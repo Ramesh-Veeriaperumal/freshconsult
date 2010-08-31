@@ -1,0 +1,64 @@
+
+<div class="note <%= cycle('stripe', '') %>">
+
+  <div class="source">
+    <% if note.status? %>
+      <div class="negative status_label">status</div>
+    <% elsif note.incoming %>
+      <div class="negative incoming_label">in</div>
+    <% elsif note.private %>
+      <div class="negative note_label">note</div>
+    <% else %>
+      <div class="negative outgoing_label">out</div>
+    <% end %>
+  </div>
+
+  <div class="details">
+    
+    <div class="timestamp"><%= note.created_at.strftime("%b %e") %></div>
+
+    <% if !note.status? %>
+      <h4>
+        <% if note.source == Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["meta"] %>
+          Meta Information
+        <% else %>
+          <%= note.incoming ? h(note.notable.name) : h(note.user ? note.user.name : "Anon") %>
+        <% end %>
+      </h4>
+    <% end %>
+
+    <div class="note-body">
+      <blockquote>
+        <%= simple_format(email_before_quoted(strip_tags(note.body))) %>
+      </blockquote>
+
+      <% if email_quoted?(note.body) %>
+        <%= link_to_function("Toggle Quoted", "$('quoted-#{ note.id }').toggle()", :class => 'toggle-quoted') %>
+
+        <blockquote id="quoted-<%= note.id %>" style="display:none">
+          <%= simple_format(email_after_quoted(strip_tags(note.body))) %>
+        </blockquote>
+      <% end %>
+    </div>
+
+    <% if note.private && !note.incoming && !note.status? %>
+      <ul class="note-actions">
+        <li><%= link_to "Edit", edit_helpdesk_ticket_helpdesk_note_path(@item, note) %></li>
+        <li><%= link_to "Delete", helpdesk_ticket_helpdesk_note_path(@item, note), :method => :delete %></li>
+      </ul>
+    <% end %>
+
+    <%= content_tag('h5', 'Attachments') unless note.attachments.empty? %>
+
+
+    <table class="attachment-list">
+      <%= render :partial => '/helpdesk/shared/attachment', :collection => note.attachments %>
+    </table>
+
+  </div>
+
+
+  <div class="clear"></div>
+
+</div>
+

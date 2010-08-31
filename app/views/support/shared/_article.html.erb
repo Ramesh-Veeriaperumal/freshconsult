@@ -1,0 +1,18 @@
+<li class="article" id="<%= article.to_param %>">
+  <h4><%= article.title %></h4>
+  <div class="article-body">
+    <%= article.body %>
+  </div>
+
+  <% unless article.attachments.empty? %>
+    <h5>Related Files</h5>
+    <ul class="attachments">
+      <% for a in article.attachments %>
+        <li>
+          <%= link_to a.content_file_name, a.content.url %>
+          <%= content_tag(:blockquote, a.description) unless !a.description || a.description.empty? %>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+</li>

@@ -1,0 +1,135 @@
+
+<% content_for :head do %>
+  <%= javascript_include_tag "helpdesk/core" %>
+  <%= javascript_include_tag "helpdesk/page_switcher" %>
+  <%= javascript_include_tag "helpdesk/take_it_button" %>
+  <%= javascript_include_tag "helpdesk/id_selector" %>
+
+  <% javascript_tag do %>
+    document.observe("dom:loaded", function(){
+
+      Helpdesk.sel = new Helpdesk.MultiSelectorsOnPages({
+        pages: ['expanded', 'list'],
+        cookieName: 'helpdesk-tickets-page'
+      });
+
+      Helpdesk.sel.submitOnClick('assign-multiple-button', ['responder_id']);
+
+      new Helpdesk.PageSwitcher({
+        toggleMode: true,
+        pages: ['assign-options']
+      });
+
+      Helpdesk.monitorTakeItButtons();
+
+      Helpdesk.submitOnChange('sort');
+
+      });
+  <% end %>
+<% end %>
+
+
+
+
+<% content_for :sidebar do %>
+
+  <%= 
+    d = (@item.tag_uses_count || 0) - (@item.tickets.visible.count || 0) 
+    if(d > 0 && !params[:show_all])
+      content_tag(:div, "#{d} Tickets are hidden due to deletion / spam. " + link_to("(show them)", helpdesk_tag_path(@item, :show_all => true)), :class => "spam")
+
+    elsif(d > 0 && params[:show_all])
+      content_tag(:div, "Spam & deleted tickets are shown. " + link_to("(hide them)", helpdesk_tag_path(@item)), :class => "spam")
+    end
+  %>
+
+  <%= render :partial => '/helpdesk/shared/tag_search_navigate' %>
+
+  <h4>Options</h4>
+
+  <form class="filter-options">
+    <%= context_check_box "Show closed tickets", :all, :open, [:visible] %>
+  </form>
+
+
+<% end %>
+
+<% content_for :main_panel_title do %>
+  Tickets Tagged: <span class="tag"><%= @item.name %></span>
+  <sup><%= @item.tag_uses_count %></sup>
+<% end %>
+
+<% content_for :main_panel_actions do %>
+  <%= link_to "Rename This Tag", :action => :edit %>
+<% end %>
+
+<% content_for :main_panel_toolbar do %>
+  <div class="actions">
+    <form class="sort">
+      Sort by&nbsp;&nbsp; 
+      <%= select_tag :sort, options_for_select(Helpdesk::Ticket::SORT_FIELD_OPTIONS, (params[:sort] || :created_asc).to_sym) %>
+    </form>
+  </div>
+  <ul>
+    <li><a href="#" id="expanded-link">Expanded View</a></li>
+    <li><a href="#" id="list-link">List View</a></li>
+  </ul>
+<% end %>
+
+<% content_for :main_panel_selected_toolbar do %>
+
+  <ul class="secondary-actions">
+    <%= content_tag('li', link_to_function("Select All", "Helpdesk.sel.checkAll()")) %>
+    <%= content_tag('li', link_to_function("Deselect All", "Helpdesk.sel.uncheckAll()")) %> 
+  </ul>
+
+  <ul>
+    <li><a href="#" id="assign-options-link">Assign To User</a></li>
+    <%= content_tag('li', link_to_function("Delete", "Helpdesk.sel.submit('#{ helpdesk_ticket_path('multiple') }', 'delete')")) %>
+    <%= content_tag('li', link_to_function("Flag Spam", "Helpdesk.sel.submit('#{ spam_helpdesk_ticket_path('multiple') }', 'put')")) %> 
+  </ul>
+
+  <div class="selection-options">
+    <div id="assign-options" style="display:none">
+      <%= select_tag 'responder_id', options_from_collection_for_select(User.all, :id, :name, current_user) %>
+      <button id="assign-multiple-button" action="<%= assign_helpdesk_ticket_path('multiple') %>">Assign</button>
+    </div>
+  </div>
+
+<% end %>
+
+
+<% content_for :main_panel_content do %>
+
+  
+  <%# 
+    This form is used by JS to submit "Take It" button clicks 
+    We couldn't use the button_to helper because it resulted in a 
+    form within a form, which caused huge rendering problems in firefox.
+  %>
+  <%= form_tag "", :method => :put, :style=>'display: none', :id => 'accept-form' do end %>
+
+  <div id="pages">
+
+    <% form_tag "", { :id => "expanded", :method => :put, :style=>'display: none'} do %>
+      <table class="tickets-expanded">
+        <%= render :partial => "/helpdesk/shared/expanded/ticket", :collection => @tickets %>
+      </table>
+    <% end %>
+
+    <% form_tag "", { :id => "list",  :method => :put, :style=>'display: none' } do %>
+      <table class="tickets">
+        <%= render :partial => "/helpdesk/shared/collapsed/ticket", :collection => @tickets %>
+      </table>
+    <% end %>
+  </div>
+
+  <%= will_paginate @tickets %>
+
+  <div class="clear"></div>
+<% end %>
+
+
+
+
+<%= render :partial => "/helpdesk/shared/main_panel" %>

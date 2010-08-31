@@ -1,0 +1,7 @@
+<% content_for :title do %>
+  Request Support
+<% end %>
+
+<% form_for @ticket, :url => support_minimal_tickets_path do |f| %>
+  <%= render :partial => 'support/shared/request_form', :object => f %>
+<% end %>

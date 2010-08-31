@@ -1,0 +1,70 @@
+<%= include_tiny_mce_if_needed %>
+
+<% content_for :head do %>
+  <%= javascript_include_tag "helpdesk/page_switcher" %>
+  <% javascript_tag do %>
+    document.observe("dom:loaded", function(){
+
+      new Helpdesk.PageSwitcher({
+        toggleMode: true,
+        pages: ['attachment-options']
+      });
+
+    });
+  <% end %>
+<% end %>
+
+
+<div id="article-form-container">
+  <% form_for article, :html => {:multipart => true, :id => "article-form"} do |f| %>
+    <%= f.error_messages %>
+
+    <%= f.label(:title, "Tile:") %>
+    <%= f.text_field :title %>
+
+    <%= f.text_area :body, :class => "mceEditor", :id => 'article-body' %>
+
+    <div class="button-container">
+      <%= submit_tag %>
+      <%= submit_tag "Save and Create Another", :name => "save_and_create"%>
+      <ul>
+        <li><a href="#" id="attachment-options-link">Attach a File</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <div class="attachment-options" id="attachment-options" style="display:none">
+        <label>Select a file</label>
+        <input type="file" id="attachment_file" name="emptyfile" nameWhenFilled="helpdesk_article[attachments][][file]" fileList="attachment-list" sendFocusTo="article-body" />
+
+        <table class="attachments">
+          <tbody id="attachment-list">
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+
+  <% end %>
+</div>
+
+<%# 
+  The following is a template used by multifile.js to create rows in
+  the attachments tableee.
+%>
+
+<textarea id="file-list-template" style="display:none">
+  <tr>
+    <td class="remove">
+      <a href="" onclick="Helpdesk.Multifile.remove(this); return false;", inputId="#{inputId}">
+        <%= image_tag("helpdesk/delete.png") %>
+      </a>
+    </td>
+    <td class="name">#{name}</td>
+    <td>
+      <label>Description</label>
+      <input type="text" name="helpdesk_article[attachments][][description]" />
+    </td>
+    </tr>
+</textarea>
+

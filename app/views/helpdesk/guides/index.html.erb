@@ -1,0 +1,128 @@
+<% content_for :head do %>
+  <%= javascript_include_tag "helpdesk/core" %>
+  <%= javascript_include_tag "helpdesk/page_switcher" %>
+  <%= javascript_include_tag "helpdesk/id_selector" %>
+  <%= javascript_include_tag "helpdesk/reorder" %>
+
+  <% javascript_tag do %>
+    document.observe("dom:loaded", function(){
+
+      Helpdesk.sel = new Helpdesk.MultiSelectorsOnPages({
+        pages: ['list', 'reorder'],
+        isSelector: { reorder: false }
+      });
+
+      Helpdesk.reorder = new Helpdesk.DDReorder({
+        container: 'article-order',
+        form: 'reorder',
+        onCancel: function(){ Helpdesk.sel.pageSwitcher.showDefault(); }
+      });
+
+    });
+  <% end %>
+<% end %>
+
+<% content_for :sidebar do %>
+<% end %>
+
+<% content_for :main_panel_title do %>
+  User Guides <sup><%= Helpdesk::Guide.all.size %></sup>
+<% end %>
+
+<% content_for :main_panel_actions do %>
+  <%= link_to "Add a User Guide", new_helpdesk_guide_path %>
+<% end %>
+
+<% content_for :main_panel_toolbar do %>
+  <div id="main-panel-toolbar-1">
+    <div class="actions">
+      <ul>
+        <li>Faqs are listed in their display order</li>
+        <li><%= link_to_function("Rearrange", "Helpdesk.reorder.start()", :id => 'reorder-link') %></li>
+      </ul>
+    </div>
+    &nbsp;
+  </div>
+
+  <div id="main-panel-toolbar-2" style = "display:none">
+    <div class="actions">
+      <ul>
+        <%= content_tag(:li, link_to_function("Cancel", "Helpdesk.reorder.cancel()")) %>
+        <li><button onclick = "Helpdesk.reorder.submit(); return false;">Save Changes</button></li>
+      </ul>
+    </div>
+    Drag and drop User Guides to the desired position.
+  </div>
+
+<% end %>
+
+<% content_for :main_panel_selected_toolbar do %>
+
+  <ul class="secondary-actions">
+    <%= content_tag('li', link_to_function("Select All", "Helpdesk.sel.checkAll()")) %>
+    <%= content_tag('li', link_to_function("Deselect All", "Helpdesk.sel.uncheckAll()")) %> 
+  </ul>
+
+  <ul>
+    <%= content_tag('li', link_to_function("Delete Guides", "if(confirm('Really delete?')) Helpdesk.sel.submit('#{helpdesk_guide_path('multiple')}', 'delete')", :id => 'delete-link')) %>
+  </ul>
+
+  <div class="selection-options">
+    <div id="delete-options" style="display:none">
+
+      This action is permanent.  It cannot be undone. No tickets will be deleted.
+      <br>
+      
+      <button onClick="Helpdesk.sel.submit('<%= helpdesk_tag_path('multiple') %>', 'delete')">Delete</button>
+      <%= link_to_function("Cancel", "Helpdesk.showOptions('delete-options', $('delete-link'))") %>
+
+    </div>
+  </div>
+
+<% end %>
+
+
+<% content_for :main_panel_content do %>
+
+  
+  <div id="pages">
+    <% form_tag "", { :method => :put, :id => 'list' } do %>
+      <table class="guides">
+        <% for guide in @items %>
+          <tr class="<%= cycle('stripe', '') %>">
+            <td class="check">
+              <%= check_box_tag('ids[]', guide.to_param,  false, :class => 'selector') %>
+            </td>
+            <td class="name"><h3><%= link_to(h(guide.name), guide) %></h3></td>
+            <td><%= guide.hidden ? "Private" : "Public" %></td>
+            <td class="count"><%= pluralize(guide.article_guides_count, 'Article', 'Articles') %></td>
+          </tr>
+        <% end %>
+
+      </table>
+    <% end %>
+
+    <% form_tag reorder_helpdesk_guides_path, { :id => "reorder", :method => :put, :style => "display: none" } do %>
+      <%= hidden_field_tag :order %>
+
+      <ol id="article-order">
+        <% for guide in @items %>
+          <li id="guide_<%= guide.id %>">
+            <h3>
+              <%= h(guide.name) %>
+            </h3>
+          </li>
+        <% end %>
+      </ol>
+    <% end %>
+
+  </div>
+
+
+  <div class="clear"></div>
+<% end %>
+
+
+
+
+<%= render :partial => "/helpdesk/shared/main_panel" %>

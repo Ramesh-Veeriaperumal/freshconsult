@@ -1,0 +1,71 @@
+<% content_for :head do %>
+  <%= javascript_include_tag "helpdesk/core" %>
+  <%= javascript_include_tag "helpdesk/take_it_button" %>
+
+  <% javascript_tag do %>
+    document.observe("dom:loaded", function(){
+      Helpdesk.monitorTakeItButtons();
+    });
+  <% end %>
+<% end %>
+
+
+
+<% content_for :sidebar do %>
+  <%= render :partial => '/helpdesk/shared/tag_search_navigate' %>
+
+  <%= render :partial => '/helpdesk/shared/reminders', :locals => {
+    :parent => false,
+    :reminders => current_user.reminders,
+    :reminder_title => "My Reminders"} %>
+<% end %>
+
+<% content_for :main_panel_title do %>
+  Latest Activity
+<% end %>
+
+<% content_for :main_panel_actions do %>
+  <%= link_to "Add a ticket", new_helpdesk_ticket_path %>
+<% end %>
+
+<% content_for :main_panel_toolbar do %>
+<% end %>
+
+<% content_for :main_panel_content do %>
+
+  
+  <%# 
+    This form is used by JS to submit "Take It" button clicks 
+    We couldn't use the button_to helper because it resulted in a 
+    form within a form.
+  %>
+  <%= form_tag "", :method => :put, :style=>'display: none', :id => 'accept-form' do end %>
+
+  <div id="pages">
+    <table class="tickets-expanded">
+      <% @items.each_with_index do |item, i| %>
+        <tr class="<%= cycle('stripe', '') %>">
+          <%= render(:partial => "ticket_note", :object => item) if item.notable.is_a? Helpdesk::Ticket %>
+          <%= render(:partial => "issue_note", :object => item) if item.notable.is_a? Helpdesk::Issue %>
+        </tr>
+      <% end %>
+    </table>
+  </div>
+
+  <%= will_paginate @items %>
+
+  <div class="clear"></div>
+
+  <%= link_to(
+    image_tag("helpdesk/feed.png", :alt => "Feed") + " Subscribe", 
+    helpdesk_formatted_dashboard_url(:format => 'atom'), 
+    :class => "feed") unless params[:f] %>
+
+  <div class="clear"></div>
+
+<% end %>
+
+
+
+
+<%= render :partial => "/helpdesk/shared/main_panel" %>

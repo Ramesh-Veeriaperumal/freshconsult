@@ -1,0 +1,148 @@
+<% content_for :head do %>
+  <%= javascript_include_tag "helpdesk/core" %>
+  <%= javascript_include_tag "helpdesk/page_switcher" %>
+  <%= javascript_include_tag "helpdesk/take_it_button" %>
+  <%= javascript_include_tag "helpdesk/id_selector" %>
+  <%= javascript_include_tag "helpdesk/ticket_search" %>
+
+  <% javascript_tag do %>
+    document.observe("dom:loaded", function(){
+
+      Helpdesk.sel = new Helpdesk.MultiSelectorsOnPages({
+        pages: ['expanded', 'list'],
+        cookieName: 'helpdesk-tickets-page'
+      });
+
+      Helpdesk.sel.submitOnClick('assign-multiple-button', ['responder_id']);
+
+      new Helpdesk.PageSwitcher({
+        toggleMode: true,
+        pages: ['assign-options']
+      });
+
+      Helpdesk.monitorTakeItButtons();
+
+      Helpdesk.submitOnChange('sort');
+
+    });
+  <% end %>
+<% end %>
+
+
+
+<% content_for :sidebar do %>
+  <%= render :partial => "filters" %>
+  <%= render :partial => "search" %>
+  <%= render :partial => "/helpdesk/shared/filter_options" %>
+
+  <% if current_selector == [:deleted] %>
+    <h4>Actions</h4>
+    <ul>
+      <li><%= link_to "Delete all tickets in trash", empty_trash_helpdesk_tickets_path, :method => :delete, :confirm => "This will permanently delete all tickets in the trash. Continue?" %></li>
+    </ul>
+  <% end %>
+
+  <% if current_selector == [:spam] %>
+    <h4>Actions</h4>
+    <ul>
+      <li><%= link_to "Delete all tickets flagged as spam", empty_spam_helpdesk_tickets_path, :method => :delete, :confirm => "This will permanently delete all tickets flagged as spam. Continue?" %></li>
+    </ul>
+  <% end %>
+
+<% end %>
+
+<% content_for :main_panel_title do %>
+  <%= current_selector_name %>
+  <sup><%= filter_count %></sup>
+<% end %>
+
+<% content_for :main_panel_actions do %>
+  <%= link_to "Add a ticket", :action => :new %>
+<% end %>
+
+<% content_for :main_panel_toolbar do %>
+  <div class="actions">
+    <form class="sort">
+      Sort by&nbsp;&nbsp; 
+      <%= select_tag :sort, options_for_select(Helpdesk::Ticket::SORT_FIELD_OPTIONS, (params[:sort] || :created_asc).to_sym) %>
+    </form>
+  </div>
+  <ul>
+    <li><a href="#" id="expanded-link">Expanded View</a></li>
+    <li><a href="#" id="list-link">List View</a></li>
+  </ul>
+<% end %>
+
+<% content_for :main_panel_selected_toolbar do %>
+
+  <ul class="secondary-actions">
+    <%= content_tag('li', link_to_function("Select All", "Helpdesk.sel.checkAll()")) %>
+    <%= content_tag('li', link_to_function("Deselect All", "Helpdesk.sel.uncheckAll()")) %> 
+  </ul>
+
+  <ul>
+    <li><a href="#" id="assign-options-link">Assign To User</a></li>
+
+    <% if current_selector == [:deleted] %>
+      <%= content_tag('li', link_to_function("Undelete", "Helpdesk.sel.submit('#{ restore_helpdesk_ticket_path('multiple') }', 'put')")) %>
+    <% else %>
+      <%= content_tag('li', link_to_function("Delete", "Helpdesk.sel.submit('#{ helpdesk_ticket_path('multiple') }', 'delete')")) %>
+    <% end %>
+
+    <% if current_selector == [:spam] %>
+      <%= content_tag('li', link_to_function("Unflag Spam", "Helpdesk.sel.submit('#{ unspam_helpdesk_ticket_path('multiple') }', 'put')")) %> 
+    <% else %>
+      <%= content_tag('li', link_to_function("Flag Spam", "Helpdesk.sel.submit('#{ spam_helpdesk_ticket_path('multiple') }', 'put')")) %> 
+    <% end %>
+
+  </ul>
+
+  <div id="assign-options" style="display:none;">
+    <%= select_tag 'responder_id', options_from_collection_for_select(Helpdesk::Authorization.find_all_by_permission(:manage_tickets), :user_id, :name, current_user) %>
+    <button id="assign-multiple-button" action="<%= assign_helpdesk_ticket_path('multiple') %>">Assign</button>
+  </div>
+
+<% end %>
+
+
+<% content_for :main_panel_content do %>
+
+  <%# 
+    This form is used by JS to submit "Take It" button clicks 
+    We couldn't use the button_to helper because it resulted in a 
+    form within a form.
+  %>
+  <%= form_tag "", :method => :put, :style=>'display: none', :id => 'accept-form' do end %>
+
+  <div id="pages">
+
+    <% form_tag "", { :id => "expanded", :method => :put, :style=>'display: none'} do %>
+      <table class="tickets-expanded">
+        <%= render :partial => "/helpdesk/shared/expanded/ticket", :collection => @items %>
+      </table>
+    <% end %>
+
+    <% form_tag "", { :id => "list",  :method => :put, :style=>'display: none' } do %>
+      <table class="tickets">
+        <%= render :partial => "/helpdesk/shared/collapsed/ticket", :collection => @items %>
+      </table>
+    <% end %>
+  </div>
+
+  <%= will_paginate @items %>
+
+  <div class="clear"></div>
+
+  <%= link_to(
+    image_tag("helpdesk/feed.png", :alt => "Feed") + " Subscribe", 
+    helpdesk_tickets_url(:format => 'atom'), 
+    :class => "feed") unless params[:f] %>
+
+  <div class="clear"></div>
+
+<% end %>
+
+
+
+
+<%= render :partial => "/helpdesk/shared/main_panel" %>

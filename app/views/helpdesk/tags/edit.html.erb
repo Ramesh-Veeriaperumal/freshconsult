@@ -1,0 +1,29 @@
+
+<% content_for :sidebar do %>
+<% end %>
+
+<% content_for :main_panel_title do %>
+  Rename Tag
+<% end %>
+
+<% content_for :main_panel_actions do %>
+<% end %>
+
+<% content_for :main_panel_toolbar do %>
+<% end %>
+
+<% content_for :main_panel_content  do %>
+
+  <% form_for @item do |f| %>
+    <%= f.error_messages %>
+    <%= f.label :name, "Tag Name" %>
+    <%= f.text_field :name %>
+    <div class="button-container">
+      <%= submit_tag 'Save Changes' %>
+      <%= link_to "Cancel", @item %>
+    </div>
+  <% end %>
+
+<% end %>
+
+<%= render :partial => "/helpdesk/shared/main_panel" %>

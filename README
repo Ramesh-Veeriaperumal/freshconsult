@@ -1,0 +1,199 @@
+== Welcome to the Helpdesk Rails Kit
+
+This kit contains everything you need to add a fully-functional
+helpdesk to your rails application.
+
+* Automatically converts incoming email and contact form requests
+  into tickets, which can be assigned to individual members of your
+  team.
+
+* Keeps a record of all incoming and outgoing customer
+  correspondence.
+
+* Lets you view all recent customer support activity at a glance.
+
+* A built in bayesian spam filter keeps your inbox free and saves
+  you time.
+
+* A searchable knowledgebase lets you easily add FAQs and user
+  manuals to your website.
+
+
+== Installation
+
+0. Install the required gems: sudo gem install mms2r
+1. Unzip the Helpdesk kit archive to the desired directory.
+2. Edit config/database.yml like you would for any rails project.
+3. Run "rake bootstrap" from your project root.
+4. Configure email in /config/helpdesk.yml (see instructions below)
+5. Run the mail fetcher daemon: "script/helpdesk_mail_fetcher"
+6. Log in to the new helpdesk at "http://yourapp.com/helpdesk", with 
+   username "admin" and the password displayed near the end of
+   the migration from running the bootstrap task.
+   
+
+== Running the Test Suite (optional)
+
+0. Install the required gems: sudo gem install thoughtbot-shoulda mocha
+1. Make sure that you've created the test database
+2. Run "rake test" like you normally would
+
+
+== Routes
+
+The "back end" of your helpdesk is located at
+http://yourapp.com/helpdesk. This is where your staff will go to
+take care of business.
+
+Your "front end" customer service portal is located at
+http://yourapp.com/service. This is where your customers will go to
+get help.
+
+
+== Configure Outgoing Email
+
+Outgoing email is sent via Rails' built-in ActionMailer class. You
+can configure it using the options defined in ActionMailer::Base:
+
+[ http://api.rubyonrails.org/classes/ActionMailer/Base.html ]
+
+You can make these changes to the EMAIL:outgoing section of 
+"config/helpdesk.yml".
+
+
+== Configure Incoming Email
+
+The Helpdesk Kit includes a mail fetching daemon that pulls incoming
+email from an IMAP or POP account every few minutes.
+
+The configuration for incoming email is located in
+"config/helpdesk.yml". If you peek into that file, you'll find
+several examples for both POP and IMAP.
+
+The mail fetching daemon is located in
+"script/helpdesk_mail_fetcher.rb". It's easy to run it:
+
+    To start the daemon:    script/helpdesk_mail_fetcher.rb start
+    To stop the daemon:     script/helpdesk_mail_fetcher.rb stop
+    To restart the daemon:  script/helpdesk_mail_fetcher.rb restart
+
+Once started, the daemon will run in the background, and shouldn't
+require any additional work on your end. We do, however, recommend
+using a process monitoring utility such as monit to make sure that
+the process is restarted if it is ever interrupted.
+
+[ http://mmonit.com/ ]
+
+
+== Customize Email Templates
+
+The Helpdesk's email templates are simply ActionMailer templates. 
+
+    "app/views/helpdesk/ticket_notifier/reply.text.plain.erb" - This
+    template is used when you or one of your staff sends a reply to
+    a customer. The default contains a footer with a link that the
+    user can follow to see the ticket's status
+
+    "app/views/helpdesk/ticket_notifier/autoreply.text.plain.erb" -
+    When the customer initiates a support request, an autoreply is
+    sent to their email address. This template is used to generate
+    that autoreply.
+
+
+== Other Configuration Options
+
+All of the following configuration options are located in
+"config/helpdesk.yml".
+
+Spam:
+    SPAM_TRAINING_MODE: When set to true, the helpdesk will not automatically
+    classify incoming requests as spam/ham. The spam filter is pretty dumb
+    out of the box. It only becomes more effective when you train it, by 
+    manually flagging posts as spam. In order to prevent legitimate requests
+    from being classified as spam, you should leave this option set to true
+    for a while. 
+
+Page Titles:
+    STAFF_FACING_TITLE: This is the title for the staff-facing back
+    end of your helpdesk
+    USER_FACING_TITLE: This is the title for your end-user-facing
+    customer-service portal
+    
+Salt Values (Used in generating unique ticket tokens):
+    SECRET_1: a random value
+    SECRET_2: a random value
+
+WYSIWYG editor options:
+    EDITOR_OPTIONS: Customize the appearance of TinyMCE [ http://github.com/kete/tiny_mce/tree/master ]
+
+User permissions:
+    ROLES: Defines the permissions granted to each role.
+
+
+
+== Integrating Your User System
+
+The Helpdesk Kit makes use of the User model that probably already
+exists in your application.
+
+Here's the good news: if you decide to use the
+restful_authentication plugin included with this kit, you don't have
+to do anything.
+
+If you want to use a different user system, it's easy to make your
+current user system compatible with the Helpdesk Kit.
+
+Just do the following:
+
+    1) Make sure that your user model has a "name" field
+    2) Provide a method "current_user" in the application controller
+    and as a helper. It should return the current user record, if
+    one is logged in. If no user is logged in, it should return nil.
+
+
+== Adding Authorized Users
+
+Once your user system is set up you can start adding authorized users.
+
+To be added as an authorized helpdesk user, the user account must
+already exist. User creation isn't handled by the helpdesk.
+
+To add accounts
+
+    1) Go to the helpdesk: http://yoursite.com/helpdesk 
+    2) Click on the "users" link at the top right corner of your
+       screen.
+    3) Type the name into the search box. Select one from the list
+       of choices.
+    4) Adjust the account's priveleges using the select box.
+
+
+* IMPORTANT NOTE: If you delete all of the authorizations, your
+  helpdesk is wide open. Any user can perform admin actions. So be
+  sure to always have at least one authorized user.
+
+
+== Customizing Your Customer Service Portal
+
+If you look in the routes.rb file, you may notice that we have two namespaces.
+
+    1) http://yoursite.com/helpdesk/* - This is the "back end" of
+    the helpdesk, the part your staff sees. It's here that you'll be
+    able to view, assign and respond to user queries. While you're
+    more than welcome to customize this area, most people won't.
+    (And that's OK)
+
+    2) http://yoursite.com/support/* - This is the "front end" of
+    your helpdesk, the part your customers see. Chances are good
+    that you'll want to style this area to match the overall design
+    of your website. Views are located in "/app/views/support".
+
+
+== Integrating the helpdesk into an existing product or website using an iframe.
+
+The MinimalTicketsController is used for ticket creation via
+a stripped down web-form. On submission, it displays a thank-you
+message and does not redirect to the user's "my requests" area.
+This is useful if you're incorporating the helpdesk into your
+product using an iframe.
+

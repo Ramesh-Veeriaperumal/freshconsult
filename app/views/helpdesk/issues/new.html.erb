@@ -1,0 +1,19 @@
+
+<% content_for :sidebar do %>
+<% end %>
+
+<% content_for :main_panel_title do %>
+  Add an Issue
+<% end %>
+
+
+<% content_for :main_panel_toolbar do %>
+<% end %>
+
+<% content_for :main_panel_content  do %>
+
+  <%= render :partial => "form" %>
+
+<% end %>
+
+<%= render :partial => "/helpdesk/shared/main_panel" %>

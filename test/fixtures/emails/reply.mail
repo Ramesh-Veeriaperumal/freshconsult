@@ -1,0 +1,73 @@
+Delivered-To: helpkit_test@chatspring.com
+Received: by 10.100.194.16 with SMTP id r16cs602519anf;
+        Fri, 9 Jan 2009 04:44:10 -0800 (PST)
+Received: by 10.210.79.14 with SMTP id c14mr30129191ebb.194.1231505049313;
+        Fri, 09 Jan 2009 04:44:09 -0800 (PST)
+Return-Path: <snhorne@gmail.com>
+Received: from ug-out-1314.google.com (ug-out-1314.google.com [66.249.92.173])
+        by mx.google.com with ESMTP id 9si20589770ewy.31.2009.01.09.04.44.07;
+        Fri, 09 Jan 2009 04:44:08 -0800 (PST)
+Received-SPF: pass (google.com: domain of snhorne@gmail.com designates 66.249.92.173 as permitted sender) client-ip=66.249.92.173;
+Authentication-Results: mx.google.com; spf=pass (google.com: domain of snhorne@gmail.com designates 66.249.92.173 as permitted sender) smtp.mail=snhorne@gmail.com; dkim=pass (test mode) header.i=@gmail.com
+Received: by ug-out-1314.google.com with SMTP id s2so26938uge.41
+        for <helpkit_test@chatspring.com>; Fri, 09 Jan 2009 04:44:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=gamma;
+        h=domainkey-signature:received:received:subject:from:to:in-reply-to
+         :references:content-type:date:message-id:mime-version:x-mailer
+         :content-transfer-encoding;
+        bh=D3lmzN/+v6/KaewkaDKUnNsaJJhyWiO+WFogqAyMWHg=;
+        b=g5ERe4ZEgT9/hShotj8gLLTVPsdQoUSt7mnMz4O+ZLxUBpoUZkEBCYucX573Elw7n4
+         1LgpYmSuXaeFZSCzdUKo2a9PuEXQPDfIb/PzHIysC3XhbsfV0WGKWh212V2akKQyUiIh
+         XDwW0B/YKvLyQObLeOLtL4baZZ31w5HGEhJfE=
+DomainKey-Signature: a=rsa-sha1; c=nofws;
+        d=gmail.com; s=gamma;
+        h=subject:from:to:in-reply-to:references:content-type:date:message-id
+         :mime-version:x-mailer:content-transfer-encoding;
+        b=s3axYy2i5DQLztjglf8XrAgV2zs8l9YoNuogwrsnDoKN+r0RpawVfwAfEOvJgB8Jv5
+         9+Zkc6/zsQ2j37ZyZf84WVZ4JO4V9MTypLOHMikBw7B8w0rO+sKBMCc0VtlSivWoJXOj
+         44e+2NxnpTi7HYQEcnz+hHWH0qeYgo6sYVFWk=
+Received: by 10.66.240.12 with SMTP id n12mr6252789ugh.75.1231505047180;
+        Fri, 09 Jan 2009 04:44:07 -0800 (PST)
+Return-Path: <snhorne@gmail.com>
+Received: from ?192.168.2.4? (ip70-178-140-76.ks.ks.cox.net [70.178.140.76])
+        by mx.google.com with ESMTPS id g30sm56980177ugd.32.2009.01.09.04.44.03
+        (version=TLSv1/SSLv3 cipher=RC4-MD5);
+        Fri, 09 Jan 2009 04:44:04 -0800 (PST)
+Subject: Re: Your support request [9f89e26017eb79b6ed48e68924681cce]
+From: Starr Horne <snhorne@gmail.com>
+To: helpkit_test@chatspring.com
+In-Reply-To: <496745d8.01b2420a.5985.7e84@mx.google.com>
+References: <496745d8.01b2420a.5985.7e84@mx.google.com>
+Content-Type: text/plain
+Date: Fri, 09 Jan 2009 06:44:01 -0600
+Message-Id: <1231505041.6828.2.camel@licorice>
+Mime-Version: 1.0
+X-Mailer: Evolution 2.22.3.1 
+Content-Transfer-Encoding: 7bit
+
+One more question: would it be possible to get a discount?
+
+SH
+
+On Fri, 2009-01-09 at 06:40 -0600, helpkit_test@chatspring.com wrote:
+> This email is to let you know that your support request has been received. One of our representatives will be in touch shortly.
+> 
+> Your support request has been assigned the following id: #9f89e26017eb79b6ed48e68924681cce.
+> 
+> Replies will be sent to this email address. 
+> 
+> You can also visit the following URL to see the status of your request at any time:
+> 
+> http://http://localhost:3000//support/tickets/9f89e26017eb79b6ed48e68924681cce?access_token=7b730eb096c638bc5cd1a9acbcb7b835
+> 
+> The text of your request:
+> 
+> This is a message body...
+> 
+> ---
+> 
+> Thank you,
+> The Customer Support Team
+> 
+

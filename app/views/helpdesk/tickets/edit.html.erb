@@ -1,0 +1,22 @@
+
+<% content_for :sidebar do %>
+<% end %>
+
+<% content_for :main_panel_title do %>
+  <%= h(@item.name) %> (#<%= h(@item.id) %>)
+<% end %>
+
+<% content_for :main_panel_actions do %>
+  <%= link_to "Delete this ticket", @item, :method => :delete %>
+<% end %>
+
+<% content_for :main_panel_toolbar do %>
+<% end %>
+
+<% content_for :main_panel_content  do %>
+
+  <%= render :partial => "ticket_form" %>
+
+<% end %>
+
+<%= render :partial => "/helpdesk/shared/main_panel" %>

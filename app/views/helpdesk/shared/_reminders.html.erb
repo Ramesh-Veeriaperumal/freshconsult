@@ -1,0 +1,21 @@
+<h4><%= local_assigns[:reminder_title] || "Reminders" %></h4>
+
+<ul class="reminders">
+  <%= reminders.visible.map do |r| 
+    content_tag(
+      :li, 
+      check_box_link(
+        r.body + (r.ticket && !parent ? link_to("Re: #{r.ticket.name}", r.ticket) : ''), 
+        r.deleted, 
+        helpdesk_reminder_path(r), 
+        :delete, 
+        restore_helpdesk_reminder_path(r), 
+        :put)) 
+  end %>
+
+</ul>
+
+<% form_for parent ? [parent, Helpdesk::Reminder.new()] : Helpdesk::Reminder.new() do |f| %>
+  <%= f.label :body, "Add a reminder" %>
+  <%= f.text_field :body %>
+<% end %>

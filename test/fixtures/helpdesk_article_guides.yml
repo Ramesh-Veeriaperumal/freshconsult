@@ -1,0 +1,39 @@
+article_backup_section_general_info:
+    id: 1
+    article_id: 1
+    guide_id: 1
+    position: 1
+
+article_fees_section_general_info:
+    id: 2
+    article_id: 2
+    guide_id: 1
+    position: 2
+
+article_cancel_section_general_info:
+    id: 3
+    article_id: 3
+    guide_id: 1
+    position: 3
+
+
+article_fees_section_billing:
+    id: 4
+    article_id: 2
+    guide_id: 2
+    position: 1
+
+article_upgrade_section_billing:
+    id: 5
+    article_id: 4
+    guide_id: 2
+    position: 1
+
+
+<% for i in 1..50 %>
+article_guide_autogen_<%= i %>:
+    id:         <%= 100 + i %>
+    article_id: <%= 100 + i %>
+    guide_id:   <%= i % 3 + 1%>
+    position:   0
+<% end %>

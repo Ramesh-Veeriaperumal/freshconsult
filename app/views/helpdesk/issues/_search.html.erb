@@ -1,0 +1,33 @@
+
+
+<% form_tag(
+  helpdesk_filter_issues_path(current_filter), 
+  :searchallaction => helpdesk_filter_issues_path(filter([:visible])),
+  :id => "search-form",
+  :class => "search #{ params[:f] && 'active'}", 
+  :method => 'get',
+  :autocomplete => 'off') do  %>
+
+  <% if params[:f] %>
+    <%= link_to("Clear Search Results", helpdesk_filter_issues_url(current_filter)) %>
+  <% else %>
+    <h4>Search</h4>
+  <% end %>
+    <fieldset>
+
+
+      <label>Where</label>
+
+      <%= search_fields %>
+
+      <label id="search-value-label">Is Like</label>
+
+      <%= search_value %>
+
+      <button id="search-all">Search All</button>
+
+      <%= submit_tag "Search #{ current_selector_name }" if current_selector != [:visible] %>
+
+    </fieldset>
+  <% end %>
+

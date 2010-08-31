@@ -1,0 +1,27 @@
+#!/usr/bin/env ruby
+require File.dirname(__FILE__) + '/../config/environment.rb'
+
+class HelpdeskMailFetcherDaemon < Daemon::Base
+  
+  @config = YAML.load_file("#{RAILS_ROOT}/config/helpdesk.yml")
+  @config = @config["EMAIL"]["incoming"][RAILS_ENV].to_options
+
+  @sleep_time = @config.delete(:sleep_time) || 60
+  def self.start
+    puts "Starting HelpdeskMailFetcherDaemon"
+
+    @fetcher = Fetcher.create({:receiver => Helpdesk::TicketNotifier}.merge(@config))
+
+    loop do
+      @fetcher.fetch
+      sleep(@sleep_time)
+    end
+  end
+  
+  def self.stop
+    puts "Stopping HelpdeskMailFetcherDaemon"
+  end
+  
+end
+
+HelpdeskMailFetcherDaemon.daemonize

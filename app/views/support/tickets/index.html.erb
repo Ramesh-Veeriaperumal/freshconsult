@@ -1,0 +1,11 @@
+<% content_for :title do %>
+  My Support Requests
+<% end %>
+
+<ol>
+  <% for ticket in @tickets %>
+    <li>
+      <%= link_to("Support request filed on #{ticket.created_at}", support_ticket_path(ticket)) %>
+    </li>
+  <% end %>
+</ol>

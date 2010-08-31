@@ -1,0 +1,29 @@
+<tr class="<%= cycle('stripe', '') %>">
+
+  <td class="check">
+    <%= check_box_tag('ids[]', issue.to_param,  false, :class => 'selector') %>
+  </td>
+
+  <td class="status">
+    <div class="negative <%= issue.freshness %>">
+      <%= issue.freshness %>
+    </div>
+  </td>
+
+  <td class="name">
+      <h3>
+        <%= link_to(h(issue.title) + " (##{issue.id})", issue) %>
+        <span class="subtitle">(<%= distance_of_time_in_words_to_now(issue.updated_at) %> ago)</span>
+      </h3>
+      <%= h(truncate(issue.description, :length => 200)) %>
+  </td>
+
+  <td class="assign">
+      <% if issue.freshness == :new %>
+        <button class="accept-button" action="<%= assign_helpdesk_issue_url(issue) %>">Take It</button> 
+      <% else %>
+        <span>Assigned to <%= issue.owner.name %></span>
+      <% end %>
+  </td>
+
+</tr>

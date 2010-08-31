@@ -1,0 +1,15 @@
+section_general_info:
+    id:         1
+    name:       General Information
+
+section_billing:
+    id:         2
+    name:       Billing Questions
+
+section_installation:
+    id:         3
+    name:       Installation and Configuration
+
+section_troubleshooting:
+    id:         4
+    name:       Troubleshooting

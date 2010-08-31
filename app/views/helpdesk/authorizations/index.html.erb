@@ -1,0 +1,99 @@
+
+<% content_for :head do %>
+  <%= javascript_include_tag "helpdesk/autosuggest" %>
+  <%= stylesheet_link_tag "helpdesk/autosuggest" %>
+
+  <%= javascript_include_tag "helpdesk/core" %>
+  <%= javascript_include_tag "helpdesk/id_selector" %>
+  <% javascript_tag do %>
+    document.observe("dom:loaded", function(){
+
+      Helpdesk.sel = new Helpdesk.MultiSelector({
+        form: 'list'
+      });
+
+      new bsn.AutoSuggest('usersearch', {
+        script: "<%= autocomplete_helpdesk_authorizations_path %>?",
+        varname: "v",
+        json: true,
+        maxresults: 35,
+        timeout: 3600000, 
+        forceselect: true,
+        callback: function(article){
+          if(article){
+            var f = $("new_helpdesk_authorization");
+            $('user-id').value = article.id;
+            f.submit();
+          }
+        }
+      });
+
+      $$('.role-selector').each(function(s){ 
+        s.observe('change', function(e){
+          var form = $('role-form');
+          form.action = e.target.readAttribute('action');
+          $('role-token').value = e.target.value;
+          form.submit();
+        });
+      });
+
+    });
+  <% end %>
+<% end %>
+
+<% content_for :sidebar do %>
+  <% form_for Helpdesk::Authorization.new(:role_token => 'admin') do |f| %>
+    <label id="search-value-label">Type a user's name to add:</label>
+    <%= text_field_tag :usersearch %>
+    <%= f.hidden_field :role_token %>
+    <%= f.hidden_field :user_id, :id => 'user-id' %>
+  <% end %>
+<% end %>
+
+<% content_for :main_panel_title do %>
+  Helpdesk Users <sup><%= Helpdesk::Authorization.all.size %></sup>
+<% end %>
+
+<% content_for :main_panel_actions do %>
+<% end %>
+
+<% content_for :main_panel_toolbar do %>
+<% end %>
+
+<% content_for :main_panel_selected_toolbar do %>
+
+  <ul class="secondary-actions">
+    <%= content_tag('li', link_to_function("Select All", "Helpdesk.sel.checkAll()")) %>
+    <%= content_tag('li', link_to_function("Deselect All", "Helpdesk.sel.uncheckAll()")) %> 
+  </ul>
+
+  <ul>
+    <%= content_tag('li', link_to_function("Revoke Authorization", "if(confirm('Really revoke?')) Helpdesk.sel.submit('#{ helpdesk_authorization_path('multiple') }', 'delete')")) %>
+  </ul>
+
+
+<% end %>
+
+
+<% content_for :main_panel_content do %>
+
+  <% form_tag "", :method => :put, :style=>'display: none', :id => 'role-form' do %>
+    <%= hidden_field_tag "helpdesk_authorization[role_token]", "", :id => 'role-token' %>
+  <% end %>
+
+  <% form_tag "", { :method => :put, :id => :list } do %>
+    <table class="authorizations">
+        <%= render :partial => "authorization", :collection => @items %>
+    </table>
+  <% end %>
+
+
+  <%= will_paginate @items %>
+
+  <div class="clear"></div>
+<% end %>
+
+
+
+
+<%= render :partial => "/helpdesk/shared/main_panel" %>

@@ -1,0 +1,29 @@
+<tr class="<%= cycle('stripe', '') %>">
+  <td class="check">
+    <%= check_box_tag('ids[]', article.to_param,  false, :class => 'selector') %>
+  </td>
+  <td class="article">
+    <h3>
+      <%= link_to(h(article.title), edit_helpdesk_article_path(article)) %>
+    </h3>
+
+    <attr>
+      (Last changed <%= distance_of_time_in_words_to_now(article.updated_at) %> 
+      ago<%= ", by #{article.user.name}" if article.user %>)
+    </attr>
+
+    <blockquote>
+      <%= h(truncate(strip_tags(article.body), :length => 200)) %>
+    </blockquote>
+
+
+    <%= if !article.guides.empty? 
+      content_tag(
+        :ul, 
+        article.guides.map {|s| content_tag(:li, link_to(h(s.name), s))}, 
+        :class => 'tags')  
+    end %>
+
+  </td>
+  
+</tr>

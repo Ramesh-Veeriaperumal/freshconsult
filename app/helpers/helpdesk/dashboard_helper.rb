@@ -1,0 +1,2 @@
+module Helpdesk::DashboardHelper
+end

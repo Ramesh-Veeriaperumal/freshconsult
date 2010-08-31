@@ -1,0 +1,51 @@
+
+  <% form_for @item do |f| %>
+    <%= f.error_messages %>
+
+    <table>
+      <tr>
+        <td>
+          <%= f.label :name, "Name" %>
+          <%= f.text_field :name %>
+        </td>
+        <td>
+          <%= f.label :email, "Email" %>
+          <%= f.text_field :email %>
+        </td>
+        <td rowspan="3">
+          <%= f.label :address, "Address" %>
+          <%= f.text_area :address %>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <%= f.label :phone, "Phone" %>
+          <%= f.text_field :phone %>
+        </td>
+        <td>
+          <%= f.label :source, "Source" %>
+          <%= f.select :source, Helpdesk::Ticket::SOURCE_OPTIONS %>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <%= f.label :status, "Status" %>
+          <%= f.select :status, Helpdesk::Ticket::STATUS_OPTIONS %>
+        </td>
+        <td>
+          <%= f.label :responder_id, "Assigned To" %>
+          <%= f.collection_select :responder_id, Helpdesk::Authorization.find_all_by_permission(:manage_tickets), :user_id, :name, {:include_blank => 'Nobody'} %>
+        </td>
+      </tr>
+    </table>
+
+    <%= f.label :description, "Description" %>
+    <%= f.text_area :description %>
+
+    <div class="button-container">
+      <%= f.submit %>
+      <%= submit_tag "Save and Create Another", :name => "save_and_create"%>
+      <%= link_to "Cancel", (@item.new_record? ? {:action => 'index'} : @item )%>
+    </div>
+
+  <% end %>

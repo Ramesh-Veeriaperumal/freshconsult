@@ -1,0 +1,180 @@
+# This file is auto-generated from the current state of the database. Instead of editing this file, 
+# please use the migrations feature of Active Record to incrementally modify your database, and
+# then regenerate this schema definition.
+#
+# Note that this schema.rb definition is the authoritative source for your database schema. If you need
+# to create the application database on another system, you should be using db:schema:load, not running
+# all the migrations from scratch. The latter is a flawed and unsustainable approach (the more migrations
+# you'll amass, the slower it'll run and the greater likelihood for issues).
+#
+# It's strongly recommended to check this file into your version control system.
+
+ActiveRecord::Schema.define(:version => 20090516153822) do
+
+  create_table "helpdesk_article_guides", :force => true do |t|
+    t.integer  "article_id"
+    t.integer  "guide_id"
+    t.integer  "position"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "helpdesk_article_guides", ["article_id"], :name => "index_helpdesk_article_sections_on_article_id"
+  add_index "helpdesk_article_guides", ["guide_id"], :name => "index_helpdesk_article_sections_on_section_id"
+
+  create_table "helpdesk_articles", :force => true do |t|
+    t.string   "title"
+    t.text     "body"
+    t.integer  "user_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "helpdesk_attachments", :force => true do |t|
+    t.text     "description"
+    t.string   "content_file_name"
+    t.string   "content_content_type"
+    t.integer  "content_file_size"
+    t.integer  "content_updated_at"
+    t.integer  "attachable_id"
+    t.string   "attachable_type"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "helpdesk_authorizations", :force => true do |t|
+    t.string   "role_token"
+    t.integer  "user_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "helpdesk_authorizations", ["role_token"], :name => "index_helpdesk_authorizations_on_role_token"
+  add_index "helpdesk_authorizations", ["user_id"], :name => "index_helpdesk_authorizations_on_user_id"
+
+  create_table "helpdesk_classifiers", :force => true do |t|
+    t.string "name",       :null => false
+    t.string "categories", :null => false
+    t.binary "data"
+  end
+
+  create_table "helpdesk_guides", :force => true do |t|
+    t.string   "name"
+    t.boolean  "hidden",               :default => false
+    t.integer  "article_guides_count"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "position",             :default => 0
+    t.text     "description"
+  end
+
+  create_table "helpdesk_issues", :force => true do |t|
+    t.string   "title"
+    t.text     "description"
+    t.integer  "user_id"
+    t.integer  "owner_id"
+    t.integer  "status",              :default => 1
+    t.boolean  "deleted",             :default => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "ticket_issues_count"
+  end
+
+  create_table "helpdesk_notes", :force => true do |t|
+    t.text     "body"
+    t.integer  "user_id"
+    t.integer  "source",       :default => 0
+    t.boolean  "incoming",     :default => false
+    t.boolean  "private",      :default => true
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "deleted",      :default => false
+    t.integer  "notable_id"
+    t.string   "notable_type"
+  end
+
+  add_index "helpdesk_notes", ["notable_id"], :name => "index_helpdesk_notes_on_notable_id"
+  add_index "helpdesk_notes", ["notable_type"], :name => "index_helpdesk_notes_on_notable_type"
+
+  create_table "helpdesk_reminders", :force => true do |t|
+    t.string   "body"
+    t.boolean  "deleted",    :default => false
+    t.integer  "user_id"
+    t.integer  "ticket_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "helpdesk_reminders", ["ticket_id"], :name => "index_helpdesk_reminders_on_ticket_id"
+  add_index "helpdesk_reminders", ["user_id"], :name => "index_helpdesk_reminders_on_user_id"
+
+  create_table "helpdesk_subscriptions", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "ticket_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "helpdesk_subscriptions", ["ticket_id"], :name => "index_helpdesk_subscriptions_on_ticket_id"
+  add_index "helpdesk_subscriptions", ["user_id"], :name => "index_helpdesk_subscriptions_on_user_id"
+
+  create_table "helpdesk_tag_uses", :force => true do |t|
+    t.integer "ticket_id", :null => false
+    t.integer "tag_id",    :null => false
+  end
+
+  add_index "helpdesk_tag_uses", ["tag_id"], :name => "index_helpdesk_tag_uses_on_tag_id"
+  add_index "helpdesk_tag_uses", ["ticket_id"], :name => "index_helpdesk_tag_uses_on_ticket_id"
+
+  create_table "helpdesk_tags", :force => true do |t|
+    t.string  "name"
+    t.integer "tag_uses_count"
+  end
+
+  create_table "helpdesk_ticket_issues", :force => true do |t|
+    t.integer "ticket_id"
+    t.integer "issue_id"
+  end
+
+  add_index "helpdesk_ticket_issues", ["issue_id"], :name => "index_helpdesk_ticket_issues_on_issue_id"
+  add_index "helpdesk_ticket_issues", ["ticket_id"], :name => "index_helpdesk_ticket_issues_on_ticket_id"
+
+  create_table "helpdesk_tickets", :force => true do |t|
+    t.string   "id_token"
+    t.string   "access_token"
+    t.string   "name"
+    t.string   "phone"
+    t.string   "email"
+    t.text     "description"
+    t.integer  "requester_id"
+    t.integer  "responder_id"
+    t.integer  "status",       :default => 1
+    t.boolean  "urgent",       :default => false
+    t.integer  "source",       :default => 0
+    t.boolean  "spam",         :default => false
+    t.boolean  "deleted",      :default => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.text     "address"
+    t.boolean  "trained",      :default => false
+  end
+
+  add_index "helpdesk_tickets", ["id_token"], :name => "index_helpdesk_tickets_on_id_token", :unique => true
+  add_index "helpdesk_tickets", ["requester_id"], :name => "index_helpdesk_tickets_on_requester_id"
+  add_index "helpdesk_tickets", ["responder_id"], :name => "index_helpdesk_tickets_on_responder_id"
+
+  create_table "users", :force => true do |t|
+    t.string   "login",                     :limit => 40
+    t.string   "name",                      :limit => 100, :default => ""
+    t.string   "email",                     :limit => 100
+    t.string   "crypted_password",          :limit => 40
+    t.string   "salt",                      :limit => 40
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "remember_token",            :limit => 40
+    t.datetime "remember_token_expires_at"
+  end
+
+  add_index "users", ["login"], :name => "index_users_on_login", :unique => true
+
+end

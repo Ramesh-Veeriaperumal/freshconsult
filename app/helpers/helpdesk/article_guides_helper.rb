@@ -1,0 +1,2 @@
+module Helpdesk::ArticleGuidesHelper
+end

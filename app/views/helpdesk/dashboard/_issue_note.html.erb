@@ -1,0 +1,45 @@
+<td class="status">
+  <% if issue_note == issue_note.notable.notes.first && !issue_note.notable.owner %>
+    <div class="negative new">new</div>
+  <% elsif issue_note.status? %>
+    <div class="negative status_label">status</div>
+  <% elsif issue_note.incoming %>
+      <div class="negative incoming_label">in</div>
+  <% elsif issue_note.private %>
+    <div class="negative note_label">note</div>
+  <% else %>
+    <div class="negative outgoing_label">out</div>
+  <% end %>
+    <div class="negative parent_type_label">issue</div>
+</td>
+
+<td class="name">
+    <h3>
+      <%= link_to(h(issue_note.notable.title) + " (##{issue_note.notable.id})", issue_note.notable) %>
+      <span class="subtitle">(<%= distance_of_time_in_words_to_now(issue_note.created_at) %> ago)</span>
+    </h3>
+
+    <div class="note-body">
+      <blockquote>
+        <%= simple_format(email_before_quoted(strip_tags(issue_note.body))) %>
+      </blockquote>
+
+      <% if email_quoted?(issue_note.body) %>
+        <%= link_to_function("Toggle Quoted", "$('quoted-#{ issue_note.id }').toggle()", :class => 'toggle-quoted') %>
+
+        <blockquote id="quoted-<%= issue_note.id %>" style="display:none">
+          <%= simple_format(email_after_quoted(strip_tags(issue_note.body))) %>
+        </blockquote>
+      <% end %>
+    </div>
+</td>
+
+<td class="assign">
+    <% if issue_note == issue_note.notable.notes.first && (issue_note.notable.freshness == :new) %>
+      <button class="accept-button" action="<%= assign_helpdesk_ticket_path(issue_note.notable) %>">Take It</button> 
+    <% else %>
+      <% if issue_note.notable.owner %>
+        <span>Assigned to <%= issue_note.notable.owner.name %></span>
+      <% end %>
+    <% end %>
+</td>

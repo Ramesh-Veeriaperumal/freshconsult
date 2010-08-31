@@ -1,0 +1,189 @@
+
+# The root url of your site. This is necessary because email processing takes place
+# outside of the normal HTTP request/response cycle, and we need to generate links
+# to pages within the site.
+
+HOST: 
+    development:    "localhost:3000"
+    test:           "localhost:3000"
+    production:     "helpdesk.example.com"
+
+
+# This is the title staff members will see when they are using the helpdesk application
+STAFF_FACING_TITLE: My App
+
+# This is the title your customers will see when using the "customer service portal"
+USER_FACING_TITLE: My App. Support
+
+
+# Example settings for receiving mail via imap:
+#
+#    incoming:
+#        development:
+#            type: imap                 # Type of connection, either imap or pop
+#            server: imap.email.com     # Address of the server
+#            port: 143                  # Port to use (defaults to 143 for imap)
+#            authentication: PLAIN      # Authentication type to use, defaults to PLAIN
+#            ssl: true                  # Use SSL to connect
+#            username: <your username>  
+#            password: <your password>
+#
+#
+# Example settings for receiving mail via GMail's imap:
+#
+#    incoming:
+#        development:
+#            type: imap                 # Type of connection, either imap or pop
+#            server: imap.email.com     # Address of the server
+#            port: 993                  # Port to use (defaults to 143 for imap)
+#            use_login: true            # use LOGIN instead of AUTHENTICATE to connect (some IMAP servers, like GMail, do not support AUTHENTICATE)
+#            ssl: true                  # Use SSL to connect
+#            username: <your username>  
+#            password: <your password>
+#
+# 
+# Example settings for receiving mail via pop:
+#
+#    incoming:
+#        development:
+#            type: pop                  # Type of connection, either imap or pop
+#            server: pop.email.com      # Address of the server
+#            port: 110                  # Port to use (defaults to 110 for imap)
+#            ssl: true                  # Use SSL to connect
+#            username: <your username>  
+#            password: <your password>
+#
+
+
+EMAIL:
+
+    # This will be the reply_to address in all outgoing email
+    from: helpdesk@example.com
+
+    # This is the subject line for all replies
+    reply_subject: "Your support request"
+    
+    # Email settings for pop/imap fetching
+    incoming:
+        development:
+            type: imap
+            server: imap.gmail.com
+            port: 993
+            ssl: true
+            use_login: true
+            username: helpdesk@example.com
+            password: helppass
+        
+        test:
+            type: pop
+            server: localhost
+            username: username
+            password: password
+        
+        production:
+            type: pop
+            server: localhost
+            username: username
+            password: password
+
+    # Email settings for sending mail
+    outgoing:
+        development:
+            tls: true
+            address: smtp.gmail.com
+            port: 587
+            domain: example.com
+            authentication: :login
+            user_name: helpdesk@example.com
+            password: helppass
+            
+        production:
+            tls: true
+            address: smtp.gmail.com
+            port: 587
+            domain: example.com
+            authentication: :login
+            user_name: helpdesk@example.com
+            password: helppass
+            
+
+# This determines whether or not incoming support requests are automatically
+# hidden if they're classified as spam by the build in spam filter. You should
+# leave this set to "true" until you've manually flagged, say, 100 spams. 
+SPAM_TRAINING_MODE: true
+
+# These are salt values used to generate access keys, so that anonymous
+# users can access their tickets. Change them to some unique noise.
+SECRET_1: 19-30ihfojgsnfgo2h40t8hgkhndhfgkerhKJHKHIDYHfinro;quhwro
+SECRET_2: f;07934t8y6[okfdkjhqw3eUHEUY970DKUHoyudououoH780))&7*(3o
+
+# The names route that the user will be redirect to if they don't
+# have permission to access an area
+ACCESS_DENIED_ROUTE: login_url   
+
+# These are permissions for the different user roles
+ROLES:
+    anonymous: 
+        permissions:
+            portal_request:         true    # Can sumit request for support?
+            portal_knowledgebase:   true    # Can browse & search the knowledgebase?
+            manage_knowledgebase:   false   # Can create / edit / delete knowledgebase articles & guides?
+            manage_tickets:         false   # Can assign / edit / respond to tickets?
+            manage_users:           false   # Can assign roles to users?
+    customer:
+        permissions:
+            portal_request:         true    # Can sumit request for support?
+            portal_knowledgebase:   true    # Can browse & search the knowledgebase?
+            manage_knowledgebase:   false   # Can create / edit / delete knowledgebase articles & guides?
+            manage_tickets:         false   # Can assign / edit / respond to tickets?
+            manage_users:           false   # Can assign roles to users?
+    techsupport:
+        title:                      Tech Support
+        description:                Allowed to manage tickets, but not edit the knowledgebase
+        permissions:
+            portal_request:         true    # Can sumit request for support?
+            portal_knowledgebase:   true    # Can browse & search the knowledgebase?
+            manage_knowledgebase:   false   # Can create / edit / delete knowledgebase articles & guides?
+            manage_tickets:         true    # Can assign / edit / respond to tickets?
+            manage_users:           false   # Can assign roles to users?
+    writer:
+        title:                      Writer
+        description:                Allowed to edit the knowledgebase, but not manage tickets
+        permissions:
+            portal_request:         true    # Can sumit request for support?
+            portal_knowledgebase:   true    # Can browse & search the knowledgebase?
+            manage_knowledgebase:   true    # Can create / edit / delete knowledgebase articles & guides?
+            manage_tickets:         false   # Can assign / edit / respond to tickets?
+            manage_users:           false   # Can assign roles to users?
+    poweruser:
+        title:                      Power User
+        description:                Can do everything except user administration
+        permissions:
+            portal_request:         true    # Can sumit request for support?
+            portal_knowledgebase:   true    # Can browse & search the knowledgebase?
+            manage_knowledgebase:   true    # Can create / edit / delete knowledgebase articles & guides?
+            manage_tickets:         true    # Can assign / edit / respond to tickets?
+            manage_users:           false   # Can assign roles to users?
+    admin:
+        title:                      Administrator
+        description:                Has total access
+        permissions:
+            manage_tickets:         true    # Can sumit request for support?
+            manage_knowledgebase:   true    # Can browse & search the knowledgebase?
+            manage_users:           true    # Can create / edit / delete knowledgebase articles & guides?
+            portal_request:         true    # Can assign / edit / respond to tickets?
+            portal_knowledgebase:   true    # Can assign roles to users?
+
+
+
+# This is the TinyMCE configuration hash passed by the helpdesk to 
+# the tiny_mce plugin. See: http://github.com/kete/tiny_mce/tree/master
+EDITOR_OPTIONS:
+    theme:                              advanced
+    theme_advanced_toolbar_location:    top
+    theme_advanced_toolbar_align:       left
+    theme_advanced_resizing:            true
+    theme_advanced_buttons1:            "bold,italic,underline,|,justifyleft,justifycenter,justifyright,justifyfull,formatselect,|,bullist,numlist,blockquote,|,link,unlink,image,cleanup,removeformat,|,code"
+    theme_advanced_buttons2:            ""
+    theme_advanced_buttons3:            ""
+

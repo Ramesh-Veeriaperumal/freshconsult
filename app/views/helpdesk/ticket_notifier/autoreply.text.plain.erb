@@ -1,0 +1,19 @@
+This email is to let you know that your support request has been received. One of our representatives will be in touch shortly.
+
+Your support request has been assigned the following id: #<%= @ticket.id_token %>.
+
+Replies will be sent to this email address. 
+
+You can also visit the following URL to see the status of your request at any time:
+
+<%= support_ticket_url(:id => @ticket.to_param, :access_token => @ticket.access_token, :host => @host) %>
+
+The text of your request:
+
+<%= @ticket.notes.first.body %>
+
+---
+
+Thank you,
+The Customer Support Team
+

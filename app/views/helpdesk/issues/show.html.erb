@@ -1,0 +1,134 @@
+<% content_for :head do %>
+  <%= javascript_include_tag "helpdesk/expanding_textarea.js" %>
+  <%= javascript_include_tag "helpdesk/multifile.js" %>
+
+  <% javascript_tag do %>
+    Helpdesk.swapEmailNote = function(cls, private, submit, link){
+      var el = $('note-form-container');
+      el.attributes['class'].nodeValue = cls;
+      el.down('input[type=submit]').value = submit;
+      el.down('input[id$=private]').value = private;
+      link.addClassName('active');
+      link.up('li').siblings().each(function(l){ l.down('a').removeClassName('active'); });
+    }
+  <% end %>
+
+<% end %>
+
+<% content_for :sidebar do %>
+
+  <%= content_tag(:div, "This issue is deleted. " + link_to("(undo)", restore_helpdesk_issue_path(@issue), :method => :put), :class => 'spam') if @issue.deleted %>
+
+  <% form_for @issue do |f| %>
+    
+    <%= f.label :status, "Status" %>
+    <%= f.select :status, Helpdesk::Issue::STATUS_OPTIONS, {}, {:onchange => "this.form.submit()"} %>
+
+    <%= f.label :owner_id, "Assigned To" %>
+    <%= f.collection_select :owner_id, Helpdesk::Authorization.find_all_by_permission(:manage_tickets), :user_id, :name, {:include_blank => 'Nobody'}, {:onchange => "this.form.submit()"} %>
+
+    <div class="apply-to-all clearfix">
+      <%= check_box_tag :apply_to_all, 1, true %>
+      <label>Apply Status and Owner Changes to Issue's Tickets</label>
+    </div>
+
+  <% end %>
+
+  <h4>Actions</h4>
+  <ul class="actions">
+    <%= content_tag(:li, link_to("Delete this issue", @issue, :method => :delete)) unless @issue.deleted %>
+    <%= content_tag(:li, link_to("Delete this issue &amp; all tickets", delete_all_helpdesk_issue_path(@issue), :method => :delete)) unless @issue.deleted %>
+
+    <%= content_tag(:li, link_to("Undelete this issue", restore_helpdesk_issue_path(@issue), :method => :put)) if @issue.deleted %>
+    <%= content_tag(:li, link_to("Undelete this issue &amp; all tickets", restore_all_helpdesk_issue_path(@issue), :method => :put)) if @issue.deleted %>
+  </ul>
+
+
+<% end %>
+
+<% content_for :main_panel_title do %>
+  <%= h(@issue.title) + " (##{@issue.id})"%>
+<% end %>
+
+<% content_for :main_panel_actions do %>
+  <%= link_to "Edit this issue", :action => :edit %>
+<% end %>
+
+<% content_for :main_panel_summary do %>
+
+
+  <div id="description-summary">
+    <%= h(truncate(@issue.description, :length => 200)) %>
+    <% if(@issue.description.size > 200) %>
+      <%= link_to_function "(more)", "Element.hide('description-summary'); Element.show('description-full');" %>
+    <% end %>
+  </div>
+
+
+  <div id="description-full" style="display:none">
+    <%= h(@issue.description) %>
+  </div>
+
+
+<% end %>
+
+<% content_for :main_panel_toolbar do %>
+  <ul>
+    <%= content_tag('li', link_to_function("Send an Email", "Helpdesk.swapEmailNote('send-email', false, 'Send Email', this)", :class => 'active')) %>
+    <%= content_tag('li', link_to_function("Add a Note", "Helpdesk.swapEmailNote('add-note', true, 'Add Note', this)")) %>
+  </ul>
+
+  <%= render(:partial => '/helpdesk/shared/note_form', :locals => {
+    :id => 'send-email', 
+    :note => [@issue, Helpdesk::Note.new(:private => false)],
+    :no_attachments => true })%>
+
+<% end %>
+
+<% content_for :main_panel_content do %>
+
+  <h3>Tickets in Issue <sup><%= @issue.tickets.size %></sup></h3>
+  <table class="issue-tickets">
+    <% for ticket in @issue.tickets do %>
+
+      <% ticket_issue = Helpdesk::TicketIssue.find_by_ticket_id_and_issue_id(ticket.id, @issue.id) %>
+
+      <% content_tag_for(:tr, ticket_issue, :class=> cycle('stripe', '')) do %>
+
+        <td class="status">
+          <div class="negative <%= ticket.freshness %>">
+            <%= ticket.freshness %>
+          </div>
+        </td>
+
+        <td class="name">
+            <h3>
+              <%= link_to(h(ticket.name) + " (##{ticket.id})", ticket) %>
+            </h3>
+            <%= h(truncate(ticket.description, :length => 50)) %>
+        </td>
+
+        <td class="remove">
+          <%= link_to_remote(image_tag('helpdesk/delete.png'), :url => helpdesk_ticket_issue_path(ticket_issue), :method => 'delete', :html => {:title => "Remove Ticket From Issue"}) %>
+        </td>
+
+      <% end %>
+    <% end %>
+  </table>
+
+  <div class="history">
+    <h3>Issue History <sup><%= @issue.notes.visible.count %></sup></h3>
+    <%= render :partial => 'note', :collection => @issue.notes.visible.newest_first %>
+  </div>
+
+  <%= link_to(
+    image_tag("helpdesk/feed.png", :alt => "Feed") + " Subscribe", 
+    helpdesk_issue_url(@issue, :format => 'atom'), 
+    :class => "feed") unless params[:f] %>
+
+  <div class="clear"></div>
+<% end %>
+
+<%= render :partial => "/helpdesk/shared/main_panel" %>
+
+

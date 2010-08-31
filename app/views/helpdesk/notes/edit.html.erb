@@ -1,0 +1,43 @@
+
+<% content_for :head do %>
+  <%= javascript_include_tag "helpdesk/expanding_textarea.js" %>
+  <%= javascript_include_tag "helpdesk/multifile.js" %>
+<% end %>
+
+<% content_for :sidebar do %>
+<% end %>
+
+<% content_for :main_panel_title do %>
+  Edit Note
+<% end %>
+
+<% content_for :main_panel_actions do %>
+  <%= link_to "Delete this note", helpdesk_ticket_helpdesk_note_path(@parent, @item), :method => :delete %>
+<% end %>
+
+<% content_for :main_panel_toolbar do %>
+<% end %>
+
+<% content_for :main_panel_content  do %>
+  <%= render(:partial => '/helpdesk/shared/note_form', :locals => {
+    :id => 'add-note', 
+    :extra_class => 'note-edit',
+    :note => [@parent, @item], 
+    :submit => "Save Changes",
+    :label => true })%>
+
+
+
+  <div class="attachment-list-container">
+    <%= content_tag('h5', 'Attachments') unless @item.attachments.empty? %>
+    <table class="attachment-list">
+      <%= render(
+        :partial => '/helpdesk/shared/attachment', 
+        :collection => @item.attachments,
+        :locals => {:show_delete => true, :url => [@item] }) %>
+    </table>
+  </div>
+
+<% end %>
+
+<%= render :partial => "/helpdesk/shared/main_panel" %>

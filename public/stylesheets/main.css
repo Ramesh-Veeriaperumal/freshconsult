@@ -1,0 +1,57 @@
+/* Do a CSS reset */
+
+@import url("reset-fonts-grids.css");
+
+body, html {
+    background: #eee;
+}
+
+div.login {
+    width: 300px;
+    border: 1px solid #666;
+    margin: 100px auto;
+    text-align: left;
+    background: white;
+}
+
+div.login form {
+    padding: 20px;
+}
+
+div.login form input[type=text],
+div.login form input[type=password]{
+    width: 254px;
+    margin-bottom: 10px;
+    padding: 3px;
+    font-weight: bold;
+    color: black;
+}
+
+div.login form label{
+    font-size: 0.8em;
+    color: #666;
+}
+
+div.login form h1{
+    margin-bottom: 10px;
+    font-size: 1.3em;
+    font-weight: bold;
+    color: #047;
+}
+
+div.login form h1{
+    margin-bottom: 10px;
+    font-size: 1.3em;
+    font-weight: bold;
+    color: #047;
+}
+
+#error {
+    background: #FFB6AD;
+    border-top: 1px solid #CC0000;
+    border-bottom: 1px solid #CC0000;
+    color: #CC0000;
+    padding: 5px;
+    margin: 10px 5px -10px 5px;
+    text-align: center;
+}

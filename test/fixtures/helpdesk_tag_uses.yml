@@ -1,0 +1,15 @@
+# As of version 2.1 rails does not support named
+# associations for namespaced model fixtures. So 
+# we have to do this manually
+
+bob_jones_to_installation:
+    ticket_id:      1 
+    tag_id:         1
+
+bob_jones_to_configuration:
+    ticket_id:      1 
+    tag_id:         2
+
+brenda_jones_to_billing:
+    ticket_id:      2 
+    tag_id:         3

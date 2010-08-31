@@ -1,0 +1,6 @@
+<ol class="guides">
+  <%= render(
+    :partial => 'guide', 
+    :collection => @guides, 
+    :locals => { :article_limit => 5 }) %>
+</ol>

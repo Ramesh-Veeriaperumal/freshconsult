@@ -1,0 +1,28 @@
+<tr class="<%= cycle('stripe', '') %>">
+
+  <td class="check">
+    <%= check_box_tag('ids[]', ticket.to_param,  false, :class => 'selector') %>
+  </td>
+
+  <td class="status">
+    <div class="negative <%= ticket.freshness %>">
+      <%= ticket.freshness %>
+    </div>
+  </td>
+
+  <td class="name">
+      <h3>
+        <%= link_to(h(ticket.name) + " (##{ticket.id})", ticket) %>
+      </h3>
+      <%= h(truncate(ticket.description, :length => 50)) %>
+  </td>
+
+  <td class="assign">
+      <% if ticket.freshness == :new %>
+        <button class="accept-button" action="<%= assign_helpdesk_ticket_url(ticket) %>">Take It</button> 
+      <% else %>
+        <span>Assigned to <%= ticket.responder.name %></span>
+      <% end %>
+  </td>
+
+</tr>

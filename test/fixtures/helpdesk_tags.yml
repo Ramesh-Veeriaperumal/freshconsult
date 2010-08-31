@@ -1,0 +1,13 @@
+installation:
+    id:     1
+    name:   installation
+
+
+configuration:
+    id:     2
+    name:   configuration
+
+billing:
+    id:     3
+    name:   billing
+

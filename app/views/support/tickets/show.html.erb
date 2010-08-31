@@ -1,0 +1,49 @@
+<% content_for :title do %>
+  Support Request (<%= @ticket.created_at.strftime('%m/%d/%y') %>)
+<% end %>
+
+<p class="filed">
+  Filed by: <strong><%= @ticket.name %></strong>
+</p>
+<% if @ticket.responder %>
+  <p class="assigned">
+    Assigned to: <strong><%= @ticket.responder.name %></strong>
+  </p>
+<% else %>
+  <p class="not-assigned">
+    Not Assigned
+  </p>
+<% end %>
+
+<% form_for Helpdesk::Note.new, :url => support_ticket_helpdesk_notes_path(@ticket, :access_token => @ticket.access_token)  do |f| %>
+  <%= f.label :body, "Add additional information to your request" %>
+  <%= f.text_area :body %>
+  <%= f.submit "Submit" %>
+<% end %>
+
+<h3>Communication History</h3>
+
+<ol class="notes">
+  <% for note in @ticket.notes.public.newest_first %>
+    <li>
+      <strong><%= note.incoming ? "Me" : note.user.name %>:</strong>
+
+      <p class = "date">
+        <strong><%= note.created_at.strftime('%m/%d/%y') %></strong>
+      </p>
+
+      <blockquote>
+        <%= simple_format(email_before_quoted(strip_tags(note.body))) %>
+      </blockquote>
+
+      <% if email_quoted?(note.body) %>
+        <%= link_to_function("Toggle Quoted", "$('quoted-#{ note.id }').toggle()", :class => 'toggle-quoted')  %>
+
+        <blockquote id="quoted-<%= note.id %>" style="display:none">
+          <%= simple_format(email_after_quoted(strip_tags(note.body))) %>
+        </blockquote>
+      <% end %>
+    </li>
+  <% end %>
+</ol>
+

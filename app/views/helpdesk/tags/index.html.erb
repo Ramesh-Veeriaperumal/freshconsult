@@ -1,0 +1,72 @@
+
+<% content_for :head do %>
+  <%= javascript_include_tag "helpdesk/core" %>
+  <%= javascript_include_tag "helpdesk/id_selector" %>
+  <% javascript_tag do %>
+    document.observe("dom:loaded", function(){
+
+      Helpdesk.sel = new Helpdesk.MultiSelector({
+        form: 'list'
+      });
+
+      Helpdesk.submitOnChange('sort');
+    });
+  <% end %>
+<% end %>
+
+<% content_for :sidebar do %>
+  <%= render :partial => '/helpdesk/shared/tag_search_navigate' %>
+<% end %>
+
+<% content_for :main_panel_title do %>
+  All Tags <sup><%= Helpdesk::Tag.all.size %></sup>
+<% end %>
+
+<% content_for :main_panel_actions do %>
+<% end %>
+
+<% content_for :main_panel_toolbar do %>
+  <div class="actions">
+    <form class="sort">
+      Sort by&nbsp;&nbsp; 
+      <%= select_tag :sort, options_for_select(Helpdesk::Tag::SORT_FIELD_OPTIONS, (params[:sort] || :created_asc).to_sym) %>
+    </form>
+  </div>
+  &nbsp;
+<% end %>
+
+<% content_for :main_panel_selected_toolbar do %>
+
+  <ul class="secondary-actions">
+    <%= content_tag('li', link_to_function("Select All", "Helpdesk.sel.checkAll()")) %>
+    <%= content_tag('li', link_to_function("Deselect All", "Helpdesk.sel.uncheckAll()")) %> 
+  </ul>
+
+  <ul>
+    <li><%= link_to_function "Delete tags",  "if(confirm('Really delete?')) Helpdesk.sel.submit('#{helpdesk_tag_path('multiple')}', 'delete')" %></li>
+  </ul>
+
+<% end %>
+
+
+<% content_for :main_panel_content do %>
+
+  
+  <div id="pages">
+    <% form_tag "", { :method => :put, :id => :list } do %>
+      <table class="tags">
+          <%= render :partial => "/helpdesk/tags/tag", :collection => @tags %>
+      </table>
+    <% end %>
+  </div>
+
+
+  <%= will_paginate @tags %>
+
+  <div class="clear"></div>
+<% end %>
+
+
+
+
+<%= render :partial => "/helpdesk/shared/main_panel" %>

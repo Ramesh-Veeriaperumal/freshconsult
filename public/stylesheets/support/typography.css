@@ -1,0 +1,303 @@
+html, body {
+    text-align: left;
+}
+
+/****************************************
+ * @strong styles
+ ***************************************/
+
+strong {
+    font-weight: bold;
+}
+
+p.assigned > strong {
+    color: red;
+}
+
+p.filed > strong {
+    color: black;
+}
+
+ol.notes > li > strong {
+    color: red;
+}
+
+
+
+/****************************************
+ * @header styles
+ ***************************************/
+
+h1, h2, h3, h4, h5 {
+    font-weight: bold;
+}
+
+h1 {
+    font-size: 2em;
+    color: white;
+}
+
+h2 {
+    font-size: 1.5em;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 10px;
+    color: #666;
+}
+
+h3 {
+    font-size: 1.2em;
+}
+
+.navigation > h3 {
+    font-size: 1.1em;
+    border-bottom: 1px solid #ccc;
+    margin: 15px 0 5px 0;
+    color: #666;
+
+}
+
+attr + h3 {
+    margin-top: 10px;
+}
+
+h4 {
+    font-size: 1.1em;
+    margin-bottom: 0.2em;
+}
+
+.article-body + h5{
+    margin: 10px 0 0 20px;
+    font-size: 0.9em;
+    color: #888;
+    border-bottom: 1px solid #ddd;
+}
+
+#errorExplanation h2{
+    font-size: 1.1em;
+    border: 0;
+    color: black;
+}
+
+
+
+/****************************************
+ * @quote styles
+ ***************************************/
+
+q:before {
+    content: "\201C";
+    padding-right: 0.1em;
+}
+
+q:after {
+    content: "\201D";
+    padding-left: 0.1em;
+}
+
+/****************************************
+ * @link styles
+ ***************************************/
+
+a {
+    color: #001E6F;
+}
+
+a.request {
+    font-weight: bold;
+    font-size: 1.1em;
+    margin: 5px 0 15px 0;
+    display: block;
+}
+
+a.more {
+    color: red;
+    display: block;
+    position: absolute;
+    right: 20px;
+    font-size: 0.9em;
+}
+
+a.more:after {
+    content: '\00BB';
+    padding-left: 0.1em;
+}
+
+a.toggle-quoted {
+    font-size: 0.75em;
+}
+
+.header > h1 > a{
+    color: white;
+    text-decoration: none;
+}
+
+
+/****************************************
+ * @list styles
+ ***************************************/
+
+.content > ol.guides {
+
+}
+
+.content > ol.guides > li {
+    margin-bottom: 25px;
+    padding-bottom: 30px;
+    border-bottom: 1px solid #ddd;
+}
+
+.content > ol.guides > li > blockquote {
+    margin: 5px 0px;
+    color: #777;
+}
+
+.navigation > ol.guides {
+}
+
+.navigation > ol.guides > li {
+    padding: 5px;
+    background: #e9e9e9;
+    margin-bottom: 3px;
+}
+
+li > ol.articles {
+    margin-top: 10px;
+}
+
+li > ol.articles > li {
+    margin: 0 0 5px 40px;
+    list-style-type: disc;
+}
+
+.content > ol.articles {
+}
+
+.content > ol.articles > li{
+    padding: 15px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.content > ol.articles > li:first-child{
+    padding-top: 0;
+}
+
+ul.attachments {
+    margin-left: 20px;
+    font-size: 0.85em;
+}
+
+ul.attachments > li{
+    margin-top: 2px;
+    padding: 5px 20px;
+    background: #fec;
+}
+
+ol.notes {
+}
+
+ol.notes > li {
+    border-top: 1px solid #ccc;
+    padding: 15px 0;
+}
+
+/****************************************
+ * @blockquote styles
+ ***************************************/
+
+ul.attachments > li > blockquote{
+    color: #333;
+}
+
+ol.notes > li > blockquote{
+    color: #222;
+}
+
+/****************************************
+ * @paragraph styles
+ ***************************************/
+
+.footer p{
+    text-align: center;
+    color: #888;
+    font-size: 0.9em;
+    text-transform: lowercase;
+    font-variant: small-caps;
+}
+
+p.date {
+    color: #999;
+    font-size: 0.85em;
+}
+
+p.assigned {
+    color: #999;
+}
+
+p.filed {
+    color: #999;
+}
+
+p.not-assigned {
+    color: red;
+}
+
+#errorExplanation p{
+    color: #666;
+    font-size: 0.85em;
+}
+
+.request-sent {
+    text-align: center !important;
+    font-size: 1.2em;
+    font-weight: bold;
+    padding: 20px 0;
+}
+
+/****************************************
+ * @form styles
+ ***************************************/
+
+form {
+    margin: 10px 0;
+}
+
+input[type=text] {
+    font-weight: bold;
+    padding: 0.15em;
+}
+
+input[type=submit] {
+    margin-top: 5px;
+    padding: 0.15em;
+}
+
+label {
+    display: block;
+    font-size: 0.75em;
+    color: #666;
+    margin-top: 10px;
+}
+
+textarea {
+    width: 475px;
+    height: 100px;
+    padding: 0.15em;
+}
+
+a.cancel {
+    font-
+}
+
+
+/****************************************
+ * @article styles
+ ***************************************/
+
+.article-body {
+    margin-left: 20px;
+}
+
+
+
+
+

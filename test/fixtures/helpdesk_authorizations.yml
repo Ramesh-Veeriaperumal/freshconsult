@@ -1,0 +1,15 @@
+aaron_admin:
+    role_token:     admin
+    user_id:        1
+
+quentin_poweruser:
+    role_token:     poweruser
+    user_id:        2
+
+joey_support:
+    role_token:     techsupport
+    user_id:        4
+
+bobby_author:
+    role_token:     author
+    user_id:        5

@@ -1,0 +1,20 @@
+<%= include_tiny_mce_if_needed %>
+
+<div id="article-form-container">
+  <% form_for guide, :html => {:multipart => true, :id => "article-form"} do |f| %>
+    <%= f.error_messages %>
+
+    <%= f.label(:name, "Name") %>
+    <%= f.text_field :name %>
+
+    <%= f.text_area :description, :class => "mceEditor" %>
+
+    <div class="button-container">
+      <%= submit_tag %>
+      <%= submit_tag "Save and Create Another", :name => "save_and_create"%>
+    </div>
+
+
+  <% end %>
+</div>
+

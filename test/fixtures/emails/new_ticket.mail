@@ -1,0 +1,47 @@
+Delivered-To: helpkit_test@chatspring.com
+Received: by 10.100.111.7 with SMTP id j7cs542014anc;
+        Thu, 8 Jan 2009 04:56:37 -0800 (PST)
+Received: by 10.214.149.7 with SMTP id w7mr21150805qad.18.1231419397090;
+        Thu, 08 Jan 2009 04:56:37 -0800 (PST)
+Return-Path: <starr@chatspring.com>
+Received: from mail-gx0-f10.google.com (mail-gx0-f10.google.com [209.85.217.10])
+        by mx.google.com with ESMTP id 6si31450675yxg.53.2009.01.08.04.56.36;
+        Thu, 08 Jan 2009 04:56:36 -0800 (PST)
+Received-SPF: neutral (google.com: 209.85.217.10 is neither permitted nor denied by best guess record for domain of starr@chatspring.com) client-ip=209.85.217.10;
+Authentication-Results: mx.google.com; spf=neutral (google.com: 209.85.217.10 is neither permitted nor denied by best guess record for domain of starr@chatspring.com) smtp.mail=starr@chatspring.com
+Received: by gxk3 with SMTP id 3so365996gxk.16
+        for <helpkit_test@chatspring.com>; Thu, 08 Jan 2009 04:56:36 -0800 (PST)
+Received: by 10.64.209.6 with SMTP id h6mr17611785qbg.10.1231419395027;
+        Thu, 08 Jan 2009 04:56:35 -0800 (PST)
+Return-Path: <starr@chatspring.com>
+Received: from ?192.168.2.4? (ip70-178-140-76.ks.ks.cox.net [70.178.140.76])
+        by mx.google.com with ESMTPS id p30sm57143423qbp.17.2009.01.08.04.56.32
+        (version=TLSv1/SSLv3 cipher=RC4-MD5);
+        Thu, 08 Jan 2009 04:56:33 -0800 (PST)
+Subject: This is a test
+From: Starr Horne <starr@chatspring.com>
+Reply-To: starr@chatspring.com
+To: helpkit_test@chatspring.com
+Content-Type: text/plain
+Organization: ChatSpring
+Date: Thu, 08 Jan 2009 06:56:31 -0600
+Message-Id: <1231419391.6954.6.camel@licorice>
+Mime-Version: 1.0
+X-Mailer: Evolution 2.22.3.1 
+Content-Transfer-Encoding: 7bit
+
+I had a question about the following:
+
+Type help for instructions on how to use fish
+starr@licorice ~> cd development/projects/helpkit/helpkit/
+starr@licorice ~/d/p/h/helpkit> ./script/helpdesk_mail_fetcher 
+Invalid command. Please specify start, stop or restart.
+starr@licorice ~/d/p/h/helpkit> ./script/helpdesk_mail_fetcher start
+starr@licorice ~/d/p/h/helpkit> 
+
+-- 
+Starr Horne
+Starr@ChatSpring.com
+ChatSpring Live Chat Software for Sales & Customer Service
+http://ChatSpring.com
+

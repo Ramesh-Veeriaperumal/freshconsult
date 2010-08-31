@@ -1,0 +1,2 @@
+module Helpdesk::AttachmentsHelper
+end

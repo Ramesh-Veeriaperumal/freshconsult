@@ -1,0 +1,30 @@
+<% content_for :head do %>
+  <%= stylesheet_link_tag "helpdesk/autosuggest" %>
+  <%= javascript_include_tag "helpdesk/autosuggest" %>
+
+  <% javascript_tag do %>
+    document.observe("dom:loaded", function(){
+
+      new bsn.AutoSuggest('tag-search', {
+        script: "<%= autocomplete_helpdesk_tags_path %>?",
+        varname: "v",
+        json: true,
+        maxresults: 35,
+        timeout: 3600000, 
+        noresults: "<%= no_result_text %>",
+        callback: function(tag){
+          <%= on_select %>
+        }
+      });
+
+      Form.Element.activate('tag-search')
+
+    });
+    
+  <% end %>
+<% end %>
+
+<% form_tag local_assigns[:action] || "", :id => "tag-search-form", :style => "display: #{ local_assigns[:hidden] ? "none" : "block"};" do %>
+  <label id="search-value-label"><%= label_text %></label>
+  <input type="text" id="tag-search" name="name"></input>
+<% end %>

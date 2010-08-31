@@ -1,0 +1,44 @@
+unassigned:
+    id:             1
+    title:          First Issue
+    description:    Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Curabitur faucibus, tortor vitae adipiscing auctor, turpis elit vestibulum tellus, id tempus velit mauris sed turpis. Duis sit amet nulla in enim dignissim blandit. Pellentesque imperdiet turpis id magna. Quisque euismod, mi at ultricies gravida, dolor magna pulvinar urna, quis ullamcorper enim tellus et mauris. Donec bibendum blandit odio. Donec eu nulla. Quisque quis arcu. Integer tortor erat, pharetra at, molestie quis, porttitor eu, urna. Morbi convallis velit nec lacus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nullam nulla elit, bibendum congue, congue in, fermentum quis, risus. Suspendisse potenti. Sed fermentum libero at tellus. Nam consectetuer ullamcorper quam. 
+
+    user_id:        1 
+    owner_id:       null
+
+    status:         0
+
+    deleted:        false
+
+    created_at:     <%= 2.day.ago.to_s(:db) %>
+    updated_at:     <%= 1.days.ago.to_s(:db) %>
+
+assigned_open:
+    id:             2
+    title:          Second Issue
+    description:    Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Curabitur faucibus, tortor vitae adipiscing auctor, turpis elit vestibulum tellus, id tempus velit mauris sed turpis. Duis sit amet nulla in enim dignissim blandit. Pellentesque imperdiet turpis id magna. Quisque euismod, mi at ultricies gravida, dolor magna pulvinar urna, quis ullamcorper enim tellus et mauris. Donec bibendum blandit odio. Donec eu nulla. Quisque quis arcu. Integer tortor erat, pharetra at, molestie quis, porttitor eu, urna. Morbi convallis velit nec lacus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nullam nulla elit, bibendum congue, congue in, fermentum quis, risus. Suspendisse potenti. Sed fermentum libero at tellus. Nam consectetuer ullamcorper quam. 
+
+    user_id:        1 
+    owner_id:       1
+
+    status:         0
+
+    deleted:        false
+
+    created_at:     <%= 2.day.ago.to_s(:db) %>
+    updated_at:     <%= 1.days.ago.to_s(:db) %>
+
+assigned_closed:
+    id:             3
+    title:          Second Issue
+    description:    Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Curabitur faucibus, tortor vitae adipiscing auctor, turpis elit vestibulum tellus, id tempus velit mauris sed turpis. Duis sit amet nulla in enim dignissim blandit. Pellentesque imperdiet turpis id magna. Quisque euismod, mi at ultricies gravida, dolor magna pulvinar urna, quis ullamcorper enim tellus et mauris. Donec bibendum blandit odio. Donec eu nulla. Quisque quis arcu. Integer tortor erat, pharetra at, molestie quis, porttitor eu, urna. Morbi convallis velit nec lacus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nullam nulla elit, bibendum congue, congue in, fermentum quis, risus. Suspendisse potenti. Sed fermentum libero at tellus. Nam consectetuer ullamcorper quam. 
+
+    user_id:        1 
+    owner_id:       1
+
+    status:         -1
+
+    deleted:        false
+
+    created_at:     <%= 2.day.ago.to_s(:db) %>
+    updated_at:     <%= 1.days.ago.to_s(:db) %>

@@ -1,0 +1,8 @@
+<tr class="<%= cycle('stripe', '') %>">
+  <td class="check">
+    <%= check_box_tag('ids[]', tag.to_param,  false, :class => 'selector') %>
+  </td>
+  <td class="name"><h3><%= link_to(h(tag.name), tag) %></h3></td>
+  <td class="count"><%= pluralize(tag.tag_uses_count, 'Ticket', 'Tickets') %></td>
+</tr>
+

@@ -1,0 +1,16 @@
+<% content_for :title do %>
+  Search User Guides
+<% end %>
+
+<% if @articles.empty? %>
+  Your search returned no results
+<% else %>
+  <ol>
+    <%= render(
+      :partial => '/support/shared/article', 
+      :collection => @articles, 
+      :locals => { :article_limit => 5 }) %>
+  </ol>
+  <%= will_paginate @items %>
+<% end %>
+
