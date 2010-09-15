@@ -1,2 +1,2 @@
 rails -v 2.3.8
-mms2r
+mms2r -v 2.4.1

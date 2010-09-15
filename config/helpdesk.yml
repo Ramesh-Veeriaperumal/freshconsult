@@ -4,9 +4,9 @@
 # to pages within the site.
 
 HOST: 
-    development:    "localhost:3000"
-    test:           "localhost:3000"
-    production:     "helpdesk.example.com"
+    development:    "localhost:3001"
+    test:           "localhost:3001"
+    production:     "fdver2.heroku.com"
 
 
 # This is the title staff members will see when they are using the helpdesk application
@@ -58,7 +58,7 @@ USER_FACING_TITLE: My App. Support
 EMAIL:
 
     # This will be the reply_to address in all outgoing email
-    from: shan@freshdesk.com
+    from: support@freshdesk.com
 
     # This is the subject line for all replies
     reply_subject: "Your support request"
@@ -71,8 +71,9 @@ EMAIL:
             port: 993
             ssl: true
             use_login: true
-            username: shan@freshdesk.com
+            username: support@freshdesk.com
             password: opmanager
+            processed_folder: fdver2m
         
         test:
             type: pop
@@ -81,10 +82,14 @@ EMAIL:
             password: password
         
         production:
-            type: pop
-            server: localhost
-            username: username
-            password: password
+            type: imap
+            server: imap.gmail.com
+            port: 993
+            ssl: true
+            use_login: true
+            username: support@freshdesk.com
+            password: opmanager
+            processed_folder: fdver2m
 
     # Email settings for sending mail
     outgoing:
@@ -94,7 +99,7 @@ EMAIL:
             port: 587
             domain: freshdesk.com
             authentication: :login
-            user_name: shan@freshdesk.com
+            user_name: support@freshdesk.com
             password: opmanager
             
         production:
@@ -103,7 +108,7 @@ EMAIL:
             port: 587
             domain: freshdesk.com
             authentication: :login
-            user_name: shan@freshdesk.com
+            user_name: support@freshdesk.com
             password: opmanager
             
 

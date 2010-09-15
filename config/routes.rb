@@ -90,6 +90,8 @@ ActionController::Routing::Routes.draw do |map|
     helpdesk.resources :guides, :member => { :reorder_articles => :put, :privatize => :put, :publicize => :put }, :collection => { :reorder => :put }
     
     helpdesk.resources :authorizations, :collection => { :autocomplete => :get }
+    
+    helpdesk.resources :mailer, :collection => { :fetch => :get }
   end
 
   map.namespace :support do |support|

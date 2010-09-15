@@ -15,17 +15,23 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
   
 
   def receive(email)
+    puts "Inside RECEIVE MAIL"
     retried = false
     begin
+      puts "Inside RECEIVE MAIL BEGIN"
       process_incoming(email)
-    rescue ActiveRecord::StatementInvalid
-      ActiveRecord::Base.connection.reconnect!
-      unless retried
-        retried = true
-        retry
-      end
-      raise
-    end 
+      puts "Inside RECEIVE MAIL PROCESS END"
+    rescue => e #ActiveRecord::StatementInvalid
+      puts "Inside RECEIVE MAIL RESCUE"
+      puts e.inspect
+      puts e.backtrace
+      #ActiveRecord::Base.connection.reconnect!
+      #unless retried
+        #retried = true
+        #retry
+      #end
+      #raise
+    end
   end
 
 protected
