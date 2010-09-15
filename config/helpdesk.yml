@@ -58,7 +58,7 @@ USER_FACING_TITLE: My App. Support
 EMAIL:
 
     # This will be the reply_to address in all outgoing email
-    from: helpdesk@example.com
+    from: shan@freshdesk.com
 
     # This is the subject line for all replies
     reply_subject: "Your support request"
@@ -71,8 +71,8 @@ EMAIL:
             port: 993
             ssl: true
             use_login: true
-            username: helpdesk@example.com
-            password: helppass
+            username: shan@freshdesk.com
+            password: opmanager
         
         test:
             type: pop
@@ -92,19 +92,19 @@ EMAIL:
             tls: true
             address: smtp.gmail.com
             port: 587
-            domain: example.com
+            domain: freshdesk.com
             authentication: :login
-            user_name: helpdesk@example.com
-            password: helppass
+            user_name: shan@freshdesk.com
+            password: opmanager
             
         production:
             tls: true
             address: smtp.gmail.com
             port: 587
-            domain: example.com
+            domain: freshdesk.com
             authentication: :login
-            user_name: helpdesk@example.com
-            password: helppass
+            user_name: shan@freshdesk.com
+            password: opmanager
             
 
 # This determines whether or not incoming support requests are automatically
