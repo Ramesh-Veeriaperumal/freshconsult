@@ -132,9 +132,9 @@ class Genesis < ActiveRecord::Migration
 
     unless table_exists?('users')
       create_table "users" do |t|
-        t.string   "login",                     :limit => 40
+        t.string   "login"
         t.string   "name",                      :limit => 100, :default => ""
-        t.string   "email",                     :limit => 100
+        t.string   "email"
         t.string   "crypted_password",          :limit => 40
         t.string   "salt",                      :limit => 40
         t.datetime "created_at"
