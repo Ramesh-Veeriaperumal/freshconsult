@@ -4,6 +4,7 @@
 class ApplicationController < ActionController::Base
 
   include AuthenticatedSystem
+  #include SavageBeast::AuthenticationSystem
   include HelpdeskSystem
   
   # See ActionController::RequestForgeryProtection for details

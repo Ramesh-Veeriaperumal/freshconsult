@@ -25,6 +25,7 @@ Rails::Initializer.run do |config|
   config.gem "mms2r"
   config.gem "classifier"
   config.gem "stemmer"
+  config.gem 'RedCloth'
   # config.gem "bj"
   # config.gem "hpricot", :version => '0.6', :source => "http://code.whytheluckystiff.net"
   # config.gem "aws-s3", :lib => "aws/s3"

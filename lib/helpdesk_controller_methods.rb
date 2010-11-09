@@ -10,13 +10,18 @@ module HelpdeskControllerMethods
 
   def create
     if @item.save
-      create_attachments
-      process_item
-      flash[:notice] = "The #{cname.humanize.downcase} has been created"
-      redirect_to params[:redirect_to].present? ? params[:redirect_to] : item_url
+      post_persist
     else
       create_error
     end
+  end
+  
+  def post_persist
+    create_attachments #
+    process_item #
+    flash[:notice] = "The #{cname.humanize.downcase} has been created."
+    #redirect_back_or_default redirect_url
+    redirect_to params[:redirect_to].present? ? params[:redirect_to] : item_url
   end
 
   def create_error
@@ -25,10 +30,7 @@ module HelpdeskControllerMethods
 
   def update
     if @item.update_attributes(params[nscname])
-      create_attachments
-      process_item
-      flash[:notice] = "The #{cname.humanize.downcase} has been updated"
-      redirect_to params[:redirect_to].present? ? params[:redirect_to] : item_url
+      post_persist
     else
       edit_error
     end

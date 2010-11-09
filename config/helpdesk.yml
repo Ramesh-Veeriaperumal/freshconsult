@@ -10,10 +10,10 @@ HOST:
 
 
 # This is the title staff members will see when they are using the helpdesk application
-STAFF_FACING_TITLE: My App
+STAFF_FACING_TITLE: FreshDesk
 
 # This is the title your customers will see when using the "customer service portal"
-USER_FACING_TITLE: My App. Support
+USER_FACING_TITLE: FreshDesk
 
 
 # Example settings for receiving mail via imap:
@@ -135,6 +135,8 @@ ROLES:
             manage_knowledgebase:   false   # Can create / edit / delete knowledgebase articles & guides?
             manage_tickets:         false   # Can assign / edit / respond to tickets?
             manage_users:           false   # Can assign roles to users?
+            post_in_forums:         false   # Can respond to topics or post new ones?
+            manage_forums:          false   # Forums administration
     customer:
         permissions:
             portal_request:         true    # Can sumit request for support?
@@ -142,6 +144,8 @@ ROLES:
             manage_knowledgebase:   false   # Can create / edit / delete knowledgebase articles & guides?
             manage_tickets:         false   # Can assign / edit / respond to tickets?
             manage_users:           false   # Can assign roles to users?
+            post_in_forums:         true    # Can respond to topics or post new ones?
+            manage_forums:          false   # Forums administration
     techsupport:
         title:                      Tech Support
         description:                Allowed to manage tickets, but not edit the knowledgebase
@@ -151,6 +155,8 @@ ROLES:
             manage_knowledgebase:   false   # Can create / edit / delete knowledgebase articles & guides?
             manage_tickets:         true    # Can assign / edit / respond to tickets?
             manage_users:           false   # Can assign roles to users?
+            post_in_forums:         true    # Can respond to topics or post new ones?
+            manage_forums:          false   # Forums administration
     writer:
         title:                      Writer
         description:                Allowed to edit the knowledgebase, but not manage tickets
@@ -160,6 +166,8 @@ ROLES:
             manage_knowledgebase:   true    # Can create / edit / delete knowledgebase articles & guides?
             manage_tickets:         false   # Can assign / edit / respond to tickets?
             manage_users:           false   # Can assign roles to users?
+            post_in_forums:         true    # Can respond to topics or post new ones?
+            manage_forums:          false   # Forums administration
     poweruser:
         title:                      Power User
         description:                Can do everything except user administration
@@ -169,6 +177,8 @@ ROLES:
             manage_knowledgebase:   true    # Can create / edit / delete knowledgebase articles & guides?
             manage_tickets:         true    # Can assign / edit / respond to tickets?
             manage_users:           false   # Can assign roles to users?
+            post_in_forums:         true    # Can respond to topics or post new ones?
+            manage_forums:          true    # Forums administration
     admin:
         title:                      Administrator
         description:                Has total access
@@ -177,7 +187,8 @@ ROLES:
             manage_knowledgebase:   true    # Can browse & search the knowledgebase?
             manage_users:           true    # Can create / edit / delete knowledgebase articles & guides?
             portal_request:         true    # Can assign / edit / respond to tickets?
-            portal_knowledgebase:   true    # Can assign roles to users?
+            post_in_forums:         true    # Can respond to topics or post new ones?
+            manage_forums:          true    # Forums administration
 
 
 

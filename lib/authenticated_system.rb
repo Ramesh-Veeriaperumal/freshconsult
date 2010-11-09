@@ -3,6 +3,7 @@ module AuthenticatedSystem
     # Returns true or false if the user is logged in.
     # Preloads @current_user with the user model if they're logged in.
     def logged_in?
+      puts "************** Logged-in?"
       !!current_user
     end
 
@@ -10,6 +11,9 @@ module AuthenticatedSystem
     # Future calls avoid the database because nil is not equal to false.
     def current_user
       @current_user ||= (login_from_session || login_from_basic_auth || login_from_cookie) unless @current_user == false
+      puts "************** CURRENT? "
+      puts @current_user
+      @current_user
     end
 
     # Store the given user id in the session.
@@ -32,6 +36,7 @@ module AuthenticatedSystem
     #  end
     #
     def authorized?(action = action_name, resource = nil)
+      puts "AUTHORIZEEEEEEED"
       logged_in?
     end
 
@@ -50,7 +55,10 @@ module AuthenticatedSystem
     #   skip_before_filter :login_required
     #
     def login_required
-      authorized? || access_denied
+      puts "LOGGGGGGGGGGGINNNNNNNNNNNNNNNNN"
+      to_ret = authorized? || access_denied
+      puts to_ret
+      to_ret
     end
 
     # Redirect as appropriate when an access request fails.

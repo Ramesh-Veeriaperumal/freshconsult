@@ -4,6 +4,8 @@ class User < ActiveRecord::Base
   include Authentication
   include Authentication::ByPassword
   include Authentication::ByCookieToken
+  
+  include SavageBeast::UserInit
 
   validates_presence_of     :login
   validates_length_of       :login,    :within => 3..40
@@ -32,6 +34,17 @@ class User < ActiveRecord::Base
   has_many :reminders, 
     :class_name => 'Helpdesk::Reminder'
 
+  #Savage_beast changes start here
+  #implement in your user model 
+  def display_name
+    name
+  end
+        
+  #implement in your user model 
+  def admin?
+    false
+  end
+  #Savage_beast changes end here
 
   # HACK HACK HACK -- how to do attr_accessible from here?
   # prevents a user from submitting a crafted form that bypasses activation

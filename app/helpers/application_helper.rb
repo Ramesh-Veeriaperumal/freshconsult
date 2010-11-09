@@ -1,5 +1,8 @@
 # Methods added to this helper will be available to all templates in the application.
 module ApplicationHelper
+  
+  include SavageBeast::ApplicationHelper
+  
   def show_flash
     [:notice, :error].collect {|type| content_tag('div', flash[type], :id => type) if flash[type] }
   end
@@ -15,7 +18,8 @@ module ApplicationHelper
       ['helpdesk/tickets',    'Tickets',      permission?(:manage_tickets)],
       ['helpdesk/tags',       'Tags',         permission?(:manage_tickets)],
       ['helpdesk/guides',     'User Guides',  permission?(:manage_knowledgebase)],
-      ['helpdesk/articles',   'Articles',     permission?(:manage_knowledgebase)]
+      ['helpdesk/articles',   'Articles',     permission?(:manage_knowledgebase)],
+      ['/forums', 'Forums', permission?(:manage_knowledgebase)]
     ]
 
     history_active = false;
@@ -31,7 +35,7 @@ module ApplicationHelper
 
     navigation = tabs.map do |s| 
       next unless s[2]
-      active = !history_active && params[:controller] == s[0]
+      active = (!history_active && params[:controller] == s[0]) || (s[1] == @selected_tab) #selected_tab hack by Shan
       tab(s[1], {:controller => s[0], :action => :index}, active && :active) 
     end
 
