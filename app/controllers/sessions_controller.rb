@@ -1,15 +1,10 @@
 # This controller handles the login/logout function of the site.  
 class SessionsController < ApplicationController
-  # Be sure to include AuthenticationSystem in Application Controller instead
-  include AuthenticatedSystem
-
-  # render new.rhtml
-  def new
-  end
+  skip_before_filter :login_required, :except => :destroy
 
   def create
     logout_keeping_session!
-    user = User.authenticate(params[:login], params[:password])
+    user = current_account.users.authenticate(params[:login], params[:password])
     if user
       # Protects against session fixation attacks, causes request forgery
       # protection if user resubmits an earlier form using back
@@ -32,6 +27,35 @@ class SessionsController < ApplicationController
     logout_killing_session!
     flash[:notice] = "You have been logged out."
     redirect_back_or_default('/')
+  end
+
+  def forgot
+    return unless request.post?
+    
+    if !params[:email].blank? && @user = current_account.users.find_by_email(params[:email])
+      PasswordReset.create(:user => @user, :remote_ip => request.remote_ip)
+      render :action => 'forgot_complete'
+    else
+      flash[:error] = "That account wasn't found."
+    end
+    
+  end
+  
+  def reset
+    raise ActiveRecord::RecordNotFound unless @password_reset = PasswordReset.find_by_token(params[:token])
+    raise ActiveRecord::RecordNotFound unless @password_reset.user.account == current_account
+    
+    @user = @password_reset.user
+    return unless request.post?
+    
+    if !params[:user][:password].blank? && 
+      if @user.update_attributes(:password => params[:user][:password],
+        :password_confirmation => params[:user][:password_confirmation])
+        @password_reset.destroy
+        flash[:notice] = "Your password has been updated.  Please log in with your new password."
+        redirect_to new_session_url
+      end
+    end
   end
 
 protected

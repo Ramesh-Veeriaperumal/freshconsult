@@ -3,7 +3,6 @@ module AuthenticatedSystem
     # Returns true or false if the user is logged in.
     # Preloads @current_user with the user model if they're logged in.
     def logged_in?
-      puts "************** Logged-in?"
       !!current_user
     end
 
@@ -11,9 +10,6 @@ module AuthenticatedSystem
     # Future calls avoid the database because nil is not equal to false.
     def current_user
       @current_user ||= (login_from_session || login_from_basic_auth || login_from_cookie) unless @current_user == false
-      puts "************** CURRENT? "
-      puts @current_user
-      @current_user
     end
 
     # Store the given user id in the session.
@@ -36,7 +32,6 @@ module AuthenticatedSystem
     #  end
     #
     def authorized?(action = action_name, resource = nil)
-      puts "AUTHORIZEEEEEEED"
       logged_in?
     end
 
@@ -55,10 +50,7 @@ module AuthenticatedSystem
     #   skip_before_filter :login_required
     #
     def login_required
-      puts "LOGGGGGGGGGGGINNNNNNNNNNNNNNNNN"
-      to_ret = authorized? || access_denied
-      puts to_ret
-      to_ret
+      authorized? || access_denied
     end
 
     # Redirect as appropriate when an access request fails.
@@ -113,13 +105,13 @@ module AuthenticatedSystem
 
     # Called from #current_user.  First attempt to login by the user id stored in the session.
     def login_from_session
-      self.current_user = User.find_by_id(session[:user_id]) if session[:user_id]
+      self.current_user = current_account.users.find_by_id(session[:user_id]) if session[:user_id]
     end
 
     # Called from #current_user.  Now, attempt to login by basic authentication information.
     def login_from_basic_auth
       authenticate_with_http_basic do |login, password|
-        self.current_user = User.authenticate(login, password)
+        self.current_user = current_account.users.authenticate(login, password)
       end
     end
     
@@ -130,7 +122,7 @@ module AuthenticatedSystem
     # Called from #current_user.  Finaly, attempt to login by an expiring token in the cookie.
     # for the paranoid: we _should_ be storing user_token = hash(cookie_token, request IP)
     def login_from_cookie
-      user = cookies[:auth_token] && User.find_by_remember_token(cookies[:auth_token])
+      user = cookies[:auth_token] && current_account.users.find_by_remember_token(cookies[:auth_token])
       if user && user.remember_token?
         self.current_user = user
         handle_remember_cookie! false # freshen cookie token (keeping date)

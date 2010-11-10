@@ -1,5 +1,4 @@
 <div class="login">
-  <%= show_flash %>
   <% form_tag session_path do -%>
   <h1>Log In</h1>
   <p><%= label_tag 'login' %><br />
@@ -15,4 +14,8 @@
 
   <p><%= submit_tag 'Log in' %></p>
   <% end -%>
+  
+  <!-- From SAAS -->
+  <%= link_to('Forgot your password?', forgot_password_url) %>
+  <!-- COPY ends -->
 </div>

@@ -184,6 +184,7 @@ ROLES:
         description:                Has total access
         permissions:
             manage_tickets:         true    # Can sumit request for support?
+            portal_knowledgebase:   true    # Can browse & search the knowledgebase?
             manage_knowledgebase:   true    # Can browse & search the knowledgebase?
             manage_users:           true    # Can create / edit / delete knowledgebase articles & guides?
             portal_request:         true    # Can assign / edit / respond to tickets?

@@ -6,18 +6,20 @@ class User < ActiveRecord::Base
   include Authentication::ByCookieToken
   
   include SavageBeast::UserInit
+  
+  belongs_to :account
 
   validates_presence_of     :login
   validates_length_of       :login,    :within => 3..40
-  validates_uniqueness_of   :login
+  validates_uniqueness_of   :login,    :scope => :account_id
   validates_format_of       :login,    :with => Authentication.login_regex, :message => Authentication.bad_login_message
 
   validates_format_of       :name,     :with => Authentication.name_regex,  :message => Authentication.bad_name_message, :allow_nil => true
-  validates_length_of       :name,     :maximum => 100
+  validates_length_of       :name,     :maximum => 100, :allow_nil => true
 
   validates_presence_of     :email
   validates_length_of       :email,    :within => 6..100 #r@a.wk
-  validates_uniqueness_of   :email
+  validates_uniqueness_of   :email,    :scope => :account_id
   validates_format_of       :email,    :with => Authentication.email_regex, :message => Authentication.bad_email_message
 
 
@@ -41,9 +43,10 @@ class User < ActiveRecord::Base
   end
         
   #implement in your user model 
-  def admin?
-    false
-  end
+#  def admin?
+#    false
+#  end
+
   #Savage_beast changes end here
 
   # HACK HACK HACK -- how to do attr_accessible from here?
@@ -59,7 +62,7 @@ class User < ActiveRecord::Base
   #
   def self.authenticate(login, password)
     return nil if login.blank? || password.blank?
-    u = find_by_login(login) # need to get the salt
+    u = find_by_login(login.downcase) # need to get the salt
     u && u.authenticated?(password) ? u : nil
   end
 

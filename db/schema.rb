@@ -9,7 +9,26 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090516153822) do
+ActiveRecord::Schema.define(:version => 20101109121749) do
+
+  create_table "accounts", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "full_domain"
+    t.datetime "deleted_at"
+  end
+
+  add_index "accounts", ["full_domain"], :name => "index_accounts_on_full_domain"
+
+  create_table "forums", :force => true do |t|
+    t.string  "name"
+    t.string  "description"
+    t.integer "topics_count",     :default => 0
+    t.integer "posts_count",      :default => 0
+    t.integer "position"
+    t.text    "description_html"
+  end
 
   create_table "helpdesk_article_guides", :force => true do |t|
     t.integer  "article_id"
@@ -163,6 +182,117 @@ ActiveRecord::Schema.define(:version => 20090516153822) do
   add_index "helpdesk_tickets", ["requester_id"], :name => "index_helpdesk_tickets_on_requester_id"
   add_index "helpdesk_tickets", ["responder_id"], :name => "index_helpdesk_tickets_on_responder_id"
 
+  create_table "moderatorships", :force => true do |t|
+    t.integer "forum_id"
+    t.integer "user_id"
+  end
+
+  add_index "moderatorships", ["forum_id"], :name => "index_moderatorships_on_forum_id"
+
+  create_table "monitorships", :force => true do |t|
+    t.integer "topic_id"
+    t.integer "user_id"
+    t.boolean "active",   :default => true
+  end
+
+  create_table "password_resets", :force => true do |t|
+    t.string   "email"
+    t.integer  "user_id"
+    t.string   "remote_ip"
+    t.string   "token"
+    t.datetime "created_at"
+  end
+
+  create_table "posts", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "topic_id"
+    t.text     "body"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "forum_id"
+    t.text     "body_html"
+  end
+
+  add_index "posts", ["forum_id", "created_at"], :name => "index_posts_on_forum_id"
+  add_index "posts", ["topic_id", "created_at"], :name => "index_posts_on_topic_id"
+  add_index "posts", ["user_id", "created_at"], :name => "index_posts_on_user_id"
+
+  create_table "subscription_discounts", :force => true do |t|
+    t.string   "name"
+    t.string   "code"
+    t.decimal  "amount",                 :precision => 6, :scale => 2, :default => 0.0
+    t.boolean  "percent"
+    t.date     "start_on"
+    t.date     "end_on"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "apply_to_setup",                                       :default => true
+    t.boolean  "apply_to_recurring",                                   :default => true
+    t.integer  "trial_period_extension",                               :default => 0
+  end
+
+  create_table "subscription_payments", :force => true do |t|
+    t.integer  "account_id"
+    t.integer  "subscription_id"
+    t.decimal  "amount",          :precision => 10, :scale => 2, :default => 0.0
+    t.string   "transaction_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "setup"
+    t.boolean  "misc"
+  end
+
+  add_index "subscription_payments", ["account_id"], :name => "index_subscription_payments_on_account_id"
+  add_index "subscription_payments", ["subscription_id"], :name => "index_subscription_payments_on_subscription_id"
+
+  create_table "subscription_plans", :force => true do |t|
+    t.string   "name"
+    t.decimal  "amount",         :precision => 10, :scale => 2
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "user_limit"
+    t.integer  "renewal_period",                                :default => 1
+    t.decimal  "setup_amount",   :precision => 10, :scale => 2
+    t.integer  "trial_period",                                  :default => 1
+  end
+
+  create_table "subscriptions", :force => true do |t|
+    t.decimal  "amount",                   :precision => 10, :scale => 2
+    t.datetime "next_renewal_at"
+    t.string   "card_number"
+    t.string   "card_expiration"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "state",                                                   :default => "trial"
+    t.integer  "subscription_plan_id"
+    t.integer  "account_id"
+    t.integer  "user_limit"
+    t.integer  "renewal_period",                                          :default => 1
+    t.string   "billing_id"
+    t.integer  "subscription_discount_id"
+  end
+
+  add_index "subscriptions", ["account_id"], :name => "index_subscriptions_on_account_id"
+
+  create_table "topics", :force => true do |t|
+    t.integer  "forum_id"
+    t.integer  "user_id"
+    t.string   "title"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "hits",         :default => 0
+    t.integer  "sticky",       :default => 0
+    t.integer  "posts_count",  :default => 0
+    t.datetime "replied_at"
+    t.boolean  "locked",       :default => false
+    t.integer  "replied_by"
+    t.integer  "last_post_id"
+  end
+
+  add_index "topics", ["forum_id", "replied_at"], :name => "index_topics_on_forum_id_and_replied_at"
+  add_index "topics", ["forum_id", "sticky", "replied_at"], :name => "index_topics_on_sticky_and_replied_at"
+  add_index "topics", ["forum_id"], :name => "index_topics_on_forum_id"
+
   create_table "users", :force => true do |t|
     t.string   "login",                     :limit => 40
     t.string   "name",                      :limit => 100, :default => ""
@@ -173,8 +303,12 @@ ActiveRecord::Schema.define(:version => 20090516153822) do
     t.datetime "updated_at"
     t.string   "remember_token",            :limit => 40
     t.datetime "remember_token_expires_at"
+    t.integer  "posts_count",                              :default => 0
+    t.datetime "last_seen_at"
+    t.boolean  "admin",                                    :default => true
+    t.integer  "account_id"
   end
 
-  add_index "users", ["login"], :name => "index_users_on_login", :unique => true
+  add_index "users", ["account_id"], :name => "index_users_on_account_id"
 
 end
