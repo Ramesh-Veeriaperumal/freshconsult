@@ -20,7 +20,7 @@ class Forum < ActiveRecord::Base
   format_attribute :description
   
   # retrieves forums ordered by position
-  def self.find_ordered(options = {})
-    find :all, options.update(:order => 'position')
+  def self.find_ordered(account, options = {})
+    find :all, options.update(:conditions => {:account_id => account}, :order => 'position')
   end
 end

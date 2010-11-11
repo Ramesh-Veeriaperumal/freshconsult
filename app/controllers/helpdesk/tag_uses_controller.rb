@@ -7,7 +7,8 @@ class Helpdesk::TagUsesController < ApplicationController
     ticket = Helpdesk::Ticket.find_by_param(params[:ticket_id])
     raise ActiveRecord::RecordNotFound unless ticket
 
-    tag = Helpdesk::Tag.find_by_name(params[:name]) || Helpdesk::Tag.new(:name => params[:name])
+    tag = Helpdesk::Tag.find_by_name_and_account_id(params[:name], current_account) || Helpdesk::Tag.new(:name => params[:name], 
+      :account_id => current_account.id)
 
     begin
       ticket.tags << tag

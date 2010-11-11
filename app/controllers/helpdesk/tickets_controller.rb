@@ -9,7 +9,7 @@ class Helpdesk::TicketsController < ApplicationController
 
   def index
 
-    @items = Helpdesk::Ticket.filter(
+    @items = Helpdesk::Ticket.filter(current_account, 
       params[:filters] || [:open, :unassigned],
       current_user
     )
@@ -48,11 +48,11 @@ class Helpdesk::TicketsController < ApplicationController
     if @item.update_attributes(params[nscname])
 
       if old_item.responder_id != @item.responder_id
-        @item.create_status_note("#{old_item.responder ? "Reassigned" : "Assigned"} to #{@item.responder ? @item.responder.name : "Nobody"}", current_user)
+        @item.create_status_note(current_account, "#{old_item.responder ? "Reassigned" : "Assigned"} to #{@item.responder ? @item.responder.name : "Nobody"}", current_user)
       end
 
       if old_item.status != @item.status
-        @item.create_status_note("Status changed to \"#{@item.status_name.titleize}\"", current_user)
+        @item.create_status_note(current_account, "Status changed to \"#{@item.status_name.titleize}\"", current_user)
       end
 
       flash[:notice] = "The #{cname.humanize.downcase} has been updated"
@@ -70,7 +70,7 @@ class Helpdesk::TicketsController < ApplicationController
       item.responder = user
       item.train(:ham)
       item.save
-      item.create_status_note(message, current_user)
+      item.create_status_note(current_account, message, current_user)
     end
 
     flash[:notice] = render_to_string(
@@ -133,6 +133,7 @@ protected
 
       n = @item.notes.build(
         :user => current_user,
+        :account_id => current_account.id,
         :incoming => false,
         :private => true,
         :source => 2,

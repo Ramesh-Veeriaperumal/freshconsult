@@ -12,7 +12,7 @@ class Helpdesk::ArticlesController < ApplicationController
   uses_tiny_mce :options => Helpdesk::EDITOR_OPTIONS 
 
   def index
-    @items = Helpdesk::Article.search(Helpdesk::Article, params[:f], params[:v])
+    @items = Helpdesk::Article.search(Helpdesk::Article.all(:conditions => { :account_id => current_account.id }), params[:f], params[:v])
 
     @items = @items.paginate( 
       :page => params[:page], 

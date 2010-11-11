@@ -21,7 +21,8 @@ module SupportTicketControllerMethods
       {
         :status => Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open],
         :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:web_form],
-        :requester_id => current_user && current_user.id
+        :requester_id => current_user && current_user.id,
+        :account_id => current_account.id
       }.merge(params[:helpdesk_ticket])
     )
 
@@ -29,6 +30,7 @@ module SupportTicketControllerMethods
       @ticket.notes.create(
         :body => params[:helpdesk_ticket][:description],
         :user_id => current_user && current_user.id,
+        :account_id => current_account.id,
         :private => false,
         :incoming => true,
         :source => 1
@@ -39,7 +41,8 @@ module SupportTicketControllerMethods
         @ticket.notes.create(
           :body => params[:meta].map { |k, v| "#{k}: #{v}" }.join("\n"),
           :private => true,
-          :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['meta']
+          :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['meta'],
+          :account_id => current_account.id
         )
       end
 

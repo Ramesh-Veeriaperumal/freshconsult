@@ -64,7 +64,7 @@
   <h4>Guides</h4>
 
   <ul class="menu">
-    <% for s in Helpdesk::Guide.most_used_first %>
+    <% for s in Helpdesk::Guide.most_used_first.all(:conditions => { :account_id => current_account.id }) %>
       <li>
         <div class="leader-right"><%= s.article_guides_count %></div>
         <div class="leader-left"><%= link_to(s.name, s) %></div>
@@ -76,7 +76,7 @@
 
 <% content_for :main_panel_title do %>
   All Articles
-  <sup><%= Helpdesk::Article.count %></sup>
+  <sup><%= Helpdesk::Article.all(:conditions => { :account_id => current_account.id }).count %></sup>
 <% end %>
 
 <% content_for :main_panel_actions do %>
@@ -110,7 +110,7 @@
 
   <div class="selection-options">
     <div id="assign-options" style="display:none">
-      <%= select_tag 'guide_id', options_from_collection_for_select(Helpdesk::Guide.all, :to_param, :name) %>
+      <%= select_tag 'guide_id', options_from_collection_for_select(Helpdesk::Guide.all(:conditions => { :account_id => current_account.id }), :to_param, :name) %>
       <button id="assign-multiple-button" action="<%= helpdesk_article_guides_path %>" method="post">Add to Guide</button>
     </div>
   </div>

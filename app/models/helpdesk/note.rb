@@ -16,9 +16,11 @@ class Helpdesk::Note < ActiveRecord::Base
   named_scope :visible, :conditions => { :deleted => false } 
   named_scope :public, :conditions => { :private => false } 
 
-  named_scope :freshest, 
-    :conditions => ["deleted = ?", false], 
-    :order => "helpdesk_notes.created_at DESC"
+  named_scope :freshest, lambda { |account|
+    { :conditions => ["deleted = ? and account_id = ? ", false, account], 
+      :order => "helpdesk_notes.created_at DESC"
+    }
+  }
 
 
   SOURCES = %w{email form note status meta}

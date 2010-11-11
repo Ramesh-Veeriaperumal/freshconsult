@@ -19,7 +19,7 @@
 <% end %>
 
 <% content_for :main_panel_title do %>
-  All Tags <sup><%= Helpdesk::Tag.all.size %></sup>
+  All Tags <sup><%= Helpdesk::Tag.all(:conditions => { :account_id => current_account.id }).size %></sup>
 <% end %>
 
 <% content_for :main_panel_actions do %>

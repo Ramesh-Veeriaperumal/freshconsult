@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101109121749) do
+ActiveRecord::Schema.define(:version => 20101110072503) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -47,6 +47,7 @@ ActiveRecord::Schema.define(:version => 20101109121749) do
     t.integer  "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "account_id"
   end
 
   create_table "helpdesk_attachments", :force => true do |t|
@@ -59,6 +60,7 @@ ActiveRecord::Schema.define(:version => 20101109121749) do
     t.string   "attachable_type"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "account_id"
   end
 
   create_table "helpdesk_authorizations", :force => true do |t|
@@ -85,6 +87,7 @@ ActiveRecord::Schema.define(:version => 20101109121749) do
     t.datetime "updated_at"
     t.integer  "position",             :default => 0
     t.text     "description"
+    t.integer  "account_id"
   end
 
   create_table "helpdesk_issues", :force => true do |t|
@@ -110,6 +113,7 @@ ActiveRecord::Schema.define(:version => 20101109121749) do
     t.boolean  "deleted",      :default => false
     t.integer  "notable_id"
     t.string   "notable_type"
+    t.integer  "account_id"
   end
 
   add_index "helpdesk_notes", ["notable_id"], :name => "index_helpdesk_notes_on_notable_id"
@@ -148,6 +152,7 @@ ActiveRecord::Schema.define(:version => 20101109121749) do
   create_table "helpdesk_tags", :force => true do |t|
     t.string  "name"
     t.integer "tag_uses_count"
+    t.integer "account_id"
   end
 
   create_table "helpdesk_ticket_issues", :force => true do |t|
@@ -176,6 +181,7 @@ ActiveRecord::Schema.define(:version => 20101109121749) do
     t.datetime "updated_at"
     t.text     "address"
     t.boolean  "trained",      :default => false
+    t.integer  "account_id"
   end
 
   add_index "helpdesk_tickets", ["id_token"], :name => "index_helpdesk_tickets_on_id_token", :unique => true

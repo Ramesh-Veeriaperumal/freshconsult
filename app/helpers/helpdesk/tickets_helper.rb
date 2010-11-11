@@ -50,7 +50,7 @@ module Helpdesk::TicketsHelper
   end
 
   def filter_count(selector=nil)
-    Helpdesk::Ticket.filter(filter(selector), current_user).count
+    Helpdesk::Ticket.filter(current_account, filter(selector), current_user).count
   end
 
   def filter_title(selector)

@@ -133,11 +133,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
     STATUS_NAMES_BY_KEY[status]
   end
 
-  def create_status_note(message, user = nil)
+  def create_status_note(account, message, user = nil)
     notes.create(
       :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['status'],
       :user => user,
-      :body => message
+      :body => message,
+      :account_id => account.id
     )
   end
 
@@ -149,11 +150,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
     SOURCE_NAMES_BY_KEY[source]
   end
 
-  def self.filter(filters, user = nil, scope = nil)
+  def self.filter(account, filters, user = nil, scope = nil)
 
     conditions = {
-      :all          =>    "",
-      :open         =>    "status > 0",
+      :all          =>    {},
+      #:open         =>    ["status > 0 and account_id = ?", account], //Hack by Shan
       :unassigned   =>    {:responder_id => nil, :deleted => false, :spam => false},
       :spam         =>    {:spam => true},
       :deleted      =>    {:deleted => true},
@@ -167,8 +168,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
       if user && f == :monitored_by
         user.subscribed_tickets.scoped(:conditions => {:spam => false, :deleted => false})
+      elsif f == :open
+        scope.scoped(:conditions => ["status > 0 and account_id = ?", account])
       else
-        scope.scoped(:conditions => conditions[f])
+        scope.scoped(:conditions => conditions[f].merge({:account_id => account}))
       end
     end
 

@@ -73,10 +73,10 @@ module HelpdeskControllerMethods
     redirect_to :back
   end
 
-  def autocomplete
+  def autocomplete #Ideally account scoping should go to autocomplete_scoper -Shan
     items = autocomplete_scoper.find(
       :all, 
-      :conditions => ["#{autocomplete_field} like ?", "%#{params[:v]}%"], 
+      :conditions => ["#{autocomplete_field} like ? and account_id = ?", "%#{params[:v]}%", current_account], 
       :limit => 30)
 
     r = {:results => items.map {|i| {:id => autocomplete_id(i), :value => i.send(autocomplete_field)} } } 
@@ -119,6 +119,8 @@ protected
 
   def load_item
     @item = self.instance_variable_set('@' + cname, load_by_param(params[:id])) 
+    raise(ActiveRecord::RecordNotFound) if (@item.respond_to?('account_id=') && @item.account_id != current_account.id)
+    
     @item || raise(ActiveRecord::RecordNotFound)
   end
 
@@ -136,6 +138,7 @@ protected
 
   def set_item_user
     @item.user ||= current_user if (@item.respond_to?('user=') && !@item.user_id)
+    @item.account_id ||= current_account.id if (@item.respond_to?('account_id='))
   end
 
   def process_item
