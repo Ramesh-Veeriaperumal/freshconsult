@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101110072503) do
+ActiveRecord::Schema.define(:version => 20101111090008) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -28,6 +28,7 @@ ActiveRecord::Schema.define(:version => 20101110072503) do
     t.integer "posts_count",      :default => 0
     t.integer "position"
     t.text    "description_html"
+    t.integer "account_id"
   end
 
   create_table "helpdesk_article_guides", :force => true do |t|
@@ -217,6 +218,7 @@ ActiveRecord::Schema.define(:version => 20101110072503) do
     t.datetime "updated_at"
     t.integer  "forum_id"
     t.text     "body_html"
+    t.integer  "account_id"
   end
 
   add_index "posts", ["forum_id", "created_at"], :name => "index_posts_on_forum_id"
@@ -293,6 +295,7 @@ ActiveRecord::Schema.define(:version => 20101110072503) do
     t.boolean  "locked",       :default => false
     t.integer  "replied_by"
     t.integer  "last_post_id"
+    t.integer  "account_id"
   end
 
   add_index "topics", ["forum_id", "replied_at"], :name => "index_topics_on_forum_id_and_replied_at"
