@@ -22,7 +22,15 @@ class Helpdesk::Article < ActiveRecord::Base
   attr_protected :guides, :attachments
 
   named_scope :display_order, :include => :article_guides, :order => 'helpdesk_article_guides.position ASC' 
-  named_scope :visible, :include => :guides, :conditions => ['helpdesk_guides.hidden = ?', false] 
+  #named_scope :visible, :include => :guides, :conditions => ['helpdesk_guides.hidden = ?', false] 
+  
+  named_scope :visible, lambda { |account|
+    { :include => :guides,
+      :conditions => ["helpdesk_guides.account_id = ? ", account], 
+      :order => 'helpdesk_article_guides.position ASC'
+    }
+  }
+  
   named_scope :limit, lambda { |num| num ? { :limit => num } : {} }
 
   SORT_FIELDS = [

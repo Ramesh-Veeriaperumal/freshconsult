@@ -33,7 +33,7 @@
 
         <h3>Jump to User Guide:</h3>
         <ol class="guides">
-          <%= Helpdesk::Guide.display_order.visible.map { |g| content_tag(:li, link_to(g.name, support_guide_path(g))) } %>
+          <%= Helpdesk::Guide.display_order.visible.all(:conditions => { :account_id => current_account.id }).map { |g| content_tag(:li, link_to(g.name, support_guide_path(g))) } %>
         </ol>
 
         <%= yield :sidebar %>
