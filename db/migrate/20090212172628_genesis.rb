@@ -130,21 +130,41 @@ class Genesis < ActiveRecord::Migration
     add_index "helpdesk_tickets", ["requester_id"], :name => "index_helpdesk_tickets_on_requester_id"
     add_index "helpdesk_tickets", ["responder_id"], :name => "index_helpdesk_tickets_on_responder_id"
 
-    unless table_exists?('users')
-      create_table "users" do |t|
+#    unless table_exists?('users')
+#      create_table "users" do |t|
+#        t.string   "login"
+#        t.string   "name",                      :limit => 100, :default => ""
+#        t.string   "email"
+#        t.string   "crypted_password",          :limit => 40
+#        t.string   "salt",                      :limit => 40
+#        t.datetime "created_at"
+#        t.datetime "updated_at"
+#        t.string   "remember_token",            :limit => 40
+#        t.datetime "remember_token_expires_at"
+#      end
+#
+#      add_index "users", ["login"], :name => "index_users_on_login", :unique => true
+#    end
+    
+    if table_exists?('users')
+      add_column :users, :admin, :boolean, :default => false
+      add_column :users, :account_id, :integer
+    else
+      create_table "users", :force => true do |t|
         t.string   "login"
-        t.string   "name",                      :limit => 100, :default => ""
         t.string   "email"
+        t.string   "name"
+        t.string   "remember_token"
         t.string   "crypted_password",          :limit => 40
         t.string   "salt",                      :limit => 40
-        t.datetime "created_at"
-        t.datetime "updated_at"
-        t.string   "remember_token",            :limit => 40
         t.datetime "remember_token_expires_at"
+        t.datetime "updated_at"
+        t.datetime "created_at"
+        t.integer  "account_id",                :limit => 11
+        t.boolean  "admin",                                   :default => false
       end
-
-      add_index "users", ["login"], :name => "index_users_on_login", :unique => true
     end
+
     
     Helpdesk::Classifier.create(:name => 'spam', :categories => 'spam ham', :data => nil)
     if User.count > 0

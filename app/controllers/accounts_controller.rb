@@ -7,8 +7,8 @@ class AccountsController < ApplicationController
   before_filter :load_discount, :only => [ :plans, :plan, :new, :create ]
   before_filter :build_plan, :only => [:new, :create]
   
-  ssl_required :billing, :cancel, :new, :create
-  ssl_allowed :plans, :thanks, :canceled, :paypal
+  #ssl_required :billing, :cancel, :new, :create #by Shan temp
+  #ssl_allowed :plans, :thanks, :canceled, :paypal
   
   def new
     # render :layout => 'public' # Uncomment if your "public" site has a different layout than the one used for logged-in users

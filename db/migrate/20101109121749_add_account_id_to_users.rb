@@ -1,6 +1,6 @@
 class AddAccountIdToUsers < ActiveRecord::Migration
   def self.up
-    remove_index "users", :name => "index_users_on_login"
+    #remove_index "users", :name => "index_users_on_login" #Index created by Helpkit
     
     create_table "accounts", :force => true do |t|
       t.string   "name"
@@ -76,25 +76,6 @@ class AddAccountIdToUsers < ActiveRecord::Migration
     end
     
     add_index 'subscriptions', 'account_id'
-
-    if table_exists?('users')
-      #add_column :users, :admin, :boolean, :default => false
-      add_column :users, :account_id, :integer
-    else
-      create_table "users", :force => true do |t|
-        t.string   "login"
-        t.string   "email"
-        t.string   "name"
-        t.string   "remember_token"
-        t.string   "crypted_password",          :limit => 40
-        t.string   "salt",                      :limit => 40
-        t.datetime "remember_token_expires_at"
-        t.datetime "updated_at"
-        t.datetime "created_at"
-        t.integer  "account_id",                :limit => 11
-        t.boolean  "admin",                                   :default => false
-      end
-    end
     
     add_index 'users', 'account_id'
   end

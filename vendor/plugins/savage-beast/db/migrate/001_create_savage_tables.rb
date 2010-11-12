@@ -7,6 +7,7 @@ class CreateSavageTables < ActiveRecord::Migration
 	    t.integer "posts_count",      :default => 0
 	    t.integer "position"
 	    t.text    "description_html"
+      t.integer "account_id"
 	  end
 	
 	  create_table "moderatorships", :force => true do |t|
@@ -30,6 +31,7 @@ class CreateSavageTables < ActiveRecord::Migration
 	    t.datetime "updated_at"
 	    t.integer  "forum_id"
 	    t.text     "body_html"
+      t.integer  "account_id"
 	  end
 	
 	  add_index "posts", ["forum_id", "created_at"], :name => "index_posts_on_forum_id"
@@ -49,6 +51,7 @@ class CreateSavageTables < ActiveRecord::Migration
 	    t.boolean  "locked",       :default => false
 	    t.integer  "replied_by"
 	    t.integer  "last_post_id"
+      t.integer  "account_id"
 	  end
 	
 	  add_index "topics", ["forum_id"], :name => "index_topics_on_forum_id"

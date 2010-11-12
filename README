@@ -24,7 +24,7 @@ helpdesk to your rails application.
 0. Install the required gems: sudo gem install mms2r
 1. Unzip the Helpdesk kit archive to the desired directory.
 2. Edit config/database.yml like you would for any rails project.
-3. Run "rake bootstrap" from your project root.
+3. Run "rake db:bootstrap" from your project root.
 4. Configure email in /config/helpdesk.yml (see instructions below)
 5. Run the mail fetcher daemon: "script/helpdesk_mail_fetcher"
 6. Log in to the new helpdesk at "http://yourapp.com/helpdesk", with 

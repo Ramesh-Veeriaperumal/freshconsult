@@ -6,7 +6,7 @@
 HOST: 
     development:    "localhost:3001"
     test:           "localhost:3001"
-    production:     "fdver2.heroku.com"
+    production:     "freshdesk.com"
 
 
 # This is the title staff members will see when they are using the helpdesk application
