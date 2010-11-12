@@ -116,7 +116,7 @@ class Account < ActiveRecord::Base
     end
     
     def send_welcome_email
-      SubscriptionNotifier.deliver_welcome(self)
+      #SubscriptionNotifier.deliver_welcome(self)
     end
     
 end
