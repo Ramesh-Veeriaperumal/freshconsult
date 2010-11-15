@@ -79,9 +79,9 @@ ActionController::Routing::Routes.draw do |map|
 
     helpdesk.resources :tags, :collection => { :autocomplete => :get }
 
-    helpdesk.resources :issues, :collection => {:empty_trash => :delete}, :member => { :delete_all => :delete, :assign => :put, :restore => :put, :restore_all => :put } do |ticket|
-      ticket.resources :notes, :member => { :restore => :put }, :name_prefix => 'helpdesk_issue_helpdesk_'
-    end
+#    helpdesk.resources :issues, :collection => {:empty_trash => :delete}, :member => { :delete_all => :delete, :assign => :put, :restore => :put, :restore_all => :put } do |ticket|
+#      ticket.resources :notes, :member => { :restore => :put }, :name_prefix => 'helpdesk_issue_helpdesk_'
+#    end
 
     helpdesk.resources :tickets, :collection => {:empty_trash => :delete, :empty_spam => :delete}, :member => { :assign => :put, :restore => :put, :spam => :put, :unspam => :put } do |ticket|
       ticket.resources :notes, :member => { :restore => :put }, :name_prefix => 'helpdesk_ticket_helpdesk_'
@@ -90,7 +90,7 @@ ActionController::Routing::Routes.draw do |map|
       ticket.resources :reminders, :name_prefix => 'helpdesk_ticket_helpdesk_'
     end
 
-    helpdesk.resources :ticket_issues
+    #helpdesk.resources :ticket_issues
 
     helpdesk.resources :notes
 
@@ -99,7 +99,7 @@ ActionController::Routing::Routes.draw do |map|
     helpdesk.filter_tag_tickets '/tags/:id/*filters', :controller => 'tags', :action => 'show'
     helpdesk.filter_tickets '/tickets/filter/*filters', :controller => 'tickets', :action => 'index'
 
-    helpdesk.filter_issues '/issues/filter/*filters', :controller => 'issues', :action => 'index'
+    #helpdesk.filter_issues '/issues/filter/*filters', :controller => 'issues', :action => 'index'
 
     helpdesk.formatted_dashboard '/dashboard.:format', :controller => 'dashboard', :action => 'index'
     helpdesk.dashboard '', :controller => 'dashboard', :action => 'index'
@@ -134,6 +134,6 @@ ActionController::Routing::Routes.draw do |map|
   # Install the default routes as the lowest priority.
   # Note: These default routes make all actions in every controller accessible via GET requests. You should
   # consider removing the them or commenting them out if you're using named routes and resources.
-  map.connect ':controller/:action/:id'
-  map.connect ':controller/:action/:id.:format'
+  #map.connect ':controller/:action/:id'
+  #map.connect ':controller/:action/:id.:format'
 end

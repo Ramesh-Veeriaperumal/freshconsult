@@ -52,22 +52,6 @@
     :label_text => "Add a tag:",
     :no_result_text => "No matches. Press enter to create tag." }%>
 
-    <h4>Issues <%= link_to "New Issue", new_helpdesk_issue_path(:redirect_to => helpdesk_ticket_path(@ticket)) %></h4>
-  <ul class="tags">
-    <% @ticket.issues.map do |t| %>
-      <% j = Helpdesk::TicketIssue.find_by_ticket_id_and_issue_id(@ticket.id, t.id) %>
-      <% content_tag_for(:li, j) do %>
-        <%= link_to(h(t.title), t) %>
-        <%= link_to_remote(image_tag('helpdesk/delete.png'), :url => j, :method => 'delete', :html => { :class => 'tag-delete'} )  %>
-      <% end %>
-    <% end %>
-  </ul>
-
-  <% form_for Helpdesk::TicketIssue.new do |f| %>
-    <%= f.label :issue_id, "Add Ticket To Issue" %>
-    <%= f.hidden_field :ticket_id, :value => @ticket.id %>
-    <%= f.collection_select :issue_id, Helpdesk::Issue.visible, :id, :title, {:include_blank => 'Choose...'}, {:onchange => "this.form.submit()"} %>
-  <% end %>
 
   <%= render :partial => '/helpdesk/shared/reminders', :locals => {
     :reminders => @ticket.reminders, 

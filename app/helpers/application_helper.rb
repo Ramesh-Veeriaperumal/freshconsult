@@ -14,7 +14,7 @@ module ApplicationHelper
   def navigation_tabs
     tabs = [
       ['helpdesk/dashboard',  'Dashboard',    permission?(:manage_tickets)],
-      ['helpdesk/issues',    'Issues',       permission?(:manage_tickets)],
+      #['helpdesk/issues',    'Issues',       permission?(:manage_tickets)],
       ['helpdesk/tickets',    'Tickets',      permission?(:manage_tickets)],
       ['helpdesk/tags',       'Tags',         permission?(:manage_tickets)],
       ['helpdesk/guides',     'User Guides',  permission?(:manage_knowledgebase)],
