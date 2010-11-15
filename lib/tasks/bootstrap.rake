@@ -19,7 +19,7 @@ namespace :db do
     user = User.new(:name => 'Test', :login => 'test', :password => 'test', :password_confirmation => 'test', :email => 'test@example.com')
     a = Account.create(:name => 'Test Account', :domain => 'localhost', :plan => plans.first, :user => user)
     a.update_attribute(:full_domain, 'localhost')
-    Helpdesk::Authorization.create(:user => user, :role_token => "admin") #by Shan
+    #Helpdesk::Authorization.create(:user => user, :role_token => "admin") #by Shan
     
     puts 'Changing secret in environment.rb...'
     new_secret = ActiveSupport::SecureRandom.hex(64)
