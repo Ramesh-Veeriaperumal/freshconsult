@@ -3,7 +3,7 @@
 <% end %>
 
 <p class="filed">
-  Filed by: <strong><%= @ticket.name %></strong>
+  Filed by: <strong><%= @ticket.requester.name if @ticket.requester %></strong> <!-- #by Shan temp -->
 </p>
 <% if @ticket.responder %>
   <p class="assigned">

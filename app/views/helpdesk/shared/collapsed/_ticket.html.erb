@@ -12,7 +12,7 @@
 
   <td class="name">
       <h3>
-        <%= link_to(h(ticket.name) + " (##{ticket.id})", ticket) %>
+        <%= link_to(h(ticket.subject) + " (##{ticket.display_id})", ticket) %>
       </h3>
       <%= h(truncate(ticket.description, :length => 50)) %>
   </td>

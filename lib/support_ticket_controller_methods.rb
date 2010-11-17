@@ -1,7 +1,7 @@
 module SupportTicketControllerMethods
 
   def show
-    @ticket = Helpdesk::Ticket.find_by_param(params[:id])
+    @ticket = Helpdesk::Ticket.find_by_param(params[:id], current_account)
     return if current_user && @ticket.requester_id == current_user.id
     return if permission?(:manage_tickets)
     return if params[:access_token] && @ticket.access_token == params[:access_token]
@@ -11,8 +11,8 @@ module SupportTicketControllerMethods
   def new
     @ticket = Helpdesk::Ticket.new 
     if current_user
-      @ticket.name = current_user.name if current_user.respond_to?(:name)
-      @ticket.email = current_user.email if current_user.respond_to?(:email)
+      #@ticket.name = current_user.name if current_user.respond_to?(:name)
+      #@ticket.email = current_user.email if current_user.respond_to?(:email)
     end
   end
 
@@ -35,7 +35,7 @@ module SupportTicketControllerMethods
         :incoming => true,
         :source => 1
       )
-      Helpdesk::TicketNotifier.deliver_autoreply(@ticket) if !@ticket.spam
+      #Helpdesk::TicketNotifier.deliver_autoreply(@ticket) if !@ticket.spam #by Shan temp
 
       if params[:meta]
         @ticket.notes.create(

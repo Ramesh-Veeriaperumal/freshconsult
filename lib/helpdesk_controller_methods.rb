@@ -114,13 +114,17 @@ protected
   end
 
   def load_by_param(id)
-    scoper.respond_to?(:find_by_param) ?  scoper.find_by_param(id) : scoper.find_by_id(id.to_i)
+    @temp_item = scoper.respond_to?(:find_by_param) ?  scoper.find_by_param(id, current_account) : scoper.find_by_id(id.to_i)
+    
+    #by Shan new
+    raise(ActiveRecord::RecordNotFound) if (@temp_item.respond_to?('account_id=') && @temp_item.account_id != current_account.id)
+    @temp_item
   end
 
   def load_item
     @item = self.instance_variable_set('@' + cname, load_by_param(params[:id])) 
-    raise(ActiveRecord::RecordNotFound) if (@item.respond_to?('account_id=') && @item.account_id != current_account.id)
-    
+    #raise(ActiveRecord::RecordNotFound) if (@item.respond_to?('account_id=') && @item.account_id != current_account.id)
+    #by Shan temp
     @item || raise(ActiveRecord::RecordNotFound)
   end
 
@@ -146,18 +150,18 @@ protected
   end
 
   def load_parent_ticket
-    @parent = Helpdesk::Ticket.find_by_param(params[:ticket_id]) 
+    @parent = Helpdesk::Ticket.find_by_param(params[:ticket_id], current_account) 
     raise ActiveRecord::RecordNotFound unless @parent
   end
 
   def load_parent_ticket_or_issue
-    @parent = Helpdesk::Ticket.find_by_param(params[:ticket_id]) if params[:ticket_id]
+    @parent = Helpdesk::Ticket.find_by_param(params[:ticket_id], current_account) if params[:ticket_id]
     @parent = Helpdesk::Issue.find_by_id(params[:issue_id]) if params[:issue_id]
     raise ActiveRecord::RecordNotFound unless @parent
   end
 
   def optionally_load_parent
-    @parent = Helpdesk::Ticket.find_by_param(params[:ticket_id]) 
+    @parent = Helpdesk::Ticket.find_by_param(params[:ticket_id], current_account) 
   end
   
   def create_attachments

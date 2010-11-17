@@ -1,6 +1,6 @@
 class Support::NotesController < ApplicationController
   def create
-    @ticket = Helpdesk::Ticket.find_by_param(params[:ticket_id])
+    @ticket = Helpdesk::Ticket.find_by_param(params[:ticket_id], current_account)
     raise ActiveRecord::RecordNotFound unless @ticket
 
     access = (current_user && @ticket.requester_id == current_user.id) ||

@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101111090008) do
+ActiveRecord::Schema.define(:version => 20101115143057) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -20,6 +20,16 @@ ActiveRecord::Schema.define(:version => 20101111090008) do
   end
 
   add_index "accounts", ["full_domain"], :name => "index_accounts_on_full_domain"
+
+  create_table "forums", :force => true do |t|
+    t.string  "name"
+    t.string  "description"
+    t.integer "topics_count",     :default => 0
+    t.integer "posts_count",      :default => 0
+    t.integer "position"
+    t.text    "description_html"
+    t.integer "account_id"
+  end
 
   create_table "helpdesk_article_guides", :force => true do |t|
     t.integer  "article_id"
@@ -157,27 +167,47 @@ ActiveRecord::Schema.define(:version => 20101111090008) do
   create_table "helpdesk_tickets", :force => true do |t|
     t.string   "id_token"
     t.string   "access_token"
-    t.string   "name"
-    t.string   "phone"
-    t.string   "email"
     t.text     "description"
     t.integer  "requester_id"
     t.integer  "responder_id"
-    t.integer  "status",       :default => 1
-    t.boolean  "urgent",       :default => false
-    t.integer  "source",       :default => 0
-    t.boolean  "spam",         :default => false
-    t.boolean  "deleted",      :default => false
+    t.integer  "status",            :default => 1
+    t.boolean  "urgent",            :default => false
+    t.integer  "source",            :default => 0
+    t.boolean  "spam",              :default => false
+    t.boolean  "deleted",           :default => false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.text     "address"
-    t.boolean  "trained",      :default => false
+    t.boolean  "trained",           :default => false
     t.integer  "account_id"
+    t.string   "subject"
+    t.integer  "ticket_type_id"
+    t.integer  "priority_id"
+    t.integer  "organization_id"
+    t.integer  "owner_id"
+    t.integer  "group_id"
+    t.datetime "first_assigned_at"
+    t.datetime "assigned_at"
+    t.datetime "due_by"
+    t.datetime "completed_at"
+    t.integer  "display_id"
   end
 
   add_index "helpdesk_tickets", ["id_token"], :name => "index_helpdesk_tickets_on_id_token", :unique => true
   add_index "helpdesk_tickets", ["requester_id"], :name => "index_helpdesk_tickets_on_requester_id"
   add_index "helpdesk_tickets", ["responder_id"], :name => "index_helpdesk_tickets_on_responder_id"
+
+  create_table "moderatorships", :force => true do |t|
+    t.integer "forum_id"
+    t.integer "user_id"
+  end
+
+  add_index "moderatorships", ["forum_id"], :name => "index_moderatorships_on_forum_id"
+
+  create_table "monitorships", :force => true do |t|
+    t.integer "topic_id"
+    t.integer "user_id"
+    t.boolean "active",   :default => true
+  end
 
   create_table "password_resets", :force => true do |t|
     t.string   "email"
@@ -186,6 +216,21 @@ ActiveRecord::Schema.define(:version => 20101111090008) do
     t.string   "token"
     t.datetime "created_at"
   end
+
+  create_table "posts", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "topic_id"
+    t.text     "body"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "forum_id"
+    t.text     "body_html"
+    t.integer  "account_id"
+  end
+
+  add_index "posts", ["forum_id", "created_at"], :name => "index_posts_on_forum_id"
+  add_index "posts", ["topic_id", "created_at"], :name => "index_posts_on_topic_id"
+  add_index "posts", ["user_id", "created_at"], :name => "index_posts_on_user_id"
 
   create_table "subscription_discounts", :force => true do |t|
     t.string   "name"
@@ -244,18 +289,40 @@ ActiveRecord::Schema.define(:version => 20101111090008) do
 
   add_index "subscriptions", ["account_id"], :name => "index_subscriptions_on_account_id"
 
+  create_table "topics", :force => true do |t|
+    t.integer  "forum_id"
+    t.integer  "user_id"
+    t.string   "title"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "hits",         :default => 0
+    t.integer  "sticky",       :default => 0
+    t.integer  "posts_count",  :default => 0
+    t.datetime "replied_at"
+    t.boolean  "locked",       :default => false
+    t.integer  "replied_by"
+    t.integer  "last_post_id"
+    t.integer  "account_id"
+  end
+
+  add_index "topics", ["forum_id", "replied_at"], :name => "index_topics_on_forum_id_and_replied_at"
+  add_index "topics", ["forum_id", "sticky", "replied_at"], :name => "index_topics_on_sticky_and_replied_at"
+  add_index "topics", ["forum_id"], :name => "index_topics_on_forum_id"
+
   create_table "users", :force => true do |t|
-    t.string   "login"
-    t.string   "email"
-    t.string   "name"
-    t.string   "remember_token"
+    t.string   "login",                     :limit => 40
+    t.string   "name",                      :limit => 100, :default => ""
+    t.string   "email",                     :limit => 100
     t.string   "crypted_password",          :limit => 40
     t.string   "salt",                      :limit => 40
-    t.datetime "remember_token_expires_at"
-    t.datetime "updated_at"
     t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "remember_token",            :limit => 40
+    t.datetime "remember_token_expires_at"
+    t.integer  "posts_count",                              :default => 0
+    t.datetime "last_seen_at"
+    t.boolean  "admin",                                    :default => true
     t.integer  "account_id"
-    t.boolean  "admin",                                   :default => false
   end
 
   add_index "users", ["account_id"], :name => "index_users_on_account_id"

@@ -5,7 +5,7 @@
     content_tag(
       :li, 
       check_box_link(
-        r.body + (r.ticket && !parent ? link_to("Re: #{r.ticket.name}", r.ticket) : ''), 
+        r.body + (r.ticket && !parent ? link_to("Re: #{r.ticket.subject}", r.ticket) : ''), 
         r.deleted, 
         helpdesk_reminder_path(r), 
         :delete, 

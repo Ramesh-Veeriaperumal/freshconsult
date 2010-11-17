@@ -4,23 +4,15 @@
 
     <table>
       <tr>
-        <td>
-          <%= f.label :name, "Name" %>
-          <%= f.text_field :name %>
-        </td>
-        <td>
-          <%= f.label :email, "Email" %>
-          <%= f.text_field :email %>
-        </td>
-        <td rowspan="3">
-          <%= f.label :address, "Address" %>
-          <%= f.text_area :address %>
+        <td colspan="2">
+          <label>Email</label>
+          <input id="helpdesk_ticket_email" name="helpdesk_ticket[email]" type="text" size="20"/>
         </td>
       </tr>
       <tr>
         <td>
-          <%= f.label :phone, "Phone" %>
-          <%= f.text_field :phone %>
+          <%= f.label :subject, "Subject" %>
+          <%= f.text_field :subject %>
         </td>
         <td>
           <%= f.label :source, "Source" %>

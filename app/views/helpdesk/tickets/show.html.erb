@@ -31,13 +31,13 @@
 
   <% end %>
 
-  <h4>Contact <%= h(@ticket.name) %></h4>
+  <h4>Contact <%= h(@ticket.requester.name) unless @ticket.requester.nil? %></h4> <!-- #by Shan temp -->
 
   <div class="contact-information">
     <table>
-      <tr><td class="title">Email</td><td><%= auto_link(h(@ticket.email)) %></td></tr>
-      <tr><td class="title">Phone</td><td><%= h(@ticket.phone) %></td></tr>
-      <tr><td class="title">Address</td><td><%= simple_format(h(@ticket.address)) %></td></tr>
+      <tr><td class="title">Email</td><td></td></tr> <!-- #by Shan temp -->
+      <tr><td class="title">Phone</td><td></td></tr>
+      <tr><td class="title">Address</td><td></td></tr>
     </table>
   </div>
 
@@ -75,7 +75,7 @@
 <% end %>
 
 <% content_for :main_panel_title do %>
-  <%= h(@ticket.name) + " (##{@ticket.id})"%>
+  <%= h(@ticket.subject) + " (##{@ticket.display_id})"%>
 <% end %>
 
 <% content_for :main_panel_actions do %>
@@ -101,11 +101,11 @@
 
 <% content_for :main_panel_toolbar do %>
   <ul>
-    <%= content_tag('li', link_to_function("Send an Email", "Helpdesk.swapEmailNote('send-email', false, 'Send Email', this)", :class => 'active')) if @item.email && !@item.email.empty? %>
-    <%= content_tag('li', link_to_function("Add a Note", "Helpdesk.swapEmailNote('add-note', true, 'Add Note', this)", :class => (!@item.email || @item.email.empty?)  ? 'active' : '')) %>
+    <%= content_tag('li', link_to_function("Send an Email", "Helpdesk.swapEmailNote('send-email', false, 'Send Email', this)", :class => 'active')) if @item.requester %> <!-- #by Shan temp -->
+    <%= content_tag('li', link_to_function("Add a Note", "Helpdesk.swapEmailNote('add-note', true, 'Add Note', this)", :class => (!@item.requester)  ? 'active' : '')) %> <!-- #by Shan temp -->
   </ul>
 
-  <% if @item.email && !@item.email.empty? %>
+  <% if @item.requester %> <!-- #by Shan temp -->
     <%= render(:partial => '/helpdesk/shared/note_form', :locals => {
       :id => 'send-email', 
       :note => [@ticket, Helpdesk::Note.new(:private => false)] })%>

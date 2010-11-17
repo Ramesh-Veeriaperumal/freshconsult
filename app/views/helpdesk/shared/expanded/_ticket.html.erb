@@ -15,7 +15,7 @@
         <%= ticket.tags.map { |t| content_tag(:li, link_to(h(t.name), t)) }.join %>
       </ul>
       <h3>
-        <%= link_to(h(ticket.name) + " (##{ticket.id})", ticket) %>
+        <%= link_to(h(ticket.subject) + " (##{ticket.display_id})", ticket) %>
         <span class="subtitle">(<%= distance_of_time_in_words_to_now(ticket.updated_at) %> ago)</span>
       </h3>
       <%= h(truncate(ticket.description, :length => 200)) %>

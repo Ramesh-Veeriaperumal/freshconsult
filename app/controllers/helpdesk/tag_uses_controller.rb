@@ -4,7 +4,7 @@ class Helpdesk::TagUsesController < ApplicationController
   before_filter { |c| c.requires_permission :manage_tickets }
 
   def create
-    ticket = Helpdesk::Ticket.find_by_param(params[:ticket_id])
+    ticket = Helpdesk::Ticket.find_by_param(params[:ticket_id], current_account)
     raise ActiveRecord::RecordNotFound unless ticket
 
     tag = Helpdesk::Tag.find_by_name_and_account_id(params[:name], current_account) || Helpdesk::Tag.new(:name => params[:name], 
@@ -21,7 +21,7 @@ class Helpdesk::TagUsesController < ApplicationController
   end
 
   def destroy
-    ticket = Helpdesk::Ticket.find_by_param(params[:ticket_id])
+    ticket = Helpdesk::Ticket.find_by_param(params[:ticket_id], current_account)
     raise ActiveRecord::RecordNotFound unless ticket
 
     tag = ticket.tags.find_by_id(params[:id])

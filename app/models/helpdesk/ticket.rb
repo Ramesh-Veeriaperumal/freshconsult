@@ -2,6 +2,10 @@ require 'digest/md5'
 
 class Helpdesk::Ticket < ActiveRecord::Base
   set_table_name "helpdesk_tickets"
+  
+  #by Shan temp
+  attr_accessor :email
+  after_create :refresh_display_id
 
   before_validation_on_create :set_tokens
   before_create :set_spam
@@ -78,9 +82,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
   STATUS_KEYS_BY_TOKEN = Hash[*STATUSES.map { |i| [i[0], i[2]] }.flatten]
 
   SEARCH_FIELDS = [
-    [ :name,          'Name'                ],
-    [ :phone,         'Phone'               ],
-    [ :email,         'Email Address'       ],
+    [ :display_id,    'Ticket ID'                ],
+    [ :subject,       'Subject'               ],
+    #[ :email,         'Email Address'       ],
     [ :description,   'Ticket Description'  ],
     [ :source,        'Source of Ticket'    ]
   ]
@@ -99,21 +103,21 @@ class Helpdesk::Ticket < ActiveRecord::Base
   SORT_FIELD_OPTIONS = SORT_FIELDS.map { |i| [i[1], i[0]] }
   SORT_SQL_BY_KEY = Hash[*SORT_FIELDS.map { |i| [i[0], i[2]] }.flatten]
 
-  validates_presence_of :name, :source, :id_token, :access_token, :status, :source
+  #validates_presence_of :name, :source, :id_token, :access_token, :status, :source
   validates_uniqueness_of :id_token
-  validates_length_of :email, :in => 5..320, :allow_nil => false, :allow_blank => false
+  #validates_length_of :email, :in => 5..320, :allow_nil => false, :allow_blank => false
   validates_numericality_of :source, :status, :only_integer => true
   validates_numericality_of :requester_id, :responder_id, :only_integer => true, :allow_nil => true
   validates_inclusion_of :source, :in => 0..SOURCES.size-1
   validates_inclusion_of :status, :in => STATUS_KEYS_BY_TOKEN.values.min..STATUS_KEYS_BY_TOKEN.values.max
-  validates_format_of :email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, :allow_nil => false, :allow_blank => false
+  #validates_format_of :email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, :allow_nil => false, :allow_blank => false
 
   def to_param 
-    id_token 
+    display_id ? display_id.to_s : nil
   end 
 
-  def self.find_by_param(token)
-    find_by_id_token(token)
+  def self.find_by_param(token, account)
+    find_by_display_id_and_account_id(token, account.id)
   end
 
   def freshness
@@ -185,9 +189,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
     exact_match = {field => value}
 
     conditions = case field.to_sym
-      when :name         :  loose_match
-      when :phone        :  loose_match
-      when :email        :  loose_match
+      when :subject      :  loose_match
+      when :display_id   :  exact_match
+      #when :email        :  loose_match
       when :description  :  loose_match
       when :status       :  exact_match
       when :urgent       :  exact_match
@@ -201,12 +205,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def nickname
-    name
+    subject
   end
 
-  def encode_id_token
-    "[#{id_token}]"
-  end
+#  def encode_id_token
+#    "[#{id_token}]"
+#  end
 
   def train(category)
     classifier.untrain(spam ? :spam : :ham, spam_text) if trained
@@ -226,6 +230,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def set_spam
+    puts "SETTTTTTTTTT SPAMMMMM $$$$$$$$$$$ "
     self[:spam] ||= (classifier.category?(spam_text) == "Spam") if spam_text && !Helpdesk::SPAM_TRAINING_MODE
     true
   end
@@ -241,6 +246,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def make_token(secret)
     Digest::MD5.hexdigest(secret + Time.now.to_f.to_s).downcase
+  end
+  
+  def refresh_display_id #by Shan temp
+    if display_id.nil?
+      self.display_id = Helpdesk::Ticket.find_by_id(id).display_id #by Shan hack need to revisit about self as well.
+    end
   end
 
 end

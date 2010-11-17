@@ -19,7 +19,7 @@
     </ul>
     <h3>
 
-      <%= link_to(h(ticket_note.notable.name) + " (##{ticket_note.notable.id})", ticket_note.notable) %>
+      <%= link_to(h(ticket_note.notable.subject) + " (##{ticket_note.notable.display_id})", ticket_note.notable) %>
       <span class="subtitle">(<%= distance_of_time_in_words_to_now(ticket_note.created_at) %> ago)</span>
     </h3>
 
@@ -29,9 +29,9 @@
       </blockquote>
 
       <% if email_quoted?(ticket_note.body) %>
-        <%= link_to_function("Toggle Quoted", "$('quoted-#{ ticket_note.id }').toggle()", :class => 'toggle-quoted') %>
+        <%= link_to_function("Toggle Quoted", "$('quoted-#{ ticket_note.display_id }').toggle()", :class => 'toggle-quoted') %>
 
-        <blockquote id="quoted-<%= ticket_note.id %>" style="display:none">
+        <blockquote id="quoted-<%= ticket_note.display_id %>" style="display:none">
           <%= simple_format(email_after_quoted(strip_tags(ticket_note.body))) %>
         </blockquote>
       <% end %>

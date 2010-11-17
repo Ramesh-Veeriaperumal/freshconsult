@@ -10,7 +10,7 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
 
   def autoreply(ticket)
     body(:ticket => ticket, :host => Helpdesk::HOST[RAILS_ENV.to_sym])
-    reply_to_ticket(ticket)
+    #reply_to_ticket(ticket) #by Shan temp
   end
   
 
