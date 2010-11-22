@@ -16,7 +16,7 @@ namespace :db do
       end
     end
     
-    user = User.new(:name => 'Test', :login => 'test', :password => 'test', :password_confirmation => 'test', :email => 'test@example.com')
+    user = User.new(:name => 'Support', :password => 'test', :password_confirmation => 'test', :email => 'support@freshdesk.com')
     a = Account.create(:name => 'Test Account', :domain => 'localhost', :plan => plans.first, :user => user)
     a.update_attribute(:full_domain, 'localhost')
     #Helpdesk::Authorization.create(:user => user, :role_token => "admin") #by Shan
@@ -34,7 +34,7 @@ namespace :db do
     Rake::Task["savage_beast:bootstrap_db"].invoke
     #by Shan ends
     
-    puts "All done!  You can now login to the test account at the localhost domain with the login test and password test.\n\n"
+    puts "All done!  You can now login to the test account at the localhost domain with the login support@freshdesk.com and password test.\n\n"
   end
 end
 #SAAS ends here

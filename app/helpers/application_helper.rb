@@ -16,10 +16,10 @@ module ApplicationHelper
       ['helpdesk/dashboard',  'Dashboard',    permission?(:manage_tickets)],
       #['helpdesk/issues',    'Issues',       permission?(:manage_tickets)],
       ['helpdesk/tickets',    'Tickets',      permission?(:manage_tickets)],
-      ['helpdesk/tags',       'Tags',         permission?(:manage_tickets)],
+      ['/forums', 'Forums', permission?(:manage_knowledgebase)],
+      #['helpdesk/tags',       'Tags',         permission?(:manage_tickets)],
       ['helpdesk/guides',     'User Guides',  permission?(:manage_knowledgebase)],
-      ['helpdesk/articles',   'Articles',     permission?(:manage_knowledgebase)],
-      ['/forums', 'Forums', permission?(:manage_knowledgebase)]
+      ['helpdesk/articles',   'Articles',     permission?(:manage_knowledgebase)]
     ]
 
     history_active = false;

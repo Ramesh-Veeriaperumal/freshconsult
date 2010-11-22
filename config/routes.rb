@@ -1,11 +1,12 @@
 ActionController::Routing::Routes.draw do |map|
-  map.logout '/logout', :controller => 'sessions', :action => 'destroy'
-  map.login '/login', :controller => 'sessions', :action => 'new'
-  map.register '/register', :controller => 'users', :action => 'create'
+  map.logout '/logout', :controller => 'user_sessions', :action => 'destroy'
+  map.login '/login', :controller => 'user_sessions', :action => 'new'
+  #map.register '/register', :controller => 'users', :action => 'create'
   #map.signup '/signup', :controller => 'users', :action => 'new'
   map.resources :users
-
-  map.resource :session
+  map.resource :user_session
+  map.register '/register/:activation_code', :controller => 'activations', :action => 'new'
+  map.activate '/activate/:id', :controller => 'activations', :action => 'create'
 
   #SAAS copy starts here
   map.with_options(:conditions => {:subdomain => AppConfig['admin_subdomain']}) do |subdom|
@@ -26,8 +27,8 @@ ActionController::Routing::Routes.draw do |map|
   map.resource :account, :collection => { :dashboard => :get, :thanks => :get, :plans => :get, :billing => :any, :paypal => :any, :plan => :any, :plan_paypal => :any, :cancel => :any, :canceled => :get }
   map.new_account '/signup/:plan/:discount', :controller => 'accounts', :action => 'new', :plan => nil, :discount => nil
   
-  map.forgot_password '/account/forgot', :controller => 'sessions', :action => 'forgot'
-  map.reset_password '/account/reset/:token', :controller => 'sessions', :action => 'reset'
+  map.forgot_password '/account/forgot', :controller => 'user_sessions', :action => 'forgot'
+  map.reset_password '/account/reset/:token', :controller => 'user_sessions', :action => 'reset'
 
   #SAAS copy ends here
 

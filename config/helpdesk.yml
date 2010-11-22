@@ -72,7 +72,7 @@ EMAIL:
             ssl: true
             use_login: true
             username: support@freshdesk.com
-            password: opmanager
+            password: opmanager123
             processed_folder: fdver2m
         
         test:
@@ -88,7 +88,7 @@ EMAIL:
             ssl: true
             use_login: true
             username: support@freshdesk.com
-            password: opmanager
+            password: opmanager123
             processed_folder: fdver2m
 
     # Email settings for sending mail
@@ -100,7 +100,7 @@ EMAIL:
             domain: freshdesk.com
             authentication: :login
             user_name: support@freshdesk.com
-            password: opmanager
+            password: opmanager123
             
         production:
             tls: true
@@ -109,7 +109,7 @@ EMAIL:
             domain: freshdesk.com
             authentication: :login
             user_name: support@freshdesk.com
-            password: opmanager
+            password: opmanager123
             
 
 # This determines whether or not incoming support requests are automatically

@@ -111,6 +111,7 @@ class Account < ActiveRecord::Base
     
     def create_admin
       self.user.admin = true
+      self.user.active = true
       self.user.account = self
       self.user.save
       Helpdesk::Authorization.create(:user => self.user, :role_token => "admin") #by Shan temp
