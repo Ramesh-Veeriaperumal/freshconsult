@@ -7,10 +7,15 @@
 <% form_for [:admin, @subscription] do |form| %>
   <%= form.error_messages %>
   <fieldset>
-    <%= form.text_field :amount %>
-    <%= form.text_field :next_renewal_at, :label => 'Renewal date' %>
+    <%= form.label :amount %>
+	<%= form.text_field :amount %>
+	<%= form.label :name, 'Renewal date' %>
+    <%= form.text_field :next_renewal_at %>
+	<%= form.label :state %>
     <%= form.text_field :state %>
+	<%= form.label :plan_id, 'Plan' %>
     <%= form.select :plan_id, SubscriptionPlan.all(:order => 'amount desc').collect {|p| [p.to_s, p.id]} %>
+	<%= form.label :subscription_discount_id, 'Discount' %>
     <%= form.select :subscription_discount_id, SubscriptionDiscount.all(:order => 'name').collect {|d| ["#{d.name} (#{d.code}) - #{discount_label(d)}", d.id]}, :include_blank => true %>
   </fieldset>
   <%= submit_tag %>
