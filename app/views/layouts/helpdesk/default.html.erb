@@ -22,7 +22,15 @@
         <h1><%= Helpdesk::STAFF_FACING_TITLE %></h1>
 
         <ul class="tabs">
-            <%= navigation_tabs %>
+			<% if admin_subdomain? %>
+				<li><%= link_to(content_tag('span', 'Subscriptions'), admin_subscriptions_path) %></li>
+				<li><%= link_to(content_tag('span', 'Accounts'), admin_accounts_path) %></li>
+				<li><%= link_to(content_tag('span', 'Plans'), admin_subscription_plans_path) %></li>
+				<li><%= link_to(content_tag('span', 'Discounts'), admin_subscription_discounts_path) %></li>
+				<li><%= link_to(content_tag('span', 'Affiliates'), admin_subscription_affiliates_path) %></li>
+  			<% else %>
+            	<%= navigation_tabs %>
+  			<% end %>
         </ul>
 
         <ul class="setting-links">
