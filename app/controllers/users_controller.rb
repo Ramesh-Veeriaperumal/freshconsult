@@ -10,7 +10,7 @@ class UsersController < ApplicationController
     @user = current_account.users.new #by Shan need to check later
  
     if @user.signup!(params)
-      @user.deliver_activation_instructions!
+      #@user.deliver_activation_instructions! #Have moved it to signup! method in the model itself.
       flash[:notice] = "Your account has been created. Please check your e-mail for your account activation instructions!"
       redirect_to root_url
     else

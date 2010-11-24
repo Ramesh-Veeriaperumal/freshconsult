@@ -132,7 +132,7 @@ protected
       @item.spam = false
 
       n = @item.notes.build(
-        :user => current_user,
+        :user => @item.requester, #by Shan temp
         :account_id => current_account.id,
         :incoming => false,
         :private => true,

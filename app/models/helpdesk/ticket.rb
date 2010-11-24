@@ -6,6 +6,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #by Shan temp
   attr_accessor :email
   after_create :refresh_display_id
+  before_create :populate_requester
 
   before_validation_on_create :set_tokens
   before_create :set_spam
@@ -230,7 +231,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def set_spam
-    puts "SETTTTTTTTTT SPAMMMMM $$$$$$$$$$$ "
     self[:spam] ||= (classifier.category?(spam_text) == "Spam") if spam_text && !Helpdesk::SPAM_TRAINING_MODE
     true
   end
@@ -251,6 +251,19 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def refresh_display_id #by Shan temp
     if display_id.nil?
       self.display_id = Helpdesk::Ticket.find_by_id(id).display_id #by Shan hack need to revisit about self as well.
+    end
+  end
+  
+  def populate_requester #by Shan temp
+    if requester_id.nil? && !email.nil?
+      @requester = User.find_by_email(email)
+      if @requester.nil?
+        @requester = User.new
+        @requester.account_id = account_id
+        @requester.signup!({:user => {:email => self.email, :name => ''}})
+      end
+      
+      self.requester = @requester
     end
   end
 

@@ -31,13 +31,13 @@
 
   <% end %>
 
-  <h4>Contact <%= h(@ticket.requester.name) unless @ticket.requester.nil? %></h4> <!-- #by Shan temp -->
+  <h4>Contact <%= h(@ticket.requester.name) %></h4>
 
   <div class="contact-information">
     <table>
-      <tr><td class="title">Email</td><td></td></tr> <!-- #by Shan temp -->
-      <tr><td class="title">Phone</td><td></td></tr>
-      <tr><td class="title">Address</td><td></td></tr>
+      <tr><td class="title">Email</td><td><%= auto_link(h(@ticket.requester.email)) %></td></tr> <!-- #by Shan temp -->
+      <tr><td class="title">Phone</td><td>Later..</td></tr>
+      <tr><td class="title">Address</td><td>Remove..</td></tr>
     </table>
   </div>
 

@@ -16,7 +16,7 @@ module HelpdeskControllerMethods
     end
   end
   
-  def post_persist
+  def post_persist #Need to check whether this should be called only inside create by Shan to do
     create_attachments #
     process_item #
     flash[:notice] = "The #{cname.humanize.downcase} has been created."

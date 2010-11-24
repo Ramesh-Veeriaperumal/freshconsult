@@ -16,6 +16,7 @@ class User < ActiveRecord::Base
     self.name = params[:user][:name]
     save_without_session_maintenance
     Helpdesk::Authorization.create(:user => self, :role_token => "admin") #by Shan temp
+    deliver_activation_instructions!
   end
  
   def active?
