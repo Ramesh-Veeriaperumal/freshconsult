@@ -66,7 +66,7 @@ _b.AutoSuggest = function (id, param)
 	
 	// defaults	
 	//
-	var k, def = {minchars:1, meth:"get", varname:"input", className:"autosuggest", timeout:2500, delay:500, offsety:-5, shownoresults: true, noresults: "No results!", maxheight: 250, cache: true, maxentries: 25};
+	var k, def = {minchars:1, meth:"get", varname:"input", className:"autosuggest", timeout:2500, delay:500, offsety:-5, shownoresults: true, noresults: "No results!", maxheight: 250, cache: true, maxentries: 25, id_as_value: false};
 	for (k in def)
 	{
 		if (typeof(this.oP[k]) != typeof(def[k]))
@@ -565,11 +565,11 @@ _b.AutoSuggest.prototype.clearHighlight = function()
 };
 
 
-_b.AutoSuggest.prototype.setHighlightedValue = function ()
+_b.AutoSuggest.prototype.setHighlightedValue = function () //id_as_value is hack by shan
 {
 	if (this.iHigh)
 	{
-		this.sInp = this.fld.value = this.aSug[ this.iHigh-1 ].value;
+		this.sInp = this.fld.value = (this.oP.id_as_value) ? this.aSug[ this.iHigh-1 ].id : this.aSug[ this.iHigh-1 ].value;
 		
 		// move cursor to end of input (safari)
 		//

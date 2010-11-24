@@ -1,14 +1,43 @@
 
+<% content_for :head do %>
+  <%= stylesheet_link_tag "helpdesk/autosuggest" %>
+  <%= javascript_include_tag "helpdesk/autosuggest" %>
+
+  <% javascript_tag do %>
+    document.observe("dom:loaded", function(){
+
+      new bsn.AutoSuggest('helpdesk_ticket_email', {
+        script: "<%= autocomplete_helpdesk_authorizations_path %>?",
+        varname: "v",
+        json: true,
+        maxresults: 35,
+        timeout: 3600000, 
+		minchars: 2,
+		shownoresults: false,
+		id_as_value: true,
+		cache: false,
+		delay:200
+      });
+
+      Form.Element.activate('helpdesk_ticket_email')
+
+    });
+    
+  <% end %>
+<% end %>
+
   <% form_for @item do |f| %>
     <%= f.error_messages %>
 
     <table>
+	  
       <tr>
         <td colspan="2">
-          <label>Email</label>
-          <input id="helpdesk_ticket_email" name="helpdesk_ticket[email]" type="text" size="20"/>
+  		<label id="requester-label">Requester:</label>
+  		<input type="text" id="helpdesk_ticket_email" name="helpdesk_ticket[email]"></input>
         </td>
       </tr>
+	  
       <tr>
         <td>
           <%= f.label :subject, "Subject" %>

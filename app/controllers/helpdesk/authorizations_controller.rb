@@ -11,6 +11,19 @@ class Helpdesk::AuthorizationsController < ApplicationController
       :order => Helpdesk::Ticket::SORT_SQL_BY_KEY[(params[:sort] || :created_asc).to_sym],
       :per_page => 20)
   end
+  
+  def autocomplete #Copied from HelpDeskControllerMethods -Shan
+    items = autocomplete_scoper.find(
+      :all, 
+      :conditions => ["name like ? or email like ? ", "%#{params[:v]}%", "%#{params[:v]}%"], 
+      :limit => 30)
+
+    r = {:results => items.map {|i| {:id => i.email, :value => "#{i.name} &lt;#{i.email}&gt;"} } } 
+
+    respond_to do |format|
+      format.json { render :json => r.to_json }
+    end
+  end
 
 protected
 
@@ -19,11 +32,11 @@ protected
   end
 
   def autocomplete_field
-    'name'
+    'email'
   end
 
   def autocomplete_scoper
-    User
+    current_account.users
   end
   
   def autocomplete_id(item)

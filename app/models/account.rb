@@ -5,9 +5,6 @@ class Account < ActiveRecord::Base
   has_one :subscription, :dependent => :destroy
   has_many :subscription_payments
   
-  #App specific
-  has_many :publishers
-  
   validates_format_of :domain, :with => /\A[a-zA-Z][a-zA-Z0-9]*\Z/
   validates_exclusion_of :domain, :in => %W( support blog www billing help api #{AppConfig['admin_subdomain']} ), :message => "The domain <strong>{{value}}</strong> is not available."
   validate :valid_domain?
