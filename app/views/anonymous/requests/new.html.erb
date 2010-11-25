@@ -1,0 +1,16 @@
+<script type="text/javascript">
+  var RecaptchaOptions = {
+    theme : 'clean'
+  };
+</script>
+
+<% content_for :title do %>
+  Request Support
+<% end %>
+
+<% form_for @ticket, :url => anonymous_requests_path do |f| %>
+  <%= f.error_messages %>
+  <%= f.label :email, "Your email" %>
+  <%= f.text_field :email %>
+  <%= render :partial => 'support/shared/request_form', :object => f %>
+<% end %>

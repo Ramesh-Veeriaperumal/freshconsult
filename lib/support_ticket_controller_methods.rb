@@ -25,11 +25,12 @@ module SupportTicketControllerMethods
         :account_id => current_account.id
       }.merge(params[:helpdesk_ticket])
     )
-
-    if @ticket.save
+    
+    if (current_user || verify_recaptcha(:model => @ticket, :message => "Captcha verification failed, try again!")) && @ticket.save
       @ticket.notes.create(
         :body => params[:helpdesk_ticket][:description],
-        :user_id => current_user && current_user.id,
+        #:user_id => current_user && current_user.id,
+        :user => @ticket.requester, #by Shan temp
         :account_id => current_account.id,
         :private => false,
         :incoming => true,

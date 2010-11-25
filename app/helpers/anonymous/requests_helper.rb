@@ -1,0 +1,2 @@
+module Anonymous::RequestsHelper
+end

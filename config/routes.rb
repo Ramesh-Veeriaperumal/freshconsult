@@ -127,6 +127,10 @@ ActionController::Routing::Routes.draw do |map|
     support.resources :minimal_tickets
     support.map '', :controller => 'guides', :action => 'index'
   end
+  
+  map.namespace :anonymous do |anonymous|
+    anonymous.resources :requests
+  end
 
   map.connect '', :controller => 'helpdesk/dashboard', :action => 'index'
   

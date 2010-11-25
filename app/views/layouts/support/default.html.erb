@@ -26,7 +26,7 @@
 
       <div class="navigation">
 
-        <%= link_to "Request Support", new_support_ticket_path, :class => :request %>
+        <%= link_to "Request Support", (current_user) ? new_support_ticket_path : new_anonymous_request_path, :class => :request %>
 
         <h3>Search User Guides</h3>
         <%= render :partial => '/support/shared/article_search' %> 

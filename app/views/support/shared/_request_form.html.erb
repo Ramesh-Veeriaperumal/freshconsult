@@ -1,8 +1,13 @@
-  <%= request_form.error_messages %>
   <%= request_form.label :subject, "Subject" %>
   <%= request_form.text_field :subject %>
   <%= request_form.label :description, "How may we help you?" %>
   <%= request_form.text_area :description %>
+  
+  <% if !logged_in? %>
+  	<label>To verify you are human, plese type the given scrambled letters</label>
+  	<%= recaptcha_tags %>
+  <% end %>
+  
   <%= request_form.submit "Submit Request" %>
 
   <%# Any fields named like meta[fieldname] will be saved by the helpdesk as metadata %>
