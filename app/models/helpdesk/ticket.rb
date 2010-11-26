@@ -260,7 +260,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       if @requester.nil?
         @requester = User.new
         @requester.account_id = account_id
-        @requester.signup!({:user => {:email => self.email, :name => ''}})
+        @requester.signup!({:user => {:email => self.email, :name => '', :role_token => 'customer'}})
       end
       
       self.requester = @requester

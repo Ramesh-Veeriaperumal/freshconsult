@@ -4,8 +4,8 @@
 # to pages within the site.
 
 HOST: 
-    development:    "localhost:3001"
-    test:           "localhost:3001"
+    development:    "localhost:3000"
+    test:           "localhost:3000"
     production:     "freshdesk.com"
 
 
