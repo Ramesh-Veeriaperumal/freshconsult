@@ -38,7 +38,7 @@
               <%= link_to "Public Support Portal", support_guides_path %>
             </li>
             <li>
-              <%= link_to "Users", helpdesk_authorizations_path %>
+              <%= link_to "Users", users_path %>
             </li>
             <%= content_tag(:li, current_user ? current_user.name  + " #{link_to('(Log out)', logout_path)}": 'Not Logged In') %>
 

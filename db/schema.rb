@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101123072738) do
+ActiveRecord::Schema.define(:version => 20101126052229) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -344,6 +344,7 @@ ActiveRecord::Schema.define(:version => 20101123072738) do
     t.boolean  "active",              :default => false, :null => false
     t.integer  "posts_count",         :default => 0
     t.datetime "last_seen_at"
+    t.string   "role_token"
   end
 
   add_index "users", ["account_id"], :name => "index_users_on_account_id"

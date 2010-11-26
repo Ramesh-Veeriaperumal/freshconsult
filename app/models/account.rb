@@ -110,8 +110,8 @@ class Account < ActiveRecord::Base
       self.user.admin = true
       self.user.active = true
       self.user.account = self
+      self.user.role_token = 'admin'
       self.user.save
-      Helpdesk::Authorization.create(:user => self.user, :role_token => "admin") #by Shan temp
     end
     
     def send_welcome_email

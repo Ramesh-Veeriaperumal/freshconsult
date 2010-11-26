@@ -6,6 +6,10 @@ class UsersController < ApplicationController
   #before_filter :require_no_user, :only => [:new, :create] #by Shan need to check later
   #before_filter :require_user, :only => [:show, :edit, :update]
   
+  def new
+    @user.role_token = 'techsupport'
+  end
+  
   def create
     @user = current_account.users.new #by Shan need to check later
  

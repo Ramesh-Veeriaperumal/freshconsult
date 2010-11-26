@@ -14,8 +14,8 @@ class User < ActiveRecord::Base
   def signup!(params)
     self.email = params[:user][:email]
     self.name = params[:user][:name]
+    self.role_token = params[:user][:role_token]
     save_without_session_maintenance
-    Helpdesk::Authorization.create(:user => self, :role_token => "admin") #by Shan temp
     deliver_activation_instructions!
   end
  
@@ -66,6 +66,21 @@ class User < ActiveRecord::Base
 #    reset_perishable_token!
 #    UserNotifier.password_reset_instructions(self).deliver
 #  end
+
+  ##Authorization copy starts here
+  def role
+    @role ||= Helpdesk::ROLES[role_token.to_sym] || Helpdesk::ROLES[:customer]
+  end
+  
+  def permission?(p)
+    role[:permissions][p]
+  end
+
+  def self.find_all_by_permission(account, p)
+    #self.find(:all).select { |a| a.permission?(p) }
+    self.find_all_by_account_id(account).select { |a| a.permission?(p) }
+  end
+  ##Authorization copy ends here
   
   def deliver_activation_instructions!
     reset_perishable_token!

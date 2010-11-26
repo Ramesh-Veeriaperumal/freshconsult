@@ -1,12 +1,13 @@
 <%= error_messages_for :user %>
 
-<label>Name</label>
+<%= f.label :name %>
 <%= f.text_field :name %>
-<label>Email</label>
+<%= f.label :email %>
 <%= f.text_field :email %>
-<label>Password</label>
-<%= f.password_field :password %>
-<label>Password again</label>
-<%= f.password_field :password_confirmation %>
+
+<%= f.label :role %>
+<%= f.radio_button  :role_token, 'admin' %> <%= f.label :role_token_admin, "Administrator" %>
+<%= f.radio_button  :role_token, 'techsupport' %> <%= f.label :role_token_techsupport, "Agent" %>
+<%= f.radio_button  :role_token, 'customer' %> <%= f.label :role_token_customer, "Customer" %>
 
 <%= submit_or_cancel %>

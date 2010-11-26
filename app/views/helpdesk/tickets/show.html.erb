@@ -27,7 +27,7 @@
     <%= f.select :status, Helpdesk::Ticket::STATUS_OPTIONS, {}, {:onchange => "this.form.submit()"} %>
 
     <%= f.label :responder_id, "Assigned To" %>
-    <%= f.collection_select :responder_id, Helpdesk::Authorization.find_all_by_permission(:manage_tickets), :user_id, :name, {:include_blank => 'Nobody'}, {:onchange => "this.form.submit()"} %>
+    <%= f.collection_select :responder_id, User.find_all_by_permission(current_account, :manage_tickets), :id, :name, {:include_blank => 'Nobody'}, {:onchange => "this.form.submit()"} %>
 
   <% end %>
 

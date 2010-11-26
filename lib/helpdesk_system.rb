@@ -12,15 +12,16 @@ module HelpdeskSystem
     def permission?(p)
       # If no authorizations have been created, the system should
       # not have any restrictions.
-      return true if Helpdesk::Authorization.count == 0
+      #return true if Helpdesk::Authorization.count == 0
 
-      if current_user
-        auth = Helpdesk::Authorization.find_by_user_id(current_user.id) 
-        role = auth ? auth.role : Helpdesk::ROLES[:customer]
-      else
-        role = Helpdesk::ROLES[:anonymous]
-      end
+#      if current_user
+#        auth = Helpdesk::Authorization.find_by_user_id(current_user.id) 
+#        role = auth ? auth.role : Helpdesk::ROLES[:customer]
+#      else
+#        role = Helpdesk::ROLES[:anonymous]
+#      end
 
+      role = current_user ? current_user.role : Helpdesk::ROLES[:anonymous]
       role[:permissions][p]
     end
     

@@ -16,10 +16,10 @@ namespace :db do
       end
     end
     
-    user = User.new(:name => 'Support', :password => 'test', :password_confirmation => 'test', :email => 'support@freshdesk.com')
+    user = User.new(:name => 'Support', :password => 'test', :password_confirmation => 'test', 
+                    :email => 'support@freshdesk.com', :role_token => 'admin')
     a = Account.create(:name => 'Test Account', :domain => 'localhost', :plan => plans.first, :user => user)
     a.update_attribute(:full_domain, 'localhost')
-    #Helpdesk::Authorization.create(:user => user, :role_token => "admin") #by Shan
     
     puts 'Changing secret in environment.rb...'
     new_secret = ActiveSupport::SecureRandom.hex(64)
