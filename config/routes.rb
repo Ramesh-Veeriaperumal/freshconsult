@@ -7,6 +7,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resource :user_session
   map.register '/register/:activation_code', :controller => 'activations', :action => 'new'
   map.activate '/activate/:id', :controller => 'activations', :action => 'create'
+  map.resources :home, :only => :index
 
   #SAAS copy starts here
   map.with_options(:conditions => {:subdomain => AppConfig['admin_subdomain']}) do |subdom|
@@ -132,7 +133,8 @@ ActionController::Routing::Routes.draw do |map|
     anonymous.resources :requests
   end
 
-  map.connect '', :controller => 'helpdesk/dashboard', :action => 'index'
+  map.root :controller => "home"
+  #map.connect '', :controller => 'helpdesk/dashboard', :action => 'index'
   
   # End routes to be included in final engine
 
