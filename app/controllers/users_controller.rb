@@ -7,7 +7,7 @@ class UsersController < ApplicationController
   #before_filter :require_user, :only => [:show, :edit, :update]
   
   def new
-    @user.role_token = 'techsupport'
+    @user.role_token = 'poweruser'
   end
   
   def create
@@ -15,8 +15,8 @@ class UsersController < ApplicationController
  
     if @user.signup!(params)
       #@user.deliver_activation_instructions! #Have moved it to signup! method in the model itself.
-      flash[:notice] = "Your account has been created. Please check your e-mail for your account activation instructions!"
-      redirect_to root_url
+      flash[:notice] = "The user has been created and activation instructions sent to #{@user.email}!"
+      redirect_to users_url
     else
       render :action => :new
     end

@@ -1,3 +1,10 @@
+<%= form.label :name, "Your nick name" %><br />
+<%= form.text_field :name %><br />
+<br />
+<label>You will be signing in with</label>
+<br />
+<label><%= "Email <strong>#{@user.email}</strong>" %></label>
+<br />
 <%= form.label :password, "Set your password" %><br />
 <%= form.password_field :password %><br />
 <br />

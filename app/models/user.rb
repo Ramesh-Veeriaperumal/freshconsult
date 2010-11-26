@@ -25,6 +25,7 @@ class User < ActiveRecord::Base
   
   def activate!(params)
     self.active = true
+    self.name = params[:user][:name]
     self.password = params[:user][:password]
     self.password_confirmation = params[:user][:password_confirmation]
     #self.openid_identifier = params[:user][:openid_identifier]
