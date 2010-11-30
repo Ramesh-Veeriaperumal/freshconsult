@@ -1,0 +1,22 @@
+<h1>Xmlreader#xmlreader</h1>
+<p>Find me in app/views/xmlreader/xmlreader.html.erb</p>
+
+<% form_for :dump, :url=>{:controller=>"xmlreader", :action=>"importxml"}, :html => { :multipart => true } do |f| -%>
+ <table">
+   <tr>
+     <td>
+      <label for="dump_file">
+        Select an xml File :
+      </label>
+     </td>
+     <td >
+       <%= f.file_field :file -%>
+     </td>
+   </tr>
+   <tr>
+     <td colspan='2'>
+       <%= submit_tag 'Submit' -%>
+     </td>
+   </tr>
+ </table>
+<% end -%>
