@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101126052229) do
+ActiveRecord::Schema.define(:version => 20101201103635) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -17,6 +17,7 @@ ActiveRecord::Schema.define(:version => 20101126052229) do
     t.datetime "updated_at"
     t.string   "full_domain"
     t.datetime "deleted_at"
+    t.string   "default_email"
   end
 
   add_index "accounts", ["full_domain"], :name => "index_accounts_on_full_domain"

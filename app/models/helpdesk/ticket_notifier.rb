@@ -42,7 +42,7 @@ protected
     media = MMS2R::Media.new(email)
 
     # Try to detect bounces and route them to the correct ticket.
-    if !ticket && (media.body =~ /From: #{Helpdesk::EMAIL[:from]}/)
+    if !ticket && (media.body =~ /From: #{ticket.account.default_email}/)
       s = media.body.match(/^Subject: (.*)/)
       subject  = s && s[1]
 
@@ -68,8 +68,8 @@ protected
   def reply_to_ticket(ticket)
     subject       Helpdesk::EMAIL[:reply_subject]  + " #{ticket.encode_display_id}"
     recipients    ticket.email
-    from          Helpdesk::EMAIL[:from]
-    headers       "Reply-to" => "#{Helpdesk::EMAIL[:from]}"
+    from          ticket.account.default_email
+    headers       "Reply-to" => "#{ticket.account.default_email}"
     sent_on       Time.now
     content_type  "text/plain"
   end
