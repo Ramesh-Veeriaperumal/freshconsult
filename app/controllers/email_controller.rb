@@ -54,7 +54,7 @@ class EmailController < ApplicationController
         if note.save
           Integer(params[:attachments]).times do |i|
             #logger.debug("attachment #{i}")
-            note.attachments.create(:content => params["attachment#{i+1}"])
+            note.attachments.create(:content => params["attachment#{i+1}"], :account_id => ticket.account_id)
           end
         end
     end
