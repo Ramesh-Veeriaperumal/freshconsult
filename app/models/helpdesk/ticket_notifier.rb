@@ -4,12 +4,12 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
 
 
   def reply(ticket, note)
-    body(:ticket => ticket, :note => note, :host => Helpdesk::HOST[RAILS_ENV.to_sym])
+    body(:ticket => ticket, :note => note, :host => ticket.account.full_domain)
     reply_to_ticket(ticket)
   end
 
   def autoreply(ticket)
-    body(:ticket => ticket, :host => Helpdesk::HOST[RAILS_ENV.to_sym])
+    body(:ticket => ticket, :host => ticket.account.full_domain)
     reply_to_ticket(ticket)
   end
   

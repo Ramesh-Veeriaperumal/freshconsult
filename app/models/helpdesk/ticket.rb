@@ -10,6 +10,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_validation_on_create :set_tokens
   before_create :set_spam
+  
+  belongs_to :account
 
   belongs_to :responder,
     :class_name => 'User'
@@ -256,7 +258,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   def populate_requester #by Shan temp
     if requester_id.nil? && !email.nil?
-      @requester = User.find_by_email(email)
+      @requester = User.find_by_email_and_account_id(email, account_id)
       if @requester.nil?
         @requester = User.new
         @requester.account_id = account_id
