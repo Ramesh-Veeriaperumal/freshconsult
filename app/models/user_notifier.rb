@@ -5,7 +5,7 @@ class UserNotifier < ActionMailer::Base
     from          Helpdesk::EMAIL[:from]
     recipients    user.email
     sent_on       Time.now
-    body          :account_activation_url => register_url(user.perishable_token, :host => Helpdesk::HOST[RAILS_ENV.to_sym])
+    body          :account_activation_url => register_url(user.perishable_token, :host => user.account.full_domain)
     headers       "Reply-to" => "#{Helpdesk::EMAIL[:from]}"
     content_type  "text/plain"
   end
@@ -15,6 +15,6 @@ class UserNotifier < ActionMailer::Base
     from          Helpdesk::EMAIL[:from]
     recipients    user.email
     sent_on       Time.now
-    body          :root_url => root_url(:host => Helpdesk::HOST[RAILS_ENV.to_sym])
+    body          :root_url => root_url(:host => user.account.full_domain)
   end
 end
