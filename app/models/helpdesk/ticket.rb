@@ -209,9 +209,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
     subject
   end
 
-#  def encode_id_token
-#    "[#{id_token}]"
-#  end
+  def encode_display_id
+    "[#{display_id}]"
+  end
 
   def train(category)
     classifier.untrain(spam ? :spam : :ham, spam_text) if trained

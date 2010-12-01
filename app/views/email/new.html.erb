@@ -1,4 +1,19 @@
 <% form_tag '/email' do -%>
+
+  <label for="from">From email</label>
+  <input id="from" name="from" size="30" type="text" />
+  
+  <label for="to">To email</label>
+  <input id="to" name="to" size="30" type="text" />
+  
+  <label for="attachments">Attachments</label>
+  <input id="attachments" name="attachments" size="30" type="text" />
+  
+  <label for="subject">Subject</label>
+  <input id="subject" name="subject" size="30" type="text" />
+  
+  <label for="text">How may we help you?</label>
+  <textarea cols="40" id="text" name="text" rows="20"></textarea>
 	
   <div><%= submit_tag 'Save' %></div>
 <% end -%>

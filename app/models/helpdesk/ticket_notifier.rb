@@ -10,10 +10,9 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
 
   def autoreply(ticket)
     body(:ticket => ticket, :host => Helpdesk::HOST[RAILS_ENV.to_sym])
-    #reply_to_ticket(ticket) #by Shan temp
+    reply_to_ticket(ticket)
   end
   
-
   def receive(email)
     puts "Inside RECEIVE MAIL"
     retried = false
@@ -67,7 +66,7 @@ protected
   end
 
   def reply_to_ticket(ticket)
-    subject       Helpdesk::EMAIL[:reply_subject]  + " #{ticket.encode_id_token}"
+    subject       Helpdesk::EMAIL[:reply_subject]  + " #{ticket.encode_display_id}"
     recipients    ticket.email
     from          Helpdesk::EMAIL[:from]
     headers       "Reply-to" => "#{Helpdesk::EMAIL[:from]}"
