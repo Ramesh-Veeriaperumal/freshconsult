@@ -212,7 +212,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def encode_display_id
-    "[#{display_id}]"
+    "[##{display_id}]"
   end
 
   def train(category)
@@ -224,7 +224,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
     
   def self.extract_id_token(text)
-    pieces = text.match(/\[([a-z0-9]{32})\]/)
+    pieces = text.match(/\[#([0-9]*)\]/) #by Shan changed to just numeric
     pieces && pieces[1]
   end
 

@@ -9,9 +9,16 @@ class EmailController < ApplicationController
     to_email = parse_email params[:to]
     account = Account.find_by_full_domain(to_email[:domain])
     if !account.nil?
-      ticket = create_ticket(account, from_email, to_email)
-      add_email_to_ticket(ticket)
-      Helpdesk::TicketNotifier.deliver_autoreply(ticket) if !ticket.spam
+      display_id = Helpdesk::Ticket.extract_id_token(params[:subject])
+      ticket = Helpdesk::Ticket.find_by_account_id_and_display_id(account.id, display_id) if display_id
+      
+      if ticket
+        add_email_to_ticket(ticket, params[:text])
+      else
+        ticket = create_ticket(account, from_email, to_email)
+        add_email_to_ticket(ticket)
+        Helpdesk::TicketNotifier.deliver_autoreply(ticket) if !ticket.spam
+      end
     end
   end
   
@@ -43,11 +50,11 @@ class EmailController < ApplicationController
       ticket
     end
 
-    def add_email_to_ticket(ticket)
+    def add_email_to_ticket(ticket, mesg=nil)
         note = ticket.notes.build(
           :private => false,
           :incoming => true,
-          :body => ticket.description,
+          :body => mesg.nil? ? ticket.description : mesg,
           :source => 0,
           :account_id => ticket.account_id
         )

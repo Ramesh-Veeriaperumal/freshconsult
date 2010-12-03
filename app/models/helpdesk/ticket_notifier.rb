@@ -67,7 +67,7 @@ protected
 
   def reply_to_ticket(ticket)
     subject       Helpdesk::EMAIL[:reply_subject]  + " #{ticket.encode_display_id}"
-    recipients    ticket.email
+    recipients    ticket.requester.email
     from          ticket.account.default_email
     headers       "Reply-to" => "#{ticket.account.default_email}"
     sent_on       Time.now
