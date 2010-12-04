@@ -5,8 +5,10 @@ class Helpdesk::Attachment < ActiveRecord::Base
   belongs_to :attachable, :polymorphic => true
 
   has_attached_file :content, 
-    :path => ":rails_root/data/helpdesk/attachments/:id/:filename",
+    :storage => :s3,
+    :s3_credentials => "#{RAILS_ROOT}/config/s3.yml",
+    :path => "/data/helpdesk/attachments/:id/:filename",
     :url => "/:class/:id"
-
+    #:bucket => 'fdesk-attachments'
 
 end

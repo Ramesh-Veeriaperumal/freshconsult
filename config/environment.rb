@@ -22,15 +22,15 @@ Rails::Initializer.run do |config|
 
   # Specify gems that this application depends on. 
   # They can then be installed with "rake gems:install" on new installations.
-  config.gem "mms2r"
+  config.gem "mms2r" #3.2.0
   config.gem "classifier"
   config.gem "stemmer"
-  config.gem 'RedCloth'
+  config.gem 'RedCloth' #4.2.3
   config.gem "lockfile" #from SAAS kit
-  config.gem "authlogic"
+  config.gem "authlogic" #2.1.6
   # config.gem "bj"
   # config.gem "hpricot", :version => '0.6', :source => "http://code.whytheluckystiff.net"
-  # config.gem "aws-s3", :lib => "aws/s3"
+  config.gem "aws-s3", :lib => "aws/s3" #0.6.2
 
   # Only load the plugins named here, in the order given. By default, all plugins 
   # in vendor/plugins are loaded in alphabetical order.

@@ -1,0 +1,16 @@
+common: &common
+  access_key_id: AKIAIUUHTCVPIEANUJSQ
+  secret_access_key: 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
+  bucket: fdesk-attachments
+
+development:
+  <<: *common
+  #bucket: development_bucket
+
+test:
+  <<: *common
+  #bucket: test_bucket
+
+production:
+  <<: *common
+  #bucket: production_bucket

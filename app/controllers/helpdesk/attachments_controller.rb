@@ -6,11 +6,14 @@ class Helpdesk::AttachmentsController < ApplicationController
   before_filter :check_download_permission, :only => [:show]
 
   def show
-    send_file(
-      @attachment.content.path, 
-      :type => @attachment.content_content_type,
-      :filename => @attachment.content_file_name
-    )
+      #    send_file(
+      #      @attachment.content.path, 
+      #      :type => @attachment.content_content_type,
+      #      :filename => @attachment.content_file_name
+      #    )
+      
+      #redirect_to(AWS::S3::S3Object.url_for(@attachment.content.path, @attachment.content.bucket_name, :expires_in => 10.seconds))
+      redirect_to @attachment.content.expiring_url(60) #by Shan tem, need to check this '60'
   end
 
   protected
