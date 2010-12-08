@@ -132,8 +132,7 @@ protected
 
 
   def process_item
-    
-    puts "inside process_item"
+  
     # Tickets created by staff have @item.source == 0
     if @item.source == 0
       @item.spam = false
