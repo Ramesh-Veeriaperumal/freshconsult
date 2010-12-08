@@ -58,6 +58,13 @@
           <%= f.collection_select :responder_id, Helpdesk::Authorization.find_all_by_permission(:manage_tickets), :user_id, :name, {:include_blank => 'Nobody'} %>
         </td>
       </tr>
+	  <tr>
+	  	<td>
+	  		 <%= f.label :priority, "Priority" %>
+          	 <%= f.select :priority, Helpdesk::Ticket::PRIORITY_OPTIONS %>
+	  		
+	  	</td>
+	  </tr>
     </table>
 
     <%= f.label :description, "Description" %>

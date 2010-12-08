@@ -1,4 +1,7 @@
 class UserSessionsController < ApplicationController
+  
+
+  
   skip_before_filter :require_user, :except => :destroy
   
   def new
@@ -21,6 +24,10 @@ class UserSessionsController < ApplicationController
     flash[:notice] = "Logout successful!"
     redirect_to login_url
   end
+  
+  
+  
+
   
   private
 

@@ -9,6 +9,7 @@ module SupportTicketControllerMethods
   end
 
   def new
+    puts "neww"
     @ticket = Helpdesk::Ticket.new 
     if current_user
       #@ticket.name = current_user.name if current_user.respond_to?(:name)

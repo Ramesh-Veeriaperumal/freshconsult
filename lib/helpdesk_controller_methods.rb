@@ -171,7 +171,7 @@ protected
     end
   end
 
-  def item_url
+  def item_url 
     @item
   end
 

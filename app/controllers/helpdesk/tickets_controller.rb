@@ -1,6 +1,7 @@
 class Helpdesk::TicketsController < ApplicationController
   layout 'helpdesk/default'
 
+
   before_filter { |c| c.requires_permission :manage_tickets }
 
   include HelpdeskControllerMethods
@@ -8,6 +9,7 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :load_multiple_items, :only => [:destroy, :restore, :spam, :unspam, :assign]
 
   def index
+   
 
     @items = Helpdesk::Ticket.filter(current_account, 
       params[:filters] || [:open, :unassigned],
@@ -43,7 +45,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def update
-
+    
     old_item = @item.clone
     if @item.update_attributes(params[nscname])
 
@@ -63,9 +65,11 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def assign
+   
     user = params[:responder_id] ? User.find(params[:responder_id]) : current_user
 
     @items.each do |item|
+      
       message = "#{item.responder ? "Reassigned" : "Assigned"} to #{user.name}"
       item.responder = user
       item.train(:ham)
@@ -82,7 +86,6 @@ class Helpdesk::TicketsController < ApplicationController
       redirect_to :back
     end
   end
-
   def spam
     @items.each do |item|
       item.train(:spam)
@@ -122,11 +125,15 @@ class Helpdesk::TicketsController < ApplicationController
 protected
 
   def item_url
+   
     return new_helpdesk_ticket_path if params[:save_and_create]
     @item
   end
 
+
   def process_item
+    
+    puts "inside process_item"
     # Tickets created by staff have @item.source == 0
     if @item.source == 0
       @item.spam = false
