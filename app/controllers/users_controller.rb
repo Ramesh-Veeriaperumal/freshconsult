@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-
+  layout 'helpdesk/layout'
   include ModelControllerMethods
 
   before_filter :check_user_limit, :only => :create
@@ -20,6 +20,10 @@ class UsersController < ApplicationController
     else
       render :action => :new
     end
+  end
+  
+  def show
+    @user = User.find(params[:id])
   end
   
   protected
