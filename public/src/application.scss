@@ -1,0 +1,667 @@
+// This import applies a global reset to any page that imports this stylesheet.
+@import "base";
+
+body{
+  	@include blueprint-typography(true);
+  	background:lighten($base, 10%);
+} 
+
+.container{  
+	overflow:visible;
+}
+ 
+.content{
+	position:relative;	
+	border:1px solid #acc0ac; 
+	border-width:0px 1px 0px 1px;
+}
+ 
+#inner {    
+	position:relative;
+	z-index:1; 
+	background-color:#ffffff;
+	overflow:hidden;
+	margin:0 0px;
+	padding-right:$sidebar-width; /* The width of the rail */ 
+	.leftcontent{
+		background-color:#ffffff;
+		width:100%;
+		border-right:$sidebar-width solid #f2f8fc; /* The width and color of the rail */
+		margin-right:-$sidebar-width; /* Hat tip to Ryan Brill */
+		float:left;
+		
+		padding-bottom:100px;
+	}
+	.sidebar{ 
+		background-color:#f2f8fc;
+		width:$sidebar-width;
+		float:left;
+		margin-right:-$sidebar-width;
+	} 
+}
+
+* html #inner{
+	height:1%; /* So IE plays nice */
+}
+	
+.content div.corners{ 
+	left:0px;
+	top:16px;
+	height:60px; 
+	width:27px;
+	z-index:10;
+} 
+
+/* Header styles */
+.header {  
+	@include clearfix;	
+	padding:12px 0px 0px 0px;
+}
+
+a.logo{	
+	@include float-left;
+	padding-bottom:6px; 	
+}
+
+.header_links{
+	@include float-right; 	
+	text-align:right;	
+	position:relative;
+	z-index:0;	
+	strong{
+		color:#6699cc;	
+	}	
+	ul{
+		@include inline-block-list(0); 
+		li{
+			a{			
+				@include link-colors(#999999, #333366);			
+				background-image:url("../images/footer_seperator.gif");
+				background-repeat:no-repeat;
+				background-position:left 3px;
+				padding-left:8px;
+				font-size:95%;			
+				text-decoration:none;
+			}			
+		}
+		li.first a{
+			background-image:none;
+		}
+	}
+} 
+
+/* Header Tab styles */
+.header_tabs{ 
+	position:relative; 
+	clear:both; 
+	width:100%;
+	ul.tabs{
+		@include inline-block-list; 
+		li{
+			float:left;
+			@include min-width(90px);
+			a{
+				text-decoration:none; 
+				color:#ffffff;
+				padding:5px 5px 5px 5px;
+				text-transform:uppercase;
+				
+				font-size:0.9em;
+				
+				font-weight:bold;
+				text-align:center;				
+				display:block;							
+				position:relative;
+				@include border-top-radius(5px); 
+				@include text-shadow(rgba(0,0,0,0.5), 1px, 1px, 3px); 
+				
+				border:1px solid #73a173;
+				border-color-top:#afcaaf;
+				background-color:#83af83;
+				
+				span{
+					  position:absolute; 
+					  width:100%;
+					  left:0;					   
+					  top:0px;					   
+					  height:100%;
+					  border-top:1px solid #fcfcfc;					   
+					  @include border-top-radius(4px); 
+					  @include opacity(0.65);
+					  background-color:rgba(255,255,255,0.10);					  					   
+					  background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(rgba(255,255,255,0.55)), to(rgba(255,255,255,0)));					   
+					  background-image:-moz-linear-gradient(top,bottom,from(rgba(255,255,255,0.55)), to(rgba(255,255,255,0)));  
+					}	
+			}
+		}
+		li.active a, li a:hover{
+				border-color:#5898c7;
+				border-color-top:darken($select, 20%);
+				background-color:$select;	
+				border-bottom:0px;
+				padding-bottom:6px;  
+			
+		}
+	}
+}
+
+.header_seperator{
+	height:9px;
+	background-color:#5fa5d8;
+	border:1px solid #5898c7;
+	border-width:0px 1px 0px 1px;	
+}
+ 
+ 
+/* Button and Nav style */
+.rightHeadElements{
+	position:absolute;
+	right:-3px;
+	bottom:4px; 
+	z-index:2;
+	@include inline-block-list; 
+	li{
+		@include clearfix;
+	}
+}
+
+a.new_ticket{ 
+	@include anchor-button(false); 
+	padding-left:25px;
+	margin-right:8px; 
+	color:#555555 !important;  
+	position:relative;   
+	top:-1px;
+	font-size:0.95em;
+	img{
+		position:absolute;
+		left:5px;
+		top:4px;	
+	}
+}
+
+.search{
+	position:relative;
+ 	label.searchTxt{  
+		@include min-width(200px);
+		border:1px solid #cfcfcf;
+		background:#fff; 
+		float:left;
+		height:23px;
+		padding-right:10px;
+		margin-right:3px;
+		position:relative;
+		top:7px;
+		@include border-radius(2em); 
+		input{		
+			color:#999999;
+			border:0px;
+			font-size:1.2em;
+			padding:5px 10px;
+			background:0px;		
+		}
+	}
+	.searchbt{
+		float:left; 
+		@include button-button(false);
+	}
+}
+
+
+.ui-bt-grey{
+	@include button-colors(#878787, #ffffff, #dadada, #d8d8d8);
+	background: #ffffff; /* old browsers */ 
+	background: -moz-linear-gradient(top, #ffffff 0%, #f6f6f6 47%, #ededed 100%); /* firefox */  
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(47%,#f6f6f6), color-stop(100%,#ededed)); /* webkit */ 
+	@include border-radius(2em); 
+}
+.ui-bt-grey:hover{
+	background: #606c88; /* old browsers */
+	background: -moz-linear-gradient(top, #606c88 0%, #3f4c6b 100%); /* firefox */	
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#606c88), color-stop(100%,#3f4c6b)); /* webkit */	
+	border-color:#606c88;
+	color:#ffffff !important;	 
+} 
+  
+
+
+/* Summary Bar */
+#summaryBar{
+	 border:2px solid #d7e8d7;
+	 margin:16px 12px 11px 0px;
+	 background-color:#fffff1;
+	 position:relative;
+	 height:56px;
+}
+
+ul.summary{
+	 @include inline-block-list;
+	 position:relative;
+	 .summary_arrow{
+		position:absolute;
+		right:-56px;
+		top:0px;
+		border:28px solid #fffff1;
+		z-index:0;
+		border-left-color:$base;
+		height:0; width:0;
+	}	 
+	li.title{
+		font-size:11px;
+		text-transform:uppercase;
+		font-weight:bold;
+		color:#666666;	
+		margin:0px 38px 0px 0px;
+		background:$base;	
+		display:inline-block;
+		height:35px;
+		padding:22px 0px 0px 16px;	
+		border:0px;
+		position:relative;
+	} 
+	 
+	li{ 
+		padding:0px;
+		margin:4px 5px 0px 5px; 	
+		h4{
+			color:#527aaa;
+			font-size:3.2em;	
+			font-weight:bold;
+			display:inline-block;	 
+			position:relative;
+			top:-8px;
+		}
+		p{
+			display:inline-block; 
+			font-size:0.95em;
+			color:#555555;
+			position:relative;
+			top:-10px;
+		}
+		a{
+			text-decoration:none; 
+			float:left; 
+			padding-right:10px;
+			height:35px;
+			position:relative;
+			border-right:1px solid #cbcbbf;
+		}	
+	}	
+	li.last-child a{
+		border:0px;
+		
+	}		 
+	li a:hover h4, li a:hover p{
+		color:#7e7ebd;
+	} 
+}  
+
+.rightSubContainers{
+	margin:16px 10px;
+	background:#f7fbfd;
+	padding:10px 12px 10px 12px;
+	border:1px solid #ced9df;
+	h3.title{
+ 		color:#666666;
+		font-size:1.2em;
+		margin-bottom:5px;
+	}
+}
+
+
+.reminders{
+	margin:16px 10px;
+	background:#ffffe5;
+	border:1px solid #eaeadc;
+	padding:12px 12px;
+	position:relative;
+	
+	h3.title{
+		color:#916c48;
+		font-size:1.2em;
+		margin-bottom:5px;
+	} 
+	ul{
+		padding:0px 5px;
+		list-style:none;	
+		li{
+			padding:6px 10px 0px 20px;
+			margin:0px;
+			color:#454545;
+			position:relative;
+			input{
+				position:absolute;
+				left:-5px;
+				top:6px;
+			}	
+			label{
+				font-size:1em;
+			}
+			.reminder{
+				font-weight:normal;
+				color:666;
+			}
+			.checked{
+				text-decoration:line-through;
+			}
+		} 
+	}
+	.todo_button{ 
+			background:#fefedd;
+			border:1px dashed #e7e8ae;
+			display:block;
+			color:#916c48;  
+			padding:5px 5px 5px 20px;
+			text-decoration:none;
+	}
+	.corner{
+			background:url("../images/corners_reminder.jpg") no-repeat;
+			width:43px; height:26px;
+			position:absolute;
+			top:-1px;
+			right:-18px; 
+	}
+}
+
+.ui-list_with_icon{ 
+	padding-top:5px;
+	list-style:none;
+	margin:0px;
+	padding:0px; 
+	li{
+		background:url('../images/request_nav_seperator.gif') left 8px no-repeat;
+		padding:4px 0px 4px 12px; 
+		color:#41658a;
+		position:relative;
+	}
+	li img{
+		position:absolute;
+		left:0px; top:4px;
+	}
+	li a{
+		color:#336699;
+	}
+	li a:hover{
+		color:#663366;
+		background:#efefef;
+	}
+}
+
+.user_name{ font-weight:bold; color:#527eaa; }
+.ticket_title{ font-weight:bold; color:#527eaa; }
+
+.pageSeperator{
+	border-top:1px solid lighten($base, 4%);
+	border-bottom:1px solid lighten($base, 8%);	
+	margin:0px 12px 0px 20px;
+}
+		
+.pageContent{
+	margin:10px 12px 22px 20px;
+	padding:5px 0px;
+	h3.content_title{
+		color:#666666;
+		font-size:1.35em;
+		font-weight:normal;
+		padding:0px 0px 5px 0px;			
+		margin:0px;
+	}
+	ul{ 
+		padding:0px;			 
+		li{
+			padding:8px 0px 0px 0px; 
+			border-bottom:1px solid #e4f4e4;
+			display:block; 
+			color:#666;
+			@include clearfix;
+		}
+		
+		li img{
+			float:left;
+			clear:left;
+			margin-right:12px;
+		}
+		
+		li p{ margin-bottom:3px;}
+		li p a{ text-decoration:none; color:#3e71a4;}
+		li p a.bold{ font-weight:bold;}		
+		
+		li em.activity_time{
+			display:block;
+			color:#a6a6a6;
+			font-style:normal;
+			padding-bottom:8px;
+		}
+	}
+}
+
+/* Making the sticky footer align to the middle and having the same width of the container */
+#footer{
+	min-width: 950px;
+	width: $blueprint-liquid-container-width;
+	margin: 0 auto; 
+	*zoom: 1; 
+	text-align:left;	
+	position:relative;
+}
+
+/* Footer Styles */
+
+.footer{
+	position:relative;
+	background-color:$base;
+	color:#666666; 
+	border-bottom: 1px solid desaturate(darken($base, 10%), 10%); 
+	.footerinfo{ 
+		padding:10px 20px;
+		position:relative;
+		z-index:1;
+		ul{
+			float:right;
+			li.first{
+				list-style:none;
+			}	
+			 li{
+				float:left;
+				padding:0px 0px 0px 10px;
+				list-style-image:url("../images/footer_seperator.gif");
+				list-style-position:inside;
+				a{
+					color:#546065;
+					text-decoration:none;
+				}
+				a:hover{
+					color:#41658a;	
+				}
+			}
+		}
+	} 
+} 
+
+/* Sharp Fold Corners */
+.corners{ 
+	position:absolute; 
+	z-index:0; 
+	width:100%;  
+	height:100%; 
+	left:0px; 
+	top:0px; 
+	*{
+		position:absolute;
+		width:9px; 
+	}
+	span.ltExt, span.rtExt{
+		height:100%;
+		top:0px;
+		background-color:$base;		
+		border-color: darken($base, 1%);
+		border-style:solid;
+		border-bottom: 1px solid desaturate(darken($base, 10%), 10%); 
+	}
+	span.ltExt{
+		left:-11px;
+		border-left-width:2px;	
+	}
+	span.rtExt{
+		right:-11px; 
+		border-right-width:2px;
+	}
+	span.ltSlant, span.rtSlant{ 
+		width:0;
+		top:-12px;  
+	}
+	span.ltSlant{
+		left:-11px;
+	} 
+	span.rtSlant{
+		right:-11px;
+	}  
+} 
+
+.ltSlant, .rtSlant{
+	  width: 0;
+	  height: 0;
+	  position: absolute;  
+	  overflow: hidden; /* IE fix */
+	  border-bottom: 11px solid desaturate(darken($base, 20%), 20%); 
+}
+
+.ltSlant{
+	  border-left: 11px solid #FFF; /* IE fix */
+	  border-left: 11px solid rgba(0,0,0,0); 
+}
+.rtSlant{	 
+	  border-right: 11px solid #FFF; /* IE fix */
+	  border-right: 11px solid rgba(0,0,0,0); 
+}
+
+.ltShadow, .rtShadow{
+	top:-10px;
+	width:25px;height:476px;
+	z-index:0;	
+	position:absolute;	
+}
+.ltShadow{  	
+	left:0;
+	margin-left:-25px; 
+	background:url("../images/shadow_lt.png") no-repeat;	
+}
+.rtShadow{  
+	right:0; 
+	margin-right:-25px;  	 
+	background:url("../images/shadow_rt.png") no-repeat right; 
+} 
+
+/* generic form styles */
+
+label{
+    display: block;
+    font-size: 0.80em;
+    color: #666;
+}
+
+input[type=text], select, input[type=file]{
+    margin: 0;
+    padding: 0;
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #333;
+    padding: 2px;
+    margin-bottom: 5px;
+    margin-top: 0;
+    width: 96%;
+}
+
+select {
+    padding: 1px;
+    width: 100%;
+}
+
+textarea {
+    padding: 5px;
+    line-height: 1.3em;
+    height: 100px;
+    width: 98%;
+}
+
+form table {
+    width: 100%;
+}
+
+form.edit_helpdesk_ticket table td, form.new_helpdesk_ticket table td{
+	padding:8px 0px;    
+}
+
+form.new_helpdesk_ticket{
+	background:lighten($base, 11%);
+	@include border-radius(1em);
+	padding:10px 20px 20px 10px;
+	margin:5px 0px; 
+	label{
+		font-size:1.0em;
+		color:#333333;
+		font-weight:normal;		 
+		padding:0px 0px 3px 0px;
+		height:auto;
+		margin-top:6px;
+	}
+	input.text, select, textarea{
+		font-size:1.0em;
+		color:#444;
+		background:#fefee6; 
+		padding:3px;
+		font-weight:normal; 
+		
+	}
+	input.text:focus, select:focus, textarea:focus{
+		background:#fff;
+	}
+	.seperator{
+		border-top:1px solid #999;
+		margin:6px 0px;
+	}
+	select{
+		width:auto; 
+	}
+}
+
+/* Page Style */
+
+.viewActions{
+	border:1px solid #dfdfdf;	
+	background:#efefef;
+	@include border-radius(0.4em);
+	@include clearfix;
+	*{
+		@include inline-block;
+	} 
+}
+
+#pages{
+	.tickets, .tickets-expanded{
+		margin-top:10px;
+		border:1px solid #efefef;
+		td{
+			vertical-align:top;
+		}
+		.stripe{
+			background:#efefef;
+		}
+		.name h3{
+			font-size:1.1em;
+			padding:4px 0px 0px 0px;
+			margin-bottom:4px;
+		} 
+	}	 
+}
+.pageContent{
+	.toolbar{
+		ul{
+			border:1px solid red;
+			@include inline-block-list(0);
+		}
+	}
+}
+
+
+
