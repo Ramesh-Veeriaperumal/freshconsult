@@ -9,7 +9,11 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
+<<<<<<< HEAD
 ActiveRecord::Schema.define(:version => 20101209112817) do
+=======
+ActiveRecord::Schema.define(:version => 20101208150822) do
+>>>>>>> shihab
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -133,6 +137,17 @@ ActiveRecord::Schema.define(:version => 20101209112817) do
 
   add_index "helpdesk_reminders", ["ticket_id"], :name => "index_helpdesk_reminders_on_ticket_id"
   add_index "helpdesk_reminders", ["user_id"], :name => "index_helpdesk_reminders_on_user_id"
+
+  create_table "helpdesk_sla_details", :force => true do |t|
+    t.string   "name"
+    t.integer  "account_id"
+    t.integer  "priority"
+    t.integer  "response_time"
+    t.integer  "resolution_time"
+    t.integer  "escalateto"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "helpdesk_subscriptions", :force => true do |t|
     t.integer  "user_id"
