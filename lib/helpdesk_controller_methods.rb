@@ -197,7 +197,7 @@ protected
     history = session[:helpdesk_history] || []
 
     if not history.include? page
-      history.shift if history.size > 2
+      history.shift if history.size > 4
       history << page
       session[:helpdesk_history] = history
     end
