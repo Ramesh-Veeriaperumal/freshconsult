@@ -1,0 +1,17 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  name: MyString
+  account_id: 1
+  priority: 1
+  response_time: 1
+  resolution_time: 1
+  escalateto: 1
+
+two:
+  name: MyString
+  account_id: 1
+  priority: 1
+  response_time: 1
+  resolution_time: 1
+  escalateto: 1
