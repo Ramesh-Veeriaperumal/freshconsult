@@ -1,5 +1,7 @@
 class Helpdesk::DashboardController < ApplicationController
   layout 'helpdesk/layout'
+  
+  helper 'helpdesk/tickets' #by Shan temp
 
   before_filter { |c| c.requires_permission :manage_tickets }
 

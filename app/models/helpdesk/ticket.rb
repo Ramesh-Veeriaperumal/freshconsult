@@ -152,11 +152,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
     STATUS_NAMES_BY_KEY[status]
   end
 
-  def create_status_note(account, message, user = nil)
+  def create_status_note(account, message, user = nil, description = nil)
     notes.create(
       :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['status'],
       :user => user,
       :body => message,
+      :description => description,
       :account_id => account.id
     )
   end

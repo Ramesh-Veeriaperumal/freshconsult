@@ -50,11 +50,11 @@ class Helpdesk::TicketsController < ApplicationController
     if @item.update_attributes(params[nscname])
 
       if old_item.responder_id != @item.responder_id
-        @item.create_status_note(current_account, "#{old_item.responder ? "Reassigned" : "Assigned"} to #{@item.responder ? @item.responder.name : "Nobody"}", current_user)
+        @item.create_status_note(current_account, "#{old_item.responder ? "Reassigned" : "Assigned"} to #{@item.responder ? @item.responder.name : "Nobody"}", current_user, "#{old_item.responder ? "reassigned" : "assigned"} the ticket")
       end
 
       if old_item.status != @item.status
-        @item.create_status_note(current_account, "Status changed to \"#{@item.status_name.titleize}\"", current_user)
+        @item.create_status_note(current_account, "Status changed to \"#{@item.status_name.titleize}\"", current_user, "changed the status to \"#{@item.status_name.titleize}\" on")
       end
 
       flash[:notice] = "The #{cname.humanize.downcase} has been updated"
@@ -74,7 +74,7 @@ class Helpdesk::TicketsController < ApplicationController
       item.responder = user
       item.train(:ham)
       item.save
-      item.create_status_note(current_account, message, current_user)
+      item.create_status_note(current_account, message, current_user, "#{item.responder ? "reassigned" : "assigned"} the ticket")
     end
 
     flash[:notice] = render_to_string(
@@ -143,7 +143,8 @@ protected
         :incoming => false,
         :private => true,
         :source => 2,
-        :body => (!@item.description || @item.description.empty?) ? "Created by staff at #{Time.now}" : @item.description
+        :body => (!@item.description || @item.description.empty?) ? "Created by staff at #{Time.now}" : @item.description,
+        :description => "opened the ticket"
       )
 
       n.save!

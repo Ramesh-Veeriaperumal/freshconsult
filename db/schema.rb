@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101208094936) do
+ActiveRecord::Schema.define(:version => 20101209112817) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -116,6 +116,7 @@ ActiveRecord::Schema.define(:version => 20101208094936) do
     t.integer  "notable_id"
     t.string   "notable_type"
     t.integer  "account_id"
+    t.text     "description"
   end
 
   add_index "helpdesk_notes", ["notable_id"], :name => "index_helpdesk_notes_on_notable_id"
