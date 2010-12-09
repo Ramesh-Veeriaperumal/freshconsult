@@ -1,49 +1,10 @@
-<td class="status">
-  <% if ticket_note == ticket_note.notable.notes.first && !ticket_note.notable.responder %>
-    <div class="negative new">new</div>
-  <% elsif ticket_note.status? %>
-    <div class="negative status_label">status</div>
-  <% elsif ticket_note.incoming %>
-      <div class="negative incoming_label">in</div>
-  <% elsif ticket_note.private %>
-    <div class="negative note_label">note</div>
-  <% else %>
-    <div class="negative outgoing_label">out</div>
-  <% end %>
-  <div class="negative parent_type_label">ticket</div>
-</td>
-
-<td class="name">
-    <ul class="tags">
-      <%= ticket_note.notable.tags.map { |t| content_tag(:li, link_to(h(t.name), t)) }.join %>
-    </ul>
-    <h3>
-
-      <%= link_to(h(ticket_note.notable.subject) + " (##{ticket_note.notable.display_id})", ticket_note.notable) %>
-      <span class="subtitle">(<%= distance_of_time_in_words_to_now(ticket_note.created_at) %> ago)</span>
-    </h3>
-
-    <div class="note-body">
-      <blockquote>
-        <%= simple_format(email_before_quoted(strip_tags(ticket_note.body))) %>
-      </blockquote>
-
-      <% if email_quoted?(ticket_note.body) %>
-        <%= link_to_function("Toggle Quoted", "$('quoted-#{ ticket_note.display_id }').toggle()", :class => 'toggle-quoted') %>
-
-        <blockquote id="quoted-<%= ticket_note.display_id %>" style="display:none">
-          <%= simple_format(email_after_quoted(strip_tags(ticket_note.body))) %>
-        </blockquote>
-      <% end %>
-    </div>
-</td>
-
-<td class="assign">
-    <% if ticket_note == ticket_note.notable.notes.first && (ticket_note.notable.freshness == :new) %>
-      <button class="accept-button" action="<%= assign_helpdesk_ticket_path(ticket_note.notable) %>">Take It</button> 
-    <% else %>
-      <% if ticket_note.notable.responder %>
-        <span>Assigned to <%= ticket_note.notable.responder.name %></span>
-      <% end %>
-    <% end %>
-</td>
+ <p>
+     <img src="/images/people/helm_pic4.png" width="39px" height="39px" /> 
+	 <%= link_to(h(ticket_note.user.name), ticket_note.user, :class => 'user_name') %>
+     assigned a  
+	 <%= link_to("Ticket (##{ticket_note.notable.display_id})", ticket_note.notable, :class => 'ticket_number') %>
+	 <%= link_to(h(ticket_note.notable.subject), ticket_note.notable, :class => 'ticket_title') %>
+    
+ </p>
+ <em class="activity_time"><%= distance_of_time_in_words_to_now(ticket_note.created_at) %> ago</em>
+  

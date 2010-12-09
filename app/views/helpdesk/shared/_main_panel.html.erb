@@ -1,13 +1,13 @@
 
-<div class="summary">
-  <div class="actions">
+<div class="pageContent">
+  <!--div class="actions">
     <%= yield :main_panel_actions %>
-  </div>
+  </div-->
 
-  <h2><%= yield :main_panel_title %></h2>
+  <h3 class="content_title"><%= yield :main_panel_title %></h3>
   <%= yield :main_panel_summary %>
 
-</div>
+
 
 <div class="toolbar" id="toolbar">
   <%= yield :main_panel_toolbar %>
@@ -15,7 +15,7 @@
 
 <div class="clear"></div>
 
-<%= content_tag('div', yield(:main_panel_selected_toolbar), :id => 'selection-toolbar', :class => "toolbar clearfix", :style => "display:none") if yield(:main_panel_selected_toolbar) %>
+<%= content_tag('div', yield(:main_panel_selected_toolbar), :id => 'selection-toolbar', :class => "toolbar clearfix") if yield(:main_panel_selected_toolbar) %>
 
 <div class="full">
   <%= yield :main_panel_content %>
@@ -23,3 +23,4 @@
 
 
 
+</div>

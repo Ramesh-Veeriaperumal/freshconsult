@@ -9,19 +9,54 @@
   <% end %>
 <% end %>
 
-
+<% content_for :efx do %>
+	<div class="corners"> 
+	     <span class="ltSlant"></span>									
+	     <span class="ltExt"></span> 
+	</div>
+<% end %>
 
 <% content_for :sidebar do %>
-  <%= render :partial => '/helpdesk/shared/tag_search_navigate' %>
-
+  <!--%= render :partial => '/helpdesk/shared/tag_search_navigate' %-->  
   <%= render :partial => '/helpdesk/shared/reminders', :locals => {
     :parent => false,
     :reminders => current_user.reminders,
-    :reminder_title => "My Reminders"} %>
+    :reminder_title => "ToDo"} %>
+  
+  <%= render :partial => '/helpdesk/shared/history' %>
 <% end %>
 
+	
+	<ul id="summaryBar" class="summary">
+      <li class="title">
+          Summary<span class="summary_arrow"></span>
+      </li>
+      <li>
+      	 <a href="#"><h4>0</h4>
+		 	<p>Overdue<br/>Tickets</p>
+		</a>
+      </li>
+      <li>
+          <a href="/helpdesk/tickets/filter/open/responded_by"><h4>0</h4>
+              <p>Open<br/>Tickets</p>
+          </a>
+      </li>
+      <li>
+          <a href="#"><h4>0</h4>
+		  	<p>Tickets<br/>Due Today</p>
+		  </a>
+      </li>
+      <li class="last-child">
+          <a href="/helpdesk/tickets/filter/open/unassigned"><h4>0</h4>
+		  	<p>Unassigned<br/>Tickets</p>
+		  </a>
+      </li>
+  </ul>
+  
+  <div class="pageSeperator"></div>
+
 <% content_for :main_panel_title do %>
-  Latest Activity
+  Recent Activity
 <% end %>
 
 <% content_for :main_panel_actions do %>
@@ -39,33 +74,27 @@
     We couldn't use the button_to helper because it resulted in a 
     form within a form.
   %>
-  <%= form_tag "", :method => :put, :style=>'display: none', :id => 'accept-form' do end %>
-
-  <div id="pages">
-    <table class="tickets-expanded">
+  <%= form_tag "", :method => :put, :style=>'display: none', :id => 'accept-form' do end %>  
+   <!--div id="pages">
+    <table class="tickets-expanded"-->
+	<ul id="pages">
       <% @items.each_with_index do |item, i| %>
-        <tr class="<%= cycle('stripe', '') %>">
-          <%= render(:partial => "ticket_note", :object => item) if item.notable.is_a? Helpdesk::Ticket %>
-          <%= render(:partial => "issue_note", :object => item) if item.notable.is_a? Helpdesk::Issue %>
-        </tr>
+        <li class="<%= cycle('stripe', '') %>">
+          <%= render(:partial => "ticket_note", :object => item) if item.notable.is_a? Helpdesk::Ticket %> 
+        </li>
       <% end %>
-    </table>
-  </div>
+	 </ul>
+    <!--/table>
+  </div-->
 
   <%= will_paginate @items %>
+ 
 
-  <div class="clear"></div>
-
-  <%= link_to(
+  <!--%= link_to(
     image_tag("helpdesk/feed.png", :alt => "Feed") + " Subscribe", 
     helpdesk_formatted_dashboard_url(:format => 'atom'), 
-    :class => "feed") unless params[:f] %>
-
-  <div class="clear"></div>
+    :class => "feed") unless params[:f] %--> 
 
 <% end %>
-
-
-
-
+ 
 <%= render :partial => "/helpdesk/shared/main_panel" %>

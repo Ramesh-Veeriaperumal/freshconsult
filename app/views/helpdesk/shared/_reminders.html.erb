@@ -1,6 +1,7 @@
-<h4><%= local_assigns[:reminder_title] || "Reminders" %></h4>
+<div class="reminders">
+<h3 class="title"><%= local_assigns[:reminder_title] || "Reminders" %></h3>
 
-<ul class="reminders">
+<ul>
   <%= reminders.visible.map do |r| 
     content_tag(
       :li, 
@@ -14,8 +15,13 @@
   end %>
 
 </ul>
-
+<a href="#" class="todo_button">Click to Add new</a>
+<!--
 <% form_for parent ? [parent, Helpdesk::Reminder.new()] : Helpdesk::Reminder.new() do |f| %>
   <%= f.label :body, "Add a reminder" %>
   <%= f.text_field :body %>
 <% end %>
+ -->
+ 
+</div>
+

@@ -2,8 +2,10 @@
 #writing/duplicating all the CRUD methods here.
 
 class ForumsController < ApplicationController
-	#before_filter :login_required, :except => [:index, :show]
-  before_filter :except => [:index, :show] do |c| 
+  layout 'helpdesk/layout'
+
+  #before_filter :login_required, :except => [:index, :show]
+  before_filter :except => [:index, :show] do |c|
     c.requires_permission :manage_forums
   end
   before_filter :find_or_initialize_forum, :except => :index
