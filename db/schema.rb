@@ -9,11 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-<<<<<<< HEAD
-ActiveRecord::Schema.define(:version => 20101209112817) do
-=======
-ActiveRecord::Schema.define(:version => 20101208150822) do
->>>>>>> shihab
+ActiveRecord::Schema.define(:version => 20101210082143) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -25,6 +21,21 @@ ActiveRecord::Schema.define(:version => 20101208150822) do
   end
 
   add_index "accounts", ["full_domain"], :name => "index_accounts_on_full_domain"
+
+  create_table "delayed_jobs", :force => true do |t|
+    t.integer  "priority",   :default => 0
+    t.integer  "attempts",   :default => 0
+    t.text     "handler"
+    t.text     "last_error"
+    t.datetime "run_at"
+    t.datetime "locked_at"
+    t.datetime "failed_at"
+    t.string   "locked_by"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "delayed_jobs", ["locked_by"], :name => "index_delayed_jobs_on_locked_by"
 
   create_table "forums", :force => true do |t|
     t.string  "name"
