@@ -9,7 +9,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   before_create :populate_requester
 
   before_validation_on_create :set_tokens
-  before_create :set_spam
+  before_create :set_spam, :set_dueby
   
   belongs_to :account
 
@@ -257,6 +257,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def set_tokens
     self.id_token ||= make_token(Helpdesk::SECRET_1)
     self.access_token ||= make_token(Helpdesk::SECRET_2)
+  end
+  
+  #shihab-- date format may need to handle later. methode will set both due_by and first_resp
+   def set_dueby     
+          
+     self.due_by = Time.now + Helpdesk::SlaDetail.find_by_priority(self.priority).resolution_time.seconds
+     self.frDueBy = Time.now + Helpdesk::SlaDetail.find_by_priority(self.priority).response_time.seconds
+          
   end
 
   def make_token(secret)
