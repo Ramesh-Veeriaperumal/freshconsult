@@ -138,13 +138,13 @@ protected
       @item.spam = false
 
       n = @item.notes.build(
-        :user => @item.requester, #by Shan temp
+        :user => current_user,
         :account_id => current_account.id,
         :incoming => false,
         :private => true,
         :source => 2,
         :body => (!@item.description || @item.description.empty?) ? "Created by staff at #{Time.now}" : @item.description,
-        :description => "opened the ticket"
+        :description => "created a new ticket"
       )
 
       n.save!
