@@ -1,6 +1,8 @@
 class Helpdesk::SlaDetail < ActiveRecord::Base
   set_table_name "helpdesk_sla_details"
   
+  belongs_to :account
+  
   RESPONSETIME = [
     [ :half,    "30 Minutes",  1800 ], 
     [ :one,     "1 Hour",      3600 ], 
