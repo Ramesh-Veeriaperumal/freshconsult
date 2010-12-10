@@ -9,7 +9,11 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
+<<<<<<< HEAD
 ActiveRecord::Schema.define(:version => 20101210082143) do
+=======
+ActiveRecord::Schema.define(:version => 20101210095824) do
+>>>>>>> shihab
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -218,6 +222,7 @@ ActiveRecord::Schema.define(:version => 20101210082143) do
     t.datetime "due_by"
     t.datetime "completed_at"
     t.integer  "priority"
+    t.datetime "frDueBy"
   end
 
   add_index "helpdesk_tickets", ["id_token"], :name => "index_helpdesk_tickets_on_id_token", :unique => true
