@@ -1,4 +1,8 @@
 ActionController::Routing::Routes.draw do |map|
+  map.resources :sla_details
+
+  map.resources :sl_as
+
   map.logout '/logout', :controller => 'user_sessions', :action => 'destroy'
   map.login '/login', :controller => 'user_sessions', :action => 'new'
   #map.register '/register', :controller => 'users', :action => 'create'
@@ -81,6 +85,7 @@ ActionController::Routing::Routes.draw do |map|
   map.namespace :helpdesk do |helpdesk|
 
     helpdesk.resources :tags, :collection => { :autocomplete => :get }
+    
 
 #    helpdesk.resources :issues, :collection => {:empty_trash => :delete}, :member => { :delete_all => :delete, :assign => :put, :restore => :put, :restore_all => :put } do |ticket|
 #      ticket.resources :notes, :member => { :restore => :put }, :name_prefix => 'helpdesk_issue_helpdesk_'
@@ -119,6 +124,8 @@ ActionController::Routing::Routes.draw do |map|
     helpdesk.resources :authorizations, :collection => { :autocomplete => :get }
     
     helpdesk.resources :mailer, :collection => { :fetch => :get }
+    
+    helpdesk.resources :sla_details
   end
 
   map.namespace :support do |support|
@@ -142,6 +149,6 @@ ActionController::Routing::Routes.draw do |map|
   # Install the default routes as the lowest priority.
   # Note: These default routes make all actions in every controller accessible via GET requests. You should
   # consider removing the them or commenting them out if you're using named routes and resources.
-  #map.connect ':controller/:action/:id'
-  #map.connect ':controller/:action/:id.:format'
+  map.connect ':controller/:action/:id'
+  map.connect ':controller/:action/:id.:format'
 end
