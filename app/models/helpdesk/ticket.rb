@@ -10,6 +10,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_validation_on_create :set_tokens
   before_create :set_spam, :set_dueby
+  before_update :set_dueby
   
   belongs_to :account
 
@@ -261,9 +262,17 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   #shihab-- date format may need to handle later. methode will set both due_by and first_resp
    def set_dueby     
+   
+    createdTime = Time.now    
+       
+     unless self.created_at.nil?
+       
+       createdTime = self.created_at
+       
+     end
           
-     self.due_by = Time.now + Helpdesk::SlaDetail.find_by_priority(self.priority).resolution_time.seconds
-     self.frDueBy = Time.now + Helpdesk::SlaDetail.find_by_priority(self.priority).response_time.seconds
+     self.due_by = createdTime + Helpdesk::SlaDetail.find_by_priority(self.priority).resolution_time.seconds
+     self.frDueBy = createdTime + Helpdesk::SlaDetail.find_by_priority(self.priority).response_time.seconds
           
   end
 
