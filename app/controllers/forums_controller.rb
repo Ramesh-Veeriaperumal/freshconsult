@@ -1,11 +1,9 @@
 #To Do Shan - Need to use ModelController or HelpdeskController classes, instead of
 #writing/duplicating all the CRUD methods here.
-
 class ForumsController < ApplicationController
   layout 'helpdesk/layout'
-
   #before_filter :login_required, :except => [:index, :show]
-  before_filter :except => [:index, :show] do |c|
+  before_filter :except => [:index, :show] do |c| 
     c.requires_permission :manage_forums
   end
   before_filter :find_or_initialize_forum, :except => :index
