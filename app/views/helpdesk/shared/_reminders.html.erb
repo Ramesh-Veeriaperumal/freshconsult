@@ -13,15 +13,14 @@
         restore_helpdesk_reminder_path(r), 
         :put)) 
   end %>
-
 </ul>
-<a href="#" class="todo_button">Click to Add new</a>
-<!--
+<!--a href="#" class="todo_button">Click to Add new</a-->
+ 
 <% form_for parent ? [parent, Helpdesk::Reminder.new()] : Helpdesk::Reminder.new() do |f| %>
   <%= f.label :body, "Add a reminder" %>
   <%= f.text_field :body %>
 <% end %>
- -->
+ 
  
 </div>
 

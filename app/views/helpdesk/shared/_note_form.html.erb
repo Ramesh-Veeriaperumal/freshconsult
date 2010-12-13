@@ -13,18 +13,22 @@
 <% end %>
 
 <div id="note-form-container" class="<%= id %> <%= local_assigns[:extra_class] %>">
-  <% form_for note, :html => {:multipart => true} do |f| %>
+  <% form_for note, :html => {:multipart => true } do |f| %>
     <%= f.error_messages %>
     <%= f.label(:body, "Enter your message:") if local_assigns[:label] %>
     <%= f.hidden_field :private %>
+	<%= f.label(:body, "Reply or add note to the Ticket", :for => "#{ id }-body", :class => "overlabel" ) %>
     <%= f.text_area :body, :class => 'expando', :id => "#{ id }-body" %>
     <div class="button-container">
-      <%= submit_tag(local_assigns[:submit] || ActiveSupport::Inflector.titleize(id)) %>
-      <% unless local_assigns[:no_attachments] %>
-        <ul>
-          <li><a href="#" id="attachment-options-link">Attach a File</a></li>
-        </ul>
-      <% end %>
+    <ul>
+      <!--li><%= submit_tag(local_assigns[:submit] || ActiveSupport::Inflector.titleize(id), :class => "button") %></li-->	  
+	  <%= content_tag('li', link_to_function("Send an Email", "Helpdesk.submitToTicket('send-email', false, 'Send Email', this)", :class => 'button')) if @item.requester %>	  
+	  <%= content_tag('li', link_to_function("Add a Note", "Helpdesk.submitToTicket('add-note', true, 'Add Note', this)", :class => 'button')) %>
+	  <% unless local_assigns[:no_attachments] %>
+      	<li><a href="#" class="button" id="attachment-options-link">Attach a File</a></li>
+	  <% end %>
+    </ul>
+      
     </div>
 
     <% unless local_assigns[:no_attachments] %>
