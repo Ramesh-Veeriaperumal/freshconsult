@@ -22,19 +22,28 @@
   <% end %>
 <% end %>
 
+<% content_for :layoutType do%>single<% end %>
+
 <% content_for :sidebar do %>
 <% end %>
 
 <% content_for :main_panel_title do %>
-  User Guides <sup><%= Helpdesk::Guide.all(:conditions => { :account_id => current_account.id }).size %></sup>
+  <!--User Guides <sup><%= Helpdesk::Guide.all(:conditions => { :account_id => current_account.id }).size %></sup>-->
+  
+  <h3 class="content_title">
+  	Need Answers? We're here to help.
+  </h3>
+  If you need help with an Acme Product, you have come to the right place
 <% end %>
 
 <% content_for :main_panel_actions do %>
-  <%= link_to "Add a User Guide", new_helpdesk_guide_path %>
+	<div class="actions_bar">
+  		<%= link_to "Add a User Guide", new_helpdesk_guide_path, :class => "button" %>
+	</div>
 <% end %>
 
 <% content_for :main_panel_toolbar do %>
-  <div id="main-panel-toolbar-1">
+  <!--div id="main-panel-toolbar-1">
     <div class="actions">
       <ul>
         <li>Faqs are listed in their display order</li>
@@ -52,13 +61,13 @@
       </ul>
     </div>
     Drag and drop User Guides to the desired position.
-  </div>
+  </div-->
 
 <% end %>
 
 <% content_for :main_panel_selected_toolbar do %>
 
-  <ul class="secondary-actions">
+  <!--ul class="secondary-actions">
     <%= content_tag('li', link_to_function("Select All", "Helpdesk.sel.checkAll()")) %>
     <%= content_tag('li', link_to_function("Deselect All", "Helpdesk.sel.uncheckAll()")) %> 
   </ul>
@@ -77,7 +86,9 @@
       <%= link_to_function("Cancel", "Helpdesk.showOptions('delete-options', $('delete-link'))") %>
 
     </div>
-  </div>
+  </div-->
+  
+  
 
 <% end %>
 
@@ -85,41 +96,108 @@
 <% content_for :main_panel_content do %>
 
   
-  <div id="pages">
-    <% form_tag "", { :method => :put, :id => 'list' } do %>
-      <table class="guides">
-        <% for guide in @items %>
-          <tr class="<%= cycle('stripe', '') %>">
-            <td class="check">
-              <%= check_box_tag('ids[]', guide.to_param,  false, :class => 'selector') %>
-            </td>
-            <td class="name"><h3><%= link_to(h(guide.name), guide) %></h3></td>
-            <td><%= guide.hidden ? "Private" : "Public" %></td>
-            <td class="count"><%= pluralize(guide.article_guides_count, 'Article', 'Articles') %></td>
-          </tr>
-        <% end %>
-
-      </table>
-    <% end %>
-
-    <% form_tag reorder_helpdesk_guides_path, { :id => "reorder", :method => :put, :style => "display: none" } do %>
-      <%= hidden_field_tag :order %>
-
-      <ol id="article-order">
-        <% for guide in @items %>
-          <li id="guide_<%= guide.id %>">
-            <h3>
-              <%= h(guide.name) %>
-            </h3>
-          </li>
-        <% end %>
-      </ol>
-    <% end %>
-
+  <div id="pages" class="guide_page">  
+	  <div class="product_help">
+	  	<h3>Product Help</h3>
+		<ul class="icon_grid">
+			<li>
+				<a href="#">
+					<img src="/images/product_icons/twitter.png" width="48px" height="48px" />
+					<em>Twitter</em>
+				</a>
+			</li>		
+			<li>
+				<a href="#">
+					<img src="/images/product_icons/cloud.png" width="48px" height="48px" />
+					<em>Cloud App</em>
+				</a>
+			</li>
+			<li>
+				<a href="#">
+					<img src="/images/product_icons/clock.png" width="48px" height="48px" />
+					<em>Billing App</em>
+				</a>
+			</li>
+			<li>
+				<a href="#">
+					<img src="/images/product_icons/digital_camera.png" width="48px" height="48px" />
+					<em>Media Coder</em>
+				</a>
+			</li>
+		</ul>
+	  </div>
+	  <div class="general_help">
+	  	<h3>General Help</h3>
+		
+		<h4>Tutorials</h4>
+		<% form_tag "", { :method => :put, :id => 'list' } do %>
+	      <ul class="guides">
+	        <% for guide in @items %>
+	          <li class="<%= cycle('stripe', '') %>">
+	          	<%= link_to(h(guide.name), guide) %>
+	            <!--td class="check">
+	              <%= check_box_tag('ids[]', guide.to_param,  false, :class => 'selector') %>
+	            </td>
+	            <td class="name"><h3></h3></td>
+	            <td><%= guide.hidden ? "Private" : "Public" %></td>
+	            <td class="count"><%= pluralize(guide.article_guides_count, 'Article', 'Articles') %></td-->
+	          </li>
+	        <% end %>
+	
+	      </ul>
+	    <% end %>
+		 <% form_tag reorder_helpdesk_guides_path, { :id => "reorder", :method => :put, :style => "display: none" } do %>
+	      <%= hidden_field_tag :order %>
+	
+	      <ol id="article-order">
+	        <% for guide in @items %>
+	          <li id="guide_<%= guide.id %>">
+	            <h3>
+	              <%= h(guide.name) %>
+	            </h3>
+	          </li>
+	        <% end %>
+	      </ol>
+	    <% end %>
+		
+	  	<h4>Login related help</h4>
+	  	<ul>
+	  		<li>
+	  			<a href="#">Unable to Sign In</a>
+			</li>
+			<li>
+				<a href="#">How to Sign Up</a>
+			</li>
+			<li>
+				<a href="#">I forgot my password</a>
+			</li>
+			<li>
+				<a href="#">I forgot my username</a>
+			</li>
+	  	</ul>
+		
+		<h4>Billing Related Help</h4>
+	  	<ul>
+	  		<li>
+	  			<a href="#">How to change the credit card on file?</a>
+			</li>
+			<li>
+				<a href="#">What is the Refund Policy?</a>
+			</li>
+			<li>
+				<a href="#">Where can I get an old Invoice?</a>
+			</li>
+			<li>
+				<a href="#">Can I change plans anytime?</a>
+			</li>
+	  	</ul>		 
+	  </div>
+	  
+	  <div class="clear"></div>
   </div>
+   
 
-
-  <div class="clear"></div>
+  
 <% end %>
 
 
