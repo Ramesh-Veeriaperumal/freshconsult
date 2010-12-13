@@ -21,8 +21,7 @@
   <%= render :partial => '/helpdesk/shared/reminders', :locals => {
     :parent => false,
     :reminders => current_user.reminders,
-    :reminder_title => "To-Dos"} %>
-  
+    :reminder_title => "To-Dos"} %> 
   <%= render :partial => '/helpdesk/shared/history' %>
 <% end %>
 
@@ -48,7 +47,7 @@
       </li>
       <li class="last-child">
           <a href="/helpdesk/tickets/filter/open/unassigned"><h4><%= filter_count([:unassigned])%></h4>
-		  	<p>New<br/>Tickets</p>
+		  	<p>Unassigned<br/>Tickets</p>
 		  </a>
       </li>
   </ul>
@@ -56,11 +55,13 @@
   <div class="pageSeperator"></div>
 
 <% content_for :main_panel_title do %>
-  Recent Activity
+  <h3 class="content_title">
+  	Recent Activity
+  </h3>
 <% end %>
 
 <% content_for :main_panel_actions do %>
-  <%= link_to "Add a ticket", new_helpdesk_ticket_path %>
+  	<%= link_to "Add a ticket", new_helpdesk_ticket_path %> 
 <% end %>
 
 <% content_for :main_panel_toolbar do %>
@@ -77,7 +78,7 @@
   <%= form_tag "", :method => :put, :style=>'display: none', :id => 'accept-form' do end %>  
    <!--div id="pages">
     <table class="tickets-expanded"-->
-	<ul id="pages">
+	<ul id="pages" class="activityfeed">
       <% @items.each_with_index do |item, i| %>
         <li class="<%= cycle('stripe', '') %>">
           <%= render(:partial => "ticket_note", :object => item) if item.notable.is_a? Helpdesk::Ticket %> 

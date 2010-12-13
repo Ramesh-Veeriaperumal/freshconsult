@@ -1,8 +1,9 @@
  <p>
-     <img src="/images/people/helm_pic4.png" width="39px" height="39px" /> 
+     <img src="/images/icons/profile_blank.gif" width="39px" height="39px" /> 
 	 <%= link_to(h(ticket_note.user.name), ticket_note.user, :class => 'user_name') %>
      <%= ticket_note.description %>  
 	 <%= link_to(h("#{ticket_note.notable.subject} (##{ticket_note.notable.display_id})"), ticket_note.notable, :class => 'ticket_title') %>
+    
  </p>
  <em class="activity_time"><%= distance_of_time_in_words_to_now(ticket_note.created_at) %> ago</em>
   
