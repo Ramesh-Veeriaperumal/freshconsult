@@ -21,7 +21,8 @@ module Helpdesk::TicketsHelper
   end
 
   def leader(left, right)
-    "<div class=\"leader-right\">#{right}</div><div class=\"leader-left\">#{left}</div><div class=\"clear\"></div>"
+    # "<div class=\"leader-right\">#{right}</div><div class=\"leader-left\">#{left}</div><div class=\"clear\"></div>"
+    "#{left} (#{right})"    
   end
 
   def filter_link(selector)
