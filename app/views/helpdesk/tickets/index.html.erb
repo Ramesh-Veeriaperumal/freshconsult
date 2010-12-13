@@ -3,8 +3,7 @@
   <%= javascript_include_tag "helpdesk/page_switcher" %>
   <%= javascript_include_tag "helpdesk/take_it_button" %>
   <%= javascript_include_tag "helpdesk/id_selector" %>
-  <%= javascript_include_tag "helpdesk/ticket_search" %>
-
+  <%= javascript_include_tag "helpdesk/ticket_search" %> 
   <% javascript_tag do %>
     document.observe("dom:loaded", function(){
 
@@ -14,7 +13,7 @@
       });
 
       Helpdesk.sel.submitOnClick('assign-multiple-button', ['responder_id']);
-
+	
       new Helpdesk.PageSwitcher({
         toggleMode: true,
         pages: ['assign-options']
@@ -28,13 +27,9 @@
   <% end %>
 <% end %>
 
+<% content_for :layoutType do %>single<% end %>
 
-
-<% content_for :sidebar do %>
-  <%= render :partial => "filters" %>
-  <%= render :partial => "search" %>
-  <%= render :partial => "/helpdesk/shared/filter_options" %>
-
+<% content_for :sidebar do %> 
   <% if current_selector == [:deleted] %>
     <h4>Actions</h4>
     <ul>
@@ -52,8 +47,10 @@
 <% end %>
 
 <% content_for :main_panel_title do %>
-  <%= current_selector_name %>
-  <sup><%= filter_count %></sup>
+  <h3 class="content_title">
+  	<%= current_selector_name %>
+  	<!--sup><%= filter_count %></sup-->
+  </h3>
 <% end %>
 
 <% content_for :main_panel_actions do %>
@@ -61,39 +58,59 @@
 <% end %>
 
 <% content_for :main_panel_toolbar do %>
-  <div class="actions">
-    <form class="sort">
-      Sort by&nbsp;&nbsp; 
-      <%= select_tag :sort, options_for_select(Helpdesk::Ticket::SORT_FIELD_OPTIONS, (params[:sort] || :created_asc).to_sym) %>
-    </form>
+  <div class="viewActions">
+  	<%= render :partial => "filters" %>
+  	<ul>  
+		<li class="bulk_checkbox">
+		<span class="button">
+			<input type="checkbox" onclick="Helpdesk.sel.toggleCheckAll(this)" />
+		</span> 
+		</li>	
+		
+	    <li><a href="#" id="assign-options-link" class="button">Assign To User</a></li>
+	
+	    <% if current_selector == [:deleted] %>
+	      <%= content_tag('li', link_to_function("Undelete", "Helpdesk.sel.submit('#{ restore_helpdesk_ticket_path('multiple') }', 'put')", :class => "button")) %>
+	    <% else %>
+	      <%= content_tag('li', link_to_function("Delete", "Helpdesk.sel.submit('#{ helpdesk_ticket_path('multiple') }', 'delete')", :class => "button")) %>
+	    <% end %>
+	
+	    <% if current_selector == [:spam] %>
+	      <%= content_tag('li', link_to_function("Unflag Spam", "Helpdesk.sel.submit('#{ unspam_helpdesk_ticket_path('multiple') }', 'put')", :class => "button")) %> 
+	    <% else %>
+	      <%= content_tag('li', link_to_function("Flag Spam", "Helpdesk.sel.submit('#{ spam_helpdesk_ticket_path('multiple') }', 'put')", :class => "button")) %> 
+	    <% end %>
+		
+		<li class="vert-seperator">&nbsp;</li>
+		<li> 
+	    <form class="sort">
+	      <h4>Sort by</h4> 
+	      <%= select_tag :sort, options_for_select(Helpdesk::Ticket::SORT_FIELD_OPTIONS, (params[:sort] || :created_asc).to_sym) %>
+	    </form>
+		</li>
+    </ul>		
+   <!--
+    <%= render :partial => "search" %>
+	
+    <%= render :partial => "/helpdesk/shared/filter_options" %>
+	
+  
+	<ul>
+	   <li><a href="#" id="expanded-link" class="button">Expanded View</a></li>
+	   <li><a href="#" id="list-link" class="button">List View</a></li>
+	</ul>-->
   </div>
-  <ul>
-    <li><a href="#" id="expanded-link">Expanded View</a></li>
-    <li><a href="#" id="list-link">List View</a></li>
-  </ul>
+  
 <% end %>
 
 <% content_for :main_panel_selected_toolbar do %>
 
   <ul class="secondary-actions">
+  	<!--
     <%= content_tag('li', link_to_function("Select All", "Helpdesk.sel.checkAll()")) %>
-    <%= content_tag('li', link_to_function("Deselect All", "Helpdesk.sel.uncheckAll()")) %> 
-  </ul>
-
-  <ul>
-    <li><a href="#" id="assign-options-link">Assign To User</a></li>
-
-    <% if current_selector == [:deleted] %>
-      <%= content_tag('li', link_to_function("Undelete", "Helpdesk.sel.submit('#{ restore_helpdesk_ticket_path('multiple') }', 'put')")) %>
-    <% else %>
-      <%= content_tag('li', link_to_function("Delete", "Helpdesk.sel.submit('#{ helpdesk_ticket_path('multiple') }', 'delete')")) %>
-    <% end %>
-
-    <% if current_selector == [:spam] %>
-      <%= content_tag('li', link_to_function("Unflag Spam", "Helpdesk.sel.submit('#{ unspam_helpdesk_ticket_path('multiple') }', 'put')")) %> 
-    <% else %>
-      <%= content_tag('li', link_to_function("Flag Spam", "Helpdesk.sel.submit('#{ spam_helpdesk_ticket_path('multiple') }', 'put')")) %> 
-    <% end %>
+    <%= content_tag('li', link_to_function("Deselect All", "Helpdesk.sel.uncheckAll()")) %>
+	--> 
+	
 
   </ul>
 
@@ -133,11 +150,12 @@
 
   <div class="clear"></div>
 
+  <!--
   <%= link_to(
     image_tag("helpdesk/feed.png", :alt => "Feed") + " Subscribe", 
     helpdesk_tickets_url(:format => 'atom'), 
     :class => "feed") unless params[:f] %>
-
+  -->
   <div class="clear"></div>
 
 <% end %>

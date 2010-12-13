@@ -28,52 +28,32 @@
 
   <% form_for @item do |f| %>
     <%= f.error_messages %>
-
-    <table>
-	  
-      <tr>
-        <td colspan="2">
-  		<label id="requester-label">Requester:</label>
-  		<input type="text" id="helpdesk_ticket_email" name="helpdesk_ticket[email]"></input>
-        </td>
-      </tr>
-	  
-      <tr>
-        <td>
+ 
+  		<label id="requester-label">Requester *</label>
+  		<input type="text" id="helpdesk_ticket_email" class="text" name="helpdesk_ticket[email]"></input>
+   		
+		<div class="seperator"></div>
           <%= f.label :subject, "Subject" %>
-          <%= f.text_field :subject %>
-        </td>
-        <td>
+          <%= f.text_field :subject, :class => "text" %>
+   
           <%= f.label :source, "Source" %>
-          <%= f.select :source, Helpdesk::Ticket::SOURCE_OPTIONS %>
-        </td>
-      </tr>
-      <tr>
-        <td>
+          <%= f.select :source, Helpdesk::Ticket::SOURCE_OPTIONS, :class => "select" %>
+       
           <%= f.label :status, "Status" %>
-          <%= f.select :status, Helpdesk::Ticket::STATUS_OPTIONS %>
-        </td>
-        <td>
+          <%= f.select :status, Helpdesk::Ticket::STATUS_OPTIONS, :class => "select" %>
+        
           <%= f.label :responder_id, "Assigned To" %>
-          <%= f.collection_select :responder_id, Helpdesk::Authorization.find_all_by_permission(:manage_tickets), :user_id, :name, {:include_blank => 'Nobody'} %>
-        </td>
-      </tr>
-	  <tr>
-	  	<td>
-	  		 <%= f.label :priority, "Priority" %>
-          	 <%= f.select :priority, Helpdesk::Ticket::PRIORITY_OPTIONS %>
-	  		
-	  	</td>
-	  </tr>
-    </table>
-
+          <%= f.collection_select :responder_id, Helpdesk::Authorization.find_all_by_permission(:manage_tickets), :user_id, :name, {:include_blank => 'Nobody'}, :class => "select" %>
+        
+ 		  <%= f.label :priority, "Priority" %>          
+		  <%= f.select :priority, Helpdesk::Ticket::PRIORITY_OPTIONS, :class => "select" %>
     <%= f.label :description, "Description" %>
-    <%= f.text_area :description %>
+    <%= f.text_area :description, :class=>"textarea" %>
 
     <div class="button-container">
-      <%= f.submit %>
-      <%= submit_tag "Save and Create Another", :name => "save_and_create"%>
-      <%= link_to "Cancel", (@item.new_record? ? {:action => 'index'} : @item )%>
+      <%= f.submit "Save changes", :class => "button submit" %>
+      <%= submit_tag "Save and Create Another", :name => "save_and_create" , :class => "button" %>
+      <%= link_to "Cancel", (@item.new_record? ? {:action => 'index'} : @item ), :class => "button" %>
     </div>
 
   <% end %>
