@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101210095824) do
+ActiveRecord::Schema.define(:version => 20101213100640) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -21,6 +21,21 @@ ActiveRecord::Schema.define(:version => 20101210095824) do
   end
 
   add_index "accounts", ["full_domain"], :name => "index_accounts_on_full_domain"
+
+  create_table "delayed_jobs", :force => true do |t|
+    t.integer  "priority",   :default => 0
+    t.integer  "attempts",   :default => 0
+    t.text     "handler"
+    t.text     "last_error"
+    t.datetime "run_at"
+    t.datetime "locked_at"
+    t.datetime "failed_at"
+    t.string   "locked_by"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "delayed_jobs", ["locked_by"], :name => "index_delayed_jobs_on_locked_by"
 
   create_table "forums", :force => true do |t|
     t.string  "name"
@@ -116,6 +131,7 @@ ActiveRecord::Schema.define(:version => 20101210095824) do
     t.integer  "notable_id"
     t.string   "notable_type"
     t.integer  "account_id"
+    t.text     "description"
   end
 
   add_index "helpdesk_notes", ["notable_id"], :name => "index_helpdesk_notes_on_notable_id"
@@ -203,6 +219,7 @@ ActiveRecord::Schema.define(:version => 20101210095824) do
     t.datetime "completed_at"
     t.integer  "priority"
     t.datetime "frDueBy"
+    t.boolean  "isescalated",       :default => false
   end
 
   add_index "helpdesk_tickets", ["id_token"], :name => "index_helpdesk_tickets_on_id_token", :unique => true
