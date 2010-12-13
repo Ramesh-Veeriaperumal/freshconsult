@@ -28,6 +28,8 @@ Rails::Initializer.run do |config|
   config.gem 'RedCloth' #4.2.3
   config.gem "lockfile" #from SAAS kit
   config.gem "authlogic" #2.1.6
+  config.gem 'rufus-scheduler', :lib=>'rufus/scheduler'
+  config.gem 'tzinfo'
   # config.gem "bj"
   # config.gem "hpricot", :version => '0.6', :source => "http://code.whytheluckystiff.net"
   config.gem "aws-s3", :lib => "aws/s3" #0.6.2
