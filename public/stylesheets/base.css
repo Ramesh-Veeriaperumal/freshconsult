@@ -62,31 +62,7 @@ a img {
   border: none;
 }
 
-/* line 10, C:/Ruby187/lib/ruby/gems/1.8/gems/compass-0.10.6/frameworks/compass/stylesheets/compass/layout/_sticky-footer.scss */
-html, body {
-  height: 100%;
-}
-
-/* line 12, C:/Ruby187/lib/ruby/gems/1.8/gems/compass-0.10.6/frameworks/compass/stylesheets/compass/layout/_sticky-footer.scss */
-#wrap {
-  clear: both;
-  min-height: 100%;
-  height: auto !important;
-  height: 100%;
-  margin-bottom: -60px;
-}
-/* line 18, C:/Ruby187/lib/ruby/gems/1.8/gems/compass-0.10.6/frameworks/compass/stylesheets/compass/layout/_sticky-footer.scss */
-#wrap .push {
-  height: 60px;
-}
-
-/* line 20, C:/Ruby187/lib/ruby/gems/1.8/gems/compass-0.10.6/frameworks/compass/stylesheets/compass/layout/_sticky-footer.scss */
-#footer {
-  clear: both;
-  position: relative;
-  height: 60px;
-}
-
+/*@include sticky-footer($footer-height, "#wrap", ".push", "#footer");*/
 /* line 39, C:/Ruby187/lib/ruby/gems/1.8/gems/compass-0.10.6/frameworks/blueprint/stylesheets/./blueprint/./_typography.scss */
 body {
   line-height: 1.5;
