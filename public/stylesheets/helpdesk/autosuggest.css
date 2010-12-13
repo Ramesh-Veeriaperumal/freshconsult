@@ -13,10 +13,13 @@ body
 div.autosuggest
 {
 	position: absolute;
-	background-image: url(../../images/helpdesk/autosuggest/as_pointer.png);
+	/*background-image: url(../../images/helpdesk/autosuggest/as_pointer.png);*/
 	background-position: top;
 	background-repeat: no-repeat;
-	padding: 10px 0 0 0;
+	padding: 0px 0 0 0;
+	margin-top:5px;
+	z-index:99999;
+	border:1px solid #9f9f9f;
 }
 
 div.autosuggest div.as_header,
@@ -25,15 +28,15 @@ div.autosuggest div.as_footer
 	position: relative;
 	height: 6px;
 	padding: 0 6px;
-    background-image: url(../../images/helpdesk/autosuggest/ul_corner_tr.png);
+   /* background-image: url(../../images/helpdesk/autosuggest/ul_corner_tr.png);*/
     background-position: top right;
     background-repeat: no-repeat;
-	background-color: #333;
+	background-color: #efefef;
 	overflow: hidden;
 }
 div.autosuggest div.as_footer
 {
-	background-image: url(../../images/helpdesk/autosuggest/ul_corner_br.png);
+	/*background-image: url(../../images/helpdesk/autosuggest/ul_corner_br.png);*/
 }
 
 div.autosuggest div.as_header div.as_corner,
@@ -44,20 +47,20 @@ div.autosuggest div.as_footer div.as_corner
 	left: 0;
 	height: 6px;
 	width: 6px;
-	background-image: url(../../images/helpdesk/autosuggest/ul_corner_tl.png);
+	/*background-image: url(../../images/helpdesk/autosuggest/ul_corner_tl.png);*/
 	background-position: top left;
 	background-repeat: no-repeat;
 }
 div.autosuggest div.as_footer div.as_corner
 {
-	background-image: url(../../images/helpdesk/autosuggest/ul_corner_bl.png);
+	/*background-image: url(../../images/helpdesk/autosuggest/ul_corner_bl.png);*/
 }
 div.autosuggest div.as_header div.as_bar,
 div.autosuggest div.as_footer div.as_bar
 {
 	height: 6px;
 	overflow: hidden;
-	background-color: #222;
+	background-color: #efefef;
 }
 
 
@@ -67,7 +70,7 @@ div.autosuggest ul
 	margin: 0 0 -4px 0;
 	padding: 0;
 	overflow: hidden;
-	background-color: #222;
+	background-color: #efefef; 
 }
 
 div.autosuggest ul li
@@ -79,16 +82,15 @@ div.autosuggest ul li
 }
 
 div.autosuggest ul li a
-{
-	color: #ccc;
+{ 
 	display: block;
 	text-decoration: none;
 	background-color: transparent;
-	text-shadow: #000 0px 0px 5px;
+	/*text-shadow: #000 0px 0px 5px;*/
+	color:#333;
 	position: relative;
 	padding: 0;
-	width: 100%;
-    color: #999;
+	width: 100%; 
     text-transform: lowercase;
     font-variant: small-caps;
     font-size: 1.2em;
@@ -183,6 +185,10 @@ div.autosuggest ul em
 {
     /*font-style: normal;*/
 	color: #6EADE7;
-	color: #fff;
+	color: #3f3f3f;
     font-weight: bold;
+}
+
+div.autosuggest ul li.as_highlight em{
+	color:#efefef;	
 }

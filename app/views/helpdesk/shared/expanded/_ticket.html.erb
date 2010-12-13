@@ -4,29 +4,48 @@
     <%= check_box_tag('ids[]', ticket.to_param,  false, :class => 'selector') %>
   </td>
 
-  <td class="status">
+  <!--td class="status">
     <div class="negative <%= ticket.freshness %>">
       <%= ticket.freshness %>
     </div>
-  </td>
+  </td-->
 
   <td class="name">
-      <ul class="tags">
+      <h3>
+        <%= link_to(h(ticket.subject) + " (##{ticket.display_id})", ticket) %> 
+      </h3> 
+      	<%= h(truncate(ticket.description, :length => 200)) %>
+ 
+	  <div>
+	  	from <%= link_to(h(ticket.requester.name), ticket.requester, :class => 'user_name') %>
+	  </div>
+	  <!--	  
+	  <ul class="tags">
         <%= ticket.tags.map { |t| content_tag(:li, link_to(h(t.name), t)) }.join %>
       </ul>
-      <h3>
-        <%= link_to(h(ticket.subject) + " (##{ticket.display_id})", ticket) %>
-        <span class="subtitle">(<%= distance_of_time_in_words_to_now(ticket.updated_at) %> ago)</span>
-      </h3>
-      <%= h(truncate(ticket.description, :length => 200)) %>
+	  -->
   </td>
 
   <td class="assign">
       <% if ticket.freshness == :new %>
         <button class="accept-button" action="<%= assign_helpdesk_ticket_url(ticket) %>">Take It</button> 
       <% else %>
-        <span>Assigned to <%= ticket.responder.name %></span>
+        <span>Assigned to <%= link_to(h(ticket.responder.name), ticket.responder, :class => 'username') %></span>
       <% end %>
+	  	<ul>
+			<li class="negative <%= ticket.freshness %>">
+		        status <span><%= ticket.freshness %></span>
+		    </li>
+			<li class="priority">
+				priority: <span class="high">high</span>
+			</li>
+		</ul>
+  </td>
+  
+  <td class="sla">
+  		<span class="subtitle">
+			 Due in 15 minutes  
+		</span>
   </td>
 
 </tr>
