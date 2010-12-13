@@ -1,5 +1,5 @@
 class Helpdesk::TicketIssuesController < ApplicationController
-  layout 'helpdesk/default'
+  layout 'helpdesk/layout'
   include HelpdeskControllerMethods
 
   def item_url
