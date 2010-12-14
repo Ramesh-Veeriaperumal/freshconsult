@@ -19,4 +19,6 @@ class UserNotifier < ActionMailer::Base
     headers       "Reply-to" => "#{user.account.default_email}"
     content_type  "text/plain"
   end
+  
+  
 end

@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101210095824) do
+ActiveRecord::Schema.define(:version => 20101214094121) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -217,8 +217,11 @@ ActiveRecord::Schema.define(:version => 20101210095824) do
     t.datetime "assigned_at"
     t.datetime "due_by"
     t.datetime "completed_at"
-    t.integer  "priority"
     t.datetime "frDueBy"
+    t.boolean  "isescalated",       :default => false
+    t.integer  "priority",          :default => 1
+    t.boolean  "fr_escalated",      :default => false
+    t.datetime "response_time"
   end
 
   add_index "helpdesk_tickets", ["id_token"], :name => "index_helpdesk_tickets_on_id_token", :unique => true
@@ -371,9 +374,9 @@ ActiveRecord::Schema.define(:version => 20101210095824) do
     t.integer  "account_id"
     t.boolean  "admin",               :default => false
     t.boolean  "active",              :default => false, :null => false
-    t.string   "role_token"
     t.integer  "posts_count",         :default => 0
     t.datetime "last_seen_at"
+    t.string   "role_token"
   end
 
   add_index "users", ["account_id"], :name => "index_users_on_account_id"
