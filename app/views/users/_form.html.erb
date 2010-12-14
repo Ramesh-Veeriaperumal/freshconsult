@@ -1,13 +1,30 @@
 <%= error_messages_for :user %>
-
-<%= f.label :name %>
-<%= f.text_field :name %>
-<%= f.label :email %>
-<%= f.text_field :email %>
+ 
+	<!--img src="/images/icons/profile_blank.gif" /--> 
+	<ul>
+		<li>
+			<%= label(:user, :name, "Name") %>
+			<%= text_field(:user, :name, :class => "text" )  %>
+		</li>
+		<li>
+			<%= label(:user, :email, "Email") %>
+			<%= text_field(:user, :email, :class => "text" ) %>
+		</li>
+		<li>	
+			<%= label(:user, :phone, "Phone No.") %>	
+			<input type="text" id="user_phone" name="user[phone]" class="text" />
+		</li>
+	</ul>	 
+<span class="seperator"></span>
 
 <%= f.label :role %>
-<%= f.radio_button  :role_token, 'admin' %> <%= f.label :role_token_admin, "Administrator" %>
-<%= f.radio_button  :role_token, 'poweruser' %> <%= f.label :role_token_poweruser, "Agent" %>
-<%= f.radio_button  :role_token, 'customer' %> <%= f.label :role_token_customer, "Customer" %>
+<ul>
+	<li><%= f.radio_button  :role_token, 'admin' %> <%= f.label :role_token_admin, "Administrator" %></li>
+	<li><%= f.radio_button  :role_token, 'poweruser' %> <%= f.label :role_token_poweruser, "Agent" %></li>
+	<li><%= f.radio_button  :role_token, 'customer' %> <%= f.label :role_token_customer, "Customer" %></li>
+</ul>
 
-<%= submit_or_cancel %>
+<div class="button-container">
+      <%= f.submit "Save changes", :class => "button submit" %> 
+	  <%= link_to "Cancel", (@user.new_record? ? {:action => 'index'} : @user ), :class => "button" %>
+</div>

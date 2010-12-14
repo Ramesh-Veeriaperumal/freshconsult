@@ -311,19 +311,19 @@ ul.summary{
 		padding:0px;
 		margin:4px 5px 0px 5px; 	
 		h4{
-			color:#527aaa;
-			font-size:3.2em;	
+			color:#4b74a6;
+			font-size:3.4em;	
 			font-weight:bold;
 			display:inline-block;	 
 			position:relative;
-			top:-8px;
+			top:-8px;			
 		}
 		p{
 			display:inline-block; 
-			font-size:0.95em;
+			font-size:1.0em;
 			color:#555555;
 			position:relative;
-			top:-10px;
+			top:-8px;
 		}
 		a{
 			text-decoration:none; 
@@ -452,11 +452,21 @@ ul.summary{
 .pageContent{
 	margin:6px 12px 22px 20px;
 	padding:5px 0px;
-	h3.content_title{
+	h3.content_title, h2.content_title{
 		color:#336699;
 		font-size:1.60em; 
 		padding:5px 0px 0px 0px;			
 		margin:0px;
+		img{
+			float:left;
+			position:relative;
+			top:-8px;
+			left:-2px;			
+		}
+	}
+	h2.content_title{	
+		font-size:1.9em;
+		margin-top:6px;
 	}
 	ul.activityfeed{ 
 		padding:0px;			 
@@ -729,6 +739,12 @@ select{
 	li{
 		
 	}	 
+}
+
+.actionsRight{
+	float:right;
+	position:relative;
+	top:-31px;
 }
 
 .actions_bar{
@@ -1048,6 +1064,12 @@ ul.ui-list-2col{
 	ul b{ 
 		float:left;	
 		font-weight:normal;
+	}
+	
+	.ltSlant{
+		left:-8px;
+		top:0px;
+		border-width:7px;
 	}
 }
 
@@ -1468,3 +1490,140 @@ $lightBase:lighten($base, 5%);
 		text-decoration:none;
 	}
 }
+
+.contact_table{
+	border:1px solid #e8e8e8; 
+	background-color:#fbfbfb;
+	td{
+		border-bottom:1px solid #e2e2e2; 
+		vertical-align:top;
+		padding:6px 5px 8px 5px;
+		font-size:1.1em;
+		b{
+			color:#666666;
+		}
+		a.user_name{
+			display:block;
+			font-weight:normal;
+			font-size:1.2em;
+			color:#336699;
+			padding:0px;
+			margin:0px;
+			text-decoration:none;
+			text-transform:capitalize;
+		}
+	} 
+	.stripe td{
+		background:#fff;
+	}
+	td.preview_pic{
+		width:1px; 
+		padding-top:10px;
+	}
+	td.checkCol{
+		width:1px;
+	}
+}
+
+.alpha_sort_list{ 
+	@include clearfix;
+	list-style:none;
+	display:block;
+	width:100%;	
+	padding:6px 0px;
+	margin:0px;
+	li{
+		float:left;
+		a{			
+			border:1px solid #dedede;
+			background: #F6F6F6; /* old browsers */
+			background: -moz-linear-gradient(top, #F6F6F6 0%, #F6F6F6 100%); /* firefox */		
+			background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#F6F6F6), color-stop(100%,#F6F6F6)); /* webkit */			
+			font-weight:bold;
+			text-decoration:none;
+			padding:5px 6px;
+			color: #909090;
+		}
+	}
+	li.active a, li a:hover{
+			color:#fff;
+			border-color:#3f4c6b;
+			background: #3f4c6b; /* old browsers */
+			background: -moz-linear-gradient(top, #3f4c6b 0%, #3f4c6b 100%); /* firefox */			
+			background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#3f4c6b), color-stop(100%,#3f4c6b)); /* webkit */
+		
+	}
+}
+ 
+ 
+.search_box{
+	input{
+		display:inline-block; 
+		border-color:#909090;
+		padding:3px 2px;
+		width:300px;
+	}
+}
+
+
+.contactForm{
+	padding-top:20px;
+	.personalCard{
+		background: #E7F1E0;  
+		background: -moz-linear-gradient(top, #E7F1E0 0%, #DAECD4 100%);  
+		background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#E7F1E0), color-stop(100%,#DAECD4));  
+		img{
+			float:left;
+		}
+	}	
+	ul{
+		@include no-bullets;
+		padding:0px;margin:0px;
+	}
+	label{
+		font-size:1.0em;
+		display:inline-block;
+	}
+	.overlabel{
+		margin-top:7px;
+		color:#aaaaaa;
+	}
+	input{
+		display:inline-block;
+	}
+	/*
+	input.text, textarea {
+		padding: 6px;
+		border: solid 1px #E5E5E5;
+		outline: 0; 
+		width: 50%;
+		background: #FFFFFF url('bg_form.png') left top repeat-x;
+		background: -webkit-gradient(linear, left top, left 25, from(#FFFFFF), color-stop(4%, #EEEEEE), to(#FFFFFF));
+		background: -moz-linear-gradient(top, #FFFFFF, #EEEEEE 1px, #FFFFFF 25px);
+		box-shadow: rgba(0,0,0, 0.1) 0px 0px 8px;
+		-moz-box-shadow: rgba(0,0,0, 0.1) 0px 0px 8px;
+		-webkit-box-shadow: rgba(0,0,0, 0.1) 0px 0px 8px;
+	}
+	
+	
+	
+	textarea {
+		width: 400px;
+		max-width: 400px;
+		height: 150px;
+		line-height: 150%;
+	}
+	
+	input.text:hover, textarea:hover,
+	input.text:focus, textarea:focus {
+		border-color: #afafaf;
+		-webkit-box-shadow: rgba(0, 0, 0, 0.15) 0px 0px 8px;
+	}
+	
+	.form label {
+		margin-left: 10px;
+		color: #999999;
+	}*/
+	 		
+}
+

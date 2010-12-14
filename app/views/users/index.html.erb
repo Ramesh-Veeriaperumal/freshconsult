@@ -1,19 +1,67 @@
-<h1><%= @page_title = 'Users' %></h1>
-<%= link_to('Add a new user', new_user_url) %>
+<% content_for :layoutType do%>single<% end %>
 
-<table id="users">
-  <tr>
-    <th>Name</th>
-    <th>Email</th>
-    <th></th>
-    <th></th>
-  </tr>
-  <% current_account.users.each do |user| %>
-    <tr>
-      <td><%=h user.name %></td>
-      <td><%=h user.email %></td>
-      <td><%= link_to('Edit', edit_user_path(user)) %></td>
-      <td><%= link_to('Delete', user, :method => 'delete', :confirm => 'Are you sure you want to delete this user?') unless user == current_user %></td>
-    </tr>
-  <% end %>
-</table>
+<div class="pageContent" style="height:600px;">
+	<h2 class="content_title">
+		<img src="/images/icons/addressbook_user.png" width="38px" height="38px" />
+		<%= @page_title = 'All Contacts' %>
+	</h2>
+	<div class="actionsRight">
+		<!--
+			<%= link_to('Edit', "#", :class => "button") %>		
+		-->
+		<%= link_to('Delete', "#", :method => 'delete', :confirm => 'Are you sure you want to delete this user?', :class => "button") %>		
+		<%= link_to('Add a new user', new_user_url, :class => "button") %>		
+	</div>
+	<span class="seperator"></span>
+	<div class="search_box">
+		<input type="search" id="srch_fld" placeholder="Search by Name or Email or Tags..." autosave="applestyle_srch" results="5" />
+	</div>
+	<ul class="alpha_sort_list">
+		<li class="active"><a href="#">All</a></li>
+		<li><a href="#">A</a></li>
+		<li><a href="#">B</a></li>
+		<li><a href="#">C</a></li>
+		<li><a href="#">D</a></li>
+		<li><a href="#">E</a></li>
+		<li><a href="#">F</a></li>
+		<li><a href="#">G</a></li>
+		<li><a href="#">H</a></li>
+		<li><a href="#">I</a></li>
+		<li><a href="#">J</a></li>
+		<li><a href="#">K</a></li>
+		<li><a href="#">L</a></li>
+		<li><a href="#">M</a></li>
+		<li><a href="#">N</a></li>
+		<li><a href="#">O</a></li>
+		<li><a href="#">P</a></li>
+		<li><a href="#">Q</a></li>
+		<li><a href="#">R</a></li>
+		<li><a href="#">S</a></li>
+		<li><a href="#">T</a></li>
+		<li><a href="#">U</a></li>
+		<li><a href="#">V</a></li>
+		<li><a href="#">W</a></li>
+		<li><a href="#">X</a></li>
+		<li><a href="#">Y</a></li>
+		<li><a href="#">Z</a></li> 		
+	</ul>
+	<table id="users" class="contact_table">	  
+	  <% current_account.users.each do |user| %>
+	    <tr class="<%= cycle('stripe', '') %>">
+	      <td class="checkCol"><input type="checkbox"></td>
+	      <td class="preview_pic"><img src="/images/icons/profile_blank.gif" width="36px" height="36px" /></td>
+	      <td class="user_prime_Details">
+	      	<%= link_to(h(user.name), user, :class => "user_name" ) %>
+		  	<div><%= h user.email %></div>
+			<b>988-992-2112</b>
+		  </td>	   
+		  <td class="user_additional_Details">
+		  	<div>Customer support manager at</div>
+			Bank of America
+		  </td>   
+	      <!--td><%= link_to('Edit', edit_user_path(user)) %></td-->
+	      <td><%= link_to('Delete', user, :method => 'delete', :confirm => 'Are you sure you want to delete this user?') unless user == current_user %></td>
+	    </tr>
+	  <% end %>
+	</table>
+</div>
