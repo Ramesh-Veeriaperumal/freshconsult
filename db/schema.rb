@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101214073156) do
+ActiveRecord::Schema.define(:version => 20101214075144) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -220,6 +220,7 @@ ActiveRecord::Schema.define(:version => 20101214073156) do
     t.datetime "frDueBy"
     t.boolean  "isescalated",       :default => false
     t.integer  "priority",          :default => 1
+    t.boolean  "fr_escalated",      :default => false
   end
 
   add_index "helpdesk_tickets", ["id_token"], :name => "index_helpdesk_tickets_on_id_token", :unique => true
