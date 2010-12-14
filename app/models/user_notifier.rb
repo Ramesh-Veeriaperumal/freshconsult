@@ -20,19 +20,5 @@ class UserNotifier < ActionMailer::Base
     content_type  "text/plain"
   end
   
-  def notifysla_escalation(user,ticket)
-    
-    puts "User notifier, notifyslaescalation"
-    
-    ##Need to check the email sending code. we need to give a proper message
-   
-    subject       "The following ticket has reached overdue"
-    from          user.account.default_email
-    recipients    user.email
-    sent_on       Time.now
-    body          :root_url => root_url(:host => user.account.full_domain)
-    headers       "Reply-to" => "#{user.account.default_email}"
-    content_type  "text/plain"
-    
-  end
+  
 end
