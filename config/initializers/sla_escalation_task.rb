@@ -13,9 +13,9 @@ module Slainit
   @overdue_tickets.each do |ticket|
          
          escalateto = Helpdesk::SlaDetail.find_by_priority(ticket.priority).escalateto
-         #email = User.find_by_id(escalateto).email
+         email = User.find_by_id(escalateto).email
          #user_notifier(email) #This method should send an email          
-         UserNotifier.deliver_notifysla_escalation(User.find_by_id(escalateto), ticket)        
+         SlaNotifier.deliver_sla_escalation(ticket, email)        
          ticket.isescalated = true
          ticket.save
       
@@ -23,14 +23,14 @@ module Slainit
   
    @froverdue_tickets = Helpdesk::Ticket.find(:all, :conditions =>['frDueBy <=?', Time.now.to_s(:db)] )
    
-   @froverdue_tickets.each do |frticket|
+   @froverdue_tickets.each do |fr_ticket|
          
-         frescalateto = Helpdesk::SlaDetail.find_by_priority(frticket.priority).escalateto
-         #email = User.find_by_id(escalateto).email
+         fr_escalateto = Helpdesk::SlaDetail.find_by_priority(fr_ticket.priority).escalateto
+         fr_email = User.find_by_id(fr_escalateto).email
          #user_notifier(email) #This method should send an email          
-         UserNotifier.deliver_notifysla_escalation(User.find_by_id(frescalateto), frticket)        
-         frticket.isescalated = true
-         frticket.save
+         SlaNotifier.deliver_sla_escalation(fr_ticket,fr_email)        
+         fr_ticket.isescalated = true
+         fr_ticket.save
       
    end
   
