@@ -56,7 +56,7 @@ class EmailController < ApplicationController
           :incoming => true,
           :body => mesg.nil? ? ticket.description : mesg,
           :source => 0,
-          :user => @ticket.requester, #by Shan temp
+          :user => ticket.requester, #by Shan temp
           :description => "raised the ticket",
           :account_id => ticket.account_id
         )
