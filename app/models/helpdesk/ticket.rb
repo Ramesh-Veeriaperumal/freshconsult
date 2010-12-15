@@ -270,6 +270,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
        createdTime = self.created_at
        
      end
+     
+     self.priority = 1 if priority.nil?
           
      self.due_by = createdTime + Helpdesk::SlaDetail.find_by_priority(self.priority).resolution_time.seconds
      self.frDueBy = createdTime + Helpdesk::SlaDetail.find_by_priority(self.priority).response_time.seconds
