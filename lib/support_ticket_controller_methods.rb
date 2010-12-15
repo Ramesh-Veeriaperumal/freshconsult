@@ -37,7 +37,8 @@ module SupportTicketControllerMethods
         :incoming => true,
         :source => 1
       )
-      Helpdesk::TicketNotifier.send_later(:deliver_autoreply, @ticket) if !@ticket.spam
+      #Helpdesk::TicketNotifier.send_later(:deliver_autoreply, @ticket) if !@ticket.spam
+      Helpdesk::TicketNotifier.deliver_autoreply(@ticket) if !@ticket.spam
 
       if params[:meta]
         @ticket.notes.create(
