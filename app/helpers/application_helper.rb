@@ -21,7 +21,7 @@ module ApplicationHelper
       ['/forums',             'Forums',       permission?(:manage_knowledgebase)],
       ['/users',              'Companies',    permission?(:manage_users)],
       #['helpdesk/articles',  'Articles',     permission?(:manage_knowledgebase)],
-      ['/users',              'Admin',        permission?(:manage_users)]
+      ['/admin',              'Admin',        permission?(:manage_users)]
     ]
 
 #    history_active = false;
@@ -37,7 +37,7 @@ module ApplicationHelper
 
     navigation = tabs.map do |s| 
       next unless s[2]
-      active = (params[:controller] == s[0]) || (s[1] == @selected_tab) #selected_tab hack by Shan  !history_active && 
+      active = (params[:controller] == s[0]) || (s[1] == @selected_tab || "/#{params[:controller]}" == s[0]) #selected_tab hack by Shan  !history_active && 
       tab(s[1], {:controller => s[0], :action => :index}, active && :active) 
     end
 

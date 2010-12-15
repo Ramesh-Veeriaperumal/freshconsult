@@ -1391,18 +1391,16 @@ a.request_bt:hover{
 ul.icon_grid{
 	@include horizontal-list;	
 	li{
-		width:70px;
+		width:80px;
 		height:80px;
-		margin:0px 8px;
+		margin:10px 0px;
+		padding:0px;
 		a{
 			position:relative;
-			float:left;
-			width:100%;
+			display:block;
 			text-align:center; 
 			text-decoration:none;
-			color:#3a3a3a;
-			img{   
-			}
+			color:#3a3a3a; 
 			em{
 				display:block;
 				font-style:normal;
@@ -1411,6 +1409,14 @@ ul.icon_grid{
 				font-size:1em;
 			}
 		}
+	}
+}
+
+ul.admin{
+	padding:10px 15px; 
+	border:1px solid #efefef; 
+	li{ 
+		width:140px; 
 	}
 }
 
