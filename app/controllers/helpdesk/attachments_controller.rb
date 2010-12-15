@@ -1,5 +1,4 @@
 class Helpdesk::AttachmentsController < ApplicationController
-  layout 'helpdesk/default'
 
   include HelpdeskControllerMethods
 

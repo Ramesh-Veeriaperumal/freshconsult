@@ -1,5 +1,4 @@
-class Helpdesk::ArticleGuidesController < ApplicationController
-  layout 'helpdesk/default'
+class Helpdesk::ArticleGuidesController < ApplicationController 
 
   before_filter { |c| c.requires_permission :manage_knowledgebase }
 

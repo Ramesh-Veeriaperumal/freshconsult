@@ -1,6 +1,5 @@
 class Helpdesk::RemindersController < ApplicationController
-  layout 'helpdesk/default'
-
+  
   before_filter { |c| c.requires_permission :manage_tickets }
 
   before_filter :optionally_load_parent, :only => [:create]

@@ -1,5 +1,4 @@
 class Helpdesk::DashboardController < ApplicationController
-  layout 'helpdesk/layout'
   
   helper 'helpdesk/tickets' #by Shan temp
 

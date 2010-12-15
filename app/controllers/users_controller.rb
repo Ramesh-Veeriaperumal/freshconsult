@@ -1,5 +1,4 @@
-class UsersController < ApplicationController
-  layout 'helpdesk/layout'
+class UsersController < ApplicationController 
   include ModelControllerMethods
 
   before_filter :check_user_limit, :only => :create

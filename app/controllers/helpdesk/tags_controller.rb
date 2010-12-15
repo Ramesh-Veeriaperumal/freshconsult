@@ -1,5 +1,4 @@
-class Helpdesk::TagsController < ApplicationController
-  layout 'helpdesk/default'
+class Helpdesk::TagsController < ApplicationController  
   helper 'helpdesk/tickets'
 
   before_filter { |c| c.requires_permission :manage_tickets }
