@@ -20,7 +20,7 @@
         <% if note.source == Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["meta"] %>
           Meta Information
         <% else %>
-          <%= note.incoming ? h(note.notable.subject) : h(note.user ? note.user.name : "Anon") %> <!-- #by Shan temp -->
+          <%= h(note.user ? note.user.name : "Anon") %> <!-- #by Shan temp -->
         <% end %>
       </h4>
     <% end %>
