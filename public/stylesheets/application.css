@@ -3751,3 +3751,82 @@ ul.admin li {
 .contactForm input {
   display: inline-block;
 }
+
+/* line 1636, ../src/application.scss */
+.ui-sortable-placeholder {
+  background: #ffffff;
+  border: 1px dotted #afafaf;
+  visibility: visible !important;
+  padding: 20px 6px;
+}
+
+/* line 1644, ../src/application.scss */
+.ui-custom-fields, .ui-custom-form {
+  list-style: none;
+  margin: 10px 10px 0px 0px;
+  padding: 0px;
+  float: left;
+}
+/* line 11, C:/Ruby187/lib/ruby/gems/1.8/gems/compass-0.10.6/frameworks/compass/stylesheets/compass/utilities/lists/_bullets.scss */
+.ui-custom-fields li, .ui-custom-form li {
+  list-style-image: none;
+  list-style-type: none;
+  margin-left: 0px;
+}
+
+/* line 1652, ../src/application.scss */
+.ui-custom-fields {
+  width: 20%;
+  overflow: hidden;
+  *zoom: 1;
+}
+/* line 1655, ../src/application.scss */
+.ui-custom-fields li {
+  float: left;
+}
+/* line 1657, ../src/application.scss */
+.ui-custom-fields li a.button {
+  min-width: 100px;
+  width: auto !important;
+  width: 100px;
+}
+
+/* line 1663, ../src/application.scss */
+.ui-custom-form {
+  width: 40%;
+  background: #f9f9f9;
+  margin-bottom: 20px;
+  padding: 6px;
+}
+/* line 1668, ../src/application.scss */
+.ui-custom-form li {
+  padding: 6px 6px;
+}
+/* line 1672, ../src/application.scss */
+.ui-custom-form label {
+  font-size: 1em;
+}
+/* line 1675, ../src/application.scss */
+.ui-custom-form span {
+  display: block;
+  padding: 4px 0px;
+  overflow: hidden;
+  *zoom: 1;
+}
+/* line 1679, ../src/application.scss */
+.ui-custom-form span input {
+  float: left;
+  position: relative;
+  left: -3px;
+  top: -1px;
+}
+/* line 1685, ../src/application.scss */
+.ui-custom-form span label {
+  font-weight: normal;
+  float: left;
+  clear: right;
+}
+/* line 1691, ../src/application.scss */
+.ui-custom-form select {
+  width: auto;
+}

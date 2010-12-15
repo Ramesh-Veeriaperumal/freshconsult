@@ -13,6 +13,7 @@ ActionController::Routing::Routes.draw do |map|
   map.activate '/activate/:id', :controller => 'activations', :action => 'create'
   map.resources :home, :only => :index
   map.resources :admin, :only => :index
+  map.resources :ticket_fields, :only => :index
   map.resources :email, :only => [:new, :create]
 
   #SAAS copy starts here

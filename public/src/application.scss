@@ -1633,3 +1633,62 @@ $lightBase:lighten($base, 5%);
 	 		
 }
 
+.ui-sortable-placeholder{
+	background:#ffffff;
+	border:1px dotted #afafaf;
+	visibility: visible !important;
+	padding:20px 6px;
+}
+
+
+.ui-custom-fields, .ui-custom-form{
+	@include no-bullets;	
+	margin:10px 10px 0px 0px; 
+	padding:0px;
+	
+	float:left;
+}
+
+.ui-custom-fields{		
+	width:20%;
+	@include clearfix;
+	li{
+		float:left;
+		a.button{
+			@include min-width(100px);
+		}
+	}
+}
+
+.ui-custom-form{
+	width:40%;
+	background:#f9f9f9;
+	margin-bottom:20px;
+	padding:6px;
+	li{
+		padding:6px 6px;
+	}
+	
+	label{
+		font-size:1em;
+	}
+	span{
+		display:block;
+		padding:4px 0px;
+		@include clearfix;
+		input{
+			float:left;
+			position:relative;
+			left:-3px;
+			top:-1px;
+		}
+		label{ 
+			font-weight:normal;
+			float:left;
+			clear:right;
+		}
+	}
+	select{
+		width:auto;
+	}
+}
