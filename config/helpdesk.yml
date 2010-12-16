@@ -94,21 +94,21 @@ EMAIL:
     # Email settings for sending mail
     outgoing:
         development:
-            tls: true
-            address: smtp.gmail.com
-            port: 587
+            #tls: true
+            address: smtp.sendgrid.net
+            port: 25
             domain: freshdesk.com
-            authentication: :login
-            user_name: support@freshdesk.com
+            authentication: :plain
+            user_name: girish@freshdesk.com
             password: opmanager123
             
         production:
-            tls: true
-            address: smtp.gmail.com
-            port: 587
+            #tls: true
+            address: smtp.sendgrid.net
+            port: 25
             domain: freshdesk.com
-            authentication: :login
-            user_name: support@freshdesk.com
+            authentication: :plain
+            user_name: girish@freshdesk.com
             password: opmanager123
             
 
