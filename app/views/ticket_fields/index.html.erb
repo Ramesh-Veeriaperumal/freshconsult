@@ -1,0 +1,75 @@
+<script type="text/javascript"> 
+	jQuery(document).ready(function() {
+		
+		var template_UI = { 
+				number:'<label>Untitled</label><div><input type="text" /></div>', 			
+				text:'<label>Untitled</label><div><input type="text" /></div>',
+				checkboxes:'<label>Untitled</label><div><span><input type="checkbox" /><label>First Choice</label></span><span><input type="checkbox" /><label>Second Choice</label></span><span><input type="checkbox" /><label>Third Choice</label></span></div>',
+				dropdown:'<label>Untitled</label><div><select><option>First choice</option><option>Second choice</option><option>Third choice</option></select></div>'
+			};
+			
+		jQuery("#custom_fields li").draggable({
+										connectToSortable: "#custom_form",
+										helper: "clone",										
+										revert: "invalid" 
+									});
+									
+		jQuery("#custom_form").sortable({
+			revert:true 
+		}).droppable({
+		    drop: function(event, ui){
+		        type = ui.draggable.attr('type');
+				
+				if(type){
+					ui.draggable.empty(); 
+					return ui.draggable.html(template_UI[type]);					
+				} 
+		    }
+		});
+	});
+</script>
+
+<% content_for :layoutType do %>single<% end %>
+
+		
+<div class="pageContent">
+	<h3 class="content_title">Ticket Fields</h3>
+	<div>
+		<ul id="custom_fields" class="ui-custom-fields">
+			<li type="number">
+				<a href="#" class="button">Number</a>
+			</li>
+			<li type="text">
+				<a href="#" class="button">Text</a>
+			</li>
+			<li type="checkboxes">
+				<a href="#" class="button">Checkboxes</a>
+			</li>
+			<li type="dropdown">
+				<a href="#" class="button">Dropdown</a>
+			</li>
+		</ul>
+	</div>
+	<div>
+		<ul id="custom_form" class="ui-form ui-custom-form">
+			<li>
+				<label>Requester</label>
+				<div>
+					<input type="text" />
+				</div>				
+			</li>
+			<li>
+				<label>Subject</label>
+				<div>
+					<input type="text" />
+				</div>				
+			</li>
+			<li>
+				<label>Status</label>
+				<div>
+					<input type="text" />
+				</div>				
+			</li>
+		</ul>		
+	</div>
+</div>
