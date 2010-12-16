@@ -1,0 +1,53 @@
+<% content_for :sidebar do %>
+	
+<% end %>
+
+<div class="pageContent">
+	<h3 class="content_title"><%= 'Forums'[:forums_title] %></h3>
+	<!--p class="subtitle">
+		<%= feed_icon_tag "Recent Posts"[:recent_posts], all_posts_path(:format => 'rss') %>
+		<%= '{count} topic(s)'[(count=Topic.all(:conditions => { :account_id => current_account.id }).count)==1 ? :topic_count : :topics_count, number_with_delimiter(count)] %>, 
+		<%= '{count} post(s)'[(count=Post.all(:conditions => { :account_id => current_account.id }).count)==1 ? :post_count : :posts_count, number_with_delimiter(count)] %>, <%= '{count} voice(s)'[(count=User.count(:conditions => ["posts_count > 0 and account_id = ?", current_account]))==1 ? :voice_count : :voices_count, number_with_delimiter(count)] %>	  
+	</p-->
+	
+	<div class="actions_bar">
+		<% if admin? %>
+  			<%= link_to 'Create New Forum'[:create_new_forum], new_forum_path, :class => "button" %>
+		<% end %> 
+	</div>
+	 
+	<div class="forum_list">
+		<h4 class="title"> <%= link_to 'Recent posts'[:recent_posts], all_posts_path %></h4>
+		<ul class="base_set">
+		<% for forum in @forums do %>
+				<li>
+					<h5>
+						<a href="<%=forum_path(forum)%>">
+							<span><%=h(forum.name)%></span>
+							<span class="subcounter">(<%= '{count}'[(count=forum.topics.size)==1 ? :topic_count : :topics_count, number_with_delimiter(count)] %>)</span>
+							<span class="follow_link">»</span>
+						</a>
+					</h5>
+					<ul>
+						<% (Topic.freshest(current_account).for_forum(forum).limit(5)).each  do |topic_list| %>
+							<li><%= link_to(topic_list.title, forum_topic_path(topic_list.forum, topic_list)) %></li>  							 
+						<% end %>
+					</ul>
+				</li>			
+		<% end %>
+		</ul>
+	</div>
+	 
+	
+	<% online_users = User.currently_online -%>
+	<% unless !online_users || online_users.empty? %>
+		<div class="stats">
+			<div class="users">
+				<% unless !online_users || online_users.empty? %>
+					<%= 'Users online:'[:users_online] %> <%= online_users.map { |u| link_to "<strong>#{h u.display_name}</strong>", user_path(u) } * ", " %><br />
+				<% end %>
+			</div>
+		</div>
+	<% end %>
+
+</div>

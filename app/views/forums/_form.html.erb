@@ -1,0 +1,28 @@
+<p style="float:right; margin-top:0"></p>
+
+<!--table border="0" cellspacing="0" cellpadding="0" class="noborder nopad wide">
+  <td>
+    <label><%= 'Title'[:title_title] %></label><br />
+    <%= form.text_field :name, :class => "primary" %>
+  </td>
+  <td style="text-align:right">
+    <label><%= 'Position'[:position_title] %></label><br />
+    <%= form.text_field :position, :size => 5 %>
+  </td>
+</table-->
+
+<ul class="ui-form">
+	<li id="forum_name">
+		<label><%= 'Title'[:title_title] %></label>
+		<div>
+			<%= form.text_field :name, :class => "primary" %>
+		</div>
+	</li>	
+	<li id="forum_descripion">
+		<label><%= 'Description'[:description_title] %></label>
+		<div>
+			<%= form.text_area :description, :rows => 7 %>
+		</div>
+	</li>
+</ul>
+ 
