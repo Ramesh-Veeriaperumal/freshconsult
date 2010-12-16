@@ -21,6 +21,7 @@ protected
     if @parent.is_a? Helpdesk::Ticket
       #Helpdesk::TicketNotifier.deliver_reply(@parent, @item) unless @item.private #by Shan using delay_jobs here..
       Helpdesk::TicketNotifier.send_later(:deliver_reply, @parent, @item) unless @item.private
+      UserNotifier.send_later(:deliver_ticket_response, @parent, @item) unless @item.private
       @parent.responder ||= current_user
     end
 

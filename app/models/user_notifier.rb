@@ -20,5 +20,15 @@ class UserNotifier < ActionMailer::Base
     content_type  "text/plain"
   end
   
+  def ticket_response(ticket, note)
+    subject       Helpdesk::EMAIL[:reply_subject]  + " #{ticket.encode_display_id}"
+    from          ticket.account.default_email
+    recipients    ticket.requester.email
+    sent_on       Time.now
+    body          :ticket => ticket, :note => note, :host => ticket.account.full_domain
+    headers       "Reply-to" => "#{ticket.account.default_email}"
+    content_type  "text/plain"
+  end
+  
   
 end
