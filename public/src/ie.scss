@@ -2,3 +2,7 @@
 
 // Generate the blueprint IE-specific customizations:
 @include blueprint-ie;
+
+#inner {
+	height:400px !important;
+}
