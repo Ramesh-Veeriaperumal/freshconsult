@@ -1,0 +1,14 @@
+## YAML Template.
+ffde1:
+  flexifield_def_id: 1
+  flexifield_name: ffs_01
+  flexifield_alias: excerpt
+  flexifield_tooltip: Enter excerpt
+  flexifield_order: 1
+  
+ffde2:
+  flexifield_def_id: 1
+  flexifield_name: ffs_02
+  flexifield_alias: references
+  flexifield_tooltip: Enter references
+  flexifield_order: 2
