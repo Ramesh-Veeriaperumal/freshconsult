@@ -1,6 +1,6 @@
 class Support::GuidesController < ApplicationController
-  layout 'support/default'
-
+  layout 'ssportal'
+  
   before_filter { |c| c.requires_permission :portal_knowledgebase }
 
   def index

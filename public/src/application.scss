@@ -23,7 +23,7 @@ body{
 	z-index:1; 
 	background-color:#ffffff;
 	overflow:hidden;
-	margin:0 0px;
+	margin:0 0px;	
 	padding-right:$sidebar-width; /* The width of the rail */ 
 	.leftcontent{
 		background-color:#ffffff;
@@ -38,6 +38,7 @@ body{
 		float:left; 
 		margin-right:-$sidebar-width;
 	} 
+	
 }
 
 .single #inner{
@@ -1650,7 +1651,7 @@ $lightBase:lighten($base, 5%);
 }
 
 .ui-custom-fields{		
-	width:20%;
+	width:280px;
 	@include clearfix;
 	li{
 		float:left;
@@ -1660,15 +1661,13 @@ $lightBase:lighten($base, 5%);
 	}
 }
 
-.ui-custom-form{
-	width:40%;
-	background:#f9f9f9;
-	margin-bottom:20px;
-	padding:6px;
+.ui-form{ 
+	@include no-bullets; 
+	padding:6px 0px;
+	margin:0px;
 	li{
-		padding:6px 6px;
-	}
-	
+		padding:6px 0px; 
+	} 
 	label{
 		font-size:1em;
 	}
@@ -1688,7 +1687,118 @@ $lightBase:lighten($base, 5%);
 			clear:right;
 		}
 	}
+	textarea{
+		margin:0px;
+	}
 	select{
 		width:auto;
 	}
+}
+
+.ui-custom-form{
+	width:550px;
+	background:#f9f9f9;
+	margin-bottom:20px;
+	li{
+		cursor:move;
+		padding:6px; 
+		*{
+			cursor:move;
+		}
+	} 
+	li:hover{		
+		background:#ffffff;
+		border:1px dotted #afafaf;
+		padding:5px;
+	}
+}
+
+.forums{
+	border:1px solid #efefef;
+	td{
+		border:1px solid #f0f0f0;
+		text-align:left;
+	}
+	td.c1{
+		background:#efefef;
+	}
+}
+
+.forum_list, .topics_list{
+	background:$base;
+	padding:6px;
+	@include border-radius(0.8em);
+	h4.title{
+		margin:0px;
+		padding:2px 6px;
+	}
+	ul.base_set{
+		@include horizontal-list;
+		background:#ffffff;
+		border:2px solid darken($base, 5%);
+		@include border-radius(0.8em);	
+		li{
+			width:46.8%;
+			margin:2px 8px;
+			padding:0px;
+			margin-bottom:6px;
+			h5{
+				font-size:14px;
+				margin:7px 6px 2px 13px;
+				a{
+					color:#545454;
+					text-decoration:none;	
+					span.subcounter{
+						font-weight:normal;	
+						color:#848484;					
+					}					
+				}
+				a:hover{
+					span.follow_link{
+						color:darken($base, 45%);
+					}
+				}
+				border-bottom:1px solid #efefef;
+			}
+		}
+	}
+	ul{
+		@include no-bullets;
+		padding:6px;
+		margin:0px; 
+		li{
+			a{
+				color:#1A6690;
+			}
+		}
+	}
+	
+}
+
+.topics_list{ 
+	ul.base_set{
+		padding-top:16px;
+		li{
+			width:100%;
+			margin-bottom:10px;
+			border-bottom:1px solid #efefef;
+		}
+		li{  
+			.topic_icon{
+			 	@include float-left; 
+			 	margin-right:10px;
+			}
+		}
+		h4.topic_title{
+			margin:0px;		
+			font-weight:bold;
+			a{
+				color:#1A6690;
+			}
+		}
+		a{
+			text-decoration:none;
+			color:#1A6690;
+		}
+	} 
 }

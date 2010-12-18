@@ -20,5 +20,4 @@ class UserNotifier < ActionMailer::Base
     content_type  "text/plain"
   end
   
-  
 end

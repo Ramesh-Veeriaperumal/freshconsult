@@ -98,3 +98,8 @@ button {
   position: relative;
   top: 0.25em;
 }
+
+/* line 6, ../src/ie.scss */
+#inner {
+  height: 400px !important;
+}
