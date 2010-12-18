@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101214094121) do
+ActiveRecord::Schema.define(:version => 20101218073860) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -36,6 +36,99 @@ ActiveRecord::Schema.define(:version => 20101214094121) do
   end
 
   add_index "delayed_jobs", ["locked_by"], :name => "index_delayed_jobs_on_locked_by"
+
+  create_table "flexifield_def_entries", :force => true do |t|
+    t.integer  "flexifield_def_id",  :null => false
+    t.string   "flexifield_name",    :null => false
+    t.string   "flexifield_alias",   :null => false
+    t.string   "flexifield_tooltip"
+    t.integer  "flexifield_order"
+    t.string   "flexifield_coltype"
+    t.string   "flexifield_defVal"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "flexifield_def_entries", ["flexifield_def_id", "flexifield_name"], :name => "idx_ffde_onceperdef", :unique => true
+  add_index "flexifield_def_entries", ["flexifield_def_id", "flexifield_order"], :name => "idx_ffde_ordering"
+
+  create_table "flexifield_defs", :force => true do |t|
+    t.string   "name",       :null => false
+    t.integer  "account_id"
+    t.string   "module"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "flexifield_defs", ["name", "account_id"], :name => "idx_ffd_onceperdef", :unique => true
+
+  create_table "flexifield_picklist_vals", :force => true do |t|
+    t.integer  "flexifield_def_entry_id", :null => false
+    t.string   "value"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "flexifields", :force => true do |t|
+    t.integer  "flexifield_def_id"
+    t.integer  "flexifield_set_id"
+    t.string   "flexifield_set_type"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "ffs_01"
+    t.string   "ffs_02"
+    t.string   "ffs_03"
+    t.string   "ffs_04"
+    t.string   "ffs_05"
+    t.string   "ffs_06"
+    t.string   "ffs_07"
+    t.string   "ffs_08"
+    t.string   "ffs_09"
+    t.string   "ffs_10"
+    t.string   "ffs_11"
+    t.string   "ffs_12"
+    t.string   "ffs_13"
+    t.string   "ffs_14"
+    t.string   "ffs_15"
+    t.string   "ffs_16"
+    t.string   "ffs_17"
+    t.string   "ffs_18"
+    t.string   "ffs_19"
+    t.string   "ffs_20"
+    t.string   "ffs_21"
+    t.string   "ffs_22"
+    t.string   "ffs_23"
+    t.string   "ffs_24"
+    t.string   "ffs_25"
+    t.string   "ffs_26"
+    t.string   "ffs_27"
+    t.string   "ffs_28"
+    t.string   "ffs_29"
+    t.string   "ffs_30"
+    t.string   "ff_int01"
+    t.string   "ff_int02"
+    t.string   "ff_int03"
+    t.string   "ff_int04"
+    t.string   "ff_int05"
+    t.string   "ff_int06"
+    t.string   "ff_int07"
+    t.string   "ff_int08"
+    t.string   "ff_int09"
+    t.string   "ff_int10"
+    t.string   "ff_date01"
+    t.string   "ff_date02"
+    t.string   "ff_date03"
+    t.string   "ff_date04"
+    t.string   "ff_date05"
+    t.string   "ff_date06"
+    t.string   "ff_date07"
+    t.string   "ff_date08"
+    t.string   "ff_date09"
+    t.string   "ff_date10"
+  end
+
+  add_index "flexifields", ["flexifield_def_id"], :name => "index_flexifields_on_flexifield_def_id"
+  add_index "flexifields", ["flexifield_set_id", "flexifield_set_type"], :name => "idx_ff_poly"
 
   create_table "forums", :force => true do |t|
     t.string  "name"
