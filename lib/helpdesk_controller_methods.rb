@@ -1,6 +1,7 @@
 module HelpdeskControllerMethods
 
   def self.included(base)
+    base.send :before_filter, :get_custom_fields,   :only => [:create, :update]
     base.send :before_filter, :build_item,          :only => [:new, :create]
     base.send :before_filter, :load_item,           :only => [:show, :edit, :update]
     base.send :before_filter, :load_multiple_items, :only => [:destroy, :restore]
@@ -9,12 +10,31 @@ module HelpdeskControllerMethods
   
 
   def create
-    if @item.save
+   
+    if @item.save!
+      handle_custom_fields
       post_persist
     else
       create_error
     end
   end
+  
+  def handle_custom_fields
+    
+   
+    ff_def_id = FlexifieldDef.find_by_account_id(current_account.id).id
+    
+    @item.ff_def = ff_def_id
+    
+    @item.assign_ff_values @flexi_fields
+    
+    #if at all the above assign won't solve the problem we can use set_ff_value    
+    #@item.set_ff_value column, value    
+  
+    
+  end
+  
+  
   
   def post_persist #Need to check whether this should be called only inside create by Shan to do
     create_attachments #
@@ -132,12 +152,31 @@ protected
     @items = (params[:ids] || (params[:id] ? [params[:id]] : [])).map { |id| load_by_param(id) }.select{ |r| r }
     self.instance_variable_set('@' + cname.pluralize, @items) 
   end
+  
+  def get_custom_fields
+    
+    @flexi_fields = params[nscname][:flexifields]
+    
+  end
 
   def build_item
+    
+    
+    testParm =nil
+    unless params[nscname].nil?
+      
+      testParm = params[nscname]
+      
+      testParm.delete("flexifields")
+          
+    end
+    
     @item = self.instance_variable_set('@' + cname,
       scoper.is_a?(Class) ? scoper.new(params[nscname]) : scoper.build(params[nscname]))
     set_item_user
     @item
+    
+       
   end
 
   def set_item_user

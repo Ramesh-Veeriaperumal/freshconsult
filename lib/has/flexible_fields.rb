@@ -4,6 +4,7 @@
 # see README for license
 module Has #:nodoc:
   module FlexibleFields #:nodoc:
+    
   
     def self.included(base) # :nodoc:
       base.extend ClassMethods
@@ -14,12 +15,14 @@ module Has #:nodoc:
         unless includes_flexiblefields?
           
           has_one :flexifield, :as => :flexifield_set, :dependent => :destroy
+          
+          has_many :flexifield_def_entry, :class_name => 'FlexifieldDefEntry'
+         
           delegate :assign_ff_values, :set_ff_value, :get_ff_value, :ff_def=, :ff_def, :to_ff_alias, :ff_aliases, :to_ff_field, :ff_fields, :to => :flexifield
           
+                  
           accepts_nested_attributes_for :flexifield
-          
-          accepts_nested_attributes_for :flexifield_picklist_val
-          
+                    
           after_create :create_flexifield
           after_save :save_flexifield
           
@@ -95,6 +98,8 @@ module Has #:nodoc:
       def has_ff_def?
         flexifield.nil? ? false : !flexifield.flexifield_def_id.nil?
       end   
+      
+  
       
       protected
       

@@ -1,7 +1,11 @@
 require 'digest/md5'
 
-class Helpdesk::Ticket < ActiveRecord::Base
+class Helpdesk::Ticket < ActiveRecord::Base 
+  
+  
   set_table_name "helpdesk_tickets"
+  
+  has_flexiblefields
   
   #by Shan temp
   attr_accessor :email
@@ -48,9 +52,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   has_many :issues, 
     :class_name => 'Helpdesk::Issue',
     :through => :ticket_issues
-
-
-
+  
+  
   named_scope :newest, lambda { |num| { :limit => num, :order => 'created_at DESC' } }
   named_scope :visible, :conditions => ["spam=? AND deleted=? AND status > 0", false, false] 
 
@@ -299,6 +302,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
       
       self.requester = @requester
     end
+  end
+  
+  def custom_fields
+   
+    @custom_fields = FlexifieldDef.all(:include => :flexifield_def_entries, :conditions => ['account_id=? AND module=?',account_id,'Ticket']) 
+    
+  
   end
 
 end

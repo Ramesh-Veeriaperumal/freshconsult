@@ -50,7 +50,7 @@ class FlexifieldDefEntry < ActiveRecord::Base
   def to_ff_alias ff_field = nil
     (ff_field.nil? || flexifield_name == ff_field) ? flexifield_alias : nil
   end
-  
+
   private
 
   def ensure_alias_is_one_word
