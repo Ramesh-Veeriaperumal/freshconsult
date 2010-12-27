@@ -224,21 +224,23 @@ a.new_ticket{
 	position:relative;
  	label.searchTxt{  
 		@include min-width(200px);
-		border:1px solid #cfcfcf;
+		/*border:1px solid #cfcfcf;
 		background:#fff; 
+		@include border-radius(2em);*/
 		float:left;
 		height:23px;
-		padding-right:10px;
+		padding:0px;
 		margin-right:3px;
 		position:relative;
-		top:7px;
-		@include border-radius(2em); 
+		top:7px;		 
 		input{		
-			color:#999999;
+			color:#000000;
 			border:0px;
-			font-size:1.2em;
+			font-size:2em;
+			width:100%;
 			padding:5px 10px;
-			background:0px;		
+			-webkit-appearance: searchfield;
+			-webkit-box-sizing: border-box; 
 		}
 	}
 	.searchbt{
@@ -2056,5 +2058,8 @@ $lightBase:lighten($base, 5%);
 	background:lighten($base, 6%);
 	@include border-radius(8px);
 	font-size:0.95em;
+	li{
+		width:90%;
+	}
 }
 
