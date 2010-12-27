@@ -1,75 +1,425 @@
-<script type="text/javascript"> 
-	jQuery(document).ready(function() {
+<script type="text/javascript">
+    jQuery(document).ready(function(){  
+	
+        var fieldFeed = [{
+            type: "text",
+            label: "Requester (email)",
+            description: "Enter requester name",
+            choices: [],
+            setDefault: 0,
+            agent: {required: true},
+            customer: {visible: true,editable: false,required: true}
+        },{
+            type: "text",
+            label: "Subject",
+            description: "Request subject",
+            choices: [],
+            setDefault: 0,
+            agent: {required: true},
+            customer: {visible: true,editable: false,required: true}
+        },{
+            type: "dropdown",
+            label: "Source",
+            description: "Source of the request",
+            choices: [{value:"Staff initiated", tags:[]}, {value:"E-mail", tags:[]}],
+            setDefault: 0,
+            agent: {required: true},
+            customer: {visible: true,editable: false,required: true}
+        },{
+            type: "dropdown",
+            label: "Status",
+            description: "Status of the request",
+            choices: [{value:"Open", tags:[]}, {value:"Closed", tags:[]}],
+            setDefault: 0,
+            agent: {required: true},
+            customer: {visible: true,editable: false,required: true}
+        },{
+            type: "dropdown",
+            label: "Priority",
+            description: "",
+            choices: [{value:"Low", tags:[]}, {value:"High", tags:[]}],
+            setDefault: 0,
+            agent: {required: true},
+            customer: {visible: true,editable: false,required: true}
+        },{
+            type: "dropdown",
+            label: "Assigned to",
+            description: "",
+            choices: [{value:"Not Assigned", tags:[]}],
+            setDefault: 0,
+            agent: {required: true},
+            customer: {visible: true,editable: false,required: true}
+        },{
+            type: "paragraph",
+            label: "Description",
+            description: "",
+            choices: [],
+            setDefault: 0,
+            agent: {required: true},
+            customer: {visible: true,editable: false,required: true}
+        }];
 		
-		var template_UI = { 
-				number:'<label>Untitled</label><div><input type="text" /></div>', 			
-				text:'<label>Untitled</label><div><input type="text" /></div>',
-				checkboxes:'<label>Untitled</label><div><span><input type="checkbox" /><label>First Choice</label></span><span><input type="checkbox" /><label>Second Choice</label></span><span><input type="checkbox" /><label>Third Choice</label></span></div>',
-				dropdown:'<label>Untitled</label><div><select><option>First choice</option><option>Second choice</option><option>Third choice</option></select></div>'
-			};
+		var DialogFieldPref = null;
+		var SourceField 	= null;	
+		
+		var dialogContainer = "div#CustomFieldsDialog";
+		var dialogDOMMap = {
+			type: jQuery(dialogContainer+' label[name|="customtype"]'),
+			label: jQuery(dialogContainer+' input[name|="customlabel"]'),
+            description: jQuery(dialogContainer+' input[name|="customdesc"]'),	
+			choices: jQuery(dialogContainer+' div[name|="customchoices"]'),
+            setDefault: 1,	    
+		    agent: {required: jQuery(dialogContainer+' input[name|="agentrequired"]')},
+			customer: {visible: jQuery(dialogContainer+' input[name|="customervisible"]'),
+					   editable: jQuery(dialogContainer+' input[name|="customereditable"]'),
+					   required: jQuery(dialogContainer+' input[name|="customerrequired"]')}
+		};
+		/*
+		for(name in dialogDOMMap){
+			console.log(jQuery(dialogDOMMap[name]).val());
+			jQuery(dialogDOMMap[name]).bind("change", function(e){
+					console.log("aaa");
+					switch (name){
+						case 'label':
+						console.log(name);
+						jQuery(SourceField).html(jQuery(this).val());					
+						break;						
+					}				
+			});			
+		}*/
+		       
+        var fieldTemplate = $H({
+					            type: "",
+					            label: "Untitled",
+					            description: "",
+					            choices: [],
+					            setDefault: 0,
+					            agent: {required: false},
+					            customer: {visible: false,editable: false,required: false}
+					        });
+        
+        function getFreshField(type){
+            var freshField = fieldTemplate.toObject();
+			freshField.type = type;			
+            switch (type) {
+                case 'dropdown': 
+                    freshField.choices = [{value: "First Choice",tag: []}, {value: "Second Choice",tag: []}];
+                break;
+            }
+			return freshField;
+        }
+		
+		function getCustomFieldJson(){
+			var allfields = [];
+			jQuery("#custom_form li").each(function(index, domLi){
+				allfields.push(jQuery(domLi).data("raw"));
+			})
+			return allfields;
+		}
+        
+        function constFieldDOM(dataItem, container){ 
+            var fieldContainer = container || jQuery("<li />"); 
+				fieldContainer.empty();
+			         
+            var label = jQuery("<label />").append(dataItem.label);            
+            var field = jQuery("<div />");
+            
+			var fieldAttr = '';
+            switch (dataItem.type) {
+                case 'number':
+                case 'text':
+					fieldContainer.addClass("large");
+                    field.append('<input type="text" '+fieldAttr+' />');
+                    break;
+                    
+                case 'checkbox':
+					fieldContainer.addClass("small");
+					var selected = (dataItem.setDefault)?'checked':'';
+                    field.append('<input type="checkbox" '+ selected +' '+fieldAttr+' />');
+                    break;
+                    
+                case 'dropdown':
+					fieldContainer.addClass("small");
+                    jQuery(dataItem.choices).each(function(ci, choice){
+                        var defChoice = (ci == dataItem.setDefault) ? 'selected="selected"' : '';
+                        field.append("<option " + defChoice + ">" + choice.value + "</option>");
+                    });
+                    field.wrapInner("<select "+fieldAttr+" />");
+                    break;
+                    
+                case 'paragraph':
+					fieldContainer.addClass("large");
+                    field.append('<textarea '+fieldAttr+'></textarea>');
+                    break;
+            }            
 			
-		jQuery("#custom_fields li").draggable({
-										connectToSortable: "#custom_form",
-										helper: "clone",										
-										revert: "invalid" 
-									});
-									
-		jQuery("#custom_form").sortable({
-			revert:true 
-		}).droppable({
-		    drop: function(event, ui){
-		        type = ui.draggable.attr('type');
-				
-				if(type){
-					ui.draggable.empty(); 
-					return ui.draggable.html(template_UI[type]);					
-				} 
-		    }
-		});
-	});
-</script>
-
-<% content_for :layoutType do %>single<% end %>
-
+            fieldContainer.append(label)
+						  .append(field);
+			fieldContainer.data("raw", dataItem); 
+			
+			return fieldContainer;
+        }
+		 
+        
+        function feedJsonForm(formInput){
+            jQuery(formInput).each(function(index, dataItem){				
+				var dom = constFieldDOM(dataItem);				
+				jQuery("#custom_form").append(dom);				
+            });
+        }
+        
+        feedJsonForm(fieldFeed);
+        
+        jQuery("#custom_fields li").draggable({
+            connectToSortable: "#custom_form",
+            helper: "clone",
+            revert: "invalid"
+        });
+        
+        jQuery("#custom_form")
+				.sortable({
+		            revert: true
+		        }).droppable({ 
+		            drop: function(ev, ui){ 
+		                type = ui.draggable.get(0).getAttribute('type');
+		                if (type) {			               
+							constFieldDOM(getFreshField(type), ui.draggable);
+							ui.draggable.trigger("click");
+		                }
+		            }
+		        });
+        
+        jQuery("#close_button").click(function(e){
+            jQuery("#CustomFieldsDialog").hide();
+        });
 		
+		jQuery("#SaveForm").click(function(e){
+			var jsonData = getCustomFieldJson();
+			
+		});
+		
+        
+		function innerLevelExpand(checkbox){
+			if (checkbox.checked) 
+                jQuery(checkbox).parent().parent().children('div').show();
+            else 
+                jQuery(checkbox).parent().parent().children('div').hide();			
+		}
+        
+        jQuery("#nestedConfig").find("input:checkbox").click(function(e){
+            innerLevelExpand(this);
+        }); 
+		
+		function addChoiceinDialog(data, dom){
+			dom 	= dom || dialogDOMMap.choices;
+			data 	= data || {value:'', tags:''};
+			dom.append('<fieldset><span class="dropchoice"><input type="text" value="'+data.value+'" /></span><span class="tags"><input type="text" value="'+data.tags+'" /></span><img class="deleteChoice" src="/images/delete.png" /></fieldset>')
+		}
+		
+		jQuery(".deleteChoice").live('click', function(){
+											jQuery(this).parent().remove();
+									  }); 
+									  
+		jQuery(".addchoice").live('click', function(){
+											addChoiceinDialog();
+									  }); 
+		
+		function getAllChoices(dom){
+			var choices = $A();
+			dom.find('fieldset').each(function(choiceset){
+				var temp = {value:'', tags:''};
+				temp.value  = jQuery(this).find("span.dropchoice input").val();
+				temp.tags   = jQuery(this).find("span.tags input").val();	
+				choices.push(temp);	 	
+			});			
+			return choices;
+		}
+		
+		function DialogOnLoad(sourceField){ 
+			// Dialog Population Method
+			jQuery(SourceField).removeClass("active");
+			SourceField = sourceField;
+			jQuery(sourceField).addClass("active");
+			
+			var sourceData = jQuery(sourceField).data("raw");
+				
+				dialogDOMMap.type.html(sourceData.type + " Label");							
+				dialogDOMMap.label.val(sourceData.label);
+				dialogDOMMap.description.val(sourceData.description);
+				
+				jQuery("div#CustomFieldsDialog label.overlabel").overlabel();
+				
+				dialogDOMMap.choices.empty();
+				sourceData.choices.each(function(item){
+					addChoiceinDialog(item, dialogDOMMap.choices);						
+				});
+				
+				dialogDOMMap.agent.required.attr("checked", sourceData.agent.required);								
+				dialogDOMMap.customer.visible.attr("checked", sourceData.customer.visible);
+					 innerLevelExpand(dialogDOMMap.customer.visible.get(0));
+				dialogDOMMap.customer.editable.attr("checked", sourceData.customer.editable);
+					innerLevelExpand(dialogDOMMap.customer.editable.get(0)); 
+				dialogDOMMap.customer.required.attr("checked", sourceData.customer.required);  
+				
+			jQuery("#DropFieldChoices").hide();
+            switch (sourceData.type) {
+                case 'dropdown':
+                    jQuery("#DropFieldChoices").show(30);
+                    break;
+            }
+		}      
+        
+		jQuery("#SaveField").click(function(){
+			var sourceData 					 = jQuery(SourceField).data("raw");																	
+				sourceData.label 			 = dialogDOMMap.label.val();
+				sourceData.description 		 = dialogDOMMap.description.val();
+				sourceData.agent.required	 = dialogDOMMap.agent.required.attr("checked");
+				sourceData.customer.visible	 = dialogDOMMap.customer.visible.attr("checked");										
+				sourceData.customer.editable = dialogDOMMap.customer.editable.attr("checked");
+				sourceData.customer.required = dialogDOMMap.customer.required.attr("checked");  											
+				sourceData.choices			 = getAllChoices(dialogDOMMap.choices);										
+														
+				constFieldDOM(sourceData, jQuery(SourceField));		
+										
+			//DialogFieldPref.dialog("close");			
+		});
+		
+		jQuery("#close_button").click(function(){
+			//DialogFieldPref.dialog("close");	
+		});
+		
+        jQuery("#custom_form li").live("click", function(e){           
+			DialogOnLoad(this);
+			
+            jQuery("#CustomFieldsDialog")
+							             /*.position({
+							             of: jQuery( this ),
+							             my: 'left' + " " + 'center',
+							             at: 'left' + " " + 'top',
+							             offset: '250px -30px',
+							             collision: "fit fit"
+							             })*/
+										 .show("highlight", 5000);
+            /*DialogFieldPref = jQuery("#CustomFieldsDialog").dialog({
+					                closeOnEscape: true,
+					                width: "550px",
+					                position: ['center', 50],
+									resizable:false,				
+					                //modal: true,
+					                dialogClass: '.dialog_ticket_field',
+					                show: 'clip' 
+					            });*/
+        });
+        
+		  
+    });
+</script>
+<% content_for :layoutType do %>single<% end %>
 <div class="pageContent">
-	<h3 class="content_title">Ticket Fields</h3>
-	<div>
-		<ul id="custom_fields" class="ui-custom-fields">
-			<li type="number">
-				<a href="#" class="button">Number</a>
-			</li>
-			<li type="text">
-				<a href="#" class="button">Text</a>
-			</li>
-			<li type="checkboxes">
-				<a href="#" class="button">Checkboxes</a>
-			</li>
-			<li type="dropdown">
-				<a href="#" class="button">Dropdown</a>
-			</li>
-		</ul>
-	</div>
-	<div>
-		<ul id="custom_form" class="ui-form ui-custom-form">
-			<li>
-				<label>Requester</label>
-				<div>
-					<input type="text" />
-				</div>				
-			</li>
-			<li>
-				<label>Subject</label>
-				<div>
-					<input type="text" />
-				</div>				
-			</li>
-			<li>
-				<label>Status</label>
-				<div>
-					<input type="text" />
-				</div>				
-			</li>
-		</ul>		
-	</div>
+    <h3 class="content_title">Ticket Fields</h3>
+    <div class="admin_form">
+        <ul id="custom_fields" class="ui-custom-fields">
+        	<h4 class="title">Add a Custom Field</h4>
+            <li type="text">
+                <a href="#" class="fdbutton">Single Line Text</a>
+            </li>
+            <li type="number">
+                <a href="#" class="fdbutton">Number</a>
+            </li>
+            <li type="paragraph">
+                <a href="#" class="fdbutton">Paragraph Text</a>
+            </li>
+            <li type="checkbox">
+                <a href="#" class="fdbutton">Checkbox</a>
+            </li>
+            <li type="dropdown">
+                <a href="#" class="fdbutton">Dropdown</a>
+            </li>
+        </ul> 
+		
+		<div class="custom_form_outer">
+			<h3 class="content_title">Customize your “New Ticket” form.</h3>
+	        <ul id="custom_form" class="ui-form ui-custom-form">
+	        </ul>  
+		</div>
+		
+		<div class="dialog_ticket_field" title="Field Properties" id="CustomFieldsDialog" style="display:none;">
+		    <form action="#">		    	
+		        <ul class="ui-form">
+		            <li>
+		                <label name="customtype">
+		                    Field Label
+		                </label>
+		                <div>
+		                    <input type="text" name="customlabel" value="" />
+		                </div>
+		            </li>
+		            <li>
+		                <label>
+		                    Description
+		                </label>
+		                <div>
+		                    <label for="customdesc" class="overlabel">
+		                        Tooltip for the field
+		                    </label>
+		                    <input type="text" name="customdesc" value="" id="customdesc" />
+		                </div><span class="seperator"></span>
+		            </li>
+		            <li class="colsets" id="DropFieldChoices">
+		                <label>
+		                    Dropdown Choices							
+		                </label>
+		                <div>		                    
+		                    <fieldset>
+		                        <b class="dropchoice">Choices</b>
+		                        <b class="tags">Tags</b>
+		                    </fieldset>
+							<div name="customchoices">
+			                    <fieldset>
+			                        <span class="dropchoice"><input type="text" /></span><span class="tags"><input type="text" /></span><img src="/images/delete.png" />
+			                    </fieldset>
+							</div>
+		                    <fieldset class="addchoice">
+		                        Add new choice <img src="/images/add.png" />
+		                    </fieldset>
+		                </div>
+		            </li>
+		            <li>
+		                <label>
+		                    For Agents
+		                </label>
+		                <div class="nestedChoices">
+		                    <h4><input type="checkbox" name="agentrequired" />Required for closure<span>Field cannot be blank when solving the ticket</span></h4>
+		                </div>
+		                <span class="seperator"></span>
+		            </li>
+		            <li>
+		                <label>
+		                    For Customers
+		                </label>
+		                <div id="nestedConfig" class="nestedChoices">
+		                    <h4><input type="checkbox" name="customervisible" />Visible to customers</h4> 
+		                    <div style="display:none;">
+		                        <h4><input type="checkbox" name="customereditable" />Can Edit the field</h4>
+		                        <div style="display:none;">
+		                            <h4><input type="checkbox" name="customerrequired" />Required for ticket submission<span>no blank selection for field value is allowed when submitting a ticket online.</span></h4>
+		                        </div>
+		                    </div>
+		                </div>
+		            </li>
+		            <li>
+		                <input type="button" class="button" id="SaveField" value="Save" /> <input type="button" class="button" value="Cancel" id="close_button" />
+		            </li>
+		        </ul>
+		    </form>
+		</div>
+    
+		<div class="button-container admin_form">
+			<a href="Javascript:void(0)" class="fdbutton" id="SaveForm">Save</a>
+			<a href="Javascript:void(0)" class="fdbutton grey" id="cancelfrom">Cancel</a>
+		</div>
+	
+	</div> 
+	
 </div>
+<% content_for :dialogs do %><% end %>

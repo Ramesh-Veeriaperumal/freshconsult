@@ -1,0 +1,46 @@
+@mixin pie {
+  behavior: url(/stylesheets/PIE.htc); }
+
+.pie {
+  @include pie; }
+
+@mixin shadows($color: #aaaaaa, $x: 1px, $y: 2px, $spread: 2px) {
+  @extend .pie;
+  -moz-box-shadow: $color $x $y $spread;
+  -webkit-box-shadow: $color $x $y $spread;
+  box-shadow: $color $x $y $spread; }
+
+@mixin inset-shadows($color: #aaaaaa, $x: 1px, $y: 1px, $spread: 1px) {
+  @extend .pie;
+  -moz-box-shadow: inset $x $y $spread $color;
+  -webkit-box-shadow: inset $x $y $spread $color;
+  box-shadow: inset $x $y $spread $color; }
+
+@mixin corners($tl: 5px, $tr: nil, $br: nil, $bl: nil) {
+  @extend .pie;
+  @if $tr == nil {
+    $tr: $tl; }
+  @if $br == nil {
+    $br: $tl; }
+  @if $bl == nil {
+    $bl: $tl; }
+  -moz-border-radius: $tl $tr $br $bl;
+  -webkit-border-top-left-radius: $tl;
+  -webkit-border-bottom-left-radius: $bl;
+  -webkit-border-top-right-radius: $tr;
+  -webkit-border-bottom-right-radius: $br;
+  border-radius: $tl $tr $br $bl; }
+
+@mixin vertical-gradient($start: black, $end: #cccccc) {
+  @extend .pie;
+  background: $end;
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0, $start), color-stop(1, $end));
+  background: -moz-linear-gradient(center top, $start 0%, $end 100%);
+  -pie-background: linear-gradient(90deg, $start, $end); }
+
+@mixin form-gradient($start: #ffffff, $end: #DDDDDD, $position: 5px ){
+	background: $start; /* old browsers */
+	background: -moz-linear-gradient(top, $end 0%, $start 5px, $start 100%); /* firefox */		
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, $end), color-stop($position, $start), color-stop(100%,$start)); /* webkit */		
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='$end', endColorstr='$start',GradientType=0 ); /* ie */
+}

@@ -1,5 +1,6 @@
 // This import applies a global reset to any page that imports this stylesheet.
 @import "base";
+@import "mixins";
 
 body{
   	@include blueprint-typography(true);
@@ -7,22 +8,20 @@ body{
 } 
 
 .container{  
-	overflow:visible;
-	@include min-height(100%);
+	overflow:visible; 
 }
  
 .content{
 	position:relative;	
 	border:1px solid #acc0ac; 
-	border-width:0px 1px 0px 1px;
-	@include min-height(100%); 
+	border-width:0px 1px 0px 1px; 
 }
  
 #inner {    
+	@include pie-clearfix;
 	position:relative;
 	z-index:1; 
-	background-color:#ffffff;
-	overflow:hidden;
+	background-color:#ffffff;	
 	margin:0 0px;	
 	padding-right:$sidebar-width; /* The width of the rail */ 
 	.leftcontent{
@@ -85,12 +84,7 @@ body{
 		float:right; 	
 	}
 }
-
-
-
-* html #inner{
-	height:1%; /* So IE plays nice */
-}
+ 
 	
 .content div.corners{ 
 	left:0px;
@@ -144,42 +138,41 @@ a.logo{
 	clear:both; 
 	width:100%;
 	ul.tabs{
-		@include inline-block-list; 
+		@include no-bullets;
+		@include clearfix;
+		margin:0px;
+		padding:0px; 
 		li{
 			float:left;
-			@include min-width(90px);
+			@include min-width(90px); 
 			a{
 				text-decoration:none; 
 				color:#ffffff;
-				padding:5px 5px 5px 5px;
-				text-transform:uppercase;
-				
-				font-size:0.9em;
-				
+				padding:5px 0px 5px 0px;
+				text-transform:uppercase;				
+				font-size:0.9em;				
 				font-weight:bold;
 				text-align:center;				
 				display:block;							
 				position:relative;
-				@include border-top-radius(5px); 
-				@include text-shadow(rgba(0,0,0,0.5), 1px, 1px, 3px); 
+				/*@include border-top-radius(5px);*/
+				@include corners(5px, 5px, 0, 0); 
+				@include text-shadow(rgba(0,0,0,0.5), 1px, 1px, 3px);
 				
 				border:1px solid #73a173;
 				border-color-top:#afcaaf;
-				background-color:#83af83;
-				
+				background-color:#83af83;   
 				span{
 					  position:absolute; 
 					  width:100%;
-					  left:0;					   
+					  left:0px;					  					   
 					  top:0px;					   
 					  height:100%;
-					  border-top:1px solid #fcfcfc;					   
-					  @include border-top-radius(4px); 
+					  border-top:1px solid #fafafa;		 
 					  @include opacity(0.65);
-					  background-color:rgba(255,255,255,0.10);					  					   
-					  background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(rgba(255,255,255,0.55)), to(rgba(255,255,255,0)));					   
-					  background-image:-moz-linear-gradient(top,bottom,from(rgba(255,255,255,0.55)), to(rgba(255,255,255,0)));  
-					}	
+					  @include corners(5px, 5px, 0, 0);
+					  @include vertical-gradient(rgba(255,255,255,0.55), rgba(255,255,255,0)); 	   
+				}	
 			}
 		}
 		li.active a, li a:hover{
@@ -187,8 +180,7 @@ a.logo{
 				border-color-top:darken($select, 20%);
 				background-color:$select;	
 				border-bottom:0px;
-				padding-bottom:6px;  
-			
+				padding-bottom:6px;  			
 		}
 	}
 }
@@ -258,16 +250,15 @@ a.new_ticket{
 
 .ui-bt-grey{
 	@include button-colors(#878787, #ffffff, #dadada, #d8d8d8);
-	background: #ffffff; /* old browsers */ 
-	background: -moz-linear-gradient(top, #ffffff 0%, #f6f6f6 47%, #ededed 100%); /* firefox */  
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(47%,#f6f6f6), color-stop(100%,#ededed)); /* webkit */ 
-	@include border-radius(2em); 
+	/*background: #ffffff;  
+	background: -moz-linear-gradient(top, #ffffff 0%, #f6f6f6 47%, #ededed 100%);   
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(47%,#f6f6f6), color-stop(100%,#ededed)); */
+	@include vertical-gradient(#ffffff, #ededed); 	 
+	@include corners(2em); 
 }
-.ui-bt-grey:hover{
-	background: #606c88; /* old browsers */
-	background: -moz-linear-gradient(top, #606c88 0%, #3f4c6b 100%); /* firefox */	
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#606c88), color-stop(100%,#3f4c6b)); /* webkit */	
+.ui-bt-grey:hover{ 
 	border-color:#606c88;
+	@include vertical-gradient(#606c88, #3f4c6b); 
 	color:#ffffff !important;	 
 } 
   
@@ -283,7 +274,8 @@ a.new_ticket{
 }
 
 ul.summary{
-	 @include inline-block-list;
+	 @include no-bullets;
+	 margin:0px; padding:0px;
 	 position:relative;
 	 .summary_arrow{
 		position:absolute;
@@ -292,39 +284,46 @@ ul.summary{
 		border:28px solid #fffff1;
 		z-index:0;
 		border-left-color:$base;
-		height:0; width:0;
+		height:0px; width:0px;
+		font-size:0px;
+		padding:0px;margin:0px;
 	}	 
 	li.title{
 		font-size:11px;
 		text-transform:uppercase;
 		font-weight:bold;
 		color:#666666;	
-		margin:0px 38px 0px 0px;
+		margin:0px 48px 0px 0px;
+		
 		background:$base;	
 		display:inline-block;
 		height:35px;
-		padding:22px 0px 0px 16px;	
+		padding:22px 10px 0px 5px;	
 		border:0px;
 		position:relative;
+		font-style:italic;
 	} 
 	 
 	li{ 
+		@include float-left; 
 		padding:0px;
 		margin:4px 5px 0px 5px; 	
 		h4{
+			@include float-left;
 			color:#4b74a6;
 			font-size:3.4em;	
 			font-weight:bold;
-			display:inline-block;	 
 			position:relative;
-			top:-8px;			
 		}
 		p{
-			display:inline-block; 
+			@include float-left;
 			font-size:1.0em;
 			color:#555555;
 			position:relative;
-			top:-8px;
+			margin-left:3px;
+			top:10px;
+			width:70px;
+			text-align:center;
 		}
 		a{
 			text-decoration:none; 
@@ -450,14 +449,15 @@ ul.summary{
 	margin:0px 12px 0px 20px;
 }
 		
+
 .pageContent{
-	margin:6px 12px 22px 20px;
-	padding:5px 0px;
+	margin:6px 0px 0px 0px;	
+	padding:5px 0px 0px 0px; 
 	h3.content_title, h2.content_title{
 		color:#336699;
 		font-size:1.60em; 
 		padding:5px 0px 0px 0px;			
-		margin:0px;
+		margin:0px 12px 0px 20px;
 		img{
 			float:left;
 			position:relative;
@@ -470,7 +470,8 @@ ul.summary{
 		margin-top:6px;
 	}
 	ul.activityfeed{ 
-		padding:0px;			 
+		padding:0px;	
+		@include no-bullets;		 
 		li{
 			padding:8px 0px 0px 0px; 
 			border-bottom:1px solid #e4f4e4;
@@ -500,7 +501,7 @@ ul.summary{
 
 /* Making the sticky footer align to the middle and having the same width of the container */
 #footer{
-	min-width: 950px;
+	min-width:950px;
 	width: $blueprint-liquid-container-width;
 	margin: 0 auto; 
 	*zoom: 1; 
@@ -514,9 +515,9 @@ ul.summary{
 	position:relative;
 	background-color:$base;
 	color:#666666; 
-	border-bottom: 1px solid desaturate(darken($base, 10%), 10%); 
+	/*border-bottom: 1px solid desaturate(darken($base, 10%), 10%);*/ 
 	.footerinfo{ 
-		padding:10px 20px;
+		padding:0px 20px;
 		position:relative;
 		z-index:1;
 		ul{
@@ -559,7 +560,7 @@ ul.summary{
 		background-color:$base;		
 		border-color: darken($base, 1%);
 		border-style:solid;
-		border-bottom: 1px solid desaturate(darken($base, 10%), 10%); 
+		/*border-bottom: 1px solid desaturate(darken($base, 10%), 10%);*/ 
 	}
 	span.ltExt{
 		left:-11px;
@@ -572,6 +573,7 @@ ul.summary{
 	span.ltSlant, span.rtSlant{ 
 		width:0;
 		top:-12px;  
+		z-index:100;
 	}
 	span.ltSlant{
 		left:-11px;
@@ -656,6 +658,11 @@ form.edit_helpdesk_ticket table td, form.new_helpdesk_ticket table td{
 }
 
 form.new_helpdesk_ticket{
+	margin:2px 15px 6px 15px; 
+	padding-bottom:30px;
+}
+/*
+form.new_helpdesk_ticket{
 	background:lighten($base, 11%);
 	@include border-radius(1em);
 	padding:10px 20px 20px 10px;
@@ -689,6 +696,7 @@ form.new_helpdesk_ticket{
 		margin-top:15px;
 	}
 }
+*/
 
 /* Page Style */
  
@@ -892,6 +900,35 @@ div.leader-right{
 	padding:3px 6px;
 	
 }
+
+.fdbutton{ 
+	@include anchor-button;
+    padding: 5px;
+    margin: 2px; 
+    border:1px solid #cdcecd;
+    text-align:center;
+    font-size: 1.0em;
+    color:#4a4a25 !important;
+    @include corners(10px);
+    @include vertical-gradient(#f1fce3, #ddf0c4);
+     box-shadow:
+        0 2px rgba(0, 0, 0, 0.05),
+        0 -2px rgba(0, 0, 0, 0.05) inset;
+
+    -webkit-box-shadow:
+        0 2px rgba(0, 0, 0, 0.05),
+        0 -2px rgba(0, 0, 0, 0.05) inset;
+
+    -moz-box-shadow:
+        0 2px rgba(0, 0, 0, 0.05),
+        0 -2px rgba(0, 0, 0, 0.05) inset;
+       
+     @include text-shadow(rgba(255,255,255,0.9), 1px, 1px, 1px);
+}
+.grey{
+	@include vertical-gradient(#f1f5ed, #dededd);
+	color:#999999 !important;
+}
 	
 .button {
 	@include anchor-button;
@@ -938,7 +975,9 @@ div.leader-right{
             color-stop(0.5, rgba(255,255,255,0)),
             color-stop(0.5, rgba(0, 0, 0, 0.03))
         ) repeat scroll 0 0 #fff;
-
+	
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#ededed',GradientType=0 ); /* ie */
+		
     border: 1px solid rgba(0, 0, 0, 0.2);
     cursor: pointer;
 }
@@ -1611,9 +1650,7 @@ $lightBase:lighten($base, 5%);
 		-moz-box-shadow: rgba(0,0,0, 0.1) 0px 0px 8px;
 		-webkit-box-shadow: rgba(0,0,0, 0.1) 0px 0px 8px;
 	}
-	
-	
-	
+	 
 	textarea {
 		width: 400px;
 		max-width: 400px;
@@ -1634,31 +1671,9 @@ $lightBase:lighten($base, 5%);
 	 		
 }
 
-.ui-sortable-placeholder{
-	background:#ffffff;
-	border:1px dotted #afafaf;
-	visibility: visible !important;
-	padding:20px 6px;
-}
 
-
-.ui-custom-fields, .ui-custom-form{
-	@include no-bullets;	
-	margin:10px 10px 0px 0px; 
-	padding:0px;
-	
-	float:left;
-}
-
-.ui-custom-fields{		
-	width:280px;
-	@include clearfix;
-	li{
-		float:left;
-		a.button{
-			@include min-width(100px);
-		}
-	}
+.new_user_session{ 
+	width:330px;
 }
 
 .ui-form{ 
@@ -1666,50 +1681,273 @@ $lightBase:lighten($base, 5%);
 	padding:6px 0px;
 	margin:0px;
 	li{
-		padding:6px 0px; 
-	} 
-	label{
-		font-size:1em;
-	}
-	span{
-		display:block;
-		padding:4px 0px;
-		@include clearfix;
-		input{
-			float:left;
-			position:relative;
-			left:-3px;
-			top:-1px;
-		}
-		label{ 
-			font-weight:normal;
-			float:left;
-			clear:right;
-		}
-	}
-	textarea{
+		padding:5px 8px; 
 		margin:0px;
+		float:left;		
+		a.fdbutton{
+			@include min-width(110px);
+		}
+		width:100%;
+	} 
+	li.large{
+		width:100%;
+	}
+	li.small{
+		width:45%;
+	}
+	.overlabel{
+		color:#999999;
+		margin-left:5px;
+		margin-top:1px;
+		font-size:1.0em;
+		font-style:italic;
+	}
+	label{
+		text-transform:capitalize;		
+		font-size:13px;
+		padding:2px 0px;
+		margin:0px;
+		line-height:18px;
+	}
+	label, input, textarea{
+		margin:0px;
+		color:#666666;
+	}
+	input, textarea, select{ 
+		padding:3px;
+		font-weight:normal;
+		@include form-gradient;		
 	}
 	select{
 		width:auto;
+		font-size:1.2em;
+		@include vertical-gradient(#FFFFFF, #F2F2F2); 
+ 	}
+ 	input:focus, textarea:focus, select:focus{ 		 
+ 		@include form-gradient(#f7fdef);	
+ 		border-color:#5b711f;
+ 	} 
+ 	
+	.button{
+		font-size:1em;
+		padding:5px 8px;
+	}  
+	span{
+		font-weight:normal;
+		font-size:0.8em;
+		color:#666666;
+		display:block;
+	}	 
+	.largefield{
+		label{
+			font-size:1.4em;			
+		}
+		input{
+			font-size:1.4em; 
+		}
+	}	
+	.seperator{
+		margin-bottom:0px;
+		padding:1px;
+	}
+	.button-container{
+		margin-top:18px;
+		background:$base;
+		@include border-radius(0.6em);
+		input.button{
+			font-size:1em;
+			padding:5px 8px;
+		}
+	}
+	.colsets{
+		/*background:lighten($base, 8%);
+		@include border-radius(0.2em);
+		*/
+		fieldset{
+			@include pie-clearfix;
+			margin:0px;
+			padding:2px 1px;
+			border:0px;
+			position:relative;
+			
+			.dropchoice, .tags{
+				@include pie-clearfix;
+				float:left; 
+				margin:0px 5px 0px 0px;
+				padding:0px;				
+				input{
+					width:95%;
+					float:left;
+				}				
+			}
+			.dropchoice{ 
+				width:35%; 
+			}
+			.tags{ 
+				width:50%; 
+			}
+			img{				
+				position:absolute;
+				right:6px;
+				top:3px;
+			}
+		}
+		fieldset.addchoice{
+			background:#ffffff;
+			border:1px solid #dfdfdf;
+			padding:5px;			
+			color:#999999;
+			cursor:pointer;
+			img{
+				top:1px;
+				right:10px;
+			} 
+		} 
+	}
+	
+	div.nestedChoices{					
+			@include clearfix;	 
+			div{
+				margin:0px 0px 0px 8px;
+				padding:4px 0px 0px 4px;
+				border:1px dotted #afafaf;
+				border-width:1px 0px 0px 1px;
+			}
+			input{
+				margin-right:3px;
+				position:relative;
+				top:1px; 
+			}
+			h4{
+				font-size:1.1em; 
+				margin:0px;
+				padding:0px 0px 8px 4px;
+				span{
+					font-size:0.9em;
+				}
+			}
+			label{				
+				border:1px solid red;	
+				float:none;
+				padding-left:10px;
+			}
+			span{ 
+				color:#999999;
+			}
+		}
+
+	li.textleft{
+		@include clearfix;
+		position:relative;
+		label{
+			position:absolute;
+			left:6px;
+			top:3px;
+			width:25%;
+		}
+		
 	}
 }
 
+.custom_form_outer{ 
+	@include pie-clearfix;
+	width:50%;
+	padding-bottom:40px;
+	float:left;
+	border:1px solid #dddddd;
+	background:#ffffff; 
+	-moz-box-shadow: 0 0 5px rgba(0,0,0,0.4) inset;
+	
+}
+
+.pageContent .custom_form_outer{ 
+	h3.content_title{
+		padding:15px 0px 0px 15px;
+		margin:0px;
+	}
+}
+
+.ui-custom-fields, .ui-custom-form{
+	@include no-bullets;	
+	margin:0px 0px 0px 0px; 
+	padding:0px;	
+	float:left;
+}
+
+.ui-custom-fields{
+	width:20%;
+	@include clearfix;
+	h4.title{
+		color:#747e74;
+		font-size:14px;
+		font-weight:bold;
+		margin:0px;
+		padding:0px 0px 8px 18px;
+	}
+	.fdbutton{
+		@include min-width(125px);
+		margin:2px 0px 2px 15px;
+		font-weight:normal;
+	}
+}
+
+.ui-sortable-placeholder{
+	background:#f1fedf;
+	border:1px dotted #afafaf;
+	visibility: visible !important;
+	padding:20px 6px;
+}
+	
 .ui-custom-form{
-	width:550px;
-	background:#f9f9f9;
-	margin-bottom:20px;
-	li{
-		cursor:move;
-		padding:6px; 
+	padding:3px 14px;	 
+	@include clearfix; 
+	li{   
+		padding:4px; 
+		position:relative;
+		.ui-field-panel{
+			position:absolute;
+			right:0px; top:0px;			 
+			display:none;
+		} 
 		*{
 			cursor:move;
-		}
+		}		
 	} 
-	li:hover{		
-		background:#ffffff;
-		border:1px dotted #afafaf;
-		padding:5px;
+	
+	li:hover, li.active{		
+		background:#f1fedf;
+		border:1px dotted #cccccc;
+		padding:3px;
+		.ui-field-panel{
+			display:block;
+		}
+	}
+	li.active{
+		border-style:solid;
+	}
+}
+
+.hint_drag{
+	background:#fefedf;
+	border:1px solid #cccccc;
+	padding:15px 30px; 
+	margin:10px 18px;
+	display:block;
+	
+}
+
+.admin_form{
+	@include clearfix;
+	background: lighten($base, 8%); 
+	padding:8px 10px 15px 10px;
+	margin-top:5px;
+}
+
+.admin_form .button-container{
+	padding-left:180px;
+	width:100%;
+	.fdbutton{
+		@include min-width(60px);
 	}
 }
 
@@ -1802,3 +2040,21 @@ $lightBase:lighten($base, 5%);
 		}
 	} 
 }
+
+
+.dialog_ticket_field{
+	/*position:absolute;
+	z-index:10;	
+	width:510px;
+	background:#ffffff;
+	border:3px solid $base;
+	padding:12px 10px;	
+	@include border-radius(0.6em);*/
+	float:left;
+	width:29%; 
+	margin-left:5px;
+	background:lighten($base, 6%);
+	@include border-radius(8px);
+	font-size:0.95em;
+}
+

@@ -1,8 +1,37 @@
 @import "blueprint";
+@import "mixins";
 
 // Generate the blueprint IE-specific customizations:
 @include blueprint-ie;
 
 #inner {
 	height:400px !important;
+	padding-right:0px;
 }
+
+.header_tabs{ 
+	ul.tabs li a{
+		font-size:0.88em;
+		span{
+			border-top:0px;
+			height:27px;
+			display:none;
+		}
+	}
+}
+
+div.corners{	 
+	 left:2px !important;
+	 display:none;
+}
+
+ul.summary{
+	li.title{
+		padding-bottom:18px;
+	}
+}
+ 
+.ui-bt-grey{
+	@include vertical-gradient(#ededed, #ffffff);
+}
+
