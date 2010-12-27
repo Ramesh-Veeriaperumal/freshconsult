@@ -50,10 +50,12 @@
 		<li class="small">
           <%= f.label :responder_id, "Assigned To" %>
           <%= f.collection_select :responder_id, Helpdesk::Authorization.find_all_by_permission(:manage_tickets), :user_id, :name, {:include_blank => 'Nobody'}, :class => "select" %>
-<<<<<<< HEAD
-        
- 		  <%= f.label :priority, "Priority" %>          
-		  <%= f.select :priority, Helpdesk::Ticket::PRIORITY_OPTIONS, :class => "select" %>
+         </li>
+		 
+ 		<li class="small">
+ 			<%= f.label :priority, "Priority" %>          
+			<%= f.select :priority, Helpdesk::Ticket::PRIORITY_OPTIONS, :class => "select" %>
+    	</li>
 		  
 		 
 		  
@@ -103,29 +105,9 @@
 					
 			
 		    <% end %>
-=======
- 		  </li>
-		<li class="small">
- 			<%= f.label :priority, "Priority" %>          
-			<%= f.select :priority, Helpdesk::Ticket::PRIORITY_OPTIONS, :class => "select" %>
-    	</li>
-		<!-- here comes custom_fields -->  
-		<% f.fields_for :flexifields do |cust_form| %>
-			<% @item.custom_fields.each  do |cust_field| %>
-		   		<% cust_field.flexifield_def_entries.each do |entries| %>
-				<li>
-					<%= cust_form.label "#{entries.flexifield_alias}", "#{entries.flexifield_alias}" %>
-		    		<%= cust_form.text_field "#{entries.flexifield_alias}" , :class=>"text" %>
-				</li>
-				<% end %>
-			<% end %>
-		<% end %>
->>>>>>> 5a7a94715258f73d92f628f6a08f2453a24263af
-			
-		  
 
-		<li>
-			<%= f.label :description, "Description" %>
+	
+				<%= f.label :description, "Description" %>
     		<%= f.text_area :description, :class=>"textarea" %>
 		</li>
 	</ul>
