@@ -138,6 +138,13 @@
 				<li>
 	                <label>Mode</label>: <%= h(@ticket.source_name) %>
 	            </li> 
+				<!-- Custom fields starts here-->
+				<%@ticket.ff_aliases.each do |cust_field|%>
+				<li>
+	                <label><%=cust_field%></label>: <%= h(@ticket.get_ff_value(cust_field)) %>
+	            </li> 
+				<%end%>
+				<!-- Custom fields ends here-->
 	        </ul> 
 			<% end %> 
 	    </div>

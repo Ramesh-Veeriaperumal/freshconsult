@@ -27,6 +27,8 @@
 <% end %>
 
   <% form_for @item do |f| %>
+   
+   
     <%= f.error_messages %>
  	<ul class="ui-form">
  		<li> 	
@@ -48,11 +50,25 @@
 		<li class="small">
           <%= f.label :responder_id, "Assigned To" %>
           <%= f.collection_select :responder_id, Helpdesk::Authorization.find_all_by_permission(:manage_tickets), :user_id, :name, {:include_blank => 'Nobody'}, :class => "select" %>
-        </li>
+ 		  </li>
 		<li class="small">
  			<%= f.label :priority, "Priority" %>          
 			<%= f.select :priority, Helpdesk::Ticket::PRIORITY_OPTIONS, :class => "select" %>
     	</li>
+		<!-- here comes custom_fields -->  
+		<% f.fields_for :flexifields do |cust_form| %>
+			<% @item.custom_fields.each  do |cust_field| %>
+		   		<% cust_field.flexifield_def_entries.each do |entries| %>
+				<li>
+					<%= cust_form.label "#{entries.flexifield_alias}", "#{entries.flexifield_alias}" %>
+		    		<%= cust_form.text_field "#{entries.flexifield_alias}" , :class=>"text" %>
+				</li>
+				<% end %>
+			<% end %>
+		<% end %>
+			
+		  
+
 		<li>
 			<%= f.label :description, "Description" %>
     		<%= f.text_area :description, :class=>"textarea" %>

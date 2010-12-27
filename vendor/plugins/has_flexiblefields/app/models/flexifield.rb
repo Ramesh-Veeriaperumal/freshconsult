@@ -35,8 +35,9 @@ class Flexifield < ActiveRecord::Base
   end
   
   def set_ff_value ff_alias, ff_value
-    ff_field = to_ff_field ff_alias
-    if ff_field
+  
+    ff_field = to_ff_field ff_alias    
+    if ff_field       
       write_attribute ff_field, ff_value
     else
       raise ArgumentError, "Flexifield alias: #{ff_alias} not found in flexifeld def mapping"
