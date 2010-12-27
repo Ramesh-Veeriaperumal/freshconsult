@@ -5,6 +5,8 @@ class FlexifieldDef < ActiveRecord::Base
   has_many :flexifield_def_entries, :class_name => 'FlexifieldDefEntry', :order => 'flexifield_order', :dependent => :destroy
   accepts_nested_attributes_for :flexifield_def_entries,
     :reject_if => proc { |attrs| attrs['flexifield_alias'].blank? }
+    
+  has_many :flexifield_picklist_val, :class_name => 'FlexifieldPicklistVal',:through =>:flexifield_def_entries
   
   validates_presence_of :name
   
