@@ -1,3 +1,8 @@
+/* line 4, ../src/_mixins.scss */
+.pie, .ui-bt-grey {
+  behavior: url(/stylesheets/PIE.htc);
+}
+
 /* line 34, C:/Ruby187/lib/ruby/gems/1.8/gems/compass-0.10.6/frameworks/blueprint/stylesheets/./blueprint/_ie.scss */
 body {
   text-align: center;
@@ -99,7 +104,38 @@ button {
   top: 0.25em;
 }
 
-/* line 6, ../src/ie.scss */
+/* line 7, ../src/ie.scss */
 #inner {
   height: 400px !important;
+  padding-right: 0px;
+}
+
+/* line 13, ../src/ie.scss */
+.header_tabs ul.tabs li a {
+  font-size: 0.88em;
+}
+/* line 15, ../src/ie.scss */
+.header_tabs ul.tabs li a span {
+  border-top: 0px;
+  height: 27px;
+  display: none;
+}
+
+/* line 23, ../src/ie.scss */
+div.corners {
+  left: 2px !important;
+  display: none;
+}
+
+/* line 29, ../src/ie.scss */
+ul.summary li.title {
+  padding-bottom: 18px;
+}
+
+/* line 34, ../src/ie.scss */
+.ui-bt-grey {
+  background: white;
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #ededed), color-stop(1, white));
+  background: -moz-linear-gradient(center top, #ededed 0%, white 100%);
+  -pie-background: linear-gradient(90deg, #ededed, white);
 }

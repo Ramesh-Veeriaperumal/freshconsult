@@ -62,7 +62,31 @@ a img {
   border: none;
 }
 
-/*@include sticky-footer($footer-height, "#wrap", ".push", "#footer");*/
+/* line 10, C:/Ruby187/lib/ruby/gems/1.8/gems/compass-0.10.6/frameworks/compass/stylesheets/compass/layout/_sticky-footer.scss */
+html, body {
+  height: 100%;
+}
+
+/* line 12, C:/Ruby187/lib/ruby/gems/1.8/gems/compass-0.10.6/frameworks/compass/stylesheets/compass/layout/_sticky-footer.scss */
+#wrap {
+  clear: both;
+  min-height: 100%;
+  height: auto !important;
+  height: 100%;
+  margin-bottom: -50px;
+}
+/* line 18, C:/Ruby187/lib/ruby/gems/1.8/gems/compass-0.10.6/frameworks/compass/stylesheets/compass/layout/_sticky-footer.scss */
+#wrap .push {
+  height: 50px;
+}
+
+/* line 20, C:/Ruby187/lib/ruby/gems/1.8/gems/compass-0.10.6/frameworks/compass/stylesheets/compass/layout/_sticky-footer.scss */
+#footer {
+  clear: both;
+  position: relative;
+  height: 50px;
+}
+
 /* line 39, C:/Ruby187/lib/ruby/gems/1.8/gems/compass-0.10.6/frameworks/blueprint/stylesheets/./blueprint/./_typography.scss */
 body {
   line-height: 1.5;
@@ -1092,7 +1116,7 @@ input.span-24, textarea.span-24, select.span-24 {
 
 /* line 8, C:/Ruby187/lib/ruby/gems/1.8/gems/compass-0.10.6/frameworks/blueprint/stylesheets/./blueprint/_debug.scss */
 .showgrid {
-  background: url('/images/grid.png?1291640764');
+  background: url('/images/grid.png');
 }
 
 /* line 4, C:/Ruby187/lib/ruby/gems/1.8/gems/compass-0.10.6/frameworks/blueprint/stylesheets/./blueprint/_interaction.scss */

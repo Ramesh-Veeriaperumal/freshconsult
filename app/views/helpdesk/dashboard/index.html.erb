@@ -27,27 +27,27 @@
 
 	
 	<ul id="summaryBar" class="summary">
-      <li class="title">
+      <li class="title"> 
           My Summary<span class="summary_arrow"></span>
       </li>
       <li>
       	 <a href="#"><h4>0</h4>
-		 	<p>Overdue<br/>Tickets</p>
+		 	<p>Overdue Tickets</p>
 		</a>
       </li>
       <li>
           <a href="/helpdesk/tickets/filter/open/responded_by"><h4><%= filter_count([:responded_by])%></h4>
-              <p>Open<br/>Tickets</p>
+              <p>Open Tickets</p>
           </a>
       </li>
       <li>
           <a href="#"><h4>0</h4>
-		  	<p>Tickets<br/>Due Today</p>
+		  	<p>Tickets Due Today</p>
 		  </a>
       </li>
       <li class="last-child">
           <a href="/helpdesk/tickets/filter/open/unassigned"><h4><%= filter_count([:unassigned])%></h4>
-		  	<p>Unassigned<br/>Tickets</p>
+		  	<p>Unassigned Tickets</p>
 		  </a>
       </li>
   </ul>
