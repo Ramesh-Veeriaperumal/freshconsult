@@ -32,9 +32,9 @@ Rails::Initializer.run do |config|
   config.gem "authlogic" #2.1.6
   config.gem 'rufus-scheduler', :lib=>'rufus/scheduler'
   config.gem 'tzinfo'
-  config.gem 'ruby-openid', :lib => 'openid'
-  config.gem 'rack-openid', :lib => 'rack/openid'
-  config.gem 'ruby-openid-apps-discovery'
+  config.gem 'ruby-openid', :lib => 'openid' #2.1.8
+  config.gem 'rack-openid', :lib => 'rack/openid' #1.2.0
+  config.gem 'ruby-openid-apps-discovery' #1.2.0
   # config.gem "bj"
   # config.gem "hpricot", :version => '0.6', :source => "http://code.whytheluckystiff.net"
   config.gem "aws-s3", :lib => "aws/s3" #0.6.2
