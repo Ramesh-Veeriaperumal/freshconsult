@@ -27,7 +27,7 @@
 <% end %>
 
   <% form_for @item do |f| %>
-   
+  
    
     <%= f.error_messages %>
  
@@ -62,19 +62,40 @@
 			<%
 						
 					@item.custom_fields.each  do |cust_field|
+
+					
 	
 					   cust_field.flexifield_def_entries.each do |entries|
 
+
+						col_type = Helpdesk::Ticket::COLUMN_TYPE_BY_KEY[entries.flexifield_coltype]
+
+						#field_class =Helpdesk::Ticket::COLUMN_CLASS_BY_KEY[entries.flexifield_coltype]
 						
-					%>
-					
-					 <%= cust_form.label "#{entries.flexifield_alias}", "#{entries.flexifield_alias}" %>
-    					<%= cust_form.text_field "#{entries.flexifield_alias}" , :class=>"text" %>
-						
-						<%	end
+					   case entries.flexifield_coltype
+					     when "text" then
+						%>
+							
+							<%= cust_form.label "#{entries.flexifield_alias}", "#{entries.flexifield_alias}" %>  
+ 							<%= cust_form.text_field "#{entries.flexifield_alias}" ,:class=>"text" %>
+				
+						<%
+						when "dropdown" then						
+						%>
+							<%= cust_form.label "#{entries.flexifield_alias}", "#{entries.flexifield_alias}" %>  
+ 							<%= cust_form.select "#{entries.flexifield_alias}", entries.flexifield_picklist_val,:class=>"select" %>
+							
+						<%
+						when "checkbox" then
+						%>
+							<%= cust_form.label "#{entries.flexifield_alias}", "#{entries.flexifield_alias}" %>  
+ 							<%= cust_form.check_box "#{entries.flexifield_alias}" ,:class=>"checkbox" %>
+						<%	
+							end
+							end
 							end
 						%>
-						
+					
 			
 		    <% end %>
 			

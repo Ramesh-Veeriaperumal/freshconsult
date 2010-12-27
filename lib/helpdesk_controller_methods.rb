@@ -175,7 +175,7 @@ protected
       scoper.is_a?(Class) ? scoper.new(params[nscname]) : scoper.build(params[nscname]))
     set_item_user
     @item
-    
+   
        
   end
 

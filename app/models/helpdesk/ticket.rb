@@ -122,6 +122,25 @@ class Helpdesk::Ticket < ActiveRecord::Base
   SORT_FIELD_OPTIONS = SORT_FIELDS.map { |i| [i[1], i[0]] }
   SORT_SQL_BY_KEY = Hash[*SORT_FIELDS.map { |i| [i[0], i[2]] }.flatten]
 
+
+  #For custom_fields
+
+ COLUMNTYPES = [
+    [ "number",       "text_field",   "text" ], 
+    [ "text",         "text_field",   "text"], 
+    [ "checkbox",     "check_box" ,   "checkbox"], 
+    [ "dropdown",     "select"    ,   "select"], 
+   
+  ]
+
+  #PRIORITY_OPTIONS = PRIORITIES.map { |i| [i[1], i[2]] }
+  COLUMN_TYPE_BY_KEY = Hash[*COLUMNTYPES.map { |i| [i[0], i[1]] }.flatten]
+  COLUMN_CLASS_BY_KEY = Hash[*COLUMNTYPES.map { |i| [i[0], i[2]] }.flatten]
+  
+  
+
+
+
   #validates_presence_of :name, :source, :id_token, :access_token, :status, :source
   validates_uniqueness_of :id_token
   #validates_length_of :email, :in => 5..320, :allow_nil => false, :allow_blank => false
@@ -306,9 +325,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   def custom_fields
    
-    @custom_fields = FlexifieldDef.all(:include => :flexifield_def_entries, :conditions => ['account_id=? AND module=?',account_id,'Ticket']) 
+    @custom_fields = FlexifieldDef.all(:include => [:flexifield_def_entries =>:flexifield_picklist_val] , :conditions => ['account_id=? AND module=?',account_id,'Ticket']) 
     
   
   end
 
+ 
 end
