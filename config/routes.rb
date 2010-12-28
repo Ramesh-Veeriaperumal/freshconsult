@@ -1,4 +1,6 @@
 ActionController::Routing::Routes.draw do |map|
+  map.resources :customers
+
   map.resources :sla_details
 
   map.resources :sl_as
