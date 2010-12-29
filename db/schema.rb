@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101228064338) do
+ActiveRecord::Schema.define(:version => 20101229071644) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -484,9 +484,17 @@ ActiveRecord::Schema.define(:version => 20101228064338) do
     t.string   "role_token"
     t.integer  "posts_count",         :default => 0
     t.datetime "last_seen_at"
+    t.integer  "customer_id"
+    t.string   "job_title"
+    t.string   "second_email"
+    t.string   "phone"
+    t.string   "mobile"
+    t.string   "twitter_id"
+    t.text     "description"
   end
 
   add_index "users", ["account_id"], :name => "index_users_on_account_id"
+  add_index "users", ["customer_id"], :name => "index_users_on_customer_id"
   add_index "users", ["email"], :name => "index_users_on_email"
   add_index "users", ["perishable_token"], :name => "index_users_on_perishable_token"
   add_index "users", ["persistence_token"], :name => "index_users_on_persistence_token"
