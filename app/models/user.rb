@@ -2,6 +2,7 @@ class User < ActiveRecord::Base
   include SavageBeast::UserInit
   
   belongs_to :account
+  belongs_to :customer
 
   acts_as_authentic do |c|
     c.validations_scope = :account_id

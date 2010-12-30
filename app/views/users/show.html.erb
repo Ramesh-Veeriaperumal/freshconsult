@@ -9,7 +9,13 @@
 	                <label>Name</label>: <%= @user.name %>
 	            </li>
 	            <li>
-	                <label>Title</label>: <%= @user.job_title %>
+	                <label>Title</label>: 
+					<%unless @user.job_title.nil?%>					
+					<%= @user.job_title %> at
+					<%end%>
+					 <%unless @user.customer.nil?%>
+					 <%=@user.customer.name%>
+					 <%end%>
 	            </li>
 				 <li>
 	                <label>Email</label>: <%= @user.email %>
