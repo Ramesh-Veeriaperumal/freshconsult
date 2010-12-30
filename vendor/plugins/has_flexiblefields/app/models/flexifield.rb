@@ -36,6 +36,7 @@ class Flexifield < ActiveRecord::Base
   
   def set_ff_value ff_alias, ff_value
   
+  logger.debug "set_ff_value , ff_alias is #{ff_alias}"
     ff_field = to_ff_field ff_alias    
     if ff_field       
       write_attribute ff_field, ff_value

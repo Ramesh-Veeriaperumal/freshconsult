@@ -9,12 +9,19 @@ class User < ActiveRecord::Base
     c.validates_length_of_password_confirmation_field_options = {:on => :update, :minimum => 4, :if => :has_no_credentials?}
   end
   
-  attr_accessible :name, :email, :password, :password_confirmation
+  attr_accessible :name, :email, :password, :password_confirmation , :second_email, :job_title, :phone, :mobile, :twitter_id, :description, :customer_id , :role_token 
 
   def signup!(params)
     self.email = params[:user][:email]
     self.name = params[:user][:name]
     self.role_token = params[:user][:role_token]
+    self.mobile = params[:user][:mobile]
+    self.second_email = params[:user][:second_email]
+    self.twitter_id = params[:user][:twitter_id]
+    self.description = params[:user][:description]
+    self.customer_id = params[:user][:customer_id]
+    self.job_title = params[:user][:job_title]
+   
     save_without_session_maintenance
     deliver_activation_instructions!
   end

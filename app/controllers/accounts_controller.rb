@@ -153,6 +153,7 @@ class AccountsController < ApplicationController
     end
     
     def build_user
+      logger.debug params[:user]
       @account.user = @user = User.new(params[:user])
     end
     
