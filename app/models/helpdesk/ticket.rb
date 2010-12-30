@@ -311,6 +311,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def populate_requester #by Shan temp
+    logger.debug "inside populate_requester"
     if requester_id.nil? && !email.nil?
       @requester = User.find_by_email_and_account_id(email, account_id)
       if @requester.nil?
@@ -319,6 +320,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
         @requester.signup!({:user => {:email => self.email, :name => '', :role_token => 'customer'}})
       end
       
+      logger.debug "inside populate_requester, setting requester object"
       self.requester = @requester
     end
   end

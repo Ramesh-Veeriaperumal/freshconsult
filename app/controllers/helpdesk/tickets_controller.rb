@@ -7,6 +7,8 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :load_multiple_items, :only => [:destroy, :restore, :spam, :unspam, :assign]
 
   def index
+    
+    
 
     @items = Helpdesk::Ticket.filter(current_account, 
       params[:filters] || [:open, :unassigned],
@@ -126,6 +128,8 @@ protected
   end
 
   def process_item
+    
+    handle_custom_fields
     # Tickets created by staff have @item.source == 0
     if @item.source == 0
       @item.spam = false
@@ -141,6 +145,8 @@ protected
       )
 
       n.save!
+      
+      
     end
    
   end

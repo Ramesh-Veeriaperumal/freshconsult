@@ -11,8 +11,8 @@ module HelpdeskControllerMethods
 
   def create
    
-    if @item.save!
-      handle_custom_fields
+    if @item.save!  
+      
       post_persist
     else
       create_error
@@ -21,12 +21,18 @@ module HelpdeskControllerMethods
   
   def handle_custom_fields
     
-   
+   logger.debug "handle_custom_fields #{@flexi_fields}"
     ff_def_id = FlexifieldDef.find_by_account_id(current_account.id).id
     
     @item.ff_def = ff_def_id
     
     @item.assign_ff_values @flexi_fields
+    
+    #@flexi_fields.each do |key, value|
+    #logger.debug "handle_custom_fields, key, value #{key} and value: #{value}"
+    #@item.set_ff_value key, value 
+    
+    #end
     
     #if at all the above assign won't solve the problem we can use set_ff_value    
     #@item.set_ff_value column, value    
@@ -156,6 +162,8 @@ protected
   def get_custom_fields
     
     @flexi_fields = params[nscname][:flexifields]
+    
+    logger.debug "get_custom_fiels #{@flexi_fields}"
     
   end
 

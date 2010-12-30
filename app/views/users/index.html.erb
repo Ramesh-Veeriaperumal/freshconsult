@@ -57,10 +57,10 @@
 	      <td class="user_prime_Details">
 	      	<%= link_to(h(user.name), user, :class => "user_name" ) %>
 		  	<div><%= h user.email %></div>
-			<b>988-992-2112</b>
+			<b><%= h user.phone %></b>
 		  </td>	   
 		  <td class="user_additional_Details">
-		  	<div>Customer support manager at</div>
+		  	<div><%= h user.job_title %> at</div>
 			Bank of America
 		  </td>   
 	      <!--td><%= link_to('Edit', edit_user_path(user)) %></td-->
