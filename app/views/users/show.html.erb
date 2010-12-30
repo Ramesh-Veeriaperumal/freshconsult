@@ -1,8 +1,30 @@
 <div class="pageContent">
 	<h3 class="content_title">
 		<img src="/images/icons/profile_blank.gif" align="left" />
-		<%= @user.name %>
+		
 	</h3>
-	<%= @user.email %>
 	
+	 <ul class="ui-list-2col">
+	            <li>
+	                <label>Name</label>: <%= @user.name %>
+	            </li>
+	            <li>
+	                <label>Title</label>: <%= @user.job_title %>
+	            </li>
+				 <li>
+	                <label>Email</label>: <%= @user.email %>
+	            </li>
+				 <li>
+	                <label>Second Email</label>: <%= @user.second_email %>
+	            </li>
+				 <li>
+	                <label>Phone</label>: <%= @user.phone %>
+	            </li>
+				 <li>
+	                <label>Mobile</label>: <%= @user.mobile %>
+	            </li> <li>
+	                <label>Back-ground Info</label>: <%= @user.description %>
+	            </li>
+	<ul>
+
 </div>	
