@@ -56,6 +56,10 @@ class User < ActiveRecord::Base
 
   has_many :reminders, 
     :class_name => 'Helpdesk::Reminder'
+    
+  has_many :tickets , :class_name => 'Helpdesk::Ticket' ,:foreign_key => "requester_id"
+  
+  
 
   #Savage_beast changes start here
   #implement in your user model 

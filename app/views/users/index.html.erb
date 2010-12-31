@@ -65,7 +65,7 @@
 		  	<div><%= h user.job_title %> at</div>
 			<%end%>
 			<%unless user.customer.nil? %>
-			<%= h user.customer.name %>
+			<%= link_to(h(user.customer.name), user.customer)  %>
 			<%end%>
 		  </td>   
 		  

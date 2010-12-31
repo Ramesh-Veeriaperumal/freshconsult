@@ -4,6 +4,7 @@
 		
 	</h3>
 	
+	<%= debug @user.tickets %>
 	 <ul class="ui-list-2col">
 	            <li>
 	                <label>Name</label>: <%= @user.name %>
@@ -31,6 +32,33 @@
 	            </li> <li>
 	                <label>Back-ground Info</label>: <%= @user.description %>
 	            </li>
+				
+				
+				
 	<ul>
+		
+		<tr>
+		Recent Tickets from <%= @user.name %>
+		</ul>
 
+		<ul>
+		<% 
+						
+					@user.tickets.each do |ticket|
+					logger.debug "Here is a subject : #{ticket.subject}"
+		%>
+		<li>
+		 <h3>
+        	<%= link_to(h(ticket.subject) + " (##{ticket.display_id})", ticket) %> 
+      		</h3> 
+      				<%= h(truncate(ticket.description, :length => 200)) %>
+					
+			</li>		
+				<%
+					end
+				%>
+				
+				</ul>
+				
+				</tr>
 </div>	
