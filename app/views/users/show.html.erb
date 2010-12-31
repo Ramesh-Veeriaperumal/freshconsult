@@ -40,8 +40,10 @@
 		Recent Tickets from <%= @user.name %>
 		</ul>
 
+			<%if @user.tickets.size.eql?(0) %><%="There is not ticket from this user"%><%end%>
 		<ul>
 		<% 
+				
 						
 					@user.tickets.each do |ticket|
 					logger.debug "Here is a subject : #{ticket.subject}"

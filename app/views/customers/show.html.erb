@@ -1,3 +1,6 @@
+<!--%= debug @customer.users.tickets%-->
+
+
 <p>
   <b>Name:</b>
   <%=h @customer.name %>
@@ -43,6 +46,54 @@
   <%=h @customer.description %>
 </p>
 
+
+<p>
+  <b>People from this company:</b>
+  <%
+  
+@customer.users.each do |user|
+
+
+
+ %>
+
+ * <%=link_to (h(user.name),user, :class => 'username')%> , <%=user.job_title%> <br></br>
+ 
+
+
+ 
+ 
+ <%end%>
+ 
+
+</p>
+
+
+<p>
+  <b>Recent Tickets from this company:</b>
+  <%
+  
+@customer.users.each do |user|
+
+    user.tickets.each do |ticket|
+
+ %>
+
+<h3>
+        	<%= link_to(h(ticket.subject) + " (##{ticket.display_id})", ticket) %> 
+      		</h3> 
+      				<%= h(truncate(ticket.description, :length => 200)) %>
+					
+					<br></br>
+
+
+ 
+ 
+ <%
+end 
+end%>
+ 
+</p>
 
 <%= link_to 'Edit', edit_customer_path(@customer) %> |
 <%= link_to 'Back', customers_path %>
