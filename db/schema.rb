@@ -513,5 +513,10 @@ ActiveRecord::Schema.define(:version => 20110103072635) do
   add_index "users", ["perishable_token"], :name => "index_users_on_perishable_token"
   add_index "users", ["persistence_token"], :name => "index_users_on_persistence_token"
   add_index "users", ["single_access_token"], :name => "index_users_on_single_access_token", :unique => true
-
+	
+  create_table "virtual_agents", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 end

@@ -8,8 +8,13 @@ $blueprint-liquid-container-width: 80%;
 $legacy-support-for-ie:true;
 
 /* Theme Colors and layout Defaults */
-$base:#d7e8d7; 		/* Base Green */
-$select:#5fa5d8;	/* Highlight Blue */
+$base:#d4ebd4; 				/* Base Green */
+$base-highlight:#629462;
+
+$complement:#5fa5d8;		/* Secondary Blue */
+
+$background:desaturate(lighten($base, 8%), 12%);
+
 
 $sidebar-width:300px;
 $solution-sidew:240px;
@@ -22,9 +27,10 @@ $header_height:90px;
 @import "compass/support";
 
 // Import the stick footer module.
+/*
 @import "compass/layout/sticky-footer";
 @include sticky-footer($footer-height, "#wrap", ".push", "#footer");
-
+*/
 // Import all the default blueprint modules so that we can access their mixins.
 @import "blueprint";   
 
@@ -32,12 +38,13 @@ $header_height:90px;
 @import "blueprint/liquid";
 @import "blueprint/buttons";
 @import "blueprint/link_icons";
-@import "blueprint/form";
-@include blueprint;
+@import "blueprint/typography";
+
+/*@include blueprint;*/
 
 // Typography Configuration
 $blueprint-font-family:'Droid Sans', Tahoma, "Lucida grande", Arial, serif; 
 
-@import "blueprint/typography";
+
 
 

@@ -32,28 +32,27 @@
       </li>
       <li>
       	 <a href="#"><h4>0</h4>
-		 	<p>Overdue Tickets</p>
+		 	<p><span>Overdue</span> Tickets</p>
 		</a>
       </li>
       <li>
           <a href="/helpdesk/tickets/filter/open/responded_by"><h4><%= filter_count([:responded_by])%></h4>
-              <p>Open Tickets</p>
+              <p><span>Open</span> Tickets</p>
           </a>
       </li>
       <li>
           <a href="#"><h4>0</h4>
-		  	<p>Tickets Due Today</p>
+		  	<p><span>Tickets</span> Due Today</p>
 		  </a>
       </li>
       <li class="last-child">
           <a href="/helpdesk/tickets/filter/open/unassigned"><h4><%= filter_count([:unassigned])%></h4>
-		  	<p>Unassigned Tickets</p>
+		  	<p><span>Unassigned</span> Tickets</p>
 		  </a>
       </li>
   </ul>
-  
-  <div class="pageSeperator"></div>
-
+   
+<div class="pageSeperator"></div>
 <% content_for :main_panel_title do %>
   <h3 class="content_title">
   	Recent Activity
