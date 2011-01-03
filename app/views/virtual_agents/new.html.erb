@@ -1,0 +1,86 @@
+<%= javascript_include_tag "condition-filter.js" %>
+
+<script type="text/javascript">
+	var filter_Array = $A(<%= @filter_defs %>);
+	var condition_Array = $A(<%= @condition_defs %>);
+	var action_Array	= $A(<%= @action_defs %>);
+	
+	var filter_plugin = initRuleList(filter_Array, condition_Array, action_Array, "#RuleList", "#add_filter", "#ActionList", "#add_action", "#VirtualAgent");
+	
+	jQuery(document).ready(function(){
+		jQuery("#RuleList, #ActionList").sortable({ items: "fieldset", containment: "parent", tolerance: "pointer", handle:"span.sort_handle"});
+		
+			
+		jQuery("#VirtualAgent")		
+			.submit(function(){
+				// Passing the value into a hidden field				
+				this['save_json'].value = filter_plugin.get_filter_list("json");
+				//console.log(this['save_json'].value);
+				return true;
+			})
+			.validate({
+				rules:{
+					vagent_name: "required"			
+				},
+				messages:{
+					vagent_name: "Virtual agent name is empty"
+				}
+			});
+			
+	});
+</script>
+
+<div class="pageContent"> 
+	<h3 class="content_title">New "Virtual Agent" Rules</h3>
+	<span class="seperator"></span>
+	<% form_for @virtual_agent, :html => {:id => "VirtualAgent"} do %>
+	
+		<input type="hidden" name="id"   value="" />
+		<input type="hidden" name="type" value="virtual_agents" />
+		<ul class="ui-form">
+			<li>
+				<label>Rule Name *</label>
+				<label class="overlabel" for="agent_name">eg: "Subscription related Tickets" </label>				
+				<input type="text" name="vagent_name" value="" id="agent_name" class="required" />
+			</li>
+			<li>
+				<label>Description</label>
+				<label class="overlabel" for="agent_desc">
+					We Know it's pretty boring. <br />
+					But meaningful descriptions can help you later to quickly identify what this rule does,<br /> 
+					when you have a tons of rules. <br />
+					Go Ahead and type something like - <br /><em>"All Subscription related tickets will be assigned to Susan"</em>
+				</label>
+				<textarea id="agent_desc" name="desc"></textarea>				
+			</li>
+			<li><span class="seperator"></span></li>						
+			<li class="choicelist">
+				<label>When should this rule be applied?</label>
+				<label class="radiolabel"><input type="radio" value="Any" name="match" checked />Match Any</label>
+				<label class="radiolabel"><input type="radio" value="All" name="match" />Match All</label>
+			</li>	
+			<li class="conditionset">			
+				<div id="RuleList"></div>			
+				<fieldset class="addchoice" id="add_filter">
+			         Add new condition <img alt="Add New choice" class="add" src="/images/add.png" />
+			     </fieldset>			
+			</li>
+			<li><span class="seperator"></span></li>
+			<li class="choicelist">								
+				<label>Actions to Perform?</label>				
+			</li>
+			<li class="conditionset">
+				<div id="ActionList"></div>
+				<fieldset class="addchoice" id="add_action">
+			        Add new action <img alt="Add New action" class="add" src="/images/add.png" />
+			    </fieldset>		
+			</li>
+		</ul>
+		<br />
+		<div class="button-container">
+			<input type="hidden" name="save_json" value="Test Value" />
+			<input type="submit" class="fdbutton" value="Save" />
+			<input type="button" class="fdbutton grey" value="Cancel" />
+		</div>
+	<% end %>
+</div>

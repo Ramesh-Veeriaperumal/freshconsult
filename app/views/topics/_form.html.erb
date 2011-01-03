@@ -1,32 +1,31 @@
 <ul class="ui-form">
 	<li>
-		<label for="topic_title"><%= 'Title'[:title_title] %></label>
+		<label for="topic_title"><%= 'Topic Name'[:title_title] %></label>
 		<div><%= form.text_field :title, :onchange => "/*TopicForm.editNewTitle(this);*/", :class => "primary", :tabindex => 10 %></div>
-	</li>	
-	<li>
-		<% if admin? or current_user.moderator_of?(@topic.forum) %>
-		<label style="margin-left:1em;">
-			<%= form.check_box :sticky %> <%= 'Sticky'[:sticky_title] %>
-		</label>
-		<label style="margin-left:1em;">
-			<%= form.check_box :locked %> <%= 'Locked'[:locked_title] %>
-		</label>
-	</li>
-<% end %>
-
-
-<% if @topic.new_record? %>
-	<li>
-		<label for="topic_body"><%= 'Body'[:body_title] %></label>
-		<%= form.text_area :body, :rows => 12, :tabindex => 20 %>
-	</li>
-<% end %>
-
-<% if admin? and not @topic.new_record? %>
-	<li id="topic_forum_id">
-  		<label for="topic_forum_id"><%= 'Forum'[:forum_title] %></label>
-  		<%= form.select :forum_id, Forum.find(:all, :order => "position").map {|x| [x.name, x.id] } %>
-	</li>
-<% end %>
-
+	</li>	 
+	
+	<% if @topic.new_record? %>
+		<li>
+			<label for="topic_body"><%= 'Message'[:body_title] %></label>
+			<%= form.text_area :body, :rows => 12, :tabindex => 20 %>
+		</li>
+	<% end %>
+	
+	<% if admin? and not @topic.new_record? %>
+		<li id="topic_forum_id">
+	  		<label for="topic_forum_id"><%= 'Forum'[:forum_title] %></label>
+	  		<%= form.select :forum_id, Forum.find(:all, :order => "position").map {|x| [x.name, x.id] } %>
+		</li>
+	<% end %>
+	
+	<% if admin? or current_user.moderator_of?(@topic.forum) %>
+		<li class="inlineChecklist">
+			<label>
+				<%= form.check_box :sticky %> <%= 'Sticky'[:sticky_title] %>
+			</label>
+			<label>
+				<%= form.check_box :locked %> <%= 'Locked'[:locked_title] %>
+			</label>
+		</li>
+	<% end %>
 </ul>

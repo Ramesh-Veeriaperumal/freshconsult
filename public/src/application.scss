@@ -1,32 +1,40 @@
 // This import applies a global reset to any page that imports this stylesheet.
 @import "base";
 @import "mixins";
-
+html{
+    height:100%;
+}
 body{
   	@include blueprint-typography(true);
-  	background:lighten($base, 10%);
+  	height:100%;
+  	background:$background;
 } 
 
-.container{  
+#wrap{
+	@include container;
 	overflow:visible; 
 }
  
 .content{
 	position:relative;	
 	border:1px solid #acc0ac; 
-	border-width:0px 1px 0px 1px; 
+	border-width:0px 1px 0px 1px;
+ 
 }
  
 #inner {    
-	@include pie-clearfix;
+	@include pie-clearfix;	
 	position:relative;
-	z-index:1; 
+	z-index:1;  
 	background-color:#ffffff;	
 	margin:0 0px;	
+	border-top:1px solid #afafaf;
 	padding-right:$sidebar-width; /* The width of the rail */ 
 	.leftcontent{
 		background-color:#ffffff;
 		width:100%;
+		padding-bottom:50px;
+		@include min-height(450px);
 		border-right:$sidebar-width solid #f2f8fc; /* The width and color of the rail */
 		margin-right:-$sidebar-width; /* Hat tip to Ryan Brill */
 		float:left;		 	
@@ -156,12 +164,11 @@ a.logo{
 				display:block;							
 				position:relative;
 				/*@include border-top-radius(5px);*/
-				@include corners(5px, 5px, 0, 0); 
+				@include corners(6px, 6px, 0, 0); 
 				@include text-shadow(rgba(0,0,0,0.5), 1px, 1px, 3px);
 				
-				border:1px solid #73a173;
-				border-color-top:#afcaaf;
-				background-color:#83af83;   
+				border:1px solid #000; 
+				@include tab-style($base-highlight);   
 				span{
 					  position:absolute; 
 					  width:100%;
@@ -176,9 +183,7 @@ a.logo{
 			}
 		}
 		li.active a, li a:hover{
-				border-color:#5898c7;
-				border-color-top:darken($select, 20%);
-				background-color:$select;	
+				@include tab-style($complement);
 				border-bottom:0px;
 				padding-bottom:6px;  			
 		}
@@ -187,9 +192,10 @@ a.logo{
 
 .header_seperator{
 	height:9px;
-	background-color:#5fa5d8;
-	border:1px solid #5898c7;
+	background-color:$complement;
+	border:1px solid $complement;
 	border-width:0px 1px 0px 1px;	
+	@include corners(0px, 5px, 0px, 0px); 
 }
  
  
@@ -224,23 +230,22 @@ a.new_ticket{
 	position:relative;
  	label.searchTxt{  
 		@include min-width(200px);
-		/*border:1px solid #cfcfcf;
+		border:1px solid #cfcfcf;
 		background:#fff; 
-		@include border-radius(2em);*/
 		float:left;
 		height:23px;
-		padding:0px;
+		padding-right:10px;
 		margin-right:3px;
 		position:relative;
-		top:7px;		 
+		top:7px;
+		@include border-radius(2em); 
 		input{		
-			color:#000000;
+			color:#999999;
 			border:0px;
-			font-size:2em;
+			font-size:1.2em;
 			width:100%;
 			padding:5px 10px;
-			-webkit-appearance: searchfield;
-			-webkit-box-sizing: border-box; 
+			background:0px;		
 		}
 	}
 	.searchbt{
@@ -268,7 +273,8 @@ a.new_ticket{
 
 /* Summary Bar */
 #summaryBar{
-	 border:2px solid #d7e8d7;
+	 border:2px solid $base;
+	 border-left-width:0px; 
 	 margin:16px 12px 11px 0px;
 	 background-color:#fffff1;
 	 position:relative;
@@ -303,7 +309,7 @@ ul.summary{
 		padding:22px 10px 0px 5px;	
 		border:0px;
 		position:relative;
-		font-style:italic;
+		/*font-style:italic;*/
 	} 
 	 
 	li{ 
@@ -312,20 +318,24 @@ ul.summary{
 		margin:4px 5px 0px 5px; 	
 		h4{
 			@include float-left;
-			color:#4b74a6;
+			font-family: 'Droid Serif', arial, serif;
+			color:#436b85;
 			font-size:3.4em;	
 			font-weight:bold;
 			position:relative;
+			padding:0px 5px;margin:0px;
+			line-height:0.9em;
 		}
 		p{
 			@include float-left;
 			font-size:1.0em;
 			color:#555555;
-			position:relative;
-			margin-left:3px;
-			top:10px;
-			width:70px;
-			text-align:center;
+			position:relative; 
+			width:60px;
+			text-align:left;
+			span{
+				display:block;
+			}
 		}
 		a{
 			text-decoration:none; 
@@ -333,7 +343,8 @@ ul.summary{
 			padding-right:10px;
 			height:35px;
 			position:relative;
-			border-right:1px solid #cbcbbf;
+			top:8px;
+			border-right:1px solid #cbcbbf; 
 		}	
 	}	
 	li.last-child a{
@@ -341,7 +352,8 @@ ul.summary{
 		
 	}		 
 	li a:hover h4, li a:hover p{
-		color:#7e7ebd;
+		color:darken($complement, 20%);
+	
 	} 
 }  
 
@@ -361,8 +373,7 @@ ul.summary{
 		margin-bottom:5px;
 		padding:0px;	
 	}
-}
-
+} 
 
 .reminders{
 	margin:16px 10px;
@@ -446,31 +457,33 @@ ul.summary{
 .ticket_title{ font-weight:bold; color:#527eaa; }
 
 .pageSeperator{
-	border-top:1px solid lighten($base, 4%);
-	border-bottom:1px solid lighten($base, 8%);	
-	margin:0px 12px 0px 20px;
+	border-top:1px solid #fefefe;
+	border-bottom:1px solid #efefef;	
+	margin:0px 18px;
 }
 		
-
-.pageContent{
-	margin:6px 0px 0px 0px;	
-	padding:5px 0px 0px 0px; 
-	h3.content_title, h2.content_title{
-		color:#336699;
-		font-size:1.60em; 
-		padding:5px 0px 0px 0px;			
-		margin:0px 12px 0px 20px;
+h3.content_title, h2.content_title{
+		color:#333333;
+		font-size:1.50em; 
+		padding:14px 0px 2px 0px;			
+		margin:0px; 
 		img{
 			float:left;
 			position:relative;
 			top:-8px;
 			left:-2px;			
 		}
-	}
-	h2.content_title{	
+}
+
+h2.content_title{	
 		font-size:1.9em;
 		margin-top:6px;
-	}
+}
+
+.pageContent{
+	margin:0px;	
+	padding:0px 20px; 
+	
 	ul.activityfeed{ 
 		padding:0px;	
 		@include no-bullets;		 
@@ -499,11 +512,18 @@ ul.summary{
 			padding-bottom:8px;
 		}
 	}
+	
+	.subtitle{
+		font-style:italic;
+		color:#333333;
+		font-size:0.8em; 
+	}
 }
 
 /* Making the sticky footer align to the middle and having the same width of the container */
 #footer{
 	min-width:950px;
+	@include min-height($footer-height);
 	width: $blueprint-liquid-container-width;
 	margin: 0 auto; 
 	*zoom: 1; 
@@ -515,11 +535,11 @@ ul.summary{
 
 .footer{
 	position:relative;
-	background-color:$base;
+	background-color:$base;	
 	color:#666666; 
-	/*border-bottom: 1px solid desaturate(darken($base, 10%), 10%);*/ 
+	border-bottom: 1px solid desaturate(darken($base, 10%), 10%); 
 	.footerinfo{ 
-		padding:0px 20px;
+		padding:15px 20px;
 		position:relative;
 		z-index:1;
 		ul{
@@ -554,23 +574,25 @@ ul.summary{
 	top:0px; 
 	*{
 		position:absolute;
-		width:9px; 
+		width:10px; 
 	}
 	span.ltExt, span.rtExt{
 		height:100%;
 		top:0px;
 		background-color:$base;		
-		border-color: darken($base, 1%);
+		border-color: desaturate(darken($base, 10%), 10%);
 		border-style:solid;
-		/*border-bottom: 1px solid desaturate(darken($base, 10%), 10%);*/ 
+		border-bottom: 1px solid desaturate(darken($base, 10%), 10%); 
 	}
 	span.ltExt{
 		left:-11px;
-		border-left-width:2px;	
+		@include corners(0, 0, 0, 5px);
+		border-left-width:1px;	
 	}
 	span.rtExt{
 		right:-11px; 
-		border-right-width:2px;
+		border-right-width:1px;
+		@include corners(0, 0, 5px, 0);
 	}
 	span.ltSlant, span.rtSlant{ 
 		width:0;
@@ -578,7 +600,7 @@ ul.summary{
 		z-index:100;
 	}
 	span.ltSlant{
-		left:-11px;
+		left:-11px;		
 	} 
 	span.rtSlant{
 		right:-11px;
@@ -603,13 +625,14 @@ ul.summary{
 }
 
 .ltShadow, .rtShadow{
-	top:-10px;
-	width:25px;height:476px;
+	top:0px;
+	width:25px;height:100%;
 	z-index:0;	
 	position:absolute;	
 }
 .ltShadow{  	
 	left:0;
+	top:-5px;
 	margin-left:-25px; 
 	background:url("../images/shadow_lt.png") no-repeat;	
 }
@@ -705,6 +728,24 @@ form.new_helpdesk_ticket{
 select{ 
 	font-size:0.90em;  
 }
+
+.tab-buttons{ 
+	margin-left:10px;
+	@include no-bullets;
+	li{
+		float:left;
+		padding:2px 8px;
+		margin:0px 5px;
+		@include border-radius(0.8em);
+		border:1px solid #afafaf;	
+		@include vertical-gradient(#ffffff, #efefef);  
+		a{
+			text-decoration:none;
+			color:#333;
+		}
+		 
+	}
+} 
 		
 .viewActions{
 	border:1px solid #e7e7e7;	 
@@ -728,8 +769,9 @@ select{
 		width:1px;		
 		margin:0px 5px;
 	}
-	ul{
+	ul.actionpanel{
 		@include inline-block-list;
+		clear:left;
 		.sort{
 			position:relative;
 			top:5px;
@@ -780,23 +822,7 @@ ul.secondary-actions{
 }
 
 
-.tab-buttons{ 
-	margin-left:10px !important;
-	li{
-		padding:3px 8px;
-		margin:0px 5px;
-		@include border-radius(0.8em);
-		border:1px solid #afafaf;	
-		background:#fff; 
-		
-		
-		a{
-			text-decoration:none;
-			color:#333;
-		}
-		 
-	}
-} 
+
  
 #pages{
 	.tickets, .tickets-expanded{ 
@@ -905,7 +931,8 @@ div.leader-right{
 
 .fdbutton{ 
 	@include anchor-button;
-    padding: 5px;
+    @include min-width(80px);
+    padding: 5px 7px;    
     margin: 2px; 
     border:1px solid #cdcecd;
     text-align:center;
@@ -1014,7 +1041,7 @@ div.leader-right{
 
 /* Request Details page */
  
-.breadcrum {
+.breadcrum, .crumbs {
 	display:block;
 	height:20px;
 	padding:10px 5px 5px 0px; 
@@ -1065,16 +1092,15 @@ ul.ui-list-2col{
 		text-decoration:none;
 		text-transform:uppercase;
 	}
-	
-	a.nav_older{
+}
+a.nav_older{
 		padding-left:10px; 
 		background:url("../images/older_arrow.gif") no-repeat left;
-	}
+}
 	
-	a.nav_new{
-		padding-right:10px; 
-		background:url("../images/newer_arrow.gif") no-repeat right;
-	}
+a.nav_new{
+	padding-right:10px; 
+	background:url("../images/newer_arrow.gif") no-repeat right;
 }
 
 .request_status{
@@ -1680,10 +1706,11 @@ $lightBase:lighten($base, 5%);
 
 .ui-form{ 
 	@include no-bullets; 
-	padding:6px 0px;
+	@include pie-clearfix;
+	padding:0px;
 	margin:0px;
 	li{
-		padding:5px 8px; 
+		padding:5px 0px; 
 		margin:0px;
 		float:left;		
 		a.fdbutton{
@@ -1700,13 +1727,13 @@ $lightBase:lighten($base, 5%);
 	.overlabel{
 		color:#999999;
 		margin-left:5px;
-		margin-top:1px;
+		margin-top:2px;
 		font-size:1.0em;
-		font-style:italic;
+		/*font-style:italic;*/
 	}
-	label{
-		text-transform:capitalize;		
-		font-size:13px;
+	label{				
+		font-size:12pt;
+		font-weight:normal; 
 		padding:2px 0px;
 		margin:0px;
 		line-height:18px;
@@ -1715,17 +1742,18 @@ $lightBase:lighten($base, 5%);
 		margin:0px;
 		color:#666666;
 	}
-	input, textarea, select{ 
+	input, textarea{ 
 		padding:3px;
+		border:1px solid #cfcfcf;
 		font-weight:normal;
 		@include form-gradient;		
 	}
 	select{
 		width:auto;
-		font-size:1.2em;
-		@include vertical-gradient(#FFFFFF, #F2F2F2); 
+		font-size:1.0em; 
+		font-weight:normal;
  	}
- 	input:focus, textarea:focus, select:focus{ 		 
+ 	input:focus, textarea:focus{ 		 
  		@include form-gradient(#f7fdef);	
  		border-color:#5b711f;
  	} 
@@ -1761,6 +1789,16 @@ $lightBase:lighten($base, 5%);
 			padding:5px 8px;
 		}
 	}
+	.inlineChecklist{
+		label{
+			float:left;
+			font-size:1em; 
+			padding:5px 16px 0px 0px; 
+		}
+		input{
+			top:0px;
+		}
+	}
 	.colsets{
 		/*background:lighten($base, 8%);
 		@include border-radius(0.2em);
@@ -1793,18 +1831,37 @@ $lightBase:lighten($base, 5%);
 				right:6px;
 				top:3px;
 			}
-		}
+		}	
 		fieldset.addchoice{
-			background:#ffffff;
 			border:1px solid #dfdfdf;
+			background:#ffffff;	
+		}	
+	}
+	fieldset.addchoice{		
 			padding:5px;			
 			color:#999999;
 			cursor:pointer;
 			img{
-				top:1px;
-				right:10px;
+				top:0px;
+				position:absolute;
+				right:8px;
 			} 
-		} 
+	} 
+	fieldset.addchoice:hover{
+		background:#f8f8f8;
+	}	
+	.choicelist{
+		label{
+			font-size:1.1em;
+		}
+		label.radiolabel{
+			font-size:1em;
+			float:left; 
+			padding:2px 5px;
+			input{
+				margin-right:5px;
+			}
+		}
 	}
 	
 	div.nestedChoices{					
@@ -1846,8 +1903,69 @@ $lightBase:lighten($base, 5%);
 			left:6px;
 			top:3px;
 			width:25%;
+		}		
+	}
+	label.error{
+		font-size:1em;
+		color:red;
+	}
+	.conditionset{
+		border:1px solid #cfcfcf;
+		padding:0px;
+		fieldset{
+			@include pie-clearfix;			
+			padding:5px 5px 5px 30px;
+			border-bottom:1px solid #cfcfcf;
+			background:#efefef;
+			position:relative;
+			*{
+				float:left;
+				width:auto;
+				margin:2px 4px;
+			}
+			input.text{
+				width:300px;
+			}
+			textarea.paragraph{
+				width:500px;
+			}
+			.add, .delete{
+				position:absolute;
+				right:10px;
+				top:0px;
+				cursor:pointer;
+			}
+			span{
+				margin:0px; padding:0px;
+			}
+			span.sort_handle{
+				position:absolute;
+				left:-25px;
+				top:0px;
+				width:25px;
+				height:25px;
+				cursor:move;
+				background:url(/images/sort_handle.gif) no-repeat;
+				@include corners(5px);
+			}
+			span.sort_handle:hover{
+				background-color:#fafafa;
+			}
+			.delete{
+				right:30px;
+				top:3px;
+			}
+			label.checkbox{
+				width:100%;
+				font-size:1.3em;				
+			}
 		}
-		
+		div{
+			margin:0px;padding:0px;
+		}
+		fieldset.addchoice{
+			padding:5px 0px 5px 10px;			
+		}
 	}
 }
 
@@ -2058,8 +2176,60 @@ $lightBase:lighten($base, 5%);
 	background:lighten($base, 6%);
 	@include border-radius(8px);
 	font-size:0.95em;
-	li{
-		width:90%;
+}
+
+.virtual_agents{
+	@include no-bullets;
+	margin:0px;
+	padding:0px;
+	border:1px solid #efefef;
+	li{	
+		padding:8px 10px 8px 40px;
+		border-bottom:1px solid #efefef;
+		@include vertical-gradient(#fbfbfb, #fafafa);
+		color:#656565;
+		position:relative;
+		a{
+			font-size:1.3em;
+			color:#336699;
+			display:block;
+			text-decoration:none;
+		 }
+		 input.checkbox{
+		 	position:absolute;
+		 	left:8px;
+		 	top:10px;
+		 }
+	}
+	li:hover{
+		background:#f2f5f7; 
+		cursor:pointer; 
 	}
 }
 
+.switch{
+	border:1px solid #afafaf;
+	@include border-radius(8px);
+	@include pie-clearfix;	
+	float:left;
+	a{
+		padding:4px 10px;
+		text-decoration:none;
+		color:#fff;
+		font-size:1.2em;
+		float:left;		
+	}
+	.on{
+		border:1px solid #afafaf;
+		@include border-radius(8px);
+		color:#333333;
+		background: #ffffff; /* old browsers */
+		background: -moz-linear-gradient(top, #ffffff 0%, #f1f1f1 9%, #f6f6f6 100%); /* firefox */	
+		background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(9%,#f1f1f1), color-stop(100%,#f6f6f6)); /* webkit */	
+		filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#f6f6f6',GradientType=0 ); /* ie */
+	}
+	background: #c9de96; /* old browsers */
+	background: -moz-linear-gradient(top, #c9de96 0%, #8ab66b 11%, #398235 100%); /* firefox */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#c9de96), color-stop(11%,#8ab66b), color-stop(100%,#398235)); /* webkit */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#c9de96', endColorstr='#398235',GradientType=0 ); /* ie */
+}

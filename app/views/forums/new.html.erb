@@ -1,0 +1,14 @@
+<div class="pageContent">
+	<div class="crumbs">
+		<%= link_to "Back to Forums"[:forums_title], forums_path, :class => "nav_older" %> 
+	</div>
+	
+	<h3 class="content_title"><%= 'New Forum'[:new_forum] %></h3>
+	
+	<% form_for :forum, :url => forums_path do |f| -%>
+		<%= render :partial => "form", :object => f %>
+			
+		<%= submit_tag 'Create'[:Create], { :class => "fdbutton" } -%> 
+		<%= link_to('Cancel'[:cancel], forums_path, :class => "fdbutton grey" ) -%>
+	<% end -%>
+</div>

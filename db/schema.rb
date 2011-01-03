@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101218073860) do
+ActiveRecord::Schema.define(:version => 20110103093328) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -129,6 +129,16 @@ ActiveRecord::Schema.define(:version => 20101218073860) do
 
   add_index "flexifields", ["flexifield_def_id"], :name => "index_flexifields_on_flexifield_def_id"
   add_index "flexifields", ["flexifield_set_id", "flexifield_set_type"], :name => "idx_ff_poly"
+
+  create_table "forums", :force => true do |t|
+    t.string  "name"
+    t.string  "description"
+    t.integer "topics_count",     :default => 0
+    t.integer "posts_count",      :default => 0
+    t.integer "position"
+    t.text    "description_html"
+    t.integer "account_id"
+  end
 
   create_table "helpdesk_article_guides", :force => true do |t|
     t.integer  "article_id"
@@ -311,6 +321,19 @@ ActiveRecord::Schema.define(:version => 20101218073860) do
   add_index "helpdesk_tickets", ["requester_id"], :name => "index_helpdesk_tickets_on_requester_id"
   add_index "helpdesk_tickets", ["responder_id"], :name => "index_helpdesk_tickets_on_responder_id"
 
+  create_table "moderatorships", :force => true do |t|
+    t.integer "forum_id"
+    t.integer "user_id"
+  end
+
+  add_index "moderatorships", ["forum_id"], :name => "index_moderatorships_on_forum_id"
+
+  create_table "monitorships", :force => true do |t|
+    t.integer "topic_id"
+    t.integer "user_id"
+    t.boolean "active",   :default => true
+  end
+
   create_table "password_resets", :force => true do |t|
     t.string   "email"
     t.integer  "user_id"
@@ -318,6 +341,21 @@ ActiveRecord::Schema.define(:version => 20101218073860) do
     t.string   "token"
     t.datetime "created_at"
   end
+
+  create_table "posts", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "topic_id"
+    t.text     "body"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "forum_id"
+    t.text     "body_html"
+    t.integer  "account_id"
+  end
+
+  add_index "posts", ["forum_id", "created_at"], :name => "index_posts_on_forum_id"
+  add_index "posts", ["topic_id", "created_at"], :name => "index_posts_on_topic_id"
+  add_index "posts", ["user_id", "created_at"], :name => "index_posts_on_user_id"
 
   create_table "subscription_affiliates", :force => true do |t|
     t.string   "name"
@@ -389,6 +427,26 @@ ActiveRecord::Schema.define(:version => 20101218073860) do
 
   add_index "subscriptions", ["account_id"], :name => "index_subscriptions_on_account_id"
 
+  create_table "topics", :force => true do |t|
+    t.integer  "forum_id"
+    t.integer  "user_id"
+    t.string   "title"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "hits",         :default => 0
+    t.integer  "sticky",       :default => 0
+    t.integer  "posts_count",  :default => 0
+    t.datetime "replied_at"
+    t.boolean  "locked",       :default => false
+    t.integer  "replied_by"
+    t.integer  "last_post_id"
+    t.integer  "account_id"
+  end
+
+  add_index "topics", ["forum_id", "replied_at"], :name => "index_topics_on_forum_id_and_replied_at"
+  add_index "topics", ["forum_id", "sticky", "replied_at"], :name => "index_topics_on_sticky_and_replied_at"
+  add_index "topics", ["forum_id"], :name => "index_topics_on_forum_id"
+
   create_table "users", :force => true do |t|
     t.string   "name",                :default => "",    :null => false
     t.string   "email"
@@ -410,6 +468,8 @@ ActiveRecord::Schema.define(:version => 20101218073860) do
     t.boolean  "admin",               :default => false
     t.boolean  "active",              :default => false, :null => false
     t.string   "role_token"
+    t.integer  "posts_count",         :default => 0
+    t.datetime "last_seen_at"
   end
 
   add_index "users", ["account_id"], :name => "index_users_on_account_id"
@@ -417,5 +477,11 @@ ActiveRecord::Schema.define(:version => 20101218073860) do
   add_index "users", ["perishable_token"], :name => "index_users_on_perishable_token"
   add_index "users", ["persistence_token"], :name => "index_users_on_persistence_token"
   add_index "users", ["single_access_token"], :name => "index_users_on_single_access_token", :unique => true
+
+  create_table "virtual_agents", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
 end
