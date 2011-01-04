@@ -1,20 +1,20 @@
 <% content_for :layoutType do%>single<% end %>
 
-<div class="pageContent" style="height:600px;">
+<div class="pageContent">
 	<h2 class="content_title">
 		<img src="/images/icons/addressbook.png" width="38px" height="38px" />
 		<%= @page_title = 'Customers' %>
 	</h2>
-	<h2>
-		<%= 'Contacts' %>
-		<%= link_to('Companies','/customers', :class => "button") %>
-	</h2>
+	<div class="tab_panel">		
+		<%= link_to('Companies','/customers') %>
+		<a class="active"><%= 'Contacts' %></a>
+	</div>	
 	<div class="actionsRight">
 		<!--
 			<%= link_to('Edit', "#", :class => "button") %>		
 		-->
 		<%= link_to('Delete', "#", :method => 'delete', :confirm => 'Are you sure you want to delete this user?', :class => "button") %>		
-		<%= link_to('Add a new user', new_user_url, :class => "button") %>		
+		<%= link_to('New user', new_user_url, :class => "button") %>		
 	</div>
 	<span class="seperator"></span>
 	<div class="search_box">

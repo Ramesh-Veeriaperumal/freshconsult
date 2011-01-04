@@ -1,54 +1,90 @@
-<!--h1>Listing customers</h1-->
-
 <% content_for :layoutType do%>single<% end %>
-<script>
-	
-	</script>
 
-<h2 class="content_title">
+<div class="pageContent">
+	<h2 class="content_title">
 		<img src="/images/icons/addressbook.png" width="38px" height="38px" />
 		<%= @page_title = 'Customers' %>
 	</h2>
-	<h2>
-		<%='Companies'%>
-		<%= link_to('Contacts','/users', :class => "button") %>
-	</h2>
-<!--%= render :partial => "/users/listview" %-->
-
-<div id="customer_list_view" style="display:block">
-<table>
-  <tr>
-    <th>Name</th>
-    <th>Customer Number</th>
-    <th>Owner</th>
-    <th>Account</th>
-    <th>Customer type</th>
-    <th>Phone</th>
-    <th>Address</th>
-    <th>Website</th>
-    <th>Description</th>
-  </tr>
-
-<% @customers.each do |customer| %>
-  <tr>
-    <td><%=h customer.name %></td>
-    <td><%=h customer.cust_identifier %></td>
-    <td><%=h customer.owner_id %></td>
-    <td><%=h customer.account_id %></td>
-    <td><%=h customer.cust_type %></td>
-    <td><%=h customer.phone %></td>
-    <td><%=h customer.address %></td>
-    <td><%=h customer.website %></td>
-    <td><%=h customer.description %></td>
-    <td><%= link_to 'Show', customer %></td>
-    <td><%= link_to 'Edit', edit_customer_path(customer) %></td>
-    <td><%= link_to 'Destroy', customer, :confirm => 'Are you sure?', :method => :delete %></td>
-  </tr>
-<% end %>
-</table>
-<br />
-
-<%= link_to 'New customer', new_customer_path %>
+	<div class="tab_panel">
+		<a class="active"><%='Companies'%></a>
+		<%= link_to('Contacts','/users') %>
+	</div>	
+	<div class="actionsRight">
+		<%= link_to 'New Company', new_customer_path, :class => "button" %>
+	</div>
+	<span class="seperator"></span>
+	<div id="customer_list_view" style="display:block">
+		<div class="search_box">
+		<input type="search" id="srch_fld" placeholder="Search by Name or Email or Tags..." autosave="applestyle_srch" results="5" />
+	</div>
+	<ul class="alpha_sort_list">
+		<li class="active"><a href="#">All</a></li>
+		<li><a href="#">A</a></li>
+		<li><a href="#">B</a></li>
+		<li><a href="#">C</a></li>
+		<li><a href="#">D</a></li>
+		<li><a href="#">E</a></li>
+		<li><a href="#">F</a></li>
+		<li><a href="#">G</a></li>
+		<li><a href="#">H</a></li>
+		<li><a href="#">I</a></li>
+		<li><a href="#">J</a></li>
+		<li><a href="#">K</a></li>
+		<li><a href="#">L</a></li>
+		<li><a href="#">M</a></li>
+		<li><a href="#">N</a></li>
+		<li><a href="#">O</a></li>
+		<li><a href="#">P</a></li>
+		<li><a href="#">Q</a></li>
+		<li><a href="#">R</a></li>
+		<li><a href="#">S</a></li>
+		<li><a href="#">T</a></li>
+		<li><a href="#">U</a></li>
+		<li><a href="#">V</a></li>
+		<li><a href="#">W</a></li>
+		<li><a href="#">X</a></li>
+		<li><a href="#">Y</a></li>
+		<li><a href="#">Z</a></li> 		
+	</ul>
+		<table class="contact_table">
+		  <tr>
+		  	<th></th>
+			<th></th>
+		    <th>Name</th>
+		    <th>Company Number</th>
+		    <!--th>Owner</th-->
+		    <!--th>Account</th-->
+		    <th>Customer type</th>
+		    <th>Phone</th>
+		    <!--th>Address</th-->
+		    <th>Website</th>
+		    <th>Description</th>
+		  </tr>
+		
+		<% @customers.each do |customer| %>
+		  <tr class="<%= cycle('stripe', '') %>">
+		  	<td class="checkCol"><input type="checkbox"></td>
+			<td class="preview_pic"><img src="/images/icons/profile_blank.gif" width="36px" height="36px" /></td>
+		    <td class="user_prime_Details">
+		    	<%= link_to(h(customer.name), customer, :class => "user_name" ) %>
+				<div><%= h customer.address %></div>
+				<div><%= h customer.description %></div>
+			</td>
+		    <td><%=h customer.cust_identifier %></td>
+		    <!--td><%=h customer.owner_id %></td-->
+		    <!--td><%=h customer.account_id %></td-->
+		    <td><%=h customer.cust_type %></td>
+		    <td><%=h customer.phone %></td>
+		    <!--td><%=h customer.address %></td-->
+		    <td><%=h customer.website %></td>
+		    <td><%=h customer.description %></td>
+		    <td><%= link_to 'Show', customer %></td>
+		    <td><%= link_to 'Edit', edit_customer_path(customer) %></td>
+		    <td><%= link_to 'Delete', customer, :confirm => 'Are you sure?', :method => :delete %></td>
+		  </tr>
+		<% end %>
+		</table>
+		<br />	
+	</div>
 </div>
-
 

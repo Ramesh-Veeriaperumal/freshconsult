@@ -68,7 +68,7 @@ a img {
 */
 /*@include blueprint;*/
 /* line 4, ../src/_mixins.scss */
-.pie, .header_tabs ul.tabs li a, .header_tabs ul.tabs li a span, .header_seperator, .ui-bt-grey, .ui-bt-grey:hover, .corners span.ltExt, .corners span.rtExt, .tab-buttons li, .fdbutton, .grey, .ui-form .conditionset fieldset span.sort_handle, .virtual_agents li {
+.pie, .header_tabs ul.tabs li a, .header_tabs ul.tabs li a span, .header_seperator, .ui-bt-grey, .ui-bt-grey:hover, .corners span.ltExt, .corners span.rtExt, .tab-buttons li, .fdbutton, .grey, .ui-form .conditionset fieldset span.sort_handle, .virtual_agents li, .tab_panel a {
   behavior: url(/stylesheets/PIE.htc);
 }
 
@@ -2823,7 +2823,7 @@ ul.admin li {
 /* line 1775, ../src/application.scss */
 .ui-form span {
   font-weight: normal;
-  font-size: 0.8em;
+  font-size: 1.0em;
   color: #666666;
   display: block;
 }
@@ -3068,7 +3068,7 @@ ul.admin li {
 /* line 1951, ../src/application.scss */
 .ui-form .conditionset fieldset span.sort_handle {
   position: absolute;
-  left: -25px;
+  left: 0px;
   top: 0px;
   width: 25px;
   height: 25px;
@@ -3504,4 +3504,33 @@ ul.admin li {
   /* webkit */
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#f6f6f6',GradientType=0 );
   /* ie */
+}
+
+/* line 2247, ../src/application.scss */
+.tab_panel {
+  margin: 5px 0px 0px 0px;
+  padding: 0px 36px;
+}
+/* line 2250, ../src/application.scss */
+.tab_panel a {
+  background: #cfcfcf;
+  position: relative;
+  top: 2px;
+  text-decoration: none;
+  padding: 5px 8px;
+  margin: 0px 8px 0px 0px;
+  color: #333333 !important;
+  border: 1px solid #cfcfcf;
+  border-bottom: 0px;
+  -moz-border-radius: 6px 6px 0 0;
+  -webkit-border-top-left-radius: 6px;
+  -webkit-border-bottom-left-radius: 0;
+  -webkit-border-top-right-radius: 6px;
+  -webkit-border-bottom-right-radius: 0;
+  border-radius: 6px 6px 0 0;
+  font-size: 1.1em;
+}
+/* line 2263, ../src/application.scss */
+.tab_panel a.active {
+  background: #ffffff;
 }
