@@ -21,7 +21,6 @@ initRuleList = function(filter_list, condition_list, action_list, Dom, add_filte
 				break;					
 			case 'text':
 				c_dom = FactoryUI.text("", "value");
-				c_dom.valid();
 				break;
 			case 'dropdown':
 				c_dom = FactoryUI.dropdown(filter.choices, "value");
