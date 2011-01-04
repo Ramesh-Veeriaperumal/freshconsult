@@ -1724,29 +1724,39 @@ $lightBase:lighten($base, 5%);
 	li.small{
 		width:45%;
 	}
-	.overlabel{
-		color:#999999;
-		margin-left:5px;
-		margin-top:2px;
-		font-size:1.0em;
-		/*font-style:italic;*/
-	}
-	label{				
-		font-size:12pt;
+	
+	label{						
 		font-weight:normal; 
-		padding:2px 0px;
+		padding:4px 0px;
 		margin:0px;
 		line-height:18px;
+		color:#565656;
+	}	
+	input, label{
+		font-size:12pt;
 	}
-	label, input, textarea{
+	label.overlabel{
+		color:#999999;
+		margin-left:8px;
+		margin-top:0px;
+		font-size:1.0em;	
+	}	
+	input, textarea{		
 		margin:0px;
-		color:#666666;
-	}
-	input, textarea{ 
+		color:#3f3f3f;
 		padding:3px;
-		border:1px solid #cfcfcf;
+		border:1px solid #bfbfbf;
 		font-weight:normal;
 		@include form-gradient;		
+	}
+	textarea{
+		font-family:inherit;
+		font-size:9pt;
+		line-height:16px;
+		overflow:auto;
+	}
+	textarea.smallpara{
+		height:50px;
 	}
 	select{
 		width:auto;

@@ -40,18 +40,21 @@
 		<ul class="ui-form">
 			<li>
 				<label>Rule Name *</label>
-				<label class="overlabel" for="agent_name">eg: "Subscription related Tickets" </label>				
+				<label class="overlabel" for="agent_name">eg: <em>"Subscription related tickets"</em> </label>				
 				<input type="text" name="vagent_name" value="" id="agent_name" class="required" />
 			</li>
 			<li>
 				<label>Description</label>
-				<label class="overlabel" for="agent_desc">
+				<!--label class="overlabel" for="agent_desc">
 					We Know it's pretty boring. <br />
 					But meaningful descriptions can help you later to quickly identify what this rule does,<br /> 
 					when you have a tons of rules. <br />
 					Go Ahead and type something like - <br /><em>"All Subscription related tickets will be assigned to Susan"</em>
+				</label-->
+				<label class="overlabel" for="agent_desc">
+					eg: <em>"All Subscription related tickets will be assigned to Susan"</em>
 				</label>
-				<textarea id="agent_desc" name="desc"></textarea>				
+				<textarea id="agent_desc" name="desc" class="smallpara"></textarea>				
 			</li>
 			<li><span class="seperator"></span></li>						
 			<li class="choicelist">
