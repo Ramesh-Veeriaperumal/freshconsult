@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110103093328) do
+ActiveRecord::Schema.define(:version => 20110104120416) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -515,6 +515,17 @@ ActiveRecord::Schema.define(:version => 20110103093328) do
   add_index "users", ["perishable_token"], :name => "index_users_on_perishable_token"
   add_index "users", ["persistence_token"], :name => "index_users_on_persistence_token"
   add_index "users", ["single_access_token"], :name => "index_users_on_single_access_token", :unique => true
+
+  create_table "va_rules", :force => true do |t|
+    t.string   "name"
+    t.text     "description"
+    t.string   "match_type"
+    t.text     "filter_data"
+    t.text     "action_data"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "account_id"
+  end
 
   create_table "virtual_agents", :force => true do |t|
     t.string   "name"

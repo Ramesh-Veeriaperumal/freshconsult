@@ -2952,12 +2952,14 @@ ul.admin li {
 /* line 1867, ../src/application.scss */
 .ui-form .choicelist label.radiolabel {
   font-size: 1em;
-  float: left;
   padding: 2px 5px;
 }
 /* line 1871, ../src/application.scss */
-.ui-form .choicelist label.radiolabel input {
+.ui-form .choicelist input.radio {
   margin-right: 5px;
+  position:relative;
+  top:2px;
+  float:left;
 }
 /* line 1877, ../src/application.scss */
 .ui-form div.nestedChoices {
