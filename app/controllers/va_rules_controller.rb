@@ -10,10 +10,10 @@ class VaRulesController < ApplicationController
     #@va_rule = VARule.new
     @va_rule.match_type = :all
     
-    filter_hash    = [{:name => 0              , :value => "--- Click to Select Filter ---"},
+    filter_hash    = [{:name => 0              , :value => "-- Click to Select Filter --"},
                       {:name => "from_email_id", :value => "From Email Id", :domtype => "autocompelete", :autocompelete_url => "allemailsurl" },
                       {:name => "to_email_id"  , :value => "To Email Id"  , :domtype => "autocompelete", :autocompelete_url => "allemailsurl" },
-                      {:name => 0              , :value => "------------------------------"},
+                      {:name => 0              , :value => "---------------------"},
                       {:name => "subject"      , :value => "Subject",       :domtype => "text" },
                       {:name => "description"  , :value => "Description...",   :domtype => "paragraph" },
                       {:name => "priority"     , :value => "Priority",      :domtype => "dropdown", :choices => [{:name => "1", :value => "Low"}, 
@@ -32,7 +32,7 @@ class VaRulesController < ApplicationController
                                                                                                                  {:name => "2", :value => "Phone"},
                                                                                                                  {:name => "3", :value => "Self Service"},
                                                                                                                  {:name => "4", :value => "Via Agent"}] },
-                      {:name => 0              , :value => "------------------------------"},
+                      {:name => 0              , :value => "---------------------"},
                       {:name => "contact_name" , :value => "Contact Name",  :domtype => "autocompelete", :autocompelete_url => "contactnameurl" },
                       {:name => "company_name" , :value => "Company Name",  :domtype => "autocompelete", :autocompelete_url => "companynameurl" },
                       {:name => "support_plan" , :value => "Support Plan",  :domtype => "dropdown", :choices => [{:name => "1", :value => "Platinum"}, 
@@ -47,7 +47,7 @@ class VaRulesController < ApplicationController
                        
     @condition_defs = ActiveSupport::JSON.encode condition_hash
     
-    action_hash     = [{:name => 0              , :value => "--- Click to Select Action ---"},
+    action_hash     = [{:name => 0              , :value => "-- Click to Select Action --"},
                        {:name => "s_priority"  , :value => "Set Priority as", :domtype => "dropdown" , :choices => [{:name => "1", :value => "Low"}, 
                                                                                                                   {:name => "2", :value => "Medium"}, 
                                                                                                                   {:name => "3", :value => "High"},
@@ -59,10 +59,10 @@ class VaRulesController < ApplicationController
                                                                                                                   {:name => "closed", :value => "Closed"},
                                                                                                                   {:name => "resolved", :value => "Resolved"},
                                                                                                                   {:name => "onhold", :value => "On Hold"}]},
-                       {:name => 0              , :value => "------------------------------"},                                                                                           
+                       {:name => 0              , :value => "---------------------"},                                                                                           
                        {:name => "add_comment"  , :value => "Add Comment as" , :domtype => 'comment'},
                        {:name => "add_tag"      , :value => "Add Tag(s)"  , :domtype => 'autocompelete', :autocompelete_url => "allemailsurl"},
-                       {:name => 0              , :value => "------------------------------"},
+                       {:name => 0              , :value => "---------------------"},
                        {:name => "assign_to_agent" , :value => "Assign to Agent"  , :domtype => 'dropdown', :choices => [{:name => "1", :value => "Edward"}, 
                                                                                                                          {:name => "2", :value => "John Patrick"},
                                                                                                                          {:name => "3", :value => "Susan Renolds"},
@@ -71,7 +71,7 @@ class VaRulesController < ApplicationController
                                                                                                                          {:name => "2", :value => "Software"},
                                                                                                                          {:name => "3", :value => "Tech support"},
                                                                                                                          {:name => "4", :value => "Product Group"}]},
-                       {:name => 0              , :value => "------------------------------"},
+                       {:name => 0              , :value => "---------------------"},
                        {:name => "send_email_group" , :value => "Send Email to Group"  , :domtype => 'autocompelete', :autocompelete_url => "groupemailsurl"},
                        {:name => "send_email_agent" , :value => "Send Email to Agent"  , :domtype => 'autocompelete', :autocompelete_url => "agentemailsurl"},
                        {:name => "send_email_user"  , :value => "Send Email to User"   , :domtype => 'autocompelete', :autocompelete_url => "useremailsurl"},
