@@ -38,9 +38,9 @@
   background: -moz-linear-gradient(center top, $start 0%, $end 100%);
   -pie-background: linear-gradient(90deg, $start, $end); }
 
-@mixin form-gradient($start: #ffffff, $end: #DDDDDD, $position: 5px ){
+@mixin form-gradient($start: #ffffff, $end: #dfdfdf, $position: 3px ){
 	background: $start; /* old browsers */
-	background: -moz-linear-gradient(top, $end 0%, $start 5px, $start 100%); /* firefox */		
+	background: -moz-linear-gradient(top, $end 0%, $start $position, $start 100%); /* firefox */		
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, $end), color-stop($position, $start), color-stop(100%,$start)); /* webkit */		
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='$end', endColorstr='$start',GradientType=0 ); /* ie */
 }

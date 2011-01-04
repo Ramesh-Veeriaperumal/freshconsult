@@ -2751,85 +2751,96 @@ ul.admin li {
 .ui-form li.small {
   width: 45%;
 }
-/* line 1727, ../src/application.scss */
-.ui-form .overlabel {
-  color: #999999;
-  margin-left: 5px;
-  margin-top: 2px;
-  font-size: 1.0em;
-  /*font-style:italic;*/
-}
-/* line 1734, ../src/application.scss */
+/* line 1728, ../src/application.scss */
 .ui-form label {
-  font-size: 12pt;
   font-weight: normal;
-  padding: 2px 0px;
+  padding: 4px 0px;
   margin: 0px;
   line-height: 18px;
+  color: #565656;
 }
-/* line 1741, ../src/application.scss */
-.ui-form label, .ui-form input, .ui-form textarea {
-  margin: 0px;
-  color: #666666;
+/* line 1735, ../src/application.scss */
+.ui-form input, .ui-form label {
+  font-size: 12pt;
 }
-/* line 1745, ../src/application.scss */
+/* line 1738, ../src/application.scss */
+.ui-form label.overlabel {
+  color: #999999;
+  margin-left: 8px;
+  margin-top: 0px;
+  font-size: 1.0em;
+}
+/* line 1744, ../src/application.scss */
 .ui-form input, .ui-form textarea {
+  margin: 0px;
+  color: #3f3f3f;
   padding: 3px;
-  border: 1px solid #cfcfcf;
+  border: 1px solid #bfbfbf;
   font-weight: normal;
   background: white;
   /* old browsers */
-  background: -moz-linear-gradient(top, #dddddd 0%, white 5px, white 100%);
+  background: -moz-linear-gradient(top, #dfdfdf 0%, white 3px, white 100%);
   /* firefox */
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #dddddd), color-stop(5px, white), color-stop(100%, white));
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #dfdfdf), color-stop(3px, white), color-stop(100%, white));
   /* webkit */
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='$end', endColorstr='$start',GradientType=0 );
   /* ie */
 }
-/* line 1751, ../src/application.scss */
+/* line 1752, ../src/application.scss */
+.ui-form textarea {
+  font-family: inherit;
+  font-size: 9pt;
+  line-height: 16px;
+  overflow: auto;
+}
+/* line 1758, ../src/application.scss */
+.ui-form textarea.smallpara {
+  height: 50px;
+}
+/* line 1761, ../src/application.scss */
 .ui-form select {
   width: auto;
   font-size: 1.0em;
   font-weight: normal;
 }
-/* line 1756, ../src/application.scss */
+/* line 1766, ../src/application.scss */
 .ui-form input:focus, .ui-form textarea:focus {
   background: #f7fdef;
   /* old browsers */
-  background: -moz-linear-gradient(top, #dddddd 0%, #f7fdef 5px, #f7fdef 100%);
+  background: -moz-linear-gradient(top, #dfdfdf 0%, #f7fdef 3px, #f7fdef 100%);
   /* firefox */
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #dddddd), color-stop(5px, #f7fdef), color-stop(100%, #f7fdef));
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #dfdfdf), color-stop(3px, #f7fdef), color-stop(100%, #f7fdef));
   /* webkit */
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='$end', endColorstr='$start',GradientType=0 );
   /* ie */
   border-color: #5b711f;
 }
-/* line 1761, ../src/application.scss */
+/* line 1771, ../src/application.scss */
 .ui-form .button {
   font-size: 1em;
   padding: 5px 8px;
 }
-/* line 1765, ../src/application.scss */
+/* line 1775, ../src/application.scss */
 .ui-form span {
   font-weight: normal;
   font-size: 0.8em;
   color: #666666;
   display: block;
 }
-/* line 1772, ../src/application.scss */
+/* line 1782, ../src/application.scss */
 .ui-form .largefield label {
   font-size: 1.4em;
 }
-/* line 1775, ../src/application.scss */
+/* line 1785, ../src/application.scss */
 .ui-form .largefield input {
   font-size: 1.4em;
 }
-/* line 1779, ../src/application.scss */
+/* line 1789, ../src/application.scss */
 .ui-form .seperator {
   margin-bottom: 0px;
   padding: 1px;
 }
-/* line 1783, ../src/application.scss */
+/* line 1793, ../src/application.scss */
 .ui-form .button-container {
   margin-top: 18px;
   background: #d4ebd4;
@@ -2840,28 +2851,28 @@ ul.admin li {
   -khtml-border-radius: 0.6em;
   border-radius: 0.6em;
 }
-/* line 1787, ../src/application.scss */
+/* line 1797, ../src/application.scss */
 .ui-form .button-container input.button {
   font-size: 1em;
   padding: 5px 8px;
 }
-/* line 1793, ../src/application.scss */
+/* line 1803, ../src/application.scss */
 .ui-form .inlineChecklist label {
   float: left;
   font-size: 1em;
   padding: 5px 16px 0px 0px;
 }
-/* line 1798, ../src/application.scss */
+/* line 1808, ../src/application.scss */
 .ui-form .inlineChecklist input {
   top: 0px;
 }
-/* line 1802, ../src/application.scss */
+/* line 1812, ../src/application.scss */
 .ui-form .colsets {
   /*background:lighten($base, 8%);
   @include border-radius(0.2em);
   */
 }
-/* line 1806, ../src/application.scss */
+/* line 1816, ../src/application.scss */
 .ui-form .colsets fieldset {
   *zoom: 1;
   margin: 0px;
@@ -2878,7 +2889,7 @@ ul.admin li {
   overflow: hidden;
   visibility: hidden;
 }
-/* line 1813, ../src/application.scss */
+/* line 1823, ../src/application.scss */
 .ui-form .colsets fieldset .dropchoice, .ui-form .colsets fieldset .tags {
   *zoom: 1;
   float: left;
@@ -2894,122 +2905,122 @@ ul.admin li {
   overflow: hidden;
   visibility: hidden;
 }
-/* line 1818, ../src/application.scss */
+/* line 1828, ../src/application.scss */
 .ui-form .colsets fieldset .dropchoice input, .ui-form .colsets fieldset .tags input {
   width: 95%;
   float: left;
 }
-/* line 1823, ../src/application.scss */
+/* line 1833, ../src/application.scss */
 .ui-form .colsets fieldset .dropchoice {
   width: 35%;
 }
-/* line 1826, ../src/application.scss */
+/* line 1836, ../src/application.scss */
 .ui-form .colsets fieldset .tags {
   width: 50%;
 }
-/* line 1829, ../src/application.scss */
+/* line 1839, ../src/application.scss */
 .ui-form .colsets fieldset img {
   position: absolute;
   right: 6px;
   top: 3px;
 }
-/* line 1835, ../src/application.scss */
+/* line 1845, ../src/application.scss */
 .ui-form .colsets fieldset.addchoice {
   border: 1px solid #dfdfdf;
   background: #ffffff;
 }
-/* line 1840, ../src/application.scss */
+/* line 1850, ../src/application.scss */
 .ui-form fieldset.addchoice {
   padding: 5px;
   color: #999999;
   cursor: pointer;
 }
-/* line 1844, ../src/application.scss */
+/* line 1854, ../src/application.scss */
 .ui-form fieldset.addchoice img {
   top: 0px;
   position: absolute;
   right: 8px;
 }
-/* line 1850, ../src/application.scss */
+/* line 1860, ../src/application.scss */
 .ui-form fieldset.addchoice:hover {
   background: #f8f8f8;
 }
-/* line 1854, ../src/application.scss */
+/* line 1864, ../src/application.scss */
 .ui-form .choicelist label {
   font-size: 1.1em;
 }
-/* line 1857, ../src/application.scss */
+/* line 1867, ../src/application.scss */
 .ui-form .choicelist label.radiolabel {
   font-size: 1em;
   float: left;
   padding: 2px 5px;
 }
-/* line 1861, ../src/application.scss */
+/* line 1871, ../src/application.scss */
 .ui-form .choicelist label.radiolabel input {
   margin-right: 5px;
 }
-/* line 1867, ../src/application.scss */
+/* line 1877, ../src/application.scss */
 .ui-form div.nestedChoices {
   overflow: hidden;
   *zoom: 1;
 }
-/* line 1869, ../src/application.scss */
+/* line 1879, ../src/application.scss */
 .ui-form div.nestedChoices div {
   margin: 0px 0px 0px 8px;
   padding: 4px 0px 0px 4px;
   border: 1px dotted #afafaf;
   border-width: 1px 0px 0px 1px;
 }
-/* line 1875, ../src/application.scss */
+/* line 1885, ../src/application.scss */
 .ui-form div.nestedChoices input {
   margin-right: 3px;
   position: relative;
   top: 1px;
 }
-/* line 1880, ../src/application.scss */
+/* line 1890, ../src/application.scss */
 .ui-form div.nestedChoices h4 {
   font-size: 1.1em;
   margin: 0px;
   padding: 0px 0px 8px 4px;
 }
-/* line 1884, ../src/application.scss */
+/* line 1894, ../src/application.scss */
 .ui-form div.nestedChoices h4 span {
   font-size: 0.9em;
 }
-/* line 1888, ../src/application.scss */
+/* line 1898, ../src/application.scss */
 .ui-form div.nestedChoices label {
   border: 1px solid red;
   float: none;
   padding-left: 10px;
 }
-/* line 1893, ../src/application.scss */
+/* line 1903, ../src/application.scss */
 .ui-form div.nestedChoices span {
   color: #999999;
 }
-/* line 1898, ../src/application.scss */
+/* line 1908, ../src/application.scss */
 .ui-form li.textleft {
   overflow: hidden;
   *zoom: 1;
   position: relative;
 }
-/* line 1901, ../src/application.scss */
+/* line 1911, ../src/application.scss */
 .ui-form li.textleft label {
   position: absolute;
   left: 6px;
   top: 3px;
   width: 25%;
 }
-/* line 1908, ../src/application.scss */
+/* line 1918, ../src/application.scss */
 .ui-form label.error {
   font-size: 1em;
   color: red;
 }
-/* line 1912, ../src/application.scss */
+/* line 1922, ../src/application.scss */
 .ui-form .conditionset {
   border: 1px solid #cfcfcf;
   padding: 0px;
 }
-/* line 1915, ../src/application.scss */
+/* line 1925, ../src/application.scss */
 .ui-form .conditionset fieldset {
   *zoom: 1;
   padding: 5px 5px 5px 30px;
@@ -3026,33 +3037,33 @@ ul.admin li {
   overflow: hidden;
   visibility: hidden;
 }
-/* line 1921, ../src/application.scss */
+/* line 1931, ../src/application.scss */
 .ui-form .conditionset fieldset * {
   float: left;
   width: auto;
   margin: 2px 4px;
 }
-/* line 1926, ../src/application.scss */
+/* line 1936, ../src/application.scss */
 .ui-form .conditionset fieldset input.text {
   width: 300px;
 }
-/* line 1929, ../src/application.scss */
+/* line 1939, ../src/application.scss */
 .ui-form .conditionset fieldset textarea.paragraph {
   width: 500px;
 }
-/* line 1932, ../src/application.scss */
+/* line 1942, ../src/application.scss */
 .ui-form .conditionset fieldset .add, .ui-form .conditionset fieldset .delete {
   position: absolute;
   right: 10px;
   top: 0px;
   cursor: pointer;
 }
-/* line 1938, ../src/application.scss */
+/* line 1948, ../src/application.scss */
 .ui-form .conditionset fieldset span {
   margin: 0px;
   padding: 0px;
 }
-/* line 1941, ../src/application.scss */
+/* line 1951, ../src/application.scss */
 .ui-form .conditionset fieldset span.sort_handle {
   position: absolute;
   left: -25px;
@@ -3068,31 +3079,31 @@ ul.admin li {
   -webkit-border-bottom-right-radius: 5px;
   border-radius: 5px 5px 5px 5px;
 }
-/* line 1951, ../src/application.scss */
+/* line 1961, ../src/application.scss */
 .ui-form .conditionset fieldset span.sort_handle:hover {
   background-color: #fafafa;
 }
-/* line 1954, ../src/application.scss */
+/* line 1964, ../src/application.scss */
 .ui-form .conditionset fieldset .delete {
   right: 30px;
   top: 3px;
 }
-/* line 1958, ../src/application.scss */
+/* line 1968, ../src/application.scss */
 .ui-form .conditionset fieldset label.checkbox {
   width: 100%;
   font-size: 1.3em;
 }
-/* line 1963, ../src/application.scss */
+/* line 1973, ../src/application.scss */
 .ui-form .conditionset div {
   margin: 0px;
   padding: 0px;
 }
-/* line 1966, ../src/application.scss */
+/* line 1976, ../src/application.scss */
 .ui-form .conditionset fieldset.addchoice {
   padding: 5px 0px 5px 10px;
 }
 
-/* line 1972, ../src/application.scss */
+/* line 1982, ../src/application.scss */
 .custom_form_outer {
   *zoom: 1;
   width: 50%;
@@ -3112,13 +3123,13 @@ ul.admin li {
   visibility: hidden;
 }
 
-/* line 1984, ../src/application.scss */
+/* line 1994, ../src/application.scss */
 .pageContent .custom_form_outer h3.content_title {
   padding: 15px 0px 0px 15px;
   margin: 0px;
 }
 
-/* line 1990, ../src/application.scss */
+/* line 2000, ../src/application.scss */
 .ui-custom-fields, .ui-custom-form {
   list-style: none;
   margin: 0px 0px 0px 0px;
@@ -3132,13 +3143,13 @@ ul.admin li {
   margin-left: 0px;
 }
 
-/* line 1997, ../src/application.scss */
+/* line 2007, ../src/application.scss */
 .ui-custom-fields {
   width: 20%;
   overflow: hidden;
   *zoom: 1;
 }
-/* line 2000, ../src/application.scss */
+/* line 2010, ../src/application.scss */
 .ui-custom-fields h4.title {
   color: #747e74;
   font-size: 14px;
@@ -3146,7 +3157,7 @@ ul.admin li {
   margin: 0px;
   padding: 0px 0px 8px 18px;
 }
-/* line 2007, ../src/application.scss */
+/* line 2017, ../src/application.scss */
 .ui-custom-fields .fdbutton {
   min-width: 125px;
   width: auto !important;
@@ -3155,7 +3166,7 @@ ul.admin li {
   font-weight: normal;
 }
 
-/* line 2014, ../src/application.scss */
+/* line 2024, ../src/application.scss */
 .ui-sortable-placeholder {
   background: #f1fedf;
   border: 1px dotted #afafaf;
@@ -3163,44 +3174,44 @@ ul.admin li {
   padding: 20px 6px;
 }
 
-/* line 2021, ../src/application.scss */
+/* line 2031, ../src/application.scss */
 .ui-custom-form {
   padding: 3px 14px;
   overflow: hidden;
   *zoom: 1;
 }
-/* line 2024, ../src/application.scss */
+/* line 2034, ../src/application.scss */
 .ui-custom-form li {
   padding: 4px;
   position: relative;
 }
-/* line 2027, ../src/application.scss */
+/* line 2037, ../src/application.scss */
 .ui-custom-form li .ui-field-panel {
   position: absolute;
   right: 0px;
   top: 0px;
   display: none;
 }
-/* line 2032, ../src/application.scss */
+/* line 2042, ../src/application.scss */
 .ui-custom-form li * {
   cursor: move;
 }
-/* line 2037, ../src/application.scss */
+/* line 2047, ../src/application.scss */
 .ui-custom-form li:hover, .ui-custom-form li.active {
   background: #f1fedf;
   border: 1px dotted #cccccc;
   padding: 3px;
 }
-/* line 2041, ../src/application.scss */
+/* line 2051, ../src/application.scss */
 .ui-custom-form li:hover .ui-field-panel, .ui-custom-form li.active .ui-field-panel {
   display: block;
 }
-/* line 2045, ../src/application.scss */
+/* line 2055, ../src/application.scss */
 .ui-custom-form li.active {
   border-style: solid;
 }
 
-/* line 2050, ../src/application.scss */
+/* line 2060, ../src/application.scss */
 .hint_drag {
   background: #fefedf;
   border: 1px solid #cccccc;
@@ -3209,7 +3220,7 @@ ul.admin li {
   display: block;
 }
 
-/* line 2059, ../src/application.scss */
+/* line 2069, ../src/application.scss */
 .admin_form {
   overflow: hidden;
   *zoom: 1;
@@ -3218,33 +3229,33 @@ ul.admin li {
   margin-top: 5px;
 }
 
-/* line 2066, ../src/application.scss */
+/* line 2076, ../src/application.scss */
 .admin_form .button-container {
   padding-left: 180px;
   width: 100%;
 }
-/* line 2069, ../src/application.scss */
+/* line 2079, ../src/application.scss */
 .admin_form .button-container .fdbutton {
   min-width: 60px;
   width: auto !important;
   width: 60px;
 }
 
-/* line 2074, ../src/application.scss */
+/* line 2084, ../src/application.scss */
 .forums {
   border: 1px solid #efefef;
 }
-/* line 2076, ../src/application.scss */
+/* line 2086, ../src/application.scss */
 .forums td {
   border: 1px solid #f0f0f0;
   text-align: left;
 }
-/* line 2080, ../src/application.scss */
+/* line 2090, ../src/application.scss */
 .forums td.c1 {
   background: #efefef;
 }
 
-/* line 2085, ../src/application.scss */
+/* line 2095, ../src/application.scss */
 .forum_list, .topics_list {
   background: #d4ebd4;
   padding: 6px;
@@ -3255,12 +3266,12 @@ ul.admin li {
   -khtml-border-radius: 0.8em;
   border-radius: 0.8em;
 }
-/* line 2089, ../src/application.scss */
+/* line 2099, ../src/application.scss */
 .forum_list h4.title, .topics_list h4.title {
   margin: 0px;
   padding: 2px 6px;
 }
-/* line 2093, ../src/application.scss */
+/* line 2103, ../src/application.scss */
 .forum_list ul.base_set, .topics_list ul.base_set {
   margin: 0;
   padding: 0;
@@ -3296,34 +3307,34 @@ ul.admin li {
 .forum_list ul.base_set li:last-child, .forum_list ul.base_set li.last, .topics_list ul.base_set li:last-child, .topics_list ul.base_set li.last {
   padding-right: 0;
 }
-/* line 2098, ../src/application.scss */
+/* line 2108, ../src/application.scss */
 .forum_list ul.base_set li, .topics_list ul.base_set li {
   width: 46.8%;
   margin: 2px 8px;
   padding: 0px;
   margin-bottom: 6px;
 }
-/* line 2103, ../src/application.scss */
+/* line 2113, ../src/application.scss */
 .forum_list ul.base_set li h5, .topics_list ul.base_set li h5 {
   font-size: 14px;
   margin: 7px 6px 2px 13px;
   border-bottom: 1px solid #efefef;
 }
-/* line 2106, ../src/application.scss */
+/* line 2116, ../src/application.scss */
 .forum_list ul.base_set li h5 a, .topics_list ul.base_set li h5 a {
   color: #545454;
   text-decoration: none;
 }
-/* line 2109, ../src/application.scss */
+/* line 2119, ../src/application.scss */
 .forum_list ul.base_set li h5 a span.subcounter, .topics_list ul.base_set li h5 a span.subcounter {
   font-weight: normal;
   color: #848484;
 }
-/* line 2115, ../src/application.scss */
+/* line 2125, ../src/application.scss */
 .forum_list ul.base_set li h5 a:hover span.follow_link, .topics_list ul.base_set li h5 a:hover span.follow_link {
   color: #459445;
 }
-/* line 2123, ../src/application.scss */
+/* line 2133, ../src/application.scss */
 .forum_list ul, .topics_list ul {
   list-style: none;
   padding: 6px;
@@ -3335,43 +3346,43 @@ ul.admin li {
   list-style-type: none;
   margin-left: 0px;
 }
-/* line 2128, ../src/application.scss */
+/* line 2138, ../src/application.scss */
 .forum_list ul li a, .topics_list ul li a {
   color: #1A6690;
 }
 
-/* line 2137, ../src/application.scss */
+/* line 2147, ../src/application.scss */
 .topics_list ul.base_set {
   padding-top: 16px;
 }
-/* line 2139, ../src/application.scss */
+/* line 2149, ../src/application.scss */
 .topics_list ul.base_set li {
   width: 100%;
   margin-bottom: 10px;
   border-bottom: 1px solid #efefef;
 }
-/* line 2145, ../src/application.scss */
+/* line 2155, ../src/application.scss */
 .topics_list ul.base_set li .topic_icon {
   display: inline;
   float: left;
   margin-right: 10px;
 }
-/* line 2150, ../src/application.scss */
+/* line 2160, ../src/application.scss */
 .topics_list ul.base_set h4.topic_title {
   margin: 0px;
   font-weight: bold;
 }
-/* line 2153, ../src/application.scss */
+/* line 2163, ../src/application.scss */
 .topics_list ul.base_set h4.topic_title a {
   color: #1A6690;
 }
-/* line 2157, ../src/application.scss */
+/* line 2167, ../src/application.scss */
 .topics_list ul.base_set a {
   text-decoration: none;
   color: #1A6690;
 }
 
-/* line 2165, ../src/application.scss */
+/* line 2175, ../src/application.scss */
 .dialog_ticket_field {
   /*position:absolute;
   z-index:10;	
@@ -3393,7 +3404,7 @@ ul.admin li {
   font-size: 0.95em;
 }
 
-/* line 2181, ../src/application.scss */
+/* line 2191, ../src/application.scss */
 .virtual_agents {
   list-style: none;
   margin: 0px;
@@ -3406,7 +3417,7 @@ ul.admin li {
   list-style-type: none;
   margin-left: 0px;
 }
-/* line 2186, ../src/application.scss */
+/* line 2196, ../src/application.scss */
 .virtual_agents li {
   padding: 8px 10px 8px 40px;
   border-bottom: 1px solid #efefef;
@@ -3417,26 +3428,26 @@ ul.admin li {
   color: #656565;
   position: relative;
 }
-/* line 2192, ../src/application.scss */
+/* line 2202, ../src/application.scss */
 .virtual_agents li a {
   font-size: 1.3em;
   color: #336699;
   display: block;
   text-decoration: none;
 }
-/* line 2198, ../src/application.scss */
+/* line 2208, ../src/application.scss */
 .virtual_agents li input.checkbox {
   position: absolute;
   left: 8px;
   top: 10px;
 }
-/* line 2204, ../src/application.scss */
+/* line 2214, ../src/application.scss */
 .virtual_agents li:hover {
   background: #f2f5f7;
   cursor: pointer;
 }
 
-/* line 2210, ../src/application.scss */
+/* line 2220, ../src/application.scss */
 .switch {
   border: 1px solid #afafaf;
   -moz-border-radius: 8px;
@@ -3465,7 +3476,7 @@ ul.admin li {
   overflow: hidden;
   visibility: hidden;
 }
-/* line 2215, ../src/application.scss */
+/* line 2225, ../src/application.scss */
 .switch a {
   padding: 4px 10px;
   text-decoration: none;
@@ -3473,7 +3484,7 @@ ul.admin li {
   font-size: 1.2em;
   float: left;
 }
-/* line 2222, ../src/application.scss */
+/* line 2232, ../src/application.scss */
 .switch .on {
   border: 1px solid #afafaf;
   -moz-border-radius: 8px;
