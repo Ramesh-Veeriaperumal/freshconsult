@@ -23,7 +23,7 @@
 	<% @page_title = @forum.name %>
 	
 	<div class="crumbs">
-		<%= link_to 'Forums'[:forums_title], forums_path %> <span class="arrow">&rarr;</span>
+		<%= link_to "Back to Forum List"[:forums_title], forums_path, :class => "nav_older" %> 
 	</div>
 	<h3 class="content_title"><%= h @forum.name %></h3>
 	

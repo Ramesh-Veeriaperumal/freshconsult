@@ -44,3 +44,10 @@
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, $end), color-stop($position, $start), color-stop(100%,$start)); /* webkit */		
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='$end', endColorstr='$start',GradientType=0 ); /* ie */
 }
+
+@mixin tab-style($color){
+	border-color:$color;
+	border-color-top:darken($color, 20%);
+	background-color:$color;	
+}
+

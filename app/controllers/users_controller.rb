@@ -5,7 +5,7 @@ class UsersController < ApplicationController
   #before_filter :require_no_user, :only => [:new, :create] #by Shan need to check later
   #before_filter :require_user, :only => [:show, :edit, :update]
   before_filter :set_selected_tab
-  
+    
   def new
     @user.role_token = 'poweruser'
   end

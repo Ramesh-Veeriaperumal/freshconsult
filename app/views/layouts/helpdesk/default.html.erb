@@ -4,6 +4,7 @@
         <meta http-equiv="content-type" content="text/html; charset=utf-8" />
         <title><%= h(@page_title) || 'Helpdesk' %></title>
 		<link href='http://fonts.googleapis.com/css?family=Droid+Sans:regular,bold' rel='stylesheet' type='text/css' />
+		<link href='http://fonts.googleapis.com/css?family=Droid+Serif:regular,italic,bold,bolditalic' rel='stylesheet' type='text/css' />
         <link rel="stylesheet" href="/stylesheets/print.css" type="text/css" media="print" />
         <link rel="stylesheet" href="/stylesheets/application.css" type="text/css" media="screen, projection" />
 		<link rel="stylesheet" href="/stylesheets/jquery-ui-1.8.7.custom.css" type="text/css" media="screen, projection" />
@@ -21,6 +22,9 @@
 		<%= javascript_include_tag "jquery-1.4.4.min.js" %>
 		<%= javascript_include_tag "jquery.overlabel.min.js" %>
 		<%= javascript_include_tag "jquery-ui-1.8.7.custom.min.js" %>
+		<%= javascript_include_tag "jquery.validate.min.js" %>
+		
+		<%= javascript_include_tag "factory_ui.js" %>
 		
  		<script type="text/javascript">
  			var jQ = jQuery.noConflict(); 
@@ -65,13 +69,12 @@
                         </li>
 						<li class="search">
                             <label class="searchTxt">
-                            	<input placeholder="Search..." type="search" autocomplete="off" result="5" />
+                            	<input value="Search" type="text" />
 							</label>
 							<a class="ui-bt-grey searchbt">GO</a>
                         </li>
                     </ul>
-                    <div class="header_seperator">
-                    </div>
+                    <div class="header_seperator"></div>
                 </div>
 				<% end %>
             </div>

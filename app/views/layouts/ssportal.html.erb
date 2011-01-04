@@ -26,9 +26,18 @@
         <div id="wrap" class="container">
             <div class="header">
                 <a href="/helpdesk/dashboard" class="logo"><img alt="FreshDesk" src="/images/logo.png" width="189px" height="47px" class="logo" /></a>
-				
+				<div class="header_links">				      
+					<ul>
+			            <li class="first">			              
+						  <%= link_to('login', login_path) %>
+			            </li>
+						<li>
+							<%= link_to('sign up') %>
+						</li> 
+			        </ul>				
+				</div>
                 <div class="header_tabs">
-                	<%= link_to(Helpdesk::USER_FACING_TITLE, support_guides_url) %>
+                	<!--<%= link_to(Helpdesk::USER_FACING_TITLE, support_guides_url) %>-->
                     <ul class="tabs">
                     	<% if admin_subdomain? %>
 							<li><%= link_to(content_tag('span', 'Subscriptions'), admin_subscriptions_path) %></li>
@@ -50,12 +59,12 @@
 				<%= yield :efx  %>
 				
                 <div id="inner">
-                    <div class="leftcontent"> 
-						<%= content_tag(:h2, yield(:title)) if yield(:title) %>
-        				<%= show_flash %>
-						<h3>Search User Guides</h3>
-        				<%= render :partial => '/support/shared/article_search' %> 
-						<%= yield  %>
+                    <div class="leftcontent">
+                    	<div class="pageContent"> 
+							<%= content_tag(:h2, yield(:title)) if yield(:title) %>
+	        				<%= show_flash %>
+							<%= yield  %>
+						</div>
                     </div> 
 	                <div class="sidebar">
 	                	<%= link_to "Request Support", (current_user) ? new_support_ticket_path : new_anonymous_request_path, :class => :request %>

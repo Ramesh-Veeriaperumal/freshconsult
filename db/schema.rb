@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110103071048) do
+ActiveRecord::Schema.define(:version => 20110103093328) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -266,6 +266,7 @@ ActiveRecord::Schema.define(:version => 20110103071048) do
     t.integer  "escalateto"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "support_plan_id"
   end
 
   create_table "helpdesk_subscriptions", :force => true do |t|
@@ -277,6 +278,19 @@ ActiveRecord::Schema.define(:version => 20110103071048) do
 
   add_index "helpdesk_subscriptions", ["ticket_id"], :name => "index_helpdesk_subscriptions_on_ticket_id"
   add_index "helpdesk_subscriptions", ["user_id"], :name => "index_helpdesk_subscriptions_on_user_id"
+
+  create_table "helpdesk_support_plans", :force => true do |t|
+    t.string   "name"
+    t.text     "description"
+    t.integer  "account_id"
+    t.boolean  "email"
+    t.boolean  "phone"
+    t.boolean  "community"
+    t.boolean  "twitter"
+    t.boolean  "facebook"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "helpdesk_tag_uses", :force => true do |t|
     t.integer "ticket_id", :null => false
@@ -501,5 +515,11 @@ ActiveRecord::Schema.define(:version => 20110103071048) do
   add_index "users", ["perishable_token"], :name => "index_users_on_perishable_token"
   add_index "users", ["persistence_token"], :name => "index_users_on_persistence_token"
   add_index "users", ["single_access_token"], :name => "index_users_on_single_access_token", :unique => true
+
+  create_table "virtual_agents", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
 end
