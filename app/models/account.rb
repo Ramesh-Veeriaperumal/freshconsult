@@ -15,6 +15,8 @@ class Account < ActiveRecord::Base
   
   attr_accessible :name, :domain, :user, :plan, :plan_start, :creditcard, :address
   attr_accessor :user, :plan, :plan_start, :creditcard, :address, :affiliate
+
+  before_create :set_time_zone
   
   after_create :create_admin
   after_create :send_welcome_email
@@ -105,6 +107,10 @@ class Account < ActiveRecord::Base
         errors.add_to_base("Error with payment: #{subscription.errors.full_messages.to_sentence}")
         return false
       end
+    end
+    
+    def set_time_zone
+      self.time_zone = Time.zone.to_s if time_zone.nil? #by Shan temp.. to_s is kinda hack.
     end
     
     def create_admin

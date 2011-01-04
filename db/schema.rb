@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101229071644) do
+ActiveRecord::Schema.define(:version => 20110103071048) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -18,6 +18,7 @@ ActiveRecord::Schema.define(:version => 20101229071644) do
     t.string   "full_domain"
     t.datetime "deleted_at"
     t.string   "default_email"
+    t.string   "time_zone"
   end
 
   add_index "accounts", ["full_domain"], :name => "index_accounts_on_full_domain"
@@ -481,9 +482,9 @@ ActiveRecord::Schema.define(:version => 20101229071644) do
     t.integer  "account_id"
     t.boolean  "admin",               :default => false
     t.boolean  "active",              :default => false, :null => false
-    t.string   "role_token"
     t.integer  "posts_count",         :default => 0
     t.datetime "last_seen_at"
+    t.string   "role_token"
     t.integer  "customer_id"
     t.string   "job_title"
     t.string   "second_email"
@@ -491,6 +492,7 @@ ActiveRecord::Schema.define(:version => 20101229071644) do
     t.string   "mobile"
     t.string   "twitter_id"
     t.text     "description"
+    t.string   "time_zone"
   end
 
   add_index "users", ["account_id"], :name => "index_users_on_account_id"

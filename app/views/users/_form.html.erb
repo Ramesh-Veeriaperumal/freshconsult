@@ -33,6 +33,11 @@
 		</li>
 		
 		<li>
+			<%= f.label :time_zone %>
+			<%= f.time_zone_select :time_zone, ActiveSupport::TimeZone.all %>
+		</li>
+		
+		<li>
 			<%= label(:user, :description, "Back ground information") %>
 			<%= text_area(:user, :description, :class => "text" ) %>
 		</li>

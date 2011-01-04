@@ -3,6 +3,8 @@ class User < ActiveRecord::Base
   
   belongs_to :account
   belongs_to :customer
+  
+  before_create :set_time_zone
 
   acts_as_authentic do |c|
     c.validations_scope = :account_id
@@ -104,4 +106,9 @@ class User < ActiveRecord::Base
     reset_perishable_token!
     UserNotifier.deliver_activation_confirmation(self)
   end
+  
+  def set_time_zone
+    self.time_zone = account.time_zone if time_zone.nil? #by Shan temp
+  end
+  
 end

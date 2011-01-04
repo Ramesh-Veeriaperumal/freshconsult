@@ -32,6 +32,17 @@ class AccountsController < ApplicationController
     end
   end
   
+  def update #by shan temp..
+    @account.name = params[:account][:name]
+    @account.time_zone = params[:account][:time_zone]
+    if @account.save
+      flash[:notice] = "The account details has been updated."
+      redirect_to account_path
+    else
+      render :action => 'edit'
+    end
+  end
+  
   def plans
     @plans = SubscriptionPlan.find(:all, :order => 'amount desc').collect {|p| p.discount = @discount; p }
     # render :layout => 'public' # Uncomment if your "public" site has a different layout than the one used for logged-in users

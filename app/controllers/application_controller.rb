@@ -3,6 +3,8 @@
 
 class ApplicationController < ActionController::Base
 
+  before_filter :set_time_zone
+
   include AuthenticationSystem
   #include SavageBeast::AuthenticationSystem
   include HelpdeskSystem
@@ -61,6 +63,10 @@ class ApplicationController < ActionController::Base
 #      redirect_to(session[:return_to] || default)
 #      session[:return_to] = nil
 #    end
+
+  def set_time_zone
+    Time.zone = current_user ? current_user.time_zone : (current_account ? current_account.time_zone : Time.zone)
+  end
   
 end
 

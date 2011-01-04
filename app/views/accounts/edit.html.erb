@@ -2,6 +2,15 @@
 
 <% form_for :account, @account, :url => { :action => 'update' }, :html => { :method => :put } do |f| %>
   <%= f.error_messages %>
-  <%= f.text_field :name %>
+  <p>
+    <%= f.label :name, "Your account name" %>
+    <%= f.text_field :name %>
+  </p>
+  
+  <p>
+	<%= f.label :time_zone %>
+	<%= f.time_zone_select :time_zone, ActiveSupport::TimeZone.all %>
+  </p>
+  
   <%= submit_or_cancel :action => 'show' %>
 <% end %>
