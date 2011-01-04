@@ -1724,6 +1724,9 @@ $lightBase:lighten($base, 5%);
 	li.small{
 		width:45%;
 	}
+	li.medium{
+		width:85%;
+	}
 	
 	label{						
 		font-weight:normal; 
@@ -1742,7 +1745,7 @@ $lightBase:lighten($base, 5%);
 		font-size:1.0em;	
 	}	
 	input, textarea{		
-		margin:0px;
+		margin:0px 0px 3px 0px;
 		color:#3f3f3f;
 		padding:3px;
 		border:1px solid #bfbfbf;
@@ -1867,10 +1870,11 @@ $lightBase:lighten($base, 5%);
 		label.radiolabel{
 			font-size:1em;
 			float:left; 
-			padding:2px 5px;
-			input{
-				margin-right:5px;
-			}
+			padding:0px 5px;	
+			margin-right:10px;		
+		}
+		input.radio{
+			float:left;
 		}
 	}
 	
@@ -1928,30 +1932,31 @@ $lightBase:lighten($base, 5%);
 			border-bottom:1px solid #cfcfcf;
 			background:#efefef;
 			position:relative;
+			.add, .delete{
+				position:absolute;
+				right:6px;
+				top:4px;
+				cursor:pointer;
+			}
 			*{
 				float:left;
 				width:auto;
 				margin:2px 4px;
 			}
 			input.text{
-				width:300px;
+				width:200px;
 			}
 			textarea.paragraph{
 				width:500px;
 			}
-			.add, .delete{
-				position:absolute;
-				right:10px;
-				top:0px;
-				cursor:pointer;
-			}
+			
 			span{
 				margin:0px; padding:0px;
 			}
 			span.sort_handle{
 				position:absolute;
-				left:0px;
-				top:0px;
+				left:3px;
+				top:3px;
 				width:25px;
 				height:25px;
 				cursor:move;
@@ -1961,10 +1966,7 @@ $lightBase:lighten($base, 5%);
 			span.sort_handle:hover{
 				background-color:#fafafa;
 			}
-			.delete{
-				right:30px;
-				top:3px;
-			}
+			
 			label.checkbox{
 				width:100%;
 				font-size:1.3em;				

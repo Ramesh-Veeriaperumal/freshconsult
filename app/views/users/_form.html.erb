@@ -1,9 +1,8 @@
-<%= error_messages_for :user %>
- 
+<%= error_messages_for :user %> 
 	<!--img src="/images/icons/profile_blank.gif" /--> 
-	<ul>
+	<ul class="ui-form" style="width:450px">
 		<li>
-			<%= label(:user, :name, "Name") %>
+			<%= label(:user, :name, "Full Name") %>
 			<%= text_field(:user, :name, :class => "text" )  %>
 		</li>
 		<li>
@@ -11,23 +10,28 @@
 			<%= text_field(:user, :job_title, :class => "text" ) %>
 		</li>
 		<li>
-			<%= label(:user, :email, "Email") %>
-			<%= text_field(:user, :email, :class => "text" ) %>
+			<%= label(:user, :company, "Company") %>
+			<input type="text" class="textbox" />
 		</li>
-		<li>
-			<%= label(:user, :second_email, "Secondary Email") %>
-			<%= text_field(:user, :second_email, :class => "text" ) %>
-		</li>
-		<li>	
+		<li class="small">	
 			<%= label(:user, :phone, "Phone No.") %>	
-			<%= text_field(:user, :phone, :class => "text" ) %>
-			<!--input type="text" id="user_phone" name="user[phone]" class="text" /-->
+			<label class="overlabel" for="phone_work">Work</label>
+			<%= text_field(:user, :phone, :class => "text", :id => "phone_work" ) %>
+			<!--input type="text" id="user_phone" name="user[phone]" class="text" /-->		
+			<!--%= label(:user, :mobile, "Mobile") %-->
+			<label class="overlabel" for="phone_mobile">Mobile</label>
+			<%= text_field(:user, :mobile, :class => "text", :id => "phone_mobile" ) %>
 		</li>
-		<li>
-			<%= label(:user, :mobile, "Mobile") %>
-			<%= text_field(:user, :mobile, :class => "text" ) %>
+		<li class="medium">
+			<%= label(:user, :email, "Email") %>
+			<label class="overlabel" for="email_primary">Primary</label>
+			<%= text_field(:user, :email, :class => "text", :id => "email_primary" ) %>
+			<!--%= label(:user, :second_email, "Secondary Email") %-->
+			<label class="overlabel" for="email_other">Other</label>
+			<%= text_field(:user, :second_email, :class => "text", :id => "email_other" ) %>
 		</li>
-		<li>
+		
+		<li class="small">
 			<%= label(:user, :twitter_id, "Twitter Id") %>
 			<%= text_field(:user, :twitter_id, :class => "text" ) %>
 		</li>
@@ -38,8 +42,12 @@
 		</li>
 		
 		<li>
-			<%= label(:user, :description, "Back ground information") %>
-			<%= text_area(:user, :description, :class => "text" ) %>
+			<%= label(:user, :description, "Background information") %>
+			<label class="overlabel" for="user_binfo">
+				Add specific notes regarding this contact <br />
+				example - address, LA Lakers fan etc.
+			</label>
+			<%= text_area(:user, :description, :class => "text", :id => "user_binfo" ) %>
 		</li>
 	</ul>	 
 <span class="seperator"></span>
@@ -57,6 +65,6 @@
 <!-- role section ends here-->
 
 <div class="button-container">
-      <%= f.submit "Save changes", :class => "button submit" %> 
-	  <%= link_to "Cancel", (@user.new_record? ? {:action => 'index'} : @user ), :class => "button" %>
+      <%= f.submit "Save changes", :class => "fdbutton" %> 
+	  <%= link_to "Cancel", (@user.new_record? ? {:action => 'index'} : @user ), :class => "fdbutton grey" %>
 </div>
