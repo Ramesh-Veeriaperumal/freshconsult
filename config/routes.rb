@@ -2,6 +2,8 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :customers
 
   map.resources :sla_details
+  
+  #map.resources :support_plans
 
   map.resources :sl_as
 
@@ -131,6 +133,8 @@ ActionController::Routing::Routes.draw do |map|
     helpdesk.resources :mailer, :collection => { :fetch => :get }
     
     helpdesk.resources :sla_details
+    
+    helpdesk.resources :support_plans
   end
 
   map.namespace :support do |support|
