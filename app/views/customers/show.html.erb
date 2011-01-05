@@ -1,99 +1,104 @@
-<!--%= debug @customer.users.tickets%-->
+<div class="pageContent">
+	<h3 class="content_title">Company name</h3>
+	<span class="seperator"></span>
+	<!--%= debug @customer.users.tickets%-->
+	
+	
+	<p>
+	  <b>Name:</b>
+	  <%=h @customer.name %>
+	</p>
+	
+	<p>
+	  <b>Customer Number:</b>
+	  <%=h @customer.cust_identifier %>
+	</p>
+	
+	<p>
+	  <b>Owner:</b>
+	  <%=h @customer.owner_id %>
+	</p>
+	
+	<!--p>
+	  <b>Account:</b>
+	  <%=h @customer.account_id %>
+	</p-->
+	
+	<p>
+	  <b>Cust type:</b>
+	  <%=h @customer.cust_type %>
+	</p>
+	
+	<p>
+	  <b>Phone:</b>
+	  <%=h @customer.phone %>
+	</p>
+	
+	<p>
+	  <b>Address:</b>
+	  <%=h @customer.address %>
+	</p>
+	
+	<p>
+	  <b>Website:</b>
+	  <%=h @customer.website %>
+	</p>
+	
+	<p>
+	  <b>Description:</b>
+	  <%=h @customer.description %>
+	</p>
+	
+	
+	<p>
+	  <b>People from this company:</b>
+	  <%
+	  
+	@customer.users.each do |user|
+	
+	
+	
+	 %>
+	
+	 * <%=link_to (h(user.name),user, :class => 'username')%> , <%=user.job_title%> <br></br>
+	 
+	
+	
+	 
+	 
+	 <%end%>
+	 
+	
+	</p>
+	
+	
+	<p>
+	  <b>Recent Tickets from this company:</b>
+	  <%
+	  
+	@customer.users.each do |user|
+	
+	    user.tickets.each do |ticket|
+	
+	 %>
+	
+	<h3>
+	        	<%= link_to(h(ticket.subject) + " (##{ticket.display_id})", ticket) %> 
+	      		</h3> 
+	      				<%= h(truncate(ticket.description, :length => 200)) %>
+						
+						<br></br>
+	
+	
+	 
+	 
+	 <%
+	end 
+	end%>
+	 
+	</p>
+	
+	<%= link_to 'Edit', edit_customer_path(@customer) %> |
+	<%= link_to 'Back', customers_path %>
 
-
-<p>
-  <b>Name:</b>
-  <%=h @customer.name %>
-</p>
-
-<p>
-  <b>Customer Number:</b>
-  <%=h @customer.cust_identifier %>
-</p>
-
-<p>
-  <b>Owner:</b>
-  <%=h @customer.owner_id %>
-</p>
-
-<!--p>
-  <b>Account:</b>
-  <%=h @customer.account_id %>
-</p-->
-
-<p>
-  <b>Cust type:</b>
-  <%=h @customer.cust_type %>
-</p>
-
-<p>
-  <b>Phone:</b>
-  <%=h @customer.phone %>
-</p>
-
-<p>
-  <b>Address:</b>
-  <%=h @customer.address %>
-</p>
-
-<p>
-  <b>Website:</b>
-  <%=h @customer.website %>
-</p>
-
-<p>
-  <b>Description:</b>
-  <%=h @customer.description %>
-</p>
-
-
-<p>
-  <b>People from this company:</b>
-  <%
-  
-@customer.users.each do |user|
-
-
-
- %>
-
- * <%=link_to (h(user.name),user, :class => 'username')%> , <%=user.job_title%> <br></br>
- 
-
-
- 
- 
- <%end%>
- 
-
-</p>
-
-
-<p>
-  <b>Recent Tickets from this company:</b>
-  <%
-  
-@customer.users.each do |user|
-
-    user.tickets.each do |ticket|
-
- %>
-
-<h3>
-        	<%= link_to(h(ticket.subject) + " (##{ticket.display_id})", ticket) %> 
-      		</h3> 
-      				<%= h(truncate(ticket.description, :length => 200)) %>
-					
-					<br></br>
-
-
- 
- 
- <%
-end 
-end%>
- 
-</p>
-
-<%= link_to 'Edit', edit_customer_path(@customer) %> |
-<%= link_to 'Back', customers_path %>
+</div>

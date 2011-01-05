@@ -1,48 +1,54 @@
-<h1>Editing customer</h1>
+<div class="pageContent">
+	<h3 class="content_title">Editing customer</h3>
+	<span class="seperator"></span>	
+	<ul class="ui-form">
+	<% form_for(@customer) do |f| %>
+	  <%= f.error_messages %>	
+	  <li>
+	    <%= f.label :name %>
+	    <%= f.text_field :name %>
+	  </li>
+	  <li>
+	    <%= f.label :cust_identifier %>
+	    <%= f.text_field :cust_identifier %>
+	  </li>
+	  <li>
+	    <%= f.label :owner_id %>
+	    <%= f.text_field :owner_id %>
+	  </li>
+	  <li>
+	    <%= f.label :account_id %>
+	    <%= f.text_field :account_id %>
+	  </li>
+	  <li>
+	    <%= f.label :cust_type, "Type" %>
+	    <%= f.select :cust_type, Customer::CUST_TYPE_OPTIONS, :class => "select" %>
+	  </li>
+	  <li>
+	    <%= f.label :phone %>
+	    <%= f.text_field :phone %>
+	  </li>
+	  <li>
+	    <%= f.label :address %>
+	    <%= f.text_field :address %>
+	  </li>
+	  <li>
+	    <%= f.label :website %>
+	    <%= f.text_field :website %>
+	  </li>
+	  <li>
+	    <%= f.label :description %>
+	    <%= f.text_area :description %>
+	  </li>
+	</ul>  
+	
+	<div class="button-container">
+	   <%= f.submit 'Update', {:class => "button"} %>
+	   <%= link_to 'Back', customers_path, :class => "button" %>
+	</div>
+	<% end %>
+	
+	<!--%= link_to 'Show', @customer %--> 
+	
 
-<% form_for(@customer) do |f| %>
-  <%= f.error_messages %>
-
-  <p>
-    <%= f.label :name %><br />
-    <%= f.text_field :name %>
-  </p>
-  <p>
-    <%= f.label :cust_identifier %><br />
-    <%= f.text_field :cust_identifier %>
-  </p>
-  <p>
-    <%= f.label :owner_id %><br />
-    <%= f.text_field :owner_id %>
-  </p>
-  <p>
-    <%= f.label :account_id %><br />
-    <%= f.text_field :account_id %>
-  </p>
-  <p>
-    <%= f.label :cust_type %><br />
-    <%= f.text_field :cust_type %>
-  </p>
-  <p>
-    <%= f.label :phone %><br />
-    <%= f.text_field :phone %>
-  </p>
-  <p>
-    <%= f.label :address %><br />
-    <%= f.text_field :address %>
-  </p>
-  <p>
-    <%= f.label :website %><br />
-    <%= f.text_field :website %>
-  </p>
-  <p>
-    <%= f.label :description %><br />
-    <%= f.text_area :description %>
-  </p>
-  <p>
-    <%= f.submit 'Update' %>
-  </p>
-<% end %>
-
-<%= link_to 'Show', @customer %> |
-<%= link_to 'Back', customers_path %>
+</div>
