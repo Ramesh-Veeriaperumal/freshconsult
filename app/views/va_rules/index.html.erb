@@ -5,30 +5,12 @@
 		<a href="#" class="button">Delete</a>
 	</div>
 	<ul class="virtual_agents">
-		<li>
-			<input type="checkbox" class="checkbox" />
-			<a href="#">Subscription Related Tickets</a>
-			All Subscription related tickets will be assigned to Susan
-		</li>
-		<li>
-			<input type="checkbox" class="checkbox" />
-			<a href="#">Platinum Customer Support</a>
-			All tickets from customers with Platinum support plan will be assigned to Platinum Group
-		</li>
-		<li>
-			<input type="checkbox" class="checkbox" />
-			<a href="#">eCommerce related Tickets</a>
-			E-Commerce related tickets will be assigned to Peter
-		</li>
-		<li>
-			<input type="checkbox" class="checkbox" />
-			<a href="#">VIP Customers</a>
-			Tickets from Larry Ellison or John Chambers will be marked High Priority and assigned to Gary
-		</li>
-		<li>
-			<input type="checkbox" class="checkbox" />
-			<a href="#">Feature Requests</a>
-			New Feature requests will be assigned to Product Management Group
-		</li> 
+		<% @va_rules.each do |va_rule| %>
+			<li>
+				<input type="checkbox" class="checkbox" />
+				<%= link_to(h(va_rule.name), edit_va_rule_path(va_rule)) %>
+				<%= h va_rule.description %>
+			</li>
+		<% end %>
 	</ul>
 </div>

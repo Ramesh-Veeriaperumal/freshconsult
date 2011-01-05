@@ -83,7 +83,7 @@
 		<div class="button-container">
 			<input type="hidden" name="save_json" value="Test Value" />
 			<input type="submit" class="fdbutton" value="Save" />
-			<input type="button" class="fdbutton grey" value="Cancel" />
+			<%= link_to "Cancel", {:action => 'index'}, :class => "fdbutton grey" %>
 		</div>
 	<% end %>
 </div>
