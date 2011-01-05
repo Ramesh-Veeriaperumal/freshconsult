@@ -1,0 +1,24 @@
+<h1>SLA Policy</h1>
+<%= link_to 'Add SLA Policy', new_helpdesk_sla_policy_path %></td>
+<table>
+  <tr>
+    <th>Name</th>
+    
+  </tr>
+
+<% @sla_policies.each do |policy| %>
+  <tr>
+    <td><%=h policy.name %></td>
+   
+    <td><%= link_to 'Show', policy %></td>
+    <td><%= link_to 'Edit', edit_helpdesk_sla_policy_path(policy) %></td>
+	<%unless policy.is_default?%>
+    <td><%= link_to 'Destroy', policy, :confirm => 'Are you sure?', :method => :delete %></td>
+	<%end%>
+  </tr>
+<% end %>
+</table>
+<br />
+
+<!--%= link_to 'New customer', new_support_plan_path %-->
+</div>
