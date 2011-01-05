@@ -2,6 +2,7 @@ class VaRulesController < ApplicationController
   include ModelControllerMethods
   
   before_filter :set_selected_tab
+  before_filter :load_filter_config, :only => [:new, :edit]
   
   def index
     @va_rules = scoper.all
@@ -9,12 +10,11 @@ class VaRulesController < ApplicationController
 
   def new
     @va_rule.match_type = :all
-    load_filter_config
   end
 
   def create
     rule_hash = ActiveSupport::JSON.decode params[:save_json]
-    puts " RULE_HASH for VA Save #{rule_hash.inspect}"
+    #puts " RULE_HASH for VA Save #{rule_hash.inspect}"
     #puts "And Rule's name is #{@va_rule.name}"
     
     @va_rule.filter_data = rule_hash["conditions"]
@@ -29,10 +29,10 @@ class VaRulesController < ApplicationController
   end
 
   def edit
-    load_filter_config
   end
 
   def update
+    redirect_to va_rules_path
   end
 
   def destroy
