@@ -1,0 +1,2 @@
+module Helpdesk::SlaPoliciesHelper
+end

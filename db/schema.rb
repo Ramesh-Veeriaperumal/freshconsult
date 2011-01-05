@@ -9,7 +9,11 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
+<<<<<<< HEAD
 ActiveRecord::Schema.define(:version => 20110104120416) do
+=======
+ActiveRecord::Schema.define(:version => 20110105064449) do
+>>>>>>> shihab
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -266,7 +270,16 @@ ActiveRecord::Schema.define(:version => 20110104120416) do
     t.integer  "escalateto"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "support_plan_id"
+    t.integer  "sla_policy_id"
+  end
+
+  create_table "helpdesk_sla_policies", :force => true do |t|
+    t.string   "name"
+    t.text     "description"
+    t.integer  "account_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "is_default",  :default => false
   end
 
   create_table "helpdesk_subscriptions", :force => true do |t|

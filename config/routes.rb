@@ -135,6 +135,8 @@ ActionController::Routing::Routes.draw do |map|
     helpdesk.resources :sla_details
     
     helpdesk.resources :support_plans
+    
+    helpdesk.resources :sla_policies
   end
 
   map.namespace :support do |support|
