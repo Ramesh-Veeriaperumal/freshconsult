@@ -1,2 +1,84 @@
-<h1>Helpdesk::SupportPlans#new</h1>
-<p>Find me in app/views/helpdesk/support_plans/new.html.erb</p>
+<h1>New SLA Policy</h1>
+<!--%= debug @support_plan%-->
+<% form_for(@support_plan) do |f| %>
+  <%= f.error_messages %>
+
+  <p>
+    <%= f.label :name %><br />
+    <%= f.text_field :name %>
+  </p>
+  <p>
+    <%= f.label :description %><br />
+    <%= f.text_area :description %>
+  </p>
+  <!--p>
+  	Select the channels of support for this plan <br/>
+	
+	<table>
+	
+	<tr>
+	
+	<td><%= f.check_box :email %><%= f.label :email, "Email" %> </td>
+	<td><%= f.check_box :phone %><%= f.label :phone, "Phone" %> </td>
+	<td><%= f.check_box :community %><%= f.label :community, "Community" %></td>
+	<td><%= f.check_box :twitter %><%= f.label :twitter, "Twitter" %></td>
+	<td><%= f.check_box :facebook %><%= f.label :facebook, "Facebook" %></td>
+	
+	</tr>
+	</table>
+	
+  </p-->
+ 
+ SLA Details: -
+ 
+ <table>
+  <tr>
+    <th>Name</th>
+    <!--th>Account</th-->
+    <!--th>Priority</th-->
+ 
+	<th>Response time</th>
+    <th>Resolution time</th>
+    <th>Escalateto</th>
+  </tr>
+ 
+ <% @support_plan.sla_details.each_with_index do |slas , index| %>
+  <% fields_for "SlaDetails[#{index}]", slas do |sla| %>
+    <p>
+	
+	<%
+
+     priority = Helpdesk::SlaDetail::PRIORITY_NAMES_BY_KEY[index+1]
+
+	
+	%>
+	
+	
+	 <tr>
+    <td><%= sla.label :name , "SLA for #{priority} priority"  %> <%= sla.hidden_field :name, { :value => "SLA for #{priority} priority"} %>
+	<%= sla.hidden_field :priority, { :value => index+1} %>
+	</td>
+	
+   
+	<td><%= sla.select :response_time , Helpdesk::SlaDetail::RESPONSETIME_OPTIONS %></td>
+    <td><%= sla.select :resolution_time, Helpdesk::SlaDetail::RESOLUTIONTIME_OPTIONS %></td>
+    <td> 
+    <%= sla.collection_select :escalateto, User.find_all_by_permission(current_account, :manage_tickets), :id, :name %>
+	</td>
+
+    
+  </tr>
+  
+  
+	
+	</p>
+  <% end %>
+<% end %>
+</table>
+  <p>
+    <%= f.submit 'Create' %>
+  </p>
+<% end %>
+
+<%= link_to 'Back', sla_details_path %>
+
