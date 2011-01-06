@@ -1,0 +1,17 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  name: MyString
+  description: MyText
+  account_id: 1
+  email_on_assign: false
+  escalate_to: 1
+  assign_time: 1
+
+two:
+  name: MyString
+  description: MyText
+  account_id: 1
+  email_on_assign: false
+  escalate_to: 1
+  assign_time: 1
