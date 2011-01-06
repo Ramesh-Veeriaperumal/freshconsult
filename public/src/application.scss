@@ -35,12 +35,12 @@ body{
 		width:100%;
 		padding-bottom:50px;
 		@include min-height(450px);
-		border-right:$sidebar-width solid #f2f8fc; /* The width and color of the rail */
+		border-right:$sidebar-width solid $sidebar-color; /* The width and color of the rail */
 		margin-right:-$sidebar-width; /* Hat tip to Ryan Brill */
 		float:left;		 	
 	}
 	.sidebar{ 
-		background-color:#f2f8fc;
+		background-color:$sidebar-color;
 		width:$sidebar-width;
 		float:left; 
 		margin-right:-$sidebar-width;
@@ -362,6 +362,7 @@ ul.summary{
 	background:#f7fbfd;
 	padding:10px 12px 10px 12px;
 	border:1px solid #ced9df;
+	@include corners(6px);
 	h3.title{
  		color:#666666;
 		font-size:1.2em;
@@ -373,6 +374,10 @@ ul.summary{
 		margin-bottom:5px;
 		padding:0px;	
 	}
+}
+
+.rightSubContainers:hover{
+	@include shadows(#afafaf);
 } 
 
 .reminders{
@@ -623,6 +628,21 @@ h2.content_title{
 	  border-right: 11px solid #FFF; /* IE fix */
 	  border-right: 11px solid rgba(0,0,0,0); 
 }
+
+
+.title_corner{
+	left:-10px;
+	top:0px;
+	position:absolute;
+	width:10px;
+	height:100%;
+	background:#ecedf3;
+	span.ltSlant{
+		top:-10px; 
+		border-bottom-color:#c5c8dc;
+	}
+}
+
 
 .ltShadow, .rtShadow{
 	top:0px;
@@ -1568,6 +1588,7 @@ $lightBase:lighten($base, 5%);
 .contact_table{
 	border:1px solid #e8e8e8; 
 	background-color:#fbfbfb;
+	width:90%;
 	td{
 		border-bottom:1px solid #e2e2e2; 
 		vertical-align:top;
@@ -2268,7 +2289,124 @@ $lightBase:lighten($base, 5%);
 	}
 }
 
+.infoPage{	
+	position:relative;
+	h3.info_title{
+		font-size:2.0em;
+		margin:0px 0px;
+		padding:4px 0px;
+	}
+	h4.info_title{
+		font-size:1.3em;
+		margin:0px 0px;
+		padding:4px 0px;
+		a{
+			text-decoration:none;
+			color:#336699;
+		}
+	}	
+	.info_subtitle{
+		font-size:1.2em;
+		font-weight:bold;
+	}
+	span.seperator{
+		border-color:#97acb8;
+		margin:15px 0px;
+	}
+	p.info{
+		font-size:1.2em;
+		color:#333333;
+	}
+}
+
+.company{
+	margin:12px 19px 12px 50px;
+	.building_pic{
+		position:absolute;
+		left:-40px;
+	}
+}
+
+.contact{
+	margin:12px 19px 12px 110px;
+	.profile_pic{
+		position:absolute;
+		@include shadows(#aaaaaa, 0px, 4px, 3px);
+		left:-98px;
+	}
+}
+
+.contact_info{
+		clear:left;
+		margin:5px;
+		.icon_text{
+			font-size:1.1em;
+			padding:2px 0px 0px 30px;
+			position:relative;
+			background:none;
+			span{
+				em{
+					font-style:normal;
+					float:left;
+					@include min-width(60px);
+				}
+			}
+			img{
+				position:absolute;
+				left:0px;
+				top:0px;
+			}
+			a, span{
+				display:block;
+			}
+			a{			
+				text-decoration:none;
+				color:#336699;				
+			}
+		}
+	}
 
 
+.tag_list{
+	background:url(../images/icons/tag_blue.png) no-repeat left top;
+	padding-left:22px;
+	margin:5px 0px;
+	position:relative;	
+	a{
+		@include corners(5px);
+		background-color:#e7e7e7;
+		color:#666666;
+		padding:2px 6px;
+		text-decoration:none;
+	}	
+}
 
-
+.history_list{
+	@include no-bullets;
+	margin:0px; padding:4px 0px;	
+	a:hover{
+		text-decoration:none;
+	}
+	li{
+		padding:8px 10px;
+		a, a:visited{
+			color:#336699;
+		}
+		h3{
+			font-size:1.2em;
+			padding:0px 0px 0px 0px; margin:0px 0px 8px 0px;
+			display:block;			
+		}
+		strong{
+			display:block;
+			span{
+				float:left;
+				@include min-width(100px);
+				font-weight:normal;
+			}
+		}
+	}
+	li.stripe{
+		background:#eaeef1;
+	}
+}

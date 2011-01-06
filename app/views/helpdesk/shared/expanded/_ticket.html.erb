@@ -15,10 +15,12 @@
         <%= link_to(h(ticket.subject) + " (##{ticket.display_id})", ticket) %> 
       </h3> 
       	<%= h(truncate(ticket.description, :length => 200)) %>
- 
+	  
+	  <% unless ticket.requester.nil? %> 
 	  <div>
 	  	from <%= link_to(h(ticket.requester.name), ticket.requester, :class => 'user_name') %>
 	  </div>
+	  <% end %>
 	  <!--	  
 	  <ul class="tags">
         <%= ticket.tags.map { |t| content_tag(:li, link_to(h(t.name), t)) }.join %>
@@ -33,8 +35,8 @@
         <span>Assigned to <%= link_to(h(ticket.responder.name), ticket.responder, :class => 'username') %></span>
       <% end %>
 	  	<ul>
-			<li class="negative <%= ticket.freshness %>">
-		        status <span><%= ticket.freshness %></span>
+			<li>
+		        status: <span><%= ticket.status_name %></span>
 		    </li>
 			<li class="priority">
 				priority: <span class="high">high</span>
@@ -43,9 +45,7 @@
   </td>
   
   <td class="sla">
-  		<span class="subtitle">
-			 Due in 15 minutes  
-		</span>
+		Due in 15 minutes  
   </td>
 
 </tr>

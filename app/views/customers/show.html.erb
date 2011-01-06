@@ -1,15 +1,61 @@
-<div class="pageContent">
-	<h3 class="content_title">Company name</h3>
+<% content_for :sidebar do %>
+	<div class="rightSubContainers">
+		<h3 class="title">Company info</h3>
+		<div>
+			<%= @customer.description %>
+		</div>
+	</div>
+	
+	<div class="rightSubContainers">
+		<h3 class="title">People from "<%= @customer.name %>"</h3>
+		<div>	  
+		  <% @customer.users.each do |user| %>
+			<%=link_to (h(user.name),user, :class => 'username')%> , <%=user.job_title%> 
+		  <%end%>
+		</div>
+	</div>
+	
+	<div class="rightSubContainers">
+		<h3 class="title">Products used</h3>
+		<ul class="ui-list_with_icon">	  
+		  <li>Basecame</li>
+		  <li>Campfire</li>
+		</ul>
+	</div>
+	
+	<div class="rightSubContainers">
+		<h3 class="title">SLA Policy</h3>
+		<ul class="ui-list_with_icon">	  
+		  <li>Default Sla policy</li>
+		</ul>
+		<a href="#" class="button"> Change </a>
+	</div>
+	
+<% end %>
+<div class="infoPage company">
+	<img src="/images/icons/building.png" class="building_pic" width="32px" height="32px" />
+	<h3 class="info_title">		
+		<%=h @customer.name %>
+	</h3>
+	<div class="tag_list">
+		<a href="#"><%= @customer.name %></a>
+	</div>
+	<div class="actionsRight">
+		<%= link_to 'Edit this company', edit_customer_path(@customer), :class => "button" %> 
+		<%= link_to 'Back', customers_path, :class => "button" %>		
+	</div>	
 	<span class="seperator"></span>
 	<!--%= debug @customer.users.tickets%-->
+	<div class="info_subtitle">Special note about "<%= @customer.name %>"</div>
+	<p class="info">
+		<%= @customer.description %>
+	</p>	
 	
-	
-	<p>
-	  <b>Name:</b>
-	  <%=h @customer.name %>
+	<div class="info_subtitle">Associated Domain names</div>
+	<p class="info">
+		freshdesk.com, kotaku.net		
 	</p>
-	
-	<p>
+	<!--p>
 	  <b>Customer Number:</b>
 	  <%=h @customer.cust_identifier %>
 	</p>
@@ -19,10 +65,10 @@
 	  <%=h @customer.owner_id %>
 	</p>
 	
-	<!--p>
+	<p>
 	  <b>Account:</b>
 	  <%=h @customer.account_id %>
-	</p-->
+	</p>
 	
 	<p>
 	  <b>Cust type:</b>
@@ -47,58 +93,23 @@
 	<p>
 	  <b>Description:</b>
 	  <%=h @customer.description %>
-	</p>
+	</p-->
 	
-	
-	<p>
-	  <b>People from this company:</b>
-	  <%
-	  
-	@customer.users.each do |user|
-	
-	
-	
-	 %>
-	
-	 * <%=link_to (h(user.name),user, :class => 'username')%> , <%=user.job_title%> <br></br>
-	 
-	
-	
-	 
-	 
-	 <%end%>
-	 
-	
-	</p>
-	
-	
-	<p>
-	  <b>Recent Tickets from this company:</b>
-	  <%
-	  
-	@customer.users.each do |user|
-	
-	    user.tickets.each do |ticket|
-	
-	 %>
-	
-	<h3>
-	        	<%= link_to(h(ticket.subject) + " (##{ticket.display_id})", ticket) %> 
-	      		</h3> 
-	      				<%= h(truncate(ticket.description, :length => 200)) %>
-						
-						<br></br>
-	
-	
-	 
-	 
-	 <%
-	end 
-	end%>
-	 
-	</p>
-	
-	<%= link_to 'Edit', edit_customer_path(@customer) %> |
-	<%= link_to 'Back', customers_path %>
+	<span class="seperator"></span>
+	<div class="info_subtitle">Recent Tickets from "<%= @customer.name %>"</div>
+	<ul class="history_list">
+	  	<% @customer.users.each do |user| %>
+			<% user.tickets.each do |ticket| %>		
+				<li class="<%= cycle('stripe', '') %>">
+					<h3><%= link_to("##{ticket.display_id} " + h(ticket.subject), ticket) %></h3> 
+	      			<!--%= h(truncate(ticket.description, :length => 200)) %-->
+					<% unless ticket.responder.nil? %>
+						<strong><span>Assigned to: </span><%= link_to(h(ticket.responder.name), ticket.responder, :class => 'username') %></strong>
+					<% end %>
+					<strong><span>Status: </span><%= h(ticket.status_name) %></strong>
+				</li>		
+			<% end %>
+		<% end %>	 
+	</ul>
 
 </div>
