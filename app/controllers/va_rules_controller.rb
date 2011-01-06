@@ -62,8 +62,8 @@ class VaRulesController < ApplicationController
 
     def load_filter_config
       filter_hash    = [{:name => 0              , :value => "--- Click to Select Filter ---"},
-                        {:name => "from_email_id", :value => "From Email Id", :domtype => "autocompelete", :autocompelete_url => "allemailsurl" },
-                        {:name => "to_email_id"  , :value => "To Email Id"  , :domtype => "autocompelete", :autocompelete_url => "allemailsurl" },
+                        {:name => "from_email", :value => "From Email Id", :domtype => "autocompelete", :autocompelete_url => "allemailsurl" },
+                        {:name => "to_email"  , :value => "To Email Id"  , :domtype => "autocompelete", :autocompelete_url => "allemailsurl" },
                         {:name => 0              , :value => "--------------------------"},
                         {:name => "subject"      , :value => "Subject",       :domtype => "text" },
                         {:name => "description"  , :value => "Description...",   :domtype => "paragraph" },
@@ -84,11 +84,8 @@ class VaRulesController < ApplicationController
                                                                                                                    {:name => "3", :value => "Self Service"},
                                                                                                                    {:name => "4", :value => "Via Agent"}] },
                         {:name => 0              , :value => "------------------------------"},
-                        {:name => "contact_name" , :value => "Contact Name",  :domtype => "autocompelete", :autocompelete_url => "contactnameurl" },
-                        {:name => "company_name" , :value => "Company Name",  :domtype => "autocompelete", :autocompelete_url => "companynameurl" },
-                        {:name => "support_plan" , :value => "Support Plan",  :domtype => "dropdown", :choices => [{:name => "1", :value => "Platinum"}, 
-                                                                                                                   {:name => "2", :value => "Gold"}, 
-                                                                                                                   {:name => "3", :value => "Silver"}] }]
+                        {:name => "contact" , :value => "Contact Name",  :domtype => "autocompelete", :autocompelete_url => "contactnameurl" },
+                        {:name => "company" , :value => "Company Name",  :domtype => "autocompelete", :autocompelete_url => "companynameurl" }]
       
       @filter_defs   = ActiveSupport::JSON.encode filter_hash
       

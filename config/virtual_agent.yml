@@ -1,17 +1,38 @@
 
 default_fields:
+    from_email:
+        handler: text
+        
+    to_email:
+        handler: text
+
     subject:
         handler: text
-      
-    status:
+
+    description:
+        handler: text
+
+    priority:
         handler: numeric
       
-    type:
-        handler: numeric
-    
     tag_names:
         handler: text_array
         
+    type:
+        handler: numeric
+    
+    status:
+        handler: numeric
+
+    source:
+        handler: numeric
+
+    contact:
+        handler: text
+
+    company:
+        handler: text
+
 handlers:
     text: Va::Handlers::Text
     text_array: Va::Handlers::TextArray
