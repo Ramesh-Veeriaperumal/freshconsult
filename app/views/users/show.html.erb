@@ -1,65 +1,73 @@
-<div class="pageContent">
-	<h3 class="content_title">
-		<img src="/images/icons/profile_blank.gif" align="left" />
-		
+<% content_for :sidebar do %>
+	<div class="rightSubContainers">
+		<h3 class="title">Contact info</h3>
+		<ul class="ui-list_with_icon contact_info">
+			<li class="icon_text">
+				<img src="/images/icons/email_icon.png" width="24px" height="24px" />
+				<% unless @user.email.nil? %>
+					<%= mail_to (@user.email) %>
+				<% end %>
+				<% unless @user.second_email.nil? %>
+					<%= mail_to (@user.second_email) %>
+				<% end %>
+			</li>
+			<li class="icon_text">
+				<img src="/images/icons/phone_icon.png" width="24px" height="24px" />
+				<% unless @user.phone.nil? %>
+					<span><em>work:</em><%= @user.phone %></span>
+				<% end %>
+				<% unless @user.mobile.nil? %>
+					<span><em>mobile:</em><%= @user.mobile %></span>
+				<% end %>
+			</li>
+		</ul>
+	</div>
+<% end %>
+
+<div class="infoPage contact">
+	<img src="/images/icons/profile_blank.gif" class="profile_pic" width="85px" height="85px" />
+	<h3 class="info_title">		
+		<%= @user.name %>
 	</h3>
 	
-	 <ul class="ui-list-2col">
-	            <li>
-	                <label>Name</label>: <%= @user.name %>
-	            </li>
-	            <li>
-	                <label>Title</label>: 
-					<%unless @user.job_title.nil?%>					
-					<%= @user.job_title %> at
-					<%end%>
-					 <%unless @user.customer.nil?%>
-					 <%=@user.customer.name%>
-					 <%end%>
-	            </li>
-				 <li>
-	                <label>Email</label>: <%= @user.email %>
-	            </li>
-				 <li>
-	                <label>Second Email</label>: <%= @user.second_email %>
-	            </li>
-				 <li>
-	                <label>Phone</label>: <%= @user.phone %>
-	            </li>
-				 <li>
-	                <label>Mobile</label>: <%= @user.mobile %>
-	            </li> <li>
-	                <label>Back-ground Info</label>: <%= @user.description %>
-	            </li>
-				
-				
-				
-	<ul>
-		
-		<tr>
-		Recent Tickets from <%= @user.name %>
-		</ul>
-
-			<%if @user.tickets.size.eql?(0) %><%="There is not ticket from this user"%><%end%>
-		<ul>
-		<% 
-				
-						
-					@user.tickets.each do |ticket|
-					logger.debug "Here is a subject : #{ticket.subject}"
-		%>
-		<li>
-		 <h3>
-        	<%= link_to(h(ticket.subject) + " (##{ticket.display_id})", ticket) %> 
-      		</h3> 
-      				<%= h(truncate(ticket.description, :length => 200)) %>
-					
+	<h4 class="info_title">
+		<% unless @user.job_title.nil? %>
+			<%= @user.job_title %>
+		<% end %>
+		of <a href="#">YCombinator</a>		
+	</h4>
+	<div class="tag_list">
+		<a href="#"><%= @user.job_title %></a>
+		<a href="#"><%= @user.name %></a>
+	</div>
+	<div class="actionsRight">
+		<%= link_to 'Edit this user', edit_user_path(@user), :class => "button" %> 
+		<%= link_to 'Back', user_path, :class => "button" %>		
+	</div>
+	<span class="seperator"></span>
+	<div class="info_subtitle">Special note about "<%= @user.name %>"</div>
+	<p class="info">
+		<%= @user.description %>
+	</p>
+	
+	<span class="seperator"></span> 
+	<div class="info_subtitle">Recent Tickets from "<%= @user.name %>"</div>
+	<%if @user.tickets.size.eql?(0) %>
+		<%= "User has not created any tickets" %>
+	<% end %>
+	<ul class="history_list">
+		<% @user.tickets.each do |ticket| %>	
+			<% logger.debug "Here is a subject : #{ticket.subject}" %>
+			<li class="<%= cycle('stripe', '') %>">
+				<h3><%= link_to("##{ticket.display_id} " + h(ticket.subject), ticket) %></h3> 
+      			<!--%= h(truncate(ticket.description, :length => 200)) %-->
+				<% unless ticket.responder.nil? %>
+					<strong><span>Assigned to: </span><%= link_to(h(ticket.responder.name), ticket.responder, :class => 'username') %></strong>
+				<% end %>
+				<strong><span>Status: </span><%= h(ticket.status_name) %></strong>
 			</li>		
-				<%
-					end
-				%>
+		<% end %>
+	</ul>
 				
-				</ul>
-				
-				</tr>
+		
 </div>	
