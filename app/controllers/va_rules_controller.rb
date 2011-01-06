@@ -6,6 +6,18 @@ class VaRulesController < ApplicationController
   
   def index
     @va_rules = scoper.all
+    
+    t = Helpdesk::Ticket.new
+    t.subject = "Test"
+    t.status = "open"
+    
+    @va_rules.each do |vr|
+      puts "###############"
+      puts vr.inspect
+      puts vr.conditions.inspect
+      puts "DOES IT MATCH #{vr.pass_through t}"
+      puts "@@@@@@@@@@@@@@@"
+    end
   end
 
   def new

@@ -1,0 +1,18 @@
+
+default_fields:
+    subject:
+        handler: text
+      
+    status:
+        handler: numeric
+      
+    type:
+        handler: numeric
+    
+    tag:
+        handler: text
+        
+handlers:
+    text: Va::Handlers::Text
+    numeric: Va::Handlers::Numeric
+    date_time: Va::Handlers::DateTime
