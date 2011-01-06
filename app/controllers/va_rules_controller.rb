@@ -111,7 +111,6 @@ class VaRulesController < ApplicationController
                                                                                                                     {:name => "resolved", :value => "Resolved"},
                                                                                                                     {:name => "onhold", :value => "On Hold"}]},
                          {:name => 0              , :value => "------------------------------"},                                                                                           
-                         {:name => "add_comment"  , :value => "Add Comment as" , :domtype => 'comment'},
                          {:name => "add_tag"      , :value => "Add Tag(s)"  , :domtype => 'autocompelete', :autocompelete_url => "allemailsurl"},
                          {:name => 0              , :value => "------------------------------"},
                          {:name => "assign_to_agent" , :value => "Assign to Agent"  , :domtype => 'dropdown', :choices => [{:name => "1", :value => "Edward"}, 

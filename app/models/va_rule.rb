@@ -47,6 +47,7 @@ class VARule < ActiveRecord::Base
   
   def trigger_actions(evaluate_on)
     puts "Trigger action called for #{name}"
+    actions.each { |a| a.trigger(evaluate_on) }
   end
   
 end
