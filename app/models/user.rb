@@ -61,6 +61,8 @@ class User < ActiveRecord::Base
     
   has_many :tickets , :class_name => 'Helpdesk::Ticket' ,:foreign_key => "requester_id"
   
+  has_many :agents , :class_name => 'Agent' , :foreign_key => "user_id"
+  
   
 
   #Savage_beast changes start here
@@ -108,7 +110,7 @@ class User < ActiveRecord::Base
   end
   
   def set_time_zone
-    self.time_zone = account.time_zone if time_zone.nil? #by Shan temp
+    #self.time_zone = account.time_zone if time_zone.nil? #by Shan temp
   end
   
 end

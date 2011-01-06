@@ -1,0 +1,82 @@
+<script>
+
+function setUserRole()
+{
+	
+	if (jQuery('input[name=user_role]').is(':checked'))
+	{
+		jQuery('#role_taken').val('admin');
+
+	}
+	else
+	{
+		jQuery('#role_taken').val('poweruser');
+		
+	}
+	
+}
+</script>
+
+<h1>New Agent</h1>
+
+<% form_for(@agent) do |f| %>
+<%= f.error_messages %>
+
+<input type="checkbox" id="user_role_val" name="user_role" onclick="javascript:setUserRole()" >make as an admin </input>
+ <% fields_for "users", @agent.user do |usr| %>
+ 
+ <ul class="ui-form" style="width:450px">
+		<li>
+			<%= label(:user, :name, "Full Name") %>
+			<%= text_field(:user, :name, :class => "text" )  %>
+		</li>
+		<li>
+			<%= label(:user, :job_title, "Title") %>
+			<%= text_field(:user, :job_title, :class => "text" ) %>
+		</li>
+		
+		<li class="small">	
+			<%= label(:user, :phone, "Phone No.") %>	
+			<label class="overlabel" for="phone_work">Work</label>
+			<%= text_field(:user, :phone, :class => "text", :id => "phone_work" ) %>
+			<!--input type="text" id="user_phone" name="user[phone]" class="text" /-->		
+			<!--%= label(:user, :mobile, "Mobile") %-->
+			<label class="overlabel" for="phone_mobile">Mobile</label>
+			<%= text_field(:user, :mobile, :class => "text", :id => "phone_mobile" ) %>
+		</li>
+		<li class="medium">
+			<%= label(:user, :email, "Email") %>
+			<label class="overlabel" for="email_primary">Primary</label>
+			<%= text_field(:user, :email, :class => "text", :id => "email_primary" ) %>
+			
+		</li>
+		<li>
+			<%= usr.label :time_zone %>
+			<%= usr.time_zone_select :time_zone, ActiveSupport::TimeZone.all %>
+		</li>
+		
+		<%= hidden_field(:user, :role_taken, :id => "role_taken", :value =>'poweruser' ) %>
+		</ul>	 
+		
+	
+		
+ 
+ <%
+ end 
+%>
+<p>
+			<%= label(:agent, :signature, "Signature") %>
+			<label class="overlabel" for="user_binfo">
+				Add signature 
+			</label>
+			<%= text_area(:agent, :signature, :class => "text", :id => "user_binfo" ) %>
+	
+</p>
+
+ <p>
+    <%= f.submit 'Create' %>
+  </p>
+  
+  <%end%>
+ 
+ 
