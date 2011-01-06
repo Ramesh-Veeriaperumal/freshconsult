@@ -2,7 +2,7 @@ class VARule < ActiveRecord::Base
   serialize :filter_data
   serialize :action_data
   
-  attr_accessor :conditions
+  attr_accessor :conditions, :actions
   
   def after_find
     deserialize_them
@@ -14,6 +14,13 @@ class VARule < ActiveRecord::Base
       f.symbolize_keys!
       @conditions << (Va::Condition.new(f))
     end
+    
+    @actions = action_data.map { |act| deserialize_action act }
+  end
+  
+  def deserialize_action(act_hash)
+    act_hash.symbolize_keys!
+    Va::Action.new(act_hash)
   end
   
   def pass_through(evaluate_on)

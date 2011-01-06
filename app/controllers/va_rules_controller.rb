@@ -99,14 +99,14 @@ class VaRulesController < ApplicationController
       @condition_defs = ActiveSupport::JSON.encode condition_hash
       
       action_hash     = [{:name => 0              , :value => "--- Click to Select Action ---"},
-                         {:name => "s_priority"  , :value => "Set Priority as", :domtype => "dropdown" , :choices => [{:name => "1", :value => "Low"}, 
+                         {:name => "priority"  , :value => "Set Priority as", :domtype => "dropdown" , :choices => [{:name => "1", :value => "Low"}, 
                                                                                                                     {:name => "2", :value => "Medium"}, 
                                                                                                                     {:name => "3", :value => "High"},
                                                                                                                     {:name => "4", :value => "Urgent"}] },
-                         {:name => "s_type"       , :value => "Set Type as"    , :domtype => "dropdown" , :choices => [{:name => "1", :value => "Incident"}, 
+                         {:name => "type"       , :value => "Set Type as"    , :domtype => "dropdown" , :choices => [{:name => "1", :value => "Incident"}, 
                                                                                                                     {:name => "2", :value => "Question"}, 
                                                                                                                     {:name => "3", :value => "Problem"}] },
-                         {:name => "s_status"     , :value => "Set Status as"  , :domtype => "dropdown" , :choices => [{:name => "open", :value => "Open"}, 
+                         {:name => "status"     , :value => "Set Status as"  , :domtype => "dropdown" , :choices => [{:name => "open", :value => "Open"}, 
                                                                                                                     {:name => "closed", :value => "Closed"},
                                                                                                                     {:name => "resolved", :value => "Resolved"},
                                                                                                                     {:name => "onhold", :value => "On Hold"}]},
