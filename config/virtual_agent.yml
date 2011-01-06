@@ -9,10 +9,11 @@ default_fields:
     type:
         handler: numeric
     
-    tag:
-        handler: text
+    tag_names:
+        handler: text_array
         
 handlers:
     text: Va::Handlers::Text
+    text_array: Va::Handlers::TextArray
     numeric: Va::Handlers::Numeric
     date_time: Va::Handlers::DateTime

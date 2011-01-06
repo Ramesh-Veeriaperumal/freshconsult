@@ -348,5 +348,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   end
 
+  #Some hackish things for virtual agent rules.
+  def tag_names
+    tags.collect { |tag| tag.name }
+  end
+  #virtual agent things end here..
  
 end

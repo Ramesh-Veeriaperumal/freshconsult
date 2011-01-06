@@ -10,6 +10,7 @@ class VaRulesController < ApplicationController
     t = Helpdesk::Ticket.new
     t.subject = "Test"
     t.status = "open"
+    t.tags = [Helpdesk::Tag.new(:name => "hardware"), Helpdesk::Tag.new(:name => "software")]
     
     @va_rules.each do |vr|
       puts "###############"
@@ -70,7 +71,7 @@ class VaRulesController < ApplicationController
                                                                                                                    {:name => "2", :value => "Medium"}, 
                                                                                                                    {:name => "3", :value => "High"}, 
                                                                                                                    {:name => "4", :value => "Urgent"}] },
-                        {:name => "tag"          , :value => "Tag",           :domtype => "autocompelete", :autocompelete_url => "alltagsurl" },
+                        {:name => "tag_names"          , :value => "Tag",           :domtype => "autocompelete", :autocompelete_url => "alltagsurl" },
                         {:name => "type"         , :value => "Type",          :domtype => "dropdown", :choices => [{:name => "1", :value => "Incident"}, 
                                                                                                                    {:name => "2", :value => "Question"}, 
                                                                                                                    {:name => "3", :value => "Problem"}] },
