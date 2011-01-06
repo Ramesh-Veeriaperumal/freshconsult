@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110104120416) do
+ActiveRecord::Schema.define(:version => 20110105090005) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -35,6 +35,7 @@ ActiveRecord::Schema.define(:version => 20110104120416) do
     t.text     "description"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "sla_policy_id"
   end
 
   create_table "delayed_jobs", :force => true do |t|
@@ -266,7 +267,16 @@ ActiveRecord::Schema.define(:version => 20110104120416) do
     t.integer  "escalateto"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "support_plan_id"
+    t.integer  "sla_policy_id"
+  end
+
+  create_table "helpdesk_sla_policies", :force => true do |t|
+    t.string   "name"
+    t.text     "description"
+    t.integer  "account_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "is_default",  :default => false
   end
 
   create_table "helpdesk_subscriptions", :force => true do |t|
@@ -496,9 +506,9 @@ ActiveRecord::Schema.define(:version => 20110104120416) do
     t.integer  "account_id"
     t.boolean  "admin",               :default => false
     t.boolean  "active",              :default => false, :null => false
+    t.string   "role_token"
     t.integer  "posts_count",         :default => 0
     t.datetime "last_seen_at"
-    t.string   "role_token"
     t.integer  "customer_id"
     t.string   "job_title"
     t.string   "second_email"

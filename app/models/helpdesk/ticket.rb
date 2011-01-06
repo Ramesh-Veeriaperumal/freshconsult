@@ -294,10 +294,26 @@ class Helpdesk::Ticket < ActiveRecord::Base
      end
      
      self.priority = 1 if priority.nil?
-          
-     self.due_by = createdTime + Helpdesk::SlaDetail.find_by_priority(self.priority).resolution_time.seconds
-     self.frDueBy = createdTime + Helpdesk::SlaDetail.find_by_priority(self.priority).response_time.seconds
-          
+     
+     
+     sla_policy_id = nil
+     
+     unless self.requester.customer.nil?
+     
+     sla_policy_id = self.requester.customer.sla_policy_id
+     
+     end
+     
+    
+     sla_policy_id = Helpdesk::SlaPolicy.find_by_account_id_and_is_default(account_id, true).id if sla_policy_id.nil?
+     
+        
+ 
+     self.due_by = createdTime + Helpdesk::SlaDetail.find(:first , :conditions =>{:sla_policy_id =>sla_policy_id, :priority =>self.priority}).resolution_time.seconds
+     self.frDueBy = createdTime + Helpdesk::SlaDetail.find(:first , :conditions =>{:sla_policy_id =>sla_policy_id, :priority =>self.priority}).response_time.seconds
+       
+    
+     
   end
 
   def make_token(secret)
