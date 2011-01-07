@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110106075447) do
+ActiveRecord::Schema.define(:version => 20110107053823) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -366,7 +366,6 @@ ActiveRecord::Schema.define(:version => 20110106075447) do
     t.integer  "account_id"
     t.string   "subject"
     t.integer  "display_id"
-    t.integer  "ticket_type_id"
     t.integer  "organization_id"
     t.integer  "owner_id"
     t.integer  "group_id"
@@ -379,6 +378,7 @@ ActiveRecord::Schema.define(:version => 20110106075447) do
     t.integer  "priority",          :default => 1
     t.boolean  "fr_escalated",      :default => false
     t.datetime "response_time"
+    t.integer  "ticket_type"
   end
 
   add_index "helpdesk_tickets", ["id_token"], :name => "index_helpdesk_tickets_on_id_token", :unique => true
@@ -531,9 +531,9 @@ ActiveRecord::Schema.define(:version => 20110106075447) do
     t.integer  "account_id"
     t.boolean  "admin",               :default => false
     t.boolean  "active",              :default => false, :null => false
-    t.string   "role_token"
     t.integer  "posts_count",         :default => 0
     t.datetime "last_seen_at"
+    t.string   "role_token"
     t.integer  "customer_id"
     t.string   "job_title"
     t.string   "second_email"
