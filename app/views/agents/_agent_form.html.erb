@@ -1,0 +1,53 @@
+ 
+ 
+ <% fields_for "users", @agent.user do |usr| %>
+
+ <ul class="ui-form" style="width:450px">
+		<li>
+			<%= label(:user, :name, "Full Name" ) %>
+			<%= text_field(:user, :name, :class => "text", :value => @agent.user.name )  %>
+		</li>
+		<li>
+			<%= label(:user, :job_title, "Title") %>
+			<%= text_field(:user, :job_title, :class => "text", :value => @agent.user.job_title ) %>
+		</li>
+		
+		<li class="small">	
+			<%= label(:user, :phone, "Phone No.") %>	
+			<label class="overlabel" for="phone_work">Work</label>
+			<%= text_field(:user, :phone, :class => "text", :id => "phone_work", :value => @agent.user.phone ) %>
+			<!--input type="text" id="user_phone" name="user[phone]" class="text" /-->		
+			<!--%= label(:user, :mobile, "Mobile") %-->
+			<label class="overlabel" for="phone_mobile">Mobile</label>
+			<%= text_field(:user, :mobile, :class => "text", :id => "phone_mobile" ,:value => @agent.user.mobile  ) %>
+		</li>
+		<li class="medium">
+			<%= label(:user, :email, "Email") %>
+			<label class="overlabel" for="email_primary">Primary</label>
+			<%= text_field(:user, :email, :class => "text", :id => "email_primary" , :value => @agent.user.email) %>
+			
+		</li>
+		<li>
+			<%= label(:user , :time_zone, "Time zone") %>
+			<%= select(:user, :time_zone, ActiveSupport::TimeZone.all, :value => @agent.user.time_zone) %>
+		</li>
+		
+		<%= hidden_field(:user, :role_taken, :id => "role_taken", :value =>'poweruser' ) %>
+		</ul>	 
+		
+	
+		
+ 
+ <%
+ end 
+%>
+<p>
+			<%= label(:agent, :signature, "Signature") %>
+			<label class="overlabel" for="user_binfo">
+				Add signature 
+			</label>
+			<%= text_area(:agent, :signature, :class => "text", :id => "user_binfo" ) %>
+			
+			<%= hidden_field(:agent, :user_id, :id => "user_id" ) %>
+	
+</p>

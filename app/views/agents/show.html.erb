@@ -1,2 +1,38 @@
-<h1>Agents#show</h1>
-<p>Find me in app/views/agents/show.html.erb</p>
+<script>
+
+function setUserRole()
+{
+	
+	if (jQuery('input[name=user_role]').is(':checked'))
+	{
+		jQuery('#role_taken').val('admin');
+
+	}
+	else
+	{
+		jQuery('#role_taken').val('poweruser');
+		
+	}
+	
+}
+</script>
+
+<h1>New Agent</h1>
+
+<% form_for(@agent) do |f| %>
+<%= f.error_messages %>
+
+<input type="checkbox" id="user_role_val" name="user_role" onclick="javascript:setUserRole()" >make as an admin </input>
+ 
+<%= render :partial => "agent_form" %>
+
+
+
+
+ <p>
+    <%= f.submit 'Update' %>
+  </p>
+  
+  <%end%>
+ 
+ 
