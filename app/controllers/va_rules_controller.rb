@@ -8,7 +8,7 @@ class VaRulesController < ApplicationController
     @va_rules = scoper.all
     
     t = Helpdesk::Ticket.new
-    t.subject = "Number"
+    t.subject = "ACTION"
     t.status = "open"
     t.description = "go"
     #t.ticket_type = 2
@@ -16,9 +16,11 @@ class VaRulesController < ApplicationController
     
     @va_rules.each do |vr|
       puts "###############"
-      puts vr.inspect
-      puts vr.conditions.inspect
+      puts vr.name
+      #puts vr.conditions.inspect
+      #puts "BEFORE PASS_THROUGH #{t.inspect}"
       puts "DOES IT MATCH #{vr.pass_through t}"
+      #puts "AFTER PASS_THROUGH #{t.inspect}"
       puts "@@@@@@@@@@@@@@@"
     end
   end
@@ -77,10 +79,11 @@ class VaRulesController < ApplicationController
                         {:name => "ticket_type"         , :value => "Type",          :domtype => "dropdown", :choices => [{:name => "1", :value => "Incident"}, 
                                                                                                                    {:name => "2", :value => "Question"}, 
                                                                                                                    {:name => "3", :value => "Problem"}] },
-                        {:name => "status"       , :value => "Status",        :domtype => "dropdown", :choices => [{:name => "open", :value => "Open"}, 
-                                                                                                                   {:name => "closed", :value => "Closed"},
-                                                                                                                   {:name => "resolved", :value => "Resolved"},
-                                                                                                                   {:name => "onhold", :value => "On Hold"}] },
+                        {:name => "status"       , :value => "Status",        :domtype => "dropdown", :choices => [{:name => 1, :value => "New"}, 
+                                                                                                                  {:name => 2, :value => "Open"}, 
+                                                                                                                  {:name => 3, :value => "Pending"},
+                                                                                                                  {:name => 4, :value => "Resolved"},
+                                                                                                                  {:name => 5, :value => "Closed"}] },
                         {:name => "source"       , :value => "Source",        :domtype => "dropdown", :choices => [{:name => "1", :value => "Email"}, 
                                                                                                                    {:name => "2", :value => "Phone"},
                                                                                                                    {:name => "3", :value => "Self Service"},
@@ -105,25 +108,26 @@ class VaRulesController < ApplicationController
                          {:name => "ticket_type"       , :value => "Set Type as"    , :domtype => "dropdown" , :choices => [{:name => "1", :value => "Incident"}, 
                                                                                                                     {:name => "2", :value => "Question"}, 
                                                                                                                     {:name => "3", :value => "Problem"}] },
-                         {:name => "status"     , :value => "Set Status as"  , :domtype => "dropdown" , :choices => [{:name => "open", :value => "Open"}, 
-                                                                                                                    {:name => "closed", :value => "Closed"},
-                                                                                                                    {:name => "resolved", :value => "Resolved"},
-                                                                                                                    {:name => "onhold", :value => "On Hold"}]},
+                         {:name => "status"     , :value => "Set Status as"  , :domtype => "dropdown" , :choices => [{:name => 1, :value => "New"}, 
+                                                                                                                    {:name => 2, :value => "Open"}, 
+                                                                                                                    {:name => 3, :value => "Pending"},
+                                                                                                                    {:name => 4, :value => "Resolved"},
+                                                                                                                    {:name => 5, :value => "Closed"}]},
                          {:name => 0              , :value => "------------------------------"},                                                                                           
                          {:name => "add_tag"      , :value => "Add Tag(s)"  , :domtype => 'autocompelete', :autocompelete_url => "allemailsurl"},
                          {:name => 0              , :value => "------------------------------"},
-                         {:name => "assign_to_agent" , :value => "Assign to Agent"  , :domtype => 'dropdown', :choices => [{:name => "1", :value => "Edward"}, 
+                         {:name => "responder_id" , :value => "Assign to Agent"  , :domtype => 'dropdown', :choices => [{:name => "1", :value => "Edward"}, 
                                                                                                                            {:name => "2", :value => "John Patrick"},
                                                                                                                            {:name => "3", :value => "Susan Renolds"},
                                                                                                                            {:name => "4", :value => "Gary Matheew"}]},
-                         {:name => "assign_to_group" , :value => "Assign to Group"  , :domtype => 'dropdown', :choices => [{:name => "1", :value => "Hardware"}, 
+                         {:name => "group_id" , :value => "Assign to Group"  , :domtype => 'dropdown', :choices => [{:name => "1", :value => "Hardware"}, 
                                                                                                                            {:name => "2", :value => "Software"},
                                                                                                                            {:name => "3", :value => "Tech support"},
                                                                                                                            {:name => "4", :value => "Product Group"}]},
                          {:name => 0              , :value => "------------------------------"},
-                         {:name => "send_email_group" , :value => "Send Email to Group"  , :domtype => 'autocompelete', :autocompelete_url => "groupemailsurl"},
-                         {:name => "send_email_agent" , :value => "Send Email to Agent"  , :domtype => 'autocompelete', :autocompelete_url => "agentemailsurl"},
-                         {:name => "send_email_user"  , :value => "Send Email to User"   , :domtype => 'autocompelete', :autocompelete_url => "useremailsurl"},
+                         {:name => "send_email_to_group" , :value => "Send Email to Group"  , :domtype => 'autocompelete', :autocompelete_url => "groupemailsurl"},
+                         {:name => "send_email_to_agent" , :value => "Send Email to Agent"  , :domtype => 'autocompelete', :autocompelete_url => "agentemailsurl"},
+                         {:name => "send_email_to_requester"  , :value => "Send Email to Requester"   , :domtype => 'autocompelete', :autocompelete_url => "useremailsurl"},
                         ]
       
       @action_defs    = ActiveSupport::JSON.encode action_hash
