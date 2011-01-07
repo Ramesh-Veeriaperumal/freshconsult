@@ -58,17 +58,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
   named_scope :visible, :conditions => ["spam=? AND deleted=? AND status > 0", false, false] 
 
   SOURCES = [
-    [ :staff,     "Staff Initiated",      0 ],
-    [ :email,     "Email",                1 ],
-    [ :web_form,  "Web Form",             2 ],
-    [ :phone,     "Phone",                3 ],
-    [ :in_person, "In Person",            4 ],
-    [ :mail,      "Mail",                 5 ],
-    [ :other,     "Other",                6 ],
-    [ :forum,     "Forum",                7 ],
-    [ :im,        "Instant Messenger",    8 ],
-    [ :fax,       "Fax",                  9 ],
-    [ :voicemail, "Voicemail",            10],
+    [ :email,       "Email",            1 ],
+    [ :portal,      "Portal",           2 ],
+    [ :phone,       "Phone",            3 ],
+    [ :forum,       "Forum",            4 ],
+    [ :twitter,     "Twitter",          5 ],
+    [ :facebook,    "Facebook",         6 ],
   ]
 
   SOURCE_OPTIONS = SOURCES.map { |i| [i[1], i[2]] }
@@ -76,12 +71,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   SOURCE_KEYS_BY_TOKEN = Hash[*SOURCES.map { |i| [i[0], i[2]] }.flatten]
 
   STATUSES = [
-    [ :open,        "OPEN",                           1 ], 
-    [ :waiting,     "OPEN: Waiting",                  2 ], 
-    [ :solved,      "CLOSED: Problem Solved",         0 ], 
-    [ :not_fixable, "CLOSED: Not Fixable",           -1 ], 
-    [ :unreachable, "CLOSED: Customer Unreachable",  -2 ], 
-    [ :bug,         "CLOSED: Moved to Bug Tracker",  -3 ]
+    [ :new,         "New",        1 ], 
+    [ :open,        "Open",       2 ], 
+    [ :pending,     "Pending",    3 ], 
+    [ :resolved,    "Resolved",   4 ], 
+    [ :closed,      "Closed",     5 ]
   ]
 
   STATUS_OPTIONS = STATUSES.map { |i| [i[1], i[2]] }
