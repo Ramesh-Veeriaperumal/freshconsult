@@ -1,4 +1,4 @@
-class Va::Handlers::Numeric < Va::RuleHandler
+class Va::Handlers::Numeric < Va::Handlers::Text
 
   private
     def is(evaluate_on_value)

@@ -1,21 +1,24 @@
 <%= javascript_include_tag "condition-filter.js" %>
 
 <script type="text/javascript">
-	var filter_Array = $A(<%= @filter_defs %>);
-	var condition_Array = $A(<%= @condition_defs %>);
-	var action_Array	= $A(<%= @action_defs %>);
+	var filter_Array    = $A(<%= @filter_defs %>),
+		condition_Array = $A(<%= @condition_defs %>),
+		action_Array	= $A(<%= @action_defs %>),
+		Filter_feed 	= $A(<%= @filter_input %>),
+		Action_feed		= $A(<%= @action_input %>);	
+		
+	rules_filter("rules", filter_Array, "#test_filter");
 	
-	var filter_plugin = initRuleList(filter_Array, condition_Array, action_Array, "#RuleList", "#add_filter", "#ActionList", "#add_action", "#VirtualAgent");
+	var filter_plugin = initRuleList(filter_Array, condition_Array, action_Array, "#RuleList", "#add_filter", "#ActionList", "#add_action", "#VirtualAgent", Filter_feed, Action_feed);
 	
 	jQuery(document).ready(function(){
-		jQuery("#RuleList, #ActionList").sortable({ items: "fieldset", containment: "parent", tolerance: "pointer", handle:"span.sort_handle"});
+		jQuery("#RuleList, #ActionList").sortable({ items: "fieldset", containment: "parent", tolerance: "pointer", handle:"span.sort_handle"});		
 		
-			
 		jQuery("#VirtualAgent")		
 			.submit(function(){
 				// Passing the value into a hidden field				
 				this['save_json'].value = filter_plugin.get_filter_list("json");
-				//console.log(this['save_json'].value);
+				console.log(this['save_json'].value);
 				return true;
 			})
 			.validate({
@@ -40,7 +43,7 @@
 		<ul class="ui-form">
 			<li>
 				<%= f.label :name, "Rule Name *" %>
-				<label class="overlabel" for="va_rule_name">eg: <em>"Subscription related tickets"</em> </label>
+				<label class="overlabel" for="va_rule_name">example: <em>"Subscription related tickets"</em> </label>
 				<%= f.text_field :name, :class => "required" %>
 			</li>
 			<li>
@@ -52,18 +55,26 @@
 					Go Ahead and type something like - <br /><em>"All Subscription related tickets will be assigned to Susan"</em>
 				</label-->
 				<label class="overlabel" for="va_rule_description">
-					eg: <em>"All Subscription related tickets will be assigned to Susan"</em>
+					example: <em>"All Subscription related tickets will be assigned to Susan"</em>
 				</label>
 				<%= f.text_area :description, :class => "smallpara" %>
 			</li>
-			<li><span class="seperator"></span></li>						
+			<li><span class="seperator"></span></li>	
+			<li class="conditionset" id="test_filter">				
+				<div class="rule_list"></div>
+				<fieldset class="addchoice">
+			         Add new condition <img alt="Add New choice" class="add" src="/images/add.png" />
+			    </fieldset>				
+			</li>
+			<li><span class="seperator"></span></li>								
 			<li class="choicelist">
 				<label>When should this rule be applied?</label>
 				<%= f.radio_button  :match_type, 'any', :class => "radio" %> <%= f.label :match_type_any, "Match Any", :class => "radiolabel" %>
 				<%= f.radio_button  :match_type, 'all', :class => "radio" %> <%= f.label :match_type_all, "Match All", :class => "radiolabel" %>
-			</li>	
+			</li>			
 			<li class="conditionset">			
-				<div id="RuleList"></div>			
+				<div id="RuleList" class="rule_list"></div>
+				<input type="hidden" name="filter_data" id="filter_data" value="" />
 				<fieldset class="addchoice" id="add_filter">
 			         Add new condition <img alt="Add New choice" class="add" src="/images/add.png" />
 			     </fieldset>			
@@ -73,7 +84,7 @@
 				<label>Actions to Perform?</label>				
 			</li>
 			<li class="conditionset">
-				<div id="ActionList"></div>
+				<div id="ActionList" class="rule_list"></div>
 				<fieldset class="addchoice" id="add_action">
 			        Add new action <img alt="Add New action" class="add" src="/images/add.png" />
 			    </fieldset>		
@@ -81,7 +92,7 @@
 		</ul>
 		<br />
 		<div class="button-container">
-			<input type="hidden" name="save_json" value="Test Value" />
+			<input type="hidden" name="save_json" id="savejson" value="" />
 			<input type="submit" class="fdbutton" value="Save" />
 			<%= link_to "Cancel", {:action => 'index'}, :class => "fdbutton grey" %>
 		</div>
