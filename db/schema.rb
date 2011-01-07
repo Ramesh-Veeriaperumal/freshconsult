@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110105090005) do
+ActiveRecord::Schema.define(:version => 20110106075447) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -22,6 +22,20 @@ ActiveRecord::Schema.define(:version => 20110105090005) do
   end
 
   add_index "accounts", ["full_domain"], :name => "index_accounts_on_full_domain"
+
+  create_table "agent_groups", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "group_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "agents", :force => true do |t|
+    t.integer  "user_id"
+    t.text     "signature"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "customers", :force => true do |t|
     t.string   "name"
@@ -154,6 +168,17 @@ ActiveRecord::Schema.define(:version => 20110105090005) do
     t.integer "position"
     t.text    "description_html"
     t.integer "account_id"
+  end
+
+  create_table "groups", :force => true do |t|
+    t.string   "name"
+    t.text     "description"
+    t.integer  "account_id"
+    t.boolean  "email_on_assign"
+    t.integer  "escalate_to"
+    t.integer  "assign_time"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "helpdesk_article_guides", :force => true do |t|

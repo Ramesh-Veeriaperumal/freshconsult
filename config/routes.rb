@@ -1,5 +1,9 @@
 ActionController::Routing::Routes.draw do |map|
   map.resources :customers
+  
+  map.resources :groups
+  
+  map.resources :agents
 
   map.resources :sla_details
   
