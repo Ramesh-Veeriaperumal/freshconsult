@@ -8,8 +8,10 @@ class VaRulesController < ApplicationController
     @va_rules = scoper.all
     
     t = Helpdesk::Ticket.new
-    t.subject = "Test"
+    t.subject = "Number"
     t.status = "open"
+    t.description = "go"
+    #t.ticket_type = 2
     t.tags = [Helpdesk::Tag.new(:name => "hardware"), Helpdesk::Tag.new(:name => "software")]
     
     @va_rules.each do |vr|
@@ -72,7 +74,7 @@ class VaRulesController < ApplicationController
                                                                                                                    {:name => "3", :value => "High"}, 
                                                                                                                    {:name => "4", :value => "Urgent"}] },
                         {:name => "tag_names"          , :value => "Tag",           :domtype => "autocompelete", :autocompelete_url => "alltagsurl" },
-                        {:name => "type"         , :value => "Type",          :domtype => "dropdown", :choices => [{:name => "1", :value => "Incident"}, 
+                        {:name => "ticket_type"         , :value => "Type",          :domtype => "dropdown", :choices => [{:name => "1", :value => "Incident"}, 
                                                                                                                    {:name => "2", :value => "Question"}, 
                                                                                                                    {:name => "3", :value => "Problem"}] },
                         {:name => "status"       , :value => "Status",        :domtype => "dropdown", :choices => [{:name => "open", :value => "Open"}, 
@@ -96,11 +98,11 @@ class VaRulesController < ApplicationController
       @condition_defs = ActiveSupport::JSON.encode condition_hash
       
       action_hash     = [{:name => 0              , :value => "--- Click to Select Action ---"},
-                         {:name => "priority"  , :value => "Set Priority as", :domtype => "dropdown" , :choices => [{:name => "1", :value => "Low"}, 
-                                                                                                                    {:name => "2", :value => "Medium"}, 
-                                                                                                                    {:name => "3", :value => "High"},
-                                                                                                                    {:name => "4", :value => "Urgent"}] },
-                         {:name => "type"       , :value => "Set Type as"    , :domtype => "dropdown" , :choices => [{:name => "1", :value => "Incident"}, 
+                         {:name => "priority"  , :value => "Set Priority as", :domtype => "dropdown" , :choices => [{:name => 1, :value => "Low"}, 
+                                                                                                                    {:name => 2, :value => "Medium"}, 
+                                                                                                                    {:name => 3, :value => "High"},
+                                                                                                                    {:name => 4, :value => "Urgent"}] },
+                         {:name => "ticket_type"       , :value => "Set Type as"    , :domtype => "dropdown" , :choices => [{:name => "1", :value => "Incident"}, 
                                                                                                                     {:name => "2", :value => "Question"}, 
                                                                                                                     {:name => "3", :value => "Problem"}] },
                          {:name => "status"     , :value => "Set Status as"  , :domtype => "dropdown" , :choices => [{:name => "open", :value => "Open"}, 
