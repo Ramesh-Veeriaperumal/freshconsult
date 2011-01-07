@@ -1,1 +1,35 @@
-<%= debug @agents%>
+<h1>Agents </h1>
+<%= link_to 'Add Agent', new_agent_path %></td>
+
+
+<table>
+  <tr>
+    <th>Name</th>
+    
+  </tr>
+<%@agents.each do |agent| %>
+
+
+
+ <tr>
+    <td><%=h agent.user.name %></td>
+	
+	<td><%= link_to 'Show', agent %></td>
+    <td><%= link_to 'Edit', edit_agent_path(agent) %></td>
+	
+    <td><%= link_to 'Destroy', agent, :confirm => 'Are you sure?', :method => :delete %></td>
+
+	
+</tr>
+<%
+end
+%>
+
+<% logger.debug "here is the "%>>
+
+</table>
+<br />
+
+<!--%= link_to 'New customer', new_support_plan_path %-->
+</div>
+

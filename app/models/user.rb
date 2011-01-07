@@ -12,7 +12,7 @@ class User < ActiveRecord::Base
     c.validates_length_of_password_confirmation_field_options = {:on => :update, :minimum => 4, :if => :has_no_credentials?}
   end
   
-  attr_accessible :name, :email, :password, :password_confirmation , :second_email, :job_title, :phone, :mobile, :twitter_id, :description, :customer_id , :role_token 
+  attr_accessible :name, :email, :password, :password_confirmation , :second_email, :job_title, :phone, :mobile, :twitter_id, :description, :customer_id , :role_token, :time_zone 
 
   def signup!(params)
     self.email = params[:user][:email]
@@ -63,6 +63,8 @@ class User < ActiveRecord::Base
   
   has_many :agents , :class_name => 'Agent' , :foreign_key => "user_id"
   
+  accepts_nested_attributes_for :agents
+  
   
 
   #Savage_beast changes start here
@@ -110,7 +112,7 @@ class User < ActiveRecord::Base
   end
   
   def set_time_zone
-    #self.time_zone = account.time_zone if time_zone.nil? #by Shan temp
+    self.time_zone = account.time_zone if time_zone.nil? #by Shan temp
   end
   
 end

@@ -1949,20 +1949,23 @@ $lightBase:lighten($base, 5%);
 		padding:0px;
 		fieldset{
 			@include pie-clearfix;			
-			padding:5px 5px 5px 30px;
+			padding:5px 0px 5px 8px;
 			border-bottom:1px solid #cfcfcf;
 			background:#efefef;
 			position:relative;
-			.add, .delete{
-				position:absolute;
-				right:6px;
-				top:4px;
-				cursor:pointer;
-			}
+			
 			*{
 				float:left;
 				width:auto;
 				margin:2px 4px;
+			}
+			.add, .delete{
+				float:right;
+				position:relative;
+				cursor:pointer;
+			}
+			.add{
+				top:2px;
 			}
 			input.text{
 				width:200px;
@@ -1975,9 +1978,9 @@ $lightBase:lighten($base, 5%);
 				margin:0px; padding:0px;
 			}
 			span.sort_handle{
-				position:absolute;
-				left:3px;
-				top:3px;
+				position:relative;
+				left:1px;
+				top:1px;
 				width:25px;
 				height:25px;
 				cursor:move;
@@ -1996,9 +1999,7 @@ $lightBase:lighten($base, 5%);
 		div{
 			margin:0px;padding:0px;
 		}
-		fieldset.addchoice{
-			padding:5px 0px 5px 10px;			
-		}
+		
 	}
 }
 
