@@ -8,7 +8,7 @@ class VaRulesController < ApplicationController
     @va_rules = scoper.all
     
     t = Helpdesk::Ticket.new
-    t.subject = "ACTION"
+    t.subject = "Number"
     t.status = "open"
     t.description = "go"
     #t.ticket_type = 2
@@ -16,11 +16,9 @@ class VaRulesController < ApplicationController
     
     @va_rules.each do |vr|
       puts "###############"
-      puts vr.name
-      #puts vr.conditions.inspect
-      #puts "BEFORE PASS_THROUGH #{t.inspect}"
+      puts vr.inspect
+      puts vr.conditions.inspect
       puts "DOES IT MATCH #{vr.pass_through t}"
-      #puts "AFTER PASS_THROUGH #{t.inspect}"
       puts "@@@@@@@@@@@@@@@"
     end
   end
@@ -66,31 +64,30 @@ class VaRulesController < ApplicationController
 
     def load_filter_config
       filter_hash    = [{:name => 0              , :value => "--- Click to Select Filter ---"},
-                        {:name => "from_email", :value => "From Email Id", :domtype => "autocompelete", :autocompelete_url => "allemailsurl" },
-                        {:name => "to_email"  , :value => "To Email Id"  , :domtype => "autocompelete", :autocompelete_url => "allemailsurl" },
+                        {:name => "from_email"   , :value => "From Email", :domtype => "autocompelete", :autocompelete_url => "allemailsurl", 
+                                                   :operatortype => "email"},
+                        {:name => "to_email"     , :value => "To Email"  , :domtype => "autocompelete", :autocompelete_url => "allemailsurl",
+                                                   :operatortype => "email"},
                         {:name => 0              , :value => "--------------------------"},
-                        {:name => "subject"      , :value => "Subject",       :domtype => "text" },
-                        {:name => "description"  , :value => "Description...",   :domtype => "paragraph" },
-                        {:name => "priority"     , :value => "Priority",      :domtype => "dropdown", :choices => [{:name => "1", :value => "Low"}, 
-                                                                                                                   {:name => "2", :value => "Medium"}, 
-                                                                                                                   {:name => "3", :value => "High"}, 
-                                                                                                                   {:name => "4", :value => "Urgent"}] },
-                        {:name => "tag_names"          , :value => "Tag",           :domtype => "autocompelete", :autocompelete_url => "alltagsurl" },
-                        {:name => "ticket_type"         , :value => "Type",          :domtype => "dropdown", :choices => [{:name => "1", :value => "Incident"}, 
-                                                                                                                   {:name => "2", :value => "Question"}, 
-                                                                                                                   {:name => "3", :value => "Problem"}] },
-                        {:name => "status"       , :value => "Status",        :domtype => "dropdown", :choices => [{:name => 1, :value => "New"}, 
-                                                                                                                  {:name => 2, :value => "Open"}, 
-                                                                                                                  {:name => 3, :value => "Pending"},
-                                                                                                                  {:name => 4, :value => "Resolved"},
-                                                                                                                  {:name => 5, :value => "Closed"}] },
-                        {:name => "source"       , :value => "Source",        :domtype => "dropdown", :choices => [{:name => "1", :value => "Email"}, 
-                                                                                                                   {:name => "2", :value => "Phone"},
-                                                                                                                   {:name => "3", :value => "Self Service"},
-                                                                                                                   {:name => "4", :value => "Via Agent"}] },
+                        {:name => "subject"      , :value => "Subject",       :domtype => "text",
+                                                   :operatortype => "text"},
+                        {:name => "description"  , :value => "Description...",   :domtype => "paragraph",
+                                                   :operatortype => "text"},
+                        {:name => "tag_names"    , :value => "Tag",           :domtype => "autocompelete", :autocompelete_url => "alltagsurl",
+                                                   :operatortype => "text"},
+                        {:name => "priority"     , :value => "Priority",      :domtype => "dropdown", :choices => Helpdesk::Ticket::PRIORITY_NAMES_BY_KEY.sort, 
+                                                   :operatortype => "choicelist"},                        
+                        {:name => "type"         , :value => "Type",          :domtype => "dropdown", :choices => Helpdesk::Ticket::TYPE_NAMES_BY_KEY.sort, 
+                                                   :operatortype => "choicelist"},
+                        {:name => "status"       , :value => "Status",        :domtype => "dropdown", :choices => Helpdesk::Ticket::STATUS_NAMES_BY_KEY.sort, 
+                                                   :operatortype => "choicelist"},
+                        {:name => "source"       , :value => "Source",        :domtype => "dropdown", :choices => Helpdesk::Ticket::SOURCE_NAMES_BY_KEY.sort, 
+                                                   :operatortype => "choicelist"},
                         {:name => 0              , :value => "------------------------------"},
-                        {:name => "contact" , :value => "Contact Name",  :domtype => "autocompelete", :autocompelete_url => "contactnameurl" },
-                        {:name => "company" , :value => "Company Name",  :domtype => "autocompelete", :autocompelete_url => "companynameurl" }]
+                        {:name => "contact"      , :value => "Contact Name",  :domtype => "autocompelete", :autocompelete_url => "contactnameurl",
+                                                   :operatortype => "text"},
+                        {:name => "company"      , :value => "Company Name",  :domtype => "autocompelete", :autocompelete_url => "companynameurl", 
+                                                   :operatortype => "text"}]
       
       @filter_defs   = ActiveSupport::JSON.encode filter_hash
       
@@ -101,18 +98,9 @@ class VaRulesController < ApplicationController
       @condition_defs = ActiveSupport::JSON.encode condition_hash
       
       action_hash     = [{:name => 0              , :value => "--- Click to Select Action ---"},
-                         {:name => "priority"  , :value => "Set Priority as", :domtype => "dropdown" , :choices => [{:name => 1, :value => "Low"}, 
-                                                                                                                    {:name => 2, :value => "Medium"}, 
-                                                                                                                    {:name => 3, :value => "High"},
-                                                                                                                    {:name => 4, :value => "Urgent"}] },
-                         {:name => "ticket_type"       , :value => "Set Type as"    , :domtype => "dropdown" , :choices => [{:name => "1", :value => "Incident"}, 
-                                                                                                                    {:name => "2", :value => "Question"}, 
-                                                                                                                    {:name => "3", :value => "Problem"}] },
-                         {:name => "status"     , :value => "Set Status as"  , :domtype => "dropdown" , :choices => [{:name => 1, :value => "New"}, 
-                                                                                                                    {:name => 2, :value => "Open"}, 
-                                                                                                                    {:name => 3, :value => "Pending"},
-                                                                                                                    {:name => 4, :value => "Resolved"},
-                                                                                                                    {:name => 5, :value => "Closed"}]},
+                         {:name => "priority"     , :value => "Set Priority as", :domtype => "dropdown" , :choices => Helpdesk::Ticket::PRIORITY_NAMES_BY_KEY.sort },
+                         {:name => "ticket_type"  , :value => "Set Type as"    , :domtype => "dropdown" , :choices => Helpdesk::Ticket::TYPE_NAMES_BY_KEY.sort },
+                         {:name => "status"       , :value => "Set Status as"  , :domtype => "dropdown" , :choices => Helpdesk::Ticket::STATUS_NAMES_BY_KEY.sort},
                          {:name => 0              , :value => "------------------------------"},                                                                                           
                          {:name => "add_tag"      , :value => "Add Tag(s)"  , :domtype => 'autocompelete', :autocompelete_url => "allemailsurl"},
                          {:name => 0              , :value => "------------------------------"},
