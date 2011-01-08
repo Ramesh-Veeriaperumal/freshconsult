@@ -16,9 +16,12 @@ var conditional_dom = function(filter){
 			c_dom = FactoryUI.text("", "value");
 			break;
 		case 'dropdown':
-			var choices = $H();
+			var choices = [];
 			filter.choices.each(function(arrayItem){
-				choices.set(arrayItem[0], arrayItem[1]);					
+				choices.push({
+					name: arrayItem[0],
+					value: arrayItem[1]
+				});					
 			});				 
 			c_dom = FactoryUI.dropdown(choices, "value");
 			break;
@@ -70,7 +73,7 @@ var preProcessCondition = function(){
 		})
 		operator_types.set(item.key, listDrop);
 	});
-	console.log(operator_types);
+	//console.log(operator_types);
 };
 preProcessCondition();
 
@@ -240,6 +243,7 @@ initRuleList = function(filter_list, condition_list, action_list, Dom, add_filte
 				    tempConstruct = $H(),
 					type		  = type || "object";
 				
+				//console.log(serialArray);
 				serialArray.each(function(item){					
 					if(item.name == 'conditions' || item.name == 'actions')
 						setValue = item;
