@@ -25,9 +25,9 @@ window.FactoryUI = {
 		if(!choices) return;
 		var className   = className	  || "dropdown";
 		var name		= name		  || "";
-		var	select 		= "<select name='"+name+"' class='"+className+"' >";
-		choices.each(function(item){
-			select += "<option value='"+item.name+"'>"+item.value+"</option>";		
+		var	select 		= "<select name='"+name+"' class='"+className+"' >";		
+		choices.each(function(item){ 			
+			select += "<option value='"+item.name+"'>"+item.value+"</option>";			
 		});		
 		select += "</select>";
 		return jQuery(select);

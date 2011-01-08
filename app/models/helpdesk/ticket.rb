@@ -86,13 +86,24 @@ class Helpdesk::Ticket < ActiveRecord::Base
     [ :low,       "Low",         1 ], 
     [ :medium,    "Medium",      2 ], 
     [ :high,      "High",        3 ], 
-    [ :urgent,    "Urgent",      4 ], 
-   
+    [ :urgent,    "Urgent",      4 ]   
   ]
 
   PRIORITY_OPTIONS = PRIORITIES.map { |i| [i[1], i[2]] }
   PRIORITY_NAMES_BY_KEY = Hash[*PRIORITIES.map { |i| [i[2], i[1]] }.flatten]
   PRIORITY_KEYS_BY_TOKEN = Hash[*PRIORITIES.map { |i| [i[0], i[2]] }.flatten]
+  
+  TYPE = [
+    [ :how_to,    "How to",               1 ], 
+    [ :incident,  "Incident",             2 ], 
+    [ :problem,   "Problem",              3 ], 
+    [ :f_request, "Feature Request",      4 ],
+    [ :lead,      "Lead",                 5 ]   
+  ]
+
+  TYPE_OPTIONS = TYPE.map { |i| [i[1], i[2]] }
+  TYPE_NAMES_BY_KEY = Hash[*TYPE.map { |i| [i[2], i[1]] }.flatten]
+  TYPE_KEYS_BY_TOKEN = Hash[*TYPE.map { |i| [i[0], i[2]] }.flatten]
 
   SEARCH_FIELDS = [
     [ :display_id,    'Ticket ID'                ],

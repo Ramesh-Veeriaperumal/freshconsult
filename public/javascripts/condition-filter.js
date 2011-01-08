@@ -5,47 +5,50 @@
 // Condition Parsing 
 // This template contains the dom population information 
 var conditional_dom = function(filter){
-		var type 		= filter.domtype;
-		var operator 	= filter.operator || 0;
-		// Conditional Dom created based on the options available
-		c_dom = "";
-		switch (type){
-			case 'autocompelete':
-				c_dom = FactoryUI.autocompelete("url..", "value");
-				break;					
-			case 'text':
-				c_dom = FactoryUI.text("", "value");
-				break;
-			case 'dropdown':
-				c_dom = FactoryUI.dropdown(filter.choices, "value");
-				break;
-			case 'comment':
+	var type = filter.domtype;
+	// Conditional Dom created based on the options available
+	c_dom = "";
+	switch (type){
+		case 'autocompelete':
+			c_dom = FactoryUI.autocompelete("url..", "value");
+			break;					
+		case 'text':
+			c_dom = FactoryUI.text("", "value");
+			break;
+		case 'dropdown':
+			var choices = $H();
+			filter.choices.each(function(arrayItem){
+				choices.set(arrayItem[0], arrayItem[1]);					
+			});				 
+			c_dom = FactoryUI.dropdown(choices, "value");
+			break;
+		case 'comment':
+			c_dom = jQuery("<span />")
+						.append(FactoryUI.paragraph("", "comment"))
+				 		.append(FactoryUI.checkbox("Make this a Private Comment", "private"));							
+			break;
+		case 'paragraph':
+			c_dom = FactoryUI.paragraph("", "value");
+			break;
+		case 'text_dropdown':
+			c_dom = FactoryUI.text("", "value");
+			break;
+		case 'number':
+			if(operator && operator == 'between')
 				c_dom = jQuery("<span />")
-							.append(FactoryUI.paragraph("", "comment"))
-					 		.append(FactoryUI.checkbox("Make this a Private Comment", "private"));							
-				break;
-			case 'paragraph':
-				c_dom = FactoryUI.paragraph("", "value");
-				break;
-			case 'text_dropdown':
+							.append(FactoryUI.text("", "value"))
+							.append(FactoryUI.text("", "value"));
+			else
 				c_dom = FactoryUI.text("", "value");
-				break;
-			case 'number':
-				if(operator && operator == 'between')
-					c_dom = jQuery("<span />")
-								.append(FactoryUI.text("", "value"))
-								.append(FactoryUI.text("", "value"));
-				else
-					c_dom = FactoryUI.text("", "value");
-			default:
-				c_dom = "<em>Conditional dom "+type+" Not defined</em>";
-		}			
-		return c_dom;
+		default:
+			c_dom = "<em>Conditional dom "+type+" Not defined</em>";
+	}			
+	return c_dom;
 }
-
-var operator_types  = {"email"       : ["is", "is_not", "contains", "not_contain"],
-                       "text"        : ["is", "is_not", "contains", "not_contain", "starts_with", "ends_with"],
-                       "choicelist"  : ["is", "is_not"]};
+	 
+var operator_types  = $H( {"email"       : ["is", "is_not", "contains", "not_contain"],
+			               "text"        : ["is", "is_not", "contains", "not_contain", "starts_with", "ends_with"],
+			               "choicelist"  : ["is", "is_not"]});
 
 var operator_list  = {"is"				:"Is", 
 					  "is_not" 			:"Is not", 
@@ -54,7 +57,22 @@ var operator_list  = {"is"				:"Is",
 					  "starts_with"		:"Starts with", 
 					  "ends_with"  		:"Ends with",
 					  "between"    		:"Between", 
-					  "between_range"   :"Between Range"};
+					  "between_range"   :"Between Range"}; 
+
+var preProcessCondition = function(){
+	operator_types.each(function(item){
+		var listDrop = $A();
+		$A(item.value).each(function(pair){
+			var value = $H();
+			value.set("name", pair);
+			value.set("value", operator_list[pair]);
+			listDrop.push(value);
+		})
+		operator_types.set(item.key, listDrop);
+	});
+	console.log(operator_types);
+};
+preProcessCondition();
 
 rules_filter = function(name, filter_data, parentDom, options){
 	var setting = {
@@ -74,8 +92,8 @@ rules_filter = function(name, filter_data, parentDom, options){
 	var hg_data		= $H(),
 		name		= name || "default",		
 	// Setting initial dom elements		
-		RULE_DOM	= parentDom + " " + setting.rule_dom,
-		ADD_DOM		= parentDom + " " + setting.add_dom;
+		RULE_DOM		= parentDom + " " + setting.rule_dom,
+		ADD_DOM			= parentDom + " " + setting.add_dom;
 	
 	// Private Methods
 	var domUtil = {
@@ -103,7 +121,7 @@ rules_filter = function(name, filter_data, parentDom, options){
 				// Adding a new Filter DOM element to the Filter Container				
 				var r_dom = domUtil.getContainer(name);			
 				jQuery.data(r_dom, "inner")
-					  .append(FactoryUI.dropdown(filter_data, "ru_"+name))
+					  .append(FactoryUI.dropdown(filter_data, "ru_"+name, "ruCls_"+name))
 					  .append("<div />");
 					 
 				
@@ -129,6 +147,22 @@ rules_filter = function(name, filter_data, parentDom, options){
 		var init = function(){			
 			jQuery(parentDom).prepend('<input type="hidden" name="'+name+'" value="" />');			
 			domUtil.init();		
+			
+			// Binding Events to Containers
+			// Filter on change action 
+			jQuery(parentDom+' .'+"ruCls_"+name)
+				.live("change", 
+						function(){ 
+							var rule_drop = jQuery(this).next().empty();
+															
+							if(this.value != 0){
+								hg_item = hg_data.get(this.value);
+								if(hg_item.operatortype)
+								 	rule_drop.append(FactoryUI.dropdown(operator_types.get(hg_item.operatortype), "compare"))
+								 
+								rule_drop.append(conditional_dom(hg_item));
+							}										
+						});
 		};
 		init();			
 	});
@@ -144,38 +178,7 @@ initRuleList = function(filter_list, condition_list, action_list, Dom, add_filte
 	var condition_hash  = $H();
 	var action_hash		= $H();
 	
-	// Condition Parsing 
-	var conditional_dom = function(filter){
-		var type = filter.domtype;
-		// Conditional Dom created based on the options available
-		c_dom = "";
-		switch (type){
-			case 'autocompelete':
-				c_dom = FactoryUI.autocompelete("url..", "value");
-				break;					
-			case 'text':
-				c_dom = FactoryUI.text("", "value");
-				break;
-			case 'dropdown':
-				c_dom = FactoryUI.dropdown(filter.choices, "value");
-				break;
-			case 'comment':
-				c_dom = jQuery("<span />")
-							.append(FactoryUI.paragraph("", "comment"))
-					 		.append(FactoryUI.checkbox("Make this a Private Comment", "private"));							
-				break;
-			case 'paragraph':
-				c_dom = FactoryUI.paragraph("", "value");
-				break;
-			case 'text_dropdown':
-				c_dom = FactoryUI.text("", "value");
-				break;
-			default:
-				c_dom = "<em>Conditional dom "+type+" Not defined</em>";
-		}			
-		return c_dom;
-	}
-												
+										
 	// Private Methods
 	var domUtil = {
 		push_to_hash:
