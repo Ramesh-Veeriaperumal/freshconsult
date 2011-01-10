@@ -7,25 +7,26 @@ class VaRulesController < ApplicationController
   def index
     @va_rules = scoper.all
     
-    t = Helpdesk::Ticket.new
-    t.email = "itsm@test.freshdesk.com"
-    t.subject = "Number test"
-    t.status = 1
-    t.description = "go"
-    t.requester_id = 2
-    t.ticket_type = 2
-    t.priority = 2
-    t.source = 2
-    t.account_id = 1
-    t.tags = [Helpdesk::Tag.new(:name => "hardware"), Helpdesk::Tag.new(:name => "printer")]
-    
-    @va_rules.each do |vr|
-      puts "###############"
-      puts vr.inspect
-      puts vr.conditions.inspect
-      puts "DOES IT MATCH #{vr.pass_through t}"
-      puts "@@@@@@@@@@@@@@@"
-    end
+#    t = Helpdesk::Ticket.new
+#    t.to_email = "itsm@test.freshdesk.com"
+#    t.subject = "Number test"
+#    t.status = 1
+#    t.description = "go"
+#    t.requester_id = 2
+#    t.ticket_type = 2
+#    t.priority = 2
+#    t.source = 1
+#    t.account_id = 1
+#    t.display_id = 8
+#    t.tags = [Helpdesk::Tag.new(:name => "hardware"), Helpdesk::Tag.new(:name => "printer")]
+#    
+#    @va_rules.each do |vr|
+#      puts "###############"
+#      puts vr.inspect
+#      puts vr.conditions.inspect
+#      puts "DOES IT MATCH #{vr.pass_through t}"
+#      puts "@@@@@@@@@@@@@@@"
+#    end
   end
 
   def new
