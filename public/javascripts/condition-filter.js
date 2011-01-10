@@ -48,55 +48,46 @@ var conditional_dom = function(filter){
 	}			
 	return c_dom;
 }
-	 
-var operator_types  = $H( {"email"       : ["is", "is_not", "contains", "not_contain"],
-			               "text"        : ["is", "is_not", "contains", "not_contain", "starts_with", "ends_with"],
-			               "choicelist"  : ["is", "is_not"]});
 
-var operator_list  = {"is"				:"Is", 
-					  "is_not" 			:"Is not", 
-                      "contains"   		:"Contains", 
-					  "not_contain"		:"Does not contain",
-					  "starts_with"		:"Starts with", 
-					  "ends_with"  		:"Ends with",
-					  "between"    		:"Between", 
-					  "between_range"   :"Between Range"}; 
-
-var preProcessCondition = function(){
-	operator_types.each(function(item){
+var preProcessCondition = function(types, list){
+	types = $H(types); 
+	types.each(function(item){
 		var listDrop = $A();
 		$A(item.value).each(function(pair){
-			var value = $H();
-			value.set("name", pair);
-			value.set("value", operator_list[pair]);
+			var value = {name : pair,  
+						 value: list[pair]};
 			listDrop.push(value);
 		})
-		operator_types.set(item.key, listDrop);
-	});
-	//console.log(operator_types);
+		types.set(item.key, listDrop);
+	});	
+	return types;
 };
-preProcessCondition();
 
 rules_filter = function(name, filter_data, parentDom, options){
 	var setting = {
 			init_feed	 : [],
 			add_dom		 : ".addchoice",
 			rule_dom	 : ".rule_list",
+			rem_dom		 : ".delete",
 			operators	 : false,
 			onRuleSelect : function(){
 												
 			} 
 		};
 	if ( options ) { 
-        $.extend( settings, options );
+        jQuery.extend( setting, options );
      }
 	
 	// Setting initial data elements	
-	var hg_data		= $H(),
-		name		= name || "default",		
+	var hg_data			= $H(),
+		parentDom		= parentDom,
+		operator_types	= setting.operators,
+		name			= name || "default",
+		hidden_			= null;
 	// Setting initial dom elements		
 		RULE_DOM		= parentDom + " " + setting.rule_dom,
 		ADD_DOM			= parentDom + " " + setting.add_dom;
+		
 	
 	// Private Methods
 	var domUtil = {
@@ -124,12 +115,49 @@ rules_filter = function(name, filter_data, parentDom, options){
 				// Adding a new Filter DOM element to the Filter Container				
 				var r_dom = domUtil.getContainer(name);			
 				jQuery.data(r_dom, "inner")
-					  .append(FactoryUI.dropdown(filter_data, "ru_"+name, "ruCls_"+name))
+					  .append(FactoryUI.dropdown(filter_data, "name", "ruCls_"+name))
 					  .append("<div />");
 					 
+				list_C = jQuery(parentDom).find(setting.rule_dom);
+				r_dom.appendTo(list_C);								
+			},
+		feed_data:
+			function(){
 				
-				r_dom.appendTo(RULE_DOM);
-								
+				
+			},
+		get_filter_list:
+			function(type, c_form){				
+			
+				var serialArray   = jQuery(c_form).serializeArray(),
+					serialHash    = $H(),
+					setValue 	  = [],
+				    tempConstruct = $H(),
+					type		  = type || "object";
+					flag		  = false;		
+				
+				serialArray.each(function(item){					
+					if(item.name == name || flag){
+						if(!serialHash.get(name)) 
+							serialHash.set(name, $A());	
+							
+						if (item.value == 'start') {
+							tempConstruct = $H();
+							flag = true;
+						}
+						else if (item.value == 'end') {
+							serialHash.get(name).push(tempConstruct.toObject());
+							flag = false;
+						}
+						else {
+							tempConstruct.set(item.name, item.value);
+						}			
+					}
+				});		
+				var current_filter = serialHash.get(name);
+				save_data = (type != 'json') ? current_filter.toObject() : current_filter.toJSON();
+				hidden_.val(save_data);				
+				return save_data;			
 			},
 		init: 
 			function(){				
@@ -148,9 +176,19 @@ rules_filter = function(name, filter_data, parentDom, options){
 	jQuery(document).ready(function(){	
 		// Init Constructor
 		var init = function(){			
-			jQuery(parentDom).prepend('<input type="hidden" name="'+name+'" value="" />');			
-			domUtil.init();		
+			hidden_ = jQuery('<input type="hidden" name="'+name+'_data" value="" />')
+							.prependTo(parentDom);	
 			
+			jQuery(parentDom).find(setting.rule_dom)
+							 .sortable({ items: "fieldset", containment: "parent", tolerance: "pointer", handle:"span.sort_handle"});
+			
+			/*
+			jQuery(parentDom).parents('form:first').submit(function(e){
+				//domUtil.get_filter_list('json', this);
+				//console.log(hidden_.val());
+				//return false;
+			});*/
+				
 			// Binding Events to Containers
 			// Filter on change action 
 			jQuery(parentDom+' .'+"ruCls_"+name)
@@ -161,11 +199,28 @@ rules_filter = function(name, filter_data, parentDom, options){
 							if(this.value != 0){
 								hg_item = hg_data.get(this.value);
 								if(hg_item.operatortype)
-								 	rule_drop.append(FactoryUI.dropdown(operator_types.get(hg_item.operatortype), "compare"))
+								 	rule_drop.append(FactoryUI.dropdown(operator_types.get(hg_item.operatortype), "operator"))
 								 
 								rule_drop.append(conditional_dom(hg_item));
 							}										
 						});
+						
+			jQuery(ADD_DOM)
+				.bind("click",
+						function(){
+							domUtil.add_dom();
+						});
+						
+			// Delete button action
+			jQuery(parentDom+' .delete')
+				.live("click", 
+						function(){
+							filter = jQuery(this).parent();
+							if(filter.parent().children().size() != 1)
+								filter.remove();										
+						});
+						
+			domUtil.init();		
 		};
 		init();			
 	});

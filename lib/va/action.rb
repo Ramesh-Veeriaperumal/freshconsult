@@ -3,7 +3,7 @@ class Va::Action
   
   def initialize(act_hash)
     @act_hash = act_hash
-    @action_key = act_hash[:action]
+    @action_key = act_hash[:name]
   end
   
   def value

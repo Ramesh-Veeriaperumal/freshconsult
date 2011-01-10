@@ -28,12 +28,12 @@ class VaRulesController < ApplicationController
   end
 
   def create
-    rule_hash = ActiveSupport::JSON.decode params[:save_json]
+    #rule_hash = ActiveSupport::JSON.decode params[:save_json]
     #puts " RULE_HASH for VA Save #{rule_hash.inspect}"
     #puts "And Rule's name is #{@va_rule.name}"
     
-    @va_rule.filter_data = rule_hash["conditions"]
-    @va_rule.action_data = rule_hash["actions"]
+    @va_rule.filter_data = ActiveSupport::JSON.decode params[:filter_data]
+    @va_rule.action_data = ActiveSupport::JSON.decode params[:action_data]
     
     if @va_rule.save
       flash[:notice] = "The virtual agent rule has been created."
@@ -90,6 +90,23 @@ class VaRulesController < ApplicationController
                                                    :operatortype => "text"}]
       
       @filter_defs   = ActiveSupport::JSON.encode filter_hash
+      
+      operator_types  = {:email       => ["is", "is_not", "contains", "not_contain"],
+                         :text        => ["is", "is_not", "contains", "not_contain", "starts_with", "ends_with"],
+                         :choicelist  => ["is", "is_not"]}
+      
+      @op_types        = ActiveSupport::JSON.encode operator_types
+      
+      operator_list  =  {:is              =>  "Is",
+                         :is_not          =>  "Is not",
+                         :contains        =>  "Contains",
+                         :not_contain     =>  "Does not contain",
+                         :starts_with     =>  "Starts with",
+                         :ends_with       =>  "Ends with",
+                         :between         =>  "Between",
+                         :between_range   =>  "Between Range"}; 
+      
+      @op_list        = ActiveSupport::JSON.encode operator_list
       
       condition_hash  = [{:name => "is"          , :value => "is"         }, {:name => "is_not"          , :value => "is not"}, 
                          {:name => "contains"    , :value => "Contains"   }, {:name => "does_not_contain", :value => "Does not contain"}, 

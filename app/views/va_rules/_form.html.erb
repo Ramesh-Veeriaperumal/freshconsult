@@ -6,19 +6,21 @@
 		action_Array	= $A(<%= @action_defs %>),
 		Filter_feed 	= $A(<%= @filter_input %>),
 		Action_feed		= $A(<%= @action_input %>);	
-		
-	rules_filter("rules", filter_Array, "#test_filter");
 	
-	var filter_plugin = initRuleList(filter_Array, condition_Array, action_Array, "#RuleList", "#add_filter", "#ActionList", "#add_action", "#VirtualAgent", Filter_feed, Action_feed);
+	
+	var op_hash = preProcessCondition(<%= @op_types %>, <%= @op_list %>);
+	//var filter_plugin = initRuleList(filter_Array, condition_Array, action_Array, "#RuleList", "#add_filter", "#ActionList", "#add_action", "#VirtualAgent", Filter_feed, Action_feed);
 	
 	jQuery(document).ready(function(){
-		jQuery("#RuleList, #ActionList").sortable({ items: "fieldset", containment: "parent", tolerance: "pointer", handle:"span.sort_handle"});		
+		var filters = new rules_filter("filter", filter_Array, "#filterDOM", {"operators": op_hash});
+		var actions = new rules_filter("action", action_Array, "#actionDOM");
+		//jQuery("#RuleList, #ActionList").sortable({ items: "fieldset", containment: "parent", tolerance: "pointer", handle:"span.sort_handle"});		
 		
 		jQuery("#VirtualAgent")		
 			.submit(function(){
 				// Passing the value into a hidden field				
-				this['save_json'].value = filter_plugin.get_filter_list("json");
-				//console.log(this['save_json'].value);
+				filters.get_filter_list("json", this);
+				actions.get_filter_list("json", this);
 				return true;
 			})
 			.validate({
@@ -59,22 +61,15 @@
 				</label>
 				<%= f.text_area :description, :class => "smallpara" %>
 			</li>
-			<li class="conditionset" id="test_filter" style="display:none;">				
-				<div class="rule_list"></div>
-				<fieldset class="addchoice">
-			         Add new condition <img alt="Add New choice" class="add" src="/images/add.png" />
-			    </fieldset>				
-			</li>
 			<li><span class="seperator"></span></li>								
 			<li class="choicelist">
 				<label>When should this rule be applied?</label>
 				<%= f.radio_button  :match_type, 'any', :class => "radio" %> <%= f.label :match_type_any, "Match Any", :class => "radiolabel" %>
 				<%= f.radio_button  :match_type, 'all', :class => "radio" %> <%= f.label :match_type_all, "Match All", :class => "radiolabel" %>
 			</li>			
-			<li class="conditionset">			
+			<li class="conditionset" id="filterDOM">			
 				<div id="RuleList" class="rule_list"></div>
-				<input type="hidden" name="filter_data" id="filter_data" value="" />
-				<fieldset class="addchoice" id="add_filter">
+				<fieldset class="addchoice">
 			         Add new condition <img alt="Add New choice" class="add" src="/images/add.png" />
 			     </fieldset>			
 			</li>
@@ -82,9 +77,9 @@
 			<li class="choicelist">								
 				<label>Actions to Perform?</label>				
 			</li>
-			<li class="conditionset">
+			<li class="conditionset" id="actionDOM">
 				<div id="ActionList" class="rule_list"></div>
-				<fieldset class="addchoice" id="add_action">
+				<fieldset class="addchoice">
 			        Add new action <img alt="Add New action" class="add" src="/images/add.png" />
 			    </fieldset>		
 			</li>
