@@ -361,10 +361,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def from_email
     requester.email if requester
   end
-  
-  def to_email #by shan temp remove this...
-    email
-  end
   #virtual agent things end here..
   
   def pass_thro_biz_rules
