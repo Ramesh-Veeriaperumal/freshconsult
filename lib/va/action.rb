@@ -25,8 +25,22 @@ class Va::Action
             :name => tag_name, :account_id => act_on.account_id)
         act_on.tags << tag
       end
-      
     end
+
+    def send_email_to_requester(act_on)
+      Helpdesk::TicketNotifier.deliver_email_to_requester(act_on, "Sending email to requester as part of 
+                VA rule action.. #{value}")
+    end
+    
+    def send_email_to_group(act_on)
+      #TO DO..
+    end
+
+    def send_email_to_agent(act_on)
+      Helpdesk::TicketNotifier.deliver_internal_email(act_on, act_on.responder.email, "You have got an mail!")
+    end
+
+
 #    def priority(act_on)
 #      act_on.priority = act_hash[:value]
 #    end

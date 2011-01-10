@@ -9,7 +9,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   #by Shan temp
   attr_accessor :email
-  after_create :refresh_display_id
+  after_create :refresh_display_id, :pass_thro_biz_rules
   before_create :populate_requester
 
   before_validation_on_create :set_tokens
@@ -357,6 +357,29 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def tag_names
     tags.collect { |tag| tag.name }
   end
+  
+  def from_email
+    requester.email if requester
+  end
+  
+  def to_email #by shan temp remove this...
+    email
+  end
   #virtual agent things end here..
+  
+  def pass_thro_biz_rules
+    #Va::VirtualAgent.send_later(:pass_thro_biz_rules, self)
+    send_later(:delayed_rule_check)
+  end
+  
+  def delayed_rule_check
+    self.save! if check_rules
+  end
+  
+  def check_rules
+    account.va_rules.each do |vr|
+      return true if vr.pass_through(self)
+    end
+  end
  
 end

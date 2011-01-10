@@ -8,11 +8,16 @@ class VaRulesController < ApplicationController
     @va_rules = scoper.all
     
     t = Helpdesk::Ticket.new
-    t.subject = "Number"
-    t.status = "open"
+    t.email = "itsm@test.freshdesk.com"
+    t.subject = "Number test"
+    t.status = 1
     t.description = "go"
-    #t.ticket_type = 2
-    t.tags = [Helpdesk::Tag.new(:name => "hardware"), Helpdesk::Tag.new(:name => "software")]
+    t.requester_id = 2
+    t.ticket_type = 2
+    t.priority = 2
+    t.source = 2
+    t.account_id = 1
+    t.tags = [Helpdesk::Tag.new(:name => "hardware"), Helpdesk::Tag.new(:name => "printer")]
     
     @va_rules.each do |vr|
       puts "###############"
@@ -77,7 +82,7 @@ class VaRulesController < ApplicationController
                                                    :operatortype => "text"},
                         {:name => "priority"     , :value => "Priority",      :domtype => "dropdown", :choices => Helpdesk::Ticket::PRIORITY_NAMES_BY_KEY.sort, 
                                                    :operatortype => "choicelist"},                        
-                        {:name => "type"         , :value => "Type",          :domtype => "dropdown", :choices => Helpdesk::Ticket::TYPE_NAMES_BY_KEY.sort, 
+                        {:name => "ticket_type"         , :value => "Type",          :domtype => "dropdown", :choices => Helpdesk::Ticket::TYPE_NAMES_BY_KEY.sort, 
                                                    :operatortype => "choicelist"},
                         {:name => "status"       , :value => "Status",        :domtype => "dropdown", :choices => Helpdesk::Ticket::STATUS_NAMES_BY_KEY.sort, 
                                                    :operatortype => "choicelist"},
