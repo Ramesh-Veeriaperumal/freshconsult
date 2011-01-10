@@ -13,6 +13,31 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
     reply_to_ticket(ticket)
   end
   
+  def email_to_requester(ticket, content)
+    body(content)
+    reply_to_ticket(ticket)
+  end
+  
+  def internal_email(ticket, receips, content)
+    subject       "Notice for the ticket #{ticket.encode_display_id}"
+    recipients    receips
+    body(content)
+    do_send(ticket)
+  end
+  
+  def reply_to_ticket(ticket)
+    subject       Helpdesk::EMAIL[:reply_subject]  + " #{ticket.encode_display_id}"
+    recipients    ticket.requester.email
+    do_send(ticket)
+  end
+  
+  def do_send(ticket)
+    from          ticket.account.default_email
+    headers       "Reply-to" => "#{ticket.account.default_email}"
+    sent_on       Time.now
+    content_type  "text/plain"
+  end
+  
   def receive(email)
     puts "Inside RECEIVE MAIL"
     retried = false
@@ -63,15 +88,6 @@ protected
       add_email_to_ticket(ticket, email, media)
       Helpdesk::TicketNotifier.deliver_autoreply(ticket) if ticket && !ticket.spam
     end
-  end
-
-  def reply_to_ticket(ticket)
-    subject       Helpdesk::EMAIL[:reply_subject]  + " #{ticket.encode_display_id}"
-    recipients    ticket.requester.email
-    from          ticket.account.default_email
-    headers       "Reply-to" => "#{ticket.account.default_email}"
-    sent_on       Time.now
-    content_type  "text/plain"
   end
 
   def create_ticket(email, media)

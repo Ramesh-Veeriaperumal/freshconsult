@@ -8,11 +8,16 @@ class VaRulesController < ApplicationController
     @va_rules = scoper.all
     
     t = Helpdesk::Ticket.new
-    t.subject = "Number"
-    t.status = "open"
+    t.email = "itsm@test.freshdesk.com"
+    t.subject = "Number test"
+    t.status = 1
     t.description = "go"
-    #t.ticket_type = 2
-    t.tags = [Helpdesk::Tag.new(:name => "hardware"), Helpdesk::Tag.new(:name => "software")]
+    t.requester_id = 2
+    t.ticket_type = 2
+    t.priority = 2
+    t.source = 2
+    t.account_id = 1
+    t.tags = [Helpdesk::Tag.new(:name => "hardware"), Helpdesk::Tag.new(:name => "printer")]
     
     @va_rules.each do |vr|
       puts "###############"
@@ -44,10 +49,20 @@ class VaRulesController < ApplicationController
   end
 
   def edit
+    @filter_input = ActiveSupport::JSON.encode @va_rule.filter_data
+    @action_input = ActiveSupport::JSON.encode @va_rule.action_data
   end
 
   def update
-    redirect_to va_rules_path
+    @va_rule.filter_data = ActiveSupport::JSON.decode params[:filter_data]
+    @va_rule.action_data = ActiveSupport::JSON.decode params[:action_data]
+    
+    if @va_rule.update_attributes(params[:va_rule])
+      flash[:notice] = "The virtual agent rule has been updated."
+      redirect_to va_rules_path
+    else
+      render :action => 'edit'
+    end
   end
 
   def destroy
@@ -77,7 +92,7 @@ class VaRulesController < ApplicationController
                                                    :operatortype => "text"},
                         {:name => "priority"     , :value => "Priority",      :domtype => "dropdown", :choices => Helpdesk::Ticket::PRIORITY_NAMES_BY_KEY.sort, 
                                                    :operatortype => "choicelist"},                        
-                        {:name => "type"         , :value => "Type",          :domtype => "dropdown", :choices => Helpdesk::Ticket::TYPE_NAMES_BY_KEY.sort, 
+                        {:name => "ticket_type"         , :value => "Type",          :domtype => "dropdown", :choices => Helpdesk::Ticket::TYPE_NAMES_BY_KEY.sort, 
                                                    :operatortype => "choicelist"},
                         {:name => "status"       , :value => "Status",        :domtype => "dropdown", :choices => Helpdesk::Ticket::STATUS_NAMES_BY_KEY.sort, 
                                                    :operatortype => "choicelist"},
@@ -115,20 +130,20 @@ class VaRulesController < ApplicationController
       @condition_defs = ActiveSupport::JSON.encode condition_hash
       
       action_hash     = [{:name => 0              , :value => "--- Click to Select Action ---"},
-                         {:name => "priority"     , :value => "Set Priority as", :domtype => "dropdown" , :choices => Helpdesk::Ticket::PRIORITY_NAMES_BY_KEY.sort },
-                         {:name => "ticket_type"  , :value => "Set Type as"    , :domtype => "dropdown" , :choices => Helpdesk::Ticket::TYPE_NAMES_BY_KEY.sort },
-                         {:name => "status"       , :value => "Set Status as"  , :domtype => "dropdown" , :choices => Helpdesk::Ticket::STATUS_NAMES_BY_KEY.sort},
+                         {:name => "priority"     , :value => "Set Priority as"  , :domtype => "dropdown", :choices => Helpdesk::Ticket::PRIORITY_NAMES_BY_KEY.sort },
+                         {:name => "ticket_type"  , :value => "Set Type as"      , :domtype => "dropdown", :choices => Helpdesk::Ticket::TYPE_NAMES_BY_KEY.sort },
+                         {:name => "status"       , :value => "Set Status as"    , :domtype => "dropdown", :choices => Helpdesk::Ticket::STATUS_NAMES_BY_KEY.sort},
                          {:name => 0              , :value => "------------------------------"},                                                                                           
-                         {:name => "add_tag"      , :value => "Add Tag(s)"  , :domtype => 'autocompelete', :autocompelete_url => "allemailsurl"},
+                         {:name => "add_tag"      , :value => "Add Tag(s)"       , :domtype => 'autocompelete', :autocompelete_url => "allemailsurl"},
                          {:name => 0              , :value => "------------------------------"},
-                         {:name => "responder_id" , :value => "Assign to Agent"  , :domtype => 'dropdown', :choices => [{:name => "1", :value => "Edward"}, 
-                                                                                                                           {:name => "2", :value => "John Patrick"},
-                                                                                                                           {:name => "3", :value => "Susan Renolds"},
-                                                                                                                           {:name => "4", :value => "Gary Matheew"}]},
-                         {:name => "group_id" , :value => "Assign to Group"  , :domtype => 'dropdown', :choices => [{:name => "1", :value => "Hardware"}, 
-                                                                                                                           {:name => "2", :value => "Software"},
-                                                                                                                           {:name => "3", :value => "Tech support"},
-                                                                                                                           {:name => "4", :value => "Product Group"}]},
+                         {:name => "responder_id" , :value => "Assign to Agent"  , :domtype => 'dropdown', :choices => [["1", "Edward"], 
+                                                                                                                        ["2", "John Patrick"],
+                                                                                                                        ["3", "Susan Renolds"],
+                                                                                                                        ["4", "Gary Matheew"]]},
+                         {:name => "group_id"     , :value => "Assign to Group"  , :domtype => 'dropdown', :choices => [["1", "Hardware"], 
+                                                                                                                        ["2", "Software"],
+                                                                                                                        ["3", "Tech support"],
+                                                                                                                        ["4", "Product Group"]]},
                          {:name => 0              , :value => "------------------------------"},
                          {:name => "send_email_to_group" , :value => "Send Email to Group"  , :domtype => 'autocompelete', :autocompelete_url => "groupemailsurl"},
                          {:name => "send_email_to_agent" , :value => "Send Email to Agent"  , :domtype => 'autocompelete', :autocompelete_url => "agentemailsurl"},

@@ -1,3 +1,6 @@
+#By shan .. Need to introduce delayed jobe here.
+#By shan must
+
 class EmailController < ApplicationController
   skip_before_filter :verify_authenticity_token
   
@@ -41,6 +44,7 @@ class EmailController < ApplicationController
         :subject => params[:subject],
         :description => params[:text],
         :email => from_email[:email],
+        :to_email => to_email[:email],
         #:name => email.friendly_from,
         :status => Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open],
         :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email]

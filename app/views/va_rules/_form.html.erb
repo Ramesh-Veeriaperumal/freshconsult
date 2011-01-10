@@ -12,8 +12,8 @@
 	//var filter_plugin = initRuleList(filter_Array, condition_Array, action_Array, "#RuleList", "#add_filter", "#ActionList", "#add_action", "#VirtualAgent", Filter_feed, Action_feed);
 	
 	jQuery(document).ready(function(){
-		var filters = new rules_filter("filter", filter_Array, "#filterDOM", {"operators": op_hash});
-		var actions = new rules_filter("action", action_Array, "#actionDOM");
+		var filters = new rules_filter("filter", filter_Array, "#filterDOM", {"operators": op_hash, "init_feed":Filter_feed});
+		var actions = new rules_filter("action", action_Array, "#actionDOM", {"init_feed":Action_feed});
 		//jQuery("#RuleList, #ActionList").sortable({ items: "fieldset", containment: "parent", tolerance: "pointer", handle:"span.sort_handle"});		
 		
 		jQuery("#VirtualAgent")		
@@ -70,7 +70,7 @@
 			<li class="conditionset" id="filterDOM">			
 				<div id="RuleList" class="rule_list"></div>
 				<fieldset class="addchoice">
-			         Add new condition <img alt="Add New choice" class="add" src="/images/add.png" />
+			         <p>Add new condition</p> <img alt="Add New choice" class="add" src="/images/add.png" />
 			     </fieldset>			
 			</li>
 			<li><span class="seperator"></span></li>
@@ -80,7 +80,7 @@
 			<li class="conditionset" id="actionDOM">
 				<div id="ActionList" class="rule_list"></div>
 				<fieldset class="addchoice">
-			        Add new action <img alt="Add New action" class="add" src="/images/add.png" />
+			        <p>Add new action</p> <img alt="Add New action" class="add" src="/images/add.png" />
 			    </fieldset>		
 			</li>
 		</ul>

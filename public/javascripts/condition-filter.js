@@ -63,6 +63,9 @@ var preProcessCondition = function(types, list){
 	return types;
 };
 
+// Base rule function for managing multiple rule based UI components
+// used in Virtual Agents [filters and actions], Senario automation
+
 rules_filter = function(name, filter_data, parentDom, options){
 	var setting = {
 			init_feed	 : [],
@@ -100,7 +103,7 @@ rules_filter = function(name, filter_data, parentDom, options){
 			},
 		getContainer:
 			function(name){
-				var inner = jQuery("<div />");
+				var inner = jQuery("<div class='controls' />");
 				var outer = jQuery("<fieldset />")
 								.append("<input type=\"hidden\" name=\""+name+"\" value=\"start\" />")
 								.append("<span class='sort_handle'></span>")
@@ -122,10 +125,26 @@ rules_filter = function(name, filter_data, parentDom, options){
 				r_dom.appendTo(list_C);								
 			},
 		feed_data:
-			function(){
-				
-				
+			function(dataFeed){
+				dataFeed.each(function(rule){
+					var r_dom 	= domUtil.getContainer(name);			
+					var inner 	= jQuery("<div />");
+										
+					if(rule.operator){	
+						opType = hg_data.get(rule.name).operatortype;
+						inner.append(FactoryUI.dropdown(operator_types.get(opType), "operator").val(rule.operator));
+					}	
+					inner.append(conditional_dom(hg_data.get(rule.name)).val(rule.value));
+									
+					jQuery.data(r_dom, "inner")
+						  .append(FactoryUI.dropdown(filter_data, "name", "rule_dropdown").val(rule.name))					  	
+						  .append(inner);	
+								
+					list_C = jQuery(parentDom).find(setting.rule_dom);
+					r_dom.appendTo(list_C);
+				});				
 			},
+		
 		get_filter_list:
 			function(type, c_form){				
 			
@@ -162,7 +181,11 @@ rules_filter = function(name, filter_data, parentDom, options){
 		init: 
 			function(){				
 				domUtil.add_to_hash(filter_data);
-				domUtil.add_dom();	
+				console.log(setting.init_feed.size());
+				if(setting.init_feed.size())
+					domUtil.feed_data(setting.init_feed);
+				else
+					domUtil.add_dom();	
 			}
 		};
 	
@@ -227,207 +250,3 @@ rules_filter = function(name, filter_data, parentDom, options){
 	
 	return pub_Methods;
 }
-
-initRuleList = function(filter_list, condition_list, action_list, Dom, add_filter, ActionDom, add_action, c_form, feed_filter, feed_actions){
-	
-	// Private JQuery Dom Elements
-	var container   	= jQuery("<fieldset />");
-	var filter_hash		= $H();
-	var condition_hash  = $H();
-	var action_hash		= $H();
-	
-										
-	// Private Methods
-	var domUtil = {
-		push_to_hash:
-			function(hash, option){
-				hash.set(option.name, option);
-			},
-		convert_to_dom:
-			function(){
-				// Filter List Dropdown
-				filter_list.each(function(rule_option){
-					domUtil.push_to_hash(filter_hash, rule_option);					
-				});					
-				// Condition List Dropdown		
-				condition_list.each(function(condition){
-					domUtil.push_to_hash(condition_hash, condition);					
-				});				
-				// Action List Dropdown
-				action_list.each(function(action){
-					domUtil.push_to_hash(action_hash, action);
-				});				
-			},			
-		getContainer:
-			function(name){
-				var inner = jQuery("<div />");
-				var outer = jQuery("<fieldset />")
-								.append("<input type=\"hidden\" name=\""+name+"\" value=\"start\" />")
-								.append("<span class='sort_handle'></span>")
-								.append("<img class=\"delete\" src=\"/images/delete.png\" />")
-								.append(inner)											 
-								.append("<input type=\"hidden\" name=\""+name+"\" value=\"end\" />");
-				jQuery.data(outer, "inner", inner);
-				return outer;								
-			},
-		add_new_action: 
-			function(){
-				// Adding a new Filter DOM element to the Filter Container
-				var filter_dom = domUtil.getContainer("actions");			
-				jQuery.data(filter_dom, "inner")
-					  .append(FactoryUI.dropdown(action_list, "action", "action_dropdown"))
-					  .append("<div />");
-					 
-				filter_dom.appendTo(ActionDom);				
-			},
-		add_new_filter:
-			function(){
-				// Adding a new Action DOM element to the Action Container
-				var filter_dom = domUtil.getContainer("conditions");			
-				jQuery.data(filter_dom, "inner")
-					  .append(FactoryUI.dropdown(filter_list, "critera", "rule_dropdown"))
-					  .append("<div />");
-					 
-				filter_dom.appendTo(Dom);				
-			},		
-		get_filter_list:
-			function(type){				
-				var serialArray   = jQuery(c_form).serializeArray(),
-					serialHash    = $H(),
-					setValue 	  = [],
-				    tempConstruct = $H(),
-					type		  = type || "object";
-				
-				//console.log(serialArray);
-				serialArray.each(function(item){					
-					if(item.name == 'conditions' || item.name == 'actions')
-						setValue = item;
-						
-					switch (setValue.name){
-						case 'conditions':
-						case 'actions':
-							if(!serialHash.get(setValue.name)) 
-								serialHash.set(setValue.name, $A());						
-						    
-							if (item.value == 'start') {
-								tempConstruct = $H();
-							}								
-							if (item.name != setValue.name) {
-									tempConstruct.set(item.name, item.value);
-							}
-							if(item.value == 'end'){
-								//tempConstruct.set('va_values', tempValues);						
-								serialHash.get(setValue.name).push(tempConstruct.toObject());
-							}																
-						break;
-						default:							
-							serialHash.set(item.name, item.value);
-						break;
-					}					
-				});
-				returnVar = (type != 'json') ? serialHash.toObject() : serialHash.toJSON();
-				return returnVar;			
-			},
-		feed_filters:function(filter_data){
-			filter_data.each(function(rule){
-				var filter_dom = domUtil.getContainer("conditions");			
-				var inner 	   = jQuery("<div />")
-								.append(FactoryUI.dropdown(condition_list, "compare").val(rule.compare))
-								.append(conditional_dom(filter_hash.get(rule.critera)).val(rule.value));
-								
-				jQuery.data(filter_dom, "inner")
-					  .append(FactoryUI.dropdown(filter_list, "critera", "rule_dropdown").val(rule.critera))					  	
-					  .append(inner);	
-							
-				filter_dom.appendTo(Dom);		
-			});
-		},
-		feed_actions:function(action_data){
-			action_data.each(function(rule){
-				var action_dom = domUtil.getContainer("actions");			
-				var inner 	   = jQuery("<div />")
-								.append(conditional_dom(action_hash.get(rule.action)).val(rule.value));
-								
-				jQuery.data(action_dom, "inner")
-					  .append(FactoryUI.dropdown(action_list, "action", "action_dropdown").val(rule.action))			  	
-					  .append(inner);	
-							
-				action_dom.appendTo(ActionDom);		
-			});
-		},
-		init: 
-			function(){
-				domUtil.convert_to_dom();
-				if(!feed_filter.size())
-					domUtil.add_new_filter();
-				else
-					domUtil.feed_filters(feed_filter);
-				
-				if(!feed_actions.size())
-					domUtil.add_new_action();
-				else
-					domUtil.feed_actions(feed_actions);		
-			}
-	}	 
-	
-	// Public Methods and Attributes
-	var pub_Methods = {		
-		add_filter:domUtil.add_new_filter,
-		get_filter_list:domUtil.get_filter_list
-	}
-	
-	// Applying Events and on Window ready initialization
-	jQuery(document).ready(function(){	
-		// Init Constructor
-		var init = function(){
-			domUtil.init();	
-			
-			// Binding Events to Containers
-			// Filter on change action
-			jQuery(Dom+' .rule_dropdown')
-				.live("change", 
-						function(){
-							var rule_drop = jQuery(this).next().empty();								
-							if(this.value != 0){
-								 rule_drop.append(FactoryUI.dropdown(condition_list, "compare"))
-								 		  .append(conditional_dom(filter_hash.get(this.value)));
-							}										
-						});
-						
-			// Action on change action			
-			jQuery(ActionDom+' .action_dropdown')
-				.live("change",
-						function(){
-							var action_drop = jQuery(this).next().empty();
-							if(this.value != 0){
-								action_drop
-									//.append("<label> To </lable>")	
-									.append(conditional_dom(action_hash.get(this.value)));
-							}
-						});
-			
-			// Delete button action
-			jQuery(Dom+' .delete, ' + ActionDom+' .delete')
-				.live("click", 
-						function(){
-							filter = jQuery(this).parent();
-							if(filter.parent().children().size() != 1)
-								filter.remove();										
-						});
-			
-			jQuery(add_filter)
-				.bind("click", 
-						function(){
-							domUtil.add_new_filter();					
-						});				
-			jQuery(add_action)
-				.bind("click", 
-						function(){
-							domUtil.add_new_action();					
-						});
-		};
-		init();			
-	});
-	
-	return pub_Methods;
- }

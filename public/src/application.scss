@@ -1871,19 +1871,7 @@ $lightBase:lighten($base, 5%);
 			background:#ffffff;	
 		}	
 	}
-	fieldset.addchoice{		
-			padding:5px;			
-			color:#999999;
-			cursor:pointer;
-			img{
-				top:0px;
-				position:absolute;
-				right:8px;
-			} 
-	} 
-	fieldset.addchoice:hover{
-		background:#f8f8f8;
-	}	
+		
 	.choicelist{
 		label{
 			font-size:1.1em;
@@ -1944,12 +1932,21 @@ $lightBase:lighten($base, 5%);
 		font-size:1em;
 		color:red;
 	}
+	fieldset.addchoice{		
+		padding:0px;			
+		color:#999999;
+		cursor:pointer;
+		
+	} 
+	fieldset.addchoice:hover{
+		background:#f8f8f8;
+	}
 	.conditionset{
 		border:1px solid #cfcfcf;
 		padding:0px;
 		fieldset{
 			@include pie-clearfix;			
-			padding:5px 0px 5px 8px;
+			padding:5px 0px 5px 4px;
 			border-bottom:1px solid #cfcfcf;
 			background:#efefef;
 			position:relative;
@@ -1960,18 +1957,23 @@ $lightBase:lighten($base, 5%);
 				margin:2px 4px;
 			}
 			.add, .delete{
-				float:right;
-				position:relative;
+				position:absolute;
+				margin:0px;
+				padding:0px;
 				cursor:pointer;
+				right:10px;
+				top:5px;
 			}
-			.add{
-				top:2px;
+			div.controls{
+				width:95%;
 			}
+			
 			input.text{
-				width:200px;
+				width:300px;
+				font-size:10pt;
 			}
 			textarea.paragraph{
-				width:500px;
+				width:400px;
 			}
 			
 			span{
@@ -1979,7 +1981,7 @@ $lightBase:lighten($base, 5%);
 			}
 			span.sort_handle{
 				position:relative;
-				left:1px;
+				left:0px;
 				top:1px;
 				width:25px;
 				height:25px;
