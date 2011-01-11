@@ -9,6 +9,9 @@ module VAConfig
   #    return params 
   #  end
   
+  BUSINESS_RULE = 1
+  SCENARIO_AUTOMATION = 2
+  
   def self.handler(field)
     HANDLERS[DEFAULT_FIELDS[field][:handler].to_sym]
   end

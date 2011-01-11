@@ -77,7 +77,11 @@ class VaRulesController < ApplicationController
     def scoper
       current_account.va_rules
     end
-
+    
+    def build_object #Some bug with build during new, so moved here from ModelControllerMethods
+      @va_rule = params[:va_rule].nil? ? VARule.new : scoper.build(params[:va_rule])
+    end
+    
     def load_filter_config
       filter_hash    = [{:name => 0              , :value => "--- Click to Select Filter ---"},
                         {:name => "from_email"   , :value => "From Email", :domtype => "autocompelete", :autocompelete_url => "allemailsurl", 

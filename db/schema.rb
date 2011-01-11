@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110110055201) do
+ActiveRecord::Schema.define(:version => 20110111065942) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -561,6 +561,7 @@ ActiveRecord::Schema.define(:version => 20110110055201) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "account_id"
+    t.integer  "rule_type"
   end
 
   create_table "virtual_agents", :force => true do |t|
