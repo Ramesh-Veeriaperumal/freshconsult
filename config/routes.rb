@@ -24,6 +24,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :ticket_fields, :only => :index
   map.resources :email, :only => [:new, :create]
   map.resources :va_rules
+  map.resources :automations
   
   #SAAS copy starts here
   map.with_options(:conditions => {:subdomain => AppConfig['admin_subdomain']}) do |subdom|
