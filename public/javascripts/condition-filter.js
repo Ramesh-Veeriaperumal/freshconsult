@@ -205,12 +205,12 @@ rules_filter = function(name, filter_data, parentDom, options){
 			jQuery(parentDom).find(setting.rule_dom)
 							 .sortable({ items: "fieldset", containment: "parent", tolerance: "pointer", handle:"span.sort_handle"});
 			
-			/*
+			
 			jQuery(parentDom).parents('form:first').submit(function(e){
-				//domUtil.get_filter_list('json', this);
+				domUtil.get_filter_list('json', this);
 				//console.log(hidden_.val());
 				//return false;
-			});*/
+			});
 				
 			// Binding Events to Containers
 			// Filter on change action 

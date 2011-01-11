@@ -1,16 +1,90 @@
-<div class="pageContent"> 
-	<h3 class="content_title">Virtual Agent - Rules</h3>
-	<div class="actions_bar">		
-		<%= link_to "<img src='/images/add.png' /> New Rule", new_va_rule_path, :class => "button"  %> 
-		<a href="#" class="button">Delete</a>
+<script type="text/javascript">
+	jQuery(document).ready(function(e){
+		jQuery('div#Sortable ul.admin_list')
+				.sortable({
+							containment: "parent", 
+							tolerance: "pointer"
+						});
+		
+		jQuery("#Reorder").click(function(e){
+			jQuery("#normal").hide();
+			jQuery(this).hide();			
+			jQuery("#Sortable").fadeIn(300);		
+		});		
+		
+		jQuery("#reorder_cancel").click(function(e){
+			jQuery("#Sortable").hide();
+			jQuery("#normal").fadeIn(300);
+			jQuery("#Reorder").show();								
+		});
+		
+		jQuery("#Reorderform").submit(function(e){
+			var position_hash = $A();	
+			jQuery
+				.each(jQuery("div#Sortable ul.admin_list li"), function(index, item){
+						position_hash.push({
+							rule_id:item.getAttribute("ruleid"),
+							position:index
+						})
+				});
+			
+			this['reorderlist'].value = position_hash.toJSON();
+			//jQuery("#Sortable").hide();
+			//jQuery("#normal").fadeIn(300);
+			//jQuery("#Reorder").show();								
+		});
+	});
+</script>
+
+<% content_for :sidebar do %>
+	<div class="rightSubContainers">
+		<h3 class="title">Virtual Agent</h3>
+		<div class="help_text">
+		"Virtual agent help text"			
+		</div>
 	</div>
-	<ul class="virtual_agents">
+<% end %>
+
+<div class="pageContent">	
+	<div class="title_bar_grey">
+		<div class="floatr">
+			<!--%= link_to "Delete", "", :class => "button" %-->
+			<a href="javascript:void(0)" class="button" id="Reorder">Reorder</a>
+			<%= link_to "<img src='/images/add.png' /> New Rule", new_va_rule_path, :class => "fdbutton"  %>
+		</div>	 
+		<h3 class="title">Virtual Agent - Rules</h3>		
+	</div>
+	<ul class="admin_list" id="normal">
 		<% @va_rules.each do |va_rule| %>
-			<li>
-				<input type="checkbox" class="checkbox" />
-				<%= link_to(h(va_rule.name), edit_va_rule_path(va_rule)) %>
-				<%= h va_rule.description %>
+			<li class="<%=cycle('stripe', '') %>"> 
+				<div class="item_actions">
+					<%= link_to('delete', va_rule, :method => 'delete', :confirm => 'Are you sure you want to delete this rule', :class => "button" ) %>					
+					<%= link_to('deactivate', '', :class => "button") %>
+					<%= link_to('edit', edit_va_rule_path(va_rule), :class => "button") %> 					
+				</div>
+				<%= link_to(h(va_rule.name), edit_va_rule_path(va_rule), :class => "item_info") %>
+				<div><%= h va_rule.description %></div>				
 			</li>
 		<% end %>
 	</ul>
+	<div class="sortable" id="Sortable" style="display:none;">
+		<div class="title_bar_grey">				
+			<h3 class="title">Reorder</h3>
+		</div>
+		<form action="#" id="Reorderform">
+			<input name="reorderlist" type="hidden" value="helper" />
+			<ul class="admin_list">
+				<% @va_rules.each do |va_rule| %>
+					<li ruleid="<%=va_rule.id%>"> 
+						<span class="sort_handle"></span>
+						<%= h(va_rule.name) %> 
+					</li>
+				<% end %>
+			</ul>
+			<div class="actions">
+				<a href="javascript:void(0)" class="fdbutton grey" id="reorder_cancel">Cancel</a>
+				<input type="submit" class="fdbutton" id="reorder_done" value="Save" />				
+			</div>
+		</form>
+	</div>
 </div>
