@@ -66,9 +66,6 @@ class VaRulesController < ApplicationController
     end
   end
 
-  def destroy
-  end
-
   protected
     def set_selected_tab
       @selected_tab = "Admin"

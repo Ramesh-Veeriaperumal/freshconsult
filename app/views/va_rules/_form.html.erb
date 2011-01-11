@@ -17,12 +17,6 @@
 		//jQuery("#RuleList, #ActionList").sortable({ items: "fieldset", containment: "parent", tolerance: "pointer", handle:"span.sort_handle"});		
 		
 		jQuery("#VirtualAgent")		
-			.submit(function(){
-				// Passing the value into a hidden field				
-				filters.get_filter_list("json", this);
-				actions.get_filter_list("json", this);
-				return true;
-			})
 			.validate({
 				rules:{
 					vagent_name: "required"			
