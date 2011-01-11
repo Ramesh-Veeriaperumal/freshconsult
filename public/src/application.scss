@@ -486,9 +486,8 @@ h2.content_title{
 }
 
 .pageContent{
-	margin:0px;	
-	padding:0px 20px; 
-	
+	margin:10px 20px;	
+	padding:0px 0px; 
 	ul.activityfeed{ 
 		padding:0px;	
 		@include no-bullets;		 
@@ -821,8 +820,10 @@ select{
 }
 
 .actions_bar{
-	margin:4px 0px 4px 0px;
-	padding:2px 6px;
+	margin:10px 0px 4px 0px;
+	display:block;
+	@include corners(6px);
+	padding:2px 4px;
 	background-color:#efefef;
 	border:1px solid #efefef;
 	border-bottom:1px solid #cfcfcf;
@@ -830,6 +831,15 @@ select{
 	ul{ 
 		@include horizontal-list; 
 	} 	
+}
+
+
+.floatr{
+	float:right;
+}
+
+.alignright{
+	text-align:right;
 }
 
 ul.secondary-actions{
@@ -976,7 +986,7 @@ div.leader-right{
 }
 .grey{
 	@include vertical-gradient(#f1f5ed, #dededd);
-	color:#999999 !important;
+	color:#777777 !important;
 }
 	
 .button {
@@ -1979,16 +1989,7 @@ $lightBase:lighten($base, 5%);
 			span{
 				margin:0px; padding:0px;
 			}
-			span.sort_handle{
-				position:relative;
-				left:0px;
-				top:1px;
-				width:25px;
-				height:25px;
-				cursor:move;
-				background:url(/images/sort_handle.gif) no-repeat;
-				@include corners(5px);
-			}
+			
 			span.sort_handle:hover{
 				background-color:#fafafa;
 			}
@@ -2003,6 +2004,17 @@ $lightBase:lighten($base, 5%);
 		}
 		
 	}
+}
+
+span.sort_handle{
+	position:relative;
+	left:0px;
+	top:1px;
+	width:25px;
+	height:25px;
+	cursor:move;
+	background:url(/images/sort_handle.gif) no-repeat;
+	@include corners(5px);
 }
 
 .custom_form_outer{ 
@@ -2214,21 +2226,50 @@ $lightBase:lighten($base, 5%);
 	font-size:0.95em;
 }
 
-.virtual_agents{
+
+.title_bar_grey{
+	@include clearfix;
+	background-color:#efefef;
+	display:block;
+	padding:4px 10px 4px 4px;
+	@include corners(6px);
+	h3.title{
+		color:#555;
+		font-weight:bold;
+		font-size:1.5em;
+		padding:8px 15px;
+		margin:0px;
+	}
+}
+
+.admin_list{
 	@include no-bullets;
-	margin:0px;
+	margin:0px 8px;
 	padding:0px;
-	border:1px solid #efefef;
+	border:3px solid #efefef;
+	border-top:0px;
 	li{	
-		padding:8px 10px 8px 40px;
+		padding:4px 5px 4px 12px;
 		border-bottom:1px solid #efefef;
 		@include vertical-gradient(#fbfbfb, #fafafa);
 		color:#656565;
 		position:relative;
-		a{
-			font-size:1.3em;
+		div.item_actions{
+			float:right;
+			padding:2px 0px;
+			display:none;
+			a{
+				color:#333333;
+				font-weight:bold;
+				text-decoration:none;
+			}
+			a:hover{
+				text-decoration:none;
+			}
+		}		
+		a.item_info{
+			font-size:1.25em;
 			color:#336699;
-			display:block;
 			text-decoration:none;
 		 }
 		 input.checkbox{
@@ -2236,10 +2277,62 @@ $lightBase:lighten($base, 5%);
 		 	left:8px;
 		 	top:10px;
 		 }
+		 span.sort_handle{
+			position:relative;
+			float:left;
+			left:0px;
+			top:1px;
+			width:25px;
+			height:25px;
+			cursor:move;
+			background:url(/images/sort_handle.gif) no-repeat;
+			@include corners(5px);
+		}
 	}
 	li:hover{
-		background:#f2f5f7; 
-		cursor:pointer; 
+		background:#f6f6f6;  
+		div.item_actions{
+			display:block;
+		}
+	} 
+}
+
+.sortable{
+	background:#efefef;
+	border-top:1px solid #cfcfcf;
+	padding:2px 0px 10px 0px;
+	margin:0px 8px;
+	span.sort_handle{
+		margin:0px 5px 0px 0px;
+		position:relative;
+		top:-1px !important;
+	}
+	.actions{
+		padding:3px 10px 6px 3px;
+		text-align:right;
+	}
+	li{
+		cursor:move;
+		border:1px solid #dfdfdf;
+		margin:1px 0px;
+		border-bottom-color:#bfbfbfb;
+		border-right-color:#bfbfbfb;
+		font-size:1.2em;
+		padding:4px;
+		@include corners(2px);
+	}
+	li.ui-sortable-placeholder{
+		border-color:#efefef;
+		background:#efefef;
+	}
+}
+
+.help_text{
+	color:#555;
+	p{
+		margin:0px;
+		padding:6px 0px;
+		text-indent:30px;
 	}
 }
 
