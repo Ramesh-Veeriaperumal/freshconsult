@@ -1,67 +1,55 @@
-<h1>New SLA Policy</h1>
-<!--%= debug @support_plan%-->
-<% form_for(@sla_policy) do |f| %>
-  <%= f.error_messages %>
-
-  <p>
-    <%= f.label :name %><br />
-    <%= f.text_field :name %>
-  </p>
-  <p>
-    <%= f.label :description %><br />
-    <%= f.text_area :description %>
-  </p>
- 
- SLA Details: -
- 
- <table>
-  <tr>
-    <th>Name</th>
-    <!--th>Account</th-->
-    <!--th>Priority</th-->
- 
-	<th>Response time</th>
-    <th>Resolution time</th>
-    <th>Escalateto</th>
-  </tr>
- 
- <% @sla_policy.sla_details.each_with_index do |slas , index| %>
-  <% fields_for "SlaDetails[#{index}]", slas do |sla| %>
-    <p>
-	
-	<%
-
-     priority = Helpdesk::SlaDetail::PRIORITY_NAMES_BY_KEY[index+1]
-
-	
-	%>
-	
-	
-	 <tr>
-    <td><%= sla.label :name , "SLA for #{priority} priority"  %> <%= sla.hidden_field :name, { :value => "SLA for #{priority} priority"} %>
-	<%= sla.hidden_field :priority, { :value => index+1} %>
-	</td>
-	
-   
-	<td><%= sla.select :response_time , Helpdesk::SlaDetail::RESPONSETIME_OPTIONS %></td>
-    <td><%= sla.select :resolution_time, Helpdesk::SlaDetail::RESOLUTIONTIME_OPTIONS %></td>
-    <td> 
-    <%= sla.collection_select :escalateto, User.find_all_by_permission(current_account, :manage_tickets), :id, :name %>
-	</td>
-
-    
-  </tr>
-  
-  
-	
-	</p>
-  <% end %>
-<% end %>
-</table>
-  <p>
-    <%= f.submit 'Create' %>
-  </p>
-<% end %>
-
-<%= link_to 'Back', sla_details_path %>
-
+<div class="pageContent">
+	<h3 class="content_title">New SLA Policy</h>
+	<span class="seperator"></span>
+	<!--%= debug @support_plan%-->
+	<% form_for(@sla_policy) do |f| %>
+	  <%= f.error_messages %>
+	  <ul class="ui-form">
+		  	<li>
+				<%= f.label :name %>
+	    		<%= f.text_field :name %>
+	  		</li>
+	  		<li>
+	    		<%= f.label :description %>
+	    		<%= f.text_area :description, :class => "smallpara" %>
+	  		</li>	 
+			<li class="seperator"></li>
+			<li><label>SLA Targets</label></li>
+	 	 	<li class="grid">	 	 		
+	 			<table>
+	  				<tr>
+	    				<th></th>
+	    				<th>Ticket <br /> Response time</th>
+	    				<th>Ticket <br /> Resolution time</th>
+	    				<th>Escalate to</th>
+	  				</tr>
+	 				<% @sla_policy.sla_details.each_with_index do |slas , index| %>
+	  					<% fields_for "SlaDetails[#{index}]", slas do |sla| %>
+						<% priority = Helpdesk::SlaDetail::PRIORITY_NAMES_BY_KEY[index+1] %>
+			 				<tr>
+	    						<td>
+	    							<%= sla.label :name , "#{index+1}. Tickets with <em>#{priority} priority</em>"  %> <%= sla.hidden_field :name, { :value => "SLA for #{priority} priority"} %>
+									<%= sla.hidden_field :priority, { :value => index+1} %>
+								</td>	   
+								<td>
+									<%= sla.select :response_time , Helpdesk::SlaDetail::RESPONSETIME_OPTIONS %>
+								</td>
+							    <td>
+							    	<%= sla.select :resolution_time, Helpdesk::SlaDetail::RESOLUTIONTIME_OPTIONS %>
+								</td>
+							    <td> 
+							    	<%= sla.collection_select :escalateto, User.find_all_by_permission(current_account, :manage_tickets), :id, :name %>
+								</td>
+							</tr>
+	  				  <% end %>
+				<% end %>
+			</table>
+		</li>
+	</ul>
+	<br />
+	<div class="button-container">
+		<%= f.submit 'Save', :class => "fdbutton" %>
+		<%= link_to 'cancel', helpdesk_sla_policies_path, :class => "fdbutton grey" %>
+	</div>	 
+	<% end %>
+</div>

@@ -1,24 +1,24 @@
-<h1>SLA Policy</h1>
-<%= link_to 'Add SLA Policy', new_helpdesk_sla_policy_path %></td>
-<table>
-  <tr>
-    <th>Name</th>
-    
-  </tr>
-
-<% @sla_policies.each do |policy| %>
-  <tr>
-    <td><%=h policy.name %></td>
-   
-    <td><%= link_to 'Show', policy %></td>
-    <td><%= link_to 'Edit', edit_helpdesk_sla_policy_path(policy) %></td>
-	<%unless policy.is_default?%>
-    <td><%= link_to 'Destroy', policy, :confirm => 'Are you sure?', :method => :delete %></td>
-	<%end%>
-  </tr>
-<% end %>
-</table>
-<br />
+<div class="pageContent">
+	<div class="title_bar_grey">
+		<div class="floatr">
+			<%= link_to "<img src='/images/add.png' /> New SLA Policy", new_helpdesk_sla_policy_path, :class => "fdbutton" %>
+		</div>
+		<h3 class="title">SLA Policy</h3>
+	</div>
+	<ul class="admin_list">
+		<% @sla_policies.each do |policy| %>
+  		<li>
+  			<div class="item_actions">
+			    <%= link_to 'edit', edit_helpdesk_sla_policy_path(policy), :class => "button" %>
+				<%unless policy.is_default?%>
+			    	<%= link_to 'delete', policy, :confirm => 'Are you sure?', :method => :delete, :class => "button" %>
+				<%end%>
+			</div>
+			<%= link_to(h(policy.name), edit_helpdesk_sla_policy_path(policy), :class => "item_info") %>
+			<div><%= h policy.description %></div>		   	
+		  </li>
+		<% end %>
+</ul>
 
 <!--%= link_to 'New customer', new_support_plan_path %-->
 </div>

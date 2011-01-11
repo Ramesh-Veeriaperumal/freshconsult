@@ -1,22 +1,17 @@
-<script>
-
-function setUserRole()
-{
-	
-	if (jQuery('input[name=user_role]').is(':checked'))
-	{
-		jQuery('#role_taken').val('admin');
-
+<script type="text/javascript">
+	function setUserRole()
+	{		
+		if (jQuery('input[name=user_role]').is(':checked'))
+		{
+			jQuery('#role_taken').val('admin');	
+		}
+		else
+		{
+			jQuery('#role_taken').val('poweruser');			
+		}		
 	}
-	else
-	{
-		jQuery('#role_taken').val('poweruser');
-		
-	}
-	
-}
 </script>
-
+<div class="pageContent">
 <h1>New Agent</h1>
 
 <% form_for(@agent) do |f| %>
@@ -32,4 +27,4 @@ function setUserRole()
   
   <%end%>
  
- 
+</div>

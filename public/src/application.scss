@@ -966,7 +966,7 @@ div.leader-right{
     margin: 2px; 
     border:1px solid #cdcecd;
     text-align:center;
-    font-size: 1.0em;
+    font-size: 12px;
     color:#4a4a25 !important;
     @include corners(10px);
     @include vertical-gradient(#f1fce3, #ddf0c4);
@@ -985,8 +985,12 @@ div.leader-right{
      @include text-shadow(rgba(255,255,255,0.9), 1px, 1px, 1px);
 }
 .grey{
+	@include vertical-gradient(#f1f5ed, #efefef);
+	color:#555555 !important;
+}
+.disabled{
 	@include vertical-gradient(#f1f5ed, #dededd);
-	color:#777777 !important;
+	color:#888888 !important;
 }
 	
 .button {
@@ -1269,6 +1273,10 @@ a.nav_new{
 .button-container ul{
 	@include horizontal-list;
 	padding:10px 0px;  
+}
+
+.button-container{
+	text-align:right;
 }
 
 label.overlabel{
@@ -1828,6 +1836,7 @@ $lightBase:lighten($base, 5%);
 		margin-top:18px;
 		background:$base;
 		@include border-radius(0.6em);
+		text-align:right;
 		input.button{
 			font-size:1em;
 			padding:5px 8px;
@@ -1950,6 +1959,37 @@ $lightBase:lighten($base, 5%);
 	} 
 	fieldset.addchoice:hover{
 		background:#f8f8f8;
+	}
+	.grid{
+		border:1px solid #cfcfcf;		
+		padding:0px;
+		background:#f6f6f6;
+		table{
+			padding:0px; margin:0px;
+			font-size:0.7em;
+			th{
+				vertical-align:bottom;
+				line-height:18px;	
+			}
+			td{
+				label{
+					font-size:12px;
+					padding:0px 6px;
+					color:#555555;
+					em{
+						font-style:normal;
+						font-weight:bold;
+						text-transform:capitalize;
+						color:#000000;
+					}
+				}
+				background:#efefef;
+				border-top:1px solid #cfcfcf;				
+			}
+		}
+		.olist{
+			list-style:decimal;
+		}
 	}
 	.conditionset{
 		border:1px solid #cfcfcf;
@@ -2257,7 +2297,7 @@ span.sort_handle{
 		div.item_actions{
 			float:right;
 			padding:2px 0px;
-			display:none;
+			visibility:hidden;
 			a{
 				color:#333333;
 				font-weight:bold;
@@ -2292,7 +2332,7 @@ span.sort_handle{
 	li:hover{
 		background:#f6f6f6;  
 		div.item_actions{
-			display:block;
+			visibility:visible;
 		}
 	} 
 }
