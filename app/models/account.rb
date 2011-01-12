@@ -8,6 +8,7 @@ class Account < ActiveRecord::Base
   #Scoping restriction for other models starts here
   has_many :va_rules, :class_name => 'VARule', :conditions => {:rule_type => VAConfig::BUSINESS_RULE}
   has_many :scn_automations, :class_name => 'VARule', :conditions => {:rule_type => VAConfig::SCENARIO_AUTOMATION}
+  has_many :products
   #Scope restriction ends
   
   validates_format_of :domain, :with => /\A[a-zA-Z][a-zA-Z0-9]*\Z/
