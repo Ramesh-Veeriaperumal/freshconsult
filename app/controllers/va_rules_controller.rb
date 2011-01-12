@@ -1,4 +1,10 @@
 class VaRulesController < AutomationsController
+  
+  def index
+    @inactive_rules = current_account.disabled_va_rules
+    super
+  end
+  
   def create
     @va_rule.filter_data = ActiveSupport::JSON.decode params[:filter_data]
     super
@@ -13,7 +19,21 @@ class VaRulesController < AutomationsController
     @va_rule.filter_data = ActiveSupport::JSON.decode params[:filter_data]
     super
   end
+   
+  def deactivate
+    va_rule = scoper.find(params[:id])
+    va_rule.active = false
+    va_rule.save
+    redirect_back_or_default redirect_url
+  end
   
+  def activate
+    va_rule = current_account.disabled_va_rules.find(params[:id])
+    va_rule.active = true
+    va_rule.save
+    redirect_back_or_default redirect_url
+  end
+ 
   protected
     def scoper
       current_account.va_rules

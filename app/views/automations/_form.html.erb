@@ -1,0 +1,57 @@
+<%= javascript_include_tag "condition-filter.js" %>
+
+<script type="text/javascript">
+	var action_Array	= $A(<%= @action_defs %>),
+		Action_feed		= $A(<%= @action_input %>);		
+	
+	jQuery(document).ready(function(){
+		var actions = new rules_filter("action", action_Array, "#actionDOM", {"init_feed":Action_feed})		
+		jQuery("#Automations")		
+			.validate({
+				rules:{
+					vagent_name: "required"			
+				},
+				messages:{
+					vagent_name: "Virtual agent name is empty"
+				}
+			});			
+	});
+</script>
+
+<ul class="ui-form">
+	<li>
+		<%= f.label :name, "Scenario Label *" %>
+		<label class="overlabel" for="va_rule_name">example: <em>"Assign QA"</em> </label>
+		<%= f.text_field :name, :class => "required very_small" %>
+		<em>25 chars max</em>
+	</li>
+	<li>
+		<%= f.label :description %>
+		<!--label class="overlabel" for="agent_desc">
+			We Know it's pretty boring. <br />
+			But meaningful descriptions can help you later to quickly identify what this rule does,<br /> 
+			when you have a tons of rules. <br />
+			Go Ahead and type something like - <br /><em>"All Subscription related tickets will be assigned to Susan"</em>
+		</label-->
+		<label class="overlabel" for="va_rule_description">
+			example: <em>"Mark the Ticket as a Bug and assign to QA"</em>
+		</label>
+		<%= f.text_area :description, :class => "smallpara" %>
+	</li>
+	<li><span class="seperator"></span></li>
+	<li class="choicelist">								
+		<label>Actions to Perform?</label>				
+	</li>
+	<li class="conditionset" id="actionDOM">
+		<div id="ActionList" class="rule_list"></div>
+		<fieldset class="addchoice">
+	        <p>Add new action</p> <img alt="Add New action" class="add" src="/images/add.png" />
+	    </fieldset>		
+	</li>
+</ul>
+<br />
+<div class="button-container">
+	<input type="submit" class="fdbutton" value="Save" />
+	<%= link_to "Cancel", {:action => 'index'}, :class => "fdbutton grey" %>
+</div>
+

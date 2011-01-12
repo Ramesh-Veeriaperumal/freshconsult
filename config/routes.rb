@@ -23,8 +23,9 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :admin, :only => :index
   map.resources :ticket_fields, :only => :index
   map.resources :email, :only => [:new, :create]
-  map.resources :va_rules
-  map.resources :automations
+
+  map.resources :va_rules, :member => { :deactivate => :put, :activate => :put }, :collections => { :reorder => :put }
+  map.resources :automations, :member => { :deactivate => :put, :activate => :put }, :collections => { :reorder => :put }
   map.resources :products
   
   #SAAS copy starts here
