@@ -8,12 +8,13 @@ class AutomationsController < ApplicationController
     @va_rule.match_type = :all
   end
 
-  def create    
+  def create
     @va_rule.action_data = ActiveSupport::JSON.decode params[:action_data]
+    @va_rule.match_type ||= :all
     
     if @va_rule.save
       flash[:notice] = "The #{human_name} has been created."
-      redirect_to va_rules_path
+      redirect_back_or_default redirect_url
     else
       render :action => 'new'
     end
@@ -28,12 +29,17 @@ class AutomationsController < ApplicationController
     
     if @va_rule.update_attributes(params[:va_rule])
       flash[:notice] = "The #{human_name} has been updated."
-      redirect_to va_rules_path
+      redirect_back_or_default redirect_url
     else
       render :action => 'edit'
     end
   end
-
+   
+  def reorder 
+    p params[:reorderlist] 
+    redirect_back_or_default redirect_url
+  end
+  
   protected
     def set_selected_tab
       @selected_tab = "Admin"
@@ -41,6 +47,10 @@ class AutomationsController < ApplicationController
   
     def scoper
       current_account.scn_automations
+    end
+    
+    def cname
+      @cname ||= "va_rule"
     end
     
     def build_object #Some bug with build during new, so moved here from ModelControllerMethods

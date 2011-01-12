@@ -6,8 +6,10 @@ class Account < ActiveRecord::Base
   has_many :subscription_payments
   
   #Scoping restriction for other models starts here
-  has_many :va_rules, :class_name => 'VARule', :conditions => {:rule_type => VAConfig::BUSINESS_RULE}
-  has_many :scn_automations, :class_name => 'VARule', :conditions => {:rule_type => VAConfig::SCENARIO_AUTOMATION}
+  has_many :va_rules, :class_name => 'VARule', :conditions => {:rule_type => VAConfig::BUSINESS_RULE, :active => true}
+  has_many :disabled_va_rules, :class_name => 'VARule', :conditions => {:rule_type => VAConfig::BUSINESS_RULE, :active => false}
+  
+  has_many :scn_automations, :class_name => 'VARule', :conditions => {:rule_type => VAConfig::SCENARIO_AUTOMATION, :active => true}
   #Scope restriction ends
   
   validates_format_of :domain, :with => /\A[a-zA-Z][a-zA-Z0-9]*\Z/

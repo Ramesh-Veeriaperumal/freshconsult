@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110111065942) do
+ActiveRecord::Schema.define(:version => 20110112092748) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -532,9 +532,9 @@ ActiveRecord::Schema.define(:version => 20110111065942) do
     t.integer  "account_id"
     t.boolean  "admin",               :default => false
     t.boolean  "active",              :default => false, :null => false
+    t.string   "role_token"
     t.integer  "posts_count",         :default => 0
     t.datetime "last_seen_at"
-    t.string   "role_token"
     t.integer  "customer_id"
     t.string   "job_title"
     t.string   "second_email"
@@ -562,6 +562,7 @@ ActiveRecord::Schema.define(:version => 20110111065942) do
     t.datetime "updated_at"
     t.integer  "account_id"
     t.integer  "rule_type"
+    t.boolean  "active"
   end
 
   create_table "virtual_agents", :force => true do |t|

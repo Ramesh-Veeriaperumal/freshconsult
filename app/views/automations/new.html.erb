@@ -1,2 +1,9 @@
-<h1>Automations#new</h1>
-<p>Find me in app/views/automations/new.html.erb</p>
+<% content_for :layoutType do%>single<% end %>
+
+<div class="pageContent"> 
+	<h3 class="content_title">New Scenario</h3>
+	<span class="seperator"></span>
+	<% form_for :va_rule, @va_rule, :url => automations_path, :html => { :method => :post , :id => "Automations" } do |f| %>
+		<%= render :partial => "form", :locals => { :f => f } %>
+	<% end %>
+</div>

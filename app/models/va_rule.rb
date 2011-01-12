@@ -13,7 +13,7 @@ class VARule < ActiveRecord::Base
     filter_data.each do |f|
       f.symbolize_keys!
       @conditions << (Va::Condition.new(f))
-    end
+    end unless filter_data.nil?
     
     @actions = action_data.map { |act| deserialize_action act }
   end

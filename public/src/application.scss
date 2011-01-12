@@ -990,11 +990,7 @@ div.leader-right{
 }
 .disabled{
 	@include vertical-gradient(#f1f5ed, #dededd);
-<<<<<<< HEAD
-	color:#777777 !important;
-=======
 	color:#888888 !important;
->>>>>>> local_venom
 }
 	
 .button {
@@ -1801,6 +1797,9 @@ $lightBase:lighten($base, 5%);
 		line-height:16px;
 		overflow:auto;
 	}
+	input.very_small{
+		width:200px;
+	}
 	textarea.smallpara{
 		height:50px;
 	}
@@ -2293,7 +2292,7 @@ span.sort_handle{
 	border:3px solid #efefef;
 	border-top:0px;
 	li{	
-		padding:4px 5px 4px 12px;
+		padding:8px 5px 8px 12px;
 		border-bottom:1px solid #efefef;
 		@include vertical-gradient(#fbfbfb, #fafafa);
 		color:#656565;
@@ -2301,11 +2300,9 @@ span.sort_handle{
 		div.item_actions{
 			float:right;
 			padding:2px 0px;
-<<<<<<< HEAD
-			display:none;
-=======
+			position:relative;
+			top:-4px;
 			visibility:hidden;
->>>>>>> local_venom
 			a{
 				color:#333333;
 				font-weight:bold;
@@ -2340,13 +2337,18 @@ span.sort_handle{
 	li:hover{
 		background:#f6f6f6;  
 		div.item_actions{
-<<<<<<< HEAD
-			display:block;
-=======
 			visibility:visible;
->>>>>>> local_venom
 		}
 	} 
+}
+
+.deactivated{
+	li{
+		background:#f6f6f6;
+		a.item_info{
+			color:#666666;
+			}
+	}
 }
 
 .sortable{

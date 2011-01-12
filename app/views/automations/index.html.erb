@@ -1,2 +1,83 @@
-<h1>Automations#index</h1>
-<p>Find me in app/views/automations/index.html.erb</p>
+<script type="text/javascript">
+	jQuery(document).ready(function(e){
+		jQuery('div#Sortable ul.admin_list')
+				.sortable({
+							containment: "parent", 
+							tolerance: "pointer"
+						});
+		
+		jQuery("#Reorder").click(function(e){
+			jQuery("#normal").hide();
+			jQuery(this).hide();			
+			jQuery("#Sortable").fadeIn(300);		
+		});		
+		
+		jQuery("#reorder_cancel").click(function(e){
+			jQuery("#Sortable").hide();
+			jQuery("#normal").fadeIn(300);
+			jQuery("#Reorder").show();								
+		});
+		
+		jQuery("#Reorderform").submit(function(e){
+			var position_hash = $H();	
+			jQuery
+				.each(jQuery("div#Sortable ul.admin_list li"), function(index, item){
+						position_hash.set(item.getAttribute("ruleid"), index+1);
+				});
+			
+			this['reorderlist'].value = position_hash.toJSON();								
+		});
+	});
+</script>
+
+<% content_for :sidebar do %>
+	<div class="rightSubContainers">
+		<h3 class="title">Senario Automations</h3>
+		<div class="help_text">
+		"Senario Automations help text"			
+		</div>
+	</div>
+<% end %>
+
+<div class="pageContent">	
+	<div class="title_bar_grey">
+		<div class="floatr">
+			<a href="javascript:void(0)" class="button" id="Reorder">Reorder</a>
+			<%= link_to "<img src='/images/add.png' /> New Scenario", new_automation_path, :class => "fdbutton"  %>
+		</div>	 
+		<h3 class="title">Senario Automations</h3>		
+	</div>
+	<ul class="admin_list" id="normal">
+		<% @automations.each do |va_rule| %>
+			<li class="<%=cycle('stripe', '') %>"> 
+				<div class="item_actions">
+					<%= link_to('delete', automation_path(va_rule), :method => 'delete', :confirm => 'Are you sure you want to delete this scenario', :class => "button" ) %>					
+					<%= link_to('edit'  , edit_automation_path(va_rule), :class => "button") %> 					
+				</div>
+				<%= link_to(h(va_rule.name), edit_automation_path(va_rule), :class => "item_info") %>
+				<div><%= h va_rule.description %></div>				
+			</li>
+		<% end %>
+	</ul>
+	
+	<div class="sortable" id="Sortable" style="display:none;">
+		<div class="title_bar_grey">				
+			<h3 class="title">Reorder</h3>
+		</div>
+		<% form_for :reorder, @va_rules, :url => { :action => "reorder" , :controller => "automations" }, :html => { :method => :reorder, :id => "Reorderform" } do |f| %>
+			<input name="reorderlist" type="hidden" value="helper" />
+			<ul class="admin_list">
+				<% @automations.each do |va_rule| %>
+					<li ruleid="<%=va_rule.id%>"> 
+						<span class="sort_handle"></span>
+						<%= h(va_rule.name) %> 
+					</li>
+				<% end %>
+			</ul>
+			<div class="actions">
+				<a href="javascript:void(0)" class="fdbutton grey" id="reorder_cancel">Cancel</a>
+				<input type="submit" class="fdbutton" id="reorder_done" value="Save" />				
+			</div>
+		<% end %>
+	</div>
+</div>
