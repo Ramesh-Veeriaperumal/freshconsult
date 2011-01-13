@@ -1,5 +1,6 @@
 class FlexifieldDefEntry < ActiveRecord::Base
-  belongs_to :flexifield_def
+  belongs_to :flexifield_def , :class_name =>'FlexifieldDef'
+  
   validates_presence_of :flexifield_name, :flexifield_alias, :flexifield_order
   
   before_save :ensure_alias_is_one_word

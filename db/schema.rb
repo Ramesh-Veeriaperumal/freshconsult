@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110107053823) do
+ActiveRecord::Schema.define(:version => 20110108094804) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -228,6 +228,14 @@ ActiveRecord::Schema.define(:version => 20110107053823) do
     t.string "name",       :null => false
     t.string "categories", :null => false
     t.binary "data"
+  end
+
+  create_table "helpdesk_form_customizers", :force => true do |t|
+    t.string   "name"
+    t.text     "json_data"
+    t.integer  "account_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "helpdesk_guides", :force => true do |t|
@@ -531,9 +539,9 @@ ActiveRecord::Schema.define(:version => 20110107053823) do
     t.integer  "account_id"
     t.boolean  "admin",               :default => false
     t.boolean  "active",              :default => false, :null => false
+    t.string   "role_token"
     t.integer  "posts_count",         :default => 0
     t.datetime "last_seen_at"
-    t.string   "role_token"
     t.integer  "customer_id"
     t.string   "job_title"
     t.string   "second_email"

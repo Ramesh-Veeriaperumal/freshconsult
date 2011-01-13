@@ -1,0 +1,11 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  name: MyString
+  json_data: MyText
+  account_id: 1
+
+two:
+  name: MyString
+  json_data: MyText
+  account_id: 1
