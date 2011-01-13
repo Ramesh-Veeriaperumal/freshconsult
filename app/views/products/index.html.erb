@@ -5,4 +5,16 @@
 		</div>	
 		<h3 class="title">Products</h3>		 
 	</div>
+	<ul class="admin_list">
+		<% @products.each do |product| %>
+			<li>
+				<div class="item_actions">
+					<%= link_to('delete', product, :method => 'delete', :confirm => 'Are you sure you want to delete this product', :class => "button" ) %>			
+					<%= link_to('edit', edit_product_path(product), :class => "button") %> 					
+				</div>
+				<%= link_to (h(product.name), edit_product_path(product), :class => "item_info") %>
+				<div><%= h product.description %></div>
+			</li>
+		<% end %>
+	</ul>
 </div>

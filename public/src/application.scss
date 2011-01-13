@@ -4,6 +4,13 @@
 html{
     height:100%;
 }
+a{
+	color:#336699;
+}
+a:hover{
+	color:#336699;
+	text-decoration:none;
+}
 body{
   	@include blueprint-typography(true);
   	height:100%;
@@ -1746,8 +1753,10 @@ $lightBase:lighten($base, 5%);
 .ui-form{ 
 	@include no-bullets; 
 	@include pie-clearfix;
-	padding:0px;
-	margin:0px;
+	padding:5px 15px 15px 15px;
+	margin:0px 0px 6px 0px;
+	background: #f5f5f5;
+	@include corners(6px);
 	li{
 		padding:5px 0px; 
 		margin:0px;
@@ -1819,8 +1828,8 @@ $lightBase:lighten($base, 5%);
 	}  
 	span{
 		font-weight:normal;
-		font-size:1.0em;
-		color:#666666;
+		font-size:0.9em;
+		color:#777777;
 		display:block;
 	}	 
 	.largefield{
@@ -1843,6 +1852,27 @@ $lightBase:lighten($base, 5%);
 		input.button{
 			font-size:1em;
 			padding:5px 8px;
+		}
+	}
+	.check_box{
+		@include clearfix;
+		label{
+			float:left;
+			font-size:1.4em;		
+		}
+		input{
+			float:left;
+			margin:5px;
+		}
+	}
+	.inline_field{
+		margin:0px 0px 10px 30px;
+		input{		
+			width:45%;
+			margin:0px;
+		}
+		label{ 
+			font-size:1.2em;
 		}
 	}
 	.inlineChecklist{

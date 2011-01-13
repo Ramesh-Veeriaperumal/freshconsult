@@ -1,11 +1,1 @@
-<div class="pageContent">
-	<h3 class="content_title">New Product</h3>
-	<% form_for :product, :html => {:id => "Products"} do |f| %>
-		<ul class="ui-form">
-			<li>
-				<%= f.label :name, "Product Name *" %>
-				<%= f.text_field :name, :class => "required" %>	
-			</li>		
-		</ul>
-	<% end %>
-</div>
+<%= render :partial => "form", :locals => { :title => "New Product" } %>
