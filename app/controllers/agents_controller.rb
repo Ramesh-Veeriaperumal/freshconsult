@@ -1,83 +1,57 @@
 class AgentsController < ApplicationController
-  def index
-    
+  def index    
     @agents = Agent.find(:all , :include => :user)
-  
-
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @agents }
     end
   end
 
-  def show
-    
+  def show    
      @agent = Agent.find(params[:id])
-
-    respond_to do |format|
+     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @agent }
-    end
-    
+    end    
   end
 
-  def new
-    
-    @agent = Agent.new
-    
-    @agent.user = User.new
-    
+  def new    
+    @agent      = Agent.new    
+    @agent.user = User.new    
      respond_to do |format|
       format.html # new.html.erb
       format.xml  { render :xml => @agent }
-    end
-    
+    end    
   end
 
-  def edit
-    
-     @agent = Agent.find(params[:id]) 
-    
+  def edit    
+     @agent = Agent.find(params[:id])    
       respond_to do |format|
       format.html # edit.html.erb
       format.xml  { render :xml => @agent }
-    end
-    
-    
+    end    
   end
 
-  def create
-     
-     @user = current_account.users.new #by Shan need to check later
-     
-     @agent = Agent.new(params[nscname])
- 
+  def create     
+    @user  = current_account.users.new #by Shan need to check later     
+    @agent = Agent.new(params[nscname]) 
     if @user.signup!(:user => params[:user])
-      logger.debug "The user Id is: #{@user.id}"
-      
-      @agent.user_id =@user.id
+      logger.debug "The user Id is: #{@user.id}"      
+      @agent.user_id = @user.id
      
       if @agent.save
          redirect_to :action => 'index'
       else
-         redirect_to :action => 'new'
-          
+         redirect_to :action => 'new'          
       end
       
-    else
-      
-      redirect_to :action => 'new'
-      
-   end
-   
-     
+    else      
+      redirect_to :action => 'new'      
+    end    
   end
 
   def update
-   
- 
     @agent = Agent.find(params[:id])
-
     respond_to do |format|      
       if @agent.update_attributes(params[nscname])  
           logger.debug " user id is #{@agent.user_id} and new params are #{params[:user]}"
@@ -91,14 +65,11 @@ class AgentsController < ApplicationController
       else
         format.html { render :action => "edit" }
         format.xml  { render :xml => @agent.errors, :status => :unprocessable_entity }
-      end
-    
-    end
-    
+      end    
+    end    
   end
 
-  def destroy
-    
+  def destroy    
     @agent = Agent.find(params[:id])
     @agent.destroy
 

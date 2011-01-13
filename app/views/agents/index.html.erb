@@ -1,34 +1,25 @@
 <div class="pageContent">
-	<h3 class="content_title">Agents</h3>
-	<%= link_to 'Add Agent', new_agent_path %></td>	
-	<table>
-	  <tr>
-	    <th>Name</th>
-	    
-	  </tr>
-	<%@agents.each do |agent| %>
-	
-	
-	
-	 <tr>
-	    <td><%=h agent.user.name %></td>
-		
-		<td><%= link_to 'Show', agent %></td>
-	    <td><%= link_to 'Edit', edit_agent_path(agent) %></td>
-		
-	    <td><%= link_to 'Destroy', agent, :confirm => 'Are you sure?', :method => :delete %></td>
-	
-		
-	</tr>
-	<%
-	end
-	%>
-	
-	<% logger.debug "here is the "%>>
-	
-	</table>
-	<br />
-	
+	<div class="title_bar_grey">
+		<div class="floatr">
+			<%= link_to "<img src='/images/add.png' /> New Agent", new_agent_path, :class => "fdbutton"  %>
+		</div>	
+		<h3 class="title">Agents</h3>		 
+	</div> 
+	<ul class="admin_list">		 
+		<%@agents.each do |agent| %>
+		<li>
+			<div class="item_actions">
+				<%= link_to 'delete', agent, :confirm => 'Are you sure you want delete?', 
+											 :method => :delete, :class => "button" %>
+				<%= link_to 'edit', edit_agent_path(agent), :class => "button" %>									 
+			</div>
+			<img src="/images/icons/profile_blank.gif" width="48px" height="48px" class="profile_pic" />
+			<%= link_to(h(agent.user.name), edit_agent_path(agent), :class => "item_info") %>
+			<div><%= h agent.user.job_title %></div>
+			<div><%= mail_to ( h(agent.user.email)) %></div>							
+		</li>
+	<% end %>	 
+	</ul>
 	<!--%= link_to 'New customer', new_support_plan_path %-->
 </div>
 	

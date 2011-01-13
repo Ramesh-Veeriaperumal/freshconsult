@@ -18,6 +18,7 @@ class User < ActiveRecord::Base
     self.email = params[:user][:email]
     self.name = params[:user][:name]
     self.role_token = params[:user][:role_token]
+    self.phone = params[:user][:phone]
     self.mobile = params[:user][:mobile]
     self.second_email = params[:user][:second_email]
     self.twitter_id = params[:user][:twitter_id]

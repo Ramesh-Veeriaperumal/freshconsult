@@ -68,7 +68,7 @@ a img {
 */
 /*@include blueprint;*/
 /* line 4, ../src/_mixins.scss */
-.pie, .header_tabs ul.tabs li a, .header_tabs ul.tabs li a span, .header_seperator, .ui-bt-grey, .ui-bt-grey:hover, .rightSubContainers, .rightSubContainers:hover, .corners span.ltExt, .corners span.rtExt, .tab-buttons li, .actions_bar, .fdbutton, .grey, .disabled, span.sort_handle, .title_bar_grey, .admin_list li, .admin_list li span.sort_handle, .sortable li, .tab_panel a, .contact .profile_pic, .tag_list a {
+.pie, .header_tabs ul.tabs li a, .header_tabs ul.tabs li a span, .header_seperator, .ui-bt-grey, .ui-bt-grey:hover, .rightSubContainers, .rightSubContainers:hover, .corners span.ltExt, .corners span.rtExt, .tab-buttons li, .actions_bar, .fdbutton, .grey, .disabled, span.sort_handle, .title_bar_grey, .admin_list, .admin_list li, .admin_list li span.sort_handle, .sortable li, .tab_panel a, .contact .profile_pic, .tag_list a {
   behavior: url(/stylesheets/PIE.htc);
 }
 
@@ -3513,12 +3513,12 @@ span.sort_handle {
   background-color: #efefef;
   display: block;
   padding: 4px 10px 4px 4px;
-  -moz-border-radius: 6px 6px 6px 6px;
+  -moz-border-radius: 6px 6px 0px 0px;
   -webkit-border-top-left-radius: 6px;
-  -webkit-border-bottom-left-radius: 6px;
+  -webkit-border-bottom-left-radius: 0px;
   -webkit-border-top-right-radius: 6px;
-  -webkit-border-bottom-right-radius: 6px;
-  border-radius: 6px 6px 6px 6px;
+  -webkit-border-bottom-right-radius: 0px;
+  border-radius: 6px 6px 0px 0px;
 }
 /* line 2279, ../src/application.scss */
 .title_bar_grey h3.title {
@@ -3532,9 +3532,15 @@ span.sort_handle {
 /* line 2288, ../src/application.scss */
 .admin_list {
   list-style: none;
-  margin: 0px 8px;
+  margin: 0px 0px;
   padding: 0px;
   border: 3px solid #efefef;
+  -moz-border-radius: 0px 0px 6px 6px;
+  -webkit-border-top-left-radius: 0px;
+  -webkit-border-bottom-left-radius: 6px;
+  -webkit-border-top-right-radius: 0px;
+  -webkit-border-bottom-right-radius: 6px;
+  border-radius: 0px 0px 6px 6px;
   border-top: 0px;
 }
 /* line 11, ../../../../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/compass/stylesheets/compass/utilities/lists/_bullets.scss */
@@ -3543,9 +3549,11 @@ span.sort_handle {
   list-style-type: none;
   margin-left: 0px;
 }
-/* line 2294, ../src/application.scss */
+/* line 2295, ../src/application.scss */
 .admin_list li {
-  padding: 8px 5px 8px 12px;
+  overflow: hidden;
+  *zoom: 1;
+  padding: 8px 5px 8px 18px;
   border-bottom: 1px solid #efefef;
   background: #fafafa;
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #fbfbfb), color-stop(1, #fafafa));
@@ -3554,7 +3562,13 @@ span.sort_handle {
   color: #656565;
   position: relative;
 }
-/* line 2300, ../src/application.scss */
+/* line 2302, ../src/application.scss */
+.admin_list li img.profile_pic {
+  float: left;
+  margin-right: 10px;
+  margin-top: 5px;
+}
+/* line 2307, ../src/application.scss */
 .admin_list li div.item_actions {
   float: right;
   padding: 2px 0px;
@@ -3562,29 +3576,34 @@ span.sort_handle {
   top: -4px;
   visibility: hidden;
 }
-/* line 2306, ../src/application.scss */
+/* line 2313, ../src/application.scss */
 .admin_list li div.item_actions a {
   color: #333333;
   font-weight: bold;
   text-decoration: none;
 }
-/* line 2311, ../src/application.scss */
+/* line 2318, ../src/application.scss */
 .admin_list li div.item_actions a:hover {
   text-decoration: none;
 }
-/* line 2315, ../src/application.scss */
+/* line 2322, ../src/application.scss */
+.admin_list li a {
+  color: #336699;
+  text-decoration: none;
+}
+/* line 2326, ../src/application.scss */
 .admin_list li a.item_info {
   font-size: 1.25em;
   color: #336699;
   text-decoration: none;
 }
-/* line 2320, ../src/application.scss */
+/* line 2331, ../src/application.scss */
 .admin_list li input.checkbox {
   position: absolute;
   left: 8px;
   top: 10px;
 }
-/* line 2325, ../src/application.scss */
+/* line 2336, ../src/application.scss */
 .admin_list li span.sort_handle {
   position: relative;
   float: left;
@@ -3601,47 +3620,46 @@ span.sort_handle {
   -webkit-border-bottom-right-radius: 5px;
   border-radius: 5px 5px 5px 5px;
 }
-/* line 2337, ../src/application.scss */
+/* line 2348, ../src/application.scss */
 .admin_list li:hover {
   background: #f6f6f6;
 }
-/* line 2339, ../src/application.scss */
+/* line 2350, ../src/application.scss */
 .admin_list li:hover div.item_actions {
   visibility: visible;
 }
 
-/* line 2346, ../src/application.scss */
+/* line 2357, ../src/application.scss */
 .deactivated li {
   background: #f6f6f6;
 }
-/* line 2348, ../src/application.scss */
+/* line 2359, ../src/application.scss */
 .deactivated li a.item_info {
   color: #666666;
 }
 
-/* line 2354, ../src/application.scss */
+/* line 2365, ../src/application.scss */
 .sortable {
   background: #efefef;
   border-top: 1px solid #cfcfcf;
   padding: 2px 0px 10px 0px;
-  margin: 0px 8px;
 }
-/* line 2359, ../src/application.scss */
+/* line 2369, ../src/application.scss */
 .sortable span.sort_handle {
   margin: 0px 5px 0px 0px;
   position: relative;
   top: -1px !important;
 }
-/* line 2364, ../src/application.scss */
+/* line 2374, ../src/application.scss */
 .sortable .actions {
   padding: 3px 10px 6px 3px;
   text-align: right;
 }
-/* line 2368, ../src/application.scss */
+/* line 2378, ../src/application.scss */
 .sortable li {
   cursor: move;
   border: 1px solid #dfdfdf;
-  margin: 1px 0px;
+  margin: 1px 10px;
   border-bottom-color: #bfbfbfb;
   border-right-color: #bfbfbfb;
   font-size: 1.2em;
@@ -3653,24 +3671,24 @@ span.sort_handle {
   -webkit-border-bottom-right-radius: 2px;
   border-radius: 2px 2px 2px 2px;
 }
-/* line 2378, ../src/application.scss */
+/* line 2388, ../src/application.scss */
 .sortable li.ui-sortable-placeholder {
   border-color: #efefef;
   background: #efefef;
 }
 
-/* line 2384, ../src/application.scss */
+/* line 2394, ../src/application.scss */
 .help_text {
   color: #555;
 }
-/* line 2386, ../src/application.scss */
+/* line 2396, ../src/application.scss */
 .help_text p {
   margin: 0px;
   padding: 6px 0px;
   text-indent: 30px;
 }
 
-/* line 2393, ../src/application.scss */
+/* line 2403, ../src/application.scss */
 .switch {
   border: 1px solid #afafaf;
   -moz-border-radius: 8px;
@@ -3699,7 +3717,7 @@ span.sort_handle {
   overflow: hidden;
   visibility: hidden;
 }
-/* line 2398, ../src/application.scss */
+/* line 2408, ../src/application.scss */
 .switch a {
   padding: 4px 10px;
   text-decoration: none;
@@ -3707,7 +3725,7 @@ span.sort_handle {
   font-size: 1.2em;
   float: left;
 }
-/* line 2405, ../src/application.scss */
+/* line 2415, ../src/application.scss */
 .switch .on {
   border: 1px solid #afafaf;
   -moz-border-radius: 8px;
@@ -3727,12 +3745,12 @@ span.sort_handle {
   /* ie */
 }
 
-/* line 2420, ../src/application.scss */
+/* line 2430, ../src/application.scss */
 .tab_panel {
   margin: 5px 0px 0px 0px;
   padding: 0px 36px;
 }
-/* line 2423, ../src/application.scss */
+/* line 2433, ../src/application.scss */
 .tab_panel a {
   background: #cfcfcf;
   position: relative;
@@ -3751,63 +3769,63 @@ span.sort_handle {
   border-radius: 6px 6px 0 0;
   font-size: 1.1em;
 }
-/* line 2436, ../src/application.scss */
+/* line 2446, ../src/application.scss */
 .tab_panel a.active {
   background: #ffffff;
 }
 
-/* line 2442, ../src/application.scss */
+/* line 2452, ../src/application.scss */
 .infoPage {
   position: relative;
 }
-/* line 2444, ../src/application.scss */
+/* line 2454, ../src/application.scss */
 .infoPage h3.info_title {
   font-size: 2.0em;
   margin: 0px 0px;
   padding: 4px 0px;
 }
-/* line 2449, ../src/application.scss */
+/* line 2459, ../src/application.scss */
 .infoPage h4.info_title {
   font-size: 1.3em;
   margin: 0px 0px;
   padding: 4px 0px;
 }
-/* line 2453, ../src/application.scss */
+/* line 2463, ../src/application.scss */
 .infoPage h4.info_title a {
   text-decoration: none;
   color: #336699;
 }
-/* line 2458, ../src/application.scss */
+/* line 2468, ../src/application.scss */
 .infoPage .info_subtitle {
   font-size: 1.2em;
   font-weight: bold;
 }
-/* line 2462, ../src/application.scss */
+/* line 2472, ../src/application.scss */
 .infoPage span.seperator {
   border-color: #97acb8;
   margin: 15px 0px;
 }
-/* line 2466, ../src/application.scss */
+/* line 2476, ../src/application.scss */
 .infoPage p.info {
   font-size: 1.2em;
   color: #333333;
 }
 
-/* line 2472, ../src/application.scss */
+/* line 2482, ../src/application.scss */
 .company {
   margin: 12px 19px 12px 50px;
 }
-/* line 2474, ../src/application.scss */
+/* line 2484, ../src/application.scss */
 .company .building_pic {
   position: absolute;
   left: -40px;
 }
 
-/* line 2480, ../src/application.scss */
+/* line 2490, ../src/application.scss */
 .contact {
   margin: 12px 19px 12px 110px;
 }
-/* line 2482, ../src/application.scss */
+/* line 2492, ../src/application.scss */
 .contact .profile_pic {
   position: absolute;
   -moz-box-shadow: #aaaaaa 0px 4px 3px;
@@ -3816,19 +3834,19 @@ span.sort_handle {
   left: -98px;
 }
 
-/* line 2489, ../src/application.scss */
+/* line 2499, ../src/application.scss */
 .contact_info {
   clear: left;
   margin: 5px;
 }
-/* line 2492, ../src/application.scss */
+/* line 2502, ../src/application.scss */
 .contact_info .icon_text {
   font-size: 1.1em;
   padding: 2px 0px 0px 30px;
   position: relative;
   background: none;
 }
-/* line 2498, ../src/application.scss */
+/* line 2508, ../src/application.scss */
 .contact_info .icon_text span em {
   font-style: normal;
   float: left;
@@ -3836,30 +3854,30 @@ span.sort_handle {
   width: auto !important;
   width: 60px;
 }
-/* line 2504, ../src/application.scss */
+/* line 2514, ../src/application.scss */
 .contact_info .icon_text img {
   position: absolute;
   left: 0px;
   top: 0px;
 }
-/* line 2509, ../src/application.scss */
+/* line 2519, ../src/application.scss */
 .contact_info .icon_text a, .contact_info .icon_text span {
   display: block;
 }
-/* line 2512, ../src/application.scss */
+/* line 2522, ../src/application.scss */
 .contact_info .icon_text a {
   text-decoration: none;
   color: #336699;
 }
 
-/* line 2520, ../src/application.scss */
+/* line 2530, ../src/application.scss */
 .tag_list {
   background: url(../images/icons/tag_blue.png) no-repeat left top;
   padding-left: 22px;
   margin: 5px 0px;
   position: relative;
 }
-/* line 2525, ../src/application.scss */
+/* line 2535, ../src/application.scss */
 .tag_list a {
   -moz-border-radius: 5px 5px 5px 5px;
   -webkit-border-top-left-radius: 5px;
@@ -3873,7 +3891,7 @@ span.sort_handle {
   text-decoration: none;
 }
 
-/* line 2534, ../src/application.scss */
+/* line 2544, ../src/application.scss */
 .history_list {
   list-style: none;
   margin: 0px;
@@ -3885,30 +3903,30 @@ span.sort_handle {
   list-style-type: none;
   margin-left: 0px;
 }
-/* line 2537, ../src/application.scss */
+/* line 2547, ../src/application.scss */
 .history_list a:hover {
   text-decoration: none;
 }
-/* line 2540, ../src/application.scss */
+/* line 2550, ../src/application.scss */
 .history_list li {
   padding: 8px 10px;
 }
-/* line 2542, ../src/application.scss */
+/* line 2552, ../src/application.scss */
 .history_list li a, .history_list li a:visited {
   color: #336699;
 }
-/* line 2545, ../src/application.scss */
+/* line 2555, ../src/application.scss */
 .history_list li h3 {
   font-size: 1.2em;
   padding: 0px 0px 0px 0px;
   margin: 0px 0px 8px 0px;
   display: block;
 }
-/* line 2550, ../src/application.scss */
+/* line 2560, ../src/application.scss */
 .history_list li strong {
   display: block;
 }
-/* line 2552, ../src/application.scss */
+/* line 2562, ../src/application.scss */
 .history_list li strong span {
   float: left;
   min-width: 100px;
@@ -3916,7 +3934,7 @@ span.sort_handle {
   width: 100px;
   font-weight: normal;
 }
-/* line 2559, ../src/application.scss */
+/* line 2569, ../src/application.scss */
 .history_list li.stripe {
   background: #eaeef1;
 }

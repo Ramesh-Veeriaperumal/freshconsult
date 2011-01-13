@@ -422,6 +422,18 @@ ActiveRecord::Schema.define(:version => 20110112092748) do
   add_index "posts", ["topic_id", "created_at"], :name => "index_posts_on_topic_id"
   add_index "posts", ["user_id", "created_at"], :name => "index_posts_on_user_id"
 
+  create_table "products", :force => true do |t|
+    t.string   "name"
+    t.text     "description"
+    t.string   "to_email"
+    t.string   "reply_email"
+    t.integer  "solution_category_id"
+    t.integer  "forum_category_id"
+    t.integer  "account_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "subscription_affiliates", :force => true do |t|
     t.string   "name"
     t.decimal  "rate",       :precision => 6, :scale => 4, :default => 0.0

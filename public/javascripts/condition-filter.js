@@ -137,7 +137,7 @@ rules_filter = function(name, filter_data, parentDom, options){
 					inner.append(conditional_dom(hg_data.get(rule.name)).val(rule.value));
 									
 					jQuery.data(r_dom, "inner")
-						  .append(FactoryUI.dropdown(filter_data, "name", "rule_dropdown").val(rule.name))					  	
+						  .append(FactoryUI.dropdown(filter_data, "name", "ruCls_"+name).val(rule.name))					  	
 						  .append(inner);	
 								
 					list_C = jQuery(parentDom).find(setting.rule_dom);

@@ -2275,7 +2275,7 @@ span.sort_handle{
 	background-color:#efefef;
 	display:block;
 	padding:4px 10px 4px 4px;
-	@include corners(6px);
+	@include corners(6px, 6px, 0px, 0px);
 	h3.title{
 		color:#555;
 		font-weight:bold;
@@ -2287,16 +2287,23 @@ span.sort_handle{
 
 .admin_list{
 	@include no-bullets;
-	margin:0px 8px;
+	margin:0px 0px;
 	padding:0px;
 	border:3px solid #efefef;
+	@include corners(0px, 0px, 6px, 6px);
 	border-top:0px;
 	li{	
-		padding:8px 5px 8px 12px;
+		@include clearfix;
+		padding:8px 5px 8px 18px;
 		border-bottom:1px solid #efefef;
 		@include vertical-gradient(#fbfbfb, #fafafa);
 		color:#656565;
 		position:relative;
+		img.profile_pic{
+			float:left;
+			margin-right:10px;
+			margin-top:5px;
+		}
 		div.item_actions{
 			float:right;
 			padding:2px 0px;
@@ -2312,6 +2319,10 @@ span.sort_handle{
 				text-decoration:none;
 			}
 		}		
+		a{
+			color:#336699;
+			text-decoration:none;
+		}
 		a.item_info{
 			font-size:1.25em;
 			color:#336699;
@@ -2355,7 +2366,6 @@ span.sort_handle{
 	background:#efefef;
 	border-top:1px solid #cfcfcf;
 	padding:2px 0px 10px 0px;
-	margin:0px 8px;
 	span.sort_handle{
 		margin:0px 5px 0px 0px;
 		position:relative;
@@ -2368,7 +2378,7 @@ span.sort_handle{
 	li{
 		cursor:move;
 		border:1px solid #dfdfdf;
-		margin:1px 0px;
+		margin:1px 10px;
 		border-bottom-color:#bfbfbfb;
 		border-right-color:#bfbfbfb;
 		font-size:1.2em;

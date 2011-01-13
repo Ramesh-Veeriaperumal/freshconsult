@@ -1,30 +1,12 @@
-<script type="text/javascript">
-	function setUserRole()
-	{		
-		if (jQuery('input[name=user_role]').is(':checked'))
-		{
-			jQuery('#role_taken').val('admin');	
-		}
-		else
-		{
-			jQuery('#role_taken').val('poweruser');			
-		}		
-	}
-</script>
 <div class="pageContent">
-<h1>New Agent</h1>
-
-<% form_for(@agent) do |f| %>
-<%= f.error_messages %>
-
-<input type="checkbox" id="user_role_val" name="user_role" onclick="javascript:setUserRole()" >make as an admin </input>
- 
-<%= render :partial => "agent_form" %>
-
- <p>
-    <%= f.submit 'Create' %>
-  </p>
-  
-  <%end%>
- 
+	<h3 class="content_title">New Agent</h3>
+	<span class="seperator"></span>
+	<% form_for(@agent) do |f| %>
+		<%= f.error_messages %>		
+ 		<%= render :partial => "agent_form" %>
+ 		<div class="button-container">
+    		<%= f.submit 'Save', { :class => "fdbutton" } %>
+			<%= link_to "Cancel", {:action => 'index'}, :class => "fdbutton grey" %>
+  		</div>  
+  <%end%> 
 </div>

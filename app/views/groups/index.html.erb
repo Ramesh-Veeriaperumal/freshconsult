@@ -1,25 +1,21 @@
-<h1>SLA Policy</h1>
-<%= link_to 'Add Group', new_group_path %></td>
-<table>
-  <tr>
-    <th>Name</th>
-    
-  </tr>
-
-<% @groups.each do |group| %>
-  <tr>
-    <td><%=h group.name %></td>
-   
-    <td><%= link_to 'Show', group %></td>
-    <td><%= link_to 'Edit', edit_group_path(group) %></td>
-	
-    <td><%= link_to 'Destroy', group, :confirm => 'Are you sure?', :method => :delete %></td>
-
-  </tr>
-<% end %>
-</table>
-<br />
-
-<!--%= link_to 'New customer', new_support_plan_path %-->
+<div class="pageContent">
+	<div class="title_bar_grey">
+		<div class="floatr">
+			<%= link_to "<img src='/images/add.png' /> New Group", new_group_path, :class => "fdbutton"  %>
+		</div>	
+		<h3 class="title">Groups</h3>		 
+	</div>
+	<ul class="admin_list">
+		<% @groups.each do |group| %>
+	  	<li>
+	  		<div class="item_actions">
+	  	    	<%= link_to 'edit', edit_group_path(group), :class => "button" %>		
+	    		<%= link_to 'delete', group, :confirm => 'Are you sure?', :method => :delete, :class => "button" %>
+			</div>
+			<%= link_to(h(group.name), edit_group_path(group), :class => "item_info") %>
+			<div><%=h(group.description)%></div>
+	  	</li>
+	<% end %>
+	</ul>
 </div>
 

@@ -43,6 +43,10 @@ class VaRulesController < AutomationsController
       "virtual agent rule"
     end
     
+    def load_object
+      @va_rule = current_account.all_va_rules.find(params[:id])
+    end
+    
     def load_config
       super
       

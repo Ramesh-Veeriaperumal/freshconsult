@@ -1,2 +1,11 @@
-<h1>Products#new</h1>
-<p>Find me in app/views/products/new.html.erb</p>
+<div class="pageContent">
+	<h3 class="content_title">New Product</h3>
+	<% form_for :product, :html => {:id => "Products"} do |f| %>
+		<ul class="ui-form">
+			<li>
+				<%= f.label :name, "Product Name *" %>
+				<%= f.text_field :name, :class => "required" %>	
+			</li>		
+		</ul>
+	<% end %>
+</div>
