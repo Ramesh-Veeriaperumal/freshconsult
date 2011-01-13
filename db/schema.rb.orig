@@ -10,9 +10,9 @@
 # It's strongly recommended to check this file into your version control system.
 
 <<<<<<< HEAD
-ActiveRecord::Schema.define(:version => 20110104120416) do
+ActiveRecord::Schema.define(:version => 20110112092748) do
 =======
-ActiveRecord::Schema.define(:version => 20110105064449) do
+ActiveRecord::Schema.define(:version => 20110108094804) do
 >>>>>>> shihab
 
   create_table "accounts", :force => true do |t|
@@ -27,6 +27,20 @@ ActiveRecord::Schema.define(:version => 20110105064449) do
 
   add_index "accounts", ["full_domain"], :name => "index_accounts_on_full_domain"
 
+  create_table "agent_groups", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "group_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "agents", :force => true do |t|
+    t.integer  "user_id"
+    t.text     "signature"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "customers", :force => true do |t|
     t.string   "name"
     t.string   "cust_identifier"
@@ -39,6 +53,7 @@ ActiveRecord::Schema.define(:version => 20110105064449) do
     t.text     "description"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "sla_policy_id"
   end
 
   create_table "delayed_jobs", :force => true do |t|
@@ -159,6 +174,17 @@ ActiveRecord::Schema.define(:version => 20110105064449) do
     t.integer "account_id"
   end
 
+  create_table "groups", :force => true do |t|
+    t.string   "name"
+    t.text     "description"
+    t.integer  "account_id"
+    t.boolean  "email_on_assign"
+    t.integer  "escalate_to"
+    t.integer  "assign_time"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "helpdesk_article_guides", :force => true do |t|
     t.integer  "article_id"
     t.integer  "guide_id"
@@ -206,6 +232,14 @@ ActiveRecord::Schema.define(:version => 20110105064449) do
     t.string "name",       :null => false
     t.string "categories", :null => false
     t.binary "data"
+  end
+
+  create_table "helpdesk_form_customizers", :force => true do |t|
+    t.string   "name"
+    t.text     "json_data"
+    t.integer  "account_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "helpdesk_guides", :force => true do |t|
@@ -344,7 +378,6 @@ ActiveRecord::Schema.define(:version => 20110105064449) do
     t.integer  "account_id"
     t.string   "subject"
     t.integer  "display_id"
-    t.integer  "ticket_type_id"
     t.integer  "organization_id"
     t.integer  "owner_id"
     t.integer  "group_id"
@@ -357,6 +390,8 @@ ActiveRecord::Schema.define(:version => 20110105064449) do
     t.integer  "priority",          :default => 1
     t.boolean  "fr_escalated",      :default => false
     t.datetime "response_time"
+    t.integer  "ticket_type"
+    t.string   "to_email"
   end
 
   add_index "helpdesk_tickets", ["id_token"], :name => "index_helpdesk_tickets_on_id_token", :unique => true
@@ -398,6 +433,18 @@ ActiveRecord::Schema.define(:version => 20110105064449) do
   add_index "posts", ["forum_id", "created_at"], :name => "index_posts_on_forum_id"
   add_index "posts", ["topic_id", "created_at"], :name => "index_posts_on_topic_id"
   add_index "posts", ["user_id", "created_at"], :name => "index_posts_on_user_id"
+
+  create_table "products", :force => true do |t|
+    t.string   "name"
+    t.text     "description"
+    t.string   "to_email"
+    t.string   "reply_email"
+    t.integer  "solution_category_id"
+    t.integer  "forum_category_id"
+    t.integer  "account_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "subscription_affiliates", :force => true do |t|
     t.string   "name"
@@ -509,9 +556,9 @@ ActiveRecord::Schema.define(:version => 20110105064449) do
     t.integer  "account_id"
     t.boolean  "admin",               :default => false
     t.boolean  "active",              :default => false, :null => false
+    t.string   "role_token"
     t.integer  "posts_count",         :default => 0
     t.datetime "last_seen_at"
-    t.string   "role_token"
     t.integer  "customer_id"
     t.string   "job_title"
     t.string   "second_email"
@@ -538,6 +585,8 @@ ActiveRecord::Schema.define(:version => 20110105064449) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "account_id"
+    t.integer  "rule_type"
+    t.boolean  "active"
   end
 
   create_table "virtual_agents", :force => true do |t|
