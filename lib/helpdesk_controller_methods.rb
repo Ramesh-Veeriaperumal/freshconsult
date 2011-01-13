@@ -182,6 +182,7 @@ protected
     @item = self.instance_variable_set('@' + cname,
       scoper.is_a?(Class) ? scoper.new(params[nscname]) : scoper.build(params[nscname]))
     set_item_user
+    set_customizer
     @item
    
        
@@ -190,6 +191,18 @@ protected
   def set_item_user
     @item.user ||= current_user if (@item.respond_to?('user=') && !@item.user_id)
     @item.account_id ||= current_account.id if (@item.respond_to?('account_id='))
+  end
+  
+   def set_customizer
+     
+     #@custom = Helpdesk::FormCustomizer.find(:first, :conditions =>{:account_id =>current_account.id}).json_data
+     
+     json_data = (Helpdesk::FormCustomizer.first(:conditions =>{:account_id =>current_account.id})).json_data
+     
+     logger.debug "json_data : #{json_data}"
+    
+    @item.customizer ||= Helpdesk::FormCustomizer.first(:conditions =>{:account_id =>current_account.id})
+    
   end
 
   def process_item

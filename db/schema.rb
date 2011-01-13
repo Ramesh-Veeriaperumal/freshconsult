@@ -9,7 +9,11 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
+<<<<<<< HEAD
 ActiveRecord::Schema.define(:version => 20110112092748) do
+=======
+ActiveRecord::Schema.define(:version => 20110108094804) do
+>>>>>>> shihab
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -228,6 +232,14 @@ ActiveRecord::Schema.define(:version => 20110112092748) do
     t.string "name",       :null => false
     t.string "categories", :null => false
     t.binary "data"
+  end
+
+  create_table "helpdesk_form_customizers", :force => true do |t|
+    t.string   "name"
+    t.text     "json_data"
+    t.integer  "account_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "helpdesk_guides", :force => true do |t|

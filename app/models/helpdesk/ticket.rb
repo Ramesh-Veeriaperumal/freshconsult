@@ -52,6 +52,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   has_many :issues, 
     :class_name => 'Helpdesk::Issue',
     :through => :ticket_issues
+    
+   has_one :customizer, :class_name =>'Helpdesk::FormCustomizer'
   
   
   named_scope :newest, lambda { |num| { :limit => num, :order => 'created_at DESC' } }

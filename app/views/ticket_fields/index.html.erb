@@ -1,8 +1,19 @@
 <script type="text/javascript">
-    jQuery(document).ready(function(){  
+	jQuery(document).ready(init);
+			
+function init(){  
 	
-        var fieldFeed = [{
-            type: "text",
+
+	//jQuery('#custom_form li').remove();
+
+
+	var fieldFeed = eval(document.getElementById('field_values').value);
+
+	//console.log(fieldFeed);
+	
+        /*var fieldFeed = [{
+	    type: "text",
+            fieldType :"custom"
             label: "Requester (email)",
             description: "Enter requester name",
             choices: [],
@@ -57,7 +68,7 @@
             setDefault: 0,
             agent: {required: true},
             customer: {visible: true,editable: false,required: true}
-        }];
+        }];*/
 		
 		var DialogFieldPref = null;
 		var SourceField 	= null;	
@@ -91,27 +102,41 @@
         var fieldTemplate = $H({
 					            type: "",
 					            label: "Untitled",
-					            description: "",
+						    description: "",
+						    fieldType :"custom",
 					            choices: [],
 					            setDefault: 0,
 					            agent: {required: false},
-					            customer: {visible: false,editable: false,required: false}
+						    customer: {visible: false,editable: false,required: false},
+						    columnId: ""
 					        });
-        
-        function getFreshField(type){
+
+	function getAjaxField(type){
+		jQuery.ajax({
+      					type: 'POST',
+					url: '/ticket_fields/get_column',
+					contentType: 'application/json',
+					data:JSON.stringify({type: type}),
+					datatype:'json',
+      					success: function(data){console.log(data);getFreshField(type, data)}
+			});
+	}
+
+	function getFreshField(type){
             var freshField = fieldTemplate.toObject();
-			freshField.type = type;			
-            switch (type) {
-                case 'dropdown': 
-                    freshField.choices = [{value: "First Choice",tag: []}, {value: "Second Choice",tag: []}];
-                break;
+	    freshField.type = type;	
+            	switch (type) {
+                	case 'dropdown': 
+                	    freshField.choices = [{value: "First Choice",tag: []}, {value: "Second Choice",tag: []}];
+                	break;
+            	}
+		return freshField;
             }
-			return freshField;
-        }
 		
 		function getCustomFieldJson(){
 			var allfields = [];
 			jQuery("#custom_form li").each(function(index, domLi){
+				
 				allfields.push(jQuery(domLi).data("raw"));
 			})
 			return allfields;
@@ -128,12 +153,12 @@
             switch (dataItem.type) {
                 case 'number':
                 case 'text':
-					fieldContainer.addClass("large");
+		    fieldContainer.addClass("large");
                     field.append('<input type="text" '+fieldAttr+' />');
                     break;
                     
                 case 'checkbox':
-					fieldContainer.addClass("small");
+			fieldContainer.addClass("small");
 					var selected = (dataItem.setDefault)?'checked':'';
                     field.append('<input type="checkbox" '+ selected +' '+fieldAttr+' />');
                     break;
@@ -177,14 +202,15 @@
         });
         
         jQuery("#custom_form")
-				.sortable({
+			.sortable({
 		            revert: true
-		        }).droppable({ 
+			    })
+			.droppable({ 
 		            drop: function(ev, ui){ 
 		                type = ui.draggable.get(0).getAttribute('type');
 		                if (type) {			               
-							constFieldDOM(getFreshField(type), ui.draggable);
-							ui.draggable.trigger("click");
+					constFieldDOM(getFreshField(type), ui.draggable);
+					ui.draggable.trigger("click");
 		                }
 		            }
 		        });
@@ -193,8 +219,25 @@
             jQuery("#CustomFieldsDialog").hide();
         });
 		
-		jQuery("#SaveForm").click(function(e){
+	jQuery("#SaveForm").click(function(e){
+			
 			var jsonData = getCustomFieldJson();
+			jQuery("#field_values").val(jsonData);
+			//init();
+
+			//submitting data here
+
+ 			jQuery.ajax({
+      					type: 'POST',
+					url: '/ticket_fields/update',
+					contentType: 'application/json',
+					data:JSON.stringify({jsonData: jsonData}),
+					datatype:'json',
+					success: function(data){jQuery('div.resultmsg').html(data)}
+    				    });
+			
+
+		
 			console.log(jsonData);
 		});
 		
@@ -269,17 +312,22 @@
             }
 		}      
         
-		jQuery("#SaveField").click(function(){
-			var sourceData 					 = jQuery(SourceField).data("raw");																	
-				sourceData.label 			 = dialogDOMMap.label.val();
+		jQuery("#SaveField").click(function()
+		{
+	
+
+				var sourceData   	         = jQuery(SourceField).data("raw");																	
+				sourceData.label 		 = dialogDOMMap.label.val();
 				sourceData.description 		 = dialogDOMMap.description.val();
 				sourceData.agent.required	 = dialogDOMMap.agent.required.attr("checked");
 				sourceData.customer.visible	 = dialogDOMMap.customer.visible.attr("checked");										
-				sourceData.customer.editable = dialogDOMMap.customer.editable.attr("checked");
-				sourceData.customer.required = dialogDOMMap.customer.required.attr("checked");  											
-				sourceData.choices			 = getAllChoices(dialogDOMMap.choices);										
-														
-				constFieldDOM(sourceData, jQuery(SourceField));		
+				sourceData.customer.editable     = dialogDOMMap.customer.editable.attr("checked");
+				sourceData.customer.required     = dialogDOMMap.customer.required.attr("checked");  											
+				sourceData.choices		 = getAllChoices(dialogDOMMap.choices);									
+
+				constFieldDOM(sourceData, jQuery(SourceField));	
+			console.log(sourceData.toSource());
+
 										
 			//DialogFieldPref.dialog("close");			
 		});
@@ -312,7 +360,7 @@
         });
         
 		  
-    });
+    };
 </script>
 <% content_for :layoutType do %>single<% end %>
 <div class="pageContent">
@@ -336,11 +384,26 @@
                 <a href="#" class="fdbutton">Dropdown</a>
             </li>
         </ul> 
+
+	<div id="resultmsg"> </div>
+
+	
+
+
+	<%
+	       
+		logger.debug "index page: #{@ticket_fields.json_data}"
 		
+		json_data = @ticket_fields.json_data
+
+
+	%>
+
 		<div class="custom_form_outer">
 			<h3 class="content_title">Customize your “New Ticket” form.</h3>
 	        <ul id="custom_form" class="ui-form ui-custom-form">
-	        </ul>  
+		</ul>  
+		<input type="hidden" id="field_values" value='<%=json_data%>' />
 		</div>
 		
 		<div class="dialog_ticket_field" title="Field Properties" id="CustomFieldsDialog" style="display:none;">
