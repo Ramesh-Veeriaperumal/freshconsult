@@ -4,6 +4,14 @@ class VARule < ActiveRecord::Base
   
   attr_accessor :conditions, :actions
   
+  belongs_to :account
+  acts_as_list
+  
+  # scope_condition for acts_as_list
+  def scope_condition
+    "account_id = #{account_id} AND #{connection.quote_column_name("rule_type")} = #{rule_type}"
+  end
+  
   def after_find
     deserialize_them
   end

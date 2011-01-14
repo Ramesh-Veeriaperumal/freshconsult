@@ -4,6 +4,10 @@ class AutomationsController < ApplicationController
   before_filter :set_selected_tab
   before_filter :load_config, :only => [:new, :edit]
   
+  def index
+    @va_rules = scoper.find(:all)
+  end
+  
   def new
     @va_rule.match_type = :all
   end
@@ -35,8 +39,17 @@ class AutomationsController < ApplicationController
     end
   end
    
-  def reorder 
-    p params[:reorderlist] 
+  def reorder
+    new_pos = ActiveSupport::JSON.decode params[:reorderlist]
+    
+    va_rules = scoper.find(:all)
+    va_rules.each do |va_rule|
+      new_p = new_pos[va_rule.id.to_s]
+      if va_rule.position != new_p
+        va_rule.position = new_p
+        va_rule.save
+      end
+    end
     redirect_back_or_default redirect_url
   end
   

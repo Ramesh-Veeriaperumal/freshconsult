@@ -22,7 +22,7 @@
 			jQuery
 				.each(jQuery("div#Sortable ul.admin_list li"), function(index, item){
 					var rule_id = item.getAttribute("ruleid");
-					position_hash.set(rule_id, index);
+					position_hash.set(rule_id, index+1);
 			});
 			this['reorderlist'].value = position_hash.toJSON();					
 		});

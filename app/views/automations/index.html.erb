@@ -48,7 +48,7 @@
 		<h3 class="title">Senario Automations</h3>		
 	</div>
 	<ul class="admin_list" id="normal">
-		<% @automations.each do |va_rule| %>
+		<% @va_rules.each do |va_rule| %>
 			<li class="<%=cycle('stripe', '') %>"> 
 				<div class="item_actions">
 					<%= link_to('delete', automation_path(va_rule), :method => 'delete', :confirm => 'Are you sure you want to delete this scenario', :class => "button" ) %>					
@@ -67,7 +67,7 @@
 		<% form_for :reorder, @va_rules, :url => { :action => "reorder" , :controller => "automations" }, :html => { :method => :reorder, :id => "Reorderform" } do |f| %>
 			<input name="reorderlist" type="hidden" value="helper" />
 			<ul class="admin_list">
-				<% @automations.each do |va_rule| %>
+				<% @va_rules.each do |va_rule| %>
 					<li ruleid="<%=va_rule.id%>"> 
 						<span class="sort_handle"></span>
 						<%= h(va_rule.name) %> 
