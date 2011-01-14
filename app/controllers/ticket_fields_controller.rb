@@ -120,7 +120,7 @@ def save_flexi_field_entries ff_alias, ff_type
   
   coltype ="text"
   
-  if ff_type.eql?("dropdown") || ff_type.eql?("text") || ff_type.eql("paragraph")
+  if ("dropdown".eql?(ff_type) || "text".eql?(ff_type) || "paragraph".eql?(ff_type))
     coltype = "text"
   else
     coltype = coltype
@@ -183,34 +183,25 @@ end
 def get_new_column_details type
   
  
-  
-  
   data = Hash.new 
   
-  @flexifield_def = FlexifieldDef.all(:include =>:flexifield_def_entries ,:conditions =>{:account_id => current_account.id,:flexifield_def_entries =>{:flexifield_coltype => type} } )
-   
-  logger.debug "here is the inspection #{@flexifield_def.inspect}"
+  ff_def_id =FlexifieldDef.first(:conditions =>{:account_id => current_account.id}).id
+  
+  @flexifield_def_entries = FlexifieldDefEntry.all(:conditions =>{:flexifield_def_id => ff_def_id ,:flexifield_coltype => type})
+  
+  logger.debug "here is the inspection #{@flexifield_def_entries.inspect}"
    
   @coulumn_used = []
-    
-  ff_def_id = nil
-    
+   
   ff_order = 0
     
-  @flexifield_def.each do |field_def|
-      
-      ff_def_id = field_def.id
-      logger.debug "here is the ENTRIES #{field_def.flexifield_def_entries.inspect}"
-    
-      field_def.flexifield_def_entries.each do |entry|
+  @flexifield_def_entries.each do |entry|
       @coulumn_used.push(entry.flexifield_name) 
       
       ff_order = entry.flexifield_order
       
       end
-    
-    end
-     
+ 
    logger.debug "current occupaid columsn : #{@coulumn_used.inspect}"
      
      
