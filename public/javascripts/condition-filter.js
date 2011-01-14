@@ -181,7 +181,7 @@ rules_filter = function(name, filter_data, parentDom, options){
 		init: 
 			function(){				
 				domUtil.add_to_hash(filter_data);
-				console.log(setting.init_feed.size());
+				//console.log(setting.init_feed.size());
 				if(setting.init_feed.size())
 					domUtil.feed_data(setting.init_feed);
 				else

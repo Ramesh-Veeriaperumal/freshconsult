@@ -17,6 +17,15 @@
 			jQuery("#normal").fadeIn(300);
 			jQuery("#Reorder").show();								
 		});
+		jQuery("#Reorderform").submit(function(e){
+			var position_hash = $H();
+			jQuery
+				.each(jQuery("div#Sortable ul.admin_list li"), function(index, item){
+					var rule_id = item.getAttribute("ruleid");
+					position_hash.set(rule_id, index);
+			});
+			this['reorderlist'].value = position_hash.toJSON();					
+		});
 		
 	});
 </script>
