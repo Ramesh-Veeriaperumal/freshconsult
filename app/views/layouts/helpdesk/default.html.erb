@@ -3,8 +3,8 @@
     <head>
         <meta http-equiv="content-type" content="text/html; charset=utf-8" />
         <title><%= h(@page_title) || 'Helpdesk' %></title>
-		<link href='http://fonts.googleapis.com/css?family=Droid+Sans:regular,bold' rel='stylesheet' type='text/css' />
-		<link href='http://fonts.googleapis.com/css?family=Droid+Serif:regular,italic,bold,bolditalic' rel='stylesheet' type='text/css' />
+		<!--link href='http://fonts.googleapis.com/css?family=Droid+Sans:regular,bold' rel='stylesheet' type='text/css' />
+		<link href='http://fonts.googleapis.com/css?family=Droid+Serif:regular,italic,bold,bolditalic' rel='stylesheet' type='text/css' /-->
         <link rel="stylesheet" href="/stylesheets/print.css" type="text/css" media="print" />
         <link rel="stylesheet" href="/stylesheets/application.css" type="text/css" media="screen, projection" />
 		<link rel="stylesheet" href="/stylesheets/jquery-ui-1.8.7.custom.css" type="text/css" media="screen, projection" />
@@ -31,52 +31,12 @@
 			    jQuery("label.overlabel").overlabel();
 			});
 		</script>
-    	<%= yield :head %>
+    	<%= yield :head %> 
+		
     </head>
     <body class="<%= yield :layoutType %>">   
         <div id="wrap" class="container">
-            <div class="header">
-                <a href="/helpdesk/dashboard" class="logo"><img alt="FreshDesk" src="/images/logo.png" width="189px" height="47px" class="logo" /></a>
-				<% if current_user then %>
-                <div class="header_links">              
-					Welcome <%= content_tag(:strong, current_user ? current_user.name : 'Not Logged In') %>      
-					<ul>
-			            <li class="first">
-			              <%= link_to "My Info", support_guides_path %>
-			            </li>
-			            <li>			              
-						  <%= link_to('Sign out', logout_path) %>
-			            </li> 
-			        </ul>				
-				</div>
-				
-                <div class="header_tabs">
-                    <ul class="tabs">
-                    	<% if admin_subdomain? %>
-							<li><%= link_to(content_tag('span', 'Subscriptions'), admin_subscriptions_path) %></li>
-							<li><%= link_to(content_tag('span', 'Accounts'), admin_accounts_path) %></li>
-							<li><%= link_to(content_tag('span', 'Plans'), admin_subscription_plans_path) %></li>
-							<li><%= link_to(content_tag('span', 'Discounts'), admin_subscription_discounts_path) %></li>
-							<li><%= link_to(content_tag('span', 'Affiliates'), admin_subscription_affiliates_path) %></li>
-			  			<% else %>
-			            	<%= navigation_tabs %>
-			  			<% end %> 
-                    </ul>
-                    <ul class="rightHeadElements">
-                    	<li>
-							<%= link_to('<img src="/images/add.png" alt="FreshDesk home" class="add_new" height="16px" width="16px" /> New Ticket', new_helpdesk_ticket_path, :class=>"ui-bt-grey new_ticket") %>                    
-                        </li>
-						<li class="search">
-                            <label class="searchTxt">
-                            	<input value="Search" type="text" />
-							</label>
-							<a class="ui-bt-grey searchbt">GO</a>
-                        </li>
-                    </ul>
-                    <div class="header_seperator"></div>
-                </div>
-				<% end %>
-            </div>
+            <%= render(:partial => '/layouts/shared/header') %>
             <div class="content">  
 				<span class="ltShadow"></span>
         		<span class="rtShadow"></span> 

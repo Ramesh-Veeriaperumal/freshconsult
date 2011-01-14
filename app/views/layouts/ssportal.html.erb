@@ -24,35 +24,8 @@
     </head>
     <body class="<%= yield :layoutType %>">   
         <div id="wrap" class="container">
-            <div class="header">
-                <a href="/helpdesk/dashboard" class="logo"><img alt="FreshDesk" src="/images/logo.png" width="189px" height="47px" class="logo" /></a>
-				<div class="header_links">				      
-					<ul>
-			            <li class="first">			              
-						  <%= link_to('login', login_path) %>
-			            </li>
-						<li>
-							<%= link_to('sign up') %>
-						</li> 
-			        </ul>				
-				</div>
-                <div class="header_tabs">
-                	<!--<%= link_to(Helpdesk::USER_FACING_TITLE, support_guides_url) %>-->
-                    <ul class="tabs">
-                    	<% if admin_subdomain? %>
-							<li><%= link_to(content_tag('span', 'Subscriptions'), admin_subscriptions_path) %></li>
-							<li><%= link_to(content_tag('span', 'Accounts'), admin_accounts_path) %></li>
-							<li><%= link_to(content_tag('span', 'Plans'), admin_subscription_plans_path) %></li>
-							<li><%= link_to(content_tag('span', 'Discounts'), admin_subscription_discounts_path) %></li>
-							<li><%= link_to(content_tag('span', 'Affiliates'), admin_subscription_affiliates_path) %></li>
-			  			<% else %>
-			            	<%= navigation_tabs %>
-			  			<% end %> 
-                    </ul> 
-                    <div class="header_seperator">
-                    </div>
-                </div> 
-            </div>
+            <%= render(:partial => '/layouts/shared/header') %>
+			
             <div class="content">  
 				<span class="ltShadow"></span>
         		<span class="rtShadow"></span> 

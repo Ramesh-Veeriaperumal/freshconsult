@@ -111,14 +111,33 @@ body{
 
 /* Header styles */
 .header {  
-	@include clearfix;	
+	@include clearfix;
+	border-bottom:8px solid $complement;
 	padding:12px 0px 0px 0px;
 }
 
-a.logo{	
+a.brand{	
 	@include float-left;
-	padding-bottom:6px; 	
+	@include clearfix;
+	padding-bottom:6px;
+	text-decoration:none;	
+	*{
+		float:left;
+	} 
+	h3{
+		font-size:2em;
+		font-weight:bold;
+		text-decoration:none;
+		margin:0px;
+		padding:0px;
+		position:relative;
+		top:10px;
+		left:-5px;
+		color:desaturate($base-highlight, 10%);
+	}	
 }
+
+
 
 .header_links{
 	@include float-right; 	
@@ -149,12 +168,14 @@ a.logo{
 
 /* Header Tab styles */
 .header_tabs{ 
+	@include pie-clearfix;
 	position:relative; 
 	clear:both; 
 	width:100%;
 	ul.tabs{
 		@include no-bullets;
 		@include clearfix;
+		float:left;
 		margin:0px;
 		padding:0px; 
 		li{
@@ -170,10 +191,8 @@ a.logo{
 				text-align:center;				
 				display:block;							
 				position:relative;
-				/*@include border-top-radius(5px);*/
 				@include corners(6px, 6px, 0, 0); 
-				@include text-shadow(rgba(0,0,0,0.5), 1px, 1px, 3px);
-				
+				@include text-shadow(rgba(0,0,0,0.5), 1px, 1px, 3px);				
 				border:1px solid #000; 
 				@include tab-style($base-highlight);   
 				span{
@@ -198,7 +217,7 @@ a.logo{
 }
 
 .header_seperator{
-	height:9px;
+	height:8px;
 	background-color:$complement;
 	border:1px solid $complement;
 	border-width:0px 1px 0px 1px;	
@@ -207,23 +226,26 @@ a.logo{
  
  
 /* Button and Nav style */
-.rightHeadElements{
+.rightHeadElements{	 
 	position:absolute;
 	right:-3px;
-	bottom:4px; 
-	z-index:2;
-	@include inline-block-list; 
+	margin:0px;
+	padding:0px;
+	bottom:-7px; 
+	z-index:2;	
 	li{
-		@include clearfix;
+		@include no-bullets;
+		padding:0px;
+		float:left;	
 	}
 }
 
 a.new_ticket{ 
 	@include anchor-button(false); 
-	padding-left:25px;
-	margin-right:8px; 
+	padding:5px 8px 5px 25px;
+	margin:0xp 8px 0px 0px; 
 	color:#555555 !important;  
-	position:relative;   
+	position:relative;  
 	top:-1px;
 	font-size:0.95em;
 	img{
@@ -235,7 +257,14 @@ a.new_ticket{
 
 .search{
 	position:relative;
- 	label.searchTxt{  
+	label.overlabel{
+		top:0px;
+		margin:3px 10px;
+		font-weight:bold;		
+		color:#999999;		
+		font-size:1.0em;
+	}
+ 	div.searchTxt{  
 		@include min-width(200px);
 		border:1px solid #cfcfcf;
 		background:#fff; 
@@ -247,12 +276,11 @@ a.new_ticket{
 		top:7px;
 		@include border-radius(2em); 
 		input{		
-			color:#999999;
 			border:0px;
-			font-size:1.2em;
+			font-size:1.0em;
 			width:100%;
 			padding:5px 10px;
-			background:0px;		
+			background:none;		
 		}
 	}
 	.searchbt{
@@ -324,21 +352,20 @@ ul.summary{
 		padding:0px;
 		margin:4px 5px 0px 5px; 	
 		h4{
-			@include float-left;
-			font-family: 'Droid Serif', arial, serif;
-			color:#436b85;
+			@include float-left;			
+			color:#666777;
 			font-size:3.4em;	
 			font-weight:bold;
 			position:relative;
 			padding:0px 5px;margin:0px;
-			line-height:0.9em;
+			line-height:0.8em;
 		}
 		p{
 			@include float-left;
 			font-size:1.0em;
 			color:#555555;
 			position:relative; 
-			width:60px;
+			width:80px;
 			text-align:left;
 			span{
 				display:block;
@@ -1516,23 +1543,38 @@ ul.icon_grid{
 			color:#3a3a3a; 
 			em{
 				display:block;
-				font-style:normal;
-				color:#3a3a3a;
-				padding-top:5px;				
-				font-size:1em;
+				font-style:normal;				
+				padding-top:5px;	
+				white-space:normal;
+				font-size:12px;
+				font-weight:bold;
+				
 			}
+			@include corners(6px);
+			
+		}
+		a:hover{
+			color:#336699;
+			background:#F2F8FC;	
 		}
 	}
 }
 
-ul.admin{
-	padding:10px 15px; 
-	border:1px solid #efefef; 
-	li{ 
-		width:140px; 
+.admin{
+	padding:5px; 
+	border-bottom:1px solid #d8d8d8;
+	ul.icon_grid{		
+		li{ 
+			width:120px; 
+			padding-right:20px;
+		}
 	}
-}
-
+	h3.content_title{
+		padding:5px 5px 20px 10px;
+		margin:0px;
+		font-weight:bold;		
+	}
+} 
 .guide_page{
 	padding:10px;
 	border:1px solid #efefef;
