@@ -1546,9 +1546,7 @@ ul.icon_grid{
 				font-style:normal;				
 				padding-top:5px;	
 				white-space:normal;
-				font-size:12px;
-				font-weight:bold;
-				
+				font-size:12px;				
 			}
 			@include corners(6px);
 			
@@ -1571,8 +1569,7 @@ ul.icon_grid{
 	}
 	h3.content_title{
 		padding:5px 5px 20px 10px;
-		margin:0px;
-		font-weight:bold;		
+		margin:0px;	
 	}
 } 
 .guide_page{
@@ -2640,5 +2637,59 @@ span.sort_handle{
 	}
 	li.stripe{
 		background:#eaeef1;
+	}
+}
+
+ul.item_list{
+	@include no-bullets;		
+	@include clearfix;	
+	margin:0px;			
+	padding:0px;	
+	background:#f8f8f8;
+	border:1px solid #dfdfdf;
+	border-bottom-color:#e8e8e8;
+	border-left-color:#e8e8e8;
+	li{
+		padding:5px;
+		margin:5px;
+		font-size:12px;
+		@include clearfix;
+		position:relative;
+		@include min-width(150px);
+		a{
+			text-decoration:none;				
+		}	
+		img{
+			float:left;
+			margin-right:6px;
+		} 
+		b{
+			position:relative;	
+			top:2px;
+		}
+		.selected_tick{
+			position:absolute;
+			left:3px; bottom:3px;		
+		}
+	}
+}
+ul.active{	
+	a{			
+		color:#336699;		
+	}
+	.selected_tick{
+		background:url('/images/accept.png') no-repeat;
+	}
+}
+ul.inactive{
+	a{
+		@include opacity(0.6);		
+		color:#333333;	
+	}
+	a:hover{
+		@include opacity(1);
+	}
+	.selected_tick{
+		background:url('/images/photo_check.png') no-repeat;					
 	}
 }
