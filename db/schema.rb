@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110114092356) do
+ActiveRecord::Schema.define(:version => 20110117070843) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -40,16 +40,13 @@ ActiveRecord::Schema.define(:version => 20110114092356) do
   create_table "customers", :force => true do |t|
     t.string   "name"
     t.string   "cust_identifier"
-    t.integer  "owner_id"
     t.integer  "account_id"
-    t.integer  "cust_type"
-    t.string   "phone"
-    t.string   "address"
-    t.string   "website"
     t.text     "description"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "sla_policy_id"
+    t.text     "note"
+    t.text     "domains"
   end
 
   create_table "delayed_jobs", :force => true do |t|
@@ -552,9 +549,9 @@ ActiveRecord::Schema.define(:version => 20110114092356) do
     t.integer  "account_id"
     t.boolean  "admin",               :default => false
     t.boolean  "active",              :default => false, :null => false
+    t.string   "role_token"
     t.integer  "posts_count",         :default => 0
     t.datetime "last_seen_at"
-    t.string   "role_token"
     t.integer  "customer_id"
     t.string   "job_title"
     t.string   "second_email"

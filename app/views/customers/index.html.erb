@@ -69,24 +69,14 @@
 			<td class="preview_pic"><img src="/images/icons/building.png" width="32px" height="32px" /></td>
 		    <td class="user_prime_Details">
 		    	<%= link_to(h(customer.name), customer, :class => "user_name" ) %>
-				<div><%= h customer.address %></div>
+			
 				<div><%= h customer.description %></div>
 			</td>
-		    <!--td><%=h customer.cust_identifier %></td-->
-		    <!--td><%=h customer.owner_id %></td-->
-		    <!--td><%=h customer.account_id %></td-->
-		    <!--td><%=h customer.cust_type %></td>
-		    <td><%=h customer.phone %></td-->
-		    <!--td><%=h customer.address %></td-->
-		    <!--td><%=h customer.website %></td>
-		    <td><%=h customer.description %></td>
-		    <td><%= link_to 'Show', customer %></td>
-		    <td><%= link_to 'Edit', edit_customer_path(customer) %></td-->
-		    <td><%= link_to 'Delete', customer, :confirm => 'Are you sure?', :method => :delete %></td>
+		   		    <td><%= link_to 'Delete', customer, :confirm => 'Are you sure?', :method => :delete %></td>
 		  </tr>
 		<% end %>
 		</table>
 		<br />	
 	</div>
 </div>
-
+<div>  <%= will_paginate @customers %></div>

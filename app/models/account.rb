@@ -5,6 +5,9 @@ class Account < ActiveRecord::Base
   has_one :subscription, :dependent => :destroy
   has_many :subscription_payments
   
+  has_many :customers, :dependent => :destroy
+  has_many :sla_policies , :class_name => 'Helpdesk::SlaPolicy' ,:dependent => :destroy
+  
   #Scoping restriction for other models starts here
   has_many :va_rules, :class_name => 'VARule', :conditions => {:rule_type => VAConfig::BUSINESS_RULE, :active => true}, :order => "position"
   has_many :disabled_va_rules, :class_name => 'VARule', :conditions => {:rule_type => VAConfig::BUSINESS_RULE, :active => false}, :order => "position"
