@@ -5,8 +5,21 @@ module ModelControllerMethods
   end
   
   def index
-    self.instance_variable_set('@' + self.controller_name,
-      scoper.find(:all, :order => 'name'))
+    @users = self.instance_variable_set('@' + self.controller_name,
+      scoper.find(:all, :order => 'name', :conditions =>{:role_token=>'customer'}))
+     
+
+    respond_to do |format|
+      format.html  do
+        @users = @users.paginate(
+          :page => params[:page], 
+          :order => 'name',
+          :per_page => 10)
+      end
+      format.atom do
+        @users = @users.newest(20)
+      end
+    end
   end
   
   def create
