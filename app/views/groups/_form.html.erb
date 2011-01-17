@@ -1,11 +1,60 @@
  <script type="text/javascript"> 	
-	function AddUser(){
-		var agent_select = jQuery('select#group_escalate_to').get(0);
-			agentName = jQuery(agent_select.options[agent_select.selectedIndex]).text();
-			agentID	  = agent_select.value;
+ 	var agent_select = null; 
+ 	function toggleText(){
+		if (jQuery("ul#Active_list li").size()) {			
+			jQuery("ul#Active_list div").hide();
+		}else{			
+			jQuery("ul#Active_list div").show();			
+		}						
+	}	
+	
+	function removeUser(element){
+		jQuery(agent_select)
+			.append("<option value='"+element.getAttribute("user_id")+"'>"+element.getAttribute("user_name")+"</option>");
+		jQuery("#All_Agents").show();		
 	}
-	jQuery(document).ready(function(){			
-			jQuery("ul#Inactive_list li")
+	function AddUser(){		
+			option	  = jQuery(agent_select.options[agent_select.selectedIndex])			
+			agentName = option.text()
+			agentID	  = agent_select.value;			
+			
+			option.remove();
+			
+			if(!agent_select.options.length)
+				jQuery("#All_Agents").hide();
+			
+			
+			var userBox = jQuery('<li />')							
+							.append("<img src=\"/images/icons/profile_blank.gif\" width=\"32px\" height=\"32px\" /><img src=\"/images/spacer.gif\" class=\"selected_tick\" width=\"16px\" height=\"16px\" /><b>"+agentName+"</b>");
+			
+			jQuery("ul#Active_list")
+					.append(userBox);
+			
+			jQuery(userBox).get(0).setAttribute("user_name", agentName);
+			jQuery(userBox).get(0).setAttribute("user_id", agentID);
+					
+			toggleText();
+	}
+	jQuery(document).ready(function(){
+		agent_select = jQuery('select#group_escalate_to').get(0);
+		
+		jQuery("ul#Active_list li")
+			.live("click", function(ev){										
+				removeUser(this);
+				jQuery(this)
+					.remove();	
+				toggleText();				
+			});			
+		
+		jQuery("#group_form").submit(function(ev){
+			activeAgents = $H();
+			jQuery("ul#Active_list li")
+				.each(function(index, item){
+					activeAgents.set(item.getAttribute("user_id"), item.getAttribute("user_name"));					
+				});
+			jQuery("#agent_list").val(activeAgents.toJSON());								
+		});
+			/*jQuery("ul#Inactive_list li")
 				.live("click", function(ev){					
 					jQuery(this)
 						.detach()
@@ -17,14 +66,14 @@
 					jQuery(this)
 						.detach()
 					    .appendTo("#Inactive_list");				
-				});
+				});*/
 	});
  </script> 
 <div class="pageContent">
 	<h3 class="content_title"><%=title%></h3>
 	<span class="seperator"></span>
 	<!--%= debug @support_plan%-->
-	<% form_for(@group) do |f|  %>
+	<% form_for(@group, :html => {:id => "group_form"}) do |f|  %>
 	  <%= f.error_messages %>
 	  <ul class="ui-form">
 		  <li>
@@ -35,11 +84,20 @@
 		    <%= f.label :description, "Description" %>
 		    <%= f.text_area :description, :class => "smallpara" %>
 		  </li>
-		  <li>	
-		  	<label>Agents in this Group</label>
+		  <li>		  	
+		  	<label>		  		
+				Agents in this Group			
+			</label>
+			<span id="All_Agents">
+					<b>Select Agents </b>
+		  			<%= f.collection_select :escalate_to, User.find_all_by_permission(current_account, :manage_tickets), :id, :name %>			
+					<%= link_to_function 'Add', 'AddUser()', :class => "button" %>
+			</span>
 			<input type="hidden" name="agent_list" id="agent_list" value="" />			
-			<ul class="item_list active" id="Active_list">				
+			<ul class="item_list active" id="Active_list">	
+				<div class="padding6">No Agents in this group</div>			
 			</ul>			
+			<!--
 			<ul class="item_list inactive" id="Inactive_list">
 				<% @agents = User.find_all_by_permission(current_account, :manage_tickets) %>
 				<% @agents.each do |agent| %>
@@ -51,12 +109,8 @@
 					</a>
 				</li>
 				<% end %>
-			</ul>
-			<br />
-			<!--		
-				<%= f.collection_select :escalate_to, User.find_all_by_permission(current_account, :manage_tickets), :id, :name %>			
-				<%= link_to_function 'Add', 'AddUser()', :class => "button" %>
-			-->
+			</ul>-->
+			<br />	
 		  </li>
 		  <li>
 			<%= f.check_box :email_on_assign %>
