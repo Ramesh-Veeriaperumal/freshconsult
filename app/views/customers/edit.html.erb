@@ -19,40 +19,17 @@
 			Add specific notes regarding this company<br /> 
 			example - we are negotiating a 100K deal with this company
 		</label>
-	    <textarea class="smallpara" id="comp_notes"></textarea>
+	   
+		<%= f.text_area :note, :id => "comp_notes", :class => "smallpara"  %>
 	  </li>
 	  <li>
-	  	<%= f.label :domain, "Domain Names for this company" %>
-		<input name="domain_names" type="text" /> 
+	  	<%= f.label :domains, "Domain Names for this company" %>		
+		<%= f.text_field :domains, :id => "domain_names", :class => "text"  %>
 		<span>
 			<b>Note:</b> Freshdesk will automatically associate Contacts with this company if email ids contain these domains 
 		</span>
 	  </li>
-	  <!--li>
-	    <%= f.label :cust_identifier, "Customer id" %>
-	    <%= f.text_field :cust_identifier %>
-	  </li>
-	  <li>
-	    <%= f.label :owner_id %>
-	    <%= f.collection_select :owner_id, Helpdesk::Authorization.find_all_by_permission(:manage_tickets), :user_id, :name, {:include_blank => 'Nobody'}, :class => "select" %>
-	    <%= f.hidden_field :account_id %>
-	  </li>	  
-	  <li>
-	    <%= f.label :cust_type, "Type" %>
-	    <%= f.select :cust_type, Customer::CUST_TYPE_OPTIONS, :class => "select" %>
-	  </li>
-	  <li>
-	    <%= f.label :phone %>
-	    <%= f.text_field :phone %>
-	  </li>
-	  <li>
-	    <%= f.label :address %>
-	    <%= f.text_field :address %>
-	  </li>
-	  <li>
-	    <%= f.label :website %>
-	    <%= f.text_field :website %>
-	  </li-->
+	 
 	</ul>  
 	
 	<div class="button-container">

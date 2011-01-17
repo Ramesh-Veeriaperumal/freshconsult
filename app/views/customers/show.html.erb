@@ -48,52 +48,14 @@
 	<!--%= debug @customer.users.tickets%-->
 	<div class="info_subtitle">Special note about "<%= @customer.name %>"</div>
 	<p class="info">
-		<%= @customer.description %>
+		<%= @customer.note %>
 	</p>	
 	
 	<div class="info_subtitle">Associated Domain names</div>
 	<p class="info">
-		freshdesk.com, kotaku.net		
+		<%= @customer.domains %>	
 	</p>
-	<!--p>
-	  <b>Customer Number:</b>
-	  <%=h @customer.cust_identifier %>
-	</p>
-	
-	<p>
-	  <b>Owner:</b>
-	  <%=h @customer.owner_id %>
-	</p>
-	
-	<p>
-	  <b>Account:</b>
-	  <%=h @customer.account_id %>
-	</p>
-	
-	<p>
-	  <b>Cust type:</b>
-	  <%=h @customer.cust_type %>
-	</p>
-	
-	<p>
-	  <b>Phone:</b>
-	  <%=h @customer.phone %>
-	</p>
-	
-	<p>
-	  <b>Address:</b>
-	  <%=h @customer.address %>
-	</p>
-	
-	<p>
-	  <b>Website:</b>
-	  <%=h @customer.website %>
-	</p>
-	
-	<p>
-	  <b>Description:</b>
-	  <%=h @customer.description %>
-	</p-->
+
 	
 	<span class="seperator"></span>
 	<div class="info_subtitle">Recent Tickets from "<%= @customer.name %>"</div>
