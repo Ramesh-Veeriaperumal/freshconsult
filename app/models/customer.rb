@@ -1,7 +1,13 @@
 class Customer < ActiveRecord::Base
   
+  belongs_to :account
   
   has_many :users , :class_name =>'User'
+  
+
+  
+  before_create :check_sla_policy
+  before_update :check_sla_policy
   
   has_many :tickets , :through =>:users , :class_name => 'Helpdesk::Ticket' ,:foreign_key => "requester_id"
   
@@ -18,6 +24,15 @@ class Customer < ActiveRecord::Base
   CUST_TYPE_BY_TOKEN = Hash[*CUST_TYPES.map { |i| [i[0], i[2]] }.flatten]
   
   
-  
+  def check_sla_policy
+    
+    if self.sla_policy_id.nil?
+      
+      
+      self.sla_policy_id = account.sla_policies.find_by_is_default(true).id
+      
+    end
+    
+  end
   
 end

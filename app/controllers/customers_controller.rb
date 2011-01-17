@@ -1,12 +1,21 @@
 class CustomersController < ApplicationController
   # GET /customers
   # GET /customers.xml
+  
+  
   def index
-    @customers = Customer.all
+    @customers = current_account.customers.all
 
     respond_to do |format|
-      format.html # index.html.erb
-      format.xml  { render :xml => @customers }
+      format.html  do
+        @customers = @customers.paginate(
+          :page => params[:page], 
+          :order => 'name',
+          :per_page => 10)
+      end
+      format.atom do
+        @customers = @customers.newest(20)
+      end
     end
   end
 
@@ -40,7 +49,10 @@ class CustomersController < ApplicationController
   # POST /customers
   # POST /customers.xml
   def create
-    @customer = Customer.new(params[:customer])
+       
+    @customer = current_account.customers.new((params[:customer]))
+    
+    #@customer
 
     respond_to do |format|
       if @customer.save
