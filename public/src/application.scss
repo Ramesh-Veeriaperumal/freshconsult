@@ -213,7 +213,7 @@ a.brand{
 				padding-bottom:6px;  			
 		}
 		li a:hover{
-				@include tab-style(desaturate($complement, 40%));
+				@include tab-style(saturate($complement, 5%));
 		}
 	}
 }
@@ -525,6 +525,10 @@ h3.content_title, h2.content_title{
 			top:-8px;
 			left:-2px;			
 		}
+}
+
+h3.content_title.withPadding{
+	margin:2px 0px 4px 25px;
 }
 
 h2.content_title{	
@@ -1822,7 +1826,7 @@ $lightBase:lighten($base, 5%);
 		width:100%;
 	}
 	li.small{
-		width:45%;
+		width:48%;
 	}
 	li.medium{
 		width:85%;
@@ -1835,7 +1839,7 @@ $lightBase:lighten($base, 5%);
 		line-height:18px;
 		color:#565656;
 	}	
-	input, label{
+	input.text, label{
 		font-size:12pt;
 	}
 	label.overlabel{
@@ -1844,7 +1848,7 @@ $lightBase:lighten($base, 5%);
 		margin-top:0px;
 		font-size:1.0em;	
 	}	
-	input, textarea{		
+	input.text, textarea{		
 		margin:0px 0px 3px 0px;
 		color:#3f3f3f;
 		padding:3px;
@@ -1869,15 +1873,10 @@ $lightBase:lighten($base, 5%);
 		font-size:1.0em; 
 		font-weight:normal;
  	}
- 	input:focus, textarea:focus{ 		 
+ 	input.text:focus, textarea:focus{ 		 
  		@include form-gradient(#f7fdef);	
  		border-color:#5b711f;
- 	} 
- 	
-	.button{
-		font-size:1em;
-		padding:5px 8px;
-	}  
+ 	}   
 	span{
 		font-weight:normal;
 		font-size:0.9em;
@@ -1972,7 +1971,8 @@ $lightBase:lighten($base, 5%);
 		}	
 		fieldset.addchoice{
 			border:1px solid #dfdfdf;
-			background:#ffffff;	
+			background:#ffffff;
+			padding:3px;	
 		}	
 	}
 		
@@ -2149,8 +2149,7 @@ span.sort_handle{
 	float:left;
 	border:1px solid #dddddd;
 	background:#ffffff; 
-	-moz-box-shadow: 0 0 5px rgba(0,0,0,0.4) inset;
-	
+	-moz-box-shadow: 0 0 5px rgba(0,0,0,0.4) inset;	
 }
 
 .pageContent .custom_form_outer{ 
@@ -2194,6 +2193,7 @@ span.sort_handle{
 .ui-custom-form{
 	padding:3px 14px;	 
 	@include clearfix; 
+	background:none;
 	li{   
 		padding:4px; 
 		position:relative;
@@ -2233,7 +2233,7 @@ span.sort_handle{
 	@include clearfix;
 	background: lighten($base, 8%); 
 	padding:8px 10px 15px 10px;
-	margin-top:5px;
+	margin:0px;
 }
 
 .admin_form .button-container{
@@ -2349,6 +2349,9 @@ span.sort_handle{
 	background:lighten($base, 6%);
 	@include border-radius(8px);
 	font-size:0.95em;
+	ul.ui-form{
+		background:none;
+	}
 }
 
 
@@ -2705,4 +2708,12 @@ ul.inactive{
 
 .padding6{
 	padding:6px;
+}
+
+h3.t_padding{
+	padding:2px 10px;
+}
+
+label.caption{
+	text-transform:capitalize;
 }

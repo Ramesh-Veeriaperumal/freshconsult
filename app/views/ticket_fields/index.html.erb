@@ -1,75 +1,10 @@
 <script type="text/javascript">
 	jQuery(document).ready(init);
 			
-function init(){  
-	
+	function init(){
+		//jQuery('#custom_form li').remove();
+		var fieldFeed = eval(document.getElementById('field_values').value);
 
-	//jQuery('#custom_form li').remove();
-
-
-	var fieldFeed = eval(document.getElementById('field_values').value);
-
-	//console.log(fieldFeed);
-	
-        /*var fieldFeed = [{
-	    type: "text",
-            fieldType :"custom"
-            label: "Requester (email)",
-            description: "Enter requester name",
-            choices: [],
-            setDefault: 0,
-            agent: {required: true},
-            customer: {visible: true,editable: false,required: true}
-        },{
-            type: "text",
-            label: "Subject",
-            description: "Request subject",
-            choices: [],
-            setDefault: 0,
-            agent: {required: true},
-            customer: {visible: true,editable: false,required: true}
-        },{
-            type: "dropdown",
-            label: "Source",
-            description: "Source of the request",
-            choices: [{value:"Staff initiated", tags:[]}, {value:"E-mail", tags:[]}],
-            setDefault: 0,
-            agent: {required: true},
-            customer: {visible: true,editable: false,required: true}
-        },{
-            type: "dropdown",
-            label: "Status",
-            description: "Status of the request",
-            choices: [{value:"Open", tags:[]}, {value:"Closed", tags:[]}],
-            setDefault: 0,
-            agent: {required: true},
-            customer: {visible: true,editable: false,required: true}
-        },{
-            type: "dropdown",
-            label: "Priority",
-            description: "",
-            choices: [{value:"Low", tags:[]}, {value:"High", tags:[]}],
-            setDefault: 0,
-            agent: {required: true},
-            customer: {visible: true,editable: false,required: true}
-        },{
-            type: "dropdown",
-            label: "Assigned to",
-            description: "",
-            choices: [{value:"Not Assigned", tags:[]}],
-            setDefault: 0,
-            agent: {required: true},
-            customer: {visible: true,editable: false,required: true}
-        },{
-            type: "paragraph",
-            label: "Description",
-            description: "",
-            choices: [],
-            setDefault: 0,
-            agent: {required: true},
-            customer: {visible: true,editable: false,required: true}
-        }];*/
-		
 		var DialogFieldPref = null;
 		var SourceField 	= null;	
 		
@@ -85,20 +20,7 @@ function init(){
 					   editable: jQuery(dialogContainer+' input[name|="customereditable"]'),
 					   required: jQuery(dialogContainer+' input[name|="customerrequired"]')}
 		};
-		/*
-		for(name in dialogDOMMap){
-			console.log(jQuery(dialogDOMMap[name]).val());
-			jQuery(dialogDOMMap[name]).bind("change", function(e){
-					console.log("aaa");
-					switch (name){
-						case 'label':
-						console.log(name);
-						jQuery(SourceField).html(jQuery(this).val());					
-						break;						
-					}				
-			});			
-		}*/
-		       
+		
         var fieldTemplate = $H({
 					            type: "",
 					            label: "Untitled",
@@ -111,26 +33,26 @@ function init(){
 						    columnId: ""
 					        });
 
-	function getAjaxField(type){
-		jQuery.ajax({
-      					type: 'POST',
-					url: '/ticket_fields/get_column',
-					contentType: 'application/json',
-					data:JSON.stringify({type: type}),
-					datatype:'json',
-      					success: function(data){console.log(data);getFreshField(type, data)}
-			});
-	}
-
-	function getFreshField(type){
-            var freshField = fieldTemplate.toObject();
-	    freshField.type = type;	
-            	switch (type) {
-                	case 'dropdown': 
-                	    freshField.choices = [{value: "First Choice",tag: []}, {value: "Second Choice",tag: []}];
-                	break;
-            	}
-		return freshField;
+		function getAjaxField(type){
+			jQuery.ajax({
+	      					type: 'POST',
+						url: '/ticket_fields/get_column',
+						contentType: 'application/json',
+						data:JSON.stringify({type: type}),
+						datatype:'json',
+	      					success: function(data){console.log(data);getFreshField(type, data)}
+				});
+		}
+	
+		function getFreshField(type){
+	            var freshField = fieldTemplate.toObject();
+		    freshField.type = type;	
+	            	switch (type) {
+	                	case 'dropdown': 
+	                	    freshField.choices = [{value: "First Choice",tag: []}, {value: "Second Choice",tag: []}];
+	                	break;
+	            	}
+			return freshField;
             }
 		
 		function getCustomFieldJson(){
@@ -314,21 +236,17 @@ function init(){
         
 		jQuery("#SaveField").click(function()
 		{
-	
+			var sourceData   	         	= jQuery(SourceField).data("raw");																	
+			sourceData.label 		 		= dialogDOMMap.label.val();
+			sourceData.description 		 	= dialogDOMMap.description.val();
+			sourceData.agent.required	 	= dialogDOMMap.agent.required.attr("checked");
+			sourceData.customer.visible	 	= dialogDOMMap.customer.visible.attr("checked");										
+			sourceData.customer.editable    = dialogDOMMap.customer.editable.attr("checked");
+			sourceData.customer.required    = dialogDOMMap.customer.required.attr("checked");  											
+			sourceData.choices		 		= getAllChoices(dialogDOMMap.choices);									
 
-				var sourceData   	         = jQuery(SourceField).data("raw");																	
-				sourceData.label 		 = dialogDOMMap.label.val();
-				sourceData.description 		 = dialogDOMMap.description.val();
-				sourceData.agent.required	 = dialogDOMMap.agent.required.attr("checked");
-				sourceData.customer.visible	 = dialogDOMMap.customer.visible.attr("checked");										
-				sourceData.customer.editable     = dialogDOMMap.customer.editable.attr("checked");
-				sourceData.customer.required     = dialogDOMMap.customer.required.attr("checked");  											
-				sourceData.choices		 = getAllChoices(dialogDOMMap.choices);									
-
-				constFieldDOM(sourceData, jQuery(SourceField));	
-			console.log(sourceData.toSource());
-
-										
+			constFieldDOM(sourceData, jQuery(SourceField));
+			console.log(sourceData.toSource());											
 			//DialogFieldPref.dialog("close");			
 		});
 		
@@ -363,8 +281,8 @@ function init(){
     };
 </script>
 <% content_for :layoutType do %>single<% end %>
-<div class="pageContent">
-    <h3 class="content_title">Ticket Fields</h3>
+<div class="pageContent" style="padding:0px;margin:0px;">
+    <h3 class="content_title withPadding">Ticket Fields</h3>
     <div class="admin_form">
         <ul id="custom_fields" class="ui-custom-fields">
         	<h4 class="title">Add a Custom Field</h4>
@@ -383,34 +301,21 @@ function init(){
             <li type="dropdown">
                 <a href="#" class="fdbutton">Dropdown</a>
             </li>
-        </ul> 
-
-	<div id="resultmsg"> </div>
-
-	
-
-
-	<%
-	       
-		logger.debug "index page: #{@ticket_fields.json_data}"
-		
-		json_data = @ticket_fields.json_data
-
-
-	%>
-
+        </ul>
+	<div id="resultmsg"> </div>	
+	<%  logger.debug "index page: #{@ticket_fields.json_data}" %>
+	<%	json_data = @ticket_fields.json_data %>
 		<div class="custom_form_outer">
-			<h3 class="content_title">Customize your “New Ticket” form.</h3>
-	        <ul id="custom_form" class="ui-form ui-custom-form">
-		</ul>  
-		<input type="hidden" id="field_values" value='<%=json_data%>' />
+			<h3 class="content_title t_padding">Customize your “New Ticket” form.</h3>
+	        <ul id="custom_form" class="ui-form ui-custom-form"></ul>  
+			<input type="hidden" id="field_values" value='<%=json_data%>' />
 		</div>
 		
 		<div class="dialog_ticket_field" title="Field Properties" id="CustomFieldsDialog" style="display:none;">
 		    <form action="#">		    	
 		        <ul class="ui-form">
 		            <li>
-		                <label name="customtype">
+		                <label class="caption">
 		                    Field Label
 		                </label>
 		                <div>
@@ -476,13 +381,10 @@ function init(){
 		        </ul>
 		    </form>
 		</div>
-    
-		
-	
 	</div> 
 	<div class="button-container admin_form">
-			<a href="Javascript:void(0)" class="fdbutton" id="SaveForm">Save</a>
-			<a href="Javascript:void(0)" class="fdbutton grey" id="cancelfrom">Cancel</a>
-		</div>
+		<a href="Javascript:void(0)" class="fdbutton" id="SaveForm">Save</a>
+		<a href="Javascript:void(0)" class="fdbutton grey" id="cancelfrom">Cancel</a>
+	</div>
 </div>
 <% content_for :dialogs do %><% end %>
