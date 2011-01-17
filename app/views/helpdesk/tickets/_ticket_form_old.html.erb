@@ -1,0 +1,120 @@
+
+<% content_for :head do %>
+  <%= stylesheet_link_tag "helpdesk/autosuggest" %>
+  <%= javascript_include_tag "helpdesk/autosuggest" %>
+
+  <% javascript_tag do %>
+    document.observe("dom:loaded", function(){
+
+      new bsn.AutoSuggest('helpdesk_ticket_email', {
+        script: "<%= autocomplete_helpdesk_authorizations_path %>?",
+        varname: "v",
+        json: true,
+        maxresults: 35,
+        timeout: 3600000, 
+		minchars: 2,
+		shownoresults: false,
+		id_as_value: true,
+		cache: false,
+		delay:200
+      });
+
+      Form.Element.activate('helpdesk_ticket_email')
+
+    });
+    
+  <% end %>
+<% end %>
+
+  <% form_for @item do |f| %>
+  
+   
+    <%= f.error_messages %>
+ 	<ul class="ui-form">
+ 		<li> 	
+  			<label id="requester-label">Requester *</label>
+  			<input type="text" id="helpdesk_ticket_email" class="text" name="helpdesk_ticket[email]"></input>
+   		</li> 
+		<li>
+          <%= f.label :subject, "Subject" %>
+          <%= f.text_field :subject, :class => "text" %>
+   		</li>
+		<li class="small">
+          <%= f.label :source, "Source" %>
+          <%= f.select :source, Helpdesk::Ticket::SOURCE_OPTIONS, :class => "select" %>
+        </li>
+		<li class="small">
+          <%= f.label :status, "Status" %>
+          <%= f.select :status, Helpdesk::Ticket::STATUS_OPTIONS, :class => "select" %>
+        </li>
+		<li class="small">
+          <%= f.label :responder_id, "Assigned To" %>
+          <%= f.collection_select :responder_id, Helpdesk::Authorization.find_all_by_permission(:manage_tickets), :user_id, :name, {:include_blank => 'Nobody'}, :class => "select" %>
+         </li>
+		 
+ 		<li class="small">
+ 			<%= f.label :priority, "Priority" %>          
+			<%= f.select :priority, Helpdesk::Ticket::PRIORITY_OPTIONS, :class => "select" %>
+    	</li>
+		  
+		 
+		  
+		  <!-- here comes custom_fields -->
+		  <li>
+		 
+		  
+		   <% f.fields_for :flexifields do |cust_form| %>
+		   
+		   	
+			<%
+						
+					@item.custom_fields.each  do |cust_field|
+
+					
+	
+					   cust_field.flexifield_def_entries.each do |entries|
+
+
+						col_type = Helpdesk::Ticket::COLUMN_TYPE_BY_KEY[entries.flexifield_coltype]
+
+						#field_class =Helpdesk::Ticket::COLUMN_CLASS_BY_KEY[entries.flexifield_coltype]
+						
+					   case entries.flexifield_coltype
+					     when "text" then
+						%>
+							
+							<%= cust_form.label "#{entries.flexifield_alias}", "#{entries.flexifield_alias}" %>  
+ 							<%= cust_form.text_field "#{entries.flexifield_alias}" ,:class=>"text" %>
+				
+						<%
+						when "dropdown" then						
+						%>
+							<%= cust_form.label "#{entries.flexifield_alias}", "#{entries.flexifield_alias}" %>  
+ 							<%= cust_form.select "#{entries.flexifield_alias}", entries.flexifield_picklist_val,:class=>"select" %>
+							
+						<%
+						when "checkbox" then
+						%>
+							<%= cust_form.label "#{entries.flexifield_alias}", "#{entries.flexifield_alias}" %>  
+ 							<%= cust_form.check_box "#{entries.flexifield_alias}" ,:class=>"checkbox" %>
+						<%	
+							end
+							end
+							end
+						%>
+					
+			
+		    <% end %>
+
+	
+				<%= f.label :description, "Description" %>
+    		<%= f.text_area :description, :class=>"textarea" %>
+		</li>
+	</ul>
+    <div class="button-container">
+      <%= f.submit "Save changes", :class => "fdbutton submit" %>
+      <%= submit_tag "Save and Create Another", :name => "save_and_create" , :class => "fdbutton" %>
+      <%= link_to "Cancel", (@item.new_record? ? {:action => 'index'} : @item ), :class => "fdbutton grey" %>
+    </div>
+
+  <% end %>
