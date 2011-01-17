@@ -7,7 +7,7 @@ class UsersController < ApplicationController
   before_filter :set_selected_tab
     
   def new
-    @user.role_token = 'poweruser'
+    @user.role_token = 'customer'
   end
   
   def create
