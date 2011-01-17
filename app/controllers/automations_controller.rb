@@ -75,6 +75,11 @@ class AutomationsController < ApplicationController
     end
     
     def load_config
+      a_users = User.find(:all , :conditions =>{:role_token => ['poweruser','admin']}, :order => 'name')      
+        agents = a_users.collect { |au| [au.id, au.name] }
+        
+      groups  = Group.find(:all).collect { |g| [g.id, g.name]}     
+      
       action_hash     = [{:name => 0              , :value => "--- Click to Select Action ---"},
                          {:name => "priority"     , :value => "Set Priority as"  , :domtype => "dropdown", :choices => Helpdesk::Ticket::PRIORITY_NAMES_BY_KEY.sort },
                          {:name => "ticket_type"  , :value => "Set Type as"      , :domtype => "dropdown", :choices => Helpdesk::Ticket::TYPE_NAMES_BY_KEY.sort },
@@ -82,14 +87,8 @@ class AutomationsController < ApplicationController
                          {:name => 0              , :value => "------------------------------"},                                                                                           
                          {:name => "add_tag"      , :value => "Add Tag(s)"       , :domtype => 'autocompelete', :autocompelete_url => "allemailsurl"},
                          {:name => 0              , :value => "------------------------------"},
-                         {:name => "responder_id" , :value => "Assign to Agent"  , :domtype => 'dropdown', :choices => [["1", "Edward"], 
-                                                                                                                        ["2", "John Patrick"],
-                                                                                                                        ["3", "Susan Renolds"],
-                                                                                                                        ["4", "Gary Matheew"]]},
-                         {:name => "group_id"     , :value => "Assign to Group"  , :domtype => 'dropdown', :choices => [["1", "Hardware"], 
-                                                                                                                        ["2", "Software"],
-                                                                                                                        ["3", "Tech support"],
-                                                                                                                        ["4", "Product Group"]]},
+                         {:name => "responder_id" , :value => "Assign to Agent"  , :domtype => 'dropdown', :choices => agents },
+                         {:name => "group_id"     , :value => "Assign to Group"  , :domtype => 'dropdown', :choices => groups },
                          {:name => 0              , :value => "------------------------------"},
                          {:name => "send_email_to_group" , :value => "Send Email to Group"  , :domtype => 'autocompelete', :autocompelete_url => "groupemailsurl"},
                          {:name => "send_email_to_agent" , :value => "Send Email to Agent"  , :domtype => 'autocompelete', :autocompelete_url => "agentemailsurl"},
