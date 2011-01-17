@@ -18,6 +18,15 @@ class Va::Action
   end
   
   protected
+  
+    def add_comment(act_on)
+      note = act_on.notes.build()
+      note.body = act_hash[:comment]
+      note.account_id = act_on.account_id
+      note.user = User.current
+      note.save!
+    end
+  
     def add_tag(act_on)
       value.split(',').each do |tag_name|
         tag_name.strip!

@@ -1,5 +1,6 @@
 class User < ActiveRecord::Base
   include SavageBeast::UserInit
+  include SentientUser
   
   belongs_to :account
   belongs_to :customer

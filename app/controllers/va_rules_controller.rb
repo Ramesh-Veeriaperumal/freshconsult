@@ -45,6 +45,7 @@ class VaRulesController < AutomationsController
     
     def load_object
       @va_rule = current_account.all_va_rules.find(params[:id])
+      @obj = @va_rule #Destroy of model-controller-methods needs @obj
     end
     
     def load_config

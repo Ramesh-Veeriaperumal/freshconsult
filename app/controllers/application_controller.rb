@@ -12,6 +12,8 @@ class ApplicationController < ActionController::Base
   include SslRequirement
   include SubscriptionSystem
   
+  include SentientController
+  
   # See ActionController::RequestForgeryProtection for details
   # Uncomment the :secret if you're not using the cookie session store
   protect_from_forgery # :secret => 'cf40acf193a63c36888fc1c1d4e94d32'
