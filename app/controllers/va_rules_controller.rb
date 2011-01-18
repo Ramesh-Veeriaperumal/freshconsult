@@ -96,5 +96,8 @@ class VaRulesController < AutomationsController
       
       @op_list        = ActiveSupport::JSON.encode operator_list
     end
-  
+    
+    def additional_actions
+      {}
+    end
 end

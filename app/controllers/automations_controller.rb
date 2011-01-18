@@ -85,7 +85,6 @@ class AutomationsController < ApplicationController
                          {:name => "ticket_type"  , :value => "Set Type as"      , :domtype => "dropdown", :choices => Helpdesk::Ticket::TYPE_NAMES_BY_KEY.sort },
                          {:name => "status"       , :value => "Set Status as"    , :domtype => "dropdown", :choices => Helpdesk::Ticket::STATUS_NAMES_BY_KEY.sort},
                          {:name => 0              , :value => "------------------------------"},
-                         {:name => "add_comment"  , :value => "Add Comment"      , :domtype => 'comment'},
                          {:name => "add_tag"      , :value => "Add Tag(s)"       , :domtype => 'autocompelete', :autocompelete_url => "allemailsurl"},
                          {:name => 0              , :value => "------------------------------"},
                          {:name => "responder_id" , :value => "Assign to Agent"  , :domtype => 'dropdown', :choices => agents },
@@ -95,7 +94,14 @@ class AutomationsController < ApplicationController
                          {:name => "send_email_to_agent" , :value => "Send Email to Agent"  , :domtype => 'autocompelete', :autocompelete_url => "agentemailsurl"},
                          {:name => "send_email_to_requester"  , :value => "Send Email to Requester"   , :domtype => 'autocompelete', :autocompelete_url => "useremailsurl"},
                         ]
+                        
+      additional_actions.each { |index, value| action_hash.insert(index, value) }
       
       @action_defs    = ActiveSupport::JSON.encode action_hash
     end
+    
+    def additional_actions
+      {5, {:name => "add_comment"  , :value => "Add Comment"      , :domtype => 'comment'}}
+    end
+
 end
