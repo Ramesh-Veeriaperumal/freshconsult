@@ -90,9 +90,9 @@ class AutomationsController < ApplicationController
                          {:name => "responder_id" , :value => "Assign to Agent"  , :domtype => 'dropdown', :choices => agents },
                          {:name => "group_id"     , :value => "Assign to Group"  , :domtype => 'dropdown', :choices => groups },
                          {:name => 0              , :value => "------------------------------"},
-                         {:name => "send_email_to_group" , :value => "Send Email to Group"  , :domtype => 'autocompelete', :autocompelete_url => "groupemailsurl"},
-                         {:name => "send_email_to_agent" , :value => "Send Email to Agent"  , :domtype => 'autocompelete', :autocompelete_url => "agentemailsurl"},
-                         {:name => "send_email_to_requester"  , :value => "Send Email to Requester"   , :domtype => 'autocompelete', :autocompelete_url => "useremailsurl"},
+                         {:name => "send_email_to_group" , :value => "Send Email to Group"  , :domtype => 'email_select', :choices => groups},
+                         {:name => "send_email_to_agent" , :value => "Send Email to Agent"  , :domtype => 'email_select', :choices => agents},
+                         {:name => "send_email_to_requester"  , :value => "Send Email to Requester"   , :domtype => 'email'},
                         ]
                         
       additional_actions.each { |index, value| action_hash.insert(index, value) }

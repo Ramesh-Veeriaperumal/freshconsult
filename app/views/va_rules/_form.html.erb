@@ -1,15 +1,17 @@
-<%= javascript_include_tag "condition-filter.js" %>
+<% content_for :head do %>
+  <%= stylesheet_link_tag "autosuggest_inquisitor" %>
+  <%= javascript_include_tag "autosuggest" %>
+  <%= javascript_include_tag "condition-filter" %>
 
-<script type="text/javascript">
+  <% javascript_tag do %>	
+	var active_email_body = null;
+	
 	var filter_Array    = $A(<%= @filter_defs %>),
-		condition_Array = $A(<%= @condition_defs %>),
 		action_Array	= $A(<%= @action_defs %>),
 		Filter_feed 	= $A(<%= @filter_input %>),
 		Action_feed		= $A(<%= @action_input %>);	
 	
-	
-	var op_hash = preProcessCondition(<%= @op_types %>, <%= @op_list %>);
-	//var filter_plugin = initRuleList(filter_Array, condition_Array, action_Array, "#RuleList", "#add_filter", "#ActionList", "#add_action", "#VirtualAgent", Filter_feed, Action_feed);
+	var op_hash = preProcessCondition(<%= @op_types %>, <%= @op_list %>);	
 	
 	jQuery(document).ready(function(){
 		var filters = new rules_filter("filter", filter_Array, "#filterDOM", {"operators": op_hash, "init_feed":Filter_feed});
@@ -25,9 +27,18 @@
 					vagent_name: "Virtual agent name is empty"
 				}
 			});
-			
+		
+		jQuery('.l_placeholder').live("click", function(ev){
+				active_email_body = jQuery(this).prev();
+				jQuery('#place-dialog')
+					.slideToggle();			
+		});
+		
 	});
-</script>
+    
+  <% end %>
+<% end %>
+
 
 <div class="pageContent"> 
 	<h3 class="content_title"><%= title %></h3>
@@ -40,16 +51,10 @@
 			<li>
 				<%= f.label :name, "Rule Name *" %>
 				<label class="overlabel" for="va_rule_name">example: <em>"Subscription related tickets"</em> </label>
-				<%= f.text_field :name, :class => "required" %>
+				<%= f.text_field :name, :class => "required text" %>
 			</li>
 			<li>
-				<%= f.label :description %>
-				<!--label class="overlabel" for="agent_desc">
-					We Know it's pretty boring. <br />
-					But meaningful descriptions can help you later to quickly identify what this rule does,<br /> 
-					when you have a tons of rules. <br />
-					Go Ahead and type something like - <br /><em>"All Subscription related tickets will be assigned to Susan"</em>
-				</label-->
+				<%= f.label :description %>				
 				<label class="overlabel" for="va_rule_description">
 					example: <em>"All Subscription related tickets will be assigned to Susan"</em>
 				</label>
@@ -77,12 +82,18 @@
 			        <p>Add new action</p> <img alt="Add New action" class="add" src="/images/add.png" />
 			    </fieldset>		
 			</li>
-		</ul>
+		</ul>		
 		<br />
 		<div class="button-container">
 			<input type="hidden" name="save_json" id="savejson" value="" />
 			<input type="submit" class="fdbutton" value="Save" />
 			<%= link_to "Cancel", {:action => 'index'}, :class => "fdbutton grey" %>
-		</div>
+		</div>	
+				
 	<% end %>
 </div>
+
+<% content_for :pagefixed do %>
+	<%= render :partial => "/shared/placeholder_help" %>
+<% end %>
+

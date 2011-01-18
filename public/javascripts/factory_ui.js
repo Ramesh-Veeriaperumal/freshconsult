@@ -37,20 +37,13 @@ window.FactoryUI = {
 		placeholder = placeholder || "";
 		name 		= name || "";
 		value 		= value || "";
-		return jQuery("<textarea type='text' name='"+name+"' class='"+className+"' placeholder='"+placeholder+"' value='"+value+"'></textarea>");
+		return jQuery("<textarea type='text' name='"+name+"' class='"+className+"' placeholder='"+placeholder+"'>"+value+"</textarea>");
 	},
 	checkbox: function(label, name, checked, className){
 		var className = className || "checkbox";
 		label   = label || "";
 		name    = name  || "";
-		checked = checked || "";
+		checked = (checked == "on")?"checked": "" || "";
 		return jQuery("<label class='"+className+"'><input type='checkbox' name='"+name+"' "+checked+" />"+label+"</label>") 
-	},
-	// Temporary autocompelete Plugins
-	autocompelete: function(dataurl, name, placeholder, className){
-		if(typeof(dataurl) == 'string'){
-			return FactoryUI.text(placeholder, name, "", className);		
-		};		
-	},
-	
+	}
 };
