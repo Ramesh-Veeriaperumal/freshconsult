@@ -52,16 +52,16 @@ class VaRulesController < AutomationsController
       super
       
       filter_hash    = [{:name => 0              , :value => "--- Click to Select Filter ---"},
-                        {:name => "from_email"   , :value => "From Email", :domtype => "autocompelete", :autocompelete_url => "allemailsurl", 
+                        {:name => "from_email"   , :value => "From Email", :domtype => "autocompelete", :data_url => autocomplete_helpdesk_authorizations_path, 
                                                    :operatortype => "email"},
-                        {:name => "to_email"     , :value => "To Email"  , :domtype => "autocompelete", :autocompelete_url => "allemailsurl",
+                        {:name => "to_email"     , :value => "To Email"  , :domtype => "text",
                                                    :operatortype => "email"},
                         {:name => 0              , :value => "--------------------------"},
                         {:name => "subject"      , :value => "Subject",       :domtype => "text",
                                                    :operatortype => "text"},
                         {:name => "description"  , :value => "Description...",   :domtype => "paragraph",
                                                    :operatortype => "text"},
-                        {:name => "tag_names"    , :value => "Tag",           :domtype => "autocompelete", :autocompelete_url => "alltagsurl",
+                        {:name => "tag_names"    , :value => "Tag",           :domtype => "autocompelete", :data_url => "alltagsurl",
                                                    :operatortype => "text"},
                         {:name => "priority"     , :value => "Priority",      :domtype => "dropdown", :choices => Helpdesk::Ticket::PRIORITY_NAMES_BY_KEY.sort, 
                                                    :operatortype => "choicelist"},                        
@@ -72,9 +72,9 @@ class VaRulesController < AutomationsController
                         {:name => "source"       , :value => "Source",        :domtype => "dropdown", :choices => Helpdesk::Ticket::SOURCE_NAMES_BY_KEY.sort, 
                                                    :operatortype => "choicelist"},
                         {:name => 0              , :value => "------------------------------"},
-                        {:name => "contact"      , :value => "Contact Name",  :domtype => "autocompelete", :autocompelete_url => "contactnameurl",
+                        {:name => "contact"      , :value => "Contact Name",  :domtype => "autocompelete", :data_url => "contactnameurl",
                                                    :operatortype => "text"},
-                        {:name => "company"      , :value => "Company Name",  :domtype => "autocompelete", :autocompelete_url => "companynameurl", 
+                        {:name => "company"      , :value => "Company Name",  :domtype => "autocompelete", :data_url => "companynameurl", 
                                                    :operatortype => "text"}]
       
       @filter_defs   = ActiveSupport::JSON.encode filter_hash

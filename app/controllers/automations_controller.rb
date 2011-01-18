@@ -86,14 +86,14 @@ class AutomationsController < ApplicationController
                          {:name => "status"       , :value => "Set Status as"    , :domtype => "dropdown", :choices => Helpdesk::Ticket::STATUS_NAMES_BY_KEY.sort},
                          {:name => 0              , :value => "------------------------------"},
                          {:name => "add_comment"  , :value => "Add Comment"      , :domtype => 'comment'},
-                         {:name => "add_tag"      , :value => "Add Tag(s)"       , :domtype => 'autocompelete', :autocompelete_url => "allemailsurl"},
+                         {:name => "add_tag"      , :value => "Add Tag(s)"       , :domtype => 'autocompelete', :data_url => "allemailsurl"},
                          {:name => 0              , :value => "------------------------------"},
                          {:name => "responder_id" , :value => "Assign to Agent"  , :domtype => 'dropdown', :choices => agents },
                          {:name => "group_id"     , :value => "Assign to Group"  , :domtype => 'dropdown', :choices => groups },
                          {:name => 0              , :value => "------------------------------"},
-                         {:name => "send_email_to_group" , :value => "Send Email to Group"  , :domtype => 'autocompelete', :autocompelete_url => "groupemailsurl"},
-                         {:name => "send_email_to_agent" , :value => "Send Email to Agent"  , :domtype => 'autocompelete', :autocompelete_url => "agentemailsurl"},
-                         {:name => "send_email_to_requester"  , :value => "Send Email to Requester"   , :domtype => 'autocompelete', :autocompelete_url => "useremailsurl"},
+                         {:name => "send_email_to_group" , :value => "Send Email to Group"  , :domtype => 'email_select', :choices => groups},
+                         {:name => "send_email_to_agent" , :value => "Send Email to Agent"  , :domtype => 'email_select', :choices => agents},
+                         {:name => "send_email_to_requester"  , :value => "Send Email to Requester"   , :domtype => 'email'},
                         ]
       
       @action_defs    = ActiveSupport::JSON.encode action_hash

@@ -37,7 +37,7 @@ class Va::Action
     end
 
     def send_email_to_requester(act_on)
-      template = Liquid::Template.parse("Sending email to requester as part of VA rule action.. #{value}. And ticket id is {{ticket.display_id}}")
+      template = Liquid::Template.parse("Sending email to requester as part of VA rule action.. #{act_hash[:email_body]}. And ticket id is {{ticket.display_id}}")
       Helpdesk::TicketNotifier.deliver_email_to_requester(act_on, template.render('ticket' => act_on.attributes))
     end
     
