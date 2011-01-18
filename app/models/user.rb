@@ -5,6 +5,11 @@ class User < ActiveRecord::Base
   belongs_to :account
   belongs_to :customer
   
+  has_one :avatar,
+    :as => :attachable,
+    :class_name => 'Helpdesk::Attachment',
+    :dependent => :destroy
+
   before_create :set_time_zone
 
   acts_as_authentic do |c|
@@ -26,6 +31,11 @@ class User < ActiveRecord::Base
     self.description = params[:user][:description]
     self.customer_id = params[:user][:customer_id]
     self.job_title = params[:user][:job_title]
+    
+    unless params[:user][:avatar].nil?
+      self.avatar = Helpdesk::Attachment.new(params[:user][:avatar])
+      self.avatar.account_id = account_id
+    end
    
     save_without_session_maintenance
     deliver_activation_instructions!

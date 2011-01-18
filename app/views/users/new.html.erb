@@ -6,7 +6,7 @@
 	    You have reached the maximum number of users you can have with your account level.  You can either delete some of your users or <a href="/account/plan">upgrade your account</a> to be able to create a new user.
 	  </p>	
 	<% else %>
-	  <% form_for @user  do |f| -%>
+	  <% form_for @user, :html => { :multipart => true }  do |f| -%>
 	    <%= render :partial => "form", :locals => { :f => f } %>
 	  <% end -%>	
 	<% end %>

@@ -49,6 +49,12 @@
 			</label>
 			<%= text_area(:user, :description, :class => "text", :id => "user_binfo" ) %>
 		</li>
+		
+		<% fields_for "user[avatar]", @user.avatar do |avatar_form| %>
+			<li>
+				<%= avatar_form.file_field :content %>
+			</li>
+		<% end %>
 	</ul>	 
 <span class="seperator"></span>
 

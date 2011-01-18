@@ -8,6 +8,7 @@ class UsersController < ApplicationController
     
   def new
     @user.role_token = 'customer'
+    @user.avatar = Helpdesk::Attachment.new
   end
   
   def create
