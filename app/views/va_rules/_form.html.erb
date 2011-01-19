@@ -1,42 +1,5 @@
 <% content_for :head do %>
-  <%= stylesheet_link_tag "autosuggest_inquisitor" %>
-  <%= javascript_include_tag "autosuggest" %>
-  <%= javascript_include_tag "condition-filter" %>
-
-  <% javascript_tag do %>	
-	var active_email_body = null;
-	
-	var filter_Array    = $A(<%= @filter_defs %>),
-		action_Array	= $A(<%= @action_defs %>),
-		Filter_feed 	= $A(<%= @filter_input %>),
-		Action_feed		= $A(<%= @action_input %>);	
-	
-	var op_hash = preProcessCondition(<%= @op_types %>, <%= @op_list %>);	
-	
-	jQuery(document).ready(function(){
-		var filters = new rules_filter("filter", filter_Array, "#filterDOM", {"operators": op_hash, "init_feed":Filter_feed});
-		var actions = new rules_filter("action", action_Array, "#actionDOM", {"init_feed":Action_feed});
-		//jQuery("#RuleList, #ActionList").sortable({ items: "fieldset", containment: "parent", tolerance: "pointer", handle:"span.sort_handle"});		
-		
-		jQuery("#VirtualAgent")		
-			.validate({
-				rules:{
-					vagent_name: "required"			
-				},
-				messages:{
-					vagent_name: "Virtual agent name is empty"
-				}
-			});
-		
-		jQuery('.l_placeholder').live("click", function(ev){
-				active_email_body = jQuery(this).prev();
-				jQuery('#place-dialog')
-					.slideToggle();			
-		});
-		
-	});
-    
-  <% end %>
+	<%= render :partial => "/shared/filter_jsinit", :locals => { :filter_type => "va_rule"} %>
 <% end %>
 
 

@@ -1,0 +1,15 @@
+
+<%= stylesheet_link_tag "autosuggest_inquisitor" %>
+<%= javascript_include_tag "autosuggest" %>
+<%= javascript_include_tag "condition-filter" %>
+
+<% javascript_tag do %>
+	var active_email_body = null;
+	jQuery(document).ready(function(){		
+		<% if(filter_type == "va_rule") %>
+			var op_hash = preProcessCondition(<%= @op_types %>, <%= @op_list %>);	 
+			new rules_filter("filter", $A(<%= @filter_defs %>), "#filterDOM", {"operators": op_hash, "init_feed":$A(<%= @filter_input %>)});	
+		<% end %>			
+			new rules_filter("action", $A(<%= @action_defs %>), "#actionDOM", {"init_feed":$A(<%= @action_input %>)});			
+	});
+<% end %>

@@ -1,22 +1,6 @@
-<%= javascript_include_tag "condition-filter.js" %>
-
-<script type="text/javascript">
-	var action_Array	= $A(<%= @action_defs %>),
-		Action_feed		= $A(<%= @action_input %>);		
-	
-	jQuery(document).ready(function(){
-		var actions = new rules_filter("action", action_Array, "#actionDOM", {"init_feed":Action_feed})		
-		jQuery("#Automations")		
-			.validate({
-				rules:{
-					vagent_name: "required"			
-				},
-				messages:{
-					vagent_name: "Virtual agent name is empty"
-				}
-			});			
-	});
-</script>
+<% content_for :head do %>
+	<%= render :partial => "/shared/filter_jsinit", :locals => { :filter_type => "automation"} %>
+<% end %>
 
 <ul class="ui-form">
 	<li>
@@ -54,4 +38,9 @@
 	<input type="submit" class="fdbutton" value="Save" />
 	<%= link_to "Cancel", {:action => 'index'}, :class => "fdbutton grey" %>
 </div>
+
+
+<% content_for :pagefixed do %>
+	<%= render :partial => "/shared/placeholder_help" %>
+<% end %>
 

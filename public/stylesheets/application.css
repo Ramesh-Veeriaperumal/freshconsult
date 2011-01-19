@@ -4216,7 +4216,7 @@ label.caption {
 }
 /* line 2778, ../src/application.scss */
 .placeholder-info .placeholder-list {
-  border: 1px dotted #afafaf;
+  border: 1px solid #afafaf;
   background: #f8f8f8;
   padding: 10px 15px;
   overflow: auto;
@@ -4249,29 +4249,14 @@ label.caption {
 }
 /* line 2809, ../src/application.scss */
 .placeholder-info dl dt a {
-  font-weight: bold;
-  font-size: 14px;
+  font-size: 16px;
   font-family: inherit;
   text-decoration: none;
-  color: #0078BD !important;
-  border-bottom: 1px dotted #0078BD;
+  color: #393939;
+  border-bottom: 1px dotted #393939;
 }
-/* line 2817, ../src/application.scss */
+/* line 2816, ../src/application.scss */
 .placeholder-info dl dt a:hover {
   border-bottom: 0px;
   color: #0078BD;
-}
-
-/* line 2826, ../src/application.scss */
-div.twdialog_right {
-  margin: 50px 10px 0px 0px;
-  height: 100%;
-}
-/* line 2830, ../src/application.scss */
-div.twdialog_right div.ui-dialog-titlebar {
-  display: none;
-}
-/* line 2833, ../src/application.scss */
-div.twdialog_right div.ui-dialog-content {
-  padding: 0px;
 }

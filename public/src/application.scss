@@ -2776,7 +2776,7 @@ label.caption{
 	@include shadows(#888888, 0px, 0px, 9px);
 	z-index:99999;
 	.placeholder-list{
-		border:1px dotted #afafaf;
+		border:1px solid #afafaf;
 		background:#f8f8f8;
 		padding:10px 15px;
 		overflow:auto;
@@ -2807,12 +2807,11 @@ label.caption{
 		}
 		dt{	
 			a{
-				font-weight:bold;
-				font-size:14px;
+				font-size:16px;
 				font-family:inherit;
 				text-decoration:none;
-				color:#0078BD !important;
-				border-bottom: 1px dotted #0078BD;
+				color:#393939;
+				border-bottom: 1px dotted #393939;
 			}
 			a:hover{
 				border-bottom: 0px;
@@ -2821,16 +2820,4 @@ label.caption{
 		}
 	}
 	
-}
-
-div.twdialog_right{
-	
-	margin:50px 10px 0px 0px;
-	height:100%;
-	div.ui-dialog-titlebar{
-		display:none;
-	}
-	div.ui-dialog-content{
-		padding:0px;
-	}
 }

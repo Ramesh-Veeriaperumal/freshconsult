@@ -7,16 +7,17 @@
 			jQuery('#place-dialog')
 					.slideToggle();	
 		});
+		jQuery('#place-dialog').draggable();
 	});
 <% end %>
 
 <div class="placeholder-info" id="place-dialog" style="display:none;">		
   	<h2>Available placeholders</h2>
 	<p>
-	  You can use placeholders to insert dynamic data into your text.<br />
-	   
+	  You can use placeholders to use frequently used information.<br />
+	  Simply type the below placeholders into your email subject or content and they will converted into the appropriate data.
 	</p>
-	<b>Select any placeholder below to add it to the email</b>
+	<b>Select any placeholder below to append it to the email content</b>
 	<div id="placeholder-list-1" class="placeholder-list">
 		<dl>
 		  <dt><a href="javascript:void(0)">{{ticket.title}}</a></dt><dd>Ticket subject.</dd>

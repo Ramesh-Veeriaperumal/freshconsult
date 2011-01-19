@@ -279,6 +279,11 @@ rules_filter = function(name, filter_data, parentDom, options){
 				//console.log(hidden_.val());
 				//return false;
 			});
+			
+			jQuery('.l_placeholder').live("click", function(ev){
+					active_email_body = jQuery(this).prev();
+					jQuery('#place-dialog').slideDown();			
+			});
 				
 			// Binding Events to Containers
 			// Filter on change action 
