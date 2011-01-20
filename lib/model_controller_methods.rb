@@ -6,12 +6,7 @@ module ModelControllerMethods
   
   def index
     @users = self.instance_variable_set('@' + self.controller_name,
-<<<<<<< HEAD
       scoper.find(:all, :order => 'name'))     
-=======
-      scoper.find(:all, :order => 'name'))
-     
->>>>>>> shihab
 
     respond_to do |format|
       format.html  do

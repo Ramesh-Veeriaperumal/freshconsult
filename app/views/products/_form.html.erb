@@ -38,14 +38,16 @@
 				</div>
 			</li>
 			<li>
-				<div class="check_box">
-					<%= f.check_box :forum_category_id %>
-					<%= f.label :forum_category_id, "Create a Top level Forum Category for this Product" %>
-				</div>
-				<div class="inline_field">
-					<%= f.label :forum_category_id, "Forum Category Name" %>
-					<%= f.text_field :forum_category_id %>
-				</div>
+				<% fields_for "product[forum_category_attributes]", @product.forum_category do |f_form| %>
+					<div class="check_box">
+						<%= f_form.check_box :name %>
+						<%= f_form.label :name, "Create a Top level Forum Category for this Product" %>
+					</div>
+					<div class="inline_field">
+						<%= f_form.label :name, "Forum Category Name" %>
+						<%= f_form.text_field :name %>
+					</div>
+				<% end %>
 			</li>
 		</ul>
 		<div class="button-container">
