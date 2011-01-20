@@ -1,0 +1,40 @@
+  
+
+  
+  <div id="pages" class="guide_page">  
+	  <div class="product_help">
+	  	<h3>Solution Folders</h3>
+		<div class="actionsRight" >
+  		<%= link_to "New Folder", new_solution_folder_path, :class => "button" %>
+	</div>
+  
+		<ul class="icon_grid">
+			<!--li>
+				<a href="#">
+					<img src="/images/product_icons/twitter.png" width="48px" height="48px" />
+					<em>Twitter</em>
+				</a>
+			</li>		
+			<li>
+				<a href="#">
+					<img src="/images/product_icons/cloud.png" width="48px" height="48px" />
+					<em>Cloud App</em>
+				</a>
+			</li>
+			<li>
+				<a href="#">
+					<img src="/images/product_icons/clock.png" width="48px" height="48px" />
+					<em>Billing App</em>
+				</a>
+			</li-->
+			
+			<% @folders.each do |folder| %>
+			<li>
+				<a href="#">
+					<img src="/images/product_icons/digital_camera.png" width="48px" height="48px" />
+					<em><%= link_to(h(folder.name), folder) %></em>
+				</a>
+			</li>
+			<%end%>
+		</ul>
+	  </div>

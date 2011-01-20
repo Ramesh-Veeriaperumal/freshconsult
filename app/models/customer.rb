@@ -24,6 +24,7 @@ class Customer < ActiveRecord::Base
   CUST_TYPE_BY_TOKEN = Hash[*CUST_TYPES.map { |i| [i[0], i[2]] }.flatten]
   
   
+  #setting default sla
   def check_sla_policy
     
     if self.sla_policy_id.nil?

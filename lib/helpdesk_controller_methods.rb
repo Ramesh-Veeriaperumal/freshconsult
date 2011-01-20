@@ -53,6 +53,8 @@ module HelpdeskControllerMethods
   end
 
   def update
+    
+    logger.debug "update : params are : #{params[nscname].inspect}"
     if @item.update_attributes(params[nscname])
       post_persist
     else
@@ -167,7 +169,7 @@ protected
 
   def build_item
     
-    
+    logger.debug "the items are #{params[nscname].inspect}"
     testParm =nil
     unless params[nscname].nil?
       
@@ -180,7 +182,11 @@ protected
     @item = self.instance_variable_set('@' + cname,
       scoper.is_a?(Class) ? scoper.new(params[nscname]) : scoper.build(params[nscname]))
     set_item_user
-    set_customizer
+    logger.debug "nscname is :: #{nscname}"
+    if "helpdesk_ticket".eql?(nscname)
+      set_customizer
+    end
+    
     @item
    
        

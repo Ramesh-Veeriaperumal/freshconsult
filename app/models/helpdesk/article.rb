@@ -56,6 +56,27 @@ class Helpdesk::Article < ActiveRecord::Base
   validates_length_of :title, :in => 3..240
   validates_numericality_of :user_id
 
+ STATUSES = [
+    [ :draft,       "Draft",        1 ], 
+    [ :published,   "Published",    2 ]
+  ]
+
+  STATUS_OPTIONS = STATUSES.map { |i| [i[1], i[2]] }
+  STATUS_NAMES_BY_KEY = Hash[*STATUSES.map { |i| [i[2], i[1]] }.flatten]
+  STATUS_KEYS_BY_TOKEN = Hash[*STATUSES.map { |i| [i[0], i[2]] }.flatten]
+  
+  TYPES = [
+    [ :workaround,   "Workaround",   1 ], 
+    [ :permanent,    "Permanent",    2 ]
+  ]
+
+  TYPE_OPTIONS = TYPES.map { |i| [i[1], i[2]] }
+  TYPE_NAMES_BY_KEY = Hash[*TYPES.map { |i| [i[2], i[1]] }.flatten]
+  TYPE_KEYS_BY_TOKEN = Hash[*TYPES.map { |i| [i[0], i[2]] }.flatten]
+  
+  
+  
+  
   def self.search(scope, field, value)
 
     return scope unless (field && value)

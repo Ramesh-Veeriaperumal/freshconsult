@@ -145,6 +145,12 @@ ActionController::Routing::Routes.draw do |map|
     
     helpdesk.resources :sla_policies
   end
+  
+   map.namespace :solution do |solution|
+     
+     solution.resources :folders
+   
+   end
 
   map.namespace :support do |support|
     support.resources :guides, :articles
