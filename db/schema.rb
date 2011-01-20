@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110117070843) do
+ActiveRecord::Schema.define(:version => 20110120053026) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -196,6 +196,9 @@ ActiveRecord::Schema.define(:version => 20110117070843) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "account_id"
+    t.integer  "status"
+    t.boolean  "is_public",  :default => true
+    t.integer  "sol_type"
   end
 
   create_table "helpdesk_attachments", :force => true do |t|
@@ -244,6 +247,7 @@ ActiveRecord::Schema.define(:version => 20110117070843) do
     t.integer  "position",             :default => 0
     t.text     "description"
     t.integer  "account_id"
+    t.integer  "folder_id"
   end
 
   create_table "helpdesk_issues", :force => true do |t|
@@ -434,6 +438,14 @@ ActiveRecord::Schema.define(:version => 20110117070843) do
     t.string   "reply_email"
     t.integer  "solution_category_id"
     t.integer  "forum_category_id"
+    t.integer  "account_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "solution_folders", :force => true do |t|
+    t.string   "name"
+    t.text     "description"
     t.integer  "account_id"
     t.datetime "created_at"
     t.datetime "updated_at"

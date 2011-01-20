@@ -9,7 +9,8 @@ class Helpdesk::GuidesController < ApplicationController
   uses_tiny_mce :options => Helpdesk::EDITOR_OPTIONS 
 
   def index
-    @items = Helpdesk::Guide.display_order.all(:conditions => { :account_id => current_account.id })
+    @items = Helpdesk::Guide.display_order.all(:include=>:articles , :conditions => { :account_id => current_account.id })
+    #@articles = @item.articles.display_order.all(:conditions => { :account_id => current_account.id })
   end
 
   def show

@@ -10,7 +10,7 @@
     document.observe("dom:loaded", function(){
 
       Helpdesk.sel = new Helpdesk.MultiSelectorsOnPages({
-        pages: ['expanded', 'list', 'reorder'],
+        pages: ['list', 'expanded',  'reorder'],
         cookieName: 'helpdesk-articles-page',
         isSelector: { reorder: false },
         save: { reorder: false }
@@ -59,7 +59,20 @@
   	</h4>
 	 
 	<ul class="tableofcontents">
-		<li class="expanded">
+		<%
+		@item_list = Helpdesk::Guide.display_order.all(:include=>:articles , :conditions => { :account_id => current_account.id })
+
+		%>
+		<% form_tag "", { :method => :put, :id => 'list' } do %>
+	      
+	        <% for guide in @item_list %>
+	          <li>
+	          	<h4><%= link_to(h(guide.name), guide) %>(2)</h4>
+			
+				</li>
+	   		<% end %>
+	   <% end %>
+		<!--li class="expanded">
 			<h4><a href="#">Frequently Asked (2)</a></h4> 
 		</li>
 		<li>
@@ -85,7 +98,7 @@
 		</li>
 		<li>
 			<h4><a href="#">Reports & Charts (24)</a></h4>
-		</li>
+		</li-->
 	</ul>
   <!--h3 class="guide-visibility">
     <% if @item.hidden %>
@@ -120,13 +133,15 @@
 <% end %>
 
 <% content_for :main_panel_actions do %>
-	<div class="actions_bar">
+
+<%= link_to "New Solution", new_helpdesk_article_path, :class => "button" %>
+	<!--div class="actions_bar">
 	<ul>
-  		<li><%= link_to("Edit This Guide", {:action => :edit}, :class => "button") %></li>
-		<!--li><a href="#" class="button" id="assign-options-link">Assign To Guide</a></li-->
-	    <%= content_tag('li', link_to_function("Delete", "if(confirm('Really delete?')) Helpdesk.sel.submit('#{ helpdesk_article_path('multiple') }', 'delete')", :class => "button")) %>
-	  </ul>
-	</div>
+  		<li><%= link_to("Edit This Guide", {:action => :edit}, :class => "button") %></li-->
+		<!--li><a href="#" class="button" id="assign-options-link">Assign To Guide 11</a></li-->
+	    <!--%= content_tag('li', link_to_function("Delete", "if(confirm('Really delete?')) Helpdesk.sel.submit('#{ helpdesk_article_path('multiple') }', 'delete')", :class => "button")) %-->
+	  <!--/ul>
+	</div-->
 <% end %>
 
 <% content_for :main_panel_summary do %>
@@ -188,9 +203,9 @@
 <% content_for :main_panel_content do %>
 
   <div id="pages">
-	<div id="description-full" class="guide_details">
+	<!--div id="description-full" class="guide_details">
     	<%= @item.description %>
-  	</div>
+  	</div-->
     <% form_tag "", { :id => "expanded", :method => :put, :style => "display: none" } do %>
       <table class="articles-expanded">
         <%= render :partial => '/helpdesk/shared/expanded/article', :collection => @articles %>

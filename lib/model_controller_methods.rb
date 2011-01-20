@@ -6,7 +6,7 @@ module ModelControllerMethods
   
   def index
     @users = self.instance_variable_set('@' + self.controller_name,
-      scoper.find(:all, :order => 'name', :conditions =>{:role_token=>'customer'}))
+      scoper.find(:all, :order => 'name'))
      
 
     respond_to do |format|
@@ -33,9 +33,10 @@ module ModelControllerMethods
 
   def update
     if @obj.update_attributes(params[cname])
-      flash[:notice] = "The #{cname.humanize.downcase} has been updated."
+      #flash[:notice] = "The #{cname.humanize.downcase} has been updated."
       redirect_back_or_default redirect_url
     else
+      logger.debug "error while saving #{@obj.errors.inspect}"
       render :action => 'edit'
     end
   end
