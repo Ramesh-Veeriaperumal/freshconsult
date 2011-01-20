@@ -1,6 +1,6 @@
 <%= error_messages_for :user %> 
 	<!--img src="/images/icons/profile_blank.gif" /--> 
-	<ul class="ui-form" style="width:450px">
+	<ul class="ui-form">
 		<li>
 			<%= label(:user, :name, "Full Name") %>
 			<%= text_field(:user, :name, :class => "text" )  %>
@@ -11,12 +11,13 @@
 		</li>
 		<li>
 			<%= label(:user, :company, "Company") %>
-			<input type="text" class="textbox" />
+			<input type="text" class="text" />
 		</li>
 		<li class="small">	
 			<%= label(:user, :phone, "Phone No.") %>	
 			<label class="overlabel" for="phone_work">Work</label>
 			<%= text_field(:user, :phone, :class => "text", :id => "phone_work" ) %>
+			<br />
 			<!--input type="text" id="user_phone" name="user[phone]" class="text" /-->		
 			<!--%= label(:user, :mobile, "Mobile") %-->
 			<label class="overlabel" for="phone_mobile">Mobile</label>

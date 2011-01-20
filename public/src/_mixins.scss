@@ -1,11 +1,10 @@
 @mixin pie {
   behavior: url(/stylesheets/PIE.htc); }
-
+/*
 .pie {
   @include pie; }
-
-@mixin shadows($color: #aaaaaa, $x: 1px, $y: 2px, $spread: 2px) {
-  @extend .pie;
+*/
+@mixin shadows($color: #aaaaaa, $x: 1px, $y: 2px, $spread: 2px) { 
   -moz-box-shadow: $color $x $y $spread;
   -webkit-box-shadow: $color $x $y $spread;
   box-shadow: $color $x $y $spread; }
@@ -17,7 +16,7 @@
   box-shadow: inset $x $y $spread $color; }
 
 @mixin corners($tl: 5px, $tr: nil, $br: nil, $bl: nil) {
-  @extend .pie;
+  
   @if $tr == nil {
     $tr: $tl; }
   @if $br == nil {
@@ -36,13 +35,13 @@
   background: $end;
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0, $start), color-stop(1, $end));
   background: -moz-linear-gradient(center top, $start 0%, $end 100%);
-  -pie-background: linear-gradient(90deg, $start, $end); }
+   }
 
 @mixin form-gradient($start: #ffffff, $end: #dfdfdf, $position: 3px ){
 	background: $start; /* old browsers */
 	background: -moz-linear-gradient(top, $end 0%, $start $position, $start 100%); /* firefox */		
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, $end), color-stop($position, $start), color-stop(100%,$start)); /* webkit */		
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='$end', endColorstr='$start',GradientType=0 ); /* ie */
+	
 }
 
 @mixin tab-style($color){

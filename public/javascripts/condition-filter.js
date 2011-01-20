@@ -9,7 +9,7 @@ var conditional_dom = function(filter, id, initFeed){
 	var initFeed  = initFeed || {};
 	
 	// Conditional Dom created based on the options available
-	console.log(initFeed.toSource());	 
+	// console.log(initFeed.toSource());	 
 	c_dom = "";
 	switch (type) {
 		case 'text':
@@ -254,6 +254,7 @@ rules_filter = function(name, filter_data, parentDom, options){
 					domUtil.feed_data(setting.init_feed);
 				else
 					domUtil.add_dom();	
+					
 			}
 		};
 	

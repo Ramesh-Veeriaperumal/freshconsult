@@ -1,9 +1,7 @@
 // This import applies a global reset to any page that imports this stylesheet.
 @import "base";
 @import "mixins";
-html{
-    height:100%;
-}
+
 a{
 	color:#336699;
 }
@@ -17,12 +15,15 @@ body{
   	background:$background;
 } 
 
+body {margin:0; padding:0 10px 0 10px; border:0; height:100%; overflow-y:auto; }
+
+
 #wrap{
 	@include container;
-	overflow:visible; 
+	overflow:visible;	
 }
  
-.content{
+.content{ 
 	position:relative;	
 	border:1px solid #acc0ac; 
 	border-width:0px 1px 0px 1px;
@@ -2770,6 +2771,7 @@ label.caption{
 .placeholder-info{
 	width:400px;
 	position:fixed;
+	text-align:left;
 	height:550px;
 	top:30px;
 	right:30px;
@@ -2821,3 +2823,5 @@ label.caption{
 	}
 	
 }
+
+* html .placeholder-info {position:absolute;}

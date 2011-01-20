@@ -4,6 +4,10 @@
 // Generate the blueprint IE-specific customizations:
 @include blueprint-ie;
 
+
+html {overflow-x:auto; overflow-y:hidden;}
+
+
 #inner {
 	height:400px !important;
 	padding-right:0px;
