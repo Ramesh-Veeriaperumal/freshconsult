@@ -44,7 +44,7 @@ class GroupsController < ApplicationController
   end
 
   def create
-     @group = Group.new(params[nscname])
+     @group = current_account.groups.new(params[nscname])
      
      agents_data = params[:AgentGroups][:agent_list]
      
