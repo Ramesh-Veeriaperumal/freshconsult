@@ -93,7 +93,16 @@
 		  			<%= f.collection_select :escalate_to, User.find_all_by_permission(current_account, :manage_tickets), :id, :name %>			
 					<%= link_to_function 'Add', 'AddUser()', :class => "button" %>
 			</span>
-			<input type="hidden" name="agent_list" id="agent_list" value="" />			
+			
+			<%
+				@tech_left = Group.find_excluded_agents(@group.id, @group.account_id)
+			%>
+			
+			<% fields_for "AgentGroups", @group.agent_groups do |agent| %>
+			<%= agent.hidden_field :agent_list, { :id =>"agent_list", :value => ""} %>
+			
+			<%end%>
+			<!--input type="hidden" name="agent_list" id="agent_list" value="" /-->			
 			<ul class="item_list active" id="Active_list">	
 				<div class="padding6">No Agents in this group</div>			
 			</ul>			
