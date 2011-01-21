@@ -1,5 +1,7 @@
 class Product < ActiveRecord::Base
   belongs_to :account
+  
+  has_many :tickets, :class_name => 'Helpdesk::Ticket'
   has_one :forum_category, :dependent => :destroy
   
   before_save :set_account_id_in_children

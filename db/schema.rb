@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110120103036) do
+ActiveRecord::Schema.define(:version => 20110121074638) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -398,6 +398,7 @@ ActiveRecord::Schema.define(:version => 20110120103036) do
     t.datetime "response_time"
     t.integer  "ticket_type"
     t.string   "to_email"
+    t.integer  "product_id"
   end
 
   add_index "helpdesk_tickets", ["id_token"], :name => "index_helpdesk_tickets_on_id_token", :unique => true
