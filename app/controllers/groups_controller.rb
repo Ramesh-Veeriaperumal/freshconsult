@@ -44,7 +44,17 @@ class GroupsController < ApplicationController
   end
 
   def create
-     @group = Group.new(params[nscname])
+     @group = current_account.groups.new(params[nscname])
+     
+     agents_data = params[:AgentGroups][:agent_list]
+     
+     @agents = ActiveSupport::JSON.decode(agents_data)
+     
+     logger.debug "params:::: #{@agents.inspect}"
+     
+     @agents.each_key { |agent| @group.agent_groups.build(:user_id =>agent) }
+     
+     logger.debug "before saving ::: #{@group.inspect}"
      
   if @group.save
     redirect_to :action => 'index'
@@ -59,6 +69,8 @@ class GroupsController < ApplicationController
 
     respond_to do |format|      
       if @group.update_attributes(params[nscname])
+        
+        update_agents 
        
         format.html { redirect_to(groups_url, :notice => 'Group was successfully updated.') }
         format.xml  { head :ok }
@@ -69,6 +81,32 @@ class GroupsController < ApplicationController
     end
     
   end
+  
+  def update_agents 
+    
+    @agents = AgentGroup.find_by_group_id(params[:id])
+    
+    unless @agents.nil?
+    
+    @agents.destroy
+    
+    end
+    
+    add_agents params[:id]
+    
+  end
+  
+  def add_agents group_id
+    
+    agents_data = params[:AgentGroups][:agent_list]     
+    @agents = ActiveSupport::JSON.decode(agents_data)
+    
+    @agents.each_key { |agent| AgentGroup.create(:user_id =>agent, :group_id =>group_id )  }
+  
+    
+  end
+  
+  
 
   def destroy
     

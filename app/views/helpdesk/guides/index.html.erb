@@ -37,8 +37,8 @@
 <% end %>
 
 <% content_for :main_panel_actions do %>
-	<div class="actions_bar">
-  		<%= link_to "Add a User Guide", new_helpdesk_guide_path, :class => "button" %>
+	<div class="actionsRight" >
+  		<%= link_to "New Category", new_helpdesk_guide_path, :class => "button" %>
 	</div>
 <% end %>
 
@@ -129,22 +129,35 @@
 	  <div class="general_help">
 	  	<h3>General Help</h3>
 		
-		<h4>Tutorials</h4>
+		<!--h4>Tutorials</h4-->
 		<% form_tag "", { :method => :put, :id => 'list' } do %>
-	      <ul class="guides">
+	      
 	        <% for guide in @items %>
-	          <li class="<%= cycle('stripe', '') %>">
-	          	<%= link_to(h(guide.name), guide) %>
+	         
+	          	<h4><%= link_to(h(guide.name), guide) %></h4>
+				
+				<ul class="guides">
+					
+						
+						
+      							<table class="articles-collapsed">
+        						<%= render :partial => '/helpdesk/shared/collapsed/article', :collection => guide.articles %>
+      							</table>
+    					
+						
+											
+				</ul>
+				
 	            <!--td class="check">
 	              <%= check_box_tag('ids[]', guide.to_param,  false, :class => 'selector') %>
 	            </td>
 	            <td class="name"><h3></h3></td>
 	            <td><%= guide.hidden ? "Private" : "Public" %></td>
 	            <td class="count"><%= pluralize(guide.article_guides_count, 'Article', 'Articles') %></td-->
-	          </li>
+	         
 	        <% end %>
 	
-	      </ul>
+	     
 	    <% end %>
 		 <% form_tag reorder_helpdesk_guides_path, { :id => "reorder", :method => :put, :style => "display: none" } do %>
 	      <%= hidden_field_tag :order %>
@@ -160,7 +173,7 @@
 	      </ol>
 	    <% end %>
 		
-	  	<h4>Login related help</h4>
+	  	<!--h4>Login related help</h4>
 	  	<ul>
 	  		<li>
 	  			<a href="#">Unable to Sign In</a>
@@ -191,7 +204,7 @@
 				<a href="#">Can I change plans anytime?</a>
 			</li>
 	  	</ul>		 
-	  </div>
+	  </div-->
 	  
 	  <div class="clear"></div>
   </div>

@@ -17,6 +17,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   before_update :set_dueby
   
   belongs_to :account
+  belongs_to :product
 
   belongs_to :responder,
     :class_name => 'User'
@@ -366,7 +367,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #virtual agent things end here..
   
   def pass_thro_biz_rules
-    #Va::VirtualAgent.send_later(:pass_thro_biz_rules, self)
     send_later(:delayed_rule_check)
   end
   

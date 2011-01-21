@@ -1,7 +1,7 @@
 <tr class="<%= cycle('stripe', '') %>">
-  <td class="check">
+  <!--td class="check">
     <%= check_box_tag('ids[]', article.to_param,  false, :class => 'selector') %>
-  </td>
+  </td-->
   <td class="article">
     <h3>
       <%= link_to(h(article.title), edit_helpdesk_article_path(article)) %>

@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110117070843) do
+ActiveRecord::Schema.define(:version => 20110121074638) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -157,6 +157,15 @@ ActiveRecord::Schema.define(:version => 20110117070843) do
   add_index "flexifields", ["flexifield_def_id"], :name => "index_flexifields_on_flexifield_def_id"
   add_index "flexifields", ["flexifield_set_id", "flexifield_set_type"], :name => "idx_ff_poly"
 
+  create_table "forum_categories", :force => true do |t|
+    t.string   "name"
+    t.text     "description"
+    t.integer  "product_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "account_id"
+  end
+
   create_table "forums", :force => true do |t|
     t.string  "name"
     t.string  "description"
@@ -196,6 +205,9 @@ ActiveRecord::Schema.define(:version => 20110117070843) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "account_id"
+    t.integer  "status"
+    t.boolean  "is_public",  :default => true
+    t.integer  "sol_type"
   end
 
   create_table "helpdesk_attachments", :force => true do |t|
@@ -244,6 +256,7 @@ ActiveRecord::Schema.define(:version => 20110117070843) do
     t.integer  "position",             :default => 0
     t.text     "description"
     t.integer  "account_id"
+    t.integer  "folder_id"
   end
 
   create_table "helpdesk_issues", :force => true do |t|
@@ -385,6 +398,7 @@ ActiveRecord::Schema.define(:version => 20110117070843) do
     t.datetime "response_time"
     t.integer  "ticket_type"
     t.string   "to_email"
+    t.integer  "product_id"
   end
 
   add_index "helpdesk_tickets", ["id_token"], :name => "index_helpdesk_tickets_on_id_token", :unique => true
@@ -433,7 +447,14 @@ ActiveRecord::Schema.define(:version => 20110117070843) do
     t.string   "to_email"
     t.string   "reply_email"
     t.integer  "solution_category_id"
-    t.integer  "forum_category_id"
+    t.integer  "account_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "solution_folders", :force => true do |t|
+    t.string   "name"
+    t.text     "description"
     t.integer  "account_id"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -549,9 +570,9 @@ ActiveRecord::Schema.define(:version => 20110117070843) do
     t.integer  "account_id"
     t.boolean  "admin",               :default => false
     t.boolean  "active",              :default => false, :null => false
-    t.string   "role_token"
     t.integer  "posts_count",         :default => 0
     t.datetime "last_seen_at"
+    t.string   "role_token"
     t.integer  "customer_id"
     t.string   "job_title"
     t.string   "second_email"

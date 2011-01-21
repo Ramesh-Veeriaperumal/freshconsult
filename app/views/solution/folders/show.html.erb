@@ -1,0 +1,25 @@
+<div id="pages" class="guide_page">  
+	  <div class="product_help">
+	  	<h3>Solution Catgories</h3>
+	 
+	<div class="actionsRight" >
+  		<%= link_to "New Category", new_helpdesk_guide_path, :class => "button" %>
+	</div>
+<% 
+		
+	@item.categories.each do |category|
+
+%>
+<p>
+<%= link_to(h(category.name), category) %>
+
+</p>
+
+<%
+end
+
+%>
+
+ </div>
+ 
+ </div>

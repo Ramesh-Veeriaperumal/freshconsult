@@ -75,6 +75,9 @@ class User < ActiveRecord::Base
   
   has_many :agents , :class_name => 'Agent' , :foreign_key => "user_id"
   
+  #has_many :agent_groups , :class_name =>'AgentGroup', :foreign_key => "user_id", :source=>'agents'
+  
+   
   accepts_nested_attributes_for :agents
   
   

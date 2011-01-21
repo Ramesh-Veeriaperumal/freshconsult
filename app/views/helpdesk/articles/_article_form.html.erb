@@ -25,8 +25,7 @@
     <%= f.text_area :body, :class => "mceEditor", :id => 'article-body' %>
 
     <div class="button-container">
-      <%= submit_tag %>
-      <%= submit_tag "Save and Create Another", :name => "save_and_create"%>
+      
       <ul>
         <li><a href="#" id="attachment-options-link">Attach a File</a></li>
       </ul>
@@ -43,8 +42,47 @@
         </table>
       </div>
     </div>
+	
+	<div>
+		<%="Solution Properties"%><br>
+		<%="--------------------------------------------"%>
+		<p>
+		
+	Make this Solution	<%= f.radio_button :is_public, "true" %>Public (Will be published in self service)<br></br>
+									<%= f.radio_button :is_public, "false" %>Private (Visible to Agents only)
+						
+		</p>
+		
+		<p>
+			
+				<li class="small">
+          			<%= f.label :sol_type, "Solution Type" %>
+         			 <%= f.select :sol_type, Helpdesk::Article::TYPE_OPTIONS, :class => "select" %>
+        		</li>
+			
+	    </p>
+		
+		
+		<p>
+			
+				<li class="small">
+          			<%= f.label :status, "Solution Status" %>
+         			 <%= f.select :status, Helpdesk::Article::STATUS_OPTIONS, :class => "select" %>
+        		</li>
+			
+	    </p>
+		
+		
+	</div>
+	
+	<div class="button-container">
 
-
+		<%= submit_tag %>
+      <%= submit_tag "Save and Create Another", :name => "save_and_create"%>
+	  
+	</div>
+	  
+	  
   <% end %>
 </div>
 

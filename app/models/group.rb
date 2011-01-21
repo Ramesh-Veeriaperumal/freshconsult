@@ -1,5 +1,9 @@
 class Group < ActiveRecord::Base
   
+   has_many :agent_groups , :class_name => "AgentGroup", :foreign_key => "group_id"
+   
+   accepts_nested_attributes_for :agent_groups
+  
   
   ASSIGNTIME = [
     [ :half,    "30 Minutes",  1800 ], 
@@ -18,5 +22,39 @@ class Group < ActiveRecord::Base
   ASSIGNTIME_OPTIONS = ASSIGNTIME.map { |i| [i[1], i[2]] }
   ASSIGNTIME_NAMES_BY_KEY = Hash[*ASSIGNTIME.map { |i| [i[2], i[1]] }.flatten]
   ASSIGNTIME_KEYS_BY_TOKEN = Hash[*ASSIGNTIME.map { |i| [i[0], i[2]] }.flatten]
+  
+  def self.find_excluded_agents(group_id , account_id)
+    
+    unless group_id.nil?
+    
+    @exclude_list = Agent.find(:all, :include =>:agent_groups , :joins=>:user, :conditions => "users.account_id=#{account_id} AND agents.user_id NOT IN (select user_id from agent_groups where group_id=#{group_id})")
+   
+    logger.debug "excluded list #{@exclude_list.inspect}"
+   
+   agent_hash = Hash.new
+    
+    @exclude_list.each do |exclude|  
+      
+      agent_hash[exclude.user.id] = exclude.user.name 
+    end
+   
+   logger.debug "user data #{agent_hash.inspect}"
+   
+   end
+   
+  end
+  
+  def self.find_included_agents(group_id)
+    
+    @include_list = AgentGroup.find(:all, :joins=>:user, :conditions =>{:group_id =>group_id} )
+   
+   include_hash = Hash.new
+    
+    @exclude_list.each do |include|  
+      
+      include_hash[include.user.id] = include.user.name 
+    end
+   
+  end
   
 end

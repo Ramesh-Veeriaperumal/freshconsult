@@ -6,8 +6,17 @@
 
     <%= f.label(:name, "Name") %>
     <%= f.text_field :name %>
-
-    <%= f.text_area :description, :class => "mceEditor" %>
+	
+	<%= f.label(:description, "More Info") %>
+	 <%= f.text_area :description, :class => "text" %>
+    <!--%= f.text_area :description, :class => "mceEditor" %-->
+	
+	<%logger.debug "current account isss  ::#{guide.account_id}"
+		account_id = guide.account_id
+	%>
+   <%= f.label :folder_id, "Folder" %>
+   <%= f.collection_select :folder_id, Solution::Folder.find_all_folders(account_id) , :id, :name , :class => "select" %>
+   
 
     <div class="button-container">
       <%= submit_tag "Save", :class => "button submit" %>
