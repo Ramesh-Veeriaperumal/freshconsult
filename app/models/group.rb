@@ -25,6 +25,8 @@ class Group < ActiveRecord::Base
   
   def self.find_excluded_agents(group_id , account_id)
     
+    unless group_id.nil?
+    
     @exclude_list = Agent.find(:all, :include =>:agent_groups , :joins=>:user, :conditions => "users.account_id=#{account_id} AND agents.user_id NOT IN (select user_id from agent_groups where group_id=#{group_id})")
    
     logger.debug "excluded list #{@exclude_list.inspect}"
@@ -37,6 +39,8 @@ class Group < ActiveRecord::Base
     end
    
    logger.debug "user data #{agent_hash.inspect}"
+   
+   end
    
   end
   
