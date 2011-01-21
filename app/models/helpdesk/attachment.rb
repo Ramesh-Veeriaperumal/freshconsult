@@ -7,9 +7,12 @@ class Helpdesk::Attachment < ActiveRecord::Base
   has_attached_file :content, 
     :storage => :s3,
     :s3_credentials => "#{RAILS_ROOT}/config/s3.yml",
-    :path => "/data/helpdesk/attachments/:id/:filename",
+    :path => "/data/helpdesk/attachments/:id/:style/:filename",
     :url => "/:class/:id",
-    :styles => { :thumb => "50x50>" }
+    :styles => { 
+        :medium => "127x177>", 
+        :thumb  => "50x50#" 
+    }
     #:bucket => 'fdesk-attachments'
     
   before_post_process :image?

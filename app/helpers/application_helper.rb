@@ -19,7 +19,7 @@ module ApplicationHelper
       #['helpdesk/tags',      'Tags',         permission?(:manage_tickets)],
       ['helpdesk/guides',     'Solutions',    permission?(:manage_knowledgebase)],      
       ['/forums',             'Forums',       permission?(:manage_knowledgebase)],      
-      ['/customers',          'Customers',    permission?(:manage_users)],
+      ['/users',              'Customers',    permission?(:manage_users)],
       #['helpdesk/articles',  'Articles',     permission?(:manage_knowledgebase)],
       ['/admin',              'Admin',        permission?(:manage_users)]
     ]

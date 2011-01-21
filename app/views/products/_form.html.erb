@@ -14,7 +14,7 @@
 			<li>
 				<label>Forward support emails of this product to</label>
 				<%= f.text_field :to_email, :class => "very_small" %>
-				@<%= current_account.name %>.<%= current_account.domain %>
+				@<%= current_account.full_domain %>
 			</li>
 			<li>
 				<label>Desired Reply Email address</label>

@@ -1,5 +1,4 @@
-<%= error_messages_for :user %> 
-	<!--img src="/images/icons/profile_blank.gif" /--> 
+<%= error_messages_for :user %> 	 
 	<ul class="ui-form">
 		<li>
 			<%= label(:user, :name, "Full Name") %>
@@ -8,7 +7,7 @@
 		<li>
 			<%= label(:user, :job_title, "Title") %>
 			<%= text_field(:user, :job_title, :class => "text" ) %>
-		</li>
+		</li>		
 		<li>
 			<%= label(:user, :company, "Company") %>
 			<input type="text" class="text" />
@@ -37,6 +36,14 @@
 			<%= text_field(:user, :twitter_id, :class => "text" ) %>
 		</li>
 		
+		<% fields_for "user[avatar]", @user.avatar do |avatar_form| %>
+			<li>
+				<%= label(:user, :photo, "Photo") %>
+				<span>A Profile image of the person, its best if the picture has the same length and height</span>
+				<%= avatar_form.file_field :content %>
+			</li>
+		<% end %>
+		
 		<li>
 			<%= f.label :time_zone %>
 			<%= f.time_zone_select :time_zone, ActiveSupport::TimeZone.all %>
@@ -49,13 +56,8 @@
 				example - address, LA Lakers fan etc.
 			</label>
 			<%= text_area(:user, :description, :class => "text", :id => "user_binfo" ) %>
-		</li>
+		</li>		
 		
-		<% fields_for "user[avatar]", @user.avatar do |avatar_form| %>
-			<li>
-				<%= avatar_form.file_field :content %>
-			</li>
-		<% end %>
 	</ul>	 
 <span class="seperator"></span>
 

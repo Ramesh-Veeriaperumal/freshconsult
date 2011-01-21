@@ -25,49 +25,56 @@
 <% end %>
 
 <div class="infoPage contact">
-	<img src="/images/icons/profile_blank.gif" class="profile_pic" width="85px" height="85px" />
-	<h3 class="info_title">		
-		<%= @user.name %>
-	</h3>
 	
-	<h4 class="info_title">
-		<% unless @user.job_title.nil? %>
-			<%= @user.job_title %>
-		<% end %>
-		at <a href="#">YCombinator</a>		
-	</h4>
-	<div class="tag_list">
-		<a href="#"><%= @user.job_title %></a>
-		<a href="#"><%= @user.name %></a>
-	</div>
-	<div class="actionsRight">
-		<%= link_to 'Edit this user', edit_user_path(@user), :class => "button" %> 
-		<%= link_to 'Back', user_path, :class => "button" %>		
-	</div>
-	<span class="seperator"></span>
-	<div class="info_subtitle">Special note about "<%= @user.name %>"</div>
-	<p class="info">
-		<%= @user.description %>
-	</p>
+	<div class="profile_pic">
+		<%= image_tag (@user.avatar) ? 
+						@user.avatar.content.url(:medium) : "/images/icons/profile_blank.gif" %>		
+	</div>				
+	<div class="contact_box">
+		<h3 class="info_title">		
+			<%= @user.name %>
+		</h3>
+		
+		<h4 class="info_title">
+			<% unless @user.job_title.nil? %>
+				<%= @user.job_title %>
+			<% end %>
+			<!-- at <a href="#">YCombinator</a-->		
+		</h4>
+		
+		<div class="tag_list">
+			<a href="#"><%= @user.job_title %></a>
+			<a href="#"><%= @user.name %></a>
+		</div>
 	
-	<span class="seperator"></span> 
-	<div class="info_subtitle">Recent Tickets from "<%= @user.name %>"</div>
-	<%if @user.tickets.size.eql?(0) %>
-		<%= "User has not created any tickets" %>
-	<% end %>
-	<ul class="history_list">
-		<% @user.tickets.each do |ticket| %>	
-			<% logger.debug "Here is a subject : #{ticket.subject}" %>
-			<li class="<%= cycle('stripe', '') %>">
-				<h3><%= link_to("##{ticket.display_id} " + h(ticket.subject), ticket) %></h3> 
-      			<!--%= h(truncate(ticket.description, :length => 200)) %-->
-				<% unless ticket.responder.nil? %>
-					<strong><span>Assigned to: </span><%= link_to(h(ticket.responder.name), ticket.responder, :class => 'username') %></strong>
-				<% end %>
-				<strong><span>Status: </span><%= h(ticket.status_name) %></strong>
-			</li>		
+		<div class="actionsRight">
+			<%= link_to 'Edit this user', edit_user_path(@user), :class => "button" %> 
+			<%= link_to 'Back', user_path, :class => "button" %>		
+		</div>
+		<span class="seperator"></span>
+		<div class="info_subtitle">"Special note"</div>
+		<p class="info">
+			<%= @user.description %>
+		</p>
+		
+		<span class="seperator"></span> 
+		<div class="info_subtitle">Recent Tickets from "<%= @user.name %>"</div>
+		<%if @user.tickets.size.eql?(0) %>
+			<%= "User has not created any tickets" %>
 		<% end %>
-	</ul>
-				
+		<ul class="history_list">
+			<% @user.tickets.each do |ticket| %>	
+				<% logger.debug "Here is a subject : #{ticket.subject}" %>
+				<li class="<%= cycle('stripe', '') %>">
+					<h3><%= link_to("##{ticket.display_id} " + h(ticket.subject), ticket) %></h3> 
+	      			<!--%= h(truncate(ticket.description, :length => 200)) %-->
+					<% unless ticket.responder.nil? %>
+						<strong><span>Assigned to: </span><%= link_to(h(ticket.responder.name), ticket.responder, :class => 'username') %></strong>
+					<% end %>
+					<strong><span>Status: </span><%= h(ticket.status_name) %></strong>
+				</li>		
+			<% end %>
+		</ul>
+	</div> 			
 		
 </div>	

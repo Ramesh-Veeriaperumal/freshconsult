@@ -10,7 +10,7 @@
 	});
  </script> 
  <% fields_for "users", @agent.user do |usr| %>
- 	<ul class="ui-form" style="width:450px">
+ 	<ul class="ui-form">
 		<li>
 			<%= label(:user, :name, "Full Name" ) %>
 				<%= text_field(:user, :name, :class => "text", :value => @agent.user.name )  %>

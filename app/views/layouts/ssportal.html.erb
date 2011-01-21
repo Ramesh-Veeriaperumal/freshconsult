@@ -39,13 +39,7 @@
 							<%= yield  %>
 						</div>
                     </div> 
-	                <div class="sidebar">
-	                	<%= link_to "Request Support", (current_user) ? new_support_ticket_path : new_anonymous_request_path, :class => :request %>
-				 
-				        <h3>Jump to User Guide:</h3>
-				        <ol class="guides">
-				          <%= Helpdesk::Guide.display_order.visible.all(:conditions => { :account_id => current_account.id }).map { |g| content_tag(:li, link_to(g.name, support_guide_path(g))) } %>
-				        </ol>
+	                <div class="sidebar">	                	
 						 <%= yield :sidebar %>					
 					</div> 
 				</div> 

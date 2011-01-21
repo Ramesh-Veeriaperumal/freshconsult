@@ -1,82 +1,22 @@
 <% content_for :layoutType do%>single<% end %>
 
 <div class="pageContent">
-	<h2 class="content_title">
-		<img src="/images/icons/addressbook.png" width="38px" height="38px" />
-		<%= @page_title = 'Customers' %>
-	</h2>
-	<div class="tab_panel">
-		<a class="active"><%='Companies'%></a>
-		<%= link_to('Contacts','/users') %>
-	</div>	
-	<div class="actionsRight">
-		<%= link_to('Delete', "#", :method => 'delete', :confirm => 'Are you sure you want to delete this user?', :class => "button") %>		
-		<%= link_to 'New Company', new_customer_path, :class => "button" %>			
-		<%= link_to('New user', new_user_url, :class => "button") %>		
-	</div>
-	<span class="seperator"></span>
-	<div id="customer_list_view" style="display:block">
-		<div class="search_box">
-		<input type="search" id="srch_fld" placeholder="Search by Name or Email or Tags..." autosave="applestyle_srch" results="5" />
-	</div>
-	<ul class="alpha_sort_list">
-		<li class="active"><a href="#">All</a></li>
-		<li><a href="#">A</a></li>
-		<li><a href="#">B</a></li>
-		<li><a href="#">C</a></li>
-		<li><a href="#">D</a></li>
-		<li><a href="#">E</a></li>
-		<li><a href="#">F</a></li>
-		<li><a href="#">G</a></li>
-		<li><a href="#">H</a></li>
-		<li><a href="#">I</a></li>
-		<li><a href="#">J</a></li>
-		<li><a href="#">K</a></li>
-		<li><a href="#">L</a></li>
-		<li><a href="#">M</a></li>
-		<li><a href="#">N</a></li>
-		<li><a href="#">O</a></li>
-		<li><a href="#">P</a></li>
-		<li><a href="#">Q</a></li>
-		<li><a href="#">R</a></li>
-		<li><a href="#">S</a></li>
-		<li><a href="#">T</a></li>
-		<li><a href="#">U</a></li>
-		<li><a href="#">V</a></li>
-		<li><a href="#">W</a></li>
-		<li><a href="#">X</a></li>
-		<li><a href="#">Y</a></li>
-		<li><a href="#">Z</a></li> 		
-	</ul>
-		<table class="contact_table">
-		  <!--tr>
-		  	<th></th>
-			<th></th>
-		    <th>Name</th>
-		    <th>Company Number</th>
-		    <th>Owner</th>
-		    <th>Account</th>
-		    <th>Customer type</th>
-		    <th>Phone</th>
-		    <th>Address</th>
-		    <th>Website</th>
-		    <th>Description</th>
-		  </tr-->
-		
+	<%= render(:partial => '/shared/companyheader', :locals => {:type => "company"}) %>
+	
+	<ul id="companies" class="contact_table content_list">
 		<% @customers.each do |customer| %>
-		  <tr class="<%= cycle('stripe', '') %>">
-		  	<td class="checkCol"><input type="checkbox"></td>
-			<td class="preview_pic"><img src="/images/icons/building.png" width="32px" height="32px" /></td>
-		    <td class="user_prime_Details">
-		    	<%= link_to(h(customer.name), customer, :class => "user_name" ) %>
-			
+		  <li class="<%= cycle('stripe', '') %>">		  	
+			<div class="item_actions">
+		    	<%= link_to('edit', edit_customer_path(customer), :class => "button") %>
+		    	<%= link_to 'Delete', customer, :confirm => 'Are you sure?', :method => :delete, :class => "button" %>
+			</div>
+			<div class="preview_pic"><img src="/images/icons/building.png" width="32px" height="32px" /></div>
+		    <span class="user_prime_Details">
+		    	<%= link_to(h(customer.name), customer, :class => "user_name" ) %>			
 				<div><%= h customer.description %></div>
-			</td>
-		   		    <td><%= link_to 'Delete', customer, :confirm => 'Are you sure?', :method => :delete %></td>
-		  </tr>
+			</span>		    
+		  </li>
 		<% end %>
-		</table>
-		<br />	
-	</div>
+	</ul>	
 </div>
 <div>  <%= will_paginate @customers %></div>

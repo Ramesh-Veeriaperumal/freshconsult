@@ -1,0 +1,16 @@
+<div class="title_bar_grey">
+	<div class="floatr">				
+		<%= link_to '<img src="/images/add.png"> New Company', new_customer_path, :class => "fdbutton" %>			
+		<%= link_to('<img src="/images/add.png"> New user', new_user_url, :class => "fdbutton") %>
+	</div>
+
+	<h3 class="title">
+		<%= @page_title = 'Customers' %>
+	</h3>	
+	<div class="tab_panel">		
+		<b>Showing</b>
+		<%= link_to('Companies','/customers', :class => (type == 'company') ? "active" : "" ) %>
+		<%= link_to('Contacts','/users', 	  :class => (type == 'user') 	? "active" : "" ) %>
+	</div>		
+	<!-- %= render(:partial => '/shared/listsearch') % -->	
+</div>
