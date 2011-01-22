@@ -45,6 +45,10 @@ namespace :db do
     #by shihab to populate SLA table
     Rake::Task["db:populatesla"].invoke
     
+    Rake::Task["db:populatecustomfields"].invoke
+    
+    
+    
     puts "All done!  You can now login to the test account at the localhost domain with the login support@freshdesk.com and password test.\n\n"
   end
   
@@ -53,20 +57,52 @@ namespace :db do
       
       puts "populate sla is called"
       
+      @sla_policy =Helpdesk::SlaPolicy.new({'name' =>'Default SLA Policy' , 'description' =>'default policy','account_id' =>Account.first.id ,'is_default' =>true })
+      
       slas =[
-      {'name' => 'Sla for low priority', 'account_id' =>Account.first.id , 'priority' =>1, 'response_time' =>86400 , 'resolution_time' =>259200, 'escalateto' =>User.first.id },
-      {'name' => 'Sla for medium priority', 'account_id' =>Account.first.id , 'priority' =>2, 'response_time' =>28800 , 'resolution_time' =>86400, 'escalateto' =>User.first.id },
-      {'name' => 'Sla for high priority', 'account_id' =>Account.first.id , 'priority' =>3, 'response_time' =>14400 , 'resolution_time' =>43200, 'escalateto' =>User.first.id },
-      {'name' => 'Sla for urgent priority', 'account_id' =>Account.first.id , 'priority' =>4, 'response_time' =>3600 , 'resolution_time' =>14400, 'escalateto' =>User.first.id }
+      {'name' => 'Sla for low priority', 'account_id' =>Account.first.id , 'priority' =>1, 'response_time' =>86400 , 'resolution_time' =>259200},
+      {'name' => 'Sla for medium priority', 'account_id' =>Account.first.id , 'priority' =>2, 'response_time' =>28800 , 'resolution_time' =>86400},
+      {'name' => 'Sla for high priority', 'account_id' =>Account.first.id , 'priority' =>3, 'response_time' =>14400 , 'resolution_time' =>43200 },
+      {'name' => 'Sla for urgent priority', 'account_id' =>Account.first.id , 'priority' =>4, 'response_time' =>3600 , 'resolution_time' =>14400}
       
       ].collect do |sla|
       
-      Helpdesk::SlaDetail.create(sla)
+      @sla_policy.sla_details.build(sla)
       
       end
+    
+     @sla_policy.save
       
        #end
-     end
+   end
+   
+   task :populatecustomfields => :environment do
+     
+     @custom_def =FlexifieldDef.new
+     
+     @custom_def.name = "Ticket_"+Account.first.id.to_s()
+     
+     @ticket_field.account_id = Account.first.id
+     
+     @ticket_field.module = "Ticket"
+     
+     @ticket_field.save
+     
+     
+     
+     @ticket_field = Helpdesk::FormCustomizer.new
+   
+     @ticket_field.name = "Ticket_"+Account.first.id.to_s()
+   
+     @ticket_field.json_data = Helpdesk::FormCustomizer::DEFAULT_FIELDS_JSON
+   
+     @ticket_field.account_id = Account.first.id
+   
+     @ticket_field.save
+     
+     
+     
+   end
     
   
   

@@ -47,8 +47,10 @@ module Has #:nodoc:
           t.string  :flexifield_set_type
           t.timestamps
           1.upto(30) {|i| t.string "ffs_" + (i < 10 ? "0#{i}" : "#{i}")}
-          1.upto(10) {|j| t.string "ff_int" + (j < 10 ? "0#{j}" : "#{j}")}
-          1.upto(10) {|k| t.string "ff_date" + (k < 10 ? "0#{k}" : "#{k}")}
+          1.upto(10) {|j| t.text "ff_text" + (j < 10 ? "0#{j}" : "#{j}")}
+          1.upto(10) {|k| t.integer "ff_int" + (k < 10 ? "0#{k}" : "#{k}")}
+          1.upto(10) {|l| t.datetime "ff_date" + (l < 10 ? "0#{l}" : "#{l}")}
+          1.upto(10) {|m| t.boolean "ff_boolean" + (m < 10 ? "0#{m}" : "#{m}")}
           
         end
         
