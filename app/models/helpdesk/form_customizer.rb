@@ -15,5 +15,10 @@ class Helpdesk::FormCustomizer < ActiveRecord::Base
    
    DATE_FIELDS = Array['ff_date01','ff_date02','ff_date03','ff_date04','ff_date05','ff_date06','ff_date07','ff_date08','ff_date09','ff_date10']
    
+   CHECKBOX_FIELDS = Array['ff_boolean01','ff_boolean02','ff_boolean03','ff_boolean04','ff_boolean05','ff_boolean06','ff_boolean07','ff_boolean08','ff_boolean09','ff_boolean10']
+   
+   TEXT_FIELDS = Array['ff_text01','ff_text02','ff_text03','ff_text04','ff_text05','ff_text06','ff_text07','ff_text08','ff_text09','ff_text10']
+   
+   
    
 end

@@ -177,7 +177,7 @@ ActiveRecord::Schema.define(:version => 20110121074638) do
   add_index "flexifields", ["flexifield_def_id"], :name => "index_flexifields_on_flexifield_def_id"
   add_index "flexifields", ["flexifield_set_id", "flexifield_set_type"], :name => "idx_ff_poly"
 
-<<<<<<< HEAD
+
   create_table "forum_categories", :force => true do |t|
     t.string   "name"
     t.text     "description"
@@ -197,8 +197,7 @@ ActiveRecord::Schema.define(:version => 20110121074638) do
     t.integer "account_id"
   end
 
-=======
->>>>>>> shihab
+
   create_table "groups", :force => true do |t|
     t.string   "name"
     t.text     "description"

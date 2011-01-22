@@ -98,13 +98,21 @@ def update
   
   @ticket_field = Helpdesk::FormCustomizer.find(:first ,:conditions =>{:account_id => current_account.id})
   
+   res = Hash.new
+   
   if @ticket_field.update_attribute(:json_data , modified_json)
     
-    render :text => "Successfully updated"
+    res["data"] = modified_json
+    res["message"]="Successfully updated"
+    
+    render :json => ActiveSupport::JSON.encode(res)
     
   else
     
-    render :text => "Update failed"
+    res["data"] = ""
+    res["message"]="Update failed"
+    
+    render :json => ActiveSupport::JSON.encode(res)
     
   end
   
@@ -120,10 +128,10 @@ def save_flexi_field_entries ff_alias, ff_type
   
   coltype ="text"
   
-  if ("dropdown".eql?(ff_type) || "text".eql?(ff_type) || "paragraph".eql?(ff_type))
+  if ("dropdown".eql?(ff_type) || "text".eql?(ff_type))
     coltype = "text"
   else
-    coltype = coltype
+    coltype = ff_type
   end
   
   columnId = 0
@@ -238,7 +246,7 @@ def get_new_column_details type
     
   when "checkbox"
     
-    @column_list = Helpdesk::FormCustomizer::CHARACTER_FIELDS
+    @column_list = Helpdesk::FormCustomizer::CHECKBOX_FIELDS
     
     @column_exist = @column_list - @coulumn_used
     
@@ -251,6 +259,18 @@ def get_new_column_details type
   when "date"
     
     @column_list = Helpdesk::FormCustomizer::DATE_FIELDS
+    
+    @column_exist = @column_list - @coulumn_used
+    
+    logger.debug "current exist : #{@column_exist.inspect}"
+    
+    new_column = @column_exist[0]
+    
+    logger.debug "new columns : #{new_column}"
+    
+ when "paragraph"
+    
+    @column_list = Helpdesk::FormCustomizer::TEXT_FIELDS
     
     @column_exist = @column_list - @coulumn_used
     

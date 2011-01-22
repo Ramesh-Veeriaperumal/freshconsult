@@ -545,11 +545,8 @@ ActiveRecord::Schema.define(:version => 20110121074638) do
     t.integer  "account_id"
     t.boolean  "admin",               :default => false
     t.boolean  "active",              :default => false, :null => false
-<<<<<<< HEAD
     t.integer  "posts_count",         :default => 0
     t.datetime "last_seen_at"
-=======
->>>>>>> shihab
     t.string   "role_token"
     t.integer  "customer_id"
     t.string   "job_title"

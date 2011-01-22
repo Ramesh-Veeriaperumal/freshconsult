@@ -155,7 +155,15 @@
 					contentType: 'application/json',
 					data:JSON.stringify({jsonData: jsonData}),
 					datatype:'json',
-					success: function(data){jQuery('div.resultmsg').html(data)}
+					success: function(data){
+						//alert(data);
+						//json = eval(data);
+						//alert(data.message);
+						jQuery("#field_values").val(data.data);
+						init();
+												
+						jQuery('div#resultmsg').html(data.message);
+						}
     				    });
 			
 
@@ -302,7 +310,7 @@
                 <a href="#" class="fdbutton">Dropdown</a>
             </li>
         </ul>
-	<div id="resultmsg"> </div>	
+	<div id="resultmsg" > </div>	
 	<%  logger.debug "index page: #{@ticket_fields.json_data}" %>
 	<%	json_data = @ticket_fields.json_data %>
 		<div class="custom_form_outer">
