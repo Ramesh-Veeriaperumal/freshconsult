@@ -129,7 +129,7 @@ def save_flexi_field_entries ff_alias, ff_type
   coltype ="text"
   
   if ("dropdown".eql?(ff_type) || "text".eql?(ff_type))
-    coltype = "text"
+    coltype = ["text" , "dropdown"]
   else
     coltype = ff_type
   end
@@ -158,7 +158,7 @@ def save_flexi_field_entries ff_alias, ff_type
   
   @ff_entries.flexifield_order = ff_order +1 
   
-  @ff_entries.flexifield_coltype = coltype
+  @ff_entries.flexifield_coltype = ff_type
   
   if @ff_entries.save
     
@@ -219,7 +219,7 @@ def get_new_column_details type
  
   case type
     
-  when "text"
+  when ["text" , "dropdown"]
     
     @column_list = Helpdesk::FormCustomizer::CHARACTER_FIELDS
     

@@ -80,7 +80,7 @@
                     break;
                     
                 case 'checkbox':
-			fieldContainer.addClass("small");
+					fieldContainer.addClass("small");
 					var selected = (dataItem.setDefault)?'checked':'';
                     field.append('<input type="checkbox" '+ selected +' '+fieldAttr+' />');
                     break;
@@ -160,6 +160,9 @@
 						//json = eval(data);
 						//alert(data.message);
 						jQuery("#field_values").val(data.data);
+						
+						jQuery("#custom_form").empty();
+						
 						init();
 												
 						jQuery('div#resultmsg').html(data.message);

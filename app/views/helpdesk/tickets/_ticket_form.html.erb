@@ -86,15 +86,15 @@
     			</li>
 				
 			<%when "Description" then%>
-			
+					<li>
 					<%= f.label :description, "Description" %>
     				<%= f.text_area :description, :class=>"textarea" %>
 					
-									
+					</li>				
 			<%else%>
 		     <%logger.debug "Custom  Field #{field["label"]}"%>
 			 
-			 <li>		 
+			
 		  
 		   			<% f.fields_for :flexifields do |cust_form| %>
 					
@@ -102,31 +102,46 @@
 
 					 when "text","number" then
 		    		%>
-					
+						 <li>		 
 						<%= cust_form.label "#{field["label"]}", "#{field["label"]}" %>  
  						<%= cust_form.text_field "#{field["label"]}" ,:class=>"text" %>
 						
+						 </li>		 
+						
+					<%	
+						 when "paragraph" then
+		    		%>
+						<li>
+						<%= cust_form.label "#{field["label"]}", "#{field["label"]}" %>  
+ 						<%= cust_form.text_area "#{field["label"]}" ,:class=>"textarea" %>
+						</li>
+					
 					<%
 					 when "dropdown" then						
 					%>
+						<li class="small">
 						<%
 							Array values =[]
 							field["choices"].each {|choice| values.push(choice["value"])}%>
 							
 						 <%= cust_form.label "#{field["label"]}", "#{field["label"]}" %>  
  						 <%= cust_form.select "#{field["label"]}", values ,:class=>"select" %>
+						 
+						 </li>
 							
 					<%
 					  when "checkbox" then
 					%>
-					     <%= cust_form.label "#{field["label"]}", "#{field["label"]}" %>  
+						<li>
+					    
  						 <%= cust_form.check_box "#{field["label"]}" ,:class=>"checkbox" %>
-					
+						  <%= cust_form.label "#{field["label"]}", "#{field["label"]}" %>  
+						</li>
 					<%end 
 					end	
 					%>
 					
-			</li>
+			
 			 
 			 
 			<%
