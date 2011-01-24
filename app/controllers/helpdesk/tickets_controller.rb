@@ -49,7 +49,11 @@ class Helpdesk::TicketsController < ApplicationController
     if @item.update_attributes(params[nscname])
 
       if old_item.responder_id != @item.responder_id
-        @item.create_status_note(current_account, "#{old_item.responder ? "Reassigned" : "Assigned"} to #{@item.responder ? @item.responder.name : "Nobody"}", current_user, "#{old_item.responder ? "reassigned" : "assigned"} the ticket")
+        @item.create_status_note(current_account, 
+                "#{old_item.responder ? "Reassigned" : "Assigned"} to #{@item.responder ? @item.responder.name : "Nobody"}", 
+                current_user, 
+                "{{user}} #{old_item.responder ? "reassigned" : "assigned"} the ticket {{ticket_path}} to {{responder}}", 
+                {'responder' => @item.responder.id})
       end
 
       if old_item.status != @item.status

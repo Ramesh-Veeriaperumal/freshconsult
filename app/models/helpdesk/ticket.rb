@@ -29,6 +29,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :class_name => 'Helpdesk::Note',
     :as => 'notable',
     :dependent => :destroy
+    
+  has_many :activities,
+    :class_name => 'Helpdesk::Activity',
+    :as => 'notable',
+    :dependent => :destroy
 
   has_many :reminders, 
     :class_name => 'Helpdesk::Reminder',
@@ -188,13 +193,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
 
-  def create_status_note(account, message, user = nil, description = nil)
-    notes.create(
-      :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['status'],
-      :user => user,
-      :body => message,
+  def create_status_note(account, message, user = nil, description = nil, activity_data = nil)
+    activities.create(
       :description => description,
-      :account_id => account.id
+      :account => account,
+      :user => user,
+      :activity_data => activity_data
     )
   end
 
