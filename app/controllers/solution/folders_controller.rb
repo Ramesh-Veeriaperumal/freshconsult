@@ -53,7 +53,7 @@ class Solution::FoldersController < ApplicationController
   end
 
   def destroy
-end
+  end
 
 
  protected
