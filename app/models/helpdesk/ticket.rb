@@ -144,10 +144,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #PRIORITY_OPTIONS = PRIORITIES.map { |i| [i[1], i[2]] }
   COLUMN_TYPE_BY_KEY = Hash[*COLUMNTYPES.map { |i| [i[0], i[1]] }.flatten]
   COLUMN_CLASS_BY_KEY = Hash[*COLUMNTYPES.map { |i| [i[0], i[2]] }.flatten]
-  
-  
-
-
 
   #validates_presence_of :name, :source, :id_token, :access_token, :status, :source
   validates_uniqueness_of :id_token
@@ -182,6 +178,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def status_name
     STATUS_NAMES_BY_KEY[status]
   end
+  
+  def priority=(val)
+    self[:priority] = PRIORITY_KEYS_BY_TOKEN[val] || val
+  end
+
+  def priority_name
+    PRIORITY_NAMES_BY_KEY[priority]
+  end
+
 
   def create_status_note(account, message, user = nil, description = nil)
     notes.create(

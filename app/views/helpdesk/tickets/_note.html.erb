@@ -1,55 +1,41 @@
 	
 <li class="note <%= cycle('stripe', '') %>">
-
-  <div class="source left_info">
-  	<!--
-    <% if note.status? %>
-      <div class="negative status_label">status</div>
-    <% elsif note.incoming %>
-      <div class="negative incoming_label">in</div>
-    <% elsif note.private %>
-      <div class="negative note_label">note</div>
-    <% else %>
-      <div class="negative outgoing_label">out</div>
-    <% end %>
-	-->
-	<img src="/images/icons/profile_blank.gif" />
-	 
-	<% if !note.status? %>
+  <div class="preview_pic">  
+		<%= image_tag (note.user.avatar) ? 
+						note.user.avatar.content.url(:thumb) : "/images/icons/profile_blank.gif" %>
+  </div>	
+  <div class="conv_details">
+  	<% if note.private && !note.incoming && !note.status? %>
+      <div class="item_actions">
+        <%= link_to "Edit", edit_helpdesk_ticket_helpdesk_note_path(@item, note), :class => "button" %>
+        <%= link_to "Delete", helpdesk_ticket_helpdesk_note_path(@item, note), :method => :delete, :class => "button" %>
+      </div>
+    <% end %> 
+    
       <h4>
         <% if note.source == Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["meta"] %>
           Meta Information
         <% else %>
-          <%= h(note.user ? note.user.name : "Anon") %> <!-- #by Shan temp -->
+			<% if note.user %>
+          		<%= link_to(h(note.user.name), note.user, :class => "user_name") %>
+			<% else %>
+				System Generated
+			<% end %>		
         <% end %>
+		<em class="timestamp"><%= note.created_at.strftime("%B %e %Y at %I:%M %p") %></em>
       </h4>
-    <% end %>
-	<em class="timestamp"><%= note.created_at.strftime("%b %e") %></em>	
-  </div>
-
-  <div class="details conv_details green">
-    <span class="speak_arrow"></span> 
-    <!--div class="timestamp"><%= note.created_at.strftime("%b %e") %></div--> 
+    
+	 
     <div class="note-body">
-      <blockquote>
-        <%= simple_format(email_before_quoted(strip_tags(note.body))) %>
-      </blockquote>
-
-      <% if email_quoted?(note.body) %>
+      <%= simple_format(email_before_quoted(strip_tags(note.body))) %>
+	  <% if email_quoted?(note.body) %>
         <%= link_to_function("Toggle Quoted", "$('quoted-#{ note.id }').toggle()", :class => 'toggle-quoted') %>
 
         <blockquote id="quoted-<%= note.id %>" style="display:none">
           <%= simple_format(email_after_quoted(strip_tags(note.body))) %>
         </blockquote>
       <% end %>
-    </div>
-
-    <% if note.private && !note.incoming && !note.status? %>
-      <ul class="note-actions">
-        <li><%= link_to "Edit", edit_helpdesk_ticket_helpdesk_note_path(@item, note) %></li>
-        <li><%= link_to "Delete", helpdesk_ticket_helpdesk_note_path(@item, note), :method => :delete %></li>
-      </ul>
-    <% end %>
+    </div>   
 	
 	<%= content_tag('span', '', :class => "seperator") unless note.attachments.empty? %>
     <%= content_tag('h5', 'Attachments') unless note.attachments.empty? %>
