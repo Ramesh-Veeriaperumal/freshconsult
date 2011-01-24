@@ -36,7 +36,7 @@
             <img src="/images/icons/profile_blank.gif" width="48px" height="48px" />
 			<%= link_to(h(@ticket.requester.name), @ticket.requester, :class => "user_name") %>
             <em><%= auto_link(h(@ticket.requester.email)) %></em>
-            <em>Ph: Later...</em>
+			<br/>
             <div class="clearfloat">
             </div>
         </div>
@@ -88,46 +88,50 @@
 <% content_for :main_panel_summary do %> 
 	<div class="request_details">
 	    <div class="request_header">
-	        <div class="title">
-	            <em><%= "##{@ticket.display_id}" %></em>
-	            <b><%= h(@ticket.subject) %></b>
-	        </div>
-	        <div class="user_details">
-	            <%= link_to(h(@ticket.requester.name),@ticket.requester, :class => "user_name") %>
-	            posted on: <b><%= h(@ticket.created_at) %>(<%= distance_of_time_in_words_to_now(@ticket.created_at) %> ago)</b>				
-	        </div>
-	        <div class="request_status">
-	            <img src="/images/status_hing.gif" width="5px" height="6px" />
+	    	<div class="request_status">
+	            <span class="ltSlant"></span>
 	            <ul>
 	                <li>
 	                    <b>Status</b>: <%= h(@ticket.status_name) %>
 	                </li>
 	                <li>
-	                    <b>Priority</b>: High
+	                    <b>Priority</b>: <%= h(@ticket.priority_name) %>
 	                </li>
 	            </ul>
 	        </div>
-	    </div>
-	    <div class="request_desp">
-	    	
-	        <p id="description-summary">
-	            <%= h(truncate(@ticket.description, :length => 500)) %>
-	            <% if(@ticket.description.size > 500) %>
-	            <%= link_to_function "(more)", "Element.hide('description-summary'); Element.show('description-full');" %>
-	            <% end %>
-	        </p>
-	        <p id="description-full" style="display:none">
-		    	<%= h(@ticket.description) %>
-		    </p>
-	        <span class="seperator"></span>
+			<div class="preview_pic">  
+				<%= image_tag (@ticket.requester.avatar) ? 
+								@ticket.requester.avatar.content.url(:thumb) : "/images/icons/profile_blank.gif" %>
+		    </div>
+			<div class="description">
+		        <div class="title">
+		            <em><%= "##{@ticket.display_id}" %></em>
+		            <b><%= h(@ticket.subject) %></b>
+		        </div>
+		        <div class="user_details">
+		            Reported by <%= link_to(h(@ticket.requester.name),@ticket.requester, :class => "user_name") %>
+		            | <%= h(@ticket.created_at.strftime("%B %e %Y at %I:%M %p")) %>				
+		        </div>	        
+				<div id="description-summary">
+		            <%= h(truncate(@ticket.description, :length => 400)) %>
+		            <% if(@ticket.description.size > 400) %>
+		            <%= link_to_function "(more)", "Element.hide('description-summary'); Element.show('description-full');" %>
+		            <% end %>
+		        </div>
+		        <div id="description-full" style="display:none">
+			    	<%= h(@ticket.description) %>
+			    </div>
+			</div>
+	    </div>		
+	    <div class="request_desp">             
 	        <span class="sub_title">Ticket properties</span>
 			<% form_for @ticket do |f| %>
 	        <ul class="ui-list-2col">
 	            <li>
-	                <label>Dueby Date</label>: Nov 19, 2010 11:10 AM
+	                <label>Dueby in</label>: <%= @ticket.due_by.strftime("%B %e %Y at %I:%M %p") %>
 	            </li>
 	            <li>
-	                <label>Priority</label>: High
+					<%= f.label :priority, "Priority" %>: <%= f.select :priority, Helpdesk::Ticket::PRIORITY_OPTIONS, {}, {:onchange => "this.form.submit()"} %>
 	            </li>
 	            <li>
 	                <%= f.label :status, "Status" %>: <%= f.select :status, Helpdesk::Ticket::STATUS_OPTIONS, {}, {:onchange => "this.form.submit()"} %>
@@ -136,19 +140,15 @@
 	                <%= f.label :responder_id, "Assigned To" %>: <%= f.collection_select :responder_id, User.find_all_by_permission(current_account, :manage_tickets), :id, :name, {:include_blank => 'Nobody'}, {:onchange => "this.form.submit()"} %>	
 	            </li>
 				<li>
-	                <label>Mode</label>: <%= h(@ticket.source_name) %>
+					<%= f.label :source, "Mode" %>: <%= f.select :source, Helpdesk::Ticket::SOURCE_OPTIONS, {}, {:onchange => "this.form.submit()"} %>
 	            </li> 
 				<!-- Custom fields starts here -->
 				
-				<% 
-					
-					@ticket.ff_aliases.each do |cust_field| %>
+				<% @ticket.ff_aliases.each do |cust_field| %>
 				<li>
 	                <label><%=cust_field%></label>: <%= h(@ticket.get_ff_value(cust_field)) %>
 	            </li> 
-				<% end
-				  
-				 %>
+				<% end %>
 				<!-- Custom fields ends here-->
 	        </ul> 
 			<% end %> 
@@ -158,13 +158,8 @@
 <% end %>
 <% content_for :main_panel_toolbar do %>
 	<div class="request_panel">
-		<!-- 
-		<ul>
-	    		<%= content_tag('li', link_to_function("Send an Email", "Helpdesk.swapEmailNote('send-email', false, 'Send Email', this)", :class => 'active')) if @item.requester %>
-				<%= content_tag('li', link_to_function("Add a Note", "Helpdesk.swapEmailNote('add-note', true, 'Add Note', this)", :class => (!@item.requester)  ? 'active' : '')) %>
-		</ul>
-		--><!-- #by Shan temp -->
-		<% if @item.requester %><!-- #by Shan temp --><%= render(:partial => '/helpdesk/shared/note_form', :locals => {:id => 'send-email', :note => [@ticket, Helpdesk::Note.new(:private => false)] }) %>
+		<% if @item.requester %>
+			<%= render(:partial => '/helpdesk/shared/note_form', :locals => {:id => 'send-email', :note => [@ticket, Helpdesk::Note.new(:private => false)] }) %>
 		<% else %>
 			<%= render(:partial => '/helpdesk/shared/note_form', :locals => {:id => 'add-note',	:note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
 		<% end %>
@@ -172,20 +167,12 @@
 <% end %>
 
 <% content_for :main_panel_content do %>
-	<div class="conversations">
-        <span class="seperator"></span>
-        <h3 class="content_title">Conversation</h3>
+	<div class="conversations">        
+        <h3 class="title">Conversation</h3>
 		<ul>
-		<%= render :partial => 'note', :collection => @ticket.notes.visible.newest_first %>
+			<%= render :partial => 'note', :collection => @ticket.notes.visible.newest_first %>
 		</ul> 
-    </div> 
-	
-	<!--
-	<%= link_to(
-		image_tag("helpdesk/feed.png", :alt => "Feed") + " Subscribe",
-		helpdesk_ticket_url(@ticket, :format => 'atom'),
-		:class => "feed") unless params[:f] %>
-	-->	
+    </div>
 <div class="clear"></div>
 
 <% end %>
