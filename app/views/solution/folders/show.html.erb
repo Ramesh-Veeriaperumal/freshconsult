@@ -1,25 +1,13 @@
-<div id="pages" class="guide_page">  
-	  <div class="product_help">
-	  	<h3>Solution Catgories</h3>
-	 
-	<div class="actionsRight" >
-  		<%= link_to "New Category", new_helpdesk_guide_path, :class => "button" %>
+<div class="pageContent">  
+	<div class="title_bar_grey">
+		<div class="floatr">
+			<%= link_to "New Category", new_helpdesk_guide_path, :class => "fdbutton" %>
+		</div>
+	  	<h3 class="title">Solution Catgories</h3> 		
 	</div>
-<% 
-		
-	@item.categories.each do |category|
+	<% @item.categories.each do |category| %>
+		<%= link_to(h(category.name), category) %>
 
-%>
-<p>
-<%= link_to(h(category.name), category) %>
-
-</p>
-
-<%
-end
-
-%>
-
- </div>
+	<% end %>
+</div>
  
- </div>

@@ -1,40 +1,38 @@
-  
-
-  
-  <div id="pages" class="guide_page">  
-	  <div class="product_help">
-	  	<h3>Solution Folders</h3>
-		<div class="actionsRight" >
-  		<%= link_to "New Folder", new_solution_folder_path, :class => "button" %>
-	</div>
-  
-		<ul class="icon_grid">
-			<!--li>
-				<a href="#">
-					<img src="/images/product_icons/twitter.png" width="48px" height="48px" />
-					<em>Twitter</em>
-				</a>
-			</li>		
-			<li>
-				<a href="#">
-					<img src="/images/product_icons/cloud.png" width="48px" height="48px" />
-					<em>Cloud App</em>
-				</a>
-			</li>
-			<li>
-				<a href="#">
-					<img src="/images/product_icons/clock.png" width="48px" height="48px" />
-					<em>Billing App</em>
-				</a>
-			</li-->
-			
-			<% @folders.each do |folder| %>
-			<li>
-				<a href="#">
-					<img src="/images/product_icons/digital_camera.png" width="48px" height="48px" />
-					<em><%= link_to(h(folder.name), folder) %></em>
-				</a>
-			</li>
-			<%end%>
-		</ul>
+<% content_for :layoutType do%>single<% end %>  
+<div class="pageContent twoColumn">  
+	<div class="col_left">
+	  <div class="title_bar_grey">
+	  	<div class="floatr" >
+  			<%= link_to "<img src='/images/add.png'> Add Folder", new_solution_folder_path, :class => "fdbutton" %>
+		</div>
+		<h3 class="title">Solution Folders</h3>		
 	  </div>
+  	  <ul class="icon_grid solution_folder">
+		<% @folders.each do |folder| %>
+		<li>
+			<%= link_to h(folder.name), folder, :class => "folder" %>		
+		</li>
+		<%end%>
+	  </ul>
+	 </div>
+	 <div class="col_right">
+	 	<div class="title_bar_grey">
+		  	<div class="floatr" >
+	  			<%= link_to "<img src='/images/add.png'> New FAQ", new_helpdesk_guide_path, :class => "fdbutton" %>					
+			</div>
+			<h3 class="title">FAQ</h3>		
+	  	</div>
+		<ul class="guides">
+			<li><a href="#">How to setup Helpdesk Email?</a></li>
+			<li><a href="#"> How can I use my custom domain URL?</a></li>
+			<li><a href="#"> What is your refund policy?</a></li>
+			<li><a href="#"> How safe is my Data?</a></li>
+			<li><a href="#"> How can I configure multi-product support?</a></li>
+			<li><a href="#"> How can I use my own SSL certificate?</a></li>
+			<li><a href="#"> How do I configure more than one support email address?</a></li>
+			<li><a href="#"> What are Business Rules?</a></li>
+			<li><a href="#"> When are Helpdesk scenario automations triggered?</a></li>
+			<li><a href="#"> How can I setup SLAs?</a></li>
+		</ul>
+	 </div>
+</div>
