@@ -1,22 +1,29 @@
 <script type="text/javascript">
 	jQuery(document).ready(init);
 			
-	function init(){
-		//jQuery('#custom_form li').remove();
-		var fieldFeed = eval(document.getElementById('field_values').value);
-
-		var DialogFieldPref = null;
-		var SourceField 	= null;	
+	function init(){		
+		var fieldFeed = JSON.parse(document.getElementById('field_values').value, 
+										function (key, value) {
+												    var type;
+													if(key == 'action'){
+														value = "";														
+													}				
+												    return value;
+												});
 		
+		var DialogFieldPref = null;
+		var SourceField 	= null;		
 		var dialogContainer = "div#CustomFieldsDialog";
+		
+		// Mapping individual dom elements to its data counterparts
 		var dialogDOMMap = {
-			type: jQuery(dialogContainer+' label[name|="customtype"]'),
-			label: jQuery(dialogContainer+' input[name|="customlabel"]'),
-            description: jQuery(dialogContainer+' input[name|="customdesc"]'),	
-			choices: jQuery(dialogContainer+' div[name|="customchoices"]'),
+			type: 			jQuery(dialogContainer+' input[name|="customtype"]'),
+			label: 			jQuery(dialogContainer+' input[name|="customlabel"]'),
+            description: 	jQuery(dialogContainer+' input[name|="customdesc"]'),	
+			choices: 		jQuery(dialogContainer+' div[name|="customchoices"]'),
             setDefault: 1,	    
-		    agent: {required: jQuery(dialogContainer+' input[name|="agentrequired"]')},
-			customer: {visible: jQuery(dialogContainer+' input[name|="customervisible"]'),
+		    agent: 	  {required: jQuery(dialogContainer+' input[name|="agentrequired"]')},
+			customer: {visible : jQuery(dialogContainer+' input[name|="customervisible"]'),
 					   editable: jQuery(dialogContainer+' input[name|="customereditable"]'),
 					   required: jQuery(dialogContainer+' input[name|="customerrequired"]')}
 		};
@@ -24,41 +31,44 @@
         var fieldTemplate = $H({
 					            type: "",
 					            label: "Untitled",
-						    description: "",
-						    fieldType :"custom",
+						    	description: "",
+						   		fieldType :"custom",
 					            choices: [],
 					            setDefault: 0,
 					            agent: {required: false},
-						    customer: {visible: false,editable: false,required: false},
-						    columnId: ""
+						    	customer: {visible: false, editable: false, required: false},
+						    	columnId: "",
+								styleClass:	"",
+								action: "create" // delete || edit || create
 					        });
 
 		function getAjaxField(type){
 			jQuery.ajax({
 	      					type: 'POST',
-						url: '/ticket_fields/get_column',
-						contentType: 'application/json',
-						data:JSON.stringify({type: type}),
-						datatype:'json',
-	      					success: function(data){console.log(data);getFreshField(type, data)}
+							url: '/ticket_fields/get_column',
+							contentType: 'application/json',
+							data:JSON.stringify({type: type}),
+							datatype:'json',
+	      					success: function(data){											
+											getFreshField(type, data)
+									}
 				});
 		}
 	
 		function getFreshField(type){
-	            var freshField = fieldTemplate.toObject();
+	        var freshField = fieldTemplate.toObject();
 		    freshField.type = type;	
 	            	switch (type) {
 	                	case 'dropdown': 
-	                	    freshField.choices = [{value: "First Choice",tag: []}, {value: "Second Choice",tag: []}];
+	                	    freshField.choices = [{value: "First Choice", tag: []}, {value: "Second Choice",tag: []}];
 	                	break;
 	            	}
 			return freshField;
-            }
+        }
 		
 		function getCustomFieldJson(){
 			var allfields = [];
-			jQuery("#custom_form li").each(function(index, domLi){
-				
+			jQuery("#custom_form li").each(function(index, domLi){				
 				allfields.push(jQuery(domLi).data("raw"));
 			})
 			return allfields;
@@ -75,33 +85,40 @@
             switch (dataItem.type) {
                 case 'number':
                 case 'text':
-		    fieldContainer.addClass("large");
+		    		fieldContainer.addClass(dataItem.type);
                     field.append('<input type="text" '+fieldAttr+' />');
+					fieldContainer.append(label)
+						  .append(field);
                     break;
                     
-                case 'checkbox':
-					fieldContainer.addClass("small");
+                case 'checkbox':				
+					fieldContainer.addClass(dataItem.type);	
 					var selected = (dataItem.setDefault)?'checked':'';
-                    field.append('<input type="checkbox" '+ selected +' '+fieldAttr+' />');
+                    field.append('<input type="checkbox" '+ selected +' '+fieldAttr+' />'+dataItem.label);
+					fieldContainer
+						  .append(field);
                     break;
                     
                 case 'dropdown':
-					fieldContainer.addClass("small");
+					fieldContainer.addClass(dataItem.type);
                     jQuery(dataItem.choices).each(function(ci, choice){
                         var defChoice = (ci == dataItem.setDefault) ? 'selected="selected"' : '';
                         field.append("<option " + defChoice + ">" + choice.value + "</option>");
                     });
                     field.wrapInner("<select "+fieldAttr+" />");
+					fieldContainer.append(label)
+						  .append(field);
                     break;
                     
                 case 'paragraph':
-					fieldContainer.addClass("large");
+					fieldContainer.addClass(dataItem.type);
                     field.append('<textarea '+fieldAttr+'></textarea>');
+					fieldContainer.append(label)
+						  .append(field);
                     break;
             }            
 			
-            fieldContainer.append(label)
-						  .append(field);
+            
 			fieldContainer.data("raw", dataItem); 
 			
 			return fieldContainer;
@@ -125,53 +142,39 @@
         
         jQuery("#custom_form")
 			.sortable({
-		            revert: true
-			    })
-			.droppable({ 
-		            drop: function(ev, ui){ 
-		                type = ui.draggable.get(0).getAttribute('type');
-		                if (type) {			               
-					constFieldDOM(getFreshField(type), ui.draggable);
-					ui.draggable.trigger("click");
-		                }
+		            revert: true,
+					stop: function(ev, ui) { 
+		             	console.log(ui.item.get(0));
+						type = ui.item.get(0).getAttribute('type');
+		                if (type) {
+							constFieldDOM(getFreshField(type), ui.item);
+							ui.item.trigger("click");
+		                }					
 		            }
-		        });
-        
-        jQuery("#close_button").click(function(e){
-            jQuery("#CustomFieldsDialog").hide();
-        });
+			    })
+			.droppable();
+        	
+    jQuery("#close_button").click(function(e){
+         	jQuery("#CustomFieldsDialog").hide();
+    });
 		
-	jQuery("#SaveForm").click(function(e){
-			
+	jQuery("#SaveForm").click(function(e){			
 			var jsonData = getCustomFieldJson();
 			jQuery("#field_values").val(jsonData);
-			//init();
-
-			//submitting data here
-
- 			jQuery.ajax({
+			jQuery.ajax({
       					type: 'POST',
-					url: '/ticket_fields/update',
-					contentType: 'application/json',
-					data:JSON.stringify({jsonData: jsonData}),
-					datatype:'json',
-					success: function(data){
-						//alert(data);
-						//json = eval(data);
-						//alert(data.message);
-						jQuery("#field_values").val(data.data);
-						
-						jQuery("#custom_form").empty();
-						
-						init();
-												
-						jQuery('div#resultmsg').html(data.message);
+						url: '/ticket_fields/update',
+						contentType: 'application/json',
+						data:JSON.stringify({jsonData: jsonData}),
+						datatype:'json',
+						success: function(data){						
+							jQuery("#field_values").val(data.data);
+							jQuery("#custom_form").empty();
+							init();
+							jQuery('div#resultmsg').html(data.message);
 						}
-    				    });
-			
-
-		
-			console.log(jsonData);
+    	  	});
+			//console.log(jsonData);
 		});
 		
         
@@ -218,51 +221,72 @@
 			jQuery(sourceField).addClass("active");
 			
 			var sourceData = jQuery(sourceField).data("raw");
+			
+			console.log(sourceData.toSource());
 				
-				dialogDOMMap.type.html(sourceData.type + " Label");							
-				dialogDOMMap.label.val(sourceData.label);
-				dialogDOMMap.description.val(sourceData.description);
+			dialogDOMMap.type.val(sourceData.type);							
+			dialogDOMMap.label.val(sourceData.label);
+			dialogDOMMap.description.val(sourceData.description);
 				
-				jQuery("div#CustomFieldsDialog label.overlabel").overlabel();
+			jQuery("div#CustomFieldsDialog label.overlabel").overlabel();
 				
-				dialogDOMMap.choices.empty();
-				sourceData.choices.each(function(item){
-					addChoiceinDialog(item, dialogDOMMap.choices);						
-				});
+			dialogDOMMap.choices.empty();
+			sourceData.choices.each(function(item){
+				addChoiceinDialog(item, dialogDOMMap.choices);						
+			});
 				
-				dialogDOMMap.agent.required.attr("checked", sourceData.agent.required);								
-				dialogDOMMap.customer.visible.attr("checked", sourceData.customer.visible);
-					 innerLevelExpand(dialogDOMMap.customer.visible.get(0));
-				dialogDOMMap.customer.editable.attr("checked", sourceData.customer.editable);
-					innerLevelExpand(dialogDOMMap.customer.editable.get(0)); 
-				dialogDOMMap.customer.required.attr("checked", sourceData.customer.required);  
+			dialogDOMMap.agent.required.attr("checked", sourceData.agent.required);								
+			dialogDOMMap.customer.visible.attr("checked", sourceData.customer.visible);
+				innerLevelExpand(dialogDOMMap.customer.visible.get(0));
+			
+			dialogDOMMap.customer.editable.attr("checked", sourceData.customer.editable);
+				innerLevelExpand(dialogDOMMap.customer.editable.get(0)); 
+			
+			dialogDOMMap.customer.required.attr("checked", sourceData.customer.required);  
 				
 			jQuery("#DropFieldChoices").hide();
-            switch (sourceData.type) {
-                case 'dropdown':
-                    jQuery("#DropFieldChoices").show(30);
-                    break;
-            }
+			
+			if(sourceData.fieldType == 'default'){
+				jQuery('#DeleteField').hide();								
+			}else{
+				jQuery('#DeleteField').show();		
+				 if (sourceData.type == 'dropdown') {	                
+	               	jQuery("#DropFieldChoices").show(30);	                
+	             }		 
+			}
+			
+           
 		}      
         
 		jQuery("#SaveField").click(function()
 		{
-			var sourceData   	         	= jQuery(SourceField).data("raw");																	
-			sourceData.label 		 		= dialogDOMMap.label.val();
-			sourceData.description 		 	= dialogDOMMap.description.val();
-			sourceData.agent.required	 	= dialogDOMMap.agent.required.attr("checked");
-			sourceData.customer.visible	 	= dialogDOMMap.customer.visible.attr("checked");										
-			sourceData.customer.editable    = dialogDOMMap.customer.editable.attr("checked");
-			sourceData.customer.required    = dialogDOMMap.customer.required.attr("checked");  											
-			sourceData.choices		 		= getAllChoices(dialogDOMMap.choices);									
-
-			constFieldDOM(sourceData, jQuery(SourceField));
-			console.log(sourceData.toSource());											
-			//DialogFieldPref.dialog("close");			
+			var sourceData   	         	= $H(jQuery(SourceField).data("raw"));	
+			
+			sourceData.set("label" 		 , dialogDOMMap.label.val());
+			sourceData.set("description" , dialogDOMMap.description.val());
+			
+			sourceData.get("agent").required	= dialogDOMMap.agent.required.attr("checked");
+				
+			sourceData.get("customer").visible	= dialogDOMMap.customer.visible.attr("checked");										
+			sourceData.get("customer").editable = dialogDOMMap.customer.editable.attr("checked");
+			sourceData.get("customer").required = dialogDOMMap.customer.required.attr("checked");  											
+				
+			sourceData.set("choices", getAllChoices(dialogDOMMap.choices));									
+			
+			sourceData.set('action', "edit");			
+			
+			constFieldDOM(sourceData.toObject(), jQuery(SourceField));
 		});
 		
 		jQuery("#close_button").click(function(){
-			//DialogFieldPref.dialog("close");	
+			DialogFieldPref.dialog("close");	
+		});
+		
+		jQuery("#DeleteField").click(function(ev){
+			var sourceData    = jQuery(SourceField).data("raw");
+			sourceData.action = "delete";
+			constFieldDOM(sourceData, jQuery(SourceField));
+			jQuery(SourceField).hide();			
 		});
 		
         jQuery("#custom_form li").live("click", function(e){           
@@ -275,8 +299,10 @@
 							             at: 'left' + " " + 'top',
 							             offset: '250px -30px',
 							             collision: "fit fit"
-							             })*/
-										 .show("highlight", 5000);
+							             })*/										 								 
+										 .show("highlight", 5000, function(){
+										 	jQuery(this).clearQueue();											
+										 })
             /*DialogFieldPref = jQuery("#CustomFieldsDialog").dialog({
 					                closeOnEscape: true,
 					                width: "550px",
@@ -325,6 +351,7 @@
 		<div class="dialog_ticket_field" title="Field Properties" id="CustomFieldsDialog" style="display:none;">
 		    <form action="#">		    	
 		        <ul class="ui-form">
+		        	<input type="hidden" name="customtype" value="" />
 		            <li>
 		                <label class="caption">
 		                    Field Label
@@ -387,7 +414,9 @@
 		                </div>
 		            </li>
 		            <li>
-		                <input type="button" class="button" id="SaveField" value="Save" /> <input type="button" class="button" value="Cancel" id="close_button" />
+		                <input type="button" class="button" id="SaveField" value="Save" />
+						<input type="button" class="button" id="DeleteField" value="Delete" />  
+						<input type="button" class="button" value="Cancel" id="close_button" />
 		            </li>
 		        </ul>
 		    </form>
