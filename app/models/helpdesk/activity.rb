@@ -10,5 +10,11 @@ class Helpdesk::Activity < ActiveRecord::Base
   attr_protected :notable_id
   
   validates_presence_of :description, :notable_id
+  
+  named_scope :freshest, lambda { |account|
+    { :conditions => ["account_id = ? ", account], 
+      :order => "helpdesk_activities.created_at DESC"
+    }
+  }
 
 end

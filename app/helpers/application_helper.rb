@@ -85,5 +85,9 @@ module ApplicationHelper
     (discount.percent? ? number_to_percentage(discount.amount * 100, :precision => 0) : number_to_currency(discount.amount)) + ' off'
   end
   #Copy ends here
+  
+  def eval_activity_data(data, ticket_note)
+    data.inject({}) {|h, (k,v)| h.update({k => eval(v.to_s)})}
+  end
 
 end

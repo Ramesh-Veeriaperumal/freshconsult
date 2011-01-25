@@ -130,4 +130,8 @@ class User < ActiveRecord::Base
     self.time_zone = account.time_zone if time_zone.nil? #by Shan temp
   end
   
+  def to_s
+    name
+  end
+  
 end

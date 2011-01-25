@@ -192,8 +192,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     PRIORITY_NAMES_BY_KEY[priority]
   end
 
-
-  def create_status_note(account, message, user = nil, description = nil, activity_data = nil)
+  def create_activity(user, description, activity_data = {})
     activities.create(
       :description => description,
       :account => account,
@@ -363,6 +362,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     @custom_fields = FlexifieldDef.all(:include => [:flexifield_def_entries =>:flexifield_picklist_val] , :conditions => ['account_id=? AND module=?',account_id,'Ticket']) 
     
   
+  end
+  
+  def to_s
+    "#{subject} (##{display_id})"
   end
 
   #Some hackish things for virtual agent rules.

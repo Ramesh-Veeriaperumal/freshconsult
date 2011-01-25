@@ -49,15 +49,15 @@ class Helpdesk::TicketsController < ApplicationController
     if @item.update_attributes(params[nscname])
 
       if old_item.responder_id != @item.responder_id
-        @item.create_status_note(current_account, 
-                "#{old_item.responder ? "Reassigned" : "Assigned"} to #{@item.responder ? @item.responder.name : "Nobody"}", 
-                current_user, 
-                "{{user}} #{old_item.responder ? "reassigned" : "assigned"} the ticket {{ticket_path}} to {{responder}}", 
-                {'responder' => @item.responder.id})
+        @item.create_activity(current_user, 
+                "{{user_path}} #{old_item.responder ? "reassigned" : "assigned"} the ticket {{notable_path}} to {{responder}}", 
+                {'responder' => @item.responder.name})
       end
 
       if old_item.status != @item.status
-        @item.create_status_note(current_account, "Status changed to \"#{@item.status_name.titleize}\"", current_user, "changed the status to \"#{@item.status_name.titleize}\" on")
+        @item.create_activity(current_user,
+                "{{user_path}} changed the ticket status of {{notable_path}} to {{status_name}}",
+                {'status_name' => @item.status_name})
       end
 
       flash[:notice] = "The #{cname.humanize.downcase} has been updated"

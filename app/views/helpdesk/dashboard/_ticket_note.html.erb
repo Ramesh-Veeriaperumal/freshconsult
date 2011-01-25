@@ -1,9 +1,7 @@
  <p>
      <img src="/images/icons/profile_blank.gif" width="39px" height="39px" /> 
-	 <%= link_to(h(ticket_note.user.name), ticket_note.user, :class => 'user_name') %>
-     <%= ticket_note.description %>  
-	 <%= link_to(h("#{ticket_note.notable.subject} (##{ticket_note.notable.display_id})"), ticket_note.notable, :class => 'ticket_title') %>
-    
+	 <%= Liquid::Template.parse(h ticket_note.description).render(ticket_note.activity_data.merge(
+				'user_path' => link_to(h(ticket_note.user), ticket_note.user),
+				'notable_path' => link_to(h(ticket_note.notable), ticket_note.notable) )) %>    
  </p>
  <em class="activity_time"><%= distance_of_time_in_words_to_now(ticket_note.created_at) %> ago</em>
-  
