@@ -26,143 +26,90 @@
   <% end %>
 <% end %>
 
-  <% form_for @item do |f| %>
-  
-   
-    <%= f.error_messages %>
- 	<ul class="ui-form">
- 		   <%
-		
-			@customizer = ActiveSupport::JSON.decode(@item.customizer.json_data)
+<% form_for @item do |f| %>
+  <%= f.error_messages %>
+	<ul class="ui-form">
+ 	<%
+		@customizer = ActiveSupport::JSON.decode(@item.customizer.json_data)
+		logger.debug "json decoded : #{@customizer}"
 
-			logger.debug "json decoded : #{@customizer}"
-
-			 @customizer.each do |field|
-
+		@customizer.each do |field|
 			case field["label"]
-
 			 when "Requester" then
-		    %>
-						
-				<li> 	
-  					<label id="requester-label">Requester *</label>
-  					<input type="text" id="helpdesk_ticket_email" class="text" name="helpdesk_ticket[email]"></input>
-   				</li> 
+    %>
+		<li> 	
+  			<label id="requester-label">Requester *</label>
+  			<input type="text" id="helpdesk_ticket_email" class="text" name="helpdesk_ticket[email]"></input>
+   		</li> 
 			
-			<% when "Subject" then%>
-			
-				<li>
-          			<%= f.label :subject, "Subject" %>
-          			<%= f.text_field :subject, :class => "text" %>
-   				</li>
-				
-			<%when "Source" then%>
-			
-				<li class="small">
-          			<%= f.label :source, "Source" %>
-         			 <%= f.select :source, Helpdesk::Ticket::SOURCE_OPTIONS, :class => "select" %>
-        		</li>
-				
-			<%when "Status" then%>
-			
-				<li class="small">
-          			<%= f.label :status, "Status" %>
-         			 <%= f.select :status, Helpdesk::Ticket::STATUS_OPTIONS, :class => "select" %>
-        		</li>
-			
-			<%when "Assigned to" then%>
-			
-				<li class="small">
-          			<%= f.label :responder_id, "Assigned To" %>
-          			<%= f.collection_select :responder_id, Helpdesk::Authorization.find_all_by_permission(:manage_tickets), :user_id, :name, {:include_blank => 'Nobody'}, :class => "select" %>
-         		</li>
-			
-			
-			<%when "Priority" then%>
-			
-				<li class="small">
- 					<%= f.label :priority, "Priority" %>          
-					<%= f.select :priority, Helpdesk::Ticket::PRIORITY_OPTIONS, :class => "select" %>
-    			</li>
-				
-			<%when "Description" then%>
-					<li>
-					<%= f.label :description, "Description" %>
-    				<%= f.text_area :description, :class=>"textarea" %>
-					
-					</li>				
-			<%else%>
-		     <%logger.debug "Custom  Field #{field["label"]}"%>
-			 
-			
-		  
-		   			<% f.fields_for :flexifields do |cust_form| %>
-					
-					<%case field["type"]
+	<% when "Subject" then%>
+		<li>
+        	<%= f.label :subject, "Subject" %>
+          	<%= f.text_field :subject, :class => "text" %>
+   		</li>
 
-					 when "text","number" then
-		    		%>
-						 <li>		 
-						<%= cust_form.label "#{field["label"]}", "#{field["label"]}" %>  
- 						<%= cust_form.text_field "#{field["label"]}" ,:class=>"text" %>
+	<%when "Source" then%>
+		<li class="dropdown">
+  			<%= f.label :source, "Source" %>
+ 			<%= f.select :source, Helpdesk::Ticket::SOURCE_OPTIONS, :class => "select" %>
+        </li>
+				
+	<%when "Status" then%>
+		<li class="dropdown">
+          	<%= f.label :status, "Status" %>
+         	<%= f.select :status, Helpdesk::Ticket::STATUS_OPTIONS, :class => "select" %>
+        </li>
+			
+	<%when "Assigned to" then%>
+		<li class="dropdown">
+          	<%= f.label :responder_id, "Assigned To" %>
+          	<%= f.collection_select :responder_id, Helpdesk::Authorization.find_all_by_permission(:manage_tickets), :user_id, :name, {:include_blank => 'Nobody'}, :class => "select" %>
+        </li>
+			
+	<%when "Priority" then%>
+		<li class="dropdown">
+ 			<%= f.label :priority, "Priority" %>          
+			<%= f.select :priority, Helpdesk::Ticket::PRIORITY_OPTIONS, :class => "select" %>
+    	</li>
+	
+	<%when "Description" then%>
+		<li>
+			<%= f.label :description, "Description" %>
+    		<%= f.text_area :description, :class=>"textarea" %>
+		</li>				
+	
+	<%else%>
+		<%logger.debug "Custom  Field #{field["label"]}"%>
+		<% f.fields_for :flexifields do |cust_form| %>
+			<% case field["type"] when "text","number" then %>				
+				<li class="<%= field['label'] %>">		 
+					<%= cust_form.label "#{field["label"]}", "#{field["label"]}" %>  
+ 					<%= cust_form.text_field "#{field["label"]}" ,:class=>"text" %>
+				</li>		 
 						
-						 </li>		 
-						
-					<%	
-						 when "paragraph" then
-		    		%>
-						<li>
-						<%= cust_form.label "#{field["label"]}", "#{field["label"]}" %>  
- 						<%= cust_form.text_area "#{field["label"]}" ,:class=>"textarea" %>
-						</li>
+			<% when "paragraph" then %>
+				<li class="paragraph">
+					<%= cust_form.label "#{field["label"]}", "#{field["label"]}" %>  
+ 					<%= cust_form.text_area "#{field["label"]}" ,:class=>"textarea" %>
+				</li>
 					
-					<%
-					 when "dropdown" then						
-					%>
-						<li class="small">
-						<%
-							Array values =[]
-							field["choices"].each {|choice| values.push(choice["value"])}%>
-							
+			<% when "dropdown" then %>
+				<li class="dropdown">
+					<% Array values =[]
+						field["choices"].each {|choice| values.push(choice["value"])}%>
 						 <%= cust_form.label "#{field["label"]}", "#{field["label"]}" %>  
  						 <%= cust_form.select "#{field["label"]}", values ,:class=>"select" %>
-						 
-						 </li>
+			    </li>
 							
-					<%
-					  when "checkbox" then
-					%>
-						<li>
-					    
- 						 <%= cust_form.check_box "#{field["label"]}" ,:class=>"checkbox" %>
-						  <%= cust_form.label "#{field["label"]}", "#{field["label"]}" %>  
-						</li>
-					<%end 
-					end	
-					%>
-					
-			
-			 
-			 
-			<%
-			end
-			end 
-			%>
-		
- 		
-		
-		
-		
-		
-		 
- 		
-		  
-		 
-		  
-		  
-	
-			
-		</li>
+		   <% when "checkbox" then %>
+				<li class="checkbox">
+					<%= cust_form.check_box "#{field["label"]}" ,:class=>"checkbox" %>					
+					<%= field["label"] %>
+			     </li>
+		   <% end %>
+		 <% end %>			 
+		<% end %>
+	<% end %>
 	</ul>
     <div class="button-container">
       <%= f.submit "Save changes", :class => "fdbutton submit" %>
