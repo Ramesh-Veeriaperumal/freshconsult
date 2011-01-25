@@ -2,7 +2,7 @@
 
 <div class="pageContent">
 	<%= render(:partial => '/shared/companyheader', :locals => {:type => "user"}) %>
-	<ul id="users" class="contact_table content_list">	  
+	<ul id="users" class="content_list">	  
 	  <% @users.each do |user| %>	 
 	    <li class="<%= cycle('stripe', '') %>">	   
 		  <div class="item_actions">
@@ -13,20 +13,16 @@
 				<%= image_tag (user.avatar) ? 
 						user.avatar.content.url(:thumb) : "/images/icons/profile_blank.gif" %>		  
 		  </div>
-	      <span class="user_prime_Details">
-	      	<%= link_to(h(user.name), user, :class => "user_name" ) %>
+	      <%= link_to(h(user.name), user, :class => "item_info" ) %>
 		  	<div><%= h user.email %></div>
-			<b><%= h user.phone %></b>
-		  </span>	   
-		  <span class="user_additional_Details">
+			<div><%= h user.phone %></div>
 		  	<%unless user.job_title.nil?%>
 		  	<div><%= h user.job_title %></div>
 			<%end%>
 			<%unless user.customer.nil? %>
 			at 	<%= link_to(h(user.customer.name), user.customer)  %>
 			<%end%>
-		  </span>  
-		  
+		 
 	     	      
 	    </li>	
 	  <% end %>	 

@@ -1,7 +1,7 @@
 <div class="pageContent">
 	<h3 class="content_title">New Agent</h3>
 	<span class="seperator"></span>
-	<% form_for(@agent) do |f| %>
+	<% form_for @agent, :html => { :multipart => true } do |f| %>
 		<%= f.error_messages %>		
  		<%= render :partial => "agent_form" %>
  		<div class="button-container">

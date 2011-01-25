@@ -3,7 +3,7 @@ ActionController::Routing::Routes.draw do |map|
   
   map.resources :groups
   
-  map.resources :agents
+  map.resources :agents, :member => { :delete_avatar => :delete }
 
   map.resources :sla_details
   
@@ -15,7 +15,7 @@ ActionController::Routing::Routes.draw do |map|
   map.login '/login', :controller => 'user_sessions', :action => 'new'
   #map.register '/register', :controller => 'users', :action => 'create'
   #map.signup '/signup', :controller => 'users', :action => 'new'
-  map.resources :users
+  map.resources :users, :member => { :delete_avatar => :delete }
   map.resource :user_session
   map.register '/register/:activation_code', :controller => 'activations', :action => 'new'
   map.activate '/activate/:id', :controller => 'activations', :action => 'create'

@@ -7,7 +7,7 @@
 	jQuery(document).ready(function(ev){
 		current_role = jQuery('input#role_token').val();
 		jQuery('input[name=user_role]').attr('checked', (current_role=='admin'));
-	});
+	});	
  </script> 
  <% fields_for "users", @agent.user do |usr| %>
  	<ul class="ui-form">
@@ -34,8 +34,10 @@
 		<li class="medium">
 			<%= label(:user, :email, "Email") %>
 			<label class="overlabel" for="email_primary">Primary</label>
-			<%= text_field(:user, :email, :class => "text", :id => "email_primary" , :value => @agent.user.email) %>
-			
+			<%= text_field(:user, :email, :class => "text", :id => "email_primary" , :value => @agent.user.email) %>			
+		</li>
+		<li>
+			<%= render :partial => "/shared/profileavatar", :locals => { :user => @agent.user, :type => type } %>
 		</li>
 		<li>
 			<%= label(:user , :time_zone, "Time zone") %>

@@ -27,6 +27,12 @@ class UsersController < ApplicationController
     @user = User.find(params[:id])
   end
   
+  def delete_avatar
+    load_object
+    @user.avatar.destroy
+    render :text => "success"
+  end
+
   protected
   
     def scoper

@@ -16,8 +16,9 @@ class AgentsController < ApplicationController
   end
 
   def new    
-    @agent      = Agent.new    
-    @agent.user = User.new    
+    @agent      = Agent.new       
+    @agent.user = User.new
+    @agent.user.avatar = Helpdesk::Attachment.new
      respond_to do |format|
       format.html # new.html.erb
       format.xml  { render :xml => @agent }
@@ -30,6 +31,12 @@ class AgentsController < ApplicationController
       format.html # edit.html.erb
       format.xml  { render :xml => @agent }
     end    
+  end
+  
+  def delete_avatar
+    @user = User.find(params[:id])
+    @user.avatar.destroy
+    render :text => "success"
   end
 
   def create     
