@@ -1,5 +1,6 @@
-	
+
 <li class="note <%= cycle('stripe', '') %>">
+  <a name="<%= note.id %>"> </a>
   <div class="preview_pic">  
 		<%= image_tag (note.user.avatar) ? 
 						note.user.avatar.content.url(:thumb) : "/images/icons/profile_blank.gif" %>
