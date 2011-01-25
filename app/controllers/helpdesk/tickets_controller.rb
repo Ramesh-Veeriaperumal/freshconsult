@@ -59,6 +59,12 @@ class Helpdesk::TicketsController < ApplicationController
                 "{{user_path}} changed the ticket status of {{notable_path}} to {{status_name}}",
                 {'status_name' => @item.status_name})
       end
+      
+      if old_item.priority != @item.priority
+        @item.create_activity(current_user,
+                "{{user_path}} changed the ticket priority of {{notable_path}} to {{priority_name}}",
+                {'priority_name' => @item.priority_name})
+      end
 
       flash[:notice] = "The #{cname.humanize.downcase} has been updated"
       redirect_to item_url
