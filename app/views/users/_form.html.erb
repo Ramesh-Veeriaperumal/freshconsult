@@ -35,15 +35,9 @@
 			<%= label(:user, :twitter_id, "Twitter Id") %>
 			<%= text_field(:user, :twitter_id, :class => "text" ) %>
 		</li>
-		
-		<% fields_for "user[avatar]", @user.avatar do |avatar_form| %>
-			<li>
-				<%= label(:user, :photo, "Photo") %>
-				<span>A Profile image of the person, its best if the picture has the same length and height</span>
-				<%= avatar_form.file_field :content %>
-			</li>
-		<% end %>
-		
+		<li>
+			<%= render :partial => "/shared/profileavatar", :locals => { :user => @user, :type => type } %>
+		</li>
 		<li>
 			<%= f.label :time_zone %>
 			<%= f.time_zone_select :time_zone, ActiveSupport::TimeZone.all %>

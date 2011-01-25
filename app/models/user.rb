@@ -11,6 +11,7 @@ class User < ActiveRecord::Base
     :dependent => :destroy
 
   before_create :set_time_zone
+  before_save :set_account_id_in_children
 
   acts_as_authentic do |c|
     c.validations_scope = :account_id
@@ -18,7 +19,7 @@ class User < ActiveRecord::Base
     c.validates_length_of_password_confirmation_field_options = {:on => :update, :minimum => 4, :if => :has_no_credentials?}
   end
   
-  attr_accessible :name, :email, :password, :password_confirmation , :second_email, :job_title, :phone, :mobile, :twitter_id, :description, :customer_id , :role_token, :time_zone 
+  attr_accessible :name, :email, :password, :password_confirmation , :second_email, :job_title, :phone, :mobile, :twitter_id, :description, :customer_id , :role_token, :time_zone, :avatar_attributes 
 
   def signup!(params)
     self.email = params[:user][:email]
@@ -32,14 +33,22 @@ class User < ActiveRecord::Base
     self.customer_id = params[:user][:customer_id]
     self.job_title = params[:user][:job_title]
     
-    unless params[:user][:avatar].nil?
-      self.avatar = Helpdesk::Attachment.new(params[:user][:avatar])
-      self.avatar.account_id = account_id
-    end
+    
+    self.avatar_attributes=params[:user][:avatar_attributes] unless params[:user][:avatar_attributes].nil?
    
     save_without_session_maintenance
     deliver_activation_instructions!
   end
+  
+  def avatar_attributes=(av_attributes)
+    puts "******************* AVATAR ATTRIBUTES CALLED in USer #{av_attributes}"
+    #unless fc_attributes[:name].empty?
+      return build_avatar(av_attributes) if avatar.nil?
+      
+      avatar.update_attributes(av_attributes)
+    #end
+  end
+
  
   def active?
     active
@@ -129,5 +138,11 @@ class User < ActiveRecord::Base
   def set_time_zone
     self.time_zone = account.time_zone if time_zone.nil? #by Shan temp
   end
+  
+  protected
+    def set_account_id_in_children
+      self.avatar.account_id = account_id unless avatar.nil?
+    end
+
   
 end
