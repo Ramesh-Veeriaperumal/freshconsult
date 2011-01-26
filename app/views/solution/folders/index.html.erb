@@ -5,12 +5,15 @@
 	  	<div class="floatr" >
   			<%= link_to "<img src='/images/add.png'> Add Folder", new_solution_folder_path, :class => "fdbutton" %>
 		</div>
-		<h3 class="title">Solution Folders</h3>		
+		<h3 class="title">Solution Categories</h3>		
 	  </div>
   	  <ul class="icon_grid solution_folder">
 		<% @folders.each do |folder| %>
 		<li>
-			<%= link_to h(folder.name), folder, :class => "folder" %>		
+			<% if(folder.categories.size != 0) %>
+				<span class="count"><%= folder.categories.size %></span>
+			<% end %>
+			<%= link_to h(folder.name), folder, :class => "sol_category", :title => h(folder.name) %>		
 		</li>
 		<%end%>
 	  </ul>

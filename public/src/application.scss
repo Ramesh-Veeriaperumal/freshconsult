@@ -1577,20 +1577,44 @@ a.request_bt:hover{
 }
 
 /* User Guide styles */
+.sol_category{
+	padding:55px 5px 5px 5px;
+	margin:0px;
+	background:url('/images/icons/solutions.png') no-repeat center 3px;
+	font-weight:bold;		
+	text-align:center;		
+}
+
+	
 ul.solution_folder.icon_grid{
 	padding:10px;
 	li{
-		width:100px;
-		padding-right:10px;
-		a.folder{
-			padding-top:60px;
-			background:url('/images/icons/folder_closed.png') no-repeat center 3px;
-			font-weight:bold;			
+		width:130px;		
+		position:relative;
+		a.sol_category{
+			margin:10px 0px;
+			padding:55px 5px 5px 5px;	
+			background:url('/images/icons/solutions.png') no-repeat center 3px;		
+			font-weight:bold;		
+			text-align:center;		
+			@include ellipsis(true);
 		}
 		a:hover{
 			color:#336699;
 			background-color:#efefef;				
 		}
+		span.count{
+			@include corners(4px);
+			background:#efefef;
+			border:1px solid #cfcfcf;
+			padding:3px 6px;
+			position:absolute;
+			left:70px;
+			font-size:14px;
+			font-weight:bold;
+			top:36px;
+			z-index:2;			
+		}		
 	}
 }
 ul.icon_grid{
@@ -1678,7 +1702,7 @@ $lightBase:lighten($base, 5%);
 
 .product_title{
 	text-align:center;
-	padding:15px 0px;
+	padding:5px 0px;
 	@include border-radius(0.8em);
 	border:2px solid #base; 
 	margin:15px 15px 0px 15px;
@@ -2188,11 +2212,23 @@ span.sort_handle{
 	-moz-box-shadow: 0 0 5px rgba(0,0,0,0.4) inset;	
 }
 
+h4.content_title{
+	margin:0px;
+	font-size:16px;
+	font-weight:bold;
+	padding:0px;
+}
+
+h4.list_title{
+	margin:3px 8px; 
+	padding:0px;
+}
+
 .pageContent .custom_form_outer{ 
 	h3.content_title{
 		padding:15px 0px 0px 15px;
 		margin:0px;
-	}
+	}	
 }
 
 .ui-custom-fields, .ui-custom-form{
@@ -2929,5 +2965,19 @@ label.caption{
 		.guides{
 			border-left:1px solid #efefef;
 		}
+	}
+}
+
+.mceEditor{
+	padding:16px;
+	line-height: 20px;
+	vertical-align: baseline;
+	font-size:12px;
+	color:#333333;	
+	img{
+		margin:0px 10px 10px 10px;
+	}
+	p{
+		margin: 0px 0px 1.5em;
 	}
 }

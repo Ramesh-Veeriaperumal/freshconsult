@@ -33,7 +33,10 @@
     <div class="user_details_widget">
         <h3 class="title">Contact</h3>
         <div class="user_details">
-            <img src="/images/icons/profile_blank.gif" width="48px" height="48px" />
+            <div class="preview_pic">  
+				<%= image_tag (@ticket.requester.avatar) ? 
+								@ticket.requester.avatar.content.url(:thumb) : "/images/icons/profile_blank.gif" %>
+		    </div>
 			<%= link_to(h(@ticket.requester.name), @ticket.requester, :class => "user_name") %>
             <em><%= auto_link(h(@ticket.requester.email)) %></em>
 			<br/>

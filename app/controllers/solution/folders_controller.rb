@@ -13,8 +13,7 @@ class Solution::FoldersController < ApplicationController
     
   end
 
-  def show
-    
+  def show    
     @item = Solution::Folder.find(params[:id], :include => :categories)
     
   end

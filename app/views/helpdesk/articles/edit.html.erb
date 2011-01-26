@@ -1,49 +1,20 @@
+<% content_for :layoutType do%>single<% end %>
 <% content_for :head do %>
   <%= javascript_include_tag "helpdesk/expanding_textarea" %>
   <%= javascript_include_tag "helpdesk/multifile" %>
   <%= javascript_include_tag "helpdesk/article_section" %>
-
-
-
 <% end %>
-
-<% content_for :main_panel_title do %>
-  Edit Article
-<% end %>
-
-<% content_for :main_panel_actions do %>
-  <%= link_to "Delete this article", helpdesk_article_path(@item), :method => :delete, :confirm => "Really delete?" %>
-<% end %>
-
-<% content_for :main_panel_toolbar do %>
-<% end %>
-
-<% content_for :sidebar do %>
-  <h4>Guides</h4>
-  <ul class="guide-select">
-    <% for s in Helpdesk::Guide.alphabetical %>
-      <li>
-        <%= check_box_tag "helpdesk_article[guides][]", s.id, @item.guides.exists?(s), :id => "helpdesk_article_guide_#{s.id}" %>
-        <%= label_tag s.name %>
-      </li>
-    <% end %>
-  </ul>
-
-<% end %>
-
-<% content_for :main_panel_content  do %>
-  <%= render :partial => 'article_form', :locals => {:article => @item} %>
-
-  <div class="attachment-list-container">
-    <%= content_tag('h5', 'Attachments') unless @item.attachments.empty? %>
-    <table class="attachment-list">
-      <%= render(
-        :partial => '/helpdesk/shared/attachment', 
-        :collection => @item.attachments,
-        :locals => {:show_delete => true, :url => [@item] }) %>
-    </table>
-  </div>
-
-<% end %>
-
-<%= render :partial => "/helpdesk/shared/main_panel" %>
+<div class="pageContent">
+	<h3 class="content_title">Edit Solution</h3>
+	<%= render :partial => 'article_form', :locals => {:article => @item} %>
+	 <div class="attachment-list-container">
+	    <%= content_tag('h5', 'Attachments') unless @item.attachments.empty? %>
+	    <table class="attachment-list">
+	      <%= render(
+	        :partial => '/helpdesk/shared/attachment', 
+	        :collection => @item.attachments,
+	        :locals => {:show_delete => true, :url => [@item] }) %>
+	    </table>
+	  </div>
+	
+</div>
