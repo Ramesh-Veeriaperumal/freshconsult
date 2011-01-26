@@ -12,6 +12,8 @@ class User < ActiveRecord::Base
 
   before_create :set_time_zone
   before_save :set_account_id_in_children
+  
+  named_scope :contacts, :conditions => ["role_token=?", "customer"]
 
   acts_as_authentic do |c|
     c.validations_scope = :account_id
