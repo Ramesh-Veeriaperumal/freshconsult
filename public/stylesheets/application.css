@@ -4289,76 +4289,97 @@ ul.item_list li {
   min-width: 150px;
   width: auto !important;
   width: 150px;
+  -moz-border-radius: 6px 6px 6px 6px;
+  -webkit-border-top-left-radius: 6px;
+  -webkit-border-bottom-left-radius: 6px;
+  -webkit-border-top-right-radius: 6px;
+  -webkit-border-bottom-right-radius: 6px;
+  border-radius: 6px 6px 6px 6px;
 }
-/* line 2827, ../src/application.scss */
+/* line 2828, ../src/application.scss */
 ul.item_list li a {
   text-decoration: none;
 }
-/* line 2830, ../src/application.scss */
-ul.item_list li img {
-  float: left;
-  margin-right: 6px;
+/* line 2831, ../src/application.scss */
+ul.item_list li div.preview_pic {
+  margin-right: 5px;
 }
-/* line 2834, ../src/application.scss */
+/* line 2833, ../src/application.scss */
+ul.item_list li div.preview_pic img {
+  width: 32px;
+  height: 32px;
+}
+/* line 2838, ../src/application.scss */
 ul.item_list li b {
   position: relative;
   top: 2px;
 }
-/* line 2838, ../src/application.scss */
+/* line 2842, ../src/application.scss */
 ul.item_list li .selected_tick {
   position: absolute;
   left: 3px;
   bottom: 3px;
   display: none;
 }
-/* line 2844, ../src/application.scss */
-ul.item_list li:hover .selected_tick {
+/* line 2847, ../src/application.scss */
+ul.item_list li .control {
+  position: absolute;
+  right: 3px;
+  bottom: 3px;
+  display: none;
+}
+/* line 2853, ../src/application.scss */
+ul.item_list li:hover {
+  background: #efefef;
+}
+/* line 2856, ../src/application.scss */
+ul.item_list li:hover .selected_tick, ul.item_list li:hover .control {
   display: block;
 }
 
-/* line 2849, ../src/application.scss */
+/* line 2861, ../src/application.scss */
 ul.active a {
   color: #336699;
 }
-/* line 2852, ../src/application.scss */
+/* line 2864, ../src/application.scss */
 ul.active .selected_tick {
   background: url("/images/delete.png") no-repeat;
 }
 
-/* line 2857, ../src/application.scss */
+/* line 2869, ../src/application.scss */
 ul.inactive a {
   opacity: 0.6;
   -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=60);
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=60);
   color: #333333;
 }
-/* line 2861, ../src/application.scss */
+/* line 2873, ../src/application.scss */
 ul.inactive a:hover {
   opacity: 1;
   -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
 }
-/* line 2864, ../src/application.scss */
+/* line 2876, ../src/application.scss */
 ul.inactive .selected_tick {
   background: url("/images/photo_check.png") no-repeat;
 }
 
-/* line 2869, ../src/application.scss */
+/* line 2881, ../src/application.scss */
 .padding6 {
   padding: 6px;
 }
 
-/* line 2873, ../src/application.scss */
+/* line 2885, ../src/application.scss */
 h3.t_padding {
   padding: 2px 10px;
 }
 
-/* line 2877, ../src/application.scss */
+/* line 2889, ../src/application.scss */
 label.caption {
   text-transform: capitalize;
 }
 
-/* line 2881, ../src/application.scss */
+/* line 2893, ../src/application.scss */
 .placeholder-info {
   width: 400px;
   position: fixed;
@@ -4381,7 +4402,7 @@ label.caption {
   border-radius: 6px 6px 6px 6px;
   border: 3px solid #dfdfdf;
 }
-/* line 2890, ../src/application.scss */
+/* line 2902, ../src/application.scss */
 .placeholder-info .placeholder-list {
   border: 1px solid #afafaf;
   background: #f8f8f8;
@@ -4389,32 +4410,32 @@ label.caption {
   overflow: auto;
   height: 400px;
 }
-/* line 2902, ../src/application.scss */
+/* line 2914, ../src/application.scss */
 .placeholder-info h2 {
   padding: 0px;
   margin: 0px;
   font-size: 1.6em;
 }
-/* line 2907, ../src/application.scss */
+/* line 2919, ../src/application.scss */
 .placeholder-info p {
   margin: 0px 0px 8px 0px;
   font-size: 10px;
 }
-/* line 2910, ../src/application.scss */
+/* line 2922, ../src/application.scss */
 .placeholder-info p a {
   font-size: 11px;
 }
-/* line 2914, ../src/application.scss */
+/* line 2926, ../src/application.scss */
 .placeholder-info dl {
   padding: 0px;
   margin: 0px;
 }
-/* line 2917, ../src/application.scss */
+/* line 2929, ../src/application.scss */
 .placeholder-info dl dd {
   padding: 0px 0px 8px 0px;
   margin: 0px;
 }
-/* line 2921, ../src/application.scss */
+/* line 2933, ../src/application.scss */
 .placeholder-info dl dt a {
   font-size: 16px;
   font-family: inherit;
@@ -4422,26 +4443,26 @@ label.caption {
   color: #393939;
   border-bottom: 1px dotted #393939;
 }
-/* line 2928, ../src/application.scss */
+/* line 2940, ../src/application.scss */
 .placeholder-info dl dt a:hover {
   border-bottom: 0px;
   color: #0078BD;
 }
 
-/* line 2937, ../src/application.scss */
+/* line 2949, ../src/application.scss */
 * html .placeholder-info {
   position: absolute;
 }
 
-/* line 2940, ../src/application.scss */
+/* line 2952, ../src/application.scss */
 .guides {
   padding: 8px 0px 0px 30px;
 }
-/* line 2942, ../src/application.scss */
+/* line 2954, ../src/application.scss */
 .guides li {
   padding: 3px 5px;
 }
-/* line 2944, ../src/application.scss */
+/* line 2956, ../src/application.scss */
 .guides li a {
   font-size: 14px;
   color: #333333;
@@ -4449,24 +4470,24 @@ label.caption {
   border-bottom: 1px dotted #333333;
   padding: 0px;
 }
-/* line 2951, ../src/application.scss */
+/* line 2963, ../src/application.scss */
 .guides li a:hover {
   border: 0px;
 }
 
-/* line 2958, ../src/application.scss */
+/* line 2970, ../src/application.scss */
 .twoColumn .col_left, .twoColumn .col_right {
   float: left;
   padding: 0px;
   margin: 0px;
   width: 50%;
 }
-/* line 2965, ../src/application.scss */
+/* line 2977, ../src/application.scss */
 .twoColumn .col_right .guides {
   border-left: 1px solid #efefef;
 }
 
-/* line 2971, ../src/application.scss */
+/* line 2983, ../src/application.scss */
 .mceEditor {
   padding: 16px;
   line-height: 20px;
@@ -4474,11 +4495,11 @@ label.caption {
   font-size: 12px;
   color: #333333;
 }
-/* line 2977, ../src/application.scss */
+/* line 2989, ../src/application.scss */
 .mceEditor img {
   margin: 0px 10px 10px 10px;
 }
-/* line 2980, ../src/application.scss */
+/* line 2992, ../src/application.scss */
 .mceEditor p {
   margin: 0px 0px 1.5em;
 }
