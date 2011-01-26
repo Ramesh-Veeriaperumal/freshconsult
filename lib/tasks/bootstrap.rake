@@ -18,6 +18,9 @@ namespace :db do
     
     user = User.new(:name => 'Support', :password => 'test', :password_confirmation => 'test', 
                     :email => 'support@freshdesk.com', :role_token => 'admin')
+                    
+    user.agent.build()
+    
     a = Account.create(:name => 'Test Account', :domain => 'localhost', :plan => plans.first, :user => user)
     a.update_attribute(:full_domain, 'localhost')
     
@@ -82,11 +85,11 @@ namespace :db do
      
      @custom_def.name = "Ticket_"+Account.first.id.to_s()
      
-     @ticket_field.account_id = Account.first.id
+     @custom_def.account_id = Account.first.id
      
-     @ticket_field.module = "Ticket"
+     @custom_def.module = "Ticket"
      
-     @ticket_field.save
+     @custom_def.save
      
      
      
