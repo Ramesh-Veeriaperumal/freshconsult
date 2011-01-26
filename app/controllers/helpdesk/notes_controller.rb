@@ -21,7 +21,10 @@ protected
     if @parent.is_a? Helpdesk::Ticket
       Helpdesk::TicketNotifier.send_later(:deliver_reply, @parent, @item) unless @item.private
       @parent.responder ||= current_user
-      @parent.create_activity(current_user, "{{user_path}} added a comment to the ticket {{notable_path}}")
+      @parent.create_activity(current_user, "{{user_path}} added a {{comment_path}} to the ticket {{notable_path}}", 
+                    {'eval_args' => {'comment_path' => ['comment_path', {
+                                                        'ticket_id' => @parent.display_id, 
+                                                        'comment_id' => @item.id}]}})
     end
 
     if @parent.is_a? Helpdesk::Issue

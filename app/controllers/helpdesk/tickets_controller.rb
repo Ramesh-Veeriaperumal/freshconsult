@@ -49,9 +49,15 @@ class Helpdesk::TicketsController < ApplicationController
     if @item.update_attributes(params[nscname])
 
       if old_item.responder_id != @item.responder_id
-        @item.create_activity(current_user, 
-                "{{user_path}} #{old_item.responder ? "reassigned" : "assigned"} the ticket {{notable_path}} to {{responder}}", 
-                {'responder' => @item.responder.name})
+        unless @item.responder
+          @item.create_activity(current_user, "{{user_path}} assgned the ticket {{notable_path}} to 'Nobody'")
+        else
+          @item.create_activity(current_user, 
+                  "{{user_path}} #{old_item.responder ? "reassigned" : "assigned"} the ticket {{notable_path}} to {{responder_path}}", 
+                  {'eval_args' => {'responder_path' => ['responder_path', {
+                                                          'id' => @item.responder.id, 
+                                                          'name' => @item.responder.name}]}})
+        end
       end
 
       if old_item.status != @item.status
