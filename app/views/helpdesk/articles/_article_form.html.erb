@@ -18,71 +18,51 @@
 <div id="article-form-container">
   <% form_for article, :html => {:multipart => true, :id => "article-form"} do |f| %>
     <%= f.error_messages %>
-
-    <%= f.label(:title, "Tile:") %>
-    <%= f.text_field :title %>
-
-    <%= f.text_area :body, :class => "mceEditor", :id => 'article-body' %>
-
-    <div class="button-container">
-      
-      <ul>
-        <li><a href="#" id="attachment-options-link">Attach a File</a></li>
-      </ul>
-    </div>
-
-    <div>
-      <div class="attachment-options" id="attachment-options" style="display:none">
-        <label>Select a file</label>
-        <input type="file" id="attachment_file" name="emptyfile" nameWhenFilled="helpdesk_article[attachments][][file]" fileList="attachment-list" sendFocusTo="article-body" />
-
-        <table class="attachments">
-          <tbody id="attachment-list">
-          </tbody>
-        </table>
-      </div>
-    </div>
+	<ul class="ui-form">
+		<li>
+    		<%= f.label(:title, "Title") %>
+    		<%= f.text_field :title %>
+    		<%= f.text_area :body, :class => "mceEditor", :id => 'article-body' %>		
+		</li>
+		 <li>
+		 	<a href="#" id="attachment-options-link">Attach a File</a>
+			<div class="attachment-options" id="attachment-options" style="display:none">
+	        <label>Select a file</label>
+	        <input type="file" id="attachment_file" name="emptyfile" nameWhenFilled="helpdesk_article[attachments][][file]" fileList="attachment-list" sendFocusTo="article-body" />
 	
-	<div>
-		<%="Solution Properties"%><br>
-		<%="--------------------------------------------"%>
-		<p>
-		
-	Make this Solution	<%= f.radio_button :is_public, "true" %>Public (Will be published in self service)<br></br>
-									<%= f.radio_button :is_public, "false" %>Private (Visible to Agents only)
-						
-		</p>
-		
-		<p>
-			
-				<li class="small">
-          			<%= f.label :sol_type, "Solution Type" %>
-         			 <%= f.select :sol_type, Helpdesk::Article::TYPE_OPTIONS, :class => "select" %>
-        		</li>
-			
-	    </p>
-		
-		
-		<p>
-			
-				<li class="small">
-          			<%= f.label :status, "Solution Status" %>
-         			 <%= f.select :status, Helpdesk::Article::STATUS_OPTIONS, :class => "select" %>
-        		</li>
-			
-	    </p>
-		
-		
-	</div>
-	
+	        <table class="attachments">
+	          <tbody id="attachment-list">
+	          </tbody>
+	        </table>
+	      </div>	
+		</li>
+		<li>
+			<%= f.label(:title, "Add this article to Section") %>
+			<%= f.select :guides, Helpdesk::Guide.alphabetical.map {|s| [s.name, s.id]}, :class => "select" %>
+		</li>		
+		<li>
+			<label>Tags</label>
+			<input type="text" />
+		</li>
+		<li>
+			<label><%="Solution Properties"%></label>
+			<span>Make this Solution</span>	
+			<%= f.radio_button :is_public, "true" %>Public (Will be published in self service)<br></br>
+			<%= f.radio_button :is_public, "false" %>Private (Visible to Agents only)
+		</li>
+		<li class="small">
+        	<%= f.label :sol_type, "Solution Type" %>
+        	<%= f.select :sol_type, Helpdesk::Article::TYPE_OPTIONS, :class => "select" %>
+        </li>	
+		<li class="small">
+          	<%= f.label :status, "Solution Status" %>
+          	<%= f.select :status, Helpdesk::Article::STATUS_OPTIONS, :class => "select" %>
+        </li>
+	</ul>
 	<div class="button-container">
-
-		<%= submit_tag %>
-      <%= submit_tag "Save and Create Another", :name => "save_and_create"%>
-	  
+		<%= submit_tag "Save", :class => "fdbutton" %>
+      	<%= submit_tag "Save and Create Another", :name => "save_and_create", :class => "fdbutton" %>
 	</div>
-	  
-	  
   <% end %>
 </div>
 

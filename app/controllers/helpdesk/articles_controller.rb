@@ -20,7 +20,7 @@ class Helpdesk::ArticlesController < ApplicationController
   end
 
   def show
-    redirect_to edit_helpdesk_article_path(@item)
+    
   end
 
 protected

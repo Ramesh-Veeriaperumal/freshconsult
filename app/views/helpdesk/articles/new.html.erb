@@ -1,38 +1,11 @@
+<% content_for :layoutType do%>single<% end %>
 <% content_for :head do %>
   <%= javascript_include_tag "helpdesk/expanding_textarea" %>
   <%= javascript_include_tag "helpdesk/multifile" %>
   <%= javascript_include_tag "helpdesk/article_section" %>
+<% end %> 
+<div class="pageContent">
+	<h3 class="content_title">New Solution</h3>
+	<%= render :partial => 'article_form', :locals => {:article => @item} %>
+</div>
 
-
-
-<% end %>
-
-<% content_for :main_panel_title do %>
-  New Article
-<% end %>
-
-<% content_for :main_panel_actions do %>
-<% end %>
-
-<% content_for :main_panel_toolbar do %>
-<% end %>
-
-<% content_for :sidebar do %>
-  <h4>Categories</h4>
-  <ul class="guide-select">
-    <% for s in Helpdesk::Guide.alphabetical %>
-      <li>
-        <%= check_box_tag "helpdesk_article[guides][]", s.id, false, :id => "helpdesk_article_guide_#{s.id}" %>
-        <%= label_tag s.name %>
-      </li>
-    <% end %>
-  </ul>
-
-<% end %>
-
-<% content_for :main_panel_content  do %>
-  <%= render :partial => 'article_form', :locals => {:article => @item} %>
-
-<% end %>
-
-<%= render :partial => "/helpdesk/shared/main_panel" %>
