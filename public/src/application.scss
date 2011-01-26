@@ -2824,12 +2824,16 @@ ul.item_list{
 		@include clearfix;
 		position:relative;
 		@include min-width(150px);
+		@include corners(6px);
 		a{
 			text-decoration:none;				
 		}	
-		img{
-			float:left;
-			margin-right:6px;
+		div.preview_pic{
+			margin-right:5px;
+			img{
+				width:32px;
+				height:32px;		
+			}
 		} 
 		b{
 			position:relative;	
@@ -2840,9 +2844,17 @@ ul.item_list{
 			left:3px; bottom:3px;
 			display:none;		
 		}
+		.control{
+			position:absolute;
+			right:3px; bottom:3px;
+			display:none;
+		}
 	}
-	li:hover .selected_tick{
-			display:block;
+	li:hover{
+		background:#efefef;
+	}
+	li:hover .selected_tick, li:hover .control{
+		display:block;
 	}
 }
 ul.active{	

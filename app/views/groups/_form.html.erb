@@ -2,21 +2,26 @@
  	var agent_select = null; 
  	function toggleText(){
 		if (jQuery("ul#Active_list li").size()) {			
-			jQuery("ul#Active_list div").hide();
+			jQuery("ul#Active_list div.info").hide();
 		}else{			
-			jQuery("ul#Active_list div").show();			
+			jQuery("ul#Active_list div.info").show();			
 		}						
 	}	
 	
 	function removeUser(element){
+		agentName 	= element.getAttribute("agent_name");
+		agentID	  	= element.getAttribute("agent_id");
+		agentThumb  = element.getAttribute("agent_thumb");
+			
 		jQuery(agent_select)
-			.append("<option value='"+element.getAttribute("user_id")+"'>"+element.getAttribute("user_name")+"</option>");
+			.append("<option agent_name='"+agentName+"' agent_id='"+agentID+"' agent_thumb='"+agentThumb+"' value='"+agentID+"'>"+agentName+"</option>");
 		jQuery("#All_Agents").show();		
 	}
 	function AddUser(){		
-			option	  = jQuery(agent_select.options[agent_select.selectedIndex])			
-			agentName = option.text()
-			agentID	  = agent_select.value;			
+			option	  	= jQuery(agent_select.options[agent_select.selectedIndex]);	
+			agentName 	= option.get(0).getAttribute("agent_name");
+			agentID	  	= option.get(0).getAttribute("agent_id");
+			agentThumb  = option.get(0).getAttribute("agent_thumb");			
 			
 			option.remove();
 			
@@ -25,35 +30,40 @@
 			
 			
 			var userBox = jQuery('<li />')							
-							.append("<img src=\"/images/icons/profile_blank.gif\" width=\"32px\" height=\"32px\" /><img src=\"/images/spacer.gif\" class=\"selected_tick\" width=\"16px\" height=\"16px\" /><b>"+agentName+"</b>");
+							.append("<div class=\"preview_pic\"><img src=\""+agentThumb+"\" /></div><a href=\"javascript:void(0)\" class=\"button control\">remove</a><b>"+agentName+"</b>");
 			
 			jQuery("ul#Active_list")
 					.append(userBox);
 			
-			jQuery(userBox).get(0).setAttribute("user_name", agentName);
-			jQuery(userBox).get(0).setAttribute("user_id", agentID);
+			jQuery(userBox).get(0).setAttribute("agent_name", agentName);
+			jQuery(userBox).get(0).setAttribute("agent_id", agentID);
+			jQuery(userBox).get(0).setAttribute("agent_thumb", agentThumb);
 					
 			toggleText();
 	}
 	jQuery(document).ready(function(){
 		agent_select = jQuery('select#group_escalate_to').get(0);
 		
-		jQuery("ul#Active_list li")
-			.live("click", function(ev){										
-				removeUser(this);
-				jQuery(this)
+		jQuery("ul#Active_list li a.control")
+			.live("click", function(ev){																	
+				removeUser(this.parentNode);
+				jQuery(this.parentNode)
 					.remove();	
 				toggleText();				
 			});			
 		
-		jQuery("#group_form").submit(function(ev){
+		jQuery("#group_form").submit(function(ev){			
 			activeAgents = $H();
 			jQuery("ul#Active_list li")
 				.each(function(index, item){
-					activeAgents.set(item.getAttribute("user_id"), item.getAttribute("user_name"));					
+					activeAgents.set(item.getAttribute("agent_id"), item.getAttribute("agent_name"));					
 				});
-			jQuery("#agent_list").val(activeAgents.toJSON());								
+			jQuery("#agent_list").val(activeAgents.toJSON());
+			//console.log(jQuery("#agent_list").val());	
 		});
+		
+		toggleText();
+			
 			/*jQuery("ul#Inactive_list li")
 				.live("click", function(ev){					
 					jQuery(this)
@@ -88,23 +98,48 @@
 		  	<label>		  		
 				Agents in this Group			
 			</label>
-			<span id="All_Agents">
-					<b>Select Agents </b>
-		  			<%= f.collection_select :escalate_to, User.find_all_by_permission(current_account, :manage_tickets), :id, :name %>			
+			<%  @exclude_list = Group.find_excluded_agents(@group.id, @group.account_id) %>
+			<%  
+				if(@exclude_list.size == 0)
+					showagent = "display:none"
+				end 
+			%>
+			<span id="All_Agents" style="<%=showagent%>">
+					<b>Select Agents </b>							  			
+					<select id="group_escalate_to">
+						<% @exclude_list.each do |agent| %>
+							<% user = agent.user %>
+							<option agent_thumb="<%=user.avatar.content.url(:thumb)||'/images/icons/profile_blank.gif'%>" agent_name="<%=user.name%>" agent_id="<%=user.id%>">
+								<%= user.name %>
+							</option>
+						<% end %>
+					</select>			
 					<%= link_to_function 'Add', 'AddUser()', :class => "button" %>
 			</span>
 			
-			<%
-				@tech_left = Group.find_excluded_agents(@group.id, @group.account_id)
-			%>
 			
 			<% fields_for "AgentGroups", @group.agent_groups do |agent| %>
-			<%= agent.hidden_field :agent_list, { :id =>"agent_list", :value => ""} %>
-			
+				<%= agent.hidden_field :agent_list, { :id =>"agent_list", :value => ""} %>			
 			<%end%>
-			<!--input type="hidden" name="agent_list" id="agent_list" value="" /-->			
-			<ul class="item_list active" id="Active_list">	
-				<div class="padding6">No Agents in this group</div>			
+						
+			
+			
+			<ul class="item_list active" id="Active_list">		
+				<% @include_list = Group.find_included_agents(@group.id) %>		
+				
+					<% @include_list.each do |agent| %>
+					<li agent_thumb="<%=agent.user.avatar.content.url(:thumb)||'/images/icons/profile_blank.gif'%>" agent_id="<%= agent.id %>" agent_name="<%= agent.user.name %>">
+							<div class="preview_pic">	
+								<%= image_tag (agent.user.avatar) ? 
+									agent.user.avatar.content.url(:thumb) : "/images/icons/profile_blank.gif" %>
+							</div>
+							<a href="javascript:void(0)" class="button control">remove</a>				
+							<b><%= agent.user.name %></b>
+					</li>
+					<% end %>
+				
+					<div class="info padding6">No Agents in this group</div>
+							
 			</ul>			
 			<!--
 			<ul class="item_list inactive" id="Inactive_list">
