@@ -5,14 +5,36 @@
 	  <%= f.error_messages %>
 	  <ul class="ui-form">
 		  <li>
-		    <%= f.label :name, "Help desk Name" %>
+		    <%= f.label :name, "Account Name" %>
 		    <%= f.text_field :name, :class => "very_small" %>
 		  </li>
 		  
 		  <li>
-			<%= f.label :time_zone, "Time Zone" %>
-			<%= f.time_zone_select :time_zone, ActiveSupport::TimeZone.all %>
+			<!--%= f.label :time_zone, "Time Zone" %-->
+			<!--%= f.time_zone_select :time_zone, ActiveSupport::TimeZone.all %-->
+		
+		  <li>
+		    <%= f.label :helpdesk_name, "Helpdesk Name" %>
+		    <%= f.text_field :helpdesk_name, :class => "very_small" %>
 		  </li>
+		  <li>
+		    <%= f.label :helpdesk_url, "Helpdesk URL" %>
+		    <%= f.text_field :helpdesk_url, :class => "very_small" %>
+		  </li>
+		  
+		   <li>
+		    <%= f.label :header_color, "Header Color" %>
+		    <%= f.text_field :header_color, :class => "very_small" %>
+		  </li>
+		  
+		   <li>
+		    <%= f.label :bg_color, "Back ground Color" %>
+		    <%= f.text_field :bg_color, :class => "very_small" %>
+		  </li>
+		  
+		  	
+			
+		  
 	  </ul>
 	  <br />	
 	  <div class="button-container"> 
