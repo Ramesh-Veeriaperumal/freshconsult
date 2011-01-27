@@ -38,7 +38,7 @@
 		</li>
 		<li>
 			<%= f.label(:title, "Add this article to Section") %>
-			<%= f.select :guides, Helpdesk::Guide.alphabetical.map {|s| [s.name, s.id]}, :class => "select" %>
+			<%= f.select :guides, Helpdesk::Guide.alphabetical.map {|s| [s.name, s.id]}, :selected =>@item.guide.id, :class => "select" %>
 		</li>		
 		<li>
 			<label>Tags</label>

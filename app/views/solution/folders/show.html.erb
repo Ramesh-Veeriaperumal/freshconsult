@@ -21,7 +21,7 @@
 	  <span class="seperator"></span>
 	  <div class="floatr">
 	  	<%= link_to "New Solution", new_helpdesk_article_path, :class => "fdbutton" %>
-		<%= link_to "New Category", new_helpdesk_guide_path, :class => "fdbutton" %>
+		<%= link_to "New Category", new_helpdesk_guide_path(:folder_id =>@item.id), :class => "fdbutton" %>
 	  </div>
 	  <h4 class="content_title"><%= @item.name %></h4>
 	  <div><%= @item.description %></div>	

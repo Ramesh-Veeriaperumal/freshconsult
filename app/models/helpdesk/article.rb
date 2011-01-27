@@ -3,6 +3,8 @@ class Helpdesk::Article < ActiveRecord::Base
 
   belongs_to :user,
     :class_name => 'User'
+    
+  belongs_to :guide , :class_name  =>'Helpdesk::Guide'
 
   has_many :article_guides,
     :class_name => 'Helpdesk::ArticleGuide',

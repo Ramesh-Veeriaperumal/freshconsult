@@ -187,11 +187,38 @@ protected
       set_customizer
     end
     
+    if "helpdesk_guide".eql?(nscname)
+      set_folder
+    end
+    
+    if "helpdesk_article".eql?(nscname)
+      set_category
+    end
+    
     @item
    
        
   end
 
+  def set_category
+    
+    logger.debug "setting Category id as :: #{params[:guide_id]}"
+    #if  erorrr.?
+    unless params[:guide_id].nil?
+      @item.guide =  Helpdesk::Guide.find(params[:guide_id])
+    end
+    
+  end
+  
+  def set_folder
+  
+    logger.debug "setting folder id as :: #{params[:folder_id]}"
+    #if  erorrr.?
+    unless params[:folder_id].nil?
+      @item.folder_id = params[:folder_id]
+    end
+  
+  end
   def set_item_user
     @item.user ||= current_user if (@item.respond_to?('user=') && !@item.user_id)
     @item.account_id ||= current_account.id if (@item.respond_to?('account_id='))

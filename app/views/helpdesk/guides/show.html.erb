@@ -134,7 +134,7 @@
 
 <% content_for :main_panel_actions do %>
 
-<%= link_to "New Solution", new_helpdesk_article_path, :class => "button" %>
+<%= link_to "New Solution", new_helpdesk_article_path(:guide_id =>@item.id ), :class => "button" %>
 	<!--div class="actions_bar">
 	<ul>
   		<li><%= link_to("Edit This Guide", {:action => :edit}, :class => "button") %></li-->

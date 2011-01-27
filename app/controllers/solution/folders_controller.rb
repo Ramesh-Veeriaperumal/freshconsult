@@ -33,7 +33,7 @@ class Solution::FoldersController < ApplicationController
   def create
     
     
-    @folder = Solution::Folder.new(params[nscname])
+    @folder = current_account.solution_folders.new(params[nscname])
     
      
     respond_to do |format|

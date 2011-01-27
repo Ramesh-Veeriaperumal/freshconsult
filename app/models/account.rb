@@ -18,6 +18,8 @@ class Account < ActiveRecord::Base
   
   has_many :groups
   
+  has_many :solution_folders , :class_name =>'Solution::Folder'
+  
   #Scope restriction ends
   
   validates_format_of :domain, :with => /\A[a-zA-Z][a-zA-Z0-9]*\Z/
