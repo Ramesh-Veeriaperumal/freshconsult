@@ -136,6 +136,16 @@ class Helpdesk::TicketsController < ApplicationController
     redirect_to :back
   end
 
+  def get_agents
+    
+    group_id = params[:id]
+    
+    @agents = AgentGroup.find(:all, :joins=>:user, :conditions =>{:group_id =>group_id} )
+    
+    render :partial => "agent_groups"
+    
+    
+  end
 protected
 
   def item_url

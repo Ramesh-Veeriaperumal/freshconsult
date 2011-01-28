@@ -26,6 +26,28 @@
   <% end %>
 <% end %>
 
+<script>
+	
+	function changeAggentList(group_id)
+	{
+		
+		jQuery.ajax({
+	      					type: 'POST',
+							url: '/helpdesk/tickets/get_agents/'+group_id,
+							contentType: 'application/text',
+	      					success: function(data){
+																					
+											jQuery('#assigned_to').replaceWith(data);
+									}
+				});
+		
+		
+		
+		
+	}
+	
+</script>
+
 <% form_for @item do |f| %>
   <%= f.error_messages %>
 	<ul class="ui-form">
@@ -59,13 +81,22 @@
           	<%= f.label :status, "Status" %>
          	<%= f.select :status, Helpdesk::Ticket::STATUS_OPTIONS, :class => "select" %>
         </li>
-			
-	<%when "Assigned to" then%>
+		
+	<%when "Group" then%>
 		<li class="dropdown">
+          	<%= f.label :group_id, "Group" %>
+          	<%= f.collection_select :group_id, Group.find_all_by_account_id(@item.account_id), :id, :name,{:include_blank => 'Nobody'}, { :onchange => "changeAggentList(this.options[this.selectedIndex].value)" ,:class => "select"} %>
+        </li>
+		
+	<%when "Assigned to" then%>
+		
+			
+		<li class="dropdown" id="assigned_to">
           	<%= f.label :responder_id, "Assigned To" %>
           	<%= f.collection_select :responder_id, Helpdesk::Authorization.find_all_by_permission(:manage_tickets), :user_id, :name, {:include_blank => 'Nobody'}, :class => "select" %>
         </li>
-			
+		
+		
 	<%when "Priority" then%>
 		<li class="dropdown">
  			<%= f.label :priority, "Priority" %>          
@@ -111,6 +142,7 @@
 		<% end %>
 	<% end %>
 	</ul>
+	
     <div class="button-container">
       <%= f.submit "Save changes", :class => "fdbutton submit" %>
       <%= submit_tag "Save and Create Another", :name => "save_and_create" , :class => "fdbutton" %>
