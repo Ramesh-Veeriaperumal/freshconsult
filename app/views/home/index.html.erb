@@ -27,7 +27,12 @@
 				<% firstFolder = @folder.find(:first) %>
 				<% @folder.all.each do |folder| %>
 				<li>
-					<%= link_to h(folder.name), folder, :title => h(folder.name), :class => (firstFolder == folder) ? "active":"" %>				
+					 <%= link_to_remote( h(folder.name),
+                         :update => "RightDiv",
+                         :url =>{ :action => :get_folders , :id => folder.id}
+						) %>
+						 
+					<!--%= link_to h(folder.name), folder, :title => h(folder.name), :class => (firstFolder == folder) ? "active":"" %-->				
 				</li>
 				<%end%>
 			</ul>				
@@ -39,8 +44,9 @@
 				</p>
 			</div>	
 		</div>
+		<% firstArticle = firstFolder.categories.find(:first).articles.first(:first) %>
 		<div class="right_col white_curved_cont" id="RightDiv">
-			<% firstArticle = firstFolder.categories.find(:first).articles.first(:first) %>
+			
 			<%= render :partial => 'solution_toc', :locals => { :folder => firstFolder } %>
 		</div>
 	</div>
@@ -51,16 +57,15 @@
 		jQuery("ul.ssp_category_list a").live("click", function(ev){		
 			ev.preventDefault();
 			
-			jQuery("#InnerDIV").hide();	
-			jQuery('#RightDiv')				
-						.addClass('ajax-loader');
-			jQuery("#Header")
+			jQuery("#InnerDIV").empty()
+			 .addClass('ajax-loader');
+			/*jQuery("#Header")
 				.text(jQuery(this).text())
 				.animate({dummy:0}, 500, function(){
 					jQuery('#RightDiv')				
 						.removeClass('ajax-loader');
 					jQuery("#InnerDIV").show("slide", 500);	
-				});
+				});*/
 					
 			jQuery("ul.ssp_category_list a.active").removeClass('active');
 			jQuery(this).addClass('active');				
