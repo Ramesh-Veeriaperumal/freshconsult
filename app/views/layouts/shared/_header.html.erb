@@ -45,11 +45,19 @@
 					<li><%= link_to(content_tag('span', 'Accounts'), admin_accounts_path) %></li>
 					<li><%= link_to(content_tag('span', 'Plans'), admin_subscription_plans_path) %></li>
 					<li><%= link_to(content_tag('span', 'Discounts'), admin_subscription_discounts_path) %></li>
-					<li><%= link_to(content_tag('span', 'Affiliates'), admin_subscription_affiliates_path) %></li>
+					<li><%= link_to(content_tag('span', 'Affiliates'), admin_subscription_affiliates_path) %></li>					
 	  			<% else %>
 	            	<%= navigation_tabs %>
 	  			<% end %> 
 	        </ul>	               
 	    </div>
+	<% else %>
+		<!--div class="header_tabs">
+			<ul class="tabs">
+				<li class="first active"><%= link_to(content_tag('span')+'Home'		, "/home") %></li>
+				<li><%= link_to(content_tag('span')+'Solutions'	, "/solution/folders") %></li>
+				<li class="last"><%= link_to(content_tag('span')+'Forums'	, "/forums") %></li>				
+			</ul>
+		</div-->	
 	<% end %>        
 </div>

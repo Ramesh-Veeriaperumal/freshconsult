@@ -5,6 +5,7 @@
 	  	<%= @item.name %>
 	  </div>
   	</h4>	 
+	<% firstArticle = firstFolder.categories.find(:first).articles.first(:first) %>
 	<ul class="tableofcontents">
 	   <% @item.categories.each do |category| %>
 	   	  <li>

@@ -5,8 +5,7 @@ class Solution::Folder < ActiveRecord::Base
    has_many :categories, :class_name =>'Helpdesk::Guide'
    
    
- def self.find_all_folders(account)
-   
+ def self.find_all_folders(account)   
     self.find(:all).select { |a| a.account_id.eql?(account) }
   end
 end

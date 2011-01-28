@@ -75,8 +75,6 @@ class Helpdesk::Article < ActiveRecord::Base
   TYPE_KEYS_BY_TOKEN = Hash[*TYPES.map { |i| [i[0], i[2]] }.flatten]
   
   
-  
-  
   def self.search(scope, field, value)
 
     return scope unless (field && value)
@@ -93,7 +91,10 @@ class Helpdesk::Article < ActiveRecord::Base
 
     scope.scoped(:conditions => conditions)
   end
-
+  
+  def type_name
+    TYPE_NAMES_BY_KEY[sol_type]
+  end
 
   def to_param
     id ? "#{id}-#{title.downcase.gsub(/[^a-z0-9]+/i, '-')}" : nil

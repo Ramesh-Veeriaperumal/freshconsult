@@ -1,9 +1,6 @@
 class Solution::FoldersController < ApplicationController
-  def index
-    
+  def index    
     @folders = Solution::Folder.all
-   
-    
     print @folders
 
     respond_to do |format|
@@ -31,11 +28,7 @@ class Solution::FoldersController < ApplicationController
   end
 
   def create
-    
-    
-    @folder = Solution::Folder.new(params[nscname])
-    
-     
+    @folder = Solution::Folder.new(params[nscname]) 
     respond_to do |format|
       if @folder.save
         format.html { redirect_to :action =>"index" }

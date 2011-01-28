@@ -17,7 +17,7 @@ module ApplicationHelper
       #['helpdesk/issues',    'Issues',       permission?(:manage_tickets)],
       ['helpdesk/tickets',    'Tickets',      permission?(:manage_tickets)],
       #['helpdesk/tags',      'Tags',         permission?(:manage_tickets)],
-      ['solution/folders',     'Solutions',    permission?(:manage_knowledgebase)],      
+      ['solution/folders',    'Solutions',    permission?(:manage_knowledgebase)],      
       ['/forums',             'Forums',       permission?(:manage_knowledgebase)],      
       ['/users',              'Customers',    permission?(:manage_users)],
       #['helpdesk/articles',  'Articles',     permission?(:manage_knowledgebase)],
@@ -45,7 +45,7 @@ module ApplicationHelper
 
     navigation #+ [spacer] + history  
   end
-
+  
   def check_box_link(text, checked, check_url, check_method, uncheck_url, uncheck_method = :post)
     form_tag("", :method => :put) +
     check_box_tag("", 1, checked, :onclick => %{

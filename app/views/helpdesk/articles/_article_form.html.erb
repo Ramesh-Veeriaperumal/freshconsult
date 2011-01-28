@@ -47,7 +47,7 @@
 		<li>
 			<label><%="Solution Properties"%></label>
 			<span>Make this Solution</span>	
-			<%= f.radio_button :is_public, "true" %>Public (Will be published in self service)<br></br>
+			<%= f.radio_button :is_public, "true" %>Public (Will be published in self service)<br />
 			<%= f.radio_button :is_public, "false" %>Private (Visible to Agents only)
 		</li>
 		<li class="small">
@@ -60,8 +60,9 @@
         </li>
 	</ul>
 	<div class="button-container">
+		<%= submit_tag " Save as draft ", :class => "fdbutton grey" %>
 		<%= submit_tag "Save", :class => "fdbutton" %>
-      	<%= submit_tag "Save and Create Another", :name => "save_and_create", :class => "fdbutton" %>
+      	<%= submit_tag " Save and Create Another ", :name => "save_and_create", :class => "fdbutton" %>
 	</div>
   <% end %>
 </div>
