@@ -9,10 +9,7 @@
 		  	<%= link_to('edit', edit_user_path(user), :class => "button") %>
 	      	<%= link_to('delete', user, :method => 'delete', :confirm => 'Are you sure you want to delete this user?', :class => "button") unless user == current_user %>
 		  </div>	   
-	      <div class="preview_pic">
-				<%= image_tag (user.avatar) ? 
-						user.avatar.content.url(:thumb) : "/images/icons/profile_blank.gif" %>		  
-		  </div>
+	      <%= render :partial => "/shared/avatar", :object => user.avatar  %>
 	      <%= link_to(h(user.name), user, :class => "item_info" ) %>
 		  	<div><%= h user.email %></div>
 			<div><%= h user.phone %></div>
