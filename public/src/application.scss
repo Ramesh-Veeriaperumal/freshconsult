@@ -536,38 +536,41 @@ h2.content_title{
 		font-size:1.9em;
 		margin-top:6px;
 }
+.title{
+	font-weight:bold;
+	font-size:16px;
+	color:#3e71a4;
+}
+
+ul.activityfeed{ 
+		padding:0px;	
+		@include no-bullets;		 
+		li{
+			@include clearfix;
+			padding:5px 0px; 
+			border-bottom:1px solid #e4f4e4;
+			display:block; 
+			color:#666;
+			div.preview_pic{			
+				clear:left;
+			}
+			a{ 
+				@include link-colors(#3e71a4, #3e71a4, #3e71a4, #3e71a4, #3e71a4);
+				text-decoration:none; 
+			}
+			em.activity_time{
+				display:block;
+				color:#a6a6a6;
+				font-style:normal;
+				padding-bottom:8px;
+			}
+		} 
+}
 
 .pageContent{
 	margin:10px 20px;	
 	padding:0px 0px; 
-	ul.activityfeed{ 
-		padding:0px;	
-		@include no-bullets;		 
-		li{
-			padding:8px 0px 0px 0px; 
-			border-bottom:1px solid #e4f4e4;
-			display:block; 
-			color:#666;
-			@include clearfix;
-		}
-		
-		li img{
-			float:left;
-			clear:left;
-			margin-right:12px;
-		}
-		
-		li p{ margin-bottom:3px;}
-		li p a{ text-decoration:none; color:#3e71a4;}
-		li p a.bold{ font-weight:bold;}		
-		
-		li em.activity_time{
-			display:block;
-			color:#a6a6a6;
-			font-style:normal;
-			padding-bottom:8px;
-		}
-	}
+	
 	
 	.subtitle{
 		font-style:italic;

@@ -1,7 +1,7 @@
- <p>
-     <img src="/images/icons/profile_blank.gif" width="39px" height="39px" /> 
+ 
+     <%= render :partial => "/shared/avatar", :object => ticket_note.user.avatar  %> 
 	 <%= Liquid::Template.parse(h ticket_note.description).render(eval_activity_data(ticket_note.activity_data).merge(
 				'user_path' => link_to(h(ticket_note.user), ticket_note.user),
 				'notable_path' => link_to(h(ticket_note.notable), ticket_note.notable) )) %>    
- </p>
+ 
  <em class="activity_time"><%= distance_of_time_in_words_to_now(ticket_note.created_at) %> ago</em>
