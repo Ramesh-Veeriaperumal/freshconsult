@@ -1,0 +1,105 @@
+<%= javascript_include_tag "jquery.jcarousel.min.js" %>
+
+<%- content_for :layoutType do -%>
+	single
+<%- end -%>
+  
+<div class="pageContent">
+	<div class="information_tip">	
+	<div class="floatr white_curved_cont">		
+			
+			<%= link_to image_tag("/images/add.png") + "Submit a Ticket", "support/tickets/new", :class => "fdbutton"  %> 
+			or 
+			<%= link_to "Check your ticket status", "helpdesk/dashboard", :class => "button" %> 
+	</div>	
+			
+		<div class="search">
+			<label>Start typing a question and see answers in real time</label>			
+			<label class="overlabel" for="ssp_search">Search for a keyword or a full question</label>
+			<input type="text" class="search" id="ssp_search"  />			
+		</div>		
+	</div>
+	
+	<div class="information_tip two_col_cont">
+		<div class="left_col">
+			<h3 class="title">&nbsp;&nbsp;Solutions</h3>
+			<ul class="ssp_category_list">
+				<% firstFolder = @folder.find(:first) %>
+				<% @folder.all.each do |folder| %>
+				<li>
+					<%= link_to h(folder.name), folder, :title => h(folder.name), :class => (firstFolder == folder) ? "active":"" %>				
+				</li>
+				<%end%>
+			</ul>				
+			
+			<div class="community_forums white_curved_cont">				
+				<h3 class="title">Community Forums</h3>	
+				<p>
+					Ask questions, share ideas, report problems and get answers from <a href="#">our community forums</a>
+				</p>
+			</div>	
+		</div>
+		<div class="right_col white_curved_cont" id="RightDiv">
+			<% firstArticle = firstFolder.categories.find(:first).articles.first(:first) %>
+			<%= render :partial => 'solution_toc', :locals => { :folder => firstFolder } %>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+	jQuery(document).ready(function(){
+		jQuery("ul.ssp_category_list a").live("click", function(ev){		
+			ev.preventDefault();
+			
+			jQuery("#InnerDIV").hide();	
+			jQuery('#RightDiv')				
+						.addClass('ajax-loader');
+			jQuery("#Header")
+				.text(jQuery(this).text())
+				.animate({dummy:0}, 500, function(){
+					jQuery('#RightDiv')				
+						.removeClass('ajax-loader');
+					jQuery("#InnerDIV").show("slide", 500);	
+				});
+					
+			jQuery("ul.ssp_category_list a.active").removeClass('active');
+			jQuery(this).addClass('active');				
+		});
+		
+		jQuery("#dialog_close").bind("click",function(ev){
+				var $marginLefty = jQuery('#solution_dialog');
+				jQuery('body').css({'overflow':'auto'});	
+				$marginLefty.animate({width: '0px'}, 500, function(){
+						jQuery('#solution_dialog_outer').fadeOut(100);
+				});			
+		});	
+		
+		jQuery('.right_col a').live('click', function(ev){
+			ev.preventDefault();
+			
+			jQuery('#solution_dialog_outer').fadeIn(200, function(){
+					var $marginLefty = jQuery('#solution_dialog');
+					$marginLefty.animate({width: "80%"}, 100, function(){
+						jQuery('body').css({'overflow':'hidden'});								
+					});
+				});	
+		});
+		
+		jQuery('.screen').bind("click", function(ev){
+			var $marginLefty = jQuery('#solution_dialog');
+				jQuery('body').css({'overflow':'auto'});		
+				$marginLefty.animate({width: '0px'}, 300, function(){
+						jQuery('#solution_dialog_outer').fadeOut(80);								
+				});					
+		});
+	});
+</script>
+
+<%- content_for :dialogs do -%>
+	<div class="tr_wrap" id="solution_dialog_outer" style="display:none;">
+		<div class="screen"></div>
+		<div class="tr_dialog" id="solution_dialog" style="width:0px;">
+			<% render :partial => 'solution_article', :locals => { :article => firstArticle } %>			
+		</div>
+	</div>	
+<%- end -%>

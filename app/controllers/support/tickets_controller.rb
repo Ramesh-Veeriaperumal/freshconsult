@@ -1,8 +1,6 @@
 class Support::TicketsController < ApplicationController
 
-  include SupportTicketControllerMethods
-
-  layout 'support/default'
+  include SupportTicketControllerMethods 
 
   before_filter { |c| c.requires_permission :portal_request }
 

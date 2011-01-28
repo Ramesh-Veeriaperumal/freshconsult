@@ -1,7 +1,7 @@
 class Helpdesk::ArticlesController < ApplicationController 
   helper 'helpdesk/tickets'
   
-  before_filter { |c| c.requires_permission :manage_knowledgebase }
+  #before_filter { |c| c.requires_permission :manage_knowledgebase }
   before_filter :save_referer, :only => [:new, :edit]
 
   include HelpdeskControllerMethods
