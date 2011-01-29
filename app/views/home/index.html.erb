@@ -25,12 +25,15 @@
 				<% firstFolder = @folder.find(:first) %>
 				<% @folder.all.each do |folder| %>
 				<li>
-					 <%= link_to_remote( h(folder.name),
+					
+					 <!--%= link_to_remote( h(folder.name),
                          :update => "RightDiv",
-                         :url =>{ :action => :get_folders , :id => folder.id}
-						) %>
+                         :url =>{ :action => :get_folders , :id => folder.id},
+						 :html => { :class => (firstFolder == folder) ? "active":"" }
+						) %-->
 						 
-					<!--%= link_to h(folder.name), folder, :title => h(folder.name), :class => (firstFolder == folder) ? "active":"" %-->				
+					<%= link_to h(folder.name), 
+							{ :action => :get_folders, :id => folder.id }, :class => (firstFolder == folder) ? "active":""  %>				
 				</li>
 				<%end%>
 			</ul>				
@@ -43,8 +46,7 @@
 			</div>	
 		</div>
 		<% firstArticle = firstFolder.categories.find(:first).articles.first(:first) %>
-		<div class="right_col white_curved_cont" id="RightDiv">
-			
+		<div class="right_col white_curved_cont" id="RightDiv">			
 			<%= render :partial => 'solution_toc', :locals => { :folder => firstFolder } %>
 		</div>
 	</div>
@@ -53,17 +55,17 @@
 <script type="text/javascript">
 	jQuery(document).ready(function(){
 		jQuery("ul.ssp_category_list a").live("click", function(ev){		
-			ev.preventDefault();
+			ev.preventDefault();	
+			jQuery("#InnerDIV").empty();
+			jQuery("#RightDiv").addClass('ajax-loader');
+			jQuery.ajax({ url: this.href, 
+						  success: function(data){
+										jQuery("#RightDiv")
+											.html(data)
+											.removeClass('ajax-loader');
+										jQuery("#InnerDIV").show("slide", 500);
+							       }});
 			
-			jQuery("#InnerDIV").empty()
-			 .addClass('ajax-loader');
-			/*jQuery("#Header")
-				.text(jQuery(this).text())
-				.animate({dummy:0}, 500, function(){
-					jQuery('#RightDiv')				
-						.removeClass('ajax-loader');
-					jQuery("#InnerDIV").show("slide", 500);	
-				});*/
 					
 			jQuery("ul.ssp_category_list a.active").removeClass('active');
 			jQuery(this).addClass('active');				
@@ -78,12 +80,19 @@
 		});	
 		
 		jQuery('.right_col a').live('click', function(ev){
-			ev.preventDefault();
-			
+			ev.preventDefault();			
+			link_url = this.href;
+			jQuery('#solution_dialog').empty().addClass("ajax-loader");
 			jQuery('#solution_dialog_outer').fadeIn(200, function(){
 					var $marginLefty = jQuery('#solution_dialog');
 					$marginLefty.animate({width: "80%"}, 100, function(){
-						jQuery('body').css({'overflow':'hidden'});								
+						jQuery('body').css({'overflow':'hidden'});			
+						jQuery.ajax({ url: link_url, 
+								success: function(data){
+										jQuery("#solution_dialog")
+											.html(data)
+											.removeClass('ajax-loader');
+							       }});					
 					});
 				});	
 		});
@@ -101,8 +110,8 @@
 <%- content_for :dialogs do -%>
 	<div class="tr_wrap" id="solution_dialog_outer" style="display:none;">
 		<div class="screen"></div>
-		<div class="tr_dialog" id="solution_dialog" style="width:0px;">
-			<% render :partial => 'solution_article', :locals => { :article => firstArticle } %>			
+		<div class="tr_dialog ajax-loader" id="solution_dialog" style="width:0px;">
+			<!--% render :partial => 'solution_article', :locals => { :article => firstArticle } %-->			
 		</div>
 	</div>	
 <%- end -%>

@@ -12,13 +12,12 @@
 			</div>
 			<ul class="sol_list">
 			<% category.articles.each do |solution| %>
-				<li>
-					<!--%= link_to h(solution.title), solution %-->
-					
-					<%= link_to_remote( h(solution.title),
+				<li> 
+					<!--%= link_to_remote( h(solution.title),
                          :update => "solution_dialog",
-                         :url =>{ :action => :get_article , :id => solution.id}
-						) %>
+                         :url =>{ :action => :get_article , :id => solution.id}) %-->
+					<%= link_to h(solution.title), 
+							{ :action => :get_article, :id => solution.id } %>						 
 				</li>
 			<% end %>
 			</ul>
