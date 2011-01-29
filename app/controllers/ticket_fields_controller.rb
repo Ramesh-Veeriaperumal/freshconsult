@@ -55,11 +55,19 @@ def update
     logger.debug "label :: #{key["label"]}"
     logger.debug "columnId :: #{key["columnId"]}"
     logger.debug "fieldType :: #{key["fieldType"]}"
+    
+    logger.debug "action action :: #{key["action"]}"
         
     columnId = 0
     if key["fieldType"].eql?("custom")
       
-      if key["columnId"].eql?("")
+      if key["action"].eql?("delete")
+        
+        
+        delete_custom_fields key["columnId"]
+        
+           
+      else if key["columnId"].eql?("")
         #Add the new column
         columnId = save_flexi_field_entries key["label"], key["type"]
         logger.debug "columnId after saving :: #{columnId}"
@@ -72,15 +80,19 @@ def update
       
     end
     
+    end
+    
     
       
       #setting the new columnId to array and pushing to new array
       
+    unless key["action"].eql?("delete")
     
+     @agentView.push(key)
     
-    @agentView.push(key)
+    end
     
-   
+   logger.debug "Agent View #{@agentView.inspect}" 
     #Following code will generate a seperate view for end customers
     
     if key["customer"]["visible"].eql?(true)
@@ -90,8 +102,8 @@ def update
     
       logger.debug "endUser: #{@endUser.inspect}" 
    
- end
- 
+end
+
   #here its going to update the database-- encode as json and then store it
   
    modified_json = ActiveSupport::JSON.encode(@agentView)
@@ -121,9 +133,13 @@ def update
   
 end
 
-
-
-
+def delete_custom_fields columnId
+  unless columnId.nil?
+    @flexifield_def = FlexifieldDefEntry.find(columnId)
+    @flexifield_def.destroy
+    
+  end
+end
 def save_flexi_field_entries ff_alias, ff_type
   
   coltype ="text"
