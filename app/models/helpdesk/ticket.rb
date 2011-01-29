@@ -18,6 +18,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   belongs_to :account
   belongs_to :product
+  belongs_to :email_config
 
   belongs_to :responder,
     :class_name => 'User'
