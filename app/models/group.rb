@@ -47,6 +47,9 @@ class Group < ActiveRecord::Base
     
     @include_list = AgentGroup.find(:all, :joins=>:user, :conditions =>{:group_id =>group_id} )
     
+        
+    return @include_list
+    
   end
   
 end

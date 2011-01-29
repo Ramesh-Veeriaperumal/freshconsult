@@ -49,12 +49,10 @@ class GroupsController < ApplicationController
      agents_data = params[:AgentGroups][:agent_list]
      
      @agents = ActiveSupport::JSON.decode(agents_data)
-     
-     logger.debug "params:::: #{@agents.inspect}"
-     
+         
      @agents.each_key { |agent| @group.agent_groups.build(:user_id =>agent) }
      
-     logger.debug "before saving ::: #{@group.inspect}"
+    
      
   if @group.save
     redirect_to :action => 'index'
@@ -84,11 +82,14 @@ class GroupsController < ApplicationController
   
   def update_agents 
     
-    @agents = AgentGroup.find_by_group_id(params[:id])
+    @agents = AgentGroup.find(:all, :conditions=>{:group_id => params[:id]})
+   
     
     unless @agents.nil?
     
-    @agents.destroy
+      @agents.each do |agent|
+        agent.destroy
+      end
     
     end
     
@@ -100,7 +101,7 @@ class GroupsController < ApplicationController
     
     agents_data = params[:AgentGroups][:agent_list]     
     @agents = ActiveSupport::JSON.decode(agents_data)
-    
+        
     @agents.each_key { |agent| AgentGroup.create(:user_id =>agent, :group_id =>group_id )  }
   
     
