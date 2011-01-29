@@ -43,12 +43,8 @@ class User < ActiveRecord::Base
   end
   
   def avatar_attributes=(av_attributes)
-    puts "******************* AVATAR ATTRIBUTES CALLED in USer #{av_attributes}"
-    #unless fc_attributes[:name].empty?
-      return build_avatar(av_attributes) if avatar.nil?
-      
-      avatar.update_attributes(av_attributes)
-    #end
+    return build_avatar(av_attributes) if avatar.nil?
+    avatar.update_attributes(av_attributes)
   end
 
  

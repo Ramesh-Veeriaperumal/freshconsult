@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110127115313) do
+ActiveRecord::Schema.define(:version => 20110129060257) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -67,6 +67,15 @@ ActiveRecord::Schema.define(:version => 20110127115313) do
   end
 
   add_index "delayed_jobs", ["locked_by"], :name => "index_delayed_jobs_on_locked_by"
+
+  create_table "email_configs", :force => true do |t|
+    t.integer  "account_id"
+    t.string   "to_email"
+    t.string   "reply_email"
+    t.integer  "group_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "flexifield_def_entries", :force => true do |t|
     t.integer  "flexifield_def_id",  :null => false
@@ -585,6 +594,8 @@ ActiveRecord::Schema.define(:version => 20110127115313) do
     t.integer  "account_id"
     t.boolean  "admin",               :default => false
     t.boolean  "active",              :default => false, :null => false
+    t.integer  "posts_count",         :default => 0
+    t.datetime "last_seen_at"
     t.string   "role_token"
     t.integer  "customer_id"
     t.string   "job_title"
@@ -594,8 +605,6 @@ ActiveRecord::Schema.define(:version => 20110127115313) do
     t.string   "twitter_id"
     t.text     "description"
     t.string   "time_zone"
-    t.integer  "posts_count",         :default => 0
-    t.datetime "last_seen_at"
   end
 
   add_index "users", ["account_id"], :name => "index_users_on_account_id"

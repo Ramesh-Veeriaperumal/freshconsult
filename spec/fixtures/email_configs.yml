@@ -1,0 +1,13 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  account_id: 1
+  to_email: MyString
+  reply_email: MyString
+  group_id: 1
+
+two:
+  account_id: 1
+  to_email: MyString
+  reply_email: MyString
+  group_id: 1
