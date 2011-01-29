@@ -151,7 +151,7 @@
 					
 					%>
 					
-					<li agent_thumb="<%=avatar_agent%>" agent_id="<%= agent.id %>" agent_name="<%= agent.user.name %>">
+					<li agent_thumb="<%=avatar_agent%>" agent_id="<%= agent.user.id %>" agent_name="<%= agent.user.name %>">
 							<div class="preview_pic">	
 								<%= image_tag (agent.user.avatar) ? 
 									agent.user.avatar.content.url(:thumb) : "/images/icons/profile_blank.gif" %>
