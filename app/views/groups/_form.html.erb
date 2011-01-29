@@ -98,9 +98,15 @@
 		  	<label>		  		
 				Agents in this Group			
 			</label>
-			<%  @exclude_list = Group.find_excluded_agents(@group.id, @group.account_id) %>
+			<% 
+				
+					account_id =  @group.account_id
+					if account_id.nil?
+						account_id = current_account.id
+					end
+					 @exclude_list = Group.find_excluded_agents(@group.id, account_id) %>
 			<%  
-				if(@exclude_list.size == 0)
+				if(@exclude_list.nil? ||@exclude_list.size == 0)
 					showagent = "display:none"
 				end 
 			%>
@@ -108,8 +114,16 @@
 					<b>Select Agents </b>							  			
 					<select id="group_escalate_to">
 						<% @exclude_list.each do |agent| %>
-							<% user = agent.user %>
-							<option agent_thumb="<%=user.avatar.content.url(:thumb)||'/images/icons/profile_blank.gif'%>" agent_name="<%=user.name%>" agent_id="<%=user.id%>">
+							<% 
+								
+								user = agent.user 
+								avatar_url = '/images/icons/profile_blank.gif'
+								unless user.avatar.nil?
+									avatar_url =user.avatar.content.url(:thumb)
+								end 
+
+								%>
+							<option agent_thumb="<%=avatar_url%>" agent_name="<%=user.name%>" agent_id="<%=user.id%>">
 								<%= user.name %>
 							</option>
 						<% end %>
@@ -127,8 +141,17 @@
 			<ul class="item_list active" id="Active_list">		
 				<% @include_list = Group.find_included_agents(@group.id) %>		
 				
-					<% @include_list.each do |agent| %>
-					<li agent_thumb="<%=agent.user.avatar.content.url(:thumb)||'/images/icons/profile_blank.gif'%>" agent_id="<%= agent.id %>" agent_name="<%= agent.user.name %>">
+					<% @include_list.each do |agent| 
+						
+						avatar_agent = '/images/icons/profile_blank.gif'
+						unless agent.user.avatar.nil?
+										
+							avatar_agent = agent.user.avatar.content.url(:thumb)
+						end
+					
+					%>
+					
+					<li agent_thumb="<%=avatar_agent%>" agent_id="<%= agent.id %>" agent_name="<%= agent.user.name %>">
 							<div class="preview_pic">	
 								<%= image_tag (agent.user.avatar) ? 
 									agent.user.avatar.content.url(:thumb) : "/images/icons/profile_blank.gif" %>
