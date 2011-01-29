@@ -4637,18 +4637,18 @@ div.search label, div.search input.search {
 .two_col_cont .right_col {
   padding-left: 20px;
   width: 65%;
-  min-height: 400px;
   -moz-box-shadow: inset 1px 1px 1px #aaaaaa;
   -webkit-box-shadow: inset 1px 1px 1px #aaaaaa;
   box-shadow: inset 1px 1px 1px #aaaaaa;
   overflow: hidden;
   border: 1px solid #dfdfdf;
 }
-/* line 3074, ../src/application.scss */
+/* line 3073, ../src/application.scss */
 .two_col_cont .right_col ul.carousel {
   list-style: none;
   margin: 0px;
   padding: 0px;
+  min-height: 400px;
 }
 /* line 11, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/compass/stylesheets/compass/utilities/lists/_bullets.scss */
 .two_col_cont .right_col ul.carousel li {
@@ -4675,10 +4675,10 @@ div.search label, div.search input.search {
 
 /* line 3090, ../src/application.scss */
 .community_forums {
-  background-image: url("../images/icons/comments_48.png");
+  background-image: url("../images/icons/comments_32.png");
   background-repeat: no-repeat;
-  background-position: 10px 10px;
-  padding: 10px 16px 4px 80px;
+  background-position: 6px 6px;
+  padding: 10px 16px 4px 44px;
   margin-right: 10px;
   margin-top: 8px;
 }
@@ -4795,7 +4795,7 @@ div.search label, div.search input.search {
   right: -5px;
   top: 1%;
   height: 98%;
-  background: #ffffff;
+  background-color: #ffffff;
   border: 1px solid #afafaf;
 }
 /* line 3164, ../src/application.scss */

@@ -3066,14 +3066,14 @@ div.search{
 	}
 	.right_col{
 		padding-left:20px;
-		width:65%;
-		min-height:400px;
+		width:65%;		
 		@include inset-shadows;
 		overflow:hidden;
 		border:1px solid #dfdfdf;
 		ul.carousel{
 			@include no-bullets;
 			margin:0px; padding:0px;
+			min-height:400px;
 		}
 	}	
 }
@@ -3088,10 +3088,10 @@ div.search{
 }
 
 .community_forums{
-	background-image:url('../images/icons/comments_48.png');
+	background-image:url('../images/icons/comments_32.png');
 	background-repeat: no-repeat;
-	background-position: 10px 10px;	
-	padding:10px 16px 4px 80px;
+	background-position: 6px 6px;	
+	padding:10px 16px 4px 44px;
 	margin-right:10px;
 	margin-top:8px;	
 }
@@ -3159,7 +3159,7 @@ div.search{
 		top:1%;
 		height:98%;
 		
-		background:#ffffff;
+		background-color:#ffffff;
 		border:1px solid #afafaf;	
 		.title_header{
 			background:#efefef;
