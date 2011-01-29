@@ -368,6 +368,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def to_s
     "#{subject} (##{display_id})"
   end
+  
+  def reply_email
+    email_config ? email_config.reply_email : account.default_email
+  end
 
   #Some hackish things for virtual agent rules.
   def tag_names

@@ -32,8 +32,9 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
   end
   
   def do_send(ticket)
-    from          ticket.account.default_email
-    headers       "Reply-to" => "#{ticket.account.default_email}"
+    from_to_use = ticket.reply_email
+    from          from_to_use
+    headers       "Reply-to" => "#{from_to_use}"
     sent_on       Time.now
     content_type  "text/plain"
   end
