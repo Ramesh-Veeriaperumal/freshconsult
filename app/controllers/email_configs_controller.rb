@@ -5,6 +5,11 @@ class EmailConfigsController < ApplicationController
   
   def index
     @email_configs = scoper.all
+    @groups = current_account.groups
+  end
+  
+  def new
+    @groups = current_account.groups    
   end
 
   protected

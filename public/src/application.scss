@@ -538,8 +538,16 @@ h2.content_title{
 }
 .title{
 	font-weight:bold;
-	font-size:16px;
 	color:#3e71a4;
+	padding:0px; margin:5px 0px;
+}
+
+h3.title{
+	font-size:16px;
+}
+
+h2.title{
+	font-size:18px;
 }
 
 ul.activityfeed{ 
@@ -2065,38 +2073,7 @@ $lightBase:lighten($base, 5%);
 	} 
 	fieldset.addchoice:hover{
 		background:#f8f8f8;
-	}
-	.grid{
-		border:1px solid #cfcfcf;		
-		padding:0px;
-		background:#f6f6f6;
-		table{
-			padding:0px; margin:0px;
-			font-size:0.7em;
-			th{
-				vertical-align:bottom;
-				line-height:18px;	
-			}
-			td{
-				label{
-					font-size:12px;
-					padding:0px 6px;
-					color:#555555;
-					em{
-						font-style:normal;
-						font-weight:bold;
-						text-transform:capitalize;
-						color:#000000;
-					}
-				}
-				background:#efefef;
-				border-top:1px solid #cfcfcf;				
-			}
-		}
-		.olist{
-			list-style:decimal;
-		}
-	}
+	}	
 	.conditionset{
 		border:1px solid #cfcfcf;
 		padding:0px;
@@ -2192,6 +2169,64 @@ $lightBase:lighten($base, 5%);
 		
 	}
 }
+
+a.addchoice{		
+	padding:5px;			
+	color:#999999;
+	border:1px solid #cfcfcf;
+	border-right-color:#dfdfdf;
+	border-bottom-color:#dfdfdf;
+	text-decoration:none;
+	cursor:pointer;
+	padding:6px 10px 6px 28px;			
+	font-weight:bold;
+	@include link-colors(#336699, #333333, #336699, #336699, #333333);
+	display:block;
+	background:url('../images/add.png') no-repeat 8px 7px;
+} 
+
+a.addchoice:hover{
+	background-color:#f8f8f8;
+}	
+
+.grid{
+		border:1px solid #cfcfcf;		
+		padding:0px;
+		background:#f6f6f6;
+		table{
+			padding:0px; margin:0px;
+			font-size:12px;
+			th, td{
+				padding:6px 10px;			
+			}
+			th{
+				vertical-align:top;
+				line-height:18px;	
+				span{
+					display:block;
+					font-weight:normal;
+				}
+			}
+			td{
+				label{
+					font-size:12px;
+					padding:0px 6px;
+					color:#555555;
+					em{
+						font-style:normal;
+						font-weight:bold;
+						text-transform:capitalize;
+						color:#000000;
+					}
+				}
+				background:#efefef;
+				border-top:1px solid #cfcfcf;				
+			}
+		}
+		.olist{
+			list-style:decimal;
+		}
+	}
 
 span.sort_handle{
 	position:relative;

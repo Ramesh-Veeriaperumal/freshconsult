@@ -1,16 +1,29 @@
-  <%= request_form.label :subject, "Subject" %>
-  <%= request_form.text_field :subject %>
-  <%= request_form.label :description, "How may we help you?" %>
-  <%= request_form.text_area :description %>
-  
-  <% if !logged_in? %>
-  	<label>To verify you are human, plese type the given scrambled letters</label>
-  	<%= recaptcha_tags %>
-  <% end %>
-  
+  <ul class="ui-form">  
+  	<li>
+  		<% if !logged_in? %>
+  			<%= request_form.label :email, "Email" %>
+  			<%= request_form.text_field :email %>
+		<% end %>
+	</li>	
+ 	<li>
+ 		<%= request_form.label :subject, "Subject" %>
+  		<%= request_form.text_field :subject %>
+ 	</li>
+	<li> 
+  		<%= request_form.label :description, "How may we help you?" %>
+  		<%= request_form.text_area :description %>
+  	</li>
+	<li>
+  		<% if !logged_in? %>
+  			<label>To verify you are human, plese type the given scrambled letters</label>
+  			<%= recaptcha_tags %>
+  		<% end %>
+  	</li>
+  </ul>
   <%= request_form.submit "Submit Request" %>
 
   <%# Any fields named like meta[fieldname] will be saved by the helpdesk as metadata %>
   <%= hidden_field_tag "meta[user_agent]", request.env["HTTP_USER_AGENT"] %>
 
   <%= link_to "Cancel", :back, :class => "cancel" %>
+	

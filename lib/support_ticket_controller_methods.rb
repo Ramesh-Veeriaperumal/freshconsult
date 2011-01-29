@@ -38,7 +38,8 @@ module SupportTicketControllerMethods
         :source => 1
       )
       Helpdesk::TicketNotifier.send_later(:deliver_autoreply, @ticket) if !@ticket.spam
-      #Helpdesk::TicketNotifier.deliver_autoreply(@ticket) if !@ticket.spam
+      
+      @ticket.create_activity(@ticket.requester, "{{user_path}} raised the ticket {{notable_path}}")
 
       if params[:meta]
         @ticket.notes.create(

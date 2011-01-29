@@ -1,2 +1,31 @@
-<h1>EmailConfigs#index</h1>
-<p>Find me in app/views/email_configs/index.html.erb</p>
+<div class="pageContent">
+	<h2 class="title">Email Settings</h2>
+	<span class="seperator"></span>
+	<div class="grid">
+		<table>
+			<tr>
+				<th width="40%">
+					Users send email to
+					<span>(This is also your Reply-to address)</span> 
+				</th>
+				<th width="40%">Forward Emails to </th>
+				<th>Assign to Group </th>
+			</tr>
+			<% @email_configs.each do |email| %>
+			<tr>
+				<td><%= email.to_email %></td>
+				<td><%= email.reply_email %></td>
+				<td><%= email.group.name %></td>			
+			</tr>
+			<% end %>
+			<% form_for @email_config do |f| %>
+			<tr>
+				<td><%= f.text_field :to_email, :class => "required text" %></td>				
+				<td><%= f.text_field :reply_email, :class => "required text" %></td>
+				<td><%= collection_select(:email_config, :group_id, @groups, :id, :name) %></td>
+			</tr>
+			<% end %>
+		</table>
+		<%= link_to "Add Another Email address", new_email_config_path, :class => "addchoice"  %>
+	</div>
+</div>
