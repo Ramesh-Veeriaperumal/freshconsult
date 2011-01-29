@@ -138,7 +138,7 @@ class User < ActiveRecord::Base
   end
   
   def to_s
-    name
+    name.empty? ? email : name
   end
 
   protected

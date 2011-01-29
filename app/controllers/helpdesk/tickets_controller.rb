@@ -159,6 +159,8 @@ protected
     # Tickets created by staff have @item.source == 0
     if @item.source == 0
       @item.spam = false
+      
+      @item.create_activity(current_user, "{{user_path}} created a new ticket {{notable_path}}")
 
       n = @item.notes.build(
         :user => current_user,

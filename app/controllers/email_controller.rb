@@ -52,6 +52,7 @@ class EmailController < ApplicationController
       )
  
       ticket.save
+      ticket.create_activity(ticket.requester, "{{user_path}} raised the ticket {{notable_path}}")
       ticket
     end
 
