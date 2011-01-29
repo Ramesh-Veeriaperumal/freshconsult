@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110129070241) do
+ActiveRecord::Schema.define(:version => 20110129101116) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -422,7 +422,6 @@ ActiveRecord::Schema.define(:version => 20110129070241) do
     t.datetime "response_time"
     t.integer  "ticket_type"
     t.string   "to_email"
-    t.integer  "product_id"
     t.integer  "email_config_id"
   end
 
@@ -465,17 +464,6 @@ ActiveRecord::Schema.define(:version => 20110129070241) do
   add_index "posts", ["forum_id", "created_at"], :name => "index_posts_on_forum_id"
   add_index "posts", ["topic_id", "created_at"], :name => "index_posts_on_topic_id"
   add_index "posts", ["user_id", "created_at"], :name => "index_posts_on_user_id"
-
-  create_table "products", :force => true do |t|
-    t.string   "name"
-    t.text     "description"
-    t.string   "to_email"
-    t.string   "reply_email"
-    t.integer  "solution_category_id"
-    t.integer  "account_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
 
   create_table "solution_folders", :force => true do |t|
     t.string   "name"
