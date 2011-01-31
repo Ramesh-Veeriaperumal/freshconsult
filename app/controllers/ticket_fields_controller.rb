@@ -107,12 +107,14 @@ end
   #here its going to update the database-- encode as json and then store it
   
    modified_json = ActiveSupport::JSON.encode(@agentView)
+   
+   requester_json = ActiveSupport::JSON.encode(@endUser)
   
   @ticket_field = Helpdesk::FormCustomizer.find(:first ,:conditions =>{:account_id => current_account.id})
   
    res = Hash.new
    
-  if @ticket_field.update_attribute(:json_data , modified_json)
+  if @ticket_field.update_attributes(:json_data =>modified_json, :agent_view =>@agentView , :requester_view => requester_json )
     
     res["data"] = modified_json
     res["message"]="Successfully updated"
