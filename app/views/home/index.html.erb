@@ -1,8 +1,6 @@
 <%= javascript_include_tag "jquery.jcarousel.min.js" %>
 
-<%- content_for :layoutType do -%>
-	single
-<%- end -%>
+<% content_for :layoutType do %>single<% end %>
   
 <div class="pageContent">
 	<div class="information_tip">	
@@ -71,7 +69,7 @@
 			jQuery(this).addClass('active');				
 		});
 		
-		jQuery("#dialog_close").bind("click",function(ev){
+		jQuery("#dialog_close").live("click",function(ev){
 				var $marginLefty = jQuery('#solution_dialog');
 				jQuery('body').css({'overflow':'auto'});	
 				$marginLefty.animate({width: '0px'}, 500, function(){
@@ -83,9 +81,9 @@
 			ev.preventDefault();			
 			link_url = this.href;
 			jQuery('#solution_dialog').empty().addClass("ajax-loader");
-			jQuery('#solution_dialog_outer').fadeIn(200, function(){
+			jQuery('#solution_dialog_outer').fadeIn(100, function(){
 					var $marginLefty = jQuery('#solution_dialog');
-					$marginLefty.animate({width: "80%"}, 100, function(){
+					$marginLefty.animate({width: "80%"}, 80, function(){
 						jQuery('body').css({'overflow':'hidden'});			
 						jQuery.ajax({ url: link_url, 
 								success: function(data){

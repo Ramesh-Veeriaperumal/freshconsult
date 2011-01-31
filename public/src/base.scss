@@ -38,7 +38,7 @@ $use-mozilla-ellipsis-binding:true;
 // Import the non-default scaffolding module.
 @import "blueprint/liquid";
 @import "blueprint/buttons";
-@import "blueprint/link_icons";
+@import "blueprint/link-icons";
 @import "blueprint/typography";
 
 /*@include blueprint;*/
@@ -48,6 +48,7 @@ $blueprint-font-family: "Lucida Grande",Geneva,Arial,Verdana,sans-serif;
 
 // Bullet icon 
 $bullet-icon:"../images/request_nav_seperator.gif";
+
 
 
 

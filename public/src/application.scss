@@ -2,6 +2,10 @@
 @import "base";
 @import "mixins";
 
+*{
+	margin:0px; padding:0px;
+}
+
 a{
 	color:#336699;
 }
@@ -26,7 +30,8 @@ body {margin:0; padding:0 10px 0 10px; border:0; height:100%; overflow-y:auto; }
 .content{ 
 	position:relative;	
 	border:1px solid #acc0ac; 
-	border-width:0px 1px 0px 1px;
+	border-width:0px 1px 1px 1px;
+	@include shadows(#999999, 0px, 0px, 5px);
 }
  
 #inner {    
@@ -542,12 +547,16 @@ h2.content_title{
 	padding:0px; margin:5px 0px;
 }
 
+.title.padded{
+	padding:0px 15px;
+}
+
 h3.title{
 	font-size:16px;
 }
 
 h2.title{
-	font-size:18px;
+	font-size:22px;
 }
 
 ul.activityfeed{ 
@@ -576,10 +585,10 @@ ul.activityfeed{
 }
 
 .pageContent{
-	margin:10px 20px;	
-	padding:0px 0px; 
-	
-	
+	margin:11px 7px;	
+	h2{
+		color:#555;
+	}	 
 	.subtitle{
 		font-style:italic;
 		color:#333333;
@@ -604,6 +613,7 @@ ul.activityfeed{
 	position:relative;
 	background-color:$base;	
 	color:#666666; 
+	display:none;
 	border-bottom: 1px solid desaturate(darken($base, 10%), 10%); 
 	.footerinfo{ 
 		padding:15px 20px;
@@ -652,14 +662,12 @@ ul.activityfeed{
 		border-bottom: 1px solid desaturate(darken($base, 10%), 10%); 
 	}
 	span.ltExt{
-		left:-11px;
-		@include corners(0, 0, 0, 5px);
+		left:-11px;		
 		border-left-width:1px;	
 	}
 	span.rtExt{
 		right:-11px; 
-		border-right-width:1px;
-		@include corners(0, 0, 5px, 0);
+		border-right-width:1px;		
 	}
 	span.ltSlant, span.rtSlant{ 
 		width:0;
@@ -733,11 +741,10 @@ label{
     color: #666;
 }
 
-input[type=text], select, input[type=file]{
+input[type=text], select, input[type=file], input.text {
     margin: 0;
     padding: 0;
-    font-size: 1.1em;
-    font-weight: bold;
+    font-size: 14px;
     color: #333;
     padding: 2px;
     margin-bottom: 5px;
@@ -745,9 +752,18 @@ input[type=text], select, input[type=file]{
     width: 96%;
 }
 
+.disabled{
+	background-color:#F0F0F0;
+    padding: 4px;
+	color:#7F7F7F;
+	border:	1px solid #afafaf;
+}
+
 select {
     padding: 1px;
     width: 100%;
+	font-size:12px;
+	width:auto;
 }
 
 textarea {
@@ -800,9 +816,7 @@ form.new_helpdesk_ticket{
 	}
 }
 */
-select{ 
-	font-size:0.90em;  
-}
+
 
 /* Page Style */
  
@@ -1027,6 +1041,8 @@ div.leader-right{
     color:#4a4a25 !important;
     @include corners(10px);
     @include vertical-gradient(#f1fce3, #ddf0c4);
+    
+    @include inset-shadows(rgba(0, 0, 0, 0.05), 0, 2px, -2px);
      box-shadow:
         0 2px rgba(0, 0, 0, 0.05),
         0 -2px rgba(0, 0, 0, 0.05) inset;
@@ -1045,10 +1061,7 @@ div.leader-right{
 	@include vertical-gradient(#f1f5ed, #efefef);
 	color:#555555 !important;
 }
-.disabled{
-	@include vertical-gradient(#f1f5ed, #dededd);
-	color:#888888 !important;
-}
+
 	
 .button {
 	@include anchor-button;
@@ -1827,8 +1840,16 @@ $lightBase:lighten($base, 5%);
 }
 
 
-.new_user_session{ 
-	width:330px;
+.ui-login{ 
+	width:380px;
+}
+
+.help_text{
+	padding:2px 0px 0px 0px;
+	a{
+		text-decoration:none;
+		color:#336699;
+	}
 }
 
 .ui-form{ 
@@ -1867,7 +1888,16 @@ $lightBase:lighten($base, 5%);
 		font-size:14px;
 	}
 	li.checkbox{
-		padding:10px 0px; 
+		padding:10px 0px;
+		@include clearfix;
+		input, label{
+			float:left;
+		} 
+		label{
+			position:relative;
+			font-size:12px;
+			top:-3px; left:3px;
+		}
 	}	
 	
 	label.overlabel{
@@ -2174,8 +2204,7 @@ a.addchoice{
 	padding:5px;			
 	color:#999999;
 	border:1px solid #cfcfcf;
-	border-right-color:#dfdfdf;
-	border-bottom-color:#dfdfdf;
+	border-width:1px 0px;
 	text-decoration:none;
 	cursor:pointer;
 	padding:6px 10px 6px 28px;			
@@ -2190,43 +2219,71 @@ a.addchoice:hover{
 }	
 
 .grid{
-		border:1px solid #cfcfcf;		
-		padding:0px;
-		background:#f6f6f6;
-		table{
-			padding:0px; margin:0px;
-			font-size:12px;
-			th, td{
-				padding:6px 10px;			
-			}
-			th{
-				vertical-align:top;
-				line-height:18px;	
-				span{
-					display:block;
-					font-weight:normal;
-				}
-			}
-			td{
-				label{
-					font-size:12px;
-					padding:0px 6px;
-					color:#555555;
-					em{
-						font-style:normal;
-						font-weight:bold;
-						text-transform:capitalize;
-						color:#000000;
-					}
-				}
-				background:#efefef;
-				border-top:1px solid #cfcfcf;				
+	border:1px solid #cfcfcf;		
+	padding:0px;
+	background:#f6f6f6;
+	table{
+		padding:0px; margin:0px;
+		font-size:12px;
+		th, td{
+			padding:8px 10px;
+			vertical-align:top;			
+		}
+		th{			
+			line-height:18px;	
+			span{
+				display:block;
+				font-weight:normal;
 			}
 		}
-		.olist{
-			list-style:decimal;
+		td{			
+			label{
+				font-size:12px;
+				padding:0px 6px;
+				color:#555555;
+				em{
+					font-style:normal;
+					font-weight:bold;
+					text-transform:capitalize;
+					color:#000000;
+				}
+			}
+			background:#efefef;
+			border-top:1px solid #cfcfcf;				
 		}
 	}
+	.olist{
+		list-style:decimal;
+	}
+	.grid_form{	
+		td{
+			border:0px;
+			padding:6px 10px 0px 10px;
+			background:#fafafa;
+		}
+		.button-container{
+			text-align:right;
+			padding:0px 10px 10px 0px;
+		}
+	}
+}
+
+.grid{
+	ul{
+		@include no-bullets;
+		margin:0px; padding:0px;		
+		background:#efefef;
+		border-top:1px solid #cfcfcf;
+		padding:8px 12px;
+		@include clearfix;
+		li{
+			margin:0px; padding:0px;
+			float:left;
+			width:33%;
+		}
+	}
+}
+
 
 span.sort_handle{
 	position:relative;
@@ -3238,4 +3295,12 @@ div.search{
 	background-image:url('/images/ajax-loader.gif');
 	background-repeat:no-repeat;
 	background-position: 10px 10px;
+}
+
+.email_info{
+	border:1px solid #cfcfcf;
+	padding:4px 10px;
+	background:#f2ffda;
+	@include corners(3px);
+	font-size:11px;
 }

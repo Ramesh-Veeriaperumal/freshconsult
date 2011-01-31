@@ -1,15 +1,1 @@
-<div class="pageContent">
-	<h2 class="title">Add new Email</h2>
-	<span>You can configure a new email new</span>
-	<% form_for @email_config do |f| %>
-	<ul class="ui-form">
-		<li><%= f.text_field :to_email, :class => "required text" %></li>
-		<li><%= f.text_field :reply_email, :class => "required text" %></li>
-		<li><%= collection_select(:email_config, :group_id, @groups, :id, :name) %></li>
-		
-	</ul>					
-	
-		<%= f.submit  %>
-	<% end %>	
 
-</div>
