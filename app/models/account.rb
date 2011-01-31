@@ -15,7 +15,7 @@ class Account < ActiveRecord::Base
   
   has_many :scn_automations, :class_name => 'VARule', :conditions => {:rule_type => VAConfig::SCENARIO_AUTOMATION, :active => true}, :order => "position"
   has_many :email_configs
-  
+  has_many :email_notifications
   has_many :groups
   
   has_many :solution_folders , :class_name =>'Solution::Folder'
