@@ -9,7 +9,11 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
+<<<<<<< HEAD
 ActiveRecord::Schema.define(:version => 20110131094137) do
+=======
+ActiveRecord::Schema.define(:version => 20110129113347) do
+>>>>>>> shihab
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -268,6 +272,8 @@ ActiveRecord::Schema.define(:version => 20110131094137) do
     t.integer  "account_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "agent_view"
+    t.text     "requester_view"
   end
 
   create_table "helpdesk_guides", :force => true do |t|
