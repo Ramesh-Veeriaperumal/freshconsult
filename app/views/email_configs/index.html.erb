@@ -1,31 +1,51 @@
+<% javascript_tag do %>
+	jQuery(document).ready(function(){		
+		jQuery(".grid li a.email").live("click", function(ev){
+			ev.preventDefault();
+			self = this;
+			jQuery.ajax({ url	 : this.href, 
+						  success: function(data){
+										jQuery(self).parent().parent().html(data);
+									}
+					});
+		});
+		
+		if(<%= @email_configs.size %> == 0){
+			jQuery("#AddEmail").trigger('click');
+		}
+	});
+<% end %>
+
+<% content_for :sidebar do %>
+	<br /><br />
+	<div class="rightSubContainers">
+		<h3 class="title">Reply Emails from Freshdesk</h3> 
+		<p>You must create an <a href="#">SPF record</a> in your DNS zone file if you are using emails in your own domain. This helps in ensuring proper delivery of email.</p> <a href="#">Learn more about creating SPF records</a>
+	</div>	
+<% end %>
+
 <div class="pageContent">
-	<h2 class="title">Email Settings</h2>
-	<span class="seperator"></span>
+	<h2 class="title">Email Settings</h2>	
 	<div class="grid">
-		<table>
-			<tr>
-				<th width="40%">
-					Users send email to
-					<span>(This is also your Reply-to address)</span> 
-				</th>
-				<th width="40%">Forward Emails to </th>
-				<th>Assign to Group </th>
-			</tr>
+			<ul>
+				<li><b>Users send email to</b></li>
+				<li><b>Forward email</b></li>
+				<li><b>&nbsp;&nbsp;&nbsp;Group</b></li>
+			</ul>
 			<% @email_configs.each do |email| %>
-			<tr>
-				<td><%= email.to_email %></td>
-				<td><%= email.reply_email %></td>
-				<td><%= email.group.name %></td>			
-			</tr>
-			<% end %>
-			<% form_for @email_config do |f| %>
-			<tr>
-				<td><%= f.text_field :to_email, :class => "required text" %></td>				
-				<td><%= f.text_field :reply_email, :class => "required text" %></td>
-				<td><%= collection_select(:email_config, :group_id, @groups, :id, :name) %></td>
-			</tr>
-			<% end %>
-		</table>
-		<%= link_to "Add Another Email address", new_email_config_path, :class => "addchoice"  %>
+			<ul>	
+				<li><%= link_to h(email.to_email), edit_email_config_path(email), :class => "email"  %></li>
+				<li class="ellipsis"><%= email.reply_email %></li>
+				<li>&nbsp;&nbsp;&nbsp;<%= (email.group) ? email.group.name : "" %></li>
+			</ul>
+			<% end %>	
+			
+			<div id="emailconfig">
+				
+			</div>
+			<%= link_to_remote "Add Another Email address", 
+							   :url  => { :action => "new" },
+							   :update => { :success => "emailconfig"},
+							   :html => { :class => "addchoice", :id => "AddEmail" }  %>
 	</div>
 </div>

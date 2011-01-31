@@ -1,7 +1,8 @@
+
 <div class="header">
-    <a href="/helpdesk/dashboard" class="brand">
+    <a href="/home" class="brand">
     	<img alt="FreshDesk" src="/images/logo.png" width="54px" height="47px" class="logo" />
-		<h3><%= current_account.name %></h3>
+		<h3><%= current_account.helpdesk_name %></h3>
 	</a>					
     <div class="header_links">
     	<% if current_user then %>              
@@ -20,7 +21,7 @@
 				<%= link_to('login', login_path) %>
 			 </li>
 			 <li>
-			 	<%= link_to('sign up') %>
+			 	<%= link_to('sign up', "/signup") %>
 			 </li> 
         </ul>
 		<% end %>				

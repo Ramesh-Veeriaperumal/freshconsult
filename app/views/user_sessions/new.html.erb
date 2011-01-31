@@ -1,24 +1,24 @@
 <% content_for :layoutType do%>single<% end %>
-
-<div class="pageContent">
-	<h3 class="content_title">Login</h3>
-	
+<div class="pageContent">		
 	<% form_for @user_session, :url => user_session_path do |f| %>
 	  <%= f.error_messages %>
-	  <ul class="ui-form">
+	  <ul class="ui-form ui-login">
+	  	<h2>Login</h2>
 	  	<li class="largefield">
 	  		<%= f.label :email %>
 	  		<%= f.text_field :email, :class => "text" %>
 		</li>
 		<li class="largefield">
 	  		<%= f.label :password %>
-	  		<%= f.password_field :password %>
+	  		<%= f.password_field :password, :class => "text" %>
+			<div class="help_text">( <a href="#">Help i dont have a password?</a> - <a href="#">Forgot password</a> ) </div>
+	  	</li>
+	  	<li class="checkbox">
+			<%= f.check_box :remember_me %>
+			<%= f.label :remember_me, "Remember me on this computer" %>
 	  	</li>
 	  	<li>
-			<%= f.check_box :remember_me %> Remember me
-	  	</li>
-	  	<li>
-	  		<%= f.submit "Login", { :class => "button"} %>
+	  		<%= f.submit "Login", { :class => "fdbutton"} %>
 		</li>
 	</ul>
 	<% end %>
