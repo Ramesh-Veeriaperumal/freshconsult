@@ -9,11 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-<<<<<<< HEAD
-ActiveRecord::Schema.define(:version => 20110131094137) do
-=======
-ActiveRecord::Schema.define(:version => 20110129113347) do
->>>>>>> shihab
+ActiveRecord::Schema.define(:version => 20110131120457) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -77,6 +73,17 @@ ActiveRecord::Schema.define(:version => 20110129113347) do
     t.string   "to_email"
     t.string   "reply_email"
     t.integer  "group_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "email_notifications", :force => true do |t|
+    t.integer  "type"
+    t.integer  "account_id"
+    t.boolean  "requester_notification"
+    t.text     "requester_template"
+    t.boolean  "agent_notification"
+    t.text     "agent_template"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
