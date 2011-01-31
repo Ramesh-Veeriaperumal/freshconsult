@@ -26,7 +26,6 @@ ActionController::Routing::Routes.draw do |map|
 
   map.resources :va_rules, :member => { :deactivate => :put, :activate => :put }, :collections => { :reorder => :put }
   map.resources :automations, :member => { :deactivate => :put, :activate => :put }, :collections => { :reorder => :put }
-  map.resources :products
   map.resources :email_configs
   
   #SAAS copy starts here

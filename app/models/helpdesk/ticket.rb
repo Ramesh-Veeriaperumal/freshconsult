@@ -17,7 +17,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   before_update :set_dueby
   
   belongs_to :account
-  belongs_to :product
   belongs_to :email_config
 
   belongs_to :responder,
