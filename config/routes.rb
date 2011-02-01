@@ -27,6 +27,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :va_rules, :member => { :deactivate => :put, :activate => :put }, :collections => { :reorder => :put }
   map.resources :automations, :member => { :deactivate => :put, :activate => :put }, :collections => { :reorder => :put }
   map.resources :email_configs
+  map.resources :email_notifications
   
   #SAAS copy starts here
   map.with_options(:conditions => {:subdomain => AppConfig['admin_subdomain']}) do |subdom|
