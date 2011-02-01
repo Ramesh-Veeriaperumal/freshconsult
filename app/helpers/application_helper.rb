@@ -4,7 +4,7 @@ module ApplicationHelper
   include SavageBeast::ApplicationHelper
   
   def show_flash
-    [:notice, :error].collect {|type| content_tag('div', flash[type], :id => type) if flash[type] }
+    [:notice, :error].collect {|type| content_tag('div', flash[type], :id => type, :class => "flash_info") if flash[type] }
   end
 
   def tab(title, url, cls = false)

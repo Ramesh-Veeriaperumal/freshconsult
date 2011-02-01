@@ -1,5 +1,5 @@
 class Support::ArticlesController < ApplicationController
-  layout 'support/default'
+  layout 'ssportal'
 
   before_filter { |c| c.requires_permission :portal_knowledgebase }
 
@@ -10,5 +10,11 @@ class Support::ArticlesController < ApplicationController
       :per_page => 10
     )
   end
+  
+  def show
+    @article = Helpdesk::Article.find(params[:id])
+    raise ActiveRecord::RecordNotFound unless @article && (@article.account_id == current_account.id)
+  end
+  
 
 end

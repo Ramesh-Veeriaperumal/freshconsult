@@ -31,7 +31,7 @@ body {margin:0; padding:0 10px 0 10px; border:0; height:100%; overflow-y:auto; }
 	position:relative;	
 	border:1px solid #acc0ac; 
 	border-width:0px 1px 1px 1px;
-	@include shadows(#999999, 0px, 0px, 5px);
+	
 }
  
 #inner {    
@@ -117,8 +117,33 @@ body {margin:0; padding:0 10px 0 10px; border:0; height:100%; overflow-y:auto; }
 /* Header styles */
 .header {  
 	@include clearfix;
-	border-bottom:8px solid $complement;
+	border-bottom:5px solid #cfd2d9;
 	padding:12px 0px 0px 0px;
+}
+
+.tab-menu{
+	display:none;	
+	clear:both;
+	@include clearfix;
+	background-color:$base;
+	ul{
+		@include no-bullets;
+		padding:0px; margin:0px;
+		li{
+			a{
+				float:left;
+				padding:5px 15px 4px;
+				text-decoration:none;
+				text-transform:uppercase;
+				font-weight:bold;
+				font-size:11px;
+				color:#333333;
+			}
+			a:hover{
+				background:#ffffff;
+			}
+		}
+	}
 }
 
 a.brand{	
@@ -543,7 +568,7 @@ h2.content_title{
 }
 .title{
 	font-weight:bold;
-	color:#3e71a4;
+	color:#555555;
 	padding:0px; margin:5px 0px;
 }
 
@@ -585,7 +610,7 @@ ul.activityfeed{
 }
 
 .pageContent{
-	margin:11px 7px;	
+	margin:11px 15px;	
 	h2{
 		color:#555;
 	}	 
@@ -605,15 +630,16 @@ ul.activityfeed{
 	*zoom: 1; 
 	text-align:left;	
 	position:relative;
+	
 }
 
 /* Footer Styles */
 
 .footer{
 	position:relative;
-	background-color:$base;	
-	color:#666666; 
-	display:none;
+	background-color:$base;
+	display:none;	
+	color:#666666;
 	border-bottom: 1px solid desaturate(darken($base, 10%), 10%); 
 	.footerinfo{ 
 		padding:15px 20px;
@@ -1144,24 +1170,30 @@ div.leader-right{
 
 
 /* Request Details page */
+
+.breadcrum{
+	background:#e9ebee;
+	border-bottom:1px solid #cfd2d9;
+	padding:3px 20px 0px 20px;
+	@include clearfix;
+}
  
 .breadcrum, .crumbs {
 	display:block;
-	height:20px;
-	padding:10px 5px 5px 0px; 
 	color:#555555;
 	a{
-		color:#3a8ecb !important;
+		color:#666666;
 		text-decoration:none;
 		padding:3px 12px 3px 0px;
 		margin-right:8px;	
 		font-weight:bold;
-		background:url(/images/newer_arrow.gif) no-repeat right center;
+		font-size:12px;
 	}
 	em{
 		font-style:normal;
 	}
 }
+
 
 ul.ui-list-2col, ul.ticket_properties{ 
 	@include clearfix; 
@@ -3115,6 +3147,7 @@ div.search{
 	padding:8px 0px;
 	position:relative;
 	width:60%;
+	@include clearfix;
 	label{
 		display:block;		
 	}
@@ -3250,46 +3283,48 @@ div.search{
 		right:-5px;
 		top:1%;
 		height:98%;
-		
 		background-color:#ffffff;
 		border:1px solid #afafaf;	
-		.title_header{
-			background:#efefef;
+		.header_area{
 			@include corners(8px, 8px, 0, 0);
-			border-bottom:1px solid #9f9f9f;
-			h4{
-				padding:0px; margin:0px;
-				font-size:18px;
-				font-weight:bold;
-				color:#333333;
-				a{
-					text-decoration:none;
-					color:#333333;
-				}
-			}
-			.actions{
-				a{
-					@include corners(6px);
-					padding:8px 2px 0px 2px;
-					text-decoration:none;
-				}
-				a:hover{
-					background:#ffffff;
-				}
-			}
 		}		
-		.solution_content, .title_header{
-			padding:15px 25px;margin:0px;
-		}
-		.solution_content{
-			font-size:14px;
-			color:#333333;
-			margin-right:10px;
+		.page_area{
 			overflow:auto;
-			height:80%;
+			height:85%;
 		}
 	}
 }
+
+.page_area, .header_area{
+	padding:10px 20px;
+}
+
+.header_area{
+	@include vertical-gradient(#ebecef, #d1d5db);
+	border-bottom:1px solid #838a9a;
+	h4{
+		padding:0px; margin:0px;
+		font-size:18px;
+		font-weight:bold;
+		color:#333333;
+		a{
+			text-decoration:none;
+			color:#333333;
+		}
+	}
+	.actions{
+		a{
+			@include corners(6px);
+			padding:8px 2px 0px 2px;
+			text-decoration:none;
+		}
+		a:hover{
+			background:#ffffff;
+		}
+	}
+}		
+
+
 
 .ajax-loader{
 	background-image:url('/images/ajax-loader.gif');
@@ -3303,4 +3338,12 @@ div.search{
 	background:#f2ffda;
 	@include corners(3px);
 	font-size:11px;
+}
+
+.flash_info{
+	background:#f6dc23;
+	border-bottom:1px solid #e4cd22;
+	padding:8px 20px;
+	color:#333333;
+	font-size:14px;
 }

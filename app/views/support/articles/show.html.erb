@@ -1,0 +1,18 @@
+<div class="breadcrum">
+	<div class="search">
+			<label>Start typing a question and see answers in real time</label>			
+			<label class="overlabel" for="ssp_search">Search for a keyword or a full question</label>
+			<input type="text" class="search" id="ssp_search"  />			
+		</div>
+</div>	
+<div class="header_area">
+	  <h4>
+	  		<%= @article.title %>
+	  </h4>
+	  <div>Modified on <%= @article.updated_at.strftime("%B %e %Y at %I:%M %p") %></div>
+	  </div>
+	  <div class="page_area">
+	  		<%= @article.body %>	
+	  </div>		  
+</div>
+ 
