@@ -3,7 +3,7 @@ class EmailNotificationsController < ApplicationController
     e_notifications = current_account.email_notifications
     by_type = Hash[*e_notifications.map { |n| [n.notification_type, n] }.flatten]
     
-    @notifications = [{ :type => "New Ticket Created", :requester => true, :agent => false, 
+    @notifications = [{ :type => "New Ticket Created", :requester => true, :agent => true, 
                                   :obj => by_type[EmailNotification::NEW_TICKET] },
                       { :type => "Ticket assigned to Group", :requester => false, :agent => true, 
                                   :obj => by_type[EmailNotification::TICKET_ASSIGNED_TO_GROUP] },
@@ -25,7 +25,11 @@ class EmailNotificationsController < ApplicationController
     puts "@NOTIFICATIONS in EmailNotificationsController #{@notifications}"
   end
 
-  def update
+  def update      
+      p "Email Notifications Save data #{params[:update][:notification_data]}"
+      
+      flash[:notice] = "Email notifications has been updated."
+      redirect_back_or_default email_notifications_url
   end
 
 end

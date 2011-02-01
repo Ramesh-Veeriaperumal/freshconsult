@@ -1,2 +1,96 @@
-<h1>EmailNotifications#index</h1>
-<p>Find me in app/views/email_notifications/index.html.erb</p>
+<% content_for :layoutType do%>single<% end %>
+<% javascript_tag do %>
+	jQuery(document).ready(function(){
+		var active_template = null;
+		jQuery("a.notify_check").bind("click", function(ev){
+			jQuery(active_template).hide();
+			var emailTr = jQuery(this).parents("tr").next();
+			active_template = jQuery(emailTr).show();
+			
+			jQuery(emailTr).find("div").hide();
+			
+			jQuery(emailTr).find("div."+this.getAttribute("showdiv")).show();
+			
+		});
+		jQuery("a.close_template").bind("click", function(ev){
+			jQuery(this).parents("tr").hide();
+		});
+		
+		jQuery("#Updateform").submit(function(){
+			allNotificationsDom   = jQuery("tr.main_rows");
+			var allNotifications  = $H();
+			var currentNotify	  = 0;
+			jQuery.each(allNotificationsDom, function(index, item){
+				var tempHash 	  = { requester_notification: 0,  agent_notification: 0, requester_template: "", agent_template: "" };
+				currentNotify 	  = item.getAttribute("notify_type");
+				jQuery.each(jQuery(item).find("input.checkbox"), function(index, checkItem){
+					tempHash[checkItem.name] = (checkItem.checked)?1:0;		
+				});
+				
+				jQuery.each(jQuery(item).next().find("textarea"), function(index, textareaItem){
+					tempHash[textareaItem.name] = textareaItem.value;
+				});
+				
+				allNotifications.set(currentNotify, tempHash);
+			});
+			
+			jQuery("#AllNotification").val(allNotifications.toJSON()); 
+		});
+	});
+<% end %>
+
+<div class="header_area">
+	<h4>Email notifications</h4>
+</div>
+<div class="page_area">
+	<% form_for :update, @email_notifications, :url => { :action => "update" }, :html => { :method => :update, :id => "Updateform" } do |f| %>
+	<%= f.hidden_field :notification_data, { :id => "AllNotification" } %>
+	<div class="grid">
+		<table>
+			<tr>
+				<th>Event</th>
+				<th>Requestor Notification</th>
+				<th>Agent Notification</th>
+			</tr>
+			<tbody>
+			<% @notifications.each do |item| %>
+			<% data = item[:obj] %>
+			<tr class="main_rows" notify_type=<%= data.notification_type %>>
+				<td><%= item[:type] %> </td>
+				<td>
+					<% if (item[:requester])  %>
+						<input type="checkbox" name="requester_notification" class="checkbox" <%= (data.requester_notification) ? "checked" : "" %> />
+						<a href="javascript:void(0)" showdiv="requester_div" class="notify_check">Customize Email</a>
+					<% end %>
+				</td>
+				<td>
+					<% if (item[:agent])  %>
+						<input type="checkbox" name="agent_notification" class="checkbox" <%= (data.agent_notification) ? "checked" : "" %> />
+						<a href="javascript:void(0)" showdiv="agent_div" class="notify_check">Customize Email</a>
+					<% end %>					
+				</td>				
+			</tr>
+			<tr style="display:none;">
+				<td colspan="3">
+					<div class="requester_div">
+						<b>Modify Requester Template</b>
+						<textarea name="requester_template"><%= h ("#{data.requester_template}") %></textarea>
+					</div>
+					<div class="agent_div">
+						<b>Modify Agent Template</b>
+						<textarea name="agent_template"><%= h ("#{data.agent_template}") %></textarea>
+					</div>
+					<a href="javascript:void(0)" class="button close_template">Done</a>
+				</td>
+			</tr>
+			<% end %>
+			</tbody>
+			
+		</table>
+		<div class="padding6">
+			<%= f.submit "Save", { :class => "fdbutton" } %>
+			<%= link_to "Back", "/admin", { :class => "fdbutton grey" } %>
+		</div>
+	</div>
+	<% end %>
+</div>
