@@ -14,7 +14,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_validation_on_create :set_tokens
   before_create :set_spam, :set_dueby
-  before_update :set_dueby
+  before_update :set_dueby, :cache_old_model
+  after_update  :notify_on_update
   
   belongs_to :account
   belongs_to :email_config
@@ -357,11 +358,27 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
   end
   
-  def custom_fields
-   
-    @custom_fields = FlexifieldDef.all(:include => [:flexifield_def_entries =>:flexifield_picklist_val] , :conditions => ['account_id=? AND module=?',account_id,'Ticket']) 
-    
+  def cache_old_model
+    @old_ticket = Helpdesk::Ticket.find id
+  end
   
+  def notify_on_update
+    notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_GROUP) if (group_id != @old_ticket.group_id)
+    notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_AGENT) if (responder_id != @old_ticket.responder_id)
+    
+    if status != @old_ticket.status
+      return notify_by_email(EmailNotification::TICKET_RESOLVED) if (status == STATUS_KEYS_BY_TOKEN[:resolved])
+      return notify_by_email(EmailNotification::TICKET_CLOSED) if (status == STATUS_KEYS_BY_TOKEN[:closed])
+      notify_by_email(EmailNotification::TICKET_REOPENED) if (status == STATUS_KEYS_BY_TOKEN[:open])
+    end
+  end
+  
+  def notify_by_email(notification_type)
+    #Helpdesk::TicketNotifier.deliver_internal_email(self, requester.email, "#{notification_type}")
+  end
+  
+  def custom_fields
+    @custom_fields = FlexifieldDef.all(:include => [:flexifield_def_entries =>:flexifield_picklist_val] , :conditions => ['account_id=? AND module=?',account_id,'Ticket']) 
   end
   
   def to_s

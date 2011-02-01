@@ -37,7 +37,10 @@ Rails::Initializer.run do |config|
   config.gem 'ruby-openid-apps-discovery' #1.2.0
   # config.gem "bj"
   # config.gem "hpricot", :version => '0.6', :source => "http://code.whytheluckystiff.net"
-  config.gem "aws-s3", :lib => "aws/s3" #0.6.2
+  config.gem "aws-s3", :lib => "aws/s3" #0.6.2  
+  config.gem "arel" #2.0.7  
+  config.gem "searchlogic" #2.4.27
+  
 
   # Only load the plugins named here, in the order given. By default, all plugins 
   # in vendor/plugins are loaded in alphabetical order.

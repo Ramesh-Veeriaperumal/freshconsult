@@ -1,0 +1,16 @@
+<%
+articles.each do |article|
+
+%>
+
+ <td class="article">
+    <h3>
+      <%= link_to(h(article.title), support_article_path(article)) %>
+	  <%= h(truncate(article.body, :length => 200)) %>
+    </h3>
+  </td>
+
+
+<%
+end
+%>
