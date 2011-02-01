@@ -27,4 +27,18 @@ class HomeController < ApplicationController
     
   end
   
+  def search_solution
+    
+    search_str = params[:search_key]
+    
+    logger.debug "search_str is #{search_str.inspect}"
+    
+    search_tokens =  search_str.scan(/\w+/)
+    
+    @articles = Helpdesk::Article.title_or_body_like_any(search_tokens).is_public(true)
+    
+    render :partial => 'solution_search_result', :locals => { :articles => @articles } 
+    
+  end
+  
 end
