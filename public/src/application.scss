@@ -3347,3 +3347,25 @@ div.search{
 	color:#333333;
 	font-size:14px;
 }
+
+.search_results{
+	background:#ffffff;
+	@include inset-shadows;
+	@include corners(6px);
+	border:1px solid #dfdfdf;
+	padding:10px;
+	.result{
+		border-top:1px solid #efefef;
+		padding:8px 10px 10px 10px;
+	}
+	h2{
+		font-size:16px; color:#333333;
+	}
+	h4{
+		font-size:12px;
+		a{
+			color:#4D769F;
+		}
+		margin:0px;
+	}
+}

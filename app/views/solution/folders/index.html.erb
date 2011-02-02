@@ -1,41 +1,23 @@
 <% content_for :layoutType do%>single<% end %>  
-<div class="pageContent twoColumn">  
-	<div class="col_left">
-	  <div class="title_bar_grey">
-	  	<div class="floatr" >
-  			<%= link_to "<img src='/images/add.png'> Add Folder", new_solution_folder_path, :class => "fdbutton" %>
-		</div>
-		<h3 class="title">Solution Categories</h3>		
-	  </div>
-  	  <ul class="icon_grid solution_folder">
-		<% @folders.each do |folder| %>
-		<li>
-			<% if(folder.categories.size != 0) %>
-				<span class="count"><%= folder.categories.size %></span>
-			<% end %>
-			<%= link_to h(folder.name), folder, :class => "sol_category", :title => h(folder.name) %>		
-		</li>
-		<%end%>
-	  </ul>
-	 </div>
-	 <div class="col_right">
-	 	<div class="title_bar_grey">
-		  	<div class="floatr" >
-	  			<%= link_to "<img src='/images/add.png'> New FAQ", new_helpdesk_guide_path, :class => "fdbutton" %>					
+<div class="pageContent">  
+	  <div class="information_tip two_col_cont">
+	  	<div class="left_col">
+	  		<div class="floatr" >
+	  			<%= link_to "<img src='/images/add.png'> Add Category", new_solution_folder_path, :class => "fdbutton" %>
 			</div>
-			<h3 class="title">FAQ</h3>		
-	  	</div>
-		<ul class="guides">
-			<li><a href="#">How to setup Helpdesk Email?</a></li>
-			<li><a href="#"> How can I use my custom domain URL?</a></li>
-			<li><a href="#"> What is your refund policy?</a></li>
-			<li><a href="#"> How safe is my Data?</a></li>
-			<li><a href="#"> How can I configure multi-product support?</a></li>
-			<li><a href="#"> How can I use my own SSL certificate?</a></li>
-			<li><a href="#"> How do I configure more than one support email address?</a></li>
-			<li><a href="#"> What are Business Rules?</a></li>
-			<li><a href="#"> When are Helpdesk scenario automations triggered?</a></li>
-			<li><a href="#"> How can I setup SLAs?</a></li>
-		</ul>
-	 </div>
+			<h3 class="title">&nbsp;&nbsp;Solutions</h3>
+			<ul class="ssp_category_list">
+				<% firstFolder = @folders.find(:first) %>
+				<% @folders.each do |folder| %>
+				<li>
+					<%= link_to h(folder.name), 
+							folder, :class => (firstFolder == folder) ? "active":""  %>				
+				</li>
+				<%end%>
+			</ul>
+		</div>
+		<div class="right_col white_curved_cont">
+			a
+		</div>
+	</div>
 </div>
