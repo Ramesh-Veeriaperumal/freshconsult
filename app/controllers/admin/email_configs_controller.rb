@@ -1,4 +1,4 @@
-class EmailConfigsController < ApplicationController
+class Admin::EmailConfigsController < ApplicationController
   include ModelControllerMethods
   
   before_filter :set_selected_tab

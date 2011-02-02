@@ -34,7 +34,7 @@
 			</ul>
 			<% @email_configs.each do |email| %>
 			<ul>	
-				<li><%= link_to h(email.to_email), edit_email_config_path(email), :class => "email"  %></li>
+				<li><%= link_to h(email.to_email), edit_admin_email_config_path(email), :class => "email"  %></li>
 				<li class="ellipsis"><%= email.reply_email %></li>
 				<li>&nbsp;&nbsp;&nbsp;<%= (email.group) ? email.group.name : "" %></li>
 			</ul>
