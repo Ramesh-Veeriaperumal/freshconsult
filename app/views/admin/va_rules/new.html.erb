@@ -1,0 +1,9 @@
+<% content_for :layoutType do%>single<% end %>
+
+<div class="pageContent"> 
+	<h3 class="content_title">Virtual Agent - New Rule</h3>
+	<span class="seperator"></span>
+	<% form_for :va_rule, @va_rule, :url => admin_va_rules_path, :html => { :method => :post , :id => "VirtualAgent" } do |f| %>
+		<%= render :partial => "form", :locals => { :f => f } %>
+	<% end %>
+</div>

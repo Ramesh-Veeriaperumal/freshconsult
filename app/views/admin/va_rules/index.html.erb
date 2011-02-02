@@ -45,7 +45,7 @@
 		<div class="floatr">
 			<!--%= link_to "Delete", "", :class => "button" %-->
 			<a href="javascript:void(0)" class="button" id="Reorder">Reorder</a>
-			<%= link_to "<img src='/images/add.png' /> New Rule", new_va_rule_path, :class => "fdbutton"  %>
+			<%= link_to "<img src='/images/add.png' /> New Rule", new_admin_va_rule_path, :class => "fdbutton"  %>
 		</div>	 
 		<h3 class="title">Virtual Agent - Rules</h3>		
 	</div>
@@ -54,11 +54,11 @@
 			<% @va_rules.each do |va_rule| %>
 				<li ruleid="<%=va_rule.id%>" class="<%=cycle('stripe', '') %>"> 
 					<div class="item_actions">
-						<%= link_to('delete', va_rule, :method => 'delete', :confirm => 'Are you sure you want to delete this rule', :class => "button" ) %>					
-						<%= link_to('deactivate', deactivate_va_rule_path(va_rule), :method => 'put', :class => "button") %>
-						<%= link_to('edit', edit_va_rule_path(va_rule), :class => "button") %> 					
+						<%= link_to('delete', admin_va_rule_path(va_rule), :method => 'delete', :confirm => 'Are you sure you want to delete this rule', :class => "button" ) %>					
+						<%= link_to('deactivate', deactivate_admin_va_rule_path(va_rule), :method => 'put', :class => "button") %>
+						<%= link_to('edit', edit_admin_va_rule_path(va_rule), :class => "button") %> 					
 					</div>
-					<%= link_to(h(va_rule.name), edit_va_rule_path(va_rule), :class => "item_info") %>
+					<%= link_to(h(va_rule.name), edit_admin_va_rule_path(va_rule), :class => "item_info") %>
 					<div><%= h va_rule.description %></div>				
 				</li>
 			<% end %> 
@@ -94,10 +94,10 @@
 				<li ruleid="<%=va_rule.id%>" class="<%=cycle('stripe', '') %>"> 
 					<div class="item_actions">
 						<%= link_to('delete', va_rule, :method => 'delete', :confirm => 'Are you sure you want to delete this rule', :class => "button" ) %>					
-						<%= link_to('activate', activate_va_rule_path(va_rule), :method => 'put', :class => "button") %>
-						<%= link_to('edit', edit_va_rule_path(va_rule), :class => "button") %> 					
+						<%= link_to('activate', activate_admin_va_rule_path(va_rule), :method => 'put', :class => "button") %>
+						<%= link_to('edit', edit_admin_va_rule_path(va_rule), :class => "button") %> 					
 					</div>
-					<%= link_to(h(va_rule.name), edit_va_rule_path(va_rule), :class => "item_info") %> 
+					<%= link_to(h(va_rule.name), edit_admin_va_rule_path(va_rule), :class => "item_info") %> 
 				</li>
 			<% end %> 
 		</ul>	

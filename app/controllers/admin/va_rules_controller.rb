@@ -1,4 +1,4 @@
-class VaRulesController < AutomationsController
+class Admin::VaRulesController < Admin::AutomationsController
   
   def index
     @inactive_rules = current_account.disabled_va_rules

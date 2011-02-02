@@ -43,7 +43,7 @@
 	<div class="title_bar_grey">
 		<div class="floatr">
 			<a href="javascript:void(0)" class="button" id="Reorder">Reorder</a>
-			<%= link_to "<img src='/images/add.png' /> New Scenario", new_automation_path, :class => "fdbutton"  %>
+			<%= link_to "<img src='/images/add.png' /> New Scenario", new_admin_automation_path, :class => "fdbutton"  %>
 		</div>	 
 		<h3 class="title">Senario Automations</h3>		
 	</div>
@@ -51,10 +51,10 @@
 		<% @va_rules.each do |va_rule| %>
 			<li class="<%=cycle('stripe', '') %>"> 
 				<div class="item_actions">
-					<%= link_to('delete', automation_path(va_rule), :method => 'delete', :confirm => 'Are you sure you want to delete this scenario', :class => "button" ) %>					
-					<%= link_to('edit'  , edit_automation_path(va_rule), :class => "button") %> 					
+					<%= link_to('delete', admin_automation_path(va_rule), :method => 'delete', :confirm => 'Are you sure you want to delete this scenario', :class => "button" ) %>					
+					<%= link_to('edit'  , edit_admin_automation_path(va_rule), :class => "button") %> 					
 				</div>
-				<%= link_to(h(va_rule.name), edit_automation_path(va_rule), :class => "item_info") %>
+				<%= link_to(h(va_rule.name), edit_admin_automation_path(va_rule), :class => "item_info") %>
 				<div><%= h va_rule.description %></div>				
 			</li>
 		<% end %>

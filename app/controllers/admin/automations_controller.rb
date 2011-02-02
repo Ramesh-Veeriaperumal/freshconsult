@@ -1,4 +1,4 @@
-class AutomationsController < ApplicationController
+class Admin::AutomationsController < ApplicationController
   include ModelControllerMethods
   
   before_filter :set_selected_tab
