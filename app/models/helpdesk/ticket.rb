@@ -9,7 +9,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   #by Shan temp
   attr_accessor :email
-  after_create :refresh_display_id, :pass_thro_biz_rules
+  after_create :refresh_display_id, :autoreply, :pass_thro_biz_rules
   before_create :populate_requester
 
   before_validation_on_create :set_tokens
@@ -356,6 +356,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
       logger.debug "inside populate_requester, setting requester object"
       self.requester = @requester
     end
+  end
+  
+  def autoreply
+    notify_by_email EmailNotification::NEW_TICKET
   end
   
   def cache_old_model
