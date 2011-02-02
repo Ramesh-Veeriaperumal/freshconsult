@@ -7,11 +7,6 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
     body(:ticket => ticket, :note => note, :host => ticket.account.full_domain)
     reply_to_ticket(ticket)
   end
-
-  def autoreply(ticket)
-    body(:ticket => ticket, :host => ticket.account.full_domain)
-    reply_to_ticket(ticket)
-  end
   
   def email_to_requester(ticket, content)
     body(content)
@@ -87,7 +82,6 @@ protected
     else
       ticket = create_ticket(email, media)
       add_email_to_ticket(ticket, email, media)
-      Helpdesk::TicketNotifier.deliver_autoreply(ticket) if ticket && !ticket.spam
     end
   end
 

@@ -20,7 +20,6 @@ class EmailController < ApplicationController
       else
         ticket = create_ticket(account, from_email, to_email)
         add_email_to_ticket(ticket)
-        Helpdesk::TicketNotifier.deliver_autoreply(ticket) if !ticket.spam
       end
     end
   end
