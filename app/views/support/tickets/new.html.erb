@@ -1,6 +1,4 @@
-<% content_for :title do %>
-  Request Support
-<% end %>
+<% content_for :layoutType do%>single<% end %>
 
 <% form_for @ticket, :url => support_tickets_path do |f| %>
   <%= f.error_messages %>

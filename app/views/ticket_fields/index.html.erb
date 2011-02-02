@@ -144,7 +144,7 @@
 			.sortable({
 		            revert: true,
 					stop: function(ev, ui) { 
-		             	console.log(ui.item.get(0));
+		             	//console.log(ui.item.get(0));
 						type = ui.item.get(0).getAttribute('type');
 		                if (type) {
 							constFieldDOM(getFreshField(type), ui.item);
@@ -222,7 +222,7 @@
 			
 			var sourceData = jQuery(sourceField).data("raw");
 			
-			console.log(sourceData.toSource());
+			//console.log(sourceData.toSource());
 				
 			dialogDOMMap.type.val(sourceData.type);							
 			dialogDOMMap.label.val(sourceData.label);

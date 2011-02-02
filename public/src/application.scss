@@ -29,7 +29,7 @@ body {margin:0; padding:0 10px 0 10px; border:0; height:100%; overflow-y:auto; }
  
 .content{ 
 	position:relative;	
-	border:1px solid #acc0ac; 
+	border:1px solid #afafaf; 
 	border-width:0px 1px 1px 1px;
 	
 }
@@ -163,7 +163,7 @@ a.brand{
 		position:relative;
 		top:10px;
 		left:-5px;
-		color:desaturate($base-highlight, 10%);
+		color:#555555;
 	}	
 }
 
@@ -1887,10 +1887,14 @@ $lightBase:lighten($base, 5%);
 .ui-form{ 
 	@include no-bullets; 
 	@include pie-clearfix;
-	padding:5px 15px 15px 15px;
+	max-width:70%;
+	padding:15px 15px 15px 15px;
 	margin:0px 0px 6px 0px;
 	background: #f5f5f5;
 	@include corners(6px);
+	border-right:1px solid #dfdfdf;
+	border-bottom:1px solid #dfdfdf;
+	@include inset-shadows(#cfcfcf, 0px, 2px, 1px);
 	li{
 		padding:0px 0px 5px 0px; 
 		margin:0px;
@@ -3018,10 +3022,10 @@ label.caption{
 
 .placeholder-info{
 	width:400px;
-	position:fixed;
+	position:absolute;
 	text-align:left;
-	height:550px;
-	top:30px;
+	height:85%;
+	top:2%;
 	right:30px;
 	@include shadows(#888888, 0px, 0px, 9px);
 	z-index:99999;
@@ -3030,7 +3034,7 @@ label.caption{
 		background:#f8f8f8;
 		padding:10px 15px;
 		overflow:auto;
-		height:400px;
+		height:70%;
 	}
 	margin:10px 0px;
 	padding:10px 15px;
@@ -3341,11 +3345,11 @@ div.search{
 }
 
 .flash_info{
-	background:#f6dc23;
-	border-bottom:1px solid #e4cd22;
+	background:#f4fdcb;
+	border-bottom:1px solid #b9b9b9;
 	padding:8px 20px;
 	color:#333333;
-	font-size:14px;
+	font-size:12px;
 }
 
 .search_results{
@@ -3368,4 +3372,9 @@ div.search{
 		}
 		margin:0px;
 	}
+}
+
+.link_placeholder{
+	float:right;
+	margin-right:15px;
 }
