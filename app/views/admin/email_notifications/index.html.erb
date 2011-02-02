@@ -1,5 +1,6 @@
 <% content_for :layoutType do%>single<% end %>
 <% javascript_tag do %>
+	var active_email_body = null;
 	jQuery(document).ready(function(){
 		var active_template = null;
 		jQuery("a.notify_check").bind("click", function(ev){
@@ -14,6 +15,10 @@
 		});
 		jQuery("a.close_template").bind("click", function(ev){
 			jQuery(this).parents("tr").hide();
+		});
+		
+		jQuery("a.reset_template").bind("click", function(ev){
+			jQuery(this).prev().prev().val(jQuery(this).prev().prev().prev().val()); 
 		});
 		
 		jQuery("#Updateform").submit(function(){
@@ -35,6 +40,10 @@
 			});
 			
 			jQuery("#AllNotification").val(allNotifications.toJSON()); 
+		});
+		jQuery('.link_placeholder').live("click", function(ev){
+				active_email_body = jQuery(this).next().next();
+				jQuery('#place-dialog').slideDown();			
 		});
 	});
 <% end %>
@@ -74,13 +83,23 @@
 				<td colspan="3">
 					<div class="requester_div">
 						<b>Modify Requester Template</b>
+						<a href="javascript:void(0)" class="link_placeholder">Insert Placeholder &raquo;</a>
+						<input type="hidden" value="<%= h ("#{data.requester_template}") %>" />
 						<textarea name="requester_template"><%= h ("#{data.requester_template}") %></textarea>
+						
+						<a href="javascript:void(0)" class="button close_template">Done</a>
+						<a href="javascript:void(0)" class="button reset_template">Reset</a>
 					</div>
 					<div class="agent_div">
 						<b>Modify Agent Template</b>
+						<a href="javascript:void(0)" class="l_placeholder">Insert Placehoder &raquo;</a>
+						<input type="hidden" value="<%= h ("#{data.agent_template}") %>" />
 						<textarea name="agent_template"><%= h ("#{data.agent_template}") %></textarea>
+						
+						<a href="javascript:void(0)" class="button close_template">Done</a>
+						<a href="javascript:void(0)" class="button reset_template">Reset</a>
 					</div>
-					<a href="javascript:void(0)" class="button close_template">Done</a>
+					
 				</td>
 			</tr>
 			<% end %>
@@ -94,3 +113,7 @@
 	</div>
 	<% end %>
 </div>
+
+<% content_for :pagefixed do %>
+	<%= render :partial => "/shared/placeholder_help" %>
+<% end %>

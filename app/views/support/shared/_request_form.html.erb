@@ -1,54 +1,24 @@
-<<<<<<< HEAD
-  <ul class="ui-form">  
-  	<li>
-  		<% if !logged_in? %>
-  			<%= request_form.label :email, "Email" %>
-  			<%= request_form.text_field :email %>
-		<% end %>
-	</li>	
- 	<li>
- 		<%= request_form.label :subject, "Subject" %>
-  		<%= request_form.text_field :subject %>
- 	</li>
-	<li> 
-  		<%= request_form.label :description, "How may we help you?" %>
-  		<%= request_form.text_area :description %>
-  	</li>
-	<li>
-  		<% if !logged_in? %>
-  			<label>To verify you are human, plese type the given scrambled letters</label>
-  			<%= recaptcha_tags %>
-  		<% end %>
-  	</li>
-  </ul>
-=======
+<div class="header_area">
+	<h4>Submit a ticket</h4>
+</div>
 
+<div class="page_area">
 	<ul class="ui-form">
-		
-  <%
-  
-	@customizer = ActiveSupport::JSON.decode(@ticket.customizer.requester_view)
-	#debug @customizer
-	
-	@customizer.each do |field|
+	<% @customizer = ActiveSupport::JSON.decode(@ticket.customizer.requester_view)
+	   @customizer.each do |field|
 			logger.debug "field.label :: #{field["label"]} and "
 			case field["label"]
-			 when "Requester" then
-
-
-%>
-
-  		<li> 	
-  			<label id="requester-label">Requester *</label>
-  			<input type="text" id="helpdesk_ticket_email" class="text" name="helpdesk_ticket[email]"></input>
-   		</li> 
-			
+				 when "Requester" then
+	%>
+	<li> 	
+  		<label id="requester-label">Email *</label>
+  		<input type="text" id="helpdesk_ticket_email" class="text" name="helpdesk_ticket[email]"></input>
+   	</li>	
 	<% when "Subject" then%>
 		<li>
         	<%= request_form.label :subject, "Subject" %>
           	<%= request_form.text_field :subject, :class => "text" %>
    		</li>
-
 	<%when "Source" then%>
 		<li class="dropdown">
   			<%= request_form.label :source, "Source" %>
@@ -67,15 +37,11 @@
           	<%= request_form.collection_select :group_id, Group.find_all_by_account_id(@item.account_id), :id, :name,{:include_blank => 'Nobody'}, { :onchange => "changeAggentList(this.options[this.selectedIndex].value)" ,:class => "select"} %>
         </li>
 		
-	<%when "Assigned to" then%>
-		
-			
+	<%when "Assigned to" then%>	
 		<li class="dropdown" id="assigned_to">
           	<%= request_form.label :responder_id, "Assigned To" %>
           	<%= request_form.collection_select :responder_id, Helpdesk::Authorization.find_all_by_permission(:manage_tickets), :user_id, :name, {:include_blank => 'Nobody'}, :class => "select" %>
         </li>
-		
-		
 	<%when "Priority" then%>
 		<li class="dropdown">
  			<%= request_form.label :priority, "Priority" %>          
@@ -120,19 +86,25 @@
 		 <% end %>			 
 		<% end %>
 	<% end %>
+	
+	<li>
+		<% if !logged_in? %>
+		  	<label>To verify you are human, plese type the given scrambled letters</label>
+		  	<%= recaptcha_tags %>
+		<% end %>
+		<br />
+	</li>
+	<li>
+		<%= request_form.submit "Submit Request", :class => "fdbutton" %>
+	    <%# Any fields named like meta[fieldname] will be saved by the helpdesk as metadata %>
+	    <%= hidden_field_tag "meta[user_agent]", request.env["HTTP_USER_AGENT"] %>
+	    <%= link_to "Cancel", :back, :class => "button" %>
+	</li>
 	</ul>
 	
+</div>	
   
-  <% if !logged_in? %>
-  	<label>To verify you are human, plese type the given scrambled letters</label>
-  	<%= recaptcha_tags %>
-  <% end %>
   
->>>>>>> shihab
-  <%= request_form.submit "Submit Request" %>
-
-  <%# Any fields named like meta[fieldname] will be saved by the helpdesk as metadata %>
-  <%= hidden_field_tag "meta[user_agent]", request.env["HTTP_USER_AGENT"] %>
-
-  <%= link_to "Cancel", :back, :class => "cancel" %>
+  
+  
 	
