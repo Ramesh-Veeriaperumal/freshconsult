@@ -5045,3 +5045,38 @@ div.search label, div.search input.search {
   color: #333333;
   font-size: 14px;
 }
+
+/* line 3351, ../src/application.scss */
+.search_results {
+  background: #ffffff;
+  -moz-box-shadow: inset 1px 1px 1px #aaaaaa;
+  -webkit-box-shadow: inset 1px 1px 1px #aaaaaa;
+  box-shadow: inset 1px 1px 1px #aaaaaa;
+  -moz-border-radius: 6px 6px 6px 6px;
+  -webkit-border-top-left-radius: 6px;
+  -webkit-border-bottom-left-radius: 6px;
+  -webkit-border-top-right-radius: 6px;
+  -webkit-border-bottom-right-radius: 6px;
+  border-radius: 6px 6px 6px 6px;
+  border: 1px solid #dfdfdf;
+  padding: 10px;
+}
+/* line 3357, ../src/application.scss */
+.search_results .result {
+  border-top: 1px solid #efefef;
+  padding: 8px 10px 10px 0px;
+}
+/* line 3361, ../src/application.scss */
+.search_results h2 {
+  font-size: 16px;
+  color: #333333;
+}
+/* line 3364, ../src/application.scss */
+.search_results h4 {
+  font-size: 12px;
+  margin: 0px;
+}
+/* line 3366, ../src/application.scss */
+.search_results h4 a {
+  color: #4D769F;
+}

@@ -1,16 +1,15 @@
-<%
-articles.each do |article|
-
-%>
-
- <td class="article">
-    <h3>
-      <%= link_to(h(article.title), support_article_path(article)) %>
-	  <%= h(truncate(article.body, :length => 200)) %>
-    </h3>
-  </td>
-
-
-<%
-end
-%>
+<% if (articles.size == 0) %>
+	<h2>No search results found for '<%= key %>'</h2>
+<% else %>
+	
+	<h2>Search results for '<%= key %>'</h2>
+	<% articles.each do |article| %>
+	<div class="result">
+	 	<h4><%= link_to(h(article.title), support_article_path(article)) %></h4>
+		<div>
+			<%= truncate ( article.body.gsub(/<\/?[^>]*>/, ""), 200)  %>
+		</div>
+	</div>
+	<% end %>
+	
+<% end %>

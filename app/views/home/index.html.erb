@@ -1,5 +1,3 @@
-<%= javascript_include_tag "jquery.jcarousel.min.js" %>
-
 <% content_for :layoutType do %>single<% end %>
   
 <div class="pageContent">
@@ -14,6 +12,7 @@
 			<label class="overlabel" for="ssp_search">Search for a keyword or a full question</label>
 			<input type="text" class="search" id="ssp_search"  />			
 		</div>		
+		<div id="search_results" class="search_results" style="display:none;"></div>
 	</div>
 	
 	<div class="information_tip two_col_cont">
@@ -102,6 +101,21 @@
 						jQuery('#solution_dialog_outer').fadeOut(80);								
 				});					
 		});
+		
+		jQuery("#ssp_search").bind("keyup", function(ev){
+			searchString = this.value;
+			if(searchString.length > 2){
+				jQuery.ajax({ url: "/home/search_solution?search_key="+searchString, 
+							  success: function(data){
+							  			jQuery("#search_results").show();
+										jQuery("#search_results")
+											.html(data);
+							       }});	
+			}else if(searchString == ''){
+				jQuery("#search_results").hide();				
+			}
+		})
+		
 	});
 </script>
 

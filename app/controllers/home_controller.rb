@@ -35,9 +35,9 @@ class HomeController < ApplicationController
     
     search_tokens =  search_str.scan(/\w+/)
     
-    @articles = Helpdesk::Article.title_or_body_like_any(search_tokens).is_public(true)
+    @articles = Helpdesk::Article.title_or_body_like_any(search_tokens).is_public(true).limit(10)
     
-    render :partial => 'solution_search_result', :locals => { :articles => @articles } 
+    render :partial => 'solution_search_result', :locals => { :articles => @articles, :key => search_str } 
     
   end
   
