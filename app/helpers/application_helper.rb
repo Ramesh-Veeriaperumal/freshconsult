@@ -21,7 +21,7 @@ module ApplicationHelper
       ['/forums',             'Forums',       permission?(:manage_knowledgebase)],      
       ['/users',              'Customers',    permission?(:manage_users)],
       #['helpdesk/articles',  'Articles',     permission?(:manage_knowledgebase)],
-      ['/admin',              'Admin',        permission?(:manage_users)]
+      ['/admin/home',         'Admin',        permission?(:manage_users)]
     ]
 
 #    history_active = false;
