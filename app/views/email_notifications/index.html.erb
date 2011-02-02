@@ -43,7 +43,7 @@
 	<h4>Email notifications</h4>
 </div>
 <div class="page_area">
-	<% form_for :update, @email_notifications, :url => { :action => "update" }, :html => { :method => :update, :id => "Updateform" } do |f| %>
+	<% form_for :update, @email_notifications, :url => { :action => "update" }, :html => { :method => :put, :id => "Updateform" } do |f| %>
 	<%= f.hidden_field :notification_data, { :id => "AllNotification" } %>
 	<div class="grid">
 		<table>
@@ -55,7 +55,7 @@
 			<tbody>
 			<% @notifications.each do |item| %>
 			<% data = item[:obj] %>
-			<tr class="main_rows" notify_type=<%= data.notification_type %>>
+			<tr class="main_rows" notify_type=<%= data.id %>>
 				<td><%= item[:type] %> </td>
 				<td>
 					<% if (item[:requester])  %>
