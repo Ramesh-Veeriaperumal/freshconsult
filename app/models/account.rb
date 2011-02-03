@@ -17,6 +17,7 @@ class Account < ActiveRecord::Base
   has_many :email_configs
   has_many :email_notifications
   has_many :groups
+  has_many :forum_categories
   
   has_many :solution_folders , :class_name =>'Solution::Folder'
   
