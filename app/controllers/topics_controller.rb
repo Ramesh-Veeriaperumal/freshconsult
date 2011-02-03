@@ -22,10 +22,13 @@ class TopicsController < ApplicationController
   end
 
   def new
+    @forum_category = ForumCategory.find(params[:category_id])
+    @forums = Forum.find(params[:forum_id])
     @topic = Topic.new
   end
   
   def show
+   
     respond_to do |format|
       format.html do
         # see notes in application.rb on how this works
@@ -106,7 +109,9 @@ class TopicsController < ApplicationController
     end
     
     def find_forum_and_topic
-      @forum = Forum.find(params[:forum_id])
+       @forum_category = ForumCategory.find(params[:category_id])
+       @forum = Forum.find(params[:forum_id])
+      logger.debug "forum parameters are #{@forum.attributes.inspect}"
       raise(ActiveRecord::RecordNotFound) unless (@forum.account_id == current_account.id)
       @topic = @forum.topics.find(params[:id]) if params[:id]
     end
