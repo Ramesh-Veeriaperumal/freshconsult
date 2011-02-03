@@ -1,3 +1,5 @@
+<%=  new_category_forum_topic_path(@forum_category,@forum) %>
+
 <% content_for :sidebar do %>	
 	<% unless @forum.description.blank? %>
 		<%= @forum.description_html %> 
@@ -23,13 +25,13 @@
 	<% @page_title = @forum.name %>
 	
 	<div class="crumbs">
-		<%= link_to "Back to Forum List"[:forums_title], forums_path, :class => "nav_older" %> 
+		<%= link_to "Back to Forum List"[:forums_title], category_path(@forum_category), :class => "nav_older" %> 
 	</div>
 	<h3 class="content_title"><%= h @forum.name %></h3>
 	
 	<div class="actions_bar">
 		<% if logged_in? %>
-			<%= link_to 'New topic'[:new_topic], new_forum_topic_path(@forum), :class => "button" %>
+			<%= link_to 'New topic'[:new_topic],new_category_forum_topic_path(@forum_category,@forum), :class => "button" %>
 		<% end%>
 	</div>
 	<!--p class="subtitle">
@@ -40,7 +42,7 @@
 		
 	<% if @topics.total_pages > 1 -%>
 		<% if logged_in? %>
-			<p style="float:right; margin-top:0;"><%= link_to 'New topic'[], new_forum_topic_path(@forum), :class => "utility" %></p>
+			<p style="float:right; margin-top:0;"><%= link_to 'New topic'[], new_category_forum_topic_path(@forum_category,@forum), :class => "utility" %></p>
 		<% end %>
 		<%= will_paginate @topics %>
 	<% end -%>
@@ -48,88 +50,27 @@
 	<div class="topics_list">
 		<h4 class="title"> <%= link_to 'Recent posts'[:recent_posts], all_posts_path %></h4>
 		<ul class="base_set">
-			<% for topic in @topics %>			
-			<li> 
-				<span class="topic_icon">
+			<% for topic in @topics %>	
+			<li>	
+			<span class="topic_icon">
 					<img src="/images/icons/topic_type.png" width="32px" height="32px" />
-				</span>
-				<h4 class="topic_title">
+			</span>	
+			<h4 class="topic_title">
 					<%= "Sticky"[:sticky_title]+": <strong>" if topic.sticky? %>
-				    <%= topic_title_link (topic), :class => "entry-title", :rel => "bookmark" %>			    
+					<%= link_to topic.title, category_forum_topic_path(@forum_category,@forum) %>
+				       
 				    <%= "</strong>" if topic.sticky? %>
-				    <% if topic.paged? -%>
-				    	<small><%= link_to 'last'[], forum_topic_path(:forum_id => @forum, :id => topic, :page => topic.last_page) %></small>
-				    <% end -%>
+				   	 <% if topic.paged? -%>
+				    	<small><%= link_to 'last'[] %></small>
+				    <% end -%> 
 				</h4>	 
-				
-				<%= 'by {user}'[:by_user, "<span class=\"author\"><strong class=\"fn\">#{h(topic.user.display_name)}</strong> on #{h(topic.created_at.strftime("%b-%d"))}</span>"] %>
-				<span class="delim2">•</span>
-				<span class="updated" title="<%= topic.replied_at.xmlschema %>">Latest comment <%= time_ago_in_words(topic.replied_at) %> ago</span>
-			    <span class="delim2">•</span>
-				<!--
-				<%= 'by {user}'[:by_user, "<span class=\"author\"><strong class=\"fn\">#{h(topic.replied_by_user.display_name)}</strong></span>"] %>
-			    -->
-				<!--span><%= link_to 'view'[], forum_topic_path(:forum_id => @forum, :id => topic, :page => topic.last_page, :anchor => "posts-#{topic.last_post_id}") %></span-->
-			  	
-				<span class="comments">
-			    	<%= topic.posts.size %>
-				</span>
+			<span><%=h(topic.title)%></span>
 			</li>
 			<% end %>
-			<%= will_paginate @topics %>
+			
 		</ul>
 	</div>
 	
-	<!--
-	<table border="0" cellspacing="0" cellpadding="0" class="wide topics">
-	<tr>
-	  <th class="la" colspan="2"><%= 'Topic'[:topic_title] %></th>
-	  <th width="1%"><%= 'Posts'[:posts_title] %></th>
-	  <th width="1%"><%= 'Views'[:views_title] %></th>
-	  <th class="la"><%= 'Last post'[:last_post] %></th>
-	</tr>
-	<% for topic in @topics %>
-	<tr class="hentry">
-	  <td style="padding:5px; width:16px;" class="c1">
-	    <% 
-	    icon = "comment"
-	    color = ""
-	    if topic.locked?
-	      icon = "lock"
-	      post = ", this topic is locked."[:comma_locked_topic]
-	      color = "darkgrey"
-	    end
-	    %>
-	    <% if recent_topic_activity(topic) %>
-	    <%= image_tag "savage_beast/clearbits/#{icon}.gif", :class => "icon green", :title => "Recent activity"[]+"#{post}" %>
-	    <% else %>
-	      <%= image_tag "savage_beast/clearbits/#{icon}.gif", :class => "icon grey #{color}", :title => "No recent activity"[]+"#{post}" %>
-	    <% end %>
-	  </td>
-	  <td class="c2">
-	    <%= "Sticky"[:sticky_title]+": <strong>" if topic.sticky? %>
-	    <%= topic_title_link (topic), :class => "entry-title", :rel => "bookmark" %>
-	    <%#= link_to h(topic.title), topic_path(@forum, topic), :class => "entry-title", :rel => "bookmark" %>
-	    <%= "</strong>" if topic.sticky? %>
-	    <% if topic.paged? -%>
-	    <small><%= link_to 'last'[], forum_topic_path(:forum_id => @forum, :id => topic, :page => topic.last_page) %></small>
-	    <% end -%>
-	  </td>
-	  <td class="ca inv stat"><%= topic.posts.size %></td>
-	  <td class="ca inv stat"><%= number_with_delimiter(topic.views) %></td>
-	  <td class="lp">
-	    <abbr class="updated" title="<%= topic.replied_at.xmlschema %>"><%= time_ago_in_words(topic.replied_at) %></abbr>
-	    <%= 'by {user}'[:by_user, "<span class=\"author\"><strong class=\"fn\">#{h(topic.replied_by_user.display_name)}</strong></span>"] %>
-	    <span><%= link_to 'view'[], forum_topic_path(:forum_id => @forum, :id => topic, :page => topic.last_page, :anchor => "posts-#{topic.last_post_id}") %></span>
-	  </td>
-	</tr>
-	<% end %>
-	</table>
 	
-	<%= will_paginate @topics %>
-	-->
 </div>
 	
-
-
-
