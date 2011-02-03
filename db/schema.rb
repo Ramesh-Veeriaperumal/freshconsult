@@ -197,6 +197,7 @@ ActiveRecord::Schema.define(:version => 20110201052711) do
     t.integer "position"
     t.text    "description_html"
     t.integer "account_id"
+	t.integer "category_id"
   end
 
   create_table "groups", :force => true do |t|
