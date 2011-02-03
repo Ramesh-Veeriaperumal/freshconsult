@@ -1,7 +1,9 @@
 class Forum < ActiveRecord::Base
   acts_as_list
 
-  validates_presence_of :name
+  validates_presence_of :name,:forum_category
+  
+  belongs_to :forum_category
 
   has_many :moderatorships, :dependent => :delete_all
   has_many :moderators, :through => :moderatorships, :source => :user
@@ -18,6 +20,7 @@ class Forum < ActiveRecord::Base
   has_one  :recent_post, :order => "#{Post.table_name}.created_at DESC", :class_name => 'Post'
   
   format_attribute :description
+
   
   # retrieves forums ordered by position
   def self.find_ordered(account, options = {})
