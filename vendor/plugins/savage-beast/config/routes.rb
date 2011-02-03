@@ -6,10 +6,19 @@ ActionController::Routing::Routes.draw do |map|
     map.resources :posts, :name_prefix => "#{attr}_", :path_prefix => "/#{attr.pluralize}/:#{attr}_id"
   end
   
-  map.resources :forums do |forum|
+  #map.resources :forums do |forum|
+   # forum.resources :topics do |topic|
+    #  topic.resources :posts
+     # topic.resource :monitorship, :controller => :monitorships
+    #end
+  #end
+
+ map.resources :categories, :controller=>'forum_categories'  do |forum_c|
+  forum_c.resources :forums do |forum|
     forum.resources :topics do |topic|
       topic.resources :posts
       topic.resource :monitorship, :controller => :monitorships
+      end
     end
   end
 
