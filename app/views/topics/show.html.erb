@@ -11,10 +11,10 @@
 <% end # right content -%>
 
 <% if logged_in? %>
-	<% form_tag forum_topic_monitorship_path(@forum, @topic), :style => 'margin-top:0em; float:right;' do -%>
+	<% form_tag category_forum_topic_monitorship_path(@forum_category,@forum, @topic), :style => 'margin-top:0em; float:right;' do -%>
 		<div>
 		  <input id="monitor_checkbox" type="checkbox" <%= "checked='checked'" if @monitoring %> 
-		    onclick="if (this.checked) {<%= remote_function :url => forum_topic_monitorship_path(@forum, @topic) %>} else {<%= remote_function :url => forum_topic_monitorship_path(@forum, @topic), :method => :delete %>}" />
+		    onclick="if (this.checked) {<%= remote_function :url => category_forum_topic_monitorship_path(@forum_category,@forum, @topic) %>} else {<%= remote_function :url => category_forum_topic_monitorship_path(@forum_category,@forum, @topic), :method => :delete %>}" />
 		  <label id="monitor_label" for="monitor_checkbox"><%= @monitoring ? 'Monitoring topic'[] : 'Monitor topic'[] %></label>
 		  <%= hidden_field_tag '_method', 'delete' if @monitoring %>
 		  <%= submit_tag :Set, :id => 'monitor_submit' %>
@@ -24,8 +24,8 @@
 
 	<div class="pageContent">
 		<div class="crumbs">
-		  <%= link_to "Forums"[:forums_title], forums_path %>
-		  <%= link_to h(@topic.forum.name), forum_path(@topic.forum) %> 
+		  <%= link_to "Forums"[:forums_title], category_path(@forum_category) %>
+		  <%= link_to h(@topic.forum.name), category_forum_path(@forum_category,@forum) %> 
 		  <% 
 		  page=session[:forum_page] ? session[:forum_page][@topic.forum.id] : nil
 		  if page and page!=1 %>
@@ -44,15 +44,15 @@
 			  <% if logged_in? %>
 			    <span style="display:none;" id="topic_mod">
 			      <% if @topic.editable_by?(current_user) -%>
-			        <%= link_to('edit'[], edit_forum_topic_path(@forum, @topic), :class => "utility") %> |
-			        <%= link_to('delete'[], forum_topic_path(@forum, @topic), :class => "utility", :method => :delete, :confirm => 'Delete this topic forever?'[:delete_topic_conf]) %>
+			        <%= link_to('edit'[], edit_category_forum_topic_path(@forum_category,@forum, @topic), :class => "utility") %> |
+			        <%= link_to('delete'[], category_forum_topic_path(@forum_category,@forum, @topic), :class => "utility", :method => :delete, :confirm => 'Delete this topic forever?'[:delete_topic_conf]) %>
 			      <% end -%>
 			    </span>
 			  <% end %>
 		</h1>
 	
 	<!--p class="subtitle">
-	  <%= feed_icon_tag @topic.title, forum_topic_path(@forum, @topic, :format => :rss) %>
+	  <%= feed_icon_tag @topic.title, category_forum_topic_path(@forum_category,@forum, @topic) %>
 	  <%= '{count} post(s)'[(count=@topic.posts.size)==1 ? :post_count : :posts_count, number_with_delimiter(count)] %>, 
 	  <%= '{count} voice(s)'[(count=@topic.voices.size)==1 ? :voice_count : :voices_count, number_with_delimiter(count)] %>
 	</p-->
