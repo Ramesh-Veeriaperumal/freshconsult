@@ -1,0 +1,12 @@
+<h1>Editing forum_category</h1>
+
+<% form_for(@forum_category) do |f| %>
+  <%= f.error_messages %>
+
+  <p>
+    <%= f.submit 'Update' %>
+  </p>
+<% end %>
+
+<%= link_to 'Show', @forum_category %> |
+<%= link_to 'Back', forum_categories_path %>

@@ -1,0 +1,29 @@
+
+
+
+<div class="pageContent">
+	
+	<div class="actions_bar">
+		<% if admin? %>
+  			<%= link_to 'Create New Forum'[:create_new_forum], new_category_forum_path(@forum_category), :class => "button" %>
+		<% end %> 
+	</div>
+	
+	<div class="forum_list">
+		<h4 class="title"> <%= link_to 'Recent posts'[:recent_posts], all_posts_path %></h4>
+		<ul class="base_set">
+		<% for forum in @forums do %>
+				<li>
+					<h5>
+						<a href="<%=category_forum_path(forum.forum_category, forum)%>">
+							<span><%=h(forum.name)%></span>
+						</a>
+					</h5>
+					
+				</li>			
+		<% end %>
+		</ul>
+	</div>
+	 
+	
+</div>

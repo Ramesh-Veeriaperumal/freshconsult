@@ -1,0 +1,34 @@
+
+
+<div class="pageContent">
+	<h3 class="content_title"><%= 'Forums Category'[:forums_category] %></h3>
+	
+	
+	<div class="actions_bar">
+		<% if admin? %>
+  			<%= link_to 'Create New Category'[:create_new_category], new_category_path, :class => "button" %>
+		<% end %> 
+	</div>
+	
+	<div class="forum_list">
+		<ul class="base_set">
+		<% for forum_category in @forum_categories do %>
+				<li>
+					<h5>
+						<a href="<%=category_path(forum_category)%>">
+							<span><%=h(forum_category.name)%></span>
+							<span class="subcounter">(<%= '{count}'[(count=forum_category.forums.size)==1 ? :topic_count : :topics_count, number_with_delimiter(count)] %>)</span>
+							<span class="follow_link">»</span>
+							</a>
+					</h5>
+				</li>			
+		<% end %>
+		</ul>
+	</div>
+	 
+	 
+	
+
+</div>
+
+

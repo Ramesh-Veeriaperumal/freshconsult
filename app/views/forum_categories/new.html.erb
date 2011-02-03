@@ -1,0 +1,17 @@
+<div class="pageContent">
+	<div class="crumbs">
+		<%= link_to "Back to Category"[:category_title], categories_path, :class => "nav_older" %> 
+	</div>
+	
+	<h3 class="content_title"><%= 'New Category'[:new_category] %></h3>
+	
+	<% form_for :forum_category, :url => categories_path do |f| -%>
+		<%= render :partial => "/shared/name_desc", :locals => { :form => f } %>
+			
+		<%= submit_tag 'Create'[:Create], { :class => "fdbutton" } -%> 
+		<%= link_to('Cancel'[:cancel], categories_path, :class => "fdbutton grey" ) -%>
+	<% end -%>
+</div>
+
+
+
