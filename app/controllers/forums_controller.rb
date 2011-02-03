@@ -22,6 +22,10 @@ class ForumsController < ApplicationController
   end
 
   def show
+    @forum_category = ForumCategory.find(params[:category_id])
+    @forum = Forum.find(params[:id])
+    
+   
     respond_to do |format|
       format.html do
         # keep track of when we last viewed this forum for activity indicators
@@ -37,11 +41,14 @@ class ForumsController < ApplicationController
 
   # new renders new.html.erb  
   def create
-    @forum.attributes = params[:forum]
+    #@forum.attributes = params[:forum]
+    @forum_category = ForumCategory.find(params[:category_id])
+    @forum = @forum_category.forums.build(params[:forum])
+    @forum.account_id ||= current_account.id
     @forum.save!
     respond_to do |format|
-      format.html { redirect_to @forum }
-      format.xml  { head :created, :location => forum_url(@forum, :format => :xml) }
+      format.html { redirect_to(category_forum_path( @forum_category,@forum), :notice => 'ForumCategory was successfully created.') }
+      format.xml  { head :created, :location => category_forum_path( @forum_category,@forum, :format => :xml) }
     end
   end
 
@@ -51,6 +58,10 @@ class ForumsController < ApplicationController
       format.html { redirect_to @forum }
       format.xml  { head 200 }
     end
+  end
+  
+  def new
+    @forum_category = ForumCategory.find(params[:category_id])
   end
   
   def destroy
@@ -64,7 +75,6 @@ class ForumsController < ApplicationController
   protected
     def find_or_initialize_forum # Shan - Should split-up find & initialize as separate methods.
       @forum = params[:id] ? Forum.find(params[:id]) : Forum.new
-      
       @forum.account_id ||= current_account.id
       (raise(ActiveRecord::RecordNotFound) unless (@forum.account_id == current_account.id)) || @forum
     end
