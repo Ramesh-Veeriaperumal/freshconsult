@@ -8,7 +8,11 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
       a_template = Liquid::Template.parse(e_notification.agent_template)
       deliver_internal_email(ticket, ticket.responder.email, a_template.render('ticket' => ticket))
     end
-    puts "******************** NOTIFY_BY_EMAIL in TicketNotifier called, and e_notification is #{e_notification.inspect}"
+    
+    if e_notification.requester_notification
+      r_template = Liquid::Template.parse(e_notification.requester_template)
+      deliver_email_to_requester(ticket, r_template.render('ticket' => ticket, 'helpdesk_name' => ticket.account.helpdesk_name))
+    end
   end
 
   def reply(ticket, note)
@@ -29,7 +33,8 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
   end
   
   def reply_to_ticket(ticket)
-    subject       Helpdesk::EMAIL[:reply_subject]  + " #{ticket.encode_display_id}"
+    #subject       Helpdesk::EMAIL[:reply_subject]  + " #{ticket.encode_display_id}"
+    subject       "Re: #{ticket.subject}"
     recipients    ticket.requester.email
     do_send(ticket)
   end

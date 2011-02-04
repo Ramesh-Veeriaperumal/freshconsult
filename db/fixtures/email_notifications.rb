@@ -8,7 +8,7 @@ EmailNotification.seed_many(:notification_type, [
 We would like to acknowledge that we have received you request and a ticket has been created with Ticket ID - {{ticket.display_id}}.
 A support representative will be reviewing your request and will send you a personal response.(usually within 24 hours).
 
-To view the status of the ticket or add comments please visit 
+To view the status of the ticket or add comments, please visit 
 {{ticket.url}}
 
 Thank you for your patience.
