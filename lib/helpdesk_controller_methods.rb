@@ -161,7 +161,7 @@ protected
   
   def get_custom_fields
     
-    @flexi_fields = params[nscname][:flexifields]
+    @flexi_fields = params[:flexifields]
     
     logger.debug "get_custom_fiels #{@flexi_fields}"
     
@@ -170,15 +170,7 @@ protected
   def build_item
     
     logger.debug "the items are #{params[nscname].inspect}"
-    testParm =nil
-    unless params[nscname].nil?
-      
-      testParm = params[nscname]
-      
-      testParm.delete("flexifields")
-          
-    end
-    
+       
     @item = self.instance_variable_set('@' + cname,
       scoper.is_a?(Class) ? scoper.new(params[nscname]) : scoper.build(params[nscname]))
     set_item_user

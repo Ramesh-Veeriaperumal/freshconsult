@@ -111,7 +111,7 @@
 	
 	<%else%>
 		<%logger.debug "Custom  Field #{field["label"]}"%>
-		<% f.fields_for :flexifields do |cust_form| %>
+		<% fields_for :flexifields do |cust_form| %>
 			<% case field["type"] when "text","number" then %>				
 				<li class="<%= field['label'] %>">		 
 					<%= cust_form.label "#{field["label"]}", "#{field["label"]}" %>  
