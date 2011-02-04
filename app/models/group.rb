@@ -1,6 +1,7 @@
 class Group < ActiveRecord::Base
   
    has_many :agent_groups , :class_name => "AgentGroup", :foreign_key => "group_id"
+   has_many :agents, :through => :agent_groups, :source => :user
    
    accepts_nested_attributes_for :agent_groups
   
@@ -50,6 +51,10 @@ class Group < ActiveRecord::Base
         
     return @include_list
     
+  end
+  
+  def agent_emails
+    agents.collect { |a| a.email }
   end
   
 end
