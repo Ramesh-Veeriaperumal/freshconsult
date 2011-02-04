@@ -4,6 +4,7 @@ class Group < ActiveRecord::Base
    has_many :agents, :through => :agent_groups, :source => :user
    
    accepts_nested_attributes_for :agent_groups
+   liquid_methods :name
   
   
   ASSIGNTIME = [

@@ -6,7 +6,9 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
     e_notification = ticket.account.email_notifications.find_by_notification_type(notification_type)
     if e_notification.agent_notification
       a_template = Liquid::Template.parse(e_notification.agent_template)
-      deliver_internal_email(ticket, ticket.responder.email, a_template.render('ticket' => ticket))
+      deliver_internal_email(ticket, 
+              (notification_type == EmailNotification::TICKET_ASSIGNED_TO_GROUP) ? ticket.group.agent_emails : ticket.responder.email, 
+              a_template.render('ticket' => ticket))
     end
     
     if e_notification.requester_notification
