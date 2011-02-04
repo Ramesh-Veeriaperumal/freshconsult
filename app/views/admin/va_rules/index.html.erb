@@ -93,7 +93,7 @@
 			<% @inactive_rules.each do |va_rule| %>
 				<li ruleid="<%=va_rule.id%>" class="<%=cycle('stripe', '') %>"> 
 					<div class="item_actions">
-						<%= link_to('delete', va_rule, :method => 'delete', :confirm => 'Are you sure you want to delete this rule', :class => "button" ) %>					
+						<%= link_to('delete', admin_va_rule_path(va_rule), :method => 'delete', :confirm => 'Are you sure you want to delete this rule', :class => "button" ) %>					
 						<%= link_to('activate', activate_admin_va_rule_path(va_rule), :method => 'put', :class => "button") %>
 						<%= link_to('edit', edit_admin_va_rule_path(va_rule), :class => "button") %> 					
 					</div>

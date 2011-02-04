@@ -12,7 +12,8 @@
 												});
 		
 		var DialogFieldPref = null;
-		var SourceField 	= null;		
+		var SourceField 	= null;
+		var sourceDomMap	= null;
 		var dialogContainer = "div#CustomFieldsDialog";
 		
 		// Mapping individual dom elements to its data counterparts
@@ -21,7 +22,7 @@
 			label: 			jQuery(dialogContainer+' input[name|="customlabel"]'),
             description: 	jQuery(dialogContainer+' input[name|="customdesc"]'),	
 			choices: 		jQuery(dialogContainer+' div[name|="customchoices"]'),
-            setDefault: 1,	    
+            setDefault: 	1,	    
 		    agent: 	  {required: jQuery(dialogContainer+' input[name|="agentrequired"]')},
 			customer: {visible : jQuery(dialogContainer+' input[name|="customervisible"]'),
 					   editable: jQuery(dialogContainer+' input[name|="customereditable"]'),
@@ -73,20 +74,34 @@
 			})
 			return allfields;
 		}
+		
         
-        function constFieldDOM(dataItem, container){ 
-            var fieldContainer = container || jQuery("<li />"); 
-				fieldContainer.empty();
-			         
-            var label = jQuery("<label />").append(dataItem.label);            
-            var field = jQuery("<div />");
-            
+        function constFieldDOM(dataItem, container){
+			var fieldContainer = container || jQuery("<li />");
+			fieldContainer.empty();
+			
+			var label = jQuery("<label />").append(dataItem.label);
+			var field = jQuery("<div />");
+			var panel = jQuery("<div class='action_panel' />");	
+			var edit  = jQuery("<a href='javascript:void(0)' class='button'>Edit</a>");
+			var del   = jQuery("<a href='javascript:void(0)' class='button'>Delete</a>")
+								.bind("click", function(){
+									deleteField(fieldContainer);
+								});
+		
+			//panel.append(edit);
+			if (dataItem.fieldType != 'default'){
+				panel.append(del);
+			}
+			
+			fieldContainer.append(panel);
+			
 			var fieldAttr = '';
             switch (dataItem.type) {
                 case 'number':
                 case 'text':
 		    		fieldContainer.addClass(dataItem.type);
-                    field.append('<input type="text" '+fieldAttr+' />');
+                    field.append('<input type="text" '+fieldAttr+' disabled="true" />');
 					fieldContainer.append(label)
 						  .append(field);
                     break;
@@ -94,7 +109,7 @@
                 case 'checkbox':				
 					fieldContainer.addClass(dataItem.type);	
 					var selected = (dataItem.setDefault)?'checked':'';
-                    field.append('<input type="checkbox" '+ selected +' '+fieldAttr+' />'+dataItem.label);
+                    field.append('<input type="checkbox" '+ selected +' disabled="true" '+fieldAttr+' />'+dataItem.label);
 					fieldContainer
 						  .append(field);
                     break;
@@ -105,22 +120,20 @@
                         var defChoice = (ci == dataItem.setDefault) ? 'selected="selected"' : '';
                         field.append("<option " + defChoice + ">" + choice.value + "</option>");
                     });
-                    field.wrapInner("<select "+fieldAttr+" />");
+                    field.wrapInner("<select "+fieldAttr+" disabled='true' />");
 					fieldContainer.append(label)
 						  .append(field);
                     break;
                     
                 case 'paragraph':
 					fieldContainer.addClass(dataItem.type);
-                    field.append('<textarea '+fieldAttr+'></textarea>');
+                    field.append('<textarea disabled="true"'+fieldAttr+'></textarea>');
 					fieldContainer.append(label)
 						  .append(field);
                     break;
             }            
-			
             
 			fieldContainer.data("raw", dataItem); 
-			
 			return fieldContainer;
         }
 		 
@@ -144,7 +157,6 @@
 			.sortable({
 		            revert: true,
 					stop: function(ev, ui) { 
-		             	//console.log(ui.item.get(0));
 						type = ui.item.get(0).getAttribute('type');
 		                if (type) {
 							constFieldDOM(getFreshField(type), ui.item);
@@ -172,22 +184,22 @@
 							jQuery("#custom_form").empty();
 							init();
 							jQuery('div#resultmsg').html(data.message);
+							jQuery('div#resultmsg').show("fade", 500);
 						}
     	  	});
-			//console.log(jsonData);
 		});
 		
         
 		function innerLevelExpand(checkbox){
-			if (checkbox.checked) 
-                jQuery(checkbox).parent().parent().children('div').show();
-            else 
-                jQuery(checkbox).parent().parent().children('div').hide();			
+            jQuery("#"+checkbox.getAttribute("toggle_ele")).toggle(checkbox.checked);			
 		}
         
-        jQuery("#nestedConfig").find("input:checkbox").click(function(e){
-            innerLevelExpand(this);
-        }); 
+        jQuery("#nestedConfig")
+			.find("input:checkbox")
+			.bind("change", function(e){
+							            innerLevelExpand(this);
+							      }); 
+		
 		
 		function addChoiceinDialog(data, dom){
 			dom 	= dom || dialogDOMMap.choices;
@@ -217,7 +229,8 @@
 		function DialogOnLoad(sourceField){ 
 			// Dialog Population Method
 			jQuery(SourceField).removeClass("active");
-			SourceField = sourceField;
+			SourceField  = sourceField;
+			sourceDomMap = { "label" : jQuery(sourceField).find("label") }; 
 			jQuery(sourceField).addClass("active");
 			
 			var sourceData = jQuery(sourceField).data("raw");
@@ -247,6 +260,8 @@
 			jQuery("#DropFieldChoices").hide();
 			
 			if(sourceData.fieldType == 'default'){
+				dialogDOMMap.label.attr("disabled", true);
+				dialogDOMMap.label.addClass("disabled");
 				jQuery('#DeleteField').hide();								
 			}else{
 				jQuery('#DeleteField').show();		
@@ -282,11 +297,13 @@
 			DialogFieldPref.dialog("close");	
 		});
 		
-		jQuery("#DeleteField").click(function(ev){
-			var sourceData    = jQuery(SourceField).data("raw");
-			sourceData.action = "delete";
-			constFieldDOM(sourceData, jQuery(SourceField));
-			jQuery(SourceField).hide();			
+		var deleteField = function(sourcefield){
+			var sourceData    = jQuery(sourcefield).data("raw").action = "delete";
+			jQuery(sourcefield).hide();			
+		};
+		
+		jQuery(dialogDOMMap.label).live("keyup", function(ev){
+			sourceDomMap.label.text(this.value);
 		});
 		
         jQuery("#custom_form li").live("click", function(e){           
@@ -313,13 +330,18 @@
 					                show: 'clip' 
 					            });*/
         });
+		
         
 		  
     };
 </script>
 <% content_for :layoutType do %>single<% end %>
-<div class="pageContent" style="padding:0px;margin:0px;">
-    <h3 class="content_title withPadding">Ticket Fields</h3>
+
+<div class="header_area">
+	<h4>Ticket Fields</h4>
+</div>
+<div id="resultmsg" class="flash_info" style="display:none;"> &nbsp; </div>	
+<div class="page_area" style="padding:0px;margin:0px;">
     <div class="admin_form">
         <ul id="custom_fields" class="ui-custom-fields">
         	<h4 class="title">Add a Custom Field</h4>
@@ -339,17 +361,23 @@
                 <a href="#" class="fdbutton">Dropdown</a>
             </li>
         </ul>
-	<div id="resultmsg" > </div>	
 	<%  logger.debug "index page: #{@ticket_fields.json_data}" %>
 	<%	json_data = @ticket_fields.json_data %>
 		<div class="custom_form_outer">
-			<h3 class="content_title t_padding">Customize your “New Ticket” form.</h3>
+			<h4 class="title">
+				Customize your “New Ticket” form.
+			</h4>
 	        <ul id="custom_form" class="ui-form ui-custom-form"></ul>  
 			<input type="hidden" id="field_values" value='<%=json_data%>' />
+			<div class="button_panel" id="button_panel">
+				<a href="Javascript:void(0)" class="fdbutton" id="SaveForm">Save Form</a>
+				<%= link_to "Back", "/admin/home", :class => "fdbutton grey" %>
+				
+			</div>
 		</div>
 		
-		<div class="dialog_ticket_field" title="Field Properties" id="CustomFieldsDialog" style="display:none;">
-		    <form action="#">		    	
+		<div class="dialog_ticket_field" title="Field Properties" id="CustomFieldsDialog">
+			<a href="javascript:void(0)" id="close_button" class="close"></a>
 		        <ul class="ui-form">
 		        	<input type="hidden" name="customtype" value="" />
 		            <li>
@@ -372,9 +400,7 @@
 		                </div><span class="seperator"></span>
 		            </li>
 		            <li class="colsets" id="DropFieldChoices">
-		                <label>
-		                    Dropdown Choices							
-		                </label>
+		                <label>Dropdown Choices</label>
 		                <div>		                    
 		                    <fieldset>
 		                        <b class="dropchoice">Choices</b>
@@ -391,40 +417,42 @@
 		                </div>
 		            </li>
 		            <li>
-		                <label>
-		                    For Agents
-		                </label>
+		                <label>For Agents</label>
 		                <div class="nestedChoices">
-		                    <h4><input type="checkbox" name="agentrequired" />Required for closure<span>Field cannot be blank when solving the ticket</span></h4>
+		                    <h4>
+		                    	<label><input type="checkbox" name="agentrequired" />Required for closure</label>
+								<span>Field cannot be blank when solving the ticket</span>
+							</h4>
 		                </div>
 		                <span class="seperator"></span>
 		            </li>
 		            <li>
-		                <label>
-		                    For Customers
-		                </label>
+		                <label>For Customers</label>
 		                <div id="nestedConfig" class="nestedChoices">
-		                    <h4><input type="checkbox" name="customervisible" />Visible to customers</h4> 
-		                    <div style="display:none;">
-		                        <h4><input type="checkbox" name="customereditable" />Can Edit the field</h4>
-		                        <div style="display:none;">
-		                            <h4><input type="checkbox" name="customerrequired" />Required for ticket submission<span>no blank selection for field value is allowed when submitting a ticket online.</span></h4>
+		                    <h4>
+		                    	<label><input type="checkbox" toggle_ele="nestedlvl2" name="customervisible" />Visible to customers</label>
+							</h4> 
+		                    <div style="display:none;" id="nestedlvl2">
+		                        <h4>
+		                        	<label><input type="checkbox" toggle_ele="nestedlvl3" name="customereditable" />Can Edit the field</label>
+								</h4>
+		                        <div style="display:none;" id="nestedlvl3">
+		                            <h4>
+		                            	<label><input type="checkbox" name="customerrequired" />Required for ticket submission</label>
+										<span>no blank selection for field value is allowed when submitting a ticket online.</span>
+									</h4>
 		                        </div>
 		                    </div>
 		                </div>
 		            </li>
 		            <li>
 		                <input type="button" class="button" id="SaveField" value="Save" />
-						<input type="button" class="button" id="DeleteField" value="Delete" />  
-						<input type="button" class="button" value="Cancel" id="close_button" />
+						<!--input type="button" class="button" id="DeleteField" value="Delete" /-->  
+
 		            </li>
 		        </ul>
-		    </form>
 		</div>
 	</div> 
-	<div class="button-container admin_form">
-		<a href="Javascript:void(0)" class="fdbutton" id="SaveForm">Save</a>
-		<a href="Javascript:void(0)" class="fdbutton grey" id="cancelfrom">Cancel</a>
-	</div>
+	
 </div>
 <% content_for :dialogs do %><% end %>
