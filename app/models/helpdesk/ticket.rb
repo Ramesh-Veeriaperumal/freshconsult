@@ -379,7 +379,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def notify_by_email(notification_type)
-    Helpdesk::TicketNotifier.notify_by_email(notification_type, self)
+    Helpdesk::TicketNotifier.send_later(:notify_by_email, notification_type, self)
   end
   
   def custom_fields
