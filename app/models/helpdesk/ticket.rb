@@ -19,6 +19,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   belongs_to :account
   belongs_to :email_config
+  belongs_to :group
 
   belongs_to :responder,
     :class_name => 'User'
@@ -367,8 +368,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def notify_on_update
-    notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_GROUP) if (group_id != @old_ticket.group_id)
-    notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_AGENT) if (responder_id != @old_ticket.responder_id)
+    notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_GROUP) if (group_id != @old_ticket.group_id && group)
+    notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_AGENT) if (responder_id != @old_ticket.responder_id && responder)
     
     if status != @old_ticket.status
       return notify_by_email(EmailNotification::TICKET_RESOLVED) if (status == STATUS_KEYS_BY_TOKEN[:resolved])
@@ -424,6 +425,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       "description" => description,
       "requester"   => requester,
       "owner"       => responder,
+      "group"       => group,
       "url"         => helpdesk_ticket_url(self, :host => account.full_domain) }
   end
   #Liquid ends here
