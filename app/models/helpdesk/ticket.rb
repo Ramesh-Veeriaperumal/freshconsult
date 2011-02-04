@@ -374,7 +374,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     if status != @old_ticket.status
       return notify_by_email(EmailNotification::TICKET_RESOLVED) if (status == STATUS_KEYS_BY_TOKEN[:resolved])
       return notify_by_email(EmailNotification::TICKET_CLOSED) if (status == STATUS_KEYS_BY_TOKEN[:closed])
-      notify_by_email(EmailNotification::TICKET_REOPENED) if (status == STATUS_KEYS_BY_TOKEN[:open])
+      #notify_by_email(EmailNotification::TICKET_REOPENED) if (status == STATUS_KEYS_BY_TOKEN[:open])
     end
   end
   
@@ -429,5 +429,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
       "url"         => helpdesk_ticket_url(self, :host => account.full_domain) }
   end
   #Liquid ends here
+
+  #When the requester responds to this ticket, need to know whether to reopen?
+  def active?
+    !([STATUS_KEYS_BY_TOKEN[:resolved], STATUS_KEYS_BY_TOKEN[:closed]].include?(status))
+  end
  
 end

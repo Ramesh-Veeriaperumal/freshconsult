@@ -16,7 +16,12 @@ class EmailController < ApplicationController
       ticket = Helpdesk::Ticket.find_by_account_id_and_display_id(account.id, display_id) if display_id
       
       if ticket
-        add_email_to_ticket(ticket, params[:text])
+        comment = add_email_to_ticket(ticket, params[:text])
+        unless ticket.active?
+          ticket.update_attribute(:status, Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open])
+          notification_type = EmailNotification::TICKET_REOPENED
+        end
+        Helpdesk::TicketNotifier.notify_by_email((notification_type ||= EmailNotification::REPLIED_BY_REQUESTER), ticket, comment)
       else
         ticket = create_ticket(account, from_email, to_email)
         add_email_to_ticket(ticket)
@@ -56,7 +61,7 @@ class EmailController < ApplicationController
     end
 
     def add_email_to_ticket(ticket, mesg=nil)
-        note = ticket.notes.build(
+      note = ticket.notes.build(
           :private => false,
           :incoming => true,
           :body => mesg.nil? ? ticket.description : mesg,
@@ -64,12 +69,15 @@ class EmailController < ApplicationController
           :user => ticket.requester, #by Shan temp
           :description => "raised the ticket",
           :account_id => ticket.account_id
-        )
-        if note.save
-          Integer(params[:attachments]).times do |i|
-            #logger.debug("attachment #{i}")
-            note.attachments.create(:content => params["attachment#{i+1}"], :account_id => ticket.account_id)
-          end
+      )
+      
+      if note.save
+        Integer(params[:attachments]).times do |i|
+          #logger.debug("attachment #{i}")
+          note.attachments.create(:content => params["attachment#{i+1}"], :account_id => ticket.account_id)
         end
+      end
+      
+      note
     end
 end
