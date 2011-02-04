@@ -1,7 +1,7 @@
 require 'digest/md5'
 
 class Helpdesk::Ticket < ActiveRecord::Base 
-  
+  include ActionController::UrlWriter
   
   set_table_name "helpdesk_tickets"
   
@@ -378,7 +378,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def notify_by_email(notification_type)
-    #Helpdesk::TicketNotifier.deliver_internal_email(self, requester.email, "#{notification_type}")
+    Helpdesk::TicketNotifier.notify_by_email(notification_type, self)
   end
   
   def custom_fields
@@ -416,5 +416,16 @@ class Helpdesk::Ticket < ActiveRecord::Base
       return true if vr.pass_through(self)
     end
   end
+  
+  #To use liquid template...
+  def to_liquid
+    { "display_id"  => display_id,
+      "subject"     => subject,
+      "description" => description,
+      "requester"   => requester,
+      "owner"       => responder,
+      "url"         => helpdesk_ticket_url(self, :host => account.full_domain) }
+  end
+  #Liquid ends here
  
 end

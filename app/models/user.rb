@@ -92,9 +92,9 @@ class User < ActiveRecord::Base
   #Savage_beast changes start here
   #implement in your user model 
   def display_name
-    name
+    to_s
   end
-        
+
   #implement in your user model 
 #  def admin?
 #    false
@@ -139,6 +139,10 @@ class User < ActiveRecord::Base
   
   def to_s
     name.empty? ? email : name
+  end
+  
+  def to_liquid
+    { "name"  => to_s }
   end
 
   protected

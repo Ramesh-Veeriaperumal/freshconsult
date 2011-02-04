@@ -2,6 +2,14 @@ require 'mms2r'
 
 class Helpdesk::TicketNotifier < ActionMailer::Base
 
+  def self.notify_by_email(notification_type, ticket)
+    e_notification = ticket.account.email_notifications.find_by_notification_type(notification_type)
+    if e_notification.agent_notification
+      a_template = Liquid::Template.parse(e_notification.agent_template)
+      deliver_internal_email(ticket, ticket.responder.email, a_template.render('ticket' => ticket))
+    end
+    puts "******************** NOTIFY_BY_EMAIL in TicketNotifier called, and e_notification is #{e_notification.inspect}"
+  end
 
   def reply(ticket, note)
     body(:ticket => ticket, :note => note, :host => ticket.account.full_domain)
@@ -35,14 +43,10 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
   end
   
   def receive(email)
-    puts "Inside RECEIVE MAIL"
     retried = false
     begin
-      puts "Inside RECEIVE MAIL BEGIN"
       process_incoming(email)
-      puts "Inside RECEIVE MAIL PROCESS END"
     rescue => e #ActiveRecord::StatementInvalid
-      puts "Inside RECEIVE MAIL RESCUE"
       puts e.inspect
       puts e.backtrace
       #ActiveRecord::Base.connection.reconnect!
