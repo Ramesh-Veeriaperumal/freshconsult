@@ -988,7 +988,7 @@ ul.secondary-actions{
 		}
 		
 		.name{			
-			width:60%;
+			width:50%;
 			h3{
 				padding:4px 0px 0px 0px;
 				margin-bottom:4px;
@@ -1008,11 +1008,14 @@ ul.secondary-actions{
 			ul{
 				@include inline-block-list;
 				li{
-					padding:0px 7px 0px 0px;
+					padding:4px 7px 0px 0px;
+					
 					color:#999999;
+					font-size:12px;
 					span{
 						color:#444444;
 						text-transform:capitalize;
+						
 					}					
 				}
 				.priority{

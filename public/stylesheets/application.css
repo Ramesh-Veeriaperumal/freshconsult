@@ -1736,7 +1736,7 @@ ul.secondary-actions li {
 }
 /* line 990, ../src/application.scss */
 #pages .tickets .name, #pages .tickets-expanded .name {
-  width: 60%;
+  width: 50%;
 }
 /* line 992, ../src/application.scss */
 #pages .tickets .name h3, #pages .tickets-expanded .name h3 {
@@ -1787,35 +1787,36 @@ ul.secondary-actions li {
 }
 /* line 1010, ../src/application.scss */
 #pages .tickets .assign ul li, #pages .tickets-expanded .assign ul li {
-  padding: 0px 7px 0px 0px;
+  padding: 4px 7px 0px 0px;
   color: #999999;
+  font-size: 12px;
 }
-/* line 1013, ../src/application.scss */
+/* line 1015, ../src/application.scss */
 #pages .tickets .assign ul li span, #pages .tickets-expanded .assign ul li span {
   color: #444444;
   text-transform: capitalize;
 }
-/* line 1019, ../src/application.scss */
+/* line 1022, ../src/application.scss */
 #pages .tickets .assign ul .priority span.style_1, #pages .tickets-expanded .assign ul .priority span.style_1 {
   /* Low priority style */
   color: #666666;
 }
-/* line 1022, ../src/application.scss */
+/* line 1025, ../src/application.scss */
 #pages .tickets .assign ul .priority span.style_2, #pages .tickets-expanded .assign ul .priority span.style_2 {
   /* Medium priority style */
   color: #cc6633;
 }
-/* line 1025, ../src/application.scss */
+/* line 1028, ../src/application.scss */
 #pages .tickets .assign ul .priority span.style_3, #pages .tickets-expanded .assign ul .priority span.style_3 {
   /* High priority style */
   color: #cc6633;
 }
-/* line 1028, ../src/application.scss */
+/* line 1031, ../src/application.scss */
 #pages .tickets .assign ul .priority span.style_4, #pages .tickets-expanded .assign ul .priority span.style_4 {
   /* Urgent priority style */
   color: #cc6633;
 }
-/* line 1034, ../src/application.scss */
+/* line 1037, ../src/application.scss */
 #pages .tickets .sla, #pages .tickets-expanded .sla {
   vertical-align: top;
   text-align: right;
@@ -1823,29 +1824,29 @@ ul.secondary-actions li {
 }
 
 /* Control Buttons */
-/* line 1043, ../src/application.scss */
+/* line 1046, ../src/application.scss */
 .bulk_checkbox .button {
   padding: 2px 3px;
 }
-/* line 1045, ../src/application.scss */
+/* line 1048, ../src/application.scss */
 .bulk_checkbox .button input {
   position: relative;
   top: -1px;
 }
 
-/* line 1052, ../src/application.scss */
+/* line 1055, ../src/application.scss */
 div.leader-left {
   border-bottom: 1px dotted #ccc;
 }
 
-/* line 1057, ../src/application.scss */
+/* line 1060, ../src/application.scss */
 div.leader-right {
   float: right;
   font-weight: normal;
   margin-top: 3px;
 }
 
-/* line 1066, ../src/application.scss */
+/* line 1069, ../src/application.scss */
 .ui-dropdown-button {
   background: #efefef;
   -moz-border-radius: 0.8em;
@@ -1868,7 +1869,7 @@ div.leader-right {
   *display: inline;
 }
 
-/* line 1076, ../src/application.scss */
+/* line 1079, ../src/application.scss */
 .fdbutton {
   display: -moz-inline-box;
   -moz-box-orient: vertical;
@@ -1925,7 +1926,7 @@ div.leader-right {
   float: none;
 }
 
-/* line 1103, ../src/application.scss */
+/* line 1106, ../src/application.scss */
 .grey {
   background: #efefef;
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #f1f5ed), color-stop(1, #efefef));
@@ -1933,7 +1934,7 @@ div.leader-right {
   color: #555555 !important;
 }
 
-/* line 1109, ../src/application.scss */
+/* line 1112, ../src/application.scss */
 .button {
   display: -moz-inline-box;
   -moz-box-orient: vertical;
@@ -1986,13 +1987,13 @@ div.leader-right {
   float: none;
 }
 
-/* line 1161, ../src/application.scss */
+/* line 1164, ../src/application.scss */
 .button:hover {
   background: #eee;
   border-color: rgba(0, 0, 0, 0.3);
 }
 
-/* line 1166, ../src/application.scss */
+/* line 1169, ../src/application.scss */
 .button.selected {
   z-index: 6;
   border-color: rgba(208, 91, 63, 0.6);
@@ -2002,7 +2003,7 @@ div.leader-right {
 }
 
 /* Request Details page */
-/* line 1191, ../src/application.scss */
+/* line 1194, ../src/application.scss */
 .breadcrum {
   background: #e9ebee;
   border-bottom: 1px solid #cfd2d9;
@@ -2011,12 +2012,12 @@ div.leader-right {
   *zoom: 1;
 }
 
-/* line 1198, ../src/application.scss */
+/* line 1201, ../src/application.scss */
 .breadcrum, .crumbs {
   display: block;
   color: #555555;
 }
-/* line 1201, ../src/application.scss */
+/* line 1204, ../src/application.scss */
 .breadcrum a, .crumbs a {
   color: #666666;
   text-decoration: none;
@@ -2025,12 +2026,12 @@ div.leader-right {
   font-weight: bold;
   font-size: 12px;
 }
-/* line 1209, ../src/application.scss */
+/* line 1212, ../src/application.scss */
 .breadcrum em, .crumbs em {
   font-style: normal;
 }
 
-/* line 1215, ../src/application.scss */
+/* line 1218, ../src/application.scss */
 ul.ui-list-2col, ul.ticket_properties {
   overflow: hidden;
   *zoom: 1;
@@ -2038,7 +2039,7 @@ ul.ui-list-2col, ul.ticket_properties {
   padding: 6px 0px 3px 0px;
   margin: 0px 0px 5px 0px;
 }
-/* line 1220, ../src/application.scss */
+/* line 1223, ../src/application.scss */
 ul.ui-list-2col li, ul.ticket_properties li {
   font-weight: bold;
   color: #565656;
@@ -2046,7 +2047,7 @@ ul.ui-list-2col li, ul.ticket_properties li {
   padding: 2px 0px;
   width: 50%;
 }
-/* line 1226, ../src/application.scss */
+/* line 1229, ../src/application.scss */
 ul.ui-list-2col li span, ul.ui-list-2col li label, ul.ticket_properties li span, ul.ticket_properties li label {
   display: inline-block;
   font-weight: normal;
@@ -2055,42 +2056,42 @@ ul.ui-list-2col li span, ul.ui-list-2col li label, ul.ticket_properties li span,
   padding-right: 6px;
   font-size: inherit;
 }
-/* line 1235, ../src/application.scss */
+/* line 1238, ../src/application.scss */
 ul.ui-list-2col input, ul.ui-list-2col select, ul.ui-list-2col textarea, ul.ticket_properties input, ul.ticket_properties select, ul.ticket_properties textarea {
   width: auto;
 }
 
-/* line 1240, ../src/application.scss */
+/* line 1243, ../src/application.scss */
 .request_nav {
   float: right;
   padding: 4px 12px;
 }
-/* line 1243, ../src/application.scss */
+/* line 1246, ../src/application.scss */
 .request_nav a {
   color: #2c86c7;
   text-decoration: none;
   text-transform: uppercase;
 }
 
-/* line 1249, ../src/application.scss */
+/* line 1252, ../src/application.scss */
 a.nav_older {
   padding-left: 10px;
   background: url("../images/older_arrow.gif") no-repeat left;
 }
 
-/* line 1254, ../src/application.scss */
+/* line 1257, ../src/application.scss */
 a.nav_new {
   padding-right: 10px;
   background: url("../images/newer_arrow.gif") no-repeat right;
 }
 
-/* line 1260, ../src/application.scss */
+/* line 1263, ../src/application.scss */
 div.preview_pic {
   padding: 0px;
   float: left;
   margin-right: 10px;
 }
-/* line 1264, ../src/application.scss */
+/* line 1267, ../src/application.scss */
 div.preview_pic img {
   padding: 3px;
   background: #ffffff;
@@ -2102,7 +2103,7 @@ div.preview_pic img {
   box-shadow: #dfdfdf 0px 1px 3px;
 }
 
-/* line 1275, ../src/application.scss */
+/* line 1278, ../src/application.scss */
 div.profile_pic img {
   padding: 3px;
   background: #ffffff;
@@ -2112,13 +2113,13 @@ div.profile_pic img {
   box-shadow: #dfdfdf 0px 1px 3px;
 }
 
-/* line 1283, ../src/application.scss */
+/* line 1286, ../src/application.scss */
 .request_details {
   background: #fff;
   margin: 0px 0px 0px 0px;
   border: 1px solid #efefef;
 }
-/* line 1288, ../src/application.scss */
+/* line 1291, ../src/application.scss */
 .request_details .request_header {
   *zoom: 1;
   padding: 5px 10px;
@@ -2136,29 +2137,29 @@ div.profile_pic img {
   overflow: hidden;
   visibility: hidden;
 }
-/* line 1295, ../src/application.scss */
+/* line 1298, ../src/application.scss */
 .request_details .request_header .title {
   color: #555555;
   font-size: 16px;
 }
-/* line 1298, ../src/application.scss */
+/* line 1301, ../src/application.scss */
 .request_details .request_header .title em {
   font-style: normal;
 }
-/* line 1302, ../src/application.scss */
+/* line 1305, ../src/application.scss */
 .request_details .request_header .user_details a {
   color: #527eaa;
   text-transform: capitalize;
 }
-/* line 1306, ../src/application.scss */
+/* line 1309, ../src/application.scss */
 .request_details .request_header .user_details a:hover {
   text-decoration: none;
 }
-/* line 1309, ../src/application.scss */
+/* line 1312, ../src/application.scss */
 .request_details .request_header div.description {
   margin: 5px 5px 15px 70px;
 }
-/* line 1311, ../src/application.scss */
+/* line 1314, ../src/application.scss */
 .request_details .request_header div.description div#description-summary, .request_details .request_header div.description div#description-full {
   padding: 0px 0px 0px 0px;
   margin: 0px;
@@ -2166,17 +2167,17 @@ div.profile_pic img {
   line-height: 18px;
   font-size: 12px;
 }
-/* line 1321, ../src/application.scss */
+/* line 1324, ../src/application.scss */
 .request_details .user_details {
   color: #999999;
 }
-/* line 1324, ../src/application.scss */
+/* line 1327, ../src/application.scss */
 .request_details .request_desp {
   margin: 0px 10px 0px 10px;
   overflow: hidden;
   *zoom: 1;
 }
-/* line 1327, ../src/application.scss */
+/* line 1330, ../src/application.scss */
 .request_details .request_desp .sub_title {
   color: #454545;
   display: block;
@@ -2184,7 +2185,7 @@ div.profile_pic img {
   text-transform: capitalize;
   font-size: 14px;
 }
-/* line 1336, ../src/application.scss */
+/* line 1339, ../src/application.scss */
 .request_details .request_status {
   background: #FEFEDF;
   /* old browsers */
@@ -2199,13 +2200,13 @@ div.profile_pic img {
   top: -13px;
   border: 1px solid #d3d497;
 }
-/* line 1347, ../src/application.scss */
+/* line 1350, ../src/application.scss */
 .request_details .request_status img {
   position: absolute;
   left: -6px;
   top: 0px;
 }
-/* line 1353, ../src/application.scss */
+/* line 1356, ../src/application.scss */
 .request_details .request_status ul {
   color: #979866;
   font-weight: bold;
@@ -2213,12 +2214,12 @@ div.profile_pic img {
   list-style: none;
   margin: 0px;
 }
-/* line 1361, ../src/application.scss */
+/* line 1364, ../src/application.scss */
 .request_details .request_status ul b {
   float: left;
   font-weight: normal;
 }
-/* line 1366, ../src/application.scss */
+/* line 1369, ../src/application.scss */
 .request_details .request_status span.ltSlant {
   left: -8px;
   top: 0px;
@@ -2226,13 +2227,13 @@ div.profile_pic img {
   border-bottom-color: #d3d497;
 }
 
-/* line 1376, ../src/application.scss */
+/* line 1379, ../src/application.scss */
 .note_conv_form .overlabel {
   margin: 5px;
   color: #666;
 }
 
-/* line 1382, ../src/application.scss */
+/* line 1385, ../src/application.scss */
 .seperator {
   border-top: 1px solid #e3e5e0;
   display: block;
@@ -2240,32 +2241,32 @@ div.profile_pic img {
   margin: 5px 0px;
 }
 
-/* line 1388, ../src/application.scss */
+/* line 1391, ../src/application.scss */
 .attachment_list {
   color: #888987;
   margin-top: 3px;
 }
 
-/* line 1392, ../src/application.scss */
+/* line 1395, ../src/application.scss */
 .attachment_list li {
   padding: 3px 6px 3px 20px;
   position: relative;
 }
 
-/* line 1396, ../src/application.scss */
+/* line 1399, ../src/application.scss */
 .attachment_list li img {
   position: absolute;
   left: 0px;
   top: 3px;
 }
 
-/* line 1401, ../src/application.scss */
+/* line 1404, ../src/application.scss */
 .attachment_list li a {
   color: #2c86c7;
   text-decoration: none;
 }
 
-/* line 1406, ../src/application.scss */
+/* line 1409, ../src/application.scss */
 .request_panel {
   background: #eff6de;
   padding: 5px 0px 5px 0px;
@@ -2275,7 +2276,7 @@ div.profile_pic img {
   padding: 3px 10px;
 }
 
-/* line 1415, ../src/application.scss */
+/* line 1418, ../src/application.scss */
 .request_panel textarea {
   border: 1px solid #DFDFDF;
   color: #333333;
@@ -2287,7 +2288,7 @@ div.profile_pic img {
   text-align: left;
 }
 
-/* line 1426, ../src/application.scss */
+/* line 1429, ../src/application.scss */
 .button-container ul {
   margin: 0;
   padding: 0;
@@ -2317,12 +2318,12 @@ div.profile_pic img {
   padding-right: 0;
 }
 
-/* line 1431, ../src/application.scss */
+/* line 1434, ../src/application.scss */
 .button-container {
   text-align: right;
 }
 
-/* line 1435, ../src/application.scss */
+/* line 1438, ../src/application.scss */
 label.overlabel {
   color: #888888;
   position: absolute;
@@ -2332,7 +2333,7 @@ label.overlabel {
   margin: 8px;
 }
 
-/* line 1445, ../src/application.scss */
+/* line 1448, ../src/application.scss */
 .request_bt {
   color: #333;
   padding: 5px 12px 5px 12px;
@@ -2348,20 +2349,20 @@ label.overlabel {
   border: 1px solid #afafaf;
 }
 
-/* line 1455, ../src/application.scss */
+/* line 1458, ../src/application.scss */
 a.request_bt:hover {
   background: #fff;
   border-color: #dae0c1;
   color: #333;
 }
 
-/* line 1461, ../src/application.scss */
+/* line 1464, ../src/application.scss */
 .conversations {
   padding: 0px 0px;
   margin-bottom: 28px;
   text-align: left;
 }
-/* line 1462, ../src/application.scss */
+/* line 1465, ../src/application.scss */
 .conversations .title {
   background: #efefef;
   margin: 0px;
@@ -2369,7 +2370,7 @@ a.request_bt:hover {
   color: #333333;
   border-bottom: 1px solid #dfdfdf;
 }
-/* line 1472, ../src/application.scss */
+/* line 1475, ../src/application.scss */
 .conversations ul {
   overflow: hidden;
   *zoom: 1;
@@ -2377,7 +2378,7 @@ a.request_bt:hover {
   margin: 0px;
   padding: 0px 0px 0px 0px;
 }
-/* line 1477, ../src/application.scss */
+/* line 1480, ../src/application.scss */
 .conversations ul li.note {
   overflow: hidden;
   *zoom: 1;
@@ -2385,7 +2386,7 @@ a.request_bt:hover {
   border: 1px solid #fff;
   border-bottom: 1px solid #dfdfdf;
 }
-/* line 1482, ../src/application.scss */
+/* line 1485, ../src/application.scss */
 .conversations ul li.note div.item_actions {
   float: right;
   padding: 2px 0px;
@@ -2393,17 +2394,17 @@ a.request_bt:hover {
   top: -4px;
   visibility: hidden;
 }
-/* line 1488, ../src/application.scss */
+/* line 1491, ../src/application.scss */
 .conversations ul li.note div.item_actions a {
   color: #333333;
   font-weight: bold;
   text-decoration: none;
 }
-/* line 1493, ../src/application.scss */
+/* line 1496, ../src/application.scss */
 .conversations ul li.note div.item_actions a:hover {
   text-decoration: none;
 }
-/* line 1497, ../src/application.scss */
+/* line 1500, ../src/application.scss */
 .conversations ul li.note .note-body {
   padding: 0px 5px 5px 0px;
   margin: 0px 0px 0px 0px;
@@ -2411,42 +2412,42 @@ a.request_bt:hover {
   line-height: 18px;
   color: #555555;
 }
-/* line 1503, ../src/application.scss */
+/* line 1506, ../src/application.scss */
 .conversations ul li.note .note-body p {
   padding: 0px;
   padding-bottom: 6px;
   margin: 0px;
 }
-/* line 1510, ../src/application.scss */
+/* line 1513, ../src/application.scss */
 .conversations ul li.note:hover {
   border: 1px solid #cfcfcf;
   background-color: #f6f6f6;
 }
-/* line 1513, ../src/application.scss */
+/* line 1516, ../src/application.scss */
 .conversations ul li.note:hover div.item_actions {
   visibility: visible;
 }
-/* line 1518, ../src/application.scss */
+/* line 1521, ../src/application.scss */
 .conversations h5 {
   margin-bottom: 5px;
 }
-/* line 1521, ../src/application.scss */
+/* line 1524, ../src/application.scss */
 .conversations ul.attachment_list {
   padding: 2px;
   margin: 2px;
 }
-/* line 1523, ../src/application.scss */
+/* line 1526, ../src/application.scss */
 .conversations ul.attachment_list li {
   padding: 0px;
   margin: 0px;
   overflow: hidden;
   *zoom: 1;
 }
-/* line 1526, ../src/application.scss */
+/* line 1529, ../src/application.scss */
 .conversations ul.attachment_list li span {
   display: inline-block;
 }
-/* line 1532, ../src/application.scss */
+/* line 1535, ../src/application.scss */
 .conversations ul.note-actions {
   margin: 0;
   padding: 0;
@@ -2475,43 +2476,43 @@ a.request_bt:hover {
 .conversations ul.note-actions li:last-child, .conversations ul.note-actions li.last {
   padding-right: 0;
 }
-/* line 1535, ../src/application.scss */
+/* line 1538, ../src/application.scss */
 .conversations ul.note-actions a {
   font-size: 0.9em;
 }
-/* line 1539, ../src/application.scss */
+/* line 1542, ../src/application.scss */
 .conversations .left_info {
   float: left;
   position: relative;
   z-index: 2;
   width: 60px;
 }
-/* line 1545, ../src/application.scss */
+/* line 1548, ../src/application.scss */
 .conversations .conv_details {
   padding: 0px 0px;
   margin-left: 70px;
   margin-right: 30px;
 }
-/* line 1549, ../src/application.scss */
+/* line 1552, ../src/application.scss */
 .conversations .conv_details h4 {
   margin: 0px;
   padding: 0px 0px 6px 0px;
 }
-/* line 1553, ../src/application.scss */
+/* line 1556, ../src/application.scss */
 .conversations .conv_details a.user_name {
   font-weight: bold;
   text-decoration: none;
   color: #444;
   font-size: 12px;
 }
-/* line 1559, ../src/application.scss */
+/* line 1562, ../src/application.scss */
 .conversations .conv_details em.timestamp {
   color: #888888;
   display: block;
   font-style: normal;
   font-size: 12px;
 }
-/* line 1566, ../src/application.scss */
+/* line 1569, ../src/application.scss */
 .conversations .conv_details .icon_lock {
   background: url("../images/private_lock.gif") #e4e4b9 left top no-repeat;
   float: right;
@@ -2522,39 +2523,39 @@ a.request_bt:hover {
   height: 19px;
 }
 
-/* line 1578, ../src/application.scss */
+/* line 1581, ../src/application.scss */
 .user_details_widget {
   background: #f7fbfd;
   border: 1px solid #b9d6eb;
   margin: 16px 8px 6px 8px;
 }
-/* line 1582, ../src/application.scss */
+/* line 1585, ../src/application.scss */
 .user_details_widget h3.title, .user_details_widget .user_details, .user_details_widget .ui-list_with_icon {
   padding: 5px 6px 5px 6px;
 }
-/* line 1585, ../src/application.scss */
+/* line 1588, ../src/application.scss */
 .user_details_widget h3.title {
   color: #666666;
   margin: 0px;
 }
-/* line 1590, ../src/application.scss */
+/* line 1593, ../src/application.scss */
 .user_details_widget .user_details img {
   float: left;
   margin-right: 6px;
   margin-top: 4px;
 }
-/* line 1595, ../src/application.scss */
+/* line 1598, ../src/application.scss */
 .user_details_widget .user_details a, .user_details_widget .user_details em {
   display: block;
   font-style: normal;
   text-decoration: none;
 }
-/* line 1601, ../src/application.scss */
+/* line 1604, ../src/application.scss */
 .user_details_widget .ui-list_with_icon {
   background: #ffffff;
 }
 
-/* line 1606, ../src/application.scss */
+/* line 1609, ../src/application.scss */
 .ui-rightColSubTab {
   margin: 0;
   padding: 0;
@@ -2583,7 +2584,7 @@ a.request_bt:hover {
 .ui-rightColSubTab li:last-child, .ui-rightColSubTab li.last {
   padding-right: 0;
 }
-/* line 1610, ../src/application.scss */
+/* line 1613, ../src/application.scss */
 .ui-rightColSubTab li a {
   background: #f3f8fd;
   border: 1px solid #d7e8f5;
@@ -2606,11 +2607,11 @@ a.request_bt:hover {
   border-top-right-radius: 0.55em;
   text-decoration: none;
 }
-/* line 1622, ../src/application.scss */
+/* line 1625, ../src/application.scss */
 .ui-rightColSubTab li.first {
   margin-left: 6px;
 }
-/* line 1625, ../src/application.scss */
+/* line 1628, ../src/application.scss */
 .ui-rightColSubTab li.active a {
   border-color: #b9d6eb;
   background-color: #ffffff;
@@ -2620,27 +2621,27 @@ a.request_bt:hover {
   font-weight: bold;
 }
 
-/* line 1635, ../src/application.scss */
+/* line 1638, ../src/application.scss */
 .ui-rightList {
   font-size: 0.75em;
   background: #fff;
   padding: 8px 0px 10px 0px;
 }
 
-/* line 1640, ../src/application.scss */
+/* line 1643, ../src/application.scss */
 .ui-rightList li {
   padding: 4px 10px 4px 23px;
   color: #41658a;
   position: relative;
 }
 
-/* line 1645, ../src/application.scss */
+/* line 1648, ../src/application.scss */
 .ui-rightList li a {
   color: #41658a;
 }
 
 /* User Guide styles */
-/* line 1650, ../src/application.scss */
+/* line 1653, ../src/application.scss */
 .sol_category {
   padding: 55px 5px 5px 5px;
   margin: 0px;
@@ -2649,7 +2650,7 @@ a.request_bt:hover {
   text-align: center;
 }
 
-/* line 1659, ../src/application.scss */
+/* line 1662, ../src/application.scss */
 ul.icon_grid {
   margin: 0;
   padding: 0;
@@ -2679,14 +2680,14 @@ ul.icon_grid li:first-child, ul.icon_grid li.first {
 ul.icon_grid li:last-child, ul.icon_grid li.last {
   padding-right: 0;
 }
-/* line 1662, ../src/application.scss */
+/* line 1665, ../src/application.scss */
 ul.icon_grid li {
   width: 80px;
   height: 80px;
   margin: 0px 0px;
   padding: 0px 0px 10px 0px;
 }
-/* line 1667, ../src/application.scss */
+/* line 1670, ../src/application.scss */
 ul.icon_grid li a {
   position: relative;
   display: block;
@@ -2701,7 +2702,7 @@ ul.icon_grid li a {
   -webkit-border-bottom-right-radius: 6px;
   border-radius: 6px 6px 6px 6px;
 }
-/* line 1674, ../src/application.scss */
+/* line 1677, ../src/application.scss */
 ul.icon_grid li a em {
   display: block;
   font-style: normal;
@@ -2709,17 +2710,17 @@ ul.icon_grid li a em {
   white-space: normal;
   font-size: 12px;
 }
-/* line 1684, ../src/application.scss */
+/* line 1687, ../src/application.scss */
 ul.icon_grid li a:hover {
   color: #336699;
   background: #daeaf6;
 }
 
-/* line 1692, ../src/application.scss */
+/* line 1695, ../src/application.scss */
 ul.solution_folder.icon_grid {
   padding: 10px;
 }
-/* line 1694, ../src/application.scss */
+/* line 1697, ../src/application.scss */
 ul.solution_folder.icon_grid li {
   height: auto;
   position: relative;
@@ -2727,7 +2728,7 @@ ul.solution_folder.icon_grid li {
   border: 1px solid red;
   padding: 0px;
 }
-/* line 1700, ../src/application.scss */
+/* line 1703, ../src/application.scss */
 ul.solution_folder.icon_grid li a.sol_category {
   margin: 10px 0px;
   padding: 5px 5px 5px 5px;
@@ -2739,12 +2740,12 @@ ul.solution_folder.icon_grid li a.sol_category {
   text-overflow: ellipsis;
   -moz-binding: url('/stylesheets/xml/ellipsis.xml#ellipsis');
 }
-/* line 1706, ../src/application.scss */
+/* line 1709, ../src/application.scss */
 ul.solution_folder.icon_grid li a:hover {
   color: #336699;
   background-color: #efefef;
 }
-/* line 1710, ../src/application.scss */
+/* line 1713, ../src/application.scss */
 ul.solution_folder.icon_grid li span.count {
   -moz-border-radius: 4px 4px 4px 4px;
   -webkit-border-top-left-radius: 4px;
@@ -2763,19 +2764,19 @@ ul.solution_folder.icon_grid li span.count {
   z-index: 2;
 }
 
-/* line 1725, ../src/application.scss */
+/* line 1728, ../src/application.scss */
 .admin {
   padding: 10px 0px;
   margin: 0px 20px;
   border-bottom: 1px solid #ededed;
   border-top: 1px solid #fefefe;
 }
-/* line 1731, ../src/application.scss */
+/* line 1734, ../src/application.scss */
 .admin ul.icon_grid li {
   width: 100px;
   padding-right: 20px;
 }
-/* line 1736, ../src/application.scss */
+/* line 1739, ../src/application.scss */
 .admin h3.content_title {
   padding: 5px 0px 15px 0px;
   font-weight: bold;
@@ -2783,39 +2784,39 @@ ul.solution_folder.icon_grid li span.count {
   margin: 0px;
 }
 
-/* line 1743, ../src/application.scss */
+/* line 1746, ../src/application.scss */
 .guide_page {
   padding: 10px;
   border: 1px solid #efefef;
 }
-/* line 1748, ../src/application.scss */
+/* line 1751, ../src/application.scss */
 .guide_page ul li a {
   color: #444;
 }
-/* line 1751, ../src/application.scss */
+/* line 1754, ../src/application.scss */
 .guide_page ul li a:hover {
   text-decoration: none;
 }
 
-/* line 1758, ../src/application.scss */
+/* line 1761, ../src/application.scss */
 .product_help, .general_help {
   float: left;
   width: 48%;
 }
 
-/* line 1762, ../src/application.scss */
+/* line 1765, ../src/application.scss */
 .general_help {
   border-left: 2px solid #efefef;
   padding-left: 2%;
 }
 
-/* line 1768, ../src/application.scss */
+/* line 1771, ../src/application.scss */
 .guide_details {
   background: #fefefe;
   padding: 4px 8% 4px 12px;
 }
 
-/* line 1775, ../src/application.scss */
+/* line 1778, ../src/application.scss */
 .product_title {
   text-align: center;
   padding: 5px 0px;
@@ -2836,13 +2837,13 @@ ul.solution_folder.icon_grid li span.count {
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='$lightBase', endColorstr='$base',GradientType=0 );
   /* ie */
 }
-/* line 1786, ../src/application.scss */
+/* line 1789, ../src/application.scss */
 .product_title a {
   font-size: 1.1em;
   color: #666666;
   text-decoration: none;
 }
-/* line 1791, ../src/application.scss */
+/* line 1794, ../src/application.scss */
 .product_title a em {
   font-style: normal;
   display: block;
@@ -2850,33 +2851,33 @@ ul.solution_folder.icon_grid li span.count {
   color: #666666;
 }
 
-/* line 1800, ../src/application.scss */
+/* line 1803, ../src/application.scss */
 .tableofcontents {
   padding: 0px;
   margin: 12px 5px 6px 18px;
   list-style: none;
 }
-/* line 1803, ../src/application.scss */
+/* line 1806, ../src/application.scss */
 .tableofcontents h4 {
   margin: 8px 0px 6px 0px;
 }
-/* line 1805, ../src/application.scss */
+/* line 1808, ../src/application.scss */
 .tableofcontents h4 a {
   text-decoration: none;
   color: #393939;
 }
-/* line 1810, ../src/application.scss */
+/* line 1813, ../src/application.scss */
 .tableofcontents ul {
   margin: 0px;
   padding: 0px 6px 6px 8px;
   list-style: none;
 }
-/* line 1815, ../src/application.scss */
+/* line 1818, ../src/application.scss */
 .tableofcontents a:hover {
   text-decoration: none;
 }
 
-/* line 1821, ../src/application.scss */
+/* line 1824, ../src/application.scss */
 .search_box input {
   display: inline-block;
   border: 1px solid #afafaf;
@@ -2890,7 +2891,7 @@ ul.solution_folder.icon_grid li span.count {
   width: 300px;
 }
 
-/* line 1832, ../src/application.scss */
+/* line 1835, ../src/application.scss */
 .contactForm {
   padding-top: 20px;
   /*
@@ -2925,17 +2926,17 @@ ul.solution_folder.icon_grid li span.count {
   	color: #999999;
   }*/
 }
-/* line 1834, ../src/application.scss */
+/* line 1837, ../src/application.scss */
 .contactForm .personalCard {
   background: #E7F1E0;
   background: -moz-linear-gradient(top, #e7f1e0 0%, #daecd4 100%);
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #e7f1e0), color-stop(100%, #daecd4));
 }
-/* line 1838, ../src/application.scss */
+/* line 1841, ../src/application.scss */
 .contactForm .personalCard img {
   float: left;
 }
-/* line 1842, ../src/application.scss */
+/* line 1845, ../src/application.scss */
 .contactForm ul {
   list-style: none;
   padding: 0px;
@@ -2947,37 +2948,37 @@ ul.solution_folder.icon_grid li span.count {
   list-style-type: none;
   margin-left: 0px;
 }
-/* line 1846, ../src/application.scss */
+/* line 1849, ../src/application.scss */
 .contactForm label {
   font-size: 1.0em;
   display: inline-block;
 }
-/* line 1850, ../src/application.scss */
+/* line 1853, ../src/application.scss */
 .contactForm .overlabel {
   margin-top: 7px;
   color: #aaaaaa;
 }
-/* line 1854, ../src/application.scss */
+/* line 1857, ../src/application.scss */
 .contactForm input {
   display: inline-block;
 }
 
-/* line 1892, ../src/application.scss */
+/* line 1895, ../src/application.scss */
 .ui-login {
   width: 380px;
 }
 
-/* line 1896, ../src/application.scss */
+/* line 1899, ../src/application.scss */
 .help_text {
   padding: 2px 0px 0px 0px;
 }
-/* line 1898, ../src/application.scss */
+/* line 1901, ../src/application.scss */
 .help_text a {
   text-decoration: none;
   color: #336699;
 }
 
-/* line 1904, ../src/application.scss */
+/* line 1907, ../src/application.scss */
 .assign-agent {
   background: #f5f5f5;
   -moz-border-radius: 6px 6px 6px 6px;
@@ -2995,7 +2996,7 @@ ul.solution_folder.icon_grid li span.count {
   margin: 3px 0px;
 }
 
-/* line 1914, ../src/application.scss */
+/* line 1917, ../src/application.scss */
 .ui-form {
   list-style: none;
   *zoom: 1;
@@ -3030,32 +3031,32 @@ ul.solution_folder.icon_grid li span.count {
   overflow: hidden;
   visibility: hidden;
 }
-/* line 1925, ../src/application.scss */
+/* line 1928, ../src/application.scss */
 .ui-form li {
   padding: 0px 0px 5px 0px;
   margin: 0px;
   float: left;
   width: 100%;
 }
-/* line 1929, ../src/application.scss */
+/* line 1932, ../src/application.scss */
 .ui-form li a.fdbutton {
   min-width: 110px;
   width: auto !important;
   width: 110px;
 }
-/* line 1934, ../src/application.scss */
+/* line 1937, ../src/application.scss */
 .ui-form li.text, .ui-form li.paragraph {
   width: 98%;
 }
-/* line 1937, ../src/application.scss */
+/* line 1940, ../src/application.scss */
 .ui-form li.dropdown, .ui-form li.small {
   width: 48%;
 }
-/* line 1941, ../src/application.scss */
+/* line 1944, ../src/application.scss */
 .ui-form li.medium {
   width: 75%;
 }
-/* line 1945, ../src/application.scss */
+/* line 1948, ../src/application.scss */
 .ui-form label, .ui-form li.checkbox {
   font-weight: normal;
   padding: 4px 0px;
@@ -3064,31 +3065,31 @@ ul.solution_folder.icon_grid li span.count {
   color: #565656;
   font-size: 14px;
 }
-/* line 1953, ../src/application.scss */
+/* line 1956, ../src/application.scss */
 .ui-form li.checkbox {
   padding: 10px 0px;
   overflow: hidden;
   *zoom: 1;
 }
-/* line 1956, ../src/application.scss */
+/* line 1959, ../src/application.scss */
 .ui-form li.checkbox input, .ui-form li.checkbox label {
   float: left;
 }
-/* line 1959, ../src/application.scss */
+/* line 1962, ../src/application.scss */
 .ui-form li.checkbox label {
   position: relative;
   font-size: 12px;
   top: -3px;
   left: 3px;
 }
-/* line 1966, ../src/application.scss */
+/* line 1969, ../src/application.scss */
 .ui-form label.overlabel {
   color: #999999;
   margin-left: 8px;
   margin-top: 0px;
   font-size: 14px;
 }
-/* line 1972, ../src/application.scss */
+/* line 1975, ../src/application.scss */
 .ui-form input.text, .ui-form textarea {
   margin: 0px 0px 3px 0px;
   color: #3f3f3f;
@@ -3103,28 +3104,28 @@ ul.solution_folder.icon_grid li span.count {
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #dfdfdf), color-stop(3px, white), color-stop(100%, white));
   /* webkit */
 }
-/* line 1981, ../src/application.scss */
+/* line 1984, ../src/application.scss */
 .ui-form textarea {
   font-family: inherit;
   font-size: 9pt;
   line-height: 16px;
   overflow: auto;
 }
-/* line 1987, ../src/application.scss */
+/* line 1990, ../src/application.scss */
 .ui-form input.very_small {
   width: 200px;
 }
-/* line 1990, ../src/application.scss */
+/* line 1993, ../src/application.scss */
 .ui-form textarea.smallpara {
   height: 50px;
 }
-/* line 1993, ../src/application.scss */
+/* line 1996, ../src/application.scss */
 .ui-form select {
   width: auto;
   font-size: 1.0em;
   font-weight: normal;
 }
-/* line 1998, ../src/application.scss */
+/* line 2001, ../src/application.scss */
 .ui-form input.text:focus, .ui-form textarea:focus {
   background: #f7fdef;
   /* old browsers */
@@ -3134,27 +3135,27 @@ ul.solution_folder.icon_grid li span.count {
   /* webkit */
   border-color: #5b711f;
 }
-/* line 2002, ../src/application.scss */
+/* line 2005, ../src/application.scss */
 .ui-form span {
   font-weight: normal;
   font-size: 0.9em;
   color: #777777;
   display: block;
 }
-/* line 2009, ../src/application.scss */
+/* line 2012, ../src/application.scss */
 .ui-form .largefield label {
   font-size: 1.4em;
 }
-/* line 2012, ../src/application.scss */
+/* line 2015, ../src/application.scss */
 .ui-form .largefield input {
   font-size: 1.4em;
 }
-/* line 2016, ../src/application.scss */
+/* line 2019, ../src/application.scss */
 .ui-form .seperator {
   margin-bottom: 0px;
   padding: 1px;
 }
-/* line 2020, ../src/application.scss */
+/* line 2023, ../src/application.scss */
 .ui-form .button-container {
   margin-top: 18px;
   background: #d4ebd4;
@@ -3166,56 +3167,56 @@ ul.solution_folder.icon_grid li span.count {
   border-radius: 0.6em;
   text-align: right;
 }
-/* line 2025, ../src/application.scss */
+/* line 2028, ../src/application.scss */
 .ui-form .button-container input.button {
   font-size: 1em;
   padding: 5px 8px;
 }
-/* line 2030, ../src/application.scss */
+/* line 2033, ../src/application.scss */
 .ui-form .check_box {
   overflow: hidden;
   *zoom: 1;
 }
-/* line 2032, ../src/application.scss */
+/* line 2035, ../src/application.scss */
 .ui-form .check_box label {
   float: left;
   font-size: 1.4em;
 }
-/* line 2036, ../src/application.scss */
+/* line 2039, ../src/application.scss */
 .ui-form .check_box input {
   float: left;
   margin: 5px;
 }
-/* line 2041, ../src/application.scss */
+/* line 2044, ../src/application.scss */
 .ui-form .inline_field {
   margin: 0px 0px 10px 30px;
 }
-/* line 2043, ../src/application.scss */
+/* line 2046, ../src/application.scss */
 .ui-form .inline_field input {
   width: 45%;
   margin: 0px;
 }
-/* line 2047, ../src/application.scss */
+/* line 2050, ../src/application.scss */
 .ui-form .inline_field label {
   font-size: 1.2em;
 }
-/* line 2052, ../src/application.scss */
+/* line 2055, ../src/application.scss */
 .ui-form .inlineChecklist label {
   float: left;
   font-size: 1em;
   padding: 5px 16px 0px 0px;
 }
-/* line 2057, ../src/application.scss */
+/* line 2060, ../src/application.scss */
 .ui-form .inlineChecklist input {
   top: 0px;
 }
-/* line 2061, ../src/application.scss */
+/* line 2064, ../src/application.scss */
 .ui-form .colsets {
   /*background:lighten($base, 8%);
   @include border-radius(0.2em);
   */
 }
-/* line 2065, ../src/application.scss */
+/* line 2068, ../src/application.scss */
 .ui-form .colsets fieldset {
   *zoom: 1;
   margin: 0px;
@@ -3232,7 +3233,7 @@ ul.solution_folder.icon_grid li span.count {
   overflow: hidden;
   visibility: hidden;
 }
-/* line 2072, ../src/application.scss */
+/* line 2075, ../src/application.scss */
 .ui-form .colsets fieldset .dropchoice, .ui-form .colsets fieldset .tags {
   *zoom: 1;
   float: left;
@@ -3248,77 +3249,77 @@ ul.solution_folder.icon_grid li span.count {
   overflow: hidden;
   visibility: hidden;
 }
-/* line 2077, ../src/application.scss */
+/* line 2080, ../src/application.scss */
 .ui-form .colsets fieldset .dropchoice input, .ui-form .colsets fieldset .tags input {
   width: 95%;
   float: left;
 }
-/* line 2082, ../src/application.scss */
+/* line 2085, ../src/application.scss */
 .ui-form .colsets fieldset .dropchoice {
   width: 35%;
 }
-/* line 2085, ../src/application.scss */
+/* line 2088, ../src/application.scss */
 .ui-form .colsets fieldset .tags {
   width: 50%;
 }
-/* line 2088, ../src/application.scss */
+/* line 2091, ../src/application.scss */
 .ui-form .colsets fieldset img {
   position: absolute;
   right: 6px;
   top: 3px;
 }
-/* line 2094, ../src/application.scss */
+/* line 2097, ../src/application.scss */
 .ui-form .colsets fieldset.addchoice {
   border: 1px solid #dfdfdf;
   background: #ffffff;
   padding: 3px;
 }
-/* line 2102, ../src/application.scss */
+/* line 2105, ../src/application.scss */
 .ui-form .choicelist label {
   font-size: 1.1em;
 }
-/* line 2105, ../src/application.scss */
+/* line 2108, ../src/application.scss */
 .ui-form .choicelist label.radiolabel {
   font-size: 1em;
   float: left;
   padding: 0px 5px;
   margin-right: 10px;
 }
-/* line 2111, ../src/application.scss */
+/* line 2114, ../src/application.scss */
 .ui-form .choicelist input.radio {
   float: left;
 }
-/* line 2116, ../src/application.scss */
+/* line 2119, ../src/application.scss */
 .ui-form div.nestedChoices {
   overflow: hidden;
   *zoom: 1;
   padding-bottom: 10px;
 }
-/* line 2119, ../src/application.scss */
+/* line 2122, ../src/application.scss */
 .ui-form div.nestedChoices div {
   margin: 5px 0px 0px 20px;
   padding: 4px 0px 0px 4px;
   border: 1px dotted #afafaf;
   border-width: 0px 0px 0px 1px;
 }
-/* line 2125, ../src/application.scss */
+/* line 2128, ../src/application.scss */
 .ui-form div.nestedChoices input {
   margin-right: 3px;
   position: relative;
   top: -1px;
 }
-/* line 2130, ../src/application.scss */
+/* line 2133, ../src/application.scss */
 .ui-form div.nestedChoices h4 {
   font-size: 1.1em;
   margin: 0px;
   padding: 3px 0px 4px 4px;
 }
-/* line 2134, ../src/application.scss */
+/* line 2137, ../src/application.scss */
 .ui-form div.nestedChoices h4 span {
   font-size: 0.9em;
   padding: 6px 3px 3px 16px;
 }
-/* line 2138, ../src/application.scss */
+/* line 2141, ../src/application.scss */
 .ui-form div.nestedChoices h4 label {
   padding: 0px;
   margin: 0px;
@@ -3326,49 +3327,49 @@ ul.solution_folder.icon_grid li span.count {
   font-size: 12px;
   display: inline;
 }
-/* line 2146, ../src/application.scss */
+/* line 2149, ../src/application.scss */
 .ui-form div.nestedChoices label {
   float: none;
   padding-left: 10px;
 }
-/* line 2150, ../src/application.scss */
+/* line 2153, ../src/application.scss */
 .ui-form div.nestedChoices span {
   color: #666666;
 }
-/* line 2155, ../src/application.scss */
+/* line 2158, ../src/application.scss */
 .ui-form li.textleft {
   overflow: hidden;
   *zoom: 1;
   position: relative;
 }
-/* line 2158, ../src/application.scss */
+/* line 2161, ../src/application.scss */
 .ui-form li.textleft label {
   position: absolute;
   left: 6px;
   top: 3px;
   width: 25%;
 }
-/* line 2165, ../src/application.scss */
+/* line 2168, ../src/application.scss */
 .ui-form label.error {
   font-size: 1em;
   color: red;
 }
-/* line 2169, ../src/application.scss */
+/* line 2172, ../src/application.scss */
 .ui-form fieldset.addchoice {
   padding: 0px;
   color: #999999;
   cursor: pointer;
 }
-/* line 2175, ../src/application.scss */
+/* line 2178, ../src/application.scss */
 .ui-form fieldset.addchoice:hover {
   background: #f8f8f8;
 }
-/* line 2178, ../src/application.scss */
+/* line 2181, ../src/application.scss */
 .ui-form .conditionset {
   border: 1px solid #cfcfcf;
   padding: 0px;
 }
-/* line 2181, ../src/application.scss */
+/* line 2184, ../src/application.scss */
 .ui-form .conditionset fieldset {
   *zoom: 1;
   padding: 5px 0px 5px 4px;
@@ -3385,13 +3386,13 @@ ul.solution_folder.icon_grid li span.count {
   overflow: hidden;
   visibility: hidden;
 }
-/* line 2188, ../src/application.scss */
+/* line 2191, ../src/application.scss */
 .ui-form .conditionset fieldset * {
   float: left;
   width: auto;
   margin: 2px 4px;
 }
-/* line 2193, ../src/application.scss */
+/* line 2196, ../src/application.scss */
 .ui-form .conditionset fieldset .add, .ui-form .conditionset fieldset .delete {
   position: absolute;
   margin: 0px;
@@ -3400,28 +3401,28 @@ ul.solution_folder.icon_grid li span.count {
   right: 10px;
   top: 5px;
 }
-/* line 2201, ../src/application.scss */
+/* line 2204, ../src/application.scss */
 .ui-form .conditionset fieldset div.controls {
   width: 95%;
 }
-/* line 2205, ../src/application.scss */
+/* line 2208, ../src/application.scss */
 .ui-form .conditionset fieldset input.text {
   width: 300px;
   font-size: 10pt;
 }
-/* line 2209, ../src/application.scss */
+/* line 2212, ../src/application.scss */
 .ui-form .conditionset fieldset textarea.paragraph {
   width: 400px;
 }
-/* line 2213, ../src/application.scss */
+/* line 2216, ../src/application.scss */
 .ui-form .conditionset fieldset div.s_comment {
   width: 520px;
 }
-/* line 2215, ../src/application.scss */
+/* line 2218, ../src/application.scss */
 .ui-form .conditionset fieldset div.s_comment .paragraph {
   width: 98%;
 }
-/* line 2219, ../src/application.scss */
+/* line 2222, ../src/application.scss */
 .ui-form .conditionset fieldset div.s_email {
   float: none;
   display: block;
@@ -3431,26 +3432,26 @@ ul.solution_folder.icon_grid li span.count {
   overflow: hidden;
   *zoom: 1;
 }
-/* line 2226, ../src/application.scss */
+/* line 2229, ../src/application.scss */
 .ui-form .conditionset fieldset div.s_email div {
   width: 100%;
   padding: 4px 0px;
   font-size: 12px;
   border-bottom: 1px solid #cfcfcf;
 }
-/* line 2231, ../src/application.scss */
+/* line 2234, ../src/application.scss */
 .ui-form .conditionset fieldset div.s_email div em {
   font-style: normal;
 }
-/* line 2234, ../src/application.scss */
+/* line 2237, ../src/application.scss */
 .ui-form .conditionset fieldset div.s_email div b {
   width: 180px;
 }
-/* line 2237, ../src/application.scss */
+/* line 2240, ../src/application.scss */
 .ui-form .conditionset fieldset div.s_email div input.text, .ui-form .conditionset fieldset div.s_email div textarea.paragraph {
   width: 590px;
 }
-/* line 2240, ../src/application.scss */
+/* line 2243, ../src/application.scss */
 .ui-form .conditionset fieldset div.s_email div a.l_placeholder {
   clear: left;
   float: right;
@@ -3459,31 +3460,31 @@ ul.solution_folder.icon_grid li span.count {
   color: #0078BD;
   border-bottom: 1px dotted #0078BD;
 }
-/* line 2248, ../src/application.scss */
+/* line 2251, ../src/application.scss */
 .ui-form .conditionset fieldset div.s_email div a.l_placeholder:hover {
   border-bottom: 1px solid #0078BD;
 }
-/* line 2254, ../src/application.scss */
+/* line 2257, ../src/application.scss */
 .ui-form .conditionset fieldset span {
   margin: 0px;
   padding: 0px;
 }
-/* line 2258, ../src/application.scss */
+/* line 2261, ../src/application.scss */
 .ui-form .conditionset fieldset span.sort_handle:hover {
   background-color: #fafafa;
 }
-/* line 2262, ../src/application.scss */
+/* line 2265, ../src/application.scss */
 .ui-form .conditionset fieldset label.checkbox {
   width: 100%;
   font-size: 1.3em;
 }
-/* line 2267, ../src/application.scss */
+/* line 2270, ../src/application.scss */
 .ui-form .conditionset div {
   margin: 0px;
   padding: 0px;
 }
 
-/* line 2274, ../src/application.scss */
+/* line 2277, ../src/application.scss */
 a.addchoice {
   padding: 5px;
   color: #999999;
@@ -3514,72 +3515,72 @@ a.addchoice:active {
   color: #336699;
 }
 
-/* line 2288, ../src/application.scss */
+/* line 2291, ../src/application.scss */
 a.addchoice:hover {
   background-color: #f8f8f8;
 }
 
-/* line 2292, ../src/application.scss */
+/* line 2295, ../src/application.scss */
 .grid {
   border: 1px solid #cfcfcf;
   padding: 0px;
   background: #f6f6f6;
 }
-/* line 2296, ../src/application.scss */
+/* line 2299, ../src/application.scss */
 .grid table {
   padding: 0px;
   margin: 0px;
   font-size: 12px;
 }
-/* line 2299, ../src/application.scss */
+/* line 2302, ../src/application.scss */
 .grid table th, .grid table td {
   padding: 8px 10px;
   vertical-align: top;
 }
-/* line 2303, ../src/application.scss */
+/* line 2306, ../src/application.scss */
 .grid table th {
   line-height: 18px;
 }
-/* line 2305, ../src/application.scss */
+/* line 2308, ../src/application.scss */
 .grid table th span {
   display: block;
   font-weight: normal;
 }
-/* line 2310, ../src/application.scss */
+/* line 2313, ../src/application.scss */
 .grid table td {
   background: #efefef;
   border-top: 1px solid #cfcfcf;
 }
-/* line 2311, ../src/application.scss */
+/* line 2314, ../src/application.scss */
 .grid table td label {
   font-size: 12px;
   padding: 0px 6px;
   color: #555555;
 }
-/* line 2315, ../src/application.scss */
+/* line 2318, ../src/application.scss */
 .grid table td label em {
   font-style: normal;
   font-weight: bold;
   text-transform: capitalize;
   color: #000000;
 }
-/* line 2326, ../src/application.scss */
+/* line 2329, ../src/application.scss */
 .grid .olist {
   list-style: decimal;
 }
-/* line 2330, ../src/application.scss */
+/* line 2333, ../src/application.scss */
 .grid .grid_form td {
   border: 0px;
   padding: 6px 10px 0px 10px;
   background: #fafafa;
 }
-/* line 2335, ../src/application.scss */
+/* line 2338, ../src/application.scss */
 .grid .grid_form .button-container {
   text-align: right;
   padding: 0px 10px 10px 0px;
 }
 
-/* line 2343, ../src/application.scss */
+/* line 2346, ../src/application.scss */
 .grid ul {
   list-style: none;
   margin: 0px;
@@ -3596,7 +3597,7 @@ a.addchoice:hover {
   list-style-type: none;
   margin-left: 0px;
 }
-/* line 2350, ../src/application.scss */
+/* line 2353, ../src/application.scss */
 .grid ul li {
   margin: 0px;
   padding: 0px;
@@ -3604,7 +3605,7 @@ a.addchoice:hover {
   width: 33%;
 }
 
-/* line 2359, ../src/application.scss */
+/* line 2362, ../src/application.scss */
 span.sort_handle {
   position: relative;
   left: 0px;
@@ -3621,7 +3622,7 @@ span.sort_handle {
   border-radius: 5px 5px 5px 5px;
 }
 
-/* line 2370, ../src/application.scss */
+/* line 2373, ../src/application.scss */
 .custom_form_outer {
   *zoom: 1;
   width: 60%;
@@ -3637,7 +3638,7 @@ span.sort_handle {
   visibility: hidden;
 }
 
-/* line 2376, ../src/application.scss */
+/* line 2379, ../src/application.scss */
 h4.content_title {
   margin: 0px;
   font-size: 16px;
@@ -3645,19 +3646,19 @@ h4.content_title {
   padding: 0px;
 }
 
-/* line 2383, ../src/application.scss */
+/* line 2386, ../src/application.scss */
 h4.list_title {
   margin: 3px 8px;
   padding: 0px;
 }
 
-/* line 2389, ../src/application.scss */
+/* line 2392, ../src/application.scss */
 .pageContent .custom_form_outer h3.content_title {
   padding: 15px 0px 0px 15px;
   margin: 0px;
 }
 
-/* line 2395, ../src/application.scss */
+/* line 2398, ../src/application.scss */
 .ui-custom-fields, .ui-custom-form {
   list-style: none;
   margin: 0px 0px 0px 0px;
@@ -3670,7 +3671,7 @@ h4.list_title {
   margin-left: 0px;
 }
 
-/* line 2401, ../src/application.scss */
+/* line 2404, ../src/application.scss */
 .admin_form {
   overflow: hidden;
   *zoom: 1;
@@ -3678,7 +3679,7 @@ h4.list_title {
   padding: 8px 10px 15px 10px;
   margin: 0px;
 }
-/* line 2406, ../src/application.scss */
+/* line 2409, ../src/application.scss */
 .admin_form h4.title {
   color: #555;
   font-size: 14px;
@@ -3687,30 +3688,30 @@ h4.list_title {
   padding: 0px 0px 8px 18px;
 }
 
-/* line 2415, ../src/application.scss */
+/* line 2418, ../src/application.scss */
 .admin_form .button-container {
   padding-left: 180px;
   width: 100%;
 }
-/* line 2418, ../src/application.scss */
+/* line 2421, ../src/application.scss */
 .admin_form .button-container .fdbutton {
   min-width: 60px;
   width: auto !important;
   width: 60px;
 }
 
-/* line 2423, ../src/application.scss */
+/* line 2426, ../src/application.scss */
 .ui-custom-fields {
   overflow: hidden;
   *zoom: 1;
   display: block;
   margin-bottom: 10px;
 }
-/* line 2427, ../src/application.scss */
+/* line 2430, ../src/application.scss */
 .ui-custom-fields li {
   float: left;
 }
-/* line 2430, ../src/application.scss */
+/* line 2433, ../src/application.scss */
 .ui-custom-fields .fdbutton {
   min-width: 125px;
   width: auto !important;
@@ -3719,7 +3720,7 @@ h4.list_title {
   font-weight: normal;
 }
 
-/* line 2437, ../src/application.scss */
+/* line 2440, ../src/application.scss */
 .ui-sortable-placeholder {
   background: #DFEFFF;
   border: 1px dotted #C2D7EF;
@@ -3727,7 +3728,7 @@ h4.list_title {
   padding: 20px 6px;
 }
 
-/* line 2444, ../src/application.scss */
+/* line 2447, ../src/application.scss */
 .ui-custom-form {
   padding: 10px 14px 3px 14px;
   margin-bottom: 10px;
@@ -3735,21 +3736,21 @@ h4.list_title {
   overflow: hidden;
   *zoom: 1;
 }
-/* line 2449, ../src/application.scss */
+/* line 2452, ../src/application.scss */
 .ui-custom-form li {
   padding: 4px;
   position: relative;
   border: 1px dotted #ffffff;
   cursor: move;
 }
-/* line 2454, ../src/application.scss */
+/* line 2457, ../src/application.scss */
 .ui-custom-form li .ui-field-panel {
   position: absolute;
   right: 0px;
   top: 0px;
   display: none;
 }
-/* line 2459, ../src/application.scss */
+/* line 2462, ../src/application.scss */
 .ui-custom-form li .action_panel {
   position: absolute;
   top: 0px;
@@ -3757,25 +3758,25 @@ h4.list_title {
   padding: 0px;
   visibility: hidden;
 }
-/* line 2468, ../src/application.scss */
+/* line 2471, ../src/application.scss */
 .ui-custom-form li:hover, .ui-custom-form li.active {
   background: #DFEFFF;
   border-color: #C2D7EF;
 }
-/* line 2471, ../src/application.scss */
+/* line 2474, ../src/application.scss */
 .ui-custom-form li:hover .ui-field-panel, .ui-custom-form li.active .ui-field-panel {
   display: block;
 }
-/* line 2474, ../src/application.scss */
+/* line 2477, ../src/application.scss */
 .ui-custom-form li:hover .action_panel, .ui-custom-form li.active .action_panel {
   visibility: visible;
 }
-/* line 2478, ../src/application.scss */
+/* line 2481, ../src/application.scss */
 .ui-custom-form li.active {
   border-style: solid;
 }
 
-/* line 2483, ../src/application.scss */
+/* line 2486, ../src/application.scss */
 .hint_drag {
   background: #fefedf;
   border: 1px solid #cccccc;
@@ -3784,21 +3785,21 @@ h4.list_title {
   display: block;
 }
 
-/* line 2494, ../src/application.scss */
+/* line 2497, ../src/application.scss */
 .forums {
   border: 1px solid #efefef;
 }
-/* line 2496, ../src/application.scss */
+/* line 2499, ../src/application.scss */
 .forums td {
   border: 1px solid #f0f0f0;
   text-align: left;
 }
-/* line 2500, ../src/application.scss */
+/* line 2503, ../src/application.scss */
 .forums td.c1 {
   background: #efefef;
 }
 
-/* line 2505, ../src/application.scss */
+/* line 2508, ../src/application.scss */
 .forum_list, .topics_list {
   background: #d4ebd4;
   padding: 6px;
@@ -3809,12 +3810,12 @@ h4.list_title {
   -khtml-border-radius: 0.8em;
   border-radius: 0.8em;
 }
-/* line 2509, ../src/application.scss */
+/* line 2512, ../src/application.scss */
 .forum_list h4.title, .topics_list h4.title {
   margin: 0px;
   padding: 2px 6px;
 }
-/* line 2513, ../src/application.scss */
+/* line 2516, ../src/application.scss */
 .forum_list ul.base_set, .topics_list ul.base_set {
   margin: 0;
   padding: 0;
@@ -3850,34 +3851,34 @@ h4.list_title {
 .forum_list ul.base_set li:last-child, .forum_list ul.base_set li.last, .topics_list ul.base_set li:last-child, .topics_list ul.base_set li.last {
   padding-right: 0;
 }
-/* line 2518, ../src/application.scss */
+/* line 2521, ../src/application.scss */
 .forum_list ul.base_set li, .topics_list ul.base_set li {
   width: 46.8%;
   margin: 2px 8px;
   padding: 0px;
   margin-bottom: 6px;
 }
-/* line 2523, ../src/application.scss */
+/* line 2526, ../src/application.scss */
 .forum_list ul.base_set li h5, .topics_list ul.base_set li h5 {
   font-size: 14px;
   margin: 7px 6px 2px 13px;
   border-bottom: 1px solid #efefef;
 }
-/* line 2526, ../src/application.scss */
+/* line 2529, ../src/application.scss */
 .forum_list ul.base_set li h5 a, .topics_list ul.base_set li h5 a {
   color: #545454;
   text-decoration: none;
 }
-/* line 2529, ../src/application.scss */
+/* line 2532, ../src/application.scss */
 .forum_list ul.base_set li h5 a span.subcounter, .topics_list ul.base_set li h5 a span.subcounter {
   font-weight: normal;
   color: #848484;
 }
-/* line 2535, ../src/application.scss */
+/* line 2538, ../src/application.scss */
 .forum_list ul.base_set li h5 a:hover span.follow_link, .topics_list ul.base_set li h5 a:hover span.follow_link {
   color: #459445;
 }
-/* line 2543, ../src/application.scss */
+/* line 2546, ../src/application.scss */
 .forum_list ul, .topics_list ul {
   list-style: none;
   padding: 6px;
@@ -3889,43 +3890,43 @@ h4.list_title {
   list-style-type: none;
   margin-left: 0px;
 }
-/* line 2548, ../src/application.scss */
+/* line 2551, ../src/application.scss */
 .forum_list ul li a, .topics_list ul li a {
   color: #1A6690;
 }
 
-/* line 2557, ../src/application.scss */
+/* line 2560, ../src/application.scss */
 .topics_list ul.base_set {
   padding-top: 16px;
 }
-/* line 2559, ../src/application.scss */
+/* line 2562, ../src/application.scss */
 .topics_list ul.base_set li {
   width: 100%;
   margin-bottom: 10px;
   border-bottom: 1px solid #efefef;
 }
-/* line 2565, ../src/application.scss */
+/* line 2568, ../src/application.scss */
 .topics_list ul.base_set li .topic_icon {
   display: inline;
   float: left;
   margin-right: 10px;
 }
-/* line 2570, ../src/application.scss */
+/* line 2573, ../src/application.scss */
 .topics_list ul.base_set h4.topic_title {
   margin: 0px;
   font-weight: bold;
 }
-/* line 2573, ../src/application.scss */
+/* line 2576, ../src/application.scss */
 .topics_list ul.base_set h4.topic_title a {
   color: #1A6690;
 }
-/* line 2577, ../src/application.scss */
+/* line 2580, ../src/application.scss */
 .topics_list ul.base_set a {
   text-decoration: none;
   color: #1A6690;
 }
 
-/* line 2585, ../src/application.scss */
+/* line 2588, ../src/application.scss */
 .dialog_ticket_field {
   /*position:absolute;
   z-index:10;	
@@ -3948,12 +3949,12 @@ h4.list_title {
   border-radius: 8px;
   font-size: 0.95em;
 }
-/* line 2601, ../src/application.scss */
+/* line 2604, ../src/application.scss */
 .dialog_ticket_field ul.ui-form {
   background: none;
 }
 
-/* line 2607, ../src/application.scss */
+/* line 2610, ../src/application.scss */
 .title_bar_grey {
   overflow: hidden;
   *zoom: 1;
@@ -3967,7 +3968,7 @@ h4.list_title {
   -webkit-border-bottom-right-radius: 0px;
   border-radius: 6px 6px 0px 0px;
 }
-/* line 2613, ../src/application.scss */
+/* line 2616, ../src/application.scss */
 .title_bar_grey h3.title {
   color: #555;
   font-weight: bold;
@@ -3976,7 +3977,7 @@ h4.list_title {
   margin: 0px;
 }
 
-/* line 2622, ../src/application.scss */
+/* line 2625, ../src/application.scss */
 .alpha_sort_list {
   overflow: hidden;
   *zoom: 1;
@@ -3995,13 +3996,13 @@ h4.list_title {
   border-radius: 6px 6px 6px 6px;
   float: left;
 }
-/* line 2633, ../src/application.scss */
+/* line 2636, ../src/application.scss */
 .alpha_sort_list li {
   float: left;
   margin: 0px;
   padding: 5px 0px;
 }
-/* line 2637, ../src/application.scss */
+/* line 2640, ../src/application.scss */
 .alpha_sort_list li a {
   border-right: 1px solid #dedede;
   background: #efefef;
@@ -4010,13 +4011,13 @@ h4.list_title {
   padding: 5px 8px;
   color: #909090;
 }
-/* line 2646, ../src/application.scss */
+/* line 2649, ../src/application.scss */
 .alpha_sort_list li.active a, .alpha_sort_list li a:hover {
   color: #333333;
   border-color: #f5f5f5f;
   background: #fff;
 }
-/* line 2651, ../src/application.scss */
+/* line 2654, ../src/application.scss */
 .alpha_sort_list li.first a {
   -moz-border-radius: 6px 0px 0px 6px;
   -webkit-border-top-left-radius: 6px;
@@ -4025,7 +4026,7 @@ h4.list_title {
   -webkit-border-bottom-right-radius: 0px;
   border-radius: 6px 0px 0px 6px;
 }
-/* line 2654, ../src/application.scss */
+/* line 2657, ../src/application.scss */
 .alpha_sort_list li.last a {
   -moz-border-radius: 0px 6px 6px 0px;
   -webkit-border-top-left-radius: 0px;
@@ -4036,7 +4037,7 @@ h4.list_title {
   border: 0px;
 }
 
-/* line 2664, ../src/application.scss */
+/* line 2667, ../src/application.scss */
 .contact_table {
   border: 3px solid #e8e8e8;
   -moz-border-radius: 6px 6px 6px 6px;
@@ -4055,7 +4056,7 @@ h4.list_title {
   list-style-type: none;
   margin-left: 0px;
 }
-/* line 2669, ../src/application.scss */
+/* line 2672, ../src/application.scss */
 .contact_table li {
   border-bottom: 1px solid #e2e2e2;
   vertical-align: top;
@@ -4063,11 +4064,11 @@ h4.list_title {
   margin: 0px;
   font-size: 1.1em;
 }
-/* line 2675, ../src/application.scss */
+/* line 2678, ../src/application.scss */
 .contact_table li b {
   color: #666666;
 }
-/* line 2678, ../src/application.scss */
+/* line 2681, ../src/application.scss */
 .contact_table li a.user_name {
   display: block;
   font-weight: normal;
@@ -4078,13 +4079,13 @@ h4.list_title {
   text-decoration: none;
   text-transform: capitalize;
 }
-/* line 2688, ../src/application.scss */
+/* line 2691, ../src/application.scss */
 .contact_table li div {
   margin: 0px;
   padding: 0px;
 }
 
-/* line 2696, ../src/application.scss */
+/* line 2699, ../src/application.scss */
 .admin_list, .content_list {
   list-style: none;
   margin: 0px 0px;
@@ -4104,7 +4105,7 @@ h4.list_title {
   list-style-type: none;
   margin-left: 0px;
 }
-/* line 2703, ../src/application.scss */
+/* line 2706, ../src/application.scss */
 .admin_list li, .content_list li {
   overflow: hidden;
   *zoom: 1;
@@ -4116,13 +4117,13 @@ h4.list_title {
   color: #656565;
   position: relative;
 }
-/* line 2710, ../src/application.scss */
+/* line 2713, ../src/application.scss */
 .admin_list li img.profile_pic, .content_list li img.profile_pic {
   float: left;
   margin-right: 10px;
   margin-top: 5px;
 }
-/* line 2715, ../src/application.scss */
+/* line 2718, ../src/application.scss */
 .admin_list li div.item_actions, .content_list li div.item_actions {
   float: right;
   padding: 2px 0px;
@@ -4130,34 +4131,34 @@ h4.list_title {
   top: -4px;
   visibility: hidden;
 }
-/* line 2721, ../src/application.scss */
+/* line 2724, ../src/application.scss */
 .admin_list li div.item_actions a, .content_list li div.item_actions a {
   color: #333333;
   font-weight: bold;
   text-decoration: none;
 }
-/* line 2726, ../src/application.scss */
+/* line 2729, ../src/application.scss */
 .admin_list li div.item_actions a:hover, .content_list li div.item_actions a:hover {
   text-decoration: none;
 }
-/* line 2730, ../src/application.scss */
+/* line 2733, ../src/application.scss */
 .admin_list li a, .content_list li a {
   color: #336699;
   text-decoration: none;
 }
-/* line 2734, ../src/application.scss */
+/* line 2737, ../src/application.scss */
 .admin_list li a.item_info, .content_list li a.item_info {
   font-size: 1.25em;
   color: #336699;
   text-decoration: none;
 }
-/* line 2739, ../src/application.scss */
+/* line 2742, ../src/application.scss */
 .admin_list li input.checkbox, .content_list li input.checkbox {
   position: absolute;
   left: 8px;
   top: 10px;
 }
-/* line 2744, ../src/application.scss */
+/* line 2747, ../src/application.scss */
 .admin_list li span.sort_handle, .content_list li span.sort_handle {
   position: relative;
   float: left;
@@ -4174,42 +4175,42 @@ h4.list_title {
   -webkit-border-bottom-right-radius: 5px;
   border-radius: 5px 5px 5px 5px;
 }
-/* line 2756, ../src/application.scss */
+/* line 2759, ../src/application.scss */
 .admin_list li:hover, .content_list li:hover {
   background: #f6f6f6;
 }
-/* line 2758, ../src/application.scss */
+/* line 2761, ../src/application.scss */
 .admin_list li:hover div.item_actions, .content_list li:hover div.item_actions {
   visibility: visible;
 }
 
-/* line 2765, ../src/application.scss */
+/* line 2768, ../src/application.scss */
 .deactivated li {
   background: #f6f6f6;
 }
-/* line 2767, ../src/application.scss */
+/* line 2770, ../src/application.scss */
 .deactivated li a.item_info {
   color: #666666;
 }
 
-/* line 2773, ../src/application.scss */
+/* line 2776, ../src/application.scss */
 .sortable {
   background: #efefef;
   border-top: 1px solid #cfcfcf;
   padding: 2px 0px 10px 0px;
 }
-/* line 2777, ../src/application.scss */
+/* line 2780, ../src/application.scss */
 .sortable span.sort_handle {
   margin: 0px 5px 0px 0px;
   position: relative;
   top: -1px !important;
 }
-/* line 2782, ../src/application.scss */
+/* line 2785, ../src/application.scss */
 .sortable .actions {
   padding: 3px 10px 6px 3px;
   text-align: right;
 }
-/* line 2786, ../src/application.scss */
+/* line 2789, ../src/application.scss */
 .sortable li {
   cursor: move;
   border: 1px solid #dfdfdf;
@@ -4225,13 +4226,13 @@ h4.list_title {
   -webkit-border-bottom-right-radius: 2px;
   border-radius: 2px 2px 2px 2px;
 }
-/* line 2796, ../src/application.scss */
+/* line 2799, ../src/application.scss */
 .sortable li.ui-sortable-placeholder {
   border-color: #efefef;
   background: #efefef;
 }
 
-/* line 2803, ../src/application.scss */
+/* line 2806, ../src/application.scss */
 .switch {
   border: 1px solid #afafaf;
   -moz-border-radius: 8px;
@@ -4260,7 +4261,7 @@ h4.list_title {
   overflow: hidden;
   visibility: hidden;
 }
-/* line 2808, ../src/application.scss */
+/* line 2811, ../src/application.scss */
 .switch a {
   padding: 4px 10px;
   text-decoration: none;
@@ -4268,7 +4269,7 @@ h4.list_title {
   font-size: 1.2em;
   float: left;
 }
-/* line 2815, ../src/application.scss */
+/* line 2818, ../src/application.scss */
 .switch .on {
   border: 1px solid #afafaf;
   -moz-border-radius: 8px;
@@ -4288,17 +4289,17 @@ h4.list_title {
   /* ie */
 }
 
-/* line 2830, ../src/application.scss */
+/* line 2833, ../src/application.scss */
 .tab_panel {
   margin: 5px 0px 10px 20px;
   padding: 0px 6px;
   display: block;
 }
-/* line 2833, ../src/application.scss */
+/* line 2836, ../src/application.scss */
 .tab_panel b {
   margin-right: 10px;
 }
-/* line 2837, ../src/application.scss */
+/* line 2840, ../src/application.scss */
 .tab_panel a {
   background: #cfcfcf;
   position: relative;
@@ -4324,7 +4325,7 @@ h4.list_title {
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#ffffff',GradientType=0 );
   /* ie */
 }
-/* line 2853, ../src/application.scss */
+/* line 2856, ../src/application.scss */
 .tab_panel a.active, .tab_panel a:hover {
   background: #fff;
   -moz-box-shadow: inset 0px 1px 3px #333333;
@@ -4332,38 +4333,38 @@ h4.list_title {
   box-shadow: inset 0 0 3px #333333;
 }
 
-/* line 2861, ../src/application.scss */
+/* line 2864, ../src/application.scss */
 .infoPage {
   position: relative;
 }
-/* line 2863, ../src/application.scss */
+/* line 2866, ../src/application.scss */
 .infoPage h3.info_title {
   font-size: 2.0em;
   margin: 0px 0px;
   padding: 4px 0px;
 }
-/* line 2868, ../src/application.scss */
+/* line 2871, ../src/application.scss */
 .infoPage h4.info_title {
   font-size: 1.3em;
   margin: 0px 0px;
   padding: 4px 0px;
 }
-/* line 2872, ../src/application.scss */
+/* line 2875, ../src/application.scss */
 .infoPage h4.info_title a {
   text-decoration: none;
   color: #336699;
 }
-/* line 2877, ../src/application.scss */
+/* line 2880, ../src/application.scss */
 .infoPage .info_subtitle {
   font-size: 1.3em;
   font-weight: bold;
 }
-/* line 2881, ../src/application.scss */
+/* line 2884, ../src/application.scss */
 .infoPage span.seperator {
   border-color: #97acb8;
   margin: 15px 0px;
 }
-/* line 2885, ../src/application.scss */
+/* line 2888, ../src/application.scss */
 .infoPage p.info {
   color: #333333;
   background-color: transparent;
@@ -4375,40 +4376,40 @@ h4.list_title {
   text-align: left;
 }
 
-/* line 2898, ../src/application.scss */
+/* line 2901, ../src/application.scss */
 .company {
   margin: 12px 19px 12px 50px;
 }
-/* line 2900, ../src/application.scss */
+/* line 2903, ../src/application.scss */
 .company .building_pic {
   position: absolute;
   left: -40px;
 }
 
-/* line 2906, ../src/application.scss */
+/* line 2909, ../src/application.scss */
 .contact {
   margin: 12px 19px 12px 150px;
 }
-/* line 2908, ../src/application.scss */
+/* line 2911, ../src/application.scss */
 .contact .profile_pic {
   position: absolute;
   border: 1px solid #afafaf;
   left: -140px;
 }
 
-/* line 2915, ../src/application.scss */
+/* line 2918, ../src/application.scss */
 .contact_info {
   clear: left;
   margin: 5px;
 }
-/* line 2918, ../src/application.scss */
+/* line 2921, ../src/application.scss */
 .contact_info .icon_text {
   font-size: 1.1em;
   padding: 2px 0px 0px 30px;
   position: relative;
   background: none;
 }
-/* line 2924, ../src/application.scss */
+/* line 2927, ../src/application.scss */
 .contact_info .icon_text span em {
   font-style: normal;
   float: left;
@@ -4416,30 +4417,30 @@ h4.list_title {
   width: auto !important;
   width: 60px;
 }
-/* line 2930, ../src/application.scss */
+/* line 2933, ../src/application.scss */
 .contact_info .icon_text img {
   position: absolute;
   left: 0px;
   top: 0px;
 }
-/* line 2935, ../src/application.scss */
+/* line 2938, ../src/application.scss */
 .contact_info .icon_text a, .contact_info .icon_text span {
   display: block;
 }
-/* line 2938, ../src/application.scss */
+/* line 2941, ../src/application.scss */
 .contact_info .icon_text a {
   text-decoration: none;
   color: #336699;
 }
 
-/* line 2946, ../src/application.scss */
+/* line 2949, ../src/application.scss */
 .tag_list {
   background: url(../images/icons/tag_blue.png) no-repeat left top;
   padding-left: 22px;
   margin: 5px 0px;
   position: relative;
 }
-/* line 2951, ../src/application.scss */
+/* line 2954, ../src/application.scss */
 .tag_list a {
   -moz-border-radius: 5px 5px 5px 5px;
   -webkit-border-top-left-radius: 5px;
@@ -4453,7 +4454,7 @@ h4.list_title {
   text-decoration: none;
 }
 
-/* line 2960, ../src/application.scss */
+/* line 2963, ../src/application.scss */
 .history_list {
   list-style: none;
   margin: 0px;
@@ -4465,30 +4466,30 @@ h4.list_title {
   list-style-type: none;
   margin-left: 0px;
 }
-/* line 2963, ../src/application.scss */
+/* line 2966, ../src/application.scss */
 .history_list a:hover {
   text-decoration: none;
 }
-/* line 2966, ../src/application.scss */
+/* line 2969, ../src/application.scss */
 .history_list li {
   padding: 8px 10px;
 }
-/* line 2968, ../src/application.scss */
+/* line 2971, ../src/application.scss */
 .history_list li a, .history_list li a:visited {
   color: #336699;
 }
-/* line 2971, ../src/application.scss */
+/* line 2974, ../src/application.scss */
 .history_list li h3 {
   font-size: 1.2em;
   padding: 0px 0px 0px 0px;
   margin: 0px 0px 8px 0px;
   display: block;
 }
-/* line 2976, ../src/application.scss */
+/* line 2979, ../src/application.scss */
 .history_list li strong {
   display: block;
 }
-/* line 2978, ../src/application.scss */
+/* line 2981, ../src/application.scss */
 .history_list li strong span {
   float: left;
   min-width: 100px;
@@ -4496,12 +4497,12 @@ h4.list_title {
   width: 100px;
   font-weight: normal;
 }
-/* line 2985, ../src/application.scss */
+/* line 2988, ../src/application.scss */
 .history_list li.stripe {
   background: #eaeef1;
 }
 
-/* line 2990, ../src/application.scss */
+/* line 2993, ../src/application.scss */
 ul.item_list {
   list-style: none;
   overflow: hidden;
@@ -4519,7 +4520,7 @@ ul.item_list li {
   list-style-type: none;
   margin-left: 0px;
 }
-/* line 2999, ../src/application.scss */
+/* line 3002, ../src/application.scss */
 ul.item_list li {
   padding: 5px;
   margin: 5px;
@@ -4537,90 +4538,90 @@ ul.item_list li {
   -webkit-border-bottom-right-radius: 6px;
   border-radius: 6px 6px 6px 6px;
 }
-/* line 3007, ../src/application.scss */
+/* line 3010, ../src/application.scss */
 ul.item_list li a {
   text-decoration: none;
 }
-/* line 3010, ../src/application.scss */
+/* line 3013, ../src/application.scss */
 ul.item_list li div.preview_pic {
   margin-right: 5px;
 }
-/* line 3012, ../src/application.scss */
+/* line 3015, ../src/application.scss */
 ul.item_list li div.preview_pic img {
   width: 32px;
   height: 32px;
 }
-/* line 3017, ../src/application.scss */
+/* line 3020, ../src/application.scss */
 ul.item_list li b {
   position: relative;
   top: 2px;
 }
-/* line 3021, ../src/application.scss */
+/* line 3024, ../src/application.scss */
 ul.item_list li .selected_tick {
   position: absolute;
   left: 3px;
   bottom: 3px;
   display: none;
 }
-/* line 3026, ../src/application.scss */
+/* line 3029, ../src/application.scss */
 ul.item_list li .control {
   position: absolute;
   right: 3px;
   bottom: 3px;
   display: none;
 }
-/* line 3032, ../src/application.scss */
+/* line 3035, ../src/application.scss */
 ul.item_list li:hover {
   background: #efefef;
 }
-/* line 3035, ../src/application.scss */
+/* line 3038, ../src/application.scss */
 ul.item_list li:hover .selected_tick, ul.item_list li:hover .control {
   display: block;
 }
 
-/* line 3040, ../src/application.scss */
+/* line 3043, ../src/application.scss */
 ul.active a {
   color: #336699;
 }
-/* line 3043, ../src/application.scss */
+/* line 3046, ../src/application.scss */
 ul.active .selected_tick {
   background: url("/images/delete.png") no-repeat;
 }
 
-/* line 3048, ../src/application.scss */
+/* line 3051, ../src/application.scss */
 ul.inactive a {
   opacity: 0.6;
   -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=60);
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=60);
   color: #333333;
 }
-/* line 3052, ../src/application.scss */
+/* line 3055, ../src/application.scss */
 ul.inactive a:hover {
   opacity: 1;
   -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
 }
-/* line 3055, ../src/application.scss */
+/* line 3058, ../src/application.scss */
 ul.inactive .selected_tick {
   background: url("/images/photo_check.png") no-repeat;
 }
 
-/* line 3060, ../src/application.scss */
+/* line 3063, ../src/application.scss */
 .padding6 {
   padding: 6px;
 }
 
-/* line 3064, ../src/application.scss */
+/* line 3067, ../src/application.scss */
 h3.t_padding {
   padding: 2px 10px;
 }
 
-/* line 3068, ../src/application.scss */
+/* line 3071, ../src/application.scss */
 label.caption {
   text-transform: capitalize;
 }
 
-/* line 3072, ../src/application.scss */
+/* line 3075, ../src/application.scss */
 .placeholder-info {
   width: 400px;
   position: absolute;
@@ -4643,7 +4644,7 @@ label.caption {
   border-radius: 6px 6px 6px 6px;
   border: 3px solid #dfdfdf;
 }
-/* line 3081, ../src/application.scss */
+/* line 3084, ../src/application.scss */
 .placeholder-info .placeholder-list {
   border: 1px solid #afafaf;
   background: #f8f8f8;
@@ -4651,32 +4652,32 @@ label.caption {
   overflow: auto;
   height: 70%;
 }
-/* line 3093, ../src/application.scss */
+/* line 3096, ../src/application.scss */
 .placeholder-info h2 {
   padding: 0px;
   margin: 0px;
   font-size: 1.6em;
 }
-/* line 3098, ../src/application.scss */
+/* line 3101, ../src/application.scss */
 .placeholder-info p {
   margin: 0px 0px 8px 0px;
   font-size: 10px;
 }
-/* line 3101, ../src/application.scss */
+/* line 3104, ../src/application.scss */
 .placeholder-info p a {
   font-size: 11px;
 }
-/* line 3105, ../src/application.scss */
+/* line 3108, ../src/application.scss */
 .placeholder-info dl {
   padding: 0px;
   margin: 0px;
 }
-/* line 3108, ../src/application.scss */
+/* line 3111, ../src/application.scss */
 .placeholder-info dl dd {
   padding: 0px 0px 8px 0px;
   margin: 0px;
 }
-/* line 3112, ../src/application.scss */
+/* line 3115, ../src/application.scss */
 .placeholder-info dl dt a {
   font-size: 16px;
   font-family: inherit;
@@ -4684,26 +4685,26 @@ label.caption {
   color: #393939;
   border-bottom: 1px dotted #393939;
 }
-/* line 3119, ../src/application.scss */
+/* line 3122, ../src/application.scss */
 .placeholder-info dl dt a:hover {
   border-bottom: 0px;
   color: #0078BD;
 }
 
-/* line 3128, ../src/application.scss */
+/* line 3131, ../src/application.scss */
 * html .placeholder-info {
   position: absolute;
 }
 
-/* line 3131, ../src/application.scss */
+/* line 3134, ../src/application.scss */
 .guides {
   padding: 8px 0px 0px 30px;
 }
-/* line 3133, ../src/application.scss */
+/* line 3136, ../src/application.scss */
 .guides li {
   padding: 3px 5px;
 }
-/* line 3135, ../src/application.scss */
+/* line 3138, ../src/application.scss */
 .guides li a {
   font-size: 14px;
   color: #333333;
@@ -4711,40 +4712,40 @@ label.caption {
   border-bottom: 1px dotted #333333;
   padding: 0px;
 }
-/* line 3142, ../src/application.scss */
+/* line 3145, ../src/application.scss */
 .guides li a:hover {
   border: 0px;
 }
 
-/* line 3149, ../src/application.scss */
+/* line 3152, ../src/application.scss */
 .twoColumn .col_left, .twoColumn .col_right {
   float: left;
   padding: 0px;
   margin: 0px;
   width: 50%;
 }
-/* line 3156, ../src/application.scss */
+/* line 3159, ../src/application.scss */
 .twoColumn .col_right .guides {
   border-left: 1px solid #efefef;
 }
 
-/* line 3162, ../src/application.scss */
+/* line 3165, ../src/application.scss */
 .mceEditorView {
   line-height: 20px;
   vertical-align: baseline;
   font-size: 12px;
   color: #333333;
 }
-/* line 3167, ../src/application.scss */
+/* line 3170, ../src/application.scss */
 .mceEditorView img {
   margin: 0px 10px 10px 10px;
 }
-/* line 3170, ../src/application.scss */
+/* line 3173, ../src/application.scss */
 .mceEditorView p {
   margin: 0px 0px 1.5em;
 }
 
-/* line 3176, ../src/application.scss */
+/* line 3179, ../src/application.scss */
 div.information_tip {
   padding: 15px 20px;
   -moz-border-radius: 8px 8px 8px 8px;
@@ -4756,25 +4757,25 @@ div.information_tip {
   margin: 0px 0px 10px 0px;
   background: #f2f2f2;
 }
-/* line 3181, ../src/application.scss */
+/* line 3184, ../src/application.scss */
 div.information_tip h3.title, div.information_tip h4.title {
   padding: 0px;
   margin: 3px 0px 6px 0px;
   font-weight: bold;
   color: #666666px;
 }
-/* line 3187, ../src/application.scss */
+/* line 3190, ../src/application.scss */
 div.information_tip h3.title {
   font-size: 20px;
   color: #888888px;
 }
-/* line 3191, ../src/application.scss */
+/* line 3194, ../src/application.scss */
 div.information_tip h4.title {
   font-size: 16px;
 }
 
 /* Search form generic styling */
-/* line 3199, ../src/application.scss */
+/* line 3202, ../src/application.scss */
 div.search {
   padding: 8px 0px;
   position: relative;
@@ -4782,23 +4783,23 @@ div.search {
   overflow: hidden;
   *zoom: 1;
 }
-/* line 3204, ../src/application.scss */
+/* line 3207, ../src/application.scss */
 div.search label {
   display: block;
 }
-/* line 3207, ../src/application.scss */
+/* line 3210, ../src/application.scss */
 div.search input.search {
   width: 90%;
   padding: 3px;
   margin: 3px 0px;
 }
-/* line 3212, ../src/application.scss */
+/* line 3215, ../src/application.scss */
 div.search label, div.search input.search {
   font-size: 14px;
   color: 333;
 }
 
-/* line 3218, ../src/application.scss */
+/* line 3221, ../src/application.scss */
 .innerContent {
   padding: 8px;
   -moz-border-radius: 6px 6px 6px 6px;
@@ -4810,7 +4811,7 @@ div.search label, div.search input.search {
   background: #efefef;
 }
 
-/* line 3224, ../src/application.scss */
+/* line 3227, ../src/application.scss */
 .sol_list {
   margin-left: 0;
   margin: 8px 0px 10px 0px;
@@ -4823,7 +4824,7 @@ div.search label, div.search input.search {
   background: url('/images/../images/request_nav_seperator.gif?1296485984') no-repeat 3.5px 3.5px;
   list-style-type: none;
 }
-/* line 3228, ../src/application.scss */
+/* line 3231, ../src/application.scss */
 .sol_list a {
   color: #336699;
   text-decoration: none;
@@ -4845,23 +4846,23 @@ div.search label, div.search input.search {
   color: #336699;
 }
 
-/* line 3234, ../src/application.scss */
+/* line 3237, ../src/application.scss */
 .two_col_cont {
   overflow: hidden;
   *zoom: 1;
   padding: 0px 0px 0px 0px;
 }
-/* line 3237, ../src/application.scss */
+/* line 3240, ../src/application.scss */
 .two_col_cont .left_col, .two_col_cont .right_col {
   float: left;
   padding-top: 10px;
   padding-bottom: 10px;
 }
-/* line 3242, ../src/application.scss */
+/* line 3245, ../src/application.scss */
 .two_col_cont .left_col {
   width: 30%;
 }
-/* line 3245, ../src/application.scss */
+/* line 3248, ../src/application.scss */
 .two_col_cont .right_col {
   padding-left: 20px;
   width: 65%;
@@ -4871,7 +4872,7 @@ div.search label, div.search input.search {
   overflow: hidden;
   border: 1px solid #dfdfdf;
 }
-/* line 3251, ../src/application.scss */
+/* line 3254, ../src/application.scss */
 .two_col_cont .right_col ul.carousel {
   list-style: none;
   margin: 0px;
@@ -4885,7 +4886,7 @@ div.search label, div.search input.search {
   margin-left: 0px;
 }
 
-/* line 3259, ../src/application.scss */
+/* line 3262, ../src/application.scss */
 .white_curved_cont {
   -moz-border-radius: 6px 6px 6px 6px;
   -webkit-border-top-left-radius: 6px;
@@ -4896,12 +4897,12 @@ div.search label, div.search input.search {
   background-color: #ffffff;
   padding: 10px;
 }
-/* line 3263, ../src/application.scss */
+/* line 3266, ../src/application.scss */
 .white_curved_cont p {
   font-size: 12px;
 }
 
-/* line 3268, ../src/application.scss */
+/* line 3271, ../src/application.scss */
 .community_forums {
   background-image: url("../images/icons/comments_32.png");
   background-repeat: no-repeat;
@@ -4911,7 +4912,7 @@ div.search label, div.search input.search {
   margin-top: 8px;
 }
 
-/* line 3277, ../src/application.scss */
+/* line 3280, ../src/application.scss */
 .ssp_category_list {
   list-style: none;
   margin: 10px 0px;
@@ -4931,7 +4932,7 @@ div.search label, div.search input.search {
   list-style-type: none;
   margin-left: 0px;
 }
-/* line 3284, ../src/application.scss */
+/* line 3287, ../src/application.scss */
 .ssp_category_list li {
   overflow: hidden;
   *zoom: 1;
@@ -4944,7 +4945,7 @@ div.search label, div.search input.search {
   -webkit-border-bottom-right-radius: 0px;
   border-radius: 6px 0px 0px 6px;
 }
-/* line 3289, ../src/application.scss */
+/* line 3292, ../src/application.scss */
 .ssp_category_list li span.count {
   float: right;
   margin: 4px;
@@ -4958,7 +4959,7 @@ div.search label, div.search input.search {
   background: #666666;
   color: #ffffff;
 }
-/* line 3297, ../src/application.scss */
+/* line 3300, ../src/application.scss */
 .ssp_category_list li a {
   background-image: url("../images/dir.png");
   background-repeat: no-repeat;
@@ -4975,16 +4976,16 @@ div.search label, div.search input.search {
   color: #333333;
   display: block;
 }
-/* line 3308, ../src/application.scss */
+/* line 3311, ../src/application.scss */
 .ssp_category_list li a:hover {
   background-color: #f3f3f3;
 }
-/* line 3311, ../src/application.scss */
+/* line 3314, ../src/application.scss */
 .ssp_category_list li a.active {
   background-color: #ffffff;
 }
 
-/* line 3317, ../src/application.scss */
+/* line 3320, ../src/application.scss */
 .tr_wrap {
   position: fixed;
   right: 0px;
@@ -4993,7 +4994,7 @@ div.search label, div.search input.search {
   height: 100%;
   z-index: 99999;
 }
-/* line 3324, ../src/application.scss */
+/* line 3327, ../src/application.scss */
 .tr_wrap .screen {
   position: absolute;
   width: 100%;
@@ -5005,7 +5006,7 @@ div.search label, div.search input.search {
   -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=30);
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=30);
 }
-/* line 3329, ../src/application.scss */
+/* line 3332, ../src/application.scss */
 .tr_wrap .tr_dialog {
   -moz-box-shadow: #888888 0px 0px 20px;
   -webkit-box-shadow: #888888 0px 0px 20px;
@@ -5026,7 +5027,7 @@ div.search label, div.search input.search {
   background-color: #ffffff;
   border: 1px solid #afafaf;
 }
-/* line 3341, ../src/application.scss */
+/* line 3344, ../src/application.scss */
 .tr_wrap .tr_dialog .header_area {
   -moz-border-radius: 8px 8px 0 0;
   -webkit-border-top-left-radius: 8px;
@@ -5035,25 +5036,25 @@ div.search label, div.search input.search {
   -webkit-border-bottom-right-radius: 0;
   border-radius: 8px 8px 0 0;
 }
-/* line 3344, ../src/application.scss */
+/* line 3347, ../src/application.scss */
 .tr_wrap .tr_dialog .page_area {
   overflow: auto;
   height: 85%;
 }
 
-/* line 3351, ../src/application.scss */
+/* line 3354, ../src/application.scss */
 .page_area, .header_area {
   padding: 10px 20px 6px 20px;
 }
 
-/* line 3355, ../src/application.scss */
+/* line 3358, ../src/application.scss */
 .header_area {
   background: #d1d5db;
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #ebecef), color-stop(1, #d1d5db));
   background: -moz-linear-gradient(center top, #ebecef 0%, #d1d5db 100%);
   border-bottom: 1px solid #bbbfc9;
 }
-/* line 3358, ../src/application.scss */
+/* line 3361, ../src/application.scss */
 .header_area h4 {
   padding: 0px;
   margin: 0px;
@@ -5061,16 +5062,16 @@ div.search label, div.search input.search {
   font-weight: bold;
   color: #333333;
 }
-/* line 3363, ../src/application.scss */
+/* line 3366, ../src/application.scss */
 .header_area h4 a {
   text-decoration: none;
   color: #333333;
 }
-/* line 3367, ../src/application.scss */
+/* line 3370, ../src/application.scss */
 .header_area h4 span {
   font-size: 12px;
 }
-/* line 3372, ../src/application.scss */
+/* line 3375, ../src/application.scss */
 .header_area .actions a {
   -moz-border-radius: 6px 6px 6px 6px;
   -webkit-border-top-left-radius: 6px;
@@ -5081,19 +5082,19 @@ div.search label, div.search input.search {
   padding: 8px 2px 0px 2px;
   text-decoration: none;
 }
-/* line 3377, ../src/application.scss */
+/* line 3380, ../src/application.scss */
 .header_area .actions a:hover {
   background: #ffffff;
 }
 
-/* line 3383, ../src/application.scss */
+/* line 3386, ../src/application.scss */
 .ajax-loader {
   background-image: url("/images/ajax-loader.gif");
   background-repeat: no-repeat;
   background-position: 10px 10px;
 }
 
-/* line 3389, ../src/application.scss */
+/* line 3392, ../src/application.scss */
 .email_info {
   border: 1px solid #cfcfcf;
   padding: 4px 10px;
@@ -5107,7 +5108,7 @@ div.search label, div.search input.search {
   font-size: 11px;
 }
 
-/* line 3397, ../src/application.scss */
+/* line 3400, ../src/application.scss */
 .flash_info {
   background-color: #f4fdcb;
   border-bottom: 1px solid #b9b9b9;
@@ -5116,7 +5117,7 @@ div.search label, div.search input.search {
   font-size: 12px;
 }
 
-/* line 3405, ../src/application.scss */
+/* line 3408, ../src/application.scss */
 .search_results {
   background: #ffffff;
   -moz-box-shadow: inset 1px 1px 1px #aaaaaa;
@@ -5131,33 +5132,33 @@ div.search label, div.search input.search {
   border: 1px solid #dfdfdf;
   padding: 10px;
 }
-/* line 3411, ../src/application.scss */
+/* line 3414, ../src/application.scss */
 .search_results .result {
   border-top: 1px solid #efefef;
   padding: 8px 10px 10px 10px;
 }
-/* line 3415, ../src/application.scss */
+/* line 3418, ../src/application.scss */
 .search_results h2 {
   font-size: 16px;
   color: #333333;
 }
-/* line 3418, ../src/application.scss */
+/* line 3421, ../src/application.scss */
 .search_results h4 {
   font-size: 12px;
   margin: 0px;
 }
-/* line 3420, ../src/application.scss */
+/* line 3423, ../src/application.scss */
 .search_results h4 a {
   color: #4D769F;
 }
 
-/* line 3427, ../src/application.scss */
+/* line 3430, ../src/application.scss */
 .link_placeholder {
   float: right;
   margin-right: 15px;
 }
 
-/* line 3434, ../src/application.scss */
+/* line 3437, ../src/application.scss */
 .button_panel {
   width: 95%;
   background: #dfdfdf;
@@ -5165,7 +5166,7 @@ div.search label, div.search input.search {
   text-align: right;
 }
 
-/* line 3441, ../src/application.scss */
+/* line 3444, ../src/application.scss */
 .close {
   position: absolute;
   right: 5px;
@@ -5176,7 +5177,7 @@ div.search label, div.search input.search {
   z-index: 999;
 }
 
-/* line 3451, ../src/application.scss */
+/* line 3454, ../src/application.scss */
 .property_selector {
   position: relative;
   padding: 3px 12px;
@@ -5192,12 +5193,12 @@ div.search label, div.search input.search {
   background: #333333;
   border-bottom: 1px solid #b4b4b4;
 }
-/* line 3460, ../src/application.scss */
+/* line 3463, ../src/application.scss */
 .property_selector a {
   color: #b4b4b4 !important;
   font-size: 12px;
 }
-/* line 3464, ../src/application.scss */
+/* line 3467, ../src/application.scss */
 .property_selector .drop {
   position: absolute;
   right: 10px;
@@ -5208,12 +5209,12 @@ div.search label, div.search input.search {
   height: 1px;
 }
 
-/* line 3474, ../src/application.scss */
+/* line 3477, ../src/application.scss */
 .menu {
   font-size: 12px;
   display: none;
 }
-/* line 3477, ../src/application.scss */
+/* line 3480, ../src/application.scss */
 .menu ul {
   list-style: none;
   background: #f5f5f5;
