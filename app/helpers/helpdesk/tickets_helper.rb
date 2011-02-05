@@ -19,6 +19,10 @@ module Helpdesk::TicketsHelper
   def filter_list
     SELECTORS.collect { |f| content_tag('li', leader(filter_link(f[0]), filter_count(f[0]).to_s)) }
   end
+  
+  def filter_select
+    select ("select_view", "id", SELECTORS.collect {|v| [v[1], helpdesk_filter_tickets_path(v[0])]}, { :prompt => "Select View..."})
+  end
 
   def leader(left, right)
     # "<div class=\"leader-right\">#{right}</div><div class=\"leader-left\">#{left}</div><div class=\"clear\"></div>"

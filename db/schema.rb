@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110201052711) do
+ActiveRecord::Schema.define(:version => 20110202054502) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -156,46 +156,26 @@ ActiveRecord::Schema.define(:version => 20110201052711) do
     t.string   "ffs_28"
     t.string   "ffs_29"
     t.string   "ffs_30"
-    t.text     "ff_text01"
-    t.text     "ff_text02"
-    t.text     "ff_text03"
-    t.text     "ff_text04"
-    t.text     "ff_text05"
-    t.text     "ff_text06"
-    t.text     "ff_text07"
-    t.text     "ff_text08"
-    t.text     "ff_text09"
-    t.text     "ff_text10"
-    t.integer  "ff_int01"
-    t.integer  "ff_int02"
-    t.integer  "ff_int03"
-    t.integer  "ff_int04"
-    t.integer  "ff_int05"
-    t.integer  "ff_int06"
-    t.integer  "ff_int07"
-    t.integer  "ff_int08"
-    t.integer  "ff_int09"
-    t.integer  "ff_int10"
-    t.datetime "ff_date01"
-    t.datetime "ff_date02"
-    t.datetime "ff_date03"
-    t.datetime "ff_date04"
-    t.datetime "ff_date05"
-    t.datetime "ff_date06"
-    t.datetime "ff_date07"
-    t.datetime "ff_date08"
-    t.datetime "ff_date09"
-    t.datetime "ff_date10"
-    t.boolean  "ff_boolean01"
-    t.boolean  "ff_boolean02"
-    t.boolean  "ff_boolean03"
-    t.boolean  "ff_boolean04"
-    t.boolean  "ff_boolean05"
-    t.boolean  "ff_boolean06"
-    t.boolean  "ff_boolean07"
-    t.boolean  "ff_boolean08"
-    t.boolean  "ff_boolean09"
-    t.boolean  "ff_boolean10"
+    t.string   "ff_int01"
+    t.string   "ff_int02"
+    t.string   "ff_int03"
+    t.string   "ff_int04"
+    t.string   "ff_int05"
+    t.string   "ff_int06"
+    t.string   "ff_int07"
+    t.string   "ff_int08"
+    t.string   "ff_int09"
+    t.string   "ff_int10"
+    t.string   "ff_date01"
+    t.string   "ff_date02"
+    t.string   "ff_date03"
+    t.string   "ff_date04"
+    t.string   "ff_date05"
+    t.string   "ff_date06"
+    t.string   "ff_date07"
+    t.string   "ff_date08"
+    t.string   "ff_date09"
+    t.string   "ff_date10"
   end
 
   add_index "flexifields", ["flexifield_def_id"], :name => "index_flexifields_on_flexifield_def_id"
@@ -207,6 +187,17 @@ ActiveRecord::Schema.define(:version => 20110201052711) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "account_id"
+  end
+
+  create_table "forums", :force => true do |t|
+    t.string  "name"
+    t.string  "description"
+    t.integer "topics_count",      :default => 0
+    t.integer "posts_count",       :default => 0
+    t.integer "position"
+    t.text    "description_html"
+    t.integer "account_id"
+    t.integer "forum_category_id"
   end
 
   create_table "groups", :force => true do |t|
@@ -451,6 +442,19 @@ ActiveRecord::Schema.define(:version => 20110201052711) do
   add_index "helpdesk_tickets", ["requester_id"], :name => "index_helpdesk_tickets_on_requester_id"
   add_index "helpdesk_tickets", ["responder_id"], :name => "index_helpdesk_tickets_on_responder_id"
 
+  create_table "moderatorships", :force => true do |t|
+    t.integer "forum_id"
+    t.integer "user_id"
+  end
+
+  add_index "moderatorships", ["forum_id"], :name => "index_moderatorships_on_forum_id"
+
+  create_table "monitorships", :force => true do |t|
+    t.integer "topic_id"
+    t.integer "user_id"
+    t.boolean "active",   :default => true
+  end
+
   create_table "password_resets", :force => true do |t|
     t.string   "email"
     t.integer  "user_id"
@@ -458,6 +462,21 @@ ActiveRecord::Schema.define(:version => 20110201052711) do
     t.string   "token"
     t.datetime "created_at"
   end
+
+  create_table "posts", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "topic_id"
+    t.text     "body"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "forum_id"
+    t.text     "body_html"
+    t.integer  "account_id"
+  end
+
+  add_index "posts", ["forum_id", "created_at"], :name => "index_posts_on_forum_id"
+  add_index "posts", ["topic_id", "created_at"], :name => "index_posts_on_topic_id"
+  add_index "posts", ["user_id", "created_at"], :name => "index_posts_on_user_id"
 
   create_table "solution_folders", :force => true do |t|
     t.string   "name"
@@ -537,6 +556,26 @@ ActiveRecord::Schema.define(:version => 20110201052711) do
 
   add_index "subscriptions", ["account_id"], :name => "index_subscriptions_on_account_id"
 
+  create_table "topics", :force => true do |t|
+    t.integer  "forum_id"
+    t.integer  "user_id"
+    t.string   "title"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "hits",         :default => 0
+    t.integer  "sticky",       :default => 0
+    t.integer  "posts_count",  :default => 0
+    t.datetime "replied_at"
+    t.boolean  "locked",       :default => false
+    t.integer  "replied_by"
+    t.integer  "last_post_id"
+    t.integer  "account_id"
+  end
+
+  add_index "topics", ["forum_id", "replied_at"], :name => "index_topics_on_forum_id_and_replied_at"
+  add_index "topics", ["forum_id", "sticky", "replied_at"], :name => "index_topics_on_sticky_and_replied_at"
+  add_index "topics", ["forum_id"], :name => "index_topics_on_forum_id"
+
   create_table "users", :force => true do |t|
     t.string   "name",                :default => "",    :null => false
     t.string   "email"
@@ -566,6 +605,8 @@ ActiveRecord::Schema.define(:version => 20110201052711) do
     t.string   "twitter_id"
     t.text     "description"
     t.string   "time_zone"
+    t.integer  "posts_count",         :default => 0
+    t.datetime "last_seen_at"
   end
 
   add_index "users", ["account_id"], :name => "index_users_on_account_id"

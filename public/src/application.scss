@@ -863,7 +863,6 @@ form.new_helpdesk_ticket{
 		
 .viewActions{
 	border:1px solid #e7e7e7;	 
-	@include border-top-radius(0.4em);
 	background: #F9F9F9; /* old browsers */
 	background: -moz-linear-gradient(top, #F9F9F9 0%, #ECECEC 100%); /* firefox */	
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#F9F9F9), color-stop(100%,#ECECEC)); /* webkit */
@@ -898,6 +897,11 @@ form.new_helpdesk_ticket{
 			}
 		}
 	}
+}
+
+.sort{
+	text-align:right;
+	padding: 3px 13px 3px 0px;
 }
 
 .actions{
@@ -947,25 +951,42 @@ ul.secondary-actions{
 } 
  
 #pages{
-	.tickets, .tickets-expanded{ 
-		border:1px solid #efefef;
-		color:#5f5f5f;		 
-		td{
+	.tickets, .tickets-expanded{
+		margin:0px; 
+		thead{
+			@include vertical-gradient(#F9F9F9, #ececec);
+			border-bottom:1px solid #afafaf;
+		}
+		
+		color:#5f5f5f;
+		th{
+			background:none;
+			padding:6px 6px 5px 6px;
+		}		 
+		td, th{
 			vertical-align:top;
 			border-bottom:1px solid #efefef;
+		}
+		td{
+			padding-bottom:8px;
+			a{
+				text-decoration:none;
+				color:#5a8ec1; 
+			}
 		}
 		.stripe td{
 			background:lighten($base, 11%);
 		}
 		.check{
 			width:25px;
-			padding-left:8px; 
+			padding-left:8px;
+			padding-top:9px; 
+			text-align:right;
 		}
-		a{
-			text-decoration:none;
-			font-weight:normal;
-			color:#5a8ec1; 
+		th.check{
+			padding-top:12px;
 		}
+		
 		.name{			
 			width:60%;
 			h3{
@@ -973,9 +994,10 @@ ul.secondary-actions{
 				margin-bottom:4px;
 				a{
 					text-transform:capitalize;
-					font-size:0.65em;
+					font-size:12px;
 					font-weight:bold;
 					color:#3f3f3f;	
+					@include ellipsis;
 				}
 				a:hover{
 					color:#4b7dc0;
@@ -1012,9 +1034,7 @@ ul.secondary-actions{
 		.sla{
 			vertical-align:top;
 			text-align:right;
-			font-style:italic;
-			font-size:0.95em;
-			width:10%;
+			font-size:11px;
 		}
 	}	 
 } 
@@ -1879,6 +1899,16 @@ $lightBase:lighten($base, 5%);
 		text-decoration:none;
 		color:#336699;
 	}
+}
+
+.assign-agent{
+	background: #f5f5f5;
+	@include corners(6px);
+	border-right:1px solid #dfdfdf;
+	border-bottom:1px solid #dfdfdf;
+	@include inset-shadows(#cfcfcf, 0px, 2px, 1px);
+	padding:10px 10px 5px 10px;
+	margin:3px 0px;
 }
 
 .ui-form{ 
@@ -3319,7 +3349,7 @@ div.search{
 }
 
 .page_area, .header_area{
-	padding:10px 20px;
+	padding:10px 20px 6px 20px;
 }
 
 .header_area{
@@ -3333,6 +3363,9 @@ div.search{
 		a{
 			text-decoration:none;
 			color:#333333;
+		}
+		span{
+			font-size:12px;
 		}
 	}
 	.actions{
@@ -3413,4 +3446,42 @@ div.search{
 	height:28px;
 	background:url("../images/close_delete.png") no-repeat center;
 	z-index:999;
+}
+
+.property_selector{
+	position:relative;
+	padding:3px 12px;
+	width:200px;
+	display:inline-block;
+	margin-left:10px;
+	@include corners(18px);
+	background:#333333;
+	border-bottom:1px solid #b4b4b4;
+	a{
+		color:#b4b4b4 !important;
+		font-size:12px;
+	}
+	.drop{
+		position:absolute;
+		right:10px;
+		top:8px;
+		border:5px solid #333333;
+		border-top-color:#ffffff;
+		width:1px; height:1px;
+	}	
+}
+
+.menu{
+	font-size:12px;
+	display:none;
+	ul{
+		@include no-bullets;
+		background: #f5f5f5;
+		@include corners(6px);
+		border-right:1px solid #dfdfdf;
+		border-bottom:1px solid #dfdfdf;
+		@include inset-shadows(#cfcfcf, 0px, 2px, 1px);
+		padding:10px 10px 5px 10px;
+		margin:3px 0px;
+	}
 }
