@@ -126,12 +126,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
   SEARCH_FIELD_OPTIONS = SEARCH_FIELDS.map { |i| [i[1], i[0]] }
 
   SORT_FIELDS = [
-    [ :created_asc,   'Date Created (Oldest First)',    "created_at ASC"  ],
-    [ :created_desc,  'Date Created (Newest First)',    "created_at DESC"  ],
-    [ :updated_asc,   'Last Modified (Oldest First)',   "updated_at ASC"  ],
-    [ :updated_desc,  'Last Modified (Newest First)',   "updated_at DESC"  ],
-    [ :status,        'Status',                         "status DESC"  ],
-    [ :source,        'Source',                         "source DESC"  ]
+    [ :created_asc,   'Date Created',    "created_at ASC"  ],
+    #[ :created_desc,  'Date Created (Newest First)',    "created_at DESC"  ],
+    [ :updated_asc,   'Last Modified',   "updated_at ASC"  ],
+    #[ :updated_desc,  'Last Modified (Newest First)',   "updated_at DESC"  ],
+    [ :due_by     ,   'Due by time',     "due_by ASC"],
+    [ :priority   ,   'Priority',        "priority DESC"],
+    [ :status,        'Status',          "status DESC"  ],
+    #[ :source,        'Source',         "source DESC"  ],
+        
   ]
 
   SORT_FIELD_OPTIONS = SORT_FIELDS.map { |i| [i[1], i[0]] }
