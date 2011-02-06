@@ -22,10 +22,10 @@
     <div class="button-container">
     <ul>
       <!--li><%= submit_tag(local_assigns[:submit] || ActiveSupport::Inflector.titleize(id), :class => "button") %></li-->	  
-	  <%= content_tag('li', link_to_function("Send an Email", "Helpdesk.submitToTicket('send-email', false, 'Send Email', this)", :class => 'button')) if @item.requester %>	  
-	  <%= content_tag('li', link_to_function("Add a Note", "Helpdesk.submitToTicket('add-note', true, 'Add Note', this)", :class => 'button')) %>
+	  <%= content_tag('li', link_to_function("Send an Email", "Helpdesk.submitToTicket('send-email', false, 'Send Email', this)", :class => 'fdbutton')) if @item.requester %>	  
+	  <%= content_tag('li', link_to_function("Add a Note", "Helpdesk.submitToTicket('add-note', true, 'Add Note', this)", :class => 'fdbutton')) %>
 	  <% unless local_assigns[:no_attachments] %>
-      	<li><a href="#" class="button" id="attachment-options-link">Attach a File</a></li>
+      	<li><a href="javascript:void(0)" class="button" id="attachment-options-link">Attach a File</a></li>
 	  <% end %>
     </ul>
       

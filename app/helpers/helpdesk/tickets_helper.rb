@@ -21,7 +21,7 @@ module Helpdesk::TicketsHelper
   end
   
   def filter_select
-    select ("select_view", "id", SELECTORS.collect {|v| [v[1], helpdesk_filter_tickets_path(v[0])]}, { :prompt => "Select View..."})
+    select ("select_view", "id", SELECTORS.collect {|v| [v[1], helpdesk_filter_tickets_path(filter(v[0]))]}, { :prompt => "Select View..."})
   end
 
   def leader(left, right)
