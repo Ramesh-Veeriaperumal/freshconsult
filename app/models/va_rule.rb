@@ -5,6 +5,7 @@ class VARule < ActiveRecord::Base
   attr_accessor :conditions, :actions
   
   belongs_to :account
+  
   acts_as_list
   
   # scope_condition for acts_as_list
@@ -20,7 +21,7 @@ class VARule < ActiveRecord::Base
     @conditions = []
     filter_data.each do |f|
       f.symbolize_keys!
-      @conditions << (Va::Condition.new(f))
+      @conditions << (Va::Condition.new(f, account_id))
     end unless filter_data.nil?
     
     @actions = action_data.map { |act| deserialize_action act }
@@ -32,6 +33,7 @@ class VARule < ActiveRecord::Base
   end
   
   def pass_through(evaluate_on)
+    RAILS_DEFAULT_LOGGER.debug "INSIDE pass_through WITH evaluate_on : #{evaluate_on.inspect} "
     is_a_match = matches(evaluate_on)
     trigger_actions(evaluate_on) if is_a_match
     
@@ -40,7 +42,7 @@ class VARule < ActiveRecord::Base
   
   def matches(evaluate_on)
     return true if conditions.empty?
-    
+    RAILS_DEFAULT_LOGGER.debug "INSIDE matches WITH conditions : #{conditions.inspect} "
     s_match = match_type.to_sym   
     to_ret = false
     conditions.each do |c|

@@ -157,7 +157,7 @@ protected
 
   def process_item
     
-    handle_custom_fields
+    #handle_custom_fields
     #if @item.source == 0
       @item.spam = false
       

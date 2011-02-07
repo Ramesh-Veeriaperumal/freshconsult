@@ -17,7 +17,7 @@ class Va::RuleHandler
   end
   
   def evaluate_rule(evaluate_on_value)
-    #return evaluate_on_value.send(:casecmp, value)
+    #return evaluate_on_value.send(:casecmp, value)   
     send(condition.operator, evaluate_on_value)
   end
 end
