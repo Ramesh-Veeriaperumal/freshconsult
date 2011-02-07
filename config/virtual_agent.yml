@@ -38,3 +38,4 @@ handlers:
     text_array: Va::Handlers::TextArray
     numeric: Va::Handlers::Numeric
     date_time: Va::Handlers::DateTime
+    dropdown:  Va::Handlers::Text

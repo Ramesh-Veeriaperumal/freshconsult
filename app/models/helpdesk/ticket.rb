@@ -8,7 +8,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   has_flexiblefields
   
   #by Shan temp
-  attr_accessor :email
+  attr_accessor :email,:custom_field
   after_create :refresh_display_id, :autoreply, :pass_thro_biz_rules
   before_create :populate_requester
 
@@ -404,18 +404,48 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #virtual agent things end here..
   
   def pass_thro_biz_rules
-    send_later(:delayed_rule_check)
+    send(:delayed_rule_check)
   end
   
   def delayed_rule_check
-    self.save! if check_rules
+    
+    #rule_applied = check_rules
+    update_custom_field  if check_rules
+    save!
+    #self.save! if check_rules
   end
   
   def check_rules
+    logger.debug "flexifield :: vals : are self.... : #{self.custom_field.inspect}"
+    logger.debug "flexifield :: #{custom_field.inspect} "
+    logger.debug "flexifield category :: #{self.category}"
+    #self.category = custom_field["category"]
     account.va_rules.each do |vr|
       return true if vr.pass_through(self)
     end
+    
   end
+  
+  def update_custom_field
+    
+    logger.debug "custom_field after business_rule :: #{ self.custom_field.inspect}"    
+    flexi_field = self.custom_field  
+    
+    self.custom_field.each do |key,value|    
+      flexi_field[key] = self.read_attribute(key)      
+      #logger.debug "update_custom_field :: cust_vals after business rules :: #{cust_vals}"    
+    end
+      logger.debug "update_custom_feild  :: flexi_field after replace #{flexi_field.inspect}"
+  
+    ff_def_id = FlexifieldDef.find_by_account_id(self.account_id).id    
+    self.ff_def = ff_def_id  
+     
+    unless flexi_field.nil?     
+      self.assign_ff_values flexi_field    
+    end
+    
+  end
+  
   
   #To use liquid template...
   def to_liquid
@@ -427,5 +457,42 @@ class Helpdesk::Ticket < ActiveRecord::Base
       "url"         => helpdesk_ticket_url(self, :host => account.full_domain) }
   end
   #Liquid ends here
+ 
+  
+def method_missing(method, *args, &block)
+  
+  super
+  
+rescue NoMethodError => e
+  
+    logger.debug "method_missing :: args is #{args} and method:: #{method} and type is :: #{method.kind_of? String} "
+    
+    if (method.to_s.include? '=') && custom_field.has_key?(method.to_s.chomp("="))
+      logger.debug "method_missing :: inside custom_field  args is #{args}  and method.chomp:: #{ method.to_s.chomp("=")}"
+      
+      ff_def_id = FlexifieldDef.find_by_account_id(self.account_id).id
+      
+      field = method.to_s.chomp("=")
+      
+      logger.debug "field is #{field}"
+    
+      self.ff_def = ff_def_id
+   
+      self.set_ff_value field , args
+      
+      save
+      
+      return
+      
+    end
+    
+    field = custom_field.has_key?(method)    
+    raise e unless field
+    custom_field[method]
+end
+
+
+ 
+ 
  
 end

@@ -51,7 +51,7 @@ class Admin::VaRulesController < Admin::AutomationsController
     def load_config
       super
       
-      filter_hash    = [{:name => 0              , :value => "--- Click to Select Filter ---"},
+    default_filter_hash   = [{:name => 0              , :value => "--- Click to Select Filter ---"},
                         {:name => "from_email"   , :value => "From Email", :domtype => "autocompelete", :data_url => autocomplete_helpdesk_authorizations_path, 
                                                    :operatortype => "email"},
                         {:name => "to_email"     , :value => "To Email"  , :domtype => "text",
@@ -76,6 +76,8 @@ class Admin::VaRulesController < Admin::AutomationsController
                                                    :operatortype => "text"},
                         {:name => "company"      , :value => "Company Name",  :domtype => "autocompelete", :data_url => "companynameurl", 
                                                    :operatortype => "text"}]
+                                                   
+      filter_hash = add_custom_filters default_filter_hash
       
       @filter_defs   = ActiveSupport::JSON.encode filter_hash
       
@@ -100,4 +102,43 @@ class Admin::VaRulesController < Admin::AutomationsController
     def additional_actions
       {}
     end
+  
+  protected
+  
+  def add_custom_filters filter_hash
+  
+   @ticket_field = Helpdesk::FormCustomizer.find(:first ,:conditions =>{:account_id => current_account.id})
+   
+   @json_data = ActiveSupport::JSON.decode(@ticket_field.json_data)
+   
+   @json_data.each do |field|
+     
+     if field["fieldType"].eql?("custom")
+       
+       
+        item = {:name =>  field["label"] , :value =>  field["label"] ,  :domtype => field["type"], :action => "set_custom_field"  , :operatortype => "text"}
+        
+        if "dropdown".eql?(field["type"])
+          choice_values = get_choices field
+          item = {:name =>  field["label"] , :value =>  field["label"] ,  :domtype => field["type"], :choices => choice_values , :action => "set_custom_field" , :operatortype => "choicelist" }
+        end
+        
+        filter_hash.push(item)
+     end
+     
+   end
+   
+  return filter_hash
+ 
+end
+
+def get_choices field
+  
+  Array values =[]
+          
+  field["choices"].each {|choice| values.push([choice["value"],choice["value"]])}
+                  
+  return values 
+end
+  
 end

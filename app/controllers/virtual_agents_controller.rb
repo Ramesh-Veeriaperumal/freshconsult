@@ -4,8 +4,8 @@ class VirtualAgentsController < ApplicationController
   
   def new   
     @virtual_agent = VirtualAgent.new
-    
-    filter_hash    = [{:name => 0              , :value => "--- Click to Select Filter ---"},
+    logger.debug "Inside VA controller"
+    default_filter_hash    = [{:name => 0              , :value => "--- Click to Select Filter ---"},
                       {:name => "from_email_id", :value => "From Email Id", :domtype => "autocompelete", :autocompelete_url => "allemailsurl" },
                       {:name => "to_email_id"  , :value => "To Email Id"  , :domtype => "autocompelete", :autocompelete_url => "allemailsurl" },
                       {:name => 0              , :value => "------------------------------"},
@@ -32,7 +32,10 @@ class VirtualAgentsController < ApplicationController
                       {:name => "company_name" , :value => "Company Name",  :domtype => "autocompelete", :autocompelete_url => "companynameurl" },
                       {:name => "support_plan" , :value => "Support Plan",  :domtype => "dropdown", :choices => [{:name => "1", :value => "Platinum"}, 
                                                                                                                  {:name => "2", :value => "Gold"}, 
-                                                                                                                 {:name => "3", :value => "Silver"}] }]
+                                                                                                               {:name => "3", :value => "Silver"}] }]
+    filter_hash = add_custom_filters default_filter_hash
+    
+    logger.debug "virtual agents :: the filter is #{filter_hash.inspect}"
     
     @filter_defs   = ActiveSupport::JSON.encode filter_hash
     
@@ -72,6 +75,8 @@ class VirtualAgentsController < ApplicationController
                        {:name => "send_email_user"  , :value => "Send Email to User"   , :domtype => 'autocompelete', :autocompelete_url => "useremailsurl"},
                       ]
     
+    
+    
     @action_defs    = ActiveSupport::JSON.encode action_hash 
                                                                                  
   end
@@ -89,6 +94,28 @@ class VirtualAgentsController < ApplicationController
   end
   
   def destroy
-  end
+end
+
+protected
+
+def add_custom_filters filter_hash
+  
+   @ticket_field = Helpdesk::FormCustomizer.find(:first ,:conditions =>{:account_id => current_account.id})
+   
+   @json_data = ActiveSupport::JSON.decode(@ticket_field.json_data)
+   
+   @json_data.each do |field|
+     
+     if field["fieldType"].eql?("custom")
+       
+        item = {:name =>  field["label"] , :value =>  field["label"] ,  :domtype => field["type"], :action => "set_custom_field" }
+        filter_hash.push(item)
+     end
+     
+   end
+   
+  return filter_hash
+ 
+end
   
 end

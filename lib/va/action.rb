@@ -11,6 +11,7 @@ class Va::Action
   end
   
   def trigger(act_on)
+       
     return send(action_key, act_on) if respond_to?(action_key)
     return act_on.send("#{action_key}=", value) if act_on.respond_to?("#{action_key}=")
     
@@ -48,8 +49,7 @@ class Va::Action
     def send_email_to_agent(act_on) #by Shan to do - liquid template
       Helpdesk::TicketNotifier.deliver_internal_email(act_on, act_on.responder.email, "You have got an mail!")
     end
-
-
+  
 #    def priority(act_on)
 #      act_on.priority = act_hash[:value]
 #    end

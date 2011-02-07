@@ -4,6 +4,7 @@ module HelpdeskControllerMethods
     base.send :before_filter, :get_custom_fields,   :only => [:create, :update]
     base.send :before_filter, :build_item,          :only => [:new, :create]
     base.send :before_filter, :load_item,           :only => [:show, :edit, :update]
+    base.send :before_filter, :set_custom_fields,   :only => [:create, :update]
     base.send :before_filter, :load_multiple_items, :only => [:destroy, :restore]
     base.send :before_filter, :add_to_history,      :only => [:show]
   end
@@ -37,8 +38,6 @@ module HelpdeskControllerMethods
     #@item.set_ff_value column, value    
    
   end
-  
-  
   
   def post_persist #Need to check whether this should be called only inside create by Shan to do
     create_attachments #
@@ -166,6 +165,14 @@ protected
     logger.debug "get_custom_fiels #{@flexi_fields}"
     
   end
+  
+  def set_custom_fields    
+    @item.custom_field = @flexi_fields    
+    @flexi_fields.each do |key,value|    
+        @item.write_attribute key , value
+     end  
+     
+  end
 
   def build_item
     
@@ -216,16 +223,8 @@ protected
     @item.account_id ||= current_account.id if (@item.respond_to?('account_id='))
   end
   
-   def set_customizer
-     
-     #@custom = Helpdesk::FormCustomizer.find(:first, :conditions =>{:account_id =>current_account.id}).json_data
-     
-     json_data = (Helpdesk::FormCustomizer.first(:conditions =>{:account_id =>current_account.id})).json_data
-     
-     logger.debug "json_data : #{json_data}"
-    
-    @item.customizer ||= Helpdesk::FormCustomizer.first(:conditions =>{:account_id =>current_account.id})
-    
+   def set_customizer        
+    @item.customizer ||= Helpdesk::FormCustomizer.first(:conditions =>{:account_id =>current_account.id})    
   end
 
   def process_item
