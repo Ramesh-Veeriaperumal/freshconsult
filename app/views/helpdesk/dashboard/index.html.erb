@@ -31,22 +31,22 @@
           My Summary<span class="summary_arrow"></span>
       </li>
       <li>
-      	 <a href="/helpdesk/tickets/filter/my_overdue"><h4><%= filter_count([:my_overdue])%></h4>
+      	 <a href="/helpdesk/tickets/filter/my_overdue"><h4><%= filter_count(:my_overdue)%></h4>
 		 	<p><span>Overdue</span> Tickets</p>
 		</a>
       </li>
       <li>
-          <a href="/helpdesk/tickets/filter/my_open"><h4><%= filter_count([:my_open])%></h4>
+          <a href="/helpdesk/tickets/filter/my_open"><h4><%= filter_count(:my_open)%></h4>
               <p><span>Open</span> Tickets</p>
           </a>
       </li>
       <li>
-          <a href="/helpdesk/tickets/filter/my_due_today"><h4><%= filter_count([:my_due_today])%></h4>
+          <a href="/helpdesk/tickets/filter/my_due_today"><h4><%= filter_count(:my_due_today)%></h4>
 		  	<p><span>Tickets</span> Due Today</p>
 		  </a>
       </li>
       <li class="last-child">
-          <a href="/helpdesk/tickets/filter/new"><h4><%= filter_count([:new])%></h4>
+          <a href="/helpdesk/tickets/filter/new"><h4><%= filter_count(:new)%></h4>
 		  	<p><span>Unassigned</span> Tickets</p>
 		  </a>
       </li>

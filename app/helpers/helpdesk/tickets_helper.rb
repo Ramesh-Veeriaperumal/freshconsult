@@ -16,7 +16,7 @@ module Helpdesk::TicketsHelper
   end
 
   def current_filter
-    (params[:filters] || DEFAULT_FILTER).map { |f| f.to_sym } 
+    (params[:filters] ? params[:filters][0] : DEFAULT_FILTER).to_sym
   end
 
   def current_selector

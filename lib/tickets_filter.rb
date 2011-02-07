@@ -1,34 +1,35 @@
 module TicketsFilter
   include TicketConstants
   
-  DEFAULT_FILTER = [:new_and_my_open]
+  DEFAULT_FILTER = :new_and_my_open
 
   SELECTORS = [
-    [[:new_and_my_open],  "New & My Open Tickets"  ],
-    [[:my_open],          "My Open Tickets"  ],
-    [[:my_resolved],      "My Resolved Tickets" ],
-    [[:my_closed],        "My Closed Tickets"  ],
-    [[:my_due_today],     "My Tickets Due Today"  ],
-    [[:my_overdue],       "My Overdue Tickets"  ],
-    [[:my_on_hold],       "My Tickets On Hold"  ],
-    [[:monitored_by],     "Tickets I'm Monitoring"  ],
-    [[:my_all],           "All My Tickets"  ],
+    [:new_and_my_open,  "New & My Open Tickets", [:visible]  ],
+    [:my_open,          "My Open Tickets", [:visible]  ],
+    [:my_resolved,      "My Resolved Tickets", [:visible] ],
+    [:my_closed,        "My Closed Tickets", [:visible]  ],
+    [:my_due_today,     "My Tickets Due Today", [:visible]  ],
+    [:my_overdue,       "My Overdue Tickets", [:visible]  ],
+    [:my_on_hold,       "My Tickets On Hold", [:visible]  ],
+    [:monitored_by,     "Tickets I'm Monitoring", [:visible]  ],
+    [:my_all,           "All My Tickets", [:visible]  ],
     
-    [[:new],              "New Tickets"  ],
-    [[:open],             "Open Tickets"  ],
-    [[:new_and_open],     "New & Open Tickets"  ],
-    [[:resolved],         "Resolved Tickets"  ],
-    [[:closed],           "Closed Tickets"  ],
-    [[:due_today],        "Tickets Due Today"  ],
-    [[:overdue],          "Overdue Tickets"  ],
-    [[:on_hold],          "Tickets On Hold"  ],
-    [[:all],              "All Tickets "  ],
+    [:new,              "New Tickets", [:visible]  ],
+    [:open,             "Open Tickets", [:visible]  ],
+    [:new_and_open,     "New & Open Tickets", [:visible]  ],
+    [:resolved,         "Resolved Tickets", [:visible]  ],
+    [:closed,           "Closed Tickets", [:visible]  ],
+    [:due_today,        "Tickets Due Today", [:visible]  ],
+    [:overdue,          "Overdue Tickets", [:visible]  ],
+    [:on_hold,          "Tickets On Hold", [:visible]  ],
+    [:all,              "All Tickets ", [:visible]  ],
     
-    [[:spam],             "Spam"  ],
-    [[:deleted],          "Trash"  ]
+    [:spam,             "Spam"  ],
+    [:deleted,          "Trash"  ]
   ]
   
   SELECTOR_NAMES = Hash[*SELECTORS.inject([]){ |a, v| a += [v[0], v[1]] }]
+  ADDITIONAL_FILTERS = Hash[*SELECTORS.inject([]){ |a, v| a += [v[0], v[2]] }]
   
   SEARCH_FIELDS = [
     [ :display_id,    'Ticket ID'           ],
@@ -50,14 +51,15 @@ module TicketsFilter
   SORT_FIELD_OPTIONS = SORT_FIELDS.map { |i| [i[1], i[0]] }
   SORT_SQL_BY_KEY = Hash[*SORT_FIELDS.map { |i| [i[0], i[2]] }.flatten]
 
-  def self.filter(filters, user = nil, scope = nil)
+  def self.filter(filter, user = nil, scope = nil)
+    scope ||= default_scope
+    
     conditions = {
       :all          =>    {},
-      :unassigned   =>    {:responder_id => nil, :deleted => false, :spam => false},
-      :spam         =>    {:spam => true},
-      :deleted      =>    {:deleted => true},
-      :visible      =>    {:deleted => false, :spam => false},
-      :responded_by =>    {:responder_id => (user && user.id) || -1, :deleted => false, :spam => false},
+      :spam         =>    { :spam => true, :deleted => false },
+      :deleted      =>    { :deleted => true },
+      :visible      =>    { :deleted => false, :spam => false },
+      :responded_by =>    { :responder_id => (user && user.id) || -1 },
       :monitored_by =>    {}, # See below
       
       :new_and_my_open  => ["status = ? or (responder_id = ? and status = ?)", 
@@ -85,17 +87,18 @@ module TicketsFilter
                                       STATUS_KEYS_BY_TOKEN[:resolved], STATUS_KEYS_BY_TOKEN[:closed]],
       :on_hold          => ["status = ?", STATUS_KEYS_BY_TOKEN[:pending]]
     }
-
-    filters.inject(scope || default_scope) do |scope, f|
-      f = f.to_sym
-
-      if user && f == :monitored_by
-        user.subscribed_tickets.scoped(:conditions => {:spam => false, :deleted => false})
-      else
-        scope.scoped(:conditions => conditions[f])
-      end
+        
+    if user && filter == :monitored_by
+      to_ret = user.subscribed_tickets.scoped(:conditions => {:spam => false, :deleted => false})
+    else
+      to_ret = scope.scoped(:conditions => conditions[filter])
     end
+    
+    ADDITIONAL_FILTERS[filter].each do |af|
+      to_ret = to_ret.scoped(:conditions => conditions[af])
+    end unless ADDITIONAL_FILTERS[filter].nil?
 
+    to_ret
   end
 
   def default_scope

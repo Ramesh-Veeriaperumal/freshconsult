@@ -8,9 +8,7 @@ class Helpdesk::TicketsController < ApplicationController
 
   def index
 
-    @items = TicketsFilter.filter(params[:filters] || TicketsFilter::DEFAULT_FILTER,
-      current_user, current_account.tickets
-    )
+    @items = TicketsFilter.filter(@template.current_filter, current_user, current_account.tickets)
 
     @items = TicketsFilter.search(@items, params[:f], params[:v])
 
