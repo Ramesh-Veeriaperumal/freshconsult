@@ -234,14 +234,25 @@ class Helpdesk::Ticket < ActiveRecord::Base
       :my_open          => ["responder_id = ? and status = ?", user.id, STATUS_KEYS_BY_TOKEN[:open]],
       :my_resolved      => ["responder_id = ? and status = ?", user.id, STATUS_KEYS_BY_TOKEN[:resolved]],
       :my_closed        => ["responder_id = ? and status = ?", user.id, STATUS_KEYS_BY_TOKEN[:closed]],
+      :my_due_today     => ["responder_id = ? and due_by <= ? and status not in (?, ?)", user.id, 
+                                      Time.now.end_of_day.to_s(:db), STATUS_KEYS_BY_TOKEN[:resolved], 
+                                      STATUS_KEYS_BY_TOKEN[:closed]],
+      :my_overdue       => ["responder_id = ? and due_by <= ? and status not in (?, ?)", user.id, 
+                                      Time.now.to_s(:db), STATUS_KEYS_BY_TOKEN[:resolved], 
+                                      STATUS_KEYS_BY_TOKEN[:closed]],
       :my_on_hold       => ["responder_id = ? and status = ?", user.id, STATUS_KEYS_BY_TOKEN[:pending]],
       :my_all           => ["responder_id = ?", user.id],
       
       :new              => ["status = ?", STATUS_KEYS_BY_TOKEN[:new]],
       :open             => ["status = ?", STATUS_KEYS_BY_TOKEN[:open]],
-      :new_and_open     => ["status = ? or status = ?", STATUS_KEYS_BY_TOKEN[:new], STATUS_KEYS_BY_TOKEN[:open]],
+      #:new_and_open     => ["status = ? or status = ?", STATUS_KEYS_BY_TOKEN[:new], STATUS_KEYS_BY_TOKEN[:open]],
+      :new_and_open     => ["status in (?, ?)", STATUS_KEYS_BY_TOKEN[:new], STATUS_KEYS_BY_TOKEN[:open]],
       :resolved         => ["status = ?", STATUS_KEYS_BY_TOKEN[:resolved]],
       :closed           => ["status = ?", STATUS_KEYS_BY_TOKEN[:closed]],
+      :due_today        => ["due_by <= ? and status not in (?, ?)", Time.now.end_of_day.to_s(:db), 
+                                      STATUS_KEYS_BY_TOKEN[:resolved], STATUS_KEYS_BY_TOKEN[:closed]],
+      :overdue          => ["due_by <= ? and status not in (?, ?)", Time.now.to_s(:db), 
+                                      STATUS_KEYS_BY_TOKEN[:resolved], STATUS_KEYS_BY_TOKEN[:closed]],
       :on_hold          => ["status = ?", STATUS_KEYS_BY_TOKEN[:pending]]
     }
 

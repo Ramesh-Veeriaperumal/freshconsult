@@ -1,6 +1,6 @@
 module Helpdesk::TicketsHelper
 
-  DEFAULT_FILTER = [:open, :unassigned]
+  DEFAULT_FILTER = [:new_and_my_open]
 
   #CONTEXTS = [:all, :open]
   CONTEXTS = []

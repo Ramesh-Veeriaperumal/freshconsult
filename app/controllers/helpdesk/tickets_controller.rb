@@ -8,7 +8,7 @@ class Helpdesk::TicketsController < ApplicationController
 
   def index
 
-    @items = Helpdesk::Ticket.filter(params[:filters] || [:open, :unassigned],
+    @items = Helpdesk::Ticket.filter(params[:filters] || Helpdesk::TicketsHelper::DEFAULT_FILTER,
       current_user, current_account.tickets
     )
 
