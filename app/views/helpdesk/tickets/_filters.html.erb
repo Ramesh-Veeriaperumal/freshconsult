@@ -1,6 +1,14 @@
+<% javascript_tag do %>
+	jQuery(document).ready(function(){
+		jQuery("#select_view_id").bind("change", function(ev){
+			window.location = this.value;
+		});
+		jQuery("#assign-options-link").bind("click", function(ev){
+			jQuery("#assign-options").show();
+			jQuery(this).hide();
+		});	
+	});
+<% end %>
 
-  <h4>Showing</h4>
 
-  <ul class="tab-buttons">
-    <%= filter_list %>
-  </ul>
+| <%= filter_select %>

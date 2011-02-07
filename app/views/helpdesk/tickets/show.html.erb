@@ -1,3 +1,5 @@
+<% content_for :layoutType do %>request_view<% end %>
+
 <% content_for :head do %>
 	<%= javascript_include_tag "helpdesk/expanding_textarea.js" %>
 	<%= javascript_include_tag "helpdesk/multifile.js" %>
@@ -25,11 +27,10 @@
 	<% end %>
 <% end %>
 
-<script>
+<% javascript_tag do %>
 	
 	function changeAggentList(group_id)
-	{
-		
+	{ 
 		jQuery.ajax({
 	      					type: 'POST',
 							url: '/helpdesk/tickets/get_agents/'+group_id,
@@ -39,58 +40,167 @@
 											jQuery('#assigned_to').replaceWith(data);
 									}
 				});
-		
-		
-		
-		
 	}
 	
-</script>
+	jQuery(document).ready(function(){
+		var activeCnt = jQuery("#TicketProperties"); 
+		jQuery(".rtPanel a").bind("click", function(ev){
+			activeCnt.hide();
+			activeCnt = jQuery("#"+this.getAttribute("cntid")).show("fade", 300);
+			
+			jQuery(this).parent().find(".active").removeClass("active");
+			jQuery(this).addClass("active");
+		});
+		
+		
+		jQuery(window).scroll(function(){
+				/*
+			if(jQuery(window).scrollTop() > jQuery("#SmartSideBar").offset().top){ 
+				jQuery(".rtCnt").css("position", "fixed");
+				jQuery(".rtCnt").css("top", "0px");
+			}	
+			if(jQuery(window).scrollTop() <= jQuery("#SmartSideBar").offset().top){
+				jQuery(".rtCnt").css("position", "relative"); 
+			}
+			*/
+		
+		});
+		
+	});
+	
+<% end %>
 
 <% content_for :sidebar do %>
+<div id="SmartSideBar"></div>
+<div class="rtCnt">
+	<div class="rtPanel">
+		<a href="javascript:void(0)" class="active" cntid="TicketProperties">
+			<img src="/images/page_white_gear.png" width="32px" height="32px"  />
+			<em>Ticket Properties</em>
+		</a>
+		<!--a href="javascript:void(0)">
+			<img src="/images/mouse_select_left.png" width="32px" height="32px"  />
+			<em>Ticket Actions</em>
+		</a-->
+		<a href="javascript:void(0)" cntid="Scenarios">
+			<img src="/images/widgets.png" width="32px" height="32px"  />
+			<em>Execute Scenario</em>
+		</a>
+		<a href="javascript:void(0)" cntid="RequesterProperties">
+			<img src="/images/user_gray.png" width="32px" height="32px"  />
+			<em>Requestor Info</em>
+		</a>
+		<a href="javascript:void(0)" cntid="TicketTodos">
+			<img src="/images/tick.png" width="32px" height="32px"  />
+			<em>To Do</em>
+		</a>
+		<a href="javascript:void(0)" cntid="RelatedSolutions">
+			<img src="/images/help.png" width="32px" height="32px"  />
+			<em>Suggest Solutions</em>
+		</a>
+		<a href="javascript:void(0)" cntid="TicketTags">
+			<img src="/images/three_tags.png" width="32px" height="32px"  />
+			<em>Tags</em>
+		</a>
+	</div>	
+	 <div class="rtDetails" id="TicketProperties">              
+			<% form_for @ticket do |f| %>
+	        <ul class="cnt">
+	            <li>
+	                <label>Due by time</label>
+					<%= @ticket.due_by.strftime("%B %e %Y at %I:%M %p") %>
+	            </li>
+	            <li>
+					<%= f.label :priority, "Priority" %>
+					<%= f.select :priority, Helpdesk::Ticket::PRIORITY_OPTIONS, {}, {:onchange => "this.form.submit()"} %>
+	            </li>
+	            <li>
+	                <%= f.label :status, "Status" %>
+					<%= f.select :status, Helpdesk::Ticket::STATUS_OPTIONS, {}, {:onchange => "this.form.submit()"} %>
+	            </li>
+				<li>
+					<%= f.label :group_id, "Group" %>
+					<%= f.collection_select :group_id, Group.find_all_by_account_id(@item.account_id), :id, :name,{:include_blank => 'Nobody'}, { :onchange => "changeAggentList(this.options[this.selectedIndex].value)" ,:class => "select"} %>
+      			</li>
+	            <li id="assigned_to">
+	                <%= f.label :responder_id, "Assigned To" %>
+					<%= f.collection_select :responder_id, User.find_all_by_permission(current_account, :manage_tickets), :id, :name, {:include_blank => 'Nobody'}, {:onchange => "this.form.submit()"} %>	
+	            </li>
+				<li>
+					<%= f.label :source, "Mode" %>
+					<%= f.select :source, Helpdesk::Ticket::SOURCE_OPTIONS, {}, {:onchange => "this.form.submit()"} %>
+	            </li> 
+				<!-- Custom fields starts here -->
+				
+				<% @ticket.ff_aliases.each do |cust_field| %>
+				<li>
+	                <label><%=cust_field%></label>
+					<%= h(@ticket.get_ff_value(cust_field)) %>
+	            </li> 
+				<% end %>
+				<!-- Custom fields ends here-->
+	        </ul> 
+			<% end %> 
+	    </div> 
+		<div class="rtDetails" style="display:none">
+			<ul class="actions">
+			    <%= content_tag(:li, link_to("Monitor this ticket", helpdesk_ticket_helpdesk_subscriptions_path(@ticket), :method => :post, :class => "button" )) if not @subscription %>
+			    <%= content_tag(:li, link_to("Stop monitoring this ticket", helpdesk_ticket_helpdesk_subscription_path(@ticket, @subscription), :method => :delete, :class => "button" )) if @subscription %>
+			    <%= content_tag(:li, link_to("This is not spam", unspam_helpdesk_ticket_path(@ticket), :method => :put, :class => "button" )) if @ticket.spam %>
+			    <%= content_tag(:li, link_to("Mark as spam", spam_helpdesk_ticket_path(@ticket), :method => :put, :class => "button" )) unless @ticket.spam %>
+			    <%= content_tag(:li, link_to("Delete this ticket", @ticket, :method => :delete, :class => "button" )) unless @ticket.deleted %>
+			    <%= content_tag(:li, link_to("Undelete this ticket", restore_helpdesk_ticket_path(@ticket), :method => :put, :class => "button" )) if @ticket.deleted %>
+			    <%= content_tag(:li, link_to("View in portal", support_ticket_path(@ticket), :class => "button" )) if not @subscription %>
+			</ul>
+		</div>
+		<%= render :partial => "helpdesk/tickets/components/user", :object => @ticket.requester %>
+		<div class="rtDetails" id="TicketTags" style="display:none;">
+			<h4>Tags</h4>
+			<ul class="tags">
+			    <%= @ticket.tags.map { |t| content_tag(:li, link_to(h(t.name), t) + link_to(image_tag('helpdesk/delete.png'), helpdesk_ticket_helpdesk_tag_use_path(@ticket, t), :method => 'delete', :class => 'tag-delete') ) }.join %>
+			</ul>
+			<%= render :partial => '/helpdesk/shared/tag_search', :locals => {:action => helpdesk_ticket_helpdesk_tag_uses_path(@ticket), :on_select => %{ $('tag-search-form').submit(); }, :label_text => "Add a tag:", :no_result_text => "No matches. Press enter to create tag." } %>		
+		</div>
+		<div class="rtDetails" id="TicketTodos" style="display:none;"> 
+			<ul>
+			  <%= @ticket.reminders.visible.map do |r| 
+			    content_tag(
+			      :li, 
+			      check_box_link(
+			        r.body + (r.ticket && @ticket ? link_to("Re: #{r.ticket.subject}", r.ticket) : ''), 
+			        r.deleted, 
+			        helpdesk_reminder_path(r), 
+			        :delete, 
+			        restore_helpdesk_reminder_path(r), 
+			        :put)) 
+			  end %>
+			</ul>
+			<!--a href="#" class="todo_button">Click to Add new</a-->
+			 
+			<% form_for @ticket ? [@ticket, Helpdesk::Reminder.new()] : Helpdesk::Reminder.new() do |f| %>
+			  <%= f.label :body, "Add a reminder" %>
+			  <%= f.text_field :body %>
+			<% end %>
+		</div>
+		
+		<div class="rtDetails" id="RelatedSolutions" style="display:none;">
+			Related Solutions
+		</div>
+		
+		<div class="rtDetails" id="Scenarios" style="display:none;">
+			
+			<h3 class="title">Run Scenario action</h3>	
+			 <ul class="scenario_actions">
+			 	<% current_account.scn_automations.each do |scenario| %>
+			 		<li><%= link_to ( scenario.name, { :action => :execute_scenario }, :scenario_id => scenario.id, :method => :post ) %></li>
+				<% end %>
+			 </ul> 
+		</div>
+</div>	
+ <div style="display:none">
 	<%= content_tag(:div, "This ticket is flagged as spam. " + link_to("(undo)", unspam_helpdesk_ticket_path(@ticket), :method => :put), :class => 'spam') if @ticket.spam %>
 	<%= content_tag(:div, "This ticket is deleted. " + link_to("(undo)", restore_helpdesk_ticket_path(@ticket), :method => :put), :class => 'spam') if @ticket.deleted %>
 	<%= content_tag(:div, "You're monitoring this ticket. " + link_to("(stop)", helpdesk_ticket_helpdesk_subscription_path(@ticket, @subscription), :method => :delete), :class => 'monitoring') if @subscription %>	 
-	
-    <div class="user_details_widget">
-        <h3 class="title">Contact</h3>
-        <div class="user_details">
-            <div class="preview_pic">  
-				<%= image_tag (@ticket.requester.avatar) ? 
-								@ticket.requester.avatar.content.url(:thumb) : "/images/icons/profile_blank.gif" %>
-		    </div>
-			<%= link_to(h(@ticket.requester.name), @ticket.requester, :class => "user_name") %>
-            <em><%= auto_link(h(@ticket.requester.email)) %></em>
-			<br/>
-            <div class="clearfloat">
-            </div>
-        </div>
-        <ul class="ui-rightColSubTab">
-            <li class="first active">
-                <a href="#">Recent Requests</a>
-            </li>
-            <!--li>
-                <a href="#">Products owned</a>
-            </li-->
-        </ul>
-        <ul class="ui-list_with_icon">
-            <li>
-                <a href="#">Exchange server not working</a>
-            </li>
-            <li>
-                <a href="#">Licence Problem</a>
-            </li>
-        </ul>
-    </div> 
-	
-	<div class="rightSubContainers">
-		<h4>Tags</h4>
-		<ul class="tags">
-		    <%= @ticket.tags.map { |t| content_tag(:li, link_to(h(t.name), t) + link_to(image_tag('helpdesk/delete.png'), helpdesk_ticket_helpdesk_tag_use_path(@ticket, t), :method => 'delete', :class => 'tag-delete') ) }.join %>
-		</ul>
-		<%= render :partial => '/helpdesk/shared/tag_search', :locals => {:action => helpdesk_ticket_helpdesk_tag_uses_path(@ticket), :on_select => %{ $('tag-search-form').submit(); }, :label_text => "Add a tag:", :no_result_text => "No matches. Press enter to create tag." } %>		
-	</div>
-	<%= render :partial => '/helpdesk/shared/reminders', :locals => {:reminders => @ticket.reminders, :parent => @ticket } %>
 	
 	<div class="rightSubContainers">
 		<h4>Actions</h4>
@@ -104,15 +214,16 @@
 		    <%= content_tag(:li, link_to("View in portal", support_ticket_path(@ticket), :class => "button" )) if not @subscription %>
 		</ul>
 	</div>
+	</div>
 <% end %>
 
 <% content_for :main_panel_title do %>
 <% end %>
 <% content_for :main_panel_actions do %>
 <% end %>
-<% content_for :main_panel_summary do %> 
+<% content_for :main_panel_summary do %>  
 	<div class="request_details">
-	    <div class="request_header">
+	    <div class="requestCnt">
 	    	<div class="request_status">
 	            <span class="ltSlant"></span>
 	            <ul>
@@ -124,80 +235,54 @@
 	                </li>
 	            </ul>
 	        </div>
-			<%= render :partial => "/shared/avatar", :object => @ticket.requester.avatar  %>
-			<div class="description">
-		        <div class="title">
+			<div class="title">
 		            <em><%= "##{@ticket.display_id}" %></em>
 		            <b><%= h(@ticket.subject) %></b>
-		        </div>
+		    </div>
+			<div class="description">
 		        <div class="user_details">
-		            Reported by <%= link_to(h(@ticket.requester.name),@ticket.requester, :class => "user_name") %>
-		            | <%= h(@ticket.created_at.strftime("%B %e %Y at %I:%M %p")) %>				
+		        	<%= render :partial => "/shared/avatar", :object => @ticket.requester.avatar  %>
+		          	  Reported by <%= link_to(h(@ticket.requester.name),@ticket.requester, :class => "user_name") %>
+		            <div> 
+						Created on <%= h(@ticket.created_at.strftime("%B %e %Y at %I:%M %p")) %> 
+					</div>				
 		        </div>	        
-				<div id="description-summary">
+				<div id="description-summary" class="details">
 		            <%= h(truncate(@ticket.description, :length => 400)) %>
 		            <% if(@ticket.description.size > 400) %>
 		            <%= link_to_function "(more)", "Element.hide('description-summary'); Element.show('description-full');" %>
 		            <% end %>
 		        </div>
-		        <div id="description-full" style="display:none">
+		        <div id="description-full" style="display:none" class="details">
 			    	<%= h(@ticket.description) %>
 			    </div>
 			</div>
 	    </div>		
-	    <div class="request_desp">             
-	        <span class="sub_title">Ticket properties</span>
-			<% form_for @ticket do |f| %>
-	        <ul class="ui-list-2col">
-	            <li>
-	                <label>Dueby in</label>: <%= @ticket.due_by.strftime("%B %e %Y at %I:%M %p") %>
-	            </li>
-	            <li>
-					<%= f.label :priority, "Priority" %>: <%= f.select :priority, Helpdesk::Ticket::PRIORITY_OPTIONS, {}, {:onchange => "this.form.submit()"} %>
-	            </li>
-	            <li>
-	                <%= f.label :status, "Status" %>: <%= f.select :status, Helpdesk::Ticket::STATUS_OPTIONS, {}, {:onchange => "this.form.submit()"} %>
-	            </li>
-				<li>
-					<%= f.label :group_id, "Group" %>:<%= f.collection_select :group_id, Group.find_all_by_account_id(@item.account_id), :id, :name,{:include_blank => 'Nobody'}, { :onchange => "changeAggentList(this.options[this.selectedIndex].value)" ,:class => "select"} %>
-      			</li>
-	            <li id="assigned_to">
-	                <%= f.label :responder_id, "Assigned To" %>: <%= f.collection_select :responder_id, User.find_all_by_permission(current_account, :manage_tickets), :id, :name, {:include_blank => 'Nobody'}, {:onchange => "this.form.submit()"} %>	
-	            </li>
-				<li>
-					<%= f.label :source, "Mode" %>: <%= f.select :source, Helpdesk::Ticket::SOURCE_OPTIONS, {}, {:onchange => "this.form.submit()"} %>
-	            </li> 
-				<!-- Custom fields starts here -->
-				
-				<% @ticket.ff_aliases.each do |cust_field| %>
-				<li>
-	                <label><%=cust_field%></label>: <%= h(@ticket.get_ff_value(cust_field)) %>
-	            </li> 
-				<% end %>
-				<!-- Custom fields ends here-->
-	        </ul> 
-			<% end %> 
-	    </div>
+		<% unless @ticket.notes.visible.newest_first.blank? then %>
+		    <h3 class="subtitle">Conversation</h3>
+			<div class="requestCnt">
+				<%= render :partial => 'note', :collection => @ticket.notes.visible.newest_first %>
+		    </div>
+		<% end %>
+		
+		<div id="RequestPanel"></div>
+		<div class="request_panel" id="RequestToolbox">
+			<% if @item.requester %>
+				<%= render(:partial => '/helpdesk/shared/note_form', :locals => {:id => 'send-email', :note => [@ticket, Helpdesk::Note.new(:private => false)] }) %>
+			<% else %>
+				<%= render(:partial => '/helpdesk/shared/note_form', :locals => {:id => 'add-note',	:note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
+			<% end %>
+		</div>
+		<br /><br />
 	</div>
 
 <% end %>
 <% content_for :main_panel_toolbar do %>
-	<div class="request_panel">
-		<% if @item.requester %>
-			<%= render(:partial => '/helpdesk/shared/note_form', :locals => {:id => 'send-email', :note => [@ticket, Helpdesk::Note.new(:private => false)] }) %>
-		<% else %>
-			<%= render(:partial => '/helpdesk/shared/note_form', :locals => {:id => 'add-note',	:note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
-		<% end %>
-	</div>
+	
 <% end %>
 
 <% content_for :main_panel_content do %>
-	<div class="conversations">        
-        <h3 class="title">Conversation</h3>
-		<ul>
-			<%= render :partial => 'note', :collection => @ticket.notes.visible.newest_first %>
-		</ul> 
-    </div>
+	
 <div class="clear"></div>
 
 <% end %>

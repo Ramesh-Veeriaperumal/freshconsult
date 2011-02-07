@@ -35,5 +35,10 @@ class Helpdesk::Note < ActiveRecord::Base
   def status?
     source == SOURCE_KEYS_BY_TOKEN["status"]
   end
+  
+  def to_liquid
+    { "commenter"   => user,
+      "body"     => body }
+  end
 
 end

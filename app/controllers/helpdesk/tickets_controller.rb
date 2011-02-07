@@ -7,21 +7,18 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :load_multiple_items, :only => [:destroy, :restore, :spam, :unspam, :assign]
 
   def index
-    
-    
 
-    @items = Helpdesk::Ticket.filter(current_account, 
-      params[:filters] || [:open, :unassigned],
-      current_user
+    @items = TicketsFilter.filter(params[:filters] || TicketsFilter::DEFAULT_FILTER,
+      current_user, current_account.tickets
     )
 
-    @items = Helpdesk::Ticket.search(@items, params[:f], params[:v])
+    @items = TicketsFilter.search(@items, params[:f], params[:v])
 
     respond_to do |format|
       format.html  do
         @items = @items.paginate(
           :page => params[:page], 
-          :order => Helpdesk::Ticket::SORT_SQL_BY_KEY[(params[:sort] || :created_asc).to_sym],
+          :order => TicketsFilter::SORT_SQL_BY_KEY[(params[:sort] || :created_asc).to_sym],
           :per_page => 10)
       end
       format.atom do
@@ -99,6 +96,11 @@ class Helpdesk::TicketsController < ApplicationController
       redirect_to :back
     end
   end
+  
+  def execute_scenario 
+    p "############ Testing "
+    redirect_to :back
+  end 
 
   def spam
     @items.each do |item|

@@ -109,7 +109,8 @@ ActionController::Routing::Routes.draw do |map|
 #      ticket.resources :notes, :member => { :restore => :put }, :name_prefix => 'helpdesk_issue_helpdesk_'
 #    end
 
-    helpdesk.resources :tickets, :collection => {:empty_trash => :delete, :empty_spam => :delete}, :member => { :assign => :put, :restore => :put, :spam => :put, :unspam => :put } do |ticket|
+    helpdesk.resources :tickets, :collection => {:empty_trash => :delete, :empty_spam => :delete}, 
+                                 :member => { :assign => :put, :restore => :put, :spam => :put, :unspam => :put, :execute_scenario => :post } do |ticket|
       ticket.resources :notes, :member => { :restore => :put }, :name_prefix => 'helpdesk_ticket_helpdesk_'
       ticket.resources :subscriptions, :name_prefix => 'helpdesk_ticket_helpdesk_'
       ticket.resources :tag_uses, :name_prefix => 'helpdesk_ticket_helpdesk_'

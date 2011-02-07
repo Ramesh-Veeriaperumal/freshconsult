@@ -2,7 +2,6 @@
   <%= javascript_include_tag "helpdesk/page_switcher" %>
   <% javascript_tag do %>
     document.observe("dom:loaded", function(){
-
       new Helpdesk.PageSwitcher({
         toggleMode: true,
         pages: ['attachment-options']
@@ -12,7 +11,7 @@
   <% end %>
 <% end %>
 
-<div id="note-form-container" class="note_conv_form">
+<div id="note-form-container">
   <% form_for note, :html => {:multipart => true } do |f| %>
     <%= f.error_messages %>
     <%= f.label(:body, "Enter your message:") if local_assigns[:label] %>
@@ -22,10 +21,10 @@
     <div class="button-container">
     <ul>
       <!--li><%= submit_tag(local_assigns[:submit] || ActiveSupport::Inflector.titleize(id), :class => "button") %></li-->	  
-	  <%= content_tag('li', link_to_function("Send an Email", "Helpdesk.submitToTicket('send-email', false, 'Send Email', this)", :class => 'button')) if @item.requester %>	  
-	  <%= content_tag('li', link_to_function("Add a Note", "Helpdesk.submitToTicket('add-note', true, 'Add Note', this)", :class => 'button')) %>
+	  <%= content_tag('li', link_to_function("Send an Email", "Helpdesk.submitToTicket('send-email', false, 'Send Email', this)", :class => 'fdbutton')) if @item.requester %>	  
+	  <%= content_tag('li', link_to_function("Add a Note", "Helpdesk.submitToTicket('add-note', true, 'Add Note', this)", :class => 'fdbutton')) %>
 	  <% unless local_assigns[:no_attachments] %>
-      	<li><a href="#" class="button" id="attachment-options-link">Attach a File</a></li>
+      	<li><a href="javascript:void(0)" class="button" id="attachment-options-link">Attach a File</a></li>
 	  <% end %>
     </ul>
       

@@ -1,45 +1,39 @@
-<div class="pageContent">
-	<h3 class="content_title">Rebrand your Help Desk</h3>
-	<span class="seperator"></span>
+<% content_for :layoutType do %>single<% end %>
+<div class="header_area">
+	<h4>Rebrand your Help Desk</h4>
+</div>	
+<div class="page_area">
 	<% form_for :account, @account, :url => { :action => 'update' }, :html => { :method => :put } do |f| %>
 	  <%= f.error_messages %>
 	  <ul class="ui-form">
 		  <li>
 		    <%= f.label :name, "Account Name" %>
-		    <%= f.text_field :name, :class => "very_small" %>
+		    <%= f.text_field :name, :class => "text" %>
 		  </li>
-		  
 		  <li>
-			<!--%= f.label :time_zone, "Time Zone" %-->
-			<!--%= f.time_zone_select :time_zone, ActiveSupport::TimeZone.all %-->
-		
+			<%= f.label :time_zone, "Time Zone" %>
+			<%= f.time_zone_select :time_zone, ActiveSupport::TimeZone.all %>
 		  <li>
 		    <%= f.label :helpdesk_name, "Helpdesk Name" %>
-		    <%= f.text_field :helpdesk_name, :class => "very_small" %>
+		    <%= f.text_field :helpdesk_name, :class => "text" %>
 		  </li>
 		  <li>
 		    <%= f.label :helpdesk_url, "Helpdesk URL" %>
-		    <%= f.text_field :helpdesk_url, :class => "very_small" %>
+		    <%= f.text_field :helpdesk_url, :class => "text" %>
 		  </li>
-		  
-		   <li>
+		  <li class="small">
 		    <%= f.label :header_color, "Header Color" %>
 		    <%= f.text_field :header_color, :class => "very_small" %>
 		  </li>
-		  
-		   <li>
-		    <%= f.label :bg_color, "Back ground Color" %>
+		  <li class="small">
+		    <%= f.label :bg_color, "Background Color" %>
 		    <%= f.text_field :bg_color, :class => "very_small" %>
 		  </li>
-		  
-		  	
-			
-		  
+		  <li>
+		  	<span class="seperator"></span>
+		  	<%= submit_tag 'Save', :class => 'fdbutton' %>
+	  		<%= link_to "Cancel", {:action => 'index'}, :class => "fdbutton grey" %>
+		  </li>
 	  </ul>
-	  <br />	
-	  <div class="button-container"> 
-	  	<%= submit_tag 'Save', :class => 'fdbutton' %>
-	  	<%= link_to "Cancel", {:action => 'index'}, :class => "fdbutton grey" %>
-	  </div>
 	<% end %>
 </div>

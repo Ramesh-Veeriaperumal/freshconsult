@@ -1,41 +1,18 @@
 module Helpdesk::TicketsHelper
-
-  DEFAULT_FILTER = [:open, :unassigned]
-
-  CONTEXTS = [:all, :open]
-
-  SELECTORS = [
-    [[:unassigned],         "New Tickets"                     ],
-    [[:responded_by],       "My Tickets"                      ],
-    [[:monitored_by],       "Tickets I'm Monitoring"          ],
-    [[:visible],            "All Tickets"                     ],
-    [[:spam],               "Spam",                   [:all]  ],
-    [[:deleted],            "Trash",                  [:all]  ]
-  ]
-
-  SELECTOR_NAMES = Hash[*SELECTORS.inject([]){ |a, v| a += [v[0], v[1]] }]
-  SELECTOR_CONTEXTS = Hash[*SELECTORS.inject([]){ |a, v| a += [v[0], v[2]] }]
-
-  def filter_list
-    SELECTORS.collect { |f| content_tag('li', leader(filter_link(f[0]), filter_count(f[0]).to_s)) }
-  end
-
-  def leader(left, right)
-    # "<div class=\"leader-right\">#{right}</div><div class=\"leader-left\">#{left}</div><div class=\"clear\"></div>"
-    "#{left} (#{right})"    
-  end
-
-  def filter_link(selector)
-    if selector == current_selector
-     SELECTOR_NAMES[selector]
-    else
-      link_to(SELECTOR_NAMES[selector], helpdesk_filter_tickets_url(filter(selector)))
-    end
+  
+  include TicketsFilter
+  
+  def filter_select
+    select("select_view", "id", SELECTORS.collect { |v| [v[1], helpdesk_filter_tickets_path(filter(v[0]))] },
+              {:prompt => "Select View..."})
   end
 
   def filter(selector = nil)
     selector ||= current_selector
-    (SELECTOR_CONTEXTS[selector] || current_context) + selector
+  end
+  
+  def filter_count(selector=nil)
+    TicketsFilter.filter(filter(selector), current_user, current_account.tickets).count
   end
 
   def current_filter
@@ -43,19 +20,11 @@ module Helpdesk::TicketsHelper
   end
 
   def current_selector
-    current_filter.reject { |f| CONTEXTS.include? f }
-  end
-
-  def current_context
-    current_filter.select { |f| CONTEXTS.include? f }
-  end
-
-  def filter_count(selector=nil)
-    Helpdesk::Ticket.filter(current_account, filter(selector), current_user).count
+    current_filter#.reject { |f| CONTEXTS.include? f }
   end
 
   def filter_title(selector)
-    "#{SELECTOR_NAMES[selector]} (#{filter_count(selector)})"
+    SELECTOR_NAMES[selector]
   end
 
   def current_filter_title

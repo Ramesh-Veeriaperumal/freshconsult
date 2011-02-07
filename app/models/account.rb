@@ -19,6 +19,7 @@ class Account < ActiveRecord::Base
   has_many :groups
   has_many :forum_categories
   
+  has_many :tickets, :class_name => 'Helpdesk::Ticket'
   has_many :solution_folders , :class_name =>'Solution::Folder'
   
   #Scope restriction ends
