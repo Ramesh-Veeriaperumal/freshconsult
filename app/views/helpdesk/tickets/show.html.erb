@@ -54,7 +54,7 @@
 		
 		
 		jQuery(window).scroll(function(){
-			
+				/*
 			if(jQuery(window).scrollTop() > jQuery("#SmartSideBar").offset().top){ 
 				jQuery(".rtCnt").css("position", "fixed");
 				jQuery(".rtCnt").css("top", "0px");
@@ -62,7 +62,7 @@
 			if(jQuery(window).scrollTop() <= jQuery("#SmartSideBar").offset().top){
 				jQuery(".rtCnt").css("position", "relative"); 
 			}
-			
+			*/
 		
 		});
 		
@@ -191,7 +191,9 @@
 			
 			<h3 class="title">Run Scenario action</h3>	
 			 <ul class="scenario_actions">
-			 	<li><a href="javascript:void(0)" class="button">Escalate to Randy</a></li>
+			 	<% current_account.scn_automations.each do |scenario| %>
+			 		<li><%= link_to ( scenario.name, { :action => :execute_scenario }, :scenario_id => scenario.id, :method => :post ) %></li>
+				<% end %>
 			 </ul> 
 		</div>
 </div>	
@@ -199,39 +201,6 @@
 	<%= content_tag(:div, "This ticket is flagged as spam. " + link_to("(undo)", unspam_helpdesk_ticket_path(@ticket), :method => :put), :class => 'spam') if @ticket.spam %>
 	<%= content_tag(:div, "This ticket is deleted. " + link_to("(undo)", restore_helpdesk_ticket_path(@ticket), :method => :put), :class => 'spam') if @ticket.deleted %>
 	<%= content_tag(:div, "You're monitoring this ticket. " + link_to("(stop)", helpdesk_ticket_helpdesk_subscription_path(@ticket, @subscription), :method => :delete), :class => 'monitoring') if @subscription %>	 
-	
-    <!--div class="user_details_widget">
-        <h3 class="title">Contact</h3>
-        <div class="user_details">
-            <div class="preview_pic">  
-				<%= image_tag (@ticket.requester.avatar) ? 
-								@ticket.requester.avatar.content.url(:thumb) : "/images/icons/profile_blank.gif" %>
-		    </div>
-			<%= link_to(h(@ticket.requester.name), @ticket.requester, :class => "user_name") %>
-            <em><%= auto_link(h(@ticket.requester.email)) %></em>
-			<br/>
-            <div class="clearfloat">
-            </div>
-        </div>
-        <ul class="ui-rightColSubTab">
-            <li class="first active">
-                <a href="#">Recent Requests</a>
-            </li>
-            <li>
-                <a href="#">Products owned</a>
-            </li>
-        </ul>
-        <ul class="ui-list_with_icon">
-            <li>
-                <a href="#">Exchange server not working</a>
-            </li>
-            <li>
-                <a href="#">Licence Problem</a>
-            </li>
-        </ul>
-    </div-->
-	
-	
 	
 	<div class="rightSubContainers">
 		<h4>Actions</h4>
@@ -289,10 +258,13 @@
 			    </div>
 			</div>
 	    </div>		
-	    <h3 class="subtitle">Conversation</h3>
-		<div class="requestCnt">
-			<%= render :partial => 'note', :collection => @ticket.notes.visible.newest_first %>
-	    </div>
+		<% unless @ticket.notes.visible.newest_first.blank? then %>
+		    <h3 class="subtitle">Conversation</h3>
+			<div class="requestCnt">
+				<%= render :partial => 'note', :collection => @ticket.notes.visible.newest_first %>
+		    </div>
+		<% end %>
+		
 		<div id="RequestPanel"></div>
 		<div class="request_panel" id="RequestToolbox">
 			<% if @item.requester %>
@@ -301,7 +273,7 @@
 				<%= render(:partial => '/helpdesk/shared/note_form', :locals => {:id => 'add-note',	:note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
 			<% end %>
 		</div>
-		<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+		<br /><br />
 	</div>
 
 <% end %>

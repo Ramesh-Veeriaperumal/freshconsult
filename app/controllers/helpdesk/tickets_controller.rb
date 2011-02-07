@@ -7,7 +7,6 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :load_multiple_items, :only => [:destroy, :restore, :spam, :unspam, :assign]
 
   def index
-    @va_rules = va_rules.find(:all)
     
     @items = Helpdesk::Ticket.filter(current_account, 
       params[:filters] || [:open, :unassigned],
@@ -98,6 +97,11 @@ class Helpdesk::TicketsController < ApplicationController
       redirect_to :back
     end
   end
+  
+  def execute_scenario 
+    p "############ Testing "
+    redirect_to :back
+  end 
 
   def spam
     @items.each do |item|
