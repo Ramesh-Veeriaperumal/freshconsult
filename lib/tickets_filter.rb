@@ -5,14 +5,14 @@ module TicketsFilter
 
   SELECTORS = [
     [:new_and_my_open,  "New & My Open Tickets", [:visible]  ],
-    [:my_open,          "My Open Tickets", [:visible]  ],
-    [:my_resolved,      "My Resolved Tickets", [:visible] ],
-    [:my_closed,        "My Closed Tickets", [:visible]  ],
-    [:my_due_today,     "My Tickets Due Today", [:visible]  ],
-    [:my_overdue,       "My Overdue Tickets", [:visible]  ],
-    [:my_on_hold,       "My Tickets On Hold", [:visible]  ],
+    [:my_open,          "My Open Tickets", [:visible, :responded_by, :open]  ],
+    [:my_resolved,      "My Resolved Tickets", [:visible, :responded_by, :resolved] ],
+    [:my_closed,        "My Closed Tickets", [:visible, :responded_by, :closed]  ],
+    [:my_due_today,     "My Tickets Due Today", [:visible, :responded_by, :due_today]  ],
+    [:my_overdue,       "My Overdue Tickets", [:visible, :responded_by, :overdue]  ],
+    [:my_on_hold,       "My Tickets On Hold", [:visible, :responded_by, :on_hold]  ],
     [:monitored_by,     "Tickets I'm Monitoring", [:visible]  ],
-    [:my_all,           "All My Tickets", [:visible]  ],
+    [:my_all,           "All My Tickets", [:visible, :responded_by]  ],
     
     [:new,              "New Tickets", [:visible]  ],
     [:open,             "Open Tickets", [:visible]  ],
@@ -52,46 +52,14 @@ module TicketsFilter
   SORT_SQL_BY_KEY = Hash[*SORT_FIELDS.map { |i| [i[0], i[2]] }.flatten]
 
   def self.filter(filter, user = nil, scope = nil)
-    scope ||= default_scope
+    to_ret = (scope ||= default_scope)
     
-    conditions = {
-      :all          =>    {},
-      :spam         =>    { :spam => true, :deleted => false },
-      :deleted      =>    { :deleted => true },
-      :visible      =>    { :deleted => false, :spam => false },
-      :responded_by =>    { :responder_id => (user && user.id) || -1 },
-      :monitored_by =>    {}, # See below
-      
-      :new_and_my_open  => ["status = ? or (responder_id = ? and status = ?)", 
-                                      STATUS_KEYS_BY_TOKEN[:new], user.id, STATUS_KEYS_BY_TOKEN[:open]],
-      :my_open          => ["responder_id = ? and status = ?", user.id, STATUS_KEYS_BY_TOKEN[:open]],
-      :my_resolved      => ["responder_id = ? and status = ?", user.id, STATUS_KEYS_BY_TOKEN[:resolved]],
-      :my_closed        => ["responder_id = ? and status = ?", user.id, STATUS_KEYS_BY_TOKEN[:closed]],
-      :my_due_today     => ["responder_id = ? and due_by <= ? and status not in (?, ?)", user.id, 
-                                      Time.now.end_of_day.to_s(:db), STATUS_KEYS_BY_TOKEN[:resolved], 
-                                      STATUS_KEYS_BY_TOKEN[:closed]],
-      :my_overdue       => ["responder_id = ? and due_by <= ? and status not in (?, ?)", user.id, 
-                                      Time.now.to_s(:db), STATUS_KEYS_BY_TOKEN[:resolved], 
-                                      STATUS_KEYS_BY_TOKEN[:closed]],
-      :my_on_hold       => ["responder_id = ? and status = ?", user.id, STATUS_KEYS_BY_TOKEN[:pending]],
-      :my_all           => ["responder_id = ?", user.id],
-      
-      :new              => ["status = ?", STATUS_KEYS_BY_TOKEN[:new]],
-      :open             => ["status = ?", STATUS_KEYS_BY_TOKEN[:open]],
-      :new_and_open     => ["status in (?, ?)", STATUS_KEYS_BY_TOKEN[:new], STATUS_KEYS_BY_TOKEN[:open]],
-      :resolved         => ["status = ?", STATUS_KEYS_BY_TOKEN[:resolved]],
-      :closed           => ["status = ?", STATUS_KEYS_BY_TOKEN[:closed]],
-      :due_today        => ["due_by <= ? and status not in (?, ?)", Time.now.end_of_day.to_s(:db), 
-                                      STATUS_KEYS_BY_TOKEN[:resolved], STATUS_KEYS_BY_TOKEN[:closed]],
-      :overdue          => ["due_by <= ? and status not in (?, ?)", Time.now.to_s(:db), 
-                                      STATUS_KEYS_BY_TOKEN[:resolved], STATUS_KEYS_BY_TOKEN[:closed]],
-      :on_hold          => ["status = ?", STATUS_KEYS_BY_TOKEN[:pending]]
-    }
-        
+    conditions = load_conditions(user)
+
     if user && filter == :monitored_by
       to_ret = user.subscribed_tickets.scoped(:conditions => {:spam => false, :deleted => false})
     else
-      to_ret = scope.scoped(:conditions => conditions[filter])
+      to_ret = to_ret.scoped(:conditions => conditions[filter]) unless conditions[filter].nil?
     end
     
     ADDITIONAL_FILTERS[filter].each do |af|
@@ -101,7 +69,7 @@ module TicketsFilter
     to_ret
   end
 
-  def default_scope
+  def self.default_scope
     eval "Helpdesk::Ticket"
   end
 
@@ -125,5 +93,29 @@ module TicketsFilter
 
     scope.scoped(:conditions => conditions)
   end
+  
+  protected
+    def self.load_conditions(user)
+      {
+        :spam         =>    { :spam => true, :deleted => false },
+        :deleted      =>    { :deleted => true },
+        :visible      =>    { :deleted => false, :spam => false },
+        :responded_by =>    { :responder_id => (user && user.id) || -1 },
+        
+        :new_and_my_open  => ["status = ? or (responder_id = ? and status = ?)", 
+                                        STATUS_KEYS_BY_TOKEN[:new], user.id, STATUS_KEYS_BY_TOKEN[:open]],
+        
+        :new              => ["status = ?", STATUS_KEYS_BY_TOKEN[:new]],
+        :open             => ["status = ?", STATUS_KEYS_BY_TOKEN[:open]],
+        :new_and_open     => ["status in (?, ?)", STATUS_KEYS_BY_TOKEN[:new], STATUS_KEYS_BY_TOKEN[:open]],
+        :resolved         => ["status = ?", STATUS_KEYS_BY_TOKEN[:resolved]],
+        :closed           => ["status = ?", STATUS_KEYS_BY_TOKEN[:closed]],
+        :due_today        => ["due_by <= ? and status not in (?, ?)", Time.now.end_of_day.to_s(:db), 
+                                        STATUS_KEYS_BY_TOKEN[:resolved], STATUS_KEYS_BY_TOKEN[:closed]],
+        :overdue          => ["due_by <= ? and status not in (?, ?)", Time.now.to_s(:db), 
+                                        STATUS_KEYS_BY_TOKEN[:resolved], STATUS_KEYS_BY_TOKEN[:closed]],
+        :on_hold          => ["status = ?", STATUS_KEYS_BY_TOKEN[:pending]]
+      }
+    end
 
 end
