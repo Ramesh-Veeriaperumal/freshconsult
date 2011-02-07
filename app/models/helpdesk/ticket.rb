@@ -2,6 +2,7 @@ require 'digest/md5'
 
 class Helpdesk::Ticket < ActiveRecord::Base 
   include ActionController::UrlWriter
+  include TicketConstants
   
   set_table_name "helpdesk_tickets"
   
@@ -61,89 +62,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :class_name => 'Helpdesk::Issue',
     :through => :ticket_issues
     
-   has_one :customizer, :class_name =>'Helpdesk::FormCustomizer'
+  has_one :customizer, :class_name =>'Helpdesk::FormCustomizer'
   
   
   named_scope :newest, lambda { |num| { :limit => num, :order => 'created_at DESC' } }
   named_scope :visible, :conditions => ["spam=? AND deleted=? AND status > 0", false, false] 
 
-  SOURCES = [
-    [ :email,       "Email",            1 ],
-    [ :portal,      "Portal",           2 ],
-    [ :phone,       "Phone",            3 ],
-    [ :forum,       "Forum",            4 ],
-    [ :twitter,     "Twitter",          5 ],
-    [ :facebook,    "Facebook",         6 ],
-  ]
-
-  SOURCE_OPTIONS = SOURCES.map { |i| [i[1], i[2]] }
-  SOURCE_NAMES_BY_KEY = Hash[*SOURCES.map { |i| [i[2], i[1]] }.flatten]
-  SOURCE_KEYS_BY_TOKEN = Hash[*SOURCES.map { |i| [i[0], i[2]] }.flatten]
-
-  STATUSES = [
-    [ :new,         "New",        1 ], 
-    [ :open,        "Open",       2 ], 
-    [ :pending,     "Pending",    3 ], 
-    [ :resolved,    "Resolved",   4 ], 
-    [ :closed,      "Closed",     5 ]
-  ]
-
-  STATUS_OPTIONS = STATUSES.map { |i| [i[1], i[2]] }
-  STATUS_NAMES_BY_KEY = Hash[*STATUSES.map { |i| [i[2], i[1]] }.flatten]
-  STATUS_KEYS_BY_TOKEN = Hash[*STATUSES.map { |i| [i[0], i[2]] }.flatten]
-  
-  PRIORITIES = [
-    [ :low,       "Low",         1 ], 
-    [ :medium,    "Medium",      2 ], 
-    [ :high,      "High",        3 ], 
-    [ :urgent,    "Urgent",      4 ]   
-  ]
-
-  PRIORITY_OPTIONS = PRIORITIES.map { |i| [i[1], i[2]] }
-  PRIORITY_NAMES_BY_KEY = Hash[*PRIORITIES.map { |i| [i[2], i[1]] }.flatten]
-  PRIORITY_KEYS_BY_TOKEN = Hash[*PRIORITIES.map { |i| [i[0], i[2]] }.flatten]
-  
-  TYPE = [
-    [ :how_to,    "How to",               1 ], 
-    [ :incident,  "Incident",             2 ], 
-    [ :problem,   "Problem",              3 ], 
-    [ :f_request, "Feature Request",      4 ],
-    [ :lead,      "Lead",                 5 ]   
-  ]
-
-  TYPE_OPTIONS = TYPE.map { |i| [i[1], i[2]] }
-  TYPE_NAMES_BY_KEY = Hash[*TYPE.map { |i| [i[2], i[1]] }.flatten]
-  TYPE_KEYS_BY_TOKEN = Hash[*TYPE.map { |i| [i[0], i[2]] }.flatten]
-
-  SEARCH_FIELDS = [
-    [ :display_id,    'Ticket ID'                ],
-    [ :subject,       'Subject'               ],
-    #[ :email,         'Email Address'       ],
-    [ :description,   'Ticket Description'  ],
-    [ :source,        'Source of Ticket'    ]
-  ]
-
-  SEARCH_FIELD_OPTIONS = SEARCH_FIELDS.map { |i| [i[1], i[0]] }
-
-  SORT_FIELDS = [
-    [ :created_asc,   'Date Created',    "created_at ASC"  ],
-    #[ :created_desc,  'Date Created (Newest First)',    "created_at DESC"  ],
-    [ :updated_asc,   'Last Modified',   "updated_at ASC"  ],
-    #[ :updated_desc,  'Last Modified (Newest First)',   "updated_at DESC"  ],
-    [ :due_by     ,   'Due by time',     "due_by ASC"],
-    [ :priority   ,   'Priority',        "priority DESC"],
-    [ :status,        'Status',          "status DESC"  ],
-    #[ :source,        'Source',         "source DESC"  ],
-        
-  ]
-
-  SORT_FIELD_OPTIONS = SORT_FIELDS.map { |i| [i[1], i[0]] }
-  SORT_SQL_BY_KEY = Hash[*SORT_FIELDS.map { |i| [i[0], i[2]] }.flatten]
-
-
   #For custom_fields
-
- COLUMNTYPES = [
+  COLUMNTYPES = [
     [ "number",       "text_field",   "text" ], 
     [ "text",         "text_field",   "text"], 
     [ "checkbox",     "check_box" ,   "checkbox"], 
@@ -151,7 +77,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
    
   ]
 
-  #PRIORITY_OPTIONS = PRIORITIES.map { |i| [i[1], i[2]] }
   COLUMN_TYPE_BY_KEY = Hash[*COLUMNTYPES.map { |i| [i[0], i[1]] }.flatten]
   COLUMN_CLASS_BY_KEY = Hash[*COLUMNTYPES.map { |i| [i[0], i[2]] }.flatten]
 
@@ -212,83 +137,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def source_name
     SOURCE_NAMES_BY_KEY[source]
-  end
-
-  def self.filter(filters, user = nil, scope = nil)
-    #filters << :visible unless filters.include?("deleted")
-    
-    puts "SO FILTER IS #{filters.inspect}"
-
-    conditions = {
-      :all          =>    {},
-      #:open         =>    ["status > 0"],
-      :unassigned   =>    {:responder_id => nil, :deleted => false, :spam => false},
-      :spam         =>    {:spam => true},
-      :deleted      =>    {:deleted => true},
-      :visible      =>    {:deleted => false, :spam => false},
-      :responded_by =>    {:responder_id => (user && user.id) || -1, :deleted => false, :spam => false},
-      :monitored_by =>    {}, # See below
-      
-      :new_and_my_open  => ["status = ? or (responder_id = ? and status = ?)", 
-                                      STATUS_KEYS_BY_TOKEN[:new], user.id, STATUS_KEYS_BY_TOKEN[:open]],
-      :my_open          => ["responder_id = ? and status = ?", user.id, STATUS_KEYS_BY_TOKEN[:open]],
-      :my_resolved      => ["responder_id = ? and status = ?", user.id, STATUS_KEYS_BY_TOKEN[:resolved]],
-      :my_closed        => ["responder_id = ? and status = ?", user.id, STATUS_KEYS_BY_TOKEN[:closed]],
-      :my_due_today     => ["responder_id = ? and due_by <= ? and status not in (?, ?)", user.id, 
-                                      Time.now.end_of_day.to_s(:db), STATUS_KEYS_BY_TOKEN[:resolved], 
-                                      STATUS_KEYS_BY_TOKEN[:closed]],
-      :my_overdue       => ["responder_id = ? and due_by <= ? and status not in (?, ?)", user.id, 
-                                      Time.now.to_s(:db), STATUS_KEYS_BY_TOKEN[:resolved], 
-                                      STATUS_KEYS_BY_TOKEN[:closed]],
-      :my_on_hold       => ["responder_id = ? and status = ?", user.id, STATUS_KEYS_BY_TOKEN[:pending]],
-      :my_all           => ["responder_id = ?", user.id],
-      
-      :new              => ["status = ?", STATUS_KEYS_BY_TOKEN[:new]],
-      :open             => ["status = ?", STATUS_KEYS_BY_TOKEN[:open]],
-      #:new_and_open     => ["status = ? or status = ?", STATUS_KEYS_BY_TOKEN[:new], STATUS_KEYS_BY_TOKEN[:open]],
-      :new_and_open     => ["status in (?, ?)", STATUS_KEYS_BY_TOKEN[:new], STATUS_KEYS_BY_TOKEN[:open]],
-      :resolved         => ["status = ?", STATUS_KEYS_BY_TOKEN[:resolved]],
-      :closed           => ["status = ?", STATUS_KEYS_BY_TOKEN[:closed]],
-      :due_today        => ["due_by <= ? and status not in (?, ?)", Time.now.end_of_day.to_s(:db), 
-                                      STATUS_KEYS_BY_TOKEN[:resolved], STATUS_KEYS_BY_TOKEN[:closed]],
-      :overdue          => ["due_by <= ? and status not in (?, ?)", Time.now.to_s(:db), 
-                                      STATUS_KEYS_BY_TOKEN[:resolved], STATUS_KEYS_BY_TOKEN[:closed]],
-      :on_hold          => ["status = ?", STATUS_KEYS_BY_TOKEN[:pending]]
-    }
-
-    filters.inject(scope || self) do |scope, f|
-      f = f.to_sym
-
-      if user && f == :monitored_by
-        user.subscribed_tickets.scoped(:conditions => {:spam => false, :deleted => false})
-      else
-        scope.scoped(:conditions => conditions[f])
-      end
-    end
-
-  end
-
-  def self.search(scope, field, value)
-
-    return scope unless (field && value)
-
-    loose_match = ["#{field} like ?", "%#{value}%"]
-    exact_match = {field => value}
-
-    conditions = case field.to_sym
-      when :subject      :  loose_match
-      when :display_id   :  exact_match
-      #when :email        :  loose_match
-      when :description  :  loose_match
-      when :status       :  exact_match
-      when :urgent       :  exact_match
-      when :source       :  exact_match
-    end
-
-    # Protect us from SQL injection in the 'field' param
-    return scope unless conditions
-
-    scope.scoped(:conditions => conditions)
   end
 
   def nickname
@@ -375,7 +223,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def populate_requester #by Shan temp
-    logger.debug "inside populate_requester"
     if requester_id.nil? && !email.nil?
       @requester = User.find_by_email_and_account_id(email, account_id)
       if @requester.nil?
@@ -384,7 +231,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
         @requester.signup!({:user => {:email => self.email, :name => '', :role_token => 'customer'}})
       end
       
-      logger.debug "inside populate_requester, setting requester object"
       self.requester = @requester
     end
   end

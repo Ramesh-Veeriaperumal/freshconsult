@@ -10,6 +10,10 @@ module Helpdesk::TicketsHelper
   def filter(selector = nil)
     selector ||= current_selector
   end
+  
+  def filter_count(selector=nil)
+    TicketsFilter.filter(filter(selector), current_user, current_account.tickets).count
+  end
 
   def current_filter
     (params[:filters] || DEFAULT_FILTER).map { |f| f.to_sym } 

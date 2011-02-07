@@ -89,7 +89,7 @@
 				<th>	
 					<form class="sort">
 					    Sort by 
-						<%= select_tag :sort, options_for_select(Helpdesk::Ticket::SORT_FIELD_OPTIONS, (params[:sort] || :created_asc).to_sym) %>
+						<%= select_tag :sort, options_for_select(TicketsFilter::SORT_FIELD_OPTIONS, (params[:sort] || :created_asc).to_sym) %>
 					</form>
 				</th>
 			</tr>
