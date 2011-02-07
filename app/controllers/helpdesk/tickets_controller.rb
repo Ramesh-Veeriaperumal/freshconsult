@@ -18,7 +18,7 @@ class Helpdesk::TicketsController < ApplicationController
       format.html  do
         @items = @items.paginate(
           :page => params[:page], 
-          :order => TicketsFilter::SORT_SQL_BY_KEY[(params[:sort] || :created_asc).to_sym],
+          :order => TicketsFilter::SORT_SQL_BY_KEY[(params[:sort] || :due_by).to_sym],
           :per_page => 10)
       end
       format.atom do
