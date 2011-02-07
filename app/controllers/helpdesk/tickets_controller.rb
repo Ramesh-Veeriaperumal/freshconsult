@@ -7,12 +7,9 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :load_multiple_items, :only => [:destroy, :restore, :spam, :unspam, :assign]
 
   def index
-    
-    
 
-    @items = Helpdesk::Ticket.filter(current_account, 
-      params[:filters] || [:open, :unassigned],
-      current_user
+    @items = Helpdesk::Ticket.filter(params[:filters] || [:open, :unassigned],
+      current_user, current_account.tickets
     )
 
     @items = Helpdesk::Ticket.search(@items, params[:f], params[:v])

@@ -2,15 +2,35 @@ module Helpdesk::TicketsHelper
 
   DEFAULT_FILTER = [:open, :unassigned]
 
-  CONTEXTS = [:all, :open]
+  #CONTEXTS = [:all, :open]
+  CONTEXTS = []
 
   SELECTORS = [
-    [[:unassigned],         "New Tickets"                     ],
-    [[:responded_by],       "My Tickets"                      ],
-    [[:monitored_by],       "Tickets I'm Monitoring"          ],
-    [[:visible],            "All Tickets"                     ],
-    [[:spam],               "Spam",                   [:all]  ],
-    [[:deleted],            "Trash",                  [:all]  ]
+    [[:new_and_my_open],  "New & My Open Tickets"  ],
+    [[:my_open],          "My Open Tickets"  ],
+    [[:my_resolved],      "My Resolved Tickets" ],
+    [[:my_closed],        "My Closed Tickets"  ],
+    [[:my_due_today],     "My Tickets Due Today"  ],
+    [[:my_overdue],       "My Overdue Tickets"  ],
+    [[:my_on_hold],       "My Tickets On Hold"  ],
+    [[:monitored_by],     "Tickets I'm Monitoring"  ],
+    [[:my_all],           "All My Tickets"  ],
+    
+    [[:new],              "New Tickets" ],
+    [[:open],             "Open Tickets"  ],
+    [[:new_and_open],     "New & Open Tickets"  ],
+    [[:resolved],         "Resolved Tickets"  ],
+    [[:closed],           "Closed Tickets"  ],
+    [[:due_today],        "Tickets Due Today" ],
+    [[:overdue],          "Overdue Tickets" ],
+    [[:on_hold],          "Tickets On Hold" ],
+    [[:all],              "All Tickets ", ],
+    
+    #[[:unassigned],      "New Tickets" ],
+    #[[:responded_by],    "My Tickets"  ],
+    #[[:visible],         "All Tickets" ],
+    [[:spam],             "Spam", ],
+    [[:deleted],          "Trash",  ]
   ]
 
   SELECTOR_NAMES = Hash[*SELECTORS.inject([]){ |a, v| a += [v[0], v[1]] }]
@@ -55,7 +75,7 @@ module Helpdesk::TicketsHelper
   end
 
   def filter_count(selector=nil)
-    Helpdesk::Ticket.filter(current_account, filter(selector), current_user).count
+    Helpdesk::Ticket.filter(filter(selector), current_user, current_account.tickets).count
   end
 
   def filter_title(selector)

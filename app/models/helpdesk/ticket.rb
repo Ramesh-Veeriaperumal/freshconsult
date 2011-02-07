@@ -214,17 +214,35 @@ class Helpdesk::Ticket < ActiveRecord::Base
     SOURCE_NAMES_BY_KEY[source]
   end
 
-  def self.filter(account, filters, user = nil, scope = nil)
+  def self.filter(filters, user = nil, scope = nil)
+    #filters << :visible unless filters.include?("deleted")
+    
+    puts "SO FILTER IS #{filters.inspect}"
 
     conditions = {
       :all          =>    {},
-      #:open         =>    ["status > 0 and account_id = ?", account], //Hack by Shan
+      #:open         =>    ["status > 0"],
       :unassigned   =>    {:responder_id => nil, :deleted => false, :spam => false},
       :spam         =>    {:spam => true},
       :deleted      =>    {:deleted => true},
       :visible      =>    {:deleted => false, :spam => false},
       :responded_by =>    {:responder_id => (user && user.id) || -1, :deleted => false, :spam => false},
-      :monitored_by =>    {} # See below
+      :monitored_by =>    {}, # See below
+      
+      :new_and_my_open  => ["status = ? or (responder_id = ? and status = ?)", 
+                                      STATUS_KEYS_BY_TOKEN[:new], user.id, STATUS_KEYS_BY_TOKEN[:open]],
+      :my_open          => ["responder_id = ? and status = ?", user.id, STATUS_KEYS_BY_TOKEN[:open]],
+      :my_resolved      => ["responder_id = ? and status = ?", user.id, STATUS_KEYS_BY_TOKEN[:resolved]],
+      :my_closed        => ["responder_id = ? and status = ?", user.id, STATUS_KEYS_BY_TOKEN[:closed]],
+      :my_on_hold       => ["responder_id = ? and status = ?", user.id, STATUS_KEYS_BY_TOKEN[:pending]],
+      :my_all           => ["responder_id = ?", user.id],
+      
+      :new              => ["status = ?", STATUS_KEYS_BY_TOKEN[:new]],
+      :open             => ["status = ?", STATUS_KEYS_BY_TOKEN[:open]],
+      :new_and_open     => ["status = ? or status = ?", STATUS_KEYS_BY_TOKEN[:new], STATUS_KEYS_BY_TOKEN[:open]],
+      :resolved         => ["status = ?", STATUS_KEYS_BY_TOKEN[:resolved]],
+      :closed           => ["status = ?", STATUS_KEYS_BY_TOKEN[:closed]],
+      :on_hold          => ["status = ?", STATUS_KEYS_BY_TOKEN[:pending]]
     }
 
     filters.inject(scope || self) do |scope, f|
@@ -232,10 +250,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
       if user && f == :monitored_by
         user.subscribed_tickets.scoped(:conditions => {:spam => false, :deleted => false})
-      elsif f == :open
-        scope.scoped(:conditions => ["status > 0 and account_id = ?", account])
       else
-        scope.scoped(:conditions => conditions[f].merge({:account_id => account}))
+        scope.scoped(:conditions => conditions[f])
       end
     end
 
