@@ -2,7 +2,6 @@
   <%= javascript_include_tag "helpdesk/page_switcher" %>
   <% javascript_tag do %>
     document.observe("dom:loaded", function(){
-
       new Helpdesk.PageSwitcher({
         toggleMode: true,
         pages: ['attachment-options']
@@ -12,7 +11,7 @@
   <% end %>
 <% end %>
 
-<div id="note-form-container" class="note_conv_form">
+<div id="note-form-container">
   <% form_for note, :html => {:multipart => true } do |f| %>
     <%= f.error_messages %>
     <%= f.label(:body, "Enter your message:") if local_assigns[:label] %>

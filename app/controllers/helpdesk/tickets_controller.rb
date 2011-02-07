@@ -96,6 +96,11 @@ class Helpdesk::TicketsController < ApplicationController
       redirect_to :back
     end
   end
+  
+  def execute_scenario 
+    p "############ Testing "
+    redirect_to :back
+  end 
 
   def spam
     @items.each do |item|

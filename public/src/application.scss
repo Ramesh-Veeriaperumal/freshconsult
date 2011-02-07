@@ -84,6 +84,7 @@ body {margin:0; padding:0 10px 0 10px; border:0; height:100%; overflow-y:auto; }
 }
 
 .request_view #inner{
+	background:#efefef;
 	.leftcontent{
 		border-right-color:#efefef;
 	}
@@ -309,7 +310,11 @@ a.new_ticket{
 		margin-right:3px;
 		position:relative;
 		top:7px;
-		@include border-radius(2em); 
+		@include border-radius(2em);
+		label.overlabel{
+		 	padding:0px 3px;
+		 	top:-2px;
+		} 
 		input{		
 			border:0px;
 			font-size:1.0em;
@@ -1420,12 +1425,6 @@ div.profile_pic{
 	
 }
 
-.note_conv_form{
-	.overlabel{
-		margin:5px;
-		color:#666;
-	}
-}
 
 .seperator{
 	border-top:1px solid #e3e5e0;
@@ -1544,22 +1543,24 @@ div.profile_pic{
 
 .request_panel{
 	background: #f5f5f5;
-	@include corners(6px);
-	border-right:1px solid #dfdfdf;
-	border-bottom:1px solid #dfdfdf;
-	@include inset-shadows(#cfcfcf, 0px, 2px, 1px);
+	border:1px solid #dfdfdf;
 	padding:8px 8px;
+	.overlabel{
+		margin:5px 8px;
+		color:#888888;
+	}
 }
 
-.request_panel textarea{
+.expando{
 	border:1px solid #DFDFDF;
-	color:#333333; 
+	color:#333333;
+	height:20px; 
 	font-size:12px;
 	padding:5px 5px;
 	width:98%;
-	height:15px;
 	clear:both;
 	text-align:left;
+	overflow:hidden;
 } 
 
 .button-container ul{
@@ -1665,7 +1666,7 @@ ul.icon_grid{
 		width:80px;
 		height:80px;
 		margin:0px 0px;
-		padding:0px 0px 10px 0px;
+		padding:0px 0px 15px 0px;
 		a{
 			position:relative;
 			display:block;
@@ -1673,15 +1674,10 @@ ul.icon_grid{
 			text-align:center; 
 			text-decoration:none;
 			color:#3a3a3a; 
-			em{
-				display:block;
-				font-style:normal;				
-				padding-top:5px;	
-				white-space:normal;
-				font-size:12px;				
+			div{
+				@include wrap;
 			}
 			@include corners(6px);
-			
 		}
 		a:hover{
 			color:#336699;
@@ -1691,13 +1687,13 @@ ul.icon_grid{
 	}
 }
 	
+/*	
 ul.solution_folder.icon_grid{
 	padding:10px;
 	li{
 		height:auto;
 		position:relative;
 		clear:left;
-		border:1px solid red;	
 		padding:0px;
 		a.sol_category{
 			margin:10px 0px;
@@ -1722,18 +1718,16 @@ ul.solution_folder.icon_grid{
 			z-index:2;			
 		}		
 	}
-}
+}*/
 
 .admin{
 	padding:10px 0px; 
 	margin:0px 20px;
 	border-bottom:1px solid #ededed;
 	border-top:1px solid #fefefe;
-	ul.icon_grid{		
-		li{ 
-			width:100px; 
-			padding-right:20px;
-		}
+	ul.icon_grid li{ 
+		width:100px; 
+		padding-right:20px;
 	}
 	h3.content_title{
 		padding:5px 0px 15px 0px;

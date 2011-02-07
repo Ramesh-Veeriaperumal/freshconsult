@@ -16,7 +16,6 @@
   box-shadow: inset $x $y $spread $color; }
 
 @mixin corners($tl: 5px, $tr: nil, $br: nil, $bl: nil) {
-  
   @if $tr == nil {
     $tr: $tl; }
   @if $br == nil {
@@ -28,7 +27,8 @@
   -webkit-border-bottom-left-radius: $bl;
   -webkit-border-top-right-radius: $tr;
   -webkit-border-bottom-right-radius: $br;
-  border-radius: $tl $tr $br $bl; }
+  border-radius: $tl $tr $br $bl; 
+}
 
 @mixin vertical-gradient($start: black, $end: #cccccc) {
   @extend .pie;
@@ -48,5 +48,13 @@
 	border-color:$color;
 	border-color-top:darken($color, 20%);
 	background-color:$color;	
+}
+
+@mixin wrap(){
+	white-space: pre-wrap; /* css-3 */
+	white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
+	white-space: -pre-wrap; /* Opera 4-6 */
+	white-space: -o-pre-wrap; /* Opera 7 */
+	word-wrap: break-word; /* Internet Explorer 5.5+ */
 }
 
