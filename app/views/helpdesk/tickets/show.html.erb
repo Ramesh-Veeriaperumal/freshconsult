@@ -54,7 +54,7 @@
 		
 		
 		jQuery(window).scroll(function(){
-				/*
+			/*
 			if(jQuery(window).scrollTop() > jQuery("#SmartSideBar").offset().top){ 
 				jQuery(".rtCnt").css("position", "fixed");
 				jQuery(".rtCnt").css("top", "0px");
@@ -78,10 +78,6 @@
 			<img src="/images/page_white_gear.png" width="32px" height="32px"  />
 			<em>Ticket Properties</em>
 		</a>
-		<!--a href="javascript:void(0)">
-			<img src="/images/mouse_select_left.png" width="32px" height="32px"  />
-			<em>Ticket Actions</em>
-		</a-->
 		<a href="javascript:void(0)" cntid="Scenarios">
 			<img src="/images/widgets.png" width="32px" height="32px"  />
 			<em>Execute Scenario</em>
@@ -103,99 +99,13 @@
 			<em>Tags</em>
 		</a>
 	</div>	
-	 <div class="rtDetails" id="TicketProperties">              
-			<% form_for @ticket do |f| %>
-	        <ul class="cnt">
-	            <li>
-	                <label>Due by time</label>
-					<%= @ticket.due_by.strftime("%B %e %Y at %I:%M %p") %>
-	            </li>
-	            <li>
-					<%= f.label :priority, "Priority" %>
-					<%= f.select :priority, Helpdesk::Ticket::PRIORITY_OPTIONS, {}, {:onchange => "this.form.submit()"} %>
-	            </li>
-	            <li>
-	                <%= f.label :status, "Status" %>
-					<%= f.select :status, Helpdesk::Ticket::STATUS_OPTIONS, {}, {:onchange => "this.form.submit()"} %>
-	            </li>
-				<li>
-					<%= f.label :group_id, "Group" %>
-					<%= f.collection_select :group_id, Group.find_all_by_account_id(@item.account_id), :id, :name,{:include_blank => 'Nobody'}, { :onchange => "changeAggentList(this.options[this.selectedIndex].value)" ,:class => "select"} %>
-      			</li>
-	            <li id="assigned_to">
-	                <%= f.label :responder_id, "Assigned To" %>
-					<%= f.collection_select :responder_id, User.find_all_by_permission(current_account, :manage_tickets), :id, :name, {:include_blank => 'Nobody'}, {:onchange => "this.form.submit()"} %>	
-	            </li>
-				<li>
-					<%= f.label :source, "Mode" %>
-					<%= f.select :source, Helpdesk::Ticket::SOURCE_OPTIONS, {}, {:onchange => "this.form.submit()"} %>
-	            </li> 
-				<!-- Custom fields starts here -->
-				
-				<% @ticket.ff_aliases.each do |cust_field| %>
-				<li>
-	                <label><%=cust_field%></label>
-					<%= h(@ticket.get_ff_value(cust_field)) %>
-	            </li> 
-				<% end %>
-				<!-- Custom fields ends here-->
-	        </ul> 
-			<% end %> 
-	    </div> 
-		<div class="rtDetails" style="display:none">
-			<ul class="actions">
-			    <%= content_tag(:li, link_to("Monitor this ticket", helpdesk_ticket_helpdesk_subscriptions_path(@ticket), :method => :post, :class => "button" )) if not @subscription %>
-			    <%= content_tag(:li, link_to("Stop monitoring this ticket", helpdesk_ticket_helpdesk_subscription_path(@ticket, @subscription), :method => :delete, :class => "button" )) if @subscription %>
-			    <%= content_tag(:li, link_to("This is not spam", unspam_helpdesk_ticket_path(@ticket), :method => :put, :class => "button" )) if @ticket.spam %>
-			    <%= content_tag(:li, link_to("Mark as spam", spam_helpdesk_ticket_path(@ticket), :method => :put, :class => "button" )) unless @ticket.spam %>
-			    <%= content_tag(:li, link_to("Delete this ticket", @ticket, :method => :delete, :class => "button" )) unless @ticket.deleted %>
-			    <%= content_tag(:li, link_to("Undelete this ticket", restore_helpdesk_ticket_path(@ticket), :method => :put, :class => "button" )) if @ticket.deleted %>
-			    <%= content_tag(:li, link_to("View in portal", support_ticket_path(@ticket), :class => "button" )) if not @subscription %>
-			</ul>
-		</div>
-		<%= render :partial => "helpdesk/tickets/components/user", :object => @ticket.requester %>
-		<div class="rtDetails" id="TicketTags" style="display:none;">
-			<h4>Tags</h4>
-			<ul class="tags">
-			    <%= @ticket.tags.map { |t| content_tag(:li, link_to(h(t.name), t) + link_to(image_tag('helpdesk/delete.png'), helpdesk_ticket_helpdesk_tag_use_path(@ticket, t), :method => 'delete', :class => 'tag-delete') ) }.join %>
-			</ul>
-			<%= render :partial => '/helpdesk/shared/tag_search', :locals => {:action => helpdesk_ticket_helpdesk_tag_uses_path(@ticket), :on_select => %{ $('tag-search-form').submit(); }, :label_text => "Add a tag:", :no_result_text => "No matches. Press enter to create tag." } %>		
-		</div>
-		<div class="rtDetails" id="TicketTodos" style="display:none;"> 
-			<ul>
-			  <%= @ticket.reminders.visible.map do |r| 
-			    content_tag(
-			      :li, 
-			      check_box_link(
-			        r.body + (r.ticket && @ticket ? link_to("Re: #{r.ticket.subject}", r.ticket) : ''), 
-			        r.deleted, 
-			        helpdesk_reminder_path(r), 
-			        :delete, 
-			        restore_helpdesk_reminder_path(r), 
-			        :put)) 
-			  end %>
-			</ul>
-			<!--a href="#" class="todo_button">Click to Add new</a-->
-			 
-			<% form_for @ticket ? [@ticket, Helpdesk::Reminder.new()] : Helpdesk::Reminder.new() do |f| %>
-			  <%= f.label :body, "Add a reminder" %>
-			  <%= f.text_field :body %>
-			<% end %>
-		</div>
+	 <%= render :partial => "helpdesk/tickets/components/ticket", :object => @ticket %>
+	 <%= render :partial => "helpdesk/tickets/components/user", :object => @ticket.requester %>
+	 <%= render :partial => "helpdesk/tickets/components/tags", :locals => { :ticket => @ticket } %>
+	 <%= render :partial => "helpdesk/tickets/components/todos", :locals => { :ticket => @ticket } %>
+	 <%= render :partial => "helpdesk/tickets/components/related_solutions", :locals => { :ticket => @ticket } %>
+	 <%= render :partial => "helpdesk/tickets/components/scenarios" %>
 		
-		<div class="rtDetails" id="RelatedSolutions" style="display:none;">
-			Related Solutions
-		</div>
-		
-		<div class="rtDetails" id="Scenarios" style="display:none;">
-			
-			<h3 class="title">Run Scenario action</h3>	
-			 <ul class="scenario_actions">
-			 	<% current_account.scn_automations.each do |scenario| %>
-			 		<li><%= link_to ( scenario.name, { :action => :execute_scenario }, :scenario_id => scenario.id, :method => :post ) %></li>
-				<% end %>
-			 </ul> 
-		</div>
 </div>	
  <div style="display:none">
 	<%= content_tag(:div, "This ticket is flagged as spam. " + link_to("(undo)", unspam_helpdesk_ticket_path(@ticket), :method => :put), :class => 'spam') if @ticket.spam %>
@@ -204,6 +114,7 @@
 	
 	<div class="rightSubContainers">
 		<h4>Actions</h4>
+		
 		<ul class="actions">
 		    <%= content_tag(:li, link_to("Monitor this ticket", helpdesk_ticket_helpdesk_subscriptions_path(@ticket), :method => :post, :class => "button" )) if not @subscription %>
 		    <%= content_tag(:li, link_to("Stop monitoring this ticket", helpdesk_ticket_helpdesk_subscription_path(@ticket, @subscription), :method => :delete, :class => "button" )) if @subscription %>
@@ -242,19 +153,19 @@
 			<div class="description">
 		        <div class="user_details">
 		        	<%= render :partial => "/shared/avatar", :object => @ticket.requester.avatar  %>
-		          	  Reported by <%= link_to(h(@ticket.requester.name),@ticket.requester, :class => "user_name") %>
+		          		Reported by <%= link_to(h(@ticket.requester.name),@ticket.requester, :class => "user_name") %>
 		            <div> 
 						Created on <%= h(@ticket.created_at.strftime("%B %e %Y at %I:%M %p")) %> 
 					</div>				
 		        </div>	        
-				<div id="description-summary" class="details">
-		            <%= h(truncate(@ticket.description, :length => 400)) %>
-		            <% if(@ticket.description.size > 400) %>
-		            <%= link_to_function "(more)", "Element.hide('description-summary'); Element.show('description-full');" %>
+				<div id="description-summary" class="details min_height">
+		            <%= h(truncate(@ticket.description, :length => 550)) %>
+		            <% if(@ticket.description.size > 550) %>
+		            	<%= link_to_function "(more)", "Element.hide('description-summary'); Element.show('description-full');" %>
 		            <% end %>
 		        </div>
 		        <div id="description-full" style="display:none" class="details">
-			    	<%= h(@ticket.description) %>
+			    	<%= @ticket.description %>
 			    </div>
 			</div>
 	    </div>		

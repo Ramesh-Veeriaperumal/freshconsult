@@ -1,0 +1,7 @@
+<div class="rtDetails" id="TicketTags" style="display:none;">
+			<h4>Tags</h4>
+			<ul class="tags">
+			    <%= ticket.tags.map { |t| content_tag(:li, link_to(h(t.name), t) + link_to(image_tag('helpdesk/delete.png'), helpdesk_ticket_helpdesk_tag_use_path(ticket, t), :method => 'delete', :class => 'tag-delete') ) }.join %>
+			</ul>
+			<%= render :partial => '/helpdesk/shared/tag_search', :locals => {:action => helpdesk_ticket_helpdesk_tag_uses_path(ticket), :on_select => %{ $('tag-search-form').submit(); }, :label_text => "Add a tag:", :no_result_text => "No matches. Press enter to create tag." } %>		
+		</div>

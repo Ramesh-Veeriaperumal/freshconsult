@@ -36,6 +36,10 @@ Helpdesk.Multifile = {
     },
 
     addFileToList: function(oldInput){
+		var container = $(oldInput.readAttribute('fileContainer'));
+		container.show();
+		
+		
         var target = $(oldInput.readAttribute('fileList'));
         target.insert({
             top: this.template.evaluate({
@@ -59,8 +63,8 @@ Helpdesk.Multifile = {
             // On ENTER or TAB, cycle through descriptions
             if(e.keyCode == 13 || e.keyCode == 9){
                 //(e.target.up('tr').next('tr').down('input[type=text]') || $(oldInput.readAttribute('sendFocusTo'))).activate();
-                var n = e.target.up('tr');
-                var n = n.next('tr');
+                var n = e.target.up('div');
+                var n = n.next('div');
 
                 (n ? n.down('input') : $(oldInput.readAttribute('sendFocusTo'))).activate();
 
@@ -74,7 +78,7 @@ Helpdesk.Multifile = {
 
     remove: function(link){
         $(link.readAttribute('inputId')).remove();
-        link.up('tr').remove();
+        link.up('div').remove();
     }
     
 
