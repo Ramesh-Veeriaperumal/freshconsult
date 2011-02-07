@@ -1,65 +1,14 @@
 module Helpdesk::TicketsHelper
-
-  DEFAULT_FILTER = [:new_and_my_open]
-
-  #CONTEXTS = [:all, :open]
-  CONTEXTS = []
-
-  SELECTORS = [
-    [[:new_and_my_open],  "New & My Open Tickets"  ],
-    [[:my_open],          "My Open Tickets"  ],
-    [[:my_resolved],      "My Resolved Tickets" ],
-    [[:my_closed],        "My Closed Tickets"  ],
-    [[:my_due_today],     "My Tickets Due Today"  ],
-    [[:my_overdue],       "My Overdue Tickets"  ],
-    [[:my_on_hold],       "My Tickets On Hold"  ],
-    [[:monitored_by],     "Tickets I'm Monitoring"  ],
-    [[:my_all],           "All My Tickets"  ],
-    
-    [[:new],              "New Tickets" ],
-    [[:open],             "Open Tickets"  ],
-    [[:new_and_open],     "New & Open Tickets"  ],
-    [[:resolved],         "Resolved Tickets"  ],
-    [[:closed],           "Closed Tickets"  ],
-    [[:due_today],        "Tickets Due Today" ],
-    [[:overdue],          "Overdue Tickets" ],
-    [[:on_hold],          "Tickets On Hold" ],
-    [[:all],              "All Tickets ", ],
-    
-    #[[:unassigned],      "New Tickets" ],
-    #[[:responded_by],    "My Tickets"  ],
-    #[[:visible],         "All Tickets" ],
-    [[:spam],             "Spam", ],
-    [[:deleted],          "Trash",  ]
-  ]
-
-  SELECTOR_NAMES = Hash[*SELECTORS.inject([]){ |a, v| a += [v[0], v[1]] }]
-  SELECTOR_CONTEXTS = Hash[*SELECTORS.inject([]){ |a, v| a += [v[0], v[2]] }]
-
-  def filter_list
-    SELECTORS.collect { |f| content_tag('li', leader(filter_link(f[0]), filter_count(f[0]).to_s)) }
-  end
+  
+  include TicketsFilter
   
   def filter_select
-    select ("select_view", "id", SELECTORS.collect {|v| [v[1], helpdesk_filter_tickets_path(filter(v[0]))]}, { :prompt => "Select View..."})
-  end
-
-  def leader(left, right)
-    # "<div class=\"leader-right\">#{right}</div><div class=\"leader-left\">#{left}</div><div class=\"clear\"></div>"
-    "#{left} (#{right})"    
-  end
-
-  def filter_link(selector)
-    if selector == current_selector
-     SELECTOR_NAMES[selector]
-    else
-      link_to(SELECTOR_NAMES[selector], helpdesk_filter_tickets_url(filter(selector)))
-    end
+    select("select_view", "id", SELECTORS.collect { |v| [v[1], helpdesk_filter_tickets_path(filter(v[0]))] },
+              {:prompt => "Select View..."})
   end
 
   def filter(selector = nil)
     selector ||= current_selector
-    (SELECTOR_CONTEXTS[selector] || current_context) + selector
   end
 
   def current_filter
@@ -67,19 +16,11 @@ module Helpdesk::TicketsHelper
   end
 
   def current_selector
-    current_filter.reject { |f| CONTEXTS.include? f }
-  end
-
-  def current_context
-    current_filter.select { |f| CONTEXTS.include? f }
-  end
-
-  def filter_count(selector=nil)
-    Helpdesk::Ticket.filter(filter(selector), current_user, current_account.tickets).count
+    current_filter#.reject { |f| CONTEXTS.include? f }
   end
 
   def filter_title(selector)
-    "#{SELECTOR_NAMES[selector]} (#{filter_count(selector)})"
+    SELECTOR_NAMES[selector]
   end
 
   def current_filter_title
