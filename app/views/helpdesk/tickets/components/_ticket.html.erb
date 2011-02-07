@@ -1,0 +1,39 @@
+<div class="rtDetails" id="TicketProperties">              
+			<% form_for ticket do |f| %>
+	        <ul class="cnt">
+	            <li>
+	                <label>Due by time</label>
+					<%= ticket.due_by.strftime("%B %e %Y at %I:%M %p") %>
+	            </li>
+	            <li>
+					<%= f.label :priority, "Priority" %>
+					<%= f.select :priority, Helpdesk::Ticket::PRIORITY_OPTIONS, {}, {:onchange => "this.form.submit()"} %>
+	            </li>
+	            <li>
+	                <%= f.label :status, "Status" %>
+					<%= f.select :status, Helpdesk::Ticket::STATUS_OPTIONS, {}, {:onchange => "this.form.submit()"} %>
+	            </li>
+				<li>
+					<%= f.label :group_id, "Group" %>
+					<%= f.collection_select :group_id, Group.find_all_by_account_id(@item.account_id), :id, :name,{:include_blank => 'Nobody'}, { :onchange => "changeAggentList(this.options[this.selectedIndex].value)" ,:class => "select"} %>
+      			</li>
+	            <li id="assigned_to">
+	                <%= f.label :responder_id, "Assigned To" %>
+					<%= f.collection_select :responder_id, User.find_all_by_permission(current_account, :manage_tickets), :id, :name, {:include_blank => 'Nobody'}, {:onchange => "this.form.submit()"} %>	
+	            </li>
+				<li>
+					<%= f.label :source, "Mode" %>
+					<%= f.select :source, Helpdesk::Ticket::SOURCE_OPTIONS, {}, {:onchange => "this.form.submit()"} %>
+	            </li> 
+				<!-- Custom fields starts here -->
+				
+				<% ticket.ff_aliases.each do |cust_field| %>
+				<li>
+	                <label><%=cust_field%></label>
+					<%= h(ticket.get_ff_value(cust_field)) %>
+	            </li> 
+				<% end %>
+				<!-- Custom fields ends here-->
+	        </ul> 
+			<% end %> 
+	    </div> 

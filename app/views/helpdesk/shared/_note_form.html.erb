@@ -11,38 +11,38 @@
   <% end %>
 <% end %>
 
-<div id="note-form-container">
+<div>
   <% form_for note, :html => {:multipart => true } do |f| %>
     <%= f.error_messages %>
     <%= f.label(:body, "Enter your message:") if local_assigns[:label] %>
     <%= f.hidden_field :private %>
 	<%= f.label(:body, "Reply or add note to the Ticket", :for => "#{ id }-body", :class => "overlabel" ) %>
-    <%= f.text_area :body, :class => 'expando', :id => "#{ id }-body" %>
-    <div class="button-container">
-    <ul>
-      <!--li><%= submit_tag(local_assigns[:submit] || ActiveSupport::Inflector.titleize(id), :class => "button") %></li-->	  
-	  <%= content_tag('li', link_to_function("Send an Email", "Helpdesk.submitToTicket('send-email', false, 'Send Email', this)", :class => 'fdbutton')) if @item.requester %>	  
-	  <%= content_tag('li', link_to_function("Add a Note", "Helpdesk.submitToTicket('add-note', true, 'Add Note', this)", :class => 'fdbutton')) %>
-	  <% unless local_assigns[:no_attachments] %>
-      	<li><a href="javascript:void(0)" class="button" id="attachment-options-link">Attach a File</a></li>
-	  <% end %>
-    </ul>
+    <%= f.text_area :body, { :class => 'expando', :id => "#{id}-body", :showDOM => "NoteFormPanel" } %>
+    <div id="NoteFormPanel">
+	<span class="seperator"></span>
+	<% unless local_assigns[:no_attachments] %>
+        <div  class="attachment-options"  id="attachment-options">
+          <label>Attach a file</label>
+          <input type="file" id="<%= id %>_file" name="emptyfile" nameWhenFilled="helpdesk_note[attachments][][file]" fileContainer="<%= id %>-container" fileList="<%= id %>-attachments" sendFocusTo="<%= id %>-body" />
+          <div class="attachments" id="<%= id %>-container" style="display:none">
+          	<strong>Attached Files</strong>
+			<span class="seperator"></span>
+			<div id="<%= id %>-attachments">
+				
+			</div>
+          </div>
+	    </div>
+    <% end %>
+	<span class="seperator"></span>
+	<div>
+      <%= submit_tag(local_assigns[:submit] || ActiveSupport::Inflector.titleize(id), :class => "button") %>	  
+	  <%= link_to_function("Send an Email", "Helpdesk.submitToTicket('send-email', false, 'Send Email', this)", :class => 'fdbutton') if @item.requester %>	  
+	  <%= link_to_function("Add as Note", "Helpdesk.submitToTicket('add-note', true, 'Add Note', this)", :class => 'fdbutton') %>
+    </div>
       
     </div>
 
-    <% unless local_assigns[:no_attachments] %>
-      <div>
-        <div class="attachment-options" id="attachment-options" style="display:none">
-          <label>Select a file</label>
-          <input type="file" id="<%= id %>_file" name="emptyfile" nameWhenFilled="helpdesk_note[attachments][][file]" fileList="<%= id %>-attachments" sendFocusTo="<%= id %>-body" />
-
-          <table class="attachments">
-            <tbody id="<%= id %>-attachments">
-            </tbody>
-          </table>
-        </div>
-      </div>
-    <% end %>
+    
   <% end %>
 </div>
 
@@ -52,16 +52,13 @@
 %>
 
 <textarea id="file-list-template" style="display:none">
-  <tr>
-    <td class="remove">
-      <a href="" onclick="Helpdesk.Multifile.remove(this); return false;", inputId="#{inputId}">
-        <%= image_tag("helpdesk/delete.png") %>
-      </a>
-    </td>
-    <td class="name">#{name}</td>
-    <td>
+  <div class="item">
+  	<span>
+  		#{name} - <a href="javascript:void(0)" onclick="Helpdesk.Multifile.remove(this); return false;", inputId="#{inputId}">remove</a>
+	</span>
+	<span>
       <label>Description</label>
       <input type="text" name="helpdesk_note[attachments][][description]" />
-    </td>
-    </tr>
+    </span>
+  </div>
 </textarea>
