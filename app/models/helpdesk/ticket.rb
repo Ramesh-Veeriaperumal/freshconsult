@@ -10,7 +10,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   #by Shan temp
   attr_accessor :email, :custom_field
-  after_create :refresh_display_id, :autoreply, :pass_thro_biz_rules
+  after_create :refresh_display_id, :autoreply,:save_custom_field ,:pass_thro_biz_rules 
   before_create :populate_requester
 
   before_validation_on_create :set_tokens
@@ -281,34 +281,60 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #virtual agent things end here..
   
   def pass_thro_biz_rules
-    send_later(:delayed_rule_check)
+     send_later(:delayed_rule_check )
   end
   
   def delayed_rule_check
-    if check_rules
-      update_custom_field
+      evaluate_on = check_rules     
+      update_custom_field evaluate_on
       save!
-    end
-  end
+   
+ end
+ 
   
-  def check_rules
+def check_rules
+    add_flexifield 
+    evaluate_on = self  
     account.va_rules.each do |vr|
-      return true if vr.pass_through(self)
-    end
+      evaluate_on= vr.pass_through(self)
+    end  
+    return evaluate_on    
+end
+  
+def add_flexifield 
+  
+  flexi_arr = Hash.new
+  self.ff_aliases.each do |label|    
+    value = self.get_ff_value(label.to_sym())    
+    flexi_arr[label] = value
+    self.write_attribute label, value
   end
   
-  def update_custom_field
-    flexi_field = self.custom_field  
-    
-    self.custom_field.each do |key,value|    
-      flexi_field[key] = self.read_attribute(key)      
-    end
+  self.custom_field = flexi_arr
   
-    ff_def_id = FlexifieldDef.find_by_account_id(self.account_id).id    
-    self.ff_def = ff_def_id  
+  logger.debug " self.custom_field  #{self.custom_field.inspect}"
      
+end
+  
+def update_custom_field  evaluate_on
+    flexi_field = evaluate_on.custom_field      
+    evaluate_on.custom_field.each do |key,value|    
+      flexi_field[key] = evaluate_on.read_attribute(key)      
+    end  
+    ff_def_id = FlexifieldDef.find_by_account_id(evaluate_on.account_id).id    
+    evaluate_on.ff_def = ff_def_id       
     unless flexi_field.nil?     
-      self.assign_ff_values flexi_field    
+      evaluate_on.assign_ff_values flexi_field    
+    end
+end
+  
+  
+ def save_custom_field 
+      
+    ff_def_id = FlexifieldDef.find_by_account_id(self.account_id).id    
+    self.ff_def = ff_def_id       
+    unless flexi_field.nil?     
+      self.assign_ff_values self.custom_field    
     end
   end
   
