@@ -42,10 +42,10 @@
 				<span class="ltShadow"></span>
         		<span class="rtShadow"></span> 
 				<%= yield :efx  %>
-				
+				<%= show_flash %>
+		        <%= yield :breadcrumb %>
                 <div id="inner">
-                    <div class="leftcontent"> 
-						<%= show_flash %>
+                    <div class="leftcontent"> 						
 						<%= yield  %>
                     </div> 
 	                <div class="sidebar">
