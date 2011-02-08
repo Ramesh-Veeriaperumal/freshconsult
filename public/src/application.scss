@@ -3,7 +3,6 @@
 @import "mixins";
 
 a{
-	color:#527EAA;
 	@include link-colors(#527EAA, #527EAA, #527EAA, #527EAA, #527EAA);
 }
 a:hover{
@@ -21,7 +20,7 @@ body {margin:0; padding:0 10px 0 10px; border:0; height:100%; overflow-y:auto; }
 #wrap{
 	@include container;
 	background:#ffffff;
-	padding:0px 15px 10px 15px;
+	padding:0px 15px 15px 15px;
 	margin-bottom:18px;
 	margin-top:18px;
 	@include corners(6px);
@@ -31,10 +30,10 @@ body {margin:0; padding:0 10px 0 10px; border:0; height:100%; overflow-y:auto; }
  
 .content{ 
 	position:relative;	
-	border:1px solid #dfdfdf; 
-	background-color:#ffffff;
-	@include shadows(#dfdfdf, 0px, 2px, 2px);
-	margin-bottom:50px;	
+	background:#efefef;
+	border:1px solid #dfdfdf;
+	margin-bottom:0px;	
+	@include corners(0px, 0px, 6px, 6px);
 }
  
 #inner {    
@@ -42,6 +41,7 @@ body {margin:0; padding:0 10px 0 10px; border:0; height:100%; overflow-y:auto; }
 	position:relative;
 	z-index:1;  	
 	margin:0px 0px;	
+	
 	padding-right:$sidebar-width; /* The width of the rail */ 
 	.leftcontent{
 		width:100%;
@@ -86,7 +86,6 @@ body {margin:0; padding:0 10px 0 10px; border:0; height:100%; overflow-y:auto; }
 }
 
 .request_view #inner{
-	background:#efefef;
 	.leftcontent{
 		border-right-color:#efefef;
 	}
@@ -109,8 +108,23 @@ body {margin:0; padding:0 10px 0 10px; border:0; height:100%; overflow-y:auto; }
 		float:right; 	
 	}
 }
+
+.breadcrumb{
+	padding:4px 0px;
+	margin:8px 10px 3px 10px;
+	@include clearfix;
+	color:#ffffff;
+	font-size:12px;
+	a{
+		@include link-colors(#ffffff, #ffffff, #ffffff, #ffffff, #ffffff);
+		text-decoration:none;
+		padding:3px 10px;
+		@include corners(6px);
+		background-color:#afafaf;
+		text-decoration:none;
+	}
+}
  
-	
 .content div.corners{ 
 	left:0px;
 	top:16px;
@@ -982,6 +996,7 @@ ul.secondary-actions{
 		}
 		td{
 			padding-bottom:8px;
+			background-color:#ffffff;
 			a{
 				text-decoration:none;
 				color:#5a8ec1; 
@@ -1210,30 +1225,6 @@ div.leader-right{
 
 /* Request Details page */
 
-.breadcrum{
-	background:#e9ebee;
-	border-bottom:1px solid #cfd2d9;
-	padding:3px 20px 0px 20px;
-	@include clearfix;
-}
- 
-.breadcrum, .crumbs {
-	display:block;
-	color:#555555;
-	a{
-		color:#666666;
-		text-decoration:none;
-		padding:3px 12px 3px 0px;
-		margin-right:8px;	
-		font-weight:bold;
-		font-size:12px;
-	}
-	em{
-		font-style:normal;
-	}
-}
-
-
 ul.ui-list-2col, ul.ticket_properties{ 
 	@include clearfix; 
 	list-style:none;
@@ -1311,7 +1302,7 @@ body h5{
 .request_details{	 
 	background:#efefef;	
 	margin:0px;
-	padding:20px 10px;
+	padding:3px 10px 20px 10px;
 	 
 	.requestCnt{		
 		@include pie-clearfix;
@@ -1471,8 +1462,8 @@ body h5{
 
 .rtCnt{
 	width:$sidebar-width - 10;
-	padding:3px 2px 2px 2px;
-	margin:20px 10px 5px 0px;
+	padding:0px 0px 0px 0px;
+	margin:8px 10px 5px 0px;
 	@include corners(6px);
 	.scenario_actions{
 		@include no-bullets;
@@ -1481,12 +1472,13 @@ body h5{
 			display:block;
 		}	
 	}
+	background-color:#3f3f3f;
 	.rtDetails{
-		margin:0px 0px 0px 82px;
-		@include corners(6px);
+		margin:0px 82px 0px 0px;
+		@include corners(4px);
+		border:1px solid #cfcfcf;
 		background:#ffffff;
 		padding-top:5px;
-		border:1px solid #cfcfcf;
 		h3.title{
 			font-size:12px;
 			background-color:#f2f2f2;
@@ -1520,35 +1512,43 @@ body h5{
 	}
 	
 	.rtPanel{
-		float:left;
-		width:83px;
+		float:right;
+		width:80px;
 		position:relative;
 		z-index:9;
 		padding-top:10px;
 		text-align:center;
+		.seperator{
+			border-color:#4f4f4f;
+		}
 		a{
 			display:block;
-			font-size:11px;
+			font-size:10px;
 			text-decoration:none;
 			font-weight:bold;
-			color:#333333;
+			color:#cfcfcf;
 			padding:5px;
+			margin-right:5px;
 			text-align:center;
 			img{
-				@include opacity(0.6);
+				width:24px; height:24px;
 			}
+			
 			em{
 				display:block;
 				font-style:normal;	 
 				line-height:12px;	
 				white-space:normal; 
-				padding-top:4px;		
+				padding-top:0px;		
 			} 
 		}
-		
 		a.active, a:hover{
-			
+			img{
+				@include opacity(1);
+			}
+			color:#ffffff;
 		}
+		
 	}
 }
 

@@ -23,7 +23,6 @@
 			el.down('input[type=submit]').value = submit;
 			el.down('input[id$=private]').value = private;
 			
-			
 			link.addClassName('active');
 			link.siblings().each(function(l){ l.removeClassName('active'); });
 		}
@@ -84,10 +83,15 @@
 	
 <% end %>
 
+<% content_for :breadcrumb do %>
+	<br />
+<% end %>
+
 <% content_for :sidebar do %>
 <div id="SmartSideBar"></div>
 <div class="rtCnt">
 	<div class="rtPanel">
+		<span class="seperator"></span>
 		<a href="javascript:void(0)" class="active" cntid="TicketProperties">
 			<img src="/images/page_white_gear.png" width="32px" height="32px"  />
 			<em>Ticket Properties</em>
@@ -146,8 +150,7 @@
 <% end %>
 <% content_for :main_panel_actions do %>
 <% end %>
-<% content_for :main_panel_summary do %>  
-	
+<% content_for :main_panel_summary do %>
 	<div class="request_details">
 	    <div class="requestCnt">
 	    	<div class="request_status">
