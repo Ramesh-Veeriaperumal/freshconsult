@@ -37,7 +37,7 @@ class VARule < ActiveRecord::Base
     is_a_match = matches(evaluate_on)
     trigger_actions(evaluate_on) if is_a_match
     
-    is_a_match
+    return evaluate_on
   end
   
   def matches(evaluate_on)
