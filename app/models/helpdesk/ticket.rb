@@ -333,7 +333,7 @@ end
       
     ff_def_id = FlexifieldDef.find_by_account_id(self.account_id).id    
     self.ff_def = ff_def_id       
-    unless flexi_field.nil?     
+    unless self.custom_field.nil?     
       self.assign_ff_values self.custom_field    
     end
   end
