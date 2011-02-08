@@ -36,6 +36,7 @@ module SentientController
     base.class_eval {
       before_filter do |c|
         User.current = c.send(:current_user)
+        c.send(:current_account).send(:make_current)
       end
     }
   end

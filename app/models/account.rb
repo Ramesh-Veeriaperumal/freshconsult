@@ -19,6 +19,8 @@ class Account < ActiveRecord::Base
   has_many :groups
   has_many :forum_categories
   
+  has_one :business_calendar
+  
   has_many :tickets, :class_name => 'Helpdesk::Ticket'
   has_many :solution_folders , :class_name =>'Solution::Folder'
   
@@ -90,6 +92,16 @@ class Account < ActiveRecord::Base
     (email_configs.collect { |ec| ec.reply_email } << default_email).sort
   end
   #HD hack ends..
+  
+  #Sentient things start here, can move to lib some time later - Shan
+  def self.current
+    Thread.current[:account]
+  end
+  
+  def make_current
+    Thread.current[:account] = self
+  end
+  #Sentient ends here
   
   protected
   

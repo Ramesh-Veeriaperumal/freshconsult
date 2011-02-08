@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110202054502) do
+ActiveRecord::Schema.define(:version => 20110208115349) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -37,6 +37,14 @@ ActiveRecord::Schema.define(:version => 20110202054502) do
   create_table "agents", :force => true do |t|
     t.integer  "user_id"
     t.text     "signature"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "business_calendars", :force => true do |t|
+    t.integer  "account_id"
+    t.text     "business_time_data"
+    t.text     "holiday_data"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -596,6 +604,8 @@ ActiveRecord::Schema.define(:version => 20110202054502) do
     t.integer  "account_id"
     t.boolean  "admin",               :default => false
     t.boolean  "active",              :default => false, :null => false
+    t.integer  "posts_count",         :default => 0
+    t.datetime "last_seen_at"
     t.string   "role_token"
     t.integer  "customer_id"
     t.string   "job_title"
@@ -605,8 +615,6 @@ ActiveRecord::Schema.define(:version => 20110202054502) do
     t.string   "twitter_id"
     t.text     "description"
     t.string   "time_zone"
-    t.integer  "posts_count",         :default => 0
-    t.datetime "last_seen_at"
   end
 
   add_index "users", ["account_id"], :name => "index_users_on_account_id"
