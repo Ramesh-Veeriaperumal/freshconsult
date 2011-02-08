@@ -28,6 +28,8 @@ class Helpdesk::TicketsController < ApplicationController
 
 
   def show
+    @reply_email = current_account.reply_emails
+    
     @subscription = current_user && @item.subscriptions.find(
       :first, 
       :conditions => {:user_id => current_user.id})

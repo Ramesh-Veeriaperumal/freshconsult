@@ -85,6 +85,12 @@ class Account < ActiveRecord::Base
     name.blank? ? full_domain : "#{name} (#{full_domain})"
   end
   
+  #Helpdesk hack starts here
+  def reply_emails
+    (email_configs.collect { |ec| ec.reply_email } << default_email).sort
+  end
+  #HD hack ends..
+  
   protected
   
     def valid_domain?

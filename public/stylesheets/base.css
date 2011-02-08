@@ -2,9 +2,7 @@
 /* Theme Colors and layout Defaults */
 /* Base Green */
 /* Secondary Blue */
-/* 
-$background:desaturate(lighten($base, 8%), 12%); 
-*/
+/* $background:desaturate(lighten($base, 8%), 12%); */
 /* line 14, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
