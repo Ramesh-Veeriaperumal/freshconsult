@@ -4,6 +4,7 @@
 
 a{
 	color:#527EAA;
+	@include link-colors(#527EAA, #527EAA, #527EAA, #527EAA, #527EAA);
 }
 a:hover{
 	text-decoration:none;
@@ -22,7 +23,8 @@ body {margin:0; padding:0 10px 0 10px; border:0; height:100%; overflow-y:auto; }
 	background:#ffffff;
 	padding:0px 15px 10px 15px;
 	margin-bottom:18px;
-	@include corners(0, 0, 6px, 6px);
+	margin-top:18px;
+	@include corners(6px);
 	overflow:visible;	
 	@include shadows(darken($background, 10%), 0px, 0px, 6px);
 }
@@ -1114,10 +1116,16 @@ div.leader-right{
        
      @include text-shadow(rgba(255,255,255,0.9), 1px, 1px, 1px);
 }
+
 .grey{
 	@include vertical-gradient(#f1f5ed, #efefef);
 	color:#555555 !important;
 }
+
+.fdbutton.active{
+	@include inset-shadows(#888, 0px, 1px, 2px);
+}
+
 
 	
 .button {
@@ -1294,7 +1302,10 @@ div.profile_pic{
 	}
 }
 
-
+body h5{
+	padding:0px;
+	margin:0px;
+}
 
 
 .request_details{	 
@@ -1307,6 +1318,7 @@ div.profile_pic{
 		@include corners(6px);
 		padding:5px 18px;		
 		position:relative;
+		margin-top:5px;
 		margin-bottom:10px;
 		background:#ffffff;
 		border:1px solid #dfdfdf;
@@ -1331,7 +1343,7 @@ div.profile_pic{
 				font-size:12px;
 			}
 			.min_height{
-				height:120px;
+				height:100px;
 			}
 			.preview_pic{
 				position:absolute;
@@ -1544,6 +1556,7 @@ div.profile_pic{
 	background: #f5f5f5;
 	border:1px solid #dfdfdf;
 	padding:8px 8px;
+	margin:8px 0px;
 	.overlabel{
 		margin:5px 8px;
 		color:#888888;
@@ -1553,7 +1566,6 @@ div.profile_pic{
 .expando{
 	border:1px solid #DFDFDF;
 	color:#333333;
-	height:20px; 
 	font-size:12px;
 	padding:5px 5px;
 	width:98%;
@@ -3475,17 +3487,24 @@ div.search{
 }
 
 .attachments{
-	padding:10px;
+	padding:8px;
 	margin-top:8px;
-	background:#ffffff;
-	border:1px solid #cfcfcf;
+	background:#f6f6f6;
+	border:1px solid #dfdfdf;
 	div.item{
+		padding:5px;
 		a{
 			text-transform:capitalize;
 			font-size:11px;
 			color:#527EAA;
 		}
 		@include clearfix;
-		border-bottom:1px solid #cfcfcf;
+	}
+}
+
+
+.note_form{
+	td{
+		vertical-align:top;
 	}
 }

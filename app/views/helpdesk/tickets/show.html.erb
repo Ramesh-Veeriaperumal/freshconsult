@@ -5,13 +5,27 @@
 	<%= javascript_include_tag "helpdesk/multifile.js" %>
 	
 	<% javascript_tag do %>
-		Helpdesk.swapEmailNote = function(cls, private, submit, link){
-			var el = $('note-form-container');
-			el.attributes['class'].nodeValue = cls;
+		Helpdesk.swapEmailNote = function(cls, private, submit, link, id){
+			var el = $(id);
+			el.show();
+			//el.attributes['class'].nodeValue = cls;
+			if(private){
+				el.down('h5[datafor=note]').show();
+				el.down('tr[datafor=note]').show();
+				el.down('h5[datafor=email]').hide();
+				el.down('tr[datafor=email]').hide();	
+			}else{
+				el.down('h5[datafor=email]').show();
+				el.down('tr[datafor=email]').show();
+				el.down('h5[datafor=note]').hide();
+				el.down('tr[datafor=note]').hide();
+			}
 			el.down('input[type=submit]').value = submit;
 			el.down('input[id$=private]').value = private;
+			
+			
 			link.addClassName('active');
-			link.up('li').siblings().each(function(l){ l.down('a').removeClassName('active'); });
+			link.siblings().each(function(l){ l.removeClassName('active'); });
 		}
 		Helpdesk.submitToTicket = function(cls, private, submit, link){			 
 			var el = $('note-form-container');
@@ -22,7 +36,7 @@
 				el.down('form').submit();
 			} 
 			//link.addClassName('active');
-			//link.up('li').siblings().each(function(l){ l.down('a').removeClassName('active'); });
+			//link.up('li').siblings().each(function(l){ l.removeClassName('active'); });
 		}
 	<% end %>
 <% end %>
@@ -133,6 +147,7 @@
 <% content_for :main_panel_actions do %>
 <% end %>
 <% content_for :main_panel_summary do %>  
+	
 	<div class="request_details">
 	    <div class="requestCnt">
 	    	<div class="request_status">
@@ -159,8 +174,8 @@
 					</div>				
 		        </div>	        
 				<div id="description-summary" class="details min_height">
-		            <%= h(truncate(@ticket.description, :length => 550)) %>
-		            <% if(@ticket.description.size > 550) %>
+		            <%= h(truncate(@ticket.description, :length => 400)) %>
+		            <% if(@ticket.description.size > 400) %>
 		            	<%= link_to_function "(more)", "Element.hide('description-summary'); Element.show('description-full');" %>
 		            <% end %>
 		        </div>
@@ -170,21 +185,33 @@
 			</div>
 	    </div>		
 		<% unless @ticket.notes.visible.newest_first.blank? then %>
+			<div class="floatr">
+				<%= link_to_function("Reply", "Helpdesk.swapEmailNote('send-email', false, 'Send Email', this, 'cnt-top')", :class => 'fdbutton') if @item.requester %>	  
+		  		<%= link_to_function("Add Note", "Helpdesk.swapEmailNote('add-note', true, 'Add Note', this, 'cnt-top')", :class => 'fdbutton') %>		
+			</div>	
 		    <h3 class="subtitle">Conversation</h3>
+		<% end %>
+		<% if @item.requester %>
+			<%= render(:partial => '/helpdesk/shared/note_form', :locals => {:id => 'send-email', :cntid => 'cnt-top', :note => [@ticket, Helpdesk::Note.new(:private => false)] }) %>
+		<% else %>
+			<%= render(:partial => '/helpdesk/shared/note_form', :locals => {:id => 'add-note',	:cntid => "cnt-top", :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
+		<% end %>
+			
+		<% unless @ticket.notes.visible.newest_first.blank? then %>
 			<div class="requestCnt">
 				<%= render :partial => 'note', :collection => @ticket.notes.visible.newest_first %>
 		    </div>
 		<% end %>
 		
-		<div id="RequestPanel"></div>
-		<div class="request_panel" id="RequestToolbox">
-			<% if @item.requester %>
-				<%= render(:partial => '/helpdesk/shared/note_form', :locals => {:id => 'send-email', :note => [@ticket, Helpdesk::Note.new(:private => false)] }) %>
-			<% else %>
-				<%= render(:partial => '/helpdesk/shared/note_form', :locals => {:id => 'add-note',	:note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
-			<% end %>
-		</div>
-		<br /><br />
+		<div class="alignright">
+			<%= link_to_function("Reply", "Helpdesk.swapEmailNote('send-email', false, 'Send Email', this, 'cnt-bottom')", :class => 'fdbutton') if @item.requester %>	  
+		 	<%= link_to_function("Add Note", "Helpdesk.swapEmailNote('add-note', true, 'Add Note', this, 'cnt-bottom')", :class => 'fdbutton') %>		
+		</div>	
+		<% if @item.requester %>
+			<%= render(:partial => '/helpdesk/shared/note_form', :locals => {:id => 'send-email', :cntid => "cnt-bottom", :note => [@ticket, Helpdesk::Note.new(:private => false)] }) %>
+		<% else %>
+			<%= render(:partial => '/helpdesk/shared/note_form', :locals => {:id => 'add-note',	:cntid => "cnt-bottom", :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
+		<% end %>
 	</div>
 
 <% end %>

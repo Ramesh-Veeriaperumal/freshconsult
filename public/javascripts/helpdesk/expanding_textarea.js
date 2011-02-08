@@ -5,7 +5,7 @@ Object.extend(Helpdesk, {
         if(!textarea.expanded){
             textarea.expanded = true;
             Element.setStyle(textarea, {height: '150px', overflow: "auto" });
-			$(textarea.getAttribute("showDOM")).show();
+			//$(textarea.getAttribute("showDOM")).show();
         }
     },
     monitorTextAreas: function(){
