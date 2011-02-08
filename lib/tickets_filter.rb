@@ -110,8 +110,8 @@ module TicketsFilter
         :new_and_open     => ["status in (?, ?)", STATUS_KEYS_BY_TOKEN[:new], STATUS_KEYS_BY_TOKEN[:open]],
         :resolved         => ["status = ?", STATUS_KEYS_BY_TOKEN[:resolved]],
         :closed           => ["status = ?", STATUS_KEYS_BY_TOKEN[:closed]],
-        :due_today        => ["due_by <= ? and status not in (?, ?)", Time.now.end_of_day.to_s(:db), 
-                                        STATUS_KEYS_BY_TOKEN[:resolved], STATUS_KEYS_BY_TOKEN[:closed]],
+        :due_today        => ["due_by >= ? and due_by <= ? and status not in (?, ?)", Time.now.beginning_of_day.to_s(:db), 
+                                 Time.now.end_of_day.to_s(:db), STATUS_KEYS_BY_TOKEN[:resolved], STATUS_KEYS_BY_TOKEN[:closed]],
         :overdue          => ["due_by <= ? and status not in (?, ?)", Time.now.to_s(:db), 
                                         STATUS_KEYS_BY_TOKEN[:resolved], STATUS_KEYS_BY_TOKEN[:closed]],
         :on_hold          => ["status = ?", STATUS_KEYS_BY_TOKEN[:pending]]
