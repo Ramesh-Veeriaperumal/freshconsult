@@ -86,6 +86,7 @@ body {margin:0; padding:0 10px 0 10px; border:0; height:100%; overflow-y:auto; }
 }
 
 .request_view #inner{
+	padding-top:10px;
 	.leftcontent{
 		border-right-color:#efefef;
 	}
@@ -1304,6 +1305,19 @@ body h5{
 	margin:0px;
 	padding:3px 10px 20px 10px;
 	 
+	.ticket_actions{
+		position:relative;
+		top:-10px;
+		float:right;
+		@include clearfix;
+		a{
+			@include clearfix;
+		}
+		.button{
+			position:relative;
+			top:-10px;
+		}
+	} 
 	.requestCnt{		
 		@include pie-clearfix;
 		@include corners(6px);
@@ -1467,23 +1481,36 @@ body h5{
 	@include corners(6px);
 	.scenario_actions{
 		@include no-bullets;
-		margin:0px 5px; padding:0px;
-		a{
-			display:block;
+		margin:0px 5px; padding:5px;
+		li{
+			padding:6px 0px;
+			border-bottom:1px dotted #cfcfcf;
+			a{
+				display:block;
+				@include link-colors(#444444, #527EAA, #527EAA, #333333);
+				text-decoration:none;
+				font-weight:bold;
+				font-size:12px;
+			}
+			span{
+				font-size:10px;
+			}
 		}	
+		
 	}
-	background-color:#3f3f3f;
+	
 	.rtDetails{
-		margin:0px 82px 0px 0px;
-		@include corners(4px);
+		margin:0px 80px 0px 0px;
+		@include corners(6px, 0px, 6px, 6px);
 		border:1px solid #cfcfcf;
 		background:#ffffff;
 		padding-top:5px;
+		min-height:500px;
 		h3.title{
-			font-size:12px;
-			background-color:#f2f2f2;
-			padding:8px 10px;
+			font-size:14px;
+			padding:0px 10px 3px 10px;
 			display:block;
+			margin:0px;
 			margin-top:5px;
 		}
 		.ui-list_with_icon{
@@ -1508,30 +1535,51 @@ body h5{
 				}
 			}
 		}
-		min-height:500px;
 	}
+	
+	$spritesize:44px;
 	
 	.rtPanel{
 		float:right;
 		width:80px;
+		@include corners(0px, 6px, 6px, 0px);
 		position:relative;
 		z-index:9;
+		background-color:#3f3f3f;
 		padding-top:10px;
 		text-align:center;
-		.seperator{
-			border-color:#4f4f4f;
-		}
+		
 		a{
 			display:block;
-			font-size:10px;
+			font-size:11px;
 			text-decoration:none;
 			font-weight:bold;
-			color:#cfcfcf;
+			color:#9aa2a9;
 			padding:5px;
-			margin-right:5px;
+			margin-bottom:10px;
 			text-align:center;
 			img{
-				width:24px; height:24px;
+				@include sprite-background("Ticket_right_icons.jpg", $spritesize, $spritesize);
+				width:44px;
+				height:32px;
+			}
+			img.ticketprop{
+				@include sprite-column(6, $spritesize);
+			}
+			img.suggestsolutions{
+				@include sprite-column(3, $spritesize);
+			}
+			img.scenario{
+				@include sprite-column(4, $spritesize);
+			}
+			img.requesterinfo{
+				@include sprite-column(2, $spritesize);
+			}
+			img.todo{
+				@include sprite-column(5, $spritesize);
+			}
+			img.tags{
+				@include sprite-column(1, $spritesize);
 			}
 			
 			em{
@@ -1543,14 +1591,52 @@ body h5{
 			} 
 		}
 		a.active, a:hover{
-			img{
-				@include opacity(1);
+			
+			img.ticketprop{
+				@include sprite-position(6, 2, $spritesize, $spritesize);
+			}
+			img.suggestsolutions{
+				@include sprite-position(3, 2, $spritesize, $spritesize);
+			}
+			img.scenario{
+				@include sprite-position(4, 2, $spritesize, $spritesize);
+			}
+			img.requesterinfo{
+				@include sprite-position(2, 2, $spritesize, $spritesize);
+			}
+			img.todo{
+				@include sprite-position(5, 2, $spritesize, $spritesize);
+			}
+			img.tags{
+				@include sprite-position(1, 2, $spritesize, $spritesize);
 			}
 			color:#ffffff;
 		}
 		
 	}
 }
+
+
+.action_icons{
+	$asp_xy: 28px;
+	img{
+		@include sprite-background("action_icons.png", $asp_xy, $asp_xy);
+		background-color:none;
+	}
+	.monitor img{
+		@include sprite-position(1, 1, $asp_xy, $asp_xy);
+	}
+	.monitor_active img{
+		@include sprite-position(1, 2, $asp_xy, $asp_xy);
+	}
+	.spam img{
+		@include sprite-position(2, 1, $asp_xy, $asp_xy);
+	}
+	.spam_active img{
+		@include sprite-position(2, 2, $asp_xy, $asp_xy);
+	}
+}
+
 
 .request_panel{
 	background: #f5f5f5;

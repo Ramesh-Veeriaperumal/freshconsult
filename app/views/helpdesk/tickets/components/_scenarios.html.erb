@@ -1,8 +1,10 @@
 <div class="rtDetails" id="Scenarios" style="display:none;">
-	<h3 class="title">Run Scenario</h3>	
+	<h3 class="title">Execute Scenario</h3>	
 	 <ul class="scenario_actions">
 	 	<% current_account.scn_automations.each do |scenario| %>
-	 		<li><%= link_to ( scenario.name, { :action => :execute_scenario }, :scenario_id => scenario.id, :method => :post ) %></li>
+	 		<li>
+	 			<%= link_to ( scenario.name, { :action => :execute_scenario }, :scenario_id => scenario.id, :method => :post ) %>
+			</li>
 		<% end %>
 	 </ul> 
 </div>

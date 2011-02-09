@@ -84,36 +84,34 @@
 <% end %>
 
 <% content_for :breadcrumb do %>
-	<br />
 <% end %>
 
 <% content_for :sidebar do %>
 <div id="SmartSideBar"></div>
 <div class="rtCnt">
 	<div class="rtPanel">
-		<span class="seperator"></span>
 		<a href="javascript:void(0)" class="active" cntid="TicketProperties">
-			<img src="/images/page_white_gear.png" width="32px" height="32px"  />
+			<img src="/images/spacer.gif" class="ticketprop" width="36px" height="36px"  />
 			<em>Ticket Properties</em>
 		</a>
+		<a href="javascript:void(0)" cntid="RelatedSolutions">
+			<img src="/images/spacer.gif" class="suggestsolutions" width="36px" height="36px"  />
+			<em>Suggest Solutions</em>
+		</a>
 		<a href="javascript:void(0)" cntid="Scenarios">
-			<img src="/images/widgets.png" width="32px" height="32px"  />
+			<img src="/images/spacer.gif" class="scenario" width="36px" height="36px"  />
 			<em>Execute Scenario</em>
 		</a>
 		<a href="javascript:void(0)" cntid="RequesterProperties">
-			<img src="/images/user_gray.png" width="32px" height="32px"  />
+			<img src="/images/spacer.gif" class="requesterinfo" width="36px" height="36px"  />
 			<em>Requestor Info</em>
 		</a>
 		<a href="javascript:void(0)" cntid="TicketTodos">
-			<img src="/images/tick.png" width="32px" height="32px"  />
+			<img src="/images/spacer.gif" class="todo" width="36px" height="36px"  />
 			<em>To Do</em>
 		</a>
-		<a href="javascript:void(0)" cntid="RelatedSolutions">
-			<img src="/images/help.png" width="32px" height="32px"  />
-			<em>Suggest Solutions</em>
-		</a>
 		<a href="javascript:void(0)" cntid="TicketTags">
-			<img src="/images/three_tags.png" width="32px" height="32px"  />
+			<img src="/images/spacer.gif" class="tags" width="36px" height="36px"  />
 			<em>Tags</em>
 		</a>
 	</div>	
@@ -126,23 +124,7 @@
 		
 </div>	
  <div style="display:none">
-	<%= content_tag(:div, "This ticket is flagged as spam. " + link_to("(undo)", unspam_helpdesk_ticket_path(@ticket), :method => :put), :class => 'spam') if @ticket.spam %>
-	<%= content_tag(:div, "This ticket is deleted. " + link_to("(undo)", restore_helpdesk_ticket_path(@ticket), :method => :put), :class => 'spam') if @ticket.deleted %>
-	<%= content_tag(:div, "You're monitoring this ticket. " + link_to("(stop)", helpdesk_ticket_helpdesk_subscription_path(@ticket, @subscription), :method => :delete), :class => 'monitoring') if @subscription %>	 
 	
-	<div class="rightSubContainers">
-		<h4>Actions</h4>
-		
-		<ul class="actions">
-		    <%= content_tag(:li, link_to("Monitor this ticket", helpdesk_ticket_helpdesk_subscriptions_path(@ticket), :method => :post, :class => "button" )) if not @subscription %>
-		    <%= content_tag(:li, link_to("Stop monitoring this ticket", helpdesk_ticket_helpdesk_subscription_path(@ticket, @subscription), :method => :delete, :class => "button" )) if @subscription %>
-		    <%= content_tag(:li, link_to("This is not spam", unspam_helpdesk_ticket_path(@ticket), :method => :put, :class => "button" )) if @ticket.spam %>
-		    <%= content_tag(:li, link_to("Mark as spam", spam_helpdesk_ticket_path(@ticket), :method => :put, :class => "button" )) unless @ticket.spam %>
-		    <%= content_tag(:li, link_to("Delete this ticket", @ticket, :method => :delete, :class => "button" )) unless @ticket.deleted %>
-		    <%= content_tag(:li, link_to("Undelete this ticket", restore_helpdesk_ticket_path(@ticket), :method => :put, :class => "button" )) if @ticket.deleted %>
-		    <%= content_tag(:li, link_to("View in portal", support_ticket_path(@ticket), :class => "button" )) if not @subscription %>
-		</ul>
-	</div>
 	</div>
 <% end %>
 
@@ -164,17 +146,30 @@
 	                </li>
 	            </ul>
 	        </div>
+			
 			<div class="title">
-		            <em><%= "##{@ticket.display_id}" %></em>
-		            <b><%= h(@ticket.subject) %></b>
+		        <em><%= "##{@ticket.display_id}" %></em>
+		        <b><%= h(@ticket.subject) %></b>
 		    </div>
 			<div class="description">
 		        <div class="user_details">
 		        	<%= render :partial => "/shared/avatar", :object => @ticket.requester.avatar  %>
 		          		Reported by <%= link_to(h(@ticket.requester.name),@ticket.requester, :class => "user_name") %>
-		            <div> 
-						Created on <%= h(@ticket.created_at.strftime("%B %e %Y at %I:%M %p")) %> 
+		            <div>
+						Created on <%= h(@ticket.created_at.strftime("%B %e %Y at %I:%M %p")) %>
+						<div class="ticket_actions action_icons">
+							<%= link_to(image_tag("/images/spacer.gif"), helpdesk_ticket_helpdesk_subscriptions_path(@ticket), :method => :post, :class => "monitor", :title => "Monitor this ticket" ) if not @subscription %>
+							<%= link_to(image_tag("/images/spacer.gif"), helpdesk_ticket_helpdesk_subscription_path(@ticket, @subscription), :method => :delete, :class => "monitor_active",  :title => "Stop monitoring this ticket" ) if @subscription %>
+							<%= link_to(image_tag("/images/spacer.gif"), unspam_helpdesk_ticket_path(@ticket), :method => :put, :class => "spam_active", :title => "This is not spam" ) if @ticket.spam %>
+					    	<%= link_to(image_tag("/images/spacer.gif"), spam_helpdesk_ticket_path(@ticket), :method => :put, :class => "spam", :title  => "Mark as spam") unless @ticket.spam %>
+							
+							<a href="#" class="button">Close</a>
+							<%= link_to("Delete", @ticket, :method => :delete, :class => "button"  ) unless @ticket.deleted %>
+					    	<%= link_to("Undelete", restore_helpdesk_ticket_path(@ticket), :method => :put  ) if @ticket.deleted %>
+							
+						</div> 
 					</div>				
+					
 		        </div>	        
 				<div id="description-summary" class="details min_height">
 		            <%= h(truncate(@ticket.description, :length => 400)) %>
@@ -185,8 +180,18 @@
 		        <div id="description-full" style="display:none" class="details">
 			    	<%= @ticket.description %>
 			    </div>
+				
 			</div>
+			
 	    </div>		
+		<%# content_tag(:div, "This ticket is flagged as spam. " + link_to("(undo)", unspam_helpdesk_ticket_path(@ticket), :method => :put), :class => 'spam') if @ticket.spam %>
+						<%# content_tag(:div, "This ticket is deleted. " + link_to("(undo)", restore_helpdesk_ticket_path(@ticket), :method => :put), :class => 'spam') if @ticket.deleted %>
+						<%# content_tag(:div, "You're monitoring this ticket. " + link_to("(stop)", helpdesk_ticket_helpdesk_subscription_path(@ticket, @subscription), :method => :delete), :class => 'monitoring') if @subscription %>
+							<%# link_to("Monitor this ticket", helpdesk_ticket_helpdesk_subscriptions_path(@ticket), :method => :post, :class => "button" ) if not @subscription %>
+					    	<%# link_to("Stop monitoring this ticket", helpdesk_ticket_helpdesk_subscription_path(@ticket, @subscription), :method => :delete, :class => "button" ) if @subscription %>
+					    	<%# link_to("This is not spam", unspam_helpdesk_ticket_path(@ticket), :method => :put, :class => "button" ) if @ticket.spam %>
+					    	<%# link_to("Mark as spam", spam_helpdesk_ticket_path(@ticket), :method => :put, :class => "button" ) unless @ticket.spam %>
+						
 		<% unless @ticket.notes.visible.newest_first.blank? then %>
 			<div class="floatr">
 				<%= link_to_function("Reply", "Helpdesk.swapEmailNote('send-email', false, 'Send Email', this, 'cnt-top')", :class => 'fdbutton') if @item.requester %>	  

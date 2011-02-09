@@ -1,15 +1,16 @@
 <div class="rtDetails" id="RequesterProperties" style="display:none">
-      <div class="user_details_widget">  
+    <h3 class="title">Requester info</h3>
+	<div class="user_details_widget">  
 		<div><%= link_to(h(user.name), user, :class => "user_name") %></div>
         <div><%= auto_link(h(user.email)) %></div>
 		<div><%= auto_link(h(user.phone)) %></div>
-	  </div>
-			<h3 class="title">Recent requests</h3>
-			<ul class="ui-list_with_icon">
-	            <% user.tickets.each do |ticket| %>	
-				<li>
-					<%= link_to("##{ticket.display_id} " + h(ticket.subject), ticket) %>
-				</li>		
-				<% end %>
-	        </ul>
+	</div>
+	<h3 class="title">Recent requests</h3>
+	<ul class="ui-list_with_icon">
+	    <% user.tickets.each do |ticket| %>	
+		<li>
+			<%= link_to("##{ticket.display_id} " + h(ticket.subject), ticket) %>
+		</li>		
+		<% end %>
+	</ul>
 </div>
