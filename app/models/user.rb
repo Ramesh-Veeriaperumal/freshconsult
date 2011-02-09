@@ -144,6 +144,13 @@ class User < ActiveRecord::Base
   def to_liquid
     { "name"  => to_s }
   end
+  
+  def has_manage_forums?
+      self.permission?(:manage_tickets)
+  end
+  
+  
+ 
 
   protected
     def set_account_id_in_children
