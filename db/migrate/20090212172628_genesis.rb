@@ -179,16 +179,6 @@ class Genesis < ActiveRecord::Migration
     
     end
 
-    
-    Helpdesk::Classifier.create(:name => 'spam', :categories => 'spam ham', :data => nil)
-#    if User.count > 0
-#      puts "\nYou should add a helpdesk admin role to at least one user, either via the Users link in the header or via the console:\n   Helpdesk::Authorization.create(:user => User.first, :role_token => 'admin')\n\n"
-#    else
-#      password = Password.phonemic
-#      puts "\nAdding helpdesk admin role to new user: login admin, password #{password}\n\n"
-#      u = User.create(:name => 'Admin', :login => 'admin', :password => password, :password_confirmation => password, :email => 'test@example.com')
-#    Helpdesk::Authorization.create(:user => u, :role_token => "admin")
-#    end
   end
 
   def self.down
