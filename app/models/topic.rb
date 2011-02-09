@@ -12,7 +12,7 @@ class Topic < ActiveRecord::Base
   has_many :monitorships
   has_many :monitors, :through => :monitorships, :conditions => ["#{Monitorship.table_name}.active = ?", true], :source => :user
 
-  has_many :posts,     :order => "#{Post.table_name}.created_at", :dependent => :delete_all
+  has_many :posts,     :order => "#{Post.table_name}.created_at", :dependent => :destroy
   has_one  :recent_post, :order => "#{Post.table_name}.created_at DESC", :class_name => 'Post'
   
   has_many :voices, :through => :posts, :source => :user, :uniq => true

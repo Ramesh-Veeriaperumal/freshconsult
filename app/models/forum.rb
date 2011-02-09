@@ -5,7 +5,7 @@ class Forum < ActiveRecord::Base
   
   belongs_to :forum_category
 
-  has_many :moderatorships, :dependent => :delete_all
+  has_many :moderatorships, :dependent => :destroy
   has_many :moderators, :through => :moderatorships, :source => :user
 
   has_many :topics, :order => 'sticky desc, replied_at desc', :dependent => :delete_all
