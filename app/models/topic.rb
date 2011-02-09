@@ -12,7 +12,7 @@ class Topic < ActiveRecord::Base
   has_many :monitorships
   has_many :monitors, :through => :monitorships, :conditions => ["#{Monitorship.table_name}.active = ?", true], :source => :user
 
-  has_many :posts,     :order => "#{Post.table_name}.created_at", :dependent => :delete_all
+  has_many :posts,     :order => "#{Post.table_name}.created_at", :dependent => :destroy
   has_one  :recent_post, :order => "#{Post.table_name}.created_at DESC", :class_name => 'Post'
   
   has_many :voices, :through => :posts, :source => :user, :uniq => true
@@ -29,9 +29,25 @@ class Topic < ActiveRecord::Base
     }
   }
   
-  attr_accessible :title
+  attr_accessible :title,:stamp_type
   # to help with the create form
   attr_accessor :body
+  
+  IDEAS_STAMPS = [
+    [ :planned,   "Planned",   1 ], 
+    [ :implemented,    "Implemented",    2 ],
+    [ :nottaken,    "Not Taken",    3 ]
+  ]
+
+  IDEAS_STAMPS_OPTIONS = IDEAS_STAMPS.map { |i| [i[1], i[2]] }
+  IDEAS_STAMPS_BY_KEY = Hash[*IDEAS_STAMPS.map { |i| [i[2], i[1]] }.flatten]
+  IDEAS_STAMPS_BY_TOKEN = Hash[*IDEAS_STAMPS.map { |i| [i[0], i[2]] }.flatten]
+  
+ 
+  def stamp_name
+    IDEAS_STAMPS_BY_KEY[stamp_type]
+  end
+  
 	
 	def hit!
     self.class.increment_counter :hits, id
@@ -61,6 +77,8 @@ class Topic < ActiveRecord::Base
       self.destroy
     end
   end
+  
+ 
   
   protected
     def set_default_replied_at_and_sticky
@@ -101,5 +119,8 @@ class Topic < ActiveRecord::Base
     
     def update_post_user_counts
       @voices = voices.to_a
-    end
+  end
+   
+  
+  
 end

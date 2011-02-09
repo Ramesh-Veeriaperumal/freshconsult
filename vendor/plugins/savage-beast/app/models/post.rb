@@ -4,6 +4,8 @@ class Post < ActiveRecord::Base
   belongs_to :forum
   belongs_to :user
   belongs_to :topic
+  
+  named_scope :answered_posts, :conditions => { :answer => true }
 
   format_attribute :body
   before_create { |r| r.forum_id = r.topic.forum_id }

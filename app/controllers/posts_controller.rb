@@ -41,7 +41,7 @@ class PostsController < ApplicationController
 
   def show
     respond_to do |format|
-      format.html { redirect_to forum_topic_path(@post.forum_id, @post.topic_id) }
+      format.html { redirect_to category_forum_topic_path(:category_id => params[:category_id],:forum_id => params[:forum_id], :id => params[:topic_id]) }
       format.xml  { render :xml => @post.to_xml }
     end
   end
@@ -54,7 +54,7 @@ class PostsController < ApplicationController
       respond_to do |format|
         format.html do
           flash[:notice] = 'This topic is locked.'[:locked_topic]
-          redirect_to(forum_topic_path(:forum_id => params[:forum_id], :id => params[:topic_id]))
+          redirect_to(category_forum_topic_path(:category_id => params[:category_id],:forum_id => params[:forum_id], :id => params[:topic_id]))
         end
         format.xml do
           render :text => 'This topic is locked.'[:locked_topic], :status => 400
@@ -69,7 +69,7 @@ class PostsController < ApplicationController
     @post.save!
     respond_to do |format|
       format.html do
-        redirect_to forum_topic_path(:forum_id => params[:forum_id], :id => params[:topic_id], :anchor => @post.dom_id, :page => params[:page] || '1')
+        redirect_to category_forum_topic_path(:category_id => params[:category_id],:forum_id => params[:forum_id], :id => params[:topic_id], :anchor => @post.dom_id, :page => params[:page] || '1')
       end
       format.xml { head :created, :location => post_url(:forum_id => params[:forum_id], :topic_id => params[:topic_id], :id => @post, :format => :xml) }
     end
@@ -77,7 +77,7 @@ class PostsController < ApplicationController
     flash[:bad_reply] = 'Please post something at least...'[:post_something_message]
     respond_to do |format|
       format.html do
-        redirect_to forum_topic_path(:forum_id => params[:forum_id], :id => params[:topic_id], :anchor => 'reply-form', :page => params[:page] || '1')
+        redirect_to category_forum_topic_path(:category_id => params[:category_id],:forum_id => params[:forum_id], :id => params[:topic_id], :anchor => 'reply-form', :page => params[:page] || '1')
       end
       format.xml { render :xml => @post.errors.to_xml, :status => 400 }
     end
@@ -116,6 +116,15 @@ class PostsController < ApplicationController
       end
       format.xml { head 200 }
     end
+  end
+  
+  def toggle_answer
+    @post.answer = !@post.answer
+    @post.save
+    respond_to do |format| 
+        format.html { redirect_to category_forum_topic_path(params[:category_id],params[:forum_id], params[:topic_id]) }
+        format.xml  { head :created, :location => topic_url(:forum_id => @forum, :id => @topic, :format => :xml) }
+      end
   end
 
   protected

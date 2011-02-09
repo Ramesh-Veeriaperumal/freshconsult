@@ -28,18 +28,37 @@ class Helpdesk::TicketsController < ApplicationController
 
 
   def show
+    
     @reply_email = current_account.reply_emails
     
     @subscription = current_user && @item.subscriptions.find(
       :first, 
       :conditions => {:user_id => current_user.id})
-
+      
+     @signature = ""
+     @agents = Agent.find(:first, :joins=>:user, :conditions =>{:user_id =>current_user.id} )     
+     @signature = "\n\n\n #{@agents.signature}" unless @agents.nil?
+     
+     logger.debug "subject of the ticket is #{@item.subject}"
+     
+     set_suggested_solutions 
+     
+     #@suggested_solution = 
+    
     respond_to do |format|
       format.html  
       format.atom
     end
   end
 
+  def set_suggested_solutions
+    
+    search_tokens =  @item.subject.scan(/\w+/)
+    
+    @articles = Helpdesk::Article.title_or_body_like_any(search_tokens).limit(10)
+        
+  end
+  
   def update
 
     old_item = @item.clone

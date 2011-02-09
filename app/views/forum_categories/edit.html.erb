@@ -1,12 +1,11 @@
 <h1>Editing forum_category</h1>
 
-<% form_for(@forum_category) do |f| %>
-  <%= f.error_messages %>
+<% form_for :forum_category,@forum_category, :url => category_url , :html=>{:method=>:put}  do |f| -%>
+  <%= render :partial => "/shared/name_desc", :locals => { :form => f, :type => "edit" } %>
 
   <p>
-    <%= f.submit 'Update' %>
+    <%= submit_tag 'Update'[:update], { :class => "fdbutton",  :action => :update } -%> 
+	<%= link_to('Cancel'[:cancel], categories_path, :class => "fdbutton grey" ) -%>
   </p>
 <% end %>
 
-<%= link_to 'Show', @forum_category %> |
-<%= link_to 'Back', forum_categories_path %>

@@ -24,5 +24,9 @@
 			<%= form.text_area :description, :rows => 7 %>
 		</div>
 	</li>
+	<li class="small">
+        	<%= form.label :forum_type, "Forum Type" %>
+        	<%= form.select :forum_type, Forum::TYPE_OPTIONS, :class => "select" %>
+    </li>
 </ul>
  

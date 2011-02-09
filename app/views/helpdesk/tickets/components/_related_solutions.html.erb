@@ -1,3 +1,18 @@
 <div class="rtDetails" id="RelatedSolutions" style="display:none;">
 	<h3 class="title">Suggested Solutions</h3>
+		
+	<% if (@articles.size == 0) %>
+		<h2> No Related Solutions found </h2>
+	<% else %>
+		<div class="request_panel_list">
+			<% @articles.each do |article| %>
+			<div class="item">
+				<%= link_to(h(article.title), helpdesk_article_path(article)) %>
+				<div style="display:none;">
+					<%= truncate ( article.body.gsub(/<\/?[^>]*>/, ""), 100)  %>
+				</div>
+			</div>
+			<% end %>
+		</div>
+	<% end %>
 </div>

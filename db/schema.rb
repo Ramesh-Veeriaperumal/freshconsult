@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110208115349) do
+ActiveRecord::Schema.define(:version => 20110209080143) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -44,9 +44,9 @@ ActiveRecord::Schema.define(:version => 20110208115349) do
   create_table "business_calendars", :force => true do |t|
     t.integer  "account_id"
     t.text     "business_time_data"
-    t.text     "holiday_data"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "holidays"
   end
 
   create_table "customers", :force => true do |t|
@@ -480,6 +480,7 @@ ActiveRecord::Schema.define(:version => 20110208115349) do
     t.integer  "forum_id"
     t.text     "body_html"
     t.integer  "account_id"
+    t.boolean  "answer",     :default => false
   end
 
   add_index "posts", ["forum_id", "created_at"], :name => "index_posts_on_forum_id"
@@ -578,6 +579,7 @@ ActiveRecord::Schema.define(:version => 20110208115349) do
     t.integer  "replied_by"
     t.integer  "last_post_id"
     t.integer  "account_id"
+    t.integer  "stamp_type"
   end
 
   add_index "topics", ["forum_id", "replied_at"], :name => "index_topics_on_forum_id_and_replied_at"
