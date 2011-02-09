@@ -1,3 +1,19 @@
 <div class="rtDetails" id="RelatedSolutions" style="display:none;">
-		Related Solutions
+		
+<% if (@articles.size == 0) %>
+	<h2>No Related Solutions found </h2>
+<% else %>
+	
+	Related Solutions
+	<% @articles.each do |article| %>
+	<div class="result">
+	 	<h4><%= link_to(h(article.title), helpdesk_article_path(article)) %></h4>
+		<div>
+			<%= truncate ( article.body.gsub(/<\/?[^>]*>/, ""), 200)  %>
+		</div>
+	</div>
+	<% end %>
+	
+<% end %>
+		
 </div>

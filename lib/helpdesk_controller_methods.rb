@@ -3,8 +3,7 @@ module HelpdeskControllerMethods
   def self.included(base)
     base.send :before_filter, :get_custom_fields,   :only => [:create]
     base.send :before_filter, :build_item,          :only => [:new, :create]
-    base.send :before_filter, :load_item,           :only => [:show, :edit, :update]
-    base.send :before_filter, :set_custom_fields,   :only => [:create]
+    base.send :before_filter, :load_item,           :only => [:show, :edit, :update]   
     base.send :before_filter, :load_multiple_items, :only => [:destroy, :restore]
     base.send :before_filter, :add_to_history,      :only => [:show]
   end
@@ -184,6 +183,7 @@ protected
     logger.debug "nscname is :: #{nscname}"
     if "helpdesk_ticket".eql?(nscname)
       set_customizer
+      set_custom_fields
     end
     
     if "helpdesk_guide".eql?(nscname)
