@@ -20,10 +20,34 @@ class Forum < ActiveRecord::Base
   has_one  :recent_post, :order => "#{Post.table_name}.created_at DESC", :class_name => 'Post'
   
   format_attribute :description
+  
+  TYPES = [
+    [ :howto,   "How To",   1 ], 
+    [ :ideas,    "Share Ideas",    2 ],
+    [ :problem,    "Report a Problem",    3 ]
+  ]
 
+  TYPE_OPTIONS = TYPES.map { |i| [i[1], i[2]] }
+  TYPE_NAMES_BY_KEY = Hash[*TYPES.map { |i| [i[2], i[1]] }.flatten]
+  TYPE_KEYS_BY_TOKEN = Hash[*TYPES.map { |i| [i[0], i[2]] }.flatten]
+  
+  
+
+  def ideas?() self.forum_type == 2 
+    end
+  
+  def questions?() self.forum_type == 3 
+    end
   
   # retrieves forums ordered by position
   def self.find_ordered(account, options = {})
     find :all, options.update(:conditions => {:account_id => account}, :order => 'position')
   end
+  
+  def type_name
+    TYPE_NAMES_BY_KEY[forum_type]
+  end
+  
+  
+  
 end

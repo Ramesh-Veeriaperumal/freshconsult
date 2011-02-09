@@ -1,12 +1,10 @@
-<%=  new_category_forum_topic_path(@forum_category,@forum) %>
-
 <% content_for :sidebar do %>	
 	<% unless @forum.description.blank? %>
 		<%= @forum.description_html %> 
 	<% end %>
  
 	<h5 style="margin-bottom:1.0em;"><%= 'Moderators'[:moderators] %></h5>
-	
+	<%=@forum.type_name%>
 	<% unless @forum.moderators.empty? -%>
 			<ul class="flat" style="margin-top:1em;">
 				<% @forum.moderators.each do |user| -%>
@@ -28,6 +26,7 @@
 		<%= link_to "Back to Forum List"[:forums_title], category_path(@forum_category), :class => "nav_older" %> 
 	</div>
 	<h3 class="content_title"><%= h @forum.name %></h3>
+	
 	
 	<div class="actions_bar">
 		<% if logged_in? %>
@@ -57,14 +56,19 @@
 			</span>	
 			<h4 class="topic_title">
 					<%= "Sticky"[:sticky_title]+": <strong>" if topic.sticky? %>
-					<%= link_to topic.title, category_forum_topic_path(@forum_category,@forum) %>
-				       
+					<%= link_to topic.title, category_forum_topic_path(@forum_category,@forum,topic) %>
+				    <span><%=h(topic.stamp_name)%></span> 
+					<%if @forum.questions?%>  
+						<%if topic.posts.answered_posts.count > 0%>
+							Answered
+						<%end%>
+					<%end%>
 				    <%= "</strong>" if topic.sticky? %>
 				   	 <% if topic.paged? -%>
 				    	<small><%= link_to 'last'[] %></small>
 				    <% end -%> 
 				</h4>	 
-			<span><%=h(topic.title)%></span>
+			<span><%=h(topic.title)%></span> 
 			</li>
 			<% end %>
 			

@@ -1,5 +1,5 @@
 class TopicsController < ApplicationController
-  before_filter :find_forum_and_topic, :except => :index
+  before_filter :find_forum_and_topic, :except => :index 
   #before_filter :login_required, :only => [:new, :create, :edit, :update, :destroy]
   before_filter :except => [:index, :show] do |c| 
     c.requires_permission :post_in_forums
@@ -28,7 +28,7 @@ class TopicsController < ApplicationController
   end
   
   def show
-   
+    
     respond_to do |format|
       format.html do
         # see notes in application.rb on how this works
@@ -69,7 +69,7 @@ class TopicsController < ApplicationController
 		
 		if topic_saved && post_saved
 			respond_to do |format| 
-				format.html { redirect_to forum_topic_path(@forum, @topic) }
+				format.html { redirect_to category_forum_topic_path(@forum_category,@forum, @topic) }
 				format.xml  { head :created, :location => topic_url(:forum_id => @forum, :id => @topic, :format => :xml) }
 			end
 		else
@@ -94,6 +94,24 @@ class TopicsController < ApplicationController
       format.html { redirect_to forum_path(@forum) }
       format.xml  { head 200 }
     end
+  end
+  
+   def update_stamp
+    if  @topic.update_attributes(:stamp_type => params[:stamp_type])
+      respond_to do |format|
+        format.html { redirect_to category_forum_topic_path(@forum_category,@forum, @topic) }
+        format.xml  { head 200 }
+      end
+     end
+  end
+    
+  def remove_stamp
+    if @topic.update_attributes(:stamp_type => nil) 
+     respond_to do |format|
+      format.html { redirect_to category_forum_topic_path(@forum_category,@forum, @topic) }
+      format.xml  { head 200 }
+    end
+   end
   end
   
   protected
