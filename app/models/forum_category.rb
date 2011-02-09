@@ -9,7 +9,5 @@ class ForumCategory < ActiveRecord::Base
     find :all, options.update(:conditions => {:account_id => account}, :order => 'name')
   end
   
-  def editable_by?(user)
-    user && ( user.admin? || user.moderator_of?(category_id))
-  end
+  
  end
