@@ -380,8 +380,10 @@ end
       return
       
     end
-    
+    field =false
+    unless custom_field.nil?
     field = custom_field.has_key?(method)    
+    end
     raise e unless field
     custom_field[method]
   end
