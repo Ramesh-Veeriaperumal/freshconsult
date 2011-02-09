@@ -117,8 +117,13 @@ class Helpdesk::TicketsController < ApplicationController
   end
   
   def execute_scenario 
-    p "############ Testing "
+    
+    va_rule = VARule.find(params[:scenario_id])
+    evaluate_on = Helpdesk::Ticket.find_by_display_id(params[:id])
+    va_rule.trigger_actions(evaluate_on)
+    evaluate_on.save
     redirect_to :back
+    
   end 
 
   def spam
