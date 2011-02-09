@@ -165,7 +165,7 @@
 							
 							<a href="#" class="button">Close</a>
 							<%= link_to("Delete", @ticket, :method => :delete, :class => "button"  ) unless @ticket.deleted %>
-					    	<%= link_to("Undelete", restore_helpdesk_ticket_path(@ticket), :method => :put  ) if @ticket.deleted %>
+					    	<%= link_to("Undelete", restore_helpdesk_ticket_path(@ticket), :method => :put, :class => "button"  ) if @ticket.deleted %>
 							
 						</div> 
 					</div>				

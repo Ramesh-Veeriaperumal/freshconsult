@@ -1,6 +1,9 @@
 <div class="rtDetails" id="RequesterProperties" style="display:none">
     <h3 class="title">Requester info</h3>
 	<div class="user_details_widget">  
+		<div class="clearfix">
+			<%= render :partial => "/shared/avatar", :object => @ticket.requester.avatar, :locals => { :avatar_size => :medium }  %>
+		</div>
 		<div><%= link_to(h(user.name), user, :class => "user_name") %></div>
         <div><%= auto_link(h(user.email)) %></div>
 		<div><%= auto_link(h(user.phone)) %></div>

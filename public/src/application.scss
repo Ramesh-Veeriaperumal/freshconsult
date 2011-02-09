@@ -8,6 +8,10 @@ a{
 a:hover{
 	text-decoration:none;
 }
+.clearfix{
+	@include clearfix;
+}
+
 body{
   	@include blueprint-typography(true);
   	height:100%;
@@ -1279,8 +1283,6 @@ div.preview_pic{
 			padding:3px;
 			background:#ffffff;
 			border:1px solid #cfcfcf;
-			width:50px;
-			height:50px;
 			@include shadows(#dfdfdf, 0px, 1px, 3px);
 		}
 }
@@ -1634,6 +1636,22 @@ body h5{
 	}
 	.spam_active img{
 		@include sprite-position(2, 2, $asp_xy, $asp_xy);
+	}
+}
+
+.request_panel_list{
+	margin:5px 3px;
+	border:1px solid #cfcfcf;
+	div.item{
+		@include vertical-gradient(#efefef, #dfdfdf);
+		padding:3px 8px;
+		a{
+			font-size:12px;
+			@include link-colors(#333333);
+			display:block;
+			text-decoration:none;
+			padding:5px;
+		}
 	}
 }
 
