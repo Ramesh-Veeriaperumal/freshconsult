@@ -28,12 +28,17 @@ class Helpdesk::TicketsController < ApplicationController
 
 
   def show
+    
     @reply_email = current_account.reply_emails
     
     @subscription = current_user && @item.subscriptions.find(
       :first, 
       :conditions => {:user_id => current_user.id})
-
+      
+     @signature = ""
+     @agents = Agent.find(:first, :joins=>:user, :conditions =>{:user_id =>current_user.id} )     
+     @signature = "\n\n\n #{@agents.signature}" unless @agents.nil?     
+    
     respond_to do |format|
       format.html  
       format.atom
