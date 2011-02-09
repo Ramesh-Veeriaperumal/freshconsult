@@ -23,7 +23,7 @@
 							<span class="follow_link">»</span>
 							</a>
 					</h5>
-					<% if logged_in? && forum_category.editable_by?(current_user) -%>
+					<% if logged_in? && current_user.has_manage_forums? -%>
 	    					
 	      						<span class="edit">
 	        					<%= link_to 'Edit' ,edit_category_path(forum_category), :class => "button"   %>
