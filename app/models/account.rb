@@ -6,6 +6,7 @@ class Account < ActiveRecord::Base
   has_many :subscription_payments
   
   has_many :customers, :dependent => :destroy
+  has_many :agents, :through =>:users
   has_many :sla_policies , :class_name => 'Helpdesk::SlaPolicy' ,:dependent => :destroy
   
   #Scoping restriction for other models starts here
