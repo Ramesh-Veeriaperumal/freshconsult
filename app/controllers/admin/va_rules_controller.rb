@@ -113,8 +113,7 @@ class Admin::VaRulesController < Admin::AutomationsController
    
    @json_data.each do |field|
      
-     if field["fieldType"].eql?("custom")
-       
+     if field["fieldType"].eql?("custom")       
        
         item = {:name =>  field["label"] , :value =>  field["label"] ,  :domtype => field["type"], :action => "set_custom_field"  , :operatortype => "text"}
         

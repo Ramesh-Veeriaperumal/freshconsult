@@ -1,5 +1,6 @@
 class Helpdesk::SlaPoliciesController < ApplicationController
   
+  before_filter :set_selected_tab
   
   def index
     
@@ -96,6 +97,10 @@ class Helpdesk::SlaPoliciesController < ApplicationController
 
   def nscname
     @nscname ||= controller_path.gsub('/', '_').singularize
+  end
+  
+  def set_selected_tab
+      @selected_tab = 'Admin'
   end
 
 end
