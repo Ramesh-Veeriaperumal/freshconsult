@@ -36,6 +36,19 @@ class Helpdesk::FormCustomizer < ActiveRecord::Base
                                                                                                   "choices": [], "setDefault": 0, 
                                                                                                   "agent": {"required": true}, 
                                                                                                   "customer": {"visible": true, "editable": false, "required": true}}]'
+     
+   DEFAULT_REQUESTER_FIELDS_JSON   = '[{"fieldType":"default", "type": "text",      "label": "Requester",   "description": "Enter requester name",      
+                                                                                                  "choices": [],  "setDefault": 0, 
+                                                                                                  "agent": {"required": true}, 
+                                                                                                  "customer": {"visible": true, "editable": true, "required": true}}, 
+                             {"fieldType":"default", "type": "text",      "label": "Subject",     "description": "Request subject",           
+                                                                                                  "choices": [], "setDefault": 0, 
+                                                                                                  "agent": {"required": true}, 
+                                                                                                  "customer": {"visible": true, "editable": true, "required": true}}, 
+                             {"fieldType":"default", "type": "paragraph", "label": "Description", "description": "",                          
+                                                                                                  "choices": [], "setDefault": 0, 
+                                                                                                  "agent": {"required": true}, 
+                                                                                                  "customer": {"visible": true, "editable": true, "required": true}}]'
    
    DEFAULT_FIELDS_BY_KEY = Hash['field', DEFAULT_FIELDS_JSON]
       

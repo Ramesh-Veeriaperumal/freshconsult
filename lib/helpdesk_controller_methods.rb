@@ -165,11 +165,17 @@ protected
     
   end
   
-  def set_custom_fields    
-    @item.custom_field = @flexi_fields    
-    @flexi_fields.each do |key,value|    
+  def set_custom_fields   
+    
+    unless @flexi_fields.nil?
+      
+      @item.custom_field = @flexi_fields    
+      @flexi_fields.each do |key,value|    
         @item.write_attribute key , value
-     end  
+      end  
+      
+    end
+    
      
   end
 
