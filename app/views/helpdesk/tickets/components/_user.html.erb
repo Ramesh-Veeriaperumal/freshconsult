@@ -6,14 +6,17 @@
 		</div>
 		<div><%= link_to(h(user.name), user, :class => "user_name") %></div>
         <div><%= auto_link(h(user.email)) %></div>
-		<div><%= auto_link(h(user.phone)) %></div>
+		<div><%= h(user.phone) %></div>
+		<div><%= h(user.mobile) %></div>
+		<div>"<%= h(user.job_title) %>" <b><%= (user.customer ? "at #{user.customer.name}" : "")  %></b></div>
 	</div>
-	<h3 class="title">Recent requests</h3>
+	<div class="seperator"></div>
+	<h3 class="title">Recent tickets</h3>
 	<ul class="ui-list_with_icon">
-	    <% user.tickets.each do |ticket| %>	
-		<li>
-			<%= link_to("##{ticket.display_id} " + h(ticket.subject), ticket) %>
-		</li>		
+	    <% user.tickets.newest(5).each do |ticket| %>	
+			<li>
+				<%= link_to( truncate("##{ticket.display_id} " + h(ticket.subject), 60), ticket ) %>
+			</li>		
 		<% end %>
 	</ul>
 </div>
