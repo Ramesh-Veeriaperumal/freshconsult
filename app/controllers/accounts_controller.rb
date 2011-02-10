@@ -1,4 +1,14 @@
-class AccountsController < ApplicationController
+class AccountsController < ActionController::Base
+  
+  include AuthenticationSystem
+  include HelpdeskSystem
+  
+  include SslRequirement
+  include SubscriptionSystem
+
+  protect_from_forgery
+  filter_parameter_logging
+  
   include ModelControllerMethods
   
   before_filter :build_user, :only => [:new, :create]
