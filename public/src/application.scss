@@ -2658,26 +2658,26 @@ h4.list_title{
 }
 
 .forum_list, .topics_list{
-	background:$base;
-	padding:6px;
-	@include border-radius(0.8em);
+	margin:10px 0px;
 	h4.title{
 		margin:0px;
 		padding:2px 6px;
 	}
 	ul.base_set{
-		@include horizontal-list;
+		@include no-bullets;
+		padding:0px 0px 10px 0px; margin:0px;
 		background:#ffffff;
-		border:2px solid darken($base, 5%);
-		@include border-radius(0.8em);	
+		border:1px solid #afafaf;
+		@include corners(6px);
 		li{
-			width:46.8%;
-			margin:2px 8px;
-			padding:0px;
-			margin-bottom:6px;
+			padding:4px 10px 8px 10px;
+			margin:0px;
 			h5{
 				font-size:14px;
-				margin:7px 6px 2px 13px;
+				div{
+					font-size:11px;
+					color:#666666;
+				}
 				a{
 					color:#545454;
 					text-decoration:none;	
@@ -3655,4 +3655,16 @@ div.search{
 	td{
 		vertical-align:top;
 	}
+}
+
+.page_title{
+	@include vertical-gradient($complement, darken($complement, 10%));
+	
+	@include inset-shadows(darken($complement, 20%), 0px, 1px, 3px);
+	padding:6px 20px;
+	margin:0px 0px;
+	font-size:16px;
+	color:#ffffff;
+	font-weight:bold;
+
 }

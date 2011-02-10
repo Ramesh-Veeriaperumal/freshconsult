@@ -4049,68 +4049,47 @@ h4.list_title {
 
 /* line 2660, ../src/application.scss */
 .forum_list, .topics_list {
-  background: #d4ebd4;
-  padding: 6px;
-  -moz-border-radius: 0.8em;
-  -webkit-border-radius: 0.8em;
-  -o-border-radius: 0.8em;
-  -ms-border-radius: 0.8em;
-  -khtml-border-radius: 0.8em;
-  border-radius: 0.8em;
+  margin: 10px 0px;
 }
-/* line 2664, ../src/application.scss */
+/* line 2662, ../src/application.scss */
 .forum_list h4.title, .topics_list h4.title {
   margin: 0px;
   padding: 2px 6px;
 }
-/* line 2668, ../src/application.scss */
+/* line 2666, ../src/application.scss */
 .forum_list ul.base_set, .topics_list ul.base_set {
-  margin: 0;
-  padding: 0;
-  border: 0;
-  outline: 0;
-  overflow: hidden;
-  *zoom: 1;
+  list-style: none;
+  padding: 0px 0px 10px 0px;
+  margin: 0px;
   background: #ffffff;
-  border: 2px solid #c3e3c3;
-  -moz-border-radius: 0.8em;
-  -webkit-border-radius: 0.8em;
-  -o-border-radius: 0.8em;
-  -ms-border-radius: 0.8em;
-  -khtml-border-radius: 0.8em;
-  border-radius: 0.8em;
+  border: 1px solid #afafaf;
+  -moz-border-radius: 6px 6px 6px 6px;
+  -webkit-border-top-left-radius: 6px;
+  -webkit-border-bottom-left-radius: 6px;
+  -webkit-border-top-right-radius: 6px;
+  -webkit-border-bottom-right-radius: 6px;
+  border-radius: 6px 6px 6px 6px;
 }
-/* line 56, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/compass/stylesheets/compass/utilities/lists/_horizontal-list.scss */
+/* line 11, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/compass/stylesheets/compass/utilities/lists/_bullets.scss */
 .forum_list ul.base_set li, .topics_list ul.base_set li {
   list-style-image: none;
   list-style-type: none;
   margin-left: 0px;
-  white-space: nowrap;
-  display: inline;
-  float: left;
-  padding-left: 4px;
-  padding-right: 4px;
 }
-/* line 45, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/compass/stylesheets/compass/utilities/lists/_horizontal-list.scss */
-.forum_list ul.base_set li:first-child, .forum_list ul.base_set li.first, .topics_list ul.base_set li:first-child, .topics_list ul.base_set li.first {
-  padding-left: 0;
-}
-/* line 46, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/compass/stylesheets/compass/utilities/lists/_horizontal-list.scss */
-.forum_list ul.base_set li:last-child, .forum_list ul.base_set li.last, .topics_list ul.base_set li:last-child, .topics_list ul.base_set li.last {
-  padding-right: 0;
-}
-/* line 2673, ../src/application.scss */
+/* line 2672, ../src/application.scss */
 .forum_list ul.base_set li, .topics_list ul.base_set li {
-  width: 46.8%;
-  margin: 2px 8px;
-  padding: 0px;
-  margin-bottom: 6px;
+  padding: 4px 10px 8px 10px;
+  margin: 0px;
 }
-/* line 2678, ../src/application.scss */
+/* line 2675, ../src/application.scss */
 .forum_list ul.base_set li h5, .topics_list ul.base_set li h5 {
   font-size: 14px;
-  margin: 7px 6px 2px 13px;
   border-bottom: 1px solid #efefef;
+}
+/* line 2677, ../src/application.scss */
+.forum_list ul.base_set li h5 div, .topics_list ul.base_set li h5 div {
+  font-size: 11px;
+  color: #666666;
 }
 /* line 2681, ../src/application.scss */
 .forum_list ul.base_set li h5 a, .topics_list ul.base_set li h5 a {
@@ -5500,4 +5479,19 @@ div.search label, div.search input.search {
 /* line 3655, ../src/application.scss */
 .note_form td {
   vertical-align: top;
+}
+
+/* line 3660, ../src/application.scss */
+.page_title {
+  background: #368ece;
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #5fa5d8), color-stop(1, #368ece));
+  background: -moz-linear-gradient(center top, #5fa5d8 0%, #368ece 100%);
+  -moz-box-shadow: inset 0px 1px 3px #2972a8;
+  -webkit-box-shadow: inset 0px 1px 3px #2972a8;
+  box-shadow: inset 0px 1px 3px #2972a8;
+  padding: 6px 20px;
+  margin: 0px 0px;
+  font-size: 16px;
+  color: #ffffff;
+  font-weight: bold;
 }

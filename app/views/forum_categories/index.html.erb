@@ -1,38 +1,41 @@
+<% content_for :layoutType do %>
+	single
+<% end %>
 <% @monitoring = logged_in? && !Monitorship.count(:id, :conditions => ['user_id = ? and active = ?', current_user.id, true]).zero? %>
-
-
-<div class="pageContent">
-	<h3 class="content_title"><%= 'Forums Category'[:forums_category] %></h3>
-	
-	
-	<div class="actions_bar">
-		<% if admin? %>
-  			<%= link_to 'Create New Category'[:create_new_category], new_category_path, :class => "button" %>
-		<% end %> 
+<div class="page_area">
+	<div>
+		<strong class="page_title"><%= 'Community Forums'[:forums_category] %></strong>
 	</div>
-	
 	<div class="forum_list">
+		<div class="alignright">
+			<% if admin? %>
+	  			<%= link_to '<img src="/images/add.png" /> New Forum Category'[:create_new_category], new_category_path, :class => "fdbutton" %>
+			<% end %> 
+		</div>
 		<ul class="base_set">
 		<% for forum_category in @forum_categories do %>
 				<li>
+					<div class="floatr">
+						<% if logged_in? && current_user.has_manage_forums? -%>
+	      					<span class="edit">
+	        					<%= link_to 'Edit' ,edit_category_path(forum_category)   %>
+	      					</span>
+							<span class="delete">
+								<%= link_to('delete', category_path(forum_category), :method => 'delete', :confirm => 'Are you sure you want to delete this category' ) %>					
+							</span>
+	    				<% end -%>
+					</div>
 					<h5>
 						<a href="<%=category_path(forum_category)%>">
 							<span><%=h(forum_category.name)%></span>
-							
 							<span class="subcounter">(<%= '{count}'[(count=forum_category.forums.size)==1 ? :topic_count : :topics_count, number_with_delimiter(count)] %>)</span>
 							<span class="follow_link">»</span>
-							</a>
-					</h5>
-					<% if logged_in? && current_user.has_manage_forums? -%>
-	    					
-	      						<span class="edit">
-	        					<%= link_to 'Edit' ,edit_category_path(forum_category), :class => "button"   %>
-	      						</span>
-								<span class="delete">
-									<%= link_to('delete', category_path(forum_category), :method => 'delete', :confirm => 'Are you sure you want to delete this category', :class => "button" ) %>					
-								</span>
-	    						
-	    					<% end -%>
+						</a>
+						<div><%= h(forum_category.description)  %></div>
+					</h5>	
+					<div>
+						
+					</div>
 				</li>			
 		<% end %>
 		</ul>
