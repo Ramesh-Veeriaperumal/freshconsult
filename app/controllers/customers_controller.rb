@@ -4,6 +4,7 @@ class CustomersController < ApplicationController
   
   
   def index
+    
     @customers = current_account.customers.all
 
     respond_to do |format|

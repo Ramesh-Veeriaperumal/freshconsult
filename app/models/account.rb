@@ -6,6 +6,7 @@ class Account < ActiveRecord::Base
   has_many :subscription_payments
   
   has_many :customers, :dependent => :destroy
+  has_many :agents, :through =>:users
   has_many :sla_policies , :class_name => 'Helpdesk::SlaPolicy' ,:dependent => :destroy
   
   #Scoping restriction for other models starts here
@@ -148,6 +149,7 @@ class Account < ActiveRecord::Base
     
     def set_time_zone
       self.time_zone = Time.zone.to_s if time_zone.nil? #by Shan temp.. to_s is kinda hack.
+      self.helpdesk_name = name.titleize if helpdesk_name.nil?
     end
     
     def create_admin

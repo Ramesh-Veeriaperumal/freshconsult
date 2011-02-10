@@ -3,13 +3,16 @@ namespace :db do
   desc 'Load an initial set of data'
   task :bootstrap => :environment do
     puts 'Creating tables...'
-    Rake::Task["db:migrate"].invoke
+    Rake::Task["db:schema:load"].invoke
+	Rake::Task["db:migrate"].invoke
     
     puts 'Loading data...'
     Rake::Task["db:seed_fu"].invoke
 
-    puts 'Bootstraping savage_beast...'
-    Rake::Task["savage_beast:bootstrap_db"].invoke
+    #We do not need savage_beast migration here, all the forums
+    #related tables should have been created as part of 'db:schema:load' rake.
+    #puts 'Bootstraping savage_beast...'
+    #Rake::Task["savage_beast:bootstrap_db"].invoke
     
     puts 'Changing secret in environment.rb...'
     new_secret = ActiveSupport::SecureRandom.hex(64)

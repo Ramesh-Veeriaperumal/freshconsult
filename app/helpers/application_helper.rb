@@ -2,6 +2,7 @@
 module ApplicationHelper
   
   include SavageBeast::ApplicationHelper
+  include Juixe::Acts::Voteable
   
   def show_flash
     [:notice, :error].collect {|type| content_tag('div', flash[type], :id => type, :class => "flash_info") if flash[type] }

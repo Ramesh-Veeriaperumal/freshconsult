@@ -9,7 +9,9 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110209080143) do
+
+ActiveRecord::Schema.define(:version => 20110210070352) do
+
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -164,26 +166,46 @@ ActiveRecord::Schema.define(:version => 20110209080143) do
     t.string   "ffs_28"
     t.string   "ffs_29"
     t.string   "ffs_30"
-    t.string   "ff_int01"
-    t.string   "ff_int02"
-    t.string   "ff_int03"
-    t.string   "ff_int04"
-    t.string   "ff_int05"
-    t.string   "ff_int06"
-    t.string   "ff_int07"
-    t.string   "ff_int08"
-    t.string   "ff_int09"
-    t.string   "ff_int10"
-    t.string   "ff_date01"
-    t.string   "ff_date02"
-    t.string   "ff_date03"
-    t.string   "ff_date04"
-    t.string   "ff_date05"
-    t.string   "ff_date06"
-    t.string   "ff_date07"
-    t.string   "ff_date08"
-    t.string   "ff_date09"
-    t.string   "ff_date10"
+    t.text     "ff_text01"
+    t.text     "ff_text02"
+    t.text     "ff_text03"
+    t.text     "ff_text04"
+    t.text     "ff_text05"
+    t.text     "ff_text06"
+    t.text     "ff_text07"
+    t.text     "ff_text08"
+    t.text     "ff_text09"
+    t.text     "ff_text10"
+    t.integer  "ff_int01"
+    t.integer  "ff_int02"
+    t.integer  "ff_int03"
+    t.integer  "ff_int04"
+    t.integer  "ff_int05"
+    t.integer  "ff_int06"
+    t.integer  "ff_int07"
+    t.integer  "ff_int08"
+    t.integer  "ff_int09"
+    t.integer  "ff_int10"
+    t.datetime "ff_date01"
+    t.datetime "ff_date02"
+    t.datetime "ff_date03"
+    t.datetime "ff_date04"
+    t.datetime "ff_date05"
+    t.datetime "ff_date06"
+    t.datetime "ff_date07"
+    t.datetime "ff_date08"
+    t.datetime "ff_date09"
+    t.datetime "ff_date10"
+    t.boolean  "ff_boolean01"
+    t.boolean  "ff_boolean02"
+    t.boolean  "ff_boolean03"
+    t.boolean  "ff_boolean04"
+    t.boolean  "ff_boolean05"
+    t.boolean  "ff_boolean06"
+    t.boolean  "ff_boolean07"
+    t.boolean  "ff_boolean08"
+    t.boolean  "ff_boolean09"
+    t.boolean  "ff_boolean10"
   end
 
   add_index "flexifields", ["flexifield_def_id"], :name => "index_flexifields_on_flexifield_def_id"
@@ -206,6 +228,7 @@ ActiveRecord::Schema.define(:version => 20110209080143) do
     t.text    "description_html"
     t.integer "account_id"
     t.integer "forum_category_id"
+    t.integer "forum_type"
   end
 
   create_table "groups", :force => true do |t|
@@ -606,8 +629,6 @@ ActiveRecord::Schema.define(:version => 20110209080143) do
     t.integer  "account_id"
     t.boolean  "admin",               :default => false
     t.boolean  "active",              :default => false, :null => false
-    t.integer  "posts_count",         :default => 0
-    t.datetime "last_seen_at"
     t.string   "role_token"
     t.integer  "customer_id"
     t.string   "job_title"
@@ -617,6 +638,8 @@ ActiveRecord::Schema.define(:version => 20110209080143) do
     t.string   "twitter_id"
     t.text     "description"
     t.string   "time_zone"
+    t.integer  "posts_count",         :default => 0
+    t.datetime "last_seen_at"
   end
 
   add_index "users", ["account_id"], :name => "index_users_on_account_id"
@@ -645,5 +668,15 @@ ActiveRecord::Schema.define(:version => 20110209080143) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "votes", :force => true do |t|
+    t.boolean  "vote",                        :default => false
+    t.datetime "created_at",                                     :null => false
+    t.string   "voteable_type", :limit => 15, :default => "",    :null => false
+    t.integer  "voteable_id",                 :default => 0,     :null => false
+    t.integer  "user_id",                     :default => 0,     :null => false
+  end
+
+  add_index "votes", ["user_id"], :name => "fk_votes_user"
 
 end
