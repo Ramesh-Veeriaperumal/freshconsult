@@ -1,4 +1,6 @@
+<% avatar_size = :thumb if local_assigns[:avatar_size].nil? %>
+
 <div class="preview_pic">
 	<%= image_tag (avatar) ? 
-			avatar.content.url(:thumb) : "/images/icons/profile_blank.gif" %>
+			avatar.content.url(avatar_size) : "/images/icons/profile_blank.gif" %>
 </div>

@@ -1,21 +1,25 @@
 <div class="rtDetails" id="TicketTodos" style="display:none;"> 
-			<ul>
-			  <%= ticket.reminders.visible.map do |r| 
-			    content_tag(
-			      :li, 
+	<h3 class="title">To Do</h3>
+	<div class="panel_area">
+	  <%= ticket.reminders.visible.map do |r| 
+			content_tag(
+			      :div, 
 			      check_box_link(
-			        r.body + (r.ticket && ticket ? link_to("Re: #{r.ticket.subject}", r.ticket) : ''), 
+			        r.body, 
 			        r.deleted, 
 			        helpdesk_reminder_path(r), 
 			        :delete, 
 			        restore_helpdesk_reminder_path(r), 
 			        :put)) 
 			  end %>
-			</ul>
-			<!--a href="#" class="todo_button">Click to Add new</a-->
-			 
-			<% form_for ticket ? [ticket, Helpdesk::Reminder.new()] : Helpdesk::Reminder.new() do |f| %>
-			  <%= f.label :body, "Add a reminder" %>
+		<span class="seperator"></span>
+		<% form_for ticket ? [ticket, Helpdesk::Reminder.new()] : Helpdesk::Reminder.new() do |f| %>
+		  <%= f.label :body, "New To Do " %>
 			  <%= f.text_field :body %>
-			<% end %>
-		</div>
+		<% end %>
+			  
+	</div>
+	<!--a href="#" class="todo_button">Click to Add new</a-->
+			 
+	
+</div>
