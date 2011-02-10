@@ -1481,18 +1481,30 @@ body h5{
 	padding:0px 0px 0px 0px;
 	margin:8px 10px 5px 0px;
 	@include corners(6px);
+	
 	.scenario_actions{
 		@include no-bullets;
-		margin:0px 5px; padding:5px;
+		@include clearfix;
+		border:1px solid #cfcfcf;
+		padding:0px;
+		margin:0px 5px; 
 		li{
-			padding:6px 0px;
-			border-bottom:1px dotted #cfcfcf;
 			a{
+				img{
+					position:absolute;
+					left:10px;
+					top:8px;
+				}
+				position:relative;
 				display:block;
 				@include link-colors(#444444, #527EAA, #527EAA, #333333);
+				@include vertical-gradient(#efefef, #e8e8e8);
+				border-bottom:1px solid #dfdfdf;
 				text-decoration:none;
 				font-weight:bold;
 				font-size:12px;
+				padding:6px 8px 6px 30px;
+				
 			}
 			span{
 				font-size:10px;

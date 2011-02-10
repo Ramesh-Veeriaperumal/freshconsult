@@ -163,6 +163,7 @@
 							<%= link_to(image_tag("/images/spacer.gif"), unspam_helpdesk_ticket_path(@ticket), :method => :put, :class => "spam_active", :title => "This is not spam" ) if @ticket.spam %>
 					    	<%= link_to(image_tag("/images/spacer.gif"), spam_helpdesk_ticket_path(@ticket), :method => :put, :class => "spam", :title  => "Mark as spam") unless @ticket.spam %>
 							
+							<%= link_to("Edit Ticket", {:action => "edit"}, :class => "button"  ) %>
 							<a href="#" class="button">Close</a>
 							<%= link_to("Delete", @ticket, :method => :delete, :class => "button"  ) unless @ticket.deleted %>
 					    	<%= link_to("Undelete", restore_helpdesk_ticket_path(@ticket), :method => :put, :class => "button"  ) if @ticket.deleted %>

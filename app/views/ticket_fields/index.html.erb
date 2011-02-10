@@ -264,7 +264,10 @@
 				dialogDOMMap.label.addClass("disabled");
 				jQuery('#DeleteField').hide();								
 			}else{
-				jQuery('#DeleteField').show();		
+				jQuery('#DeleteField').show();
+				dialogDOMMap.label.attr("disabled", false);
+				dialogDOMMap.label.removeClass("disabled");
+						
 				 if (sourceData.type == 'dropdown') {	                
 	               	jQuery("#DropFieldChoices").show(30);	                
 	             }		 
@@ -447,7 +450,7 @@
 		            </li>
 		            <li>
 		                <input type="button" class="button" id="SaveField" value="Save" />
-						<!--input type="button" class="button" id="DeleteField" value="Delete" /-->  
+						<input type="button" class="button" id="DeleteField" value="Delete" />  
 
 		            </li>
 		        </ul>
