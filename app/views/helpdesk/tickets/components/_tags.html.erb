@@ -1,7 +1,14 @@
 <div class="rtDetails" id="TicketTags" style="display:none;">
 	<h3 class="title">Tags</h3>
-	<ul class="tags">
-	    <%= ticket.tags.map { |t| content_tag(:li, link_to(h(t.name), t) + link_to(image_tag('helpdesk/delete.png'), helpdesk_ticket_helpdesk_tag_use_path(ticket, t), :method => 'delete', :class => 'tag-delete') ) }.join %>
-	</ul>
-	<%= render :partial => '/helpdesk/shared/tag_search', :locals => {:action => helpdesk_ticket_helpdesk_tag_uses_path(ticket), :on_select => %{ $('tag-search-form').submit(); }, :label_text => "Add a tag:", :no_result_text => "No matches. Press enter to create tag." } %>		
+	<div class="panel_area">
+	    <% ticket.tags.map.each do |t| %> 
+			<div class="item">
+				<%= link_to(image_tag('icons/btn_close_icon.png'), helpdesk_ticket_helpdesk_tag_use_path(ticket, t), :method => 'delete', :class => 'tag_delete') %>
+				<%= link_to(h(t.name), t, :class => "tag_item")  %>
+			</div>
+		<% end %>
+		<span class="seperator"></span>
+		<%= render :partial => '/helpdesk/shared/tag_search', :locals => {:action => helpdesk_ticket_helpdesk_tag_uses_path(ticket), :on_select => %{ $('tag-search-form').submit(); }, :label_text => "Add a tag:", :no_result_text => "No matches. Press enter to create tag." } %>
+	</div>
+			
 </div>
