@@ -16,7 +16,7 @@ class Helpdesk::TagsController < ApplicationController
   def show
     @tickets = (params[:show_all] ? @tag.tickets : @tag.tickets.visible).paginate(
       :page => params[:page], 
-      :order => Helpdesk::Ticket::SORT_SQL_BY_KEY[(params[:sort] || :created_asc).to_sym],
+      :order => TicketsFilter::SORT_SQL_BY_KEY[(params[:sort] || :created_asc).to_sym],
       :per_page => 10)
   end
 

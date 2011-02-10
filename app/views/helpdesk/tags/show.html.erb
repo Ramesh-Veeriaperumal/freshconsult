@@ -47,9 +47,6 @@
 
   <h4>Options</h4>
 
-  <form class="filter-options">
-    <%= context_check_box "Show closed tickets", :all, :open, [:visible] %>
-  </form>
 
 
 <% end %>
@@ -67,7 +64,6 @@
   <div class="actions">
     <form class="sort">
       Sort by&nbsp;&nbsp; 
-      <%= select_tag :sort, options_for_select(Helpdesk::Ticket::SORT_FIELD_OPTIONS, (params[:sort] || :created_asc).to_sym) %>
     </form>
   </div>
   <ul>

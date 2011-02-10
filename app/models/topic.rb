@@ -1,4 +1,6 @@
 class Topic < ActiveRecord::Base
+  include Juixe::Acts::Voteable
+  acts_as_voteable 
   validates_presence_of :forum, :user, :title
   before_create  :set_default_replied_at_and_sticky
   before_update  :check_for_changing_forums

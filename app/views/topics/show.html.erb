@@ -49,11 +49,25 @@
 		</div>
 	
 		<h3 id="topic-title" class="content_title" <%= %( onmouseover="$('topic_mod').show();" onmouseout="$('topic_mod').hide();") if logged_in? %>>
+			<div id="flash_notice"></div>
 			<%= h @topic.title %>
 			  <% if @topic.locked? %>
 			  <span>(<%= 'locked'[] %>)</span>
 			  <% end %>
 			  <%= h(@topic.stamp_name) if @topic.stamp_type %>
+			  <span id="votes<%= @topic.id %>">  
+					<%= link_to_remote "+(#{@topic.votes_for})",  
+									:update => "flash_notice", 
+      								:url => { :action=>"vote",:id => @topic.id, :forum_id => @forum.id , :category_id => @forum_category.id,  
+                   					:id=>@topic.id,  
+                  				 	:vote=>"for"} %>   
+					/
+					<%= link_to_remote "-(#{@topic.votes_against})",
+									:update => "flash_notice",    
+      								:url => { :action=>"vote",:id => @topic.id, :forum_id => @forum.id , :category_id => @forum_category.id,   
+                   					:id=>@topic.id,  
+                  					:vote=>"against"} %>  
+</span>  
 			  <% if logged_in? %>
 			    <span style="display:none;" id="topic_mod">
 			      <% if @topic.editable_by?(current_user) -%>

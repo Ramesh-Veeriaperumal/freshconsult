@@ -2,6 +2,7 @@ class Helpdesk::SlaDetail < ActiveRecord::Base
   set_table_name "helpdesk_sla_details"
   
   belongs_to :account
+  belongs_to :sla_policy, :class_name => "Helpdesk::SlaPolicy"
   
   RESPONSETIME = [
     [ :half,    "30 Minutes",  1800 ], 
