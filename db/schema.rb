@@ -9,11 +9,9 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-<<<<<<< HEAD
-ActiveRecord::Schema.define(:version => 20110209080143) do
-=======
-ActiveRecord::Schema.define(:version => 20110209124540) do
->>>>>>> local_freshdesk
+
+ActiveRecord::Schema.define(:version => 20110210070352) do
+
 
   create_table "accounts", :force => true do |t|
     t.string   "name"

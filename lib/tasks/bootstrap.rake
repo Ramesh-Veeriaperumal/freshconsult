@@ -3,7 +3,8 @@ namespace :db do
   desc 'Load an initial set of data'
   task :bootstrap => :environment do
     puts 'Creating tables...'
-    Rake::Task["db:migrate"].invoke
+    Rake::Task["db:schema:load"].invoke
+	Rake::Task["db:migrate"].invoke
     
     puts 'Loading data...'
     Rake::Task["db:seed_fu"].invoke
