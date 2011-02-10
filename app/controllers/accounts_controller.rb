@@ -204,6 +204,12 @@ class AccountsController < ApplicationController
       %w(new create plans canceled thanks).include?(self.action_name) || 
       (self.action_name == 'dashboard' && logged_in?) ||
       admin?
-    end 
+  end
+  
+    def set_selected_tab
+      @selected_tab = 'Admin'
+    end
+  def 
+  
     
 end
