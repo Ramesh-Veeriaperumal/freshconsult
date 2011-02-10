@@ -9,7 +9,7 @@
 	  <% end %>
 	  
  	 	<div class="user_details">
-			<%= render :partial => "/shared/avatar", :object => note.user.avatar  %>
+			<%= (render :partial => "/shared/avatar", :object => note.user.avatar)  if note.user %>
 			<% if note.source == Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["meta"] %>
 	          Meta Information
 	        <% else %>
