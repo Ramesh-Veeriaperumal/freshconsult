@@ -24,6 +24,7 @@
 	<th>Response time</th>
     <th>Resolution time</th>
     <th>Escalate to</th>
+	<th>Override Business Hours</th>
   </tr>
 
  <% @sla_policy.sla_details.each_with_index do |slas , index| %>
@@ -50,7 +51,9 @@
     <td> 
     <%= sla.collection_select :escalateto, User.find_all_by_permission(current_account, :manage_tickets), :id, :name %>
 	</td>
-
+	 <td>
+	    	<%= sla.check_box :override_bhrs%>
+	</td>
     
   </tr>
   

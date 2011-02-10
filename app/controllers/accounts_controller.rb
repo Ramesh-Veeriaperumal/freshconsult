@@ -5,7 +5,8 @@ class AccountsController < ApplicationController
   before_filter :load_billing, :only => [ :new, :create, :billing, :paypal ]
   before_filter :load_subscription, :only => [ :billing, :plan, :paypal, :plan_paypal ]
   before_filter :load_discount, :only => [ :plans, :plan, :new, :create ]
-  before_filter :build_plan, :only => [:new, :create]
+  before_filter :build_plan, :only => [:new, :create]  
+  before_filter :set_selected_tab
   
   #ssl_required :billing, :cancel, :new, :create #by Shan temp
   #ssl_allowed :plans, :thanks, :canceled, :paypal
