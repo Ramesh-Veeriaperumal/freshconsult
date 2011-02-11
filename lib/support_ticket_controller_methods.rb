@@ -54,16 +54,6 @@ module SupportTicketControllerMethods
     if (current_user || verify_recaptcha(:model => @ticket, :message => "Captcha verification failed, try again!")) && @ticket.save!
       
       handle_custom_fields
-      @ticket.notes.create(
-        :body => params[:helpdesk_ticket][:description],
-        :description => "raised the ticket",
-        #:user_id => current_user && current_user.id,
-        :user => @ticket.requester, #by Shan temp
-        :account_id => current_account.id,
-        :private => false,
-        :incoming => true,
-        :source => 1
-      )
       
       @ticket.create_activity(@ticket.requester, "{{user_path}} raised the ticket {{notable_path}}")
 

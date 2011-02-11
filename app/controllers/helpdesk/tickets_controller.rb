@@ -184,21 +184,7 @@ protected
     #handle_custom_fields
     #if @item.source == 0
       @item.spam = false
-      
       @item.create_activity(current_user, "{{user_path}} created a new ticket {{notable_path}}")
-
-      n = @item.notes.build(
-        :user => current_user,
-        :account_id => current_account.id,
-        :incoming => false,
-        :private => true,
-        :source => 2,
-        :body => (!@item.description || @item.description.empty?) ? "Created by staff at #{Time.now}" : @item.description
-      )
-
-      n.save!
-      
-      
     #end
    
   end

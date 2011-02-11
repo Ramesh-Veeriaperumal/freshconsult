@@ -25,7 +25,7 @@ class EmailController < ApplicationController
         Helpdesk::TicketNotifier.notify_by_email((notification_type ||= EmailNotification::REPLIED_BY_REQUESTER), ticket, comment)
       else
         ticket = create_ticket(account, from_email, to_email)
-        add_email_to_ticket(ticket)
+        #add_email_to_ticket(ticket)
       end
     end
     
