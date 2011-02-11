@@ -55,7 +55,8 @@ module SupportTicketControllerMethods
       
       handle_custom_fields
       
-      @ticket.create_activity(@ticket.requester, "{{user_path}} raised the ticket {{notable_path}}")
+      @ticket.create_activity(@ticket.requester, "{{user_path}} submitted a new ticket {{notable_path}}", {}, 
+                                   "{{user_path}} submitted the ticket")
 
       if params[:meta]
         @ticket.notes.create(

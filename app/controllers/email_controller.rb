@@ -6,6 +6,7 @@ class EmailController < ApplicationController
   skip_before_filter :set_time_zone
   
   def new
+    render :layout => 'application'
   end
 
   def create
@@ -22,7 +23,9 @@ class EmailController < ApplicationController
           ticket.update_attribute(:status, Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open])
           notification_type = EmailNotification::TICKET_REOPENED
         end
-        Helpdesk::TicketNotifier.notify_by_email((notification_type ||= EmailNotification::REPLIED_BY_REQUESTER), ticket, comment)
+        
+        Helpdesk::TicketNotifier.notify_by_email((notification_type ||= EmailNotification::REPLIED_BY_REQUESTER), 
+                                                  ticket, comment) if ticket.responder
       else
         ticket = create_ticket(account, from_email, to_email)
         #add_email_to_ticket(ticket)
@@ -59,7 +62,8 @@ class EmailController < ApplicationController
       )
  
       ticket.save
-      ticket.create_activity(ticket.requester, "{{user_path}} raised the ticket {{notable_path}}")
+      ticket.create_activity(ticket.requester, "{{user_path}} submitted a new ticket {{notable_path}}", {}, 
+                                   "{{user_path}} submitted the ticket")
       ticket
     end
 
@@ -79,6 +83,12 @@ class EmailController < ApplicationController
           note.attachments.create(:content => params["attachment#{i+1}"], :account_id => ticket.account_id)
         end
       end
+      
+      ticket.create_activity(ticket.requester, "{{user_path}} sent an {{email_response_path}} to the ticket {{notable_path}}", 
+                    {'eval_args' => {'email_response_path' => ['email_response_path', {
+                                                        'ticket_id' => ticket.display_id, 
+                                                        'comment_id' => note.id}]}},
+                     "{{user_path}} sent an {{email_response_path}}")
       
       note
     end
