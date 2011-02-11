@@ -3,43 +3,36 @@
 <% @monitoring = logged_in? && !Monitorship.count(:id, :conditions => ['user_id = ? and topic_id = ? and active = ?', current_user.id, @topic.id, true]).zero? %>
 
 <% content_for :sidebar do -%>
-	<!--
-	<h5><%= 'Voices'[:voices_title] %></h5>
-	<ul class="flat talking">
-	<% @topic.voices.each do | user | %>
-  		<li><%= link_to h(user.display_name), user_path(user) %></li>
-	<% end %>
-	</ul>
-	-->
-	<% if logged_in? && current_user.has_manage_forums?  %>
-	Ideas Forums
-	<li>
-		 <% Topic::IDEAS_STAMPS_OPTIONS.each	do |k,v| %>
-		 	<%if @topic.stamp_type != v %>
-			<%= link_to (k , update_stamp_category_forum_topic_path(@forum_category,@forum,@topic,:stamp_type => v),  :method=>:put )   %>
-			<%else%>
-			<%= link_to (k , remove_stamp_category_forum_topic_path(@forum_category,@forum,@topic),  :method=>:put , :class => "button")   %>
-			<%end%>
+	<div class="rtCnt">
+		<div class="rtDetails_forum">
+		<% if logged_in? && current_user.has_manage_forums?  %>
+		<h4 class="title">Moderate</h4>
+		<div>
+			Make this idea as 
+		</div>
+		<div class="mark_action">
+			 <% Topic::IDEAS_STAMPS_OPTIONS.each	do |k,v| %>
+			 	<%if @topic.stamp_type != v %>
+				<%= link_to (k , update_stamp_category_forum_topic_path(@forum_category,@forum,@topic,:stamp_type => v),  :method=>:put )   %>
+				<%else%>
+				<%= link_to (k , remove_stamp_category_forum_topic_path(@forum_category,@forum,@topic),  :method=>:put , :class => "active")   %>
+				<%end%>
+			<% end %>
+	    </div>
 		<% end %>
-    </li>
-	<% end %>
-<% end # right content -%>
-
-
-
-	
-		<!--div class="breadcrumbs">
+		</div>
+	</div>
+<% end %> 
+		<div class="breadcrumbs" style="display:none;">
 		  <%= link_to "Forums"[:forums_title], category_path(@forum_category) %>
 		  <%= link_to h(@topic.forum.name), category_forum_path(@forum_category,@forum) %> 
-		  <% 
-		  page=session[:forum_page] ? session[:forum_page][@topic.forum.id] : nil
-		  if page and page!=1 %>
-		  <small>
-		  	(<%= link_to 'page {page}'[:page, page], forum_path(:id => @topic.forum, :page => page) %>)
-		  </small>
-		  <% end %>
-		  
-		</div-->
+		  	<% page=session[:forum_page] ? session[:forum_page][@topic.forum.id] : nil %>
+		  	<% if page and page!=1 %>
+				  <small>
+				  	(<%= link_to 'page {page}'[:page, page], forum_path(:id => @topic.forum, :page => page) %>)
+				  </small>
+		  	<% end %>
+		</div>
 		
 		<div class="request_details">
 	    	<div class="requestCnt">
@@ -72,6 +65,12 @@
 						      <% if @topic.editable_by?(current_user) -%>
 						        <%= link_to('edit'[], edit_category_forum_topic_path(@forum_category,@forum, @topic), :class => "utility") %> |
 						        <%= link_to('delete'[], category_forum_topic_path(@forum_category,@forum, @topic), :class => "utility", :method => :delete, :confirm => 'Delete this topic forever?'[:delete_topic_conf]) %>
+								<% if @topic.locked? %>
+									<p>
+									    <%= image_tag "savage_beast/clearbits/lock.gif", :class => "icon grey", :title => "Topic locked"[:topic_locked_title] %>
+									    <%= 'This topic is locked'[:locked_topic] %>
+									</p>
+								<% else %>
 						      <% end -%>
 						  <% end %>
 					</div>	
@@ -81,7 +80,7 @@
 							<div><%= @topic.user.job_title %></div>
 							<div>Created on <%= h(@topic.created_at.strftime("%B %e %Y at %I:%M %p")) %> ( <%=time_ago_in_words(@topic.created_at)%> ago ) </div>
 		        	</div>
-					<div class="details">
+					<div class="details min_height">
 						<%= first_post.body_html %>
 					</div>
 					<div class="status" id="voting_container">
@@ -89,22 +88,34 @@
 					</div>
 				</div>
 	    	</div>
-			<h3 class="subtitle">
+			 
+			<% if (@posts.size > 1) %>
 				<div class="floatr">
 					<%= link_to_function ('Reply to topic'[], "ReplyForm.init()", :class => "fdbutton") if logged_in? %>
-				</div>
-				Comments
-			</h3>
+				</div>			
+				<h3 class="subtitle">				
+					Comments
+				</h3> 
+				<div class="requestCnt">
+					<% last_post = @posts.last %>
+					<% @posts.each do |post| %>
+						<% unless (post == first_post) %>
+							<%= render :partial => "forum_shared/post", :object => post %>
+						<% end %>
+						<% if (post != last_post) %>
+							<div class="seperator"></div>
+						<% end %>	
+						<%= will_paginate @posts %>
+					<% end %> 
+				</div>  
+			<% end %>
 			<div>
+			<div class="alignright">
+				<%= link_to_function ('Reply to topic'[], "ReplyForm.init()", :class => "fdbutton") if logged_in? %>
+			</div>	
 				<% if logged_in? %>
 				<div id="edit"></div>
-				<% if @topic.locked? %>
-				<p>
-				    <%= image_tag "savage_beast/clearbits/lock.gif", :class => "icon grey", :title => "Topic locked"[:topic_locked_title] %> 
-				    <label>
-				    <%= 'This topic is locked'[:locked_topic] %>.</label>
-				</p>
-				<% else %>
+				
 				
 				
 				<div id="reply" class="editbox" style="display:none;">
@@ -143,42 +154,5 @@
 			<% end %>
 				
 			</div>	
-			<div class="requestCnt">
-				<% @posts.each do |post| %>
-					<% unless (post == first_post) %>
-					<div class="description <%= cycle('stripe', '') %>"  id="<%= dom_id post %>-row">
-						<a href="#<%= dom_id post %>" rel="bookmark"></a>
-						<div class="item_actions">
-						<% if logged_in? && post.editable_by?(current_user) -%>
-							   <%= ajax_spinner_for "edit-post-#{post.id}", "spinner_bounce.gif" %>
-						       <%= link_to_remote('Edit post'[], 
-						             {:url => edit_post_path(:forum_id => @forum, :topic_id => @topic, :id => post), :method => :get,
-						              :before => "EditForm.init(#{post.id});", :condition => "!EditForm.isEditing(#{post.id})" }, 
-						             {:href => edit_post_path(:forum_id => @forum, :topic_id => @topic, :id => post, :page => params[:page]), :class => "button"}) %>
-						<% end -%>
-						<%if post != @posts.first and @forum.questions? %>
-							<div id="post-body-<%= post.id %>">
-								<% if logged_in? && current_user.has_manage_forums?  %>
-									<%= link_to ("Answer" , toggle_answer_category_forum_topic_post_path(@forum_category,@forum,@topic,post),  :method=>:put ) if post.answer?  %>
-									<%= link_to ("Not Answer" , toggle_answer_category_forum_topic_post_path(@forum_category,@forum,@topic,post),  :method=>:put ) if !post.answer?  %>
-								<%end%>
-							</div>
-						<%end%>
-						</div>
-						<div class="user_details">
-							<%= (render :partial => "/shared/avatar", :object => post.user.avatar)  if post.user %>
-							<b><%= post.user.name %></b>
-							<div><%= post.user.job_title %></div>
-							<div title="<%= post.created_at.xmlschema %>"><%= time_ago_in_words(post.created_at) %> ago</div> 
-				  		</div>
-						<div class="details">
-							<%= post.body_html %>
-						</div>
-					</div>
-					<div class="seperator"></div>					
-					<% end %>
-					<%= will_paginate @posts %>
-				<% end %>
-			</div>
 		</div>
 		
