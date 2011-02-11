@@ -9,9 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-
-ActiveRecord::Schema.define(:version => 20110210070352) do
-
+ActiveRecord::Schema.define(:version => 20110210132959) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -587,6 +585,13 @@ ActiveRecord::Schema.define(:version => 20110210070352) do
   end
 
   add_index "subscriptions", ["account_id"], :name => "index_subscriptions_on_account_id"
+
+  create_table "ticket_topics", :force => true do |t|
+    t.integer  "ticket_id"
+    t.integer  "topic_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "topics", :force => true do |t|
     t.integer  "forum_id"

@@ -64,6 +64,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
     
   has_one :customizer, :class_name =>'Helpdesk::FormCustomizer'
   
+  has_one :ticket_topic
+  has_one :topic,:through => :ticket_topic
+  
+  
+  
   
   named_scope :newest, lambda { |num| { :limit => num, :order => 'created_at DESC' } }
   named_scope :visible, :conditions => ["spam=? AND deleted=? AND status > 0", false, false] 
