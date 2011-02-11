@@ -1,0 +1,42 @@
+	<span class="seperator"></span>
+	<span id="votes<%= @topic.id %>">
+		
+		<% if(topic_vote.voted_by_user? current_user) %>
+			<% if( topic_vote.votes_for == 1 ) %>  
+				You like this idea -
+			<% else %>
+				<%= pluralize(topic_vote.votes_for, "Person") %>
+				including You like this idea -
+			<% end %>
+		<% else %>
+			<% if (topic_vote.votes_for != 0) %>
+				<%= pluralize(topic_vote.votes_for, "Person") %>
+				<%= (topic_vote.votes_for > 1)?"like":"likes" %>  this idea -
+			<% end %>
+			
+		<% end %>
+			
+			<strong>
+			<% unless(topic_vote.voted_by_user? current_user) %>
+				<%= link_to_remote ((topic_vote.votes_for != 0) ? "me too" : "do you like this idea?" ),  
+						:update => "voting_container",  
+						:url => { :action=>"vote", :id => @topic.id, :forum_id => @forum.id , :category_id => @forum_category.id,  
+						:id=>@topic.id,  
+						:vote=>"for"} %>
+			<% else %>
+				<%= link_to_remote ("Unlike"),  
+					:update => "voting_container",  
+					:url => { :action=>"vote", :id => @topic.id, :forum_id => @forum.id , :category_id => @forum_category.id,  
+					:id=>@topic.id,  
+					:vote=>"for"} %>
+			<% end %>
+			</strong>
+		   
+					
+		<%# link_to_remote "-(#{@topic.votes_against})",
+			:update => "flash_notice",    
+			:url => { :action=>"vote",:id => @topic.id, :forum_id => @forum.id , :category_id => @forum_category.id,   
+			:id=>@topic.id,  
+			:vote=>"against"} %>
+	  
+	</span>
