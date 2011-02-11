@@ -219,7 +219,6 @@ class AccountsController < ActionController::Base
     def set_selected_tab
       @selected_tab = 'Admin'
     end
-  def 
-  
+
     
 end
