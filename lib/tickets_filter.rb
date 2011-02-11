@@ -16,7 +16,7 @@ module TicketsFilter
     
     [:new,              "New Tickets", [:visible]  ],
     [:open,             "Open Tickets", [:visible]  ],
-    [:new_and_open,     "New & Open Tickets", [:visible]  ],
+    #[:new_and_open,     "New & Open Tickets", [:visible]  ],
     [:resolved,         "Resolved Tickets", [:visible]  ],
     [:closed,           "Closed Tickets", [:visible]  ],
     [:due_today,        "Tickets Due Today", [:visible]  ],
@@ -102,12 +102,12 @@ module TicketsFilter
         :visible      =>    { :deleted => false, :spam => false },
         :responded_by =>    { :responder_id => (user && user.id) || -1 },
         
-        :new_and_my_open  => ["status = ? or (responder_id = ? and status = ?)", 
-                                        STATUS_KEYS_BY_TOKEN[:new], user.id, STATUS_KEYS_BY_TOKEN[:open]],
+        :new_and_my_open  => ["status = ? and (responder_id is NULL or responder_id = ?)", 
+                                        STATUS_KEYS_BY_TOKEN[:open], user.id],
         
-        :new              => ["status = ?", STATUS_KEYS_BY_TOKEN[:new]],
+        :new              => ["status = ? and responder_id is NULL", STATUS_KEYS_BY_TOKEN[:open]],
         :open             => ["status = ?", STATUS_KEYS_BY_TOKEN[:open]],
-        :new_and_open     => ["status in (?, ?)", STATUS_KEYS_BY_TOKEN[:new], STATUS_KEYS_BY_TOKEN[:open]],
+        #:new_and_open     => ["status in (?, ?)", STATUS_KEYS_BY_TOKEN[:new], STATUS_KEYS_BY_TOKEN[:open]],
         :resolved         => ["status = ?", STATUS_KEYS_BY_TOKEN[:resolved]],
         :closed           => ["status = ?", STATUS_KEYS_BY_TOKEN[:closed]],
         :due_today        => ["due_by >= ? and due_by <= ? and status not in (?, ?)", Time.now.beginning_of_day.to_s(:db), 

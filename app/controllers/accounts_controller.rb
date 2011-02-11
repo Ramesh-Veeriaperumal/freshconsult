@@ -1,11 +1,15 @@
 class AccountsController < ApplicationController
+  
   include ModelControllerMethods
+  
+  skip_before_filter :set_time_zone
   
   before_filter :build_user, :only => [:new, :create]
   before_filter :load_billing, :only => [ :new, :create, :billing, :paypal ]
   before_filter :load_subscription, :only => [ :billing, :plan, :paypal, :plan_paypal ]
   before_filter :load_discount, :only => [ :plans, :plan, :new, :create ]
-  before_filter :build_plan, :only => [:new, :create]
+  before_filter :build_plan, :only => [:new, :create]  
+  before_filter :set_selected_tab
   
   #ssl_required :billing, :cancel, :new, :create #by Shan temp
   #ssl_allowed :plans, :thanks, :canceled, :paypal
@@ -203,6 +207,11 @@ class AccountsController < ApplicationController
       %w(new create plans canceled thanks).include?(self.action_name) || 
       (self.action_name == 'dashboard' && logged_in?) ||
       admin?
-    end 
+    end
+  
+    def set_selected_tab
+      @selected_tab = 'Admin'
+    end
+
     
 end

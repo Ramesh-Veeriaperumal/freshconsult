@@ -148,7 +148,7 @@ class Account < ActiveRecord::Base
     end
     
     def set_time_zone
-      self.time_zone = Time.zone.to_s if time_zone.nil? #by Shan temp.. to_s is kinda hack.
+      self.time_zone = Time.zone.name if time_zone.nil? #by Shan temp.. to_s is kinda hack.
       self.helpdesk_name = name.titleize if helpdesk_name.nil?
     end
     

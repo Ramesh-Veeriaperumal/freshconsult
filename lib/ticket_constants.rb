@@ -14,7 +14,7 @@ module TicketConstants
   SOURCE_KEYS_BY_TOKEN = Hash[*SOURCES.map { |i| [i[0], i[2]] }.flatten]
 
   STATUSES = [
-    [ :new,         "New",        1 ], 
+    #[ :new,         "New",        1 ], 
     [ :open,        "Open",       2 ], 
     [ :pending,     "Pending",    3 ], 
     [ :resolved,    "Resolved",   4 ], 

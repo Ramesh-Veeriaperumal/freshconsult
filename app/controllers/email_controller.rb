@@ -3,6 +3,7 @@
 
 class EmailController < ApplicationController
   skip_before_filter :verify_authenticity_token
+  skip_before_filter :set_time_zone
   
   def new
   end
@@ -27,6 +28,8 @@ class EmailController < ApplicationController
         add_email_to_ticket(ticket)
       end
     end
+    
+    render :layout => 'email'
   end
   
   private

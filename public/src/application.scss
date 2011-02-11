@@ -5,6 +5,13 @@
 a{
 	@include link-colors(#527EAA, #527EAA, #527EAA, #527EAA, #527EAA);
 }
+
+strong{
+	a{
+		@include link-colors(#999999, #527EAA, #527EAA, #527EAA, #527EAA);
+	}
+}
+
 a:hover{
 	text-decoration:none;
 }
@@ -13,7 +20,7 @@ a:hover{
 }
 
 body{
-  	@include blueprint-typography(true);
+  	@include blueprint-typography(true);  	
   	height:100%;
   	background:$background;
 } 
@@ -38,13 +45,17 @@ body {margin:0; padding:0 10px 0 10px; border:0; height:100%; overflow-y:auto; }
 	margin-bottom:0px;	
 	@include corners(0px, 0px, 6px, 6px);
 }
+
+#minwidthfix{
+	width:950px;
+	background:red;
+}
  
 #inner {    
 	@include pie-clearfix;	
 	position:relative;
 	z-index:1;  	
 	margin:0px 0px;	
-	
 	padding-right:$sidebar-width; /* The width of the rail */ 
 	.leftcontent{
 		width:100%;
@@ -2658,50 +2669,56 @@ h4.list_title{
 }
 
 .forum_list, .topics_list{
-	background:$base;
-	padding:6px;
-	@include border-radius(0.8em);
-	h4.title{
-		margin:0px;
-		padding:2px 6px;
+	border:1px solid #cfcfcf;
+	border-top:0px;
+	margin:10px 0px;
+	a{
+		@include link-colors(#527EAA, #545454, #527EAA, #527EAA);
+		text-decoration:none;
 	}
+	a.title{
+		@include link-colors(#545454, #527EAA, #545454, #545454);
+	}	
+	span.subcounter, span.no_info_text{
+		font-weight:normal;	
+		color:#848484;	
+	}
+	.forum_group{
+		h5.category_title{
+				font-size:16px;
+				background-color:#efefef;
+				padding:5px 12px;
+				border-top:1px solid #cfcfcf;
+				div{
+					font-size:11px;
+					color:#666666;
+					font-weight:normal;
+				}
+			}
+		}	
+	
 	ul.base_set{
 		@include horizontal-list;
+		border-bottom:1px solid #cfcfcf;
+		padding:5px 18px 20px 14px;
 		background:#ffffff;
-		border:2px solid darken($base, 5%);
-		@include border-radius(0.8em);	
 		li{
-			width:46.8%;
-			margin:2px 8px;
-			padding:0px;
-			margin-bottom:6px;
-			h5{
+			width:48%;
+			padding:0px 2% 0px 0px;
+			margin:0px 0px;
+			h4.forum_title{
+				margin:3px 0px 0px 0px;
+				padding:6px 0px;		
+				font-weight:bold;
 				font-size:14px;
-				margin:7px 6px 2px 13px;
-				a{
-					color:#545454;
-					text-decoration:none;	
-					span.subcounter{
-						font-weight:normal;	
-						color:#848484;					
-					}					
-				}
-				a:hover{
-					span.follow_link{
-						color:darken($base, 45%);
-					}
-				}
-				border-bottom:1px solid #efefef;
+				border-bottom:1px dotted #dfdfdf;
 			}
-		}
-	}
-	ul{
-		@include no-bullets;
-		padding:6px;
-		margin:0px; 
-		li{
-			a{
-				color:#1A6690;
+			.topic_list{
+				@include min-height(60px);
+				a.topic{
+					display:block;
+					padding:3px 5px 3px 20px;
+				}
 			}
 		}
 	}
@@ -3655,4 +3672,13 @@ div.search{
 	td{
 		vertical-align:top;
 	}
+}
+
+.page_title{
+	padding:8px 10px;
+	margin:0px 0px;
+	font-size:18px;
+	color:#333333;
+	font-weight:bold;
+
 }
