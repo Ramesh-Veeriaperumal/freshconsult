@@ -115,20 +115,13 @@ class TopicsController < ApplicationController
  end
  
 
- def vote  
- 
- 
+ def vote   
   unless @topic.voted_by_user?(current_user)  
     @vote = Vote.new(:vote => params[:vote] == "for")  
     @vote.user_id = current_user.id  
     @topic.votes << @vote
-    render :text =>  "You  voted it !"
-   
-  else
-    render :text =>  "You already voted it !"
-  end
- 
-   
+    render :partial => "forum_shared/topic_vote", :object => @topic
+  end  
 end  
  
   
