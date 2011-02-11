@@ -1,6 +1,8 @@
 ActionController::Routing::Routes.draw do |map|
   map.resources :customers
   
+  map.resources :contacts
+  
   map.resources :groups
   
   map.resources :agents, :member => { :delete_avatar => :delete }
