@@ -28,6 +28,8 @@ class EmailController < ApplicationController
         add_email_to_ticket(ticket)
       end
     end
+    
+    render :layout => 'email'
   end
   
   private
