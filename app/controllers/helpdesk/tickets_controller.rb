@@ -172,6 +172,26 @@ class Helpdesk::TicketsController < ApplicationController
     
     
   end
+  
+  def new
+    unless params[:topic_id].nil?
+      @topic = Topic.find(params[:topic_id])
+      @item.subject = @topic.title
+      @item.description = @topic.posts.first.body
+    end
+  end
+ 
+  def create
+   unless params[:topic_id].nil?
+       @item.build_ticket_topic(:topic_id => params[:topic_id])
+   end
+    if @item.save!  
+      post_persist
+    else
+      create_error
+    end
+  end
+  
 protected
 
   def item_url

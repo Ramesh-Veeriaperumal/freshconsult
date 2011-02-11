@@ -17,6 +17,8 @@ class Topic < ActiveRecord::Base
   has_many :posts,     :order => "#{Post.table_name}.created_at", :dependent => :destroy
   has_one  :recent_post, :order => "#{Post.table_name}.created_at DESC", :class_name => 'Post'
   
+  has_one :ticket,:through => :ticket_topic
+  
   has_many :voices, :through => :posts, :source => :user, :uniq => true
   belongs_to :replied_by_user, :foreign_key => "replied_by", :class_name => "User"
 

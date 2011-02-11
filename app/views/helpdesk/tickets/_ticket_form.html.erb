@@ -50,6 +50,7 @@
 
 <% form_for @item do |f| %>
   <%= f.error_messages %>
+  	<%= hidden_field_tag  :topic_id,  params[:topic_id] %> 
 	<ul class="ui-form">
  	<%
 		@customizer = ActiveSupport::JSON.decode(@item.customizer.json_data)
