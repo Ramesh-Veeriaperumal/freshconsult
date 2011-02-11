@@ -56,7 +56,7 @@ class UsersController < ApplicationController
   protected
   
     def scoper
-      current_account.users.contacts
+      current_account.users
     end
     
     def authorized?
