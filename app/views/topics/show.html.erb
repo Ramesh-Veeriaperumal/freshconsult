@@ -11,7 +11,7 @@
 	<% end %>
 	</ul>
 	-->
-	<% if logged_in? && current_user.has_manage_forums?  %>
+	<% if logged_in? && current_user.has_manage_forums? && @forum.ideas? %>
 	Ideas Forums
 	<li>
 		 <% Topic::IDEAS_STAMPS_OPTIONS.each	do |k,v| %>
