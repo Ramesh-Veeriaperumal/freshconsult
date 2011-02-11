@@ -643,15 +643,17 @@ ul.activityfeed{
 				@include link-colors(#3e71a4, #3e71a4, #3e71a4, #3e71a4, #3e71a4);
 				text-decoration:none; 
 			}
-			em.activity_time{
-				display:block;
-				color:#a6a6a6;
-				font-style:normal;
-				padding-bottom:8px;
-			}
+			
 		} 
 }
 
+.activity_time{
+	display:block;
+	color:#a6a6a6;
+	font-style:normal;
+	padding-bottom:8px;
+}
+			
 .pageContent{	
 	h2{
 		color:#555;
@@ -1349,6 +1351,12 @@ body h5{
 				font-style:normal;
 			}
 		}
+		.mark_action{
+			float:right;
+			padding:0px;
+			margin:0px;
+			margin-top:8px;
+		}
 	}
 	
 	div.description{
@@ -1526,6 +1534,14 @@ body h5{
 		
 	}
 	
+	.local_activities{
+		a{
+			display:block;
+			font-weight:bold;
+			@include link-colors(#527EAA, #527EAA, #527EAA, #527EAA, #527EAA);
+		}
+	}
+	
 	.rtDetails_forum{
 		@include corners(6px);
 		border:1px solid #cfcfcf;
@@ -1536,21 +1552,7 @@ body h5{
 			color:#afafaf;
 		}
 		@include min-height(230px);
-		.mark_action{
-			padding:4px 0px;
-			a{
-				background:#336600;
-				padding:3px 8px; 
-				@include corners(6px);
-				@include link_colors(#ffffff, #93b16d, #ffffff, #ffffff);
-				text-decoration:none;
-				font-weight:bold;
-			}
-			a.hover, a.active{
-				@include inset-shadows(#000000, 0px, 1px, 2px);
-				background:#6a9336;
-			}
-		}
+		
 	}
 	
 	.rtDetails{
@@ -1672,6 +1674,45 @@ body h5{
 		
 	}
 }
+
+.mark_action{
+			padding:8px 0px;
+			a, .stamp{
+				padding:3px 8px; 
+				margin:0px 0px 6px 0px;
+				@include corners(4px);
+				@include link_colors(#ffffff, #ffffaf, #ffffff, #ffffff);
+				text-decoration:none;
+				font-weight:bold;
+			}
+			
+			.stamp{
+				margin:0px 8px;
+			}
+			
+			a.hover, a.active{
+				@include inset-shadows(#000000, 0px, 1px, 2px);				
+			}
+						
+			.stamp_type_1{
+				background:#336600;
+			}
+			.active.stamp_type_1{
+				background:lighten(#336600, 10%);
+			}
+			.stamp_type_2{
+				background:#cc6600;
+			}
+			.active.stamp_type_2{
+				background:lighten(#cc6600, 10%);
+			}
+			.stamp_type_3{
+				background:#993333;
+			}
+			.active.stamp_type_3{
+				background:lighten(#993333, 10%);
+			}
+		}
 
 div.panel_area{
 	padding:10px;
