@@ -80,6 +80,7 @@ module ModelControllerMethods
     end
     
     def build_object
+      
       @obj = self.instance_variable_set('@' + cname,
         scoper.is_a?(Class) ? scoper.new(params[cname]) : scoper.build(params[cname]))
     end

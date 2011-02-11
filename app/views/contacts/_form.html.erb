@@ -1,0 +1,84 @@
+<%= error_messages_for :user %> 	 
+	<ul class="ui-form">
+		<li>
+			<%= label(:user, :name, "Full Name") %>
+			<%= text_field(:user, :name, :class => "text" )  %>
+		</li>
+		<li>
+			<%= label(:user, :job_title, "Title") %>
+			<%= text_field(:user, :job_title, :class => "text" ) %>
+		</li>		
+		<li>
+			<%
+			
+				company_name ="";
+
+				unless @user.customer.nil?
+					company_name =  @user.customer.name
+				end
+				
+			
+			%>
+			<%= label(:user, :customer, "Company") %>
+			<%= text_field(:user, :customer, :class => "text" , :value => company_name) %>
+			
+		</li>
+		<li class="small">	
+			<%= label(:user, :phone, "Phone No.") %>	
+			<label class="overlabel" for="phone_work">Work</label>
+			<%= text_field(:user, :phone, :class => "text", :id => "phone_work" ) %>
+			<br />
+			<!--input type="text" id="user_phone" name="user[phone]" class="text" /-->		
+			<!--%= label(:user, :mobile, "Mobile") %-->
+			<label class="overlabel" for="phone_mobile">Mobile</label>
+			<%= text_field(:user, :mobile, :class => "text", :id => "phone_mobile" ) %>
+		</li>
+		<li class="medium">
+			<%= label(:user, :email, "Email") %>
+			<label class="overlabel" for="email_primary">Primary</label>
+			<%= text_field(:user, :email, :class => "text", :id => "email_primary" ) %>
+			<!--%= label(:user, :second_email, "Secondary Email") %--><br />
+			<label class="overlabel" for="email_second">Other</label>	
+			<%= text_field(:user, :second_email, :class => "text", :id => "email_second" ) %>
+		</li>
+		
+		<li class="small">
+			<%= label(:user, :twitter_id, "Twitter Id") %>
+			<%= text_field(:user, :twitter_id, :class => "text" ) %>
+		</li>
+		<li>
+			<%= render :partial => "/shared/profileavatar", :locals => { :user => @user, :type => type } %>
+		</li>
+		<li>
+			<%= f.label :time_zone %>
+			<%= f.time_zone_select :time_zone, ActiveSupport::TimeZone.all %>
+		</li>
+		
+		<li>
+			<%= label(:user, :description, "Background information") %>
+			<label class="overlabel" for="user_binfo">
+				Add specific notes regarding this contact <br />
+				example - address, LA Lakers fan etc.
+			</label>
+			<%= text_area(:user, :description, :class => "text", :id => "user_binfo" ) %>
+		</li>		
+		
+	</ul>	 
+<span class="seperator"></span>
+
+<!-- We can remove the following as the default role is customer-->
+<div style="display:none">
+<%= f.label :role %>
+<ul>
+	<li><%= f.radio_button  :role_token, 'admin' %> <%= f.label :role_token_admin, "Administrator" %></li>
+	<li><%= f.radio_button  :role_token, 'poweruser' %> <%= f.label :role_token_poweruser, "Agent" %></li>
+	<li><%= f.radio_button  :role_token, 'customer', :checked => true %> <%= f.label :role_token_customer, "Customer" %></li>
+</ul>
+</div>
+
+<!-- role section ends here-->
+
+<div class="button-container">
+      <%= f.submit "Save changes", :class => "fdbutton" %> 
+	  <%= link_to "Cancel", (@user.new_record? ? {:controller =>'contacts', :action => 'index'} : @user ), :class => "fdbutton grey" %>
+</div>

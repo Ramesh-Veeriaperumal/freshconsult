@@ -1,0 +1,80 @@
+<% content_for :sidebar do %>
+	<div class="rightSubContainers">
+		<h3 class="title">Contact info</h3>
+		<ul class="ui-list_with_icon contact_info">
+			<li class="icon_text">
+				<img src="/images/icons/email_icon.png" width="24px" height="24px" />
+				<% unless @user.email.nil? %>
+					<%= mail_to (@user.email) %>
+				<% end %>
+				<% unless @user.second_email.nil? %>
+					<%= mail_to (@user.second_email) %>
+				<% end %>
+			</li>
+			<li class="icon_text">
+				<img src="/images/icons/phone_icon.png" width="24px" height="24px" />
+				<% unless @user.phone.nil? %>
+					<span><em>work:</em><%= @user.phone %></span>
+				<% end %>
+				<% unless @user.mobile.nil? %>
+					<span><em>mobile:</em><%= @user.mobile %></span>
+				<% end %>
+			</li>
+		</ul>
+	</div>
+<% end %>
+
+<div class="infoPage contact">
+	
+	<div class="profile_pic">
+		<%= image_tag (@user.avatar) ? 
+						@user.avatar.content.url(:medium) : "/images/icons/profile_blank.gif" %>		
+	</div>				
+	<div class="contact_box">
+		<h3 class="info_title">		
+			<%= @user.name %>
+		</h3>
+		
+		<h4 class="info_title">
+			<% unless @user.job_title.nil? %>
+				<%= @user.job_title %>
+			<% end %>
+			<!-- at <a href="#">YCombinator</a-->		
+		</h4>
+		
+		<div class="tag_list">
+			<a href="#"><%= @user.job_title %></a>
+			<a href="#"><%= @user.name %></a>
+		</div>
+	
+		<div class="actionsRight">
+			<%= link_to 'Edit this user', edit_contact_path(@user), :class => "button" %> 
+			<%= link_to 'Back', contact_path, :class => "button" %>		
+		</div>
+		<span class="seperator"></span>
+		<div class="info_subtitle">"Special note"</div>
+		<p class="info">
+			<%= @user.description %>
+		</p>
+		
+		<span class="seperator"></span> 
+		<div class="info_subtitle">Recent Tickets from "<%= @user.name %>"</div>
+		<%if @user.tickets.size.eql?(0) %>
+			<%= "User has not created any tickets" %>
+		<% end %>
+		<ul class="history_list">
+			<% @user.tickets.each do |ticket| %>	
+				<% logger.debug "Here is a subject : #{ticket.subject}" %>
+				<li class="<%= cycle('stripe', '') %>">
+					<h3><%= link_to("##{ticket.display_id} " + h(ticket.subject), ticket) %></h3> 
+	      			<!--%= h(truncate(ticket.description, :length => 200)) %-->
+					<% unless ticket.responder.nil? %>
+						<strong><span>Assigned to: </span><%= link_to(h(ticket.responder.name), ticket.responder, :class => 'username') %></strong>
+					<% end %>
+					<strong><span>Status: </span><%= h(ticket.status_name) %></strong>
+				</li>		
+			<% end %>
+		</ul>
+	</div> 			
+		
+</div>	

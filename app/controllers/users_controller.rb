@@ -7,17 +7,17 @@ class UsersController < ApplicationController
   before_filter :set_selected_tab
     
   def new
-    @user.role_token = 'customer'
-    @user.avatar = Helpdesk::Attachment.new
+    redirect_to new_contact_url
+  end
+  
+  def edit
+    redirect_to edit_contact_url
   end
   
   def create
     
-    @user = current_account.users.new #by Shan need to check later
-    
-    company_id = add_or_update_company    
-    params[:user][:customer_id]=company_id
-    
+    @user = current_account.users.new #by Shan need to check later    
+   
     if @user.signup!(params)
       #@user.deliver_activation_instructions! #Have moved it to signup! method in the model itself.
       flash[:notice] = "The user has been created and activation instructions sent to #{@user.email}!"
@@ -27,23 +27,11 @@ class UsersController < ApplicationController
     end
   end
   
-  def add_or_update_company
    
-    company_name = params[:user][:customer]    
-    cust_id = Customer.find_by_name(company_name)
-    
-    if cust_id.nil?      
-      @customer = current_account.customers.new(:name =>company_name)
-      @customer.save
-      cust_id = @customer.id
-    end
-    
-    return cust_id
-    
-  end
-  
   def show
-    @user = User.find(params[:id])
+    
+    redirect_to :controller =>'contacts' ,:action => 'show', :id => params[:id]
+    
   end
   
   def delete_avatar

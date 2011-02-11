@@ -1,0 +1,29 @@
+<% content_for :layoutType do%>single<% end %>
+
+<div class="pageContent">
+	<%= render(:partial => '/shared/companyheader', :locals => {:type => "user"}) %>
+	<ul id="users" class="content_list">	  
+	  <% @contacts.each do |contact| %>	 
+	 
+	    <li class="<%= cycle('stripe', '') %>">	   
+		  <div class="item_actions">
+		  	<%= link_to('edit', edit_contact_path(contact), :class => "button") %>
+	      	<%= link_to('delete', {:controller => "contacts", :action => "destroy", :id => contact} , :method => 'delete', :confirm => 'Are you sure you want to delete this contact?', :class => "button") unless contact == current_user %>
+		  </div>	   
+	      <%= render :partial => "/shared/avatar", :object => contact.avatar  %>
+	      <%= link_to(h(contact.name), {:controller => "contacts", :action => "show", :id => contact}, :class => "item_info" ) %>
+		  	<div><%= h contact.email %></div>
+			<div><%= h contact.phone %></div>
+		  	<%unless contact.job_title.nil?%>
+		  	<div><%= h contact.job_title %></div>
+			<%end%>
+			<%unless contact.customer.nil? %>
+			at 	<%= link_to(h(contact.customer.name), contact.customer)  %>
+			<%end%>
+		 
+	     	      
+	    </li>	
+	  <% end %>	 
+	</ul>
+</div>
+<div>  <%= will_paginate @contacts %></div>
