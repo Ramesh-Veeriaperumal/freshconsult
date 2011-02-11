@@ -24,7 +24,8 @@ protected
       @parent.create_activity(current_user, "{{user_path}} added a {{comment_path}} to the ticket {{notable_path}}", 
                     {'eval_args' => {'comment_path' => ['comment_path', {
                                                         'ticket_id' => @parent.display_id, 
-                                                        'comment_id' => @item.id}]}})
+                                                        'comment_id' => @item.id}]}},
+                     "{{user_path}} added a {{comment_path}}")
     end
 
     if @parent.is_a? Helpdesk::Issue

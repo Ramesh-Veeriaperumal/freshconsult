@@ -20,7 +20,7 @@ module ApplicationHelper
       #['helpdesk/tags',      'Tags',         permission?(:manage_tickets)],
       ['solution/folders',    'Solutions',    permission?(:manage_knowledgebase)],      
       ['/categories',             'Forums',       permission?(:manage_knowledgebase)],      
-      ['/users',              'Customers',    permission?(:manage_users)],
+      ['/contacts',              'Customers',    permission?(:manage_users)],
       #['helpdesk/articles',  'Articles',     permission?(:manage_knowledgebase)],
       ['/admin/home',         'Admin',        permission?(:manage_users)]
     ]
@@ -86,4 +86,28 @@ module ApplicationHelper
     (discount.percent? ? number_to_percentage(discount.amount * 100, :precision => 0) : number_to_currency(discount.amount)) + ' off'
   end
   #Copy ends here
+  
+  #Liquid template parsing methods used in Dashboard and Tickets view page
+  def eval_activity_data(data)
+    unless data['eval_args'].nil?
+      data['eval_args'].each_pair do |k, v|
+        data[k] = send(v[0].to_sym, v[1])
+      end
+    end
+    
+    data
+  end
+  
+  def responder_path(args_hash)
+    link_to(h(args_hash['name']), user_path(args_hash['id']))
+  end
+  
+  def comment_path(args_hash, link_display = 'comment')
+    link_to(link_display, "#{helpdesk_ticket_path args_hash['ticket_id']}##{args_hash['comment_id']}")
+  end
+  
+  def email_response_path(args_hash)
+    comment_path(args_hash, 'email response')
+  end 
+  
 end

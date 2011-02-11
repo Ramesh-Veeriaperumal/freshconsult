@@ -17,7 +17,7 @@ class User < ActiveRecord::Base
 
   acts_as_authentic do |c|
     c.validations_scope = :account_id
-    c.validates_length_of_password_field_options = {:on => :update, :minimum => 4, :if => :has_no_credentials?}
+    c.validates_length_of_password_field_options = {:on => :update, :minimum => 4, :if => :has_no_credentials? }
     c.validates_length_of_password_confirmation_field_options = {:on => :update, :minimum => 4, :if => :has_no_credentials?}
   end
   
@@ -62,7 +62,7 @@ class User < ActiveRecord::Base
   end
   
   def has_no_credentials?
-    self.crypted_password.blank? #&& self.openid_identifier.blank?
+    self.crypted_password.blank? && active?#&& self.openid_identifier.blank?
   end
 
   # TODO move this to the "HelpdeskUser" model

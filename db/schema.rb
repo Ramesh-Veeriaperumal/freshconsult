@@ -9,9 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-
-ActiveRecord::Schema.define(:version => 20110211075333) do
-
+ActiveRecord::Schema.define(:version => 20110211102830) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -231,6 +229,7 @@ ActiveRecord::Schema.define(:version => 20110211075333) do
     t.datetime "updated_at"
     t.integer  "user_id"
     t.text     "activity_data"
+    t.text     "short_descr"
   end
 
   create_table "helpdesk_article_guides", :force => true do |t|
@@ -615,8 +614,6 @@ ActiveRecord::Schema.define(:version => 20110211075333) do
     t.integer  "account_id"
     t.boolean  "admin",               :default => false
     t.boolean  "active",              :default => false, :null => false
-    t.integer  "posts_count",         :default => 0
-    t.datetime "last_seen_at"
     t.string   "role_token"
     t.integer  "customer_id"
     t.string   "job_title"
@@ -626,6 +623,8 @@ ActiveRecord::Schema.define(:version => 20110211075333) do
     t.string   "twitter_id"
     t.text     "description"
     t.string   "time_zone"
+    t.integer  "posts_count",         :default => 0
+    t.datetime "last_seen_at"
   end
 
   add_index "users", ["account_id"], :name => "index_users_on_account_id"

@@ -66,26 +66,30 @@ class Helpdesk::TicketsController < ApplicationController
 
       if old_item.responder_id != @item.responder_id
         unless @item.responder
-          @item.create_activity(current_user, "{{user_path}} assgned the ticket {{notable_path}} to 'Nobody'")
+          @item.create_activity(current_user, "{{user_path}} assgned the ticket {{notable_path}} to 'Nobody'", {}, 
+                                   "Assigned to 'Nobody' by {{user_path}}")
         else
           @item.create_activity(current_user, 
                   "{{user_path}} #{old_item.responder ? "reassigned" : "assigned"} the ticket {{notable_path}} to {{responder_path}}", 
                   {'eval_args' => {'responder_path' => ['responder_path', {
                                                           'id' => @item.responder.id, 
-                                                          'name' => @item.responder.name}]}})
+                                                          'name' => @item.responder.name}]}}, 
+                  "Assigned to {{responder_path}} by {{user_path}}")
         end
       end
 
       if old_item.status != @item.status
         @item.create_activity(current_user,
                 "{{user_path}} changed the ticket status of {{notable_path}} to {{status_name}}",
-                {'status_name' => @item.status_name})
+                {'status_name' => @item.status_name}, 
+                "{{user_path}} changed the status to {{status_name}}")
       end
       
       if old_item.priority != @item.priority
         @item.create_activity(current_user,
                 "{{user_path}} changed the ticket priority of {{notable_path}} to {{priority_name}}",
-                {'priority_name' => @item.priority_name})
+                {'priority_name' => @item.priority_name}, 
+                "{{user_path}} changed the priority to {{priority_name}}")
       end
 
       flash[:notice] = "The #{cname.humanize.downcase} has been updated"
@@ -204,21 +208,8 @@ protected
     #handle_custom_fields
     #if @item.source == 0
       @item.spam = false
-      
-      @item.create_activity(current_user, "{{user_path}} created a new ticket {{notable_path}}")
-
-      n = @item.notes.build(
-        :user => current_user,
-        :account_id => current_account.id,
-        :incoming => false,
-        :private => true,
-        :source => 2,
-        :body => (!@item.description || @item.description.empty?) ? "Created by staff at #{Time.now}" : @item.description
-      )
-
-      n.save!
-      
-      
+      @item.create_activity(current_user, "{{user_path}} created a new ticket {{notable_path}}", {},
+                            "{{user_path}} created the ticket")
     #end
    
   end

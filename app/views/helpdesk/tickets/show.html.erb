@@ -41,6 +41,12 @@
 <% end %>
 
 <% javascript_tag do %>
+
+	function closeTicket(ticket_id)
+	{
+		
+	
+	}
 	
 	function changeAggentList(group_id)
 	{ 
@@ -114,6 +120,10 @@
 			<img src="/images/spacer.gif" class="tags" width="36px" height="36px"  />
 			<em>Tags</em>
 		</a>
+		<a href="javascript:void(0)" cntid="Activity">
+			<img src="/images/spacer.gif" class="tags" width="36px" height="36px"  />
+			<em>Activities</em>
+		</a>
 	</div>	
 	 <%= render :partial => "helpdesk/tickets/components/ticket", :object => @ticket %>
 	 <%= render :partial => "helpdesk/tickets/components/user", :object => @ticket.requester %>
@@ -121,7 +131,7 @@
 	 <%= render :partial => "helpdesk/tickets/components/todos", :locals => { :ticket => @ticket } %>
 	 <%= render :partial => "helpdesk/tickets/components/related_solutions", :locals => { :ticket => @ticket } %>
 	 <%= render :partial => "helpdesk/tickets/components/scenarios" %>
-		
+	 <%= render :partial => "helpdesk/tickets/components/activity",  :locals => { :ticket => @ticket } %>	
 </div>
 <% end %>
 

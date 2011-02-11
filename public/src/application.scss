@@ -40,10 +40,10 @@ body {margin:0; padding:0 10px 0 10px; border:0; height:100%; overflow-y:auto; }
 }
  
 .content{ 
-	position:relative;	
-	border:1px solid #dfdfdf;
+	position:relative;	 
 	margin-bottom:0px;	
-	@include corners(0px, 0px, 6px, 6px);
+	border:1px solid #dfdfdf;
+	@include corners(0px, 0px, 6px, 6px); 
 }
 
 #minwidthfix{
@@ -101,9 +101,9 @@ body {margin:0; padding:0 10px 0 10px; border:0; height:100%; overflow-y:auto; }
 
 .request_view #inner{
 	padding-top:10px;
-	background-color:#efefef;
+	background-color:#e9e9e9;
 	.leftcontent{
-		border-right-color:#efefef;
+		border-right-color:#e9e9e9;
 	}
 }
 
@@ -152,7 +152,9 @@ body {margin:0; padding:0 10px 0 10px; border:0; height:100%; overflow-y:auto; }
 /* Header styles */
 .header {  
 	@include clearfix;
-	padding:12px 0px 0px 0px;
+	position:relative;
+	padding:20px 0px 0px 0px;
+	height:80px;
 	border-bottom:5px solid $complement;
 }
 
@@ -190,9 +192,9 @@ a.brand{
 		float:left;
 	} 
 	h3{
-		font-size:20px;
-		font-weight:bold;
+		font-size:24px; 
 		text-decoration:none;
+		font-weight:bold;
 		margin:0px;
 		padding:0px;
 		position:relative;
@@ -234,7 +236,9 @@ a.brand{
 /* Header Tab styles */
 .header_tabs{ 
 	@include pie-clearfix;
-	position:relative; 
+	position:absolute;
+	bottom:0px;
+	left:0px; 
 	clear:both; 
 	width:100%;
 	ul.tabs{
@@ -639,17 +643,18 @@ ul.activityfeed{
 				@include link-colors(#3e71a4, #3e71a4, #3e71a4, #3e71a4, #3e71a4);
 				text-decoration:none; 
 			}
-			em.activity_time{
-				display:block;
-				color:#a6a6a6;
-				font-style:normal;
-				padding-bottom:8px;
-			}
+			
 		} 
 }
 
-.pageContent{
-	margin:11px 15px;	
+.activity_time{
+	display:block;
+	color:#a6a6a6;
+	font-style:normal;
+	padding-bottom:8px;
+}
+			
+.pageContent{	
 	h2{
 		color:#555;
 	}	 
@@ -1313,8 +1318,7 @@ body h5{
 }
 
 
-.request_details{	 
-	background:#efefef;	
+.request_details{	 	
 	margin:0px;
 	padding:3px 10px 20px 10px;
 	 
@@ -1346,6 +1350,12 @@ body h5{
 			em{ 			
 				font-style:normal;
 			}
+		}
+		.mark_action{
+			float:right;
+			padding:0px;
+			margin:0px;
+			margin-top:8px;
 		}
 	}
 	
@@ -1524,6 +1534,27 @@ body h5{
 		
 	}
 	
+	.local_activities{
+		a{
+			display:block;
+			font-weight:bold;
+			@include link-colors(#527EAA, #527EAA, #527EAA, #527EAA, #527EAA);
+		}
+	}
+	
+	.rtDetails_forum{
+		@include corners(6px);
+		border:1px solid #cfcfcf;
+		background:#ffffff;
+		padding:5px 14px;
+		h4.title{
+			font-size:16px; 
+			color:#afafaf;
+		}
+		@include min-height(230px);
+		
+	}
+	
 	.rtDetails{
 		margin:0px 80px 0px 0px;
 		@include corners(6px, 0px, 0px, 6px);
@@ -1643,6 +1674,45 @@ body h5{
 		
 	}
 }
+
+.mark_action{
+			padding:8px 0px;
+			a, .stamp{
+				padding:3px 8px; 
+				margin:0px 0px 6px 0px;
+				@include corners(4px);
+				@include link_colors(#ffffff, #ffffaf, #ffffff, #ffffff);
+				text-decoration:none;
+				font-weight:bold;
+			}
+			
+			.stamp{
+				margin:0px 8px;
+			}
+			
+			a.hover, a.active{
+				@include inset-shadows(#000000, 0px, 1px, 2px);				
+			}
+						
+			.stamp_type_1{
+				background:#336600;
+			}
+			.active.stamp_type_1{
+				background:lighten(#336600, 10%);
+			}
+			.stamp_type_2{
+				background:#cc6600;
+			}
+			.active.stamp_type_2{
+				background:lighten(#cc6600, 10%);
+			}
+			.stamp_type_3{
+				background:#993333;
+			}
+			.active.stamp_type_3{
+				background:lighten(#993333, 10%);
+			}
+		}
 
 div.panel_area{
 	padding:10px;
