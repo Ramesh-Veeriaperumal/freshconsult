@@ -193,8 +193,7 @@ protected
         :incoming => false,
         :private => true,
         :source => 2,
-        :body => (!@item.description || @item.description.empty?) ? "Created by staff at #{Time.now}" : @item.description,
-		:description => "created a new ticket"
+        :body => (!@item.description || @item.description.empty?) ? "Created by staff at #{Time.now}" : @item.description
       )
 
       n.save!
