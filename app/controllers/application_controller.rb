@@ -67,6 +67,8 @@ class ApplicationController < ActionController::Base
 #    end
 
   def set_time_zone
+    #ActiveSupport::TimeZone.all
+    current_account.make_current
     Time.zone = current_user ? current_user.time_zone : (current_account ? current_account.time_zone : Time.zone)
   end
   

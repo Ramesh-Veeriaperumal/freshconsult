@@ -1,15 +1,8 @@
-class AccountsController < ActionController::Base
-  
-  include AuthenticationSystem
-  include HelpdeskSystem
-  
-  include SslRequirement
-  include SubscriptionSystem
-
-  protect_from_forgery
-  filter_parameter_logging
+class AccountsController < ApplicationController
   
   include ModelControllerMethods
+  
+  skip_before_filter :set_time_zone
   
   before_filter :build_user, :only => [:new, :create]
   before_filter :load_billing, :only => [ :new, :create, :billing, :paypal ]
@@ -214,7 +207,7 @@ class AccountsController < ActionController::Base
       %w(new create plans canceled thanks).include?(self.action_name) || 
       (self.action_name == 'dashboard' && logged_in?) ||
       admin?
-  end
+    end
   
     def set_selected_tab
       @selected_tab = 'Admin'
