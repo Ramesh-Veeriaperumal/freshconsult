@@ -2,6 +2,7 @@ class CustomersController < ApplicationController
   # GET /customers
   # GET /customers.xml
   
+  before_filter :set_selected_tab
   
   def index
     
@@ -93,4 +94,11 @@ class CustomersController < ApplicationController
       format.xml  { head :ok }
     end
   end
+  
+  protected
+  
+    def set_selected_tab
+      @selected_tab = 'Customers'
+    end
+  
 end
