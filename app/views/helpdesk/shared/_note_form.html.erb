@@ -34,6 +34,18 @@
     			<%= f.text_area :body, { :class => 'expando', :id => "#{id}-#{cntid}-body" , :value =>@signature} %>
 			</td>
     	</tr>
+		
+		<% unless @ticket.ticket_topic.nil? %>
+		<tr datafor="posts">
+			<td></td>
+			<td>
+				<label>
+					<%=check_box_tag :post_forums%> Post in linked forum
+				</label>
+				<br />
+			</td>
+		</tr>
+		<%end%>	
 		<tr datafor="note"  style="display:none">
 			<td></td>
 			<td>

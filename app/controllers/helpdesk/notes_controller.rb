@@ -6,6 +6,21 @@ class Helpdesk::NotesController < ApplicationController
 
   include HelpdeskControllerMethods
   
+  def create
+    if @item.save! 
+      if params[:post_forums]
+       @topic = Topic.find(@parent.ticket_topic.topic_id)
+       @post  = @topic.posts.build(:body => params[:helpdesk_note][:body])
+       @post.user = current_user
+       @post.account_id = current_account.id
+       @post.save!
+    end
+      post_persist
+    else
+      create_error
+    end
+  end
+  
 protected
 
   def scoper
