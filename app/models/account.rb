@@ -91,7 +91,7 @@ class Account < ActiveRecord::Base
   
   #Helpdesk hack starts here
   def reply_emails
-    (email_configs.collect { |ec| ec.reply_email } << default_email).sort
+    (email_configs.collect { |ec| ec.to_email } << default_email).sort
   end
   #HD hack ends..
   
