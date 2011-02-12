@@ -24,9 +24,10 @@
 						:id=>@topic.id,  
 						:vote=>"for"} %>
 			<% else %>
+			<%=%>
 				<%= link_to_remote ("Unlike"),  
 					:update => "voting_container",  
-					:url => { :action=>"vote", :id => @topic.id, :forum_id => @forum.id , :category_id => @forum_category.id,  
+					:url => { :action=>"destroy_vote", :id => @topic.id, :forum_id => @forum.id , :category_id => @forum_category.id,  
 					:id=>@topic.id,  
 					:vote=>"for"} %>
 			<% end %>

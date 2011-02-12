@@ -5,7 +5,8 @@
 <% content_for :sidebar do -%>
 	<div class="rtCnt">
 		<div class="rtDetails_forum">
-		<% if logged_in? && current_user.has_manage_forums?  %>
+		<%= link_to('Connect To Ticket', new_helpdesk_ticket_path(:topic_id => @topic.id)) if logged_in? %>
+		<% if logged_in? && current_user.has_manage_forums? && @forum.ideas? %>
 		<h4 class="title">Moderate</h4>
 		<div>
 			Make this idea as 
@@ -41,9 +42,9 @@
 				  </small>
 		  	<% end %>
 		</div>
-		
+
 		<div class="request_details">
-			
+
 	    	<div class="requestCnt">
 	    		<div class="mark_action">
 						<% if @topic.stamp_type %>
@@ -79,7 +80,7 @@
 						      <% if @topic.editable_by?(current_user) -%>
 						        <%= link_to('edit'[], edit_category_forum_topic_path(@forum_category,@forum, @topic), :class => "utility") %> |
 						        <%= link_to('delete'[], category_forum_topic_path(@forum_category,@forum, @topic), :class => "utility", :method => :delete, :confirm => 'Delete this topic forever?'[:delete_topic_conf]) %>
-								
+
 						  <% end %>
 					</div>	
 		        	<div class="user_details">
@@ -88,7 +89,7 @@
 							<div><%= @topic.user.job_title %></div>
 							<div>Created on <%= h(@topic.created_at.strftime("%B %e %Y at %I:%M %p")) %> ( <%=time_ago_in_words(@topic.created_at)%> ago ) </div>
 		        	</div>
-					
+
 					<div class="details min_height">
 						<%= first_post.body_html %>
 					</div>
@@ -97,7 +98,7 @@
 					</div>
 				</div>
 	    	</div>
-			 
+
 			<% if (@posts.size > 1) %>
 				<div class="floatr">
 					<%= link_to_function ('Reply to topic'[], "ReplyForm.init()", :class => "fdbutton") if logged_in? %>
@@ -121,9 +122,9 @@
 			</div>	
 				<% if logged_in? %>
 				<div id="edit"></div>
-				
-				
-				
+
+
+
 				<div id="reply" class="editbox" style="display:none;">
 				<div class="request_panel">
 				  <%= content_tag 'p', h(flash[:bad_reply]), :class => 'notice' if flash[:bad_reply] %>
@@ -144,7 +145,7 @@
 				          <li>"IBM":http://www.ibm.com</li>
 				          <li><%= '* or # <span>(lists)</span>'[:formatting_list] %></li>
 				        </ul>
-				
+
 				      </td>
 				    </tr>
 				    <tr>
@@ -158,7 +159,6 @@
 				</div>
 				<% end %>
 			<% end %>
-				
+
 			</div>	
 		</div>
-		

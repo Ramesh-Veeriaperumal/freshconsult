@@ -82,7 +82,7 @@ class TopicsController < ApplicationController
     assign_protected
     @topic.save!
     respond_to do |format|
-      format.html { redirect_to forum_topic_path(@forum, @topic) }
+      format.html { redirect_to category_forum_topic_path(@forum_category,@forum, @topic) }
       format.xml  { head 200 }
     end
   end
@@ -91,7 +91,7 @@ class TopicsController < ApplicationController
     @topic.destroy
     flash[:notice] = "Topic '{title}' was deleted."[:topic_deleted_message, @topic.title]
     respond_to do |format|
-      format.html { redirect_to forum_path(@forum) }
+      format.html { redirect_to  category_forum_path(@forum_category,@forum) }
       format.xml  { head 200 }
     end
   end
@@ -122,6 +122,13 @@ class TopicsController < ApplicationController
     @topic.votes << @vote
     render :partial => "forum_shared/topic_vote", :object => @topic
   end  
+end 
+
+def destroy_vote   
+   @votes = Vote.find(:all, :conditions => ["user_id = ? and voteable_id = ?", current_user.id, params[:id]] )
+   @votes.first.destroy
+   render :partial => "forum_shared/topic_vote", :object => @topic
+ 
 end  
  
   
