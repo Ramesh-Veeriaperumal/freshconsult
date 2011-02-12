@@ -172,6 +172,28 @@ class Helpdesk::TicketsController < ApplicationController
     
     
   end
+  
+   def close_ticket
+     
+     @ticket = Helpdesk::Ticket.find_by_display_id(params[:id])
+     status_id = Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:closed]
+     logger.debug "close the ticket...with status id  #{status_id}"
+     res = Hash.new
+     if @ticket.update_attribute(:status , status_id)
+       res["success"] = true
+       res["status"] = 'Closed'
+       res["value"] = status_id
+       res["message"]="Successfully updated"
+       render :json => ActiveSupport::JSON.encode(res)
+     else
+       res["success"] = false
+       res["message"]="closing the ticket failed"
+       render :json => ActiveSupport::JSON.encode(res)
+       
+     end
+        
+  end
+  
 protected
 
   def item_url
