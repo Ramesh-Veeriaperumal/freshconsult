@@ -4,7 +4,9 @@ namespace :db do
   task :bootstrap => :environment do
     puts 'Creating tables...'
     Rake::Task["db:schema:load"].invoke
-	Rake::Task["db:migrate"].invoke
+    Rake::Task["db:migrate"].invoke
+    
+    Rake::Task["db:create_trigger"].invoke #To do.. Need to make sure the db account has super privs.
     
     puts 'Loading data...'
     Rake::Task["db:seed_fu"].invoke
@@ -24,6 +26,11 @@ namespace :db do
     
     puts "All done!  You can now login to the test account at the localhost domain with the login support@freshdesk.com and password test.\n\n"
   end
-     
+  
+  task :create_trigger => :environment do
+    puts 'Creating database trigger for tickets display id...'
+    ActiveRecord::Base.connection.execute(TriggerSql.sql_for_populating_ticket_display_id)
+  end
+
 end
 #SAAS ends here
