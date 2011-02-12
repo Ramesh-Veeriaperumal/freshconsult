@@ -5,7 +5,8 @@ class Helpdesk::TicketsController < ApplicationController
   include HelpdeskControllerMethods
 
   before_filter :load_multiple_items, :only => [:destroy, :restore, :spam, :unspam, :assign]
-
+  before_filter :set_customizer , :only => [:new , :edit]
+ 
   def index
 
     @items = TicketsFilter.filter(@template.current_filter, current_user, current_account.tickets)

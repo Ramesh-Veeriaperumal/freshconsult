@@ -9,7 +9,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   has_flexiblefields
   
   #by Shan temp
-  attr_accessor :email, :custom_field
+  attr_accessor :email, :custom_field ,:customizer
   after_create :refresh_display_id, :autoreply,:save_custom_field ,:pass_thro_biz_rules 
   before_create :populate_requester
 
@@ -62,8 +62,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :class_name => 'Helpdesk::Issue',
     :through => :ticket_issues
     
-  has_one :customizer, :class_name =>'Helpdesk::FormCustomizer'
-  
   has_one :ticket_topic
   has_one :topic,:through => :ticket_topic
   
