@@ -9,9 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-
-ActiveRecord::Schema.define(:version => 20110210081611) do
-
+ActiveRecord::Schema.define(:version => 20110212141352) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -251,6 +249,7 @@ ActiveRecord::Schema.define(:version => 20110210081611) do
     t.datetime "updated_at"
     t.integer  "user_id"
     t.text     "activity_data"
+    t.text     "short_descr"
   end
 
   create_table "helpdesk_article_guides", :force => true do |t|
@@ -351,7 +350,6 @@ ActiveRecord::Schema.define(:version => 20110210081611) do
     t.integer  "notable_id"
     t.string   "notable_type"
     t.integer  "account_id"
-    t.text     "description"
   end
 
   add_index "helpdesk_notes", ["notable_id"], :name => "index_helpdesk_notes_on_notable_id"
@@ -510,12 +508,32 @@ ActiveRecord::Schema.define(:version => 20110210081611) do
   add_index "posts", ["topic_id", "created_at"], :name => "index_posts_on_topic_id"
   add_index "posts", ["user_id", "created_at"], :name => "index_posts_on_user_id"
 
-  create_table "solution_folders", :force => true do |t|
+  create_table "solution_articles", :force => true do |t|
+    t.string   "title"
+    t.text     "description"
+    t.integer  "user_id"
+    t.integer  "folder_id"
+    t.integer  "status"
+    t.integer  "art_type"
+    t.boolean  "is_public"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "solution_categories", :force => true do |t|
     t.string   "name"
     t.text     "description"
     t.integer  "account_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "solution_folders", :force => true do |t|
+    t.string   "name"
+    t.text     "description"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "category_id"
   end
 
   create_table "subscription_affiliates", :force => true do |t|
@@ -587,6 +605,13 @@ ActiveRecord::Schema.define(:version => 20110210081611) do
   end
 
   add_index "subscriptions", ["account_id"], :name => "index_subscriptions_on_account_id"
+
+  create_table "ticket_topics", :force => true do |t|
+    t.integer  "ticket_id"
+    t.integer  "topic_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "topics", :force => true do |t|
     t.integer  "forum_id"
