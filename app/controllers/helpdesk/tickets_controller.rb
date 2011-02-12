@@ -37,7 +37,7 @@ class Helpdesk::TicketsController < ApplicationController
       
      @signature = ""
      @agents = Agent.find(:first, :joins=>:user, :conditions =>{:user_id =>current_user.id} )     
-     @signature = "\n\n\n #{@agents.signature}" unless @agents.nil?
+     @signature = "\n\n\n #{@agents.signature}" unless (@agents.nil? || @agents.signature.blank?)
      
      logger.debug "subject of the ticket is #{@item.subject}"
      
