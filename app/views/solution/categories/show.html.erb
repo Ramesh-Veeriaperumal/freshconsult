@@ -1,0 +1,47 @@
+<% content_for :layoutType do%>solutions_ltSidebar<% end %>
+<% content_for :sidebar do %>
+	<h4 class="product_title">
+	  <div class="sol_category">
+	  	<%= @item.name %>
+	  </div>
+  	</h4>	 
+	<ul class="tableofcontents">
+	   <% @item.categories.each do |category| %>
+	   	  <li>
+			<h4><%= link_to(h(category.name), category) %></h4>
+		  </li>
+	   <% end %>
+	</ul>
+<% end %>  
+<div class="pageContent">
+	  <div class="breadcrum">
+	 	<a href="/solution/folders">Solution Center</a> 
+	 	<em><%= @item.name %></em> 
+	  </div>
+	  <span class="seperator"></span>
+	  <div class="floatr">
+	  	<%= link_to "New Solution", new_helpdesk_article_path, :class => "fdbutton" %>
+		<%= link_to "New Category", new_helpdesk_guide_path(:folder_id =>@item.id), :class => "fdbutton" %>
+	  </div>
+	  <h4 class="content_title"><%= @item.name %></h4>
+	  <div><%= @item.description %></div>	
+	  <span class="seperator"></span>
+	  <% @item.categories.each do |category| %>
+	 	<div class="title_bar_grey">
+			<h4 class="list_title"><%= category.name %></h4>
+		</div>
+		<ul class="content_list">			
+			<% category.articles.each do |article| %>
+			<li>
+				<div class="item_actions">
+					<%= link_to('edit', edit_helpdesk_article_path(article), :class => "button") %>
+					<%= link_to('delete', article, :method => 'delete', :confirm => 'Are you sure you want to delete this solution', :class => "button" ) %>					
+				</div>
+				<%= link_to(h(article.title), article) %>
+			</li>
+			<% end %>
+		</ul>
+		<br />
+	  <% end %>
+</div>
+ 

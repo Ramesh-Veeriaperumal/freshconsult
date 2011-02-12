@@ -1,0 +1,23 @@
+<% content_for :layoutType do%>single<% end %>  
+<div class="pageContent">  
+	  <div class="information_tip two_col_cont">
+	  	<div class="left_col">
+	  		<div class="floatr" >
+	  			<%= link_to "<img src='/images/add.png'> Add Category", new_solution_category_path, :class => "fdbutton" %>
+			</div>
+			<h3 class="title">&nbsp;&nbsp;Solutions</h3>
+			<ul class="ssp_category_list">
+				<% firstCategory = @categories.find(:first) %>
+				<% @categories.each do |category| %>
+				<li>
+					<%= link_to h(category.name), 
+							category, :class => (firstCategory == category) ? "active":""  %>				
+				</li>
+				<%end%>
+			</ul>
+		</div>
+		<div class="right_col white_curved_cont">
+			a
+		</div>
+	</div>
+</div>
