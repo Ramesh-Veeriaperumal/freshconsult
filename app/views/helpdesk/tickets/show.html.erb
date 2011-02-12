@@ -44,7 +44,20 @@
 
 	function closeTicket(ticket_id)
 	{
-		
+		jQuery.ajax({
+	      					type: 'POST',
+							url: '/helpdesk/tickets/close_ticket/'+ticket_id,
+							contentType: 'application/text',
+	      					success: function(data){
+											
+											if(data.success)
+											{
+												jQuery('#status_name_id').text(data.status).show("highlight", 500);
+												jQuery('#helpdesk_ticket_status').val(data.value);	
+											}								
+											//Need to show the message some where data.message
+									}
+				});
 	
 	}
 	
@@ -146,7 +159,7 @@
 	            <span class="ltSlant"></span>
 	            <ul>
 	                <li>
-	                    <b>Status</b>: <%= h(@ticket.status_name) %>
+	                    <b>Status</b>: <span id="status_name_id"><%= h(@ticket.status_name) %></span>
 	                </li>
 	                <li>
 	                    <b>Priority</b>: <%= h(@ticket.priority_name) %>
@@ -171,7 +184,7 @@
 					    	<%= link_to(image_tag("/images/spacer.gif"), spam_helpdesk_ticket_path(@ticket), :method => :put, :class => "spam", :title  => "Mark as spam") unless @ticket.spam %>
 							
 							<%= link_to("Edit Ticket", {:action => "edit"}, :class => "button"  ) %>
-							<a href="#" class="button">Close</a>
+							<a href="javascript:void(0);closeTicket(<%=@ticket.display_id%>)" class="button">Close</a>
 							<%= link_to("Delete", @ticket, :method => :delete, :class => "button"  ) unless @ticket.deleted %>
 					    	<%= link_to("Undelete", restore_helpdesk_ticket_path(@ticket), :method => :put, :class => "button"  ) if @ticket.deleted %>
 							

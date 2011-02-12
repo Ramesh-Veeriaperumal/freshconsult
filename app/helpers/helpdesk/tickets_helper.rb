@@ -80,6 +80,10 @@ module Helpdesk::TicketsHelper
   end
 
   def search_clear
-  end
+ end
+
+ 
+
+
 
 end
