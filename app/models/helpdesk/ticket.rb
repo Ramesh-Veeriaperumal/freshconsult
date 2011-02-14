@@ -241,6 +241,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   def autoreply
     notify_by_email EmailNotification::NEW_TICKET
+    
+    notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_GROUP) if group_id
+    notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_AGENT) if responder_id
+    
+    return notify_by_email(EmailNotification::TICKET_RESOLVED) if (status == STATUS_KEYS_BY_TOKEN[:resolved])
+    return notify_by_email(EmailNotification::TICKET_CLOSED) if (status == STATUS_KEYS_BY_TOKEN[:closed])
   end
   
   def cache_old_model
