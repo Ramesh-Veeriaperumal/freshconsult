@@ -1,17 +1,17 @@
 <ul id="InnerDIV" class="carousel">
 	<li class="inner_div">	
-		<h3 class="title" id="Header"><%= folder.name %></h3>
+		<h3 class="title" id="Header"><%= category.name %></h3>
 		<div>
-			<%= folder.description %>
+			<%= category.description %>
 		</div> 
-		<% folder.categories.each do |category| %>
+		<% category.folders.each do |folder| %>
 			<span class="seperator"></span>
-			<h4 class="title"><%=category.name%></h4>
+			<h4 class="title"><%=folder.name%></h4>
 			<div>
-				<%= category.description %>
+				<%= folder.description %>
 			</div>
 			<ul class="sol_list">
-			<% category.articles.each do |solution| %>
+			<% folder.articles.each do |solution| %>
 				<li> 
 					<!--%= link_to_remote( h(solution.title),
                          :update => "solution_dialog",

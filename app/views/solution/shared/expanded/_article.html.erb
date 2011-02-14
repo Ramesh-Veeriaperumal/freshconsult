@@ -4,7 +4,8 @@
   </td-->
   <td class="article">
     <h3>
-      <%= link_to(h(article.title), edit_solution_article_path(article)) %>
+    	<%logger.debug "folder :: #{article.folder.inspect}"%>
+      <%= link_to article.title, edit_solution_category_folder_article_path(article.folder.category_id,article.folder.id, article) %>
     </h3>
 
     <!--attr>

@@ -1,6 +1,6 @@
 class Solution::Folder < ActiveRecord::Base
   
-  belongs_to :categories, :class_name => 'Solution::Category'
+  belongs_to :category, :class_name => 'Solution::Category'
    set_table_name "solution_folders"
    
    has_many :articles, :class_name =>'Solution::Article'

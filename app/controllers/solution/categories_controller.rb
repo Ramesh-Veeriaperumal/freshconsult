@@ -27,6 +27,12 @@ class Solution::CategoriesController < ApplicationController
   end
 
   def edit
+    
+     @category = Solution::Category.find(params[:id])      
+      respond_to do |format|
+      format.html # edit.html.erb
+      format.xml  { render :xml => @category }
+    end
   end
 
   def create
@@ -45,9 +51,30 @@ class Solution::CategoriesController < ApplicationController
   end
 
   def update
+    
+     @category = Solution::Category.find(params[:id]) 
+    
+    respond_to do |format|
+     
+       if @category.update_attributes(params[nscname])       
+          format.html { redirect_to :action =>"index" }
+          format.xml  { render :xml => @category, :status => :created, :location => @category }     
+       else
+          format.html { render :action => "edit" }
+          format.xml  { render :xml => @category.errors, :status => :unprocessable_entity }
+       end
+    end
   end
 
   def destroy
+    
+    @category = Solution::Category.find(params[:id])
+    @category.destroy
+
+    respond_to do |format|
+      format.html {  redirect_to :action =>"index" }
+      format.xml  { head :ok }
+    end
 end
 
  protected

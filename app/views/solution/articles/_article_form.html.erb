@@ -14,10 +14,10 @@
   <% end %>
 <% end %>
 
+<%logger.debug " here is the folder deta:: #{@article.folder.inspect}"%>
 
-<div id="article-form-container">
-  <% form_for article, :html => {:multipart => true, :id => "article-form"} do |f| %>
-    <%= f.error_messages %>
+
+  <%= f.error_messages %>
 	<ul class="ui-form">
 		<li>
     		<%= f.label(:title, "Title") %>
@@ -64,8 +64,7 @@
 		<%= submit_tag "Save", :class => "fdbutton" %>
       	<%= submit_tag " Save and Create Another ", :name => "save_and_create", :class => "fdbutton" %>
 	</div>
-  <% end %>
-</div>
+ 
 
 <%# 
   The following is a template used by multifile.js to create rows in

@@ -1,5 +1,5 @@
 class Solution::Article < ActiveRecord::Base
-   belongs_to :folders, :class_name => 'Solution::Folder'
+   belongs_to :folder, :class_name => 'Solution::Folder'
    set_table_name "solution_articles"
    
    belongs_to :user, :class_name => 'User'

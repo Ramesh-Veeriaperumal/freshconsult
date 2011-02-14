@@ -14,7 +14,7 @@ class Solution::ArticlesController < ApplicationController
   def show
     
     logger.debug "show is :: #{params.inspect}"
-     @article = Solution::Article.find(params[:id])
+     @article = Solution::Article.find(params[:id], :include => :folder) 
     
   end
 
@@ -47,7 +47,7 @@ class Solution::ArticlesController < ApplicationController
     #@folder = current_account.solution_folders.new(params[nscname]) 
     respond_to do |format|
       if @article.save
-        format.html { redirect_to :action =>"index" }
+        format.html { redirect_to(solution_category_folder_url(params[:category_id], params[:folder_id])) }        
         format.xml  { render :xml => @article, :status => :created, :location => @article }
       else
         format.html { render :action => "new" }
@@ -57,10 +57,33 @@ class Solution::ArticlesController < ApplicationController
   end
 
   def update
+    
+    logger.debug "Inside update :: #{params.inspect}"
+    @article = Solution::Article.find(params[:id]) 
+    
+    respond_to do |format|
+     
+       if @article.update_attributes(params[nscname])       
+          format.html { redirect_to :action =>"index" }
+          format.xml  { render :xml => @article, :status => :created, :location => @article }     
+       else
+          format.html { render :action => "edit" }
+          format.xml  { render :xml => @article.errors, :status => :unprocessable_entity }
+       end
+    end
   end
 
   def destroy
-end
+    logger.debug "params::: #{params.inspect}"
+    @article = Solution::Article.find(params[:id])
+    @article.destroy
+
+    respond_to do |format|
+      format.html { redirect_to(solution_category_folder_url(params[:category_id]),params[:folder_id]) }
+      format.xml  { head :ok }
+    end
+    
+  end
 
 protected
 

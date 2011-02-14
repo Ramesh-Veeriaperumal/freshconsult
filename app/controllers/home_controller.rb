@@ -1,19 +1,19 @@
 class HomeController < ApplicationController
   def index
     redirect_to helpdesk_dashboard_path if (current_user && current_user.permission?(:manage_tickets))
-    
-    @folder = Solution::Folder
+    @categories = current_account.solution_categories.all(:include => :folders)
+   
   end
   
   
-  def get_folders
+  def get_categories
     
     logger.debug "Folder is is  :::  #{params[:id]}"
     
-    @folder = Solution::Folder.find(:first, :include =>:categories , :conditions =>{:id =>params[:id]})
+    @category = Solution::Category.find(:first, :include =>:folders , :conditions =>{:id =>params[:id]})
     
         
-     render :partial => "solution_toc", :locals => { :folder => @folder }
+     render :partial => "solution_toc", :locals => { :category => @category }
     
   end
   
@@ -21,7 +21,7 @@ class HomeController < ApplicationController
     
     logger.debug "Folder is is  :::  #{params[:id]}"
     
-    @solution = Helpdesk::Article.find(params[:id])
+    @solution = Solution::Article.find(params[:id])
        
      render :partial => 'solution_article', :locals => { :article => @solution } 
     
@@ -35,7 +35,7 @@ class HomeController < ApplicationController
     
     search_tokens =  search_str.scan(/\w+/)
     
-    @articles = Helpdesk::Article.title_or_body_like_any(search_tokens).is_public(true).limit(10)
+    @articles = Solution::Article.title_or_body_like_any(search_tokens).is_public(true).limit(10)
     
     render :partial => 'solution_search_result', :locals => { :articles => @articles, :key => search_str } 
     

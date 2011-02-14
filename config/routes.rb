@@ -155,9 +155,12 @@ ActionController::Routing::Routes.draw do |map|
   end
   
    map.namespace :solution do |solution|     
-     solution.resources :categories     
-     solution.resources :folders    
-     solution.resources :articles    
+     solution.resources :categories  do |category|   
+     category.resources :folders  do |folder|
+       folder.resources :articles
+       end
+     end
+         
      end
 
   map.namespace :support do |support|
