@@ -1,2 +1,11 @@
-<h1>Solution::Articles#new</h1>
-<p>Find me in app/views/solution/articles/new.html.erb</p>
+<% content_for :layoutType do%>single<% end %>
+<% content_for :head do %>
+  <%= javascript_include_tag "helpdesk/expanding_textarea" %>
+  <%= javascript_include_tag "helpdesk/multifile" %>
+  <%= javascript_include_tag "helpdesk/article_section" %>
+<% end %> 
+<div class="pageContent">
+	<h3 class="content_title">New Solution</h3>
+	<%= render :partial => 'article_form', :locals => {:article => @article} %>
+</div>
+

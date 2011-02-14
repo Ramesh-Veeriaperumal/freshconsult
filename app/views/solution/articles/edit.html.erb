@@ -1,2 +1,20 @@
-<h1>Solution::Articles#edit</h1>
-<p>Find me in app/views/solution/articles/edit.html.erb</p>
+<% content_for :layoutType do%>single<% end %>
+<% content_for :head do %>
+  <%= javascript_include_tag "helpdesk/expanding_textarea" %>
+  <%= javascript_include_tag "helpdesk/multifile" %>
+  <%= javascript_include_tag "helpdesk/article_section" %>
+<% end %>
+<div class="pageContent">
+	<h3 class="content_title">Edit Solution</h3>
+	<%= render :partial => 'article_form', :locals => {:article => @article} %>
+	 <div class="attachment-list-container">
+	    <%= content_tag('h5', 'Attachments') unless @article.attachments.empty? %>
+	    <table class="attachment-list">
+	      <%= render(
+	        :partial => '/helpdesk/shared/attachment', 
+	        :collection => @article.attachments,
+	        :locals => {:show_delete => true, :url => [@article] }) %>
+	    </table>
+	  </div>
+	
+</div>
