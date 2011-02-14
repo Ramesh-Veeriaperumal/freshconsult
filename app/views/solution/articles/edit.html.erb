@@ -6,7 +6,15 @@
 <% end %>
 <div class="pageContent">
 	<h3 class="content_title">Edit Solution</h3>
-	<%= render :partial => 'article_form', :locals => {:article => @article} %>
+	
+	
+	 <% form_for @article, :url => solution_category_folder_article_path(@article.folder.category_id  , @article.folder.id) , :html => {:multipart => true, :id => "article-form"} do |f| %>
+  
+	<%= render :partial => 'article_form', :locals => { :f => f } %>
+	
+	 <% end %>
+	
+	
 	 <div class="attachment-list-container">
 	    <%= content_tag('h5', 'Attachments') unless @article.attachments.empty? %>
 	    <table class="attachment-list">

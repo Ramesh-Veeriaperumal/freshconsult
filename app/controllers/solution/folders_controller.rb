@@ -28,6 +28,11 @@ class Solution::FoldersController < ApplicationController
   end
 
   def edit
+     @folder = Solution::Folder.find(params[:id])      
+      respond_to do |format|
+      format.html # edit.html.erb
+      format.xml  { render :xml => @folder }
+    end
   end
 
   def create 
@@ -37,7 +42,7 @@ class Solution::FoldersController < ApplicationController
     #@folder = current_account.solution_folders.new(params[nscname]) 
     respond_to do |format|
       if @folder.save
-        format.html { redirect_to :action =>"index" }
+        format.html { redirect_to solution_category_url(params[:category_id]) }
         format.xml  { render :xml => @folder, :status => :created, :location => @folder }
       else
         format.html { render :action => "new" }
@@ -48,9 +53,31 @@ class Solution::FoldersController < ApplicationController
   end
 
   def update
+    
+     @folder = Solution::Folder.find(params[:id]) 
+    
+    respond_to do |format|
+     
+       if @folder.update_attributes(params[nscname])       
+          format.html { redirect_to :action =>"index" }
+          format.xml  { render :xml => @folder, :status => :created, :location => @folder }     
+       else
+          format.html { render :action => "edit" }
+          format.xml  { render :xml => @folder.errors, :status => :unprocessable_entity }
+       end
+    end
   end
 
   def destroy
+    
+     @folder = Solution::Folder.find(params[:id])
+    @folder.destroy
+
+    respond_to do |format|
+      format.html {  redirect_to :action =>"index" }
+      format.xml  { head :ok }
+    end
+    
   end
 
 

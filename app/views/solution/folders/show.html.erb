@@ -2,13 +2,13 @@
 <% content_for :sidebar do %>
 	<h4 class="product_title">
 	  <div>
-	  	<%= @item.name %>
+	  	<%=  @item.name %>
 	  </div>
   	</h4>	 
 	<ul class="tableofcontents">
 	   <% @item.articles.each do |article| %>
 	   	  <li>
-			<h4><%= link_to(h(article.name), article) %></h4>
+			<h4><%= link_to article.title, solution_category_folder_article_path(@item.category_id , @item, article) %></h4>
 		  </li>
 	   <% end %>
 	</ul>
@@ -16,31 +16,32 @@
 <div>
 	  <div class="header_area">
 	  	<div class="floatr">
-		  	<%= link_to "New Folder", new_solution_folders_path(:category_id =>@item.category_id), :class => "fdbutton" %>
-			<%= link_to "New Solution", new_solution_articles_path(:folder_id =>@item.id), :class => "fdbutton" %>
+		  	<%= link_to "New Folder", new_solution_category_folder_path(@item.category_id), :class => "fdbutton" %>
+			<%= link_to "New Solution", new_solution_category_folder_article_path(@item.category_id, @item), :class => "fdbutton" %>
 		  </div>
-		<%= link_to "Solutions", solution_folders_path, :class => "page_title" %>
+		<%= link_to "Solutions", solution_category_folders_path, :class => "page_title" %>
 	  </div>
 	  <div class="forum_list">
 		  <h5 class="category_title">
 			  <%= @item.name %>
 			  <div><%= @item.description %></div>
 		  </h5>
-		  <ul class="base_set">				
-		  <% @item.each do |folder| %>
-				<li>
-					<h4 class="forum_title"><span class="title"><%= folder.name %></span></h4>
+		  <ul class="base_set">			 
+					<li>				
 					<div class="topic_list">
-					<% folder.articles.each do |article| %>
+					<% @item.articles.each do |article| %>
+						<li>	
 						<!--div class="item_actions">
 							<%# link_to('edit', edit_helpdesk_article_path(article), :class => "button") %>
 							<%# link_to('delete', article, :method => 'delete', :confirm => 'Are you sure you want to delete this solution', :class => "button" ) %>					
 						</div-->
-						<%= link_to(h(article.title), article, :class => "topic") %>
+						<!--%= link_to(h(article.title), article, :class => "topic") %-->
+						<%= link_to article.title, solution_category_folder_article_path(@item.category_id , @item, article) %>
+						</li>	
 					<% end %>
 					</div>
-				</li>		
-		  <% end %>
+				</li>
+		
 		  </ul>	
 	  </div>
 </div>
