@@ -1,4 +1,6 @@
 class Solution::CategoriesController < ApplicationController
+  
+  before_filter :set_selected_tab
   def index
     
      @categories = current_account.solution_categories.all
@@ -11,7 +13,7 @@ class Solution::CategoriesController < ApplicationController
 
   def show
     
-     @item = Solution::Category.find(params[:id])
+     @item = Solution::Category.find(params[:id], :include => :folders)
      
   end
 
@@ -61,6 +63,8 @@ end
   def nscname
     @nscname ||= controller_path.gsub('/', '_').singularize
   end
-  
+  def set_selected_tab
+      @selected_tab = 'Solutions'
+  end
 
 end

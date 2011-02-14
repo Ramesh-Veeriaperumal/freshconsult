@@ -1,4 +1,5 @@
 class Solution::FoldersController < ApplicationController
+  before_filter :set_selected_tab
   def index    
     @folders = Solution::Folder.all
     print @folders
@@ -11,13 +12,15 @@ class Solution::FoldersController < ApplicationController
   end
 
   def show    
-    @item = Solution::Folder.find(params[:id], :include => :categories)
+    @item = Solution::Folder.find(params[:id], :include => :articles)
     
   end
 
   def new
-     @folder = Solution::Folder.new
-
+    
+      logger.debug "params:: #{params.inspect}"
+      current_category = Solution::Category.find(params[:category_id])
+     @folder = current_category.folders.new
     respond_to do |format|
       format.html # new.html.erb
       format.xml  { render :xml => @folder }
@@ -28,7 +31,10 @@ class Solution::FoldersController < ApplicationController
   end
 
   def create 
-    @folder = current_account.solution_folders.new(params[nscname]) 
+    
+    logger.debug "params:: #{params.inspect}"
+    @folder = Solution::Folder.new(params[nscname]) 
+    #@folder = current_account.solution_folders.new(params[nscname]) 
     respond_to do |format|
       if @folder.save
         format.html { redirect_to :action =>"index" }
@@ -62,5 +68,8 @@ class Solution::FoldersController < ApplicationController
     @nscname ||= controller_path.gsub('/', '_').singularize
   end
   
+  def set_selected_tab
+      @selected_tab = 'Solutions'
+  end
 
 end
