@@ -22,7 +22,7 @@
 	
 	
 	jQuery(document).ready(function(){
-		jQuery("#email_config_to_email").bind('change keyup', 
+		jQuery("#reply_to_id").bind('change keyup', 
 											function(ev){			
 												reply_email = construct_reply_url(this.value);
 												jQuery("#div_reply_email").text(reply_email);
@@ -31,7 +31,13 @@
 	});
 <% end -%>
 
-<% form_for @email_config do |f| %>
+<% 
+	type_check = (type == "edit")
+	form_for :email_config, @email_config, 
+				:url => (!type_check) ? (admin_email_configs_path) : (admin_email_config_path), 
+			    :html => {:method => (!type_check) ? (:post) : (:put) } do |f|
+%>
+ 
 <table class="grid_form">
 	<tr>
 		<th class="title">
@@ -46,15 +52,15 @@
 		<td width="40%">
 			<b>Users send email to</b>
 			<div>(This is also your Reply-to address)</div>
-			<%= f.text_field :to_email, :class => "required text" %>						
+			<%= f.text_field :reply_email, :class => "required text", :id => "reply_to_id" %>						
 		</td>
 	</tr>	
 		<td width="40%">
 			<b>Forward your emails to</b>
 			<div id="div_reply_email" class="email_info">
-				<%= (email_form) ? email_form.reply_email : '&nbsp;' %>
+				<%= (email_form) ? email_form.to_email : '&nbsp;' %>
 			</div>
-			<%= f.hidden_field :reply_email, :id => "hidden_reply_to" %>
+			<%= f.hidden_field :to_email, :id => "hidden_reply_to" %>
 		</td>
 	</tr>	
 	<tr>
@@ -67,9 +73,9 @@
 		<td class="button-container">
 			<%= f.submit "Save", :class => "button"  %>
 			<% if (type == "edit") %>
-				<%= link_to('delete', email_form, :method => 'delete', :confirm => 'Are you sure you want to delete this email', :class => "button" ) %>
+				<%= link_to('delete', admin_email_configs_path, :method => 'delete', :confirm => 'Are you sure you want to delete this email', :class => "button" ) %>
 			<% end %>
-			<%= link_to("cancel", @email_config, :class => "button red")  %>
+				<%= link_to("cancel", admin_email_configs_path, :class => "button red")  %>
 		</td>
 		
 	</tr>	

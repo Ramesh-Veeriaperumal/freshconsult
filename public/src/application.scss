@@ -1627,6 +1627,9 @@ body h5{
 			img.tags{
 				@include sprite-column(1, $spritesize);
 			}
+			img.activity{
+				@include sprite-column(7, $spritesize);
+			}
 			
 			em{
 				display:block;
@@ -1656,10 +1659,48 @@ body h5{
 			img.tags{
 				@include sprite-position(1, 2, $spritesize, $spritesize);
 			}
+			img.activity{
+				@include sprite-position(7, 2, $spritesize, $spritesize);
+			}
 			color:#ffffff;
 		}
 		
 	}
+}
+
+
+.admin_icons{
+	$aicon_size:66px;
+	img{
+		@include sprite-background("admin_icons.png", 34px, 34px);
+	}
+	.ticket_field{
+		@include sprite-column(5, $aicon_size);
+	}
+	.sla{
+		@include sprite-column(2, $aicon_size);
+	}
+	.email{
+		@include sprite-column(3, $aicon_size);
+	}
+	.email_notify{
+		@include sprite-column(4, $aicon_size);
+	}								
+	.helpdesk_rebrand{
+		@include sprite-column(1, $aicon_size);
+	}
+	.user{
+		@include sprite-column(6, $aicon_size);
+	}				
+	.user_group{
+		@include sprite-column(7, $aicon_size);
+	}				
+	.virtual_agent{
+		@include sprite-column(8, $aicon_size);
+	}				
+	.automation{
+		@include sprite-column(9, $aicon_size);
+	}								
 }
 
 .mark_action{
@@ -1890,7 +1931,6 @@ ul.icon_grid{
 	@include clearfix;	
 	li{
 		width:80px;
-		height:80px;
 		margin:0px 0px;
 		padding:0px 0px 15px 0px;
 		a{
@@ -1899,7 +1939,7 @@ ul.icon_grid{
 			padding:5px 0px;
 			text-align:center; 
 			text-decoration:none;
-			color:#3a3a3a; 
+			color:#3a3a3a;
 			div{
 				@include wrap;
 			}
@@ -1952,7 +1992,7 @@ ul.solution_folder.icon_grid{
 	border-bottom:1px solid #ededed;
 	border-top:1px solid #fefefe;
 	ul.icon_grid li{ 
-		width:100px; 
+		width:100px;
 		padding-right:20px;
 	}
 	h3.content_title{

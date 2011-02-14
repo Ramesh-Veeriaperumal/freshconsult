@@ -55,7 +55,7 @@ class EmailController < ApplicationController
         :description => params[:text],
         :email => from_email[:email],
         :to_email => to_email[:email],
-        :email_config => account.email_configs.find_by_reply_email(to_email[:email]),
+        :email_config => account.email_configs.find_by_to_email(to_email[:email]),
         #:name => email.friendly_from,
         :status => Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open],
         :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email]
