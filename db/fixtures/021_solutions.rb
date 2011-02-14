@@ -1,4 +1,4 @@
-account = Account.first
+account = Account.current
 
 folder = Solution::Folder.seed(:account_id, :name) do |s|
   s.account_id = account.id

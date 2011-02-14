@@ -43,6 +43,7 @@ class Account < ActiveRecord::Base
   before_create :set_time_zone
   
   after_create :create_admin
+  after_create :populate_seed_data
   after_create :send_welcome_email
   
   acts_as_paranoid
@@ -161,7 +162,11 @@ class Account < ActiveRecord::Base
       self.user.role_token = 'admin'
       self.user.save
     end
-    
+
+    def populate_seed_data
+      PopulateAccountSeed.populate_for(self)
+    end
+
     def send_welcome_email
       #SubscriptionNotifier.deliver_welcome(self) #by Shan temp
     end

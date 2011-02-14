@@ -1,4 +1,71 @@
 module SeedFu
+  
+  class PopulateSeed
+    def self.populate
+      fixture_path = ENV["FIXTURE_PATH"] ? ENV["FIXTURE_PATH"] : "db/fixtures"
+  
+      seed_files = (
+        ( Dir[File.join(RAILS_ROOT, fixture_path, '*.rb')] +
+          Dir[File.join(RAILS_ROOT, fixture_path, '*.rb.gz')] ).sort +
+        ( Dir[File.join(RAILS_ROOT, fixture_path, RAILS_ENV, '*.rb')] +
+          Dir[File.join(RAILS_ROOT, fixture_path, RAILS_ENV, '*.rb.gz')] ).sort
+      ).uniq
+      
+      if ENV["SEED"]
+        filter = ENV["SEED"].gsub(/,/, "|")
+        seed_files.reject!{ |file| !(file =~ /#{filter}/) }
+        puts "\n == Filtering seed files against regexp: #{filter}"
+      end
+  
+      seed_files.each do |file|
+        pretty_name = file.sub("#{RAILS_ROOT}/", "")
+        puts "\n== Seed from #{pretty_name} " + ("=" * (60 - (17 + File.split(file).last.length)))
+  
+        old_level = ActiveRecord::Base.logger.level
+        begin
+          ActiveRecord::Base.logger.level = 7
+  
+          ActiveRecord::Base.transaction do
+            if pretty_name[-3..pretty_name.length] == '.gz'
+              # If the file is gzip, read it and use eval
+              #
+              Zlib::GzipReader.open(file) do |gz|
+                chunked_ruby = ''
+                gz.each_line do |line|
+                  if line == "# BREAK EVAL\n"
+                    eval(chunked_ruby)
+                    chunked_ruby = ''
+                  else
+                    chunked_ruby << line
+                  end
+                end
+                eval(chunked_ruby) unless chunked_ruby == ''
+              end
+            else
+              # Just load regular .rb files
+              #
+              File.open(file) do |file|
+                chunked_ruby = ''
+                file.each_line do |line|
+                  if line == "# BREAK EVAL\n"
+                    eval(chunked_ruby)
+                    chunked_ruby = ''
+                  else
+                    chunked_ruby << line
+                  end
+                end
+                eval(chunked_ruby) unless chunked_ruby == ''
+              end
+            end
+          end
+  
+        ensure
+          ActiveRecord::Base.logger.level = old_level
+        end
+      end
+    end
+  end
+
   class Seeder
     def self.plant(model_class, *constraints, &block)
       constraints = [:id] if constraints.empty?
