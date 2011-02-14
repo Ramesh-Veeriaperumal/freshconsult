@@ -6,8 +6,8 @@
 		if(email_domain != ''){
 			email_domain = email_domain.split(".")[0];
 		}		
-		account_name = "<%=current_account.name%>".toLowerCase();
-		reply_email  = "@"+account_name+".freshdesk.com";
+		account_name = "<%=current_account.full_domain%>".toLowerCase();
+		reply_email  = "@"+account_name;
 		
 		
 		if(email_domain.toLowerCase() == account_name){
