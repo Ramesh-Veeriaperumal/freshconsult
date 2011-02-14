@@ -9,7 +9,7 @@
         <%= link_to(h(ticket.subject) + " (##{ticket.display_id})", ticket, :title => ticket.description ) %>
       </h3>
 	  <% unless ticket.requester.nil? %>
-		from <%= link_to(h(ticket.requester.name), ticket.requester, :class => 'user_name' ) %>
+		from <%= link_to(h(ticket.requester.display_name), ticket.requester, :class => 'user_name' ) %>
 	  <% end %>
 	  <% unless ticket.group.nil? %>
 	  	in <%= link_to( h(ticket.group.name), ticket.group ) %>
@@ -21,7 +21,7 @@
       <% if ticket.freshness == :new %>
         Unassigned <button class="accept-button" action="<%= assign_helpdesk_ticket_url(ticket) %>">Pick Up</button> 
       <% else %>
-        <span>Assigned to <%= link_to(h(ticket.responder.name), ticket.responder, :class => 'username') %></span>
+        <span>Assigned to <%= link_to(h(ticket.responder.display_name), ticket.responder, :class => 'username') %></span>
       <% end %>
 	  	<ul>
 			<li>
