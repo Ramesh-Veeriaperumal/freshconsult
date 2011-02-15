@@ -52,11 +52,11 @@
 		</li>
 		<li class="small">
         	<%= f.label :art_type, "Solution Type" %>
-        	<%= f.select :art_type, Helpdesk::Article::TYPE_OPTIONS, :class => "select" %>
+        	<%= f.select :art_type, Solution::Article::TYPE_OPTIONS, :class => "select" %>
         </li>	
 		<li class="small">
           	<%= f.label :status, "Solution Status" %>
-          	<%= f.select :status, Helpdesk::Article::STATUS_OPTIONS, :class => "select" %>
+          	<%= f.select :status, Solution::Article::STATUS_OPTIONS, :class => "select" %>
         </li>
 	</ul>
 	
