@@ -10,7 +10,25 @@
 	  </div> 
 	  <div class="page_area">
 	  		<h3 class="title"><%= @article.title %></h3>
-	  		<%= @article.description %>		
+			<ul>
+			<p>
+	  		<%= @article.description %>	
+			</p>
+			<p>
+		    Created By: 
+			<%= @article.user.name%>	
+			</p>
+			<p>
+			Solution Type:
+			<%= @article.type_name%>
+			</p>
+			<p>
+				Solution Status:
+			<%=@article.status_name%>
+			</p>
+			
+			</ul>
+			
 	  </div>	 
 </div>
  

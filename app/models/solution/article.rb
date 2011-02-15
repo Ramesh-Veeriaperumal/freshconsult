@@ -7,4 +7,34 @@ class Solution::Article < ActiveRecord::Base
     :as => :attachable,
     :class_name => 'Helpdesk::Attachment',
     :dependent => :destroy
+    
+    
+    
+    STATUSES = [
+                  [ :draft,       "Draft",        1 ], 
+                  [ :published,   "Published",    2 ]
+                ]
+
+  STATUS_OPTIONS = STATUSES.map { |i| [i[1], i[2]] }
+  STATUS_NAMES_BY_KEY = Hash[*STATUSES.map { |i| [i[2], i[1]] }.flatten]
+  STATUS_KEYS_BY_TOKEN = Hash[*STATUSES.map { |i| [i[0], i[2]] }.flatten]
+  
+  TYPES = [
+    [ :workaround,   "Workaround",   1 ], 
+    [ :permanent,    "Permanent",    2 ]
+  ]
+
+  TYPE_OPTIONS = TYPES.map { |i| [i[1], i[2]] }
+  TYPE_NAMES_BY_KEY = Hash[*TYPES.map { |i| [i[2], i[1]] }.flatten]
+  TYPE_KEYS_BY_TOKEN = Hash[*TYPES.map { |i| [i[0], i[2]] }.flatten]
+  
+  def type_name
+    TYPE_NAMES_BY_KEY[art_type]
+  end
+  
+  def status_name
+    STATUS_NAMES_BY_KEY[status]
+  end
+    
+    
 end
