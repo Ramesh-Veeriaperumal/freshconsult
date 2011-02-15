@@ -2,6 +2,7 @@
 <% content_for :head do %>
   <%= stylesheet_link_tag "autosuggest_inquisitor" %>
   <%= javascript_include_tag "autosuggest" %>
+  <%= javascript_include_tag "helpdesk/multifile.js" %>
 
   <% javascript_tag do %>
     document.observe("dom:loaded", function(){
@@ -48,7 +49,7 @@
 	
 </script>
 
-<% form_for @item do |f| %>
+<% form_for @item, :html => {:multipart => true } do |f| %>
   <%= f.error_messages %>
   	<%= hidden_field_tag  :topic_id,  params[:topic_id] %> 
 	<ul class="ui-form">
@@ -142,6 +143,14 @@
 		 <% end %>			 
 		<% end %>
 	<% end %>
+		<li>
+			<label>Attach files</label>
+			<input type="file" id="ticket_file" name="emptyfile" nameWhenFilled="helpdesk_ticket[attachments][][file]" fileContainer="ticket-container" fileList="ticket-attachments" sendFocusTo="ticket-body" />
+			<div class="attachments" id="ticket-container" style="display:none">
+			  <div id="ticket-attachments">
+			  </div>
+	        </div>
+		</li>
 	</ul>
 	
     <div class="button-container">
@@ -151,3 +160,20 @@
     </div>
 
   <% end %>
+  
+  <%# 
+  The following is a template used by multifile.js to create rows in
+  the attachments table.
+  %>
+
+<textarea id="file-list-template" style="display:none">
+  <div class="item">
+  	<span>
+  		#{name} - <a href="javascript:void(0)" onclick="Helpdesk.Multifile.remove(this); return false;", inputId="#{inputId}">remove</a>
+	</span>
+	<span style="display:none;">
+      <label class="overlabel">Description</label>
+      <input type="text" name="helpdesk_ticket[attachments][][description]" />
+    </span>
+  </div>
+</textarea>

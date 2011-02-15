@@ -62,6 +62,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :class_name => 'Helpdesk::Issue',
     :through => :ticket_issues
     
+  has_many :attachments,
+    :as => :attachable,
+    :class_name => 'Helpdesk::Attachment',
+    :dependent => :destroy
+
+  attr_protected :attachments #by Shan - need to check..
+
   has_one :ticket_topic
   has_one :topic,:through => :ticket_topic
   
