@@ -1,12 +1,13 @@
-<li>	
+<li>
 	<h4 class="forum_title">
+		<span class="forum_type forum_<%= forum.forum_type %>"><%= forum.type_name %></span>
 		<%= link_to ( h(forum.name), category_forum_path(category, forum), :class => "title" )  %>
 		<span class="subcounter">(<%= content_tag(:span, forum.topics.size, :class => "sub_counter") %>)</span>
 	</h4>
 	<div class="topic_list">
 		<% unless (forum.topics.size == 0) %>
 			<% forum.topics.each do |topic| %>
-				<%= link_to topic.title, category_forum_topic_path(category, forum, topic) , :class => "topic" %>
+				 <%= link_to topic.title, category_forum_topic_path(category, forum, topic) , :class => "topic" %>
 			<% end %>
 		<% else %>
 			<span class="no_info_text">No topics in this forum - </span><%= link_to 'add a new topic'[:create_new_topic], new_category_forum_topic_path(category, forum) %>

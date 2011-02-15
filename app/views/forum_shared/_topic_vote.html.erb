@@ -1,35 +1,52 @@
 	<span class="seperator"></span>
 	<span id="votes<%= @topic.id %>">
-		
-		<% if(topic_vote.voted_by_user? current_user) %>
-			<% if( topic_vote.votes_for == 1 ) %>  
-				You like this idea -
-			<% else %>
-				<%= pluralize(topic_vote.votes_for, "Person") %>
-				including You like this idea -
-			<% end %>
-		<% else %>
-			<% if (topic_vote.votes_for != 0) %>
-				<%= pluralize(topic_vote.votes_for, "Person") %>
-				<%= (topic_vote.votes_for > 1)?"like":"likes" %>  this idea -
-			<% end %>
+		    <% info_text = (@forum.forum_type != 2) ? ((topic_vote.votes_for == 1)?"has":"have"): ((topic_vote.votes_for > 1)?"like":"likes") %>
 			
-		<% end %>
+			<% forum_type_name = @forum.type_name.singularize %>
+			
+			<% if(topic_vote.voted_by_user? current_user) %>
+				<div class="forum_info">
+				<% if( topic_vote.votes_for == 1 ) %>  
+					You <%= (@forum.forum_type != 2) ? "have" : "like" %> this <%= forum_type_name %>
+				<% else %>
+					<%= pluralize(topic_vote.votes_for, "Person") %>
+					"including you" <%= info_text %> this <%= forum_type_name %>
+				<% end %>
+				</div>
+			<% else %>
+				
+				<% if (topic_vote.votes_for != 0) %>
+					<div class="forum_info">
+						<%= pluralize(topic_vote.votes_for, "Person") %>
+						<%= info_text %>  this <%= forum_type_name %>
+					</div>
+				<% end %>
+				
+			<% end %>
+		
 			
 			<strong>
+			<%	like_text = ((@forum.forum_type != 2)?"I have":"I like") + " this " + forum_type_name %>
 			<% unless(topic_vote.voted_by_user? current_user) %>
-				<%= link_to_remote ((topic_vote.votes_for != 0) ? "me too" : "do you like this idea?" ),  
+				<%= link_to_remote like_text,  
 						:update => "voting_container",  
 						:url => { :action=>"vote", :id => @topic.id, :forum_id => @forum.id , :category_id => @forum_category.id,  
-						:id=>@topic.id,  
-						:vote=>"for"} %>
+									:id => @topic.id,  
+									:vote => "for"}, 
+						:html => { :class => "forum_button" }
+				%>
 			<% else %>
-			<%=%>
-				<%= link_to_remote ("Unlike"),  
-					:update => "voting_container",  
-					:url => { :action=>"destroy_vote", :id => @topic.id, :forum_id => @forum.id , :category_id => @forum_category.id,  
-					:id=>@topic.id,  
-					:vote=>"for"} %>
+				<% if (@forum.forum_type == 2) %> 
+					<%= link_to_remote ("Unlike"),  
+						:update => "voting_container",  
+						:url => { :action=>"destroy_vote", :id => @topic.id, :forum_id => @forum.id , :category_id => @forum_category.id,  
+						:id=>@topic.id,  
+						:vote=>"for"},
+						:html => { :class => "forum_button" }
+					 %>
+				 <% else %>
+				 	<%= render :partial => "/forum_shared/follow" %>		 
+				 <% end %>
 			<% end %>
 			</strong>
 		   

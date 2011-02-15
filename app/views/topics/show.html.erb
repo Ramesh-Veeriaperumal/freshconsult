@@ -5,14 +5,24 @@
 <% content_for :sidebar do -%>
 	<div class="rtCnt">
 		<div class="rtDetails_forum">
-		<%= link_to('Connect To Ticket', new_helpdesk_ticket_path(:topic_id => @topic.id)) if logged_in? and @topic.ticket_topic.nil? %>
+
+		<h4 class="title">Moderate</h4>
+		<%= link_to('Connect To Ticket', new_helpdesk_ticket_path(:topic_id => @topic.id), :class => "fdbutton") if logged_in? and @topic.ticket_topic.nil?  %>
 		<%= link_to(h(@topic.ticket.subject), helpdesk_ticket_path(@topic.ticket)) unless @topic.ticket_topic.nil? %>
 		
+		<% if logged_in? %>
+						<% form_tag category_forum_topic_monitorship_path(@forum_category,@forum, @topic) do -%>
+							<div class="checkbox">
+							  <input id="monitor_checkbox" type="checkbox" <%= "checked='checked'" if @monitoring %> 
+							    						   onclick="if (this.checked) {<%= remote_function :url => category_forum_topic_monitorship_path(@forum_category,@forum, @topic) %>} else {<%= remote_function :url => category_forum_topic_monitorship_path(@forum_category,@forum, @topic), :method => :delete %>}" />
+							  <label id="monitor_label" for="monitor_checkbox"><%= @monitoring ? 'You are currently following this topic'[] : 'Follow this topic'[] %></label>
+							  <%= hidden_field_tag '_method', 'delete' if @monitoring %>
+							  <%# submit_tag :Set, :id => 'monitor_submit' %>
+							</div>
+						<% end %>
+					<% end %>
 		<% if logged_in? && current_user.has_manage_forums? && @forum.ideas? %>
-		<h4 class="title">Moderate</h4>
-		<div>
-			Mark this idea as 
-		</div>
+		<div> Mark this idea as </div>
 		<div class="mark_action">
 			 <% Topic::IDEAS_STAMPS_OPTIONS.each do |k,v| %>
 			 	<% class_name = "stamp_type_#{v}" %>
@@ -48,12 +58,14 @@
 		<div class="request_details">
 
 	    	<div class="requestCnt">
-	    		<div class="mark_action">
-						<% if @topic.stamp_type %>
-						<% class_name = "stamp_type_#{@topic.stamp_type}" %>
-							<div class="<%=class_name%> stamp"><%= h(@topic.stamp_name) %></div>
-						<% end %>
-				</div>
+	    		<% if @forum.ideas? %>
+		    		<div class="mark_action">
+							<% if @topic.stamp_type %>
+							<% class_name = "stamp_type_#{@topic.stamp_type}" %>
+								<div class="<%=class_name%> stamp"><%= h(@topic.stamp_name) %></div>
+							<% end %>
+					</div>
+				<% end %>
 	    		<div class="title">
 			        <b><%= h @topic.title  %></b>	  
 			        <em>
@@ -61,6 +73,7 @@
 					  	<span>(<%= 'locked'[] %>)</span>
 					  <% end %>
 					</em>
+<<<<<<< HEAD
 					<div class="floatr">
 	    			<% if logged_in? %>
 						<% form_tag category_forum_topic_monitorship_path(@forum_category,@forum, @topic), :style => 'margin-top:0em; float:right;' do -%>
@@ -73,6 +86,10 @@
 							</div>
 						<% end %>
 					<% end %>
+=======
+					<div class="floatr" >
+	    			
+>>>>>>> Venom_beta_release
 				</div>	
 			    </div>
 				<% first_post = @posts.first %>
@@ -80,8 +97,8 @@
 					<div class="item_actions">
 						  <% if logged_in? %>
 						      <% if @topic.editable_by?(current_user) -%>
-						        <%= link_to('Edit'[], edit_category_forum_topic_path(@forum_category,@forum, @topic), :class => "utility") %> |
-						        <%= link_to('Eelete'[], category_forum_topic_path(@forum_category,@forum, @topic), :class => "utility", :method => :delete, :confirm => 'Delete this topic forever?'[:delete_topic_conf]) %>
+						        <%= link_to('Edit'[], edit_category_forum_topic_path(@forum_category,@forum, @topic), :class => "button") %> 
+						        <%= link_to('Delete'[], category_forum_topic_path(@forum_category,@forum, @topic), :class => "button", :method => :delete, :confirm => 'Delete this topic forever?'[:delete_topic_conf]) %>
 
 						  <% end %>
 					</div>	
@@ -96,7 +113,9 @@
 						<%= first_post.body_html %>
 					</div>
 					<div class="status" id="voting_container">
+						<% if(@forum.type != 4) %>
 						  <%= render :partial => "/forum_shared/topic_vote", :object => @topic %>
+						<% end %>
 					</div>
 				</div>
 	    	</div>
@@ -124,9 +143,6 @@
 			</div>	
 				<% if logged_in? %>
 				<div id="edit"></div>
-
-
-
 				<div id="reply" class="editbox" style="display:none;">
 				<div class="request_panel">
 				  <%= content_tag 'p', h(flash[:bad_reply]), :class => 'notice' if flash[:bad_reply] %>

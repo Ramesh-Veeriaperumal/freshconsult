@@ -7,7 +7,7 @@
   <% javascript_tag do %>
     document.observe("dom:loaded", function(){
 
-      new bsn.AutoSuggest('helpdesk_ticket_email', {
+     /* new bsn.AutoSuggest('helpdesk_ticket_email', {
         script: "<%= autocomplete_helpdesk_authorizations_path %>?",
         varname: "v",
         json: true,
@@ -20,34 +20,61 @@
 		delay:200
       });
 
-      Form.Element.activate('helpdesk_ticket_email')
+      Form.Element.activate('helpdesk_ticket_email');*/
 
     });
-    
+    	
   <% end %>
 <% end %>
 
-<script>
-	
+<% javascript_tag do %>
 	function changeAggentList(group_id)
-	{
-		
+	{	
 		jQuery.ajax({
-	      					type: 'POST',
-							url: '/helpdesk/tickets/get_agents/'+group_id,
-							contentType: 'application/text',
-	      					success: function(data){
-																					
-											jQuery('#assigned_to').replaceWith(data);
-									}
-				});
-		
-		
-		
-		
+		     	type:        'POST',
+				url: 		 '/helpdesk/tickets/get_agents/'+group_id,
+				contentType: 'application/text',
+		     	success: function(data){
+																			
+									jQuery('#assigned_to').replaceWith(data);
+							}
+		});
 	}
-	
-</script>
+	jQuery(document).ready(function(){
+		jQuery("#helpdesk_ticket_email").autocomplete({
+			source: function( request, response ) {
+				jQuery.ajax({
+					url: "<%=autocomplete_helpdesk_authorizations_path%>",
+					data: {
+						v: request.term
+					},
+					success: function(data) {
+						response( jQuery.map( data.results, function( item ) {
+							//console.log(item.value);
+							return {
+								label: item.value,
+								value: item.id
+							}
+						}));
+					}
+				});
+			},
+			select: function( event, ui ) {
+				
+			},
+			open: function(){
+				jQuery(this).removeClass('ui-corner-all');
+			}
+		}).data( "autocomplete" )
+			._renderItem = function( ul, item ) {
+									return jQuery( "<li></li>" )
+										.data( "item.autocomplete", item )
+										.append( "<a>" + item.label + "<br>" + item.value + "</a>" )
+										.appendTo( ul );
+								};
+	});
+<% end %>
+
 
 <% form_for @item, :html => {:multipart => true } do |f| %>
   <%= f.error_messages %>
@@ -55,16 +82,16 @@
 	<ul class="ui-form">
  	<%
 		@customizer = ActiveSupport::JSON.decode(@item.customizer.json_data)
-		logger.debug "json decoded : #{@customizer}"
+		logger.debug "json decoded:#{@customizer}"
 
 		@customizer.each do |field|
 			case field["label"]
 			 when "Requester" then
     %>
-		<li> 	
-  			<label id="requester-label">Requester *</label>
-  			<input type="text" id="helpdesk_ticket_email" class="text" name="helpdesk_ticket[email]" value="<%=@item.requester.email if @item.requester %>"></input>
-   		</li> 
+	<li> 	
+  		<label id="requester-label">Requester *</label>
+  		<input type="text" id="helpdesk_ticket_email" class="text" name="helpdesk_ticket[email]" value="<%=@item.requester.email if @item.requester %>"></input>
+   	</li> 
 			
 	<% when "Subject" then%>
 		<li>
