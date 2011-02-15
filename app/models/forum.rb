@@ -22,9 +22,10 @@ class Forum < ActiveRecord::Base
   format_attribute :description
   
   TYPES = [
-    [ :howto,   "How To",   1 ], 
-    [ :ideas,    "Share Ideas",    2 ],
-    [ :problem,    "Report a Problem",    3 ]
+    [ :howto,   "Questions",     1 ], 
+    [ :ideas,   "Ideas",         2 ],
+    [ :problem, "Problems",      3 ],
+    [ :announce, "Announcement", 4 ]
   ]
 
   TYPE_OPTIONS = TYPES.map { |i| [i[1], i[2]] }
