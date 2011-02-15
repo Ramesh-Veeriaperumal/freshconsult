@@ -62,6 +62,7 @@ class EmailController < ApplicationController
       )
  
       ticket.save
+      create_attachments(ticket, ticket)
       ticket.create_activity(ticket.requester, "{{user_path}} submitted a new ticket {{notable_path}}", {}, 
                                    "{{user_path}} submitted the ticket")
       ticket
@@ -77,12 +78,7 @@ class EmailController < ApplicationController
           :account_id => ticket.account_id
       )
       
-      if note.save
-        Integer(params[:attachments]).times do |i|
-          #logger.debug("attachment #{i}")
-          note.attachments.create(:content => params["attachment#{i+1}"], :account_id => ticket.account_id)
-        end
-      end
+      create_attachments(ticket, note) if note.save 
       
       ticket.create_activity(ticket.requester, "{{user_path}} sent an {{email_response_path}} to the ticket {{notable_path}}", 
                     {'eval_args' => {'email_response_path' => ['email_response_path', {
@@ -91,5 +87,11 @@ class EmailController < ApplicationController
                      "{{user_path}} sent an {{email_response_path}}")
       
       note
+    end
+
+    def create_attachments(ticket, item)
+      Integer(params[:attachments]).times do |i|
+        item.attachments.create(:content => params["attachment#{i+1}"], :account_id => ticket.account_id)
+      end
     end
 end
