@@ -1,7 +1,7 @@
 class Solution::ArticlesController < ApplicationController
   
   before_filter :set_selected_tab
-  
+  uses_tiny_mce :options => Helpdesk::EDITOR_OPTIONS 
   def index
     @articles = Solution::Article.all
     
