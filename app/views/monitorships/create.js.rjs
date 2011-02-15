@@ -1,0 +1,5 @@
+#page["monitorship-icon-topics-#{params[:topic_id]}"].remove_class_name(:grey)
+#page["monitorship-icon-topics-#{params[:topic_id]}"].add_class_name(:green)
+
+page[:monitor_label].innerHTML = "You are currently following this topic"[]
+alert("test");

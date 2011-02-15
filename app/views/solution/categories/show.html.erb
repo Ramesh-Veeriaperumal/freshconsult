@@ -16,12 +16,10 @@
 <div>
 	  <div class="header_area">
 	  	<div class="floatr">
-	
-		  			<%= link_to ("New Solution", new_solution_category_folder_article_path(@item , @item.folders.first) , :class => "fdbutton") unless @item.folders.empty? %>
-	
+			<%= link_to ("New Solution", new_solution_category_folder_article_path(@item , @item.folders.first) , :class => "fdbutton") unless @item.folders.empty? %>
 			<%= link_to "New Folder", new_solution_category_folder_path(@item), :class => "fdbutton" %>
 		  </div>
-		<%= link_to "Solutions", solution_category_path, :class => "page_title" %>
+		<%= link_to "Solutions", solution_categories_path, :class => "page_title" %>
 	  </div>
 	  <div class="forum_list">
 		  <h5 class="category_title">

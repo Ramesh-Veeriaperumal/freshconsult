@@ -1,20 +1,22 @@
-<% content_for :layoutType do%>single<% end %>
+<% content_for :layoutType do%><% end %>
 
 <div class="pageContent">
 	<%= render(:partial => '/shared/companyheader', :locals => {:type => "company"}) %>
 	
-	<ul id="companies" class="contact_table content_list">
+	<ul id="companies" class="content_list">
 		<% @customers.each do |customer| %>
 		  <li class="<%= cycle('stripe', '') %>">		  	
 			<div class="item_actions">
-		    	<%= link_to('edit', edit_customer_path(customer), :class => "button") %>
+		    	<%= link_to('Edit', edit_customer_path(customer), :class => "button") %>
 		    	<%= link_to 'Delete', customer, :confirm => 'Are you sure?', :method => :delete, :class => "button" %>
 			</div>
-			<div class="preview_pic"><img src="/images/icons/building.png" width="32px" height="32px" /></div>
-		    <span class="user_prime_Details">
-		    	<%= link_to(h(customer.name), customer, :class => "user_name" ) %>			
+			<div class="preview_pic">
+				<img src="/images/company_profile_blank.gif" />
+			</div>
+		    <div class="item_information">
+		    	<%= link_to(h(customer.name), customer, :class => "item_info" ) %>			
 				<div><%= h customer.description %></div>
-			</span>		    
+			</div>		    
 		  </li>
 		<% end %>
 	</ul>	

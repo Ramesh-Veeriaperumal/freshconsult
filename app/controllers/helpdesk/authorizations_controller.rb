@@ -17,7 +17,7 @@ class Helpdesk::AuthorizationsController < ApplicationController
       :conditions => ["name like ? or email like ? ", "%#{params[:v]}%", "%#{params[:v]}%"], 
       :limit => 30)
 
-    r = {:results => items.map {|i| {:id => i.email, :value => "#{i.name} &lt;#{i.email}&gt;"} } } 
+    r = {:results => items.map {|i| {:id => i.email, :value => i.name} } } 
 
     respond_to do |format|
       format.json { render :json => r.to_json }

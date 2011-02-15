@@ -19,7 +19,7 @@
 		  	<%= link_to "New Folder", new_solution_category_folder_path(@item.category_id), :class => "fdbutton" %>
 			<%= link_to "New Solution", new_solution_category_folder_article_path(@item.category_id, @item), :class => "fdbutton" %>
 		  </div>
-		<%= link_to "Solutions", solution_category_folders_path, :class => "page_title" %>
+		<%= link_to "Solutions", solution_categories_path, :class => "page_title" %>
 	  </div>
 	  <div class="forum_list">
 		  <h5 class="category_title">
@@ -30,14 +30,14 @@
 					<li>				
 					<div class="topic_list">
 					<% @item.articles.each do |article| %>
-						<li>	
+						<div>	
 						<!--div class="item_actions">
 							<%# link_to('edit', edit_helpdesk_article_path(article), :class => "button") %>
 							<%# link_to('delete', article, :method => 'delete', :confirm => 'Are you sure you want to delete this solution', :class => "button" ) %>					
 						</div-->
 						<!--%= link_to(h(article.title), article, :class => "topic") %-->
-						<%= link_to article.title, solution_category_folder_article_path(@item.category_id , @item, article) %>
-						</li>	
+							<%= link_to article.title, solution_category_folder_article_path(@item.category_id , @item, article, :class => "topic") %>
+						</div>	
 					<% end %>
 					</div>
 				</li>
