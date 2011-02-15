@@ -11,6 +11,9 @@
 	  <div class="page_area">
 	  		<h3 class="title"><%= @article.title %></h3>
 			<ul>
+				<div id="article_voting">
+				<%= render :partial => "voting", :object => @article %>
+				</div>
 			<p>
 	  		<%= @article.description %>	
 			</p>

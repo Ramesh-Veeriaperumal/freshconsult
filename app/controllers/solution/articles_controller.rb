@@ -100,6 +100,20 @@ class Solution::ArticlesController < ApplicationController
       @article.attachments.create(:content => a[:file], :description => a[:description], :account_id => @article.account_id)
     end
   end
+  def thumbs_down_increment
+    @article = Solution::Article.find(params[:id])
+    @article.increment!(:thumbs_down)
+    render :partial => "voting"
+    
+  end
+  
+   def thumbs_up_increment
+     @article = Solution::Article.find(params[:id])
+      @article.increment!(:thumbs_up)
+      render :partial => "voting"
+    
+  end
+  
 protected
 
   def scoper
