@@ -38,6 +38,12 @@
 						<!--%= link_to(h(article.title), article, :class => "topic") %-->
 						<%= link_to article.title, solution_category_folder_article_path(@item.category_id , @item, article) %>
 						</li>	
+						<div class="floatr button_p">
+						<% if logged_in? && current_user.has_manage_solutions? -%>
+							<%= link_to 'Edit' ,edit_solution_category_folder_article_path(@item.category_id , @item, article)  %>
+							<%= link_to('delete', solution_category_folder_article_path(@item.category_id , @item, article), :method => 'delete', :confirm => 'Are you sure you want to delete this category') %>
+						<% end %>
+						</div>
 					<% end %>
 					</div>
 				</li>
