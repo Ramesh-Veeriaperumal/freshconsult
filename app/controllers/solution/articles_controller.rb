@@ -43,17 +43,25 @@ class Solution::ArticlesController < ApplicationController
     
     @article = Solution::Article.new(params[nscname]) 
     set_item_user
-    logger.debug "@article is :: #{@article.inspect}"
-    #@folder = current_account.solution_folders.new(params[nscname]) 
+   
+    redirect_to_url = solution_category_folder_url(params[:category_id], params[:folder_id])
+    redirect_to_url = new_solution_category_folder_article_path(params[:category_id], params[:folder_id]) unless params[:save_and_create].nil?
+   
     respond_to do |format|
       if @article.save
-        format.html { redirect_to(solution_category_folder_url(params[:category_id], params[:folder_id])) }        
+        format.html { redirect_to redirect_to_url }        
         format.xml  { render :xml => @article, :status => :created, :location => @article }
       else
         format.html { render :action => "new" }
         format.xml  { render :xml => @article.errors, :status => :unprocessable_entity }
       end
     end
+  end
+  
+  def save_and_create
+    
+    logger debug "Inside save and create"
+    
   end
 
   def update

@@ -37,12 +37,15 @@ class Solution::FoldersController < ApplicationController
 
   def create 
     
-    logger.debug "params:: #{params.inspect}"
     @folder = Solution::Folder.new(params[nscname]) 
+    
+    redirect_to_url = solution_category_url(params[:category_id])
+    redirect_to_url = new_solution_category_folder_path(params[:category_id]) unless params[:save_and_create].nil?
+   
     #@folder = current_account.solution_folders.new(params[nscname]) 
     respond_to do |format|
       if @folder.save
-        format.html { redirect_to solution_category_url(params[:category_id]) }
+        format.html { redirect_to redirect_to_url }
         format.xml  { render :xml => @folder, :status => :created, :location => @folder }
       else
         format.html { render :action => "new" }
