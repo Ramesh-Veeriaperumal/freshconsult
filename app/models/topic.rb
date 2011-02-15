@@ -50,7 +50,7 @@ class Topic < ActiveRecord::Base
   
   def monitorship_emails
     user_emails = Array.new
-    for monitorship in self.monitorships
+    for monitorship in self.monitorships.active_monitors
       user_emails = monitorships.collect {|a| a.user.email}
     end
     return user_emails

@@ -187,8 +187,8 @@ class Helpdesk::TicketsController < ApplicationController
   end
  
   def create
-   unless params[:topic_id].nil?
-       @item.build_ticket_topic(:topic_id => params[:topic_id])
+   if params[:topic_id].length > 0 
+        @item.build_ticket_topic(:topic_id => params[:topic_id])
    end
     if @item.save!  
       post_persist

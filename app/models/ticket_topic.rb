@@ -7,5 +7,7 @@ class TicketTopic < ActiveRecord::Base
     :foreign_key => 'ticket_id'
     
    validates_uniqueness_of :topic_id,:ticket_id
+   
+   validates_presence_of :topic_id,:ticket_id
   
 end
