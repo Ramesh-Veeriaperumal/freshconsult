@@ -34,22 +34,30 @@
 					<h4 class="forum_title"><span class="title">
 						
 						<%= link_to folder.name,  solution_category_folder_path(@item,folder)  %>
-				<div class="floatr button_p">
+			
 					<% if logged_in? && current_user.has_manage_solutions? -%>
 					<%= link_to 'Edit' ,edit_solution_category_folder_path(folder.category_id,folder), :class => "grey_button"   %>
 					<%= link_to('delete', solution_category_folder_path(folder.category_id,folder), :method => 'delete', :confirm => 'Are you sure you want to delete this category',  :class => "grey_button" ) %>
-				<% end %>
-				</div>
+					<% end %>
+						</span></h4>
 						
 						<!--%= link_to(h(folder.name), folder) %--></span></h4>
 					<div class="topic_list">
+						<ul>
 					<% folder.articles.each do |article| %>
 						<!--div class="item_actions">
 							<%# link_to('edit', edit_helpdesk_article_path(article), :class => "button") %>
 							<%# link_to('delete', article, :method => 'delete', :confirm => 'Are you sure you want to delete this solution', :class => "button" ) %>					
 						</div-->
+						<li>
 						<%= link_to article.title, solution_category_folder_article_path(@item,folder,article), :class => "topic" %>
+						<% if logged_in? && current_user.has_manage_solutions? %>
+							<%= link_to 'Edit' ,edit_solution_category_folder_article_path(@item,folder,article), :class => "grey_button"   %>
+							<%= link_to('delete', solution_category_folder_article_path(@item,folder,article), :method => 'delete', :confirm => 'Are you sure you want to delete this category',  :class => "grey_button" ) %>
 					<% end %>
+					</li>
+					<% end %>
+					</ul>
 					</div>
 				</li>		
 		  <% end %>
