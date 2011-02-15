@@ -85,9 +85,9 @@ class Solution::ArticlesController < ApplicationController
     logger.debug "params::: #{params.inspect}"
     @article = Solution::Article.find(params[:id])
     @article.destroy
-
+    
     respond_to do |format|
-      format.html { redirect_to(solution_category_folder_url(params[:category_id]),params[:folder_id]) }
+      format.html { redirect_to(solution_category_folder_url(params[:category_id],params[:folder_id])) }
       format.xml  { head :ok }
     end
     

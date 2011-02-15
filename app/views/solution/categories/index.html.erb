@@ -6,6 +6,8 @@
 		</div>
 		<strong class="page_title">Solutions</strong>
 	</div>	  
+	
+	
 	<div class="page_area">			
 			<% @categories.each do |category| %>
 			<div class="sol_list">
@@ -13,8 +15,16 @@
 				<div>
 					<%= category.description %>
 				</div>	
+				
+				<div class="floatr button_p">
+				<% if logged_in? && current_user.has_manage_solutions? -%>
+					<%= link_to 'Edit' ,edit_solution_category_path(category), :class => "grey_button"   %>
+					<%= link_to('delete', solution_category_path(category), :method => 'delete', :confirm => 'Are you sure you want to delete this category',  :class => "grey_button" ) %>
+				<% end %>
+				</div>
 				<span class="seperator"></span>
 			</div>
+			
 			<%end%>
 	</div>
 </div>

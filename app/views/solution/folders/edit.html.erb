@@ -1,2 +1,7 @@
-<h1>Solution::Folders#edit</h1>
-<p>Find me in app/views/solution/folders/edit.html.erb</p>
+<div class="pageContent">
+	<h3 class="content_title">Edit Folder</h3>
+	<% form_for (@folder), :url => solution_category_folder_path(@folder.category_id) , :html => {:multipart => true, :id => "folder-form"} do |f| %>
+
+	<%= render :partial => "folder_form" , :locals => { :f => f }%>
+	<% end %>
+</div>
