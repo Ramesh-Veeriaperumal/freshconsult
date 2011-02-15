@@ -1,6 +1,8 @@
 class ForumCategoriesController < ApplicationController
   include ModelControllerMethods
   
+  before_filter :set_selected_tab
+  
   def index
      @forum_categories = scoper.all
   end
@@ -19,6 +21,10 @@ class ForumCategoriesController < ApplicationController
   protected
     def scoper
       current_account.forum_categories
+    end
+    
+    def set_selected_tab
+      @selected_tab = 'Forums'
     end
     
 end
