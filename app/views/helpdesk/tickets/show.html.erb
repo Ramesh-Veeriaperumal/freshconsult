@@ -158,6 +158,7 @@
 		        <em><%= "##{@ticket.display_id}" %></em>
 		        <b><%= h(@ticket.subject) %></b>
 		    </div>
+			<b>See linked forum <%= link_to(h(@ticket.topic.title) , category_forum_topic_path(@ticket.topic.forum.forum_category.id,@ticket.topic.forum.id,@ticket.topic.id)) unless @ticket.ticket_topic.nil? %></b>
 			<div class="description">
 		        <div class="user_details">
 		        	<%= render :partial => "/shared/avatar", :object => @ticket.requester.avatar  %>

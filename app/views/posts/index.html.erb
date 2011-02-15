@@ -39,8 +39,8 @@
   </td>
   <td class="body entry-content">
     <p class="topic">
-      <%= "Topic"[:topic_title] %>: <%= link_to h(post.forum_name), category_forum_path(post.forum.forum_category.id,post.forum_id) %> / 
-      <%= link_to h(post.topic_title), category_forum_topic_path(post.forum.forum_category.id,post.forum_id, post.topic_id) %>
+      <%= "Topic"[:topic_title] %>: <%= link_to h(post.forum_name), category_forum_path(post.topic.forum.forum_category.id,post.forum_id) %> / 
+      <%= link_to h(post.topic_title), category_forum_topic_path(post.topic.forum.forum_category.id,post.forum_id, post.topic_id) %>
     </p>
     
     <%= post.body_html %>

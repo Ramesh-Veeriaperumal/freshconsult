@@ -5,7 +5,9 @@
 <% content_for :sidebar do -%>
 	<div class="rtCnt">
 		<div class="rtDetails_forum">
-		<%= link_to('Connect To Ticket', new_helpdesk_ticket_path(:topic_id => @topic.id)) if logged_in? %>
+		<%= link_to('Connect To Ticket', new_helpdesk_ticket_path(:topic_id => @topic.id)) if logged_in? and @topic.ticket_topic.nil? %>
+		<%= link_to(h(@topic.ticket.subject), helpdesk_ticket_path(@topic.ticket)) unless @topic.ticket_topic.nil? %>
+		
 		<% if logged_in? && current_user.has_manage_forums? && @forum.ideas? %>
 		<h4 class="title">Moderate</h4>
 		<div>
