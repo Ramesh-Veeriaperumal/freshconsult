@@ -1,0 +1,18 @@
+
+	<ul id="folder-form-container" class="ui-form">  
+	    <%= f.error_messages %>
+		<li>
+	    	<%= f.label(:name, "Name") %>
+	    	<%= f.text_field :name %>
+		</li>
+		<li>
+			<%= f.label(:description, "More Info") %>
+		 	<%= f.text_area :description, :class => "text" %>
+	    	<!--%= f.text_area :description, :class => "mceEditor" %-->
+		</li>  
+	</ul>	
+	<div class="button-container">
+	    <%= submit_tag "Save", :class => "fdbutton submit" %>
+	    <%= submit_tag "Save and Create Another", :name => "save_and_create", :class => "fdbutton" %>
+		<%= link_to('Cancel'[:cancel], solution_categories_url, :class => "fdbutton grey" ) %>
+	</div>

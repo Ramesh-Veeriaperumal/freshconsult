@@ -24,7 +24,7 @@ Rails::Initializer.run do |config|
 
   # Specify gems that this application depends on. 
   # They can then be installed with "rake gems:install" on new installations.
-  config.gem "mms2r" #3.2.0
+  #config.gem "mms2r" #3.2.0
   config.gem "classifier"
   config.gem "stemmer"
   config.gem 'RedCloth' #4.2.3

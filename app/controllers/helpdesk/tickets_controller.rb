@@ -5,7 +5,8 @@ class Helpdesk::TicketsController < ApplicationController
   include HelpdeskControllerMethods
 
   before_filter :load_multiple_items, :only => [:destroy, :restore, :spam, :unspam, :assign]
-
+  before_filter :set_customizer , :only => [:new , :edit]
+ 
   def index
 
     @items = TicketsFilter.filter(@template.current_filter, current_user, current_account.tickets)
@@ -37,7 +38,7 @@ class Helpdesk::TicketsController < ApplicationController
       
      @signature = ""
      @agents = Agent.find(:first, :joins=>:user, :conditions =>{:user_id =>current_user.id} )     
-     @signature = "\n\n\n #{@agents.signature}" unless @agents.nil?
+     @signature = "\n\n\n #{@agents.signature}" unless (@agents.nil? || @agents.signature.blank?)
      
      logger.debug "subject of the ticket is #{@item.subject}"
      
@@ -195,7 +196,26 @@ class Helpdesk::TicketsController < ApplicationController
       create_error
     end
   end
-  
+ 
+   def close_ticket
+     
+     @ticket = Helpdesk::Ticket.find_by_display_id(params[:id])
+     status_id = Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:closed]
+     logger.debug "close the ticket...with status id  #{status_id}"
+     res = Hash.new
+     if @ticket.update_attribute(:status , status_id)
+       res["success"] = true
+       res["status"] = 'Closed'
+       res["value"] = status_id
+       res["message"]="Successfully updated"
+       render :json => ActiveSupport::JSON.encode(res)
+     else
+       res["success"] = false
+       res["message"]="closing the ticket failed"
+       render :json => ActiveSupport::JSON.encode(res)
+       
+     end
+  end
 protected
 
   def item_url

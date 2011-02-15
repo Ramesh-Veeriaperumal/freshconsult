@@ -31,7 +31,7 @@ body {margin:0; padding:0 10px 0 10px; border:0; height:100%; overflow-y:auto; }
 #wrap{
 	@include container;
 	background:#ffffff;
-	padding:0px 15px 15px 15px;
+	padding:5px 25px 15px 25px;
 	margin-bottom:18px;
 	margin-top:18px;
 	@include corners(6px);
@@ -48,7 +48,6 @@ body {margin:0; padding:0 10px 0 10px; border:0; height:100%; overflow-y:auto; }
 
 #minwidthfix{
 	width:950px;
-	background:red;
 }
  
 #inner {    
@@ -192,7 +191,7 @@ a.brand{
 		float:left;
 	} 
 	h3{
-		font-size:24px; 
+		font-size:20px; 
 		text-decoration:none;
 		font-weight:bold;
 		margin:0px;
@@ -654,7 +653,8 @@ ul.activityfeed{
 	padding-bottom:8px;
 }
 			
-.pageContent{	
+.pageContent{
+	padding:10px 18px;	
 	h2{
 		color:#555;
 	}	 
@@ -1128,29 +1128,15 @@ div.leader-right{
 .fdbutton{ 
 	@include anchor-button;
     @include min-width(80px);
-    padding: 5px 15px;    
+    padding: 5px 10px 5px 5px;    
     margin: 2px; 
     border:1px solid #cdcecd;
     text-align:center;
     font-size: 12px;
-    color:#4a4a25 !important;
-    @include corners(10px);
-    @include vertical-gradient(#f1fce3, #ddf0c4);
-    
-    @include inset-shadows(rgba(0, 0, 0, 0.05), 0, 2px, -2px);
-     box-shadow:
-        0 2px rgba(0, 0, 0, 0.05),
-        0 -2px rgba(0, 0, 0, 0.05) inset;
-
-    -webkit-box-shadow:
-        0 2px rgba(0, 0, 0, 0.05),
-        0 -2px rgba(0, 0, 0, 0.05) inset;
-
-    -moz-box-shadow:
-        0 2px rgba(0, 0, 0, 0.05),
-        0 -2px rgba(0, 0, 0, 0.05) inset;
-       
-     @include text-shadow(rgba(255,255,255,0.9), 1px, 1px, 1px);
+    @include link-colors(#4a4a4a, #666666, #4a4a4a, #4a4a4a);
+    @include corners(6px);
+    @include vertical-gradient(#f1fce3, #ddf0c4);       
+    @include text-shadow(#ffffff, 0px, 1px, 1px);
 }
 
 .grey{
@@ -1161,7 +1147,6 @@ div.leader-right{
 .fdbutton.active{
 	@include inset-shadows(#888, 0px, 1px, 2px);
 }
-
 
 	
 .button {
@@ -1555,6 +1540,10 @@ body h5{
 		
 	}
 	
+	.rtDetails, .rtPanel{
+		@include min-height(550px);
+	}
+	
 	.rtDetails{
 		margin:0px 80px 0px 0px;
 		@include corners(6px, 0px, 0px, 6px);
@@ -1563,7 +1552,6 @@ body h5{
 		padding-top:5px;
 		z-index:10;
 		position:relative;
-		min-height:500px;
 		h3.title{
 			font-size:14px;
 			padding:0px 10px 3px 10px;
@@ -1599,7 +1587,6 @@ body h5{
 	
 	.rtPanel{
 		float:right;
-		min-height:501px;
 		width:80px;
 		@include corners(0px, 6px, 6px, 0px);
 		position:relative;
@@ -1640,6 +1627,9 @@ body h5{
 			img.tags{
 				@include sprite-column(1, $spritesize);
 			}
+			img.activity{
+				@include sprite-column(7, $spritesize);
+			}
 			
 			em{
 				display:block;
@@ -1669,10 +1659,48 @@ body h5{
 			img.tags{
 				@include sprite-position(1, 2, $spritesize, $spritesize);
 			}
+			img.activity{
+				@include sprite-position(7, 2, $spritesize, $spritesize);
+			}
 			color:#ffffff;
 		}
 		
 	}
+}
+
+
+.admin_icons{
+	$aicon_size:66px;
+	img{
+		@include sprite-background("admin_icons.png", 34px, 34px);
+	}
+	.ticket_field{
+		@include sprite-column(5, $aicon_size);
+	}
+	.sla{
+		@include sprite-column(2, $aicon_size);
+	}
+	.email{
+		@include sprite-column(3, $aicon_size);
+	}
+	.email_notify{
+		@include sprite-column(4, $aicon_size);
+	}								
+	.helpdesk_rebrand{
+		@include sprite-column(1, $aicon_size);
+	}
+	.user{
+		@include sprite-column(6, $aicon_size);
+	}				
+	.user_group{
+		@include sprite-column(7, $aicon_size);
+	}				
+	.virtual_agent{
+		@include sprite-column(8, $aicon_size);
+	}				
+	.automation{
+		@include sprite-column(9, $aicon_size);
+	}								
 }
 
 .mark_action{
@@ -1682,36 +1710,35 @@ body h5{
 				margin:0px 0px 6px 0px;
 				@include corners(4px);
 				@include link_colors(#ffffff, #ffffaf, #ffffff, #ffffff);
+				@include text-shadow(#333333, 0px, 1px, 1px);
 				text-decoration:none;
 				font-weight:bold;
+			}
+			a{
+				background: #666666;
+				color:#ffffff;
 			}
 			
 			.stamp{
 				margin:0px 8px;
+				@include min-width(80px);
+				text-align:center;
 			}
 			
 			a.hover, a.active{
 				@include inset-shadows(#000000, 0px, 1px, 2px);				
 			}
-						
-			.stamp_type_1{
-				background:#336600;
-			}
-			.active.stamp_type_1{
+			
+			.stamp.stamp_type_1{
+				background: #cc6600;
+			} 		
+			.stamp.stamp_type_2{
 				background:lighten(#336600, 10%);
-			}
-			.stamp_type_2{
-				background:#cc6600;
-			}
-			.active.stamp_type_2{
-				background:lighten(#cc6600, 10%);
-			}
-			.stamp_type_3{
+			} 
+			
+			.stamp.stamp_type_3{
 				background:#993333;
-			}
-			.active.stamp_type_3{
-				background:lighten(#993333, 10%);
-			}
+			} 
 		}
 
 div.panel_area{
@@ -1904,7 +1931,6 @@ ul.icon_grid{
 	@include clearfix;	
 	li{
 		width:80px;
-		height:80px;
 		margin:0px 0px;
 		padding:0px 0px 15px 0px;
 		a{
@@ -1913,7 +1939,7 @@ ul.icon_grid{
 			padding:5px 0px;
 			text-align:center; 
 			text-decoration:none;
-			color:#3a3a3a; 
+			color:#3a3a3a;
 			div{
 				@include wrap;
 			}
@@ -1966,7 +1992,7 @@ ul.solution_folder.icon_grid{
 	border-bottom:1px solid #ededed;
 	border-top:1px solid #fefefe;
 	ul.icon_grid li{ 
-		width:100px; 
+		width:100px;
 		padding-right:20px;
 	}
 	h3.content_title{
@@ -2738,26 +2764,34 @@ h4.list_title{
 	}
 }
 
-.forum_list, .topics_list{
-	border:1px solid #cfcfcf;
-	border-top:0px;
-	margin:10px 0px;
-	a{
-		@include link-colors(#527EAA, #545454, #527EAA, #527EAA);
-		text-decoration:none;
+.topics_list_grid{
+	.item{
+		@include clearfix;
+		border-bottom:1px solid #efefef;
+		padding:10px 15px 6px 60px;
+		position:relative;
+		.topic_icon{
+			position:absolute; 
+			left:15px; top:8px;
+		} 
+		h4.topic_title{
+			margin:0px;		
+			font-weight:bold;
+			font-size:12px;
+			a{
+				color:#1A6690;
+			}
+		}
+		a{
+			text-decoration:none;
+			color:#1A6690;
+		}
 	}
-	a.title{
-		@include link-colors(#545454, #527EAA, #545454, #545454);
-	}	
-	span.subcounter, span.no_info_text{
-		font-weight:normal;	
-		color:#848484;	
-	}
-	.forum_group{
-		h5.category_title{
-				font-size:16px;
+}
+h5.category_title{
+				font-size:14px;
 				background-color:#efefef;
-				padding:5px 12px;
+				padding:5px 20px;
 				border-top:1px solid #cfcfcf;
 				div{
 					font-size:11px;
@@ -2765,12 +2799,42 @@ h4.list_title{
 					font-weight:normal;
 				}
 			}
-		}	
+			
+.forum_list{
+	margin:0px 0px;
+	a{
+		@include link-colors(#527EAA, #545454, #527EAA, #527EAA);
+		text-decoration:none;
+	}
+	a.title{
+		@include link-colors(#545454, #527EAA, #545454, #545454);
+	}
+	.button_p{
+		margin:8px 0px;
+		padding:0px 15px;	
+		a.grey_button{
+		    white-space: nowrap;
+		    text-align: center;
+		    margin:4px 2px;
+		    padding:3px 10px;
+		    background:#5e5e5e;
+		    @include corners(8px);
+		    border:0px;
+		    @include link-colors(#ffffff, #ffffff, #ffffff, #ffffff, #ffffff);
+		    font-weight:bold;
+		}
+	}
+		
+	span.subcounter, span.no_info_text{
+		font-weight:normal;	
+		color:#848484;	
+	}
+		
 	
 	ul.base_set{
 		@include horizontal-list;
 		border-bottom:1px solid #cfcfcf;
-		padding:5px 18px 20px 14px;
+		padding:5px 18px 20px 20px;
 		background:#ffffff;
 		li{
 			width:48%;
@@ -3596,7 +3660,9 @@ div.search{
 
 .header_area{
 	@include vertical-gradient(#ebecef, #d1d5db);
+	@include clearfix;
 	border-bottom:1px solid #bbbfc9;
+	
 	h4{
 		padding:0px; margin:0px;
 		font-size:16px;
@@ -3619,6 +3685,12 @@ div.search{
 		a:hover{
 			background:#ffffff;
 		}
+	}
+	.right_panel{
+		float:right;
+		position:relative;
+		top:-5px; 
+		right:-8px;
 	}
 }		
 
@@ -3745,10 +3817,17 @@ div.search{
 }
 
 .page_title{
-	padding:8px 10px;
+	padding:4px 4px 4px 0px;
 	margin:0px 0px;
-	font-size:18px;
+	font-size:16px;
 	color:#333333;
 	font-weight:bold;
+}
+a.page_title{
+	text-decoration:none;
+	@include link_colors(#336699, #333333, #336699, #336699);
+}
 
+.title_area{
+	background:#efefef;
 }

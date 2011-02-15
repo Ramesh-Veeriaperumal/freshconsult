@@ -187,8 +187,7 @@ protected
       scoper.is_a?(Class) ? scoper.new(params[nscname]) : scoper.build(params[nscname]))
     set_item_user
     logger.debug "nscname is :: #{nscname}"
-    if "helpdesk_ticket".eql?(nscname)
-      set_customizer
+    if "helpdesk_ticket".eql?(nscname)     
       set_custom_fields
     end
     

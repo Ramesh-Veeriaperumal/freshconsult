@@ -1,14 +1,14 @@
 <% content_for :layoutType do %>single<% end %>
 
 <% @monitoring = logged_in? && !Monitorship.count(:id, :conditions => ['user_id = ? and active = ?', current_user.id, true]).zero? %>
-<div class="page_area">
-	<div>
-		<div class="floatr">
+<div>
+	<div class="header_area">
+		<div class="right_panel">
 			<% if admin? %>
 	  			<%= link_to '<img src="/images/add.png" /> New Forum Category'[:create_new_category], new_category_path, :class => "fdbutton" %>
 			<% end %> 
 		</div>
-		<strong class="page_title"><%= 'Community Forums'[:forums_category] %></strong>
+		<%= link_to("Forums"[:forums_category], categories_path, :class => "page_title") %>
 	</div>
 	<div class="forum_list">
 		<% @forum_categories.each do |forum_category| %>

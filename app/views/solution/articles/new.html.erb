@@ -1,0 +1,17 @@
+<% content_for :layoutType do%>single<% end %>
+<% content_for :head do %>
+  <%= javascript_include_tag "helpdesk/expanding_textarea" %>
+  <%= javascript_include_tag "helpdesk/multifile" %>
+  <%= javascript_include_tag "helpdesk/article_section" %>
+<% end %> 
+<div class="pageContent">
+	<h3 class="content_title">New Solution</h3>
+	<div id="article-form-container">
+  <% form_for @article, :url => solution_category_folder_articles_path(@article.folder.category_id  , @article.folder.id) , :html => {:multipart => true, :id => "article-form"} do |f| %>
+  
+	<%= render :partial => 'article_form', :locals => { :f => f } %>
+	
+	 <% end %>
+</div>
+</div>
+

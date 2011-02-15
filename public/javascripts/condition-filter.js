@@ -237,6 +237,8 @@ rules_filter = function(name, filter_data, parentDom, options){
 							flag = false;
 						}
 						else {
+							console.log(item.name+ " ---- " + item.value + "----" + item.type );
+							
 							tempConstruct.set(item.name, item.value);
 						}			
 					}
@@ -278,7 +280,7 @@ rules_filter = function(name, filter_data, parentDom, options){
 			jQuery(parentDom).parents('form:first').submit(function(e){
 				domUtil.get_filter_list('json', this);
 				//console.log(hidden_.val());
-				//return false;
+				return false;
 			});
 			
 			jQuery('.l_placeholder').live("click", function(ev){

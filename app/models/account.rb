@@ -4,6 +4,7 @@ class Account < ActiveRecord::Base
   has_one :admin, :class_name => "User", :conditions => { :admin => true }
   has_one :subscription, :dependent => :destroy
   has_many :subscription_payments
+  has_many :solution_categories , :class_name =>'Solution::Category'
   
   has_many :customers, :dependent => :destroy
   has_many :contacts, :class_name => 'User' , :conditions =>{:role_token => 'customer'}
@@ -42,6 +43,7 @@ class Account < ActiveRecord::Base
   before_create :set_time_zone
   
   after_create :create_admin
+  after_create :populate_seed_data
   after_create :send_welcome_email
   
   acts_as_paranoid
@@ -91,7 +93,7 @@ class Account < ActiveRecord::Base
   
   #Helpdesk hack starts here
   def reply_emails
-    (email_configs.collect { |ec| ec.reply_email } << default_email).sort
+    (email_configs.collect { |ec| ec.to_email } << default_email).sort
   end
   #HD hack ends..
   
@@ -160,7 +162,11 @@ class Account < ActiveRecord::Base
       self.user.role_token = 'admin'
       self.user.save
     end
-    
+
+    def populate_seed_data
+      PopulateAccountSeed.populate_for(self)
+    end
+
     def send_welcome_email
       #SubscriptionNotifier.deliver_welcome(self) #by Shan temp
     end

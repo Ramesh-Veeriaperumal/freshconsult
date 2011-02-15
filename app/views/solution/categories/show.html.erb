@@ -1,0 +1,59 @@
+<% content_for :layoutType do%>single<% end %>
+<% content_for :sidebar do %>
+	<h4 class="product_title">
+	  <div>
+	  	<%= @item.name %>
+	  </div>
+  	</h4>	 
+	<ul class="tableofcontents">
+	   <% @item.folders.each do |folder| %>
+	   	  <li>
+			<h4><%= link_to(h(folder.name), solution_category_folders_path(@item,folder), :id =>folder.id) %></h4>
+		  </li>
+	   <% end %>
+	</ul>
+<% end %>  
+<div>
+	  <div class="header_area">
+	  	<div class="floatr">
+	
+		  			<%= link_to ("New Solution", new_solution_category_folder_article_path(@item , @item.folders.first) , :class => "fdbutton") unless @item.folders.empty? %>
+	
+			<%= link_to "New Folder", new_solution_category_folder_path(@item), :class => "fdbutton" %>
+		  </div>
+		<%= link_to "Solutions", solution_category_path, :class => "page_title" %>
+	  </div>
+	  <div class="forum_list">
+		  <h5 class="category_title">
+			  <%= @item.name %>
+			  <div><%= @item.description %></div>
+		  </h5>
+		  <ul class="base_set">				
+		  <% @item.folders.each do |folder| %>
+				<li>
+					<h4 class="forum_title"><span class="title">
+						
+						<%= link_to folder.name,  solution_category_folder_path(@item,folder)  %>
+				<div class="floatr button_p">
+					<% if logged_in? && current_user.has_manage_solutions? -%>
+					<%= link_to 'Edit' ,edit_solution_category_folder_path(folder.category_id,folder), :class => "grey_button"   %>
+					<%= link_to('delete', solution_category_folder_path(folder.category_id,folder), :method => 'delete', :confirm => 'Are you sure you want to delete this category',  :class => "grey_button" ) %>
+				<% end %>
+				</div>
+						
+						<!--%= link_to(h(folder.name), folder) %--></span></h4>
+					<div class="topic_list">
+					<% folder.articles.each do |article| %>
+						<!--div class="item_actions">
+							<%# link_to('edit', edit_helpdesk_article_path(article), :class => "button") %>
+							<%# link_to('delete', article, :method => 'delete', :confirm => 'Are you sure you want to delete this solution', :class => "button" ) %>					
+						</div-->
+						<%= link_to article.title, solution_category_folder_article_path(@item,folder,article), :class => "topic" %>
+					<% end %>
+					</div>
+				</li>		
+		  <% end %>
+		  </ul>	
+	  </div>
+</div>
+ 

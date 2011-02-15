@@ -1,3 +1,4 @@
+<% content_for :layoutType do %>single<% end %>
 <% content_for :sidebar do %>	
 	<% unless @forum.description.blank? %>
 		<%= @forum.description_html %> 
@@ -18,46 +19,42 @@
 	
 <% end %>
 
-<div class="pageContent">	
-	
+<div>
 	<% @page_title = @forum.name %>
-	
-	<div class="crumbs">
-		<%= link_to "Back to Forum List"[:forums_title], category_path(@forum_category), :class => "nav_older" %> 
+	<div class="header_area">
+		<div class="floatr">
+		    <% if logged_in? %>
+				<%= link_to '<img src="/images/add.png" /> New topic'[:new_topic],new_category_forum_topic_path(@forum_category,@forum), :class => "fdbutton" %>
+			<% end%>
+			<div style="display:none;">
+				<%= feed_icon_tag @forum.name, forum_posts_path(@forum, :format => :rss) %> 
+			    <%= '{count} topic(s)'[(count=@forum.topics.size)==1 ? :topic_count : :topics_count, number_with_delimiter(count)] %>, 
+  			    <%= '{count} post(s)'[(count=@forum.posts.size)==1 ? :post_count : :posts_count, number_with_delimiter(count)] %>
+			</div>
+		</div>
+		<%= link_to("Forums →"[:forums_category], categories_path, :class => "page_title") %>
+		<%= link_to( "#{@forum_category.name} →", category_path, :class => "page_title") %>
+		<div>
+			<strong class="page_title"><%= h @forum.name %></strong>
+			<div><%= @forum.description %></div>
+			<div><%# link_to 'Recent posts'[:recent_posts], all_posts_path %></div>
+		</div>
 	</div>
-	<h3 class="content_title"><%= h @forum.name %></h3>
+	  
 	
-	
-	<div class="actions_bar">
-		<% if logged_in? %>
-			<%= link_to 'New topic'[:new_topic],new_category_forum_topic_path(@forum_category,@forum), :class => "button" %>
-		<% end%>
-	</div>
-	<!--p class="subtitle">
-	  <%= feed_icon_tag @forum.name, forum_posts_path(@forum, :format => :rss) %> 
-	  <%= '{count} topic(s)'[(count=@forum.topics.size)==1 ? :topic_count : :topics_count, number_with_delimiter(count)] %>, 
-	  <%= '{count} post(s)'[(count=@forum.posts.size)==1 ? :post_count : :posts_count, number_with_delimiter(count)] %>
-	</p-->
-		
-	<% if @topics.total_pages > 1 -%>
-		<% if logged_in? %>
-			<p style="float:right; margin-top:0;"><%= link_to 'New topic'[], new_category_forum_topic_path(@forum_category,@forum), :class => "utility" %></p>
-		<% end %>
-		<%= will_paginate @topics %>
-	<% end -%>
-	
-	<div class="topics_list">
-		<h4 class="title"> <%= link_to 'Recent posts'[:recent_posts], all_posts_path %></h4>
-		<ul class="base_set">
+	<div class="topics_list_grid"> 
 			<% for topic in @topics %>	
-			<li>	
+			<div class="item">	
+			<span class="floatr mark_action">
+				<div class="stamp stamp_type_<%=topic.stamp_type%>"><%=h(topic.stamp_name)%></div>
+			</span> 
 			<span class="topic_icon">
-					<img src="/images/icons/topic_type.png" width="32px" height="32px" />
+				<img src="/images/icons/topic_type.png" width="32px" height="32px" />
 			</span>	
 			<h4 class="topic_title">
 					<%= "Sticky"[:sticky_title]+": <strong>" if topic.sticky? %>
 					<%= link_to topic.title, category_forum_topic_path(@forum_category,@forum,topic) %>
-				    <span><%=h(topic.stamp_name)%></span> 
+				    
 					<%if @forum.questions?%>  
 						<%if topic.posts.answered_posts.count > 0%>
 							Answered
@@ -69,10 +66,10 @@
 				    <% end -%> 
 				</h4>	 
 			<span><%=h(topic.title)%></span> 
-			</li>
+			</div>
 			<% end %>
 			
-		</ul>
+	 
 	</div>
 	
 	

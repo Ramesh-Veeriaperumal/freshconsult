@@ -10,7 +10,7 @@ class Admin::EmailConfigsController < ApplicationController
   
   def new
     @groups = current_account.groups
-    render :partial => "email_form", :locals => { :type => "new" }
+    render :partial => 'email_form', :locals => { :type => "new" }
   end
 
   def edit

@@ -19,8 +19,8 @@
 		<div class="left_col">
 			<h3 class="title">&nbsp;&nbsp;Solutions</h3>
 			<ul class="ssp_category_list">
-				<% firstFolder = @folder.find(:first) %>
-				<% @folder.all.each do |folder| %>
+				<% firstCategory = @categories.find(:first) %>
+				<% @categories.each do |category| %>
 				<li>
 					
 					 <!--%= link_to_remote( h(folder.name),
@@ -29,8 +29,8 @@
 						 :html => { :class => (firstFolder == folder) ? "active":"" }
 						) %-->
 						 
-					<%= link_to h(folder.name), 
-							{ :action => :get_folders, :id => folder.id }, :class => (firstFolder == folder) ? "active":""  %>				
+					<%= link_to h(category.name), 
+							{ :action => :get_categories, :id => category.id }, :class => (firstCategory == category) ? "active":""  %>				
 				</li>
 				<%end%>
 			</ul>				
@@ -42,9 +42,9 @@
 				</p>
 			</div>	
 		</div>
-		<% firstArticle = firstFolder.categories.find(:first).articles.first(:first) %>
+		
 		<div class="right_col white_curved_cont" id="RightDiv">			
-			<%= render :partial => 'solution_toc', :locals => { :folder => firstFolder } %>
+			<%= render :partial => 'solution_toc', :locals => { :category => @categories.first } %>
 		</div>
 	</div>
 </div>

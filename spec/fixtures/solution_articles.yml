@@ -1,0 +1,19 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  title: MyString
+  description: MyText
+  user_id: 1
+  folder_id: 1
+  status: 1
+  art_type: 1
+  is_public: false
+
+two:
+  title: MyString
+  description: MyText
+  user_id: 1
+  folder_id: 1
+  status: 1
+  art_type: 1
+  is_public: false

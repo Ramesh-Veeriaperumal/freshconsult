@@ -28,6 +28,7 @@ ActionController::Routing::Routes.draw do |map|
   
   map.namespace :admin do |admin|
     admin.resources :home, :only => :index
+    admin.home '', :controller => 'home', :action => 'index'
     admin.resources :automations, :member => { :deactivate => :put, :activate => :put }, :collections => { :reorder => :put }
     admin.resources :va_rules, :member => { :deactivate => :put, :activate => :put }, :collections => { :reorder => :put }
     admin.resources :email_configs
@@ -153,11 +154,14 @@ ActionController::Routing::Routes.draw do |map|
     helpdesk.resources :sla_policies
   end
   
-   map.namespace :solution do |solution|
-     
-     solution.resources :folders
-   
-   end
+   map.namespace :solution do |solution|     
+     solution.resources :categories  do |category|   
+     category.resources :folders  do |folder|
+       folder.resources :articles
+       end
+     end
+         
+     end
 
   map.namespace :support do |support|
     support.resources :guides, :articles

@@ -1,23 +1,20 @@
 <% content_for :layoutType do%>single<% end %>  
-<div class="pageContent">  
-	  <div class="information_tip two_col_cont">
-	  	<div class="left_col">
-	  		<div class="floatr" >
-	  			<%= link_to "<img src='/images/add.png'> Add Category", new_solution_folder_path, :class => "fdbutton" %>
+<div>
+	<div class="header_area">
+		<div class="right_panel" >
+	  		<%= link_to "<img src='/images/add.png'> Add Category", new_solution_category_folder_path, :class => "fdbutton" %>
+		</div>
+		<strong class="page_title">Solutions</strong>
+	</div>	  
+	<div class="page_area">			
+			<% @folders.each do |folder| %>
+			<div class="sol_list">
+				<strong><%= link_to folder.name, solution_category_folder_path(folder.category_id, folder) %></strong>
+				<div>
+					<%= folder.description %>
+				</div>	
+				<span class="seperator"></span>
 			</div>
-			<h3 class="title">&nbsp;&nbsp;Solutions</h3>
-			<ul class="ssp_category_list">
-				<% firstFolder = @folders.find(:first) %>
-				<% @folders.each do |folder| %>
-				<li>
-					<%= link_to h(folder.name), 
-							folder, :class => (firstFolder == folder) ? "active":""  %>				
-				</li>
-				<%end%>
-			</ul>
-		</div>
-		<div class="right_col white_curved_cont">
-			a
-		</div>
+			<%end%>
 	</div>
 </div>

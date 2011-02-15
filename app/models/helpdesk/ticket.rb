@@ -9,7 +9,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   has_flexiblefields
   
   #by Shan temp
-  attr_accessor :email, :custom_field
+  attr_accessor :email, :custom_field ,:customizer
   after_create :refresh_display_id, :autoreply,:save_custom_field ,:pass_thro_biz_rules 
   before_create :populate_requester
 
@@ -62,8 +62,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :class_name => 'Helpdesk::Issue',
     :through => :ticket_issues
     
-  has_one :customizer, :class_name =>'Helpdesk::FormCustomizer'
-  
   has_one :ticket_topic
   has_one :topic,:through => :ticket_topic
   
@@ -86,7 +84,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   COLUMN_CLASS_BY_KEY = Hash[*COLUMNTYPES.map { |i| [i[0], i[2]] }.flatten]
 
   #validates_presence_of :name, :source, :id_token, :access_token, :status, :source
-  validates_uniqueness_of :id_token
   #validates_length_of :email, :in => 5..320, :allow_nil => false, :allow_blank => false
   validates_numericality_of :source, :status, :only_integer => true
   validates_numericality_of :requester_id, :responder_id, :only_integer => true, :allow_nil => true
@@ -180,7 +177,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def set_tokens
-    self.id_token ||= make_token(Helpdesk::SECRET_1)
     self.access_token ||= make_token(Helpdesk::SECRET_2)
   end
   
@@ -243,6 +239,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   def autoreply
     notify_by_email EmailNotification::NEW_TICKET
+    
+    notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_GROUP) if group_id
+    notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_AGENT) if responder_id
+    
+    return notify_by_email(EmailNotification::TICKET_RESOLVED) if (status == STATUS_KEYS_BY_TOKEN[:resolved])
+    return notify_by_email(EmailNotification::TICKET_CLOSED) if (status == STATUS_KEYS_BY_TOKEN[:closed])
   end
   
   def cache_old_model

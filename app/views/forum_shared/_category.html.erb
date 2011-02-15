@@ -1,18 +1,14 @@
 <div class="forum_group">
-	<div class="floatr">
+	<div class="floatr button_p">
 		<% if logged_in? && current_user.has_manage_forums? -%>
-			<span class="edit">
-				<%= link_to 'Edit' ,edit_category_path(category)   %>
-			</span>
-			<span class="delete">
-				<%= link_to('delete', category_path(category), :method => 'delete', :confirm => 'Are you sure you want to delete this category' ) %>					
-			</span>
+			<%= link_to 'Edit' ,edit_category_path(category), :class => "grey_button"   %>
+			<%= link_to('delete', category_path(category), :method => 'delete', :confirm => 'Are you sure you want to delete this category',  :class => "grey_button" ) %>
 		<% end -%>
 	</div>
 	<h5 class="category_title">
 		<a href="<%= category_path(category) %>" class = "title">
-			<span><%= h(category.name) %></span>							
-			<span class="follow_link">»</span>
+			<span><%= h(category.name) %></span>
+			
 		</a>
 		<div><%= h(category.description)  %></div>
 	</h5>
