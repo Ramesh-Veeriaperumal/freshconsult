@@ -10,7 +10,7 @@ class Post < ActiveRecord::Base
 
   format_attribute :body
   before_create { |r| r.forum_id = r.topic.forum_id }
-  after_create  :update_cached_fields
+  after_create  :update_cached_fields,:monitor_reply
   after_destroy :update_cached_fields
 
   
@@ -25,6 +25,12 @@ class Post < ActiveRecord::Base
     options[:except] << :topic_title << :forum_name
     super
   end
+  
+  def monitor_reply
+    emailcoll = self.topic.monitorship_emails
+    PostMailer.deliver_monitor_email!(emailcoll,self,self.user)  if emailcoll.count > 0
+    
+   end
   
   protected
     # using count isn't ideal but it gives us correct caches each time

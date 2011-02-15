@@ -48,7 +48,14 @@ class Topic < ActiveRecord::Base
   IDEAS_STAMPS_BY_KEY = Hash[*IDEAS_STAMPS.map { |i| [i[2], i[1]] }.flatten]
   IDEAS_STAMPS_BY_TOKEN = Hash[*IDEAS_STAMPS.map { |i| [i[0], i[2]] }.flatten]
   
- 
+  def monitorship_emails
+    user_emails = Array.new
+    for monitorship in self.monitorships
+      user_emails = monitorships.collect {|a| a.user.email}
+    end
+    return user_emails
+  end
+   
   def stamp_name
     IDEAS_STAMPS_BY_KEY[stamp_type]
   end
