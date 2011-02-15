@@ -15,5 +15,6 @@
 	<div class="button-container">
 	    <%= submit_tag "Save", :class => "fdbutton submit" %>
 	    <%= submit_tag "Save and Create Another", :name => "save_and_create", :class => "fdbutton" %>
+		<%= link_to('Cancel'[:cancel], solution_category_url(@folder.category_id), :class => "fdbutton grey" ) %>
 	</div>
 <% end %>
