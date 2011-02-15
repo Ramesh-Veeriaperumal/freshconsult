@@ -2,5 +2,12 @@
 	<h3 class="content_title">New Category</h3>
 	<% form_for (@category), :html => {:multipart => true, :id => "folder-form"} do |f| %>
 	<%= render :partial => "category_form" , :locals => { :f => f }%>
+	
+	<div class="button-container">
+	    <%= submit_tag "Save", :class => "fdbutton submit" %>
+	    <%= submit_tag "Save and Create Another", :name => "save_and_create", :class => "fdbutton" %>
+		<%= link_to('Cancel'[:cancel], solution_categories_url, :class => "fdbutton grey" ) %>
+	</div>
+	
 	<% end %>
 </div>
