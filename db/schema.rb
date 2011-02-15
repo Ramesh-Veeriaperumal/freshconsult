@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110214100523) do
+ActiveRecord::Schema.define(:version => 20110215050600) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -414,40 +414,33 @@ ActiveRecord::Schema.define(:version => 20110214100523) do
   add_index "helpdesk_ticket_issues", ["ticket_id"], :name => "index_helpdesk_ticket_issues_on_ticket_id"
 
   create_table "helpdesk_tickets", :force => true do |t|
-    t.string   "id_token"
     t.string   "access_token"
     t.text     "description"
     t.integer  "requester_id"
     t.integer  "responder_id"
-    t.integer  "status",            :default => 1
-    t.boolean  "urgent",            :default => false
-    t.integer  "source",            :default => 0
-    t.boolean  "spam",              :default => false
-    t.boolean  "deleted",           :default => false
+    t.integer  "status",          :default => 1
+    t.boolean  "urgent",          :default => false
+    t.integer  "source",          :default => 0
+    t.boolean  "spam",            :default => false
+    t.boolean  "deleted",         :default => false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "trained",           :default => false
+    t.boolean  "trained",         :default => false
     t.integer  "account_id"
     t.string   "subject"
     t.integer  "display_id"
-    t.integer  "organization_id"
     t.integer  "owner_id"
     t.integer  "group_id"
-    t.datetime "first_assigned_at"
-    t.datetime "assigned_at"
     t.datetime "due_by"
-    t.datetime "completed_at"
     t.datetime "frDueBy"
-    t.boolean  "isescalated",       :default => false
-    t.integer  "priority",          :default => 1
-    t.boolean  "fr_escalated",      :default => false
-    t.datetime "response_time"
+    t.boolean  "isescalated",     :default => false
+    t.integer  "priority",        :default => 1
+    t.boolean  "fr_escalated",    :default => false
     t.integer  "ticket_type"
     t.string   "to_email"
     t.integer  "email_config_id"
   end
 
-  add_index "helpdesk_tickets", ["id_token"], :name => "index_helpdesk_tickets_on_id_token", :unique => true
   add_index "helpdesk_tickets", ["requester_id"], :name => "index_helpdesk_tickets_on_requester_id"
   add_index "helpdesk_tickets", ["responder_id"], :name => "index_helpdesk_tickets_on_responder_id"
 

@@ -84,7 +84,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   COLUMN_CLASS_BY_KEY = Hash[*COLUMNTYPES.map { |i| [i[0], i[2]] }.flatten]
 
   #validates_presence_of :name, :source, :id_token, :access_token, :status, :source
-  validates_uniqueness_of :id_token
   #validates_length_of :email, :in => 5..320, :allow_nil => false, :allow_blank => false
   validates_numericality_of :source, :status, :only_integer => true
   validates_numericality_of :requester_id, :responder_id, :only_integer => true, :allow_nil => true
@@ -178,7 +177,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def set_tokens
-    self.id_token ||= make_token(Helpdesk::SECRET_1)
     self.access_token ||= make_token(Helpdesk::SECRET_2)
   end
   
