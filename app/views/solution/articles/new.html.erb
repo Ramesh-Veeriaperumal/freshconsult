@@ -11,6 +11,14 @@
   
 	<%= render :partial => 'article_form', :locals => { :f => f } %>
 	
+	<div class="button-container">
+		
+		<%= submit_tag "Save", :class => "fdbutton" %>
+      	<%= submit_tag " Save and Create Another ", :name => "save_and_create", :class => "fdbutton" %>
+		<%= link_to('Cancel'[:cancel], solution_category_folder_url(@article.folder.category_id, @article.folder.id), :class => "fdbutton grey" ) %>
+		
+	</div>
+	
 	 <% end %>
 </div>
 </div>
