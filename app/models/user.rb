@@ -149,6 +149,10 @@ class User < ActiveRecord::Base
       self.permission?(:manage_tickets)
   end
   
+  def has_manage_solutions?
+    self.permission?(:manage_tickets)
+  end
+  
   
  
 
