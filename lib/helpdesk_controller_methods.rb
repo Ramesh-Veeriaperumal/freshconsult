@@ -55,6 +55,7 @@ module HelpdeskControllerMethods
     logger.debug "update : params are : #{params[nscname].inspect}"
     if @item.update_attributes(params[nscname])
       post_persist
+      flash[:notice] = "The #{cname.humanize.downcase} has been updated."
     else
       edit_error
     end
