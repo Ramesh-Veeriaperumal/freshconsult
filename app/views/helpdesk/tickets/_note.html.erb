@@ -1,8 +1,19 @@
-<div class="description <%= cycle('stripe', '') %>">
+
+<%
+note_view_id = "note_view_"+note.id.to_s()
+
+%>
+<div id="<%=note_view_id%>" class="description <%= cycle('stripe', '') %>">
   <a name="<%= note.id %>"> </a>
    <% if note.private && !note.incoming && !note.status? %>
 	      <div class="item_actions">
-	      	<%= link_to "Edit", edit_helpdesk_ticket_helpdesk_note_path(@item, note), :class => "button" %>
+	      	<%=link_to_remote( "Edit",  :update => note_view_id,
+                         				:url => edit_helpdesk_ticket_helpdesk_note_path(@item, note),
+										:method => :GET,
+										:html => {:class => "button"}
+										) %>
+
+
 	        <%= link_to "Delete", helpdesk_ticket_helpdesk_note_path(@item, note), :method => :delete, :class => "button" %>
 	      </div>
 	  <% end %>
@@ -40,3 +51,4 @@
 	  </div>	
 </div>
 <div class="seperator"></div>
+<!--div id="note_view_id"> </div-->
