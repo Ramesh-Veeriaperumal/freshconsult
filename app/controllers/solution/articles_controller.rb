@@ -41,8 +41,9 @@ class Solution::ArticlesController < ApplicationController
   end
 
   def create
-    
-    @article = Solution::Article.new(params[nscname]) 
+  
+   current_folder = Solution::Folder.find(params[:folder_id]) 
+   @article = current_folder.articles.new(params[nscname]) 
     set_item_user
    
     redirect_to_url = solution_category_folder_url(params[:category_id], params[:folder_id])

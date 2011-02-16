@@ -34,10 +34,7 @@
 	        </table>
 	      </div>	
 		</li>
-		<li>
-			<%= f.label(:title, "Add this article to Section") %>
-			<%= f.select :folder_id, Solution::Folder.alphabetical.map {|s| [s.name, s.id]},  :class => "select" %>
-		</li>		
+			
 		<li>
 			<label>Tags</label>
 			<input type="text" />
