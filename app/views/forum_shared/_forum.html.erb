@@ -10,7 +10,8 @@
 				 <%= link_to topic.title, category_forum_topic_path(category, forum, topic) , :class => "topic" %>
 			<% end %>
 		<% else %>
-			<span class="no_info_text">No topics in this forum - </span><%= link_to 'add a new topic'[:create_new_topic], new_category_forum_topic_path(category, forum) %>
+			<span class="no_info_text">No topics in this forum - </span>
+			<%= (link_to 'add a new topic'[:create_new_topic], new_category_forum_topic_path(category, forum)) if logged_in? %>
 		<% end %>	
 	</div>
 </li> 

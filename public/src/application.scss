@@ -82,6 +82,20 @@ body {margin:0; padding:0 10px 0 10px; border:0; height:100%; overflow-y:auto; }
 	}
 }
 
+.bg_pulp{
+	.leftcontent{
+		background-color:#F3F1EC;
+	}
+}
+
+div.bg_white{
+	background-color:#ffffff;
+}
+
+div.bg_pulp{
+	background-color:#F3F1EC;
+}
+
 .twoCol_ltSidebar #inner{
 	padding-right:0px;
 	padding-left:$sidebar-width; /* The width of the rail */
@@ -147,6 +161,11 @@ body {margin:0; padding:0 10px 0 10px; border:0; height:100%; overflow-y:auto; }
 	width:27px;
 	z-index:10;
 } 
+
+.info_data{
+	color:#888888;
+}
+
 
 /* Header styles */
 .header {  
@@ -2824,16 +2843,72 @@ h4.list_title{
 	}
 }
 h5.category_title{
-				font-size:14px;
-				background-color:#efefef;
-				padding:5px 20px;
-				border-top:1px solid #cfcfcf;
-				div{
-					font-size:11px;
-					color:#666666;
-					font-weight:normal;
-				}
+	font-size:14px;
+	@include clearfix;
+	background-color:#F3F1EC;
+	padding:5px 4% 6px 2%;
+	border-top:1px solid #cfcfcf;
+	div{
+		font-size:11px;
+		color:#666666;
+		font-weight:normal;
+	}
+	.item_actions{ 
+		a{
+			font-size:12px;
+			font-weight:bold;
+		} 
+	}
+}
+
+.icon_text{
+	font-size:10px;
+	font-weight:bold;
+	text-transform:uppercase;
+	width:100%;
+	background-color:#888888;
+	color:#ffffff;
+	padding:0px 2px;
+	@include corners(3px);
+	@include ellipsis;
+}
+
+.list_icon_large_full_width{
+	background:#ffffff;
+	@include corners(6px);
+	@include clearfix;
+	margin:5px 8px;
+	padding:6px;
+	.item{
+		@include min-height(42px);
+		border-bottom:1px solid #F3F1EC;
+		padding:6px 6px 6px 45px;
+		position:relative;
+		.topic_icon{
+			margin:2px;
+			left:5px;
+			top:5px;
+			position:absolute;
+			width:32px;
+			text-align:center;
+			
+			.locked{
+				position:absolute;
+				bottom:0px;
+				left:0px;
 			}
+		}
+		.topic_title{
+			font-size:14px;
+			padding:0px 0px 1px 0px;
+			margin:0px;
+		}	
+		.info{
+			font-size:11px;
+			color:#888888;
+		}
+	}
+}
 			
 .forum_list{
 	margin:0px 0px;
@@ -2843,6 +2918,19 @@ h5.category_title{
 	}
 	a.title{
 		@include link-colors(#545454, #527EAA, #545454, #545454);
+	}
+	.item_actions{
+		float:right;
+		font-size:10px;
+		background-color:#F3F1EC;
+		@include corners(6px);
+		border:1px solid #cfcfcf;
+		color:#afafaf;
+		padding:2px 8px;
+		a.highlight{
+			background-color:#ffffcc;
+			padding:1px 3px;
+		}
 	}
 	.button_p{
 		margin:8px 0px;
@@ -2867,13 +2955,16 @@ h5.category_title{
 		
 	
 	ul.base_set{
-		@include horizontal-list;
+		@include no-bullets;
+		@include clearfix;
+		margin:0px;
 		border-bottom:1px solid #cfcfcf;
 		padding:5px 18px 20px 20px;
 		background:#ffffff;
 		li{
+			float:left;
 			width:48%;
-			padding:0px 2% 0px 0px;
+			padding:0px 2% 0px 0%;
 			margin:0px 0px;
 			h4.forum_title{
 				margin:3px 0px 0px 0px;
@@ -2883,10 +2974,11 @@ h5.category_title{
 				border-bottom:1px dotted #dfdfdf;
 			}
 			.topic_list{
-				@include min-height(60px);
+				@include min-height(80px);
 				a.topic{
+					@include ellipsis;
 					display:block;
-					padding:3px 5px 3px 20px;
+					padding:5px 0px;
 				}
 			}
 		}
@@ -3569,11 +3661,26 @@ div.search{
 
 .sol_list{
 	@include pretty-bullets($bullet-icon);
-	margin:8px 0px 10px 0px; padding:0px 3px;
-	font-size:14px;
+	@include clearfix;
+	margin:0px 0px 10px 0px; padding:0px 3px;
+	font-size:12px;
+	strong{
+		font-size:14px;
+	}
 	a{
-		@include link-colors(#336699, #443322, #336699, #336699, #336699);
+		@include link-colors(#333333, #336699, #333333, #333333, #333333);
 		text-decoration:none;
+	}
+	.item_actions{
+		float:right;
+		background-color:#F3F1EC;
+		@include corners(6px);
+		border:1px solid #cfcfcf;
+		color:#afafaf;
+		padding:2px 8px 3px 8px;
+		a{
+			@include link-colors(#333333, #999999, #333333, #333333, #333333); 
+		}
 	}
 }
 
@@ -3695,7 +3802,10 @@ div.search{
 }
 
 .page_area, .header_area{
-	padding:10px 20px 6px 20px;
+	padding:10px 20px 10px 20px;
+}
+.no_padding.header_area{
+	padding-bottom:0px;
 }
 
 .header_area{
@@ -3717,6 +3827,7 @@ div.search{
 		}
 	}
 	.actions{
+		float:right;
 		a{
 			@include corners(6px);
 			padding:8px 2px 0px 2px;
@@ -3730,7 +3841,7 @@ div.search{
 		float:right;
 		position:relative;
 		top:-5px; 
-		right:-8px;
+		right:10px;
 	}
 }		
 
@@ -3859,10 +3970,16 @@ div.search{
 .page_title{
 	padding:4px 4px 4px 0px;
 	margin:0px 0px;
-	font-size:16px;
+	font-size:14px;
 	color:#333333;
 	font-weight:bold;
 }
+span.sub_title{
+	color:#666666;
+	font-weight:normal;
+	font-size:12px;
+}
+
 a.page_title{
 	text-decoration:none;
 	@include link_colors(#336699, #333333, #336699, #336699);
@@ -3881,4 +3998,31 @@ a.page_title{
 	.ui-menu-item{
 		border-bottom:1px solid #dfdfdf;
 	}
+}
+
+.solution_title{
+	position:relative;
+	.topic_icon{
+		position:absolute;
+		left:20px;
+		top:10px;
+		text-align:center;
+		.locked{
+			position:absolute;
+			top:13px;
+			left:10px;
+		}
+	}
+	padding:6px 20px 8px 100px;
+}
+
+.status_text{
+	background:#888888;
+	@include corners(6px);
+	color:#ffffff;
+	padding:3px 8px;
+	text-transform:uppercase;
+	font-weight:bold;
+	font-size:11px;
+	margin:2p 5px;
 }

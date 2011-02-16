@@ -1,12 +1,12 @@
 	<ul id="folder-form-container" class="ui-form">  
 	    <%= f.error_messages %>
 		<li>
-	    	<%= f.label(:name, "Name") %>
-	    	<%= f.text_field :name %>
+	    	<%= f.label(:name, "Name *") %>
+	    	<%= f.text_field :name, :class => "required" %>
 		</li>
 		<li>
-			<%= f.label(:description, "More Info") %>
-		 	<%= f.text_area :description, :class => "text" %>
+			<%= f.label(:description, "Description") %>
+		 	<%= f.text_area :description, :class => "smallpara" %>
 	    	<!--%= f.text_area :description, :class => "mceEditor" %-->
 		</li>  
 		<%=f.hidden_field :category_id %>

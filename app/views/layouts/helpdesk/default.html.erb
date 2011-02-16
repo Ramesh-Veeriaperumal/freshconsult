@@ -30,6 +30,7 @@
  			var jQ = jQuery.noConflict(); 
 			jQuery(document).ready(function() {
 			    jQuery("label.overlabel").overlabel();
+		 		jQuery("ul.ui-form").parents('form:first').validate(); 
 			});
 		</script>
     	<%= yield :head %> 

@@ -21,6 +21,11 @@ class Helpdesk::NotesController < ApplicationController
     end
   end
   
+  def edit
+    #@item = Helpdesk::Note.find(params[:id])
+    render :partial => "edit_note"
+  end
+  
 protected
 
   def scoper

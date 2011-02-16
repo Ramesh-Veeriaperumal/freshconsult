@@ -1,10 +1,15 @@
 class Account < ActiveRecord::Base
   
+  #
+  # Tell authlogic that we'll be scoping users by account
+  #
+  authenticates_many :user_sessions
+  
   has_many :users, :dependent => :destroy
   has_one :admin, :class_name => "User", :conditions => { :admin => true }
   has_one :subscription, :dependent => :destroy
   has_many :subscription_payments
-  has_many :solution_categories , :class_name =>'Solution::Category'
+  has_many :solution_categories , :class_name =>'Solution::Category'  
   
   has_many :customers, :dependent => :destroy
   has_many :contacts, :class_name => 'User' , :conditions =>{:role_token => 'customer'}
@@ -93,7 +98,7 @@ class Account < ActiveRecord::Base
   
   #Helpdesk hack starts here
   def reply_emails
-    (email_configs.collect { |ec| ec.to_email } << default_email).sort
+    (email_configs.collect { |ec| ec.reply_email } << default_email).sort
   end
   #HD hack ends..
   
@@ -159,8 +164,10 @@ class Account < ActiveRecord::Base
       self.user.admin = true
       self.user.active = true
       self.user.account = self
-      self.user.role_token = 'admin'
+      self.user.role_token = 'admin'  
+      self.user.build_agent()
       self.user.save
+      
     end
 
     def populate_seed_data

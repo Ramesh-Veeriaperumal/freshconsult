@@ -1,4 +1,4 @@
-<% content_for :layoutType do%>single<% end %>
+<% content_for :layoutType do%>single bg_pulp<% end %>
 <% content_for :sidebar do %>
 	<h4 class="product_title">
 	  <div>
@@ -14,44 +14,49 @@
 	</ul>
 <% end %>  
 <div>
-	  <div class="header_area">
-	  	<div class="floatr">
-		  	<%= link_to "New Folder", new_solution_category_folder_path(@item.category_id), :class => "fdbutton" %>
-			<%= link_to "New Solution", new_solution_category_folder_article_path(@item.category_id, @item), :class => "fdbutton" %>
+	  <div class="header_area no_padding">
+	  	<div class="right_panel">
+			<%= link_to "<img src='/images/add.png'> New Solution", new_solution_category_folder_article_path(@item.category_id, @item), :class => "fdbutton" %>
 		  </div>
-		<%= link_to "Solutions", solution_categories_path, :class => "page_title" %>
+		<%= link_to "Solutions →", solution_categories_path, :class => "page_title" %>
+		<%= link_to @item.category.name+" →", solution_category_path(@item.category), :class => "page_title" %>
+		<span class="page_title"><%= @item.name %></span>
 	  </div>
 	  <div class="forum_list">
 		  <h5 class="category_title">
 			  <%= @item.name %>
 			  <div><%= @item.description %></div>
 		  </h5>
-		  <ul class="base_set">			 
-				<li>				
-					<div class="topic_list">
+		  <div class="list_icon_large_full_width">
 					<% @item.articles.each do |article| %>
-						<div>	
-						<!--div class="item_actions">
-							<%# link_to('edit', edit_helpdesk_article_path(article), :class => "button") %>
-							<%# link_to('delete', article, :method => 'delete', :confirm => 'Are you sure you want to delete this solution', :class => "button" ) %>					
-						</div-->
-						<!--%= link_to(h(article.title), article, :class => "topic") %-->
- 
-						<%= link_to article.title, solution_category_folder_article_path(@item.category_id , @item, article, :class => "topic") %>
-						
-						
-						<% if logged_in? && current_user.has_manage_solutions? -%>
-							<%= link_to 'Edit' ,edit_solution_category_folder_article_path(@item.category_id , @item, article)  %>
-							<%= link_to('delete', solution_category_folder_article_path(@item.category_id , @item, article), :method => 'delete', :confirm => 'Are you sure you want to delete this category') %>
-						<% end %>
-						
+						<div class="item">	
+							<div class="item_actions">
+								<% if logged_in? && current_user.has_manage_solutions? -%>
+									<%= link_to 'edit' ,edit_solution_category_folder_article_path(@item.category_id , @item, article)  %> |
+									<%= link_to('delete', solution_category_folder_article_path(@item.category_id , @item, article), :method => 'delete', :confirm => 'Are you sure you want to delete this category') %>
+								<% end %>					
+							</div>
+							<span class="topic_icon">
+								<% if( !article.is_public )%> 
+									<img src="/images/private_lock.gif" class="locked" width="20px" height="19px" />
+								<% end %>
+								<% if( article.art_type == 2 )%> 
+									<img src="/images/solution_type.png" title="<%= article.type_name %>" width="32px" height="32px" />
+								<% else %>
+									<img src="/images/solution_workaround_type.png" title="<%= article.type_name %>"  width="32px" height="32px" />
+								<% end %>
+							</span>	
+	 						<h4 class="topic_title">
+								<%= link_to article.title, solution_category_folder_article_path(@item.category_id , @item, article, :class => "topic") %>
+							</h4>
+							<div>
+								<span class="info">Written by, <%=article.user.name%> - Last updated <%= article.updated_at.strftime("%B %e %Y at %I:%M %p") %></span>
+							</div>	
 						</div>	
  
 					<% end %>
-					</div>
-				</li>
 		
-		  </ul>	
+		  </div>	
 	  </div>
 </div>
  

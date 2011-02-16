@@ -63,6 +63,7 @@
 	
 	function changeAggentList(group_id)
 	{ 
+	
 		jQuery.ajax({
 	      					type: 'POST',
 							url: '/helpdesk/tickets/get_agents/'+group_id,
@@ -222,7 +223,7 @@
 		    <h3 class="subtitle">Conversation</h3>
 		<% end %>
 		<% if @item.requester %>
-			<%= render(:partial => '/helpdesk/shared/note_form', :locals => {:id => 'send-email', :cntid => 'cnt-top', :note => [@ticket, Helpdesk::Note.new(:private => false)] }) %>
+			<%= render(:partial => '/helpdesk/shared/reply_form', :locals => {:id => 'send-email', :cntid => 'cnt-top', :note => [@ticket, Helpdesk::Note.new(:private => false)] }) %>
 		<% else %>
 			<%= render(:partial => '/helpdesk/shared/note_form', :locals => {:id => 'add-note',	:cntid => "cnt-top", :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
 		<% end %>
@@ -238,7 +239,7 @@
 		 	<%= link_to_function("Add Note", "Helpdesk.swapEmailNote('add-note', true, 'Add Note', this, 'cnt-bottom')", :class => 'fdbutton') %>		
 		</div>	
 		<% if @item.requester %>
-			<%= render(:partial => '/helpdesk/shared/note_form', :locals => {:id => 'send-email', :cntid => "cnt-bottom", :note => [@ticket, Helpdesk::Note.new(:private => false)] }) %>
+			<%= render(:partial => '/helpdesk/shared/reply_form', :locals => {:id => 'send-email', :cntid => "cnt-bottom", :note => [@ticket, Helpdesk::Note.new(:private => false)] }) %>
 		<% else %>
 			<%= render(:partial => '/helpdesk/shared/note_form', :locals => {:id => 'add-note',	:cntid => "cnt-bottom", :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
 		<% end %>

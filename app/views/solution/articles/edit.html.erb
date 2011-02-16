@@ -4,10 +4,13 @@
   <%= javascript_include_tag "helpdesk/multifile" %>
   <%= javascript_include_tag "helpdesk/article_section" %>
 <% end %>
-<div class="pageContent">
-	<h3 class="content_title">Edit Solution</h3>
-	
-	
+<div class="header_area no_padding">
+	<div class="right_panel">
+		<%= link_to('Back'[:cancel], solution_category_folder_article_path(@article.folder.category_id, @article.folder.id), :class => "fdbutton grey" ) %>
+	</div>
+	<h3 class="title">Edit Solution</h3>
+</div>
+<div class="page_area"> 
 	 <% form_for @article, :url => solution_category_folder_article_path(@article.folder.category_id  , @article.folder.id) , :html => {:multipart => true, :id => "article-form"} do |f| %>
   
 	<%= render :partial => 'article_form', :locals => { :f => f } %>

@@ -11,7 +11,8 @@ class EmailController < ApplicationController
 
   def create
     from_email = parse_email params[:from]
-    to_email = parse_email params[:to]
+    #to_email = parse_email params[:to]
+    to_email = parse_to_email
     account = Account.find_by_full_domain(to_email[:domain])
     if !account.nil?
       display_id = Helpdesk::Ticket.extract_id_token(params[:subject])
@@ -46,6 +47,16 @@ class EmailController < ApplicationController
       domain = (/@(.+)/).match(email).to_a[1]
       
       {:name => name, :email => email, :domain => domain}
+    end
+    
+    def parse_to_email
+      envelope = params[:envelope]
+      unless envelope.nil?
+        envelope_to = (ActiveSupport::JSON.decode envelope)['to']
+        return parse_email envelope_to.first unless (envelope_to.nil? || envelope_to.empty?)
+      end
+      
+      parse_email params[:to]
     end
     
     def create_ticket(account, from_email, to_email)

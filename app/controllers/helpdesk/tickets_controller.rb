@@ -171,8 +171,9 @@ class Helpdesk::TicketsController < ApplicationController
     
     group_id = params[:id]
     
-    @agents = AgentGroup.find(:all, :joins=>:user, :conditions =>{:group_id =>group_id} )
-    
+    @agents = current_account.agents.all(:include =>:user)    
+    @agents = AgentGroup.find(:all, :joins=>:user, :conditions =>{:group_id =>group_id ,:users =>{:account_id =>current_account.id} } ) unless group_id.nil?
+        
     render :partial => "agent_groups"
     
     

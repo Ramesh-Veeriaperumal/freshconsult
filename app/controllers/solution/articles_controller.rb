@@ -23,6 +23,7 @@ class Solution::ArticlesController < ApplicationController
      current_folder = Solution::Folder.first
      current_folder = Solution::Folder.find(params[:folder_id]) unless params[:folder_id].nil?
      @article = current_folder.articles.new
+     @article.is_public = "true"
     respond_to do |format|
       format.html # new.html.erb
       format.xml  { render :xml => @article }
@@ -40,8 +41,9 @@ class Solution::ArticlesController < ApplicationController
   end
 
   def create
-    
-    @article = Solution::Article.new(params[nscname]) 
+  
+   current_folder = Solution::Folder.find(params[:folder_id]) 
+   @article = current_folder.articles.new(params[nscname]) 
     set_item_user
    
     redirect_to_url = solution_category_folder_url(params[:category_id], params[:folder_id])
@@ -67,13 +69,17 @@ class Solution::ArticlesController < ApplicationController
 
   def update
     
+    redirect_to_url = solution_category_folder_url(params[:category_id], params[:folder_id])
+    
     logger.debug "Inside update :: #{params.inspect}"
     @article = Solution::Article.find(params[:id]) 
+    
+    redirect_to_url = solution_category_folder_url(params[:category_id], params[:folder_id])   
     
     respond_to do |format|
      
        if @article.update_attributes(params[nscname])       
-          format.html { redirect_to :action =>"index" }
+          format.html { redirect_to redirect_to_url }
           format.xml  { render :xml => @article, :status => :created, :location => @article }     
        else
           format.html { render :action => "edit" }

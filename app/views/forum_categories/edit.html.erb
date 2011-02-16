@@ -1,11 +1,15 @@
-<h1>Editing forum_category</h1>
-
-<% form_for :forum_category,@forum_category, :url => category_url , :html=>{:method=>:put}  do |f| -%>
-  <%= render :partial => "/shared/name_desc", :locals => { :form => f, :type => "edit" } %>
-
-  <p>
-    <%= submit_tag 'Update'[:update], { :class => "fdbutton",  :action => :update } -%> 
-	<%= link_to('Cancel'[:cancel], categories_path, :class => "fdbutton grey" ) -%>
-  </p>
-<% end %>
+<% content_for :layoutType do -%>single<%- end %>
+<div class="header_area">
+	<h3 class="title">Edit Forum Category</h3>
+</div>
+<div class="page_area">
+	<% form_for :forum_category,@forum_category, :url => category_url , :html=>{:method=>:put}  do |f| -%>
+	  <%= render :partial => "/shared/name_desc", :locals => { :form => f, :type => "edit" } %>
+	
+	  <div class="button-container">
+	    <%= submit_tag 'Update'[:update], { :class => "fdbutton",  :action => :update } -%> 
+		<%= link_to('Cancel'[:cancel], categories_path, :class => "fdbutton grey" ) -%>
+	  </div>
+	<% end %>
+</div>
 

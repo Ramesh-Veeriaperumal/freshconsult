@@ -18,6 +18,14 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
 
   def reply(ticket, note)
     body(:ticket => ticket, :note => note, :host => ticket.account.full_domain)
+    content_type    "multipart/alternative"
+
+    note.attachments.each do |a|
+      attachment  :content_type => a.content_content_type, 
+                  :body => File.read(a.content.to_file.path), 
+                  :filename => a.content_file_name
+    end
+    
     reply_to_ticket(ticket)
   end
   
