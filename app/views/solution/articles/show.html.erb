@@ -1,34 +1,42 @@
 <% content_for :layoutType do%>single<% end %> 
 <div>
 	  <div class="header_area">
-	  	<div class="floatr">
-	  		<%= link_to('Edit', edit_solution_category_folder_article_path(@article.folder.category_id,@article.folder,@article), :class => "button") %>
-			<%= link_to('Delete', solution_category_folder_article_path(@article.folder.category_id,@article.folder,@article), :method => 'delete', :confirm => 'Are you sure you want to delete this solution', :class => "button" ) %>
-	  	</div>
-	 	<%= link_to "Solutions", solution_category_folders_path, :class => "page_title" %>
-		
+	 	<%= link_to "Solutions →", solution_categories_path, :class => "page_title" %>
+		<%= link_to @article.folder.category.name+" →", solution_category_path(@article.folder.category), :class => "page_title" %>
+		<%= link_to @article.folder.name+" →", solution_category_folder_path(@article.folder.category_id, @article.folder), :class => "page_title" %>
 	  </div> 
-	  <div class="page_area">
+	  <div class="page_area bg_pulp solution_title">
+		    <div class="floatr">
+		    	<span class="status_text"><%=@article.status_name%></span>
+		  		<%= link_to('Edit', edit_solution_category_folder_article_path(@article.folder.category_id,@article.folder,@article), :class => "fdbutton") %>
+				<%= link_to('Delete', solution_category_folder_article_path(@article.folder.category_id,@article.folder,@article), :method => 'delete', :confirm => 'Are you sure you want to delete this solution', :class => "fdbutton" ) %>
+		  	</div>	
+			<span class="topic_icon">
+				<% if( !@article.is_public )%> 
+					<img src="/images/private_lock.gif" class="locked" width="20px" height="19px" />
+				<% end %>
+				<% if( @article.art_type == 2 )%> 
+					<img src="/images/solution_type.png" title="<%= @article.type_name %>" width="32px" height="32px" />
+				<% else %>
+					<img src="/images/solution_workaround_type.png" title="<%= @article.type_name %>"  width="32px" height="32px" />
+				<% end %>
+				<div class="icon_text"><%= @article.type_name %></div>
+			</span>	
 	  		<h3 class="title"><%= @article.title %></h3>
-			<ul>
-			<p>
-	  		<%= @article.description %>	
-			</p>
-			<p>
-		    Created By: 
-			<%= @article.user.name%>	
-			</p>
-			<p>
-			Solution Type:
-			<%= @article.type_name%>
-			</p>
-			<p>
-				Solution Status:
-			<%=@article.status_name%>
-			</p>
+			<div class="info_data"> 
+				Written By: <%= @article.user.name%>
+				<div>Last updated <%= @article.updated_at.strftime("%B %e %Y at %I:%M %p")%></div>  
+			</div>
 			
-			</ul>
-			
+	 </div>
+	 <div class="page_area">
+			<table>
+				<tr>
+					<td>		
+						<%= @article.description %>
+					</td>
+				</tr>
+			</table>
 	  </div>	 
 </div>
  

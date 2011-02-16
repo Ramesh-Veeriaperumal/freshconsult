@@ -14,14 +14,12 @@
   <% end %>
 <% end %>
 
-<%logger.debug " here is the folder deta:: #{@article.folder.inspect}"%>
-
-
+<%logger.debug " here is the folder deta:: #{@article.folder.inspect}"%> 
   <%= f.error_messages %>
 	<ul class="ui-form">
 		<li>
     		<%= f.label(:title, "Title") %>
-    		<%= f.text_field :title %>
+    		<%= f.text_field :title, :class => "required" %>
     		<%= f.text_area :description, :class => "mceEditor", :id => 'article-body' %>		
 		</li>
 		 <li>
@@ -45,10 +43,9 @@
 			<input type="text" />
 		</li>
 		<li>
-			<label><%="Solution Properties"%></label>
-			<span>Make this Solution</span>	
-			<%= f.radio_button :is_public, "true" %>Public (Will be published in self service)<br />
-			<%= f.radio_button :is_public, "false" %>Private (Visible to Agents only)
+			<label>Make this Solution</label>
+			<%= f.radio_button :is_public, true  %>Public (Will be published in self service)<br />
+			<%= f.radio_button :is_public, false %>Private (Visible to Agents only)
 		</li>
 		<li class="small">
         	<%= f.label :art_type, "Solution Type" %>
