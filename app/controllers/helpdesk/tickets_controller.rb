@@ -56,7 +56,7 @@ class Helpdesk::TicketsController < ApplicationController
     
     search_tokens =  @item.subject.scan(/\w+/)
     
-    @articles = Helpdesk::Article.title_or_body_like_any(search_tokens).limit(10)
+    @articles = Solution::Article.title_or_body_like_any(search_tokens).limit(10)
         
   end
   
