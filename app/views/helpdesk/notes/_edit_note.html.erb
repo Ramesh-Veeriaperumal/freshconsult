@@ -1,4 +1,14 @@
-
+<script type="text/javascript">
+	jQuery(document).ready(function init(){
+		
+		$('note_form_name').hide()
+		$('note_public_check_box').style.display='block'
+	}
+	
+	
+	);
+	
+</script>
 <% content_for :head do %>
   <%= javascript_include_tag "helpdesk/expanding_textarea.js" %>
   <%= javascript_include_tag "helpdesk/multifile.js" %>

@@ -11,7 +11,7 @@
   <% end %>
 <% end %>
 <div class="request_panel" id="<%=cntid%>" style="display:block"> 
-  <h5 datafor="note">&nbsp;Add a note to this conversation</h5>
+  <h5 datafor="note" id="note_form_name">&nbsp;Add a note to this conversation</h5>
   <h5 datafor="edit_note">&nbsp;Edit this note </h5>
   <span class="seperator"></span>
   <% form_for note, :html => {:multipart => true } do |f| %>
@@ -33,7 +33,7 @@
 			</td>
     	</tr>
 	
-		<tr datafor="note"  style="display:none">
+		<tr datafor="note"  id="note_public_check_box" style="display:none">
 			<td></td>
 			<td>
 				<label><input type="checkbox" class="checkbox" />Requester can view this note (public note)</label>
