@@ -57,12 +57,14 @@ class Solution::FoldersController < ApplicationController
 
   def update
     
-     @folder = Solution::Folder.find(params[:id]) 
+    @folder = Solution::Folder.find(params[:id])
+    
+    redirect_to_url = solution_category_url(params[:category_id])
     
     respond_to do |format|
      
        if @folder.update_attributes(params[nscname])       
-          format.html { redirect_to :action =>"index" }
+          format.html { redirect_to redirect_to_url }
           format.xml  { render :xml => @folder, :status => :created, :location => @folder }     
        else
           format.html { render :action => "edit" }
@@ -73,11 +75,13 @@ class Solution::FoldersController < ApplicationController
 
   def destroy
     
-     @folder = Solution::Folder.find(params[:id])
+    @folder = Solution::Folder.find(params[:id])
     @folder.destroy
-
+    
+    redirect_to_url = solution_category_url(params[:category_id])
+    
     respond_to do |format|
-      format.html {  redirect_to :action =>"index" }
+      format.html { redirect_to redirect_to_url }
       format.xml  { head :ok }
     end
     
