@@ -1,0 +1,15 @@
+<% form_remote_tag   :update => { :success => "article_voting", :failure => "article_error" } , :url => create_ticket_support_article_path, :method =>:post do   %>
+  <%= hidden_field_tag "meta[user_agent]", request.env["HTTP_USER_AGENT"] %>
+  <%= hidden_field_tag "helpdesk_ticket[subject]", "Feedback for #{article.title}" %>
+  <%= hidden_field_tag "helpdesk_ticket[email]", current_account.default_email %>
+  <%= text_area_tag "helpdesk_ticket[description]" %>
+  <li>
+	<% if !logged_in? %>
+		  <label>To verify you are human, plese type the given scrambled letters</label>
+			<%=recaptcha_tags  :ajax => true %>
+		<% end %>
+	<br />
+  </li>
+  
+  <%= submit_tag 'Send Feedback' -%>
+<% end %>

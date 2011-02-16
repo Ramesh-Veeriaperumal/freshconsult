@@ -12,8 +12,9 @@
 	  		<h3 class="title"><%= @article.title %></h3>
 			<ul>
 				<div id="article_voting">
-				<%= render :partial => "voting", :object => @article %>
+				<%= render :partial => "voting",  :article => @article %>
 				</div>
+				
 			<p>
 	  		<%= @article.description %>	
 			</p>

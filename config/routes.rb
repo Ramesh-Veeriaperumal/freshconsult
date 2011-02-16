@@ -157,14 +157,15 @@ ActionController::Routing::Routes.draw do |map|
    map.namespace :solution do |solution|     
      solution.resources :categories  do |category|   
      category.resources :folders  do |folder|
-       folder.resources :articles
+       folder.resources :articles, :member => { :thumbs_up => :put, :thumbs_down => :put }
        end
      end
          
      end
 
   map.namespace :support do |support|
-    support.resources :guides, :articles
+    support.resources :guides 
+     support.resources  :articles, :member => { :thumbs_up => :put, :thumbs_down => :put , :create_ticket => :post }
     support.resources :tickets do |ticket|
       ticket.resources :notes, :name_prefix => 'support_ticket_helpdesk_'
     end
