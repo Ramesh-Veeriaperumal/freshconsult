@@ -51,8 +51,10 @@ class EmailController < ApplicationController
     
     def parse_to_email
       envelope = params[:envelope]
-      puts "********** IN EMAILSCONTROLLER envelope is #{envelope}"
-      puts "********** envelope.inspect is #{envelope.inspect}" unless envelope.nil?
+      unless envelope.nil?
+        envelope_to = (ActiveSupport::JSON.decode envelope)['to']
+        return parse_email envelope_to.first unless (envelope_to.nil? || envelope_to.empty?)
+      end
       
       parse_email params[:to]
     end
