@@ -6,6 +6,7 @@ class ContactsController < ApplicationController
   before_filter :set_selected_tab
   skip_before_filter :build_object , :only => :new
   
+  
   def index
     
     @contacts = self.instance_variable_set('@' + self.controller_name,
@@ -72,6 +73,8 @@ class ContactsController < ApplicationController
   end
   
   def update
+    
+    @obj.customer_id = add_or_update_company
     if @obj.update_attributes(params[cname])
       #flash[:notice] = "The #{cname.humanize.downcase} has been updated."
       redirect_to contacts_url
