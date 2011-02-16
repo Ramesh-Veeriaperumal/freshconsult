@@ -111,9 +111,12 @@
 					<div class="details min_height">
 						<%= first_post.body_html %>
 					</div>
+					
+					<% unless @topic.forum.announcement? %>
 					<div class="status" id="voting_container"> 
 						  <%= render (:partial => "/forum_shared/topic_vote", :object => @topic) if logged_in? %> 
 					</div>
+					<% end %>
 				</div>
 	    	</div>
 
