@@ -69,13 +69,15 @@ class Solution::ArticlesController < ApplicationController
 
   def update
     
+    redirect_to_url = solution_category_folder_url(params[:category_id], params[:folder_id])
+    
     logger.debug "Inside update :: #{params.inspect}"
     @article = Solution::Article.find(params[:id]) 
     
     respond_to do |format|
      
        if @article.update_attributes(params[nscname])       
-          format.html { redirect_to :action =>"index" }
+          format.html { redirect_to redirect_to_url }
           format.xml  { render :xml => @article, :status => :created, :location => @article }     
        else
           format.html { render :action => "edit" }
