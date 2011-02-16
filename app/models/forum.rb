@@ -32,13 +32,17 @@ class Forum < ActiveRecord::Base
   TYPE_NAMES_BY_KEY = Hash[*TYPES.map { |i| [i[2], i[1]] }.flatten]
   TYPE_KEYS_BY_TOKEN = Hash[*TYPES.map { |i| [i[0], i[2]] }.flatten]
   
-  
+  def announcement?()
+    forum_type == TYPE_KEYS_BY_TOKEN[:announce]
+  end
 
-  def ideas?() self.forum_type == 2 
-    end
+  def ideas?()
+    self.forum_type == 2 
+  end
   
-  def questions?() self.forum_type == 3 
-    end
+  def questions?()
+    self.forum_type == 3 
+  end
   
   # retrieves forums ordered by position
   def self.find_ordered(account, options = {})
