@@ -69,6 +69,8 @@ class Solution::ArticlesController < ApplicationController
 
   def update
     
+    redirect_to_url = solution_category_folder_url(params[:category_id], params[:folder_id])
+    
     logger.debug "Inside update :: #{params.inspect}"
     @article = Solution::Article.find(params[:id]) 
     
