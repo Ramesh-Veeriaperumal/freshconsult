@@ -1,5 +1,10 @@
 class Account < ActiveRecord::Base
   
+  #
+  # Tell authlogic that we'll be scoping users by account
+  #
+  authenticates_many :user_sessions
+  
   has_many :users, :dependent => :destroy
   has_one :admin, :class_name => "User", :conditions => { :admin => true }
   has_one :subscription, :dependent => :destroy

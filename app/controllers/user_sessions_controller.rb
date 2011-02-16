@@ -10,12 +10,12 @@ require 'openid'
   skip_before_filter :require_user, :except => :destroy
   
   def new
-    @user_session = UserSession.new
+    @user_session = current_account.user_sessions.new
   end
   
   def create
    
-    @user_session = UserSession.new(params[:user_session])
+    @user_session = current_account.user_sessions.new(params[:user_session])
     if @user_session.save
       #flash[:notice] = "Login successful!"
       redirect_back_or_default('/')
