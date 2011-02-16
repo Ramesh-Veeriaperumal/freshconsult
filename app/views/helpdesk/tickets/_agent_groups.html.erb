@@ -3,7 +3,7 @@
           	<label for="helpdesk_ticket_responder_id">Assigned To</label>
 
 					<select class="select" id="helpdesk_ticket_responder_id" name="helpdesk_ticket[responder_id]">
-							<option value="">Nobody</option>
+							<option value="">None</option>
 						<% @agents.each do |agent| %>
 							<% user = agent.user %>
 							<option value="<%=user.id%>"><%=user.name%></option>
