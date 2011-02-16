@@ -3,6 +3,7 @@
 <% @monitoring = logged_in? && !Monitorship.count(:id, :conditions => ['user_id = ? and topic_id = ? and active = ?', current_user.id, @topic.id, true]).zero? %>
 
 <% content_for :sidebar do -%>
+	<% if logged_in? && current_user.has_manage_forums? && @forum.ideas? %>
 	<div class="rtCnt">
 		<div class="rtDetails_forum">
 
@@ -43,6 +44,7 @@
 		<% end %>
 		</div>
 	</div>
+	<% end %>
 <% end %> 
 		<div class="breadcrumbs" style="display:none;">
 		  <%= link_to "Forums"[:forums_title], category_path(@forum_category) %>
@@ -61,7 +63,7 @@
 	    		<% if @forum.ideas? %>
 		    		<div class="mark_action">
 							<% if @topic.stamp_type %>
-							<% class_name = "stamp_type_#{@topic.stamp_type}" %>
+								<% class_name = "stamp_type_#{@topic.stamp_type}" %>
 								<div class="<%=class_name%> stamp"><%= h(@topic.stamp_name) %></div>
 							<% end %>
 					</div>
@@ -96,7 +98,7 @@
 						      <% if @topic.editable_by?(current_user) -%>
 						        <%= link_to('Edit'[], edit_category_forum_topic_path(@forum_category,@forum, @topic), :class => "button") %> 
 						        <%= link_to('Delete'[], category_forum_topic_path(@forum_category,@forum, @topic), :class => "button", :method => :delete, :confirm => 'Delete this topic forever?'[:delete_topic_conf]) %>
-
+ 							  <% end %>	
 						  <% end %>
 					</div>	
 		        	<div class="user_details">
@@ -109,10 +111,8 @@
 					<div class="details min_height">
 						<%= first_post.body_html %>
 					</div>
-					<div class="status" id="voting_container">
-						<% if(@forum.type != 4) %>
-						  <%= render :partial => "/forum_shared/topic_vote", :object => @topic %>
-						<% end %>
+					<div class="status" id="voting_container"> 
+						  <%= render (:partial => "/forum_shared/topic_vote", :object => @topic) if logged_in? %> 
 					</div>
 				</div>
 	    	</div>
@@ -173,7 +173,6 @@
 				</div>
 				</div>
 				<% end %>
-			<% end %>
-
+		 
 			</div>	
 		</div>

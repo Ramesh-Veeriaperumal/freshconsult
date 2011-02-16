@@ -1,5 +1,5 @@
 <% content_for :layoutType do -%>single<%- end %>
-<div class="header_area">	
+<div class="header_area no_padding">	
 	<div class="right_panel">
 		<%= link_to "Back", solution_category_path(@folder.category_id), :class => "fdbutton grey" %>
 	</div>
@@ -7,14 +7,11 @@
 </div>
 <div class="page_area">
 	<% form_for (@folder), :url => solution_category_folders_path(@folder.category_id) , :html => {:multipart => true, :id => "folder-form"} do |f| %>
-
-	<%= render :partial => "folder_form" , :locals => { :f => f }%>
-	
-	<div class="button-container">
-	    <%= submit_tag "Save", :class => "fdbutton submit" %>
-	    <%= submit_tag "Save and Create Another", :name => "save_and_create", :class => "fdbutton" %>
-		<%= link_to('Cancel'[:cancel], solution_category_url(@folder.category_id), :class => "fdbutton grey" ) %>
-	</div>
-	
+		<%= render :partial => "folder_form" , :locals => { :f => f }%>
+		<div class="button-container">
+		    <%= submit_tag "Save", :class => "fdbutton submit" %>
+		    <%= submit_tag "Save and Create Another", :name => "save_and_create", :class => "fdbutton" %>
+			<%= link_to('Cancel'[:cancel], solution_category_url(@folder.category_id), :class => "fdbutton grey" ) %>
+		</div>
 	<% end %>
 </div>
