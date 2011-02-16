@@ -82,10 +82,10 @@ class User < ActiveRecord::Base
   
   has_one :agent , :class_name => 'Agent' , :foreign_key => "user_id"
   
-  #has_many :agent_groups , :class_name =>'AgentGroup', :foreign_key => "user_id", :source=>'agents'
+  has_many :agent_groups , :class_name =>'AgentGroup', :foreign_key => "user_id"
   
    
-  #accepts_nested_attributes_for :agents
+  #accepts_nested_attributes_for :agent
   
   
 
