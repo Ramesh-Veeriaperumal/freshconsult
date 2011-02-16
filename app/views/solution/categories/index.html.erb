@@ -1,30 +1,25 @@
-<% content_for :layoutType do%>single<% end %>  
-<div>
-	<div class="header_area">
-		<div class="right_panel" >
-	  		<%= link_to "<img src='/images/add.png'> Add Category", new_solution_category_path, :class => "fdbutton" %>
-		</div>
-		<strong class="page_title">Solutions</strong>
-	</div>	  
-	
-	
-	<div class="page_area">			
-			<% @categories.each do |category| %>
-			<div class="sol_list">
-				<strong><%= link_to h(category.name), category %></strong>
-				<div>
-					<%= category.description %>
-				</div>	
-				
-				<div class="floatr button_p">
-				<% if logged_in? && current_user.has_manage_solutions? -%>
-					<%= link_to 'Edit' ,edit_solution_category_path(category), :class => "grey_button"   %>
-					<%= link_to('delete', solution_category_path(category), :method => 'delete', :confirm => 'Are you sure you want to delete this category',  :class => "grey_button" ) %>
-				<% end %>
-				</div>
-				<span class="seperator"></span>
-			</div>
-			
-			<%end%>
+<% content_for :layoutType do%>single<% end %>
+<div class="header_area no_padding">
+	<div class="right_panel">
+  		<%= link_to "<img src='/images/add.png'> New Category", new_solution_category_path, :class => "fdbutton" %>
 	</div>
-</div>
+	<strong class="page_title">Solutions</strong>
+</div>	  
+<div class="page_area">			
+		<% @categories.each do |category| %>
+		<div class="sol_list">
+			<div class="item_actions">
+			<% if logged_in? && current_user.has_manage_solutions? -%>
+				<%= link_to 'edit' ,edit_solution_category_path(category)   %> | 
+				<%= link_to('delete', solution_category_path(category), :method => 'delete', :confirm => 'Are you sure you want to delete this category' ) %>
+			<% end %>
+			</div>
+			<strong><%= link_to h(category.name), category %></strong>
+			<div>
+				<%= category.description %>
+			</div>	 
+			<span class="seperator"></span>
+		</div>
+		
+		<%end%>
+</div> 

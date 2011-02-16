@@ -23,6 +23,7 @@ class Solution::ArticlesController < ApplicationController
      current_folder = Solution::Folder.first
      current_folder = Solution::Folder.find(params[:folder_id]) unless params[:folder_id].nil?
      @article = current_folder.articles.new
+     @article.is_public = "true"
     respond_to do |format|
       format.html # new.html.erb
       format.xml  { render :xml => @article }
