@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110215172702) do
+ActiveRecord::Schema.define(:version => 20110217054524) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -376,7 +376,7 @@ ActiveRecord::Schema.define(:version => 20110215172702) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "sla_policy_id"
-    t.boolean  "override_bhrs",   :default => false
+    t.boolean  "override_bhrs"
   end
 
   create_table "helpdesk_sla_policies", :force => true do |t|
@@ -513,6 +513,7 @@ ActiveRecord::Schema.define(:version => 20110215172702) do
     t.datetime "updated_at"
     t.integer  "thumbs_up",   :default => 0
     t.integer  "thumbs_down", :default => 0
+    t.integer  "account_id"
   end
 
   create_table "solution_categories", :force => true do |t|

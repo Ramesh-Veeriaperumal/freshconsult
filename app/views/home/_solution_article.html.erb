@@ -1,11 +1,17 @@
+<script type="text/javascript" src="http://api.recaptcha.net/js/recaptcha_ajax.js"></script>
 <div class="header_area"> 
 	<div class="floatr actions">
 		<%= link_to image_tag("/images/icons/open-in-new-window.png", :size => "16x16", :title => "Read this Article in a new window"), support_article_path(article), :popup => true %>
 		<a href="javascript:void(0)" id="dialog_close"><img src="/images/icons/btn_close_icon.png" width="16px" height="16px" /></a>
 	</div>
 	<h4><%= link_to h(article.title), support_article_path(article) , :popup => true  %></h4>
-	<div>Modified on <%= article.updated_at.strftime("%B %e %Y at %I:%M %p") %></div>				
+	<div>Modified on <%= article.updated_at.strftime("%B %e %Y at %I:%M %p") %></div>
+				
 </div>
 <div class="page_area">
 	<%= article.description %>
+	<div id="article_errors"></div>
+	<div id="article_voting">
+		<%= render :partial => "/support/shared/voting", :locals =>{ :article => article} %>
+	</div>	
 </div>

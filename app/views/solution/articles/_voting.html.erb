@@ -1,13 +1,3 @@
   
-	<%=@article.thumbs_up%> <%= link_to_remote image_tag('/images/thumb_up.png' ),  
-						:update=> "article_voting",
-						:url => { :action=>"thumbs_up_increment",:id => @article.id} 
-						
-				%>
-				/
-					<%=@article.thumbs_down%> <%= link_to_remote image_tag('/images/thumb_down.png' ),  
-						:update=> "article_voting",
-						:url => { :action=>"thumbs_down_increment",:id => @article.id} 
-						
-				%>
+	<%=@article.thumbs_up%> <%=image_tag('/images/thumb_up.png' )%> / <%=@article.thumbs_down%> <%=image_tag('/images/thumb_down.png' )%>
 

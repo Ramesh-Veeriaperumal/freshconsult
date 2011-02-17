@@ -1,6 +1,7 @@
 class Post < ActiveRecord::Base
   def self.per_page() 25 end
-
+  validates_presence_of :user_id, :body, :topic
+  
   belongs_to :forum
   belongs_to :user
   belongs_to :topic
@@ -12,7 +13,7 @@ class Post < ActiveRecord::Base
   after_create  :update_cached_fields
   after_destroy :update_cached_fields
 
-  validates_presence_of :user_id, :body, :topic
+  
   attr_accessible :body	
 	
   def editable_by?(user)
@@ -24,6 +25,8 @@ class Post < ActiveRecord::Base
     options[:except] << :topic_title << :forum_name
     super
   end
+  
+  
   
   protected
     # using count isn't ideal but it gives us correct caches each time

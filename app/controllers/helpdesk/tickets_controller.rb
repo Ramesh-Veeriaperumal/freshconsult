@@ -6,6 +6,7 @@ class Helpdesk::TicketsController < ApplicationController
 
   before_filter :load_multiple_items, :only => [:destroy, :restore, :spam, :unspam, :assign]
   before_filter :set_customizer , :only => [:new , :edit]
+  before_filter :load_item,     :only => [:show, :edit, :update, :execute_scenario, :close_ticket ] 
  
   def index
 
@@ -56,7 +57,8 @@ class Helpdesk::TicketsController < ApplicationController
     
     search_tokens =  @item.subject.scan(/\w+/)
     
-    @articles = Helpdesk::Article.title_or_body_like_any(search_tokens).limit(10)
+    @articles = current_account.solution_articles.title_or_description_like_any(search_tokens).first(10)
+    
         
   end
   
@@ -123,10 +125,9 @@ class Helpdesk::TicketsController < ApplicationController
   
   def execute_scenario 
     
-    va_rule = VARule.find(params[:scenario_id])
-    evaluate_on = Helpdesk::Ticket.find_by_display_id(params[:id])
-    va_rule.trigger_actions(evaluate_on)
-    evaluate_on.save
+    va_rule = VARule.find(params[:scenario_id])   
+    va_rule.trigger_actions(@item)
+    @item.save
     redirect_to :back
     
   end 
@@ -200,11 +201,11 @@ class Helpdesk::TicketsController < ApplicationController
  
    def close_ticket
      
-     @ticket = Helpdesk::Ticket.find_by_display_id(params[:id])
+     
      status_id = Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:closed]
      logger.debug "close the ticket...with status id  #{status_id}"
      res = Hash.new
-     if @ticket.update_attribute(:status , status_id)
+     if @item.update_attribute(:status , status_id)
        res["success"] = true
        res["status"] = 'Closed'
        res["value"] = status_id

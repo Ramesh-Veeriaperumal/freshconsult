@@ -8,9 +8,9 @@
 		<div class="request_panel_list">
 			<% @articles.each do |article| %>
 			<div class="item">
-				<%= link_to(h(article.title), helpdesk_article_path(article)) %>
+				<%= link_to(h(article.title), solution_category_folder_article_path(article.folder.category_id,article.folder_id,article)) %>
 				<div style="display:none;">
-					<%= truncate ( article.body.gsub(/<\/?[^>]*>/, ""), 100)  %>
+					<%= truncate ( article.description.gsub(/<\/?[^>]*>/, ""), 100)  %>
 				</div>
 			</div>
 			<% end %>

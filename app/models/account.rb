@@ -10,6 +10,7 @@ class Account < ActiveRecord::Base
   has_one :subscription, :dependent => :destroy
   has_many :subscription_payments
   has_many :solution_categories , :class_name =>'Solution::Category'  
+  has_many :solution_articles , :class_name =>'Solution::Article'
   
   has_many :customers, :dependent => :destroy
   has_many :contacts, :class_name => 'User' , :conditions =>{:role_token => 'customer'}
@@ -31,6 +32,8 @@ class Account < ActiveRecord::Base
   
   has_many :tickets, :class_name => 'Helpdesk::Ticket'
   has_many :solution_folders , :class_name =>'Solution::Folder'
+  
+  has_one :form_customizer , :class_name =>'Helpdesk::FormCustomizer'
   
   #Scope restriction ends
   

@@ -1,9 +1,9 @@
 <% content_for :layoutType do%>single<% end %> 
 <div>
 	  <div class="header_area">
-	 	<%= link_to "Solutions →", solution_categories_path, :class => "page_title" %>
-		<%= link_to @article.folder.category.name+" →", solution_category_path(@article.folder.category), :class => "page_title" %>
-		<%= link_to @article.folder.name+" →", solution_category_folder_path(@article.folder.category_id, @article.folder), :class => "page_title" %>
+	 	<%= link_to "Solutions ?", solution_categories_path, :class => "page_title" %>
+		<%= link_to @article.folder.category.name+" ?", solution_category_path(@article.folder.category), :class => "page_title" %>
+		<%= link_to @article.folder.name+" ?", solution_category_folder_path(@article.folder.category_id, @article.folder), :class => "page_title" %>
 	  </div> 
 	  <div class="page_area bg_pulp solution_title">
 		    <div class="floatr">
@@ -27,10 +27,10 @@
 				Written By: <%= @article.user.name%>
 				<div>Last updated <%= @article.updated_at.strftime("%B %e %Y at %I:%M %p")%></div>  
 				<div id="article_voting">
-					<%# render :partial => "voting", :object => @article %>
+					<%= render :partial => "voting", :object => @article %>
 				</div>
 			</div>
-			
+
 	 </div>
 	 <div class="page_area">
 			<table>
