@@ -27,6 +27,9 @@ body{
 
 body {margin:0; padding:0 10px 0 10px; border:0; height:100%; overflow-y:auto; }
 
+.fixedWidth{
+	max-width:680px;
+}
 
 #wrap{
 	@include container;

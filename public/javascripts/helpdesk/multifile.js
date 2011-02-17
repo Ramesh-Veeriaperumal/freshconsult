@@ -48,7 +48,7 @@ Helpdesk.Multifile = {
             })
         });
 
-        var description = target.down('input')
+       /* var description = target.down('input')
         description.activate();
 
         // Pressing enter inside description box should NOT
@@ -72,7 +72,7 @@ Helpdesk.Multifile = {
             }
 
 
-        });
+        });*/
 
     },
 
