@@ -149,28 +149,36 @@
 			%>
 			<% case field["type"] when "text","number" then %>				
 				<li class="<%= field['label'] %>">		 
-					<%= cust_form.label "#{field["label"]}", field_label %>  
+
+					<%= cust_form.label "#{field["label"]}", field_label.humanize() %>  
  					<%= cust_form.text_field "#{field["label"]}" , :class=> field_class %>
+
 				</li>		 
 						
 			<% when "paragraph" then %>
 				<li class="paragraph">
-					<%= cust_form.label "#{field["label"]}", field_label %>  
+
+					<%= cust_form.label "#{field["label"]}", field_label.humanize() %>  
  					<%= cust_form.text_area "#{field["label"]}" ,:class=> field_class %>
+
 				</li>
 					
 			<% when "dropdown" then %>
 				<li class="dropdown"> 
 					<% Array values =[]
 						field["choices"].each {|choice| values.push(choice["value"])}%>
-						 <%= cust_form.label "#{field["label"]}", field_label %>  
+
+						 <%= cust_form.label "#{field["label"]}", field_label.humanize() %>  
  						 <%= cust_form.select "#{field["label"]}", values ,:class=> field_class %>
+
 			    </li>
 							
 		   <% when "checkbox" then %>
 				<li class="checkbox">
+
 					<%= cust_form.check_box "#{field["label"]}" ,:class => field_class %>					
-					<%= field_label %>
+					<%= field_label.humanize() %>
+
 			     </li>
 		   <% end %>
 		 <% end %>			 

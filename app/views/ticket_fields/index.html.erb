@@ -7,6 +7,10 @@
 												    var type;
 													if(key == 'action'){
 														value = "";														
+													}
+													else if (key == "label")
+													{
+														value = value.replace(new RegExp('_','g'),' ');
 													}				
 												    return value;
 												});
