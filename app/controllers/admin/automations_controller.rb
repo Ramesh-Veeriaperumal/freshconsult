@@ -75,10 +75,10 @@ class Admin::AutomationsController < ApplicationController
     end
     
     def load_config
-      a_users = User.find(:all , :conditions =>{:role_token => ['poweruser','admin']}, :order => 'name')      
+      a_users = current_account.users.find(:all , :conditions =>{:role_token => ['poweruser','admin']}, :order => 'name')      
         agents = a_users.collect { |au| [au.id, au.name] }
         
-      groups  = Group.find(:all).collect { |g| [g.id, g.name]}     
+      groups  = current_account.groups.find(:all).collect { |g| [g.id, g.name]}     
       
       action_hash     = [{:name => 0              , :value => "--- Click to Select Action ---"},
                          {:name => "priority"     , :value => "Set Priority as"  , :domtype => "dropdown", :choices => Helpdesk::Ticket::PRIORITY_NAMES_BY_KEY.sort },
