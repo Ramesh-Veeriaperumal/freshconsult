@@ -1,0 +1,20 @@
+<%= javascript_include_tag "helpdesk/multifile.js" %>
+<% attach_id = attach_id || "ticket" %>
+<label>Attach files</label>
+<input type="file" id="<%=attach_id%>_file" name="emptyfile" nameWhenFilled="helpdesk_ticket[attachments][][file]" fileContainer="<%=attach_id%>-container" fileList="<%=attach_id%>-attachments" sendFocusTo="<%=attach_id%>-body" />
+<div class="attachments" id="<%=attach_id%>-container" style="display:none">
+  <div id="<%=attach_id%>-attachments"></div>
+</div>
+
+<%# 
+  The following is a template used by multifile.js to create rows in
+  the attachments table.
+ %>
+			
+<textarea id="file-list-template" style="display:none">
+  <div class="item">
+  	<span>
+  		#{name} - <a href="javascript:void(0)" onclick="Helpdesk.Multifile.remove(this); return false;", inputId="#{inputId}">remove</a>
+	</span>
+  </div>
+</textarea>

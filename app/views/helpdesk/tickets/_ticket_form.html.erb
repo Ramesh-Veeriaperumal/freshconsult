@@ -2,8 +2,7 @@
 <% content_for :head do %>
   <%= stylesheet_link_tag "autosuggest_inquisitor" %>
   <%= javascript_include_tag "autosuggest" %>
-  <%= javascript_include_tag "helpdesk/multifile.js" %>
-
+  
   <% javascript_tag do %>
     document.observe("dom:loaded", function(){
 
@@ -72,11 +71,17 @@
 										.append( "<a>" + item.label + "<br>" + item.value + "</a>" )
 										.appendTo( ul );
 								};
+								
+		jQuery("#NewTicket")
+			.submit(function(){
+				console.log(jQuery("#ticket_file").html());
+				return true;
+			});
 	});
 <% end %>
 
 
-<% form_for @item, :html => {:multipart => true } do |f| %>
+<% form_for @item, :html => {:multipart => true, :id => "NewTicket" } do |f| %>
   <%= f.error_messages %>
   	<%= hidden_field_tag  :topic_id,  params[:topic_id] %> 
 	<ul class="ui-form">
@@ -90,7 +95,7 @@
     %>
 	<li> 	
   		<label id="requester-label">Requester *</label>
-  		<input type="text" id="helpdesk_ticket_email" class="text" name="helpdesk_ticket[email]" value="<%=@item.requester.email if @item.requester %>"></input>
+  		<input type="text" id="helpdesk_ticket_email" class="text required" name="helpdesk_ticket[email]" value="<%=@item.requester.email if @item.requester %>"></input>
    	</li> 
 			
 	<% when "Subject" then%>
@@ -117,14 +122,11 @@
           	<%= f.collection_select :group_id, Group.find_all_by_account_id(@item.account_id), :id, :name,{:include_blank => 'Nobody'}, { :onchange => "changeAggentList(this.options[this.selectedIndex].value)" ,:class => "select"} %>
         </li>
 		
-	<%when "Assigned to" then%>
-		
-			
+	<%when "Assigned to" then%> 
 		<li class="dropdown" id="assigned_to">
           	<%= f.label :responder_id, "Assigned To" %>
           	<%= f.collection_select :responder_id, Helpdesk::Authorization.find_all_by_permission(:manage_tickets), :user_id, :name, {:include_blank => 'Nobody'}, :class => "select" %>
-        </li>
-		
+        </li> 
 		
 	<%when "Priority" then%>
 		<li class="dropdown">
@@ -139,44 +141,43 @@
 		</li>				
 	
 	<%else%>
-		<%logger.debug "Custom  Field #{field["label"]}"%>
+		<%logger.debug "Custom  Field #{field["label"]}"%>		
 		<% fields_for :flexifields do |cust_form| %>
+			<% 
+				field_label = (field["agent"]["required"]) ? "#{field["label"]} *" : "#{field["label"]}"  
+				field_class = field["type"] + ((field["agent"]["required"]) ? " required" : "") 
+			%>
 			<% case field["type"] when "text","number" then %>				
 				<li class="<%= field['label'] %>">		 
-					<%= cust_form.label "#{field["label"]}", "#{field["label"]}" %>  
- 					<%= cust_form.text_field "#{field["label"]}" ,:class=>"text" %>
+					<%= cust_form.label "#{field["label"]}", field_label %>  
+ 					<%= cust_form.text_field "#{field["label"]}" , :class=> field_class %>
 				</li>		 
 						
 			<% when "paragraph" then %>
 				<li class="paragraph">
-					<%= cust_form.label "#{field["label"]}", "#{field["label"]}" %>  
- 					<%= cust_form.text_area "#{field["label"]}" ,:class=>"textarea" %>
+					<%= cust_form.label "#{field["label"]}", field_label %>  
+ 					<%= cust_form.text_area "#{field["label"]}" ,:class=> field_class %>
 				</li>
 					
 			<% when "dropdown" then %>
-				<li class="dropdown">
+				<li class="dropdown"> 
 					<% Array values =[]
 						field["choices"].each {|choice| values.push(choice["value"])}%>
-						 <%= cust_form.label "#{field["label"]}", "#{field["label"]}" %>  
- 						 <%= cust_form.select "#{field["label"]}", values ,:class=>"select" %>
+						 <%= cust_form.label "#{field["label"]}", field_label %>  
+ 						 <%= cust_form.select "#{field["label"]}", values ,:class=> field_class %>
 			    </li>
 							
 		   <% when "checkbox" then %>
 				<li class="checkbox">
-					<%= cust_form.check_box "#{field["label"]}" ,:class=>"checkbox" %>					
-					<%= field["label"] %>
+					<%= cust_form.check_box "#{field["label"]}" ,:class => field_class %>					
+					<%= field_label %>
 			     </li>
 		   <% end %>
 		 <% end %>			 
 		<% end %>
 	<% end %>
 		<li>
-			<label>Attach files</label>
-			<input type="file" id="ticket_file" name="emptyfile" nameWhenFilled="helpdesk_ticket[attachments][][file]" fileContainer="ticket-container" fileList="ticket-attachments" sendFocusTo="ticket-body" />
-			<div class="attachments" id="ticket-container" style="display:none">
-			  <div id="ticket-attachments">
-			  </div>
-	        </div>
+			<%= render :partial=> "/helpdesk/shared/attachment_form" %>
 		</li>
 	</ul>
 	
@@ -188,19 +189,4 @@
 
   <% end %>
   
-  <%# 
-  The following is a template used by multifile.js to create rows in
-  the attachments table.
-  %>
 
-<textarea id="file-list-template" style="display:none">
-  <div class="item">
-  	<span>
-  		#{name} - <a href="javascript:void(0)" onclick="Helpdesk.Multifile.remove(this); return false;", inputId="#{inputId}">remove</a>
-	</span>
-	<span style="display:none;">
-      <label class="overlabel">Description</label>
-      <input type="text" name="helpdesk_ticket[attachments][][description]" />
-    </span>
-  </div>
-</textarea>
