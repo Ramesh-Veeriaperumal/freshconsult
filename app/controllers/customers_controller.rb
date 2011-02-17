@@ -35,7 +35,7 @@ class CustomersController < ApplicationController
   # GET /customers/new
   # GET /customers/new.xml
   def new
-    @customer = Customer.new
+    @customer = current_account.customers.new
 
     respond_to do |format|
       format.html # new.html.erb
