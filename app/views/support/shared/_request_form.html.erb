@@ -34,7 +34,9 @@
 	<%when "Group" then%>
 		<li class="dropdown">
           	<%= request_form.label :group_id, "Group" %>
+
           	<%= request_form.collection_select :group_id, Group.find_all_by_account_id(current_account.id), :id, :name,{:include_blank => 'None'}, { :onchange => "changeAggentList(this.options[this.selectedIndex].value)" ,:class => "select"} %>
+
         </li>
 		
 	<%when "Assigned to" then%>	
@@ -86,6 +88,13 @@
 		 <% end %>			 
 		<% end %>
 	<% end %>
+	
+	<li>
+		<%= render :partial=>"/helpdesk/shared/attachment_form"  %>
+	</li>	
+	<li>
+		<span class="seperator"></span>
+	</li>
 	
 	<li>
 		<% if !logged_in? %>
