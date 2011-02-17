@@ -8,6 +8,7 @@
 	</div>	
 	<div class="page_area">
 	<% form_for :forum_category, :url => categories_path do |f| -%>
+		<%= f.error_messages %>
 		<%= render :partial => "/shared/name_desc", :locals => { :form => f } %>
 		<div class="button-container">	
 			<%= submit_tag 'Save'[:Create], { :class => "fdbutton" } -%> 

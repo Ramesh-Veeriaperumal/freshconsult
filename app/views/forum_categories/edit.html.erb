@@ -4,6 +4,7 @@
 </div>
 <div class="page_area">
 	<% form_for :forum_category,@forum_category, :url => category_url , :html=>{:method=>:put}  do |f| -%>
+	  <%= f.error_messages %>
 	  <%= render :partial => "/shared/name_desc", :locals => { :form => f, :type => "edit" } %>
 	
 	  <div class="button-container">
