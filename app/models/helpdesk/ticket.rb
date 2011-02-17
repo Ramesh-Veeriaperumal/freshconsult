@@ -47,6 +47,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :dependent => :destroy
 
   has_many :tag_uses,
+    :as => :taggable,
     :class_name => 'Helpdesk::TagUse',
     :dependent => :destroy
 

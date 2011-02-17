@@ -7,6 +7,8 @@ class Helpdesk::Tag < ActiveRecord::Base
 
   has_many :tickets,
     :class_name => 'Helpdesk::Ticket',
+    :source => :taggable,
+    :source_type => "Helpdesk::Ticket",
     :through => :tag_uses
 
   SORT_FIELDS = [

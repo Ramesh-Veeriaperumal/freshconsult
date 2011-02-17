@@ -6,11 +6,9 @@ class Helpdesk::TagUse < ActiveRecord::Base
     :foreign_key => 'tag_id',
     :counter_cache => true
 
-  belongs_to :tickets, 
-    :class_name => 'Helpdesk::Ticket',
-    :foreign_key => 'ticket_id'
+  belongs_to :taggable, :polymorphic => true
 
-  validates_uniqueness_of :tag_id, :scope => :ticket_id
-  validates_numericality_of :tag_id, :ticket_id
+  validates_uniqueness_of :tag_id, :scope => [:taggable_id, :taggable_type]
+  validates_numericality_of :tag_id, :taggable_id
   
 end
