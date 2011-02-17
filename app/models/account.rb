@@ -32,6 +32,8 @@ class Account < ActiveRecord::Base
   has_many :tickets, :class_name => 'Helpdesk::Ticket'
   has_many :solution_folders , :class_name =>'Solution::Folder'
   
+  has_one :form_customizer , :class_name =>'Helpdesk::FormCustomizer'
+  
   #Scope restriction ends
   
   validates_format_of :domain, :with => /\A[a-zA-Z][a-zA-Z0-9]*\Z/
