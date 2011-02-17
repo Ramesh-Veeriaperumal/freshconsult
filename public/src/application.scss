@@ -518,14 +518,41 @@ ul.summary{
 .rightSubContainers:hover{
 	@include shadows(#afafaf);
 } 
+ 
+.reminders:before {
+   content:"";
+   position:absolute;
+   top:0;
+   right:0;
+   border-width:0 16px 16px 0;
+   border-style:solid;
+   border-color:#fff #fff #e3b558 #e3b558;
+   background:#e3b558; 
+   display:block; width:0; /* Firefox 3.0 damage limitation */
+}
+
+.reminders.rounded {
+   -webkit-border-radius:5px;
+   -moz-border-radius:5px;
+   border-radius:5px;
+}
+
+.reminders.rounded:before {
+   border-width:8px;
+   border-color:#fff #fff transparent transparent;
+   -webkit-border-bottom-left-radius:5px;
+   -moz-border-radius:0 0 0 5px;
+   border-radius:0 0 0 5px;
+}
 
 .reminders{
-	margin:16px 10px;
-	background:#ffffe5;
-	border:1px solid #eaeadc;
-	padding:12px 12px;
 	position:relative;
-	
+    padding:1em 1.5em;
+    margin:15px 5px; 
+    background:#fafae4;
+    overflow:hidden;  
+    @include shadows(#efefef, -1px, 1px, 1px);
+    
 	h3.title{
 		color:#916c48;
 		font-size:1.2em;
@@ -534,6 +561,7 @@ ul.summary{
 	ul{
 		padding:0px 5px;
 		list-style:none;	
+		@include min-height(200px);
 		li{
 			padding:6px 10px 0px 20px;
 			margin:0px;
@@ -546,6 +574,12 @@ ul.summary{
 			}	
 			label{
 				font-size:1em;
+			}
+			a.request_link{
+				display:block;
+				@include ellipsis;
+				@include link-colors(#6f8698, #336699, #6f8698, #6f8698);
+				font-size:10px;				
 			}
 			.reminder{
 				font-weight:normal;
@@ -639,6 +673,7 @@ h2.content_title{
 
 h3.title{
 	font-size:16px;
+	color:#666666;
 }
 
 h2.title{
@@ -842,7 +877,7 @@ input[type=text], select, input.text {
     width: 96%;
 }
 
-.disabled{
+input.disabled, select.disabled, textarea.disabled{
 	background-color:#F0F0F0;
 	color:#777777 !important;
 	padding:4px !important;
@@ -3342,11 +3377,10 @@ h5.category_title{
 }
 
 .contact{
-	margin:12px 19px 12px 150px;
+	margin:12px 19px 12px 170px;
 	.profile_pic{
-		position:absolute;
-		border:1px solid #afafaf;
-		left:-140px;
+		position:absolute; 
+		left:-150px;
 	}
 }
 
@@ -4025,4 +4059,48 @@ a.page_title{
 	font-weight:bold;
 	font-size:11px;
 	margin:2p 5px;
+}
+
+
+div.ribbon{
+	position:relative;
+	color:#fff;
+	background:#f43059;
+	font-size:1.5em;
+	float:left;
+	clear:both;
+	padding:10px 10px 10px 20px;
+	margin-left:-20px;
+	margin-bottom:20px;
+	text-shadow:0 -1px #d0284b, 0 1px #f96080;
+
+	-moz-box-shadow:2px 2px 0 rgba(0,0,0,0.1);
+	-webkit-box-shadow:2px 2px 0 rgba(0,0,0,0.1);
+	-o-box-shadow:2px 2px 0 rgba(0,0,0,0.1);
+	box-shadow:2px 2px 0 rgba(0,0,0,0.1);
+}
+div.ribbon:before{
+	content:" "; 
+	display:block;
+	border:10px solid green;
+	width: 0;
+	height: 0;
+	border-bottom: 11px solid desaturate(darken($base, 20%), 20%); 
+	border-left: 11px solid #FFF; /* IE fix */
+	border-left: 11px solid rgba(0,0,0,0); 
+	position:absolute;
+	bottom:0;
+	left:0;
+	margin-bottom:-10px;
+	z-index:-1;
+}
+
+.pagination{
+	padding:8px 10px; 
+	background:#efefef;
+	@include corners(6px);
+	a{
+		@include link-colors(#336699, #333333, #336699, #336699);
+		font-weight:bold;
+	}	
 }

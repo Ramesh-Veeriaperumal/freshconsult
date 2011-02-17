@@ -6,14 +6,14 @@
   <%= javascript_include_tag "helpdesk/ticket_search" %> 
   <% javascript_tag do %>
     document.observe("dom:loaded", function(){
-     
-     /* Helpdesk.sel = new Helpdesk.MultiSelectorsOnPages({
-        pages: ['expanded', 'list'],
-        cookieName: 'helpdesk-tickets-page'
-      });*/
-
-     // Helpdesk.sel.submitOnClick('assign-multiple-button', ['responder_id']);
+      
+	  Helpdesk.sel = new Helpdesk.MultiSelectorsOnPages({
+	      pages: ['expanded', 'list'],
+	      cookieName: 'helpdesk-tickets-page'
+	  });
 	
+	  Helpdesk.sel.submitOnClick('assign-multiple-button', ['responder_id']); 
+	  
       new Helpdesk.PageSwitcher({
         toggleMode: true,
         pages: ['assign-options']
@@ -22,6 +22,13 @@
       Helpdesk.monitorTakeItButtons();
 	  	
       Helpdesk.submitOnChange('sort');
+	  
+	  Helpdesk.sel.toggleCheckAll = function(source){
+	  	if(source.checked)
+			Helpdesk.sel.checkAll();
+		else
+			Helpdesk.sel.uncheckAll();
+	  }
 
     });
   <% end %>
@@ -62,7 +69,7 @@
       	<thead>
       		<tr>
 	      		<th class="check">
-	      			<input type="checkbox" onclick="Helpdesk.sel.toggleCheckAll(this)" />
+	      			<input type="checkbox" onclick="Helpdesk.sel.toggleCheckAll(this)"  />
 	      		</th>
 				<th>
 					<!--a href="#" class="button">Edit</a-->
@@ -76,10 +83,9 @@
 					  <%= link_to_function("Unflag Spam", "Helpdesk.sel.submit('#{ unspam_helpdesk_ticket_path('multiple') }', 'put')", :class => "button") %> 
 					<% else %>
 					  <%= link_to_function("Flag Spam", "Helpdesk.sel.submit('#{ spam_helpdesk_ticket_path('multiple') }', 'put')", :class => "button") %> 
-					<% end %>
-					
-					<a href="#" class="button">Close</a>
-					<a href="#" class="button">Pick up</a>
+					<% end %> 
+					<!--a href="#" class="button">Close</a>
+					<a href="#" class="button">Pick up</a-->
 					<a href="javascript:void(0)" id="assign-options-link" class="button">Assign To Agent</a>
 					<div id="assign-options" class="assign-agent" style="display:none;">
 					    Assign to agent <%= select_tag 'responder_id', options_from_collection_for_select(User.find_all_by_permission(current_account, :manage_tickets), :id, :name, current_user) %>
@@ -95,13 +101,20 @@
 			</tr>
       	</thead>
 	  </table>
+	  <% form_tag "", { :id => "expanded",  :method => :put } do %>
+		  <table class="tickets">	
+			<tbody>
+	        	<%= render :partial => "/helpdesk/shared/expanded/ticket", :collection => @items %>
+			</tbody>
+	      </table>
+	  <% end %>
 	  <% form_tag "", { :id => "list",  :method => :put } do %>
-	  <table class="tickets">	
-		<tbody>
-        	<%= render :partial => "/helpdesk/shared/collapsed/ticket", :collection => @items %>
-		</tbody>
-      </table>
-    <% end %>
+		  <table class="tickets">	
+			<tbody>
+	        	<%= render :partial => "/helpdesk/shared/collapsed/ticket", :collection => @items %>
+			</tbody>
+	      </table>
+	  <% end %>
   </div>
 
   <%= will_paginate @items %>

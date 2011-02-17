@@ -1,4 +1,4 @@
-<div class="reminders">
+<div class="reminders rounded">
 <h3 class="title"><%= local_assigns[:reminder_title] || "Reminders" %></h3>
 
 <ul>
@@ -6,7 +6,7 @@
     content_tag(
       :li, 
       check_box_link(
-        r.body + (r.ticket && !parent ? link_to("Re: #{r.ticket.subject}", r.ticket) : ''), 
+        r.body + (r.ticket && !parent ? link_to("Re: #{r.ticket.subject}", r.ticket, :class => "request_link") : ''), 
         r.deleted, 
         helpdesk_reminder_path(r), 
         :delete, 

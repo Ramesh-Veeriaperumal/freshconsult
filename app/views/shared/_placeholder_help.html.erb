@@ -20,6 +20,14 @@
 	<b>Select any placeholder below to append it to the email content</b>
 	<div id="placeholder-list-1" class="placeholder-list">
 		<dl>
+		  <dt><a href="javascript:void(0)">{{ticket.subject}}</a></dt><dd>Ticket subject.</dd>
+		  <dt><a href="javascript:void(0)">{{ticket.description}}</a></dt><dd>Ticket description.</dd>
+		  <dt><a href="javascript:void(0)">{{ticket.url}}</a></dt><dd>Full URL path to ticket (excluding "http://").</dd>
+		  <dt><a href="javascript:void(0)">{{ticket.display_id}}</a></dt><dd>Unique ticket display ID.</dd>
+		  <dt><a href="javascript:void(0)">{{ticket.status}}</a></dt><dd>Ticket status.</dd>
+		  <dt><a href="javascript:void(0)">{{ticket.requester.name}}</a></dt><dd>Full name of the requester who raised the Ticket.</dd>
+		</dl>
+		<!--dl>
 		  <dt><a href="javascript:void(0)">{{ticket.title}}</a></dt><dd>Ticket subject.</dd>
 		  <dt><a href="javascript:void(0)">{{ticket.description}}</a></dt><dd>Ticket description.</dd>
 		  <dt><a href="javascript:void(0)">{{ticket.url}}</a></dt><dd>Full URL path to ticket (excluding "http://").</dd>
@@ -66,7 +74,7 @@
 		  <dt><a href="javascript:void(0)">{{current_user.details}}</a></dt><dd>Detailed information for the user logged in to your help desk.</dd>
 		  <dt><a href="javascript:void(0)">{{current_user.notes}}</a></dt><dd>Notes for the user logged in to your help desk.</dd>
 		  <dt><a href="javascript:void(0)">{{current_user.language}}</a></dt><dd>The language for the user logged in to your help desk.</dd>
-		</dl>	
+		</dl-->	
 	</div>
 	<div class="button-container">
 		<a href="javascript:void(0)" id="placeholder_close" class="fdbutton grey">Close</a>

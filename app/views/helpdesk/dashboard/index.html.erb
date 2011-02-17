@@ -22,7 +22,7 @@
   <%= render :partial => '/helpdesk/shared/history' %>
 <% end %>
 	
-	<ul id="summaryBar" class="summary">
+	<ul id="summaryBar" class="summary"> 
       <li class="title">
       	 <div class="corners"> 
 		     <span class="ltSlant"></span>									
@@ -51,54 +51,30 @@
 		  </a>
       </li>
   </ul>
-   
-<div class="pageSeperator"></div>
+
 <% content_for :main_panel_title do %><% end %>
-
-<% content_for :main_panel_actions do %>
-<!--
-  	<%= link_to "Add a ticket", new_helpdesk_ticket_path, :class => "button" %> 
--->
-<% end %>
-
-<% content_for :main_panel_toolbar do %>
-<% end %>
-
-<% content_for :main_panel_content do %>
-
-  
+<% content_for :main_panel_actions do %><% end %>
+<% content_for :main_panel_toolbar do %><% end %>
+<% content_for :main_panel_content do %>  
   <%# 
     This form is used by JS to submit "Take It" button clicks 
     We couldn't use the button_to helper because it resulted in a 
     form within a form.
   %>
-  <%= form_tag "", :method => :put, :style=>'display: none', :id => 'accept-form' do end %>  
-   <!--div id="pages">
-    <table class="tickets-expanded"-->
+  <%= form_tag "", :method => :put, :style=>'display: none', :id => 'accept-form' do end %>
 	<div class="page_area">
-	<h3 class="title">
-  		Recent Activity
-  	</h3>
-	<ul id="pages" class="activityfeed">
-      <% @items.each_with_index do |item, i| %>
-        <li class="<%= cycle('stripe', '') %>">
-          <%= render(:partial => "ticket_note", :object => item) if item.notable.is_a? Helpdesk::Ticket %> 
-        </li>
-      <% end %>
-	 </ul>
-	
-    <!--/table>
-  </div-->
-
-  <%= will_paginate @items %>
- </div>
- <br />
-
-  <!--%= link_to(
-    image_tag("helpdesk/feed.png", :alt => "Feed") + " Subscribe", 
-    helpdesk_formatted_dashboard_url(:format => 'atom'), 
-    :class => "feed") unless params[:f] %--> 
-
-<% end %>
+		<h3 class="title">Recent Activity</h3>
+		<span class="seperator"></span>
+		<ul id="pages" class="activityfeed">
+	      <% @items.each_with_index do |item, i| %>
+	        <li class="<%= cycle('stripe', '') %>">
+	          <%= render(:partial => "ticket_note", :object => item) if item.notable.is_a? Helpdesk::Ticket %> 
+	        </li>
+	      <% end %>
+		</ul>
+		<%= will_paginate @items %>
+ 	</div>
+	<!--%= link_to(image_tag("helpdesk/feed.png", :alt => "Feed") + " Subscribe", helpdesk_formatted_dashboard_url(:format => 'atom'), :class => "feed") unless params[:f] %--> 
+  <% end %>
  
-<%= render :partial => "/helpdesk/shared/main_panel" %>
+  <%= render :partial => "/helpdesk/shared/main_panel" %>

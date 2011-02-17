@@ -10,9 +10,11 @@ history = (session[:helpdesk_history] || []).reverse.map do |h|
   tab(h[:title], h[:url], "#{active ? :active : :history} #{ h[:class] || '' }") 
 end
 %>
-<div id="RecentItems" class="rightSubContainers">
-<h3 class="title">Recent Items</h3> 
- 	<ul class="ui-list_with_icon">
-		<%=history%>
-	</ul>
-</div>
+<% if (history_active) %>
+	<div id="RecentItems" class="rightSubContainers">
+	<h3 class="title">Recent Items</h3> 
+	 	<ul class="ui-list_with_icon">
+			<%=history%>
+		</ul>
+	</div>
+<% end %>

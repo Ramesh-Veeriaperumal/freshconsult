@@ -4,48 +4,40 @@
     <%= check_box_tag('ids[]', ticket.to_param,  false, :class => 'selector') %>
   </td>
 
-  <!--td class="status">
-    <div class="negative <%= ticket.freshness %>">
-      <%= ticket.freshness %>
-    </div>
-  </td-->
-
   <td class="name">
       <h3>
-        <%= link_to(h(ticket.subject) + " (##{ticket.display_id})", ticket) %> 
-      </h3> 
-      	<%= h(truncate(ticket.description, :length => 200)) %>
-	  
-	  <% unless ticket.requester.nil? %> 
-	  <div>
-	  	from <%= link_to(h(ticket.requester.name), ticket.requester, :class => 'user_name') %>
-	  </div>
+        <%= link_to(h(ticket.subject) + " (##{ticket.display_id})", ticket, :title => ticket.description ) %>
+      </h3>
+	  <% unless ticket.requester.nil? %>
+		from <%= link_to(h(ticket.requester.display_name), ticket.requester, :class => 'user_name' ) %>
 	  <% end %>
-	  <!--	  
-	  <ul class="tags">
-        <%= ticket.tags.map { |t| content_tag(:li, link_to(h(t.name), t)) }.join %>
-      </ul>
-	  -->
+	  <% unless ticket.group.nil? %>
+	  	in <%= link_to( h(ticket.group.name), ticket.group ) %>
+	  <% end %>
+	  
   </td>
 
   <td class="assign">
       <% if ticket.freshness == :new %>
-        <button class="accept-button" action="<%= assign_helpdesk_ticket_url(ticket) %>">Take It</button> 
+        Unassigned <button class="accept-button" action="<%= assign_helpdesk_ticket_url(ticket) %>">Pick Up</button> 
       <% else %>
-        <span>Assigned to <%= link_to(h(ticket.responder.name), ticket.responder, :class => 'username') %></span>
+        <span>Assigned to <%= link_to(h(ticket.responder.display_name), ticket.responder, :class => 'username') %></span>
       <% end %>
 	  	<ul>
 			<li>
-		        status: <span><%= ticket.status_name %></span>
+		        Status <span><%= ticket.status_name %></span>
 		    </li>
 			<li class="priority">
-				priority: <span class="style_<%=ticket.priority%>"><%= ticket.priority_name %></span>
+			    Priority <span class="style_<%=ticket.priority%>"><%= ticket.priority_name %></span>
 			</li>
 		</ul>
   </td>
-  
+	
   <td class="sla">
-		Due in 15 minutes  
+  		<% if(Time.now > ticket.due_by ) %>
+			Already Overdue for <%= distance_of_time_in_words(Time.now, ticket.due_by) %>
+		<% else %>
+			Due in <%= distance_of_time_in_words(Time.now, ticket.due_by) %> 
+		<% end %>  
   </td>
-
 </tr>
