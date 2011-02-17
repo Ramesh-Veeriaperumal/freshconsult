@@ -3,7 +3,7 @@ class Solution::ArticlesController < ApplicationController
   before_filter :set_selected_tab
   uses_tiny_mce :options => Helpdesk::EDITOR_OPTIONS 
   def index
-    @articles = Solution::Article.all
+    @articles = current_account.solution_articles.all
     
     @articles = @articles.paginate( 
       :page => params[:page], 
@@ -137,6 +137,8 @@ protected
   def set_item_user
     
     @article.user ||= current_user if (@article.respond_to?('user=') && !@article.user_id)
+    
+    @article.account_id ||= current_account.id if (@article.respond_to?('account_id='))
     
   end
   
