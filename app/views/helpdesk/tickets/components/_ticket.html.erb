@@ -30,7 +30,7 @@
 				
 				<% ticket.ff_aliases.each do |cust_field| %>
 				<li>
-	                <label><%=cust_field%></label>
+	                <label><%=cust_field.humanize()%></label>
 					<%= h(ticket.get_ff_value(cust_field)) %>
 	            </li> 
 				<% end %>

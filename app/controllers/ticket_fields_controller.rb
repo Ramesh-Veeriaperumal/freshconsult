@@ -165,21 +165,12 @@ def save_flexi_field_entries ff_alias, ff_type
   
   ff_order = data["ff_order"]
   
-  logger.debug "type is #{ff_type} and new_column#{column_name} and ff_def_id : #{ff_def_id} "
+  logger.debug "type is #{ff_type} and new_column#{column_name} and ff_def_id : #{ff_def_id} and ff_alias:: #{ff_alias.inspect} "
   
   #saving new column as Untitled
   
-  @ff_entries = FlexifieldDefEntry.new
-  
-  @ff_entries.flexifield_name = column_name
-  
-  @ff_entries.flexifield_def_id = ff_def_id
-  
-  @ff_entries.flexifield_alias = ff_alias
-  
-  @ff_entries.flexifield_order = ff_order +1 
-  
-  @ff_entries.flexifield_coltype = ff_type
+  @ff_entries = FlexifieldDefEntry.new(:flexifield_name =>column_name , :flexifield_def_id =>ff_def_id ,:flexifield_alias =>ff_alias , :flexifield_order =>ff_order +1, :flexifield_coltype =>ff_type)
+ 
   
   if @ff_entries.save
     
