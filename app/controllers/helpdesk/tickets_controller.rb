@@ -4,9 +4,9 @@ class Helpdesk::TicketsController < ApplicationController
 
   include HelpdeskControllerMethods
 
-  before_filter :load_multiple_items, :only => [:destroy, :restore, :spam, :unspam, :assign]
-  before_filter :set_customizer , :only => [:new , :edit]
+  before_filter :load_multiple_items, :only => [:destroy, :restore, :spam, :unspam, :assign]  
   before_filter :load_item,     :only => [:show, :edit, :update, :execute_scenario, :close_ticket ] 
+  before_filter :set_customizer , :only => [:new ,:edit]
  
   def index
 
