@@ -229,8 +229,8 @@ protected
     @item.account_id ||= current_account.id if (@item.respond_to?('account_id='))
   end
   
-   def set_customizer        
-    @item.customizer ||= Helpdesk::FormCustomizer.first(:conditions =>{:account_id =>current_account.id})    
+   def set_customizer   
+    @item.customizer ||= Helpdesk::FormCustomizer.first(:conditions =>{:account_id =>current_account.id}) 
   end
 
   def process_item

@@ -86,9 +86,10 @@
   	<%= hidden_field_tag  :topic_id,  params[:topic_id] %> 
 	<ul class="ui-form">
  	<%
+	
+		
 		@customizer = ActiveSupport::JSON.decode(@item.customizer.json_data)
-		logger.debug "json decoded:#{@customizer}"
-
+		
 		@customizer.each do |field|
 			case field["label"]
 			 when "Requester" then

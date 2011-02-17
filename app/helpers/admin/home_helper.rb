@@ -1,3 +1,3 @@
 module Admin::HomeHelper
-  include ReCaptcha::ViewHelper
+  #include ReCaptcha::ViewHelper
 end
