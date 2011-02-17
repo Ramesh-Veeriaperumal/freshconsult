@@ -55,6 +55,10 @@ module SupportTicketControllerMethods
       
       handle_custom_fields
       
+      (params[:helpdesk_ticket][:attachments] || []).each do |a|
+        @ticket.attachments.create(:content => a[:file], :description => a[:description], :account_id => @ticket.account_id)
+      end
+       
       @ticket.create_activity(@ticket.requester, "{{user_path}} submitted a new ticket {{notable_path}}", {}, 
                                    "{{user_path}} submitted the ticket")
 

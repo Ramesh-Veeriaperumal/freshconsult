@@ -1,6 +1,6 @@
 <% content_for :layoutType do%>single<% end %>
 
-<% form_for @ticket, :url => support_tickets_path do |f| %>
+<% form_for @ticket, :url => support_tickets_path, :html => { :multipart => true } do |f| %>
   <%= f.error_messages %>
   <%= render :partial => 'support/shared/request_form', :object => f %>
 <% end %>
