@@ -1,2 +1,0 @@
-module Helpdesk::GuidesHelper
-end
