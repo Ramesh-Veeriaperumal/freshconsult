@@ -1,5 +1,9 @@
 class Helpdesk::FormCustomizer < ActiveRecord::Base
   
+   serialize :json_data
+   serialize :agent_view
+   serialize :requester_view
+   
    set_table_name "helpdesk_form_customizers"
    
    belongs_to :account
