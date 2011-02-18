@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110217104617) do
+ActiveRecord::Schema.define(:version => 20110218122500) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -622,7 +622,6 @@ ActiveRecord::Schema.define(:version => 20110217104617) do
     t.string   "current_login_ip"
     t.integer  "login_count",         :default => 0,     :null => false
     t.integer  "failed_login_count",  :default => 0,     :null => false
-    t.datetime "last_request_at"
     t.string   "single_access_token"
     t.string   "perishable_token"
     t.datetime "created_at"
