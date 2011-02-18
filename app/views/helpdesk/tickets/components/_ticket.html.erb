@@ -1,3 +1,18 @@
+<% javascript_tag do %>
+	changeAggentList = function(group_id)
+	{
+		jQuery.ajax({type: 'POST',
+					 url: '/helpdesk/tickets/get_agents/'+group_id,
+					 contentType: 'application/text',
+	      			 success: function(data){
+					 			jQuery('#assigned_to')
+									.html(data)
+									.hide()
+									.show("highlight", {}, 500);
+						  	  }
+					});
+	}
+<% end %>
 <div class="rtDetails" id="TicketProperties">              
 		<h3 class="title">Ticket Properties</h3>	
 			<% form_for ticket do |f| %>
@@ -8,24 +23,28 @@
 	            </li>
 	            <li>
 					<%= f.label :priority, "Priority" %>
-					<%= f.select :priority, Helpdesk::Ticket::PRIORITY_OPTIONS, {}, {:onchange => "this.form.submit()"} %>
+					<%= f.select :priority, Helpdesk::Ticket::PRIORITY_OPTIONS, {} %>
 	            </li>
 	            <li>
 	                <%= f.label :status, "Status" %>
-					<%= f.select :status, Helpdesk::Ticket::STATUS_OPTIONS, {}, {:onchange => "this.form.submit()"} %>
+					<%= f.select :status, Helpdesk::Ticket::STATUS_OPTIONS, {}  %>
 	            </li>
 				<li>
 					<%= f.label :group_id, "Group" %>
-					<%= f.collection_select :group_id, Group.find_all_by_account_id(@item.account_id), :id, :name,{:include_blank => 'None'}, { :onchange => "changeAggentList(this.options[this.selectedIndex].value)" ,:class => "select"} %>
+					<%= f.collection_select :group_id, Group.find_all_by_account_id(@item.account_id), :id, :name,{:include_blank => '...'}, { :onchange => "changeAggentList(this.options[this.selectedIndex].value)" ,:class => "select"} %>
       			</li>
-	            <li id="assigned_to">
+	            <li id="assigned_to" class="dropdown">
 	                <%= f.label :responder_id, "Assigned To" %>
-					<%= f.collection_select :responder_id, User.find_all_by_permission(current_account, :manage_tickets), :id, :name, {:include_blank => 'None'}, {:onchange => "this.form.submit()"} %>	
+					<%= f.collection_select :responder_id, User.find_all_by_permission(current_account, :manage_tickets), :id, :name, {:include_blank => '...'} %>
 	            </li>
 				<li>
-					<%= f.label :source, "Mode" %>
-					<%= f.select :source, Helpdesk::Ticket::SOURCE_OPTIONS, {}, {:onchange => "this.form.submit()"} %>
+					<%= f.label :ticket_type, "Type" %>
+					<%= f.select :ticket_type, Helpdesk::Ticket::TYPE_OPTIONS, {} %>
 	            </li> 
+				<li>
+					<%= f.label :source, "Source" %>
+					<%= f.select :source, Helpdesk::Ticket::SOURCE_OPTIONS, {} %>
+	            </li>
 				<!-- Custom fields starts here -->
 				
 				<% ticket.ff_aliases.each do |cust_field| %>
@@ -35,6 +54,9 @@
 	            </li> 
 				<% end %>
 				<!-- Custom fields ends here-->
-	        </ul> 
+				<li>
+					<%= f.submit "Update", :class => "fdbutton" %>	
+				</li>
+	        </ul>
 			<% end %> 
 	    </div> 
