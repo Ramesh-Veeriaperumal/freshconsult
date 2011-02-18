@@ -2,6 +2,7 @@
 	<%= render :partial => "/shared/filter_jsinit", :locals => { :filter_type => "automation"} %>
 <% end %>
 
+<%= f.error_messages :object_name => 'scenario' %>
 <ul class="ui-form">
 	<li>
 		<%= f.label :name, "Scenario Label *" %>

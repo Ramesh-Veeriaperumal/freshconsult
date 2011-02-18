@@ -2,6 +2,7 @@
 	<%= render :partial => "/shared/filter_jsinit", :locals => { :filter_type => "va_rule"} %>
 <% end %>
 
+<%= f.error_messages :object_name => 'rule' %>
 <input type="hidden" name="id"   value="" />
 <input type="hidden" name="type" value="virtual_agents" />
 <ul class="ui-form">

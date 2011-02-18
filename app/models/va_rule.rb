@@ -2,6 +2,10 @@ class VARule < ActiveRecord::Base
   serialize :filter_data
   serialize :action_data
   
+  validates_presence_of :name, :rule_type
+  validates_uniqueness_of :name, :scope => [:account_id, :rule_type]
+  validate :has_actions?
+  
   attr_accessor :conditions, :actions
   
   belongs_to :account
@@ -24,7 +28,7 @@ class VARule < ActiveRecord::Base
       @conditions << (Va::Condition.new(f, account_id))
     end unless filter_data.nil?
     
-    @actions = action_data.map { |act| deserialize_action act }
+    @actions = action_data.map { |act| deserialize_action act } unless action_data.nil?
   end
   
   def deserialize_action(act_hash)
@@ -59,5 +63,11 @@ class VARule < ActiveRecord::Base
     puts "Trigger action called for #{name}"
     actions.each { |a| a.trigger(evaluate_on) }
   end
+  
+  private
+    def has_actions?
+      deserialize_them
+      errors.add_to_base("Actions can't be empty") if(actions.nil? || actions.empty?)
+    end
   
 end

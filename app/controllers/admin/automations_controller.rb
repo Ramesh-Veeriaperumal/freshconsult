@@ -20,6 +20,7 @@ class Admin::AutomationsController < ApplicationController
       flash[:notice] = "The #{human_name} has been created."
       redirect_back_or_default redirect_url
     else
+      load_config
       render :action => 'new'
     end
   end
@@ -35,6 +36,7 @@ class Admin::AutomationsController < ApplicationController
       flash[:notice] = "The #{human_name} has been updated."
       redirect_back_or_default redirect_url
     else
+      load_config
       render :action => 'edit'
     end
   end
