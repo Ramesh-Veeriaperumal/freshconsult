@@ -40,7 +40,9 @@ class Bayes
 	#     b.untrain :this, "This text"
 	def untrain(category, text)
 		category = category.prepare_category_name
+    
 		text.word_hash.each do |word, count|
+      RAILS_DEFAULT_LOGGER.debug "count: #{count}"
 			if @total_words >= 0
 				orig = @categories[category][word]
 				@categories[category][word]     ||=     0
@@ -48,7 +50,7 @@ class Bayes
 				if @categories[category][word] <= 0
 					@categories[category].delete(word)
 					count = orig
-				end
+			end        
 				@total_words -= count
 			end
 		end
