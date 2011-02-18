@@ -157,7 +157,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     "[##{display_id}]"
   end
 
-  def train(category)
+  def train(category)   
     classifier.untrain(spam ? :spam : :ham, spam_text) if trained
     classifier.train(category, spam_text)
     classifier.save

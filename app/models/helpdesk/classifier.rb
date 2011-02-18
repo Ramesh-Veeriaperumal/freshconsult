@@ -16,7 +16,7 @@ class Helpdesk::Classifier < ActiveRecord::Base
     brain.train(category, text)
   end
 
-  def untrain(category, text)
+  def untrain(category, text)   
     brain.untrain(category, text)
   end
 
