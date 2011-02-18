@@ -1,5 +1,8 @@
 class Group < ActiveRecord::Base
   
+  validates_presence_of :name
+  validates_uniqueness_of :name, :scope => :account_id
+  
    has_many :agent_groups , :class_name => "AgentGroup", :foreign_key => "group_id"
    has_many :agents, :through => :agent_groups, :source => :user
    

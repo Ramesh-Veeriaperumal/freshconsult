@@ -1,5 +1,8 @@
 class Solution::Folder < ActiveRecord::Base
   
+  validates_presence_of :name
+  validates_uniqueness_of :name, :scope => :category_id
+  
   belongs_to :category, :class_name => 'Solution::Category'
    set_table_name "solution_folders"
    

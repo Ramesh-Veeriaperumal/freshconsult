@@ -1,7 +1,7 @@
 class Solution::Article < ActiveRecord::Base
    belongs_to :folder, :class_name => 'Solution::Folder'
-   set_table_name "solution_articles"
    
+   set_table_name "solution_articles"   
    belongs_to :user, :class_name => 'User'
    
    has_many :attachments,
@@ -11,7 +11,7 @@ class Solution::Article < ActiveRecord::Base
     
     attr_protected :attachments
     
-   validates_presence_of :title, :description, :user_id
+   validates_presence_of :title, :description, :user_id , :account_id
    validates_length_of :title, :in => 3..240
    validates_numericality_of :user_id
     
