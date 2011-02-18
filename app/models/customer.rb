@@ -1,5 +1,9 @@
 class Customer < ActiveRecord::Base
   
+  
+  validates_presence_of :name,:account
+  validates_uniqueness_of :name, :scope => :account_id
+  
   belongs_to :account
   
   has_many :users , :class_name =>'User'
@@ -27,8 +31,7 @@ class Customer < ActiveRecord::Base
   #setting default sla
   def check_sla_policy
     
-    if self.sla_policy_id.nil?
-      
+    if self.sla_policy_id.nil?      
       
       self.sla_policy_id = account.sla_policies.find_by_is_default(true).id
       
