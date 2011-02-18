@@ -12,6 +12,12 @@ class BusinessCalendar < ActiveRecord::Base
   
   attr_accessible :holidays
   
+  DEFAULT_SEED_DATA = {
+    :beginning_of_workday => '9:00 am',
+    :end_of_workday => '6:00 pm',
+    :weekdays => [1, 2, 3, 4, 5]
+  }
+  
   def after_find
     self.holidays ||= []
   end
