@@ -2,6 +2,7 @@ class Forum < ActiveRecord::Base
   acts_as_list
 
   validates_presence_of :name,:forum_category
+  validates_uniqueness_of :name, :scope => :forum_category_id
   
   belongs_to :forum_category
 
