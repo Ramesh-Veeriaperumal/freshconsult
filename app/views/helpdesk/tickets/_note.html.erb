@@ -1,10 +1,6 @@
-
-<%
-note_view_id = "note_view_"+note.id.to_s()
-
-%>
+<% note_view_id = "note_view_"+note.id.to_s() %>
 <div id="<%=note_view_id%>" class="description <%= cycle('stripe', '') %>">
-  <a name="<%= note.id %>"> </a>
+   <a name="<%= note.id %>"></a>
    <% if note.private && !note.incoming && !note.status? %>
 	      <div class="item_actions">
 	      	<%=link_to_remote( "Edit",  :update => note_view_id,
@@ -50,5 +46,3 @@ note_view_id = "note_view_"+note.id.to_s()
 		    </ul>
 	  </div>	
 </div>
-<div class="seperator"></div>
-<!--div id="note_view_id"> </div-->

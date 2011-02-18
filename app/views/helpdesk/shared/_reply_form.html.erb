@@ -59,12 +59,7 @@
 		        <strong>Attach files</strong>
 		    </td>
 			<td> 
-				<input type="file" id="<%= id %>_file" name="emptyfile" nameWhenFilled="helpdesk_note[attachments][][file]" fileContainer="<%= id %>-container" fileList="<%= id %>-attachments" sendFocusTo="<%= id %>-body" />   
-				  <div class="attachments" id="<%= id %>-container" style="display:none">
-					<div id="<%= id %>-attachments">
-						
-					</div>
-		          </div>
+			<%= render :partial => "/helpdesk/shared/attachment_form", :locals => { :attach_id => id } %>
 			</td>
 		    <% end %>
 		</tr>
@@ -75,20 +70,3 @@
     </div>      
   <% end %>
 </div>
-
-<%# 
-  The following is a template used by multifile.js to create rows in
-  the attachments table.
-%>
-
-<textarea id="file-list-template" style="display:none">
-  <div class="item">
-  	<span>
-  		#{name} - <a href="javascript:void(0)" onclick="Helpdesk.Multifile.remove(this); return false;", inputId="#{inputId}">remove</a>
-	</span>
-	<span style="display:none;">
-      <label class="overlabel">Description</label>
-      <input type="text" name="helpdesk_note[attachments][][description]" />
-    </span>
-  </div>
-</textarea>

@@ -6,18 +6,23 @@ class Helpdesk::SubscriptionsController < ApplicationController
 
   include HelpdeskControllerMethods
 
-protected
-
-  def scoper
-    @parent.subscriptions
-  end
-
-  def item_url
-    :back
-  end
-
-  def create_error
-    redirect_to :back
-  end
+  protected
+  
+    def scoper
+      @parent.subscriptions
+    end
+  
+    def item_url
+      :back
+    end
+  
+    def create_error
+      redirect_to :back
+    end
+    
+    def post_persist
+      flash[:notice] = "You are now monitoring this ticket"
+      redirect_to params[:redirect_to].present? ? params[:redirect_to] : item_url
+    end
   
 end

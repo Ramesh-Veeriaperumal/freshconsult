@@ -44,6 +44,6 @@ window.FactoryUI = {
 		label   = label || "";
 		name    = name  || "";
 		checked = (checked == "on")?"checked": "" || "";
-		return jQuery("<label class='"+className+"'><input type='checkbox' name='"+name+"' "+checked+" />"+label+"</label>") 
+		return jQuery("<label class='"+className+"'><input type='hidden' name='"+name+"' value=false /><input type='checkbox' name='"+name+"' "+checked+" value=true />"+label+"</label>") 
 	}
 };

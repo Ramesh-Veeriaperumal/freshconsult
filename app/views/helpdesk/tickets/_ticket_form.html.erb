@@ -1,4 +1,4 @@
-
+<% type ||= "new" %>
 <% content_for :head do %>
   <%= stylesheet_link_tag "autosuggest_inquisitor" %>
   <%= javascript_include_tag "autosuggest" %>
@@ -190,8 +190,13 @@
 	</ul>
 	
     <div class="button-container">
+      
       <%= f.submit "Save changes", :class => "fdbutton submit" %>
-      <%= submit_tag "Save and Create Another", :name => "save_and_create" , :class => "fdbutton" %>
+      <% if(type == "edit") %>	
+      	<%= link_to "Delete", @item, :method => :delete, :class => "fdbutton red" %>
+	  <% else %>
+	  	<%= submit_tag "Save and Create Another", :name => "save_and_create" , :class => "fdbutton" %>
+	  <% end %>
       <%= link_to "Cancel", (@item.new_record? ? {:action => 'index'} : @item ), :class => "fdbutton grey" %>
     </div>
 

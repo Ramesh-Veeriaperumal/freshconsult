@@ -222,6 +222,7 @@ rules_filter = function(name, filter_data, parentDom, options){
 				    tempConstruct = $H(),
 					type		  = type || "object";
 					flag		  = false;		
+				 
 				
 				serialArray.each(function(item){					
 					if(item.name == name || flag){
@@ -236,16 +237,18 @@ rules_filter = function(name, filter_data, parentDom, options){
 							serialHash.get(name).push(tempConstruct.toObject());
 							flag = false;
 						}
-						else {
-							//console.log(item.name+ " ---- " + item.value + "----" + item.type );
+						else { 
 							tempConstruct.set(item.name, item.value);
 						}			
 					}
 				});		
 				var current_filter = serialHash.get(name);
-				save_data = (type != 'json') ? current_filter.toObject() : current_filter.toJSON();
-				hidden_.val(save_data);				
-				return save_data;			
+				
+				if( ! (current_filter.length == 1 && current_filter[0].name == 0) ) { 
+					save_data = (type != 'json') ? current_filter.toObject() : current_filter.toJSON();
+					hidden_.val(save_data);
+					return save_data;
+				}
 			},
 		init: 
 			function(){				
@@ -279,7 +282,7 @@ rules_filter = function(name, filter_data, parentDom, options){
 			jQuery(parentDom).parents('form:first').submit(function(e){
 				domUtil.get_filter_list('json', this);
 				//console.log(hidden_.val());
-				return true;
+				return false;
 			});
 			
 			jQuery('.l_placeholder').live("click", function(ev){

@@ -177,6 +177,7 @@
 	jQuery("#SaveForm").click(function(e){			
 			var jsonData = getCustomFieldJson();
 			jQuery("#field_values").val(jsonData);
+			//console.log(jsonData.toSource());
 			jQuery.ajax({
       					type: 'POST',
 						url: '/ticket_fields/update',
@@ -427,7 +428,7 @@
 		                <label>For Agents</label>
 		                <div class="nestedChoices">
 		                    <h4>
-		                    	<label><input type="checkbox" name="agentrequired" />Required for closure</label>
+		                    	<label><input type="checkbox" name="agentrequired" />Make this mandatory</label>
 								<span>Field cannot be blank when solving the ticket</span>
 							</h4>
 		                </div>

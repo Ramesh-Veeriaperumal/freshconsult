@@ -419,9 +419,10 @@ ul.summary{
 	 position:relative;
 	 .summary_arrow{
 		position:absolute;
-		right:-56px;
+		right:-26px;
 		top:0px;
 		border:28px solid #fffff1;
+		border-right:2px;
 		z-index:0;
 		border-left-color:$base;
 		height:0px; width:0px;
@@ -433,7 +434,7 @@ ul.summary{
 		text-transform:uppercase;
 		font-weight:bold;
 		color:#666666;	
-		margin:0px 48px 0px 0px;
+		margin:0px 20px 0px 0px;
 		
 		background:$base;	
 		display:inline-block;
@@ -1232,8 +1233,13 @@ div.leader-right{
 }
 
 .grey{
-	@include vertical-gradient(#f1f5ed, #efefef);
+	@include vertical-gradient(#f4f4f4, #efefef);
 	color:#555555 !important;
+}
+
+.red{
+	@include vertical-gradient(#f4f4f4, #efefef);
+	color:#993333 !important;
 }
 
 .fdbutton.active{
@@ -1401,17 +1407,49 @@ body h5{
 	 
 	.ticket_actions{
 		position:relative;
-		top:-10px;
+		display:block;
 		float:right;
-		@include clearfix;
-		a{
-			@include clearfix;
-		}
-		.button{
+		clear:right;
+		div.action_buttons{
 			position:relative;
-			top:-10px;
+			float:right;
+			@include corners(12px);
+			margin:2px 0px 2px 5px;
+			@include vertical-gradient(#F3F1EC, darken(#F3F1EC, 8%)); 
+			padding:2px 8px;
+			border:1px solid darken(#F3F1EC, 10%);
+			a{
+				text-decoration:none;
+				margin:0px 0px;
+				padding:0px 8px 0px 5px;
+				border-right:1px solid darken(#F3F1EC, 20%);
+				@include link-colors(#333333, #666666, #333333, #333333); 
+				@include text-shadow(#ffffff, 0px, 1px, 1px);
+			}
+			a.last{ 
+				border:0px;
+				padding-right:4px;
+			}
 		}
 	} 
+	.request_info{
+		background:#efffd6;
+		@include corners(6px);
+		padding:8px 18px 8px 18px;
+		font-size:14px;
+		color:#333300;
+		margin:0px 0px 10px 0px;
+		a.link_to{
+			@include link-colors(#666633,#333300,#666633,#666633);
+			font-size:12px;
+			font-weight:bold; 
+		}
+		ul{
+			@include no-bullets;
+			padding:0px;
+			margin:0px;
+		}
+	}
 	.requestCnt{		
 		@include pie-clearfix;
 		@include corners(6px);
@@ -1434,10 +1472,14 @@ body h5{
 			margin:0px;
 			margin-top:8px;
 		}
+		.seperator{
+			margin:24px 0px 18px 0px; 
+			border-top: 1px solid #f2f2f2;
+		}
 	}
 	
 	div.description{
-			margin:10px 5px 15px 70px;
+			margin:8px 0px 8px 70px;
 			position:relative;
 			.details{ 
 				padding:8px 0px 0px 0px;
@@ -1559,12 +1601,14 @@ body h5{
 	padding:0px;
 
 	li{
+		@include clearfix;
 		padding:3px 6px 3px 20px;
 		position:relative;
 		img{
-			position:absolute;
-			left:0px;
-			top:3px;
+			float:left;
+			padding:3px;
+			margin:0px 8px 0px 0px;
+			border:1px solid #cfcfcf;
 		}	
 		a{
 			color:#2c86c7;
@@ -3652,12 +3696,12 @@ div.information_tip{
 	padding:15px 20px;
 	@include corners(8px);
 	margin:0px 0px 10px 0px;
-	background: #f2f2f2;
+	background: #F3F1EC;
 	h3.title, h4.title{
 		padding:0px;
 		margin:3px 0px 6px 0px;
 		font-weight:bold;		
-		color:#666666px;
+		color:#666666;
 	}
 	h3.title{
 		font-size:20px;
@@ -3796,7 +3840,7 @@ div.search{
 			display:block;
 		}
 		a:hover{
-			background-color:#f3f3f3;
+			background-color:#f6efdd;
 		} 
 		a.active{
 			background-color:#ffffff;

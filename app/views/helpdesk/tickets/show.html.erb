@@ -167,32 +167,29 @@
 	                </li>
 	            </ul>
 	        </div>
-			
 			<div class="title">
 		        <em><%= "##{@ticket.display_id}" %></em>
 		        <b><%= h(@ticket.subject) %></b>
 		    </div>
-			<b> <%= link_to("link to forum #{@ticket.topic.title}" , category_forum_topic_path(@ticket.topic.forum.forum_category.id,@ticket.topic.forum.id,@ticket.topic.id)) unless @ticket.ticket_topic.nil? %></b>
 			<div class="description">
+				<div class="ticket_actions action_icons">
+						<div class="action_buttons">
+							<%= link_to("Edit", edit_helpdesk_ticket_path(@ticket)  ) %> 
+							<%= link_to_function("Close", "closeTicket(#{@ticket.display_id})"  )  %>
+							<%= link_to("Delete", @ticket, :method => :delete,:class => "last"   ) unless @ticket.deleted %>
+							<%= link_to("Undelete", restore_helpdesk_ticket_path(@ticket), :method => :put, :class => "last" ) if @ticket.deleted %>
+						</div>	
+		            	<%= link_to(image_tag("/images/spacer.gif"), helpdesk_ticket_helpdesk_subscriptions_path(@ticket), :method => :post, :class => "monitor", :title => "Monitor this ticket" ) if not @subscription %>
+						<%= link_to(image_tag("/images/spacer.gif"), helpdesk_ticket_helpdesk_subscription_path(@ticket, @subscription), :method => :delete, :class => "monitor_active",  :title => "Stop monitoring this ticket" ) if @subscription %>
+						<%= link_to(image_tag("/images/spacer.gif"), unspam_helpdesk_ticket_path(@ticket), :method => :put, :class => "spam_active", :title => "This is not spam" ) if @ticket.spam %>
+					   	<%= link_to(image_tag("/images/spacer.gif"), spam_helpdesk_ticket_path(@ticket), :method => :put, :class => "spam", :title  => "Mark as spam") unless @ticket.spam %>
+		        </div>	 
 		        <div class="user_details">
 		        	<%= render :partial => "/shared/avatar", :object => @ticket.requester.avatar  %>
 		          		Reported by <%= link_to(h(@ticket.requester.name),@ticket.requester, :class => "user_name") %>
 		            <div>
 						Created on <%= h(@ticket.created_at.strftime("%B %e %Y at %I:%M %p")) %>
-						<div class="ticket_actions action_icons">
-							<%= link_to(image_tag("/images/spacer.gif"), helpdesk_ticket_helpdesk_subscriptions_path(@ticket), :method => :post, :class => "monitor", :title => "Monitor this ticket" ) if not @subscription %>
-							<%= link_to(image_tag("/images/spacer.gif"), helpdesk_ticket_helpdesk_subscription_path(@ticket, @subscription), :method => :delete, :class => "monitor_active",  :title => "Stop monitoring this ticket" ) if @subscription %>
-							<%= link_to(image_tag("/images/spacer.gif"), unspam_helpdesk_ticket_path(@ticket), :method => :put, :class => "spam_active", :title => "This is not spam" ) if @ticket.spam %>
-					    	<%= link_to(image_tag("/images/spacer.gif"), spam_helpdesk_ticket_path(@ticket), :method => :put, :class => "spam", :title  => "Mark as spam") unless @ticket.spam %>
-							
-							<%= link_to("Edit Ticket", {:action => "edit"}, :class => "button"  ) %>
-							<a href="javascript:void(0);closeTicket(<%=@ticket.display_id%>)" class="button">Close</a>
-							<%= link_to("Delete", @ticket, :method => :delete, :class => "button"  ) unless @ticket.deleted %>
-					    	<%= link_to("Undelete", restore_helpdesk_ticket_path(@ticket), :method => :put, :class => "button"  ) if @ticket.deleted %>
-							
-						</div> 
-					</div>				
-					
+					</div>
 		        </div>	        
 				<div id="description-summary" class="details min_height">
 		            <%= h(truncate(@ticket.description, :length => 400)) %>
@@ -203,8 +200,22 @@
 		        <div id="description-full" style="display:none" class="details">
 			    	<%= @ticket.description %>
 			    </div>
-				
+				<% unless @ticket.attachments.empty? %>
+					<span class="seperator"></span>
+					<ul class="attachment_list">
+				      <%= render :partial => '/helpdesk/shared/attachment', :collection => @ticket.attachments %>
+				    </ul>
+				<% end %>
 			</div>
+			<% unless @ticket.ticket_topic.nil? %>
+			<div class="request_info" > 
+				<ul>
+					<li>
+						This ticket is linked to the forum "<%= link_to("#{@ticket.topic.title}" , category_forum_topic_path(@ticket.topic.forum.forum_category.id,@ticket.topic.forum.id,@ticket.topic.id), :class => "link_to") %>"
+					</li>
+				</ul>
+			</div>
+			<% end %>
 			
 	    </div>		
 		<%# content_tag(:div, "This ticket is flagged as spam. " + link_to("(undo)", unspam_helpdesk_ticket_path(@ticket), :method => :put), :class => 'spam') if @ticket.spam %>
@@ -214,35 +225,24 @@
 					    	<%# link_to("Stop monitoring this ticket", helpdesk_ticket_helpdesk_subscription_path(@ticket, @subscription), :method => :delete, :class => "button" ) if @subscription %>
 					    	<%# link_to("This is not spam", unspam_helpdesk_ticket_path(@ticket), :method => :put, :class => "button" ) if @ticket.spam %>
 					    	<%# link_to("Mark as spam", spam_helpdesk_ticket_path(@ticket), :method => :put, :class => "button" ) unless @ticket.spam %>
-						
-		<% unless @ticket.notes.visible.newest_first.blank? then %>
-			<div class="floatr">
-				<%= link_to_function("Reply", "Helpdesk.swapEmailNote('send-email', false, 'Send Email', this, 'cnt-top')", :class => 'fdbutton') if @item.requester %>	  
-		  		<%= link_to_function("Add Note", "Helpdesk.swapEmailNote('add-note', true, 'Add Note', this, 'cnt-top')", :class => 'fdbutton') %>		
-			</div>	
-		    <h3 class="subtitle">Conversation</h3>
-		<% end %>
+		<div class="floatr">
+			<%= link_to_function("Reply", "Helpdesk.swapEmailNote('send-email', false, 'Send Email', this, 'cnt-reply')", :class => 'fdbutton') if @item.requester %>	  
+			<%= link_to_function("Add Note", "Helpdesk.swapEmailNote('add-note', true, 'Add Note', this, 'cnt-reply')", :class => 'fdbutton') %>		
+		</div>
+		
 		<% if @item.requester %>
-			<%= render(:partial => '/helpdesk/shared/reply_form', :locals => {:id => 'send-email', :cntid => 'cnt-top', :note => [@ticket, Helpdesk::Note.new(:private => false)] }) %>
+			<%= render(:partial => '/helpdesk/shared/reply_form', :locals => {:id => 'send-email', :cntid => 'cnt-reply', :note => [@ticket, Helpdesk::Note.new(:private => false)] }) %>
 		<% else %>
-			<%= render(:partial => '/helpdesk/shared/note_form', :locals => {:id => 'add-note',	:cntid => "cnt-top", :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
-		<% end %>
-			
+			<%= render(:partial => '/helpdesk/shared/note_form', :locals => {:id => 'add-note',	:cntid => "cnt-reply", :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
+		<% end %>				
+		
 		<% unless @ticket.notes.visible.newest_first.blank? then %>
+			<h3 class="subtitle">Conversation</h3>
 			<div class="requestCnt">
-				<%= render :partial => 'note', :collection => @ticket.notes.visible.newest_first %>
+				<%= render :partial => 'note', :collection => @ticket.notes.visible.newest_first, :spacer_template => "ui/seperator" %>
 		    </div>
 		<% end %>
-		
-		<div class="alignright">
-			<%= link_to_function("Reply", "Helpdesk.swapEmailNote('send-email', false, 'Send Email', this, 'cnt-bottom')", :class => 'fdbutton') if @item.requester %>	  
-		 	<%= link_to_function("Add Note", "Helpdesk.swapEmailNote('add-note', true, 'Add Note', this, 'cnt-bottom')", :class => 'fdbutton') %>		
-		</div>	
-		<% if @item.requester %>
-			<%= render(:partial => '/helpdesk/shared/reply_form', :locals => {:id => 'send-email', :cntid => "cnt-bottom", :note => [@ticket, Helpdesk::Note.new(:private => false)] }) %>
-		<% else %>
-			<%= render(:partial => '/helpdesk/shared/note_form', :locals => {:id => 'add-note',	:cntid => "cnt-bottom", :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
-		<% end %>
+		 
 	</div>
 
 <% end %>

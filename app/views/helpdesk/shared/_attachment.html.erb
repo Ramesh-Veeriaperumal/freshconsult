@@ -7,7 +7,8 @@
   <% end %>
 
   <span class="name">
-    <%= link_to attachment.content_file_name, attachment %>
+  	<%= image_tag(attachment.content.url(:thumb)) if attachment.image? %>
+    <%= link_to attachment.content_file_name, attachment, :popup => true %>
     <%= content_tag(:p, attachment.description) unless !attachment.description || attachment.description.empty? %>
   </span>
 
