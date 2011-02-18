@@ -1,3 +1,3 @@
 module Admin::HomeHelper
-  
+ 
 end

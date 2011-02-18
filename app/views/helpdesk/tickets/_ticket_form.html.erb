@@ -70,13 +70,8 @@
 										.data( "item.autocomplete", item )
 										.append( "<a>" + item.label + "<br>" + item.value + "</a>" )
 										.appendTo( ul );
-								};
-								
-		jQuery("#NewTicket")
-			.submit(function(){
-				console.log(jQuery("#ticket_file").html());
-				return true;
-			});
+								};								
+		
 	});
 <% end %>
 
@@ -86,9 +81,10 @@
   	<%= hidden_field_tag  :topic_id,  params[:topic_id] %> 
 	<ul class="ui-form">
  	<%
+	
+		
 		@customizer = ActiveSupport::JSON.decode(@item.customizer.json_data)
-		logger.debug "json decoded:#{@customizer}"
-
+		
 		@customizer.each do |field|
 			case field["label"]
 			 when "Requester" then

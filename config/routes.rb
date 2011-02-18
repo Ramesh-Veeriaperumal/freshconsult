@@ -1,7 +1,7 @@
 ActionController::Routing::Routes.draw do |map|
   map.resources :customers
-  
-  map.resources :contacts
+ 
+  map.resources :contacts, :collection => { :autocomplete => :get }
   
   map.resources :groups
   

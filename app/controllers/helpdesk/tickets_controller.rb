@@ -104,13 +104,26 @@ class Helpdesk::TicketsController < ApplicationController
 
   def assign
     user = params[:responder_id] ? User.find(params[:responder_id]) : current_user
-
+    
     @items.each do |item|
+      old_item = item.clone
       message = "#{item.responder ? "Reassigned" : "Assigned"} to #{user.name}"
       item.responder = user
       item.train(:ham)
       item.save
-      item.create_status_note(current_account, message, current_user, "#{item.responder ? "reassigned" : "assigned"} the ticket")
+      if old_item.responder_id != item.responder_id
+        unless item.responder
+          item.create_activity(current_user, "{{user_path}} assgned the ticket {{notable_path}} to 'Nobody'", {}, 
+                                   "Assigned to 'Nobody' by {{user_path}}")
+        else
+          item.create_activity(current_user, "{{user_path}} #{old_item.responder ? "reassigned" : "assigned"} the ticket {{notable_path}} to {{responder_path}}", 
+                  {'eval_args' => {'responder_path' => ['responder_path', {
+                                                          'id' => item.responder.id, 
+                                                          'name' => item.responder.name}]}}, 
+                  "Assigned to {{responder_path}} by {{user_path}}")
+        end
+      end
+      #item.create_status_note(current_account, message, current_user, "#{item.responder ? "reassigned" : "assigned"} the ticket")
     end
 
     flash[:notice] = render_to_string(

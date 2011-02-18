@@ -45,18 +45,24 @@ class ForumsController < ApplicationController
     @forum_category = ForumCategory.find(params[:category_id])
     @forum = @forum_category.forums.build(params[:forum])
     @forum.account_id ||= current_account.id
-    @forum.save!
-    respond_to do |format|
-      format.html { redirect_to(category_forum_path( @forum_category,@forum), :notice => 'ForumCategory was successfully created.') }
-      format.xml  { head :created, :location => category_forum_path( @forum_category,@forum, :format => :xml) }
+    if @forum.save
+      respond_to do |format|
+        format.html { redirect_to(category_forum_path( @forum_category,@forum), :notice => 'The forum has been created.') }
+        format.xml  { head :created, :location => category_forum_path( @forum_category,@forum, :format => :xml) }
+      end
+    else
+      render :action => 'new'
     end
   end
 
   def update
-    @forum.update_attributes!(params[:forum])
-    respond_to do |format|
-      format.html { redirect_to @forum }
-      format.xml  { head 200 }
+    if @forum.update_attributes(params[:forum])
+      respond_to do |format|
+        format.html { redirect_to @forum }
+        format.xml  { head 200 }
+      end
+    else
+      render :action => 'edit'
     end
   end
   

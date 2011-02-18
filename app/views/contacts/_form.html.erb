@@ -1,3 +1,43 @@
+<script> 
+	jQuery(document).ready(function(){
+		jQuery("#contact_customer").autocomplete({
+			source: function( request, response ) {
+				jQuery.ajax({
+					url: "<%=autocomplete_contacts_path%>",
+					data: {
+						v: request.term
+					},
+					success: function(data) {
+						response( jQuery.map( data.results, function( item ) {
+							//console.log(item.value);
+							return {
+								label: item.value,
+								value: item.value
+							}
+						}));
+					}
+				});
+			},
+			select: function( event, ui ) {
+				
+			},
+			open: function(){
+				jQuery(this).removeClass('ui-corner-all');
+			}
+		}).data( "autocomplete" )
+			._renderItem = function( ul, item ) {
+									return jQuery( "<li></li>" )
+										.data( "item.autocomplete", item )
+										.append( "<a>" + item.label + "</a>" )
+										.appendTo( ul );
+								};	
+	});		
+	
+</script>
+
+
+
+
 <%= error_messages_for :user %> 	 
 	<ul class="ui-form">
 		<li>
@@ -20,7 +60,7 @@
 			
 			%>
 			<%= label(:user, :customer, "Company") %>
-			<%= text_field(:user, :customer, :class => "text" , :value => company_name) %>
+			<%= text_field(:user, :customer, :class => "text" , :value => company_name , :id => "contact_customer") %>
 			
 		</li>
 		<li class="small">	

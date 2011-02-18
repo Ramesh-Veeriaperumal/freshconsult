@@ -38,7 +38,7 @@ class User < ActiveRecord::Base
     
     self.avatar_attributes=params[:user][:avatar_attributes] unless params[:user][:avatar_attributes].nil?
    
-    save_without_session_maintenance
+    return false unless save_without_session_maintenance
     deliver_activation_instructions!
   end
   
