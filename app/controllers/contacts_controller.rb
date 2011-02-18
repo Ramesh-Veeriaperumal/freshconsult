@@ -52,11 +52,9 @@ class ContactsController < ApplicationController
   
   def add_or_update_company
    
-    company_name = params[:user][:customer]    
-    logger.debug "add_or_update_company  :: company_name #{company_name}"
-    cust_id = current_account.customers.find_by_name(company_name)
-    
-    if cust_id.nil? && !company_name.nil?     
+    company_name = params[:user][:customer]       
+    cust_id = current_account.customers.find_by_name(company_name)    
+    if cust_id.nil? 
       @customer = current_account.customers.new(:name =>company_name)
       @customer.save
       cust_id = @customer.id
