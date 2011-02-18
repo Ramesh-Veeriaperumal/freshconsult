@@ -3,10 +3,13 @@ class Solution::Article < ActiveRecord::Base
    set_table_name "solution_articles"
    
    belongs_to :user, :class_name => 'User'
+   
    has_many :attachments,
     :as => :attachable,
     :class_name => 'Helpdesk::Attachment',
     :dependent => :destroy
+    
+    attr_protected :attachments
     
    validates_presence_of :title, :description, :user_id
    validates_length_of :title, :in => 3..240

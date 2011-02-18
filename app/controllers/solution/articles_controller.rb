@@ -51,7 +51,7 @@ class Solution::ArticlesController < ApplicationController
    
     respond_to do |format|
       if @article.save
-        #create_attachments Need to handle this case
+        create_attachments 
         format.html { redirect_to redirect_to_url }        
         format.xml  { render :xml => @article, :status => :created, :location => @article }
       else
@@ -78,7 +78,8 @@ class Solution::ArticlesController < ApplicationController
     
     respond_to do |format|
      
-       if @article.update_attributes(params[nscname])       
+       if @article.update_attributes(params[nscname])  
+          create_attachments
           format.html { redirect_to redirect_to_url }
           format.xml  { render :xml => @article, :status => :created, :location => @article }     
        else
@@ -101,8 +102,10 @@ class Solution::ArticlesController < ApplicationController
   end
 
  def create_attachments
+   logger.debug "create_attachments  "
     return unless @article.respond_to?(:attachments)
     (params[nscname][:attachments] || []).each do |a|
+      logger.debug "creating file :#{a[:file]}"
       @article.attachments.create(:content => a[:file], :description => a[:description], :account_id => @article.account_id)
     end
   end
