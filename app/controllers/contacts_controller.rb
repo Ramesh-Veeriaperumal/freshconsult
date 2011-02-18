@@ -83,6 +83,19 @@ class ContactsController < ApplicationController
       render :action => 'edit'
     end
   end
+  
+  def autocomplete
+   
+     items = current_account.customers.find(:all, 
+                                            :conditions => ["name like ? ", "%#{params[:v]}%"], 
+                                            :limit => 30)
+
+    r = {:results => items.map {|i| {:id => i.id, :value => i.name} } }  
+    respond_to do |format|
+      format.json { render :json => r.to_json }
+    end
+    
+  end
  
 
 protected

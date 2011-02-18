@@ -70,13 +70,8 @@
 										.data( "item.autocomplete", item )
 										.append( "<a>" + item.label + "<br>" + item.value + "</a>" )
 										.appendTo( ul );
-								};
-								
-		jQuery("#NewTicket")
-			.submit(function(){
-				console.log(jQuery("#ticket_file").html());
-				return true;
-			});
+								};								
+		
 	});
 <% end %>
 
