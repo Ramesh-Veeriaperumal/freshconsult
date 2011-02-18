@@ -35,9 +35,12 @@ class ContactsController < ApplicationController
   
   def create
     
-    @user = current_account.users.new #by Shan need to check later    
-    company_id = add_or_update_company    
-    params[:user][:customer_id]=company_id
+    @user = current_account.users.new #by Shan need to check later  
+
+    company_name =params[:user][:customer]    
+    unless company_name.empty?      
+      params[:user][:customer_id]= add_or_update_company   
+    end
     
     if @user.signup!(params)    
       flash[:notice] = "The contact has been created and activation instructions sent to #{@user.email}!"
@@ -50,9 +53,10 @@ class ContactsController < ApplicationController
   def add_or_update_company
    
     company_name = params[:user][:customer]    
+    logger.debug "add_or_update_company  :: company_name #{company_name}"
     cust_id = current_account.customers.find_by_name(company_name)
     
-    if cust_id.nil?      
+    if cust_id.nil? && !company_name.nil?     
       @customer = current_account.customers.new(:name =>company_name)
       @customer.save
       cust_id = @customer.id
@@ -74,7 +78,11 @@ class ContactsController < ApplicationController
   
   def update
     
-    @obj.customer_id = add_or_update_company
+    company_name =params[:user][:customer]    
+    unless company_name.empty?     
+      @obj.customer_id = add_or_update_company    
+    end
+     
     if @obj.update_attributes(params[cname])
       #flash[:notice] = "The #{cname.humanize.downcase} has been updated."
       redirect_to contacts_url

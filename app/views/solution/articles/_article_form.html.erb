@@ -22,7 +22,7 @@
     		<%= f.text_field :title, :class => "required" %>
     		<%= f.text_area :description, :class => "mceEditor", :id => 'article-body' %>		
 		</li>
-		 <li>
+		 <!--li>
 		 	<a href="#" id="attachment-options-link">Attach a File</a>
 			<div class="attachment-options" id="attachment-options" style="display:none">
 	        <label>Select a file</label>
@@ -33,6 +33,10 @@
 	          </tbody>
 	        </table>
 	      </div>	
+		</li-->
+		
+		<li>
+			<%= render :partial=> "/solution/shared/attachment_form" %>
 		</li>
 			
 		<li>

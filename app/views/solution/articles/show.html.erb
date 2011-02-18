@@ -40,6 +40,10 @@
 					</td>
 				</tr>
 			</table>
-	  </div>	 
+	  </div>	
+	  
+	  <ul class="attachment_list">
+		      <%= render :partial => '/helpdesk/shared/attachment', :collection => @article.attachments %>
+      </ul> 
 </div>
  
