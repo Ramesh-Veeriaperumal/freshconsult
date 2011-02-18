@@ -35,12 +35,12 @@ class ContactsController < ApplicationController
   
   def create
     
-    @contact = current_account.users.new #by Shan need to check later    
+    @user = current_account.users.new #by Shan need to check later    
     company_id = add_or_update_company    
     params[:user][:customer_id]=company_id
     
-    if @contact.signup!(params)    
-      flash[:notice] = "The contact has been created and activation instructions sent to #{@contact.email}!"
+    if @user.signup!(params)    
+      flash[:notice] = "The contact has been created and activation instructions sent to #{@user.email}!"
       redirect_to contacts_url
     else
       render :action => :new
@@ -68,7 +68,7 @@ class ContactsController < ApplicationController
   
   def delete_avatar
     load_object
-    @contact.avatar.destroy
+    @user.avatar.destroy
     render :text => "success"
   end
   
