@@ -10,11 +10,6 @@ class Admin::VaRulesController < Admin::AutomationsController
     super
   end
   
-  def edit
-    @filter_input = ActiveSupport::JSON.encode @va_rule.filter_data
-    super
-  end
-  
   def update
     @va_rule.filter_data = ActiveSupport::JSON.decode params[:filter_data]
     super
@@ -41,6 +36,11 @@ class Admin::VaRulesController < Admin::AutomationsController
     
     def human_name
       "virtual agent rule"
+    end
+    
+    def edit_data
+      @filter_input = ActiveSupport::JSON.encode @va_rule.filter_data
+      super
     end
     
     def load_object

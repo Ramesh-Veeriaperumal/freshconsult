@@ -22,13 +22,14 @@ class VARule < ActiveRecord::Base
   end
   
   def deserialize_them
+    puts "******* filter_data #{filter_data.inspect} and #{filter_data.class}"
     @conditions = []
     filter_data.each do |f|
       f.symbolize_keys!
       @conditions << (Va::Condition.new(f, account_id))
-    end unless filter_data.nil?
+    end unless !filter_data
     
-    @actions = action_data.map { |act| deserialize_action act } unless action_data.nil?
+    @actions = action_data.map { |act| deserialize_action act } unless !action_data
   end
   
   def deserialize_action(act_hash)

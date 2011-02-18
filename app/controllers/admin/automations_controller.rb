@@ -21,12 +21,13 @@ class Admin::AutomationsController < ApplicationController
       redirect_back_or_default redirect_url
     else
       load_config
+      edit_data
       render :action => 'new'
     end
   end
 
   def edit
-    @action_input = ActiveSupport::JSON.encode @va_rule.action_data
+    edit_data
   end
 
   def update
@@ -37,6 +38,7 @@ class Admin::AutomationsController < ApplicationController
       redirect_back_or_default redirect_url
     else
       load_config
+      edit_data
       render :action => 'edit'
     end
   end
@@ -76,6 +78,10 @@ class Admin::AutomationsController < ApplicationController
       "automation"
     end
     
+    def edit_data
+      @action_input = ActiveSupport::JSON.encode @va_rule.action_data
+    end
+    
     def load_config
       a_users = current_account.users.find(:all , :conditions =>{:role_token => ['poweruser','admin']}, :order => 'name')      
         agents = a_users.collect { |au| [au.id, au.name] }
@@ -106,34 +112,26 @@ class Admin::AutomationsController < ApplicationController
     
     def additional_actions
       {5, {:name => "add_comment"  , :value => "Add Comment"      , :domtype => 'comment'}}
-  end
-  
-  
-def add_custom_actions action_hash
-  
-   @ticket_field = Helpdesk::FormCustomizer.find(:first ,:conditions =>{:account_id => current_account.id})
-   
-   @json_data = ActiveSupport::JSON.decode(@ticket_field.json_data)
-   
-   @json_data.each do |field|
-     
-     if field["fieldType"].eql?("custom")
-        Array values =[]
-        if "dropdown".eql?(field["type"])
-          
-          field["choices"].each {|choice| values.push([choice["value"],choice["value"]])}
-                  
-        end
+    end
+    
+    
+    def add_custom_actions action_hash
+       @ticket_field = Helpdesk::FormCustomizer.find(:first ,:conditions =>{:account_id => current_account.id})
+       @json_data = ActiveSupport::JSON.decode(@ticket_field.json_data)
        
-        item = {:name =>  field["label"] , :value =>  "Set #{field["label"]} as" ,  :domtype => field["type"] , :choices => values , :action => "set_custom_field" ,:handler =>field["type"]}
-        action_hash.push(item)
-     end
-     
-   end
-   
-  return action_hash
- 
-end
-  
+       @json_data.each do |field|
+         if field["fieldType"].eql?("custom")
+            Array values =[]
+            if "dropdown".eql?(field["type"])
+              field["choices"].each {|choice| values.push([choice["value"],choice["value"]])}
+            end
+           
+            item = {:name =>  field["label"] , :value =>  "Set #{field["label"]} as" ,  :domtype => field["type"] , :choices => values , :action => "set_custom_field" ,:handler =>field["type"]}
+            action_hash.push(item)
+         end
+       end
+      return action_hash
+    end
+    
 
 end
