@@ -5,8 +5,7 @@ module HelpdeskControllerMethods
     base.send :before_filter, :build_item,          :only => [:new, :create]
     base.send :before_filter, :load_item,           :only => [:show, :edit, :update ]   
     base.send :before_filter, :load_multiple_items, :only => [:destroy, :restore]
-    base.send :before_filter, :add_to_history,      :only => [:show]
-    base.send :before_filter, :set_nscname
+    base.send :before_filter, :add_to_history,      :only => [:show] 
   end
   
 
@@ -289,11 +288,6 @@ protected
       history << page
       session[:helpdesk_history] = history
     end
-  end
-  
-  
-  def set_nscname
-    @item.nscname = @nscname
-  end
+  end 
 
 end

@@ -207,9 +207,7 @@ class Helpdesk::TicketsController < ApplicationController
     end
   end
  
-   def close_ticket
-     
-     
+   def close_ticket 
      status_id = Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:closed]
      logger.debug "close the ticket...with status id  #{status_id}"
      res = Hash.new

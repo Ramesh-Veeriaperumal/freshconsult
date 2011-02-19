@@ -19,8 +19,8 @@
 	<%end%>
 	</div>
 	<div class="user_details">
-		<%= (render :partial => "/shared/avatar", :object => post.user.avatar)  if post.user %>
-		<b><%= post.user.name %></b>
+		<%= user_avatar(post.user.avatar)  if post.user %>
+		<b><%= post.user.display_name %></b>
 		<div><%= post.user.job_title %></div>
 		<div title="<%= post.created_at.xmlschema %>"><%= time_ago_in_words(post.created_at) %> ago</div> 
 	</div>

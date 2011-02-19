@@ -24,31 +24,24 @@
 	</div>
 <% end %>
 
-<div class="infoPage contact"> 
-	<div class="profile_pic">
-		<%= image_tag (@user.avatar) ? 
-						@user.avatar.content.url(:medium) : "/images/icons/profile_blank.gif" %>		
-	</div>				
+<div class="infoPage contact">
+	<%= user_avatar(@user.avatar, :medium, "profile_pic") %>
 	<div class="contact_box">
 		<h3 class="info_title">		
 			<%= @user.name %>
 		</h3>
-		
+		<% unless @user.job_title.nil? %>
 		<h4 class="info_title">
-			<% unless @user.job_title.nil? %>
-				<%= @user.job_title %>
-			<% end %>
-			<!-- at <a href="#">YCombinator</a-->		
+			<%= @user.job_title %>
 		</h4>
-		
+		<% end %>	
 		<div class="tag_list">
-			<a href="#"><%= @user.job_title %></a>
-			<a href="#"><%= @user.name %></a>
+			
 		</div>
 	
 		<div class="actionsRight">
-			<%= link_to 'Edit this user', edit_contact_path(@user), :class => "button" %> 
-			<%= link_to 'Back', contact_path, :class => "button" %>		
+			<%= link_to 'Edit', edit_contact_path(@user), :class => "button" %>
+			<%= link_to('Delete', {:controller => "contacts", :action => "destroy", :id => @user} , :method => 'delete', :confirm => 'Are you sure you want to delete this contact?', :class => "button") unless @user == current_user %>		
 		</div>
 		<span class="seperator"></span>
 		<div class="info_subtitle">"Special note"</div>
