@@ -5,8 +5,7 @@
       new Helpdesk.PageSwitcher({
         toggleMode: true,
         pages: ['attachment-options']
-      });
-
+      }); 
     });
   <% end %>
 <% end %>
@@ -27,9 +26,8 @@
 		</tr>
 		<tr>
 			<td></td>
-			<td>
-				
-    			<%= f.text_area :body, { :class => 'expando', :id => "#{id}-#{cntid}-body" , :value => @signature} %>
+			<td> 
+				<%= f.text_area :body, { :class => 'expando', :id => "#{id}-#{cntid}-body" , :value => @signature} %>
 			</td>
     	</tr>
 	
@@ -46,12 +44,7 @@
 		        <strong>Attach files</strong>
 		    </td>
 			<td> 
-				<input type="file" id="<%= cntid %>_file" name="emptyfile" nameWhenFilled="helpdesk_note[attachments][][file]" fileContainer="<%= cntid %>-container" fileList="<%= cntid %>-attachments" sendFocusTo="<%= cntid %>-body" />   
-				  <div class="attachments" id="<%= cntid %>-container" style="display:none">
-					<div id="<%= cntid %>-attachments">
-						
-					</div>
-		          </div>
+				<%= render :partial => "/helpdesk/shared/attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note" } %>
 			</td>
 		    <% end %>
 		</tr>
@@ -61,17 +54,4 @@
       <%= submit_tag(local_assigns[:submit] || ActiveSupport::Inflector.titleize(id), :class => "fdbutton") %>
     </div>      
   <% end %>
-</div>
-
-<%# 
-  The following is a template used by multifile.js to create rows in
-  the attachments table.
-%>
-
-<textarea id="file-list-template" style="display:none">
-  <div class="item">
-  	<span>
-  		#{name} - <a href="javascript:void(0)" onclick="Helpdesk.Multifile.remove(this); return false;", inputId="#{inputId}">remove</a>
-	</span> 
-  </div>
-</textarea>
+</div> 

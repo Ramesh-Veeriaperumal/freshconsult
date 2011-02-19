@@ -10,6 +10,7 @@ class Helpdesk::Note < ActiveRecord::Base
     :class_name => 'Helpdesk::Attachment',
     :dependent => :destroy
 
+  attr_accessor :nscname
   attr_protected :attachments, :notable_id
 
   named_scope :newest_first, :order => "created_at DESC"

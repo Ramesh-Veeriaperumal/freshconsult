@@ -187,14 +187,15 @@
 		        </div>
 		        <div id="description-full" style="display:none" class="details">
 			    	<%= @ticket.description %>
-			    </div>
-				<% unless @ticket.attachments.empty? %>
+			    </div> 
+			</div>
+			<% unless @ticket.attachments.empty? %>
 					<span class="seperator"></span>
+					<h4><%= @ticket.attachments.size %> attachments</h4>
 					<ul class="attachment_list">
 				      <%= render :partial => '/helpdesk/shared/attachment', :collection => @ticket.attachments %>
 				    </ul>
-				<% end %>
-			</div>
+			<% end %>
 			<% unless @ticket.ticket_topic.nil? %>
 			<div class="request_info" > 
 				<ul>
