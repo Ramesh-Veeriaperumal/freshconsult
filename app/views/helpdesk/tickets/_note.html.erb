@@ -15,12 +15,12 @@
 	  <% end %>
 	  
  	 	<div class="user_details">
-			<%= (render :partial => "/shared/avatar", :object => note.user.avatar)  if note.user %>
+			<%= user_avatar(note.user.avatar) if note.user %>
 			<% if note.source == Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["meta"] %>
 	          Meta Information
 	        <% else %>
 				<% if note.user %>
-	          		<%= link_to(h(note.user.name), note.user, :class => "user_name") %>
+	          		<%= link_to(h(note.user.display_name), note.user, :class => "user_name") %>
 				<% else %>
 					System Generated
 				<% end %>		

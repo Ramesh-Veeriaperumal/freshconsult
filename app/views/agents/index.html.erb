@@ -13,8 +13,8 @@
 												 :method => :delete, :class => "button" %>
 					<%= link_to 'edit', edit_agent_path(agent), :class => "button" %>									 
 				</div>
-				<%= render :partial => "/shared/avatar", :object => agent.user.avatar  %>
-				<%= link_to(h(agent.user.name), edit_agent_path(agent), :class => "item_info") %>
+				<%= user_avatar(agent.user.avatar) %>
+				<%= link_to(h(agent.user.display_name), edit_agent_path(agent), :class => "item_info") %>
 				<div><%= h agent.user.job_title %></div>
 				<div><%= mail_to ( h(agent.user.email)) %></div>							
 			</li>	
