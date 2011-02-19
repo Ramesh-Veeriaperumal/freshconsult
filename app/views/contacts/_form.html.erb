@@ -1,4 +1,4 @@
-<script> 
+<% javascript_tag do %>
 	jQuery(document).ready(function(){
 		jQuery("#contact_customer").autocomplete({
 			source: function( request, response ) {
@@ -31,9 +31,8 @@
 										.append( "<a>" + item.label + "</a>" )
 										.appendTo( ul );
 								};	
-	});		
-	
-</script>
+	});
+<% end %>
 
 
 
@@ -50,14 +49,10 @@
 		</li>		
 		<li>
 			<%
-			
-				company_name ="";
-
+				company_name = "";
 				unless @user.customer.nil?
 					company_name =  @user.customer.name
 				end
-				
-			
 			%>
 			<%= label(:user, :customer, "Company") %>
 			<%= text_field(:user, :customer, :class => "text" , :value => company_name , :id => "contact_customer") %>
@@ -88,6 +83,7 @@
 		</li>
 		<li>
 			<%= render :partial => "/shared/profileavatar", :locals => { :user => @user, :type => type } %>
+			
 		</li>
 		<li>
 			<%= f.label :time_zone %>

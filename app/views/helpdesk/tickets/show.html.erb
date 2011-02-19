@@ -173,8 +173,8 @@
 					   	<%= link_to(image_tag("/images/spacer.gif"), spam_helpdesk_ticket_path(@ticket), :method => :put, :class => "spam", :title  => "Mark as spam") unless @ticket.spam %>
 		        </div>	 
 		        <div class="user_details">
-		        	<%= render :partial => "/shared/avatar", :object => @ticket.requester.avatar  %>
-		          		Reported by <%= link_to(h(@ticket.requester.name),@ticket.requester, :class => "user_name") %>
+		        	<%= user_avatar(@ticket.requester.avatar)  %>
+		          		Reported by <%= link_to(h(@ticket.requester.display_name),@ticket.requester, :class => "user_name") %>
 		            <div>
 						Created on <%= h(@ticket.created_at.strftime("%B %e %Y at %I:%M %p")) %>
 					</div>

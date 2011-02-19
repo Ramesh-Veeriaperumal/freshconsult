@@ -79,6 +79,8 @@ class ContactsController < ApplicationController
     company_name =params[:user][:customer]    
     unless company_name.empty?     
       @obj.customer_id = add_or_update_company    
+    else
+      @obj.customer_id = nil
     end
      
     if @obj.update_attributes(params[cname])

@@ -60,9 +60,9 @@ var conditional_dom = function(filter, id, initFeed){
 				var to = jQuery('<div />').append("<b>To </b>").append(control);
 			}
 			
-			var subject = jQuery('<div />')
+			/*var subject = jQuery('<div />')
 							.append("<b>Subject </b>")
-							.append(FactoryUI.text("", "email_subject", initFeed["email_subject"]));
+							.append(FactoryUI.text("", "email_subject", initFeed["email_subject"]));*/
 			var body	= jQuery('<div />')
 							.append("<b>Body</b>")
 							.append(FactoryUI.paragraph("", "email_body", initFeed["email_body"]))

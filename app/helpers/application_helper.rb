@@ -135,4 +135,10 @@ module ApplicationHelper
     ]
   end
   
+  # Avatar helper for user profile image
+  # :medium and :small size of the original image will be saved as an attachment to the user 
+  def user_avatar( avatar, profile_size = :thumb, profile_class = "preview_pic" )
+    content_tag( :div, (image_tag (avatar) ? avatar.content.url(profile_size) : "/images/icons/profile_blank.gif"), :class => profile_class)
+  end
+  
 end

@@ -12,16 +12,16 @@
 		<%= link_to(h(@topic.ticket.subject), helpdesk_ticket_path(@topic.ticket)) unless @topic.ticket_topic.nil? %>
 		
 		<% if logged_in? %>
-						<% form_tag category_forum_topic_monitorship_path(@forum_category,@forum, @topic) do -%>
-							<div class="checkbox">
-							  <input id="monitor_checkbox" type="checkbox" <%= "checked='checked'" if @monitoring %> 
-							    						   onclick="if (this.checked) {<%= remote_function :url => category_forum_topic_monitorship_path(@forum_category,@forum, @topic) %>} else {<%= remote_function :url => category_forum_topic_monitorship_path(@forum_category,@forum, @topic), :method => :delete %>}" />
-							  <label id="monitor_label" for="monitor_checkbox"><%= @monitoring ? 'You are currently following this topic'[] : 'Follow this topic'[] %></label>
-							  <%= hidden_field_tag '_method', 'delete' if @monitoring %>
-							  <%# submit_tag :Set, :id => 'monitor_submit' %>
-							</div>
-						<% end %>
-					<% end %>
+			<% form_tag category_forum_topic_monitorship_path(@forum_category,@forum, @topic) do -%>
+			<div class="checkbox">
+			  <input id="monitor_checkbox" type="checkbox" <%= "checked='checked'" if @monitoring %> 
+				   onclick="if (this.checked) {<%= remote_function :url => category_forum_topic_monitorship_path(@forum_category,@forum, @topic) %>} else {<%= remote_function :url => category_forum_topic_monitorship_path(@forum_category,@forum, @topic), :method => :delete %>}" />
+			  <label id="monitor_label" for="monitor_checkbox"><%= @monitoring ? 'You are currently following this topic'[] : 'Follow this topic'[] %></label>
+			  <%= hidden_field_tag '_method', 'delete' if @monitoring %>
+			  <%# submit_tag :Set, :id => 'monitor_submit' %>
+			</div>
+			<% end %>
+		<% end %>
 		<% if logged_in? && current_user.has_manage_forums? && @forum.ideas? %>
 		<div> Mark this idea as </div>
 		<div class="mark_action">
@@ -102,10 +102,10 @@
 						  <% end %>
 					</div>	
 		        	<div class="user_details">
-		        		<%= render :partial => "/shared/avatar", :object => @topic.user.avatar  %>
-		          			Posted by <b><%= @topic.user.name %></b>
-							<div><%= @topic.user.job_title %></div>
-							<div>Created on <%= h(@topic.created_at.strftime("%B %e %Y at %I:%M %p")) %> ( <%=time_ago_in_words(@topic.created_at)%> ago ) </div>
+						<%= user_avatar( @topic.user.avatar ) %>
+		          		Posted by <b><%= @topic.user.display_name %></b>
+						<div><%= @topic.user.job_title %></div>
+						<div>Created on <%= h(@topic.created_at.strftime("%B %e %Y at %I:%M %p")) %> ( <%=time_ago_in_words(@topic.created_at)%> ago ) </div>
 		        	</div>
 
 					<div class="details min_height">

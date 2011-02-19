@@ -115,14 +115,12 @@
 					<select id="group_escalate_to">
 						<% @exclude_list.each do |agent| %>
 							<% 
-								
 								user = agent.user 
 								avatar_url = '/images/icons/profile_blank.gif'
 								unless user.avatar.nil?
 									avatar_url =user.avatar.content.url(:thumb)
 								end 
-
-								%>
+							%>
 							<option agent_thumb="<%=avatar_url%>" agent_name="<%=user.name%>" agent_id="<%=user.id%>">
 								<%= user.name %>
 							</option>
@@ -140,24 +138,18 @@
 			
 			<ul class="item_list active" id="Active_list">		
 				<% @include_list = Group.find_included_agents(@group.id) %>		
-				
-					<% @include_list.each do |agent| 
-						
+					<%  
+						@include_list.each do |agent| 
 						avatar_agent = '/images/icons/profile_blank.gif'
 						unless agent.user.avatar.nil?
-										
 							avatar_agent = agent.user.avatar.content.url(:thumb)
 						end
-					
 					%>
 					
 					<li agent_thumb="<%=avatar_agent%>" agent_id="<%= agent.user.id %>" agent_name="<%= agent.user.name %>">
-							<div class="preview_pic">	
-								<%= image_tag (agent.user.avatar) ? 
-									agent.user.avatar.content.url(:thumb) : "/images/icons/profile_blank.gif" %>
-							</div>
-							<a href="javascript:void(0)" class="button control">remove</a>				
-							<b><%= agent.user.name %></b>
+						<%= user_avatar(agent.user.avatar, :thumb) %>
+						<a href="javascript:void(0)" class="button control">remove</a>				
+						<b><%= agent.user.name %></b>
 					</li>
 					<% end %>
 				
