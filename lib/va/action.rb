@@ -25,6 +25,7 @@ class Va::Action
       note.body = act_hash[:comment]
       note.account_id = act_on.account_id
       note.user = User.current
+      note.private = "true".eql?(act_hash[:private])
       note.save!
     end
   
