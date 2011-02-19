@@ -38,11 +38,12 @@
 	        </blockquote>
 	      <% end %>
 		  
-		  <%= content_tag('span', '', :class => "seperator") unless note.attachments.empty? %>
-	    	<%= content_tag('h5', 'Attachments') unless note.attachments.empty? %>
-	
-		    <ul class="attachment_list">
-		      <%= render :partial => '/helpdesk/shared/attachment', :collection => note.attachments %>
-		    </ul>
+		  <% unless note.attachments.empty? %>
+			<span class="seperator"></span>
+			<h4><%= pluralize(note.attachments.size, 'attachment')%></h4>
+			<ul class="attachment_list">
+			    <%= render :partial => '/helpdesk/shared/attachment', :collection => note.attachments %>
+			</ul>
+		  <% end %>
 	  </div>	
 </div>

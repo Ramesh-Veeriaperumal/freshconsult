@@ -59,7 +59,7 @@
 		        <strong>Attach files</strong>
 		    </td>
 			<td> 
-			<%= render :partial => "/helpdesk/shared/attachment_form", :locals => { :attach_id => id } %>
+			<%= render :partial => "/helpdesk/shared/attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note" } %>
 			</td>
 		    <% end %>
 		</tr>

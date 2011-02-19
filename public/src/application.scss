@@ -25,6 +25,7 @@ body{
   	background:$background;
 } 
 
+
 body {margin:0; padding:0 10px 0 10px; border:0; height:100%; overflow-y:auto; }
 
 .fixedWidth{
@@ -167,6 +168,15 @@ div.bg_pulp{
 
 .info_data{
 	color:#888888;
+}
+
+body {
+	h1, h2, h3, h4, h5{
+		margin:0px;
+	}
+	h4{
+		font-size:12px;
+	}
 }
 
 
@@ -1473,7 +1483,7 @@ body h5{
 			margin-top:8px;
 		}
 		.seperator{
-			margin:24px 0px 18px 0px; 
+			margin:20px 0px 5px 0px; 
 			border-top: 1px solid #f2f2f2;
 		}
 	}
@@ -1599,21 +1609,33 @@ body h5{
 	color:#888987; 
 	margin-top:3px;
 	padding:0px;
-
+	@include clearfix;	
 	li{
 		@include clearfix;
-		padding:3px 6px 3px 20px;
+		float:left;
+		font-size:11px;
+		width:25%;
+		padding:5px 3px 5px 37px;
+		@include min-height(40px); 
 		position:relative;
-		img{
-			float:left;
-			padding:3px;
-			margin:0px 8px 0px 0px;
-			border:1px solid #cfcfcf;
+		.preview_img{
+			margin:8px 0px;
+			position:absolute;
+			width:35px; 
+			left:0px;
+			top:0px;
+			img.image{
+				margin:0px 0px 0px 0px; 
+				width:32px; height:32px;
+			}
 		}	
 		a{
-			color:#2c86c7;
+			@include link-colors(#6699cc, #336699, #6699cc, #6699cc);
 			text-decoration:none;
 		} 
+		name a{
+			@include ellipsis;
+		}
 	} 
 }
  

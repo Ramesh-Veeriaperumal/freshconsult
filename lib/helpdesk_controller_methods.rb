@@ -6,6 +6,7 @@ module HelpdeskControllerMethods
     base.send :before_filter, :load_item,           :only => [:show, :edit, :update ]   
     base.send :before_filter, :load_multiple_items, :only => [:destroy, :restore]
     base.send :before_filter, :add_to_history,      :only => [:show]
+    base.send :before_filter, :set_nscname
   end
   
 
@@ -38,8 +39,8 @@ module HelpdeskControllerMethods
    
   end
   
-  def post_persist #Need to check whether this should be called only inside create by Shan to do
-    create_attachments #
+  def post_persist #Need to check whether this should be called only inside create by Shan to do 
+    create_attachments 
     process_item #
     flash[:notice] = "The #{cname.humanize.downcase} has been created."
     #redirect_back_or_default redirect_url
@@ -123,7 +124,7 @@ protected
   end
 
   def nscname
-    @nscname ||= controller_path.gsub('/', '_').singularize
+    @nscname ||= controller_path.gsub('/', '_').singularize 
   end
 
   def autocomplete_scoper
@@ -205,8 +206,7 @@ protected
        
   end
 
-  def set_category
-    
+  def set_category 
     logger.debug "setting Category id as :: #{params[:guide_id]}"
     #if  erorrr.?
     unless params[:guide_id].nil?
@@ -215,8 +215,7 @@ protected
     
   end
   
-  def set_folder
-  
+  def set_folder 
     logger.debug "setting folder id as :: #{params[:folder_id]}"
     #if  erorrr.?
     unless params[:folder_id].nil?
@@ -253,10 +252,11 @@ protected
   end
   
   def create_attachments
-    return unless @item.respond_to?(:attachments)
+    return unless @item.respond_to?(:attachments) 
     (params[nscname][:attachments] || []).each do |a|
       @item.attachments.create(:content => a[:file], :description => a[:description], :account_id => @item.account_id)
     end
+    
   end
 
   def item_url 
@@ -290,6 +290,10 @@ protected
       session[:helpdesk_history] = history
     end
   end
-
+  
+  
+  def set_nscname
+    @item.nscname = @nscname
+  end
 
 end

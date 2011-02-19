@@ -9,7 +9,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   has_flexiblefields
   
   #by Shan temp
-  attr_accessor :email, :custom_field ,:customizer
+  attr_accessor :email, :custom_field ,:customizer, :nscname
   after_create :refresh_display_id, :autoreply,:save_custom_field ,:pass_thro_biz_rules 
   before_create :populate_requester
 

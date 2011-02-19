@@ -1,18 +1,23 @@
- <li>
-
+ <li> 
   <% if local_assigns[:show_delete] %>
     <span class="delete">
       <%= link_to image_tag("helpdesk/delete.png"), helpdesk_attachment_path(attachment), :method => 'delete', :confirm => "You're about to permanently delete this attachment. Continue?" %>
     </span>
   <% end %>
+	
+  <div class="preview_img">
+  	<% if attachment.image? %>
+  		<%= image_tag(attachment.content.url(:thumb), :class => "image")  %>
+	<% else %>
+		<%= image_tag("/images/filetype/file_extension_#{attachment.content_file_name.split('.')[-1]}.png") %>
+	<% end %>
+  </div>	
+  <div class="name">
+    <%= link_to truncate(attachment.content_file_name, 23), attachment, :popup => true %>
+  </div>
 
-  <span class="name">
-  	<%= image_tag(attachment.content.url(:thumb)) if attachment.image? %>
-    <%= link_to attachment.content_file_name, attachment, :popup => true %>
-    <%= content_tag(:p, attachment.description) unless !attachment.description || attachment.description.empty? %>
-  </span>
-
-  <span class="size">
-    <%= number_to_human_size attachment.content_file_size %>
-  </span>
+  <div class="size">
+    (<%= number_to_human_size attachment.content_file_size %>)
+  </div>
+  
  </li>
