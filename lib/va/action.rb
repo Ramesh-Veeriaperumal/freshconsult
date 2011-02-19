@@ -39,19 +39,35 @@ class Va::Action
     end
 
     def send_email_to_requester(act_on)
-      template = Liquid::Template.parse("Sending email to requester as part of VA rule action.. #{act_hash[:email_body]}. And ticket id is {{ticket.display_id}}")
-      Helpdesk::TicketNotifier.deliver_email_to_requester(act_on, template.render('ticket' => act_on.attributes))
+      Helpdesk::TicketNotifier.deliver_email_to_requester(act_on, 
+                                                          Liquid::Template.parse(act_hash[:email_body]).render('ticket' => act_on))
     end
     
     def send_email_to_group(act_on)
-      #TO DO..
+      group = get_group(act_on)
+      send_internal_email(act_on, group.agent_emails) if group
     end
 
-    def send_email_to_agent(act_on) #by Shan to do - liquid template
-      Helpdesk::TicketNotifier.deliver_internal_email(act_on, act_on.responder.email, "You have got an mail!")
+    def send_email_to_agent(act_on)
+      agent = get_agent(act_on)
+      send_internal_email(act_on, agent.email) if agent
     end
-  
-#    def priority(act_on)
-#      act_on.priority = act_hash[:value]
-#    end
+    
+  private
+    def get_group(act_on) # this (g == 0) is kind of hack, same goes for agents also.
+      g_id = act_hash[:email_to].to_i
+      (g_id == 0) ? (act_on.group_id ? act_on.group : nil) : act_on.account.groups.find(g_id)
+    end
+
+    def get_agent(act_on)
+      a_id = act_hash[:email_to].to_i
+      (a_id == 0) ? (act_on.responder_id ? act_on.responder : nil) : act_on.account.users.find(a_id)
+    end
+
+    def send_internal_email(act_on, receipients)
+      Helpdesk::TicketNotifier.deliver_internal_email(act_on, 
+                                                      receipients, 
+                                                      Liquid::Template.parse(act_hash[:email_body]).render('ticket' => act_on))
+    end
+
 end
