@@ -27,7 +27,7 @@ A new ticket ({{ticket.display_id}}) has been assigned to your group "{{ticket.g
   { :notification_type => EmailNotification::TICKET_ASSIGNED_TO_AGENT, 
       :account_id => account.id, :requester_notification => false, 
       :agent_notification => true,
-      :agent_template => 'Hi {{ticket.owner.name}},
+      :agent_template => 'Hi {{ticket.agent.name}},
 A new ticket (Ticket ID - {{ticket.display_id}}) has been assigned to you. Please follow the link below to view the ticket.
 
 {{ticket.subject}}
@@ -48,7 +48,7 @@ Sincerely,
   { :notification_type => EmailNotification::REPLIED_BY_REQUESTER, 
       :account_id => account.id, :requester_notification => false, 
       :agent_notification => true,
-      :agent_template => 'Hi {{ticket.owner.name}},
+      :agent_template => 'Hi {{ticket.agent.name}},
 The customer has responded to the ticket (#{{ticket.display_id}})
 
 {{ticket.subject}}
@@ -78,7 +78,7 @@ Sincerely,
 {{helpdesk_name}} Support Team' },
   { :notification_type => EmailNotification::TICKET_REOPENED, 
       :account_id => account.id, :requester_notification => false, :agent_notification => true,
-      :agent_template => 'Hi {{ticket.owner.name}},
+      :agent_template => 'Hi {{ticket.agent.name}},
 Ticket "#{{ticket.display_id}} - {{ticket.subject}}" has been reopened, please visit {{ticket.url}} to view the ticket.
 
 Ticket comment

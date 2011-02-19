@@ -14,67 +14,15 @@
 <div class="placeholder-info" id="place-dialog" style="display:none;">		
   	<h2>Available placeholders</h2>
 	<p>
-	  You can use placeholders to use frequently used information.<br />
-	  Simply type the below placeholders into your email subject or content and they will converted into the appropriate data.
+	  Select the below placeholders to append to the email content and they will get converted into the appropriate data.
 	</p>
-	<b>Select any placeholder below to append it to the email content</b>
+	<b></b>
 	<div id="placeholder-list-1" class="placeholder-list">
 		<dl>
-		  <dt><a href="javascript:void(0)">{{ticket.subject}}</a></dt><dd>Ticket subject.</dd>
-		  <dt><a href="javascript:void(0)">{{ticket.description}}</a></dt><dd>Ticket description.</dd>
-		  <dt><a href="javascript:void(0)">{{ticket.url}}</a></dt><dd>Full URL path to ticket (excluding "http://").</dd>
-		  <dt><a href="javascript:void(0)">{{ticket.display_id}}</a></dt><dd>Unique ticket display ID.</dd>
-		  <dt><a href="javascript:void(0)">{{ticket.status}}</a></dt><dd>Ticket status.</dd>
-		  <dt><a href="javascript:void(0)">{{ticket.requester.name}}</a></dt><dd>Full name of the requester who raised the Ticket.</dd>
-		</dl>
-		<!--dl>
-		  <dt><a href="javascript:void(0)">{{ticket.title}}</a></dt><dd>Ticket subject.</dd>
-		  <dt><a href="javascript:void(0)">{{ticket.description}}</a></dt><dd>Ticket description.</dd>
-		  <dt><a href="javascript:void(0)">{{ticket.url}}</a></dt><dd>Full URL path to ticket (excluding "http://").</dd>
-		  <dt><a href="javascript:void(0)">{{ticket.id}}</a></dt><dd>Unique ticket ID.</dd>
-		  <dt><a href="javascript:void(0)">{{ticket.external_id}}</a></dt><dd>External ticket ID. Typically populated through the API.</dd>
-		  <dt><a href="javascript:void(0)">{{ticket.via}}</a></dt><dd>The source channel of the ticket - e.g. "Mail" or "Twitter".</dd>
-		  <dt><a href="javascript:void(0)">{{ticket.status}}</a></dt><dd>Ticket status.</dd>
-		  <dt><a href="javascript:void(0)">{{ticket.priority}}</a></dt><dd>Ticket priority.</dd>
-		  <dt><a href="javascript:void(0)">{{ticket.ticket_type}}</a></dt><dd>Ticket type.</dd>
-		  <dt><a href="javascript:void(0)">{{ticket.score}}</a></dt><dd>Score.</dd>
-		  <dt><a href="javascript:void(0)">{{ticket.group.name}}</a></dt><dd>Ticket group.</dd>
-		  <dt><a href="javascript:void(0)">{{ticket.due_date}}</a></dt><dd>Ticket due date (relevant for tickets of type Task).</dd>
-		  <dt><a href="javascript:void(0)">{{ticket.latest_comment_formatted}}</a></dt><dd>Latest comment.</dd>
-		  <dt><a href="javascript:void(0)">{{ticket.latest_public_comment_formatted}}</a></dt><dd>Latest public comment.</dd>
-		  <dt><a href="javascript:void(0)">{{ticket.comments_formatted}}</a></dt><dd>All comments, latest first.</dd>
-		  <dt><a href="javascript:void(0)">{{ticket.public_comments_formatted}}</a></dt><dd>All public comments, latest first.</dd>
-		  <dt><a href="javascript:void(0)">{{ticket.account}}</a></dt><dd>Help desk name.</dd>
-		  <dt><a href="javascript:void(0)">{{ticket.assignee.name}}</a></dt><dd>Ticket assignee full name (if any).</dd>
-		  <dt><a href="javascript:void(0)">{{ticket.assignee.first_name}}</a></dt><dd>Ticket assignee first name (if any).</dd>
-		  <dt><a href="javascript:void(0)">{{ticket.assignee.last_name}}</a></dt><dd>Ticket assignee last name (if any).</dd>
-		  <dt><a href="javascript:void(0)">{{ticket.requester.name}}</a></dt><dd>Ticket requester full name.</dd>
-		  <dt><a href="javascript:void(0)">{{ticket.requester.first_name}}</a></dt><dd>Ticket requester first name.</dd>
-		  <dt><a href="javascript:void(0)">{{ticket.requester.last_name}}</a></dt><dd>Ticket requester last name.</dd>
-		  <dt><a href="javascript:void(0)">{{ticket.requester.email}}</a></dt><dd>Ticket requester email.</dd>
-		  <dt><a href="javascript:void(0)">{{ticket.requester.language}}</a></dt><dd>Ticket requester language.</dd>
-		  <dt><a href="javascript:void(0)">{{ticket.requester.external_id}}</a></dt><dd>Ticket requester external ID.</dd>
-		  <dt><a href="javascript:void(0)">{{ticket.organization.name}}</a></dt><dd>Ticket requester organization.</dd>
-		  <dt><a href="javascript:void(0)">{{ticket.cc_names}}</a></dt><dd>Ticket Cc's.</dd>
-		  <dt><a href="javascript:void(0)">{{ticket.tags}}</a></dt><dd>All tags registered on the ticket.</dd>
-		  <dt><a href="javascript:void(0)">{{ticket.ticket_field_ID}}</a></dt><dd>The value of a ticket custom field. E.g, {{ticket.ticket_field_123}}.</dd>
-		  <dt><a href="javascript:void(0)">{{ticket.ticket_field_option_title_ID}}</a></dt><dd>For drop-down custom fields, this yields the title of the drop-down value selected (as opposed to the tag, which is what the previous placeholder yields). E.g {{ticket.ticket_field_option_title_123}}.</dd>
-		
-		</dl>
-		
-		<dl>
-		  <dt><a href="javascript:void(0)">{{current_user.name}}</a></dt><dd>The name of the user logged in to your help desk.</dd>
-		  <dt><a href="javascript:void(0)">{{current_user.first_name}}</a></dt><dd>The first name of the user logged in to your help desk.</dd>
-		  <dt><a href="javascript:void(0)">{{current_user.email}}</a></dt><dd>The email address of the user logged in to your help desk.</dd>
-		  <dt><a href="javascript:void(0)">{{current_user.organization.name}}</a></dt><dd>The organization of the user logged in to your help desk.</dd>
-		  <dt><a href="javascript:void(0)">{{current_user.organization.notes}}</a></dt><dd>The notes about the organization of the user logged in to your help desk.</dd>
-		  <dt><a href="javascript:void(0)">{{current_user.organization.details}}</a></dt><dd>The details about the organization of the user logged in to your help desk.</dd>
-		  <dt><a href="javascript:void(0)">{{current_user.external_id}}</a></dt><dd>The external id of the user logged in to your help desk.</dd>
-		  <dt><a href="javascript:void(0)">{{current_user.phone}}</a></dt><dd>The phone number of the user logged in to your help desk.</dd>
-		  <dt><a href="javascript:void(0)">{{current_user.details}}</a></dt><dd>Detailed information for the user logged in to your help desk.</dd>
-		  <dt><a href="javascript:void(0)">{{current_user.notes}}</a></dt><dd>Notes for the user logged in to your help desk.</dd>
-		  <dt><a href="javascript:void(0)">{{current_user.language}}</a></dt><dd>The language for the user logged in to your help desk.</dd>
-		</dl-->	
+			<% ticket_placeholders.each do |ph| %>
+				<dt><a href="javascript:void(0)"><%= ph[0] %></a></dt><dd><%= ph[1] %></dd>
+			<% end %>
+		</dl>	
 	</div>
 	<div class="button-container">
 		<a href="javascript:void(0)" id="placeholder_close" class="fdbutton grey">Close</a>

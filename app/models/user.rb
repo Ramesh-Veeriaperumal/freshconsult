@@ -142,7 +142,14 @@ class User < ActiveRecord::Base
   end
   
   def to_liquid
-    { "name"  => to_s }
+    to_ret = { 
+      "name"  => to_s,
+      "email" => email
+    }
+    
+    to_ret["company_name"] = customer.name if customer_id
+    
+    to_ret
   end
   
   def has_manage_forums?
@@ -152,9 +159,6 @@ class User < ActiveRecord::Base
   def has_manage_solutions?
     self.permission?(:manage_tickets)
   end
-  
-  
- 
 
   protected
     def set_account_id_in_children

@@ -108,6 +108,31 @@ module ApplicationHelper
   
   def email_response_path(args_hash)
     comment_path(args_hash, 'email response')
-  end 
+  end
+  #Liquid ends here..
+  
+  #Ticket place-holders, which will be used in email and comment contents.
+  def ticket_placeholders
+    [
+      ['{{ticket.subject}}', 'Ticket subject.'],
+      ['{{ticket.description}}', 'Ticket description.'],
+      ['{{ticket.display_id}}', 'Unique ticket display ID.'],
+      ['{{ticket.url}}', 'Full URL path to ticket.'],
+      ['{{ticket.status}}', 'Ticket status.'],
+      ['{{ticket.priority}}', 'Ticket priority.'],
+      ['{{ticket.source}}', 'The source channel of the ticket.'],
+      ['{{ticket.ticket_type}}', 'Ticket type.'],
+      ['{{ticket.due_by_time}}', 'Ticket due by time.'],
+      ['{{ticket.requester.name}}', 'Name of the requester who raised the ticket.'],
+      ['{{ticket.requester.email}}', "Requester's email."],
+      ['{{ticket.requester.company_name}}', "Requester's company name."], #??? should it be requester.company.name?!
+      ['{{ticket.group.name}}', 'Ticket group.'],
+      ['{{ticket.agent.name}}', 'Name of the agent who is currently working on the ticket.'],
+      ['{{ticket.agent.email}}', "Agent's email."],
+      ['{{ticket.tags}}', 'Ticket tags.'],
+      ['{{ticket.latest_comment}}', 'Latest comment for this ticket.'],
+      ['{{ticket.latest_public_comment}}', 'Latest public comment for this ticket.']
+    ]
+  end
   
 end

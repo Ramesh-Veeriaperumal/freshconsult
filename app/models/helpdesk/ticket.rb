@@ -357,13 +357,21 @@ end
   
   #To use liquid template...
   def to_liquid
-    { "display_id"  => display_id,
+    { 
+      "display_id"  => display_id,
       "subject"     => subject,
       "description" => description,
       "requester"   => requester,
-      "owner"       => responder,
+      "agent"       => responder,
       "group"       => group,
-      "url"         => helpdesk_ticket_url(self, :host => account.full_domain) }
+      "status"      => STATUS_NAMES_BY_KEY[status],
+      "priority"    => PRIORITY_NAMES_BY_KEY[priority],
+      "source"      => SOURCE_NAMES_BY_KEY[source],
+      "ticket_type" => TYPE_NAMES_BY_KEY[ticket_type],
+      "tags"        => tag_names.join(', '),
+      "due_by_time" => due_by.strftime("%B %e %Y at %I:%M %p"),
+      "url"         => helpdesk_ticket_url(self, :host => account.full_domain) 
+      }
   end
   #Liquid ends here
 
