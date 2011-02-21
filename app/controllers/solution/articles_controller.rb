@@ -2,6 +2,7 @@ class Solution::ArticlesController < ApplicationController
   
   before_filter :set_selected_tab
   uses_tiny_mce :options => Helpdesk::EDITOR_OPTIONS 
+  
   def index
     @articles = current_account.solution_articles.all
     
@@ -50,8 +51,8 @@ class Solution::ArticlesController < ApplicationController
     redirect_to_url = new_solution_category_folder_article_path(params[:category_id], params[:folder_id]) unless params[:save_and_create].nil?
    
     respond_to do |format|
-      if @article.save
-        create_attachments 
+      if @article.save!
+        post_persist 
         format.html { redirect_to redirect_to_url }        
         format.xml  { render :xml => @article, :status => :created, :location => @article }
       else
@@ -79,7 +80,7 @@ class Solution::ArticlesController < ApplicationController
     respond_to do |format|
      
        if @article.update_attributes(params[nscname])  
-          create_attachments
+          post_persist
           format.html { redirect_to redirect_to_url }
           format.xml  { render :xml => @article, :status => :created, :location => @article }     
        else
@@ -100,7 +101,31 @@ class Solution::ArticlesController < ApplicationController
     end
     
   end
+  
+   def delete_tag
+     
+     logger.debug "delete_tag :: params are :: #{params.inspect} "
+     
+     article = Solution::Article.find(params[:article_id])
+     
+     tag = article.tags.find_by_id(params[:tag_id])
+      
+     raise ActiveRecord::RecordNotFound unless tag
 
+    Helpdesk::TagUse.find_by_article_id_and_tag_id(article.id, tag.id).destroy
+
+    flash[:notice] = "The tag was removed from this Solution"
+    redirect_to :back
+
+      
+  end
+
+def post_persist
+  
+  create_attachments
+  set_solution_tags
+  
+end
  def create_attachments
    logger.debug "create_attachments  "
     return unless @article.respond_to?(:attachments)
@@ -137,4 +162,21 @@ protected
       @selected_tab = 'Solutions'
   end
 
+  def set_solution_tags
+    
+    tags = params[:tags][:name]
+    ar_tags =  tags.scan(/\w+/)    
+    new_tag = nil
+    ar_tags.each do |tag|    
+      
+      new_tag = Helpdesk::Tag.find_by_name_and_account_id(tag, current_account) || Helpdesk::Tag.new(:name => tag ,:account_id => current_account.id)
+
+       begin
+        @article.tags << new_tag
+        rescue ActiveRecord::RecordInvalid => e
+      end
+      
+    end   
+    
+  end
 end
