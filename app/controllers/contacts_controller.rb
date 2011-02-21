@@ -55,7 +55,7 @@ class ContactsController < ApplicationController
   def add_or_update_company
    
     company_name = params[:user][:customer]       
-    cust_id = current_account.customers.find_by_name(company_name)    
+    cust_id = current_account.customers.find_by_name(company_name).id     
     if cust_id.nil? 
       @customer = current_account.customers.new(:name =>company_name)
       @customer.save
@@ -78,7 +78,7 @@ class ContactsController < ApplicationController
   
   def update
     
-    company_name =params[:user][:customer]    
+    company_name =params[:user][:customer]       
     unless company_name.empty?     
       @obj.customer_id = add_or_update_company    
     else
