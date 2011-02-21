@@ -6,6 +6,11 @@
 class Fixnum
   include BusinessTime
   
+  def business_minutes
+    BusinessMinutes.new(self)
+  end
+  alias_method :business_minute, :business_minutes
+  
   def business_hours
     BusinessHours.new(self)
   end
