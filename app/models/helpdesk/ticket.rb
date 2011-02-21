@@ -11,6 +11,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #by Shan temp
   attr_accessor :email, :custom_field ,:customizer, :nscname
   after_create :refresh_display_id, :autoreply,:save_custom_field ,:pass_thro_biz_rules 
+  after_update :save_custom_field
   before_create :populate_requester
 
   before_validation_on_create :set_tokens
@@ -72,9 +73,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   has_one :ticket_topic
   has_one :topic,:through => :ticket_topic
-  
-  
-  
   
   named_scope :newest, lambda { |num| { :limit => num, :order => 'created_at DESC' } }
   named_scope :visible, :conditions => ["spam=? AND deleted=? AND status > 0", false, false] 
@@ -199,8 +197,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
        
      end
      
-     self.priority = 1 if priority.nil?
-     
+     self.priority = 1 if priority.nil?     
      
      sla_policy_id = nil
      
@@ -309,7 +306,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
  
   
 def check_rules
-    add_flexifield 
+    load_flexifield 
     evaluate_on = self  
     account.va_rules.each do |vr|
       evaluate_on= vr.pass_through(self)
@@ -317,7 +314,7 @@ def check_rules
     return evaluate_on    
 end
   
-def add_flexifield 
+def load_flexifield 
   
   flexi_arr = Hash.new
   self.ff_aliases.each do |label|    
@@ -328,8 +325,6 @@ def add_flexifield
   
   self.custom_field = flexi_arr
   
-  logger.debug " self.custom_field  #{self.custom_field.inspect}"
-     
 end
   
 def update_custom_field  evaluate_on
@@ -345,11 +340,11 @@ def update_custom_field  evaluate_on
 end
   
   
- def save_custom_field 
+ def save_custom_field   
       
     ff_def_id = FlexifieldDef.find_by_account_id(self.account_id).id    
     self.ff_def = ff_def_id       
-    unless self.custom_field.nil?     
+    unless self.custom_field.nil?          
       self.assign_ff_values self.custom_field    
     end
   end

@@ -1,7 +1,7 @@
 module HelpdeskControllerMethods
 
   def self.included(base)
-    base.send :before_filter, :get_custom_fields,   :only => [:create]
+    
     base.send :before_filter, :build_item,          :only => [:new, :create]
     base.send :before_filter, :load_item,           :only => [:show, :edit, :update ]   
     base.send :before_filter, :load_multiple_items, :only => [:destroy, :restore]
@@ -168,6 +168,8 @@ protected
   
   def set_custom_fields   
     
+    logger.debug "set_custom_fields :: #{@flexi_fields.inspect}"
+    
     unless @flexi_fields.nil?
       
       @item.custom_field = @flexi_fields    
@@ -187,10 +189,7 @@ protected
     @item = self.instance_variable_set('@' + cname,
       scoper.is_a?(Class) ? scoper.new(params[nscname]) : scoper.build(params[nscname]))
     set_item_user
-    logger.debug "nscname is :: #{nscname}"
-    if "helpdesk_ticket".eql?(nscname)     
-      set_custom_fields
-    end
+    logger.debug "nscname is :: #{nscname}"   
     
     if "helpdesk_guide".eql?(nscname)
       set_folder
