@@ -356,22 +356,37 @@ end
   
   
   #To use liquid template...
+  #Might be darn expensive db queries, need to revisit - shan.
   def to_liquid
     { 
-      "display_id"  => display_id,
-      "subject"     => subject,
-      "description" => description,
-      "requester"   => requester,
-      "agent"       => responder,
-      "group"       => group,
-      "status"      => STATUS_NAMES_BY_KEY[status],
-      "priority"    => PRIORITY_NAMES_BY_KEY[priority],
-      "source"      => SOURCE_NAMES_BY_KEY[source],
-      "ticket_type" => TYPE_NAMES_BY_KEY[ticket_type],
-      "tags"        => tag_names.join(', '),
-      "due_by_time" => due_by.strftime("%B %e %Y at %I:%M %p"),
-      "url"         => helpdesk_ticket_url(self, :host => account.full_domain) 
+      "display_id"            => display_id,
+      "subject"               => subject,
+      "description"           => description,
+      "requester"             => requester,
+      "agent"                 => responder,
+      "group"                 => group,
+      "status"                => STATUS_NAMES_BY_KEY[status],
+      "priority"              => PRIORITY_NAMES_BY_KEY[priority],
+      "source"                => SOURCE_NAMES_BY_KEY[source],
+      "ticket_type"           => TYPE_NAMES_BY_KEY[ticket_type],
+      "tags"                  => tag_names.join(', '),
+      "due_by_time"           => due_by.strftime("%B %e %Y at %I:%M %p"),
+      "url"                   => helpdesk_ticket_url(self, :host => account.full_domain),
+      "latest_comment"        => liquidize_comment(latest_comment),
+      "latest_public_comment" => liquidize_comment(latest_public_comment)
       }
+  end
+  
+  def latest_comment #There must be a smarter way than this. maybe a proper named scope in Note?!
+    notes.visible.newest_first.first
+  end
+  
+  def latest_public_comment
+    notes.visible.public.newest_first.first
+  end
+  
+  def liquidize_comment(comm)
+    "#{comm.user ? comm.user.name : 'System'} : #{comm.body}" if comm
   end
   #Liquid ends here
 
