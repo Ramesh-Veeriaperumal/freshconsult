@@ -1,5 +1,7 @@
 class ContactsController < ApplicationController
   
+   before_filter { |c| c.requires_permission :manage_tickets }
+  
  include ModelControllerMethods
 
   before_filter :check_user_limit, :only => :create 
