@@ -6,7 +6,7 @@ class Account < ActiveRecord::Base
   authenticates_many :user_sessions
   
   has_many :users, :dependent => :destroy
-  has_one :admin, :class_name => "User", :conditions => { :admin => true }
+  has_one :admin, :class_name => "User", :conditions => { :role_token => 'admin' } #has_one ?!?!?!?!
   has_one :subscription, :dependent => :destroy
   has_many :subscription_payments
   has_many :solution_categories , :class_name =>'Solution::Category'  
@@ -164,7 +164,6 @@ class Account < ActiveRecord::Base
     end
     
     def create_admin
-      self.user.admin = true
       self.user.active = true
       self.user.account = self
       self.user.role_token = 'admin'  

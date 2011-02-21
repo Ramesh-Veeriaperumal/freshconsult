@@ -96,9 +96,9 @@ class User < ActiveRecord::Base
   end
 
   #implement in your user model 
-#  def admin?
-#    false
-#  end
+  def admin?
+    role_token == 'admin'
+  end
 
   #Savage_beast changes end here
 
