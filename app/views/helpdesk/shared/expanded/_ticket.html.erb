@@ -19,7 +19,7 @@
 
   <td class="assign">
       <% if ticket.freshness == :new %>
-        Unassigned <button class="accept-button" action="<%= assign_helpdesk_ticket_url(ticket) %>">Pick Up</button> 
+        Unassigned
       <% else %>
         <span>Assigned to <%= link_to(h(ticket.responder.display_name), ticket.responder, :class => 'username') %></span>
       <% end %>
