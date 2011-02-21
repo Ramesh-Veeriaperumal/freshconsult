@@ -2,6 +2,7 @@ class CustomersController < ApplicationController
   # GET /customers
   # GET /customers.xml
   
+  before_filter { |c| c.requires_permission :manage_tickets }
   before_filter :set_selected_tab
   
   def index
