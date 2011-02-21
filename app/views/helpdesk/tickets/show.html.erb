@@ -2,8 +2,7 @@
 
 <% content_for :head do %>
 	<%= javascript_include_tag "helpdesk/expanding_textarea.js" %>
-	<%= javascript_include_tag "helpdesk/multifile.js" %>
-	
+	<%= javascript_include_tag "helpdesk/multifile.js" %>	
 	<% javascript_tag do %>
 		Helpdesk.swapEmailNote = function(cls, private, submit, link, id){
 			var el = $(id);

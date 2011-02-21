@@ -3,10 +3,14 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter { |c| c.requires_permission :manage_tickets }
 
   include HelpdeskControllerMethods
-
+  
+  before_filter :get_custom_fields,   :only => [:create ,:update]
   before_filter :load_multiple_items, :only => [:destroy, :restore, :spam, :unspam, :assign]  
   before_filter :load_item,     :only => [:show, :edit, :update, :execute_scenario, :close_ticket ] 
-  before_filter :set_customizer , :only => [:new ,:edit]
+  before_filter :set_customizer , :only => [:new ,:edit ,:show]
+  before_filter :set_custom_fields , :only => [:create ,:update]
+  
+  
  
   def index
 
