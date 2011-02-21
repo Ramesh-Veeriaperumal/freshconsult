@@ -181,7 +181,7 @@
 		<% end %>
 	<% end %>
 		<li>
-			<%= render :partial=> "/helpdesk/shared/attachment_form" %>
+			<%= render ( :partial => "/helpdesk/shared/attachment_form" ) unless (type == "edit") %>
 		</li>
 	</ul>
 	

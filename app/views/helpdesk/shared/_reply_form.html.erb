@@ -11,60 +11,36 @@
   <% end %>
 <% end %>
 <div class="request_panel" id="<%=cntid%>" style="display:none">
-  <h5 datafor="email">&nbsp;Reply to this conversation and email the requester</h5>
-  <h5 datafor="note">&nbsp;Add a note to this conversation</h5>
-  <span class="seperator"></span>
   <% form_for note, :html => {:multipart => true } do |f| %>
     <%= f.error_messages %>
-	<table class="note_form">
-    	<tr datafor="email" style="display:none">
-			<td>
-				<%= f.label(:body, "Enter your message:") if local_assigns[:label] %>
-    			<%= f.hidden_field :private %>
-				<strong>From Email</strong>
-			</td>
-			<td>
-				<%= select :reply_email, :id, options_for_select(@reply_email, @ticket.reply_email) %>
-			</td>
-		</tr>
-		<tr>
-			<td></td>
-			<td>
-				<%= f.label(:body, "Enter your message here", :for =>"#{id}-#{cntid}-body", :class => "overlabel" ) %>
-    			<%= f.text_area :body, { :class => 'expando', :id => "#{id}-#{cntid}-body" , :value => @signature} %>
-			</td>
-    	</tr>
+	<ul class="ui-form">
+    	<li datafor="email" style="display:none">
+			<%= f.label(:reply_email, "Send the reply from the following email id") %>
+			<%= select :reply_email, :id, options_for_select(@reply_email, @ticket.reply_email) %>
+			<span class="seperator"></span>
+		</li>
+		<li>
+			<%= f.label(:body, "Enter your message here", :for =>"#{id}-#{cntid}-body", :class => "overlabel" ) %>
+    		<%= f.text_area :body, { :class => 'expando', :id => "#{id}-#{cntid}-body" , :value => @signature} %>
+    	</li>
 		
 		<% unless @ticket.ticket_topic.nil? %>
-		<tr datafor="posts">
-			<td></td>
-			<td>
-				<label>
-					<%=check_box_tag :post_forums%> Post in linked forum
-				</label>
-				<br />
-			</td>
-		</tr>
+		<li datafor="posts">
+			<label>
+				<%=check_box_tag :post_forums%> Post in linked forum
+			</label>
+		</li>
 		<%end%>	
-		<tr datafor="note"  style="display:none">
-			<td></td>
-			<td>
-				<label><input type="checkbox" class="checkbox" />Requester can view this note (public note)</label>
-				<br />
-			</td>
-		</tr>	
-		<tr width="70px">
+		<li datafor="note" class="checkbox">
+			<%= f.check_box(:private, {:checked => true}, 1, 0) %>
+			<%= f.label(:private, "Requester can view this note (public note)") %>
+		</li>	
+		<li class="attachment-options"  id="attachment-options">
 			<% unless local_assigns[:no_attachments] %>
-			<td class="attachment-options"  id="attachment-options">
-		        <strong>Attach files</strong>
-		    </td>
-			<td> 
 			<%= render :partial => "/helpdesk/shared/attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note" } %>
-			</td>
 		    <% end %>
-		</tr>
-	</table>
-	<span class="seperator"></span>
+		</li>
+	</ul>
  	<div class="alignright">
       <%= submit_tag(local_assigns[:submit] || ActiveSupport::Inflector.titleize(id), :class => "fdbutton") %>
     </div>      
