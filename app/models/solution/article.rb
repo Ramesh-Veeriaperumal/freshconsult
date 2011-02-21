@@ -3,14 +3,22 @@ class Solution::Article < ActiveRecord::Base
    
    set_table_name "solution_articles"   
    belongs_to :user, :class_name => 'User'
+   belongs_to :account
    
    has_many :attachments,
     :as => :attachable,
     :class_name => 'Helpdesk::Attachment',
     :dependent => :destroy
     
-    attr_protected :attachments
-    
+   attr_protected :attachments
+   
+   has_many :activities,
+    :class_name => 'Helpdesk::Activity',
+    :as => 'notable',
+    :dependent => :destroy
+   
+   after_create :create_activity
+
    validates_presence_of :title, :description, :user_id , :account_id
    validates_length_of :title, :in => 3..240
    validates_numericality_of :user_id
@@ -66,5 +74,20 @@ class Solution::Article < ActiveRecord::Base
   def nickname
     title
   end
+  
+  def to_s
+    nickname
+  end
+  
+  private
+    def create_activity
+      activities.create(
+        :description => "{{user_path}} created a new solution {{notable_path}}",
+        :short_descr => "{{user_path}} created the new solution",
+        :account => account,
+        :user => user,
+        :activity_data => {}
+      )
+    end
     
 end

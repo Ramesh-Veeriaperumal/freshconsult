@@ -160,6 +160,8 @@ ActionController::Routing::Routes.draw do |map|
        folder.resources :articles, :member => { :thumbs_up => :put, :thumbs_down => :put }
        end
      end
+     
+     solution.resources :articles, :only => :show
          
      end
 
