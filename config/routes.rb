@@ -25,6 +25,7 @@ ActionController::Routing::Routes.draw do |map|
   #map.resources :admin, :only => :index
   map.resources :ticket_fields, :only => :index
   map.resources :email, :only => [:new, :create]
+  map.resources :password_resets, :except => [:index, :show, :destroy]
   
   map.namespace :admin do |admin|
     admin.resources :home, :only => :index

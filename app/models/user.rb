@@ -102,11 +102,10 @@ class User < ActiveRecord::Base
 
   #Savage_beast changes end here
 
-#To do work for password reset. By Shan
-#  def deliver_password_reset_instructions!  
-#    reset_perishable_token!
-#    UserNotifier.password_reset_instructions(self).deliver
-#  end
+  def deliver_password_reset_instructions!  
+    reset_perishable_token!
+    UserNotifier.deliver_password_reset_instructions(self) #Do we need delayed_jobs here?! by Shan
+  end
 
   ##Authorization copy starts here
   def role
