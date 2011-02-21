@@ -1,4 +1,5 @@
 class Solution::Article < ActiveRecord::Base
+   
    belongs_to :folder, :class_name => 'Solution::Folder'
    
    set_table_name "solution_articles"   
@@ -10,6 +11,15 @@ class Solution::Article < ActiveRecord::Base
     :dependent => :destroy
     
     attr_protected :attachments
+    
+  has_many :tag_uses,
+    :as => :taggable,
+    :class_name => 'Helpdesk::TagUse',
+    :dependent => :destroy
+
+  has_many :tags, 
+    :class_name => 'Helpdesk::Tag',
+    :through => :tag_uses
     
    validates_presence_of :title, :description, :user_id , :account_id
    validates_length_of :title, :in => 3..240
