@@ -1,5 +1,6 @@
 class ContactImportController < ApplicationController
    
+   before_filter { |c| c.requires_permission :manage_tickets }
    map_fields :create, 
                     ['Name','Job Title','Company','Phone','Email','Twitter Id'], 
                     :file_field => :file, 

@@ -48,14 +48,12 @@ module ApplicationHelper
   end
   
   def check_box_link(text, checked, check_url, check_method, uncheck_url, uncheck_method = :post)
-    form_tag("", :method => :put) +
-    check_box_tag("", 1, checked, :onclick => %{
-      this.form.action = this.checked ? '#{check_url}' : '#{uncheck_url}';
+    form_tag("", :method => :put) +    
+    check_box_tag("", 1, checked, :onclick => %{this.form.action = this.checked ? '#{check_url}' : '#{uncheck_url}';
       Element.down(this.form, "input[name=_method]").value = this.checked ? '#{check_method}' : '#{uncheck_method}';
-      this.form.submit();
-    }) +
-    content_tag("label", text, :class=>"reminder #{ checked ? "checked" : "unchecked" }")
-    
+      this.form.submit();    }) +   
+    content_tag("label", text, :class=>"reminder #{ checked ? "checked" : "unchecked" }") 
+   
   end
 
   def email_quoted?(text)

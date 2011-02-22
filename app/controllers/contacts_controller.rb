@@ -12,14 +12,12 @@ class ContactsController < ApplicationController
   def index
     
     @contacts = self.instance_variable_set('@' + self.controller_name,
-      scoper.find(:all, :order => 'name' ))  
+    scoper.find(:all, :order => 'name' ))  
       
+    
     respond_to do |format|
       format.html  do
-        @contacts = @contacts.paginate(
-          :page => params[:page], 
-          :order => 'name',
-          :per_page => 10)
+        @contacts = scoper.search(params[:letter],params[:page])
       end
       format.atom do
         @contacts = @contacts.newest(20)
