@@ -158,6 +158,12 @@ class User < ActiveRecord::Base
   def has_manage_solutions?
     self.permission?(:manage_tickets)
   end
+  
+  def self.search(letter, page)
+  paginate :per_page => 10, :page => page,
+           :conditions => ['name like ?', "#{letter}%"],
+           :order => 'name'
+  end
 
   protected
     def set_account_id_in_children
