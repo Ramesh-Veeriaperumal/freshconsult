@@ -84,8 +84,11 @@
 					<% else %>
 					  <%= link_to_function("Flag Spam", "Helpdesk.sel.submit('#{ spam_helpdesk_ticket_path('multiple') }', 'put')", :class => "button") %> 
 					<% end %> 
-					<!--a href="#" class="button">Close</a>
-					<a href="#" class="button">Pick up</a-->
+					
+					<%= link_to_function("Close", "Helpdesk.sel.submit('#{ close_multiple_helpdesk_ticket_path('multiple') }', 'put')", :class => "button") %> 
+					
+					<%= link_to_function("Pick Up", "Helpdesk.sel.submit('#{ pick_tickets_helpdesk_ticket_path('multiple') }', 'put')", :class => "button") %> 
+					
 					<a href="javascript:void(0)" id="assign-options-link" class="button">Assign To Agent</a>
 					<div id="assign-options" class="assign-agent" style="display:none;">
 					    Assign to agent <%= select_tag 'responder_id', options_from_collection_for_select(User.find_all_by_permission(current_account, :manage_tickets), :id, :name, current_user) %>
