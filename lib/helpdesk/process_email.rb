@@ -10,13 +10,18 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       
       if ticket
         comment = add_email_to_ticket(ticket, from_email, params[:text])
-        unless ticket.active?
-          ticket.update_attribute(:status, Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open])
-          notification_type = EmailNotification::TICKET_REOPENED
-        end
         
-        Helpdesk::TicketNotifier.notify_by_email((notification_type ||= EmailNotification::REPLIED_BY_REQUESTER), 
-                                                  ticket, comment) if ticket.responder
+        if comment.user.customer?
+          unless ticket.active?
+            ticket.update_attribute(:status, Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open])
+            notification_type = EmailNotification::TICKET_REOPENED
+          end
+          
+          Helpdesk::TicketNotifier.notify_by_email((notification_type ||= EmailNotification::REPLIED_BY_REQUESTER), 
+                                                    ticket, comment) if ticket.responder
+        else
+          Helpdesk::TicketNotifier.notify_by_email(EmailNotification::COMMENTED_BY_AGENT, ticket, comment)
+        end
       else
         ticket = create_ticket(account, from_email, to_email)
       end
