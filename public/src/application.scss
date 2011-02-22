@@ -3608,36 +3608,6 @@ h5.category_title{
 	}	
 }
 
-.history_list{
-	@include no-bullets;
-	margin:0px; padding:4px 0px;	
-	a:hover{
-		text-decoration:none;
-	}
-	li{
-		padding:8px 10px;
-		a, a:visited{
-			color:#336699;
-		}
-		h3{
-			font-size:1.2em;
-			padding:0px 0px 0px 0px; margin:0px 0px 8px 0px;
-			display:block;			
-		}
-		strong{
-			display:block;
-			span{
-				float:left;
-				@include min-width(100px);
-				font-weight:normal;
-			}
-		}
-	}
-	li.stripe{
-		background:#eaeef1;
-	}
-}
-
 ul.item_list{
 	@include no-bullets;		
 	@include clearfix;	
@@ -4326,3 +4296,56 @@ div.ribbon:before{
 		}
 	}
 }
+
+div.contactPage{
+	position:relative;
+	@include clearfix;
+	h4{
+		font-size:14px;
+		padding-bottom:8px;
+	}
+	h4.info_title{
+		font-size:18px;
+	}
+	.seperator{
+		border-top: 1px solid #f3f3f3;
+		margin:10px 0px;
+	}
+	.contact_box{
+		float:left;
+		width:80%; 
+		padding:12px 18px;
+		background:#ffffff;
+		@include corners(6px);
+	}
+	.profile_pic{
+		float:left;
+		margin-right:8px;
+	}
+	.user_info{
+		div{
+			span{
+				width:100px;
+			}
+		}
+	}
+	.history_list{
+		@include no-bullets;
+		margin:0px; padding:4px 0px;
+		a:hover{
+			text-decoration:none;
+		}
+		li{
+			padding:8px 10px; 
+			strong{
+				display:block;
+				span{
+					float:left;
+					@include min-width(100px);
+					font-weight:normal;
+				}
+			}
+		} 
+	}
+}
+

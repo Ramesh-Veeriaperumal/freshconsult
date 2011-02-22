@@ -175,7 +175,7 @@
 		        	<%= user_avatar(@ticket.requester.avatar)  %>
 		          	<div> Reported by <%= link_to(h(@ticket.requester.display_name),@ticket.requester, :class => "user_name") %> </div>
 		            <div> 
-						Created on <%= h(@ticket.created_at.strftime("%B %e %Y at %I:%M %p")) %>
+						Created on <%= formated_date(@ticket.created_at) %>
 						<% metainfo = @ticket.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["meta"]) %>
 						<% unless (metainfo.blank?) %>
 							<span class="meta_icon" title="<%= metainfo.body %>"> 
