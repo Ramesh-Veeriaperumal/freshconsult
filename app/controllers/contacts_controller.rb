@@ -27,7 +27,6 @@ class ContactsController < ApplicationController
   end
 
   def new
-  
     @user = current_account.users.new
     @user.role_token = 'customer'
     @user.avatar = Helpdesk::Attachment.new
@@ -76,7 +75,7 @@ class ContactsController < ApplicationController
   
   def update
     
-    company_name =params[:user][:customer]       
+    company_name = params[:user][:customer]
     unless company_name.empty?     
       @obj.customer_id = add_or_update_company    
     else

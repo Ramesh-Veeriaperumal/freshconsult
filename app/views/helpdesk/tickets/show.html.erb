@@ -185,14 +185,8 @@
 					</div>
 					
 		        </div>
-				<div id="description-summary" class="details min_height">
-		            <%= h(truncate(@ticket.description, :length => 400)) %>
-		            <% if(@ticket.description.size > 400) %>
-		            	<%= link_to_function "(more)", "Element.hide('description-summary'); Element.show('description-full');" %>
-		            <% end %>
-		        </div>
-		        <div id="description-full" style="display:none" class="details">
-			    	<%= @ticket.description %>
+		        <div id="description-full" style="display:block" class="details">
+			    	<%= RedCloth.new(auto_link(@ticket.description, :all, :target => "_blank")).to_html %>
 			    </div> 
 			</div>
 			<% unless @ticket.attachments.empty? %>

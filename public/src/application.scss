@@ -2456,6 +2456,14 @@ $lightBase:lighten($base, 5%);
 		width:75%;
 	}
 	
+	h2{
+		font-size:16px;
+		margin:3px 0px 8px 0px;
+		padding:0px 0px 8px 0px;
+		color:#443829;
+		border-bottom:1px solid #dfdfdf;
+	}
+	
 	label, li.checkbox{						
 		font-weight:normal; 
 		padding:4px 0px;
@@ -3357,8 +3365,18 @@ h5.category_title{
 			}
 		}		
 		div.item_information{
+			@include clearfix;
 			float:left;
 			width:70%;
+			.col1{
+				width:40%;
+			}
+			.col1, .col2{
+				float:left;
+			}
+			.col2{
+				padding-top:2px;
+			}
 		}
 		a{
 			color:#336699;
@@ -4281,4 +4299,36 @@ div.ribbon:before{
 
 .meta_icon{
 	background:#efefef;
+}
+
+.item_information{
+	.two_cols{
+		display:none;
+	}
+}
+
+.item_information:hover{
+	.two_cols{
+		display:block;
+	}
+}
+
+
+
+.user_info{
+	background-color:$color_pulp;
+	width:40%;
+	padding:6px;
+	@include corners(6px);
+	
+	div{
+		@include clearfix;
+		span{
+			float:left;
+			text-align:right;
+			padding-right:5px;
+			color:#999999;
+			width:80px;
+		}
+	}
 }

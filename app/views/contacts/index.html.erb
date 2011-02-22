@@ -12,16 +12,24 @@
 		  </div>	   
 		  <%= user_avatar( contact.avatar ) %>
 		  <div class="item_information">
-	        <%= link_to(h(contact.display_name), {:controller => "contacts", :action => "show", :id => contact}, :class => "item_info" ) %>
-		  	<div><%= h(contact.email) unless (contact.display_name == contact.email) %></div>
-			<div><%= h contact.phone %></div>
-		  	<div>
-				<%unless contact.job_title.nil?%>
-		  			<%= h contact.job_title %>
-				<%end%>
-				<%unless contact.customer.nil? %>
+		  	<div class="col1">
+	        	<%= link_to(h(contact.display_name), {:controller => "contacts", :action => "show", :id => contact}, :class => "item_info" ) %>
+				<div>
+				<% unless contact.job_title.empty? %>
+		  			<b><%= h contact.job_title %></b>
+				<% else %>
+				   Working
+				<% end %>
+				<% unless contact.customer.nil? %>
 					at <%= link_to(h(contact.customer.name), contact.customer)  %>
-				<%end%>
+				<% end %>
+				</div>
+			</div>
+		  	<div class="col2 user_info">
+		  		<div><span>primary</span> <%= h contact.email %></div>
+				<div><span>secondary</span> <%= h contact.second_email  %></div>
+				<div><span>phone</span> <%= h contact.phone  %></div>
+				<div><span>mobile</span> <%= h contact.mobile %></div>
 			</div>
 		 </div>
 	     	      

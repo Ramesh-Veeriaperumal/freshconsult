@@ -109,11 +109,11 @@
 	      </table>
 	  <% end %>
 	  <% form_tag "", { :id => "list",  :method => :put } do %>
-		  <!--table class="tickets">	
+		  <table class="tickets">	
 			<tbody>
-	        	<%# render :partial => "/helpdesk/shared/collapsed/ticket", :collection => @items %>
+	        	<%= render :partial => "/helpdesk/shared/collapsed/ticket", :collection => @items %>
 			</tbody>
-	      </table-->
+	      </table>
 	  <% end %>
   </div>
 
