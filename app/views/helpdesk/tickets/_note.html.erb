@@ -37,11 +37,11 @@
   	</div>
 	
 	<div class="details">
-		<%= simple_format(email_before_quoted(strip_tags(note.body))) %>
+		<%= simple_format(auto_link(email_before_quoted(strip_tags(note.body)))) %>
 		<% if email_quoted?(note.body) %>
 	    	<%= link_to_function("Show Quoted text", "$('quoted-#{ note.id }').toggle()", :class => 'toggle-quoted') %>
 	        <blockquote id="quoted-<%= note.id %>" style="display:none">
-	          <%= simple_format(email_after_quoted(strip_tags(note.body))) %>
+	          <%= simple_format(auto_link(email_after_quoted(strip_tags(note.body)))) %>
 	        </blockquote>
 		<% end %>
 	</div>	
