@@ -2,7 +2,7 @@
 	<div class="floatr">				
 		<%= link_to '<img src="/images/add.png"> New Company', new_customer_path, :class => "fdbutton" %>			
 		<%= link_to('<img src="/images/add.png"> New Contact', new_contact_url, :class => "fdbutton") %>
-		<%= link_to('Import users from CSV', "", :class => "fdbutton grey") %>
+		<%= link_to('Import users from CSV', import_index_path, :class => "fdbutton grey") %>
 	</div>
 
 	<h3 class="title">
@@ -17,6 +17,7 @@
 </div>
 
 <ul class="alpha_sort_list">
+  <%= hidden_field_tag :letter, '' %>
   <li class="active first"><%= link_to 'All', :letter => '' %></li>
   <% "A".upto("Y") do |l| -%>	    
      <li><%= link_to l, :letter => l %></li>	
