@@ -139,4 +139,9 @@ module ApplicationHelper
     content_tag( :div, (image_tag (avatar) ? avatar.content.url(profile_size) : "/images/icons/profile_blank.gif"), :class => profile_class)
   end
   
+  # Date and time format that is mostly used in our product
+  def formated_date(date_time)
+    date_time.strftime("%B %e %Y at %I:%M %p")
+  end
+  
 end
