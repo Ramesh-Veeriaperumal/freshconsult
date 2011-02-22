@@ -1,0 +1,15 @@
+<div class="page_area">
+	<% form_tag password_resets_path do %>
+	<ul class="ui-form">
+		<li>
+			<h2>Forgot Password</h2>
+			<div>Fill out the form below and instructions to reset your password will be emailed to you</div>
+		</li>	
+		<li>
+	  		<label>Your email address</label>
+	  		<%= text_field_tag "email", "", { :class => "required" } %>
+		</li>
+	  <%= submit_tag "Reset my password" %>
+	</ul>
+	<% end %>
+</div>

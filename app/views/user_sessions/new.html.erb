@@ -11,7 +11,8 @@
 		<li class="largefield">
 	  		<%= f.label :password %>
 	  		<%= f.password_field :password, :class => "text" %>
-			<!--div class="help_text">( <a href="#">Forgot password</a> ) </div-->
+			<div class="help_text">
+				( <%= link_to("Forgot password", new_password_reset_path ) %> ) </div>
 	  	</li>
 	  	<li class="checkbox">
 			<%= f.check_box :remember_me %>

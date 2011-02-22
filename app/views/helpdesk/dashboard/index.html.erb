@@ -68,7 +68,7 @@
 		<ul id="pages" class="activityfeed">
 	      <% @items.each_with_index do |item, i| %>
 	        <li class="<%= cycle('stripe', '') %>">
-	          <%= render(:partial => "ticket_note", :object => item) if item.notable.is_a? Helpdesk::Ticket %> 
+	          <%= render(:partial => "ticket_note", :object => item) %> 
 	        </li>
 	      <% end %>
 		</ul>

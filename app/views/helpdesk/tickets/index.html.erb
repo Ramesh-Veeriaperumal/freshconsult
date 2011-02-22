@@ -8,7 +8,7 @@
     document.observe("dom:loaded", function(){
       
 	  Helpdesk.sel = new Helpdesk.MultiSelectorsOnPages({
-	      pages: ['expanded', 'list'],
+	      pages: ['list', 'expanded'],
 	      cookieName: 'helpdesk-tickets-page'
 	  });
 	
@@ -109,11 +109,11 @@
 	      </table>
 	  <% end %>
 	  <% form_tag "", { :id => "list",  :method => :put } do %>
-		  <table class="tickets">	
+		  <!--table class="tickets">	
 			<tbody>
-	        	<%= render :partial => "/helpdesk/shared/collapsed/ticket", :collection => @items %>
+	        	<%# render :partial => "/helpdesk/shared/collapsed/ticket", :collection => @items %>
 			</tbody>
-	      </table>
+	      </table-->
 	  <% end %>
   </div>
 

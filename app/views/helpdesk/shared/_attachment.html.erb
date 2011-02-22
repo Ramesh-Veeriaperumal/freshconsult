@@ -1,10 +1,4 @@
- <li> 
-  <% if local_assigns[:show_delete] %>
-    <span class="delete">
-      <%= link_to image_tag("helpdesk/delete.png"), helpdesk_attachment_path(attachment), :method => 'delete', :confirm => "You're about to permanently delete this attachment. Continue?" %>
-    </span>
-  <% end %>
-	
+<li>  
   <div class="preview_img">
   	<% if attachment.image? %>
   		<%= image_tag(attachment.content.url(:thumb), :class => "image")  %>
@@ -18,6 +12,10 @@
 
   <div class="size">
     (<%= number_to_human_size attachment.content_file_size %>)
-  </div>
-  
- </li>
+	<% if local_assigns[:show_delete] %>
+	    <span class="delete">
+	      <%= link_to image_tag("icons/btn_close_icon.png"), helpdesk_attachment_path(attachment), :method => 'delete', :confirm => "You're about to permanently delete this attachment. Continue?", :class => "delete" %>
+	    </span>
+	<% end %>
+  </div>  
+</li>

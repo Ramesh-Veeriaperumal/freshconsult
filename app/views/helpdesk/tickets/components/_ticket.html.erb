@@ -1,6 +1,8 @@
 <% javascript_tag do %>
 	changeAggentList = function(group_id)
 	{
+		jQuery('#assigned_to').children("select").replaceWith("...");
+		
 		jQuery.ajax({type: 'POST',
 					 url: '/helpdesk/tickets/get_agents/'+group_id,
 					 contentType: 'application/text',
@@ -21,38 +23,16 @@
 	                <label>Due by time</label>
 					<%= ticket.due_by.strftime("%B %e %Y at %I:%M %p") %>
 	            </li>
-	            <li>
-					<%= f.label :priority, "Priority" %>
-					<%= f.select :priority, Helpdesk::Ticket::PRIORITY_OPTIONS, {} %>
-	            </li>
-	            <li>
-	                <%= f.label :status, "Status" %>
-					<%= f.select :status, Helpdesk::Ticket::STATUS_OPTIONS, {}  %>
-	            </li>
-				<li>
-					<%= f.label :group_id, "Group" %>
-					<%= f.collection_select :group_id, Group.find_all_by_account_id(@item.account_id), :id, :name,{:include_blank => '...'}, { :onchange => "changeAggentList(this.options[this.selectedIndex].value)" ,:class => "select"} %>
-      			</li>
-	            <li id="assigned_to" class="dropdown">
-	                <%= f.label :responder_id, "Assigned To" %>
-					<%= f.collection_select :responder_id, User.find_all_by_permission(current_account, :manage_tickets), :id, :name, {:include_blank => '...'} %>
-	            </li>
-				<li>
-					<%= f.label :ticket_type, "Type" %>
-					<%= f.select :ticket_type, Helpdesk::Ticket::TYPE_OPTIONS, {} %>
-	            </li> 
-				<li>
-					<%= f.label :source, "Source" %>
-					<%= f.select :source, Helpdesk::Ticket::SOURCE_OPTIONS, {} %>
-	            </li>
-				<!-- Custom fields starts here -->
 				
-				<% ticket.ff_aliases.each do |cust_field| %>
-				<li>
-	                <label><%=cust_field.humanize()%></label>
-					<%= h(ticket.get_ff_value(cust_field)) %>
-	            </li> 
-				<% end %>
+				
+				<!--form values starts here-->
+				
+			<%= render :partial=> "custom_form_partial" ,:locals => { :f => f } %>
+				
+				
+				
+				
+				<!--form values ens here-->
 				<!-- Custom fields ends here-->
 				<li>
 					<%= f.submit "Update", :class => "fdbutton" %>	

@@ -29,13 +29,14 @@
 <% javascript_tag do %>
 	function changeAggentList(group_id)
 	{	
+		jQuery('#assigned_to').children("select").replaceWith("...");
 		jQuery.ajax({
 		     	type:        'POST',
 				url: 		 '/helpdesk/tickets/get_agents/'+group_id,
 				contentType: 'application/text',
 		     	success: function(data){
 																			
-									jQuery('#assigned_to').replaceWith(data);
+									jQuery('#assigned_to').html(data);
 							}
 		});
 	}
@@ -121,7 +122,7 @@
 	<%when "Assigned to" then%> 
 		<li class="dropdown" id="assigned_to">
           	<%= f.label :responder_id, "Assigned To" %>
-          	<%= f.collection_select :responder_id, Helpdesk::Authorization.find_all_by_permission(:manage_tickets), :user_id, :name, {:include_blank => 'Nobody'}, :class => "select" %>
+          	<%= f.collection_select :responder_id, Agent.technician_list(@item.account_id), :id, :name, {:include_blank => 'None'}, :class => "select" %>
         </li> 
 		
 	<%when "Priority" then%>
@@ -137,17 +138,22 @@
 		</li>				
 	
 	<%else%>
-		<%logger.debug "Custom  Field #{field["label"]}"%>		
+		<%
+						
+logger.debug "Custom  Field #{field["label"]}"%>		
 		<% fields_for :flexifields do |cust_form| %>
 			<% 
 				field_label = (field["agent"]["required"]) ? "#{field["label"]} *" : "#{field["label"]}"  
 				field_class = field["type"] + ((field["agent"]["required"]) ? " required" : "") 
+				field_val = nil
+				logger.debug "ff_aliases :: ff_aliases #{@item.id}"
+				field_val = @item.get_ff_value(field["label"]) unless @item.id.nil?
 			%>
 			<% case field["type"] when "text","number" then %>				
 				<li class="<%= field['label'] %>">		 
 
 					<%= cust_form.label "#{field["label"]}", field_label.humanize() %>  
- 					<%= cust_form.text_field "#{field["label"]}" , :class=> field_class %>
+ 					<%= cust_form.text_field "#{field["label"]}" , :class=> field_class  , :value =>field_val%>
 
 				</li>		 
 						
@@ -155,7 +161,7 @@
 				<li class="paragraph">
 
 					<%= cust_form.label "#{field["label"]}", field_label.humanize() %>  
- 					<%= cust_form.text_area "#{field["label"]}" ,:class=> field_class %>
+ 					<%= cust_form.text_area "#{field["label"]}" ,:class=> field_class , :value =>field_val %>
 
 				</li>
 					
@@ -165,14 +171,14 @@
 						field["choices"].each {|choice| values.push(choice["value"])}%>
 
 						 <%= cust_form.label "#{field["label"]}", field_label.humanize() %>  
- 						 <%= cust_form.select "#{field["label"]}", values ,:class=> field_class %>
+ 						 <%= cust_form.select "#{field["label"]}", values ,:class=> field_class , :selected =>field_val%>
 
 			    </li>
 							
 		   <% when "checkbox" then %>
 				<li class="checkbox">
 
-					<%= cust_form.check_box "#{field["label"]}" ,:class => field_class %>					
+					<%= cust_form.check_box "#{field["label"]}" ,:class => field_class , :value =>field_val %>					
 					<%= field_label.humanize() %>
 
 			     </li>
@@ -181,7 +187,7 @@
 		<% end %>
 	<% end %>
 		<li>
-			<%= render :partial=> "/helpdesk/shared/attachment_form" %>
+			<%= render ( :partial => "/helpdesk/shared/attachment_form" ) unless (type == "edit") %>
 		</li>
 	</ul>
 	

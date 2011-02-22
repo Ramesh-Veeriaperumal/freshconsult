@@ -39,10 +39,14 @@
 			<%= render :partial=> "/solution/shared/attachment_form" %>
 		</li>
 			
+		<% fields_for :tags  do |tag| %>
 		<li>
-			<label>Tags</label>
-			<input type="text" />
+			<!--label>Tags</label>
+			<input type="text" /-->
+			<%= tag.label(:name, "Tags") %>
+    		<%= tag.text_field :name %>
 		</li>
+		<%end%>
 		<li>
 			<label>Make this Solution</label>
 			<%= f.radio_button :is_public, true  %>Public (Will be published in self service)<br />

@@ -27,6 +27,7 @@ ActionController::Routing::Routes.draw do |map|
   #map.resources :admin, :only => :index
   map.resources :ticket_fields, :only => :index
   map.resources :email, :only => [:new, :create]
+  map.resources :password_resets, :except => [:index, :show, :destroy]
   
   map.namespace :admin do |admin|
     admin.resources :home, :only => :index
@@ -159,9 +160,11 @@ ActionController::Routing::Routes.draw do |map|
    map.namespace :solution do |solution|     
      solution.resources :categories  do |category|   
      category.resources :folders  do |folder|
-       folder.resources :articles, :member => { :thumbs_up => :put, :thumbs_down => :put }
+       folder.resources :articles, :member => { :thumbs_up => :put, :thumbs_down => :put , :delete_tag => :post }
        end
      end
+     
+     solution.resources :articles, :only => :show
          
      end
 
