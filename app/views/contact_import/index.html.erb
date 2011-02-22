@@ -1,0 +1,19 @@
+<h4>CSV Import</h4>
+
+<h4>Import Contacts</h4>
+<% form_for :user,:url => { :controller => "contact_import", :action => "create" }, :html => {:multipart => true} do |f| %>
+  <%= f.error_messages %>
+
+ <div class="field">
+      <label for="file">File</label>
+      <%= file_field_tag 'file' %>
+    </div>
+  <p>
+     <%= f.submit 'Import' %>
+  </p>
+<% end %>
+
+<%= link_to 'Back', contacts_path %>
+
+
+

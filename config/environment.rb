@@ -40,6 +40,7 @@ Rails::Initializer.run do |config|
   config.gem "aws-s3", :lib => "aws/s3" #0.6.2  
   config.gem "arel" #2.0.7  
   config.gem "searchlogic" #2.4.27
+  config.gem 'map-fields',  :lib => 'map_fields'
   
 
   # Only load the plugins named here, in the order given. By default, all plugins 
