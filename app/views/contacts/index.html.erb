@@ -15,21 +15,24 @@
 		  	<div class="col1">
 	        	<%= link_to(h(contact.display_name), {:controller => "contacts", :action => "show", :id => contact}, :class => "item_info" ) %>
 				<div>
-				<% unless contact.job_title.empty? %>
+				
+				</div>
+				<div class="user_info">
+			  		<%= content_tag (:div, "#{content_tag(:span, "primary")}  #{h(contact.email)}") unless contact.email.blank? %>
+					<%# content_tag (:div, "#{content_tag(:span, "secondary")}  #{h(contact.second_email)}") unless contact.second_email.blank? %>
+					<%= content_tag (:div, "#{content_tag(:span, "phone")}  #{h(contact.phone)}") unless contact.phone.blank? %>
+					<%# content_tag (:div, "#{content_tag(:span, "mobile")}  #{h(contact.mobile)}") unless contact.mobile.blank? %>
+				</div>
+			</div>
+		  	<div class="col2">
+		  		<% unless contact.job_title.blank? %>
 		  			<b><%= h contact.job_title %></b>
 				<% else %>
 				   Working
 				<% end %>
-				<% unless contact.customer.nil? %>
+				<% unless contact.customer.blank? %>
 					at <%= link_to(h(contact.customer.name), contact.customer)  %>
 				<% end %>
-				</div>
-			</div>
-		  	<div class="col2 user_info">
-		  		<div><span>primary</span> <%= h contact.email %></div>
-				<div><span>secondary</span> <%= h contact.second_email  %></div>
-				<div><span>phone</span> <%= h contact.phone  %></div>
-				<div><span>mobile</span> <%= h contact.mobile %></div>
 			</div>
 		 </div>
 	     	      
