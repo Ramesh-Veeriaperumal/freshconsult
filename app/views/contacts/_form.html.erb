@@ -32,13 +32,14 @@
 										.appendTo( ul );
 								};	
 	});
+	
 <% end %>
-
-
-
-
+<% form_title = (type == 'new')? "New Contact" : "Edit Contact" %>
 <%= error_messages_for :user %> 	 
 	<ul class="ui-form">
+		<li>
+			<h2><%=form_title%></h2>
+		</li>	
 		<li>
 			<%= label(:user, :name, "Full Name") %>
 			<%= text_field(:user, :name, :class => "text" )  %>
@@ -55,8 +56,7 @@
 				end
 			%>
 			<%= label(:user, :customer, "Company") %>
-			<%= text_field(:user, :customer, :class => "text" , :value => company_name , :id => "contact_customer") %>
-			
+			<%= text_field(:user, :customer, :class => "text" , :value => company_name, :id => "contact_customer" ) %>
 		</li>
 		<li class="small">	
 			<%= label(:user, :phone, "Phone No.") %>	
@@ -73,7 +73,7 @@
 			<label class="overlabel" for="email_primary">Primary</label>
 			<%= text_field(:user, :email, :class => "text", :id => "email_primary" ) %>
 			<!--%= label(:user, :second_email, "Secondary Email") %--><br />
-			<label class="overlabel" for="email_second">Other</label>	
+			<label class="overlabel" for="email_second">Secondary</label>	
 			<%= text_field(:user, :second_email, :class => "text", :id => "email_second" ) %>
 		</li>
 		
@@ -100,7 +100,6 @@
 		</li>		
 		
 	</ul>	 
-<span class="seperator"></span>
 
 <!-- We can remove the following as the default role is customer-->
 <div style="display:none">
