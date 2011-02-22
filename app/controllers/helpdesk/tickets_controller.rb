@@ -5,7 +5,7 @@ class Helpdesk::TicketsController < ApplicationController
   include HelpdeskControllerMethods
   
   before_filter :get_custom_fields,   :only => [:create ,:update]
-  before_filter :load_multiple_items, :only => [:destroy, :restore, :spam, :unspam, :assign]  
+  before_filter :load_multiple_items, :only => [:destroy, :restore, :spam, :unspam, :assign , :close_multiple ,:pick_tickets]  
   before_filter :load_item,     :only => [:show, :edit, :update, :execute_scenario, :close_ticket ] 
   before_filter :set_customizer , :only => [:new ,:edit ,:show]
   before_filter :set_custom_fields , :only => [:create ,:update]
@@ -109,26 +109,7 @@ class Helpdesk::TicketsController < ApplicationController
   def assign
     user = params[:responder_id] ? User.find(params[:responder_id]) : current_user
     
-    @items.each do |item|
-      old_item = item.clone
-      message = "#{item.responder ? "Reassigned" : "Assigned"} to #{user.name}"
-      item.responder = user
-      item.train(:ham)
-      item.save
-      if old_item.responder_id != item.responder_id
-        unless item.responder
-          item.create_activity(current_user, "{{user_path}} assgned the ticket {{notable_path}} to 'Nobody'", {}, 
-                                   "Assigned to 'Nobody' by {{user_path}}")
-        else
-          item.create_activity(current_user, "{{user_path}} #{old_item.responder ? "reassigned" : "assigned"} the ticket {{notable_path}} to {{responder_path}}", 
-                  {'eval_args' => {'responder_path' => ['responder_path', {
-                                                          'id' => item.responder.id, 
-                                                          'name' => item.responder.name}]}}, 
-                  "Assigned to {{responder_path}} by {{user_path}}")
-        end
-      end
-      #item.create_status_note(current_account, message, current_user, "#{item.responder ? "reassigned" : "assigned"} the ticket")
-    end
+    assign_ticket user
 
     flash[:notice] = render_to_string(
       :inline => "<%= pluralize(@items.length, 'ticket was', 'tickets were') %> assigned to #{user.name}.")
@@ -139,6 +120,31 @@ class Helpdesk::TicketsController < ApplicationController
       redirect_to :back
     end
   end
+  
+  def close_multiple
+    
+    status_id = Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:closed]       
+    @items.each do |item|
+      item.update_attribute(:status , status_id)
+    end
+    
+    flash[:notice] = render_to_string(:inline => "<%= pluralize(@items.length, 'ticket was', 'tickets were') %> closed")  
+    
+    redirect_to :back
+    
+  end
+  
+ 
+  def pick_tickets
+    
+    assign_ticket current_user
+    
+    flash[:notice] = render_to_string(:inline => "<%= pluralize(@items.length, 'ticket was', 'tickets were') %> assigned to you")  
+    
+    redirect_to :back
+    
+  end
+  
   
   def execute_scenario 
     
@@ -244,6 +250,31 @@ protected
                             "{{user_path}} created the ticket")
     #end
    
-  end
+ end
+ 
+ def assign_ticket user
+   
+    @items.each do |item|
+      old_item = item.clone
+      message = "#{item.responder ? "Reassigned" : "Assigned"} to #{user.name}"
+      item.responder = user
+      item.train(:ham)
+      item.save
+      if old_item.responder_id != item.responder_id
+        unless item.responder
+          item.create_activity(current_user, "{{user_path}} assgned the ticket {{notable_path}} to 'Nobody'", {}, 
+                                   "Assigned to 'Nobody' by {{user_path}}")
+        else
+          item.create_activity(current_user, "{{user_path}} #{old_item.responder ? "reassigned" : "assigned"} the ticket {{notable_path}} to {{responder_path}}", 
+                  {'eval_args' => {'responder_path' => ['responder_path', {
+                                                          'id' => item.responder.id, 
+                                                          'name' => item.responder.name}]}}, 
+                  "Assigned to {{responder_path}} by {{user_path}}")
+        end
+      end
+      #item.create_status_note(current_account, message, current_user, "#{item.responder ? "reassigned" : "assigned"} the ticket")
+    end
+   
+ end
 
 end

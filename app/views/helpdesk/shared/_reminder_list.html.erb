@@ -1,0 +1,17 @@
+
+<%
+text = r.body + (r.ticket && !parent ? link_to("Re: #{r.ticket.subject}", r.ticket, :class => "request_link") : '');
+
+close_link =%{this.form.action = this.checked ? '#{check_url}' : '#{uncheck_url}';Element.down(this.form, "input[name=_method]").value = this.checked ? '#{check_method}' : '#{uncheck_method}'; this.form.submit();}
+
+%>	
+<li>
+<% form_for "",:remote => true, :html => {:method => :put } do |f| %>
+<%=
+    check_box_tag("", 1, checked , :onclick => close_link) +   
+    content_tag("label", text, :class=>"reminder #{ checked ? "checked" : "unchecked" }")
+%>
+<%end%>
+
+</li>
+
