@@ -26,9 +26,11 @@ class Helpdesk::TagUsesController < ApplicationController
     tag = ticket.tags.find_by_id(params[:id])
     raise ActiveRecord::RecordNotFound unless tag
 
+    taggable_type = params[:taggable_type] || "Helpdesk::Ticket"
     # ticket.tags.delete(tag) does not call tag_use.destroy, so it won't 
-    # decrement the counter cache. This is a workaround.
-    Helpdesk::TagUse.find_by_ticket_id_and_tag_id(ticket.id, tag.id).destroy
+    # decrement the counter cache. This is a workaround. need to re-work..now this will work only for ticket module
+    
+    Helpdesk::TagUse.find_by_taggable_id_and_tag_id_and_taggable_type(ticket.id, tag.id,taggable_type ).destroy
 
     flash[:notice] = "The tag was removed from this ticket"
     redirect_to :back
