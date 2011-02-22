@@ -5273,7 +5273,7 @@ h5.category_title .item_actions a {
 }
 /* line 3371, ../src/application.scss */
 .admin_list li div.item_information .col1, .content_list li div.item_information .col1 {
-  width: 40%;
+  width: 60%;
 }
 /* line 3374, ../src/application.scss */
 .admin_list li div.item_information .col1, .admin_list li div.item_information .col2, .content_list li div.item_information .col1, .content_list li div.item_information .col2 {
@@ -5281,7 +5281,7 @@ h5.category_title .item_actions a {
 }
 /* line 3377, ../src/application.scss */
 .admin_list li div.item_information .col2, .content_list li div.item_information .col2 {
-  padding-top: 2px;
+  padding-top: 4px;
 }
 /* line 3381, ../src/application.scss */
 .admin_list li a, .content_list li a {
@@ -5319,7 +5319,7 @@ h5.category_title .item_actions a {
 }
 /* line 3407, ../src/application.scss */
 .admin_list li:hover, .content_list li:hover {
-  background: #f6f6f6;
+  background: #f3f1ec;
 }
 /* line 3409, ../src/application.scss */
 .admin_list li:hover div.item_actions, .content_list li:hover div.item_actions {
@@ -6640,28 +6640,15 @@ div.ribbon:before {
   display: block;
 }
 
-/* line 4318, ../src/application.scss */
-.user_info {
-  background-color: #f3f1ec;
-  width: 40%;
-  padding: 6px;
-  -moz-border-radius: 6px 6px 6px 6px;
-  -webkit-border-top-left-radius: 6px;
-  -webkit-border-bottom-left-radius: 6px;
-  -webkit-border-top-right-radius: 6px;
-  -webkit-border-bottom-right-radius: 6px;
-  border-radius: 6px 6px 6px 6px;
-}
-/* line 4324, ../src/application.scss */
+/* line 4319, ../src/application.scss */
 .user_info div {
   overflow: hidden;
   *zoom: 1;
 }
-/* line 4326, ../src/application.scss */
+/* line 4321, ../src/application.scss */
 .user_info div span {
   float: left;
-  text-align: right;
   padding-right: 5px;
   color: #999999;
-  width: 80px;
+  width: 50px;
 }
