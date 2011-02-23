@@ -8,6 +8,8 @@ class Customer < ActiveRecord::Base
   
   has_many :users , :class_name =>'User'
   
+  belongs_to :sla_policy, :class_name =>'Helpdesk::SlaPolicy'
+  
 
   
   before_create :check_sla_policy
