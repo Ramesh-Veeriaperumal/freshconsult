@@ -1,7 +1,6 @@
-class Admin::AutomationsController < ApplicationController
+class Admin::AutomationsController < Admin::AdminController
   include ModelControllerMethods
-  
-  before_filter :set_selected_tab
+   
   before_filter :load_config, :only => [:new, :edit]
   
   def index
@@ -57,10 +56,7 @@ class Admin::AutomationsController < ApplicationController
     redirect_back_or_default redirect_url
   end
   
-  protected
-    def set_selected_tab
-      @selected_tab = "Admin"
-    end
+  protected 
   
     def scoper
       current_account.scn_automations

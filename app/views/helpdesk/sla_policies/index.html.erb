@@ -1,4 +1,19 @@
-<div class="pageContent">
+<% content_for :sidebar do %>
+	<div class="rightSubContainers">
+		<h4>SLA Policy</h4>
+			<p>
+				SLA Policy is a set of target response and resolution times based on ticket priority.
+				It is an industry best practice to set Service Levels based on priority. Your SLA policy could be as simple as saying “High Priority tickets should be resolved in 2 hours” etc.
+			</p>
+			<p>
+				Freshdesk uses the SLA Policy to determine the “Due By” time of tickets. You can have a default SLA policy for all of your customers, but if you have a special customer who requires faster response and resolution times, you can always create a special SLA policy for that customer.
+			</p>
+			<p>
+				SLA Policy works in conjuction with Business Hours.
+			</p>
+	</div>	
+<% end %>
+<div class="page_area">
 	<div class="title_bar_grey">
 		<div class="floatr">
 			<%= link_to "<img src='/images/add.png' /> New SLA Policy", new_helpdesk_sla_policy_path, :class => "fdbutton" %>

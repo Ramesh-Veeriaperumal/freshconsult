@@ -1,11 +1,31 @@
-<% content_for :title do %>
-  My Support Requests
-<% end %>
+<% content_for :layoutType do -%>single<%- end %>
 
-<ol>
-  <% for ticket in @tickets %>
-    <li>
-      <%= link_to("Support request filed on #{ticket.created_at}", support_ticket_path(ticket)) %>
-    </li>
-  <% end %>
-</ol>
+<div class="header_area">
+	<h3 class="title">&nbsp;Your requests</h3>
+</div> 
+<div class="page_area">
+ <table class="tickets">	
+	<tbody>
+		<% @tickets.each do |ticket| %>
+	       	<tr class="<%= cycle('stripe', '') %>">
+			  <td class="name" width="70%">
+			      <h3>
+			        <%= link_to( h(ticket.subject) + " (##{ticket.display_id}) ", support_ticket_path(ticket), :title => ticket.description ) %>
+			      </h3>   
+			      <div class="info_data"><%= time_ago_in_words(ticket.created_at) %> ago </div>
+			  </td> 
+			  <td class="assign">
+			  	  <% if ticket.freshness != :new %>
+			        <span>Assigned to <b><%=h(ticket.responder.display_name)%></b></span>
+			      <% end %>
+				  	<ul>
+						<li>
+					        Status <span><%= ticket.status_name %></span>
+					    </li>
+					</ul>
+			  </td> 
+			</tr>
+		<% end %>
+	</tbody>
+ </table> 
+</div>
