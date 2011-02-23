@@ -11,9 +11,8 @@ module SubscriptionSystem
   protected
   
     def current_account
-      #puts "@$@$@$@$@$@$$@$@REQUEST.INSPECT #{request.inspect}"
-      puts "********************"
-      puts "request.subdomains #{request.subdomains} request.remoteblahhh #{request.env["HTTP_HOST"]}"
+      logger.debug "********************"
+      logger.debug "request.subdomains #{request.subdomains} request.remoteblahhh #{request.env["HTTP_HOST"]}"
       @current_account ||= Account.find_by_full_domain(request.host) || (Rails.env.development? ? Account.first : nil)
       raise ActiveRecord::RecordNotFound unless @current_account
       @current_account
