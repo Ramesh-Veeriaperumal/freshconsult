@@ -1,5 +1,4 @@
-class Admin::EmailNotificationsController < ApplicationController
-  before_filter :set_selected_tab
+class Admin::EmailNotificationsController < Admin::AdminController 
   
   def index
     e_notifications = current_account.email_notifications
@@ -35,10 +34,5 @@ class Admin::EmailNotificationsController < ApplicationController
       flash[:notice] = "Email notifications have been updated."
       redirect_back_or_default admin_email_notifications_url
   end
-  
-  protected
-    def set_selected_tab
-      @selected_tab = "Admin"
-    end
-
+   
 end

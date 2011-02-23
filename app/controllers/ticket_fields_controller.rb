@@ -1,7 +1,5 @@
-class TicketFieldsController < ApplicationController
-  
-  before_filter :set_selected_tab
-  
+class TicketFieldsController < Admin::AdminController
+   
   def index
     
     @ticket_fields = Helpdesk::FormCustomizer.find(:first ,:conditions =>{:account_id => current_account.id})
@@ -301,12 +299,6 @@ def get_new_column_details type
   
 
 end
-
-protected
-
-def set_selected_tab
-      @selected_tab = 'Admin'
-end
-
+ 
 
 end

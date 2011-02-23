@@ -26,7 +26,8 @@
         </ul>
 		<% end %>				
 	</div>
-	<% if current_user then %>
+	
+	<% if current_user and permission?(:manage_tickets) then %>
 	    <div class="header_tabs">
 	    	<ul class="rightHeadElements">
 	        	<li>

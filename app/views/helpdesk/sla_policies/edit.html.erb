@@ -1,58 +1,9 @@
-<div class="pageContent">
-	<h3 class="content_title">Edit SLA Policy</h>
-	<span class="seperator"></span
-	<!--%= debug @support_plan%-->
+<% content_for :layoutType do%>single<% end %>
+<div class="page_area">
+	<h3 class="content_title">Edit SLA Policy</h3>
+	<span class="seperator"></span> 
 	<% form_for(@sla_policy) do |f| %>
-  		<%= f.error_messages %>
-
-  	 <ul class="ui-form">
-		  	<li>
-				<%= f.label :name %>
-	    		<%= f.text_field :name %>
-				<%= f.hidden_field :id %>
-	  		</li>
-	  		<li>
-	    		<%= f.label :description %>
-	    		<%= f.text_area :description, :class => "smallpara" %>
-	  		</li>	 
-			<li class="seperator"></li>
-			<li>
-				<label>SLA Targets</label>
-			</li>
- 			<li class="grid">
- 				<table>
-				  <tr>
-				    <th></th>
-					<th>Response time</th>
-				    <th>Resolution time</th>
-				    <th>Escalate to</th>
-					<th>Override Business Hours</th>
-				  </tr> 
-					 <% @sla_policy.sla_details.each_with_index do |slas , index| %>
-					  <% fields_for "SlaDetails[#{index}]", slas do |sla| %>				   				
-						<% logger.debug "index is #{index}"				
-					       priority = Helpdesk::SlaDetail::PRIORITY_NAMES_BY_KEY[index+1] %>
-					  <tr>
-					    <td>
-					    	<%= sla.label :name , slas.name  %> <%= sla.hidden_field :name, { :value => slas.name} %>
-							<%= sla.hidden_field :priority, { :value => slas.priority} %>
-							<%= sla.hidden_field :id, { :value => slas.id} %>					
-						</td>			   
-						<td><%= sla.select :response_time , Helpdesk::SlaDetail::RESPONSETIME_OPTIONS %></td>
-					    <td><%= sla.select :resolution_time, Helpdesk::SlaDetail::RESOLUTIONTIME_OPTIONS %></td>
-					    <td> 
-					    <%= sla.collection_select :escalateto, User.find_all_by_permission(current_account, :manage_tickets), :id, :name %>
-						</td>	
-						 <td>
-							    	<%= sla.check_box :override_bhrs%>
-						</td>		    
-					  </tr>
-					  <% end %>
-					<% end %>
-				</table>
-			</li>	
-		</ul>
-		<br />
+  		<%= render :partial => "form", :locals => { :f => f } %>
    		<div class="button-container"> 
 			<%= f.submit 'Save', :class => "fdbutton" %>
 			<%= link_to 'cancel', helpdesk_sla_policies_path, :class => "fdbutton grey" %>

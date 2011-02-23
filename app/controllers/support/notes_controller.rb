@@ -19,6 +19,7 @@ class Support::NotesController < ApplicationController
     )
 
     if @note.save
+      create_attachments
       flash[:notice] = "The note has been added to your request."
     else
       flash[:error] = "There was a problem adding the note to your request. Please try again."
@@ -26,4 +27,14 @@ class Support::NotesController < ApplicationController
 
     redirect_to :back
   end
+  
+  def create_attachments 
+    return unless @note.respond_to?(:attachments)
+    (params[:helpdesk_note][:attachments] || []).each do |a| 
+      @note.attachments.create(:content => a[:file], :description => a[:description], :account_id => @note.account_id)
+    end
+  end
+  
+  
+  
 end
