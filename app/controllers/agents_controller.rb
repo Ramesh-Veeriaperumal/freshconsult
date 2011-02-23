@@ -42,17 +42,21 @@ class AgentsController < Admin::AdminController
 
   def create   
     
-    @user  = current_account.users.new #by Shan need to check later     
+    @user  = current_account.users.new #by Shan need to check later        
     @agent = Agent.new(params[nscname]) 
-    if @user.signup!(:user => params[:user])          
+    
+    if @user.signup!(:user => params[:user])   
+    
       @agent.user_id = @user.id      
       if @agent.save
+         flash[:notice] = "The Agent has been created and activation instructions sent to #{@user.email}!"
          redirect_to :action => 'index'
-      else
-         redirect_to :action => 'new'          
-      end      
-    else      
-         redirect_to :action => 'new'      
+      else      
+        render :action => :new         
+      end
+    else 
+        @agent.user =@user       
+         render :action => :new        
     end    
   end
 
