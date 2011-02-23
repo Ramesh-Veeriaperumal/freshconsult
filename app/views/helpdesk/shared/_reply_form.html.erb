@@ -14,7 +14,7 @@
   <% form_for note, :html => {:multipart => true } do |f| %>
     <%= f.error_messages %>
 	<ul class="ui-form">
-    	<li datafor="email" style="display:none">
+    	<li datafor="email" style="display:block">
 			<%= f.label(:reply_email, "Send the reply from the following email id") %>
 			<%= select :reply_email, :id, options_for_select(@reply_email, @ticket.reply_email) %>
 			<span class="seperator"></span>
@@ -31,10 +31,20 @@
 			</label>
 		</li>
 		<%end%>	
-		<li datafor="note" class="checkbox">
+		
+		<!-- reply will be always public -->
+		
+		<%=f.hidden_field :private , :value=>false%>
+		
+		<!--reply source will be always reply-->	
+		
+		
+		<%=f.hidden_field :source , :value=>Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["email"]%>
+		
+		<!--li datafor="note" class="checkbox">
 			<%= f.check_box(:private, {:checked => true}, 1, 0) %>
 			<%= f.label(:private, "Requester can view this note (public note)") %>
-		</li>	
+		</li-->	
 		<li class="attachment-options"  id="attachment-options">
 			<% unless local_assigns[:no_attachments] %>
 			<%= render :partial => "/helpdesk/shared/attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note" } %>
