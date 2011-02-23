@@ -39,8 +39,9 @@ class Va::Action
     end
 
     def send_email_to_requester(act_on)
-      Helpdesk::TicketNotifier.deliver_email_to_requester(act_on, 
-                                                          Liquid::Template.parse(act_hash[:email_body]).render('ticket' => act_on))
+      Helpdesk::TicketNotifier.send_later(:deliver_email_to_requester, 
+                                          act_on, 
+                                          Liquid::Template.parse(act_hash[:email_body]).render('ticket' => act_on))
     end
     
     def send_email_to_group(act_on)
@@ -65,9 +66,10 @@ class Va::Action
     end
 
     def send_internal_email(act_on, receipients)
-      Helpdesk::TicketNotifier.deliver_internal_email(act_on, 
-                                                      receipients, 
-                                                      Liquid::Template.parse(act_hash[:email_body]).render('ticket' => act_on))
+      Helpdesk::TicketNotifier.send_later(:deliver_internal_email, 
+                                          act_on, 
+                                          receipients, 
+                                          Liquid::Template.parse(act_hash[:email_body]).render('ticket' => act_on))
     end
 
 end
