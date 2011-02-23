@@ -22,10 +22,20 @@
 					<%= user_avatar(@ticket.responder.avatar, :thumb)  %>
 					<%= link_to(h(@ticket.responder.name), @ticket.responder, :class => "user_name") %>
 					<%= auto_link(h(@ticket.responder.email)) %>
-					<div><%= h(@ticket.responder.phone) %></div>
-					<div><%= h(@ticket.responder.mobile) %></div>
+					<div> <span class="info_data">phone</span> <%= h(@ticket.responder.phone) %></div>
+					<div> <span class="info_data">mobile</span> <%= h(@ticket.responder.mobile) %></div>
 				</div>
 			<% end %>
+			<span class="seperator"></span>
+			<div> <strong class="info_data">Priority:</strong> <%=@ticket.priority_name%> </div>
+			<div> <strong class="info_data">
+					<% if(Time.now > @ticket.due_by ) %>
+						Already Overdue for <%= distance_of_time_in_words(Time.now, @ticket.due_by) %>
+					<% else %>
+						Due in <%= distance_of_time_in_words(Time.now, @ticket.due_by) %> 
+					<% end %>  
+				</strong> 
+			</div>
 		</div>
 	</div>
 <% end %>
@@ -90,7 +100,7 @@
 					</li>
 					<li class="attachment-options"  id="attachment-options">
 						<% unless local_assigns[:no_attachments] %>
-						<%= render :partial => "/helpdesk/shared/attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note" } %>
+							<%= render :partial => "/helpdesk/shared/attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note" } %>
 					    <% end %>
 					</li>
 				</ul>

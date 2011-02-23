@@ -1,4 +1,4 @@
-class AgentsController < Admin::AutomationsController
+class AgentsController < Admin::AdminController
     
   def index    
     @agents = current_account.agents.find(:all , :include => :user)
