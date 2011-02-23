@@ -31,9 +31,10 @@ class Helpdesk::AttachmentsController < ApplicationController
         return true if current_user && ticket.requester_id == current_user.id
         return true if params[:access_token] && ticket.access_token == params[:access_token]
   
-      # Is the attachment on a guide? If so, it's always downloadable.
-      # elsif @attachment.attachable.guide
-      #   return  true
+      # Is the attachment on a solution  If so, it's always downloadable.
+      
+      elsif ['Solution::Article'].include? @attachment.attachable_type      
+        return  true       
       end 
       redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) 
     end

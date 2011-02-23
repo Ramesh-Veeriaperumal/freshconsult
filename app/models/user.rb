@@ -11,7 +11,7 @@ class User < ActiveRecord::Base
     :dependent => :destroy
 
   before_create :set_time_zone
-  before_save :set_account_id_in_children
+  before_save :set_account_id_in_children , :set_contact_name
   
   named_scope :contacts, :conditions => ["role_token=?", "customer"]
 
@@ -99,6 +99,10 @@ class User < ActiveRecord::Base
   def admin?
     role_token == 'admin'
   end
+  
+  def customer?
+    role_token == 'customer'
+  end
 
   #Savage_beast changes end here
 
@@ -168,6 +172,14 @@ class User < ActiveRecord::Base
   protected
     def set_account_id_in_children
       self.avatar.account_id = account_id unless avatar.nil?
+  end
+  
+  def set_contact_name
+   
+    if self.name.empty?
+      self.name = (self.email.split("@")[0])     
     end
+   
+  end
   
 end

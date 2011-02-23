@@ -4,6 +4,25 @@
 	<%= javascript_include_tag "helpdesk/expanding_textarea.js" %>
 	<%= javascript_include_tag "helpdesk/multifile.js" %>	
 	<% javascript_tag do %>
+		swapEmailNote = function(action)
+		{
+			if (action == "reply")
+			{
+				jQuery('#cnt-note').css("display", "none");
+				jQuery('#cnt-reply').css("display", "block");
+				
+			
+			}
+			else
+			{
+			
+				jQuery('#cnt-reply').css("display", "none");
+				jQuery('#cnt-note').css("display", "block");
+			
+			
+			}
+		
+		}
 		Helpdesk.swapEmailNote = function(cls, private, submit, link, id){
 			var el = $(id);
 			el.show();
@@ -175,7 +194,7 @@
 		        	<%= user_avatar(@ticket.requester.avatar)  %>
 		          	<div> Reported by <%= link_to(h(@ticket.requester.display_name),@ticket.requester, :class => "user_name") %> </div>
 		            <div> 
-						Created on <%= h(@ticket.created_at.strftime("%B %e %Y at %I:%M %p")) %>
+						Created on <%= formated_date(@ticket.created_at) %>
 						<% metainfo = @ticket.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["meta"]) %>
 						<% unless (metainfo.blank?) %>
 							<span class="meta_icon" title="<%= metainfo.body %>"> 
@@ -214,14 +233,20 @@
 				<%# link_to("This is not spam", unspam_helpdesk_ticket_path(@ticket), :method => :put, :class => "button" ) if @ticket.spam %>
 				<%# link_to("Mark as spam", spam_helpdesk_ticket_path(@ticket), :method => :put, :class => "button" ) unless @ticket.spam %>
 		<div class="alignright">
-			<%= link_to_function("Reply", "Helpdesk.swapEmailNote('send-email', false, 'Send Email', this, 'cnt-reply')", :class => 'fdbutton') if @item.requester %>	  
-			<%= link_to_function("Add Note", "Helpdesk.swapEmailNote('add-note', true, 'Add Note', this, 'cnt-reply')", :class => 'fdbutton') %>		
+			<%= link_to_function("Reply", "swapEmailNote('reply')", :class => 'fdbutton') if @item.requester %>	  
+			<%= link_to_function("Add Note", "swapEmailNote('note')", :class => 'fdbutton') %>		
 		</div>
 		
+	
 		<% if @item.requester %>
+			
+			<%= render(:partial => '/helpdesk/shared/note_form', :locals => {:id => 'add-note',	:cntid => "cnt-note", :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
 			<%= render(:partial => '/helpdesk/shared/reply_form', :locals => {:id => 'send-email', :cntid => 'cnt-reply', :note => [@ticket, Helpdesk::Note.new(:private => false)] }) %>
+			
 		<% else %>
-			<%= render(:partial => '/helpdesk/shared/note_form', :locals => {:id => 'add-note',	:cntid => "cnt-reply", :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
+			
+			<%= render(:partial => '/helpdesk/shared/note_form', :locals => {:id => 'add-note',	:cntid => "cnt-note", :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
+			
 		<% end %>				
 		
 		<% unless @ticket.notes.visible.exclude_source('meta').newest_first.blank? then %>

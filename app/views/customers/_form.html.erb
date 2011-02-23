@@ -1,0 +1,40 @@
+<% form_title = (type == 'edit')? "Edit Company" : "New Company" %>
+
+<% form_for(@customer) do |f| %>
+	  <%= f.error_messages %>	
+	  <ul class="ui-form">
+		  <li>
+				<h2><%=form_title%></h2>
+		  </li>	
+		  <li>
+		    <%= f.label :name, "Company name" %>
+		    <%= f.text_field :name %>
+		  </li>	  
+		  <li>
+		    <%= f.label :description %>
+			<label class="overlabel" for="comp_desc">More info regarding this company like address, phone number, website etc.</label>
+		    <%= f.text_area :description, :id => "comp_desc", :class => "smallpara"  %>
+		  </li>	
+		  <li>
+		  	<%= f.label :note, "Notes" %>
+			<label class="overlabel" for="comp_notes">
+				Add specific notes regarding this company<br /> 
+				example - we are negotiating a 100K deal with this company
+			</label>
+		   
+			<%= f.text_area :note, :id => "comp_notes", :class => "smallpara"  %>
+		  </li>
+		  <li>
+		  	<%= f.label :domains, "Domain Names for this company" %>		
+			<%= f.text_field :domains, :id => "domain_names", :class => "text"  %>
+			<span>
+				<b>Note:</b> Freshdesk will automatically associate Contacts with this company if email ids contain these domains 
+			</span>
+		  </li> 
+	</ul>  
+	
+	<div class="button-container">
+	   <%= f.submit 'Save', {:class => "fdbutton"} %> 
+	   <%= link_to 'Cancel', customers_path, :class => "fdbutton grey" %>
+	</div>
+<% end %>

@@ -1,72 +1,59 @@
-<% content_for :sidebar do %>
-	<div class="rightSubContainers">
-		<h3 class="title">Contact info</h3>
-		<ul class="ui-list_with_icon contact_info">
-			<li class="icon_text">
-				<img src="/images/icons/email_icon.png" width="24px" height="24px" />
-				<% unless @user.email.nil? %>
-					<%= mail_to (@user.email) %>
-				<% end %>
-				<% unless @user.second_email.nil? %>
-					<%= mail_to (@user.second_email) %>
-				<% end %>
-			</li>
-			<li class="icon_text">
-				<img src="/images/icons/phone_icon.png" width="24px" height="24px" />
-				<% unless @user.phone.nil? %>
-					<span><em>work:</em><%= @user.phone %></span>
-				<% end %>
-				<% unless @user.mobile.nil? %>
-					<span><em>mobile:</em><%= @user.mobile %></span>
-				<% end %>
-			</li>
-		</ul>
-	</div>
-<% end %>
+<% content_for :layoutType do -%>single bg_pulp<%-end %>
 
-<div class="infoPage contact">
+<div class="page_area contactPage">
 	<%= user_avatar(@user.avatar, :medium, "profile_pic") %>
 	<div class="contact_box">
-		<h3 class="info_title">		
-			<%= @user.name %>
-		</h3>
-		<% unless @user.job_title.nil? %>
-		<h4 class="info_title">
-			<%= @user.job_title %>
-		</h4>
+		<div class="floatr">
+			<%= link_to 'Edit', edit_contact_path(@user), :class => "fdbutton grey" %>
+			<%= link_to('Delete', {:controller => "contacts", :action => "destroy", :id => @user} , :method => 'delete', :confirm => 'Are you sure you want to delete this contact?', :class => "fdbutton red") unless @user == current_user %>		
+		</div> 
+		<h4 class="info_title"><%= @user.display_name %></h4>
+		<% unless @user.job_title.blank? %>
+		   <b><%= h @user.job_title %></b>
+		<% else %>
+		   Working
+		<% end %>
+		<% unless @user.customer.blank? %>
+			at <%= link_to(h(@user.customer.name), @user.customer)  %>
 		<% end %>	
-		<div class="tag_list">
-			
-		</div>
-	
-		<div class="actionsRight">
-			<%= link_to 'Edit', edit_contact_path(@user), :class => "button" %>
-			<%= link_to('Delete', {:controller => "contacts", :action => "destroy", :id => @user} , :method => 'delete', :confirm => 'Are you sure you want to delete this contact?', :class => "button") unless @user == current_user %>		
-		</div>
 		<span class="seperator"></span>
-		<div class="info_subtitle">"Special note"</div>
-		<p class="info">
-			<%= @user.description %>
-		</p>
-		
-		<span class="seperator"></span> 
-		<div class="info_subtitle">Recent Tickets from "<%= @user.name %>"</div>
-		<%if @user.tickets.size.eql?(0) %>
+		<div class="user_info">
+			<%= content_tag (:div, "#{content_tag(:span, "primary")}  #{h(@user.email)}") unless @user.email.blank? %>
+			<%= content_tag (:div, "#{content_tag(:span, "secondary")}  #{h(@user.second_email)}") unless @user.second_email.blank? %>
+			<%= content_tag (:div, "#{content_tag(:span, "phone")}  #{h(@user.phone)}") unless @user.phone.blank? %>
+			<%= content_tag (:div, "#{content_tag(:span, "mobile")}  #{h(@user.mobile)}") unless @user.mobile.blank? %>
+			<%= content_tag (:div, "#{content_tag(:span, "twitter id")}  #{h(@user.twitter_id)}") unless @user.twitter_id.blank? %>
+			<%= content_tag (:div, "#{content_tag(:span, "time zone")}  #{h(@user.time_zone)}") %>
+		</div>
+		<% unless @user.description.blank? %>
+			<span class="seperator"></span>
+			<h4>Background information</h4>
+			<div>
+				<%= @user.description %>
+			</div>					
+		<% end %>
+		<span class="seperator"></span>
+		<h4> Tickets raised </h4>
+		<% if @user.tickets.size.eql?(0) %>
 			<%= "User has not created any tickets" %>
 		<% end %>
 		<ul class="history_list">
-			<% @user.tickets.each do |ticket| %>	
-				<% logger.debug "Here is a subject : #{ticket.subject}" %>
-				<li class="<%= cycle('stripe', '') %>">
-					<h3><%= link_to("##{ticket.display_id} " + h(ticket.subject), ticket) %></h3> 
-	      			<!--%= h(truncate(ticket.description, :length => 200)) %-->
-					<% unless ticket.responder.nil? %>
-						<strong><span>Assigned to: </span><%= link_to(h(ticket.responder.name), ticket.responder, :class => 'username') %></strong>
-					<% end %>
-					<strong><span>Status: </span><%= h(ticket.status_name) %></strong>
-				</li>		
+			<% @user.tickets.each do |ticket| %>
+			<li class="<%= cycle('stripe', '') %>">
+				<%= link_to("##{ticket.display_id} " + h(ticket.subject), ticket, :class => "title") %>
+				  <div>  
+				  <% if ticket.freshness == :new %>
+			        Unassigned
+			      <% else %>
+			        Assigned to <%= link_to(h(ticket.responder.display_name), ticket.responder, :class => 'username') %>
+			      <% end %>
+				  </div>
+				  <div> Status <%= ticket.status_name %></div>
+				  <div class="priority">
+						    Priority <%= ticket.priority_name %>
+				  </div>
+			</li>		
 			<% end %>
-		</ul>
+		 </ul>
 	</div> 			
-		
 </div>	

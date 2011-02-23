@@ -91,9 +91,10 @@ body {margin:0; padding:0 10px 0 10px; border:0; height:100%; overflow-y:auto; }
 	}
 }
 
-.bg_pulp{
+.bg_pulp #inner{
 	.leftcontent{
 		background-color:#F3F1EC;
+		border-color:#F3F1EC;
 	}
 }
 
@@ -504,6 +505,28 @@ ul.summary{
 	
 	} 
 }  
+
+.sidepanel{
+	background:#ffffff;
+	padding:10px 0px 10px 0px;
+	margin:10px 10px 10px 0px; 
+	@include corners(6px);
+	h4{
+		color:#666666;
+		font-size:14px;
+		font-weight:bold;
+		margin-bottom:5px;
+		padding:0px;	
+	}
+	.element{
+		padding:4px 16px 16px 16px;
+		border-bottom:1px solid $color_pulp;
+		border-top:1px solid lighten($color_pulp, 5%);
+	}
+	.element.last{
+		border-bottom:0px;
+	}
+}
 
 .rightSubContainers{
 	margin:16px 10px;
@@ -3608,36 +3631,6 @@ h5.category_title{
 	}	
 }
 
-.history_list{
-	@include no-bullets;
-	margin:0px; padding:4px 0px;	
-	a:hover{
-		text-decoration:none;
-	}
-	li{
-		padding:8px 10px;
-		a, a:visited{
-			color:#336699;
-		}
-		h3{
-			font-size:1.2em;
-			padding:0px 0px 0px 0px; margin:0px 0px 8px 0px;
-			display:block;			
-		}
-		strong{
-			display:block;
-			span{
-				float:left;
-				@include min-width(100px);
-				font-weight:normal;
-			}
-		}
-	}
-	li.stripe{
-		background:#eaeef1;
-	}
-}
-
 ul.item_list{
 	@include no-bullets;		
 	@include clearfix;	
@@ -3707,7 +3700,27 @@ ul.inactive{
 		background:url('/images/photo_check.png') no-repeat;					
 	}
 }
-
+ul.user_list{
+	@include no-bullets;
+	@include clearfix;
+	margin:0px;
+	padding:0px;
+	li{
+		float:left;
+		width:20% !important;
+		.preview_pic{
+			margin:2px;
+			img{
+				padding:0px;
+				border:0px;
+			}	
+		}
+		.username{
+			display:block;
+			@include ellipsis;
+		}
+	}
+}
 .padding6{
 	padding:6px;
 }
@@ -4015,7 +4028,7 @@ div.search{
 }
 
 .page_area, .header_area{
-	padding:10px 20px 10px 20px;
+	padding:10px 12px 10px 12px;
 }
 .no_padding.header_area{
 	padding-bottom:0px;
@@ -4326,3 +4339,67 @@ div.ribbon:before{
 		}
 	}
 }
+
+div.contactPage{
+	position:relative;
+	@include clearfix;
+	h4{
+		font-size:14px;
+		padding-bottom:8px;
+		font-weight:bold;
+	}
+	h4.info_title{
+		font-size:24px;
+	}
+	.seperator{
+		border-top: 1px solid #f3f3f3;
+		margin:10px 0px;
+	}
+	.contact_box, .company_box{
+		padding:12px 18px;
+		background:#ffffff;
+		@include min-height(400px);
+		@include corners(6px);
+	}
+	.contact_box{
+		float:left;
+		width:80%;
+	}
+	.profile_pic{
+		float:left;
+		margin-right:8px;
+	}
+	.user_info{
+		div{
+			span{
+				width:100px;
+			}
+		}
+	}
+	.history_list{
+		@include no-bullets;
+		margin:0px; padding:0px;
+		a:hover{
+			text-decoration:none;
+		}
+		li{
+			@include clearfix;
+			padding:2px 0px 8px 0px;
+			border-bottom:1px solid #f3f3f3;
+			a.title{
+				display:block;
+				@include ellipsis;
+			} 
+			a{
+				@include link-colors(#527EAA, #527EAA, #527EAA, #527EAA, #527EAA);
+				text-decoration:none;
+			}
+			
+			div{
+				float:left;
+				width:30%;
+			}
+		} 
+	}
+}
+

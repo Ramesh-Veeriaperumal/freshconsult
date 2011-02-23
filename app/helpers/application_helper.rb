@@ -18,9 +18,9 @@ module ApplicationHelper
       #['helpdesk/issues',    'Issues',       permission?(:manage_tickets)],
       ['helpdesk/tickets',    'Tickets',      permission?(:manage_tickets)],
       #['helpdesk/tags',      'Tags',         permission?(:manage_tickets)],
-      ['solution/categories',    'Solutions',    permission?(:manage_knowledgebase)],      
-      ['/categories',             'Forums',       permission?(:manage_knowledgebase)],      
-      ['/contacts',              'Customers',    permission?(:manage_users)],
+      ['solution/categories', 'Solutions',    permission?(:manage_knowledgebase)],      
+      ['/categories',         'Forums',       permission?(:manage_knowledgebase)],      
+      ['/contacts',           'Customers',    permission?(:manage_users)],
       #['helpdesk/articles',  'Articles',     permission?(:manage_knowledgebase)],
       ['/admin/home',         'Admin',        permission?(:manage_users)]
     ]
@@ -137,6 +137,11 @@ module ApplicationHelper
   # :medium and :small size of the original image will be saved as an attachment to the user 
   def user_avatar( avatar, profile_size = :thumb, profile_class = "preview_pic" )
     content_tag( :div, (image_tag (avatar) ? avatar.content.url(profile_size) : "/images/icons/profile_blank.gif"), :class => profile_class)
+  end
+  
+  # Date and time format that is mostly used in our product
+  def formated_date(date_time)
+    date_time.strftime("%B %e %Y at %I:%M %p")
   end
   
 end
