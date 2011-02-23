@@ -14,8 +14,6 @@ class BusinessCalendar < ActiveRecord::Base
   
   HOLIDAYS_JSON ='[{holidays: [Jan 01, Jan 26, Feb 14, Mar 31]}]'
   
-  BUSINESS_TIME = '[{working_days :[Mon,Tues,Wed,Thu,Fri],
-                    working_hours: [{full_time:true}, {[starting_time:9.30 am,end_time:6.30 pm] }] }]'
   
   
   DEFAULT_SEED_DATA = {
