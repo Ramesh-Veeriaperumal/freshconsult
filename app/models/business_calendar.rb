@@ -12,6 +12,12 @@ class BusinessCalendar < ActiveRecord::Base
   
   attr_accessible :holidays
   
+  HOLIDAYS_JSON ='[{holidays: [Jan 01, Jan 26, Feb 14, Mar 31]}]'
+  
+  BUSINESS_TIME = '[{working_days :[Mon,Tues,Wed,Thu,Fri],
+                    working_hours: [{full_time:true}, {[starting_time:9.30 am,end_time:6.30 pm] }] }]'
+  
+  
   DEFAULT_SEED_DATA = {
     :beginning_of_workday => '9:00 am',
     :end_of_workday => '6:00 pm',
