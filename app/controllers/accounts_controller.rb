@@ -41,8 +41,9 @@ class AccountsController < ApplicationController
     @account.time_zone = params[:account][:time_zone]
     @account.helpdesk_name = params[:account][:helpdesk_name]
     @account.helpdesk_url = params[:account][:helpdesk_url] 
-    @account.header_color = params[:account][:header_color]
-    @account.bg_color = params[:account][:bg_color]
+    @account.preferences = params[:account][:preferences]
+    #@account.header_color = params[:account][:header_color]
+    #@account.bg_color = params[:account][:bg_color]
     
     if @account.save
       flash[:notice] = "The account details has been updated."

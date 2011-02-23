@@ -1,5 +1,8 @@
 class Account < ActiveRecord::Base
   
+  serialize :preferences, Hash
+  
+ 
   #
   # Tell authlogic that we'll be scoping users by account
   #
@@ -45,11 +48,11 @@ class Account < ActiveRecord::Base
   validate_on_create :valid_payment_info?
   validate_on_create :valid_subscription?
   
-  attr_accessible :name, :domain, :user, :plan, :plan_start, :creditcard, :address
+  attr_accessible :name, :domain, :user, :plan, :plan_start, :creditcard, :address,:preferences
   attr_accessor :user, :plan, :plan_start, :creditcard, :address, :affiliate
 
-  before_create :set_time_zone
-  
+  before_create :set_default_values
+    
   after_create :create_admin
   after_create :populate_seed_data
   after_create :send_welcome_email
@@ -66,6 +69,9 @@ class Account < ActiveRecord::Base
       self.subscription.send(name) && self.subscription.send(name) <= meth.call(self)
     end
   end
+  
+    
+     
   
   def needs_payment_info?
     if new_record?
@@ -158,9 +164,10 @@ class Account < ActiveRecord::Base
       end
     end
     
-    def set_time_zone
+    def set_default_values
       self.time_zone = Time.zone.name if time_zone.nil? #by Shan temp.. to_s is kinda hack.
       self.helpdesk_name = name.titleize if helpdesk_name.nil?
+      self.preferences = HashWithIndifferentAccess.new({:bg_color => "#d4ebd4",:header_color => "#787878"})
     end
     
     def create_admin
