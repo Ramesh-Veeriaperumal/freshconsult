@@ -18,9 +18,9 @@ module ApplicationHelper
       #['helpdesk/issues',    'Issues',       permission?(:manage_tickets)],
       ['helpdesk/tickets',    'Tickets',      permission?(:manage_tickets)],
       #['helpdesk/tags',      'Tags',         permission?(:manage_tickets)],
-      ['solution/categories',    'Solutions',    permission?(:manage_knowledgebase)],      
-      ['/categories',             'Forums',       permission?(:manage_knowledgebase)],      
-      ['/contacts',              'Customers',    permission?(:manage_users)],
+      ['solution/categories', 'Solutions',    permission?(:manage_knowledgebase)],      
+      ['/categories',         'Forums',       permission?(:manage_knowledgebase)],      
+      ['/contacts',           'Customers',    permission?(:manage_users)],
       #['helpdesk/articles',  'Articles',     permission?(:manage_knowledgebase)],
       ['/admin/home',         'Admin',        permission?(:manage_users)]
     ]

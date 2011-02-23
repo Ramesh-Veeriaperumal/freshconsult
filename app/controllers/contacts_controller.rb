@@ -36,9 +36,9 @@ class ContactsController < ApplicationController
     
     @user = current_account.users.new #by Shan need to check later  
 
-    company_name =params[:user][:customer]    
+    company_name = params[:user][:customer]    
     unless company_name.empty?      
-      params[:user][:customer_id]= add_or_update_company   
+      params[:user][:customer_id] = add_or_update_company   
     end
     
     if @user.signup!(params)    
