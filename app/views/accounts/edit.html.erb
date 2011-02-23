@@ -21,14 +21,16 @@
 		    <%= f.label :helpdesk_url, "Helpdesk URL" %>
 		    <%= f.text_field :helpdesk_url, :class => "text" %>
 		  </li>
-		  <% f.fields_for :preferences,@account.preferences do |p| %>
+		  <% f.fields_for :preferences, @account.preferences do |p| %>
         	<li class="small">
-        	<%= p.label :header_color, "Header Color" %>
-			<%= p.text_field :header_color, :value =>  @account[:preferences].default(:header_color) %>
+        		<%= p.label :header_color, "Header Color" %>
+				<!-- :value =>  @account[:preferences].default(:header_color)  -->
+				<%= p.text_field :header_color %>
          	</li>
 			<li class="small">
-        	<%= p.label :bg_color, "Back Ground Color" %>
-			<%= p.text_field :bg_color, :value =>  @account[:preferences].default(:bg_color) %>
+        		<%= p.label :bg_color, "Background Color" %>
+				<!-- :value =>  @account[:preferences].default(:bg_color) -->
+				<%= p.text_field :bg_color %>
          	</li>
 		  <% end %>
 		  

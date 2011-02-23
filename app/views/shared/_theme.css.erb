@@ -1,4 +1,5 @@
 <style> 
+<% unless current_account.preferences.nil? %>
 /*
 	 body{
 		background:<%= current_account.preferences[:bg_color] %>;
@@ -11,4 +12,5 @@
 		background-color:<%= current_account.preferences[:bg_color] %> !important;	
 	}
 */ 
+<% end %>
 </style>

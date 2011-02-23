@@ -76,6 +76,7 @@ module ModelControllerMethods
     end
     
     def load_object
+      puts "SCOPER is #{scoper} and cname is #{cname}"
       @obj = self.instance_variable_set('@' + cname,  scoper.find(params[:id]))
     end
     
