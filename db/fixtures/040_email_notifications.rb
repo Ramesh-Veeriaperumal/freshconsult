@@ -5,7 +5,7 @@ EmailNotification.seed_many(:account_id, :notification_type, [
       :account_id => account.id, :requester_notification => true, 
       :agent_notification => false,
       :requester_template => 'Dear {{ticket.requester.name}},
-We would like to acknowledge that we have received you request and a ticket has been created with Ticket ID - {{ticket.id}}.
+We would like to acknowledge that we have received your request and a ticket has been created with Ticket ID - {{ticket.id}}.
 A support representative will be reviewing your request and will send you a personal response.(usually within 24 hours).
 
 To view the status of the ticket or add comments, please visit 
