@@ -62,10 +62,12 @@ class Account < ActiveRecord::Base
   validate_on_create :valid_payment_info?
   validate_on_create :valid_subscription?
   
-  attr_accessible :name, :domain, :user, :plan, :plan_start, :creditcard, :address,:preferences,:logo_attributes,:fav_icon_attributes
+  attr_accessible :name, :domain, :user, :plan, :plan_start, :creditcard, :address,:preferences,:logo_attributes,:fav_icon_attributes,:ticket_display_id
   attr_accessor :user, :plan, :plan_start, :creditcard, :address, :affiliate
 
   before_create :set_default_values
+  
+  before_update :check_default_values
     
   after_create :create_admin
   after_create :populate_seed_data
@@ -84,8 +86,19 @@ class Account < ActiveRecord::Base
     end
   end
   
-    
-     
+  def get_max_display_id
+    ticket_dis_id = self.ticket_display_id
+    max_dis_id = self.tickets.maximum('display_id')
+    return  ticket_dis_id > max_dis_id ? ticket_dis_id : max_dis_id
+  end
+  
+  def check_default_values
+    dis_max_id = get_max_display_id
+    if self.ticket_display_id.blank? or (self.ticket_display_id < dis_max_id)
+      puts "Ticket display id is nil Bapre !"
+      self.ticket_display_id = dis_max_id
+    end
+  end
   
   def needs_payment_info?
     if new_record?
