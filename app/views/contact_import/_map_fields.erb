@@ -1,24 +1,28 @@
-<% form_tag nil, :method => :post do -%>
-  <% @parameters.each do |arr| -%>
-    <%= hidden_field_tag arr[0], arr[1] %>
-  <% end -%>
-  <div class="map_fields">
-   <table cellspacing="0">
-      <thead>
-      	<% @fields.each do |k,v| -%>
-        <tr>
-        	<td><%=k%></td>
-			<td><%= select_tag "fields[#{v}]", options_for_select(to_hash(@rows.first)),  :class => 'field_options' %></td>
-        </tr>
-		 <% end -%>
-      </thead>
-	 </table>
-  </div>
-  <div class="option">
-    <%= check_box_tag 'ignore_first_row', '1', true, :id => 'ignore_first_row_option' %><label for="ignore_first_row_option">Ignore the first row (headings)</label>
-  </div>
-  <div class="action">
-    <%= submit_tag 'Contacts Import' %>
-  </div>
-<% end -%>
-
+	<% form_tag nil, :method => :post do -%>
+	  <% @parameters.each do |arr| -%>
+	    <%= hidden_field_tag arr[0], arr[1] %>
+	  <% end -%>
+	  <ul class="ui-form">
+	  	  <li class="info_data">
+	  	  	Please map the details you're importing
+		  </li>
+		  <li class="map_fields">
+		   <table cellspacing="0">
+		      <thead>
+		      	<% @fields.each do |k,v| -%>
+		        <tr>
+		        	<td><%=k%></td>
+					<td><%= select_tag "fields[#{v}]", options_for_select(to_hash(@rows.first)),  :class => 'field_options' %></td>
+		        </tr>
+				 <% end -%>
+		      </thead>
+			 </table>
+		  </li>
+		  <li class="checkbox">
+		    <%= check_box_tag 'ignore_first_row', '1', true, :id => 'ignore_first_row_option' %><label for="ignore_first_row_option">Ignore the first row (headings)</label>
+		  </li>
+	  </ul>
+	  <div class="button-container">
+	    <%= submit_tag 'Contacts Import', :class => "fdbutton" %>
+	  </div>
+	<% end -%>
