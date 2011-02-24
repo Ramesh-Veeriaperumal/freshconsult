@@ -147,8 +147,7 @@ class Helpdesk::TicketsController < ApplicationController
   
   
   def execute_scenario 
-    
-    va_rule = current_account.va_rules.find(params[:scenario_id])   
+    va_rule = current_account.scn_automations.find(params[:scenario_id])   
     va_rule.trigger_actions(@item)
     @item.save
     @item.create_activity(current_user, "{{user_path}} executed the scenario '{{scenario_name}}' on {{notable_path}}", 
@@ -156,7 +155,6 @@ class Helpdesk::TicketsController < ApplicationController
                             "{{user_path}} executed the scenario '{{scenario_name}}'")
 
     redirect_to :back
-    
   end 
 
   def spam
