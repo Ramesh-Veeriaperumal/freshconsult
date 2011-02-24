@@ -11,7 +11,8 @@ module SubscriptionSystem
   protected
   
     def current_account
-      @current_account ||= Account.find_by_full_domain(request.host) || (Rails.env.development? ? Account.first : nil)
+      @current_account ||= Account.find(:first, :conditions => ["full_domain = ? or helpdesk_url = ?", request.host, request.host]) || 
+                                   (Rails.env.development? ? Account.first : nil)
       raise ActiveRecord::RecordNotFound unless @current_account
       @current_account
     end
