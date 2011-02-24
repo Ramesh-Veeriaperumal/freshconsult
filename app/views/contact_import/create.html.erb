@@ -1,3 +1,8 @@
- <h1>Import a new List</h1>
-  <p>Please map the details you're importing</p>
-  <%=render :partial => 'map_fields' %>
+<% content_for :breadcrumb do -%>
+	<div class="header_area">
+		<h4>Import a new List</h4>
+	</div>
+<% end %> 
+<div class="page_area">
+	<%=render :partial => 'map_fields' %>
+</div>

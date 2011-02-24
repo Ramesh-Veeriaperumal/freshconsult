@@ -36,6 +36,7 @@ ActionController::Routing::Routes.draw do |map|
     admin.resources :va_rules, :member => { :deactivate => :put, :activate => :put }, :collections => { :reorder => :put }
     admin.resources :email_configs
     admin.resources :email_notifications
+    admin.resources :business_calender, :member => { :update => :put }
   end
   
   #SAAS copy starts here

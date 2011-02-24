@@ -91,7 +91,7 @@
 			<a href="javascript:void(0)" class="fdbutton" onclick="jQuery('#ReplyToTicket').show(); jQuery(this).hide();">Add comment</a>
 		</div>  
 		<div id="ReplyToTicket" style="display:none;">
-			<% form_for Helpdesk::Note.new, :url => support_ticket_helpdesk_notes_path(@ticket, :access_token => @ticket.access_token), :html => {:multipart => true }  do |f| %>
+			<% form_for Helpdesk::Note.new, :url => support_ticket_helpdesk_notes_path(@ticket), :html => {:multipart => true }  do |f| %>
 				<%= f.error_messages %>
 				<ul class="ui-form">
 			    	<li> 

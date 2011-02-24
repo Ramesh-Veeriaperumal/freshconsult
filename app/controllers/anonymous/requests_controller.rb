@@ -8,7 +8,7 @@ class Anonymous::RequestsController < ApplicationController #by Shan temp need t
   protected
 
     def redirect_url
-      support_ticket_url(@ticket, :access_token => @ticket.access_token)
+      support_ticket_url(@ticket)
     end
 
 #    def captcha_check
