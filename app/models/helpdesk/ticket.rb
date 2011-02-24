@@ -354,7 +354,7 @@ end
   #Might be darn expensive db queries, need to revisit - shan.
   def to_liquid
     { 
-      "display_id"            => display_id,
+      "id"                    => display_id,
       "subject"               => subject,
       "description"           => description,
       "requester"             => requester,

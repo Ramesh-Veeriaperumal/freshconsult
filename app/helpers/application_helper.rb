@@ -114,7 +114,7 @@ module ApplicationHelper
     [
       ['{{ticket.subject}}', 'Ticket subject.'],
       ['{{ticket.description}}', 'Ticket description.'],
-      ['{{ticket.display_id}}', 'Unique ticket display ID.'],
+      ['{{ticket.id}}', 'Unique ticket ID.'],
       ['{{ticket.url}}', 'Full URL path to ticket.'],
       ['{{ticket.status}}', 'Ticket status.'],
       ['{{ticket.priority}}', 'Ticket priority.'],
