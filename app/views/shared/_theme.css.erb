@@ -1,14 +1,16 @@
-<style>
-/*	
-body{
-	background:<%= current_account.bg_color %>;
-}
-
-ul.tabs li a{
-	background-color:<%= current_account.header_color %> !important;
-}
-ul.tabs li a:hover{
-	background-color:<%= current_account.bg_color %> !important;	
-}
-*/
+<style> 
+<% unless current_account.preferences.nil? %>
+/*
+	 body{
+		background:<%= current_account.preferences[:bg_color] %>;
+	}
+	
+	ul.tabs li a{
+		background-color:<%= current_account.preferences[:header_color] %> !important;
+	}
+	ul.tabs li a:hover{ 
+		background-color:<%= current_account.preferences[:bg_color] %> !important;	
+	}
+*/ 
+<% end %>
 </style>

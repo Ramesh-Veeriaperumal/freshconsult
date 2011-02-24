@@ -9,14 +9,19 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       ticket = Helpdesk::Ticket.find_by_account_id_and_display_id(account.id, display_id) if display_id
       
       if ticket
-        comment = add_email_to_ticket(ticket, params[:text])
-        unless ticket.active?
-          ticket.update_attribute(:status, Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open])
-          notification_type = EmailNotification::TICKET_REOPENED
-        end
+        comment = add_email_to_ticket(ticket, from_email, params[:text])
         
-        Helpdesk::TicketNotifier.notify_by_email((notification_type ||= EmailNotification::REPLIED_BY_REQUESTER), 
-                                                  ticket, comment) if ticket.responder
+        if comment.user.customer?
+          unless ticket.active?
+            ticket.update_attribute(:status, Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open])
+            notification_type = EmailNotification::TICKET_REOPENED
+          end
+          
+          Helpdesk::TicketNotifier.notify_by_email((notification_type ||= EmailNotification::REPLIED_BY_REQUESTER), 
+                                                    ticket, comment) if ticket.responder
+        else
+          Helpdesk::TicketNotifier.notify_by_email(EmailNotification::COMMENTED_BY_AGENT, ticket, comment)
+        end
       else
         ticket = create_ticket(account, from_email, to_email)
       end
@@ -65,25 +70,36 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       ticket
     end
 
-    def add_email_to_ticket(ticket, mesg)
+    def add_email_to_ticket(ticket, from_email, mesg)
+      user = get_user(ticket, from_email[:email])
       note = ticket.notes.build(
           :private => false,
           :incoming => true,
           :body => mesg,
           :source => 0, #?!?! use SOURCE_KEYS_BY_TOKEN - by Shan
-          :user => ticket.requester, #by Shan temp
+          :user => user, #by Shan temp
           :account_id => ticket.account_id
       )
       
       create_attachments(ticket, note) if note.save 
       
-      ticket.create_activity(ticket.requester, "{{user_path}} sent an {{email_response_path}} to the ticket {{notable_path}}", 
+      ticket.create_activity(note.user, "{{user_path}} sent an {{email_response_path}} to the ticket {{notable_path}}", 
                     {'eval_args' => {'email_response_path' => ['email_response_path', {
                                                         'ticket_id' => ticket.display_id, 
                                                         'comment_id' => note.id}]}},
                      "{{user_path}} sent an {{email_response_path}}")
       
       note
+    end
+    
+    def get_user(ticket, email)
+      user = ticket.account.users.find_by_email(email)
+      unless user
+        user = ticket.account.contacts.new
+        user.signup!({:user => {:email => email, :name => '', :role_token => 'customer'}})
+      end
+      
+      user
     end
 
     def create_attachments(ticket, item)

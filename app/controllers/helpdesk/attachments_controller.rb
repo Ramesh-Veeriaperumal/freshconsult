@@ -29,7 +29,6 @@ class Helpdesk::AttachmentsController < ApplicationController
         # Or if the note belogs to a ticket, and the user is the originator of the ticket
         ticket = @attachment.attachable.respond_to?(:notable) ? @attachment.attachable.notable : @attachment.attachable
         return true if current_user && ticket.requester_id == current_user.id
-        return true if params[:access_token] && ticket.access_token == params[:access_token]
   
       # Is the attachment on a solution  If so, it's always downloadable.
       
@@ -39,13 +38,4 @@ class Helpdesk::AttachmentsController < ApplicationController
       redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) 
     end
   
-#    def is_the_requester?
-#      if @attachment.attachable.respond_to?(:notable)
-#        return true if current_user && @attachment.attachable.notable.requester_id == current_user.id
-#        return true if params[:access_token] && @attachment.attachable.notable.access_token == params[:access_token]
-#      end
-#      
-#      return true if current_user && @attachment.attachable.requester_id == current_user.id
-#      return true if params[:access_token] && @attachment.attachable.access_token == params[:access_token]
-#    end
 end

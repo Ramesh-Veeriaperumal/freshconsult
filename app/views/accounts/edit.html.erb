@@ -3,7 +3,7 @@
 	<h4>Rebrand your Help Desk</h4>
 </div>	
 <div class="page_area">
-	<% form_for :account, @account, :url => { :action => 'update' }, :html => { :method => :put } do |f| %>
+	<% form_for :account, @account, :url => { :action => 'update' }, :html => { :multipart => true ,:method => :put} do |f| %>
 	  <%= f.error_messages %>
 	  <ul class="ui-form">
 		  <li>
@@ -21,14 +21,26 @@
 		    <%= f.label :helpdesk_url, "Helpdesk URL" %>
 		    <%= f.text_field :helpdesk_url, :class => "text" %>
 		  </li>
-		  <li class="small">
-		    <%= f.label :header_color, "Header Color" %>
-		    <%= f.text_field :header_color, :class => "very_small" %>
-		  </li>
-		  <li class="small">
-		    <%= f.label :bg_color, "Background Color" %>
-		    <%= f.text_field :bg_color, :class => "very_small" %>
-		  </li>
+		  <% f.fields_for :preferences, @account.preferences do |p| %>
+        	<li class="small">
+        		<%= p.label :header_color, "Header Color" %>
+				<!-- :value =>  @account[:preferences].default(:header_color)  -->
+				<%= p.text_field :header_color %>
+         	</li>
+			<li class="small">
+        		<%= p.label :bg_color, "Background Color" %>
+				<!-- :value =>  @account[:preferences].default(:bg_color) -->
+				<%= p.text_field :bg_color %>
+         	</li>
+		  <% end %>
+		  <li>
+			<%= render :partial => "/shared/logo_image", :locals => { :account => @account } %>
+		 </li>
+		 
+		 <li>
+			<%= render :partial => "/shared/fav_image", :locals => { :account => @account } %>
+		 </li>
+		  
 		  <li>
 		  	<span class="seperator"></span>
 		  	<%= submit_tag 'Save', :class => 'fdbutton' %>

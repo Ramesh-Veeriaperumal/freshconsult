@@ -1,4 +1,4 @@
-class AccountsController < ApplicationController
+class AccountsController < Admin::AdminController
   
   include ModelControllerMethods
   
@@ -8,8 +8,7 @@ class AccountsController < ApplicationController
   before_filter :load_billing, :only => [ :new, :create, :billing, :paypal ]
   before_filter :load_subscription, :only => [ :billing, :plan, :paypal, :plan_paypal ]
   before_filter :load_discount, :only => [ :plans, :plan, :new, :create ]
-  before_filter :build_plan, :only => [:new, :create]  
-  before_filter :set_selected_tab
+  before_filter :build_plan, :only => [:new, :create]
   
   #ssl_required :billing, :cancel, :new, :create #by Shan temp
   #ssl_allowed :plans, :thanks, :canceled, :paypal
@@ -41,14 +40,37 @@ class AccountsController < ApplicationController
     @account.time_zone = params[:account][:time_zone]
     @account.helpdesk_name = params[:account][:helpdesk_name]
     @account.helpdesk_url = params[:account][:helpdesk_url] 
-    @account.header_color = params[:account][:header_color]
-    @account.bg_color = params[:account][:bg_color]
+    @account.preferences = params[:account][:preferences]
+   
+    update_logo_image  
+    update_fav_icon_image
+    
     
     if @account.save
       flash[:notice] = "The account details has been updated."
       redirect_to account_path
     else
       render :action => 'edit'
+    end
+  end
+  
+  def update_logo_image
+    unless  params[:account][:logo_attributes].nil?
+      if @account.logo.nil?
+        @account.build_logo(:content => params[:account][:logo_attributes][:content], :description => 'logo')
+      else
+        @account.logo.update_attributes(:content => params[:account][:logo_attributes][:content], :description => 'logo')
+      end
+    end
+  end
+  
+  def update_fav_icon_image
+    unless  params[:account][:fav_icon_attributes].nil?
+      if @account.fav_icon.nil?
+        @account.build_fav_icon(:content => params[:account][:fav_icon_attributes][:content], :description => 'fav_icon')
+      else
+        @account.fav_icon.update_attributes(:content => params[:account][:fav_icon_attributes][:content], :description => 'fav_icon')
+      end
     end
   end
   
@@ -165,6 +187,18 @@ class AccountsController < ApplicationController
   def dashboard
     render :text => 'Dashboard action, engage!', :layout => true
   end
+  
+  def delete_logo
+    load_object
+    @account.logo.destroy
+    render :text => "success"
+  end
+  
+  def delete_fav
+    load_object
+    @account.fav_icon.destroy
+    render :text => "success"
+  end
 
   protected
   
@@ -208,10 +242,5 @@ class AccountsController < ApplicationController
       (self.action_name == 'dashboard' && logged_in?) ||
       admin?
     end
-  
-    def set_selected_tab
-      @selected_tab = 'Admin'
-    end
-
-    
+        
 end

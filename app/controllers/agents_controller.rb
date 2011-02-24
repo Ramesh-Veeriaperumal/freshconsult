@@ -1,7 +1,5 @@
-class AgentsController < ApplicationController
-  
-  before_filter :set_selected_tab
-  
+class AgentsController < Admin::AdminController
+    
   def index    
     @agents = current_account.agents.find(:all , :include => :user)
     respond_to do |format|
@@ -95,10 +93,6 @@ end
 
   def nscname
     @nscname ||= controller_path.gsub('/', '_').singularize
-  end
-  
-  def set_selected_tab
-      @selected_tab = 'Admin'
   end
 
 end

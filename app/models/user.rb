@@ -99,6 +99,10 @@ class User < ActiveRecord::Base
   def admin?
     role_token == 'admin'
   end
+  
+  def customer?
+    role_token == 'customer'
+  end
 
   #Savage_beast changes end here
 

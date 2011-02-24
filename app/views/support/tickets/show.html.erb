@@ -1,49 +1,123 @@
-<% content_for :title do %>
-  Support Request (<%= @ticket.created_at.strftime('%m/%d/%y') %>)
-<% end %>
+<% content_for :layoutType do %>request_view<% end %>
+<% content_for :head do %>
+  <%= javascript_include_tag "helpdesk/expanding_textarea.js" %>
+  <%= javascript_include_tag "helpdesk/page_switcher" %>
+  <% javascript_tag do %>
+    document.observe("dom:loaded", function(){
+      new Helpdesk.PageSwitcher({
+        toggleMode: true,
+        pages: ['attachment-options']
+      });
 
-<p class="filed">
-  Filed by: <strong><%= @ticket.requester.name if @ticket.requester %></strong> <!-- #by Shan temp -->
-</p>
-<% if @ticket.responder %>
-  <p class="assigned">
-    Assigned to: <strong><%= @ticket.responder.name %></strong>
-  </p>
-<% else %>
-  <p class="not-assigned">
-    Not Assigned
-  </p>
-<% end %>
-
-<% form_for Helpdesk::Note.new, :url => support_ticket_helpdesk_notes_path(@ticket, :access_token => @ticket.access_token)  do |f| %>
-  <%= f.label :body, "Add additional information to your request" %>
-  <%= f.text_area :body %>
-  <%= f.submit "Submit" %>
-<% end %>
-
-<h3>Communication History</h3>
-
-<ol class="notes">
-  <% for note in @ticket.notes.public.newest_first %>
-    <li>
-      <strong><%= note.incoming ? "Me" : note.user.name %>:</strong>
-
-      <p class = "date">
-        <strong><%= note.created_at.strftime('%m/%d/%y') %></strong>
-      </p>
-
-      <blockquote>
-        <%= simple_format(email_before_quoted(strip_tags(note.body))) %>
-      </blockquote>
-
-      <% if email_quoted?(note.body) %>
-        <%= link_to_function("Toggle Quoted", "$('quoted-#{ note.id }').toggle()", :class => 'toggle-quoted')  %>
-
-        <blockquote id="quoted-<%= note.id %>" style="display:none">
-          <%= simple_format(email_after_quoted(strip_tags(note.body))) %>
-        </blockquote>
-      <% end %>
-    </li>
+    });
   <% end %>
-</ol>
+<% end %>
+
+<% content_for :sidebar do %>
+	<div class="sidepanel">
+		<div class="element last">
+			<% if @ticket.responder %>
+				<div class="user_details_widget clearfix" style="padding:0px">  
+					<h4>Assigned To agent</h4>
+					<%= user_avatar(@ticket.responder.avatar, :thumb)  %>
+					<%= link_to(h(@ticket.responder.name), @ticket.responder, :class => "user_name") %>
+					<%= auto_link(h(@ticket.responder.email)) %>
+					<div> <span class="info_data">phone</span> <%= h(@ticket.responder.phone) %></div>
+					<div> <span class="info_data">mobile</span> <%= h(@ticket.responder.mobile) %></div>
+				</div>
+			<% end %>
+			<span class="seperator"></span>
+			<div> <strong class="info_data">Priority:</strong> <%=@ticket.priority_name%> </div>
+			<div> <strong class="info_data">
+					<% if(Time.now > @ticket.due_by ) %>
+						Already Overdue for <%= distance_of_time_in_words(Time.now, @ticket.due_by) %>
+					<% else %>
+						Due in <%= distance_of_time_in_words(Time.now, @ticket.due_by) %> 
+					<% end %>  
+				</strong> 
+			</div>
+		</div>
+	</div>
+<% end %>
+	
+<div class="request_details">
+	    <div class="requestCnt">
+	    	<div class="request_status">
+	            <span class="ltSlant"></span>
+	            <ul>
+	                <li>
+	                    <b>Status</b>: <span id="status_name_id"><%= h(@ticket.status_name) %></span>
+	                </li>
+	            </ul>
+	        </div>
+			<div class="title">
+		        <em><%= "##{@ticket.display_id}" %></em>
+		        <b><%= h(@ticket.subject) %></b>
+		    </div>
+			<div class="description">
+				<div class="ticket_actions action_icons">
+					<% unless (@ticket.status == 5) %>
+						<%= link_to_function("Close this request", "#", :class => "fdbutton grey" )  %>
+					<% end %>
+		        </div>	 
+		        <div class="user_details">
+		        	<%= user_avatar(@ticket.requester.avatar)  %>
+		          	<div> Reported by <%= link_to(h(@ticket.requester.display_name),@ticket.requester, :class => "user_name") %> </div>
+		            <div> 
+						Created on <%= formated_date(@ticket.created_at) %>
+						<% metainfo = @ticket.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["meta"]) %>
+						<% unless (metainfo.blank?) %>
+							<span class="meta_icon" title="<%= metainfo.body %>"> 
+								meta
+							</span>
+						<% end %>
+					</div>
+					
+		        </div>
+		        <div id="description-full" class="details min_height">
+			    	<%= RedCloth.new(auto_link(@ticket.description, :all, :target => "_blank")).to_html %>
+			    </div>  
+			</div>
+			
+			<% unless @ticket.attachments.empty? %>
+				<span class="seperator"></span>
+				<h4><%= @ticket.attachments.size %> attachments</h4>
+				<ul class="attachment_list">
+				     <%= render :partial => '/helpdesk/shared/attachment', :collection => @ticket.attachments, :locals => {:show_delete => true, :url => [@item] } %>
+				</ul>
+			<% end %> 
+	    </div>
+		<div class="alignright">		
+			<a href="javascript:void(0)" class="fdbutton" onclick="jQuery('#ReplyToTicket').show(); jQuery(this).hide();">Add comment</a>
+		</div>  
+		<div id="ReplyToTicket" style="display:none;">
+			<% form_for Helpdesk::Note.new, :url => support_ticket_helpdesk_notes_path(@ticket), :html => {:multipart => true }  do |f| %>
+				<%= f.error_messages %>
+				<ul class="ui-form">
+			    	<li> 
+			    		<%= f.label :body, "Add additional information to your request", :class => "overlabel" %>
+			  			<%= f.text_area :body, :class => "expando required" %>
+					</li>
+					<li class="attachment-options"  id="attachment-options">
+						<% unless local_assigns[:no_attachments] %>
+							<%= render :partial => "/helpdesk/shared/attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note" } %>
+					    <% end %>
+					</li>
+				</ul>
+				
+				<div class="button-container">
+			  		<%= f.submit "Add comment", {:class => "fdbutton"} %>
+				</div>
+			<% end %>		
+		</div>
+		
+		<% unless @ticket.notes.public.exclude_source('meta').newest_first.blank? then %>
+			<h3 class="subtitle">Conversation</h3>
+			<div class="requestCnt requestConv">
+				<%= render :partial => '/helpdesk/tickets/note', :collection => @ticket.notes.public.exclude_source('meta').newest_first, :spacer_template => "ui/seperator" %>
+		    </div>
+		<% end %>
+	</div>
+ 
+ 
 

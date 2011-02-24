@@ -25,12 +25,16 @@
 			Make this agent an admin
 			<%= hidden_field(:user, :role_token, :id=>"role_token", :value => @agent.user.role_token ||= "poweruser" ) %>
 		</li>
-		<li class="small">	
+		<li class="small">
 			<%= label(:user, :phone, "Phone No.") %>	
-			<label class="overlabel" for="phone_work">Work</label>
-			<%= text_field(:user, :phone, :class => "text", :id => "phone_work", :value => @agent.user.phone ) %> 
-			<label class="overlabel" for="phone_mobile">Mobile</label>
-			<%= text_field(:user, :mobile, :class => "text", :id => "phone_mobile" ,:value => @agent.user.mobile  ) %>
+			<div>
+				<label class="overlabel" for="phone_work">Work</label>
+				<%= text_field(:user, :phone, :class => "text", :id => "phone_work", :value => @agent.user.phone ) %> 
+			</div>
+			<div>
+				<label class="overlabel" for="phone_mobile">Mobile</label>
+				<%= text_field(:user, :mobile, :class => "text", :id => "phone_mobile" ,:value => @agent.user.mobile  ) %>
+			</div>
 		</li>
 		<li class="medium">
 			<%= label(:user, :email, "Email") %>

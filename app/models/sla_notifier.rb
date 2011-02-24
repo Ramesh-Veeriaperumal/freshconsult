@@ -6,7 +6,7 @@ class SlaNotifier < ActionMailer::Base
     recipients    email
     from          ticket.account.default_email
     sent_on       Time.now    
-    body          :ticket => ticket, :host => ticket.account.full_domain
+    body          :ticket => ticket, :host => ticket.account.host
     headers       "Reply-to" => "#{ticket.account.default_email}"
     content_type  "text/plain"
   end
@@ -16,7 +16,7 @@ class SlaNotifier < ActionMailer::Base
     recipients    email
     from          ticket.account.default_email
     sent_on       Time.now    
-    body          :ticket => ticket, :host => ticket.account.full_domain
+    body          :ticket => ticket, :host => ticket.account.host
     headers       "Reply-to" => "#{ticket.account.default_email}"
     content_type  "text/plain"
   end

@@ -1,5 +1,27 @@
 class Account < ActiveRecord::Base
+  require 'net/dns/resolver'
+
+  #rebranding starts
+  serialize :preferences, Hash
+  has_one :logo,
+    :as => :attachable,
+    :class_name => 'Helpdesk::Attachment',
+    :conditions => ['description = ?', 'logo' ],
+    :dependent => :destroy
   
+  has_one :fav_icon,
+    :as => :attachable,
+    :class_name => 'Helpdesk::Attachment',
+    :conditions => ['description = ?', 'fav_icon' ],
+    :dependent => :destroy
+    
+  #rebranding ends 
+
+  RESERVED_DOMAINS = %W(  blog support help chat smtp mail www ftp imap pop faq docs doc wiki team people india us talk 
+                          upload download info lounge community forums ticket tickets tour about pricing bugs in out 
+                          logs projects itil marketing sales partners partner store channel reseller resellers online 
+                          signup login contact admin #{AppConfig['admin_subdomain']} girish shan vijay parsu kiran shihab )
+
   #
   # Tell authlogic that we'll be scoping users by account
   #
@@ -38,18 +60,19 @@ class Account < ActiveRecord::Base
   #Scope restriction ends
   
   validates_format_of :domain, :with => /\A[a-zA-Z][a-zA-Z0-9]*\Z/
-  validates_exclusion_of :domain, :in => %W( support blog www billing help api #{AppConfig['admin_subdomain']} ), :message => "The domain <strong>{{value}}</strong> is not available."
+  validates_exclusion_of :domain, :in => RESERVED_DOMAINS, :message => "The domain <strong>{{value}}</strong> is not available."
   validate :valid_domain?
+  validate :valid_helpdesk_url?
   validate_on_create :valid_user?
   validate_on_create :valid_plan?
   validate_on_create :valid_payment_info?
   validate_on_create :valid_subscription?
   
-  attr_accessible :name, :domain, :user, :plan, :plan_start, :creditcard, :address
+  attr_accessible :name, :domain, :user, :plan, :plan_start, :creditcard, :address,:preferences,:logo_attributes,:fav_icon_attributes
   attr_accessor :user, :plan, :plan_start, :creditcard, :address, :affiliate
 
-  before_create :set_time_zone
-  
+  before_create :set_default_values
+    
   after_create :create_admin
   after_create :populate_seed_data
   after_create :send_welcome_email
@@ -66,6 +89,9 @@ class Account < ActiveRecord::Base
       self.subscription.send(name) && self.subscription.send(name) <= meth.call(self)
     end
   end
+  
+    
+     
   
   def needs_payment_info?
     if new_record?
@@ -99,6 +125,11 @@ class Account < ActiveRecord::Base
     name.blank? ? full_domain : "#{name} (#{full_domain})"
   end
   
+  #Will be used as :host in emails
+  def host
+    helpdesk_url.blank? ? full_domain : helpdesk_url
+  end
+  
   #Helpdesk hack starts here
   def reply_emails
     (email_configs.collect { |ec| ec.reply_email } << default_email).sort
@@ -120,6 +151,26 @@ class Account < ActiveRecord::Base
     def valid_domain?
       conditions = new_record? ? ['full_domain = ?', self.full_domain] : ['full_domain = ? and id <> ?', self.full_domain, self.id]
       self.errors.add(:domain, 'is not available') if self.full_domain.blank? || self.class.count(:conditions => conditions) > 0
+    end
+    
+    def valid_helpdesk_url?
+      return true if (helpdesk_url.blank? || helpdesk_url == full_domain)
+
+      errors.add_to_base(<<-eos
+                          Host verification failed, please configure a CNAME record in your DNS server 
+                          for '#{helpdesk_url}' and alias it to '#{full_domain}'
+                        eos
+                        ) unless (cname == full_domain)
+    end
+    
+    def cname
+      begin
+        Net::DNS::Resolver.new.query(helpdesk_url).each_cname do |cn| 
+          return cn.sub(/\.?$/, '') if cn.include?(full_domain)
+        end
+      rescue Exception => e
+        logger.debug "Host name verification failed #{e.message}"
+      end
     end
     
     # An account must have an associated user to be the administrator
@@ -158,9 +209,10 @@ class Account < ActiveRecord::Base
       end
     end
     
-    def set_time_zone
+    def set_default_values
       self.time_zone = Time.zone.name if time_zone.nil? #by Shan temp.. to_s is kinda hack.
       self.helpdesk_name = name.titleize if helpdesk_name.nil?
+      self.preferences = HashWithIndifferentAccess.new({:bg_color => "#d4ebd4",:header_color => "#787878"})
     end
     
     def create_admin

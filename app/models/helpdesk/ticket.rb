@@ -14,7 +14,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_update :save_custom_field
   before_create :populate_requester
 
-  before_validation_on_create :set_tokens
   before_create :set_spam, :set_dueby
   before_update :set_dueby, :cache_old_model
   after_update  :notify_on_update
@@ -182,10 +181,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
     @spam_text ||= notes.empty? ? description : notes.find(:first).body
   end
 
-  def set_tokens
-    self.access_token ||= make_token(Helpdesk::SECRET_2)
-  end
-  
   #shihab-- date format may need to handle later. methode will set both due_by and first_resp
    def set_dueby     
    
@@ -219,10 +214,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
      
   end
 
-  def make_token(secret)
-    Digest::MD5.hexdigest(secret + Time.now.to_f.to_s).downcase
-  end
-  
   def refresh_display_id #by Shan temp
     if display_id.nil?
       self.display_id = Helpdesk::Ticket.find_by_id(id).display_id #by Shan hack need to revisit about self as well.
@@ -354,7 +345,7 @@ end
   #Might be darn expensive db queries, need to revisit - shan.
   def to_liquid
     { 
-      "display_id"            => display_id,
+      "id"                    => display_id,
       "subject"               => subject,
       "description"           => description,
       "requester"             => requester,
@@ -366,7 +357,7 @@ end
       "ticket_type"           => TYPE_NAMES_BY_KEY[ticket_type],
       "tags"                  => tag_names.join(', '),
       "due_by_time"           => due_by.strftime("%B %e %Y at %I:%M %p"),
-      "url"                   => helpdesk_ticket_url(self, :host => account.full_domain),
+      "url"                   => helpdesk_ticket_url(self, :host => account.host),
       "latest_comment"        => liquidize_comment(latest_comment),
       "latest_public_comment" => liquidize_comment(latest_public_comment)
       }

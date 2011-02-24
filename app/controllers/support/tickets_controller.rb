@@ -13,7 +13,7 @@ class Support::TicketsController < ApplicationController
 protected
 
   def redirect_url
-    support_ticket_url(@ticket, :access_token => @ticket.access_token)
+    support_ticket_url(@ticket)
   end
 
 end
