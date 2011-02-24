@@ -1,19 +1,19 @@
 class UserNotifier < ActionMailer::Base
   def activation_instructions(user)
     subject       "#{user.account.helpdesk_name} user activation instructions"
-    body          :account_activation_url => register_url(user.perishable_token, :host => user.account.full_domain)
+    body          :account_activation_url => register_url(user.perishable_token, :host => user.account.host)
     send_the_mail user
   end
 
   def activation_confirmation(user)
     subject       "#{user.account.helpdesk_name} user activation complete"
-    body          :root_url => root_url(:host => user.account.full_domain)
+    body          :root_url => root_url(:host => user.account.host)
     send_the_mail user
   end
   
   def password_reset_instructions(user)
     subject       "#{user.account.helpdesk_name} Password Reset Instructions"
-    body          :edit_password_reset_url => edit_password_reset_url(user.perishable_token, :host => user.account.full_domain)
+    body          :edit_password_reset_url => edit_password_reset_url(user.perishable_token, :host => user.account.host)
     send_the_mail user
   end
   

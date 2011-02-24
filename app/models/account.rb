@@ -1,5 +1,6 @@
 class Account < ActiveRecord::Base
-  
+  require 'net/dns/resolver'
+
   #rebranding starts
   serialize :preferences, Hash
   has_one :logo,
@@ -55,6 +56,7 @@ class Account < ActiveRecord::Base
   validates_format_of :domain, :with => /\A[a-zA-Z][a-zA-Z0-9]*\Z/
   validates_exclusion_of :domain, :in => %W( support blog www billing help api #{AppConfig['admin_subdomain']} ), :message => "The domain <strong>{{value}}</strong> is not available."
   validate :valid_domain?
+  validate :valid_helpdesk_url?
   validate_on_create :valid_user?
   validate_on_create :valid_plan?
   validate_on_create :valid_payment_info?
@@ -117,6 +119,11 @@ class Account < ActiveRecord::Base
     name.blank? ? full_domain : "#{name} (#{full_domain})"
   end
   
+  #Will be used as :host in emails
+  def host
+    helpdesk_url.blank? ? full_domain : helpdesk_url
+  end
+  
   #Helpdesk hack starts here
   def reply_emails
     (email_configs.collect { |ec| ec.reply_email } << default_email).sort
@@ -138,6 +145,26 @@ class Account < ActiveRecord::Base
     def valid_domain?
       conditions = new_record? ? ['full_domain = ?', self.full_domain] : ['full_domain = ? and id <> ?', self.full_domain, self.id]
       self.errors.add(:domain, 'is not available') if self.full_domain.blank? || self.class.count(:conditions => conditions) > 0
+    end
+    
+    def valid_helpdesk_url?
+      return true if (helpdesk_url.blank? || helpdesk_url == full_domain)
+
+      errors.add_to_base(<<-eos
+                          Host verification failed, please configure a CNAME record in your DNS server 
+                          for '#{helpdesk_url}' and alias it to '#{full_domain}'
+                        eos
+                        ) unless (cname == full_domain)
+    end
+    
+    def cname
+      begin
+        Net::DNS::Resolver.new.query(helpdesk_url).each_cname do |cn| 
+          return cn.sub(/\.?$/, '') if cn.include?(full_domain)
+        end
+      rescue Exception => e
+        logger.debug "Host name verification failed #{e.message}"
+      end
     end
     
     # An account must have an associated user to be the administrator

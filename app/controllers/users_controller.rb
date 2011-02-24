@@ -1,4 +1,5 @@
 class UsersController < ApplicationController 
+  
   include ModelControllerMethods
 
   before_filter :check_user_limit, :only => :create
@@ -16,8 +17,7 @@ class UsersController < ApplicationController
   
   def create
     
-    @user = current_account.users.new #by Shan need to check later    
-   
+    @user = current_account.users.new #by Shan need to check later       
     if @user.signup!(params)
       #@user.deliver_activation_instructions! #Have moved it to signup! method in the model itself.
       flash[:notice] = "The user has been created and activation instructions sent to #{@user.email}!"
@@ -30,7 +30,13 @@ class UsersController < ApplicationController
    
   def show
     
-    redirect_to :controller =>'contacts' ,:action => 'show', :id => params[:id]
+    role_token = User.find(params[:id]).role_token    
+    if "customer".eql?(role_token)      
+      redirect_to :controller =>'contacts' ,:action => 'show', :id => params[:id]    
+    else    
+      agent_id = Agent.find_by_user_id(params[:id]).id
+      redirect_to :controller =>'agents' ,:action => 'show', :id => agent_id    
+    end
     
   end
   

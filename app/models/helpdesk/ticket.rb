@@ -366,7 +366,7 @@ end
       "ticket_type"           => TYPE_NAMES_BY_KEY[ticket_type],
       "tags"                  => tag_names.join(', '),
       "due_by_time"           => due_by.strftime("%B %e %Y at %I:%M %p"),
-      "url"                   => helpdesk_ticket_url(self, :host => account.full_domain),
+      "url"                   => helpdesk_ticket_url(self, :host => account.host),
       "latest_comment"        => liquidize_comment(latest_comment),
       "latest_public_comment" => liquidize_comment(latest_public_comment)
       }
