@@ -148,7 +148,7 @@ class Helpdesk::TicketsController < ApplicationController
   
   def execute_scenario 
     
-    va_rule = VARule.find(params[:scenario_id])   
+    va_rule = current_account.va_rules.find(params[:scenario_id])   
     va_rule.trigger_actions(@item)
     @item.save
     redirect_to :back
