@@ -21,7 +21,7 @@ class Helpdesk::Activity < ActiveRecord::Base
   
   private
     def set_short_descr
-      self.short_descr ||= descr
+      self.short_descr ||= description
     end
 
 end

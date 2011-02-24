@@ -151,6 +151,10 @@ class Helpdesk::TicketsController < ApplicationController
     va_rule = VARule.find(params[:scenario_id])   
     va_rule.trigger_actions(@item)
     @item.save
+    @item.create_activity(current_user, "{{user_path}} executed the scenario '{{scenario_name}}' on {{notable_path}}", 
+                            { 'scenario_name' => va_rule.name },
+                            "{{user_path}} executed the scenario '{{scenario_name}}'")
+
     redirect_to :back
     
   end 
