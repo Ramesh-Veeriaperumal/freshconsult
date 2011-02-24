@@ -1,13 +1,12 @@
 module ModelControllerMethods
   def self.included(base)
     base.send :before_filter, :build_object, :only => [ :new, :create ]
-    base.send :before_filter, :load_object, :only => [ :show, :edit, :update, :destroy ]
+    base.send :before_filter, :load_object, :only => [ :show, :edit, :update, :destroy , :restore]
   end
   
   def index
     @users = self.instance_variable_set('@' + self.controller_name,
-      scoper.find(:all, :order => 'name'))    
-     
+      scoper.find(:all, :order => 'name'))      
 
     respond_to do |format|
       format.html  do
