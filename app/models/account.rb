@@ -108,6 +108,11 @@ class Account < ActiveRecord::Base
     name.blank? ? full_domain : "#{name} (#{full_domain})"
   end
   
+  #Will be used as :host in emails
+  def host
+    helpdesk_url.blank? ? full_domain : helpdesk_url
+  end
+  
   #Helpdesk hack starts here
   def reply_emails
     (email_configs.collect { |ec| ec.reply_email } << default_email).sort

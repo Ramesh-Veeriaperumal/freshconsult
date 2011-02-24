@@ -17,7 +17,7 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
   end
 
   def reply(ticket, note , reply_email)
-    body(:ticket => ticket, :note => note, :host => ticket.account.full_domain)
+    body(:ticket => ticket, :note => note, :host => ticket.account.host)
     content_type    "multipart/alternative"
 
     note.attachments.each do |a|
