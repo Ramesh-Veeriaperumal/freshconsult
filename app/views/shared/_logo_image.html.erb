@@ -1,0 +1,38 @@
+<% javascript_tag do %>
+	function changeLogoPic(){
+		jQuery('#LogoPic').toggle();
+		jQuery('#LogoInput').toggle();		
+	}
+	
+	deleteLogo = function() {
+	    jQuery("#LogoControls").remove();
+		jQuery('#LogoPic').remove();
+		jQuery('#LogoInput').show();
+	}
+<% end %>
+<%= label(:account, :logo, "Logo") %>
+<% if(account.logo) %>				
+	<div class="profile_pic" id="LogoPic">
+		<%= image_tag account.logo.content.url(:medium) %>
+	</div>
+	<div id="LogoInput" style="display:none;">
+		<% fields_for "account[logo_attributes]", account.logo do |logo_form| %>					
+			<%= logo_form.file_field :content %>				
+		<% end %>
+	</div>
+	<div id="LogoControls">
+		<%= link_to_function("Change", "changeLogoPic()", :class => "button") %>
+		<%= link_to_remote('Delete', 
+				:url => { :action => "delete_logo", :id => account.id },
+				:success => "deleteLogo()",
+				:confirm => 'Are you sure you want to delete this logo',
+				:method => 'delete', 
+				:html => { :class => "button" }) %>
+		
+	</div>				
+	<br />
+<% else %>		
+	<% fields_for "account[logo_attributes]", account.logo do |logo_form| %>
+		<%= logo_form.file_field :content %>				
+	<% end %>
+<% end %>

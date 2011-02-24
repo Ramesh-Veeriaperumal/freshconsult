@@ -1,0 +1,38 @@
+<% javascript_tag do %>
+	function changeFavPic(){
+		jQuery('#FavPic').toggle();
+		jQuery('#FavInput').toggle();		
+	}
+	
+	deleteFav = function() {
+	    jQuery("#FavControls").remove();
+		jQuery('#FavPic').remove();
+		jQuery('#FavInput').show();
+	}
+<% end %>
+<%= label(:account, :fav_icon, "Fav Icon") %>
+<% if(account.fav_icon) %>				
+	<div class="profile_pic" id="FavPic">
+		<%= image_tag account.fav_icon.content.url(:medium) %>
+	</div>
+	<div id="FavInput" style="display:none;">
+		<% fields_for "account[fav_icon_attributes]", account.fav_icon do |fav_icon_form| %>					
+			<%= fav_icon_form.file_field :content %>				
+		<% end %>
+	</div>
+	<div id="FavControls">
+		<%= link_to_function("Change", "changeFavPic()", :class => "button") %>
+		<%= link_to_remote('Delete', 
+				:url => { :action => "delete_fav", :id => account.id },
+				:success => "deleteFav()",
+				:confirm => 'Are you sure you want to delete this fav icon',
+				:method => 'delete', 
+				:html => { :class => "button" }) %>
+		
+	</div>				
+	<br />
+<% else %>		
+	<% fields_for "account[fav_icon_attributes]", account.fav_icon do |fav_icon_form| %>
+		<%= fav_icon_form.file_field :content %>				
+	<% end %>
+<% end %>

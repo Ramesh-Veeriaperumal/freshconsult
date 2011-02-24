@@ -1,7 +1,12 @@
 
 <div class="header">
     <a href="/home" class="brand">
-    	<img alt="FreshDesk" src="/images/logo.png" width="54px" height="47px" class="logo" />
+    	
+		<%unless current_account.logo.nil?%>
+		<%= image_tag current_account.logo.content.url(:medium) %>
+		<%else%>
+		<img alt="FreshDesk" src="/images/logo.png" width="54px" height="47px" class="logo" />
+		<%end%>
 		<h3><%= current_account.helpdesk_name %></h3>
 	</a>					
     <div class="header_links">

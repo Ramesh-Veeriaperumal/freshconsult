@@ -3,7 +3,7 @@
 	<h4>Rebrand your Help Desk</h4>
 </div>	
 <div class="page_area">
-	<% form_for :account, @account, :url => { :action => 'update' }, :html => { :method => :put } do |f| %>
+	<% form_for :account, @account, :url => { :action => 'update' }, :html => { :multipart => true ,:method => :put} do |f| %>
 	  <%= f.error_messages %>
 	  <ul class="ui-form">
 		  <li>
@@ -33,6 +33,13 @@
 				<%= p.text_field :bg_color %>
          	</li>
 		  <% end %>
+		  <li>
+			<%= render :partial => "/shared/logo_image", :locals => { :account => @account } %>
+		 </li>
+		 
+		 <li>
+			<%= render :partial => "/shared/fav_image", :locals => { :account => @account } %>
+		 </li>
 		  
 		  <li>
 		  	<span class="seperator"></span>

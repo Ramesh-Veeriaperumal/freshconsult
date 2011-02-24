@@ -1,8 +1,20 @@
 class Account < ActiveRecord::Base
   
+  #rebranding starts
   serialize :preferences, Hash
+  has_one :logo,
+    :as => :attachable,
+    :class_name => 'Helpdesk::Attachment',
+    :conditions => ['description = ?', 'logo' ],
+    :dependent => :destroy
   
- 
+  has_one :fav_icon,
+    :as => :attachable,
+    :class_name => 'Helpdesk::Attachment',
+    :conditions => ['description = ?', 'fav_icon' ],
+    :dependent => :destroy
+    
+  #rebranding ends 
   #
   # Tell authlogic that we'll be scoping users by account
   #
@@ -48,7 +60,7 @@ class Account < ActiveRecord::Base
   validate_on_create :valid_payment_info?
   validate_on_create :valid_subscription?
   
-  attr_accessible :name, :domain, :user, :plan, :plan_start, :creditcard, :address,:preferences
+  attr_accessible :name, :domain, :user, :plan, :plan_start, :creditcard, :address,:preferences,:logo_attributes,:fav_icon_attributes
   attr_accessor :user, :plan, :plan_start, :creditcard, :address, :affiliate
 
   before_create :set_default_values
