@@ -3,13 +3,11 @@ class Admin::BusinessCalendarsController < ApplicationController
   before_filter :set_selected_tab
   
   def index
-    
-     @business_calendars = BusinessCalendar.find(:first ,:conditions =>{:account_id => current_account.id})
+    @business_calendars = BusinessCalendar.find(:first ,:conditions =>{:account_id => current_account.id})
      respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :json => @business_calendars }
     end
-    
   end
 
   def show
@@ -25,6 +23,7 @@ class Admin::BusinessCalendarsController < ApplicationController
   end
 
   def update
+    redirect_back_or_default :action => 'index'
   end
 
   def destroy

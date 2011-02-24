@@ -1,2 +1,136 @@
-<h1>Admin::BusinessCalendars#index</h1>
-<p>Find me in app/views/admin/business_calendars/index.html.erb</p>
+<% javascript_tag do %>
+	HolidayList = $H();
+	
+	jQuery(document).ready(function(){
+		jQuery("#BusinessHours")
+			.submit(function(){
+				days_array 	   = $A(),
+				holidays_array = $A();
+				jQuery.each(jQuery("#DAYS_LIST input[type=checkbox]"), function(){
+								if(this.checked)
+									days_array.push(this.value)
+						   });
+						   
+				jQuery("#business_calenders_weekdays").val( days_array.toJSON() );
+				
+				HolidayList.each(function(pair) {
+				  	holidays_array.push([pair.key, pair.value]);
+				}); 
+				
+				jQuery("#business_calenders_holidays").val(holidays_array.toJSON());
+				
+				//return false;
+			});
+		
+		jQuery("#HolidayList a.close").live("click", function(){
+			holiday = jQuery(this).parent();
+			HolidayList.unset( holiday.attr("month_date") );
+			holiday.remove();
+		});
+		
+		jQuery("input.radio").change(function(){ 
+			if(this.value == "specify"){
+				jQuery("#SpecificHoursDiv").show();
+				jQuery("#business_calenders_fullweek").val(false);
+			}else{
+				jQuery("#SpecificHoursDiv").hide();
+				jQuery("#business_calenders_fullweek").val(true);
+			}
+		});	
+	});
+	
+	addHolidaytoList = function(month, date, name){
+		var month_date = month + " " + date; 
+		if( !HolidayList.get( month_date ) ){
+			HolidayList.set( month_date, name );
+			jQuery("#HolidayValidation").hide();
+			jQuery("#HolidayList")
+				.append("<li month_date= "+month_date+"><a href='javascript:void(0)' class='close'></a>"+month+" "+date+" - " + name +"</li>");
+		}else{
+			jQuery("#HolidayValidation").show();
+		}
+	}
+	
+	addHoliday = function(){
+		var month = jQuery("#holiday_date_2i option:selected").text();
+		var date  = jQuery("#holiday_date_3i").val();
+		var name  = jQuery("#holiday_name").val();
+		addHolidaytoList(month, date, name);
+	}
+	 
+	
+<% end %>
+<div class="page_area">
+	<% form_for :business_calenders, @business_calendars, :url => { :action => "update" },  :html => { :method => :put, :id => "BusinessHours"  } do |f| %>
+	<ul class="ui-form business_hours">
+		<li>
+			<h3 class="info_data">Business Hours</h3>
+		</li>			
+		<li class="seperator"></li>
+		<li>
+			<label>Helpdesk Hours</label>			
+		</li>
+		<li>
+			<%= hidden_field "business_calenders", "fullweek" %>
+			<table class="business_time">
+				<tr>
+					<td width="35%">
+						<label><input type="radio" name="workday" class="radio" value="24_7" /> 24 x 7 </label>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<label><input type="radio" name="workday" class="radio" value="specify" checked="checked" /> Specific Working Hours</label>
+						<div class="specific_hours" id="SpecificHoursDiv">
+							<div class="timerange">
+								<%= f.text_field :beginning_of_workday, :class => "time" %>
+								<strong>to </strong>
+								<%= f.text_field :end_of_workday, :class => "time"  %>
+							</div>
+							<div class="info_data">Working Days for your Helpdesk</div>
+							<div id="DAYS_LIST" class="business_days checkbox">
+								<% weekdays = @business_calendars.business_time_data[:weekdays] %>
+								<% weekday_human_list = [ "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" ] %>
+								<% weekday_human_list.each_index do |days_index| %>
+									<label>
+										<% cal_index = ( days_index != 6 ) ? (days_index+1) : 0 %>
+										<% checked = weekdays.include?(cal_index) %>	 
+										<%= check_box_tag ( weekday_human_list[days_index], cal_index, checked )  %><%= weekday_human_list[days_index] %>
+									</label>
+								<% end %>
+								<%= f.hidden_field :weekdays %>			
+							</div> 		
+						</div>
+					</td>
+				</tr>
+			</table>
+	    </li>		
+		<li class="seperator"></li>					
+		<li>
+			<label>Yearly Holiday List <span class="info_data">Holidays will be ignored when calculating SLA for a ticket</span></label>
+					
+			<table>
+				<tr>
+					<td width="60%">
+						<ul class="nobullets holidaylist" id="HolidayList"> 
+						</ul> 
+						<%= f.hidden_field :holidays %>
+					</td>
+					<td class="borderleft">
+						<%= date_select("holiday", "date", { :order => [:month, :day], :use_short_month => true } ) %>
+						<label class="overlabel" for="holiday_name">Holiday name</label>
+						<%= text_field("holiday", "name") %>
+						
+						<%= link_to_function( "Add Holiday", "addHoliday()", :class => "fdbutton grey" ) %>
+						<b class="text_red" id="HolidayValidation" style="display:none;"> Holiday already added </b>
+					</td>
+				</tr>				
+			</table>	
+		</li>
+	</ul>
+	<div class="button-container">
+		<%= f.submit "Save", :class => "fdbutton" %>
+		<%= link_to "Back", "/admin/home", :class => "fdbutton grey" %>
+	</div>
+	<% end %>
+</div>
