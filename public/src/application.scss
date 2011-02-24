@@ -1269,7 +1269,7 @@ div.leader-right{
 	color:#555555 !important;
 }
 
-.red{
+a.red{
 	@include vertical-gradient(#f4f4f4, #efefef);
 	color:#993333 !important;
 }
@@ -1964,6 +1964,9 @@ body h5{
 	}				
 	.automation{
 		@include sprite-column(9, $aicon_size);
+	}	
+	.business_hours{
+		@include sprite-column(10, $aicon_size);
 	}								
 }
 
@@ -2808,6 +2811,62 @@ $lightBase:lighten($base, 5%);
 		
 	}
 }
+
+.business_hours{
+	td{
+		vertical-align:top;
+	}
+	td.borderleft{
+		border-left:1px solid darken($color_pulp,10%);
+	}
+	.business_time{
+		div.specific_hours{
+			padding:16px 26px;
+		}
+		div.timerange{
+			@include pie-clearfix;	
+			input, strong{
+				float:left;
+			}
+			input{
+				width:80px;
+			}
+			strong{
+				font-weight:normal;
+				padding:0px 10px;
+			}
+		}
+	}
+	.business_days{
+		label{
+			float:left;
+			font-size:12px;
+			padding-right:8px;
+		}
+	}
+	.holidaylist{
+		color:#444444;
+		li{
+			position:relative;
+			margin-right:20px;
+			
+			.close{
+				position:absolute;
+				background:url(../images/icons/btn_close_icon.png) no-repeat;
+				width:18px;
+				height:18px;
+				right:6px;
+				top:0px;
+			}
+		}
+	}
+}
+
+input.time{
+	font-weight:normal;
+	font-size:12px;
+}
+
 
 a.addchoice{		
 	padding:5px;			
@@ -4397,3 +4456,16 @@ div.contactPage{
 	}
 }
 
+
+.max_width{
+	width:200px;
+}
+
+.nobullets{
+	@include no-bullets;
+	margin:0px; padding:0px;
+}
+
+.text_red{
+	color:#ff0000 !important;
+}

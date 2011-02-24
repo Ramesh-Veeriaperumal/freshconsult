@@ -1,19 +1,22 @@
-<h4>CSV Import</h4>
-
-<h4>Import Contacts</h4>
-<% form_for :user,:url => { :controller => "contact_import", :action => "create" }, :html => {:multipart => true} do |f| %>
-  <%= f.error_messages %>
-
- <div class="field">
-      <label for="file">File</label>
-      <%= file_field_tag 'file' %>
-    </div>
-  <p>
-     <%= f.submit 'Import' %>
-  </p>
+<% content_for :breadcrumb do -%>
+	<div class="header_area">
+		<h4>Import Contacts</h4>
+	</div>
 <% end %>
-
-<%= link_to 'Back', contacts_path %>
-
+<div class="page_area" style="width:350px;"">
+	<% form_for :user,:url => { :controller => "contact_import", :action => "create" }, :html => {:multipart => true} do |f| %>
+	  <%= f.error_messages %>
+	  <ul class="ui-form">
+		 <li>
+		      <label for="file">Select your CSV file</label>
+		      <%= file_field_tag 'file', :class => "required" %>
+		  </li>
+	  </ul>
+	  <div class="button-container">
+		<%= f.submit 'Import', { :class => "fdbutton" } %>
+	  	<%= link_to 'cancel', contacts_path, :class => "fdbutton grey"  %>
+	  </div>
+	<% end %>
+</div>
 
 
