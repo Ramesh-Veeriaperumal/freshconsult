@@ -1,12 +1,15 @@
 class Helpdesk::NotesController < ApplicationController
 
+
+
   before_filter { |c| c.requires_permission :manage_tickets }
-
   before_filter :load_parent_ticket_or_issue
-
+ 
+  
   include HelpdeskControllerMethods
   
-  def create
+  
+  def create  
     if @item.save! 
       if params[:post_forums]
        @topic = Topic.find(@parent.ticket_topic.topic_id)
@@ -26,6 +29,8 @@ class Helpdesk::NotesController < ApplicationController
     render :partial => "edit_note"
   end
   
+  
+  
 protected
 
   def scoper
@@ -37,9 +42,10 @@ protected
   end
 
   def process_item
-
+    
+     reply_email = params[:reply_email][:id] unless params[:reply_email].nil?
     if @parent.is_a? Helpdesk::Ticket
-      Helpdesk::TicketNotifier.send_later(:deliver_reply, @parent, @item) unless @item.private
+      Helpdesk::TicketNotifier.send_later(:deliver_reply, @parent, @item , reply_email) unless @item.private
       @parent.responder ||= current_user
       @parent.create_activity(current_user, "{{user_path}} added a {{comment_path}} to the ticket {{notable_path}}", 
                     {'eval_args' => {'comment_path' => ['comment_path', {
@@ -52,7 +58,7 @@ protected
       unless @item.private
         @parent.tickets.each do |t|
           t.notes << (c = @item.clone)
-          Helpdesk::TicketNotifier.deliver_reply(t, c)
+          Helpdesk::TicketNotifier.deliver_reply(t, c, reply_email)
         end
       end
       @parent.owner ||= current_user  if @parent.respond_to?(:owner)
@@ -64,5 +70,7 @@ protected
   def create_error
     redirect_to @parent
   end
+  
+  
 
 end

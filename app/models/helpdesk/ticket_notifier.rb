@@ -16,7 +16,7 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
     end
   end
 
-  def reply(ticket, note)
+  def reply(ticket, note , reply_email)
     body(:ticket => ticket, :note => note, :host => ticket.account.full_domain)
     content_type    "multipart/alternative"
 
@@ -24,9 +24,9 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
       attachment  :content_type => a.content_content_type, 
                   :body => File.read(a.content.to_file.path), 
                   :filename => a.content_file_name
-    end
+    end   
     
-    reply_to_ticket(ticket)
+    reply_to_ticket(ticket, reply_email)
   end
   
   def email_to_requester(ticket, content)
@@ -41,15 +41,15 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
     do_send(ticket)
   end
   
-  def reply_to_ticket(ticket)
+  def reply_to_ticket(ticket , reply_email= nil)
     #subject       Helpdesk::EMAIL[:reply_subject]  + " #{ticket.encode_display_id}"
     subject       "Re: #{ticket.subject} #{ticket.encode_display_id}"
     recipients    ticket.requester.email
-    do_send(ticket)
+    do_send(ticket , reply_email)
   end
   
-  def do_send(ticket)
-    from_to_use = ticket.reply_email
+  def do_send(ticket, reply_email= nil)
+    from_to_use = reply_email ||ticket.reply_email
     from          from_to_use
     headers       "Reply-to" => "#{from_to_use}"
     sent_on       Time.now
