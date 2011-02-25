@@ -37,6 +37,8 @@ class Account < ActiveRecord::Base
   has_many :customers, :dependent => :destroy
   has_many :contacts, :class_name => 'User' , :conditions =>{:role_token => 'customer' , :deleted =>false}
   has_many :agents, :through =>:users , :conditions =>{:users=>{:deleted => false}}
+  has_many :all_contacts , :class_name => 'User', :conditions =>{:role_token => 'customer'}
+  has_many :all_agents, :class_name => 'Agent', :through =>:users  , :source =>:agent
   has_many :sla_policies , :class_name => 'Helpdesk::SlaPolicy' ,:dependent => :destroy
   
   #Scoping restriction for other models starts here
