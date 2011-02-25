@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110223094721) do
+ActiveRecord::Schema.define(:version => 20110225045033) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -22,6 +22,7 @@ ActiveRecord::Schema.define(:version => 20110223094721) do
     t.string   "helpdesk_name"
     t.text     "helpdesk_url"
     t.text     "preferences"
+    t.integer  "ticket_display_id", :default => 0
   end
 
   add_index "accounts", ["full_domain"], :name => "index_accounts_on_full_domain"
@@ -433,7 +434,6 @@ ActiveRecord::Schema.define(:version => 20110223094721) do
   add_index "helpdesk_ticket_issues", ["ticket_id"], :name => "index_helpdesk_ticket_issues_on_ticket_id"
 
   create_table "helpdesk_tickets", :force => true do |t|
-    t.string   "access_token"
     t.text     "description"
     t.integer  "requester_id"
     t.integer  "responder_id"

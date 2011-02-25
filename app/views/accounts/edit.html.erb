@@ -40,6 +40,10 @@
 		 <li>
 			<%= render :partial => "/shared/fav_image", :locals => { :account => @account } %>
 		 </li>
+		 <li class="small">
+		    <%= f.label :ticket_display_id, "Ticket Display Id" %>
+		    <%= f.text_field :ticket_display_id,:value => @account.get_max_display_id %>
+		  </li>
 		  
 		  <li>
 		  	<span class="seperator"></span>
