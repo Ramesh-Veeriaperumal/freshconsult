@@ -91,6 +91,38 @@ class ContactsController < ApplicationController
     end
   end
   
+  
+   def destroy
+   
+      if @obj.respond_to?(:deleted)
+        if @obj.update_attribute(:deleted, true)
+           @restorable = true
+           flash[:notice] = render_to_string(:partial => '/contacts/flash/delete_notice') 
+           redirect_to redirect_url
+         else
+           render :action => 'show'
+         end
+         
+      else
+        if item.destroy
+          flash[:notice] = "The #{cname.humanize.downcase} has been deleted."
+          redirect_back_or_default redirect_url
+        else
+          render :action => 'show'
+        end
+      end
+   
+  end
+
+  def restore
+   
+    @obj.update_attribute(:deleted, false)
+    
+    flash[:notice] = render_to_string(
+      :partial => '/contacts/flash/restore_notice')
+    redirect_to :back
+  end
+  
   def autocomplete
    
      items = current_account.customers.find(:all, 

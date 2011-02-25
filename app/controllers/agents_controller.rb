@@ -1,7 +1,7 @@
 class AgentsController < Admin::AdminController
     
   def index    
-    @agents = current_account.agents.find(:all , :include => :user)
+    @agents = current_account.agents.find(:all , :include => :user )
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @agents }
@@ -77,13 +77,27 @@ class AgentsController < Admin::AdminController
 
   def destroy    
     @agent = Agent.find(params[:id])
-    @agent.destroy
-
-    respond_to do |format|
-      format.html { redirect_to(agents_url) }
-      format.xml  { head :ok }
-    end
+    if @agent.user.update_attribute(:deleted, true)    
+       @restorable = true
+       flash[:notice] = render_to_string(:partial => '/agents/flash/delete_notice')      
+     else
+           flash[:notice] = "Agent could not be able to delete"           
+     end
+    redirect_to :back
 end
+
+ def restore
+   
+    @agent = Agent.find(params[:id])
+    if @agent.user.update_attribute(:deleted, false)   
+      flash[:notice] = render_to_string(:partial => '/contacts/flash/restore_notice')
+    else
+      flash[:notice] = "Agent could not be able to restore"
+    end
+    
+    redirect_to :back
+   
+ end
 
  protected
 

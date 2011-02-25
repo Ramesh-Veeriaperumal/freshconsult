@@ -1,16 +1,24 @@
 <style> 
 <% unless current_account.preferences.nil? %>
-/*
-	 body{
+
+	body{
 		background:<%= current_account.preferences[:bg_color] %>;
 	}
 	
-	ul.tabs li a{
-		background-color:<%= current_account.preferences[:header_color] %> !important;
+	.header_tabs ul.tabs li a{
+		background-color:<%= current_account.preferences[:header_color] %>;
+		border-color:<%= current_account.preferences[:header_color] %>;
+		border-color-top:<%= current_account.preferences[:header_color] %>;
 	}
-	ul.tabs li a:hover{ 
-		background-color:<%= current_account.preferences[:bg_color] %> !important;	
+	.header_tabs ul.tabs li.active a, .header_tabs ul.tabs li a:hover{ 
+		background-color:<%= current_account.preferences[:header_color_selected] %>;	 
+		border-color:<%= current_account.preferences[:header_color_selected] %>;
+		border-color-top:<%= current_account.preferences[:header_color_selected] %>;
 	}
-*/ 
+	
+	.header{
+		border-color:<%= current_account.preferences[:header_color_selected] %>;		
+	}
+
 <% end %>
 </style>
