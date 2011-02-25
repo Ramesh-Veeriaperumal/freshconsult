@@ -41,11 +41,12 @@
 		  </li>
 		  <li>
 		    <%= f.label :helpdesk_name, "Helpdesk Name" %>
-		    <%= f.text_field :helpdesk_name, :class => "color", :id => "headcolor" %>
+		    <%= f.text_field :helpdesk_name, :class => "text" %>
 		  </li>
 		  <li>
 		    <%= f.label :helpdesk_url, "Helpdesk URL" %>
-		    <%= f.text_field :helpdesk_url, :class => "color" %>
+		    <%= f.text_field :helpdesk_url, :class => "text" %>
+			<span class="seperator"></span>
 		  </li>
 		  <% f.fields_for :preferences, @account.preferences do |p| %>
         	<li>
@@ -58,7 +59,7 @@
 							</div>
 						</td>	
         				<td>
-			        		<%= p.label :header_color, "Tab selected color" %>
+			        		<%= p.label :header_color_tab, "Tab selected color" %>
 							<div class="color">
 								<input type="color" class="color_field" name="account[preferences][header_color_selected]"  data-hex="true" value="<%= @account[:preferences].default(:header_color_selected) %>"> 
 							</div>
@@ -79,17 +80,17 @@
 		 
 		 <li>
 			<%= render :partial => "/shared/fav_image", :locals => { :account => @account } %>
+			<span class="seperator"></span>
 		 </li>
 		 <li class="small">
-		    <%= f.label :ticket_display_id, "Ticket Display Id" %>
-		    <%= f.text_field :ticket_display_id,:value => @account.get_max_display_id %>
-		  </li>
-		  
-		  <li>
-		  	<span class="seperator"></span>
-		  	<%= submit_tag 'Save', :class => 'fdbutton' %>
-	  		<%= link_to "Cancel", admin_home_path , :class => "fdbutton grey" %>
-		  </li>
+		    <%= f.label :ticket_display_id, "Next Ticket ID #" %>
+			<%= f.text_field :ticket_display_id, :value => @account.get_max_display_id, :class => "number very_small" %>
+			<div class="info_data">The next ticket ID counter will start with the value (most likely should be greater than the last ticket ID created) specified below. This affects tickets created henceforth.</div>
+		 </li>
 	  </ul>
+	  <div class="button-container">
+			<%= submit_tag 'Save', :class => 'fdbutton' %>
+	  		<%= link_to "Cancel", admin_home_path , :class => "fdbutton grey" %>
+	  </div>
 	<% end %>
 </div>

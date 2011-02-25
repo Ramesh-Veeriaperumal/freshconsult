@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
     	<%unless current_account.fav_icon.nil?%>
-			<link rel="shortcut icon" href="<%=current_account.fav_icon.content.url(:thumb)%>" />
+			<link rel="shortcut icon" href="<%=current_account.fav_icon.content.url(:fav_icon)%>" />
 		<% else %>
 			<link rel="shortcut icon" href="/images/favicon.ico" />
 		<% end %>
