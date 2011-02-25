@@ -3,11 +3,11 @@ ActionController::Routing::Routes.draw do |map|
   
   map.resources :customers
  
-  map.resources :contacts, :collection => { :autocomplete => :get }
+  map.resources :contacts, :collection => { :autocomplete => :get } , :member => { :restore => :put}
   
   map.resources :groups
   
-  map.resources :agents, :member => { :delete_avatar => :delete }
+  map.resources :agents, :member => { :delete_avatar => :delete , :restore => :put }
 
   map.resources :sla_details
   
