@@ -10,7 +10,8 @@ class BusinessCalendar < ActiveRecord::Base
   
   belongs_to :account
   
-  attr_accessible :holidays
+  attr_accessible :holidays,:business_time_data
+  
   
   HOLIDAYS_JSON ='[{holidays: [Jan 01, Jan 26, Feb 14, Mar 31]}]'
   
@@ -36,6 +37,10 @@ class BusinessCalendar < ActiveRecord::Base
   
   def weekdays
     business_time_data[:weekdays]
+  end
+  
+  def fullweek
+    business_time_data[:fullweek]
   end
   
   def self.config

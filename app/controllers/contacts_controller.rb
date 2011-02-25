@@ -97,7 +97,7 @@ class ContactsController < ApplicationController
       if @obj.respond_to?(:deleted)
         if @obj.update_attribute(:deleted, true)
            @restorable = true
-           flash[:notice] = render_to_string(:partial => '/helpdesk/shared/flash/delete_notice') 
+           flash[:notice] = render_to_string(:partial => '/contacts/flash/delete_notice') 
            redirect_to redirect_url
          else
            render :action => 'show'
@@ -119,7 +119,7 @@ class ContactsController < ApplicationController
     @obj.update_attribute(:deleted, false)
     
     flash[:notice] = render_to_string(
-      :partial => '/helpdesk/shared/flash/restore_notice')
+      :partial => '/contacts/flash/restore_notice')
     redirect_to :back
   end
   

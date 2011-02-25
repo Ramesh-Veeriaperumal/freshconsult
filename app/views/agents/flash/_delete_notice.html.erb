@@ -1,0 +1,3 @@
+<%= "The agent has been deleted" %> . 
+
+<%= link_to('Undo', { :action => :restore, :ids => params[:ids] }, :method => :put ) if @restorable %>
