@@ -1,4 +1,29 @@
 <% content_for :layoutType do %>single<% end %>
+<%= javascript_include_tag "mColorPicker.min.js" %>
+<script type="text/javascript" charset="UTF-8">
+	jQuery.fn.mColorPicker.init.enhancedSwatches = false;
+	jQuery.fn.mColorPicker.init.allowTransparency = false;
+	jQuery.fn.mColorPicker.init.showLogo = false;
+	jQuery.fn.mColorPicker.defaults = {
+		 imageFolder: '../images/',
+		    swatches: [
+		      "#ffffff",
+		      "#ffff00",
+		      "#00ff00",
+		      "#00ffff",
+		      "#0000ff",
+		      "#ff00ff",
+		      "#ff0000",
+		      "#4c2b11",
+		      "#3b3b3b",
+		      "#000000"
+		    ]
+		  };
+	jQuery(document).ready(function(){ 
+			
+	}); 
+</script>
+
 <div class="header_area">
 	<h4>Rebrand your Help Desk</h4>
 </div>	
@@ -13,24 +38,39 @@
 		  <li>
 			<%= f.label :time_zone, "Time Zone" %>
 			<%= f.time_zone_select :time_zone, ActiveSupport::TimeZone.all %>
+		  </li>
 		  <li>
 		    <%= f.label :helpdesk_name, "Helpdesk Name" %>
-		    <%= f.text_field :helpdesk_name, :class => "text" %>
+		    <%= f.text_field :helpdesk_name, :class => "color", :id => "headcolor" %>
 		  </li>
 		  <li>
 		    <%= f.label :helpdesk_url, "Helpdesk URL" %>
-		    <%= f.text_field :helpdesk_url, :class => "text" %>
+		    <%= f.text_field :helpdesk_url, :class => "color" %>
 		  </li>
 		  <% f.fields_for :preferences, @account.preferences do |p| %>
-        	<li class="small">
-        		<%= p.label :header_color, "Header Color" %>
-				<!-- :value =>  @account[:preferences].default(:header_color)  -->
-				<%= p.text_field :header_color %>
-         	</li>
-			<li class="small">
-        		<%= p.label :bg_color, "Background Color" %>
-				<!-- :value =>  @account[:preferences].default(:bg_color) -->
-				<%= p.text_field :bg_color %>
+        	<li>
+        		<table>
+        			<tr>
+        				<td>
+							<%= p.label :header_color, "Tab color" %>
+							<div class="color">
+								<input type="color" class="color_field" name="account[preferences][header_color]"  data-hex="true" value="<%= @account[:preferences].default(:header_color) %>"> 
+							</div>
+						</td>	
+        				<td>
+			        		<%= p.label :header_color, "Tab selected color" %>
+							<div class="color">
+								<input type="color" class="color_field" name="account[preferences][header_color_selected]"  data-hex="true" value="<%= @account[:preferences].default(:header_color_selected) %>"> 
+							</div>
+         				</td>						
+						<td>
+			        		<%= p.label :bg_color, "Background Color" %>
+							<div class="color"> 
+								<input type="color" class="color_field" name="account[preferences][bg_color]"  data-hex="true" value="<%= @account[:preferences].default(:bg_color) %>">
+							</div>	
+						</td>
+					</tr>
+				</table>
          	</li>
 		  <% end %>
 		  <li>

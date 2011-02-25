@@ -47,8 +47,8 @@ class AccountsController < Admin::AdminController
     
     
     if @account.save
-      flash[:notice] = "The account details has been updated."
-      redirect_to account_path
+      flash[:notice] = "Your account details have been updated."
+      redirect_to admin_home_path
     else
       render :action => 'edit'
     end
