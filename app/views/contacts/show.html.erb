@@ -1,12 +1,22 @@
 <% content_for :layoutType do -%>single bg_pulp<%-end %>
 
 <div class="page_area contactPage">
+	
 	<%= user_avatar(@user.avatar, :medium, "profile_pic") %>
 	<div class="contact_box">
+		<div>
+			<% if @user.deleted %>
+				<%= "This is a deleted contact" %>
+				<%= link_to('restore', { :action => :restore, :id => @user.id }, :method => :put ) %>
+			<% end %>
+			
+		</div>
+		
 		<div class="floatr">
 			<%= link_to 'Edit', edit_contact_path(@user), :class => "fdbutton grey" %>
 			<%= link_to('Delete', {:controller => "contacts", :action => "destroy", :id => @user} , :method => 'delete', :confirm => 'Are you sure you want to delete this contact?', :class => "fdbutton red") unless @user == current_user %>		
 		</div> 
+		
 		<h4 class="info_title"><%= @user.display_name %></h4>
 		<% unless @user.job_title.blank? %>
 		   <b><%= h @user.job_title %></b>
