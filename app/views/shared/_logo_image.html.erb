@@ -13,7 +13,7 @@
 <%= label(:account, :logo, "Logo") %>
 <% if(account.logo) %>				
 	<div class="profile_pic" id="LogoPic">
-		<%= image_tag account.logo.content.url(:medium) %>
+		<%= image_tag account.logo.content.url(:logo) %>
 	</div>
 	<div id="LogoInput" style="display:none;">
 		<% fields_for "account[logo_attributes]", account.logo do |logo_form| %>					
