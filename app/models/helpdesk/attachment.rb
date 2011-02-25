@@ -11,7 +11,8 @@ class Helpdesk::Attachment < ActiveRecord::Base
     :url => "/:class/:id",
     :styles => { 
         :medium => "127x177>", 
-        :thumb  => "50x50#" 
+        :thumb  => "50x50#",
+        :logo   => "x50>"
     }
     #:bucket => 'fdesk-attachments'
     

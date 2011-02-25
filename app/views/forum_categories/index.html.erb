@@ -2,7 +2,7 @@
 
 <% @monitoring = logged_in? && !Monitorship.count(:id, :conditions => ['user_id = ? and active = ?', current_user.id, true]).zero? %>
 <div>
-	<div class="header_area">
+	<div class="header_area no_padding">
 		<div class="right_panel">
 			<% if admin? %>
 	  			<%= link_to '<img src="/images/add.png" /> New Forum Category'[:create_new_category], new_category_path, :class => "fdbutton" %>

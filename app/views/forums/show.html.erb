@@ -32,8 +32,8 @@
   			    <%= '{count} post(s)'[(count=@forum.posts.size)==1 ? :post_count : :posts_count, number_with_delimiter(count)] %>
 			</div>
 		</div>
-		<%= link_to("Forums →"[:forums_category], categories_path, :class => "page_title") %>
-		<%= link_to( "#{@forum_category.name} →", category_path, :class => "page_title") %>
+		<%= link_to("Forums &rarr;"[:forums_category], categories_path, :class => "page_title") %>
+		<%= link_to( "#{@forum_category.name} &rarr;", category_path(@forum_category), :class => "page_title") %>
 		<div>
 			<strong class="page_title"><%= h @forum.name %></strong>
 			<div><%= @forum.description %></div>

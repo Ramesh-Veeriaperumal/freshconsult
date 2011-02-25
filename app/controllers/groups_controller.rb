@@ -1,4 +1,4 @@
-class GroupsController < Admin::AutomationsController
+class GroupsController < Admin::AdminController
    
   def index
     

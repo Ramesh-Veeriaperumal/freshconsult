@@ -1,6 +1,29 @@
 <% javascript_tag do %>
 	HolidayList = $H();
 	
+	setFullWeek = function( fullweek ){ 
+		jQuery("#SpecificHoursDiv").toggle( (fullweek === "false") );
+	}
+	
+	addHolidaytoList = function(month_date, name){
+		if( !HolidayList.get( month_date ) ){
+			HolidayList.set( month_date, name );
+			jQuery("#HolidayValidation").hide();
+			jQuery("#HolidayList")
+				.append("<li month_date= "+month_date+"><a href='javascript:void(0)' class='close'></a>"+month_date+" - " + name +"</li>");
+		}else{
+			jQuery("#HolidayValidation").show();
+		}
+	}
+	
+	addHoliday = function(){
+		var month = jQuery("#holiday_date_2i option:selected").text();
+		var date  = jQuery("#holiday_date_3i").val();
+		var name  = jQuery("#holiday_name").val();
+		month_date = month + " " + date;
+		addHolidaytoList(month_date, name);
+	}
+	
 	jQuery(document).ready(function(){
 		jQuery("#BusinessHours")
 			.submit(function(){
@@ -17,7 +40,7 @@
 				  	holidays_array.push([pair.key, pair.value]);
 				}); 
 				
-				jQuery("#business_calenders_holidays").val(holidays_array.toJSON());
+				jQuery("#business_calenders_holidays").val( holidays_array.toJSON() );
 				
 				//return false;
 			});
@@ -28,35 +51,12 @@
 			holiday.remove();
 		});
 		
-		jQuery("input.radio").change(function(){ 
-			if(this.value == "specify"){
-				jQuery("#SpecificHoursDiv").show();
-				jQuery("#business_calenders_fullweek").val(false);
-			}else{
-				jQuery("#SpecificHoursDiv").hide();
-				jQuery("#business_calenders_fullweek").val(true);
-			}
+		jQuery("input:radio").change(function(){ 
+			setFullWeek(this.value); 
 		});	
 	});
 	
-	addHolidaytoList = function(month, date, name){
-		var month_date = month + " " + date; 
-		if( !HolidayList.get( month_date ) ){
-			HolidayList.set( month_date, name );
-			jQuery("#HolidayValidation").hide();
-			jQuery("#HolidayList")
-				.append("<li month_date= "+month_date+"><a href='javascript:void(0)' class='close'></a>"+month+" "+date+" - " + name +"</li>");
-		}else{
-			jQuery("#HolidayValidation").show();
-		}
-	}
 	
-	addHoliday = function(){
-		var month = jQuery("#holiday_date_2i option:selected").text();
-		var date  = jQuery("#holiday_date_3i").val();
-		var name  = jQuery("#holiday_name").val();
-		addHolidaytoList(month, date, name);
-	}
 	 
 	
 <% end %>
@@ -71,17 +71,21 @@
 			<label>Helpdesk Hours</label>			
 		</li>
 		<li>
-			<%= hidden_field "business_calenders", "fullweek" %>
 			<table class="business_time">
 				<tr>
 					<td width="35%">
-						<label><input type="radio" name="workday" class="radio" value="24_7" /> 24 x 7 </label>
+						<label>
+							<%= f.radio_button :fullweek, true %> 24 x 7
+						</label>
 					</td>
 				</tr>
 				<tr>
 					<td>
-						<label><input type="radio" name="workday" class="radio" value="specify" checked="checked" /> Specific Working Hours</label>
-						<div class="specific_hours" id="SpecificHoursDiv">
+						<label>
+							<%= f.radio_button :fullweek, false %> Specific Working Hours
+						</label>
+						<% display_week = (@business_calendars.business_time_data[:fullweek] == "false") ? 'block':'none' %>
+						<div class="specific_hours" id="SpecificHoursDiv" style="display:<%=display_week%>"  >
 							<div class="timerange">
 								<%= f.text_field :beginning_of_workday, :class => "time" %>
 								<strong>to </strong>
@@ -94,7 +98,7 @@
 								<% weekday_human_list.each_index do |days_index| %>
 									<label>
 										<% cal_index = ( days_index != 6 ) ? (days_index+1) : 0 %>
-										<% checked = weekdays.include?(cal_index) %>	 
+										<% checked = weekdays.include?(cal_index.to_s()) %>
 										<%= check_box_tag ( weekday_human_list[days_index], cal_index, checked )  %><%= weekday_human_list[days_index] %>
 									</label>
 								<% end %>
@@ -103,7 +107,7 @@
 						</div>
 					</td>
 				</tr>
-			</table>
+			</table> 
 	    </li>		
 		<li class="seperator"></li>					
 		<li>
@@ -111,10 +115,14 @@
 					
 			<table>
 				<tr>
-					<td width="60%">
-						<ul class="nobullets holidaylist" id="HolidayList"> 
-						</ul> 
+					<td width="60%" class="holidaylist">
 						<%= f.hidden_field :holidays %>
+						<ul class="nobullets" id="HolidayList"></ul>
+						<% javascript_tag do %>
+							<% @business_calendars.holidays.each do |holiday| %>
+								addHolidaytoList("<%=holiday[0]%>", "<%=holiday[1]%>");
+							<% end %>	
+						<% end %>
 					</td>
 					<td class="borderleft">
 						<%= date_select("holiday", "date", { :order => [:month, :day], :use_short_month => true } ) %>
@@ -128,7 +136,7 @@
 			</table>	
 		</li>
 	</ul>
-	<div class="button-container">
+	<div>
 		<%= f.submit "Save", :class => "fdbutton" %>
 		<%= link_to "Back", "/admin/home", :class => "fdbutton grey" %>
 	</div>

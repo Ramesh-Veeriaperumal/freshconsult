@@ -1,8 +1,15 @@
 <li>
 	<h4 class="forum_title">
-		<span class="forum_type forum_<%= forum.forum_type %>"><%= forum.type_name %></span>
+		<% if logged_in? && admin? -%>
+		<div class="item_actions">
+			<%= link_to ("New Topic", new_category_forum_topic_path(category, forum), :class=> "highlight") %> | 
+			<%= link_to 'edit' , edit_category_forum_path(category, forum)  %> |
+			<%= link_to('delete', category_forum_path(category, forum), :method => 'delete', :confirm => 'Are you sure you want to delete this folder' ) %>
+		</div>
+		<% end %>
 		<%= link_to ( h(forum.name), category_forum_path(category, forum), :class => "title" )  %>
 		<span class="subcounter">(<%= content_tag(:span, forum.topics.size, :class => "sub_counter") %>)</span>
+		<span class="forum_type forum_<%= forum.forum_type %>"><%= forum.type_name %></span>
 	</h4>
 	<div class="topic_list">
 		<% unless (forum.topics.size == 0) %>
