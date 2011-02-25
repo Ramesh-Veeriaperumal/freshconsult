@@ -9,6 +9,15 @@
 		jQuery('input[name=user_role]').attr('checked', (current_role=='admin'));
 	});	
  </script> 
+ <div>
+ 	
+		<% if @agent.user.deleted %>
+				<%= "This is a deleted Agent" %>
+				<%= link_to('restore', { :action => :restore, :id => @agent.id }, :method => :put ) %>
+		<% end %>
+	
+</div>
+ 
  <% fields_for "users", @agent.user do |usr| %>
      <%= error_messages_for :user %> 
  	<ul class="ui-form">

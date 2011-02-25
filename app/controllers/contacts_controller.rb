@@ -146,6 +146,8 @@ protected
       current_account.contacts
   end
   
+  
+  
   def authorized?
       (logged_in? && self.action_name == 'index') || admin?
   end
@@ -159,7 +161,7 @@ protected
  end
  
   def load_object
-      @obj = self.instance_variable_set('@user',  scoper.find(params[:id]))
+      @obj = self.instance_variable_set('@user',  current_account.all_contacts.find(params[:id]))      
   end
   
   
