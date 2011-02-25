@@ -206,6 +206,7 @@ class Helpdesk::TicketsController < ApplicationController
       @item.subject = @topic.title
       @item.description = @topic.posts.first.body
       @item.source = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:forum]
+      @item.requester = @topic.user
     end
   end
  
