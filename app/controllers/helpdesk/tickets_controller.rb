@@ -205,6 +205,7 @@ class Helpdesk::TicketsController < ApplicationController
       @topic = Topic.find(params[:topic_id])
       @item.subject = @topic.title
       @item.description = @topic.posts.first.body
+      @item.source = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:forum]
     end
   end
  

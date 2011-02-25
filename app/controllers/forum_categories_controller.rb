@@ -1,6 +1,10 @@
 class ForumCategoriesController < ApplicationController
   include ModelControllerMethods
   
+  before_filter :except => [:index, :show] do |c| 
+    c.requires_permission :manage_forums
+  end
+  
   before_filter :set_selected_tab
   
   def index
