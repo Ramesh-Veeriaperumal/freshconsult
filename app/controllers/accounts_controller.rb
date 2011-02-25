@@ -16,7 +16,7 @@ class AccountsController < Admin::AdminController
   def new
     # render :layout => 'public' # Uncomment if your "public" site has a different layout than the one used for logged-in users
   end
-  
+ 
   def create
     @account.affiliate = SubscriptionAffiliate.find_by_token(cookies[:affiliate]) unless cookies[:affiliate].blank?
 
@@ -41,10 +41,11 @@ class AccountsController < Admin::AdminController
     @account.helpdesk_name = params[:account][:helpdesk_name]
     @account.helpdesk_url = params[:account][:helpdesk_url] 
     @account.preferences = params[:account][:preferences]
+    @account.ticket_display_id = params[:account][:ticket_display_id]
    
     update_logo_image  
     update_fav_icon_image
-    
+      
     
     if @account.save
       flash[:notice] = "Your account details have been updated."
