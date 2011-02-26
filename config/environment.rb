@@ -89,4 +89,6 @@ Rails::Initializer.run do |config|
 
 end
 
+ActiveRecord::ConnectionAdapters::MysqlAdapter::NATIVE_DATABASE_TYPES[:primary_key] = "BIGINT UNSIGNED DEFAULT NULL auto_increment PRIMARY KEY"
+
 
