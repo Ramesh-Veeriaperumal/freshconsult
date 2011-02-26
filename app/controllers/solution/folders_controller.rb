@@ -1,5 +1,9 @@
 class Solution::FoldersController < ApplicationController
+  before_filter :except => [:index, :show] do |c| 
+    c.requires_permission :manage_knowledgebase
+  end
   before_filter :set_selected_tab
+  
   def index    
     @folders = Solution::Folder.all
     print @folders
@@ -37,8 +41,9 @@ class Solution::FoldersController < ApplicationController
 
   def create 
     
-    @folder = Solution::Folder.new(params[nscname]) 
     
+    @folder = Solution::Folder.new(params[nscname]) 
+    @folder.category_id = params[:category_id]
     redirect_to_url = solution_category_url(params[:category_id])
     redirect_to_url = new_solution_category_folder_path(params[:category_id]) unless params[:save_and_create].nil?
    

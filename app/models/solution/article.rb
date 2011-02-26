@@ -20,7 +20,7 @@ class Solution::Article < ActiveRecord::Base
    
    after_create :create_activity
 
-  attr_protected :attachments
+  attr_accessible :title,:description,:status,:status,:art_type,:is_public
     
   has_many :tag_uses,
     :as => :taggable,

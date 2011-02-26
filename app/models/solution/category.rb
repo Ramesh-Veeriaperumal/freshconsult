@@ -7,4 +7,7 @@ class Solution::Category < ActiveRecord::Base
    set_table_name "solution_categories"
    
    has_many :folders, :class_name =>'Solution::Folder' , :dependent => :destroy
+   
+   attr_accessible  :name,:description
+   
 end

@@ -1,6 +1,11 @@
 class Solution::ArticlesController < ApplicationController
   
   before_filter :set_selected_tab
+  
+  before_filter :except => [:index, :show] do |c| 
+    c.requires_permission :manage_knowledgebase
+  end
+  
   uses_tiny_mce :options => Helpdesk::EDITOR_OPTIONS 
   
   def index
@@ -154,7 +159,7 @@ protected
     
     @article.user ||= current_user if (@article.respond_to?('user=') && !@article.user_id)
     
-    @article.account_id ||= current_account.id if (@article.respond_to?('account_id='))
+    @article.account ||= current_account
     
   end
   

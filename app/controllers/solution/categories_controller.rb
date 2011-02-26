@@ -1,6 +1,11 @@
 class Solution::CategoriesController < ApplicationController
   
+  before_filter :except => [:index, :show] do |c| 
+    c.requires_permission :manage_knowledgebase
+  end
+  
   before_filter :set_selected_tab
+  
   def index
     
      @categories = current_account.solution_categories.all
