@@ -7,6 +7,8 @@ class Agent < ActiveRecord::Base
   
   validates_presence_of :user_id
   
+  attr_accessible :signature
+  
   has_many :agent_groups ,:class_name => 'AgentGroup', :through => :user , :foreign_key =>'user_id', :source =>'agents'
   
   def self.technician_list account_id
