@@ -1,6 +1,8 @@
 class EmailNotification < ActiveRecord::Base
   belongs_to :account
   
+  validates_uniqueness_of :notification_type, :scope => :account_id
+  
   #Notification types
   NEW_TICKET = 1
   TICKET_ASSIGNED_TO_GROUP = 2

@@ -1,12 +1,5 @@
-
-
-<div class="pageContent">
-	<div class="crumbs">
-		<%= link_to "Back to Forums"[:forums_title], forums_path, :class => "nav_older" %> 
-	</div>
-	
+<div class="page_area">
 	<h3 class="content_title"><%= 'New Forum'[:new_forum] %></h3>
-	
 	<% form_for :forum, :url => category_forums_path(@forum_category) do |f| -%>
 		<%= render :partial => "form", :object => f %>
 		<%= submit_tag 'Create'[], { :class => "fdbutton" } -%> 

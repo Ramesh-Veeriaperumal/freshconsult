@@ -1,9 +1,9 @@
 <% content_for :layoutType do%>single<% end %> 
 <div>
 	  <div class="header_area">
-	 	<%= link_to "Solutions ?", solution_categories_path, :class => "page_title" %>
-		<%= link_to @article.folder.category.name+" ?", solution_category_path(@article.folder.category), :class => "page_title" %>
-		<%= link_to @article.folder.name+" ?", solution_category_folder_path(@article.folder.category_id, @article.folder), :class => "page_title" %>
+	 	<%= link_to "Solutions &rarr;", solution_categories_path, :class => "page_title" %>
+		<%= link_to @article.folder.category.name+" &rarr;", solution_category_path(@article.folder.category), :class => "page_title" %>
+		<%= link_to @article.folder.name, solution_category_folder_path(@article.folder.category_id, @article.folder), :class => "page_title" %>
 	  </div> 
 	  <div class="page_area bg_pulp solution_title">
 		    <div class="floatr">

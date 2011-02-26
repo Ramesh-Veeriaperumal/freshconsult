@@ -186,13 +186,11 @@ body {
 }
 
 .logo{
-	width:55px;
-	height:55px;
+	@include clearfix; 
 	float:left;
-	margin-right:8px;
+	margin:0px 8px 4px 0px;
 	img{
-		width:100%;
-		height:100%;
+		
 	}
 }
 
@@ -1267,7 +1265,6 @@ div.leader-right{
 }
 
 .forum_type{
-	float:right;
 	font-size:10px;
 	padding:5px;
 	background:#efefef;
@@ -2855,18 +2852,25 @@ $lightBase:lighten($base, 5%);
 		}
 	}
 	.holidaylist{
-		color:#444444;
-		li{
-			position:relative;
-			margin-right:20px;
-			
-			.close{
-				position:absolute;
-				background:url(../images/icons/btn_close_icon.png) no-repeat;
-				width:18px;
-				height:18px;
-				right:6px;
-				top:0px;
+		padding-left:0px;
+		ul{
+			color:#444444;
+			@include clearfix;
+			background-color:lighten($color_pulp, 5%);
+			padding:10px 5px 5px 10px;
+			margin:0px;
+			@include corners(6px);
+			li{
+				position:relative;
+				margin-right:20px; 
+				.close{
+					position:absolute;
+					background:url(../images/icons/btn_close_icon.png) no-repeat;
+					width:18px;
+					height:18px;
+					right:6px;
+					top:0px;
+				}
 			}
 		}
 	}

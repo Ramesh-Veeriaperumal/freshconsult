@@ -1,12 +1,8 @@
-<div class="crumbs">
-  <%= link_to 'Forums'[:forums_title], category_forum_path(@forum.forum_category_id,@forum.id) %> <span class="arrow">&rarr;</span>
+<div class="page_area">
+	<h3 class="content_title"><%= 'Edit Forum'[:edit_forum] %></h3>
+	<% form_for :forum, :url => category_forums_path(@forum_category) do |f| -%>
+		<%= render :partial => "form", :object => f %>
+		<%= submit_tag 'Save Forum'[], { :class => "fdbutton" } -%> 
+		<%= link_to('Cancel'[:cancel], category_path(@forum_category), :class => "fdbutton grey" ) -%>
+	<% end -%>
 </div>
-
-<h1><%= 'Edit Forum'[:edit_forum] %></h1>
-
-<% form_for @forum,
-     :url  => forum_path(@forum),
-     :html => { :method => :put } do |f| -%>
-<%= render :partial => "form", :object => f %>
-<%= submit_tag 'Save Forum'[:save_forum] -%> or <%= link_to('Cancel'[:cancel], category_forum_path(@forum.forum_category_id,@forum.id)) %>
-<% end -%>

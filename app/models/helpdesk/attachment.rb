@@ -10,8 +10,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
     :path => "/data/helpdesk/attachments/:id/:style/:filename",
     :url => "/:class/:id",
     :styles => Proc.new  { |attachment| attachment.instance.attachment_sizes }
-    
-    #:bucket => 'fdesk-attachments'
+   #:bucket => 'fdesk-attachments'
     
   before_post_process :image?
     
