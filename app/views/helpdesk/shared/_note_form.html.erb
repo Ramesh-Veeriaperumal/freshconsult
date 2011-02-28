@@ -12,55 +12,29 @@
 <div class="request_panel" id="<%=cntid%>" style="display:none"> 
   <!--h5 datafor="note" id="note_form_name">&nbsp;Add a note to this conversation</h5>
   <h5 datafor="edit_note">&nbsp;Edit this note </h5-->
-  <span class="seperator"></span>
   <% form_for note, :html => {:multipart => true } do |f| %>
     <%= f.error_messages %>
-	<table class="note_form">
-    	<!--tr datafor="email" style="display:none">
-			<td>
-				<%= f.label(:body, "Enter your message:") if local_assigns[:label] %>
-    			<%= f.hidden_field :private %>
-				<%= debug Helpdesk::Note::SOURCE_KEYS_BY_TOKEN%>
-			</td>
-			
-		</tr-->
-		<tr>
-			<td><%= f.label(:body, "Enter your message:") if local_assigns[:label] %></td>
-			<td> 
-				<%= f.text_area :body, { :class => 'expando', :id => "#{id}-#{cntid}-body" , :value => @signature} %>
-			</td>
-    	</tr>
-	
-		<!--tr datafor="note" id="note_public_check_box" style="display:none">
-			<td></td>
-			<td>
-				<label><input type="checkbox" class="checkbox" />Requester can view this note (public note)</label>
-				<br />
-			</td>
-		</tr-->	
-		<tr>
-			<td><%= f.check_box :private %> </td>
-			<td>
-				<%= f.label(:private, "make this note private") %>
-		    </td>
-			
-			<%=f.hidden_field :source , :value=>Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"]%>	
-		</tr>
-		
-		<tr width="70px">
+	<ul class="ui-form">
+		<li>
+			<h3 class="title">Add a Note</h3>
+		</li>
+		<li class="checkbox">
+			<%= f.check_box :private, :checked => false %>
+			<%= f.label(:private, "This is a private note, don't show this to the requester") %>
+			<%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"]%>	
+		</li>	
+		<li>
+			<%= f.label(:body, "Enter your message:") if local_assigns[:label] %> 
+			<%= f.text_area :body, { :class => 'expando', :id => "#{id}-#{cntid}-body" , :value => @signature} %>
+    	</li>	
+		<li class="attachment-options"  id="attachment-options">
 			<% unless local_assigns[:no_attachments] %>
-			<td class="attachment-options"  id="attachment-options">
-		        
-		    </td>
-			<td> 
-				<%= render :partial => "/helpdesk/shared/attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note" } %>
-			</td>
+			<%= render :partial => "/helpdesk/shared/attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note" } %>
 		    <% end %>
-		</tr>
-	</table>
-	<span class="seperator"></span>
- 	<div class="alignright">
-      <%= submit_tag(local_assigns[:submit] || ActiveSupport::Inflector.titleize(id), :class => "fdbutton") %>
-    </div>      
+		</li>
+		<li class="alignright">
+	      <%= submit_tag(local_assigns[:submit] || ActiveSupport::Inflector.titleize(id), :class => "fdbutton") %>
+	    </li>
+	</ul> 
   <% end %>
 </div> 

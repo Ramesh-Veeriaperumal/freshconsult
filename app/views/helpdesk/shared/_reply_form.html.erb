@@ -10,10 +10,13 @@
     });
   <% end %>
 <% end %>
-<div class="request_panel" id="<%=cntid%>" style="display:none">
+<div class="request_panel" id="<%=cntid%>" style="display:none;">
   <% form_for note, :html => {:multipart => true } do |f| %>
     <%= f.error_messages %>
 	<ul class="ui-form">
+		<li>
+			<h3 class="title">Reply to the conversation</h3>
+		</li>
     	<li datafor="email" style="display:block">
 			<%= f.label(:reply_email, "Send the reply from the following email id") %>
 			<%= select :reply_email, :id, options_for_select(@reply_email, @ticket.reply_email) %>
@@ -34,7 +37,7 @@
 		
 		<!-- reply will be always public -->
 		
-		<%=f.hidden_field :private , :value=>false%>
+		<%=f.hidden_field :private , :value => false %>
 		
 		<!--reply source will be always email-->			
 		
@@ -45,9 +48,10 @@
 			<%= render :partial => "/helpdesk/shared/attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note" } %>
 		    <% end %>
 		</li>
+		<li class="alignright">
+      		<%= submit_tag(local_assigns[:submit] || ActiveSupport::Inflector.titleize(id), :class => "fdbutton") %>
+    	</li>      
 	</ul>
- 	<div class="alignright">
-      <%= submit_tag(local_assigns[:submit] || ActiveSupport::Inflector.titleize(id), :class => "fdbutton") %>
-    </div>      
+ 	
   <% end %>
 </div>

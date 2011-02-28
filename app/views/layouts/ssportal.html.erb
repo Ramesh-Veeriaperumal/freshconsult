@@ -9,15 +9,20 @@
         <!--[if IE]>
             <link rel="stylesheet" href="/stylesheets/ie.css" type="text/css" media="screen, projection" />
         <![endif]--> 
+		
+		<%= render :partial => "shared/theme.css"  %>
 		 
 		<%= javascript_include_tag :defaults  %>
 		<%= javascript_include_tag "jquery-1.4.4.min.js" %>
-		<%= javascript_include_tag "jquery.overlabel.min.js" %> 
+		<%= javascript_include_tag "jquery.overlabel.min.js" %>
+		<%= javascript_include_tag "jquery.validate.min.js" %>
 		
  		<script type="text/javascript">
  			var jQ = jQuery.noConflict(); 
 			jQuery(document).ready(function() {
 			    jQuery("label.overlabel").overlabel();
+				jQuery("ul.ui-form").parents('form:first').validate();
+				jQuery("div.ui-form").find('form').validate();
 			});
 		</script>
     	<%= yield :head %>
@@ -25,7 +30,6 @@
     <body class="<%= yield :layoutType %>">   
         <div id="wrap" class="container">
             <%= render(:partial => '/layouts/shared/header') %>
-			
             <div class="content">  
 				<span class="ltShadow"></span>
         		<span class="rtShadow"></span> 

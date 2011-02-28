@@ -82,10 +82,10 @@
 			<%= render :partial => "/shared/fav_image", :locals => { :account => @account } %>
 			<span class="seperator"></span>
 		 </li>
-		 <li class="small">
+		 <li>
 		    <%= f.label :ticket_display_id, "Next Ticket ID #" %>
-			<%= f.text_field :ticket_display_id, :value => @account.get_max_display_id, :class => "number very_small" %>
-			<div class="info_data">The next ticket ID counter will start with the value (most likely should be greater than the last ticket ID created) specified below. This affects tickets created henceforth.</div>
+			<div class="info_data">The next ticket ID counter will start with this number (Should be greater than the last ticket ID created). This affects tickets created henceforth.</div>
+			<%= f.text_field :ticket_display_id, :value => @account.get_max_display_id, :class => "number very_small" %>			
 		 </li>
 	  </ul>
 	  <div class="button-container">

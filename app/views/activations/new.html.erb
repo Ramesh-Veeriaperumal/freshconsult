@@ -1,8 +1,10 @@
-<h1>Activate your account</h1>
-
-<% form_for @user, :url => activate_path(@user.id), :html => { :method => :post } do |form| %>
-	<%= form.error_messages %>
-	<br />
-	<%= render :partial => "form", :locals => { :form => form }%>
-	<%= form.submit "Activate" %>
-<% end %>
+<% content_for :layoutType do -%>clean<%-end%>
+<div class="ui-form">
+	<h3 class="title">Activate your account</h3>
+	<span class="seperator"></span>
+	<% form_for @user, :url => activate_path(@user.id), :html => { :method => :post } do |form| %>
+		<%= form.error_messages %>
+		<%= render :partial => "form", :locals => { :form => form }%>
+		<%= form.submit "Activate", :class => "fdbutton" %>
+	<% end %>
+</div>

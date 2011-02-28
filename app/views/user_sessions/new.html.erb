@@ -1,12 +1,13 @@
-<% content_for :layoutType do%>single<% end %>
-<div class="pageContent">		
+<% content_for :layoutType do -%>clean<%- end %>
+<div class="ui-form ui-login">
 	<% form_for @user_session, :url => user_session_path do |f| %>
 	  <%= f.error_messages %>
-	  <ul class="ui-form ui-login">
-	  	<h2>Login</h2>
+	  <h3 class="title">Login</h3>
+	  <span class="seperator"></span>
+	  <ul>
 	  	<li class="largefield">
 	  		<%= f.label :email %>
-	  		<%= f.text_field :email, :class => "text" %>
+	  		<%= f.text_field :email, :class => "required text" %>
 		</li>
 		<li class="largefield">
 	  		<%= f.label :password %>

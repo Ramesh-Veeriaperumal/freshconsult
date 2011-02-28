@@ -1,12 +1,18 @@
-<%= form.label :name, "Your nick name" %><br />
-<%= form.text_field :name %><br />
-<br />
-<label>You will be signing in with</label>
-<br />
-<label><%= "Email <strong>#{@user.email}</strong>" %></label>
-<br />
-<%= form.label :password, "Set your password" %><br />
-<%= form.password_field :password %><br />
-<br />
-<%= form.label :password_confirmation %><br />
-<%= form.password_field :password_confirmation %><br />
+<ul>
+	<li>
+		<%= form.label :name, "Enter a nick name" %>
+		<%= form.text_field :name %>
+	</li>
+	<li>
+		<label>You will be signing in with</label>
+		<label><%= "<strong>#{@user.email}</strong>" %></label>
+	</li>
+	<li class="small">
+		<%= form.label :password, "Set your password" %>
+		<%= form.password_field :password, :class => "password" %>
+	</li>
+	<li>
+		<%= form.label :password_confirmation %>
+		<%= form.password_field :password_confirmation %>
+	</li>
+</ul>
