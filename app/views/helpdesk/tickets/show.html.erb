@@ -4,24 +4,20 @@
 	<%= javascript_include_tag "helpdesk/expanding_textarea.js" %>
 	<%= javascript_include_tag "helpdesk/multifile.js" %>	
 	<% javascript_tag do %>
-		swapEmailNote = function(action)
+		swapEmailNote = function(action, link)
 		{
 			if (action == "reply")
 			{
 				jQuery('#cnt-note').css("display", "none");
 				jQuery('#cnt-reply').css("display", "block");
-				
-			
 			}
 			else
 			{
-			
 				jQuery('#cnt-reply').css("display", "none");
 				jQuery('#cnt-note').css("display", "block");
-			
-			
 			}
-		
+			link.addClassName('active');
+			link.siblings().each(function(l){ l.removeClassName('active'); });
 		}
 		Helpdesk.swapEmailNote = function(cls, private, submit, link, id){
 			var el = $(id);
@@ -90,6 +86,10 @@
 			jQuery(this).parent().find(".active").removeClass("active");
 			jQuery(this).addClass("active");
 		});
+		
+		<% if @ticket.notes.visible.exclude_source('meta').newest_first.blank? then %>
+			jQuery("#ReplyButton").trigger('click');
+		<% end %>
 		
 		
 		jQuery(window).scroll(function(){
@@ -204,7 +204,7 @@
 					</div>
 					
 		        </div>
-		        <div id="description-full" style="display:block" class="details">
+		        <div id="description-full" style="display:block" class="details min_height">
 			    	<%= RedCloth.new(auto_link(@ticket.description, :all, :target => "_blank")).to_html %>
 			    </div> 
 			</div>
@@ -233,8 +233,8 @@
 				<%# link_to("This is not spam", unspam_helpdesk_ticket_path(@ticket), :method => :put, :class => "button" ) if @ticket.spam %>
 				<%# link_to("Mark as spam", spam_helpdesk_ticket_path(@ticket), :method => :put, :class => "button" ) unless @ticket.spam %>
 		<div class="alignright">
-			<%= link_to_function("Reply", "swapEmailNote('reply')", :class => 'fdbutton') if @item.requester %>	  
-			<%= link_to_function("Add Note", "swapEmailNote('note')", :class => 'fdbutton') %>		
+			<%= link_to_function("Reply",    "swapEmailNote('reply', this)", :class => 'fdbutton grey', :id => "ReplyButton") if @item.requester %>	  
+			<%= link_to_function("Add Note", "swapEmailNote('note', this)", :class => 'fdbutton grey') %>		
 		</div>
 		
 	

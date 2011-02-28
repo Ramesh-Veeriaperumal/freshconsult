@@ -2,24 +2,22 @@
 @import "base";
 @import "mixins";
 
-/*
-	Color Definitions
-*/
+/* Color Definitions */
+
 $color_pulp:#F3F1EC;
 
 a{
 	@include link-colors(#527EAA, #527EAA, #527EAA, #527EAA, #527EAA);
 }
 
-strong{
-	a{
-		@include link-colors(#999999, #527EAA, #527EAA, #527EAA, #527EAA);
-	}
-}
-
 a:hover{
 	text-decoration:none;
 }
+
+strong a{
+	@include link-colors(#999999, #527EAA, #527EAA, #527EAA, #527EAA);
+}
+
 .clearfix{
 	@include clearfix;
 }
@@ -88,6 +86,15 @@ body {margin:0; padding:0 10px 0 10px; border:0; height:100%; overflow-y:auto; }
 	.leftcontent{
 		margin-right:0px;
 		border-right:0px;
+	}
+}
+
+.clean {
+	.content, .header{
+		border:0px;
+	} 	
+	.content{
+		padding-top:20px;
 	}
 }
 
@@ -2083,7 +2090,7 @@ div.panel_area{
 
 
 .request_panel{
-	padding:0px 8px;
+	padding:0px 0px;
 	margin:5px 0px;
 	.ui-form{
 		background-color:lighten($color_pulp, 2%);
@@ -2452,17 +2459,24 @@ $lightBase:lighten($base, 5%);
 	margin:3px 0px;
 }
 
-.ui-form{ 
+div.ui-form ul{
+	padding:0px;
+}
+
+div.ui-form ul, ul.ui-form{ 
 	@include no-bullets; 
 	@include pie-clearfix;
-	padding:15px 15px 15px 15px;
 	margin:0px 0px 6px 0px;
+}
+
+.ui-form{
+	padding:15px 15px 15px 15px;
 	position:relative;
 	background-color: #F3F1EC;
 	@include corners(6px);
 	border-right:1px solid #dfdfdf;
 	border-bottom:1px solid #dfdfdf;
-	@include inset-shadows(#cfcfcf, 0px, 2px, 1px);
+	@include inset-shadows(#cfcfcf, 0px, 2px, 1px); 
 	li{
 		padding:0px 0px 5px 0px; 
 		margin:0px;
@@ -4491,4 +4505,9 @@ div.color{
 	span{
 		display:inline;
 	}
+}
+
+.private{
+	padding-left:20px;
+	background:url(../images/private_lock_grey.gif) no-repeat left;
 }

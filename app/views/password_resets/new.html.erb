@@ -1,15 +1,15 @@
-<div class="page_area">
+<% content_for :layoutType do -%>clean<%- end %>
+<div class="ui-form">
+	<h3 class="title">Forgot Password</h3>
+	<div>Fill out the form below and instructions to reset your password will be emailed to you</div>
+	<span class="seperator"></span>
 	<% form_tag password_resets_path do %>
-	<ul class="ui-form">
+	<ul>
 		<li>
-			<h2>Forgot Password</h2>
-			<div>Fill out the form below and instructions to reset your password will be emailed to you</div>
-		</li>	
-		<li>
-	  		<label>Your email address</label>
+	  		<label>Your email address *</label>
 	  		<%= text_field_tag "email", "", { :class => "required" } %>
 		</li>
-	  <%= submit_tag "Reset my password" %>
 	</ul>
+	<%= submit_tag "Reset my password", :class => "fdbutton" %>
 	<% end %>
 </div>

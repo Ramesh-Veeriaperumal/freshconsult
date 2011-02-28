@@ -97,7 +97,7 @@
 					<li>
 						<% if !logged_in? %>
 						  	<label>To verify you are human, plese type the given scrambled letters</label>
-						  	<%= recaptcha_tags %>
+						  	<%= recaptcha_tags :display => { :theme => "white" }  %>
 						<% end %>
 						<br />
 					</li>
