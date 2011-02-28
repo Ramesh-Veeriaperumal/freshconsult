@@ -227,7 +227,7 @@ class Account < ActiveRecord::Base
     def set_default_values
       self.time_zone = Time.zone.name if time_zone.nil? #by Shan temp.. to_s is kinda hack.
       self.helpdesk_name = name.titleize if helpdesk_name.nil?
-      self.preferences = HashWithIndifferentAccess.new({:bg_color => "#d4ebd4",:header_color => "#787878"})
+      self.preferences = HashWithIndifferentAccess.new({:bg_color => "#787878",:header_color => "#629462", :header_color_selected => "#5fa5d8"})
     end
     
     def create_admin
