@@ -16,7 +16,8 @@ class AccountsController < Admin::AdminController
   def new
     # render :layout => 'public' # Uncomment if your "public" site has a different layout than the one used for logged-in users
   end
- 
+  
+  
   def create
     @account.affiliate = SubscriptionAffiliate.find_by_token(cookies[:affiliate]) unless cookies[:affiliate].blank?
 
@@ -58,7 +59,12 @@ class AccountsController < Admin::AdminController
   def update_logo_image
     unless  params[:account][:logo_attributes].nil?
       if @account.logo.nil?
-        @account.build_logo(:content => params[:account][:logo_attributes][:content], :description => 'logo')
+        @logo_attachment = Helpdesk::Attachment.new
+        @logo_attachment.description = "logo"
+        @logo_attachment.content = params[:account][:logo_attributes][:content]
+        @logo_attachment.account_id = @account.id
+        @account.logo = @logo_attachment
+        #@account.build_logo( :description => 'logo' ,:content => params[:account][:logo_attributes][:content])
       else
         @account.logo.update_attributes(:content => params[:account][:logo_attributes][:content], :description => 'logo')
       end
@@ -68,7 +74,12 @@ class AccountsController < Admin::AdminController
   def update_fav_icon_image
     unless  params[:account][:fav_icon_attributes].nil?
       if @account.fav_icon.nil?
-        @account.build_fav_icon(:content => params[:account][:fav_icon_attributes][:content], :description => 'fav_icon')
+        @fav_attachment = Helpdesk::Attachment.new
+        @fav_attachment.description = "fav_icon"
+        @fav_attachment.content = params[:account][:fav_icon_attributes][:content]
+        @fav_attachment.account_id = @account.id
+        @account.fav_icon = @fav_attachment
+        #@account.build_fav_icon(:content => params[:account][:fav_icon_attributes][:content], :description => 'fav_icon')
       else
         @account.fav_icon.update_attributes(:content => params[:account][:fav_icon_attributes][:content], :description => 'fav_icon')
       end
