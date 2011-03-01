@@ -1,5 +1,6 @@
 class EmailNotification < ActiveRecord::Base
   belongs_to :account
+  attr_protected  :account_id
   
   validates_uniqueness_of :notification_type, :scope => :account_id
   

@@ -1,6 +1,8 @@
 class FlexifieldDef < ActiveRecord::Base
   
   belongs_to :account
+  
+  attr_protected  :account_id
 
   has_many :flexifield_def_entries, :class_name => 'FlexifieldDefEntry', :order => 'flexifield_order', :dependent => :destroy
   accepts_nested_attributes_for :flexifield_def_entries,
