@@ -97,8 +97,11 @@
 				</th>	
 				<th>	
 					<form class="sort">
+						<a href="javascript:void(0)" class="sort_order">
+							<img src="/images/spacer.gif" alt="Order by newest first" title="Order by newest first" onclick="jQuery(this).toggleClass('desending')" />
+						</a>
 					    Sort by 
-						<%= select_tag :sort, options_for_select(TicketsFilter::SORT_FIELD_OPTIONS, (params[:sort] || :due_by).to_sym) %>
+						<%= select_tag :sort, options_for_select(TicketsFilter::SORT_FIELD_OPTIONS, (params[:sort] || :due_by).to_sym) %> 
 					</form>
 				</th>
 			</tr>
