@@ -6,7 +6,9 @@ class TicketTopic < ActiveRecord::Base
     :class_name => 'Helpdesk::Ticket',
     :foreign_key => 'ticket_id'
     
+      
    validates_uniqueness_of :topic_id,:ticket_id
+   
    
    validates_presence_of :topic_id,:ticket_id
   

@@ -9,6 +9,8 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
   
   has_many :sla_details , :class_name => "Helpdesk::SlaDetail", :foreign_key => "sla_policy_id"
   
+  attr_accessible :name,:description,:is_default
+  
   accepts_nested_attributes_for :sla_details
   
 end

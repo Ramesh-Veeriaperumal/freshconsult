@@ -7,6 +7,7 @@ class Helpdesk::FormCustomizer < ActiveRecord::Base
    set_table_name "helpdesk_form_customizers"
    
    belongs_to :account
+   attr_protected  :account_id
      
    DEFAULT_FIELDS_JSON   = '[{"fieldType":"default", "type": "text",      "label": "Requester",   "description": "Enter requester name",      
                                                                                                   "choices": [],  "setDefault": 0, 

@@ -6,6 +6,8 @@ class Helpdesk::Subscription < ActiveRecord::Base
 
   belongs_to :user,
     :class_name => 'User'
+    
+  attr_protected :ticket_id, :user_id
 
   validates_uniqueness_of :ticket_id, :scope => :user_id
   validates_numericality_of :ticket_id, :user_id

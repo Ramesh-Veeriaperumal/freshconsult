@@ -11,7 +11,8 @@ class Helpdesk::Note < ActiveRecord::Base
     :dependent => :destroy
 
   attr_accessor :nscname
-  attr_protected :attachments, :notable_id
+  
+  attr_accessible :body,:private
 
   named_scope :newest_first, :order => "created_at DESC"
   named_scope :visible, :conditions => { :deleted => false } 

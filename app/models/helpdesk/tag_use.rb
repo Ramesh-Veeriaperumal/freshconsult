@@ -7,6 +7,7 @@ class Helpdesk::TagUse < ActiveRecord::Base
     :counter_cache => true
 
   belongs_to :taggable, :polymorphic => true
+  attr_protected :taggable_id, :taggable_type
 
   validates_uniqueness_of :tag_id, :scope => [:taggable_id, :taggable_type]
   validates_numericality_of :tag_id, :taggable_id
