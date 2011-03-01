@@ -1,4 +1,4 @@
-class AccountsController < Admin::AdminController
+class AccountsController < ApplicationController
   
   include ModelControllerMethods
   

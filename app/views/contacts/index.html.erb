@@ -1,6 +1,6 @@
-<% content_for :layoutType do%>single<% end %>
+<% content_for :layoutType do%>single bg_pulp<% end %>
 
-<div class="pageContent">
+<div>
 	<%= render(:partial => '/shared/companyheader', :locals => {:type => "user"}) %>
 	
 	<ul id="users" class="content_list contact_list">	  
@@ -28,10 +28,12 @@
 		  		<% unless contact.job_title.blank? %>
 		  			<b><%= h contact.job_title %></b>
 				<% else %>
-				   Working
+					<% unless contact.customer.blank? %>
+				   		Working
+					<% end %> 
 				<% end %>
 				<% unless contact.customer.blank? %>
-					at <%= link_to(h(contact.customer.name), contact.customer)  %>
+				   at <%= link_to(h(contact.customer.name), contact.customer)  %>
 				<% end %>
 			</div>
 		 </div>

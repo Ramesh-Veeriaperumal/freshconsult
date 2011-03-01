@@ -44,7 +44,7 @@ module TicketsFilter
     [ :due_by     ,   'Due by time',     "due_by ASC"  ],
     [ :created_asc,   'Date Created',    "created_at ASC"  ],
     [ :updated_asc,   'Last Modified',   "updated_at ASC"  ],
-    [ :priority   ,   'Priority',        "priority DESC"  ],
+    [ :priority   ,   'Priority',        "priority ASC"  ],
     [ :status,        'Status',          "status ASC"  ],        
   ]
 
