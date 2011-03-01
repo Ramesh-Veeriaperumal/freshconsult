@@ -14,10 +14,10 @@
 		  	<div><%= h user.email %></div>
 			<div><%= h user.phone %></div>
 		  	<%unless user.job_title.nil?%>
-		  	<div><%= h user.job_title %></div>
+		  		<div><%= h user.job_title %></div>
 			<%end%>
 			<%unless user.customer.nil? %>
-			at 	<%= link_to(h(user.customer.name), user.customer)  %>
+				at 	<%= link_to(h(user.customer.name), user.customer)  %>
 			<%end%>	      
 	    </li>	
 	  <% end %>	 

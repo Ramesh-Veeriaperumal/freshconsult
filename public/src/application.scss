@@ -93,9 +93,7 @@ body {margin:0; padding:0 10px 0 10px; border:0; height:100%; overflow-y:auto; }
 	.content, .header{
 		border:0px;
 	} 	
-	.content{
-		padding-top:20px;
-	}
+	
 }
 
 .bg_pulp #inner{
@@ -1041,11 +1039,6 @@ form.new_helpdesk_ticket{
 		@include inline-block-list;
 		clear:left;
 		.sort{
-			position:relative;
-			top:5px;
-			*{
-				float:left;			
-			}			
 			select{
 				width:130px;
 				margin:0px 6px;
@@ -1056,7 +1049,23 @@ form.new_helpdesk_ticket{
 
 .sort{
 	text-align:right;
-	padding: 3px 13px 3px 0px;
+	position:relative;
+	padding: 6px 40px 0px 0px;
+	.sort_order{
+		position:absolute;
+		right:0px;
+		top:0px;
+		img{
+			width:32px; height:32px;
+			@include sprite-background("../images/sort.gif", 32px, 32px);
+		}
+		.asending{
+			@include sprite-column(1, 32px);
+		}
+		.desending{
+			@include sprite-column(2, 32px);
+		}
+	}
 }
 
 .actions{
@@ -3347,11 +3356,9 @@ h5.category_title{
 
 
 .title_bar_grey{
-	@include clearfix;
-	background-color:#efefef;
+	@include clearfix; 
 	display:block;
-	padding:4px 10px 4px 4px;
-	@include corners(6px, 6px, 0px, 0px);
+	padding:4px 10px 4px 4px; 
 	h3.title{
 		color:#555;
 		font-weight:bold;
@@ -3367,9 +3374,7 @@ h5.category_title{
 	display:block;	
 	padding:3px;
 	margin:0px;
-	padding:0px 10px 8px 14px;	
-	background:#efefef;
-	
+	padding:0px 10px 8px 14px;
 	li{
 		float:left;
 		margin:0px;
@@ -3436,11 +3441,9 @@ h5.category_title{
 
 .admin_list, .content_list{
 	@include no-bullets;
-	margin:0px 0px;
+	margin:0px 3px;
 	padding:0px;
-	border:3px solid #efefef;
-	@include corners(0px, 0px, 6px, 6px);
-	border-top:0px;
+	
 	li{	
 		@include clearfix;
 		padding:8px 5px 8px 18px;
@@ -3509,7 +3512,7 @@ h5.category_title{
 		}
 	}
 	li:hover{
-		background:$color_pulp;  
+		background:lighten($color_pulp, 2%);  
 		div.item_actions{
 			visibility:visible;
 		}
@@ -4511,3 +4514,4 @@ div.color{
 	padding-left:20px;
 	background:url(../images/private_lock_grey.gif) no-repeat left;
 }
+

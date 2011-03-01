@@ -1,8 +1,7 @@
-<% content_for :layoutType do%>single<% end %>
+<% content_for :layoutType do%>single bg_pulp<% end %>
 
-<div class="pageContent">
+<div>
 	<%= render(:partial => '/shared/companyheader', :locals => {:type => "company"}) %>
-	
 	<ul id="companies" class="content_list">
 		<% @customers.each do |customer| %>
 		  <li class="<%= cycle('stripe', '') %>">		  	

@@ -1,7 +1,5 @@
-class Admin::BusinessCalendarsController < ApplicationController
-  
-  before_filter :set_selected_tab
-  
+class Admin::BusinessCalendarsController <  Admin::AdminController  
+   
   def index
     @business_calendars = BusinessCalendar.find(:first ,:conditions =>{:account_id => current_account.id})    
     logger.debug "@business_calendars :: index: business_time_data #{@business_calendars.business_time_data.inspect} \n and holidays:: #{@business_calendars.holiday_data.inspect}"
@@ -11,19 +9,7 @@ class Admin::BusinessCalendarsController < ApplicationController
       format.xml  { render :json => @business_calendars }
     end
   end
-
-  def show
-  end
-
-  def new
-  end
-
-  def edit
-  end
-
-  def create
-  end
-
+ 
   def update
     
    
@@ -33,7 +19,7 @@ class Admin::BusinessCalendarsController < ApplicationController
     
     business_time = Hash.new
     
-    business_time[:beginning_of_workday] = params[:business_calenders][:beginning_of_workday]
+    business_time[:beginning_of_workday] = params[:business_calenders][:beginning_of_workday] 
     business_time[:end_of_workday] =  params[:business_calenders][:end_of_workday]
     business_time[:weekdays] = weekdays.map {|i| i.to_i}
     business_time[:fullweek] = false
@@ -42,7 +28,7 @@ class Admin::BusinessCalendarsController < ApplicationController
        business_time[:fullweek] = true
        business_time[:beginning_of_workday]="12:00 am"
        business_time[:end_of_workday] = "12:00 am"
-    end
+    end 
     
     @business_cal = BusinessCalendar.find(:first ,:conditions =>{:account_id => current_account.id})
     
@@ -57,14 +43,5 @@ class Admin::BusinessCalendarsController < ApplicationController
     
    
   end
-
-  def destroy
-  end
-
-protected
-
-def set_selected_tab
-      @selected_tab = 'Admin'
-end
 
 end
