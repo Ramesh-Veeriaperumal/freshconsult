@@ -26,20 +26,18 @@ class Admin::BusinessCalendarsController < ApplicationController
 
   def update
     
-    logger.debug "params are:: #{params.inspect}"
    
     holidays = ActiveSupport::JSON.decode params[:business_calenders][:holidays]
-   
+    weekdays = ActiveSupport::JSON.decode params[:business_calenders][:weekdays]
+    full_week = params[:business_calenders][:fullweek]
+    
     business_time = Hash.new
     
     business_time[:beginning_of_workday] = params[:business_calenders][:beginning_of_workday]
     business_time[:end_of_workday] =  params[:business_calenders][:end_of_workday]
-    business_time[:weekdays] = ActiveSupport::JSON.decode params[:business_calenders][:weekdays]
-    business_time[:fullweek] = params[:business_calenders][:fullweek]
-       
-    logger.debug "business_time :: #{business_time.inspect}"
-    
-    logger.debug "holidays :: #{holidays.inspect}"    
+    business_time[:weekdays] = weekdays.map {|i| i.to_i}
+    business_time[:fullweek] = eval(full_week)
+   
     
     @business_cal = BusinessCalendar.find(:first ,:conditions =>{:account_id => current_account.id})
     
