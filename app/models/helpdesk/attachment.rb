@@ -13,10 +13,15 @@ class Helpdesk::Attachment < ActiveRecord::Base
    #:bucket => 'fdesk-attachments'
     
   before_post_process :image?
+  
+ 
+  
     
   def image?
     !(content_content_type =~ /^image.*/).nil?
   end
+  
+  
   
   def attachment_sizes
    if self.description == "logo"

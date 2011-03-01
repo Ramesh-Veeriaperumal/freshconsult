@@ -72,6 +72,11 @@ class Account < ActiveRecord::Base
   
   attr_accessible :name, :domain, :user, :plan, :plan_start, :creditcard, :address,:preferences,:logo_attributes,:fav_icon_attributes,:ticket_display_id
   attr_accessor :user, :plan, :plan_start, :creditcard, :address, :affiliate
+  
+  validates_numericality_of :ticket_display_id,
+                            :less_than => 1000000,
+                            :message => "Value must be less than six digits"
+                            
 
   before_create :set_default_values
   

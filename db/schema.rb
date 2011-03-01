@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110228074428) do
+ActiveRecord::Schema.define(:version => 20110301104051) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -46,7 +46,7 @@ ActiveRecord::Schema.define(:version => 20110228074428) do
     t.text     "business_time_data"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.text     "holidays"
+    t.text     "holiday_data"
   end
 
   add_index "business_calendars", ["account_id"], :name => "index_business_calendars_on_account_id"
@@ -360,7 +360,7 @@ ActiveRecord::Schema.define(:version => 20110228074428) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "sla_policy_id",   :limit => 8
-    t.boolean  "override_bhrs"
+    t.boolean  "override_bhrs",                :default => false
   end
 
   create_table "helpdesk_sla_policies", :force => true do |t|
