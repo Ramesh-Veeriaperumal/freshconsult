@@ -116,10 +116,10 @@
 			<table>
 				<tr>
 					<td width="60%" class="holidaylist">
-						<%= f.hidden_field :holidays %>
+						<%= f.hidden_field :holiday_data %>
 						<ul class="nobullets" id="HolidayList"></ul>
 						<% javascript_tag do %>
-							<% @business_calendars.holidays.each do |holiday| %>
+							<% @business_calendars.holiday_data.each do |holiday| %>
 								addHolidaytoList("<%=holiday[0]%>", "<%=holiday[1]%>");
 							<% end %>	
 						<% end %>

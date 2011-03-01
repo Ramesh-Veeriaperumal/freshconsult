@@ -2,7 +2,7 @@
 
 class BusinessCalendar < ActiveRecord::Base
   serialize :business_time_data
-  serialize :holidays
+  serialize :holiday_data
   
   #business_time_data has working days and working hours inside.
   #for now, a sporadically structured hash is used.
@@ -10,7 +10,7 @@ class BusinessCalendar < ActiveRecord::Base
   
   belongs_to :account
   
-  attr_accessible :holidays,:business_time_data
+  attr_accessible :holiday_data,:business_time_data
   
   
   HOLIDAYS_JSON ='[{holidays: [Jan 01, Jan 26, Feb 14, Mar 31]}]'
@@ -23,9 +23,7 @@ class BusinessCalendar < ActiveRecord::Base
     :weekdays => [1, 2, 3, 4, 5]
   }
   
-  def after_find
-    self.holidays ||= []
-  end
+  
     
   def beginning_of_workday
     business_time_data[:beginning_of_workday]
@@ -42,6 +40,11 @@ class BusinessCalendar < ActiveRecord::Base
   def fullweek
     business_time_data[:fullweek]
   end
+  
+  def holidays
+    holiday_data.map {|hol| hol[0]+", #{Time.zone.now.year}"}  
+  end
+  
   
   def self.config
     Account.current ? Account.current.business_calendar : BusinessTime::Config
