@@ -40,7 +40,7 @@ class BusinessCalendar < ActiveRecord::Base
   end
   
   def holidays    
-    holiday_data.map {|hol| ("#{hol[0]}, #{Time.zone.now.year}").to_date}      
+    holiday_data.nil? ? [] : holiday_data.map {|hol| ("#{hol[0]}, #{Time.zone.now.year}").to_date}      
   end
   
   
