@@ -11,7 +11,7 @@
 					%>
 					<li> 	
 				  		<label id="requester-label">Email *</label>
-				  		<input type="text" id="helpdesk_ticket_email" class="text required" name="helpdesk_ticket[email]"></input>
+				  		<input type="text" id="helpdesk_ticket_email" class="text required" name="helpdesk_ticket[email]" value="<%=@ticket.email%>"></input>
 				   	</li>	
 					<% when "Subject" then%>
 						<li>
