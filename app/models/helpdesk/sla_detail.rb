@@ -11,9 +11,9 @@ class Helpdesk::SlaDetail < ActiveRecord::Base
     [ :four,    "4 Hour",     14400 ], 
     [ :eight,   "8 Hour",     28800 ], 
     [ :two,     "12 Hour",    43200 ], 
-    [ :day,     "1 Day",      86400 ],
-    [ :twoday,  "2 Day",     172800 ], 
-    [ :threeday,"3 Day",     259200 ], 
+    [ :day,     "24 Hour",      86400 ],
+    [ :twoday,  "48 Hour",     172800 ], 
+    [ :threeday,"72 Hour",     259200 ], 
    
    
   ]
@@ -29,9 +29,9 @@ class Helpdesk::SlaDetail < ActiveRecord::Base
     [ :four,    "4 Hour",     14400 ], 
     [ :eight,   "8 Hour",     28800 ], 
     [ :two,     "12 Hour",    43200 ], 
-    [ :day,     "1 Day",      86400 ],
-    [ :twoday,  "2 Day",     172800 ], 
-    [ :threeday,"3 Day",     259200 ], 
+    [ :day,     "24 Hour",      86400 ],
+    [ :twoday,  "48 Hour",     172800 ], 
+    [ :threeday,"72 Hour",     259200 ], 
    
    
   ]
