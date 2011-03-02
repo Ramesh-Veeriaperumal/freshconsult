@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110301104051) do
+ActiveRecord::Schema.define(:version => 20110302100213) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -629,7 +629,6 @@ ActiveRecord::Schema.define(:version => 20110301104051) do
     t.datetime "updated_at"
     t.integer  "account_id",          :limit => 8
     t.boolean  "active",                           :default => false, :null => false
-    t.string   "role_token"
     t.integer  "customer_id",         :limit => 8
     t.string   "job_title"
     t.string   "second_email"
@@ -641,6 +640,7 @@ ActiveRecord::Schema.define(:version => 20110301104051) do
     t.integer  "posts_count",                      :default => 0
     t.datetime "last_seen_at"
     t.boolean  "deleted",                          :default => false
+    t.integer  "user_role"
   end
 
   add_index "users", ["account_id", "email"], :name => "index_users_on_account_id_and_email", :unique => true

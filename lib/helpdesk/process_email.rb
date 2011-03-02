@@ -96,7 +96,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       user = ticket.account.users.find_by_email(email)
       unless user
         user = ticket.account.contacts.new
-        user.signup!({:user => {:email => email, :name => '', :role_token => 'customer'}})
+        user.signup!({:user => {:email => email, :name => '', :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}})
       end
       
       user

@@ -4,7 +4,7 @@ class ContactsController < ApplicationController
   
  include ModelControllerMethods
 
-  before_filter :check_user_limit, :only => :create 
+  #before_filter :check_user_limit, :only => :create 
   before_filter :set_selected_tab
   skip_before_filter :build_object , :only => :new
   
@@ -28,7 +28,7 @@ class ContactsController < ApplicationController
 
   def new
     @user = current_account.users.new
-    @user.role_token = 'customer'
+    @user.user_role = User::USER_ROLES_KEYS_BY_TOKEN[:customer]
     @user.avatar = Helpdesk::Attachment.new
   end
   

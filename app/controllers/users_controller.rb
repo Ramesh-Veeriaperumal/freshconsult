@@ -30,8 +30,8 @@ class UsersController < ApplicationController
    
   def show
     
-    role_token = User.find(params[:id]).role_token    
-    if "customer".eql?(role_token)      
+    user_role = User.find(params[:id]).user_role    
+    if User::USER_ROLES_KEYS_BY_TOKEN[:customer].eql?(user_role)      
       redirect_to :controller =>'contacts' ,:action => 'show', :id => params[:id]    
     else    
       agent_id = Agent.find_by_user_id(params[:id]).id

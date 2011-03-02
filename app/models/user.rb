@@ -2,6 +2,17 @@ class User < ActiveRecord::Base
   include SavageBeast::UserInit
   include SentientUser
   
+  USER_ROLES = [
+    [ :admin,       "Admin",            1 ],
+    [ :poweruser,   "Power User",       2 ],
+    [ :customer,    "Customer",         3 ],
+   ]
+
+  USER_ROLES_OPTIONS = USER_ROLES.map { |i| [i[1], i[2]] }
+  USER_ROLES_NAMES_BY_KEY = Hash[*USER_ROLES.map { |i| [i[2], i[1]] }.flatten]
+  USER_ROLES_KEYS_BY_TOKEN = Hash[*USER_ROLES.map { |i| [i[0], i[2]] }.flatten]
+  USER_ROLES_SYMBOL_BY_KEY = Hash[*USER_ROLES.map { |i| [i[2], i[0]] }.flatten]
+  
   belongs_to :account
   belongs_to :customer
   
@@ -13,7 +24,7 @@ class User < ActiveRecord::Base
   before_create :set_time_zone
   before_save :set_account_id_in_children , :set_contact_name
   
-  named_scope :contacts, :conditions => ["role_token=?", "customer"]
+  named_scope :contacts, :conditions => ["user_role=?", USER_ROLES_KEYS_BY_TOKEN[:customer]]
 
   acts_as_authentic do |c|
     c.validations_scope = :account_id
@@ -21,12 +32,11 @@ class User < ActiveRecord::Base
     c.validates_length_of_password_confirmation_field_options = {:on => :update, :minimum => 4, :if => :has_no_credentials?}
   end
   
-  attr_accessible :name, :email, :password, :password_confirmation , :second_email, :job_title, :phone, :mobile, :twitter_id, :description,  :role_token, :time_zone, :avatar_attributes 
+  attr_accessible :name, :email, :password, :password_confirmation , :second_email, :job_title, :phone, :mobile, :twitter_id, :description, :time_zone, :avatar_attributes,:user_role,:customer_id
 
   def signup!(params)
     self.email = params[:user][:email]
     self.name = params[:user][:name]
-    self.role_token = params[:user][:role_token]
     self.phone = params[:user][:phone]
     self.mobile = params[:user][:mobile]
     self.second_email = params[:user][:second_email]
@@ -34,6 +44,7 @@ class User < ActiveRecord::Base
     self.description = params[:user][:description]
     self.customer_id = params[:user][:customer_id]
     self.job_title = params[:user][:job_title]
+    self.user_role = params[:user][:user_role]
     
     
     self.avatar_attributes=params[:user][:avatar_attributes] unless params[:user][:avatar_attributes].nil?
@@ -97,11 +108,11 @@ class User < ActiveRecord::Base
 
   #implement in your user model 
   def admin?
-    role_token == 'admin'
+    user_role == USER_ROLES_KEYS_BY_TOKEN[:admin]
   end
   
   def customer?
-    role_token == 'customer'
+    user_role == USER_ROLES_KEYS_BY_TOKEN[:customer]
   end
 
   #Savage_beast changes end here
@@ -113,7 +124,7 @@ class User < ActiveRecord::Base
 
   ##Authorization copy starts here
   def role
-    @role ||= Helpdesk::ROLES[role_token.to_sym] || Helpdesk::ROLES[:customer]
+    @role ||= Helpdesk::ROLES[USER_ROLES_SYMBOL_BY_KEY[user_role]] || Helpdesk::ROLES[:customer]
   end
   
   def permission?(p)

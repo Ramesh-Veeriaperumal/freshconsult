@@ -5,12 +5,12 @@ class Helpdesk::Authorization < ActiveRecord::Base
 
   ROLE_OPTIONS = Helpdesk::ROLES.map { |k, v| [v[:title], k.to_s] }.reject { |p| !p[0] }
 
-  validates_presence_of :role_token, :user_id
-  validates_inclusion_of :role_token, :in => Helpdesk::ROLES.stringify_keys.keys
+  validates_presence_of  :user_id, :user_role
+  validates_inclusion_of :user_role, :in => Helpdesk::ROLES.stringify_keys.keys
   validates_uniqueness_of :user_id
 
   def role
-    @role ||= Helpdesk::ROLES[role_token.to_sym] || Helpdesk::ROLES[:customer]
+    @role ||= Helpdesk::ROLES[USER_ROLES_SYMBOL_BY_KEY[user_role]] || Helpdesk::ROLES[:customer]
   end
 
   def name
