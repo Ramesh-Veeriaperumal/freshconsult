@@ -16,7 +16,7 @@ module SupportTicketControllerMethods
     
     if current_user
       #@ticket.name = current_user.name if current_user.respond_to?(:name)
-      #@ticket.email = current_user.email if current_user.respond_to?(:email)
+      @ticket.email = current_user.email if current_user.respond_to?(:email)
     end
   end
   

@@ -39,8 +39,8 @@ class BusinessCalendar < ActiveRecord::Base
     business_time_data[:fullweek]
   end
   
-  def holidays
-    holiday_data.map {|hol| hol[0]+", #{Time.zone.now.year}"}  
+  def holidays    
+    holiday_data.map {|hol| ("#{hol[0]}, #{Time.zone.now.year}").to_date}      
   end
   
   

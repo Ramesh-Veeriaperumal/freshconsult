@@ -9,6 +9,25 @@ class Support::TicketsController < ApplicationController
     @tickets = Helpdesk::Ticket.find_all_by_requester_id(current_user.id)
     @tickets ||= []
   end
+  
+  def close_ticket 
+    @item = Helpdesk::Ticket.find_by_param(params[:id], current_account)
+     status_id = Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:closed]
+     logger.debug "close the ticket...with status id  #{status_id}"
+     res = Hash.new
+     if @item.update_attribute(:status , status_id)
+       res["success"] = true
+       res["status"] = 'Closed'
+       res["value"] = status_id
+       res["message"]="Successfully updated"
+       render :json => ActiveSupport::JSON.encode(res)
+     else
+       res["success"] = false
+       res["message"]="closing the ticket failed"
+       render :json => ActiveSupport::JSON.encode(res)
+       
+     end
+  end
 
 protected
 

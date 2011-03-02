@@ -17,7 +17,15 @@ class AccountsController < ApplicationController
     # render :layout => 'public' # Uncomment if your "public" site has a different layout than the one used for logged-in users
   end
   
+  def check_domain
+    puts "#{params[:domain]}"
+    render :json => { :account_name => true }, :callback => params[:callback]
+  end
   
+  def create_json
+    render :json => { :account_name => true }, :callback => params[:callback]
+  end
+   
   def create
     @account.affiliate = SubscriptionAffiliate.find_by_token(cookies[:affiliate]) unless cookies[:affiliate].blank?
 
@@ -253,6 +261,6 @@ class AccountsController < ApplicationController
       %w(new create plans canceled thanks).include?(self.action_name) || 
       (self.action_name == 'dashboard' && logged_in?) ||
       admin?
-    end
+    end 
         
 end

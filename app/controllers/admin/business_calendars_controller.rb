@@ -23,11 +23,12 @@ class Admin::BusinessCalendarsController <  Admin::AdminController
     business_time[:end_of_workday] =  params[:business_calenders][:end_of_workday]
     business_time[:weekdays] = weekdays.map {|i| i.to_i}
     business_time[:fullweek] = false
+    
     if "true".eql?(full_week)      
        business_time[:weekdays] = [1, 2, 3, 4, 5, 6, 7]
        business_time[:fullweek] = true
-       business_time[:beginning_of_workday]="12:00 am"
-       business_time[:end_of_workday] = "12:00 am"
+       business_time[:beginning_of_workday]="00:00:00 am"
+       business_time[:end_of_workday] = "11:59:59 pm"
     end 
     
     @business_cal = BusinessCalendar.find(:first ,:conditions =>{:account_id => current_account.id})
