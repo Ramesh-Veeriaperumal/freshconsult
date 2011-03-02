@@ -182,38 +182,36 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   #shihab-- date format may need to handle later. methode will set both due_by and first_resp
-   def set_dueby     
+   def set_dueby    
    
-    createdTime = Time.now    
-       
-     unless self.created_at.nil?
-       
-       createdTime = self.created_at
-       
-     end
+     createdTime = Time.zone.now   
+     
+     unless self.created_at.nil?       
+       createdTime = self.created_at       
+     end    
      
      self.priority = 1 if priority.nil?     
      
-     sla_policy_id = nil
+     sla_policy_id = nil     
+     unless self.requester.customer.nil?     
+      sla_policy_id = self.requester.customer.sla_policy_id     
+     end      
+     sla_policy_id = Helpdesk::SlaPolicy.find_by_account_id_and_is_default(account_id, true) if sla_policy_id.nil?     
+     sla_detail = Helpdesk::SlaDetail.find(:first , :conditions =>{:sla_policy_id =>sla_policy_id, :priority =>self.priority})
      
-     unless self.requester.customer.nil?
      
-     sla_policy_id = self.requester.customer.sla_policy_id
      
-     end
-     
+     if sla_detail.override_bhrs      
+      self.due_by = createdTime + sla_detail.resolution_time.seconds      
+      self.frDueBy = createdTime + sla_detail.response_time.seconds       
+     else      
+      self.due_by = (sla_detail.resolution_time).div(60).business_minute.after(createdTime)      
+      self.frDueBy =  (sla_detail.response_time).div(60).business_minute.after(createdTime)     
+    end
     
-     sla_policy_id = Helpdesk::SlaPolicy.find_by_account_id_and_is_default(account_id, true).id if sla_policy_id.nil?
-     
-        
- 
-     self.due_by = createdTime + Helpdesk::SlaDetail.find(:first , :conditions =>{:sla_policy_id =>sla_policy_id, :priority =>self.priority}).resolution_time.seconds
-     self.frDueBy = createdTime + Helpdesk::SlaDetail.find(:first , :conditions =>{:sla_policy_id =>sla_policy_id, :priority =>self.priority}).response_time.seconds
-       
-    
-     
+     logger.debug "sla_detail_id :: #{sla_detail.id} :: and createdTime : #{createdTime} due_by::#{self.due_by} and fr_due:: #{self.frDueBy} "   
   end
-
+  
   def refresh_display_id #by Shan temp
     if display_id.nil?
       self.display_id = Helpdesk::Ticket.find_by_id(id).display_id #by Shan hack need to revisit about self as well.
