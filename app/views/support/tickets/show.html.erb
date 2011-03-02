@@ -10,11 +10,32 @@
       });
 
     });
+	
+	function closeTicket(ticket_id)
+	{
+		jQuery.ajax({
+	      					type: 'POST',
+							url: '/support/tickets/close_ticket/'+ticket_id,
+							contentType: 'application/text',
+	      					success: function(data){
+											
+											if(data.success)
+											{
+												jQuery('#status_name_id').text(data.status).show("highlight", 500);
+												jQuery('#close_ticket_btn').css("display", "none");
+												
+											}								
+											//Need to show the message some where data.message
+									}
+				});
+	
+	}
+	
   <% end %>
 <% end %>
 
 <% content_for :sidebar do %>
-	<div class="sidepanel">
+	<!--div class="sidepanel">
 		<div class="element last">
 			<% if @ticket.responder %>
 				<div class="user_details_widget clearfix" style="padding:0px">  
@@ -37,7 +58,7 @@
 				</strong> 
 			</div>
 		</div>
-	</div>
+	</div-->
 <% end %>
 	
 <div class="request_details">
@@ -55,9 +76,9 @@
 		        <b><%= h(@ticket.subject) %></b>
 		    </div>
 			<div class="description">
-				<div class="ticket_actions action_icons">
+				<div class="ticket_actions action_icons" id="close_ticket_btn">
 					<% unless (@ticket.status == 5) %>
-						<%= link_to_function("Close this request", "#", :class => "fdbutton grey" )  %>
+						<%= link_to_function("Close this request", "closeTicket(#{@ticket.display_id})", :class => "fdbutton grey" )  %>
 					<% end %>
 		        </div>	 
 		        <div class="user_details">
