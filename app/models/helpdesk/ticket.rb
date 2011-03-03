@@ -13,6 +13,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_create :refresh_display_id, :autoreply,:save_custom_field ,:pass_thro_biz_rules 
   after_update :save_custom_field
   before_create :populate_requester
+  before_save :save_ticket_states
 
   before_create :set_spam, :set_dueby
   before_update :set_dueby, :cache_old_model
@@ -67,6 +68,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :as => :attachable,
     :class_name => 'Helpdesk::Attachment',
     :dependent => :destroy
+    
+  has_one :ticket_states , :class_name =>'Helpdesk::TicketState'
 
   attr_protected :attachments #by Shan - need to check..
 
@@ -409,6 +412,17 @@ end
     end
     raise e unless field
     custom_field[method]
+  end
+  
+  def save_ticket_states
+    
+    ticket_state = Helpdesk::TicketState.new
+    
+    #ticket_state.closed_at = self.
+    
+     self.ticket_states = ticket_state
+
+    
   end
   
 end
