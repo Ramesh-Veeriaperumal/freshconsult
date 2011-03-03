@@ -9,7 +9,9 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
+
 ActiveRecord::Schema.define(:version => 20110303071828) do
+
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -360,7 +362,7 @@ ActiveRecord::Schema.define(:version => 20110303071828) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "sla_policy_id",   :limit => 8
-    t.boolean  "override_bhrs",                :default => false
+    t.boolean  "override_bhrs"
   end
 
   create_table "helpdesk_sla_policies", :force => true do |t|
@@ -407,6 +409,21 @@ ActiveRecord::Schema.define(:version => 20110303071828) do
 
   add_index "helpdesk_ticket_issues", ["issue_id"], :name => "index_helpdesk_ticket_issues_on_issue_id"
   add_index "helpdesk_ticket_issues", ["ticket_id"], :name => "index_helpdesk_ticket_issues_on_ticket_id"
+
+  create_table "helpdesk_ticket_states", :force => true do |t|
+    t.integer  "ticket_id",              :limit => 8
+    t.datetime "opened_at"
+    t.datetime "pending_since"
+    t.datetime "resolved_at"
+    t.datetime "closed_at"
+    t.datetime "first_asigned_at"
+    t.datetime "assigned_at"
+    t.datetime "first_response_time"
+    t.datetime "requester_responded_at"
+    t.datetime "agent_responded_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "helpdesk_tickets", :force => true do |t|
     t.text     "description"
