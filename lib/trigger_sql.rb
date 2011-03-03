@@ -7,7 +7,11 @@ module TriggerSql
         declare max_dis_id integer;
         select max(display_id) into  max_dis_id from helpdesk_tickets where account_id = new.account_id;
         select ticket_display_id into  ticket_dis_id from accounts where id = new.account_id;
-        set max_dis_id = max_dis_id + 1; 
+        if max_dis_id is null then 
+            set max_dis_id = 1;
+        else
+            set max_dis_id = max_dis_id + 1; 
+        end if;
         if ticket_dis_id > max_dis_id then
          set new.display_id = ticket_dis_id;
         else

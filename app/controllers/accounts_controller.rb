@@ -13,6 +13,7 @@ class AccountsController < ApplicationController
   #ssl_required :billing, :cancel, :new, :create #by Shan temp
   #ssl_allowed :plans, :thanks, :canceled, :paypal
   
+   
   def new
     # render :layout => 'public' # Uncomment if your "public" site has a different layout than the one used for logged-in users
   end
@@ -22,8 +23,18 @@ class AccountsController < ApplicationController
     render :json => { :account_name => true }, :callback => params[:callback]
   end
   
-  def create_json
-    render :json => { :account_name => true }, :callback => params[:callback]
+  def signup_free
+    params[:plan] = SubscriptionPlan::SUBSCRIPTION_PLANS[:premium]
+    build_object
+    build_plan
+    build_user
+    @account.time_zone = (ActiveSupport::TimeZone[params[:utc_offset].to_f]).name
+   if @account.save
+      render :json => { :success => true, :url => @account.full_domain }, :callback => params[:callback]
+    else
+      render :json => { :success => false, :errors => @account.errors.to_json }, :callback => params[:callback]
+    end
+    
   end
    
   def create
