@@ -46,9 +46,9 @@ class Solution::Article < ActiveRecord::Base
   STATUS_KEYS_BY_TOKEN = Hash[*STATUSES.map { |i| [i[0], i[2]] }.flatten]
   
   TYPES = [
-    [ :workaround,   "Workaround",   1 ], 
-    [ :permanent,    "Permanent",    2 ]
-  ]
+            [ :permanent,    "Permanent",    1 ],
+            [ :workaround,   "Workaround",   2 ]
+          ]
 
   TYPE_OPTIONS = TYPES.map { |i| [i[1], i[2]] }
   TYPE_NAMES_BY_KEY = Hash[*TYPES.map { |i| [i[2], i[1]] }.flatten]
