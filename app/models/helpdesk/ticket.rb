@@ -12,8 +12,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   attr_accessor :email, :custom_field ,:customizer, :nscname
   after_create :refresh_display_id, :autoreply,:save_custom_field ,:pass_thro_biz_rules 
   after_update :save_custom_field
-  before_create :populate_requester
-  before_save :save_ticket_states
+  before_create :populate_requester,:save_ticket_states
+  
 
   before_create :set_spam, :set_dueby
   before_update :set_dueby, :cache_old_model
@@ -415,14 +415,10 @@ end
   end
   
   def save_ticket_states
-    
-    ticket_state = Helpdesk::TicketState.new
-    
-    #ticket_state.closed_at = self.
-    
-     self.ticket_states = ticket_state
+   
+    ticket_state = Helpdesk::TicketState.new      
+    self.ticket_states = ticket_state
 
-    
   end
   
 end

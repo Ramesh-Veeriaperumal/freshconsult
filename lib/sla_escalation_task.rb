@@ -21,7 +21,7 @@ module Slainit
       
    end
   
-   @froverdue_tickets = Helpdesk::Ticket.find(:all, :conditions =>['frDueBy <=? AND fr_escalated=? AND response_time IS ?', Time.now.to_s(:db),false,nil] )
+   @froverdue_tickets = Helpdesk::Ticket.find(:all, :joins => :ticket_states , :conditions =>['frDueBy <=? AND fr_escalated=? AND helpdesk_ticket_states.first_response_time IS ?', Time.now.to_s(:db),false,nil] )
    puts @froverdue_tickets
    @froverdue_tickets.each do |fr_ticket|
          
