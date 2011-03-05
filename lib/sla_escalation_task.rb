@@ -13,8 +13,10 @@ module Slainit
   @overdue_tickets.each do |ticket|
          
          escalateto = Helpdesk::SlaDetail.find_by_priority(ticket.priority).escalateto
-         email = User.find_by_id(escalateto).email                  
-         SlaNotifier.deliver_sla_escalation(ticket, email)       
+         unless escalateto.nil?
+            email = User.find_by_id(escalateto).email                  
+            SlaNotifier.deliver_sla_escalation(ticket, email) unless email.nil?
+         end
          ticket.update_attribute(:isescalated , true)
         
    end
@@ -24,9 +26,13 @@ module Slainit
    @froverdue_tickets.each do |fr_ticket|
          
          fr_escalateto = Helpdesk::SlaDetail.find_by_priority(fr_ticket.priority).escalateto
-         fr_email = User.find_by_id(fr_escalateto).email                
-         SlaNotifier.deliver_fr_sla_escalation(fr_ticket,fr_email)         
-         fr_ticket.update_attribute(:fr_escalated , true)    
+         unless fr_escalateto.nil?
+          fr_email = User.find_by_id(fr_escalateto).email  
+          SlaNotifier.deliver_fr_sla_escalation(fr_ticket,fr_email) unless fr_email.nil?
+         end
+         fr_ticket.update_attribute(:fr_escalated , true)   
+         
+         #If there is no email-id /agent still escalted will show as true. This is to avoid huge sending if somebody changes the config
           
       
    end
