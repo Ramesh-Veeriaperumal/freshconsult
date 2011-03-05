@@ -13,7 +13,7 @@ class Agent < ActiveRecord::Base
   
   def self.technician_list account_id
     
-    agents = User.find(:all, :joins=>:agent, :conditions => {:account_id=>account_id})    
+    agents = User.find(:all, :joins=>:agent, :conditions => {:account_id=>account_id, :deleted =>false})    
   
   end
 
