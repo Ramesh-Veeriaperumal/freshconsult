@@ -33,9 +33,13 @@ class HomeController < ApplicationController
     
     logger.debug "search_str is #{search_str.inspect}"
     
-    search_tokens =  search_str.scan(/\w+/)
+    tokens =  search_str.scan(/\w+/)
     
-    @articles = Solution::Article.title_or_body_like_any(search_tokens).is_public(true).limit(10)
+    search_tokens = tokens-Solution::Article::SEARCH_STOP_WORDS
+    
+    @articles = Array.new
+    
+    @articles = Solution::Article.title_or_description_like_any(search_tokens).is_public(true).first(10) unless search_tokens.empty?
     
     render :partial => 'solution_search_result', :locals => { :articles => @articles, :key => search_str } 
     

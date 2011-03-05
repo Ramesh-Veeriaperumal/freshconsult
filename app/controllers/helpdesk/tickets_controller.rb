@@ -66,9 +66,13 @@ class Helpdesk::TicketsController < ApplicationController
 
   def set_suggested_solutions
     
-    search_tokens =  @item.subject.scan(/\w+/)
+    tokens =  @item.subject.scan(/\w+/)   
     
-    @articles = current_account.solution_articles.title_or_description_like_any(search_tokens).first(10)
+    search_tokens = tokens-Solution::Article::SEARCH_STOP_WORDS
+    
+    @articles = Array.new 
+    
+    @articles = current_account.solution_articles.title_or_description_like_any(search_tokens).first(10) unless search_tokens.empty?
     
         
   end

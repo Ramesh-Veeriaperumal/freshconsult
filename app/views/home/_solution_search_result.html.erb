@@ -7,7 +7,7 @@
 	<div class="result">
 	 	<h4><%= link_to(h(article.title), support_article_path(article)) %></h4>
 		<div>
-			<%= truncate ( article.body.gsub(/<\/?[^>]*>/, ""), 200)  %>
+			<%= truncate ( article.description.gsub(/<\/?[^>]*>/, ""), 200)  %>
 		</div>
 	</div>
 	<% end %>
