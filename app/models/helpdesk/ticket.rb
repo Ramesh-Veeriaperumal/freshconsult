@@ -6,6 +6,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   set_table_name "helpdesk_tickets"
   
+  serialize :cc_email, Hash
+  
   has_flexiblefields
   
   #by Shan temp

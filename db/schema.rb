@@ -9,9 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-
-ActiveRecord::Schema.define(:version => 20110303071828) do
-
+ActiveRecord::Schema.define(:version => 20110305092821) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -362,7 +360,7 @@ ActiveRecord::Schema.define(:version => 20110303071828) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "sla_policy_id",   :limit => 8
-    t.boolean  "override_bhrs"
+    t.boolean  "override_bhrs",                :default => false
   end
 
   create_table "helpdesk_sla_policies", :force => true do |t|
@@ -450,6 +448,7 @@ ActiveRecord::Schema.define(:version => 20110303071828) do
     t.integer  "ticket_type",     :limit => 8
     t.string   "to_email"
     t.integer  "email_config_id", :limit => 8
+    t.text     "cc_email"
   end
 
   add_index "helpdesk_tickets", ["account_id", "requester_id"], :name => "index_helpdesk_tickets_on_account_id_and_requester_id"
