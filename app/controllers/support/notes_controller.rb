@@ -6,15 +6,15 @@ class Support::NotesController < ApplicationController
     access = (current_user && @ticket.requester_id == current_user.id) || (permission?(:manage_tickets))
 
     return redirect_to(send(Helpdesk::ACCESS_DENIED_ROUTE)) unless access
+  
+    @note = @ticket.notes.build({
+        "incoming" => true,
+        "private" => false,
+        "source" => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],
+        "user_id" => current_user && current_user.id,
+        "account_id" =>current_account && current_account.id
+      }.merge(params[:helpdesk_note]))
     
-    @note = @ticket.notes.build(
-      {
-        :incoming => true,
-        :private => false,
-        :source => 1,
-        :user_id => current_user && current_user.id
-      }.merge(params[:helpdesk_note])
-    )
 
     if @note.save
       create_attachments
@@ -26,6 +26,7 @@ class Support::NotesController < ApplicationController
     redirect_to :back
   end
   
+
   def create_attachments 
     return unless @note.respond_to?(:attachments)
     (params[:helpdesk_note][:attachments] || []).each do |a| 
