@@ -12,7 +12,9 @@ class Helpdesk::Note < ActiveRecord::Base
 
   attr_accessor :nscname
   
-  attr_accessible :body,:private
+  #attr_accessible :body,:private  
+  
+  after_create :save_response_time
 
   named_scope :newest_first, :order => "created_at DESC"
   named_scope :visible, :conditions => { :deleted => false } 
@@ -45,6 +47,21 @@ class Helpdesk::Note < ActiveRecord::Base
   def to_liquid
     { "commenter"   => user,
       "body"     => body }
+  end
+  
+  def save_response_time
+    
+    if self.notable.is_a? Helpdesk::Ticket      
+        ticket_state = notable.ticket_states     
+        if "Customer".eql?(User::USER_ROLES_NAMES_BY_KEY[user.user_role])      
+          ticket_state.requester_responded_at=Time.zone.now          
+        else
+          ticket_state.agent_responded_at=Time.zone.now unless private
+          ticket_state.first_response_time=Time.zone.now if ticket_state.first_response_time.nil? && !private
+      end  
+      ticket_state.save
+    end
+    
   end
 
 end

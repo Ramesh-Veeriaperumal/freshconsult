@@ -6,7 +6,7 @@ class CreateHelpdeskTicketStates < ActiveRecord::Migration
       t.datetime :pending_since
       t.datetime :resolved_at
       t.datetime :closed_at
-      t.datetime :first_asigned_at
+      t.datetime :first_assigned_at
       t.datetime :assigned_at
       t.datetime :first_response_time
       t.datetime :requester_responded_at
