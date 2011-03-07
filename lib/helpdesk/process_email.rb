@@ -113,10 +113,9 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
 
     def create_attachments(ticket, item)
-        #Integer(params[:attachments]).times do |i|
-        #item.attachments.create(:content => params["attachment#{i+1}"], :account_id => ticket.account_id)
-     
-  #end
+        Integer(params[:attachments]).times do |i|
+        item.attachments.create(:content => params["attachment#{i+1}"], :account_id => ticket.account_id)
+     end
   end
   
 end
