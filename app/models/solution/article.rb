@@ -2,7 +2,17 @@ class Solution::Article < ActiveRecord::Base
    
    belongs_to :folder, :class_name => 'Solution::Folder'
    
-   set_table_name "solution_articles"   
+   set_table_name "solution_articles"
+   
+  define_index do
+    indexes :title, :sortable => true
+    indexes description
+    
+    has account_id, user_id, created_at, updated_at, is_public
+    
+    set_property :delta => :delayed
+  end
+   
    belongs_to :user, :class_name => 'User'
    belongs_to :account
    
@@ -64,22 +74,22 @@ class Solution::Article < ActiveRecord::Base
     STATUS_NAMES_BY_KEY[status]
   end
   
-  def self.search(scope, field, value)
-
-    return scope unless (field && value)
-
-    loose_match = ["#{field} like ?", "%#{value}%"]
-
-    conditions = case field.to_sym
-      when :title : loose_match
-      when :description  : loose_match
-    end
-
-    # Protect us from SQL injection in the 'field' param
-    return scope unless conditions
-
-    scope.scoped(:conditions => conditions)
-  end
+#  def self.search(scope, field, value)
+#
+#    return scope unless (field && value)
+#
+#    loose_match = ["#{field} like ?", "%#{value}%"]
+#
+#    conditions = case field.to_sym
+#      when :title : loose_match
+#      when :description  : loose_match
+#    end
+#
+#    # Protect us from SQL injection in the 'field' param
+#    return scope unless conditions
+#
+#    scope.scoped(:conditions => conditions)
+#  end
    
    def to_param
     id ? "#{id}-#{title.downcase.gsub(/[^a-z0-9]+/i, '-')}" : nil

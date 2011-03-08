@@ -1,4 +1,5 @@
 log/*.log
+log/*.pid
 tmp/*
 tmp/**/*
 doc/api
@@ -10,3 +11,5 @@ db/*.sqlite3
 .loadpath
 .project
 *~
+db/sphinx/*
+config/development.sphinx.conf

@@ -43,7 +43,11 @@ Rails::Initializer.run do |config|
   config.gem "arel" #2.0.7  
   config.gem "searchlogic" #2.4.27
   config.gem 'map-fields',  :lib => 'map_fields' #1.0.0
-  
+  config.gem 'thinking-sphinx', :lib     => 'thinking_sphinx', :version => '1.4.3'
+  config.gem 'ts-delayed-delta', :lib     => 'thinking_sphinx/deltas/delayed_delta', 
+                    :version => '>= 1.1.0', :source  => 'http://gemcutter.org'
+  #config.gem 'delayed_job' :version => '1.8.4' #just a reference for using it along with ts-delayed-delta. 
+  #otherwise ts-del** will install the latest version of delayed_job. 
 
   # Only load the plugins named here, in the order given. By default, all plugins 
   # in vendor/plugins are loaded in alphabetical order.
