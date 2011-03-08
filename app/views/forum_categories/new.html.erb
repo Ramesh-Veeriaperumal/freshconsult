@@ -4,7 +4,7 @@
 		<%= link_to "Back to Category"[:category_title], categories_path, :class => "nav_older" %> 
 	</div>
 	<div class="header_area">		
-		<h3 class="title"><%= 'New Category'[:new_category] %></h3>
+		<h3 class="title"><%=t 'category.new'%> </h3>
 	</div>	
 	<div class="page_area">
 	<% form_for :forum_category, :url => categories_path do |f| -%>

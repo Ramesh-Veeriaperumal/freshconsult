@@ -4,6 +4,8 @@
 class ApplicationController < ActionController::Base
 
   before_filter :set_time_zone
+  
+  before_filter :set_locale
 
   include AuthenticationSystem
   #include SavageBeast::AuthenticationSystem
@@ -65,12 +67,14 @@ class ApplicationController < ActionController::Base
 #      redirect_to(session[:return_to] || default)
 #      session[:return_to] = nil
 #    end
+def set_locale
+  I18n.locale = request.compatible_language_from I18n.available_locales
+end
 
   def set_time_zone
     #ActiveSupport::TimeZone.all
     current_account.make_current
     Time.zone = current_user ? current_user.time_zone : (current_account ? current_account.time_zone : Time.zone)
   end
-  
 end
 

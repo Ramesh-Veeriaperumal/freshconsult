@@ -1,19 +1,19 @@
 <ul class="ui-form">
 	<li>
-		<label for="topic_title"><%= 'Topic Name'[:title_title] %></label>
+		<label for="topic_title"><%= t('topic.name') %></label>
 		<div><%= form.text_field :title, :onchange => "/*TopicForm.editNewTitle(this);*/", :class => "primary", :tabindex => 10 %></div>
 	</li>	 
 	
 	<% if @topic.new_record? %>
 		<li>
-			<label for="topic_body"><%= 'Message'[:body_title] %></label>
+			<label for="topic_body"><%= t('message') %></label>
 			<%= form.text_area :body, :rows => 12, :tabindex => 20 %>
 		</li>
 	<% end %>
 	
 	<% if admin? and not @topic.new_record? %>
 		<li id="topic_forum_id">
-	  		<label for="topic_forum_id"><%= 'Forum'[:forum_title] %></label>
+	  		<label for="topic_forum_id"><%= t('forum.title') %></label>
 	  		<%= form.select :forum_id, Forum.find(:all, :order => "position").map {|x| [x.name, x.id] } %>
 		</li>
 	<% end %>
@@ -21,10 +21,10 @@
 	<% if admin? or current_user.moderator_of?(@topic.forum) %>
 		<li class="inlineChecklist">
 			<label>
-				<%= form.check_box :sticky %> <%= 'Sticky'[:sticky_title] %>
+				<%= form.check_box :sticky %> <%= t('topic.sticky') %>
 			</label>
 			<label>
-				<%= form.check_box :locked %> <%= 'Locked'[:locked_title] %>
+				<%= form.check_box :locked %> <%= t('topic.locked') %>
 			</label>
 		</li>
 	<% end %>

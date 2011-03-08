@@ -43,6 +43,7 @@ Rails::Initializer.run do |config|
   config.gem "arel" #2.0.7  
   config.gem "searchlogic" #2.4.27
   config.gem 'map-fields',  :lib => 'map_fields' #1.0.0
+  config.gem "http_accept_language" #1.0.1
   
 
   # Only load the plugins named here, in the order given. By default, all plugins 
@@ -52,6 +53,9 @@ Rails::Initializer.run do |config|
 
   # Add additional load paths for your own custom dirs
   # config.load_paths += %W( #{RAILS_ROOT}/extras )
+  
+  #To load all the i18n files
+  #config.i18n.load_path += Dir[File.join(RAILS_ROOT, 'config', 'locales', '**', '*.{rb,yml}')]
 
   # Force all environments to use the same logger level
   # (by default production uses :info, the others :debug)

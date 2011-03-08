@@ -8,7 +8,7 @@
 		<div class="rtDetails_forum">
 
 		<h4 class="title">Moderate</h4>
-		<%= link_to('Connect To Ticket', new_helpdesk_ticket_path(:topic_id => @topic.id), :class => "fdbutton") if logged_in? and @topic.ticket_topic.nil?  %>
+		<%= link_to(t('connect_ticket'), new_helpdesk_ticket_path(:topic_id => @topic.id), :class => "fdbutton") if logged_in? and @topic.ticket_topic.nil?  %>
 		<%= link_to(h(@topic.ticket.subject), helpdesk_ticket_path(@topic.ticket)) unless @topic.ticket_topic.nil? %>
 		
 		<% if logged_in? %>
@@ -96,16 +96,16 @@
 					<div class="item_actions">
 						  <% if logged_in? %>
 						      <% if @topic.editable_by?(current_user) -%>
-						        <%= link_to('Edit'[], edit_category_forum_topic_path(@forum_category,@forum, @topic), :class => "button") %> 
-						        <%= link_to('Delete'[], category_forum_topic_path(@forum_category,@forum, @topic), :class => "button", :method => :delete, :confirm => 'Delete this topic forever?'[:delete_topic_conf]) %>
+						        <%= link_to(t('edit'), edit_category_forum_topic_path(@forum_category,@forum, @topic), :class => "button") %> 
+						        <%= link_to(t('delete'), category_forum_topic_path(@forum_category,@forum, @topic), :class => "button", :method => :delete, :confirm => "#{t(:delete_topic_msg)}?") %>
  							  <% end %>	
 						  <% end %>
 					</div>	
 		        	<div class="user_details">
 						<%= user_avatar( @topic.user.avatar ) %>
-		          		Posted by <b><%= @topic.user.display_name %></b>
+		          		<%=t('posted_by')%> <b><%= @topic.user.display_name %></b>
 						<div><%= @topic.user.job_title %></div>
-						<div>Created on <%= h(@topic.created_at.strftime("%B %e %Y at %I:%M %p")) %> ( <%=time_ago_in_words(@topic.created_at)%> ago ) </div>
+						<div><%=t('created_on')%> <%= h(@topic.created_at.strftime("%B %e %Y at %I:%M %p")) %> ( <%=time_ago_in_words(@topic.created_at)%> ago ) </div>
 		        	</div>
 
 					<div class="details min_height">
@@ -122,10 +122,10 @@
 
 			<% if (@posts.size > 1) %>
 				<div class="floatr">
-					<%= link_to_function ('Reply to topic'[], "ReplyForm.init()", :class => "fdbutton") if logged_in? %>
+					<%= link_to_function (t('reply_topic'), "ReplyForm.init()", :class => "fdbutton") if logged_in? %>
 				</div>			
 				<h3 class="subtitle">				
-					Comments
+					<%=t('comments')%>
 				</h3> 
 				<div class="requestCnt">
 					<% last_post = @posts.last %>
@@ -139,7 +139,7 @@
 			<% end %>
 			<div>
 			<div class="alignright">
-				<%= link_to_function ('Reply to topic'[], "ReplyForm.init()", :class => "fdbutton") if logged_in? %>
+				<%= link_to_function (t('reply_topic'), "ReplyForm.init()", :class => "fdbutton") if logged_in? %>
 			</div>	
 				<% if logged_in? %>
 				<div id="edit"></div>
@@ -153,7 +153,7 @@
 				        <%= f.text_area :body, :rows => 8 %>
 				      </td>
 				      <td valign="top">				
-				        <h5><%= 'Formatting Help'[] %></h5>
+				        <h5><%= t('formatting_help') %></h5>
 				        <ul class="help">
 				          <li><%= '*bold*'[:formatting_bold] %>
 				          &nbsp; &nbsp; &nbsp;
@@ -168,7 +168,7 @@
 				    </tr>
 				    <tr>
 				      <td valign="bottom" style="padding-bottom:15px;">
-				       <%= submit_tag "Save Reply"[] %><span class="button_or">or <%= link_to_function 'cancel'[], "$('reply').hide()" %></span>
+				       <%= submit_tag t('save_reply')%><span class="button_or">or <%= link_to_function t('cancel'), "$('reply').hide()" %></span>
 				     </td>
 				   </tr>
 				  </table>

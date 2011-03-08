@@ -2,9 +2,9 @@
 	<h4 class="forum_title">
 		<% if logged_in? && admin? -%>
 		<div class="item_actions">
-			<%= link_to ("New Topic", new_category_forum_topic_path(category, forum), :class=> "highlight") %> | 
-			<%= link_to 'edit' , edit_category_forum_path(category, forum)  %> |
-			<%= link_to('delete', category_forum_path(category, forum), :method => 'delete', :confirm => 'Are you sure you want to delete this folder' ) %>
+			<%= link_to (t('topic.new'), new_category_forum_topic_path(category, forum), :class=> "highlight") %> | 
+			<%= link_to t('edit') , edit_category_forum_path(category, forum)  %> |
+			<%= link_to(t('delete'), category_forum_path(category, forum), :method => 'delete', :confirm => 'Are you sure you want to delete this folder' ) %>
 		</div>
 		<% end %>
 		<%= link_to ( h(forum.name), category_forum_path(category, forum), :class => "title" )  %>
@@ -17,8 +17,8 @@
 				 <%= link_to topic.title, category_forum_topic_path(category, forum, topic) , :class => "topic" %>
 			<% end %>
 		<% else %>
-			<span class="no_info_text">No topics in this forum - </span>
-			<%= (link_to 'add a new topic'[:create_new_topic], new_category_forum_topic_path(category, forum)) if logged_in? %>
+			<span class="no_info_text"><%=t('add_a_topic')%> - </span>
+			<%= (link_to t('add_a_topic'), new_category_forum_topic_path(category, forum)) if logged_in? %>
 		<% end %>	
 	</div>
 </li> 

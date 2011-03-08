@@ -14,19 +14,19 @@
 <%= form.error_messages %>
 <ul class="ui-form">
 	<li id="forum_name">
-		<label><%= 'Title'[:title_title] %></label>
+		<label><%=t('title')%></label>
 		<div>
 			<%= form.text_field :name, :class => "primary" %>
 		</div>
 	</li>	
 	<li id="forum_descripion">
-		<label><%= 'Description'[:description_title] %></label>
+		<label><%=t('description')%></label>
 		<div>
 			<%= form.text_area :description, :rows => 7 %>
 		</div>
 	</li>
 	<li class="small">
-        	<%= form.label :forum_type, "Forum Type" %>
+        	<%= form.label :forum_type, t('forum.type') %>
         	<%= form.select :forum_type, Forum::TYPE_OPTIONS, :class => "select" %>
     </li>
 </ul>
