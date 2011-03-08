@@ -2,13 +2,13 @@ module Slainit
   # This will initialize SLA scheduler which will be called in every 1 min 
   require 'rufus/scheduler'
   
-  logger.debug "-------SLA escalation Initializes--------"
+  RAILS_DEFAULT_LOGGER.debug "-------SLA escalation Initializes--------"
   
   scheduler = Rufus::Scheduler.start_new
 
   scheduler.every '3m' do
     
-  logger.debug "-------SLA escalation check starts--------"
+  RAILS_DEFAULT_LOGGER.debug "-------SLA escalation check starts--------"
   @overdue_tickets = Helpdesk::Ticket.find(:all, :readonly => false, :conditions =>['due_by <=? AND isescalated=? AND status=?', Time.zone.now.to_s(:db),false,Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open]] )
   
   @overdue_tickets.each do |ticket|
@@ -37,7 +37,7 @@ module Slainit
           
       
     end
-      logger.debug "-------SLA escalation check ends--------"
+      RAILS_DEFAULT_LOGGER.debug "-------SLA escalation check ends--------"
    end
    
 end
