@@ -29,7 +29,7 @@ class Helpdesk::TagsController < ApplicationController
   
    def set_selected_tab
       @selected_tab = 'Tickets'
- end
+   end
  
 
 end
