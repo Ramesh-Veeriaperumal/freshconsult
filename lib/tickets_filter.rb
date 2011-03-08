@@ -25,7 +25,8 @@ module TicketsFilter
     [:all,              "All Tickets ", [:visible]  ],
     
     [:spam,             "Spam"  ],
-    [:deleted,          "Trash"  ]
+    [:deleted,          "Trash"  ],
+    [:tags  ,           "Tags by Ticket" ]
   ]
   
   SELECTOR_NAMES = Hash[*SELECTORS.inject([]){ |a, v| a += [v[0], v[1]] }]

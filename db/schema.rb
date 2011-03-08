@@ -360,7 +360,7 @@ ActiveRecord::Schema.define(:version => 20110305092821) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "sla_policy_id",   :limit => 8
-    t.boolean  "override_bhrs",                :default => false
+    t.boolean  "override_bhrs"
   end
 
   create_table "helpdesk_sla_policies", :force => true do |t|

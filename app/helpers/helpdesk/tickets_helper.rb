@@ -3,8 +3,10 @@ module Helpdesk::TicketsHelper
   include TicketsFilter
   
   def filter_select
-    select("select_view", "id", SELECTORS.collect { |v| [v[1], helpdesk_filter_tickets_path(filter(v[0]))] },
+    
+    selector = select("select_view", "id", SELECTORS.collect { |v| [v[1], helpdesk_filter_tickets_path(filter(v[0]))] },
               {:prompt => "Select View..."})
+        
   end
 
   def filter(selector = nil)
