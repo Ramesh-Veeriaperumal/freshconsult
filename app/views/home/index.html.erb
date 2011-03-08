@@ -102,19 +102,34 @@
 				});					
 		});
 		
-		jQuery("#ssp_search").bind("keyup", function(ev){
-			searchString = this.value;
-			if(searchString.length > 2){
-				jQuery.ajax({ url: "/home/search_solution?search_key="+searchString, 
+		var delay = (function(){
+		  var timer = 0;
+		  return function(callback, ms){
+		    clearTimeout (timer);
+		    timer = setTimeout(callback, ms);
+		  };
+		})();
+		
+		callbackToSearch = function(string){
+			jQuery.ajax({ url: "/home/search_solution?search_key="+string, 
 							  success: function(data){
 							  			jQuery("#search_results").show();
 										jQuery("#search_results")
 											.html(data);
-							       }});	
+						}});
+		}
+		
+		jQuery("#ssp_search").bind("keyup", function(ev){
+			searchString = this.value;
+			if(searchString.length > 2){
+				delay(function(){
+			      callbackToSearch(searchString);
+			    }, 300 );
+					
 			}else if(searchString == ''){
 				jQuery("#search_results").hide();				
 			}
-		})
+		});
 		
 	});
 </script>
