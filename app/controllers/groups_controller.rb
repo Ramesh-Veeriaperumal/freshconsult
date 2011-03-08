@@ -53,7 +53,7 @@ class GroupsController < Admin::AdminController
 
   def update
     
-     @group = Group.find(params[:id])
+     @group = current_account.groups.find(params[:id])
      respond_to do |format|      
       if @group.update_attributes(params[nscname])
         update_agents        
