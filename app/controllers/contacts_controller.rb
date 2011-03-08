@@ -17,7 +17,7 @@ class ContactsController < ApplicationController
     
     respond_to do |format|
       format.html  do
-        @contacts = scoper.search(params[:letter],params[:page])
+        @contacts = scoper.filter(params[:letter],params[:page])
       end
       format.atom do
         @contacts = @contacts.newest(20)

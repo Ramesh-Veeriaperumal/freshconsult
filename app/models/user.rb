@@ -174,7 +174,7 @@ class User < ActiveRecord::Base
     self.permission?(:manage_tickets)
   end
   
-  def self.search(letter, page)
+  def self.filter(letter, page)
   paginate :per_page => 10, :page => page,
            :conditions => ['name like ?', "#{letter}%"],
            :order => 'name'

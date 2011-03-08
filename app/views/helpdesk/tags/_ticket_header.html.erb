@@ -1,0 +1,42 @@
+    <table class="tickets">
+      	<thead>
+      		<tr>
+	      		<th class="check">
+	      			<input type="checkbox" onclick="Helpdesk.sel.toggleCheckAll(this)"  />
+	      		</th>
+				<th>
+					<!--a href="#" class="button">Edit</a-->
+					<% if current_selector == [:deleted] %>
+					  <%= link_to_function("Undelete", "Helpdesk.sel.submit('#{ restore_helpdesk_ticket_path('multiple') }', 'put')", :class => "button") %>
+					<% else %>
+					  <%= link_to_function("Delete", "Helpdesk.sel.submit('#{ helpdesk_ticket_path('multiple') }', 'delete')", :class => "button") %>
+					<% end %>
+					
+					<% if current_selector == [:spam] %>
+					  <%= link_to_function("Unflag Spam", "Helpdesk.sel.submit('#{ unspam_helpdesk_ticket_path('multiple') }', 'put')", :class => "button") %> 
+					<% else %>
+					  <%= link_to_function("Flag Spam", "Helpdesk.sel.submit('#{ spam_helpdesk_ticket_path('multiple') }', 'put')", :class => "button") %> 
+					<% end %> 
+					
+					<%= link_to_function("Close", "Helpdesk.sel.submit('#{ close_multiple_helpdesk_ticket_path('multiple') }', 'put')", :class => "button") %> 
+					
+					<%= link_to_function("Pick Up", "Helpdesk.sel.submit('#{ pick_tickets_helpdesk_ticket_path('multiple') }', 'put')", :class => "button") %> 
+					
+					<a href="javascript:void(0)" id="assign-options-link" class="button">Assign To Agent</a>
+					<div id="assign-options" class="assign-agent" style="display:none;">
+					    Assign to agent <%= select_tag 'responder_id', options_from_collection_for_select(User.find_all_by_permission(current_account, :manage_tickets), :id, :name, current_user) %>
+					    <button id="assign-multiple-button" action="<%= assign_helpdesk_ticket_path('multiple') %>">Assign</button>
+					</div>
+				</th>	
+				<th>	
+					<form class="sort">
+						<a href="javascript:void(0)" class="sort_order">
+							<img src="/images/spacer.gif" alt="Order by newest first" title="Order by newest first" onclick="jQuery(this).toggleClass('desending')" />
+						</a>
+					    Sort by 
+						<%= select_tag :sort, options_for_select(TicketsFilter::SORT_FIELD_OPTIONS, (params[:sort] || :due_by).to_sym) %> 
+					</form>
+				</th>
+			</tr>
+      	</thead>
+	  </table>

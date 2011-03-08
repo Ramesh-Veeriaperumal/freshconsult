@@ -28,21 +28,10 @@ class HomeController < ApplicationController
   end
   
   def search_solution
-    
-    search_str = params[:search_key]
-    
-    logger.debug "search_str is #{search_str.inspect}"
-    
-    tokens =  search_str.scan(/\w+/)
-    
-    search_tokens = tokens-Solution::Article::SEARCH_STOP_WORDS
-    
-    @articles = Array.new
-    
-    @articles = Solution::Article.title_or_description_like_any(search_tokens).is_public(true).first(10) unless search_tokens.empty?
-    
-    render :partial => 'solution_search_result', :locals => { :articles => @articles, :key => search_str } 
-    
+    #For now, :star has been commented out as wildcard and stopwords don't go together well.
+    @articles = Solution::Article.search params[:search_key], 
+                                  :with => { :account_id => current_account.id, :is_public => true }#, :star => true
+    render :partial => 'solution_search_result', :locals => { :articles => @articles, :key => params[:search_key] } 
   end
   
 end

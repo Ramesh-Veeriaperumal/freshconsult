@@ -66,6 +66,7 @@ module HelpdeskControllerMethods
   end
 
   def destroy
+    logger.debug "@items.inspect #{@items.inspect}"
     @items.each do |item|
       if item.respond_to?(:deleted)
         item.update_attribute(:deleted, true)

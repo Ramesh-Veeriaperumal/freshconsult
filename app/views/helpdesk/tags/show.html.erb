@@ -7,24 +7,33 @@
 
   <% javascript_tag do %>
     document.observe("dom:loaded", function(){
-
-      Helpdesk.sel = new Helpdesk.MultiSelectorsOnPages({
-        pages: ['expanded', 'list'],
-        cookieName: 'helpdesk-tickets-page'
-      });
-
-      Helpdesk.sel.submitOnClick('assign-multiple-button', ['responder_id']);
-
+      
+	  Helpdesk.sel = new Helpdesk.MultiSelectorsOnPages({
+	      pages: ['list', 'expanded'],
+	      cookieName: 'helpdesk-tickets-page'
+	  });
+	
+	  Helpdesk.sel.submitOnClick('assign-multiple-button', ['responder_id']); 
+	  
       new Helpdesk.PageSwitcher({
         toggleMode: true,
         pages: ['assign-options']
       });
 
       Helpdesk.monitorTakeItButtons();
-
+	  	
       Helpdesk.submitOnChange('sort');
+	  
+	  Helpdesk.sel.toggleCheckAll = function(source){
+	  	if(source.checked)
+			Helpdesk.sel.checkAll();
+		else
+			Helpdesk.sel.uncheckAll();
+	  }
 
-      });
+	  
+	});
+	
   <% end %>
 <% end %>
 
@@ -33,7 +42,7 @@
 
 <% content_for :sidebar do %>
 
-  <%= 
+  <!--%= 
     d = (@item.tag_uses_count || 0) - (@item.tickets.visible.count || 0) 
     if(d > 0 && !params[:show_all])
       content_tag(:div, "#{d} Tickets are hidden due to deletion / spam. " + link_to("(show them)", helpdesk_tag_path(@item, :show_all => true)), :class => "spam")
@@ -41,19 +50,26 @@
     elsif(d > 0 && params[:show_all])
       content_tag(:div, "Spam & deleted tickets are shown. " + link_to("(hide them)", helpdesk_tag_path(@item)), :class => "spam")
     end
-  %>
+  %-->
 
-  <%= render :partial => '/helpdesk/shared/tag_search_navigate' %>
+  <!--%= render :partial => '/helpdesk/shared/tag_search_navigate' %-->
 
-  <h4>Options</h4>
-
-
-
+  <!--h4>Options</h4-->
+  
 <% end %>
 
 <% content_for :main_panel_title do %>
-  Tickets Tagged: <span class="tag"><%= @item.name %></span>
-  <sup><%= @item.tag_uses_count %></sup>
+
+<div class="header_area"> 
+  <h4>
+  	Tickets Tagged: <span class="tag"><%= @item.name %></span>  	
+	<%= render :partial => "/helpdesk/tickets/filters" %>
+  </h4>
+</div>
+
+<%= render :partial => "/helpdesk/tags/ticket_header" %>
+
+  
 <% end %>
 
 <% content_for :main_panel_actions do %>
@@ -61,7 +77,7 @@
 <% end %>
 
 <% content_for :main_panel_toolbar do %>
-  <div class="actions">
+  <!--div class="actions">
     <form class="sort">
       Sort by&nbsp;&nbsp; 
     </form>
@@ -69,12 +85,12 @@
   <ul>
     <li><a href="#" id="expanded-link">Expanded View</a></li>
     <li><a href="#" id="list-link">List View</a></li>
-  </ul>
+  </ul-->
 <% end %>
 
 <% content_for :main_panel_selected_toolbar do %>
 
-  <ul class="secondary-actions">
+  <!--ul class="secondary-actions">
     <%= content_tag('li', link_to_function("Select All", "Helpdesk.sel.checkAll()")) %>
     <%= content_tag('li', link_to_function("Deselect All", "Helpdesk.sel.uncheckAll()")) %> 
   </ul>
@@ -90,7 +106,7 @@
       <%= select_tag 'responder_id', options_from_collection_for_select(User.all, :id, :name, current_user) %>
       <button id="assign-multiple-button" action="<%= assign_helpdesk_ticket_path('multiple') %>">Assign</button>
     </div>
-  </div>
+  </div-->
 
 <% end %>
 

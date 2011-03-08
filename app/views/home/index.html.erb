@@ -3,7 +3,8 @@
 <div class="pageContent">
 	<div class="information_tip">	
 		<div class="floatr white_curved_cont">
-			<%= link_to image_tag("/images/add.png") + "Submit a Ticket", "support/tickets/new", :class => "fdbutton"  %> 
+			
+			<%= link_to image_tag("/images/add.png") + "Submit a Ticket", "support/tickets/new", :class => "fdbutton", :style => "width: 150px;"  %> 
 			or 
 			<%= link_to "Check your ticket status", support_tickets_path, :class => "button" %> 
 		</div>	
@@ -21,8 +22,7 @@
 			<ul class="ssp_category_list">
 				<% firstCategory = @categories.find(:first) %>
 				<% @categories.each do |category| %>
-				<li>
-					
+				<li> 
 					 <!--%= link_to_remote( h(folder.name),
                          :update => "RightDiv",
                          :url =>{ :action => :get_folders , :id => folder.id},
@@ -97,24 +97,39 @@
 		jQuery('.screen').bind("click", function(ev){
 			var $marginLefty = jQuery('#solution_dialog');
 				jQuery('body').css({'overflow':'auto'});		
-				$marginLefty.animate({width: '0px'}, 300, function(){
+				$marginLefty.animate({width: '0px'}, 400, function(){
 						jQuery('#solution_dialog_outer').fadeOut(80);								
 				});					
 		});
 		
-		jQuery("#ssp_search").bind("keyup", function(ev){
-			searchString = this.value;
-			if(searchString.length > 2){
-				jQuery.ajax({ url: "/home/search_solution?search_key="+searchString, 
+		var delay = (function(){
+		  var timer = 0;
+		  return function(callback, ms){
+		    clearTimeout (timer);
+		    timer = setTimeout(callback, ms);
+		  };
+		})();
+		
+		callbackToSearch = function(string){
+			jQuery.ajax({ url: "/home/search_solution?search_key="+string, 
 							  success: function(data){
 							  			jQuery("#search_results").show();
 										jQuery("#search_results")
 											.html(data);
-							       }});	
+						}});
+		}
+		
+		jQuery("#ssp_search").bind("keyup", function(ev){
+			searchString = this.value;
+			if(searchString.length > 2){
+				delay(function(){
+			      callbackToSearch(searchString);
+			    }, 300 );
+					
 			}else if(searchString == ''){
 				jQuery("#search_results").hide();				
 			}
-		})
+		});
 		
 	});
 </script>

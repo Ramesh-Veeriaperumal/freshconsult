@@ -22,16 +22,16 @@ class AccountsController < ApplicationController
     puts "#{params[:domain]}"
     render :json => { :account_name => true }, :callback => params[:callback]
   end
-  
+   
   def signup_free
     params[:plan] = SubscriptionPlan::SUBSCRIPTION_PLANS[:premium]
     build_object
     build_plan
    @account.time_zone = (ActiveSupport::TimeZone[params[:utc_offset].to_f]).name
-   if @account.save
+    if @account.save
       render :json => { :success => true, :url => @account.full_domain }, :callback => params[:callback]
     else
-      render :json => { :success => false, :errors => @account.errors.to_json }, :callback => params[:callback]
+      render :json => { :success => false, :errors => @account.errors.to_json }, :callback => params[:callback] 
     end
     
   end

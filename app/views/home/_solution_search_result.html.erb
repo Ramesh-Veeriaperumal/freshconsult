@@ -1,13 +1,17 @@
 <% if (articles.size == 0) %>
 	<h2>No search results found for '<%= key %>'</h2>
 <% else %>
-	
+	<style>
+		.match{
+			font-weight:bold;
+		}
+	</style>
 	<h2>Search results for '<%= key %>'</h2>
 	<% articles.each do |article| %>
 	<div class="result">
-	 	<h4><%= link_to(h(article.title), support_article_path(article)) %></h4>
+	 	<h4><%= link_to(article.excerpts.title, support_article_path(article)) %></h4>
 		<div>
-			<%= truncate ( article.description.gsub(/<\/?[^>]*>/, ""), 200)  %>
+			<%= article.excerpts.description %>
 		</div>
 	</div>
 	<% end %>
