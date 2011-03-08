@@ -3,7 +3,12 @@
   	<% if attachment.image? %>
   		<%= image_tag(attachment.content.url(:thumb), :class => "image")  %>
 	<% else %>
-		<%= image_tag("/images/filetype/file_extension_#{attachment.content_file_name.split('.')[-1]}.png") %>
+		<% 
+			extname = attachment.content_file_name.split('.')[-1] 
+			extname = (["pdf", "doc", "chm", "mov", "avi", "swf", "wmv", "xls", "zip", "txt", "log", "exe"].include?(extname)) ? extname : "def" 
+		%>
+			
+		<%= image_tag("/images/filetype/file_extension_#{extname}.png") %>
 	<% end %>
   </div>	
   <div class="name">

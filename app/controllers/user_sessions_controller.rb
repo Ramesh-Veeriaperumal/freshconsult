@@ -27,7 +27,7 @@ require 'openid'
   
   def destroy
     current_user_session.destroy
-    flash[:notice] = "Logout successful!"
+    #flash[:notice] = "Logout successful!"
     redirect_to root_url
   end
   

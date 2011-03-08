@@ -2,10 +2,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-        <title><%= h(@page_title) || 'Helpdesk' %></title>
-		<link href='http://fonts.googleapis.com/css?family=Droid+Sans:regular,bold' rel='stylesheet' type='text/css' />
-        <link rel="stylesheet" href="/stylesheets/print.css" type="text/css" media="print" />
-        <link rel="stylesheet" href="/stylesheets/application.css" type="text/css" media="screen, projection" /> 
+        <title><%= " #{h(current_account.name)} : #{h(@page_title || 'Helpdesk')}"  %></title>
+		<link rel="stylesheet" href="/stylesheets/reset.css" type="text/css" media="screen, projection" />
+        <link rel="stylesheet" href="/stylesheets/application.css" type="text/css" media="screen, projection" />
+		<link rel="stylesheet" href="/stylesheets/uni-form.css" type="text/css" media="screen, projection"  />
+		<link rel="stylesheet" href="/stylesheets/default.uni-form.css" type="text/css" media="screen, projection"  /> 
         <!--[if IE]>
             <link rel="stylesheet" href="/stylesheets/ie.css" type="text/css" media="screen, projection" />
         <![endif]--> 
@@ -30,31 +31,20 @@
     <body class="<%= yield :layoutType %>">   
         <div id="wrap" class="container">
             <%= render(:partial => '/layouts/shared/header') %>
-            <div class="content">  
-				<span class="ltShadow"></span>
-        		<span class="rtShadow"></span> 
-				<%= yield :efx  %>
-                <div id="inner">
-                    <div class="leftcontent">
-                    	<%= show_flash %>
-						<%= yield  %>
-                    </div> 
-	                <div class="sidebar">	                	
-						 <%= yield :sidebar %>					
+            <div class="content">
+            	<div class="wrapper"> 
+	                <div id="inner">
+	                    <div class="leftcontent">
+		                    	<%= show_flash %>
+								<%= yield  %>
+	                    </div> 
+		                <div class="sidebar">	                	
+							 <%= yield :sidebar %>					
+						</div> 
 					</div> 
-				</div> 
+				</div>
 			</div>
-            <div class="footer">
-	            <div class="corners">
-	                <span class="ltSlant"></span>
-	                <span class="rtSlant"></span>
-	                <span class="ltExt"></span>
-	                <span class="rtExt"></span>
-	            </div>
-	            <div class="footerinfo">
-	                Copyright (c) 2011
-	            </div>
-        	</div>
+            <div class="footer"></div>
         </div>
 		<%= yield :dialogs  %>        
     </body>

@@ -1,80 +1,48 @@
 
 <div class="header">
-    <a href="/home" class="brand">
-    	<span class="logo">
-			<%unless current_account.logo.nil?%>
-				<%= image_tag current_account.logo.content.url(:logo) %>
-			<%else%>
-				<img alt="FreshDesk" src="/images/logo.png" width="50px" height="50px"  />
-			<%end%>
-		</span>
-		<h3><%= current_account.helpdesk_name %></h3>
-	</a>					
-    <div class="header_links">
-    	<% if current_user then %>              
-		Welcome <%= content_tag(:strong, current_user ? current_user.name : 'Not Logged In') %>      
-		<ul>
-            <li class="first">
-              <%= link_to "My Info", support_guides_path %>
-            </li>
-            <li>			              
-			  <%= link_to('Sign out', logout_path) %>
-            </li> 
-		</ul>
-		<% else %>
-		<ul>
-			 <li class="first">			              
+	<div class="brand">
+	    	<a class="logo" href="/home">
+				<%unless current_account.logo.nil?%>
+					<%= image_tag current_account.logo.content.url(:logo) %>
+				<%else%>
+					<img alt="FreshDesk" src="/images/logo.png" width="50px" height="50px"  />
+				<%end%>
+			</a>
+			<a href="/home"><h3><%= current_account.helpdesk_name %></h3></a>
+	</div>		
+	<div class="wrapper">
+	    <div class="header_links">
+	    	<% if current_user then %>              
+				Welcome <span class="font_color"><strong><%= link_to current_user.name, edit_user_path(current_user) %></strong>-<%= link_to('Sign out', logout_path) %></span>
+			<% else %>
 				<%= link_to('login', login_path) %>
-			 </li>
-			 <li>
-			 	<%= link_to('sign up', "/signup") %>
-			 </li> 
-        </ul>
-		<% end %>				
-	</div>
-	
-	<% if current_user and permission?(:manage_tickets) then %>
-	    <div class="header_tabs">
-	    	<ul class="rightHeadElements">
-	        	<li>
-					<%= link_to('<img src="/images/add.png" alt="FreshDesk home" class="add_new" height="16px" width="16px" /> New Ticket', new_helpdesk_ticket_path, :class=>"ui-bt-grey new_ticket") %>                    
-	            </li>
-				<li class="search">
-				    <div class="searchTxt">
-				       	<label class="overlabel" for="header_search">Search</label>				           	
-						<input value="" type="text" id="header_search" />
-					</div>
-					<a class="ui-bt-grey searchbt">GO</a>
-				 </li>
-	        </ul> 
-	        <ul class="tabs">
-	        	<% if admin_subdomain? %>
-					<li><%= link_to(content_tag('span', 'Subscriptions'), admin_subscriptions_path) %></li>
-					<li><%= link_to(content_tag('span', 'Accounts'), admin_accounts_path) %></li>
-					<li><%= link_to(content_tag('span', 'Plans'), admin_subscription_plans_path) %></li>
-					<li><%= link_to(content_tag('span', 'Discounts'), admin_subscription_discounts_path) %></li>
-					<li><%= link_to(content_tag('span', 'Affiliates'), admin_subscription_affiliates_path) %></li>					
-	  			<% else %>
-	            	<%= navigation_tabs %>
-	  			<% end %> 
-	        </ul>	               
-	    </div>
-	<% else %>
-		<!--div class="header_tabs">
-			<ul class="tabs">
-				<li class="first active"><%= link_to(content_tag('span')+'Home'		, "/home") %></li>
-				<li><%= link_to(content_tag('span')+'Solutions'	, "/solution/folders") %></li>
-				<li class="last"><%= link_to(content_tag('span')+'Forums'	, "/forums") %></li>				
-			</ul>
-		</div-->	
-		
-	<div class="tab-menu-bg">
-		<div class="tab-menu">
-			<ul>
-				<li><%= link_to(content_tag('span')+'Home'		, "/home") %></li>
-				<li><%= link_to(content_tag('span')+'Forums'	, "/forums") %></li>
-			</ul>
+			<% end %>				
 		</div>
 	</div>
-	<% end %>        
+	<div class="top_nav_bg"> 
+		<div class="wrapper">
+			 <% if current_user and permission?(:manage_tickets) then %>
+				 <form class="nav_search" action="#">
+				 	<div class="search_bar">
+						<label class="overlabel" for="header_search">Search</label>				           	
+						<input value="" type="text" id="header_search" /> 
+					</div>
+				 </form>
+			 <% end %>
+			 <div class="top_nav"> 	
+				<ul class="tabs">
+					<%= navigation_tabs %> 
+				</ul>
+				<div class="nav_right">
+					<% if current_user and permission?(:manage_tickets) then %>
+						<%= link_to('<img src="/images/add.png" width="16px" height="16px" /> New Ticket', new_helpdesk_ticket_path, :class => "new_ticket" ) %>
+					<% else %>
+						<%= link_to('<img src="/images/add.png" width="16px" height="16px" /> Submit a ticket', new_helpdesk_ticket_path, :class => "new_ticket" ) %>
+					<% end %> 
+				</div> 
+			</div>
+			
+		</div>
+	</div>
+	
 </div>

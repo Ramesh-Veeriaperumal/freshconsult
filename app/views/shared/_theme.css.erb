@@ -1,24 +1,26 @@
-<style> 
-<% unless current_account.preferences.nil? %>
+<% unless current_account.preferences.nil? %> 
 
-	body{
-		background:<%= current_account.preferences[:bg_color] %>;
-	}
+<style>
+	<%	
+		$background   = current_account.preferences[:bg_color]
+		$header_color = current_account.preferences[:header_color]
+		$tab_color    = current_account.preferences[:tab_color]
+		
+		$bg_ctxt_color     = contrasting_text_color($background[1..-1])
+		$header_ctxt_color = contrasting_text_color($header_color[1..-1]) 
+	%>
+	body{ background: <%= $background %>; }
 	
-	.header_tabs ul.tabs li a{
-		background-color:<%= current_account.preferences[:header_color] %>;
-		border-color:<%= current_account.preferences[:header_color] %>;
-		border-color-top:<%= current_account.preferences[:header_color] %>;
-	}
-	.header_tabs ul.tabs li.active a, .header_tabs ul.tabs li a:hover{ 
-		background-color:<%= current_account.preferences[:header_color_selected] %>;	 
-		border-color:<%= current_account.preferences[:header_color_selected] %>;
-		border-color-top:<%= current_account.preferences[:header_color_selected] %>;
-	}
+	.sp_border, .pagearea, .sidepanel, .flash_info{ border-color:<%= process_color($background, 0.05, 1) %>; }
+	.reminders:before { border-color:<%= $background %> <%= $background %> #734e3d #734e3d; }
 	
-	.header{
-		border-color:<%= current_account.preferences[:header_color_selected] %>;		
-	}
-
-<% end %>
+	/* Header color */
+	.header { background: <%= $header_color %>; }
+	.brand h3, .header_links{ color: <%= $header_ctxt_color %>;}
+	 
+	/* Tab color settings */
+	.top_nav_bg{ background: <%= $tab_color %>; }
+	ul.tabs li.active a, ul.tabs li.active span{ background: <%= $background %>; color:<%= $bg_ctxt_color %>; }
+	ul.tabs li a:hover{ background: <%= process_color($tab_color) %>; }
 </style>
+<% end %>

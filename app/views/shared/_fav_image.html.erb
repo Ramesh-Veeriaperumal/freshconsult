@@ -33,6 +33,6 @@
 	<br />
 <% else %>		
 	<% fields_for "account[fav_icon_attributes]", account.fav_icon do |fav_icon_form| %>
-		<%= fav_icon_form.file_field :content %>				
+		<%= fav_icon_form.file_field :content, :class => "fileUpload" %>				
 	<% end %>
 <% end %>
