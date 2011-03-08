@@ -1,16 +1,17 @@
-<div class="reminders rounded">
-<h3 class="title"><%= local_assigns[:reminder_title] || "To-dos" %></h3>
-<ul>
-  <%reminders.visible.map do |r| 
-   %>   
-   <%= render :partial => "/helpdesk/shared/reminder_list", :locals => {:parent=>parent, :r =>r, :checked =>r.deleted, :check_url =>helpdesk_reminder_path(r), :check_method => :delete, :uncheck_url =>restore_helpdesk_reminder_path(r), :uncheck_method =>:put} %>
-		
-  <%end %> 
-</ul>
-<% form_for  Helpdesk::Reminder.new() do |f| %>
-  <%= f.label :body, "New To-do" %>
-  <%= f.text_field :body %>
-<% end %>
+<div id="Reminders" class="reminders sidepanel">
+	<h3 class="title"><%= local_assigns[:reminder_title] || "To-dos" %></h3>
+	<table>
+	  <% reminders.visible.map do |r| %>   
+	   <%= render :partial => "/helpdesk/shared/reminder_list", :locals => {:parent => parent, :r => r, :checked =>r.deleted, :check_url =>helpdesk_reminder_path(r), :check_method => :delete, :uncheck_url =>restore_helpdesk_reminder_path(r), :uncheck_method =>:put} %>
+	  <% end %>
+	</table> 
+	  <div class="addReminder">
+	  	<% form_for  Helpdesk::Reminder.new() do |f| %>
+		  <%= f.label :body, "Add To do", :class => "overlabel", :for => "helpdesk_reminder_body" %>
+		  <%= f.text_field :body, :class => "text" %>
+		<% end %>
+	  </div>
+	
 </div>
 
 

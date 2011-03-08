@@ -1,4 +1,4 @@
-<% content_for :layoutType do%>single<% end %> 
+<% content_for :layoutType do%><% end %> 
 <div>
 	  <div class="header_area">
 	 	<%= link_to "Solutions &rarr;", solution_categories_path, :class => "page_title" %>
@@ -38,14 +38,8 @@
 				<% end %>
 
 	 </div>
-	 <div class="page_area">
-			<table>
-				<tr>
-					<td>		
-						<%= @article.description %>
-					</td>
-				</tr>
-			</table>
+	 <div class="page_area solutions_text">
+		<%= @article.description %>
 	  </div>	
 	  
 	  <ul class="attachment_list">

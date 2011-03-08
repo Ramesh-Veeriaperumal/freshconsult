@@ -1,26 +1,25 @@
-<div class="title_bar_grey">
+<div>
 	<div class="floatr">				
 		<%= link_to '<img src="/images/add.png"> New Company', new_customer_path, :class => "fdbutton" %>			
 		<%= link_to('<img src="/images/add.png"> New Contact', new_contact_url, :class => "fdbutton") %>
 		<%= link_to('Import users from CSV', import_index_path, :class => "fdbutton grey") %>
 	</div>
 
-	<h3 class="title">
-		<%= @page_title = 'Customers' %>
-	</h3>	
+	<h3 class="title"><%= @page_title = 'Customers' %></h3>	
 	<div class="tab_panel">		
 		<b>Showing</b>
 		<%= link_to('Companies','/customers', :class => (type == 'company') ? "active" : "" ) %>
 		<%= link_to('Contacts','/contacts', 	  :class => (type == 'user') 	? "active" : "" ) %>
 	</div>		
+		
+	<ul class="alpha_sort_list">
+	  <%= hidden_field_tag :letter, '' %>
+	  <li class="active first"><%= link_to 'All', :letter => '' %></li>
+	  <% "A".upto("Y") do |l| -%>	    
+	     <li><%= link_to l, :letter => l %></li>	
+	  <% end %>
+	  <li class="last"><%= link_to 'Z', :letter => 'z' %></li>
+	</ul>
+
 	<!-- %= render(:partial => '/shared/listsearch') % -->	
 </div>
-
-<ul class="alpha_sort_list">
-  <%= hidden_field_tag :letter, '' %>
-  <li class="active first"><%= link_to 'All', :letter => '' %></li>
-  <% "A".upto("Y") do |l| -%>	    
-     <li><%= link_to l, :letter => l %></li>	
-  <% end %>
-  <li class="last"><%= link_to 'Z', :letter => 'z' %></li>
-</ul>

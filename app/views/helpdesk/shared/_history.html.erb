@@ -1,20 +1,19 @@
 <%
-history_active = false;
-
-history = (session[:helpdesk_history] || []).reverse.map do |h| 
-  active = h[:url][:id] == @item.to_param && 
-           h[:url][:controller] == params[:controller]
-
-  history_active ||= active
-
-  tab(h[:title], h[:url], "#{active ? :active : :history} #{ h[:class] || '' }") 
-end
-%>
-<% if (history_active) %>
-	<div id="RecentItems" class="rightSubContainers">
-	<h3 class="title">Recent Items</h3> 
+	history_active = false
+	history = (session[:helpdesk_history] || []).reverse.map do |h| 
+	  	active = h[:url][:id] == @item.to_param && 
+	           h[:url][:controller] == params[:controller]
+	
+	  	history_active ||= active
+	
+	  	tab(h[:title], h[:url], "#{active ? :active : :history} #{ h[:class] || '' }") 
+	end
+%> 
+<% unless history.blank?  %>
+	<div id="RecentItems" class="sidepanel">
+		<h3 class="title">Recent Items</h3> 
 	 	<ul class="ui-list_with_icon">
 			<%=history%>
 		</ul>
-	</div>
+	</div> 
 <% end %>

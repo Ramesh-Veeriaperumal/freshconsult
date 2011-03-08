@@ -33,6 +33,6 @@
 	<br />
 <% else %>		
 	<% fields_for "account[logo_attributes]", account.logo do |logo_form| %>
-		<%= logo_form.file_field :content %>				
+		<%= logo_form.file_field :content, :class => "fileUpload" %>				
 	<% end %>
 <% end %>

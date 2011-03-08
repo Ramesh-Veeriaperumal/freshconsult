@@ -1,6 +1,4 @@
-<% content_for :layoutType do%>single bg_pulp<% end %>
-
-<div>
+  
 	<%= render(:partial => '/shared/companyheader', :locals => {:type => "user"}) %>
 	
 	<ul id="users" class="content_list contact_list">	  
@@ -40,6 +38,5 @@
 	     	      
 	    </li>	
 	  <% end %>	 
-	</ul>
-</div>
+	</ul> 
 <div>  <%= will_paginate @contacts %> </div>

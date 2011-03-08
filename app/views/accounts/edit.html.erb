@@ -1,4 +1,4 @@
-<% content_for :layoutType do %>single<% end %>
+ 
 <%= javascript_include_tag "mColorPicker.min.js" %>
 <script type="text/javascript" charset="UTF-8">
 	jQuery.fn.mColorPicker.init.enhancedSwatches = false;
@@ -20,77 +20,85 @@
 		    ]
 		  };
 	jQuery(document).ready(function(){ 
-			
+		jQuery("#ResetColors").click(function(){
+			jQuery("#HeaderColor").val("#2f3733").trigger("keyup");
+			jQuery("#TabColor").val("#7cb537").trigger("keyup");
+			jQuery("#BackgroundColor").val("#efefef").trigger("keyup");
+		});
 	}); 
 </script>
 
-<div class="header_area">
-	<h4>Rebrand your Help Desk</h4>
-</div>	
-<div class="page_area">
-	<% form_for :account, @account, :url => { :action => 'update' }, :html => { :multipart => true ,:method => :put} do |f| %>
+
+<h3 class="title">Rebrand your Helpdesk</h3>
+	 
+	<% form_for :account, @account, :url => { :action => 'update' }, :html => { :multipart => true ,:method => :put, :class => "uniForm" } do |f| %>
 	  <%= f.error_messages %>
-	  <ul class="ui-form">
-		  <li>
-		    <%= f.label :name, "Account Name" %>
-		    <%= f.text_field :name, :class => "text" %>
-		  </li>
-		  <li>
+	  <fieldset class="inlineLabels">
+	  	 <div class="ctrlHolder">
+		    <%= f.label :name, "<em>*</em> Account Name" %>
+		    <%= f.text_field :name, :class => "textInput auto" %> 
+		 </div>
+	     <div class="ctrlHolder"> 
 			<%= f.label :time_zone, "Time Zone" %>
-			<%= f.time_zone_select :time_zone, ActiveSupport::TimeZone.all %>
-		  </li>
-		  <li>
+			<%= f.time_zone_select :time_zone, ActiveSupport::TimeZone.all, { :class => "selectInput" } %>
+		 </div>
+		 <div class="ctrlHolder">
 		    <%= f.label :helpdesk_name, "Helpdesk Name" %>
-		    <%= f.text_field :helpdesk_name, :class => "text" %>
-		  </li>
-		  <li>
+		    <%= f.text_field :helpdesk_name, :class => "textInput auto" %>
+		 </div>
+		 <div class="ctrlHolder">
 		    <%= f.label :helpdesk_url, "Helpdesk URL" %>
-		    <%= f.text_field :helpdesk_url, :class => "text" %>
-			<span class="seperator"></span>
-		  </li>
+		    <%= f.text_field :helpdesk_url, :class => "textInput auto" %> 
+		 </div>
+	  </fieldset>
+	  <fieldset class="inlineLabels">
 		  <% f.fields_for :preferences, @account.preferences do |p| %>
-        	<li>
-        		<table>
-        			<tr>
-        				<td>
-							<%= p.label :header_color, "Tab color" %>
+        	<div class="ctrlHolder">
+        		<p class="label">
+					<b>Page colors</b>	
+				</p>
+				<ul>
+					<li>
+						<%= p.label :header_color, "Header" %>
+						<div class="color">
+							<input type="color" id="HeaderColor" class="color_field" name="account[preferences][header_color]"  data-hex="true" value="<%= @account[:preferences].default(:header_color) %>" />
+						</div>
+					</li>
+					<li>
+			        	<%= p.label :header_color_tab, "Tab Color" %>
+						
 							<div class="color">
-								<input type="color" class="color_field" name="account[preferences][header_color]"  data-hex="true" value="<%= @account[:preferences].default(:header_color) %>"> 
+								<input type="color" id="TabColor" class="color_field" name="account[preferences][tab_color]"  data-hex="true" value="<%= @account[:preferences].default(:tab_color) %>" /> 
 							</div>
-						</td>	
-        				<td>
-			        		<%= p.label :header_color_tab, "Tab selected color" %>
-							<div class="color">
-								<input type="color" class="color_field" name="account[preferences][header_color_selected]"  data-hex="true" value="<%= @account[:preferences].default(:header_color_selected) %>"> 
-							</div>
-         				</td>						
-						<td>
-			        		<%= p.label :bg_color, "Background Color" %>
+         			</li>
+					<li>	
+			        		<%= p.label :bg_color, "Background" %>
 							<div class="color"> 
-								<input type="color" class="color_field" name="account[preferences][bg_color]"  data-hex="true" value="<%= @account[:preferences].default(:bg_color) %>">
+								<input type="color" id="BackgroundColor" class="color_field" name="account[preferences][bg_color]"  data-hex="true" value="<%= @account[:preferences].default(:bg_color) %>" />
 							</div>	
-						</td>
-					</tr>
-				</table>
-         	</li>
+					</li>
+					<li><a href="javascript:void(0)" id="ResetColors">Reset to Default colors </a></li>
+				</ul>
+					
+						 
+          </div>
 		  <% end %>
-		  <li>
+		</fieldset>
+		<fieldset class="inlineLabels">
+		  <div class="ctrlHolder">
 			<%= render :partial => "/shared/logo_image", :locals => { :account => @account } %>
-		 </li>
-		 
-		 <li>
+		  </div>
+		  <div class="ctrlHolder">
 			<%= render :partial => "/shared/fav_image", :locals => { :account => @account } %>
-			<span class="seperator"></span>
-		 </li>
-		 <li>
+		  </div> 
+		  <div class="ctrlHolder">
 		    <%= f.label :ticket_display_id, "Next Ticket ID #" %>
-			<div class="info_data">The next ticket ID counter will start with this number (Should be greater than the last ticket ID created). This affects tickets created henceforth.</div>
-			<%= f.text_field :ticket_display_id, :value => @account.get_max_display_id, :class => "number very_small" %>			
-		 </li>
-	  </ul>
-	  <div class="button-container">
-			<%= submit_tag 'Save', :class => 'fdbutton' %>
-	  		<%= link_to "Cancel", admin_home_path , :class => "fdbutton grey" %>
+			<%= f.text_field :ticket_display_id, :value => @account.get_max_display_id, :class => "textInput small" %>
+			<p class="formHint">The next ticket ID counter will start with this number (Should be greater than the last ticket ID created). This affects tickets created henceforth.</p>
+		  </div>			
+		</fieldset>
+	  <div class="buttonHolder">
+			<%= link_to "&larr; Cancel and go back", admin_home_path , :class => "secondaryAction" %>
+			<%= submit_tag 'Save changes', :class => 'primaryAction' %>
 	  </div>
 	<% end %>
-</div>

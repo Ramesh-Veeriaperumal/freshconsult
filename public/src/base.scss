@@ -3,47 +3,30 @@
 
 $blueprint-grid-columns: 24;
 $blueprint-grid-width: 30px;
-$blueprint-grid-margin: 10px; 
-$blueprint-liquid-container-width: 80%;
-$legacy-support-for-ie:true;
+$blueprint-grid-margin: 10px;
+$blueprint-liquid-container-width: 95%; 
 
 /* Theme Colors and layout Defaults */
-$base:#d4ebd4; 				/* Base Green */
-$base-highlight:#629462;
-
-$complement:#5fa5d8;		/* Secondary Blue */
-
-/* $background:desaturate(lighten($base, 8%), 12%); */
-$background:#787878; 
+$header_color:#2f3733; 				 
+$tab_color:#7cb537; 				 
+$background:#efefef; 
 
 $sidebar-color:#ffffff;
-$sidebar-width:300px;
+$sidebar-width:310px;
 $solution-sidew:240px;
-$footer-height:50px;
 $header_height:90px;
 $use-mozilla-ellipsis-binding:true;
 
-@import "compass/reset";
 @import "compass/utilities";
 @import "compass/css3";
-@import "compass/support";
-
-// Import the stick footer module.
-/*
-@import "compass/layout/sticky-footer";
-@include sticky-footer($footer-height, "#wrap", ".push", "#footer");
-*/
-// Import all the default blueprint modules so that we can access their mixins.
-@import "blueprint";   
+@import "compass/support"; 
 
 // Import the non-default scaffolding module.
 @import "blueprint/liquid";
 @import "blueprint/buttons";
 @import "blueprint/link-icons";
 @import "blueprint/typography";
-
-/*@include blueprint;*/
-
+ 
 // Typography Configuration
 $blueprint-font-family: "Lucida Grande", Geneva, Arial,Verdana,sans-serif;
 

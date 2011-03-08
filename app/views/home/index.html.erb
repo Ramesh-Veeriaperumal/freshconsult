@@ -3,7 +3,8 @@
 <div class="pageContent">
 	<div class="information_tip">	
 		<div class="floatr white_curved_cont">
-			<%= link_to image_tag("/images/add.png") + "Submit a Ticket", "support/tickets/new", :class => "fdbutton"  %> 
+			
+			<%= link_to image_tag("/images/add.png") + "Submit a Ticket", "support/tickets/new", :class => "fdbutton", :style => "width: 150px;"  %> 
 			or 
 			<%= link_to "Check your ticket status", support_tickets_path, :class => "button" %> 
 		</div>	
@@ -21,8 +22,7 @@
 			<ul class="ssp_category_list">
 				<% firstCategory = @categories.find(:first) %>
 				<% @categories.each do |category| %>
-				<li>
-					
+				<li> 
 					 <!--%= link_to_remote( h(folder.name),
                          :update => "RightDiv",
                          :url =>{ :action => :get_folders , :id => folder.id},

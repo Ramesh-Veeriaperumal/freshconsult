@@ -23,7 +23,17 @@ class AccountsController < ApplicationController
   end
   
   def create_json
-    render :json => { :account_name => true }, :callback => params[:callback]
+    @account = Account.new
+    @account.name = params[:account][:name]
+    @account.domain = params[:account][:domain]
+    
+    if @account.save
+      build_user
+      render :json => { :account_name => true }, :callback => params[:callback]
+    else
+      render :json => { :account_name => false }, :callback => params[:callback]
+    end
+    
   end
    
   def create
