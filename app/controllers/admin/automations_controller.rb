@@ -79,7 +79,7 @@ class Admin::AutomationsController < Admin::AdminController
     end
     
     def load_config
-      a_users = current_account.users.find(:all , :conditions =>{:role_token => ['poweruser','admin']}, :order => 'name')      
+      a_users = current_account.users.find(:all , :conditions =>{:user_role => [User::USER_ROLES_KEYS_BY_TOKEN[:poweruser],User::USER_ROLES_KEYS_BY_TOKEN[:admin]]}, :order => 'name')      
       agents = a_users.collect { |au| [au.id, au.name] }
       agents.insert(0, [0, '{{ticket.agent}}'])
         

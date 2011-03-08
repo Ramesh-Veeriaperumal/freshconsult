@@ -1,5 +1,7 @@
 class Helpdesk::TicketsController < ApplicationController  
 
+  before_filter :check_user , :only => [:show]
+  
   before_filter { |c| c.requires_permission :manage_tickets }
 
   include HelpdeskControllerMethods
@@ -9,6 +11,13 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :load_item,     :only => [:show, :edit, :update, :execute_scenario, :close_ticket ] 
   before_filter :set_customizer , :only => [:new ,:edit ,:show]
   before_filter :set_custom_fields , :only => [:create ,:update]
+  
+  
+  def check_user
+    if !current_user.nil? and current_user.customer?
+      return redirect_to(support_ticket_url(@ticket))
+    end
+  end
   
   
  
@@ -34,9 +43,7 @@ class Helpdesk::TicketsController < ApplicationController
 
 
   def show
-    
     @reply_email = current_account.reply_emails
-    
     @subscription = current_user && @item.subscriptions.find(
       :first, 
       :conditions => {:user_id => current_user.id})
@@ -59,9 +66,13 @@ class Helpdesk::TicketsController < ApplicationController
 
   def set_suggested_solutions
     
-    search_tokens =  @item.subject.scan(/\w+/)
+    tokens =  @item.subject.scan(/\w+/)   
     
-    @articles = current_account.solution_articles.title_or_description_like_any(search_tokens).first(10)
+    search_tokens = tokens-Solution::Article::SEARCH_STOP_WORDS
+    
+    @articles = Array.new 
+    
+    @articles = current_account.solution_articles.title_or_description_like_any(search_tokens).first(10) unless search_tokens.empty?
     
         
   end

@@ -28,16 +28,16 @@ class Account < ActiveRecord::Base
   authenticates_many :user_sessions
   
   has_many :users, :dependent => :destroy
-  has_one :admin, :class_name => "User", :conditions => { :role_token => 'admin' } #has_one ?!?!?!?!
+  has_one :admin, :class_name => "User", :conditions => { :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:admin] } #has_one ?!?!?!?!
   has_one :subscription, :dependent => :destroy
   has_many :subscription_payments
   has_many :solution_categories , :class_name =>'Solution::Category'  
   has_many :solution_articles , :class_name =>'Solution::Article'
   
   has_many :customers, :dependent => :destroy
-  has_many :contacts, :class_name => 'User' , :conditions =>{:role_token => 'customer' , :deleted =>false}
+  has_many :contacts, :class_name => 'User' , :conditions =>{:user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer] , :deleted =>false}
   has_many :agents, :through =>:users , :conditions =>{:users=>{:deleted => false}}
-  has_many :all_contacts , :class_name => 'User', :conditions =>{:role_token => 'customer'}
+  has_many :all_contacts , :class_name => 'User', :conditions =>{:user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}
   has_many :all_agents, :class_name => 'Agent', :through =>:users  , :source =>:agent
   has_many :sla_policies , :class_name => 'Helpdesk::SlaPolicy' ,:dependent => :destroy
   
@@ -238,7 +238,7 @@ class Account < ActiveRecord::Base
     def create_admin
       self.user.active = true
       self.user.account = self
-      self.user.role_token = 'admin'  
+      self.user.user_role = User::USER_ROLES_KEYS_BY_TOKEN[:admin]  
       self.user.build_agent()
       self.user.save
       

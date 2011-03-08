@@ -4,7 +4,7 @@ class AccountsController < ApplicationController
   
   skip_before_filter :set_time_zone
   
-  before_filter :build_user, :only => [:new, :create]
+  before_filter :build_user, :only => [:new, :create,:signup_free]
   before_filter :load_billing, :only => [ :new, :create, :billing, :paypal ]
   before_filter :load_subscription, :only => [ :billing, :plan, :paypal, :plan_paypal ]
   before_filter :load_discount, :only => [ :plans, :plan, :new, :create ]
@@ -13,6 +13,7 @@ class AccountsController < ApplicationController
   #ssl_required :billing, :cancel, :new, :create #by Shan temp
   #ssl_allowed :plans, :thanks, :canceled, :paypal
   
+   
   def new
     # render :layout => 'public' # Uncomment if your "public" site has a different layout than the one used for logged-in users
   end
@@ -21,17 +22,16 @@ class AccountsController < ApplicationController
     puts "#{params[:domain]}"
     render :json => { :account_name => true }, :callback => params[:callback]
   end
-  
-  def create_json
-    @account = Account.new
-    @account.name = params[:account][:name]
-    @account.domain = params[:account][:domain]
-    
+   
+  def signup_free
+    params[:plan] = SubscriptionPlan::SUBSCRIPTION_PLANS[:premium]
+    build_object
+    build_plan
+   @account.time_zone = (ActiveSupport::TimeZone[params[:utc_offset].to_f]).name
     if @account.save
-      build_user
-      render :json => { :account_name => true }, :callback => params[:callback]
+      render :json => { :success => true, :url => @account.full_domain }, :callback => params[:callback]
     else
-      render :json => { :account_name => false }, :callback => params[:callback]
+      render :json => { :success => false, :errors => @account.errors.to_json }, :callback => params[:callback] 
     end
     
   end

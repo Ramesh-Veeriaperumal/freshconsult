@@ -9,9 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-
-ActiveRecord::Schema.define(:version => 20110301104051) do
-
+ActiveRecord::Schema.define(:version => 20110305092821) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -362,7 +360,7 @@ ActiveRecord::Schema.define(:version => 20110301104051) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "sla_policy_id",   :limit => 8
-    t.boolean  "override_bhrs",                :default => false
+    t.boolean  "override_bhrs"
   end
 
   create_table "helpdesk_sla_policies", :force => true do |t|
@@ -410,6 +408,21 @@ ActiveRecord::Schema.define(:version => 20110301104051) do
   add_index "helpdesk_ticket_issues", ["issue_id"], :name => "index_helpdesk_ticket_issues_on_issue_id"
   add_index "helpdesk_ticket_issues", ["ticket_id"], :name => "index_helpdesk_ticket_issues_on_ticket_id"
 
+  create_table "helpdesk_ticket_states", :force => true do |t|
+    t.integer  "ticket_id",              :limit => 8
+    t.datetime "opened_at"
+    t.datetime "pending_since"
+    t.datetime "resolved_at"
+    t.datetime "closed_at"
+    t.datetime "first_assigned_at"
+    t.datetime "assigned_at"
+    t.datetime "first_response_time"
+    t.datetime "requester_responded_at"
+    t.datetime "agent_responded_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "helpdesk_tickets", :force => true do |t|
     t.text     "description"
     t.integer  "requester_id",    :limit => 8
@@ -435,6 +448,7 @@ ActiveRecord::Schema.define(:version => 20110301104051) do
     t.integer  "ticket_type",     :limit => 8
     t.string   "to_email"
     t.integer  "email_config_id", :limit => 8
+    t.text     "cc_email"
   end
 
   add_index "helpdesk_tickets", ["account_id", "requester_id"], :name => "index_helpdesk_tickets_on_account_id_and_requester_id"
@@ -631,7 +645,6 @@ ActiveRecord::Schema.define(:version => 20110301104051) do
     t.datetime "updated_at"
     t.integer  "account_id",          :limit => 8
     t.boolean  "active",                           :default => false, :null => false
-    t.string   "role_token"
     t.integer  "customer_id",         :limit => 8
     t.string   "job_title"
     t.string   "second_email"
@@ -643,6 +656,7 @@ ActiveRecord::Schema.define(:version => 20110301104051) do
     t.integer  "posts_count",                      :default => 0
     t.datetime "last_seen_at"
     t.boolean  "deleted",                          :default => false
+    t.integer  "user_role"
   end
 
   add_index "users", ["account_id", "email"], :name => "index_users_on_account_id_and_email", :unique => true

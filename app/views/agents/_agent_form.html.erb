@@ -1,12 +1,12 @@
  <script type="text/javascript">
 	function setUserRole()
 	{		
-		var role = jQuery('input[name=user_role]').is(':checked')? 'admin':'poweruser'
-		jQuery('#role_token').val(role);		
+		var role = jQuery('input[name=user_role]').is(':checked')? '<%=User::USER_ROLES_KEYS_BY_TOKEN[:admin]%>':'<%=User::USER_ROLES_KEYS_BY_TOKEN[:poweruser]%>'
+		jQuery('#user_role').val(role);		
 	}
 	jQuery(document).ready(function(ev){
-		current_role = jQuery('input#role_token').val();
-		jQuery('input[name=user_role]').attr('checked', (current_role=='admin'));
+		current_role = jQuery('input#user_role').val();
+		jQuery('input[name=user_role]').attr('checked', (user_role=='<%=User::USER_ROLES_KEYS_BY_TOKEN[:admin]%>'));
 	});	
  </script> 
  <div>
@@ -32,7 +32,7 @@
 		<li>
 			<input type="checkbox" id="user_role_val" name="user_role" onclick="setUserRole()" /> 
 			Make this agent an admin
-			<%= hidden_field(:user, :role_token, :id=>"role_token", :value => @agent.user.role_token ||= "poweruser" ) %>
+			<%= hidden_field(:user, :user_role, :id=>"user_role", :value => @agent.user.user_role ||= User::USER_ROLES_KEYS_BY_TOKEN[:poweruser] ) %>
 		</li>
 		<li class="small">
 			<%= label(:user, :phone, "Phone No.") %>	

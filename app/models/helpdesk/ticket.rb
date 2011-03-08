@@ -6,17 +6,20 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   set_table_name "helpdesk_tickets"
   
+  serialize :cc_email
+  
   has_flexiblefields
   
   #by Shan temp
-  attr_accessor :email, :custom_field ,:customizer, :nscname
+  attr_accessor :email, :custom_field ,:customizer, :nscname 
   after_create :refresh_display_id, :autoreply,:save_custom_field ,:pass_thro_biz_rules 
   after_update :save_custom_field
-  before_create :populate_requester
+  before_create :populate_requester,:save_ticket_states
+  
 
   before_create :set_spam, :set_dueby
   before_update :set_dueby, :cache_old_model
-  after_update  :notify_on_update
+  after_update  :notify_on_update ,:update_ticket_states
   
   belongs_to :account
   belongs_to :email_config
@@ -67,6 +70,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :as => :attachable,
     :class_name => 'Helpdesk::Attachment',
     :dependent => :destroy
+    
+  has_one :ticket_states , :class_name =>'Helpdesk::TicketState', :dependent => :destroy
 
   attr_protected :attachments #by Shan - need to check..
 
@@ -90,6 +95,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   #validates_presence_of :name, :source, :id_token, :access_token, :status, :source
   #validates_length_of :email, :in => 5..320, :allow_nil => false, :allow_blank => false
+  #validates_presence_of :responder_id
   validates_numericality_of :source, :status, :only_integer => true
   validates_numericality_of :requester_id, :responder_id, :only_integer => true, :allow_nil => true
   validates_inclusion_of :source, :in => 0..SOURCES.size-1
@@ -224,7 +230,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       if @requester.nil?
         @requester = User.new
         @requester.account_id = account_id
-        @requester.signup!({:user => {:email => self.email, :name => '', :role_token => 'customer'}})
+        @requester.signup!({:user => {:email => self.email, :name => '', :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}})
       end
       
       self.requester = @requester
@@ -254,6 +260,35 @@ class Helpdesk::Ticket < ActiveRecord::Base
       return notify_by_email(EmailNotification::TICKET_CLOSED) if (status == STATUS_KEYS_BY_TOKEN[:closed])
       #notify_by_email(EmailNotification::TICKET_REOPENED) if (status == STATUS_KEYS_BY_TOKEN[:open])
     end
+  end
+  
+  def save_ticket_states
+   
+    ticket_state = Helpdesk::TicketState.new      
+    self.ticket_states = ticket_state
+
+  end
+
+  def update_ticket_states
+    
+    ticket_states = self.ticket_states
+    
+    logger.debug "ticket_states :: #{ticket_states.inspect} "
+    
+    ticket_states.assigned_at=Time.zone.now if (responder_id != @old_ticket.responder_id && responder)    
+    ticket_states.first_assigned_at=Time.zone.now if (@old_ticket.responder_id.nil? && responder_id != @old_ticket.responder_id && responder)
+   
+    
+    if status != @old_ticket.status
+      ticket_states.opened_at=Time.zone.now if (status == STATUS_KEYS_BY_TOKEN[:open])
+      ticket_states.pending_since=Time.zone.now if (status == STATUS_KEYS_BY_TOKEN[:pending])
+      ticket_states.resolved_at=Time.zone.now if (status == STATUS_KEYS_BY_TOKEN[:resolved])
+      ticket_states.closed_at=Time.zone.now if (status == STATUS_KEYS_BY_TOKEN[:closed])       
+      
+    end
+    
+    ticket_states.save
+    
   end
   
   def notify_by_email(notification_type)
@@ -410,5 +445,7 @@ end
     raise e unless field
     custom_field[method]
   end
+  
+  
   
 end

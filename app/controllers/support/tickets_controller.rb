@@ -11,6 +11,7 @@ class Support::TicketsController < ApplicationController
   end
   
   def close_ticket 
+    
     @item = Helpdesk::Ticket.find_by_param(params[:id], current_account)
      status_id = Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:closed]
      logger.debug "close the ticket...with status id  #{status_id}"

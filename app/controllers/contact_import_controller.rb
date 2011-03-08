@@ -30,7 +30,7 @@ class ContactImportController < ApplicationController
                                 :email =>  row[(params[:fields]["4"]).to_i],
                                 :twitter_id => row[(params[:fields]["5"]).to_i], 
                                 :customer_id => nil,
-                                :role_token => 'customer'
+                                :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]
                                 }
                                 }
                                 email = @params_hash[:user][:email]  

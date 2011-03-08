@@ -9,10 +9,11 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       ticket = Helpdesk::Ticket.find_by_account_id_and_display_id(account.id, display_id) if display_id
       
       if ticket
-        comment = add_email_to_ticket(ticket, from_email, params[:text])
+          comment = add_email_to_ticket(ticket, from_email, params[:text])
+      
         
         if comment.user.customer?
-          unless ticket.active?
+           unless ticket.active?
             ticket.update_attribute(:status, Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open])
             notification_type = EmailNotification::TICKET_REOPENED
           end
@@ -51,6 +52,15 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       parse_email params[:to]
     end
     
+    def parse_cc_email
+      cc_array = []
+      unless params[:cc].nil?
+        cc_array = params[:cc].split(',').collect! {|n| (parse_email n)[:email]}
+      end
+      return cc_array.uniq
+    end
+      
+    
     def create_ticket(account, from_email, to_email)
       ticket = Helpdesk::Ticket.new(
         :account_id => account.id,
@@ -58,11 +68,11 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         :description => params[:text],
         :email => from_email[:email],
         :to_email => to_email[:email],
+        :cc_email => parse_cc_email,
         :email_config => account.email_configs.find_by_to_email(to_email[:email]),
         :status => Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open],
         :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email]
       )
- 
       ticket.save
       create_attachments(ticket, ticket)
       ticket.create_activity(ticket.requester, "{{user_path}} submitted a new ticket {{notable_path}}", {}, 
@@ -96,16 +106,17 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       user = ticket.account.users.find_by_email(email)
       unless user
         user = ticket.account.contacts.new
-        user.signup!({:user => {:email => email, :name => '', :role_token => 'customer'}})
+        user.signup!({:user => {:email => email, :name => '', :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}})
       end
       
       user
     end
 
     def create_attachments(ticket, item)
-      Integer(params[:attachments]).times do |i|
-        item.attachments.create(:content => params["attachment#{i+1}"], :account_id => ticket.account_id)
-      end
-    end
+        #Integer(params[:attachments]).times do |i|
+        #item.attachments.create(:content => params["attachment#{i+1}"], :account_id => ticket.account_id)
+     
+  #end
+  end
   
 end
