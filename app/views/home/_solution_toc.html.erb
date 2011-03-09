@@ -11,7 +11,7 @@
 				<%= folder.description %>
 			</div>
 			<ul class="sol_list">
-			<% folder.articles.each do |solution| %>
+			<% folder.articles.visible.each do |solution| %>
 				<li> 
 					<!--%= link_to_remote( h(solution.title),
                          :update => "solution_dialog",
