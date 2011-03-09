@@ -51,7 +51,7 @@ class Helpdesk::Note < ActiveRecord::Base
   
   def save_response_time
     
-    if self.notable.is_a? Helpdesk::Ticket      
+    if ((self.notable.is_a? Helpdesk::Ticket) && user)    
         ticket_state = notable.ticket_states     
         if "Customer".eql?(User::USER_ROLES_NAMES_BY_KEY[user.user_role])      
           ticket_state.requester_responded_at=Time.zone.now          
