@@ -66,7 +66,8 @@ module SupportTicketControllerMethods
           :body => params[:meta].map { |k, v| "#{k}: #{v}" }.join("\n"),
           :private => true,
           :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['meta'],
-          :account_id => current_account.id
+          :account_id => current_account.id,
+          :user_id => current_user && current_user.id
         )
       end
 

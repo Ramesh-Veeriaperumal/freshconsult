@@ -1,55 +1,46 @@
 class Solution::Article < ActiveRecord::Base
-   
-   belongs_to :folder, :class_name => 'Solution::Folder'
-   
-   set_table_name "solution_articles"
-   
-  define_index do
-    indexes :title, :sortable => true
-    indexes description
-    
-    has account_id, user_id, created_at, updated_at, is_public
-    
-    set_property :delta => :delayed
-  end
-   
-   belongs_to :user, :class_name => 'User'
-   belongs_to :account
-   
-   has_many :attachments,
+  set_table_name "solution_articles"
+  
+  belongs_to :folder, :class_name => 'Solution::Folder'
+  belongs_to :user, :class_name => 'User'
+  belongs_to :account
+  
+  has_many :attachments,
     :as => :attachable,
     :class_name => 'Helpdesk::Attachment',
     :dependent => :destroy
-    
-
-   
-   has_many :activities,
+  has_many :activities,
     :class_name => 'Helpdesk::Activity',
     :as => 'notable',
     :dependent => :destroy
-   
-   after_create :create_activity
-
-  attr_accessible :title,:description,:status,:status,:art_type,:is_public
-    
   has_many :tag_uses,
     :as => :taggable,
     :class_name => 'Helpdesk::TagUse',
     :dependent => :destroy
-
   has_many :tags, 
     :class_name => 'Helpdesk::Tag',
     :through => :tag_uses
 
-   validates_presence_of :title, :description, :user_id , :account_id
-   validates_length_of :title, :in => 3..240
-   validates_numericality_of :user_id
+ named_scope :visible, :conditions => ['is_public = ?', true] 
+
+  define_index do
+    indexes :title, :sortable => true
+    indexes description
+    has account_id, user_id, created_at, updated_at, is_public    
+    set_property :delta => :delayed
+  end
+     
+  after_create :create_activity
+  attr_accessible :title,:description,:status,:status,:art_type,:is_public
+  
+  validates_presence_of :title, :description, :user_id , :account_id
+  validates_length_of :title, :in => 3..240
+  validates_numericality_of :user_id
     
-    
-    STATUSES = [
+  STATUSES = [
                   [ :draft,       "Draft",        1 ], 
                   [ :published,   "Published",    2 ]
-                ]
+              ]
 
   STATUS_OPTIONS = STATUSES.map { |i| [i[1], i[2]] }
   STATUS_NAMES_BY_KEY = Hash[*STATUSES.map { |i| [i[2], i[1]] }.flatten]
