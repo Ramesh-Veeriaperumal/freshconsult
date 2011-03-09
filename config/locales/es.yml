@@ -28,3 +28,21 @@ es:
      name: "Topic Name"
      sticky: "Sticky"
      locked: "Locked"
+   activerecord:
+    errors:
+      template:
+        header:
+          one:    "1 error prohibited this %{model} from being saved"
+          other:  "%{count} errors prohibited this %{model} from being saved"
+        body: "There were problems with the following fields:"
+
+      messages:
+        blank: " is blank"
+        taken: "has already been taken"
+        record_invalid: "Validation failed: %{errors}"
+        <<: *errors_messages
+
+      full_messages:
+        format: "%{attribute}%{message}"
+   
+       
