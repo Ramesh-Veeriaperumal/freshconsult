@@ -26,6 +26,7 @@ class Solution::Article < ActiveRecord::Base
     indexes description
     
     has account_id, user_id, created_at, updated_at, is_public
+    has '0', :as => :deleted, :type => :boolean
     
     set_property :delta => :delayed
   end
