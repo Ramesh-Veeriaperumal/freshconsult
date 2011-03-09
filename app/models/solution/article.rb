@@ -78,6 +78,10 @@ class Solution::Article < ActiveRecord::Base
     nickname
   end
   
+  def self.suggest_solutions(ticket)
+    search(ticket.subject, :with => { :account_id => ticket.account.id }, :match_mode => :any)
+  end
+  
   private
     def create_activity
       activities.create(
