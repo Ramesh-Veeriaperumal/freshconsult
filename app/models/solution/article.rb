@@ -20,14 +20,16 @@ class Solution::Article < ActiveRecord::Base
   has_many :tags, 
     :class_name => 'Helpdesk::Tag',
     :through => :tag_uses
-   
+
+ named_scope :visible, :conditions => ['is_public = ?', true] 
+
   define_index do
     indexes :title, :sortable => true
     indexes description
-    
+
     has account_id, user_id, created_at, updated_at, is_public
     has '0', :as => :deleted, :type => :boolean
-    
+
     set_property :delta => :delayed
   end
      
