@@ -22,7 +22,7 @@ class Helpdesk::TicketsController < ApplicationController
   
  
   def index
-
+ 
     @items = TicketsFilter.filter(@template.current_filter, current_user, current_account.tickets)
 
     @items = TicketsFilter.search(@items, params[:f], params[:v])
@@ -31,7 +31,7 @@ class Helpdesk::TicketsController < ApplicationController
       format.html  do
         @items = @items.paginate(
           :page => params[:page], 
-          :order => TicketsFilter::SORT_SQL_BY_KEY[(params[:sort] || :due_by).to_sym],
+          :order => TicketsFilter::SORT_SQL_BY_KEY[(params[:sort] || :due_by).to_sym ] +" #{params[:sort_order]}"  ,
           :per_page => 10)
       end
       format.atom do
