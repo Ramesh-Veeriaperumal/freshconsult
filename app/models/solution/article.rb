@@ -30,6 +30,8 @@ class Solution::Article < ActiveRecord::Base
   has_many :tags, 
     :class_name => 'Helpdesk::Tag',
     :through => :tag_uses
+    
+   named_scope :visible, :conditions => ['is_public = ?', true] 
 
    validates_presence_of :title, :description, :user_id , :account_id
    validates_length_of :title, :in => 3..240
