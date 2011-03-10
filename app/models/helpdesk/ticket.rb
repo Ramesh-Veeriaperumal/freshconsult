@@ -80,6 +80,19 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   named_scope :newest, lambda { |num| { :limit => num, :order => 'created_at DESC' } }
   named_scope :visible, :conditions => ["spam=? AND deleted=? AND status > 0", false, false] 
+  
+  #Sphinx configuration starts
+  define_index do
+    indexes :display_id, :sortable => true
+    indexes :subject, :sortable => true
+    indexes description
+    indexes notes.body, :as => :note
+    
+    has account_id, deleted
+    
+    set_property :delta => :delayed
+  end
+  #Sphinx configuration ends here..
 
   #For custom_fields
   COLUMNTYPES = [
@@ -301,6 +314,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   def to_s
     "#{subject} (##{display_id})"
+  end
+  
+  def self.search_display(ticket)
+    "#{ticket.excerpts.subject} (##{ticket.excerpts.display_id})"
   end
   
   def reply_email

@@ -10,12 +10,12 @@
 			})();
 			
 			callbackToSearch = function(string){
-				/*jQuery.ajax({ url: "/home/search_solution?search_key="+string, 
+				jQuery.ajax({ url: "/search/index?search_key="+string, 
 								  success: function(data){
 								  			$("#SearchResultsBar").show();
 											$("#SearchResultsBar .results").html(data);
-							}});*/
-				$("#SearchResultsBar").show();
+							}});
+				//$("#SearchResultsBar").show();
 				//initSearchNavigator();
 			}
 			
@@ -51,7 +51,7 @@
 				if(searchString.length > 2){
 					delay(function(){
 				      callbackToSearch(searchString);
-				    }, 300 ); 
+				    }, 200 ); 
 				} 
 			});
 			

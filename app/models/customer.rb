@@ -11,7 +11,18 @@ class Customer < ActiveRecord::Base
   
   belongs_to :sla_policy, :class_name =>'Helpdesk::SlaPolicy'
   
-
+  #Sphinx configuration starts
+  define_index do
+    indexes :name, :sortable => true
+    indexes :description
+    indexes :note
+    
+    has account_id
+    has '0', :as => :deleted, :type => :boolean
+    
+    set_property :delta => :delayed
+  end
+  #Sphinx configuration ends here..
   
   before_create :check_sla_policy
   before_update :check_sla_policy

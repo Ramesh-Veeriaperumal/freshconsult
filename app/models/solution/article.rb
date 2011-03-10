@@ -27,12 +27,12 @@ class Solution::Article < ActiveRecord::Base
     indexes :title, :sortable => true
     indexes description
 
-    has account_id, user_id, created_at, updated_at, is_public
+    has account_id, user_id, is_public
     has '0', :as => :deleted, :type => :boolean
 
     set_property :delta => :delayed
   end
-     
+
   after_create :create_activity
   attr_accessible :title,:description,:status,:status,:art_type,:is_public
   

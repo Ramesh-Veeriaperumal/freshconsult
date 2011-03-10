@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110308065956) do
+ActiveRecord::Schema.define(:version => 20110310105715) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -61,6 +61,7 @@ ActiveRecord::Schema.define(:version => 20110308065956) do
     t.integer  "sla_policy_id",   :limit => 8
     t.text     "note"
     t.text     "domains"
+    t.boolean  "delta",                        :default => true, :null => false
   end
 
   add_index "customers", ["account_id", "name"], :name => "index_customers_on_account_id_and_name", :unique => true
@@ -172,46 +173,26 @@ ActiveRecord::Schema.define(:version => 20110308065956) do
     t.string   "ffs_28"
     t.string   "ffs_29"
     t.string   "ffs_30"
-    t.text     "ff_text01"
-    t.text     "ff_text02"
-    t.text     "ff_text03"
-    t.text     "ff_text04"
-    t.text     "ff_text05"
-    t.text     "ff_text06"
-    t.text     "ff_text07"
-    t.text     "ff_text08"
-    t.text     "ff_text09"
-    t.text     "ff_text10"
-    t.integer  "ff_int01"
-    t.integer  "ff_int02"
-    t.integer  "ff_int03"
-    t.integer  "ff_int04"
-    t.integer  "ff_int05"
-    t.integer  "ff_int06"
-    t.integer  "ff_int07"
-    t.integer  "ff_int08"
-    t.integer  "ff_int09"
-    t.integer  "ff_int10"
-    t.datetime "ff_date01"
-    t.datetime "ff_date02"
-    t.datetime "ff_date03"
-    t.datetime "ff_date04"
-    t.datetime "ff_date05"
-    t.datetime "ff_date06"
-    t.datetime "ff_date07"
-    t.datetime "ff_date08"
-    t.datetime "ff_date09"
-    t.datetime "ff_date10"
-    t.boolean  "ff_boolean01"
-    t.boolean  "ff_boolean02"
-    t.boolean  "ff_boolean03"
-    t.boolean  "ff_boolean04"
-    t.boolean  "ff_boolean05"
-    t.boolean  "ff_boolean06"
-    t.boolean  "ff_boolean07"
-    t.boolean  "ff_boolean08"
-    t.boolean  "ff_boolean09"
-    t.boolean  "ff_boolean10"
+    t.string   "ff_int01"
+    t.string   "ff_int02"
+    t.string   "ff_int03"
+    t.string   "ff_int04"
+    t.string   "ff_int05"
+    t.string   "ff_int06"
+    t.string   "ff_int07"
+    t.string   "ff_int08"
+    t.string   "ff_int09"
+    t.string   "ff_int10"
+    t.string   "ff_date01"
+    t.string   "ff_date02"
+    t.string   "ff_date03"
+    t.string   "ff_date04"
+    t.string   "ff_date05"
+    t.string   "ff_date06"
+    t.string   "ff_date07"
+    t.string   "ff_date08"
+    t.string   "ff_date09"
+    t.string   "ff_date10"
   end
 
   add_index "flexifields", ["flexifield_def_id"], :name => "index_flexifields_on_flexifield_def_id"
@@ -360,7 +341,7 @@ ActiveRecord::Schema.define(:version => 20110308065956) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "sla_policy_id",   :limit => 8
-    t.boolean  "override_bhrs"
+    t.boolean  "override_bhrs",                :default => false
   end
 
   create_table "helpdesk_sla_policies", :force => true do |t|
@@ -414,13 +395,13 @@ ActiveRecord::Schema.define(:version => 20110308065956) do
     t.datetime "pending_since"
     t.datetime "resolved_at"
     t.datetime "closed_at"
-    t.datetime "first_assigned_at"
     t.datetime "assigned_at"
     t.datetime "first_response_time"
     t.datetime "requester_responded_at"
     t.datetime "agent_responded_at"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.datetime "first_assigned_at"
   end
 
   create_table "helpdesk_tickets", :force => true do |t|
@@ -449,10 +430,11 @@ ActiveRecord::Schema.define(:version => 20110308065956) do
     t.string   "to_email"
     t.integer  "email_config_id", :limit => 8
     t.text     "cc_email"
+    t.boolean  "delta",                        :default => true,  :null => false
   end
 
-  add_index "helpdesk_tickets", ["account_id", "requester_id"], :name => "index_helpdesk_tickets_on_account_id_and_requester_id"
-  add_index "helpdesk_tickets", ["account_id", "responder_id"], :name => "index_helpdesk_tickets_on_account_id_and_responder_id"
+  add_index "helpdesk_tickets", ["account_id", "requester_id"], :name => "index_helpdesk_tickets_on_account_and_requester_id"
+  add_index "helpdesk_tickets", ["account_id", "responder_id"], :name => "index_helpdesk_tickets_on_account_and_responder_id"
 
   create_table "moderatorships", :force => true do |t|
     t.integer "forum_id", :limit => 8
@@ -622,6 +604,7 @@ ActiveRecord::Schema.define(:version => 20110308065956) do
     t.integer  "last_post_id", :limit => 8
     t.integer  "account_id",   :limit => 8
     t.integer  "stamp_type"
+    t.boolean  "delta",                     :default => true,  :null => false
   end
 
   add_index "topics", ["forum_id", "replied_at"], :name => "index_topics_on_forum_id_and_replied_at"
@@ -646,6 +629,8 @@ ActiveRecord::Schema.define(:version => 20110308065956) do
     t.datetime "updated_at"
     t.integer  "account_id",          :limit => 8
     t.boolean  "active",                           :default => false, :null => false
+    t.integer  "posts_count",                      :default => 0
+    t.datetime "last_seen_at"
     t.integer  "customer_id",         :limit => 8
     t.string   "job_title"
     t.string   "second_email"
@@ -654,10 +639,9 @@ ActiveRecord::Schema.define(:version => 20110308065956) do
     t.string   "twitter_id"
     t.text     "description"
     t.string   "time_zone"
-    t.integer  "posts_count",                      :default => 0
-    t.datetime "last_seen_at"
     t.boolean  "deleted",                          :default => false
     t.integer  "user_role"
+    t.boolean  "delta",                            :default => true,  :null => false
   end
 
   add_index "users", ["account_id", "email"], :name => "index_users_on_account_id_and_email", :unique => true

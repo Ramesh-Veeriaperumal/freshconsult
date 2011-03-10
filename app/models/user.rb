@@ -33,6 +33,20 @@ class User < ActiveRecord::Base
   end
   
   attr_accessible :name, :email, :password, :password_confirmation , :second_email, :job_title, :phone, :mobile, :twitter_id, :description, :time_zone, :avatar_attributes,:user_role,:customer_id
+  
+  #Sphinx configuration starts
+  define_index do
+    indexes :name, :sortable => true
+    indexes :email, :sortable => true
+    indexes :description
+    indexes :job_title
+    indexes customer.name, :as => :company
+    
+    has account_id, deleted
+    
+    set_property :delta => :delayed
+  end
+  #Sphinx configuration ends here..
 
   def signup!(params)
     self.email = params[:user][:email]
@@ -121,6 +135,12 @@ class User < ActiveRecord::Base
     reset_perishable_token!
     UserNotifier.deliver_password_reset_instructions(self) #Do we need delayed_jobs here?! by Shan
   end
+  
+  #Search display
+  def self.search_display(user)
+    "#{user.excerpts.name} - #{user.excerpts.email}"
+  end
+  #Search display ends here
 
   ##Authorization copy starts here
   def role

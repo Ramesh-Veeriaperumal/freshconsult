@@ -22,6 +22,16 @@ class Topic < ActiveRecord::Base
   
   has_many :voices, :through => :posts, :source => :user, :uniq => true
   belongs_to :replied_by_user, :foreign_key => "replied_by", :class_name => "User"
+  
+  define_index do
+    indexes :title, :sortable => true
+    indexes posts.body, :as => :comment
+
+    has account_id, user_id
+    has '0', :as => :deleted, :type => :boolean
+
+    set_property :delta => :delayed
+  end
 
   named_scope :for_forum, lambda { |forum|
     { :conditions => ["forum_id = ? ", forum] 
