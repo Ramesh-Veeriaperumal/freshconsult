@@ -17,8 +17,7 @@ class Helpdesk::RemindersController < ApplicationController
     end
 
     respond_to do |expects|
-      expects.html do 
-        flash[:notice] = "To -do has been completed"
+      expects.html do       
         redirect_to after_destroy_url
       end
       expects.js do
