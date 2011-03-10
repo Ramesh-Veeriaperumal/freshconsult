@@ -1,10 +1,7 @@
-<div class="pageContent">
-	<div class="title_bar_grey">
-		<div class="floatr">
-			<%= link_to "<img src='/images/add.png' /> New Agent", new_agent_path, :class => "fdbutton"  %>
-		</div>	
-		<h3 class="title">Agents</h3>		 
-	</div> 
+	<div class="floatr">
+		<%= link_to "<img src='/images/add.png' /> New Agent", new_agent_path, :class => "fdbutton"  %>
+	</div>
+	<h3 class="title">Agents</h3>
 	<ul class="admin_list">		 
 		<%@agents.each do |agent| %>
 			<li>
@@ -20,6 +17,4 @@
 			</li>	
 		<% end %>	 
 	</ul>
-	<!--%= link_to 'New customer', new_support_plan_path %-->
-</div>
 	

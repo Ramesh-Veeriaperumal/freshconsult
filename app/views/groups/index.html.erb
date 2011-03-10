@@ -1,12 +1,9 @@
-<div class="pageContent">
-	<div class="title_bar_grey">
-		<div class="floatr">
-			<%= link_to "<img src='/images/add.png' /> New Group", new_group_path, :class => "fdbutton"  %>
-		</div>	
-		<h3 class="title">Groups</h3>		 
-	</div>
-	<ul class="admin_list">
-		<% @groups.each do |group| %>
+<div class="floatr">
+	<%= link_to "<img src='/images/add.png' /> New Group", new_group_path, :class => "fdbutton"  %>
+</div>	
+<h3 class="title">Groups</h3>
+<ul class="admin_list">
+	<% @groups.each do |group| %>
 	  	<li>
 	  		<div class="item_actions">
 	  	    	<%= link_to 'edit', edit_group_path(group), :class => "button" %>		
@@ -14,8 +11,7 @@
 			</div>
 			<%= link_to(h(group.name), edit_group_path(group), :class => "item_info") %>
 			<div><%=h(group.description)%></div>
-	  	</li>
+	 	</li>
 	<% end %>
-	</ul>
-</div>
+</ul>
 

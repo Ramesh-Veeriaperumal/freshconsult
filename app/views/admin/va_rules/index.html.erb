@@ -31,7 +31,7 @@
 </script>
 
 <% content_for :sidebar do %>
-	<div class="rightSubContainers">
+	<div class="sidepanel">
 		<h3 class="title">Virtual Agent</h3>
 		<div class="help_text">
 			<p>Virtual agent will automatically dispatch a newly created support ticket based on the rules and actions defined.</p>			
@@ -40,17 +40,13 @@
 	</div>
 <% end %>
 
-<div class="pageContent">	
-	<div class="title_bar_grey">
-		<div class="floatr">
-			<!--%= link_to "Delete", "", :class => "button" %-->
-			<a href="javascript:void(0)" class="button" id="Reorder">Reorder</a>
-			<%= link_to "<img src='/images/add.png' /> New Rule", new_admin_va_rule_path, :class => "fdbutton"  %>
-		</div>	 
-		<h3 class="title">Virtual Agent - Rules</h3>		
-	</div>
-	
-		<ul class="admin_list" id="normal"> 
+<div class="pageContent">
+	<div class="floatr"> 
+		<%= link_to ("Reorder", "#", :id => "Reorder", :class => "fdbutton grey") if ( @va_rules.size > 1 ) %>
+		<%= link_to "<img src='/images/add.png' /> New Rule", new_admin_va_rule_path, :class => "fdbutton"  %>
+	</div>	
+	<h3 class="title">Virtual Agent - Rules</h3>	
+		 <ul class="admin_list" id="normal"> 
 			<% @va_rules.each do |va_rule| %>
 				<li ruleid="<%=va_rule.id%>" class="<%=cycle('stripe', '') %>"> 
 					<div class="item_actions">
@@ -86,9 +82,7 @@
 	
 	<br />
 	<% unless @inactive_rules.empty? %>
-		<div class="title_bar_grey">
-			<h3 class="title">Inactive Rules</h3>
-		</div>		
+		<h3 class="title">Inactive Rules</h3>
 		<ul class="admin_list deactivated"> 
 			<% @inactive_rules.each do |va_rule| %>
 				<li ruleid="<%=va_rule.id%>" class="<%=cycle('stripe', '') %>"> 

@@ -31,7 +31,7 @@
 </script>
 
 <% content_for :sidebar do %>
-	<div class="rightSubContainers">
+	<div class="sidepanel">
 		<h3 class="title">Scenario Automations</h3>
 		<div class="help_text">
 			<p>
@@ -46,15 +46,13 @@
 		</div>
 	</div>
 <% end %>
+<div class="floatr">
+	<%= link_to ("Reorder", "#", :id => "Reorder", :class => "fdbutton grey") if ( @va_rules.size > 1 ) %>
+	<%= link_to "<img src='/images/add.png' /> New Scenario", new_admin_automation_path, :class => "fdbutton"  %>
+</div>	 
 
-<div class="pageContent">	
-	<div class="title_bar_grey">
-		<div class="floatr">
-			<a href="javascript:void(0)" class="button" id="Reorder">Reorder</a>
-			<%= link_to "<img src='/images/add.png' /> New Scenario", new_admin_automation_path, :class => "fdbutton"  %>
-		</div>	 
-		<h3 class="title">Scenario Automations</h3>		
-	</div>
+<h3 class="title">Scenario Automations</h3>
+<div>	
 	<ul class="admin_list" id="normal">
 		<% @va_rules.each do |va_rule| %>
 			<li class="<%=cycle('stripe', '') %>"> 
