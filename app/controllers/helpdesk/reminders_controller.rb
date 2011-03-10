@@ -27,6 +27,14 @@ class Helpdesk::RemindersController < ApplicationController
 
   end
 
+ def restore
+    @items.each do |item|
+      item.update_attribute(:deleted, false)
+    end
+
+    redirect_to :back
+  end
+
 protected
 
   def scoper
