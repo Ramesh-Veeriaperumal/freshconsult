@@ -63,7 +63,14 @@
 		});
 		
 		toggleText();
-			
+		
+		jQuery("#Active_list li").live('mouseover mouseout', function(event) {
+		  if (event.type == 'mouseover') { 
+		  	jQuery(this).find(".button").show();
+		  } else {
+		  	jQuery(this).find(".button").hide(); 
+		  }
+		});
 			/*jQuery("ul#Inactive_list li")
 				.live("click", function(ev){					
 					jQuery(this)
@@ -78,11 +85,8 @@
 					    .appendTo("#Inactive_list");				
 				});*/
 	});
- </script> 
-<div class="pageContent">
-	<h3 class="content_title"><%=title%></h3>
-	<span class="seperator"></span>
-	<!--%= debug @support_plan%-->
+ </script>
+ <h3 class="title"><%=title%></h3> 
 	<% form_for(@group, :html => {:id => "group_form"}) do |f|  %>
 	  <%= f.error_messages %>
 	  <ul class="ui-form">
@@ -95,9 +99,7 @@
 		    <%= f.text_area :description, :class => "smallpara" %>
 		  </li>
 		  <li>		  	
-		  	<label>		  		
-				Agents in this Group			
-			</label>
+		  	<label>Agents in this Group</label>
 			<% 
 				
 					account_id =  @group.account_id
@@ -186,5 +188,4 @@
 		<%= f.submit 'Save', :class => "fdbutton" %>
 		<%= link_to 'Cancel', groups_path, :class => "fdbutton grey" %>	
 	  </div>
-	  <% end %>
-</div>
+<% end %>

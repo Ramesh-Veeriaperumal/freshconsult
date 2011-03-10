@@ -408,7 +408,7 @@ ul.activityfeed li{
 
 .sidepanel{
 	p{
-		font-size:15px; 
+		font-size:14px; 
 		line-height:1.5em;
 		font-family:georgia;
 		margin:0px 0px 14px 0px;
@@ -444,7 +444,7 @@ ul.activityfeed li{
 .reminders{
 	@include corners(6px);
 	position:relative; 
-    background:#ffffe2;      
+    background:#ffffe2;    
 	h3.title{
 		color:#734e3d;  
 		border-bottom:1px solid #e3dcc1;
@@ -479,7 +479,8 @@ ul.activityfeed li{
 }
 
 div.addReminder{
-	margin-top:8px;
+	margin:8px 0px;
+	display:block;
 	height:20px;
 	padding:0px;
 	position:relative;
@@ -810,8 +811,7 @@ ul.secondary-actions{
 	width:100%;  
 	border:1px solid #dfdfdf;
 	border-bottom-color:#efefef;
-	thead{
-		@include pie;
+	thead{ 
 		@include vertical-gradient(#F9F9F9, #ececec);
 		border:1px solid #afafaf;
 	}
@@ -940,11 +940,10 @@ div.leader-right{
 	
 }
 
-.fdbutton{ 
-	@include pie;
+.fdbutton{
 	@include anchor-button;
     @include min-width(80px);
-    padding: 5px 10px;    
+    padding: 5px 10px 7px 10px;    
     position:relative;
     margin: 2px; 
     border:1px solid #cdcecd;
@@ -1002,17 +1001,15 @@ a.red{
 	@include anchor-button;
     white-space: nowrap;
     text-align: center;
-    font-size: 0.90em;
+    font-size: 11px;
     overflow: hidden;
     padding: 4px 8px;
     margin: 2px;
     border: 2px solid #aaa;
     background:#fff;
-    color:#3f3f3f !important;
-
-    border-radius: 6px;
-    -webkit-border-radius: 6px;
-    -moz-border-radius: 6px;
+    
+	@include link-colors(#3f3f3f, #666666, #3f3f3f, #3f3f3f);
+    @include corners(6px);
 
     box-shadow:
         0 2px rgba(0, 0, 0, 0.05),
@@ -1046,7 +1043,7 @@ a.red{
 	
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#ededed',GradientType=0 ); /* ie */
 		
-    border: 1px solid rgba(0, 0, 0, 0.2);
+    border: 1px solid #afafaf;
     cursor: pointer;
 }
 
@@ -2156,11 +2153,11 @@ a.addchoice:hover{
 .ui-form{
 	padding:15px 15px 15px 15px;
 	position:relative;
-	/*
-		@include pie;
-		@include corners(6px);
-		@include inset-shadows(#cfcfcf, 0px, 2px, 1px);
-	*/
+	/*  @include pie;
+		@include inset-shadows(#cfcfcf, 0px, 2px, 1px); 
+	*/	
+	@include corners(6px);
+	@include shadows(#cfcfcf, 0px, 1px, 3px);
 	border-right:1px solid #dfdfdf;
 	border-bottom:1px solid #dfdfdf; 
 	li{
@@ -2499,16 +2496,18 @@ input.time{
 	background:#f6f6f6;
 	table{
 		padding:0px; margin:0px;
+		border:0px;
 		font-size:12px;
 		th, td{
 			padding:8px 10px;
-			vertical-align:top;			
+			vertical-align:top;
+			border:0px;			
 		}
 		th{			
 			line-height:18px;	
+			font-weight:bold;
 			span{
-				display:block;
-				font-weight:normal;
+				display:block; 
 			}
 		}
 		td{			
@@ -2654,16 +2653,12 @@ h4.list_title{
 .ui-custom-form{
 	padding:0px;
 	position:relative;
-	.ui-form{
-		background:#ffffff;
-	}		 
+	.ui-form{ background:#ffffff; }		 
 	li{   
 		padding:4px; 
 		position:relative;
 		background:#ffffff;
-		div{
-			position:relative;
-		}
+		div{ position:relative; }
 		border:1px dotted #ffffff;
 		cursor:move; 
 		.ui-field-panel{
