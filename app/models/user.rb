@@ -21,7 +21,7 @@ class User < ActiveRecord::Base
     :class_name => 'Helpdesk::Attachment',
     :dependent => :destroy
 
-  before_create :set_time_zone
+  before_create :set_time_zone , :set_company_name
   before_save :set_account_id_in_children , :set_contact_name
   
   named_scope :contacts, :conditions => ["user_role=?", USER_ROLES_KEYS_BY_TOKEN[:customer]]
@@ -211,6 +211,19 @@ class User < ActiveRecord::Base
       self.name = (self.email.split("@")[0])     
     end
    
-  end
+ end
+ 
+ def set_company_name
+   
+   if (self.customer_id.nil? && self.email)      
+       email_domain =  self.email.split("@")[1]
+       cust = Customer.account_id_like(account_id).domains_like(email_domain).first
+       self.customer_id = cust.id unless cust.nil?    
+     
+   end
+   
+ end
+ 
+ 
   
 end
