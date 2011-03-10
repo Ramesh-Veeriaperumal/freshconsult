@@ -31,6 +31,10 @@ class Solution::Article < ActiveRecord::Base
     has '0', :as => :deleted, :type => :boolean
 
     set_property :delta => :delayed
+    set_property :field_weights => {
+      :title        => 10,
+      :description  => 6
+    }
   end
 
   after_create :create_activity

@@ -22,6 +22,11 @@ class Customer < ActiveRecord::Base
     has '0', :as => :deleted, :type => :boolean
     
     set_property :delta => :delayed
+    set_property :field_weights => {
+      :name         => 10,
+      :note         => 4,
+      :description  => 3
+    }
   end
   #Sphinx configuration ends here..
   

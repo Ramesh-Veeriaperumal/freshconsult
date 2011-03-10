@@ -23,6 +23,7 @@ class Topic < ActiveRecord::Base
   has_many :voices, :through => :posts, :source => :user, :uniq => true
   belongs_to :replied_by_user, :foreign_key => "replied_by", :class_name => "User"
   
+  #Sphinx configuration starts
   define_index do
     indexes :title, :sortable => true
     indexes posts.body, :as => :comment
@@ -31,7 +32,12 @@ class Topic < ActiveRecord::Base
     has '0', :as => :deleted, :type => :boolean
 
     set_property :delta => :delayed
+    set_property :field_weights => {
+      :title    => 10,
+      :comment  => 4
+    }
   end
+  #Sphinx configuration ends here..
 
   named_scope :for_forum, lambda { |forum|
     { :conditions => ["forum_id = ? ", forum] 

@@ -45,6 +45,13 @@ class User < ActiveRecord::Base
     has account_id, deleted
     
     set_property :delta => :delayed
+    set_property :field_weights => {
+      :name         => 10,
+      :email        => 10,
+      :company      => 5,
+      :job_title    => 4,
+      :description  => 3
+    }
   end
   #Sphinx configuration ends here..
 

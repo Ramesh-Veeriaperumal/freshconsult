@@ -3,7 +3,7 @@
 development:
   adapter: mysql
   encoding: utf8
-  database: helpkit1
+  database: helpkit
   username: root
   password: 
 
