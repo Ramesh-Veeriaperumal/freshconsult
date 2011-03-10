@@ -1,6 +1,7 @@
 class Customer < ActiveRecord::Base
   
-  
+  serialize :domains
+    
   validates_presence_of :name,:account
   validates_uniqueness_of :name, :scope => :account_id
   attr_accessible :name,:description,:note,:domains ,:sla_policy_id
