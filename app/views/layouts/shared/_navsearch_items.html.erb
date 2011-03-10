@@ -1,5 +1,8 @@
 <!-- To do - Remove duplicates and use some partials by Shan -->
-		<li><div class="title">Displaying Top 10 results</div></li> 
+		<% unless @total_results == 0 %>
+			<li><div class="title"><%= (@total_results == 1) ? "Displaying 1 result" : "Displaying Top #{@total_results} results" %></div></li>
+		<% end %>
+		
 		<% unless @tickets.nil? or @tickets.empty? %>
 			<li class="ticket_icon">
 				<h4>Tickets</h4>
@@ -47,10 +50,12 @@
 		
 		<% if @total_results == 10 %>
 			<li>
-				<a href="#">See more results for "Search query" &raquo;</a>
+				<a href="#">See more results for <%= "\"#{@search_key}\"" %> &raquo;</a>
 			</li>
 		<% end %>
-			
-		<li style="display:none;">
-			<div>No Results Found</div>
-		</li>
+		
+		<% if @total_results == 0 %>
+			<li>
+				<div>No results found</div>
+			</li>
+		<% end %>
