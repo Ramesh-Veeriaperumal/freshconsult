@@ -148,3 +148,19 @@ ul.icon_grid li a div {
 .uniForm select {
   height: 24px;
 }
+
+/* line 25, ../src/ie.scss */
+#custom_form li {
+  height: 53px !important;
+}
+
+/* line 29, ../src/ie.scss */
+.ui-draggable-dragging {
+  margin-left: -18px;
+  margin-top: -45px;
+}
+
+/* line 34, ../src/ie.scss */
+.search_results_bar .results li h4 {
+  margin-left: -50px;
+}

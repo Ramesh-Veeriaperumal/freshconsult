@@ -1,34 +1,20 @@
-<% content_for :layoutType do%>single<% end %>
-<% content_for :sidebar do %>
-	<h4 class="product_title">
-	  <div>
-	  	<%= @item.name %>
-	  </div>
-  	</h4>	 
-	<ul class="tableofcontents">
-	   <% @item.folders.each do |folder| %>
-	   	  <li>
-			<h4><%= link_to(h(folder.name), solution_category_folders_path(@item,folder), :id =>folder.id) %></h4>
-		  </li>
-	   <% end %>
-	</ul>
+<% content_for :breadcrumb do %>
+	<%= link_to "Solutions &rarr;", solution_categories_path %> <%= @item.name %>
 <% end %>
-<div class="header_area no_padding"> 
-	<div class="right_panel">
-  		<%= link_to "<img src='/images/add.png'> New Folder", new_solution_category_folder_path(@item), :class => "fdbutton" %>
-	</div>
-	<%= link_to "Solutions &rarr;", solution_categories_path, :class => "page_title" %>
-	<span class="page_title"><%= @item.name %></span>
+
+<div class="floatr">
+	<%= link_to "<img src='/images/add.png'> New Folder", new_solution_category_folder_path(@item), :class => "fdbutton" %>
 </div>
+<h3 class="title"></h3>
+
 <div class="forum_list">
-	<h5 class="category_title">
-	  	<div class="item_actions">
+	<div><%= @item.description %></div>
 			<%= link_to 'edit' ,  edit_solution_category_path(@item)  %> |
-			<%= link_to('delete', solution_category_path(@item), :method => 'delete', :confirm => 'Are you sure you want to delete this category' ) %>
-		</div>		
-	  <%= @item.name %>		  
-	  <div><%= @item.description %></div>
-	</h5>
+			<% link_to('delete', solution_category_path(@item), :method => 'delete', :confirm => 'Are you sure you want to delete this category' ) %>
+				
+	  		  
+	  
+	
 	<ul class="base_set">	
 	<% unless (@item.folders.size == 0) %>			
 	  <% @item.folders.each do |folder| %>
