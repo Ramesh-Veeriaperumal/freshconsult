@@ -1,5 +1,31 @@
-  
+  	<%content_for :sidebar do%>
+	<div class="sidepanel">
+	<h3 class="title">Quick Contact</h3>
+	
+	<% form_tag :url  => contacts_path, :method =>:post do %>
+	<%= error_messages_for :user %> 	
+	<ul class="ui-form">
+	<li> 
+		<label for="user_name">Full Name</label> 
+		<input class="text" id="user_name" name="user[name]" size="30" type="text" value="" /> 
+	</li> 
+	<li>
+		<label for="email_primary">Email</label> 
+		<input class="text" id="email_primary" name="user[email]" size="30" type="text" />
+	</li>
+	<li>
+		<label for="user_phone">Phone</label> 
+		<input class="text" id="phone_work" name="user[phone]" size="30" type="text" /> 
+	</li>
+	</ul>
+  		<div><%= submit_tag 'Create', :class => "fdbutton" %></div>
+	<% end %>
+	</div>
+	<%end%>
+	
 	<%= render(:partial => '/shared/companyheader', :locals => {:type => "user"}) %>
+	
+	
 	
 	<ul id="users" class="content_list contact_list">	  
 	  <% @contacts.each do |contact| %>

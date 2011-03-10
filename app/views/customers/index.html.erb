@@ -1,4 +1,19 @@
- 
+<%content_for :sidebar do%>
+	<div class="sidepanel">
+	<h3 class="title">Quick Customer</h3>
+	
+	<% form_tag :action=> :quick, :method =>:post do %>
+	
+	<ul class="ui-form">
+	<li> 
+		 <label for="customer_name">Company name</label> 
+		 <input id="customer_name" name="customer[name]" size="30" type="text" /> 
+	</li> 
+	</ul>
+  		<div><%= submit_tag 'Create', :class => "fdbutton" %></div>
+	<% end %>
+	</div>
+	<%end%> 
 <div>
 	<%= render(:partial => '/shared/companyheader', :locals => {:type => "company"}) %>
 	<ul id="companies" class="content_list">

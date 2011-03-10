@@ -32,16 +32,20 @@ class ContactsController < ApplicationController
     @user.avatar = Helpdesk::Attachment.new
   end
   
-  def create
-    
-    @user = current_account.users.new #by Shan need to check later  
-
-    company_name = params[:user][:customer]    
-    unless company_name.empty?      
-      params[:user][:customer_id] = add_or_update_company   
+  def quick_customer
+    build_object
+    params[:user][:customer_id] = params[:customer_id]
+    if build_and_save
+        flash[:notice] = "The contact has been created and activation instructions sent to #{@user.email}!"
+    else
+        flash[:notice] =  activerecord_error_list(@user.errors)
     end
-    
-    if @user.signup!(params)    
+    customer = Customer.find(params[:customer_id])
+    redirect_to(customer_url(customer))
+  end
+  
+  def create
+    if build_and_save    
       flash[:notice] = "The contact has been created and activation instructions sent to #{@user.email}!"
       redirect_to contacts_url
     else
@@ -49,17 +53,26 @@ class ContactsController < ApplicationController
     end
   end
   
+  def build_and_save
+    @user = current_account.users.new #by Shan need to check later  
+    company_name = params[:user][:customer]    
+    unless company_name.blank?      
+      params[:user][:customer_id] = add_or_update_company   
+    end
+    @user.signup!(params)
+  end
+  
   def add_or_update_company
    
     company_name = params[:user][:customer]       
-    cust_id = (current_account.customers.find_by_name(company_name)).id     
-    if cust_id.nil? 
+    customer = (current_account.customers.find_by_name(company_name))     
+    if customer.nil? 
       @customer = current_account.customers.new(:name =>company_name)
       @customer.save
-      cust_id = @customer.id
+      customer = @customer
     end
     
-    return cust_id
+    return customer.id
     
   end
   
