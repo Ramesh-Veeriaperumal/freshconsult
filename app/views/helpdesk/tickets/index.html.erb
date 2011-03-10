@@ -52,15 +52,14 @@
     		return vars;
 	 }
 	  setSortOrder();
-	  changeSortOrder =function()  
-	  {
+	  changeSortOrder = function(){
 	  	source = jQuery('#sort_order_id').val();		
 	  	if (source == "ASC")
 			jQuery('#sort_order_id').val('DESC');
 		else
 		   jQuery('#sort_order_id').val('ASC');
 	  
-	    jQuery('#sort_form').submit()
+	    jQuery('#sort_form').submit();
 	  }
 
     });
@@ -88,13 +87,12 @@
 
 
 <% content_for :main_panel_content do %>
-
   <%# 
     This form is used by JS to submit "Take It" button clicks 
     We couldn't use the button_to helper because it resulted in a 
     form within a form.
   %>
-  <%= form_tag "", :method => :put, :style=>'display: none', :id => 'accept-form' do end %>
+  <%= form_tag "", :method => :put, :style=> 'display: none', :id => 'accept-form' do end %>
 
   <div id="pages"> 
       <table class="tickets">

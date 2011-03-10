@@ -70,7 +70,7 @@ var conditional_dom = function(filter, id, initFeed){
 											 
 			c_dom = jQuery("<div class=\"s_email\" />")
 						.append(to || "")												
-						.append(subject)
+						//.append(subject)
 						.append(body);								
 			break;	
 		

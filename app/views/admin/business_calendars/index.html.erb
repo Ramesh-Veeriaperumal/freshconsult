@@ -60,18 +60,22 @@
 			setFullWeek(this.value); 
 		});	
 	});
-	
-	
-	 
-	
 <% end %>
-<div class="page_area">
+
+<% content_for :sidebar do %>
+	<div class="sidepanel">
+		<h3 class="title">Business Hours</h3>
+		<p>Setting up your Business Hours in Freshdesk allows you to get more control on your SLAs.
+For eg. If you helpdesk works 9AM - 6PM Mon-Fri and a customer sends a high priority ticket at 4 PM on Tuesday with a SLA target resolution time of 4 hours, then the ticket Due By time is set as 11 AM on Wednesday.
+You can configure your SLAs to either respect or ignore business hours.</p>
+		<h3 class="title">Holidays</h3>
+		<p>Holidays work exactly like Business hours. For eg. If you helpdesk works 9AM - 6PM Mon-Fri and a customer sends a medium priority ticket at 8 PM on Friday with a SLA target resolution time of 24 hours, then the ticket Due By time is set as 9AM on Tuesday.(not 8PM on Sat)</p>
+	</div>
+<% end %>
+
+<h3 class="title">Business Hours</h3>
 	<% form_for :business_calenders, @business_calendars, :url => { :action => "update" },  :html => { :method => :put, :id => "BusinessHours"  } do |f| %>
-	<ul class="ui-form business_hours">
-		<li>
-			<h3 class="info_data">Business Hours</h3>
-		</li>			
-		<li class="seperator"></li>
+	<ul class="ui-form business_hours"> 
 		<li>
 			<label>Helpdesk Hours</label>			
 		</li>
@@ -117,10 +121,9 @@
 		<li class="seperator"></li>					
 		<li>
 			<label>Yearly Holiday List <span class="info_data">Holidays will be ignored when calculating SLA for a ticket</span></label>
-					
 			<table>
 				<tr>
-					<td width="60%" class="holidaylist"> 
+					<td width="55%" class="holidaylist" style="padding-right:10px;"> 
 						<%= f.hidden_field :holiday_data, :id=>"holiday_data" %>
 						<ul class="nobullets" id="HolidayList" style="display:none"></ul>
  
@@ -130,7 +133,7 @@
 							<% end %>	
 						<% end %>
 					</td>
-					<td class="borderleft">
+					<td class="borderleft" style="padding-left:10px;">
 						<%= date_select("holiday", "date", { :order => [:month, :day], :use_short_month => true } ) %><br />
 						<label class="overlabel" for="holiday_name">Holiday name</label>
 						<%= text_field("holiday", "name") %>
@@ -147,4 +150,3 @@
 		<%= link_to "Back", "/admin/home", :class => "fdbutton grey" %>
 	</div>
 	<% end %>
-</div>

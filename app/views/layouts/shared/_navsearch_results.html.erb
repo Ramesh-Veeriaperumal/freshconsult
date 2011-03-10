@@ -1,13 +1,7 @@
 <% javascript_tag do %>
 	(function($){
 		$(document).ready(function(){
-			var delay = (function(){
-			  var timer = 0;
-			  return function(callback, ms){
-			    clearTimeout (timer);
-			    timer = setTimeout(callback, ms);
-			  };
-			})();
+			
 			
 			callbackToSearch = function(string){
 				jQuery.ajax({ url: "/search/index?search_key="+string, 

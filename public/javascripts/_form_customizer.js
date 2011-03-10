@@ -5,21 +5,7 @@
 (function($){
 	jQuery(document).ready(function(){
 		init();
-		/*		
-		// Internet Explorer:
-		if (document.all)
-		  document.onselectstart =
-		    function () { return false; };
-		
-		// Netscape 4:
-		if (document.layers) {
-		  document.captureEvents(Event.MOUSEDOWN);
-		  document.onmousedown =
-		    function (evt) { return false; };
-		}
-		
-		// Netscape 6:
-		document.onmousedown = function () { return false; };*/
+		makePageNonSelectable($('custom_form'));
 	});
 			
 	function init(){		
@@ -28,10 +14,7 @@
 							    var type;
 								if(key == 'action'){
 									value = "";														
-								}
-								else if (key == "label"){
-									value = value.replace(new RegExp('_','g'),' ');
-								}				
+								} 	
 								return value;
 							});
 		
@@ -43,7 +26,7 @@
 		// Mapping individual dom elements to its data counterparts
 		var dialogDOMMap = {
 			type: 			jQuery(dialogContainer+' input[name|="customtype"]'),
-			label: 			jQuery(dialogContainer+' input[name|="customlabel"]'),
+			label: 			jQuery(dialogContainer+' input[name|="customlabel"]'), 
             description: 	jQuery(dialogContainer+' input[name|="customdesc"]'),	
 			choices: 		jQuery(dialogContainer+' div[name|="customchoices"]'),
             setDefault: 	1,	    
@@ -56,6 +39,7 @@
         var fieldTemplate = $H({
 					            type: "",
 					            label: "Untitled",
+								display_name:"Untitled",
 						    	description: "",
 						   		fieldType :"custom",
 					            choices: [],
@@ -104,7 +88,7 @@
 			var fieldContainer = container || jQuery("<li />");
 			fieldContainer.empty();
 			
-			var label = jQuery("<label />").append(dataItem.label);
+			var label = jQuery("<label />").append(dataItem.display_name);
 			var field = jQuery("<div />");
 			var panel = jQuery("<div class='action_panel' />");	
 			/*var edit  = jQuery("<a href='javascript:void(0)' class='button'>Edit</a>");
@@ -133,7 +117,7 @@
                 case 'checkbox':				
 					fieldContainer.addClass(dataItem.type);	
 					var selected = (dataItem.setDefault)?'checked':'';
-                    field.append('<input type="checkbox" '+ selected +' disabled="true" '+fieldAttr+' />'+dataItem.label);
+                    field.append('<input type="checkbox" '+ selected +' disabled="true" '+fieldAttr+' />'+dataItem.display_name);
 					fieldContainer
 						  .append(field);
                     break;
@@ -205,7 +189,8 @@
 		
 	jQuery("#SaveForm").click(function(e){			
 			var jsonData = getCustomFieldJson();
-			jQuery("#field_values").val(jsonData); 
+			jQuery("#field_values").val(jsonData);
+			 
 			jQuery.ajax({
       					type: 'POST',
 						url: '/ticket_fields/update',
@@ -219,7 +204,8 @@
 							jQuery('div#resultmsg').html(data.message);
 							jQuery('div#resultmsg').show("fade", 500);
 						}
-    	  	});
+    	  	});  
+			return false;
 		});
 		
         
@@ -270,7 +256,7 @@
 			 
 				
 			dialogDOMMap.type.val(sourceData.type);							
-			dialogDOMMap.label.val(sourceData.label);
+			dialogDOMMap.label.val(sourceData.display_name);
 			dialogDOMMap.description.val(sourceData.description);
 				
 			jQuery("div#CustomFieldsDialog label.overlabel").overlabel();
@@ -312,8 +298,9 @@
 		{
 			var sourceData   	         	= $H(jQuery(SourceField).data("raw"));	
 			
-			sourceData.set("label" 		 , dialogDOMMap.label.val());
-			sourceData.set("description" , dialogDOMMap.description.val());
+			sourceData.set("label" 		 		 , dialogDOMMap.label.val());
+			sourceData.set("display_name" 		 , dialogDOMMap.label.val());
+			sourceData.set("description" 		 , dialogDOMMap.description.val());
 			
 			sourceData.get("agent").required	= dialogDOMMap.agent.required.attr("checked");
 				
