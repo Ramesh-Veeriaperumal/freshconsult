@@ -1,7 +1,4 @@
-<% content_for :layoutType do -%>single<%- end %>
-<div class="page_area">
-	<h3 class="content_title">New SLA Policy</h3>
-	<span class="seperator"></span>
+<h3 class="title">New SLA Policy</h3>
 	<% form_for(@sla_policy) do |f| %> 
 	  <%= render :partial => "form", :locals => { :f => f } %> 
 	  <div class="button-container">
@@ -9,4 +6,3 @@
 		<%= link_to 'cancel', helpdesk_sla_policies_path, :class => "fdbutton grey" %>
 	  </div>	 
 	<% end %>
-</div>

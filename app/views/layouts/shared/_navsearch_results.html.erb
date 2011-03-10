@@ -1,0 +1,93 @@
+<% javascript_tag do %>
+	(function($){
+		$(document).ready(function(){
+			
+			
+			callbackToSearch = function(string){
+				jQuery.ajax({ url: "/search/index?search_key="+string, 
+								  success: function(data){
+								  			$("#SearchResultsBar").show();
+											$("#SearchResultsBar .results").html(data);
+							}});
+				//$("#SearchResultsBar").show();
+				//initSearchNavigator();
+			}
+			
+			$("#SearchResultsBar a").live("click", function(){
+				window.location = this.href; 
+			});
+			
+			$("#SearchResultsBar a").live("hover", function(){
+				$(currentactive).removeClass("active");
+				currentactive = $(this).addClass("active");
+			});
+			
+			$("#SearchResultsBar")
+				.hover(function(){
+					insideSearch = true;
+					console.log(insideSearch);
+				}, function(){
+					insideSearch = false;
+					console.log(insideSearch);
+				});
+			
+			$("#header_search").bind("focusout", function(ev){ 
+				if(!insideSearch)
+					jQuery("#SearchResultsBar").hide();
+			});
+			
+			$("#header_search").bind("focusin", function(ev){
+				jQuery("#SearchResultsBar").show();
+			});
+			
+			$("#header_search").bind("keyup", function(ev){
+				searchString = this.value;
+				if(searchString.length > 1){
+					delay(function(){
+				      callbackToSearch(searchString);
+				    }, 200 ); 
+				} 
+			});
+			
+			var currentactive,
+				position   = -1,
+				searchlist = $("#SearchResultsBar a"),
+				max		   = searchlist.size() - 1,
+				insideSearch = false;
+			
+			initSearchNavigator = function(){
+				searchlist 		= $("#SearchResultsBar a");
+				max		   		= searchlist.size()-1;
+				currentactive	= searchlist.first();
+			}
+			
+			move = function(diff){
+				$(currentactive).removeClass("active");
+				position = Math.min(max, Math.max(0, position + diff));
+				currentactive = $(searchlist.get(position)).addClass("active"); 
+			}
+			
+			$("#header_search").bind("keydown", function(e){ 
+				 switch (e.keyCode) {
+			        case 40:
+						move(1);
+						e.preventDefault();
+			            break;
+			        case 38:
+						move(-1);
+						e.preventDefault();
+			            break;
+					case 13:
+						$(currentactive).trigger("click");
+						break; 
+				}
+			}); 
+		});
+	})(jQuery);
+<% end %>
+
+<div class="search_results_bar" id="SearchResultsBar"> 
+	<ul class="results"> 
+		<%= render :partial => "/layouts/shared/navsearch_items" %>
+	</ul> 
+</div>

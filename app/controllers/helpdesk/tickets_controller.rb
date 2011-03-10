@@ -22,7 +22,7 @@ class Helpdesk::TicketsController < ApplicationController
   
  
   def index
-
+ 
     @items = TicketsFilter.filter(@template.current_filter, current_user, current_account.tickets)
 
     @items = TicketsFilter.search(@items, params[:f], params[:v])
@@ -31,7 +31,7 @@ class Helpdesk::TicketsController < ApplicationController
       format.html  do
         @items = @items.paginate(
           :page => params[:page], 
-          :order => TicketsFilter::SORT_SQL_BY_KEY[(params[:sort] || :due_by).to_sym],
+          :order => TicketsFilter::SORT_SQL_BY_KEY[(params[:sort] || :due_by).to_sym ] +" #{params[:sort_order]}"  ,
           :per_page => 10)
       end
       format.atom do
@@ -55,8 +55,6 @@ class Helpdesk::TicketsController < ApplicationController
      logger.debug "subject of the ticket is #{@item.subject}"
      
      set_suggested_solutions 
-     
-     #@suggested_solution = 
     
     respond_to do |format|
       format.html  
@@ -65,16 +63,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def set_suggested_solutions
-    
-#    tokens =  @item.subject.scan(/\w+/)   
-#    
-#    search_tokens = tokens-Solution::Article::SEARCH_STOP_WORDS
-    
-    @articles = Array.new 
-    
-   # @articles = current_account.solution_articles.title_or_description_like_any(search_tokens).first(10) unless search_tokens.empty?
-    
-        
+    @articles = Solution::Article.suggest_solutions @ticket
   end
   
   def update

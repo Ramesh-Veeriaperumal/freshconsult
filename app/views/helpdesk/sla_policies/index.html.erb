@@ -1,6 +1,6 @@
 <% content_for :sidebar do %>
-	<div class="rightSubContainers">
-		<h4>SLA Policy</h4>
+	<div class="sidepanel">
+		<h3 class="title">SLA Policy</h3>
 			<p>
 				SLA Policy is a set of target response and resolution times based on ticket priority.
 				It is an industry best practice to set Service Levels based on priority. Your SLA policy could be as simple as saying “High Priority tickets should be resolved in 2 hours” etc.
@@ -13,27 +13,21 @@
 			</p>
 	</div>	
 <% end %>
-<div class="page_area">
-	<div class="title_bar_grey">
-		<div class="floatr">
-			<%= link_to "<img src='/images/add.png' /> New SLA Policy", new_helpdesk_sla_policy_path, :class => "fdbutton" %>
-		</div>
-		<h3 class="title">SLA Policy</h3>
-	</div>
-	<ul class="admin_list">
-		<% @sla_policies.each do |policy| %>
-  		<li>
-  			<div class="item_actions">
-			    <%= link_to 'edit', edit_helpdesk_sla_policy_path(policy), :class => "button" %>
-				<%unless policy.is_default?%>
-			    	<%= link_to 'delete', policy, :confirm => 'Are you sure?', :method => :delete, :class => "button" %>
-				<%end%>
-			</div>
-			<%= link_to(h(policy.name), edit_helpdesk_sla_policy_path(policy), :class => "item_info") %>
-			<div><%= h policy.description %></div>		   	
-		  </li>
-		<% end %>
-</ul>
-
-<!--%= link_to 'New customer', new_support_plan_path %-->
+<div class="floatr">
+	<%= link_to "<img src='/images/add.png' /> New SLA Policy", new_helpdesk_sla_policy_path, :class => "fdbutton" %>
 </div>
+<h3 class="title">SLA Policy</h3> 
+<ul class="admin_list">
+	<% @sla_policies.each do |policy| %>
+	<li>
+		<div class="item_actions">
+		    <%= link_to 'edit', edit_helpdesk_sla_policy_path(policy), :class => "button" %>
+			<%unless policy.is_default?%>
+		    	<%= link_to 'delete', policy, :confirm => 'Are you sure?', :method => :delete, :class => "button" %>
+			<%end%>
+		</div>
+		<%= link_to(h(policy.name), edit_helpdesk_sla_policy_path(policy), :class => "item_info") %>
+		<div><%= h policy.description %></div>		   	
+	  </li>
+	<% end %>
+</ul> 

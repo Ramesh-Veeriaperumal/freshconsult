@@ -26,10 +26,17 @@ class Solution::Article < ActiveRecord::Base
   define_index do
     indexes :title, :sortable => true
     indexes description
-    has account_id, user_id, created_at, updated_at, is_public    
+
+    has account_id, user_id, is_public
+    has '0', :as => :deleted, :type => :boolean
+
     set_property :delta => :delayed
+    set_property :field_weights => {
+      :title        => 10,
+      :description  => 6
+    }
   end
-     
+
   after_create :create_activity
   attr_accessible :title,:description,:status,:status,:art_type,:is_public
   
@@ -73,6 +80,10 @@ class Solution::Article < ActiveRecord::Base
   
   def to_s
     nickname
+  end
+  
+  def self.suggest_solutions(ticket)
+    search(ticket.subject, :with => { :account_id => ticket.account.id }, :match_mode => :any)
   end
   
   private

@@ -5,10 +5,15 @@
 		<br />
 		<div>&nbsp;&nbsp;&nbsp; No Related Solutions found </div>
 	<% else %>
+	<style>
+		.match{
+			font-weight:bold;
+		}
+	</style>
 		<div class="request_panel_list">
 			<% @articles.each do |article| %>
 			<div class="item">
-				<%= link_to(h(article.title), solution_category_folder_article_path(article.folder.category_id,article.folder_id,article)) %>
+				<%= link_to(article.excerpts.title, solution_category_folder_article_path(article.folder.category_id,article.folder_id,article)) %>
 				<div style="display:none;">
 					<%= truncate ( article.description.gsub(/<\/?[^>]*>/, ""), 100)  %>
 				</div>

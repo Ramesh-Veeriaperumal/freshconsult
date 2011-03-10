@@ -1,0 +1,56 @@
+<!-- To do - Remove duplicates and use some partials by Shan -->
+		<li><div class="title">Displaying Top 10 results</div></li> 
+		<% unless @tickets.nil? or @tickets.empty? %>
+			<li class="ticket_icon">
+				<h4>Tickets</h4>
+				<% @tickets.each do |ticket| %>
+					<%= link_to(Helpdesk::Ticket.search_display(ticket), ticket) %>
+				<% end %>
+			</li>
+		<% end %>
+		
+		<% unless @users.nil? or @users.empty? %>
+			<li class="contact_icon">
+				<h4>Users</h4>
+				<% @users.each do |user| %>
+					<%= link_to(User.search_display(user), user) %>
+				<% end %>
+			</li>
+		<% end %>
+		
+		<% unless @companies.nil? or @companies.empty? %>
+			<li class="company_icon">
+				<h4>Companies</h4>
+				<% @companies.each do |company| %>
+					<%= link_to(company.excerpts.name, company) %>
+				<% end %>
+			</li>
+		<% end %>
+		
+		<% unless @articles.nil? or @articles.empty? %>
+			<li class="solution_icon">
+				<h4>Solutions</h4>
+				<% @articles.each do |article| %>
+					<%= link_to(article.excerpts.title, article) %>
+				<% end %>
+			</li>
+		<% end %>
+		
+		<% unless @topics.nil? or @topics.empty? %>
+			<li class="forum_icon">
+				<h4>Forums</h4>
+				<% @topics.each do |topic| %>
+					<%= link_to(topic.excerpts.title, category_forum_topic_path(topic.forum.forum_category, topic.forum, topic)) %>
+				<% end %>
+			</li>
+		<% end %>
+		
+		<% if @total_results == 10 %>
+			<li>
+				<a href="#">See more results for "Search query" &raquo;</a>
+			</li>
+		<% end %>
+			
+		<li style="display:none;">
+			<div>No Results Found</div>
+		</li>

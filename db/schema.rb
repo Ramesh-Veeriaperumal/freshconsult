@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110308065956) do
+ActiveRecord::Schema.define(:version => 20110310105715) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -61,6 +61,7 @@ ActiveRecord::Schema.define(:version => 20110308065956) do
     t.integer  "sla_policy_id",   :limit => 8
     t.text     "note"
     t.text     "domains"
+    t.boolean  "delta",                        :default => true, :null => false
   end
 
   add_index "customers", ["account_id", "name"], :name => "index_customers_on_account_id_and_name", :unique => true
@@ -394,13 +395,13 @@ ActiveRecord::Schema.define(:version => 20110308065956) do
     t.datetime "pending_since"
     t.datetime "resolved_at"
     t.datetime "closed_at"
-    t.datetime "first_asigned_at"
     t.datetime "assigned_at"
     t.datetime "first_response_time"
     t.datetime "requester_responded_at"
     t.datetime "agent_responded_at"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.datetime "first_assigned_at"
   end
 
   create_table "helpdesk_tickets", :force => true do |t|
@@ -429,6 +430,7 @@ ActiveRecord::Schema.define(:version => 20110308065956) do
     t.string   "to_email"
     t.integer  "email_config_id", :limit => 8
     t.text     "cc_email"
+    t.boolean  "delta",                        :default => true,  :null => false
   end
 
   add_index "helpdesk_tickets", ["account_id", "requester_id"], :name => "index_helpdesk_tickets_on_account_and_requester_id"
@@ -602,6 +604,7 @@ ActiveRecord::Schema.define(:version => 20110308065956) do
     t.integer  "last_post_id", :limit => 8
     t.integer  "account_id",   :limit => 8
     t.integer  "stamp_type"
+    t.boolean  "delta",                     :default => true,  :null => false
   end
 
   add_index "topics", ["forum_id", "replied_at"], :name => "index_topics_on_forum_id_and_replied_at"
@@ -638,6 +641,7 @@ ActiveRecord::Schema.define(:version => 20110308065956) do
     t.string   "time_zone"
     t.boolean  "deleted",                          :default => false
     t.integer  "user_role"
+    t.boolean  "delta",                            :default => true,  :null => false
   end
 
   add_index "users", ["account_id", "email"], :name => "index_users_on_account_id_and_email", :unique => true

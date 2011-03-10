@@ -1,17 +1,17 @@
  <script type="text/javascript">
 	function setUserRole()
 	{		
-		var role = jQuery('input[name=user_role]').is(':checked')? '<%=User::USER_ROLES_KEYS_BY_TOKEN[:admin]%>':'<%=User::USER_ROLES_KEYS_BY_TOKEN[:poweruser]%>'
+		var role = jQuery('#user_role_val').is(':checked')? '<%=User::USER_ROLES_KEYS_BY_TOKEN[:admin]%>':'<%=User::USER_ROLES_KEYS_BY_TOKEN[:poweruser]%>'
 		jQuery('#user_role').val(role);		
 	}
 	jQuery(document).ready(function(ev){
 		current_role = jQuery('input#user_role').val();
-		jQuery('input[name=user_role]').attr('checked', (user_role=='<%=User::USER_ROLES_KEYS_BY_TOKEN[:admin]%>'));
+		jQuery('#user_role_val').attr('checked', ( <%= @agent.user.user_role %> == <%=User::USER_ROLES_KEYS_BY_TOKEN[:admin]%> ));
 	});	
  </script> 
  <div>
  	
-		<% if @agent.user.deleted %>
+		<% if @agent.user.deleted? %>
 				<%= "This is a deleted Agent" %>
 				<%= link_to('restore', { :action => :restore, :id => @agent.id }, :method => :put ) %>
 		<% end %>

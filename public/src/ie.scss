@@ -21,3 +21,19 @@ ul.icon_grid li a div{ font-weight:bold; }
       .uniForm .fileUpload,
       .uniForm .selectInput,
       .uniForm select{ height:24px; }
+      
+#custom_form li{
+	height:53px !important;
+}
+
+.fdbutton{
+	width:auto; 
+	background:#f1fce3;
+}
+
+.ui-draggable-dragging{
+	margin-left:-18px;
+	margin-top:-45px;
+}
+
+.search_results_bar .results li h4{ margin-left:-50px;}
