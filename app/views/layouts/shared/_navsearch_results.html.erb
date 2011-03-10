@@ -42,7 +42,7 @@
 			
 			$("#header_search").bind("keyup", function(ev){
 				searchString = this.value;
-				if(searchString.length > 2){
+				if(searchString.length > 1){
 					delay(function(){
 				      callbackToSearch(searchString);
 				    }, 200 ); 
