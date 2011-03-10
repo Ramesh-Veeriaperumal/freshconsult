@@ -40,7 +40,7 @@
 			<li class="forum_icon">
 				<h4>Forums</h4>
 				<% @topics.each do |topic| %>
-					<%= link_to(topic.excerpts.title, topic) %>
+					<%= link_to(topic.excerpts.title, category_forum_topic_path(topic.forum.forum_category, topic.forum, topic)) %>
 				<% end %>
 			</li>
 		<% end %>
