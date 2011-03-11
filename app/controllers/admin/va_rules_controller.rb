@@ -6,13 +6,17 @@ class Admin::VaRulesController < Admin::AutomationsController
   end
   
   def create
-    @va_rule.filter_data = ActiveSupport::JSON.decode params[:filter_data]
+    set_filter_data
     super
   end
   
   def update
-    @va_rule.filter_data = ActiveSupport::JSON.decode params[:filter_data]
+    set_filter_data
     super
+  end
+  
+  def set_filter_data
+    @va_rule.filter_data = params[:filter_data].blank? ? [] : ActiveSupport::JSON.decode(params[:filter_data])
   end
    
   def deactivate
