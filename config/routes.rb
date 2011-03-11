@@ -1,9 +1,9 @@
 ActionController::Routing::Routes.draw do |map|
   map.resources :import , :controller => 'contact_import'
   
-  map.resources :customers
+  map.resources :customers ,:member => {:quick => :post}
  
-  map.resources :contacts, :collection => { :autocomplete => :get } , :member => { :restore => :put}
+  map.resources :contacts, :collection => { :autocomplete => :get } , :member => { :restore => :put,:quick_customer => :post}
   
   map.resources :groups
   

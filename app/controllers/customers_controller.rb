@@ -48,17 +48,22 @@ class CustomersController < ApplicationController
   def edit
     @customer = Customer.find(params[:id])
   end
+  
+  def quick
+   if build_and_save  
+      flash[:notice] = "The company has been created !"
+   else
+     flash[:notice] =  activerecord_error_list(@customer.errors)
+   end
+   redirect_to(customers_url)
+  end
 
   # POST /customers
   # POST /customers.xml
   def create
-       
-    @customer = current_account.customers.new((params[:customer]))
-    
-    #@customer
-
     respond_to do |format|
-      if @customer.save
+      if build_and_save
+        User.update_all("customer_id = #{@customer.id}", ['email LIKE ? and customer_id is null and account_id = ?',"%@#{get_domain(@customer.domains)}",current_account.id])
         format.html { redirect_to(@customer, :notice => 'Customer was successfully created.') }
         format.xml  { render :xml => @customer, :status => :created, :location => @customer }
       else
@@ -66,6 +71,11 @@ class CustomersController < ApplicationController
         format.xml  { render :xml => @customer.errors, :status => :unprocessable_entity }
       end
     end
+  end
+  
+  def build_and_save
+    @customer = current_account.customers.new((params[:customer]))
+    @customer.save
   end
 
   # PUT /customers/1
@@ -100,6 +110,9 @@ class CustomersController < ApplicationController
   
     def set_selected_tab
       @selected_tab = 'Customers'
-    end
+  end
+   def get_domain(s)
+      s.gsub(/^(http:\/\/)?(www\.)?/,'').gsub(/\/.*$/,'')
+   end 
   
 end

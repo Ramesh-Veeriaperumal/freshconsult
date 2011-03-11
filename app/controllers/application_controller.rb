@@ -76,5 +76,14 @@ end
     current_account.make_current
     Time.zone = current_user ? current_user.time_zone : (current_account ? current_account.time_zone : Time.zone)
   end
+  
+  def activerecord_error_list(errors)
+    error_list = '<ul class="error_list">'
+    error_list << errors.collect do |e, m|
+      "<li>#{e.humanize unless e == "base"} #{m}</li>"
+    end.to_s << '</ul>'
+    error_list
+  end
+  
 end
 

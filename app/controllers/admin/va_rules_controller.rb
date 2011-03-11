@@ -35,7 +35,7 @@ class Admin::VaRulesController < Admin::AutomationsController
     end
     
     def human_name
-      "virtual agent rule"
+      "Dispatch'r rule"
     end
     
     def edit_data

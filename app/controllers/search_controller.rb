@@ -21,6 +21,7 @@ class SearchController < ApplicationController
     @topics = results['Topic']
     
     @total_results = items.size
+    @search_key = params[:search_key]
     render :partial => '/layouts/shared/navsearch_items'
   end
   
