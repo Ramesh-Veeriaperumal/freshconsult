@@ -86,6 +86,7 @@ module SupportTicketControllerMethods
    
    @ticket.status = Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open]
    @ticket.source = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:portal]
+   @ticket.ticket_type = Helpdesk::Ticket::TYPE_KEYS_BY_TOKEN[:how_to]
    @ticket.requester_id = current_user && current_user.id
    @ticket.account_id = current_account.id
   
