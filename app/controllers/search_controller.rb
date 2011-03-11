@@ -23,4 +23,8 @@ class SearchController < ApplicationController
     @total_results = items.size
     render :partial => '/layouts/shared/navsearch_items'
   end
+  
+  def show
+    
+  end
 end

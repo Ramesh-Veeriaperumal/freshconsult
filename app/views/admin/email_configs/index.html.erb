@@ -10,9 +10,8 @@
 					});
 		});
 		
-		if(<%= @email_configs.size %> == 0){
-			jQuery("#AddEmail").trigger('click');
-		}
+		// Opening the new email support config when there are not emails configured
+		if(<%= @email_configs.size %> == 0) jQuery("#AddEmail").trigger('click');
 	});
 <% end %>
 

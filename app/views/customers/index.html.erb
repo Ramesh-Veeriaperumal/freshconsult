@@ -1,5 +1,4 @@
- 
-<div>
+<% content_for :layoutType do -%>single<%- end %>
 	<%= render(:partial => '/shared/companyheader', :locals => {:type => "company"}) %>
 	<ul id="companies" class="content_list">
 		<% @customers.each do |customer| %>
@@ -18,5 +17,5 @@
 		  </li>
 		<% end %>
 	</ul>	
-</div>
+
 <div>  <%= will_paginate @customers %></div>
