@@ -25,17 +25,19 @@ class ForumsController < ApplicationController
     @forum_category = ForumCategory.find(params[:category_id])
     @forum = Forum.find(params[:id])
     
+   (session[:forums] ||= {})[@forum.id] = Time.now.utc if logged_in?
+   (session[:forum_page] ||= Hash.new(1))[@forum.id] = params[:page].to_i if params[:page]
+
+    @topics = @forum.topics.paginate :page => params[:page]
+    User.find(:all, :conditions => ['id IN (?)', @topics.collect { |t| t.replied_by }.uniq]) unless @topics.blank?
+    
    
     respond_to do |format|
       format.html do
         # keep track of when we last viewed this forum for activity indicators
-        (session[:forums] ||= {})[@forum.id] = Time.now.utc if logged_in?
-        (session[:forum_page] ||= Hash.new(1))[@forum.id] = params[:page].to_i if params[:page]
-
-        @topics = @forum.topics.paginate :page => params[:page]
-        User.find(:all, :conditions => ['id IN (?)', @topics.collect { |t| t.replied_by }.uniq]) unless @topics.blank?
-      end
+         end
       format.xml { render :xml => @forum }
+      format.atom
     end
   end
 

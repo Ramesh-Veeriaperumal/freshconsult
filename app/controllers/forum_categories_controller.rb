@@ -9,6 +9,11 @@ class ForumCategoriesController < ApplicationController
   
   def index
      @forum_categories = scoper.all
+     respond_to do |format|
+      format.html 
+      format.xml  { render :xml => @forum_categories }
+      format.atom 
+    end
   end
   
   def show
@@ -19,6 +24,9 @@ class ForumCategoriesController < ApplicationController
     respond_to do |format|
       format.html 
       format.xml  { render :xml => @forum_category }
+      format.atom 
+      
+     
     end
   end
     
