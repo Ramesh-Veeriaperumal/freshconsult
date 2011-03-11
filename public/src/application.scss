@@ -942,6 +942,44 @@ div.leader-right{
 	
 }
 
+.uiButton, .uiButton:visited {
+	background: #91bd09 url(../images/overlay-button.png) repeat-x; 
+	display: inline-block; 
+	padding: 5px 10px 6px; 
+	color: #ffffff; 
+	text-decoration: none;
+	-moz-border-radius: 5px; 
+	-webkit-border-radius: 5px;
+	-moz-box-shadow: 0 1px 2px rgba(0,0,0,0.25);
+	-webkit-box-shadow: 0 1px 2px rgba(0,0,0,0.25);
+	text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
+	border:0px;
+	border: 1px solid rgba(0,0,0,0.15);
+	position: relative;
+	cursor: pointer;
+}
+
+.uiButton:hover									{ background-color: #749a02; color: #fff; }
+.uiButton:active								{ top: 1px; }
+.small.uiButton, .small.uiButton:visited 		{ font-size: 11px;  }
+.uiButton, .uiButton:visited,
+.medium.uiButton, .medium.uiButton:visited 		{ font-size: 13px; font-weight: bold; line-height: 1; text-shadow: 0 -1px 1px rgba(0,0,0,0.25); }
+.large.uiButton, .large.uiButton:visited 		{ font-size: 14px; padding: 8px 14px 9px; }
+
+.green.uiButton, .green.uiButton:visited		{ background-color: #91bd09; }
+.green.uiButton:hover							{ background-color: #749a02; }
+.blue.uiButton, .blue.uiButton:visited			{ background-color: #2daebf; }
+.blue.uiButton:hover							{ background-color: #007d9a; }
+.red.uiButton, .red.uiButton:visited			{ background-color: #e33100; }
+.red.uiButton:hover								{ background-color: #872300; }
+.magenta.uiButton, .magenta.uiButton:visited	{ background-color: #a9014b; }
+.magenta.uiButton:hover							{ background-color: #630030; }
+.orange.uiButton, .orange.uiButton:visited		{ background-color: #ff5c00; }
+.orange.uiButton:hover							{ background-color: #d45500; }
+.yellow.uiButton, .yellow.uiButton:visited		{ background-color: #ffb515; }
+.yellow.uiButton:hover							{ background-color: #fc9200; }
+
+
 .fdbutton{
 	@include anchor-button;
     @include min-width(80px);
@@ -989,10 +1027,6 @@ div.leader-right{
 	color:#555555 !important;
 }
 
-a.red{
-	@include vertical-gradient(#f4f4f4, #efefef);
-	color:#993333 !important;
-}
 
 .fdbutton.active{
 	@include inset-shadows(#888, 0px, 1px, 2px);
