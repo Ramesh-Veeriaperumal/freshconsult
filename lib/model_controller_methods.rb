@@ -23,7 +23,7 @@ module ModelControllerMethods
   
   def create
     if @obj.save
-      flash[:notice] = "The #{cname.humanize.downcase} has been created."
+      flash[:notice] = "The #{human_name} has been created."
       redirect_back_or_default redirect_url
     else
       render :action => 'new'
@@ -32,7 +32,7 @@ module ModelControllerMethods
 
   def update
     if @obj.update_attributes(params[cname])
-      #flash[:notice] = "The #{cname.humanize.downcase} has been updated."
+      flash[:notice] = "The #{human_name} has been updated."
       redirect_back_or_default redirect_url
     else
       logger.debug "error while saving #{@obj.errors.inspect}"
@@ -45,7 +45,7 @@ module ModelControllerMethods
     respond_to do |wants|
       wants.html do
         if @result
-          flash[:notice] = "The #{cname.humanize.downcase} has been deleted."
+          flash[:notice] = "The #{human_name} has been deleted."
           redirect_back_or_default redirect_url
         else
           render :action => 'show'
@@ -68,6 +68,10 @@ module ModelControllerMethods
   
     def cname
       @cname ||= controller_name.singularize
+    end
+    
+    def human_name
+      cname.humanize.downcase
     end
     
     def set_object

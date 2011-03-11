@@ -361,7 +361,7 @@ ActiveRecord::Schema.define(:version => 20110310105715) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "sla_policy_id",   :limit => 8
-    t.boolean  "override_bhrs",                :default => false
+    t.boolean  "override_bhrs"
   end
 
   create_table "helpdesk_sla_policies", :force => true do |t|
@@ -415,7 +415,7 @@ ActiveRecord::Schema.define(:version => 20110310105715) do
     t.datetime "pending_since"
     t.datetime "resolved_at"
     t.datetime "closed_at"
-    t.datetime "first_asigned_at"
+    t.datetime "first_assigned_at"
     t.datetime "assigned_at"
     t.datetime "first_response_time"
     t.datetime "requester_responded_at"

@@ -37,11 +37,11 @@ class Group < ActiveRecord::Base
     
     unless group_id.nil?
     
-      @exclude_list = Agent.find(:all, :joins=>:user, :conditions => "users.account_id=#{account_id} AND users.id NOT IN (select user_id from agent_groups where group_id=#{group_id})")
+      @exclude_list = Agent.find(:all, :joins=>:user, :conditions => "users.account_id=#{account_id} AND users.deleted=#{false} AND users.id NOT IN (select user_id from agent_groups where group_id=#{group_id})")
      
    else
      
-      @exclude_list = Agent.find(:all, :joins=>:user, :conditions => "users.account_id=#{account_id}")
+      @exclude_list = Agent.find(:all, :joins=>:user, :conditions => "users.account_id=#{account_id} AND users.deleted=#{false}")
       
           
     end

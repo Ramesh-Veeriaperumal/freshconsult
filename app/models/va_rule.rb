@@ -40,9 +40,9 @@ class VARule < ActiveRecord::Base
   def pass_through(evaluate_on)
     RAILS_DEFAULT_LOGGER.debug "INSIDE pass_through WITH evaluate_on : #{evaluate_on.inspect} "
     is_a_match = matches(evaluate_on)
-    trigger_actions(evaluate_on) if is_a_match
-    
-    return evaluate_on
+    trigger_actions(evaluate_on) if is_a_match    
+    return evaluate_on if is_a_match
+    return nil
   end
   
   def matches(evaluate_on)

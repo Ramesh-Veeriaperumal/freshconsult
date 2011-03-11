@@ -143,7 +143,7 @@
 logger.debug "Custom  Field #{field["label"]}"%>		
 		<% fields_for :flexifields do |cust_form| %>
 			<% 
-				field_label = (field["agent"]["required"]) ? "#{field["label"]} *" : "#{field["label"]}"  
+				field_label = (field["agent"]["required"]) ? "#{field["display_name"]} *" : "#{field["display_name"]}"  
 				field_class = field["type"] + ((field["agent"]["required"]) ? " required" : "") 
 				field_val = nil
 				logger.debug "ff_aliases :: ff_aliases #{@item.id}"
@@ -152,7 +152,7 @@ logger.debug "Custom  Field #{field["label"]}"%>
 			<% case field["type"] when "text","number" then %>				
 				<li class="<%= field['label'] %>">		 
 
-					<%= cust_form.label "#{field["label"]}", field_label.humanize() %>  
+					<%= cust_form.label "#{field["label"]}", field_label %>  
  					<%= cust_form.text_field "#{field["label"]}" , :class=> field_class  , :value =>field_val%>
 
 				</li>		 
@@ -160,7 +160,7 @@ logger.debug "Custom  Field #{field["label"]}"%>
 			<% when "paragraph" then %>
 				<li class="paragraph">
 
-					<%= cust_form.label "#{field["label"]}", field_label.humanize() %>  
+					<%= cust_form.label "#{field["label"]}", field_label %>  
  					<%= cust_form.text_area "#{field["label"]}" ,:class=> field_class , :value =>field_val %>
 
 				</li>
@@ -170,7 +170,7 @@ logger.debug "Custom  Field #{field["label"]}"%>
 					<% Array values =[]
 						field["choices"].each {|choice| values.push(choice["value"])}%>
 
-						 <%= cust_form.label "#{field["label"]}", field_label.humanize() %>  
+						 <%= cust_form.label "#{field["label"]}", field_label %>  
  						 <%= cust_form.select "#{field["label"]}", values ,:class=> field_class , :selected =>field_val%>
 
 			    </li>
@@ -179,7 +179,7 @@ logger.debug "Custom  Field #{field["label"]}"%>
 				<li class="checkbox">
 
 					<%= cust_form.check_box "#{field["label"]}" ,:class => field_class , :value =>field_val %>					
-					<%= field_label.humanize() %>
+					<%= field_label %>
 
 			     </li>
 		   <% end %>

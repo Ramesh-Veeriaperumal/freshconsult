@@ -32,9 +32,9 @@
 
 <% content_for :sidebar do %>
 	<div class="sidepanel">
-		<h3 class="title">Virtual Agent</h3>
+		<h3 class="title">Dispatch'r</h3>
 		<div class="help_text">
-			<p>Virtual agent will automatically dispatch a newly created support ticket based on the rules and actions defined.</p>			
+			<p>Dispatch'r will automatically dispatch a newly created support ticket based on the rules and actions defined.</p>			
 			<p><b>Reorder</b> organize the order in which the rules should get executed </p>			
 		</div>
 	</div>
@@ -45,12 +45,12 @@
 		<%= link_to ("Reorder", "#", :id => "Reorder", :class => "fdbutton grey") if ( @va_rules.size > 1 ) %>
 		<%= link_to "<img src='/images/add.png' /> New Rule", new_admin_va_rule_path, :class => "fdbutton"  %>
 	</div>	
-	<h3 class="title">Virtual Agent - Rules</h3>	
+	<h3 class="title">Dispatch'r - Rules</h3>	
 		 <ul class="admin_list" id="normal"> 
 			<% @va_rules.each do |va_rule| %>
 				<li ruleid="<%=va_rule.id%>" class="<%=cycle('stripe', '') %>"> 
 					<div class="item_actions">
-						<%= link_to('delete', admin_va_rule_path(va_rule), :method => 'delete', :confirm => 'Are you sure you want to delete this rule', :class => "button" ) %>					
+						<%= link_to('delete', admin_va_rule_path(va_rule), :method => 'delete', :confirm => 'Are you sure you want to delete this rule?', :class => "button" ) %>					
 						<%= link_to('deactivate', deactivate_admin_va_rule_path(va_rule), :method => 'put', :class => "button") %>
 						<%= link_to('edit', edit_admin_va_rule_path(va_rule), :class => "button") %> 					
 					</div>
