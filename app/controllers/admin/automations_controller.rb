@@ -71,7 +71,7 @@ class Admin::AutomationsController < Admin::AdminController
     end
     
     def human_name
-      "automation"
+      "scenario"
     end
     
     def edit_data
