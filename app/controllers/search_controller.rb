@@ -24,4 +24,8 @@ class SearchController < ApplicationController
     @search_key = params[:search_key]
     render :partial => '/layouts/shared/navsearch_items'
   end
+  
+  def show
+    
+  end
 end

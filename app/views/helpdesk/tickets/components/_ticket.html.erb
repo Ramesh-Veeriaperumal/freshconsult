@@ -23,15 +23,8 @@
 	                <label>Due by time</label>
 					<%= ticket.due_by.strftime("%B %e %Y at %I:%M %p") %>
 	            </li>
-				
-				
 				<!--form values starts here-->
-				
 			<%= render :partial=> "custom_form_partial" ,:locals => { :f => f } %>
-				
-				
-				
-				
 				<!--form values ens here-->
 				<!-- Custom fields ends here-->
 				<li>

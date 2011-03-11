@@ -1,6 +1,5 @@
-<div> 
-	<h3 class="title">Dispatch'r - New Rule</h3> 
-	<% form_for :va_rule, @va_rule, :url => admin_va_rules_path, :html => { :method => :post , :id => "VirtualAgent" } do |f| %>
-		<%= render :partial => "form", :locals => { :f => f } %>
-	<% end %>
-</div>
+<% content_for :layoutType do -%>single<%- end %> 
+<h3 class="title">Dispatch'r - New Rule</h3> 
+<% form_for :va_rule, @va_rule, :url => admin_va_rules_path, :html => { :method => :post , :id => "VirtualAgent" } do |f| %>
+	<%= render :partial => "form", :locals => { :f => f } %>
+<% end %>

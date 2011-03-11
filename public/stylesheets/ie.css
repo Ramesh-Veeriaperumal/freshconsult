@@ -155,18 +155,23 @@ ul.icon_grid li a div {
 }
 
 /* line 29, ../src/ie.scss */
+.awesome, .awesome:visited {
+  border: 1px solid #666666;
+}
+
+/* line 33, ../src/ie.scss */
 .fdbutton {
   width: auto;
   background: #f1fce3;
 }
 
-/* line 34, ../src/ie.scss */
+/* line 38, ../src/ie.scss */
 .ui-draggable-dragging {
   margin-left: -18px;
   margin-top: -45px;
 }
 
-/* line 39, ../src/ie.scss */
+/* line 43, ../src/ie.scss */
 .search_results_bar .results li h4 {
   margin-left: -50px;
 }

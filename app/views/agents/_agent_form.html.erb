@@ -11,10 +11,10 @@
  </script> 
  <div>
  	
-		<% if @agent.user.deleted? %>
-				<%= "This is a deleted Agent" %>
-				<%= link_to('restore', { :action => :restore, :id => @agent.id }, :method => :put ) %>
-		<% end %>
+	<% if @agent.user.deleted? %>
+			<%= "This is a deleted Agent" %>
+			<%= link_to('restore', { :action => :restore, :id => @agent.id }, :method => :put ) %>
+	<% end %>
 	
 </div>
  
