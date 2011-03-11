@@ -16,6 +16,13 @@
   			<%= f.label :source, "Source" %>
  			<%= f.select :source, Helpdesk::Ticket::SOURCE_OPTIONS, :class => "select" %>
         </li>
+		
+	<%when "Type" then%>
+		
+		<li class="dropdown">
+          	<%= f.label :ticket_type, "Type" %>
+         	<%= f.select :ticket_type, Helpdesk::Ticket::TYPE_OPTIONS, :class => "select" %>
+        </li>
 				
 	<%when "Status" then%>
 		<li class="dropdown">
