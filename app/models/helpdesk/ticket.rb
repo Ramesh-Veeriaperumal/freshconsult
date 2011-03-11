@@ -346,7 +346,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   def delayed_rule_check
       evaluate_on = check_rules     
-      update_custom_field evaluate_on
+      update_custom_field evaluate_on unless evaluate_on.nil?
       save!
    
  end
@@ -357,8 +357,9 @@ def check_rules
     evaluate_on = self  
     account.va_rules.each do |vr|
       evaluate_on= vr.pass_through(self)
+      return evaluate_on unless evaluate_on.nil?
     end  
-    return evaluate_on    
+    return evaluate_on       
 end
   
 def load_flexifield 
