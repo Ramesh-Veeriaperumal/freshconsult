@@ -57,3 +57,8 @@ q:before, q:after, blockquote:before, blockquote:after {
 a img {
   border: none;
 }
+
+/* line 3, ../src/reset.scss */
+ol {
+  list-style: decimal inside;
+}
