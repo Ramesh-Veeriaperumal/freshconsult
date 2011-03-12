@@ -27,7 +27,8 @@ class Account < ActiveRecord::Base
   #
   authenticates_many :user_sessions
   
-  has_many :users, :dependent => :destroy
+  has_many :users, :dependent => :destroy , :conditions =>{:deleted =>false}
+  has_many :all_users , :class_name => 'User', :dependent => :destroy
   has_one :admin, :class_name => "User", :conditions => { :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:admin] } #has_one ?!?!?!?!
   has_one :subscription, :dependent => :destroy
   has_many :subscription_payments
