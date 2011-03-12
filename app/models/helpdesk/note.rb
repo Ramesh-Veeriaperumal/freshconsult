@@ -11,8 +11,7 @@ class Helpdesk::Note < ActiveRecord::Base
     :dependent => :destroy
 
   attr_accessor :nscname
-  
-  #attr_accessible :body,:private  
+  attr_protected :attachments, :notable_id
   
   after_create :save_response_time
 
