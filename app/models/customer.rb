@@ -8,7 +8,7 @@ class Customer < ActiveRecord::Base
   
   belongs_to :account
   
-  has_many :users , :class_name =>'User'
+  has_many :users , :class_name =>'User' ,:conditions =>{:deleted =>false}
   
   belongs_to :sla_policy, :class_name =>'Helpdesk::SlaPolicy'
   
