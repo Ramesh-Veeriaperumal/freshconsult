@@ -38,7 +38,7 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
   end
   
   def reply(ticket, note , reply_email)
-    subject       formatted_subject ticket
+    subject       formatted_subject(ticket)
     recipients    ticket.requester.email
     from          reply_email
     body          :ticket => ticket, :note => note, :host => ticket.account.host
@@ -51,10 +51,12 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
                   :body => File.read(a.content.to_file.path), 
                   :filename => a.content_file_name
     end
+    
+    content_type  "text/plain"
   end
   
   def email_to_requester(ticket, content)
-    subject       formatted_subject ticket
+    subject       formatted_subject(ticket)
     recipients    ticket.requester.email
     from          ticket.reply_email
     body          content
@@ -64,7 +66,7 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
   end
   
   def internal_email(ticket, receips, content)
-    subject       formatted_subject ticket
+    subject       formatted_subject(ticket)
     recipients    receips
     from          ticket.reply_email
     body          content
