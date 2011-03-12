@@ -1,28 +1,32 @@
-<% content_for :sidebar do %>
-<div class="sidepanel">
-	<h3 class="title">Contribute your Articles</h3>
-	<p>
-		Here you can find and contribute articles about your products or service.
-	</p>
-	<p> 
-		The articles can be published to your self service portal so that your customers can easily find <b>solutions</b> to their common problems.
-	</p>	  
-	
-	<span class="seperator"></span>
-	
-	<h3 class="title">Organize</h3>
-	<p>
-		You can organize your articals into <b>folders</b> and in-turn order these folders into <b>categories</b>  
-	</p>
-</div>
-<% end %> 
+<% if logged_in? && current_user.has_manage_solutions? -%>
+	<% content_for :sidebar do -%>
+		<div class="sidepanel">
+			<h3 class="title">Contribute your Articles</h3>
+			<p>
+				Here you can find and contribute articles about your products or service.
+			</p>
+			<p> 
+				The articles can be published to your self service portal so that your customers can easily find <b>solutions</b> to their common problems.
+			</p>	  
+			
+			<span class="seperator"></span>
+			
+			<h3 class="title">Organize</h3>
+			<p>
+				You can organize your articals into <b>folders</b> and in-turn order these folders into <b>categories</b>  
+			</p>
+		</div>
+	<%- end %>
+<%- end %> 
 
-
-<div class="floatr">
-	<%= link_to "<img src='/images/add.png'> New Category", new_solution_category_path, :class => "fdbutton" %>
-</div>
+<% if logged_in? && current_user.has_manage_solutions? -%>
+	<div class="floatr">
+		<%= link_to "<img src='/images/add.png'> New Category", new_solution_category_path, :class => "fdbutton" %>
+	</div>
+<%- end %>
 <h3 class="title">Solutions</h3>
-<div class="brief">Welcome to the <b><%= current_account.helpdesk_name %></b> Soutions.</div> 
+<div class="brief">Welcome to the <b><%= current_account.helpdesk_name %></b> Soutions.</div>
+ 
 <div class="clearfix sol_list">			
 	<% @categories.each do |category| %>
 		<div class="<%= cycle('odd', 'even') %>">
@@ -30,22 +34,20 @@
 				<% link_to 'edit' ,edit_solution_category_path(category)   %> | 
 				<% link_to('delete', solution_category_path(category), :method => 'delete', :confirm => 'Are you sure you want to delete this category' ) %> 
 			</div>
-			<div class="floatr">
-				<div class="add_list">
-					<%= link_to 'Add folder'[:create_new_folder], new_solution_category_folder_path(category)  %>
+			<% if logged_in? && current_user.has_manage_solutions? -%>
+				<div class="floatr">
+					<div class="add_list">
+						<%= link_to 'Add folder'[:create_new_folder], new_solution_category_folder_path(category)  %>
+					</div>
 				</div>
-			</div>
+			<% end %>
 			<h4><%= link_to category.name + " &raquo;", category %></h4>  
 			<ul>			
 	  		<% category.folders.each do |folder| %>
 				<li><%= link_to h(folder.name),  solution_category_folder_path(category, folder)  %></li>
 			<% end %> 
 			</ul>
-			<% if logged_in? && current_user.has_manage_solutions? -%>
-			
-				<%= content_tag (:span, "No folders in this category", :class => "no_info_text") if (category.folders.size == 0)  %>
-				
-			<% end %>
+			<%= content_tag (:span, "No folders in this category", :class => "no_info_text") if (category.folders.size == 0)  %>
 		</div>
 	<%end%>
 </div> 
