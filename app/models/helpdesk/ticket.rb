@@ -403,6 +403,7 @@ end
   def to_liquid
     { 
       "id"                    => display_id,
+      "encoded_id"            => encode_display_id,
       "subject"               => subject,
       "description"           => description,
       "requester"             => requester,
