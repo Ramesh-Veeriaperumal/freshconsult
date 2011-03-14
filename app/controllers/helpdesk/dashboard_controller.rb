@@ -5,13 +5,9 @@ class Helpdesk::DashboardController < ApplicationController
   before_filter { |c| c.requires_permission :manage_tickets }
 
   def index
-    respond_to do |format|
-      format.html  do
-        @items = recent_activities.paginate(:page => params[:page], :per_page => 10)
-      end
-      format.atom do
-        @items = recent_activities.paginate(:page => 1, :per_page => 20)
-      end
+    @items = recent_activities.paginate(:page => params[:page], :per_page => 10)
+    if request.xhr?
+      render(:partial => "ticket_note", :collection => @items)
     end
   end
   

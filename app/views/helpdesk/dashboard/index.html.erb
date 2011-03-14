@@ -3,6 +3,7 @@
 <% content_for :head do %>
   <%= javascript_include_tag "helpdesk/core" %>
   <%= javascript_include_tag "helpdesk/take_it_button" %>
+  <%= javascript_include_tag 'jquery.pageless' %>
 
   <% javascript_tag do %>
     document.observe("dom:loaded", function(){
@@ -25,13 +26,11 @@
 
 <div id="Activity">
 	<h3 class="title">Helpdesk Activity</h3>
-	<ul id="pages" class="activityfeed">
+	<ul id="Pages" class="activityfeed">
 		<% @items.each_with_index do |item, i| %>
-	        <li class="<%= cycle('stripe', '') %> clearfix">
 	          <%= render(:partial => "ticket_note", :object => item) %> 
-	        </li>
 	     <% end %>
 	</ul>
 </div>
 <%= will_paginate @items %>
-
+<%= pageless(@items.total_pages, helpdesk_dashboard_path) %>
