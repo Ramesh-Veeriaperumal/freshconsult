@@ -5,6 +5,8 @@ class Solution::Article < ActiveRecord::Base
   belongs_to :user, :class_name => 'User'
   belongs_to :account
   
+  before_save :set_un_html_content
+  
   has_many :attachments,
     :as => :attachable,
     :class_name => 'Helpdesk::Attachment',
@@ -91,6 +93,10 @@ class Solution::Article < ActiveRecord::Base
         :user => user,
         :activity_data => {}
       )
-    end
+  end
+  
+  def set_un_html_content    
+    self.desc_un_html = (self.description).gsub(/<\/?[^>]*>/, "") unless self.description.empty?
+  end
     
 end
