@@ -14,12 +14,12 @@ class SearchController < ApplicationController
   
   protected
     def search
-      items = ThinkingSphinx.search params[:search_key], 
+      @items = ThinkingSphinx.search params[:search_key], 
                                         :with => { :account_id => current_account.id, :deleted => false }, 
-                                        :star => true, :per_page => 10
+                                        :star => true, :page => params[:page], :per_page => 10
   
       results = Hash.new
-      items.each do |i|
+      @items.each do |i|
         results[i.class.name] ||= []
         results[i.class.name] << i
       end
@@ -30,7 +30,7 @@ class SearchController < ApplicationController
       @companies = results['Customer']
       @topics = results['Topic']
       
-      @total_results = items.size
+      @total_results = @items.size
       @search_key = params[:search_key]
     end
 end
