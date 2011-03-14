@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110310105715) do
+ActiveRecord::Schema.define(:version => 20110314045229) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -495,18 +495,19 @@ ActiveRecord::Schema.define(:version => 20110310105715) do
 
   create_table "solution_articles", :force => true do |t|
     t.string   "title"
-    t.text     "description", :limit => 16777215
-    t.integer  "user_id",     :limit => 8
-    t.integer  "folder_id",   :limit => 8
+    t.text     "description",  :limit => 16777215
+    t.integer  "user_id",      :limit => 8
+    t.integer  "folder_id",    :limit => 8
     t.integer  "status"
     t.integer  "art_type"
     t.boolean  "is_public"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "thumbs_up",                       :default => 0
-    t.integer  "thumbs_down",                     :default => 0
-    t.integer  "account_id",  :limit => 8
-    t.boolean  "delta",                           :default => true, :null => false
+    t.integer  "thumbs_up",                          :default => 0
+    t.integer  "thumbs_down",                        :default => 0
+    t.integer  "account_id",   :limit => 8
+    t.boolean  "delta",                              :default => true, :null => false
+    t.text     "desc_un_html", :limit => 2147483647
   end
 
   add_index "solution_articles", ["account_id", "folder_id"], :name => "index_solution_articles_on_account_id"
