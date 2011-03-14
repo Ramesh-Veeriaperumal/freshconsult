@@ -1,4 +1,3 @@
- 
 <%= javascript_include_tag "mColorPicker.min.js" %>
 <script type="text/javascript" charset="UTF-8">
 	jQuery.fn.mColorPicker.init.enhancedSwatches = false;
@@ -27,10 +26,16 @@
 		});
 	}); 
 </script>
+<% content_for :sidebar do -%>
+	<div class="sidepanel">
+		<h3 class="title"><%= current_account.name %></h3> 
+		<ul class="ui-list_with_icon">
+			<li><b>Active Since  </b><br /><%= formated_date(current_account.created_at) %></li>
+		</ul> 
+	</div>
+<%- end %>
 
-
-<h3 class="title">Rebrand your Helpdesk</h3>
-	 
+<h3 class="title">Rebrand your Helpdesk</h3> 
 	<% form_for :account, @account, :url => { :action => 'update' }, :html => { :multipart => true ,:method => :put, :class => "uniForm" } do |f| %>
 	  <%= f.error_messages %>
 	  <fieldset class="inlineLabels">

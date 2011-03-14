@@ -14,7 +14,7 @@
 		
 		<% unless @users.nil? or @users.empty? %>
 			<li class="contact_icon">
-				<h4>Users</h4>
+				<h4>People</h4>
 				<% @users.each do |user| %>
 					<%= link_to(User.search_display(user), user) %>
 				<% end %>
@@ -50,7 +50,7 @@
 		
 		<% if @total_results == 10 %>
 			<li>
-				<a href="#">See more results for <%= "\"#{@search_key}\"" %> &raquo;</a>
+				<%= link_to("See more results for \"#{@search_key}\"  &raquo;", "/search?search_key=#{@search_key}") %>
 			</li>
 		<% end %>
 		

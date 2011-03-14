@@ -4,28 +4,33 @@ class SearchController < ApplicationController
   #by Shan
   #To do.. some smart meta-programming
   def index
-    items = ThinkingSphinx.search params[:search_key], 
-                                      :with => { :account_id => current_account.id, :deleted => false }, 
-                                      :star => true, :per_page => 10
-
-    results = Hash.new
-    items.each do |i|
-      results[i.class.name] ||= []
-      results[i.class.name] << i
-    end
-    
-    @tickets = results['Helpdesk::Ticket']
-    @articles = results['Solution::Article']
-    @users = results['User']
-    @companies = results['Customer']
-    @topics = results['Topic']
-    
-    @total_results = items.size
-    @search_key = params[:search_key]
-    render :partial => '/layouts/shared/navsearch_items'
+    search
   end
   
-  def show
-    
+  def suggest
+    search
+    render :partial => '/layouts/shared/navsearch_items'    
   end
+  
+  protected
+    def search
+      @items = ThinkingSphinx.search params[:search_key], 
+                                        :with => { :account_id => current_account.id, :deleted => false }, 
+                                        :star => true, :page => params[:page], :per_page => 10
+  
+      results = Hash.new
+      @items.each do |i|
+        results[i.class.name] ||= []
+        results[i.class.name] << i
+      end
+      
+      @tickets = results['Helpdesk::Ticket']
+      @articles = results['Solution::Article']
+      @users = results['User']
+      @companies = results['Customer']
+      @topics = results['Topic']
+      
+      @total_results = @items.size
+      @search_key = params[:search_key]
+    end
 end

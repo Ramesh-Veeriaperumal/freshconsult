@@ -72,14 +72,10 @@ label.overlabel{
 	position:relative;
 	z-index:1;  	
 	margin:12px 0px;	
-	padding-right:$sidebar-width; /* The width of the rail */ 
-	.leftcontent{
-		width:100%;
-		float:left;		 	
-	}
+	padding-right:$sidebar-width; /* The width of the rail */  
 	.sidebar{ 
 		width:$sidebar-width;
-		float:left; 
+		float:right; 
 		margin-right:-$sidebar-width;
 	}  
 }
@@ -353,8 +349,9 @@ ul.tabs{
 	position:relative;
 }
 
-h2.title{ font-size:22px; }
-h3.title, h3.sub_title{ font-size:1.3em; color:#2f3733; padding:6px 0px 10px 0px; font-weight:bold; }
+.title{ color:#2f3733; padding:6px 0px 10px 0px; font-weight:bold; }
+h2.title{ font-size:1.8em; }
+h3.title, h3.sub_title{ font-size:1.3em; }
 h3.sub_title{ font-size:1.1em; }
 
 ul.activityfeed, ul.summary{
@@ -983,7 +980,7 @@ div.leader-right{
 .fdbutton{
 	@include anchor-button;
     @include min-width(80px);
-    padding: 5px 10px 7px 10px;    
+    padding: 7px 10px 7px 12px;    
     position:relative;
     margin: 2px; 
     border:1px solid #cdcecd;
@@ -3592,9 +3589,6 @@ div.search{
 		font-size:16px;
 		border-bottom:1px solid #ebebeb;
 		margin-bottom:8px;
-		a{
-			font-family:georgia;
-		}
 	}
 	
 	a{
@@ -4242,8 +4236,72 @@ div.color{
 	padding:8px 24px 12px 24px;
 }
 
+.live_search{
+	margin-bottom: 14px;
+    text-align: left;
+}
+
 input.search{
-	font-size:14px;
-	width:450px;
-	padding:3px 6px;
+	font-size: 16px;
+    margin-right: 10px;
+    padding: 5px;
+    width: 500px;
+}
+
+.folder_section{
+	float:left;
+	width:200px;
+	padding-top:15px;
+	h3.title{
+		text-align:center;
+		border-bottom:1px dashed #DCDCDC;
+		padding: 0 0 20px; 
+	}
+}
+
+.solution_list{
+	border-bottom:1px dashed #DCDCDC;	
+	margin: 10px 0 0;
+	li{  
+		font-size: 13px;
+	    line-height: 1.5em;
+	    margin: 0 0 7px;
+		a{
+			@include link-colors(#4D769F, #126d9b, #4D769F, #4D769F);
+		}
+		span{
+			color: #888888;
+    		font-size: 11px;
+		}
+	}
+}
+
+.artical_section{
+	margin-left:210px;
+	border-left:1px solid #efefef;
+	@include min-height(450px); 
+	padding: 20px;
+	margin-top:-14px;
+	margin-right:-20px;
+	text-align: left;  
+	.seperator{ border-style:dashed; }
+}
+
+.artical_list{
+	font-size: 14px;
+    line-height: 1.7em;
+    margin-bottom: 20px; 
+    text-align: left;
+    li{
+    	a{ @include link-colors(#006699, #126d9b, #006699, #006699); }
+    }
+}
+
+.crumbs{ 
+	background-color: #f8f8f8;
+    border-bottom: 1px solid #E8E8E8;
+    font-size: 11px;
+    margin: -20px -20px 10px;
+    padding: 7px 20px;
+    a{ @include link-colors(#006699, #126d9b, #006699, #006699); }
 }
