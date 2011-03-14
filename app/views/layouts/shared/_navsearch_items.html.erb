@@ -14,7 +14,7 @@
 		
 		<% unless @users.nil? or @users.empty? %>
 			<li class="contact_icon">
-				<h4>Users</h4>
+				<h4>People</h4>
 				<% @users.each do |user| %>
 					<%= link_to(User.search_display(user), user) %>
 				<% end %>

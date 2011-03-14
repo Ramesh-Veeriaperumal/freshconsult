@@ -22,12 +22,12 @@
 	<div class="top_nav_bg"> 
 		<div class="wrapper">
 			 <% if current_user and permission?(:manage_tickets) then %>
-				 <form class="nav_search" action="#">
+				 <% form_tag '/search', :method => :get, :class => "nav_search" do %>
 				 	<div class="search_bar">
 						<label class="overlabel" for="header_search">Search</label>				           	
-						<input value="" type="text" id="header_search" autocomplete="off" /> 
+						<input value="" type="text" id="header_search" autocomplete="off" name="search_key" />
 					</div>
-				 </form>
+				 <% end %>
 			 <% end %>
 			 <div class="top_nav"> 	
 				<ul class="tabs">

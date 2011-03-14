@@ -4,7 +4,7 @@
 			
 			
 			callbackToSearch = function(string){
-				jQuery.ajax({ url: "/search?search_key="+string, 
+				jQuery.ajax({ url: "/search/suggest?search_key="+string, 
 								  success: function(data){
 								  			$("#SearchResultsBar").show();
 											$("#SearchResultsBar .results").html(data);

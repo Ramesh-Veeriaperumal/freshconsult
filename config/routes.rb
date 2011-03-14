@@ -61,7 +61,7 @@ ActionController::Routing::Routes.draw do |map|
   map.forgot_password '/account/forgot', :controller => 'user_sessions', :action => 'forgot'
   map.reset_password '/account/reset/:token', :controller => 'user_sessions', :action => 'reset'
   
-  map.resources :search
+  map.resources :search, :only => :index, :member => { :suggest => :get }
   
   
   #SAAS copy ends here
