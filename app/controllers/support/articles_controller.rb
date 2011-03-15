@@ -13,7 +13,7 @@ class Support::ArticlesController < ApplicationController
   
   def show
      @article = Solution::Article.find(params[:id])
-     raise ActiveRecord::RecordNotFound unless @article && (@article.account_id == current_account.id)
+     raise ActiveRecord::RecordNotFound unless @article && (@article.account_id == current_account.id) && (@article.is_public?)
  end
  
   def thumbs_down
