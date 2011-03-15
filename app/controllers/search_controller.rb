@@ -3,8 +3,8 @@ class SearchController < ApplicationController
   
   #by Shan
   #To do.. some smart meta-programming
-  def index
-    search
+  def index 
+    search 
   end
   
   def suggest
@@ -24,11 +24,11 @@ class SearchController < ApplicationController
         results[i.class.name] << i
       end
       
-      @tickets = results['Helpdesk::Ticket']
-      @articles = results['Solution::Article']
-      @users = results['User']
-      @companies = results['Customer']
-      @topics = results['Topic']
+      @searched_tickets   = results['Helpdesk::Ticket']
+      @searched_articles  = results['Solution::Article']
+      @searched_users     = results['User']
+      @searched_companies = results['Customer']
+      @searched_topics    = results['Topic']
       
       @total_results = @items.size
       @search_key = params[:search_key]
