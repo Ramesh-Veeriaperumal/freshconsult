@@ -1,7 +1,20 @@
 class Forum < ActiveRecord::Base
   acts_as_list
+  
+  TYPES = [
+    [ :howto,   "Questions",     1 ], 
+    [ :ideas,   "Ideas",         2 ],
+    [ :problem, "Problems",      3 ],
+    [ :announce, "Announcement", 4 ]
+  ]
 
-  validates_presence_of :name,:forum_category
+  TYPE_OPTIONS = TYPES.map { |i| [i[1], i[2]] }
+  TYPE_NAMES_BY_KEY = Hash[*TYPES.map { |i| [i[2], i[1]] }.flatten]
+  TYPE_KEYS_BY_TOKEN = Hash[*TYPES.map { |i| [i[0], i[2]] }.flatten]
+
+  validates_presence_of :name,:forum_category,:forum_type
+  validates_inclusion_of :forum_type, :in => TYPE_KEYS_BY_TOKEN.values.min..TYPE_KEYS_BY_TOKEN.values.max
+ 
   validates_uniqueness_of :name, :scope => :forum_category_id
   
   belongs_to :forum_category
@@ -24,16 +37,7 @@ class Forum < ActiveRecord::Base
   
   attr_accessible :name,:description, :description_html, :forum_type
   
-  TYPES = [
-    [ :howto,   "Questions",     1 ], 
-    [ :ideas,   "Ideas",         2 ],
-    [ :problem, "Problems",      3 ],
-    [ :announce, "Announcement", 4 ]
-  ]
-
-  TYPE_OPTIONS = TYPES.map { |i| [i[1], i[2]] }
-  TYPE_NAMES_BY_KEY = Hash[*TYPES.map { |i| [i[2], i[1]] }.flatten]
-  TYPE_KEYS_BY_TOKEN = Hash[*TYPES.map { |i| [i[0], i[2]] }.flatten]
+  
   
   def announcement?()
     forum_type == TYPE_KEYS_BY_TOKEN[:announce]

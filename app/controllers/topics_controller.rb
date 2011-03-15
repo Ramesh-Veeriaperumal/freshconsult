@@ -55,6 +55,7 @@ class TopicsController < ApplicationController
     topic_saved, post_saved = false, false
 		# this is icky - move the topic/first post workings into the topic model?
     Topic.transaction do
+      puts "Transaction happened"
 	    @topic  = @forum.topics.build(params[:topic])
       assign_protected
       @post       = @topic.posts.build(params[:topic])
@@ -70,10 +71,13 @@ class TopicsController < ApplicationController
 		if topic_saved && post_saved
 			respond_to do |format| 
 				format.html { redirect_to category_forum_topic_path(@forum_category,@forum, @topic) }
-				format.xml  { head :created, :location => topic_url(:forum_id => @forum, :id => @topic, :format => :xml) }
+				format.xml  { render  :xml => @topic }
 			end
-		else
-			render :action => "new"
+	else
+   respond_to do |format|  
+			format.html { render :action => "new" }
+      format.xml  { render  :xml => @topic.errors }
+   end
 		end
   end
   

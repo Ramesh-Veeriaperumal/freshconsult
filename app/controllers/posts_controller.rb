@@ -72,7 +72,7 @@ class PostsController < ApplicationController
       format.html do
         redirect_to category_forum_topic_path(:category_id => params[:category_id],:forum_id => params[:forum_id], :id => params[:topic_id], :anchor => @post.dom_id, :page => params[:page] || '1')
       end
-      format.xml { head :created, :location => post_url(:forum_id => params[:forum_id], :topic_id => params[:topic_id], :id => @post, :format => :xml) }
+      format.xml { render :xml => @post }
     end
   rescue ActiveRecord::RecordInvalid
     flash[:bad_reply] = 'Please post something at least...'[:post_something_message]

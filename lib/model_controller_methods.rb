@@ -24,7 +24,15 @@ module ModelControllerMethods
   def create
     if @obj.save
       flash[:notice] = "The #{human_name} has been created."
-      redirect_back_or_default redirect_url
+     
+      respond_to do |format|
+      format.html  do
+         redirect_back_or_default redirect_url
+      end
+      format.xml do
+        render :xml => @obj 
+      end
+    end
     else
       render :action => 'new'
     end

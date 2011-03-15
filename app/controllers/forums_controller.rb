@@ -50,10 +50,14 @@ class ForumsController < ApplicationController
     if @forum.save
       respond_to do |format|
         format.html { redirect_to(category_forum_path( @forum_category,@forum), :notice => 'The forum has been created.') }
-        format.xml  { head :created, :location => category_forum_path( @forum_category,@forum, :format => :xml) }
+        format.xml  { render :xml => @forum,:status => 200 }
       end
     else
-      render :action => 'new'
+      respond_to do |format|
+        format.html {  render :action => 'new' }
+        format.xml  {  render :xml => @forum.errors ,:status => 500}
+      end
+     
     end
   end
 
@@ -64,7 +68,8 @@ class ForumsController < ApplicationController
         format.xml  { head 200 }
       end
     else
-      render :action => 'edit'
+      format.html {render :action => 'edit'}
+      format.xml  {render :xml => @forum.errors }
     end
   end
   
