@@ -1,50 +1,22 @@
 <% content_for :layoutType do -%>single<%- end %>
 <div class="folder_section">
-	<h3 class="title"><%= @item.name %></h3>
-	<div class="floatr" style="display:none;">
-		<%= link_to "<img src='/images/add.png'> New Folder", new_solution_category_folder_path(@item), :class => "fdbutton" %>
-	</div>
-	<ul class="solution_list">
-		<% @item.folders.each do |folder| %>
-			<li><%= link_to folder.name,  solution_category_folder_path(@item,folder)  %> <span><%= folder.articles.size %></span> </li>
-		<% end %>
-	</ul>
+	<%= render :partial => "/solution/shared/category_folder_list", :locals => { :category => @item } %>
 </div>
-<div class="artical_section">
+<div class="artical_section"> 
 	<div class="crumbs">
-		<%= link_to "Solutions", solution_categories_path %> &rarr; <%= @item.name %>
+		<%= link_to "Solutions", solution_categories_path %> &rarr; 
+		<%= content_tag (:span, @item.name ) %>
 	</div>
+	
 	<div class="live_search">
 		<h3 class="title">Search <%= @item.name %> </h3>
 		<input class="search" type="text" />
 	</div>
-	<%# link_to 'edit' ,  edit_solution_category_path(@item)  %> 
-	<%# link_to('delete', solution_category_path(@item), :method => 'delete', :confirm => 'Are you sure you want to delete this category' ) %>
 	
-	<% unless (@item.folders.size == 0) %>			
-	  <% firstFolder = @item.folders.first %>
-	  <div class="floatr">
-			<% if logged_in? && current_user.has_manage_solutions? -%>
-				<%= link_to ("New Solution", new_solution_category_folder_article_path(@item , firstFolder), :class => "uiButton blue") %>
-				<% link_to 'Edit' ,  edit_solution_category_folder_path(firstFolder.category_id,firstFolder) %>
-				<% link_to('delete', solution_category_folder_path(firstFolder.category_id,firstFolder), :method => 'delete', :confirm => 'Are you sure you want to delete this folder' ) %>
-			<% end %>
-	  </div>
-	  <span class="seperator"></span>
-	  <h2 class="title"><%= firstFolder.name %></h2>
-		<ol class="artical_list">
-			<% unless (firstFolder.articles.size == 0) %>
-				<% firstFolder.articles.each do |article| %>
-					<li><%= link_to article.title, solution_category_folder_article_path(@item,firstFolder,article), :class => "topic" %></li>
-				<% end %>
-			<% else %>
-				<span class="no_info_text">No solutions in this folder - </span><%= link_to 'add a new solution'[:create_new_topic], new_solution_category_folder_article_path(@item, firstFolder) %>
-			<% end %>
-		</ol>
-		<span class="seperator"></span>
+	
+	<% unless (@item.folders.size == 0) %>	
+	  <%= render :partial => "/solution/shared/solution_list", :locals => { :category => @item, :folder => @item.folders.first } %>
 	<% else %>
-	
-	<span class="no_info_text">No folders in this category - </span><%= link_to 'add a new folder'[:create_new_folder], new_solution_category_folder_path(@item) %>
-	
+		<span class="info_data">No folders in this category - </span><%= link_to 'add a new folder'[:create_new_folder], new_solution_category_folder_path(@item) %>
 	<% end %>	
 </div> 

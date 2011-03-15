@@ -1,0 +1,19 @@
+<% if logged_in? && current_user.has_manage_solutions? %>
+	<div class="action_buttons">
+		<%= link_to ("Add Solution", new_solution_category_folder_article_path(category , folder), :class => "icon add_new") %>
+		<%= link_to 'Edit' ,  edit_solution_category_folder_path(category, folder), :class => "last" %>
+	</div>
+<% end %>	
+<h4 class="border_title"><%= folder.name %></h4> 
+<div class="info_data"><%= folder.description %></div> 
+
+<% unless (folder.articles.size == 0) %>
+	<ol class="artical_list">
+		<% folder.articles.each do |article| %>
+			<li><%= link_to article.title, solution_category_folder_article_path(category, folder, article) %></li>
+		<% end %>
+	</ol>
+<% else %>
+	<span class="no_info_text">No solutions in this folder  <%= link_to ' &rarr; Add a new solution '[:create_new_topic], new_solution_category_folder_article_path(category, folder) %></span>
+<% end %>
+<span class="seperator"></span>

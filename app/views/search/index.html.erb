@@ -9,10 +9,10 @@
 <div class="big_results">
 	<!-- h3 class="sub_title">Search for "Freshdesk" has 120 results</h3 -->
 	<ul class="results">
-		<% unless @tickets.nil? %>
+		<% unless @searched_tickets.nil? %>
 			<li class="ticket_icon"> 
 				<strong class="title">Tickets</strong>
-				<% @tickets.each do |ticket| %>
+				<% @searched_tickets.each do |ticket| %>
 					<div class="group">
 						<%= link_to(Helpdesk::Ticket.search_display(ticket), ticket, :class => "big") %>
 						<span class="light"><%= "Requested by, <b>#{ticket.requester}</b>" %> </span>
@@ -22,10 +22,10 @@
 			</li>
 		<% end %>
 		
-		<% unless @users.nil? %>
+		<% unless @searched_users.nil? %>
 			<li> 
 				<strong class="title">People</strong>
-				<% @users.each do |user| %>
+				<% @searched_users.each do |user| %>
 					<div class="group"> 
 						<%= user_avatar(user.avatar) %>
 						<%= link_to user, user, :class => "user" %>
@@ -43,19 +43,19 @@
 			</li>
 		<% end %>
 		
-		<% unless @companies.nil? %>
+		<% unless @searched_companies.nil? %>
 			<li class="company_icon"> 
 				<strong class="title">Companies</strong>
-				<% @companies.each do |company| %>
+				<% @searched_companies.each do |company| %>
 					<div class="group"><%= link_to(company.name, company, :class => "big") %></div>
 				<% end %>
 			</li>
 		<% end %>
 
-		<% unless @articles.nil? %>
+		<% unless @searched_articles.nil? %>
 			<li class="solution_icon"> 
 				<strong class="title">Solutions</strong>
-				<% @articles.each do |article| %>
+				<% @searched_articles.each do |article| %>
 					<div class="group">
 						<%= link_to(article.excerpts.title, article, :class => "big") %>
 						<p><%= article.excerpts.description  %></p>
@@ -64,10 +64,10 @@
 			</li>
 		<% end %>
 		
-		<% unless @topics.nil? %>
+		<% unless @searched_topics.nil? %>
 			<li class="forum_icon"> 
 				<strong class="title">Forums</strong>
-				<% @topics.each do |topic| %>
+				<% @searched_topics.each do |topic| %>
 					<div class="group">
 						<%= link_to(topic.excerpts.title, category_forum_topic_path(topic.forum.forum_category, topic.forum, topic), :class => "big") %>
 						<p><%= truncate(topic.posts.first.body.gsub(/<\/?[^>]*>/, ""), 300)  %></p>

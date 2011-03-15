@@ -10,7 +10,7 @@
 		<%= render :partial => "folder_form" , :locals => { :f => f }%>
 		<div class="button-container">
 		    <%= submit_tag "Save", :class => "fdbutton submit" %>	  
-			<%= link_to('Cancel'[:cancel], solution_category_url(@folder.category_id), :class => "fdbutton grey" ) %>
+			<%= link_to('Cancel'[:cancel], solution_category_url(@folder.category_id), :class => "fdbutton grey" ) %> 
 		</div>
 	<% end %>
 </div>
