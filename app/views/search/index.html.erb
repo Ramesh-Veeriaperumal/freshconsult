@@ -1,12 +1,11 @@
 <% content_for :layoutType do -%>single<%- end %>
-<h3 class="title">Search results</h3>
-<% form_tag '/search', :method => :get do %>
-	<input class="search" value="<%= @search_key %>" placeholder="Search" autocomplete="off" name="search_key" />
-	<input type="submit" value="Search" class="uiButton blue" />
-<% end %>
-<span class="seperator"></span>
-
 <div class="big_results">
+	<h3 class="title">Search results</h3>
+	<% form_tag '/search', :method => :get do %>
+		<input class="search" value="<%= @search_key %>" placeholder="Search" autocomplete="off" name="search_key" />
+		<input type="submit" value="Search" class="uiButton blue" />
+	<% end %>
+	<span class="seperator"></span>
 	<!-- h3 class="sub_title">Search for "Freshdesk" has 120 results</h3 -->
 	<ul class="results">
 		<% unless @searched_tickets.nil? %>

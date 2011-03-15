@@ -80,15 +80,7 @@
 						jQuery('#solution_dialog_outer').fadeOut(80);								
 				});					
 		});
-		
-		var delay = (function(){
-		  var timer = 0;
-		  return function(callback, ms){
-		    clearTimeout (timer);
-		    timer = setTimeout(callback, ms);
-		  };
-		})();
-		
+		 
 		callbackToSearch = function(string){
 			jQuery.ajax({ url: "/home/search_solution?search_key="+string, 
 							  success: function(data){

@@ -9,7 +9,7 @@ class SearchController < ApplicationController
   
   def suggest
     search
-    render :partial => '/layouts/shared/navsearch_items'    
+    render :partial => '/search/navsearch_items'    
   end
   
   protected

@@ -1,16 +1,18 @@
 <% javascript_tag do %>
 	(function($){
 		$(document).ready(function(){
-			
+			 
+			var currentactive,
+				position   		= -1, 
+				insideSearch 	= false;
 			
 			callbackToSearch = function(string){
 				jQuery.ajax({ url: "/search/suggest?search_key="+string, 
 								  success: function(data){
-								  			$("#SearchResultsBar").show();
+								  			$("#SearchResultsBar").show(); 
+											position   = -1
 											$("#SearchResultsBar .results").html(data);
 							}});
-				//$("#SearchResultsBar").show();
-				//initSearchNavigator();
 			}
 			
 			$("#SearchResultsBar a").live("click", function(){
@@ -25,10 +27,8 @@
 			$("#SearchResultsBar")
 				.hover(function(){
 					insideSearch = true;
-					console.log(insideSearch);
 				}, function(){
 					insideSearch = false;
-					console.log(insideSearch);
 				});
 			
 			$("#header_search").bind("focusout", function(ev){ 
@@ -37,57 +37,61 @@
 			});
 			
 			$("#header_search").bind("focusin", function(ev){
-				jQuery("#SearchResultsBar").show();
-			});
+				searchString = this.value.replace(/^\s+|\s+$/g, "");
+				if(searchString != ''){
+					jQuery("#SearchResultsBar").show();
+				}
+			}); 
 			
-			$("#header_search").bind("keyup", function(ev){
-				searchString = this.value;
-				if(searchString.length > 1){
-					delay(function(){
-				      callbackToSearch(searchString);
-				    }, 200 ); 
-				} 
-			});
-			
-			var currentactive,
-				position   = -1,
-				searchlist = $("#SearchResultsBar a"),
-				max		   = searchlist.size() - 1,
-				insideSearch = false;
-			
-			initSearchNavigator = function(){
-				searchlist 		= $("#SearchResultsBar a");
-				max		   		= searchlist.size()-1;
-				currentactive	= searchlist.first();
-			}
-			
-			move = function(diff){
+			var move = function(diff){
+				searchlist 	= $("#SearchResultsBar a");
 				$(currentactive).removeClass("active");
-				position = Math.min(max, Math.max(0, position + diff));
+				position = Math.min((searchlist.size()-1), Math.max(0, position + diff)); 
 				currentactive = $(searchlist.get(position)).addClass("active"); 
-			}
+			};
 			
-			$("#header_search").bind("keydown", function(e){ 
-				 switch (e.keyCode) {
+			var executeAction = function (keyCode){ 
+				 switch (keyCode) {
 			        case 40:
-						move(1);
-						e.preventDefault();
+						move(1); 
 			            break;
 			        case 38:
-						move(-1);
-						e.preventDefault();
+						move(-1); 
 			            break;
 					case 13:
 						$(currentactive).trigger("click");
 						break; 
 				}
-			}); 
+			} 
+			
+			$("#header_search").bind("keyup", function(e){
+				 switch (e.keyCode) {
+				 	case 40:
+					case 38:
+					case 13:
+						executeAction(e.keyCode);
+						e.preventDefault();
+					break;
+					default:
+						searchString = this.value.replace(/^\s+|\s+$/g, "");
+						if(searchString != '' && searchString.length > 1){
+							delay(function(){
+						      callbackToSearch(searchString);
+						    }, 200 ); 
+						}else{
+							jQuery("#SearchResultsBar").hide();				
+						}
+					break;
+				}
+			});
+			
+			
+			
+			
 		});
 	})(jQuery);
 <% end %>
 
 <div class="search_results_bar" id="SearchResultsBar"> 
-	<ul class="results"> 
-		<%= render :partial => "/layouts/shared/navsearch_items" %>
-	</ul> 
+	<ul class="results">  </ul> 
 </div>
