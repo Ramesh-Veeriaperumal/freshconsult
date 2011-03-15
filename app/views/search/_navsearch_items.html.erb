@@ -33,7 +33,7 @@
 		<% unless @searched_articles.nil? or @searched_articles.empty? %>
 			<li class="solution_icon">
 				<h4>Solutions</h4>
-				<% @articles.each do |article| %>
+				<% @searched_articles.each do |article| %>
 					<%= link_to(article.excerpts.title, article) %>
 				<% end %>
 			</li>

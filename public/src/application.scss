@@ -3737,11 +3737,13 @@ h4.border_title{
 	}
 }		
 
-.ajax-loader{
-	background-image:url('/images/ajax-loader.gif');
+.ajax-loader, .loading{
+	background-image:url('/images/load.gif');
 	background-repeat:no-repeat;
 	background-position: 10px 10px;
 }
+
+
 
 .email_info{
 	border:1px solid #cfcfcf;
@@ -3758,7 +3760,7 @@ h4.border_title{
 }
 
 .search_results{
-	background:#ffffff;
+	background-color:#ffffff;
 	@include inset-shadows;
 	@include corners(6px);
 	border:1px solid #dfdfdf;
