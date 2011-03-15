@@ -4,7 +4,7 @@ class AccountsController < ApplicationController
   
   skip_before_filter :set_time_zone
   
-  before_filter :build_user, :only => [:new, :create,:signup_free]
+  before_filter :build_user, :only => [:new, :create]
   before_filter :load_billing, :only => [ :new, :create, :billing, :paypal ]
   before_filter :load_subscription, :only => [ :billing, :plan, :paypal, :plan_paypal ]
   before_filter :load_discount, :only => [ :plans, :plan, :new, :create ]
@@ -26,6 +26,7 @@ class AccountsController < ApplicationController
   def signup_free
     params[:plan] = SubscriptionPlan::SUBSCRIPTION_PLANS[:premium]
     build_object
+    build_user
     build_plan
    @account.time_zone = (ActiveSupport::TimeZone[params[:utc_offset].to_f]).name
     if @account.save
