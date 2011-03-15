@@ -1,48 +1,33 @@
-<% content_for :layoutType do -%>single<%- end %>
-  
-<div class="pageContent">
-	<div class="information_tip">
-		<div class="search">
-			<label>Start typing a question and see answers in real time</label>			
-			<label class="overlabel" for="ssp_search">Search for a keyword or a full question</label>
-			<input type="text" class="search" id="ssp_search"  />			
-		</div>		
-		<div id="search_results" class="search_results" style="display:none;"></div>
-	</div>
-	
-	<div class="information_tip two_col_cont">
+<% content_for :layoutType do -%>single<%- end %> 
+	<div class="live_search">
+		<h3 class="title">Start typing a question and see answers in real time</h3>			
+		<label class="overlabel" for="ssp_search">Search using a keyword or a full question</label>
+		<input type="text" class="search" id="ssp_search"  />			
+	</div>		
+	<span class="seperator"></span>
+	<div id="search_results" style="display:none;"></div>
+	<div class="two_col_cont">
 		<div class="left_col">
-			<h3 class="title">&nbsp;&nbsp;Solutions</h3>
-			<ul class="ssp_category_list">
-				<% firstCategory = @categories.find(:first) %>
+			<h3 class="title">Get Answers</h3>
+			<div class="ssp_category_list">	
 				<% @categories.each do |category| %>
-				<li> 
-					 <!--%= link_to_remote( h(folder.name),
-                         :update => "RightDiv",
-                         :url =>{ :action => :get_folders , :id => folder.id},
-						 :html => { :class => (firstFolder == folder) ? "active":"" }
-						) %-->
-						 
-					<%= link_to h(category.name), 
-							{ :action => :get_categories, :id => category.id }, :class => (firstCategory == category) ? "active":""  %>				
-				</li>
-				<%end%>
-			</ul>				
-			
-			<div class="community_forums white_curved_cont">				
-				<h3 class="title">Community Forums</h3>	
-				<p>
-					Ask questions, share ideas, report problems and get answers from <%= link_to "our community forums", categories_path %></a>
-				</p>
-			</div>	
+				<div class="<%= cycle('odd', 'even') %>"> 
+					<%= link_to category.name + " &raquo;", category %>
+					<%= content_tag (:span, category.description) %> 
+				</div> 
+				<% end %>
+			</div>
 		</div>
-		
-		<div class="right_col white_curved_cont" id="RightDiv">			
-			<%= render :partial => 'solution_toc', :locals => { :category => @categories.first } %>
+		<div class="right_col">
+			<h3 class="title">Recent Forum Posts</h3>
+			<ul class="list_with_icon"> 
+				 <li>
+				 	<a href="#">Can we Sync our Outlook Calendar with Backpack Calendar? </a>
+					<div class="info_data">9 replies, latest by Capnet Admin on Mar 15, 2011 5:43 AM </div>
+				 </li>
+			</ul>
 		</div>
-	</div>
-</div>
-
+	</div> 
 <script type="text/javascript">
 	jQuery(document).ready(function(){
 		jQuery("ul.ssp_category_list a").live("click", function(ev){		
@@ -95,15 +80,7 @@
 						jQuery('#solution_dialog_outer').fadeOut(80);								
 				});					
 		});
-		
-		var delay = (function(){
-		  var timer = 0;
-		  return function(callback, ms){
-		    clearTimeout (timer);
-		    timer = setTimeout(callback, ms);
-		  };
-		})();
-		
+		 
 		callbackToSearch = function(string){
 			jQuery.ajax({ url: "/home/search_solution?search_key="+string, 
 							  success: function(data){

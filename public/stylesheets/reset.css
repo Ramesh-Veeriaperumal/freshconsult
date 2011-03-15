@@ -60,5 +60,6 @@ a img {
 
 /* line 3, ../src/reset.scss */
 ol {
-  list-style: decimal inside;
+  list-style: decimal outside;
+  margin: 3px 8px 3px 28px;
 }

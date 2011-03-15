@@ -30,18 +30,21 @@
 <div class="clearfix sol_list">			
 	<% @categories.each do |category| %>
 		<div class="<%= cycle('odd', 'even') %>">
-			<div class="item_actions" style="display:none;">  
-				<% link_to 'edit' ,edit_solution_category_path(category)   %> | 
-				<% link_to('delete', solution_category_path(category), :method => 'delete', :confirm => 'Are you sure you want to delete this category' ) %> 
-			</div>
 			<% if logged_in? && current_user.has_manage_solutions? -%>
-				<div class="floatr">
-					<div class="add_list">
-						<%= link_to 'Add folder'[:create_new_folder], new_solution_category_folder_path(category)  %>
+					<div class="action_buttons">
+						<%= link_to 'Add folder'[:create_new_folder], new_solution_category_folder_path(category), :class => "first icon add_new"  %> 
+						<%= link_to 'Edit' ,edit_solution_category_path(category), :class => "last"   %> 
+						<% link_to "RSS", "", :class => "last" %>  
+						<% link_to('delete', solution_category_path(category), :method => 'delete', :confirm => 'Are you sure you want to delete this category' ) %> 
 					</div>
-				</div>
 			<% end %>
-			<h4><%= link_to category.name + " &raquo;", category %></h4>  
+			<h4 class="border_title">
+				<% unless category.folders.empty? %>
+					<%= link_to category.name + " &raquo;", category %>
+				<% else %>
+					<%= category.name %>
+				<% end %>
+			</h4>  
 			<ul>			
 	  		<% category.folders.each do |folder| %>
 				<li><%= link_to h(folder.name),  solution_category_folder_path(category, folder)  %></li>

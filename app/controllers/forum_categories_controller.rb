@@ -23,7 +23,11 @@ class ForumCategoriesController < ApplicationController
 
     respond_to do |format|
       format.html 
-      format.xml  { render :xml => @forum_category }
+      format.xml  { 
+      
+            render :xml => @forums      
+            
+          }
       format.atom 
       
      

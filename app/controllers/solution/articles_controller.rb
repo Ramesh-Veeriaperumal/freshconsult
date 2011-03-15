@@ -1,5 +1,6 @@
 class Solution::ArticlesController < ApplicationController
   
+  before_filter :check_user , :only => [:show]
   before_filter :set_selected_tab
   
   before_filter :except => [:index, :show] do |c| 
@@ -20,7 +21,11 @@ class Solution::ArticlesController < ApplicationController
   def show
     
     logger.debug "show is :: #{params.inspect}"
-     @article = Solution::Article.find(params[:id], :include => :folder) 
+    @article = Solution::Article.find(params[:id], :include => :folder) 
+    respond_to do |format|
+      format.html
+      format.xml  { render :xml => @article.to_xml(:include => :folder) }
+    end
     
   end
 
@@ -139,6 +144,14 @@ end
       @article.attachments.create(:content => a[:file], :description => a[:description], :account_id => @article.account_id)
     end
   end
+  
+   def check_user
+    if current_user.nil? || current_user.customer?
+      @article = Solution::Article.find(params[:id], :include => :folder)
+      return redirect_to(support_article_url(@article)) 
+    end
+  end
+  
  
   
 protected

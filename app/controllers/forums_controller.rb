@@ -36,7 +36,7 @@ class ForumsController < ApplicationController
       format.html do
         # keep track of when we last viewed this forum for activity indicators
          end
-      format.xml { render :xml => @forum }
+      format.xml { render :xml => @forum.to_xml(:include => [:forum_category,:topics] )   }
       format.atom
     end
   end

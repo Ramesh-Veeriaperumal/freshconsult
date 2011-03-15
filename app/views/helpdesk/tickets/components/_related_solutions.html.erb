@@ -1,3 +1,49 @@
+<script>
+respondWithSol = function(select , sol_id, url){	
+
+	
+	if (select == "url")
+	{
+		jQuery('#cnt-note').css("display", "none");
+		jQuery('#cnt-reply').css("display", "block");
+		jQuery('#send-email-cnt-reply-body').focus();
+		jQuery('#send-email-cnt-reply-body').val(url+ "\n" +jQuery('#send-email-cnt-reply-body').val()); 		
+		return true;		
+	}
+	else if(select == "none")
+	{
+		return true;		
+	}
+	else
+	{
+		handleSolutionDetail(sol_id);		
+	}
+	
+	
+};
+
+handleSolutionDetail = function(sol_id){
+	jQuery.ajax({		type: 'POST',
+						url: '/helpdesk/tickets/get_solution_detail/'+sol_id,
+						contentType: 'application/text',
+						async: false,						
+						success: function(data){		
+							
+									jQuery('#cnt-note').css("display", "none");
+									jQuery('#cnt-reply').css("display", "block");	
+									jQuery('#send-email-cnt-reply-body').focus();															
+									jQuery('#send-email-cnt-reply-body').val(data+ "\n" +jQuery('#send-email-cnt-reply-body').val()); 
+							
+						}
+						});
+						
+	return true;
+};
+
+
+</script>
+
+
 <div class="rtDetails" id="RelatedSolutions" style="display:none;">
 	<h3 class="title">Suggested Solutions</h3>
 		
@@ -11,12 +57,23 @@
 		}
 	</style>
 		<div class="request_panel_list">
-			<% @articles.each do |article| %>
+			<% @articles.each do |article|
+				article_url = solution_category_folder_article_url(article.folder.category_id,article.folder_id,article)
+			 %>
+			 
+			
 			<div class="item">
-				<%= link_to(article.excerpts.title, solution_category_folder_article_path(article.folder.category_id,article.folder_id,article)) %>
-				<div style="display:none;">
+				<%= link_to(article.excerpts.title, article_url) %>
+				Use<select id="suggest_solution_insert" onchange="respondWithSol(this.value, '<%=article.id%>' ,'<%=article_url%>')">
+									<option value="none">.....</option>
+									<option value="content">Content </option>
+									<%if article.is_public?%>
+									<option value="url">URL </option>
+									<%end%>
+									</select>
+				<!--div style="display:none;">
 					<%= truncate ( article.description.gsub(/<\/?[^>]*>/, ""), 100)  %>
-				</div>
+				</div-->
 			</div>
 			<% end %>
 		</div>

@@ -20,6 +20,11 @@ class Solution::CategoriesController < ApplicationController
     
      @item = Solution::Category.find(params[:id], :include => :folders)
      
+     respond_to do |format|
+      format.html # index.html.erb
+      format.xml  { render :xml => @item.to_xml(:include => :folders) }
+    end
+     
   end
 
   def new

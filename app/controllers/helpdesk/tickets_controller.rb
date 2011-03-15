@@ -63,7 +63,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def set_suggested_solutions
-   @articles = Solution::Article.suggest_solutions @ticket     
+   @articles = Solution::Article.suggest_solutions @ticket      
   end
   
   def update
@@ -237,7 +237,12 @@ class Helpdesk::TicketsController < ApplicationController
        render :json => ActiveSupport::JSON.encode(res)
        
      end
-  end
+ end
+ def get_solution_detail   
+   sol_desc = current_account.solution_articles.find(params[:id])
+   render :text => (sol_desc.description.gsub(/<\/?[^>]*>/, "")).gsub(/&nbsp;/i,"") || "" 
+ end
+ 
 protected
 
   def item_url

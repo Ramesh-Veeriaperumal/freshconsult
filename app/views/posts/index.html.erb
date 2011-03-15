@@ -9,10 +9,9 @@
 </h1>
 <p class="subtitle">
   <%= feed_icon_tag @page_title, search_posts_path(true) %>
-  <%= '{count} post(s) found'[(count=@posts.total_entries)==1 ? :post_count_found : :posts_count_found, number_with_delimiter(count)] %>
-</p>
+ </p>
 
-<%= will_paginate @posts %>
+
 
 <table border="0" cellspacing="0" cellpadding="0" class="posts wide">
 <% for post in @posts do %>
@@ -39,8 +38,8 @@
   </td>
   <td class="body entry-content">
     <p class="topic">
-      <%= "Topic"[:topic_title] %>: <%= link_to h(post.forum_name), category_forum_path(post.topic.forum.forum_category.id,post.forum_id) %> / 
-      <%= link_to h(post.topic_title), category_forum_topic_path(post.topic.forum.forum_category.id,post.forum_id, post.topic_id) %>
+      <%= "Topic"[:topic_title] %>: kiran<%= link_to h(post.forum.name), category_forum_path(post.topic.forum.forum_category.id,post.forum_id) %> / 
+      <%= link_to h(post.topic.title), category_forum_topic_path(post.topic.forum.forum_category.id,post.forum_id, post.topic_id) %>
     </p>
     
     <%= post.body_html %>
@@ -50,4 +49,3 @@
 <% end %>
 </table>
 
-<%= will_paginate @posts %>

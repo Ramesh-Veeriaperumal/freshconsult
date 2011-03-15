@@ -42,7 +42,7 @@ class TopicsController < ApplicationController
         @post   = Post.new
       end
       format.xml do
-        render :xml => @topic.to_xml
+        render :xml => @topic.posts
       end
       format.rss do
         @posts = @topic.posts.find(:all, :order => 'created_at desc', :limit => 25)
