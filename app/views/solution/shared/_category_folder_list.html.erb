@@ -1,0 +1,9 @@
+<% selected ||= category.folders.first %>
+<h3 class="title"><%= category.name %></h3>
+<ul class="solution_list"> 
+	<% category.folders.each do |folder| %>  
+		<li class = "<%= ( folder == selected ) ? 'active' : '' %>" >
+			<%= link_to folder.name,  solution_category_folder_path(category,folder)  %> <span><%= folder.articles.size %></span> 
+		</li>
+	<% end %>
+</ul>
