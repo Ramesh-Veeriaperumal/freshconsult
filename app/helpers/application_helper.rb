@@ -111,6 +111,10 @@ module ApplicationHelper
   def email_response_path(args_hash)
     comment_path(args_hash, 'email response')
   end
+  
+  def reply_path(args_hash)
+    comment_path(args_hash, 'reply')
+  end
   #Liquid ends here..
   
   #Ticket place-holders, which will be used in email and comment contents.

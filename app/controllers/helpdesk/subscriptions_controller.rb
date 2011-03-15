@@ -23,6 +23,11 @@ class Helpdesk::SubscriptionsController < ApplicationController
     def post_persist
       flash[:notice] = "You are now monitoring this ticket"
       redirect_to params[:redirect_to].present? ? params[:redirect_to] : item_url
-    end
+  end
+   
+  
+  def process_destroy_message
+      flash[:notice] = "You are no longer monitoring this ticket"      
+  end
   
 end

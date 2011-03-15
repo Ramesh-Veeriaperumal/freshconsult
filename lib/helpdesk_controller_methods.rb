@@ -40,8 +40,8 @@ module HelpdeskControllerMethods
   
   def post_persist #Need to check whether this should be called only inside create by Shan to do 
     create_attachments 
-    process_item #
     flash[:notice] = "The #{cname.humanize.downcase} has been created."
+    process_item #    
     #redirect_back_or_default redirect_url
     redirect_to params[:redirect_to].present? ? params[:redirect_to] : item_url
   end
@@ -75,10 +75,10 @@ module HelpdeskControllerMethods
         item.destroy
       end
     end
-
+    
     respond_to do |expects|
       expects.html do 
-        flash[:notice] = render_to_string(:partial => '/helpdesk/shared/flash/delete_notice') 
+        process_destroy_message  
         redirect_to after_destroy_url
       end
       expects.js do
@@ -233,6 +233,11 @@ protected
 
   def process_item
     # Hook for controllers to add post create/update code
+  end
+  
+  def process_destroy_message
+    flash[:notice] = render_to_string(:partial => '/helpdesk/shared/flash/delete_notice')
+    # Hook for controllers to add their own message and redirect
   end
 
   def load_parent_ticket

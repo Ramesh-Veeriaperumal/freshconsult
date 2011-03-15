@@ -43,15 +43,10 @@ protected
 
   def process_item
     
-     reply_email = params[:reply_email][:id] unless params[:reply_email].nil?
-    if @parent.is_a? Helpdesk::Ticket
-      Helpdesk::TicketNotifier.send_later(:deliver_reply, @parent, @item , reply_email) unless @item.private
-      @parent.responder ||= current_user
-      @parent.create_activity(current_user, "{{user_path}} added a {{comment_path}} to the ticket {{notable_path}}", 
-                    {'eval_args' => {'comment_path' => ['comment_path', {
-                                                        'ticket_id' => @parent.display_id, 
-                                                        'comment_id' => @item.id}]}},
-                     "{{user_path}} added a {{comment_path}}")
+    if @parent.is_a? Helpdesk::Ticket      
+      send_reply_email if @item.source.eql?(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["email"])
+      add_note if @item.source.eql?(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"])
+      @parent.responder ||= current_user                     
     end
 
     if @parent.is_a? Helpdesk::Issue
@@ -65,8 +60,32 @@ protected
     end
 
     @parent.save
+  
   end
 
+ def send_reply_email
+   reply_email = params[:reply_email][:id] unless params[:reply_email].nil?
+   Helpdesk::TicketNotifier.send_later(:deliver_reply, @parent, @item , reply_email)
+   @parent.create_activity(current_user, "{{user_path}} has sent a {{reply_path}} to the ticket {{notable_path}}", 
+                    {'eval_args' => {'reply_path' => ['reply_path', {
+                                                        'ticket_id' => @parent.display_id, 
+                                                        'comment_id' => @item.id}]}},
+                     "{{user_path}}has sent a {{reply_path}}") 
+                     
+     flash[:notice] = "The reply has been sent."
+   
+ end
+  
+ 
+ def add_note   
+   Helpdesk::TicketNotifier.send_later(:notify_by_email, EmailNotification::COMMENTED_BY_AGENT , @parent ,@item) unless @item.private
+   @parent.create_activity(current_user, "{{user_path}} added a {{comment_path}} to the ticket {{notable_path}}", 
+                    {'eval_args' => {'comment_path' => ['comment_path', {
+                                                        'ticket_id' => @parent.display_id, 
+                                                        'comment_id' => @item.id}]}},
+                     "{{user_path}} added a {{comment_path}}") if @item.source.eql?(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"])
+ end
+ 
   def create_error
     redirect_to @parent
   end
