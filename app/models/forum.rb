@@ -22,7 +22,7 @@ class Forum < ActiveRecord::Base
   
   format_attribute :description
   
-  attr_accessible :name,:description, :description_html
+  attr_accessible :name,:description, :description_html, :forum_type
   
   TYPES = [
     [ :howto,   "Questions",     1 ], 
