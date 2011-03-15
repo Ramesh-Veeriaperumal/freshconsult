@@ -20,7 +20,11 @@ class Solution::ArticlesController < ApplicationController
   def show
     
     logger.debug "show is :: #{params.inspect}"
-     @article = Solution::Article.find(params[:id], :include => :folder) 
+    @article = Solution::Article.find(params[:id], :include => :folder) 
+    respond_to do |format|
+      format.html
+      format.xml  { render :xml => @article.to_xml(:include => :folder) }
+    end
     
   end
 

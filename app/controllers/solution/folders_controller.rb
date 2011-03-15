@@ -18,6 +18,11 @@ class Solution::FoldersController < ApplicationController
   def show    
     @item = Solution::Folder.find(params[:id], :include => :articles)
     
+    respond_to do |format|
+      format.html 
+      format.xml  { render :xml => @item.to_xml(:include => :articles) }
+    end
+    
   end
 
   def new
