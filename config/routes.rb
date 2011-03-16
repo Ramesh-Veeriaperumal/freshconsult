@@ -24,14 +24,12 @@ ActionController::Routing::Routes.draw do |map|
   map.register '/register/:activation_code', :controller => 'activations', :action => 'new'
   map.activate '/activate/:id', :controller => 'activations', :action => 'create'
   map.resources :home, :only => :index
-  #map.resources :admin, :only => :index
   map.resources :ticket_fields, :only => :index
   map.resources :email, :only => [:new, :create]
   map.resources :password_resets, :except => [:index, :show, :destroy]
   
   map.namespace :admin do |admin|
     admin.resources :home, :only => :index
-    admin.home '', :controller => 'home', :action => 'index'
     admin.resources :automations, :member => { :deactivate => :put, :activate => :put }, :collections => { :reorder => :put }
     admin.resources :va_rules, :member => { :deactivate => :put, :activate => :put }, :collections => { :reorder => :put }
     admin.resources :email_configs
