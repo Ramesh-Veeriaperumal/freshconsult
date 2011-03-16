@@ -27,29 +27,12 @@ Rails::Initializer.run do |config|
   # Specify gems that this application depends on. 
   # They can then be installed with "rake gems:install" on new installations.
   #config.gem "mms2r" #3.2.0
-  config.gem "classifier"
-  config.gem "stemmer"
-  config.gem 'RedCloth' #4.2.3
-  config.gem "lockfile" #from SAAS kit
-  config.gem "authlogic" #2.1.6
-  config.gem 'rufus-scheduler', :lib=>'rufus/scheduler'
-  config.gem 'tzinfo'
-  config.gem 'ruby-openid', :lib => 'openid' #2.1.8
-  config.gem 'rack-openid', :lib => 'rack/openid' #1.2.0
-  config.gem 'ruby-openid-apps-discovery' #1.2.0
+  #config.gem "classifier" LOCAL /vendor/gems
+  #config.gem "stemmer" LOCAL
+  #config.gem "lockfile" #from SAAS kit LOCAL
   # config.gem "bj"
   # config.gem "hpricot", :version => '0.6', :source => "http://code.whytheluckystiff.net"
-  config.gem "aws-s3", :lib => "aws/s3" #0.6.2  
-  config.gem "arel" #2.0.7  
-  config.gem "searchlogic" #2.4.27
-  config.gem 'map-fields',  :lib => 'map_fields' #1.0.0
 
-  config.gem "http_accept_language" #1.0.1
-
-
-  config.gem 'thinking-sphinx', :lib     => 'thinking_sphinx', :version => '1.4.3'
-  config.gem 'ts-delayed-delta', :lib     => 'thinking_sphinx/deltas/delayed_delta', 
-                    :version => '>= 1.1.0', :source  => 'http://gemcutter.org'
   #config.gem 'delayed_job' :version => '1.8.4' #just a reference for using it along with ts-delayed-delta. 
   #otherwise ts-del** will install the latest version of delayed_job. 
 
