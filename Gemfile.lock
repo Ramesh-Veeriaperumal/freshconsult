@@ -84,6 +84,7 @@ DEPENDENCIES
   net-dns (= 0.6.1)
   rack-openid (= 1.2.0)
   rails (= 2.3.8)
+  rake (= 0.8.7)
   ruby-debug (= 0.10.3)
   ruby-openid (= 2.1.8)
   ruby-openid-apps-discovery (= 1.2.0)

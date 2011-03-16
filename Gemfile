@@ -1,5 +1,6 @@
 source :gemcutter
 
+gem "rake", "0.8.7"
 gem "rails", "2.3.8"
 gem "mysql"
 gem "i18n", "0.4.2"
