@@ -27,3 +27,6 @@ gem "delayed_job", "1.8.4"
 gem "ts-delayed-delta", "1.1.0", :require => "thinking_sphinx/deltas/delayed_delta"
 
 gem "net-dns", "0.6.1"
+
+gem 'classifier', "1.3.1", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/classifier-1.3.1"
+gem 'stemmer', "1.0.1", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/stemmer-1.0.1"
