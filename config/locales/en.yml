@@ -6,8 +6,8 @@ en:
    title: "Title"
    message: "Message"
    description: "Description"
-   add_a_topic: "add a new topic"
-   no_info_text: "No topics in this forum"
+   add_a_topic: "Start a Topic"
+   no_topics_text: "Be the first to start a new topic"
    connect_ticket: "Connect to ticket"
    posted_by: "Posted by"
    reply_topic: "Reply to topic"
@@ -17,7 +17,7 @@ en:
    created_on: "Created on"
    delete_topic_msg: "Delete this topic forever"
    category:
-        new: "New Forum Category"
+        new: "New Category"
    forum: 
       title: "Forums"
       new:  "New Forum"
