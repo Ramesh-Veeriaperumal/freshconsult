@@ -1,20 +1,35 @@
 <% if logged_in? && current_user.has_manage_solutions? -%>
 	<% content_for :sidebar do -%>
 		<div class="sidepanel">
-			<h3 class="title">Contribute your Articles</h3>
+			<h3 class="title"> Solutions </h3>
 			<p>
-				Here you can find and contribute articles about your products or service.
+				Solutions in Freshdesk is  your Knowledge base.
+			</p>
+			<p>
+				Solutions can be <b>public</b> or <b>private</b>. Public Solutions are visible in the Self Service Portal and also appear in Search results. 
+			</p>
+			<p>
+				Private solutions are agent-only solutions used for internal knowledge sharing.
 			</p>
 			<p> 
-				The articles can be published to your self service portal so that your customers can easily find <b>solutions</b> to their common problems.
+				Solutions have a 3 level hierarchy - <b>Category --> Folder --> Article</b>
 			</p>	  
 			
+			<p>
+				Solutions can be of two types - <b>Workaround</b> or <b>Permanent</b> solutions. 
+				
+		    </p>
+			
+			<p>
+				A Solution can have a <b>Draft</b> status when you are working on it and can be  changed to <b>Published</b> status once it is finished and reviewed.
+				
+		    </p>
 			<span class="seperator"></span>
 			
-			<h3 class="title">Organize</h3>
+			<!--h3 class="title">Organize</h3>
 			<p>
 				You can organize your articals into <b>folders</b> and in-turn order these folders into <b>categories</b>  
-			</p>
+			</p-->
 		</div>
 	<%- end %>
 <%- end %> 
