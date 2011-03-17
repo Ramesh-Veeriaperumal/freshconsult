@@ -30,6 +30,7 @@ class ContactsController < ApplicationController
     @user = current_account.users.new
     @user.user_role = User::USER_ROLES_KEYS_BY_TOKEN[:customer]
     @user.avatar = Helpdesk::Attachment.new
+    @user.time_zone = current_account.time_zone
   end
   
   def quick_customer

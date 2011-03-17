@@ -46,7 +46,8 @@
 	  		 
 			
 			<% @article.tags.map.each do |t| %> 
-				<div class="item">				
+				<div class="item">		
+					<%= link_to(image_tag('icons/btn_close_icon.png'), solution_category_folder_article_tag_use_path(@article.folder.category_id,@article.folder,@article,t), :method => 'delete', :class => 'tag_delete') %>		
 					<%= link_to(h(t.name), t, :class => "tag_item")  %>
 				</div>
 			<% end %>

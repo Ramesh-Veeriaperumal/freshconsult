@@ -31,7 +31,9 @@ class Helpdesk::TagUsesController < ApplicationController
     # decrement the counter cache. This is a workaround. need to re-work..now this will work only for ticket module
     
     Helpdesk::TagUse.find_by_taggable_id_and_tag_id_and_taggable_type(ticket.id, tag.id,taggable_type ).destroy
-
+    count = tag.tag_uses_count - 1
+    tag.update_attribute(:tag_uses_count,count )
+    
     flash[:notice] = "The tag was removed from this ticket"
     redirect_to :back
     

@@ -20,6 +20,7 @@ class AgentsController < Admin::AdminController
     @agent      = Agent.new       
     @agent.user = User.new
     @agent.user.avatar = Helpdesk::Attachment.new
+    @agent.user.time_zone = current_account.time_zone
      respond_to do |format|
       format.html # new.html.erb
       format.xml  { render :xml => @agent }

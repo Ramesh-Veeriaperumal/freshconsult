@@ -55,7 +55,7 @@
 		<%logger.debug "Custom  Field #{field["label"]}"%>		
 		<% fields_for :flexifields do |cust_form| %>
 			<% 
-				field_label = (field["agent"]["required"]) ? "#{field["display_name"]} *" : "#{field["display_name"]}"  
+				field_label = (field["agent"]["required"]) ? "#{field["display_name"]} " : "#{field["display_name"]}"  
 				field_class = field["type"] + ((field["agent"]["required"]) ? " required" : "") 
 			%>
 			<% case field["type"] when "text","number" then %>				
@@ -87,7 +87,7 @@
 		   <% when "checkbox" then %>
 				<li class="checkbox">
 
-					<%= cust_form.check_box "#{field["label"]}" ,:class => field_class  , :value =>@item.get_ff_value(field["label"])%>					
+					<%= cust_form.check_box "#{field["label"]}" ,:class => field_class  , :checked =>@item.get_ff_value(field["label"])%>					
 					<%= field_label %>
 
 			     </li>
