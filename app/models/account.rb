@@ -32,7 +32,7 @@ class Account < ActiveRecord::Base
   has_one :admin, :class_name => "User", :conditions => { :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:admin] } #has_one ?!?!?!?!
   has_one :subscription, :dependent => :destroy
   has_many :subscription_payments
-  has_many :solution_categories , :class_name =>'Solution::Category'  
+  has_many :solution_categories , :class_name =>'Solution::Category',:include =>:folders
   has_many :solution_articles , :class_name =>'Solution::Article'
   
   has_many :customers, :dependent => :destroy

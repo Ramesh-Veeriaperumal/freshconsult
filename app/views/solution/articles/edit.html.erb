@@ -25,14 +25,5 @@
 	 <% end %>
 	
 	
-	 <div class="attachment-list-container">
-	    <%= content_tag('h5', 'Attachments') unless @article.attachments.empty? %>
-	    <table class="attachment-list">
-	      <%= render(
-	        :partial => '/helpdesk/shared/attachment', 
-	        :collection => @article.attachments,
-	        :locals => {:show_delete => true, :url => [@article] }) %>
-	    </table>
-	  </div>
 	
 </div>
