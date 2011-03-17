@@ -324,6 +324,10 @@
 			jQuery(sourcefield).hide();			
 		};
 		
+		jQuery("#DeleteField").live("click", function(e){
+			deleteField(SourceField);
+		});
+		
 		jQuery(dialogDOMMap.label).live("keyup", function(ev){
 			sourceDomMap.label.text(this.value);
 		});
