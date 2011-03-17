@@ -41,8 +41,8 @@
 <%- end %>
 <h3 class="title">Solutions</h3>
 <div class="brief">Welcome to the <b><%= current_account.helpdesk_name %></b> Soutions.</div>
- 
-<div class="clearfix sol_list">			
+
+<div class="clearfix solution-list">			
 	<% @categories.each do |category| %>
 		<div class="<%= cycle('odd', 'even') %>">
 			<% if logged_in? && current_user.has_manage_solutions? -%>

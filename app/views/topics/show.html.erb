@@ -1,4 +1,4 @@
-<% content_for :layoutType do %>request_view<% end %>
+<% content_for :layoutType do %><% end %>
 <% @page_title = @topic.title %>
 <% @monitoring = logged_in? && !Monitorship.count(:id, :conditions => ['user_id = ? and topic_id = ? and active = ?', current_user.id, @topic.id, true]).zero? %>
 
@@ -68,46 +68,50 @@
 							<% end %>
 					</div>
 				<% end %>
-	    		<div class="title">
-			        <b><%= h @topic.title  %></b>	  
+			        <h3 class="title"><%= h @topic.title  %></h3>	  
 			        <em>
 			          <% if @topic.locked? %>
 					  	<span>(<%= 'locked'[] %>)</span>
 					  <% end %>
 					</em>
-
-					<div class="floatr" >
-	    			<% if logged_in? %>
+					
+					<% if logged_in? %>
+					<div class="floatr" style="display:none;">
 						<% form_tag category_forum_topic_monitorship_path(@forum_category,@forum, @topic), :style => 'margin-top:0em; float:right;' do -%>
-							<div style="display:none;">
+							<div>
 							  <input id="monitor_checkbox" type="checkbox" <%= "checked='checked'" if @monitoring %> 
 							    onclick="if (this.checked) {<%= remote_function :url => category_forum_topic_monitorship_path(@forum_category,@forum, @topic) %>} else {<%= remote_function :url => category_forum_topic_monitorship_path(@forum_category,@forum, @topic), :method => :delete %>}" />
 							  <label id="monitor_label" for="monitor_checkbox"><%= @monitoring ? 'Monitoring topic'[] : 'Monitor topic'[] %></label>
 							  <%= hidden_field_tag '_method', 'delete' if @monitoring %>
 							  <%= submit_tag :Set, :id => 'monitor_submit' %>
+							  		
 							</div>
 						<% end %>
+					</div>	
 					<% end %>
-
-				</div>	
-			    </div>
+					
 				<% first_post = @posts.first %>
 				<div class="description">
-					<div class="item_actions">
-						  <% if logged_in? %>
-						      <% if @topic.editable_by?(current_user) -%>
-						        <%= link_to(t('edit'), edit_category_forum_topic_path(@forum_category,@forum, @topic), :class => "button") %> 
-						        <%= link_to(t('delete'), category_forum_topic_path(@forum_category,@forum, @topic), :class => "button", :method => :delete, :confirm => "#{t(:delete_topic_msg)}?") %>
- 							  <% end %>	
-						  <% end %>
-					</div>	
-		        	<div class="user_details">
+					<div class="user_details">
 						<%= user_avatar( @topic.user.avatar ) %>
-		          		<%=t('posted_by')%> <b><%= @topic.user.display_name %></b>
-						<div><%= @topic.user.job_title %></div>
-						<div><%=t('created_on')%> <%= h(@topic.created_at.strftime("%B %e %Y at %I:%M %p")) %> ( <%=time_ago_in_words(@topic.created_at)%> ago ) </div>
+		          		<div> <%=t('posted_by')%> <b><%= @topic.user.display_name %></b> </div>
+						<div> <%=t('created_on')%> <%= h(@topic.created_at.strftime("%B %e %Y at %I:%M %p")) %> ( <%=time_ago_in_words(@topic.created_at)%> ago ) </div>
 		        	</div>
-
+					<div class="ticket_actions action_icons">
+						<% link_to(image_tag("/images/spacer.gif"), category_forum_topic_monitorship_path(@forum_category,@forum, @topic), :method => :post, :class => "monitor", :title => "Monitor this ticket" ) if @monitoring %>
+						<% link_to(image_tag("/images/spacer.gif"), category_forum_topic_monitorship_path(@forum_category,@forum, @topic), :method => :delete, :class => "monitor_active",  :title => "Stop monitoring this ticket" ) if not @monitoring %>
+	
+						<% if logged_in? %>
+						  <div class="action_buttons">
+						     <% if @topic.editable_by?(current_user) -%>
+						        <%= link_to(t('edit'), edit_category_forum_topic_path(@forum_category,@forum, @topic) , :class => "last" ) %> 
+						        <% link_to(t('delete'), category_forum_topic_path(@forum_category,@forum, @topic) , :class => "last" , :method => :delete, :confirm => "#{t(:delete_topic_msg)}?") %>
+	 					     <% end %>
+						  </div>		
+					    <% end %>
+						
+					</div>
+		        	 
 					<div class="details min_height">
 						<%= first_post.body_html %>
 					</div>
@@ -119,11 +123,11 @@
 					<% end %>
 				</div>
 	    	</div>
-
+			<div class="alignright">
+				<%= link_to_function (t('reply_topic'), "ReplyForm.init()", :class => "uiButton") if logged_in? %>
+			</div>
 			<% if (@posts.size > 1) %>
-				<div class="floatr">
-					<%= link_to_function (t('reply_topic'), "ReplyForm.init()", :class => "fdbutton") if logged_in? %>
-				</div>			
+							
 				<h3 class="subtitle">				
 					<%=t('comments')%>
 				</h3> 
@@ -137,41 +141,35 @@
 					<% end %> 
 				</div>  
 			<% end %>
-			<div>
-			<div class="alignright">
-				<%= link_to_function (t('reply_topic'), "ReplyForm.init()", :class => "fdbutton") if logged_in? %>
-			</div>	
+			<div> 
 				<% if logged_in? %>
 				<div id="edit"></div>
 				<div id="reply" class="editbox" style="display:none;">
 				<div class="request_panel">
 				  <%= content_tag 'p', h(flash[:bad_reply]), :class => 'notice' if flash[:bad_reply] %>
 				  <% form_for :post, :url => posts_path(:category_id => @forum_category,:forum_id => @forum, :topic_id => @topic, :page => @topic.last_page) do |f| -%>
-				  <table class="note_form">
-				    <tr>
-				      <td rowspan="2" width="70%">
-				        <%= f.text_area :body, :rows => 8 %>
-				      </td>
-				      <td valign="top">				
-				        <h5><%= t('formatting_help') %></h5>
-				        <ul class="help">
-				          <li><%= '*bold*'[:formatting_bold] %>
-				          &nbsp; &nbsp; &nbsp;
-				          <%= '_italics_'[:formatting_italics] %>
-				          &nbsp; &nbsp; &nbsp;<br />
-				          <%= 'bq. <span>(quotes)</span>'[:formatting_blockquote] %></li>
-				          <li>"IBM":http://www.ibm.com</li>
-				          <li><%= '* or # <span>(lists)</span>'[:formatting_list] %></li>
-				        </ul>
-
-				      </td>
-				    </tr>
-				    <tr>
-				      <td valign="bottom" style="padding-bottom:15px;">
-				       <%= submit_tag t('save_reply')%><span class="button_or">or <%= link_to_function t('cancel'), "$('reply').hide()" %></span>
-				     </td>
-				   </tr>
-				  </table>
+				  <ul class="note_form ui-form">
+				  	<li>
+				  		<h3 class="title">Reply to this Topic</h3>
+				  	</li>
+				    <li>
+				       <%= f.text_area :body, :rows => 8 %>
+				    </li>
+				    <li style="display:none;">			
+				        <div class="info_data"><%= t('formatting_help') %></h5></div>
+				        <div class="info_data">
+				          <%= '*bold*'[:formatting_bold] %>, &nbsp;, 
+						  <%= '_italics_'[:formatting_italics] %>, &nbsp; 
+						  <%= '(quotes)'[:formatting_blockquote] %>, &nbsp;
+						  "IBM":http://www.ibm.com
+				          <%= '* or # <span>(lists)</span>'[:formatting_list] %>
+				        </div>
+					</li>
+					<li class="alignright">
+				      <%= submit_tag t('save_reply'), :class => "button" %> 
+					  <%= link_to_function t('cancel'), "$('reply').hide()", :class => "button" %>
+					</li>
+				  </ul>
 				  <% end -%>
 				</div>
 				</div>

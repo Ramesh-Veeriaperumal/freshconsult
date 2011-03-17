@@ -1,6 +1,6 @@
 <% content_for :layoutType do -%>clean<%- end %>
 
-<div class="ui-form ui-login">
+<div class="ui-form">
 	<h3 class="title">Create an account</h3>
 	<% form_tag :action => 'create' do %>
   		<%= hidden_field_tag 'plan', params[:plan] %>
