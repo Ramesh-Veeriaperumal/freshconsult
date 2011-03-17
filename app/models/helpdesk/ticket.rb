@@ -12,14 +12,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   #by Shan temp
   attr_accessor :email, :custom_field ,:customizer, :nscname 
-  after_create :refresh_display_id, :autoreply,:save_custom_field ,:pass_thro_biz_rules 
-  after_update :save_custom_field
-  before_create :populate_requester,:save_ticket_states
-  
 
-  before_create :set_spam, :set_dueby
-  before_update :set_dueby, :cache_old_model
-  after_update  :notify_on_update ,:update_ticket_states
+  before_create :set_spam, :populate_requester, :set_dueby, :save_ticket_states
+  after_create :refresh_display_id, :save_custom_field, :pass_thro_biz_rules, :autoreply 
+  before_update :cache_old_model, :set_dueby
+  after_update :save_custom_field, :update_ticket_states, :notify_on_update
   
   belongs_to :account
   belongs_to :email_config
@@ -71,13 +68,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :class_name => 'Helpdesk::Attachment',
     :dependent => :destroy
     
-  has_one :ticket_states , :class_name =>'Helpdesk::TicketState', :dependent => :destroy
-
-  attr_protected :attachments #by Shan - need to check..
+  has_one :ticket_states, :class_name =>'Helpdesk::TicketState', :dependent => :destroy
 
   has_one :ticket_topic
-  has_one :topic,:through => :ticket_topic
+  has_one :topic, :through => :ticket_topic
   
+  attr_protected :attachments #by Shan - need to check..
+
   named_scope :newest, lambda { |num| { :limit => num, :order => 'created_at DESC' } }
   named_scope :visible, :conditions => ["spam=? AND deleted=? AND status > 0", false, false] 
   
@@ -106,7 +103,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
     [ "text",         "text_field",   "text"], 
     [ "checkbox",     "check_box" ,   "checkbox"], 
     [ "dropdown",     "select"    ,   "select"], 
-   
   ]
 
   COLUMN_TYPE_BY_KEY = Hash[*COLUMNTYPES.map { |i| [i[0], i[1]] }.flatten]
@@ -129,7 +125,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     find_by_display_id_and_account_id(token, account.id)
   end
 
-  def freshness
+  def freshness #Need to clean it up later.. by Shan
     return :new if !responder
     return :closed if status <= 0
 
@@ -203,38 +199,31 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def spam_text
-    @spam_text ||= notes.empty? ? description : notes.find(:first).body
+    #@spam_text ||= notes.empty? ? description : notes.find(:first).body
+    @spam_text ||= description #by Shan
   end
 
   #shihab-- date format may need to handle later. methode will set both due_by and first_resp
-   def set_dueby    
-   
-     createdTime = Time.zone.now   
+  def set_dueby #For update - Do all these things only when priority changes.. Shan
+    createdTime = created_at || Time.zone.now
+    self.priority = 1 if priority.nil? #Use PRIORITY_KEYS_BY_TOKEN instead..
      
-     unless self.created_at.nil?       
-       createdTime = self.created_at       
-     end    
-     
-     self.priority = 1 if priority.nil?     
-     
-     sla_policy_id = nil     
-     unless self.requester.customer.nil?     
+    sla_policy_id = nil
+    unless self.requester.customer.nil?     
       sla_policy_id = self.requester.customer.sla_policy_id     
-     end      
-     sla_policy_id = Helpdesk::SlaPolicy.find_by_account_id_and_is_default(account_id, true) if sla_policy_id.nil?     
-     sla_detail = Helpdesk::SlaDetail.find(:first , :conditions =>{:sla_policy_id =>sla_policy_id, :priority =>self.priority})
+    end      
+    sla_policy_id = Helpdesk::SlaPolicy.find_by_account_id_and_is_default(account_id, true) if sla_policy_id.nil?     
+    sla_detail = Helpdesk::SlaDetail.find(:first , :conditions =>{:sla_policy_id =>sla_policy_id, :priority =>self.priority})
      
-     
-     
-     if sla_detail.override_bhrs      
+    if sla_detail.override_bhrs      
       self.due_by = createdTime + sla_detail.resolution_time.seconds      
       self.frDueBy = createdTime + sla_detail.response_time.seconds       
-     else      
+    else      
       self.due_by = (sla_detail.resolution_time).div(60).business_minute.after(createdTime)      
       self.frDueBy =  (sla_detail.response_time).div(60).business_minute.after(createdTime)     
     end
     
-     logger.debug "sla_detail_id :: #{sla_detail.id} :: and createdTime : #{createdTime} due_by::#{self.due_by} and fr_due:: #{self.frDueBy} "   
+    logger.debug "sla_detail_id :: #{sla_detail.id} :: and createdTime : #{createdTime} due_by::#{self.due_by} and fr_due:: #{self.frDueBy} "   
   end
   
   def refresh_display_id #by Shan temp
@@ -257,7 +246,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def autoreply
-    notify_by_email EmailNotification::NEW_TICKET
+    notify_by_email EmailNotification::NEW_TICKET #Do SPAM check.. by Shan
     
     notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_GROUP) if group_id
     notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_AGENT) if responder_id
@@ -282,32 +271,23 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def save_ticket_states
-   
-    ticket_state = Helpdesk::TicketState.new      
-    self.ticket_states = ticket_state
-
+    self.ticket_states = Helpdesk::TicketState.new
   end
 
   def update_ticket_states
-    
-    ticket_states = self.ticket_states
-    
     logger.debug "ticket_states :: #{ticket_states.inspect} "
     
     ticket_states.assigned_at=Time.zone.now if (responder_id != @old_ticket.responder_id && responder)    
     ticket_states.first_assigned_at=Time.zone.now if (@old_ticket.responder_id.nil? && responder_id != @old_ticket.responder_id && responder)
-   
     
     if status != @old_ticket.status
       ticket_states.opened_at=Time.zone.now if (status == STATUS_KEYS_BY_TOKEN[:open])
       ticket_states.pending_since=Time.zone.now if (status == STATUS_KEYS_BY_TOKEN[:pending])
       ticket_states.resolved_at=Time.zone.now if (status == STATUS_KEYS_BY_TOKEN[:resolved])
       ticket_states.closed_at=Time.zone.now if (status == STATUS_KEYS_BY_TOKEN[:closed])       
-      
     end
     
     ticket_states.save
-    
   end
   
   def notify_by_email(notification_type)
@@ -345,14 +325,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def delayed_rule_check
-      evaluate_on = check_rules     
-      update_custom_field evaluate_on unless evaluate_on.nil?
-      save!
-   
- end
+    evaluate_on = check_rules     
+    update_custom_field evaluate_on unless evaluate_on.nil?
+    save! #Should move this to unless block.. by Shan
+  end
  
-  
-def check_rules
+  def check_rules
     load_flexifield 
     evaluate_on = self  
     account.va_rules.each do |vr|
@@ -360,43 +338,39 @@ def check_rules
       return evaluate_on unless evaluate_on.nil?
     end  
     return evaluate_on       
-end
-  
-def load_flexifield 
-  
-  flexi_arr = Hash.new
-  self.ff_aliases.each do |label|    
-    value = self.get_ff_value(label.to_sym())    
-    flexi_arr[label] = value
-    self.write_attribute label, value
   end
   
-  self.custom_field = flexi_arr
+  def load_flexifield 
+    flexi_arr = Hash.new
+    self.ff_aliases.each do |label|    
+      value = self.get_ff_value(label.to_sym())    
+      flexi_arr[label] = value
+      self.write_attribute label, value
+    end
+    
+    self.custom_field = flexi_arr
+  end
   
-end
-  
-def update_custom_field  evaluate_on
+  def update_custom_field  evaluate_on
     flexi_field = evaluate_on.custom_field      
     evaluate_on.custom_field.each do |key,value|    
       flexi_field[key] = evaluate_on.read_attribute(key)      
-    end  
+    end
+    
     ff_def_id = FlexifieldDef.find_by_account_id(evaluate_on.account_id).id    
     evaluate_on.ff_def = ff_def_id       
     unless flexi_field.nil?     
       evaluate_on.assign_ff_values flexi_field    
     end
-end
+  end
   
-  
- def save_custom_field   
-      
+  def save_custom_field   
     ff_def_id = FlexifieldDef.find_by_account_id(self.account_id).id    
     self.ff_def = ff_def_id       
     unless self.custom_field.nil?          
       self.assign_ff_values self.custom_field    
     end
   end
-  
   
   #To use liquid template...
   #Might be darn expensive db queries, need to revisit - shan.
@@ -440,37 +414,31 @@ end
   end
   
   def method_missing(method, *args, &block)
-    super
-  rescue NoMethodError => e
-
-    logger.debug "method_missing :: args is #{args} and method:: #{method} and type is :: #{method.kind_of? String} "
-    
-    if (method.to_s.include? '=') && custom_field.has_key?(method.to_s.chomp("="))
-      logger.debug "method_missing :: inside custom_field  args is #{args}  and method.chomp:: #{ method.to_s.chomp("=")}"
+    begin
+      super
+    rescue NoMethodError => e
+      logger.debug "method_missing :: args is #{args} and method:: #{method} and type is :: #{method.kind_of? String} "
       
-      ff_def_id = FlexifieldDef.find_by_account_id(self.account_id).id
+      if (method.to_s.include? '=') && custom_field.has_key?(method.to_s.chomp("="))
+        logger.debug "method_missing :: inside custom_field  args is #{args}  and method.chomp:: #{ method.to_s.chomp("=")}"
+        
+        ff_def_id = FlexifieldDef.find_by_account_id(self.account_id).id
+        field = method.to_s.chomp("=")
+        logger.debug "field is #{field}"
+        self.ff_def = ff_def_id
+        self.set_ff_value field, args
+        save
+        return
+      end
       
-      field = method.to_s.chomp("=")
+      field =false
+      unless custom_field.nil?
+        field = custom_field.has_key?(method)    
+      end
+      raise e unless field
       
-      logger.debug "field is #{field}"
-    
-      self.ff_def = ff_def_id
-   
-      self.set_ff_value field , args
-      
-      save
-      
-      return
-      
+      custom_field[method]
     end
-    field =false
-    unless custom_field.nil?
-    field = custom_field.has_key?(method)    
-    end
-    raise e unless field
-    custom_field[method]
   end
-  
-  
   
 end
