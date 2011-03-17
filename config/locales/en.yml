@@ -7,7 +7,7 @@ en:
    message: "Message"
    description: "Description"
    add_a_topic: "Start a Topic"
-   no_topics_text: "Be the first to start a new topic"
+   no_topics_text: "No topics in this forum"
    connect_ticket: "Connect to ticket"
    posted_by: "Posted by"
    reply_topic: "Reply to topic"

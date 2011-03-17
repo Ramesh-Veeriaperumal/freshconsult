@@ -1,47 +1,19 @@
-<% content_for :layoutType do %>single<% end %>
-<% content_for :sidebar do %>	
-	<% unless @forum.description.blank? %>
-		<%= @forum.description_html %> 
-	<% end %>
- 
-	<h5 style="margin-bottom:1.0em;"><%= 'Moderators'[:moderators] %></h5>
-	<%=@forum.type_name%>
-	<% unless @forum.moderators.empty? -%>
-			<ul class="flat" style="margin-top:1em;">
-				<% @forum.moderators.each do |user| -%>
-				  <li><%= link_to user.display_name, user_path(user) %></li>
-				<% end -%>
-			</ul>
-		<% else -%>
-		<p><%= 'This forum is currently unmoderated.'[:forum_is_unmoderated] %></p>
-		<p><%= 'Please always be courteous.'[:please_be_courteous] %></p>
-	<% end -%>
-	
-<% end %>
-
-<div>
+<% content_for :layoutType do %>single<% end %>  
 	<% @page_title = @forum.name %>
-	<div class="header_area">
-		<div class="floatr">
-		    <% if logged_in? %>
-				<%= link_to '<img src="/images/add.png" /> New topic'[:new_topic],new_category_forum_topic_path(@forum_category,@forum), :class => "fdbutton" %>
-			<% end%>
-			<div style="display:none;">
-				<%= feed_icon_tag @forum.name, forum_posts_path(@forum, :format => :rss) %> 
-			    <%= '{count} topic(s)'[(count=@forum.topics.size)==1 ? :topic_count : :topics_count, number_with_delimiter(count)] %>, 
-  			    <%= '{count} post(s)'[(count=@forum.posts.size)==1 ? :post_count : :posts_count, number_with_delimiter(count)] %>
-			</div>
-		</div>
-		<%= link_to("Forums &rarr;"[:forums_category], categories_path, :class => "page_title") %>
-		<%= link_to( "#{@forum_category.name} &rarr;", category_path(@forum_category), :class => "page_title") %>
-		<div>
-			<strong class="page_title"><%= h @forum.name %></strong>
-			<div><%= @forum.description %></div>
-			<div><%# link_to 'Recent posts'[:recent_posts], all_posts_path %></div>
-		</div>
-	</div>
-	  
 	
+	<h3 class="title">
+	 	<%= link_to("Forums"[:forums_category], categories_path) %> &rarr;
+		<%= link_to( "#{@forum_category.name}", category_path(@forum_category)) %> &rarr;
+		<%= h @forum.name %>
+	</h3>	 
+	<div>
+		<% if logged_in? %>
+			<%= link_to 'Start a Topic'[:new_topic],new_category_forum_topic_path(@forum_category,@forum), :class => "uiButton Large" %>
+	   <% end%>
+		<%= feed_icon_tag @forum.name, forum_posts_path(@forum, :format => :rss) %> 
+	    <%= '{count} topic(s)'[(count=@forum.topics.size)==1 ? :topic_count : :topics_count, number_with_delimiter(count)] %>, 
+  	    <%= '{count} post(s)'[(count=@forum.posts.size)==1 ? :post_count : :posts_count, number_with_delimiter(count)] %>
+	</div>
 	<div class="topics_list_grid"> 
 			<% for topic in @topics %>	
 			<div class="item">	
