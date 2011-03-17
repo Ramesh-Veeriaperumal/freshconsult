@@ -1,15 +1,9 @@
-<% content_for :layoutType do %>single<% end %>
-<div>
-	<div class="header_area no_padding">
-		<div class="right_panel">
-				<% if admin? %>
-		  			<%= link_to '<img src="/images/add.png" /> New Forum'[:create_new_forum], new_category_forum_path(@forum_category), :class => "fdbutton" %>
-				<% end %> 
-		</div>
-		<%= link_to("Forums	&rarr;"[:forums_category], categories_path, :class => "page_title") %> 
-		<span class="page_title"><%= @forum_category.name %></span>
-	</div>
-	<div class="forum_list">
-		<%= render :partial => "forum_shared/category", :object => @forum_category %>
-	</div>
+<% content_for :layoutType do %>single<% end %> 
+<h3 class="title">
+	<%= link_to("Forums"[:forums_category], categories_path) %> &rarr;
+	<%= @forum_category.name %> 
+</h3> 
+
+<div class="forum_list">
+	<%= render :partial => "forum_shared/category", :object => @forum_category %>
 </div>
