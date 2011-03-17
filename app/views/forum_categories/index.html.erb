@@ -1,21 +1,15 @@
 <% content_for :layoutType do %>single<% end %>
-
 <% @monitoring = logged_in? && !Monitorship.count(:id, :conditions => ['user_id = ? and active = ?', current_user.id, true]).zero? %>
-<div>
-	<div class="header_area no_padding">
-		<div class="right_panel">
-			<% if admin? %>
-			<%=t('category.new')%>
-	  		<%= link_to [image_tag("/images/add.png"), t('category.new')], new_category_path, :class => "fdbutton" %>
-			<% end %> 
-		</div>
-		<%= link_to( t('forum.title'), categories_path, :class => "page_title") %>
-	</div>
-	<div class="forum_list">
-		<% @forum_categories.each do |forum_category| %>
-				<%= render :partial => "forum_shared/category", :object => forum_category %>
-		<% end %>
-	</div>
+<div class="floatr">
+	<% if admin? %>
+  		<%= link_to t('category.new'), new_category_path, :class => "uiButton" %>
+	<% end %> 
+</div>
+<h3 class="title"><%= t('forum.title') %></h3>
+<div class="forum_list">
+	<% @forum_categories.each do |forum_category| %>
+		<%= render :partial => "forum_shared/category", :object => forum_category %>
+	<% end %>
 </div>
 
 
