@@ -75,8 +75,6 @@
 	
 	}
 	
-	
-	
 	jQuery(document).ready(function(){
 		var activeCnt = jQuery("#TicketProperties"); 
 		jQuery(".rtPanel a").bind("click", function(ev){
@@ -90,20 +88,6 @@
 		<% if @ticket.notes.visible.exclude_source('meta').newest_first.blank? then %>
 			jQuery("#ReplyButton").trigger('click');
 		<% end %>
-		
-		
-		jQuery(window).scroll(function(){
-			/*
-			if(jQuery(window).scrollTop() > jQuery("#SmartSideBar").offset().top){ 
-				jQuery(".rtCnt").css("position", "fixed");
-				jQuery(".rtCnt").css("top", "0px");
-			}	
-			if(jQuery(window).scrollTop() <= jQuery("#SmartSideBar").offset().top){
-				jQuery(".rtCnt").css("position", "relative"); 
-			}
-			*/
-		
-		});
 		
 	});
 	
@@ -232,8 +216,8 @@
 				<%# link_to("This is not spam", unspam_helpdesk_ticket_path(@ticket), :method => :put, :class => "button" ) if @ticket.spam %>
 				<%# link_to("Mark as spam", spam_helpdesk_ticket_path(@ticket), :method => :put, :class => "button" ) unless @ticket.spam %>
 		<div class="alignright">
-			<%= link_to_function("Reply",    "swapEmailNote('reply', this)", :class => 'fdbutton grey', :id => "ReplyButton") if @item.requester %>	  
-			<%= link_to_function("Add Note", "swapEmailNote('note', this)", :class => 'fdbutton grey') %>		
+			<%= link_to_function("Reply to ticket",    "swapEmailNote('reply', this)", :class => 'uiButton', :id => "ReplyButton") if @item.requester %>	  
+			<%= link_to_function("Add note", "swapEmailNote('note', this)", :class => 'uiButton') %>		
 		</div>
 		
 	

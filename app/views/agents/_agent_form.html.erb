@@ -54,8 +54,9 @@
 			<%= render :partial => "/shared/profileavatar", :locals => { :user => @agent.user, :type => type } %>
 		</li>
 		<li>
+			
 			<%= label(:user , :time_zone, "Time zone") %>			
-			<%= time_zone_select (:user, :time_zone, ActiveSupport::TimeZone.all, :value => @agent.user.time_zone) %>
+			<%= time_zone_select (:user, :time_zone, ActiveSupport::TimeZone.all, :default => @agent.user.time_zone) %>
 		</li>
 		<li>
 			<%= label(:agent, :signature, "Signature") %>

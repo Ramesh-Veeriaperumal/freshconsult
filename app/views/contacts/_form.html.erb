@@ -87,7 +87,7 @@
 		</li>
 		<li>
 			<%= f.label :time_zone %>
-			<%= f.time_zone_select :time_zone, ActiveSupport::TimeZone.all %>
+			<%= f.time_zone_select :time_zone, ActiveSupport::TimeZone.all , :default => @user.time_zone %>
 		</li>
 		
 		<li>

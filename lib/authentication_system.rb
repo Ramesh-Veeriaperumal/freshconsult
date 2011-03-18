@@ -58,7 +58,7 @@ module AuthenticationSystem
 
     def authenticate_admin
       authenticate_or_request_with_http_basic do |user, password|
-       	user == 'super' && password == 'd00per'
+       	user == 'super' && password == 'SPIDEYd00per'
      	end
     end
 

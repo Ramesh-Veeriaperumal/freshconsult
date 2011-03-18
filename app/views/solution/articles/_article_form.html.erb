@@ -1,6 +1,7 @@
 <%= include_tiny_mce_if_needed %>
 
 <% content_for :head do %>
+
   <%= javascript_include_tag "helpdesk/page_switcher" %>
   <% javascript_tag do %>
     document.observe("dom:loaded", function(){
@@ -14,7 +15,7 @@
   <% end %>
 <% end %>
 
-<%logger.debug " here is the folder deta:: #{@article.folder.inspect}"%> 
+<!--%logger.debug " here is the folder deta:: #{@article.folder.inspect}"%--> 
   <%= f.error_messages %>
 	<ul class="ui-form">
 		<li>
@@ -38,13 +39,24 @@
 		<li>
 			<%= render :partial=> "/solution/shared/attachment_form" %>
 		</li>
+		
+		
+	 <div class="attachment-list-container">
+	    <%= content_tag('h5', 'Attachments') unless @article.attachments.empty? %>
+	    <table class="attachment-list">
+	      <%= render(
+	        :partial => '/helpdesk/shared/attachment', 
+	        :collection => @article.attachments,
+	        :locals => {:show_delete => true, :url => [@article] }) %>
+	    </table>
+	  </div>
 			
 		<% fields_for :tags  do |tag| %>
 		<li>
 			<!--label>Tags</label>
 			<input type="text" /-->
 			<%= tag.label(:name, "Tags") %>
-    		<%= tag.text_field :name %>
+    		<%= tag.text_field :name , :value => @article.tags.collect{|tg| tg.name+"," }%>
 		</li>
 		<%end%>
 		<li>

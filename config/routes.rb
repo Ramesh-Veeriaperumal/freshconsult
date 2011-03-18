@@ -27,14 +27,12 @@ ActionController::Routing::Routes.draw do |map|
   map.register '/register/:activation_code', :controller => 'activations', :action => 'new'
   map.activate '/activate/:id', :controller => 'activations', :action => 'create'
   map.resources :home, :only => :index
-  #map.resources :admin, :only => :index
   map.resources :ticket_fields, :only => :index
   map.resources :email, :only => [:new, :create]
   map.resources :password_resets, :except => [:index, :show, :destroy]
   
   map.namespace :admin do |admin|
     admin.resources :home, :only => :index
-    admin.home '', :controller => 'home', :action => 'index'
     admin.resources :automations, :member => { :deactivate => :put, :activate => :put }, :collections => { :reorder => :put }
     admin.resources :va_rules, :member => { :deactivate => :put, :activate => :put }, :collections => { :reorder => :put }
     admin.resources :email_configs
@@ -170,7 +168,9 @@ ActionController::Routing::Routes.draw do |map|
    map.namespace :solution do |solution|     
      solution.resources :categories  do |category|   
      category.resources :folders  do |folder|
-       folder.resources :articles, :member => { :thumbs_up => :put, :thumbs_down => :put , :delete_tag => :post }
+       folder.resources :articles, :member => { :thumbs_up => :put, :thumbs_down => :put , :delete_tag => :post } do |article|
+         article.resources :tag_uses
+       end
        end
      end
      
