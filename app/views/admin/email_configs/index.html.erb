@@ -14,11 +14,36 @@
 		if(<%= @email_configs.size %> == 0) jQuery("#AddEmail").trigger('click');
 	});
 <% end %>
-
+<%
+#@email_configs = Array.new
+reply_email  = "support@yourcompany.com" 
+to_email = "@youraccount.freshdesk.com" 
+to_email = @email_configs.first.to_email unless @email_configs.first.nil?
+reply_email = @email_configs.first.reply_email unless @email_configs.first.nil?
+ 
+%>
 <% content_for :sidebar do %> 
 	<div class="sidepanel">
+		<h3 class="title">Email Settings</h3> 
+		<p>Your users send support emails to <a class="email" href="#"><%=reply_email%></a></p>
+		<p>
+			You must forward your support emails to your unique email address <a class="email" href="#"><%=to_email%></a>. Freshdesk will fetch those emails and convert them as tickets.
+		</p>
+		<p>
+			You can add multiple email addresses if you support multiple products - each having its own support email address.
+		</p>
+		
 		<h3 class="title">Reply Emails from Freshdesk</h3> 
-		<p>You must create an <a href="#">SPF record</a> in your DNS zone file if you are using emails in your own domain. This helps in ensuring proper delivery of email.</p> <a href="#">Learn more about creating SPF records</a>
+		
+		<p>
+			Reply emails from Freshdesk will automatically use your original support email ids as the From email address.			
+		</p>
+		<p>
+			While most of your emails will be delivered to be of the safer side you must create an <a href="#">SPF record</a> in your DNS zone file if you are using emails in your own domain. This helps in ensuring proper delivery of email.
+		</p> 
+		<a href="#">Learn more about creating SPF records</a>
+		<!--p>You must create an <a href="#">SPF record</a> in your DNS zone file if you are using emails in your own domain. 
+		This helps in ensuring proper delivery of email.</p--> 
 	</div>	
 <% end %>
 

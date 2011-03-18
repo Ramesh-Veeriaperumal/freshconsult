@@ -42,7 +42,15 @@
 		</li>	
 		<li>
 			<%= label(:user, :name, "Full Name") %>
-			<%= text_field(:user, :name, :class => "text" )  %>
+			<%= text_field(:user, :name, :class => "text required" )  %>
+		</li>
+		<li class="medium">
+			<%= label(:user, :email, "Email") %>
+			<!--label class="overlabel" for="email_primary">Primary</label-->
+			<%= text_field(:user, :email, :class => "text required email", :id => "email_primary" ) %>
+			<!--%= label(:user, :second_email, "Secondary Email") %--><br />
+			<!--label class="overlabel" for="email_second">Secondary</label-->	
+			<!--%= text_field(:user, :second_email, :class => "text email", :id => "email_second" ) %-->
 		</li>
 		<li>
 			<%= label(:user, :job_title, "Title") %>
@@ -68,14 +76,7 @@
 			<label class="overlabel" for="phone_mobile">Mobile</label>
 			<%= text_field(:user, :mobile, :class => "text", :id => "phone_mobile" ) %>
 		</li>
-		<li class="medium">
-			<%= label(:user, :email, "Email") %>
-			<label class="overlabel" for="email_primary">Primary</label>
-			<%= text_field(:user, :email, :class => "text", :id => "email_primary" ) %>
-			<!--%= label(:user, :second_email, "Secondary Email") %--><br />
-			<label class="overlabel" for="email_second">Secondary</label>	
-			<%= text_field(:user, :second_email, :class => "text", :id => "email_second" ) %>
-		</li>
+		
 		
 		<li class="small">
 			<%= label(:user, :twitter_id, "Twitter Id") %>
