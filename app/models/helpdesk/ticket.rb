@@ -315,6 +315,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     tags.collect { |tag| tag.name }
   end
   
+  def subject_or_description
+    [subject, description]
+  end
+  
   def from_email
     requester.email if requester
   end

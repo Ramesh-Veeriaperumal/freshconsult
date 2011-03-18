@@ -11,6 +11,9 @@ default_fields:
 
     description:
         handler: text
+        
+    subject_or_description:
+        handler: text_array
 
     priority:
         handler: numeric
