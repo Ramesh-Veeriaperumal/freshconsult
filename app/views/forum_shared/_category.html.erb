@@ -1,14 +1,3 @@
-<div class="forum-group"> 
-	<div class="category-title">
-		<div class="action_buttons">
-			<% if logged_in? && current_user.has_manage_forums? -%>
-		  		<%= link_to  t('forum.new'), new_category_forum_path(category), :class => "last add_new icon" %>
-				<% link_to t('edit') ,edit_category_path(category)   %> 
-				<% link_to( t('delete'), category_path(category), :method => 'delete', :confirm => 'Are you sure you want to delete this category'  ) %>
-			<% end -%>
-		</div>
-		<%= link_to h(category.name), category_path(category), :class => "title" %>
-	</div>
 	<ul class="base-set">	
 		<% unless (category.forums.size == 0) %>
 			<% category.forums.each do |forum| %>
@@ -21,4 +10,3 @@
 			<% end %> 
 		<% end %>
 	</ul>
-</div>		

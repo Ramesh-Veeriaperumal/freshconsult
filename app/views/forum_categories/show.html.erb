@@ -1,9 +1,22 @@
-<% content_for :layoutType do %>single<% end %> 
+<% content_for :layoutType do %>single<% end %>
+
 <h3 class="title">
 	<%= link_to("Forums"[:forums_category], categories_path) %> &rarr;
 	<%= @forum_category.name %> 
-</h3> 
+</h3>  
 
 <div class="forum_list">
+	<div class="forum-group">
+		<div class="search-grey-box">
+			<% if logged_in? && current_user.has_manage_forums? -%>
+				<div class="action_buttons no_margin">
+			  		<%= link_to  t('forum.new'), new_category_forum_path(@forum_category), :class => "add_new icon" %>
+					<%= link_to t('edit') ,edit_category_path(@forum_category)   %> 
+					<%= link_to( t('delete'), category_path(@forum_category), :method => 'delete', :class => "last", :confirm => 'Are you sure you want to delete this category'  ) %>
+				</div> 
+			<% end -%> 
+			<%= render :partial => "/search/pagesearch", :locals => { :placeholder => "Search #{@forum_category.name}" } %>
+		</div>
 	<%= render :partial => "forum_shared/category", :object => @forum_category %>
+	</div>		
 </div>
