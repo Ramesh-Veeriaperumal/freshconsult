@@ -16,7 +16,8 @@ class Helpdesk::AttachmentsController < ApplicationController
       
       #render :nothing => true
       redir_url = AWS::S3::S3Object.url_for(@attachment.content.path,@attachment.content.bucket_name,:expires_in => 10.seconds)
-      redirect_to( redir_url.gsub( AWS::S3::DEFAULT_HOST, '' ))
+      redir_url =  redir_url.gsub( AWS::S3::DEFAULT_HOST, '' ) if Rails.env.production?
+      redirect_to( redir_url)
   end
   
    def fetch_url(url)

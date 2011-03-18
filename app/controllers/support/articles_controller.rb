@@ -13,6 +13,10 @@ class Support::ArticlesController < ApplicationController
   
   def show
      @article = Solution::Article.find(params[:id])
+     respond_to do |format|
+      format.html
+      format.xml  { render :xml => @article.to_xml(:include => :folder) }
+    end
      raise ActiveRecord::RecordNotFound unless @article && (@article.account_id == current_account.id) && (@article.is_public?)
  end
  

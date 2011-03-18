@@ -5,8 +5,7 @@ common: &common
  
 development:
   <<: *common
-  #bucket: fdesk-devp
-  bucket: cdn.freshdesk.com
+  bucket: fdesk-devp
 
 test:
   <<: *common
@@ -14,4 +13,4 @@ test:
 
 production:
   <<: *common
-  bucket: fdesk-attachments
+  bucket: cdn.freshdesk.com

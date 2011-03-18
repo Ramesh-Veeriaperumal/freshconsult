@@ -3,15 +3,23 @@ class Helpdesk::Attachment < ActiveRecord::Base
   set_table_name "helpdesk_attachments"
 
   belongs_to :attachable, :polymorphic => true
-  has_attached_file  :content, 
-                    :storage => :s3, 
-                    :s3_credentials =>"#{RAILS_ROOT}/config/s3.yml", 
-                    :url => ":s3_alias_url",
-                    :s3_host_alias => "cdn.freshdesk.com",
-                    :path => lambda { |attachment| ":id_partition/:filename" },
-                    :styles => Proc.new  { |attachment| attachment.instance.attachment_sizes }
   
- 
+  if Rails.env.production?
+   has_attached_file :content, 
+    :storage => :s3,
+    :s3_credentials => "#{RAILS_ROOT}/config/s3.yml",
+    :path => "/data/helpdesk/attachments/:id/:style/:filename",
+    :url => ":s3_alias_url",
+    :s3_host_alias => "cdn.freshdesk.com",
+    :styles => Proc.new  { |attachment| attachment.instance.attachment_sizes }
+  else
+   has_attached_file :content, 
+    :storage => :s3,
+    :s3_credentials => "#{RAILS_ROOT}/config/s3.yml",
+    :path => "/data/helpdesk/attachments/:id/:style/:filename",
+    :url => "/:class/:id",
+    :styles => Proc.new  { |attachment| attachment.instance.attachment_sizes }
+  end
   
     #before_validation_on_create :set_random_secret
     before_post_process :image?
@@ -28,6 +36,8 @@ class Helpdesk::Attachment < ActiveRecord::Base
   end
  
  def image?
+   puts "Is image"
+   puts content.styles.to_s
     !(content_content_type =~ /^image.*/).nil?
   end
   
