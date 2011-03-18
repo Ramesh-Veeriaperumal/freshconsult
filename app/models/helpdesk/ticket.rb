@@ -322,6 +322,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def from_email
     requester.email if requester
   end
+  
+  def contact_name
+    requester.name if requester
+  end
+  
+  def company_name
+    requester.customer.name if (requester && requester.customer)
+  end
   #virtual agent things end here..
   
   def pass_thro_biz_rules
