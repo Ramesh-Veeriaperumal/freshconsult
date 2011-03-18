@@ -134,6 +134,15 @@ def destroy_vote
    render :partial => "forum_shared/topic_vote", :object => @topic
  
 end  
+
+def update_lock
+  @topic.locked = !@topic.locked
+  @topic.save!
+   respond_to do |format|
+      format.html { redirect_to category_forum_topic_path(@forum_category,@forum, @topic) }
+      format.xml  { head 200 }
+   end
+end
  
   
   protected
