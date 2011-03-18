@@ -1,8 +1,8 @@
 <div class="page_area">
 	<h3 class="content_title"><%= 'Edit Forum'[:edit_forum] %></h3>
-	<% form_for :forum, :url => category_forums_path(@forum_category) do |f| -%>
+	<% form_for @forum, :url => category_forum_path(@forum.forum_category_id,@forum)   do |f| -%>
 		<%= render :partial => "form", :object => f %>
-		<%= submit_tag 'Save Forum'[], { :class => "fdbutton" } -%> 
+		<%= submit_tag 'Update'[:update], { :class => "fdbutton",  :action => :update } -%> 
 		<%= link_to('Cancel'[:cancel], category_path(@forum_category), :class => "fdbutton grey" ) -%>
 	<% end -%>
 </div>

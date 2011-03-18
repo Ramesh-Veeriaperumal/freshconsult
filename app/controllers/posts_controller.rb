@@ -99,7 +99,7 @@ class PostsController < ApplicationController
   ensure
     respond_to do |format|
       format.html do
-        redirect_to forum_topic_path(:forum_id => params[:forum_id], :id => params[:topic_id], :anchor => @post.dom_id, :page => params[:page] || '1')
+        redirect_to category_forum_topic_path(@post.topic.forum.forum_category_id,:forum_id => params[:forum_id], :id => params[:topic_id])
       end
       format.js
       format.xml { head 200 }
@@ -112,8 +112,8 @@ class PostsController < ApplicationController
     respond_to do |format|
       format.html do
         redirect_to(@post.topic.frozen? ? 
-          forum_path(params[:forum_id]) :
-          forum_topic_path(:forum_id => params[:forum_id], :id => params[:topic_id], :page => params[:page]))
+          category_forum_path(@post.topic.forum.forum_category_id,:forum_id => params[:forum_id]) :
+          category_forum_topic_path(@post.topic.forum.forum_category_id,:forum_id => params[:forum_id], :id => params[:topic_id]))
       end
       format.xml { head 200 }
     end

@@ -14,7 +14,7 @@
 	<% if admin? and not @topic.new_record? %>
 		<li id="topic_forum_id">
 	  		<label for="topic_forum_id"><%= t('forum.title') %></label>
-	  		<%= form.select :forum_id, Forum.find(:all, :order => "position").map {|x| [x.name, x.id] } %>
+	  		<%= form.select :forum_id, Forum.find(:all,:conditions =>['account_id = ?',current_account.id], :order => "position").map {|x| [x.name, x.id] } %>
 		</li>
 	<% end %>
 	
