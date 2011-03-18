@@ -1,6 +1,6 @@
 common: &common
-  access_key_id: AKIAIUUHTCVPIEANUJSQ
-  secret_access_key: 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
+  access_key_id: AKIAJWGOEYKNTQ75K5TQ
+  secret_access_key: 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
   AWS_CALLING_FORMAT: SUBDOMAIN
  
 development:
