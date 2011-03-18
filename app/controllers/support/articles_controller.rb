@@ -34,8 +34,9 @@ class Support::ArticlesController < ApplicationController
       
   end
   
+ 
+  
   def create_ticket
-    puts "kiran"
     @ticket = Helpdesk::Ticket.new(params[:helpdesk_ticket])
     set_default_values
     if (current_user || verify_recaptcha(:model => @ticket, :message => "Captcha verification failed, try again!")) && @ticket.save!
@@ -51,10 +52,7 @@ class Support::ArticlesController < ApplicationController
       end
       render :text => "Thanks for the feedback. We will improve this article."
     else
-      #@article = Solution::Article.find(params[:id])
       render :text => "There is an error #{@ticket.errors}"
-      #render :partial => "/support/shared/feedback_form" ,:locals =>{ :ticket => @ticket,:article => @article }
-    
      end
   end
   
