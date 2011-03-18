@@ -24,7 +24,12 @@
 		<li>
 			<%= label(:user, :name, "Full Name" ) %>
 				<%= text_field(:user, :name, :class => "text", :value => @agent.user.name )  %>
-		</li>		
+		</li>	
+		<li class="medium">
+			<%= label(:user, :email, "Email") %>
+			<!--label class="overlabel" for="email_primary">Primary</label-->
+			<%= text_field(:user, :email, :class => "text required email", :id => "email_primary" , :value => @agent.user.email) %>			
+		</li>	
 		<li>
 			<%= label(:user, :job_title, "Title") %>
 			<%= text_field(:user, :job_title, :class => "text", :value => @agent.user.job_title ) %>
@@ -45,11 +50,7 @@
 				<%= text_field(:user, :mobile, :class => "text", :id => "phone_mobile" ,:value => @agent.user.mobile  ) %>
 			</div>
 		</li>
-		<li class="medium">
-			<%= label(:user, :email, "Email") %>
-			<label class="overlabel" for="email_primary">Primary</label>
-			<%= text_field(:user, :email, :class => "text", :id => "email_primary" , :value => @agent.user.email) %>			
-		</li>
+		
 		<li>
 			<%= render :partial => "/shared/profileavatar", :locals => { :user => @agent.user, :type => type } %>
 		</li>
