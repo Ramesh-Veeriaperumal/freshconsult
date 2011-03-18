@@ -1,4 +1,7 @@
 ActionController::Routing::Routes.draw do |map|
+  
+  map.connect '/images/helpdesk/attachments/:id/:style.:format', :controller => '/helpdesk/attachments', :action => 'show', :conditions => { :method => :get }
+  
   map.resources :import , :controller => 'contact_import'
   
   map.resources :customers ,:member => {:quick => :post}
@@ -50,6 +53,8 @@ ActionController::Routing::Routes.draw do |map|
       admin.resources :subscription_affiliates, :as => 'affiliates'
     end
   end
+  
+  map.widget '/create_widget_ticket', :controller => 'support/tickets', :action => 'create_widget_ticket'
 
   map.plans '/signup', :controller => 'accounts', :action => 'plans'
   map.connect '/signup/d/:discount', :controller => 'accounts', :action => 'plans'
@@ -176,7 +181,7 @@ ActionController::Routing::Routes.draw do |map|
   map.namespace :support do |support|
     support.resources :guides 
      support.resources  :articles, :member => { :thumbs_up => :put, :thumbs_down => :put , :create_ticket => :post }
-    support.resources :tickets do |ticket|
+       support.resources :tickets do |ticket|
       ticket.resources :notes, :name_prefix => 'support_ticket_helpdesk_'
     end
     support.resources :minimal_tickets
