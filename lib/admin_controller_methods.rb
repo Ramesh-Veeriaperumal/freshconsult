@@ -7,7 +7,7 @@ module AdminControllerMethods
     base.send :prepend_before_filter, :check_admin_subdomain
     base.send :skip_before_filter, :set_time_zone
     base.send :layout, false
-    base.send :login_from_basic_auth
+    #base.send :login_from_basic_auth
   end
   
   protected
