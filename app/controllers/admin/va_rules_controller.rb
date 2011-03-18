@@ -87,20 +87,20 @@ class Admin::VaRulesController < Admin::AutomationsController
       
       @filter_defs   = ActiveSupport::JSON.encode filter_hash
       
-      operator_types  = {:email       => ["is", "is_not", "contains", "not_contain"],
-                         :text        => ["is", "is_not", "contains", "not_contain", "starts_with", "ends_with"],
+      operator_types  = {:email       => ["is", "is_not", "contains", "does_not_contain"],
+                         :text        => ["is", "is_not", "contains", "does_not_contain", "starts_with", "ends_with"],
                          :choicelist  => ["is", "is_not"]}
       
       @op_types        = ActiveSupport::JSON.encode operator_types
       
-      operator_list  =  {:is              =>  "Is",
-                         :is_not          =>  "Is not",
-                         :contains        =>  "Contains",
-                         :not_contain     =>  "Does not contain",
-                         :starts_with     =>  "Starts with",
-                         :ends_with       =>  "Ends with",
-                         :between         =>  "Between",
-                         :between_range   =>  "Between Range"}; 
+      operator_list  =  {:is                =>  "Is",
+                         :is_not            =>  "Is not",
+                         :contains          =>  "Contains",
+                         :does_not_contain  =>  "Does not contain",
+                         :starts_with       =>  "Starts with",
+                         :ends_with         =>  "Ends with",
+                         :between           =>  "Between",
+                         :between_range     =>  "Between Range"}; 
       
       @op_list        = ActiveSupport::JSON.encode operator_list
     end
