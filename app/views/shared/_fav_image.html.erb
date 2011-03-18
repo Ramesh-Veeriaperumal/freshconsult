@@ -13,7 +13,7 @@
 <%= label(:account, :fav_icon, "Fav Icon") %>
 <% if(account.fav_icon) %>				
 	<div class="profile_pic" id="FavPic">
-		<%= image_tag account.fav_icon.content.url %>
+		<%= image_tag account.fav_icon.content.url(:fav_icon) %>
 	</div>
 	<div id="FavInput" style="display:none;">
 		<% fields_for "account[fav_icon_attributes]", account.fav_icon do |fav_icon_form| %>					
