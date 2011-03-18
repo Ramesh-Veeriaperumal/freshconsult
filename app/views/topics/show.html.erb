@@ -3,27 +3,11 @@
 <% @monitoring = logged_in? && !Monitorship.count(:id, :conditions => ['user_id = ? and topic_id = ? and active = ?', current_user.id, @topic.id, true]).zero? %>
 
 <% content_for :sidebar do -%>
-	<% if logged_in? && current_user.has_manage_forums? && @forum.ideas? %>
+	<% if logged_in? && current_user.has_manage_forums? %>
 	<div class="rtCnt">
-		<div class="rtDetails_forum">
-
-		<h4 class="title">Moderate</h4>
-		<%= link_to(t('connect_ticket'), new_helpdesk_ticket_path(:topic_id => @topic.id), :class => "fdbutton") if logged_in? and @topic.ticket_topic.nil?  %>
-		<%= link_to(h(@topic.ticket.subject), helpdesk_ticket_path(@topic.ticket)) unless @topic.ticket_topic.nil? %>
-		
-		<% if logged_in? %>
-			<% form_tag category_forum_topic_monitorship_path(@forum_category,@forum, @topic) do -%>
-			<div class="checkbox">
-			  <input id="monitor_checkbox" type="checkbox" <%= "checked='checked'" if @monitoring %> 
-				   onclick="if (this.checked) {<%= remote_function :url => category_forum_topic_monitorship_path(@forum_category,@forum, @topic) %>} else {<%= remote_function :url => category_forum_topic_monitorship_path(@forum_category,@forum, @topic), :method => :delete %>}" />
-			  <label id="monitor_label" for="monitor_checkbox"><%= @monitoring ? 'You are currently following this topic'[] : 'Follow this topic'[] %></label>
-			  <%= hidden_field_tag '_method', 'delete' if @monitoring %>
-			  <%# submit_tag :Set, :id => 'monitor_submit' %>
-			</div>
-			<% end %>
-		<% end %>
+		<div class="rtDetails_forum"> 
 		<% if logged_in? && current_user.has_manage_forums? && @forum.ideas? %>
-		<div> Mark this idea as </div>
+		<h4 class="title"> Mark this idea as </h4>
 		<div class="mark_action">
 			 <% Topic::IDEAS_STAMPS_OPTIONS.each do |k,v| %>
 			 	<% class_name = "stamp_type_#{v}" %>
@@ -34,9 +18,14 @@
 				<%end%>
 			<% end %>
 	    </div>
+		<span class="seperator"></span>
+		<div class="alignright">
+			<%= link_to(t('connect_ticket') + " &raquo;", new_helpdesk_ticket_path(:topic_id => @topic.id), :class => "uiButton green") if logged_in? and @topic.ticket_topic.nil?  %>
+			<%= link_to(h(@topic.ticket.subject), helpdesk_ticket_path(@topic.ticket)) unless @topic.ticket_topic.nil? %>
+		</div>
 			<% if @topic.locked? %>
 				<div>
-				    <%= image_tag "savage_beast/clearbits/lock.gif", :class => "icon grey", :title => "Topic locked"[:topic_locked_title] %>
+				    <%= image_tag "/savage_beast/clearbits/lock.gif", :class => "icon grey", :title => "Topic locked"[:topic_locked_title] %>
 				    <%= 'This topic is locked'[:locked_topic] %>
 				</div>
 			<% else %>
@@ -46,20 +35,14 @@
 	</div>
 	<% end %>
 <% end %> 
-		<div class="breadcrumbs" style="display:none;">
-		  <%= link_to "Forums"[:forums_title], category_path(@forum_category) %>
-		  <%= link_to h(@topic.forum.name), category_forum_path(@forum_category,@forum) %> 
-		  	<% page=session[:forum_page] ? session[:forum_page][@topic.forum.id] : nil %>
-		  	<% if page and page!=1 %>
-				  <small>
-				  	(<%= link_to 'page {page}'[:page, page], forum_path(:id => @topic.forum, :page => page) %>)
-				  </small>
-		  	<% end %>
-		</div>
+		<h3 class="title">
+			<%= link_to("Forums"[:forums_category], categories_path) %> &rarr;
+			<%= link_to( "#{@forum_category.name}", category_path(@forum_category)) %> &rarr;
+			<%= link_to( "#{@forum.name}", category_forum_path(@forum_category, @forum)) %> 
+		</h3>
 
-		<div class="request_details">
-
-	    	<div class="requestCnt">
+		<div class="request_details"> 
+	    	<div class="requestCnt request-cnt-first">
 	    		<% if @forum.ideas? %>
 		    		<div class="mark_action">
 							<% if @topic.stamp_type %>
@@ -69,12 +52,7 @@
 					</div>
 				<% end %>
 			        <h3 class="title"><%= h @topic.title  %></h3>	  
-			        <em>
-			          <% if @topic.locked? %>
-					  	<span>(<%= 'locked'[] %>)</span>
-					  <% end %>
-					</em>
-					
+			         
 					<% if logged_in? %>
 					<div class="floatr" style="display:none;">
 						<% form_tag category_forum_topic_monitorship_path(@forum_category,@forum, @topic), :style => 'margin-top:0em; float:right;' do -%>
@@ -87,6 +65,7 @@
 							  		
 							</div>
 						<% end %>
+						<%= render :partial => "/forum_shared/follow" %>
 					</div>	
 					<% end %>
 					
@@ -94,8 +73,8 @@
 				<div class="description">
 					<div class="user_details">
 						<%= user_avatar( @topic.user.avatar ) %>
-		          		<div> <%=t('posted_by')%> <b><%= @topic.user.display_name %></b> </div>
-						<div> <%=t('created_on')%> <%= h(@topic.created_at.strftime("%B %e %Y at %I:%M %p")) %> ( <%=time_ago_in_words(@topic.created_at)%> ago ) </div>
+		          		<div> <%=t('posted_by')%> <%= link_to @topic.user.display_name, @topic.user, :class => "user_name" %> </div>
+						<div> <%= h(@topic.created_at.strftime("%B %e %Y at %I:%M %p")) %>  </div>
 		        	</div>
 					<div class="ticket_actions action_icons">
 						<% link_to(image_tag("/images/spacer.gif"), category_forum_topic_monitorship_path(@forum_category,@forum, @topic), :method => :post, :class => "monitor", :title => "Monitor this ticket" ) if @monitoring %>
@@ -108,8 +87,7 @@
 						        <% link_to(t('delete'), category_forum_topic_path(@forum_category,@forum, @topic) , :class => "last" , :method => :delete, :confirm => "#{t(:delete_topic_msg)}?") %>
 	 					     <% end %>
 						  </div>		
-					    <% end %>
-						
+					    <% end %> 
 					</div>
 		        	 
 					<div class="details min_height">
@@ -117,63 +95,60 @@
 					</div>
 					
 					<% unless @topic.forum.announcement? %>
-					<div class="status" id="voting_container"> 
-						  <%= render (:partial => "/forum_shared/topic_vote", :object => @topic) if logged_in? %> 
-					</div>
+						<div class="status" id="voting_container"> 
+							  <%= render (:partial => "/forum_shared/topic_vote", :object => @topic) if logged_in? %> 
+						</div>
 					<% end %>
 				</div>
 	    	</div>
 			<div class="alignright">
 				<%= link_to_function (t('reply_topic'), "ReplyForm.init()", :class => "uiButton") if logged_in? %>
 			</div>
+			<% if logged_in? %>
+				<div id="reply" class="editbox" style="display:none;">
+					<div class="request_panel">
+					  <%= content_tag 'p', h(flash[:bad_reply]), :class => 'notice' if flash[:bad_reply] %>
+					  <% form_for :post, :url => posts_path(:category_id => @forum_category,:forum_id => @forum, :topic_id => @topic, :page => @topic.last_page) do |f| -%>
+					  <ul class="note_form ui-form">
+					  	<li>
+					  		<h3 class="title">Reply to this Topic</h3>
+					  	</li>
+					    <li>
+					       <%= f.text_area :body, :rows => 8 %>
+					    </li>
+					    <li style="display:none;">			
+					        <div class="info_data"><%= t('formatting_help') %></h5></div>
+					        <div class="info_data">
+					          <%= '*bold*'[:formatting_bold] %>, &nbsp;, 
+							  <%= '_italics_'[:formatting_italics] %>, &nbsp; 
+							  <%= '(quotes)'[:formatting_blockquote] %>, &nbsp;
+							  "IBM":http://www.ibm.com
+					          <%= '* or # <span>(lists)</span>'[:formatting_list] %>
+					        </div>
+						</li>
+						<li class="alignright">
+					      <%= submit_tag t('save_reply'), :class => "button" %> 
+						  <%= link_to_function t('cancel'), "$('reply').hide()", :class => "button" %>
+						</li>
+					  </ul>
+					  <% end -%>
+					</div>
+				</div>
+			<% end %> 
+				
 			<% if (@posts.size > 1) %>
-							
-				<h3 class="subtitle">				
-					<%=t('comments')%>
-				</h3> 
-				<div class="requestCnt">
+				<h3 class="title"><%=t('comments')%></h3> 
+				<div class="requestCnt request-conversation">
 					<% last_post = @posts.last %>
 					<% @posts.each do |post| %>
 						<% unless (post == first_post) %>
 							<%= render :partial => "forum_shared/post", :object => post %>
+							<%= content_tag (:span, "", :class => "seperator") unless ( post == @topic.last_post ) %>
 						<% end %>
 						<%= will_paginate @posts %>
 					<% end %> 
 				</div>  
 			<% end %>
-			<div> 
-				<% if logged_in? %>
-				<div id="edit"></div>
-				<div id="reply" class="editbox" style="display:none;">
-				<div class="request_panel">
-				  <%= content_tag 'p', h(flash[:bad_reply]), :class => 'notice' if flash[:bad_reply] %>
-				  <% form_for :post, :url => posts_path(:category_id => @forum_category,:forum_id => @forum, :topic_id => @topic, :page => @topic.last_page) do |f| -%>
-				  <ul class="note_form ui-form">
-				  	<li>
-				  		<h3 class="title">Reply to this Topic</h3>
-				  	</li>
-				    <li>
-				       <%= f.text_area :body, :rows => 8 %>
-				    </li>
-				    <li style="display:none;">			
-				        <div class="info_data"><%= t('formatting_help') %></h5></div>
-				        <div class="info_data">
-				          <%= '*bold*'[:formatting_bold] %>, &nbsp;, 
-						  <%= '_italics_'[:formatting_italics] %>, &nbsp; 
-						  <%= '(quotes)'[:formatting_blockquote] %>, &nbsp;
-						  "IBM":http://www.ibm.com
-				          <%= '* or # <span>(lists)</span>'[:formatting_list] %>
-				        </div>
-					</li>
-					<li class="alignright">
-				      <%= submit_tag t('save_reply'), :class => "button" %> 
-					  <%= link_to_function t('cancel'), "$('reply').hide()", :class => "button" %>
-					</li>
-				  </ul>
-				  <% end -%>
-				</div>
-				</div>
-				<% end %>
-		 
-			</div>	
+			
+			<div id="edit"></div>
 		</div>

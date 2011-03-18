@@ -1,26 +1,27 @@
-<div class="dialog_ticket_field sp_border" title="Field Properties" id="CustomFieldsDialog">
+<div class="dialog-ticketfield sp_border" title="Field Properties" id="CustomFieldsDialog">
 	<a href="javascript:void(0)" id="close_button" class="close"></a>
         <form class="uniForm" action="#">
-        	<fieldset>
         	<input type="hidden" name="customtype" value="" />
             <div class="ctrlHolder">
                 <label class="caption">
                     Field Label
                 </label>
-                <div>
+                <fieldset>
                     <input type="textInput" name="customlabel" size="35" maxlength="50"  value="" />
-                </div>
+                </fieldset>
             </div>
             <div class="ctrlHolder">
-                <label>
+                <label class="caption">
                     Description
                 </label>
-                <div> 
+                <fieldset> 
                     <input type="textInput" name="customdesc" size="35" maxlength="50" value="" id="customdesc" />
-                </div> 
+                </fieldset> 
             </div>
             <div class="ctrlHolder colsets" id="DropFieldChoices">
-                <label>Dropdown Choices</label>
+                <label class="caption">
+                	Dropdown Choices
+				</label>
                 <div>
 					<fieldset>
 						<b class="dropchoice">Choices</b><b class="tags">Tags</b>
@@ -34,26 +35,34 @@
                 </div>
             </div>
             <div class="ctrlHolder">
-                <label>For Agents</label>
-                <fieldset class="nestedChoices"> 
-                    <label><input type="checkbox" name="agentrequired" /> Make this mandatory</label>
-					<span class="info_data">Field cannot be blank when solving the ticket</span>
+                <label class="caption">
+                	For Agents
+				</label>
+                <fieldset> 
+                    <label><input type="checkbox" name="agentrequired" /> Mandatory for submission </label>
+					<span class="info-data">Field cannot be blank when submitting the ticket</span>
+				</fieldset>
+				<fieldset> 
+					<label><input type="checkbox" name="agentresolved" /> Mandatory for closure </label>
+					<span class="info-data">Field cannot be blank when closing the ticket</span>
                 </fieldset> 
             </div>
             <div class="ctrlHolder">
-                <label>For Customers</label>
+                <label class="caption">
+                	For Customers
+				</label>
                 <fieldset id="nestedConfig" class="nestedChoices">
-					<label><input type="checkbox" toggle_ele="nestedlvl2" name="customervisible" /> Visible to customers</label></li>
+					<label><input type="checkbox" toggle_ele="nestedlvl2" name="customervisible" /> Visible to customers </label></li>
 					<fieldset id="nestedlvl2" style="display:none;">
-						<label><input type="checkbox" toggle_ele="nestedlvl3" name="customereditable" /> Can Edit the field</label>
+						<label><input type="checkbox" toggle_ele="nestedlvl3" name="customereditable" /> Can Edit the field </label>
 						<fieldset id="nestedlvl3" style="display:none;">
-							<label><input type="checkbox" name="customerrequired" /> Required for ticket submission</label>
-								<span class="info_data">no blank selection for field value is allowed when submitting a ticket online.</span>
+							<label><input type="checkbox" name="customerrequired" /> Required for ticket submission </label>
+								<span class="info-data">Field cannot be blank when submitting the ticket online.</span>
 						</fieldset>
 			        </fieldset>
                 </fieldset>  
             </div> 
-			<div>
+			<div class="ctrlHolder">
 				<input type="button" class="button" id="SaveField" value="Save" />
 				<input type="button" class="button" id="DeleteField" value="Delete" />
 			</div>

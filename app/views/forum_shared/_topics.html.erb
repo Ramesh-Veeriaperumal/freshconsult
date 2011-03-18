@@ -1,23 +1,46 @@
-<% unless (topics.size == 0) %>
-	<div class="floatr">
-		<%= (link_to t('add_a_topic'), new_category_forum_topic_path(category, forum), :class => "uiButton") if logged_in? %>
-	</div> 
-	<div>
-		RECENT    POPULAR    LATEST    UNANSWERED
-	</div>
-	<ul class="topic-list">
+<% unless (topics.size == 0) %> 
+	<ul class="topic-list-view">
 		<% topics.each do |topic| %>
-			<li>
+			<% className = (topic.sticky?) ? "sticky" : "" %>
+			<% last_post = topic.last_post %>
+			<li class="<%= className %>">
+				<span class="floatr mark_action">
+					<div class="stamp stamp_type_<%=topic.stamp_type%>"><%=h(topic.stamp_name)%></div>
+				</span>
+				<% if topic.posts_count > 1 %>
+					<%= user_avatar( last_post.user.avatar ) %>
+				<% else %>
+					<%= user_avatar( topic.user.avatar ) %>
+				<% end %>
 				<%= link_to topic.title, category_forum_topic_path(category, forum, topic), :class => "topic-title" %>
-					<% if topic.posts_count > 1 %> 
-						<% last_post = topic.last_post %>
-						<%= user_avatar( topic.user.avatar ) %>
-						<div class="info_data">	<%= pluralize(topic.posts_count - 1, "reply") %>, latest by <%= link_to last_post.user.name, last_post.user   %> on <%= formated_date(last_post.created_at) %></div>
-					<% else %>
-						<%= user_avatar( topic.user.avatar ) %> 
-						<div class="info_data">Asked by <%= link_to topic.user.name, topic.user %> on <%= formated_date(topic.created_at) %></div>
-					<% end %>
-				
+					<div class="info_data"> 
+						<% if topic.posts_count > 1 %>
+							Last reply <%= time_ago_in_words(last_post.created_at) %> ago 
+							by <%= link_to last_post.user.name, last_post.user %>
+						<% else %>
+							Posted <%= time_ago_in_words(topic.created_at) %> ago
+						<% end %>
+						
+						-  
+						<% 
+							count = topic.posts_count
+							if topic.posts_count > 1 
+								count -= 1
+						   	end 
+						%>
+						<%= pluralize(count, "reply") %> 
+						-
+						<%= t("forum.verb.#{topic.forum.type_name.downcase}") %>   
+						<%= link_to topic.user.name, topic.user %>	 
+					</div>
+					<%if @forum.questions?%>  
+						<%if topic.posts.answered_posts.count > 0%>
+							Answered
+						<%end%>
+					<%end%> 
+				   	 <% if topic.paged? -%>
+				    	<small><%= link_to 'last'[] %></small>
+				    <% end -%> 
 			</li>
 		<% end %>
 	</ul>

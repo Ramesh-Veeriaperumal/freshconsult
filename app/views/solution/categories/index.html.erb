@@ -39,9 +39,10 @@
 		<%= link_to "<img src='/images/add.png'> New Category", new_solution_category_path, :class => "fdbutton" %>
 	</div>
 <%- end %>
-<h3 class="title">Solutions</h3>
-<div class="brief">Welcome to the <b><%= current_account.helpdesk_name %></b> Soutions.</div>
-
+<h3 class="title">Solutions</h3> 
+<div class="search-grey-box ignore-margin-20">
+	<%= render :partial => "/search/pagesearch", :locals => { :placeholder => "Search All Solutions"  } %>
+</div>
 <div class="clearfix solution-list">			
 	<% @categories.each do |category| %>
 		<div class="<%= cycle('odd', 'even') %>">
