@@ -67,8 +67,6 @@ class Admin::VaRulesController < Admin::AutomationsController
                                                    :operatortype => "text"},
                         {:name => "subject_or_description", :value => "Subject or Description",   :domtype => "text",
                                                    :operatortype => "text"},
-                        {:name => "tag_names"    , :value => "Tag",           :domtype => "autocompelete", :data_url => "alltagsurl",
-                                                   :operatortype => "text"},
                         {:name => "priority"     , :value => "Priority",      :domtype => "dropdown", :choices => Helpdesk::Ticket::PRIORITY_NAMES_BY_KEY.sort, 
                                                    :operatortype => "choicelist"},                        
                         {:name => "ticket_type"  , :value => "Type",          :domtype => "dropdown", :choices => Helpdesk::Ticket::TYPE_NAMES_BY_KEY.sort, 
@@ -78,9 +76,9 @@ class Admin::VaRulesController < Admin::AutomationsController
                         {:name => "source"       , :value => "Source",        :domtype => "dropdown", :choices => Helpdesk::Ticket::SOURCE_NAMES_BY_KEY.sort, 
                                                    :operatortype => "choicelist"},
                         {:name => 0              , :value => "------------------------------"},
-                        {:name => "contact"      , :value => "Contact Name",  :domtype => "autocompelete", :data_url => "contactnameurl",
+                        {:name => "contact_name" , :value => "Contact Name",  :domtype => "text",
                                                    :operatortype => "text"},
-                        {:name => "company"      , :value => "Company Name",  :domtype => "autocompelete", :data_url => "companynameurl", 
+                        {:name => "company_name" , :value => "Company Name",  :domtype => "text", 
                                                    :operatortype => "text"}]
                                                    
       filter_hash = add_custom_filters default_filter_hash
