@@ -8,33 +8,38 @@
 		<div class="rtDetails_forum">
 
 		<h4 class="title">Moderate</h4>
-		<%= link_to(t('connect_ticket'), new_helpdesk_ticket_path(:topic_id => @topic.id), :class => "fdbutton") if logged_in? and @topic.ticket_topic.nil?  %>
-		<%= link_to(h(@topic.ticket.subject), helpdesk_ticket_path(@topic.ticket)) unless @topic.ticket_topic.nil? %>
 		
-		<% if logged_in? && current_user.has_manage_forums? && @forum.ideas? %>
-		<h4 class="title"> Mark this idea as </h4>
-		<div class="mark_action">
-			 <% Topic::IDEAS_STAMPS_OPTIONS.each do |k,v| %>
-			 	<% class_name = "stamp_type_#{v}" %>
-			 	<%if @topic.stamp_type != v %>
-					<%= link_to (k , update_stamp_category_forum_topic_path(@forum_category,@forum,@topic,:stamp_type => v),  :method=>:put, :class => class_name )   %>
-				<%else%>
-					<%= link_to (k , remove_stamp_category_forum_topic_path(@forum_category,@forum,@topic), :method=>:put , :class => class_name + " active")   %>
-				<%end%>
-			<% end %>
-	    </div>
-		<span class="seperator"></span>
-		<div class="alignright">
-			<%= link_to(t('connect_ticket') + " &raquo;", new_helpdesk_ticket_path(:topic_id => @topic.id), :class => "uiButton green") if logged_in? and @topic.ticket_topic.nil?  %>
-			<%= link_to(h(@topic.ticket.subject), helpdesk_ticket_path(@topic.ticket)) unless @topic.ticket_topic.nil? %>
-		</div>
-			<% if @topic.locked? %>
-				<div>
-				    <%= image_tag "/savage_beast/clearbits/lock.gif", :class => "icon grey", :title => "Topic locked"[:topic_locked_title] %>
-				    <%= 'This topic is locked'[:locked_topic] %>
-				</div>
-			<% else %>
-			<% end -%>
+		 
+		<% if logged_in? && current_user.has_manage_forums? %>
+			<% if @forum.ideas? %>
+				<h4 class="title"> Mark this idea as </h4>
+				<div class="mark_action">
+					 <% Topic::IDEAS_STAMPS_OPTIONS.each do |k,v| %>
+					 	<% class_name = "stamp_type_#{v}" %>
+					 	<%if @topic.stamp_type != v %>
+							<%= link_to (k , update_stamp_category_forum_topic_path(@forum_category,@forum,@topic,:stamp_type => v),  :method=>:put, :class => class_name )   %>
+						<%else%>
+							<%= link_to (k , remove_stamp_category_forum_topic_path(@forum_category,@forum,@topic), :method=>:put , :class => class_name + " active")   %>
+						<%end%>
+					<% end %>
+			    </div>
+			 <% end %>
+			<span class="seperator"></span>
+			<div>
+				<%= link_to(t('connect_ticket') + " &raquo;", new_helpdesk_ticket_path(:topic_id => @topic.id), :class => "uiButton small") if logged_in? and @topic.ticket_topic.nil?  %>
+				<%= link_to(h(@topic.ticket.subject), helpdesk_ticket_path(@topic.ticket)) unless @topic.ticket_topic.nil? %>
+			</div>
+			<span class="seperator"></span>
+			<div>
+				<% if @topic.locked? %>
+					<h4 class="title">
+				    	<%= 'Comments are closed for this topic'[:locked_topic] %>
+					</h4>
+				<% end -%>
+				<%= link_to((@topic.locked)?"Re-open this Discussion":"Close this Discussion", update_lock_category_forum_topic_path(@forum_category,@forum, @topic), :method => :put,  :title => "Discussion comments", :class => "uiButton small" ) %>
+			</div>
+			
+			
 		<% end %>
 		</div>
 	</div>
