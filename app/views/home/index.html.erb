@@ -8,31 +8,23 @@
 	<div class="search-grey-box  ignore-margin-20">
 		<%= render :partial => "/search/pagesearch", :locals => { :placeholder => "Search using a keyword or a full question" } %>
 	</div>
-	<h3 class="title">Solutions</h3>
-		<div class="ssp_category_list">	
-		<% @categories.each do |category| %>
-			<div class="<%= cycle('odd', 'even') %>"> 
-				<%= link_to category.name + " &raquo;", category %>
-				<%= content_tag (:span, category.description) %> 
-			</div> 
-		<% end %>
-		</div>
-		<span class="seperator"></span>
 	<div class="two_col_cont">
-		<div class="left_col" style="display:none;">
-			<h4 class="title">Recent Articles</h4>
-			<ul class="list_with_icon">
-				<% @posts.each do |post|  %>
-					<li>
-					 	<%= link_to post.topic.title, post.topic, :class => "title" %> 
-						<div class="info_data"> by <%= post.user.name %> on <%= formated_date(post.updated_at) %> </div>
-					</li>	
-				<% end %> 
-			</ul>
-		</div>
-		<div class="right_col">
-			<% unless (@posts.size == 0) %>
-				<h4 class="title">Recent Forum Posts</h4>
+		
+		<div class="left_col">
+			<h3 class="title">Solutions</h3>
+			<div class="ssp_category_list">	
+			<% @categories.each do |category| %>
+				<div class="<%= cycle('odd', 'even') %>"> 
+					<%= link_to category.name, category %>
+					<%= content_tag (:span, category.description) %> 
+				</div> 
+			<% end %>
+			</div>
+			
+	 		<div style="display:none">
+	 			<!-- This area has to be replaced with the recent articals instead of forums -->
+	 			<span class="seperator"></span>
+				<h4 class="title">Recent Articles</h4>
 				<ul class="list_with_icon">
 					<% @posts.each do |post|  %>
 						<li>
@@ -41,6 +33,20 @@
 						</li>	
 					<% end %> 
 				</ul>
+			</div>
+		</div>
+		<div class="right_col">
+			
+			<% unless (@posts.size == 0) %> 
+				<h3 class="title">Recent Forum Posts</h3>
+				<ul class="list_with_icon">
+					<% @posts.each do |post|  %>
+						<li>
+						 	<%= link_to post.topic.title, post.topic, :class => "title" %> 
+							<div class="info_data"> by <%= post.user.name %> on <%= formated_date(post.updated_at) %> </div>
+						</li>	
+					<% end %> 
+				</ul> 
 			<% end %>
 		</div>
 	</div> 
