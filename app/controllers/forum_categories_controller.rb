@@ -33,6 +33,20 @@ class ForumCategoriesController < ApplicationController
      
     end
   end
+  
+  def destroy
+    @result = @obj.destroy
+    respond_to do |wants|
+      wants.html do
+        if @result
+          flash[:notice] = "The #{human_name} has been deleted."
+          redirect_to categories_path
+        else
+          render :action => 'show'
+        end
+    end
+  end
+  end
     
   protected
     def scoper
