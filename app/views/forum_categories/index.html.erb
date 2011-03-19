@@ -6,10 +6,24 @@
 	<% end %> 
 </div>
 <h3 class="title"><%= t('forum.title') %></h3>
+
 <div class="forum_list">
-	<% @forum_categories.each do |forum_category| %>
-		<%= render :partial => "forum_shared/category", :object => forum_category %>
-	<% end %>
+	<div class="forum-group">
+		<div class="search-grey-box">
+			<%= render :partial => "/search/pagesearch", :locals => { :placeholder => "Search All Topics" } %>
+		</div>
+		<% @forum_categories.each do |forum_category| %>
+			<div class="category-title">
+				<% if logged_in? && current_user.has_manage_forums? -%>
+					<div class="action_buttons">
+				  		<%= link_to  t('forum.new'), new_category_forum_path(forum_category), :class => "last add_new icon" %>
+					</div>
+				<% end -%>
+				<%= link_to h(forum_category.name), category_path(forum_category), :class => "title" %>
+			</div>
+			<%= render :partial => "forum_shared/category", :object => forum_category %>
+		<% end %>
+	</div>
 </div>
 
 

@@ -8,10 +8,7 @@
 		<%= link_to @item.category.name, solution_category_path(@item.category) %> &rarr;
 		<%= content_tag (:span, @item.name ) %>
 	</div>
-	<div class="live_search">
-		<h3 class="title">Search <%= @item.category.name %> </h3>
-		<input class="search" type="text" />
-	</div> 		
+	<%= render :partial => "/search/pagesearch", :locals => { :placeholder => "Search #{@item.category.name}"  } %>
 	<%= render :partial => "/solution/shared/solution_list", :locals => { :category => @item.category, :folder => @item } %>
 </div>
 

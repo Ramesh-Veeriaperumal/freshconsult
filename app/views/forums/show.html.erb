@@ -1,49 +1,35 @@
 <% content_for :layoutType do %>single<% end %>  
 	<% @page_title = @forum.name %>
 	
+	<% if logged_in? %> 
+		<div class="floatr">
+			<%= link_to 'Start a Topic' [:new_topic],new_category_forum_topic_path(@forum_category, @forum), :class => "uiButton Large" %>
+		</div>
+	<% end%>
+	
 	<h3 class="title">
 	 	<%= link_to("Forums"[:forums_category], categories_path) %> &rarr;
 		<%= link_to( "#{@forum_category.name}", category_path(@forum_category)) %> &rarr;
-		<%= h @forum.name %>
+		<%= h @forum.name %> 
 	</h3>	 
-	<div>
-		<% if logged_in? %>
-			<%= link_to 'Start a Topic'[:new_topic],new_category_forum_topic_path(@forum_category,@forum), :class => "uiButton Large" %>
-	   <% end%>
-		<%= feed_icon_tag @forum.name, forum_posts_path(@forum, :format => :rss) %> 
-	    <%= '{count} topic(s)'[(count=@forum.topics.size)==1 ? :topic_count : :topics_count, number_with_delimiter(count)] %>, 
-  	    <%= '{count} post(s)'[(count=@forum.posts.size)==1 ? :post_count : :posts_count, number_with_delimiter(count)] %>
-	</div>
-	<div class="topics_list_grid"> 
-			<% for topic in @topics %>	
-			<div class="item">	
-			<span class="floatr mark_action">
-				<div class="stamp stamp_type_<%=topic.stamp_type%>"><%=h(topic.stamp_name)%></div>
-			</span> 
-			<span class="topic_icon">
-				<img src="/images/icons/topic_type.png" width="32px" height="32px" />
-			</span>	
-			<h4 class="topic_title">
-					<%= "Sticky"[:sticky_title]+": <strong>" if topic.sticky? %>
-					<%= link_to topic.title, category_forum_topic_path(@forum_category,@forum,topic) %>
-				    
-					<%if @forum.questions?%>  
-						<%if topic.posts.answered_posts.count > 0%>
-							Answered
-						<%end%>
-					<%end%>
-				    <%= "</strong>" if topic.sticky? %>
-				   	 <% if topic.paged? -%>
-				    	<small><%= link_to 'last'[] %></small>
-				    <% end -%> 
-				</h4>	 
-			<span><%=h(topic.title)%></span> 
-			</div>
+	
+	<div class="forum-group">
+		<div class="search-grey-box">
+			<% if logged_in? && admin? -%>
+				<div class="action_buttons no_margin">
+					<%= link_to t('edit') , edit_category_forum_path(@forum_category, @forum)  %>
+					<%= link_to(t('delete'), category_forum_path(@forum_category, @forum), :method => 'delete', :class => "last",  :confirm => 'Are you sure you want to delete this folder' ) %>
+				</div>
 			<% end %>
-			
-	 
+			<div class="floatr" style="display:none;">
+				<%= feed_icon_tag @forum.name, forum_posts_path(@forum, :format => :rss) %>
+				<%= '{count} topic(s)'[(count=@forum.topics.size)==1 ? :topic_count : :topics_count, number_with_delimiter(count)] %>,
+		  	    <%= '{count} post(s)'[(count=@forum.posts.size)==1 ? :post_count : :posts_count, number_with_delimiter(count)] %>
+		    </div>
+			<%= render :partial => "/search/pagesearch", :locals => { :placeholder => "Search #{@forum_category.name}" } %>
+	   </div>
+	   <%= render :partial => "forum_shared/topics", :object => @topics, :locals => { :category => @forum_category, :forum => @forum } %>
 	</div>
 	
-	
-</div>
+	 
 	

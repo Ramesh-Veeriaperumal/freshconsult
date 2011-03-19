@@ -9,7 +9,7 @@ class Forum < ActiveRecord::Base
   ]
 
   TYPE_OPTIONS = TYPES.map { |i| [i[1], i[2]] }
-  TYPE_NAMES_BY_KEY = Hash[*TYPES.map { |i| [i[2], i[1]] }.flatten]
+  TYPE_NAMES_BY_KEY = Hash[*TYPES.map { |i| [i[2], i[1]] }.flatten] 
   TYPE_KEYS_BY_TOKEN = Hash[*TYPES.map { |i| [i[0], i[2]] }.flatten]
 
   validates_presence_of :name,:forum_category,:forum_type
@@ -44,11 +44,11 @@ class Forum < ActiveRecord::Base
   end
 
   def ideas?()
-    self.forum_type == 2 
+    self.forum_type == TYPE_KEYS_BY_TOKEN[:ideas] 
   end
   
   def questions?()
-    self.forum_type == 3 
+    self.forum_type == TYPE_KEYS_BY_TOKEN[:howto]
   end
   
   # retrieves forums ordered by position
@@ -59,7 +59,5 @@ class Forum < ActiveRecord::Base
   def type_name
     TYPE_NAMES_BY_KEY[forum_type]
   end
-  
-  
-  
+   
 end

@@ -3,13 +3,11 @@
 		<h3 class="title">Forums</h3>
 		<p style="margin-top:0px;">Ask questions, share ideas, report problems and get answers from <%= link_to "our community forums", categories_path, :class => "default" %></a></p>
 	</div>			
-	<div class="live_search">
-		<h3 class="title">Start typing a question and see answers in real time</h3>			
-		<label class="overlabel" for="ssp_search">Search using a keyword or a full question</label>
-		<input type="text" class="search" id="ssp_search"  />			
-	</div>		
-	<span class="seperator"></span>
-	<div id="search_results" style="display:none;"></div>
+	
+	<h3 class="title">Start typing a question and see answers in real time</h3>			
+	<div class="search-grey-box  ignore-margin-20">
+		<%= render :partial => "/search/pagesearch", :locals => { :placeholder => "Search using a keyword or a full question" } %>
+	</div>
 	<h3 class="title">Solutions</h3>
 		<div class="ssp_category_list">	
 		<% @categories.each do |category| %>
@@ -19,7 +17,7 @@
 			</div> 
 		<% end %>
 		</div>
-	<span class="seperator"></span>
+		<span class="seperator"></span>
 	<div class="two_col_cont">
 		<div class="left_col" style="display:none;">
 			<h4 class="title">Recent Articles</h4>
@@ -100,26 +98,7 @@
 				});					
 		});*/
 		 
-		callbackToSearch = function(string){
-			jQuery.ajax({ url: "/home/search_solution?search_key="+string, 
-							  success: function(data){
-							  			jQuery("#search_results").show();
-										jQuery("#search_results")
-											.html(data);
-						}});
-		}
 		
-		jQuery("#ssp_search").bind("keyup", function(ev){
-			searchString = this.value;
-			if(searchString.length > 2){
-				delay(function(){
-			      callbackToSearch(searchString);
-			    }, 300 );
-					
-			}else if(searchString == ''){
-				jQuery("#search_results").hide();				
-			}
-		});
 		
 	});
 </script>

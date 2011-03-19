@@ -8,11 +8,7 @@
 		<%= content_tag (:span, @item.name ) %>
 	</div>
 	
-	<div class="live_search">
-		<h3 class="title">Search <%= @item.name %> </h3>
-		<input class="search" type="text" />
-	</div>
-	
+	<%= render :partial => "/search/pagesearch", :locals => { :placeholder => "Search #{@item.name}"  } %>
 	
 	<% unless (@item.folders.size == 0) %>	
 	  <%= render :partial => "/solution/shared/solution_list", :locals => { :category => @item, :folder => @item.folders.first } %>

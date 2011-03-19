@@ -1,32 +1,31 @@
-
 <div class="description <%= cycle('stripe', '') %>"  id="<%= dom_id post %>-row">
-	<a href="#<%= dom_id post %>" rel="bookmark"></a>
-	<div class="item_actions">
-	<% if logged_in? && post.editable_by?(current_user) -%>
-		   <%= ajax_spinner_for "edit-post-#{post.id}", "spinner_bounce.gif" %>
-	       <%= link_to_remote('Edit post'[], 
-	             {:url => edit_post_path(:forum_id => @forum, :topic_id => @topic, :id => post), :method => :get,
-	              :before => "EditForm.init(#{post.id});", :condition => "!EditForm.isEditing(#{post.id})" }, 
-	             {:href => edit_post_path(:forum_id => @forum, :topic_id => @topic, :id => post, :page => params[:page]), :class => "button"}) %>
-	<% end -%>
-	<%if post != @posts.first and @forum.questions? %>
-		<div id="post-body-<%= post.id %>">
-			<% if logged_in? && current_user.has_manage_forums?  %>
-				<%= link_to ("Answer" , toggle_answer_category_forum_topic_post_path(@forum_category,@forum,@topic,post),  :method=>:put ) if post.answer?  %>
-				<%= link_to ("Not Answer" , toggle_answer_category_forum_topic_post_path(@forum_category,@forum,@topic,post),  :method=>:put ) if !post.answer?  %>
-			<%end%>
-		</div>
-	<%end%>
-	</div>
+	<a href="#<%= dom_id post %>" rel="bookmark"></a> 
 	<div class="user_details">
 		<%= user_avatar(post.user.avatar)  if post.user %>
-		<b><%= post.user.display_name %></b>
-		<div><%= post.user.job_title %></div>
-		<div title="<%= post.created_at.xmlschema %>"><%= time_ago_in_words(post.created_at) %> ago</div> 
+		<%= link_to post.user.display_name, post.user, :class => "user_name" %> on <%= formated_date(post.created_at) %> 
 	</div>
 	<div class="details">
 		<%= post.body_html %>
 	</div>
+	<div class="bottom-actions">
+		<%if post != @posts.first and @forum.questions? %> 
+				<% if logged_in? && current_user.has_manage_forums?  %>
+					<%= link_to ("Answer" , toggle_answer_category_forum_topic_post_path(@forum_category,@forum,@topic,post),  :method=>:put ) if post.answer?  %>
+					<% if !post.answer? %>
+						<%= link_to ("This answers the Question" , toggle_answer_category_forum_topic_post_path(@forum_category,@forum,@topic,post ),  :method=>:put )   %>
+						-
+					<% end %>
+				<%end%> 
+		<%end%>
+		
+		<% if logged_in? && post.editable_by?(current_user) -%> 
+			   <%= ajax_spinner_for "edit-post-#{post.id}", "spinner_bounce.gif" %>
+		       <%= link_to_remote('Edit'[], 
+		             {:url => edit_post_path(:forum_id => @forum, :topic_id => @topic, :id => post), :method => :get,
+		              :before => "EditForm.init(#{post.id});", :condition => "!EditForm.isEditing(#{post.id})" }, 
+		             {:href => edit_post_path(:forum_id => @forum, :topic_id => @topic, :id => post, :page => params[:page]) }) %>
+		<% end -%> 
+	</div>
 </div>
-<div class="seperator"></div>
+
 				
