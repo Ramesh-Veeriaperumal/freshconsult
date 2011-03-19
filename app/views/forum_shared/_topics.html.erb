@@ -19,8 +19,7 @@
 							by <%= link_to last_post.user.name, last_post.user %>
 						<% else %>
 							Posted <%= time_ago_in_words(topic.created_at) %> ago
-						<% end %>
-						
+						<% end %> 
 						-  
 						<% 
 							count = topic.posts_count

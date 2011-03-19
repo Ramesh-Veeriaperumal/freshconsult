@@ -3578,28 +3578,26 @@ h4.border_title{
 		border-width:1px 0px; 
 		li{
 			@include clearfix;
-			border-bottom:1px dotted #dadada;
-			padding:10px 25px 8px 70px;
+			border-bottom:1px dotted #eaeaea;
+			padding:14px 25px 10px 70px;
 			position:relative;
 			a{ 
 				@include link-colors(#4D769F, #3399cc, #4D769F, #4D769F); text-decoration:none; 
 			}
 			a.topic-title{ 
 				font-weight:400;	
-				font-size:14px;
-				@include ellipsis; 
+				font-size:14px; 
 			}
 			.info_data{
 				padding:7px 0px 6px 0px;
 				font-size:12px;
 			}
 			.preview_pic{
-				margin-top:-2px;
 				border-color:#d2d2d2;
 				position:absolute;
 				left:20px;
-				top:10px;
-				img{ width:36px; height:36px; padding:2px; }
+				top:14px;
+				img{ width:36px; height:36px; padding:0px; border:0px; }
 			}
 		}
 }
