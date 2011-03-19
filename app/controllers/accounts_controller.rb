@@ -69,7 +69,7 @@ class AccountsController < ApplicationController
     
     if @account.save
       flash[:notice] = "Your account details have been updated."
-      redirect_to admin_home_path
+      redirect_to admin_home_index_path
     else
       render :action => 'edit'
     end
@@ -91,7 +91,7 @@ class AccountsController < ApplicationController
   end
   
   def update_fav_icon_image
-    unless  params[:account][:fav_icon_attributes].nil?
+   unless  params[:account][:fav_icon_attributes].nil?
       if @account.fav_icon.nil?
         @fav_attachment = Helpdesk::Attachment.new
         @fav_attachment.description = "fav_icon"

@@ -29,9 +29,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
   end
  
  def image?
-   puts "Is image"
-   puts content.styles.to_s
-    !(content_content_type =~ /^image.*/).nil?
+   !(content_content_type =~ /^image.*/).nil?
   end
   
   
