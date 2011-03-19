@@ -2459,7 +2459,7 @@ body h5 {
   -moz-border-radius: 6px 6px 6px 6px;
   -webkit-border-radius: 6px 6px 6px 6px;
   border-radius: 6px 6px 6px 6px;
-  padding: 5px 14px;
+  padding: 14px 14px 6px 14px;
   min-height: 230px;
   height: auto !important;
   height: 230px;
@@ -6549,4 +6549,10 @@ div.action_buttons a.icon {
 /* line 4495, ../src/application.scss */
 .no_margin {
   margin: 0px !important;
+}
+
+/* line 4499, ../src/application.scss */
+.full-width {
+  display: block !important;
+  text-align: center;
 }

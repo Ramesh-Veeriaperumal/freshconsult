@@ -1568,7 +1568,7 @@ body h5{
 	
 	.rtDetails_forum{
 		@include corners(6px);
-		padding:5px 14px;
+		padding:14px 14px 6px 14px;
 		h4.title{
 			font-size:13px; 
 			color:#afafaf;
@@ -4494,4 +4494,9 @@ div.action_buttons{
 
 .no_margin{
 	margin:0px !important;
+}
+
+.full-width{
+	display:block !important;
+	text-align:center;
 }
