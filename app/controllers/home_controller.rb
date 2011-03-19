@@ -1,7 +1,8 @@
 class HomeController < ApplicationController
   def index
     redirect_to helpdesk_dashboard_path if (current_user && current_user.permission?(:manage_tickets))
-    @categories = current_account.solution_categories.all(:include => :folders)
+    @categories = current_account.solution_categories
+    @forums_categories = current_account.forum_categories
     @posts = recentposts
   end
   

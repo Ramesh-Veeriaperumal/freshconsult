@@ -12,6 +12,7 @@
 				<% else %>
 					<%= user_avatar( topic.user.avatar ) %>
 				<% end %>
+				<b><%=(topic.sticky?) ? "STICKY" : ""%></b>
 				<%= link_to topic.title, category_forum_topic_path(category, forum, topic), :class => "topic-title" %>
 					<div class="info_data"> 
 						<% if topic.posts_count > 1 %>
