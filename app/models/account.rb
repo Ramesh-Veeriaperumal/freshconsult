@@ -17,10 +17,10 @@ class Account < ActiveRecord::Base
     
   #rebranding ends 
 
-  RESERVED_DOMAINS = %W(  blog support help chat smtp mail www ftp imap pop faq docs doc wiki team people india us talk 
+  RESERVED_DOMAINS = %W(  blog help chat smtp mail www ftp imap pop faq docs doc wiki team people india us talk 
                           upload download info lounge community forums ticket tickets tour about pricing bugs in out 
                           logs projects itil marketing sales partners partner store channel reseller resellers online 
-                          signup login contact admin #{AppConfig['admin_subdomain']} girish shan vijay parsu kiran shihab )
+                           login contact admin #{AppConfig['admin_subdomain']} girish shan vijay parsu kiran shihab )
 
   #
   # Tell authlogic that we'll be scoping users by account
@@ -109,8 +109,7 @@ class Account < ActiveRecord::Base
   def check_default_values
     dis_max_id = get_max_display_id
     if self.ticket_display_id.blank? or (self.ticket_display_id < dis_max_id)
-      puts "Ticket display id is nil Bapre !"
-      self.ticket_display_id = dis_max_id
+       self.ticket_display_id = dis_max_id
     end
   end
   
