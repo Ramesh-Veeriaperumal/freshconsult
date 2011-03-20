@@ -47,9 +47,8 @@ reply_email = @email_configs.first.reply_email unless @email_configs.first.nil?
 	</div>	
 <% end %>
 
-<div class="pageContent">
-	<h3 class="title">Email Settings</h3>	
-	<div class="grid">
+<h3 class="title">Email Settings</h3>	
+<div class="grid">
 			<ul>
 				<li><b>Users send email to</b></li>
 				<li><b>Forward email</b></li>
@@ -70,5 +69,4 @@ reply_email = @email_configs.first.reply_email unless @email_configs.first.nil?
 							   :url  => { :action => "new" },
 							   :update => { :success => "emailconfig"},
 							   :html => { :class => "addchoice", :id => "AddEmail" }  %>
-	</div>
-</div>
+</div> 
