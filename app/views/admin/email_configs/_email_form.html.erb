@@ -36,7 +36,7 @@
 	type_check = (type == "edit")
 	form_for :email_config, @email_config, 
 				:url => (!type_check) ? (admin_email_configs_path) : (admin_email_config_path), 
-			    :html => { :class => "uniForm" ,  :method => (!type_check) ? (:post) : (:put) } do |f|
+			    :html => { :method => (!type_check) ? (:post) : (:put) } do |f|
 %>
  
 <table class="grid_form">

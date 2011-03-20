@@ -36,7 +36,7 @@
 
 <% if logged_in? && current_user.has_manage_solutions? -%>
 	<div class="floatr">
-		<%= link_to "<img src='/images/add.png'> New Category", new_solution_category_path, :class => "fdbutton" %>
+		<%= link_to "New Category", new_solution_category_path, :class => "uiButton" %>
 	</div>
 <%- end %>
 <h3 class="title">Solutions</h3> 
