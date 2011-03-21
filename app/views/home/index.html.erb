@@ -28,7 +28,7 @@
 				<ul class="list_with_icon">
 					<% @posts.each do |post|  %>
 						<li>
-						 	<%= link_to post.topic.title, post.topic, :class => "title" %> 
+							<%= link_to post.topic.title,category_forum_topic_path(post.topic.forum.forum_category_id,post.topic.forum_id,post.topic.id), :class => "title" %> 
 							<div class="info_data"> by <%= post.user.name %> on <%= formated_date(post.updated_at) %> </div>
 						</li>	
 					<% end %> 
@@ -42,7 +42,7 @@
 				<ul class="list_with_icon">
 					<% @posts.each do |post|  %>
 						<li>
-						 	<%= link_to post.topic.title, post.topic, :class => "title" %> 
+						 	<%= link_to post.topic.title, category_forum_topic_path(post.topic.forum.forum_category_id,post.topic.forum_id,post.topic.id), :class => "title" %> 
 							<div class="info_data"> by <%= post.user.name %> on <%= formated_date(post.updated_at) %> </div>
 						</li>	
 					<% end %> 
