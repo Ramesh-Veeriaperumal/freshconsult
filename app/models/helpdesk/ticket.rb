@@ -208,7 +208,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   #shihab-- date format may need to handle later. methode will set both due_by and first_resp
    def set_dueby    
-   
+     
+     set_account_time_zone
      createdTime = Time.zone.now   
      
      unless self.created_at.nil?       
@@ -234,8 +235,20 @@ class Helpdesk::Ticket < ActiveRecord::Base
       self.frDueBy =  (sla_detail.response_time).div(60).business_minute.after(createdTime)     
     end
     
+    set_user_time_zone if User.current
      logger.debug "sla_detail_id :: #{sla_detail.id} :: and createdTime : #{createdTime} due_by::#{self.due_by} and fr_due:: #{self.frDueBy} "   
   end
+
+
+ def set_account_time_zone  
+    self.account.make_current
+    Time.zone = self.account.time_zone    
+ end
+ 
+ def set_user_time_zone 
+   Time.zone = User.current.time_zone  
+ end
+  
   
   def refresh_display_id #by Shan temp
     if display_id.nil?
