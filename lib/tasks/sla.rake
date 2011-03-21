@@ -15,7 +15,7 @@ namespace :sla do
         ticket.update_attribute(:isescalated , true)
      end
     
-    froverdue_tickets = Helpdesk::Ticket.find(:all, :joins => :ticket_states , :readonly => false , :conditions =>['frDueBy <=? AND fr_escalated=? AND helpdesk_ticket_states.first_response_time IS ?', Time.now.to_s(:db),false,nil] )
+    froverdue_tickets = Helpdesk::Ticket.find(:all, :joins => :ticket_states , :readonly => false , :conditions =>['frDueBy <=? AND fr_escalated=? AND helpdesk_ticket_states.first_response_time IS ?', Time.zone.now.to_s(:db),false,nil] )
     puts "Number of first response overdues are #{froverdue_tickets.size}"
     froverdue_tickets.each do |fr_ticket|
       fr_escalateto = fr_ticket.account.sla_policies.first.sla_details.find_by_priority(fr_ticket.priority).escalateto
