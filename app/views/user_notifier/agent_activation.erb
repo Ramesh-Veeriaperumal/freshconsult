@@ -1,0 +1,12 @@
+Hi <%= @user %>,
+
+Your <%= @user.account.helpdesk_name %> account has been created.
+
+Click the url below to activate your account!
+
+<%= @account_activation_url %>
+
+If the above URL does not work try copying and pasting it into your browser. If you continue to have problems, please feel free to contact us.
+
+Regards,
+<%= @user.account.helpdesk_name %>

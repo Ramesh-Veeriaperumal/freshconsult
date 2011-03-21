@@ -1,18 +1,17 @@
-This email is to let you know that ticket with following details has reached its dueby
-
-details:
-ticket id: #<%= @ticket.display_id %>.
-
-
-You can also visit the following URL to see the status of your request at any time:
-
-<%= support_ticket_url(:id => @ticket.to_param, :host => @host) %>
-
-
----
-
-Thank you,
-The Customer Support Team
+Hi <%=@name%>,
 
 
 
+Ticket #<%= @ticket.display_id %> has not been resolved within the SLA time period. The ticket was due by <%=@ticket.due_by.strftime("%I:%M %p")%> today.
+
+
+
+Ticket Details: 
+
+Subject - <%= @ticket.subject %>
+
+Requestor - <%= @ticket.requester.email %>
+
+
+
+This is an escalation email from <%= @ticket.account.name%>

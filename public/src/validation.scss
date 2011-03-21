@@ -23,7 +23,27 @@
 }
 
 .flash_info{
-	background-color:#f4fdcb;
+	position:relative;
+	background-color:#fdfde5;
 	color:#333333;
 	font-size:14px;
+	.list{
+		display:none;
+		padding:6px 5px;
+		h4.title{
+			font-size:13px;
+		}
+		ul {
+		  font-size: 13px;
+		  list-style: disc;
+		  margin:0px 8px 0px 18px;
+		}
+	}
+	.close{
+		right:0px;
+		top:0px;
+		background:url("../images/icons/btn_close_icon.png") no-repeat center;
+	}
 }
+
+
