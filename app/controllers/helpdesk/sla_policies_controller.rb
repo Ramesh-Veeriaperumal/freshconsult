@@ -47,8 +47,10 @@ class Helpdesk::SlaPoliciesController < Admin::AutomationsController
     params[:SlaDetails].each_value { |sla| @sla_policy.sla_details.build(sla) }
     
     if @sla_policy.save
+        flash[:notice] = "Sla Policy has been created."
         redirect_to :action => 'index'
     else
+      flash[:notice] = "Unable to save Sla Policy"
        render :action => 'new'
     end  
   end
@@ -62,7 +64,7 @@ class Helpdesk::SlaPoliciesController < Admin::AutomationsController
          @sla_detail = Helpdesk::SlaDetail.find(sla[:id])
          @sla_detail.update_attributes(sla)
        end
-        format.html { redirect_to(helpdesk_sla_policies_url, :notice => 'Helpdesk::SlaPolicy was successfully updated.') }
+        format.html { redirect_to(helpdesk_sla_policies_url, :notice => 'Sla policy was successfully updated.') }
         format.xml  { head :ok }
       else
         format.html { render :action => "edit" }
