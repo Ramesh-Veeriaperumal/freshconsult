@@ -86,7 +86,7 @@ class TopicsController < ApplicationController
     assign_protected
     @topic.save!
     respond_to do |format|
-      format.html { redirect_to category_forum_topic_path(@forum_category,@forum, @topic) }
+      format.html { redirect_to category_forum_topic_path(@topic.forum.forum_category_id,@topic.forum_id, @topic) }
       format.xml  { head 200 }
     end
   end

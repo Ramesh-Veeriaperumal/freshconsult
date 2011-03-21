@@ -19,7 +19,7 @@
 			<h3 class="title">Add a Note</h3>
 		</li>
 		<li class="checkbox">
-			<%= f.check_box :private, :checked => false %>
+			<%= f.check_box :private, :checked => true %>
 			<%= f.label(:private, "This is a private note, don't show this to the requester") %>
 			<%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"]%>	
 		</li>	

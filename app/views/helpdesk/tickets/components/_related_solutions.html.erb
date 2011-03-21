@@ -1,47 +1,55 @@
-<script>
-respondWithSol = function(select , sol_id, url){	
-
-	
-	if (select == "url")
-	{
-		jQuery('#cnt-note').css("display", "none");
-		jQuery('#cnt-reply').css("display", "block");
-		jQuery('#send-email-cnt-reply-body').focus();
-		jQuery('#send-email-cnt-reply-body').val(url+ "\n" +jQuery('#send-email-cnt-reply-body').val()); 		
-		return true;		
-	}
-	else if(select == "none")
-	{
-		return true;		
-	}
-	else
-	{
-		handleSolutionDetail(sol_id);		
-	}
-	
-	
-};
-
-handleSolutionDetail = function(sol_id){
-	jQuery.ajax({		type: 'POST',
-						url: '/helpdesk/tickets/get_solution_detail/'+sol_id,
-						contentType: 'application/text',
-						async: false,						
-						success: function(data){		
-							
-									jQuery('#cnt-note').css("display", "none");
-									jQuery('#cnt-reply').css("display", "block");	
-									jQuery('#send-email-cnt-reply-body').focus();															
-									jQuery('#send-email-cnt-reply-body').val(data+ "\n" +jQuery('#send-email-cnt-reply-body').val()); 
-							
+<% javascript_tag do -%>
+	respondWithSol = function(select , sol_id, url){	
+						if (select == "url")
+						{
+							jQuery('#cnt-note').css("display", "none");
+							jQuery('#cnt-reply').css("display", "block");
+							jQuery('#send-email-cnt-reply-body').focus();
+							jQuery('#send-email-cnt-reply-body').val(url+ "\n" +jQuery('#send-email-cnt-reply-body').val()); 		
+							return true;		
 						}
-						});
-						
-	return true;
+						else if(select == "none")
+						{
+							return true;		
+						}
+						else
+						{
+							handleSolutionDetail(sol_id);		
+						}
+					}
+
+	handleSolutionDetail = function(sol_id){
+						jQuery.ajax({		type: 'POST',
+											url: '/helpdesk/tickets/get_solution_detail/'+sol_id,
+											contentType: 'application/text',
+											async: false,						
+											success: function(data){		
+												
+														jQuery('#cnt-note').css("display", "none");
+														jQuery('#cnt-reply').css("display", "block");	
+														jQuery('#send-email-cnt-reply-body').focus();															
+														jQuery('#send-email-cnt-reply-body').val(data+ "\n" +jQuery('#send-email-cnt-reply-body').val()); 
+												
+											}
+											});
+											
+						return true;
 };
 
+(function($){	  
+	$(document).ready(function(){
+		$("div.item")
+			.hover(function(ev){
+				   		$(this).find(".item-menu").show();
+				   }, 
+				   function(ev){
+				   		$(this).find(".item-menu").hide();
+				   });
+	});
+})(jQuery);
 
-</script>
+
+<%- end %>
 
 
 <div class="rtDetails" id="RelatedSolutions" style="display:none;">
@@ -50,30 +58,32 @@ handleSolutionDetail = function(sol_id){
 	<% if (@articles.size == 0) %>
 		<br />
 		<div>&nbsp;&nbsp;&nbsp; No Related Solutions found </div>
-	<% else %>
-	<style>
-		.match{
-			font-weight:bold;
-		}
-	</style>
-		<div class="request_panel_list">
+	<% else %> 
+		<div class="request-list">
 			<% @articles.each do |article|
 				article_url = solution_category_folder_article_url(article.folder.category_id,article.folder_id,article)
-			 %>
-			 
-			
+			 %> 
 			<div class="item">
-				<%= link_to(article.excerpts.title, article_url) %>
-				Use<select id="suggest_solution_insert" onchange="respondWithSol(this.value, '<%=article.id%>' ,'<%=article_url%>')">
-									<option value="none">.....</option>
-									<option value="content">Content </option>
-									<%if article.is_public?%>
-									<option value="url">URL </option>
-									<%end%>
-									</select>
-				<!--div style="display:none;">
-					<%= truncate ( article.description.gsub(/<\/?[^>]*>/, ""), 100)  %>
-				</div-->
+				<%= link_to( "<span class='bulb'></span> #{article.excerpts.title} ", article_url, :target => "blank", 
+							:class => "item-title #{( !article.is_public? ) ? 'private' : '' }",  
+							:title => truncate ( article.description.gsub(/<\/?[^>]*>/, ""), 100) ) %>
+				<div class="item-menu">
+					<ul>
+						<li><%= link_to_function "Insert Content", "respondWithSol('content', '#{article.id}', '#{article_url}')" %></li>
+						<%if article.is_public?%>
+							<li><%= link_to_function "Insert URL", "respondWithSol('url', '#{article.id}', '#{article_url}')" %></li>
+						<%end%> 
+					</ul>
+					<div style="display:none">
+					Use<select id="suggest_solution_insert" onchange="respondWithSol(this.value, '<%=article.id%>' ,'<%=article_url%>')">
+										<option value="none">.....</option>
+										<option value="content">Content </option>
+										<%if article.is_public?%>
+											<option value="url">URL </option>
+										<%end%>
+										</select>
+									</div> 
+				</div>
 			</div>
 			<% end %>
 		</div>
