@@ -50,8 +50,7 @@
 					<div class="action_buttons">
 						<%= link_to 'Add folder'[:create_new_folder], new_solution_category_folder_path(category), :class => "first icon add_new"  %> 
 						<%= link_to 'Edit' ,edit_solution_category_path(category), :class => "last"   %> 
-						<% link_to "RSS", "", :class => "last" %>  
-						<% link_to('delete', solution_category_path(category), :method => 'delete', :confirm => 'Are you sure you want to delete this category' ) %> 
+						<% link_to "RSS", "", :class => "last" %>
 					</div>
 			<% end %>
 			<h4 class="border_title">

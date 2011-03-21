@@ -45,6 +45,32 @@
 				active_email_body = jQuery(this).next().next();
 				jQuery('#place-dialog').slideDown();			
 		});
+		
+		/*
+		jQuery.validator.addMethod("requesteremail", function(value, element) {
+			inputEle  = jQuery(element).parents("tr").prev().find("input.requester")
+			selected  = inputEle.attr("checked");
+			returnval = true;
+		 	if(selected == true)
+				returnval = (value != '');
+			
+			if(!returnval)	
+				jQuery(inputEle.next()).trigger("click");
+			
+			console.log( jQuery(element).parents("tr").prev().text() );
+			
+			return returnval; 
+			
+		}, "Email cannot be empty");
+		
+		jQuery("#Updateform").validate({
+			rules:{
+					"requesteremail":true
+				}
+			});
+		jQuery("#Updateform").submit(function(){
+			return false;
+		});*/
 	});
 <% end %>
 
@@ -65,14 +91,14 @@
 				<td><%= item[:type] %> </td>
 				<td>
 					<% if (item[:requester])  %>
-						<input type="checkbox" name="requester_notification" class="checkbox" <%= (data.requester_notification) ? "checked" : "" %> />
+						<input type="checkbox" name="requester_notification" class="checkbox requester" <%= (data.requester_notification) ? "checked" : "" %> />
 						<a href="javascript:void(0)" showdiv="requester_div" class="notify_check">Customize Email</a>
 					<% end %>
 					&nbsp;
 				</td>
 				<td>
 					<% if (item[:agent])  %>
-						<input type="checkbox" name="agent_notification" class="checkbox" <%= (data.agent_notification) ? "checked" : "" %> />
+						<input type="checkbox" name="agent_notification" class="checkbox agent" <%= (data.agent_notification) ? "checked" : "" %> />
 						<a href="javascript:void(0)" showdiv="agent_div" class="notify_check">Customize Email</a>
 					<% end %>
 					&nbsp;					
@@ -85,7 +111,7 @@
 						<b>Modify Requester Template</b>
 						
 						<input type="hidden" value="<%= h ("#{data.requester_template}") %>" />
-						<textarea name="requester_template"><%= h ("#{data.requester_template}") %></textarea>
+						<textarea name="requester_template" class="requesteremail"><%= h ("#{data.requester_template}") %></textarea>
 						
 						<a href="javascript:void(0)" class="button close_template">Done</a>
 						<a href="javascript:void(0)" class="button reset_template">Reset</a>
@@ -94,7 +120,7 @@
 						<b>Modify Agent Template</b>
 						<a href="javascript:void(0)" class="link_placeholder">Insert Placehoder &raquo;</a>
 						<input type="hidden" value="<%= h ("#{data.agent_template}") %>" />
-						<textarea name="agent_template"><%= h ("#{data.agent_template}") %></textarea>
+						<textarea name="agent_template" class="agentemail"><%= h ("#{data.agent_template}") %></textarea>
 						
 						<a href="javascript:void(0)" class="button close_template">Done</a>
 						<a href="javascript:void(0)" class="button reset_template">Reset</a>

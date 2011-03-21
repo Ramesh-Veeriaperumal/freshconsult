@@ -1,18 +1,14 @@
 <% content_for :layoutType do -%>single<%- end %>
-<div class="header_area">	
-	<div class="right_panel">
-		<%= link_to "Back", solution_categories_path, :class => "fdbutton grey" %>
-	</div>
-	<h3 class="page_title">Edit Category <span class="sub_title">"<%=@category.name%>"</span> </h3>
-</div>
-<div class="page_area">
+<h3 class="title">Edit Category <span class="sub_title">"<%=@category.name%>"</span> </h3>
 	<% form_for (@category), :html => {:multipart => true, :id => "folder-form", :class => "validate_form"} do |f| %>
 	<%= render :partial => "category_form" , :locals => { :f => f }%>
 	
 	<div class="button-container">
-	    <%= submit_tag "Update", :class => "fdbutton submit" %>	   
-		<%= link_to('Cancel'[:cancel], solution_categories_url, :class => "fdbutton grey" ) %>
+		<div class="floatl">
+			<%= link_to('Delete', solution_category_path(@category), :method => 'delete', :confirm => 'Are you sure you want to delete this category', :class => "uiButton red" ) %>
+		</div>
+	    <%= submit_tag "Save", :class => "uiButton" %>	   
+		<%= link_to('Cancel'[:cancel], solution_categories_url, :class => "uiButton grey" ) %>
 	</div>
 	
 	<% end %>
-</div>
