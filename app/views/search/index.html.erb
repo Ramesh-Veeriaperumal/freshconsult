@@ -7,73 +7,7 @@
 	<% end %>
 	<span class="seperator"></span>
 	<!-- h3 class="sub_title">Search for "Freshdesk" has 120 results</h3 -->
-	<ul class="results">
-		<% unless @searched_tickets.nil? %>
-			<li class="ticket_icon"> 
-				<strong class="title">Tickets</strong>
-				<% @searched_tickets.each do |ticket| %>
-					<div class="group">
-						<%= link_to(Helpdesk::Ticket.search_display(ticket), ticket, :class => "big") %>
-						<span class="light"><%= "Requested by, <b>#{ticket.requester}</b>" %> </span>
-						<p><%= ticket.excerpts.description %></p>
-					</div>
-				<% end %>
-			</li>
-		<% end %>
-		
-		<% unless @searched_users.nil? %>
-			<li> 
-				<strong class="title">People</strong>
-				<% @searched_users.each do |user| %>
-					<div class="group"> 
-						<%= user_avatar(user.avatar) %>
-						<%= link_to user, user, :class => "user" %>
-						<% if user.customer? %>
-							<% if user.customer %>
-								<span class="light"><%= user.job_title.blank? ? "#{user.customer.name}" : 
-											"#{user.job_title} at #{user.customer.name}" %></span> 
-							<% end %>
-						<% else %>
-							<span class="light"><%= user.admin? ? "Administrator" : "Agent" %></span>
-						<% end %>
-						
-					</div>
-				<% end %>
-			</li>
-		<% end %>
-		
-		<% unless @searched_companies.nil? %>
-			<li class="company_icon"> 
-				<strong class="title">Companies</strong>
-				<% @searched_companies.each do |company| %>
-					<div class="group"><%= link_to(company.name, company, :class => "big") %></div>
-				<% end %>
-			</li>
-		<% end %>
 
-		<% unless @searched_articles.nil? %>
-			<li class="solution_icon"> 
-				<strong class="title">Solutions</strong>
-				<% @searched_articles.each do |article| %>
-					<div class="group">
-						<%= link_to(article.excerpts.title, article, :class => "big") %>
-						<p><%= article.excerpts.description  %></p>
-					</div>
-				<% end %>
-			</li>
-		<% end %>
-		
-		<% unless @searched_topics.nil? %>
-			<li class="forum_icon"> 
-				<strong class="title">Forums</strong>
-				<% @searched_topics.each do |topic| %>
-					<div class="group">
-						<%= link_to(topic.excerpts.title, category_forum_topic_path(topic.forum.forum_category, topic.forum, topic), :class => "big") %>
-						<p><%= truncate(topic.posts.first.body.gsub(/<\/?[^>]*>/, ""), 300)  %></p>
-					</div>
-				<% end %>
-			</li>
-		<% end %> 
-	</ul>
+	<%= render :partial => 'search_results' %>
 	<%= will_paginate @items %>
 </div>

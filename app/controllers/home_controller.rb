@@ -15,13 +15,6 @@ class HomeController < ApplicationController
      render :partial => 'solution_article', :locals => { :article => @solution }
   end
   
-  def search_solution
-    #For now, :star has been commented out as wildcard and stopwords don't go together well.
-    @articles = Solution::Article.search params[:search_key], 
-                                  :with => { :account_id => current_account.id, :is_public => true }#, :star => true
-    render :partial => 'solution_search_result', :locals => { :articles => @articles, :key => params[:search_key] } 
-  end
-  
   protected
     
     def post_order

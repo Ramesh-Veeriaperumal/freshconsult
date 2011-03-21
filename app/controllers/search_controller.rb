@@ -1,5 +1,5 @@
 class SearchController < ApplicationController
-  before_filter { |c| c.requires_permission :manage_tickets }
+  before_filter( :only => [ :suggest, :index ] ) { |c| c.requires_permission :manage_tickets }
   
   #by Shan
   #To do.. some smart meta-programming
@@ -12,12 +12,42 @@ class SearchController < ApplicationController
     render :partial => '/search/navsearch_items'    
   end
   
+  def content
+    search_content [Solution::Article, Topic]
+  end
+  
+  def solutions
+    @skip_title = true
+    search_content [Solution::Article]
+  end
+  
+  def topics
+    @skip_title = true
+    search_content [Topic]
+  end
+  
   protected
+    def search_content(f_classes)
+      s_options = { :account_id => current_account.id }
+      s_options.merge!(:is_public => true) unless (current_user && !current_user.customer?)
+      s_options.merge!(:category_id => params[:category_id]) unless params[:category_id].blank?
+      
+      @items = ThinkingSphinx.search params[:search_key], 
+                                    :with => s_options,#, :star => true
+                                    :classes => f_classes, :per_page => 10
+      process_results
+      render :partial => '/search/search_results'
+    end
+  
     def search
       @items = ThinkingSphinx.search params[:search_key], 
                                         :with => { :account_id => current_account.id, :deleted => false }, 
                                         :star => true, :page => params[:page], :per_page => 10
   
+      process_results
+    end
+
+    def process_results
       results = Hash.new
       @items.each do |i|
         results[i.class.name] ||= []

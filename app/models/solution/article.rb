@@ -27,9 +27,10 @@ class Solution::Article < ActiveRecord::Base
 
   define_index do
     indexes :title, :sortable => true
-    indexes description
+    indexes :desc_un_html, :as => :description
 
     has account_id, user_id, is_public
+    has folder.category_id, :as => :category_id
     has '0', :as => :deleted, :type => :boolean
 
     set_property :delta => :delayed

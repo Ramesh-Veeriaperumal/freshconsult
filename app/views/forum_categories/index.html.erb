@@ -10,7 +10,7 @@
 <div class="forum_list">
 	<div class="forum-group">
 		<div class="search-grey-box">
-			<%= render :partial => "/search/pagesearch", :locals => { :placeholder => "Search All Topics" } %>
+			<%= render :partial => "/search/pagesearch", :locals => { :placeholder => "Search All Topics", :url => "/search/topics?search_key=" } %>
 		</div>
 		<% @forum_categories.each do |forum_category| %>
 			<div class="category-title">
