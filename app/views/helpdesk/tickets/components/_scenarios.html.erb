@@ -1,12 +1,10 @@
 <div class="rtDetails" id="Scenarios" style="display:none;">
 	<h3 class="title">Execute Scenario</h3>	
-	 <ul class="scenario_actions">
+	 <div class="request-list">
 	 	<% current_account.scn_automations.each do |scenario| %>
-
-	 		<li>	 			
-	 			<%= link_to ( image_tag("/images/left_action_arrow.gif", :class => "action_arrow" ) + scenario.name, { :action => :execute_scenario , :scenario_id => scenario.id} , :method => :post ) %>			
-			</li>
-
+	 		<div class="item">	 			
+	 			<%= link_to ( "<span class='wand'></span> #{scenario.name}", { :action => :execute_scenario , :scenario_id => scenario.id} , :method => :post, :class => "item-title", :title => "Execute this scenario" ) %>			
+			</div>
 		<% end %>
-	 </ul> 
+	 </div> 
 </div>
