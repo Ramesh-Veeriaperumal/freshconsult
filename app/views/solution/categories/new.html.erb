@@ -1,6 +1,4 @@
-<% content_for :layoutType do -%>single<%- end %>
 <h3 class="title">New Category</h3>
-
 <% form_for (@category), :html => {:multipart => true, :id => "folder-form"} do |f| %>
 	<%= render :partial => "category_form" , :locals => { :f => f }%>
 
