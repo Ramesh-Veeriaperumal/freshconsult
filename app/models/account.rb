@@ -249,7 +249,7 @@ class Account < ActiveRecord::Base
     end
 
     def send_welcome_email
-      #SubscriptionNotifier.deliver_welcome(self) #by Shan temp
+      SubscriptionNotifier.send_later(:deliver_welcome, self)
     end
     
 end
