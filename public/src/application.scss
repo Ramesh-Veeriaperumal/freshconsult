@@ -6,9 +6,7 @@ $color_pulp:#F3F1EC;
 
 /* Color Definitions */
 
-a.default{
-	@include link-colors(#4D769F, #3399cc, #4D769F, #4D769F);
-}
+a{ @include link-colors(#4D769F, #3399cc, #4D769F, #4D769F); }
 a:hover{text-decoration:none;}
 
 p{
@@ -337,11 +335,14 @@ ul.tabs{
 	border:3px solid darken($background, 5%);
 }
 
-.pagearea, .sidepanel, .flash_info, .rtCnt{  
+.pagearea, .sidepanel, .rtCnt{
+	background-color:#ffffff;	
+}
+
+.pagearea, .sidepanel, .rtCnt, #errorExplanation, .flash_info{  
     @extend .sp_border;
 	padding:14px 20px; margin:0px 10px 10px 0px;
 	@include corners(6px);
-	background-color:#ffffff;
 }
   
 .pagearea{
@@ -970,6 +971,13 @@ div.leader-right{
 	cursor: pointer;
 }
 
+input.uiButton{
+	padding:3px 10px;
+	position:relative;
+	top:1px;
+	left:-3px;
+}
+
 .uiButton:hover	, .fdbutton:hover			{ background-color: #007d9a; color: #fff; }
 .uiButton:active, .fdbutton:active				{ top: 1px; }
 .small.uiButton, .small.uiButton:visited 		{ font-size: 11px;  }
@@ -979,6 +987,9 @@ div.leader-right{
 
 .green.uiButton, .green.uiButton:visited		{ background-color: #91bd09; }
 .green.uiButton:hover							{ background-color: #749a02; }
+.grey.uiButton, .grey.uiButton:visited		 	{ background-color: #f4f4f4;color:#555555; text-shadow: none; }
+.grey.uiButton:hover							{ background-color: #efefef; }
+
 .blue.uiButton, .blue.uiButton:visited			{ background-color: #2daebf; }
 .blue.uiButton:hover							{ background-color: #007d9a; }
 .red.uiButton, .red.uiButton:visited			{ background-color: #e33100; }
@@ -1573,9 +1584,6 @@ body h5{
 		@include min-height(230px);
 		.mark_action{
 			margin-bottom:14px;
-			a{
-			
-			}
 		}
 	}
 	
@@ -1744,11 +1752,12 @@ body h5{
 
 .mark_action{ 
 	a, .stamp{
-		padding:3px 8px; 
+		padding:2px 6px; 
 		margin:0px 0px 6px 0px;
 		@include corners(4px);
 		@include link_colors(#ffffff, #ffffaf, #ffffff, #ffffff);
-		@include text-shadow(#333333, 0px, 1px, 1px);
+		text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
+		font-size:12px;
 		text-decoration:none;
 		font-weight:bold;
 	}
@@ -3587,7 +3596,7 @@ h4.border_title{
 				font-weight:500;
 			}
 			.info_data{
-				padding:3px 0px 4px 0px;
+				padding:6px 0px 4px 0px;
 				font-size:12px;
 				color:#888888;
 			}
@@ -3640,7 +3649,9 @@ h4.border_title{
 				margin:3px 0px 0px -30px;
 				padding:6px 0px 4px 30px; 
 				font-size:16px;
-				
+				a{
+					font-weight:normal;
+				}
 				background-repeat:no-repeat;
 				background-position:3px 6px;
 			}
@@ -3890,12 +3901,6 @@ h4.border_title{
 	background:#f2ffda;
 	@include corners(3px);
 	font-size:11px;
-}
-
-.flash_info{
-	background-color:#f4fdcb;
-	color:#333333;
-	font-size:14px;
 }
 
 .search_results{
@@ -4250,7 +4255,7 @@ div.color{
 	.ticket_icon  a{ background-image:url("../images/icon_small/page_white.png"); }
 	.contact_icon a{ background-image:url("../images/icon_small/user.png"); }
 	.company_icon  a{ background-image:url("../images/icon_small/building.png"); }
-	.solution_icon  a{ background-image:url("../images/icon_small/lightbulb.png"); }
+	.solution_icon  a{ background-image:url("../images/icon_small/solutions.png"); }
 	.forum_icon  a{ background-image:url("../images/icon_small/comments.png"); }
 	
 	li{

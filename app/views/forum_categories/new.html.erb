@@ -1,21 +1,9 @@
-<% content_for :layoutType do -%>single<%- end %>
-
-	<div class="crumbs" style="display:none;">
-		<%= link_to "Back to Category"[:category_title], categories_path, :class => "nav_older" %> 
+<h3 class="title"><%=t 'category.new'%> </h3>
+<% form_for :forum_category, :url => categories_path do |f| -%>
+	<%= f.error_messages %>
+	<%= render :partial => "/shared/name_desc", :locals => { :form => f } %>
+	<div class="button-container">	
+		<%= submit_tag 'Save'[:Create], { :class => "uiButton" } -%> 
+		<%= link_to('Cancel'[:cancel], categories_path, :class => "uiButton grey" ) -%>
 	</div>
-	<div class="header_area">		
-		<h3 class="title"><%=t 'category.new'%> </h3>
-	</div>	
-	<div class="page_area">
-	<% form_for :forum_category, :url => categories_path do |f| -%>
-		<%= f.error_messages %>
-		<%= render :partial => "/shared/name_desc", :locals => { :form => f } %>
-		<div class="button-container">	
-			<%= submit_tag 'Save'[:Create], { :class => "fdbutton" } -%> 
-			<%= link_to('Cancel'[:cancel], categories_path, :class => "fdbutton grey" ) -%>
-		</div>
-	<% end -%>
-	</div>
-
-
-
+<% end -%>

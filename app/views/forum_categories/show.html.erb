@@ -12,11 +12,11 @@
 			<% if logged_in? && current_user.has_manage_forums? -%>
 				<div class="action_buttons no_margin">
 			  		<%= link_to  t('forum.new'), new_category_forum_path(@forum_category), :class => "add_new icon" %>
-					<%= link_to t('edit') ,edit_category_path(@forum_category)   %> 
-					<%= link_to( t('delete'), category_path(@forum_category), :method => 'delete', :class => "last", :confirm => 'Are you sure you want to delete this category'  ) %>
+					<%= link_to "Edit Category" ,edit_category_path(@forum_category), :class => "last"   %> 
+					
 				</div> 
 			<% end -%> 
-			<%= render :partial => "/search/pagesearch", :locals => { :placeholder => "Search #{@forum_category.name}" } %>
+			<%= render :partial => "/search/pagesearch", :locals => { :placeholder => "Search #{@forum_category.name}", :url => "/search/topics?category_id=#{@forum_category.id}&search_key=" } %>
 		</div>
 	<%= render :partial => "forum_shared/category", :object => @forum_category %>
 	</div>		

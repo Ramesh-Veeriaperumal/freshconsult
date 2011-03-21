@@ -21,7 +21,7 @@ module ApplicationHelper
       #['helpdesk/tags',      'Tags',         permission?(:manage_tickets)],
       ['solution/categories', 'Solutions',    true],      
       ['/categories',         'Forums',       true],      
-      ['/contacts',           'Customers',    permission?(:manage_users)],
+      ['/contacts',           'Customers',    permission?(:manage_tickets)],
       ['support/tickets',     'Check your ticket status',      !permission?(:manage_tickets)],
       #['helpdesk/articles',  'Articles',     permission?(:manage_knowledgebase)],
       ['/admin/home',         'Admin',        permission?(:manage_users)]
