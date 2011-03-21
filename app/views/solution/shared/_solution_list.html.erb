@@ -1,9 +1,9 @@
-<% if logged_in? && current_user.has_manage_solutions? %>
-	<div class="action_buttons">
-		<%= link_to ("Add Solution", new_solution_category_folder_article_path(category , folder), :class => "icon add_new") %>
-		<%= link_to 'Edit' ,  edit_solution_category_folder_path(category, folder), :class => "last" %>
-	</div>
-<% end %>	
+
+<div class="action_buttons">
+	<%= link_to ("Add Solution", new_solution_category_folder_article_path(category , folder), :class => "icon add_new") %>
+	<%= link_to 'Edit' ,  edit_solution_category_folder_path(category, folder), :class => "last" %>
+</div>
+
 <h4 class="border_title"><%= folder.name %></h4> 
 <div class="info_data"><%= folder.description %></div> 
 
