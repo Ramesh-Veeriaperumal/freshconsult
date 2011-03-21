@@ -65,6 +65,7 @@ class Helpdesk::TicketsController < ApplicationController
 
   def set_suggested_solutions
    @articles = Solution::Article.suggest_solutions @ticket   
+   #@articles =[]
   end
   
   def update
