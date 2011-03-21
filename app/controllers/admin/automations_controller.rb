@@ -81,10 +81,10 @@ class Admin::AutomationsController < Admin::AdminController
     def load_config
       a_users = current_account.users.find(:all , :conditions =>{:user_role => [User::USER_ROLES_KEYS_BY_TOKEN[:poweruser],User::USER_ROLES_KEYS_BY_TOKEN[:admin]]}, :order => 'name')      
       agents = a_users.collect { |au| [au.id, au.name] }
-      agents.insert(0, [0, '{{ticket.agent}}'])
-        
+      agents << ([0, '{{ticket.agent}}'])
+
       groups  = current_account.groups.find(:all).collect { |g| [g.id, g.name]}
-      groups.insert(0, [0, '{{ticket.group}}'])
+      groups << ([0, '{{ticket.group}}'])
       
       action_hash     = [{:name => 0              , :value => "--- Click to Select Action ---"},
                          {:name => "priority"     , :value => "Set Priority as"  , :domtype => "dropdown", :choices => Helpdesk::Ticket::PRIORITY_NAMES_BY_KEY.sort },
