@@ -6,10 +6,16 @@ namespace :sla do
     
     overdue_tickets = Helpdesk::Ticket.find(:all, :readonly => false, :conditions =>['due_by <=? AND isescalated=? AND status=?', Time.zone.now.to_s(:db),false,Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open]] )
     puts "Number of overdues are #{overdue_tickets.size}"
-    overdue_tickets.each do |ticket|
-      escalateto = ticket.account.sla_policies.first.sla_details.find_by_priority(ticket.priority).escalateto
-      unless escalateto.nil?
-        email = User.find_by_id(escalateto).email                  
+    overdue_tickets.each do |ticket|      
+      sla_policy_id = nil
+      unless ticket.requester.customer.nil?     
+        sla_policy_id = ticket.requester.customer.sla_policy_id     
+      end      
+      sla_policy_id = Helpdesk::SlaPolicy.find_by_account_id_and_is_default(ticket.account_id, true) if sla_policy_id.nil?     
+      sla_detail = Helpdesk::SlaDetail.find(:first , :conditions =>{:sla_policy_id =>sla_policy_id, :priority =>ticket.priority})
+           
+      unless sla_detail.escalateto.nil?
+        email = User.find(sla_detail.escalateto).email                  
         SlaNotifier.deliver_sla_escalation(ticket, email) unless email.nil?
       end
         ticket.update_attribute(:isescalated , true)
@@ -18,9 +24,16 @@ namespace :sla do
     froverdue_tickets = Helpdesk::Ticket.find(:all, :joins => :ticket_states , :readonly => false , :conditions =>['frDueBy <=? AND fr_escalated=? AND helpdesk_ticket_states.first_response_time IS ?', Time.zone.now.to_s(:db),false,nil] )
     puts "Number of first response overdues are #{froverdue_tickets.size}"
     froverdue_tickets.each do |fr_ticket|
-      fr_escalateto = fr_ticket.account.sla_policies.first.sla_details.find_by_priority(fr_ticket.priority).escalateto
-      unless fr_escalateto.nil?
-        fr_email = User.find_by_id(fr_escalateto).email  
+      
+      fr_sla_policy_id = nil
+      unless fr_ticket.requester.customer.nil?     
+        fr_sla_policy_id = fr_ticket.requester.customer.sla_policy_id     
+      end      
+      fr_sla_policy_id = Helpdesk::SlaPolicy.find_by_account_id_and_is_default(fr_ticket.account_id, true) if fr_sla_policy_id.nil?     
+      fr_sla_detail = Helpdesk::SlaDetail.find(:first , :conditions =>{:sla_policy_id =>fr_sla_policy_id, :priority =>fr_ticket.priority})
+      
+      unless fr_sla_detail.fr_escalateto.nil?
+        fr_email = User.find(fr_sla_detail.fr_escalateto).email  
         SlaNotifier.deliver_fr_sla_escalation(fr_ticket,fr_email) unless fr_email.nil?
       end
         fr_ticket.update_attribute(:fr_escalated , true)   
