@@ -49,7 +49,7 @@
 				<% @searched_articles.each do |article| %>
 					<div class="group">
 						<%= link_to(article.excerpts.title, article, :class => "big") %>
-						<p><%= article.excerpts.description  %></p>
+						<p><%= article.excerpts.desc_un_html  %></p>
 					</div>
 				<% end %>
 			</li>
