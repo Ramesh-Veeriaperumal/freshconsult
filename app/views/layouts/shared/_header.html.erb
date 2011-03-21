@@ -13,7 +13,7 @@
 	<div class="wrapper">
 	    <div class="header_links">
 	    	<% if current_user then %>              
-				Welcome <span class="font_color"><strong><%= link_to current_user.name, edit_user_path(current_user) %></strong>-<%= link_to('Sign out', logout_path) %></span>
+				Welcome <span class="font_color"><strong><%= link_to current_user.name, edit_profile_path(current_user) %></strong>-<%= link_to('Sign out', logout_path) %></span>
 			<% else %>
 				<%= link_to('login', login_path) %>
 			<% end %>				
