@@ -15,8 +15,8 @@ namespace :sla do
       sla_detail = Helpdesk::SlaDetail.find(:first , :conditions =>{:sla_policy_id =>sla_policy_id, :priority =>ticket.priority})
            
       unless sla_detail.escalateto.nil?
-        email = User.find(sla_detail.escalateto).email                  
-        SlaNotifier.deliver_sla_escalation(ticket, email) unless email.nil?
+        agent = User.find(sla_detail.escalateto)                 
+        SlaNotifier.deliver_sla_escalation(ticket, agent) unless agent.email.nil?
       end
         ticket.update_attribute(:isescalated , true)
      end
@@ -32,9 +32,9 @@ namespace :sla do
       fr_sla_policy_id = Helpdesk::SlaPolicy.find_by_account_id_and_is_default(fr_ticket.account_id, true) if fr_sla_policy_id.nil?     
       fr_sla_detail = Helpdesk::SlaDetail.find(:first , :conditions =>{:sla_policy_id =>fr_sla_policy_id, :priority =>fr_ticket.priority})
       
-      unless fr_sla_detail.fr_escalateto.nil?
-        fr_email = User.find(fr_sla_detail.fr_escalateto).email  
-        SlaNotifier.deliver_fr_sla_escalation(fr_ticket,fr_email) unless fr_email.nil?
+      unless fr_sla_detail.escalateto.nil?
+        fr_agent = User.find(fr_sla_detail.escalateto)  
+        SlaNotifier.deliver_fr_sla_escalation(fr_ticket,fr_agent) unless fr_agent.email.nil?
       end
         fr_ticket.update_attribute(:fr_escalated , true)   
         #If there is no email-id /agent still escalted will show as true. This is to avoid huge sending if somebody changes the config

@@ -1,9 +1,6 @@
 <% content_for :layoutType do -%>single<%- end %>
+<h3 class="title">&nbsp;Your requests</h3>
 
-<div class="header_area">
-	<h3 class="title">&nbsp;Your requests</h3>
-</div> 
-<div class="page_area">
  <table class="tickets">	
 	<tbody>
 		<% @tickets.each do |ticket| %>
@@ -27,5 +24,4 @@
 			</tr>
 		<% end %>
 	</tbody>
- </table> 
-</div>
+ </table>

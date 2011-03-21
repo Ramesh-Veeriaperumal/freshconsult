@@ -2,7 +2,7 @@
 <% content_for :head do %>
   <%= javascript_include_tag "helpdesk/expanding_textarea.js" %>
   <%= javascript_include_tag "helpdesk/page_switcher" %>
-  <% javascript_tag do %>
+  <% javascript_tag do -%>
     document.observe("dom:loaded", function(){
       new Helpdesk.PageSwitcher({
         toggleMode: true,
@@ -31,34 +31,21 @@
 	
 	}
 	
-  <% end %>
+  <%- end %>
 <% end %>
 
 <% content_for :sidebar do %>
-	<!--div class="sidepanel">
-		<div class="element last">
-			<% if @ticket.responder %>
-				<div class="user_details_widget clearfix" style="padding:0px">  
-					<h4>Assigned To agent</h4>
-					<%= user_avatar(@ticket.responder.avatar, :thumb)  %>
-					<%= link_to(h(@ticket.responder.name), @ticket.responder, :class => "user_name") %>
-					<%= auto_link(h(@ticket.responder.email)) %>
-					<div> <span class="info_data">phone</span> <%= h(@ticket.responder.phone) %></div>
-					<div> <span class="info_data">mobile</span> <%= h(@ticket.responder.mobile) %></div>
-				</div>
-			<% end %>
-			<span class="seperator"></span>
-			<div> <strong class="info_data">Priority:</strong> <%=@ticket.priority_name%> </div>
-			<div> <strong class="info_data">
-					<% if(Time.now > @ticket.due_by ) %>
-						Already Overdue for <%= distance_of_time_in_words(Time.now, @ticket.due_by) %>
-					<% else %>
-						Due in <%= distance_of_time_in_words(Time.now, @ticket.due_by) %> 
-					<% end %>  
-				</strong> 
-			</div>
+	<% if @ticket.responder %>
+		<div class="sidepanel clearfix">
+			<h4 class="title">Assigned To agent</h4>
+			<%= user_avatar(@ticket.responder.avatar, :thumb)  %>
+			<%= content_tag (:b, h(@ticket.responder.name)) %>
+			<%= h(@ticket.responder.email) %>
+			<%= content_tag ( :div, content_tag(:span, "phone", :class => "info_data") + " " + h(@ticket.responder.phone) ) unless @ticket.responder.phone.empty? %>
+			<%= content_tag ( :div, content_tag(:span, "mobile", :class => "info_data") + " " + h(@ticket.responder.mobile) ) unless @ticket.responder.mobile.empty? %>
+			
 		</div>
-	</div-->
+	<% end %>
 <% end %>
 	
 <div class="request_details">
@@ -76,11 +63,7 @@
 		        <b><%= h(@ticket.subject) %></b>
 		    </div>
 			<div class="description">
-				<div class="ticket_actions action_icons" id="close_ticket_btn">
-					<% unless (@ticket.status == 5) %>
-						<%= link_to_function("Close this request", "closeTicket(#{@ticket.display_id})", :class => "fdbutton grey" )  %>
-					<% end %>
-		        </div>	 
+				<div class="ticket_actions action_icons" id="close_ticket_btn"></div>	 
 		        <div class="user_details">
 		        	<%= user_avatar(@ticket.requester.avatar)  %>
 		          	<div> Reported by <%= link_to(h(@ticket.requester.display_name),@ticket.requester, :class => "user_name") %> </div>
@@ -109,8 +92,13 @@
 			<% end %> 
 	    </div>
 		<div class="alignright">		
-			<a href="javascript:void(0)" class="fdbutton" onclick="jQuery('#ReplyToTicket').show(); jQuery(this).hide();">Add comment</a>
+			<% unless (@ticket.status == 5) %>
+				<%= link_to_function("Close this request", "closeTicket(#{@ticket.display_id})", :class => "uiButton" )  %>
+			<% end %>
+			<a href="javascript:void(0)" class="uiButton" onclick="jQuery('#ReplyToTicket').show(); jQuery(this).hide();">Add comment</a>
 		</div>  
+		<br />
+			
 		<div id="ReplyToTicket" style="display:none;">
 			<% form_for Helpdesk::Note.new, :url => support_ticket_helpdesk_notes_path(@ticket), :html => {:multipart => true }  do |f| %>
 				<%= f.error_messages %>
@@ -126,8 +114,8 @@
 					</li>
 				</ul>
 				
-				<div class="button-container">
-			  		<%= f.submit "Add comment", {:class => "fdbutton"} %>
+				<div class="button-container"> 
+			  		<%= f.submit "Add comment", {:class => "uiButton"} %>
 				</div>
 			<% end %>		
 		</div>

@@ -1462,7 +1462,7 @@ body h5{
 	}
 	.subtitle{
 			margin:0px;
-			padding:8px 10px;
+			padding:8px 0px;
 			font-size:14px;
 			font-weight:bold;
 			color:#333333;
@@ -1534,37 +1534,7 @@ body h5{
  
 
 .rtCnt{
-	padding:0px 0px 0px 0px;
-	.scenario_actions{
-		@include no-bullets;
-		@include clearfix;
-		border:1px solid #cfcfcf;
-		padding:0px;
-		margin:0px 5px; 
-		li{
-			a{
-				img{
-					position:absolute;
-					left:10px;
-					top:8px;
-				}
-				position:relative;
-				display:block;
-				@include link-colors(#444444, #527EAA, #527EAA, #333333);
-				@include vertical-gradient(#efefef, #e8e8e8);
-				border-bottom:1px solid #dfdfdf;
-				text-decoration:none;
-				font-weight:bold;
-				font-size:12px;
-				padding:6px 8px 6px 30px;
-				
-			}
-			span{
-				font-size:10px;
-			}
-		}	
-		
-	}
+	padding:0px 0px 0px 0px; 
 	
 	.local_activities{
 		a{
@@ -1853,7 +1823,6 @@ div.panel_area{
 		}
 	}
 }
-
 
 .request_panel{
 	padding:0px 0px;
@@ -4518,3 +4487,126 @@ div.action_buttons{
 	display:block !important;
 	text-align:center;
 }
+
+.scenario_actions{
+		@include no-bullets;
+		@include clearfix;
+		border:1px solid #cfcfcf;
+		padding:0px;
+		margin:0px 5px; 
+		li{
+			a{
+				img{
+					position:absolute;
+					left:10px;
+					top:8px;
+				}
+				position:relative;
+				display:block;
+				@include link-colors(#444444, #527EAA, #527EAA, #333333);
+				@include vertical-gradient(#efefef, #e8e8e8);
+				border-bottom:1px solid #dfdfdf;
+				text-decoration:none;
+				font-weight:bold;
+				font-size:12px;
+				padding:6px 8px 6px 30px;
+				
+			}
+			span{
+				font-size:10px;
+			}
+		}	
+		
+	}
+
+.request-list{
+	background-color:#f4f4f4;
+	margin:4px 1px;
+	div.item{ 
+		border-bottom:1px dotted #dedede;
+		position:relative;
+		a.item-title{
+			font-size:12px;
+			@include link-colors(#333333, #ffffff);
+			display:block;
+			text-decoration:none;
+			padding:9px 8px 11px 26px;
+			.bulb, .wand{
+				position:absolute;
+				width:16px; 
+				height:16px;
+				left:6px;
+				top:10px;
+				background-postion:left; 
+				background-repeat:no-repeat;
+			}
+			.bulb{
+				background-image:url("../images/icon_small/lightbulb-grey.gif");
+			} 
+			.wand{
+				background-image:url("../images/icon_small/wand-grey.png");
+				width:22px; 
+				height:22px;
+				left:2px;
+				top:8px
+			}
+		}
+		a.item-title:hover{
+			background-color:#666666;
+			.arrow_left{
+				border-color:#666666;
+				border-right-color:#ffffff;
+			}
+			.bulb{
+				background-image:url("../images/icon_small/lightbulb.png");
+			}	
+			.wand{
+				background-image:url("../images/icon_small/wand.png");
+			}	
+				
+		}
+		a.private{
+			background-image:url("../images/private_lock_grey.gif");
+			background-position: right 9px;
+			background-repeat:  no-repeat;
+		}
+	} 
+}
+
+.item-menu{
+	position:absolute;
+	left:-1px;
+	top:0px;
+	z-index:9999;
+	width:1px;
+	display:none;
+	ul{
+		@include no-bullets;
+		position:absolute;
+		right:0px;
+		top:0px;
+		width:170px;
+		background: #f6f6f6;
+		@include corners(6px, 0px, 0px, 6px);
+		@include shadows(#bbbbbb, 0px, 3px, 10px);
+		border:1px solid #afafaf;
+		padding:3px 0px;
+		margin:0px;
+		li{
+			display:block;
+			a{
+				font-size:13px;
+				font-weight:400;
+				padding:3px 12px;
+				display:block;
+				text-decoration:none; 		
+				@include link-colors(#666666, #ffffff); 
+			}
+			a:hover{
+				background:#666666; 
+			}
+			
+		} 
+		
+	}
+} 
