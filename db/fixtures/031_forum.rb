@@ -7,10 +7,10 @@ category = ForumCategory.seed(:account_id, :name) do |s|
 end
 
 Forum.seed_many(:account_id, :forum_category_id, :name, [
-    ['Announcements', 'General helpdesk announcements to the customers.', :howto],
+    ['Announcements', 'General helpdesk announcements to the customers.', :announce],
     ['Feature Requests', 'Customers can voice their ideas here.', :ideas],
     ['Tips and Tricks', 'Helpful Tips and Tricks.', :howto],
-    ['Help from the Community', 'No description...', :howto]
+    ['Help from the Community', 'No description...', :problem]
   ].map do |f|
     {
       :account_id => account.id,
