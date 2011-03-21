@@ -4,15 +4,17 @@
 			<% className = (topic.sticky?) ? "sticky" : "" %>
 			<% last_post = topic.last_post %>
 			<li class="<%= className %>">
-				<span class="floatr mark_action">
-					<div class="stamp stamp_type_<%=topic.stamp_type%>"><%=h(topic.stamp_name)%></div>
-				</span>
+				
 				<% if topic.posts_count > 1 %>
 					<%= user_avatar( last_post.user.avatar ) %>
 				<% else %>
 					<%= user_avatar( topic.user.avatar ) %>
 				<% end %>
+				<b><%=(topic.sticky?) ? "STICKY" : ""%></b>
 				<%= link_to topic.title, category_forum_topic_path(category, forum, topic), :class => "topic-title" %>
+				<span class="mark_action">
+					<span class="stamp stamp_type_<%=topic.stamp_type%>"><%=h(topic.stamp_name)%></span>
+				</span>
 					<div class="info_data"> 
 						<% if topic.posts_count > 1 %>
 							Last reply <%= time_ago_in_words(last_post.created_at) %> ago 

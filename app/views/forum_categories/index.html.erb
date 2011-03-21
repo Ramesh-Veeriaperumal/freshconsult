@@ -1,5 +1,7 @@
 <% content_for :layoutType do %>single<% end %>
 <% @monitoring = logged_in? && !Monitorship.count(:id, :conditions => ['user_id = ? and active = ?', current_user.id, true]).zero? %>
+ 
+
 <div class="floatr">
 	<% if admin? %>
   		<%= link_to t('category.new'), new_category_path, :class => "uiButton" %>
