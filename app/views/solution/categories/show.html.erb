@@ -11,7 +11,11 @@
 	<%= render :partial => "/search/pagesearch", :locals => { :placeholder => "Search #{@item.name}", :url => "/search/solutions?category_id=#{@item.id}&search_key=" } %>
 	
 	<% unless (@item.folders.size == 0) %>	
-	  <%= render :partial => "/solution/shared/solution_list", :locals => { :category => @item, :folder => @item.folders.first } %>
+	  <% if logged_in? && current_user.has_manage_solutions? %>
+	  		<%= render :partial => "/solution/shared/solution_list", :locals => { :category => @item, :folder => @item.folders.first } %>
+	  <%else%>
+	  		<%= render :partial => "/solution/shared/portal_sol_list", :locals => { :category => @item, :folder => @item.folders.first } %>
+	  <%end%>
 	<% else %>
 		<span class="info_data">No folders in this category - </span><%= link_to 'add a new folder'[:create_new_folder], new_solution_category_folder_path(@item) %>
 	<% end %>	
