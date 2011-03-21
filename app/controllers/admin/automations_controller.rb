@@ -91,7 +91,7 @@ class Admin::AutomationsController < Admin::AdminController
                          {:name => "ticket_type"  , :value => "Set Type as"      , :domtype => "dropdown", :choices => Helpdesk::Ticket::TYPE_NAMES_BY_KEY.sort },
                          {:name => "status"       , :value => "Set Status as"    , :domtype => "dropdown", :choices => Helpdesk::Ticket::STATUS_NAMES_BY_KEY.sort},
                          {:name => 0              , :value => "------------------------------"},
-                         {:name => "add_tag"      , :value => "Add Tag(s)"       , :domtype => 'autocompelete', :autocompelete_url => "allemailsurl"},
+                         {:name => "add_tag"      , :value => "Add Tag(s)"       , :domtype => 'text'},
                          {:name => 0              , :value => "------------------------------"},
                          {:name => "responder_id" , :value => "Assign to Agent"  , :domtype => 'dropdown', :choices => agents },
                          {:name => "group_id"     , :value => "Assign to Group"  , :domtype => 'dropdown', :choices => groups },
