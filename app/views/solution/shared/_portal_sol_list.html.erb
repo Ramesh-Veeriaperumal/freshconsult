@@ -1,0 +1,14 @@
+
+<h4 class="border_title"><%= folder.name %></h4> 
+<div class="info_data"><%= folder.description %></div> 
+
+<% unless (folder.articles.size == 0) %>
+	<ol class="artical_list">
+		<% folder.articles.visible.each do |article| %>
+			<li><%= link_to article.title, solution_category_folder_article_path(category, folder, article) %></li>
+		<% end %>
+	</ol>
+<% else %>
+	<span class="no_info_text">No solutions in this folder </span>
+<% end %>
+<span class="seperator"></span>
