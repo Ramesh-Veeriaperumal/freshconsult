@@ -495,7 +495,7 @@ ActiveRecord::Schema.define(:version => 20110314045229) do
 
   create_table "solution_articles", :force => true do |t|
     t.string   "title"
-    t.text     "description",  :limit => 16777215
+    t.text     "description",  :limit => 2147483647
     t.integer  "user_id",      :limit => 8
     t.integer  "folder_id",    :limit => 8
     t.integer  "status"
@@ -503,11 +503,11 @@ ActiveRecord::Schema.define(:version => 20110314045229) do
     t.boolean  "is_public"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "thumbs_up",                        :default => 0
-    t.integer  "thumbs_down",                      :default => 0
+    t.integer  "thumbs_up",                          :default => 0
+    t.integer  "thumbs_down",                        :default => 0
     t.integer  "account_id",   :limit => 8
-    t.boolean  "delta",                            :default => true, :null => false
-    t.text     "desc_un_html", :limit => 16777215
+    t.boolean  "delta",                              :default => true, :null => false
+    t.text     "desc_un_html", :limit => 2147483647
   end
 
   add_index "solution_articles", ["account_id", "folder_id"], :name => "index_solution_articles_on_account_id"
@@ -660,7 +660,7 @@ ActiveRecord::Schema.define(:version => 20110314045229) do
     t.string   "time_zone"
     t.integer  "posts_count",                      :default => 0
     t.datetime "last_seen_at"
-    t.integer  "deleted",             :limit => 1
+    t.boolean  "deleted",                          :default => false
     t.integer  "user_role"
     t.boolean  "delta",                            :default => true,  :null => false
   end

@@ -170,12 +170,12 @@ class User < ActiveRecord::Base
   
   def deliver_activation_instructions!
     reset_perishable_token!
-    UserNotifier.send_later(:deliver_activation_instructions, self)
+    UserNotifier.send_later((customer? ? :deliver_user_activation : :deliver_agent_activation), self)
   end
  
   def deliver_activation_confirmation!
     reset_perishable_token!
-    UserNotifier.deliver_activation_confirmation(self)
+    UserNotifier.send_later((customer? ? :deliver_user_confirmation : :deliver_agent_confirmation), self)
   end
   
   def set_time_zone
