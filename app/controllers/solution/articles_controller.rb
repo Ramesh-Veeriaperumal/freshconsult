@@ -1,6 +1,6 @@
 class Solution::ArticlesController < ApplicationController
   
-  before_filter :check_user , :only => [:show]
+  
   before_filter :set_selected_tab
   
   before_filter :except => [:index, :show] do |c| 
@@ -145,12 +145,7 @@ end
     end
   end
   
-   def check_user
-    if current_user.nil? || current_user.customer?
-      @article = Solution::Article.find(params[:id], :include => :folder)
-      return redirect_to(support_article_url(@article)) 
-    end
-  end
+  
   
  
   

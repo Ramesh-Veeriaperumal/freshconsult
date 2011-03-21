@@ -1,6 +1,5 @@
-class Support::ArticlesController < ApplicationController
-  layout 'ssportal'
-
+class Support::ArticlesController < ApplicationController 
+  
   before_filter { |c| c.requires_permission :portal_knowledgebase }
 
   def index
@@ -12,8 +11,8 @@ class Support::ArticlesController < ApplicationController
   end
   
   def show
-     @article = Solution::Article.find(params[:id])
-     respond_to do |format|
+      @article = Solution::Article.find(params[:id], :include => :folder) 
+    respond_to do |format|
       format.html
       format.xml  { render :xml => @article.to_xml(:include => :folder) }
     end
