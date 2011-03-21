@@ -29,7 +29,9 @@ class Topic < ActiveRecord::Base
     indexes posts.body, :as => :comment
 
     has account_id, user_id
+    has forum.forum_category_id, :as => :category_id
     has '0', :as => :deleted, :type => :boolean
+    has '1', :as => :is_public, :type => :boolean
 
     set_property :delta => :delayed
     set_property :field_weights => {

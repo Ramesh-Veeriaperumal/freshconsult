@@ -41,7 +41,7 @@
 <%- end %>
 <h3 class="title">Solutions</h3> 
 <div class="search-grey-box ignore-margin-20">
-	<%= render :partial => "/search/pagesearch", :locals => { :placeholder => "Search All Solutions"  } %>
+	<%= render :partial => "/search/pagesearch", :locals => { :placeholder => "Search All Solutions", :url => "/search/solutions?search_key=" } %>
 </div>
 <div class="clearfix solution-list">			
 	<% @categories.each do |category| %>

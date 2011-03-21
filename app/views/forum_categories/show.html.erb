@@ -16,7 +16,7 @@
 					<%= link_to( t('delete'), category_path(@forum_category), :method => 'delete', :class => "last", :confirm => 'Are you sure you want to delete this category'  ) %>
 				</div> 
 			<% end -%> 
-			<%= render :partial => "/search/pagesearch", :locals => { :placeholder => "Search #{@forum_category.name}" } %>
+			<%= render :partial => "/search/pagesearch", :locals => { :placeholder => "Search #{@forum_category.name}", :url => "/search/topics?category_id=#{@forum_category.id}&search_key=" } %>
 		</div>
 	<%= render :partial => "forum_shared/category", :object => @forum_category %>
 	</div>		
