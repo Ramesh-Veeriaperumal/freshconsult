@@ -156,7 +156,12 @@ class Helpdesk::TicketsController < ApplicationController
     @item.create_activity(current_user, "{{user_path}} executed the scenario '{{scenario_name}}' on {{notable_path}}", 
                             { 'scenario_name' => va_rule.name },
                             "{{user_path}} executed the scenario '{{scenario_name}}'")
-
+    
+    actions_executed = "<li> Sample list </li>" 
+    
+    flash[:notice] = render_to_string(:inline => "\"#{va_rule.name}\" scenario executed <a href='#' class='show-list'>view details...</a> 
+                                                <div class='list'> <h4 class='title'>Executed Scenarios</h4> <ul> #{actions_executed} </ul> </div>")
+                                  
     redirect_to :back
   end 
   
