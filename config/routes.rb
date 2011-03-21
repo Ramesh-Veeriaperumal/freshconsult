@@ -10,6 +10,8 @@ ActionController::Routing::Routes.draw do |map|
   
   map.resources :groups
   
+  map.resources :profiles , :member => { :change_password => :post}
+  
   map.resources :agents, :member => { :delete_avatar => :delete , :restore => :put }
 
   map.resources :sla_details

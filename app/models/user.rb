@@ -135,6 +135,10 @@ class User < ActiveRecord::Base
   def customer?
     user_role == USER_ROLES_KEYS_BY_TOKEN[:customer]
   end
+  
+  def agent?
+    user_role == USER_ROLES_KEYS_BY_TOKEN[:poweruser]
+  end
 
   #Savage_beast changes end here
 

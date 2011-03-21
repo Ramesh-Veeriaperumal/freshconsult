@@ -15,7 +15,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_create :set_spam, :populate_requester, :set_dueby, :save_ticket_states
   after_create :refresh_display_id, :save_custom_field, :pass_thro_biz_rules, :autoreply 
-  before_update :cache_old_model, :set_dueby
+  before_update :cache_old_model, :update_dueby
   after_update :save_custom_field, :update_ticket_states, :notify_on_update
   
   belongs_to :account
@@ -204,9 +204,17 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   #shihab-- date format may need to handle later. methode will set both due_by and first_resp
-  def set_dueby #For update - Do all these things only when priority changes.. Shan
+
+  def update_dueby
+     if priority != @old_ticket.priority
+       set_dueby
+     end
+  end
+  def set_dueby 
+    
+    set_account_time_zone   
     createdTime = created_at || Time.zone.now
-    self.priority = 1 if priority.nil? #Use PRIORITY_KEYS_BY_TOKEN instead..
+    self.priority = PRIORITY_KEYS_BY_TOKEN[:low] if priority.nil? 
      
     sla_policy_id = nil
     unless self.requester.customer.nil?     
@@ -221,10 +229,21 @@ class Helpdesk::Ticket < ActiveRecord::Base
     else      
       self.due_by = (sla_detail.resolution_time).div(60).business_minute.after(createdTime)      
       self.frDueBy =  (sla_detail.response_time).div(60).business_minute.after(createdTime)     
-    end
-    
-    logger.debug "sla_detail_id :: #{sla_detail.id} :: and createdTime : #{createdTime} due_by::#{self.due_by} and fr_due:: #{self.frDueBy} "   
+    end 
+     set_user_time_zone if User.current
+     logger.debug "sla_detail_id :: #{sla_detail.id} :: and createdTime : #{createdTime} due_by::#{self.due_by} and fr_due:: #{self.frDueBy} "   
   end
+
+
+ def set_account_time_zone  
+    self.account.make_current
+    Time.zone = self.account.time_zone    
+ end
+ 
+ def set_user_time_zone 
+   Time.zone = User.current.time_zone  
+ end
+  
   
   def refresh_display_id #by Shan temp
     if display_id.nil?

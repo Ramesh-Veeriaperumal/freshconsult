@@ -1,20 +1,16 @@
 /* line 1, ../src/validation.scss */
 #errorExplanation {
-  border: 3px solid #e2e2e2;
   padding: 14px 20px;
   margin: 0px 0px 10px 0px;
-  -moz-border-radius: 6px 6px 6px 6px;
-  -webkit-border-radius: 6px 6px 6px 6px;
-  border-radius: 6px 6px 6px 6px;
   background-color: #feefd6;
 }
 
-/* line 11, ../src/validation.scss */
+/* line 7, ../src/validation.scss */
 #errorExplanation h2 {
   display: none;
 }
 
-/* line 15, ../src/validation.scss */
+/* line 11, ../src/validation.scss */
 #errorExplanation p {
   color: #333;
   margin: 0px;
@@ -23,9 +19,16 @@
   color: #993333;
 }
 
-/* line 23, ../src/validation.scss */
+/* line 19, ../src/validation.scss */
 #errorExplanation ul li {
   font-size: 13px;
   list-style: disc;
   margin: 8px 8px 5px 18px;
+}
+
+/* line 25, ../src/validation.scss */
+.flash_info {
+  background-color: #f4fdcb;
+  color: #333333;
+  font-size: 14px;
 }

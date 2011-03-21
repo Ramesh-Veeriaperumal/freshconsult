@@ -17,8 +17,7 @@
 		<div class="search-grey-box">
 			<% if logged_in? && admin? -%>
 				<div class="action_buttons no_margin">
-					<%= link_to t('edit') , edit_category_forum_path(@forum_category, @forum)  %>
-					<%= link_to(t('delete'), category_forum_path(@forum_category, @forum), :method => 'delete', :class => "last",  :confirm => 'Are you sure you want to delete this folder' ) %>
+					<%= link_to "Edit Forum" , edit_category_forum_path(@forum_category, @forum), :class => "last"  %>
 				</div>
 			<% end %>
 			<div class="floatr" style="display:none;">
