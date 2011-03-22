@@ -100,8 +100,8 @@ class Solution::Article < ActiveRecord::Base
       )
   end
   
-  def set_un_html_content    
-    self.desc_un_html = (self.description).gsub(/<\/?[^>]*>/, "") unless self.description.empty?
+  def set_un_html_content        
+    self.desc_un_html = (self.description.gsub(/<\/?[^>]*>/, "")).gsub(/&nbsp;/i,"") unless self.description.empty?
   end
     
 end

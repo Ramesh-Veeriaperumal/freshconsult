@@ -79,7 +79,7 @@ class Helpdesk::SlaPoliciesController < Admin::AutomationsController
     @sla_policy = Helpdesk::SlaPolicy.find(params[:id])
     @sla_policy.destroy
     respond_to do |format|
-      format.html { redirect_to(helpdesk_support_plans_url) }
+      format.html { redirect_to(helpdesk_sla_policies_url) }
       format.xml  { head :ok }
     end
     

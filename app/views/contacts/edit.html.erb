@@ -1,5 +1,11 @@
-<div class="page_area">
-	<% form_for @user, :url => { :controller => "contacts", :action => "update" },:html => { :multipart => true }  do |f| %>
+<h3 class="title">Edit Contact <span class="info_data">"<%= @user.display_name %>"</span> </h3>
+<% form_for @user, :url => { :controller => "contacts", :action => "update" },:html => { :multipart => true }  do |f| %>
 	  <%= render :partial => "form", :locals => { :f => f, :type => "edit" } %>
-	<% end -%>
-</div>
+	  <div class="button-container">
+		  <div class="floatl">
+		  		<%= link_to('Delete', {:controller => "contacts", :action => "destroy", :id => @user} , :method => 'delete', :confirm => 'Are you sure you want to delete this contact?', :class => "uiButton red") %>
+		  </div>
+	      <%= f.submit "Save changes", :class => "uiButton" %> 
+		  <%= link_to "Cancel", (@user.new_record? ? {:controller =>'contacts', :action => 'index'} : @user ), :class => "uiButton grey" %>
+	</div>
+<% end -%>
