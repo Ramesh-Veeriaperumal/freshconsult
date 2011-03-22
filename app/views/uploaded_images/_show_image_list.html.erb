@@ -1,0 +1,12 @@
+<% if !images.nil? and images.size > 0 %>
+<ul>
+  <% images.each do |image| %>
+    <li>
+      <a href="javascript:void(0)" onclick="<%="ImageDialog.ts_insert_image('#{image.content.url }', '#{image.content_file_name}');" %>">
+      <%= image_tag( image.content.url(:thumb) ) %></a>
+    </li>
+  <% end %>
+</ul>
+<% else %>
+ No Images Uploaded Yet.
+<% end %>
