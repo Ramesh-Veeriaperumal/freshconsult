@@ -2485,19 +2485,6 @@ h4.list_title{
 	}
 
 
-.tag_list{
-	background:url(../images/icons/tag_blue.png) no-repeat left top;
-	padding-left:22px;
-	margin:5px;
-	position:relative;	
-	a.item{
-		@include corners(5px);
-		background-color:#e7e7e7;
-		color:#666666;
-		padding:2px 6px;
-		text-decoration:none;
-	}	
-}
 
 ul.item_list{
 	@include no-bullets;		
@@ -3450,19 +3437,6 @@ div.color{
 	background:url(../images/private_lock_grey.gif) no-repeat left;
 }
 
-
-
-.solutions_text{
-	padding-top:8px;
-	font-family:'Georgia';
-	p{  
-		font-size:16px;
-		line-height: 1.5em;
-	    margin-bottom: 1.3em;
-	    text-align: left;
-	    width: 550px;
-    }
-}
 
 .uniForm{
 	background:#f8f8f8;

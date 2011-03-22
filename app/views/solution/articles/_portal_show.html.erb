@@ -1,4 +1,5 @@
 <% content_for :layoutType do%>single<% end %>
+<script type="text/javascript" src="http://api.recaptcha.net/js/recaptcha_ajax.js"></script>
 <div class="folder_section">
 	<%= render :partial => "/solution/shared/category_folder_list", :locals => { :category => @article.folder.category, :selected => @article.folder } %>
 </div>  
@@ -21,7 +22,7 @@
      </ul>
 	 <span class="seperator"></span> 
 	 <div id="article_voting">
-		<%= render :partial => "/solution/articles/voting", :object => @article %>
+		<%= render :partial => "/support/shared/voting", :locals => {:article => @article} %>
 	 </div>
 </div>
 </div>

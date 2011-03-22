@@ -3,7 +3,7 @@
 <ul class="solution_list"> 
 	<% category.folders.each do |folder| %>  
 		<li class = "<%= ( folder == selected ) ? 'active' : '' %>" >
-			<%= link_to folder.name,  solution_category_folder_path(category,folder)  %> <span><%= folder.articles.size %></span> 
+			<%= link_to folder.name,  solution_category_folder_path(category,folder)  %> <span>(<%= folder.articles.size %>)</span> 
 		</li>
 	<% end %>
 </ul>
