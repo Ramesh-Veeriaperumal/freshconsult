@@ -7,7 +7,7 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
   
   belongs_to :account
   
-  has_many :sla_details , :class_name => "Helpdesk::SlaDetail", :foreign_key => "sla_policy_id"
+  has_many :sla_details , :class_name => "Helpdesk::SlaDetail", :foreign_key => "sla_policy_id" , :dependent => :destroy 
   
   attr_accessible :name,:description,:is_default
   
