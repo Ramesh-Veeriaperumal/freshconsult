@@ -7,13 +7,13 @@ class Helpdesk::SlaDetail < ActiveRecord::Base
   RESPONSETIME = [
     [ :half,    "30 Minutes",  1800 ], 
     [ :one,     "1 Hour",      3600 ], 
-    [ :two,     "2 Hour",      7200 ], 
-    [ :four,    "4 Hour",     14400 ], 
-    [ :eight,   "8 Hour",     28800 ], 
-    [ :two,     "12 Hour",    43200 ], 
-    [ :day,     "24 Hour",      86400 ],
-    [ :twoday,  "48 Hour",     172800 ], 
-    [ :threeday,"72 Hour",     259200 ], 
+    [ :two,     "2 Hours",      7200 ], 
+    [ :four,    "4 Hours",     14400 ], 
+    [ :eight,   "8 Hours",     28800 ], 
+    [ :two,     "12 Hours",    43200 ], 
+    [ :day,     "24 Hours",      86400 ],
+    [ :twoday,  "48 Hours",     172800 ], 
+    [ :threeday,"72 Hours",     259200 ], 
    
    
   ]
@@ -25,13 +25,13 @@ class Helpdesk::SlaDetail < ActiveRecord::Base
   RESOLUTIONTIME = [
     [ :half,    "30 Minutes",  1800 ], 
     [ :one,     "1 Hour",      3600 ], 
-    [ :two,     "2 Hour",      7200 ], 
-    [ :four,    "4 Hour",     14400 ], 
-    [ :eight,   "8 Hour",     28800 ], 
-    [ :two,     "12 Hour",    43200 ], 
-    [ :day,     "24 Hour",      86400 ],
-    [ :twoday,  "48 Hour",     172800 ], 
-    [ :threeday,"72 Hour",     259200 ], 
+    [ :two,     "2 Hours",      7200 ], 
+    [ :four,    "4 Hours",     14400 ], 
+    [ :eight,   "8 Hours",     28800 ], 
+    [ :two,     "12 Hours",    43200 ], 
+    [ :day,     "24 Hours",      86400 ],
+    [ :twoday,  "48 Hours",     172800 ], 
+    [ :threeday,"72 Hours",     259200 ], 
    
    
   ]

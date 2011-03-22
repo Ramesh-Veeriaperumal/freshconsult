@@ -17,13 +17,13 @@ class Group < ActiveRecord::Base
   ASSIGNTIME = [
     [ :half,    "30 Minutes",  1800 ], 
     [ :one,     "1 Hour",      3600 ], 
-    [ :two,     "2 Hour",      7200 ], 
-    [ :four,    "4 Hour",     14400 ], 
-    [ :eight,   "8 Hour",     28800 ], 
-    [ :two,     "12 Hour",    43200 ], 
+    [ :two,     "2 Hours",      7200 ], 
+    [ :four,    "4 Hours",     14400 ], 
+    [ :eight,   "8 Hours",     28800 ], 
+    [ :two,     "12 Hours",    43200 ], 
     [ :day,     "1 Day",      86400 ],
-    [ :twoday,  "2 Day",     172800 ], 
-    [ :threeday,"3 Day",     259200 ], 
+    [ :twoday,  "2 Days",     172800 ], 
+    [ :threeday,"3 Days",     259200 ], 
    
    
   ]
