@@ -76,7 +76,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   attr_protected :attachments #by Shan - need to check..
 
   named_scope :newest, lambda { |num| { :limit => num, :order => 'created_at DESC' } }
-  named_scope :visible, :conditions => ["spam=? AND deleted=? AND status > 0", false, false] 
+  named_scope :visible, :conditions => ["spam=? AND helpdesk_tickets.deleted=? AND status > 0", false, false] 
   
   #Sphinx configuration starts
   define_index do
