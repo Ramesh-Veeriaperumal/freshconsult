@@ -9,11 +9,7 @@ class AgentsController < Admin::AdminController
   end
 
   def show    
-     @agent = current_account.all_agents.find(params[:id])
-     respond_to do |format|
-      format.html # show.html.erb
-      format.xml  { render :xml => @agent }
-    end    
+    redirect_to :action => 'edit'
   end
 
   def new    
