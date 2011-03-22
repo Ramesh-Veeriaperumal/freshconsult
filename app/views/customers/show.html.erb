@@ -54,10 +54,10 @@
 	</div>
 <% end %>
 <div class="company_box">
-	<h3 class="title"><%= h @customer.name %></h3>
 	<div class="action_buttons">
 		<%= link_to 'Edit this company', edit_customer_path(@customer), :class => "last" %>
 	</div>
+	<h3 class="title"><%= h @customer.name %></h3>
 	<div><%=@customer.description%></div>
 </div> 
 <h4 class="title">Add a Note about "<%= @customer.name %>"</h4>	
@@ -71,8 +71,9 @@
 		<%= f.submit 'Save', :class=>"uiButton small grey"  %> &nbsp;
 	</div>
 <% end %>	  
-<span class="seperator"></span>
+
 <% unless @customer.users.empty? %>
+<span class="seperator"></span>
 <h4 class="title">People in <%=@customer.name%> (<%= @customer.users.size %>) </h4>
 	<ul class="user_list">	  
 			  <% @customer.users.each do |user| %>
@@ -83,16 +84,17 @@
 			  </li>  
 			  <%end%>
 	</ul>
-
 <% end %>
 <span class="seperator"></span>
 <h4 class="title">Recent Tickets from "<%= @customer.name %>"</h4>
-	<ul class="history-list">
-		  	<% @customer.users.each do |user| %>
-				<% user.tickets.first(5).each do |ticket| %>		
-					<%= render :partial => "/contact_shared/ticket", :object => ticket %> 
-				<% end %>
-			<% end %>	 
-			</ul>
 	
-	</div>
+	<%= "No tickets have been created by the people in this company" %>
+	
+	<ul class="history-list">
+	  	<% @customer.users.each do |user| %>
+			<% user.tickets.visible.first(5).each do |ticket| %>		
+				<%= render :partial => "/contact_shared/ticket", :object => ticket %> 
+			<% end %>
+		<% end %>	 
+	</ul>	
+</div>

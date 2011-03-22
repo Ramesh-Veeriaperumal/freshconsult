@@ -1,6 +1,4 @@
-<% form_title = (type == 'edit')? "Edit Company" : "New Company" %>
-<h3 class="title"><%=form_title%></h3>
-<% form_for(@customer) do |f| %>
+
 	  <%= f.error_messages %>	
 	  <ul class="ui-form"> 
 		  <li>
@@ -28,13 +26,5 @@
 				<b>Note:</b> Freshdesk will automatically associate Contacts with this company if email ids contain these domains 
 			</span>
 		  </li> 
-	</ul>  
+	</ul>
 	
-	<div class="button-container">
-	   <div class="floatl">
-			<%= link_to 'Delete', @customer, :confirm => 'Are you sure you want to delete this company?', :method => :delete, :class => "uiButton red" %>
-	   </div>
-	   <%= f.submit 'Save', {:class => "uiButton"} %> 
-	   <%= link_to 'Cancel', customer_path(@customer), :class => "uiButton grey" %>
-	</div>
-<% end %>
