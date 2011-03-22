@@ -2,24 +2,24 @@
 	<h3 class="title">Ticket summary</h3>
 	<ul class="summary clearfix">  
 	  <li>
-	  	 <a class="overdue" href="/helpdesk/tickets/filter/my_overdue">
+	  	 <a class="overdue" href="/helpdesk/tickets/filter/overdue">
 		  <span>Overdue</span> 
-		  <h4><%= filter_count(:my_overdue)%></h4>
+		  <h4><%= filter_count(:overdue)%></h4>
 		</a>
 	  </li>
-	  <% if (filter_count(:my_open)) %>
+	  <% if (filter_count(:open)) %>
 	  <li>
-	      <a href="/helpdesk/tickets/filter/my_open">
+	      <a href="/helpdesk/tickets/filter/open">
 	       <span>Open</span> 
-		   <h4><%= filter_count(:my_open) %></h4>
+		   <h4><%= filter_count(:open) %></h4>
 	      </a>
 	  </li>
 	  <% end %>
-	  <% if (filter_count(:my_due_today)) %>
+	  <% if (filter_count(:due_today)) %>
 	  <li>
-	      <a href="/helpdesk/tickets/filter/my_due_today">
+	      <a href="/helpdesk/tickets/filter/due_today">
 		   <span>Due Today</span> 
-		   <h4><%= filter_count(:my_due_today)%></h4>
+		   <h4><%= filter_count(:due_today)%></h4>
 		  </a>
 	  </li>
 	  <% end %>
