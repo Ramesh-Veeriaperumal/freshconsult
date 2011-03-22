@@ -88,13 +88,14 @@
 <span class="seperator"></span>
 <h4 class="title">Recent Tickets from "<%= @customer.name %>"</h4>
 	
-	<%= "No tickets have been created by the people in this company" %>
-	
-	<ul class="history-list">
-	  	<% @customer.users.each do |user| %>
-			<% user.tickets.visible.first(5).each do |ticket| %>		
+	<% if (@customer.tickets.visible.size == 0) %>
+		<%= "No tickets have been created by the people in this company" %>
+	<% else %> 
+		<ul class="history-list">
+			<% @customer.tickets.visible.first(5).each do |ticket| %>		
 				<%= render :partial => "/contact_shared/ticket", :object => ticket %> 
-			<% end %>
-		<% end %>	 
-	</ul>	
+			<% end %>	
+		</ul>	
+	<%end%>
+	
 </div>
