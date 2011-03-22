@@ -68,7 +68,7 @@
 			<div class="item">
 				<%= link_to( "<span class='bulb'></span> #{article.excerpts.title} ", article_url, :target => "blank", 
 							:class => "item-title #{( !article.is_public? ) ? 'private' : '' }",  
-							:title => truncate ( article.description.gsub(/<\/?[^>]*>/, ""), 100) ) %>
+							:title => truncate ( article.desc_un_html, 100) ) %>
 				<div class="item-menu">
 					<ul>
 						<li><%= link_to_function "Insert Content", "respondWithSol('content', '#{article.id}', '#{article_url}')" %></li>
