@@ -1,11 +1,12 @@
-<div class="page_area">
-	<% if false %>	
-	  <p>
-	    You have reached the maximum number of users you can have with your account level.  You can either delete some of your users or <a href="/account/plan">upgrade your account</a> to be able to create a new user.
-	  </p>	
-	<% else %>
-	  <% form_for @user,:url => { :controller => "contacts", :action => "create" }, :html => { :multipart => true }  do |f| -%>
-	    <%= render :partial => "form", :locals => { :f => f , :type => "new" } %>
-	  <% end -%>	
-	<% end %>
-</div>
+<% if false %>	
+  <p> You have reached the maximum number of users you can have with your account level.  You can either delete some of your users or <a href="/account/plan">upgrade your account</a> to be able to create a new user. </p>	
+<% else %>
+  <h3 class="title">New Contact</h3>
+  <% form_for @user,:url => { :controller => "contacts", :action => "create" }, :html => { :multipart => true }  do |f| -%>
+    <%= render :partial => "form", :locals => { :f => f } %>
+	<div class="button-container">
+	      <%= f.submit "Save changes", :class => "uiButton" %> 
+		  <%= link_to "Cancel", (@user.new_record? ? {:controller =>'contacts', :action => 'index'} : @user ), :class => "uiButton grey" %>
+	</div>
+  <% end -%>	
+<% end %>
