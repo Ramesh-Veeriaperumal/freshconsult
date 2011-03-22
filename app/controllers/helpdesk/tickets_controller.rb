@@ -265,8 +265,8 @@ protected
     #handle_custom_fields
     #if @item.source == 0
       @item.spam = false
-      @item.create_activity(current_user, "{{user_path}} created a new ticket {{notable_path}}", {},
-                            "{{user_path}} created the ticket")
+      @item.create_activity(@item.requester, "{{user_path}} submitted a new ticket {{notable_path}}", {},
+                            "{{user_path}} submitted the ticket")
     #end
    
  end
