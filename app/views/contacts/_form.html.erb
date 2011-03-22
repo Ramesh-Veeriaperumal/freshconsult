@@ -34,21 +34,17 @@
 	});
 	
 <% end %>
-<% form_title = (type == 'new')? "New Contact" : "Edit Contact" %>
+
 <%= error_messages_for :user %>
-	<h3 class="title"><%=form_title%></h3> 	 
+	 	 
 	<ul class="ui-form">	
 		<li>
 			<%= label(:user, :name, "Full Name") %>
 			<%= text_field(:user, :name, :class => "text required" )  %>
 		</li>
 		<li class="medium">
-			<%= label(:user, :email, "Email") %>
-			<!--label class="overlabel" for="email_primary">Primary</label-->
-			<%= text_field(:user, :email, :class => "text required email", :id => "email_primary" ) %>
-			<!--%= label(:user, :second_email, "Secondary Email") %--><br />
-			<!--label class="overlabel" for="email_second">Secondary</label-->	
-			<!--%= text_field(:user, :second_email, :class => "text email", :id => "email_second" ) %-->
+			<%= label(:user, :email, "Email") %> 
+			<%= text_field(:user, :email, :class => "text required email", :id => "email_primary" ) %> 
 		</li>
 		<li>
 			<%= label(:user, :job_title, "Title") %>
@@ -81,8 +77,7 @@
 			<%= text_field(:user, :twitter_id, :class => "text" ) %>
 		</li>
 		<li>
-			<%= render :partial => "/shared/profileavatar", :locals => { :user => @user, :type => type } %>
-			
+			<%= render :partial => "/shared/profileavatar", :locals => { :user => @user, :type => type } %> 
 		</li>
 		<li>
 			<%= f.label :time_zone %>
@@ -111,8 +106,3 @@
 </div>
 
 <!-- role section ends here-->
-
-<div class="button-container">
-      <%= f.submit "Save changes", :class => "fdbutton" %> 
-	  <%= link_to "Cancel", (@user.new_record? ? {:controller =>'contacts', :action => 'index'} : @user ), :class => "fdbutton grey" %>
-</div>
