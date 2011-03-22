@@ -175,8 +175,7 @@
 		  </li>
 		 
 
-		  <li>
-			<%= f.check_box :escalate_to %>
+		  <li>		
 			Send an Escalation email to 
 			<%= f.collection_select :escalate_to, Agent.technician_list(account_id), :id, :name, {:include_blank => '...'} %>
 			if a ticket remains un-assigned for more than

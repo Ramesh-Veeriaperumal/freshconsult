@@ -21,7 +21,7 @@ namespace :sla do
         ticket.update_attribute(:isescalated , true)
      end
     
-    froverdue_tickets = Helpdesk::Ticket.find(:all, :joins => :ticket_states , :readonly => false , :conditions =>['frDueBy <=? AND fr_escalated=? AND helpdesk_ticket_states.first_response_time IS ?', Time.zone.now.to_s(:db),false,nil] )
+    froverdue_tickets = Helpdesk::Ticket.find(:all, :joins => :ticket_states , :readonly => false , :conditions =>['frDueBy <=? AND fr_escalated=? AND status=? AND helpdesk_ticket_states.first_response_time IS ?', Time.zone.now.to_s(:db),false,Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open],nil] )
     puts "Number of first response overdues are #{froverdue_tickets.size}"
     froverdue_tickets.each do |fr_ticket|
       
@@ -39,6 +39,20 @@ namespace :sla do
         fr_ticket.update_attribute(:fr_escalated , true)   
         #If there is no email-id /agent still escalted will show as true. This is to avoid huge sending if somebody changes the config
     end
+    
+    
+    ##Tickets left unassigned in group
+    
+    tickets_unpicked = Helpdesk::Ticket.find(:all, :joins => [:ticket_states,:group] , :readonly => false , :conditions =>['DATE_ADD(helpdesk_tickets.created_at, INTERVAL groups.assign_time SECOND)  <=? AND group_escalated=? AND status=? AND helpdesk_ticket_states.first_assigned_at IS ?', Time.zone.now.to_s(:db),false,Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open],nil] )
+     puts "Number of un attended tickets are #{tickets_unpicked.size}"
+    tickets_unpicked.each do |gr_ticket| 
+      
+      SlaNotifier.deliver_group_escalation(gr_ticket,gr_ticket.group.escalate) if (!gr_ticket.group.escalate.nil? && !gr_ticket.group.escalate.email.nil? )
+    
+      gr_ticket.ticket_states.update_attribute(:group_escalated , true)
+      
+    end
+    
     puts "SLA Escalation task completed.."
   end
 end
