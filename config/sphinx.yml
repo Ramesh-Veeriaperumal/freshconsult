@@ -14,7 +14,7 @@ development:
 #Need to remove the one from EY receipes.. by Shan  
 production:
   pid_file: /var/run/sphinx/helpkit.pid
-  address: ec2-174-129-119-30.compute-1.amazonaws.com
+  address: ec2-50-16-51-165.compute-1.amazonaws.com
   port: 9312
   config_file: /data/helpkit/current/config/production.sphinx.conf
   searchd_file_path: /var/log/engineyard/sphinx/helpkit/indexes
