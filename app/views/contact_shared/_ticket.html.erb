@@ -1,0 +1,13 @@
+<li>
+	<%= user_avatar( ticket.requester.avatar ) %>
+	<%= link_to("##{ticket.display_id} " + h(ticket.subject), ticket, :class => "title") %>
+	<div class="info_data">
+		<%= formated_date(ticket.created_at) %>
+		|
+		<% if ticket.freshness == :new %>
+	     	Unassigned
+	  	<% else %>
+	  		Assigned to <%= link_to(h(ticket.responder.display_name), ticket.responder, :class => 'username') %>
+		<% end %>| Status <%= ticket.status_name %>
+	</div>
+</li>		

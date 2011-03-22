@@ -9,7 +9,13 @@
 		<%= content_tag (:span, @item.name ) %>
 	</div>
 	<%= render :partial => "/search/pagesearch", :locals => { :placeholder => "Search #{@item.category.name}", :url => "/search/solutions?category_id=#{@item.category.id}&search_key=" } %>
-	<%= render :partial => "/solution/shared/solution_list", :locals => { :category => @item.category, :folder => @item } %>
+	
+	 <% if logged_in? && current_user.has_manage_solutions? %>
+	  		<%= render :partial => "/solution/shared/solution_list", :locals => { :category => @item.category, :folder => @item } %>
+	  <%else%>
+	  		<%= render :partial => "/solution/shared/portal_sol_list", :locals => { :category => @item.category, :folder => @item } %>
+	  <%end%>
+	
 </div>
 
  

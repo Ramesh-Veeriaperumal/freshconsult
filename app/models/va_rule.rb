@@ -22,7 +22,6 @@ class VARule < ActiveRecord::Base
   end
   
   def deserialize_them
-    puts "******* filter_data #{filter_data.inspect} and #{filter_data.class}"
     @conditions = []
     filter_data.each do |f|
       f.symbolize_keys!
@@ -61,7 +60,7 @@ class VARule < ActiveRecord::Base
   end
   
   def trigger_actions(evaluate_on)
-    puts "Trigger action called for #{name}"
+    Va::Action.initialize_activities
     actions.each { |a| a.trigger(evaluate_on) }
   end
   

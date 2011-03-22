@@ -57,9 +57,11 @@
 		
 	<% if (@articles.size == 0) %>
 		<br />
-		<div>&nbsp;&nbsp;&nbsp; No Related Solutions found </div>
+
+		<div>&nbsp;&nbsp;&nbsp; No Solutions found </div>
 	<% else %> 
 		<div class="request-list">
+
 			<% @articles.each do |article|
 				article_url = solution_category_folder_article_url(article.folder.category_id,article.folder_id,article)
 			 %> 

@@ -10,7 +10,7 @@ class SubscriptionNotifier < ActionMailer::Base
   
   def welcome(account)
     setup_email(account.admin, "Welcome to #{AppConfig['app_name']}!")
-    @body = { :account => account }
+    @body = { :account => account, :host => account.host }
   end
   
   def trial_expiring(user, subscription)

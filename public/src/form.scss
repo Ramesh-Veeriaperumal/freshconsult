@@ -1,0 +1,649 @@
+@import "base";
+@import "mixins";
+
+.ui-login{ 
+	text-align:center;
+	display:block;
+	padding:18px 0px;
+	.ui-form{ 
+		background:none;
+		border:0px;
+		width:350px;
+		@include corners(6px);
+		text-align:left;
+		padding:25px;
+		border:1px solid #c2c2c2;
+		margin:0px auto !important;
+		background:#ffffff;
+		ul{
+			margin:0px;
+			li{
+				input.text{
+					margin:3px 0px 5px 0px;
+					width:320px;	
+				}
+			}
+		}
+	}
+}
+
+div.ui-form ul{
+	padding:0px;
+}
+
+div.ui-form ul, ul.ui-form{ 
+	list-style:none; 
+	@include pie-clearfix;
+	margin:0px -20px 10px -20px;
+}
+
+
+a.addchoice{		
+	padding:5px;			
+	color:#999999;
+	border:1px solid #cfcfcf;
+	border-width:1px 0px;
+	text-decoration:none;
+	cursor:pointer;
+	padding:8px 10px 8px 28px;			
+	font-weight:bold;
+	@include link-colors(#336699, #333333, #336699, #336699, #333333);
+	display:block;
+	background:url('../images/add.png') no-repeat 8px 7px;
+} 
+
+a.addchoice:hover{
+	background-color:#f8f8f8;
+}	
+
+.colsets{
+	fieldset{
+		@include pie-clearfix;
+		margin:0px;
+		padding:2px 1px;
+		border:0px;
+		position:relative;
+		b{
+			font-size:11px;
+		}
+		.dropchoice, .tags{
+			@include pie-clearfix;
+			float:left; 
+			margin:0px 5px 0px 0px;
+			padding:0px;				
+			input{
+				margin-right:5px;
+				width:100%;
+			}				
+		}
+		.dropchoice{ 
+			width:35%; 
+		}
+		.tags{ 
+			width:50%; 
+		}
+		img{				
+			position:absolute;
+			right:6px;
+			top:3px;
+		}
+	}
+	a.addchoice{
+		border:1px solid #cfcfcf;
+		background-color:#ffffff;
+		background-position:5px 6px;
+		font-size:12px;
+		padding:8px 10px 6px 25px;			
+	}
+}
+
+	
+	
+.choicelist{
+	label{
+		font-size:1.1em;
+	}
+	label.radiolabel{
+		font-size:1em;
+		float:left; 
+		padding:0px 5px;	
+		margin-right:10px;		
+	}
+	input.radio{
+		float:left;
+	}
+	
+}
+
+.ui-form{
+	padding:15px 20px 15px 20px; 
+	position:relative;
+	border-top:1px solid #dfdfdf;
+	border-bottom:1px solid #dfdfdf; 
+	background-color:#f6f6f6;
+	li{
+		padding:0px 0px 5px 0px; 
+		margin:0px;
+		float:left;		
+		a.fdbutton{
+			@include min-width(110px);
+		}
+		width:100%;
+	} 
+	li.text, li.paragraph{
+		width:98%;
+	}
+	li.dropdown, li.small{
+		width:48%;
+	}
+	
+	li.medium{
+		width:75%;
+	}
+	 
+	label, li.checkbox{						
+		font-weight:normal; 
+		padding:4px 0px;
+		margin:0px;
+		line-height:18px;
+		color:#565656;
+		font-size:14px;
+	}
+	li.checkbox{
+		@include clearfix;
+		input, label{
+			float:left;
+		} 
+		label{
+			position:relative;
+			font-size:12px;
+			top:-3px; left:3px;
+		}
+	}	
+	
+	label.overlabel{
+		color:#999999;
+		margin-left:8px;
+		margin-top:0px;
+		font-size:14px;	
+	}	
+	input.text, textarea{		
+		margin:0px 0px 3px 0px;
+		color:#3f3f3f;
+		padding:3px;
+		font-size:16px;
+		border:1px solid #bfbfbf;
+		font-weight:normal;
+	}
+	textarea{
+		font-family:inherit;
+		font-size:9pt;
+		line-height:16px;
+		overflow:auto;
+	}
+	input.very_small{
+		width:200px;
+	}
+	textarea.smallpara{
+		height:50px;
+	}
+	select{
+		width:auto;
+		font-size:1.0em; 
+		font-weight:normal;
+ 	}
+ 	input.text:focus, textarea:focus{
+ 		border-color:#5b711f;
+ 	}   
+	span{
+		font-weight:normal;
+		font-size:0.9em;
+		color:#777777;
+		display:block;
+	}	 
+	.largefield{
+		label{
+			font-size:1.4em;			
+		}
+		input{
+			font-size:1.4em; 
+		}
+	}	
+	.seperator{
+		margin-bottom:0px;
+		padding:1px;
+	}
+	
+	.check_box{
+		@include clearfix;
+		label{
+			float:left;
+			font-size:1.4em;		
+		}
+		input{
+			float:left;
+			margin:5px;
+		}
+	}
+	.inline_field{
+		margin:0px 0px 10px 30px;
+		input{		
+			width:45%;
+			margin:0px;
+		}
+		label{ 
+			font-size:1.2em;
+		}
+	}
+	.inlineChecklist{
+		label{
+			float:left;
+			font-size:1em; 
+			padding:5px 16px 0px 0px; 
+		}
+		input{
+			top:0px;
+		}
+	}
+	
+	
+	li.textleft{
+		@include clearfix;
+		position:relative;
+		label{
+			position:absolute;
+			left:6px;
+			top:3px;
+			width:25%;
+		}		
+	}
+	label.error{
+		font-size:1em;
+		color:red;
+	}
+	fieldset.addchoice{		
+		padding:0px;			
+		color:#999999;
+		cursor:pointer;
+		
+	} 
+	fieldset.addchoice:hover{
+		background:#f8f8f8;
+	}	
+	.conditionset{
+		border:1px solid #cfcfcf;
+		padding:0px;
+		fieldset{
+			@include pie-clearfix;			
+			padding:5px 0px 5px 4px;
+			border-bottom:1px solid #cfcfcf;
+			background:#efefef;
+			position:relative;
+			
+			*{
+				float:left;
+				width:auto;
+				margin:2px 4px;
+			}
+			.add, .delete{
+				position:absolute;
+				margin:0px;
+				padding:0px;
+				cursor:pointer;
+				right:10px;
+				top:5px;
+			}
+			div.controls{
+				width:95%;
+			}
+			
+			input.text{
+				width:300px;
+				font-size:10pt;
+			}
+			textarea.paragraph{
+				width:400px;
+			}
+			
+			div.s_comment{				
+				width:520px;
+				.paragraph{
+					width:98%;
+				}
+			}
+			div.s_email{
+				float:none;
+				display:block;
+				clear:both;
+				width:800px;
+				padding:4px;
+				@include clearfix;	
+				div{
+					width:100%;
+					padding:4px 0px;
+					font-size:12px;
+					border-bottom:1px solid #cfcfcf;
+					em{
+						font-style:normal;
+					}
+					b{
+						width:180px;
+					}
+					input.text, textarea.paragraph{
+						width:590px;
+					}
+					a.l_placeholder{
+						clear:left;
+						float:right;
+						font-size:11px; 
+						text-decoration:none;
+						color:#0078BD;
+						border-bottom: 1px dotted #0078BD;
+					}
+					a.l_placeholder:hover {
+					     border-bottom: 1px solid #0078BD;
+					}
+				}
+			}
+			
+			span{
+				margin:0px; padding:0px;
+			}
+			
+			span.sort_handle:hover{
+				background-color:#fafafa;
+			}
+			
+			label.checkbox{
+				width:100%;
+				font-size:1.3em;				
+			}
+		}
+		div{
+			margin:0px;padding:0px;
+		}
+		
+	}
+}
+
+fieldset.nestedChoices{					
+	@include clearfix;	
+	fieldset{ 
+		margin:5px 0px 0px 18px !important;
+		padding:6px 0px 0px 6px !important;
+		border:1px dotted #afafaf;
+		border-width:0px 0px 0px 1px;
+		float:left;
+	}
+	input{
+		margin-right:3px;
+		position:relative;
+		top:-1px; 
+	}
+}
+
+
+.business_hours{
+	td{
+		vertical-align:top;
+	}
+	td.borderleft{
+		border-left:1px solid darken(#f2f2f2,10%);
+	}
+	.business_time{
+		div.specific_hours{
+			padding:16px 26px;
+		}
+		div.timerange{
+			@include pie-clearfix;	
+			input, strong{
+				float:left;
+			}
+			input{
+				width:80px;
+			}
+			strong{
+				font-weight:normal;
+				padding:0px 10px;
+			}
+		}
+	}
+	.business_days{
+		label{
+			float:left;
+			font-size:12px;
+			padding-right:8px;
+		}
+	}
+	.holidaylist{
+		padding-left:0px;
+		ul{
+			color:#444444;
+			@include clearfix;
+			background-color:lighten(#f3f3f3, 5%);
+			padding:10px 5px 5px 10px;
+			margin:0px;
+			@include corners(6px);
+			li{
+				position:relative;
+				margin-right:20px; 
+				.close{
+					position:absolute;
+					background:url(../images/icons/btn_close_icon.png) no-repeat;
+					width:18px;
+					height:18px;
+					right:6px;
+					top:0px;
+				}
+			}
+		}
+	}
+}
+
+input.time{
+	font-weight:normal;
+	font-size:12px;
+}
+
+
+
+
+.grid{
+	border:1px solid #cfcfcf;		
+	padding:0px;
+	background:#f6f6f6;
+	table{
+		padding:0px; margin:0px;
+		border:0px;
+		font-size:12px;
+		th, td{
+			padding:8px 10px;
+			vertical-align:top;
+			border:0px;			
+		}
+		th{			
+			line-height:18px;	
+			font-weight:bold;
+			span{
+				display:block; 
+			}
+		}
+		td{			
+			label{
+				font-size:12px;
+				padding:0px 6px;
+				color:#555555;
+				em{
+					font-style:normal;
+					font-weight:bold;
+					text-transform:capitalize;
+					color:#000000;
+				}
+			}
+			background:#efefef;
+			border-top:1px solid #cfcfcf;				
+		}
+	}
+	.olist{
+		list-style:decimal;
+	}
+	.grid_form{	
+		td{
+			border:0px;
+			padding:6px 10px 0px 10px;
+			background:#fafafa;
+		}
+		.button-container{
+			text-align:right;
+			padding:0px 10px 10px 0px;
+		}
+	}
+}
+
+.grid{
+	ul{
+		@include no-bullets;
+		margin:0px; padding:0px;		
+		background:#efefef;
+		border-top:1px solid #cfcfcf;
+		padding:8px 12px;
+		@include clearfix;
+		li{
+			margin:0px; padding:0px;
+			float:left;
+			width:33%;
+		}
+	}
+}
+
+
+span.sort_handle{
+	position:relative;
+	left:0px;
+	top:1px;
+	width:25px;
+	height:25px;
+	cursor:move;
+	background:url(/images/sort_handle.gif) no-repeat;
+	@include corners(5px);
+}	
+
+.ui-custom-fields, .ui-custom-form{
+	@include no-bullets;	
+	margin:0px 0px 0px 0px; 
+	padding:0px;
+}
+
+.admin_form{
+	@include clearfix;
+	background-color:#efefef; 
+	padding:8px 10px 15px 10px;
+	margin:0px;
+	li{
+		position:relative;
+	}
+	h4.title{
+		color:#555;
+		font-size:14px;
+		font-weight:bold;
+		margin:0px;
+		padding:0px 0px 8px 0px;
+	}
+}
+
+.admin_form .button-container{
+	padding-left:180px;
+	width:100%;
+	.fdbutton{
+		@include min-width(60px);
+	}
+}
+
+.ui-draggable-dragging{
+	z-index:99999;
+	padding:0px !important;
+}
+
+.ui-custom-fields{ 
+	display:block;
+	margin-bottom:10px;
+	@include pie-clearfix;
+	li{
+		float:left;
+		position:relative;
+	}
+	.fdbutton{
+		@include min-width(120px);
+		margin:2px 4px;
+		font-size:11px;
+	}
+}
+
+.custom_form_outer .placeHolder{
+	height:50px !important;
+	border:1px solid red !important;
+}
+
+
+.ui-sortable-placeholder{
+	background:#DFEFFF !important;
+	border:1px dotted #C2D7EF  !important;
+	visibility: visible !important;
+	padding:20px 6px;
+	position:relative;
+	z-index:99;
+}
+	
+.ui-custom-form{
+	padding:0px;
+	position:relative;
+	.ui-form{ background:#ffffff; margin-left:0px; margin-right:0px; }		 
+	li{   
+		padding:4px; 
+		position:relative;
+		background:#ffffff;
+		div{ position:relative; }
+		border:1px dotted #ffffff;
+		cursor:move; 
+		.ui-field-panel{
+			position:absolute;
+			right:0px; top:0px;			 
+			display:none;
+		}  	
+		.action_panel{
+			position:absolute;
+			top:0px;
+			right:20px;
+			padding:0px;
+			visibility:hidden;
+		}
+	} 
+	
+	li:hover, li.hover, li.active{		
+		background:#DFEFFF;
+		border-color:#C2D7EF;
+		.ui-field-panel{
+			display:block;
+		}
+		.action_panel{
+			visibility:visible;
+		}
+	}
+	li.active{
+		border-style:solid;
+	}
+}
+
+.hint_drag{
+	background:#fefedf;
+	border:1px solid #cccccc;
+	padding:15px 30px; 
+	margin:10px 18px;
+	display:block;
+	
+}
+
+.width400{
+	width:400px;
+}
+

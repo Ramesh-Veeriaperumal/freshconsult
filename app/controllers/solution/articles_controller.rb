@@ -1,7 +1,9 @@
 class Solution::ArticlesController < ApplicationController
   
-  before_filter :check_user , :only => [:show]
+  
   before_filter :set_selected_tab
+  
+  before_filter :check_solution_permission, :only => [:show]
   
   before_filter :except => [:index, :show] do |c| 
     c.requires_permission :manage_knowledgebase
@@ -145,12 +147,7 @@ end
     end
   end
   
-   def check_user
-    if current_user.nil? || current_user.customer?
-      @article = Solution::Article.find(params[:id], :include => :folder)
-      return redirect_to(support_article_url(@article)) 
-    end
-  end
+  
   
  
   
@@ -179,6 +176,16 @@ protected
   def set_selected_tab
       @selected_tab = 'Solutions'
   end
+
+def check_solution_permission
+  
+  @solution = Solution::Article.find(params[:id]) 
+  if ((!@solution.is_public) && (current_user.nil? || current_user.customer?))    
+    flash[:notice] = "You don't have sufficient privileges to access this page"
+    redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)  
+  end
+
+end
 
   def set_solution_tags
     

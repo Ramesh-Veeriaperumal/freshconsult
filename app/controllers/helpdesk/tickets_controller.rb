@@ -65,7 +65,6 @@ class Helpdesk::TicketsController < ApplicationController
 
   def set_suggested_solutions
    @articles = Solution::Article.suggest_solutions @ticket   
-   #@articles =[]
   end
   
   def update
@@ -158,10 +157,11 @@ class Helpdesk::TicketsController < ApplicationController
                             { 'scenario_name' => va_rule.name },
                             "{{user_path}} executed the scenario '{{scenario_name}}'")
     
-    actions_executed = "<li> Sample list </li>" 
+    actions_executed = Va::Action.activities.collect { |a| "<li>#{a}</li>" }
+    Va::Action.clear_activities #by Shan
     
-    flash[:notice] = render_to_string(:inline => "\"#{va_rule.name}\" scenario executed <a href='#' class='show-list'>view details...</a> 
-                                                <div class='list'> <h4 class='title'>Executed Scenarios</h4> <ul> #{actions_executed} </ul> </div>")
+    flash[:notice] = render_to_string(:inline => "Executed the scenario <b>'#{va_rule.name}'</b> <a href='#' class='show-list'>view details</a> 
+                                                <div class='list'> <h4 class='title'>Actions performed</h4> <ul> #{actions_executed.join} </ul> </div>")
                                   
     redirect_to :back
   end 
