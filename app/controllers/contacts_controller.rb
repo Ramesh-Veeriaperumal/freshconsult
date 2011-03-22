@@ -77,8 +77,9 @@ class ContactsController < ApplicationController
     
   end
   
-  def show
+  def show 
     @user = User.find(params[:id])
+    @user_tickets_open_pending = Helpdesk::Ticket.requester_active(@user)
   end
   
   def delete_avatar

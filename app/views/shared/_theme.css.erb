@@ -1,26 +1,31 @@
-<% unless current_account.preferences.nil? %> 
-
-<style>
-	<%	
-		$background   = current_account.preferences[:bg_color]
-		$header_color = current_account.preferences[:header_color]
-		$tab_color    = current_account.preferences[:tab_color]
+<% unless current_account.preferences.nil? %>
+	<style>
+		<%	
+			$background   = current_account.preferences[:bg_color]
+			$header_color = current_account.preferences[:header_color]
+			$tab_color    = current_account.preferences[:tab_color]
+			
+			$bg_ctxt_color     = contrasting_text_color($background[1..-1])
+			$header_ctxt_color = contrasting_text_color($header_color[1..-1])
+			$tab_ctxt_color	   = contrasting_text_color($tab_color[1..-1])  
+		%>
+		body{ background: <%= $background %>; }
 		
-		$bg_ctxt_color     = contrasting_text_color($background[1..-1])
-		$header_ctxt_color = contrasting_text_color($header_color[1..-1]) 
-	%>
-	body{ background: <%= $background %>; }
-	
-	.sp_border, .pagearea, .sidepanel, .flash_info,  #errorExplanation { border-color:<%= process_color($background, 0.05, 1) %>; }
-	.reminders:before { border-color:<%= $background %> <%= $background %> #734e3d #734e3d; }
-	
-	/* Header color */
-	.header { background: <%= $header_color %>; }
-	.brand h3, .header_links, .header_links a { color: <%= $header_ctxt_color %>;}
-	 
-	/* Tab color settings */
-	.top_nav_bg{ background: <%= $tab_color %>; }
-	ul.tabs li.active a, ul.tabs li.active span{ background: <%= $background %>; color:<%= $bg_ctxt_color %>; }
-	ul.tabs li a:hover{ background: <%= process_color($tab_color) %>; }
-</style>
+		.sp_border, .pagearea, .sidepanel, .flash_info,  #errorExplanation { border-color:<%= process_color($background, 0.05, 1) %>; }
+		.reminders:before { border-color:<%= $background %> <%= $background %> #734e3d #734e3d; }
+		
+		/* Header color */
+		.header { background: <%= $header_color %>; }
+		.brand h3, .header_links, .header_links a { color: <%= $header_ctxt_color %>;}
+		 
+		/* Tab color settings */
+		.top_nav_bg { background: <%= $tab_color %>; }
+		ul.tabs li.active a, ul.tabs li.active span { background: <%= $background %>; color:<%= $bg_ctxt_color %>; }
+		ul.tabs li a:hover { background: <%= process_color($tab_color) %>; }
+		.uiButton:hover, .fdbutton:hover {
+			 background-color:<%= $tab_color %>; 
+			 border-color: <%= process_color($tab_color, 0.2, 1) %>;  
+			 color: <%= $tab_ctxt_color %>; 
+		}
+	</style>
 <% end %>
