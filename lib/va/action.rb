@@ -1,14 +1,6 @@
 class Va::Action
   attr_accessor :action_key, :act_hash
   
-  ACTIVITIES = {
-    :priority     => "Changed the priority to <b>{{ticket.priority}}</b>",
-    :status       => "Changed the status to <b>{{ticket.status}}</b>",
-    :ticket_type  => "Changed the ticket type to <b>{{ticket.ticket_type}}</b>",
-    :responder_id => "Assigned to the agent <b>{{ticket.agent.name}}</b>",
-    :group_id     => "Assigned to the group <b>{{ticket.group.name}}</b>"
-  }
-  
   def initialize(act_hash)
     @act_hash = act_hash
     @action_key = act_hash[:name]
@@ -24,13 +16,29 @@ class Va::Action
     if act_on.respond_to?("#{action_key}=")
       act_on.send("#{action_key}=", value)
       
-      activity_template = ACTIVITIES[action_key.to_sym]
-      add_activity(activity_template ? Liquid::Template.parse(activity_template).render('ticket' => act_on) : 
-          "Set #{action_key} as <b>#{value}</b>")
+      add_activity(property_message act_on)
       return
     end
     
     puts "From the trigger of Action... Looks like #{action_key} is not supported!"
+  end
+  
+  #POOR CODE - due to time constraint - by SHAN
+  def property_message(act_on)
+    case action_key
+    when 'priority'
+      "Changed the priority to <b>#{TicketConstants::PRIORITY_NAMES_BY_KEY[value.to_i]}</b>"
+    when 'status'
+      "Changed the status to <b>#{TicketConstants::STATUS_NAMES_BY_KEY[value.to_i]}</b>"
+    when 'ticket_type'
+      "Changed the ticket type to <b>#{TicketConstants::TYPE_NAMES_BY_KEY[value.to_i]}</b>"
+    when 'responder_id'
+      "Assigned to the agent <b>#{act_on.account.users.find(value.to_i)}</b>"
+    when 'group_id'
+      "Assigned to the group <b>#{act_on.account.groups.find(value.to_i).name}</b>"
+    else
+      "Set #{action_key} as <b>#{value}</b>"
+    end
   end
   
   ##Execution activities temporary storage hack starts here
