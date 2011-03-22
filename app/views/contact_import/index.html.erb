@@ -1,20 +1,16 @@
-<% content_for :breadcrumb do -%>
-	<div class="header_area">
-		<h4>Import Contacts</h4>
-	</div>
-<% end %>
-<div class="page_area" style="width:350px;"">
+<h3 class="title">Import Contacts</h3>
+<div class="page_area">
 	<% form_for :user,:url => { :controller => "contact_import", :action => "create" }, :html => {:multipart => true} do |f| %>
 	  <%= f.error_messages %>
 	  <ul class="ui-form">
 		 <li>
 		      <label for="file">Select your CSV file</label>
-		      <%= file_field_tag 'file', :class => "required" %>
+		      <%= file_field_tag 'file', :class => "required", :size => "40" %>
 		  </li>
 	  </ul>
-	  <div class="button-container">
-		<%= f.submit 'Import', { :class => "fdbutton" } %>
-	  	<%= link_to 'cancel', contacts_path, :class => "fdbutton grey"  %>
+	  <div class="button-container width400">
+		<%= f.submit 'Import', { :class => "uiButton" } %>
+	  	<%= link_to 'Cancel', contacts_path, :class => "uiButton grey"  %>
 	  </div>
 	<% end %>
 </div>

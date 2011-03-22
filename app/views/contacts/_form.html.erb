@@ -35,11 +35,9 @@
 	
 <% end %>
 <% form_title = (type == 'new')? "New Contact" : "Edit Contact" %>
-<%= error_messages_for :user %> 	 
-	<ul class="ui-form">
-		<li>
-			<h2><%=form_title%></h2>
-		</li>	
+<%= error_messages_for :user %>
+	<h3 class="title"><%=form_title%></h3> 	 
+	<ul class="ui-form">	
 		<li>
 			<%= label(:user, :name, "Full Name") %>
 			<%= text_field(:user, :name, :class => "text required" )  %>
