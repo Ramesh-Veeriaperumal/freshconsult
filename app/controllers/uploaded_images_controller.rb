@@ -6,7 +6,7 @@ class UploadedImagesController < ApplicationController
   end
   
   def index
-    @images = Helpdesk::Attachment.find(:all,:conditions => ['account_id=?',current_account.id])
+    @images = Helpdesk::Attachment.find(:all,:conditions => ['account_id=? and description = \'public\'',current_account.id])
     respond_to do |format|
       format.html
       format.js
