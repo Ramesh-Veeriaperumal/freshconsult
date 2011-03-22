@@ -86,7 +86,7 @@ class Solution::Article < ActiveRecord::Base
   end
   
   def self.suggest_solutions(ticket)
-    search(ticket.subject, :with => { :account_id => ticket.account.id }, :match_mode => :any)
+    search(ticket.subject, :with => { :account_id => ticket.account.id }, :match_mode => :any, :per_page => 10)
   end
   
   private
@@ -100,8 +100,8 @@ class Solution::Article < ActiveRecord::Base
       )
   end
   
-  def set_un_html_content    
-    self.desc_un_html = (self.description).gsub(/<\/?[^>]*>/, "") unless self.description.empty?
+  def set_un_html_content        
+    self.desc_un_html = (self.description.gsub(/<\/?[^>]*>/, "")).gsub(/&nbsp;/i,"") unless self.description.empty?
   end
     
 end

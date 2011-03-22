@@ -9,7 +9,7 @@ class Solution::ArticlesController < ApplicationController
     c.requires_permission :manage_knowledgebase
   end
   
-  uses_tiny_mce :options => Helpdesk::EDITOR_OPTIONS 
+  uses_tiny_mce :options => Helpdesk::LARGE_EDITOR 
   
   def index
     @articles = current_account.solution_articles.all
