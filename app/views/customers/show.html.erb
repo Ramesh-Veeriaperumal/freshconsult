@@ -2,10 +2,10 @@
 <% content_for :sidebar do %> 
 	<div class="sidepanel">
 		<div class="element first">
-			<div class="floatr">
-				<a href="javascript:void(0)" class="fdbutton grey" onclick="jQuery('#sla_details, #sla_form').toggle(); jQuery(this).hide()">Change policy</a>
+			<div class="edit" id="sla_button">
+				<a href="javascript:void(0)" onclick="jQuery('#sla_details, #sla_form').toggle(); jQuery('#sla_button').hide()">Edit</a>
 			</div> 
-			<h4>SLA Policy</h4>
+			<h4 class="title">SLA Policy</h4>
 			<div id="sla_details">
 				<strong><%= @customer.sla_policy.name %></strong>
 				<div class="info_data"><%= @customer.sla_policy.description %></div>
@@ -16,23 +16,65 @@
 						<%= f.label(:sla_policy_id, "Select policy") %>
 						<%= f.select(:sla_policy_id, current_account.sla_policies.map {|u| [u.name, u.id]}) %>
 					</div>
-					<%= f.submit "Change", {:class => "fdbutton"} %>
-					<a href="javascript:void(0)" class="fdbutton grey" onclick="jQuery('#sla_details, #sla_form').toggle();">Cancel</a>
+					<%= f.submit "Change"  %>
+					<a href="javascript:void(0)" onclick="jQuery('#sla_details, #sla_form').toggle(); jQuery('#sla_button').show()">Cancel</a>
 				<% end %>
 			</div>
 		</div>
 		<% unless @customer.domains.blank? %>
-		<div class="element">
-			<h4>Domain Names for this company</h4>
-			<div class="info_data">
+		<div class="element" style="display:none;">
+			<h4 class="title">Domain Names for this company</h4>
+			<p>
 				<%= @customer.domains %>	
-			</div>	
+			</p>	
 		</div>
 		<% end %>
-		<% unless @customer.users.empty? %>
-		<div class="element last">  
-			<h4>People in this company (<%= @customer.users.size %>) </h4>
-			<ul class="user_list">	  
+	</div> 
+	<div class="sidepanel">
+	<h4 class="title">New Contact <span class="highlight">in <%=@customer.name%></span></h4> 
+	
+		<% form_tag :action=> :quick_customer,:controller => "contacts", :method =>:post do %>
+		<%= hidden_field_tag 'customer_id', params[:id] %> 	
+		<ul class="ui-form">
+		<li> 
+			<label for="user_name">Full Name</label> 
+			<input class="text" id="user_name" name="user[name]" size="30" type="text" value="" /> 
+		</li> 
+		<li>
+			<label for="email_primary">Email</label> 
+			<input class="text" id="email_primary" name="user[email]" size="30" type="text" />
+		</li>
+		<li>
+			<label for="user_phone">Phone</label> 
+			<input class="text" id="phone_work" name="user[phone]" size="30" type="text" /> 
+		</li>
+		</ul>
+		<div class="button-container"><%= submit_tag 'Create', :class => "uiButton grey small" %></div>
+		<% end %>
+	</div>
+<% end %>
+<div class="company_box">
+	<h3 class="title"><%= h @customer.name %></h3>
+	<div class="action_buttons">
+		<%= link_to 'Edit this company', edit_customer_path(@customer), :class => "last" %>
+	</div>
+	<div><%=@customer.description%></div>
+</div> 
+<h4 class="title">Add a Note about "<%= @customer.name %>"</h4>	
+<% form_for(@customer) do |f| %>
+	<label class="overlabel" for="comp_notes">
+		Add specific notes regarding this company<br /> 
+		example - we are negotiating a 100K deal with this company
+	</label>
+	<%= f.text_area :note, :class=> "sp_paragraph", :id => "comp_notes" %>
+	<div class="alignright"> 
+		<%= f.submit 'Save', :class=>"uiButton small grey"  %> &nbsp;
+	</div>
+<% end %>	  
+<span class="seperator"></span>
+<% unless @customer.users.empty? %>
+<h4 class="title">People in <%=@customer.name%> (<%= @customer.users.size %>) </h4>
+	<ul class="user_list">	  
 			  <% @customer.users.each do |user| %>
 			  <li>
 			  	<%= link_to (user_avatar(user.avatar, :thumb), user, :title => h(user.name) ) %> 
@@ -40,70 +82,17 @@
 				<%# user.job_title %>
 			  </li>  
 			  <%end%>
-			</ul>
-		</div>
-		<% end %>
-	</div> 
-	<div class="sidepanel">
-	<h3 class="title">New Contact <span class="small_text" style="font-size:12px;color:#0078BD;">in <%=@customer.name%></span></h3> 
-	
-	<% form_tag :action=> :quick_customer,:controller => "contacts", :method =>:post do %>
-	<%= hidden_field_tag 'customer_id', params[:id] %> 	
-	<ul class="ui-form">
-	<li> 
-		<label for="user_name">Full Name</label> 
-		<input class="text" id="user_name" name="user[name]" size="30" type="text" value="" /> 
-	</li> 
-	<li>
-		<label for="email_primary">Email</label> 
-		<input class="text" id="email_primary" name="user[email]" size="30" type="text" />
-	</li>
-	<li>
-		<label for="user_phone">Phone</label> 
-		<input class="text" id="phone_work" name="user[phone]" size="30" type="text" /> 
-	</li>
 	</ul>
-  		<div><%= submit_tag 'Create', :class => "fdbutton" %></div>
-	<% end %>
-	</div>
+
 <% end %>
-<div class="page_area contactPage"> 
-	<div class="company_box">
-		<div class="floatr">
-			<%= link_to 'Edit this company', edit_customer_path(@customer), :class => "fdbutton grey" %>
-			<%= link_to 'Delete', @customer, :confirm => 'Are you sure you want to delete this company?', :method => :delete, :class => "fdbutton red" %>
-		</div>	
-	<h4 class="info_title"><%=h @customer.name %></h4>
-	<div><%=@customer.description%></div>
-		
-	<% unless @customer.note.blank? %>
-	<span class="seperator"></span>
-	<h4>Note</h4>
-	<div>
-		<%= @customer.note %>
+<span class="seperator"></span>
+<h4 class="title">Recent Tickets from "<%= @customer.name %>"</h4>
+	<ul class="history-list">
+		  	<% @customer.users.each do |user| %>
+				<% user.tickets.first(5).each do |ticket| %>		
+					<%= render :partial => "/contact_shared/ticket", :object => ticket %> 
+				<% end %>
+			<% end %>	 
+			</ul>
+	
 	</div>
-	<% end %>	 
-	<span class="seperator"></span>
-	<h4>Recent Tickets from "<%= @customer.name %>"</h4>
-	<ul class="history_list">
-	  	<% @customer.users.each do |user| %>
-			<% user.tickets.first(5).each do |ticket| %>		
-				<li class="<%= cycle('stripe', '') %>">
-					<%= link_to("##{ticket.display_id} " + h(ticket.subject), ticket, :class => "title") %>
-					  <div>  
-					  <% if ticket.freshness == :new %>
-				        Unassigned
-				      <% else %>
-				        Assigned to <%= link_to(h(ticket.responder.display_name), ticket.responder, :class => 'username') %>
-				      <% end %>
-					  </div>
-					  <div> Status <%= ticket.status_name %></div>
-					  <div class="priority">
-							    Priority <%= ticket.priority_name %>
-					  </div>
-				</li>		
-			<% end %>
-		<% end %>	 
-	</ul>
-	</div>
-</div>

@@ -1,6 +1,6 @@
 <div id="Reminders" class="reminders sidepanel">
 	<h3 class="title"><%= local_assigns[:reminder_title] || "To-dos" %></h3>
-	<table>
+	<table width="100%">
 	  <% reminders.visible.map do |r| %>   
 	   <%= render :partial => "/helpdesk/shared/reminder_list", :locals => {:parent => parent, :r => r, :checked =>r.deleted, :check_url =>helpdesk_reminder_path(r), :check_method => :delete, :uncheck_url =>restore_helpdesk_reminder_path(r), :uncheck_method =>:put} %>
 	  <% end %>

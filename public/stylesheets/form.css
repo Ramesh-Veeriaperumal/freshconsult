@@ -1,0 +1,838 @@
+@charset "UTF-8";
+/* Theme Colors and layout Defaults */
+/* line 4, ../src/form.scss */
+.ui-login {
+  text-align: center;
+  display: block;
+  padding: 18px 0px;
+}
+/* line 8, ../src/form.scss */
+.ui-login .ui-form {
+  background: none;
+  border: 0px;
+  width: 350px;
+  -moz-border-radius: 6px 6px 6px 6px;
+  -webkit-border-radius: 6px 6px 6px 6px;
+  border-radius: 6px 6px 6px 6px;
+  text-align: left;
+  padding: 25px;
+  border: 1px solid #c2c2c2;
+  margin: 0px auto !important;
+  background: #ffffff;
+}
+/* line 18, ../src/form.scss */
+.ui-login .ui-form ul {
+  margin: 0px;
+}
+/* line 22, ../src/form.scss */
+.ui-login .ui-form ul li input.text {
+  margin: 3px 0px 5px 0px;
+  width: 320px;
+}
+
+/* line 31, ../src/form.scss */
+div.ui-form ul {
+  padding: 0px;
+}
+
+/* line 35, ../src/form.scss */
+div.ui-form ul, ul.ui-form {
+  list-style: none;
+  *zoom: 1;
+  margin: 0px -20px 10px -20px;
+}
+/* line 22, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/compass/stylesheets/compass/utilities/general/_clearfix.scss */
+div.ui-form ul:after, ul.ui-form:after {
+  content: "\0020";
+  display: block;
+  height: 0;
+  clear: both;
+  overflow: hidden;
+  visibility: hidden;
+}
+
+/* line 42, ../src/form.scss */
+a.addchoice {
+  padding: 5px;
+  color: #999999;
+  border: 1px solid #cfcfcf;
+  border-width: 1px 0px;
+  text-decoration: none;
+  cursor: pointer;
+  padding: 8px 10px 8px 28px;
+  font-weight: bold;
+  color: #336699;
+  display: block;
+  background: url("../images/add.png") no-repeat 8px 7px;
+}
+/* line 18, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/compass/stylesheets/compass/utilities/links/_link-colors.scss */
+a.addchoice:visited {
+  color: #336699;
+}
+/* line 21, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/compass/stylesheets/compass/utilities/links/_link-colors.scss */
+a.addchoice:focus {
+  color: #333333;
+}
+/* line 24, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/compass/stylesheets/compass/utilities/links/_link-colors.scss */
+a.addchoice:hover {
+  color: #333333;
+}
+/* line 27, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/compass/stylesheets/compass/utilities/links/_link-colors.scss */
+a.addchoice:active {
+  color: #336699;
+}
+
+/* line 56, ../src/form.scss */
+a.addchoice:hover {
+  background-color: #f8f8f8;
+}
+
+/* line 61, ../src/form.scss */
+.colsets fieldset {
+  *zoom: 1;
+  margin: 0px;
+  padding: 2px 1px;
+  border: 0px;
+  position: relative;
+}
+/* line 22, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/compass/stylesheets/compass/utilities/general/_clearfix.scss */
+.colsets fieldset:after {
+  content: "\0020";
+  display: block;
+  height: 0;
+  clear: both;
+  overflow: hidden;
+  visibility: hidden;
+}
+/* line 67, ../src/form.scss */
+.colsets fieldset b {
+  font-size: 11px;
+}
+/* line 70, ../src/form.scss */
+.colsets fieldset .dropchoice, .colsets fieldset .tags {
+  *zoom: 1;
+  float: left;
+  margin: 0px 5px 0px 0px;
+  padding: 0px;
+}
+/* line 22, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/compass/stylesheets/compass/utilities/general/_clearfix.scss */
+.colsets fieldset .dropchoice:after, .colsets fieldset .tags:after {
+  content: "\0020";
+  display: block;
+  height: 0;
+  clear: both;
+  overflow: hidden;
+  visibility: hidden;
+}
+/* line 75, ../src/form.scss */
+.colsets fieldset .dropchoice input, .colsets fieldset .tags input {
+  margin-right: 5px;
+  width: 100%;
+}
+/* line 80, ../src/form.scss */
+.colsets fieldset .dropchoice {
+  width: 35%;
+}
+/* line 83, ../src/form.scss */
+.colsets fieldset .tags {
+  width: 50%;
+}
+/* line 86, ../src/form.scss */
+.colsets fieldset img {
+  position: absolute;
+  right: 6px;
+  top: 3px;
+}
+/* line 92, ../src/form.scss */
+.colsets a.addchoice {
+  border: 1px solid #cfcfcf;
+  background-color: #ffffff;
+  background-position: 5px 6px;
+  font-size: 12px;
+  padding: 8px 10px 6px 25px;
+}
+
+/* line 104, ../src/form.scss */
+.choicelist label {
+  font-size: 1.1em;
+}
+/* line 107, ../src/form.scss */
+.choicelist label.radiolabel {
+  font-size: 1em;
+  float: left;
+  padding: 0px 5px;
+  margin-right: 10px;
+}
+/* line 113, ../src/form.scss */
+.choicelist input.radio {
+  float: left;
+}
+
+/* line 119, ../src/form.scss */
+.ui-form {
+  padding: 15px 20px 15px 20px;
+  position: relative;
+  border-top: 1px solid #dfdfdf;
+  border-bottom: 1px solid #dfdfdf;
+  background-color: #f6f6f6;
+}
+/* line 125, ../src/form.scss */
+.ui-form li {
+  padding: 0px 0px 5px 0px;
+  margin: 0px;
+  float: left;
+  width: 100%;
+}
+/* line 129, ../src/form.scss */
+.ui-form li a.fdbutton {
+  min-width: 110px;
+  width: auto !important;
+  width: 110px;
+}
+/* line 134, ../src/form.scss */
+.ui-form li.text, .ui-form li.paragraph {
+  width: 98%;
+}
+/* line 137, ../src/form.scss */
+.ui-form li.dropdown, .ui-form li.small {
+  width: 48%;
+}
+/* line 141, ../src/form.scss */
+.ui-form li.medium {
+  width: 75%;
+}
+/* line 145, ../src/form.scss */
+.ui-form label, .ui-form li.checkbox {
+  font-weight: normal;
+  padding: 4px 0px;
+  margin: 0px;
+  line-height: 18px;
+  color: #565656;
+  font-size: 14px;
+}
+/* line 153, ../src/form.scss */
+.ui-form li.checkbox {
+  overflow: hidden;
+  *zoom: 1;
+}
+/* line 155, ../src/form.scss */
+.ui-form li.checkbox input, .ui-form li.checkbox label {
+  float: left;
+}
+/* line 158, ../src/form.scss */
+.ui-form li.checkbox label {
+  position: relative;
+  font-size: 12px;
+  top: -3px;
+  left: 3px;
+}
+/* line 165, ../src/form.scss */
+.ui-form label.overlabel {
+  color: #999999;
+  margin-left: 8px;
+  margin-top: 0px;
+  font-size: 14px;
+}
+/* line 171, ../src/form.scss */
+.ui-form input.text, .ui-form textarea {
+  margin: 0px 0px 3px 0px;
+  color: #3f3f3f;
+  padding: 3px;
+  font-size: 16px;
+  border: 1px solid #bfbfbf;
+  font-weight: normal;
+}
+/* line 179, ../src/form.scss */
+.ui-form textarea {
+  font-family: inherit;
+  font-size: 9pt;
+  line-height: 16px;
+  overflow: auto;
+}
+/* line 185, ../src/form.scss */
+.ui-form input.very_small {
+  width: 200px;
+}
+/* line 188, ../src/form.scss */
+.ui-form textarea.smallpara {
+  height: 50px;
+}
+/* line 191, ../src/form.scss */
+.ui-form select {
+  width: auto;
+  font-size: 1.0em;
+  font-weight: normal;
+}
+/* line 196, ../src/form.scss */
+.ui-form input.text:focus, .ui-form textarea:focus {
+  border-color: #5b711f;
+}
+/* line 199, ../src/form.scss */
+.ui-form span {
+  font-weight: normal;
+  font-size: 0.9em;
+  color: #777777;
+  display: block;
+}
+/* line 206, ../src/form.scss */
+.ui-form .largefield label {
+  font-size: 1.4em;
+}
+/* line 209, ../src/form.scss */
+.ui-form .largefield input {
+  font-size: 1.4em;
+}
+/* line 213, ../src/form.scss */
+.ui-form .seperator {
+  margin-bottom: 0px;
+  padding: 1px;
+}
+/* line 218, ../src/form.scss */
+.ui-form .check_box {
+  overflow: hidden;
+  *zoom: 1;
+}
+/* line 220, ../src/form.scss */
+.ui-form .check_box label {
+  float: left;
+  font-size: 1.4em;
+}
+/* line 224, ../src/form.scss */
+.ui-form .check_box input {
+  float: left;
+  margin: 5px;
+}
+/* line 229, ../src/form.scss */
+.ui-form .inline_field {
+  margin: 0px 0px 10px 30px;
+}
+/* line 231, ../src/form.scss */
+.ui-form .inline_field input {
+  width: 45%;
+  margin: 0px;
+}
+/* line 235, ../src/form.scss */
+.ui-form .inline_field label {
+  font-size: 1.2em;
+}
+/* line 240, ../src/form.scss */
+.ui-form .inlineChecklist label {
+  float: left;
+  font-size: 1em;
+  padding: 5px 16px 0px 0px;
+}
+/* line 245, ../src/form.scss */
+.ui-form .inlineChecklist input {
+  top: 0px;
+}
+/* line 251, ../src/form.scss */
+.ui-form li.textleft {
+  overflow: hidden;
+  *zoom: 1;
+  position: relative;
+}
+/* line 254, ../src/form.scss */
+.ui-form li.textleft label {
+  position: absolute;
+  left: 6px;
+  top: 3px;
+  width: 25%;
+}
+/* line 261, ../src/form.scss */
+.ui-form label.error {
+  font-size: 1em;
+  color: red;
+}
+/* line 265, ../src/form.scss */
+.ui-form fieldset.addchoice {
+  padding: 0px;
+  color: #999999;
+  cursor: pointer;
+}
+/* line 271, ../src/form.scss */
+.ui-form fieldset.addchoice:hover {
+  background: #f8f8f8;
+}
+/* line 274, ../src/form.scss */
+.ui-form .conditionset {
+  border: 1px solid #cfcfcf;
+  padding: 0px;
+}
+/* line 277, ../src/form.scss */
+.ui-form .conditionset fieldset {
+  *zoom: 1;
+  padding: 5px 0px 5px 4px;
+  border-bottom: 1px solid #cfcfcf;
+  background: #efefef;
+  position: relative;
+}
+/* line 22, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/compass/stylesheets/compass/utilities/general/_clearfix.scss */
+.ui-form .conditionset fieldset:after {
+  content: "\0020";
+  display: block;
+  height: 0;
+  clear: both;
+  overflow: hidden;
+  visibility: hidden;
+}
+/* line 284, ../src/form.scss */
+.ui-form .conditionset fieldset * {
+  float: left;
+  width: auto;
+  margin: 2px 4px;
+}
+/* line 289, ../src/form.scss */
+.ui-form .conditionset fieldset .add, .ui-form .conditionset fieldset .delete {
+  position: absolute;
+  margin: 0px;
+  padding: 0px;
+  cursor: pointer;
+  right: 10px;
+  top: 5px;
+}
+/* line 297, ../src/form.scss */
+.ui-form .conditionset fieldset div.controls {
+  width: 95%;
+}
+/* line 301, ../src/form.scss */
+.ui-form .conditionset fieldset input.text {
+  width: 300px;
+  font-size: 10pt;
+}
+/* line 305, ../src/form.scss */
+.ui-form .conditionset fieldset textarea.paragraph {
+  width: 400px;
+}
+/* line 309, ../src/form.scss */
+.ui-form .conditionset fieldset div.s_comment {
+  width: 520px;
+}
+/* line 311, ../src/form.scss */
+.ui-form .conditionset fieldset div.s_comment .paragraph {
+  width: 98%;
+}
+/* line 315, ../src/form.scss */
+.ui-form .conditionset fieldset div.s_email {
+  float: none;
+  display: block;
+  clear: both;
+  width: 800px;
+  padding: 4px;
+  overflow: hidden;
+  *zoom: 1;
+}
+/* line 322, ../src/form.scss */
+.ui-form .conditionset fieldset div.s_email div {
+  width: 100%;
+  padding: 4px 0px;
+  font-size: 12px;
+  border-bottom: 1px solid #cfcfcf;
+}
+/* line 327, ../src/form.scss */
+.ui-form .conditionset fieldset div.s_email div em {
+  font-style: normal;
+}
+/* line 330, ../src/form.scss */
+.ui-form .conditionset fieldset div.s_email div b {
+  width: 180px;
+}
+/* line 333, ../src/form.scss */
+.ui-form .conditionset fieldset div.s_email div input.text, .ui-form .conditionset fieldset div.s_email div textarea.paragraph {
+  width: 590px;
+}
+/* line 336, ../src/form.scss */
+.ui-form .conditionset fieldset div.s_email div a.l_placeholder {
+  clear: left;
+  float: right;
+  font-size: 11px;
+  text-decoration: none;
+  color: #0078BD;
+  border-bottom: 1px dotted #0078BD;
+}
+/* line 344, ../src/form.scss */
+.ui-form .conditionset fieldset div.s_email div a.l_placeholder:hover {
+  border-bottom: 1px solid #0078BD;
+}
+/* line 350, ../src/form.scss */
+.ui-form .conditionset fieldset span {
+  margin: 0px;
+  padding: 0px;
+}
+/* line 354, ../src/form.scss */
+.ui-form .conditionset fieldset span.sort_handle:hover {
+  background-color: #fafafa;
+}
+/* line 358, ../src/form.scss */
+.ui-form .conditionset fieldset label.checkbox {
+  width: 100%;
+  font-size: 1.3em;
+}
+/* line 363, ../src/form.scss */
+.ui-form .conditionset div {
+  margin: 0px;
+  padding: 0px;
+}
+
+/* line 370, ../src/form.scss */
+fieldset.nestedChoices {
+  overflow: hidden;
+  *zoom: 1;
+}
+/* line 372, ../src/form.scss */
+fieldset.nestedChoices fieldset {
+  margin: 5px 0px 0px 18px !important;
+  padding: 6px 0px 0px 6px !important;
+  border: 1px dotted #afafaf;
+  border-width: 0px 0px 0px 1px;
+  float: left;
+}
+/* line 379, ../src/form.scss */
+fieldset.nestedChoices input {
+  margin-right: 3px;
+  position: relative;
+  top: -1px;
+}
+
+/* line 388, ../src/form.scss */
+.business_hours td {
+  vertical-align: top;
+}
+/* line 391, ../src/form.scss */
+.business_hours td.borderleft {
+  border-left: 1px solid #d8d8d8;
+}
+/* line 395, ../src/form.scss */
+.business_hours .business_time div.specific_hours {
+  padding: 16px 26px;
+}
+/* line 398, ../src/form.scss */
+.business_hours .business_time div.timerange {
+  *zoom: 1;
+}
+/* line 22, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/compass/stylesheets/compass/utilities/general/_clearfix.scss */
+.business_hours .business_time div.timerange:after {
+  content: "\0020";
+  display: block;
+  height: 0;
+  clear: both;
+  overflow: hidden;
+  visibility: hidden;
+}
+/* line 400, ../src/form.scss */
+.business_hours .business_time div.timerange input, .business_hours .business_time div.timerange strong {
+  float: left;
+}
+/* line 403, ../src/form.scss */
+.business_hours .business_time div.timerange input {
+  width: 80px;
+}
+/* line 406, ../src/form.scss */
+.business_hours .business_time div.timerange strong {
+  font-weight: normal;
+  padding: 0px 10px;
+}
+/* line 413, ../src/form.scss */
+.business_hours .business_days label {
+  float: left;
+  font-size: 12px;
+  padding-right: 8px;
+}
+/* line 419, ../src/form.scss */
+.business_hours .holidaylist {
+  padding-left: 0px;
+}
+/* line 421, ../src/form.scss */
+.business_hours .holidaylist ul {
+  color: #444444;
+  overflow: hidden;
+  *zoom: 1;
+  background-color: white;
+  padding: 10px 5px 5px 10px;
+  margin: 0px;
+  -moz-border-radius: 6px 6px 6px 6px;
+  -webkit-border-radius: 6px 6px 6px 6px;
+  border-radius: 6px 6px 6px 6px;
+}
+/* line 428, ../src/form.scss */
+.business_hours .holidaylist ul li {
+  position: relative;
+  margin-right: 20px;
+}
+/* line 431, ../src/form.scss */
+.business_hours .holidaylist ul li .close {
+  position: absolute;
+  background: url(../images/icons/btn_close_icon.png) no-repeat;
+  width: 18px;
+  height: 18px;
+  right: 6px;
+  top: 0px;
+}
+
+/* line 444, ../src/form.scss */
+input.time {
+  font-weight: normal;
+  font-size: 12px;
+}
+
+/* line 452, ../src/form.scss */
+.grid {
+  border: 1px solid #cfcfcf;
+  padding: 0px;
+  background: #f6f6f6;
+}
+/* line 456, ../src/form.scss */
+.grid table {
+  padding: 0px;
+  margin: 0px;
+  border: 0px;
+  font-size: 12px;
+}
+/* line 460, ../src/form.scss */
+.grid table th, .grid table td {
+  padding: 8px 10px;
+  vertical-align: top;
+  border: 0px;
+}
+/* line 465, ../src/form.scss */
+.grid table th {
+  line-height: 18px;
+  font-weight: bold;
+}
+/* line 468, ../src/form.scss */
+.grid table th span {
+  display: block;
+}
+/* line 472, ../src/form.scss */
+.grid table td {
+  background: #efefef;
+  border-top: 1px solid #cfcfcf;
+}
+/* line 473, ../src/form.scss */
+.grid table td label {
+  font-size: 12px;
+  padding: 0px 6px;
+  color: #555555;
+}
+/* line 477, ../src/form.scss */
+.grid table td label em {
+  font-style: normal;
+  font-weight: bold;
+  text-transform: capitalize;
+  color: #000000;
+}
+/* line 488, ../src/form.scss */
+.grid .olist {
+  list-style: decimal;
+}
+/* line 492, ../src/form.scss */
+.grid .grid_form td {
+  border: 0px;
+  padding: 6px 10px 0px 10px;
+  background: #fafafa;
+}
+/* line 497, ../src/form.scss */
+.grid .grid_form .button-container {
+  text-align: right;
+  padding: 0px 10px 10px 0px;
+}
+
+/* line 505, ../src/form.scss */
+.grid ul {
+  list-style: none;
+  margin: 0px;
+  padding: 0px;
+  background: #efefef;
+  border-top: 1px solid #cfcfcf;
+  padding: 8px 12px;
+  overflow: hidden;
+  *zoom: 1;
+}
+/* line 11, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/compass/stylesheets/compass/utilities/lists/_bullets.scss */
+.grid ul li {
+  list-style-image: none;
+  list-style-type: none;
+  margin-left: 0px;
+}
+/* line 512, ../src/form.scss */
+.grid ul li {
+  margin: 0px;
+  padding: 0px;
+  float: left;
+  width: 33%;
+}
+
+/* line 521, ../src/form.scss */
+span.sort_handle {
+  position: relative;
+  left: 0px;
+  top: 1px;
+  width: 25px;
+  height: 25px;
+  cursor: move;
+  background: url(/images/sort_handle.gif) no-repeat;
+  -moz-border-radius: 5px 5px 5px 5px;
+  -webkit-border-radius: 5px 5px 5px 5px;
+  border-radius: 5px 5px 5px 5px;
+}
+
+/* line 532, ../src/form.scss */
+.ui-custom-fields, .ui-custom-form {
+  list-style: none;
+  margin: 0px 0px 0px 0px;
+  padding: 0px;
+}
+/* line 11, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/compass/stylesheets/compass/utilities/lists/_bullets.scss */
+.ui-custom-fields li, .ui-custom-form li {
+  list-style-image: none;
+  list-style-type: none;
+  margin-left: 0px;
+}
+
+/* line 538, ../src/form.scss */
+.admin_form {
+  overflow: hidden;
+  *zoom: 1;
+  background-color: #efefef;
+  padding: 8px 10px 15px 10px;
+  margin: 0px;
+}
+/* line 543, ../src/form.scss */
+.admin_form li {
+  position: relative;
+}
+/* line 546, ../src/form.scss */
+.admin_form h4.title {
+  color: #555;
+  font-size: 14px;
+  font-weight: bold;
+  margin: 0px;
+  padding: 0px 0px 8px 0px;
+}
+
+/* line 555, ../src/form.scss */
+.admin_form .button-container {
+  padding-left: 180px;
+  width: 100%;
+}
+/* line 558, ../src/form.scss */
+.admin_form .button-container .fdbutton {
+  min-width: 60px;
+  width: auto !important;
+  width: 60px;
+}
+
+/* line 563, ../src/form.scss */
+.ui-draggable-dragging {
+  z-index: 99999;
+  padding: 0px !important;
+}
+
+/* line 568, ../src/form.scss */
+.ui-custom-fields {
+  display: block;
+  margin-bottom: 10px;
+  *zoom: 1;
+}
+/* line 22, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/compass/stylesheets/compass/utilities/general/_clearfix.scss */
+.ui-custom-fields:after {
+  content: "\0020";
+  display: block;
+  height: 0;
+  clear: both;
+  overflow: hidden;
+  visibility: hidden;
+}
+/* line 572, ../src/form.scss */
+.ui-custom-fields li {
+  float: left;
+  position: relative;
+}
+/* line 576, ../src/form.scss */
+.ui-custom-fields .fdbutton {
+  min-width: 120px;
+  width: auto !important;
+  width: 120px;
+  margin: 2px 4px;
+  font-size: 11px;
+}
+
+/* line 583, ../src/form.scss */
+.custom_form_outer .placeHolder {
+  height: 50px !important;
+  border: 1px solid red !important;
+}
+
+/* line 589, ../src/form.scss */
+.ui-sortable-placeholder {
+  background: #DFEFFF !important;
+  border: 1px dotted #C2D7EF  !important;
+  visibility: visible !important;
+  padding: 20px 6px;
+  position: relative;
+  z-index: 99;
+}
+
+/* line 598, ../src/form.scss */
+.ui-custom-form {
+  padding: 0px;
+  position: relative;
+}
+/* line 601, ../src/form.scss */
+.ui-custom-form .ui-form {
+  background: #ffffff;
+  margin-left: 0px;
+  margin-right: 0px;
+}
+/* line 602, ../src/form.scss */
+.ui-custom-form li {
+  padding: 4px;
+  position: relative;
+  background: #ffffff;
+  border: 1px dotted #ffffff;
+  cursor: move;
+}
+/* line 606, ../src/form.scss */
+.ui-custom-form li div {
+  position: relative;
+}
+/* line 609, ../src/form.scss */
+.ui-custom-form li .ui-field-panel {
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  display: none;
+}
+/* line 614, ../src/form.scss */
+.ui-custom-form li .action_panel {
+  position: absolute;
+  top: 0px;
+  right: 20px;
+  padding: 0px;
+  visibility: hidden;
+}
+/* line 623, ../src/form.scss */
+.ui-custom-form li:hover, .ui-custom-form li.hover, .ui-custom-form li.active {
+  background: #DFEFFF;
+  border-color: #C2D7EF;
+}
+/* line 626, ../src/form.scss */
+.ui-custom-form li:hover .ui-field-panel, .ui-custom-form li.hover .ui-field-panel, .ui-custom-form li.active .ui-field-panel {
+  display: block;
+}
+/* line 629, ../src/form.scss */
+.ui-custom-form li:hover .action_panel, .ui-custom-form li.hover .action_panel, .ui-custom-form li.active .action_panel {
+  visibility: visible;
+}
+/* line 633, ../src/form.scss */
+.ui-custom-form li.active {
+  border-style: solid;
+}
+
+/* line 638, ../src/form.scss */
+.hint_drag {
+  background: #fefedf;
+  border: 1px solid #cccccc;
+  padding: 15px 30px;
+  margin: 10px 18px;
+  display: block;
+}
