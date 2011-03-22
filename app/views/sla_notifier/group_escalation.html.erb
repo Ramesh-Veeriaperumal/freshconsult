@@ -1,0 +1,15 @@
+Hi <%=@name%>,
+
+
+A new ticket (#<%= @ticket.display_id %>) in group <%= @ticket.group.name%> is currently unassigned for more than <%= @ticket.group.assign_time.div(60)%> minutes.
+
+
+Ticket Details: 
+
+Subject - <%= @ticket.subject %>
+
+Description  - <%= @ticket.description %>
+
+
+
+This is an escalation email for the QA group in <%= @ticket.account.name%>

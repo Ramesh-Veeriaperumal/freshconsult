@@ -6,6 +6,8 @@ class Group < ActiveRecord::Base
    has_many :agent_groups , :class_name => "AgentGroup", :foreign_key => "group_id"
    has_many :agents, :through => :agent_groups, :source => :user
    
+   belongs_to :escalate , :class_name => "User", :foreign_key => "escalate_to"
+   
    attr_accessible :name,:description,:email_on_assign,:escalate_to,:assign_time
    
    accepts_nested_attributes_for :agent_groups

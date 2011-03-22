@@ -2,6 +2,8 @@ ActionController::Routing::Routes.draw do |map|
   
   map.connect '/images/helpdesk/attachments/:id/:style.:format', :controller => '/helpdesk/attachments', :action => 'show', :conditions => { :method => :get }
   
+  map.resources :uploaded_images, :controller => 'uploaded_images'
+  
   map.resources :import , :controller => 'contact_import'
   
   map.resources :customers ,:member => {:quick => :post}

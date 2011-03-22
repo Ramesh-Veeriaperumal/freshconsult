@@ -11,11 +11,7 @@ class GroupsController < Admin::AdminController
   end
 
   def show
-     @group = Group.find(params[:id])
-    respond_to do |format|
-      format.html # show.html.erb
-      format.xml  { render :xml => @group }
-    end
+   redirect_to :action => 'edit'
   end
 
   def new
@@ -31,7 +27,7 @@ class GroupsController < Admin::AdminController
 
   def edit
     
-     @group = Group.find(params[:id])     
+     @group = current_account.groups.find(params[:id])     
       respond_to do |format|
       format.html # edit.html.erb
       format.xml  { render :xml => @group }
