@@ -48,6 +48,6 @@
 <% else %>
 	<div class="big-info">
 		<div class="no-info-text"> <%= t('no_topics_text')%> </div>
-		<%= (link_to t('add_a_topic'), new_category_forum_topic_path(category, forum), :class => "uiButton large") if logged_in? %>
+		<%= (link_to t('add_a_topic'), new_category_forum_topic_path(category, forum), :class => "uiButton large") %>
 	</div>
 <% end %>	
