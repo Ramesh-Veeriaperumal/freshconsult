@@ -68,6 +68,7 @@ class PostsController < ApplicationController
     @post.user = current_user
     @post.account_id = current_account.id
     @post.save!
+    create_attachments
     respond_to do |format|
       format.html do
         redirect_to category_forum_topic_path(:category_id => params[:category_id],:forum_id => params[:forum_id], :id => params[:topic_id], :anchor => @post.dom_id, :page => params[:page] || '1')
@@ -75,12 +76,19 @@ class PostsController < ApplicationController
       format.xml { render :xml => @post }
     end
   rescue ActiveRecord::RecordInvalid
-    flash[:bad_reply] = 'Please post something at least...'[:post_something_message]
+    flash[:bad_reply] = 'Please post a valid message...'[:post_something_message]
     respond_to do |format|
       format.html do
         redirect_to category_forum_topic_path(:category_id => params[:category_id],:forum_id => params[:forum_id], :id => params[:topic_id], :anchor => 'reply-form', :page => params[:page] || '1')
       end
       format.xml { render :xml => @post.errors.to_xml, :status => 400 }
+    end
+  end
+  
+   def create_attachments
+   return unless @post.respond_to?(:attachments)
+    (params[:post][:attachments] || []).each do |a|
+      @post.attachments.create(:content => a[:file], :description => a[:description], :account_id => @post.account_id)
     end
   end
   

@@ -1,3 +1,18 @@
+<% content_for :head do %>
+
+  <%= javascript_include_tag "helpdesk/page_switcher" %>
+  <% javascript_tag do %>
+    document.observe("dom:loaded", function(){
+
+      new Helpdesk.PageSwitcher({
+        toggleMode: true,
+        pages: ['attachment-options']
+      });
+
+    });
+  <% end %>
+<% end %>
+
 <ul class="ui-form">
 	<li>
 		<label for="topic_title"><%= t('topic.name') %>*</label>
@@ -18,6 +33,20 @@
 		</li>
 	<% end %>
 	
+	<li>
+		<%= render :partial=> "/forum_shared/attachment_form" %>
+	</li>
+	<% unless @topic.new_record? %>
+	<div class="attachment-list-container">
+	    <%= content_tag('h5', 'Attachments') unless @topic.posts.first.attachments.empty? %>
+	    <table class="attachment-list">
+	      <%= render(
+	        :partial => '/helpdesk/shared/attachment', 
+	        :collection => @topic.posts.first.attachments,
+	        :locals => {:show_delete => true, :url => [@topic.posts.first] }) %>
+	    </table>
+	  </div>
+	<%end%>
 	<% if admin? or current_user.moderator_of?(@topic.forum) %>
 		<li class="inlineChecklist">
 			<label>
@@ -29,3 +58,18 @@
 		</li>
 	<% end %>
 </ul>
+
+<textarea id="file-list-template" style="display:none">
+  <tr>
+    <td class="remove">
+      <a href="" onclick="Helpdesk.Multifile.remove(this); return false;", inputId="#{inputId}">
+        <%= image_tag("helpdesk/delete.png") %>
+      </a>
+    </td>
+    <td class="name">#{name}</td>
+    <td>
+      <label>Description</label>
+      <input type="text" name="helpdesk_article[attachments][][description]" />
+    </td>
+    </tr>
+</textarea>

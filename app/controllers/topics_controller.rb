@@ -5,6 +5,8 @@ class TopicsController < ApplicationController
     c.requires_permission :post_in_forums
   end
   before_filter :set_selected_tab
+  
+  #uses_tiny_mce :options => Helpdesk::MEDIUM_EDITOR 
 
 	# @WBH@ TODO: This uses the caches_formatted_page method.  In the main Beast project, this is implemented via a Config/Initializer file.  Not
 	# sure what analogous place to put it in this plugin.  It don't work in the init.rb  
@@ -69,6 +71,7 @@ class TopicsController < ApplicationController
     end
 		
 		if topic_saved && post_saved
+      create_attachments  
 			respond_to do |format| 
 				format.html { redirect_to category_forum_topic_path(@forum_category,@forum, @topic) }
 				format.xml  { render  :xml => @topic }
@@ -85,6 +88,7 @@ class TopicsController < ApplicationController
     @topic.attributes = params[:topic]
     assign_protected
     @topic.save!
+    create_attachments
     respond_to do |format|
       format.html { redirect_to category_forum_topic_path(@topic.forum.forum_category_id,@topic.forum_id, @topic) }
       format.xml  { head 200 }
@@ -143,6 +147,13 @@ def update_lock
       format.xml  { head 200 }
    end
 end
+
+ def create_attachments
+   return unless @topic.posts.first.respond_to?(:attachments)
+    (params[:post][:attachments] || []).each do |a|
+      @topic.posts.first.attachments.create(:content => a[:file], :description => a[:description], :account_id => @topic.posts.first.account_id)
+    end
+  end
  
   
   protected

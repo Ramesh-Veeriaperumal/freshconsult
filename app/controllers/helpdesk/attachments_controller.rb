@@ -15,18 +15,11 @@ class Helpdesk::AttachmentsController < ApplicationController
       #redirect_to @attachment.content.expiring_url(60) #by Shan tem, need to check this '60'
       
       #render :nothing => true
-      redir_url = AWS::S3::S3Object.url_for(@attachment.content.path,@attachment.content.bucket_name,:expires_in => 10.seconds)
-      redirect_to(  redir_url.gsub( AWS::S3::DEFAULT_HOST, '' ))
+      redir_url = AWS::S3::S3Object.url_for(@attachment.content.path,@attachment.content.bucket_name,:expires_in => 300.seconds)
+      puts redir_url
+      redirect_to(  redir_url.gsub( "#{AWS::S3::DEFAULT_HOST}/", '' ))
   end
   
-   def fetch_url(url)
-    r = Net::HTTP.get_response(URI.parse(url))
-    if r.is_a? Net::HTTPSuccess
-      r.body
-    else
-      nil
-    end
-  end
 
   protected
 
