@@ -88,7 +88,7 @@ class ForumsController < ApplicationController
   protected
     def find_or_initialize_forum # Shan - Should split-up find & initialize as separate methods.
       @forum = params[:id] ? Forum.find(params[:id]) : Forum.new
-      @forum_category = params[:category_id] ? Forum.find(params[:category_id]) : nil
+      @forum_category = params[:category_id] ? ForumCategory.find(params[:category_id]) : nil
       @forum.account_id ||= current_account.id
       (raise(ActiveRecord::RecordNotFound) unless (@forum.account_id == current_account.id)) || @forum
     end
