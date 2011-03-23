@@ -37,6 +37,7 @@ class Solution::ArticlesController < ApplicationController
      current_folder = Solution::Folder.find(params[:folder_id]) unless params[:folder_id].nil?
      @article = current_folder.articles.new
      @article.is_public = "true"
+     @article.status = Solution::Article::STATUS_KEYS_BY_TOKEN[:published]
     respond_to do |format|
       format.html # new.html.erb
       format.xml  { render :xml => @article }
