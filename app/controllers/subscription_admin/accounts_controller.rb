@@ -3,7 +3,7 @@ class SubscriptionAdmin::AccountsController < ApplicationController
   include AdminControllerMethods
   
   def index
-    @accounts = Account.paginate(:include => :subscription, :page => params[:page], :per_page => 30, :order => 'accounts.name')
+    @accounts = Account.paginate(:include => :subscription, :page => params[:page], :per_page => 30, :order => 'accounts.created_at desc')
   end
   
 end
