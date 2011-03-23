@@ -49,6 +49,7 @@ class Account < ActiveRecord::Base
   
   has_many :scn_automations, :class_name => 'VARule', :conditions => {:rule_type => VAConfig::SCENARIO_AUTOMATION, :active => true}, :order => "position"
   has_many :email_configs
+  has_one  :primary_email_config, :class_name => 'EmailConfig', :conditions => { :primary_role => true }
   has_many :email_notifications
   has_many :groups
   has_many :forum_categories
@@ -79,7 +80,7 @@ class Account < ActiveRecord::Base
                             :message => "Value must be less than six digits"
                             
 
-  before_create :set_default_values
+  before_create :set_default_values, :config_default_email
   
   before_update :check_default_values
     
@@ -138,7 +139,10 @@ class Account < ActiveRecord::Base
   def domain=(domain)
     @domain = domain
     self.full_domain = "#{domain}.#{AppConfig['base_domain']}"
-    self.default_email = "support@#{full_domain}"
+  end
+  
+  def default_email
+    primary_email_config.reply_email
   end
   
   def to_s
@@ -233,6 +237,11 @@ class Account < ActiveRecord::Base
       self.time_zone = Time.zone.name if time_zone.nil? #by Shan temp.. to_s is kinda hack.
       self.helpdesk_name = name.titleize if helpdesk_name.nil?
       self.preferences = HashWithIndifferentAccess.new({:bg_color => "#efefef",:header_color => "#2f3733", :tab_color => "#7cb537"})
+    end
+    
+    def config_default_email
+      d_email = "support@#{full_domain}"
+      email_configs.build(:to_email => d_email, :reply_email => d_email, :primary_role => true)
     end
     
     def create_admin

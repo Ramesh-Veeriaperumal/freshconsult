@@ -37,7 +37,7 @@ class Va::Action
     when 'group_id'
       "Assigned to the group <b>#{act_on.account.groups.find(value.to_i).name}</b>"
     else
-      "Set #{action_key} as <b>#{value}</b>"
+      "Set #{action_key.humanize()} as <b>#{value}</b>"
     end
   end
   
