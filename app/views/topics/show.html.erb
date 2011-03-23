@@ -78,6 +78,9 @@
 		        	 
 					<div class="details min_height">
 						<%= first_post.body_html %>
+						 <ul class="attachment_list">
+	   						<%= render :partial => '/helpdesk/shared/attachment', :collection => first_post.attachments, :locals => {:show_delete => true, :url => [first_post] } %>
+    					 </ul>
 					</div>
 					
 					<% unless @topic.forum.announcement? %>
@@ -99,7 +102,7 @@
 				<div id="reply" class="editbox" style="display:none;">
 					<div class="request_panel">
 					  <%= content_tag 'p', h(flash[:bad_reply]), :class => 'notice' if flash[:bad_reply] %>
-					  <% form_for :post, :url => posts_path(:category_id => @forum_category,:forum_id => @forum, :topic_id => @topic, :page => @topic.last_page) do |f| -%>
+					  <% form_for :post, :url => posts_path(:category_id => @forum_category,:forum_id => @forum, :topic_id => @topic, :page => @topic.last_page), :html => {:multipart => true} do |f| -%>
 					  <ul class="note_form ui-form">
 					  	<li>
 					  		<h3 class="title">Reply to this Topic</h3>
@@ -107,6 +110,9 @@
 					    <li>
 					       <%= f.text_area :body, :rows => 8 %>
 					    </li>
+						<li>
+							<%= render :partial=> "/forum_shared/attachment_form" %>
+						</li>
 					    <li style="display:none;">			
 					        <div class="info_data"><%= t('formatting_help') %></h5></div>
 					        <div class="info_data">
@@ -135,6 +141,9 @@
 						<% unless (post == first_post) %>
 							<%= render :partial => "forum_shared/post", :object => post %>
 							<%= content_tag (:span, "", :class => "seperator") unless ( post == @topic.last_post ) %>
+							<ul class="attachment_list">
+	   							<%= render :partial => '/helpdesk/shared/attachment', :collection => post.attachments, :locals => {:show_delete => true, :url => [post] } %>
+    					 	</ul>
 						<% end %>
 						<%= will_paginate @posts %>
 					<% end %> 

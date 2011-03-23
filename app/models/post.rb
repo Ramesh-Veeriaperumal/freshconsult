@@ -7,6 +7,11 @@ class Post < ActiveRecord::Base
   belongs_to :topic
   
   named_scope :answered_posts, :conditions => { :answer => true }
+  
+  has_many :attachments,
+    :as => :attachable,
+    :class_name => 'Helpdesk::Attachment',
+    :dependent => :destroy
 
   format_attribute :body
   before_create { |r| r.forum_id = r.topic.forum_id }

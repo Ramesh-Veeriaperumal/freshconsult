@@ -9,7 +9,7 @@
 	
 	<%= error_messages_for :post %>
 	<%= error_messages_for :topic %>
-	<% form_for :topic, :url  => category_forum_topics_path(@forum_category,@forum) do |f| -%>
+	<% form_for :topic, :url  => category_forum_topics_path(@forum_category,@forum), :html => {:multipart => true, :id => "post-form"} do |f| -%>
 		<%= render :partial => "form", :object => f %>
 		<br />
 		<%= submit_tag t('topic.post'), :class => "button", :or => link_to(t('cancel'), forum_path(@forum)) %>
