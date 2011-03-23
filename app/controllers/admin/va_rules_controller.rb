@@ -119,11 +119,11 @@ class Admin::VaRulesController < Admin::AutomationsController
      
      if field["fieldType"].eql?("custom")       
        
-        item = {:name =>  field["label"] , :value =>  field["label"] ,  :domtype => field["type"], :action => "set_custom_field"  , :operatortype => "text"}
+        item = {:name =>  field["label"] , :value =>  field["display_name"] ,  :domtype => field["type"], :action => "set_custom_field"  , :operatortype => "text"}
         
         if "dropdown".eql?(field["type"])
           choice_values = get_choices field
-          item = {:name =>  field["label"] , :value =>  field["label"] ,  :domtype => field["type"], :choices => choice_values , :action => "set_custom_field" , :operatortype => "choicelist" }
+          item = {:name =>  field["label"] , :value =>  field["display_name"] ,  :domtype => field["type"], :choices => choice_values , :action => "set_custom_field" , :operatortype => "choicelist" }
         end
         
         filter_hash.push(item)
