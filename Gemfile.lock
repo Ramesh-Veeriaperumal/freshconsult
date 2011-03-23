@@ -45,6 +45,7 @@ GEM
     mysql (2.8.1)
     mysql (2.8.1-x86-mingw32)
     net-dns (0.6.1)
+    newrelic_rpm (2.13.4)
     rack (1.1.2)
     rack-openid (1.2.0)
       rack (>= 1.1.0)
@@ -103,6 +104,7 @@ DEPENDENCIES
   map-fields (= 1.0.0)
   mysql
   net-dns (= 0.6.1)
+  newrelic_rpm
   rack-openid (= 1.2.0)
   rails (= 2.3.8)
   rake (= 0.8.7)
