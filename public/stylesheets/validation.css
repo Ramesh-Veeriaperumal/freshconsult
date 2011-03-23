@@ -54,3 +54,15 @@
   top: 0px;
   background: url("../images/icons/btn_close_icon.png") no-repeat center;
 }
+
+/* line 49, ../src/validation.scss */
+.ui-form label.error {
+  font-size: 13px;
+  border: 1px solid #efefef;
+  background: #fefcea;
+  display: block;
+  font-style: normal;
+  margin: 2px -3px;
+  padding: 8px 12px;
+  color: #a90329;
+}

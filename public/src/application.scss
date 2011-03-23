@@ -293,6 +293,7 @@ a.new_ticket:hover{
 }
 
 ul.tabs{
+	list-style:none;
 	li{
 		float:left;
 		@include min-width(90px);  
@@ -313,15 +314,7 @@ ul.tabs{
 				background:lighten($tab_color, 10%);
 				color:#ffffff;
 			} 
-	} 
-	/*li.active span{
-		width:100%;
-		position:absolute;
-		background:$background;
-		border-bottom:1px solid $background;
-		height:1px;
-		bottom:-1px; 
-	}*/
+	}  
 	li.active a, li.active a:hover{
 		border-color:darken($tab_color, 10%);
 		background:$background; 
@@ -1892,7 +1885,8 @@ a.request_bt:hover{
 
 
 ul.icon_grid{
-	@include clearfix;	
+	@include clearfix;
+	list-style:none;
 	li{
 		float:left;
 		padding-right:10px;
@@ -2942,7 +2936,6 @@ h4.border_title{
 	float:left;
 	width:100%;
 	font-size:12px;
-	
 	a{
 		@include link-colors(#4D769F, #3399cc, #4D769F, #4D769F);
 		text-decoration:none;
@@ -2957,7 +2950,7 @@ h4.border_title{
 		padding:0px 0px 4px 18px;
 		color:black;
 		a{ 
-			font-size:12px; 
+			font-size:14px; 
 			@include link-colors(#21759B, #cc0000, #21759B, #21759B); 
 		}
 	} 
@@ -3616,6 +3609,7 @@ input.search{
 .solution_list{
 	border-bottom:1px dashed #DCDCDC;	
 	margin: 10px 0 0;
+	list-style:none;
 	li{  
 		font-size: 13px;
 	    line-height: 1.8em;
@@ -3625,8 +3619,7 @@ input.search{
 			text-decoration:none;
 		}
 		span{
-			color: #888888;
-    		font-size: 11px;
+			color: #888888; 
 		}
 	}
 	li.active{ 

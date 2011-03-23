@@ -82,3 +82,70 @@ blockquote {
 .hide {
   display: none;
 }
+
+/* 
+ * print styles
+ * inlined to avoid required HTTP connection www.phpied.com/delay-loading-your-print-css/ 
+ */
+@media print {
+  /* line 11, ../src/print.scss */
+  * {
+    background: transparent !important;
+    color: #444 !important;
+    text-shadow: none !important;
+  }
+
+  /* line 12, ../src/print.scss */
+  a, a:visited {
+    color: #444 !important;
+    text-decoration: underline;
+  }
+
+  /* line 13, ../src/print.scss */
+  a:after {
+    content: " (" attr(href) ")";
+  }
+
+  /* line 14, ../src/print.scss */
+  abbr:after {
+    content: " (" attr(title) ")";
+  }
+
+  /* line 15, ../src/print.scss */
+  .ir a:after {
+    content: "";
+  }
+
+  /* Don't show links for images */
+  /* line 16, ../src/print.scss */
+  pre, blockquote {
+    border: 1px solid #999;
+    page-break-inside: avoid;
+  }
+
+  /* line 17, ../src/print.scss */
+  thead {
+    display: table-header-group;
+  }
+
+  /* css-discuss.incutio.com/wiki/Printing_Tables */
+  /* line 18, ../src/print.scss */
+  tr, img {
+    page-break-inside: avoid;
+  }
+
+  @page {
+    margin: 0.5cm;
+}
+
+  /* line 20, ../src/print.scss */
+  p, h2, h3 {
+    orphans: 3;
+    widows: 3;
+  }
+
+  /* line 21, ../src/print.scss */
+  h2, h3 {
+    page-break-after: avoid;
+  }
+}
