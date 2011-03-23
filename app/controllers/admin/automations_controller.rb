@@ -124,7 +124,7 @@ class Admin::AutomationsController < Admin::AdminController
               field["choices"].each {|choice| values.push([choice["value"],choice["value"]])}
             end
            
-            item = {:name =>  field["label"] , :value =>  "Set #{field["label"]} as" ,  :domtype => field["type"] , :choices => values , :action => "set_custom_field" ,:handler =>field["type"]}
+            item = {:name =>  field["label"] , :value =>  "Set #{field["display_name"]} as" ,  :domtype => field["type"] , :choices => values , :action => "set_custom_field" ,:handler =>field["type"]}
             action_hash.push(item)
          end
        end
