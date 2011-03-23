@@ -4,7 +4,7 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
   
   def index
     @stats = SubscriptionPayment.stats if params[:page].blank?
-    @subscriptions = Subscription.paginate(:include => :account, :page => params[:page], :per_page => 30, :order => 'accounts.name')
+    @subscriptions = Subscription.paginate(:include => :account, :page => params[:page], :per_page => 30, :order => 'accounts.created_at desc')
   end
   
   def charge

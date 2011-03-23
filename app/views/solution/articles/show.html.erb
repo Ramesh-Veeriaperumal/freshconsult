@@ -1,5 +1,5 @@
- 		<% if logged_in? && current_user.has_manage_solutions? %>
-	  		<%= render :partial => "agent_show", :locals => { :article => @article } %>
-	  <%else%>
-	  		<%= render :partial => "portal_show", :locals => { :article =>@article } %>
-	  <%end%>
+<% if logged_in? && current_user.has_manage_solutions? %>
+	<%= render :partial => "agent_show", :locals => { :article => @article } %>
+<%else%>
+	<%= render :partial => "portal_show", :locals => { :article =>@article } %>
+<%end%>

@@ -1,5 +1,6 @@
   
-	Help us improve our customer service: Was this article helpful?  <%= link_to_remote 'Yes',  
+	Was this article useful?  
+				<%= link_to_remote 'Yes',  
 						:update=> "article_voting",
 						:url => thumbs_up_support_article_path(article.id),
 						:method => :put 
@@ -11,4 +12,4 @@
 						:url => thumbs_down_support_article_path(article.id),
 						:method => :put 
 				%>
-
+ 

@@ -7,7 +7,7 @@
 			
 			$bg_ctxt_color     = contrasting_text_color($background[1..-1])
 			$header_ctxt_color = contrasting_text_color($header_color[1..-1])
-			$tab_ctxt_color	   = contrasting_text_color($tab_color[1..-1])  
+			$tab_ctxt_color	   = contrasting_text_color($tab_color[1..-1])   
 		%>
 		body{ background: <%= $background %>; }
 		
@@ -20,12 +20,14 @@
 		 
 		/* Tab color settings */
 		.top_nav_bg { background: <%= $tab_color %>; }
-		ul.tabs li.active a, ul.tabs li.active span { background: <%= $background %>; color:<%= $bg_ctxt_color %>; }
-		ul.tabs li a:hover { background: <%= process_color($tab_color) %>; }
+		ul.tabs li.active a, ul.tabs li.active span, ul.tabs li.active a:hover { background: <%= $background %>; color:<%= $bg_ctxt_color %>; }
+		ul.tabs li a { color: <%= $tab_ctxt_color %>; }
+		ul.tabs li a:hover { background: <%= process_color($tab_color) %>;  color: <%= $tab_ctxt_color %>; }
 		.uiButton:hover, .fdbutton:hover {
 			 background-color:<%= $tab_color %>; 
 			 border-color: <%= process_color($tab_color, 0.2, 1) %>;  
 			 color: <%= $tab_ctxt_color %>; 
 		}
 	</style>
+	
 <% end %>

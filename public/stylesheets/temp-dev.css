@@ -1,6 +1,6 @@
 @charset "UTF-8";
 /* Theme Colors and layout Defaults */
-/* line 6, ../src/temp-dev.scss */
+/* line 4, ../src/temp-dev.scss */
 .uiButton, .uiButton:visited, .fdbutton, .fdbutton:visited {
   background-image: url(../images/overlay-button.png);
   background-color: #ececec;
@@ -19,57 +19,37 @@
   cursor: pointer;
 }
 
-/* line 22, ../src/temp-dev.scss */
+/* line 20, ../src/temp-dev.scss */
 .uiButton:hover, .fdbutton:hover {
   background-color: #7cb537;
   border-color: #618e2b;
   color: #ffffff;
-  text-shadow: rgba(0, 0, 0, 0.3) -1px -1px 1px;
+  text-shadow: rgba(0, 0, 0, 0.1) -1px -1px 1px;
 }
 
-/* line 23, ../src/temp-dev.scss */
+/* line 21, ../src/temp-dev.scss */
 .uiButton:active, .fdbutton:active {
   top: 1px;
 }
 
-/* line 24, ../src/temp-dev.scss */
+/* line 22, ../src/temp-dev.scss */
 .small.uiButton, .small.uiButton:visited {
   font-size: 11px;
 }
 
-/* line 26, ../src/temp-dev.scss */
+/* line 24, ../src/temp-dev.scss */
 .uiButton, .fdbutton, .uiButton:visited, .fdbutton:visited,
 .medium.uiButton, .medium.uiButton:visited {
   font-size: 12px;
 }
 
-/* line 27, ../src/temp-dev.scss */
+/* line 25, ../src/temp-dev.scss */
 .large.uiButton, .large.uiButton:visited {
   font-size: 14px;
   padding: 8px 14px 9px;
 }
 
-/*
-.green.uiButton, .green.uiButton:visited		{ background-color: #91bd09; }
-.green.uiButton:hover							{ background-color: #749a02; }
-.grey.uiButton, .grey.uiButton:visited		 	{ background-color: #f4f4f4;color:#555555; text-shadow: none; }
-.grey.uiButton:hover							{ background-color: #efefef; }
-
-.blue.uiButton, .blue.uiButton:visited			{ background-color: #2daebf; }
-.blue.uiButton:hover							{ background-color: #007d9a; }
-.red.uiButton, .red.uiButton:visited			{ background-color: #e33100; }
-.red.uiButton:hover								{ background-color: #872300; }
-.magenta.uiButton, .magenta.uiButton:visited	{ background-color: #a9014b; }
-.magenta.uiButton:hover							{ background-color: #630030; }
-.orange.uiButton, .orange.uiButton:visited		{ background-color: #ff5c00; }
-.orange.uiButton:hover							{ background-color: #d45500; }
-.yellow.uiButton, .yellow.uiButton:visited		{ background-color: #ffb515; }
-.yellow.uiButton:hover							{ background-color: #fc9200; } 
- 
-.grey.fdbutton, .grey.fdbutton:visited			{ background-color: #f4f4f4; color:#555555; text-shadow: none; }
-.grey.fdbutton:hover							{ background-color: #efefef; }
-*/
-/* line 51, ../src/temp-dev.scss */
+/* line 27, ../src/temp-dev.scss */
 input.uiButton {
   padding: 3px 10px;
   position: relative;
@@ -77,7 +57,7 @@ input.uiButton {
   left: -3px;
 }
 
-/* line 59, ../src/temp-dev.scss */
+/* line 35, ../src/temp-dev.scss */
 .fdbutton {
   display: -moz-inline-box;
   -moz-box-orient: vertical;
@@ -116,7 +96,7 @@ input.uiButton {
   float: none;
 }
 
-/* line 69, ../src/temp-dev.scss */
+/* line 45, ../src/temp-dev.scss */
 div.action_buttons {
   position: relative;
   float: right;
@@ -132,7 +112,7 @@ div.action_buttons {
   padding: 4px 7px 3px 3px;
   border: 1px solid #e5e5e5;
 }
-/* line 77, ../src/temp-dev.scss */
+/* line 53, ../src/temp-dev.scss */
 div.action_buttons a {
   text-decoration: none;
   float: left;
@@ -156,17 +136,17 @@ div.action_buttons a:hover {
 div.action_buttons a:active {
   color: #333333;
 }
-/* line 89, ../src/temp-dev.scss */
+/* line 65, ../src/temp-dev.scss */
 div.action_buttons a.last {
   border: 0px;
   padding-right: 4px;
 }
-/* line 93, ../src/temp-dev.scss */
+/* line 69, ../src/temp-dev.scss */
 div.action_buttons a.icon {
   padding-left: 20px;
 }
 
-/* line 99, ../src/temp-dev.scss */
+/* line 75, ../src/temp-dev.scss */
 .info-highlight {
   font-size: 13px;
   margin: 14px 0px 3px 0px;
@@ -179,7 +159,7 @@ div.action_buttons a.icon {
   background-color: #fffbee;
 }
 
-/* line 111, ../src/temp-dev.scss */
+/* line 87, ../src/temp-dev.scss */
 .tab_panel {
   border-bottom: 1px solid #cfcfcf;
   margin: 5px -20px 0px -20px;
@@ -188,13 +168,13 @@ div.action_buttons a.icon {
   *zoom: 1;
   display: block;
 }
-/* line 116, ../src/temp-dev.scss */
+/* line 92, ../src/temp-dev.scss */
 .tab_panel b {
   margin-right: 10px;
   padding: 5px 0px 0px 0px;
   float: left;
 }
-/* line 122, ../src/temp-dev.scss */
+/* line 98, ../src/temp-dev.scss */
 .tab_panel a {
   background: #cfcfcf;
   position: relative;
@@ -213,19 +193,19 @@ div.action_buttons a.icon {
   background: linear-gradient(#f5f5f5, #e1e1e1);
   -pie-background: linear-gradient(#f5f5f5, #e1e1e1);
 }
-/* line 136, ../src/temp-dev.scss */
+/* line 112, ../src/temp-dev.scss */
 .tab_panel a.last {
   -moz-border-radius: 0px 4px 4px 0px;
   -webkit-border-radius: 0px 4px 4px 0px;
   border-radius: 0px 4px 4px 0px;
 }
-/* line 139, ../src/temp-dev.scss */
+/* line 115, ../src/temp-dev.scss */
 .tab_panel a.first {
   -moz-border-radius: 4px 0px 0px 4px;
   -webkit-border-radius: 4px 0px 0px 4px;
   border-radius: 4px 0px 0px 4px;
 }
-/* line 142, ../src/temp-dev.scss */
+/* line 118, ../src/temp-dev.scss */
 .tab_panel a.active, .tab_panel a:hover {
   background: #fcfcfc;
   background: -moz-linear-gradient(top, #fcfcfc 0%, #f1f1f1 100%);
@@ -233,4 +213,129 @@ div.action_buttons a.icon {
   background: linear-gradient(#fcfcfc, #f1f1f1);
   -pie-background: linear-gradient(#fcfcfc, #f1f1f1);
   border-bottom: 1px solid #eaeaea;
+}
+
+/* line 124, ../src/temp-dev.scss */
+.solutions_text {
+  padding-top: 8px;
+  font-family: Georgia, Verdana, Arial, Helvetica, sans-serif;
+  font-size: 14px;
+}
+/* line 128, ../src/temp-dev.scss */
+.solutions_text img {
+  max-width: 100%;
+  height: auto;
+}
+/* line 129, ../src/temp-dev.scss */
+.solutions_text ol, .solutions_text ul {
+  margin: 14px 0px 14px 0px;
+  padding: 0px 0px 0px 40px;
+  line-height: 17px;
+}
+/* line 130, ../src/temp-dev.scss */
+.solutions_text blockquote {
+  margin: 1em 1em;
+  color: #999;
+  border-left: 2px solid #999;
+  padding: 6px 6px 1px 1em;
+  background-color: #EEE;
+}
+/* line 131, ../src/temp-dev.scss */
+.solutions_text ul {
+  list-style: disc outside;
+}
+/* line 132, ../src/temp-dev.scss */
+.solutions_text h1, .solutions_text h2, .solutions_text h3, .solutions_text h4 {
+  font-weight: 400;
+}
+/* line 133, ../src/temp-dev.scss */
+.solutions_text h1 {
+  font-size: 2em;
+}
+/* line 134, ../src/temp-dev.scss */
+.solutions_text h2 {
+  font-size: 1.5em;
+}
+/* line 135, ../src/temp-dev.scss */
+.solutions_text h3 {
+  font-size: 1.17em;
+}
+/* line 136, ../src/temp-dev.scss */
+.solutions_text h4 {
+  font-size: 1em;
+}
+/* line 137, ../src/temp-dev.scss */
+.solutions_text h5 {
+  font-size: .83em;
+}
+/* line 138, ../src/temp-dev.scss */
+.solutions_text h6 {
+  font-size: .75em;
+}
+/* line 139, ../src/temp-dev.scss */
+.solutions_text p {
+  font-size: 14px;
+  line-height: 1.5em;
+  margin-bottom: 1.3em;
+  text-align: left;
+  width: 90%;
+}
+/* line 140, ../src/temp-dev.scss */
+.solutions_text table td, .solutions_text table th {
+  border: 1px solid #BBB;
+  padding: 4px 5px;
+}
+/* line 141, ../src/temp-dev.scss */
+.solutions_text ins {
+  border-bottom: 1px solid green;
+  text-decoration: none;
+  color: green;
+}
+/* line 142, ../src/temp-dev.scss */
+.solutions_text del {
+  color: red;
+  text-decoration: line-through;
+}
+/* line 143, ../src/temp-dev.scss */
+.solutions_text cite {
+  border-bottom: 1px dashed blue;
+}
+/* line 144, ../src/temp-dev.scss */
+.solutions_text acronym {
+  border-bottom: 1px dotted #CCC;
+  cursor: help;
+}
+/* line 145, ../src/temp-dev.scss */
+.solutions_text abbr {
+  border-bottom: 1px dashed #CCC;
+  cursor: help;
+}
+
+/* line 149, ../src/temp-dev.scss */
+.tag_list {
+  overflow: hidden;
+  *zoom: 1;
+  position: relative;
+  padding: 0px;
+}
+/* line 153, ../src/temp-dev.scss */
+.tag_list div.item {
+  float: left;
+  -moz-border-radius: 5px 5px 5px 5px;
+  -webkit-border-radius: 5px 5px 5px 5px;
+  border-radius: 5px 5px 5px 5px;
+  height: 17px;
+  background-color: #e7e7e7;
+  color: #666666;
+  padding: 3px 0px 0px 8px;
+  margin: 0px 4px;
+}
+/* line 161, ../src/temp-dev.scss */
+.tag_list div.item .tag_delete {
+  float: right;
+  visibility: hidden;
+}
+/* line 167, ../src/temp-dev.scss */
+.tag_list div.item:hover .tag_delete {
+  visibility: visible;
 }

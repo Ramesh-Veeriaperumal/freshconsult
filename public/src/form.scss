@@ -1,32 +1,6 @@
 @import "base";
 @import "mixins";
 
-.ui-login{ 
-	text-align:center;
-	display:block;
-	padding:18px 0px;
-	.ui-form{ 
-		background:none;
-		border:0px;
-		width:350px;
-		@include corners(6px);
-		text-align:left;
-		padding:25px;
-		border:1px solid #c2c2c2;
-		margin:0px auto !important;
-		background:#ffffff;
-		ul{
-			margin:0px;
-			li{
-				input.text{
-					margin:3px 0px 5px 0px;
-					width:320px;	
-				}
-			}
-		}
-	}
-}
-
 div.ui-form ul{
 	padding:0px;
 }
@@ -257,10 +231,6 @@ a.addchoice:hover{
 			width:25%;
 		}		
 	}
-	label.error{
-		font-size:1em;
-		color:red;
-	}
 	fieldset.addchoice{		
 		padding:0px;			
 		color:#999999;
@@ -356,7 +326,7 @@ a.addchoice:hover{
 			
 			label.checkbox{
 				width:100%;
-				font-size:1.3em;				
+				font-size:13px;				
 			}
 		}
 		div{
@@ -647,3 +617,29 @@ span.sort_handle{
 	width:400px;
 }
 
+
+.ui-login{ 
+	text-align:center;
+	display:block;
+	padding:18px 0px;
+	.ui-form{ 
+		background:none;
+		border:0px;
+		width:350px;
+		@include corners(6px);
+		text-align:left;
+		padding:25px;
+		border:1px solid #c2c2c2;
+		margin:0px auto !important;
+		background:#ffffff;
+		ul{
+			margin:0px;
+			li{
+				input.text{
+					margin:3px 0px 5px 0px;
+					width:320px;	
+				}
+			}
+		}
+	}
+}

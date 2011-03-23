@@ -1,8 +1,6 @@
 @import "base";
 @import "mixins";
-
-
-
+ 
 .uiButton, .uiButton:visited, .fdbutton, .fdbutton:visited {
 	background-image:url(../images/overlay-button.png);
 	background-color:#ececec;
@@ -19,34 +17,12 @@
 	cursor: pointer;
 }
 
-.uiButton:hover	, .fdbutton:hover				{ background-color:$tab_color; border-color: darken($tab_color, 10%); color:#ffffff; @include text-shadow(rgba(0, 0, 0, 0.3), -1px, -1px, 1px); }
+.uiButton:hover	, .fdbutton:hover				{ background-color:$tab_color; border-color: darken($tab_color, 10%); color:#ffffff; @include text-shadow(rgba(0, 0, 0, 0.1), -1px, -1px, 1px); }
 .uiButton:active, .fdbutton:active				{ top: 1px; }
 .small.uiButton, .small.uiButton:visited 		{ font-size: 11px;  }
 .uiButton, .fdbutton, .uiButton:visited, .fdbutton:visited, 
 .medium.uiButton, .medium.uiButton:visited 		{ font-size: 12px;}
 .large.uiButton, .large.uiButton:visited 		{ font-size: 14px; padding: 8px 14px 9px; }
-
-/*
-.green.uiButton, .green.uiButton:visited		{ background-color: #91bd09; }
-.green.uiButton:hover							{ background-color: #749a02; }
-.grey.uiButton, .grey.uiButton:visited		 	{ background-color: #f4f4f4;color:#555555; text-shadow: none; }
-.grey.uiButton:hover							{ background-color: #efefef; }
-
-.blue.uiButton, .blue.uiButton:visited			{ background-color: #2daebf; }
-.blue.uiButton:hover							{ background-color: #007d9a; }
-.red.uiButton, .red.uiButton:visited			{ background-color: #e33100; }
-.red.uiButton:hover								{ background-color: #872300; }
-.magenta.uiButton, .magenta.uiButton:visited	{ background-color: #a9014b; }
-.magenta.uiButton:hover							{ background-color: #630030; }
-.orange.uiButton, .orange.uiButton:visited		{ background-color: #ff5c00; }
-.orange.uiButton:hover							{ background-color: #d45500; }
-.yellow.uiButton, .yellow.uiButton:visited		{ background-color: #ffb515; }
-.yellow.uiButton:hover							{ background-color: #fc9200; } 
- 
-.grey.fdbutton, .grey.fdbutton:visited			{ background-color: #f4f4f4; color:#555555; text-shadow: none; }
-.grey.fdbutton:hover							{ background-color: #efefef; }
-*/
-
 
 input.uiButton{
 	padding:3px 10px;
@@ -142,5 +118,54 @@ div.action_buttons{
 	a.active, a:hover{
 		@include vertical-gradient(#fcfcfc, #f1f1f1);  
 		border-bottom:1px solid #eaeaea;		
+	}
+}
+
+.solutions_text{
+	padding-top:8px;
+	font-family: Georgia, Verdana, Arial, Helvetica, sans-serif; 
+	font-size:14px;
+	img{ max-width:100%; height:auto;}
+	ol, ul{ margin: 14px 0px 14px 0px; padding: 0px 0px 0px 40px; line-height: 17px;}
+	blockquote { margin: 1em 1em; color: #999; border-left: 2px solid #999; padding:6px 6px 1px 1em; background-color: #EEE;}
+	ul{ list-style:disc outside;  }
+	h1, h2, h3, h4{ font-weight:400; }
+	h1 {font-size: 2em}
+	h2 {font-size: 1.5em}
+	h3 {font-size: 1.17em}
+	h4 {font-size: 1em}
+	h5 {font-size: .83em}
+	h6 {font-size: .75em}
+	p{  font-size:14px; line-height: 1.5em; margin-bottom: 1.3em; text-align: left; width: 90%; }
+    table td, table th { border:1px solid #BBB; padding:4px 5px; }
+    ins {border-bottom:1px solid green; text-decoration: none; color:green}
+	del {color:red; text-decoration:line-through}
+	cite {border-bottom:1px dashed blue}
+	acronym {border-bottom:1px dotted #CCC; cursor:help}
+	abbr {border-bottom:1px dashed #CCC; cursor:help}
+}
+
+
+.tag_list{
+	@include clearfix;
+	position:relative;
+	padding:0px;	
+	div.item{
+		float:left;
+		@include corners(5px);
+		height:17px;
+		background-color:#e7e7e7;
+		color:#666666;
+		padding:3px 0px 0px 8px;
+		margin:0px 4px;
+		.tag_delete{
+			float:right;
+			visibility:hidden;
+		}
+	}	
+	div.item:hover{
+		.tag_delete{
+			visibility:visible;
+		}
 	}
 }

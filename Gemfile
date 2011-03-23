@@ -38,3 +38,7 @@ group :development do
    gem "rspec-rails", "1.3.3"
    gem "factory_girl", "1.2.3"  
 end
+
+group :production do
+  gem "newrelic_rpm"
+end

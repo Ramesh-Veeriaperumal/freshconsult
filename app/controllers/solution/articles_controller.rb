@@ -37,6 +37,7 @@ class Solution::ArticlesController < ApplicationController
      current_folder = Solution::Folder.find(params[:folder_id]) unless params[:folder_id].nil?
      @article = current_folder.articles.new
      @article.is_public = "true"
+     @article.status = Solution::Article::STATUS_KEYS_BY_TOKEN[:published]
     respond_to do |format|
       format.html # new.html.erb
       format.xml  { render :xml => @article }
@@ -58,7 +59,7 @@ class Solution::ArticlesController < ApplicationController
    current_folder = Solution::Folder.find(params[:folder_id]) 
    @article = current_folder.articles.new(params[nscname]) 
     set_item_user
-   
+    
     redirect_to_url = solution_category_folder_url(params[:category_id], params[:folder_id])
     redirect_to_url = new_solution_category_folder_article_path(params[:category_id], params[:folder_id]) unless params[:save_and_create].nil?
    
@@ -85,10 +86,8 @@ class Solution::ArticlesController < ApplicationController
     redirect_to_url = solution_category_folder_url(params[:category_id], params[:folder_id])
     
     logger.debug "Inside update :: #{params.inspect}"
-    @article = Solution::Article.find(params[:id]) 
-    
-    redirect_to_url = solution_category_folder_url(params[:category_id], params[:folder_id])   
-    
+    @article = Solution::Article.find(params[:id])     
+    redirect_to_url = solution_category_folder_url(params[:category_id], params[:folder_id])       
     respond_to do |format|
      
        if @article.update_attributes(params[nscname])  
@@ -116,16 +115,11 @@ class Solution::ArticlesController < ApplicationController
   
    def delete_tag
      
-     logger.debug "delete_tag :: params are :: #{params.inspect} "
-     
-     article = Solution::Article.find(params[:article_id])
-     
-     tag = article.tags.find_by_id(params[:tag_id])
-      
+     logger.debug "delete_tag :: params are :: #{params.inspect} "     
+     article = Solution::Article.find(params[:article_id])     
+     tag = article.tags.find_by_id(params[:tag_id])      
      raise ActiveRecord::RecordNotFound unless tag
-
-    Helpdesk::TagUse.find_by_article_id_and_tag_id(article.id, tag.id).destroy
-
+     Helpdesk::TagUse.find_by_article_id_and_tag_id(article.id, tag.id).destroy
     flash[:notice] = "The tag was removed from this Solution"
     redirect_to :back
 
@@ -187,8 +181,9 @@ def check_solution_permission
 
 end
 
-  def set_solution_tags
+  def set_solution_tags   
     
+    @article.tags.clear    
     tags = params[:tags][:name]
     ar_tags =  tags.scan(/\w+/)    
     new_tag = nil

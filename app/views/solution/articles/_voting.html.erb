@@ -1,8 +1,4 @@
-<%= @article.thumbs_up%> 
-<%= image_tag('/images/thumb_up.png' )%> 
-/ <%= @article.thumbs_down%> 
-<%= image_tag('/images/thumb_down.png' )%>
- 
-
-
-
+<img src='/images/thumb_up.png' style="position:relative;top:2px;" /> <%= @article.thumbs_up %> <b>likes</b>, 
+<img src='/images/thumb_down.png'  style="position:relative;top:6px;" /> <%= @article.thumbs_down %> <b>dislikes</b>
+			 
+For this article

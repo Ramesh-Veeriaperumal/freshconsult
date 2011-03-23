@@ -15,8 +15,8 @@
 
 <ul class="ui-form">
 	<li>
-		<label for="topic_title"><%= t('topic.name') %></label>
-		<div><%= form.text_field :title, :onchange => "/*TopicForm.editNewTitle(this);*/", :class => "primary", :tabindex => 10 %></div>
+		<label for="topic_title"><%= t('topic.name') %>*</label>
+		<div><%= form.text_field :title, :onchange => "/*TopicForm.editNewTitle(this);*/", :class => "required text", :tabindex => 10 %></div>
 	</li>	 
 	
 	<% if @topic.new_record? %>
