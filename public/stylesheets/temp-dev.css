@@ -339,61 +339,69 @@ div.action_buttons a.icon {
   visibility: visible;
 }
 
-/* line 173, ../src/temp-dev.scss */
+/* line 174, ../src/temp-dev.scss */
 .email-settings {
-  background: #f7f7f7;
-  margin: 0px -20px 10px;
-  padding: 12px 22px;
-  border: 1px solid #e6e6e6;
-  border-width: 1px 0px;
+  margin: 0px -20px 0px;
+  padding: 0px;
+  border-top: 1px solid #e6e6e6;
+  border-bottom: 1px solid #ffffff;
 }
 /* line 179, ../src/temp-dev.scss */
 .email-settings label {
   font-size: 14px;
-  line-height: 20px;
   color: #666666;
   display: block;
 }
-/* line 185, ../src/temp-dev.scss */
+/* line 184, ../src/temp-dev.scss */
 .email-settings .highlight {
-  background: #fcfcd7;
   font-size: inherit;
-  color: #000000;
+  font-size: 15px;
 }
-/* line 190, ../src/temp-dev.scss */
+/* line 188, ../src/temp-dev.scss */
 .email-settings .info_data {
   font-size: 12px;
 }
-/* line 191, ../src/temp-dev.scss */
-.email-settings div.email-item {
-  margin-bottom: 8px;
+/* line 190, ../src/temp-dev.scss */
+.email-settings div.email-item-default, .email-settings div.email-item {
+  padding: 12px 22px 4px;
 }
 /* line 194, ../src/temp-dev.scss */
-.email-settings div.email-item .seperator {
-  border-style: solid;
-  margin: 8px -20px 16px -40px;
+.email-settings div.email-item-default {
+  padding-top: 10px;
+  padding-bottom: 12px;
+  background: #f6f6f6;
 }
-/* line 199, ../src/temp-dev.scss */
+/* line 195, ../src/temp-dev.scss */
+.email-settings div.email-item-default label {
+  line-height: 20px;
+}
+/* line 202, ../src/temp-dev.scss */
+.email-settings div.email-item {
+  border-top: 1px solid #ffffff;
+  background: #fafafa;
+  border-bottom: 1px solid #e8e8e8;
+}
+/* line 206, ../src/temp-dev.scss */
 .email-settings div.email-item div.item {
-  margin-bottom: 15px;
+  margin-bottom: 10px;
   font-size: 14px;
 }
-/* line 201, ../src/temp-dev.scss */
+/* line 208, ../src/temp-dev.scss */
 .email-settings div.email-item div.item label {
-  font-size: 13px;
-  padding-bottom: 6px;
+  font-size: 12px;
+  padding-bottom: 2px;
 }
 
-/* line 209, ../src/temp-dev.scss */
+/* line 216, ../src/temp-dev.scss */
 .email-settings-form table {
   width: 400px;
 }
-/* line 210, ../src/temp-dev.scss */
+/* line 217, ../src/temp-dev.scss */
 .email-settings-form td {
   padding: 6px 8px;
 }
 
-/* line 213, ../src/temp-dev.scss */
+/* line 220, ../src/temp-dev.scss */
 .email_info {
   border: 1px solid #cfcfcf;
   padding: 8px 12px;
@@ -404,7 +412,7 @@ div.action_buttons a.icon {
   font-size: 14px;
 }
 
-/* line 221, ../src/temp-dev.scss */
+/* line 228, ../src/temp-dev.scss */
 .primary_email {
   padding: 2px 15px;
   border: 1px solid #b8d385;
@@ -414,4 +422,34 @@ div.action_buttons a.icon {
   -moz-border-radius: 5px 5px 5px 5px;
   -webkit-border-radius: 5px 5px 5px 5px;
   border-radius: 5px 5px 5px 5px;
+}
+
+/* line 240, ../src/temp-dev.scss */
+.wordwrap p {
+  white-space: pre-wrap;
+  /* css-3 */
+  white-space: -moz-pre-wrap;
+  /* Mozilla, since 1999 */
+  white-space: -pre-wrap;
+  /* Opera 4-6 */
+  white-space: -o-pre-wrap;
+  /* Opera 7 */
+  word-wrap: break-word;
+  /* Internet Explorer 5.5+ */
+}
+
+/* line 249, ../src/temp-dev.scss */
+.intro {
+  color: #777;
+  font-size: 12px;
+  line-height: 17px;
+  margin-top: -8px;
+  margin-bottom: 10px;
+}
+
+/* line 258, ../src/temp-dev.scss */
+.info-description p {
+  font-size: 12px;
+  color: #000000;
+  line-height: 17px;
 }
