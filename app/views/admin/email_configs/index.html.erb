@@ -3,38 +3,43 @@
 <% end %>
 
 <% 
-	default_email 		= "support@#{current_account.full_domain}"
-	isDefaultEmailOnly 	= (@email_configs.first.reply_email == default_email) ? true : false
+	default_email = false
+
+	@email_configs.each do |email|
+		if (email.reply_email == "support@#{current_account.full_domain}")
+			default_email = email
+		end 
+	end
 %> 
 <div id="emailconfig-list">
-	<h3 class="title">Email Settings</h3>
-	
-		
-	
-	<div id="email-settings-list" class="email-settings">
-			<% @email_configs.each do |email| %>
-				<% if (email.reply_email == default_email) %>
-				<div>
-					<div class="action_buttons">
-						<%= link_to ( "Make primary", make_primary_admin_email_config_path(email), :method => "put" ) unless email.primary_role? %>
-						<%= link_to "Change this", edit_admin_email_config_path(@email_configs.first), :class => "last edit-email"  %>
-					</div>
-					<label>
-						Your support email address is <strong class="highlight"> support@<%= current_account.full_domain %> </strong> <%= content_tag (:span, "Primary", :class => "primary_email") if email.primary_role? %><br />
-						<span class="info_data">Any email sent to this address will be converted as a ticket</span>
-					</label>
+	<h3 class="title">Email Settings</h3> 
+	<div class="intro">Configure incoming and outgoing support email address(s)</div> 
+		<% if (default_email) %>
+		<div class="email-settings">
+			<div class="email-item-default">
+				<div class="action_buttons">
+					<%= link_to ( "Make primary", make_primary_admin_email_config_path(default_email), :method => "put" ) unless default_email.primary_role? %>
+					<%= link_to "Change this", edit_admin_email_config_path(default_email), :class => "last edit-email"  %>
 				</div>
-				<% else %>
-				<div class="email-item">
-					<%= content_tag(:span, "", :class => "seperator") unless (email == @email_configs.first ) %>
+				<label>
+					Your support email address is <span class="highlight"> support@<%= current_account.full_domain %> </span> <%= content_tag (:span, "Primary", :class => "primary_email") if default_email.primary_role? %><br />
+					<span class="info_data">Any email sent to this address will be converted as a ticket</span>
+				</label>
+			</div>
+		<% end %>
+		</div> 
+		<div id="email-settings-list" class="email-settings">
+			<% @email_configs.each do |email| %>
+				<% unless (email == default_email) %>  
+				 <div class="email-item">
 					<div class="action_buttons">
 						<%= link_to ( "Make primary", make_primary_admin_email_config_path(email), :method => "put" ) unless email.primary_role? %>
 						<%= link_to "Edit", edit_admin_email_config_path(email), :class => "edit-email last"  %>
 					</div>	
 					
 					<div class="item">
-						<label>Support email address</label>
-						<div class="info_data">Your customers send email to this address</div>
+						<label><strong>Support email address</strong></label>
+						
 						<%= content_tag (:span, h(email.reply_email), :class => "highlight") %>
 						<%= content_tag (:span, "Primary", :class => "primary_email") if email.primary_role? %>
 					</div> 
@@ -42,13 +47,12 @@
 						<label>You must forward these emails to</label>
 						<%= content_tag (:span, h(email.to_email), :class => "large highlight" ) %>
 					</div> 
-					<%= content_tag ( :div, content_tag ( :label, "Emails get assigned to #{email.group.name}" ) ) if email.group %>
+					<%= content_tag ( :div, content_tag ( :label, "Tickets will be assigned to <strong>#{email.group.name}</strong> group" ) , :class => "item" ) if email.group %>
 				</div>
 				<% end %>
-			<% end %>
-		</ol>
-	</div> 
-	<div class="button-container clearfix">
+			<% end %> 
+		</div> 
+	<div class="button-container clearfix" style="margin-top:10px;">
 		<span class="floatl">
 			<%= link_to "Add Another Email address", new_admin_email_config_path, :id => "AddEmail", :class => "uiButton"  %>
 		</span> 
