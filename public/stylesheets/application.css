@@ -5014,10 +5014,11 @@ div.color span {
 }
 /* line 3477, ../src/application.scss */
 .results li {
+  list-style: none;
   position: relative;
   padding: 6px 0px 8px 0px;
 }
-/* line 3481, ../src/application.scss */
+/* line 3482, ../src/application.scss */
 .results li a {
   display: block;
   text-decoration: none;
@@ -5038,13 +5039,13 @@ div.color span {
 .results li a:active {
   color: #333333;
 }
-/* line 3489, ../src/application.scss */
+/* line 3490, ../src/application.scss */
 .results li a span.info {
   float: right;
   font-size: 10px;
   color: #888888;
 }
-/* line 3496, ../src/application.scss */
+/* line 3497, ../src/application.scss */
 .results li a.user {
   color: #006699;
   font-weight: bold;
@@ -5061,7 +5062,7 @@ div.color span {
 .results li a.user:active {
   color: #006699;
 }
-/* line 3500, ../src/application.scss */
+/* line 3501, ../src/application.scss */
 .results li a.big {
   font-size: 13px;
   position: relative;
@@ -5080,11 +5081,11 @@ div.color span {
 .results li a.big:active {
   color: #006699;
 }
-/* line 3506, ../src/application.scss */
+/* line 3507, ../src/application.scss */
 .results li a.big:hover {
   text-decoration: underline;
 }
-/* line 3510, ../src/application.scss */
+/* line 3511, ../src/application.scss */
 .results li h4 {
   position: absolute;
   left: 0px;
@@ -5095,21 +5096,21 @@ div.color span {
   font-size: 12px;
   text-align: right;
 }
-/* line 3520, ../src/application.scss */
+/* line 3521, ../src/application.scss */
 .results li div, .results li a {
   padding: 4px 8px 4px 25px;
 }
-/* line 3523, ../src/application.scss */
+/* line 3524, ../src/application.scss */
 .results li div.title {
   background: #efefef;
   color: #666666;
 }
-/* line 3527, ../src/application.scss */
+/* line 3528, ../src/application.scss */
 .results li strong.title {
   font-weight: bold;
   font-size: 13px;
 }
-/* line 3531, ../src/application.scss */
+/* line 3532, ../src/application.scss */
 .results li div.group {
   overflow: hidden;
   *zoom: 1;
@@ -5117,47 +5118,47 @@ div.color span {
   padding-top: 6px;
   padding-bottom: 6px;
 }
-/* line 3536, ../src/application.scss */
+/* line 3537, ../src/application.scss */
 .results li div.group .preview_pic {
   padding: 0px;
   margin: 0px;
   position: relative;
   margin-left: -28px;
 }
-/* line 3541, ../src/application.scss */
+/* line 3542, ../src/application.scss */
 .results li div.group .preview_pic img {
   border: 0px;
   padding: 6px;
 }
-/* line 3546, ../src/application.scss */
+/* line 3547, ../src/application.scss */
 .results li div.group span {
   padding: 0px 0px 4px 0px;
 }
-/* line 3549, ../src/application.scss */
+/* line 3550, ../src/application.scss */
 .results li div.group span.small {
   font-size: 11px;
 }
-/* line 3552, ../src/application.scss */
+/* line 3553, ../src/application.scss */
 .results li div.group span.light {
   color: #888888;
 }
 
-/* line 3560, ../src/application.scss */
+/* line 3561, ../src/application.scss */
 .big_results {
   padding: 8px 14px 12px 14px;
 }
 
-/* line 3564, ../src/application.scss */
+/* line 3565, ../src/application.scss */
 .live_search {
   text-align: left;
   padding: 8px 0px;
 }
-/* line 3567, ../src/application.scss */
+/* line 3568, ../src/application.scss */
 .live_search .loading {
   background-position: right !important;
 }
 
-/* line 3572, ../src/application.scss */
+/* line 3573, ../src/application.scss */
 input.search {
   margin-right: 10px;
   -moz-border-radius: 3px 3px 3px 3px;
@@ -5173,7 +5174,7 @@ input.search {
   width: 500px;
 }
 
-/* line 3585, ../src/application.scss */
+/* line 3586, ../src/application.scss */
 .sp_paragraph {
   -moz-border-radius: 3px 3px 3px 3px;
   -webkit-border-radius: 3px 3px 3px 3px;
@@ -5184,32 +5185,32 @@ input.search {
   margin-bottom: 8px;
 }
 
-/* line 3593, ../src/application.scss */
+/* line 3594, ../src/application.scss */
 .folder_section {
   float: left;
   width: 200px;
   padding-top: 15px;
 }
-/* line 3597, ../src/application.scss */
+/* line 3598, ../src/application.scss */
 .folder_section h3.title {
   text-align: center;
   border-bottom: 1px dashed #DCDCDC;
   padding: 0 0 20px;
 }
 
-/* line 3604, ../src/application.scss */
+/* line 3605, ../src/application.scss */
 .solution_list {
   border-bottom: 1px dashed #DCDCDC;
   margin: 10px 0 0;
   list-style: none;
 }
-/* line 3608, ../src/application.scss */
+/* line 3609, ../src/application.scss */
 .solution_list li {
   font-size: 13px;
   line-height: 1.8em;
   margin: 0 0 7px;
 }
-/* line 3612, ../src/application.scss */
+/* line 3613, ../src/application.scss */
 .solution_list li a {
   color: #4d769f;
   text-decoration: none;
@@ -5226,11 +5227,11 @@ input.search {
 .solution_list li a:active {
   color: #4d769f;
 }
-/* line 3616, ../src/application.scss */
+/* line 3617, ../src/application.scss */
 .solution_list li span {
   color: #888888;
 }
-/* line 3621, ../src/application.scss */
+/* line 3622, ../src/application.scss */
 .solution_list li.active a {
   color: #4d769f;
 }
@@ -5247,7 +5248,7 @@ input.search {
   color: #4d769f;
 }
 
-/* line 3627, ../src/application.scss */
+/* line 3628, ../src/application.scss */
 .artical_section {
   margin-left: 210px;
   border-left: 1px solid #efefef;
@@ -5259,16 +5260,16 @@ input.search {
   margin-right: -20px;
   text-align: left;
 }
-/* line 3635, ../src/application.scss */
+/* line 3636, ../src/application.scss */
 .artical_section .seperator {
   border-style: dashed;
 }
-/* line 3636, ../src/application.scss */
+/* line 3637, ../src/application.scss */
 .artical_section .info_data {
   margin-bottom: 7px;
 }
 
-/* line 3639, ../src/application.scss */
+/* line 3640, ../src/application.scss */
 .artical_list {
   font-size: 14px;
   font-weight: 400;
@@ -5278,11 +5279,11 @@ input.search {
   margin-left: 37px;
   text-align: left;
 }
-/* line 3648, ../src/application.scss */
+/* line 3649, ../src/application.scss */
 .artical_list li {
   margin-top: 4px;
 }
-/* line 3650, ../src/application.scss */
+/* line 3651, ../src/application.scss */
 .artical_list li a {
   color: #4d769f;
 }
@@ -5299,12 +5300,12 @@ input.search {
   color: #4d769f;
 }
 
-/* line 3654, ../src/application.scss */
+/* line 3655, ../src/application.scss */
 .article_info {
   padding-top: 5px;
 }
 
-/* line 3658, ../src/application.scss */
+/* line 3659, ../src/application.scss */
 .crumbs {
   background-color: #f8f8f8;
   border-bottom: 1px solid #E8E8E8;
@@ -5316,7 +5317,7 @@ input.search {
   margin: -20px -20px 10px;
   padding: 7px 15px;
 }
-/* line 3666, ../src/application.scss */
+/* line 3667, ../src/application.scss */
 .crumbs a {
   color: #4d769f;
   text-decoration: none;
@@ -5333,22 +5334,22 @@ input.search {
 .crumbs a:active {
   color: #4d769f;
 }
-/* line 3669, ../src/application.scss */
+/* line 3670, ../src/application.scss */
 .crumbs span, .crumbs a {
   padding: 0px 5px;
 }
 
-/* line 3674, ../src/application.scss */
+/* line 3675, ../src/application.scss */
 .add_new {
   background: url("../images/add_small.png") 3px 1px no-repeat;
 }
 
-/* line 3677, ../src/application.scss */
+/* line 3678, ../src/application.scss */
 .rss_icon {
   background: url("../images/feed-icon.png") 8px 3px no-repeat;
 }
 
-/* line 3680, ../src/application.scss */
+/* line 3681, ../src/application.scss */
 .lock {
   background-image: url("../images/private_lock.gif");
   background-position: 3px 0px;
@@ -5356,7 +5357,7 @@ input.search {
   padding-left: 20px !important;
 }
 
-/* line 3687, ../src/application.scss */
+/* line 3688, ../src/application.scss */
 .status_text {
   background-color: #888888;
   -moz-border-radius: 6px 6px 6px 6px;
@@ -5370,30 +5371,30 @@ input.search {
   margin: 0px 2px;
 }
 
-/* line 3699, ../src/application.scss */
+/* line 3700, ../src/application.scss */
 .ignore-margin-20 {
   margin-left: -20px;
   margin-right: -20px;
 }
 
-/* line 3704, ../src/application.scss */
+/* line 3705, ../src/application.scss */
 #pageless-loader .msg {
   padding-top: 12px;
   font-size: 1.4em !important;
 }
 
-/* line 3709, ../src/application.scss */
+/* line 3710, ../src/application.scss */
 .no_margin {
   margin: 0px !important;
 }
 
-/* line 3713, ../src/application.scss */
+/* line 3714, ../src/application.scss */
 .full-width {
   display: block !important;
   text-align: center;
 }
 
-/* line 3718, ../src/application.scss */
+/* line 3719, ../src/application.scss */
 .scenario_actions {
   list-style: none;
   overflow: hidden;
@@ -5408,7 +5409,7 @@ input.search {
   list-style-type: none;
   margin-left: 0px;
 }
-/* line 3725, ../src/application.scss */
+/* line 3726, ../src/application.scss */
 .scenario_actions li a {
   position: relative;
   display: block;
@@ -5424,7 +5425,7 @@ input.search {
   font-size: 12px;
   padding: 6px 8px 6px 30px;
 }
-/* line 3726, ../src/application.scss */
+/* line 3727, ../src/application.scss */
 .scenario_actions li a img {
   position: absolute;
   left: 10px;
@@ -5442,22 +5443,22 @@ input.search {
 .scenario_actions li a:active {
   color: #527eaa;
 }
-/* line 3742, ../src/application.scss */
+/* line 3743, ../src/application.scss */
 .scenario_actions li span {
   font-size: 10px;
 }
 
-/* line 3749, ../src/application.scss */
+/* line 3750, ../src/application.scss */
 .request-list {
   background-color: #f4f4f4;
   margin: 4px 1px;
 }
-/* line 3752, ../src/application.scss */
+/* line 3753, ../src/application.scss */
 .request-list div.item {
   border-bottom: 1px dotted #dedede;
   position: relative;
 }
-/* line 3755, ../src/application.scss */
+/* line 3756, ../src/application.scss */
 .request-list div.item a.item-title {
   font-size: 12px;
   color: #333333;
@@ -5469,7 +5470,7 @@ input.search {
 .request-list div.item a.item-title:hover {
   color: white;
 }
-/* line 3761, ../src/application.scss */
+/* line 3762, ../src/application.scss */
 .request-list div.item a.item-title .bulb, .request-list div.item a.item-title .wand {
   position: absolute;
   width: 16px;
@@ -5479,11 +5480,11 @@ input.search {
   background-postion: left;
   background-repeat: no-repeat;
 }
-/* line 3770, ../src/application.scss */
+/* line 3771, ../src/application.scss */
 .request-list div.item a.item-title .bulb {
   background-image: url("../images/icon_small/lightbulb-grey.gif");
 }
-/* line 3773, ../src/application.scss */
+/* line 3774, ../src/application.scss */
 .request-list div.item a.item-title .wand {
   background-image: url("../images/icon_small/wand-grey.png");
   width: 22px;
@@ -5491,31 +5492,31 @@ input.search {
   left: 2px;
   top: 8px;
 }
-/* line 3781, ../src/application.scss */
+/* line 3782, ../src/application.scss */
 .request-list div.item a.item-title:hover {
   background-color: #666666;
 }
-/* line 3783, ../src/application.scss */
+/* line 3784, ../src/application.scss */
 .request-list div.item a.item-title:hover .arrow_left {
   border-color: #666666;
   border-right-color: #ffffff;
 }
-/* line 3787, ../src/application.scss */
+/* line 3788, ../src/application.scss */
 .request-list div.item a.item-title:hover .bulb {
   background-image: url("../images/icon_small/lightbulb.png");
 }
-/* line 3790, ../src/application.scss */
+/* line 3791, ../src/application.scss */
 .request-list div.item a.item-title:hover .wand {
   background-image: url("../images/icon_small/wand.png");
 }
-/* line 3795, ../src/application.scss */
+/* line 3796, ../src/application.scss */
 .request-list div.item a.private {
   background-image: url("../images/private_lock_grey.gif");
   background-position: right 9px;
   background-repeat: no-repeat;
 }
 
-/* line 3803, ../src/application.scss */
+/* line 3804, ../src/application.scss */
 .item-menu {
   position: absolute;
   left: -1px;
@@ -5524,7 +5525,7 @@ input.search {
   width: 1px;
   display: none;
 }
-/* line 3810, ../src/application.scss */
+/* line 3811, ../src/application.scss */
 .item-menu ul {
   list-style: none;
   position: absolute;
@@ -5548,11 +5549,11 @@ input.search {
   list-style-type: none;
   margin-left: 0px;
 }
-/* line 3822, ../src/application.scss */
+/* line 3823, ../src/application.scss */
 .item-menu ul li {
   display: block;
 }
-/* line 3824, ../src/application.scss */
+/* line 3825, ../src/application.scss */
 .item-menu ul li a {
   font-size: 13px;
   font-weight: 400;
@@ -5565,7 +5566,7 @@ input.search {
 .item-menu ul li a:hover {
   color: white;
 }
-/* line 3832, ../src/application.scss */
+/* line 3833, ../src/application.scss */
 .item-menu ul li a:hover {
   background: #666666;
 }
