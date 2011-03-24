@@ -19,35 +19,73 @@ time, mark, audio, video {
   padding: 0;
   border: 0;
   outline: 0;
+  font-weight: inherit;
+  font-style: inherit;
   font-size: 100%;
+  font-family: inherit;
   vertical-align: baseline;
-  background: transparent;
 }
 
-/* line 28, ../src/reset.scss */
+/* line 29, ../src/reset.scss */
+body {
+  line-height: 1;
+  color: black;
+  background: white;
+}
+
+/* line 35, ../src/reset.scss */
+table {
+  border-collapse: separate;
+  border-spacing: 0;
+  vertical-align: middle;
+}
+
+/* line 41, ../src/reset.scss */
+caption, th, td {
+  text-align: left;
+  font-weight: normal;
+  vertical-align: middle;
+}
+
+/* line 47, ../src/reset.scss */
+q, blockquote {
+  quotes: "" "";
+}
+
+/* line 52, ../src/reset.scss */
+q:before, q:after, blockquote:before, blockquote:after {
+  content: "";
+}
+
+/* line 56, ../src/reset.scss */
+a img {
+  border: none;
+}
+
+/* line 61, ../src/reset.scss */
 article, aside, details, figcaption, figure,
 footer, header, hgroup, menu, nav, section {
   display: block;
 }
 
-/* line 32, ../src/reset.scss */
+/* line 65, ../src/reset.scss */
 nav ul {
   list-style: none;
 }
 
-/* line 34, ../src/reset.scss */
+/* line 67, ../src/reset.scss */
 blockquote, q {
   quotes: none;
 }
 
-/* line 37, ../src/reset.scss */
+/* line 70, ../src/reset.scss */
 blockquote:before, blockquote:after,
 q:before, q:after {
   content: '';
   content: none;
 }
 
-/* line 39, ../src/reset.scss */
+/* line 72, ../src/reset.scss */
 a {
   margin: 0;
   padding: 0;
@@ -56,14 +94,14 @@ a {
   background: transparent;
 }
 
-/* line 41, ../src/reset.scss */
+/* line 74, ../src/reset.scss */
 ins {
   background-color: #ff9;
   color: #000;
   text-decoration: none;
 }
 
-/* line 43, ../src/reset.scss */
+/* line 76, ../src/reset.scss */
 mark {
   background-color: #ff9;
   color: #000;
@@ -71,25 +109,25 @@ mark {
   font-weight: bold;
 }
 
-/* line 45, ../src/reset.scss */
+/* line 78, ../src/reset.scss */
 del {
   text-decoration: line-through;
 }
 
-/* line 47, ../src/reset.scss */
+/* line 80, ../src/reset.scss */
 abbr[title], dfn[title] {
   border-bottom: 1px dotted;
   cursor: help;
 }
 
 /* tables still need cellspacing="0" in the markup */
-/* line 50, ../src/reset.scss */
+/* line 83, ../src/reset.scss */
 table {
   border-collapse: collapse;
   border-spacing: 0;
 }
 
-/* line 52, ../src/reset.scss */
+/* line 85, ../src/reset.scss */
 hr {
   display: block;
   height: 1px;
@@ -99,18 +137,18 @@ hr {
   padding: 0;
 }
 
-/* line 54, ../src/reset.scss */
+/* line 87, ../src/reset.scss */
 input, select {
   vertical-align: middle;
 }
 
-/* line 56, ../src/reset.scss */
+/* line 89, ../src/reset.scss */
 ol {
   list-style: decimal outside;
   margin: 3px 8px 3px 28px;
 }
 
-/* line 58, ../src/reset.scss */
+/* line 91, ../src/reset.scss */
 strong, b {
   font-weight: bold;
 }

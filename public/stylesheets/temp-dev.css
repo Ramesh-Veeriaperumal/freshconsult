@@ -51,13 +51,12 @@
 
 /* line 27, ../src/temp-dev.scss */
 input.uiButton {
-  padding: 3px 10px;
+  padding: 4px 10px 5px 10px;
   position: relative;
-  top: 1px;
-  left: -3px;
+  top: -1px;
 }
 
-/* line 35, ../src/temp-dev.scss */
+/* line 34, ../src/temp-dev.scss */
 .fdbutton {
   display: -moz-inline-box;
   -moz-box-orient: vertical;
@@ -96,7 +95,7 @@ input.uiButton {
   float: none;
 }
 
-/* line 45, ../src/temp-dev.scss */
+/* line 44, ../src/temp-dev.scss */
 div.action_buttons {
   position: relative;
   float: right;
@@ -112,7 +111,7 @@ div.action_buttons {
   padding: 4px 7px 3px 3px;
   border: 1px solid #e5e5e5;
 }
-/* line 53, ../src/temp-dev.scss */
+/* line 52, ../src/temp-dev.scss */
 div.action_buttons a {
   text-decoration: none;
   float: left;
@@ -136,17 +135,17 @@ div.action_buttons a:hover {
 div.action_buttons a:active {
   color: #333333;
 }
-/* line 65, ../src/temp-dev.scss */
+/* line 64, ../src/temp-dev.scss */
 div.action_buttons a.last {
   border: 0px;
   padding-right: 4px;
 }
-/* line 69, ../src/temp-dev.scss */
+/* line 68, ../src/temp-dev.scss */
 div.action_buttons a.icon {
   padding-left: 20px;
 }
 
-/* line 75, ../src/temp-dev.scss */
+/* line 74, ../src/temp-dev.scss */
 .info-highlight {
   font-size: 13px;
   margin: 14px 0px 3px 0px;
@@ -159,7 +158,7 @@ div.action_buttons a.icon {
   background-color: #fffbee;
 }
 
-/* line 87, ../src/temp-dev.scss */
+/* line 86, ../src/temp-dev.scss */
 .tab_panel {
   border-bottom: 1px solid #cfcfcf;
   margin: 5px -20px 0px -20px;
@@ -168,13 +167,13 @@ div.action_buttons a.icon {
   *zoom: 1;
   display: block;
 }
-/* line 92, ../src/temp-dev.scss */
+/* line 91, ../src/temp-dev.scss */
 .tab_panel b {
   margin-right: 10px;
   padding: 5px 0px 0px 0px;
   float: left;
 }
-/* line 98, ../src/temp-dev.scss */
+/* line 97, ../src/temp-dev.scss */
 .tab_panel a {
   background: #cfcfcf;
   position: relative;
@@ -187,32 +186,32 @@ div.action_buttons a.icon {
   border: 1px solid #d3d3d3;
   border-bottom: 0px;
   font-size: 13px;
-  background: #f5f5f5;
-  background: -moz-linear-gradient(top, #f5f5f5 0%, #e1e1e1 100%);
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #f5f5f5), color-stop(100%, #e1e1e1));
-  background: linear-gradient(#f5f5f5, #e1e1e1);
-  -pie-background: linear-gradient(#f5f5f5, #e1e1e1);
-}
-/* line 112, ../src/temp-dev.scss */
-.tab_panel a.last {
-  -moz-border-radius: 0px 4px 4px 0px;
-  -webkit-border-radius: 0px 4px 4px 0px;
-  border-radius: 0px 4px 4px 0px;
-}
-/* line 115, ../src/temp-dev.scss */
-.tab_panel a.first {
-  -moz-border-radius: 4px 0px 0px 4px;
-  -webkit-border-radius: 4px 0px 0px 4px;
-  border-radius: 4px 0px 0px 4px;
-}
-/* line 118, ../src/temp-dev.scss */
-.tab_panel a.active, .tab_panel a:hover {
   background: #fcfcfc;
   background: -moz-linear-gradient(top, #fcfcfc 0%, #f1f1f1 100%);
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #fcfcfc), color-stop(100%, #f1f1f1));
   background: linear-gradient(#fcfcfc, #f1f1f1);
   -pie-background: linear-gradient(#fcfcfc, #f1f1f1);
   border-bottom: 1px solid #eaeaea;
+}
+/* line 113, ../src/temp-dev.scss */
+.tab_panel a.last {
+  -moz-border-radius: 0px 4px 4px 0px;
+  -webkit-border-radius: 0px 4px 4px 0px;
+  border-radius: 0px 4px 4px 0px;
+}
+/* line 116, ../src/temp-dev.scss */
+.tab_panel a.first {
+  -moz-border-radius: 4px 0px 0px 4px;
+  -webkit-border-radius: 4px 0px 0px 4px;
+  border-radius: 4px 0px 0px 4px;
+}
+/* line 119, ../src/temp-dev.scss */
+.tab_panel a.active, .tab_panel a:hover {
+  background: #f5f5f5;
+  background: -moz-linear-gradient(top, #f5f5f5 0%, #e1e1e1 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #f5f5f5), color-stop(100%, #e1e1e1));
+  background: linear-gradient(#f5f5f5, #e1e1e1);
+  -pie-background: linear-gradient(#f5f5f5, #e1e1e1);
 }
 
 /* line 124, ../src/temp-dev.scss */
@@ -338,4 +337,81 @@ div.action_buttons a.icon {
 /* line 167, ../src/temp-dev.scss */
 .tag_list div.item:hover .tag_delete {
   visibility: visible;
+}
+
+/* line 173, ../src/temp-dev.scss */
+.email-settings {
+  background: #f7f7f7;
+  margin: 0px -20px 10px;
+  padding: 12px 22px;
+  border: 1px solid #e6e6e6;
+  border-width: 1px 0px;
+}
+/* line 179, ../src/temp-dev.scss */
+.email-settings label {
+  font-size: 14px;
+  line-height: 20px;
+  color: #666666;
+  display: block;
+}
+/* line 185, ../src/temp-dev.scss */
+.email-settings .highlight {
+  background: #fcfcd7;
+  font-size: inherit;
+  color: #000000;
+}
+/* line 190, ../src/temp-dev.scss */
+.email-settings .info_data {
+  font-size: 12px;
+}
+/* line 191, ../src/temp-dev.scss */
+.email-settings div.email-item {
+  margin-bottom: 8px;
+}
+/* line 194, ../src/temp-dev.scss */
+.email-settings div.email-item .seperator {
+  border-style: solid;
+  margin: 8px -20px 16px -40px;
+}
+/* line 199, ../src/temp-dev.scss */
+.email-settings div.email-item div.item {
+  margin-bottom: 15px;
+  font-size: 14px;
+}
+/* line 201, ../src/temp-dev.scss */
+.email-settings div.email-item div.item label {
+  font-size: 13px;
+  padding-bottom: 6px;
+}
+
+/* line 209, ../src/temp-dev.scss */
+.email-settings-form table {
+  width: 400px;
+}
+/* line 210, ../src/temp-dev.scss */
+.email-settings-form td {
+  padding: 6px 8px;
+}
+
+/* line 213, ../src/temp-dev.scss */
+.email_info {
+  border: 1px solid #cfcfcf;
+  padding: 8px 12px;
+  background: #f2ffda;
+  -moz-border-radius: 3px 3px 3px 3px;
+  -webkit-border-radius: 3px 3px 3px 3px;
+  border-radius: 3px 3px 3px 3px;
+  font-size: 14px;
+}
+
+/* line 221, ../src/temp-dev.scss */
+.primary_email {
+  padding: 2px 15px;
+  border: 1px solid #b8d385;
+  background-color: #ddeeba;
+  color: #5b7200;
+  font-size: 10px;
+  -moz-border-radius: 5px 5px 5px 5px;
+  -webkit-border-radius: 5px 5px 5px 5px;
+  border-radius: 5px 5px 5px 5px;
 }

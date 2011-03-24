@@ -147,12 +147,12 @@ div.bg_pulp{
 		background-color:#afafaf;
 		text-decoration:none;
 	}
-}
-  
+} 
 
 .info_data, .info-data{
 	color:#888888;
 	font-size:11px;
+	padding-bottom:6px;
 }
 
 body {
@@ -1146,7 +1146,9 @@ div.preview_pic{
 	img{			
 		padding:3px;
 		background:#ffffff;
-		border:1px solid darken($color_pulp, 10%);
+		border:1px solid #efefef;
+		width:50px;
+		height:50px;
 	}
 }
 
@@ -1353,10 +1355,7 @@ body h5{
 				a:hover{
 					text-decoration:none;
 				} 
-				.timestamp{
-					color:#999999;
-					font-size:11px;
-				}
+				
 				div{
 					padding:2px 0px;
 				}
@@ -1476,6 +1475,11 @@ body h5{
 			display:block;
 		}
 	}
+}
+
+.timestamp{
+	color:#999999;
+	font-size:11px;
 }
  
  
@@ -1800,7 +1804,7 @@ div.panel_area{
 
 .button-container ul{
 	@include horizontal-list;
-	padding:10px 0px;  
+	padding:10px 0px;   
 }
 
 .button-container{
@@ -3114,15 +3118,6 @@ h4.border_title{
 	background-position: 10px 10px;
 }
 
-
-
-.email_info{
-	border:1px solid #cfcfcf;
-	padding:4px 10px;
-	background:#f2ffda;
-	@include corners(3px);
-	font-size:11px;
-}
 
 .search_results{
 	background-color:#ffffff;
