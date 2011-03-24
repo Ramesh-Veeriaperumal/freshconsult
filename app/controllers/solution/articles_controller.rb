@@ -16,14 +16,14 @@ class Solution::ArticlesController < ApplicationController
     
     @articles = @articles.paginate( 
       :page => params[:page], 
-      :order => Helpdesk::Article::SORT_SQL_BY_KEY[(params[:sort] || :created_desc).to_sym],
+      :order => Solution::Article::SORT_SQL_BY_KEY[(params[:sort] || :created_desc).to_sym],
       :per_page => 20)
   end
 
   def show
     
     logger.debug "show is :: #{params.inspect}"
-    @article = Solution::Article.find(params[:id], :include => :folder) 
+    @article = current_account.solution_articles.find(params[:id], :include => :folder) 
     respond_to do |format|
       format.html
       format.xml  { render :xml => @article.to_xml(:include => :folder) }
@@ -46,7 +46,7 @@ class Solution::ArticlesController < ApplicationController
 
   def edit
     
-    @article = Solution::Article.find(params[:id])      
+    @article = current_account.solution_articles.find(params[:id])      
       respond_to do |format|
       format.html # edit.html.erb
       format.xml  { render :xml => @article }
@@ -86,7 +86,7 @@ class Solution::ArticlesController < ApplicationController
     redirect_to_url = solution_category_folder_url(params[:category_id], params[:folder_id])
     
     logger.debug "Inside update :: #{params.inspect}"
-    @article = Solution::Article.find(params[:id])     
+    @article = current_account.solution_articles.find(params[:id])     
     redirect_to_url = solution_category_folder_url(params[:category_id], params[:folder_id])       
     respond_to do |format|
      
@@ -103,7 +103,7 @@ class Solution::ArticlesController < ApplicationController
 
   def destroy
     logger.debug "params::: #{params.inspect}"
-    @article = Solution::Article.find(params[:id])
+    @article = current_account.solution_articles.find(params[:id])
     @article.destroy
     
     respond_to do |format|
@@ -116,7 +116,7 @@ class Solution::ArticlesController < ApplicationController
    def delete_tag
      
      logger.debug "delete_tag :: params are :: #{params.inspect} "     
-     article = Solution::Article.find(params[:article_id])     
+     article = current_account.solution_articles.find(params[:article_id])     
      tag = article.tags.find_by_id(params[:tag_id])      
      raise ActiveRecord::RecordNotFound unless tag
      Helpdesk::TagUse.find_by_article_id_and_tag_id(article.id, tag.id).destroy
