@@ -2,18 +2,29 @@ class Admin::EmailConfigsController < Admin::AdminController
   include ModelControllerMethods
    
   def index
-    @email_configs = scoper.all
+    @email_configs = scoper.find(:all, :order => 'id')
     @groups = current_account.groups    
   end
   
   def new
-    @groups = current_account.groups
-    render :partial => 'email_form', :locals => { :type => "new" }
+    @email_configs = scoper.all
+    @groups = current_account.groups 
   end
 
   def edit
+    @email_configs = scoper.all
     @groups = current_account.groups
-    render :partial => "email_form", :object => scoper.find(params[:id]), :locals => { :type => "edit" }
+  end
+  
+  def make_primary 
+    @email_config = scoper.find(params[:id])
+    if @email_config
+      current_account.primary_email_config.update_attributes(:primary_role => false)
+      if @email_config.update_attributes(:primary_role => true)
+        flash[:notice] = "<b>#{@email_config.reply_email}</b> is now your primary support email!"
+        redirect_back_or_default redirect_url
+      end
+    end
   end
   
   protected

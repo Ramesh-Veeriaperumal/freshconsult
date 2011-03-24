@@ -8,17 +8,9 @@ div.ui-form ul {
 /* line 8, ../src/form.scss */
 div.ui-form ul, ul.ui-form {
   list-style: none;
+  overflow: hidden;
   *zoom: 1;
   margin: 0px -20px 10px -20px;
-}
-/* line 22, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/compass/stylesheets/compass/utilities/general/_clearfix.scss */
-div.ui-form ul:after, ul.ui-form:after {
-  content: "\0020";
-  display: block;
-  height: 0;
-  clear: both;
-  overflow: hidden;
-  visibility: hidden;
 }
 
 /* line 15, ../src/form.scss */
@@ -232,10 +224,6 @@ a.addchoice:hover {
   width: auto;
   font-size: 1.0em;
   font-weight: normal;
-}
-/* line 169, ../src/form.scss */
-.ui-form input.text:focus, .ui-form textarea:focus {
-  border-color: #5b711f;
 }
 /* line 172, ../src/form.scss */
 .ui-form span {
@@ -824,14 +812,17 @@ span.sort_handle {
   text-align: left;
   padding: 25px;
   border: 1px solid #c2c2c2;
-  margin: 0px auto !important;
+  margin: 0px auto;
   background: #ffffff;
+  -moz-box-shadow: 0px 1px 6px #999999;
+  -webkit-box-shadow: 0px 1px 6px #999999;
+  box-shadow: 0px 1px 6px #999999;
 }
-/* line 635, ../src/form.scss */
+/* line 636, ../src/form.scss */
 .ui-login .ui-form ul {
   margin: 0px;
 }
-/* line 638, ../src/form.scss */
+/* line 639, ../src/form.scss */
 .ui-login .ui-form ul li input.text {
   margin: 3px 0px 5px 0px;
   width: 320px;

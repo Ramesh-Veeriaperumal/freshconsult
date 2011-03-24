@@ -1,4 +1,4 @@
-body, td, pre {color:#000; font-family: Georgia, Verdana, Arial, Helvetica, sans-serif; font-size:14px; margin:8px;}
+body, td, pre {color:#000; font-family:Verdana, Arial, Helvetica, sans-serif; font-size:10px; margin:8px;}
 body {background:#FFF;}
 body.mceForceColors {background:#FFF; color:#000;}
 h1 {font-size: 2em}
@@ -7,7 +7,7 @@ h3 {font-size: 1.17em}
 h4 {font-size: 1em}
 h5 {font-size: .83em}
 h6 {font-size: .75em}
-.mceItemTable, .mceItemTable td, .mceItemTable th, .mceItemTable caption, .mceItemVisualAid {border: 1px dashed #BBB;}
+.mceItemTable, .mceItemTable td, .mceItemTable th, .mceItemTable caption, .mceItemVisualAid {border: 1px solid #BBB !important;}
 a.mceItemAnchor {display:inline-block; width:11px !important; height:11px  !important; background:url(img/items.gif) no-repeat 0 0;}
 td.mceSelected, th.mceSelected {background-color:#3399ff !important}
 img {border:0;}
@@ -18,6 +18,9 @@ del {color:red; text-decoration:line-through}
 cite {border-bottom:1px dashed blue}
 acronym {border-bottom:1px dotted #CCC; cursor:help}
 abbr {border-bottom:1px dashed #CCC; cursor:help}
+ol, ul{ margin: 14px 0px 14px 0px; padding: 0px 0px 0px 40px; line-height: 17px;}
+ul{ list-style:disc outside;  }
+blockquote { margin: 1em 1em; color: #999; border-left: 2px solid #999; padding:6px 6px 1px 1em; background-color: #EEE;}
 
 /* IE */
 * html body {
