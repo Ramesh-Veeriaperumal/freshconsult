@@ -62,31 +62,32 @@
 	<% else %> 
 		<div class="request-list">
 
-			<% @articles.each do |article|
-				article_url = solution_category_folder_article_url(article.folder.category_id,article.folder_id,article)
-			 %> 
-			<div class="item">
-				<%= link_to( "<span class='bulb'></span> #{article.excerpts.title} ", article_url, :target => "blank", 
-							:class => "item-title #{( !article.is_public? ) ? 'private' : '' }",  
-							:title => truncate ( article.desc_un_html, 100) ) %>
-				<div class="item-menu">
-					<ul>
-						<li><%= link_to_function "Insert Content", "respondWithSol('content', '#{article.id}', '#{article_url}')" %></li>
-						<%if article.is_public?%>
-							<li><%= link_to_function "Insert URL", "respondWithSol('url', '#{article.id}', '#{article_url}')" %></li>
-						<%end%> 
-					</ul>
-					<div style="display:none">
-					Use<select id="suggest_solution_insert" onchange="respondWithSol(this.value, '<%=article.id%>' ,'<%=article_url%>')">
-										<option value="none">.....</option>
-										<option value="content">Content </option>
-										<%if article.is_public?%>
-											<option value="url">URL </option>
-										<%end%>
-										</select>
-									</div> 
+			<% @articles.each do |article| %>
+			 <% unless article.nil? %>
+			 	<% article_url = solution_category_folder_article_url(article.folder.category_id,article.folder_id,article) %> 
+				<div class="item">
+					<%= link_to( "<span class='bulb'></span> #{article.excerpts.title} ", article_url, :target => "blank", 
+								:class => "item-title #{( !article.is_public? ) ? 'private' : '' }",  
+								:title => truncate ( article.desc_un_html, 100) ) %>
+					<div class="item-menu">
+						<ul>
+							<li><%= link_to_function "Insert Content", "respondWithSol('content', '#{article.id}', '#{article_url}')" %></li>
+							<%if article.is_public?%>
+								<li><%= link_to_function "Insert URL", "respondWithSol('url', '#{article.id}', '#{article_url}')" %></li>
+							<%end%> 
+						</ul>
+						<div style="display:none">
+						Use<select id="suggest_solution_insert" onchange="respondWithSol(this.value, '<%=article.id%>' ,'<%=article_url%>')">
+											<option value="none">.....</option>
+											<option value="content">Content </option>
+											<%if article.is_public?%>
+												<option value="url">URL </option>
+											<%end%>
+											</select>
+										</div> 
+					</div>
 				</div>
-			</div>
+				<% end %>
 			<% end %>
 		</div>
 	<% end %>
