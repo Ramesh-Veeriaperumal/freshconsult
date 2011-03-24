@@ -30,14 +30,13 @@ class ContactImportController < ApplicationController
                                 :email =>  row[(params[:fields]["4"]).to_i],
                                 :twitter_id => row[(params[:fields]["5"]).to_i], 
                                 :customer_id => nil,
-                                :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]
-                                }
+                     }
                                 }
                                 email = @params_hash[:user][:email]  
          unless  @params_hash[:user][:company].nil?      
                 @params_hash[:user][:customer_id]= add_or_update_company   
          end
-        @user = User.find_by_email(email)
+        @user = current_account.users.find_by_email(email)
         
         unless @user.nil?
           if @user.update_attributes(@params_hash[:user])
@@ -45,6 +44,7 @@ class ContactImportController < ApplicationController
           end
         else
           @user = current_account.users.new
+          @user.user_role = User::USER_ROLES_KEYS_BY_TOKEN[:customer]
           if @user.signup!(@params_hash)    
           end
         end
