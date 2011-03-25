@@ -1,29 +1,26 @@
 <% note_view_id = "note_view_"+note.id.to_s() %>
 <div id="<%=note_view_id%>" class="description <%= cycle('stripe', '') %>">
    	<a name="<%= note.id %>"></a>
-		<div class="item_actions"> 
 			<% if note.private && !note.incoming && !note.status? %>
-				<div class="note_icon">
-					<% if note.private? %>
-						<img src="/images/NotePinned_lock.png" class="noteType" title="Conversation added as a private note" />
-					<% else %>
-						<img src="/images/NotePinned.png" class="noteType" title="Conversation added as a note" />
-					<% end %>
-				</div>
-				<!--a href="javascript:void(0)" class="options">
-						<div class="item_menu">
-				     		<%# link_to_remote( "Edit",  :update => note_view_id,
+				<div class="action_buttons" style="display:none;">
+					<%= link_to_remote( "Edit",  :update => note_view_id,
 				                            			 :url => edit_helpdesk_ticket_helpdesk_note_path(@item, note),
 														 :method => :GET) %>
-							<%# link_to "Delete", helpdesk_ticket_helpdesk_note_path(@item, note), :method => :delete %>
-						</div>				
-				</a-->
-				
-			<% else %>
-			<div class="note_icon">
-				<img src="/images/MailReply.png" class="noteType" title="Conversation sent as email" />
-			</div>
+					<%= link_to "Delete", helpdesk_ticket_helpdesk_note_path(@item, note), :method => :delete, :class => "last" %>
+				</div>
 			<% end %>
+		
+		<div class="converstion-sprite">
+			<% if note.private_note? %>	 
+				<span class="image note-private" title="Private note"></span>
+			<% elsif note.public_note? %>
+				<span class="image note-public" title="Public note"></span>
+			<% elsif note.inbound_email? %>
+				<span class="image email-inbound" title="Incoming email"></span>
+			<% elsif note.outbound_email? %>
+				<span class="image email-outbound" title="Outbound email"></span>
+			<% end %>
+			
 	    </div>
 		  
  	<div class="user_details">
