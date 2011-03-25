@@ -26,11 +26,13 @@
 				sla_size = @sla_policy.sla_details.size
 				@sla_policy.sla_details.each_with_index do |slas , index| %>
 		 		<% fields_for "SlaDetails[#{index}]", slas do |sla| %>
-					<% priority = Helpdesk::SlaDetail::PRIORITY_NAMES_BY_KEY[sla_size-index] %>
+					<%
+					 priority_id = slas.priority || (sla_size-index)
+					 priority = Helpdesk::SlaDetail::PRIORITY_NAMES_BY_KEY[priority_id]  %>
 					<tr>
 						<td>
 							<%= sla.label :name , "#{index+1}. <em>#{priority} priority</em>"  %> <%= sla.hidden_field :name, { :value => "SLA for #{priority} priority"} %>
-							<%= sla.hidden_field :priority, { :value => (sla_size-index)} %>
+							<%= sla.hidden_field :priority, { :value => (priority_id)} %>
 							<%= sla.hidden_field :id, { :value => slas.id} %>		
 						</td>	   
 						<td>
