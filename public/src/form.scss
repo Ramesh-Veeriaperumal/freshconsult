@@ -7,7 +7,7 @@ div.ui-form ul{
 
 div.ui-form ul, ul.ui-form{ 
 	list-style:none; 
-	@include pie-clearfix;
+	@include clearfix;
 	margin:0px -20px 10px -20px;
 }
 
@@ -166,8 +166,8 @@ a.addchoice:hover{
 		font-size:1.0em; 
 		font-weight:normal;
  	}
- 	input.text:focus, textarea:focus{
- 		border-color:#5b711f;
+ 	input.text:focus, textarea:focus{ 
+ 		
  	}   
 	span{
 		font-weight:normal;
@@ -630,8 +630,9 @@ span.sort_handle{
 		text-align:left;
 		padding:25px;
 		border:1px solid #c2c2c2;
-		margin:0px auto !important;
+		margin:0px auto;
 		background:#ffffff;
+		@include shadows(0px, 1px, 6px, #999999);
 		ul{
 			margin:0px;
 			li{

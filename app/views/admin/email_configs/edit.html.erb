@@ -1,2 +1,5 @@
-<h1>EmailConfigs#edit</h1>
-<p>Find me in app/views/email_configs/edit.html.erb</p>
+<% content_for :sidebar do %> 
+	<%= render :partial => "helpnote" %>	
+<% end %>
+
+<%= render :partial => 'email_form', :locals => { :type => "edit" } %>

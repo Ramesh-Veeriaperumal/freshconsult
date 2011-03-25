@@ -57,7 +57,7 @@
 
 /* line 49, ../src/validation.scss */
 .ui-form label.error {
-  font-size: 13px;
+  font-size: 13px !important;
   border: 1px solid #efefef;
   background: #fefcea;
   display: block;
