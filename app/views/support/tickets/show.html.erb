@@ -37,12 +37,12 @@
 <% content_for :sidebar do %>
 	<% if @ticket.responder %>
 		<div class="sidepanel clearfix">
-			<h4 class="title">Assigned To agent</h4>
+			<h4 class="title">Agent working on this ticket</h4>
 			<%= user_avatar(@ticket.responder.avatar, :thumb)  %>
 			<%= content_tag (:b, h(@ticket.responder.name)) %>
-			<%= h(@ticket.responder.email) %>
-			<%= content_tag ( :div, content_tag(:span, "phone", :class => "info_data") + " " + h(@ticket.responder.phone) ) unless @ticket.responder.phone.empty? %>
-			<%= content_tag ( :div, content_tag(:span, "mobile", :class => "info_data") + " " + h(@ticket.responder.mobile) ) unless @ticket.responder.mobile.empty? %>
+			<!--%= h(@ticket.responder.email) %-->
+			<!--%= content_tag ( :div, content_tag(:span, "phone", :class => "info_data") + " " + h(@ticket.responder.phone) ) unless @ticket.responder.phone.empty? %-->
+			<!--%= content_tag ( :div, content_tag(:span, "mobile", :class => "info_data") + " " + h(@ticket.responder.mobile) ) unless @ticket.responder.mobile.empty? %-->
 			
 		</div>
 	<% end %>
