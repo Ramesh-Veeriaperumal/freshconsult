@@ -16,9 +16,9 @@
 			<% elsif note.public_note? %>
 				<span class="image note-public" title="Public note"></span>
 			<% elsif note.inbound_email? %>
-				<span class="image email-inbound" title="Incoming email"></span>
+				<span class="image email-receive" title="Incoming email"></span>
 			<% elsif note.outbound_email? %>
-				<span class="image email-outbound" title="Outbound email"></span>
+				<span class="image email-reply" title="Outbound email"></span>
 			<% end %>
 			
 	    </div>
