@@ -6,6 +6,7 @@ class UsersController < ApplicationController
   #before_filter :require_no_user, :only => [:new, :create] #by Shan need to check later
   #before_filter :require_user, :only => [:show, :edit, :update]
   before_filter :set_selected_tab
+  skip_before_filter :load_object , :only => [ :show, :edit]
     
   def new
     redirect_to new_contact_url
@@ -29,7 +30,7 @@ class UsersController < ApplicationController
   
    
   def show
-    
+    logger.debug "in users controller :: show show"
     user_role = User.find(params[:id]).user_role    
     if User::USER_ROLES_KEYS_BY_TOKEN[:customer].eql?(user_role)      
       redirect_to :controller =>'contacts' ,:action => 'show', :id => params[:id]    

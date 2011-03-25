@@ -43,6 +43,22 @@ class Helpdesk::Note < ActiveRecord::Base
     source == SOURCE_KEYS_BY_TOKEN["email"]
   end
   
+  def private_note?
+    source == SOURCE_KEYS_BY_TOKEN["note"] && private
+  end
+  
+  def public_note?
+    source == SOURCE_KEYS_BY_TOKEN["note"] && !private
+  end
+  
+  def inbound_email?
+    source == SOURCE_KEYS_BY_TOKEN["email"] && incoming
+  end
+  
+  def outbound_email?
+    source == SOURCE_KEYS_BY_TOKEN["email"] && !incoming
+  end
+  
   def to_liquid
     { "commenter"   => user,
       "body"     => body }
