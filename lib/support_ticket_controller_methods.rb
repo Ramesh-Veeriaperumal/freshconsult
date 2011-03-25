@@ -49,8 +49,7 @@ module SupportTicketControllerMethods
     
     logger.debug "TICKET PARAMS ARE :: #{@ticket.inspect}"
    
-    
-    if (current_user || verify_recaptcha(:model => @ticket, :message => "Captcha verification failed, try again!")) && @ticket.save!
+   if  @ticket.save
       
       handle_custom_fields
       
@@ -75,9 +74,13 @@ module SupportTicketControllerMethods
       redirect_to redirect_url and return
     else
         set_customizer
-        logger.debug "Error is #{@ticket.errors}"
+        logger.debug "Ticket Errors is #{@ticket.errors}"
         render :action => :new
     end
+ 
+    
+  
+       
 
     #redirect_to :action => :new
   end

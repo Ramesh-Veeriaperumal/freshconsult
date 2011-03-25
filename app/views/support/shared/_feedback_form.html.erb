@@ -1,17 +1,28 @@
+
 <h4 class="title">Tell us what you would like to see in this article?</h4>
-<% form_remote_tag   :update => { :success => "article_voting", :failure => "article_error" } , :url => create_ticket_support_article_path, :method =>:post do   %>
+<% form_for :ticket, :url => create_ticket_support_article_path, :html => { :method =>:post, :id => "feedback_form" }  do |f|    %>
   <%= hidden_field_tag "meta[user_agent]", request.env["HTTP_USER_AGENT"] %>
   <%= hidden_field_tag "helpdesk_ticket[subject]", "Feedback for #{article.title}" %>
-  <%= hidden_field_tag "helpdesk_ticket[email]", current_account.default_email %>
-  
+  <ul class="ui-form">
+  <li>
+  <label id="requester-label">Requester *</label>
+  <input type="text" id="helpdesk_ticket[email]" class="text required email" name="helpdesk_ticket[email]"></input>
+  </li> 
+  <li>
+  <label id="description-label">Description</label>
   <%= text_area_tag "helpdesk_ticket[description]" %>
+  </li>
+ </ul>
   <span class="seperator"></span>
-  <div>
-		<% if !logged_in? %>
-		  <label>To verify you are human, plese type the given scrambled letters</label>
-			<%=recaptcha_tags :ajax => true , :display => { :theme => "white" } %>
-		<% end %>
-  </div>
-  
-  <%= submit_tag 'Send Feedback', :class => "uiButton" -%>
+  <%= submit_tag 'Send Feedback', :class => "uiButton" -%> 
 <% end %>
+ <% javascript_tag do %>
+  	jQuery("#feedback_form").validate({
+		submitHandler: function(form) {
+		   	jQuery(form).ajaxSubmit({success: showResponse});
+		}
+	});
+	function showResponse(response, status){
+		jQuery("#article_voting").html(response);
+	}
+  <% end %>

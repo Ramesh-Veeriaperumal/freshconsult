@@ -1,5 +1,7 @@
 class Support::TicketsController < ApplicationController
-
+  
+  validates_captcha_of 'Helpdesk::Ticket', :only => [:create]
+  
   include SupportTicketControllerMethods 
 
   before_filter { |c| c.requires_permission :portal_request }

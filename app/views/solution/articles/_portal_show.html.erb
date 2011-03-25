@@ -1,5 +1,5 @@
 <% content_for :layoutType do%>single<% end %>
-<script type="text/javascript" src="http://api.recaptcha.net/js/recaptcha_ajax.js"></script>
+<%= javascript_include_tag "jquery.form.js" %>
 <div class="folder_section">
 	<%= render :partial => "/solution/shared/category_folder_list", :locals => { :category => @article.folder.category, :selected => @article.folder } %>
 </div>  

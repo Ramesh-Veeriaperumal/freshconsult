@@ -1,5 +1,7 @@
 class Support::ArticlesController < ApplicationController 
   
+  
+  
   before_filter { |c| c.requires_permission :portal_knowledgebase }
 
   def index
@@ -42,7 +44,7 @@ class Support::ArticlesController < ApplicationController
   def create_ticket
     @ticket = Helpdesk::Ticket.new(params[:helpdesk_ticket])
     set_default_values
-    if (current_user || verify_recaptcha(:model => @ticket, :message => "Captcha verification failed, try again!")) && @ticket.save!
+    if  @ticket.save
      @ticket.create_activity(@ticket.requester, "{{user_path}} submitted a new ticket {{notable_path}}", {}, 
                                    "{{user_path}} submitted the ticket")
      if params[:meta]
