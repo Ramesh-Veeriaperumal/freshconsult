@@ -80,7 +80,7 @@ class ForumsController < ApplicationController
   def destroy
     @forum.destroy
     respond_to do |format|
-      format.html { redirect_to forums_path }
+      format.html { redirect_to categories_path }
       format.xml  { head 200 }
     end
   end
