@@ -32,6 +32,7 @@ module SupportTicketControllerMethods
 
   def create
     
+  
     get_custom_fields
     
    # @ticket = Helpdesk::Ticket.new(
@@ -48,8 +49,10 @@ module SupportTicketControllerMethods
     set_default_values
     
     logger.debug "TICKET PARAMS ARE :: #{@ticket.inspect}"
+    
    
-   if  @ticket.save
+   
+    if (current_user || verify_recaptcha(:model => @ticket, :message => "Captcha verification failed, try again!")) && @ticket.save!
       
       handle_custom_fields
       

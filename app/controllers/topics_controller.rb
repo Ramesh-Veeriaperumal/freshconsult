@@ -4,6 +4,13 @@ class TopicsController < ApplicationController
   before_filter :except => [:index, :show] do |c| 
     c.requires_permission :post_in_forums
   end
+  
+  before_filter :only => [:update_stamp,:remove_stamp,:destroy] do |c| 
+    c.requires_permission :manage_forums
+  end
+ 
+  before_filter :check_user_permission,:only => [:edit,:destroy,:update] 
+  
   before_filter :set_selected_tab
   
   #uses_tiny_mce :options => Helpdesk::MEDIUM_EDITOR 
@@ -13,6 +20,14 @@ class TopicsController < ApplicationController
   #caches_formatted_page :rss, :show
   cache_sweeper :posts_sweeper, :only => [:create, :update, :destroy]
 
+  def check_user_permission
+    if (current_user.id != @topic.user_id and  !current_user.has_manage_forums?)
+          flash[:notice] =  "You don't have sufficient privileges to access this page"
+          redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
+    end
+  end
+  
+  
   def index
     respond_to do |format|
       format.html { redirect_to forum_path(params[:forum_id]) }
@@ -24,8 +39,6 @@ class TopicsController < ApplicationController
   end
 
   def new
-    @forum_category = ForumCategory.find(params[:category_id])
-    @forums = Forum.find(params[:forum_id])
     @topic = Topic.new
   end
   
@@ -40,7 +53,6 @@ class TopicsController < ApplicationController
         # authors of topics don't get counted towards total hits
         @topic.hit! unless logged_in? and @topic.user == current_user
         @posts = @topic.posts.paginate :page => params[:page]
-        User.find(:all, :conditions => ['id IN (?)', @posts.collect { |p| p.user_id }.uniq]) unless @posts.blank?
         @post   = Post.new
       end
       format.xml do
@@ -184,16 +196,19 @@ end
     end
     
     def find_forum_and_topic
-       @forum_category = ForumCategory.find(params[:category_id])
-       @forum = Forum.find(params[:forum_id])
-      logger.debug "forum parameters are #{@forum.attributes.inspect}"
-      raise(ActiveRecord::RecordNotFound) unless (@forum.account_id == current_account.id)
-      @topic = @forum.topics.find(params[:id]) if params[:id]
+       @forum_category = scoper.find(params[:category_id])
+       @forum = @forum_category.forums.find(params[:forum_id])
+       raise(ActiveRecord::RecordNotFound) unless (@forum.account_id == current_account.id)
+       @topic = @forum.topics.find(params[:id]) if params[:id]
+    end
+    def scoper
+      current_account.forum_categories
     end
     
     def set_selected_tab
       @selected_tab = 'Forums'
     end
+  
     
 #    def authorized?
 #      %w(new create).include?(action_name) || @topic.editable_by?(current_user)

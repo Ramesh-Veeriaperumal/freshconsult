@@ -93,12 +93,13 @@
 					<li>
 						<span class="seperator"></span>
 					</li>
-					<li class="small inline">
-						<%= request_form.label :captcha %>
-							<label class="clearfix"><%=  request_form.captcha_challenge %><%=  request_form.captcha_field  %></label>
-						<span class="seperator"></span>
+					<li>
+						<% if !logged_in? %>
+						  	<label>To verify you are human, plese type the given scrambled letters</label>
+						  	<%= recaptcha_tags :display => { :theme => "white" }  %>
+						<% end %>
+						<br />
 					</li>
-					
 					
 					<li>
 						

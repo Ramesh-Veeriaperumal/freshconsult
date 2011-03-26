@@ -18,6 +18,7 @@ class Support::NotesController < ApplicationController
 
     if @note.save
       create_attachments
+      process_item
       flash[:notice] = "The note has been added to your request."
     else
       flash[:error] = "There was a problem adding the note to your request. Please try again."
@@ -34,6 +35,17 @@ class Support::NotesController < ApplicationController
     end
   end
   
+  def process_item  
+    
+    unless @ticket.active?
+     @ticket.update_attribute(:status, Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open])
+     notification_type = EmailNotification::TICKET_REOPENED
+    end          
+    Helpdesk::TicketNotifier.notify_by_email((notification_type ||= EmailNotification::REPLIED_BY_REQUESTER), @ticket, @note) if @ticket.responder
+     
+                     
+                     
+  end
   
   
 end

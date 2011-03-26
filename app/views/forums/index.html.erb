@@ -1,53 +1,31 @@
-<% content_for :sidebar do %>
-	
-<% end %>
+<% content_for :layoutType do %>single<% end %>
+<% @monitoring = logged_in? && !Monitorship.count(:id, :conditions => ['user_id = ? and active = ?', current_user.id, true]).zero? %>
+ 
 
-<div class="pageContent">
-	<h3 class="content_title"><%= 'Forums'[:forums_title] %></h3>
-	<!--p class="subtitle">
-		<%= feed_icon_tag "Recent Posts"[:recent_posts], all_posts_path(:format => 'rss') %>
-		<%= '{count} topic(s)'[(count=Topic.all(:conditions => { :account_id => current_account.id }).count)==1 ? :topic_count : :topics_count, number_with_delimiter(count)] %>, 
-		<%= '{count} post(s)'[(count=Post.all(:conditions => { :account_id => current_account.id }).count)==1 ? :post_count : :posts_count, number_with_delimiter(count)] %>, <%= '{count} voice(s)'[(count=User.count(:conditions => ["posts_count > 0 and account_id = ?", current_account]))==1 ? :voice_count : :voices_count, number_with_delimiter(count)] %>	  
-	</p-->
-	
-	<div class="actions_bar">
-		<% if admin? %>
-  			<%= link_to 'Create New Forum'[:create_new_forum], new_forum_path, :class => "button" %>
-		<% end %> 
-	</div>
-	 
-	<div class="forum_list">
-		<h4 class="title"> <%= link_to 'Recent posts'[:recent_posts], all_posts_path %></h4>
-		<ul class="base_set">
-		<% for forum in @forums do %>
-				<li>
-					<h5>
-						<a href="<%=forum_path(forum)%>">
-							<span><%=h(forum.name)%></span>
-							<span class="subcounter">(<%= '{count}'[(count=forum.topics.size)==1 ? :topic_count : :topics_count, number_with_delimiter(count)] %>)</span>
-							<span class="follow_link">»</span>
-						</a>
-					</h5>
-					<ul>
-						<% (Topic.freshest(current_account).for_forum(forum).limit(5)).each  do |topic_list| %>
-							<li><%= link_to(topic_list.title, forum_topic_path(topic_list.forum, topic_list)) %></li>  							 
-						<% end %>
-					</ul>
-				</li>			
-		<% end %>
-		</ul>
-	</div>
-	 
-	
-	<% online_users = User.currently_online -%>
-	<% unless !online_users || online_users.empty? %>
-		<div class="stats">
-			<div class="users">
-				<% unless !online_users || online_users.empty? %>
-					<%= 'Users online:'[:users_online] %> <%= online_users.map { |u| link_to "<strong>#{h u.display_name}</strong>", user_path(u) } * ", " %><br />
-				<% end %>
-			</div>
-		</div>
-	<% end %>
-
+<div class="floatr">
+	<% if admin? %>
+  		<%= link_to t('category.new'), new_category_path, :class => "uiButton" %>
+	<% end %> 
 </div>
+<h3 class="title"><%= t('forum.title') %></h3>
+
+<div class="forum_list">
+	<div class="forum-group">
+		<div class="search-grey-box">
+			<%= render :partial => "/search/pagesearch", :locals => { :placeholder => "Search All Topics", :url => "/search/topics?search_key=" } %>
+		</div>
+		<% @forum_categories.each do |forum_category| %>
+			<div class="category-title">
+				<% if logged_in? && current_user.has_manage_forums? -%>
+					<div class="action_buttons">
+				  		<%= link_to  t('forum.new'), new_category_forum_path(forum_category), :class => "last add_new icon" %>
+					</div>
+				<% end -%>
+				<%= link_to h(forum_category.name), category_path(forum_category), :class => "title" %>
+			</div>
+			<%= render :partial => "forum_shared/category", :object => forum_category %>
+		<% end %>
+	</div>
+</div>
+
+

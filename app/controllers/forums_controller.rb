@@ -12,26 +12,20 @@ class ForumsController < ApplicationController
   cache_sweeper :posts_sweeper, :only => [:create, :update, :destroy]
 
   def index
-    @forums = Forum.find_ordered(current_account)
-    # reset the page of each forum we have visited when we go back to index
-    session[:forum_page] = nil
-    respond_to do |format|
-      format.html
-      format.xml { render :xml => @forums }
+   @forum_categories = scoper.all
+     respond_to do |format|
+      format.html 
+      format.xml  { render :xml => @forum_categories }
+      format.atom 
     end
   end
 
   def show
-    @forum_category = ForumCategory.find(params[:category_id])
-    @forum = Forum.find(params[:id])
-    
+   
    (session[:forums] ||= {})[@forum.id] = Time.now.utc if logged_in?
    (session[:forum_page] ||= Hash.new(1))[@forum.id] = params[:page].to_i if params[:page]
 
     @topics = @forum.topics.paginate :page => params[:page]
-    User.find(:all, :conditions => ['id IN (?)', @topics.collect { |t| t.replied_by }.uniq]) unless @topics.blank?
-    
-   
     respond_to do |format|
       format.html do
         # keep track of when we last viewed this forum for activity indicators
@@ -43,8 +37,6 @@ class ForumsController < ApplicationController
 
   # new renders new.html.erb  
   def create
-    #@forum.attributes = params[:forum]
-    @forum_category = ForumCategory.find(params[:category_id])
     @forum = @forum_category.forums.build(params[:forum])
     @forum.account_id ||= current_account.id
     if @forum.save
@@ -73,9 +65,7 @@ class ForumsController < ApplicationController
     end
   end
   
-  def new
-    @forum_category = ForumCategory.find(params[:category_id])
-  end
+  
   
   def destroy
     @forum.destroy
@@ -85,13 +75,15 @@ class ForumsController < ApplicationController
     end
   end
   
+  def scoper
+    current_account.forum_categories
+  end
+  
   protected
     def find_or_initialize_forum # Shan - Should split-up find & initialize as separate methods.
-      @forum = params[:id] ? Forum.find(params[:id]) : Forum.new
-      @forum_category = params[:category_id] ? ForumCategory.find(params[:category_id]) : nil
-      @forum.account_id ||= current_account.id
-      (raise(ActiveRecord::RecordNotFound) unless (@forum.account_id == current_account.id)) || @forum
-    end
+      @forum_category = params[:category_id] ? scoper.find(params[:category_id]) : nil
+      @forum = params[:id] ? @forum_category.forums.find(params[:id]) : nil
+   end
     
     def set_selected_tab
       @selected_tab = 'Forums'

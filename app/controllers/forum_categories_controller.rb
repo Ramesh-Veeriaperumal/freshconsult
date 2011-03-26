@@ -18,7 +18,7 @@ class ForumCategoriesController < ApplicationController
   
   def show
     
-    @forum_category = ForumCategory.find(params[:id])
+    @forum_category = scoper.find(params[:id])
     @forums = @forum_category.forums.paginate :page => params[:page]
 
     respond_to do |format|
