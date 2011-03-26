@@ -13,7 +13,7 @@ module SubscriptionSystem
     def current_account
       @current_account ||= Account.find(:first, :conditions => ["full_domain = ? or helpdesk_url = ?", request.host, request.host]) || 
                                    (Rails.env.development? ? Account.first : nil)
-      raise ActiveRecord::RecordNotFound unless @current_account
+      (render("/errors/invalid_domain") and raise ActiveRecord::RecordNotFound) unless @current_account
       @current_account
     end
     

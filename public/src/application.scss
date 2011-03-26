@@ -152,7 +152,7 @@ div.bg_pulp{
 	color:#888888;
 	font-size:11px;
 	padding-bottom:6px;
-}
+} 
 
 body {
 	h1, h2, h3, h4, h5{
@@ -327,11 +327,12 @@ ul.tabs{
 	border:3px solid darken($background, 5%);
 }
 
-.pagearea, .sidepanel, .rtCnt{
+
+.pagearea, .sidepanel, .rtCnt, .no-helpdesk{
 	background-color:#ffffff;	
 }
 
-.pagearea, .sidepanel, .rtCnt, #errorExplanation, .flash_info{  
+.pagearea, .sidepanel, .rtCnt, .no-helpdesk, #errorExplanation, .flash_info{  
     @extend .sp_border;
 	padding:14px 20px; margin:0px 10px 10px 0px;
 	@include corners(6px);
@@ -400,6 +401,20 @@ ul.activityfeed li{
 }
 
 /* SIDEBAR CONTAINERS */
+
+.no-helpdesk{
+	margin:50px auto;
+	padding:18px 20px 30px 20px;
+	text-align:center;
+	max-width:700px; 
+}
+
+.no-helpdesk p{
+	font-size:15px; 
+	line-height:1.5em; 
+	margin:0px;
+	text-align:center;
+}
 
 .sidepanel{
 	p{

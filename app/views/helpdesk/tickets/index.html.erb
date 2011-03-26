@@ -7,8 +7,8 @@
   <% javascript_tag do %>
     document.observe("dom:loaded", function(){
       
-	  Helpdesk.sel = new Helpdesk.MultiSelectorsOnPages({
-	      pages: ['list', 'expanded'],
+	  Helpdesk.sel = new Helpdesk.MultiSelector({
+	      form: 'expanded',
 	      cookieName: 'helpdesk-tickets-page'
 	  });
 	
@@ -94,7 +94,7 @@
   %>
   <%= form_tag "", :method => :put, :style=> 'display: none', :id => 'accept-form' do end %>
 
-  <div id="pages"> 
+  <div id="pages" class="tickets-container">  
       <table class="tickets">
       	<thead>
       		<tr>
@@ -126,7 +126,7 @@
 					</div>
 				</th>	
 				<th>	
-					<form class="sort" id="sort_form" >
+					<form class="sort" id="sort_form" action="#" >
 						<a href="javascript:void(0);changeSortOrder();" class="sort_order">
 							<img src="/images/spacer.gif" alt="Order by newest first" title="Order by newest first" id="sort_order_img" onclick="jQuery(this).toggleClass('desending');" />
 						</a>
@@ -145,14 +145,7 @@
 	        	<%= render :partial => "/helpdesk/shared/expanded/ticket", :collection => @items %>
 			</tbody>
 	      </table>
-	  <% end %>
-	  <% form_tag "", { :id => "list",  :method => :put } do %>
-		  <table class="tickets">	
-			<tbody>
-	        	<%= render :partial => "/helpdesk/shared/collapsed/ticket", :collection => @items %>
-			</tbody>
-	      </table>
-	  <% end %>
+	  <% end %> 
   </div>
 
   <%= will_paginate @items %>
