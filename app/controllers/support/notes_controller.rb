@@ -42,6 +42,8 @@ class Support::NotesController < ApplicationController
      notification_type = EmailNotification::TICKET_REOPENED
     end          
     Helpdesk::TicketNotifier.notify_by_email((notification_type ||= EmailNotification::REPLIED_BY_REQUESTER), @ticket, @note) if @ticket.responder
+     
+                     
                      
   end
   
