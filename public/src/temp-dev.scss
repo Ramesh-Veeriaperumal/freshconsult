@@ -380,10 +380,10 @@ div.action_buttons{
 	    margin: 0px;
 	    @include sprite-background("../images/sprites/32square_sprite.png", 32px, 32px);
 	}
-	.email-receive{
+	.email-reply{
 		@include sprite-row(1, 32px, 0);
 	}
-	.email-reply{
+	.email-receive{
 		@include sprite-row(2, 32px, 0);
 	}
 	.note-public{

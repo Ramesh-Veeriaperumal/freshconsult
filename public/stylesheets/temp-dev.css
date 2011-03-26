@@ -620,17 +620,17 @@ div.action_buttons a.icon {
   width: 32px;
   height: 32px;
   margin: 0px;
-  background: url('/images/../images/sprites/32square_sprite.png?1301061435') no-repeat;
+  background: url('/images/../images/sprites/32square_sprite.png?1301061661') no-repeat;
   width: 32px;
   height: 32px;
   overflow: hidden;
 }
 /* line 383, ../src/temp-dev.scss */
-.converstion-sprite .email-receive {
+.converstion-sprite .email-reply {
   background-position: 0px 0px;
 }
 /* line 386, ../src/temp-dev.scss */
-.converstion-sprite .email-reply {
+.converstion-sprite .email-receive {
   background-position: 0px -32px;
 }
 /* line 389, ../src/temp-dev.scss */
