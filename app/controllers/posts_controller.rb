@@ -4,6 +4,9 @@ class PostsController < ApplicationController
   before_filter :except => [:index, :monitored, :search, :show] do |c| 
     c.requires_permission :post_in_forums
   end
+  before_filter :only => [:edit,:destroy,:update] do |c| 
+    c.requires_permission :manage_forums
+  end
   @@query_options = { :select => "#{Post.table_name}.*, #{Topic.table_name}.title as topic_title, #{Forum.table_name}.name as forum_name", :joins => "inner join #{Topic.table_name} on #{Post.table_name}.topic_id = #{Topic.table_name}.id inner join #{Forum.table_name} on #{Topic.table_name}.forum_id = #{Forum.table_name}.id" }
 
 	# @WBH@ TODO: This uses the caches_formatted_page method.  In the main Beast project, this is implemented via a Config/Initializer file.  Not
@@ -18,7 +21,7 @@ class PostsController < ApplicationController
     conditions = conditions.empty? ? nil : conditions.collect { |c| "(#{c})" }.join(' AND ')
     #@posts = Post.paginate @@query_options.merge(:conditions => conditions, :page => params[:page], :count => {:select => "#{Post.table_name}.id"}, :order => post_order, :limit =>10 )
     @posts = Post.find(:all,:conditions => conditions, :order => post_order, :limit =>10 )
-    @users = User.find(:all, :select => 'distinct *', :conditions => ['id in (?)', @posts.collect(&:user_id).uniq]).index_by(&:id)
+    @users = current_account.users.find(:all, :select => 'distinct *', :conditions => ['id in (?)', @posts.collect(&:user_id).uniq]).index_by(&:id)
     render_posts_or_xml
   end
 
@@ -30,7 +33,7 @@ class PostsController < ApplicationController
 #  end
 
   def monitored
-    @user = User.find params[:user_id]
+    @user = current_account.users.find params[:user_id]
     options = @@query_options.merge(:conditions => ["#{Monitorship.table_name}.user_id = ? and #{Post.table_name}.user_id != ? and #{Monitorship.table_name}.active = ?", params[:user_id], @user.id, true])
     options[:order]  = post_order
     options[:joins] += " inner join #{Monitorship.table_name} on #{Monitorship.table_name}.topic_id = #{Topic.table_name}.id"
@@ -48,8 +51,8 @@ class PostsController < ApplicationController
   end
 
   def create
-    @topic = Topic.find_by_id_and_forum_id(params[:topic_id],params[:forum_id])
-    raise(ActiveRecord::RecordNotFound) unless (@topic.account_id == current_account.id) #by Shan
+    @topic = Topic.find_by_id_and_forum_id_and_account_id(params[:topic_id],params[:forum_id],current_account.id)
+    #raise(ActiveRecord::RecordNotFound) unless (@topic.account_id == current_account.id) #by Shan
     
     if @topic.locked?
       respond_to do |format|

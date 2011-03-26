@@ -198,7 +198,7 @@ class User < ActiveRecord::Base
   end
   
   def has_manage_forums?
-      self.permission?(:manage_tickets)
+      self.permission?(:manage_forums)
   end
   
   def has_manage_solutions?

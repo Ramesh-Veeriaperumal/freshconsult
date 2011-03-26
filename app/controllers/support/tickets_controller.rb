@@ -1,10 +1,14 @@
 class Support::TicketsController < ApplicationController
   
-  validates_captcha_of 'Helpdesk::Ticket', :only => [:create]
-  
+  #validates_captcha_of 'Helpdesk::Ticket', :only => [:create]
+   
   include SupportTicketControllerMethods 
+  
+ 
 
   before_filter { |c| c.requires_permission :portal_request }
+  
+  
 
   def index
     return redirect_to(send(Helpdesk::ACCESS_DENIED_ROUTE)) unless current_user
