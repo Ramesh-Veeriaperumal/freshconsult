@@ -10,6 +10,9 @@ Subject - <%= @ticket.subject %>
 
 Description  - <%= @ticket.description %>
 
+<%
+helpdesk_name = "your helpdesk"
+helpdesk_name = @ticket.account.helpdesk_name unless @ticket.account.helpdesk_name.blank?
+%>
 
-
-This is an escalation email for the QA group in <%= @ticket.account.helpdesk_name || "your helpdesk"%>
+This is an escalation email for the QA group in <%= helpdesk_name%>
