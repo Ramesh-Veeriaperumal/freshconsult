@@ -12,6 +12,9 @@ Subject - <%= @ticket.subject %>
 
 Requestor - <%= @ticket.requester.email %>
 
+<%
+helpdesk_name = "your helpdesk"
+helpdesk_name = @ticket.account.helpdesk_name unless @ticket.account.helpdesk_name.blank?
+%>
 
-
-This is an escalation email from <%= @ticket.account.helpdesk_name || "your helpdesk"%>
+This is an escalation email from <%=helpdesk_name%>
