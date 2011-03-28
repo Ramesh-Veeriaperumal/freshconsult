@@ -1,20 +1,11 @@
 <% @page_title = "Dashboard" %>
 
-<% content_for :head do %>
-  <%= javascript_include_tag "helpdesk/core" %>
-  <%= javascript_include_tag "helpdesk/take_it_button" %>
+<% content_for :head do %> 
   <%= javascript_include_tag 'jquery.pageless' %>
-
-  <% javascript_tag do %>
-    document.observe("dom:loaded", function(){
-      Helpdesk.monitorTakeItButtons();
-    });
-  <% end %>
 <% end %>
- 
 
 <% content_for :sidebar do %>
-  <!--%= render :partial => '/helpdesk/shared/tag_search_navigate' %-->  
+  <%# render :partial => '/helpdesk/shared/tag_search_navigate' %>  
   <%= render :partial => '/helpdesk/shared/reminders', :locals => {
     :parent => false,
     :reminders => current_user.reminders,

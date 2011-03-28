@@ -53,6 +53,8 @@ class Helpdesk::TicketsController < ApplicationController
      @agents = Agent.find(:first, :joins=>:user, :conditions =>{:user_id =>current_user.id} )     
      @signature = "\n\n\n #{@agents.signature}" unless (@agents.nil? || @agents.signature.blank?)
      
+     @ticket_notes = @ticket.notes.visible.exclude_source('meta')
+     
      logger.debug "subject of the ticket is #{@item.subject}"
      
      set_suggested_solutions 
