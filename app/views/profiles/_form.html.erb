@@ -28,7 +28,7 @@ user = @profile.user unless current_user.customer?
 		
 		<li>
 			
-			<%= hidden_field(:user, :user_role, :id=>"user_role", :value => user.user_role ||= User::USER_ROLES_KEYS_BY_TOKEN[:poweruser] ) %>
+			<%= hidden_field(:user, :user_role, :id=>"user_role", :value => user.user_role) %>
 		</li>
 		
 		<li class="small">
