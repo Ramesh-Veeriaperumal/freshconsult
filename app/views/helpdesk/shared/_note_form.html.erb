@@ -6,15 +6,16 @@
         toggleMode: true,
         pages: ['attachment-options']
       }); 
+	  jQuery("#HelpdeskNotes").validate();
     });
   <% end %>
 <% end %>
 <div class="request_panel" id="<%=cntid%>" style="display:none"> 
   <!--h5 datafor="note" id="note_form_name">&nbsp;Add a note to this conversation</h5>
   <h5 datafor="edit_note">&nbsp;Edit this note </h5-->
-  <% form_for note, :html => {:multipart => true } do |f| %>
+  <% form_for note, :html => {:multipart => true,  :id => "HelpdeskNotes" } do |f| %>
     <%= f.error_messages %>
-	<ul class="ui-form">
+	<ul class="ui-form dont-validate">
 		<li>
 			<h3 class="title">Add a Note</h3>
 		</li>
@@ -25,7 +26,7 @@
 		</li>	
 		<li>
 			<%= f.label(:body, "Enter your message:") if local_assigns[:label] %> 
-			<%= f.text_area :body, { :class => 'expando', :id => "#{id}-#{cntid}-body" , :value => @signature} %>
+			<%= f.text_area :body, { :class => 'expando required', :id => "#{id}-#{cntid}-body" , :value => @signature} %>
     	</li>	
 		<li class="attachment-options"  id="attachment-options">
 			<% unless local_assigns[:no_attachments] %>
@@ -33,7 +34,7 @@
 		    <% end %>
 		</li>
 		<li class="alignright">
-	      <%= submit_tag(local_assigns[:submit] || ActiveSupport::Inflector.titleize(id), :class => "fdbutton") %>
+	      <%= submit_tag(local_assigns[:submit] || ActiveSupport::Inflector.titleize(id), :class => "uiButton") %>
 	    </li>
 	</ul> 
   <% end %>
