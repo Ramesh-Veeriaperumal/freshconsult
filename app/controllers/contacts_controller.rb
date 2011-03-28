@@ -39,8 +39,9 @@ class ContactsController < ApplicationController
     params[:user][:customer_id] = params[:customer_id]
     if build_and_save
         flash[:notice] = "The contact has been created and activation instructions sent to #{@user.email}!"
-    else
-        flash[:notice] =  activerecord_error_list(@user.errors)
+    else  
+        check_email_exist
+        flash[:notice] =  activerecord_error_list(@user.errors)        
     end
     customer = Customer.find(params[:customer_id])
     redirect_to(customer_url(customer))
@@ -48,9 +49,10 @@ class ContactsController < ApplicationController
   
   def create
     if build_and_save    
-      flash[:notice] = "The contact has been created and activation instructions sent to #{@user.email}!"
+      flash[:notice] = "The contact has been created and activation instructions sent to #{@user.email}!"      
       redirect_to contacts_url
     else
+      check_email_exist
       render :action => :new
     end
   end
@@ -103,6 +105,7 @@ class ContactsController < ApplicationController
       redirect_to contacts_url
     else
       logger.debug "error while saving #{@obj.errors.inspect}"
+      check_email_exist
       render :action => 'edit'
     end
   end
@@ -193,6 +196,11 @@ protected
     def check_user_limit
       redirect_to :back if current_account.reached_user_limit?
     end
-  
+
+   def check_email_exist
+     if("has already been taken".eql?(@user.errors["email"]))        
+           @existing_user = current_account.all_users.find(:first, :conditions =>{:users =>{:email => @user.email}})
+     end    
+   end
 
 end
