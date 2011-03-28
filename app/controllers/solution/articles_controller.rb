@@ -64,7 +64,7 @@ class Solution::ArticlesController < ApplicationController
     redirect_to_url = new_solution_category_folder_article_path(params[:category_id], params[:folder_id]) unless params[:save_and_create].nil?
    
     respond_to do |format|
-      if @article.save!
+      if @article.save
         post_persist 
         format.html { redirect_to redirect_to_url }        
         format.xml  { render :xml => @article, :status => :created, :location => @article }
