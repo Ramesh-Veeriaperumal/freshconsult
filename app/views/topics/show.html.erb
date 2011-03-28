@@ -19,9 +19,8 @@
 						<%end%>
 					<% end %>
 			    </div>
-				
-			<span class="seperator"></span>
-			 <% end %>
+				<span class="seperator"></span>
+			<% end %>
 			<div>
 				<span class="seperator"></span>
 				<%= link_to(t('connect_ticket') + " &raquo;", new_helpdesk_ticket_path(:topic_id => @topic.id), :class => "uiButton small full-width") if logged_in? and @topic.ticket_topic.nil?  %>
@@ -51,14 +50,12 @@
 							<% end %>
 					</div>
 				<% end %>
-			        <h3 class="title"><%= h @topic.title  %></h3>	  
-			        
-					
+			    <h3 class="title"><%= h @topic.title  %></h3>
 				<% first_post = @posts.first %>
 				<div class="description">
 					<div class="user_details">
 						<%= user_avatar( @topic.user.avatar ) %>
-		          		<div> <%=t('posted_by')%> <%= link_to @topic.user.display_name, @topic.user, :class => "user_name" %> </div>
+		          		<div> <%=t('posted_by')%> <%= link_to_user @topic.user, :class => "user_name" %> </div>
 						<div> <%= h(@topic.created_at.strftime("%B %e %Y at %I:%M %p")) %>  </div>
 		        	</div>
 					<div class="ticket_actions action_icons">
@@ -66,7 +63,6 @@
 						  <div class="action_buttons">
 						     <% if @topic.editable_by?(current_user) -%>
 						        <%= link_to("Edit topic", edit_category_forum_topic_path(@forum_category,@forum, @topic) , :class => "last" ) %> 
-						        
 	 					     <% end %>
 						  </div>		
 							

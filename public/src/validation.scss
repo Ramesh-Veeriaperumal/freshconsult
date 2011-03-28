@@ -1,4 +1,7 @@
+@import "compass/utilities/general/clearfix";
+
 #errorExplanation { 
+  @include clearfix; 
   padding: 14px 20px;
   margin: 0px 0px 10px 0px; 
   background-color: #feefd6;

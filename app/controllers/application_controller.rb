@@ -73,8 +73,11 @@ end
 
   def set_time_zone
     #ActiveSupport::TimeZone.all
-    current_account.make_current
-    Time.zone = current_user ? current_user.time_zone : (current_account ? current_account.time_zone : Time.zone)
+    begin
+      current_account.make_current
+      Time.zone = current_user ? current_user.time_zone : (current_account ? current_account.time_zone : Time.zone)
+    rescue ActiveRecord::RecordNotFound
+    end
   end
   
   def activerecord_error_list(errors)

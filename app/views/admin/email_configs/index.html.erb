@@ -9,13 +9,14 @@
 		<div id="primary-email-settings" class="email-settings">
 			<%= render (:partial => "email", :object =>  @email_configs.first) %>
 		</div>
-		
-		<h4 class="title">Additional support email(s)</h4>
-		<div id="email-settings-list" class="email-settings">
-			<% @email_configs.each do |email| %>  
-				<%= render (:partial => "email", :object => email) unless email == @email_configs.first %>
-			<% end %> 
-		</div> 
+		<%  if (@email_configs.size > 1) %>
+			<%= content_tag( :h4, "Additional support email(s)", :class => "title" ) %>
+			<div id="email-settings-list" class="email-settings">
+				<% @email_configs.each do |email| %>  
+					<%= render (:partial => "email", :object => email) unless email == @email_configs.first %>
+				<% end %> 
+			</div>
+		<% end %> 
 	<div class="button-container clearfix">
 		<span class="floatl">
 			<%= link_to "Add Another Email address", new_admin_email_config_path, :id => "AddEmail", :class => "uiButton"  %>

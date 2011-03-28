@@ -1,0 +1,25 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" href="/stylesheets/reset.css" type="text/css" media="screen, projection" />
+        <link rel="stylesheet" href="/stylesheets/application.css" type="text/css" media="screen, projection" />
+		
+		<title>There is no helpdesk here!</title>
+	</head>
+	<body>
+		<div id="wrap" class="container">
+			<div class="wrapper">
+				<div class="no-helpdesk">
+					<img src="/images/logo.png" alt="Freshdesk" width="50px" height="50px" />
+					<h2 class="title"> We couldn't find <span id="domainname"></span></h2>
+					<p> May be this is still fresh!  </p> 
+					<p> You can claim it now at <a href="http://www.freshdesk.com/signup.html">http://www.freshdesk.com/signup.html</a></p>
+				</div>
+			</div>
+		</div>
+		<% javascript_tag do %>
+			document.getElementById("domainname").innerHTML = (document.domain);
+		<% end %>
+	</body>
+</html>

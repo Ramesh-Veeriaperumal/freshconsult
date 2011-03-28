@@ -12,12 +12,11 @@
   });
 <% end %>
 
-<div class="ui-form">
 <h3 class="title">Change My Password</h3>
 <span class="seperator"></span>
 <% form_for @user, :url => password_reset_path, :method => :put, :html => { :id => "ChangePassword" } do |f| %>
   <%= f.error_messages %>
-  <ul>
+  <ul class="ui-form">
   	<li>
   		<%= f.label :password %>
 		<%= f.password_field :password, :class => "text password", :id => "password" %>
@@ -30,4 +29,3 @@
   
   <%= f.submit "Update and login", :class => "fdbutton" %>
 <% end %>
-</div>

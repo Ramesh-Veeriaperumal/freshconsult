@@ -1,20 +1,15 @@
 <tr class="<%= cycle('stripe', '') %>">
-
+	
   <td class="check">
     <%= check_box_tag('ids[]', ticket.to_param,  false, :class => 'selector') %>
   </td>
 
   <td class="name">
-      <h3>
-        <%= link_to(h(ticket.subject) + " (##{ticket.display_id})", ticket, :title => ticket.description ) %>
-      </h3>
+  	  <%= user_avatar(ticket.requester.avatar) %>
+      <h3> <%= link_to(h(ticket.subject) + " (##{ticket.display_id})", ticket, :title => ticket.description ) %> </h3>
 	  <% unless ticket.requester.nil? %>
-		from <%= link_to(h(ticket.requester.display_name), ticket.requester, :class => 'user_name' ) %>
+		<div> Reported by <%= link_to(h(ticket.requester.display_name), ticket.requester, :class => 'user_name' ) %>, on <%= formated_date(ticket.created_at) %> </div>
 	  <% end %>
-	  <% unless ticket.group.nil? %>
-	  	in <%= link_to( h(ticket.group.name), ticket.group ) %>
-	  <% end %>
-	  
   </td>
 
   <td class="assign">

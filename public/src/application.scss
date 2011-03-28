@@ -152,7 +152,7 @@ div.bg_pulp{
 	color:#888888;
 	font-size:11px;
 	padding-bottom:6px;
-}
+} 
 
 body {
 	h1, h2, h3, h4, h5{
@@ -327,11 +327,12 @@ ul.tabs{
 	border:3px solid darken($background, 5%);
 }
 
-.pagearea, .sidepanel, .rtCnt{
+
+.pagearea, .sidepanel, .rtCnt, .no-helpdesk{
 	background-color:#ffffff;	
 }
 
-.pagearea, .sidepanel, .rtCnt, #errorExplanation, .flash_info{  
+.pagearea, .sidepanel, .rtCnt, .no-helpdesk, #errorExplanation, .flash_info{  
     @extend .sp_border;
 	padding:14px 20px; margin:0px 10px 10px 0px;
 	@include corners(6px);
@@ -401,6 +402,20 @@ ul.activityfeed li{
 
 /* SIDEBAR CONTAINERS */
 
+.no-helpdesk{
+	margin:50px auto;
+	padding:18px 20px 30px 20px;
+	text-align:center;
+	max-width:700px; 
+}
+
+.no-helpdesk p{
+	font-size:15px; 
+	line-height:1.5em; 
+	margin:0px;
+	text-align:center;
+}
+
 .sidepanel{
 	p{
 		font-size:14px; 
@@ -455,29 +470,41 @@ ul.activityfeed li{
    border-radius:0 0 0 5px;
 }
 
-
 .reminders{
 	@include corners(6px);
+	h3.title{  
+		border-bottom:1px solid #e3dcc1;
+		color:#734e3d;  
+		display:block;
+	}
+}
+.reminders-ticket{
+	@include corners(6px, 0, 0, 6px);
+	label{ font-size:14px; }
+}
+
+.reminders, .reminders-ticket{
 	position:relative; 
     background:#ffffe2;    
-	h3.title{
-		color:#734e3d;  
-		border-bottom:1px solid #e3dcc1;
-		display:block;
-	} 
 	table{
 		display:block;
 		margin:2px 0px;
 		border-top:1px solid #e3dcc1;	
+		tbody, tr{
+			display:block;
+		}
+		
 		td{
 			vertical-align:top;
-			padding:5px 0px;
+			padding:5px 0px 5px 0px;
 			border-bottom:1px solid #f1edd1;
+			text-transform:capitalize;
 			label{
-				font-size:14px;
+				font-size:13px;
 				font-weight:normal;
-				color:#734e3d;
-				padding:3px;
+				color:#734e3d; 
+				margin-top:3px;	
+				display:block;
 			}
 			a.request_link{
 				display:block; 

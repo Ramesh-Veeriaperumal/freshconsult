@@ -1,14 +1,11 @@
 <% content_for :head do %>
-
   <%= javascript_include_tag "helpdesk/page_switcher" %>
   <% javascript_tag do %>
     document.observe("dom:loaded", function(){
-
       new Helpdesk.PageSwitcher({
         toggleMode: true,
         pages: ['attachment-options']
       });
-
     });
   <% end %>
 <% end %>
@@ -19,14 +16,12 @@
 		<div><%= form.text_field :title, :onchange => "/*TopicForm.editNewTitle(this);*/", :class => "required text", :tabindex => 10 %></div>
 	</li>	 
 	<li>
-			<label for="topic_body"><%= t('message') %></label>
-	<% if @topic.new_record? %>
-		
-			<%= form.text_area :body, :rows => 12, :tabindex => 20%>
-		
-		<%else%>
-		   <%= form.text_area :body, :rows => 12, :tabindex => 20, :value => @topic.posts.first.body , :class => "required text"%>
-	<% end %>
+		<label for="topic_body"><%= t('message') %></label>
+		<% if @topic.new_record? %>
+			<%= form.text_area :body, :rows => 12, :tabindex => 20%>	
+		<% else %>
+			<%= form.text_area :body, :rows => 12, :tabindex => 20, :value => @topic.posts.first.body , :class => "required text"%>
+		<% end %>
 	</li>
 	<% if admin? and not @topic.new_record? %>
 		<li id="topic_forum_id">

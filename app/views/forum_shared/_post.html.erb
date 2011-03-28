@@ -2,7 +2,7 @@
 	<a href="#<%= dom_id post %>" rel="bookmark"></a> 
 	<div class="user_details">
 		<%= user_avatar(post.user.avatar)  if post.user %>
-		<%= link_to post.user.display_name, post.user, :class => "user_name" %> on <%= formated_date(post.created_at) %> 
+		<%= link_to_user post.user, :class => "user_name" %> on <%= formated_date(post.created_at) %> 
 	</div>
 	<div class="details">
 		<%= post.body_html %>

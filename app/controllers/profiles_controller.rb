@@ -1,6 +1,9 @@
 class ProfilesController < ApplicationController
   
-   include ModelControllerMethods
+   before_filter :require_user
+   
+   include ModelControllerMethods  
+   
    
   def index
   end
@@ -14,9 +17,9 @@ class ProfilesController < ApplicationController
   def edit       
    
     if current_user.customer?
-      @profile = User.find(params[:id])
+      @profile = current_account.users.find(params[:id])
     else
-       @profile = Agent.find_by_user_id(params[:id]) 
+       @profile = current_account.agents.find_by_user_id(params[:id]) 
     end
       respond_to do |format|
       format.html # edit.html.erb
@@ -60,10 +63,10 @@ end
 
 def update_agent
   
-  @profile = Agent.find_by_user_id(params[:id])
+  @profile = current_account.agents.find_by_user_id(params[:id])
     respond_to do |format|      
       if @profile.update_attributes(params[:agent])            
-          @user = User.find(@profile.user_id)          
+          @user = current_account.users.find(@profile.user_id)          
           @user.update_attributes(params[:user])        
           format.html { redirect_to(edit_profile_url, :notice => 'Your profile has been updated successfully.') }
           format.xml  { head :ok }
@@ -92,7 +95,7 @@ def change_password
 end
 
 def reset_password
-    @user = User.find(params[:id])  
+    @user = current_account.users.find(params[:id])  
     @user.password = params[:user][:password]
     @user.password_confirmation = params[:user][:password_confirmation]
     @user.active = true #by Shan need to revisit..
