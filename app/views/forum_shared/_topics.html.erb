@@ -10,7 +10,7 @@
 				<% else %>
 					<%= user_avatar( topic.user.avatar ) %>
 				<% end %>
-				<b><%=(topic.sticky?) ? "STICKY" : ""%></b>
+				<%= content_tag (:b, "STICKY") if (topic.sticky?) %>
 				<%= link_to topic.title, category_forum_topic_path(category, forum, topic), :class => "topic-title" %>
 				<span class="mark_action">
 					<span class="stamp stamp_type_<%=topic.stamp_type%>"><%=h(topic.stamp_name)%></span>

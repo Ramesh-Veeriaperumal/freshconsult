@@ -5,15 +5,15 @@
       new Helpdesk.PageSwitcher({
         toggleMode: true,
         pages: ['attachment-options']
-      });
-
-    });
+      });	
+	  jQuery("#HelpdeskReply").validate();
+    }); 
   <% end %>
 <% end %>
 <div class="request_panel" id="<%=cntid%>" style="display:none;">
-  <% form_for note, :html => {:multipart => true } do |f| %>
+  <% form_for note, :html => {:multipart => true, :id => "HelpdeskReply" } do |f| %>
     <%= f.error_messages %>
-	<ul class="ui-form">
+	<ul class="ui-form dont-validate">
 		<li>
 			<h3 class="title">Reply to the conversation</h3>
 		</li>
@@ -24,7 +24,7 @@
 		</li>
 		<li>
 			<%= f.label(:body, "Enter your message here", :for =>"#{id}-#{cntid}-body", :class => "overlabel" ) %>
-    		<%= f.text_area :body, { :class => 'expando', :id => "#{id}-#{cntid}-body" , :value => @signature} %>
+    		<%= f.text_area :body, { :class => 'expando required', :id => "#{id}-#{cntid}-body" , :value => @signature} %>
     	</li>
 		
 		<% unless @ticket.ticket_topic.nil? %>
@@ -49,7 +49,7 @@
 		    <% end %>
 		</li>
 		<li class="alignright">
-      		<%= submit_tag(local_assigns[:submit] || ActiveSupport::Inflector.titleize(id), :class => "fdbutton") %>
+      		<%= submit_tag(local_assigns[:submit] || ActiveSupport::Inflector.titleize(id), :class => "uiButton" ) %>
     	</li>      
 	</ul>
  	

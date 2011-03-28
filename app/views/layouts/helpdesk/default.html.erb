@@ -34,8 +34,8 @@
  			var jQ = jQuery.noConflict(); 
 			jQuery(document).ready(function() {
 			    jQuery("label.overlabel").overlabel();
-				jQuery("ul.ui-form").parents('form:first').validate();
-				jQuery("div.ui-form").find('form:first').validate(); 
+				jQuery("ul.ui-form").not(".dont-validate").parents('form:first').validate();
+				jQuery("div.ui-form").not(".dont-validate").find('form:first').validate(); 
 			});
 		</script>
     	<%= yield :head %> 
