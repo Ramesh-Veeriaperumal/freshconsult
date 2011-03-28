@@ -1,9 +1,69 @@
+/* line 14, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, font, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  font-weight: inherit;
+  font-style: inherit;
+  font-size: 100%;
+  font-family: inherit;
+  vertical-align: baseline;
+}
+
+/* line 17, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+body {
+  line-height: 1;
+  color: black;
+  background: white;
+}
+
+/* line 19, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+ol, ul {
+  list-style: none;
+}
+
+/* line 21, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+table {
+  border-collapse: separate;
+  border-spacing: 0;
+  vertical-align: middle;
+}
+
+/* line 23, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+caption, th, td {
+  text-align: left;
+  font-weight: normal;
+  vertical-align: middle;
+}
+
+/* line 25, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+q, blockquote {
+  quotes: "" "";
+}
+/* line 96, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+q:before, q:after, blockquote:before, blockquote:after {
+  content: "";
+}
+
+/* line 27, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+a img {
+  border: none;
+}
+
 /* 
   html5doctor.com Reset Stylesheet (Eric Meyer's Reset Reloaded + HTML5 baseline)
   v1.4 2009-07-27 | Authors: Eric Meyer & Richard Clark
   html5doctor.com/html-5-reset-stylesheet/
 */
-/* line 17, ../src/reset.scss */
+/* line 19, ../src/reset.scss */
 html, body, div, span, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 abbr, address, cite, code,
@@ -26,66 +86,66 @@ time, mark, audio, video {
   vertical-align: baseline;
 }
 
-/* line 29, ../src/reset.scss */
+/* line 31, ../src/reset.scss */
 body {
   line-height: 1;
   color: black;
   background: white;
 }
 
-/* line 35, ../src/reset.scss */
+/* line 37, ../src/reset.scss */
 table {
   border-collapse: separate;
   border-spacing: 0;
   vertical-align: middle;
 }
 
-/* line 41, ../src/reset.scss */
+/* line 43, ../src/reset.scss */
 caption, th, td {
   text-align: left;
   font-weight: normal;
   vertical-align: middle;
 }
 
-/* line 47, ../src/reset.scss */
+/* line 49, ../src/reset.scss */
 q, blockquote {
   quotes: "" "";
 }
 
-/* line 52, ../src/reset.scss */
+/* line 54, ../src/reset.scss */
 q:before, q:after, blockquote:before, blockquote:after {
   content: "";
 }
 
-/* line 56, ../src/reset.scss */
+/* line 58, ../src/reset.scss */
 a img {
   border: none;
 }
 
-/* line 61, ../src/reset.scss */
+/* line 63, ../src/reset.scss */
 article, aside, details, figcaption, figure,
 footer, header, hgroup, menu, nav, section {
   display: block;
 }
 
-/* line 65, ../src/reset.scss */
+/* line 67, ../src/reset.scss */
 nav ul {
   list-style: none;
 }
 
-/* line 67, ../src/reset.scss */
+/* line 69, ../src/reset.scss */
 blockquote, q {
   quotes: none;
 }
 
-/* line 70, ../src/reset.scss */
+/* line 72, ../src/reset.scss */
 blockquote:before, blockquote:after,
 q:before, q:after {
   content: '';
   content: none;
 }
 
-/* line 72, ../src/reset.scss */
+/* line 74, ../src/reset.scss */
 a {
   margin: 0;
   padding: 0;
@@ -94,14 +154,14 @@ a {
   background: transparent;
 }
 
-/* line 74, ../src/reset.scss */
+/* line 76, ../src/reset.scss */
 ins {
   background-color: #ff9;
   color: #000;
   text-decoration: none;
 }
 
-/* line 76, ../src/reset.scss */
+/* line 78, ../src/reset.scss */
 mark {
   background-color: #ff9;
   color: #000;
@@ -109,25 +169,25 @@ mark {
   font-weight: bold;
 }
 
-/* line 78, ../src/reset.scss */
+/* line 80, ../src/reset.scss */
 del {
   text-decoration: line-through;
 }
 
-/* line 80, ../src/reset.scss */
+/* line 82, ../src/reset.scss */
 abbr[title], dfn[title] {
   border-bottom: 1px dotted;
   cursor: help;
 }
 
 /* tables still need cellspacing="0" in the markup */
-/* line 83, ../src/reset.scss */
+/* line 85, ../src/reset.scss */
 table {
   border-collapse: collapse;
   border-spacing: 0;
 }
 
-/* line 85, ../src/reset.scss */
+/* line 87, ../src/reset.scss */
 hr {
   display: block;
   height: 1px;
@@ -137,18 +197,18 @@ hr {
   padding: 0;
 }
 
-/* line 87, ../src/reset.scss */
+/* line 89, ../src/reset.scss */
 input, select {
   vertical-align: middle;
 }
 
-/* line 89, ../src/reset.scss */
+/* line 91, ../src/reset.scss */
 ol {
   list-style: decimal outside;
   margin: 3px 8px 3px 28px;
 }
 
-/* line 91, ../src/reset.scss */
+/* line 93, ../src/reset.scss */
 strong, b {
   font-weight: bold;
 }

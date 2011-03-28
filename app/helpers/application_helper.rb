@@ -147,6 +147,15 @@ module ApplicationHelper
     content_tag( :div, (image_tag (avatar) ? avatar.content.url(profile_size) : "/images/icons/profile_blank.gif"), :class => profile_class)
   end
   
+  # User details page link should be shown only to agents and admin
+  def link_to_user( user, classname = "" )
+    if current_user && !current_user.customer?
+      link_to user.display_name, user, :class => classname
+    else 
+      content_tag(:strong, user.display_name, :class => classname)
+    end
+  end
+  
   # Date and time format that is mostly used in our product
   def formated_date(date_time)
     date_time.strftime("%B %e %Y at %I:%M %p")

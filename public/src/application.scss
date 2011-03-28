@@ -470,29 +470,41 @@ ul.activityfeed li{
    border-radius:0 0 0 5px;
 }
 
-
 .reminders{
 	@include corners(6px);
+	h3.title{  
+		border-bottom:1px solid #e3dcc1;
+		color:#734e3d;  
+		display:block;
+	}
+}
+.reminders-ticket{
+	@include corners(6px, 0, 0, 6px);
+	label{ font-size:14px; }
+}
+
+.reminders, .reminders-ticket{
 	position:relative; 
     background:#ffffe2;    
-	h3.title{
-		color:#734e3d;  
-		border-bottom:1px solid #e3dcc1;
-		display:block;
-	} 
 	table{
 		display:block;
 		margin:2px 0px;
 		border-top:1px solid #e3dcc1;	
+		tbody, tr{
+			display:block;
+		}
+		
 		td{
 			vertical-align:top;
-			padding:5px 0px;
+			padding:5px 0px 5px 0px;
 			border-bottom:1px solid #f1edd1;
+			text-transform:capitalize;
 			label{
-				font-size:14px;
+				font-size:13px;
 				font-weight:normal;
-				color:#734e3d;
-				padding:3px;
+				color:#734e3d; 
+				margin-top:3px;	
+				display:block;
 			}
 			a.request_link{
 				display:block; 

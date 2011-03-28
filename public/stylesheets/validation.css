@@ -1,16 +1,18 @@
-/* line 1, ../src/validation.scss */
+/* line 3, ../src/validation.scss */
 #errorExplanation {
+  overflow: hidden;
+  *zoom: 1;
   padding: 14px 20px;
   margin: 0px 0px 10px 0px;
   background-color: #feefd6;
 }
 
-/* line 7, ../src/validation.scss */
+/* line 10, ../src/validation.scss */
 #errorExplanation h2 {
   display: none;
 }
 
-/* line 11, ../src/validation.scss */
+/* line 14, ../src/validation.scss */
 #errorExplanation p {
   color: #333;
   margin: 0px;
@@ -19,43 +21,43 @@
   color: #993333;
 }
 
-/* line 19, ../src/validation.scss */
+/* line 22, ../src/validation.scss */
 #errorExplanation ul li {
   font-size: 13px;
   list-style: disc;
   margin: 8px 8px 5px 18px;
 }
 
-/* line 25, ../src/validation.scss */
+/* line 28, ../src/validation.scss */
 .flash_info {
   position: relative;
   background-color: #fdfde5;
   color: #333333;
   font-size: 14px;
 }
-/* line 30, ../src/validation.scss */
+/* line 33, ../src/validation.scss */
 .flash_info .list {
   display: none;
   padding: 6px 5px;
 }
-/* line 33, ../src/validation.scss */
+/* line 36, ../src/validation.scss */
 .flash_info .list h4.title {
   font-size: 13px;
 }
-/* line 36, ../src/validation.scss */
+/* line 39, ../src/validation.scss */
 .flash_info .list ul {
   font-size: 13px;
   list-style: disc;
   margin: 0px 8px 0px 18px;
 }
-/* line 42, ../src/validation.scss */
+/* line 45, ../src/validation.scss */
 .flash_info .close {
   right: 0px;
   top: 0px;
   background: url("../images/icons/btn_close_icon.png") no-repeat center;
 }
 
-/* line 49, ../src/validation.scss */
+/* line 52, ../src/validation.scss */
 .ui-form label.error {
   font-size: 13px !important;
   border: 1px solid #efefef;
