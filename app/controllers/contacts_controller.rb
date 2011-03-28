@@ -3,6 +3,8 @@ class ContactsController < ApplicationController
    before_filter { |c| c.requires_permission :manage_tickets }
   
  include ModelControllerMethods
+ 
+ before_filter :check_user_limit, :only => :make_agent
 
   #before_filter :check_user_limit, :only => :create 
   before_filter :set_selected_tab
@@ -12,8 +14,7 @@ class ContactsController < ApplicationController
   def index
     
     @contacts = self.instance_variable_set('@' + self.controller_name,
-    scoper.find(:all, :order => 'name' ))  
-      
+    scoper.find(:all, :order => 'name' ))       
     
     respond_to do |format|
       format.html  do
@@ -78,7 +79,7 @@ class ContactsController < ApplicationController
   end
   
   def show 
-    @user = User.find(params[:id])
+    @user = current_account.all_users.find(params[:id])
     @user_tickets_open_pending = Helpdesk::Ticket.requester_active(@user)
   end
   
@@ -131,11 +132,21 @@ class ContactsController < ApplicationController
 
   def restore
    
-    @obj.update_attribute(:deleted, false)
-    
+    @obj.update_attribute(:deleted, false)    
     flash[:notice] = render_to_string(
       :partial => '/contacts/flash/restore_notice')
     redirect_to :back
+  end
+  
+  def make_agent    
+    @obj.update_attributes(:delete =>false   ,:user_role =>User::USER_ROLES_KEYS_BY_TOKEN[:poweruser])      
+    @agent = current_account.agents.new
+    @agent.user_id = @obj.id  
+    if @agent.save        
+      redirect_to @obj
+    else
+      redirect_to :back
+    end    
   end
   
   def autocomplete
@@ -179,6 +190,9 @@ protected
       @obj = self.instance_variable_set('@user',  current_account.all_contacts.find(params[:id]))      
   end
   
+    def check_user_limit
+      redirect_to :back if current_account.reached_user_limit?
+    end
   
 
 end

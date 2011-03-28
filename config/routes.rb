@@ -8,7 +8,7 @@ ActionController::Routing::Routes.draw do |map|
   
   map.resources :customers ,:member => {:quick => :post}
  
-  map.resources :contacts, :collection => { :autocomplete => :get } , :member => { :restore => :put,:quick_customer => :post}
+  map.resources :contacts, :collection => { :autocomplete => :get } , :member => { :restore => :put,:quick_customer => :post ,:make_agent =>:put}
   
   map.resources :groups
   

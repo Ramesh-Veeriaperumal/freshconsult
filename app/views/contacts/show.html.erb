@@ -1,8 +1,17 @@
 
+			<% if @user.deleted %>
+				<div class="flash_info">
+					<%= "This is a deleted contact" %>
+					<%= link_to('restore', { :action => :restore, :id => @user.id }, :method => :put ) %>
+			   </div>
+			<% end %>	
 
 <div class="contact-box clearfix">
 		<div class="action_buttons">
 			<%= link_to 'Edit contact', edit_contact_path(@user), :class => "last" %>
+		</div>
+		<div >			
+			<%= link_to('Make this User an Agent', { :action => :make_agent, :id => @user.id }, :method => :put ) %>
 		</div>
 		<%= user_avatar(@user.avatar, :medium, "profile_pic") %>	
 		<h3 class="title"><%= @user.display_name %></h3>
@@ -30,10 +39,7 @@
 </div>
 
 <div class="contact-box-additional">
-			<% if @user.deleted %>
-				<%= "This is a deleted contact" %>
-				<%= link_to('restore', { :action => :restore, :id => @user.id }, :method => :put ) %>
-			<% end %>		
+			
 		 
 			<h4 class="title">Background information from "<%= @user.display_name %>"</h4>
 			<% form_for @user do |f| %>
