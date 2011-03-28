@@ -1,0 +1,29 @@
+package_assets:         always      # (on, off, always)
+embed_assets:           on          # (on, off, datauri)
+compress_assets:        on          # (on, off)
+package_path:           packages    # (defaults to assets)
+javascript_compressor:  closure     # (yui, closure)
+compressor_options:
+  compilation_level: SIMPLE_OPTIMIZATIONS
+
+javascripts:
+  frameworks:
+    - public/javascripts/framworks/jquery.js
+    - public/javascripts/framworks/jquery-ui.js
+    - public/javascripts/framworks/jquery.overlabel.js
+    - public/javascripts/framworks/jquery.validate.js
+  workspace:
+    - public/javascripts/utils.js
+    - public/javascripts/factory_ui.js
+
+stylesheets:
+  common:
+    - public/stylesheets/reset.css
+    - public/stylesheets/application.css
+    - public/stylesheets/temp-dev.css
+    - public/stylesheets/uni-form.css
+    - public/stylesheets/validation.css
+    - public/stylesheets/form.css
+    #- public/stylesheets/jquery-ui-1.8.7.custom.css
+  ie:
+    - public//stylesheets/ie.css    

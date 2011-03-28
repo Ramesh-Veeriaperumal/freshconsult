@@ -1,6 +1,9 @@
 ActionController::Routing::Routes.draw do |map|
-  
+    
   map.connect '/images/helpdesk/attachments/:id/:style.:format', :controller => '/helpdesk/attachments', :action => 'show', :conditions => { :method => :get }
+  
+  # Routing for Asset management Jammit
+  Jammit::Routes.draw(map)
   
   map.resources :uploaded_images, :controller => 'uploaded_images'
   
@@ -206,4 +209,5 @@ ActionController::Routing::Routes.draw do |map|
   # consider removing the them or commenting them out if you're using named routes and resources.
   map.connect ':controller/:action/:id'
   map.connect ':controller/:action/:id.:format'
+  
 end
