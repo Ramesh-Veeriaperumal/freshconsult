@@ -361,7 +361,7 @@ ActiveRecord::Schema.define(:version => 20110326063108) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "sla_policy_id",   :limit => 8
-    t.boolean  "override_bhrs"
+    t.boolean  "override_bhrs" ,  :default => false
   end
 
   create_table "helpdesk_sla_policies", :force => true do |t|
@@ -496,7 +496,7 @@ ActiveRecord::Schema.define(:version => 20110326063108) do
 
   create_table "solution_articles", :force => true do |t|
     t.string   "title"
-    t.text     "description",  :limit => 16777215
+    t.text     "description",  :limit => 2147483647
     t.integer  "user_id",      :limit => 8
     t.integer  "folder_id",    :limit => 8
     t.integer  "status"
