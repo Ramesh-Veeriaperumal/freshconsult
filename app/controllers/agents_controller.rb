@@ -92,7 +92,7 @@ end
    
     @agent = Agent.find(params[:id])
     if @agent.user.update_attribute(:deleted, false)   
-      flash[:notice] = render_to_string(:partial => '/contacts/flash/restore_notice')
+      flash[:notice] = render_to_string(:partial => '/agents/flash/restore_notice')
     else
       flash[:notice] = "Agent could not be able to restore"
     end
