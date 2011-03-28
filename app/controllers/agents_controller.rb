@@ -24,7 +24,7 @@ class AgentsController < Admin::AdminController
   end
 
   def edit    
-     @agent = Agent.find(params[:id])    
+     @agent = current_account.all_agents.find(params[:id])    
       respond_to do |format|
       format.html # edit.html.erb
       format.xml  { render :xml => @agent }
@@ -42,8 +42,7 @@ class AgentsController < Admin::AdminController
     @user  = current_account.users.new #by Shan need to check later        
     @agent = Agent.new(params[nscname]) 
     
-    if @user.signup!(:user => params[:user])   
-    
+    if @user.signup!(:user => params[:user])       
       @agent.user_id = @user.id      
       if @agent.save
          flash[:notice] = "The Agent has been created and activation instructions sent to #{@user.email}!"
@@ -51,25 +50,31 @@ class AgentsController < Admin::AdminController
       else      
         render :action => :new         
       end
-    else 
+    else       
+        check_email_exist
         @agent.user =@user       
-         render :action => :new        
+        render :action => :new        
     end    
   end
 
   def update
     @agent = Agent.find(params[:id])
-    respond_to do |format|      
+   
       if @agent.update_attributes(params[nscname])            
           @user = User.find(@agent.user_id)          
-          @user.update_attributes(params[:user])        
-          format.html { redirect_to(agents_url, :notice => 'Agent was successfully updated.') }
-          format.xml  { head :ok }
+          if @user.update_attributes(params[:user])        
+             flash[:notice] = "The Agent has been updated sucessfully"
+             redirect_to :action => 'index'
+         else
+             check_email_exist     
+             @agent.user =@user       
+             render :action => :edit 
+         end
       else
-        format.html { render :action => "edit" }
-        format.xml  { render :xml => @agent.errors, :status => :unprocessable_entity }
+        @agent.user =@user       
+        render :action => :edit
       end    
-    end    
+     
   end
 
   def destroy    
@@ -87,7 +92,7 @@ end
    
     @agent = Agent.find(params[:id])
     if @agent.user.update_attribute(:deleted, false)   
-      flash[:notice] = render_to_string(:partial => '/contacts/flash/restore_notice')
+      flash[:notice] = render_to_string(:partial => '/agents/flash/restore_notice')
     else
       flash[:notice] = "Agent could not be able to restore"
     end
@@ -104,6 +109,12 @@ end
 
   def nscname
     @nscname ||= controller_path.gsub('/', '_').singularize
+  end
+  
+  def check_email_exist
+     if("has already been taken".eql?(@user.errors["email"]))        
+           @existing_user = current_account.all_users.find(:first, :conditions =>{:users =>{:email => @user.email}})
+     end    
   end
 
 end

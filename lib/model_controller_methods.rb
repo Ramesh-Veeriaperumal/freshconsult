@@ -1,7 +1,7 @@
 module ModelControllerMethods
   def self.included(base)
     base.send :before_filter, :build_object, :only => [ :new, :create ]
-    base.send :before_filter, :load_object, :only => [ :show, :edit, :update, :destroy , :restore]
+    base.send :before_filter, :load_object, :only => [ :show, :edit, :update, :destroy , :restore , :make_agent]
   end
   
   def index
@@ -103,6 +103,8 @@ module ModelControllerMethods
     
     def redirect_url
       { :action => 'index' }
-    end
+  end
+  
+ 
     
 end

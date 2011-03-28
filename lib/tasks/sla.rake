@@ -4,7 +4,7 @@ namespace :sla do
   task :escalate => :environment do
     puts "SLA Escalation task initialized at #{Time.zone.now}"
     
-    overdue_tickets = Helpdesk::Ticket.find(:all, :readonly => false, :conditions =>['due_by <=? AND isescalated=? AND status=?', Time.zone.now.to_s(:db),false,Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open]] )
+    overdue_tickets = Helpdesk::Ticket.visible.find(:all, :readonly => false, :conditions =>['due_by <=? AND isescalated=? AND status=?', Time.zone.now.to_s(:db),false,Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open]] )
     puts "Number of overdues are #{overdue_tickets.size}"
     overdue_tickets.each do |ticket|      
       sla_policy_id = nil
@@ -21,7 +21,7 @@ namespace :sla do
         ticket.update_attribute(:isescalated , true)
      end
     
-    froverdue_tickets = Helpdesk::Ticket.find(:all, :joins => :ticket_states , :readonly => false , :conditions =>['frDueBy <=? AND fr_escalated=? AND status=? AND helpdesk_ticket_states.first_response_time IS ?', Time.zone.now.to_s(:db),false,Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open],nil] )
+    froverdue_tickets = Helpdesk::Ticket.visible.find(:all, :joins => :ticket_states , :readonly => false , :conditions =>['frDueBy <=? AND fr_escalated=? AND status=? AND helpdesk_ticket_states.first_response_time IS ?', Time.zone.now.to_s(:db),false,Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open],nil] )
     puts "Number of first response overdues are #{froverdue_tickets.size}"
     froverdue_tickets.each do |fr_ticket|
       
@@ -43,7 +43,7 @@ namespace :sla do
     
     ##Tickets left unassigned in group
     
-    tickets_unpicked = Helpdesk::Ticket.find(:all, :joins => [:ticket_states,:group] , :readonly => false , :conditions =>['DATE_ADD(helpdesk_tickets.created_at, INTERVAL groups.assign_time SECOND)  <=? AND group_escalated=? AND status=? AND helpdesk_ticket_states.first_assigned_at IS ?', Time.zone.now.to_s(:db),false,Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open],nil] )
+    tickets_unpicked = Helpdesk::Ticket.visible.find(:all, :joins => [:ticket_states,:group] , :readonly => false , :conditions =>['DATE_ADD(helpdesk_tickets.created_at, INTERVAL groups.assign_time SECOND)  <=? AND group_escalated=? AND status=? AND helpdesk_ticket_states.first_assigned_at IS ?', Time.zone.now.to_s(:db),false,Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open],nil] )
      puts "Number of un attended tickets are #{tickets_unpicked.size}"
     tickets_unpicked.each do |gr_ticket| 
       

@@ -35,7 +35,16 @@
 	
 <% end %>
 
-<%= error_messages_for :user %>
+ 	 <% if @existing_user %>
+	  	<div id="errorExplanation" class="errorExplanation">
+			<%= "Email has already been taken " %>
+			<%= link_to('View User' , @existing_user ) %>
+		</div>
+	  <%else%>		
+	   	<%= error_messages_for :user %>
+	 <%end%>
+
+
 	 	 
 	<ul class="ui-form">	
 		<li>
