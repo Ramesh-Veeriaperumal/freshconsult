@@ -2,34 +2,20 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
-    	<%unless current_account.fav_icon.nil?%>
-			<link rel="shortcut icon" href="<%=current_account.fav_icon.content.url%>" />
-		<% else %>
-			<link rel="shortcut icon" href="/images/favicon.ico" />
-		<% end %>
+    	<link rel="shortcut icon" href="<%=current_account.fav_icon.nil? ? '/images/favicon.ico' : current_account.fav_icon.content.url%>" />
         <meta http-equiv="content-type" content="text/html; charset=utf-8" />
         <title><%= " #{h(current_account.name)} : #{h(@page_title || 'Helpdesk')}"  %></title>
          
 		<%= include_stylesheets :common, :media => "screen, projection" %>
         <!--[if IE]>
-            <%= stylesheet_link_tag "/stylesheets/ie.css", :media => "screen, projection" %>
-       	<![endif]-->
-		<%= render :partial => "shared/theme.css"  %> 
+			<%= stylesheet_link_tag "/stylesheets/ie.css", :media => "screen, projection" %>
+		<![endif]-->
+		<%= render :partial => "shared/theme.css"  %>
 		
-		<%= javascript_include_tag :defaults  %>
+		<%= include_javascripts :defaults  %>
 		<%= include_javascripts :frameworks %>
 		<%= include_javascripts :workspace %>
-		
- 		<script type="text/javascript">
- 			var jQ = jQuery.noConflict(); 
-			jQuery(document).ready(function() {
-			    jQuery("label.overlabel").overlabel();
-				jQuery("ul.ui-form").not(".dont-validate").parents('form:first').validate();
-				jQuery("div.ui-form").not(".dont-validate").find('form:first').validate(); 
-			});
-		</script>
-    	<%= yield :head %> 
-		
+    	<%= yield :head %>
     </head>
     <body class="<%= yield :layoutType %>">
 	   <div id="wrap"> 

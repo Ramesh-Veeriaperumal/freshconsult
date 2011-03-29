@@ -1,8 +1,4 @@
-<div class="header_area">
-	<h4>Submit a ticket</h4>
-</div>
-
-<div class="page_area">
+<h3 class="title">Submit a ticket</h3>
 	<ul class="ui-form">
 		<% @customizer = ActiveSupport::JSON.decode(@ticket.customizer.requester_view)
 		   @customizer.each do |field|
@@ -101,18 +97,10 @@
 						<br />
 					</li>
 					
-					<li>
-						
-						<%= request_form.submit "Submit Ticket", :class => "fdbutton" %>
-					    <%# Any fields named like meta[fieldname] will be saved by the helpdesk as metadata %>
-					    <%= hidden_field_tag "meta[user_agent]", request.env["HTTP_USER_AGENT"] %>
-					    <%= link_to "Cancel", :back, :class => "button" %>
-					</li>
 	</ul>
-	
-</div>	
-  
-  
-  
-  
-	
+	<div class="button-container">
+		<%= request_form.submit "Submit Ticket", :class => "uiButton" %>
+		<%# Any fields named like meta[fieldname] will be saved by the helpdesk as metadata %>
+		<%= hidden_field_tag "meta[user_agent]", request.env["HTTP_USER_AGENT"] %>
+		<%= link_to "Cancel", :back, :class => "uiButton" %>
+	</div>
