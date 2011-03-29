@@ -35,7 +35,7 @@
 	<% end %>
 <% end %> 
 		<h3 class="title">
-			<%= link_to("Forums"[:forums_category], categories_path) %> &rarr;
+			<%= link_to(t('forum.title'), categories_path) %> &rarr;
 			<%= link_to( "#{@forum_category.name}", category_path(@forum_category)) %> &rarr;
 			<%= link_to( "#{@forum.name}", category_forum_path(@forum_category, @forum)) %> 
 		</h3>
@@ -62,7 +62,7 @@
 						<% if logged_in? %>
 						  <div class="action_buttons">
 						     <% if @topic.editable_by?(current_user) -%>
-						        <%= link_to("Edit topic", edit_category_forum_topic_path(@forum_category,@forum, @topic) , :class => "last" ) %> 
+						        <%= link_to(t('topic.edit'), edit_category_forum_topic_path(@forum_category,@forum, @topic) , :class => "last" ) %> 
 	 					     <% end %>
 						  </div>		
 							
@@ -87,8 +87,8 @@
 				</div>
 	    	</div>
 			<div class="alignright">
-				<%= content_tag(:h4, 'Comments are closed for this topic'[:locked_topic], :class => "title" ) if @topic.locked? %>
-				<%= link_to( (@topic.locked)?"Re-open this Discussion":"Close this Discussion", 
+				<%= content_tag(:h4, t('topic.msg1'), :class => "title" ) if @topic.locked? %>
+				<%= link_to( (@topic.locked)?t('topic.open'):t('topic.close'), 
 							 update_lock_category_forum_topic_path(@forum_category,@forum, @topic), 
 							 :method => :put,  :title => "Discussion comments", :class => "uiButton" ) 	if logged_in? && current_user.has_manage_forums? %>
 					
@@ -101,7 +101,7 @@
 					  <% form_for :post, :url => posts_path(:category_id => @forum_category,:forum_id => @forum, :topic_id => @topic, :page => @topic.last_page), :html => {:multipart => true} do |f| -%>
 					  <ul class="note_form ui-form">
 					  	<li>
-					  		<h3 class="title">Reply to this Topic</h3>
+					  		<h3 class="title"><%=t('topic.reply')%></h3>
 					  	</li>
 					    <li>
 					       <%= f.text_area :body, :rows => 8 %>

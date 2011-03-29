@@ -55,6 +55,12 @@ en:
      name: "Topic Name"
      sticky: "Sticky"
      locked: "Locked"
+     edit: "Edit Topic"
+     msg1: "Comments are closed for this topic"
+     open: "Re-open this Discussion"
+     close: "Close this Discussion"
+     reply: "Reply to this Topic"
+     
    
    activerecord:
     errors:
