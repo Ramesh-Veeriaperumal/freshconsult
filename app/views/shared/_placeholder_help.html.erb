@@ -12,10 +12,9 @@
 <% end %>
 
 <div class="placeholder-info" id="place-dialog" style="display:none;">		
-  	<h2>Available placeholders</h2>
+  	<h2><%=t('automations.available_placeholders')%></h2>
 	<p>
-	  Select the below placeholders to append to the email content and they will get converted into the appropriate data.
-	</p>
+	  <%=t('automations.info4')%>.</p>
 	<b></b>
 	<div id="placeholder-list-1" class="placeholder-list">
 		<dl>
@@ -25,6 +24,6 @@
 		</dl>	
 	</div>
 	<div class="button-container">
-		<a href="javascript:void(0)" id="placeholder_close" class="fdbutton grey">Close</a>
+		<a href="javascript:void(0)" id="placeholder_close" class="fdbutton grey"><%=t('close')%></a>
 	</div>
 </div>

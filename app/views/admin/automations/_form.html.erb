@@ -6,7 +6,7 @@
 <ul class="ui-form">
 	<li>
 		<%= f.label :name, "Scenario Label *" %>
-		<label class="overlabel" for="va_rule_name">example: <em>"Assign QA"</em> </label>
+		<label class="overlabel" for="va_rule_name">example: <em>"<%=t('automations.info5')%>"</em> </label>
 		<%= f.text_field :name, :class => "required" %>
 	</li>
 	<li>
@@ -18,25 +18,25 @@
 			Go Ahead and type something like - <br /><em>"All Subscription related tickets will be assigned to Susan"</em>
 		</label-->
 		<label class="overlabel" for="va_rule_description">
-			example: <em>"Mark the Ticket as a Bug and assign to QA"</em>
+			example: <em>"<%=t('automations.info6')%>"</em>
 		</label>
 		<%= f.text_area :description, :class => "smallpara" %>
 	</li>
 	<li><span class="seperator"></span></li>
 	<li class="choicelist">								
-		<label>Actions to Perform?</label>				
+		<label><%=t('automations.info7')%>?</label>				
 	</li>
 	<li class="conditionset" id="actionDOM">
 		<div id="ActionList" class="rule_list"></div>
 		<fieldset class="addchoice">
-	        <p>Add new action</p> <img alt="Add New action" class="add" src="/images/add.png" />
+	        <p><%=t('automations.info8')%></p> <img alt="Add New action" class="add" src="/images/add.png" />
 	    </fieldset>		
 	</li>
 </ul>
 <br />
 <div class="button-container">
-	<input type="submit" class="uiButton" value="Save" />
-	<%= link_to "Cancel", {:action => 'index'}, :class => "uiButton" %>
+	<input type="submit" class="uiButton" value="<%=t('save')%>" />
+	<%= link_to t('cancel'), {:action => 'index'}, :class => "uiButton" %>
 </div>
 
 
