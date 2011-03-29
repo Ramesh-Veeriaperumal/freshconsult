@@ -3,12 +3,12 @@
 	
 	<% if logged_in? %> 
 		<div class="floatr">
-			<%= link_to 'Start a Topic' [:new_topic],new_category_forum_topic_path(@forum_category, @forum), :class => "uiButton Large" %>
+			<%= link_to t('forum.start_topic'),new_category_forum_topic_path(@forum_category, @forum), :class => "uiButton Large" %>
 		</div>
 	<% end%>
 	
 	<h3 class="title">
-	 	<%= link_to("Forums"[:forums_category], categories_path) %> &rarr;
+	 	<%= link_to(t('forum.title'), categories_path) %> &rarr;
 		<%= link_to( "#{@forum_category.name}", category_path(@forum_category)) %> &rarr;
 		<%= h @forum.name %> 
 	</h3>	 

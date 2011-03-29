@@ -29,7 +29,6 @@ en:
        deleted_message:     "This is a deleted contact"
        restore:             "Restore"
        emailnotverified:    "Email has not been verified for this user!"
-       
        form_placeholder:
            description:     "Add specific notes regarding this contact example - address, LA Lakers fan etc."
       
@@ -42,11 +41,14 @@ en:
       title: "Forums"
       new:  "New Forum"
       type: "Forum Type"
+      edit: "Edit Forum"
       verb:
           questions:     "Question asked by"
           ideas:         "Idea shared by"
           problems:      "Problem Reported by"  
           announcement:  "Announced by"
+      confim_msg1: "Are you sure you want to delete this forum"
+      start_topic: "Start a Topic"
    topic:   
      new: "New Topic"
      post: "Post Topic"

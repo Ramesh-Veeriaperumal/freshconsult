@@ -1,13 +1,13 @@
-<h3 class="title"><%= 'Edit Forum'[:edit_forum] %></h3>
+<h3 class="title"><%= t('forum.edit') %></h3>
 <% form_for @forum, :url => category_forum_path(@forum.forum_category_id,@forum)   do |f| -%>
 	<%= render :partial => "form", :object => f %>
 	
 	<div class="button-container">	
 		<div class="floatl">
-			<%= link_to(t('delete'), category_forum_path(@forum_category, @forum), :method => 'delete', :class => "uiButton red",  :confirm => 'Are you sure you want to delete this forum' ) %>
+			<%= link_to(t('delete'), category_forum_path(@forum_category, @forum), :method => 'delete', :class => "uiButton red",  :confirm => t('forum.confim_msg1') ) %>
 		</div>
 		
-		<%= submit_tag 'Save'[:update], { :class => "uiButton",  :action => :update } -%> 
-		<%= link_to('Cancel'[:cancel], category_path(@forum_category), :class => "uiButton grey" ) -%>
+		<%= submit_tag t('save'), { :class => "uiButton",  :action => :update } -%> 
+		<%= link_to(t('cancel'), category_path(@forum_category), :class => "uiButton grey" ) -%>
 	</div>
 <% end -%>
