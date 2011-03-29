@@ -9,7 +9,7 @@ class TopicsController < ApplicationController
     c.requires_permission :manage_forums
   end
  
-  before_filter :check_user_permission,:only => [:edit,:destroy,:update] 
+  before_filter :check_user_permission,:only => [:edit,:update] 
   
   before_filter :set_selected_tab
   
