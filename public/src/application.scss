@@ -233,19 +233,14 @@ body {
 
 .nav_search{
 	@include min-width(260px);
-	div.search_bar{
-		@include corners(6px);
-		@include pie;  
-		height:27px;
-		border:1px solid #cfcfcf;
-		background:url("../images/search_icon.gif") 4px 5px no-repeat #ffffff;
-		border:1px solid darken($tab_color, 15%);
-		@include pie;
+	div.search_bar{ 
+		height:26px; 
+		background:url("../images/search_icon.gif") 4px 5px no-repeat #ffffff;  
 		padding:0px 8px 0px 25px;
 	}
 	height:27px;
 	position:relative;
-	margin:2px 4px 0px 0px;
+	margin:2px 14px 0px 0px;
 	label.overlabel, input{
 		top:4px;
 	}
@@ -267,16 +262,19 @@ body {
 .nav_right{
 	position:relative;
 	z-index:10; 
-	margin:2px 16px 0px 3px;
+	margin:2px 6px 0px 3px;
 }
+
+a.new_ticket, .nav_search div.search_bar{
+	@include shadows(#555555, 0px, 0px, 4px);
+	@include pie;
+	@include corners(4px);  
+	margin-top:2px;
+} 
  
 a.new_ticket{  
-	@include vertical-gradient(#fefefe, #dfdfdf);
-	@include corners(4px);
-	@include shadows(#555555, 0px, 0px, 4px);
-	@include pie;  
-	padding:6px 10px 5px 25px; 
-	margin-top:2px;
+	@include vertical-gradient(#fefefe, #dfdfdf);  
+	padding:6px 10px 5px 25px;
 	color:#333333; 
 	font-size:12px; 
 	text-decoration:none; font-weight:bold;
@@ -302,7 +300,7 @@ ul.tabs{
 				z-index:5;
 				text-decoration:none; 
 				color:#ffffff;
-				padding:10px 10px 10px 10px; 		
+				padding:9px 6px 9px 8px; 		
 				font-size:13px;				
 				font-weight:bold;
 				text-align:center;				
