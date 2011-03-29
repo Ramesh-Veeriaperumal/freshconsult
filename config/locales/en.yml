@@ -18,7 +18,15 @@ en:
    created_on: "Created on"
    asked_on: "Asked on"
    delete_topic_msg: "Delete this topic forever"
-    
+ 
+   contacts:
+       deleted_message:     "This is a deleted contact"
+       restore:             "Restore"
+       emailnotverified:    "Email has not been verified for this user!"
+       
+       form_placeholder:
+           description:     "Add specific notes regarding this contact example - address, LA Lakers fan etc."
+      
    category:
         new: "New Category"
         

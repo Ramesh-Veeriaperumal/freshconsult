@@ -146,19 +146,6 @@ div.action_buttons a.icon {
 }
 
 /* line 74, ../src/temp-dev.scss */
-.info-highlight {
-  font-size: 13px;
-  margin: 14px 0px 3px 0px;
-  padding: 12px 18px;
-  color: #666666;
-  -moz-border-radius: 6px 6px 6px 6px;
-  -webkit-border-radius: 6px 6px 6px 6px;
-  border-radius: 6px 6px 6px 6px;
-  border: 1px solid #f4f4e9;
-  background-color: #fffbee;
-}
-
-/* line 86, ../src/temp-dev.scss */
 .tab_panel {
   border-bottom: 1px solid #cfcfcf;
   margin: 5px -20px 0px -20px;
@@ -167,13 +154,13 @@ div.action_buttons a.icon {
   *zoom: 1;
   display: block;
 }
-/* line 91, ../src/temp-dev.scss */
+/* line 79, ../src/temp-dev.scss */
 .tab_panel b {
   margin-right: 10px;
   padding: 5px 0px 0px 0px;
   float: left;
 }
-/* line 97, ../src/temp-dev.scss */
+/* line 85, ../src/temp-dev.scss */
 .tab_panel a {
   background: #cfcfcf;
   position: relative;
@@ -193,19 +180,19 @@ div.action_buttons a.icon {
   -pie-background: linear-gradient(#fcfcfc, #f1f1f1);
   border-bottom: 1px solid #eaeaea;
 }
-/* line 113, ../src/temp-dev.scss */
+/* line 101, ../src/temp-dev.scss */
 .tab_panel a.last {
   -moz-border-radius: 0px 4px 4px 0px;
   -webkit-border-radius: 0px 4px 4px 0px;
   border-radius: 0px 4px 4px 0px;
 }
-/* line 116, ../src/temp-dev.scss */
+/* line 104, ../src/temp-dev.scss */
 .tab_panel a.first {
   -moz-border-radius: 4px 0px 0px 4px;
   -webkit-border-radius: 4px 0px 0px 4px;
   border-radius: 4px 0px 0px 4px;
 }
-/* line 119, ../src/temp-dev.scss */
+/* line 107, ../src/temp-dev.scss */
 .tab_panel a.active, .tab_panel a:hover {
   background: #f5f5f5;
   background: -moz-linear-gradient(top, #f5f5f5 0%, #e1e1e1 100%);
@@ -214,24 +201,24 @@ div.action_buttons a.icon {
   -pie-background: linear-gradient(#f5f5f5, #e1e1e1);
 }
 
-/* line 124, ../src/temp-dev.scss */
+/* line 112, ../src/temp-dev.scss */
 .solutions_text {
   padding-top: 8px;
   font-family: Georgia, Verdana, Arial, Helvetica, sans-serif;
   font-size: 14px;
 }
-/* line 128, ../src/temp-dev.scss */
+/* line 116, ../src/temp-dev.scss */
 .solutions_text img {
   max-width: 100%;
   height: auto;
 }
-/* line 129, ../src/temp-dev.scss */
+/* line 117, ../src/temp-dev.scss */
 .solutions_text ol, .solutions_text ul {
   margin: 14px 0px 14px 0px;
   padding: 0px 0px 0px 40px;
   line-height: 17px;
 }
-/* line 130, ../src/temp-dev.scss */
+/* line 118, ../src/temp-dev.scss */
 .solutions_text blockquote {
   margin: 1em 1em;
   color: #999;
@@ -239,39 +226,39 @@ div.action_buttons a.icon {
   padding: 6px 6px 1px 1em;
   background-color: #EEE;
 }
-/* line 131, ../src/temp-dev.scss */
+/* line 119, ../src/temp-dev.scss */
 .solutions_text ul {
   list-style: disc outside;
 }
-/* line 132, ../src/temp-dev.scss */
+/* line 120, ../src/temp-dev.scss */
 .solutions_text h1, .solutions_text h2, .solutions_text h3, .solutions_text h4 {
   font-weight: 400;
 }
-/* line 133, ../src/temp-dev.scss */
+/* line 121, ../src/temp-dev.scss */
 .solutions_text h1 {
   font-size: 2em;
 }
-/* line 134, ../src/temp-dev.scss */
+/* line 122, ../src/temp-dev.scss */
 .solutions_text h2 {
   font-size: 1.5em;
 }
-/* line 135, ../src/temp-dev.scss */
+/* line 123, ../src/temp-dev.scss */
 .solutions_text h3 {
   font-size: 1.17em;
 }
-/* line 136, ../src/temp-dev.scss */
+/* line 124, ../src/temp-dev.scss */
 .solutions_text h4 {
   font-size: 1em;
 }
-/* line 137, ../src/temp-dev.scss */
+/* line 125, ../src/temp-dev.scss */
 .solutions_text h5 {
   font-size: .83em;
 }
-/* line 138, ../src/temp-dev.scss */
+/* line 126, ../src/temp-dev.scss */
 .solutions_text h6 {
   font-size: .75em;
 }
-/* line 139, ../src/temp-dev.scss */
+/* line 127, ../src/temp-dev.scss */
 .solutions_text p {
   font-size: 14px;
   line-height: 1.5em;
@@ -279,45 +266,45 @@ div.action_buttons a.icon {
   text-align: left;
   width: 90%;
 }
-/* line 140, ../src/temp-dev.scss */
+/* line 128, ../src/temp-dev.scss */
 .solutions_text table td, .solutions_text table th {
   border: 1px solid #BBB;
   padding: 4px 5px;
 }
-/* line 141, ../src/temp-dev.scss */
+/* line 129, ../src/temp-dev.scss */
 .solutions_text ins {
   border-bottom: 1px solid green;
   text-decoration: none;
   color: green;
 }
-/* line 142, ../src/temp-dev.scss */
+/* line 130, ../src/temp-dev.scss */
 .solutions_text del {
   color: red;
   text-decoration: line-through;
 }
-/* line 143, ../src/temp-dev.scss */
+/* line 131, ../src/temp-dev.scss */
 .solutions_text cite {
   border-bottom: 1px dashed blue;
 }
-/* line 144, ../src/temp-dev.scss */
+/* line 132, ../src/temp-dev.scss */
 .solutions_text acronym {
   border-bottom: 1px dotted #CCC;
   cursor: help;
 }
-/* line 145, ../src/temp-dev.scss */
+/* line 133, ../src/temp-dev.scss */
 .solutions_text abbr {
   border-bottom: 1px dashed #CCC;
   cursor: help;
 }
 
-/* line 149, ../src/temp-dev.scss */
+/* line 137, ../src/temp-dev.scss */
 .tag_list {
   overflow: hidden;
   *zoom: 1;
   position: relative;
   padding: 0px;
 }
-/* line 153, ../src/temp-dev.scss */
+/* line 141, ../src/temp-dev.scss */
 .tag_list div.item {
   float: left;
   -moz-border-radius: 5px 5px 5px 5px;
@@ -329,82 +316,82 @@ div.action_buttons a.icon {
   padding: 3px 0px 0px 8px;
   margin: 0px 4px;
 }
-/* line 161, ../src/temp-dev.scss */
+/* line 149, ../src/temp-dev.scss */
 .tag_list div.item .tag_delete {
   float: right;
   visibility: hidden;
 }
-/* line 167, ../src/temp-dev.scss */
+/* line 155, ../src/temp-dev.scss */
 .tag_list div.item:hover .tag_delete {
   visibility: visible;
 }
 
-/* line 174, ../src/temp-dev.scss */
+/* line 162, ../src/temp-dev.scss */
 .email-settings {
   margin: 0px -20px 10px;
   padding: 0px;
   border-top: 1px solid #e6e6e6;
   border-bottom: 1px solid #f4f4f4;
 }
-/* line 179, ../src/temp-dev.scss */
+/* line 167, ../src/temp-dev.scss */
 .email-settings label {
   font-size: 14px;
   color: #666666;
   display: block;
 }
-/* line 184, ../src/temp-dev.scss */
+/* line 172, ../src/temp-dev.scss */
 .email-settings .highlight {
   font-size: inherit;
   font-size: 15px;
 }
-/* line 188, ../src/temp-dev.scss */
+/* line 176, ../src/temp-dev.scss */
 .email-settings .info_data {
   font-size: 12px;
 }
-/* line 190, ../src/temp-dev.scss */
+/* line 178, ../src/temp-dev.scss */
 .email-settings div.email-item-default, .email-settings div.email-item {
   padding: 12px 22px 4px;
   background: #f6f6f6;
 }
-/* line 195, ../src/temp-dev.scss */
+/* line 183, ../src/temp-dev.scss */
 .email-settings div.email-item-default {
   padding-top: 10px;
   padding-bottom: 10px;
 }
-/* line 196, ../src/temp-dev.scss */
+/* line 184, ../src/temp-dev.scss */
 .email-settings div.email-item-default label {
   line-height: 20px;
 }
-/* line 201, ../src/temp-dev.scss */
+/* line 189, ../src/temp-dev.scss */
 .email-settings div.email-item-default .info_data {
   padding-top: 4px;
 }
-/* line 205, ../src/temp-dev.scss */
+/* line 193, ../src/temp-dev.scss */
 .email-settings div.email-item {
   border-top: 1px solid #ffffff;
   border-bottom: 1px solid #e8e8e8;
 }
-/* line 208, ../src/temp-dev.scss */
+/* line 196, ../src/temp-dev.scss */
 .email-settings div.email-item div.item {
   margin-bottom: 10px;
   font-size: 14px;
 }
-/* line 210, ../src/temp-dev.scss */
+/* line 198, ../src/temp-dev.scss */
 .email-settings div.email-item div.item label {
   font-size: 12px;
   padding-bottom: 2px;
 }
 
-/* line 218, ../src/temp-dev.scss */
+/* line 206, ../src/temp-dev.scss */
 .email-settings-form table {
   width: 400px;
 }
-/* line 219, ../src/temp-dev.scss */
+/* line 207, ../src/temp-dev.scss */
 .email-settings-form td {
   padding: 6px 8px;
 }
 
-/* line 222, ../src/temp-dev.scss */
+/* line 210, ../src/temp-dev.scss */
 .email_info {
   border: 1px solid #cfcfcf;
   padding: 8px 12px;
@@ -415,7 +402,7 @@ div.action_buttons a.icon {
   font-size: 14px;
 }
 
-/* line 230, ../src/temp-dev.scss */
+/* line 218, ../src/temp-dev.scss */
 .primary_email {
   padding: 2px 15px;
   border: 1px solid #b8d385;
@@ -427,12 +414,12 @@ div.action_buttons a.icon {
   border-radius: 5px 5px 5px 5px;
 }
 
-/* line 241, ../src/temp-dev.scss */
+/* line 229, ../src/temp-dev.scss */
 #primary-email-settings div.email-item-default, #primary-email-settings div.email-item {
   background-color: #fdfff3;
 }
 
-/* line 248, ../src/temp-dev.scss */
+/* line 236, ../src/temp-dev.scss */
 .wordwrap p {
   white-space: pre-wrap;
   /* css-3 */
@@ -446,7 +433,7 @@ div.action_buttons a.icon {
   /* Internet Explorer 5.5+ */
 }
 
-/* line 257, ../src/temp-dev.scss */
+/* line 245, ../src/temp-dev.scss */
 .intro {
   color: #777;
   font-size: 12px;
@@ -455,26 +442,26 @@ div.action_buttons a.icon {
   margin-bottom: 10px;
 }
 
-/* line 266, ../src/temp-dev.scss */
+/* line 254, ../src/temp-dev.scss */
 .info-description p {
   font-size: 12px;
   color: #000000;
   line-height: 17px;
 }
 
-/* line 273, ../src/temp-dev.scss */
+/* line 261, ../src/temp-dev.scss */
 .tickets-container {
   margin: 0px -20px;
 }
 
-/* line 277, ../src/temp-dev.scss */
+/* line 265, ../src/temp-dev.scss */
 .tickets, .tickets-expanded {
   margin: 0px;
   width: 100%;
   border-bottom-color: #efefef;
   color: #5f5f5f;
 }
-/* line 281, ../src/temp-dev.scss */
+/* line 269, ../src/temp-dev.scss */
 .tickets thead, .tickets-expanded thead {
   background: #f9f9f9;
   background: -moz-linear-gradient(top, #f9f9f9 0%, #ececec 100%);
@@ -483,47 +470,47 @@ div.action_buttons a.icon {
   -pie-background: linear-gradient(#f9f9f9, #ececec);
   border-top: 1px solid #efefef;
 }
-/* line 286, ../src/temp-dev.scss */
+/* line 274, ../src/temp-dev.scss */
 .tickets .preview_pic img, .tickets-expanded .preview_pic img {
   width: 36px;
   height: 36px;
 }
-/* line 289, ../src/temp-dev.scss */
+/* line 277, ../src/temp-dev.scss */
 .tickets th, .tickets-expanded th {
   background: none;
   padding: 6px 6px 5px 6px;
 }
-/* line 293, ../src/temp-dev.scss */
+/* line 281, ../src/temp-dev.scss */
 .tickets td, .tickets th, .tickets-expanded td, .tickets-expanded th {
   vertical-align: top;
   border-bottom: 1px solid #efefef;
 }
-/* line 297, ../src/temp-dev.scss */
+/* line 285, ../src/temp-dev.scss */
 .tickets td, .tickets-expanded td {
   padding: 8px 8px;
   background-color: #ffffff;
 }
-/* line 300, ../src/temp-dev.scss */
+/* line 288, ../src/temp-dev.scss */
 .tickets td a, .tickets-expanded td a {
   text-decoration: none;
   color: #5a8ec1;
 }
-/* line 307, ../src/temp-dev.scss */
+/* line 295, ../src/temp-dev.scss */
 .tickets .check, .tickets-expanded .check {
   width: 25px;
   padding-left: 8px;
   padding-top: 9px;
   text-align: right;
 }
-/* line 313, ../src/temp-dev.scss */
+/* line 301, ../src/temp-dev.scss */
 .tickets th.check, .tickets-expanded th.check {
   padding-top: 12px;
 }
-/* line 318, ../src/temp-dev.scss */
+/* line 306, ../src/temp-dev.scss */
 .tickets .name h3, .tickets-expanded .name h3 {
   padding: 0px 0px 4px 0px;
 }
-/* line 320, ../src/temp-dev.scss */
+/* line 308, ../src/temp-dev.scss */
 .tickets .name h3 a, .tickets-expanded .name h3 a {
   text-transform: capitalize;
   font-size: 13px;
@@ -536,15 +523,15 @@ div.action_buttons a.icon {
   text-overflow: ellipsis;
   -moz-binding: url('/stylesheets/xml/ellipsis.xml#ellipsis');
 }
-/* line 327, ../src/temp-dev.scss */
+/* line 315, ../src/temp-dev.scss */
 .tickets .name h3 a:hover, .tickets-expanded .name h3 a:hover {
   color: #4b7dc0;
 }
-/* line 331, ../src/temp-dev.scss */
+/* line 319, ../src/temp-dev.scss */
 .tickets .name div, .tickets-expanded .name div {
   color: #888888;
 }
-/* line 336, ../src/temp-dev.scss */
+/* line 324, ../src/temp-dev.scss */
 .tickets .assign ul, .tickets-expanded .assign ul {
   margin: 0;
   padding: 0;
@@ -569,75 +556,106 @@ div.action_buttons a.icon {
 .tickets .assign ul li, .tickets-expanded .assign ul li {
   *display: inline;
 }
-/* line 338, ../src/temp-dev.scss */
+/* line 326, ../src/temp-dev.scss */
 .tickets .assign ul li, .tickets-expanded .assign ul li {
   padding: 4px 7px 0px 0px;
   color: #999999;
   font-size: 12px;
 }
-/* line 343, ../src/temp-dev.scss */
+/* line 331, ../src/temp-dev.scss */
 .tickets .assign ul li span, .tickets-expanded .assign ul li span {
   color: #444444;
   text-transform: capitalize;
 }
-/* line 350, ../src/temp-dev.scss */
+/* line 338, ../src/temp-dev.scss */
 .tickets .assign ul .priority span.style_1, .tickets-expanded .assign ul .priority span.style_1 {
   /* Low priority style */
   color: #666666;
 }
-/* line 353, ../src/temp-dev.scss */
+/* line 341, ../src/temp-dev.scss */
 .tickets .assign ul .priority span.style_2, .tickets-expanded .assign ul .priority span.style_2 {
   /* Medium priority style */
   color: #cc6633;
 }
-/* line 356, ../src/temp-dev.scss */
+/* line 344, ../src/temp-dev.scss */
 .tickets .assign ul .priority span.style_3, .tickets-expanded .assign ul .priority span.style_3 {
   /* High priority style */
   color: #cc6633;
 }
-/* line 359, ../src/temp-dev.scss */
+/* line 347, ../src/temp-dev.scss */
 .tickets .assign ul .priority span.style_4, .tickets-expanded .assign ul .priority span.style_4 {
   /* Urgent priority style */
   color: #cc6633;
 }
-/* line 365, ../src/temp-dev.scss */
+/* line 353, ../src/temp-dev.scss */
 .tickets .sla, .tickets-expanded .sla {
   vertical-align: top;
   text-align: right;
   font-size: 11px;
 }
 
-/* line 372, ../src/temp-dev.scss */
-.converstion-sprite {
+/* line 360, ../src/temp-dev.scss */
+.conversation-sprite {
   overflow: hidden;
   *zoom: 1;
   float: right;
 }
-/* line 375, ../src/temp-dev.scss */
-.converstion-sprite .image {
+/* line 363, ../src/temp-dev.scss */
+.conversation-sprite .image {
   float: right;
   content: "";
   width: 32px;
   height: 32px;
   margin: 0px;
-  background: url('/images/../images/sprites/32square_sprite.png?1301130704') no-repeat;
+  background: url('/images/../images/sprites/32square_sprite.png?1301325625') no-repeat;
   width: 32px;
   height: 32px;
   overflow: hidden;
 }
-/* line 383, ../src/temp-dev.scss */
-.converstion-sprite .email-reply {
+/* line 371, ../src/temp-dev.scss */
+.conversation-sprite .email-reply {
   background-position: 0px 0px;
 }
-/* line 386, ../src/temp-dev.scss */
-.converstion-sprite .email-receive {
+/* line 374, ../src/temp-dev.scss */
+.conversation-sprite .email-receive {
   background-position: 0px -32px;
 }
-/* line 389, ../src/temp-dev.scss */
-.converstion-sprite .note-public {
+/* line 377, ../src/temp-dev.scss */
+.conversation-sprite .note-public {
   background-position: 0px -64px;
 }
-/* line 392, ../src/temp-dev.scss */
-.converstion-sprite .note-private {
+/* line 380, ../src/temp-dev.scss */
+.conversation-sprite .note-private {
   background-position: 0px -96px;
+}
+
+/* line 386, ../src/temp-dev.scss */
+.contact-box {
+  padding-left: 170px;
+}
+/* line 388, ../src/temp-dev.scss */
+.contact-box .profile_pic {
+  float: left;
+  margin-left: -150px;
+  padding: 0px;
+  border: 0px;
+}
+/* line 394, ../src/temp-dev.scss */
+.contact-box .info-highlight {
+  margin: 8px 0px 0px -170px;
+  padding-left: 165px;
+}
+
+/* line 400, ../src/temp-dev.scss */
+.info-highlight {
+  font-size: 13px;
+  margin: 0px 0px 0px 0px;
+  padding: 8px 18px;
+  color: #666666;
+  border: 1px solid #f4f4e9;
+  background-color: #fffbee;
+}
+/* line 407, ../src/temp-dev.scss */
+.info-highlight div {
+  padding: 6px;
 }

@@ -149,6 +149,7 @@ rules_filter = function(name, filter_data, parentDom, options){
 		RULE_DOM		= parentDom + " " + setting.rule_dom,
 		ADD_DOM			= parentDom + " " + setting.add_dom;
 		
+			
 	var itemManager = {
 		itemNumber:0,
 		get:function(){
@@ -268,10 +269,9 @@ rules_filter = function(name, filter_data, parentDom, options){
 		get_filter_list:domUtil.get_filter_list
 	};	 
 	
-	// Applying Events and on Window ready initialization
-	jQuery(document).ready(function(){	
+	// Applying Events and on Window ready initialization	
 		// Init Constructor
-		var init = function(){			
+		var init = function(){			 
 			hidden_ = jQuery('<input type="hidden" name="'+name+'_data" value="" />')
 							.prependTo(parentDom);	
 			
@@ -326,8 +326,7 @@ rules_filter = function(name, filter_data, parentDom, options){
 						
 			domUtil.init();		
 		};
-		init();			
-	});
-	
+		init();			 
+		
 	return pub_Methods;
 }
