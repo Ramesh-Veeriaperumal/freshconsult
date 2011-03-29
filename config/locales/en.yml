@@ -22,6 +22,7 @@ en:
    add_new_forum: "add a new forum"
    edit_forum_category: "Edit Forum Category"
    forum_confirm_msg1: "Are you sure you want to delete this category"
+   next:    "Next"
     
 
  
@@ -60,6 +61,26 @@ en:
      open: "Re-open this Discussion"
      close: "Close this Discussion"
      reply: "Reply to this Topic"
+     
+     
+   account:
+       rebrand: "Rebrand your Helpdesk"
+       name: "Account Name"
+       time_zone: "Time Zone"
+       helpdesk_name: "Helpdesk Name"
+       helpdesk_url:  "Helpdesk URL"
+       info1: "You can use this field to setup custom domain mapping for Freshdesk"
+       info2: "Before using this field please ensure that you have created a CNAME DNS record in your DNS Zone file to point support.mycompanyname.com to %{full_domain}. Your Webmaster or Server administrator should be able to help you set this up correctly"
+       info3: "Reset to Default colors"
+       info4: "The next ticket ID counter will start with this number (Should be greater than the last ticket ID created). This affects tickets created henceforth."
+       page_colors: 
+               title: "Page colors"
+               header: "Header"
+               tab_color: "Tab Color"
+               background: "Background"
+       save: "Save changes"   
+       cancel: "Cancel and go back" 
+       active_since: "Active Since"
      
    
    activerecord:

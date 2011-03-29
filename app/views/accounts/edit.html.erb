@@ -30,36 +30,36 @@
 	<div class="sidepanel">
 		<h3 class="title"><%= current_account.name %></h3> 
 		<ul class="ui-list_with_icon">
-			<li><b>Active Since  </b><br /><%= formated_date(current_account.created_at) %></li>
+			<li><b><%=t('account.active_since')%>  </b><br /><%= formated_date(current_account.created_at) %></li>
 		</ul> 
 	</div>
 <%- end %>
 
-<h3 class="title">Rebrand your Helpdesk</h3> 
+<h3 class="title"><%=t('account.rebrand')%></h3> 
 	<% form_for :account, @account, :url => { :action => 'update' }, :html => { :multipart => true ,:method => :put, :class => "uniForm" } do |f| %>
 	  <%= f.error_messages %>
 	  <fieldset class="inlineLabels">
 	  	 <div class="ctrlHolder">
-		    <%= f.label :name, "<em>*</em> Account Name" %>
+		    <%= f.label :name, "<em>*</em> #{t('account.name')}" %>
 		    <%= f.text_field :name, :class => "textInput auto" %> 
 		 </div>
 	     <div class="ctrlHolder"> 
-			<%= f.label :time_zone, "Time Zone" %>
+			<%= f.label :time_zone, t('account.time_zone') %>
 			<%= f.time_zone_select :time_zone, ActiveSupport::TimeZone.all, { :class => "selectInput" } %>
 		 </div>
 		 <div class="ctrlHolder">
-		    <%= f.label :helpdesk_name, "Helpdesk Name" %>
+		    <%= f.label :helpdesk_name,t('account.helpdesk_name')%>
 		    <%= f.text_field :helpdesk_name, :class => "textInput auto" %>
 		 </div>
 		 <div class="ctrlHolder">
-		    <%= f.label :helpdesk_url, "Helpdesk URL" %>
+		    <%= f.label :helpdesk_url, t('account.helpdesk_url') %>
 		    <%= f.text_field :helpdesk_url, :class => "textInput auto" %> 
 			<p class="formHint">
-			You can use this field to setup custom domain mapping for Freshdesk - <br />
+			<%=t('account.helpdesk_url')%> - <br />
 			Eg. support.mycompanyname.com 
 			</p>
 			<p class="formHint">
-			Before using this field please ensure that you have created a CNAME DNS record in your DNS Zone file to point support.mycompanyname.com to <%=@account.full_domain%>. Your Webmaster or Server administrator should be able to help you set this up correctly
+				<%=t('account.info2',:full_domain => @account.full_domain)%>
 			</p>	
 		 </div>
 	  </fieldset>
@@ -67,29 +67,29 @@
 		  <% f.fields_for :preferences, @account.preferences do |p| %>
         	<div class="ctrlHolder">
         		<p class="label">
-					<b>Page colors</b>	
+					<b><%=t('account.page_colors.title')%></b>	
 				</p>
 				<ul>
 					<li>
-						<%= p.label :header_color, "Header" %>
+						<%= p.label :header_color, t('account.page_colors.header') %>
 						<div class="color">
 							<input type="color" id="HeaderColor" class="color_field" name="account[preferences][header_color]"  data-hex="true" value="<%= @account[:preferences].default(:header_color) %>" />
 						</div>
 					</li>
 					<li>
-			        	<%= p.label :header_color_tab, "Tab Color" %>
+			        	<%= p.label :header_color_tab, t('account.page_colors.tab_color') %>
 						
 							<div class="color">
 								<input type="color" id="TabColor" class="color_field" name="account[preferences][tab_color]"  data-hex="true" value="<%= @account[:preferences].default(:tab_color) %>" /> 
 							</div>
          			</li>
 					<li>	
-			        		<%= p.label :bg_color, "Background" %>
+			        		<%= p.label :bg_color, t('account.page_colors.background') %>
 							<div class="color"> 
 								<input type="color" id="BackgroundColor" class="color_field" name="account[preferences][bg_color]"  data-hex="true" value="<%= @account[:preferences].default(:bg_color) %>" />
 							</div>	
 					</li>
-					<li><a href="javascript:void(0)" id="ResetColors">Reset to Default colors </a></li>
+					<li><a href="javascript:void(0)" id="ResetColors"><%=t('account.info3')%> </a></li>
 				</ul>
 					
 						 
@@ -104,13 +104,13 @@
 			<%= render :partial => "/shared/fav_image", :locals => { :account => @account } %>
 		  </div> 
 		  <div class="ctrlHolder">
-		    <%= f.label :ticket_display_id, "Next Ticket ID #" %>
+		    <%= f.label :ticket_display_id, "#{t('next')} Ticket ID #" %>
 			<%= f.text_field :ticket_display_id, :value => @account.get_max_display_id, :class => "textInput small" %>
-			<p class="formHint">The next ticket ID counter will start with this number (Should be greater than the last ticket ID created). This affects tickets created henceforth.</p>
+			<p class="formHint"><%=t('account.info4')%></p>
 		  </div>			
 		</fieldset>
 	  <div class="buttonHolder">
-			<%= link_to "&larr; Cancel and go back", "/admin/home", :class => "uiButton blue floatl" %>
-			<%= submit_tag 'Save changes', :class => 'uiButton blue' %>
+			<%= link_to "&larr; #{t('account.cancel')}", "/admin/home", :class => "uiButton blue floatl" %>
+			<%= submit_tag t('account.save'), :class => 'uiButton blue' %>
 	  </div>
 	<% end %>
