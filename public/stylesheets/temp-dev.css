@@ -607,7 +607,7 @@ div.action_buttons a.icon {
   width: 32px;
   height: 32px;
   margin: 0px;
-  background: url('/images/../images/sprites/32square_sprite.png?1301325625') no-repeat;
+  background: url('/images/../images/embed/sprites/32square_sprite.png?1301406599') no-repeat;
   width: 32px;
   height: 32px;
   overflow: hidden;
@@ -634,19 +634,20 @@ div.action_buttons a.icon {
   padding-left: 170px;
 }
 /* line 388, ../src/temp-dev.scss */
-.contact-box .profile_pic {
+.contact-box div.profile_pic {
   float: left;
   margin-left: -150px;
-  padding: 0px;
-  border: 0px;
+  width: 127px;
+  margin-top: 5px;
+  text-align: center;
 }
-/* line 394, ../src/temp-dev.scss */
+/* line 395, ../src/temp-dev.scss */
 .contact-box .info-highlight {
   margin: 8px 0px 0px -170px;
   padding-left: 165px;
 }
 
-/* line 400, ../src/temp-dev.scss */
+/* line 401, ../src/temp-dev.scss */
 .info-highlight {
   font-size: 13px;
   margin: 0px 0px 0px 0px;
@@ -655,7 +656,159 @@ div.action_buttons a.icon {
   border: 1px solid #f4f4e9;
   background-color: #fffbee;
 }
-/* line 407, ../src/temp-dev.scss */
+/* line 408, ../src/temp-dev.scss */
 .info-highlight div {
   padding: 6px;
+}
+
+/* line 414, ../src/temp-dev.scss */
+.forum_list {
+  margin: 0px 0px;
+}
+/* line 416, ../src/temp-dev.scss */
+.forum_list a {
+  text-decoration: none;
+}
+/* line 417, ../src/temp-dev.scss */
+.forum_list a.title {
+  color: #545454;
+}
+/* line 18, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/compass/stylesheets/compass/utilities/links/_link-colors.scss */
+.forum_list a.title:visited {
+  color: #545454;
+}
+/* line 24, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/compass/stylesheets/compass/utilities/links/_link-colors.scss */
+.forum_list a.title:hover {
+  color: #527eaa;
+}
+/* line 27, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/compass/stylesheets/compass/utilities/links/_link-colors.scss */
+.forum_list a.title:active {
+  color: #545454;
+}
+/* line 418, ../src/temp-dev.scss */
+.forum_list .item_actions {
+  float: right;
+  font-size: 10px;
+  background-color: #F3F1EC;
+  -moz-border-radius: 6px 6px 6px 6px;
+  -webkit-border-radius: 6px 6px 6px 6px;
+  border-radius: 6px 6px 6px 6px;
+  border: 1px solid #cfcfcf;
+  color: #afafaf;
+  padding: 2px 8px;
+}
+/* line 426, ../src/temp-dev.scss */
+.forum_list .item_actions a.highlight {
+  background-color: #ffffcc;
+  padding: 1px 3px;
+}
+/* line 431, ../src/temp-dev.scss */
+.forum_list .subcounter {
+  color: #afafaf;
+}
+/* line 434, ../src/temp-dev.scss */
+.forum_list ul.base-set {
+  list-style: none;
+  overflow: hidden;
+  *zoom: 1;
+  margin: 0px;
+  padding: 5px 26px;
+}
+/* line 11, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/compass/stylesheets/compass/utilities/lists/_bullets.scss */
+.forum_list ul.base-set li {
+  list-style-image: none;
+  list-style-type: none;
+  margin-left: 0px;
+}
+/* line 439, ../src/temp-dev.scss */
+.forum_list ul.base-set li {
+  float: left;
+  width: 44%;
+  padding: 0px 0px 0px 30px;
+  margin: 0px 3% 0px 0px;
+}
+/* line 444, ../src/temp-dev.scss */
+.forum_list ul.base-set li h4.forum_title {
+  margin: 3px 0px 0px 0px;
+  padding: 6px 0px 4px 0px;
+  font-size: 16px;
+  position: relative;
+}
+/* line 448, ../src/temp-dev.scss */
+.forum_list ul.base-set li h4.forum_title a {
+  font-weight: normal;
+}
+/* line 453, ../src/temp-dev.scss */
+.forum_list ul.base-set li span.icon {
+  position: absolute;
+  left: -34px;
+  top: 2px;
+  background: url('/images/../images/embed/sprites/32square_sprite.png?1301406599') no-repeat;
+  width: 32px;
+  height: 32px;
+  overflow: hidden;
+}
+/* line 459, ../src/temp-dev.scss */
+.forum_list ul.base-set li span.forum_type_1 {
+  background-position: 0px -192px;
+}
+/* line 463, ../src/temp-dev.scss */
+.forum_list ul.base-set li span.forum_type_2 {
+  background-position: 0px -224px;
+}
+/* line 467, ../src/temp-dev.scss */
+.forum_list ul.base-set li span.forum_type_3 {
+  background-position: 0px -160px;
+}
+/* line 471, ../src/temp-dev.scss */
+.forum_list ul.base-set li span.forum_type_4 {
+  background-position: 0px -128px;
+}
+/* line 475, ../src/temp-dev.scss */
+.forum_list ul.base-set li .topic-list {
+  padding: 6px 0px 12px 0px;
+  margin-bottom: 8px;
+  border-top: 1px solid #f1f1f1;
+}
+/* line 479, ../src/temp-dev.scss */
+.forum_list ul.base-set li .topic-list a.topic {
+  white-space: nowrap;
+  overflow: hidden;
+  -o-text-overflow: ellipsis;
+  -ms-text-overflow: ellipsis;
+  text-overflow: ellipsis;
+  -moz-binding: url('/stylesheets/xml/ellipsis.xml#ellipsis');
+  display: block;
+  padding: 5px 0px;
+  font-size: 13px;
+}
+/* line 485, ../src/temp-dev.scss */
+.forum_list ul.base-set li .topic-list a {
+  color: #4d769f;
+}
+/* line 18, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/compass/stylesheets/compass/utilities/links/_link-colors.scss */
+.forum_list ul.base-set li .topic-list a:visited {
+  color: #4d769f;
+}
+/* line 24, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/compass/stylesheets/compass/utilities/links/_link-colors.scss */
+.forum_list ul.base-set li .topic-list a:hover {
+  color: #3399cc;
+}
+/* line 27, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/compass/stylesheets/compass/utilities/links/_link-colors.scss */
+.forum_list ul.base-set li .topic-list a:active {
+  color: #4d769f;
+}
+/* line 490, ../src/temp-dev.scss */
+.forum_list ul.base-set li.odd {
+  clear: left;
+}
+/* line 493, ../src/temp-dev.scss */
+.forum_list ul.base-set li.even {
+  margin-right: 0px;
+  width: 46%;
+}
+
+/* line 501, ../src/temp-dev.scss */
+.forum-group {
+  margin: 0px -20px;
 }
