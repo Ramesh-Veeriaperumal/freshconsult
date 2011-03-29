@@ -76,7 +76,7 @@
         }
 		
 		function getCustomFieldJson(){
-			var allfields = [];
+			var allfields = $A();
 			jQuery("#custom_form li").each(function(index, domLi){				
 				allfields.push(jQuery(domLi).data("raw"));
 			})
@@ -189,9 +189,11 @@
 		
 	jQuery("#SaveForm").click(function(e){			
 			var jsonData = getCustomFieldJson();
-			jQuery("#field_values").val(jsonData);
+			jQuery("#field_values").val(jsonData.toJSON()); 
+			// console.log(jQuery("#field_values").val());
+			// return false;
 			 
-			jQuery.ajax({
+			/*jQuery.ajax({
       					type: 'POST',
 						url: '/ticket_fields/update',
 						contentType: 'application/json',
@@ -204,8 +206,8 @@
 							jQuery('div#resultmsg').html(data.message);
 							jQuery('div#resultmsg').show("fade", 500);
 						}
-    	  	});  
-			return false;
+    	  	});  */ 
+			
 		});
 		
         

@@ -41,11 +41,7 @@ def update
   
   jsonData = params[:jsonData]
   
-  logger.debug "jso data: #{jsonData}"
-  
-  @data = ActiveSupport::JSON.decode(jsonData)
-  
-  logger.debug "data: #{@data.inspect}" 
+  @data = ActiveSupport::JSON.decode(jsonData)  
   
   @endUser =[]
   
@@ -62,16 +58,16 @@ def update
     columnId = 0
     if key["fieldType"].eql?("custom")
       
-      if key["action"].eql?("delete")
-        
-        
-        delete_custom_fields key["columnId"]
-        
-           
-      else if key["columnId"].eql?("")
+      if key["action"].eql?("delete")     
+        delete_custom_fields key["columnId"]      
+      elsif key["columnId"].eql?("")
         #Add the new column
         columnId = save_flexi_field_entries key["label"], key["type"]
-        logger.debug "columnId after saving :: #{columnId}"
+        logger.debug "columnId after saving :: #{columnId}"        
+        if columnId == -1 then
+            next
+        end
+        
         key["columnId"] = columnId
       else
         #update flexifields
@@ -79,18 +75,12 @@ def update
         update_flexi_field_entries columnId, key["label"], key["type"]
       end
       
-    end
-    
-    end
-    
-    
-      
+    end   
+   
       #setting the new columnId to array and pushing to new array
       
-    unless key["action"].eql?("delete")
-    
-     @agentView.push(key)
-    
+    unless key["action"].eql?("delete")    
+     @agentView.push(key)    
     end
     
    logger.debug "Agent View #{@agentView.inspect}" 
@@ -115,22 +105,20 @@ end
   
    res = Hash.new
    
-  if @ticket_field.update_attributes(:json_data =>modified_json, :agent_view =>@agentView , :requester_view => requester_json )
+  respond_to do |format|
     
-    res["data"] = modified_json
-    res["message"]="Successfully updated"
-    
-    render :json => ActiveSupport::JSON.encode(res)
-    
-  else
-    
-    res["data"] = ""
-    res["message"]="Update failed"
-    
-    render :json => ActiveSupport::JSON.encode(res)
-    
+  if @ticket_field.update_attributes(:json_data =>modified_json, :agent_view =>@agentView , :requester_view => requester_json )   
+      flash[:notice] = "Custom fields successfully updated."
+      format.html { redirect_to :action => "index" }
+      format.xml  { render :json => @ticket_field }     
+  else  
+      flash[:notice] = "Custom updation failed."
+      format.html { redirect_to :action => "index"}
+      format.xml  { render :json => @ticket_field } 
+  
   end
   
+  end
   ##Need to pass back the modified_json and reload it after saving...
   
   
@@ -170,14 +158,11 @@ def save_flexi_field_entries ff_alias, ff_type
   @ff_entries = FlexifieldDefEntry.new(:flexifield_name =>column_name , :flexifield_def_id =>ff_def_id ,:flexifield_alias =>ff_alias , :flexifield_order =>ff_order +1, :flexifield_coltype =>ff_type)
  
   
-  if @ff_entries.save
-    
-     columnId = @ff_entries.id
-     
-   else
-     
-     columnId = -1
-    
+  if @ff_entries.save    
+     columnId = @ff_entries.id     
+   else    
+     logger.debug "error while saving the cusom field #{ff_alias} : Error:: #{@ff_entries.errors.inspect}"
+     columnId = -1    
   end
   logger.debug "columnId inside  save methode :: #{columnId}"
   
