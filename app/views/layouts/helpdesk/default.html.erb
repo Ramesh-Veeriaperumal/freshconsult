@@ -17,7 +17,7 @@
 		<%= include_javascripts :workspace %>
     	<%= yield :head %>
     </head>
-    <body class="<%= yield :layoutType %>">
+    <body class="<% unless @content_for_sidebar %>single<% end %>">
 	   <div id="wrap"> 
             <%= render(:partial => '/layouts/shared/header') %>
             <div class="content">
