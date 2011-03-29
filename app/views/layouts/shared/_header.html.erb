@@ -1,7 +1,7 @@
 <div class="header">
 	<div class="brand">
 	    	<a class="logo" href="/home">
-				<%= image_tag current_account.logo.nil? ? "/images/logo.png" : current_account.logo.content.url(:logo) %>
+				<%= image_tag (current_account.logo.nil? ? "/images/logo.png" : current_account.logo.content.url(:logo)), :class => "logo" %>
 			</a>
 			<a href="/home"><h3><%= current_account.helpdesk_name %></h3></a>
 	</div>		
