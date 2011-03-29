@@ -87,6 +87,7 @@ class Admin::VaRulesController < Admin::AutomationsController
       
       operator_types  = {:email       => ["is", "is_not", "contains", "does_not_contain"],
                          :text        => ["is", "is_not", "contains", "does_not_contain", "starts_with", "ends_with"],
+                         :checkbox    => ["selected", "not_selected"],
                          :choicelist  => ["is", "is_not"]}
       
       @op_types        = ActiveSupport::JSON.encode operator_types
@@ -98,7 +99,9 @@ class Admin::VaRulesController < Admin::AutomationsController
                          :starts_with       =>  "Starts with",
                          :ends_with         =>  "Ends with",
                          :between           =>  "Between",
-                         :between_range     =>  "Between Range"}; 
+                         :between_range     =>  "Between Range",
+                         :selected          =>  "Selected",
+                         :not_selected      =>  "Not Selected" } 
       
       @op_list        = ActiveSupport::JSON.encode operator_list
     end
@@ -124,6 +127,11 @@ class Admin::VaRulesController < Admin::AutomationsController
         if "dropdown".eql?(field["type"])
           choice_values = get_choices field
           item = {:name =>  field["label"] , :value =>  field["display_name"] ,  :domtype => field["type"], :choices => choice_values , :action => "set_custom_field" , :operatortype => "choicelist" }
+        end
+        
+       if "checkbox".eql?(field["type"])
+          choice_values = get_choices field
+          item = {:name =>  field["label"] , :value =>  field["display_name"] ,  :domtype => field["type"], :choices => choice_values , :action => "set_custom_field" , :operatortype => "checkbox" }
         end
         
         filter_hash.push(item)

@@ -42,3 +42,4 @@ handlers:
     numeric: Va::Handlers::Numeric
     date_time: Va::Handlers::DateTime
     dropdown:  Va::Handlers::Text
+    checkbox: Va::Handlers::Numeric
