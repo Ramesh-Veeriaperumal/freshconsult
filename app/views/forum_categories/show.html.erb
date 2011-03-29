@@ -2,7 +2,7 @@
 
 
 <h3 class="title">
-	<%= link_to("Forums"[:forums_category], categories_path) %> &rarr;
+	<%= link_to(t('forum.title'), categories_path) %> &rarr;
 	<%= @forum_category.name %> 
 </h3>  
 
@@ -12,7 +12,7 @@
 			<% if logged_in? && current_user.has_manage_forums? -%>
 				<div class="action_buttons no_margin">
 			  		<%= link_to  t('forum.new'), new_category_forum_path(@forum_category), :class => "add_new icon" %>
-					<%= link_to "Edit Category" ,edit_category_path(@forum_category), :class => "last"   %> 
+					<%= link_to t('category.edit') ,edit_category_path(@forum_category), :class => "last"   %> 
 					
 				</div> 
 			<% end -%> 

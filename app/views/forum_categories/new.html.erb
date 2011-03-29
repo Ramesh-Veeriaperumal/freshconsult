@@ -3,7 +3,7 @@
 	<%= f.error_messages %>
 	<%= render :partial => "/shared/name_desc", :locals => { :form => f } %>
 	<div class="button-container">	
-		<%= submit_tag 'Save'[:Create], { :class => "uiButton" } -%> 
-		<%= link_to('Cancel'[:cancel], categories_path, :class => "uiButton grey" ) -%>
+		<%= submit_tag t('save'), { :class => "uiButton" } -%> 
+		<%= link_to(t('cancel'), categories_path, :class => "uiButton grey" ) -%>
 	</div>
 <% end -%>

@@ -18,9 +18,14 @@ en:
    created_on: "Created on"
    asked_on: "Asked on"
    delete_topic_msg: "Delete this topic forever"
+   no_forum_category: "No forums in this category"
+   add_new_forum: "add a new forum"
+   edit_forum_category: "Edit Forum Category"
+   forum_confirm_msg1: "Are you sure you want to delete this category"
     
    category:
         new: "New Category"
+        edit: "Edit Category"
         
    forum: 
       title: "Forums"
