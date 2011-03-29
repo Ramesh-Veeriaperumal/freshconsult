@@ -366,7 +366,7 @@ div.action_buttons{
 	    width: 32px;
 	    height: 32px;
 	    margin: 0px;
-	    @include sprite-background("../images/sprites/32square_sprite.png", 32px, 32px);
+	    @include sprite-background("../images/embed/sprites/32square_sprite.png", 32px, 32px);
 	}
 	.email-reply{
 		@include sprite-row(1, 32px, 0);
@@ -385,11 +385,12 @@ div.action_buttons{
 
 .contact-box{
 	padding-left:170px;
-	.profile_pic{
+	div.profile_pic{
 		float:left;
 		margin-left:-150px;
-		padding:0px;
-		border:0px;
+		width:127px;
+		margin-top:5px;
+		text-align:center; 
 	}
 	.info-highlight{
 		margin:8px 0px 0px -170px;
@@ -407,4 +408,96 @@ div.action_buttons{
 	div{
 		padding:6px;
 	}
+}
+
+
+.forum_list{
+	margin:0px 0px;
+	a{ text-decoration:none; }
+	a.title{ @include link-colors(#545454, #527EAA, #545454, #545454); }
+	.item_actions{
+		float:right;
+		font-size:10px;
+		background-color:#F3F1EC;
+		@include corners(6px);
+		border:1px solid #cfcfcf;
+		color:#afafaf;
+		padding:2px 8px;
+		a.highlight{
+			background-color:#ffffcc;
+			padding:1px 3px;
+		}
+	}
+	.subcounter{ 
+		color:#afafaf;
+	}
+	ul.base-set{
+		@include no-bullets;
+		@include clearfix;
+		margin:0px; 
+		padding:5px 26px;
+		li{
+			float:left;
+			width:44%;
+			padding:0px 0px 0px 30px;
+			margin:0px 3% 0px 0px;
+			h4.forum_title{
+				margin:3px 0px 0px 0px;
+				padding:6px 0px 4px 0px; 
+				font-size:16px;
+				a{
+					font-weight:normal;
+				}
+				position:relative;
+			}
+			span.icon{
+				position:absolute;
+				left:-34px; top:2px;
+				@include sprite-background("../images/embed/sprites/32square_sprite.png", 32px, 32px);
+			}
+			// Help icon
+			span.forum_type_1{ 
+				@include sprite-row(7, 32px, 0); 
+			}
+			// Ideas icon
+			span.forum_type_2{ 
+				@include sprite-row(8, 32px, 0); 
+			}
+			// Problem Icon
+			span.forum_type_3{ 
+				@include sprite-row(6, 32px, 0); 
+			}
+			// Announcements Icon
+			span.forum_type_4{ 
+				@include sprite-row(5, 32px, 0); 
+			}
+						
+			.topic-list{ 
+				padding:6px 0px 12px 0px;
+				margin-bottom:8px;
+				border-top:1px solid #f1f1f1;  
+				a.topic{
+					@include ellipsis;
+					display:block;
+					padding:5px 0px;
+					font-size:13px;
+				}
+				a{ 
+					@include link-colors(#4D769F, #3399cc, #4D769F, #4D769F);	
+				}
+			}
+		}
+		li.odd{
+			clear:left;
+		}
+		li.even{
+			margin-right:0px;
+			width:46%;
+		}
+	}
+	
+}
+
+.forum-group{
+	margin:0px -20px; 
 }
