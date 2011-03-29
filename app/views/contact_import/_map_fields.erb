@@ -1,10 +1,11 @@
-	<% form_tag nil, :method => :post do -%>
+<% form_tag nil, :method => :post do -%>
 	  <% @parameters.each do |arr| -%>
 	    <%= hidden_field_tag arr[0], arr[1] %>
 	  <% end -%>
 	  <ul class="ui-form">
-	  	  <li class="info_data">
-	  	  	Please map the details you're importing
+	  	<li class="info_data">
+	   	  <li class="info_data">
+	  	  	An email with user activation instructions will be sent to each contact on successful import. If the email is already present in the databse we will update the attributes like Name, Company etc. Please map the details you're importing
 		  </li>
 		  <li class="map_fields">
 		   <table cellspacing="0">
@@ -23,6 +24,6 @@
 		  </li>
 	  </ul>
 	  <div class="button-container">
-	    <%= submit_tag 'Contacts Import', :class => "fdbutton" %>
+	    <%= submit_tag 'Import', :class => "fdbutton" %>
 	  </div>
 	<% end -%>

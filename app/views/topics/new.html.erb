@@ -5,7 +5,7 @@
 	<%= render :partial => "form", :object => f %>
 	<div class="button-container">
 		<%= submit_tag t('topic.post'), :class => "uiButton" %>
-		<%= link_to t('cancel'), forum_path(@forum), :class => "uiButton" %>
+		<%= link_to t('cancel'), category_forum_path(@forum.forum_category_id,@forum), :class => "uiButton" %>
 	</div>
 <% end -%>
 <%= javascript_tag "$('topic_title').focus();" %>

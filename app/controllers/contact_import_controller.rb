@@ -21,6 +21,9 @@ class ContactImportController < ApplicationController
   end
     
   def create
+    created = 0
+    updated = 0
+    
     if fields_mapped?
        mapped_fields.each do |row|
        @params_hash ={ :user => {:name => row[(params[:fields]["0"]).to_i],
@@ -40,19 +43,19 @@ class ContactImportController < ApplicationController
         
         unless @user.nil?
           if @user.update_attributes(@params_hash[:user])
-             flash[:notice] = 'Contact list created'
+             updated+=1
           end
         else
           @user = current_account.users.new
           @user.user_role = User::USER_ROLES_KEYS_BY_TOKEN[:customer]
           if @user.signup!(@params_hash)    
+            created+=1
           end
         end
         
         
       end
-    
-      flash[:notice] = 'Contact list created'
+       flash[:notice] = "#{created} contacts has been newly imported and #{updated} existing contacts has been updated !"
       redirect_to contacts_url
     else
       render

@@ -4,12 +4,12 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
     e_notification = ticket.account.email_notifications.find_by_notification_type(notification_type)
     if e_notification.agent_notification
       a_template = Liquid::Template.parse(e_notification.agent_template)
+      i_receips = internal_receips(notification_type, ticket)
       deliver_email_notification({ :ticket => ticket,
              :notification_type => notification_type,
-             :receips => (notification_type == EmailNotification::TICKET_ASSIGNED_TO_GROUP) ? ticket.group.agent_emails : 
-                          ticket.responder.email,
+             :receips => i_receips,
              :email_body => a_template.render('ticket' => ticket, 'comment' => comment)
-          })
+          }) unless i_receips.nil?
     end
     
     if e_notification.requester_notification
@@ -20,6 +20,17 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
              :email_body => r_template.render('ticket' => ticket, 'helpdesk_name' => ticket.account.helpdesk_name, 
                                               'comment' => comment)
           })
+    end
+  end
+  
+  def self.internal_receips(notification_type, ticket)
+    if(notification_type == EmailNotification::TICKET_ASSIGNED_TO_GROUP)
+      unless ticket.group.nil?
+        to_ret = ticket.group.agent_emails
+        return to_ret unless to_ret.empty?
+      end
+    else
+      ticket.responder.email unless ticket.responder.nil?
     end
   end
   

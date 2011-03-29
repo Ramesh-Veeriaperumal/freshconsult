@@ -69,18 +69,6 @@ div.action_buttons{
 		padding-left:20px;
 	}
 }
-	 
-	 
-.info-highlight{
-	font-size:13px;
-	margin:14px 0px 3px 0px;
-	padding:12px 18px;
-	color:#666666;
-	@include corners(6px);
-	border:1px solid #f4f4e9;
-	background-color:#fffbee;
-}
-
 
 
 .tab_panel{
@@ -369,7 +357,7 @@ div.action_buttons{
 	}
 }	  
  
-.converstion-sprite{
+.conversation-sprite{
 	@include clearfix;
 	float:right;
 	.image {
@@ -395,3 +383,28 @@ div.action_buttons{
 	
 }
 
+.contact-box{
+	padding-left:170px;
+	.profile_pic{
+		float:left;
+		margin-left:-150px;
+		padding:0px;
+		border:0px;
+	}
+	.info-highlight{
+		margin:8px 0px 0px -170px;
+		padding-left:165px;
+	}
+}
+
+.info-highlight{
+	font-size:13px;
+	margin:0px 0px 0px 0px;
+	padding:8px 18px;
+	color:#666666;
+	border:1px solid #f4f4e9;
+	background-color:#fffbee;
+	div{
+		padding:6px;
+	}
+}
