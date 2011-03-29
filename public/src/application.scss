@@ -184,7 +184,7 @@ body {
 	.logo{
 		@include clearfix; 
 		float:left;
-		margin:0px 0px 0px 0px; 
+		margin:0px 5px 0px; 
 	}
 	img, h3{
 		float:left;
@@ -303,11 +303,11 @@ ul.tabs{
 				text-decoration:none; 
 				color:#ffffff;
 				padding:10px 10px 10px 10px; 		
-				font-size:11px;				
+				font-size:13px;				
 				font-weight:bold;
 				text-align:center;				
 				display:block;	 
-				text-transform:uppercase;
+				text-transform:capitalize;
 			}
 			a:hover{
 				background:lighten($tab_color, 10%);
@@ -3262,14 +3262,6 @@ a.page_title{
 	background:#F6F6F6;
 	border-bottom:1px solid #f3f3f3;
 	@include corners(6px, 6px, 0px, 0px);
-}
-
-.contact-box{
-	padding-left:170px;
-	.profile_pic{
-		float:left;
-		margin-left:-150px;
-	}
 }
 
 .contact-box-additional{

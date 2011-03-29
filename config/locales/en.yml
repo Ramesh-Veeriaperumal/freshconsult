@@ -23,6 +23,17 @@ en:
    edit_forum_category: "Edit Forum Category"
    forum_confirm_msg1: "Are you sure you want to delete this category"
     
+
+ 
+   contacts:
+       deleted_message:     "This is a deleted contact"
+       restore:             "Restore"
+       emailnotverified:    "Email has not been verified for this user!"
+       
+       form_placeholder:
+           description:     "Add specific notes regarding this contact example - address, LA Lakers fan etc."
+      
+
    category:
         new: "New Category"
         edit: "Edit Category"

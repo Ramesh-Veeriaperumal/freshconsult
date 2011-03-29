@@ -4,15 +4,23 @@ class PostsController < ApplicationController
   before_filter :except => [:index, :monitored, :search, :show] do |c| 
     c.requires_permission :post_in_forums
   end
-  before_filter :only => [:edit,:destroy,:update] do |c| 
-    c.requires_permission :manage_forums
-  end
+  
+  
+  before_filter :check_user_permission,:only => [:edit,:destroy,:update] 
+  
   @@query_options = { :select => "#{Post.table_name}.*, #{Topic.table_name}.title as topic_title, #{Forum.table_name}.name as forum_name", :joins => "inner join #{Topic.table_name} on #{Post.table_name}.topic_id = #{Topic.table_name}.id inner join #{Forum.table_name} on #{Topic.table_name}.forum_id = #{Forum.table_name}.id" }
 
 	# @WBH@ TODO: This uses the caches_formatted_page method.  In the main Beast project, this is implemented via a Config/Initializer file.  Not
 	# sure what analogous place to put it in this plugin.  It don't work in the init.rb
   #caches_formatted_page :rss, :index, :monitored
   cache_sweeper :posts_sweeper, :only => [:create, :update, :destroy]
+  
+  def check_user_permission
+    if (current_user.id != @topic.user_id and  !current_user.has_manage_forums?)
+          flash[:notice] =  "You don't have sufficient privileges to access this page"
+          redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
+    end
+  end
 
   def index
     conditions = []

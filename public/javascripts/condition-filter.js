@@ -4,12 +4,11 @@
 
 // Condition Parsing 
 // This template contains the dom population information 
-var conditional_dom = function(filter, id, initFeed){
+var conditional_dom = function(filter, id, compName, initFeed){
 	var type   	  = filter.domtype;
 	var initFeed  = initFeed || {};
-	
-	// Conditional Dom created based on the options available
-	// console.log(initFeed.toSource());	 
+	var compName  = compName || "filter";
+	// Conditional Dom created based on the options available 
 	c_dom = "";
 	switch (type) {
 		case 'text':
@@ -35,8 +34,7 @@ var conditional_dom = function(filter, id, initFeed){
 		case 'comment':			
 			c_dom = jQuery("<div class=\"s_comment\" />")
 						.append(FactoryUI.paragraph("", "comment", initFeed["comment"]))
-						.append(FactoryUI.checkbox("Make this a Private Comment", "private", initFeed["private"]));
-			
+						.append(FactoryUI.checkbox("Make this a Private Comment", "private", initFeed["private"])); 
 			break;
 		case 'email_select':
 		case 'email_text':
@@ -74,14 +72,27 @@ var conditional_dom = function(filter, id, initFeed){
 						.append(body);								
 			break;	
 		
-		
+		case 'checkbox':
+			if (compName == 'action') {
+				var choices = [{
+					name: 1,
+					value: "Selected"
+				}, {
+					name: 0,
+					value: "Not selected"
+				}];
+				c_dom = FactoryUI.dropdown(choices, "value");
+				jQuery(c_dom).val(initFeed["value"]);
+			}	
+			break;
+			
 		default:
 			c_dom = "<em>Conditional dom "+type+" Not defined</em>";
 	}			
 	return c_dom;
 }
 
-var postProcessionCondition = function(filter, id){
+var postProcessCondition = function(filter, id){
 	var type = filter.domtype;
 	//console.log(filter);
 	switch (type){
@@ -149,6 +160,7 @@ rules_filter = function(name, filter_data, parentDom, options){
 		RULE_DOM		= parentDom + " " + setting.rule_dom,
 		ADD_DOM			= parentDom + " " + setting.add_dom;
 		
+			
 	var itemManager = {
 		itemNumber:0,
 		get:function(){
@@ -200,7 +212,7 @@ rules_filter = function(name, filter_data, parentDom, options){
 						opType = hg_data.get(rule.name).operatortype;
 						inner.append(FactoryUI.dropdown(operator_types.get(opType), "operator").val(rule.operator));
 					}	
-					inner.append(conditional_dom(hg_data.get(rule.name), data_id, rule));
+					inner.append(conditional_dom(hg_data.get(rule.name), data_id, name, rule));
 														
 					jQuery.data(r_dom, "inner")
 						  .append(FactoryUI.dropdown(filter_data, "name", "ruCls_"+name).val(rule.name))					  	
@@ -209,7 +221,7 @@ rules_filter = function(name, filter_data, parentDom, options){
 					list_C = jQuery(parentDom).find(setting.rule_dom);
 					r_dom.appendTo(list_C);
 					  
-					postProcessionCondition(hg_data.get(rule.name), data_id);					
+					postProcessCondition(hg_data.get(rule.name), data_id);					
 				});				
 			},
 		
@@ -268,10 +280,9 @@ rules_filter = function(name, filter_data, parentDom, options){
 		get_filter_list:domUtil.get_filter_list
 	};	 
 	
-	// Applying Events and on Window ready initialization
-	jQuery(document).ready(function(){	
+	// Applying Events and on Window ready initialization	
 		// Init Constructor
-		var init = function(){			
+		var init = function(){			 
 			hidden_ = jQuery('<input type="hidden" name="'+name+'_data" value="" />')
 							.prependTo(parentDom);	
 			
@@ -304,8 +315,8 @@ rules_filter = function(name, filter_data, parentDom, options){
 								if(hg_item.operatortype)
 								 	rule_drop.append(FactoryUI.dropdown(operator_types.get(hg_item.operatortype), "operator"))
 								 
-								rule_drop.append(conditional_dom(hg_item, data_id));
-								postProcessionCondition(hg_item, data_id);
+								rule_drop.append(conditional_dom(hg_item, data_id, name));
+								postProcessCondition(hg_item, data_id);
 							}										
 						});
 						
@@ -326,8 +337,7 @@ rules_filter = function(name, filter_data, parentDom, options){
 						
 			domUtil.init();		
 		};
-		init();			
-	});
-	
+		init();			 
+		
 	return pub_Methods;
 }

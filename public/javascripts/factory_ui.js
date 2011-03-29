@@ -43,7 +43,7 @@ window.FactoryUI = {
 		var className = className || "checkbox";
 		label   = label || "";
 		name    = name  || "";
-		checked = (checked == "on")?"checked": "" || "";
+		checked = (checked == "true")?"checked": "" || "";
 		return jQuery("<label class='"+className+"'><input type='hidden' name='"+name+"' value=false /><input type='checkbox' name='"+name+"' "+checked+" value=true />"+label+"</label>") 
 	}
 };
