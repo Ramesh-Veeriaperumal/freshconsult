@@ -47,28 +47,28 @@
 </h3>  
 <ul class="ui-form">
 	<li>
-			<label>Enter your support email eg. support@yourcompany.com </label>
-			<span class"info_data">This is also your Reply-to address</span>
+			<label><%=t('email_configs.info6')%> eg. support@yourcompany.com </label>
+			<span class"info_data"><%=t('email_configs.info7')%></span>
 			<%= f.text_field :reply_email, :class => "required text", :id => "reply_to_id" %>						
 	</li>
 	<li>	
-			<label>Forward your emails to</label>
+			<label><%=t('email_configs.info8')%></label>
 			<div id="div_reply_email" class="email_info">
 				<%= (type_check) ? @email_config.to_email : '&nbsp;' %>
 			</div>
 			<%= f.hidden_field :to_email, :id => "hidden_reply_to" %>
 	</li>	
 	<li>
-			<label>Assign to Group</label>
-			<span class="info_data">New tickets to this support email will get automatically assigned to a group </span>
+			<label><%=t('email_configs.info9')%></label>
+			<span class="info_data"><%=t('email_configs.info10')%> </span>
 			<%= collection_select(:email_config, :group_id, @groups, :id, :name, options = {:include_blank => "..."}) %>
 	</li> 
 </ul>
 <div class="button-container">
 	<div class="floatl">
-		<%= link_to('Delete', admin_email_config_path(@email_config), :method => 'delete', :confirm => 'Are you sure you want to delete this email', :class => "uiButton" ) if (type == "edit" and !@email_config.primary_role) %>
+		<%= link_to(t('delete'), admin_email_config_path(@email_config), :method => 'delete', :confirm => 'Are you sure you want to delete this email', :class => "uiButton" ) if (type == "edit" and !@email_config.primary_role) %>
 	</div>
-	<%= f.submit "Save", :class => "uiButton"  %>
-	<%= link_to("Cancel", admin_email_configs_path, :class => "uiButton", :id => "email-form-cancel" )  %>
+	<%= f.submit t('save'), :class => "uiButton"  %>
+	<%= link_to(t('cancel'), admin_email_configs_path, :class => "uiButton", :id => "email-form-cancel" )  %>
 </div> 
 <% end %>
