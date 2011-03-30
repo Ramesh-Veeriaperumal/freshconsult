@@ -25,6 +25,8 @@ en:
    forum_confirm_msg1: "Are you sure you want to delete this category"
    next:    "Next"
    close: "Close"
+   done: "Done"
+   reset: "Reset"
     
 
  
@@ -107,6 +109,16 @@ en:
            primary_supp_email: "Primary support email"
            add_supp_emails: "Additional support email(s)"
            reply_emails: "Reply Emails from Freshdesk"
+           
+   
+   email_notifications:
+           title: "Email notifications"
+           event: "Event"
+           requestor_notification: "Requestor Notification"
+           agent_notification: "Agent Notification"
+           customize_email: "Customize Email"
+           insert_placeholder: "Insert Placeholder"
+           modify_template: "Modify Requester Template"
         
    business_hours:
        title: "Business Hours"

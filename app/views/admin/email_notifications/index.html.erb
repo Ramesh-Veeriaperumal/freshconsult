@@ -74,16 +74,16 @@
 	});
 <% end %>
 
-<h3 class="title">Email notifications</h3>
+<h3 class="title"><%=t('email_notifications.title')%></h3>
 <div>
 	<% form_for :update, @email_notifications, :url => { :action => "update" }, :html => { :method => :put, :id => "Updateform" } do |f| %>
 	<%= f.hidden_field :notification_data, { :id => "AllNotification" } %>
 	<div class="grid">
 		<table border="0">
 			<tr>
-				<th>Event</th>
-				<th>Requestor Notification</th>
-				<th>Agent Notification</th>
+				<th><%=t('email_notifications.event')%></th>
+				<th><%=t('email_notifications.requestor_notification')%></th>
+				<th><%=t('email_notifications.agent_notification')%></th>
 			</tr>
 			<% @notifications.each do |item| %>
 			<% data = item[:obj] %>
@@ -92,14 +92,14 @@
 				<td>
 					<% if (item[:requester])  %>
 						<input type="checkbox" name="requester_notification" class="checkbox requester" <%= (data.requester_notification) ? "checked" : "" %> />
-						<a href="javascript:void(0)" showdiv="requester_div" class="notify_check">Customize Email</a>
+						<a href="javascript:void(0)" showdiv="requester_div" class="notify_check"><%=t('email_notifications.customize_email')%></a>
 					<% end %>
 					&nbsp;
 				</td>
 				<td>
 					<% if (item[:agent])  %>
 						<input type="checkbox" name="agent_notification" class="checkbox agent" <%= (data.agent_notification) ? "checked" : "" %> />
-						<a href="javascript:void(0)" showdiv="agent_div" class="notify_check">Customize Email</a>
+						<a href="javascript:void(0)" showdiv="agent_div" class="notify_check"><%=t('email_notifications.customize_email')%></a>
 					<% end %>
 					&nbsp;					
 				</td>				
@@ -107,23 +107,23 @@
 			<tr style="display:none;">
 				<td colspan="3">
 					<div class="requester_div">
-						<a href="javascript:void(0)" class="link_placeholder">Insert Placeholder &raquo;</a>
-						<b>Modify Requester Template</b>
+						<a href="javascript:void(0)" class="link_placeholder"><%=t('email_notifications.insert_placeholder')%> &raquo;</a>
+						<b><%=t('email_notifications.modify_template')%></b>
 						
 						<input type="hidden" value="<%= h ("#{data.requester_template}") %>" />
 						<textarea name="requester_template" class="requesteremail"><%= h ("#{data.requester_template}") %></textarea>
 						
-						<a href="javascript:void(0)" class="button close_template">Done</a>
-						<a href="javascript:void(0)" class="button reset_template">Reset</a>
+						<a href="javascript:void(0)" class="button close_template"><%=t('done')%></a>
+						<a href="javascript:void(0)" class="button reset_template"><%=t('reset')%></a>
 					</div>
 					<div class="agent_div">
 						<b>Modify Agent Template</b>
-						<a href="javascript:void(0)" class="link_placeholder">Insert Placehoder &raquo;</a>
+						<a href="javascript:void(0)" class="link_placeholder"><%=t('email_notifications.insert_placeholder')%> &raquo;</a>
 						<input type="hidden" value="<%= h ("#{data.agent_template}") %>" />
 						<textarea name="agent_template" class="agentemail"><%= h ("#{data.agent_template}") %></textarea>
 						
-						<a href="javascript:void(0)" class="button close_template">Done</a>
-						<a href="javascript:void(0)" class="button reset_template">Reset</a>
+						<a href="javascript:void(0)" class="button close_template"><%=t('done')%></a>
+						<a href="javascript:void(0)" class="button reset_template"><%=t('reset')%></a>
 					</div> 
 				</td>
 			</tr>
@@ -131,8 +131,8 @@
 			
 		</table>
 		<div class="padding6">
-			<%= f.submit "Save", { :class => "fdbutton" } %>
-			<%= link_to "Back", "/admin/home", { :class => "fdbutton grey" } %>
+			<%= f.submit t('save'), { :class => "fdbutton" } %>
+			<%= link_to t('back'), "/admin/home", { :class => "fdbutton grey" } %>
 		</div>
 	</div>
 	<% end %>
