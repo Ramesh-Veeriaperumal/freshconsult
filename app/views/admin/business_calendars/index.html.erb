@@ -64,20 +64,18 @@
 
 <% content_for :sidebar do %>
 	<div class="sidepanel">
-		<h3 class="title">Business Hours</h3>
-		<p>Setting up your Business Hours in Freshdesk allows you to get more control on your SLAs.
-For eg. If you helpdesk works 9AM - 6PM Mon-Fri and a customer sends a high priority ticket at 4 PM on Tuesday with a SLA target resolution time of 4 hours, then the ticket Due By time is set as 11 AM on Wednesday.
-You can configure your SLAs to either respect or ignore business hours.</p>
-		<h3 class="title">Holidays</h3>
-		<p>Holidays work exactly like Business hours. For eg. If you helpdesk works 9AM - 6PM Mon-Fri and a customer sends a medium priority ticket at 8 PM on Friday with a SLA target resolution time of 24 hours, then the ticket Due By time is set as 9AM on Tuesday.(not 8PM on Sat)</p>
+		<h3 class="title"><%=t('business_hours.title')%></h3>
+		<p><%=t('business_hours.info1')%>.</p>
+		<h3 class="title"><%=t('business_hours.holidays')%></h3>
+		<p><%=t('business_hours.info2')%></p>
 	</div>
 <% end %>
 
-<h3 class="title">Business Hours</h3>
+<h3 class="title"><%=t('business_hours.title')%></h3>
 	<% form_for :business_calenders, @business_calendars, :url => { :action => "update" },  :html => { :method => :put, :id => "BusinessHours"  } do |f| %>
 	<ul class="ui-form business_hours"> 
 		<li>
-			<label>Helpdesk Hours</label>			
+			<label><%=t('business_hours.helpdesk_hours')%></label>			
 		</li>
 		<li>
 			<table class="business_time">
@@ -91,7 +89,7 @@ You can configure your SLAs to either respect or ignore business hours.</p>
 				<tr>
 					<td>
 						<label>
-							<%= f.radio_button :fullweek, false %> Specific Working Hours
+							<%= f.radio_button :fullweek, false %> <%=t('business_hours.info3')%>
 						</label>
 						<% display_week = (@business_calendars.business_time_data[:fullweek] == false) ? 'block':'none' %>
 						<div class="specific_hours" id="SpecificHoursDiv" style="display:<%=display_week%>"  >
@@ -100,7 +98,7 @@ You can configure your SLAs to either respect or ignore business hours.</p>
 								<strong>to </strong>
 								<%= f.text_field :end_of_workday, :class => "time"  %>
 							</div>
-							<div class="info_data">Working Days for your Helpdesk</div>
+							<div class="info_data"><%=t('business_hours.info4')%></div>
 							<div id="DAYS_LIST" class="business_days checkbox">
 								<% weekdays = @business_calendars.business_time_data[:weekdays] %>
 								<% weekday_human_list = [ "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" ] %>
@@ -120,7 +118,7 @@ You can configure your SLAs to either respect or ignore business hours.</p>
 	    </li>		
 		<li class="seperator"></li>					
 		<li>
-			<label>Yearly Holiday List <span class="info_data">Holidays will be ignored when calculating SLA for a ticket</span></label>
+			<label><%=t('business_hours.holiday_list')%> <span class="info_data"><%=t('business_hours.info5')%></span></label>
 			<table>
 				<tr>
 					<td width="55%" class="holidaylist" style="padding-right:10px;"> 
@@ -135,18 +133,18 @@ You can configure your SLAs to either respect or ignore business hours.</p>
 					</td>
 					<td class="borderleft" style="padding-left:10px;">
 						<%= date_select("holiday", "date", { :order => [:month, :day], :use_short_month => true } ) %><br />
-						<label class="overlabel" for="holiday_name">Holiday name</label>
+						<label class="overlabel" for="holiday_name"><%=t('business_hours.holiday_name')%></label>
 						<%= text_field("holiday", "name") %>
 						
 						<%= link_to_function( "Add Holiday", "addHoliday()", :class => "fdbutton grey" ) %>
-						<b class="text_red" id="HolidayValidation" style="display:none;"> Holiday already added </b>
+						<b class="text_red" id="HolidayValidation" style="display:none;"> <%=t('business_hours.holiday_added')%> </b>
 					</td>
 				</tr>				
 			</table>	
 		</li>
 	</ul>
 	<div>
-		<%= f.submit "Save", :class => "fdbutton" %>
-		<%= link_to "Back", "/admin/home", :class => "fdbutton grey" %>
+		<%= f.submit t('save'), :class => "fdbutton" %>
+		<%= link_to t('back'), "/admin/home", :class => "fdbutton grey" %>
 	</div>
 	<% end %>
