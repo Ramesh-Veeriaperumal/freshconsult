@@ -49,6 +49,12 @@ class Customer < ActiveRecord::Base
   CUST_TYPE_BY_KEY = Hash[*CUST_TYPES.map { |i| [i[2], i[1]] }.flatten]
   CUST_TYPE_BY_TOKEN = Hash[*CUST_TYPES.map { |i| [i[0], i[2]] }.flatten]
   
+  def self.filter(letter, page)
+  paginate :per_page => 10, :page => page,
+           :conditions => ['name like ?', "#{letter}%"],
+           :order => 'name'
+  end
+
   
   #setting default sla
   def check_sla_policy

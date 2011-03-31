@@ -7,14 +7,10 @@ class CustomersController < ApplicationController
   
   def index
     
-    @customers = current_account.customers.all
-
     respond_to do |format|
       format.html  do
-        @customers = @customers.paginate(
-          :page => params[:page], 
-          :order => 'name',
-          :per_page => 10)
+        @customers =current_account.customers.filter(params[:letter],params[:page])
+
       end
       format.atom do
         @customers = @customers.newest(20)
