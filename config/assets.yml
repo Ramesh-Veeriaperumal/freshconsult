@@ -21,6 +21,7 @@ javascripts:
   workspace: 
     - public/javascripts/utils.js
     - public/javascripts/factory_ui.js
+    - public/javascripts/json2.js
     - public/javascripts/globalinit.js
 
 stylesheets:
@@ -31,6 +32,8 @@ stylesheets:
     - public/stylesheets/default.uni-form.css
     - public/stylesheets/validation.css
     - public/stylesheets/form.css
-    - public/stylesheets/temp-dev.css 
+    - public/stylesheets/temp-dev.css
+    - public/stylesheets/buttons.css
+    - public/stylesheets/jquery-ui-1.8.7.custom.css  
   ie:
     - public//stylesheets/ie.css    

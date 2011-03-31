@@ -5,13 +5,11 @@
           });   
   });
 <% end %>
-<%
-user = @profile
-user = @profile.user unless current_user.customer?
-%>
+<% user = @profile %>
+<% user = @profile.user unless current_user.customer? %>
  
- <% fields_for "users", @profile do |usr| %>
-     <%= error_messages_for :user %> 
+<% fields_for "users", @profile do |usr| %>
+    <%= error_messages_for :user %> 
  	<ul class="ui-form">
 		<li>
 			<%= label(:user, :name, "Full Name" ) %>
@@ -23,14 +21,9 @@ user = @profile.user unless current_user.customer?
 		</li>	
 		<li class="medium">
 			<%= label(:user, :email, "Email") %>			
-			<%= text_field(:user, :email, :class => "text required email disabled", :id => "email_primary" , :value => user.email , :disabled =>true) %>			
-		</li>	
-		
-		<li>
-			
-			<%= hidden_field(:user, :user_role, :id=>"user_role", :value => user.user_role) %>
+			<%= text_field(:user, :email, :class => "text required email disabled", :id => "email_primary" , :value => user.email , :disabled =>true) %>
+			<%= hidden_field(:user, :user_role, :id=>"user_role", :value => user.user_role) %>			
 		</li>
-		
 		<li class="small">
 			<%= label(:user, :phone, "Phone No.") %>	
 			<div>
@@ -44,74 +37,40 @@ user = @profile.user unless current_user.customer?
 		</li>
 		
 		<% if current_user.customer?%>
-		
-		<li class="small">
-			<%= label(:user, :twitter_id, "Twitter Id") %>
-			<%= text_field(:user, :twitter_id, :class => "text" ) %>
-		</li>
-		<li>
-			<%
-				company_name = "";
-				unless user.customer.nil?
-					company_name =  user.customer.name
-				end
-			%>
-			<%= label(:user, :customer, "Company") %>
-			<%= text_field(:user, :customer, :class => "text" , :value => company_name, :id => "contact_customer" ) %>
-		</li>
+			<li class="small">
+				<%= label(:user, :twitter_id, "Twitter Id") %>
+				<%= text_field(:user, :twitter_id, :class => "text" ) %>
+			</li>
+			<li>
+				<%
+					company_name = "";
+					unless user.customer.nil?
+						company_name =  user.customer.name
+					end
+				%>
+				<%= label(:user, :customer, "Company") %>
+				<%= text_field(:user, :customer, :class => "text" , :value => company_name, :id => "contact_customer" ) %>
+			</li>
 		<%end%>
 		
-		
-		<li>
-			<%= render :partial => "/shared/profileavatar", :locals => { :user => user, :type => type } %>
-		</li>
-		<li>
-			
-			<%= label(:user , :time_zone, "Time zone") %>			
-			<%= time_zone_select (:user, :time_zone, ActiveSupport::TimeZone.all, :default => user.time_zone) %>
-		</li>
+			<li>
+				<%= render :partial => "/shared/profileavatar", :locals => { :user => user, :type => "edit" } %>
+			</li>
+			<li>
+				
+				<%= label(:user , :time_zone, "Time zone") %>			
+				<%= time_zone_select (:user, :time_zone, ActiveSupport::TimeZone.all, :default => user.time_zone) %>
+			</li>
 		
 		<%unless current_user.customer?%>
-		<li>
-			<%= label(:agent, :signature, "Signature") %>
-			<label class="overlabel" for="user_binfo">
-				Add signature 
-			</label>
-			<%= text_area(:agent, :signature, :class => "text", :id => "user_binfo" , :value =>@profile.signature  ) %>			
-			<%= hidden_field(:agent, :user_id, :id => "user_id", :value =>@profile.user_id  ) %>
+			<li>
+				<%= label(:agent, :signature, "Signature") %>
+				<label class="overlabel" for="user_binfo">
+					Add signature 
+				</label>
+				<%= text_area(:agent, :signature, :class => "text", :id => "user_binfo" , :value =>@profile.signature  ) %>			
+				<%= hidden_field(:agent, :user_id, :id => "user_id", :value =>@profile.user_id  ) %>
 		</li>
 		<%end%>
 	</ul>
-<% content_for :sidebar do %> 	
-	<div class="sidepanel">
-	<div class="ui-form">
-<h3 class="title">Change My Password</h3>
-<span class="seperator"></span>
-<% form_tag :action=> :change_password,:controller => 'profiles', :method => :put do |f| %>
-  
-  <ul>
-  
-	<%= hidden_field_tag 'user_id', params[:id] %> 
-  
-	<li> 
-		<label for="current_password">Current password</label> 
-		<input class="password required" id="current_password" name="user[current_password]" size="30" type="password" value="" /> 
-	</li> 
-	<li> 
-		<label for="password">New password</label> 
-		<input class="password" id="password" name="user[password]" size="30" type="password" value="" /> 
-	</li> 
-	<li> 
-		<label for="password_confirmation">Confirm password</label> 
-		<input class="password" id="password_confirmation" name="user[password_confirmation]" size="30" type="password" value="" /> 
-	</li> 
-	
-  
-  </ul>
-  
-  <%= submit_tag "change password", :class => "fdbutton" %>
-<% end %>
-</div>
-</div>	
- <% end%>
 <% end %>

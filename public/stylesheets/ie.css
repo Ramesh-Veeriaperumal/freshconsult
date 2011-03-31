@@ -110,20 +110,20 @@ a.new_ticket {
 }
 
 /* line 11, ../src/ie.scss */
+.nav_search {
+  margin-top: 4px;
+}
+
+/* line 12, ../src/ie.scss */
 .nav_search div.search_bar {
   padding-top: 4px;
   padding-bottom: 3px;
 }
 
-/* line 12, ../src/ie.scss */
+/* line 13, ../src/ie.scss */
 .nav_search input {
   top: 1px;
   left: 2px;
-}
-
-/* line 14, ../src/ie.scss */
-ul.tabs li {
-  width: auto;
 }
 
 /* line 15, ../src/ie.scss */
@@ -174,4 +174,10 @@ ul.icon_grid li a div {
 /* line 43, ../src/ie.scss */
 .search_results_bar .results li h4 {
   margin-left: -50px;
+}
+
+/* line 45, ../src/ie.scss */
+.uiButton {
+  padding: 4px 6px !important;
+  font-size: 11px !important;
 }

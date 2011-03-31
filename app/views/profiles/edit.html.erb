@@ -1,14 +1,36 @@
-<div class="pageContent">
-	<h3 class="content_title">My Info</h3>
-	<span class="seperator"></span>
-	<% form_for @profile , :url => {:action=> "update" ,:controller => 'profiles'} , :html => { :multipart => true } do |f| %>
-		<%= f.error_messages %>
-		
-		<%= render :partial => "form", :locals => { :type => "edit" } %>
-		<div class="button-container">
-    		<%= f.submit "Update", { :class => "fdbutton" } %>
-			<%= link_to "Cancel", root_path, :class => "fdbutton grey" %>
-  		</div>	  
-	<%end%>
-</div>
- 
+<%= content_tag( :h3, t("profile.edit"), :class => "title" ) %>
+<% form_for @profile , :url => {:action=> "update" ,:controller => 'profiles'} , :html => { :multipart => true } do |f| %>
+	<%= f.error_messages %>
+	<%= render :partial => "form" %>
+	<div class="button-container">
+   		<%= f.submit t('save_changes'), { :class => "uiButton" } %>
+		<%= link_to t('cancel'), root_path, :class => "uiButton" %>
+	</div>	  
+<%end%>
+
+
+<% content_for :sidebar do %> 	
+	<div class="sidepanel">
+		<%= content_tag( :h3, t("profile.change_password"), :class => "title" ) %>
+		<% form_tag :action => :change_password, :controller => 'profiles', :method => :put do |f| %>
+  			<%= hidden_field_tag 'user_id', params[:id] %>
+			<ul class="ui-form">
+				<li> 
+					<label for="current_password"><%= t("profile.current_password") %></label> 
+					<input class="text required" id="current_password" name="user[current_password]" size="30" type="password" value="" /> 
+				</li> 
+				<li> 
+					<label for="password"><%= t("profile.new_password") %></label> 
+					<input class="text" id="password" name="user[password]" size="30" type="password" value="" /> 
+				</li> 
+				<li> 
+					<label for="password_confirmation"><%= t("profile.confirm_password") %></label> 
+					<input class="text" id="password_confirmation" name="user[password_confirmation]" size="30" type="password" value="" /> 
+				</li>
+  			</ul>
+			<div class="button-container">
+  				<%= submit_tag t("profile.change_password"), :class => "uiButton" %>
+			</div>
+		<% end %>
+	</div>	
+<% end%>
