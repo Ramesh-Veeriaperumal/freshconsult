@@ -1,48 +1,44 @@
-@import "blueprint";
 @import "mixins";
 
-// Generate the blueprint IE-specific customizations:
-@include blueprint-ie;
+.ie6, .ie7, .ie8, .ie9{
 
-.wrapper{ width: 1024px; }
-
-a.new_ticket{ display:inline; }
-
-.nav_search { margin-top:4px; }
-.nav_search div.search_bar{ padding-top:4px; padding-bottom:3px; }
-.nav_search input{ top:1px; left:2px; }
- 
-ul.summary{ border-color:ececec; }
-
-ul.icon_grid li a div{ font-weight:bold; }
-
-.uniForm, .uniForm fieldset, .uniForm .ctrlHolder, .uniForm .formHint, .uniForm .buttonHolder, .uniForm .ctrlHolder ul{ zoom:1; }
-.uniForm .textInput,
-      .uniForm .fileUpload,
-      .uniForm .selectInput,
-      .uniForm select{ height:24px; }
-      
-#custom_form li{
-	height:53px !important;
-}
-
-.awesome, .awesome:visited{
-	border: 1px solid #666666;
-} 
-
-.fdbutton{
-	width:auto; 
-	background:#f1fce3;
-}
-
-.ui-draggable-dragging{
-	margin-left:-18px;
-	margin-top:-45px;
-}
-
-.search_results_bar .results li h4{ margin-left:-50px;}
-
-.uiButton{
-	padding:4px 6px !important;
-	font-size:11px !important;
+	a.new_ticket{ display:inline; }
+	
+	.nav_search { margin-top:4px; } 
+	.nav_search div.search_bar{ padding-top:4px; padding-bottom:3px; }
+	.nav_search input{ top:1px; left:2px; }
+	 
+	ul.summary{ border-color:ececec; }
+	
+	ul.icon_grid li a div{ font-weight:bold; }
+	
+	.uniForm, .uniForm fieldset, .uniForm .ctrlHolder, .uniForm .formHint, .uniForm .buttonHolder, .uniForm .ctrlHolder ul{ zoom:1; }
+	.uniForm .textInput,
+	      .uniForm .fileUpload,
+	      .uniForm .selectInput,
+	      .uniForm select{ height:24px; }
+	      
+	#custom_form li{
+		height:53px !important;
+	}
+	
+	.awesome, .awesome:visited{
+		border: 1px solid #666666;
+	} 
+	
+	.uiButton{
+		width:auto;
+	}
+	
+	.ui-draggable-dragging{
+		margin-left:-18px;
+		margin-top:-45px;
+	}
+	
+	.search_results_bar .results li h4{ margin-left:-50px;}
+	
+	.uiButton{
+		padding:4px 6px !important;
+		font-size:11px !important;
+	}
 }

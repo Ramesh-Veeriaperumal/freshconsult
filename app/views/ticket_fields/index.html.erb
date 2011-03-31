@@ -22,9 +22,9 @@
             </li>
         </ul> 
 		<span class="seperator"></span>
-	<%	json_data = @ticket_fields.json_data %>
+		<% json_data = @ticket_fields.json_data %>
 	
-	<% form_tag :action=> :update, :controller => 'ticket_fields', :method => :post do |f| %>
+		<% form_tag :action=> :update, :controller => 'ticket_fields', :method => :post do |f| %>
 		<div class="custom_form_outer">
 			<h4 class="title">
 				Customize your “New Ticket” form.
@@ -35,9 +35,9 @@
 			<input type="hidden" name="jsonData" id="field_values" value='<%=json_data%>' />
 			<span class="seperator"></span>
 			<div class="alignright" id="button_panel">
-				<%= link_to "&larr; cancel and go back", "/admin/home", :class => "button floatl" %> 
+				<%= link_to "&larr; cancel and go back", "/admin/home", :class => "uiButton floatl" %> 
 				<!--a href="Javascript:void(0)" class="button" id="SaveForm">Save Form</a-->
-				<%= submit_tag "Save Form", :class => "button", :id => "SaveForm" %>
+				<%= submit_tag "Save Form", :class => "uiButton", :id => "SaveForm" %>
 			</div>
 		</div>
 		<%end%>
