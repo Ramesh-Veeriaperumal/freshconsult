@@ -16,7 +16,7 @@ class PostsController < ApplicationController
   cache_sweeper :posts_sweeper, :only => [:create, :update, :destroy]
   
   def check_user_permission
-    if (current_user.id != @topic.user_id and  !current_user.has_manage_forums?)
+    if (current_user.id != @post.user_id and  !current_user.has_manage_forums?)
           flash[:notice] =  "You don't have sufficient privileges to access this page"
           redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
     end
