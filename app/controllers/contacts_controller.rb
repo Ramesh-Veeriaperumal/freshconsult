@@ -13,8 +13,9 @@ class ContactsController < ApplicationController
   
   def index
     
-    @contacts = self.instance_variable_set('@' + self.controller_name,
-    scoper.find(:all, :order => 'name' ))       
+    #@contacts = self.instance_variable_set('@' + self.controller_name,  scoper.find(:all, :order => 'name' ))
+    
+
     
     respond_to do |format|
       format.html  do
