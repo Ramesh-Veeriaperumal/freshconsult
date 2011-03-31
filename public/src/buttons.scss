@@ -1,0 +1,154 @@
+@import "base";
+@import "mixins";
+
+
+.uiButton, .uiButton:visited, .fdbutton, .fdbutton:visited {
+	@include button-base;
+	@include pie;
+	background-image:url(../images/overlay-button.png);
+	background-color:#ececec;
+	background-repeat:repeat-x; 
+	color: #666666;
+	display:inline-block; 
+	text-decoration: none;
+	@include corners(4px);
+	font-weight:bold;
+	margin:1px; 
+	line-height:17px;
+	border: 1px solid #d4d4d4;
+	padding:5px 12px;
+	position: relative;
+	font-size:12px;
+	cursor: pointer;
+}
+
+.uiButton:hover, .fdbutton:hover				{ background-color:$tab_color; border-color: darken($tab_color, 10%); color:#ffffff; @include text-shadow(rgba(0, 0, 0, 0.1), -1px, -1px, 1px); }
+.uiButton:active, .fdbutton:active				{ top: 1px; }
+.small.uiButton, .small.uiButton:visited 		{ font-size: 11px;  }
+.uiButton, .fdbutton, .uiButton:visited, .fdbutton:visited, 
+.medium.uiButton, .medium.uiButton:visited 		{ font-size: 12px;}
+.large.uiButton, .large.uiButton:visited 		{ font-size: 14px; padding: 8px 14px 9px; }
+
+
+.fdbutton{
+	@include anchor-button;
+    @include min-width(80px);
+    padding: 7px 10px 7px 12px;    
+    position:relative;
+    margin: 2px;
+    text-align:center;
+}
+
+
+div.action_buttons{
+	position:relative;
+	float:right;
+	@include corners(4px);
+	margin:-5px 0px 2px 5px;
+	@include vertical-gradient(#f8f8f8, #f2f2f2); 
+	padding:4px 7px 3px 3px; 
+	border:1px solid darken(#f2f2f2, 5%);
+	a{
+		text-decoration:none;
+		float:left;
+		margin:0px 0px;
+		font-size:11px;
+		font-weight:bold;
+		padding:2px 8px 2px 8px;
+		border-right:1px solid darken(#f2f2f2, 10%);
+		@include link-colors(#333333, #666666, #333333, #333333);
+		@include text-shadow(#ffffff, 0px, 1px, 1px);
+	}
+	
+	a.last{ 
+		border:0px;
+		padding-right:4px;
+	}
+	a.icon{
+		padding-left:20px;
+	}
+}
+
+/* BUTTONS */
+
+.buttons a, .buttons button{
+    display:block;
+    float:left;
+    margin:0 7px 0 0;
+    background-color:#f5f5f5;
+    border:1px solid #dedede;
+    border-top:1px solid #eee;
+    border-left:1px solid #eee;
+ 	@include corners(6px);
+    font-size:100%;
+    line-height:130%;
+    text-decoration:none;
+    font-weight:bold;
+    color:#565656;
+    cursor:pointer;
+    padding:5px 10px 6px 10px; /* Links */
+}
+.buttons button{
+    width:auto;
+    overflow:visible;
+    padding:4px 10px 3px 10px; /* IE6 */
+}
+.buttons button[type]{
+    padding:5px 10px 5px 7px; /* Firefox */
+    line-height:17px; /* Safari */
+}
+*:first-child+html button[type]{
+    padding:4px 10px 3px 7px; /* IE7 */
+}
+.buttons button img, .buttons a img{
+    margin:0 3px -3px 0 !important;
+    padding:0;
+    border:none;
+    width:16px;
+    height:16px;
+}
+
+/* STANDARD */
+
+button:hover, .buttons a:hover{
+    background-color:#dff4ff;
+    border:1px solid #c2e1ef;
+    color:#336699;
+}
+.buttons a:active{
+    background-color:#6299c5;
+    border:1px solid #6299c5;
+    color:#fff;
+}
+
+/* POSITIVE */
+
+button.positive, .buttons a.positive{
+    color:#529214;
+}
+.buttons a.positive:hover, button.positive:hover{
+    background-color:#E6EFC2;
+    border:1px solid #C6D880;
+    color:#529214;
+}
+.buttons a.positive:active{
+    background-color:#529214;
+    border:1px solid #529214;
+    color:#fff;
+}
+
+/* NEGATIVE */
+
+.buttons a.negative, button.negative{
+    color:#d12f19;
+}
+.buttons a.negative:hover, button.negative:hover{
+    background:#fbe3e4;
+    border:1px solid #fbc2c4;
+    color:#d12f19;
+}
+.buttons a.negative:active{
+    background-color:#d12f19;
+    border:1px solid #d12f19;
+    color:#fff;
+}

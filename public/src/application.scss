@@ -6,7 +6,7 @@ $color_pulp:#F3F1EC;
 
 /* Color Definitions */
 
-a{ @include link-colors(#4D769F, #3399cc, #4D769F, #4D769F); }
+a{ @include link-colors(#4D769F, #3399cc); }
 a:hover{text-decoration:none;}
 
 p{
@@ -266,7 +266,7 @@ body {
 }
 
 a.new_ticket, .nav_search div.search_bar{
-	@include shadows(#555555, 0px, 0px, 4px);
+	@include shadows(#777777, 0px, 0px, 2px);
 	@include pie;
 	@include corners(4px);  
 	margin-top:2px;
@@ -306,6 +306,7 @@ ul.tabs{
 				text-align:center;				
 				display:block;	 
 				text-transform:capitalize;
+				@include text-shadow(rgba(0, 0, 0, 0.2), 1px, 1px, 1px);
 			}
 			a:hover{
 				background:lighten($tab_color, 10%);

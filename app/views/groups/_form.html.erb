@@ -53,13 +53,16 @@
 			});			
 		
 		jQuery("#group_form").submit(function(ev){			
-			activeAgents = $H();
-			jQuery("ul#Active_list li")
-				.each(function(index, item){
-					activeAgents.set(item.getAttribute("agent_id"), item.getAttribute("agent_name"));					
+			try {
+				activeAgents = $H();
+				jQuery("ul#Active_list li").each(function(index, item){
+					activeAgents.set(item.getAttribute("agent_id"), item.getAttribute("agent_name"));
 				});
-			jQuery("#agent_list").val(activeAgents.toJSON());
-			//console.log(jQuery("#agent_list").val());	
+				jQuery("#agent_list").val(JSON.stringify(activeAgents.toJSON()));
+			}catch(e){
+				jQuery("#agent_list").val('{}');
+			}	
+			//return false;
 		});
 		
 		toggleText();
@@ -70,20 +73,7 @@
 		  } else {
 		  	jQuery(this).find(".button").hide(); 
 		  }
-		});
-			/*jQuery("ul#Inactive_list li")
-				.live("click", function(ev){					
-					jQuery(this)
-						.detach()
-					    .appendTo("#Active_list");				
-				});
-			
-			jQuery("ul#Active_list li")
-				.live("click", function(ev){					
-					jQuery(this)
-						.detach()
-					    .appendTo("#Inactive_list");				
-				});*/
+		}); 
 	});
  </script>
  <h3 class="title"><%=title%></h3> 
@@ -184,7 +174,7 @@
 	  </ul>
 	  <br />
 	  <div class="button-container">	    
-		<%= f.submit 'Save', :class => "fdbutton" %>
-		<%= link_to 'Cancel', groups_path, :class => "fdbutton grey" %>	
+		<%= f.submit t('save'), :class => "uiButton" %>
+		<%= link_to t('cancel'), groups_path, :class => "uiButton" %>	
 	  </div>
 <% end %>

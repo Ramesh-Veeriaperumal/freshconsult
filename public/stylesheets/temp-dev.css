@@ -1,151 +1,6 @@
 @charset "UTF-8";
 /* Theme Colors and layout Defaults */
 /* line 4, ../src/temp-dev.scss */
-.uiButton, .uiButton:visited, .fdbutton, .fdbutton:visited {
-  background-image: url(../images/overlay-button.png);
-  background-color: #ececec;
-  background-repeat: repeat-x;
-  display: inline-block;
-  padding: 5px 10px 6px;
-  color: #666666;
-  text-decoration: none;
-  -moz-border-radius: 4px 4px 4px 4px;
-  -webkit-border-radius: 4px 4px 4px 4px;
-  border-radius: 4px 4px 4px 4px;
-  font-weight: bold;
-  margin: 0px 1px;
-  border: 1px solid #d4d4d4;
-  position: relative;
-  cursor: pointer;
-}
-
-/* line 20, ../src/temp-dev.scss */
-.uiButton:hover, .fdbutton:hover {
-  background-color: #7cb537;
-  border-color: #618e2b;
-  color: #ffffff;
-  text-shadow: rgba(0, 0, 0, 0.1) -1px -1px 1px;
-}
-
-/* line 21, ../src/temp-dev.scss */
-.uiButton:active, .fdbutton:active {
-  top: 1px;
-}
-
-/* line 22, ../src/temp-dev.scss */
-.small.uiButton, .small.uiButton:visited {
-  font-size: 11px;
-}
-
-/* line 24, ../src/temp-dev.scss */
-.uiButton, .fdbutton, .uiButton:visited, .fdbutton:visited,
-.medium.uiButton, .medium.uiButton:visited {
-  font-size: 12px;
-}
-
-/* line 25, ../src/temp-dev.scss */
-.large.uiButton, .large.uiButton:visited {
-  font-size: 14px;
-  padding: 8px 14px 9px;
-}
-
-/* line 27, ../src/temp-dev.scss */
-input.uiButton {
-  padding: 4px 10px 5px 10px;
-  position: relative;
-  top: -1px;
-}
-
-/* line 34, ../src/temp-dev.scss */
-.fdbutton {
-  display: -moz-inline-box;
-  -moz-box-orient: vertical;
-  display: inline-block;
-  vertical-align: middle;
-  *vertical-align: auto;
-  margin: 0.7em 0.5em 0.7em 0;
-  border-width: 1px;
-  border-style: solid;
-  font-family: "Lucida Grande", Tahoma, Arial, Verdana, sans-serif;
-  font-size: 100%;
-  line-height: 130%;
-  font-weight: bold;
-  text-decoration: none;
-  cursor: pointer;
-  padding: 5px 10px 5px 7px;
-  min-width: 80px;
-  width: auto !important;
-  width: 80px;
-  padding: 7px 10px 7px 12px;
-  position: relative;
-  margin: 2px;
-  text-align: center;
-}
-/* line 7, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
-.fdbutton {
-  *display: inline;
-}
-/* line 75, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/blueprint/stylesheets/blueprint/_buttons.scss */
-.fdbutton img {
-  margin: 0 3px -3px 0 !important;
-  padding: 0;
-  border: none;
-  width: 16px;
-  height: 16px;
-  float: none;
-}
-
-/* line 44, ../src/temp-dev.scss */
-div.action_buttons {
-  position: relative;
-  float: right;
-  -moz-border-radius: 4px 4px 4px 4px;
-  -webkit-border-radius: 4px 4px 4px 4px;
-  border-radius: 4px 4px 4px 4px;
-  margin: -5px 0px 2px 5px;
-  background: #f8f8f8;
-  background: -moz-linear-gradient(top, #f8f8f8 0%, #f2f2f2 100%);
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #f8f8f8), color-stop(100%, #f2f2f2));
-  background: linear-gradient(#f8f8f8, #f2f2f2);
-  -pie-background: linear-gradient(#f8f8f8, #f2f2f2);
-  padding: 4px 7px 3px 3px;
-  border: 1px solid #e5e5e5;
-}
-/* line 52, ../src/temp-dev.scss */
-div.action_buttons a {
-  text-decoration: none;
-  float: left;
-  margin: 0px 0px;
-  font-size: 11px;
-  font-weight: bold;
-  padding: 2px 8px 2px 8px;
-  border-right: 1px solid #d8d8d8;
-  color: #333333;
-  text-shadow: white 0px 1px 1px;
-}
-/* line 18, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/compass/stylesheets/compass/utilities/links/_link-colors.scss */
-div.action_buttons a:visited {
-  color: #333333;
-}
-/* line 24, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/compass/stylesheets/compass/utilities/links/_link-colors.scss */
-div.action_buttons a:hover {
-  color: #666666;
-}
-/* line 27, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/compass/stylesheets/compass/utilities/links/_link-colors.scss */
-div.action_buttons a:active {
-  color: #333333;
-}
-/* line 64, ../src/temp-dev.scss */
-div.action_buttons a.last {
-  border: 0px;
-  padding-right: 4px;
-}
-/* line 68, ../src/temp-dev.scss */
-div.action_buttons a.icon {
-  padding-left: 20px;
-}
-
-/* line 74, ../src/temp-dev.scss */
 .tab_panel {
   border-bottom: 1px solid #cfcfcf;
   margin: 5px -20px 0px -20px;
@@ -154,13 +9,13 @@ div.action_buttons a.icon {
   *zoom: 1;
   display: block;
 }
-/* line 79, ../src/temp-dev.scss */
+/* line 9, ../src/temp-dev.scss */
 .tab_panel b {
   margin-right: 10px;
   padding: 5px 0px 0px 0px;
   float: left;
 }
-/* line 85, ../src/temp-dev.scss */
+/* line 15, ../src/temp-dev.scss */
 .tab_panel a {
   background: #cfcfcf;
   position: relative;
@@ -180,19 +35,19 @@ div.action_buttons a.icon {
   -pie-background: linear-gradient(#fcfcfc, #f1f1f1);
   border-bottom: 1px solid #eaeaea;
 }
-/* line 101, ../src/temp-dev.scss */
+/* line 31, ../src/temp-dev.scss */
 .tab_panel a.last {
   -moz-border-radius: 0px 4px 4px 0px;
   -webkit-border-radius: 0px 4px 4px 0px;
   border-radius: 0px 4px 4px 0px;
 }
-/* line 104, ../src/temp-dev.scss */
+/* line 34, ../src/temp-dev.scss */
 .tab_panel a.first {
   -moz-border-radius: 4px 0px 0px 4px;
   -webkit-border-radius: 4px 0px 0px 4px;
   border-radius: 4px 0px 0px 4px;
 }
-/* line 107, ../src/temp-dev.scss */
+/* line 37, ../src/temp-dev.scss */
 .tab_panel a.active, .tab_panel a:hover {
   background: #f5f5f5;
   background: -moz-linear-gradient(top, #f5f5f5 0%, #e1e1e1 100%);
@@ -201,24 +56,24 @@ div.action_buttons a.icon {
   -pie-background: linear-gradient(#f5f5f5, #e1e1e1);
 }
 
-/* line 112, ../src/temp-dev.scss */
+/* line 42, ../src/temp-dev.scss */
 .solutions_text {
   padding-top: 8px;
   font-family: Georgia, Verdana, Arial, Helvetica, sans-serif;
   font-size: 14px;
 }
-/* line 116, ../src/temp-dev.scss */
+/* line 46, ../src/temp-dev.scss */
 .solutions_text img {
   max-width: 100%;
   height: auto;
 }
-/* line 117, ../src/temp-dev.scss */
+/* line 47, ../src/temp-dev.scss */
 .solutions_text ol, .solutions_text ul {
   margin: 14px 0px 14px 0px;
   padding: 0px 0px 0px 40px;
   line-height: 17px;
 }
-/* line 118, ../src/temp-dev.scss */
+/* line 48, ../src/temp-dev.scss */
 .solutions_text blockquote {
   margin: 1em 1em;
   color: #999;
@@ -226,39 +81,39 @@ div.action_buttons a.icon {
   padding: 6px 6px 1px 1em;
   background-color: #EEE;
 }
-/* line 119, ../src/temp-dev.scss */
+/* line 49, ../src/temp-dev.scss */
 .solutions_text ul {
   list-style: disc outside;
 }
-/* line 120, ../src/temp-dev.scss */
+/* line 50, ../src/temp-dev.scss */
 .solutions_text h1, .solutions_text h2, .solutions_text h3, .solutions_text h4 {
   font-weight: 400;
 }
-/* line 121, ../src/temp-dev.scss */
+/* line 51, ../src/temp-dev.scss */
 .solutions_text h1 {
   font-size: 2em;
 }
-/* line 122, ../src/temp-dev.scss */
+/* line 52, ../src/temp-dev.scss */
 .solutions_text h2 {
   font-size: 1.5em;
 }
-/* line 123, ../src/temp-dev.scss */
+/* line 53, ../src/temp-dev.scss */
 .solutions_text h3 {
   font-size: 1.17em;
 }
-/* line 124, ../src/temp-dev.scss */
+/* line 54, ../src/temp-dev.scss */
 .solutions_text h4 {
   font-size: 1em;
 }
-/* line 125, ../src/temp-dev.scss */
+/* line 55, ../src/temp-dev.scss */
 .solutions_text h5 {
   font-size: .83em;
 }
-/* line 126, ../src/temp-dev.scss */
+/* line 56, ../src/temp-dev.scss */
 .solutions_text h6 {
   font-size: .75em;
 }
-/* line 127, ../src/temp-dev.scss */
+/* line 57, ../src/temp-dev.scss */
 .solutions_text p {
   font-size: 14px;
   line-height: 1.5em;
@@ -266,45 +121,45 @@ div.action_buttons a.icon {
   text-align: left;
   width: 90%;
 }
-/* line 128, ../src/temp-dev.scss */
+/* line 58, ../src/temp-dev.scss */
 .solutions_text table td, .solutions_text table th {
   border: 1px solid #BBB;
   padding: 4px 5px;
 }
-/* line 129, ../src/temp-dev.scss */
+/* line 59, ../src/temp-dev.scss */
 .solutions_text ins {
   border-bottom: 1px solid green;
   text-decoration: none;
   color: green;
 }
-/* line 130, ../src/temp-dev.scss */
+/* line 60, ../src/temp-dev.scss */
 .solutions_text del {
   color: red;
   text-decoration: line-through;
 }
-/* line 131, ../src/temp-dev.scss */
+/* line 61, ../src/temp-dev.scss */
 .solutions_text cite {
   border-bottom: 1px dashed blue;
 }
-/* line 132, ../src/temp-dev.scss */
+/* line 62, ../src/temp-dev.scss */
 .solutions_text acronym {
   border-bottom: 1px dotted #CCC;
   cursor: help;
 }
-/* line 133, ../src/temp-dev.scss */
+/* line 63, ../src/temp-dev.scss */
 .solutions_text abbr {
   border-bottom: 1px dashed #CCC;
   cursor: help;
 }
 
-/* line 137, ../src/temp-dev.scss */
+/* line 67, ../src/temp-dev.scss */
 .tag_list {
   overflow: hidden;
   *zoom: 1;
   position: relative;
   padding: 0px;
 }
-/* line 141, ../src/temp-dev.scss */
+/* line 71, ../src/temp-dev.scss */
 .tag_list div.item {
   float: left;
   -moz-border-radius: 5px 5px 5px 5px;
@@ -316,82 +171,82 @@ div.action_buttons a.icon {
   padding: 3px 0px 0px 8px;
   margin: 0px 4px;
 }
-/* line 149, ../src/temp-dev.scss */
+/* line 79, ../src/temp-dev.scss */
 .tag_list div.item .tag_delete {
   float: right;
   visibility: hidden;
 }
-/* line 155, ../src/temp-dev.scss */
+/* line 85, ../src/temp-dev.scss */
 .tag_list div.item:hover .tag_delete {
   visibility: visible;
 }
 
-/* line 162, ../src/temp-dev.scss */
+/* line 92, ../src/temp-dev.scss */
 .email-settings {
   margin: 0px -20px 10px;
   padding: 0px;
   border-top: 1px solid #e6e6e6;
   border-bottom: 1px solid #f4f4f4;
 }
-/* line 167, ../src/temp-dev.scss */
+/* line 97, ../src/temp-dev.scss */
 .email-settings label {
   font-size: 14px;
   color: #666666;
   display: block;
 }
-/* line 172, ../src/temp-dev.scss */
+/* line 102, ../src/temp-dev.scss */
 .email-settings .highlight {
   font-size: inherit;
   font-size: 15px;
 }
-/* line 176, ../src/temp-dev.scss */
+/* line 106, ../src/temp-dev.scss */
 .email-settings .info_data {
   font-size: 12px;
 }
-/* line 178, ../src/temp-dev.scss */
+/* line 108, ../src/temp-dev.scss */
 .email-settings div.email-item-default, .email-settings div.email-item {
   padding: 12px 22px 4px;
   background: #f6f6f6;
 }
-/* line 183, ../src/temp-dev.scss */
+/* line 113, ../src/temp-dev.scss */
 .email-settings div.email-item-default {
   padding-top: 10px;
   padding-bottom: 10px;
 }
-/* line 184, ../src/temp-dev.scss */
+/* line 114, ../src/temp-dev.scss */
 .email-settings div.email-item-default label {
   line-height: 20px;
 }
-/* line 189, ../src/temp-dev.scss */
+/* line 119, ../src/temp-dev.scss */
 .email-settings div.email-item-default .info_data {
   padding-top: 4px;
 }
-/* line 193, ../src/temp-dev.scss */
+/* line 123, ../src/temp-dev.scss */
 .email-settings div.email-item {
   border-top: 1px solid #ffffff;
   border-bottom: 1px solid #e8e8e8;
 }
-/* line 196, ../src/temp-dev.scss */
+/* line 126, ../src/temp-dev.scss */
 .email-settings div.email-item div.item {
   margin-bottom: 10px;
   font-size: 14px;
 }
-/* line 198, ../src/temp-dev.scss */
+/* line 128, ../src/temp-dev.scss */
 .email-settings div.email-item div.item label {
   font-size: 12px;
   padding-bottom: 2px;
 }
 
-/* line 206, ../src/temp-dev.scss */
+/* line 136, ../src/temp-dev.scss */
 .email-settings-form table {
   width: 400px;
 }
-/* line 207, ../src/temp-dev.scss */
+/* line 137, ../src/temp-dev.scss */
 .email-settings-form td {
   padding: 6px 8px;
 }
 
-/* line 210, ../src/temp-dev.scss */
+/* line 140, ../src/temp-dev.scss */
 .email_info {
   border: 1px solid #cfcfcf;
   padding: 8px 12px;
@@ -402,7 +257,7 @@ div.action_buttons a.icon {
   font-size: 14px;
 }
 
-/* line 218, ../src/temp-dev.scss */
+/* line 148, ../src/temp-dev.scss */
 .primary_email {
   padding: 2px 15px;
   border: 1px solid #b8d385;
@@ -414,12 +269,12 @@ div.action_buttons a.icon {
   border-radius: 5px 5px 5px 5px;
 }
 
-/* line 229, ../src/temp-dev.scss */
+/* line 159, ../src/temp-dev.scss */
 #primary-email-settings div.email-item-default, #primary-email-settings div.email-item {
   background-color: #fdfff3;
 }
 
-/* line 236, ../src/temp-dev.scss */
+/* line 166, ../src/temp-dev.scss */
 .wordwrap p {
   white-space: pre-wrap;
   /* css-3 */
@@ -433,7 +288,7 @@ div.action_buttons a.icon {
   /* Internet Explorer 5.5+ */
 }
 
-/* line 245, ../src/temp-dev.scss */
+/* line 175, ../src/temp-dev.scss */
 .intro {
   color: #777;
   font-size: 12px;
@@ -442,26 +297,26 @@ div.action_buttons a.icon {
   margin-bottom: 10px;
 }
 
-/* line 254, ../src/temp-dev.scss */
+/* line 184, ../src/temp-dev.scss */
 .info-description p {
   font-size: 12px;
   color: #000000;
   line-height: 17px;
 }
 
-/* line 261, ../src/temp-dev.scss */
+/* line 191, ../src/temp-dev.scss */
 .tickets-container {
   margin: 0px -20px;
 }
 
-/* line 265, ../src/temp-dev.scss */
+/* line 195, ../src/temp-dev.scss */
 .tickets, .tickets-expanded {
   margin: 0px;
   width: 100%;
   border-bottom-color: #efefef;
   color: #5f5f5f;
 }
-/* line 269, ../src/temp-dev.scss */
+/* line 199, ../src/temp-dev.scss */
 .tickets thead, .tickets-expanded thead {
   background: #f9f9f9;
   background: -moz-linear-gradient(top, #f9f9f9 0%, #ececec 100%);
@@ -470,47 +325,47 @@ div.action_buttons a.icon {
   -pie-background: linear-gradient(#f9f9f9, #ececec);
   border-top: 1px solid #efefef;
 }
-/* line 274, ../src/temp-dev.scss */
+/* line 204, ../src/temp-dev.scss */
 .tickets .preview_pic img, .tickets-expanded .preview_pic img {
   width: 36px;
   height: 36px;
 }
-/* line 277, ../src/temp-dev.scss */
+/* line 207, ../src/temp-dev.scss */
 .tickets th, .tickets-expanded th {
   background: none;
   padding: 6px 6px 5px 6px;
 }
-/* line 281, ../src/temp-dev.scss */
+/* line 211, ../src/temp-dev.scss */
 .tickets td, .tickets th, .tickets-expanded td, .tickets-expanded th {
   vertical-align: top;
   border-bottom: 1px solid #efefef;
 }
-/* line 285, ../src/temp-dev.scss */
+/* line 215, ../src/temp-dev.scss */
 .tickets td, .tickets-expanded td {
   padding: 8px 8px;
   background-color: #ffffff;
 }
-/* line 288, ../src/temp-dev.scss */
+/* line 218, ../src/temp-dev.scss */
 .tickets td a, .tickets-expanded td a {
   text-decoration: none;
   color: #5a8ec1;
 }
-/* line 295, ../src/temp-dev.scss */
+/* line 225, ../src/temp-dev.scss */
 .tickets .check, .tickets-expanded .check {
   width: 25px;
   padding-left: 8px;
   padding-top: 9px;
   text-align: right;
 }
-/* line 301, ../src/temp-dev.scss */
+/* line 231, ../src/temp-dev.scss */
 .tickets th.check, .tickets-expanded th.check {
   padding-top: 12px;
 }
-/* line 306, ../src/temp-dev.scss */
+/* line 236, ../src/temp-dev.scss */
 .tickets .name h3, .tickets-expanded .name h3 {
   padding: 0px 0px 4px 0px;
 }
-/* line 308, ../src/temp-dev.scss */
+/* line 238, ../src/temp-dev.scss */
 .tickets .name h3 a, .tickets-expanded .name h3 a {
   text-transform: capitalize;
   font-size: 13px;
@@ -523,15 +378,15 @@ div.action_buttons a.icon {
   text-overflow: ellipsis;
   -moz-binding: url('/stylesheets/xml/ellipsis.xml#ellipsis');
 }
-/* line 315, ../src/temp-dev.scss */
+/* line 245, ../src/temp-dev.scss */
 .tickets .name h3 a:hover, .tickets-expanded .name h3 a:hover {
   color: #4b7dc0;
 }
-/* line 319, ../src/temp-dev.scss */
+/* line 249, ../src/temp-dev.scss */
 .tickets .name div, .tickets-expanded .name div {
   color: #888888;
 }
-/* line 324, ../src/temp-dev.scss */
+/* line 254, ../src/temp-dev.scss */
 .tickets .assign ul, .tickets-expanded .assign ul {
   margin: 0;
   padding: 0;
@@ -556,84 +411,84 @@ div.action_buttons a.icon {
 .tickets .assign ul li, .tickets-expanded .assign ul li {
   *display: inline;
 }
-/* line 326, ../src/temp-dev.scss */
+/* line 256, ../src/temp-dev.scss */
 .tickets .assign ul li, .tickets-expanded .assign ul li {
   padding: 4px 7px 0px 0px;
   color: #999999;
   font-size: 12px;
 }
-/* line 331, ../src/temp-dev.scss */
+/* line 261, ../src/temp-dev.scss */
 .tickets .assign ul li span, .tickets-expanded .assign ul li span {
   color: #444444;
   text-transform: capitalize;
 }
-/* line 338, ../src/temp-dev.scss */
+/* line 268, ../src/temp-dev.scss */
 .tickets .assign ul .priority span.style_1, .tickets-expanded .assign ul .priority span.style_1 {
   /* Low priority style */
   color: #666666;
 }
-/* line 341, ../src/temp-dev.scss */
+/* line 271, ../src/temp-dev.scss */
 .tickets .assign ul .priority span.style_2, .tickets-expanded .assign ul .priority span.style_2 {
   /* Medium priority style */
   color: #cc6633;
 }
-/* line 344, ../src/temp-dev.scss */
+/* line 274, ../src/temp-dev.scss */
 .tickets .assign ul .priority span.style_3, .tickets-expanded .assign ul .priority span.style_3 {
   /* High priority style */
   color: #cc6633;
 }
-/* line 347, ../src/temp-dev.scss */
+/* line 277, ../src/temp-dev.scss */
 .tickets .assign ul .priority span.style_4, .tickets-expanded .assign ul .priority span.style_4 {
   /* Urgent priority style */
   color: #cc6633;
 }
-/* line 353, ../src/temp-dev.scss */
+/* line 283, ../src/temp-dev.scss */
 .tickets .sla, .tickets-expanded .sla {
   vertical-align: top;
   text-align: right;
   font-size: 11px;
 }
 
-/* line 360, ../src/temp-dev.scss */
+/* line 290, ../src/temp-dev.scss */
 .conversation-sprite {
   overflow: hidden;
   *zoom: 1;
   float: right;
 }
-/* line 363, ../src/temp-dev.scss */
+/* line 293, ../src/temp-dev.scss */
 .conversation-sprite .image {
   float: right;
   content: "";
   width: 32px;
   height: 32px;
   margin: 0px;
-  background: url('/images/../images/embed/sprites/32square_sprite.png?1301406599') no-repeat;
+  background: url('/images/../images/embed/sprites/32square_sprite.png?1301407817') no-repeat;
   width: 32px;
   height: 32px;
   overflow: hidden;
 }
-/* line 371, ../src/temp-dev.scss */
+/* line 301, ../src/temp-dev.scss */
 .conversation-sprite .email-reply {
   background-position: 0px 0px;
 }
-/* line 374, ../src/temp-dev.scss */
+/* line 304, ../src/temp-dev.scss */
 .conversation-sprite .email-receive {
   background-position: 0px -32px;
 }
-/* line 377, ../src/temp-dev.scss */
+/* line 307, ../src/temp-dev.scss */
 .conversation-sprite .note-public {
   background-position: 0px -64px;
 }
-/* line 380, ../src/temp-dev.scss */
+/* line 310, ../src/temp-dev.scss */
 .conversation-sprite .note-private {
   background-position: 0px -96px;
 }
 
-/* line 386, ../src/temp-dev.scss */
+/* line 316, ../src/temp-dev.scss */
 .contact-box {
   padding-left: 170px;
 }
-/* line 388, ../src/temp-dev.scss */
+/* line 318, ../src/temp-dev.scss */
 .contact-box div.profile_pic {
   float: left;
   margin-left: -150px;
@@ -641,13 +496,13 @@ div.action_buttons a.icon {
   margin-top: 5px;
   text-align: center;
 }
-/* line 395, ../src/temp-dev.scss */
+/* line 325, ../src/temp-dev.scss */
 .contact-box .info-highlight {
   margin: 8px 0px 0px -170px;
   padding-left: 165px;
 }
 
-/* line 401, ../src/temp-dev.scss */
+/* line 331, ../src/temp-dev.scss */
 .info-highlight {
   font-size: 13px;
   margin: 0px 0px 0px 0px;
@@ -656,20 +511,20 @@ div.action_buttons a.icon {
   border: 1px solid #f4f4e9;
   background-color: #fffbee;
 }
-/* line 408, ../src/temp-dev.scss */
+/* line 338, ../src/temp-dev.scss */
 .info-highlight div {
   padding: 6px;
 }
 
-/* line 414, ../src/temp-dev.scss */
+/* line 344, ../src/temp-dev.scss */
 .forum_list {
   margin: 0px 0px;
 }
-/* line 416, ../src/temp-dev.scss */
+/* line 346, ../src/temp-dev.scss */
 .forum_list a {
   text-decoration: none;
 }
-/* line 417, ../src/temp-dev.scss */
+/* line 347, ../src/temp-dev.scss */
 .forum_list a.title {
   color: #545454;
 }
@@ -685,7 +540,7 @@ div.action_buttons a.icon {
 .forum_list a.title:active {
   color: #545454;
 }
-/* line 418, ../src/temp-dev.scss */
+/* line 348, ../src/temp-dev.scss */
 .forum_list .item_actions {
   float: right;
   font-size: 10px;
@@ -697,16 +552,16 @@ div.action_buttons a.icon {
   color: #afafaf;
   padding: 2px 8px;
 }
-/* line 426, ../src/temp-dev.scss */
+/* line 356, ../src/temp-dev.scss */
 .forum_list .item_actions a.highlight {
   background-color: #ffffcc;
   padding: 1px 3px;
 }
-/* line 431, ../src/temp-dev.scss */
+/* line 361, ../src/temp-dev.scss */
 .forum_list .subcounter {
   color: #afafaf;
 }
-/* line 434, ../src/temp-dev.scss */
+/* line 364, ../src/temp-dev.scss */
 .forum_list ul.base-set {
   list-style: none;
   overflow: hidden;
@@ -720,57 +575,57 @@ div.action_buttons a.icon {
   list-style-type: none;
   margin-left: 0px;
 }
-/* line 439, ../src/temp-dev.scss */
+/* line 369, ../src/temp-dev.scss */
 .forum_list ul.base-set li {
   float: left;
   width: 44%;
   padding: 0px 0px 0px 30px;
   margin: 0px 3% 0px 0px;
 }
-/* line 444, ../src/temp-dev.scss */
+/* line 374, ../src/temp-dev.scss */
 .forum_list ul.base-set li h4.forum_title {
   margin: 3px 0px 0px 0px;
   padding: 6px 0px 4px 0px;
   font-size: 16px;
   position: relative;
 }
-/* line 448, ../src/temp-dev.scss */
+/* line 378, ../src/temp-dev.scss */
 .forum_list ul.base-set li h4.forum_title a {
   font-weight: normal;
 }
-/* line 453, ../src/temp-dev.scss */
+/* line 383, ../src/temp-dev.scss */
 .forum_list ul.base-set li span.icon {
   position: absolute;
   left: -34px;
   top: 2px;
-  background: url('/images/../images/embed/sprites/32square_sprite.png?1301406599') no-repeat;
+  background: url('/images/../images/embed/sprites/32square_sprite.png?1301407817') no-repeat;
   width: 32px;
   height: 32px;
   overflow: hidden;
 }
-/* line 459, ../src/temp-dev.scss */
+/* line 389, ../src/temp-dev.scss */
 .forum_list ul.base-set li span.forum_type_1 {
   background-position: 0px -192px;
 }
-/* line 463, ../src/temp-dev.scss */
+/* line 393, ../src/temp-dev.scss */
 .forum_list ul.base-set li span.forum_type_2 {
   background-position: 0px -224px;
 }
-/* line 467, ../src/temp-dev.scss */
+/* line 397, ../src/temp-dev.scss */
 .forum_list ul.base-set li span.forum_type_3 {
   background-position: 0px -160px;
 }
-/* line 471, ../src/temp-dev.scss */
+/* line 401, ../src/temp-dev.scss */
 .forum_list ul.base-set li span.forum_type_4 {
   background-position: 0px -128px;
 }
-/* line 475, ../src/temp-dev.scss */
+/* line 405, ../src/temp-dev.scss */
 .forum_list ul.base-set li .topic-list {
   padding: 6px 0px 12px 0px;
   margin-bottom: 8px;
   border-top: 1px solid #f1f1f1;
 }
-/* line 479, ../src/temp-dev.scss */
+/* line 409, ../src/temp-dev.scss */
 .forum_list ul.base-set li .topic-list a.topic {
   white-space: nowrap;
   overflow: hidden;
@@ -782,7 +637,7 @@ div.action_buttons a.icon {
   padding: 5px 0px;
   font-size: 13px;
 }
-/* line 485, ../src/temp-dev.scss */
+/* line 415, ../src/temp-dev.scss */
 .forum_list ul.base-set li .topic-list a {
   color: #4d769f;
 }
@@ -798,17 +653,17 @@ div.action_buttons a.icon {
 .forum_list ul.base-set li .topic-list a:active {
   color: #4d769f;
 }
-/* line 490, ../src/temp-dev.scss */
+/* line 420, ../src/temp-dev.scss */
 .forum_list ul.base-set li.odd {
   clear: left;
 }
-/* line 493, ../src/temp-dev.scss */
+/* line 423, ../src/temp-dev.scss */
 .forum_list ul.base-set li.even {
   margin-right: 0px;
   width: 46%;
 }
 
-/* line 501, ../src/temp-dev.scss */
+/* line 431, ../src/temp-dev.scss */
 .forum-group {
   margin: 0px -20px;
 }

@@ -200,19 +200,17 @@ logger.debug "Custom  Field #{field["label"]}"%>
 		</li>
 	</ul>
 	
-    <div class="button-container">
-      
-     
+    <div class="button-container"> 
       <% if(type == "edit") %>	
-	  	 <%= f.submit "Update", :class => "fdbutton submit" %>
-      	<%= link_to "Delete", @item, :method => :delete, :class => "fdbutton red" %>
+	  	 <%= f.submit "Update", :class => "uiButton" %>
+      	<%= link_to "Delete", @item, :method => :delete, :class => "uiButton" %>
 	  <% else %>
-	  	<%= f.submit "Create", :class => "fdbutton submit" %>
-	  	<%= submit_tag "Save and Create Another", :name => "save_and_create" , :class => "fdbutton" %>
+	  	<%= f.submit "Create", :class => "uiButton" %>
+	  	<%= submit_tag "Save and Create Another", :name => "save_and_create" , :class => "uiButton" %>
 	  <% end %>
-      <%= link_to "Cancel", (@item.new_record? ? {:action => 'index'} : @item ), :class => "fdbutton grey" %>
-    </div>
-
+      <%= link_to "Cancel", (@item.new_record? ? {:action => 'index'} : @item ), :class => "uiButton" %>
+    </div> 
+	
   <% end %>
   
 

@@ -15,6 +15,7 @@ en:
    formatting_help: "Formatting Help"
    save_reply: "Save Reply"
    save:    "Save"
+   save_changes: "Save Changes"
    created_on: "Created on"
    asked_on: "Asked on"
    delete_topic_msg: "Delete this topic forever"
@@ -25,8 +26,6 @@ en:
    next:    "Next"
    close: "Close"
     
-
- 
    contacts:
        deleted_message:     "This is a deleted contact"
        restore:             "Restore"
@@ -98,8 +97,13 @@ en:
         available_placeholders: "Available placeholders"
         
         
-     
-   
+   profile:
+       edit: "Edit Profile" 
+       change_password  : "Change Password"
+       current_password : "Current password"
+       new_password     : "New password"
+       confirm_password : "Confirm password"
+       
    activerecord:
     errors:
       template:

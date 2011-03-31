@@ -8,10 +8,10 @@
 
 a.new_ticket{ display:inline; }
 
+.nav_search { margin-top:4px; }
 .nav_search div.search_bar{ padding-top:4px; padding-bottom:3px; }
 .nav_search input{ top:1px; left:2px; }
-
-ul.tabs li{ width:auto;  }
+ 
 ul.summary{ border-color:ececec; }
 
 ul.icon_grid li a div{ font-weight:bold; }
@@ -41,3 +41,8 @@ ul.icon_grid li a div{ font-weight:bold; }
 }
 
 .search_results_bar .results li h4{ margin-left:-50px;}
+
+.uiButton{
+	padding:4px 6px !important;
+	font-size:11px !important;
+}
