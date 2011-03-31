@@ -1,5 +1,6 @@
 en:
    edit: "Edit"
+   back: "Back"
    delete: "Delete"
    create: "Create"
    cancel: "Cancel"
@@ -25,6 +26,8 @@ en:
    forum_confirm_msg1: "Are you sure you want to delete this category"
    next:    "Next"
    close: "Close"
+   done: "Done"
+   reset: "Reset"
     
    contacts:
        deleted_message:     "This is a deleted contact"
@@ -81,6 +84,53 @@ en:
        save: "Save changes"   
        cancel: "Cancel and go back" 
        active_since: "Active Since"
+   email_configs:
+           title: "Email Settings"
+           info1: "Your users send support emails to"
+           info2: "You must forward your support emails to your unique email address"
+           info3: "Freshdesk will fetch those emails and convert them as tickets"
+           info4: "You can add multiple email addresses if you support multiple products - each having its own support email address"
+           info5: "Reply emails from Freshdesk will automatically use your original support email ids as the From email address"
+           info6: "Enter your support email"
+           info7: "This is also your Reply-to address" 
+           info8: "Forward your emails to"
+           info9: "Assign to Group"
+           info10: "New tickets to this support email will get automatically assigned to a group"
+           info11: "Configure incoming and outgoing support email address"
+           info12: "Add Another Email address"
+           info13: "Your support email address is"
+           info14: "Any email sent to this address will be converted as a ticket"
+           info15: "You must forward these emails to"
+           info16: "Tickets will be assigned to"
+           supp_email_add: "Support email address"
+           make_primary: "Make primary"
+           change_this: "Change this"
+           primary_supp_email: "Primary support email"
+           add_supp_emails: "Additional support email(s)"
+           reply_emails: "Reply Emails from Freshdesk"
+           
+   
+   email_notifications:
+           title: "Email notifications"
+           event: "Event"
+           requestor_notification: "Requestor Notification"
+           agent_notification: "Agent Notification"
+           customize_email: "Customize Email"
+           insert_placeholder: "Insert Placeholder"
+           modify_template: "Modify Requester Template"
+        
+   business_hours:
+       title: "Business Hours"
+       holidays: "Holidays"
+       helpdesk_hours: "Helpdesk Hours"
+       info1: "Setting up your Business Hours in Freshdesk allows you to get more control on your SLAs.For eg. If you helpdesk works 9AM - 6PM Mon-Fri and a customer sends a high priority ticket at 4 PM on Tuesday with a SLA target resolution time of 4 hours, then the ticket Due By time is set as 11 AM on Wednesday.You can configure your SLAs to either respect or ignore business hours"
+       info2: "Holidays work exactly like Business hours. For eg. If you helpdesk works 9AM - 6PM Mon-Fri and a customer sends a medium priority ticket at 8 PM on Friday with a SLA target resolution time of 24 hours, then the ticket Due By time is set as 9AM on Tuesday.(not 8PM on Sat)"
+       info3: "Specific Working Hours"
+       info4: "Working Days for your Helpdesk"
+       info5: "Holidays will be ignored when calculating SLA for a ticket"
+       holiday_list: "Yearly Holiday List"
+       holiday_name: "Holiday name"
+       holiday_added: "Holiday already added"
        
    automations:
         title: "Scenario Automations"
@@ -95,7 +145,12 @@ en:
         info7: "Actions to Perform"
         info8: "Add new action"
         available_placeholders: "Available placeholders"
-        
+  
+
+  
+    
+   
+          
         
    profile:
        edit: "Edit Profile" 

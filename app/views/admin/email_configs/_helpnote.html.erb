@@ -6,14 +6,14 @@
 	reply_email  = @email_configs.first.reply_email unless @email_configs.first.nil?
 %>
 <div class="sidepanel wordwrap">
-		<h3 class="title">Email Settings</h3> 
-		<p>Your users send support emails to <strong><%=reply_email%></strong></p>
-		<p>You must forward your support emails to your unique email address <strong><%=to_email%></strong>. Freshdesk will fetch those emails and convert them as tickets.</p>
-		<p>You can add multiple email addresses if you support multiple products - each having its own support email address.</p>
+		<h3 class="title"><%=t('email_configs.title')%></h3> 
+		<p><%=t('email_configs.info1')%> <strong><%=reply_email%></strong></p>
+		<p><%=t('email_configs.info2')%> <strong><%=to_email%></strong>. <%=t('email_configs.info3')%>.</p>
+		<p><%=t('email_configs.info4')%>.</p>
 		
-		<h3 class="title">Reply Emails from Freshdesk</h3> 
+		<h3 class="title"><%=t('email_configs.reply_emails')%></h3> 
 		
-		<p>Reply emails from Freshdesk will automatically use your original support email ids as the From email address.</p>
+		<p><%=t('email_configs.info5')%>.</p>
 		<p>While most of your emails will be delivered, to be on the safer side you must create an <a target="_blank" title="Learn more about creating SPF records" href="http://support.freshdesk.com/solution/categories/4/folders/7/articles/5-spf-record">SPF record</a> in your DNS zone file if you are using emails in your own domain. This helps in ensuring proper delivery of email.</p> 
 		
 		<a target="_blank" href="http://support.freshdesk.com/solution/categories/4/folders/7/articles/2-converting-your-support-email-into-freshdesk-tickets">Read our Email Settings article for more information...</a>
