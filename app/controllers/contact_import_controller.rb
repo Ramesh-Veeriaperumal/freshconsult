@@ -47,7 +47,7 @@ class ContactImportController < ApplicationController
           end
         else
           @user = current_account.users.new
-          @user.user_role = User::USER_ROLES_KEYS_BY_TOKEN[:customer]
+          @params_hash[:user][:user_role] = User::USER_ROLES_KEYS_BY_TOKEN[:customer]
           if @user.signup!(@params_hash)    
             created+=1
           end
