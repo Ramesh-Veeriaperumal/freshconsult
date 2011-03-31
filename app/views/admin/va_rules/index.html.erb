@@ -32,10 +32,10 @@
 
 <% content_for :sidebar do %>
 	<div class="sidepanel">
-		<h3 class="title">Dispatch'r</h3>
+		<h3 class="title"><%=t('dispatch.title')%></h3>
 		<div class="help_text">
-			<p>Dispatch'r will automatically dispatch a newly created support ticket based on the rules and actions defined.</p>
-			<p>Remember, the order of the rules are important. For each incoming ticket, Dispatch'r will execute the first matching rule and stop.
+			<p><%=t('dispatch.info4')%>.</p>
+			<p><%=t('dispatch.info5')%>.
 			You can use the <b>Reorder</b> functionality to change the order of the rules.</p>
 		</div>
 	</div>
@@ -43,17 +43,17 @@
 
 <div class="pageContent">
 	<div class="floatr"> 
-		<%= link_to ("Reorder", "#", :id => "Reorder", :class => "uiButton grey") if ( @va_rules.size > 1 ) %>
-		<%= link_to "New Rule", new_admin_va_rule_path, :class => "uiButton"  %>
+		<%= link_to (t('dispatch.reorder'), "#", :id => "Reorder", :class => "uiButton grey") if ( @va_rules.size > 1 ) %>
+		<%= link_to t('dispatch.new_rule'), new_admin_va_rule_path, :class => "uiButton"  %>
 	</div>	
-	<h3 class="title">Dispatch'r - Rules</h3>	
+	<h3 class="title"><%=t('dispatch.dispatch_rules')%></h3>	
 		 <ul class="admin_list" id="normal"> 
 			<% @va_rules.each do |va_rule| %>
 				<li ruleid="<%=va_rule.id%>" class="<%=cycle('stripe', '') %>"> 
 					<div class="item_actions">
-						<%= link_to('delete', admin_va_rule_path(va_rule), :method => 'delete', :confirm => 'Are you sure you want to delete this rule?', :class => "button" ) %>					
-						<%= link_to('deactivate', deactivate_admin_va_rule_path(va_rule), :method => 'put', :class => "button") %>
-						<%= link_to('edit', edit_admin_va_rule_path(va_rule), :class => "button") %> 					
+						<%= link_to(t('delete'), admin_va_rule_path(va_rule), :method => 'delete', :confirm => 'Are you sure you want to delete this rule?', :class => "button" ) %>					
+						<%= link_to(t('deactivate'), deactivate_admin_va_rule_path(va_rule), :method => 'put', :class => "button") %>
+						<%= link_to(t('edit'), edit_admin_va_rule_path(va_rule), :class => "button") %> 					
 					</div>
 					<%= link_to(h(va_rule.name), edit_admin_va_rule_path(va_rule), :class => "item_info") %>
 					<div><%= h va_rule.description %></div>				
@@ -62,7 +62,7 @@
 		</ul>
 	<div class="sortable" id="Sortable" style="display:none;">
 		<div class="title_bar_grey">				
-			<h3 class="title">Reorder</h3>
+			<h3 class="title"><%=t('dispatch.reorder')%></h3>
 		</div>
 		<% form_for :reorder, @va_rules, :url => { :action => "reorder" }, :html => { :method => :reorder, :id => "Reorderform" } do |f| %>
 			<input name="reorderlist" type="hidden" value="" />
@@ -83,14 +83,14 @@
 	
 	<br />
 	<% unless @inactive_rules.empty? %>
-		<h3 class="title">Inactive Rules</h3>
+		<h3 class="title"><%=t('dispatch.inactive_rules')%></h3>
 		<ul class="admin_list deactivated"> 
 			<% @inactive_rules.each do |va_rule| %>
 				<li ruleid="<%=va_rule.id%>" class="<%=cycle('stripe', '') %>"> 
 					<div class="item_actions">
-						<%= link_to('delete', admin_va_rule_path(va_rule), :method => 'delete', :confirm => 'Are you sure you want to delete this rule', :class => "button" ) %>					
-						<%= link_to('activate', activate_admin_va_rule_path(va_rule), :method => 'put', :class => "button") %>
-						<%= link_to('edit', edit_admin_va_rule_path(va_rule), :class => "button") %> 					
+						<%= link_to(t('delete'), admin_va_rule_path(va_rule), :method => 'delete', :confirm => 'Are you sure you want to delete this rule', :class => "button" ) %>					
+						<%= link_to(t('activate'), activate_admin_va_rule_path(va_rule), :method => 'put', :class => "button") %>
+						<%= link_to(t('edit'), edit_admin_va_rule_path(va_rule), :class => "button") %> 					
 					</div>
 					<%= link_to(h(va_rule.name), edit_admin_va_rule_path(va_rule), :class => "item_info") %> 
 				</li>

@@ -28,6 +28,9 @@ en:
    close: "Close"
    done: "Done"
    reset: "Reset"
+   deactivate: "deactivate"
+   activate: "activate"
+   
     
    contacts:
        deleted_message:     "This is a deleted contact"
@@ -119,7 +122,26 @@ en:
            insert_placeholder: "Insert Placeholder"
            modify_template: "Modify Requester Template"
    dispatch:
-        edit: "Dispatch'r - Edit Rule"     
+        title: "Dispatch'r"
+        edit: "Dispatch'r - Edit Rule" 
+        new: "Dispatch'r - New Rule"
+        rule_name: "Rule Name" 
+        info1: "Subscription related tickets"
+        info2: "All Subscription related tickets will be assigned to Susan"
+        info3: "When should this rule be applied"   
+        info4: "Dispatch'r will automatically dispatch a newly created support ticket based on the rules and actions defined"
+        info5: "Remember, the order of the rules are important. For each incoming ticket, Dispatch'r will execute the first matching rule and stop"
+        add_condition: "Add new condition"
+        act_to_perform: "Actions to Perform"
+        add_new_action: "Add new action"
+        match_any: "Match Any"
+        match_all: "Match All"
+        add_new_choice: "Add New choice"
+        reorder: "Reorder"
+        new_rule: "New Rule"
+        dispatch_rules: "Dispatch'r - Rules"
+        inactive_rules: "Inactive Rules"
+        
    business_hours:
        title: "Business Hours"
        holidays: "Holidays"
@@ -132,6 +154,7 @@ en:
        holiday_list: "Yearly Holiday List"
        holiday_name: "Holiday name"
        holiday_added: "Holiday already added"
+       
        
    automations:
         title: "Scenario Automations"
