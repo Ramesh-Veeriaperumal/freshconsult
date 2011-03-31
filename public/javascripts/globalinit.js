@@ -15,18 +15,18 @@ var jQ = jQuery.noConflict();
 		
 		flash = $("div.flash_info");
 		if(flash.get(0)){
-			close =	$("<a />").addClass("close")
-							  .attr("href", "#")
-							  .appendTo(flash)
-							   .click(function(ev){
-									flash.fadeOut(600);
-								});
+			try {
+				close = $("<a />").addClass("close").attr("href", "#").appendTo(flash).click(function(ev){
+					flash.fadeOut(600);
+				});
 				
-					flash.find('a.show-list')
-					  	 .click(function(ev){
-						  	flash.find('div.list').slideDown(300);
-							$(this).hide();
-						 });			
+				flash.find('a.show-list').click(function(ev){
+					flash.find('div.list').slideDown(300);
+					$(this).hide();
+				});
+			} catch(e){
+				
+			}			
 		}
 		
 	});

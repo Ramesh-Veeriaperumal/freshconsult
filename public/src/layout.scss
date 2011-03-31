@@ -1,0 +1,314 @@
+// This import applies a global reset to any page that imports this stylesheet.
+@import "base";
+@import "mixins";
+
+html {  height:100%; overflow-y:scroll; }
+ 
+body { 
+	font:12px $blueprint-font-family; 
+	background-color: transparent;
+	color: #333; 
+	background:$background; 
+} 
+
+.wrapper{
+    @include clearfix;
+	@include container;
+	position:relative;
+	text-align: left; 
+	max-width:1220px; 
+	padding:0px 8px; 
+}
+  
+.top_links a{
+	text-decoration:none;
+	font-weight:bold;
+	padding:0px 8px;
+	margin:0px;
+	border-right:1px solid #afafaf;
+	border-left:1px solid #efefef;
+	@include link-colors(#527EAA, #888888, #527EAA, #527EAA);
+}
+
+.fixedWidth{
+	max-width:680px;
+}
+
+#wrap{
+	margin-bottom:18px;
+	text-align:center;   
+} 
+
+#minwidthfix{
+	width:950px;
+}
+
+label.overlabel{
+	color:#888888;
+	position:absolute; 
+	font-size:1.0em;
+	font-weight:normal;
+	z-index:5;
+	margin:8px;
+}
+
+ 
+#inner {    
+	@include clearfix;	
+	position:relative;
+	z-index:1;  	
+	margin:12px 0px;	
+	padding-right:$sidebar-width; /* The width of the rail */  
+	.sidebar{ 
+		width:$sidebar-width;
+		float:right; 
+		margin-right:-$sidebar-width;
+	}  
+}
+
+.single #inner{
+	padding-right:0px;	
+	.sidebar{
+		display:none;
+	}	
+	.leftcontent{
+		margin-right:0px;
+		border-right:0px;
+	}	
+}
+  
+.invert #inner{
+	padding-right:0px;
+	padding-left: $invert-side-width; /* The width of the rail */	
+	.sidebar, .leftcontent{
+		float:right; 
+	}
+	.sidebar{
+		margin-right:0px;
+		width:$invert-side-width;
+		margin-left: -$invert-side-width; 
+	}	
+}
+  
+
+div.bg_white{
+	background-color:#ffffff;
+}
+
+div.bg_pulp{
+	background-color:#F3F1EC;
+}
+
+.twoCol_ltSidebar #inner{
+	padding-right:0px;
+	padding-left:$sidebar-width; /* The width of the rail */
+	.sidebar{
+		margin-right:0px;
+		margin-left:-$sidebar-width;
+	} 
+	.leftcontent{
+		margin-right:0px;
+		border-right:0px;
+		border-left:$sidebar-width solid #f2f8fc; /* The width and color of the rail */
+		margin-left:-$sidebar-width; /* Hat tip to Ryan Brill */
+		float:right;			
+	}
+}
+
+.breadcrumb{
+	padding:4px 0px;
+	margin:8px 10px 3px 10px;
+	@include clearfix;
+	color:#ffffff;
+	font-size:12px;
+	a{
+		@include link-colors(#ffffff, #ffffff, #ffffff, #ffffff, #ffffff);
+		text-decoration:none;
+		padding:3px 10px;
+		@include corners(6px);
+		background-color:#afafaf;
+		text-decoration:none;
+	}
+} 
+
+.info_data, .info-data{
+	color:#888888;
+	font-size:11px;
+	padding-bottom:6px;
+} 
+
+body {
+	h1, h2, h3, h4, h5{
+		margin:0px;
+	}
+	h4{
+		font-size:12px;
+	}
+}
+
+
+/* Header styles */
+
+.header {  
+	@include clearfix;
+	position:relative;
+	padding:10px 0px 0px 0px;
+	background:$header_color;
+}
+
+.brand{	
+	position:absolute;
+	left:0px;
+	margin-left:8px;
+	text-decoration:none;
+	a{
+		text-decoration:none;
+	}
+	.logo{
+		@include clearfix; 
+		float:left;
+		margin:0px 5px 0px; 
+	}
+	img, h3{
+		float:left;
+	}
+	h3{
+		font-size:20px;
+		text-decoration:none;
+		font-weight:normal;
+		margin:0px;
+		padding:13px 0px 0px 2px;
+		position:relative;
+		color:#ffffff;
+		text-transform:capitalize;
+	}	 
+}
+
+.header_links{
+	float:right;
+	text-align:right;
+	height:60px;
+	margin:0px 12px;
+	color:#ffffff;
+	font-size:12px;		 
+	strong{
+		font-weight:bold;		
+	}	
+	a{			 
+		padding:0px 6px; 
+		color:#ffffff;
+		text-decoration:none;
+	}
+	a:hover {	 
+		text-decoration:none;
+	}
+} 
+
+/* Header Tab styles */
+
+.top_nav_bg{
+	background:$tab_color;
+}
+
+.nav_search, .nav_right{
+	float:right; 
+}
+
+.nav_search{
+	@include min-width(260px);
+	div.search_bar{ 
+		height:26px; 
+		background:url("../images/search_icon.gif") 4px 5px no-repeat #ffffff;  
+		padding:0px 8px 0px 25px;
+	}
+	height:27px;
+	position:relative;
+	margin:2px 14px 0px 0px;
+	label.overlabel, input{
+		top:4px;
+	}
+	label.overlabel{
+	 	padding:0px;
+	 	margin:2px 3px;
+	 	font-size:14px;
+	} 
+	input{		
+		border:0px;
+		position:relative;
+		font-size:14px;
+		width:100%;
+		padding:0px;
+		background:none;		
+	}
+}
+
+.nav_right{
+	position:relative;
+	z-index:10; 
+	margin:2px 6px 0px 3px;
+}
+
+a.new_ticket, .nav_search div.search_bar{
+	@include shadows(#777777, 0px, 0px, 2px);
+	@include pie;
+	@include corners(4px);  
+	margin-top:2px;
+} 
+ 
+a.new_ticket{  
+	@include vertical-gradient(#fefefe, #dfdfdf);  
+	padding:6px 10px 5px 25px;
+	color:#333333; 
+	font-size:12px; 
+	text-decoration:none; font-weight:bold;
+	position:relative; 
+	display:block;
+	img { position:absolute; left:6px; top:5px; }
+}
+
+a.new_ticket:hover{ 
+	@include vertical-gradient(#606c88, #3f4c6b);
+	border-color:#606c88;  
+	color:#ffffff;	 
+}
+
+ul.tabs{
+	list-style:none;
+	li{
+		float:left; 
+		position:relative;
+		span{
+			background:none;
+			height:1px;
+			display:block;
+			width:90px;
+			font-size:0px;
+			position:relative;
+			z-index:1;
+			margin-bottom:-2px;
+		}
+		 
+			a{
+				position:relative;
+				z-index:5;
+				text-decoration:none; 
+				color:#ffffff;
+				padding:9px 6px 9px 8px; 		
+				font-size:13px;				
+				font-weight:bold;
+				text-align:center;				
+				display:block;	 
+				text-transform:capitalize;
+				@include text-shadow(rgba(0, 0, 0, 0.2), 1px, 1px, 1px);
+			}
+			a:hover{
+				background:lighten($tab_color, 10%);
+				color:#ffffff;
+			} 
+	}  
+	li.active a, li.active a:hover{
+		border-color:darken($tab_color, 10%);
+		background:$background; 
+		color:#000000; 
+	} 
+} 
