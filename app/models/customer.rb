@@ -54,7 +54,7 @@ class Customer < ActiveRecord::Base
            :conditions => ['name like ?', "#{letter}%"],
            :order => 'name'
   end
-  
+
   
   #setting default sla
   def check_sla_policy
