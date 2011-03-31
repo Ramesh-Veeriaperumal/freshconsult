@@ -18,7 +18,7 @@
 	  <% "A".upto("Y") do |l| -%>	    
 	     <li class="<%= 'active' if params[:letter] == l %>"><%= link_to l, :letter => l %></li>	
 	  <% end %>
-	  <li class="last <%= 'active' if params[:letter] == 'Z' %>"><%= link_to 'Z', :letter => '' %></li>
+	  <li class="last <%= 'active' if params[:letter] == 'Z' %>"><%= link_to 'Z', :letter => 'Z' %></li>
 	</ul>
 
 	<!-- %= render(:partial => '/shared/listsearch') % -->	
