@@ -27,6 +27,7 @@ javascripts:
 stylesheets:
   common:
     - public/stylesheets/reset.css
+    - public/stylesheets/layout.css
     - public/stylesheets/application.css
     - public/stylesheets/uni-form.css
     - public/stylesheets/default.uni-form.css
@@ -35,5 +36,4 @@ stylesheets:
     - public/stylesheets/temp-dev.css
     - public/stylesheets/buttons.css
     - public/stylesheets/jquery-ui-1.8.7.custom.css  
-  ie:
-    - public//stylesheets/ie.css    
+    - public/stylesheets/ie.css

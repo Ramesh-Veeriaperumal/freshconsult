@@ -1,183 +1,63 @@
-/* line 34, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/blueprint/stylesheets/blueprint/_ie.scss */
-body {
-  text-align: center;
-}
-/* line 48, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/blueprint/stylesheets/blueprint/_ie.scss */
-* html body legend {
-  margin: 0px -8px 16px 0;
-  padding: 0;
-}
-/* line 52, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/blueprint/stylesheets/blueprint/_ie.scss */
-html > body p code {
-  *white-space: normal;
-}
-
-/* line 67, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/blueprint/stylesheets/blueprint/_ie.scss */
-.container {
-  text-align: left;
-}
-
-/* line 69, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/blueprint/stylesheets/blueprint/_ie.scss */
-sup {
-  vertical-align: text-top;
-}
-
-/* line 71, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/blueprint/stylesheets/blueprint/_ie.scss */
-sub {
-  vertical-align: text-bottom;
-}
-
-/* line 73, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/blueprint/stylesheets/blueprint/_ie.scss */
-hr {
-  margin: -8px auto 11px;
-}
-
-/* line 75, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/blueprint/stylesheets/blueprint/_ie.scss */
-img {
-  -ms-interpolation-mode: bicubic;
-}
-
-/* line 77, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/blueprint/stylesheets/blueprint/_ie.scss */
-fieldset {
-  padding-top: 0;
-}
-
-/* line 79, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/blueprint/stylesheets/blueprint/_ie.scss */
-textarea {
-  overflow: auto;
-}
-
-/* line 82, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/blueprint/stylesheets/blueprint/_ie.scss */
-input.text {
-  margin: 0.5em 0;
-  background-color: white;
-  border: 1px solid #bbbbbb;
-}
-/* line 86, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/blueprint/stylesheets/blueprint/_ie.scss */
-input.text:focus {
-  border: 1px solid #666666;
-}
-/* line 88, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/blueprint/stylesheets/blueprint/_ie.scss */
-input.title {
-  margin: 0.5em 0;
-  background-color: white;
-  border: 1px solid #bbbbbb;
-}
-/* line 92, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/blueprint/stylesheets/blueprint/_ie.scss */
-input.title:focus {
-  border: 1px solid #666666;
-}
-/* line 94, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/blueprint/stylesheets/blueprint/_ie.scss */
-input.checkbox {
-  position: relative;
-  top: 0.25em;
-}
-/* line 97, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/blueprint/stylesheets/blueprint/_ie.scss */
-input.radio {
-  position: relative;
-  top: 0.25em;
-}
-/* line 100, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/blueprint/stylesheets/blueprint/_ie.scss */
-input.button {
-  position: relative;
-  top: 0.25em;
-}
-
-/* line 103, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/blueprint/stylesheets/blueprint/_ie.scss */
-textarea {
-  margin: 0.5em 0;
-}
-
-/* line 105, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/blueprint/stylesheets/blueprint/_ie.scss */
-select {
-  margin: 0.5em 0;
-}
-
-/* line 107, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/blueprint/stylesheets/blueprint/_ie.scss */
-button {
-  position: relative;
-  top: 0.25em;
-}
-
-/* line 7, ../src/ie.scss */
-.wrapper {
-  width: 1024px;
-}
-
-/* line 9, ../src/ie.scss */
-a.new_ticket {
+/* line 5, ../src/ie.scss */
+.ie6 a.new_ticket, .ie7 a.new_ticket, .ie8 a.new_ticket, .ie9 a.new_ticket {
   display: inline;
 }
-
-/* line 11, ../src/ie.scss */
-.nav_search {
+/* line 7, ../src/ie.scss */
+.ie6 .nav_search, .ie7 .nav_search, .ie8 .nav_search, .ie9 .nav_search {
   margin-top: 4px;
 }
-
-/* line 12, ../src/ie.scss */
-.nav_search div.search_bar {
+/* line 8, ../src/ie.scss */
+.ie6 .nav_search div.search_bar, .ie7 .nav_search div.search_bar, .ie8 .nav_search div.search_bar, .ie9 .nav_search div.search_bar {
   padding-top: 4px;
   padding-bottom: 3px;
 }
-
-/* line 13, ../src/ie.scss */
-.nav_search input {
+/* line 9, ../src/ie.scss */
+.ie6 .nav_search input, .ie7 .nav_search input, .ie8 .nav_search input, .ie9 .nav_search input {
   top: 1px;
   left: 2px;
 }
-
-/* line 15, ../src/ie.scss */
-ul.summary {
+/* line 11, ../src/ie.scss */
+.ie6 ul.summary, .ie7 ul.summary, .ie8 ul.summary, .ie9 ul.summary {
   border-color: ececec;
 }
-
-/* line 17, ../src/ie.scss */
-ul.icon_grid li a div {
+/* line 13, ../src/ie.scss */
+.ie6 ul.icon_grid li a div, .ie7 ul.icon_grid li a div, .ie8 ul.icon_grid li a div, .ie9 ul.icon_grid li a div {
   font-weight: bold;
 }
-
-/* line 19, ../src/ie.scss */
-.uniForm, .uniForm fieldset, .uniForm .ctrlHolder, .uniForm .formHint, .uniForm .buttonHolder, .uniForm .ctrlHolder ul {
+/* line 15, ../src/ie.scss */
+.ie6 .uniForm, .ie6 .uniForm fieldset, .ie6 .uniForm .ctrlHolder, .ie6 .uniForm .formHint, .ie6 .uniForm .buttonHolder, .ie6 .uniForm .ctrlHolder ul, .ie7 .uniForm, .ie7 .uniForm fieldset, .ie7 .uniForm .ctrlHolder, .ie7 .uniForm .formHint, .ie7 .uniForm .buttonHolder, .ie7 .uniForm .ctrlHolder ul, .ie8 .uniForm, .ie8 .uniForm fieldset, .ie8 .uniForm .ctrlHolder, .ie8 .uniForm .formHint, .ie8 .uniForm .buttonHolder, .ie8 .uniForm .ctrlHolder ul, .ie9 .uniForm, .ie9 .uniForm fieldset, .ie9 .uniForm .ctrlHolder, .ie9 .uniForm .formHint, .ie9 .uniForm .buttonHolder, .ie9 .uniForm .ctrlHolder ul {
   zoom: 1;
 }
-
-/* line 23, ../src/ie.scss */
-.uniForm .textInput,
-.uniForm .fileUpload,
-.uniForm .selectInput,
-.uniForm select {
+/* line 19, ../src/ie.scss */
+.ie6 .uniForm .textInput,
+.ie6 .uniForm .fileUpload,
+.ie6 .uniForm .selectInput,
+.ie6 .uniForm select, .ie7 .uniForm .textInput, .ie7 .uniForm .fileUpload, .ie7 .uniForm .selectInput, .ie7 .uniForm select, .ie8 .uniForm .textInput, .ie8 .uniForm .fileUpload, .ie8 .uniForm .selectInput, .ie8 .uniForm select, .ie9 .uniForm .textInput, .ie9 .uniForm .fileUpload, .ie9 .uniForm .selectInput, .ie9 .uniForm select {
   height: 24px;
 }
-
-/* line 25, ../src/ie.scss */
-#custom_form li {
+/* line 21, ../src/ie.scss */
+.ie6 #custom_form li, .ie7 #custom_form li, .ie8 #custom_form li, .ie9 #custom_form li {
   height: 53px !important;
 }
-
-/* line 29, ../src/ie.scss */
-.awesome, .awesome:visited {
+/* line 25, ../src/ie.scss */
+.ie6 .awesome, .ie6 .awesome:visited, .ie7 .awesome, .ie7 .awesome:visited, .ie8 .awesome, .ie8 .awesome:visited, .ie9 .awesome, .ie9 .awesome:visited {
   border: 1px solid #666666;
 }
-
-/* line 33, ../src/ie.scss */
-.fdbutton {
+/* line 29, ../src/ie.scss */
+.ie6 .uiButton, .ie7 .uiButton, .ie8 .uiButton, .ie9 .uiButton {
   width: auto;
-  background: #f1fce3;
 }
-
-/* line 38, ../src/ie.scss */
-.ui-draggable-dragging {
+/* line 33, ../src/ie.scss */
+.ie6 .ui-draggable-dragging, .ie7 .ui-draggable-dragging, .ie8 .ui-draggable-dragging, .ie9 .ui-draggable-dragging {
   margin-left: -18px;
   margin-top: -45px;
 }
-
-/* line 43, ../src/ie.scss */
-.search_results_bar .results li h4 {
+/* line 38, ../src/ie.scss */
+.ie6 .search_results_bar .results li h4, .ie7 .search_results_bar .results li h4, .ie8 .search_results_bar .results li h4, .ie9 .search_results_bar .results li h4 {
   margin-left: -50px;
 }
-
-/* line 45, ../src/ie.scss */
-.uiButton {
+/* line 40, ../src/ie.scss */
+.ie6 .uiButton, .ie7 .uiButton, .ie8 .uiButton, .ie9 .uiButton {
   padding: 4px 6px !important;
   font-size: 11px !important;
 }
