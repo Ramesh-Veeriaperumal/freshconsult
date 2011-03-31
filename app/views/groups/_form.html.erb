@@ -52,17 +52,12 @@
 				toggleText();				
 			});			
 		
-		jQuery("#group_form").submit(function(ev){			
-			try {
-				activeAgents = $H();
-				jQuery("ul#Active_list li").each(function(index, item){
-					activeAgents.set(item.getAttribute("agent_id"), item.getAttribute("agent_name"));
-				});
-				jQuery("#agent_list").val(JSON.stringify(activeAgents.toJSON()));
-			}catch(e){
-				jQuery("#agent_list").val('{}');
-			}	
-			//return false;
+		jQuery("#group_form").submit(function(ev){
+			activeAgents = $H();
+			jQuery("ul#Active_list li").each(function(index, item){
+				activeAgents.set(item.getAttribute("agent_id"), item.getAttribute("agent_name"));
+			});
+			jQuery("#agent_list").val(activeAgents.toJSON()); 
 		});
 		
 		toggleText();

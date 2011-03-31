@@ -1,12 +1,11 @@
 @import "base";
 @import "mixins";
 
-
 .uiButton, .uiButton:visited, .fdbutton, .fdbutton:visited {
 	@include button-base;
 	@include pie;
 	background-image:url(../images/overlay-button.png);
-	background-color:#ececec;
+	background-color:#f4f4f4;
 	background-repeat:repeat-x; 
 	color: #666666;
 	display:inline-block; 
@@ -152,3 +151,81 @@ button.positive, .buttons a.positive{
     border:1px solid #d12f19;
     color:#fff;
 }
+
+
+.button {
+	@include anchor-button;
+    white-space: nowrap;
+    text-align: center;
+    font-size: 11px;
+    overflow: hidden;
+    padding: 4px 8px;
+    margin: 2px;
+    border: 2px solid #aaa;
+    background:#fff;
+    
+	@include link-colors(#3f3f3f, #666666, #3f3f3f, #3f3f3f);
+    @include corners(6px);
+
+    box-shadow:
+        0 2px rgba(0, 0, 0, 0.05),
+        0 -2px rgba(0, 0, 0, 0.05) inset;
+
+    -webkit-box-shadow:
+        0 2px rgba(0, 0, 0, 0.05),
+        0 -2px rgba(0, 0, 0, 0.05) inset;
+
+    -moz-box-shadow:
+        0 2px rgba(0, 0, 0, 0.05),
+        0 -2px rgba(0, 0, 0, 0.05) inset;
+
+    background:
+        -moz-linear-gradient(
+            center top,
+            rgba(255, 255, 255, 0) 50%,
+            rgba(0, 0, 0, 0.03) 0%
+        ) repeat scroll 0 0 #fff;
+
+    background:
+        -webkit-gradient(
+            linear,
+            0% 0%,
+            0% 100%,
+            from(#fff),
+            to(rgba(0, 0, 0, 0.03)),
+            color-stop(0.5, rgba(255,255,255,0)),
+            color-stop(0.5, rgba(0, 0, 0, 0.03))
+        ) repeat scroll 0 0 #fff;
+	
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#ededed',GradientType=0 ); /* ie */
+		
+    border: 1px solid #afafaf;
+    cursor: pointer;
+}
+
+.button:hover {
+    background: #eee;
+    border-color: rgba(0, 0, 0, 0.3);
+}
+
+.button.selected {
+    z-index: 6;
+    border-color: rgba(208, 91, 63, 0.6);
+
+    box-shadow:
+        0 2px rgba(0, 0, 0, 0.05),
+        0 1px 7px rgba(208, 91, 63, 0.5),
+        0 -2px rgba(0, 0, 0, 0.05) inset;
+
+    -webkit-box-shadow:
+        0 2px rgba(0, 0, 0, 0.05),
+        0 1px 7px rgba(208, 91, 63, 0.5),
+        0 -2px rgba(0, 0, 0, 0.05) inset;
+
+    -moz-box-shadow:
+        0 2px rgba(0, 0, 0, 0.05),
+        0 1px 7px rgba(208, 91, 63, 0.5),
+        0 -2px rgba(0, 0, 0, 0.05) inset;
+}
+
+

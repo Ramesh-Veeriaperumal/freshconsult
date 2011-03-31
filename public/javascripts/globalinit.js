@@ -12,6 +12,7 @@ var jQ = jQuery.noConflict();
 		// - jQuery Validation for forms with class .ui-form ( ...An optional dont-validate written for the form element will make the selectors ignore those form alone )
 		jQuery("ul.ui-form").not(".dont-validate").parents('form:first').validate();
 		jQuery("div.ui-form").not(".dont-validate").find('form:first').validate(); 
+		jQuery("form.uniForm").validate();
 		
 		flash = $("div.flash_info");
 		if(flash.get(0)){
