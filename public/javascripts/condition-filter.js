@@ -229,7 +229,7 @@ rules_filter = function(name, filter_data, parentDom, options){
 			function(type, c_form){				
 			
 				var serialArray   = jQuery(c_form).serializeArray(),
-					serialHash    = $H({}),
+					serialHash    = $H(),
 					setValue 	  = [],
 				    tempConstruct = $H(),
 					type		  = type || "object";
@@ -254,17 +254,12 @@ rules_filter = function(name, filter_data, parentDom, options){
 						}			
 					}
 				});		
-				try {
-					var current_filter = serialHash.get(name);
-					console.log(current_filter);  
-					var save_data = [];
-					if (!(current_filter.length == 1 && current_filter[0].name == 0)) {
-						save_data = (type != 'json') ? current_filter.toObject() : current_filter.toJSON();
-					}
-					hidden_.val(save_data);
-				}catch(e){
-					alert(e);
-				} 
+				var current_filter = serialHash.get(name);
+				var save_data	   = [];
+				if( ! (current_filter.length == 1 && current_filter[0].name == 0) ) { 
+					save_data = (type != 'json') ? current_filter.toObject() : current_filter.toJSON();
+				}
+				hidden_.val(save_data); 
 				return save_data;
 			},
 		init: 
@@ -297,8 +292,8 @@ rules_filter = function(name, filter_data, parentDom, options){
 			
 			jQuery(parentDom).parents('form:first').submit(function(e){
 				domUtil.get_filter_list('json', this);
-				console.log(hidden_.val());
-				return false;
+				//console.log(hidden_.val());
+				return true;
 			});
 			
 			jQuery('.l_placeholder').live("click", function(ev){
