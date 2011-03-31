@@ -24,6 +24,8 @@
         </ul> 
 		<span class="seperator"></span>
 	<%	json_data = @ticket_fields.json_data %>
+	
+	<% form_tag :action=> :update, :controller => 'ticket_fields', :method => :post do |f| %>
 		<div class="custom_form_outer">
 			<h4 class="title">
 				Customize your “New Ticket” form.
@@ -35,10 +37,11 @@
 			<span class="seperator"></span>
 			<div class="alignright" id="button_panel">
 				<%= link_to "&larr; cancel and go back", "/admin/home", :class => "button floatl" %> 
-				<a href="Javascript:void(0)" class="button" id="SaveForm">Save Form</a>
+				<!--a href="Javascript:void(0)" class="button" id="SaveForm">Save Form</a-->
+				<%= submit_tag "Save Form", :class => "button", :id => "SaveForm" %>
 			</div>
 		</div>
-		
+		<%end%>
 		
 	</div> 
 	
