@@ -190,16 +190,20 @@
 
 .tickets-container{
 	margin:0px -20px;
+	padding:0px;
+}
+
+.ticket-header{ 
+	background-image:url(../images/overlay-button.png);
+	background-color:#f8f8f8;
+	background-repeat:repeat-x; 
+	border-top:1px solid #dfdfdf;
+	border-bottom:1px solid #cfcfcf;
 }
 
 .tickets, .tickets-expanded{
-	margin:0px;
-	width:100%;  
+	width:100%;
 	border-bottom-color:#efefef;
-	thead{ 
-		@include vertical-gradient(#F9F9F9, #ececec);
-		border-top:1px solid #efefef;
-	}
 	color:#5f5f5f;
 	.preview_pic img{
 		width:36px; height:36px;

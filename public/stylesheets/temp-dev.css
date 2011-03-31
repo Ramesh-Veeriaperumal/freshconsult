@@ -307,65 +307,65 @@
 /* line 191, ../src/temp-dev.scss */
 .tickets-container {
   margin: 0px -20px;
+  padding: 0px;
 }
 
-/* line 195, ../src/temp-dev.scss */
+/* line 196, ../src/temp-dev.scss */
+.ticket-header {
+  background-image: url(../images/overlay-button.png);
+  background-color: #f8f8f8;
+  background-repeat: repeat-x;
+  border-top: 1px solid #dfdfdf;
+  border-bottom: 1px solid #cfcfcf;
+}
+
+/* line 204, ../src/temp-dev.scss */
 .tickets, .tickets-expanded {
-  margin: 0px;
   width: 100%;
   border-bottom-color: #efefef;
   color: #5f5f5f;
 }
-/* line 199, ../src/temp-dev.scss */
-.tickets thead, .tickets-expanded thead {
-  background: #f9f9f9;
-  background: -moz-linear-gradient(top, #f9f9f9 0%, #ececec 100%);
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #f9f9f9), color-stop(100%, #ececec));
-  background: linear-gradient(#f9f9f9, #ececec);
-  -pie-background: linear-gradient(#f9f9f9, #ececec);
-  border-top: 1px solid #efefef;
-}
-/* line 204, ../src/temp-dev.scss */
+/* line 208, ../src/temp-dev.scss */
 .tickets .preview_pic img, .tickets-expanded .preview_pic img {
   width: 36px;
   height: 36px;
 }
-/* line 207, ../src/temp-dev.scss */
+/* line 211, ../src/temp-dev.scss */
 .tickets th, .tickets-expanded th {
   background: none;
   padding: 6px 6px 5px 6px;
 }
-/* line 211, ../src/temp-dev.scss */
+/* line 215, ../src/temp-dev.scss */
 .tickets td, .tickets th, .tickets-expanded td, .tickets-expanded th {
   vertical-align: top;
   border-bottom: 1px solid #efefef;
 }
-/* line 215, ../src/temp-dev.scss */
+/* line 219, ../src/temp-dev.scss */
 .tickets td, .tickets-expanded td {
   padding: 8px 8px;
   background-color: #ffffff;
 }
-/* line 218, ../src/temp-dev.scss */
+/* line 222, ../src/temp-dev.scss */
 .tickets td a, .tickets-expanded td a {
   text-decoration: none;
   color: #5a8ec1;
 }
-/* line 225, ../src/temp-dev.scss */
+/* line 229, ../src/temp-dev.scss */
 .tickets .check, .tickets-expanded .check {
   width: 25px;
   padding-left: 8px;
   padding-top: 9px;
   text-align: right;
 }
-/* line 231, ../src/temp-dev.scss */
+/* line 235, ../src/temp-dev.scss */
 .tickets th.check, .tickets-expanded th.check {
   padding-top: 12px;
 }
-/* line 236, ../src/temp-dev.scss */
+/* line 240, ../src/temp-dev.scss */
 .tickets .name h3, .tickets-expanded .name h3 {
   padding: 0px 0px 4px 0px;
 }
-/* line 238, ../src/temp-dev.scss */
+/* line 242, ../src/temp-dev.scss */
 .tickets .name h3 a, .tickets-expanded .name h3 a {
   text-transform: capitalize;
   font-size: 13px;
@@ -378,15 +378,15 @@
   text-overflow: ellipsis;
   -moz-binding: url('/stylesheets/xml/ellipsis.xml#ellipsis');
 }
-/* line 245, ../src/temp-dev.scss */
+/* line 249, ../src/temp-dev.scss */
 .tickets .name h3 a:hover, .tickets-expanded .name h3 a:hover {
   color: #4b7dc0;
 }
-/* line 249, ../src/temp-dev.scss */
+/* line 253, ../src/temp-dev.scss */
 .tickets .name div, .tickets-expanded .name div {
   color: #888888;
 }
-/* line 254, ../src/temp-dev.scss */
+/* line 258, ../src/temp-dev.scss */
 .tickets .assign ul, .tickets-expanded .assign ul {
   margin: 0;
   padding: 0;
@@ -411,51 +411,51 @@
 .tickets .assign ul li, .tickets-expanded .assign ul li {
   *display: inline;
 }
-/* line 256, ../src/temp-dev.scss */
+/* line 260, ../src/temp-dev.scss */
 .tickets .assign ul li, .tickets-expanded .assign ul li {
   padding: 4px 7px 0px 0px;
   color: #999999;
   font-size: 12px;
 }
-/* line 261, ../src/temp-dev.scss */
+/* line 265, ../src/temp-dev.scss */
 .tickets .assign ul li span, .tickets-expanded .assign ul li span {
   color: #444444;
   text-transform: capitalize;
 }
-/* line 268, ../src/temp-dev.scss */
+/* line 272, ../src/temp-dev.scss */
 .tickets .assign ul .priority span.style_1, .tickets-expanded .assign ul .priority span.style_1 {
   /* Low priority style */
   color: #666666;
 }
-/* line 271, ../src/temp-dev.scss */
+/* line 275, ../src/temp-dev.scss */
 .tickets .assign ul .priority span.style_2, .tickets-expanded .assign ul .priority span.style_2 {
   /* Medium priority style */
   color: #cc6633;
 }
-/* line 274, ../src/temp-dev.scss */
+/* line 278, ../src/temp-dev.scss */
 .tickets .assign ul .priority span.style_3, .tickets-expanded .assign ul .priority span.style_3 {
   /* High priority style */
   color: #cc6633;
 }
-/* line 277, ../src/temp-dev.scss */
+/* line 281, ../src/temp-dev.scss */
 .tickets .assign ul .priority span.style_4, .tickets-expanded .assign ul .priority span.style_4 {
   /* Urgent priority style */
   color: #cc6633;
 }
-/* line 283, ../src/temp-dev.scss */
+/* line 287, ../src/temp-dev.scss */
 .tickets .sla, .tickets-expanded .sla {
   vertical-align: top;
   text-align: right;
   font-size: 11px;
 }
 
-/* line 290, ../src/temp-dev.scss */
+/* line 294, ../src/temp-dev.scss */
 .conversation-sprite {
   overflow: hidden;
   *zoom: 1;
   float: right;
 }
-/* line 293, ../src/temp-dev.scss */
+/* line 297, ../src/temp-dev.scss */
 .conversation-sprite .image {
   float: right;
   content: "";
@@ -467,28 +467,28 @@
   height: 32px;
   overflow: hidden;
 }
-/* line 301, ../src/temp-dev.scss */
+/* line 305, ../src/temp-dev.scss */
 .conversation-sprite .email-reply {
   background-position: 0px 0px;
 }
-/* line 304, ../src/temp-dev.scss */
+/* line 308, ../src/temp-dev.scss */
 .conversation-sprite .email-receive {
   background-position: 0px -32px;
 }
-/* line 307, ../src/temp-dev.scss */
+/* line 311, ../src/temp-dev.scss */
 .conversation-sprite .note-public {
   background-position: 0px -64px;
 }
-/* line 310, ../src/temp-dev.scss */
+/* line 314, ../src/temp-dev.scss */
 .conversation-sprite .note-private {
   background-position: 0px -96px;
 }
 
-/* line 316, ../src/temp-dev.scss */
+/* line 320, ../src/temp-dev.scss */
 .contact-box {
   padding-left: 170px;
 }
-/* line 318, ../src/temp-dev.scss */
+/* line 322, ../src/temp-dev.scss */
 .contact-box div.profile_pic {
   float: left;
   margin-left: -150px;
@@ -496,13 +496,13 @@
   margin-top: 5px;
   text-align: center;
 }
-/* line 325, ../src/temp-dev.scss */
+/* line 329, ../src/temp-dev.scss */
 .contact-box .info-highlight {
   margin: 8px 0px 0px -170px;
   padding-left: 165px;
 }
 
-/* line 331, ../src/temp-dev.scss */
+/* line 335, ../src/temp-dev.scss */
 .info-highlight {
   font-size: 13px;
   margin: 0px 0px 0px 0px;
@@ -511,20 +511,20 @@
   border: 1px solid #f4f4e9;
   background-color: #fffbee;
 }
-/* line 338, ../src/temp-dev.scss */
+/* line 342, ../src/temp-dev.scss */
 .info-highlight div {
   padding: 6px;
 }
 
-/* line 344, ../src/temp-dev.scss */
+/* line 348, ../src/temp-dev.scss */
 .forum_list {
   margin: 0px 0px;
 }
-/* line 346, ../src/temp-dev.scss */
+/* line 350, ../src/temp-dev.scss */
 .forum_list a {
   text-decoration: none;
 }
-/* line 347, ../src/temp-dev.scss */
+/* line 351, ../src/temp-dev.scss */
 .forum_list a.title {
   color: #545454;
 }
@@ -540,7 +540,7 @@
 .forum_list a.title:active {
   color: #545454;
 }
-/* line 348, ../src/temp-dev.scss */
+/* line 352, ../src/temp-dev.scss */
 .forum_list .item_actions {
   float: right;
   font-size: 10px;
@@ -552,16 +552,16 @@
   color: #afafaf;
   padding: 2px 8px;
 }
-/* line 356, ../src/temp-dev.scss */
+/* line 360, ../src/temp-dev.scss */
 .forum_list .item_actions a.highlight {
   background-color: #ffffcc;
   padding: 1px 3px;
 }
-/* line 361, ../src/temp-dev.scss */
+/* line 365, ../src/temp-dev.scss */
 .forum_list .subcounter {
   color: #afafaf;
 }
-/* line 364, ../src/temp-dev.scss */
+/* line 368, ../src/temp-dev.scss */
 .forum_list ul.base-set {
   list-style: none;
   overflow: hidden;
@@ -575,25 +575,25 @@
   list-style-type: none;
   margin-left: 0px;
 }
-/* line 369, ../src/temp-dev.scss */
+/* line 373, ../src/temp-dev.scss */
 .forum_list ul.base-set li {
   float: left;
   width: 44%;
   padding: 0px 0px 0px 30px;
   margin: 0px 3% 0px 0px;
 }
-/* line 374, ../src/temp-dev.scss */
+/* line 378, ../src/temp-dev.scss */
 .forum_list ul.base-set li h4.forum_title {
   margin: 3px 0px 0px 0px;
   padding: 6px 0px 4px 0px;
   font-size: 16px;
   position: relative;
 }
-/* line 378, ../src/temp-dev.scss */
+/* line 382, ../src/temp-dev.scss */
 .forum_list ul.base-set li h4.forum_title a {
   font-weight: normal;
 }
-/* line 383, ../src/temp-dev.scss */
+/* line 387, ../src/temp-dev.scss */
 .forum_list ul.base-set li span.icon {
   position: absolute;
   left: -34px;
@@ -603,29 +603,29 @@
   height: 32px;
   overflow: hidden;
 }
-/* line 389, ../src/temp-dev.scss */
+/* line 393, ../src/temp-dev.scss */
 .forum_list ul.base-set li span.forum_type_1 {
   background-position: 0px -192px;
 }
-/* line 393, ../src/temp-dev.scss */
+/* line 397, ../src/temp-dev.scss */
 .forum_list ul.base-set li span.forum_type_2 {
   background-position: 0px -224px;
 }
-/* line 397, ../src/temp-dev.scss */
+/* line 401, ../src/temp-dev.scss */
 .forum_list ul.base-set li span.forum_type_3 {
   background-position: 0px -160px;
 }
-/* line 401, ../src/temp-dev.scss */
+/* line 405, ../src/temp-dev.scss */
 .forum_list ul.base-set li span.forum_type_4 {
   background-position: 0px -128px;
 }
-/* line 405, ../src/temp-dev.scss */
+/* line 409, ../src/temp-dev.scss */
 .forum_list ul.base-set li .topic-list {
   padding: 6px 0px 12px 0px;
   margin-bottom: 8px;
   border-top: 1px solid #f1f1f1;
 }
-/* line 409, ../src/temp-dev.scss */
+/* line 413, ../src/temp-dev.scss */
 .forum_list ul.base-set li .topic-list a.topic {
   white-space: nowrap;
   overflow: hidden;
@@ -637,7 +637,7 @@
   padding: 5px 0px;
   font-size: 13px;
 }
-/* line 415, ../src/temp-dev.scss */
+/* line 419, ../src/temp-dev.scss */
 .forum_list ul.base-set li .topic-list a {
   color: #4d769f;
 }
@@ -653,17 +653,17 @@
 .forum_list ul.base-set li .topic-list a:active {
   color: #4d769f;
 }
-/* line 420, ../src/temp-dev.scss */
+/* line 424, ../src/temp-dev.scss */
 .forum_list ul.base-set li.odd {
   clear: left;
 }
-/* line 423, ../src/temp-dev.scss */
+/* line 427, ../src/temp-dev.scss */
 .forum_list ul.base-set li.even {
   margin-right: 0px;
   width: 46%;
 }
 
-/* line 431, ../src/temp-dev.scss */
+/* line 435, ../src/temp-dev.scss */
 .forum-group {
   margin: 0px -20px;
 }

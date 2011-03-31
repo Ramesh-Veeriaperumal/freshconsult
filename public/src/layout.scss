@@ -56,13 +56,17 @@ label.overlabel{
 #inner {    
 	@include clearfix;	
 	position:relative;
+	.leftcontent{
+		float:left;
+		width:100%;
+	}
 	z-index:1;  	
 	margin:12px 0px;	
-	padding-right:$sidebar-width; /* The width of the rail */  
+	padding-right:$sidebar-width;   
 	.sidebar{ 
 		width:$sidebar-width;
 		float:right; 
-		margin-right:-$sidebar-width;
+		margin-right:-($sidebar-width);
 	}  
 }
 

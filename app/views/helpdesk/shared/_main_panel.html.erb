@@ -4,10 +4,8 @@
 
 	<div class="toolbar" id="toolbar">
 	  <%= yield :main_panel_toolbar %>
-	</div> 
-	<div class="clear"></div>	
+	</div>  
 	<%= content_tag('div', yield(:main_panel_selected_toolbar), :id => 'selection-toolbar', :class => "toolbar clearfix") if yield(:main_panel_selected_toolbar) %>
 	
-	<div class="full">
-	  <%= yield :main_panel_content %>
-	</div>
+
+	<%= yield :main_panel_content %>

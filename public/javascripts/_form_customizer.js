@@ -189,7 +189,7 @@
 		
 	jQuery("#SaveForm").click(function(e){			
 			var jsonData = getCustomFieldJson();
-			jQuery("#field_values").val(JSON.stringify(jsonData)); 
+			jQuery("#field_values").val(jsonData.toJSON()); 
 			//alert(jQuery("#field_values").val());
 			//return false;
 			 

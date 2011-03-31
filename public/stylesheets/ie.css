@@ -40,24 +40,20 @@
   height: 53px !important;
 }
 /* line 25, ../src/ie.scss */
-.ie6 .awesome, .ie6 .awesome:visited, .ie7 .awesome, .ie7 .awesome:visited, .ie8 .awesome, .ie8 .awesome:visited, .ie9 .awesome, .ie9 .awesome:visited {
-  border: 1px solid #666666;
-}
-/* line 29, ../src/ie.scss */
-.ie6 .uiButton, .ie7 .uiButton, .ie8 .uiButton, .ie9 .uiButton {
-  width: auto;
-}
-/* line 33, ../src/ie.scss */
 .ie6 .ui-draggable-dragging, .ie7 .ui-draggable-dragging, .ie8 .ui-draggable-dragging, .ie9 .ui-draggable-dragging {
   margin-left: -18px;
   margin-top: -45px;
 }
-/* line 38, ../src/ie.scss */
+/* line 30, ../src/ie.scss */
+.ie6 input.search, .ie7 input.search, .ie8 input.search, .ie9 input.search {
+  height: 28px;
+}
+/* line 34, ../src/ie.scss */
 .ie6 .search_results_bar .results li h4, .ie7 .search_results_bar .results li h4, .ie8 .search_results_bar .results li h4, .ie9 .search_results_bar .results li h4 {
   margin-left: -50px;
 }
-/* line 40, ../src/ie.scss */
+/* line 36, ../src/ie.scss */
 .ie6 .uiButton, .ie7 .uiButton, .ie8 .uiButton, .ie9 .uiButton {
-  padding: 4px 6px !important;
-  font-size: 11px !important;
+  padding: 4px 6px;
+  font-size: 11px;
 }

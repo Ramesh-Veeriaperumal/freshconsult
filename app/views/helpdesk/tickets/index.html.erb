@@ -67,9 +67,7 @@
 	
   <% end %>
 <% end %>
-
-<% content_for :layoutType do %>single<% end %>
-
+ 
 <% content_for :main_panel_title do %>
   <h3 class="title">
   	<%= current_selector_name %>
@@ -95,7 +93,7 @@
   <%= form_tag "", :method => :put, :style=> 'display: none', :id => 'accept-form' do end %>
 
   <div id="pages" class="tickets-container">  
-      <table class="tickets">
+      <table class="tickets ticket-header" width="100%">
       	<thead>
       		<tr>
 	      		<th class="check">
