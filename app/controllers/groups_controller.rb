@@ -38,8 +38,8 @@ class GroupsController < Admin::AdminController
   def create
      @group = current_account.groups.new(params[nscname])     
      agents_data = params[:AgentGroups][:agent_list]     
-     @agents = ActiveSupport::JSON.decode(agents_data)         
-     @agents.each_key { |agent| @group.agent_groups.build(:user_id =>agent) }     
+     @agents = ActiveSupport::JSON.decode(agents_data)      
+     @agents.each_key { |agent| @group.agent_groups.build(:user_id =>agent) } unless @agents.blank?
      if @group.save
         redirect_to :action => 'index'
      else
@@ -79,7 +79,7 @@ class GroupsController < Admin::AdminController
     
     agents_data = params[:AgentGroups][:agent_list]     
     @agents = ActiveSupport::JSON.decode(agents_data)
-    @agents.each_key { |agent| AgentGroup.create(:user_id =>agent, :group_id =>group_id )  }
+    @agents.each_key { |agent| AgentGroup.create(:user_id =>agent, :group_id =>group_id )} unless @agents.blank?
   end
   
   
