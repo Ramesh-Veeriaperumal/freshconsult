@@ -118,7 +118,8 @@ en:
            customize_email: "Customize Email"
            insert_placeholder: "Insert Placeholder"
            modify_template: "Modify Requester Template"
-        
+   dispatch:
+        edit: "Dispatch'r - Edit Rule"     
    business_hours:
        title: "Business Hours"
        holidays: "Holidays"
