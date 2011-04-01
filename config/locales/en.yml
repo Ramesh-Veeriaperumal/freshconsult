@@ -32,8 +32,31 @@ en:
    activate: "activate"
    add: "Add"
    
-    
+   company:
+       title: "Companies"
+       new: "New Company"
+       
+   
+   ticket:
+       unassigned: "Unassigned"
+       assigned_to: "Assigned to"
+       status: "Status"
+   
    contacts:
+       edit: "Edit Contact"
+       new: "New Contact"
+       showing: "Showing"
+       import_csv: "Import users from CSV"
+       title: "Contacts"
+       quick_contact: "Quick Contact"
+       save_changes: "Save changes"
+       edit_contact: "Edit contact"
+       working: "Working"
+       info1: "Are you sure you want to delete this contact"
+       info2: "Make this User an Agent"
+       info3: "Background information from %{nick_name}"
+       info4: "Recent tickets from %{nick_name}"
+       info5: "User has not created any ticket till now"
        deleted_message:     "This is a deleted contact"
        restore:             "Restore"
        emailnotverified:    "Email has not been verified for this user!"
@@ -155,6 +178,7 @@ en:
        info1: "This is a deleted Agent"
        info2: "Email has already been taken"
        info3: "Are you sure you want delete"
+   
    group:
        title: "Groups"
        edit: "Edit Group"
@@ -166,6 +190,9 @@ en:
        info3: "Send an Escalation email to"
        info4: "if a ticket remains un-assigned for more than"
        info5: "Are you sure"
+  
+      
+       
    user:
       full_name: "Full Name"
       email: "Email"
@@ -174,7 +201,12 @@ en:
       work: "Work"
       mobile: "Mobile"
       photo: "Photo"
+      company: "Company"
+      twitter_id: "Twitter Id"
+      secondary: "secondary"
+      back_info: "Background information"
       info1: "A Profile image of the person, its best if the picture has the same length and height"
+      info2: "Add specific notes regarding this contact"
       
         
    business_hours:
