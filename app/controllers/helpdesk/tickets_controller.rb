@@ -20,6 +20,21 @@ class Helpdesk::TicketsController < ApplicationController
     end
   end
   
+  def user_ticket
+    @user = current_account.users.find_by_email(params[:email])
+    if !@user.nil?
+      @tickets =  Helpdesk::Ticket.requester_active(@user)
+    else
+      @tickets = []
+    end
+    respond_to do |format|
+      format.xml do
+        render :xml => @tickets.to_xml
+      end
+    end
+    
+  end
+  
   
  
   def index
