@@ -117,7 +117,7 @@ a.addchoice:hover{
 	 
 	label, li.checkbox{						
 		font-weight:normal; 
-		padding:4px 0px;
+		padding:8px 0px;
 		margin:0px;
 		line-height:18px;
 		color:#565656;
@@ -125,8 +125,9 @@ a.addchoice:hover{
 	}
 	li.checkbox{
 		@include clearfix;
-		input, label{
+		input{
 			float:left;
+			margin-right:3px;
 		} 
 		label{
 			position:relative;
@@ -557,7 +558,7 @@ span.sort_handle{
 
 .ui-sortable-placeholder{
 	background:#DFEFFF !important;
-	border:1px dotted #C2D7EF  !important;
+	border:2px dotted #C2D7EF  !important;
 	visibility: visible !important;
 	padding:20px 6px;
 	position:relative;
@@ -583,9 +584,13 @@ span.sort_handle{
 		.action_panel{
 			position:absolute;
 			top:0px;
-			right:20px;
+			left:0px;
 			padding:0px;
-			visibility:hidden;
+			z-index:9999;
+			width:100%;
+			height:100%;
+			background:#afafaf;
+			@include opacity(0);
 		}
 	} 
 	

@@ -2,7 +2,7 @@
 	<% form_for(@sla_policy) do |f| %> 
 	  <%= render :partial => "form", :locals => { :f => f } %> 
 	  <div class="button-container">
-		<%= f.submit 'Save', :class => "fdbutton" %>
-		<%= link_to 'cancel', helpdesk_sla_policies_path, :class => "fdbutton grey" %>
+		<%= f.submit t('save'), :class => "uiButton" %>
+		<%= link_to t('cancel'), helpdesk_sla_policies_path, :class => "uiButton grey" %>
 	  </div>	 
 	<% end %>

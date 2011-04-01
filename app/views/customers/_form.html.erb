@@ -2,28 +2,28 @@
 	  <%= f.error_messages %>	
 	  <ul class="ui-form"> 
 		  <li>
-		    <%= f.label :name, "Company name" %>
+		    <%= f.label :name, t('company.name') %>
 		    <%= f.text_field :name , :class => "text required" %>
 		  </li>	  
 		  <li>
-		    <%= f.label :description %>
-			<label class="overlabel" for="comp_desc">More info regarding this company like address, phone number, website etc.</label>
+		    <%= f.label :description, t('description')  %>
+			<label class="overlabel" for="comp_desc"><%=t('company.info8')%>.</label>
 		    <%= f.text_area :description, :id => "comp_desc", :class => "smallpara"  %>
 		  </li>	
 		  <li>
 		  	<%= f.label :note, "Notes" %>
 			<label class="overlabel" for="comp_notes">
-				Add specific notes regarding this company<br /> 
+				<%=t('company.info5')%><br /> 
 				example - we are negotiating a 100K deal with this company
 			</label>
 		   
 			<%= f.text_area :note, :id => "comp_notes", :class => "smallpara"  %>
 		  </li>
 		  <li>
-		  	<%= f.label :domains, "Domain Names for this company" %>		
+		  	<%= f.label :domains, t('company.info2') %>		
 			<%= f.text_field :domains, :id => "domain_names", :class => "text"  %>
 			<span>
-				<b>Note:</b> Freshdesk will automatically associate Contacts with this company if email ids contain these domains 
+				<b>Note:</b> <%=t('company.info9')%> 
 			</span>
 		  </li> 
 	</ul>

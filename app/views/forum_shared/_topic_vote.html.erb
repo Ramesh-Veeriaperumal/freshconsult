@@ -1,4 +1,4 @@
-	<span class="seperator"></span>
+ 
 	<span id="votes<%= @topic.id %>">
 		    <% info_text = (@forum.forum_type != 2) ? ((topic_vote.votes_for == 1)?"has":"have"): ((topic_vote.votes_for > 1)?"like":"likes") %>
 			
@@ -19,13 +19,14 @@
 					<div class="forum_info">
 						<%= pluralize(topic_vote.votes_for, "Person") %>
 						<%= info_text %>  this <%= forum_type_name %>
+						<span class="bottom-pointer"></span>
 					</div>
 				<% end %>
 				
 			<% end %>
 		
 			
-			<strong>
+			<div>
 			<%	like_text = ((@forum.forum_type != 2)?"I have":"I like") + " this " + forum_type_name %>
 			<% unless(topic_vote.voted_by_user? current_user) %>
 				<%= link_to_remote like_text,  
@@ -42,13 +43,13 @@
 						:url => { :action=>"destroy_vote", :id => @topic.id, :forum_id => @forum.id , :category_id => @forum_category.id,  
 						:id=>@topic.id,  
 						:vote=>"for"},
-						:html => { :class => "forum_button" }
+						:html => { :class => "forum_button small" }
 					 %>
 				 <% else %>
 				 			 
 				 <% end %>
 			<% end %>
-			</strong>
+			</div>
 		   
 					
 		<%# link_to_remote "-(#{@topic.votes_against})",
