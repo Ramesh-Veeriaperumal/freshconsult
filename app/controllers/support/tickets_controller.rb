@@ -14,6 +14,12 @@ class Support::TicketsController < ApplicationController
     return redirect_to(send(Helpdesk::ACCESS_DENIED_ROUTE)) unless current_user
     @tickets = Helpdesk::Ticket.find_all_by_requester_id(current_user.id)
     @tickets ||= []
+    
+    respond_to do |format|
+      format.html
+      format.xml  { render :xml => @tickets.to_xml }
+    end
+    
   end
   
   def close_ticket 

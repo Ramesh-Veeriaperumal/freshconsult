@@ -27,6 +27,7 @@ class Helpdesk::TicketsController < ApplicationController
     @items = TicketsFilter.filter(@template.current_filter, current_user, current_account.tickets)
 
     @items = TicketsFilter.search(@items, params[:f], params[:v])
+    
 
     respond_to do |format|
       format.html  do
@@ -35,9 +36,16 @@ class Helpdesk::TicketsController < ApplicationController
           :order => TicketsFilter::SORT_SQL_BY_KEY[(params[:sort] || :due_by).to_sym ] +" #{params[:sort_order]}"  ,
           :per_page => 10)
       end
+      
+      format.xml do
+        render :xml => @items.to_xml
+      end
+      
+      
       format.atom do
         @items = @items.newest(20)
       end
+      
     end
 
   end
