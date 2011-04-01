@@ -23,7 +23,7 @@ module ModelControllerMethods
   
   def create
     if @obj.save
-      flash[:notice] = "The #{human_name} has been created."
+      flash[:notice] = create_flash
      
       respond_to do |format|
       format.html  do
@@ -103,8 +103,10 @@ module ModelControllerMethods
     
     def redirect_url
       { :action => 'index' }
-  end
+    end
   
- 
+    def create_flash
+      "The #{human_name} has been created."
+    end
     
 end
