@@ -1,14 +1,14 @@
 <%content_for :sidebar do%>
 	<div class="sidepanel">
-	<h3 class="title">Quick Customer</h3> 
+	<h3 class="title"><%=t('company.quick_company')%></h3> 
 	<% form_tag :action=> :quick, :method =>:post do %> 
 	<ul class="ui-form">
 	<li> 
-		 <label for="customer_name">Company name</label> 
+		 <label for="customer_name"><%=t('company.name')%></label> 
 		 <input id="customer_name" name="customer[name]" size="30" type="text" /> 
 	</li> 
 	</ul>
-  	<div class="button-container"><%= submit_tag 'Create', :class => "uiButton small" %></div>
+  	<div class="button-container"><%= submit_tag t('create'), :class => "uiButton small" %></div>
 	<% end %>
 	</div>
 <%end%> 
@@ -17,8 +17,8 @@
 	<% @customers.each do |customer| %>
 	  <li class="<%= cycle('stripe', '') %>">		  	
 		<div class="item_actions">
-	    	<%= link_to('Edit', edit_customer_path(customer), :class => "button") %>
-	    	<%= link_to 'Delete', customer, :confirm => 'Are you sure you want to delete this company?', :method => :delete, :class => "button" %>
+	    	<%= link_to(t('edit'), edit_customer_path(customer), :class => "button") %>
+	    	<%= link_to t('delete'), customer, :confirm =>  "#{t('company.info1')}?", :method => :delete, :class => "button" %>
 		</div> 
 	    <div class="item_information">
 	    	<%= link_to(h(customer.name), customer, :class => "item_info" ) %>			

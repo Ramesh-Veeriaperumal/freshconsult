@@ -5,7 +5,7 @@
 			<div class="edit" id="sla_button">
 				<a href="javascript:void(0)" onclick="jQuery('#sla_details, #sla_form').toggle(); jQuery('#sla_button').hide()">Edit</a>
 			</div> 
-			<h4 class="title">SLA Policy</h4>
+			<h4 class="title"><%=t('sla_policy.title')%></h4>
 			<div id="sla_details">
 				<strong><%= @customer.sla_policy.name %></strong>
 				<div class="info_data"><%= @customer.sla_policy.description %></div>
@@ -13,17 +13,17 @@
 			<div id="sla_form" style="display:none;">
 				<% form_for @customer do |f| %>
 					<div>
-						<%= f.label(:sla_policy_id, "Select policy") %>
+						<%= f.label(:sla_policy_id, t('sla_policy.select_policy')) %>
 						<%= f.select(:sla_policy_id, current_account.sla_policies.map {|u| [u.name, u.id]}) %>
 					</div>
-					<%= f.submit "Change"  %>
+					<%= f.submit t('change') %>
 					<a href="javascript:void(0)" onclick="jQuery('#sla_details, #sla_form').toggle(); jQuery('#sla_button').show()">Cancel</a>
 				<% end %>
 			</div>
 		</div>
 		<% unless @customer.domains.blank? %>
 		<div class="element" style="display:none;">
-			<h4 class="title">Domain Names for this company</h4>
+			<h4 class="title"><%=t('company.info2')%></h4>
 			<p>
 				<%= @customer.domains %>	
 			</p>	
@@ -31,39 +31,39 @@
 		<% end %>
 	</div> 
 	<div class="sidepanel">
-	<h4 class="title">New Contact <span class="highlight">in <%=@customer.name%></span></h4> 
+	<h4 class="title"><%=t('contacts.new')%> <span class="highlight">in <%=@customer.name%></span></h4> 
 	
 		<% form_tag :action=> :quick_customer,:controller => "contacts", :method =>:post do %>
 		<%= hidden_field_tag 'customer_id', params[:id] %> 	
 		<ul class="ui-form">
 		<li> 
-			<label for="user_name">Full Name</label> 
+			<label for="user_name"><%=t('user.full_name')%></label> 
 			<input class="text" id="user_name" name="user[name]" size="30" type="text" value="" /> 
 		</li> 
 		<li>
-			<label for="email_primary">Email</label> 
+			<label for="email_primary"><%=t('user.email')%></label> 
 			<input class="text" id="email_primary" name="user[email]" size="30" type="text" />
 		</li>
 		<li>
-			<label for="user_phone">Phone</label> 
+			<label for="user_phone"><%=t('user.phone_no')%></label> 
 			<input class="text" id="phone_work" name="user[phone]" size="30" type="text" /> 
 		</li>
 		</ul>
-		<div class="button-container"><%= submit_tag 'Create', :class => "uiButton grey small" %></div>
+		<div class="button-container"><%= submit_tag t('create'), :class => "uiButton grey small" %></div>
 		<% end %>
 	</div>
 <% end %>
 <div class="company_box">
 	<div class="action_buttons">
-		<%= link_to 'Edit this company', edit_customer_path(@customer), :class => "last" %>
+		<%= link_to t('edit'), edit_customer_path(@customer), :class => "last" %>
 	</div>
 	<h3 class="title"><%= h @customer.name %></h3>
 	<div><%=@customer.description%></div>
 </div> 
-<h4 class="title">Add a Note about "<%= @customer.name %>"</h4>	
+<h4 class="title"><%=t('company.info4',:name => @customer.name)%></h4>	
 <% form_for(@customer) do |f| %>
 	<label class="overlabel" for="comp_notes">
-		Add specific notes regarding this company<br /> 
+		<%=t('company.info3')%><br /> 
 		example - we are negotiating a 100K deal with this company
 	</label>
 	<%= f.text_area :note, :class=> "sp_paragraph", :id => "comp_notes" %>
@@ -74,7 +74,7 @@
 
 <% unless @customer.users.empty? %>
 <span class="seperator"></span>
-<h4 class="title">People in <%=@customer.name%> (<%= @customer.users.size %>) </h4>
+<h4 class="title"><%=t('company.info6',:name => @customer.name)%> (<%= @customer.users.size %>) </h4>
 	<ul class="user_list">	  
 			  <% @customer.users.each do |user| %>
 			  <li>
@@ -86,10 +86,10 @@
 	</ul>
 <% end %>
 <span class="seperator"></span>
-<h4 class="title">Recent Tickets from "<%= @customer.name %>"</h4>
+<h4 class="title"><%=t('contacts.info4',:nick_name => @customer.name)%></h4>
 	
 	<% if (@customer.tickets.visible.size == 0) %>
-		<%= "No tickets have been created by the people in this company" %>
+		<%= "#{t('company.info7')}" %>
 	<% else %> 
 		<ul class="history-list">
 			<% @customer.tickets.visible.first(5).each do |ticket| %>		

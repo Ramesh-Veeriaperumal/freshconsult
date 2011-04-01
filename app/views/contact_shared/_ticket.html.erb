@@ -5,9 +5,9 @@
 		<%= formated_date(ticket.created_at) %>
 		|
 		<% if ticket.freshness == :new %>
-	     	Unassigned
+	     	<%=t('ticket.unassigned')%>
 	  	<% else %>
-	  		Assigned to <%= link_to(h(ticket.responder.display_name), ticket.responder, :class => 'username') %>
-		<% end %>| Status <%= ticket.status_name %>
+	  		<%=t('ticket.assigned_to')%> <%= link_to(h(ticket.responder.display_name), ticket.responder, :class => 'username') %>
+		<% end %>| <%=t('ticket.status')%> <%= ticket.status_name %>
 	</div>
 </li>		
