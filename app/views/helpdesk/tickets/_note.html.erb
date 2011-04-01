@@ -1,15 +1,6 @@
 <% note_view_id = "note_view_"+note.id.to_s() %>
 <div id="<%=note_view_id%>" class="description <%= cycle('stripe', '') %>">
-   	<a name="<%= note.id %>"></a>
-			<% if note.private && !note.incoming && !note.status? %>
-				<div class="action_buttons" style="display:none;">
-					<%= link_to_remote( "Edit",  :update => note_view_id,
-				                            			 :url => edit_helpdesk_ticket_helpdesk_note_path(@item, note),
-														 :method => :GET) %>
-					<%= link_to "Delete", helpdesk_ticket_helpdesk_note_path(@item, note), :method => :delete, :class => "last" %>
-				</div>
-			<% end %>
-		
+   	<a name="<%= note.id %>" class="bookmark"></a> 
 		<div class="conversation-sprite">
 			<% if note.private_note? %>	 
 				<span class="image note-private" title="Private note"></span>
@@ -30,7 +21,7 @@
 		<% else %>
 			System Generated
 		<% end %>
-		<div class="timestamp"><%= note.created_at.strftime("%B %e %Y at %I:%M %p") %></div>
+		 on <%= formated_date(note.created_at) %>
   	</div>
 	
 	<div class="details">
@@ -42,6 +33,14 @@
 	        </blockquote>
 		<% end %>
 	</div>	
+	<% if note.private && !note.incoming && !note.status? %>
+		<div class="bottom-actions" style="display:none;">
+			<%= link_to_remote( "Edit",  :update => note_view_id,
+		                         			 :url => edit_helpdesk_ticket_helpdesk_note_path(@item, note),
+											 :method => :GET) %>
+			<%= link_to "Delete", helpdesk_ticket_helpdesk_note_path(@item, note), :method => :delete, :class => "last" %>
+		</div>
+	<% end %>
 	<% unless note.attachments.empty? %>
 		<span class="seperator"></span>
 		<h4><%= pluralize(note.attachments.size, 'attachment')%></h4>

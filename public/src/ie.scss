@@ -1,8 +1,9 @@
 @import "mixins";
 
 .ie6, .ie7, .ie8, .ie9{
-
+	  
 	a.new_ticket{ display:inline; }
+	.wrapper{ width:980px; }
 	
 	.nav_search { margin-top:4px; } 
 	.nav_search div.search_bar{ padding-top:4px; padding-bottom:3px; }
@@ -22,19 +23,46 @@
 		height:53px !important;
 	}
 	
-	.ui-draggable-dragging{
+	/*.ui-draggable-dragging{
 		margin-left:-18px;
 		margin-top:-45px;
+	}*/
+	
+	.request-list div.item{ 
+		.bulb, .wand{
+			left:0px;
+			margin-left:-25px;
+		}
 	}
 	
 	input.search{
 		height:28px;	
 	}
 	
+	div.description{  
+		margin-top:0px;
+		margin-bottom:0px;
+		padding-top:0px;
+		padding-bottom:0px;
+		.details{
+			padding:0px;
+		}
+	}
+	
+	.rtCnt .rtDetails h3.title{
+		margin-top:14px;
+		padding-bottom:0px;
+	}
+	
+	div.panel_area .tag_delete{
+		right:12px;
+	}
+	
+	
 	.search_results_bar .results li h4{ margin-left:-50px;}
 	
 	.uiButton{
-		padding:4px 6px;
+		padding:4px 12px;
 		font-size:11px;
 	}
 }

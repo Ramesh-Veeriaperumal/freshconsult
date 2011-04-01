@@ -6,7 +6,7 @@
 <!--[if (gt IE 9)|!(IE)]><!--> <html class="no-js"> <!--<![endif]-->
 
     <%= render :partial => "layouts/shared/head" %>
-    <body class="<% unless @content_for_sidebar %>single<% end %>">
+    <body class="<% unless @content_for_sidebar %>single<% end %> <%= yield :layoutType %>">
 	   <div id="wrap"> 
             <%= render(:partial => '/layouts/shared/header') %>
             <div class="content">
@@ -25,14 +25,12 @@
 								<%= yield %>
 							</div>
 		                </div>
-					</div>
+					</div> 
 				</div> 
-				</div>
-			</div> 
+			</div>
 		</div>
 		<div id="footer" class="footer"> 
-			<div class="wrapper">  
-			</div> 
+			<div class="wrapper"></div> 
        	</div> 
 		<%= yield :dialogs  %>
 		<%= yield :pagefixed  %>

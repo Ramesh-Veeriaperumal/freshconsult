@@ -8,16 +8,16 @@
 		{
 			if (action == "reply")
 			{
-				jQuery('#cnt-note').css("display", "none");
-				jQuery('#cnt-reply').css("display", "block");
+				jQuery('#cnt-note').hide();
+				jQuery('#cnt-reply').show();
 			}
 			else
 			{
-				jQuery('#cnt-reply').css("display", "none");
-				jQuery('#cnt-note').css("display", "block");
+				jQuery('#cnt-reply').hide();
+				jQuery('#cnt-note').show();
 			}
-			link.addClassName('active');
-			link.siblings().each(function(l){ l.removeClassName('active'); });
+			//link.addClassName('active');
+			//link.siblings().each(function(l){ l.removeClassName('active'); });
 		}
 		Helpdesk.swapEmailNote = function(cls, private, submit, link, id){
 			var el = $(id);
@@ -92,13 +92,10 @@
 	});
 	
 <% end %>
+ 
 
-<% content_for :breadcrumb do %>
-<% end %>
-
-<% content_for :sidebar do %>
-<div id="SmartSideBar"></div>
-<div class="rtCnt sidepanel">
+<% content_for :sidebar do %> 
+<div class="rtCnt sidepanel ticket-panel">
 	<div class="rtPanel">
 		<a href="javascript:void(0)" class="active" cntid="TicketProperties">
 			<img src="/images/spacer.gif" class="ticketprop" width="36px" height="36px"  />
@@ -182,10 +179,12 @@
 							<%= link_to("Delete", @ticket, :method => :delete, :class => "last", :title => "Move this ticket to trash"   ) unless @ticket.deleted %>
 							<%= link_to("Undelete", restore_helpdesk_ticket_path(@ticket), :method => :put, :class => "last", :title => "Move this ticket to trash" ) if @ticket.deleted %>
 						</div>	
-		            	<%= link_to(image_tag("/images/spacer.gif"), helpdesk_ticket_helpdesk_subscriptions_path(@ticket), :method => :post, :class => "monitor", :title => "Monitor this ticket" ) if not @subscription %>
-						<%= link_to(image_tag("/images/spacer.gif"), helpdesk_ticket_helpdesk_subscription_path(@ticket, @subscription), :method => :delete, :class => "monitor_active",  :title => "Stop monitoring this ticket" ) if @subscription %>
-						<%= link_to(image_tag("/images/spacer.gif"), unspam_helpdesk_ticket_path(@ticket), :method => :put, :class => "spam_active", :title => "This is not spam" ) if @ticket.spam %>
-					   	<%= link_to(image_tag("/images/spacer.gif"), spam_helpdesk_ticket_path(@ticket), :method => :put, :class => "spam", :title  => "Mark as spam") unless @ticket.spam %>
+						<div class="floatr">  
+		            		<%= link_to(image_tag("/images/spacer.gif"), helpdesk_ticket_helpdesk_subscriptions_path(@ticket), :method => :post, :class => "monitor", :title => "Monitor this ticket" ) if not @subscription %>
+							<%= link_to(image_tag("/images/spacer.gif"), helpdesk_ticket_helpdesk_subscription_path(@ticket, @subscription), :method => :delete, :class => "monitor_active",  :title => "Stop monitoring this ticket" ) if @subscription %>
+							<%= link_to(image_tag("/images/spacer.gif"), unspam_helpdesk_ticket_path(@ticket), :method => :put, :class => "spam_active", :title => "This is not spam" ) if @ticket.spam %>
+						   	<%= link_to(image_tag("/images/spacer.gif"), spam_helpdesk_ticket_path(@ticket), :method => :put, :class => "spam", :title  => "Mark as spam") unless @ticket.spam %>
+						</div>
 		        </div>	
 		        <div id="description-full" style="display:block" class="details min_height">
 			    	<%= RedCloth.new(auto_link(@ticket.description, :all, :target => "_blank")).to_html %>
@@ -207,34 +206,27 @@
 				</ul>
 			</div>
 			<% end %>
-	    </div>		
-				<%# content_tag(:div, "This ticket is flagged as spam. " + link_to("(undo)", unspam_helpdesk_ticket_path(@ticket), :method => :put), :class => 'spam') if @ticket.spam %>
-				<%# content_tag(:div, "This ticket is deleted. " + link_to("(undo)", restore_helpdesk_ticket_path(@ticket), :method => :put), :class => 'spam') if @ticket.deleted %>
-				<%# content_tag(:div, "You're monitoring this ticket. " + link_to("(stop)", helpdesk_ticket_helpdesk_subscription_path(@ticket, @subscription), :method => :delete), :class => 'monitoring') if @subscription %>
-				<%# link_to("Monitor this ticket", helpdesk_ticket_helpdesk_subscriptions_path(@ticket), :method => :post, :class => "button" ) if not @subscription %>
-				<%# link_to("Stop monitoring this ticket", helpdesk_ticket_helpdesk_subscription_path(@ticket, @subscription), :method => :delete, :class => "button" ) if @subscription %>
-				<%# link_to("This is not spam", unspam_helpdesk_ticket_path(@ticket), :method => :put, :class => "button" ) if @ticket.spam %>
-				<%# link_to("Mark as spam", spam_helpdesk_ticket_path(@ticket), :method => :put, :class => "button" ) unless @ticket.spam %>
+	    </div>		 
 		<div class="alignright">
 			<%= link_to_function("Reply to ticket",    "swapEmailNote('reply', this)", :class => 'uiButton', :id => "ReplyButton") if @item.requester %>	  
 			<%= link_to_function("Add note", "swapEmailNote('note', this)", :class => 'uiButton') %>		
 		</div>
 		
-	
-		<% if @item.requester %>
-			
-			<%= render(:partial => '/helpdesk/shared/note_form', :locals => {:id => 'add-note',	:cntid => "cnt-note", :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
-			<%= render(:partial => '/helpdesk/shared/reply_form', :locals => {:id => 'send-email', :cntid => 'cnt-reply', :note => [@ticket, Helpdesk::Note.new(:private => false)] }) %>
-			
-		<% else %>
-			
-			<%= render(:partial => '/helpdesk/shared/note_form', :locals => {:id => 'add-note',	:cntid => "cnt-note", :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
-			
-		<% end %>				
-		
+		<table>
+			<tr>
+				<td>
+					<% if @item.requester %> 
+						<%= render(:partial => '/helpdesk/shared/note_form', :locals => {:id => 'add-note',	:cntid => "cnt-note", :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
+						<%= render(:partial => '/helpdesk/shared/reply_form', :locals => {:id => 'send-email', :cntid => 'cnt-reply', :note => [@ticket, Helpdesk::Note.new(:private => false)] }) %>
+					<% else %>
+						<%= render(:partial => '/helpdesk/shared/note_form', :locals => {:id => 'add-note',	:cntid => "cnt-note", :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
+					<% end %>
+				</td>
+			</tr>				
+		</table>
 		<% unless @ticket_notes.blank? then %>
 			<h3 class="subtitle">Conversation</h3>
-			<div class="requestCnt requestConv">
+			<div class="requestCnt request-conversation">
 				<%= render :partial => 'note', :collection => @ticket_notes, :spacer_template => "ui/seperator" %>
 		    </div>
 		<% end %>

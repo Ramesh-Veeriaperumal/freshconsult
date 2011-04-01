@@ -4,7 +4,7 @@
 
 <% content_for :sidebar do -%>
 	<% if logged_in? && current_user.has_manage_forums? %>
-	<div class="rtCnt">
+	<div class="rtCnt sidepanel">
 		<div class="rtDetails_forum">
 		<% if logged_in? && current_user.has_manage_forums? %>
 			<% if @forum.ideas? %>
@@ -25,10 +25,7 @@
 				<span class="seperator"></span>
 				<%= link_to(t('connect_ticket') + " &raquo;", new_helpdesk_ticket_path(:topic_id => @topic.id), :class => "uiButton small full-width") if logged_in? and @topic.ticket_topic.nil?  %>
 				<%= link_to(h(@topic.ticket.subject), helpdesk_ticket_path(@topic.ticket)) unless @topic.ticket_topic.nil? %>
-			</div>
-			
-			
-			
+			</div> 
 		<% end %>
 		</div>
 	</div>
@@ -65,10 +62,10 @@
 						        <%= link_to(t('topic.edit'), edit_category_forum_topic_path(@forum_category,@forum, @topic) , :class => "last" ) %> 
 	 					     <% end %>
 						  </div>		
-							
-						  <%= link_to(image_tag("/images/spacer.gif"), category_forum_topic_monitorship_path(@forum_category,@forum, @topic), :method => :post, :class => "monitor", :title => "Monitor this topic" ) unless @monitoring %>
-						  <%= link_to(image_tag("/images/spacer.gif"), category_forum_topic_monitorship_path(@forum_category,@forum, @topic), :method => :delete, :class => "monitor_active",  :title => "Stop monitoring this topic" ) if @monitoring %>
-							  	
+						  <div class="floatr">	
+							  <%= link_to(image_tag("/images/spacer.gif"), category_forum_topic_monitorship_path(@forum_category,@forum, @topic), :method => :post, :class => "monitor", :title => "Monitor this topic" ) unless @monitoring %>
+							  <%= link_to(image_tag("/images/spacer.gif"), category_forum_topic_monitorship_path(@forum_category,@forum, @topic), :method => :delete, :class => "monitor_active",  :title => "Stop monitoring this topic" ) if @monitoring %>
+						  </div>	  	
 						<% end %> 
 					</div>
 		        	 

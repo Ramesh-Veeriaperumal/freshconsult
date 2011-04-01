@@ -291,8 +291,10 @@
 	}
 }	  
  
-.conversation-sprite{
-	@include clearfix;
+.conversation-sprite{ 
+	position:relative;
+	display:inline;
+	margin-bottom:-30px; 
 	float:right;
 	.image {
 		float:right;

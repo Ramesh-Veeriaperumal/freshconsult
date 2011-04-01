@@ -22,8 +22,7 @@ p{
 /* PAGE AREA STYLE */ 
 
 .sp_border{
-	border:3px solid darken($background, 5%);
-	@include pie;
+	border:2px solid darken($background, 5%); 
 }
 
 .pagearea, .sidepanel, .rtCnt, .no-helpdesk{
@@ -150,101 +149,6 @@ ul.activityfeed li{
 	border-right:0px;
 	margin:12px 0px;
 }
-
-.reminders:before {
-   content:"";
-   position:absolute;
-   top:-3px;
-   right:-3px;
-   border-width:0 16px 16px 0;
-   border-style:solid;
-   border-color:$background $background #734e3d #734e3d;
-   background:#e3b558; 
-   display:block; width:0; /* Firefox 3.0 damage limitation */
-   border-width:14px;
-   border-color:$background $background transparent transparent;
-   -webkit-border-bottom-left-radius:5px;
-   -moz-border-radius:0 0 0 5px;
-   border-radius:0 0 0 5px;
-}
-
-.reminders{
-	@include corners(6px);
-	h3.title{  
-		border-bottom:1px solid #e3dcc1;
-		color:#734e3d;  
-		display:block;
-	}
-}
-.reminders-ticket{
-	@include corners(6px, 0, 0, 6px);
-	label{ font-size:14px; }
-}
-
-.reminders, .reminders-ticket{
-	position:relative; 
-    background:#ffffe2;    
-	table{
-		display:block;
-		margin:2px 0px;
-		border-top:1px solid #e3dcc1;	
-		tbody, tr{
-			display:block;
-		}
-		
-		td{
-			vertical-align:top;
-			padding:5px 0px 5px 0px;
-			border-bottom:1px solid #f1edd1;
-			text-transform:capitalize;
-			label{
-				font-size:13px;
-				font-weight:normal;
-				color:#734e3d; 
-				margin-top:3px;	
-				display:block;
-			}
-			a.request_link{
-				display:block; 
-				@include link-colors(#666666, #6f8698, #6f8698, #6f8698);
-				font-size:12px;		
-				text-decoration:none;		
-			}
-			.checked{ 
-				font-size:12px;
-				color:#a17d52; 
-			}
-		}  
-	} 
-}
-
-div.addReminder{
-	margin:8px 0px;
-	display:block;
-	height:20px;
-	padding:0px;
-	position:relative;
-	form{
-		@include pie;
-		@include corners(6px);
-		border:2px solid #e3dcc1;
-		padding:3px 0px;
-		background-color:#fefef2;
-		input.text{
-			color:#734e3d;
-			border:0px; background:0px;
-			font-size:14px;
-			display:block;
-			margin:3px 0px 0px 0px;
-			padding:0px 0px 0px 10px;
-		}
-		label.overlabel{
-			margin:2px 5px 4px 10px;
-			font-size:14px;
-			color:#ab9485;
-		}
-	}
-} 
 
 .ui-list_with_icon{ 
 	padding-top:5px;
@@ -599,25 +503,8 @@ div.leader-right{
 	
 }
 
-.forum_info{
-	background:#ffffcc;
-	@include corners(6px);
-	padding:8px 20px;
-	font-size:14px; font-weight:bold;
-}
 
-.forum_button{
-	@include anchor-button;
-    @include min-width(80px);
-    padding: 5px 20px;    
-    margin: 2px; 
-    border:1px solid #b2a587;
-    text-align:center;
-    font-size: 12px;
-    @include link-colors(#663300, #996600, #663300, #663300);
-    @include corners(6px);
-    @include vertical-gradient(#fcfff4, #e9e9ce);
-}
+
 
 .forum_type{
 	padding:6px 12px;
@@ -719,102 +606,21 @@ body h5{
 	}
 }
 
-.request_details{	 	
-	margin:0px 0px; 
-	a.options{
-		position:absolute;
-		background:url(../images/icons/btn_close_icon.png) no-repeat;
-		width:18px;
-		height:18px;
-		right:0px;
-		top:0px; 
-		div.item_menu{
-			display:none;
-		}
-	}
-	a.options:hover{
-		border-color:#afafaf;
-		background-color:#f2f2f2;
-		div.item_menu{
-			display:block;
-		}
-	}
-	div.item_actions{
-		float:right;
-		position:relative;
-		top:-5px;
-		.drop{
-			position:absolute;
-			right:0px;
-			top:0px;
-			border:4px solid #ffffff;
-			border-top-color:#333333;
-			width:1px; height:1px;
-		}
-		a{
-			color:#333333; 
-			text-decoration:none;
-		}
-		a:hover{
-			text-decoration:none;
-		}
-		.note_icon{
-			position:absolute;
-			right:25px;
-		}
-		.item_buttons{
-			@include corners(12px);
-			margin:0px 10px 0px 5px;
-			@include vertical-gradient(#F3F1EC, lighter(darken(#F3F1EC, 8%), 10%)); 
-			padding:0px 8px 2px 8px;
-			border:1px solid lighter(darken(#F3F1EC, 10%), 10%);
-			position:relative;
-			top:4px; 
-			a{
-				text-decoration:none;
-				margin:0px 0px;
-				padding:0px 8px 0px 5px;
-				border-right:1px solid lighter(darken(#F3F1EC, 10%), 5%);
-				@include link-colors(#666666, #888888, #666666, #666666);
-				font-size:10px;
-			}
-			a.last{ 
-				border:0px;
-				padding-right:0px;
-			}
-		}
-	}		
-	 
+.request_details{	  
 	.ticket_actions{
-		position:relative;
-		display:block;
+		position:relative; 
+		display:inline;
 		float:right;
-		top:-30px; 
+		margin-top:-30px; 
 		.action_buttons{
 			margin-top:0px;
-		}
+		} 
 	} 
-	
-	.request_info{
-		background:#efffd6;
-		@include corners(6px);
-		padding:8px 18px 8px 18px;
-		font-size:14px;
-		color:#333300;
-		margin:0px 0px 10px 0px;
-		a.link_to{
-			@include link-colors(#666633,#333300,#666633,#666633);
-			font-size:12px;
-			font-weight:bold; 
-		}
-		ul{
-			@include no-bullets;
-			padding:0px;
-			margin:0px;
-		}
+	.bookmark{
+		display:none;
 	}
+	
 	.requestCnt{		 
-		/*@include corners(6px);*/
 		padding:10px 20px;		
 		position:relative;
 		margin:5px -20px 16px -20px;
@@ -822,7 +628,7 @@ body h5{
 		border:1px solid #f1f1f1;
 		border-width:1px 0px;
 		.title{ 			
-			color:#555555;  
+			color:#555555; 
 			em{ 			
 				font-style:normal;
 				color:#888888;  
@@ -856,14 +662,20 @@ body h5{
 	
 	.request-cnt-first{
 		background:#fafafa;  
+		div.description{  
+			margin-left:60px;
+			.preview_pic{
+				margin-left:-70px;
+			}	
+		}
 	}
 	
 	div.description{  
 			margin:8px 0px 8px 70px;
-			padding:0px 10px; 
+			padding:0px 0px 0px 10px; 
 			position:relative;
 			.details{ 
-				padding:8px 0px 8px 0px;
+				padding:3px 0px 3px 0px;
 				margin-top:8px;
 				border-top:1px solid #efefef; 
 				color:#333333;
@@ -917,6 +729,7 @@ body h5{
 		top:-18px;
 		border:1px solid #d3d497;
 		@include vertical-gradient(#FEFEDF, #FBFD90);
+		filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#FEFEDF', endColorstr='#FBFD90',GradientType=0 ); /* ie */
 		img{
 			position:absolute;
 			left:-6px;
@@ -956,6 +769,7 @@ body h5{
 
 .seperator{
 	border-top:1px dashed #e3e5e0;
+	font-size:0px;
 	display:block;
 	height:1px;
 	margin:5px 0px;
@@ -1019,11 +833,12 @@ body h5{
 	font-size:11px;
 }
  
- 
+.ticket-panel{
+	background-color:#3f3f3f;
+}
 
 .rtCnt{
-	padding:0px 0px 0px 0px; 
-	
+	padding:0px 0px 0px 0px;
 	.local_activities{
 		a{
 			display:block;
@@ -1045,14 +860,16 @@ body h5{
 		}
 	}
 	
-	.rtDetails, .rtPanel{
+	.rtDetails{
 		@include min-height(550px);
 	}
 	
 	.rtDetails{
 		margin:0px 80px 0px 0px;  
 		padding-top:5px;
-		z-index:10;
+		@include corners(3px, 3px, 3px, 3px);
+		z-index:10; 
+		background-color:#ffffff;
 		position:relative;
 		h3.title{
 			font-size:14px;
@@ -1093,7 +910,6 @@ body h5{
 		@include corners(0, 3px, 3px, 0);
 		position:relative;
 		z-index:9;
-		background-color:#3f3f3f;
 		padding-top:6px;
 		text-align:center;
 		
@@ -1105,7 +921,7 @@ body h5{
 			color:#9aa2a9;
 			padding:5px;
 			margin-bottom:10px;
-			text-align:center;
+			text-align:center; 
 			img{
 				@include sprite-background("Ticket_right_icons.jpg", $spritesize, $spritesize);
 				width:44px;
@@ -1169,6 +985,101 @@ body h5{
 		
 	}
 }
+
+.reminders:before {
+   content:"";
+   position:absolute;
+   top:-3px;
+   right:-3px;
+   border-width:0 16px 16px 0;
+   border-style:solid;
+   border-color:$background $background #734e3d #734e3d;
+   background:#e3b558; 
+   display:block; width:0; /* Firefox 3.0 damage limitation */
+   border-width:14px;
+   border-color:$background $background transparent transparent;
+   -webkit-border-bottom-left-radius:5px;
+   -moz-border-radius:0 0 0 5px;
+   border-radius:0 0 0 5px;
+}
+
+.reminders{
+	@include corners(3px);
+	h3.title{  
+		border-bottom:1px solid #e3dcc1;
+		color:#734e3d;  
+		display:block;
+	}
+}
+.reminders-ticket{
+	@include corners(6px, 0, 0, 6px);
+	label{ font-size:14px; }
+}
+
+.reminders, .reminders-ticket{
+	position:relative; 
+    background-color:#ffffe2 !important;    
+	table{
+		display:block;
+		margin:2px 0px;
+		border-top:1px solid #e3dcc1;	
+		tbody, tr{
+			display:block;
+		}
+		
+		td{
+			vertical-align:top;
+			padding:5px 0px 5px 0px;
+			border-bottom:1px solid #f1edd1;
+			text-transform:capitalize;
+			label{
+				font-size:13px;
+				font-weight:normal;
+				color:#734e3d; 
+				margin-top:3px;	
+				display:block;
+			}
+			a.request_link{
+				display:block; 
+				@include link-colors(#666666, #6f8698, #6f8698, #6f8698);
+				font-size:12px;		
+				text-decoration:none;		
+			}
+			.checked{ 
+				font-size:12px;
+				color:#a17d52; 
+			}
+		}  
+	} 
+}
+
+div.addReminder{
+	margin:8px 0px;
+	display:block;
+	height:20px;
+	padding:0px;
+	position:relative;
+	form{
+		@include pie;
+		@include corners(6px);
+		border:2px solid #e3dcc1;
+		padding:3px 0px;
+		background-color:#fefef2;
+		input.text{
+			color:#734e3d;
+			border:0px; background:0px;
+			font-size:14px;
+			display:block;
+			margin:3px 0px 0px 0px;
+			padding:0px 0px 0px 10px;
+		}
+		label.overlabel{
+			margin:2px 5px 4px 10px;
+			font-size:14px;
+			color:#ab9485;
+		}
+	}
+} 
 
 
 .admin_icons{
@@ -1268,7 +1179,7 @@ div.panel_area{
 		font-size:10px;
 		position:absolute;
 		right:3px;
-		top:3px;
+		top:2px;
 	}
 	div.item{
 		display:block;
@@ -1369,6 +1280,13 @@ a.request_bt:hover{
 	padding:10px;
 	a, a.user_name{
 		color:#527EAA;
+	}
+	.preview_pic img{
+		padding:0px;
+		border:0px;
+		margin-bottom:8px;
+		width:auto;
+		height:auto;
 	}
 } 
 

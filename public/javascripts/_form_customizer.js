@@ -1,6 +1,7 @@
 /**
  * @author venom
  */ 
+
  
 (function($){
 	jQuery(document).ready(function(){
@@ -90,19 +91,9 @@
 			
 			var label = jQuery("<label />").append(dataItem.display_name);
 			var field = jQuery("<div />");
-			var panel = jQuery("<div class='action_panel' />");	
-			/*var edit  = jQuery("<a href='javascript:void(0)' class='button'>Edit</a>");
-			var del   = jQuery("<a href='javascript:void(0)' class='button'>Delete</a>")
-								.bind("click", function(){
-									deleteField(fieldContainer);
-								});
-		
-			//panel.append(edit);
-			//if (dataItem.fieldType != 'default'){
-				//panel.append(del);
-			//}*/
+			//var panel = jQuery("<div class='action_panel' />");	
 			
-			fieldContainer.append(panel);
+			//fieldContainer.append(panel);
 			
 			var fieldAttr = '';
             switch (dataItem.type) {
@@ -115,9 +106,9 @@
                     break;
                     
                 case 'checkbox':				
-					fieldContainer.addClass(dataItem.type);	
+					fieldContainer.addClass("checkbox");	
 					var selected = (dataItem.setDefault)?'checked':'';
-                    field.append('<input type="checkbox" '+ selected +' disabled="true" '+fieldAttr+' />'+dataItem.display_name);
+                    field.append('<input type="checkbox" '+ selected +' disabled="true" '+ fieldAttr +' />' + dataItem.display_name );
 					fieldContainer
 						  .append(field);
                     break;
@@ -164,12 +155,11 @@
         
         jQuery("#custom_form")
 			.sortable({
-		            revert: true,
+		            revert: true,  
 					stop: function(ev, ui) { 
 						type = ui.item.get(0).getAttribute('type');
 		                if (type) {
-							constFieldDOM(getFreshField(type), ui.item);
-							ui.item.trigger("click");
+							showFieldDialog(constFieldDOM(getFreshField(type), ui.item)); 
 		                }					
 		            }
 			    })
@@ -190,26 +180,7 @@
 	jQuery("#SaveForm").click(function(e){			
 			var jsonData = getCustomFieldJson();
 			jQuery("#field_values").val(jsonData.toJSON()); 
-			//alert(jQuery("#field_values").val());
-			//return false;
-			 
-			/*jQuery.ajax({
-      					type: 'POST',
-						url: '/ticket_fields/update',
-						contentType: 'application/json',
-						data:JSON.stringify({jsonData: jsonData}),
-						datatype:'json',
-						success: function(data){						
-							jQuery("#field_values").val(data.data);
-							jQuery("#custom_form").empty();
-							init();
-							jQuery('div#resultmsg').html(data.message);
-							jQuery('div#resultmsg').show("fade", 500);
-						}
-    	  	});  */ 
-			
-		});
-		
+		}); 
         
 		function innerLevelExpand(checkbox){ 
             jQuery("#"+checkbox.getAttribute("toggle_ele")).toggle(checkbox.checked);
@@ -249,51 +220,57 @@
 		
 		function DialogOnLoad(sourceField){ 
 			// Dialog Population Method
-			jQuery(SourceField).removeClass("active");
-			SourceField  = sourceField;
-			sourceDomMap = { "label" : jQuery(sourceField).find("label") }; 
-			jQuery(sourceField).addClass("active");
-			
-			var sourceData = jQuery(sourceField).data("raw");
-			 
+			try {
+				jQuery(SourceField).removeClass("active");
+				SourceField = sourceField;
+				sourceDomMap = {
+					"label": jQuery(sourceField).find("label")
+				};
+				jQuery(sourceField).addClass("active");
 				
-			dialogDOMMap.type.val(sourceData.type);							
-			dialogDOMMap.label.val(sourceData.display_name);
-			dialogDOMMap.description.val(sourceData.description);
+				var sourceData = jQuery(sourceField).data("raw");
 				
-			jQuery("div#CustomFieldsDialog label.overlabel").overlabel();
 				
-			dialogDOMMap.choices.empty();
-			sourceData.choices.each(function(item){
-				addChoiceinDialog(item, dialogDOMMap.choices);						
-			});
+				dialogDOMMap.type.val(sourceData.type);
+				dialogDOMMap.label.val(sourceData.display_name);
+				dialogDOMMap.description.val(sourceData.description);
 				
-			dialogDOMMap.agent.required.attr("checked", sourceData.agent.required);								
-			dialogDOMMap.customer.visible.attr("checked", sourceData.customer.visible);
+				jQuery("div#CustomFieldsDialog label.overlabel").overlabel();
+				
+				dialogDOMMap.choices.empty();
+				sourceData.choices.each(function(item){
+					addChoiceinDialog(item, dialogDOMMap.choices);
+				});
+				
+				dialogDOMMap.agent.required.attr("checked", sourceData.agent.required);
+				dialogDOMMap.customer.visible.attr("checked", sourceData.customer.visible);
 				innerLevelExpand(dialogDOMMap.customer.visible.get(0));
-			
-			dialogDOMMap.customer.editable.attr("checked", sourceData.customer.editable);
-				innerLevelExpand(dialogDOMMap.customer.editable.get(0)); 
-			
-			dialogDOMMap.customer.required.attr("checked", sourceData.customer.required);  
 				
-			jQuery("#DropFieldChoices").hide();
-			
-			if(sourceData.fieldType == 'default'){
-				dialogDOMMap.label.attr("disabled", true);
-				dialogDOMMap.label.addClass("disabled");
-				jQuery('#DeleteField').hide();								
-			}else{
-				jQuery('#DeleteField').show();
-				dialogDOMMap.label.attr("disabled", false);
-				dialogDOMMap.label.removeClass("disabled");
-						
-				 if (sourceData.type == 'dropdown') {	                
-	               	jQuery("#DropFieldChoices").show();	                
-	             }		 
+				dialogDOMMap.customer.editable.attr("checked", sourceData.customer.editable);
+				innerLevelExpand(dialogDOMMap.customer.editable.get(0));
+				
+				dialogDOMMap.customer.required.attr("checked", sourceData.customer.required);
+				
+				jQuery("#DropFieldChoices").hide();
+				
+				if (sourceData.fieldType == 'default') {
+					dialogDOMMap.label.attr("disabled", true);
+					dialogDOMMap.label.addClass("disabled");
+					jQuery('#DeleteField').hide();
+				}
+				else {
+					jQuery('#DeleteField').show();
+					dialogDOMMap.label.attr("disabled", false);
+					dialogDOMMap.label.removeClass("disabled");
+					
+					if (sourceData.type == 'dropdown') {
+						jQuery("#DropFieldChoices").show();
+					}
+				}
+				
+			}catch(e){
+				 
 			}
-			
-           
 		}      
         
 		jQuery("#SaveField").click(function()
@@ -334,29 +311,17 @@
 			sourceDomMap.label.text(this.value);
 		});
 		
+		showFieldDialog = function(element){
+			DialogOnLoad(element);
+			jQuery("#CustomFieldsDialog")
+				.show("highlight", 5000, function(){
+						jQuery(element).clearQueue();											
+				 });	
+		} 
+		
         jQuery("#custom_form li").live("click", function(e){           
-			DialogOnLoad(this);
-			
-            jQuery("#CustomFieldsDialog")
-							             /*.position({
-							             of: jQuery( this ),
-							             my: 'left' + " " + 'center',
-							             at: 'left' + " " + 'top',
-							             offset: '250px -30px',
-							             collision: "fit fit"
-							             })*/										 								 
-										 .show("highlight", 5000, function(){
-										 	jQuery(this).clearQueue();											
-										 })
-            /*DialogFieldPref = jQuery("#CustomFieldsDialog").dialog({
-					                closeOnEscape: true,
-					                width: "550px",
-					                position: ['center', 50],
-									resizable:false,				
-					                //modal: true,
-					                dialogClass: '.dialog_ticket_field',
-					                show: 'clip' 
-					            });*/
+			showFieldDialog(this);
+            
         });
 		
         
