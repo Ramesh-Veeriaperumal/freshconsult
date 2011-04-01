@@ -30,6 +30,7 @@ en:
    reset: "Reset"
    deactivate: "deactivate"
    activate: "activate"
+   add: "Add"
    
     
    contacts:
@@ -154,6 +155,17 @@ en:
        info1: "This is a deleted Agent"
        info2: "Email has already been taken"
        info3: "Are you sure you want delete"
+   group:
+       title: "Groups"
+       edit: "Edit Group"
+       name: "Group Name"
+       new: "New Group"
+       select_agents: "Select Agents"
+       info1: "Agents in this Group"
+       info2: "No Agents in this group"
+       info3: "Send an Escalation email to"
+       info4: "if a ticket remains un-assigned for more than"
+       info5: "Are you sure"
    user:
       full_name: "Full Name"
       email: "Email"

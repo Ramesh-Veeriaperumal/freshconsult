@@ -76,15 +76,15 @@
 	  <%= f.error_messages %>
 	  <ul class="ui-form">
 		  <li>
-		    <%= f.label :name, "Group Name" %>
+		    <%= f.label :name, t('group.name') %>
 		    <%= f.text_field :name ,:class => "text required" %>
 		  </li>
 		  <li>
-		    <%= f.label :description, "Description" %>
+		    <%= f.label :description, t('description') %>
 		    <%= f.text_area :description, :class => "smallpara" %>
 		  </li>
 		  <li>		  	
-		  	<label>Agents in this Group</label>
+		  	<label><%=t('group.info1')%></label>
 			<% 
 				
 					account_id =  @group.account_id
@@ -98,7 +98,7 @@
 				end 
 			%>
 			<span id="All_Agents" style="<%=showagent%>">
-					<b>Select Agents </b>							  			
+					<b><%=t('group.select_agents')%> </b>							  			
 					<select id="group_escalate_to">
 						<% @exclude_list.each do |agent| %>
 							<% 
@@ -113,7 +113,7 @@
 							</option>
 						<% end %>
 					</select>			
-					<%= link_to_function 'Add', 'AddUser()', :class => "button" %>
+					<%= link_to_function t('add'), 'AddUser()', :class => "button" %>
 			</span>
 			
 			
@@ -140,7 +140,7 @@
 					</li>
 					<% end %>
 				
-					<div class="info padding6">No Agents in this group</div>
+					<div class="info padding6"><%=t('group.info2')%></div>
 							
 			</ul>			
 			<!--
@@ -161,9 +161,9 @@
 		 
 
 		  <li>		
-			Send an Escalation email to 
+			<%=t('group.info3')%> 
 			<%= f.collection_select :escalate_to, Agent.technician_list(account_id), :id, :name, {:include_blank => '...'} %>
-			if a ticket remains un-assigned for more than
+			<%=t('group.info4')%>
 			<%= f.select :assign_time , Group::ASSIGNTIME_OPTIONS %>			
 	   	  </li>
 	  </ul>
