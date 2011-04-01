@@ -13,8 +13,8 @@
  	
 	<% if @agent.user.deleted? %>
 		<div class="flash_info">
-			<%= "This is a deleted Agent" %>
-			<%= link_to('restore', { :action => :restore, :id => @agent.id }, :method => :put ) %>
+			<%= "#{t('agent.info1')}" %>
+			<%= link_to(t('agent.restore'), { :action => :restore, :id => @agent.id }, :method => :put ) %>
 		</div>
 	<% end %>
 		
@@ -26,8 +26,8 @@
  
       <% if @existing_user %>
 	  	<div id="errorExplanation" class="errorExplanation">
-			<%= "Email has already been taken " %>
-			<%= link_to('View User' , @existing_user ) %>
+			<%= "#{t('agent.info2')} " %>
+			<%= link_to(t('agent.view_user') , @existing_user ) %>
 		</div>
 	  <%else%>		
 	   	<%= error_messages_for :user %> 
@@ -35,31 +35,31 @@
      
  	<ul class="ui-form">
 		<li>
-			<%= label(:user, :name, "Full Name" ) %>
-				<%= text_field(:user, :name, :class => "text", :value => @agent.user.name )  %>
+			<%= label(:user, :name, t('user.full_name') ) %>
+			<%= text_field(:user, :name, :class => "text", :value => @agent.user.name )  %>
 		</li>	
 		<li class="medium">
-			<%= label(:user, :email, "Email") %>
+			<%= label(:user, :email, t('user.email')) %>
 			<!--label class="overlabel" for="email_primary">Primary</label-->
 			<%= text_field(:user, :email, :class => "text required email", :id => "email_primary" , :value => @agent.user.email) %>			
 		</li>	
 		<li>
-			<%= label(:user, :job_title, "Title") %>
+			<%= label(:user, :job_title, t('user.title')) %>
 			<%= text_field(:user, :job_title, :class => "text", :value => @agent.user.job_title ) %>
 		</li>
 		<li>
 			<input type="checkbox" id="user_role_val" name="user_role" onclick="setUserRole()" /> 
-			Make this agent an admin
+			<%=t('agent.make_admin')%>
 			<%= hidden_field(:user, :user_role, :id=>"user_role", :value => @agent.user.user_role ||= User::USER_ROLES_KEYS_BY_TOKEN[:poweruser] ) %>
 		</li>
 		<li class="small">
-			<%= label(:user, :phone, "Phone No.") %>	
+			<%= label(:user, :phone, "#{t('user.make_admin')}.") %>	
 			<div>
-				<label class="overlabel" for="phone_work">Work</label>
+				<label class="overlabel" for="phone_work"><%=t('user.work')%></label>
 				<%= text_field(:user, :phone, :class => "text", :id => "phone_work", :value => @agent.user.phone ) %> 
 			</div>
 			<div>
-				<label class="overlabel" for="phone_mobile">Mobile</label>
+				<label class="overlabel" for="phone_mobile"><%=t('user.mobile')%></label>
 				<%= text_field(:user, :mobile, :class => "text", :id => "phone_mobile" ,:value => @agent.user.mobile  ) %>
 			</div>
 		</li>
@@ -69,13 +69,13 @@
 		</li>
 		<li>
 			
-			<%= label(:user , :time_zone, "Time zone") %>			
+			<%= label(:user , :time_zone,t('account.time_zone')) %>			
 			<%= time_zone_select (:user, :time_zone, ActiveSupport::TimeZone.all, :default => @agent.user.time_zone) %>
 		</li>
 		<li>
-			<%= label(:agent, :signature, "Signature") %>
+			<%= label(:agent, :signature, t('agent.signature')) %>
 			<label class="overlabel" for="user_binfo">
-				Add signature 
+				<%=t('agent.add_signature')%>
 			</label>
 			<%= text_area(:agent, :signature, :class => "text", :id => "user_binfo" ) %>			
 			<%= hidden_field(:agent, :user_id, :id => "user_id" ) %>

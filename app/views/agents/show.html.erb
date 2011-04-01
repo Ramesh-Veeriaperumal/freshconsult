@@ -17,7 +17,7 @@ function setUserRole()
 }
 </script>
 
-<h1>New Agent</h1>
+<h1><%=t('agent.new')%></h1>
 
 <% form_for(@agent) do |f| %>
 <%= f.error_messages %>
@@ -30,7 +30,7 @@ function setUserRole()
 
 
  <p>
-    <%= f.submit 'Update' %>
+    <%= f.submit t('update') %>
   </p>
   
   <%end%>

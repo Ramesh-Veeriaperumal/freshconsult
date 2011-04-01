@@ -1,14 +1,14 @@
 	<div class="floatr">
-		<%= link_to "New Agent", new_agent_path, :class => "uiButton"  %>
+		<%= link_to t('agent.new'), new_agent_path, :class => "uiButton"  %>
 	</div>
-	<h3 class="title">Agents</h3>
+	<h3 class="title"><%=t('agent.title')%></h3>
 	<ul class="admin_list">		 
 		<%@agents.each do |agent| %>
 			<li>
 				<div class="item_actions">
-					<%= link_to 'delete', agent, :confirm => 'Are you sure you want delete?', 
+					<%= link_to t('delete'), agent, :confirm => "#{t('agent.info3')}?", 
 												 :method => :delete, :class => "button" %>
-					<%= link_to 'edit', edit_agent_path(agent), :class => "button" %>									 
+					<%= link_to t('edit'), edit_agent_path(agent), :class => "button" %>									 
 				</div>
 				<%= user_avatar(agent.user.avatar) %>
 				<%= link_to(h(agent.user.display_name), edit_agent_path(agent), :class => "item_info") %>

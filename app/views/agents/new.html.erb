@@ -1,4 +1,4 @@
-<h3 class="content_title">New Agent</h3>
+<h3 class="content_title"><%=t('agent.new')%></h3>
 <% form_for @agent, :html => { :multipart => true } do |f| %>
 	<%= f.error_messages %>		
  	<%= render :partial => "agent_form" %>

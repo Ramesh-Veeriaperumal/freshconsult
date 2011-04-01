@@ -141,6 +141,29 @@ en:
         new_rule: "New Rule"
         dispatch_rules: "Dispatch'r - Rules"
         inactive_rules: "Inactive Rules"
+   agent:
+       title: "Agents"
+       edit: "Edit Agent"
+       new: "New Agent"
+       update: "Update"
+       restore: "restore"
+       view_user: "View User"
+       make_admin: "Make this agent an admin"
+       signature: "Signature"
+       add_signature: "Add signature"
+       info1: "This is a deleted Agent"
+       info2: "Email has already been taken"
+       info3: "Are you sure you want delete"
+   user:
+      full_name: "Full Name"
+      email: "Email"
+      title: "Title"
+      phone_no: "Phone No"
+      work: "Work"
+      mobile: "Mobile"
+      photo: "Photo"
+      info1: "A Profile image of the person, its best if the picture has the same length and height"
+      
         
    business_hours:
        title: "Business Hours"

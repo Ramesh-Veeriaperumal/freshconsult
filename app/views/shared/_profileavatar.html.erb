@@ -11,7 +11,7 @@
 	}
 <% end %>
 
-<%= label(:user, :photo, "Photo") %>
+<%= label(:user, :photo, t('user.photo')) %>
 <% if(type == "edit" &&  user.avatar) %>				
 	<div class="profile_pic" id="AvatarPic">
 		<%= image_tag user.avatar.content.url(:medium) %>
@@ -33,7 +33,7 @@
 	<br />
 <% else %>		
 	<% fields_for "user[avatar_attributes]", user.avatar do |avatar_form| %>
-		<span>A Profile image of the person, its best if the picture has the same length and height</span>
+		<span><%=t('user.info1')%></span>
 		<%= avatar_form.file_field :content %>				
 	<% end %>
 <% end %>
