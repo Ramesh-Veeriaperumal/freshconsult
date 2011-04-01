@@ -1,4 +1,4 @@
-<li class="<%= cycle('odd', 'even') %>">  
+<li class="<%= cycle('odd', 'even') %>"> 
 	<h4 class="forum_title">
 		<span class="<%= "forum_type_#{forum.forum_type}" %> icon"></span>
 		<%= link_to ( h(forum.name), category_forum_path(category, forum), :class => "title" )  %>
