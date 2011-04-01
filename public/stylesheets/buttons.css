@@ -16,24 +16,24 @@
   font-weight: bold;
   text-decoration: none;
   cursor: pointer;
-  behavior: url(/stylesheets/PIE.htc);
   background-image: url(../images/overlay-button.png);
-  background-color: #f4f4f4;
+  background-color: #eeeeee;
   background-repeat: repeat-x;
-  color: #666666;
+  color: #333333;
   display: inline-block;
   text-decoration: none;
   -moz-border-radius: 4px 4px 4px 4px;
   -webkit-border-radius: 4px 4px 4px 4px;
   border-radius: 4px 4px 4px 4px;
-  font-weight: bold;
   margin: 1px;
   line-height: 17px;
   border: 1px solid #d4d4d4;
   padding: 5px 12px;
   position: relative;
-  font-size: 12px;
+  font-size: 11px;
+  font-weight: bold;
   cursor: pointer;
+  text-shadow: 1px 1px 0 white;
 }
 /* line 7, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
 .uiButton, .uiButton:visited, .fdbutton, .fdbutton:visited {
@@ -50,36 +50,114 @@
 }
 
 /* line 24, ../src/buttons.scss */
-.uiButton:hover, .fdbutton:hover {
+.forum_button {
+  display: -moz-inline-box;
+  -moz-box-orient: vertical;
+  display: inline-block;
+  vertical-align: middle;
+  *vertical-align: auto;
+  margin: 0.7em 0.5em 0.7em 0;
+  border-width: 1px;
+  border-style: solid;
+  font-family: "Lucida Grande", Tahoma, Arial, Verdana, sans-serif;
+  font-size: 100%;
+  line-height: 130%;
+  font-weight: bold;
+  text-decoration: none;
+  cursor: pointer;
+  padding: 5px 10px 5px 7px;
+  padding: 4px 14px;
+  margin: 2px;
+  border: 1px solid #cfcfcf;
+  text-align: center;
+  font-size: 12px;
+  font-weight: bold;
+  color: #333333;
+  -moz-border-radius: 14px 14px 14px 14px;
+  -webkit-border-radius: 14px 14px 14px 14px;
+  border-radius: 14px 14px 14px 14px;
+  background-color: #eeeeee;
+  background-repeat: repeat-x;
+  background-image: url(../images/overlay-button.png);
+  text-shadow: 1px 1px 0 white;
+  background-position: top left;
+  margin-top: 20px;
+}
+/* line 7, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
+.forum_button {
+  *display: inline;
+}
+/* line 75, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/blueprint/stylesheets/blueprint/_buttons.scss */
+.forum_button img {
+  margin: 0 3px -3px 0 !important;
+  padding: 0;
+  border: none;
+  width: 16px;
+  height: 16px;
+  float: none;
+}
+
+/* line 41, ../src/buttons.scss */
+.small.forum_button {
+  font-size: 11px;
+  padding: 1px 14px;
+}
+
+/* line 43, ../src/buttons.scss */
+.forum_info {
+  background: #fff7b4;
+  display: inline;
+  font-weight: bold;
+  border: 1px solid #fff7b4;
+  color: #333333;
+  font-size: 13px;
+  padding: 8px 10px;
+  position: relative;
+  margin-left: 2px;
+}
+/* line 54, ../src/buttons.scss */
+.forum_info span.bottom-pointer {
+  border: 10px solid transparent;
+  border-top-color: #fff7b4;
+  border-bottom: 0px;
+  width: 0px;
+  height: 0px;
+  bottom: -11px;
+  left: 20px;
+  position: absolute;
+}
+
+/* line 68, ../src/buttons.scss */
+.uiButton:hover, .fdbutton:hover, .forum_button:hover {
   background-color: #7cb537;
   border-color: #618e2b;
   color: #ffffff;
-  text-shadow: rgba(0, 0, 0, 0.1) -1px -1px 1px;
+  text-shadow: rgba(0, 0, 0, 0.2) -1px -1px 1px;
 }
 
-/* line 25, ../src/buttons.scss */
+/* line 69, ../src/buttons.scss */
 .uiButton:active, .fdbutton:active {
   top: 1px;
 }
 
-/* line 26, ../src/buttons.scss */
+/* line 70, ../src/buttons.scss */
 .small.uiButton, .small.uiButton:visited {
   font-size: 11px;
 }
 
-/* line 28, ../src/buttons.scss */
+/* line 72, ../src/buttons.scss */
 .uiButton, .fdbutton, .uiButton:visited, .fdbutton:visited,
 .medium.uiButton, .medium.uiButton:visited {
   font-size: 12px;
 }
 
-/* line 29, ../src/buttons.scss */
+/* line 73, ../src/buttons.scss */
 .large.uiButton, .large.uiButton:visited {
   font-size: 14px;
   padding: 8px 14px 9px;
 }
 
-/* line 32, ../src/buttons.scss */
+/* line 76, ../src/buttons.scss */
 .fdbutton {
   display: -moz-inline-box;
   -moz-box-orient: vertical;
@@ -118,7 +196,7 @@
   float: none;
 }
 
-/* line 42, ../src/buttons.scss */
+/* line 86, ../src/buttons.scss */
 div.action_buttons {
   position: relative;
   float: right;
@@ -126,15 +204,13 @@ div.action_buttons {
   -webkit-border-radius: 4px 4px 4px 4px;
   border-radius: 4px 4px 4px 4px;
   margin: -5px 0px 2px 5px;
-  background: #f8f8f8;
-  background: -moz-linear-gradient(top, #f8f8f8 0%, #f2f2f2 100%);
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #f8f8f8), color-stop(100%, #f2f2f2));
-  background: linear-gradient(#f8f8f8, #f2f2f2);
-  -pie-background: linear-gradient(#f8f8f8, #f2f2f2);
+  background-image: url(../images/overlay-button.png);
+  background-color: #f8f8f8;
+  background-repeat: repeat-x;
   padding: 4px 7px 3px 3px;
   border: 1px solid #e5e5e5;
 }
-/* line 50, ../src/buttons.scss */
+/* line 96, ../src/buttons.scss */
 div.action_buttons a {
   text-decoration: none;
   float: left;
@@ -158,18 +234,18 @@ div.action_buttons a:hover {
 div.action_buttons a:active {
   color: #333333;
 }
-/* line 62, ../src/buttons.scss */
+/* line 108, ../src/buttons.scss */
 div.action_buttons a.last {
   border: 0px;
   padding-right: 4px;
 }
-/* line 66, ../src/buttons.scss */
+/* line 112, ../src/buttons.scss */
 div.action_buttons a.icon {
   padding-left: 20px;
 }
 
 /* BUTTONS */
-/* line 73, ../src/buttons.scss */
+/* line 119, ../src/buttons.scss */
 .buttons a, .buttons button {
   display: block;
   float: left;
@@ -191,7 +267,7 @@ div.action_buttons a.icon {
   /* Links */
 }
 
-/* line 90, ../src/buttons.scss */
+/* line 136, ../src/buttons.scss */
 .buttons button {
   width: auto;
   overflow: visible;
@@ -199,7 +275,7 @@ div.action_buttons a.icon {
   /* IE6 */
 }
 
-/* line 95, ../src/buttons.scss */
+/* line 141, ../src/buttons.scss */
 .buttons button[type] {
   padding: 5px 10px 5px 7px;
   /* Firefox */
@@ -207,13 +283,13 @@ div.action_buttons a.icon {
   /* Safari */
 }
 
-/* line 99, ../src/buttons.scss */
+/* line 145, ../src/buttons.scss */
 *:first-child + html button[type] {
   padding: 4px 10px 3px 7px;
   /* IE7 */
 }
 
-/* line 102, ../src/buttons.scss */
+/* line 148, ../src/buttons.scss */
 .buttons button img, .buttons a img {
   margin: 0 3px -3px 0 !important;
   padding: 0;
@@ -223,14 +299,14 @@ div.action_buttons a.icon {
 }
 
 /* STANDARD */
-/* line 112, ../src/buttons.scss */
+/* line 158, ../src/buttons.scss */
 button:hover, .buttons a:hover {
   background-color: #dff4ff;
   border: 1px solid #c2e1ef;
   color: #336699;
 }
 
-/* line 117, ../src/buttons.scss */
+/* line 163, ../src/buttons.scss */
 .buttons a:active {
   background-color: #6299c5;
   border: 1px solid #6299c5;
@@ -238,19 +314,19 @@ button:hover, .buttons a:hover {
 }
 
 /* POSITIVE */
-/* line 125, ../src/buttons.scss */
+/* line 171, ../src/buttons.scss */
 button.positive, .buttons a.positive {
   color: #529214;
 }
 
-/* line 128, ../src/buttons.scss */
+/* line 174, ../src/buttons.scss */
 .buttons a.positive:hover, button.positive:hover {
   background-color: #E6EFC2;
   border: 1px solid #C6D880;
   color: #529214;
 }
 
-/* line 133, ../src/buttons.scss */
+/* line 179, ../src/buttons.scss */
 .buttons a.positive:active {
   background-color: #529214;
   border: 1px solid #529214;
@@ -258,26 +334,26 @@ button.positive, .buttons a.positive {
 }
 
 /* NEGATIVE */
-/* line 141, ../src/buttons.scss */
+/* line 187, ../src/buttons.scss */
 .buttons a.negative, button.negative {
   color: #d12f19;
 }
 
-/* line 144, ../src/buttons.scss */
+/* line 190, ../src/buttons.scss */
 .buttons a.negative:hover, button.negative:hover {
   background: #fbe3e4;
   border: 1px solid #fbc2c4;
   color: #d12f19;
 }
 
-/* line 149, ../src/buttons.scss */
+/* line 195, ../src/buttons.scss */
 .buttons a.negative:active {
   background-color: #d12f19;
   border: 1px solid #d12f19;
   color: #fff;
 }
 
-/* line 156, ../src/buttons.scss */
+/* line 202, ../src/buttons.scss */
 .button {
   display: -moz-inline-box;
   -moz-box-orient: vertical;
@@ -342,13 +418,13 @@ button.positive, .buttons a.positive {
   color: #3f3f3f;
 }
 
-/* line 206, ../src/buttons.scss */
+/* line 252, ../src/buttons.scss */
 .button:hover {
   background: #eee;
   border-color: rgba(0, 0, 0, 0.3);
 }
 
-/* line 211, ../src/buttons.scss */
+/* line 257, ../src/buttons.scss */
 .button.selected {
   z-index: 6;
   border-color: rgba(208, 91, 63, 0.6);

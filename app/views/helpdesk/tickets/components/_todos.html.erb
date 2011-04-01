@@ -1,7 +1,7 @@
 <div class="rtDetails reminders-ticket" id="TicketTodos" style="display:none;">
 	<h3 class="title">Tickets To-Do</h3> 
 	<div class="panel_area">
-		<table width="100%">	
+		<table width="90%">	
 			<% ticket.reminders.visible.map do |r| %>
 				<%= render :partial => "/helpdesk/shared/reminder_list", :locals => { :parent => ticket, :r => r, :checked => r.deleted, :check_url => helpdesk_reminder_path(r), :check_method => :delete, :uncheck_url => restore_helpdesk_reminder_path(r), :uncheck_method =>:put } %>
 			<% end %>
