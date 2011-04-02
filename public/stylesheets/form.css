@@ -166,7 +166,7 @@ a.addchoice:hover {
 /* line 118, ../src/form.scss */
 .ui-form label, .ui-form li.checkbox {
   font-weight: normal;
-  padding: 8px 0px;
+  padding: 4px 0px;
   margin: 0px;
   line-height: 18px;
   color: #565656;

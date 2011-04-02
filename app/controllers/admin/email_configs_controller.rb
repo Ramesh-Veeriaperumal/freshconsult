@@ -32,4 +32,12 @@ class Admin::EmailConfigsController < Admin::AdminController
       current_account.email_configs
     end
  
+    def human_name
+      "email"
+    end
+  
+    def create_flash
+      "The #{human_name} has been added."
+    end
+    
 end

@@ -86,10 +86,13 @@ ul.summary{
 
 ul.activityfeed li{ 
 	border-bottom:1px solid #f7f7f7;
-	padding:8px 0px 4px 0px;
+	padding:8px 0px 4px 70px;
 	display:block; 
 	color:#666666;
 	font-size:1.1em; line-height:1.5;
+	.preview_pic{
+		margin-left:-68px;
+	}
 	a{ 
 		@include link-colors(#3e71a4, #3e71a4, #3e71a4, #3e71a4, #3e71a4);
 	   	text-decoration:none; 
