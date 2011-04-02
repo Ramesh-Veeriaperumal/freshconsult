@@ -19,9 +19,9 @@
   <%= f.error_messages %>
 	<ul class="ui-form">
 		<li>
-    		<%= f.label(:title, "Title") %>
+    		<%= f.label(:title, t('title')) %>
     		<%= f.text_field :title, :class => "required" %>
-    		<%= f.text_area :description, :class => "mceEditor", :id => 'article-body' %>		
+    		<%= f.text_area  :description, :class => "mceEditor", :id => 'article-body' %>		
 		</li>
 		 <!--li>
 		 	<a href="#" id="attachment-options-link">Attach a File</a>
@@ -55,21 +55,21 @@
 		<li>
 			<!--label>Tags</label>
 			<input type="text" /-->
-			<%= tag.label(:name, "Tags") %>
+			<%= tag.label(:name, t('tag.title')) %>
     		<%= tag.text_field :name , :value => @article.tags.collect{|tg| tg.name+"," }%>
 		</li>
 		<%end%>
 		<li>
 			<label>Make this Solution</label>
-			<%= f.radio_button :is_public, true  %>Public (Will be published in self service)<br />
-			<%= f.radio_button :is_public, false %>Private (Visible to Agents only)
+			<%= f.radio_button :is_public, true  %><%=t('solution.info9')%><br />
+			<%= f.radio_button :is_public, false %><%=t('solution.info10')%>
 		</li>
 		<li class="small">
-        	<%= f.label :art_type, "Solution Type" %>
+        	<%= f.label :art_type, t('solution.type') %>
         	<%= f.select :art_type, Solution::Article::TYPE_OPTIONS, :class => "select" %>
         </li>	
 		<li class="small">
-          	<%= f.label :status, "Solution Status" %>
+          	<%= f.label :status, t('solution.status') %>
           	<%= f.select :status, Solution::Article::STATUS_OPTIONS, :class => "select" %>
         </li>
 	</ul>

@@ -5,7 +5,7 @@
 	
  <div class="artical_section">
  	<div class="crumbs">
-	 	<%= link_to "Solutions", solution_categories_path %> &rarr; 
+	 	<%= link_to t('solution.title'), solution_categories_path %> &rarr; 
 		<%= link_to @article.folder.category.name, solution_category_path(@article.folder.category) %> &rarr;
 		<%= link_to @article.folder.name, solution_category_folder_path(@article.folder.category_id, @article.folder)%>
  	</div>
@@ -13,7 +13,7 @@
 	<h2 class="title"><%= @article.title %></h2> 
 	<div class="info_data clearfix">
 		<div class="floatr">
-			<%= link_to('Edit', edit_solution_category_folder_article_path(@article.folder.category_id,@article.folder,@article), :class => "uiButton small") %>
+			<%= link_to(t('edit'), edit_solution_category_folder_article_path(@article.folder.category_id,@article.folder,@article), :class => "uiButton small") %>
 		</div>
 		<div class="article_info">
 		By <b> <%= @article.user.name%></b> 

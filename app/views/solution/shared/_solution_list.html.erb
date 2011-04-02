@@ -1,7 +1,7 @@
 
 <div class="action_buttons">
-	<%= link_to ("Add Solution", new_solution_category_folder_article_path(category , folder), :class => "icon add_new") %>
-	<%= link_to 'Edit' ,  edit_solution_category_folder_path(category, folder), :class => "last" %>
+	<%= link_to (t('solution.add'), new_solution_category_folder_article_path(category , folder), :class => "icon add_new") %>
+	<%= link_to t('edit') ,  edit_solution_category_folder_path(category, folder), :class => "last" %>
 </div>
 
 <h4 class="border_title"><%= folder.name %></h4> 
@@ -14,6 +14,6 @@
 		<% end %>
 	</ol>
 <% else %>
-	<span class="no_info_text">No solutions in this folder  <%= link_to ' &rarr; Add a new solution '[:create_new_topic], new_solution_category_folder_article_path(category, folder) %></span>
+	<span class="no_info_text"><%=t('solution.info7')%>  <%= link_to t('solution.add_new_solution'), new_solution_category_folder_article_path(category, folder) %></span>
 <% end %>
 <span class="seperator"></span>

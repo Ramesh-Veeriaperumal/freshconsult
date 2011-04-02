@@ -1,28 +1,27 @@
 <% if logged_in? && current_user.has_manage_solutions? -%>
 	<% content_for :sidebar do -%>
 		<div class="sidepanel">
-			<h3 class="title"> Solutions </h3>
+			<h3 class="title"> <%=t('solution.title')%> </h3>
 			<p>
-				Solutions in Freshdesk is  your Knowledge base.
+				<%=t('solution.info1')%>.
 			</p>
 			<p>
-				Solutions can be <b>public</b> or <b>private</b>. Public Solutions are visible in the Self Service Portal and also appear in Search results. 
+				 <%=t('solution.info2')%>. 
 			</p>
 			<p>
-				Private solutions are agent-only solutions used for internal knowledge sharing.
+				<%=t('solution.info3')%>.
 			</p>
 			<p> 
-				Solutions have a 3 level hierarchy - <b>Category --> Folder --> Article</b>
+				<%=t('solution.info4')%>
 			</p>	  
 			
 			<p>
-				Solutions can be of two types - <b>Workaround</b> or <b>Permanent</b> solutions. 
+				<%=t('solution.info5')%>. 
 				
 		    </p>
 			
 			<p>
-				A Solution can have a <b>Draft</b> status when you are working on it and can be  changed to <b>Published</b> status once it is finished and reviewed.
-				
+				<%=t('solution.info6')%>.
 		    </p>
 			<span class="seperator"></span>
 			
@@ -36,10 +35,10 @@
 
 <% if logged_in? && current_user.has_manage_solutions? -%>
 	<div class="floatr">
-		<%= link_to "New Category", new_solution_category_path, :class => "uiButton" %>
+		<%= link_to t('solution_category.new'), new_solution_category_path, :class => "uiButton" %>
 	</div>
 <%- end %>
-<h3 class="title">Solutions</h3> 
+<h3 class="title"><%=t('solution.title')%></h3> 
 <div class="search-grey-box ignore-margin-20">
 	<%= render :partial => "/search/pagesearch", :locals => { :placeholder => "Search All Solutions", :url => "/search/solutions?search_key=" } %>
 </div>
@@ -48,8 +47,8 @@
 		<div class="<%= cycle('odd', 'even') %>">
 			<% if logged_in? && current_user.has_manage_solutions? -%>
 					<div class="action_buttons">
-						<%= link_to 'Add folder'[:create_new_folder], new_solution_category_folder_path(category), :class => "first icon add_new"  %> 
-						<%= link_to 'Edit' ,edit_solution_category_path(category), :class => "last"   %> 
+						<%= link_to t('folder.add_folder'), new_solution_category_folder_path(category), :class => "first icon add_new"  %> 
+						<%= link_to t('edit') ,edit_solution_category_path(category), :class => "last"   %> 
 						<% link_to "RSS", "", :class => "last" %>
 					</div>
 			<% end %>
@@ -65,7 +64,7 @@
 				<li><%= link_to h(folder.name),  solution_category_folder_path(category, folder)  %></li>
 			<% end %> 
 			</ul>
-			<%= content_tag (:span, "No folders in this category", :class => "no_info_text") if (category.folders.size == 0)  %>
+			<%= content_tag (:span, t('solution_category.info2'), :class => "no_info_text") if (category.folders.size == 0)  %>
 		</div>
 	<%end%>
 </div> 

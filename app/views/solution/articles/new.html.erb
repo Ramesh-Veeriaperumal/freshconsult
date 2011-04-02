@@ -10,9 +10,9 @@
 	<% form_for @article, :url => solution_category_folder_articles_path(@article.folder.category_id  , @article.folder.id) , :html => {:multipart => true, :id => "article-form"} do |f| %>
 	<%= render :partial => 'article_form', :locals => { :f => f } %>
 		<div class="button-container">
-			<%= submit_tag "Save", :class => "uiButton" %>
-	      	<%= submit_tag " Save and Create Another ", :name => "save_and_create", :class => "uiButton" %>
-			<%= link_to('Cancel'[:cancel], solution_category_folder_url(@article.folder.category_id, @article.folder.id), :class => "uiButton grey" ) %>
+			<%= submit_tag t('save'), :class => "uiButton" %>
+	      	<%= submit_tag t('save_and_create'), :name => "save_and_create", :class => "uiButton" %>
+			<%= link_to(t('cancel'), solution_category_folder_url(@article.folder.category_id, @article.folder.id), :class => "uiButton grey" ) %>
 		</div>
 	 <% end %>
 </div>

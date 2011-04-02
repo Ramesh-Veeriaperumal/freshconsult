@@ -33,6 +33,8 @@ en:
    add: "Add"
    change: "Change"
    name: "Name"
+   save_and_create: "Save and Create Another"
+   attach_files: "Attach files"
    
    sla_policy: 
        title: "SLA Policy"
@@ -50,7 +52,8 @@ en:
        info2: "Freshdesk uses the SLA Policy to determine the “Due By” time of tickets. You can have a default SLA policy for all of your customers, but if you have a special customer who requires faster response and resolution times, you can always create a special SLA policy for that customer."
        info3: "SLA Policy works in conjunction with Business Hours"
        
-       
+   tag:
+     title: "Tags"    
    
    company:
        title: "Companies"
@@ -240,7 +243,36 @@ en:
       back_info: "Background information"
       info1: "A Profile image of the person, its best if the picture has the same length and height"
       
-      
+   solution:
+       title: "Solutions"
+       add:   "Add Solution"
+       edit: "Edit Solution"
+       add_new_solution: "Add a new solution"
+       type: "Solution Type"
+       status: "Solution Status"
+       info1: "Solutions in Freshdesk is  your Knowledge base"
+       info2: "Solutions can be <b>public</b> or <b>private</b>. Public Solutions are visible in the Self Service Portal and also appear in Search results"
+       info3: "Private solutions are agent-only solutions used for internal knowledge sharing"
+       info4: "Solutions have a 3 level hierarchy - <b>Category --> Folder --> Article</b>"
+       info5: "Solutions can be of two types - <b>Workaround</b> or <b>Permanent</b> solutions"
+       info6: "A Solution can have a <b>Draft</b> status when you are working on it and can be  changed to <b>Published</b> status once it is finished and reviewed"
+       info7: "No solutions in this folder"  
+       info8: "Are you sure you want to delete this solution"
+       info9: "Public (Will be published in self service)"
+       info10: "Private (Visible to Agents only)"
+       
+       
+   solution_category:
+        edit: "Edit Category"  
+        new: "New Category"
+        save_and_create: "Save and Create Another" 
+        info1: "Are you sure you want to delete this category"
+        info2: "No folders in this category"
+   
+   folder:
+       add_folder: "Add folder"
+       edit: "Edit Folder"
+       info1: "Are you sure you want to delete this folder"
         
    business_hours:
        title: "Business Hours"

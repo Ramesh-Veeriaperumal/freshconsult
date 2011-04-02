@@ -4,7 +4,7 @@
 </div>
 <div class="artical_section"> 
 	<div class="crumbs">
-		<%= link_to "Solutions", solution_categories_path %> &rarr; 
+		<%= link_to t('solution.title'), solution_categories_path %> &rarr; 
 		<%= link_to @item.category.name, solution_category_path(@item.category) %> &rarr;
 		<%= content_tag (:span, @item.name ) %>
 	</div>

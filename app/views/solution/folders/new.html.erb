@@ -3,8 +3,8 @@
 <% form_for (@folder), :url => solution_category_folders_path(@folder.category_id) , :html => {:multipart => true, :id => "folder-form"} do |f| %>
 	<%= render :partial => "folder_form" , :locals => { :f => f }%>
 	<div class="button-container">
-	    <%= submit_tag "Save", :class => "uiButton submit" %>
-	    <%= submit_tag "Save and Create Another", :name => "save_and_create", :class => "uiButton" %>
-		<%= link_to('Cancel'[:cancel], solution_category_url(@folder.category_id), :class => "uiButton grey" ) %>
+	    <%= submit_tag t('save'), :class => "uiButton submit" %>
+	    <%= submit_tag t('save_and_create'), :name => "save_and_create", :class => "uiButton" %>
+		<%= link_to(t('cancel'), solution_category_url(@folder.category_id), :class => "uiButton grey" ) %>
 	</div>
 <% end %>

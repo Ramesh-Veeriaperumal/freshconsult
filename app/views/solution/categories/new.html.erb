@@ -1,11 +1,11 @@
-<h3 class="title">New Category</h3>
+<h3 class="title"><%=t('solution_category.new')%></h3>
 <% form_for (@category), :html => {:multipart => true, :id => "folder-form"} do |f| %>
 	<%= render :partial => "category_form" , :locals => { :f => f }%>
 
 	<div class="button-container">
-	    <%= submit_tag "Save", :class => "uiButton submit" %>
-	    <%= submit_tag "Save and Create Another", :name => "save_and_create", :class => "uiButton" %>
-		<%= link_to('Cancel'[:cancel], solution_categories_url, :class => "uiButton grey" ) %>
+	    <%= submit_tag t('save'), :class => "uiButton submit" %>
+	    <%= submit_tag t('solution_category.save_and_create'), :name => "save_and_create", :class => "uiButton" %>
+		<%= link_to(t('cancel'), solution_categories_url, :class => "uiButton grey" ) %>
 	</div>
 	
 <% end %>

@@ -2,9 +2,9 @@
 <div>
 	<div class="header_area">
 		<div class="right_panel" >
-	  		<%= link_to "New Category", new_solution_category_folder_path, :class => "fdbutton" %>
+	  		<%= link_to t('solution_category.new'), new_solution_category_folder_path, :class => "fdbutton" %>
 		</div>
-		<strong class="page_title">Solutions</strong>
+		<strong class="page_title"><%=t('solution.title')%></strong>
 	</div>	  
 	<div class="page_area">			
 		<% @folders.each do |folder| %>

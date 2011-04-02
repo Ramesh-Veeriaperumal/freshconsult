@@ -1,11 +1,11 @@
 	<ul id="folder-form-container" class="ui-form">  
 	    <%= f.error_messages %>
 		<li>
-	    	<%= f.label(:name, "Name *") %>
+	    	<%= f.label(:name, "#{t('name')} *") %>
 	    	<%= f.text_field :name, :class => "required" %>
 		</li>
 		<li>
-			<%= f.label(:description, "Description") %>
+			<%= f.label(:description, t('description')) %>
 		 	<%= f.text_area :description, :class => "smallpara" %>
 	    	<!--%= f.text_area :description, :class => "mceEditor" %-->
 		</li>  
