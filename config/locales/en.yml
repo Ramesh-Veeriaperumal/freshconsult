@@ -32,10 +32,25 @@ en:
    activate: "activate"
    add: "Add"
    change: "Change"
+   name: "Name"
    
    sla_policy: 
        title: "SLA Policy"
+       title1: "SLA Policies"
        select_policy: "Select policy"
+       edit: "Edit SLA Policy"
+       new: "New SLA Policy"
+       sla_targets: "SLA Targets"
+       tickets_with: "Tickets with"
+       response_time: "Response time"
+       resolution_time: "Resolution time"
+       escalate_to: "Escalate to"
+       override: "Override"
+       info1: "	SLA Policy is a set of target response and resolution times based on ticket priority.It is an industry best practice to set Service Levels based on priority. Your SLA policy could be as simple as saying “High Priority tickets should be resolved in 2 hours” etc."
+       info2: "Freshdesk uses the SLA Policy to determine the “Due By” time of tickets. You can have a default SLA policy for all of your customers, but if you have a special customer who requires faster response and resolution times, you can always create a special SLA policy for that customer."
+       info3: "SLA Policy works in conjunction with Business Hours"
+       
+       
    
    company:
        title: "Companies"
@@ -58,6 +73,7 @@ en:
        unassigned: "Unassigned"
        assigned_to: "Assigned to"
        status: "Status"
+       singular: "Ticket"
    
    contacts:
        edit: "Edit Contact"

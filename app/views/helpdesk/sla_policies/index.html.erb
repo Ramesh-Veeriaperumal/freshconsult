@@ -1,29 +1,28 @@
 <% content_for :sidebar do %>
 	<div class="sidepanel">
-		<h3 class="title">SLA Policy</h3>
+		<h3 class="title"><%=t('sla_policy.title')%></h3>
 			<p>
-				SLA Policy is a set of target response and resolution times based on ticket priority.
-				It is an industry best practice to set Service Levels based on priority. Your SLA policy could be as simple as saying “High Priority tickets should be resolved in 2 hours” etc.
+				<%=t('sla_policy.info1')%>
 			</p>
 			<p>
-				Freshdesk uses the SLA Policy to determine the “Due By” time of tickets. You can have a default SLA policy for all of your customers, but if you have a special customer who requires faster response and resolution times, you can always create a special SLA policy for that customer.
+				<%=t('sla_policy.info2')%>
 			</p>
 			<p>
-				SLA Policy works in conjunction with Business Hours.
+				<%=t('sla_policy.info3')%>.
 			</p>
 	</div>	
 <% end %>
 <div class="floatr">
-	<%= link_to "New SLA Policy", new_helpdesk_sla_policy_path, :class => "uiButton" %>
+	<%= link_to t('sla_policy.new'), new_helpdesk_sla_policy_path, :class => "uiButton" %>
 </div>
-<h3 class="title">SLA Policies</h3> 
+<h3 class="title"><%=t('sla_policy.title1')%></h3> 
 <ul class="admin_list">
 	<% @sla_policies.each do |policy| %>
 	<li>
 		<div class="item_actions">
-		    <%= link_to 'edit', edit_helpdesk_sla_policy_path(policy), :class => "button" %>
+		    <%= link_to t('edit'), edit_helpdesk_sla_policy_path(policy), :class => "button" %>
 			<%unless policy.is_default?%>
-		    	<%= link_to 'delete', policy, :confirm => 'Are you sure?', :method => :delete, :class => "button" %>
+		    	<%= link_to t('delete'), policy, :confirm => 'Are you sure?', :method => :delete, :class => "button" %>
 			<%end%>
 		</div>
 		<%= link_to(h(policy.name), edit_helpdesk_sla_policy_path(policy), :class => "item_info") %>

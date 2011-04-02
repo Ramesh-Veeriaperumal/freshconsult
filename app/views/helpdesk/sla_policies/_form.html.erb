@@ -1,26 +1,26 @@
 <%= f.error_messages %>
 <ul class="ui-form">
   	<li>
-		<%= f.label :name %>
+		<%= f.label :name, t('name') %>
    		<%= f.text_field :name, :class => "required" %>
 		<%= f.hidden_field :id %>
 	</li>
 	<li>
-		<%= f.label :description %>
+		<%= f.label :description, t('description') %>
 	    <%= f.text_area :description, :class => "smallpara" %>
 	</li>	 
 	<li class="seperator"></li>
 	<li>
-		<label>SLA Targets</label>
+		<label><%=t('sla_policy.sla_targets')%></label>
 	</li>
 	<li class="grid">	 	 		
 		<table>
 	  		<tr>
-	    		<th>Tickets with </th>
-	    		<th>Ticket <br /> Response time</th>
-	    		<th>Ticket <br /> Resolution time</th>
-	    		<th>Escalate to</th>
-				<th>Override <br />Business Hours</th>
+	    		<th><%=t('sla_policy.tickets_with')%> </th>
+	    		<th><%=t('ticket.singular')%> <br /> <%=t('sla_policy.response_time')%></th>
+	    		<th><%=t('ticket.singular')%> <br /> <%=t('sla_policy.resolution_time')%></th>
+	    		<th><%=t('sla_policy.escalate_to')%></th>
+				<th><%=t('sla_policy.override')%> <br /><%=t('business_hours.title')%></th>
 	  		</tr>
 	 		<% 
 				sla_size = @sla_policy.sla_details.size

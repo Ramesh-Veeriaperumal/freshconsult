@@ -1,6 +1,6 @@
 <% content_for :layoutType do%>single<% end %>
 <div class="page_area">
-	<h3 class="content_title">Edit SLA Policy</h3>
+	<h3 class="content_title"><%=t('sla_policy.edit')%></h3>
 	<span class="seperator"></span> 
 	<% form_for(@sla_policy) do |f| %>
   		<%= render :partial => "form", :locals => { :f => f } %>
