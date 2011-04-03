@@ -13,38 +13,38 @@
 
 	<%when "Source" then%>
 		<li class="dropdown">
-  			<%= f.label :source, "Source" %>
+  			<%= f.label :source, t('ticket.source') %>
  			<%= f.select :source, Helpdesk::Ticket::SOURCE_OPTIONS, :class => "select" %>
         </li>
 		
 	<%when "Type" then%>
 		
 		<li class="dropdown">
-          	<%= f.label :ticket_type, "Type" %>
+          	<%= f.label :ticket_type, t('ticket.type') %>
          	<%= f.select :ticket_type, Helpdesk::Ticket::TYPE_OPTIONS, :class => "select" %>
         </li>
 				
 	<%when "Status" then%>
 		<li class="dropdown">
-          	<%= f.label :status, "Status" %>
+          	<%= f.label :status, t('ticket.status') %>
          	<%= f.select :status, Helpdesk::Ticket::STATUS_OPTIONS, :class => "select" %>
         </li>
 		
 	<%when "Group" then%>
 		<li class="dropdown">
-          	<%= f.label :group_id, "Group" %>
+          	<%= f.label :group_id, t('ticket.group') %>
           	<%= f.collection_select :group_id, Group.find_all_by_account_id(@item.account_id), :id, :name,{:include_blank => '...'}, { :onchange => "changeAggentList(this.options[this.selectedIndex].value)" ,:class => "select"} %>
         </li>
 		
 	<%when "Assigned to" then%> 
 		<li class="dropdown" id="assigned_to">
-          	<%= f.label :responder_id, "Assigned To" %>
+          	<%= f.label :responder_id, t('ticket.assigned_to') %>
           	<%= f.collection_select :responder_id, Agent.technician_list(@item.account_id), :id, :name, {:include_blank => '...'}, :class => "select" %>
         </li> 
 		
 	<%when "Priority" then%>
 		<li class="dropdown">
- 			<%= f.label :priority, "Priority" %>          
+ 			<%= f.label :priority, t('ticket.priority') %>          
 			<%= f.select :priority, Helpdesk::Ticket::PRIORITY_OPTIONS, :class => "select" %>
     	</li>
 	

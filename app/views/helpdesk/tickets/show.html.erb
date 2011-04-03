@@ -99,31 +99,31 @@
 	<div class="rtPanel">
 		<a href="javascript:void(0)" class="active" cntid="TicketProperties">
 			<img src="/images/spacer.gif" class="ticketprop" width="36px" height="36px"  />
-			<em>Ticket Properties</em>
+			<em><%=t('ticket.properties')%></em>
 		</a>
 		<a href="javascript:void(0)" cntid="RelatedSolutions">
 			<img src="/images/spacer.gif" class="suggestsolutions" width="36px" height="36px"  />
-			<em>Suggest Solutions</em>
+			<em><%=t('ticket.suggest_solutions')%></em>
 		</a>
 		<a href="javascript:void(0)" cntid="Scenarios">
 			<img src="/images/spacer.gif" class="scenario" width="36px" height="36px"  />
-			<em>Execute Scenario</em>
+			<em><%=t('ticket.execute_scenario')%></em>
 		</a>
 		<a href="javascript:void(0)" cntid="RequesterProperties">
 			<img src="/images/spacer.gif" class="requesterinfo" width="36px" height="36px"  />
-			<em>Requestor Info</em>
+			<em><%=t('ticket.requestor_info')%></em>
 		</a>
 		<a href="javascript:void(0)" cntid="TicketTodos">
 			<img src="/images/spacer.gif" class="todo" width="36px" height="36px"  />
-			<em>To Do</em>
+			<em><%=t('to_do')%></em>
 		</a>
 		<a href="javascript:void(0)" cntid="TicketTags">
 			<img src="/images/spacer.gif" class="tags" width="36px" height="36px"  />
-			<em>Tags</em>
+			<em><%=t('tag.title')%></em>
 		</a>
 		<a href="javascript:void(0)" cntid="Activity">
 			<img src="/images/spacer.gif" class="activity" width="36px" height="36px"  />
-			<em>Activities</em>
+			<em><%=t('activities')%></em>
 		</a>
 	</div>	
 	 <%= render :partial => "helpdesk/tickets/components/ticket", :object => @ticket %>

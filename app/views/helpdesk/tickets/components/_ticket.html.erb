@@ -16,11 +16,11 @@
 	}
 <% end %>
 <div class="rtDetails" id="TicketProperties">              
-		<h3 class="title">Ticket Properties</h3>	
+		<h3 class="title"><%=t('ticket.properties')%></h3>	
 			<% form_for ticket do |f| %>
 	        <ul class="cnt">
 	            <li>
-	                <label>Due by time</label>
+	                <label><%=t('ticket.due_by_time')%></label>
 					<%= ticket.due_by.strftime("%B %e %Y at %I:%M %p") %>
 	            </li>
 				<!--form values starts here-->
@@ -28,7 +28,7 @@
 				<!--form values ends here-->
 				<!-- Custom fields ends here-->
 				<li class="button-container">
-					<%= f.submit "Update", :class => "uiButton grey small" %>
+					<%= f.submit t('update'), :class => "uiButton grey small" %>
 				</li>		
 	        </ul>
 			<% end %> 

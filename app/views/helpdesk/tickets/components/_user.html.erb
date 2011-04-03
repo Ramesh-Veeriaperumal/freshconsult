@@ -1,5 +1,5 @@
 <div class="rtDetails" id="RequesterProperties" style="display:none">
-    <h3 class="title">Requester info</h3>
+    <h3 class="title"><%=t('ticket.requestor_info')%></h3>
 	<div class="user_details_widget">  
 		<div class="clearfix">
 			<%= user_avatar(@ticket.requester.avatar, :medium)  %>
@@ -11,7 +11,7 @@
 		<div>"<%= h(user.job_title) %>" <b><%= (user.customer ? "at #{user.customer.name}" : "")  %></b></div>
 	</div>
 	<div class="seperator"></div>
-	<h3 class="title">Recent tickets</h3>
+	<h3 class="title"><%=t('ticket.recent_tickets')%></h3>
 	<ul class="ui-list_with_icon">
 	    <% user.tickets.newest(5).each do |ticket| %>	
 			<li>

@@ -91,21 +91,21 @@
 			 when "Requester" then
     %>
 	<li> 	
-  		<label id="requester-label">Requester *</label>
+  		<label id="requester-label"><%=t('ticket.requester')%> *</label>
   		<input type="text" id="helpdesk_ticket_email" class="text required email" name="helpdesk_ticket[email]" value="<%=@item.requester.email if @item.requester %>"></input>
    	</li> 
 	  
 			
 	<% when "Subject" then%>
 		<li>
-        	<%= f.label :subject, "Subject" %>
+        	<%= f.label :subject, t('ticket.subject') %>
           	<%= f.text_field :subject, :class => "text" %>
    		</li>
 
 	<%when "Type" then%>
 		
 		<li class="dropdown">
-          	<%= f.label :ticket_type, "Type" %>
+          	<%= f.label :ticket_type, t('ticket.type') %>
          	<%= f.select :ticket_type, Helpdesk::Ticket::TYPE_OPTIONS, :class => "select" %>
         </li>
 		
@@ -118,31 +118,31 @@
 				
 	<%when "Status" then%>
 		<li class="dropdown">
-          	<%= f.label :status, "Status" %>
+          	<%= f.label :status, t('ticket.status') %>
          	<%= f.select :status, Helpdesk::Ticket::STATUS_OPTIONS, :class => "select" %>
         </li>
 		
 	<%when "Group" then%>
 		<li class="dropdown">
-          	<%= f.label :group_id, "Group" %>
+          	<%= f.label :group_id, t('ticket.group') %>
           	<%= f.collection_select :group_id, Group.find_all_by_account_id(@item.account_id), :id, :name,{:include_blank => 'Nobody'}, { :onchange => "changeAggentList(this.options[this.selectedIndex].value)" ,:class => "select"} %>
         </li>
 		
 	<%when "Assigned to" then%> 
 		<li class="dropdown" id="assigned_to">
-          	<%= f.label :responder_id, "Assigned To" %>
+          	<%= f.label :responder_id, t('ticket.assigned_to') %>
           	<%= f.collection_select :responder_id, Agent.technician_list(@item.account_id), :id, :name, {:include_blank => 'None'}, :class => "select" %>
         </li> 
 		
 	<%when "Priority" then%>
 		<li class="dropdown">
- 			<%= f.label :priority, "Priority" %>          
+ 			<%= f.label :priority, t('ticket.priority') %>          
 			<%= f.select :priority, Helpdesk::Ticket::PRIORITY_OPTIONS, :class => "select" %>
     	</li>
 	
 	<%when "Description" then%>
 		<li>
-			<%= f.label :description, "Description" %>
+			<%= f.label :description, t('description') %>
     		<%= f.text_area :description, :class=>"textarea" %>
 		</li>				
 	
@@ -202,13 +202,13 @@ logger.debug "Custom  Field #{field["label"]}"%>
 	
     <div class="button-container"> 
       <% if(type == "edit") %>	
-	  	 <%= f.submit "Update", :class => "uiButton" %>
-      	<%= link_to "Delete", @item, :method => :delete, :class => "uiButton" %>
+	  	 <%= f.submit t('update'), :class => "uiButton" %>
+      	<%= link_to t('delete'), @item, :method => :delete, :class => "uiButton" %>
 	  <% else %>
-	  	<%= f.submit "Create", :class => "uiButton" %>
-	  	<%= submit_tag "Save and Create Another", :name => "save_and_create" , :class => "uiButton" %>
+	  	<%= f.submit t('create'), :class => "uiButton" %>
+	  	<%= submit_tag t('save_and_create'), :name => "save_and_create" , :class => "uiButton" %>
 	  <% end %>
-      <%= link_to "Cancel", (@item.new_record? ? {:action => 'index'} : @item ), :class => "uiButton" %>
+      <%= link_to t('cancel'), (@item.new_record? ? {:action => 'index'} : @item ), :class => "uiButton" %>
     </div> 
 	
   <% end %>

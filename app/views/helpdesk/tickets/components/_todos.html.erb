@@ -1,5 +1,5 @@
 <div class="rtDetails reminders-ticket" id="TicketTodos" style="display:none;">
-	<h3 class="title">Tickets To-Do</h3> 
+	<h3 class="title"><%=t('ticket.to_do')%></h3> 
 	<div class="panel_area">
 		<table width="90%">	
 			<% ticket.reminders.visible.map do |r| %>
@@ -8,7 +8,7 @@
 		</table>
 		<div class="addReminder">
 			<% form_for ticket ? [ticket, Helpdesk::Reminder.new()] : Helpdesk::Reminder.new() do |f| %>
-				<%= f.label :body, "Add To do", :class => "overlabel" %>
+				<%= f.label :body, t('add_to_do'), :class => "overlabel" %>
 				<%= f.text_field :body, :class => "text" %>
 			<% end %> 
 		</div>
