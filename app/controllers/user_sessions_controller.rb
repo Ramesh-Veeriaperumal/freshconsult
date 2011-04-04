@@ -47,18 +47,24 @@ require 'openid'
     
   resp = request.env[Rack::OpenID::RESPONSE]
   email = get_email resp
-  @current_user = User.find_by_email(email)  
+  domain_name = params[:domain]
+  full_domain  = "#{domain_name.split('.').first}.#{AppConfig['base_domain']}"
+  @current_account = Account.find_by_full_domain(full_domain)  
+  @current_user = @current_account.users.find_by_email(email)  unless  @current_account.blank?
+  @current_user = create_user(email,@current_account) if (@current_user.blank? && !@current_account.blank?)
+  @current_user = User.find_by_email(email) if @current_account.blank?  
+  return :back if @current_user.blank?
   @current_user.email = email 
   @user_session = @current_user.account.user_sessions.create(@current_user)
   if @user_session.save      
       flash[:notice] = "Login successful!"
-      redirect_back_or_default(@current_user.account.full_domain)
+      redirect_back_or_default('/')
   else
       note_failed_login
       render :action => :new
   end
- end
-  
+end
+ 
   private
 
     def note_failed_login
@@ -76,6 +82,15 @@ def get_email(resp)
   else
     "Error: #{resp.status}"
   end
- end
+end
+
+ def create_user(email, account)
+      @contact = account.users.new
+      @contact.email = email
+      @contact.user_role = User::USER_ROLES_KEYS_BY_TOKEN[:customer]
+      @contact.active = true     
+      @contact.save  
+      return @contact
+  end
 
 end
