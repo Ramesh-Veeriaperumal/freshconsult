@@ -7,8 +7,10 @@
 %>
 <div class="sidepanel wordwrap">
 		<h3 class="title"><%=t('email_configs.title')%></h3> 
+		<% if @email_configs.size > 1 %>
 		<p><%=t('email_configs.info1')%> <strong><%=reply_email%></strong></p>
 		<p><%=t('email_configs.info2')%> <strong><%=to_email%></strong>. <%=t('email_configs.info3')%>.</p>
+		<% end %>
 		<p><%=t('email_configs.info4')%>.</p>
 		
 		<h3 class="title"><%=t('email_configs.reply_emails')%></h3> 
