@@ -7,7 +7,7 @@
 	</table> 
 	  <div class="addReminder">
 	  	<% form_for  Helpdesk::Reminder.new() do |f| %>
-		  <%= f.label :body, "Add To do", :class => "overlabel", :for => "helpdesk_reminder_body" %>
+		  <%= f.label :body, t('add_to_do'), :class => "overlabel", :for => "helpdesk_reminder_body" %>
 		  <%= f.text_field :body, :class => "text" %>
 		<% end %>
 	  </div>
