@@ -622,15 +622,21 @@ span.sort_handle{
 	width:400px;
 }
 
+.ui-login .ui-form{ 
+	width:350px;
+}
 
-.ui-login{ 
+.ui-signup .ui-form{ 
+	width:560px;
+}
+
+.ui-login, .ui-signup{ 
 	text-align:center;
 	display:block;
 	padding:18px 0px;
 	.ui-form{ 
 		background:none;
 		border:0px;
-		width:350px;
 		@include corners(6px);
 		text-align:left;
 		padding:25px;

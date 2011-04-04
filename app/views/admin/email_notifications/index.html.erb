@@ -4,14 +4,12 @@
 	jQuery(document).ready(function(){
 		var active_template = null;
 		jQuery("a.notify_check").bind("click", function(ev){
-			jQuery(active_template).hide();
+			//jQuery(active_template).hide();
+			//hideData = (jQuery(this).parents("tr").attr("notify_type"));
 			var emailTr = jQuery(this).parents("tr").next();
-			active_template = jQuery(emailTr).show();
-			
+			active_template = jQuery(emailTr).toggle();
 			jQuery(emailTr).find("div").hide();
-			
 			jQuery(emailTr).find("div."+this.getAttribute("showdiv")).show();
-			
 		});
 		jQuery("a.close_template").bind("click", function(ev){
 			jQuery(this).parents("tr").hide();
@@ -104,7 +102,7 @@
 					&nbsp;					
 				</td>				
 			</tr>
-			<tr style="display:none;">
+			<tr style="display:none;" notify_type=<%= data.id %>>
 				<td colspan="3">
 					<div class="requester_div">
 						<a href="javascript:void(0)" class="link_placeholder"><%=t('email_notifications.insert_placeholder')%> &raquo;</a>
@@ -131,8 +129,8 @@
 			
 		</table>
 		<div class="padding6">
-			<%= f.submit t('save'), { :class => "fdbutton" } %>
-			<%= link_to t('back'), "/admin/home", { :class => "fdbutton grey" } %>
+			<%= f.submit t('save'), { :class => "uiButton" } %>
+			<%= link_to t('back'), "/admin/home", { :class => "uiButton" } %>
 		</div>
 	</div>
 	<% end %>

@@ -802,17 +802,26 @@ span.sort_handle {
   width: 400px;
 }
 
-/* line 626, ../src/form.scss */
-.ui-login {
+/* line 625, ../src/form.scss */
+.ui-login .ui-form {
+  width: 350px;
+}
+
+/* line 629, ../src/form.scss */
+.ui-signup .ui-form {
+  width: 560px;
+}
+
+/* line 633, ../src/form.scss */
+.ui-login, .ui-signup {
   text-align: center;
   display: block;
   padding: 18px 0px;
 }
-/* line 630, ../src/form.scss */
-.ui-login .ui-form {
+/* line 637, ../src/form.scss */
+.ui-login .ui-form, .ui-signup .ui-form {
   background: none;
   border: 0px;
-  width: 350px;
   -moz-border-radius: 6px 6px 6px 6px;
   -webkit-border-radius: 6px 6px 6px 6px;
   border-radius: 6px 6px 6px 6px;
@@ -825,12 +834,12 @@ span.sort_handle {
   -webkit-box-shadow: 0px 1px 6px #999999;
   box-shadow: 0px 1px 6px #999999;
 }
-/* line 641, ../src/form.scss */
-.ui-login .ui-form ul {
+/* line 647, ../src/form.scss */
+.ui-login .ui-form ul, .ui-signup .ui-form ul {
   margin: 0px;
 }
-/* line 644, ../src/form.scss */
-.ui-login .ui-form ul li input.text {
+/* line 650, ../src/form.scss */
+.ui-login .ui-form ul li input.text, .ui-signup .ui-form ul li input.text {
   margin: 3px 0px 5px 0px;
   width: 320px;
 }

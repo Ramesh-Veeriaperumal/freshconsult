@@ -1,7 +1,6 @@
- <% javascript_tag do %>
+<% javascript_tag do %>
   jQuery(document).ready(function(){    	
-    jQuery("#account_timezone_offset").val(getLocalTimeZoneOffset()); 
-	
+    jQuery("#account_timezone_offset").val(getLocalTimeZoneOffset());  
   });
   
   function getLocalTimeZoneOffset()
@@ -27,72 +26,37 @@
 <% end %>
  
  
- <!-- Body Starts -->
-        <div id="body">
-        	<div class="bodyLft"><!-- Body Left Image --></div>
-            <div class="bodyMdl">
-				<!-- Top Curve Starts -->
-				<div class="topCurve"><!--TopCurve--></div>
-				<!-- Top Curve Ends -->
-				<!-- Body Content Starts -->
-				<div class="bodyContent">
-					<div id="signup_form">
-					<h3>Sign up for a Freshdesk Beta account</h3>
-					
-					<div class="ui-form">
-						<div class="signup_error" id="signup_error" style="display:none;"></div>
-						
-						<% form_for :account, @account, :url => {:action=> :create_account_google} , :html => { :method => "put" } do |f| %>
-						<%= f.error_messages %>
-						<!--form id="signup" method="post" action="#"-->
-						  <fieldset class="clearfix">
-							<div class="clearfix">
-								<label for="account_name">Company Name</label>
-								<div class="form_input"><input type="text" size="24" name="account[name]" id="account_name" class="textfield required" value="<%=@account.name%>"></div>
-							</div>
-							<div class="clearfix">
-						    	<label for="account_domain">Your Helpdesk URL</label>
-								<div class="form_input"><input type="text" value="<%=@account.domain%>" size="24" name="account[domain]" id="account_domain" class="textfield required"><strong class="very_bold">.freshdesk.com</strong></div>
-							</div>
-							   <input type="hidden" name="utc_offset" id="account_timezone_offset" />
-						  </fieldset>
-						  <fieldset class="clearfix">
-						  	<input type="hidden" name="call_back" id="call_back_url" value="<%=@call_back_url%>" />
-							<input type="hidden" value="<%=@user.name%>" size="24" name="user[name]" id="user_name" class="textfield">
-							<input type="hidden" value="<%=@user.email%>" size="24" name="user[email]" id="user_email" class="textfield">
-							
-							<div class="clearfix">
-							<label for="user_email">Phone no.</label>
-						      <div class="form_input"><input type="text" size="24" name="user[phone]" id="user_phone" class="textfield" value="<%=@user.phone%>"></div>
-							</div>
-							
-						  </fieldset>  
-						  <fieldset>
-						  	<label></label> 
-							By clicking <strong>Create my account</strong> you agree to the <a href="terms.html" target="_blank">terms &amp; conditions</a> and <a href="privacy.html" target="_blank">privacy policy</a>
-						  </fieldset>	
-						  
-						  <fieldset>
-						  	  <label><img id="loading_data" src="images/loading.gif" style="display:none;" /></label>
-							  <div class="form_input">
-							  	<span class="fdbutton">
-							  		 <%= submit_tag "Create my account", :class => "fdbutton" %>								
-									<!--input type="submit" value="Create my account" /-->
-									</span>
-							  </div>
-						  </fieldset>
-						<% end %>
-					</div>
-					
-					
-					</div>
-					<div class="signup-success" id="signup-success" style="display:none;">
-						<h3>Your Helpdesk is now ready to use !!!</h3>
-						<p>
-							Click on the below url to access your helpdesk
-							<strong><a class="helpdesk-link" href="" id="domainurl">support.freshdesk.com</a></strong>
-						</p>
-						<p> Please check your email for some sample tickets from the newly created helpdesk and an activation email for your admin account (if you are signing up for the first time)</p>
-					</div>
-			</div>
-    <!-- Body Top Ends -->
+<div id="signup-form" class="ui-signup">
+	<div class="ui-form">		
+	<h3 class="title">Sign up for a Freshdesk account</h3>
+	<span class="seperator"></span>
+	<% form_for :account, @account, :url => {:action=> :create_account_google} , :html => { :method => "put" } do |f| %>
+		<%= f.error_messages %>
+		  <input type="hidden" name="call_back" id="call_back_url" value="<%=@call_back_url%>" />
+		  <input type="hidden" value="<%=@user.name%>" size="24" name="user[name]" id="user_name" class="textfield">
+		  <input type="hidden" value="<%=@user.email%>" size="24" name="user[email]" id="user_email" class="textfield">
+		  <input type="hidden" name="utc_offset" id="account_timezone_offset" />
+		  <ul>
+				<label for="account_name">Company Name</label>
+				<input type="text" size="24" name="account[name]" id="account_name" class="text required" value="<%=@account.name%>">
+			</li>
+			<li>
+		    	<label for="account_domain">Your Helpdesk URL</label>
+				<input type="text" value="<%=@account.domain%>" size="24" name="account[domain]" id="account_domain" class="text very_small required"><strong>.freshdesk.com</strong>
+			</li>
+			<li>
+				<label for="user_email">Phone no.</label>
+		      	<input type="text" size="24" name="user[phone]" id="user_phone" class="text" value="<%=@user.phone%>">
+			</li>
+			<li>
+				<%= submit_tag "Create my account", :class => "uiButton" %>
+			</li>
+		  	<li>
+		  		<span class="seperator"></span>
+				
+				<div class="help_text">By clicking <strong>Create my account</strong> you agree to the <a href="http://freshdesk.com/terms.html" target="_blank">terms of Service</a> and <a href="http://freshdesk.com/privacy.html" target="_blank">privacy policy</a></div>
+		  	</li>
+		  </ul>	  
+		<% end %>
+	</div>
+</div>
