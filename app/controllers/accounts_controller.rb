@@ -80,7 +80,8 @@ def openid_complete
   
    @call_back_url = params[:callback]   
    @account  = Account.new
-   @account.domain = params[:domain].split(".")[0]    
+   @account.domain = params[:domain].split(".")[0] 
+   @account.name = @account.domain.titleize
    @user = @account.users.new   
    unless data.blank?
       @user.email = data["email"]
