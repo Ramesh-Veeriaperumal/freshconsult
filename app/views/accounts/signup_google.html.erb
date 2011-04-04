@@ -1,0 +1,98 @@
+ <% javascript_tag do %>
+  jQuery(document).ready(function(){    	
+    jQuery("#account_timezone_offset").val(getLocalTimeZoneOffset()); 
+	
+  });
+  
+  function getLocalTimeZoneOffset()
+  {
+	 var timeZoneOffset = (new Date()).getTimezoneOffset() / 60 * (-1);
+	 timeZoneOffset -= (isDST() ? 1 : 0);	 
+	 return timeZoneOffset;
+  }
+  
+  	function isDST() {
+		   var today = new Date();
+		   var jan = new Date(today.getFullYear(), 0, 1, 0, 0, 0, 0);
+		   var jul = new Date(today.getFullYear(), 6, 1, 0, 0, 0, 0);
+		   var temp = jan.toGMTString();
+		   var jan_local = new Date(temp.substring(0, temp.lastIndexOf(" ")-1));
+		   var temp = jul.toGMTString();
+		   var jul_local = new Date(temp.substring(0, temp.lastIndexOf(" ")-1));
+		   var hoursDiffStdTime = (jan - jan_local) / (1000 * 60 * 60);
+		   var hoursDiffDaylightTime = (jul - jul_local) / (1000 * 60 * 60);
+		
+		   return hoursDiffDaylightTime != hoursDiffStdTime;
+		}
+<% end %>
+ 
+ 
+ <!-- Body Starts -->
+        <div id="body">
+        	<div class="bodyLft"><!-- Body Left Image --></div>
+            <div class="bodyMdl">
+				<!-- Top Curve Starts -->
+				<div class="topCurve"><!--TopCurve--></div>
+				<!-- Top Curve Ends -->
+				<!-- Body Content Starts -->
+				<div class="bodyContent">
+					<div id="signup_form">
+					<h3>Sign up for a Freshdesk Beta account</h3>
+					
+					<div class="ui-form">
+						<div class="signup_error" id="signup_error" style="display:none;"></div>
+						
+						<% form_for :account, @account, :url => {:action=> :create_account_google} , :html => { :method => "put" } do |f| %>
+						<%= f.error_messages %>
+						<!--form id="signup" method="post" action="#"-->
+						  <fieldset class="clearfix">
+							<div class="clearfix">
+								<label for="account_name">Company Name</label>
+								<div class="form_input"><input type="text" size="24" name="account[name]" id="account_name" class="textfield required" value="<%=@account.name%>"></div>
+							</div>
+							<div class="clearfix">
+						    	<label for="account_domain">Your Helpdesk URL</label>
+								<div class="form_input"><input type="text" value="<%=@account.domain%>" size="24" name="account[domain]" id="account_domain" class="textfield required"><strong class="very_bold">.freshdesk.com</strong></div>
+							</div>
+							   <input type="hidden" name="utc_offset" id="account_timezone_offset" />
+						  </fieldset>
+						  <fieldset class="clearfix">
+						  	<input type="hidden" name="call_back" id="call_back_url" value="<%=@call_back_url%>" />
+							<input type="hidden" value="<%=@user.name%>" size="24" name="user[name]" id="user_name" class="textfield">
+							<input type="hidden" value="<%=@user.email%>" size="24" name="user[email]" id="user_email" class="textfield">
+							
+							<div class="clearfix">
+							<label for="user_email">Phone no.</label>
+						      <div class="form_input"><input type="text" size="24" name="user[phone]" id="user_phone" class="textfield" value="<%=@user.phone%>"></div>
+							</div>
+							
+						  </fieldset>  
+						  <fieldset>
+						  	<label></label> 
+							By clicking <strong>Create my account</strong> you agree to the <a href="terms.html" target="_blank">terms &amp; conditions</a> and <a href="privacy.html" target="_blank">privacy policy</a>
+						  </fieldset>	
+						  
+						  <fieldset>
+						  	  <label><img id="loading_data" src="images/loading.gif" style="display:none;" /></label>
+							  <div class="form_input">
+							  	<span class="fdbutton">
+							  		 <%= submit_tag "Create my account", :class => "fdbutton" %>								
+									<!--input type="submit" value="Create my account" /-->
+									</span>
+							  </div>
+						  </fieldset>
+						<% end %>
+					</div>
+					
+					
+					</div>
+					<div class="signup-success" id="signup-success" style="display:none;">
+						<h3>Your Helpdesk is now ready to use !!!</h3>
+						<p>
+							Click on the below url to access your helpdesk
+							<strong><a class="helpdesk-link" href="" id="domainurl">support.freshdesk.com</a></strong>
+						</p>
+						<p> Please check your email for some sample tickets from the newly created helpdesk and an activation email for your admin account (if you are signing up for the first time)</p>
+					</div>
+			</div>
+    <!-- Body Top Ends -->
