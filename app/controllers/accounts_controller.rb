@@ -18,6 +18,10 @@ class AccountsController < ApplicationController
     # render :layout => 'public' # Uncomment if your "public" site has a different layout than the one used for logged-in users
   end
   
+  def edit
+  	@selected_tab = 'Admin'
+  end
+  
   def check_domain
     puts "#{params[:domain]}"
     render :json => { :account_name => true }, :callback => params[:callback]
@@ -63,34 +67,34 @@ class AccountsController < ApplicationController
     
   end
   
-def openid_complete
-  
-  data = Hash.new
-  resp = request.env[Rack::OpenID::RESPONSE]
-  if resp.status == :success
-    session[:openid] = resp.display_identifier
-    ax_response = OpenID::AX::FetchResponse.from_success_response(resp)
-    data["email"] = ax_response.data["http://axschema.org/contact/email"].first
-    data["first_name"] = ax_response.data["http://axschema.org/namePerson/first"].first
-    data["last_name"] = ax_response.data["http://axschema.org/namePerson/last"].first
-    
-  else
-    "Error: #{resp.status}"
+  def openid_complete
+	  
+	  data = Hash.new
+	  resp = request.env[Rack::OpenID::RESPONSE]
+	  if resp.status == :success
+	    session[:openid] = resp.display_identifier
+	    ax_response = OpenID::AX::FetchResponse.from_success_response(resp)
+	    data["email"] = ax_response.data["http://axschema.org/contact/email"].first
+	    data["first_name"] = ax_response.data["http://axschema.org/namePerson/first"].first
+	    data["last_name"] = ax_response.data["http://axschema.org/namePerson/last"].first
+	    
+	  else
+	    "Error: #{resp.status}"
+	  end
+	  
+	   @call_back_url = params[:callback]   
+	   @account  = Account.new
+	   @account.domain = params[:domain].split(".")[0] 
+	   @account.name = @account.domain.titleize
+	   @user = @account.users.new   
+	   unless data.blank?
+	      @user.email = data["email"]
+	      @user.name = data["first_name"] +" "+data["last_name"]
+	    end
+	     
+	   render :action => :signup_google
+	 
   end
-  
-   @call_back_url = params[:callback]   
-   @account  = Account.new
-   @account.domain = params[:domain].split(".")[0] 
-   @account.name = @account.domain.titleize
-   @user = @account.users.new   
-   unless data.blank?
-      @user.email = data["email"]
-      @user.name = data["first_name"] +" "+data["last_name"]
-    end
-     
-   render :action => :signup_google
- 
-end
 
  
   def create
