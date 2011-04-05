@@ -678,10 +678,9 @@ span.sort_handle {
 /* line 533, ../src/form.scss */
 .ui-draggable-dragging {
   z-index: 99999;
-  padding: 0px !important;
 }
 
-/* line 538, ../src/form.scss */
+/* line 537, ../src/form.scss */
 .ui-custom-fields {
   display: block;
   margin-bottom: 10px;
@@ -696,12 +695,12 @@ span.sort_handle {
   overflow: hidden;
   visibility: hidden;
 }
-/* line 542, ../src/form.scss */
+/* line 541, ../src/form.scss */
 .ui-custom-fields li {
   float: left;
   position: relative;
 }
-/* line 546, ../src/form.scss */
+/* line 545, ../src/form.scss */
 .ui-custom-fields .fdbutton {
   min-width: 120px;
   width: auto !important;
@@ -710,13 +709,13 @@ span.sort_handle {
   font-size: 11px;
 }
 
-/* line 553, ../src/form.scss */
+/* line 552, ../src/form.scss */
 .custom_form_outer .placeHolder {
   height: 50px !important;
   border: 1px solid red !important;
 }
 
-/* line 559, ../src/form.scss */
+/* line 558, ../src/form.scss */
 .ui-sortable-placeholder {
   background: #DFEFFF !important;
   border: 2px dotted #C2D7EF  !important;
@@ -726,18 +725,18 @@ span.sort_handle {
   z-index: 99;
 }
 
-/* line 568, ../src/form.scss */
+/* line 567, ../src/form.scss */
 .ui-custom-form {
   padding: 0px;
   position: relative;
 }
-/* line 571, ../src/form.scss */
+/* line 570, ../src/form.scss */
 .ui-custom-form .ui-form {
   background: #ffffff;
   margin-left: 0px;
   margin-right: 0px;
 }
-/* line 572, ../src/form.scss */
+/* line 571, ../src/form.scss */
 .ui-custom-form li {
   padding: 4px;
   position: relative;
@@ -745,18 +744,18 @@ span.sort_handle {
   border: 1px dotted #ffffff;
   cursor: move;
 }
-/* line 576, ../src/form.scss */
+/* line 575, ../src/form.scss */
 .ui-custom-form li div {
   position: relative;
 }
-/* line 579, ../src/form.scss */
+/* line 578, ../src/form.scss */
 .ui-custom-form li .ui-field-panel {
   position: absolute;
   right: 0px;
   top: 0px;
   display: none;
 }
-/* line 584, ../src/form.scss */
+/* line 583, ../src/form.scss */
 .ui-custom-form li .action_panel {
   position: absolute;
   top: 0px;
@@ -770,25 +769,25 @@ span.sort_handle {
   -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
 }
-/* line 597, ../src/form.scss */
+/* line 596, ../src/form.scss */
 .ui-custom-form li:hover, .ui-custom-form li.hover, .ui-custom-form li.active {
   background: #DFEFFF;
   border-color: #C2D7EF;
 }
-/* line 600, ../src/form.scss */
+/* line 599, ../src/form.scss */
 .ui-custom-form li:hover .ui-field-panel, .ui-custom-form li.hover .ui-field-panel, .ui-custom-form li.active .ui-field-panel {
   display: block;
 }
-/* line 603, ../src/form.scss */
+/* line 602, ../src/form.scss */
 .ui-custom-form li:hover .action_panel, .ui-custom-form li.hover .action_panel, .ui-custom-form li.active .action_panel {
   visibility: visible;
 }
-/* line 607, ../src/form.scss */
+/* line 606, ../src/form.scss */
 .ui-custom-form li.active {
   border-style: solid;
 }
 
-/* line 612, ../src/form.scss */
+/* line 611, ../src/form.scss */
 .hint_drag {
   background: #fefedf;
   border: 1px solid #cccccc;
@@ -797,28 +796,28 @@ span.sort_handle {
   display: block;
 }
 
-/* line 621, ../src/form.scss */
+/* line 620, ../src/form.scss */
 .width400 {
   width: 400px;
 }
 
-/* line 625, ../src/form.scss */
+/* line 624, ../src/form.scss */
 .ui-login .ui-form {
   width: 350px;
 }
 
-/* line 629, ../src/form.scss */
+/* line 628, ../src/form.scss */
 .ui-signup .ui-form {
   width: 560px;
 }
 
-/* line 633, ../src/form.scss */
+/* line 632, ../src/form.scss */
 .ui-login, .ui-signup {
   text-align: center;
   display: block;
   padding: 18px 0px;
 }
-/* line 637, ../src/form.scss */
+/* line 636, ../src/form.scss */
 .ui-login .ui-form, .ui-signup .ui-form {
   background: none;
   border: 0px;
@@ -834,12 +833,17 @@ span.sort_handle {
   -webkit-box-shadow: 0px 1px 6px #999999;
   box-shadow: 0px 1px 6px #999999;
 }
-/* line 647, ../src/form.scss */
+/* line 646, ../src/form.scss */
 .ui-login .ui-form ul, .ui-signup .ui-form ul {
   margin: 0px;
 }
-/* line 650, ../src/form.scss */
+/* line 649, ../src/form.scss */
 .ui-login .ui-form ul li input.text, .ui-signup .ui-form ul li input.text {
   margin: 3px 0px 5px 0px;
   width: 320px;
+}
+
+/* line 658, ../src/form.scss */
+.requesteremail, .agentemail {
+  height: 220px;
 }

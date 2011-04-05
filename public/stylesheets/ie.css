@@ -79,11 +79,15 @@
 .ie6 div.panel_area .tag_delete, .ie7 div.panel_area .tag_delete, .ie8 div.panel_area .tag_delete, .ie9 div.panel_area .tag_delete {
   right: 12px;
 }
-/* line 62, ../src/ie.scss */
+/* line 61, ../src/ie.scss */
+.ie6 .placeholder-list dl dt a, .ie7 .placeholder-list dl dt a, .ie8 .placeholder-list dl dt a, .ie9 .placeholder-list dl dt a {
+  width: 180px;
+}
+/* line 65, ../src/ie.scss */
 .ie6 .search_results_bar .results li h4, .ie7 .search_results_bar .results li h4, .ie8 .search_results_bar .results li h4, .ie9 .search_results_bar .results li h4 {
   margin-left: -50px;
 }
-/* line 64, ../src/ie.scss */
+/* line 67, ../src/ie.scss */
 .ie6 .uiButton, .ie7 .uiButton, .ie8 .uiButton, .ie9 .uiButton {
   padding: 4px 12px;
   font-size: 11px;

@@ -1,7 +1,9 @@
 /**
  * @author venom
  */
-var jQ = jQuery.noConflict(); 
+var jQ = jQuery.noConflict();
+
+jQuery.fn.qtip.baseIndex = 10000;
 
 (function($){
 	// Global initialisation  
@@ -13,6 +15,7 @@ var jQ = jQuery.noConflict();
 		jQuery("ul.ui-form").not(".dont-validate").parents('form:first').validate();
 		jQuery("div.ui-form").not(".dont-validate").find('form:first').validate(); 
 		jQuery("form.uniForm").validate();
+		
 		
 		flash = $("div.flash_info");
 		if(flash.get(0)){

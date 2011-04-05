@@ -532,7 +532,6 @@ span.sort_handle{
 
 .ui-draggable-dragging{
 	z-index:99999;
-	padding:0px !important;
 }
 
 .ui-custom-fields{ 
@@ -654,4 +653,8 @@ span.sort_handle{
 			}
 		}
 	}
+}
+ 
+.requesteremail, .agentemail{
+	height:220px;
 }
