@@ -58,25 +58,6 @@
 
 <% javascript_tag do %>
 
-	function closeTicket(ticket_id)
-	{
-		jQuery.ajax({
-	      					type: 'POST',
-							url: '/helpdesk/tickets/close_ticket/'+ticket_id,
-							contentType: 'application/text',
-	      					success: function(data){
-											
-											if(data.success)
-											{
-												jQuery('#status_name_id').text(data.status).show("highlight", 500);
-												jQuery('#helpdesk_ticket_status').val(data.value);	
-											}								
-											//Need to show the message some where data.message
-									}
-				});
-	
-	}
-	
 	jQuery(document).ready(function(){
 		var activeCnt = jQuery("#TicketProperties"); 
 		jQuery(".rtPanel a").bind("click", function(ev){
@@ -177,7 +158,7 @@
 				<div class="ticket_actions action_icons">
 						<div class="action_buttons clearfix">
 							<%= link_to("Edit", edit_helpdesk_ticket_path(@ticket)  ) %> 
-							<%= link_to_function("Close", "closeTicket(#{@ticket.display_id})"  )  %>
+							<%= link_to("Close", close_helpdesk_ticket_path(@ticket), :method => :put, :title  => "Close this ticket") unless @ticket.closed? %>
 							<%= link_to("Delete", @ticket, :method => :delete, :class => "last", :title => "Move this ticket to trash"   ) unless @ticket.deleted %>
 							<%= link_to("Undelete", restore_helpdesk_ticket_path(@ticket), :method => :put, :class => "last", :title => "Move this ticket to trash" ) if @ticket.deleted %>
 						</div>	
