@@ -1,40 +1,44 @@
 <% javascript_tag do -%>
-	respondWithSol = function(select , sol_id, url){	
-						if (select == "url")
-						{
-							jQuery('#cnt-note').css("display", "none");
-							jQuery('#cnt-reply').css("display", "block");
-							jQuery('#send-email-cnt-reply-body').focus();
-							jQuery('#send-email-cnt-reply-body').val(url+ "\n" +jQuery('#send-email-cnt-reply-body').val()); 		
-							return true;		
-						}
-						else if(select == "none")
-						{
-							return true;		
-						}
-						else
-						{
-							handleSolutionDetail(sol_id);		
-						}
-					}
+	function insertIntoConversation(value){
+		note_area  = jQuery('#cnt-note');
+		reply_area = jQuery('#cnt-reply');
+		if(note_area.css("display") == 'block'){
+			insertTextAtCursor($('add-note-cnt-note-body'), value);
+		} 
+		else{
+			if(reply_area.css("display") == 'none')
+				jQuery('#ReplyButton').trigger("click");
+			
+			insertTextAtCursor( $('send-email-cnt-reply-body'), value );
+		}
+	}
+		
+	function respondWithSol(select , sol_id, url){	
+			if (select == "url")
+			{
+				insertIntoConversation(url);
+			}
+			else if(select == "none")
+			{
+				return true;		
+			}
+			else
+			{
+				handleSolutionDetail(sol_id);		
+			}
+	}
 
-	handleSolutionDetail = function(sol_id){
-						jQuery.ajax({		type: 'POST',
-											url: '/helpdesk/tickets/get_solution_detail/'+sol_id,
-											contentType: 'application/text',
-											async: false,						
-											success: function(data){		
-												
-														jQuery('#cnt-note').css("display", "none");
-														jQuery('#cnt-reply').css("display", "block");	
-														jQuery('#send-email-cnt-reply-body').focus();															
-														jQuery('#send-email-cnt-reply-body').val(data+ "\n" +jQuery('#send-email-cnt-reply-body').val()); 
-												
-											}
-											});
-											
-						return true;
-};
+	function handleSolutionDetail(sol_id){
+		jQuery.ajax({	type: 'POST',
+						url: '/helpdesk/tickets/get_solution_detail/'+sol_id,
+						contentType: 'application/text',
+						async: false,						
+						success: function(data){		
+									insertIntoConversation(data);
+								}
+						});
+		return true;
+	};
 
 (function($){	  
 	$(document).ready(function(){
@@ -56,12 +60,10 @@
 	<h3 class="title">Suggested Solutions</h3>
 		
 	<% if (@articles.size == 0) %>
-		<br />
-
+		<br /> 
 		<div>&nbsp;&nbsp;&nbsp; No Solutions found </div>
 	<% else %> 
 		<div class="request-list">
-
 			<% @articles.each do |article| %>
 			 <% unless article.nil? %>
 			 	<% article_url = solution_category_folder_article_url(article.folder.category_id,article.folder_id,article) %> 
@@ -71,20 +73,11 @@
 								:title => truncate ( article.desc_un_html, 100) ) %>
 					<div class="item-menu">
 						<ul>
-							<li><%= link_to_function "Insert Content", "respondWithSol('content', '#{article.id}', '#{article_url}')" %></li>
+							<li><%= link_to_function "Insert Content", "respondWithSol('content', '#{article.id}', '#{article_url}')", :title => "Insert this solution article to your Reply or Note", :class => "custom-tip" %></li>
 							<%if article.is_public?%>
-								<li><%= link_to_function "Insert URL", "respondWithSol('url', '#{article.id}', '#{article_url}')" %></li>
+								<li><%= link_to_function "Insert URL", "respondWithSol('url', '#{article.id}', '#{article_url}')", :title => "Insert this solution URL to your Reply or Note", :class => "custom-tip" %></li>
 							<%end%> 
 						</ul>
-						<div style="display:none">
-						Use<select id="suggest_solution_insert" onchange="respondWithSol(this.value, '<%=article.id%>' ,'<%=article_url%>')">
-											<option value="none">.....</option>
-											<option value="content">Content </option>
-											<%if article.is_public?%>
-												<option value="url">URL </option>
-											<%end%>
-											</select>
-										</div> 
 					</div>
 				</div>
 				<% end %>

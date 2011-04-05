@@ -1,24 +1,22 @@
 <% content_for :layoutType do%>single<% end %>
 <% javascript_tag do %>
-	var active_email_body = null;
+	var active_email_body = null; 
 	jQuery(document).ready(function(){
 		var active_template = null;
 		jQuery("a.notify_check").bind("click", function(ev){
-			jQuery(active_template).hide();
+			//jQuery(active_template).hide();
+			//hideData = (jQuery(this).parents("tr").attr("notify_type"));
 			var emailTr = jQuery(this).parents("tr").next();
-			active_template = jQuery(emailTr).show();
-			
+			active_template = jQuery(emailTr).toggle();
 			jQuery(emailTr).find("div").hide();
-			
 			jQuery(emailTr).find("div."+this.getAttribute("showdiv")).show();
-			
 		});
 		jQuery("a.close_template").bind("click", function(ev){
 			jQuery(this).parents("tr").hide();
 		});
 		
 		jQuery("a.reset_template").bind("click", function(ev){
-			jQuery(this).prev().prev().val(jQuery(this).prev().prev().prev().val()); 
+			jQuery(this).prev().prev().prev().val(jQuery(this).prev().prev().val()); 
 		});
 		
 		jQuery("#Updateform").submit(function(){
@@ -41,36 +39,13 @@
 			
 			jQuery("#AllNotification").val(allNotifications.toJSON()); 
 		});
+		
 		jQuery('.link_placeholder').live("click", function(ev){
-				active_email_body = jQuery(this).next().next();
-				jQuery('#place-dialog').slideDown();			
+				active_email_body = jQuery("#"+jQuery(this).attr("SELECT_AREA"));  
+				jQuery('#place-dialog') 
+							.fadeIn(500);	
 		});
-		
-		/*
-		jQuery.validator.addMethod("requesteremail", function(value, element) {
-			inputEle  = jQuery(element).parents("tr").prev().find("input.requester")
-			selected  = inputEle.attr("checked");
-			returnval = true;
-		 	if(selected == true)
-				returnval = (value != '');
-			
-			if(!returnval)	
-				jQuery(inputEle.next()).trigger("click");
-			
-			console.log( jQuery(element).parents("tr").prev().text() );
-			
-			return returnval; 
-			
-		}, "Email cannot be empty");
-		
-		jQuery("#Updateform").validate({
-			rules:{
-					"requesteremail":true
-				}
-			});
-		jQuery("#Updateform").submit(function(){
-			return false;
-		});*/
+		 
 	});
 <% end %>
 
@@ -95,6 +70,7 @@
 						<a href="javascript:void(0)" showdiv="requester_div" class="notify_check"><%=t('email_notifications.customize_email')%></a>
 					<% end %>
 					&nbsp;
+					
 				</td>
 				<td>
 					<% if (item[:agent])  %>
@@ -104,35 +80,38 @@
 					&nbsp;					
 				</td>				
 			</tr>
-			<tr style="display:none;">
+			<tr class="even" style="display:none;" notify_type=<%= data.id %>>
 				<td colspan="3">
 					<div class="requester_div">
-						<a href="javascript:void(0)" class="link_placeholder"><%=t('email_notifications.insert_placeholder')%> &raquo;</a>
-						<b><%=t('email_notifications.modify_template')%></b>
+						<% id_area = "#{data.id}_REQ_TEXTAREA" %>
+						<a href="javascript:void(0)" class="link_placeholder" SELECT_AREA="<%= id_area %>"><%=t('email_notifications.insert_placeholder')%> &raquo;</a>
+						<h4 class="title"><%=t('email_notifications.modify_requester_template')%></h4> 
 						
+						<textarea name="requester_template" id='<%= id_area %>' class="requesteremail auto-expand"><%= h ("#{data.requester_template}") %></textarea> 
 						<input type="hidden" value="<%= h ("#{data.requester_template}") %>" />
-						<textarea name="requester_template" class="requesteremail"><%= h ("#{data.requester_template}") %></textarea>
 						
-						<a href="javascript:void(0)" class="button close_template"><%=t('done')%></a>
-						<a href="javascript:void(0)" class="button reset_template"><%=t('reset')%></a>
+						<a href="javascript:void(0)" class="uiButton small close_template"><%=t('done')%></a>
+						<a href="javascript:void(0)" class="uiButton small reset_template"><%=t('reset')%></a>
 					</div>
 					<div class="agent_div">
-						<b>Modify Agent Template</b>
-						<a href="javascript:void(0)" class="link_placeholder"><%=t('email_notifications.insert_placeholder')%> &raquo;</a>
-						<input type="hidden" value="<%= h ("#{data.agent_template}") %>" />
-						<textarea name="agent_template" class="agentemail"><%= h ("#{data.agent_template}") %></textarea>
+						<% id_area = "#{data.id}_AGENT_TEXTAREA" %>
+						<a href="javascript:void(0)" class="link_placeholder" SELECT_AREA="<%= id_area %>"><%=t('email_notifications.insert_placeholder')%> &raquo;</a>
+						<h4 class="title"><%=t('email_notifications.modify_agent_template')%></h4> 
 						
-						<a href="javascript:void(0)" class="button close_template"><%=t('done')%></a>
-						<a href="javascript:void(0)" class="button reset_template"><%=t('reset')%></a>
+						<textarea name="agent_template" class="agentemail auto-expand" id="<%= id_area %>"><%= h ("#{data.agent_template}") %></textarea>
+						<input type="hidden" value="<%= h ("#{data.agent_template}") %>" />
+						
+						<a href="javascript:void(0)" class="uiButton small close_template"><%=t('done')%></a>
+						<a href="javascript:void(0)" class="uiButton small reset_template"><%=t('reset')%></a>
 					</div> 
 				</td>
 			</tr>
 			<% end %> 
 			
 		</table>
-		<div class="padding6">
-			<%= f.submit t('save'), { :class => "fdbutton" } %>
-			<%= link_to t('back'), "/admin/home", { :class => "fdbutton grey" } %>
+		<div class="button-container">
+			<%= link_to "&larr; #{t('account.cancel')}", "/admin/home", :class => "uiButton floatl" %>
+			<%= f.submit t('save'), { :class => "uiButton" } %>
 		</div>
 	</div>
 	<% end %>

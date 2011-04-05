@@ -120,24 +120,24 @@ module ApplicationHelper
   #Ticket place-holders, which will be used in email and comment contents.
   def ticket_placeholders
     [
-      ['{{ticket.subject}}', 'Ticket subject.'],
-      ['{{ticket.description}}', 'Ticket description.'],
-      ['{{ticket.id}}', 'Unique ticket ID.'],
-      ['{{ticket.url}}', 'Full URL path to ticket.'],
-      ['{{ticket.status}}', 'Ticket status.'],
-      ['{{ticket.priority}}', 'Ticket priority.'],
-      ['{{ticket.source}}', 'The source channel of the ticket.'],
-      ['{{ticket.ticket_type}}', 'Ticket type.'],
-      ['{{ticket.due_by_time}}', 'Ticket due by time.'],
-      ['{{ticket.requester.name}}', 'Name of the requester who raised the ticket.'],
-      ['{{ticket.requester.email}}', "Requester's email."],
-      ['{{ticket.requester.company_name}}', "Requester's company name."], #??? should it be requester.company.name?!
-      ['{{ticket.group.name}}', 'Ticket group.'],
-      ['{{ticket.agent.name}}', 'Name of the agent who is currently working on the ticket.'],
-      ['{{ticket.agent.email}}', "Agent's email."],
-      ['{{ticket.tags}}', 'Ticket tags.'],
-      ['{{ticket.latest_comment}}', 'Latest comment for this ticket.'],
-      ['{{ticket.latest_public_comment}}', 'Latest public comment for this ticket.']
+      ['{{ticket.id}}', 		 			'Ticket ID' ,				'Unique ticket ID.'],
+      ['{{ticket.subject}}',     			'Subject', 					'Ticket subject.'],
+      ['{{ticket.description}}', 			'Description', 				'Ticket description.'],
+      ['{{ticket.url}}', 		 			'Url' ,						'Full URL path to ticket.'],
+      ['{{ticket.status}}', 	 			'Status' , 					'Ticket status.'],
+      ['{{ticket.priority}}', 	 			'Priority', 				'Ticket priority.'],
+      ['{{ticket.source}}', 	 			'Source', 					'The source channel of the ticket.'],
+      ['{{ticket.ticket_type}}', 			'Ticket type', 				'Ticket type.'],
+      ['{{ticket.tags}}', 					'Tags', 					'Ticket tags.'],
+      ['{{ticket.due_by_time}}', 			'Due by time',				'Ticket due by time.'],
+      ['{{ticket.requester.name}}', 		'Requester name', 			'Name of the requester who raised the ticket.'],
+      ['{{ticket.requester.email}}',		'Requester email', 			"Requester's email."],
+      ['{{ticket.requester.company_name}}', 'Requester company name', 	"Requester's company name."], #??? should it be requester.company.name?!
+      ['{{ticket.group.name}}', 			'Group name',				'Ticket group.'],
+      ['{{ticket.agent.name}}', 			'Agent name',				'Name of the agent who is currently working on the ticket.'],
+      ['{{ticket.agent.email}}', 			'Agent email',				"Agent's email."],
+      ['{{ticket.latest_comment}}', 		'Latest comment', 			'Latest comment for this ticket.'],
+      ['{{ticket.latest_public_comment}}',  'Latest Public comment',	'Latest public comment for this ticket.']
     ]
   end
   

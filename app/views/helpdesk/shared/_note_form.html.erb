@@ -5,8 +5,9 @@
       new Helpdesk.PageSwitcher({
         toggleMode: true,
         pages: ['attachment-options']
-      }); 
-	  jQuery("#HelpdeskNotes").validate();
+      });
+	  jQuery("#HelpdeskNotes").validate(); 
+	  
     });
   <% end %>
 <% end %>
@@ -26,7 +27,7 @@
 		</li>	
 		<li>
 			<%= f.label(:body, "Enter your message:") if local_assigns[:label] %> 
-			<%= f.text_area :body, { :class => 'expando required', :id => "#{id}-#{cntid}-body" , :value => @signature} %>
+			<%= f.text_area :body, { :class => 'auto-expand required', :id => "#{id}-#{cntid}-body" , :value => @signature} %>
     	</li>	
 		<li class="attachment-options"  id="attachment-options">
 			<% unless local_assigns[:no_attachments] %>

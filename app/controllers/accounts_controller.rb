@@ -2,6 +2,8 @@ class AccountsController < ApplicationController
   
   include ModelControllerMethods
   
+  layout :choose_layout 
+  
   skip_before_filter :set_time_zone
   
   before_filter :build_user, :only => [:new, :create]
@@ -16,6 +18,10 @@ class AccountsController < ApplicationController
    
   def new
     # render :layout => 'public' # Uncomment if your "public" site has a different layout than the one used for logged-in users
+  end
+  
+  def edit
+  	@selected_tab = 'Admin'
   end
   
   def check_domain
@@ -44,7 +50,7 @@ class AccountsController < ApplicationController
     rqrd_data = ["http://axschema.org/contact/email","http://axschema.org/namePerson/first" ,"http://axschema.org/namePerson/last"]
     re_alm = "http://*.freshdesk.com/"
    
-    authenticate_with_open_id(url,{ :required =>rqrd_data , :return_to => return_url ,:realm =>re_alm}) do |result, identity_url, registration| 
+    authenticate_with_open_id(url,{ :required =>rqrd_data , :return_to => return_url ,:trust_root =>re_alm}) do |result, identity_url, registration| 
     end     
   end
   
@@ -64,34 +70,34 @@ class AccountsController < ApplicationController
     
   end
   
-def openid_complete
-  
-  data = Hash.new
-  resp = request.env[Rack::OpenID::RESPONSE]
-  if resp.status == :success
-    session[:openid] = resp.display_identifier
-    ax_response = OpenID::AX::FetchResponse.from_success_response(resp)
-    data["email"] = ax_response.data["http://axschema.org/contact/email"].first
-    data["first_name"] = ax_response.data["http://axschema.org/namePerson/first"].first
-    data["last_name"] = ax_response.data["http://axschema.org/namePerson/last"].first
-    
-  else
-    "Error: #{resp.status}"
+  def openid_complete
+	  
+	  data = Hash.new
+	  resp = request.env[Rack::OpenID::RESPONSE]
+	  if resp.status == :success
+	    session[:openid] = resp.display_identifier
+	    ax_response = OpenID::AX::FetchResponse.from_success_response(resp)
+	    data["email"] = ax_response.data["http://axschema.org/contact/email"].first
+	    data["first_name"] = ax_response.data["http://axschema.org/namePerson/first"].first
+	    data["last_name"] = ax_response.data["http://axschema.org/namePerson/last"].first
+	    
+	  else
+	    "Error: #{resp.status}"
+	  end
+	  
+	   @call_back_url = params[:callback]   
+	   @account  = Account.new
+	   @account.domain = params[:domain].split(".")[0] 
+	   @account.name = @account.domain.titleize
+	   @user = @account.users.new   
+	   unless data.blank?
+	      @user.email = data["email"]
+	      @user.name = data["first_name"] +" "+data["last_name"]
+	    end
+	     
+	   render :action => :signup_google
+	 
   end
-  
-   @call_back_url = params[:callback]   
-   @account  = Account.new
-   @account.domain = params[:domain].split(".")[0] 
-   @account.name = @account.domain.titleize
-   @user = @account.users.new   
-   unless data.blank?
-      @user.email = data["email"]
-      @user.name = data["first_name"] +" "+data["last_name"]
-    end
-     
-   render :action => :signup_google
- 
-end
 
  
   def create
@@ -290,7 +296,10 @@ end
   end
 
   protected
-  
+    def choose_layout
+      (action_name == "openid_complete" || "create_account_google") ? 'signup_google' : 'helpdesk/default'
+	end
+	
     def load_object
       @obj = @account = current_account
     end

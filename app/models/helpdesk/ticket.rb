@@ -449,6 +449,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     !([STATUS_KEYS_BY_TOKEN[:resolved], STATUS_KEYS_BY_TOKEN[:closed]].include?(status))
   end
   
+  def closed?
+    (status == STATUS_KEYS_BY_TOKEN[:closed])
+  end
+  
   def method_missing(method, *args, &block)
     begin
       super

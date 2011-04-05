@@ -1,7 +1,7 @@
 @import "base";
 @import "mixins";
 
-.uiButton, .uiButton:visited, .fdbutton, .fdbutton:visited {
+.uiButton, .uiButton:visited, .fdbutton, .fdbutton:visited	 {
 	@include button-base; 
 	background-image:url(../images/overlay-button.png);
 	background-color:#eeeeee;
@@ -20,6 +20,13 @@
 	cursor: pointer;
 	text-shadow: 1px 1px 0 white;
 }
+.uiButton:hover, .fdbutton:hover, .forum_button:hover				{ background-color:$tab_color; border-color: darken($tab_color, 10%); color:#ffffff; @include text-shadow(rgba(0, 0, 0, 0.2), -1px, -1px, 1px); }
+.uiButton:active, .fdbutton:active				{ top: 1px; }
+.small.uiButton, .small.uiButton:visited 		{ font-size: 11px;  }
+.uiButton, .fdbutton, .uiButton:visited, .fdbutton:visited, 
+.medium.uiButton, .medium.uiButton:visited 		{ font-size: 12px;}
+.large.uiButton, .large.uiButton:visited 		{ font-size: 14px; padding: 8px 14px 9px; }
+
 
 .forum_button{
 	@include anchor-button;
@@ -62,16 +69,7 @@
    		position:absolute;
    	} 
 }
-
-
-
-.uiButton:hover, .fdbutton:hover, .forum_button:hover				{ background-color:$tab_color; border-color: darken($tab_color, 10%); color:#ffffff; @include text-shadow(rgba(0, 0, 0, 0.2), -1px, -1px, 1px); }
-.uiButton:active, .fdbutton:active				{ top: 1px; }
-.small.uiButton, .small.uiButton:visited 		{ font-size: 11px;  }
-.uiButton, .fdbutton, .uiButton:visited, .fdbutton:visited, 
-.medium.uiButton, .medium.uiButton:visited 		{ font-size: 12px;}
-.large.uiButton, .large.uiButton:visited 		{ font-size: 14px; padding: 8px 14px 9px; }
-
+ 
 
 .fdbutton{
 	@include anchor-button;

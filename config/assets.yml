@@ -18,6 +18,8 @@ javascripts:
     - public/javascripts/framworks/jquery-ui.js
     - public/javascripts/framworks/jquery.overlabel.js
     - public/javascripts/framworks/jquery.validate.js
+    - public/javascripts/framworks/jquery.autoresize.js
+    - public/javascripts/framworks/jquery.qtip.js
   workspace: 
     - public/javascripts/utils.js
     - public/javascripts/factory_ui.js
@@ -35,5 +37,6 @@ stylesheets:
     - public/stylesheets/form.css
     - public/stylesheets/temp-dev.css
     - public/stylesheets/buttons.css
-    - public/stylesheets/jquery-ui-1.8.7.custom.css  
+    - public/stylesheets/jquery-ui-1.8.7.custom.css
+    - public/stylesheets/jquery.qtip.css  
     - public/stylesheets/ie.css

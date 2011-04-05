@@ -1,29 +1,29 @@
 <% javascript_tag do %>	
-	jQuery(document).ready(function(dom){
-		jQuery("#placeholder-list-1 a").click(function(ev){
-			active_email_body.get(0).value += jQuery(this).text();
+	jQuery(document).ready(function(){
+		jQuery("textarea").live("focus", function(){
+			active_email_body = jQuery(this);
+		});
+		jQuery("#placeholder-list-1 a").click(function(ev){ 
+			insertTextAtCursor(active_email_body.get(0), jQuery(this).attr("placeholder"));
 		});
 		jQuery('#placeholder_close').click(function(){
 			jQuery('#place-dialog')
-					.slideToggle();	
+					.hide();	
 		});
 		jQuery('#place-dialog').draggable();
+		
 	});
 <% end %>
 
 <div class="placeholder-info" id="place-dialog" style="display:none;">		
-  	<h2><%=t('automations.available_placeholders')%></h2>
-	<p>
-	  <%=t('automations.info4')%>.</p>
-	<b></b>
+	<a href="javascript:void(0)" id="placeholder_close" class="close"></a>
+  	<h3 class="title"><%=t('automations.available_placeholders')%></h3>
+	<div class="intro"><%=t('automations.info4')%>.</div>
 	<div id="placeholder-list-1" class="placeholder-list">
 		<dl>
 			<% ticket_placeholders.each do |ph| %>
-				<dt><a href="javascript:void(0)"><%= ph[0] %></a></dt><dd><%= ph[1] %></dd>
+				<dt><a class="uiButton small custom-tip" href="javascript:void(0)"  placeholder="<%= ph[0] %>" title="<%= ph[2] %>"><%= ph[1] %></a></dt> 
 			<% end %>
 		</dl>	
-	</div>
-	<div class="button-container">
-		<a href="javascript:void(0)" id="placeholder_close" class="fdbutton grey"><%=t('close')%></a>
-	</div>
+	</div> 
 </div>
