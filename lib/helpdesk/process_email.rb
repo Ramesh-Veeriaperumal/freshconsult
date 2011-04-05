@@ -9,7 +9,9 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       ticket = Helpdesk::Ticket.find_by_account_id_and_display_id(account.id, display_id) if display_id
       
       if ticket
-          comment = add_email_to_ticket(ticket, from_email, params[:text])
+        return if(from_email[:email] == ticket.reply_email) #Premature handling for email looping..
+        
+        comment = add_email_to_ticket(ticket, from_email, params[:text])
       
         
         if comment.user.customer?
