@@ -26,10 +26,10 @@
 	 			<span class="seperator"></span>
 				<h4 class="title">Recent Articles</h4>
 				<ul class="list_with_icon">
-					<% @posts.each do |post|  %>
+					<% @topics.each do |topic|  %>
 						<li>
-							<%= link_to post.topic.title,category_forum_topic_path(post.topic.forum.forum_category_id,post.topic.forum_id,post.topic.id), :class => "title" %> 
-							<div class="info_data"> by <%= post.user.name %> on <%= formated_date(post.updated_at) %> </div>
+							<%= link_to topic.title,category_forum_topic_path(topic.forum.forum_category_id,topic.forum_id,topic.id), :class => "title" %> 
+							<div class="info_data"> by <%= topic.user.name %> on <%= formated_date(topic.updated_at) %> </div>
 						</li>	
 					<% end %> 
 				</ul>
@@ -37,13 +37,13 @@
 		</div>
 		<div class="right_col">
 			
-			<% unless (@posts.size == 0) %> 
+			<% unless (@topics.size == 0) %> 
 				<h3 class="title">Recent Forum Posts</h3>
 				<ul class="list_with_icon">
-					<% @posts.each do |post|  %>
+					<% @topics.each do |topic|  %>
 						<li>
-						 	<%= link_to post.topic.title, category_forum_topic_path(post.topic.forum.forum_category_id,post.topic.forum_id,post.topic.id), :class => "title" %> 
-							<div class="info_data"> by <%= post.user.name %> on <%= formated_date(post.updated_at) %> </div>
+							<%= link_to topic.title,category_forum_topic_path(topic.forum.forum_category_id,topic.forum_id,topic.id), :class => "title" %> 
+							<div class="info_data"> by <%= topic.posts.last.user.name %> on <%= formated_date(topic.replied_at) %> </div>
 						</li>	
 					<% end %> 
 				</ul> 
