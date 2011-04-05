@@ -39,7 +39,7 @@ class AccountsController < ApplicationController
   
   def signup_google
    
-    return_url = url_for('http://localhost:3000/google/complete?domain='+params[:domain]+'&callback='+params[:callback])   
+    return_url = url_for('http://signup.freshdesk.com/google/complete?domain='+params[:domain]+'&callback='+params[:callback])   
     url = "https://www.google.com/accounts/o8/site-xrds?hd=" + params[:domain]      
     rqrd_data = ["http://axschema.org/contact/email","http://axschema.org/namePerson/first" ,"http://axschema.org/namePerson/last"]
    
