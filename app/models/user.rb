@@ -26,7 +26,7 @@ class User < ActiveRecord::Base
   
   named_scope :contacts, :conditions => ["user_role=?", USER_ROLES_KEYS_BY_TOKEN[:customer]]
 
-  acts_as_authentic do |c|
+  acts_as_authentic do |c|    
     c.validations_scope = :account_id
     c.validates_length_of_password_field_options = {:on => :update, :minimum => 4, :if => :has_no_credentials? }
     c.validates_length_of_password_confirmation_field_options = {:on => :update, :minimum => 4, :if => :has_no_credentials?}
@@ -219,7 +219,7 @@ class User < ActiveRecord::Base
   def set_contact_name
    
     if self.name.empty?
-      self.name = (self.email.split("@")[0])     
+      self.name = (self.email.split("@")[0]).capitalize
     end
    
  end

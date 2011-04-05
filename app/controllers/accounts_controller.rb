@@ -36,8 +36,65 @@ class AccountsController < ApplicationController
     end
     
   end
+  
+  def signup_google
    
+    return_url = url_for('http://signup.freshdesk.com/google/complete?domain='+params[:domain]+'&callback='+params[:callback])   
+    url = "https://www.google.com/accounts/o8/site-xrds?hd=" + params[:domain]      
+    rqrd_data = ["http://axschema.org/contact/email","http://axschema.org/namePerson/first" ,"http://axschema.org/namePerson/last"]
+   
+    authenticate_with_open_id(url,{ :required =>rqrd_data , :return_to => return_url}) do |result, identity_url, registration| 
+    end     
+  end
+  
+  def create_account_google
+    params[:plan] = SubscriptionPlan::SUBSCRIPTION_PLANS[:premium]
+    build_object
+    build_user
+    build_plan
+    @account.time_zone = (ActiveSupport::TimeZone[params[:utc_offset].to_f]).name
+    if @account.save
+       redirect_to params[:call_back]+"&EXTERNAL_CONFIG=true"
+      #redirect to google.... else to the signup page
+    else
+      @call_back_url = params[:call_back]
+      render :action => :signup_google 
+    end
+    
+  end
+  
+def openid_complete
+  
+  data = Hash.new
+  resp = request.env[Rack::OpenID::RESPONSE]
+  if resp.status == :success
+    session[:openid] = resp.display_identifier
+    ax_response = OpenID::AX::FetchResponse.from_success_response(resp)
+    data["email"] = ax_response.data["http://axschema.org/contact/email"].first
+    data["first_name"] = ax_response.data["http://axschema.org/namePerson/first"].first
+    data["last_name"] = ax_response.data["http://axschema.org/namePerson/last"].first
+    
+  else
+    "Error: #{resp.status}"
+  end
+  
+   @call_back_url = params[:callback]   
+   @account  = Account.new
+   @account.domain = params[:domain].split(".")[0] 
+   @account.name = @account.domain.titleize
+   @user = @account.users.new   
+   unless data.blank?
+      @user.email = data["email"]
+      @user.name = data["first_name"] +" "+data["last_name"]
+    end
+     
+   render :action => :signup_google
+ 
+end
+
+ 
   def create
+    
     @account.affiliate = SubscriptionAffiliate.find_by_token(cookies[:affiliate]) unless cookies[:affiliate].blank?
 
     if @account.needs_payment_info?
