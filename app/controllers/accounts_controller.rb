@@ -2,6 +2,8 @@ class AccountsController < ApplicationController
   
   include ModelControllerMethods
   
+  layout :choose_layout 
+  
   skip_before_filter :set_time_zone
   
   before_filter :build_user, :only => [:new, :create]
@@ -293,7 +295,10 @@ class AccountsController < ApplicationController
   end
 
   protected
-  
+    def choose_layout
+      (action_name == "openid_complete" || "create_account_google") ? 'signup_google' : 'helpdesk/default'
+	end
+	
     def load_object
       @obj = @account = current_account
     end
