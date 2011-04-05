@@ -31,7 +31,7 @@ require 'openid'
   end
   
   def google_auth       
-    return_url = url_for('http://localhost:3000/authdone/google?domain='+params[:domain]) 
+    return_url = url_for('http://signup.freshdesk.com/authdone/google?domain='+params[:domain]) 
     domain_name = params[:domain] 
     logger.debug "domain name is :: #{domain_name}"
     url = nil    
