@@ -4,7 +4,7 @@
 	<%= render :partial => "folder_form" , :locals => { :f => f }%>
 	<div class="button-container">
 		<div class="floatl">
-			<%= link_to(t('delete'), solution_category_folder_path(@folder.category, @folder), :method => 'delete', :confirm => "#{t(folder.info1)?}", :class => "uiButton red" ) %>
+			<%= link_to(t('delete'), solution_category_folder_path(@folder.category, @folder), :method => 'delete', :confirm => "#{t('folder.info1')}?", :class => "uiButton red" ) %>
 		</div>
 	    <%= submit_tag t('save'), :class => "uiButton submit" %>	  
 		<%= link_to(t('cancel'), solution_category_url(@folder.category_id), :class => "uiButton grey" ) %> 
