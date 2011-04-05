@@ -96,7 +96,7 @@ module HelpdeskControllerMethods
     flash[:notice] = render_to_string(
       :partial => '/helpdesk/shared/flash/restore_notice')
 
-    redirect_to :back
+    redirect_to after_restore_url
   end
 
   def autocomplete #Ideally account scoping should go to autocomplete_scoper -Shan
@@ -268,6 +268,12 @@ protected
   end
 
   def after_destroy_url
+    :back
+  end
+  
+  def after_restore_url
+    return @items.first if @items.size == 1
+    
     :back
   end
 

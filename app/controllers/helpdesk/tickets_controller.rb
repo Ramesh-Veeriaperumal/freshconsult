@@ -8,7 +8,7 @@ class Helpdesk::TicketsController < ApplicationController
   
   before_filter :get_custom_fields,   :only => [:create ,:update]
   before_filter :load_multiple_items, :only => [:destroy, :restore, :spam, :unspam, :assign , :close_multiple ,:pick_tickets]  
-  before_filter :load_item,     :only => [:show, :edit, :update, :execute_scenario, :close_ticket ] 
+  before_filter :load_item,     :only => [:show, :edit, :update, :execute_scenario, :close ] 
   before_filter :load_flexifield , :only =>[:execute_scenario]
   before_filter :set_customizer , :only => [:new ,:edit ,:show]
   before_filter :set_custom_fields , :only => [:create ,:update]
@@ -256,23 +256,18 @@ class Helpdesk::TicketsController < ApplicationController
     end
   end
  
-   def close_ticket 
-     status_id = Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:closed]
-     logger.debug "close the ticket...with status id  #{status_id}"
-     res = Hash.new
-     if @item.update_attribute(:status , status_id)
-       res["success"] = true
-       res["status"] = 'Closed'
-       res["value"] = status_id
-       res["message"]="Successfully updated"
-       render :json => ActiveSupport::JSON.encode(res)
-     else
-       res["success"] = false
-       res["message"]="closing the ticket failed"
-       render :json => ActiveSupport::JSON.encode(res)
-       
-     end
- end
+  def close 
+    status_id = Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:closed]
+    logger.debug "close the ticket...with status id  #{status_id}"
+    if @item.update_attribute(:status , status_id)
+      flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/close_notice')
+      redirect_to redirect_url
+    else
+      flash[:error] = "Closing the ticket failed"
+      redirect_to :back
+    end
+  end
+ 
  def get_solution_detail   
    sol_desc = current_account.solution_articles.find(params[:id])
    render :text => (sol_desc.description.gsub(/<\/?[^>]*>/, "")).gsub(/&nbsp;/i,"") || "" 
@@ -283,6 +278,14 @@ protected
   def item_url
     return new_helpdesk_ticket_path if params[:save_and_create]
     @item
+  end
+  
+  def after_destroy_url
+    redirect_url
+  end
+  
+  def redirect_url
+    { :action => 'index' }
   end
 
   def process_item
