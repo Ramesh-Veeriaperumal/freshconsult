@@ -53,7 +53,7 @@
 			<%= hidden_field(:user, :user_role, :id=>"user_role", :value => @agent.user.user_role ||= User::USER_ROLES_KEYS_BY_TOKEN[:poweruser] ) %>
 		</li>
 		<li class="small">
-			<%= label(:user, :phone, "#{t('user.make_admin')}.") %>	
+			<%= label(:user, :phone, "#{t('user.phone_no')}.") %>	
 			<div>
 				<label class="overlabel" for="phone_work"><%=t('user.work')%></label>
 				<%= text_field(:user, :phone, :class => "text", :id => "phone_work", :value => @agent.user.phone ) %> 
