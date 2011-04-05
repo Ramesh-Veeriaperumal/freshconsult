@@ -87,8 +87,8 @@ def update
     #Following code will generate a seperate view for end customers
     
     if key["customer"]["visible"].eql?(true)
-      logger.debug "yeah this field is visible"
-      @endUser.push(key)
+      #logger.debug "yeah this field is visible"
+      @endUser.push(key) unless key["action"].eql?("delete")
     end
     
       logger.debug "endUser: #{@endUser.inspect}" 

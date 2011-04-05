@@ -1,8 +1,6 @@
 class AccountsController < ApplicationController
-	
-  include ModelControllerMethods
   
-  layout :choose_layout 
+  include ModelControllerMethods
   
   skip_before_filter :set_time_zone
   
@@ -14,9 +12,14 @@ class AccountsController < ApplicationController
   
   #ssl_required :billing, :cancel, :new, :create #by Shan temp
   #ssl_allowed :plans, :thanks, :canceled, :paypal
+  
    
   def new
     # render :layout => 'public' # Uncomment if your "public" site has a different layout than the one used for logged-in users
+  end
+  
+  def edit
+  	@selected_tab = 'Admin'
   end
   
   def check_domain
@@ -25,7 +28,6 @@ class AccountsController < ApplicationController
   end
    
   def signup_free
-  	
     params[:plan] = SubscriptionPlan::SUBSCRIPTION_PLANS[:premium]
     build_object
     build_user
@@ -38,14 +40,15 @@ class AccountsController < ApplicationController
     end
     
   end
-    
+  
   def signup_google
-    return_url = url_for('http://localhost:3000/google/complete?domain='+params[:domain]+'&callback='+params[:callback])   
+   
+    return_url = url_for('http://signup.freshdesk.com/google/complete?domain='+params[:domain]+'&callback='+params[:callback])   
     url = "https://www.google.com/accounts/o8/site-xrds?hd=" + params[:domain]      
     rqrd_data = ["http://axschema.org/contact/email","http://axschema.org/namePerson/first" ,"http://axschema.org/namePerson/last"]
    
     authenticate_with_open_id(url,{ :required =>rqrd_data , :return_to => return_url}) do |result, identity_url, registration| 
-    end      
+    end     
   end
   
   def create_account_google
@@ -65,7 +68,7 @@ class AccountsController < ApplicationController
   end
   
   def openid_complete
-  
+	  
 	  data = Hash.new
 	  resp = request.env[Rack::OpenID::RESPONSE]
 	  if resp.status == :success
@@ -81,15 +84,16 @@ class AccountsController < ApplicationController
 	  
 	   @call_back_url = params[:callback]   
 	   @account  = Account.new
-	   @account.domain = params[:domain].split(".")[0]    
+	   @account.domain = params[:domain].split(".")[0] 
+	   @account.name = @account.domain.titleize
 	   @user = @account.users.new   
 	   unless data.blank?
 	      @user.email = data["email"]
 	      @user.name = data["first_name"] +" "+data["last_name"]
 	    end
 	     
-	  render :action => :signup_google
- 
+	   render :action => :signup_google
+	 
   end
 
  
@@ -289,12 +293,7 @@ class AccountsController < ApplicationController
   end
 
   protected
-  	
-  	def choose_layout
-      (action_name == "openid_complete" || "create_account_google") ? 'signup_google' : 'helpdesk/default'
-	end
   
-
     def load_object
       @obj = @account = current_account
     end

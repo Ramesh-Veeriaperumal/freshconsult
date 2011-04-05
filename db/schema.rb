@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110326063108) do
+ActiveRecord::Schema.define(:version => 20110405072602) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -19,12 +19,13 @@ ActiveRecord::Schema.define(:version => 20110326063108) do
     t.datetime "deleted_at"
     t.string   "time_zone"
     t.string   "helpdesk_name"
-    t.text     "helpdesk_url"
+    t.string   "helpdesk_url"
     t.text     "preferences"
     t.integer  "ticket_display_id", :limit => 8, :default => 0
   end
 
   add_index "accounts", ["full_domain"], :name => "index_accounts_on_full_domain", :unique => true
+  add_index "accounts", ["helpdesk_url"], :name => "index_accounts_on_helpdesk_url"
 
   create_table "agent_groups", :force => true do |t|
     t.integer  "user_id",    :limit => 8
@@ -282,6 +283,8 @@ ActiveRecord::Schema.define(:version => 20110326063108) do
     t.integer  "account_id",           :limit => 8
   end
 
+  add_index "helpdesk_attachments", ["attachable_id"], :name => "index_helpdesk_attachments_on_attachable_id"
+
   create_table "helpdesk_authorizations", :force => true do |t|
     t.string   "role_token"
     t.integer  "user_id"
@@ -490,6 +493,7 @@ ActiveRecord::Schema.define(:version => 20110326063108) do
     t.boolean  "answer",                  :default => false
   end
 
+  add_index "posts", ["account_id", "created_at"], :name => "index_posts_on_account_id_and_created_at"
   add_index "posts", ["forum_id", "created_at"], :name => "index_posts_on_forum_id"
   add_index "posts", ["topic_id", "created_at"], :name => "index_posts_on_topic_id"
   add_index "posts", ["user_id", "created_at"], :name => "index_posts_on_user_id"

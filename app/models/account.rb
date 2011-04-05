@@ -20,7 +20,7 @@ class Account < ActiveRecord::Base
   RESERVED_DOMAINS = %W(  blog help chat smtp mail www ftp imap pop faq docs doc wiki team people india us talk 
                           upload download info lounge community forums ticket tickets tour about pricing bugs in out 
                           logs projects itil marketing sales partners partner store channel reseller resellers online 
-                           login contact admin #{AppConfig['admin_subdomain']} girish shan vijay parsu kiran shihab )
+                          contact admin #{AppConfig['admin_subdomain']} girish shan vijay parsu kiran shihab )
 
   #
   # Tell authlogic that we'll be scoping users by account
@@ -65,6 +65,7 @@ class Account < ActiveRecord::Base
   
   validates_format_of :domain, :with => /\A[a-zA-Z][a-zA-Z0-9]*\Z/
   validates_exclusion_of :domain, :in => RESERVED_DOMAINS, :message => "The domain <strong>{{value}}</strong> is not available."
+  validates_length_of :helpdesk_url, :maximum=>255
   validate :valid_domain?
   validate :valid_helpdesk_url?
   validate_on_create :valid_user?
