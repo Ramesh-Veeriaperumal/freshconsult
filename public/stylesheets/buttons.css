@@ -1,7 +1,7 @@
 @charset "UTF-8";
 /* Theme Colors and layout Defaults */
 /* line 4, ../src/buttons.scss */
-.uiButton, .uiButton:visited, .fdbutton, .fdbutton:visited, .uiButton:active, .fdbutton:active {
+.uiButton, .uiButton:visited, .fdbutton, .fdbutton:visited {
   display: -moz-inline-box;
   -moz-box-orient: vertical;
   display: inline-block;
@@ -36,11 +36,11 @@
   text-shadow: 1px 1px 0 white;
 }
 /* line 7, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
-.uiButton, .uiButton:visited, .fdbutton, .fdbutton:visited, .uiButton:active, .fdbutton:active {
+.uiButton, .uiButton:visited, .fdbutton, .fdbutton:visited {
   *display: inline;
 }
 /* line 75, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/blueprint/stylesheets/blueprint/_buttons.scss */
-.uiButton img, .uiButton:visited img, .fdbutton img, .fdbutton:visited img, .uiButton:active img, .fdbutton:active img {
+.uiButton img, .uiButton:visited img, .fdbutton img, .fdbutton:visited img {
   margin: 0 3px -3px 0 !important;
   padding: 0;
   border: none;

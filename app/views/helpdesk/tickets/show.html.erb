@@ -10,11 +10,13 @@
 			{
 				jQuery('#cnt-note').hide();
 				jQuery('#cnt-reply').show();
+				setCaretToPos($('send-email-cnt-reply-body'), 0);
 			}
 			else
 			{
 				jQuery('#cnt-reply').hide();
 				jQuery('#cnt-note').show();
+				setCaretToPos($('add-note-cnt-note-body'), 0);
 			}
 			//link.addClassName('active');
 			//link.siblings().each(function(l){ l.removeClassName('active'); });
@@ -209,7 +211,7 @@
 	    </div>		 
 		<div class="alignright">
 			<%= link_to_function("Reply to ticket",    "swapEmailNote('reply', this)", :class => 'uiButton', :id => "ReplyButton") if @item.requester %>	  
-			<%= link_to_function("Add note", "swapEmailNote('note', this)", :class => 'uiButton') %>		
+			<%= link_to_function("Add note", 		   "swapEmailNote('note', this)", :class => 'uiButton', :id => "AddNoteButton") %>		
 		</div>
 		
 		<table>

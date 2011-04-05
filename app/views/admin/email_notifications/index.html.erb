@@ -16,7 +16,7 @@
 		});
 		
 		jQuery("a.reset_template").bind("click", function(ev){
-			jQuery(this).prev().prev().val(jQuery(this).prev().prev().prev().val()); 
+			jQuery(this).prev().prev().prev().val(jQuery(this).prev().prev().val()); 
 		});
 		
 		jQuery("#Updateform").submit(function(){
@@ -45,9 +45,7 @@
 				jQuery('#place-dialog') 
 							.fadeIn(500);	
 		});
-		
-		jQuery('.requesteremail').autoResize(); 
-		
+		 
 	});
 <% end %>
 
@@ -82,14 +80,14 @@
 					&nbsp;					
 				</td>				
 			</tr>
-			<tr style="display:none;" notify_type=<%= data.id %>>
+			<tr class="even" style="display:none;" notify_type=<%= data.id %>>
 				<td colspan="3">
 					<div class="requester_div">
 						<% id_area = "#{data.id}_REQ_TEXTAREA" %>
 						<a href="javascript:void(0)" class="link_placeholder" SELECT_AREA="<%= id_area %>"><%=t('email_notifications.insert_placeholder')%> &raquo;</a>
 						<h4 class="title"><%=t('email_notifications.modify_requester_template')%></h4> 
 						
-						<textarea name="requester_template" id='<%= id_area %>' class="requesteremail"><%= h ("#{data.requester_template}") %></textarea> 
+						<textarea name="requester_template" id='<%= id_area %>' class="requesteremail auto-expand"><%= h ("#{data.requester_template}") %></textarea> 
 						<input type="hidden" value="<%= h ("#{data.requester_template}") %>" />
 						
 						<a href="javascript:void(0)" class="uiButton small close_template"><%=t('done')%></a>
@@ -100,7 +98,7 @@
 						<a href="javascript:void(0)" class="link_placeholder" SELECT_AREA="<%= id_area %>"><%=t('email_notifications.insert_placeholder')%> &raquo;</a>
 						<h4 class="title"><%=t('email_notifications.modify_agent_template')%></h4> 
 						
-						<textarea name="agent_template" class="agentemail" id="<%= id_area %>"><%= h ("#{data.agent_template}") %></textarea>
+						<textarea name="agent_template" class="agentemail auto-expand" id="<%= id_area %>"><%= h ("#{data.agent_template}") %></textarea>
 						<input type="hidden" value="<%= h ("#{data.agent_template}") %>" />
 						
 						<a href="javascript:void(0)" class="uiButton small close_template"><%=t('done')%></a>

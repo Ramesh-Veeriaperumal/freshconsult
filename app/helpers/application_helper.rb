@@ -120,7 +120,7 @@ module ApplicationHelper
   #Ticket place-holders, which will be used in email and comment contents.
   def ticket_placeholders
     [
-      ['{{ticket.id}}', 		 			'ID' , 						'Unique ticket ID.'],
+      ['{{ticket.id}}', 		 			'Ticket ID' ,				'Unique ticket ID.'],
       ['{{ticket.subject}}',     			'Subject', 					'Ticket subject.'],
       ['{{ticket.description}}', 			'Description', 				'Ticket description.'],
       ['{{ticket.url}}', 		 			'Url' ,						'Full URL path to ticket.'],

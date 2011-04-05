@@ -74,7 +74,7 @@ class Helpdesk::TicketsController < ApplicationController
       
      @signature = ""
      @agents = Agent.find(:first, :joins=>:user, :conditions =>{:user_id =>current_user.id} )     
-     @signature = "\n\n\n #{@agents.signature}" unless (@agents.nil? || @agents.signature.blank?)
+     @signature = "\n\n\n#{@agents.signature}" unless (@agents.nil? || @agents.signature.blank?)
      
      @ticket_notes = @ticket.notes.visible.exclude_source('meta')
      

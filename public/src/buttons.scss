@@ -1,7 +1,7 @@
 @import "base";
 @import "mixins";
 
-.uiButton, .uiButton:visited, .fdbutton, .fdbutton:visited, .uiButton:active, .fdbutton:active	 {
+.uiButton, .uiButton:visited, .fdbutton, .fdbutton:visited	 {
 	@include button-base; 
 	background-image:url(../images/overlay-button.png);
 	background-color:#eeeeee;

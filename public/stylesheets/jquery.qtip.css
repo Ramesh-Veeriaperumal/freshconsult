@@ -26,11 +26,11 @@
 	top: -31000px;
 	display: none;
 
-	max-width: 280px;
+	max-width: 300px;
 	min-width: 50px;
 	
-	font-size: 10.5px;
-	line-height: 12px;
+	font-size: 13px;
+	line-height: 16px;
 }
 
 	.ui-tooltip-content{

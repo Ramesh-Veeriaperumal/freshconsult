@@ -11,13 +11,7 @@
 					.hide();	
 		});
 		jQuery('#place-dialog').draggable();
-		jQuery(".placeholder-list a").qtip({
-			 position: {
-			      my: 'top center',  // Position my top left...
-			      at: 'bottom center', // at the bottom right of...
-			      viewport: jQuery(window)
-			 } 
-		});
+		
 	});
 <% end %>
 
@@ -28,7 +22,7 @@
 	<div id="placeholder-list-1" class="placeholder-list">
 		<dl>
 			<% ticket_placeholders.each do |ph| %>
-				<dt><a class="uiButton small" href="javascript:void(0)"  placeholder="<%= ph[0] %>" title="<%= ph[2] %>"><%= ph[1] %></a></dt> 
+				<dt><a class="uiButton small custom-tip" href="javascript:void(0)"  placeholder="<%= ph[0] %>" title="<%= ph[2] %>"><%= ph[1] %></a></dt> 
 			<% end %>
 		</dl>	
 	</div> 

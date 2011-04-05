@@ -1253,15 +1253,6 @@ div.panel_area{
 	overflow:hidden;
 } 
 
-.button-container ul{
-	@include horizontal-list;
-	padding:10px 0px;   
-}
-
-.button-container{
-	text-align:right;
-}
-
 .request_bt{
 	color:#333; 
 	padding:5px 12px 5px 12px;	
@@ -3187,7 +3178,8 @@ input.search{
 		background: #f6f6f6;
 		@include corners(6px, 0px, 0px, 6px);
 		@include shadows(#bbbbbb, 0px, 3px, 10px);
-		border:1px solid #afafaf;
+		border:1px solid #cfcfcf;
+		border-right-color:#dfdfdf;
 		padding:3px 0px;
 		margin:0px;
 		li{

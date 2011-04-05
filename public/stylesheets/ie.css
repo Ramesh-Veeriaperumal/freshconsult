@@ -84,10 +84,14 @@
   width: 180px;
 }
 /* line 65, ../src/ie.scss */
+.ie6 .auto-expand, .ie7 .auto-expand, .ie8 .auto-expand, .ie9 .auto-expand {
+  overflow-x: hidden;
+}
+/* line 69, ../src/ie.scss */
 .ie6 .search_results_bar .results li h4, .ie7 .search_results_bar .results li h4, .ie8 .search_results_bar .results li h4, .ie9 .search_results_bar .results li h4 {
   margin-left: -50px;
 }
-/* line 67, ../src/ie.scss */
+/* line 71, ../src/ie.scss */
 .ie6 .uiButton, .ie7 .uiButton, .ie8 .uiButton, .ie9 .uiButton {
   padding: 4px 12px;
   font-size: 11px;

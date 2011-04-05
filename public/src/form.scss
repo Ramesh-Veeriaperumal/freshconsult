@@ -416,9 +416,7 @@ input.time{
 	font-size:12px;
 }
 
-
-
-
+ 
 .grid{
 	border:1px solid #cfcfcf;		
 	padding:0px;
@@ -426,7 +424,8 @@ input.time{
 	table{
 		padding:0px; margin:0px;
 		border:0px;
-		font-size:12px;
+		font-size:13px;
+		border-bottom:2px solid #cfcfcf;
 		th, td{
 			padding:8px 10px;
 			vertical-align:top;
@@ -435,6 +434,9 @@ input.time{
 		th{			
 			line-height:18px;	
 			font-weight:bold;
+			background-image:url(../images/overlay-button.png);
+			background-color:#f2f2f2;
+			background-repeat:repeat-x; 
 			span{
 				display:block; 
 			}
@@ -451,8 +453,13 @@ input.time{
 					color:#000000;
 				}
 			}
-			background:#efefef;
+			background-color:#efefef;
 			border-top:1px solid #cfcfcf;				
+		}
+		tr.even{
+			td{
+				background-color:#f4f4f4;
+			}	
 		}
 	}
 	.olist{
@@ -528,6 +535,11 @@ span.sort_handle{
 	.fdbutton{
 		@include min-width(60px);
 	}
+}
+
+.button-container{
+	text-align:right;
+	padding:1.5em;
 }
 
 .ui-draggable-dragging{

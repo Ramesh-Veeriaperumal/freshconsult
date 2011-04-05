@@ -3,19 +3,35 @@
  */
 var jQ = jQuery.noConflict();
 
-jQuery.fn.qtip.baseIndex = 10000;
-
 (function($){
-	// Global initialisation  
-	jQuery(document).ready(function() {
+	// Global Jquery Plugin initialisation
+	$.fn.qtip.baseIndex = 10000;
+	  
+	// App initialisation  
+	$(document).ready(function() {
 		// - Labels with overlabel will act a Placeholder for form elements 
-	    jQuery("label.overlabel").overlabel();
+	    $("label.overlabel").overlabel();
 	
 		// - jQuery Validation for forms with class .ui-form ( ...An optional dont-validate written for the form element will make the selectors ignore those form alone )
-		jQuery("ul.ui-form").not(".dont-validate").parents('form:first').validate();
-		jQuery("div.ui-form").not(".dont-validate").find('form:first').validate(); 
-		jQuery("form.uniForm").validate();
+		$("ul.ui-form").not(".dont-validate").parents('form:first').validate();
+		$("div.ui-form").not(".dont-validate").find('form:first').validate(); 
+		$("form.uniForm").validate();
 		
+		// Make Textareas to expand automatically when editing it
+		// Auto Resise in IE seems to be screwing up the horizontal scroll bar... hence removing it
+		if(!$.browser.msie)
+			$("textarea.auto-expand").autoResize();
+		
+		$(".custom-tip").qtip({
+			 position: {
+			      my: 'center right',  // Position my top left...
+			      at: 'center left', // at the bottom right of...
+			      viewport: jQuery(window) 
+			 }, 
+			 style : {
+			 	classes: 'ui-tooltip-rounded ui-tooltip-shadow'
+			 }
+		});
 		
 		flash = $("div.flash_info");
 		if(flash.get(0)){

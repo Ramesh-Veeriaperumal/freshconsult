@@ -6,7 +6,8 @@
         toggleMode: true,
         pages: ['attachment-options']
       });	
-	  jQuery("#HelpdeskReply").validate();
+	  jQuery("#HelpdeskReply").validate(); 
+	   
     }); 
   <% end %>
 <% end %>
@@ -24,7 +25,7 @@
 		</li>
 		<li>
 			<%= f.label(:body, "Enter your message here", :for =>"#{id}-#{cntid}-body", :class => "overlabel" ) %>
-    		<%= f.text_area :body, { :class => 'expando required', :id => "#{id}-#{cntid}-body" , :value => @signature} %>
+    		<%= f.text_area :body, { :class => 'auto-expand required', :id => "#{id}-#{cntid}-body" , :value => @signature} %>
     	</li>
 		
 		<% unless @ticket.ticket_topic.nil? %>
