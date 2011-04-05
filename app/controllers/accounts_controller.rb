@@ -42,8 +42,9 @@ class AccountsController < ApplicationController
     return_url = url_for('http://signup.freshdesk.com/google/complete?domain='+params[:domain]+'&callback='+params[:callback])   
     url = "https://www.google.com/accounts/o8/site-xrds?hd=" + params[:domain]      
     rqrd_data = ["http://axschema.org/contact/email","http://axschema.org/namePerson/first" ,"http://axschema.org/namePerson/last"]
+    re_alm = "http://*.freshdesk.com/"
    
-    authenticate_with_open_id(url,{ :required =>rqrd_data , :return_to => return_url}) do |result, identity_url, registration| 
+    authenticate_with_open_id(url,{ :required =>rqrd_data , :return_to => return_url ,:realm =>re_alm}) do |result, identity_url, registration| 
     end     
   end
   
