@@ -38,24 +38,19 @@ class Helpdesk::TicketsController < ApplicationController
   
  
   def index
- 
     @items = TicketsFilter.filter(@template.current_filter, current_user, current_account.tickets)
-
     @items = TicketsFilter.search(@items, params[:f], params[:v])
-    
-
     respond_to do |format|
       format.html  do
         @items = @items.paginate(
           :page => params[:page], 
-          :order => TicketsFilter::SORT_SQL_BY_KEY[(params[:sort] || :due_by).to_sym ] +" #{params[:sort_order]}"  ,
+          :order => @template.cookie_sort,
           :per_page => 10)
       end
       
       format.xml do
         render :xml => @items.to_xml
       end
-      
       
       format.atom do
         @items = @items.newest(20)

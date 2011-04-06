@@ -351,26 +351,7 @@ h2.content_title{
 	}
 }
 
-.sort{
-	text-align:right;
-	position:relative;
-	padding: 6px 40px 0px 0px;
-	.sort_order{
-		position:absolute;
-		right:0px;
-		top:0px;
-		img{
-			width:32px; height:32px;
-			@include sprite-background("../images/sort.gif", 32px, 32px);
-		}
-		.asending{
-			@include sprite-column(1, 32px);
-		}
-		.desending{
-			@include sprite-column(2, 32px);
-		}
-	}
-}
+
 
 
 .actionsRight{
@@ -751,7 +732,7 @@ body h5{
 			left:5px;
 			top:0px;
 			img.image{
-				margin:0px 0px 0px 0px; 
+				margin:0px 0px 0px 0px;
 				width:32px; height:32px;
 			}
 		}	
