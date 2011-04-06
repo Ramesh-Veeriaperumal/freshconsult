@@ -1,6 +1,6 @@
 <% content_for :layoutType do%>single<% end %>
 <% javascript_tag do %>
-	var active_email_body = null; 
+	var active_email_body = null;
 	jQuery(document).ready(function(){
 		var active_template = null;
 		jQuery("a.notify_check").bind("click", function(ev){
@@ -16,7 +16,7 @@
 		});
 		
 		jQuery("a.reset_template").bind("click", function(ev){
-			jQuery(this).prev().prev().prev().val(jQuery(this).prev().prev().val()); 
+			jQuery(this).prev().prev().val(jQuery(this).prev().prev().prev().val()); 
 		});
 		
 		jQuery("#Updateform").submit(function(){
@@ -39,13 +39,11 @@
 			
 			jQuery("#AllNotification").val(allNotifications.toJSON()); 
 		});
-		
 		jQuery('.link_placeholder').live("click", function(ev){
-				active_email_body = jQuery("#"+jQuery(this).attr("SELECT_AREA"));  
-				jQuery('#place-dialog') 
-							.fadeIn(500);	
+				active_email_body = jQuery(this).next().next().next();
+				jQuery('#place-dialog').slideDown();			
 		});
-		 
+		
 	});
 <% end %>
 
@@ -70,7 +68,6 @@
 						<a href="javascript:void(0)" showdiv="requester_div" class="notify_check"><%=t('email_notifications.customize_email')%></a>
 					<% end %>
 					&nbsp;
-					
 				</td>
 				<td>
 					<% if (item[:agent])  %>
@@ -80,29 +77,27 @@
 					&nbsp;					
 				</td>				
 			</tr>
-			<tr class="even" style="display:none;" notify_type=<%= data.id %>>
+			<tr style="display:none;" notify_type=<%= data.id %>>
 				<td colspan="3">
 					<div class="requester_div">
-						<% id_area = "#{data.id}_REQ_TEXTAREA" %>
-						<a href="javascript:void(0)" class="link_placeholder" SELECT_AREA="<%= id_area %>"><%=t('email_notifications.insert_placeholder')%> &raquo;</a>
+						<a href="javascript:void(0)" class="link_placeholder"><%=t('email_notifications.insert_placeholder')%> &raquo;</a>
 						<h4 class="title"><%=t('email_notifications.modify_requester_template')%></h4> 
 						
-						<textarea name="requester_template" id='<%= id_area %>' class="requesteremail auto-expand"><%= h ("#{data.requester_template}") %></textarea> 
 						<input type="hidden" value="<%= h ("#{data.requester_template}") %>" />
+						<textarea name="requester_template" class="requesteremail"><%= h ("#{data.requester_template}") %></textarea>
 						
-						<a href="javascript:void(0)" class="uiButton small close_template"><%=t('done')%></a>
-						<a href="javascript:void(0)" class="uiButton small reset_template"><%=t('reset')%></a>
+						<a href="javascript:void(0)" class="button close_template"><%=t('done')%></a>
+						<a href="javascript:void(0)" class="button reset_template"><%=t('reset')%></a>
 					</div>
 					<div class="agent_div">
-						<% id_area = "#{data.id}_AGENT_TEXTAREA" %>
-						<a href="javascript:void(0)" class="link_placeholder" SELECT_AREA="<%= id_area %>"><%=t('email_notifications.insert_placeholder')%> &raquo;</a>
-						<h4 class="title"><%=t('email_notifications.modify_agent_template')%></h4> 
-						
-						<textarea name="agent_template" class="agentemail auto-expand" id="<%= id_area %>"><%= h ("#{data.agent_template}") %></textarea>
+						<a href="javascript:void(0)" class="link_placeholder"><%=t('email_notifications.insert_placeholder')%> &raquo;</a>
+						<h4 class="title"><%=t('email_notifications.modify_agent_template')%></h4>
+						 
 						<input type="hidden" value="<%= h ("#{data.agent_template}") %>" />
+						<textarea name="agent_template" class="agentemail"><%= h ("#{data.agent_template}") %></textarea>
 						
-						<a href="javascript:void(0)" class="uiButton small close_template"><%=t('done')%></a>
-						<a href="javascript:void(0)" class="uiButton small reset_template"><%=t('reset')%></a>
+						<a href="javascript:void(0)" class="button close_template"><%=t('done')%></a>
+						<a href="javascript:void(0)" class="button reset_template"><%=t('reset')%></a>
 					</div> 
 				</td>
 			</tr>
@@ -110,7 +105,7 @@
 			
 		</table>
 		<div class="button-container">
-			<%= link_to "&larr; #{t('account.cancel')}", "/admin/home", :class => "uiButton floatl" %>
+			<%= link_to "&larr; #{t('account.cancel')}", "/admin/home", { :class => "uiButton floatl" } %>
 			<%= f.submit t('save'), { :class => "uiButton" } %>
 		</div>
 	</div>
