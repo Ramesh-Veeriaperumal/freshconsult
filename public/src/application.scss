@@ -3,7 +3,6 @@
 @import "mixins";  
 
 $color_pulp:#F3F1EC;
-
 /* Color Definitions */
 
 a{ @include link-colors(#4D769F, #3399cc); }
@@ -36,7 +35,7 @@ p{
 }
   
 .pagearea{
-	@include min-height(450px); 
+	@include min-height(450px);
 	position:relative;
 }
 
@@ -297,56 +296,7 @@ h2.content_title{
 	margin-right:-25px;  	 
 	background:url("../images/shadow_rt.png") no-repeat top right; 
 } 
-
-/* generic form styles */
-
-label{
-    display: block;
-    font-size: 12px;
-    color: #666;
-}
-
-input[type=text], select, input.text {
-    margin: 0;
-    padding: 0;
-    font-size: 14px;
-    color: #333;
-    padding: 2px;
-    margin-bottom: 5px;
-    margin-top: 0;
-    width: 96%;
-}
-
-
-input.disabled, select.disabled, textarea.disabled{
-	background-color:#F0F0F0;
-	color:#777777 !important;
-	
-	padding:4px !important;
-	border:	1px solid #cfcfcf;
-}
-
-select {
-    padding: 1px;
-    width: 100%;
-	font-size:12px;
-	width:auto;
-}
-
-textarea {
-    padding: 5px;
-    font-size:13px;
-    line-height: 18px;
-    height: 100px;
-    width: 98%;
-    font-family:$blueprint-font-family;
-}
-
-form table {
-    width: 100%;
-}
-
-
+ 
 
 /* Page Style */
  
