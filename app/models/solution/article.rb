@@ -23,7 +23,7 @@ class Solution::Article < ActiveRecord::Base
     :class_name => 'Helpdesk::Tag',
     :through => :tag_uses
 
- named_scope :visible, :conditions => ['is_public = ?', true] 
+ 
 
   define_index do
     indexes :title, :sortable => true
@@ -77,6 +77,8 @@ class Solution::Article < ActiveRecord::Base
 
  SORT_FIELD_OPTIONS = SORT_FIELDS.map { |i| [i[1], i[0]] }    
  SORT_SQL_BY_KEY = Hash[*SORT_FIELDS.map { |i| [i[0], i[2]] }.flatten]
+ 
+ named_scope :visible, :conditions => ['is_public = ? AND status = ?', true, STATUS_KEYS_BY_TOKEN[:published]] 
     
   def type_name
     TYPE_NAMES_BY_KEY[art_type]

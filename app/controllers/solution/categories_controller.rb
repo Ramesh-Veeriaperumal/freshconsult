@@ -8,8 +8,7 @@ class Solution::CategoriesController < ApplicationController
   
   def index
     
-     @categories = current_account.solution_categories.all
-    
+     @categories = current_account.solution_categories.all    
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @categories }
@@ -18,7 +17,7 @@ class Solution::CategoriesController < ApplicationController
 
   def show
     
-     @item = Solution::Category.find(params[:id], :include => :folders)
+     @item = current_account.solution_categories.find(params[:id], :include => :folders)
      
      respond_to do |format|
       format.html # index.html.erb
@@ -38,7 +37,7 @@ class Solution::CategoriesController < ApplicationController
 
   def edit
     
-     @category = Solution::Category.find(params[:id])      
+     @category = current_account.solution_categories.find(params[:id])      
       respond_to do |format|
       format.html # edit.html.erb
       format.xml  { render :xml => @category }
@@ -66,7 +65,7 @@ class Solution::CategoriesController < ApplicationController
 
   def update
     
-     @category = Solution::Category.find(params[:id]) 
+     @category = current_account.solution_categories.find(params[:id]) 
     
     respond_to do |format|
      
@@ -82,7 +81,7 @@ class Solution::CategoriesController < ApplicationController
 
   def destroy
     
-    @category = Solution::Category.find(params[:id])
+    @category = current_account.solution_categories.find(params[:id])
     @category.destroy
 
     respond_to do |format|
