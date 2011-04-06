@@ -4,10 +4,9 @@ class Solution::FoldersController < ApplicationController
   end
   before_filter :set_selected_tab
   
-  def index    
-    @folders = Solution::Folder.all
-    print @folders
-
+  def index        
+    current_category  = current_account.solution_categories.find(params[:category_id])
+    @folders = current_category.folders.all   
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @folders }
@@ -16,7 +15,8 @@ class Solution::FoldersController < ApplicationController
   end
 
   def show    
-    @item = Solution::Folder.find(params[:id], :include => :articles)
+    current_category = current_account.solution_categories.find(params[:category_id])
+    @item = current_category.folders.find(params[:id], :include => :articles)
     
     respond_to do |format|
       format.html 
@@ -25,10 +25,9 @@ class Solution::FoldersController < ApplicationController
     
   end
 
-  def new
-    
-      logger.debug "params:: #{params.inspect}"
-      current_category = Solution::Category.find(params[:category_id])
+  def new    
+     logger.debug "params:: #{params.inspect}"
+     current_category = current_account.solution_categories.find(params[:category_id])
      @folder = current_category.folders.new
     respond_to do |format|
       format.html # new.html.erb
@@ -37,7 +36,8 @@ class Solution::FoldersController < ApplicationController
   end
 
   def edit
-     @folder = Solution::Folder.find(params[:id])      
+    current_category = current_account.solution_categories.find(params[:category_id])
+     @folder = current_category.folders.find(params[:id])      
       respond_to do |format|
       format.html # edit.html.erb
       format.xml  { render :xml => @folder }
@@ -46,8 +46,8 @@ class Solution::FoldersController < ApplicationController
 
   def create 
     
-    
-    @folder = Solution::Folder.new(params[nscname]) 
+    current_category = current_account.solution_categories.find(params[:category_id])    
+    @folder = current_category.folders.new(params[nscname]) 
     @folder.category_id = params[:category_id]
     redirect_to_url = solution_category_url(params[:category_id])
     redirect_to_url = new_solution_category_folder_path(params[:category_id]) unless params[:save_and_create].nil?
@@ -66,8 +66,8 @@ class Solution::FoldersController < ApplicationController
   end
 
   def update
-    
-    @folder = Solution::Folder.find(params[:id])
+    current_category = current_account.solution_categories.find(params[:category_id])     
+    @folder = current_category.folders.find(params[:id])
     
     redirect_to_url = solution_category_url(params[:category_id])
     
@@ -85,7 +85,9 @@ class Solution::FoldersController < ApplicationController
 
   def destroy
     
-    @folder = Solution::Folder.find(params[:id])
+    current_category = current_account.solution_categories.find(params[:category_id])     
+    @folder = current_category.folders.find(params[:id])
+    
     @folder.destroy
     
     redirect_to_url = solution_category_url(params[:category_id])

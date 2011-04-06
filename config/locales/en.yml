@@ -105,6 +105,9 @@ en:
        pick_up: "Pick Up"
        assign_to_agent: "Assign To Agent"
        sort_by: "Sort by"
+       submit_ticket_title: "Submit a ticket"
+       verify_human: "To verify you are human, please type the given scrambled letters"
+       submit_ticket: "Submit Ticket"
    
    contacts:
        edit: "Edit Contact"

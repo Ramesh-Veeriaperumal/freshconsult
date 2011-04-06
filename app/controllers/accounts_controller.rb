@@ -45,11 +45,12 @@ class AccountsController < ApplicationController
   
   def signup_google
    
-    return_url = url_for('http://signup.freshdesk.com/google/complete?domain='+params[:domain]+'&callback='+params[:callback])   
+    return_url = "http://signup.freshdesk.com/google/complete?domain="+params[:domain]+"&callback="+params[:callback]  
+    
     url = "https://www.google.com/accounts/o8/site-xrds?hd=" + params[:domain]      
     rqrd_data = ["http://axschema.org/contact/email","http://axschema.org/namePerson/first" ,"http://axschema.org/namePerson/last"]
-    re_alm = "http://*.freshdesk.com/"
-   
+    re_alm = "http://*.freshdesk.com"
+    logger.debug "return_url is :: #{return_url.inspect} and :: trusted root is:: #{re_alm.inspect} "
     authenticate_with_open_id(url,{ :required =>rqrd_data , :return_to => return_url ,:trust_root =>re_alm}) do |result, identity_url, registration| 
     end     
   end
@@ -70,10 +71,13 @@ class AccountsController < ApplicationController
     
   end
   
+
   def openid_complete
 	  
 	  data = Hash.new
 	  resp = request.env[Rack::OpenID::RESPONSE]
+    logger.debug "The openid _complete resp is :: #{resp.inspect}"
+    logger.debug "The resp.status is :: #{resp.status}"
 	  if resp.status == :success
 	    session[:openid] = resp.display_identifier
 	    ax_response = OpenID::AX::FetchResponse.from_success_response(resp)
@@ -84,7 +88,7 @@ class AccountsController < ApplicationController
 	  else
 	    "Error: #{resp.status}"
 	  end
-	  
+	   logger.debug "here is the retrieved data: #{data.inspect}"
 	   @call_back_url = params[:callback]   
 	   @account  = Account.new
 	   @account.domain = params[:domain].split(".")[0] 
@@ -96,8 +100,7 @@ class AccountsController < ApplicationController
 	    end
 	     
 	   render :action => :signup_google
-	 
-  end
+ end
 
  
   def create

@@ -105,7 +105,7 @@ module ApplicationHelper
   end
   
   def comment_path(args_hash, link_display = 'comment')
-    link_to(link_display, "#{helpdesk_ticket_path args_hash['ticket_id']}##{args_hash['comment_id']}")
+    link_to(link_display, "#{helpdesk_ticket_path args_hash['ticket_id']}#note#{args_hash['comment_id']}")
   end
   
   def email_response_path(args_hash)

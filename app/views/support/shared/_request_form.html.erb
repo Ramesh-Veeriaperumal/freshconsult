@@ -1,4 +1,4 @@
-<h3 class="title">Submit a ticket</h3>
+<%= content_tag ( :h3, t('ticket.submit_ticket_title') ,:class => "title" ) %>
 	<ul class="ui-form">
 		<% @customizer = ActiveSupport::JSON.decode(@ticket.customizer.requester_view)
 		   @customizer.each do |field|
@@ -91,16 +91,15 @@
 					</li>
 					<li>
 						<% if !logged_in? %>
-						  	<label>To verify you are human, plese type the given scrambled letters</label>
+						  	<%= content_tag ( :label, t('ticket.verify_human') ) %>
 						  	<%= recaptcha_tags :display => { :theme => "white" }  %>
-						<% end %>
-						<br />
+						<% end %> 
 					</li>
 					
 	</ul>
 	<div class="button-container">
-		<%= request_form.submit "Submit Ticket", :class => "uiButton" %>
+		<%= request_form.submit t('ticket.submit_ticket'), :class => "uiButton" %>
 		<%# Any fields named like meta[fieldname] will be saved by the helpdesk as metadata %>
 		<%= hidden_field_tag "meta[user_agent]", request.env["HTTP_USER_AGENT"] %>
-		<%= link_to "Cancel", :back, :class => "uiButton" %>
+		<%= link_to t("cancel"), :back, :class => "uiButton" %>
 	</div>
