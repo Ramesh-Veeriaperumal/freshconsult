@@ -84,7 +84,7 @@ class AccountsController < ApplicationController
 	  else
 	    "Error: #{resp.status}"
 	  end
-	  
+	   logger.debug "here is the retrieved data: #{data.inspect}"
 	   @call_back_url = params[:callback]   
 	   @account  = Account.new
 	   @account.domain = params[:domain].split(".")[0] 
