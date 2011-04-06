@@ -33,6 +33,10 @@
 	line-height: 16px;
 }
 
+.ui-tooltip-desc{
+	max-width: 700px !important;
+}
+
 	.ui-tooltip-content{
 		position: relative;
 		padding: 5px 9px;
@@ -519,3 +523,5 @@
 			background-color: #FBFBFB;
 			color: #555;
 		}
+
+ 

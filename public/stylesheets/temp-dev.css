@@ -315,82 +315,84 @@
   background-image: url(../images/overlay-button.png);
   background-color: #f8f8f8;
   background-repeat: repeat-x;
+  background-position: bottom;
   border-top: 1px solid #dfdfdf;
   border-bottom: 1px solid #cfcfcf;
 }
 
-/* line 204, ../src/temp-dev.scss */
+/* line 205, ../src/temp-dev.scss */
 .tickets, .tickets-expanded {
   width: 100%;
   border-bottom-color: #efefef;
   color: #5f5f5f;
 }
-/* line 209, ../src/temp-dev.scss */
+/* line 210, ../src/temp-dev.scss */
 .tickets th, .tickets-expanded th {
   background: none;
   padding: 6px 6px 5px 6px;
 }
-/* line 213, ../src/temp-dev.scss */
+/* line 214, ../src/temp-dev.scss */
 .tickets td, .tickets th, .tickets-expanded td, .tickets-expanded th {
   vertical-align: top;
   border-bottom: 1px solid #efefef;
 }
-/* line 217, ../src/temp-dev.scss */
+/* line 218, ../src/temp-dev.scss */
 .tickets td, .tickets-expanded td {
   padding: 8px 8px;
   background-color: #ffffff;
 }
-/* line 220, ../src/temp-dev.scss */
+/* line 221, ../src/temp-dev.scss */
 .tickets td a, .tickets-expanded td a {
   text-decoration: none;
   color: #5a8ec1;
 }
-/* line 227, ../src/temp-dev.scss */
+/* line 228, ../src/temp-dev.scss */
 .tickets .check, .tickets-expanded .check {
   width: 25px;
   padding-left: 8px;
   padding-top: 9px;
   text-align: right;
 }
-/* line 233, ../src/temp-dev.scss */
+/* line 234, ../src/temp-dev.scss */
 .tickets th.check, .tickets-expanded th.check {
   padding-top: 12px;
 }
-/* line 237, ../src/temp-dev.scss */
+/* line 238, ../src/temp-dev.scss */
 .tickets .name, .tickets-expanded .name {
   width: 55%;
   padding-left: 53px;
 }
-/* line 240, ../src/temp-dev.scss */
+/* line 241, ../src/temp-dev.scss */
 .tickets .name .preview_pic, .tickets-expanded .name .preview_pic {
   margin: 0px;
   margin-left: -53px;
 }
-/* line 243, ../src/temp-dev.scss */
+/* line 244, ../src/temp-dev.scss */
 .tickets .name .preview_pic img, .tickets-expanded .name .preview_pic img {
+  padding: 2px;
   width: 36px;
   height: 36px;
 }
-/* line 247, ../src/temp-dev.scss */
+/* line 249, ../src/temp-dev.scss */
 .tickets .name h3, .tickets-expanded .name h3 {
   padding: 0px 0px 4px 0px;
 }
-/* line 249, ../src/temp-dev.scss */
+/* line 251, ../src/temp-dev.scss */
 .tickets .name h3 a, .tickets-expanded .name h3 a {
   text-transform: capitalize;
   font-size: 13px;
   font-weight: bold;
   color: #444444;
 }
-/* line 255, ../src/temp-dev.scss */
+/* line 257, ../src/temp-dev.scss */
 .tickets .name h3 a:hover, .tickets-expanded .name h3 a:hover {
   color: #4b7dc0;
 }
-/* line 259, ../src/temp-dev.scss */
+/* line 261, ../src/temp-dev.scss */
 .tickets .name div, .tickets-expanded .name div {
   color: #888888;
 }
-/* line 264, ../src/temp-dev.scss */
+/* line 266, ../src/temp-dev.scss */
 .tickets .assign ul, .tickets-expanded .assign ul {
   margin: 0;
   padding: 0;
@@ -415,85 +417,85 @@
 .tickets .assign ul li, .tickets-expanded .assign ul li {
   *display: inline;
 }
-/* line 266, ../src/temp-dev.scss */
+/* line 268, ../src/temp-dev.scss */
 .tickets .assign ul li, .tickets-expanded .assign ul li {
   padding: 4px 7px 0px 0px;
   color: #999999;
   font-size: 12px;
 }
-/* line 271, ../src/temp-dev.scss */
+/* line 273, ../src/temp-dev.scss */
 .tickets .assign ul li span, .tickets-expanded .assign ul li span {
   color: #444444;
   text-transform: capitalize;
 }
-/* line 278, ../src/temp-dev.scss */
+/* line 280, ../src/temp-dev.scss */
 .tickets .assign ul .priority span.style_1, .tickets-expanded .assign ul .priority span.style_1 {
   /* Low priority style */
   color: #666666;
 }
-/* line 281, ../src/temp-dev.scss */
+/* line 283, ../src/temp-dev.scss */
 .tickets .assign ul .priority span.style_2, .tickets-expanded .assign ul .priority span.style_2 {
   /* Medium priority style */
   color: #cc6633;
 }
-/* line 284, ../src/temp-dev.scss */
+/* line 286, ../src/temp-dev.scss */
 .tickets .assign ul .priority span.style_3, .tickets-expanded .assign ul .priority span.style_3 {
   /* High priority style */
   color: #cc6633;
 }
-/* line 287, ../src/temp-dev.scss */
+/* line 289, ../src/temp-dev.scss */
 .tickets .assign ul .priority span.style_4, .tickets-expanded .assign ul .priority span.style_4 {
   /* Urgent priority style */
   color: #cc6633;
 }
-/* line 293, ../src/temp-dev.scss */
+/* line 295, ../src/temp-dev.scss */
 .tickets .sla, .tickets-expanded .sla {
   vertical-align: top;
   text-align: right;
   font-size: 11px;
 }
 
-/* line 300, ../src/temp-dev.scss */
+/* line 302, ../src/temp-dev.scss */
 .conversation-sprite {
   position: relative;
   display: inline;
   margin-bottom: -30px;
   float: right;
 }
-/* line 305, ../src/temp-dev.scss */
+/* line 307, ../src/temp-dev.scss */
 .conversation-sprite .image {
   float: right;
   content: "";
   width: 32px;
   height: 32px;
   margin: 0px;
-  background: url('/images/../images/embed/sprites/32square_sprite.png?1301407817') no-repeat;
+  background: url('/images/../images/embed/sprites/32square_sprite.png?1302089780') no-repeat;
   width: 32px;
   height: 32px;
   overflow: hidden;
 }
-/* line 313, ../src/temp-dev.scss */
+/* line 315, ../src/temp-dev.scss */
 .conversation-sprite .email-reply {
   background-position: 0px 0px;
 }
-/* line 316, ../src/temp-dev.scss */
+/* line 318, ../src/temp-dev.scss */
 .conversation-sprite .email-receive {
   background-position: 0px -32px;
 }
-/* line 319, ../src/temp-dev.scss */
+/* line 321, ../src/temp-dev.scss */
 .conversation-sprite .note-public {
   background-position: 0px -64px;
 }
-/* line 322, ../src/temp-dev.scss */
+/* line 324, ../src/temp-dev.scss */
 .conversation-sprite .note-private {
   background-position: 0px -96px;
 }
 
-/* line 328, ../src/temp-dev.scss */
+/* line 330, ../src/temp-dev.scss */
 .contact-box {
   padding-left: 170px;
 }
-/* line 330, ../src/temp-dev.scss */
+/* line 332, ../src/temp-dev.scss */
 .contact-box div.profile_pic {
   float: left;
   margin-left: -150px;
@@ -501,13 +503,13 @@
   margin-top: 5px;
   text-align: center;
 }
-/* line 337, ../src/temp-dev.scss */
+/* line 339, ../src/temp-dev.scss */
 .contact-box .info-highlight {
   margin: 8px 0px 0px -170px;
   padding-left: 165px;
 }
 
-/* line 343, ../src/temp-dev.scss */
+/* line 345, ../src/temp-dev.scss */
 .info-highlight {
   font-size: 13px;
   margin: 0px 0px 0px 0px;
@@ -516,20 +518,20 @@
   border: 1px solid #f4f4e9;
   background-color: #fffbee;
 }
-/* line 350, ../src/temp-dev.scss */
+/* line 352, ../src/temp-dev.scss */
 .info-highlight div {
   padding: 6px;
 }
 
-/* line 356, ../src/temp-dev.scss */
+/* line 358, ../src/temp-dev.scss */
 .forum_list {
   margin: 0px 0px;
 }
-/* line 358, ../src/temp-dev.scss */
+/* line 360, ../src/temp-dev.scss */
 .forum_list a {
   text-decoration: none;
 }
-/* line 359, ../src/temp-dev.scss */
+/* line 361, ../src/temp-dev.scss */
 .forum_list a.title {
   color: #545454;
 }
@@ -545,7 +547,7 @@
 .forum_list a.title:active {
   color: #545454;
 }
-/* line 360, ../src/temp-dev.scss */
+/* line 362, ../src/temp-dev.scss */
 .forum_list .item_actions {
   float: right;
   font-size: 10px;
@@ -557,16 +559,16 @@
   color: #afafaf;
   padding: 2px 8px;
 }
-/* line 368, ../src/temp-dev.scss */
+/* line 370, ../src/temp-dev.scss */
 .forum_list .item_actions a.highlight {
   background-color: #ffffcc;
   padding: 1px 3px;
 }
-/* line 373, ../src/temp-dev.scss */
+/* line 375, ../src/temp-dev.scss */
 .forum_list .subcounter {
   color: #afafaf;
 }
-/* line 376, ../src/temp-dev.scss */
+/* line 378, ../src/temp-dev.scss */
 .forum_list ul.base-set {
   list-style: none;
   overflow: hidden;
@@ -580,57 +582,57 @@
   list-style-type: none;
   margin-left: 0px;
 }
-/* line 381, ../src/temp-dev.scss */
+/* line 383, ../src/temp-dev.scss */
 .forum_list ul.base-set li {
   float: left;
   width: 44%;
   padding: 0px 0px 0px 30px;
   margin: 0px 3% 0px 0px;
 }
-/* line 386, ../src/temp-dev.scss */
+/* line 388, ../src/temp-dev.scss */
 .forum_list ul.base-set li h4.forum_title {
   margin: 3px 0px 0px 0px;
   padding: 6px 0px 4px 0px;
   font-size: 16px;
   position: relative;
 }
-/* line 390, ../src/temp-dev.scss */
+/* line 392, ../src/temp-dev.scss */
 .forum_list ul.base-set li h4.forum_title a {
   font-weight: normal;
 }
-/* line 395, ../src/temp-dev.scss */
+/* line 397, ../src/temp-dev.scss */
 .forum_list ul.base-set li span.icon {
   position: absolute;
   left: -34px;
   top: 2px;
-  background: url('/images/../images/embed/sprites/32square_sprite.png?1301407817') no-repeat;
+  background: url('/images/../images/embed/sprites/32square_sprite.png?1302089780') no-repeat;
   width: 32px;
   height: 32px;
   overflow: hidden;
 }
-/* line 401, ../src/temp-dev.scss */
+/* line 403, ../src/temp-dev.scss */
 .forum_list ul.base-set li span.forum_type_1 {
   background-position: 0px -192px;
 }
-/* line 405, ../src/temp-dev.scss */
+/* line 407, ../src/temp-dev.scss */
 .forum_list ul.base-set li span.forum_type_2 {
   background-position: 0px -224px;
 }
-/* line 409, ../src/temp-dev.scss */
+/* line 411, ../src/temp-dev.scss */
 .forum_list ul.base-set li span.forum_type_3 {
   background-position: 0px -160px;
 }
-/* line 413, ../src/temp-dev.scss */
+/* line 415, ../src/temp-dev.scss */
 .forum_list ul.base-set li span.forum_type_4 {
   background-position: 0px -128px;
 }
-/* line 417, ../src/temp-dev.scss */
+/* line 419, ../src/temp-dev.scss */
 .forum_list ul.base-set li .topic-list {
   padding: 6px 0px 12px 0px;
   margin-bottom: 8px;
   border-top: 1px solid #f1f1f1;
 }
-/* line 421, ../src/temp-dev.scss */
+/* line 423, ../src/temp-dev.scss */
 .forum_list ul.base-set li .topic-list a.topic {
   white-space: nowrap;
   overflow: hidden;
@@ -642,7 +644,7 @@
   padding: 5px 0px;
   font-size: 13px;
 }
-/* line 427, ../src/temp-dev.scss */
+/* line 429, ../src/temp-dev.scss */
 .forum_list ul.base-set li .topic-list a {
   color: #4d769f;
 }
@@ -658,17 +660,73 @@
 .forum_list ul.base-set li .topic-list a:active {
   color: #4d769f;
 }
-/* line 432, ../src/temp-dev.scss */
+/* line 434, ../src/temp-dev.scss */
 .forum_list ul.base-set li.odd {
   clear: left;
 }
-/* line 435, ../src/temp-dev.scss */
+/* line 437, ../src/temp-dev.scss */
 .forum_list ul.base-set li.even {
   margin-right: 0px;
   width: 46%;
 }
 
-/* line 443, ../src/temp-dev.scss */
+/* line 445, ../src/temp-dev.scss */
 .forum-group {
   margin: 0px -20px;
+}
+
+/* line 449, ../src/temp-dev.scss */
+.list-noinfo {
+  background: #f6f6f6;
+  text-align: center;
+  padding: 2em 0 2em 0;
+  margin: 3px 3px -11px 3px;
+  height: 300px;
+  font-size: 1.6em;
+  font-weight: bold;
+  color: #666666;
+  text-shadow: white -1px -1px 1px;
+}
+
+/* line 461, ../src/temp-dev.scss */
+.caption-text {
+  background: #f6f6f6;
+  padding: 6px 8px 6px 50px;
+  border-bottom: 1px solid #efefef;
+  font-size: 12px;
+  color: #999999;
+}
+
+/* line 469, ../src/temp-dev.scss */
+.sort {
+  text-align: right;
+  position: relative;
+  padding: 6px 40px 0px 0px;
+}
+/* line 473, ../src/temp-dev.scss */
+.sort .sort_order {
+  position: absolute;
+  right: 0px;
+  top: 0px;
+}
+/* line 477, ../src/temp-dev.scss */
+.sort .sort_order .image {
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  width: 32px;
+  height: 32px;
+  background: url('/images/../images/embed/sprites/32square_sprite.png?1302089780') no-repeat;
+  width: 32px;
+  height: 32px;
+  overflow: hidden;
+  background-position: 0px -288px;
+}
+/* line 485, ../src/temp-dev.scss */
+.sort .sort_order .ASC {
+  background-position: 0px -256px;
+}
+/* line 488, ../src/temp-dev.scss */
+.sort .sort_order .DESC {
+  background-position: 0px -288px;
 }

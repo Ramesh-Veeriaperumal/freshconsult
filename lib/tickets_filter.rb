@@ -42,15 +42,15 @@ module TicketsFilter
   SEARCH_FIELD_OPTIONS = SEARCH_FIELDS.map { |i| [i[1], i[0]] }
 
   SORT_FIELDS = [
-    [ :due_by     ,   'Due by time',     "due_by"  ],
-    [ :created_asc,   'Date Created',    "created_at"  ],
-    [ :updated_asc,   'Last Modified',   "updated_at"  ],
-    [ :priority   ,   'Priority',        "priority"  ],
-    [ :status,        'Status',          "status"  ],        
+    [ :due_by     ,   'Due by time'  ],
+    [ :created_at ,   'Date Created' ],
+    [ :updated_at ,   'Last Modified'],
+    [ :priority   ,   'Priority',    ],
+    [ :status,        'Status',      ],        
   ]
 
   SORT_FIELD_OPTIONS = SORT_FIELDS.map { |i| [i[1], i[0]] }
-  SORT_SQL_BY_KEY = Hash[*SORT_FIELDS.map { |i| [i[0], i[2]] }.flatten]
+  SORT_SQL_BY_KEY    = Hash[*SORT_FIELDS.map { |i| [i[0], i[0]] }.flatten]
 
   def self.filter(filter, user = nil, scope = nil)
     to_ret = (scope ||= default_scope)
