@@ -91,7 +91,7 @@
 					</li>
 					<li>
 						<% if !logged_in? %>
-						  	<%= content_for ( :label, t('ticket.verify_human') ) %>
+						  	<%= content_tag ( :label, t('ticket.verify_human') ) %>
 						  	<%= recaptcha_tags :display => { :theme => "white" }  %>
 						<% end %> 
 					</li>
