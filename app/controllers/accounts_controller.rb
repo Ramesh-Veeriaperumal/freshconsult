@@ -74,6 +74,8 @@ class AccountsController < ApplicationController
 	  
 	  data = Hash.new
 	  resp = request.env[Rack::OpenID::RESPONSE]
+    logger.debug "The openid _complete resp is :: #{resp.inspect}"
+    logger.debug "The resp.status is :: #{resp.status}"
 	  if resp.status == :success
 	    session[:openid] = resp.display_identifier
 	    ax_response = OpenID::AX::FetchResponse.from_success_response(resp)
