@@ -7,7 +7,7 @@ module AuthenticationSystem
   private
     def current_user_session
       return @current_user_session if defined?(@current_user_session)
-      @current_user_session = UserSession.find
+      @current_user_session = current_account.user_sessions.find
     end
 
     def log_out!
@@ -22,6 +22,7 @@ module AuthenticationSystem
     end
   
     def require_user
+      puts "****************************************************************current_user_session"
       unless authorized?
         respond_to do |wants|
           wants.html do
