@@ -25,7 +25,6 @@ module Helpdesk::TicketsHelper
 		[ :priority   ,   'Priority',    ],
 		[ :status,        'Status',      ],
 	]
-	
 	 
   end
 
@@ -34,11 +33,12 @@ module Helpdesk::TicketsHelper
   end
    
   def current_sort
-  	cookies[:sort] 	  = TicketsFilter::SORT_SQL_BY_KEY[  ( params[:sort] ? params[:sort] : (!cookies[:sort].blank?) ? cookies[:sort] : ":due_by").to_sym ]
+  	#cookies[:sort] 	  = TicketsFilter::SORT_SQL_BY_KEY[  ( params[:sort] ? params[:sort] : (!cookies[:sort].blank?) ? cookies[:sort] : ":due_by").to_sym ]
+  	TicketsFilter::SORT_SQL_BY_KEY[(params[:sort] || :due_by).to_sym ] 
   end
  
   def current_sort_order 
-  	cookies[:sort_order] = ( params[:sort_order] ? params[:sort_order] : ( (!cookies[:sort_order].blank?) ? cookies[:sort_order] : ":DESC") ).to_sym
+  	#cookies[:sort_order] = ( params[:sort_order] ? params[:sort_order] : ( (!cookies[:sort_order].blank?) ? cookies[:sort_order] : ":DESC") ).to_sym
   end
   
   def cookie_sort 
