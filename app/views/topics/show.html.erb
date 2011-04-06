@@ -72,7 +72,7 @@
 					<div class="details min_height">
 						<%= first_post.body_html %>
 						 <ul class="attachment_list">
-	   						<%= render :partial => '/helpdesk/shared/attachment', :collection => first_post.attachments, :locals => {:show_delete => true, :url => [first_post] } %>
+	   						<%= render :partial => '/helpdesk/shared/attachment', :collection => first_post.attachments, :locals => { :url => [first_post] } %>
     					 </ul>
 					</div>
 					

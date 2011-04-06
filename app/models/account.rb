@@ -65,7 +65,7 @@ class Account < ActiveRecord::Base
   
   validates_format_of :domain, :with => /\A[a-zA-Z][a-zA-Z0-9]*\Z/
   validates_exclusion_of :domain, :in => RESERVED_DOMAINS, :message => "The domain <strong>{{value}}</strong> is not available."
-  validates_length_of :helpdesk_url, :maximum=>255, :allow_nil => true ,:allow_blank => true
+  validates_length_of :helpdesk_url, :maximum=>255, :allow_blank => true
   validate :valid_domain?
   validate :valid_helpdesk_url?
   validate_on_create :valid_user?
