@@ -15,6 +15,9 @@ class AccountsController < ApplicationController
   #ssl_required :billing, :cancel, :new, :create #by Shan temp
   #ssl_allowed :plans, :thanks, :canceled, :paypal
   
+   before_filter :only => [:update, :destroy, :edit, :delete_logo, :delete_fav] do |c| 
+    c.requires_permission :manage_users
+  end
    
   def new
     # render :layout => 'public' # Uncomment if your "public" site has a different layout than the one used for logged-in users
@@ -142,35 +145,6 @@ class AccountsController < ApplicationController
     end
   end
   
-  def update_logo_image
-    unless  params[:account][:logo_attributes].nil?
-      if @account.logo.nil?
-        @logo_attachment = Helpdesk::Attachment.new
-        @logo_attachment.description = "logo"
-        @logo_attachment.content = params[:account][:logo_attributes][:content]
-        @logo_attachment.account_id = @account.id
-        @account.logo = @logo_attachment
-        #@account.build_logo( :description => 'logo' ,:content => params[:account][:logo_attributes][:content])
-      else
-        @account.logo.update_attributes(:content => params[:account][:logo_attributes][:content], :description => 'logo')
-      end
-    end
-  end
-  
-  def update_fav_icon_image
-   unless  params[:account][:fav_icon_attributes].nil?
-      if @account.fav_icon.nil?
-        @fav_attachment = Helpdesk::Attachment.new
-        @fav_attachment.description = "fav_icon"
-        @fav_attachment.content = params[:account][:fav_icon_attributes][:content]
-        @fav_attachment.account_id = @account.id
-        @account.fav_icon = @fav_attachment
-        #@account.build_fav_icon(:content => params[:account][:fav_icon_attributes][:content], :description => 'fav_icon')
-      else
-        @account.fav_icon.update_attributes(:content => params[:account][:fav_icon_attributes][:content], :description => 'fav_icon')
-      end
-    end
-  end
   
   def plans
     @plans = SubscriptionPlan.find(:all, :order => 'amount desc').collect {|p| p.discount = @discount; p }
@@ -299,6 +273,37 @@ class AccountsController < ApplicationController
   end
 
   protected
+  
+   def update_logo_image
+    unless  params[:account][:logo_attributes].nil?
+      if @account.logo.nil?
+        @logo_attachment = Helpdesk::Attachment.new
+        @logo_attachment.description = "logo"
+        @logo_attachment.content = params[:account][:logo_attributes][:content]
+        @logo_attachment.account_id = @account.id
+        @account.logo = @logo_attachment
+        #@account.build_logo( :description => 'logo' ,:content => params[:account][:logo_attributes][:content])
+      else
+        @account.logo.update_attributes(:content => params[:account][:logo_attributes][:content], :description => 'logo')
+      end
+    end
+  end
+  
+  def update_fav_icon_image
+   unless  params[:account][:fav_icon_attributes].nil?
+      if @account.fav_icon.nil?
+        @fav_attachment = Helpdesk::Attachment.new
+        @fav_attachment.description = "fav_icon"
+        @fav_attachment.content = params[:account][:fav_icon_attributes][:content]
+        @fav_attachment.account_id = @account.id
+        @account.fav_icon = @fav_attachment
+        #@account.build_fav_icon(:content => params[:account][:fav_icon_attributes][:content], :description => 'fav_icon')
+      else
+        @account.fav_icon.update_attributes(:content => params[:account][:fav_icon_attributes][:content], :description => 'fav_icon')
+      end
+    end
+  end
+    
     def choose_layout
       (action_name == "openid_complete" || "create_account_google") ? 'signup_google' : 'helpdesk/default'
 	end
