@@ -13,6 +13,11 @@ class Helpdesk::AttachmentsController < ApplicationController
       redirect_to(  redir_url.gsub( "#{AWS::S3::DEFAULT_HOST}/", '' ))
   end
   
+  def scoper
+    current_account.attachments
+  end 
+  
+  
 
   protected
   
