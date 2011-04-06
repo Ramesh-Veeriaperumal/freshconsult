@@ -22,6 +22,7 @@ var jQ = jQuery.noConflict();
 		if(!$.browser.msie)
 			$("textarea.auto-expand").autoResize();
 		
+		// Any object with class custom-tip will be given a different tool tip
 		$(".custom-tip").qtip({
 			 position: {
 			      my: 'center right',  // Position my top left...
@@ -32,7 +33,7 @@ var jQ = jQuery.noConflict();
 			 	classes: 'ui-tooltip-rounded ui-tooltip-shadow'
 			 }
 		});
-		
+		 
 		flash = $("div.flash_info");
 		if(flash.get(0)){
 			try {
