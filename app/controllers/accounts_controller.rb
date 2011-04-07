@@ -304,8 +304,7 @@ class AccountsController < ApplicationController
     end
   end
     
-    def choose_layout
-    	puts "Insides choose layout $$$$$$$$$$$$$$$$$$$ #{action_name}"
+    def choose_layout 
       (action_name == "openid_complete" || action_name == "create_account_google") ? 'signup_google' : 'helpdesk/default'
 	end
 	
