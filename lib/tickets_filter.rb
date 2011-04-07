@@ -41,6 +41,9 @@ module TicketsFilter
 
   SEARCH_FIELD_OPTIONS = SEARCH_FIELDS.map { |i| [i[1], i[0]] }
 
+  DEFAULT_SORT 			= :due_by
+  DEFAULT_SORT_ORDER 	= :ASC
+	
   SORT_FIELDS = [
     [ :due_by     ,   'Due by time'  ],
     [ :created_at ,   'Date Created' ],

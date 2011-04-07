@@ -13,10 +13,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #by Shan temp
   attr_accessor :email, :custom_field ,:customizer, :nscname 
 
-  before_create :set_spam, :populate_requester, :set_dueby, :save_ticket_states
+  before_create :set_spam, :set_dueby, :save_ticket_states
   after_create :refresh_display_id, :save_custom_field, :pass_thro_biz_rules, :autoreply 
   before_update :cache_old_model, :update_dueby
   after_update :save_custom_field, :update_ticket_states, :notify_on_update
+  before_save :populate_requester
   
   belongs_to :account
   belongs_to :email_config
@@ -257,15 +258,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def populate_requester #by Shan temp
-    if requester_id.nil? && !email.nil?
-      @requester = User.find_by_email_and_account_id(email, account_id)
-      if @requester.nil?
-        @requester = User.new
-        @requester.account_id = account_id
-        @requester.signup!({:user => {:email => self.email, :name => '', :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}})
+    unless email.blank?
+      if(requester_id.nil? or !email.eql?(requester.email))
+        @requester = account.all_users.find_by_email(email)
+        if @requester.nil?
+          @requester = account.users.new          
+          @requester.signup!({:user => {:email => self.email, :name => '', :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}})
+        end        
+        self.requester = @requester
       end
-      
-      self.requester = @requester
     end
   end
   

@@ -216,32 +216,38 @@
 		border-bottom:1px solid #efefef;
 	}
 	td{
-		padding:8px 8px;
+		padding:10px 8px 10px 10px;
 		background-color:#ffffff;
 		a{
 			text-decoration:none;
 			color:#5a8ec1; 
 		}
 	}
-	.stripe td{
+	tr:hover td, tr.active td{
+		background-color:#f4f4f4;
+		background-image:url(../images/overlay-top-shadow.png);
+		background-position:top left;
+		border-bottom:1px solid #dfdfdf;
+		background-repeat:repeat-x;
 	}
 	.check{
 		width:25px;
 		padding-left:8px;
-		padding-top:9px; 
+		padding-top:12px; 
 		text-align:right;
 	}
 	th.check{
-		padding-top:12px;
+		padding-top:10px;
 	}
 	
 	.name{			
 		width:55%;
-		padding-left:53px;
+		padding-left:57px;
 		.preview_pic{
-			margin:0px;
+			margin:0px; 
+			margin-top:2px;
 			margin-left:-53px;
-			img{
+			img{ 
 				padding:2px;
 				width:36px; height:36px;
 			}
@@ -250,12 +256,13 @@
 			padding:0px 0px 4px 0px;
 			a{
 				text-transform:capitalize;
-				font-size:13px;
-				font-weight:bold;
+				font-size:1.06em;
+				line-height:22px;
+				display:block;
 				color:#444444;	 
 			}
 			a:hover{
-				color:#4b7dc0;
+				color:#000000;
 			}
 		} 
 		div{
@@ -266,8 +273,7 @@
 		ul{
 			@include inline-block-list;
 			li{
-				padding:4px 7px 0px 0px;
-				
+				padding:4px 7px 0px 0px; 
 				color:#999999;
 				font-size:12px;
 				span{

@@ -1,4 +1,5 @@
 <% javascript_tag do %>
+
 	changeAggentList = function(group_id)
 	{
 		jQuery('#assigned_to').children("select").replaceWith("...");
@@ -16,8 +17,9 @@
 	}
 <% end %>
 <div class="rtDetails" id="TicketProperties">              
+
 		<h3 class="title"><%=t('ticket.properties')%></h3>	
-			<% form_for ticket do |f| %>
+			<% form_for ticket, :html => { :id => 'custom_ticket_form' } do |f| %>
 	        <ul class="cnt">
 	            <li>
 	                <label><%=t('ticket.due_by_time')%></label>
