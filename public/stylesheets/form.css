@@ -17,7 +17,7 @@ input[type=text], select, input.text {
   padding: 2px;
   margin-bottom: 5px;
   margin-top: 0;
-  width: 100%;
+  width: 96%;
 }
 
 /* line 24, ../src/form.scss */
@@ -42,7 +42,7 @@ textarea {
   font-size: 13px;
   line-height: 18px;
   height: 100px;
-  width: 100%;
+  width: 96%;
   font-family: "Lucida Grande", Geneva, Arial, Verdana, sans-serif;
 }
 
@@ -911,4 +911,51 @@ span.sort_handle {
 /* line 718, ../src/form.scss */
 .requesteremail, .agentemail {
   height: 220px;
+}
+
+/* line 722, ../src/form.scss */
+.live_search {
+  text-align: left;
+  float: left;
+  padding: 0px 0px 0px 0px;
+  margin: 8px 0px;
+}
+/* line 727, ../src/form.scss */
+.live_search .loading {
+  background-position: right !important;
+}
+
+/* line 732, ../src/form.scss */
+input.search {
+  -moz-border-radius: 3px 3px 3px 3px;
+  -webkit-border-radius: 3px 3px 3px 3px;
+  border-radius: 3px 3px 3px 3px;
+  margin-right: 10px;
+  background-color: #FFFFFF;
+  border: 1px solid #C7C7C7;
+  color: #747472;
+  font-size: 13px;
+  height: 18px;
+  padding: 5px 7px;
+  width: 500px;
+}
+
+/* line 744, ../src/form.scss */
+.sp_paragraph {
+  -moz-border-radius: 3px 3px 3px 3px;
+  -webkit-border-radius: 3px 3px 3px 3px;
+  border-radius: 3px 3px 3px 3px;
+  background-color: #FFFFFF;
+  border: 1px solid #C7C7C7;
+  color: #747472;
+  margin-bottom: 8px;
+}
+
+/* line 753, ../src/form.scss */
+.search-grey-box {
+  overflow: hidden;
+  *zoom: 1;
+  background-color: #f2f2f2;
+  border-top: 1px solid #e2e2e2;
+  padding: 6px 30px 6px 20px;
 }

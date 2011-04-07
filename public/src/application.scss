@@ -2225,12 +2225,6 @@ h4.border_title{
 	}
 }
 
-.search-grey-box{
-	background-color:#f6f6f6;
-	border-top:1px solid #e2e2e2; 
-	padding:6px 30px 6px 20px;  
-}
-
 .solution-list .odd, .solution-list .even{
 	@include clearfix;
 	margin:5px 2% 5px 0px; 
@@ -2854,34 +2848,6 @@ div.color{
 	padding:8px 14px 12px 14px;
 }
 
-.live_search{
-    text-align:left;
-    padding:0px 0px 0px 0px;
-    margin:8px 0px;
-    .loading{
-    	background-position:right !important;
-    }
-} 
-
-input.search{
-	@include corners(3px);
-    margin-right: 10px;
-    background-color: #FFFFFF;
-    border: 1px solid #C7C7C7;
-    color: #747472;
-    font-size: 13px;
-    height:18px;
-    padding: 5px 7px;
-    width: 500px;
-}
-
-.sp_paragraph{
-	@include corners(3px);
-    background-color: #FFFFFF;
-    border: 1px solid #C7C7C7;
-    color: #747472;
-    margin-bottom:8px;
-}
 
 .folder_section{
 	float:left;
