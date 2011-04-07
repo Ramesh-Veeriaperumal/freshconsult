@@ -3,29 +3,28 @@
 		note_area  = jQuery('#cnt-note');
 		reply_area = jQuery('#cnt-reply');
 		if(note_area.css("display") == 'block'){
-			insertTextAtCursor($('add-note-cnt-note-body'), value);
+			insertTextAtCursor( $('add-note-cnt-note-body'), value );
+			jQuery('#add-note-cnt-note-body').trigger("focus");
 		} 
 		else{
 			if(reply_area.css("display") == 'none')
 				jQuery('#ReplyButton').trigger("click");
 			
 			insertTextAtCursor( $('send-email-cnt-reply-body'), value );
+			jQuery('#send-email-cnt-reply-body').trigger("focus");
 		}
 	}
 		
-	function respondWithSol(select , sol_id, url){	
-			if (select == "url")
-			{
-				insertIntoConversation(url);
-			}
-			else if(select == "none")
-			{
-				return true;		
-			}
-			else
-			{
-				handleSolutionDetail(sol_id);		
-			}
+	function respondWithSol(select, sol_id, url){	
+		if (select == "url"){
+			insertIntoConversation(url);
+		}
+		else if(select == "none"){
+			return true;		
+		}
+		else{
+			handleSolutionDetail(sol_id);		
+		}
 	}
 
 	function handleSolutionDetail(sol_id){

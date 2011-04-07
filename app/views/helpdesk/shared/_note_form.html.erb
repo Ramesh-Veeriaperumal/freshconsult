@@ -26,7 +26,7 @@
 			<%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"]%>	
 		</li>	
 		<li>
-			<%= f.label(:body, "Enter your message:") if local_assigns[:label] %> 
+			<%= f.label(:body, "Enter your message here", :for =>"#{id}-#{cntid}-body", :class => "overlabel" ) %>
 			<%= f.text_area :body, { :class => 'auto-expand required', :id => "#{id}-#{cntid}-body" , :value => @signature} %>
     	</li>	
 		<li class="attachment-options"  id="attachment-options">
