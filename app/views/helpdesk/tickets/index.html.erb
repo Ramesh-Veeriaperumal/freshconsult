@@ -31,7 +31,7 @@
 	  };
 		 	
 	  jQuery(".ticket-description-tip").qtip({
-			 position: {
+			 position: { 
 			      my: 'bottom left',
 			      at: 'top  left', 
 			      viewport: jQuery(window) 
@@ -40,7 +40,11 @@
 			 	classes: 'ui-tooltip-desc ui-tooltip-rounded ui-tooltip-shadow'
 			 },
 			 show: {
-			    solo: true
+			    solo: true,
+			    delay: 200,
+			    effect: function(offset) {
+			        jQuery(this).show("fade", 240); // "this" refers to the tooltip
+			    }
 			 }
 		});
 		
