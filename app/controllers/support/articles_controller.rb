@@ -23,20 +23,25 @@ class Support::ArticlesController < ApplicationController
  
   def thumbs_down
     
-    @article = Solution::Article.find(params[:id])
+    @article = current_account.solution_articles.find(params[:id])
     @article.increment!(:thumbs_down)
    
     @ticket = Helpdesk::Ticket.new 
-    render :partial => "/support/shared/feedback_form" ,:locals =>{ :ticket => @ticket,:article => @article }
+     respond_to do |format|
+        format.html { render :partial => "/support/shared/feedback_form" ,:locals =>{ :ticket => @ticket,:article => @article }}
+        format.xml  { head 200}
+      end
+    
     
   end
   
    def thumbs_up
-     @article = Solution::Article.find(params[:id])
-      @article.increment!(:thumbs_up)
-      #render :partial => "/solution/shared/voting" ,:locals =>{ :article => @article}
-      render :text => "Glad we could be helpful. Thanks for the feedback."
-      
+     @article = current_account.solution_articles.find(params[:id])
+     @article.increment!(:thumbs_up)
+     respond_to do |format|
+        format.html { render :text => "Glad we could be helpful. Thanks for the feedback." }
+        format.xml  { head 200}
+      end
   end
   
  

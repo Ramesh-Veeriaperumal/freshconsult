@@ -41,7 +41,7 @@ class ContactsController < ApplicationController
         check_email_exist
         flash[:notice] =  activerecord_error_list(@user.errors)        
     end
-    customer = Customer.find(params[:customer_id])
+    customer = current_account.customers.find(params[:customer_id])
     redirect_to(customer_url(customer))
   end
   
