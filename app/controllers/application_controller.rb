@@ -74,7 +74,7 @@ end
   def set_time_zone
     begin
       current_account.make_current
-      current_user.make_current
+      User.current = current_user
       Time.zone = current_user ? current_user.time_zone : (current_account ? current_account.time_zone : Time.zone)
     rescue ActiveRecord::RecordNotFound
     end
