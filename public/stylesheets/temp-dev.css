@@ -338,7 +338,7 @@
 }
 /* line 218, ../src/temp-dev.scss */
 .tickets td, .tickets-expanded td {
-  padding: 8px 8px;
+  padding: 10px 8px 10px 10px;
   background-color: #ffffff;
 }
 /* line 221, ../src/temp-dev.scss */
@@ -346,53 +346,63 @@
   text-decoration: none;
   color: #5a8ec1;
 }
-/* line 228, ../src/temp-dev.scss */
+/* line 226, ../src/temp-dev.scss */
+.tickets tr:hover td, .tickets tr.active td, .tickets-expanded tr:hover td, .tickets-expanded tr.active td {
+  background-color: #f4f4f4;
+  background-image: url(../images/overlay-top-shadow.png);
+  background-position: top left;
+  border-bottom: 1px solid #dfdfdf;
+  background-repeat: repeat-x;
+}
+/* line 233, ../src/temp-dev.scss */
 .tickets .check, .tickets-expanded .check {
   width: 25px;
   padding-left: 8px;
-  padding-top: 9px;
+  padding-top: 12px;
   text-align: right;
 }
-/* line 234, ../src/temp-dev.scss */
+/* line 239, ../src/temp-dev.scss */
 .tickets th.check, .tickets-expanded th.check {
-  padding-top: 12px;
+  padding-top: 10px;
 }
-/* line 238, ../src/temp-dev.scss */
+/* line 243, ../src/temp-dev.scss */
 .tickets .name, .tickets-expanded .name {
   width: 55%;
-  padding-left: 53px;
+  padding-left: 57px;
 }
-/* line 241, ../src/temp-dev.scss */
+/* line 246, ../src/temp-dev.scss */
 .tickets .name .preview_pic, .tickets-expanded .name .preview_pic {
   margin: 0px;
+  margin-top: 2px;
   margin-left: -53px;
 }
-/* line 244, ../src/temp-dev.scss */
+/* line 250, ../src/temp-dev.scss */
 .tickets .name .preview_pic img, .tickets-expanded .name .preview_pic img {
   padding: 2px;
   width: 36px;
   height: 36px;
 }
-/* line 249, ../src/temp-dev.scss */
+/* line 255, ../src/temp-dev.scss */
 .tickets .name h3, .tickets-expanded .name h3 {
   padding: 0px 0px 4px 0px;
 }
-/* line 251, ../src/temp-dev.scss */
+/* line 257, ../src/temp-dev.scss */
 .tickets .name h3 a, .tickets-expanded .name h3 a {
   text-transform: capitalize;
-  font-size: 13px;
-  font-weight: bold;
+  font-size: 1.06em;
+  line-height: 22px;
+  display: block;
   color: #444444;
 }
-/* line 257, ../src/temp-dev.scss */
+/* line 264, ../src/temp-dev.scss */
 .tickets .name h3 a:hover, .tickets-expanded .name h3 a:hover {
-  color: #4b7dc0;
+  color: #000000;
 }
-/* line 261, ../src/temp-dev.scss */
+/* line 268, ../src/temp-dev.scss */
 .tickets .name div, .tickets-expanded .name div {
   color: #888888;
 }
-/* line 266, ../src/temp-dev.scss */
+/* line 273, ../src/temp-dev.scss */
 .tickets .assign ul, .tickets-expanded .assign ul {
   margin: 0;
   padding: 0;
@@ -417,85 +427,85 @@
 .tickets .assign ul li, .tickets-expanded .assign ul li {
   *display: inline;
 }
-/* line 268, ../src/temp-dev.scss */
+/* line 275, ../src/temp-dev.scss */
 .tickets .assign ul li, .tickets-expanded .assign ul li {
   padding: 4px 7px 0px 0px;
   color: #999999;
   font-size: 12px;
 }
-/* line 273, ../src/temp-dev.scss */
+/* line 279, ../src/temp-dev.scss */
 .tickets .assign ul li span, .tickets-expanded .assign ul li span {
   color: #444444;
   text-transform: capitalize;
 }
-/* line 280, ../src/temp-dev.scss */
+/* line 286, ../src/temp-dev.scss */
 .tickets .assign ul .priority span.style_1, .tickets-expanded .assign ul .priority span.style_1 {
   /* Low priority style */
   color: #666666;
 }
-/* line 283, ../src/temp-dev.scss */
+/* line 289, ../src/temp-dev.scss */
 .tickets .assign ul .priority span.style_2, .tickets-expanded .assign ul .priority span.style_2 {
   /* Medium priority style */
   color: #cc6633;
 }
-/* line 286, ../src/temp-dev.scss */
+/* line 292, ../src/temp-dev.scss */
 .tickets .assign ul .priority span.style_3, .tickets-expanded .assign ul .priority span.style_3 {
   /* High priority style */
   color: #cc6633;
 }
-/* line 289, ../src/temp-dev.scss */
+/* line 295, ../src/temp-dev.scss */
 .tickets .assign ul .priority span.style_4, .tickets-expanded .assign ul .priority span.style_4 {
   /* Urgent priority style */
   color: #cc6633;
 }
-/* line 295, ../src/temp-dev.scss */
+/* line 301, ../src/temp-dev.scss */
 .tickets .sla, .tickets-expanded .sla {
   vertical-align: top;
   text-align: right;
   font-size: 11px;
 }
 
-/* line 302, ../src/temp-dev.scss */
+/* line 308, ../src/temp-dev.scss */
 .conversation-sprite {
   position: relative;
   display: inline;
   margin-bottom: -30px;
   float: right;
 }
-/* line 307, ../src/temp-dev.scss */
+/* line 313, ../src/temp-dev.scss */
 .conversation-sprite .image {
   float: right;
   content: "";
   width: 32px;
   height: 32px;
   margin: 0px;
-  background: url('/images/../images/embed/sprites/32square_sprite.png?1302089780') no-repeat;
+  background: url('/images/../images/embed/sprites/32square_sprite.png?1302103955') no-repeat;
   width: 32px;
   height: 32px;
   overflow: hidden;
 }
-/* line 315, ../src/temp-dev.scss */
+/* line 321, ../src/temp-dev.scss */
 .conversation-sprite .email-reply {
   background-position: 0px 0px;
 }
-/* line 318, ../src/temp-dev.scss */
+/* line 324, ../src/temp-dev.scss */
 .conversation-sprite .email-receive {
   background-position: 0px -32px;
 }
-/* line 321, ../src/temp-dev.scss */
+/* line 327, ../src/temp-dev.scss */
 .conversation-sprite .note-public {
   background-position: 0px -64px;
 }
-/* line 324, ../src/temp-dev.scss */
+/* line 330, ../src/temp-dev.scss */
 .conversation-sprite .note-private {
   background-position: 0px -96px;
 }
 
-/* line 330, ../src/temp-dev.scss */
+/* line 336, ../src/temp-dev.scss */
 .contact-box {
   padding-left: 170px;
 }
-/* line 332, ../src/temp-dev.scss */
+/* line 338, ../src/temp-dev.scss */
 .contact-box div.profile_pic {
   float: left;
   margin-left: -150px;
@@ -503,13 +513,13 @@
   margin-top: 5px;
   text-align: center;
 }
-/* line 339, ../src/temp-dev.scss */
+/* line 345, ../src/temp-dev.scss */
 .contact-box .info-highlight {
   margin: 8px 0px 0px -170px;
   padding-left: 165px;
 }
 
-/* line 345, ../src/temp-dev.scss */
+/* line 351, ../src/temp-dev.scss */
 .info-highlight {
   font-size: 13px;
   margin: 0px 0px 0px 0px;
@@ -518,20 +528,20 @@
   border: 1px solid #f4f4e9;
   background-color: #fffbee;
 }
-/* line 352, ../src/temp-dev.scss */
+/* line 358, ../src/temp-dev.scss */
 .info-highlight div {
   padding: 6px;
 }
 
-/* line 358, ../src/temp-dev.scss */
+/* line 364, ../src/temp-dev.scss */
 .forum_list {
   margin: 0px 0px;
 }
-/* line 360, ../src/temp-dev.scss */
+/* line 366, ../src/temp-dev.scss */
 .forum_list a {
   text-decoration: none;
 }
-/* line 361, ../src/temp-dev.scss */
+/* line 367, ../src/temp-dev.scss */
 .forum_list a.title {
   color: #545454;
 }
@@ -547,7 +557,7 @@
 .forum_list a.title:active {
   color: #545454;
 }
-/* line 362, ../src/temp-dev.scss */
+/* line 368, ../src/temp-dev.scss */
 .forum_list .item_actions {
   float: right;
   font-size: 10px;
@@ -559,16 +569,16 @@
   color: #afafaf;
   padding: 2px 8px;
 }
-/* line 370, ../src/temp-dev.scss */
+/* line 376, ../src/temp-dev.scss */
 .forum_list .item_actions a.highlight {
   background-color: #ffffcc;
   padding: 1px 3px;
 }
-/* line 375, ../src/temp-dev.scss */
+/* line 381, ../src/temp-dev.scss */
 .forum_list .subcounter {
   color: #afafaf;
 }
-/* line 378, ../src/temp-dev.scss */
+/* line 384, ../src/temp-dev.scss */
 .forum_list ul.base-set {
   list-style: none;
   overflow: hidden;
@@ -582,57 +592,57 @@
   list-style-type: none;
   margin-left: 0px;
 }
-/* line 383, ../src/temp-dev.scss */
+/* line 389, ../src/temp-dev.scss */
 .forum_list ul.base-set li {
   float: left;
   width: 44%;
   padding: 0px 0px 0px 30px;
   margin: 0px 3% 0px 0px;
 }
-/* line 388, ../src/temp-dev.scss */
+/* line 394, ../src/temp-dev.scss */
 .forum_list ul.base-set li h4.forum_title {
   margin: 3px 0px 0px 0px;
   padding: 6px 0px 4px 0px;
   font-size: 16px;
   position: relative;
 }
-/* line 392, ../src/temp-dev.scss */
+/* line 398, ../src/temp-dev.scss */
 .forum_list ul.base-set li h4.forum_title a {
   font-weight: normal;
 }
-/* line 397, ../src/temp-dev.scss */
+/* line 403, ../src/temp-dev.scss */
 .forum_list ul.base-set li span.icon {
   position: absolute;
   left: -34px;
   top: 2px;
-  background: url('/images/../images/embed/sprites/32square_sprite.png?1302089780') no-repeat;
+  background: url('/images/../images/embed/sprites/32square_sprite.png?1302103955') no-repeat;
   width: 32px;
   height: 32px;
   overflow: hidden;
 }
-/* line 403, ../src/temp-dev.scss */
+/* line 409, ../src/temp-dev.scss */
 .forum_list ul.base-set li span.forum_type_1 {
   background-position: 0px -192px;
 }
-/* line 407, ../src/temp-dev.scss */
+/* line 413, ../src/temp-dev.scss */
 .forum_list ul.base-set li span.forum_type_2 {
   background-position: 0px -224px;
 }
-/* line 411, ../src/temp-dev.scss */
+/* line 417, ../src/temp-dev.scss */
 .forum_list ul.base-set li span.forum_type_3 {
   background-position: 0px -160px;
 }
-/* line 415, ../src/temp-dev.scss */
+/* line 421, ../src/temp-dev.scss */
 .forum_list ul.base-set li span.forum_type_4 {
   background-position: 0px -128px;
 }
-/* line 419, ../src/temp-dev.scss */
+/* line 425, ../src/temp-dev.scss */
 .forum_list ul.base-set li .topic-list {
   padding: 6px 0px 12px 0px;
   margin-bottom: 8px;
   border-top: 1px solid #f1f1f1;
 }
-/* line 423, ../src/temp-dev.scss */
+/* line 429, ../src/temp-dev.scss */
 .forum_list ul.base-set li .topic-list a.topic {
   white-space: nowrap;
   overflow: hidden;
@@ -644,7 +654,7 @@
   padding: 5px 0px;
   font-size: 13px;
 }
-/* line 429, ../src/temp-dev.scss */
+/* line 435, ../src/temp-dev.scss */
 .forum_list ul.base-set li .topic-list a {
   color: #4d769f;
 }
@@ -660,22 +670,22 @@
 .forum_list ul.base-set li .topic-list a:active {
   color: #4d769f;
 }
-/* line 434, ../src/temp-dev.scss */
+/* line 440, ../src/temp-dev.scss */
 .forum_list ul.base-set li.odd {
   clear: left;
 }
-/* line 437, ../src/temp-dev.scss */
+/* line 443, ../src/temp-dev.scss */
 .forum_list ul.base-set li.even {
   margin-right: 0px;
   width: 46%;
 }
 
-/* line 445, ../src/temp-dev.scss */
+/* line 451, ../src/temp-dev.scss */
 .forum-group {
   margin: 0px -20px;
 }
 
-/* line 449, ../src/temp-dev.scss */
+/* line 455, ../src/temp-dev.scss */
 .list-noinfo {
   background: #f6f6f6;
   text-align: center;
@@ -688,7 +698,7 @@
   text-shadow: white -1px -1px 1px;
 }
 
-/* line 461, ../src/temp-dev.scss */
+/* line 467, ../src/temp-dev.scss */
 .caption-text {
   background: #f6f6f6;
   padding: 6px 8px 6px 50px;
@@ -697,36 +707,36 @@
   color: #999999;
 }
 
-/* line 469, ../src/temp-dev.scss */
+/* line 475, ../src/temp-dev.scss */
 .sort {
   text-align: right;
   position: relative;
   padding: 6px 40px 0px 0px;
 }
-/* line 473, ../src/temp-dev.scss */
+/* line 479, ../src/temp-dev.scss */
 .sort .sort_order {
   position: absolute;
   right: 0px;
   top: 0px;
 }
-/* line 477, ../src/temp-dev.scss */
+/* line 483, ../src/temp-dev.scss */
 .sort .sort_order .image {
   position: absolute;
   right: 0px;
   top: 0px;
   width: 32px;
   height: 32px;
-  background: url('/images/../images/embed/sprites/32square_sprite.png?1302089780') no-repeat;
+  background: url('/images/../images/embed/sprites/32square_sprite.png?1302103955') no-repeat;
   width: 32px;
   height: 32px;
   overflow: hidden;
   background-position: 0px -288px;
 }
-/* line 485, ../src/temp-dev.scss */
+/* line 491, ../src/temp-dev.scss */
 .sort .sort_order .ASC {
   background-position: 0px -256px;
 }
-/* line 488, ../src/temp-dev.scss */
+/* line 494, ../src/temp-dev.scss */
 .sort .sort_order .DESC {
   background-position: 0px -288px;
 }
