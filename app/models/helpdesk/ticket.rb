@@ -13,11 +13,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #by Shan temp
   attr_accessor :email, :custom_field ,:customizer, :nscname 
 
-  before_create :set_spam, :set_dueby, :save_ticket_states
+  before_create :set_spam, :populate_requester, :set_dueby, :save_ticket_states
   after_create :refresh_display_id, :save_custom_field, :pass_thro_biz_rules, :autoreply 
-  before_update :cache_old_model, :update_dueby 
+  before_update :cache_old_model, :update_dueby
   after_update :save_custom_field, :update_ticket_states, :notify_on_update
-  before_save  :populate_requester
   
   belongs_to :account
   belongs_to :email_config
@@ -257,20 +256,18 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
   end
   
-   
   def populate_requester #by Shan temp
-    logger.debug "requester_id is ::: #{requester_id.inspect} and email is #{email}"
-    if (requester_id.nil? && !email.nil?) || ( !requester_id.nil? &&!email.eql?(requester.email))
+    if requester_id.nil? && !email.nil?
       @requester = User.find_by_email_and_account_id(email, account_id)
       if @requester.nil?
         @requester = User.new
         @requester.account_id = account_id
         @requester.signup!({:user => {:email => self.email, :name => '', :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}})
-      end      
+      end
+      
       self.requester = @requester
     end
   end
- 
   
   def autoreply
     notify_by_email EmailNotification::NEW_TICKET #Do SPAM check.. by Shan
