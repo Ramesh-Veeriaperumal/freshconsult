@@ -14,7 +14,7 @@ class ApplicationController < ActionController::Base
   include SslRequirement
   include SubscriptionSystem
   
-  include SentientController
+  #include SentientController
   
   # See ActionController::RequestForgeryProtection for details
   # Uncomment the :secret if you're not using the cookie session store
@@ -72,9 +72,9 @@ def set_locale
 end
 
   def set_time_zone
-    #ActiveSupport::TimeZone.all
     begin
       current_account.make_current
+      User.current = current_user
       Time.zone = current_user ? current_user.time_zone : (current_account ? current_account.time_zone : Time.zone)
     rescue ActiveRecord::RecordNotFound
     end
