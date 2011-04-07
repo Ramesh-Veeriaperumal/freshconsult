@@ -305,7 +305,8 @@ class AccountsController < ApplicationController
   end
     
     def choose_layout
-      (action_name == "openid_complete" || "create_account_google") ? 'signup_google' : 'helpdesk/default'
+    	puts "Insides choose layout $$$$$$$$$$$$$$$$$$$ #{action_name}"
+      (action_name == "openid_complete" || action_name == "create_account_google") ? 'signup_google' : 'helpdesk/default'
 	end
 	
     def load_object
