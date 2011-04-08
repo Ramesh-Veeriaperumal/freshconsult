@@ -10,9 +10,7 @@ module HelpdeskControllerMethods
   
 
   def create
-   
-    if @item.save!  
-      
+    if @item.save
       post_persist
     else
       create_error
