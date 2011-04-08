@@ -53,15 +53,16 @@ def update
     logger.debug "columnId :: #{key["columnId"]}"
     logger.debug "fieldType :: #{key["fieldType"]}"
     
-    logger.debug "action action :: #{key["action"]}"
+    logger.debug "action action :: #{key["action"]}"   
         
     columnId = 0
     if key["fieldType"].eql?("custom")
       
       if key["action"].eql?("delete")     
         delete_custom_fields key["columnId"]      
-      elsif key["columnId"].eql?("")
+      elsif key["columnId"].eql?("")        
         #Add the new column
+        key["label"] = (key["label"]).gsub('?','')+"_"+current_account.id.to_s()
         columnId = save_flexi_field_entries key["label"], key["type"]
         logger.debug "columnId after saving :: #{columnId}"        
         if columnId == -1 then
@@ -69,7 +70,9 @@ def update
         end
         
         key["columnId"] = columnId
-      else
+        
+      elsif key["action"].eql?("edit")
+        key["label"] = (key["label"]).gsub('?','')+"_"+current_account.id.to_s()
         #update flexifields
         columnId = key["columnId"]
         update_flexi_field_entries columnId, key["label"], key["type"]
