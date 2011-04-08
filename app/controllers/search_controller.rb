@@ -36,7 +36,6 @@ class SearchController < ApplicationController
                                     :with => s_options,#, :star => true
                                     :classes => f_classes, :per_page => 10
       process_results
-      puts "************ search article #{@searched_articles}*******************"
       respond_to do |format|
         format.html { render :partial => '/search/search_results'  }
         format.xml  { 
