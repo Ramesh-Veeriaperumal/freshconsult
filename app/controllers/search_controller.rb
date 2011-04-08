@@ -39,8 +39,12 @@ class SearchController < ApplicationController
       respond_to do |format|
         format.html { render :partial => '/search/search_results'  }
         format.xml  { 
-        render :xml => @searched_articles.to_xml  if ['Solution::Article'].include? f_classes.first.name 
-        render :xml => @searched_topics.to_xml  if ['Topic'].include? f_classes.first.name
+        api_xml = []
+        api_xml = @searched_articles.to_xml  if ['Solution::Article'].include? f_classes.first.name and !@searched_articles.nil?
+        api_xml = @searched_topics.to_xml  if ['Topic'].include? f_classes.first.name and !@searched_topics.nil?
+        
+        render :xml => api_xml
+        
         }
       end 
            
