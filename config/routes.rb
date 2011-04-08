@@ -145,7 +145,7 @@ ActionController::Routing::Routes.draw do |map|
 
     helpdesk.resources :notes
 
-    helpdesk.resources :reminders, :member => { :restore => :put }
+    helpdesk.resources :reminders, :member => { :complete => :put, :restore => :put }
 
     helpdesk.filter_tag_tickets '/tags/:id/*filters', :controller => 'tags', :action => 'show'
     helpdesk.filter_tickets '/tickets/filter/tags', :controller => 'tags', :action => 'index'
