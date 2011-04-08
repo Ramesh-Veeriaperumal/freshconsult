@@ -13,6 +13,10 @@ require 'openid'
     @user_session = current_account.user_sessions.new
   end
   
+  def show
+    redirect_to :action => :new
+  end
+  
   def create   
     @user_session = current_account.user_sessions.new(params[:user_session])
     if @user_session.save

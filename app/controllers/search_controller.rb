@@ -19,7 +19,7 @@ class SearchController < ApplicationController
   def solutions
     @skip_title = true
     search_content [Solution::Article]
-  end
+ end
   
   def topics
     @skip_title = true
@@ -36,7 +36,15 @@ class SearchController < ApplicationController
                                     :with => s_options,#, :star => true
                                     :classes => f_classes, :per_page => 10
       process_results
-      render :partial => '/search/search_results'
+      puts "************ search article #{@searched_articles}*******************"
+      respond_to do |format|
+        format.html { render :partial => '/search/search_results'  }
+        format.xml  { 
+        render :xml => @searched_articles.to_xml  if ['Solution::Article'].include? f_classes.first.name 
+        render :xml => @searched_topics.to_xml  if ['Topic'].include? f_classes.first.name
+        }
+      end 
+           
     end
   
     def search
