@@ -12,12 +12,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   #by Shan temp
   attr_accessor :email, :custom_field ,:customizer, :nscname 
-
+  
+  before_validation :populate_requester
   before_create :set_spam, :set_dueby, :save_ticket_states
   after_create :refresh_display_id, :save_custom_field, :pass_thro_biz_rules, :autoreply 
   before_update :cache_old_model, :update_dueby
-  after_update :save_custom_field, :update_ticket_states, :notify_on_update
-  before_save :populate_requester
+  after_update :save_custom_field, :update_ticket_states, :notify_on_update 
   
   belongs_to :account
   belongs_to :email_config
@@ -117,6 +117,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #validates_presence_of :name, :source, :id_token, :access_token, :status, :source
   #validates_length_of :email, :in => 5..320, :allow_nil => false, :allow_blank => false
   #validates_presence_of :responder_id
+  validates_presence_of :requester_id
   validates_numericality_of :source, :status, :only_integer => true
   validates_numericality_of :requester_id, :responder_id, :only_integer => true, :allow_nil => true
   validates_inclusion_of :source, :in => 0..SOURCES.size-1
@@ -257,7 +258,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
   end
   
-  def populate_requester #by Shan temp
+  def populate_requester #by Shan temp  
     unless email.blank?
       if(requester_id.nil? or !email.eql?(requester.email))
         @requester = account.all_users.find_by_email(email)
