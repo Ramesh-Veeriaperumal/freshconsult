@@ -1318,13 +1318,7 @@ ul.icon_grid{
 }
 
 .assign-agent{
-	background: #f5f5f5;
-	@include corners(6px);
-	border-right:1px solid #dfdfdf;
-	border-bottom:1px solid #dfdfdf;
-	@include inset-shadows(#cfcfcf, 0px, 2px, 1px);
-	padding:10px 10px 5px 10px;
-	margin:3px 0px;
+	
 }
 
 h4.list_title{
@@ -2475,8 +2469,8 @@ a.page_title{
 
 .pagination{
 	padding:8px 10px; 
+	margin:0px -20px;
 	background:#efefef;
-	@include corners(6px);
 	a{
 		@include link-colors(#336699, #333333, #336699, #336699);
 		font-weight:bold;

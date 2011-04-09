@@ -117,7 +117,7 @@
   -moz-border-radius: 6px 6px 6px 6px;
   -webkit-border-radius: 6px 6px 6px 6px;
   border-radius: 6px 6px 6px 6px;
-  background: url('/images/../images/embed/sprites/16square_sprite.png?1302189722') no-repeat;
+  background: url('/images/../images/embed/sprites/16square_sprite.png?1302240294') no-repeat;
   width: 16px;
   height: 16px;
   overflow: hidden;
@@ -487,37 +487,36 @@ div.addReminder form label.overlabel {
   background-color: #f8f8f8;
   background-repeat: repeat-x;
   background-position: bottom;
-  border-top: 1px solid #dfdfdf;
-  border-bottom: 1px solid #cfcfcf;
+  border: 1px solid #dfdfdf;
+  border-width: 1px 0px;
 }
 
 /* line 329, ../src/temp-dev.scss */
 .tickets, .tickets-expanded {
   width: 100%;
-  border-bottom-color: #efefef;
   color: #5f5f5f;
 }
-/* line 334, ../src/temp-dev.scss */
+/* line 332, ../src/temp-dev.scss */
 .tickets th, .tickets-expanded th {
   background: none;
   padding: 6px 6px 5px 6px;
 }
-/* line 338, ../src/temp-dev.scss */
+/* line 336, ../src/temp-dev.scss */
 .tickets td, .tickets th, .tickets-expanded td, .tickets-expanded th {
   vertical-align: top;
   border-bottom: 1px solid #efefef;
 }
-/* line 342, ../src/temp-dev.scss */
+/* line 340, ../src/temp-dev.scss */
 .tickets td, .tickets-expanded td {
   padding: 10px 8px 10px 10px;
   background-color: #ffffff;
 }
-/* line 345, ../src/temp-dev.scss */
+/* line 343, ../src/temp-dev.scss */
 .tickets td a, .tickets-expanded td a {
   text-decoration: none;
   color: #5a8ec1;
 }
-/* line 350, ../src/temp-dev.scss */
+/* line 348, ../src/temp-dev.scss */
 .tickets tr:hover td, .tickets tr.active td, .tickets-expanded tr:hover td, .tickets-expanded tr.active td {
   background-color: #f4f4f4;
   background-image: url(../images/overlay-top-shadow.png);
@@ -525,39 +524,39 @@ div.addReminder form label.overlabel {
   border-bottom: 1px solid #dfdfdf;
   background-repeat: repeat-x;
 }
-/* line 357, ../src/temp-dev.scss */
+/* line 355, ../src/temp-dev.scss */
 .tickets .check, .tickets-expanded .check {
   width: 25px;
   padding-left: 8px;
   padding-top: 12px;
   text-align: right;
 }
-/* line 363, ../src/temp-dev.scss */
+/* line 361, ../src/temp-dev.scss */
 .tickets th.check, .tickets-expanded th.check {
   padding-top: 10px;
 }
-/* line 367, ../src/temp-dev.scss */
+/* line 365, ../src/temp-dev.scss */
 .tickets .name, .tickets-expanded .name {
   width: 55%;
   padding-left: 57px;
 }
-/* line 370, ../src/temp-dev.scss */
+/* line 368, ../src/temp-dev.scss */
 .tickets .name .preview_pic, .tickets-expanded .name .preview_pic {
   margin: 0px;
   margin-top: 2px;
   margin-left: -53px;
 }
-/* line 374, ../src/temp-dev.scss */
+/* line 372, ../src/temp-dev.scss */
 .tickets .name .preview_pic img, .tickets-expanded .name .preview_pic img {
   padding: 2px;
   width: 36px;
   height: 36px;
 }
-/* line 379, ../src/temp-dev.scss */
+/* line 377, ../src/temp-dev.scss */
 .tickets .name h3, .tickets-expanded .name h3 {
   padding: 0px 0px 4px 0px;
 }
-/* line 381, ../src/temp-dev.scss */
+/* line 379, ../src/temp-dev.scss */
 .tickets .name h3 a, .tickets-expanded .name h3 a {
   text-transform: capitalize;
   font-size: 1.06em;
@@ -565,15 +564,15 @@ div.addReminder form label.overlabel {
   display: block;
   color: #444444;
 }
-/* line 388, ../src/temp-dev.scss */
+/* line 386, ../src/temp-dev.scss */
 .tickets .name h3 a:hover, .tickets-expanded .name h3 a:hover {
   color: #000000;
 }
-/* line 392, ../src/temp-dev.scss */
+/* line 390, ../src/temp-dev.scss */
 .tickets .name div, .tickets-expanded .name div {
   color: #888888;
 }
-/* line 397, ../src/temp-dev.scss */
+/* line 395, ../src/temp-dev.scss */
 .tickets .assign ul, .tickets-expanded .assign ul {
   margin: 0;
   padding: 0;
@@ -598,52 +597,52 @@ div.addReminder form label.overlabel {
 .tickets .assign ul li, .tickets-expanded .assign ul li {
   *display: inline;
 }
-/* line 399, ../src/temp-dev.scss */
+/* line 397, ../src/temp-dev.scss */
 .tickets .assign ul li, .tickets-expanded .assign ul li {
   padding: 4px 7px 0px 0px;
   color: #999999;
   font-size: 12px;
 }
-/* line 403, ../src/temp-dev.scss */
+/* line 401, ../src/temp-dev.scss */
 .tickets .assign ul li span, .tickets-expanded .assign ul li span {
   color: #444444;
   text-transform: capitalize;
 }
-/* line 410, ../src/temp-dev.scss */
+/* line 408, ../src/temp-dev.scss */
 .tickets .assign ul .priority span.style_1, .tickets-expanded .assign ul .priority span.style_1 {
   /* Low priority style */
   color: #666666;
 }
-/* line 413, ../src/temp-dev.scss */
+/* line 411, ../src/temp-dev.scss */
 .tickets .assign ul .priority span.style_2, .tickets-expanded .assign ul .priority span.style_2 {
   /* Medium priority style */
   color: #cc6633;
 }
-/* line 416, ../src/temp-dev.scss */
+/* line 414, ../src/temp-dev.scss */
 .tickets .assign ul .priority span.style_3, .tickets-expanded .assign ul .priority span.style_3 {
   /* High priority style */
   color: #cc6633;
 }
-/* line 419, ../src/temp-dev.scss */
+/* line 417, ../src/temp-dev.scss */
 .tickets .assign ul .priority span.style_4, .tickets-expanded .assign ul .priority span.style_4 {
   /* Urgent priority style */
   color: #cc6633;
 }
-/* line 425, ../src/temp-dev.scss */
+/* line 423, ../src/temp-dev.scss */
 .tickets .sla, .tickets-expanded .sla {
   vertical-align: top;
   text-align: right;
   font-size: 11px;
 }
 
-/* line 432, ../src/temp-dev.scss */
+/* line 430, ../src/temp-dev.scss */
 .conversation-sprite {
   position: relative;
   display: inline;
   margin-bottom: -30px;
   float: right;
 }
-/* line 437, ../src/temp-dev.scss */
+/* line 435, ../src/temp-dev.scss */
 .conversation-sprite .image {
   float: right;
   content: "";
@@ -655,28 +654,28 @@ div.addReminder form label.overlabel {
   height: 32px;
   overflow: hidden;
 }
-/* line 445, ../src/temp-dev.scss */
+/* line 443, ../src/temp-dev.scss */
 .conversation-sprite .email-reply {
   background-position: 0px 0px;
 }
-/* line 448, ../src/temp-dev.scss */
+/* line 446, ../src/temp-dev.scss */
 .conversation-sprite .email-receive {
   background-position: 0px -32px;
 }
-/* line 451, ../src/temp-dev.scss */
+/* line 449, ../src/temp-dev.scss */
 .conversation-sprite .note-public {
   background-position: 0px -64px;
 }
-/* line 454, ../src/temp-dev.scss */
+/* line 452, ../src/temp-dev.scss */
 .conversation-sprite .note-private {
   background-position: 0px -96px;
 }
 
-/* line 460, ../src/temp-dev.scss */
+/* line 458, ../src/temp-dev.scss */
 .contact-box {
   padding-left: 170px;
 }
-/* line 462, ../src/temp-dev.scss */
+/* line 460, ../src/temp-dev.scss */
 .contact-box div.profile_pic {
   float: left;
   margin-left: -150px;
@@ -684,13 +683,13 @@ div.addReminder form label.overlabel {
   margin-top: 5px;
   text-align: center;
 }
-/* line 469, ../src/temp-dev.scss */
+/* line 467, ../src/temp-dev.scss */
 .contact-box .info-highlight {
   margin: 8px 0px 0px -170px;
   padding-left: 165px;
 }
 
-/* line 475, ../src/temp-dev.scss */
+/* line 473, ../src/temp-dev.scss */
 .info-highlight {
   font-size: 13px;
   margin: 0px 0px 0px 0px;
@@ -699,20 +698,20 @@ div.addReminder form label.overlabel {
   border: 1px solid #f4f4e9;
   background-color: #fffbee;
 }
-/* line 482, ../src/temp-dev.scss */
+/* line 480, ../src/temp-dev.scss */
 .info-highlight div {
   padding: 6px;
 }
 
-/* line 488, ../src/temp-dev.scss */
+/* line 486, ../src/temp-dev.scss */
 .forum_list {
   margin: 0px 0px;
 }
-/* line 490, ../src/temp-dev.scss */
+/* line 488, ../src/temp-dev.scss */
 .forum_list a {
   text-decoration: none;
 }
-/* line 491, ../src/temp-dev.scss */
+/* line 489, ../src/temp-dev.scss */
 .forum_list a.title {
   color: #545454;
 }
@@ -728,7 +727,7 @@ div.addReminder form label.overlabel {
 .forum_list a.title:active {
   color: #545454;
 }
-/* line 492, ../src/temp-dev.scss */
+/* line 490, ../src/temp-dev.scss */
 .forum_list .item_actions {
   float: right;
   font-size: 10px;
@@ -740,16 +739,16 @@ div.addReminder form label.overlabel {
   color: #afafaf;
   padding: 2px 8px;
 }
-/* line 500, ../src/temp-dev.scss */
+/* line 498, ../src/temp-dev.scss */
 .forum_list .item_actions a.highlight {
   background-color: #ffffcc;
   padding: 1px 3px;
 }
-/* line 505, ../src/temp-dev.scss */
+/* line 503, ../src/temp-dev.scss */
 .forum_list .subcounter {
   color: #afafaf;
 }
-/* line 508, ../src/temp-dev.scss */
+/* line 506, ../src/temp-dev.scss */
 .forum_list ul.base-set {
   list-style: none;
   overflow: hidden;
@@ -763,25 +762,25 @@ div.addReminder form label.overlabel {
   list-style-type: none;
   margin-left: 0px;
 }
-/* line 513, ../src/temp-dev.scss */
+/* line 511, ../src/temp-dev.scss */
 .forum_list ul.base-set li {
   float: left;
   width: 44%;
   padding: 0px 0px 0px 30px;
   margin: 0px 3% 0px 0px;
 }
-/* line 518, ../src/temp-dev.scss */
+/* line 516, ../src/temp-dev.scss */
 .forum_list ul.base-set li h4.forum_title {
   margin: 3px 0px 0px 0px;
   padding: 6px 0px 4px 0px;
   font-size: 16px;
   position: relative;
 }
-/* line 522, ../src/temp-dev.scss */
+/* line 520, ../src/temp-dev.scss */
 .forum_list ul.base-set li h4.forum_title a {
   font-weight: normal;
 }
-/* line 527, ../src/temp-dev.scss */
+/* line 525, ../src/temp-dev.scss */
 .forum_list ul.base-set li span.icon {
   position: absolute;
   left: -34px;
@@ -791,29 +790,29 @@ div.addReminder form label.overlabel {
   height: 32px;
   overflow: hidden;
 }
-/* line 533, ../src/temp-dev.scss */
+/* line 531, ../src/temp-dev.scss */
 .forum_list ul.base-set li span.forum_type_1 {
   background-position: 0px -192px;
 }
-/* line 537, ../src/temp-dev.scss */
+/* line 535, ../src/temp-dev.scss */
 .forum_list ul.base-set li span.forum_type_2 {
   background-position: 0px -224px;
 }
-/* line 541, ../src/temp-dev.scss */
+/* line 539, ../src/temp-dev.scss */
 .forum_list ul.base-set li span.forum_type_3 {
   background-position: 0px -160px;
 }
-/* line 545, ../src/temp-dev.scss */
+/* line 543, ../src/temp-dev.scss */
 .forum_list ul.base-set li span.forum_type_4 {
   background-position: 0px -128px;
 }
-/* line 549, ../src/temp-dev.scss */
+/* line 547, ../src/temp-dev.scss */
 .forum_list ul.base-set li .topic-list {
   padding: 6px 0px 12px 0px;
   margin-bottom: 8px;
   border-top: 1px solid #f1f1f1;
 }
-/* line 553, ../src/temp-dev.scss */
+/* line 551, ../src/temp-dev.scss */
 .forum_list ul.base-set li .topic-list a.topic {
   white-space: nowrap;
   overflow: hidden;
@@ -825,7 +824,7 @@ div.addReminder form label.overlabel {
   padding: 5px 0px;
   font-size: 13px;
 }
-/* line 559, ../src/temp-dev.scss */
+/* line 557, ../src/temp-dev.scss */
 .forum_list ul.base-set li .topic-list a {
   color: #4d769f;
 }
@@ -841,35 +840,31 @@ div.addReminder form label.overlabel {
 .forum_list ul.base-set li .topic-list a:active {
   color: #4d769f;
 }
-/* line 564, ../src/temp-dev.scss */
+/* line 562, ../src/temp-dev.scss */
 .forum_list ul.base-set li.odd {
   clear: left;
 }
-/* line 567, ../src/temp-dev.scss */
+/* line 565, ../src/temp-dev.scss */
 .forum_list ul.base-set li.even {
   margin-right: 0px;
   width: 46%;
 }
 
-/* line 575, ../src/temp-dev.scss */
+/* line 573, ../src/temp-dev.scss */
 .forum-group {
   margin: 0px -20px;
 }
 
-/* line 579, ../src/temp-dev.scss */
+/* line 577, ../src/temp-dev.scss */
 .list-noinfo {
-  background: #f6f6f6;
-  text-align: center;
-  padding: 2em 0 2em 0;
-  margin: 3px 3px -11px 3px;
-  height: 300px;
-  font-size: 1.6em;
+  padding: 10px 20px;
+  font-size: 1.1em;
   font-weight: bold;
   color: #666666;
   text-shadow: white -1px -1px 1px;
 }
 
-/* line 591, ../src/temp-dev.scss */
+/* line 585, ../src/temp-dev.scss */
 .caption-text {
   background: #f6f6f6;
   padding: 6px 8px 6px 50px;
@@ -878,19 +873,19 @@ div.addReminder form label.overlabel {
   color: #999999;
 }
 
-/* line 599, ../src/temp-dev.scss */
+/* line 593, ../src/temp-dev.scss */
 .sort {
   text-align: right;
   position: relative;
   padding: 6px 40px 0px 0px;
 }
-/* line 603, ../src/temp-dev.scss */
+/* line 597, ../src/temp-dev.scss */
 .sort .sort_order {
   position: absolute;
   right: 0px;
   top: 0px;
 }
-/* line 607, ../src/temp-dev.scss */
+/* line 601, ../src/temp-dev.scss */
 .sort .sort_order .image {
   position: absolute;
   right: 0px;
@@ -903,11 +898,11 @@ div.addReminder form label.overlabel {
   overflow: hidden;
   background-position: 0px -288px;
 }
-/* line 615, ../src/temp-dev.scss */
+/* line 609, ../src/temp-dev.scss */
 .sort .sort_order .ASC {
   background-position: 0px -256px;
 }
-/* line 618, ../src/temp-dev.scss */
+/* line 612, ../src/temp-dev.scss */
 .sort .sort_order .DESC {
   background-position: 0px -288px;
 }

@@ -15,16 +15,16 @@
 		.reminders:before { border-color:<%= $background %> <%= $background %> #734e3d #734e3d; }
 		
 		/* Header color */
-		.header { background: <%= $header_color %>; }
-		.brand h3, .header_links, .header_links a { color: <%= $header_ctxt_color %>;}
+		.header, .ui-widget-header  { background-color: <%= $header_color %>; }
+		.brand h3, .header_links, .header_links a, .ui-widget-header  { color: <%= $header_ctxt_color %>;}
 		 
 		/* Tab color settings */
 		.top_nav_bg { background: <%= $tab_color %>; }
 		ul.tabs li.active a, ul.tabs li.active a:hover { background: <%= $background %>; color:<%= $bg_ctxt_color %>; }
-		ul.tabs li a { color: <%= $tab_ctxt_color %>; }
+		ul.tabs li a  { color: <%= $tab_ctxt_color %>; }
 		ul.tabs li a:hover { background: <%= process_color($tab_color) %>;  color: <%= $tab_ctxt_color %>; }
 		
-		.uiButton:hover, .fdbutton:hover, .forum_button:hover {
+		.uiButton:hover, .fdbutton:hover, .forum_button:hover, .ui-state-hover, .ui-widget-content .ui-state-hover, .ui-widget-header .ui-state-hover, .ui-state-focus, .ui-widget-content .ui-state-focus, .ui-widget-header .ui-state-focus  {
 			 background-color:<%= $tab_color %>; 
 			 border-color: <%= process_color($tab_color, 0.2, 1) %>;  
 			 color: <%= $tab_ctxt_color %>; 

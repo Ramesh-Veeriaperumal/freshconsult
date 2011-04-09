@@ -138,9 +138,11 @@ div.bg_pulp{
 
 .info_data, .info-data{
 	color:#888888;
-	font-size:11px;
+
 	padding-bottom:6px;
 } 
+
+
 
 body {
 	h1, h2, h3, h4, h5{
@@ -172,7 +174,7 @@ body {
 	.logo{
 		@include clearfix; 
 		float:left;
-		margin:0px 5px 0px; 
+		margin:0px 0px 0px 5px; 
 	}
 	img, h3{
 		float:left;
@@ -192,7 +194,7 @@ body {
 .header_links{
 	float:right;
 	text-align:right;
-	height:60px;
+	height:$header_height;
 	margin:0px 12px;
 	color:#ffffff;
 	font-size:12px;		 
