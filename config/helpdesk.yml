@@ -108,6 +108,7 @@ EMAIL:
         
         staging:
             <<: *common
+            domain: freshpo.com
             
 
 # This determines whether or not incoming support requests are automatically

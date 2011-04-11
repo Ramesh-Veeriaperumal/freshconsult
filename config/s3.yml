@@ -7,6 +7,10 @@ development:
   <<: *common
   bucket: cdn.freshdesk.com
 
+staging:
+  <<: *common
+  bucket: cdn.freshdesk.com
+
 test:
   <<: *common
   bucket: fdesk-testbed
