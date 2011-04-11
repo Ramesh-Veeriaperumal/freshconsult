@@ -2,7 +2,7 @@ module SubscriptionSystem
 
   # Set up some stuff for ApplicationController
   def self.included(base)
-    base.send :before_filter, :login_required
+    #base.send :before_filter, :login_required
     base.send :before_filter, :set_affiliate_cookie
     base.send :helper_method, :current_account, :admin?, :admin_subdomain?
     base.send :filter_parameter_logging, :password, :creditcard

@@ -3,6 +3,10 @@ module AuthenticationSystem
   def self.included(base)
     base.helper_method :current_user_session, :current_user
   end
+  
+  #### Need to remove this method - kiran
+  def update_last_seen_at
+  end
 
   private
     def current_user_session
@@ -22,7 +26,6 @@ module AuthenticationSystem
     end
   
     def require_user
-      puts "****************************************************************current_user_session"
       unless authorized?
         respond_to do |wants|
           wants.html do
