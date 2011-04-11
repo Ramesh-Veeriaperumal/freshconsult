@@ -7,6 +7,7 @@ HOST:
     development:    "localhost:3000"
     test:           "localhost:3000"
     production:     "freshdesk.com"
+    staging:        "freshpo.com"
 
 
 # This is the title staff members will see when they are using the helpdesk application
@@ -55,7 +56,7 @@ USER_FACING_TITLE: FreshDesk
 #
 
 
-EMAIL:
+EMAIL: 
 
     # This will be the reply_to address in all outgoing email
     from: support@freshdesk.com
@@ -64,16 +65,18 @@ EMAIL:
     reply_subject: "Your support request"
     
     # Email settings for pop/imap fetching
-    incoming:
+    incoming: &common
+        type: imap
+        server: imap.gmail.com
+        port: 993
+        ssl: true
+        use_login: true
+        username: support@freshdesk.com
+        password: opmanager123
+        processed_folder: fdver2m
+        
         development:
-            type: imap
-            server: imap.gmail.com
-            port: 993
-            ssl: true
-            use_login: true
-            username: support@freshdesk.com
-            password: opmanager123
-            processed_folder: fdver2m
+            <<: *common
         
         test:
             type: pop
@@ -82,34 +85,29 @@ EMAIL:
             password: password
         
         production:
-            type: imap
-            server: imap.gmail.com
-            port: 993
-            ssl: true
-            use_login: true
-            username: support@freshdesk.com
-            password: opmanager123
-            processed_folder: fdver2m
+            <<: *common
+        
+        staging:
+            <<: *common
 
     # Email settings for sending mail
-    outgoing:
+    outgoing: &common
+        #tls: true
+        address: smtp.sendgrid.net
+        port: 25
+        domain: freshdesk.com
+        authentication: :plain
+        user_name: girish@freshdesk.com
+        password: opmanager123
+        
         development:
-            #tls: true
-            address: smtp.sendgrid.net
-            port: 25
-            domain: freshdesk.com
-            authentication: :plain
-            user_name: girish@freshdesk.com
-            password: opmanager123
+            <<: *common
             
         production:
-            #tls: true
-            address: smtp.sendgrid.net
-            port: 25
-            domain: freshdesk.com
-            authentication: :plain
-            user_name: girish@freshdesk.com
-            password: opmanager123
+            <<: *common
+        
+        staging:
+            <<: *common
             
 
 # This determines whether or not incoming support requests are automatically
