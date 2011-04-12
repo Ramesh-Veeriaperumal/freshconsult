@@ -12,7 +12,6 @@ gem "tzinfo"
 gem "ruby-debug", "0.10.3"
 
 gem "ruby-openid", "2.1.8", :require => "openid"
-gem "rack-openid", "1.2.0", :require => "rack/openid"
 gem "ruby-openid-apps-discovery", "1.2.0"
 
 gem "aws-s3", "0.6.2", :require => "aws/s3"
