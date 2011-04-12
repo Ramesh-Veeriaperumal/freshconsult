@@ -1,7 +1,7 @@
 module AuthenticationSystem
   
   def self.included(base)
-    base.helper_method :current_user_session, :current_user
+    base.helper_method :current_user_session, :current_user, :logged_in?
   end
   
   #### Need to remove this method - kiran
