@@ -34,8 +34,10 @@ require 'openid'
     redirect_to root_url
   end
   
-  def google_auth       
-    return_url = url_for('http://login.freshdesk.com/authdone/google?domain='+params[:domain]) 
+  def google_auth
+    base_domain = AppConfig['base_domain'][RAILS_ENV]
+    logger.debug "base domain is #{base_domain}"
+    return_url = url_for('http://login.'+base_domain+'/authdone/google?domain='+params[:domain]) 
     domain_name = params[:domain] 
     logger.debug "domain name is :: #{domain_name}"
     url = nil    
