@@ -65,50 +65,49 @@ EMAIL:
     reply_subject: "Your support request"
     
     # Email settings for pop/imap fetching
-    incoming: &common
-        type: imap
-        server: imap.gmail.com
-        port: 993
-        ssl: true
-        use_login: true
-        username: support@freshdesk.com
-        password: opmanager123
-        processed_folder: fdver2m
-        
+    incoming: 
+        defaults: &defaults
+          type: imap
+          server: imap.gmail.com
+          port: 993
+          ssl: true
+          use_login: true
+          username: support@freshdesk.com
+          password: opmanager123
+          processed_folder: fdver2m
+          
         development:
-            <<: *common
-        
+          <<: *defaults
+        production:
+          <<: *defaults
+        staging:
+          <<: *defaults
         test:
-            type: pop
-            server: localhost
-            username: username
-            password: password
-        
-        production:
-            <<: *common
-        
-        staging:
-            <<: *common
-
+          type: pop
+          server: localhost
+          username: username
+          password: password
+          
+          
+          
     # Email settings for sending mail
-    outgoing: &common
-        #tls: true
-        address: smtp.sendgrid.net
-        port: 25
-        domain: freshdesk.com
-        authentication: :plain
-        user_name: girish@freshdesk.com
-        password: opmanager123
-        
+    outgoing: 
+        defaults: &defaults
+          address: smtp.sendgrid.net
+          port: 25
+          domain: freshdesk.com
+          authentication: :plain
+          user_name: girish@freshdesk.com
+          password: opmanager123
+          
         development:
-            <<: *common
-            
+          <<: *defaults
         production:
-            <<: *common
-        
+          <<: *defaults
         staging:
-            <<: *common
-            domain: freshpo.com
+          <<: *defaults
+          domain: freshpo.com        
+          
             
 
 # This determines whether or not incoming support requests are automatically
