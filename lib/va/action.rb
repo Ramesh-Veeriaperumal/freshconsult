@@ -85,8 +85,8 @@ class Va::Action
 
     def send_email_to_requester(act_on)
       Helpdesk::TicketNotifier.send_later(:deliver_email_to_requester, 
-                                          act_on, 
-                                          Liquid::Template.parse(act_hash[:email_body]).render('ticket' => act_on))
+                act_on, Liquid::Template.parse(act_hash[:email_body]).render('ticket' => act_on, 
+                              'helpdesk_name' => act_on.account.helpdesk_name))
       add_activity("Sent an email to the requester")
     end
     
@@ -119,9 +119,8 @@ class Va::Action
 
     def send_internal_email(act_on, receipients)
       Helpdesk::TicketNotifier.send_later(:deliver_internal_email, 
-                                          act_on, 
-                                          receipients, 
-                                          Liquid::Template.parse(act_hash[:email_body]).render('ticket' => act_on))
+                act_on, receipients, Liquid::Template.parse(act_hash[:email_body]).render('ticket' => act_on, 
+                                            'helpdesk_name' => act_on.account.helpdesk_name))
     end
 
 end
