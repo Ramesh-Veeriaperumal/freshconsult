@@ -691,9 +691,16 @@ body h5{
 		}
 		
 		span.ltSlant{
-			left:-8px;
-			top:0px;
-			border-width:7px;
+			display:none;
+			position:absolute;
+			font-size:0px;
+			line-height:0px;
+			width:0px;
+			height:0px;
+			left:-9px;
+			top:-1px;
+			border:4px solid white;
+			border-right-color:#d3d497;
 			border-bottom-color:#d3d497;
 		}
 	}
@@ -782,9 +789,12 @@ body h5{
 	padding:0px 0px 0px 0px;
 	.local_activities{
 		a{
-			display:block;
 			font-weight:bold;
 			@include link-colors(#527EAA, #527EAA, #527EAA, #527EAA, #527EAA);
+		}
+		.activity_time{
+			color:#999999;
+			padding:3px 0px;
 		}
 	}
 	
@@ -1462,30 +1472,6 @@ h4.list_title{
 	} 
 }
 
-
-.dialog-ticketfield{
-	.uniForm{
-		.caption{
-			font-size:12px; 
-			font-weight:bold;
-			margin-bottom:6px;
-		}
-		label{
-			margin:0px;
-		}
-		fieldset{
-			margin-top:4px;
-			margin-bottom:10px;
-		}
-		.info-data{
-			padding:3px 8px 2px 16px;
-			display:block;
-		}
-	} 
-}
-
-
-
 .alpha_sort_list{ 
 	@include clearfix;
 	list-style:none;
@@ -1620,17 +1606,6 @@ h4.list_title{
 		 	left:8px;
 		 	top:10px;
 		 }
-		 span.sort_handle{
-			position:relative;
-			float:left;
-			left:0px;
-			top:1px;
-			width:25px;
-			height:25px;
-			cursor:move;
-			background:url(/images/sort_handle.gif) no-repeat;
-			@include corners(5px);
-		}
 	}
 	li:hover{
 		background:lighten(#f1f1f1, 2%);  
@@ -1640,6 +1615,17 @@ h4.list_title{
 	} 
 }
  
+span.sort_handle{
+			position:relative;
+			float:left;
+			left:0px;
+			top:1px;
+			width:25px;
+			height:25px;
+			cursor:move;
+			background:url(/images/sort_handle.gif) no-repeat;
+			@include corners(5px);
+}
 
 .deactivated{
 	li{
@@ -2600,16 +2586,6 @@ a.page_title{
 
 .text_red{
 	color:#ff0000 !important;
-}
-
-div.color{
-	input{
-		width:220px;
-		border:1px solid #afafaf;
-	}
-	span{
-		display:inline;
-	}
 }
 
 .private{

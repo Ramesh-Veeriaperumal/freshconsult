@@ -28,7 +28,8 @@
     		<%= f.text_area :body, { :class => 'auto-expand required', :id => "#{id}-#{cntid}-body" , :value => @signature} %>
     	</li>
 		
-		<% unless @ticket.ticket_topic.nil? %>
+		
+		<% if !@ticket.ticket_topic.nil? and !(@ticket.ticket_topic.topic.locked) %>
 		<li datafor="posts">
 			<label>
 				<%=check_box_tag :post_forums%> Post in linked forum

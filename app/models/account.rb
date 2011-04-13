@@ -141,7 +141,7 @@ class Account < ActiveRecord::Base
   
   def domain=(domain)
     @domain = domain
-    self.full_domain = "#{domain}.#{AppConfig['base_domain']}"
+    self.full_domain = "#{domain}.#{AppConfig['base_domain'][RAILS_ENV]}"
   end
   
   def default_email

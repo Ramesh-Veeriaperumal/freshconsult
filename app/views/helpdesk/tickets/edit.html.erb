@@ -1,7 +1,4 @@
-<% content_for :layoutType do -%>single<%- end %>
-<div class="header_area">
-	<h3 class="title"><%=t('ticket.edit')%> "<%= h(@item.subject) %> (#<%= h(@item.display_id) %>)" </h3>
-</div>
-<div class="page_area fixedWidth">
-	<%= render :partial => "ticket_form", :locals => {:type => "edit"} %>
-</div> 
+<% content_for :sidebar do -%><%- end %>
+<h3 class="title"><%=t('ticket.edit')%> <span class="info-data"> (#<%= h(@item.display_id) %>) </span></h3>
+<%= render :partial => "ticket_form", :locals => {:type => "edit"} %>
+ 

@@ -34,13 +34,26 @@ require 'openid'
     redirect_to root_url
   end
   
-  def google_auth       
-    return_url = url_for('http://login.freshdesk.com/authdone/google?domain='+params[:domain]) 
+  
+  
+  def google_auth
+    base_domain = AppConfig['base_domain'][RAILS_ENV]
     domain_name = params[:domain] 
+    logger.debug "base domain is #{base_domain}"
+    full_domain  = "#{domain_name.split('.').first}.#{AppConfig['base_domain'][RAILS_ENV]}"
+    @current_account = Account.find_by_full_domain(full_domain)
+    cust_url = @current_account.full_domain unless @current_account.blank?
+    return :back if @current_account.blank?
+    ##Need to handle the case where google is integrated with a seperate domain-- 2 times we need to authenticate
+    return_url = "http://"+cust_url+"/authdone/google?domain="+params[:domain] 
+    logger.debug "the return_url is :: #{return_url}"
+    
+    re_alm = "http://*."+base_domain
+    
     logger.debug "domain name is :: #{domain_name}"
     url = nil    
     url = ("https://www.google.com/accounts/o8/site-xrds?hd=" + params[:domain]) unless domain_name.blank?
-    authenticate_with_open_id(url,{ :required => ["http://axschema.org/contact/email", :email] , :return_to => return_url}) do |result, identity_url, registration|
+    authenticate_with_open_id(url,{ :required => ["http://axschema.org/contact/email", :email] , :return_to => return_url, :trust_root =>re_alm}) do |result, identity_url, registration|
       
     end  
   end
@@ -50,19 +63,21 @@ require 'openid'
   def google_auth_completed
     
   resp = request.env[Rack::OpenID::RESPONSE]
-  email = get_email resp
-  domain_name = params[:domain]
-  full_domain  = "#{domain_name.split('.').first}.#{AppConfig['base_domain']}"
-  @current_account = Account.find_by_full_domain(full_domain)  
+  logger.debug "The response is :: #{resp.inspect}"
+  email = get_email resp  
+  domain_name = params[:domain]    
+  full_domain  = "#{domain_name.split('.').first}.#{AppConfig['base_domain'][RAILS_ENV]}"
+  @current_account = Account.find_by_full_domain(full_domain)   
   @current_user = @current_account.users.find_by_email(email)  unless  @current_account.blank?
   @current_user = create_user(email,@current_account) if (@current_user.blank? && !@current_account.blank?)
   @current_user = User.find_by_email(email) if @current_account.blank?  
   return :back if @current_user.blank?
-  @current_user.email = email 
-  @user_session = @current_user.account.user_sessions.create(@current_user)
-  if @user_session.save      
-      flash[:notice] = "Login successful!"
-      redirect_back_or_default(@current_user.account.full_domain)
+  @current_user.email = email   
+  @user_session = @current_user.account.user_sessions.new(@current_user)  
+  if @user_session.save
+      logger.debug " @user session has been saved :: #{@user_session.inspect}"
+      flash[:notice] = "Login successful!"      
+      redirect_back_or_default('/')      
   else
       note_failed_login
       render :action => :new
@@ -89,6 +104,7 @@ def get_email(resp)
 end
 
  def create_user(email, account)
+   logger.debug "create user has beeen called ::"
       @contact = account.users.new
       @contact.email = email
       @contact.user_role = User::USER_ROLES_KEYS_BY_TOKEN[:customer]

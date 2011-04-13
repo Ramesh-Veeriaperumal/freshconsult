@@ -20,6 +20,14 @@
 		 
 		/* Tab color settings */
 		.top_nav_bg { background: <%= $tab_color %>; }
+		
+		input:focus, textarea:focus{ border-color: <%= $tab_color %> !important; }
+		input:focus, select:focus, textarea:focus{ 
+			  -moz-box-shadow: <%= $tab_color %> 0 0 3px;
+			  -webkit-box-shadow: <%= $tab_color %> 0 0 3px;
+			  box-shadow: <%= $tab_color %> 0 0 3px;
+		}
+		
 		ul.tabs li.active a, ul.tabs li.active a:hover { background: <%= $background %>; color:<%= $bg_ctxt_color %>; }
 		ul.tabs li a  { color: <%= $tab_ctxt_color %>; }
 		ul.tabs li a:hover { background: <%= process_color($tab_color) %>;  color: <%= $tab_ctxt_color %>; }

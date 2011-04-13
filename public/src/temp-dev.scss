@@ -4,8 +4,8 @@
 .reminders:before {
    content:"";
    position:absolute;
-   top:-3px;
-   right:-3px;
+   top:-2px;
+   right:-2px;
    border-width:0 16px 16px 0;
    border-style:solid;
    border-color:$background $background #734e3d #734e3d;
@@ -16,6 +16,8 @@
    -webkit-border-bottom-left-radius:5px;
    -moz-border-radius:0 0 0 5px;
    border-radius:0 0 0 5px;
+   height:0px;
+   font-size:0px;
 }
 
 .reminders{
@@ -54,6 +56,7 @@
 				color:#734e3d; 
 				margin-left:5px;
 				line-height:18px;	
+				padding-top:0px;
 				display:block;
 			}
 			a.request_link{
@@ -117,6 +120,7 @@ div.addReminder{
 		}
 		label.overlabel{
 			margin:2px 5px 4px 10px;
+			padding:0px;
 			font-size:14px;
 			color:#ab9485;
 		}

@@ -4,41 +4,73 @@
 /* generic form styles */
 
 label{
-    display: block;
-    font-size: 12px;
+    display: block; 
     color: #666;
+	padding:6px 0px 3px 0px;
+	font-size:1.4em;
 }
 
-input[type=text], select, input.text {
-    margin: 0;
-    padding: 0;
-    font-size: 14px;
-    color: #333;
-    padding: 2px;
-    margin-bottom: 5px;
-    margin-top: 0;
+input[type=text], select, input.text { 
     width: 96%;
+	margin:0px 0px 3px 0px;
+	color:#3f3f3f;
+	padding:3px;
+	font-size:1.6em;
 }
 
+input.text, input[type=text], textarea{
+	border:1px solid #cfcfcf;
+	font-weight:400;
+}
+
+div.color{
+	input{
+		width:220px;
+		font-size:1em;
+		border:1px solid #afafaf;
+	}
+	span{
+		display:inline;
+	}
+}
+
+textarea{  
+	overflow:auto;
+	font-size:1.0em;
+	line-height:1.4em;
+	resize:false;
+	padding:3px;
+}
+
+input.very_small{
+	width:200px;
+}
+
+textarea.smallpara{
+	height:50px;
+}
+	
+input:focus, textarea:focus{ border-color:$tab_color !important; }
+input:focus, select:focus, textarea:focus{ @include shadows($tab_color, 0, 0, 3px);}
+
+#header_search{
+	border:0px;
+}
 
 input.disabled, select.disabled, textarea.disabled{
-	background-color:#F0F0F0;
-	color:#777777 !important; 
-	padding:4px !important;
+	background-color:#F0F0F0;  
 	border:	1px solid #cfcfcf;
+	color:#777777 !important;
 }
 
 select {
     padding: 1px;
-    width: 100%;
-	font-size:12px;
+	font-size:13px; 
+	font-weight:normal;
 	width:auto;
 }
 
-textarea {
-    padding: 5px;
-    font-size:13px;
-    line-height: 18px;
+textarea { 
     height: 100px;
     width: 96%;
     font-family:$blueprint-font-family;
@@ -69,22 +101,30 @@ a.addchoice{
 	cursor:pointer;
 	padding:8px 10px 8px 28px;			
 	font-weight:bold;
-	@include link-colors(#336699, #333333, #336699, #336699, #333333);
+	@include link-colors(#333333, #336699, #333333, #333333, #333333);
 	display:block;
-	background:url('../images/add.png') no-repeat 8px 7px;
+	background-image:url('../images/add.png');
+	background-repeat: no-repeat;
+	background-position: 8px 7px;
+	background-color:#f2f2f2;
 } 
 
 a.addchoice:hover{
-	background-color:#f8f8f8;
+	background-color:#e8e8e8;
 }	
 
 .colsets{
+	.customchoices{
+				
+	}
 	fieldset{
 		@include pie-clearfix;
-		margin:0px;
+		margin:1px 0px 0px 0px;
 		padding:2px 1px;
 		border:0px;
 		position:relative;
+		background-color:#f1f1f1;
+		border:1px solid #cfcfcf;
 		b{
 			font-size:11px;
 		}
@@ -99,27 +139,30 @@ a.addchoice:hover{
 			}				
 		}
 		.dropchoice{ 
-			width:35%; 
+			width:76%; 
 		}
 		.tags{ 
 			width:50%; 
+			display:none;
 		}
-		img{				
+		img{	
+			cursor:pointer;			
 			position:absolute;
-			right:6px;
-			top:3px;
+			right:8px;
+			top:5px;
 		}
 	}
 	a.addchoice{
-		border:1px solid #cfcfcf;
-		background-color:#ffffff;
-		background-position:5px 6px;
+		border:1px solid #dfdfdf;
+		background-color:#f3f3f3;
+		background-position:5px 5px; 
 		font-size:12px;
-		padding:8px 10px 6px 25px;			
+		padding:6px 10px 6px 25px;			
 	}
-}
-
-	
+	a.addchoice:hover{
+		background-color:#f8f8f8;
+	}
+}	
 	
 .choicelist{
 	label{
@@ -138,7 +181,7 @@ a.addchoice:hover{
 }
 
 .ui-form{
-	padding:15px 20px 15px 20px; 
+	padding:15px 20px 15px 26px; 
 	position:relative;
 	border-top:1px solid #dfdfdf;
 	border-bottom:1px solid #dfdfdf; 
@@ -164,66 +207,34 @@ a.addchoice:hover{
 	}
 	 
 	label, li.checkbox{						
-		font-weight:normal; 
-		padding:4px 0px;
+		font-weight:normal;
 		margin:0px;
 		line-height:18px;
 		color:#565656;
-		font-size:14px;
+		font-size:1.3em;
+		font-weight:400;
 	}
-	li.checkbox{
-		@include clearfix;
-		input{
-			float:left;
-			margin-right:3px;
-		} 
-		label{
-			position:relative;
-			font-size:12px;
-			top:-3px; left:3px;
-		}
-	}	
 	
 	label.overlabel{
 		color:#999999;
 		margin-left:8px;
 		margin-top:0px;
 		font-size:14px;	
-	}	
-	input.text, textarea{		
-		margin:0px 0px 3px 0px;
-		color:#3f3f3f;
-		padding:3px;
-		font-size:16px;
-		border:1px solid #bfbfbf;
-		font-weight:normal;
-	}
-	textarea{
-		font-family:inherit;
-		font-size:9pt;
-		line-height:16px;
-		overflow:auto;
-	}
-	input.very_small{
-		width:200px;
-	}
-	textarea.smallpara{
-		height:50px;
-	}
-	select{
-		width:auto;
-		font-size:1.0em; 
-		font-weight:normal;
- 	}
- 	input.text:focus, textarea:focus{ 
- 		
- 	}   
-	span{
-		font-weight:normal;
-		font-size:0.9em;
-		color:#777777;
-		display:block;
 	}	 
+	li.checkbox{
+		@include clearfix;
+		padding:10px 0px;
+		input{
+			float:left;
+			margin-right:6px;
+		} 
+		label{
+			position:relative;
+			font-size:12px;
+			top:-8px; left:3px;
+		}
+	}	
+	
 	.largefield{
 		label{
 			font-size:1.4em;			
@@ -232,11 +243,12 @@ a.addchoice:hover{
 			font-size:1.4em; 
 		}
 	}	
-	.seperator{
-		margin-bottom:0px;
-		padding:1px;
+	span{
+		font-weight:normal;
+		font-size:0.9em;
+		color:#777777;
+		display:block;
 	}
-	
 	.check_box{
 		@include clearfix;
 		label{
@@ -247,6 +259,11 @@ a.addchoice:hover{
 			float:left;
 			margin:5px;
 		}
+	}
+	
+	.seperator{
+		margin-bottom:0px;
+		padding:1px;
 	}
 	.inline_field{
 		margin:0px 0px 10px 30px;
@@ -384,23 +401,6 @@ a.addchoice:hover{
 		
 	}
 }
-
-fieldset.nestedChoices{					
-	@include clearfix;	
-	fieldset{ 
-		margin:5px 0px 0px 18px !important;
-		padding:6px 0px 0px 6px !important;
-		border:1px dotted #afafaf;
-		border-width:0px 0px 0px 1px;
-		float:left;
-	}
-	input{
-		margin-right:3px;
-		position:relative;
-		top:-1px; 
-	}
-}
-
 
 .business_hours{
 	td{
@@ -562,28 +562,20 @@ span.sort_handle{
 
 .admin_form{
 	@include clearfix;
-	background-color:#efefef; 
-	padding:8px 10px 15px 10px;
-	margin:0px;
+	background-color:#f3f3f3; 
+	padding:8px 20px 0px 20px;
+	margin:0px -20px;
 	li{
 		position:relative;
 	}
 	h4.title{
-		color:#555;
-		font-size:14px;
+		color:#555; 
 		font-weight:bold;
 		margin:0px;
-		padding:0px 0px 8px 0px;
+		padding:8px 0px 6px 0px;
 	}
 }
 
-.admin_form .button-container{
-	padding-left:180px;
-	width:100%;
-	.fdbutton{
-		@include min-width(60px);
-	}
-}
 
 .button-container{
 	text-align:right;
@@ -611,13 +603,13 @@ span.sort_handle{
 
 .custom_form_outer .placeHolder{
 	height:50px !important;
-	border:1px solid red !important;
+	border:1px solid #C2D7EF !important;
 }
 
 
 .ui-sortable-placeholder{
 	background:#DFEFFF !important;
-	border:2px dotted #C2D7EF  !important;
+	border:1px dotted #C2D7EF  !important;
 	visibility: visible !important;
 	padding:20px 6px;
 	position:relative;
@@ -627,7 +619,7 @@ span.sort_handle{
 .ui-custom-form{
 	padding:0px;
 	position:relative;
-	.ui-form{ background:#ffffff; margin-left:0px; margin-right:0px; }		 
+	.ui-form{ background:#ffffff; margin-bottom:1px; }		 
 	li{   
 		padding:4px; 
 		position:relative;
@@ -635,22 +627,6 @@ span.sort_handle{
 		div{ position:relative; }
 		border:1px dotted #ffffff;
 		cursor:move; 
-		.ui-field-panel{
-			position:absolute;
-			right:0px; top:0px;			 
-			display:none;
-		}  	
-		.action_panel{
-			position:absolute;
-			top:0px;
-			left:0px;
-			padding:0px;
-			z-index:9999;
-			width:100%;
-			height:100%;
-			background:#afafaf;
-			@include opacity(0);
-		}
 	} 
 	
 	li:hover, li.hover, li.active{		
@@ -721,11 +697,13 @@ span.sort_handle{
 
 .live_search{
     text-align:left;
-    float:left;
     padding:0px 0px 0px 0px;
     margin:8px 0px;
     .loading{
     	background-position:right !important;
+    }
+    .overlabel{
+    	padding:0px;
     }
 } 
 
@@ -755,4 +733,52 @@ input.search{
 	background-color:#f2f2f2;
 	border-top:1px solid #e2e2e2; 
 	padding:6px 30px 6px 20px;  
+}
+
+
+.sidepanel{
+	.close{ right:14px; }
+}
+
+.ui-dialog-form{
+	font-size:80%;
+	.info-data{
+		padding-left:24px;
+		display:block;
+		font-size:1.2em;
+		margin-top:-5px;
+	}
+}
+
+fieldset.nestedChoices{					
+	@include clearfix;	
+	display:block;
+	margin:1px 0px;
+	padding:2px;
+	border:1px dotted #cfcfcf;
+	border-right-color:#e2e2e2;
+	border-bottom-color:#e2e2e2;
+	background-color:rgba(0, 0, 0, 0.01);
+	display:block;
+	
+} 
+
+.dialog-panel{
+	@include shadows(rgba(0, 0, 0, 0.5), 0, 0, 8px);
+	z-index:999999;
+	background-color:#fafafa;	
+}
+
+
+.border-top{
+	margin-top:6px;
+	padding-top:6px;
+	border-top:1px dotted #cfcfcf;
+}
+
+.overlay-field{
+	position:absolute;
+	width:100%;
+	height:100%;
+	background:none;
 }
