@@ -45,7 +45,7 @@ require 'openid'
     cust_url = @current_account.full_domain unless @current_account.blank?
     return :back if @current_account.blank?
     ##Need to handle the case where google is integrated with a seperate domain-- 2 times we need to authenticate
-    return_url = url_for(cust_url+'/authdone/google?domain='+params[:domain]) 
+    return_url = "http://"+cust_url+"/authdone/google?domain="+params[:domain] 
     logger.debug "the return_url is :: #{return_url}"
     
     re_alm = "http://*."+base_domain
@@ -63,6 +63,7 @@ require 'openid'
   def google_auth_completed
     
   resp = request.env[Rack::OpenID::RESPONSE]
+  logger.debug "The response is :: #{resp.inspect}"
   email = get_email resp  
   domain_name = params[:domain]    
   full_domain  = "#{domain_name.split('.').first}.#{AppConfig['base_domain'][RAILS_ENV]}"
