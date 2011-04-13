@@ -48,10 +48,12 @@ require 'openid'
     return_url = url_for(cust_url+'/authdone/google?domain='+params[:domain]) 
     logger.debug "the return_url is :: #{return_url}"
     
+    re_alm = "http://*."+base_domain
+    
     logger.debug "domain name is :: #{domain_name}"
     url = nil    
     url = ("https://www.google.com/accounts/o8/site-xrds?hd=" + params[:domain]) unless domain_name.blank?
-    authenticate_with_open_id(url,{ :required => ["http://axschema.org/contact/email", :email] , :return_to => return_url}) do |result, identity_url, registration|
+    authenticate_with_open_id(url,{ :required => ["http://axschema.org/contact/email", :email] , :return_to => return_url, :trust_root =>re_alm}) do |result, identity_url, registration|
       
     end  
   end
