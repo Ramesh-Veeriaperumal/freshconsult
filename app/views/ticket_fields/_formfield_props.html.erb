@@ -27,7 +27,7 @@
 					</div>
                     <a class="addchoice" href="javascript:void(0)"> <%= t("ticketfields.fieldprop.add_new_choice") %> </a> 
             </div> 
-            <div class="ctrlHolder border-top">
+            <div class="ctrlHolder border-top" id="AgentMandatory">
             	<%= content_tag(:label, t("ticketfields.fieldprop.for_agents"), :class => "caption") %>
 	            <fieldset> 
 	                <label><input type="checkbox" name="agentrequired" /> <%= t("ticketfields.fieldprop.agent_mandatory_submission") %> </label>

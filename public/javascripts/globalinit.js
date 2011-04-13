@@ -13,12 +13,17 @@ var jQ = jQuery.noConflict();
 	    $("label.overlabel").overlabel();
 	
 		// - jQuery Validation for forms with class .ui-form ( ...An optional dont-validate written for the form element will make the selectors ignore those form alone )
-		$("ul.ui-form").not(".dont-validate").parents('form:first').validate();
-		$("div.ui-form").not(".dont-validate").find('form:first').validate(); 
-		$("form.uniForm").validate();
+		validateOptions = {
+			onkeyup: false,
+			focusCleanup: true,
+			focusInvalid: false
+		}
+		$("ul.ui-form").not(".dont-validate").parents('form:first').validate(validateOptions);
+		$("div.ui-form").not(".dont-validate").find('form:first').validate(validateOptions); 
+		$("form.uniForm").validate(validateOptions);
 		
 		// Make Textareas to expand automatically when editing it
-		// Auto Resise in IE seems to be screwing up the horizontal scroll bar... hence removing it
+		// Auto Resize in IE seems to be screwing up the horizontal scroll bar... hence removing it
 		if(!$.browser.msie)
 			$("textarea.auto-expand").autoResize();
 		
