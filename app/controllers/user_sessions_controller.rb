@@ -64,7 +64,7 @@ require 'openid'
   @user_session = @current_user.account.user_sessions.create(@current_user)
   if @user_session.save      
       flash[:notice] = "Login successful!"
-      redirect_back_or_default(@current_user.account.full_domain)
+      redirect_to(@current_user.account.full_domain)
   else
       note_failed_login
       render :action => :new
