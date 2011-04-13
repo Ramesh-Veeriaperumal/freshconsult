@@ -1,9 +1,4 @@
-<% content_for :layoutType do -%>single<%- end %> 
-	<div class="floatr" style="display:none;">
-		<h3 class="title">Forums</h3>
-		<p style="margin-top:0px;">Ask questions, share ideas, report problems and get answers from <%= link_to "our community forums", categories_path, :class => "default" %></a></p>
-	</div>			
-	
+<% content_for :layoutType do -%>single<%- end %>  
 	<h3 class="title">Start typing a question and see answers in real time</h3>			
 	<div class="search-grey-box  ignore-margin-20">
 		<%= render :partial => "/search/pagesearch", :locals => { :placeholder => "Search using a keyword or a full question" } %>
@@ -49,71 +44,5 @@
 				</ul> 
 			<% end %>
 		</div>
-	</div> 
-<script type="text/javascript">
-	jQuery(document).ready(function(){
-		/*
-		jQuery("ul.ssp_category_list a").live("click", function(ev){		
-			ev.preventDefault();	
-			jQuery("#InnerDIV").empty();
-			jQuery("#RightDiv").addClass('ajax-loader');
-			jQuery.ajax({ url: this.href, 
-						  success: function(data){
-										jQuery("#RightDiv")
-											.html(data)
-											.removeClass('ajax-loader');
-										jQuery("#InnerDIV").show("slide", 500);
-							       }});
-			
-					
-			jQuery("ul.ssp_category_list a.active").removeClass('active');
-			jQuery(this).addClass('active');				
-		});
-		
-		jQuery("#dialog_close").live("click",function(ev){
-				var $marginLefty = jQuery('#solution_dialog');
-				jQuery('body').css({'overflow':'auto'});	
-				$marginLefty.animate({width: '0px'}, 500, function(){
-						jQuery('#solution_dialog_outer').fadeOut(100);
-				});			
-		});	
-		
-		jQuery('.right_col a').live('click', function(ev){
-			ev.preventDefault();			
-			link_url = this.href;
-			jQuery('#solution_dialog').empty().addClass("ajax-loader");
-			jQuery('#solution_dialog_outer').fadeIn(100, function(){
-					var $marginLefty = jQuery('#solution_dialog');
-					$marginLefty.animate({width: "80%"}, 80, function(){
-						jQuery('body').css({'overflow':'hidden'});			
-						jQuery.ajax({ url: link_url, 
-								success: function(data){
-										jQuery("#solution_dialog")
-											.html(data)
-											.removeClass('ajax-loader');
-							       }});					
-					});
-				});	
-		});
-		
-		jQuery('.screen').bind("click", function(ev){
-			var $marginLefty = jQuery('#solution_dialog');
-				jQuery('body').css({'overflow':'auto'});		
-				$marginLefty.animate({width: '0px'}, 400, function(){
-						jQuery('#solution_dialog_outer').fadeOut(80);								
-				});					
-		});*/
-		 
-		
-		
-	});
-</script>
-
-<%- content_for :dialogs do -%>
-	<div class="tr_wrap" id="solution_dialog_outer" style="display:none;">
-		<div class="screen"></div>
-		<div class="tr_dialog ajax-loader" id="solution_dialog" style="width:0px;">
-			<!--% render :partial => 'solution_article', :locals => { :article => firstArticle } %-->			
-		</div>
-	</div>	
-<%- end -%>
+	</div>  
+ 

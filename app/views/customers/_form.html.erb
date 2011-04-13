@@ -7,23 +7,19 @@
 		  </li>	  
 		  <li>
 		    <%= f.label :description, t('description')  %>
-			<label class="overlabel" for="comp_desc"><%=t('company.info8')%>.</label>
+			<%= f.label :description, t('company.info8'), :for => "comp_desc", :class => "overlabel" %>
 		    <%= f.text_area :description, :id => "comp_desc", :class => "smallpara"  %>
 		  </li>	
 		  <li>
-		  	<%= f.label :note, "Notes" %>
-			<label class="overlabel" for="comp_notes">
-				<%=t('company.info5')%><br /> 
-				example - we are negotiating a 100K deal with this company
-			</label>
-		   
+		  	<%= f.label :note, t('company.notes') %>
+		  	<%= f.label :note, t('company.info5'), :for => "comp_notes", :class => "overlabel" %>
 			<%= f.text_area :note, :id => "comp_notes", :class => "smallpara"  %>
 		  </li>
 		  <li>
 		  	<%= f.label :domains, t('company.info2') %>		
 			<%= f.text_field :domains, :id => "domain_names", :class => "text"  %>
 			<span>
-				<b>Note:</b> <%=t('company.info9')%> 
+				<b><%= t('note') %>:</b> <%=t('company.info9')%> 
 			</span>
 		  </li> 
 	</ul>

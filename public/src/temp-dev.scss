@@ -4,8 +4,8 @@
 .reminders:before {
    content:"";
    position:absolute;
-   top:-3px;
-   right:-3px;
+   top:-2px;
+   right:-2px;
    border-width:0 16px 16px 0;
    border-style:solid;
    border-color:$background $background #734e3d #734e3d;
@@ -16,6 +16,8 @@
    -webkit-border-bottom-left-radius:5px;
    -moz-border-radius:0 0 0 5px;
    border-radius:0 0 0 5px;
+   height:0px;
+   font-size:0px;
 }
 
 .reminders{
@@ -54,6 +56,7 @@
 				color:#734e3d; 
 				margin-left:5px;
 				line-height:18px;	
+				padding-top:0px;
 				display:block;
 			}
 			a.request_link{
@@ -117,6 +120,7 @@ div.addReminder{
 		}
 		label.overlabel{
 			margin:2px 5px 4px 10px;
+			padding:0px;
 			font-size:14px;
 			color:#ab9485;
 		}
@@ -322,15 +326,13 @@ div.addReminder{
 	background-color:#f8f8f8;
 	background-repeat:repeat-x;
 	background-position:bottom; 
-	border-top:1px solid #dfdfdf;
-	border-bottom:1px solid #cfcfcf;
+	border:1px solid #dfdfdf;
+	border-width:1px 0px;
 }
 
 .tickets, .tickets-expanded{
-	width:100%;
-	border-bottom-color:#efefef;
-	color:#5f5f5f;
-	
+	width:100%; 
+	color:#5f5f5f; 
 	th{
 		background:none;
 		padding:6px 6px 5px 6px;
@@ -577,12 +579,8 @@ div.addReminder{
 }
 
 .list-noinfo{
-	background:#f6f6f6;
-	text-align:center;
-	padding:2em 0 2em 0;
-	margin:3px 3px -11px 3px;
-	height:300px;
-	font-size:1.6em;
+	padding:10px 20px;
+	font-size:1.1em;
 	font-weight:bold;
 	color:#666666;
 	@include text-shadow(#ffffff, -1px, -1px, 1px);

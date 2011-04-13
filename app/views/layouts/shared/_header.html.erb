@@ -30,9 +30,9 @@
 				</ul>
 				<div class="nav_right">
 					<% if current_user and permission?(:manage_tickets) then %>
-						<%= link_to('<img src="/images/add.png" width="16px" height="16px" /> New Ticket', new_helpdesk_ticket_path, :class => "new_ticket" ) %>
+						<%= link_to('<img src="/images/add.png" width="16" height="16" /> New Ticket', new_helpdesk_ticket_path, :class => "new_ticket" ) %>
 					<% else %>
-						<%= link_to('<img src="/images/add.png" width="16px" height="16px" /> Submit a ticket', new_support_ticket_path, :class => "new_ticket" ) %>
+						<%= link_to('<img src="/images/add.png" width="16" height="16" /> Submit a ticket', new_support_ticket_path, :class => "new_ticket" ) %>
 					<% end %> 
 				</div> 
 			</div>
