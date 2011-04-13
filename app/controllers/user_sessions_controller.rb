@@ -54,7 +54,7 @@ require 'openid'
   resp = request.env[Rack::OpenID::RESPONSE]
   email = get_email resp
   domain_name = params[:domain]
-  full_domain  = "#{domain_name.split('.').first}.#{AppConfig['base_domain']}"
+  full_domain  = "#{domain_name.split('.').first}.#{AppConfig['base_domain'][RAILS_ENV]}"
   @current_account = Account.find_by_full_domain(full_domain)  
   @current_user = @current_account.users.find_by_email(email)  unless  @current_account.blank?
   @current_user = create_user(email,@current_account) if (@current_user.blank? && !@current_account.blank?)
