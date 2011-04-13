@@ -1,71 +1,61 @@
-<div class="dialog-ticketfield sp_border" title="Field Properties" id="CustomFieldsDialog" style="display:none;">
+<div class="dialog-panel sidepanel" id="CustomFieldsDialog" style="display:none;position:absolute;">
 	<a href="javascript:void(0)" id="close_button" class="close"></a>
-        <form class="uniForm" action="#">
+        <form class="ui-dialog-form" action="#">
         	<input type="hidden" name="customtype" value="" />
             <div class="ctrlHolder">
-                <label class="caption">
-                    Field Label
-                </label>
+            	<%= content_tag(:label, t("ticketfields.fieldprop.label"), :class => "caption") %>
                 <fieldset>
-                    <input type="textInput" name="customlabel" size="35" maxlength="50"  value="" />
+                    <input type="text" name="customlabel" size="35" maxlength="50" class="text"  value="" />
                 </fieldset>
             </div>
             <div class="ctrlHolder">
-                <label class="caption">
-                    Description
-                </label>
+            	<%= content_tag(:label, t("ticketfields.fieldprop.description"), :class => "caption") %>
                 <fieldset> 
-                    <input type="textInput" name="customdesc" size="35" maxlength="50" value="" id="customdesc" />
+                    <input type="text" name="customdesc" size="35" maxlength="50" class="text" value="" id="customdesc" />
                 </fieldset> 
-            </div>
-            <div class="ctrlHolder colsets" id="DropFieldChoices">
-                <label class="caption">
-                	Dropdown Choices
-				</label>
-                <div>
-					<fieldset>
+            </div> 
+            <div class="ctrlHolder colsets border-top" id="DropFieldChoices">
+            	<%= content_tag(:label, t("ticketfields.fieldprop.dropdown_choices"), :class => "caption") %> 
+					<!--fieldset>
 						<b class="dropchoice">Choices</b><b class="tags">Tags</b>
-					</fieldset>
-					<div name="customchoices">
+					</fieldset-->
+					<div name="customchoices" class="customchoices">
 	                    <fieldset>
-	                        <span class="dropchoice"><input type="text" /></span><span class="tags"><input type="text" /></span><img src="/images/delete.png" />
+	                    	<span class="sort_handle"></span>
+	                        <span class="dropchoice"><input type="text" name="choice" /></span><span class="tags"><input type="text" /></span><img src="/images/delete.png" />
 	                    </fieldset>
 					</div>
-                    <a class="addchoice" href="javascript:void(0)"> Add new choice </a>
-                </div>
-            </div>
-            <div class="ctrlHolder">
-                <label class="caption">
-                	For Agents
-				</label>
-                <fieldset> 
-                    <label><input type="checkbox" name="agentrequired" /> Mandatory for submission </label>
-					<span class="info-data">Field cannot be blank when submitting the ticket</span>
+                    <a class="addchoice" href="javascript:void(0)"> <%= t("ticketfields.fieldprop.add_new_choice") %> </a> 
+            </div> 
+            <div class="ctrlHolder border-top">
+            	<%= content_tag(:label, t("ticketfields.fieldprop.for_agents"), :class => "caption") %>
+	            <fieldset> 
+	                <label><input type="checkbox" name="agentrequired" /> <%= t("ticketfields.fieldprop.agent_mandatory_submission") %> </label>
+					<span class="info-data"> <%= t("ticketfields.fieldprop.agent_info1") %> </span>
 				</fieldset>
 				<fieldset> 
-					<label><input type="checkbox" name="agentresolved" /> Mandatory for closure </label>
-					<span class="info-data">Field cannot be blank when closing the ticket</span>
-                </fieldset> 
-            </div>
-            <div class="ctrlHolder">
-                <label class="caption">
-                	For Customers
-				</label>
-                <fieldset id="nestedConfig" class="nestedChoices">
-					<label><input type="checkbox" toggle_ele="nestedlvl2" name="customervisible" /> Visible to customers </label></li>
-					<fieldset id="nestedlvl2" style="display:none;">
-						<label><input type="checkbox" toggle_ele="nestedlvl3" name="customereditable" /> Can Edit the field </label>
-						<fieldset id="nestedlvl3" style="display:none;">
-							<label><input type="checkbox" name="customerrequired" /> Required for ticket submission </label>
-								<span class="info-data">Field cannot be blank when submitting the ticket online.</span>
+					<label><input type="checkbox" name="agentclosure" /> <%= t("ticketfields.fieldprop.agent_mandatory_closure") %> </label>
+					<span class="info-data"><%= t("ticketfields.fieldprop.agent_info2") %></span>
+	            </fieldset> 
+            </div> 
+            <div class="ctrlHolder border-top">
+                <%= content_tag(:label, t("ticketfields.fieldprop.for_customer"), :class => "caption") %>
+                <fieldset id="nestedConfig">
+					<label><input type="checkbox" toggle_ele="nestedlvl2" name="customervisible" /><%= t("ticketfields.fieldprop.customer_visible") %> </label></li>
+					<fieldset id="nestedlvl2" class="nestedChoices" style="display:none;">
+						<label><input type="checkbox" toggle_ele="nestedlvl3" name="customereditable" /><%= t("ticketfields.fieldprop.customer_edit") %> </label>
+						<fieldset id="nestedlvl3" class="nestedChoices" style="display:none;">
+							<label><input type="checkbox" name="customerrequired" /> <%= t("ticketfields.fieldprop.customer_mandatoy") %> </label>
+								<span class="info-data"><%= t("ticketfields.fieldprop.customer_info1") %></span>
 						</fieldset>
 			        </fieldset>
                 </fieldset>  
             </div> 
-			<div class="ctrlHolder">
-				<input type="button" class="button" id="SaveField" value="Save" />
-				<input type="button" class="button" id="DeleteField" value="Delete" />
+			<span class="seperator"></span> 
+			<div class="alignright">
+				<!--input type="button" class="button" id="SaveField" value="Save" /-->
+				<a class="uiButton delete small floatl" id="DeleteField"><%= t("delete") %></a>
+				<a class="uiButton small" id="close_button_2"><%= t("close") %></a>
 			</div>
-			</fieldset>
         </form>   
 </div>

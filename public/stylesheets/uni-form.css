@@ -27,7 +27,7 @@
 /* #############################   GENERALS   ################################### */
 /* ------------------------------------------------------------------------------ */
 
-.uniForm{ margin: 0; padding: 0; position: relative; z-index: 1; } /* reset stuff */
+.uniForm{ margin: -1px -12px; padding: 0; position: relative; z-index: 1; border:1px solid #efefef; } /* reset stuff */
   
   /* Some generals and more resets */
   .uniForm fieldset{ border: none; margin: 0; padding: 0; }
@@ -54,7 +54,7 @@
 /* ------------------------------------------------------------------------------ */
 
       .uniForm label,
-      .uniForm .label{ display: block; float: none; margin: 0 0 .5em 0; padding: 0; line-height: 100%; width: auto; }
+      .uniForm .label{ display: block; float: none; margin: 0 0 .5em 0; padding: 0; line-height: 100%; width: auto; font-size:1.1em; }
       
       /* Float the input elements */
       .uniForm .textInput,
