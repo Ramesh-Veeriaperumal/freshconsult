@@ -146,23 +146,19 @@
     		<%= f.text_area :description, :class=>"textarea" %>
 		</li>				
 	
-	<%else%>
-		<%
-						
-logger.debug "Custom  Field #{field["label"]}"%>		
+	<%else%>		
 		<% fields_for :flexifields do |cust_form| %>
 			<% 
 				field_label = (field["agent"]["required"]) ? "#{field["display_name"]} *" : "#{field["display_name"]}"  
 				field_class = field["type"] + ((field["agent"]["required"]) ? " required" : "") 
-				field_val = nil
-				logger.debug "ff_aliases :: ff_aliases #{@item.id}"
+				field_val = nil 
 				field_val = @item.get_ff_value(field["label"]) unless @item.id.nil?
 			%>
 			<% case field["type"] when "text","number" then %>				
 				<li class="<%= field['label'] %>">		 
 
 					<%= cust_form.label "#{field["label"]}", field_label %>  
- 					<%= cust_form.text_field "#{field["label"]}" , :class=> field_class  , :value =>field_val%>
+ 					<%= cust_form.text_field "#{field["label"]}" , :class => field_class  , :value =>field_val%>
 
 				</li>		 
 						
@@ -170,7 +166,7 @@ logger.debug "Custom  Field #{field["label"]}"%>
 				<li class="paragraph">
 
 					<%= cust_form.label "#{field["label"]}", field_label %>  
- 					<%= cust_form.text_area "#{field["label"]}" ,:class=> field_class , :value =>field_val %>
+ 					<%= cust_form.text_area "#{field["label"]}" ,:class => field_class , :value =>field_val %>
 
 				</li>
 					
@@ -180,17 +176,15 @@ logger.debug "Custom  Field #{field["label"]}"%>
 						field["choices"].each {|choice| values.push(choice["value"])}%>
 
 						 <%= cust_form.label "#{field["label"]}", field_label %>  
- 						 <%= cust_form.select "#{field["label"]}", values ,:class=> field_class , :selected =>field_val%>
+ 						 <%= cust_form.select "#{field["label"]}", values ,:class => field_class , :selected => field_val%>
 
 			    </li>
 							
 		   <% when "checkbox" then %>
-				<li class="checkbox">
-
-					<%= cust_form.check_box "#{field["label"]}" ,:class => field_class , :value =>field_val %>					
-					<%= field_label %>
-
-			     </li>
+				<li class="checkbox"> 
+					<%= cust_form.check_box "#{field["label"]}" ,:class => field_class , :value => field_val %>					
+					<%= field_label %> 
+			    </li>
 		   <% end %>
 		 <% end %>			 
 		<% end %>

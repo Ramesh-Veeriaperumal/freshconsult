@@ -245,10 +245,7 @@
 				constFieldDOM(sourceData.toObject(), jQuery(SourceField));
 		}
 		
-		function hideDialog(){
-			//jQuery("#CustomFieldsDialog").hide("slide", { direction: "left" }, 500, function(){
-				//$(this).css({"left":0, "top":0});
-			//});
+		function hideDialog(){ 
 			jQuery("#CustomFieldsDialog").css({"left":-999999});
 			dialogHidden = true;
 		}
@@ -303,6 +300,15 @@
 						jQuery("#DropFieldChoices").show();
 					}
 				}
+				/*
+				$('#AgentMandatory').show();
+				
+				switch (sourceData.type){
+					case 'checkbox': 
+						$('#AgentMandatory').hide();
+					break;
+				}
+				*/
 				
 			}catch(e){
 				 

@@ -6,8 +6,8 @@
 					 when "Requester" then 
 					%>
 					<li> 	
-				  		<label id="requester-label">Email *</label>
-				  		<input type="text" id="helpdesk_ticket_email" class="text required" name="helpdesk_ticket[email]" value="<%=@ticket.email%>"></input>
+				  		<label id="requester-label">Email*</label>
+				  		<input type="text" id="helpdesk_ticket_email" class="text email required" name="helpdesk_ticket[email]" value="<%=@ticket.email%>"></input>
 				   	</li>	
 					<% when "Subject" then%>
 						<li>
@@ -50,33 +50,36 @@
 				    		<%= request_form.text_area :description, :class=>"textarea" %>
 						</li>				
 					
-					<%else%>
-						<%logger.debug "Custom  Field #{field["label"]}"%>
+					<%else%> 
 						<% request_form.fields_for :flexifields do |cust_form| %>
+						<% 
+							field_label = (field["customer"]["required"]) ? "#{field["display_name"]}*" : "#{field["display_name"]}"  
+							field_class = field["type"] + ((field["customer"]["required"]) ? " required" : "")  
+						%>
 							<% case field["type"] when "text","number" then %>				
 								<li class="<%= field['label'] %>">		 
-									<%= cust_form.label "#{field["label"]}", "#{field["display_name"]}" %>  
-				 					<%= cust_form.text_field "#{field["label"]}" ,:class=>"text" %>
+									<%= cust_form.label "#{field["label"]}", field_label %>  
+				 					<%= cust_form.text_field "#{field["label"]}", :class => field_class %>
 								</li>		 
 										
 							<% when "paragraph" then %>
 								<li class="paragraph">
-									<%= cust_form.label "#{field["label"]}", "#{field["display_name"]}" %>  
-				 					<%= cust_form.text_area "#{field["label"]}" ,:class=>"textarea" %>
+									<%= cust_form.label "#{field["label"]}", field_label %>  
+				 					<%= cust_form.text_area "#{field["label"]}" ,:class => field_class %>
 								</li>
 									
 							<% when "dropdown" then %>
 								<li class="dropdown">
 									<% Array values =[]
 										field["choices"].each {|choice| values.push(choice["value"])}%>
-										 <%= cust_form.label "#{field["label"]}", "#{field["display_name"]}" %>  
-				 						 <%= cust_form.select "#{field["label"]}", values ,:class=>"select" %>
+										 <%= cust_form.label "#{field["label"]}", field_label %>  
+				 						 <%= cust_form.select "#{field["label"]}", values ,:class=> field_class %>
 							    </li>
 											
 						   <% when "checkbox" then %>
 								<li class="checkbox">
-									<%= cust_form.check_box "#{field["label"]}" ,:class=>"checkbox" %>					
-									<%= field["display_name"] %>
+									<%= cust_form.check_box "#{field["label"]}" ,:class=>field_class %>					
+									<%= field_label %>
 							     </li>
 						   <% end %>
 						 <% end %>			 
