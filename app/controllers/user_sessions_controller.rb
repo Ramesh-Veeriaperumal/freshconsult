@@ -38,6 +38,7 @@ require 'openid'
     base_domain = AppConfig['base_domain'][RAILS_ENV]
     logger.debug "base domain is #{base_domain}"
     return_url = url_for('http://login.'+base_domain+'/authdone/google?domain='+params[:domain]) 
+    logger.debug "the return_url is :: #{return_url}"
     domain_name = params[:domain] 
     logger.debug "domain name is :: #{domain_name}"
     url = nil    
@@ -52,8 +53,9 @@ require 'openid'
   def google_auth_completed
     
   resp = request.env[Rack::OpenID::RESPONSE]
-  email = get_email resp
+  #email = get_email resp
   domain_name = params[:domain]
+  email = "shihab@freshpo.com"  
   full_domain  = "#{domain_name.split('.').first}.#{AppConfig['base_domain'][RAILS_ENV]}"
   @current_account = Account.find_by_full_domain(full_domain)  
   @current_user = @current_account.users.find_by_email(email)  unless  @current_account.blank?
@@ -61,10 +63,10 @@ require 'openid'
   @current_user = User.find_by_email(email) if @current_account.blank?  
   return :back if @current_user.blank?
   @current_user.email = email 
-  @user_session = @current_user.account.user_sessions.create(@current_user)
+  @user_session = @current_user.account.user_sessions.create(@current_user)  
   if @user_session.save      
-      flash[:notice] = "Login successful!"
-      redirect_to @current_user.account.full_domain
+      flash[:notice] = "Login successful!"      
+      redirect_to root_url(:host => @current_user.account.full_domain)
   else
       note_failed_login
       render :action => :new
