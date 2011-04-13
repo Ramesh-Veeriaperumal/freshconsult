@@ -235,13 +235,13 @@ class Helpdesk::TicketsController < ApplicationController
       @topic = Topic.find(params[:topic_id])
       @item.subject = @topic.title
       @item.description = @topic.posts.first.body
-      @item.source = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:forum]
       @item.requester = @topic.user
     end
   end
  
   def create
    if params[:topic_id].length > 0 
+        @item.source = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:forum]
         @item.build_ticket_topic(:topic_id => params[:topic_id])
    end
     if @item.save!  
