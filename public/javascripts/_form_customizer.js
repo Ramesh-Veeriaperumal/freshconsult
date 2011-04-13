@@ -352,16 +352,22 @@
 				break;
 				
 				case 'agentclosure':
-					sourceData.get("agent").required = $(this).attr("checked");
+					sourceData.get("agent").closure = $(this).attr("checked");
 				break;
 				
 				case 'customervisible':
-					sourceData.get("customer").required = $(this).attr("checked");
+					sourceData.get("customer").visible = $(this).attr("checked");
+					if (sourceData.get("customer").visible == false) {
+						sourceData.get("customer").editable = false
+						sourceData.get("customer").required = false;
+					}
 				break;
 				
 				case 'customereditable':
-					sourceData.get("customer").required = $(this).attr("checked");
-				break;
+					sourceData.get("customer").editable = $(this).attr("checked");
+					if (sourceData.get("customer").editable == false) 
+						sourceData.get("customer").required = false;
+ 				break;
 				
 				case 'customerrequired':
 					sourceData.get("customer").required = $(this).attr("checked");
@@ -387,9 +393,7 @@
 		jQuery(dialogDOMMap.label).live("keyup", function(ev){
 			sourceDomMap.label.text(this.value);
 		});
-		
-		
-		
+		 
 		jQuery("#CustomFieldsDialog").draggable();
 		
 		showFieldDialog = function(element){
