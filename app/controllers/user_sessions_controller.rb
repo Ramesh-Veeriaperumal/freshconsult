@@ -34,12 +34,20 @@ require 'openid'
     redirect_to root_url
   end
   
+  
+  
   def google_auth
     base_domain = AppConfig['base_domain'][RAILS_ENV]
-    logger.debug "base domain is #{base_domain}"
-    return_url = url_for('http://login.'+base_domain+'/authdone/google?domain='+params[:domain]) 
-    logger.debug "the return_url is :: #{return_url}"
     domain_name = params[:domain] 
+    logger.debug "base domain is #{base_domain}"
+    full_domain  = "#{domain_name.split('.').first}.#{AppConfig['base_domain'][RAILS_ENV]}"
+    @current_account = Account.find_by_full_domain(full_domain)
+    cust_url = @current_account.full_domain unless @current_account.blank?
+    return :back if @current_account.blank?
+    ##Need to handle the case where google is integrated with a seperate domain-- 2 times we need to authenticate
+    return_url = url_for(cust_url+'/authdone/google?domain='+params[:domain]) 
+    logger.debug "the return_url is :: #{return_url}"
+    
     logger.debug "domain name is :: #{domain_name}"
     url = nil    
     url = ("https://www.google.com/accounts/o8/site-xrds?hd=" + params[:domain]) unless domain_name.blank?
@@ -53,30 +61,20 @@ require 'openid'
   def google_auth_completed
     
   resp = request.env[Rack::OpenID::RESPONSE]
-  email = get_email resp
-  #email = "support@freshdesk.com"
-  domain_name = params[:domain]  
-  logger.debug "google_auth_completed :: domain_name is ::#{domain_name}"
+  email = get_email resp  
+  domain_name = params[:domain]    
   full_domain  = "#{domain_name.split('.').first}.#{AppConfig['base_domain'][RAILS_ENV]}"
-  @current_account = Account.find_by_full_domain(full_domain)  
-  logger.debug "google_auth_completed :: domain_name is ::#{domain_name} full_domain:: #{full_domain} and current_acc: #{@current_account.inspect}"
-  
+  @current_account = Account.find_by_full_domain(full_domain)   
   @current_user = @current_account.users.find_by_email(email)  unless  @current_account.blank?
   @current_user = create_user(email,@current_account) if (@current_user.blank? && !@current_account.blank?)
   @current_user = User.find_by_email(email) if @current_account.blank?  
   return :back if @current_user.blank?
-  @current_user.email = email 
-  logger.debug "user is :: #{@current_user.inspect}"
-  #@user_session = @current_user.account.user_sessions.new(@current_user)  
-  @user_session = @current_account.user_sessions.new(@current_user)  
-  logger.debug "@user session is :: #{@user_session.inspect} and user is ::: #{@current_user.inspect}"
-  red_url = @current_user.account.full_domain
-  #red_url = "localhost:3000"
+  @current_user.email = email   
+  @user_session = @current_user.account.user_sessions.new(@current_user)  
   if @user_session.save
       logger.debug " @user session has been saved :: #{@user_session.inspect}"
       flash[:notice] = "Login successful!"      
-      redirect_to root_url(:host =>red_url )
-      
+      redirect_back_or_default('/')      
   else
       note_failed_login
       render :action => :new
