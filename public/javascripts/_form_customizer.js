@@ -4,10 +4,12 @@
 
  
 (function($){
+	ticket_fields_modified = false;
+	
 	jQuery(document).ready(function(){
 		init();
-		makePageNonSelectable($('custom_form'));
-	});
+		//makePageNonSelectable($('custom_form'));
+	}); 
 			
 	function init(){		
 		var fieldFeed = JSON.parse(document.getElementById('field_values').value, 
@@ -22,6 +24,7 @@
 		var DialogFieldPref = null;
 		var SourceField 	= null;
 		var sourceDomMap	= null;
+		var dialogHidden	= true;
 		var dialogContainer = "div#CustomFieldsDialog";
 		
 		// Mapping individual dom elements to its data counterparts
@@ -31,7 +34,8 @@
             description: 	jQuery(dialogContainer+' input[name|="customdesc"]'),	
 			choices: 		jQuery(dialogContainer+' div[name|="customchoices"]'),
             setDefault: 	1,	    
-		    agent: 	  {required: jQuery(dialogContainer+' input[name|="agentrequired"]')},
+		    agent: 	  {required: jQuery(dialogContainer+' input[name|="agentrequired"]'),
+					   closure:  jQuery(dialogContainer+' input[name|="agentclosure"]') },
 			customer: {visible : jQuery(dialogContainer+' input[name|="customervisible"]'),
 					   editable: jQuery(dialogContainer+' input[name|="customereditable"]'),
 					   required: jQuery(dialogContainer+' input[name|="customerrequired"]')}
@@ -91,10 +95,7 @@
 			
 			var label = jQuery("<label />").append(dataItem.display_name);
 			var field = jQuery("<div />");
-			//var panel = jQuery("<div class='action_panel' />");	
-			
-			//fieldContainer.append(panel);
-			
+			 
 			var fieldAttr = '';
             switch (dataItem.type) {
                 case 'number':
@@ -131,7 +132,13 @@
 						  .append(field);
                     break;
             }            
-            
+			
+			$(field).prepend("<span class='overlay-field' />");
+			 
+			if (dataItem.action) { 
+				ticket_fields_modified = true;
+			}
+			
 			fieldContainer.data("raw", dataItem); 
 			return fieldContainer;
         }
@@ -161,9 +168,18 @@
 		                if (type) {
 							showFieldDialog(constFieldDOM(getFreshField(type), ui.item)); 
 		                }					
+						ticket_fields_modified = true;
 		            }
 			    })
 			.droppable();
+			
+		jQuery(".customchoices").sortable({
+			items: 'fieldset'	,
+			handle: ".sort_handle",
+			stop: function(ev){
+				saveAllChoices();
+			}
+		});
 			
 		if ($.browser.msie) {
 			jQuery(".ui-custom-form li").hover(function(){
@@ -173,8 +189,8 @@
 			});
 		}
         	
-    jQuery("#close_button").click(function(e){
-         	jQuery("#CustomFieldsDialog").hide();
+    jQuery("#close_button, #close_button_2").click(function(e){
+         	hideDialog();
     });
 		
 	jQuery("#SaveForm").click(function(e){			
@@ -196,11 +212,15 @@
 		function addChoiceinDialog(data, dom){
 			dom 	= dom || dialogDOMMap.choices;
 			data 	= data || {value:'', tags:''};
-			dom.append('<fieldset><span class="dropchoice"><input type="text" value="'+data.value+'" /></span><span class="tags"><input type="text" value="'+data.tags+'" /></span><img class="deleteChoice" src="/images/delete.png" /></fieldset>')
+			dom.append('<fieldset><span class="sort_handle"></span><span class="dropchoice"><input type="text" value="'+data.value+'" name="choice" /></span><span class="tags"><input type="text" value="'+data.tags+'" /></span><img class="deleteChoice" src="/images/delete.png" /></fieldset>')
 		}
 		
-		jQuery(".deleteChoice").live('click', function(){
-											jQuery(this).parent().remove();
+		jQuery(".deleteChoice").live('click', 
+									  function(){
+									  		if (jQuery(this).parent().siblings().size() != 0) {
+												jQuery(this).parent().remove();
+												saveAllChoices();
+											}
 									  }); 
 									  
 		jQuery(".addchoice").live('click', function(){
@@ -216,6 +236,21 @@
 				choices.push(temp);	 	
 			});			
 			return choices;
+		}
+		
+		function saveAllChoices(){
+			var sourceData = $H(jQuery(SourceField).data("raw"));
+				sourceData.set("choices", getAllChoices(dialogDOMMap.choices));
+				sourceData.set('action', "edit");
+				constFieldDOM(sourceData.toObject(), jQuery(SourceField));
+		}
+		
+		function hideDialog(){
+			//jQuery("#CustomFieldsDialog").hide("slide", { direction: "left" }, 500, function(){
+				//$(this).css({"left":0, "top":0});
+			//});
+			jQuery("#CustomFieldsDialog").css({"left":-999999});
+			dialogHidden = true;
 		}
 		
 		function DialogOnLoad(sourceField){ 
@@ -243,6 +278,7 @@
 				});
 				
 				dialogDOMMap.agent.required.attr("checked", sourceData.agent.required);
+				dialogDOMMap.agent.closure.attr("checked", sourceData.agent.closure);
 				dialogDOMMap.customer.visible.attr("checked", sourceData.customer.visible);
 				innerLevelExpand(dialogDOMMap.customer.visible.get(0));
 				
@@ -282,7 +318,8 @@
 			sourceData.set("description" 		 , dialogDOMMap.description.val());
 			
 			sourceData.get("agent").required	= dialogDOMMap.agent.required.attr("checked");
-				
+			sourceData.get("agent").closure		= dialogDOMMap.agent.closure.attr("checked");
+					
 			sourceData.get("customer").visible	= dialogDOMMap.customer.visible.attr("checked");										
 			sourceData.get("customer").editable = dialogDOMMap.customer.editable.attr("checked");
 			sourceData.get("customer").required = dialogDOMMap.customer.required.attr("checked");  											
@@ -294,13 +331,53 @@
 			constFieldDOM(sourceData.toObject(), jQuery(SourceField));
 		});
 		
-		jQuery("#close_button").click(function(){
-			DialogFieldPref.dialog("close");	
+		$("#CustomFieldsDialog input").live("change", function(){
+			var sourceData = $H(jQuery(SourceField).data("raw"));
+			switch(this.name){
+				case 'choice':
+					sourceData.set("choices", getAllChoices(dialogDOMMap.choices));			
+				break;
+				
+				case 'customlabel':
+					sourceData.set("label", 	   this.value);
+					sourceData.set("display_name", this.value);
+				break;
+				
+				case 'customdesc':
+					sourceData.set("description",  this.value);
+				break;	
+				
+				case 'agentrequired':
+					sourceData.get("agent").required = $(this).attr("checked");
+				break;
+				
+				case 'agentclosure':
+					sourceData.get("agent").required = $(this).attr("checked");
+				break;
+				
+				case 'customervisible':
+					sourceData.get("customer").required = $(this).attr("checked");
+				break;
+				
+				case 'customereditable':
+					sourceData.get("customer").required = $(this).attr("checked");
+				break;
+				
+				case 'customerrequired':
+					sourceData.get("customer").required = $(this).attr("checked");
+				break;
+			} 
+			sourceData.set('action', "edit");
+			constFieldDOM(sourceData.toObject(), jQuery(SourceField));
 		});
 		
+		
 		var deleteField = function(sourcefield){
-			var sourceData    = jQuery(sourcefield).data("raw").action = "delete";
-			jQuery(sourcefield).hide();			
+			if (confirm('Are you sure you want to delete this field?')) {
+				var sourceData = jQuery(sourcefield).data("raw").action = "delete";
+				jQuery(sourcefield).hide();
+				hideDialog();
+			}
 		};
 		
 		jQuery("#DeleteField").live("click", function(e){
@@ -311,20 +388,39 @@
 			sourceDomMap.label.text(this.value);
 		});
 		
+		
+		
+		jQuery("#CustomFieldsDialog").draggable();
+		
 		showFieldDialog = function(element){
-			DialogOnLoad(element);
-			jQuery("#CustomFieldsDialog")
+			DialogOnLoad(element); 
+			/*jQuery("#CustomFieldsDialog")
 				.show("highlight", 5000, function(){
 						jQuery(element).clearQueue();											
-				 });	
+				 });*/
+			
+			offset 		=  $(element).offset();
+			offset.left += ($(element).width() - 50) ; 
+			offset.top  -= 50;
+			
+			jQuery("#CustomFieldsDialog")
+				.position({
+					my:"left top",
+					at:"right top",
+					of: element,
+					collision: "fit fit",
+					offset: "-50 -50"
+				})
+			
+			if (dialogHidden) {
+				jQuery("#CustomFieldsDialog").show("slide", { direction: "left" }, 500);
+				dialogHidden = false;
+			}
 		} 
 		
         jQuery("#custom_form li").live("click", function(e){           
-			showFieldDialog(this);
-            
+			showFieldDialog(this); 
         });
-		
-        
 		  
     };
 })(jQuery);

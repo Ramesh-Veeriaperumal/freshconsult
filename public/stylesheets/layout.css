@@ -80,12 +80,20 @@ label.overlabel {
 
 /* line 56, ../src/layout.scss */
 #inner {
-  overflow: hidden;
   *zoom: 1;
   position: relative;
   z-index: 1;
   margin: 12px 0px;
   padding-right: 310px;
+}
+/* line 22, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/compass/stylesheets/compass/utilities/general/_clearfix.scss */
+#inner:after {
+  content: "\0020";
+  display: block;
+  height: 0;
+  clear: both;
+  overflow: hidden;
+  visibility: hidden;
 }
 /* line 59, ../src/layout.scss */
 #inner .leftcontent {
@@ -321,9 +329,9 @@ body h4 {
 }
 /* line 242, ../src/layout.scss */
 .nav_search input {
-  border: 0px;
+  border: 0px !important;
   position: relative;
-  font-size: 14px;
+  font-size: 12px !important;
   width: 100%;
   padding: 0px;
   background: none;
@@ -413,7 +421,7 @@ ul.tabs li a {
   text-align: center;
   display: block;
   text-transform: capitalize;
-  text-shadow: rgba(0, 0, 0, 0.2) 1px 1px 1px;
+  text-shadow: rgba(0, 0, 0, 0.1) 1px 1px 1px;
 }
 /* line 311, ../src/layout.scss */
 ul.tabs li a:hover {

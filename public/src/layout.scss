@@ -54,7 +54,7 @@ label.overlabel{
 
  
 #inner {    
-	@include clearfix;	
+	@include pie-clearfix;	
 	position:relative;
 	.leftcontent{
 		float:left;
@@ -240,9 +240,9 @@ body {
 	 	font-size:14px;
 	} 
 	input{		
-		border:0px;
+		border:0px !important;
 		position:relative;
-		font-size:14px;
+		font-size:12px !important;
 		width:100%;
 		padding:0px;
 		background:none;		
@@ -306,7 +306,7 @@ ul.tabs{
 				text-align:center;				
 				display:block;	 
 				text-transform:capitalize;
-				@include text-shadow(rgba(0, 0, 0, 0.2), 1px, 1px, 1px);
+				@include text-shadow(rgba(0, 0, 0, 0.1), 1px, 1px, 1px);
 			}
 			a:hover{
 				background:lighten($tab_color, 10%);
