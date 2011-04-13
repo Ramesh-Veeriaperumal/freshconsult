@@ -54,15 +54,21 @@ require 'openid'
     
   resp = request.env[Rack::OpenID::RESPONSE]
   email = get_email resp
+  #email = "support@freshdesk.com"
   domain_name = params[:domain]  
+  logger.debug "google_auth_completed :: domain_name is ::#{domain_name}"
   full_domain  = "#{domain_name.split('.').first}.#{AppConfig['base_domain'][RAILS_ENV]}"
   @current_account = Account.find_by_full_domain(full_domain)  
+  logger.debug "google_auth_completed :: domain_name is ::#{domain_name} full_domain:: #{full_domain} and current_acc: #{@current_account.inspect}"
+  
   @current_user = @current_account.users.find_by_email(email)  unless  @current_account.blank?
   @current_user = create_user(email,@current_account) if (@current_user.blank? && !@current_account.blank?)
   @current_user = User.find_by_email(email) if @current_account.blank?  
   return :back if @current_user.blank?
   @current_user.email = email 
-  @user_session = @current_user.account.user_sessions.new(@current_user)  
+  logger.debug "user is :: #{@current_user.inspect}"
+  #@user_session = @current_user.account.user_sessions.new(@current_user)  
+  @user_session = @current_account.user_sessions.new(@current_user)  
   logger.debug "@user session is :: #{@user_session.inspect} and user is ::: #{@current_user.inspect}"
   red_url = @current_user.account.full_domain
   #red_url = "localhost:3000"
@@ -70,6 +76,7 @@ require 'openid'
       logger.debug " @user session has been saved :: #{@user_session.inspect}"
       flash[:notice] = "Login successful!"      
       redirect_to root_url(:host =>red_url )
+      
   else
       note_failed_login
       render :action => :new
@@ -96,6 +103,7 @@ def get_email(resp)
 end
 
  def create_user(email, account)
+   logger.debug "create user has beeen called ::"
       @contact = account.users.new
       @contact.email = email
       @contact.user_role = User::USER_ROLES_KEYS_BY_TOKEN[:customer]
