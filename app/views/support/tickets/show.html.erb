@@ -112,11 +112,10 @@
 							<%= render :partial => "/helpdesk/shared/attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note" } %>
 					    <% end %>
 					</li>
+					<li class="alignright">
+						<%= f.submit "Add comment", {:class => "uiButton"} %>	
+					</li>
 				</ul>
-				
-				<div class="button-container"> 
-			  		<%= f.submit "Add comment", {:class => "uiButton"} %>
-				</div>
 			<% end %>		
 		</div>
 		
