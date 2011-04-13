@@ -1,0 +1,418 @@
+de:
+   edit: "Bearbeiten"
+   back: "Zur&uuml;ck"
+   delete: "L&ouml;schen"
+   create: "Neu"
+   cancel: "Abbrechen"
+   title: "Titel"
+   message: "Nachricht"
+   description: "Beschreibung"
+   add_a_topic: "Neues Thema"
+   no_topics_text: "Keine Themen in diesem Forum"
+   connect_ticket: "Mit Ticket verkn&uuml;pfen"
+   posted_by: "Geschrieben von"
+   reply_topic: "Auf Thema antworten"
+   comments: "Kommentare"
+   formatting_help: "Formatierungshilfe"
+   save_reply: "Antwort speichern"
+   save:    "Speichern"
+   save_changes: "Unterschiede speichern"
+   created_on: "Erstellt am"
+   asked_on: "Gefragt zu"
+   delete_topic_msg: "Thema endg&uuml;ltig l&ouml;schen"
+   no_forum_category: "Keine Foren zu dieser Kategorie"
+   add_new_forum: "Neues Forum erstellen"
+   edit_forum_category: "Forenkategorie bearbeiten"
+   forum_confirm_msg1: "Wollen Sie die Kategorie wirklich l&ouml;schen"
+   next:    "N&auml;chstes"
+   close: "Schlie&szlig;en"
+   done: "Fertig"
+   reset: "Zur&uuml;cksetzen"
+   deactivate: "Deaktivieren"
+   activate: "Aktivieren"
+   add: "Hinzuf&uuml;gen"
+   change: "&Auml;ndern"
+   name: "Name"
+   save_and_create: "Speichern und Neu"
+   attach_files: "Datei hinzuf&uuml;gen"
+   update: "Aktualisieren"
+   to_do: "Aufgaben"
+   add_to_do: "Zu Aufgaben hinzuf&uuml;gen"
+   activities: "Aktivit&auml;ten"
+   undelete: "Nicht l&ouml;schen"
+   recent_activity: "Neueste Aktivit&auml;ten"
+   
+   
+   sla_policy: 
+       title: "SLA Richtlinie"
+       title1: "SLA Richtlinien"
+       select_policy: "Richtlinie ausw&auml;hlen"
+       edit: "Richtlinie bearbeiten"
+       new: "Neue SLA Richtlinie"
+       sla_targets: "SLA Zielvorgaben"
+       tickets_with: "Tickets mit"
+       response_time: "Antwortzeit"
+       resolution_time: "L&ouml;sungszeit"
+       escalate_to: "Eskalieren an"
+       override: "&Uuml;berschreiben"
+       info1: "	Eine SLA Richtlinie ist ist eine Kombination aus Antwort- und L&ouml;sungszeit basierend auf der Ticketpriorit&auml;t. Es entspricht &uuml;blichen Business Practices, Service Levels nach ihrer Priorit&auml;t zu setzen. Ihre SLA Richtlinien k&ouml;nnten so lauten: Alle Tickets mit hoher Priorit&auml;t m&uuml;ssen innerhalb von 2 Stunden gel&ouml;st werden. usw"
+       info2: "Freshdesk benutzt die SLA Richtlinie, um zu bestimmen, wann ein Ticket f&auml;llig ist. Sie k&ouml;nnen eine SLA Richtlinie f&uuml;r alle Kunden einrichten. Aber wenn Sie einen Kunden mit anderen W&uuml;nschen haben, k&ouml;nnen Sie f&uuml;r ihn eine eigene SLA Richtlinie einrichten."
+       info3: "Die SLA Richtlinie wird in Verbindung mit den Gesch&auml;ftszeiten verarbeitet."
+       
+   tag:
+     title: "Tags"    
+   
+   company:
+       title: "Unternehmen"
+       new: "Neues Unternehmen"
+       edit: "Unternehmen bearbeiten"
+       name: "Name des Unternehmens"
+       quick_company: "Unternehmen (schnell)"
+       info1: "Wollen Sie das Unternehmen wirklich l&ouml;schen"
+       info2: "Domainnamen f&uuml;r dieses Unternehmen"
+       info3: "Notizen f&uuml;r diesen Kontakt hinzuf&uuml;gen"
+       info4: "Notiz f&uuml;r %{name} hinzuf&uuml;gen"
+       info5: "Notizen f&uuml;r dieses Unternehmen hinzuf&uuml;gen"
+       info6: "Personen von %{name}"
+       info7: "Keine Tickets von diesem Unternehmen vorhanden"
+       info8: "Mehr Informationen zu diesem Unternehmen, wie z.B. Adresse, Telefon, Website, usw."
+       info9: "Freshdesk f&uuml;gt Kontakte automatisch dem Unternehmen hinzu, wenn die Kontakt-E-Mailadresse auf die Domain endet."
+       
+   
+   ticket:
+       unassigned: "Nicht zugewiesen"
+       assigned_to: "Zugewiesen an"
+       status: "Status"
+       singular: "Ticket"
+       edit: "Ticket bearbeiten"
+       requester: "Anfragender"
+       subject: "Thema"
+       type: "Typ"
+       status: "Status"
+       group: "Gruppe"
+       assigned_to: "Zugewiesen an"
+       priority: "Priorit&auml;t"
+       properties: "Ticket-Details"
+       suggest_solutions: "L&ouml;sung vorschlagen"
+       execute_scenario: "Scenario ausf&uuml;hren"
+       requestor_info: "Info zum Anfragenden"
+       due_by_time: "F&auml;llig"
+       source: "Quelle"
+       recent_tickets: "Aktuelle Tickets"
+       to_do: "Zu erledigende Tickets"
+       activity: "Aktivit&auml;t"
+       unflag_spam: "Kein Spam"
+       flag_spam: "Spam"
+       pick_up: "&Uuml;bernehmen"
+       assign_to_agent: "Techniker zuweisen"
+       sort_by: "Sortieren nach"
+   
+   contacts:
+       edit: " Kontakt bearbeiten"
+       new: "Neuer Kontakt"
+       showing: "Angezeigt"
+       import_csv: "Benutzer aus CSV"
+       title: "Kontakte"
+       quick_contact: "Kontakt (schnell)"
+       save_changes: "&Auml;nderungen speichern"
+       edit_contact: "Kontakt bearbeiten"
+       working: "In Bearbeitung"
+       info1: "Wollen Sie den Kontakt wirklich l&ouml;schen"
+       info2: "Zu einem Techniker machen"
+       info3: "Details zu %{nick_name}"
+       info4: "Aktuelle Tickets von %{nick_name}"
+       info5: "Keine Tickets von diesem Benutzer"
+       deleted_message:     "Dieser Kontakt wurde gel&ouml;scht"
+       restore:             "Wiederherstellen"
+       emailnotverified:    "E-Mailadresse nicht freigeschaltet!"
+       form_placeholder:
+           description:     "Notizen f&uuml;r diesen Kontakt hinzuf&uuml;gen - z.B. die Adresse, FC Bayern-Fan, usw."
+      
+
+   category:
+        new: "Neue Kategorie"
+        edit: "Kategorie bearbeiten"
+        
+   forum: 
+      title: "Foren"
+      new:  "Neues Forum"
+      type: "Forentyp"
+      edit: "Forum bearbeiten"
+      verb:
+          questions:     "Frage gestellt von"
+          ideas:         "Idee geteilt von"
+          problems:      "Problem berichtet von"  
+          announcement:  "Ver&ouml;ffentlicht von"
+      confim_msg1: "Wollen Sie das Forum wirklich l&ouml;schen"
+      start_topic: "Neues Thema &ouml;ffnen"
+   topic:   
+     new: "Neues Thema"
+     post: "Thema speichern"
+     name: "Name f&uuml;r das Thema"
+     sticky: "Als Erstes anzeigen"
+     locked: "Gesperrt"
+     edit: "Thema bearbeiten"
+     msg1: "Keine Kommentare f&uuml;r dieses Thema m&ouml;glich"
+     open: "Diskussion wieder freigeben"
+     close: "Diskussion sperren"
+     reply: "Auf Thema antworten"
+     
+     
+   account:
+       rebrand: "Individualisieren Sie Ihren Helpdesk"
+       name: "Kontoname"
+       time_zone: "Zeitzone"
+       helpdesk_name: "Helpdesk Name"
+       helpdesk_url:  "Helpdesk URL"
+       info1: "Nutzen Sie dieses Feld, um Ihrem Freshdesk eine andere URL zu geben"
+       info2: "Bevor Sie dieses Feld nutzen, versichern Sie sich bitte, dass der CNAME DNS-Record Ihrer DNS-Zonendatei f�r support.meinedomain.de auf %{full_domain} zeigt. Fragen Sie im Zweifelsfall Ihren Systemadmin. "
+       info3: "Auf die Standardfarben zur&uuml;cksetzen"
+       info4: "Das n&auml;chste Ticket erh&auml;lt diese Ticketnummer. (Die eingegebene Zahl sollte gr&ouml;&szlig;er als das letzte, eingegangene Ticket sein). Diese Einstellung ist nur f&uuml;r zuk&uuml;nftige Tickets relevant."
+       page_colors: 
+               title: "Farben f&uuml;r die Seite"
+               header: "Header"
+               tab_color: "Tab-Farbe"
+               background: "Hintergrund"
+       save: "&Auml;nderungen speichern"   
+       cancel: "Ohne Speichern zur&uuml;ck" 
+       active_since: "Aktiv seit"
+   email_configs:
+           title: "E-Mail-Einstellungen"
+           info1: "Ihre Benutzer senden Support-E-Mails an"
+           info2: "Alle Support-E-Mails m&uuml;ssen an genau eine E-Mailadresse gesendet werden"
+           info3: "Freshdesk fragt dieses Postfach ab und interpretiert eingehende E-Mails als Tickets"
+           info4: "Geben Sie mehrere E-Mailadressen an, falls Sie mehrere Produkte betreuen - f&uuml;r jedes eine eigene E-Mailadresse"
+           info5: "Antworten von Freshdesk verwenden automatisch die E-Mailadresse, die adressiert wurde"
+           info6: "Support-E-Mailadresse eingeben"
+           info7: "Das ist auch die Antwortadresse" 
+           info8: "E-Mails an diese Adresse weiterleiten"
+           info9: "Einer Gruppe zuweisen"
+           info10: "Neue Tickets an diese E-Mailadresse werden automatisch der Gruppe zugeordnet"
+           info11: "Support-E-Mailadresse (ein- und ausgehend) konfigurieren"
+           info12: "Weitere E-Mailadresse eingeben"
+           info13: "Ihre Support-E-Mailadresse ist"
+           info14: "Jede Nachricht an diese Adresse wird zum Ticket"
+           info15: "Diese Nachrichten weiterleiten an"
+           info16: "Tickets zuweisen"
+           supp_email_add: "Support-E-Mailadresse"
+           make_primary: "Als Prim&auml;r definieren"
+           change_this: "Ver&auml;ndern"
+           primary_supp_email: "Prim&auml;re Support-E-Mailadresse"
+           add_supp_emails: "Zus&auml;tzliche Support-E-Mailadresse(n)"
+           reply_emails: "Antwortnachrichten von Freshdesk"
+           
+   
+   email_notifications:
+           title: "E-Mailbenachrichtigungen"
+           event: "Ereignis"
+           requestor_notification: "Benachrichtigung an Anfragenden"
+           agent_notification: "Benachrichtigung an Techniker"
+           customize_email: "E-Mail anpassen"
+           insert_placeholder: "Platzhalter einf&uuml;gen"
+           modify_template: "Anfragevorlage bearbeiten"
+   dispatch:
+        title: "Dispatch'r"
+        edit: "Dispatch'r - Bearbeitungsregel" 
+        new: "Dispatch'r - Neue Regel"
+        rule_name: "Regelname" 
+        info1: "Tickets bez&uuml;glich der Anmeldung"
+        info2: "Alle Tickets bez&uuml;glich der Anmeldung werden Susan zugeordnet"
+        info3: "Wann soll diese Regel angewandt werden"   
+        info4: "Dispatch'r weist neue Tickets entsprechend der Regeln und Aktionen zu"
+        info5: "Bitte beachten: Die Reihenfolge der Regeln wird ber&uuml;cksichtigt. Nur die erste passende Regeln, die Dispatch'r findet, wird angewandt."
+        add_condition: "Bedingung hinzuf&uuml;gen"
+        act_to_perform: "Durchzuf&uuml;hrende Aktionen"
+        add_new_action: "Aktion hinzuf&uuml;gen"
+        match_any: "Entspricht irgendeiner"
+        match_all: "Entspricht allen"
+        add_new_choice: "Auswahl hinzuf&uuml;gen"
+        reorder: "Sortieren"
+        new_rule: "Neue Regel"
+        dispatch_rules: "Dispatch'r - Regeln"
+        inactive_rules: "Inaktive Regeln"
+   agent:
+       title: "Techniker"
+       edit: "Techniker bearbeiten"
+       new: "Neuer Techniker"
+       update: "Aktualisieren"
+       restore: "Wiederherstellen"
+       view_user: "Benutzer ansehen"
+       make_admin: "Techniker zum Admin bef&ouml;rdern"
+       signature: "Signatur"
+       add_signature: "Signatur hinzuf&uuml;gen"
+       info1: "Das ist ein gel&ouml;schter Techniker"
+       info2: "E-Mailadresse wurde bereits ausgew&auml;hlt"
+       info3: "Wollen Sie wirklich l&ouml;schen"
+   
+   group:
+       title: "Gruppen"
+       edit: "Gruppen bearbeiten"
+       name: "Gruppenname"
+       new: "Neue Gruppe"
+       select_agents: "Techniker ausw&auml;hlen"
+       info1: "Techniker in dieser Gruppe"
+       info2: "Keine Techniker in dieser Gruppe"
+       info3: "Eskalieren an"
+       info4: "Wenn ein Ticket l&auml;nger liegt als"
+       info5: "Sicher"
+  
+      
+       
+   user:
+      full_name: "Vollst&auml;ndiger Name"
+      email: "E-Mail"
+      title: "Titel"
+      phone_no: "Telefon"
+      work: "Arbeit"
+      mobile: "Mobil"
+      photo: "Photo"
+      company: "Unternehmen"
+      twitter_id: "Twitter Id"
+      secondary: "Optional"
+      back_info: "Zus&auml;tzliche Details"
+      info1: "Ein Profilbild (Avatar) f&uuml;r die Person. Am Besten ist ein quadratisches Bild. "
+      
+   solution:
+       title: "L&ouml;sungen"
+       add:   "L&ouml;sung hinzuf&uuml;gen"
+       edit: "L&ouml;sung bearbeiten"
+       add_new_solution: "L&ouml;sung hinzuf&uuml;gen"
+       type: "L&ouml;sungstyp"
+       status: "Status der L&ouml;sung"
+       info1: "Der Bereich L&ouml;sungen in Freshdesk ist Ihre L&ouml;sungsdatenbank"
+       info2: "L&ouml;sungen k&ouml;nnen <b>&ouml;ffentlich</b> oder <b>intern</b> sein. &Ouml;ffentliche L&ouml;sungen werden im Self-Service Portal ver&ouml;ffentlicht und erscheinen in der allgemeinen Suche. "
+       info3: "Interne L&ouml;sungen k&ouml;nnen nur von Technikern eingesehen werden. "
+       info4: "L&ouml;sungen werden folgenderma&szlig;en kategorisiert: <b>Kategorie --> Ordner --> Beitrag</b>"
+       info5: "L&ouml;sungen sind entweder <b>Workarounds</b> oder <b>dauerhafte</b> L&ouml;sungen"
+       info6: "Eine L&ouml;sung befindet sich im <b>Entwurfs</b>-Stadium und kann auf <b>Ver&ouml;ffentlicht</b> gesetzt werden, sobald die L&ouml;sung genehmigt wurde"
+       info7: "Keine L&ouml;sungen in diesem Ordner"  
+       info8: "Wollen Sie die L&ouml;sung wirklich l&ouml;schen"
+       info9: "&Ouml;ffentlich (allgemein zug&auml;nglich)"
+       info10: "Intern (nur f&uuml;r Techniker und Admins)"
+       
+       
+   solution_category:
+        edit: "Kategorie bearbeiten"  
+        new: "Neue Kategorie"
+        save_and_create: "Speichern und Neu" 
+        info1: "Wollen Sie die Kategorie wirklich l&ouml;schen"
+        info2: "Keine Ordner in dieser Kategorie"
+   
+   folder:
+       add_folder: "Ordner hinzuf&uuml;gen"
+       edit: "Ordner bearbeiten"
+       info1: "Wollen Sie den Ordner wirklich l&ouml;schen"
+        
+   business_hours:
+       title: "Gesch&auml;ftszeiten"
+       holidays: "Feiertage"
+       helpdesk_hours: "Helpdesk &Ouml;ffnungszeiten"
+       info1: "Gesch&auml;ftszeiten einzugeben ist f&uuml;r die korrekte Verarbeitung der SLA Richtlinien wichtig. Wenn Ihre Gesch&auml;ftszeiten Mo - Fr von 9 bis 16 Uhr sind, dann muss ein am Dienstag um 14 Uhr eingehendes Ticket mit hoher Priorit&auml;t (in unserem Beispiel 4 Stunden L&ouml;sungszeit) erst am Mittwoch um 11 gel&ouml;st sein. Stellen Sie in den SLA Richtlinien ein, ob die Gesch&auml;ftszeiten f&uuml;r die jeweilige Richtlinie relevant ist oder nicht. "
+       info2: "Feiertage haben eine &auml;nliche Wirkung wie Gesch&auml;ftszeiten. Wenn ein Ticket am Freitag Abend eingeht, der HelpDesk einen 5x8h-Service anbietet, muss das Ticket fr&uuml;hestens am Montag gel&ouml;st sein. "
+       info3: "Au&szlig;erordentliche Arbeitszeiten"
+       info4: "Arbeitstage des HelpDesks"
+       info5: "eiertage werden bei der SLA-Berechnung f&uuml;r Tickets nicht ber&uuml;cksichtigt"
+       holiday_list: "Liste der arbeitsfreien Tage im Kalenderjahr"
+       holiday_name: "Name des Feiertags"
+       holiday_added: "Feiertag bereits hinzugef&uuml;gt"
+       
+       
+   automations:
+        title: "Automatisierte Szenarien"
+        new:  "Neues Szenario"
+        reorder: "Sortieren"
+        info1: "Jeder HelpDesk hat spezifische, sich wiederholende Szenarien - z.B. Eskaliere Ticket auf Stufe 2, weise es der Qualit&auml;tssicherung zu, leite es an den Vertrieb weiter... In diesen Szenarien sind normalerweise mehrere Schritte n&ouml;tig"
+        info2: "Beispiel: Bevor ein Ticket der Qualit&auml;tssicherung zugewiesen wird, muss der Ticket-Typ auf Bug gesetzt werden. Anschlie&szlig;end wird das Ticket der Gruppe QS zugewiesen und an den Leiter der QS geschickt. "
+        info3: "Automatisierte Szenarien erlauben viele Schritte mit einem Klick zu gehen"
+        info4: "W&auml;hlen Sie die Platzhalter (unten) aus, damit sie automatisch mit den richtigen Inhalten ausgef&uuml;llt werden"
+        info5: "Der Qualit&auml;tssicherung zuweisen"
+        info6: "Ticket als Bug markieren und Qualit&auml;tssicherung zuweisen"
+        info7: "Auszuf&uuml;hrende Aktionen"
+        info8: "Aktion hinzuf&uuml;gen"
+        available_placeholders: "Verf&uuml;gbare Platzhalter"
+  
+
+  
+    
+   
+          
+        
+   profile:
+       edit: "Profil bearbeiten" 
+       change_password  : "Passwort &auml;ndern"
+       current_password : "Altes Passwort"
+       new_password     : "Neues Passwort"
+       confirm_password : "Passwort best&auml;tigen"
+   datetime:
+    distance_in_words:
+      half_a_minute: 'eine halbe Minute'
+      less_than_x_seconds:
+        one: 'weniger als eine Sekunde'
+        other: 'weniger als %{count} Sekunden'
+      x_seconds:
+        one: 'eine Sekunde'
+        other: '%{count} Sekunden'
+      less_than_x_minutes:
+        one: 'weniger als eine Minute'
+        other: 'weniger als %{count} Minuten'
+      x_minutes:
+        one: 'eine Minute'
+        other: '%{count} Minuten'
+      about_x_hours:
+        one: 'etwa eine Stunde'
+        other: 'etwa %{count} Stunden'
+      x_days:
+        one: 'ein Tag'
+        other: '%{count} Tage'
+      about_x_months:
+        one: 'etwa ein Monat'
+        other: 'etwa %{count} Monate'
+      x_months:
+        one: 'ein Monat'
+        other: '%{count} Monate'
+      almost_x_years:
+        one: 'fast ein Jahr'
+        other: 'fast %{count} Jahre'
+      about_x_years:
+        one: 'etwa ein Jahr'
+        other: 'etwa %{count} Jahre'
+      over_x_years:
+        one: 'mehr als ein Jahr'
+        other: 'mehr als %{count} Jahre'
+            
+   activerecord:
+    errors:
+      template:
+         one:    "1 Fehler verhinderte, dass %{model} gespeichert wurde"
+         other:  "%{count} Fehler verhinderten das Speichern"
+         body: "Folgende Felder enthalten Fehler:"   
+     
+           
+
+      messages:
+          inclusion: "ist nicht in der Liste enthalten"
+          exclusion: "steht nicht zur Verf&uuml;gung"
+          invalid: "ist nicht g&uuml;ltig"
+          confirmation: "ist nicht gleich der Best&auml;tigung"
+          accepted: "muss akzeptiert werden"
+          empty: "darf nicht leer bleiben"
+          blank: "darf nicht frei bleiben"
+          too_long: "ist zu lang (h&ouml;chstens %{count} Zeichen)"
+          too_short: "ist zu kurz (mindestens is %{count} Zeichen)"
+          wrong_length: "hat die falsche L&auml;nge (%{count} Zeichen verlangt)"
+          not_a_number: "ist keine Zahl"
+          not_an_integer: "muss eine Zahl sein"
+          greater_than: "muss gr&ouml;&szlig;er als %{count} sein"
+          greater_than_or_equal_to: "muss gr&ouml;&szlig;er gleich %{count} sein"
+          equal_to: "muss gleich %{count} sein"
+          less_than: "muss weniger als %{count} sein"
+          less_than_or_equal_to: "muss kleiner gleich %{count} sein"
+          odd: "muss ungerade sein"
+          even: "muss gerade sein"
+          record_invalid: "Validierung fehlgeschlagen: %{errors}"
+          <<: *errors_messages
+
+      full_messages:
+        format: "%{attribute} %{message}"
+   
+       

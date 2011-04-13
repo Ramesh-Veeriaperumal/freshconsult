@@ -17,3 +17,9 @@ if Helpdesk::EMAIL[:outgoing] && Helpdesk::EMAIL[:outgoing][RAILS_ENV.to_sym]
   ActionMailer::Base.smtp_settings = Helpdesk::EMAIL[:outgoing][RAILS_ENV.to_sym]
 end
 
+I18n.backend.class.send(:include, I18n::Backend::Fallbacks)
+I18n.fallbacks.map('it' => 'en')
+I18n.fallbacks.map('es' => 'en')
+I18n.fallbacks.map('de' => 'en')
+I18n.fallbacks.map('fr' => 'en')
+
