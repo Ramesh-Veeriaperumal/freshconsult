@@ -35,12 +35,13 @@ div.color span {
   display: inline;
 }
 
-/* line 38, ../src/form.scss */
+/* line 37, ../src/form.scss */
 textarea {
   overflow: auto;
-  font-size: 1.2em;
+  font-size: 1.0em;
   line-height: 1.4em;
   resize: false;
+  padding: 3px;
 }
 
 /* line 45, ../src/form.scss */
