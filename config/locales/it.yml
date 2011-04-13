@@ -1,0 +1,419 @@
+it:
+   edit: "Modifica"
+   back: "Indietro"
+   delete: "Elimina"
+   create: "Crea"
+   cancel: "Annulla"
+   title: "Titolo"
+   message: "Messaggio"
+   description: "Descrizione"
+   add_a_topic: "Nuova Discussione"
+   no_topics_text: "Nessuna discussione in questo forum"
+   connect_ticket: "Collegamento al ticket"
+   posted_by: "Scritto da"
+   reply_topic: "Rispondi alla discussione"
+   comments: "Commento"
+   formatting_help: "Aiuto formattazione testo"
+   save_reply: "Salva risposta"
+   save:    "Salva"
+   save_changes: "Salva cambiamenti"
+   created_on: "Creato il"
+   asked_on: "Chiesto il"
+   delete_topic_msg: "Cancella definitivamente questa discussione"
+   no_forum_category: "Nessun forum in questa categoria"
+   add_new_forum: "Aggiungi un nuovo forum"
+   edit_forum_category: "Madifica categoria del forum"
+   forum_confirm_msg1: "Sei sicuro di voler cancellare questa categoria"
+   next:    "Prossimo"
+   close: "Chiuso"
+   done: "Fatto"
+   reset: "Reset"
+   deactivate: "Disattiva"
+   activate: "Attiva"
+   add: "Aggiungi"
+   change: "Cambia"
+   name: "Nome"
+   save_and_create: "Salva e crea un altro"
+   attach_files: "Allega file"
+   update: "Aggiorna"
+   to_do: "Cose da fare"
+   add_to_do: "Aggiungi Cose da fare"
+   activities: "Attività"
+   undelete: "Non cancellabile"
+   recent_activity: "Attività recenti"
+   
+   
+   sla_policy: 
+       title: "Condizione SLA"
+       title1: "Condizioni SLA"
+       select_policy: "Seleziona Condizione"
+       edit: "Modifica condizione SLA"
+       new: "Nuova condizione SLA"
+       sla_targets: "Obbiettivi SLA"
+       tickets_with: "Tickets con"
+       response_time: "Tempo di risposta"
+       resolution_time: "Tempo di risoluzione"
+       escalate_to: "Aumenta di"
+       override: "Annullare"
+       info1: "	SLA Policy is a set of target response and resolution times based on ticket priority.It is an industry best practice to set Service Levels based on priority. Your SLA policy could be as simple as saying ‚ÄúHigh Priority tickets should be resolved in 2 hours‚Äù etc."
+       info2: "Freshdesk uses the SLA Policy to determine the ‚ÄúDue By‚Äù time of tickets. You can have a default SLA policy for all of your customers, but if you have a special customer who requires faster response and resolution times, you can always create a special SLA policy for that customer."
+       info3: "SLA Policy works in conjunction with Business Hours"
+       
+   tag:
+     title: "Tags"    
+   
+   company:
+       title: "Aziende"
+       new: "Nuova Azienda"
+       edit: "Modifica Azienda"
+       name: "Nome Azienda"
+       quick_company: "Aggiungi Veloce"
+       info1: "Sei sicuro di voler eliminare questa azienda"
+       info2: "Nome principale del' azienda"
+       info3: "Aggiungi nota specifica riguardo questo contatto"
+       info4: "Aggiungi nota riguardo %{name}"
+       info5: "Aggiungi nota specifica riguardo questa azienda"
+       info6: "Impiegato di %{name}"
+       info7: "Nessun ticket è stato creato da impiegati di questa azienda"
+       info8: "Più informazioni riguardo questa azienda indirizzo, numero di telefono, sito web etc"
+       info9: "Freshdesk aggiungerà automaticamente i contatti a questa azienda se il dominio sarà il medesimo"
+       
+   
+   ticket:
+       unassigned: "Non assegnato"
+       assigned_to: "Assegnato a"
+       status: "Status"
+       singular: "Ticket"
+       edit: "Modifica Ticket"
+       requester: "Richiedente"
+       subject: "Oggetto"
+       type: "Tipo"
+       status: "Status"
+       group: "Gruppo"
+       assigned_to: "Assegnato a"
+       priority: "Priorità"
+       properties: "Proprietà del Ticket"
+       suggest_solutions: "Soluzioni Suggerite"
+       execute_scenario: "Esegui Scenario"
+       requestor_info: "Informazioni sul richiedente"
+       due_by_time: "Ordina per data"
+       source: "Sorgente"
+       recent_tickets: "Tickets recenti"
+       to_do: "Tickets da fare"
+       activity: "Attività"
+       unflag_spam: "Deseleziona come Spam"
+       flag_spam: "Segna come Spam"
+       pick_up: "Apri sopra"
+       assign_to_agent: "Assegna a"
+       sort_by: "Elenca per"
+   
+   contacts:
+       edit: "Modifica Contatto"
+       new: "Nuovo contatto"
+       showing: "Mostra"
+       import_csv: "Importa utenti da CSV"
+       title: "Contatti"
+       quick_contact: "Aggiungi contatto veloce"
+       save_changes: "Salva modifiche"
+       edit_contact: "Modifica contatto"
+       working: "Elaborando"
+       info1: "Sei sicuro di voler eliminare questo contatto"
+       info2: "Promuovi questo utente ad Agente"
+       info3: "Informazioni di %{nick_name}"
+       info4: "Ticket recenti da %{nick_name}"
+       info5: "Questo utente non ha ancora aperto ticket"
+       deleted_message:     "Questo contatto è stato cancellato"
+       restore:             "Ripristina"
+       emailnotverified:    "L'Email di questo utente non è stata verificata!"
+       form_placeholder:
+           description:     "Aggiungi note specifiche riguardo questo contatto - indirizzo, interessi, etc."
+      
+
+   category:
+        new: "Nuova categoria"
+        edit: "Modifica categoria"
+        
+   forum: 
+      title: "Forum"
+      new:  "Nuovo Forum"
+      type: "Tipo di Forum"
+      edit: "Modifica Forum"
+      verb:
+          questions:     "Domanda posta da"
+          ideas:         "Idea condivisa da"
+          problems:      "Problema riportato da"  
+          announcement:  "Annunciato da"
+      confim_msg1: "Sei sicuro di voler cancellare questo forum"
+      start_topic: "Inizia discussione"
+   topic:   
+     new: "Nuova discussion"
+     post: "Pubblica discussione"
+     name: "Nome discussione"
+     sticky: "Unisci"
+     locked: "Bloccato"
+     edit: "Modifica discussione"
+     msg1: "Commenti bloccati per questa discussione"
+     open: "Riapri discussione"
+     close: "Chiudi questa discussione"
+     reply: "Rispondi a questa discussione"
+     
+     
+   account:
+       rebrand: "Rinomina il tuo Helpdesk"
+       name: "Nome Account"
+       time_zone: "Time Zone"
+       helpdesk_name: "Nome Helpdesk"
+       helpdesk_url:  "URL Helpdesk"
+       info1: "Puoi personalizzare questo campo per aggiungere Freshdesk al tuo dominio"
+       info2: "Before using this field please ensure that you have created a CNAME DNS record in your DNS Zone file to point support.mycompanyname.com to %{full_domain}. Your Webmaster or Server administrator should be able to help you set this up correctly"
+       info3: "Reset al colore predefinito"
+       info4: "The next ticket ID counter will start with this number (Should be greater than the last ticket ID created). This affects tickets created henceforth."
+       page_colors: 
+               title: "Pagina colori"
+               header: "Testata"
+               tab_color: "Tabella Colori"
+               background: "Sfondo"
+       save: "Salva modifiche"   
+       cancel: "Cancella e torna indietro" 
+       active_since: "Attivato il"
+   email_configs:
+           title: "Configurazione Email"
+           info1: "Il tuo utente invia email come"
+           info2: "Devi unite le tue email di support in un unico indirizzo mail"
+           info3: "Freshdesk quango riceverà le email le convertirà in un ticket"
+           info4: "Puoi aggiungere un email per ogni prodotto che tratti - ogni prodotto avrà la sua mail di supporto"
+           info5: "Rispondendo alle email via Freshdesk  automaticamente sarà usata l'email originale di supporto"
+           info6: "Inserisci la tua mail di supporto"
+           info7: "Questa e anche la mail di risposta a" 
+           info8: "Invia le tue email a"
+           info9: "Assegna al gruppo"
+           info10: "I nuovi ticket inviati a questa mail saranno automaticamente assegnati ad un gruppo"
+           info11: "Configura posta in entrata e in uscita della email di supporto"
+           info12: "Aggiungi un nuovo indirizzo mail"
+           info13: "Il tuo indirizzo mail di supporto è"
+           info14: "Ogni email inviata a questo indirizzo sarà convertita in un ticket"
+           info15: "Devi inviare questa mail a"
+           info16: "Ticket verrà assegnato a"
+           supp_email_add: "Indirizzo mail di supporto"
+           make_primary: "Imposta predefinito"
+           change_this: "Cambia questo"
+           primary_supp_email: "Email di supporto primaria"
+           add_supp_emails: "Email di supporto addizionale/i"
+           reply_emails: "Rispondi alle mail da Freshdesk"
+           
+   
+   email_notifications:
+           title: "Notifiche email"
+           event: "Eventi"
+           requestor_notification: "Notifica al richiedente"
+           agent_notification: "Notifica all' operatore"
+           customize_email: "Personalizza Email"
+           insert_placeholder: "Inserisci segnalibro"
+           modify_template: "Modifica Template richiedente"
+   dispatch:
+        title: "Dispatch'r"
+        edit: "Dispatch'r - Modifica regola" 
+        new: "Dispatch'r - Nuova regola"
+        rule_name: "Nome regola" 
+        info1: "Iscrizione a tickets simili"
+        info2: "Tutte le iscrizioni relative ai ticket saranno inviate a Susan"
+        info3: "Quando questa regola dovrebbe essere applicata"   
+        info4: "Dispatch'r automaticamente smisterà i ticket in base alle regole e alle azioni definite"
+        info5: "Ricorda, l'ordine dell regole è importante. Per ogni ticket entrante, Dispatch'r eseguirà la prima regola nella lista e si fermerà"
+        add_condition: "Aggiungi nuova condizione"
+        act_to_perform: "Azioni da eseguire"
+        add_new_action: "Aggiungi nuova azione"
+        match_any: "Assegna selezionati"
+        match_all: "Assegna tutto"
+        add_new_choice: "Aggiungi nuova scelta"
+        reorder: "Riordina"
+        new_rule: "Nuova regola"
+        dispatch_rules: "Dispatch'r - Regole"
+        inactive_rules: "Regole inattive"
+   agent:
+       title: "Operatori"
+       edit: "Modifica Operatore"
+       new: "Nuovo Operatore"
+       update: "Aggiorna"
+       restore: "ripristina"
+       view_user: "Vedi utente"
+       make_admin: "Promuovi operatore ad amministratore"
+       signature: "Firma"
+       add_signature: "Aggiungi firma"
+       info1: "Questo è un operatore eliminato"
+       info2: "L'email è già stata usata"
+       info3: "Sei sicuro di voler eliminare"
+   
+   group:
+       title: "Gruppi"
+       edit: "Modifica gruppi"
+       name: "Nome gruppo"
+       new: "Nuovo gruppo"
+       select_agents: "Seleziona operatore"
+       info1: "Operatore in questo gruppo"
+       info2: "Nessun operatore in questo gruppo"
+       info3: "Invia un Escalation email a"
+       info4: "Se un ticket rimane non assegnato per più di"
+       info5: "Sei sicuro"
+  
+      
+       
+   user:
+      full_name: "Nome completo"
+      email: "Email"
+      title: "Titolo"
+      phone_no: "Numero di Telefono"
+      work: "Lavoro"
+      mobile: "Cellulare"
+      photo: "Foto"
+      company: "Azienda"
+      twitter_id: "Twitter Id"
+      secondary: "secondario"
+      back_info: "Informazioni personali"
+      info1: "Un immagine del profilo ha un aspetto più gradevole se ha l stessa altezza e larghezza."
+      
+   solution:
+       title: "Soluzioni"
+       add:   "Aggiungi soluzione"
+       edit: "Modifica Soluzione"
+       add_new_solution: "Aggiungi nuova soluzione"
+       type: "Tipo soluzione"
+       status: "Status Soluzioni"
+       info1: "Soluzioni di Freshdesk nel vostro Knowledge base"
+       info2: "Soluzioni possono essere <b>pubbliche</b> o <b>private</b>. Le soluzioni pubbliche sono visibili nel Self Service Portal e appaiono anche nei risultati della ricerca"
+       info3: "Le soluzioni private sono soluzioni per i soli operatori e fungono da scambio di informazioni"
+       info4: "Le soluzioni usano una gerarchia a 3 livelli - <b>Categoria --> Cartella --> Articolo</b>"
+       info5: "Le soluzioni possono essere di due tipi - <b>In lavorazione</b> o <b>Definitive</b>"
+       info6: "Una soluzione può avere lo status <b>in progettazione</b> mentre è in lavorazione e può essere cambiata in status <b>pubblicata</b> una volta che è stata rivista e corretta."
+       info7: "Nessuna soluzione presente in questa cartella"  
+       info8: "Sei sicuro di voler cancellare questa soluzione"
+       info9: "Pubblica (sarà pubblicata nel Self Service Portal)"
+       info10: "Privata (Visibile solo dagli operatori)"
+       
+       
+   solution_category:
+        edit: "Modifica categoria"  
+        new: "Nuova categoria"
+        save_and_create: "Salva e crier un' altra" 
+        info1: "Sei sicuro di voler cancellare questa categoria"
+        info2: "Nessuna cartella in questa categoria"
+   
+   folder:
+       add_folder: "Aggiungi cartella"
+       edit: "Nuova cartella"
+       info1: "Sei sicuro di voler cancellare questa cartella"
+        
+   business_hours:
+       title: "Orario di lavoro"
+       holidays: "Festività"
+       helpdesk_hours: "Orario Helpdesk"
+       info1: "Setting up your Business Hours in Freshdesk allows you to get more control on your SLAs.For eg. If you helpdesk works 9AM - 6PM Mon-Fri and a customer sends a high priority ticket at 4 PM on Tuesday with a SLA target resolution time of 4 hours, then the ticket Due By time is set as 11 AM on Wednesday.You can configure your SLAs to either respect or ignore business hours"
+       info2: "Holidays work exactly like Business hours. For eg. If you helpdesk works 9AM - 6PM Mon-Fri and a customer sends a medium priority ticket at 8 PM on Friday with a SLA target resolution time of 24 hours, then the ticket Due By time is set as 9AM on Tuesday.(not 8PM on Sat)"
+       info3: "Orario di lavoro specifico"
+       info4: "Giorni lavorativi del tuo Helpdesk"
+       info5: "I giorni festivi verranno ignorati nel calcolo della SLA di un ticket"
+       holiday_list: "Lista festività annuali"
+       holiday_name: "Nome festività"
+       holiday_added: "Festività già inserita"
+       
+       
+   automations:
+        title: "Scenario Automatizzazioni"
+        new:  "Nuovo Scenario"
+        reorder: "Riordina"
+        info1: "Ogni Helpdesk ha un set di scenario commune ricorrenti - Eg. Escalate to Level 2, Assegna a QA, Inoltra al reparto vendite etc. Questi scenario di solito eseguono aggiornamenti multipli al ticket"
+        info2: "Per esempio prima di assegnare un ticket a QA poi impostare il ticket come bug, assegnarlo al gruppo QA e informare il manager del QA riguardo il nuovo bug"
+        info3: "Scenario Automatizzazioni ti permette di avviare queste azioni con un single click"
+        info4: "Seleziona i segnalibri seguenti per aggiungere contenuto all'email e convertirlo nel formato appropriato"
+        info5: "Assegna QA"
+        info6: "Segna il Ticket come Bug ed assegna a QA"
+        info7: "Azioni da eseguire"
+        info8: "Aggiungi nuova azione"
+        available_placeholders: "Segnalibri disponibili"
+  
+
+  
+    
+   
+          
+        
+   profile:
+       edit: "Modifica Profilo" 
+       change_password  : "Cambia Password"
+       current_password : "Password Corrente"
+       new_password     : "Nuova password"
+       confirm_password : "Conferma password"
+   
+   datetime:
+    distance_in_words:
+      half_a_minute: "mezzo minuto"
+      less_than_x_seconds:
+        one:  "meno di un secondo"
+        other: "meno di %{count} secondi"
+      x_seconds:
+        one:  "1 secondo"
+        other: "%{count} secondi"
+      less_than_x_minutes:
+        one:  "meno di un minuto"
+        other: "meno di %{count} minuti"
+      x_minutes:
+        one:  "1 minuto"
+        other: "%{count} minuti"
+      about_x_hours:
+        one:  "circa un'ora"
+        other: "circa %{count} ore"
+      x_days:
+        one:  "1 giorno"
+        other: "%{count} giorni"
+      about_x_months:
+        one:  "circa un mese"
+        other: "circa %{count} mesi"
+      x_months:
+        one:  "1 mese"
+        other: "%{count} mesi"
+      about_x_years:
+        one:  "circa un anno"
+        other: "circa %{count} anni"
+      over_x_years:
+        one:  "oltre un anno"
+        other: "oltre %{count} anni"
+      almost_x_years:
+        one:   "circa 1 anno"
+        other: "circa %{count} anni"
+   
+   activerecord:
+    errors:
+      template:
+         one:    "1 error prohibited this %{model} from being saved"
+         other:  "%{count} errors prohibited this %{model} from being saved"
+         body: "Ce un problema con i seguenti campi:"   
+     
+           
+
+      messages:
+          inclusion: "non è incluso nella lista"
+          exclusion: "è riservato"
+          invalid: "non è valido"
+          confirmation: "non corrisponde"
+          accepted: "deve essere accettato"
+          empty: "non può essere vuoto"
+          blank: "non può essere nullo"
+          too_long: "troppo lungo (massimo %{count} caratteri)"
+          too_short: "trope corto (minimo %{count} caratteri)"
+          wrong_length: "number di caratteri errata (deve essere %{count} caratteri)"
+          not_a_number: "non è un numero"
+          not_an_integer: "deve essere integer"
+          greater_than: "deve essere maggiore di %{count}"
+          greater_than_or_equal_to: "deve essere maggiore o uguale a %{count}"
+          equal_to: "deve essere uguale a  %{count}"
+          less_than: "deve essere minore di %{count}"
+          less_than_or_equal_to: "deve essere minore o uguale a %{count}"
+          odd: "deve essere dispari"
+          even: "deve essere pari"
+          record_invalid: "Validazione fallita: %{errors}"
+          <<: *errors_messages
+
+      full_messages:
+        format: "%{attribute} %{message}"
+   
+       

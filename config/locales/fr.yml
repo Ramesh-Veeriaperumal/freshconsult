@@ -1,0 +1,421 @@
+fr:
+   edit: "Modifier"
+   back: "Précédent"
+   delete: "Supprimer"
+   create: "Créer"
+   cancel: "Annuler"
+   title: "Titre"
+   message: "Message"
+   description: "Description"
+   add_a_topic: "Commencer une rubrique"
+   no_topics_text: "Aucune rubrique dans ce forum"
+   connect_ticket: "Lien vers le ticket"
+   posted_by: "Mis en ligne par"
+   reply_topic: "Répondre à la rubrique"
+   comments: "Commentaires"
+   formatting_help: "Aide au formatage"
+   save_reply: "Enregistrer la réponse"
+   save:    "Enregistrer"
+   save_changes: "Enregistrer les modifications"
+   created_on: "Créé le"
+   asked_on: "Demandé le"
+   delete_topic_msg: "Supprimer définitivement cette rubrique "
+   no_forum_category: "Aucun forum dans cette catégorie"
+   add_new_forum: "ajouter un nouveau forum"
+   edit_forum_category: "Modifier la catégorie du forum"
+   forum_confirm_msg1: "Êtes-vous sûr de vouloir supprimer cette catégorie ?"
+   next:    "Suivant"
+   close: "Fermer"
+   done: "Exécuté"
+   reset: "Réinitialiser"
+   deactivate: "désactiver"
+   activate: "activer"
+   add: "Ajouter"
+   change: "Modifier"
+   name: "Nom"
+   save_and_create: "Enregistrer et créer un autre"
+   attach_files: "Joindre des fichiers"
+   update: "Mettre à jour"
+   to_do: "Liste de tâches"
+   add_to_do: "Ajouter à la liste de tâches"
+   activities: "Activités"
+   undelete: "Annuler la suppression"
+   recent_activity: "Activité récente"
+   
+   
+   sla_policy: 
+       title: "Accord SLA"
+       title1: "Règles SLA"
+       select_policy: "Sélectionner un accord"
+       edit: "Modifier un accord SLA"
+       new: "Nouvel accord SLA"
+       sla_targets: "Cibles du SLA"
+       tickets_with: "Tickets avec"
+       response_time: "Délai de réponse"
+       resolution_time: "Temps de résolution"
+       escalate_to: "Remonter vers"
+       override: "Ignorer"
+       info1: "	L'accord SLA correspond à un ensemble de réponses ciblées et de temps de résolution définis selon la priorité du ticket. Il s'agit d'une bonne pratique en vigueur dans l'industrie visant à établir des niveaux de service en fonction de la priorité. Votre stratégie SLA peut simplement se résumer à une phrase comme « Les tickets à priorité élevée doivent être résolus en 2 heures »."
+       info2: "Freshdesk utilise l'accord SLA pour déterminer l'heure d'échéance des tickets. Vous pouvez utiliser avec tous vos clients le même accord SLA par défaut, mais si un client particulier exige des délais et des temps de résolution plus rapides, vous avez toujours la possibilité de créer un accord SLA spécial pour lui."
+       info3: "L'accord SLA respecte les heures de bureau"
+       
+   tag:
+     title: "Balises"    
+   
+   company:
+       title: "Sociétés"
+       new: "Nouvelle société"
+       edit: "Modifier une société"
+       name: "Nom de la société"
+       quick_company: "Société rapide"
+       info1: "Êtes-vous sûr de vouloir supprimer cette société ?"
+       info2: "Noms de domaine pour cette société"
+       info3: "Ajouter des remarques spécifiques concernant ce contact"
+       info4: "Ajouter une remarque au sujet de/du %{name}"
+       info5: "Ajouter des remarques spécifiques concernant cette société"
+       info6: "Personnel de %{name}"
+       info7: "Aucun ticket n'a été créé par le personnel de cette société"
+       info8: "Informations complémentaires concernant cette société comme l'adresse, le numéro de téléphone, le site Web, etc."
+       info9: "Freshdesk associera automatiquement des contacts à cette société si leurs ID de messagerie contiennent ces domaines"
+       
+   
+   ticket:
+       unassigned: "Non affecté"
+       assigned_to: "Affecté à"
+       status: "État"
+       singular: "Ticket"
+       edit: "Modifier un ticket"
+       requester: "Demandeur"
+       subject: "Objet"
+       type: "Type"
+       status: "État"
+       group: "Groupe"
+       assigned_to: "Affecté à"
+       priority: "Priorité"
+       properties: "Propriétés du ticket"
+       suggest_solutions: "Suggérer des solutions"
+       execute_scenario: "Exécuter un scénario"
+       requestor_info: "Informations sur le demandeur"
+       due_by_time: "Heure d'échéance"
+       source: "Source"
+       recent_tickets: "Tickets récents"
+       to_do: "Tickets à traiter"
+       activity: "Activité"
+       unflag_spam: "Non-spam"
+       flag_spam: "Signaler comme spam"
+       pick_up: "Récupérer"
+       assign_to_agent: "Affecter à un agent"
+       sort_by: "Trier par"
+   
+   contacts:
+       edit: "Modifier un contact"
+       new: "Nouveau contact"
+       showing: "Affichage"
+       import_csv: "Importer des utilisateurs depuis un fichier CSV"
+       title: "Contacts"
+       quick_contact: "Contact rapide"
+       save_changes: "Enregistrer les modifications"
+       edit_contact: "Modifier un contact"
+       working: "Actif"
+       info1: "Êtes-vous sûr de vouloir supprimer ce contact ?"
+       info2: "Attribuer à cet utilisateur le rôle d'agent"
+       info3: "Informations complémentaires reçues de %{nick_name}"
+       info4: "Tickets récents reçus de %{nick_name}"
+       info5: "L'utilisateur n'a créé aucun ticket jusqu'à présent"
+       deleted_message:     "Il s'agit d'un contact qui a été supprimé"
+       restore:             "Rétablir"
+       emailnotverified:    "L'adresse de messagerie de cet utilisateur n'a pas été vérifiée !"
+       form_placeholder:
+           description:     "Ajouter des remarques spécifiques concernant ce contact comme par exemple l'adresse, admirateur des LA Lakers, etc."
+      
+
+   category:
+        new: "Nouvelle catégorie"
+        edit: "Modifier une catégorie"
+        
+   forum: 
+      title: "Forums"
+      new:  "Nouveau forum"
+      type: "Type de forum"
+      edit: "Modifier un forum"
+      verb:
+          questions:     "Question posée par"
+          ideas:         "Idée partagée par"
+          problems:      "Problème signalé par"  
+          announcement:  "Annoncé par"
+      confim_msg1: "Êtes-vous sûr de vouloir supprimer ce forum ?"
+      start_topic: "Commencer une rubrique"
+   topic:   
+     new: "Nouvelle rubrique"
+     post: "Mettre une rubrique en ligne"
+     name: "Nom de la rubrique"
+     sticky: "En page d'accueil"
+     locked: "Verrouillé"
+     edit: "Modifier une rubrique"
+     msg1: "Les commentaires sont fermés pour cette rubrique"
+     open: "Rouvrir cette discussion"
+     close: "Fermer cette discussion"
+     reply: "Répondre à cette rubrique"
+     
+     
+   account:
+       rebrand: "Changer la marque de votre service d'assistance"
+       name: "Nom du compte"
+       time_zone: "Fuseau horaire"
+       helpdesk_name: "Nom du service d'assistance "
+       helpdesk_url:  "URL du service d'assistance "
+       info1: "Vous pouvez utiliser ce champ pour configurer le mappage de domaine personnalisé pour Freshdesk"
+       info2: "Avant d'utiliser ce champ, assurez-vous que vous avez créé un enregistrement CNAME DNS dans votre fichier de zone DNS pour renvoyer support.mycompanyname.com à %{full_domain}. Votre webmaster ou votre administrateur de serveur saura vous aider à effectuer cette configuration correctement."
+       info3: "Réinitialiser aux couleurs par défaut"
+       info4: "Le compteur d'identifiant de ticket suivant commencera par ce nombre (Il doit être supérieur au dernier identifiant de ticket créé) Ceci concerne les tickets créés dorénavant."
+       page_colors: 
+               title: "Couleurs de la page"
+               header: "En-tête"
+               tab_color: "Couleur de l'onglet"
+               background: "Arrière-plan"
+       save: "Enregistrer les modifications"   
+       cancel: "Annuler et revenir en arrière" 
+       active_since: "Actif depuis"
+   email_configs:
+           title: "Paramètres de messagerie"
+           info1: "Vos utilisateurs ont envoyé des demandes d'assistance par e-mail à"
+           info2: "Vous devez transférer ces demandes d'assistance sur votre adresse de messagerie unique"
+           info3: "Freshdesk va extraire ces courriers électroniques et les convertir en tickets"
+           info4: "Vous pouvez ajouter plusieurs adresses de messagerie si vous prenez en charge plusieurs produits – chacun possédant sa propre adresse de messagerie d'assistance"
+           info5: "Les e-mails de réponse envoyés par Freshdesk utiliseront automatiquement vos identifiants e-mail d'assistance initiaux comme adresses de messagerie de l'expéditeur"
+           info6: "Saisissez votre adresse e-mail d'assistance"
+           info7: "C'est également votre adresse de réponse" 
+           info8: "Transférer vos messages électroniques à"
+           info9: "Affecter à un groupe"
+           info10: "Les nouveaux tickets relatifs à cette demande d'assistance seront affectés automatiquement à un groupe"
+           info11: "Configurer les adresses des courriers électroniques d'assistance entrants et sortants"
+           info12: "Ajouter une autre adresse e-mail"
+           info13: "Votre adresse e-mail d'assistance est"
+           info14: "Tout courrier électronique envoyé à cette adresse sera converti en ticket"
+           info15: "Vous devez transférer ces courriers électroniques à"
+           info16: "Les tickets seront affectés à"
+           supp_email_add: "Adresse e-mail d'assistance"
+           make_primary: "Définir comme adresse principale"
+           change_this: "Modifier ce"
+           primary_supp_email: "Adresse e-mail d'assistance principale"
+           add_supp_emails: "Adresse(s) e-mail d'assistance supplémentaire(s)"
+           reply_emails: "E-mails de réponse reçus de Freshdesk"
+           
+   
+   email_notifications:
+           title: "Notifications par courrier électronique"
+           event: "Événement"
+           requestor_notification: "Notification du demandeur"
+           agent_notification: "Notification de l'agent"
+           customize_email: "Personnaliser un courrier électronique"
+           insert_placeholder: "Insérer un espace réservé"
+           modify_template: "Modifier le modèle du demandeur"
+   dispatch:
+        title: "Dispatch'r"
+        edit: "Dispatch'r - Modifier une règle" 
+        new: "Dispatch'r - Nouvelle règle"
+        rule_name: "Nom de la règle" 
+        info1: "Tickets relatifs à l'inscription"
+        info2: "Tous les tickets relatifs à l'inscription seront affectés à Susan"
+        info3: "Quand est-ce que cette règle doit s'appliquer ?"   
+        info4: "Dispatch'r va distribuer automatiquement un ticket d'assistance nouvellement créé selon les règles et actions définies"
+        info5: "Souvenez-vous que l'ordre des règles est important. Pour chaque ticket entrant, Dispatch'r exécutera la première règle satisfaisante et s'arrêtera"
+        add_condition: "Ajouter une nouvelle condition"
+        act_to_perform: "Actions à exécuter"
+        add_new_action: "Ajouter une nouvelle action"
+        match_any: "Satisfaire à n'importe lequel/laquelle"
+        match_all: "Satisfaire tous/toutes"
+        add_new_choice: "Ajouter un nouveau choix"
+        reorder: "Réorganiser"
+        new_rule: "Nouvelle règle"
+        dispatch_rules: "Dispatch'r - Règles"
+        inactive_rules: "Règles inactives"
+   agent:
+       title: "Agents"
+       edit: "Modifier un agent"
+       new: "Nouvel agent"
+       update: "Mettre à jour"
+       restore: "rétablir"
+       view_user: "Afficher un utilisateur"
+       make_admin: "Attribuer à cet agent le rôle d'administrateur"
+       signature: "Signature"
+       add_signature: "Ajouter une signature"
+       info1: "Il s'agit d'un agent qui a été supprimé"
+       info2: "L'adresse de courrier électronique est déjà prise"
+       info3: "Êtes-vous sûr de vouloir supprimer"
+   
+   group:
+       title: "Groupes"
+       edit: "Modifier un groupe"
+       name: "Nom du groupe"
+       new: "Nouveau groupe"
+       select_agents: "Sélectionner des agents"
+       info1: "Agents dans ce groupe"
+       info2: "Aucun agent dans ce groupe"
+       info3: "Envoyer un e-mail de remontée hiérarchique à"
+       info4: "si un ticket demeure non affecté pendant plus de"
+       info5: "Êtes-vous sûr ?"
+  
+      
+       
+   user:
+      full_name: "Nom complet"
+      email: "E-mail"
+      title: "Titre"
+      phone_no: "N° de téléphone"
+      work: "Travail"
+      mobile: "Portable"
+      photo: "Photo"
+      company: "Société"
+      twitter_id: "Identifiant Twitter"
+      secondary: "secondaire"
+      back_info: "Informations complémentaires"
+      info1: "Photo de profil de la personne (si possible même longueur et même hauteur)"
+      
+   solution:
+       title: "Solutions"
+       add:   "Ajouter une solution"
+       edit: "Modifier une solution"
+       add_new_solution: "Ajouter une nouvelle solution"
+       type: "Type de solution"
+       status: "État de la solution"
+       info1: "Les solutions dans Freshdesk composent votre base de connaissances"
+       info2: "Les solutions peuvent être <b>publiques</b> ou <b>privées</b>. Les solutions publiques sont visibles dans le portail en libre-service et apparaissent également dans les résultats de recherche"
+       info3: "Les solutions privées sont réservées aux agents et sont destinées à partager les connaissances en interne"
+       info4: "Les solutions sont classées selon 3 niveaux de hiérarchie - <b>Catégorie --> Dossier--> Article</b>"
+       info5: "Les solutions peuvent être de deux types - des solutions <b>de contournement</b> ou <b>permanentes</b>"
+       info6: "Une solution a le statut de <b>Brouillon</b> lorsque vous y travaillez et peut être modifiée une fois achevée et revue en <b>Publiée</b> "
+       info7: "Aucune solution dans ce dossier"  
+       info8: "Êtes-vous sûr de vouloir supprimer cette solution ?"
+       info9: "Publique (elle sera publiée en libre-service)"
+       info10: "Privée (Visible pour les agents uniquement)"
+       
+       
+   solution_category:
+        edit: "Modifier une catégorie"  
+        new: "Nouvelle catégorie"
+        save_and_create: "Enregistrer et créer une autre" 
+        info1: "Êtes-vous sûr de vouloir supprimer cette catégorie ?"
+        info2: "Aucun dossier dans cette catégorie"
+   
+   folder:
+       add_folder: "Ajouter un dossier"
+       edit: "Modifier un dossier"
+       info1: "Êtes-vous sûr de vouloir supprimer ce dossier ?"
+        
+   business_hours:
+       title: "Heures de bureau"
+       holidays: "Jours fériés"
+       helpdesk_hours: "Horaires du service d'assistance"
+       info1: "La configuration de vos heures de bureau dans Freshdesk vous permet de mieux contrôler vos SLA. Par ex., si votre service d'assistance travaille du lundi au vendredi de 9 h à 18 h et qu'un client envoie un ticket de priorité de niveau élevé un mardi à 16 h avec un temps de résolution de SLA de 4 heures, alors l'heure d'échéance du ticket est fixée au mercredi à 11 h. Vous pouvez configurer vos SLA soit en respectant les heures de bureau, soit en les ignorant."
+       info2: "Les jours fériés fonctionnent exactement de la même façon que les heures de bureau. Par ex., si votre service d'assistance travaille du lundi au vendredi de 9h à 18h et qu'un client envoie un ticket de priorité de niveau moyen à 20 h un vendredi avec un temps de résolution de SLA de 24 heures, alors l'heure d'échéance du ticket est fixée au mardi à 9 h. (et non au samedi à 20 h)"
+       info3: "Heures de bureau spéciales"
+       info4: "Jours ouvrables de votre service d'assistance"
+       info5: "Les jours fériés seront ignorés lors du calcul SLA pour un ticket"
+       holiday_list: "Liste des jours fériés de l'année"
+       holiday_name: "Nom du jour férié"
+       holiday_added: "Jour férié déjà ajouté"
+       
+       
+   automations:
+        title: "Automatisation d'un scénario"
+        new:  "Nouveau scénario"
+        reorder: "Réorganiser"
+        info1: "Chaque service d'assistance possède un ensemble de scénarios récurrents - Par ex., Remonter hiérarchiquement au niveau 2, Affecter à la FAQ, Transférer au service commercial, etc. Ces scénarios exigent généralement l'exécution de plusieurs mises à jour du ticket."
+        info2: "Par exemple, vous souhaiterez peut-être définir qu'il s'agit d'un ticket de type 'bug' avant de l'assigner au groupe de la FAQ et d'envoyer un message au gestionnaire de la FAQ au sujet de ce nouveau bug."
+        info3: "L'automatisation de scénario vous permet d'automatiser ces actions au moyen d'un simple clic"
+        info4: "Sélectionnez les espaces réservés ci-dessous à ajouter au contenu du message électronique ; ils seront convertis en données appropriées"
+        info5: "Affecter à la FAQ"
+        info6: "Marquer le ticket comme 'bug' et l'affecter à la FAQ"
+        info7: "Actions à exécuter"
+        info8: "Ajouter une nouvelle action"
+        available_placeholders: "Espaces réservés disponibles"
+  
+
+  
+    
+   
+          
+        
+   profile:
+       edit: "Modifier le profil" 
+       change_password  : "Modifier le mot de passe"
+       current_password : "Mot de passe actuel"
+       new_password     : "Nouveau mot de passe"
+       confirm_password : "Confirmez le mot de passe"
+   
+   datetime:
+    distance_in_words:
+      half_a_minute: "une demi-minute"
+      less_than_x_seconds:
+        zero:  "moins d'une seconde"
+        one:   "moins d'une seconde"
+        other: "moins de %{count} secondes"
+      x_seconds:
+        one:   "1 seconde"
+        other: "%{count} secondes"
+      less_than_x_minutes:
+        zero:  "moins d'une minute"
+        one:   "moins d'une minute"
+        other: "moins de %{count} minutes"
+      x_minutes:
+        one:   "1 minute"
+        other: "%{count} minutes"
+      about_x_hours:
+        one:   "environ une heure"
+        other: "environ %{count} heures"
+      x_days:
+        one:   "1 jour"
+        other: "%{count} jours"
+      about_x_months:
+        one:   "environ un mois"
+        other: "environ %{count} mois"
+      x_months:
+        one:   "1 mois"
+        other: "%{count} mois"
+      about_x_years:
+        one:   "environ un an"
+        other: "environ %{count} ans"
+      over_x_years:
+        one:   "plus d'un an"
+        other: "plus de %{count} ans"
+      almost_x_years:
+        one:   "presqu'un an"
+        other: "presque %{count} ans"    
+   
+   activerecord:
+    errors:
+      template:
+         one:    "1 erreur a empêché l'enregistrement de ce %{model}"
+         other:  "%{count} erreurs ont empêché l'enregistrement de ce %{model}"
+         body: "Des problèmes sont survenus dans les champs suivants :"   
+     
+           
+
+      messages:
+          inclusion: "ne figure pas dans la liste"
+          exclusion: "est réservé"
+          invalid: "n'est pas valide"
+          confirmation: "ne correspond pas à une confirmation"
+          accepted: "doit être accepté"
+          empty: "ne peut pas être vide"
+          blank: "doit être renseigné"
+          too_long: "est trop long (au maximum %{count} caractères)"
+          too_short: "est trop court (au minimum %{count} caractères)"
+          wrong_length: "a une longueur incorrecte (doit contenir %{count} caractères)"
+          not_a_number: "n'est pas un nombre"
+          not_an_integer: "doit être un nombre entier "
+          greater_than: "doit être supérieur à %{count}"
+          greater_than_or_equal_to: "doit être supérieur ou égal à %{count}"
+          equal_to: "doit être égal à %{count}"
+          less_than: "doit être inférieur à %{count}"
+          less_than_or_equal_to: "doit être inférieur ou égal à %{count}"
+          odd: "doit être impair"
+          even: "doit être pair"
+          record_invalid: "La validation a échoué : %{errors}"
+          <<: *errors_messages
+
+      full_messages:
+        format: "%{attribute} %{message}"
+   
+       
