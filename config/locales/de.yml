@@ -165,7 +165,7 @@ de:
        helpdesk_name: "Helpdesk Name"
        helpdesk_url:  "Helpdesk URL"
        info1: "Nutzen Sie dieses Feld, um Ihrem Freshdesk eine andere URL zu geben"
-       info2: "Bevor Sie dieses Feld nutzen, versichern Sie sich bitte, dass der CNAME DNS-Record Ihrer DNS-Zonendatei f�r support.meinedomain.de auf %{full_domain} zeigt. Fragen Sie im Zweifelsfall Ihren Systemadmin. "
+       info2: "Bevor Sie dieses Feld nutzen, versichern Sie sich bitte, dass der CNAME DNS-Record Ihrer DNS-Zonendatei für support.meinedomain.de auf %{full_domain} zeigt. Fragen Sie im Zweifelsfall Ihren Systemadmin. "
        info3: "Auf die Standardfarben zur&uuml;cksetzen"
        info4: "Das n&auml;chste Ticket erh&auml;lt diese Ticketnummer. (Die eingegebene Zahl sollte gr&ouml;&szlig;er als das letzte, eingegangene Ticket sein). Diese Einstellung ist nur f&uuml;r zuk&uuml;nftige Tickets relevant."
        page_colors: 
@@ -343,6 +343,7 @@ de:
        current_password : "Altes Passwort"
        new_password     : "Neues Passwort"
        confirm_password : "Passwort best&auml;tigen"
+   
    datetime:
     distance_in_words:
       half_a_minute: 'eine halbe Minute'
@@ -379,7 +380,7 @@ de:
       over_x_years:
         one: 'mehr als ein Jahr'
         other: 'mehr als %{count} Jahre'
-            
+       
    activerecord:
     errors:
       template:
