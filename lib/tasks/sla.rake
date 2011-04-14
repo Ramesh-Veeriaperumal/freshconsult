@@ -16,7 +16,7 @@ namespace :sla do
            
       unless sla_detail.escalateto.nil?
         agent = User.find(sla_detail.escalateto)                 
-        SlaNotifier.deliver_sla_escalation(ticket, agent) unless agent.email.nil?
+        send_email(ticket, agent, EmailNotification::RESOLUTION_TIME_SLA_VIOLATION)
       end
         ticket.update_attribute(:isescalated , true)
      end
@@ -34,7 +34,7 @@ namespace :sla do
       
       unless fr_sla_detail.escalateto.nil?
         fr_agent = User.find(fr_sla_detail.escalateto)  
-        SlaNotifier.deliver_fr_sla_escalation(fr_ticket,fr_agent) unless fr_agent.email.nil?
+        send_email(fr_ticket, fr_agent, EmailNotification::FIRST_RESPONSE_SLA_VIOLATION)
       end
         fr_ticket.update_attribute(:fr_escalated , true)   
         #If there is no email-id /agent still escalted will show as true. This is to avoid huge sending if somebody changes the config
@@ -44,16 +44,22 @@ namespace :sla do
     ##Tickets left unassigned in group
     
     tickets_unpicked = Helpdesk::Ticket.visible.find(:all, :joins => [:ticket_states,:group] , :readonly => false , :conditions =>['DATE_ADD(helpdesk_tickets.created_at, INTERVAL groups.assign_time SECOND)  <=? AND group_escalated=? AND status=? AND helpdesk_ticket_states.first_assigned_at IS ?', Time.zone.now.to_s(:db),false,Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open],nil] )
-     puts "Number of un attended tickets are #{tickets_unpicked.size}"
+    puts "Number of un attended tickets are #{tickets_unpicked.size}"
     tickets_unpicked.each do |gr_ticket| 
-      
-      SlaNotifier.deliver_group_escalation(gr_ticket,gr_ticket.group.escalate) if (!gr_ticket.group.escalate.nil? && !gr_ticket.group.escalate.email.nil? )
-    
+      send_email(gr_ticket, gr_ticket.group.escalate, EmailNotification::TICKET_UNATTENDED_IN_GROUP) unless gr_ticket.group.escalate.nil?
       gr_ticket.ticket_states.update_attribute(:group_escalated , true)
-      
     end
     
     puts "SLA Escalation task completed.."
   end
 end
 #SLA ends here
+
+def send_email(ticket, agent, n_type)
+  e_notification = ticket.account.email_notifications.find_by_notification_type(n_type)
+  return unless e_notification.agent_notification
+  
+  email_body = Liquid::Template.parse(e_notification.agent_template).render(
+                                'agent' => agent, 'ticket' => ticket, 'helpdesk_name' => ticket.account.helpdesk_name)
+  SlaNotifier.deliver_escalation(ticket, agent, :email_body => email_body, :subject => e_notification.ticket_subject(ticket))
+end

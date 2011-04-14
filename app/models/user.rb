@@ -1,4 +1,5 @@
 class User < ActiveRecord::Base
+  include ActionController::UrlWriter
   include SavageBeast::UserInit
   include SentientUser
   
@@ -170,12 +171,20 @@ class User < ActiveRecord::Base
   
   def deliver_activation_instructions!
     reset_perishable_token!
-    UserNotifier.send_later((customer? ? :deliver_user_activation : :deliver_agent_activation), self)
-  end
- 
-  def deliver_activation_confirmation!
-    reset_perishable_token!
-    UserNotifier.send_later((customer? ? :deliver_user_confirmation : :deliver_agent_confirmation), self)
+
+    e_notification = account.email_notifications.find_by_notification_type(EmailNotification::USER_ACTIVATION)
+    if customer?
+      return unless e_notification.requester_notification
+      template = e_notification.requester_template
+      user_key = 'contact'
+    else
+      template = e_notification.agent_template
+    end
+    
+    UserNotifier.send_later(:deliver_user_activation, self, 
+        :email_body => Liquid::Template.parse(template).render((user_key ||= 'agent') => self, 
+          'helpdesk_name' => account.helpdesk_name, 'activation_url' => register_url(perishable_token, :host => account.host)), 
+        :subject => "#{account.helpdesk_name} user activation")
   end
   
   def set_time_zone

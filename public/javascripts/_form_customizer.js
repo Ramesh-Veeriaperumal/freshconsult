@@ -386,8 +386,13 @@
 		
 		var deleteField = function(sourcefield){
 			if (confirm('Are you sure you want to delete this field?')) {
-				var sourceData = jQuery(sourcefield).data("raw").action = "delete";
-				jQuery(sourcefield).hide();
+				var sourceData = jQuery(sourcefield).data("raw");
+				if( sourceData.columnId == '' || sourceData.columnId == null){
+					jQuery(sourcefield).remove();
+				}else{
+					sourceData.action = "delete";
+					jQuery(sourcefield).hide();
+				}
 				hideDialog();
 			}
 		};

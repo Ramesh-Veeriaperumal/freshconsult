@@ -427,13 +427,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
       "ticket_type"                       => TYPE_NAMES_BY_KEY[ticket_type],
       "tags"                              => tag_names.join(', '),
       "due_by_time"                       => due_by.strftime("%B %e %Y at %I:%M %p"),
+      "due_by_hrs"                        => due_by.strftime("%I:%M %p"),
+      "fr_due_by_hrs"                     => frDueBy.strftime("%I:%M %p"),
       "url"                               => helpdesk_ticket_url(self, :host => account.host),
       "attachments"                       => liquidize_attachments(attachments),
       "latest_comment"                    => liquidize_comment(latest_comment),
       "latest_public_comment"             => liquidize_comment(latest_public_comment),
       "latest_comment_attachments"        => liquidize_c_attachments(latest_comment),
       "latest_public_comment_attachments" => liquidize_c_attachments(latest_public_comment)
-      }
+    }
   end
   
   def liquidize_attachments(attachments)
