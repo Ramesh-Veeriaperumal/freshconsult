@@ -8,10 +8,11 @@ class Solution::CategoriesController < ApplicationController
   
   def index
     
-     @categories = current_account.solution_categories.all    
+    @categories = current_account.solution_categories.all    
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @categories }
+      format.json  { render :json => @categories }
     end
   end
 
@@ -22,6 +23,7 @@ class Solution::CategoriesController < ApplicationController
      respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @item.to_xml(:include => :folders) }
+      format.json  { render :json => @item.to_json(:include => :folders) }
     end
      
   end

@@ -12,6 +12,7 @@ class ForumCategoriesController < ApplicationController
      respond_to do |format|
       format.html 
       format.xml  { render :xml => @forum_categories }
+      format.json  { render :json => @forum_categories }
       format.atom 
     end
   end
@@ -23,11 +24,8 @@ class ForumCategoriesController < ApplicationController
 
     respond_to do |format|
       format.html 
-      format.xml  { 
-      
-            render :xml => @forums      
-            
-          }
+      format.xml  { render :xml => @forum_category.to_xml(:include => :forums) }
+      format.json  { render :json => @forum_category.to_json(:include => :forums) }
       format.atom 
       
      

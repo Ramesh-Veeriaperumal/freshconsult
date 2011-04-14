@@ -10,6 +10,7 @@ class Solution::FoldersController < ApplicationController
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @folders }
+      format.json  { render :json => @folders }
     end
     
   end
@@ -21,6 +22,7 @@ class Solution::FoldersController < ApplicationController
     respond_to do |format|
       format.html 
       format.xml  { render :xml => @item.to_xml(:include => :articles) }
+      format.json  { render :json => @item.to_json(:include => :articles) }
     end
     
   end
