@@ -1,7 +1,7 @@
 class UsersController < ApplicationController 
   
   
-  
+  include ModelControllerMethods
 
   before_filter :check_user_limit, :only => :create
   #before_filter :require_no_user, :only => [:new, :create] #by Shan need to check later
@@ -9,6 +9,7 @@ class UsersController < ApplicationController
   before_filter :set_selected_tab
   skip_before_filter :load_object , :only => [ :show, :edit]
   
+  ##redirect to contacts
   def index
     redirect_to contacts_url
   end
