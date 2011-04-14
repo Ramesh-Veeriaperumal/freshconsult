@@ -46,7 +46,7 @@ module AuthenticationSystem
       if current_user
         store_location
         flash[:notice] = "You must be logged out to access this page"
-        redirect_to user_url
+        redirect_to root_url
         return false
       end
     end

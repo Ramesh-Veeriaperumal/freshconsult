@@ -143,11 +143,6 @@ class User < ActiveRecord::Base
 
   #Savage_beast changes end here
 
-  def deliver_password_reset_instructions!  
-    reset_perishable_token!
-    UserNotifier.deliver_password_reset_instructions(self) #Do we need delayed_jobs here?! by Shan
-  end
-  
   #Search display
   def self.search_display(user)
     "#{user.excerpts.name} - #{user.excerpts.email}"
@@ -169,7 +164,23 @@ class User < ActiveRecord::Base
   end
   ##Authorization copy ends here
   
-  def deliver_activation_instructions!
+  def deliver_password_reset_instructions! #Do we need delayed_jobs here?! by Shan
+    reset_perishable_token!
+    
+    e_notification = account.email_notifications.find_by_notification_type(EmailNotification::PASSWORD_RESET)
+    if customer?
+      template = e_notification.requester_template
+      user_key = 'contact'
+    else
+      template = e_notification.agent_template
+    end
+    
+    UserNotifier.deliver_password_reset_instructions(self, 
+        :email_body => Liquid::Template.parse(template).render((user_key ||= 'agent') => self, 
+          'helpdesk_name' => account.helpdesk_name, 'password_reset_url' => edit_password_reset_url(perishable_token, :host => account.host)))
+  end
+  
+  def deliver_activation_instructions! #Need to refactor this.. Almost similar structure with the above one.
     reset_perishable_token!
 
     e_notification = account.email_notifications.find_by_notification_type(EmailNotification::USER_ACTIVATION)

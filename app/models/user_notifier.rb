@@ -6,9 +6,9 @@ class UserNotifier < ActionMailer::Base
     send_the_mail user
   end
   
-  def password_reset_instructions(user)
+  def password_reset_instructions(user, params)
     subject       "#{user.account.helpdesk_name} password reset instructions"
-    body          :edit_password_reset_url => edit_password_reset_url(user.perishable_token, :host => user.account.host)
+    body          params[:email_body]
     send_the_mail user
   end
   
