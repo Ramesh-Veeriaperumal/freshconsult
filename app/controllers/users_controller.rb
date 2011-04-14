@@ -1,7 +1,7 @@
 class UsersController < ApplicationController 
   
   
-  
+  include ModelControllerMethods
 
   before_filter :check_user_limit, :only => :create
   #before_filter :require_no_user, :only => [:new, :create] #by Shan need to check later
