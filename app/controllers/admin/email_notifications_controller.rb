@@ -7,6 +7,8 @@ class Admin::EmailNotificationsController < Admin::AdminController
     @notifications = [
       { :type => "User Activation Email", :requester => true, :agent => true,
                   :obj => by_type[EmailNotification::USER_ACTIVATION] },
+      { :type => "Password Reset Email", :requester => true, :agent => true,
+                  :obj => by_type[EmailNotification::PASSWORD_RESET] },
       { :type => "New Ticket Created", :requester => true, :agent => false, 
                   :obj => by_type[EmailNotification::NEW_TICKET] },
       { :type => "Ticket assigned to Group", :requester => false, :agent => true, 

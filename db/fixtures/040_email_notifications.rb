@@ -31,6 +31,22 @@ If the above URL does not work try copying and pasting it into your browser. If 
 Regards,
 {{helpdesk_name}}'
   },
+  {
+    :notification_type => EmailNotification::PASSWORD_RESET,
+    :account_id => account.id, 
+    :requester_notification => true, 
+    :agent_notification => true,
+    :agent_template => 'A request to reset your password has been made. If you did not make this request, simply ignore this email. If you did make this request, just click the link below:
+
+{{password_reset_url}}
+
+If the above URL does not work, try copying and pasting it into your browser. If you continue to have problem, please feel free to contact us.',
+    :requester_template => 'A request to reset your password has been made. If you did not make this request, simply ignore this email. If you did make this request, just click the link below:
+
+{{password_reset_url}}
+
+If the above URL does not work, try copying and pasting it into your browser. If you continue to have problem, please feel free to contact us.'
+  },
   { 
     :notification_type => EmailNotification::NEW_TICKET, 
     :account_id => account.id, :requester_notification => true, 
