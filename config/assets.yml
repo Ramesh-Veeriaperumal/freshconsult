@@ -37,6 +37,6 @@ stylesheets:
     - public/stylesheets/form.css
     - public/stylesheets/temp-dev.css
     - public/stylesheets/buttons.css
-    - public/stylesheets/jquery-ui-1.8.7.custom.css
+    - public/stylesheets/jquery-ui.css
     - public/stylesheets/jquery.qtip.css  
     - public/stylesheets/ie.css

@@ -3,24 +3,17 @@
   <%= javascript_include_tag "helpdesk/core" %>
   <%= javascript_include_tag "helpdesk/id_selector" %>
   <% javascript_tag do %>
-    document.observe("dom:loaded", function(){
-	
-      
+    document.observe("dom:loaded", function(){  
 	  Helpdesk.sel = new Helpdesk.MultiSelector({
         form: 'list'
-      });
-	
-	  Helpdesk.submitOnChange('sort');
-	   
-
+      }); 
+	  Helpdesk.submitOnChange('sort'); 
 	  Helpdesk.sel.toggleCheckAll = function(source){
 	  	if(source.checked)
 			Helpdesk.sel.checkAll();
 		else
 			Helpdesk.sel.uncheckAll();
-	  }
-	 
-
+	  } 
     });
   <% end %>
 <% end %>
@@ -65,11 +58,8 @@
 <% end %>
 
 
-<% content_for :main_panel_content do %>
-
-  
-  <div id="pages">
-    <!--% form_tag "", { :method => :put, :id => :list } do  end%-->
+<% content_for :main_panel_content do %> 
+  <div id="pages"> 
       <table class="tickets">
       	<thead>
       		<tr>

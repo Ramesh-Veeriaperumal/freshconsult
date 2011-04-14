@@ -4,8 +4,8 @@
 .reminders:before {
   content: "";
   position: absolute;
-  top: -3px;
-  right: -3px;
+  top: -2px;
+  right: -2px;
   border-width: 0 16px 16px 0;
   border-style: solid;
   border-color: #efefef #efefef #734e3d #734e3d;
@@ -18,48 +18,50 @@
   -webkit-border-bottom-left-radius: 5px;
   -moz-border-radius: 0 0 0 5px;
   border-radius: 0 0 0 5px;
+  height: 0px;
+  font-size: 0px;
 }
 
-/* line 21, ../src/temp-dev.scss */
+/* line 23, ../src/temp-dev.scss */
 .reminders {
   -moz-border-radius: 3px 3px 3px 3px;
   -webkit-border-radius: 3px 3px 3px 3px;
   border-radius: 3px 3px 3px 3px;
 }
-/* line 23, ../src/temp-dev.scss */
+/* line 25, ../src/temp-dev.scss */
 .reminders h3.title {
   border-bottom: 1px solid #e3dcc1;
   color: #734e3d;
   display: block;
 }
 
-/* line 29, ../src/temp-dev.scss */
+/* line 31, ../src/temp-dev.scss */
 .reminders-ticket {
   -moz-border-radius: 6px 0 0 6px;
   -webkit-border-radius: 6px 0 0 6px;
   border-radius: 6px 0 0 6px;
 }
-/* line 31, ../src/temp-dev.scss */
+/* line 33, ../src/temp-dev.scss */
 .reminders-ticket label {
   font-size: 14px;
 }
 
-/* line 34, ../src/temp-dev.scss */
+/* line 36, ../src/temp-dev.scss */
 .reminders, .reminders-ticket {
   position: relative;
   background-color: #ffffe2 !important;
 }
-/* line 37, ../src/temp-dev.scss */
+/* line 39, ../src/temp-dev.scss */
 .reminders table, .reminders-ticket table {
   display: block;
   margin: 2px 0px;
   border-top: 1px solid #e3dcc1;
 }
-/* line 41, ../src/temp-dev.scss */
+/* line 43, ../src/temp-dev.scss */
 .reminders table tbody, .reminders table tr, .reminders-ticket table tbody, .reminders-ticket table tr {
   display: block;
 }
-/* line 45, ../src/temp-dev.scss */
+/* line 47, ../src/temp-dev.scss */
 .reminders table td, .reminders-ticket table td {
   vertical-align: top;
   padding: 6px 0px 6px 0px;
@@ -67,16 +69,17 @@
   text-transform: capitalize;
   position: relative;
 }
-/* line 51, ../src/temp-dev.scss */
+/* line 53, ../src/temp-dev.scss */
 .reminders table td label, .reminders-ticket table td label {
   font-size: 13px;
   font-weight: normal;
   color: #734e3d;
   margin-left: 5px;
   line-height: 18px;
+  padding-top: 0px;
   display: block;
 }
-/* line 59, ../src/temp-dev.scss */
+/* line 62, ../src/temp-dev.scss */
 .reminders table td a.request_link, .reminders-ticket table td a.request_link {
   display: block;
   color: #666666;
@@ -95,18 +98,18 @@
 .reminders table td a.request_link:active, .reminders-ticket table td a.request_link:active {
   color: #6f8698;
 }
-/* line 65, ../src/temp-dev.scss */
+/* line 68, ../src/temp-dev.scss */
 .reminders table td .checked, .reminders-ticket table td .checked {
   font-size: 12px;
   color: #a98e6d;
   text-decoration: line-through;
 }
-/* line 69, ../src/temp-dev.scss */
+/* line 72, ../src/temp-dev.scss */
 .reminders table td .checked a.request_link, .reminders-ticket table td .checked a.request_link {
   font-size: 10px;
   color: #a98e6d;
 }
-/* line 74, ../src/temp-dev.scss */
+/* line 77, ../src/temp-dev.scss */
 .reminders table td .delete, .reminders-ticket table td .delete {
   float: right;
   width: 16px;
@@ -117,7 +120,7 @@
   -moz-border-radius: 6px 6px 6px 6px;
   -webkit-border-radius: 6px 6px 6px 6px;
   border-radius: 6px 6px 6px 6px;
-  background: url('/images/../images/embed/sprites/16square_sprite.png?1302189722') no-repeat;
+  background: url('/images/../images/embed/sprites/16square_sprite.png?1302240294') no-repeat;
   width: 16px;
   height: 16px;
   overflow: hidden;
@@ -125,18 +128,18 @@
   position: relative;
   left: -3px;
 }
-/* line 87, ../src/temp-dev.scss */
+/* line 90, ../src/temp-dev.scss */
 .reminders table tr:hover, .reminders table tr.active, .reminders-ticket table tr:hover, .reminders-ticket table tr.active {
   background-color: #fefed2;
   background-image: url(../images/overlay-top-shadow.png);
   background-repeat: repeat-x;
 }
-/* line 91, ../src/temp-dev.scss */
+/* line 94, ../src/temp-dev.scss */
 .reminders table tr:hover .delete, .reminders table tr.active .delete, .reminders-ticket table tr:hover .delete, .reminders-ticket table tr.active .delete {
   visibility: visible;
 }
 
-/* line 98, ../src/temp-dev.scss */
+/* line 101, ../src/temp-dev.scss */
 div.addReminder {
   margin: 8px 0px;
   display: block;
@@ -144,7 +147,7 @@ div.addReminder {
   padding: 0px;
   position: relative;
 }
-/* line 104, ../src/temp-dev.scss */
+/* line 107, ../src/temp-dev.scss */
 div.addReminder form {
   behavior: url(/stylesheets/PIE.htc);
   -moz-border-radius: 6px 6px 6px 6px;
@@ -154,7 +157,7 @@ div.addReminder form {
   padding: 3px 0px;
   background-color: #fefef2;
 }
-/* line 110, ../src/temp-dev.scss */
+/* line 113, ../src/temp-dev.scss */
 div.addReminder form input.text {
   color: #734e3d;
   border: 0px;
@@ -164,14 +167,15 @@ div.addReminder form input.text {
   margin: 3px 0px 0px 0px;
   padding: 0px 0px 0px 10px;
 }
-/* line 118, ../src/temp-dev.scss */
+/* line 121, ../src/temp-dev.scss */
 div.addReminder form label.overlabel {
   margin: 2px 5px 4px 10px;
+  padding: 0px;
   font-size: 14px;
   color: #ab9485;
 }
 
-/* line 128, ../src/temp-dev.scss */
+/* line 132, ../src/temp-dev.scss */
 .tab_panel {
   border-bottom: 1px solid #cfcfcf;
   margin: 5px -20px 0px -20px;
@@ -180,13 +184,13 @@ div.addReminder form label.overlabel {
   *zoom: 1;
   display: block;
 }
-/* line 133, ../src/temp-dev.scss */
+/* line 137, ../src/temp-dev.scss */
 .tab_panel b {
   margin-right: 10px;
   padding: 5px 0px 0px 0px;
   float: left;
 }
-/* line 139, ../src/temp-dev.scss */
+/* line 143, ../src/temp-dev.scss */
 .tab_panel a {
   background: #cfcfcf;
   position: relative;
@@ -206,19 +210,19 @@ div.addReminder form label.overlabel {
   -pie-background: linear-gradient(#fcfcfc, #f1f1f1);
   border-bottom: 1px solid #eaeaea;
 }
-/* line 155, ../src/temp-dev.scss */
+/* line 159, ../src/temp-dev.scss */
 .tab_panel a.last {
   -moz-border-radius: 0px 4px 4px 0px;
   -webkit-border-radius: 0px 4px 4px 0px;
   border-radius: 0px 4px 4px 0px;
 }
-/* line 158, ../src/temp-dev.scss */
+/* line 162, ../src/temp-dev.scss */
 .tab_panel a.first {
   -moz-border-radius: 4px 0px 0px 4px;
   -webkit-border-radius: 4px 0px 0px 4px;
   border-radius: 4px 0px 0px 4px;
 }
-/* line 161, ../src/temp-dev.scss */
+/* line 165, ../src/temp-dev.scss */
 .tab_panel a.active, .tab_panel a:hover {
   background: #f5f5f5;
   background: -moz-linear-gradient(top, #f5f5f5 0%, #e1e1e1 100%);
@@ -227,24 +231,24 @@ div.addReminder form label.overlabel {
   -pie-background: linear-gradient(#f5f5f5, #e1e1e1);
 }
 
-/* line 166, ../src/temp-dev.scss */
+/* line 170, ../src/temp-dev.scss */
 .solutions_text {
   padding-top: 8px;
   font-family: Georgia, Verdana, Arial, Helvetica, sans-serif;
   font-size: 14px;
 }
-/* line 170, ../src/temp-dev.scss */
+/* line 174, ../src/temp-dev.scss */
 .solutions_text img {
   max-width: 100%;
   height: auto;
 }
-/* line 171, ../src/temp-dev.scss */
+/* line 175, ../src/temp-dev.scss */
 .solutions_text ol, .solutions_text ul {
   margin: 14px 0px 14px 0px;
   padding: 0px 0px 0px 40px;
   line-height: 17px;
 }
-/* line 172, ../src/temp-dev.scss */
+/* line 176, ../src/temp-dev.scss */
 .solutions_text blockquote {
   margin: 1em 1em;
   color: #999;
@@ -252,39 +256,39 @@ div.addReminder form label.overlabel {
   padding: 6px 6px 1px 1em;
   background-color: #EEE;
 }
-/* line 173, ../src/temp-dev.scss */
+/* line 177, ../src/temp-dev.scss */
 .solutions_text ul {
   list-style: disc outside;
 }
-/* line 174, ../src/temp-dev.scss */
+/* line 178, ../src/temp-dev.scss */
 .solutions_text h1, .solutions_text h2, .solutions_text h3, .solutions_text h4 {
   font-weight: 400;
 }
-/* line 175, ../src/temp-dev.scss */
+/* line 179, ../src/temp-dev.scss */
 .solutions_text h1 {
   font-size: 2em;
 }
-/* line 176, ../src/temp-dev.scss */
+/* line 180, ../src/temp-dev.scss */
 .solutions_text h2 {
   font-size: 1.5em;
 }
-/* line 177, ../src/temp-dev.scss */
+/* line 181, ../src/temp-dev.scss */
 .solutions_text h3 {
   font-size: 1.17em;
 }
-/* line 178, ../src/temp-dev.scss */
+/* line 182, ../src/temp-dev.scss */
 .solutions_text h4 {
   font-size: 1em;
 }
-/* line 179, ../src/temp-dev.scss */
+/* line 183, ../src/temp-dev.scss */
 .solutions_text h5 {
   font-size: .83em;
 }
-/* line 180, ../src/temp-dev.scss */
+/* line 184, ../src/temp-dev.scss */
 .solutions_text h6 {
   font-size: .75em;
 }
-/* line 181, ../src/temp-dev.scss */
+/* line 185, ../src/temp-dev.scss */
 .solutions_text p {
   font-size: 14px;
   line-height: 1.5em;
@@ -292,45 +296,45 @@ div.addReminder form label.overlabel {
   text-align: left;
   width: 90%;
 }
-/* line 182, ../src/temp-dev.scss */
+/* line 186, ../src/temp-dev.scss */
 .solutions_text table td, .solutions_text table th {
   border: 1px solid #BBB;
   padding: 4px 5px;
 }
-/* line 183, ../src/temp-dev.scss */
+/* line 187, ../src/temp-dev.scss */
 .solutions_text ins {
   border-bottom: 1px solid green;
   text-decoration: none;
   color: green;
 }
-/* line 184, ../src/temp-dev.scss */
+/* line 188, ../src/temp-dev.scss */
 .solutions_text del {
   color: red;
   text-decoration: line-through;
 }
-/* line 185, ../src/temp-dev.scss */
+/* line 189, ../src/temp-dev.scss */
 .solutions_text cite {
   border-bottom: 1px dashed blue;
 }
-/* line 186, ../src/temp-dev.scss */
+/* line 190, ../src/temp-dev.scss */
 .solutions_text acronym {
   border-bottom: 1px dotted #CCC;
   cursor: help;
 }
-/* line 187, ../src/temp-dev.scss */
+/* line 191, ../src/temp-dev.scss */
 .solutions_text abbr {
   border-bottom: 1px dashed #CCC;
   cursor: help;
 }
 
-/* line 191, ../src/temp-dev.scss */
+/* line 195, ../src/temp-dev.scss */
 .tag_list {
   overflow: hidden;
   *zoom: 1;
   position: relative;
   padding: 0px;
 }
-/* line 195, ../src/temp-dev.scss */
+/* line 199, ../src/temp-dev.scss */
 .tag_list div.item {
   float: left;
   -moz-border-radius: 5px 5px 5px 5px;
@@ -342,82 +346,82 @@ div.addReminder form label.overlabel {
   padding: 3px 0px 0px 8px;
   margin: 0px 4px;
 }
-/* line 203, ../src/temp-dev.scss */
+/* line 207, ../src/temp-dev.scss */
 .tag_list div.item .tag_delete {
   float: right;
   visibility: hidden;
 }
-/* line 209, ../src/temp-dev.scss */
+/* line 213, ../src/temp-dev.scss */
 .tag_list div.item:hover .tag_delete {
   visibility: visible;
 }
 
-/* line 216, ../src/temp-dev.scss */
+/* line 220, ../src/temp-dev.scss */
 .email-settings {
   margin: 0px -20px 10px;
   padding: 0px;
   border-top: 1px solid #e6e6e6;
   border-bottom: 1px solid #f4f4f4;
 }
-/* line 221, ../src/temp-dev.scss */
+/* line 225, ../src/temp-dev.scss */
 .email-settings label {
   font-size: 14px;
   color: #666666;
   display: block;
 }
-/* line 226, ../src/temp-dev.scss */
+/* line 230, ../src/temp-dev.scss */
 .email-settings .highlight {
   font-size: inherit;
   font-size: 15px;
 }
-/* line 230, ../src/temp-dev.scss */
+/* line 234, ../src/temp-dev.scss */
 .email-settings .info_data {
   font-size: 12px;
 }
-/* line 232, ../src/temp-dev.scss */
+/* line 236, ../src/temp-dev.scss */
 .email-settings div.email-item-default, .email-settings div.email-item {
   padding: 12px 22px 4px;
   background: #f6f6f6;
 }
-/* line 237, ../src/temp-dev.scss */
+/* line 241, ../src/temp-dev.scss */
 .email-settings div.email-item-default {
   padding-top: 10px;
   padding-bottom: 10px;
 }
-/* line 238, ../src/temp-dev.scss */
+/* line 242, ../src/temp-dev.scss */
 .email-settings div.email-item-default label {
   line-height: 20px;
 }
-/* line 243, ../src/temp-dev.scss */
+/* line 247, ../src/temp-dev.scss */
 .email-settings div.email-item-default .info_data {
   padding-top: 4px;
 }
-/* line 247, ../src/temp-dev.scss */
+/* line 251, ../src/temp-dev.scss */
 .email-settings div.email-item {
   border-top: 1px solid #ffffff;
   border-bottom: 1px solid #e8e8e8;
 }
-/* line 250, ../src/temp-dev.scss */
+/* line 254, ../src/temp-dev.scss */
 .email-settings div.email-item div.item {
   margin-bottom: 10px;
   font-size: 14px;
 }
-/* line 252, ../src/temp-dev.scss */
+/* line 256, ../src/temp-dev.scss */
 .email-settings div.email-item div.item label {
   font-size: 12px;
   padding-bottom: 2px;
 }
 
-/* line 260, ../src/temp-dev.scss */
+/* line 264, ../src/temp-dev.scss */
 .email-settings-form table {
   width: 400px;
 }
-/* line 261, ../src/temp-dev.scss */
+/* line 265, ../src/temp-dev.scss */
 .email-settings-form td {
   padding: 6px 8px;
 }
 
-/* line 264, ../src/temp-dev.scss */
+/* line 268, ../src/temp-dev.scss */
 .email_info {
   border: 1px solid #cfcfcf;
   padding: 8px 12px;
@@ -428,7 +432,7 @@ div.addReminder form label.overlabel {
   font-size: 14px;
 }
 
-/* line 272, ../src/temp-dev.scss */
+/* line 276, ../src/temp-dev.scss */
 .primary_email {
   padding: 2px 15px;
   border: 1px solid #b8d385;
@@ -440,12 +444,12 @@ div.addReminder form label.overlabel {
   border-radius: 5px 5px 5px 5px;
 }
 
-/* line 283, ../src/temp-dev.scss */
+/* line 287, ../src/temp-dev.scss */
 #primary-email-settings div.email-item-default, #primary-email-settings div.email-item {
   background-color: #fdfff3;
 }
 
-/* line 290, ../src/temp-dev.scss */
+/* line 294, ../src/temp-dev.scss */
 .wordwrap p {
   white-space: pre-wrap;
   /* css-3 */
@@ -459,7 +463,7 @@ div.addReminder form label.overlabel {
   /* Internet Explorer 5.5+ */
 }
 
-/* line 299, ../src/temp-dev.scss */
+/* line 303, ../src/temp-dev.scss */
 .intro {
   color: #777;
   font-size: 12px;
@@ -468,56 +472,55 @@ div.addReminder form label.overlabel {
   margin-bottom: 10px;
 }
 
-/* line 308, ../src/temp-dev.scss */
+/* line 312, ../src/temp-dev.scss */
 .info-description p {
   font-size: 12px;
   color: #000000;
   line-height: 17px;
 }
 
-/* line 315, ../src/temp-dev.scss */
+/* line 319, ../src/temp-dev.scss */
 .tickets-container {
   margin: 0px -20px;
   padding: 0px;
 }
 
-/* line 320, ../src/temp-dev.scss */
+/* line 324, ../src/temp-dev.scss */
 .ticket-header {
   background-image: url(../images/overlay-button.png);
   background-color: #f8f8f8;
   background-repeat: repeat-x;
   background-position: bottom;
-  border-top: 1px solid #dfdfdf;
-  border-bottom: 1px solid #cfcfcf;
+  border: 1px solid #dfdfdf;
+  border-width: 1px 0px;
 }
 
-/* line 329, ../src/temp-dev.scss */
+/* line 333, ../src/temp-dev.scss */
 .tickets, .tickets-expanded {
   width: 100%;
-  border-bottom-color: #efefef;
   color: #5f5f5f;
 }
-/* line 334, ../src/temp-dev.scss */
+/* line 336, ../src/temp-dev.scss */
 .tickets th, .tickets-expanded th {
   background: none;
   padding: 6px 6px 5px 6px;
 }
-/* line 338, ../src/temp-dev.scss */
+/* line 340, ../src/temp-dev.scss */
 .tickets td, .tickets th, .tickets-expanded td, .tickets-expanded th {
   vertical-align: top;
   border-bottom: 1px solid #efefef;
 }
-/* line 342, ../src/temp-dev.scss */
+/* line 344, ../src/temp-dev.scss */
 .tickets td, .tickets-expanded td {
   padding: 10px 8px 10px 10px;
   background-color: #ffffff;
 }
-/* line 345, ../src/temp-dev.scss */
+/* line 347, ../src/temp-dev.scss */
 .tickets td a, .tickets-expanded td a {
   text-decoration: none;
   color: #5a8ec1;
 }
-/* line 350, ../src/temp-dev.scss */
+/* line 352, ../src/temp-dev.scss */
 .tickets tr:hover td, .tickets tr.active td, .tickets-expanded tr:hover td, .tickets-expanded tr.active td {
   background-color: #f4f4f4;
   background-image: url(../images/overlay-top-shadow.png);
@@ -525,39 +528,39 @@ div.addReminder form label.overlabel {
   border-bottom: 1px solid #dfdfdf;
   background-repeat: repeat-x;
 }
-/* line 357, ../src/temp-dev.scss */
+/* line 359, ../src/temp-dev.scss */
 .tickets .check, .tickets-expanded .check {
   width: 25px;
   padding-left: 8px;
   padding-top: 12px;
   text-align: right;
 }
-/* line 363, ../src/temp-dev.scss */
+/* line 365, ../src/temp-dev.scss */
 .tickets th.check, .tickets-expanded th.check {
   padding-top: 10px;
 }
-/* line 367, ../src/temp-dev.scss */
+/* line 369, ../src/temp-dev.scss */
 .tickets .name, .tickets-expanded .name {
   width: 55%;
   padding-left: 57px;
 }
-/* line 370, ../src/temp-dev.scss */
+/* line 372, ../src/temp-dev.scss */
 .tickets .name .preview_pic, .tickets-expanded .name .preview_pic {
   margin: 0px;
   margin-top: 2px;
   margin-left: -53px;
 }
-/* line 374, ../src/temp-dev.scss */
+/* line 376, ../src/temp-dev.scss */
 .tickets .name .preview_pic img, .tickets-expanded .name .preview_pic img {
   padding: 2px;
   width: 36px;
   height: 36px;
 }
-/* line 379, ../src/temp-dev.scss */
+/* line 381, ../src/temp-dev.scss */
 .tickets .name h3, .tickets-expanded .name h3 {
   padding: 0px 0px 4px 0px;
 }
-/* line 381, ../src/temp-dev.scss */
+/* line 383, ../src/temp-dev.scss */
 .tickets .name h3 a, .tickets-expanded .name h3 a {
   text-transform: capitalize;
   font-size: 1.06em;
@@ -565,15 +568,15 @@ div.addReminder form label.overlabel {
   display: block;
   color: #444444;
 }
-/* line 388, ../src/temp-dev.scss */
+/* line 390, ../src/temp-dev.scss */
 .tickets .name h3 a:hover, .tickets-expanded .name h3 a:hover {
   color: #000000;
 }
-/* line 392, ../src/temp-dev.scss */
+/* line 394, ../src/temp-dev.scss */
 .tickets .name div, .tickets-expanded .name div {
   color: #888888;
 }
-/* line 397, ../src/temp-dev.scss */
+/* line 399, ../src/temp-dev.scss */
 .tickets .assign ul, .tickets-expanded .assign ul {
   margin: 0;
   padding: 0;
@@ -598,52 +601,52 @@ div.addReminder form label.overlabel {
 .tickets .assign ul li, .tickets-expanded .assign ul li {
   *display: inline;
 }
-/* line 399, ../src/temp-dev.scss */
+/* line 401, ../src/temp-dev.scss */
 .tickets .assign ul li, .tickets-expanded .assign ul li {
   padding: 4px 7px 0px 0px;
   color: #999999;
   font-size: 12px;
 }
-/* line 403, ../src/temp-dev.scss */
+/* line 405, ../src/temp-dev.scss */
 .tickets .assign ul li span, .tickets-expanded .assign ul li span {
   color: #444444;
   text-transform: capitalize;
 }
-/* line 410, ../src/temp-dev.scss */
+/* line 412, ../src/temp-dev.scss */
 .tickets .assign ul .priority span.style_1, .tickets-expanded .assign ul .priority span.style_1 {
   /* Low priority style */
   color: #666666;
 }
-/* line 413, ../src/temp-dev.scss */
+/* line 415, ../src/temp-dev.scss */
 .tickets .assign ul .priority span.style_2, .tickets-expanded .assign ul .priority span.style_2 {
   /* Medium priority style */
   color: #cc6633;
 }
-/* line 416, ../src/temp-dev.scss */
+/* line 418, ../src/temp-dev.scss */
 .tickets .assign ul .priority span.style_3, .tickets-expanded .assign ul .priority span.style_3 {
   /* High priority style */
   color: #cc6633;
 }
-/* line 419, ../src/temp-dev.scss */
+/* line 421, ../src/temp-dev.scss */
 .tickets .assign ul .priority span.style_4, .tickets-expanded .assign ul .priority span.style_4 {
   /* Urgent priority style */
   color: #cc6633;
 }
-/* line 425, ../src/temp-dev.scss */
+/* line 427, ../src/temp-dev.scss */
 .tickets .sla, .tickets-expanded .sla {
   vertical-align: top;
   text-align: right;
   font-size: 11px;
 }
 
-/* line 432, ../src/temp-dev.scss */
+/* line 434, ../src/temp-dev.scss */
 .conversation-sprite {
   position: relative;
   display: inline;
   margin-bottom: -30px;
   float: right;
 }
-/* line 437, ../src/temp-dev.scss */
+/* line 439, ../src/temp-dev.scss */
 .conversation-sprite .image {
   float: right;
   content: "";
@@ -655,28 +658,28 @@ div.addReminder form label.overlabel {
   height: 32px;
   overflow: hidden;
 }
-/* line 445, ../src/temp-dev.scss */
+/* line 447, ../src/temp-dev.scss */
 .conversation-sprite .email-reply {
   background-position: 0px 0px;
 }
-/* line 448, ../src/temp-dev.scss */
+/* line 450, ../src/temp-dev.scss */
 .conversation-sprite .email-receive {
   background-position: 0px -32px;
 }
-/* line 451, ../src/temp-dev.scss */
+/* line 453, ../src/temp-dev.scss */
 .conversation-sprite .note-public {
   background-position: 0px -64px;
 }
-/* line 454, ../src/temp-dev.scss */
+/* line 456, ../src/temp-dev.scss */
 .conversation-sprite .note-private {
   background-position: 0px -96px;
 }
 
-/* line 460, ../src/temp-dev.scss */
+/* line 462, ../src/temp-dev.scss */
 .contact-box {
   padding-left: 170px;
 }
-/* line 462, ../src/temp-dev.scss */
+/* line 464, ../src/temp-dev.scss */
 .contact-box div.profile_pic {
   float: left;
   margin-left: -150px;
@@ -684,13 +687,13 @@ div.addReminder form label.overlabel {
   margin-top: 5px;
   text-align: center;
 }
-/* line 469, ../src/temp-dev.scss */
+/* line 471, ../src/temp-dev.scss */
 .contact-box .info-highlight {
   margin: 8px 0px 0px -170px;
   padding-left: 165px;
 }
 
-/* line 475, ../src/temp-dev.scss */
+/* line 477, ../src/temp-dev.scss */
 .info-highlight {
   font-size: 13px;
   margin: 0px 0px 0px 0px;
@@ -699,20 +702,20 @@ div.addReminder form label.overlabel {
   border: 1px solid #f4f4e9;
   background-color: #fffbee;
 }
-/* line 482, ../src/temp-dev.scss */
+/* line 484, ../src/temp-dev.scss */
 .info-highlight div {
   padding: 6px;
 }
 
-/* line 488, ../src/temp-dev.scss */
+/* line 490, ../src/temp-dev.scss */
 .forum_list {
   margin: 0px 0px;
 }
-/* line 490, ../src/temp-dev.scss */
+/* line 492, ../src/temp-dev.scss */
 .forum_list a {
   text-decoration: none;
 }
-/* line 491, ../src/temp-dev.scss */
+/* line 493, ../src/temp-dev.scss */
 .forum_list a.title {
   color: #545454;
 }
@@ -728,7 +731,7 @@ div.addReminder form label.overlabel {
 .forum_list a.title:active {
   color: #545454;
 }
-/* line 492, ../src/temp-dev.scss */
+/* line 494, ../src/temp-dev.scss */
 .forum_list .item_actions {
   float: right;
   font-size: 10px;
@@ -740,16 +743,16 @@ div.addReminder form label.overlabel {
   color: #afafaf;
   padding: 2px 8px;
 }
-/* line 500, ../src/temp-dev.scss */
+/* line 502, ../src/temp-dev.scss */
 .forum_list .item_actions a.highlight {
   background-color: #ffffcc;
   padding: 1px 3px;
 }
-/* line 505, ../src/temp-dev.scss */
+/* line 507, ../src/temp-dev.scss */
 .forum_list .subcounter {
   color: #afafaf;
 }
-/* line 508, ../src/temp-dev.scss */
+/* line 510, ../src/temp-dev.scss */
 .forum_list ul.base-set {
   list-style: none;
   overflow: hidden;
@@ -763,25 +766,25 @@ div.addReminder form label.overlabel {
   list-style-type: none;
   margin-left: 0px;
 }
-/* line 513, ../src/temp-dev.scss */
+/* line 515, ../src/temp-dev.scss */
 .forum_list ul.base-set li {
   float: left;
   width: 44%;
   padding: 0px 0px 0px 30px;
   margin: 0px 3% 0px 0px;
 }
-/* line 518, ../src/temp-dev.scss */
+/* line 520, ../src/temp-dev.scss */
 .forum_list ul.base-set li h4.forum_title {
   margin: 3px 0px 0px 0px;
   padding: 6px 0px 4px 0px;
   font-size: 16px;
   position: relative;
 }
-/* line 522, ../src/temp-dev.scss */
+/* line 524, ../src/temp-dev.scss */
 .forum_list ul.base-set li h4.forum_title a {
   font-weight: normal;
 }
-/* line 527, ../src/temp-dev.scss */
+/* line 529, ../src/temp-dev.scss */
 .forum_list ul.base-set li span.icon {
   position: absolute;
   left: -34px;
@@ -791,29 +794,29 @@ div.addReminder form label.overlabel {
   height: 32px;
   overflow: hidden;
 }
-/* line 533, ../src/temp-dev.scss */
+/* line 535, ../src/temp-dev.scss */
 .forum_list ul.base-set li span.forum_type_1 {
   background-position: 0px -192px;
 }
-/* line 537, ../src/temp-dev.scss */
+/* line 539, ../src/temp-dev.scss */
 .forum_list ul.base-set li span.forum_type_2 {
   background-position: 0px -224px;
 }
-/* line 541, ../src/temp-dev.scss */
+/* line 543, ../src/temp-dev.scss */
 .forum_list ul.base-set li span.forum_type_3 {
   background-position: 0px -160px;
 }
-/* line 545, ../src/temp-dev.scss */
+/* line 547, ../src/temp-dev.scss */
 .forum_list ul.base-set li span.forum_type_4 {
   background-position: 0px -128px;
 }
-/* line 549, ../src/temp-dev.scss */
+/* line 551, ../src/temp-dev.scss */
 .forum_list ul.base-set li .topic-list {
   padding: 6px 0px 12px 0px;
   margin-bottom: 8px;
   border-top: 1px solid #f1f1f1;
 }
-/* line 553, ../src/temp-dev.scss */
+/* line 555, ../src/temp-dev.scss */
 .forum_list ul.base-set li .topic-list a.topic {
   white-space: nowrap;
   overflow: hidden;
@@ -825,7 +828,7 @@ div.addReminder form label.overlabel {
   padding: 5px 0px;
   font-size: 13px;
 }
-/* line 559, ../src/temp-dev.scss */
+/* line 561, ../src/temp-dev.scss */
 .forum_list ul.base-set li .topic-list a {
   color: #4d769f;
 }
@@ -841,35 +844,31 @@ div.addReminder form label.overlabel {
 .forum_list ul.base-set li .topic-list a:active {
   color: #4d769f;
 }
-/* line 564, ../src/temp-dev.scss */
+/* line 566, ../src/temp-dev.scss */
 .forum_list ul.base-set li.odd {
   clear: left;
 }
-/* line 567, ../src/temp-dev.scss */
+/* line 569, ../src/temp-dev.scss */
 .forum_list ul.base-set li.even {
   margin-right: 0px;
   width: 46%;
 }
 
-/* line 575, ../src/temp-dev.scss */
+/* line 577, ../src/temp-dev.scss */
 .forum-group {
   margin: 0px -20px;
 }
 
-/* line 579, ../src/temp-dev.scss */
+/* line 581, ../src/temp-dev.scss */
 .list-noinfo {
-  background: #f6f6f6;
-  text-align: center;
-  padding: 2em 0 2em 0;
-  margin: 3px 3px -11px 3px;
-  height: 300px;
-  font-size: 1.6em;
+  padding: 10px 20px;
+  font-size: 1.1em;
   font-weight: bold;
   color: #666666;
   text-shadow: white -1px -1px 1px;
 }
 
-/* line 591, ../src/temp-dev.scss */
+/* line 589, ../src/temp-dev.scss */
 .caption-text {
   background: #f6f6f6;
   padding: 6px 8px 6px 50px;
@@ -878,19 +877,19 @@ div.addReminder form label.overlabel {
   color: #999999;
 }
 
-/* line 599, ../src/temp-dev.scss */
+/* line 597, ../src/temp-dev.scss */
 .sort {
   text-align: right;
   position: relative;
   padding: 6px 40px 0px 0px;
 }
-/* line 603, ../src/temp-dev.scss */
+/* line 601, ../src/temp-dev.scss */
 .sort .sort_order {
   position: absolute;
   right: 0px;
   top: 0px;
 }
-/* line 607, ../src/temp-dev.scss */
+/* line 605, ../src/temp-dev.scss */
 .sort .sort_order .image {
   position: absolute;
   right: 0px;
@@ -903,11 +902,11 @@ div.addReminder form label.overlabel {
   overflow: hidden;
   background-position: 0px -288px;
 }
-/* line 615, ../src/temp-dev.scss */
+/* line 613, ../src/temp-dev.scss */
 .sort .sort_order .ASC {
   background-position: 0px -256px;
 }
-/* line 618, ../src/temp-dev.scss */
+/* line 616, ../src/temp-dev.scss */
 .sort .sort_order .DESC {
   background-position: 0px -288px;
 }

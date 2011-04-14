@@ -17,6 +17,7 @@ en:
    save_reply: "Save Reply"
    save:    "Save"
    save_changes: "Save Changes"
+   cancel_and_back : "Cancel and go back"
    created_on: "Created on"
    asked_on: "Asked on"
    delete_topic_msg: "Delete this topic forever"
@@ -39,9 +40,9 @@ en:
    to_do: "To Do"
    add_to_do: "Add To do"
    activities: "Activities"
-   undelete: "Undelete"
+   undelete: "Restore"
    recent_activity: "Recent Activity"
-   
+   note: "Note"
    
    sla_policy: 
        title: "SLA Policy"
@@ -71,19 +72,19 @@ en:
        info1: "Are you sure you want to delete this company"
        info2: "Domain Names for this company"
        info4: "Add a Note about %{name}"
-       info5: "Add specific notes regarding this company"
+       info5: "Add specific notes regarding this company. example - we are negotiating a 100K deal with this company"
        info6: "People in %{name}"
        info7: "No tickets have been created by the people in this company"
        info8: "More info regarding this company like address, phone number, website etc"
        info9: "Freshdesk will automatically associate Contacts with this company if email ids contain these domains"
-       
+       notes: "Notes"
    
    ticket:
        unassigned: "Unassigned"
        assigned_to: "Assigned to"
        status: "Status"
        singular: "Ticket"
-       edit: "Edit Ticket"
+       edit: "Edit ticket"
        requester: "Requester"
        subject: "Subject"
        type: "Type"
@@ -100,10 +101,11 @@ en:
        recent_tickets: "Recent tickets"
        to_do: "Tickets To-Do"
        activity: "Activity"
-       unflag_spam: "Unflag Spam"
+       unflag_spam: "Not Spam"
        flag_spam: "Flag Spam"
        pick_up: "Pick Up"
        assign_to_agent: "Assign To Agent"
+       select_to_agent: "Select an Agent"
        sort_by: "Sort by"
        submit_ticket_title: "Submit a ticket"
        verify_human: "To verify you are human, please type the given scrambled letters"
@@ -212,8 +214,8 @@ en:
            agent_notification: "Agent Notification"
            customize_email: "Customize Email"
            insert_placeholder: "Insert Placeholders"
-           modify_requester_template: "Modify Requester Template"
-           modify_agent_template: "Modify Requester Template"
+           modify_requester_template: "Modify Email Template"
+           modify_agent_template: "Modify Email Template"
    dispatch:
         title: "Dispatch'r"
         edit: "Dispatch'r - Edit Rule" 
@@ -275,7 +277,36 @@ en:
       secondary: "secondary"
       back_info: "Background information"
       info1: "A Profile image of the person, its best if the picture has the same length and height"
-      
+   
+   ticketfields:
+          title:                 "Ticket Fields"
+          add_custom_field:      "Add a Custom Field"
+          field:
+              single_line:       "Single Line Text"
+              number:            "Number"
+              paragraph:         "Paragraph Text"
+              checkbox:          "Checkbox"
+              dropdown:          "Dropdown"
+          customize_form:        "Customize your “New Ticket” form."
+          save:                  "Save Ticket fields"
+          
+          fieldprop:
+              label:            "Field Label"
+              description:      "Description"
+              dropdown_choices: "Dropdown Choices"
+              choices:          "Choices"
+              add_new_choice:   "Add new choice"
+              for_agents:                  "For Agents"
+              agent_mandatory_submission:  "Mandatory for submission"
+              agent_info1:                 "Field cannot be blank when submitting the ticket"
+              agent_mandatory_closure:     "Mandatory for closure" 
+              agent_info2:                 "Field cannot be blank when closing the ticket"
+              for_customer:           "For Customers"
+              customer_visible:       "Visible to customers"
+              customer_edit:          "Can Edit the field"
+              customer_mandatoy:      "Mandatory for ticket submission"
+              customer_info1:         "Field cannot be blank when submitting the ticket online."
+              
    solution:
        title: "Solutions"
        add:   "Add Solution"
@@ -296,9 +327,10 @@ en:
        
        
    solution_category:
-        edit: "Edit Category"  
-        new: "New Category"
+        edit: "Edit solution category"  
+        new: "New solution category"
         save_and_create: "Save and Create Another" 
+        name: "Category name"
         info1: "Are you sure you want to delete this category"
         info2: "No folders in this category"
    

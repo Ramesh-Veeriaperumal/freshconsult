@@ -129,6 +129,7 @@ module ApplicationHelper
       ['{{ticket.source}}', 	 			'Source', 					'The source channel of the ticket.'],
       ['{{ticket.ticket_type}}', 			'Ticket type', 				'Ticket type.'],
       ['{{ticket.tags}}', 					'Tags', 					'Ticket tags.'],
+      ['{{ticket.attachments}}',    'Ticket attachments', 'Attachments for the ticket.'],
       ['{{ticket.due_by_time}}', 			'Due by time',				'Ticket due by time.'],
       ['{{ticket.requester.name}}', 		'Requester name', 			'Name of the requester who raised the ticket.'],
       ['{{ticket.requester.email}}',		'Requester email', 			"Requester's email."],
@@ -137,7 +138,9 @@ module ApplicationHelper
       ['{{ticket.agent.name}}', 			'Agent name',				'Name of the agent who is currently working on the ticket.'],
       ['{{ticket.agent.email}}', 			'Agent email',				"Agent's email."],
       ['{{ticket.latest_comment}}', 		'Latest comment', 			'Latest comment for this ticket.'],
-      ['{{ticket.latest_public_comment}}',  'Latest Public comment',	'Latest public comment for this ticket.']
+      ['{{ticket.latest_public_comment}}',  'Latest public comment',	'Latest public comment for this ticket.'],
+      ['{{ticket.latest_comment_attachments}}', 'Latest comment attachments', 'Attachments for the latest comment of the ticket.'],
+      ['{{ticket.latest_public_comment_attachments}}',  'Latest public comment attachments', 'Attachments for the latest public comment of the ticket.']
     ]
   end
   

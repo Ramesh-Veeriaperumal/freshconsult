@@ -38,11 +38,11 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
   def email_notification(params)
     subject       get_subject(params[:notification_type], params[:ticket])
     recipients    params[:receips]
-    body          params[:email_body]
+    body          RedCloth.new(params[:email_body]).to_html
     from          params[:ticket].reply_email
     headers       "Reply-to" => "#{params[:ticket].reply_email}"
     sent_on       Time.now
-    content_type  "text/plain"
+    content_type  "text/html"
   end
  
   def get_subject(notification_type, ticket)
@@ -71,20 +71,20 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
     subject       formatted_subject(ticket)
     recipients    ticket.requester.email
     from          ticket.reply_email
-    body          content
+    body          RedCloth.new(content).to_html
     headers       "Reply-to" => "#{ticket.reply_email}"
     sent_on       Time.now
-    content_type  "text/plain"
+    content_type  "text/html"
   end
   
   def internal_email(ticket, receips, content)
     subject       formatted_subject(ticket)
     recipients    receips
     from          ticket.reply_email
-    body          content
+    body          RedCloth.new(content).to_html
     headers       "Reply-to" => "#{ticket.reply_email}"
     sent_on       Time.now
-    content_type  "text/plain"
+    content_type  "text/html"
   end
   
   def formatted_subject(ticket)

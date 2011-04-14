@@ -414,25 +414,34 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #Might be darn expensive db queries, need to revisit - shan.
   def to_liquid
     { 
-      "id"                    => display_id,
-      "encoded_id"            => encode_display_id,
-      "subject"               => subject,
-      "description"           => description,
-      "requester"             => requester,
-      "agent"                 => responder,
-      "group"                 => group,
-      "status"                => STATUS_NAMES_BY_KEY[status],
-      "priority"              => PRIORITY_NAMES_BY_KEY[priority],
-      "source"                => SOURCE_NAMES_BY_KEY[source],
-      "ticket_type"           => TYPE_NAMES_BY_KEY[ticket_type],
-      "tags"                  => tag_names.join(', '),
-      "due_by_time"           => due_by.strftime("%B %e %Y at %I:%M %p"),
-      "due_by_hrs"            => due_by.strftime("%I:%M %p"),
-      "fr_due_by_hrs"         => frDueBy.strftime("%I:%M %p"),
-      "url"                   => helpdesk_ticket_url(self, :host => account.host),
-      "latest_comment"        => liquidize_comment(latest_comment),
-      "latest_public_comment" => liquidize_comment(latest_public_comment)
-      }
+      "id"                                => display_id,
+      "encoded_id"                        => encode_display_id,
+      "subject"                           => subject,
+      "description"                       => description,
+      "requester"                         => requester,
+      "agent"                             => responder,
+      "group"                             => group,
+      "status"                            => STATUS_NAMES_BY_KEY[status],
+      "priority"                          => PRIORITY_NAMES_BY_KEY[priority],
+      "source"                            => SOURCE_NAMES_BY_KEY[source],
+      "ticket_type"                       => TYPE_NAMES_BY_KEY[ticket_type],
+      "tags"                              => tag_names.join(', '),
+      "due_by_time"                       => due_by.strftime("%B %e %Y at %I:%M %p"),
+      "due_by_hrs"                        => due_by.strftime("%I:%M %p"),
+      "fr_due_by_hrs"                     => frDueBy.strftime("%I:%M %p"),
+      "url"                               => helpdesk_ticket_url(self, :host => account.host),
+      "attachments"                       => liquidize_attachments(attachments),
+      "latest_comment"                    => liquidize_comment(latest_comment),
+      "latest_public_comment"             => liquidize_comment(latest_public_comment),
+      "latest_comment_attachments"        => liquidize_c_attachments(latest_comment),
+      "latest_public_comment_attachments" => liquidize_c_attachments(latest_public_comment)
+    }
+  end
+  
+  def liquidize_attachments(attachments)
+    attachments.each_with_index.map { |a, i| 
+      "#{i+1}. <a href='#{helpdesk_attachment_url(a, :host => account.host)}'>#{a.content_file_name}</a>"
+      }.join("<br />") #Not a smart way for sure, but donno how to do this in RedCloth?
   end
   
   def latest_comment #There must be a smarter way than this. maybe a proper named scope in Note?!
@@ -441,6 +450,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   def latest_public_comment
     notes.visible.public.newest_first.first
+  end
+  
+  def liquidize_c_attachments(c)
+    liquidize_attachments(c.attachments) if c
   end
   
   def liquidize_comment(comm)

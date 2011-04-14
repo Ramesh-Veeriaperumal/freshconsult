@@ -3,7 +3,13 @@ class Support::ArticlesController < ApplicationController
   
   
   before_filter { |c| c.requires_permission :portal_knowledgebase }
+  
+  rescue_from ActionController::UnknownAction, :with => :handle_unknown
 
+  def handle_unknown
+     redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
+  end
+  
   def index
     @articles = Solution::Article.visible(current_account).paginate(
       :page => params[:page], 
