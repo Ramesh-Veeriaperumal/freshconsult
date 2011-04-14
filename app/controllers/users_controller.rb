@@ -9,6 +9,7 @@ class UsersController < ApplicationController
   before_filter :set_selected_tab
   skip_before_filter :load_object , :only => [ :show, :edit]
   
+  ##redirect to contacts
   def index
     redirect_to contacts_url
   end
