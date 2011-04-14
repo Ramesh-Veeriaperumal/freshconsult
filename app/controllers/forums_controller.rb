@@ -16,6 +16,7 @@ class ForumsController < ApplicationController
      respond_to do |format|
       format.html 
       format.xml  { render :xml => @forum_categories }
+      format.json  { render :json => @forum_categories }
       format.atom 
     end
   end
@@ -26,11 +27,13 @@ class ForumsController < ApplicationController
    (session[:forum_page] ||= Hash.new(1))[@forum.id] = params[:page].to_i if params[:page]
 
     @topics = @forum.topics.paginate :page => params[:page]
+    
     respond_to do |format|
       format.html do
         # keep track of when we last viewed this forum for activity indicators
          end
-      format.xml { render :xml => @forum.to_xml(:include => [:forum_category,:topics] )   }
+      format.xml  { render :xml => @forum.to_xml(:include => :topics) }
+      format.json  { render :json => @forum.to_json(:include => :topics) }
       format.atom
     end
   end
