@@ -16,7 +16,6 @@ class ActivationsController < ApplicationController
     raise Exception if @user.active?
  
     if @user.activate!(params)
-      @user.deliver_activation_confirmation!
       flash[:notice] = "Your account has been activated."
       redirect_to root_url
     else

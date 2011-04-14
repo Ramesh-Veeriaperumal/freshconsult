@@ -64,4 +64,11 @@ class Group < ActiveRecord::Base
     agents.collect { |a| a.email }
   end
   
+  def to_liquid
+    { 
+      "name"  => name,
+      "assign_time_mins" => (assign_time || 0).div(60)
+    }
+  end
+  
 end
