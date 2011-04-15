@@ -1,4 +1,4 @@
-<% content_for :layoutType do%>single<% end %>
+<% content_for :sidebar do -%><%-end %>
 <% content_for :head do %>
   <%= javascript_include_tag "helpdesk/expanding_textarea" %>
   <%= javascript_include_tag "helpdesk/multifile" %>
@@ -12,7 +12,7 @@
 		<div class="button-container">
 			<%= submit_tag t('save'), :class => "uiButton" %>
 	      	<%= submit_tag t('save_and_create'), :name => "save_and_create", :class => "uiButton" %>
-			<%= link_to(t('cancel'), solution_category_folder_url(@article.folder.category_id, @article.folder.id), :class => "uiButton grey" ) %>
+			<%= link_to(t('cancel'), solution_category_folder_url(@article.folder.category_id, @article.folder.id), :class => "uiButton" ) %>
 		</div>
 	 <% end %>
 </div>

@@ -1,5 +1,5 @@
-<% content_for :layoutType do -%>single<%- end %>
-<h3 class="title"><%=t('folder.edit')%> <span class="sub_title">"<%=@folder.name%>"</span> </h3>
+<% content_for :sidebar do -%><%-end %>
+<h3 class="title"><%=t('folder.edit')%> <span class="info_data">"<%=@folder.name%>"</span> </h3>
 <% form_for (@folder), :url => solution_category_folder_path(@folder.category_id) , :html => {:multipart => true, :id => "folder-form"} do |f| %>
 	<%= render :partial => "folder_form" , :locals => { :f => f }%>
 	<div class="button-container">

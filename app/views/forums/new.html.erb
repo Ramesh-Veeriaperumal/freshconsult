@@ -1,3 +1,4 @@
+<% content_for :sidebar do -%><%-end %>
 <h3 class="title"><%= t('forum.new') %></h3>
 <% form_for :forum, :url => category_forums_path(@forum_category) do |f| -%>
 	<%= render :partial => "form", :object => f %>
