@@ -41,3 +41,11 @@
 	word-wrap: break-word; /* Internet Explorer 5.5+ */
 }
 
+@mixin rotate($degree: -90deg, $location: bottom left) {
+	-moz-transform:rotate($degree); 
+	-moz-transform-origin: $location;
+	-webkit-transform: rotate($degree);
+	-webkit-transform-origin: $location;
+	-o-transform: rotate($degree);
+	-o-transform-origin: $location;
+}

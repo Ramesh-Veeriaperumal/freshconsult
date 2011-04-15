@@ -1,4 +1,5 @@
-<h3 class="title"><%=t('solution_category.edit')%> <span class="sub_title">"<%=@category.name%>"</span> </h3>
+<% content_for :sidebar do -%><%-end %>
+<h3 class="title"><%=t('solution_category.edit')%> <span class="info_data">"<%=@category.name%>"</span> </h3>
 <% form_for (@category), :html => {:multipart => true, :id => "folder-form", :class => "validate_form"} do |f| %>
 	<%= render :partial => "category_form" , :locals => { :f => f }%>
 	<div class="button-container">
