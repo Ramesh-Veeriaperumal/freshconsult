@@ -1,3 +1,4 @@
+<% content_for :sidebar do -%><%-end %>
 <h3 class="title">Import Contacts</h3>
 <div class="page_area">
 	<% form_for :user,:url => { :controller => "contact_import", :action => "create" }, :html => {:multipart => true} do |f| %>

@@ -1,10 +1,10 @@
-<% content_for :layoutType do -%>single<%- end %>
+<% content_for :sidebar do -%><%-end %>
 <h3 class="title">New Folder</h3>
 <% form_for (@folder), :url => solution_category_folders_path(@folder.category_id) , :html => {:multipart => true, :id => "folder-form"} do |f| %>
 	<%= render :partial => "folder_form" , :locals => { :f => f }%>
 	<div class="button-container">
-	    <%= submit_tag t('save'), :class => "uiButton submit" %>
+	    <%= submit_tag t('save'), :class => "uiButton" %>
 	    <%= submit_tag t('save_and_create'), :name => "save_and_create", :class => "uiButton" %>
-		<%= link_to(t('cancel'), solution_category_url(@folder.category_id), :class => "uiButton grey" ) %>
+		<%= link_to(t('cancel'), solution_category_url(@folder.category_id), :class => "uiButton" ) %>
 	</div>
 <% end %>
