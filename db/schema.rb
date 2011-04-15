@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110414103307) do
+ActiveRecord::Schema.define(:version => 20110415090430) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -457,6 +457,7 @@ ActiveRecord::Schema.define(:version => 20110414103307) do
     t.boolean  "delta",                        :default => true,  :null => false
   end
 
+  add_index "helpdesk_tickets", ["account_id", "display_id"], :name => "index_helpdesk_tickets_on_account_id_and_display_id", :unique => true
   add_index "helpdesk_tickets", ["account_id", "requester_id"], :name => "index_helpdesk_tickets_on_account_id_and_requester_id"
   add_index "helpdesk_tickets", ["account_id", "responder_id"], :name => "index_helpdesk_tickets_on_account_id_and_responder_id"
 
