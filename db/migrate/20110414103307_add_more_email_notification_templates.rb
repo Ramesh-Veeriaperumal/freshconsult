@@ -40,12 +40,18 @@ Regards,
 
 {{password_reset_url}}
 
-If the above URL does not work, try copying and pasting it into your browser. If you continue to have problem, please feel free to contact us.',
+If the above URL does not work, try copying and pasting it into your browser. If you continue to have problem, please feel free to contact us.
+
+Regards,
+{{helpdesk_name}}',
           :requester_template => 'A request to reset your password has been made. If you did not make this request, simply ignore this email. If you did make this request, just click the link below:
 
 {{password_reset_url}}
 
-If the above URL does not work, try copying and pasting it into your browser. If you continue to have problem, please feel free to contact us.')
+If the above URL does not work, try copying and pasting it into your browser. If you continue to have problem, please feel free to contact us.
+
+Regards,
+{{helpdesk_name}}')
 
       account.email_notifications.build(
           :notification_type => EmailNotification::TICKET_UNATTENDED_IN_GROUP, 
