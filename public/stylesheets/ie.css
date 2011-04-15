@@ -71,27 +71,31 @@
   padding: 0px;
 }
 /* line 52, ../src/ie.scss */
+.ie6 .reminders, .ie7 .reminders, .ie8 .reminders, .ie9 .reminders {
+  width: 100%;
+}
+/* line 56, ../src/ie.scss */
 .ie6 .rtCnt .rtDetails h3.title, .ie7 .rtCnt .rtDetails h3.title, .ie8 .rtCnt .rtDetails h3.title, .ie9 .rtCnt .rtDetails h3.title {
   margin-top: 14px;
   padding-bottom: 0px;
 }
-/* line 57, ../src/ie.scss */
+/* line 61, ../src/ie.scss */
 .ie6 div.panel_area .tag_delete, .ie7 div.panel_area .tag_delete, .ie8 div.panel_area .tag_delete, .ie9 div.panel_area .tag_delete {
   right: 12px;
 }
-/* line 61, ../src/ie.scss */
+/* line 65, ../src/ie.scss */
 .ie6 .placeholder-list dl dt a, .ie7 .placeholder-list dl dt a, .ie8 .placeholder-list dl dt a, .ie9 .placeholder-list dl dt a {
   width: 180px;
 }
-/* line 65, ../src/ie.scss */
+/* line 69, ../src/ie.scss */
 .ie6 .auto-expand, .ie7 .auto-expand, .ie8 .auto-expand, .ie9 .auto-expand {
   overflow-x: hidden;
 }
-/* line 69, ../src/ie.scss */
+/* line 73, ../src/ie.scss */
 .ie6 .search_results_bar .results li h4, .ie7 .search_results_bar .results li h4, .ie8 .search_results_bar .results li h4, .ie9 .search_results_bar .results li h4 {
   margin-left: -50px;
 }
-/* line 71, ../src/ie.scss */
+/* line 75, ../src/ie.scss */
 .ie6 .uiButton, .ie7 .uiButton, .ie8 .uiButton, .ie9 .uiButton {
   padding: 4px 12px;
   font-size: 11px;
