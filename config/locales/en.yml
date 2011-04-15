@@ -214,8 +214,9 @@ en:
            agent_notification: "Agent Notification"
            customize_email: "Customize Email"
            insert_placeholder: "Insert Placeholders"
-           modify_requester_template: "Modify Email Template"
-           modify_agent_template: "Modify Email Template"
+           modify_requester_template: "Modify Requester Email Template"
+           modify_agent_template: "Modify Agent Email Template"
+           
    dispatch:
         title: "Dispatch'r"
         edit: "Dispatch'r - Edit Rule" 

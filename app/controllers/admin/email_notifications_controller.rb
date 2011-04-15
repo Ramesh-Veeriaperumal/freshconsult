@@ -5,9 +5,9 @@ class Admin::EmailNotificationsController < Admin::AdminController
     by_type = Hash[*e_notifications.map { |n| [n.notification_type, n] }.flatten]
     
     @notifications = [
-      { :type => "User Activation Email", :requester => true, :agent => true,
+      { :type => "User Activation Email", :requester => true, :agent => true, :placeholder => false, :agentSelect => false,
                   :obj => by_type[EmailNotification::USER_ACTIVATION] },
-      { :type => "Password Reset Email", :requester => true, :agent => true,
+      { :type => "Password Reset Email", :requester => true, :agent => true, :placeholder => false, :agentSelect => false, :userSelect => false,
                   :obj => by_type[EmailNotification::PASSWORD_RESET] },
       { :type => "New Ticket Created", :requester => true, :agent => false, 
                   :obj => by_type[EmailNotification::NEW_TICKET] },
