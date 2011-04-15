@@ -4,6 +4,7 @@
 		@customizer = ActiveSupport::JSON.decode(@item.customizer.json_data)
 		
 		@customizer.each do |field|
+			field_class = field["type"] + ((field["agent"]["required"]) ? " required" : "") 
 			case field["label"]
 			 when "Requester" then
     %>
@@ -14,38 +15,38 @@
 	<%when "Source" then%>
 		<li class="dropdown">
   			<%= f.label :source, t('ticket.source') %>
- 			<%= f.select :source, Helpdesk::Ticket::SOURCE_OPTIONS, :class => "select" %>
+ 			<%= f.select :source, Helpdesk::Ticket::SOURCE_OPTIONS, :class => field_class %>
         </li>
 		
 	<%when "Type" then%>
 		
 		<li class="dropdown">
           	<%= f.label :ticket_type, t('ticket.type') %>
-         	<%= f.select :ticket_type, Helpdesk::Ticket::TYPE_OPTIONS, :class => "select" %>
+         	<%= f.select :ticket_type, Helpdesk::Ticket::TYPE_OPTIONS, :class => field_class %>
         </li>
 				
 	<%when "Status" then%>
 		<li class="dropdown">
           	<%= f.label :status, t('ticket.status') %>
-         	<%= f.select :status, Helpdesk::Ticket::STATUS_OPTIONS, :class => "select" %>
+         	<%= f.select :status, Helpdesk::Ticket::STATUS_OPTIONS, :class => field_class %>
         </li>
 		
 	<%when "Group" then%>
 		<li class="dropdown">
           	<%= f.label :group_id, t('ticket.group') %>
-          	<%= f.collection_select :group_id, Group.find_all_by_account_id(@item.account_id), :id, :name,{:include_blank => '...'}, { :onchange => "changeAggentList(this.options[this.selectedIndex].value)" ,:class => "select"} %>
+          	<%= f.collection_select :group_id, Group.find_all_by_account_id(@item.account_id), :id, :name,{:include_blank => '...'}, { :onchange => "changeAggentList(this.options[this.selectedIndex].value)" ,:class => field_class} %>
         </li>
 		
 	<%when "Assigned to" then%> 
 		<li class="dropdown" id="assigned_to">
           	<%= f.label :responder_id, t('ticket.assigned_to') %>
-          	<%= f.collection_select :responder_id, Agent.technician_list(@item.account_id), :id, :name, {:include_blank => '...'}, :class => "select" %>
+          	<%= f.collection_select :responder_id, Agent.technician_list(@item.account_id), :id, :name, {:include_blank => '...'}, :class => field_class %>
         </li> 
 		
 	<%when "Priority" then%>
 		<li class="dropdown">
  			<%= f.label :priority, t('ticket.priority') %>          
-			<%= f.select :priority, Helpdesk::Ticket::PRIORITY_OPTIONS, :class => "select" %>
+			<%= f.select :priority, Helpdesk::Ticket::PRIORITY_OPTIONS, :class => field_class %>
     	</li>
 	
 	<%when "Description" then%>
@@ -55,8 +56,8 @@
 		<%logger.debug "Custom  Field #{field["label"]}"%>		
 		<% fields_for :flexifields do |cust_form| %>
 			<% 
-				field_label = (field["agent"]["required"]) ? "#{field["display_name"]} " : "#{field["display_name"]}"  
-				field_class = field["type"] + ((field["agent"]["required"]) ? " required" : "") 
+				field_label = (field["agent"]["required"]) ? "#{field["display_name"]} " : "#{field["display_name"]}" 
+				
 			%>
 			<% case field["type"] when "text","number" then %>				
 				<li class="<%= field['label'] %>">		 

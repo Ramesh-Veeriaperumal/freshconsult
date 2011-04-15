@@ -2,6 +2,7 @@
 	<ul class="ui-form">
 		<% @customizer = ActiveSupport::JSON.decode(@ticket.customizer.requester_view)
 		   @customizer.each do |field|
+				field_class = field["type"] + ((field["customer"]["required"]) ? " required" : "") 
 				case field["label"]
 					 when "Requester" then 
 					%>
@@ -12,49 +13,49 @@
 					<% when "Subject" then%>
 						<li>
 				        	<%= request_form.label :subject, "Subject" %>
-				          	<%= request_form.text_field :subject, :class => "text" %>
+				          	<%= request_form.text_field :subject, :class => field_class %>
 				   		</li>
 					<%when "Source" then%>
 						<li class="dropdown">
 				  			<%= request_form.label :source, "Source" %>
-				 			<%= request_form.select :source, Helpdesk::Ticket::SOURCE_OPTIONS, :class => "select" %>
+				 			<%= request_form.select :source, Helpdesk::Ticket::SOURCE_OPTIONS, :class => field_class %>
 				        </li>
 								
 					<%when "Status" then%>
 						<li class="dropdown">
 				          	<%= request_form.label :status, "Status" %>
-				         	<%= request_form.select :status, Helpdesk::Ticket::STATUS_OPTIONS, :class => "select" %>
+				         	<%= request_form.select :status, Helpdesk::Ticket::STATUS_OPTIONS, :class => field_class %>
 				        </li>
 						
 					<%when "Group" then%>
 						<li class="dropdown">
 				          	<%= request_form.label :group_id, "Group" %>
-				          	<%= request_form.collection_select :group_id, Group.find_all_by_account_id(current_account.id), :id, :name,{:include_blank => 'None'}, { :onchange => "changeAggentList(this.options[this.selectedIndex].value)" ,:class => "select"} %>
+				          	<%= request_form.collection_select :group_id, Group.find_all_by_account_id(current_account.id), :id, :name,{:include_blank => 'None'}, { :onchange => "changeAggentList(this.options[this.selectedIndex].value)" ,:class => field_class} %>
 				        </li>
 						
 					<%when "Assigned to" then%>	
 						<li class="dropdown" id="assigned_to">
 				          	<%= request_form.label :responder_id, "Assigned To" %>
-				          	<%= request_form.collection_select :responder_id, Helpdesk::Authorization.find_all_by_permission(:manage_tickets), :user_id, :name, {:include_blank => 'Nobody'}, :class => "select" %>
+				          	<%= request_form.collection_select :responder_id, Helpdesk::Authorization.find_all_by_permission(:manage_tickets), :user_id, :name, {:include_blank => 'Nobody'}, :class => field_class %>
 				        </li>
 						
 					<%when "Priority" then%>
 						<li class="dropdown">
 				 			<%= request_form.label :priority, "Priority" %>          
-							<%= request_form.select :priority, Helpdesk::Ticket::PRIORITY_OPTIONS, :class => "select" %>
+							<%= request_form.select :priority, Helpdesk::Ticket::PRIORITY_OPTIONS, :class => field_class %>
 				    	</li>
 					
 					<%when "Description" then%>
 						<li>
 							<%= request_form.label :description, "Description" %>
-				    		<%= request_form.text_area :description, :class=>"textarea" %>
+				    		<%= request_form.text_area :description, :class=> field_class %>
 						</li>				
 					
 					<%else%> 
 						<% request_form.fields_for :flexifields do |cust_form| %>
 						<% 
 							field_label = (field["customer"]["required"]) ? "#{field["display_name"]}*" : "#{field["display_name"]}"  
-							field_class = field["type"] + ((field["customer"]["required"]) ? " required" : "")  
+							 
 						%>
 							<% case field["type"] when "text","number" then %>				
 								<li class="<%= field['label'] %>">		 
