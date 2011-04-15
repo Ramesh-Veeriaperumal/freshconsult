@@ -3,16 +3,28 @@
 	var active_email_body = null;
 	jQuery(document).ready(function(){
 		var active_template = null;
+		var active_link     = null;
 		jQuery("a.notify_check").bind("click", function(ev){
 			//jQuery(active_template).hide();
 			//hideData = (jQuery(this).parents("tr").attr("notify_type"));
 			var emailTr = jQuery(this).parents("tr").next();
-			active_template = jQuery(emailTr).toggle();
-			jQuery(emailTr).find("div").hide();
-			jQuery(emailTr).find("div."+this.getAttribute("showdiv")).show();
+			if(active_link != null && active_link == this){
+				jQuery(active_template).hide(); 
+				jQuery("#"+active_link.getAttribute("showdiv")).hide();
+				active_link = null;
+			}else{			
+				jQuery(active_template).hide();	
+				jQuery("#"+jQuery(active_link).attr("showdiv")).hide();
+				jQuery('#place-dialog').hide();
+				
+				active_template = jQuery(emailTr).show(); 
+				jQuery("#"+this.getAttribute("showdiv")).show();
+				active_link = this;
+			}
 		});
 		jQuery("a.close_template").bind("click", function(ev){
 			jQuery(this).parents("tr").hide();
+			jQuery('#place-dialog').hide();
 		});
 		
 		jQuery("a.reset_template").bind("click", function(ev){
@@ -64,23 +76,31 @@
 				<td><%= item[:type] %> </td>
 				<td>
 					<% if (item[:requester])  %>
-						<input type="checkbox" name="requester_notification" class="checkbox requester" <%= (data.requester_notification) ? "checked" : "" %> />
-						<a href="javascript:void(0)" showdiv="requester_div" class="notify_check"><%=t('email_notifications.customize_email')%></a>
+						<% if (item[:userSelect] == false )  
+						   	 checkStyle = "visibility:hidden" 
+						   end %>
+						<input type="checkbox" style="<%=checkStyle%>" name="requester_notification" class="checkbox requester" <%= (data.requester_notification) ? "checked" : "" %> />
+						<a href="javascript:void(0)" showdiv='<%= "requester_div_#{data.id}" %>' class="notify_check"><%=t('email_notifications.customize_email')%></a>
 					<% end %>
 					&nbsp;
 				</td>
 				<td>
 					<% if (item[:agent])  %>
-						<input type="checkbox" name="agent_notification" class="checkbox agent" <%= (data.agent_notification) ? "checked" : "" %> />
-						<a href="javascript:void(0)" showdiv="agent_div" class="notify_check"><%=t('email_notifications.customize_email')%></a>
+						<% if (item[:agentSelect] == false )  
+						   	 checkStyle = "visibility:hidden" 
+						   end %>
+						<input type="checkbox" style="<%=checkStyle%>" name="agent_notification" class="checkbox agent" <%= (data.agent_notification) ? "checked" : "" %> />
+						<a href="javascript:void(0)" showdiv='<%= "agent_div_#{data.id}" %>' class="notify_check"><%=t('email_notifications.customize_email')%></a>
 					<% end %>
 					&nbsp;					
 				</td>				
 			</tr>
 			<tr style="display:none;" notify_type=<%= data.id %>>
 				<td colspan="3">
-					<div class="requester_div">
-						<a href="javascript:void(0)" class="link_placeholder"><%=t('email_notifications.insert_placeholder')%> &raquo;</a>
+					<div class="requester_div" style="display:none;" id='<%="requester_div_#{data.id}" %>'>
+						<%if item[:placeholder] != false %>
+							<a href="javascript:void(0)" class="link_placeholder"><%=t('email_notifications.insert_placeholder')%> &raquo;</a>
+						<% end %>
 						<h4 class="title"><%=t('email_notifications.modify_requester_template')%></h4> 
 						
 						<input type="hidden" value="<%= h ("#{data.requester_template}") %>" />
@@ -89,8 +109,10 @@
 						<a href="javascript:void(0)" class="button close_template"><%=t('done')%></a>
 						<a href="javascript:void(0)" class="button reset_template"><%=t('reset')%></a>
 					</div>
-					<div class="agent_div">
-						<a href="javascript:void(0)" class="link_placeholder"><%=t('email_notifications.insert_placeholder')%> &raquo;</a>
+					<div class="agent_div" style="display:none;" id='<%="agent_div_#{data.id}"%>'>
+						<%if item[:placeholder] != false %>
+							<a href="javascript:void(0)" class="link_placeholder"><%=t('email_notifications.insert_placeholder')%> &raquo;</a>
+						<% end %>
 						<h4 class="title"><%=t('email_notifications.modify_agent_template')%></h4>
 						 
 						<input type="hidden" value="<%= h ("#{data.agent_template}") %>" />
