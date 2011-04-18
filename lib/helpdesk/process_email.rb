@@ -9,7 +9,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       charset_encoding = (ActiveSupport::JSON.decode charsets)['text']
       puts "############################################################## Encoding #{charset_encoding}"
       puts params[:text]
-      params[:text] = Iconv.iconv("UTF8", charset_encoding,params[:text])
+      params[:text] = Iconv.iconv("UTF-8", charset_encoding,params[:text])
       puts "############################################################## Decoding UTF8"
       puts params[:text]
      
