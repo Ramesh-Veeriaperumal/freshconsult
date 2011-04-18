@@ -1,8 +1,11 @@
 class Account < ActiveRecord::Base
   require 'net/dns/resolver'
+  require 'net/http' 
+  require 'uri' 
 
   #rebranding starts
   serialize :preferences, Hash
+  serialize :sso_options, Hash
   has_one :logo,
     :as => :attachable,
     :class_name => 'Helpdesk::Attachment',
@@ -70,6 +73,7 @@ class Account < ActiveRecord::Base
   validates_length_of :helpdesk_url, :maximum=>255, :allow_blank => true
   validate :valid_domain?
   validate :valid_helpdesk_url?
+  validate :valid_sso_options?
   validate_on_create :valid_user?
   validate_on_create :valid_plan?
   validate_on_create :valid_payment_info?
@@ -180,6 +184,26 @@ class Account < ActiveRecord::Base
       self.errors.add(:domain, 'is not available') if self.full_domain.blank? || self.class.count(:conditions => conditions) > 0
     end
     
+    def valid_sso_options?
+      if self.sso_enabled?
+        if self.sso_options[:login_url].blank?  
+          self.errors.add(:sso_options, ', Please provide a valid login url') 
+        else
+          self.errors.add(:sso_options, ', Please provide a valid login url') if !external_url_is_valid?(self.sso_options[:login_url])
+        end
+      end
+    end
+    
+    def external_url_is_valid?(url) 
+      uri = URI.parse(url) 
+      response = Net::HTTP.start(uri.host, uri.port) {|http| http.head(uri.path)} 
+      response.is_a?(Net::HTTPSuccess) || response.is_a?(Net::HTTPRedirection) 
+    rescue  ArgumentError
+      false
+    rescue Errno::ECONNREFUSED
+      false
+    end 
+    
     def valid_helpdesk_url?
       return true if (helpdesk_url.blank? || helpdesk_url == full_domain)
 
@@ -240,6 +264,16 @@ class Account < ActiveRecord::Base
       self.time_zone = Time.zone.name if time_zone.nil? #by Shan temp.. to_s is kinda hack.
       self.helpdesk_name = name.titleize if helpdesk_name.nil?
       self.preferences = HashWithIndifferentAccess.new({:bg_color => "#efefef",:header_color => "#2f3733", :tab_color => "#7cb537"})
+      self.shared_secret = generate_secret_token
+      self.sso_options = set_sso_options_hash
+    end
+    
+    def generate_secret_token
+      Digest::MD5.hexdigest(Helpdesk::SHARED_SECRET + self.full_domain + Time.now.to_f.to_s).downcase
+    end
+    
+    def set_sso_options_hash
+      HashWithIndifferentAccess.new({:login_url => "",:logout_url => ""})
     end
     
     def config_default_email

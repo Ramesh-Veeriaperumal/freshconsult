@@ -15,6 +15,11 @@
 				        	<%= request_form.label :subject, "Subject" %>
 				          	<%= request_form.text_field :subject, :class => field_class %>
 				   		</li>
+					<%when "Type" then%>		
+						<li class="dropdown">
+          					<%= request_form.label :ticket_type, t('ticket.type') %>
+         					<%= request_form.select :ticket_type, Helpdesk::Ticket::TYPE_OPTIONS, :class => field_class %>
+        				</li>
 					<%when "Source" then%>
 						<li class="dropdown">
 				  			<%= request_form.label :source, "Source" %>

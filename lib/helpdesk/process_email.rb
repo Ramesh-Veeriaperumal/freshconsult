@@ -11,6 +11,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       if ticket
         return if(from_email[:email] == ticket.reply_email) #Premature handling for email looping..
         
+        params[:text] = Iconv.iconv('utf-8', params[:charsets][:text],params[:text])
         comment = add_email_to_ticket(ticket, from_email, params[:text])
       
         

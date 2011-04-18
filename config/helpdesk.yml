@@ -119,6 +119,7 @@ SPAM_TRAINING_MODE: true
 # users can access their tickets. Change them to some unique noise.
 SECRET_1: 19-30ihfojgsnfgo2h40t8hgkhndhfgkerhKJHKHIDYHfinro;quhwro
 SECRET_2: f;07934t8y6[okfdkjhqw3eUHEUY970DKUHoyudououoH780))&7*(3o
+SHARED_SECRET: 7e8c587a5f7aff66519ae35eabb6b76f1632d0f058a84607702
 
 # The names route that the user will be redirect to if they don't
 # have permission to access an area
