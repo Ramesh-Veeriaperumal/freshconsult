@@ -5,13 +5,16 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     to_email = parse_to_email
     account = Account.find_by_full_domain(to_email[:domain])
     if !account.nil?
+      charsets = params[:charsets]
+      charset_encoding = (ActiveSupport::JSON.decode charsets)['text']
+      params[:text] = Iconv.iconv('utf-8', charset_encoding,params[:text])
       display_id = Helpdesk::Ticket.extract_id_token(params[:subject])
       ticket = Helpdesk::Ticket.find_by_account_id_and_display_id(account.id, display_id) if display_id
       
       if ticket
         return if(from_email[:email] == ticket.reply_email) #Premature handling for email looping..
         
-        params[:text] = Iconv.iconv('utf-8', params[:charsets][:text],params[:text])
+        
         comment = add_email_to_ticket(ticket, from_email, params[:text])
       
         
