@@ -80,6 +80,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         :subject => params[:subject],
         :description => params[:text],
         :email => from_email[:email],
+        :name => from_email[:name],
         :to_email => to_email[:email],
         :cc_email => parse_cc_email,
         :email_config => account.email_configs.find_by_to_email(to_email[:email]),
