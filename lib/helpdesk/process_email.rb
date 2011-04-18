@@ -7,7 +7,12 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     if !account.nil?
       charsets = params[:charsets]
       charset_encoding = (ActiveSupport::JSON.decode charsets)['text']
-      params[:text] = Iconv.iconv('utf-8', charset_encoding,params[:text])
+      puts "############################################################## Encoding #{charset_encoding}"
+      puts params[:text]
+      params[:text] = Iconv.iconv("UTF8", charset_encoding,params[:text])
+      puts "############################################################## Decoding UTF8"
+      puts params[:text]
+     
       display_id = Helpdesk::Ticket.extract_id_token(params[:subject])
       ticket = Helpdesk::Ticket.find_by_account_id_and_display_id(account.id, display_id) if display_id
       

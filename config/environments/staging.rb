@@ -4,7 +4,7 @@
 # Code is not reloaded between requests
 config.log_level = :debug
 
-config.cache_classes = true
+config.cache_classes = false
 
 # Use a different logger for distributed setups
 # config.logger = SyslogLogger.new
