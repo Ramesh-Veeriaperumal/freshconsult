@@ -37,7 +37,7 @@ module TicketConstants
   PRIORITY_KEYS_BY_TOKEN = Hash[*PRIORITIES.map { |i| [i[0], i[2]] }.flatten]
   
   TYPE = [
-    [ :how_to,    "How to",               1 ], 
+    [ :how_to,    "Question",             1 ], 
     [ :incident,  "Incident",             2 ], 
     [ :problem,   "Problem",              3 ], 
     [ :f_request, "Feature Request",      4 ],
