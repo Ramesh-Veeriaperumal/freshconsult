@@ -6,13 +6,10 @@ class Helpdesk::TicketsController < ApplicationController
 
   include HelpdeskControllerMethods
   
-  before_filter :get_custom_fields,   :only => [:create ,:update]
   before_filter :load_multiple_items, :only => [:destroy, :restore, :spam, :unspam, :assign , :close_multiple ,:pick_tickets]  
   before_filter :load_item,     :only => [:show, :edit, :update, :execute_scenario, :close ] 
   before_filter :load_flexifield , :only =>[:execute_scenario]
   before_filter :set_customizer , :only => [:new ,:edit ,:show]
-  before_filter :set_custom_fields , :only => [:create ,:update]
-  
   
   def check_user
     if !current_user.nil? and current_user.customer?
@@ -34,8 +31,6 @@ class Helpdesk::TicketsController < ApplicationController
     end
     
   end
-  
-  
  
   def index
     @items = TicketsFilter.filter(@template.current_filter, current_user, current_account.tickets)
@@ -55,11 +50,8 @@ class Helpdesk::TicketsController < ApplicationController
       format.atom do
         @items = @items.newest(20)
       end
-      
     end
-
   end
-
 
   def show
     @reply_email = current_account.reply_emails
@@ -67,15 +59,12 @@ class Helpdesk::TicketsController < ApplicationController
       :first, 
       :conditions => {:user_id => current_user.id})
       
-     @signature = ""
-     @agents = Agent.find(:first, :joins=>:user, :conditions =>{:user_id =>current_user.id} )     
-     @signature = "\n\n\n#{@agents.signature}" unless (@agents.nil? || @agents.signature.blank?)
+    @signature = ""
+    @agents = Agent.find(:first, :joins=>:user, :conditions =>{:user_id =>current_user.id} )     
+    @signature = "\n\n\n#{@agents.signature}" unless (@agents.nil? || @agents.signature.blank?)
      
-     @ticket_notes = @ticket.notes.visible.exclude_source('meta')
-     
-     logger.debug "subject of the ticket is #{@item.subject}"
-     
-     set_suggested_solutions 
+    @ticket_notes = @ticket.notes.visible.exclude_source('meta')
+    set_suggested_solutions 
     
     respond_to do |format|
       format.html  
@@ -84,7 +73,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def set_suggested_solutions
-   @articles = Solution::Article.suggest_solutions @ticket   
+    @articles = Solution::Article.suggest_solutions @ticket   
   end
   
   def update
@@ -240,11 +229,12 @@ class Helpdesk::TicketsController < ApplicationController
   end
  
   def create
-   if params[:topic_id].length > 0 
-        @item.source = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:forum]
-        @item.build_ticket_topic(:topic_id => params[:topic_id])
-   end
-    if @item.save!  
+    if params[:topic_id].length > 0 
+      @item.source = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:forum]
+      @item.build_ticket_topic(:topic_id => params[:topic_id])
+    end
+    
+    if @item.save
       post_persist
     else
       create_error
@@ -284,14 +274,11 @@ protected
   end
 
   def process_item
-    
-    #handle_custom_fields
     #if @item.source == 0
       @item.spam = false
       @item.create_activity(@item.requester, "{{user_path}} submitted a new ticket {{notable_path}}", {},
                             "{{user_path}} submitted the ticket")
     #end
-   
  end
  
  def assign_ticket user

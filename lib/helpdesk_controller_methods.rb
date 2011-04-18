@@ -1,7 +1,6 @@
 module HelpdeskControllerMethods
 
   def self.included(base)
-    
     base.send :before_filter, :build_item,          :only => [:new, :create]
     base.send :before_filter, :load_item,           :only => [:show, :edit, :update ]   
     base.send :before_filter, :load_multiple_items, :only => [:destroy, :restore]
@@ -17,25 +16,6 @@ module HelpdeskControllerMethods
     end
   end
   
-  def handle_custom_fields
-    
-   logger.debug "handle_custom_fields #{@flexi_fields}"
-   
-   ff_def_id = FlexifieldDef.find_by_account_id(current_account.id).id
-    
-   @item.ff_def = ff_def_id
-   
-   unless @flexi_fields.nil?
-     
-    @item.assign_ff_values @flexi_fields
-    
-  end
-  
-    #if at all the above assign won't solve the problem we can use set_ff_value    
-    #@item.set_ff_value column, value    
-   
-  end
-  
   def post_persist #Need to check whether this should be called only inside create by Shan to do 
     create_attachments 
     flash[:notice] = "The #{cname.humanize.downcase} has been created."
@@ -49,8 +29,6 @@ module HelpdeskControllerMethods
   end
 
   def update
-    
-    logger.debug "update : params are : #{params[nscname].inspect}"
     if @item.update_attributes(params[nscname])
       post_persist
       flash[:notice] = "The #{cname.humanize.downcase} has been updated."
@@ -64,7 +42,6 @@ module HelpdeskControllerMethods
   end
 
   def destroy
-    logger.debug "@items.inspect #{@items.inspect}"
     @items.each do |item|
       if item.respond_to?(:deleted)
         item.update_attribute(:deleted, true)
@@ -157,75 +134,20 @@ protected
     self.instance_variable_set('@' + cname.pluralize, @items) 
   end
   
-  def get_custom_fields
-    
-    @flexi_fields = params[:flexifields]
-    
-    logger.debug "get_custom_fiels #{@flexi_fields}"
-    
-  end
-  
-  def set_custom_fields   
-    
-    logger.debug "set_custom_fields :: #{@flexi_fields.inspect}"
-    
-    unless @flexi_fields.nil?
-      
-      @item.custom_field = @flexi_fields    
-      @flexi_fields.each do |key,value|    
-        @item.write_attribute key , value
-      end  
-      
-    end
-    
-     
-  end
-
   def build_item
-    
-    logger.debug "the items are #{params[nscname].inspect}"
-       
     @item = self.instance_variable_set('@' + cname,
       scoper.is_a?(Class) ? scoper.new(params[nscname]) : scoper.build(params[nscname]))
     set_item_user
-    logger.debug "nscname is :: #{nscname}"   
-    
-    if "helpdesk_guide".eql?(nscname)
-      set_folder
-    end
-    
-    if "helpdesk_article".eql?(nscname)
-      set_category
-    end
     
     @item
-   
-       
   end
 
-  def set_category 
-    logger.debug "setting Category id as :: #{params[:guide_id]}"
-    #if  erorrr.?
-    unless params[:guide_id].nil?
-      @item.guide =  Helpdesk::Guide.find(params[:guide_id])
-    end
-    
-  end
-  
-  def set_folder 
-    logger.debug "setting folder id as :: #{params[:folder_id]}"
-    #if  erorrr.?
-    unless params[:folder_id].nil?
-      @item.folder_id = params[:folder_id]
-    end
-  
-  end
   def set_item_user
     @item.user ||= current_user if (@item.respond_to?('user=') && !@item.user_id)
     @item.account_id ||= current_account.id if (@item.respond_to?('account_id='))
   end
   
-   def set_customizer   
+  def set_customizer   
     @item.customizer ||= Helpdesk::FormCustomizer.first(:conditions =>{:account_id =>current_account.id}) 
   end
 

@@ -147,7 +147,7 @@
 		</li>				
 	
 	<%else%>		
-		<% fields_for :flexifields do |cust_form| %>
+		<% f.fields_for :custom_field do |cust_form| %>
 			<% 
 				field_label = (field["agent"]["required"]) ? "#{field["display_name"]} *" : "#{field["display_name"]}" 
 				field_val = nil 
