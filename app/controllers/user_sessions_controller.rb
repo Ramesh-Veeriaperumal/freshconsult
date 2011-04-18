@@ -8,9 +8,41 @@ require 'openid'
  layout "ssportal"
   
   skip_before_filter :require_user, :except => :destroy
+  before_filter :check_sso_params, :only => :sso_login
   
   def new
+    if current_account.sso_enabled? and (request.request_uri != "/login/normal")
+       redirect_to  current_account.sso_options[:login_url]
+    end
     @user_session = current_account.user_sessions.new
+  end
+  
+ 
+  def check_sso_params
+    if params[:name].blank? or params[:email].blank? or params[:hash].blank?
+      flash[:notice] = "Expected params are name, email and hash which are not present "
+      redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
+    end
+  end
+  
+  def sso_login
+      if params[:hash] == gen_hash_from_params_hash
+          @current_user = current_account.users.find_by_email(params[:email])  
+          @current_user = create_user(params[:email],current_account) if @current_user.blank?  
+          @user_session = @current_user.account.user_sessions.new(@current_user)
+          if @user_session.save
+              flash[:notice] = "Login successful!"      
+              redirect_back_or_default('/')      
+          else
+              redirect_to current_account.sso_options[:login_url]
+          end
+      else
+        redirect_to current_account.sso_options[:login_url]
+      end
+   end
+  
+  def gen_hash_from_params_hash
+     Digest::MD5.hexdigest(params[:name]+params[:email]+current_account.shared_secret)
   end
   
   def show
@@ -31,6 +63,9 @@ require 'openid'
   def destroy
     current_user_session.destroy
     #flash[:notice] = "Logout successful!"
+    if current_account.sso_enabled? and !current_account.sso_options[:logout_url].blank?
+      redirect_to current_account.sso_options[:logout_url]
+    end
     redirect_to root_url
   end
   

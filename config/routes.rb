@@ -29,6 +29,9 @@ ActionController::Routing::Routes.draw do |map|
   map.gauth '/auth/google', :controller => 'user_sessions', :action => 'google_auth'
   map.gauth_done '/authdone/google', :controller => 'user_sessions', :action => 'google_auth_completed'
   map.login '/login', :controller => 'user_sessions', :action => 'new'
+  map.sso_login '/login/sso', :controller => 'user_sessions', :action => 'sso_login'
+  map.login_normal '/login/normal', :controller => 'user_sessions', :action => 'new'
+  
   map.openid_done '/google/complete', :controller => 'accounts', :action => 'openid_complete'
   
   #map.register '/register', :controller => 'users', :action => 'create'
