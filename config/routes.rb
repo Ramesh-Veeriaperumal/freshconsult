@@ -63,7 +63,7 @@ ActionController::Routing::Routes.draw do |map|
     end
   end
   
-  map.widget '/create_widget_ticket', :controller => 'support/tickets', :action => 'create_widget_ticket'
+  map.widget '/widget', :controller => 'widget'
 
   map.plans '/signup', :controller => 'accounts', :action => 'plans'
   map.connect '/signup/d/:discount', :controller => 'accounts', :action => 'plans'

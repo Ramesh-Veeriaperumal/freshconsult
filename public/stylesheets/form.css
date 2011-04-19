@@ -883,26 +883,62 @@ span.sort_handle {
 }
 
 /* line 694, ../src/form.scss */
+.ui-widget-container {
+  padding: 10px 20px;
+  background: white;
+  background: -moz-linear-gradient(top, white 0%, #f4f4f4 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, white), color-stop(100%, #f4f4f4));
+  background: linear-gradient(white, #f4f4f4);
+  -pie-background: linear-gradient(white, #f4f4f4);
+  -moz-border-radius: 6px 6px 6px 6px;
+  -webkit-border-radius: 6px 6px 6px 6px;
+  border-radius: 6px 6px 6px 6px;
+  -moz-box-shadow: rgba(0, 0, 0, 0.5) -3px 5px 10px;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.5) -3px 5px 10px;
+  box-shadow: rgba(0, 0, 0, 0.5) -3px 5px 10px;
+  _border: 1px solid #afafaf;
+  _background: #ffffff;
+  margin: 10px;
+}
+/* line 702, ../src/form.scss */
+.ui-widget-container .button-container {
+  width: 96% !important;
+  padding-right: 0px !important;
+}
+
+/* line 708, ../src/form.scss */
+.ui-form-widget {
+  padding: 15px;
+  margin: 0px -15px !important;
+  border: 1px solid #DFDFDF !important;
+  background-color: rgba(244, 244, 244, 0.5) !important;
+}
+/* line 713, ../src/form.scss */
+.ui-form-widget label {
+  font-size: 1.2em;
+}
+
+/* line 718, ../src/form.scss */
 .requesteremail, .agentemail {
   height: 220px;
 }
 
-/* line 698, ../src/form.scss */
+/* line 722, ../src/form.scss */
 .live_search {
   text-align: left;
   padding: 0px 0px 0px 0px;
   margin: 8px 0px;
 }
-/* line 702, ../src/form.scss */
+/* line 726, ../src/form.scss */
 .live_search .loading {
   background-position: right !important;
 }
-/* line 705, ../src/form.scss */
+/* line 729, ../src/form.scss */
 .live_search .overlabel {
   padding: 0px;
 }
 
-/* line 710, ../src/form.scss */
+/* line 734, ../src/form.scss */
 input.search {
   -moz-border-radius: 3px 3px 3px 3px;
   -webkit-border-radius: 3px 3px 3px 3px;
@@ -917,7 +953,7 @@ input.search {
   width: 500px;
 }
 
-/* line 722, ../src/form.scss */
+/* line 746, ../src/form.scss */
 .sp_paragraph {
   -moz-border-radius: 3px 3px 3px 3px;
   -webkit-border-radius: 3px 3px 3px 3px;
@@ -928,7 +964,7 @@ input.search {
   margin-bottom: 8px;
 }
 
-/* line 731, ../src/form.scss */
+/* line 755, ../src/form.scss */
 .search-grey-box {
   overflow: hidden;
   *zoom: 1;
@@ -937,16 +973,16 @@ input.search {
   padding: 6px 30px 6px 20px;
 }
 
-/* line 740, ../src/form.scss */
+/* line 764, ../src/form.scss */
 .sidepanel .close {
   right: 14px;
 }
 
-/* line 743, ../src/form.scss */
+/* line 767, ../src/form.scss */
 .ui-dialog-form {
   font-size: 80%;
 }
-/* line 745, ../src/form.scss */
+/* line 769, ../src/form.scss */
 .ui-dialog-form .info-data {
   padding-left: 24px;
   display: block;
@@ -954,7 +990,7 @@ input.search {
   margin-top: -5px;
 }
 
-/* line 753, ../src/form.scss */
+/* line 777, ../src/form.scss */
 fieldset.nestedChoices {
   overflow: hidden;
   *zoom: 1;
@@ -968,7 +1004,7 @@ fieldset.nestedChoices {
   display: block;
 }
 
-/* line 766, ../src/form.scss */
+/* line 790, ../src/form.scss */
 .dialog-panel {
   -moz-box-shadow: rgba(0, 0, 0, 0.5) 0 0 8px;
   -webkit-box-shadow: rgba(0, 0, 0, 0.5) 0 0 8px;
@@ -977,14 +1013,14 @@ fieldset.nestedChoices {
   background-color: #fafafa;
 }
 
-/* line 773, ../src/form.scss */
+/* line 797, ../src/form.scss */
 .border-top {
   margin-top: 6px;
   padding-top: 6px;
   border-top: 1px dotted #cfcfcf;
 }
 
-/* line 779, ../src/form.scss */
+/* line 803, ../src/form.scss */
 .overlay-field {
   position: absolute;
   width: 100%;
