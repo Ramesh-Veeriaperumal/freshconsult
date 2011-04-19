@@ -66,7 +66,9 @@ ActionController::Routing::Routes.draw do |map|
     end
   end
   
-  map.widget '/widget', :controller => 'widget'
+  map.namespace :widgets do |widgets|
+    widgets.resources :feedback_widget 
+  end 
 
   map.plans '/signup', :controller => 'accounts', :action => 'plans'
   map.connect '/signup/d/:discount', :controller => 'accounts', :action => 'plans'

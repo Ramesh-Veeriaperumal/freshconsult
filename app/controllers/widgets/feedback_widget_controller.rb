@@ -1,4 +1,4 @@
-class WidgetController < ApplicationController
+class Widgets::FeedbackWidgetController < ApplicationController
   include SupportTicketControllerMethods 
   
   def create

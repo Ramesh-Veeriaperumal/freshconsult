@@ -105,7 +105,7 @@
 	 }  
 	 
 	 function widgetFormUrl(){
-	 	iframe.src = options.domain + "/widget/new";	
+	 	iframe.src = options.domain + "/widgets/feedback_widget/new";	
 	 }
 	 
 	 function showContainer(){ 
