@@ -109,7 +109,7 @@ class Admin::AutomationsController < Admin::AdminController
     end
     
     def additional_actions
-      {5, {:name => "add_comment"  , :value => "Add Comment"      , :domtype => 'comment'}}
+      {5, {:name => "add_comment"  , :value => "Add Note"      , :domtype => 'comment'}}
     end
     
     
