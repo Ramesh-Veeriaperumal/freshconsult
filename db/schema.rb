@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110415090430) do
+ActiveRecord::Schema.define(:version => 20110415190902) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -22,6 +22,9 @@ ActiveRecord::Schema.define(:version => 20110415090430) do
     t.string   "helpdesk_url"
     t.text     "preferences"
     t.integer  "ticket_display_id", :limit => 8, :default => 0
+    t.boolean  "sso_enabled",                    :default => false
+    t.string   "shared_secret"
+    t.text     "sso_options"
   end
 
   add_index "accounts", ["full_domain"], :name => "index_accounts_on_full_domain", :unique => true

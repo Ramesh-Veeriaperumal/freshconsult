@@ -1,6 +1,6 @@
 class Support::ArticlesController < ApplicationController 
   
-  
+  include Helpdesk::TicketActions
   
   before_filter { |c| c.requires_permission :portal_knowledgebase }
   
@@ -50,35 +50,9 @@ class Support::ArticlesController < ApplicationController
       end
   end
   
- 
-  
   def create_ticket
-    @ticket = Helpdesk::Ticket.new(params[:helpdesk_ticket])
-    set_default_values
-    if  @ticket.save
-     @ticket.create_activity(@ticket.requester, "{{user_path}} submitted a new ticket {{notable_path}}", {}, 
-                                   "{{user_path}} submitted the ticket")
-     if params[:meta]
-        @ticket.notes.create(
-          :body => params[:meta].map { |k, v| "#{k}: #{v}" }.join("\n"),
-          :private => true,
-          :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['meta'],
-          :account_id => current_account.id
-        )
-      end
-      render :text => "Thanks for the feedback. We will improve this article."
-    else
-      render :text => "There is an error #{@ticket.errors}"
-     end
+    render :text => (create_the_ticket) ? "Thanks for the feedback. We will improve this article." : 
+                  "There is an error #{@ticket.errors}"
   end
-  
-  def set_default_values
-   @ticket.status = Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open]
-   @ticket.source = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:portal]
-   @ticket.requester_id = current_user && current_user.id
-   @ticket.account_id = current_account.id
-   #@ticket.email = current_account.email
-  end
-  
 
 end

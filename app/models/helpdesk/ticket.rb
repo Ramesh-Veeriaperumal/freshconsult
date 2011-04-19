@@ -11,7 +11,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   has_flexiblefields
   
   #by Shan temp
-  attr_accessor :email, :custom_field ,:customizer, :nscname 
+  attr_accessor :email, :name, :custom_field ,:customizer, :nscname 
   
   before_validation :populate_requester
   before_create :set_spam, :set_dueby, :save_ticket_states
@@ -264,7 +264,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
         @requester = account.all_users.find_by_email(email)
         if @requester.nil?
           @requester = account.users.new          
-          @requester.signup!({:user => {:email => self.email, :name => '', :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}})
+          @requester.signup!({:user => {:email => self.email, :name => (name || ''), :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}})
         end        
         self.requester = @requester
       end
