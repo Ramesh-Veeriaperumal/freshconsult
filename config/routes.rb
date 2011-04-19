@@ -40,6 +40,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resource :user_session
   map.register '/register/:activation_code', :controller => 'activations', :action => 'new'
   map.activate '/activate/:id', :controller => 'activations', :action => 'create'
+  map.resources :activations, :member => { :send_invite => :put }
   map.resources :home, :only => :index
   map.resources :ticket_fields, :only => :index
   map.resources :email, :only => [:new, :create]

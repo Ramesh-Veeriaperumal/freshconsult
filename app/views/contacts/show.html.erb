@@ -24,7 +24,7 @@
 		<% if @user.deleted || !@user.active? %>
 		<div class="info-highlight">
 			<%= content_tag(:div, "#{ t('contacts.deleted_message') } #{ link_to( t('contacts.restore'), { :action => :restore, :id => @user.id }, :method => :put ) }") if @user.deleted %>
-			<%= content_tag(:div, "#{ t('contacts.emailnotverified') }" ) unless @user.active? %> 
+			<%= content_tag(:div, "#{ t('contacts.emailnotverified') }   #{ link_to( 'Send activation email', send_invite_activation_path(@user), :method => :put ) } " ) unless @user.active? %>
 		</div>
 		<% end %>
 </div>
