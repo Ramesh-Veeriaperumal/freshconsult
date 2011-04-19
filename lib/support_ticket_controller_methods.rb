@@ -20,6 +20,7 @@ module SupportTicketControllerMethods
   end
 
   def create
+    puts "Create method in support controller methods"
     if create_the_ticket(true)
       flash[:notice] = "Your ticket has been created and a copy has been sent to you via email."
       redirect_to redirect_url and return
