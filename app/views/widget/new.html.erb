@@ -1,0 +1,7 @@
+<div class="ui-widget-container" id="ui-widget-container">
+	<h3 class="title">How can we help you?</h3> 
+	<% form_for @ticket, :url => support_tickets_path, :html => { :multipart => true } do |f| %>
+	  <%= f.error_messages %> 
+	  <%= render :partial => 'form', :object => f %>
+	<% end %>
+</div>

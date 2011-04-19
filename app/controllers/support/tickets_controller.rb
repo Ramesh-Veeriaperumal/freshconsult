@@ -1,15 +1,9 @@
 class Support::TicketsController < ApplicationController
   
   #validates_captcha_of 'Helpdesk::Ticket', :only => [:create]
-   
   include SupportTicketControllerMethods 
-  
- 
-
   before_filter { |c| c.requires_permission :portal_request }
   
-  
-
   def index
     return redirect_to(send(Helpdesk::ACCESS_DENIED_ROUTE)) unless current_user
     @tickets = Helpdesk::Ticket.find_all_by_requester_id(current_user.id)
@@ -22,8 +16,7 @@ class Support::TicketsController < ApplicationController
     
   end
   
-  def close_ticket 
-    
+  def close_ticket
     @item = Helpdesk::Ticket.find_by_param(params[:id], current_account)
      status_id = Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:closed]
      logger.debug "close the ticket...with status id  #{status_id}"
@@ -41,11 +34,10 @@ class Support::TicketsController < ApplicationController
        
      end
   end
-
-protected
-
-  def redirect_url
-    current_user ? support_ticket_url(@ticket) : root_path
-  end
+   
+  protected 
+    def redirect_url
+      current_user ? support_ticket_url(@ticket) : root_path
+    end
 
 end

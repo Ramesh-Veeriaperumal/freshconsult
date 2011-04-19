@@ -7,14 +7,6 @@ html {
 }
 
 /* line 7, ../src/layout.scss */
-body {
-  font: 12px "Lucida Grande", Geneva, Arial, Verdana, sans-serif;
-  background-color: transparent;
-  color: #333;
-  background: #efefef;
-}
-
-/* line 14, ../src/layout.scss */
 .wrapper {
   overflow: hidden;
   *zoom: 1;
@@ -29,7 +21,7 @@ body {
   padding: 0px 8px;
 }
 
-/* line 23, ../src/layout.scss */
+/* line 16, ../src/layout.scss */
 .top_links a {
   text-decoration: none;
   font-weight: bold;
@@ -52,23 +44,23 @@ body {
   color: #527eaa;
 }
 
-/* line 33, ../src/layout.scss */
+/* line 26, ../src/layout.scss */
 .fixedWidth {
   max-width: 680px;
 }
 
-/* line 37, ../src/layout.scss */
+/* line 30, ../src/layout.scss */
 #wrap {
   margin-bottom: 18px;
   text-align: center;
 }
 
-/* line 42, ../src/layout.scss */
+/* line 35, ../src/layout.scss */
 #minwidthfix {
   width: 950px;
 }
 
-/* line 46, ../src/layout.scss */
+/* line 39, ../src/layout.scss */
 label.overlabel {
   color: #888888;
   position: absolute;
@@ -78,7 +70,7 @@ label.overlabel {
   margin: 8px;
 }
 
-/* line 56, ../src/layout.scss */
+/* line 49, ../src/layout.scss */
 #inner {
   *zoom: 1;
   position: relative;
@@ -95,12 +87,12 @@ label.overlabel {
   overflow: hidden;
   visibility: hidden;
 }
-/* line 59, ../src/layout.scss */
+/* line 52, ../src/layout.scss */
 #inner .leftcontent {
   float: left;
   width: 100%;
 }
-/* line 66, ../src/layout.scss */
+/* line 59, ../src/layout.scss */
 #inner .sidebar {
   width: 310px;
   float: right;
@@ -108,59 +100,59 @@ label.overlabel {
   margin-right: -310px;
 }
 
-/* line 74, ../src/layout.scss */
+/* line 67, ../src/layout.scss */
 .single #inner {
   padding-right: 0px;
 }
-/* line 76, ../src/layout.scss */
+/* line 69, ../src/layout.scss */
 .single #inner .sidebar {
   display: none;
 }
-/* line 79, ../src/layout.scss */
+/* line 72, ../src/layout.scss */
 .single #inner .leftcontent {
   margin-right: 0px;
   border-right: 0px;
 }
 
-/* line 85, ../src/layout.scss */
+/* line 78, ../src/layout.scss */
 .invert #inner {
   padding-right: 0px;
   padding-left: 200px;
   /* The width of the rail */
 }
-/* line 88, ../src/layout.scss */
+/* line 81, ../src/layout.scss */
 .invert #inner .sidebar, .invert #inner .leftcontent {
   float: right;
 }
-/* line 91, ../src/layout.scss */
+/* line 84, ../src/layout.scss */
 .invert #inner .sidebar {
   margin-right: 0px;
   width: 200px;
   margin-left: -200px;
 }
 
-/* line 99, ../src/layout.scss */
+/* line 92, ../src/layout.scss */
 div.bg_white {
   background-color: #ffffff;
 }
 
-/* line 103, ../src/layout.scss */
+/* line 96, ../src/layout.scss */
 div.bg_pulp {
   background-color: #F3F1EC;
 }
 
-/* line 107, ../src/layout.scss */
+/* line 100, ../src/layout.scss */
 .twoCol_ltSidebar #inner {
   padding-right: 0px;
   padding-left: 310px;
   /* The width of the rail */
 }
-/* line 110, ../src/layout.scss */
+/* line 103, ../src/layout.scss */
 .twoCol_ltSidebar #inner .sidebar {
   margin-right: 0px;
   margin-left: -310px;
 }
-/* line 114, ../src/layout.scss */
+/* line 107, ../src/layout.scss */
 .twoCol_ltSidebar #inner .leftcontent {
   margin-right: 0px;
   border-right: 0px;
@@ -171,7 +163,7 @@ div.bg_pulp {
   float: right;
 }
 
-/* line 123, ../src/layout.scss */
+/* line 116, ../src/layout.scss */
 .breadcrumb {
   padding: 4px 0px;
   margin: 8px 10px 3px 10px;
@@ -180,7 +172,7 @@ div.bg_pulp {
   color: #ffffff;
   font-size: 12px;
 }
-/* line 129, ../src/layout.scss */
+/* line 122, ../src/layout.scss */
 .breadcrumb a {
   color: white;
   text-decoration: none;
@@ -208,23 +200,23 @@ div.bg_pulp {
   color: white;
 }
 
-/* line 139, ../src/layout.scss */
+/* line 132, ../src/layout.scss */
 .info_data, .info-data {
   color: #888888;
   padding-bottom: 6px;
 }
 
-/* line 148, ../src/layout.scss */
+/* line 141, ../src/layout.scss */
 body h1, body h2, body h3, body h4, body h5 {
   margin: 0px;
 }
-/* line 151, ../src/layout.scss */
+/* line 144, ../src/layout.scss */
 body h4 {
   font-size: 12px;
 }
 
 /* Header styles */
-/* line 159, ../src/layout.scss */
+/* line 152, ../src/layout.scss */
 .header {
   overflow: hidden;
   *zoom: 1;
@@ -233,29 +225,29 @@ body h4 {
   background: #2f3733;
 }
 
-/* line 166, ../src/layout.scss */
+/* line 159, ../src/layout.scss */
 .brand {
   position: absolute;
   left: 0px;
   margin-left: 8px;
   text-decoration: none;
 }
-/* line 171, ../src/layout.scss */
+/* line 164, ../src/layout.scss */
 .brand a {
   text-decoration: none;
 }
-/* line 174, ../src/layout.scss */
+/* line 167, ../src/layout.scss */
 .brand .logo {
   overflow: hidden;
   *zoom: 1;
   float: left;
   margin: 0px 0px 0px 5px;
 }
-/* line 179, ../src/layout.scss */
+/* line 172, ../src/layout.scss */
 .brand img, .brand h3 {
   float: left;
 }
-/* line 182, ../src/layout.scss */
+/* line 175, ../src/layout.scss */
 .brand h3 {
   font-size: 20px;
   text-decoration: none;
@@ -267,7 +259,7 @@ body h4 {
   text-transform: capitalize;
 }
 
-/* line 194, ../src/layout.scss */
+/* line 187, ../src/layout.scss */
 .header_links {
   float: right;
   text-align: right;
@@ -276,33 +268,33 @@ body h4 {
   color: #ffffff;
   font-size: 12px;
 }
-/* line 201, ../src/layout.scss */
+/* line 194, ../src/layout.scss */
 .header_links strong {
   font-weight: bold;
 }
-/* line 204, ../src/layout.scss */
+/* line 197, ../src/layout.scss */
 .header_links a {
   padding: 0px 6px;
   color: #ffffff;
   text-decoration: none;
 }
-/* line 209, ../src/layout.scss */
+/* line 202, ../src/layout.scss */
 .header_links a:hover {
   text-decoration: none;
 }
 
 /* Header Tab styles */
-/* line 216, ../src/layout.scss */
+/* line 209, ../src/layout.scss */
 .top_nav_bg {
   background: #7cb537;
 }
 
-/* line 220, ../src/layout.scss */
+/* line 213, ../src/layout.scss */
 .nav_search, .nav_right {
   float: right;
 }
 
-/* line 224, ../src/layout.scss */
+/* line 217, ../src/layout.scss */
 .nav_search {
   min-width: 260px;
   width: auto !important;
@@ -311,23 +303,23 @@ body h4 {
   position: relative;
   margin: 2px 14px 0px 0px;
 }
-/* line 226, ../src/layout.scss */
+/* line 219, ../src/layout.scss */
 .nav_search div.search_bar {
   height: 26px;
   background: url("../images/search_icon.gif") 4px 5px no-repeat white;
   padding: 0px 8px 0px 25px;
 }
-/* line 234, ../src/layout.scss */
+/* line 227, ../src/layout.scss */
 .nav_search label.overlabel, .nav_search input {
   top: 4px;
 }
-/* line 237, ../src/layout.scss */
+/* line 230, ../src/layout.scss */
 .nav_search label.overlabel {
   padding: 0px;
   margin: 2px 3px;
   font-size: 14px;
 }
-/* line 242, ../src/layout.scss */
+/* line 235, ../src/layout.scss */
 .nav_search input {
   border: 0px !important;
   position: relative;
@@ -337,14 +329,14 @@ body h4 {
   background: none;
 }
 
-/* line 252, ../src/layout.scss */
+/* line 245, ../src/layout.scss */
 .nav_right {
   position: relative;
   z-index: 10;
   margin: 2px 6px 0px 3px;
 }
 
-/* line 258, ../src/layout.scss */
+/* line 251, ../src/layout.scss */
 a.new_ticket, .nav_search div.search_bar {
   -moz-box-shadow: #777777 0px 0px 2px;
   -webkit-box-shadow: #777777 0px 0px 2px;
@@ -356,7 +348,7 @@ a.new_ticket, .nav_search div.search_bar {
   margin-top: 2px;
 }
 
-/* line 265, ../src/layout.scss */
+/* line 258, ../src/layout.scss */
 a.new_ticket {
   background: #fefefe;
   background: -moz-linear-gradient(top, #fefefe 0%, #dfdfdf 100%);
@@ -371,14 +363,14 @@ a.new_ticket {
   position: relative;
   display: block;
 }
-/* line 273, ../src/layout.scss */
+/* line 266, ../src/layout.scss */
 a.new_ticket img {
   position: absolute;
   left: 6px;
   top: 5px;
 }
 
-/* line 276, ../src/layout.scss */
+/* line 269, ../src/layout.scss */
 a.new_ticket:hover {
   background: #606c88;
   background: -moz-linear-gradient(top, #606c88 0%, #3f4c6b 100%);
@@ -389,16 +381,16 @@ a.new_ticket:hover {
   color: #ffffff;
 }
 
-/* line 282, ../src/layout.scss */
+/* line 275, ../src/layout.scss */
 ul.tabs {
   list-style: none;
 }
-/* line 284, ../src/layout.scss */
+/* line 277, ../src/layout.scss */
 ul.tabs li {
   float: left;
   position: relative;
 }
-/* line 287, ../src/layout.scss */
+/* line 280, ../src/layout.scss */
 ul.tabs li span {
   background: none;
   height: 1px;
@@ -409,7 +401,7 @@ ul.tabs li span {
   z-index: 1;
   margin-bottom: -2px;
 }
-/* line 298, ../src/layout.scss */
+/* line 291, ../src/layout.scss */
 ul.tabs li a {
   position: relative;
   z-index: 5;
@@ -423,12 +415,12 @@ ul.tabs li a {
   text-transform: capitalize;
   text-shadow: rgba(0, 0, 0, 0.1) 1px 1px 1px;
 }
-/* line 311, ../src/layout.scss */
+/* line 304, ../src/layout.scss */
 ul.tabs li a:hover {
   background: #95cb54;
   color: #ffffff;
 }
-/* line 316, ../src/layout.scss */
+/* line 309, ../src/layout.scss */
 ul.tabs li.active a, ul.tabs li.active a:hover {
   border-color: #618e2b;
   background: #efefef;

@@ -20,16 +20,14 @@
    font-size:0px;
 }
 
-.reminders{
-	@include corners(3px);
+.reminders{ 
 	h3.title{  
 		border-bottom:1px solid #e3dcc1;
 		color:#734e3d;  
 		display:block;
 	}
 }
-.reminders-ticket{
-	@include corners(6px, 0, 0, 6px);
+.reminders-ticket{ 
 	label{ font-size:14px; }
 }
 
@@ -617,4 +615,82 @@ div.addReminder{
 			@include sprite-row(10, 32px, 0);
 		}
 	}
+}
+
+.admin_list, .content_list{
+	@include no-bullets;
+	margin:0px -20px;
+	padding:0px 0px;
+	border:1px solid #f2f2f2;
+	border-width:1px 0px;
+	li{	
+		@include clearfix;
+		padding:8px 20px 8px 20px;
+		border-bottom:1px solid #efefef;
+		@include vertical-gradient(#fbfbfb, #fafafa);
+		color:#656565;
+		position:relative;
+		.preview_pic{
+			float:left;
+			margin-right:10px;
+			margin-top:-3px;
+		}
+		div{
+			padding-top:1px;
+		}
+		div.item_actions{
+			float:right;
+			padding:2px 0px;
+			position:relative;
+			top:-4px;
+			visibility:hidden;
+			a{
+				color:#333333;
+				font-weight:bold;
+				text-decoration:none;
+			}
+			a:hover{
+				text-decoration:none;
+			}
+		}		
+		div.item_information{
+			@include clearfix;
+			float:left;
+			width:70%;
+			.info_data{
+				padding:2px 2px;
+				font-size:12px;
+			}
+			.col1{
+				width:60%;
+			}
+			.col1, .col2{
+				float:left;
+				padding:0px;
+			}
+			.col2{
+				padding-top:4px;
+			}
+		}
+		a{
+			color:#336699;
+			text-decoration:none;
+		}
+		a.item_info{
+			font-size:1.25em;
+			color:#336699;
+			text-decoration:none;
+		 }
+		 input.checkbox{
+		 	position:absolute;
+		 	left:8px;
+		 	top:10px;
+		 }
+	}
+	li:hover{
+		background:lighten(#f1f1f1, 2%);  
+		div.item_actions{
+			visibility:visible;
+		}
+	} 
 }
