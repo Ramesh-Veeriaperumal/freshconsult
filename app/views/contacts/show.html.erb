@@ -24,21 +24,20 @@
 		<% if @user.deleted || !@user.active? %>
 		<div class="info-highlight">
 			<%= content_tag(:div, "#{ t('contacts.deleted_message') } #{ link_to( t('contacts.restore'), { :action => :restore, :id => @user.id }, :method => :put ) }") if @user.deleted %>
-			<%= content_tag(:div, "#{ t('contacts.emailnotverified') }" ) unless @user.active? %>
+			<%= content_tag(:div, "#{ t('contacts.emailnotverified') }" ) unless @user.active? %> 
 		</div>
 		<% end %>
 </div>
 
-<div class="contact-box-additional"> 
-		 
-			<h4 class="title"><%=t('contacts.info3',:nick_name => @user.display_name)%></h4>
-			<% form_for @user do |f| %>
-				<%= f.label :description, t("contacts.form_placeholder.description"), :class => "overlabel" %>
-				<%= f.text_area :description, :class=> "sp_paragraph" %>
-				<div class="alignright"> 
-					<%= f.submit t('save'), :class=>"uiButton small grey"  %> &nbsp;
-				</div>
-			<% end %> 
+<div class="contact-box-additional">
+	<h4 class="title"><%=t('contacts.info3',:nick_name => @user.display_name)%></h4>
+		<% form_for @user do |f| %>
+			<%= f.label :description, t("contacts.form_placeholder.description"), :class => "overlabel" %>
+			<%= f.text_area :description, :class=> "sp_paragraph" %>
+			<div class="alignright"> 
+				<%= f.submit t('save'), :class=>"uiButton small grey"  %> &nbsp;
+			</div>
+		<% end %> 
 		
 		<span class="seperator"></span>
 		<h4 class="title"><%=t('contacts.info4',:nick_name => @user.display_name)%></h4>

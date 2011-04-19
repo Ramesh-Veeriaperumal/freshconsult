@@ -1,0 +1,106 @@
+<%= stylesheet_link_tag "autosuggest_inquisitor" %>
+<%= javascript_include_tag "autosuggest" %>
+<% javascript_tag do %>
+	// Condition Parsing 
+	// This template contains the dom population information 
+	var conditional_dom = function(filter, id, compName, initFeed){
+		var type   	  = filter.domtype;
+		var initFeed  = initFeed || {};
+		var compName  = compName || "filter";
+		// Conditional Dom created based on the options available 
+		c_dom = "";
+		switch (type) {
+			case 'text':
+			case 'autocompelete':
+				c_dom = FactoryUI.text("", "value", initFeed["value"]);
+				jQuery(c_dom).attr("id", id);			
+				break;
+			case 'dropdown':
+				var choices = [];
+				filter.choices.each(function(arrayItem){
+					choices.push({
+						name: arrayItem[0],
+						value: arrayItem[1]
+					});
+				});
+				c_dom = FactoryUI.dropdown(choices, "value");
+				jQuery(c_dom).val(initFeed["value"]);
+				break;
+				
+			case 'paragraph':
+				c_dom = FactoryUI.paragraph("", "value", initFeed["value"]);
+				break;
+			case 'comment':			
+				c_dom = jQuery("<div class=\"s_comment\" />")
+							.append(FactoryUI.paragraph("", "comment", initFeed["comment"]))
+							.append(FactoryUI.checkbox("<%= t('ticket.note_form.private_note') %>", "private", initFeed["private"])); 
+				break;
+			case 'email_select':
+			case 'email_text':
+			case 'email':
+				var control = "";
+				if (type == 'email_select') {			
+					var choices = [];
+					filter.choices.each(function(arrayItem){
+						choices.push({
+							name: arrayItem[0],
+							value: arrayItem[1]
+						});
+					});
+					control = FactoryUI.dropdown(choices, "email_to");				
+				}else{
+					control = FactoryUI.text("", "email_to");				
+				}			
+				
+				if (type != 'email') {
+					jQuery(control).val(initFeed["email_to"]);
+					var to = jQuery('<div />').append("<b>To </b>").append(control);
+				}
+				
+				/*var subject = jQuery('<div />')
+								.append("<b>Subject </b>")
+								.append(FactoryUI.text("", "email_subject", initFeed["email_subject"]));*/
+				var body	= jQuery('<div />')
+								.append("<b>Body</b>")
+								.append(FactoryUI.paragraph("", "email_body", initFeed["email_body"]))
+								.append("<a class='l_placeholder' href='javascript:void'>Insert Placeholder &raquo;</a>");				
+												 
+				c_dom = jQuery("<div class=\"s_email\" />")
+							.append(to || "")												
+							//.append(subject)
+							.append(body);								
+				break;	
+			
+			case 'checkbox':
+				if (compName == 'action') {
+					var choices = [{
+						name: 1,
+						value: "Selected"
+					}, {
+						name: 0,
+						value: "Not selected"
+					}];
+					c_dom = FactoryUI.dropdown(choices, "value");
+					jQuery(c_dom).val(initFeed["value"]);
+				}	
+				break;
+				
+			default:
+				c_dom = "<em>Conditional dom "+type+" Not defined</em>";
+		}			
+		return c_dom;
+	}
+<% end %>
+
+<%= javascript_include_tag "condition-filter" %>
+
+<% javascript_tag do %>
+	var active_email_body = null;
+	jQuery(document).ready(function(){		
+		<% if(filter_type == "va_rule") %>
+			var op_hash = preProcessCondition(<%= @op_types %>, <%= @op_list %>);	 
+			filter_rule = new rules_filter("filter", $A(<%= @filter_defs %>), "#filterDOM", {"operators": op_hash, "init_feed":$A(<%= @filter_input %>)});	
+		<% end %>			
+			action_rule = new rules_filter("action", $A(<%= @action_defs %>), "#actionDOM", {"init_feed":$A(<%= @action_input %>)});			
+	});
+<% end %>
