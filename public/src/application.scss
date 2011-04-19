@@ -2,22 +2,8 @@
 @import "base";
 @import "mixins";  
 
-$color_pulp:#F3F1EC;
-/* Color Definitions */
+body { color: #333; background:$background; }
 
-a{ @include link-colors(#4D769F, #3399cc); }
-a:hover{text-decoration:none;}
-
-p{
-	color: #555555;
-    font-size: 12px;
-    line-height: 1.35em;
-    margin:5px 0px 1.3em 0px;
-    text-align: left;
-}
-
-.clearfix{ @include clearfix; }
- 
 /* PAGE AREA STYLE */ 
 
 .sp_border{
@@ -31,21 +17,17 @@ p{
 .pagearea, .sidepanel, .rtCnt, .no-helpdesk, #errorExplanation, .flash_info{  
     @extend .sp_border;
 	padding:14px 20px; margin:0px 10px 10px 0px;
-	/*@include corners(6px);*/
-}
-  
-.pagearea{
-	@include min-height(450px);
-	@include shadows(rgba(0,0,0, 0.2), 0px, 3px, 3px);
-	position:relative;
 }
 
-.title{ color:#2f3733; padding:6px 0px 10px 0px; font-weight:bold; }
-.title a{ @include link-colors(#4D769F, #3399cc, #4D769F, #4D769F); text-decoration:none; }
-h2.title{ font-size:1.8em; }
-h3.title, h3.sub_title, h3.title-band{ font-size:1.3em; }
-h3.title-band{ margin:12px -20px; background-color:#f2f2f2; padding:8px 20px; }
-h3.sub_title{ font-size:1.1em; }
+.sidepanel, .rtCnt{
+	@include shadows(rgba(0,0,0, 0.05), 0px, 1px, 2px);
+}
+
+.pagearea{
+	@include min-height(450px);
+	@include shadows(rgba(0,0,0, 0.2), 0px, 2px, 3px);
+	position:relative;
+}
 
 ul.activityfeed, ul.summary{
 	list-style:none;
@@ -783,11 +765,13 @@ body h5{
 }
  
 .ticket-panel{
+	@include corners(0, 12px, 12px, 0);
 	background-color:#3f3f3f;
 }
 
 .rtCnt{
 	padding:0px 0px 0px 0px;
+	border:0px !important;
 	.local_activities{
 		a{
 			font-weight:bold;
@@ -814,14 +798,15 @@ body h5{
 	
 	.rtDetails{
 		@include min-height(550px);
+		box-shadow:0 0 40px rgba(0, 0, 0, 0.05) inset;
 	}
 	
 	.rtDetails{
 		margin:0px 80px 0px 0px;  
-		padding-top:5px;
-		@include corners(3px, 3px, 3px, 3px);
+		padding-top:5px; 
 		z-index:10; 
 		background-color:#ffffff;
+		border:1px solid #cfcfcf;
 		position:relative;
 		h3.title{
 			font-size:14px;
@@ -859,7 +844,6 @@ body h5{
 	.rtPanel{
 		float:right;
 		width:80px;
-		@include corners(0, 3px, 3px, 0);
 		position:relative;
 		z-index:9;
 		padding-top:6px;
@@ -1084,7 +1068,7 @@ div.panel_area{
 	padding:0px 0px;
 	margin:5px 0px;
 	.ui-form{
-		background-color:lighten($color_pulp, 2%);
+		background-color:#F3F1EC;
 		label{
 			font-size:12px;
 		}
@@ -1539,83 +1523,7 @@ h4.list_title{
 		
 }
 
-.admin_list, .content_list{
-	@include no-bullets;
-	margin:0px -20px;
-	padding:0px 0px;
-	border:1px solid #f2f2f2;
-	border-width:1px 0px;
-	li{	
-		@include clearfix;
-		padding:8px 20px 8px 20px;
-		border-bottom:1px solid #efefef;
-		@include vertical-gradient(#fbfbfb, #fafafa);
-		color:#656565;
-		position:relative;
-		.profile_pic{
-			float:left;
-			margin-right:10px;
-			margin-top:5px;
-		}
-		div{
-			padding-top:4px;
-		}
-		div.item_actions{
-			float:right;
-			padding:2px 0px;
-			position:relative;
-			top:-4px;
-			visibility:hidden;
-			a{
-				color:#333333;
-				font-weight:bold;
-				text-decoration:none;
-			}
-			a:hover{
-				text-decoration:none;
-			}
-		}		
-		div.item_information{
-			@include clearfix;
-			float:left;
-			width:70%;
-			.info_data{
-				padding:2px 2px;
-				font-size:12px;
-			}
-			.col1{
-				width:60%;
-			}
-			.col1, .col2{
-				float:left;
-				padding:0px;
-			}
-			.col2{
-				padding-top:4px;
-			}
-		}
-		a{
-			color:#336699;
-			text-decoration:none;
-		}
-		a.item_info{
-			font-size:1.25em;
-			color:#336699;
-			text-decoration:none;
-		 }
-		 input.checkbox{
-		 	position:absolute;
-		 	left:8px;
-		 	top:10px;
-		 }
-	}
-	li:hover{
-		background:lighten(#f1f1f1, 2%);  
-		div.item_actions{
-			visibility:visible;
-		}
-	} 
-}
+
  
 span.sort_handle{
 			position:relative;

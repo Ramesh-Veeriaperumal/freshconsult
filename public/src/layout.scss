@@ -3,13 +3,6 @@
 @import "mixins";
 
 html {  height:100%; overflow-y:scroll; }
- 
-body { 
-	font:12px $blueprint-font-family; 
-	background-color: transparent;
-	color: #333; 
-	background:$background; 
-} 
 
 .wrapper{
     @include clearfix;

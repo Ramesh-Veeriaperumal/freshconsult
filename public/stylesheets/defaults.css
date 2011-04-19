@@ -1,0 +1,83 @@
+@charset "UTF-8";
+/* Theme Colors and layout Defaults */
+/* line 5, ../src/defaults.scss */
+body {
+  font: 12px "Lucida Grande", Geneva, Arial, Verdana, sans-serif;
+  background-color: transparent;
+}
+
+/* line 7, ../src/defaults.scss */
+a {
+  color: #4d769f;
+}
+/* line 24, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/compass/stylesheets/compass/utilities/links/_link-colors.scss */
+a:hover {
+  color: #3399cc;
+}
+
+/* line 8, ../src/defaults.scss */
+a:hover {
+  text-decoration: none;
+}
+
+/* line 10, ../src/defaults.scss */
+p {
+  color: #555555;
+  font-size: 12px;
+  line-height: 1.35em;
+  margin: 5px 0px 1.3em 0px;
+  text-align: left;
+}
+
+/* line 18, ../src/defaults.scss */
+.clearfix {
+  overflow: hidden;
+  *zoom: 1;
+}
+
+/* line 20, ../src/defaults.scss */
+.title {
+  color: #2f3733;
+  padding: 6px 0px 10px 0px;
+  font-weight: bold;
+}
+
+/* line 21, ../src/defaults.scss */
+.title a {
+  color: #4d769f;
+  text-decoration: none;
+}
+/* line 18, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/compass/stylesheets/compass/utilities/links/_link-colors.scss */
+.title a:visited {
+  color: #4d769f;
+}
+/* line 24, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/compass/stylesheets/compass/utilities/links/_link-colors.scss */
+.title a:hover {
+  color: #3399cc;
+}
+/* line 27, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/compass/stylesheets/compass/utilities/links/_link-colors.scss */
+.title a:active {
+  color: #4d769f;
+}
+
+/* line 22, ../src/defaults.scss */
+h2.title {
+  font-size: 1.8em;
+}
+
+/* line 23, ../src/defaults.scss */
+h3.title, h3.sub_title, h3.title-band {
+  font-size: 1.3em;
+}
+
+/* line 24, ../src/defaults.scss */
+h3.title-band {
+  margin: 12px -20px;
+  background-color: #f2f2f2;
+  padding: 8px 20px;
+}
+
+/* line 25, ../src/defaults.scss */
+h3.sub_title {
+  font-size: 1.1em;
+}
