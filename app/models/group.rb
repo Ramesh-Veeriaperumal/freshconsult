@@ -4,7 +4,8 @@ class Group < ActiveRecord::Base
   validates_uniqueness_of :name, :scope => :account_id
   
    has_many :agent_groups , :class_name => "AgentGroup", :foreign_key => "group_id"
-   has_many :agents, :through => :agent_groups, :source => :user
+   
+   has_many :agents, :through => :agent_groups, :source => :user , :conditions => ["users.deleted=?", false]
    
    belongs_to :escalate , :class_name => "User", :foreign_key => "escalate_to"
    
