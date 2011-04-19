@@ -18,15 +18,15 @@
     <%= f.error_messages %>
 	<ul class="ui-form dont-validate">
 		<li>
-			<h3 class="title">Add a Note</h3>
+			<%= content_tag( :h3, t("ticket.note_form.form_title"), :class => "title" ) %>
 		</li>
 		<li class="checkbox">
 			<%= f.check_box :private, :checked => true %>
-			<%= f.label(:private, "This is a private note, don't show this to the requester") %>
+			<%= f.label(:private, t("ticket.note_form.private_note")) %>
 			<%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"]%>	
 		</li>	
 		<li>
-			<%= f.label(:body, "Enter your message here", :for =>"#{id}-#{cntid}-body", :class => "overlabel" ) %>
+			<%= f.label(:body, t("enter_message"), :for =>"#{id}-#{cntid}-body", :class => "overlabel" ) %>
 			<%= f.text_area :body, { :class => 'auto-expand required', :id => "#{id}-#{cntid}-body" , :value => @signature} %>
     	</li>	
 		<li class="attachment-options"  id="attachment-options">

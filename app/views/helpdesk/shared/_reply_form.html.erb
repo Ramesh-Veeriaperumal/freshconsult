@@ -15,16 +15,16 @@
   <% form_for note, :html => {:multipart => true, :id => "HelpdeskReply" } do |f| %>
     <%= f.error_messages %>
 	<ul class="ui-form dont-validate">
-		<li>
-			<h3 class="title">Reply to the conversation</h3>
+		<li> 
+			<%= content_tag( :h3, t("ticket.reply_form.form_title"), :class => "title" ) %>
 		</li>
     	<li datafor="email" style="display:block">
-			<%= f.label(:reply_email, "Send the reply from the following email id") %>
+			<%= f.label(:reply_email, t("ticket.reply_form.reply_email_id") ) %>
 			<%= select :reply_email, :id, options_for_select(@reply_email, @ticket.reply_email) %>
 			<span class="seperator"></span>
 		</li>
 		<li>
-			<%= f.label(:body, "Enter your message here", :for =>"#{id}-#{cntid}-body", :class => "overlabel" ) %>
+			<%= f.label(:body, t("enter_message"), :for =>"#{id}-#{cntid}-body", :class => "overlabel" ) %>
     		<%= f.text_area :body, { :class => 'auto-expand required', :id => "#{id}-#{cntid}-body" , :value => @signature} %>
     	</li>
 		
@@ -32,7 +32,7 @@
 		<% if !@ticket.ticket_topic.nil? and !(@ticket.ticket_topic.topic.locked) %>
 		<li datafor="posts">
 			<label>
-				<%=check_box_tag :post_forums%> Post in linked forum
+				<%= check_box_tag :post_forums %> <%= t("ticket.reply_form.post_to_linked_forum") %>
 			</label>
 		</li>
 		<%end%>	
