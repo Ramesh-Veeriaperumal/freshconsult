@@ -19,19 +19,39 @@
 	position:absolute;
 }
 
-.freshwidget-theme{
-	@include shadows(#000000, 0, 0, 2px); 
-	padding:6px 18px;
-	background-color:#000000;
-	border:3px solid #ffffff;
-	color:#ffffff;
-	font-size:16px;
-	text-decoration:none;
-	_font-weight:bold;
+
+.left a{ left:0px; }
+
+.right{ right:0px; }
+
+.top{ top:0px; }
+
+.bottom{
+	bottom:0px;
+	a{ bottom:0px; }
 }
+
+.freshwidget-theme{
+	@include shadows(rgba(0,0,0, 0.2), -1px, 2px, 2px);
+	@include inset-shadows(rgba(255,255,255, 1), 0px, 0px, 2px);  
+	@include text-shadow(rgba(0, 0, 0, 0.2), -1px, -1px, 1px);
+	padding:4px 14px 6px 14px;
+	background-color:#7eb600;
+	border:1px solid darken(#7eb600, 10%);
+	color:#ffffff;
+	font-size:16px; 
+	text-decoration:none;
+	font-weight:bold;
+}
+
 .freshwidget-theme:hover{
 	color:#f3f3f3;
 }
+
+.freshwidget-customimage{ overflow:visible; }
+
+.right .freshwidget-customimage{ right:0px; }
+
 
 .freshwidget-button{
 	a{
@@ -47,33 +67,17 @@
 	margin:0px;
 }
 
-.left{
-	a{
-		left:0px;
-		border-top-width:0px;
+.left a.freshwidget-theme, .top a.freshwidget-theme{ @include corners(0, 0, 8px, 8px);  border-top-width:0px; }
+.left a.freshwidget-theme{
 		@include rotate(-90deg, top left);
-		filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);		
-	}
+		filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+}
+.bottom a.freshwidget-theme, .right a.freshwidget-theme{ @include corners(8px, 8px, 0px, 0px);  border-bottom-width:0px; }
+.right a.freshwidget-theme{
+	@include rotate;
+	filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
 }
 
-.right{
-	right:0px;
-	a{
-		border-bottom-width:0px;
-		@include rotate;
-		filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);		
-	}
-}
-
-.top{
-	top:0px;	
-	a{ border-top-width:0px; }
-}
-
-.bottom{
-	bottom:0px;
-	a{ border-bottom-width:0px;bottom:0px; }
-}
 
 
 /* Widget Form Style */ 
@@ -96,8 +100,7 @@
 		right:-2px;
 		top:6px;
 		width: 28px;
-		height: 28px;
-		background:url(http://192.168.1.104:3000/images/widget_close.png) no-repeat;
+		height: 28px; 
 		cursor:pointer;
 	}
 }

@@ -6,24 +6,14 @@
 <!--[if (gt IE 9)|!(IE)]><!--> <html lang="en" class="no-js"> <!--<![endif]-->
 
     <%= render :partial => "layouts/shared/head" %>
-    <body class="<% unless @content_for_sidebar %>single<% end %>">   
+    <body>   
         <div id="wrap" class="container">
             <%= render(:partial => '/layouts/shared/header') %>
             <div class="content">
             	<div class="wrapper"> 
-	                <div id="inner">
-	                    <div class="leftcontent">
-		                    	<%= show_flash %>
-								<%= yield  %>
-	                    </div> 
-		                <div class="sidebar">	                	
-							 <%= yield :sidebar %>					
-						</div> 
-					</div> 
+	                <%= yield  %>
 				</div>
-			</div>
-			<%= render :partial => "layouts/shared/footer" %>  
-        </div>
-		<%= yield :dialogs  %>        
+			</div>  
+        </div>       
     </body>
 </html>

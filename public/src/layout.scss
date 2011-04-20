@@ -28,7 +28,7 @@ html {  height:100%; overflow-y:scroll; }
 }
 
 #wrap{
-	margin-bottom:18px;
+	margin-bottom:0px;
 	text-align:center;   
 } 
 
@@ -54,7 +54,7 @@ label.overlabel{
 		width:100%;
 	}
 	z-index:1;  	
-	margin:12px 0px;	
+	margin:12px 0px 0px 0px;	
 	padding-right:$sidebar-width;   
 	.sidebar{ 
 		width:$sidebar-width;
@@ -134,18 +134,6 @@ div.bg_pulp{
 
 	padding-bottom:6px;
 } 
-
-
-
-body {
-	h1, h2, h3, h4, h5{
-		margin:0px;
-	}
-	h4{
-		font-size:12px;
-	}
-}
-
 
 /* Header styles */
 
@@ -312,3 +300,8 @@ ul.tabs{
 		color:#000000; 
 	} 
 } 
+
+/* Footer styles */
+.footerContent{
+	padding:4px 20px 20px; 
+}
