@@ -6,7 +6,16 @@ body {
   background-color: transparent;
 }
 
-/* line 7, ../src/defaults.scss */
+/* line 8, ../src/defaults.scss */
+body h1, body h2, body h3, body h4, body h5 {
+  margin: 0px;
+}
+/* line 11, ../src/defaults.scss */
+body h4 {
+  font-size: 12px;
+}
+
+/* line 16, ../src/defaults.scss */
 a {
   color: #4d769f;
 }
@@ -15,12 +24,12 @@ a:hover {
   color: #3399cc;
 }
 
-/* line 8, ../src/defaults.scss */
+/* line 17, ../src/defaults.scss */
 a:hover {
   text-decoration: none;
 }
 
-/* line 10, ../src/defaults.scss */
+/* line 19, ../src/defaults.scss */
 p {
   color: #555555;
   font-size: 12px;
@@ -29,20 +38,20 @@ p {
   text-align: left;
 }
 
-/* line 18, ../src/defaults.scss */
+/* line 27, ../src/defaults.scss */
 .clearfix {
   overflow: hidden;
   *zoom: 1;
 }
 
-/* line 20, ../src/defaults.scss */
+/* line 29, ../src/defaults.scss */
 .title {
   color: #2f3733;
   padding: 6px 0px 10px 0px;
   font-weight: bold;
 }
 
-/* line 21, ../src/defaults.scss */
+/* line 30, ../src/defaults.scss */
 .title a {
   color: #4d769f;
   text-decoration: none;
@@ -60,24 +69,24 @@ p {
   color: #4d769f;
 }
 
-/* line 22, ../src/defaults.scss */
+/* line 31, ../src/defaults.scss */
 h2.title {
   font-size: 1.8em;
 }
 
-/* line 23, ../src/defaults.scss */
+/* line 32, ../src/defaults.scss */
 h3.title, h3.sub_title, h3.title-band {
   font-size: 1.3em;
 }
 
-/* line 24, ../src/defaults.scss */
+/* line 33, ../src/defaults.scss */
 h3.title-band {
   margin: 12px -20px;
   background-color: #f2f2f2;
   padding: 8px 20px;
 }
 
-/* line 25, ../src/defaults.scss */
+/* line 34, ../src/defaults.scss */
 h3.sub_title {
   font-size: 1.1em;
 }

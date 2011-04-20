@@ -24,26 +24,64 @@
   position: absolute;
 }
 
-/* line 22, ../src/freshwidget.scss */
+/* line 23, ../src/freshwidget.scss */
+.left a {
+  left: 0px;
+}
+
+/* line 25, ../src/freshwidget.scss */
+.right {
+  right: 0px;
+}
+
+/* line 27, ../src/freshwidget.scss */
+.top {
+  top: 0px;
+}
+
+/* line 29, ../src/freshwidget.scss */
+.bottom {
+  bottom: 0px;
+}
+/* line 31, ../src/freshwidget.scss */
+.bottom a {
+  bottom: 0px;
+}
+
+/* line 34, ../src/freshwidget.scss */
 .freshwidget-theme {
-  -moz-box-shadow: black 0 0 2px;
-  -webkit-box-shadow: black 0 0 2px;
-  box-shadow: black 0 0 2px;
-  padding: 6px 18px;
-  background-color: #000000;
-  border: 3px solid #ffffff;
+  -moz-box-shadow: rgba(0, 0, 0, 0.2) -1px 2px 2px;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.2) -1px 2px 2px;
+  box-shadow: rgba(0, 0, 0, 0.2) -1px 2px 2px;
+  -moz-box-shadow: inset 0px 0px 2px white;
+  -webkit-box-shadow: inset 0px 0px 2px white;
+  box-shadow: inset 0px 0px 2px white;
+  text-shadow: rgba(0, 0, 0, 0.2) -1px -1px 1px;
+  padding: 4px 14px 6px 14px;
+  background-color: #7eb600;
+  border: 1px solid #5b8300;
   color: #ffffff;
   font-size: 16px;
   text-decoration: none;
-  _font-weight: bold;
+  font-weight: bold;
 }
 
-/* line 32, ../src/freshwidget.scss */
+/* line 47, ../src/freshwidget.scss */
 .freshwidget-theme:hover {
   color: #f3f3f3;
 }
 
-/* line 36, ../src/freshwidget.scss */
+/* line 51, ../src/freshwidget.scss */
+.freshwidget-customimage {
+  overflow: visible;
+}
+
+/* line 53, ../src/freshwidget.scss */
+.right .freshwidget-customimage {
+  right: 0px;
+}
+
+/* line 56, ../src/freshwidget.scss */
 .freshwidget-button {
   position: absolute;
   width: 0px;
@@ -51,7 +89,7 @@
   z-index: 90000;
   margin: 0px;
 }
-/* line 37, ../src/freshwidget.scss */
+/* line 57, ../src/freshwidget.scss */
 .freshwidget-button a {
   position: fixed;
   white-space: nowrap;
@@ -59,10 +97,16 @@
   _right: 0px;
 }
 
-/* line 51, ../src/freshwidget.scss */
-.left a {
-  left: 0px;
+/* line 70, ../src/freshwidget.scss */
+.left a.freshwidget-theme, .top a.freshwidget-theme {
+  -moz-border-radius: 0 0 8px 8px;
+  -webkit-border-radius: 0 0 8px 8px;
+  border-radius: 0 0 8px 8px;
   border-top-width: 0px;
+}
+
+/* line 71, ../src/freshwidget.scss */
+.left a.freshwidget-theme {
   -moz-transform: rotate(-90deg);
   -moz-transform-origin: top left;
   -webkit-transform: rotate(-90deg);
@@ -72,13 +116,16 @@
   filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
 }
 
-/* line 59, ../src/freshwidget.scss */
-.right {
-  right: 0px;
-}
-/* line 61, ../src/freshwidget.scss */
-.right a {
+/* line 75, ../src/freshwidget.scss */
+.bottom a.freshwidget-theme, .right a.freshwidget-theme {
+  -moz-border-radius: 8px 8px 0px 0px;
+  -webkit-border-radius: 8px 8px 0px 0px;
+  border-radius: 8px 8px 0px 0px;
   border-bottom-width: 0px;
+}
+
+/* line 76, ../src/freshwidget.scss */
+.right a.freshwidget-theme {
   -moz-transform: rotate(-90deg);
   -moz-transform-origin: bottom left;
   -webkit-transform: rotate(-90deg);
@@ -88,27 +135,8 @@
   filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
 }
 
-/* line 68, ../src/freshwidget.scss */
-.top {
-  top: 0px;
-}
-/* line 70, ../src/freshwidget.scss */
-.top a {
-  border-top-width: 0px;
-}
-
-/* line 73, ../src/freshwidget.scss */
-.bottom {
-  bottom: 0px;
-}
-/* line 75, ../src/freshwidget.scss */
-.bottom a {
-  border-bottom-width: 0px;
-  bottom: 0px;
-}
-
 /* Widget Form Style */
-/* line 81, ../src/freshwidget.scss */
+/* line 85, ../src/freshwidget.scss */
 .freshwidget-dialog {
   position: absolute;
   padding: 8px 0px;
@@ -117,18 +145,17 @@
   top: 100px;
   z-index: 900010;
 }
-/* line 89, ../src/freshwidget.scss */
+/* line 93, ../src/freshwidget.scss */
 .freshwidget-dialog iframe {
   width: 612px;
   height: 900px;
 }
-/* line 94, ../src/freshwidget.scss */
+/* line 98, ../src/freshwidget.scss */
 .freshwidget-dialog .widget-close {
   position: absolute;
   right: -2px;
   top: 6px;
   width: 28px;
   height: 28px;
-  background: url(http://192.168.1.104:3000/images/widget_close.png) no-repeat;
   cursor: pointer;
 }

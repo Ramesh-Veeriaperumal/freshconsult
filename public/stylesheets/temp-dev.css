@@ -1005,3 +1005,22 @@ div.addReminder form label.overlabel {
 .admin_list li:hover div.item_actions, .content_list li:hover div.item_actions {
   visibility: visible;
 }
+
+/* line 698, ../src/temp-dev.scss */
+.footerContent {
+  color: #000000;
+  opacity: 0.6;
+  -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=60);
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=60);
+}
+/* line 700, ../src/temp-dev.scss */
+.footerContent a {
+  color: #000000;
+  text-decoration: none;
+  border-bottom: 1px dotted #000000;
+}
+/* line 701, ../src/temp-dev.scss */
+.footerContent a:hover {
+  color: #000000;
+  border-bottom: none;
+}

@@ -693,9 +693,10 @@ span.sort_handle{
 
 .ui-widget-container{
 	padding:10px 20px;
+	min-height:200px;
 	@include vertical-gradient(#ffffff, #f4f4f4);
 	@include corners(6px); 
-	@include shadows(rgba(0,0,0,0.5), -3px, 5px, 10px);
+	@include shadows(rgba(0,0,0,0.5), -3px, 5px, 10px); 
 	_border:1px solid #afafaf;
 	_background:#ffffff;
 	margin:10px;

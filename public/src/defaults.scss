@@ -4,6 +4,15 @@
 
 body {	font:12px $blueprint-font-family; background-color: transparent; }
 
+body {
+	h1, h2, h3, h4, h5{
+		margin:0px;
+	}
+	h4{
+		font-size:12px;
+	}
+}
+
 a{ @include link-colors(#4D769F, #3399cc); }
 a:hover{text-decoration:none;}
 

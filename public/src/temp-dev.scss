@@ -694,3 +694,10 @@ div.addReminder{
 		}
 	} 
 }
+
+.footerContent{
+	color:#000000;
+	a{color:#000000; text-decoration:none; border-bottom:1px dotted #000000; }
+	a:hover{color:#000000; border-bottom: none;}
+	@include opacity(0.6);
+}

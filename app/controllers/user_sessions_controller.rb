@@ -4,8 +4,6 @@ require 'gapps_openid'
 require 'rack/openid'
 require 'uri'
 require 'openid'
-
- layout "ssportal"
   
   skip_before_filter :require_user, :except => :destroy
   before_filter :check_sso_params, :only => :sso_login
