@@ -4,6 +4,9 @@
 	<%= f.error_messages %>
 	<%= render :partial => "agent_form", :locals => { :type => "edit" } %>
 	<div class="button-container">
+		<%= link_to (t('delete'), @agent, :confirm => "#{t('agent.info3')}?", 
+												 :method => :delete, :class => "uiButton floatl") unless (@agent.user == current_user)  %>
+												 
    		<%= f.submit t('agent.update'), { :class => "uiButton" } %>
 		<%= link_to t('cancel'), {:action => 'index'}, :class => "uiButton" %>
 	</div>	  

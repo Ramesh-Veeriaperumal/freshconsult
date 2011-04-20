@@ -7,8 +7,8 @@
 		<%@agents.each do |agent| %>
 			<li>
 				<div class="item_actions">
-					<%= link_to t('delete'), agent, :confirm => "#{t('agent.info3')}?", 
-												 :method => :delete, :class => "button" %>
+					<%= link_to (t('delete'), agent, :confirm => "#{t('agent.info3')}?", 
+												 :method => :delete, :class => "button") unless (agent.user == current_user)  %>
 					<%= link_to t('edit'), edit_agent_path(agent), :class => "button" %>									 
 				</div>
 				<%= user_avatar(agent.user.avatar) %>
