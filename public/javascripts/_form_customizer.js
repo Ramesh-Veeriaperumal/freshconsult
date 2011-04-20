@@ -232,9 +232,10 @@
 			dom.find('fieldset').each(function(choiceset){
 				var temp = {value:'', tags:''};
 				temp.value  = jQuery(this).find("span.dropchoice input").val();
-				temp.tags   = jQuery(this).find("span.tags input").val();	
-				choices.push(temp);	 	
-			});			
+				temp.tags   = jQuery(this).find("span.tags input").val();
+				if(jQuery.trim(temp.value) != '')
+					choices.push(temp);	 	
+			});			 
 			return choices;
 		}
 		
@@ -345,8 +346,14 @@
 				break;
 				
 				case 'customlabel':
-					sourceData.set("label", 	   this.value);
-					sourceData.set("display_name", this.value);
+					field_label = jQuery.trim(this.value);
+					if(field_label == '')
+						field_label = "Untitled";
+					
+					sourceData.set("label", 	   field_label);
+					sourceData.set("display_name", field_label);
+					
+					this.value = field_label;
 				break;
 				
 				case 'customdesc':
