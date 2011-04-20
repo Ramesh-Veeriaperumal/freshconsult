@@ -62,7 +62,8 @@
 		var activeCnt = jQuery("#TicketProperties"); 
 		jQuery(".rtPanel a").bind("click", function(ev){
 			activeCnt.hide();
-			activeCnt = jQuery("#"+this.getAttribute("cntid")).show("slide", { direction: "left" }, 300);
+			//activeCnt = jQuery("#"+this.getAttribute("cntid")).show("slide", { direction: "left" }, 300);
+			activeCnt = jQuery("#"+this.getAttribute("cntid")).show();
 			
 			jQuery(this).parent().find(".active").removeClass("active");
 			jQuery(this).addClass("active");

@@ -2,7 +2,8 @@
 	<ul class="ui-form">
 		<% @customizer = ActiveSupport::JSON.decode(@ticket.customizer.requester_view)
 		   @customizer.each do |field|
-				field_class = field["type"] + ((field["customer"]["required"]) ? " required" : "") 
+				#field_class = field["type"] + ((field["customer"]["required"]) ? " required" : "")
+				field_class = field["type"] 
 				case field["label"]
 					 when "Requester" then 
 					%>
