@@ -1,11 +1,12 @@
 class TicketFieldsController < Admin::AdminController
-   
+  
+     
   def index
     
     @ticket_fields = Helpdesk::FormCustomizer.find(:first ,:conditions =>{:account_id => current_account.id})
      respond_to do |format|
       format.html # index.html.erb
-      format.xml  { render :json => @ticket_fields }
+      format.xml  { render :xml => @ticket_fields.agent_view }
     end
     
   end

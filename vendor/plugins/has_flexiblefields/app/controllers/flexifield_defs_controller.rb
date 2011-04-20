@@ -1,8 +1,15 @@
 class FlexifieldDefsController < ApplicationController
   
+  before_filter :access_denied
+  
   before_filter :find_flexifield_def, :only => %w(show edit update destroy)
 
   helper_method :setup_flexifield_def
+  
+  #This controller is not used for anything so redirecting to access denied
+  def access_denied
+    redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
+  end
 
   # GET /flexifield_defs
   # GET /flexifield_defs.xml

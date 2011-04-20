@@ -21,11 +21,17 @@ module HelpdeskControllerMethods
     flash[:notice] = "The #{cname.humanize.downcase} has been created."
     process_item #    
     #redirect_back_or_default redirect_url
-    redirect_to params[:redirect_to].present? ? params[:redirect_to] : item_url
+    respond_to do |format|
+      format.html { redirect_to params[:redirect_to].present? ? params[:redirect_to] : item_url }
+      format.xml  { head 200}
+    end
   end
 
   def create_error
-    render :action => :new
+    respond_to do |format|
+      format.html { render :action => :new }
+      format.xml  { render :xml => @item.errors}
+    end
   end
 
   def update

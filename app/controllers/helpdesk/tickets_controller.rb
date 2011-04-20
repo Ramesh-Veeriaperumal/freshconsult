@@ -69,9 +69,16 @@ class Helpdesk::TicketsController < ApplicationController
     respond_to do |format|
       format.html  
       format.atom
+      format.xml  { 
+      render :xml => @item.deep_xml  
+      }
+      format.json {
+      render :json => Hash.from_xml(@item.deep_xml)
+      }
     end
   end
-
+  
+  
   def set_suggested_solutions
     @articles = Solution::Article.suggest_solutions @ticket   
   end
@@ -229,7 +236,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
  
   def create
-    if params[:topic_id].length > 0 
+    if !params[:topic_id].blank? 
       @item.source = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:forum]
       @item.build_ticket_topic(:topic_id => params[:topic_id])
     end

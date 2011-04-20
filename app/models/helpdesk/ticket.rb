@@ -13,7 +13,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #by Shan temp
   attr_accessor :email, :name, :custom_field ,:customizer, :nscname 
   
-  before_validation :populate_requester
+  before_validation :populate_requester, :set_default_values
   before_create :set_spam, :set_dueby, :save_ticket_states
   after_create :refresh_display_id, :save_custom_field, :pass_thro_biz_rules, :autoreply 
   before_update :cache_old_model, :update_dueby
@@ -124,6 +124,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
   validates_inclusion_of :status, :in => STATUS_KEYS_BY_TOKEN.values.min..STATUS_KEYS_BY_TOKEN.values.max
   #validates_format_of :email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, :allow_nil => false, :allow_blank => false
 
+  def set_default_values
+    self.status = TicketConstants::STATUS_KEYS_BY_TOKEN[:open] unless TicketConstants::STATUS_KEYS_BY_TOKEN.key?(self.status)
+    self.source ||= TicketConstants::SOURCE_KEYS_BY_TOKEN[:portal]
+    self.ticket_type ||= TicketConstants::TYPE_KEYS_BY_TOKEN[:how_to]
+  end
+  
   def to_param 
     display_id ? display_id.to_s : nil
   end 
@@ -497,5 +503,18 @@ class Helpdesk::Ticket < ActiveRecord::Base
       custom_field[method]
     end
   end
+  
+  def deep_xml(builder=nil)
+    to_xml(:builder => builder, :skip_instruct => true) do |xml|
+       xml.custom_field do
+        self.ff_aliases.each do |label|    
+          value = self.get_ff_value(label.to_sym()) 
+          xml.tag!(label, value) unless value.blank?
+        end
+       
+      end
+     end
+  end
+  
   
 end
