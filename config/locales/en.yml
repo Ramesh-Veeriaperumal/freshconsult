@@ -43,6 +43,7 @@ en:
    undelete: "Restore"
    recent_activity: "Recent Activity"
    note: "Note"
+   enter_message : "Enter your message here"
    
    sla_policy: 
        title: "SLA Policy"
@@ -110,6 +111,13 @@ en:
        submit_ticket_title: "Submit a ticket"
        verify_human: "To verify you are human, please type the given scrambled letters"
        submit_ticket: "Submit Ticket"
+       note_form:
+           form_title:            "Add a Note"
+           private_note:          "This is a private note, don't show this to the requester"
+       reply_form:
+           form_title:            "Reply to the conversation"
+           reply_email_id:        "Send the reply from the following email id"
+           post_to_linked_forum:  "Post in linked forum"
    
    contacts:
        edit: "Edit Contact"
