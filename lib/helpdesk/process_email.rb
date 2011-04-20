@@ -6,8 +6,15 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     account = Account.find_by_full_domain(to_email[:domain])
     if !account.nil?
       charsets = params[:charsets]
-      charset_encoding = (ActiveSupport::JSON.decode charsets)['text']
-      params[:text] = Iconv.new('utf-8', charset_encoding).iconv(params[:text])
+      text_retrv = params[:text].blank? ? 'html' : 'text'
+#      unless params[:text].blank?
+#        charset_encoding = (ActiveSupport::JSON.decode charsets)['text']
+#        params[:text] = Iconv.new('utf-8', charset_encoding).iconv(params[:text])
+#      else
+        charset_encoding = (ActiveSupport::JSON.decode charsets)[text_retrv]
+        params[:text] = Iconv.new('utf-8', charset_encoding).iconv(params[text_retrv.to_sym])
+#      end
+      
       display_id = Helpdesk::Ticket.extract_id_token(params[:subject])
       ticket = Helpdesk::Ticket.find_by_account_id_and_display_id(account.id, display_id) if display_id
       
