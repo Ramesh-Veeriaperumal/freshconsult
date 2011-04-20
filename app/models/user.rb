@@ -198,6 +198,18 @@ class User < ActiveRecord::Base
         :subject => "#{account.helpdesk_name} user activation")
   end
   
+  def deliver_contact_activation
+    unless active?
+      reset_perishable_token!
+  
+      e_notification = account.email_notifications.find_by_notification_type(EmailNotification::USER_ACTIVATION)
+      UserNotifier.send_later(:deliver_user_activation, self, 
+          :email_body => Liquid::Template.parse(e_notification.requester_template).render('contact' => self, 
+            'helpdesk_name' => account.helpdesk_name, 'activation_url' => register_url(perishable_token, :host => account.host)), 
+          :subject => "#{account.helpdesk_name} user activation")
+    end
+  end
+  
   def set_time_zone
     self.time_zone = account.time_zone if time_zone.nil? #by Shan temp
   end
