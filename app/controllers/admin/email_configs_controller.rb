@@ -27,9 +27,25 @@ class Admin::EmailConfigsController < Admin::AdminController
     end
   end
   
+  def register_email
+    @email_config = scoper.find_by_activator_token params[:activation_code]
+    if @email_config
+      unless @email_config.active
+        @email_config.active = true
+        flash[:notice] = "#{@email_config.reply_email} has been activated" if @email_config.save
+      else
+        flash[:warning] = "#{@email_config.reply_email} has been activated already"
+      end
+    else
+      flash[:warning] = "The activation code is not valid"
+    end
+    
+    redirect_back_or_default redirect_url
+  end
+  
   protected
     def scoper
-      current_account.email_configs
+      current_account.all_email_configs
     end
  
     def human_name

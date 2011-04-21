@@ -53,7 +53,8 @@ class Account < ActiveRecord::Base
   has_many :all_va_rules, :class_name => 'VARule', :conditions => {:rule_type => VAConfig::BUSINESS_RULE}, :order => "position"
   
   has_many :scn_automations, :class_name => 'VARule', :conditions => {:rule_type => VAConfig::SCENARIO_AUTOMATION, :active => true}, :order => "position"
-  has_many :email_configs
+  has_many :all_email_configs, :class_name => 'EmailConfig'
+  has_many :email_configs, :conditions => { :active => true }
   has_one  :primary_email_config, :class_name => 'EmailConfig', :conditions => { :primary_role => true }
   has_many :email_notifications
   has_many :groups
@@ -149,7 +150,7 @@ class Account < ActiveRecord::Base
   end
   
   def default_email
-    primary_email_config.reply_email
+    primary_email_config.active ? primary_email_config.reply_email : primary_email_config.to_email
   end
   
   def to_s
@@ -163,7 +164,8 @@ class Account < ActiveRecord::Base
   
   #Helpdesk hack starts here
   def reply_emails
-    (email_configs.collect { |ec| ec.reply_email }).sort
+    to_ret = (email_configs.collect { |ec| ec.reply_email }).sort
+    to_ret.empty? ? [primary_email_config.to_email] : to_ret #to_email case will come, when none of the emails are active.. 
   end
   #HD hack ends..
   
@@ -278,7 +280,8 @@ class Account < ActiveRecord::Base
     
     def config_default_email
       d_email = "support@#{full_domain}"
-      email_configs.build(:to_email => d_email, :reply_email => d_email, :primary_role => true)
+      e_c = email_configs.build(:to_email => d_email, :reply_email => d_email, :primary_role => true)
+      e_c.active = true
     end
     
     def create_admin
