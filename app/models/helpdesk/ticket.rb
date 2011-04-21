@@ -125,7 +125,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #validates_format_of :email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, :allow_nil => false, :allow_blank => false
 
   def set_default_values
-    self.status = TicketConstants::STATUS_KEYS_BY_TOKEN[:open] unless TicketConstants::STATUS_KEYS_BY_TOKEN.key?(self.status)
+    self.status = TicketConstants::STATUS_KEYS_BY_TOKEN[:open] unless TicketConstants::STATUS_NAMES_BY_KEY.key?(self.status)
     self.source ||= TicketConstants::SOURCE_KEYS_BY_TOKEN[:portal]
     self.ticket_type ||= TicketConstants::TYPE_KEYS_BY_TOKEN[:how_to]
   end
