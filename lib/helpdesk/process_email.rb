@@ -97,10 +97,11 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         ticket.create_activity(ticket.requester, "{{user_path}} submitted a new ticket {{notable_path}}", {}, 
                                    "{{user_path}} submitted the ticket")
         ticket
-      rescue ActiveRecord::RecordInvalid
+      rescue ActiveRecord::RecordInvalid => e
         RAILS_DEFAULT_LOGGER.debug "Email record is invalid !" if RAILS_DEFAULT_LOGGER
         RAILS_DEFAULT_LOGGER.debug "The ticket errors are #{ticket.errors.to_json}" if RAILS_DEFAULT_LOGGER
         RAILS_DEFAULT_LOGGER.debug "The params are :: #{params.inspect}" if RAILS_DEFAULT_LOGGER
+        FreshdeskErrorsMailer.deliver_error_email(ticket,params,e)
       end
       
       
