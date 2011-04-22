@@ -91,11 +91,19 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         :ticket_type =>Helpdesk::Ticket::TYPE_KEYS_BY_TOKEN[:how_to]
       )
       ticket.group_id = ticket.email_config.group_id unless ticket.email_config.nil?
-      ticket.save
+      begin
+        ticket.save!
+      rescue ActiveRecord::RecordInvalid
+        logger.debug "Email record is invalid !"
+        logger.debug "The ticket errors are #{ticket.errors.to_json}"
+        logger.debug "The params are :: #{params.inspect}"
+      end
+      
       create_attachments(ticket, ticket)
       ticket.create_activity(ticket.requester, "{{user_path}} submitted a new ticket {{notable_path}}", {}, 
                                    "{{user_path}} submitted the ticket")
       ticket
+    
     end
 
     def add_email_to_ticket(ticket, from_email, mesg)
