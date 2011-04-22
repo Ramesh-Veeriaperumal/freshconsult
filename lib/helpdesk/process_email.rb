@@ -91,7 +91,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         :ticket_type =>Helpdesk::Ticket::TYPE_KEYS_BY_TOKEN[:how_to]
       )
       ticket.group_id = ticket.email_config.group_id unless ticket.email_config.nil?
-      ticket.save
+      ticket.save!
       create_attachments(ticket, ticket)
       ticket.create_activity(ticket.requester, "{{user_path}} submitted a new ticket {{notable_path}}", {}, 
                                    "{{user_path}} submitted the ticket")
