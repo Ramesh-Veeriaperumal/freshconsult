@@ -10,23 +10,27 @@
 			</label>
 		</div>
 	<% else %>
-		<div class="email-item">
+		<div class='email-item <%= "email-inactive" unless email.active?  %>'>
 			<div class="action_buttons">
-				<%= link_to ( t('email_configs.make_primary'), make_primary_admin_email_config_path(email), :method => "put" ) unless email.primary_role? %>
+				<% if email.active? %> 
+					<%= link_to ( t('email_configs.make_primary'), make_primary_admin_email_config_path(email), :method => "put" ) unless email.primary_role? %>
+				<% end %>
 				<%= link_to t('edit'), edit_admin_email_config_path(email), :class => "edit-email last"  %>
-			</div>	
-			
+			</div>
 			<div class="item">
-				<label><strong><%=t('email_configs.supp_email_add')%> : </strong>
-				<%= content_tag (:span, h(email.reply_email), :class => "highlight") %>
-				<% content_tag (:span, "Primary", :class => "primary_email") if email.primary_role? %>
-				</label>
-			</div> 
+				<label>
+					<strong><%=t('email_configs.supp_email_add')%> : </strong>
+					<%= content_tag (:span, h(email.reply_email), :class => "highlight") %>
+					<%= content_tag (:span, "unverified", :class => "inactive_email custom-tip-top", :title => t('email_configs.unverified_info1')) unless email.active? %>
+				</label>	
+			</div>
+			<% if ( email.active? ) %>
 			<div class="item">
 				<label><%=t('email_configs.info15')%> : 
 				<%= content_tag (:span, h(email.to_email), :class => "large highlight" ) %>
 				</label>
 			</div> 
 			<%= content_tag ( :div, content_tag ( :label, "#{t('email_configs.info16')} <strong>#{email.group.name}</strong> group" ) , :class => "item" ) if email.group %>
+			<% end %>
 		</div>
 	<% end %>

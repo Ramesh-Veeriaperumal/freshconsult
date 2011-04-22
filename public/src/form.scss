@@ -87,7 +87,7 @@ div.ui-form ul{
 
 div.ui-form ul, ul.ui-form{ 
 	list-style:none; 
-	@include clearfix;
+	@include pie-clearfix;
 	margin:0px -20px 10px -20px;
 }
 
@@ -672,13 +672,13 @@ span.sort_handle{
 	.ui-form{ 
 		background:none;
 		border:0px;
-		@include corners(6px);
+		@include corners(12px);
+		@include shadows(0px, 1px, 6px, rgba(0, 0, 0, 0.10) );
 		text-align:left;
 		padding:25px;
 		border:1px solid #c2c2c2;
 		margin:0px auto;
 		background:#ffffff;
-		@include shadows(0px, 1px, 6px, #999999);
 		ul{
 			margin:0px;
 			li{

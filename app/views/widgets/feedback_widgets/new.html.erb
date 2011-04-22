@@ -1,7 +1,5 @@
-<div class="ui-widget-container" id="ui-widget-container">
-	<h3 class="title">How can we help you?</h3> 
-	<% form_for :ticket, @ticket, :url => widgets_feedback_widget_path , :html => {:method => :post}  do |f| %>
-	  <%= f.error_messages %> 
-	  <%= render :partial => 'form', :object => f %>
-	<% end %>
-</div>
+<h3 class="title">How can we help you?</h3> 
+<% form_for :ticket, @ticket, :url => widgets_feedback_widget_path , :html => {:method => :post}  do |f| %>
+  <%= f.error_messages %> 
+  <%= render :partial => 'form', :object => f %>
+<% end %>

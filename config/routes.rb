@@ -52,6 +52,7 @@ ActionController::Routing::Routes.draw do |map|
   
   map.namespace :admin do |admin|
     admin.resources :home, :only => :index
+    admin.resources :widget_config, :only => :index
     admin.resources :automations, :member => { :deactivate => :put, :activate => :put }, :collections => { :reorder => :put }
     admin.resources :va_rules, :member => { :deactivate => :put, :activate => :put }, :collections => { :reorder => :put }
     admin.resources :email_configs, :member => { :make_primary => :put }
@@ -73,7 +74,7 @@ ActionController::Routing::Routes.draw do |map|
   end
   
   map.namespace :widgets do |widgets|
-    widgets.resource :feedback_widget 
+    widgets.resource :feedback_widget, :member => { :loading => :get } 
   end 
 
   map.plans '/signup', :controller => 'accounts', :action => 'plans'
