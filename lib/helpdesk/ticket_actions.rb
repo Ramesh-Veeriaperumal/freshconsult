@@ -24,7 +24,7 @@ module Helpdesk::TicketActions
   end
 
   def set_default_values
-    @ticket.status = TicketConstants::STATUS_KEYS_BY_TOKEN[:open] unless TicketConstants::STATUS_NAMES_BY_KEY.key?(self.status)
+    @ticket.status = TicketConstants::STATUS_KEYS_BY_TOKEN[:open] unless TicketConstants::STATUS_NAMES_BY_KEY.key?(@ticket.status)
     @ticket.source ||= TicketConstants::SOURCE_KEYS_BY_TOKEN[:portal]
     @ticket.ticket_type ||= TicketConstants::TYPE_KEYS_BY_TOKEN[:how_to]
     @ticket.email ||= current_user && current_user.email
