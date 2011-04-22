@@ -150,7 +150,7 @@ class Account < ActiveRecord::Base
   end
   
   def default_email
-    primary_email_config.active ? primary_email_config.reply_email : primary_email_config.to_email
+    primary_email_config.active ? primary_email_config.reply_email : "support@#{full_domain}"
   end
   
   def to_s
@@ -165,7 +165,7 @@ class Account < ActiveRecord::Base
   #Helpdesk hack starts here
   def reply_emails
     to_ret = (email_configs.collect { |ec| ec.reply_email }).sort
-    to_ret.empty? ? [primary_email_config.to_email] : to_ret #to_email case will come, when none of the emails are active.. 
+    to_ret.empty? ? [ "support@#{full_domain}" ] : to_ret #to_email case will come, when none of the emails are active.. 
   end
   #HD hack ends..
   

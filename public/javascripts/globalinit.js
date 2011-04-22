@@ -39,6 +39,17 @@ var jQ = jQuery.noConflict();
 			 	classes: 'ui-tooltip-rounded ui-tooltip-shadow'
 			 }
 		});
+		
+		$(".custom-tip-top").qtip({
+			 position: {
+			      my: 'bottom center',  // Position my top left...
+			      at: 'top center', // at the bottom right of...
+			      viewport: jQuery(window) 
+			 }, 
+			 style : {
+			 	classes: 'ui-tooltip-rounded ui-tooltip-shadow'
+			 }
+		});
 		 
 		flash = $("div.flash_info");
 		if(flash.get(0)){
@@ -48,7 +59,7 @@ var jQ = jQuery.noConflict();
 				});
 				setTimeout(function() {
 			        flash.hide('blind', {}, 500)
-			    }, 1000);
+			    }, 20000);
 				flash.find('a.show-list').click(function(ev){
 					flash.find('div.list').slideDown(300);
 					$(this).hide();

@@ -203,7 +203,9 @@ div.action_buttons{
 	}
 }
 
-
+div.action_buttons:hover{
+	@include shadows(rgba(0, 0, 0, 0.1), 0, 0, 2px);
+}
 /* POSITIVE */
 
 button.positive, .buttons a.positive{
