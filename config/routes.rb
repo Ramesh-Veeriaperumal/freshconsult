@@ -55,6 +55,7 @@ ActionController::Routing::Routes.draw do |map|
     admin.resources :automations, :member => { :deactivate => :put, :activate => :put }, :collections => { :reorder => :put }
     admin.resources :va_rules, :member => { :deactivate => :put, :activate => :put }, :collections => { :reorder => :put }
     admin.resources :email_configs, :member => { :make_primary => :put }
+    admin.register_email '/register_email/:activation_code', :controller => 'email_configs', :action => 'register_email'
     admin.resources :email_notifications
     admin.resources :business_calender, :member => { :update => :put }
   end

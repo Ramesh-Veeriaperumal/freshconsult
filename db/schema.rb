@@ -9,7 +9,9 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110422061245) do
+
+ActiveRecord::Schema.define(:version => 20110421065658) do
+
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -94,13 +96,15 @@ ActiveRecord::Schema.define(:version => 20110422061245) do
   add_index "delayed_jobs", ["locked_by"], :name => "index_delayed_jobs_on_locked_by"
 
   create_table "email_configs", :force => true do |t|
-    t.integer  "account_id",   :limit => 8
+    t.integer  "account_id",      :limit => 8
     t.string   "to_email"
     t.string   "reply_email"
-    t.integer  "group_id",     :limit => 8
+    t.integer  "group_id",        :limit => 8
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "primary_role",              :default => false
+    t.boolean  "primary_role",                 :default => false
+    t.boolean  "active",                       :default => false
+    t.string   "activator_token"
   end
 
   add_index "email_configs", ["account_id", "to_email"], :name => "index_email_configs_on_account_id_and_to_email", :unique => true
