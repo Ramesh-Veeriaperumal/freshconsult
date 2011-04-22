@@ -94,9 +94,9 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       begin
         ticket.save!
       rescue ActiveRecord::RecordInvalid
-        logger.debug "Email record is invalid !"
-        logger.debug "The ticket errors are #{ticket.errors.to_json}"
-        logger.debug "The params are :: #{params.inspect}"
+        RAILS_DEFAULT_LOGGER.debug "Email record is invalid !" if RAILS_DEFAULT_LOGGER
+        RAILS_DEFAULT_LOGGER.debug "The ticket errors are #{ticket.errors.to_json}" if RAILS_DEFAULT_LOGGER
+        RAILS_DEFAULT_LOGGER.debug "The params are :: #{params.inspect}" if RAILS_DEFAULT_LOGGER
       end
       
       create_attachments(ticket, ticket)
