@@ -7,6 +7,7 @@ gem "i18n", "0.4.2"
 
 gem "RedCloth", "4.2.3"
 gem "authlogic", "2.1.6"
+gem "omniauth", "0.1.6"
 gem "rufus-scheduler", :require =>"rufus/scheduler"
 gem "tzinfo"
 gem "ruby-debug", "0.10.3"
@@ -31,6 +32,7 @@ gem "classifier", "1.3.1", :path => "#{File.expand_path(__FILE__)}/../vendor/gem
 gem "stemmer", "1.0.1", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/stemmer-1.0.1"
 gem "tiny_mce", "0.1.4"
 gem "jammit"
+#gem "win32-open3", "0.3.2"
 
 group :development do
    gem "rspec", "1.3.1"

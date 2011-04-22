@@ -91,7 +91,9 @@ module Rack #:nodoc:
     # returns a <tt>[status, header, body]</tt> response. 
     # The server_port is set as 80 forcefully to work in cluster - shihab
     def call(env)
-      env["SERVER_PORT"] = 80 
+      if RAILS_ENV == "production" or RAILS_ENV == "staging"
+        env["SERVER_PORT"] = 80 
+      end
       req = Rack::Request.new(env)
       if req.params["openid.mode"]
         complete_authentication(env)

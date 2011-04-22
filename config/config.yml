@@ -9,6 +9,11 @@ base_domain:
     staging: freshpo.com
     test: freshpo.com
 
+demo_site:
+    development: "localhost"
+    production:  "demo.freshdesk.com"
+    staging:     "demo.freshpo.com"
+
 # Set this to true if you want to require CC info when creating a trial account for a paid plan
 require_payment_info_for_trials: false
 

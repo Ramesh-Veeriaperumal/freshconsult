@@ -1,9 +1,13 @@
 ActionController::Routing::Routes.draw do |map|
-    
+      
   map.connect '/images/helpdesk/attachments/:id/:style.:format', :controller => '/helpdesk/attachments', :action => 'show', :conditions => { :method => :get }
   
   # Routing for Asset management Jammit
   Jammit::Routes.draw(map)
+  
+  map.resources :authorizations
+  map.callback '/auth/:provider/callback', :controller => 'authorizations', :action => 'create'
+  map.failure '/auth/failure', :controller => 'authorizations', :action => 'failure'
   
   map.resources :uploaded_images, :controller => 'uploaded_images'
   

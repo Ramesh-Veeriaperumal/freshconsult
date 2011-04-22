@@ -16,7 +16,7 @@
 				<%= f.label :remember_me, "Remember me on this computer" %>
 		  	</li>
 		  	<li>
-		  		<%= f.submit "Login", { :class => "uiButton"} %>
+		  		<%= f.submit "Login", { :class => "uiButton"} %> or <%= link_to "Signin using Google", "/auth/open_id?openid_url=https://www.google.com/accounts/o8/id" %>
 			</li>
 			<li>
 				<span class="seperator"></span>

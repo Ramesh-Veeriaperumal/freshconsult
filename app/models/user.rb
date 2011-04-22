@@ -17,6 +17,8 @@ class User < ActiveRecord::Base
   belongs_to :account
   belongs_to :customer
   
+  has_many :authorizations, :dependent => :destroy
+  
   has_one :avatar,
     :as => :attachable,
     :class_name => 'Helpdesk::Attachment',
