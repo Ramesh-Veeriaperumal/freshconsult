@@ -924,39 +924,42 @@ body h5{
 
 
 .admin_icons{
-	$aicon_size:66px;
+	$aicon_size:32px;
 	img{
-		@include sprite-background("admin_icons.png", 34px, 34px);
+		@include sprite-background("embed/sprites/admin_icons.png", 32px, 32px);
 	}
 	.ticket_field{
-		@include sprite-column(5, $aicon_size);
+		@include sprite-row(5, $aicon_size);
 	}
 	.sla{
-		@include sprite-column(2, $aicon_size);
+		@include sprite-row(2, $aicon_size);
 	}
 	.email{
-		@include sprite-column(3, $aicon_size);
+		@include sprite-row(3, $aicon_size);
 	}
 	.email_notify{
-		@include sprite-column(4, $aicon_size);
+		@include sprite-row(4, $aicon_size);
 	}								
 	.helpdesk_rebrand{
-		@include sprite-column(1, $aicon_size);
+		@include sprite-row(1, $aicon_size);
 	}
 	.user{
-		@include sprite-column(6, $aicon_size);
+		@include sprite-row(9, $aicon_size);
 	}				
 	.user_group{
-		@include sprite-column(7, $aicon_size);
+		@include sprite-row(6, $aicon_size);
 	}				
 	.virtual_agent{
-		@include sprite-column(8, $aicon_size);
+		@include sprite-row(7, $aicon_size);
 	}				
 	.automation{
-		@include sprite-column(9, $aicon_size);
+		@include sprite-row(8, $aicon_size);
 	}	
 	.business_hours{
-		@include sprite-column(10, $aicon_size);
+		@include sprite-row(10, $aicon_size);
+	}
+	.feedback_widget{
+		@include sprite-row(11, $aicon_size);
 	}								
 }
 

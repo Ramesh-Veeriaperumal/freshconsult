@@ -271,7 +271,8 @@ en:
        info4: "if a ticket remains un-assigned for more than"
        info5: "Are you sure"
   
-      
+   feedback_widget:
+       title: "Widget Settings" 
        
    user:
       full_name: "Full Name"

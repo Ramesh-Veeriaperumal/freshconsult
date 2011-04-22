@@ -17,7 +17,8 @@
 		<%= image_tag user.avatar.content.url(:medium) %>
 	</div>
 	<div id="AvatarInput" style="display:none;">
-		<% fields_for "user[avatar_attributes]", user.avatar do |avatar_form| %>					
+		<% fields_for "user[avatar_attributes]", user.avatar do |avatar_form| %>	
+			<span><%=t('user.info1')%></span>				
 			<%= avatar_form.file_field :content %>				
 		<% end %>
 	</div>

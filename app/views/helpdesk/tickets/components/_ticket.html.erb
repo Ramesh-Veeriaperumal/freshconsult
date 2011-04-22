@@ -16,22 +16,21 @@
 					});
 	}
 <% end %>
-<div class="rtDetails" id="TicketProperties">              
-
-		<h3 class="title"><%=t('ticket.properties')%></h3>	
-			<% form_for ticket, :html => { :id => 'custom_ticket_form' } do |f| %>
-	        <ul class="cnt">
-	            <li>
-	                <label><%=t('ticket.due_by_time')%></label>
-					<%= ticket.due_by.strftime("%B %e %Y at %I:%M %p") %>
-	            </li>
-				<!--form values starts here-->
-					<%= render :partial=> "custom_form_partial" ,:locals => { :f => f } %>
-				<!--form values ends here-->
-				<!-- Custom fields ends here-->
-				<li class="button-container">
-					<%= f.submit t('update'), :class => "uiButton grey small" %>
-				</li>		
-	        </ul>
-			<% end %> 
-	    </div> 
+<div class="rtDetails" id="TicketProperties">
+	<h3 class="title"><%=t('ticket.properties')%></h3>	
+	<% form_for ticket, :html => { :id => 'custom_ticket_form' } do |f| %>
+       <ul class="cnt">
+           <li>
+              <label><%=t('ticket.due_by_time')%></label>
+				<%= ticket.due_by.strftime("%B %e %Y at %I:%M %p") %>
+	       </li>
+		   <!--form values starts here-->
+		   <%= render :partial=> "custom_form_partial" ,:locals => { :f => f } %>
+			<!--form values ends here-->
+			<!-- Custom fields ends here-->
+			<li class="button-container">
+				<%= f.submit t('update'), :class => "uiButton grey small" %>
+			</li>		
+	   </ul>
+	<% end %> 
+</div> 

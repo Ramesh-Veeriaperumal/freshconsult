@@ -195,7 +195,8 @@ div.bg_pulp{
 /* Header Tab styles */
 
 .top_nav_bg{
-	background:$tab_color;
+	background:$tab_color; 
+	@include inset-shadows(rgba(0, 0, 0, 0.1), 0px, -2px, 2px);
 }
 
 .nav_search, .nav_right{
@@ -297,6 +298,7 @@ ul.tabs{
 	li.active a, li.active a:hover{
 		border-color:darken($tab_color, 10%);
 		background:$background; 
+		@include shadows(rgba(0, 0, 0, 0.6), 0px, 0px, 2px);
 		color:#000000; 
 	} 
 } 

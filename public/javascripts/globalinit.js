@@ -17,7 +17,8 @@ var jQ = jQuery.noConflict();
 			onkeyup: false,
 			focusCleanup: true,
 			focusInvalid: false
-		}
+		} 
+		
 		$("ul.ui-form").not(".dont-validate").parents('form:first').validate(validateOptions);
 		$("div.ui-form").not(".dont-validate").find('form:first').validate(validateOptions); 
 		$("form.uniForm").validate(validateOptions);
@@ -45,7 +46,9 @@ var jQ = jQuery.noConflict();
 				close = $("<a />").addClass("close").attr("href", "#").appendTo(flash).click(function(ev){
 					flash.fadeOut(600);
 				});
-				
+				setTimeout(function() {
+			        flash.hide('blind', {}, 500)
+			    }, 1000);
 				flash.find('a.show-list').click(function(ev){
 					flash.find('div.list').slideDown(300);
 					$(this).hide();
