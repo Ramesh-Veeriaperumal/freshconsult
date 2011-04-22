@@ -93,16 +93,17 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       ticket.group_id = ticket.email_config.group_id unless ticket.email_config.nil?
       begin
         ticket.save!
+        create_attachments(ticket, ticket)
+        ticket.create_activity(ticket.requester, "{{user_path}} submitted a new ticket {{notable_path}}", {}, 
+                                   "{{user_path}} submitted the ticket")
+        ticket
       rescue ActiveRecord::RecordInvalid
         RAILS_DEFAULT_LOGGER.debug "Email record is invalid !" if RAILS_DEFAULT_LOGGER
         RAILS_DEFAULT_LOGGER.debug "The ticket errors are #{ticket.errors.to_json}" if RAILS_DEFAULT_LOGGER
         RAILS_DEFAULT_LOGGER.debug "The params are :: #{params.inspect}" if RAILS_DEFAULT_LOGGER
       end
       
-      create_attachments(ticket, ticket)
-      ticket.create_activity(ticket.requester, "{{user_path}} submitted a new ticket {{notable_path}}", {}, 
-                                   "{{user_path}} submitted the ticket")
-      ticket
+      
     
     end
 
