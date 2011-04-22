@@ -5,6 +5,7 @@ unless Account.current
     
     a = Account.create(:name => 'Test Account', :domain => 'localhost', :plan => SubscriptionPlan.first, :user => user)
     a.update_attribute(:full_domain, 'localhost')
+    a.primary_email_config.update_attributes(:reply_email => "support@localhost", :to_email => "support@localhost")
     
     a.make_current
   else
