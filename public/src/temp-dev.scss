@@ -225,6 +225,9 @@ div.addReminder{
 		color:#666666;
 		display:block; 
 	}
+	.action_buttons{
+		margin-top:2px;
+	}
 	.highlight{ 
 		font-size:inherit; 
 		font-size:15px;
@@ -232,7 +235,7 @@ div.addReminder{
 	.info_data{ font-size:12px; }
 	
 	div.email-item-default, div.email-item{
-		padding:12px 22px 4px;
+		padding:6px 22px 4px;
 		background:#f6f6f6;
 	}
 	
@@ -257,6 +260,11 @@ div.addReminder{
 	
 	}
 } 
+.email-inactive{
+	.highlight{
+		color:#777777 !important;
+	}	
+}
 
 .email-settings-form{
 	table{ width: 400px; }
@@ -271,20 +279,34 @@ div.addReminder{
 	font-size:14px;
 }
 
-.primary_email{
+.inactive_email{
 	padding:2px 15px;
-	border:1px solid #b8d385;
-	background-color:#ddeeba;
-	color:#5b7200;
+	border:1px solid darken(#f7e6e6, 5%);
+	background-color:#f7e6e6;
+	color:#b56e6e;
 	font-size:10px;
-	@include corners(5px);
-	
+	position:relative;
+	top:-1px;
+	text-transform:uppercase;
+	font-weight:bold;
+	@include corners(5px); 
 }
 
 #primary-email-settings{
 	div.email-item-default, div.email-item{
-		background-color:#fdfff3;
+		background-color:#efffd8;
 	}
+}
+
+.email-info{
+	background-color:#fefce5;
+	padding:12px 22px;
+	line-height:22px;
+	margin:0px -20px;
+	font-size:13px;
+	color:#996666;
+	border:1px solid #f4f4f4;
+	margin-bottom:10px;
 }
 
 

@@ -41,7 +41,7 @@ stylesheets:
     - public/stylesheets/temp-dev.css
     - public/stylesheets/buttons.css
     - public/stylesheets/jquery-ui.css
-    - public/stylesheets/jquery.qtip.css  
+    - public/stylesheets/jquery.qtip.css
     - public/stylesheets/ie.css 
   
   widget:
@@ -49,4 +49,4 @@ stylesheets:
     - public/stylesheets/defaults.css
     - public/stylesheets/form.css
     - public/stylesheets/buttons.css
-    
+    - public/stylesheets/ie.css 

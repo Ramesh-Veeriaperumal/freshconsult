@@ -106,9 +106,17 @@ div.ui-form ul {
 /* line 88, ../src/form.scss */
 div.ui-form ul, ul.ui-form {
   list-style: none;
-  overflow: hidden;
   *zoom: 1;
   margin: 0px -20px 10px -20px;
+}
+/* line 22, ../../../.gem/ruby/1.8/gems/compass-0.10.6/frameworks/compass/stylesheets/compass/utilities/general/_clearfix.scss */
+div.ui-form ul:after, ul.ui-form:after {
+  content: "\0020";
+  display: block;
+  height: 0;
+  clear: both;
+  overflow: hidden;
+  visibility: hidden;
 }
 
 /* line 95, ../src/form.scss */
@@ -860,17 +868,17 @@ span.sort_handle {
 .ui-login .ui-form, .ui-signup .ui-form {
   background: none;
   border: 0px;
-  -moz-border-radius: 6px 6px 6px 6px;
-  -webkit-border-radius: 6px 6px 6px 6px;
-  border-radius: 6px 6px 6px 6px;
+  -moz-border-radius: 12px 12px 12px 12px;
+  -webkit-border-radius: 12px 12px 12px 12px;
+  border-radius: 12px 12px 12px 12px;
+  -moz-box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.1);
+  -webkit-box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.1);
   text-align: left;
   padding: 25px;
   border: 1px solid #c2c2c2;
   margin: 0px auto;
   background: #ffffff;
-  -moz-box-shadow: 0px 1px 6px #999999;
-  -webkit-box-shadow: 0px 1px 6px #999999;
-  box-shadow: 0px 1px 6px #999999;
 }
 /* line 682, ../src/form.scss */
 .ui-login .ui-form ul, .ui-signup .ui-form ul {

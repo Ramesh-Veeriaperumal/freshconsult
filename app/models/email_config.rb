@@ -23,7 +23,7 @@ class EmailConfig < ActiveRecord::Base
     end
   
     def deliver_email_activation
-      EmailConfigNotifier.deliver_activation_instructions(self) if @need_activation #Move to delayed_job after initial testing..
+      EmailConfigNotifier.send_later(:deliver_activation_instructions, self) if @need_activation
     end
 
     def reset_activator_token

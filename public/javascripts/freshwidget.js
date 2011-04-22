@@ -2,11 +2,18 @@
 	 // Private Variable and methods
 	 var document 	   = window.document,
 	 	 locationClass = { 1: "top", 2: "right", 3: "bottom", 4: "left", top: "top", right: "right", bottom: "bottom", left: "left"},
+		 urlWithScheme = /^[a-zA-Z]+:\/\//,
 		 options = {
-			buttonText: "Support", 
-			alignment:  "left", 
-			offset:     "35%",
-			domain:		"http://192.168.1.104:3000"	
+			widgetId:		0,
+			buttonImageUrl:	"",					 	
+			buttonText: 	"Support",
+			buttonBg: 	 	"#7eb600",
+			buttonColor: 	"white",
+			buttonBorder:   "#5B8300",
+			backgroundImage: null, 
+			alignment:  	"left", 
+			offset:     	"35%",
+			url:			"http://192.168.1.104:3000"	
 		},
 		iframe, button, closeButton, overlay, dialog
 		container = null;
@@ -21,6 +28,14 @@
 			}
 		}
 	 }
+	 
+	 function prependSchemeIfNecessary(url) {
+	    if (url && !(urlWithScheme.test(url))) {
+	      return document.location.protocol + '//' + url;
+	    } else {
+	      return url;
+	    }
+	 } 
 	 
 	 function loadcssfile(filename){
 		var fileref = document.createElement("link");
@@ -39,18 +54,30 @@
 	    }
 	 }  
 	 	 
-	 function extend (obj, extObj) {
-	    if (arguments.length > 2) {
-	        for (var a = 1; a < arguments.length; a++) {
-	            extend(obj, arguments[a]);
+	 function extend (params) {
+		var prop;
+	    for (prop in params) {
+	      if (options.hasOwnProperty(prop)) {
+	        if (prop === 'url' || prop === 'assetHost') {
+	          options[prop] = prependSchemeIfNecessary(params[prop]);
+	        } else {
+	          options[prop] = params[prop];
 	        }
-	    } else {
-	        for (var i in extObj) {
-	            obj[i] = extObj[i];
-	        }
+	      }
 	    }
-	    return obj;
 	 } 
+	 
+	 function useFilterforIE(item) {
+	 	url = item.src;
+	    var browser = window.navigator && window.navigator.appVersion.split("MSIE");
+	    var version = parseFloat(browser[1]);
+	    if ((version >= 5.5) && (version < 7) && (document.body.filters)) {
+	      item.style.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" + url + "', sizingMethod='crop')";
+	    } else {
+	      item.style.backgroundImage = 'url(' + url + ')';
+	    }
+		return item;
+	 }
 	 	 
 	 function createButton(){
 	 	if (container == null) {
@@ -58,15 +85,32 @@
 			button = document.createElement('div');
 			button.setAttribute('id', 'freshwidget-button');
 			button.className = "freshwidget-button " + class_name;
-			if (class_name == 'top' || class_name == 'bottom') 
-				button.style.left = options.offset;
-			else 
-				button.style.top = options.offset;
 			
 			link = document.createElement('a');
 			link.setAttribute('href', 'javascript:void(0)');
-			link.className = "freshwidget-theme";
-			text = document.createTextNode(options.buttonText);
+			
+			text = null;
+			
+			if(options.backgroundImage == null){
+				link.className = "freshwidget-theme";
+				link.style.color		   = options.buttonColor;
+				link.style.backgroundColor = options.buttonBg;
+				link.style.borderColor 	   = options.buttonBorder;
+				text = document.createTextNode(options.buttonText);
+			}else{
+				link.className 			   = "freshwidget-customimage";
+				text = document.createElement("img");
+				text.src = options.backgroundImage;	
+				text = useFilterforIE(text);
+			}
+			
+			if (class_name == 'top' || class_name == 'bottom'){
+				button.style.left = options.offset; 
+			}
+			else{ 
+				button.style.top = options.offset;
+			}
+			
 			document.body.insertBefore(button, document.body.childNodes[0]);
 			button.appendChild(link);
 			link.appendChild(text);
@@ -79,7 +123,7 @@
 			
 			container.innerHTML = '<div class="widget-ovelay" id="freshwidget-overlay">&nbsp;</div>' +
 			'<div class="freshwidget-dialog" id="freshwidget-dialog">' +
-			' <span id="freshwidget-close" class="widget-close"></span>' +
+			' <img id="freshwidget-close" class="widget-close" src="'+options.url+'/images/widget_close.png" />' +
 			' <div class="frame-container">' +
 			' 	<iframe id="freshwidget-frame" src="about:blank" frameborder="0" scrolling="auto" allowTransparency="true" />' +
 			' </div>'
@@ -87,6 +131,7 @@
 			
 			container 	= document.getElementById('FreshWidget');
 			closeButton = document.getElementById('freshwidget-close');
+			closeButton	= useFilterforIE(closeButton);
 			dialog      = document.getElementById('freshwidget-dialog');
 			iframe	    = document.getElementById("freshwidget-frame");
 			overlay     = document.getElementById('freshwidget-overlay'); 
@@ -101,14 +146,15 @@
 	 }; 
 	 
 	 function loadingIframe(){
-	 	iframe.src = options.domain + "/loading.html";
+	 	iframe.src = options.url + "/loading.html";
 	 }  
 	 
 	 function widgetFormUrl(){
-	 	iframe.src = options.domain + "/widgets/feedback_widget/new";	
+	 	iframe.src = options.url + "/widgets/feedback_widget/new";	
 	 }
 	 
 	 function showContainer(){ 
+	 	scroll(0,0);
 	 	container.style.display = 'block';
 		widgetFormUrl();
 	 }
@@ -120,6 +166,7 @@
 	 
 	 function initialize(){ 
 		loadcssfile("http://192.168.1.104:3000/stylesheets/freshwidget.css"); 
+		extend(params);
 		bind(window, 'load', function(){
 			// File name to be changed later when uploaded
 			createButton();
@@ -129,7 +176,6 @@
 	 // Defining Public methods				  
      var FreshWidget = {
 	 	init 		: function(apikey, params){
-						catchException(function(){ return extend(options, params) });
 						catchException(function(){ return initialize() });	
 				      },
 		show 		: function(){

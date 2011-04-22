@@ -40,19 +40,15 @@
 			<%= label(:user, :name, t('user.full_name') ) %>
 			<%= text_field(:user, :name, :class => "text", :value => @agent.user.name )  %>
 		</li>	
-		<li class="medium">
+		<li>
 			<%= label(:user, :email, t('user.email')) %>
 			<!--label class="overlabel" for="email_primary">Primary</label-->
-			<%= text_field(:user, :email, :class => "text required email", :id => "email_primary" , :value => @agent.user.email) %>			
+			<%= text_field(:user, :email, :class => "text required email", :id => "email_primary" , :value => @agent.user.email) %>
+						
 		</li>	
 		<li>
 			<%= label(:user, :job_title, t('user.title')) %>
 			<%= text_field(:user, :job_title, :class => "text", :value => @agent.user.job_title ) %>
-		</li>
-		<li>
-			<input type="checkbox" id="user_role_val" name="user_role" onclick="setUserRole()" /> 
-			<%=t('agent.make_admin')%>
-			<%= hidden_field(:user, :user_role, :id=>"user_role", :value => @agent.user.user_role ||= User::USER_ROLES_KEYS_BY_TOKEN[:poweruser] ) %>
 		</li>
 		<li class="small">
 			<%= label(:user, :phone, "#{t('user.phone_no')}.") %>	
@@ -64,8 +60,7 @@
 				<label class="overlabel" for="phone_mobile"><%=t('user.mobile')%></label>
 				<%= text_field(:user, :mobile, :class => "text", :id => "phone_mobile" ,:value => @agent.user.mobile  ) %>
 			</div>
-		</li>
-		
+		</li> 
 		<li>
 			<%= render :partial => "/shared/profileavatar", :locals => { :user => @agent.user, :type => type } %>
 		</li>
@@ -81,7 +76,16 @@
 			<%= text_area(:agent, :signature, :class => "text", :id => "user_binfo" ) %>			
 			<%= hidden_field(:agent, :user_id, :id => "user_id" ) %>
 		</li>
-	
+		<li class="seperator"></li>
+		<li>
+			<h3 class="title border">Permissions</h3>
+			<label>	
+				<input type="checkbox" id="user_role_val" name="user_role" onclick="setUserRole()" /> 
+				<%=t('agent.make_admin')%>
+			</label>	 
+			<%= hidden_field(:user, :user_role, :id=>"user_role", :value => @agent.user.user_role ||= User::USER_ROLES_KEYS_BY_TOKEN[:poweruser] ) %>
+		</li>
+		<li class="seperator"></li>
 	</ul>	 	
  
 <% end %>

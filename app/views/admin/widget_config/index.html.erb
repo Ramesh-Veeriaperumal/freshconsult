@@ -1,0 +1,69 @@
+<%= render :partial => "shared/colorpicker" %>
+
+<% content_for :sidebar do -%>
+<div class="sidepanel"> 
+	<h3 class="title">Feedback widget</h3>
+	<p> 
+		The Feedback widget is a form that embeds into your site as a button on every page, allowing you to capture support requests, feedback, pricing enquiries etc.
+	</p>
+	<p>
+		The form contents will be converted to a ticket in your freshdesk upon submit.
+	</p>
+</div>
+<%- end %>
+
+<%= content_tag( :h3, t("feedback_widget.title"), :class => "title"  ) %>
+<% form_for "widget_config", "widget_config", :html => {:class => "uniForm"} do |f| %>	
+	  <fieldset class="inlineLabels">
+	  	 <div class="ctrlHolder">
+	  	 	<label>Text</label>
+			<input type="text" class="textInput" name="widget[buttonText]" value="Support" />
+	  	 </div>
+		 <div class="ctrlHolder">
+	  	 	<p class="label">Position</p>
+			<ul class="alternate">
+				<li>
+					<label>
+						Align
+						<select>
+							<option>Left</option>
+							<option>Right</option>
+							<option>Top</option>
+							<option>Bottom</option>
+						</select>
+					</label>
+					<label>
+						With an offset of
+						<input type="text" class="textInput" name="widget[buttonText]" value="50%" />
+					</label>
+				</li>
+			</ul>
+	  	 </div>
+		 <div class="ctrlHolder">
+			<p class="label">Button Color </p>
+			<div class="color">
+				<input type="color" id="TabColor" class="color_field required" name="widget[buttonBg]"  data-hex="true" value="<%= $tab_color %>" /> 
+			</div>
+	  	 </div>
+		 <div class="ctrlHolder">
+		 	<p class="label">Custom image URL</p>
+			<input type="text" class="textInput" name="widget[buttonText]" value="" />
+		 </div>
+		 <div class="ctrlHolder">
+		 	<p class="label">Grab code</p>
+			<p class="wordWrapCode">
+					params = {
+						buttonText: 	 "Support", 
+						alignment:  	 "left", 
+						offset:    		 "30%"
+					};
+					FreshWidget.init("", params);
+				
+			</p>	
+		 </div>
+	  </fieldset>
+	  <div class="button-container">
+	  	<a href="#" class="uiButton">Copy code to clipboard</a>
+	  	<a href="#" class="uiButton">Preview</a>
+	  </div>	
+<% end %>

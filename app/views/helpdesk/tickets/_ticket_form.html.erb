@@ -84,20 +84,20 @@
  	<%	
 		@customizer = ActiveSupport::JSON.decode(@item.customizer.json_data)		
 		@customizer.each do |field|
-			#field_class = field["type"] + ((field["agent"]["required"]) ? " required" : "")
-			field_class = field["type"]
+			field_class 	= field["type"] + (field["type"] != 'dropdown' && (field["agent"]["required"]) ? " required" : "")
+			field_madatory  = (field["agent"]["required"]) ? " *" : " " 
 			case field["label"]
 			 when "Requester" then
-    %>
-	<li> 	
-  		<label id="requester-label"><%=t('ticket.requester')%> *</label>
-  		<input type="text" id="helpdesk_ticket_email" class="text required email" name="helpdesk_ticket[email]" value="<%=@item.requester.email if @item.requester %>"></input>
+    %> 
+	<li class="text"> 	
+  		<label id="requester-label"><%=t('ticket.requester')%> <%= field_madatory %></label>
+  		<input type="text" id="helpdesk_ticket_email" class="<%= field_class %> email" name="helpdesk_ticket[email]" value="<%=@item.requester.email if @item.requester %>"></input>
    	</li> 
 	  
 			
 	<% when "Subject" then%>
-		<li>
-        	<%= f.label :subject, t('ticket.subject') %>
+		<li class="text">
+        	<%= f.label :subject, t('ticket.subject') + field_madatory %>
           	<%= f.text_field :subject, :class => field_class %>
    		</li>
 
@@ -140,8 +140,8 @@
     	</li>
 	
 	<%when "Description" then%>
-		<li>
-			<%= f.label :description, t('description') %>
+		<li class="paragraph">
+			<%= f.label :description, t('description') + field_madatory %>
     		<%= f.text_area :description, :class=>field_class %>
 		</li>				
 	
@@ -153,7 +153,7 @@
 				field_val = @item.get_ff_value(field["label"]) unless @item.id.nil?
 			%>
 			<% case field["type"] when "text","number" then %>				
-				<li class="<%= field['label'] %>">		 
+				<li class="text">		 
 
 					<%= cust_form.label "#{field["label"]}", field_label %>  
  					<%= cust_form.text_field "#{field["label"]}" , :class => field_class  , :value =>field_val%>

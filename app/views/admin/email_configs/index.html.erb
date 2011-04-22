@@ -4,7 +4,14 @@
  
 <div id="emailconfig-list">
 	<h3 class="title"><%=t('email_configs.title')%></h3> 
-	<div class="intro"><%=t('email_configs.info11')%></div> 
+	<div class="intro"><%=t('email_configs.info11')%></div>
+		<% if current_account.email_configs.count == 0 %>
+			<div class="email-info">
+				<%= t('email_configs.inactive_info1') %>
+				<br />
+				<%= t('email_configs.inactive_info2', :default_email => "support@#{current_account.full_domain}") %>
+			</div>
+		<% end %> 
 		<h4 class="title"><%=t('email_configs.primary_supp_email')%></h4>
 		<div id="primary-email-settings" class="email-settings">
 			<%= render (:partial => "email", :object =>  @email_configs.first) %>
