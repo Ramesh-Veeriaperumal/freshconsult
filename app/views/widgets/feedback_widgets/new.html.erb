@@ -1,5 +1,15 @@
-<h3 class="title">How can we help you?</h3> 
+<%= content_tag (:h3, (params[:formTitle].blank?) ? t('feedbackwidget_defaulttitle') : params[:formTitle], :class => "title") %>
 <% form_for :ticket, @ticket, :url => widgets_feedback_widget_path , :html => {:method => :post}  do |f| %>
-  <%= f.error_messages %> 
-  <%= render :partial => 'form', :object => f %>
+  <%= f.error_messages %>
+  	<ul class="ui-form"> 
+	    <%= render :partial => 'support/shared/request_form', :object => f %>
+  		<li>	
+			<span class="seperator"></span>
+		</li>		
+	</ul>
+	<div class="button-container">
+		<%= f.submit t('ticket.submit_ticket'), :class => "uiButton" %>
+		<%# Any fields named like meta[fieldname] will be saved by the helpdesk as metadata %>
+		<%= hidden_field_tag "meta[user_agent]", request.env["HTTP_USER_AGENT"] %> 
+	</div>
 <% end %>

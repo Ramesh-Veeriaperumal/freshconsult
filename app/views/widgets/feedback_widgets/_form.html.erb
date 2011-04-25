@@ -13,17 +13,17 @@
 				        	<%= form.label :subject, "Question" %>
 				          	<%= form.text_field :subject, :class => "text" %>
 				   		</li>
-					<% when "Source" then%> 
-					<% when "Status" then%>
-					<% when "Group"  then%>
-					<% when "Assigned to" then%>
-					<% when "Priority" then%>
-					
 					<% when "Description" then%>
 						<li>
 							<%= form.label :description, "Details" %>
 				    		<%= form.text_area :description, :class=>"textarea" %>
-						</li>				
+						</li>
+						
+					<% when "Source" then%> 
+					<% when "Status" then%>
+					<% when "Group"  then%>
+					<% when "Assigned to" then%>
+					<% when "Priority" then%>				
 					
 					<% else %> 
 						<% form.fields_for :flexifields do |cust_form| %>

@@ -4,21 +4,21 @@
 	 	 locationClass = { 1: "top", 2: "right", 3: "bottom", 4: "left", top: "top", right: "right", bottom: "bottom", left: "left"},
 		 urlWithScheme = /^[a-zA-Z]+:\/\//,
 		 options = {
-			widgetId:		0,
-			buttonImageUrl:	"",					 	
+			widgetId:		0,					 	
 			buttonText: 	"Support",
 			buttonBg: 	 	"#7eb600",
 			buttonColor: 	"white",
-			buttonBorder:   "#5B8300",
 			backgroundImage: null, 
 			alignment:  	"left", 
 			offset:     	"35%",
-			url:			"http://192.168.1.104:3000"	
+			url:			"http://support.freshdesk.com",
+			queryString:    ""
 		},
+		assetUrl  = "http://www.freshdesk.com/assets/",
 		iframe, button, closeButton, overlay, dialog
 		container = null;
 	
-	 // Utiltiy methods for FreshWidget	
+	 // Utility methods for FreshWidget	
 	 function catchException(fn) {
 		try {
 			return fn();
@@ -80,7 +80,7 @@
 	 }
 	 	 
 	 function createButton(){
-	 	if (container == null) {
+	 	if (button == null) {
 			class_name = locationClass[options.alignment] || "left";
 			button = document.createElement('div');
 			button.setAttribute('id', 'freshwidget-button');
@@ -91,11 +91,11 @@
 			
 			text = null;
 			
-			if(options.backgroundImage == null){
+			if(options.backgroundImage == null || options.backgroundImage == ""){
 				link.className = "freshwidget-theme";
 				link.style.color		   = options.buttonColor;
 				link.style.backgroundColor = options.buttonBg;
-				link.style.borderColor 	   = options.buttonBorder;
+				link.style.borderColor	   = options.buttonColor;
 				text = document.createTextNode(options.buttonText);
 			}else{
 				link.className 			   = "freshwidget-customimage";
@@ -115,6 +115,19 @@
 			button.appendChild(link);
 			link.appendChild(text);
 			
+			bind(link, 'click', function(){ window.FreshWidget.show(); });
+		}
+	 }	 
+	 
+	 function destroyButton(){
+ 	   if (button != null) {
+	   	document.body.removeChild(button);
+	   	button = null;
+	   }
+	 }
+	 
+	 function createContainer(){
+	 	if (container == null) {
 			container = document.createElement('div');
 			container.className = "freshwidget-container";
 			container.id = "FreshWidget";
@@ -123,7 +136,7 @@
 			
 			container.innerHTML = '<div class="widget-ovelay" id="freshwidget-overlay">&nbsp;</div>' +
 			'<div class="freshwidget-dialog" id="freshwidget-dialog">' +
-			' <img id="freshwidget-close" class="widget-close" src="'+options.url+'/images/widget_close.png" />' +
+			' <img id="freshwidget-close" class="widget-close" src="'+assetUrl+'/widget_close.png" />' +
 			' <div class="frame-container">' +
 			' 	<iframe id="freshwidget-frame" src="about:blank" frameborder="0" scrolling="auto" allowTransparency="true" />' +
 			' </div>'
@@ -139,7 +152,6 @@
 			dialog.appendChild(iframe);
 			loadingIframe();
 			
-			bind(link, 		  'click', function(){ window.FreshWidget.show(); });
 			bind(closeButton, 'click', function(){ window.FreshWidget.close(); });
 			bind(overlay, 	  'click', function(){ window.FreshWidget.close(); });
 		}
@@ -150,7 +162,7 @@
 	 }  
 	 
 	 function widgetFormUrl(){
-	 	iframe.src = options.url + "/widgets/feedback_widget/new";	
+	 	iframe.src = options.url + "/widgets/feedback_widget/new?"+options.queryString;	
 	 }
 	 
 	 function showContainer(){ 
@@ -164,20 +176,26 @@
 		loadingIframe();
 	 }
 	 
-	 function initialize(){ 
-		loadcssfile("http://192.168.1.104:3000/stylesheets/freshwidget.css"); 
+	 function initialize(params){ 
 		extend(params);
 		bind(window, 'load', function(){
 			// File name to be changed later when uploaded
 			createButton();
+			createContainer();
 		});
+	 }
+	 
+	 function updateWidget(params){
+	 	extend(params);
+		destroyButton();
+		createButton();
 	 }
 	 
 	 // Defining Public methods				  
      var FreshWidget = {
 	 	init 		: function(apikey, params){
-						catchException(function(){ return initialize() });	
-				      },
+						catchException(function(){ return initialize(params); });	
+				      }, 
 		show 		: function(){
 						catchException(function(){ return showContainer(); });
 					  },
@@ -186,8 +204,13 @@
 					  },
 		iframe 		: function(){
 						return iframe;
+					  }, 
+	    update 		: function(params){
+						catchException(function(){ return updateWidget(params); });
 					  }
-	 }
+	 }; 
+	 
+	 loadcssfile(assetUrl+"/freshwidget.css");
 	 
 	 if(!window.FreshWidget){window.FreshWidget=FreshWidget;}
 })();

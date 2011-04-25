@@ -1,5 +1,4 @@
-<%= content_tag ( :h3, t('ticket.submit_ticket_title') ,:class => "title" ) %>
-	<ul class="ui-form">
+
 		<% @customizer = ActiveSupport::JSON.decode(@ticket.customizer.requester_view)
 		   @customizer.each do |field|
 				#field_class = field["type"] + ((field["customer"]["required"]) ? " required" : "")
@@ -8,7 +7,7 @@
 					 when "Requester" then 
 					%>
 					<li> 	
-				  		<label id="requester-label">Email*</label>
+				  		<label id="requester-label">Your Email*</label>
 				  		<input type="text" id="helpdesk_ticket_email" class="text email required" name="helpdesk_ticket[email]" value="<%=@ticket.email%>"></input>
 				   	</li>	
 					<% when "Subject" then%>
@@ -96,20 +95,4 @@
 					<li>
 						<%= render :partial=>"/helpdesk/shared/attachment_form"  %>
 					</li>	
-					<li>
-						<span class="seperator"></span>
-					</li>
-					<li>
-						<% if !logged_in? %>
-						  	<%= content_tag ( :label, t('ticket.verify_human') ) %>
-						  	<%= recaptcha_tags :display => { :theme => "white" }  %>
-						<% end %> 
-					</li>
 					
-	</ul>
-	<div class="button-container">
-		<%= request_form.submit t('ticket.submit_ticket'), :class => "uiButton" %>
-		<%# Any fields named like meta[fieldname] will be saved by the helpdesk as metadata %>
-		<%= hidden_field_tag "meta[user_agent]", request.env["HTTP_USER_AGENT"] %>
-		<%= link_to t("cancel"), :back, :class => "uiButton" %>
-	</div>
