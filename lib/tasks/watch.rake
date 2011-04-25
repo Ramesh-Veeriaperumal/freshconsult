@@ -4,8 +4,8 @@ CONVERSATIONS_THRESHOLD = 40
 
 namespace :watch do
   desc 'Check for abnormal activities and email us, if needed'
-  puts "Check for abnormal activities started at #{Time.now}"
   task :abnormal => :environment do
+    puts "Check for abnormal activities started at #{Time.now}"
     check_and_alert('helpdesk_tickets', TICKETS_THRESHOLD)
     check_and_alert('helpdesk_notes', CONVERSATIONS_THRESHOLD)
   end
