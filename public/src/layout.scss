@@ -131,7 +131,7 @@ div.bg_pulp{
 
 .info_data, .info-data{
 	color:#888888;
-
+	font-size:12px;
 	padding-bottom:6px;
 } 
 
@@ -292,6 +292,7 @@ ul.tabs{
 			}
 			a:hover{
 				background:lighten($tab_color, 10%);
+				@include inset-shadows(rgba(0, 0, 0, 0.1), 0px, -2px, 2px); 
 				color:#ffffff;
 			} 
 	}  

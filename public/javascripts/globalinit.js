@@ -1,4 +1,4 @@
-/**
+/*
  * @author venom
  */
 var jQ = jQuery.noConflict();
@@ -27,6 +27,10 @@ var jQ = jQuery.noConflict();
 		// Auto Resize in IE seems to be screwing up the horizontal scroll bar... hence removing it
 		if(!$.browser.msie)
 			$("textarea.auto-expand").autoResize();
+		
+		sidebarHeight = $('#Sidebar').height();
+		if(sidebarHeight != null && sidebarHeight > $('#Pagearea').height())
+			$('#Pagearea').css("minHeight", sidebarHeight);
 		
 		// Any object with class custom-tip will be given a different tool tip
 		$(".custom-tip").qtip({

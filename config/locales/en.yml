@@ -42,7 +42,7 @@ en:
    activities: "Activities"
    undelete: "Restore"
    recent_activity: "Recent Activity"
-   note: "Note"
+   note: "Note: "
    enter_message : "Enter your message here"
    
    sla_policy: 
@@ -272,10 +272,7 @@ en:
        info3: "Send an Escalation email to"
        info4: "if a ticket remains un-assigned for more than"
        info5: "Are you sure"
-  
-   feedback_widget:
-       title: "Widget Settings" 
-       
+      
    user:
       full_name: "Full Name"
       email: "Email"
@@ -423,3 +420,34 @@ en:
         format: "%{attribute} %{message}"
    
        
+#April 25th 2011
+    
+   feedbackwidget_help_title:         "Feedback widget"
+   feedbackwidget_help_para1:         "The Feedback widget helps you to embed your self service portals ticket form in your own website."
+   feedbackwidget_help_para2:         "Using the widget users can submit support tickets directly from your website. "
+   feedbackwidget_title:              "Widget Settings"
+   feedbackwidget_intro:              "Customize your freshdesk widget below and see a realtime preview."
+   
+   feedbackwidget_btcustomize:        "Button customization"
+   feedbackwidget_text:               "Text"
+   feedbackwidget_bgcolor:            "Background Color"
+   feedbackwidget_position:           "Position"
+   feedbackwidget_custom_image:       "Custom image URL"
+   feedbackwidget_custom_image_info:  "if you are using a custom image the color and text will be ignored."
+   feedbackwidget_offset_label:       "With an offset of"
+   feedbackwidget_offset_info:        "The offset will be the distance of the widget button (pixels/percent) from the left or top of the screen based on the alignment you choose."
+   
+   feedbackwidget_formcustomize:      "Form customization"
+   feedbackwidget_form_title:         "Widget form title"
+   feedbackwidget_embed_code:         "Widget embed code"
+   feedbackwidget_embed_code_intro:   "Please copy and paste the code below anywhere before the &lt;/body&gt; tag in the html template of your site or every page where you'd like to provide the Freshdesk widget."
+   
+   align_to:                          "Align to"
+   left:                              "Left"
+   right:                             "Right"
+   top:                               "Top"
+   bottom:                            "Bottom"
+   feedbackwidget_defaultbutton:      "Support"
+   feedbackwidget_defaulttitle:       "Help & Support"
+   back_to_admin:                     "Back to Admin"
+   

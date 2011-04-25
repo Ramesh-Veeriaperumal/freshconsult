@@ -50,3 +50,6 @@ stylesheets:
     - public/stylesheets/form.css
     - public/stylesheets/buttons.css
     - public/stylesheets/ie.css 
+    
+  freshwidget: 
+    - public/stylesheets/freshwidget.css

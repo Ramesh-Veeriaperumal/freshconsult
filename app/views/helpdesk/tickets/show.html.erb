@@ -9,13 +9,13 @@
 			if (action == "reply")
 			{
 				jQuery('#cnt-note').hide();
-				jQuery('#cnt-reply').show();
+				jQuery('#cnt-reply').toggle();
 				setCaretToPos($('send-email-cnt-reply-body'), 0);
 			}
 			else
 			{
 				jQuery('#cnt-reply').hide();
-				jQuery('#cnt-note').show();
+				jQuery('#cnt-note').toggle();
 				setCaretToPos($('add-note-cnt-note-body'), 0);
 			}
 			//link.addClassName('active');
@@ -70,7 +70,7 @@
 		});
 		
 		<% if @ticket.notes.visible.exclude_source('meta').newest_first.blank? then %>
-			jQuery("#ReplyButton").trigger('click');
+		//	jQuery("#ReplyButton").trigger('click');
 		<% end %>
 		
 		jQuery('#custom_ticket_form').validate();
