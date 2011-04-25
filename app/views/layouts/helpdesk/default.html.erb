@@ -14,14 +14,14 @@
 					<%= render(:partial => '/search/navsearch') %>
 	                <div id="inner"> 
 						<% if @content_for_sidebar %>
-						    <div class="sidebar"> 
+						    <div class="sidebar" id="Sidebar"> 
 							 	<%= yield :sidebar %>					
 							</div>
 						<% end %>  
 		                <div class="leftcontent">
 		                	<%= show_flash %> 
-							<%= yield :breadcrumb %>		
-							<div class="pagearea">				
+							<%= yield :breadcrumb %>
+							<div class="pagearea" id="Pagearea">				
 								<%= yield %>
 							</div>
 		                </div>

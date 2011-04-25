@@ -203,6 +203,7 @@ div.bg_pulp {
 /* line 132, ../src/layout.scss */
 .info_data, .info-data {
   color: #888888;
+  font-size: 12px;
   padding-bottom: 6px;
 }
 
@@ -412,9 +413,12 @@ ul.tabs li a {
 /* line 293, ../src/layout.scss */
 ul.tabs li a:hover {
   background: #95cb54;
+  -moz-box-shadow: inset 0px -2px 2px rgba(0, 0, 0, 0.1);
+  -webkit-box-shadow: inset 0px -2px 2px rgba(0, 0, 0, 0.1);
+  box-shadow: inset 0px -2px 2px rgba(0, 0, 0, 0.1);
   color: #ffffff;
 }
-/* line 298, ../src/layout.scss */
+/* line 299, ../src/layout.scss */
 ul.tabs li.active a, ul.tabs li.active a:hover {
   border-color: #618e2b;
   background: #efefef;
@@ -425,7 +429,7 @@ ul.tabs li.active a, ul.tabs li.active a:hover {
 }
 
 /* Footer styles */
-/* line 307, ../src/layout.scss */
+/* line 308, ../src/layout.scss */
 .footerContent {
   padding: 4px 20px 20px;
 }

@@ -1,69 +1,123 @@
 <%= render :partial => "shared/colorpicker" %>
-
+	
 <% content_for :sidebar do -%>
 <div class="sidepanel"> 
-	<h3 class="title">Feedback widget</h3>
-	<p> 
-		The Feedback widget is a form that embeds into your site as a button on every page, allowing you to capture support requests, feedback, pricing enquiries etc.
-	</p>
-	<p>
-		The form contents will be converted to a ticket in your freshdesk upon submit.
-	</p>
+	<%= content_tag( :h3, t('feedbackwidget_help_title'), :class => 'title' ) %>
+	<%= content_tag( :p,  t('feedbackwidget_help_para1')) %>
+	<%= content_tag( :p,  t('feedbackwidget_help_para2')) %>
 </div>
 <%- end %>
 
-<%= content_tag( :h3, t("feedback_widget.title"), :class => "title"  ) %>
-<% form_for "widget_config", "widget_config", :html => {:class => "uniForm"} do |f| %>	
-	  <fieldset class="inlineLabels">
-	  	 <div class="ctrlHolder">
-	  	 	<label>Text</label>
-			<input type="text" class="textInput" name="widget[buttonText]" value="Support" />
-	  	 </div>
-		 <div class="ctrlHolder">
-	  	 	<p class="label">Position</p>
-			<ul class="alternate">
-				<li>
-					<label>
-						Align
-						<select>
-							<option>Left</option>
-							<option>Right</option>
-							<option>Top</option>
-							<option>Bottom</option>
-						</select>
-					</label>
-					<label>
-						With an offset of
-						<input type="text" class="textInput" name="widget[buttonText]" value="50%" />
-					</label>
-				</li>
-			</ul>
-	  	 </div>
-		 <div class="ctrlHolder">
-			<p class="label">Button Color </p>
+<%= content_tag( :h3, t("feedbackwidget_title"), :class => "title") %>
+<%= content_tag( :div, t("feedbackwidget_intro"), :class => "intro") %>
+
+<% form_for "widget_config", "widget_config", :html => { :name => "widget_config", :id => "WidgetConfig" } do |f| %>
+	<ul class="ui-form">	
+	  <li class="inline-field">
+	  	 <%= content_tag(:h4, t('feedbackwidget_btcustomize'), :class => "title" ) %> 
+		 <%= content_tag(:label, t('feedbackwidget_text'), :class => "caption" ) %>
+		 <div class="fields">
+		 	<input type="text" class="text" size="18" name="buttonText" value="<%=t('feedbackwidget_defaultbutton')%>" />
+		 </div>
+	  </li>
+	  <li class="inline-field">
+	  	<%= content_tag(:label, t('feedbackwidget_bgcolor'), :class => "caption" ) %>
+		<div class="fields">
 			<div class="color">
-				<input type="color" id="TabColor" class="color_field required" name="widget[buttonBg]"  data-hex="true" value="<%= $tab_color %>" /> 
+				<input type="color" id="TabColor" class="color_field required" name="buttonBg"  data-hex="true" value="<%= $tab_color %>" />
 			</div>
-	  	 </div>
-		 <div class="ctrlHolder">
-		 	<p class="label">Custom image URL</p>
-			<input type="text" class="textInput" name="widget[buttonText]" value="" />
-		 </div>
-		 <div class="ctrlHolder">
-		 	<p class="label">Grab code</p>
-			<p class="wordWrapCode">
-					params = {
-						buttonText: 	 "Support", 
-						alignment:  	 "left", 
-						offset:    		 "30%"
-					};
-					FreshWidget.init("", params);
-				
-			</p>	
-		 </div>
-	  </fieldset>
-	  <div class="button-container">
-	  	<a href="#" class="uiButton">Copy code to clipboard</a>
-	  	<a href="#" class="uiButton">Preview</a>
-	  </div>	
+		</div>
+	  </li>
+	  <li class="inline-field">
+		<%= content_tag(:label, t('feedbackwidget_custom_image'), :class => "caption" ) %>
+		<div class="fields">
+			<input type="text" class="textInput" name="backgroundImage" value=""  size="35" />
+			<%= content_tag(:div, content_tag(:b, t('note')) + t('feedbackwidget_custom_image_info') ,:class => "info-data")  %> 
+		</div>
+	  </li>
+	  <li class="inline-field">
+	  	 <%= content_tag(:label, t('feedbackwidget_position'), :class => "caption" ) %> 
+		 <div class="fields">
+				<label>
+					<%= t('align_to') %>
+					<select name="alignment">
+						<option value="4" selected="selected"><%=t('left')%></option>
+						<option value="2"><%=t('right')%></option>
+						<option value="1"><%=t('top')%></option>
+						<option value="3"><%=t('bottom')%></option>
+					</select>
+				</label>
+				<label> 
+					<%= t('feedbackwidget_offset_label') %>
+					<input type="text" class="text" name="offset" value="35%" size="3" />
+					<div class="info-data"><%= t('feedbackwidget_offset_info') %></div>
+				</label> 
+		</div>
+	  </li>
+	  <li class="inline-field">
+			<%= content_tag(:h4, t('feedbackwidget_formcustomize'), :class => "title" ) %> 
+			<%= content_tag(:label, t('feedbackwidget_form_title'), :class => "caption" ) %>
+			<div class="fields">
+				<label class="overlabel" for="FormTitle"><%= t('feedbackwidget_defaulttitle') %></label>
+			 	<input type="text" class="text" size="35" name="formTitle" id="FormTitle" value="" />
+			</div>
+	  </li>	
+	  <li class="code-view">
+		 	<%= content_tag(:h4, t('feedbackwidget_embed_code'), :class => "title" ) %>
+			<%= content_tag(:div, t('feedbackwidget_embed_code_intro'), :class => "intro") %>
+			<textarea id="EmbedCode"></textarea>	 
+	  </li>
+	 </ul>
+	 <input type="hidden" name="url" value='<%= current_account.full_url %>' />
+	 <div>
+	 	<a href="/admin/home" class="uiButton"><%= t('back_to_admin') %></a>
+	 </div>	
+<% end %>
+
+<%= javascript_include_tag "freshwidget.js" %>
+<% javascript_tag do %>
+	FreshWidget.init("", {"buttonText": "Support", "buttonBg": "#000000", "backgroundImage": "", "alignment": "4", "offset": "30%" });
+	(function($){
+		WidgetFormHash  = $H();
+		function convertToSlug(text)
+		{
+		    return text.toLowerCase().replace(/ /g,'-').replace(/[^\w-]+/g,'');
+		}
+		function changeCode(){
+			WidgetFormArray = $("#WidgetConfig").serializeArray();
+			WidgetFormHash.set("queryString", "");
+			$.each(WidgetFormArray, function(index, item){
+				if(item['value'] != ''){
+					switch (item['name']){
+					 	case "authenticity_token":
+					 	break;
+						case "formTitle": 
+							WidgetFormHash.set("queryString", WidgetFormHash.get("queryString") + "&" + $("#FormTitle").serialize());
+						break;
+						case "buttonBg":
+							WidgetFormHash.set("buttonColor", $.fn.mColorPicker.RGBtoHex($("#TabColor").css("color")));
+					 	default:
+							WidgetFormHash.set(item['name'], item['value']);
+						break;
+					}
+				}
+			});
+			constructCode(WidgetFormHash);
+			FreshWidget.update(WidgetFormHash.toObject());
+		}
+		
+		function constructCode(data){
+			code_text = '<'+'script type="text/javascript" src="http://www.freshdesk.com/assets/freshwidget.js"></'+'script>\n'+
+						'<'+'script type="text/javascript">\n'+
+						'\tFreshWidget.init("", ' + data.toJSON() + ' );\n' +
+						'<'+'/script>';
+			$("#EmbedCode").val(code_text);
+		}	
+		
+		$(document).ready(function () {
+			$("#WidgetConfig select, #WidgetConfig :text").change(changeCode);
+	    	$('#TabColor').bind('colorpicked', changeCode);
+			changeCode();
+	  	});
+	})(jQuery)
 <% end %>

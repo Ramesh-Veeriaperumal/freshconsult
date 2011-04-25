@@ -1,5 +1,23 @@
 <% content_for :sidebar do-%><%-end %> 
 <% form_for @ticket, :url => support_tickets_path, :html => { :multipart => true } do |f| %>
   <%= f.error_messages %>
-  <%= render :partial => 'support/shared/request_form', :object => f %>
+  	<%= content_tag ( :h3, t('ticket.submit_ticket_title') ,:class => "title" ) %>
+	<ul class="ui-form">	
+		<%= render :partial => 'support/shared/request_form', :object => f %>
+     	<li>
+			<span class="seperator"></span>
+		</li>
+		<li>
+			<% if !logged_in? %>
+			  	<%= content_tag ( :label, t('ticket.verify_human') ) %>
+			  	<%= recaptcha_tags :display => { :theme => "white" }  %>
+				<% end %> 
+		</li>		
+	</ul>
+	<div class="button-container">
+		<%= f.submit t('ticket.submit_ticket'), :class => "uiButton" %>
+		<%# Any fields named like meta[fieldname] will be saved by the helpdesk as metadata %>
+		<%= hidden_field_tag "meta[user_agent]", request.env["HTTP_USER_AGENT"] %>
+		<%= link_to t("cancel"), :back, :class => "uiButton" %>
+	</div>
 <% end %>

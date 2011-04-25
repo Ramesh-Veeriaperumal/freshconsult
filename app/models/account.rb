@@ -162,6 +162,10 @@ class Account < ActiveRecord::Base
     helpdesk_url.blank? ? full_domain : helpdesk_url
   end
   
+  def full_url
+    "http://#{host}"
+  end
+  
   #Helpdesk hack starts here
   def reply_emails
     to_ret = (email_configs.collect { |ec| ec.reply_email }).sort
