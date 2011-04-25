@@ -32,6 +32,10 @@
 						-
 						<%= t("forum.verb.#{topic.forum.type_name.downcase}") %>   
 						<%= link_to_user topic.user %>
+						<%if @forum.ideas?%>  
+						 |<img src='/images/thumb_up.png' style="position:relative;top:2px;" /> <%= topic.votes_count%> 
+						<%end%>
+					
 					</div>
 					<%if @forum.questions?%>  
 						<%if topic.posts.answered_posts.count > 0%>

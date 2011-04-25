@@ -27,6 +27,13 @@
 		    </div>
 			<%= render :partial => "/search/pagesearch", :locals => { :placeholder => "Search #{@forum_category.name}", :url => "/search/topics?category_id=#{@forum_category.id}&search_key=" } %>
 	   </div>
+	   <%=link_to "overview", category_forum_path( @forum_category, @forum)%>
+	   <%=link_to "recent", category_forum_path( @forum_category, @forum,:order  => "replied_at")%>
+	   <%if @forum.ideas?%>
+	   <% Topic::IDEAS_STAMPS_OPTIONS.each do |k,v| %>
+	   		<%=link_to k, category_forum_path( @forum_category, @forum,:stamp_type  => v)%>
+	   <%end%>
+	   <%end%>
 	   <%= render :partial => "forum_shared/topics", :object => @topics, :locals => { :category => @forum_category, :forum => @forum } %>
 	</div>
 	

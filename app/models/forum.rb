@@ -22,7 +22,9 @@ class Forum < ActiveRecord::Base
   has_many :moderatorships, :dependent => :destroy
   has_many :moderators, :through => :moderatorships, :source => :user
 
-  has_many :topics, :order => 'sticky desc, replied_at desc', :dependent => :delete_all
+  has_many :topics,  :dependent => :delete_all
+  #has_many :feature_topics, :class_name => 'Topic',:order => 'votes_count desc', :dependent => :delete_all
+  
   has_one  :recent_topic, :class_name => 'Topic', :order => 'sticky desc, replied_at desc'
 
   # this is used to see if a forum is "fresh"... we can't use topics because it puts
@@ -37,7 +39,16 @@ class Forum < ActiveRecord::Base
   
   attr_accessible :name,:description, :description_html, :forum_type
   
-  
+#  def self.search(scope, field, value)
+#    return scope unless (field && value)
+#    loose_match = ["#{field} like ?", "%#{value}%"]
+#    exact_match = {field => value}
+#    conditions = case field.to_sym
+#      when :stamp_type      :  exact_match
+#    end
+#    return scope unless conditions
+#    scope.scoped(:conditions => conditions)
+#  end
   
   def announcement?()
     forum_type == TYPE_KEYS_BY_TOKEN[:announce]

@@ -26,7 +26,23 @@ class ForumsController < ApplicationController
    (session[:forums] ||= {})[@forum.id] = Time.now.utc if logged_in?
    (session[:forum_page] ||= Hash.new(1))[@forum.id] = params[:page].to_i if params[:page]
 
-    @topics = @forum.topics.paginate :page => params[:page]
+    if @forum.ideas? and params[:order].blank?
+      conditions =  {:stamp_type => params[:stamp_type]} unless params[:stamp_type].blank?
+      @topics = @forum.topics.find(:all, :include => :votes, :conditions => conditions).sort_by { |u| -u.votes.size }
+    else
+      params[:order] = "created_at" if params[:order].blank? 
+      params[:order] = params[:order] + " desc";
+      @topics = @forum.topics
+    end
+    
+    @topics = @topics.paginate(
+          :page => params[:page], 
+          :order => params[:order],
+          :per_page => 10)
+    
+    #@topics = @topics.paginate :page => params[:page]
+    
+    
     
     respond_to do |format|
       format.html do
