@@ -9,7 +9,7 @@ class AuthorizationsController < ApplicationController
     if !@current_user.blank? and !@auth.blank?
       unless @current_user.active?
         @current_user.active = true
-        @current_user.save!
+        #@current_user.save!
       end
     elsif !@current_user.blank?
       @current_user.authorizations.create(:provider => omniauth['provider'], :uid => omniauth['uid'], :account_id => current_account.id) #Add an auth to existing user
@@ -39,7 +39,11 @@ class AuthorizationsController < ApplicationController
     user.active = true   
     user.save 
     user.reset_persistence_token! 
-    user
+    if AppConfig['demo_site'][RAILS_ENV] == current_account.full_domain
+      agent = Agent.new
+      agent.user_id = user.id
+      agent.save
+    end
     Authorization.create(:user_id => user.id, :uid => hash['uid'], :provider => hash['provider'],:account_id => current_account.id)
   end
   
