@@ -72,6 +72,7 @@ GEM
     ruby-openid (2.1.8)
     ruby-openid-apps-discovery (1.2.0)
       ruby-openid (>= 2.1.7)
+    rubyzip (0.9.4)
     rufus-scheduler (2.0.8)
       tzinfo (>= 0.3.23)
     searchlogic (2.4.27)
@@ -115,6 +116,7 @@ DEPENDENCIES
   ruby-debug (= 0.10.3)
   ruby-openid (= 2.1.8)
   ruby-openid-apps-discovery (= 1.2.0)
+  rubyzip (= 0.9.4)
   rufus-scheduler
   searchlogic (= 2.4.27)
   stemmer (= 1.0.1)!

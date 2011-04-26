@@ -19,6 +19,10 @@ gem "arel", "2.0.7"
 gem "searchlogic", "2.4.27"
 gem "map-fields", "1.0.0", :require => "map_fields"
 
+#gem "win32-open3",:require => "win32/open3"
+
+gem "rubyzip", "0.9.4" , :require => "zip/zip"
+
 gem "http_accept_language", "1.0.1"
 
 gem "thinking-sphinx", "1.4.3", :require => "thinking_sphinx"

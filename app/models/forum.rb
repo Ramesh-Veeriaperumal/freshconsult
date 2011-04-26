@@ -35,7 +35,7 @@ class Forum < ActiveRecord::Base
   
   format_attribute :description
   
-  attr_accessible :name,:description, :description_html, :forum_type
+  attr_accessible :name,:description, :description_html, :forum_type ,:import_id
   
   
   

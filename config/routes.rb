@@ -34,6 +34,8 @@ ActionController::Routing::Routes.draw do |map|
   
   map.openid_done '/google/complete', :controller => 'accounts', :action => 'openid_complete'
   
+  map.zendesk_import '/zendesk/import', :controller => 'zip_readers', :action => 'index'
+  
   #map.register '/register', :controller => 'users', :action => 'create'
   #map.signup '/signup', :controller => 'users', :action => 'new'
   map.resources :users, :member => { :delete_avatar => :delete }
