@@ -109,6 +109,19 @@ class Account < ActiveRecord::Base
     end
   end
   
+  has_features do
+    feature :pro
+    feature :premium, :requires => [:pro] #To make the hierarchy easier
+    
+    feature :scenario_automations, :requires => [:pro]
+    feature :customer_slas, :requires => [:pro]
+    feature :business_hours, :requires => [:pro]
+    feature :forums, :requires => [:pro]
+    
+    feature :multi_product, :requires => [:premium]
+    feature :multi_timezone, :requires => [:premium]
+  end
+  
   def get_max_display_id
     ticket_dis_id = self.ticket_display_id
     max_dis_id = self.tickets.maximum('display_id')

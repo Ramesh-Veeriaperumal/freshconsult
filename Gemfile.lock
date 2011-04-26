@@ -10,6 +10,7 @@ PATH
 
 GEM
   remote: http://rubygems.org/
+  remote: http://gems.github.com/
   specs:
     POpen4 (0.1.4)
       Platform (>= 0.4.0)
@@ -126,7 +127,7 @@ GEM
       ruby-openid (>= 2.1.7)
     rubyntlm (0.1.1)
     rubyzip (0.9.4)
-    rufus-scheduler (2.0.9)    
+    rufus-scheduler (2.0.9)
       tzinfo (>= 0.3.23)
     searchlogic (2.4.27)
       activerecord (>= 2.0.0)
@@ -143,6 +144,7 @@ GEM
     xml-simple (1.0.15)
     yui-compressor (0.9.6)
       POpen4 (>= 0.1.4)
+    zendesk-features (1.0.2)
 
 PLATFORMS
   ruby
@@ -179,3 +181,4 @@ DEPENDENCIES
   tiny_mce (= 0.1.4)
   ts-delayed-delta (= 1.1.0)
   tzinfo
+  zendesk-features

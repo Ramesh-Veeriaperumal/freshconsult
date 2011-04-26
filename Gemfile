@@ -1,4 +1,5 @@
 source :gemcutter
+source "http://gems.github.com"
 
 gem "rake", "0.8.7"
 gem "rails", "2.3.8"
@@ -36,6 +37,8 @@ gem "classifier", "1.3.1", :path => "#{File.expand_path(__FILE__)}/../vendor/gem
 gem "stemmer", "1.0.1", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/stemmer-1.0.1"
 gem "tiny_mce", "0.1.4"
 gem "jammit"
+gem 'zendesk-features', :require => 'features'
+
 #gem "win32-open3", "0.3.2"
 
 group :development do

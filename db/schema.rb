@@ -9,9 +9,8 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
+ActiveRecord::Schema.define(:version => 20110426100326) do
 
-ActiveRecord::Schema.define(:version => 20110422100935) do
-  
   create_table "accounts", :force => true do |t|
     t.string   "name"
     t.datetime "created_at"
@@ -121,6 +120,13 @@ ActiveRecord::Schema.define(:version => 20110422100935) do
   end
 
   add_index "email_notifications", ["account_id", "notification_type"], :name => "index_email_notifications_on_notification_type", :unique => true
+
+  create_table "features", :force => true do |t|
+    t.string   "type",                    :null => false
+    t.integer  "account_id", :limit => 8, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "flexifield_def_entries", :force => true do |t|
     t.integer  "flexifield_def_id",  :limit => 8, :null => false
@@ -383,7 +389,7 @@ ActiveRecord::Schema.define(:version => 20110422100935) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "sla_policy_id",   :limit => 8
-    t.boolean  "override_bhrs", :default => false
+    t.boolean  "override_bhrs",                :default => false
   end
 
   create_table "helpdesk_sla_policies", :force => true do |t|
@@ -392,7 +398,7 @@ ActiveRecord::Schema.define(:version => 20110422100935) do
     t.integer  "account_id",  :limit => 8
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "is_default",  :default => false
+    t.boolean  "is_default",               :default => false
   end
 
   add_index "helpdesk_sla_policies", ["account_id", "name"], :name => "index_helpdesk_sla_policies_on_account_id_and_name", :unique => true
@@ -521,7 +527,7 @@ ActiveRecord::Schema.define(:version => 20110422100935) do
 
   create_table "solution_articles", :force => true do |t|
     t.string   "title"
-    t.text     "description",  :limit => 16777215
+    t.text     "description",  :limit => 2147483647
     t.integer  "user_id",      :limit => 8
     t.integer  "folder_id",    :limit => 8
     t.integer  "status"
