@@ -9,7 +9,7 @@ class Group < ActiveRecord::Base
    
    belongs_to :escalate , :class_name => "User", :foreign_key => "escalate_to"
    
-   attr_accessible :name,:description,:email_on_assign,:escalate_to,:assign_time
+   attr_accessible :name,:description,:email_on_assign,:escalate_to,:assign_time ,:import_id
    
    accepts_nested_attributes_for :agent_groups
    liquid_methods :name

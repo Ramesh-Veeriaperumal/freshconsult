@@ -3,7 +3,7 @@ class ForumCategory < ActiveRecord::Base
   validates_uniqueness_of :name, :scope => :account_id
 
   has_many :forums, :dependent => :destroy
-  attr_accessible :name,:description
+  attr_accessible :name,:description , :import_id
   belongs_to :account
    
    
