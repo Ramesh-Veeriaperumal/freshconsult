@@ -10,8 +10,9 @@
         <div id="wrap" class="container">
             <%= render(:partial => '/layouts/shared/header') %>
             <div class="content">
-            	<div class="wrapper"> 
-	                <%= yield  %>
+            	<div class="wrapper ui-login"> 
+						<%= show_flash %>
+	                	<%= yield  %> 
 				</div>
 			</div>  
         </div>       

@@ -69,20 +69,17 @@
 	  </li>
 	 </ul>
 	 <input type="hidden" name="url" value='<%= current_account.full_url %>' />
+	 <input type="hidden" name="assetUrl" value='<%= Helpdesk::ASSET_URL %>' />
 	 <div>
 	 	<a href="/admin/home" class="uiButton"><%= t('back_to_admin') %></a>
 	 </div>	
 <% end %>
 
-<%= javascript_include_tag "freshwidget.js" %>
+<%= javascript_include_tag "freshwidget.js" %> 
 <% javascript_tag do %>
 	FreshWidget.init("", {"buttonText": "Support", "buttonBg": "#000000", "backgroundImage": "", "alignment": "4", "offset": "30%" });
 	(function($){
-		WidgetFormHash  = $H();
-		function convertToSlug(text)
-		{
-		    return text.toLowerCase().replace(/ /g,'-').replace(/[^\w-]+/g,'');
-		}
+		WidgetFormHash  = $H(); 
 		function changeCode(){
 			WidgetFormArray = $("#WidgetConfig").serializeArray();
 			WidgetFormHash.set("queryString", "");
@@ -107,7 +104,10 @@
 		}
 		
 		function constructCode(data){
-			code_text = '<'+'script type="text/javascript" src="http://www.freshdesk.com/assets/freshwidget.js"></'+'script>\n'+
+			code_text = '<'+'script type="text/javascript" src="<%=Helpdesk::ASSET_URL%>/freshwidget.js"></'+'script>\n'+
+						'<'+'style type="text/css" media="screen, projection">\n' +
+  						'\t@import url(<%=Helpdesk::ASSET_URL%>/freshwidget.css); \n'+
+						'</'+'style> \n' +
 						'<'+'script type="text/javascript">\n'+
 						'\tFreshWidget.init("", ' + data.toJSON() + ' );\n' +
 						'<'+'/script>';

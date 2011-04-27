@@ -12,9 +12,9 @@
 			alignment:  	"left", 
 			offset:     	"35%",
 			url:			"http://support.freshdesk.com",
+			assetUrl: 		"http://www.freshdesk.com/assets/",
 			queryString:    ""
 		},
-		assetUrl  = "http://www.freshdesk.com/assets/",
 		iframe, button, closeButton, overlay, dialog
 		container = null;
 	
@@ -84,6 +84,7 @@
 			class_name = locationClass[options.alignment] || "left";
 			button = document.createElement('div');
 			button.setAttribute('id', 'freshwidget-button');
+			button.style.display = 'none';
 			button.className = "freshwidget-button " + class_name;
 			
 			link = document.createElement('a');
@@ -135,12 +136,12 @@
 			document.body.insertBefore(container, document.body.childNodes[0]);
 			
 			container.innerHTML = '<div class="widget-ovelay" id="freshwidget-overlay">&nbsp;</div>' +
-			'<div class="freshwidget-dialog" id="freshwidget-dialog">' +
-			' <img id="freshwidget-close" class="widget-close" src="'+assetUrl+'/widget_close.png" />' +
-			' <div class="frame-container">' +
-			' 	<iframe id="freshwidget-frame" src="about:blank" frameborder="0" scrolling="auto" allowTransparency="true" />' +
-			' </div>'
-			'</div>';
+						'<div class="freshwidget-dialog" id="freshwidget-dialog">' +
+						' <img id="freshwidget-close" class="widget-close" src="'+options.assetUrl+'/widget_close.png" />' +
+						' <div class="frame-container">' +
+						' 	<iframe id="freshwidget-frame" src="about:blank" frameborder="0" scrolling="auto" allowTransparency="true" />' +
+						' </div>'
+						'</div>';
 			
 			container 	= document.getElementById('FreshWidget');
 			closeButton = document.getElementById('freshwidget-close');
@@ -210,7 +211,7 @@
 					  }
 	 }; 
 	 
-	 loadcssfile(assetUrl+"/freshwidget.css");
+	 loadcssfile(options.assetUrl+"/freshwidget.css");
 	 
 	 if(!window.FreshWidget){window.FreshWidget=FreshWidget;}
 })();
