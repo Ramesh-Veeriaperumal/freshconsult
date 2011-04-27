@@ -23,18 +23,28 @@ input.text, input[type=text], textarea {
   font-weight: 400;
 }
 
-/* line 27, ../src/form.scss */
+/* line 26, ../src/form.scss */
+div.color {
+  position: relative;
+}
+/* line 28, ../src/form.scss */
+div.color .mColorPickerTrigger {
+  position: absolute;
+  top: 3px;
+  left: 230px;
+}
+/* line 33, ../src/form.scss */
 div.color input {
   width: 220px;
   font-size: 16px;
   border: 1px solid #afafaf;
 }
-/* line 32, ../src/form.scss */
+/* line 38, ../src/form.scss */
 div.color span {
   display: inline;
 }
 
-/* line 37, ../src/form.scss */
+/* line 43, ../src/form.scss */
 textarea {
   overflow: auto;
   font-size: 1.0em;
@@ -43,41 +53,41 @@ textarea {
   padding: 3px;
 }
 
-/* line 45, ../src/form.scss */
+/* line 51, ../src/form.scss */
 input.very_small {
   width: 200px;
 }
 
-/* line 49, ../src/form.scss */
+/* line 55, ../src/form.scss */
 textarea.smallpara {
   height: 50px;
 }
 
-/* line 53, ../src/form.scss */
+/* line 59, ../src/form.scss */
 input:focus, textarea:focus {
   border-color: #7cb537 !important;
 }
 
-/* line 54, ../src/form.scss */
+/* line 60, ../src/form.scss */
 input:focus, select:focus, textarea:focus {
   -moz-box-shadow: #7cb537 0 0 3px;
   -webkit-box-shadow: #7cb537 0 0 3px;
   box-shadow: #7cb537 0 0 3px;
 }
 
-/* line 56, ../src/form.scss */
+/* line 62, ../src/form.scss */
 #header_search {
   border: 0px;
 }
 
-/* line 60, ../src/form.scss */
+/* line 66, ../src/form.scss */
 input.disabled, select.disabled, textarea.disabled {
   background-color: #F0F0F0;
   border: 1px solid #cfcfcf;
   color: #777777 !important;
 }
 
-/* line 66, ../src/form.scss */
+/* line 72, ../src/form.scss */
 select {
   padding: 1px;
   font-size: 13px;
@@ -85,24 +95,24 @@ select {
   width: auto;
 }
 
-/* line 73, ../src/form.scss */
+/* line 79, ../src/form.scss */
 textarea {
   height: 100px;
   width: 96%;
   font-family: "Lucida Grande", Geneva, Arial, Verdana, sans-serif;
 }
 
-/* line 80, ../src/form.scss */
+/* line 86, ../src/form.scss */
 form table {
   width: 100%;
 }
 
-/* line 84, ../src/form.scss */
+/* line 90, ../src/form.scss */
 div.ui-form ul {
   padding: 0px;
 }
 
-/* line 88, ../src/form.scss */
+/* line 94, ../src/form.scss */
 div.ui-form ul, ul.ui-form {
   list-style: none;
   *zoom: 1;
@@ -118,7 +128,7 @@ div.ui-form ul:after, ul.ui-form:after {
   visibility: hidden;
 }
 
-/* line 95, ../src/form.scss */
+/* line 101, ../src/form.scss */
 a.addchoice {
   padding: 5px;
   color: #999999;
@@ -152,12 +162,12 @@ a.addchoice:active {
   color: #333333;
 }
 
-/* line 112, ../src/form.scss */
+/* line 118, ../src/form.scss */
 a.addchoice:hover {
   background-color: #e8e8e8;
 }
 
-/* line 120, ../src/form.scss */
+/* line 126, ../src/form.scss */
 .colsets fieldset {
   *zoom: 1;
   margin: 1px 0px 0px 0px;
@@ -176,11 +186,11 @@ a.addchoice:hover {
   overflow: hidden;
   visibility: hidden;
 }
-/* line 128, ../src/form.scss */
+/* line 134, ../src/form.scss */
 .colsets fieldset b {
   font-size: 11px;
 }
-/* line 131, ../src/form.scss */
+/* line 137, ../src/form.scss */
 .colsets fieldset .dropchoice, .colsets fieldset .tags {
   *zoom: 1;
   float: left;
@@ -196,28 +206,28 @@ a.addchoice:hover {
   overflow: hidden;
   visibility: hidden;
 }
-/* line 136, ../src/form.scss */
+/* line 142, ../src/form.scss */
 .colsets fieldset .dropchoice input, .colsets fieldset .tags input {
   margin-right: 5px;
   width: 100%;
 }
-/* line 141, ../src/form.scss */
+/* line 147, ../src/form.scss */
 .colsets fieldset .dropchoice {
   width: 76%;
 }
-/* line 144, ../src/form.scss */
+/* line 150, ../src/form.scss */
 .colsets fieldset .tags {
   width: 50%;
   display: none;
 }
-/* line 148, ../src/form.scss */
+/* line 154, ../src/form.scss */
 .colsets fieldset img {
   cursor: pointer;
   position: absolute;
   right: 8px;
   top: 5px;
 }
-/* line 155, ../src/form.scss */
+/* line 161, ../src/form.scss */
 .colsets a.addchoice {
   border: 1px solid #dfdfdf;
   background-color: #f3f3f3;
@@ -225,28 +235,28 @@ a.addchoice:hover {
   font-size: 12px;
   padding: 6px 10px 6px 25px;
 }
-/* line 162, ../src/form.scss */
+/* line 168, ../src/form.scss */
 .colsets a.addchoice:hover {
   background-color: #f8f8f8;
 }
 
-/* line 168, ../src/form.scss */
+/* line 174, ../src/form.scss */
 .choicelist label {
   font-size: 1.1em;
 }
-/* line 171, ../src/form.scss */
+/* line 177, ../src/form.scss */
 .choicelist label.radiolabel {
   font-size: 1em;
   float: left;
   padding: 0px 5px;
   margin-right: 10px;
 }
-/* line 177, ../src/form.scss */
+/* line 183, ../src/form.scss */
 .choicelist input.radio {
   float: left;
 }
 
-/* line 183, ../src/form.scss */
+/* line 189, ../src/form.scss */
 .ui-form {
   padding: 15px 20px 15px 26px;
   position: relative;
@@ -254,32 +264,32 @@ a.addchoice:hover {
   border-bottom: 1px solid #dfdfdf;
   background-color: #f6f6f6;
 }
-/* line 189, ../src/form.scss */
+/* line 195, ../src/form.scss */
 .ui-form li {
   padding: 0px 0px 5px 0px;
   margin: 0px;
   float: left;
   width: 100%;
 }
-/* line 193, ../src/form.scss */
+/* line 199, ../src/form.scss */
 .ui-form li a.fdbutton {
   min-width: 110px;
   width: auto !important;
   width: 110px;
 }
-/* line 198, ../src/form.scss */
+/* line 204, ../src/form.scss */
 .ui-form li.text, .ui-form li.paragraph {
   width: 98%;
 }
-/* line 201, ../src/form.scss */
+/* line 207, ../src/form.scss */
 .ui-form li.dropdown, .ui-form li.small {
   width: 48%;
 }
-/* line 205, ../src/form.scss */
+/* line 211, ../src/form.scss */
 .ui-form li.medium {
   width: 75%;
 }
-/* line 209, ../src/form.scss */
+/* line 215, ../src/form.scss */
 .ui-form label, .ui-form li.checkbox {
   font-weight: normal;
   margin: 0px;
@@ -288,119 +298,119 @@ a.addchoice:hover {
   font-size: 1.3em;
   font-weight: 400;
 }
-/* line 218, ../src/form.scss */
+/* line 224, ../src/form.scss */
 .ui-form label.overlabel {
   color: #999999;
   margin-left: 8px;
   margin-top: 0px;
   font-size: 14px;
 }
-/* line 224, ../src/form.scss */
+/* line 230, ../src/form.scss */
 .ui-form li.checkbox {
   overflow: hidden;
   *zoom: 1;
   padding: 10px 0px;
 }
-/* line 227, ../src/form.scss */
+/* line 233, ../src/form.scss */
 .ui-form li.checkbox input {
   float: left;
   margin-right: 6px;
   margin-top: 1px;
 }
-/* line 232, ../src/form.scss */
+/* line 238, ../src/form.scss */
 .ui-form li.checkbox label {
   position: relative;
   font-size: 0.8em;
   top: -8px;
   left: 3px;
 }
-/* line 240, ../src/form.scss */
+/* line 246, ../src/form.scss */
 .ui-form .largefield label {
   font-size: 1.4em;
 }
-/* line 243, ../src/form.scss */
+/* line 249, ../src/form.scss */
 .ui-form .largefield input {
   font-size: 1.4em;
 }
-/* line 247, ../src/form.scss */
+/* line 253, ../src/form.scss */
 .ui-form span {
   font-weight: normal;
   font-size: 0.9em;
   color: #777777;
   display: block;
 }
-/* line 253, ../src/form.scss */
+/* line 259, ../src/form.scss */
 .ui-form .check_box {
   overflow: hidden;
   *zoom: 1;
 }
-/* line 255, ../src/form.scss */
+/* line 261, ../src/form.scss */
 .ui-form .check_box label {
   float: left;
   font-size: 1.4em;
 }
-/* line 259, ../src/form.scss */
+/* line 265, ../src/form.scss */
 .ui-form .check_box input {
   float: left;
   margin: 5px;
 }
-/* line 265, ../src/form.scss */
+/* line 271, ../src/form.scss */
 .ui-form .seperator {
   margin-bottom: 0px;
   padding: 1px;
 }
-/* line 269, ../src/form.scss */
+/* line 275, ../src/form.scss */
 .ui-form .inline_field {
   margin: 0px 0px 10px 30px;
 }
-/* line 271, ../src/form.scss */
+/* line 277, ../src/form.scss */
 .ui-form .inline_field input {
   width: 45%;
   margin: 0px;
 }
-/* line 275, ../src/form.scss */
+/* line 281, ../src/form.scss */
 .ui-form .inline_field label {
   font-size: 1.2em;
 }
-/* line 280, ../src/form.scss */
+/* line 286, ../src/form.scss */
 .ui-form .inlineChecklist label {
   float: left;
   font-size: 1em;
   padding: 5px 16px 0px 0px;
 }
-/* line 285, ../src/form.scss */
+/* line 291, ../src/form.scss */
 .ui-form .inlineChecklist input {
   top: 0px;
 }
-/* line 291, ../src/form.scss */
+/* line 297, ../src/form.scss */
 .ui-form li.textleft {
   overflow: hidden;
   *zoom: 1;
   position: relative;
 }
-/* line 294, ../src/form.scss */
+/* line 300, ../src/form.scss */
 .ui-form li.textleft label {
   position: absolute;
   left: 6px;
   top: 3px;
   width: 25%;
 }
-/* line 301, ../src/form.scss */
+/* line 307, ../src/form.scss */
 .ui-form fieldset.addchoice {
   padding: 0px;
   color: #999999;
   cursor: pointer;
 }
-/* line 307, ../src/form.scss */
+/* line 313, ../src/form.scss */
 .ui-form fieldset.addchoice:hover {
   background: #f8f8f8;
 }
-/* line 310, ../src/form.scss */
+/* line 316, ../src/form.scss */
 .ui-form .conditionset {
   border: 1px solid #cfcfcf;
   padding: 0px;
 }
-/* line 313, ../src/form.scss */
+/* line 319, ../src/form.scss */
 .ui-form .conditionset fieldset {
   *zoom: 1;
   padding: 5px 0px 5px 4px;
@@ -417,13 +427,13 @@ a.addchoice:hover {
   overflow: hidden;
   visibility: hidden;
 }
-/* line 320, ../src/form.scss */
+/* line 326, ../src/form.scss */
 .ui-form .conditionset fieldset * {
   float: left;
   width: auto;
   margin: 2px 4px;
 }
-/* line 325, ../src/form.scss */
+/* line 331, ../src/form.scss */
 .ui-form .conditionset fieldset .add, .ui-form .conditionset fieldset .delete {
   position: absolute;
   margin: 0px;
@@ -432,28 +442,28 @@ a.addchoice:hover {
   right: 10px;
   top: 5px;
 }
-/* line 333, ../src/form.scss */
+/* line 339, ../src/form.scss */
 .ui-form .conditionset fieldset div.controls {
   width: 95%;
 }
-/* line 337, ../src/form.scss */
+/* line 343, ../src/form.scss */
 .ui-form .conditionset fieldset input.text {
   width: 300px;
   font-size: 10pt;
 }
-/* line 341, ../src/form.scss */
+/* line 347, ../src/form.scss */
 .ui-form .conditionset fieldset textarea.paragraph {
   width: 400px;
 }
-/* line 345, ../src/form.scss */
+/* line 351, ../src/form.scss */
 .ui-form .conditionset fieldset div.s_comment {
   width: 520px;
 }
-/* line 347, ../src/form.scss */
+/* line 353, ../src/form.scss */
 .ui-form .conditionset fieldset div.s_comment .paragraph {
   width: 98%;
 }
-/* line 351, ../src/form.scss */
+/* line 357, ../src/form.scss */
 .ui-form .conditionset fieldset div.s_email {
   float: none;
   display: block;
@@ -463,26 +473,26 @@ a.addchoice:hover {
   overflow: hidden;
   *zoom: 1;
 }
-/* line 358, ../src/form.scss */
+/* line 364, ../src/form.scss */
 .ui-form .conditionset fieldset div.s_email div {
   width: 100%;
   padding: 4px 0px;
   font-size: 12px;
   border-bottom: 1px solid #cfcfcf;
 }
-/* line 363, ../src/form.scss */
+/* line 369, ../src/form.scss */
 .ui-form .conditionset fieldset div.s_email div em {
   font-style: normal;
 }
-/* line 366, ../src/form.scss */
+/* line 372, ../src/form.scss */
 .ui-form .conditionset fieldset div.s_email div b {
   width: 180px;
 }
-/* line 369, ../src/form.scss */
+/* line 375, ../src/form.scss */
 .ui-form .conditionset fieldset div.s_email div input.text, .ui-form .conditionset fieldset div.s_email div textarea.paragraph {
   width: 590px;
 }
-/* line 372, ../src/form.scss */
+/* line 378, ../src/form.scss */
 .ui-form .conditionset fieldset div.s_email div a.l_placeholder {
   clear: left;
   float: right;
@@ -491,67 +501,67 @@ a.addchoice:hover {
   color: #0078BD;
   border-bottom: 1px dotted #0078BD;
 }
-/* line 380, ../src/form.scss */
+/* line 386, ../src/form.scss */
 .ui-form .conditionset fieldset div.s_email div a.l_placeholder:hover {
   border-bottom: 1px solid #0078BD;
 }
-/* line 386, ../src/form.scss */
+/* line 392, ../src/form.scss */
 .ui-form .conditionset fieldset span {
   margin: 0px;
   padding: 0px;
 }
-/* line 390, ../src/form.scss */
+/* line 396, ../src/form.scss */
 .ui-form .conditionset fieldset span.sort_handle:hover {
   background-color: #fafafa;
 }
-/* line 394, ../src/form.scss */
+/* line 400, ../src/form.scss */
 .ui-form .conditionset fieldset label.checkbox {
   width: 100%;
   font-size: 13px;
 }
-/* line 399, ../src/form.scss */
+/* line 405, ../src/form.scss */
 .ui-form .conditionset div {
   margin: 0px;
   padding: 0px;
 }
 
-/* line 406, ../src/form.scss */
+/* line 412, ../src/form.scss */
 .ui-form .inline-field {
   border-bottom: 1px dotted #cfcfcf;
   padding-top: 8px;
 }
-/* line 409, ../src/form.scss */
+/* line 415, ../src/form.scss */
 .ui-form .inline-field input[type=text], .ui-form .inline-field select, .ui-form .inline-field input.text {
   width: auto;
 }
-/* line 412, ../src/form.scss */
+/* line 418, ../src/form.scss */
 .ui-form .inline-field .caption {
   float: left;
   width: 35%;
 }
-/* line 416, ../src/form.scss */
+/* line 422, ../src/form.scss */
 .ui-form .inline-field div.fields {
   float: left;
   width: 60%;
 }
-/* line 419, ../src/form.scss */
+/* line 425, ../src/form.scss */
 .ui-form .inline-field div.fields label {
   font-size: 1.1em;
 }
 
-/* line 426, ../src/form.scss */
+/* line 432, ../src/form.scss */
 .business_hours td {
   vertical-align: top;
 }
-/* line 429, ../src/form.scss */
+/* line 435, ../src/form.scss */
 .business_hours td.borderleft {
   border-left: 1px solid #d8d8d8;
 }
-/* line 433, ../src/form.scss */
+/* line 439, ../src/form.scss */
 .business_hours .business_time div.specific_hours {
   padding: 16px 26px;
 }
-/* line 436, ../src/form.scss */
+/* line 442, ../src/form.scss */
 .business_hours .business_time div.timerange {
   *zoom: 1;
 }
@@ -564,30 +574,30 @@ a.addchoice:hover {
   overflow: hidden;
   visibility: hidden;
 }
-/* line 438, ../src/form.scss */
+/* line 444, ../src/form.scss */
 .business_hours .business_time div.timerange input, .business_hours .business_time div.timerange strong {
   float: left;
 }
-/* line 441, ../src/form.scss */
+/* line 447, ../src/form.scss */
 .business_hours .business_time div.timerange input {
   width: 80px;
 }
-/* line 444, ../src/form.scss */
+/* line 450, ../src/form.scss */
 .business_hours .business_time div.timerange strong {
   font-weight: normal;
   padding: 0px 10px;
 }
-/* line 451, ../src/form.scss */
+/* line 457, ../src/form.scss */
 .business_hours .business_days label {
   float: left;
   font-size: 12px;
   padding-right: 8px;
 }
-/* line 457, ../src/form.scss */
+/* line 463, ../src/form.scss */
 .business_hours .holidaylist {
   padding-left: 0px;
 }
-/* line 459, ../src/form.scss */
+/* line 465, ../src/form.scss */
 .business_hours .holidaylist ul {
   color: #444444;
   overflow: hidden;
@@ -599,12 +609,12 @@ a.addchoice:hover {
   -webkit-border-radius: 6px 6px 6px 6px;
   border-radius: 6px 6px 6px 6px;
 }
-/* line 466, ../src/form.scss */
+/* line 472, ../src/form.scss */
 .business_hours .holidaylist ul li {
   position: relative;
   margin-right: 20px;
 }
-/* line 469, ../src/form.scss */
+/* line 475, ../src/form.scss */
 .business_hours .holidaylist ul li .close {
   position: absolute;
   background: url(../images/icons/btn_close_icon.png) no-repeat;
@@ -614,19 +624,19 @@ a.addchoice:hover {
   top: 0px;
 }
 
-/* line 482, ../src/form.scss */
+/* line 488, ../src/form.scss */
 input.time {
   font-weight: normal;
   font-size: 12px;
 }
 
-/* line 488, ../src/form.scss */
+/* line 494, ../src/form.scss */
 .grid {
   border: 1px solid #cfcfcf;
   padding: 0px;
   background: #f6f6f6;
 }
-/* line 492, ../src/form.scss */
+/* line 498, ../src/form.scss */
 .grid table {
   padding: 0px;
   margin: 0px;
@@ -634,13 +644,13 @@ input.time {
   font-size: 13px;
   border-bottom: 2px solid #cfcfcf;
 }
-/* line 497, ../src/form.scss */
+/* line 503, ../src/form.scss */
 .grid table th, .grid table td {
   padding: 8px 10px;
   vertical-align: top;
   border: 0px;
 }
-/* line 502, ../src/form.scss */
+/* line 508, ../src/form.scss */
 .grid table th {
   line-height: 18px;
   font-weight: bold;
@@ -648,49 +658,49 @@ input.time {
   background-color: #f2f2f2;
   background-repeat: repeat-x;
 }
-/* line 508, ../src/form.scss */
+/* line 514, ../src/form.scss */
 .grid table th span {
   display: block;
 }
-/* line 512, ../src/form.scss */
+/* line 518, ../src/form.scss */
 .grid table td {
   background-color: #efefef;
   border-top: 1px solid #cfcfcf;
 }
-/* line 513, ../src/form.scss */
+/* line 519, ../src/form.scss */
 .grid table td label {
   font-size: 12px;
   padding: 0px 6px;
   color: #555555;
 }
-/* line 517, ../src/form.scss */
+/* line 523, ../src/form.scss */
 .grid table td label em {
   font-style: normal;
   font-weight: bold;
   text-transform: capitalize;
   color: #000000;
 }
-/* line 528, ../src/form.scss */
+/* line 534, ../src/form.scss */
 .grid table tr.even td {
   background-color: #f4f4f4;
 }
-/* line 533, ../src/form.scss */
+/* line 539, ../src/form.scss */
 .grid .olist {
   list-style: decimal;
 }
-/* line 537, ../src/form.scss */
+/* line 543, ../src/form.scss */
 .grid .grid_form td {
   border: 0px;
   padding: 6px 10px 0px 10px;
   background: #fafafa;
 }
-/* line 542, ../src/form.scss */
+/* line 548, ../src/form.scss */
 .grid .grid_form .button-container {
   text-align: right;
   padding: 0px 10px 10px 0px;
 }
 
-/* line 550, ../src/form.scss */
+/* line 556, ../src/form.scss */
 .grid ul {
   list-style: none;
   margin: 0px;
@@ -707,7 +717,7 @@ input.time {
   list-style-type: none;
   margin-left: 0px;
 }
-/* line 557, ../src/form.scss */
+/* line 563, ../src/form.scss */
 .grid ul li {
   margin: 0px;
   padding: 0px;
@@ -715,7 +725,7 @@ input.time {
   width: 33%;
 }
 
-/* line 566, ../src/form.scss */
+/* line 572, ../src/form.scss */
 span.sort_handle {
   position: relative;
   left: 0px;
@@ -729,7 +739,7 @@ span.sort_handle {
   border-radius: 5px 5px 5px 5px;
 }
 
-/* line 577, ../src/form.scss */
+/* line 583, ../src/form.scss */
 .ui-custom-fields, .ui-custom-form {
   list-style: none;
   margin: 0px 0px 0px 0px;
@@ -742,7 +752,7 @@ span.sort_handle {
   margin-left: 0px;
 }
 
-/* line 583, ../src/form.scss */
+/* line 589, ../src/form.scss */
 .admin_form {
   overflow: hidden;
   *zoom: 1;
@@ -750,11 +760,11 @@ span.sort_handle {
   padding: 8px 20px 0px 20px;
   margin: 0px -20px;
 }
-/* line 588, ../src/form.scss */
+/* line 594, ../src/form.scss */
 .admin_form li {
   position: relative;
 }
-/* line 591, ../src/form.scss */
+/* line 597, ../src/form.scss */
 .admin_form h4.title {
   color: #555;
   font-weight: bold;
@@ -762,18 +772,18 @@ span.sort_handle {
   padding: 8px 0px 6px 0px;
 }
 
-/* line 600, ../src/form.scss */
+/* line 606, ../src/form.scss */
 .button-container {
   text-align: right;
   padding: 1em 2em 1em 0;
 }
 
-/* line 605, ../src/form.scss */
+/* line 611, ../src/form.scss */
 .ui-draggable-dragging {
   z-index: 99999;
 }
 
-/* line 609, ../src/form.scss */
+/* line 615, ../src/form.scss */
 .ui-custom-fields {
   display: block;
   margin-bottom: 10px;
@@ -788,12 +798,12 @@ span.sort_handle {
   overflow: hidden;
   visibility: hidden;
 }
-/* line 613, ../src/form.scss */
+/* line 619, ../src/form.scss */
 .ui-custom-fields li {
   float: left;
   position: relative;
 }
-/* line 617, ../src/form.scss */
+/* line 623, ../src/form.scss */
 .ui-custom-fields .fdbutton {
   min-width: 120px;
   width: auto !important;
@@ -802,13 +812,13 @@ span.sort_handle {
   font-size: 11px;
 }
 
-/* line 624, ../src/form.scss */
+/* line 630, ../src/form.scss */
 .custom_form_outer .placeHolder {
   height: 50px !important;
   border: 1px solid #C2D7EF !important;
 }
 
-/* line 630, ../src/form.scss */
+/* line 636, ../src/form.scss */
 .ui-sortable-placeholder {
   background: #DFEFFF !important;
   border: 1px dotted #C2D7EF  !important;
@@ -818,17 +828,17 @@ span.sort_handle {
   z-index: 99;
 }
 
-/* line 639, ../src/form.scss */
+/* line 645, ../src/form.scss */
 .ui-custom-form {
   padding: 0px;
   position: relative;
 }
-/* line 642, ../src/form.scss */
+/* line 648, ../src/form.scss */
 .ui-custom-form .ui-form {
   background: #ffffff;
   margin-bottom: 1px;
 }
-/* line 643, ../src/form.scss */
+/* line 649, ../src/form.scss */
 .ui-custom-form li {
   padding: 4px;
   position: relative;
@@ -836,29 +846,29 @@ span.sort_handle {
   border: 1px dotted #ffffff;
   cursor: move;
 }
-/* line 647, ../src/form.scss */
+/* line 653, ../src/form.scss */
 .ui-custom-form li div {
   position: relative;
 }
-/* line 652, ../src/form.scss */
+/* line 658, ../src/form.scss */
 .ui-custom-form li:hover, .ui-custom-form li.hover, .ui-custom-form li.active {
   background: #DFEFFF;
   border-color: #C2D7EF;
 }
-/* line 655, ../src/form.scss */
+/* line 661, ../src/form.scss */
 .ui-custom-form li:hover .ui-field-panel, .ui-custom-form li.hover .ui-field-panel, .ui-custom-form li.active .ui-field-panel {
   display: block;
 }
-/* line 658, ../src/form.scss */
+/* line 664, ../src/form.scss */
 .ui-custom-form li:hover .action_panel, .ui-custom-form li.hover .action_panel, .ui-custom-form li.active .action_panel {
   visibility: visible;
 }
-/* line 662, ../src/form.scss */
+/* line 668, ../src/form.scss */
 .ui-custom-form li.active {
   border-style: solid;
 }
 
-/* line 667, ../src/form.scss */
+/* line 673, ../src/form.scss */
 .hint_drag {
   background: #fefedf;
   border: 1px solid #cccccc;
@@ -867,28 +877,28 @@ span.sort_handle {
   display: block;
 }
 
-/* line 676, ../src/form.scss */
+/* line 682, ../src/form.scss */
 .width400 {
   width: 400px;
 }
 
-/* line 680, ../src/form.scss */
+/* line 686, ../src/form.scss */
 .ui-login .ui-form {
   width: 350px;
 }
 
-/* line 684, ../src/form.scss */
+/* line 690, ../src/form.scss */
 .ui-signup .ui-form {
   width: 560px;
 }
 
-/* line 688, ../src/form.scss */
+/* line 694, ../src/form.scss */
 .ui-login, .ui-signup {
   text-align: center;
   display: block;
   padding: 18px 0px;
 }
-/* line 692, ../src/form.scss */
+/* line 698, ../src/form.scss */
 .ui-login .ui-form, .ui-signup .ui-form {
   background: none;
   border: 0px;
@@ -904,17 +914,17 @@ span.sort_handle {
   border: 1px solid #c2c2c2;
   background: #ffffff;
 }
-/* line 702, ../src/form.scss */
+/* line 708, ../src/form.scss */
 .ui-login .ui-form ul, .ui-signup .ui-form ul {
   margin: 0px;
 }
-/* line 705, ../src/form.scss */
+/* line 711, ../src/form.scss */
 .ui-login .ui-form ul li input.text, .ui-signup .ui-form ul li input.text {
   margin: 3px 0px 5px 0px;
   width: 320px;
 }
 
-/* line 714, ../src/form.scss */
+/* line 720, ../src/form.scss */
 .ui-widget-container {
   padding: 10px 20px;
   min-height: 200px;
@@ -933,45 +943,45 @@ span.sort_handle {
   _background: #ffffff;
   margin: 10px;
 }
-/* line 723, ../src/form.scss */
+/* line 729, ../src/form.scss */
 .ui-widget-container .button-container {
   width: 96% !important;
   padding-right: 0px !important;
 }
 
-/* line 729, ../src/form.scss */
+/* line 735, ../src/form.scss */
 .ui-form-widget {
   padding: 15px;
   margin: 0px -15px !important;
   border: 1px solid #DFDFDF !important;
   background-color: rgba(244, 244, 244, 0.5) !important;
 }
-/* line 734, ../src/form.scss */
+/* line 740, ../src/form.scss */
 .ui-form-widget label {
   font-size: 1.2em;
 }
 
-/* line 739, ../src/form.scss */
+/* line 745, ../src/form.scss */
 .requesteremail, .agentemail {
   height: 220px;
 }
 
-/* line 743, ../src/form.scss */
+/* line 749, ../src/form.scss */
 .live_search {
   text-align: left;
   padding: 0px 0px 0px 0px;
   margin: 8px 0px;
 }
-/* line 747, ../src/form.scss */
+/* line 753, ../src/form.scss */
 .live_search .loading {
   background-position: right !important;
 }
-/* line 750, ../src/form.scss */
+/* line 756, ../src/form.scss */
 .live_search .overlabel {
   padding: 0px;
 }
 
-/* line 755, ../src/form.scss */
+/* line 761, ../src/form.scss */
 input.search {
   -moz-border-radius: 3px 3px 3px 3px;
   -webkit-border-radius: 3px 3px 3px 3px;
@@ -986,7 +996,7 @@ input.search {
   width: 500px;
 }
 
-/* line 767, ../src/form.scss */
+/* line 773, ../src/form.scss */
 .sp_paragraph {
   -moz-border-radius: 3px 3px 3px 3px;
   -webkit-border-radius: 3px 3px 3px 3px;
@@ -997,7 +1007,7 @@ input.search {
   margin-bottom: 8px;
 }
 
-/* line 776, ../src/form.scss */
+/* line 782, ../src/form.scss */
 .search-grey-box {
   overflow: hidden;
   *zoom: 1;
@@ -1006,16 +1016,16 @@ input.search {
   padding: 6px 30px 6px 20px;
 }
 
-/* line 785, ../src/form.scss */
+/* line 791, ../src/form.scss */
 .sidepanel .close {
   right: 14px;
 }
 
-/* line 788, ../src/form.scss */
+/* line 794, ../src/form.scss */
 .ui-dialog-form {
   font-size: 80%;
 }
-/* line 790, ../src/form.scss */
+/* line 796, ../src/form.scss */
 .ui-dialog-form .info-data {
   padding-left: 24px;
   display: block;
@@ -1023,7 +1033,7 @@ input.search {
   margin-top: -5px;
 }
 
-/* line 798, ../src/form.scss */
+/* line 804, ../src/form.scss */
 fieldset.nestedChoices {
   overflow: hidden;
   *zoom: 1;
@@ -1037,7 +1047,7 @@ fieldset.nestedChoices {
   display: block;
 }
 
-/* line 811, ../src/form.scss */
+/* line 817, ../src/form.scss */
 .dialog-panel {
   -moz-box-shadow: rgba(0, 0, 0, 0.5) 0 0 8px;
   -webkit-box-shadow: rgba(0, 0, 0, 0.5) 0 0 8px;
@@ -1046,14 +1056,14 @@ fieldset.nestedChoices {
   background-color: #fafafa;
 }
 
-/* line 818, ../src/form.scss */
+/* line 824, ../src/form.scss */
 .border-top {
   margin-top: 6px;
   padding-top: 6px;
   border-top: 1px dotted #cfcfcf;
 }
 
-/* line 824, ../src/form.scss */
+/* line 830, ../src/form.scss */
 .overlay-field {
   position: absolute;
   width: 100%;
@@ -1061,11 +1071,11 @@ fieldset.nestedChoices {
   background: none;
 }
 
-/* line 831, ../src/form.scss */
+/* line 837, ../src/form.scss */
 .code-view {
   padding: 8px 20px;
 }
-/* line 833, ../src/form.scss */
+/* line 839, ../src/form.scss */
 .code-view textarea {
   border: 1px dotted #afafaf;
   display: block;
