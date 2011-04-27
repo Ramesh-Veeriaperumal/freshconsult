@@ -990,7 +990,7 @@ body h5{
 	}
 	
 	.stamp.stamp_type_1{
-		background: #cc6600;
+		background: #3EA9E0;
 	} 		
 	.stamp.stamp_type_2{
 		background:lighten(#336600, 10%);
@@ -2009,6 +2009,9 @@ h4.border_title{
 				top:16px;
 				img{ width:36px; height:36px; padding:0px; border:0px; }
 			}
+		}
+		li:hover{
+			background:#f4f4f4;
 		}
 }
 

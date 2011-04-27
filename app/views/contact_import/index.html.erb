@@ -1,19 +1,25 @@
 <% content_for :sidebar do -%><%-end %>
-<h3 class="title">Import Contacts</h3>
-<div class="page_area">
+<%= content_tag(:h3, t('contacts.import_csv'), :class => "title") %>
+
 	<% form_for :user,:url => { :controller => "contact_import", :action => "create" }, :html => {:multipart => true} do |f| %>
 	  <%= f.error_messages %>
-	  <ul class="ui-form">
+	  <ul class="ui-form"> 
 		 <li>
-		      <label for="file">Select your CSV file</label>
+		      <label for="file"><%= content_tag(:b, t('step1')) %>: <%= t('import_step1_info') %></label>
 		      <%= file_field_tag 'file', :class => "required", :size => "40" %>
-		  </li>
+			  <p><%= content_tag(:b, t('warning')) %> <%= t('import_warning_info') %></p>
+			  <p><%= content_tag(:b, t('note')) %> <%= t('import_note_info') %> </p>
+		 </li>
+		 
+		 <li class="button-container">
+			<%= f.submit t('import'), { :class => "uiButton" } %>
+		  	<%= link_to t('cancel'), contacts_path, :class => "uiButton"  %>
+		 </li>
+		 <li class="seperator"></li> 
+		 <li>	
+			  <%= content_tag(:h4, t('import_example_title'), :class => "title") %>
+			  <div class="intro"><img src="/images/import_csv.png" /></div> 
+	  	 </li>
 	  </ul>
-	  <div class="button-container width400">
-		<%= f.submit 'Next', { :class => "uiButton" } %>
-	  	<%= link_to 'Cancel', contacts_path, :class => "uiButton grey"  %>
-	  </div>
+	 
 	<% end %>
-</div>
-
-

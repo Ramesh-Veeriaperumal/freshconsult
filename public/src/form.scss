@@ -691,12 +691,12 @@ span.sort_handle{
 	.ui-form{ 
 		background:none;
 		border:0px;
+		margin:4px auto;
 		@include corners(12px);
 		@include shadows(0px, 1px, 6px, rgba(0, 0, 0, 0.10) );
 		text-align:left;
 		padding:25px;
-		border:1px solid #c2c2c2;
-		margin:0px auto;
+		border:1px solid #c2c2c2; 
 		background:#ffffff;
 		ul{
 			margin:0px;
@@ -835,7 +835,7 @@ fieldset.nestedChoices{
 		background:#ffffff;
 		font-size:12px;
 		color:#333333;
-		height:100px;
+		height:160px;
 		font-family: "courier";
 	}
 }

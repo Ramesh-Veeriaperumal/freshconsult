@@ -892,6 +892,7 @@ span.sort_handle {
 .ui-login .ui-form, .ui-signup .ui-form {
   background: none;
   border: 0px;
+  margin: 4px auto;
   -moz-border-radius: 12px 12px 12px 12px;
   -webkit-border-radius: 12px 12px 12px 12px;
   border-radius: 12px 12px 12px 12px;
@@ -901,7 +902,6 @@ span.sort_handle {
   text-align: left;
   padding: 25px;
   border: 1px solid #c2c2c2;
-  margin: 0px auto;
   background: #ffffff;
 }
 /* line 701, ../src/form.scss */
@@ -1072,6 +1072,6 @@ fieldset.nestedChoices {
   background: #ffffff;
   font-size: 12px;
   color: #333333;
-  height: 100px;
+  height: 160px;
   font-family: "courier";
 }
