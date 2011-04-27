@@ -90,6 +90,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email],
         :ticket_type =>Helpdesk::Ticket::TYPE_KEYS_BY_TOKEN[:how_to]
       )
+      ticket = check_for_chat_scources(ticket,from_email)
       ticket.group_id = ticket.email_config.group_id unless ticket.email_config.nil?
       begin
         ticket.save!
@@ -98,14 +99,21 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
                                    "{{user_path}} submitted the ticket")
         ticket
       rescue ActiveRecord::RecordInvalid => e
-        RAILS_DEFAULT_LOGGER.debug "Email record is invalid !" if RAILS_DEFAULT_LOGGER
-        RAILS_DEFAULT_LOGGER.debug "The ticket errors are #{ticket.errors.to_json}" if RAILS_DEFAULT_LOGGER
-        RAILS_DEFAULT_LOGGER.debug "The params are :: #{params.inspect}" if RAILS_DEFAULT_LOGGER
         FreshdeskErrorsMailer.deliver_error_email(ticket,params,e)
       end
       
       
     
+  end
+  
+    def check_for_chat_scources(ticket,from_email)
+      ticket.source = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:chat] if Helpdesk::Ticket::CHAT_SOURCES.has_value?(from_email[:domain])
+      if from_email[:domain] == Helpdesk::Ticket::CHAT_SOURCES[:snapengage]
+        emailreg = Regexp.new(/\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/)
+        chat_email =  params[:subject].scan(emailreg).uniq[0]
+        ticket.email = chat_email unless chat_email.blank?
+      end
+      ticket
     end
 
     def add_email_to_ticket(ticket, from_email, mesg)

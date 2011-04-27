@@ -1,5 +1,9 @@
 module TicketConstants
   
+  CHAT_SOURCES = { :snapengage =>  "snapengage.com", :olark => "olark.com"}
+   
+
+  
   SOURCES = [
     [ :email,       "Email",            1 ],
     [ :portal,      "Portal",           2 ],
@@ -7,6 +11,8 @@ module TicketConstants
     [ :forum,       "Forum",            4 ],
     [ :twitter,     "Twitter",          5 ],
     [ :facebook,    "Facebook",         6 ],
+    [ :chat,        "Chat",             7 ]
+    
   ]
 
   SOURCE_OPTIONS = SOURCES.map { |i| [i[1], i[2]] }

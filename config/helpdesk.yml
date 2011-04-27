@@ -8,7 +8,8 @@ HOST:
     test:           "localhost:3000"
     production:     "freshdesk.com"
     staging:        "freshpo.com"
-
+    
+ASSET_URL: "http://www.freshdesk.com/assets" 
 
 # This is the title staff members will see when they are using the helpdesk application
 STAFF_FACING_TITLE: FreshDesk
