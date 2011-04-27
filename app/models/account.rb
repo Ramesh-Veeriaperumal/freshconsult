@@ -109,17 +109,22 @@ class Account < ActiveRecord::Base
     end
   end
   
+  PLANS_AND_FEATURES = {
+    :pro => {
+      :features => [ :scenario_automations, :customer_slas, :business_hours, :forums ]
+    },
+    
+    :premium => {
+      :features => [ :multi_product, :multi_timezone ],
+      :inherits => [ :pro ] #To make the hierarchy easier
+    }
+  }
+  
   has_features do
-    feature :pro
-    feature :premium, :requires => [:pro] #To make the hierarchy easier
-    
-    feature :scenario_automations, :requires => [:pro]
-    feature :customer_slas, :requires => [:pro]
-    feature :business_hours, :requires => [:pro]
-    feature :forums, :requires => [:pro]
-    
-    feature :multi_product, :requires => [:premium]
-    feature :multi_timezone, :requires => [:premium]
+    PLANS_AND_FEATURES.each_pair do |k, v|
+      feature k, :requires => ( v[:inherits] || [] )
+      v[:features].each { |f_n| feature f_n, :requires => k } unless v[:features].nil?
+    end
   end
   
   def get_max_display_id
