@@ -4,7 +4,7 @@ module SubscriptionSystem
   def self.included(base)
     #base.send :before_filter, :login_required
     base.send :before_filter, :set_affiliate_cookie
-    base.send :helper_method, :current_account, :admin?, :admin_subdomain?
+    base.send :helper_method, :current_account, :admin?, :admin_subdomain?, :feature?
     base.send :filter_parameter_logging, :password, :creditcard
   end
   
@@ -23,6 +23,10 @@ module SubscriptionSystem
     
     def admin_subdomain?
       request.subdomains.first == AppConfig['admin_subdomain']
+    end
+    
+    def feature?(f)
+      current_account.features? f
     end
 
     def set_affiliate_cookie

@@ -16,14 +16,11 @@ module ApplicationHelper
     tabs = [
       ['/home',               'Home',         !permission?(:manage_tickets)],
       ['helpdesk/dashboard',  'Dashboard',    permission?(:manage_tickets)],
-      #['helpdesk/issues',    'Issues',       permission?(:manage_tickets)],
       ['helpdesk/tickets',    'Tickets',      permission?(:manage_tickets)],
-      #['helpdesk/tags',      'Tags',         permission?(:manage_tickets)],
       ['solution/categories', 'Solutions',    true],      
-      ['/categories',         'Forums',       true],      
+      ['/categories',         'Forums',       feature?(:forums)],
       ['/contacts',           'Customers',    permission?(:manage_tickets)],
       ['support/tickets',     'Check your ticket status',      !permission?(:manage_tickets)],
-      #['helpdesk/articles',  'Articles',     permission?(:manage_knowledgebase)],
       ['/admin/home',         'Admin',        permission?(:manage_users)]
     ]
 
