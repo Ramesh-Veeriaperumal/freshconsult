@@ -35,7 +35,7 @@ class User < ActiveRecord::Base
     c.validates_length_of_password_confirmation_field_options = {:on => :update, :minimum => 4, :if => :has_no_credentials?}
   end
   
-  attr_accessible :name, :email, :password, :password_confirmation , :second_email, :job_title, :phone, :mobile, :twitter_id, :description, :time_zone, :avatar_attributes,:user_role,:customer_id
+  attr_accessible :name, :email, :password, :password_confirmation , :second_email, :job_title, :phone, :mobile, :twitter_id, :description, :time_zone, :avatar_attributes,:user_role,:customer_id,:import_id
   
   #Sphinx configuration starts
   define_index do
@@ -69,6 +69,7 @@ class User < ActiveRecord::Base
     self.customer_id = params[:user][:customer_id]
     self.job_title = params[:user][:job_title]
     self.user_role = params[:user][:user_role]
+    self.import_id = params[:user][:import_id]
     
     
     self.avatar_attributes=params[:user][:avatar_attributes] unless params[:user][:avatar_attributes].nil?
@@ -117,7 +118,7 @@ class User < ActiveRecord::Base
   
   has_one :agent , :class_name => 'Agent' , :foreign_key => "user_id"
   
-  has_many :agent_groups , :class_name =>'AgentGroup', :foreign_key => "user_id"
+  has_many :agent_groups , :class_name =>'AgentGroup', :foreign_key => "user_id" , :dependent => :destroy
   
    
   #accepts_nested_attributes_for :agent

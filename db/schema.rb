@@ -9,9 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-
-ActiveRecord::Schema.define(:version => 20110421065658) do
-
+ActiveRecord::Schema.define(:version => 20110426100326) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -76,6 +74,7 @@ ActiveRecord::Schema.define(:version => 20110421065658) do
     t.text     "note"
     t.text     "domains"
     t.boolean  "delta",                        :default => true, :null => false
+    t.integer  "import_id"
   end
 
   add_index "customers", ["account_id", "name"], :name => "index_customers_on_account_id_and_name", :unique => true
@@ -121,6 +120,13 @@ ActiveRecord::Schema.define(:version => 20110421065658) do
   end
 
   add_index "email_notifications", ["account_id", "notification_type"], :name => "index_email_notifications_on_notification_type", :unique => true
+
+  create_table "features", :force => true do |t|
+    t.string   "type",                    :null => false
+    t.integer  "account_id", :limit => 8, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "flexifield_def_entries", :force => true do |t|
     t.integer  "flexifield_def_id",  :limit => 8, :null => false
@@ -241,6 +247,7 @@ ActiveRecord::Schema.define(:version => 20110421065658) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "account_id",  :limit => 8
+    t.integer  "import_id"
   end
 
   add_index "forum_categories", ["account_id", "name"], :name => "index_forum_categories_on_account_id_and_name", :unique => true
@@ -255,6 +262,7 @@ ActiveRecord::Schema.define(:version => 20110421065658) do
     t.integer "account_id",        :limit => 8
     t.integer "forum_category_id", :limit => 8
     t.integer "forum_type"
+    t.integer "import_id"
   end
 
   add_index "forums", ["forum_category_id", "name"], :name => "index_forums_on_forum_category_id", :unique => true
@@ -268,6 +276,7 @@ ActiveRecord::Schema.define(:version => 20110421065658) do
     t.integer  "assign_time"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "import_id"
   end
 
   add_index "groups", ["account_id", "name"], :name => "index_groups_on_account_id", :unique => true
@@ -471,6 +480,7 @@ ActiveRecord::Schema.define(:version => 20110421065658) do
     t.integer  "email_config_id", :limit => 8
     t.text     "cc_email"
     t.boolean  "delta",                        :default => true,  :null => false
+    t.integer  "import_id"
   end
 
   add_index "helpdesk_tickets", ["account_id", "display_id"], :name => "index_helpdesk_tickets_on_account_id_and_display_id", :unique => true
@@ -648,6 +658,7 @@ ActiveRecord::Schema.define(:version => 20110421065658) do
     t.integer  "account_id",   :limit => 8
     t.integer  "stamp_type"
     t.boolean  "delta",                     :default => true,  :null => false
+    t.integer  "import_id"
   end
 
   add_index "topics", ["forum_id", "replied_at"], :name => "index_topics_on_forum_id_and_replied_at"
@@ -685,6 +696,7 @@ ActiveRecord::Schema.define(:version => 20110421065658) do
     t.boolean  "deleted",                          :default => false
     t.integer  "user_role"
     t.boolean  "delta",                            :default => true,  :null => false
+    t.integer  "import_id"
   end
 
   add_index "users", ["account_id", "email"], :name => "index_users_on_account_id_and_email", :unique => true
