@@ -1,6 +1,7 @@
 #config/initializers/omniauth.rb
 require 'openid/store/filesystem'
 
+
 ActionController::Dispatcher.middleware.use OmniAuth::Builder do
   provider :twitter,  'KEY', 'SECRET'
   provider :facebook, 'APP_ID', 'APP_SECRET'
