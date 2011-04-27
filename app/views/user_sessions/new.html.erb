@@ -15,11 +15,14 @@
 				<%= f.label :remember_me, "Remember me on this computer" %>
 		  	</li>
 		  	<li>
-		  		<%= f.submit "Login", { :class => "uiButton"} %> or <%= link_to "Signin using Google", "/auth/open_id?openid_url=https://www.google.com/accounts/o8/id" %>
+		  		<%= f.submit "Login", { :class => "uiButton"} %>
 			</li>
 			<li>
 				<span class="seperator"></span>
 				<div class="help_text"><b>Help:</b> <%= link_to("I forgot my password?", new_password_reset_path ) %> </div>
+			</li>
+			<li>
+				<div><b>Sign In using: </b> <%= link_to (image_tag("google.png", :alt => "Sign in using your Google account") + "Google", "/auth/open_id?openid_url=https://www.google.com/accounts/o8/id", :class => "button") %></div>
 			</li>
 		</ul>
 	<% end %>

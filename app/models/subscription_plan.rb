@@ -10,7 +10,7 @@ class SubscriptionPlan < ActiveRecord::Base
   
   attr_accessor :discount
   
-  SUBSCRIPTION_PLANS = {:free => "Free", :basic => "Basic" , :premium => "Premium" }
+  SUBSCRIPTION_PLANS = {:basic => "Basic", :pro => "Pro" , :premium => "Premium" }
 
   def to_s
     "#{self.name} - #{number_to_currency(self.amount)} / month"
