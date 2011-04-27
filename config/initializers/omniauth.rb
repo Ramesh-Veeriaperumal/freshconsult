@@ -1,6 +1,8 @@
 #config/initializers/omniauth.rb
 require 'openid/store/filesystem'
 
+OpenIdAuthentication.store = :file
+
 
 # you will be able to access the above providers by the following url
 # /auth/providername for example /auth/twitter /auth/facebook
