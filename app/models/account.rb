@@ -94,6 +94,7 @@ class Account < ActiveRecord::Base
     
   after_create :create_admin
   after_create :populate_seed_data
+  after_create :populate_features
   after_create :send_welcome_email
   
   acts_as_paranoid
@@ -200,6 +201,20 @@ class Account < ActiveRecord::Base
     Thread.current[:account] = self
   end
   #Sentient ends here
+  
+  def populate_features
+    add_features_of subscription.subscription_plan.name.downcase.to_sym
+  end
+  
+  def add_features_of(s_plan)
+    p_features = PLANS_AND_FEATURES[s_plan]
+    unless p_features.nil?
+      p_features[:inherits].each { |p_n| add_features_of(p_n) } unless p_features[:inherits].nil?
+
+      features.send(s_plan).create
+      p_features[:features].each { |f_n| features.send(f_n).create } unless p_features[:features].nil?
+    end
+  end
   
   protected
   
