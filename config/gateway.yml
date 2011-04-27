@@ -1,6 +1,6 @@
 development:
-  login: 'demo'
-  password: 'password'
+  login: 'freshdesk'
+  password: 'opmanager321'
 production:
   login: 'demo'
   password: 'password'

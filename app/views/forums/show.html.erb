@@ -1,4 +1,4 @@
-<% content_for :layoutType do %>single<% end %>  
+
 	<% @page_title = @forum.name %>
 	
 	<% if logged_in? %> 
@@ -20,20 +20,22 @@
 					<%= link_to "Edit Forum" , edit_category_forum_path(@forum_category, @forum), :class => "last"  %>
 				</div>
 			<% end %>
-			<div class="floatr" style="display:none;">
+			<div class="" style="display:none;">
 				<%= feed_icon_tag @forum.name, forum_posts_path(@forum, :format => :rss) %>
 				<%= '{count} topic(s)'[(count=@forum.topics.size)==1 ? :topic_count : :topics_count, number_with_delimiter(count)] %>,
-		  	    <%= '{count} post(s)'[(count=@forum.posts.size)==1 ? :post_count : :posts_count, number_with_delimiter(count)] %>
-		    </div>
+				<%= '{count} post(s)'[(count=@forum.posts.size)==1 ? :post_count : :posts_count, number_with_delimiter(count)] %>	
+			</div>
 			<%= render :partial => "/search/pagesearch", :locals => { :placeholder => "Search #{@forum_category.name}", :url => "/search/topics?category_id=#{@forum_category.id}&search_key=" } %>
 	   </div>
-	   <%=link_to "overview", category_forum_path( @forum_category, @forum)%>
-	   <%=link_to "recent", category_forum_path( @forum_category, @forum,:order  => "replied_at")%>
-	   <%if @forum.ideas?%>
-	   <% Topic::IDEAS_STAMPS_OPTIONS.each do |k,v| %>
-	   		<%=link_to k, category_forum_path( @forum_category, @forum,:stamp_type  => v)%>
-	   <%end%>
-	   <%end%>
+	   <div class="list-bar"> 
+		   <%= link_to("Popular", category_forum_path( @forum_category, @forum), :class => "first #{ (params[:stamp_type].blank? && params[:order].blank?)? 'active' : '' }" ) if @forum.ideas? %>
+		   <%= link_to "recent", category_forum_path( @forum_category, @forum, :order => "replied_at"), :class => (!params[:order].blank? ? "active" : "") %>
+		   <% if @forum.ideas? %>
+		   		<% Topic::IDEAS_STAMPS_OPTIONS.each do |k,v| %> 
+		   			<%= link_to k, category_forum_path( @forum_category, @forum, :stamp_type  => v ), :class => ((params[:stamp_type] == v.to_s)? "active":"") %>
+		   		<% end %>
+		   <% end %>
+	   </div>
 	   <%= render :partial => "forum_shared/topics", :object => @topics, :locals => { :category => @forum_category, :forum => @forum } %>
 	</div>
 	

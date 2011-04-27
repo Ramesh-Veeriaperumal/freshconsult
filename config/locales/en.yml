@@ -451,3 +451,15 @@ en:
    feedbackwidget_defaulttitle:       "Help & Support"
    back_to_admin:                     "Back to Admin"
    
+#April 26th 2011
+   
+   step1:                           "Step 1"
+   step2:                           "Step 2" 
+   warning:                         "WARNING"
+   import:                          "Import"
+   import_example_title:            "Following is the example of a CSV file"
+   import_step1_info:               "Select a CSV file and click import"
+   import_step2_info:               "Map the following CSV fields with database fields and import."
+   import_warning_info:             "An email with user activation instructions will be sent to each contact on successful import. If the email is already present in the database we will update the attributes like Name, Company etc."
+   import_note_info:                "The fields in your csv file can be in any order. Just ensure that the first row has the header information.(Eg. Name, email etc.) The only required field is email."
+   import_ignore_first_row:         "Ignore the first row (headings)"

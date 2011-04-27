@@ -1,29 +1,45 @@
-<% form_tag nil, :method => :post do -%>
+<% javascript_tag do %>
+	jQuery(document).ready(function(){
+		jQuery.validator.addMethod("required_value_6", function(value, element) {
+		  return (element.value != 6);  
+		}, "Email is a required field for importing to contacts");
+		
+		jQuery.validator.addClassRules("required_value_6", {
+		  required_value_6: true
+		});
+	});
+<% end %>
+    <% form_tag nil, :method => :post do -%>
 	  <% @parameters.each do |arr| -%>
 	    <%= hidden_field_tag arr[0], arr[1] %>
 	  <% end -%>
 	  <ul class="ui-form">
-	  	<li class="info_data">
-	   	  <li class="info_data">
-	  	  	An email with user activation instructions will be sent to each contact on successful import. If the email is already present in the databse we will update the attributes like Name, Company etc. Please map the details you're importing
+	  	  <li>
+		      <label for="file"><%= content_tag(:b, t('step2')) %>: <%= t('import_step2_info') %></label>
 		  </li>
 		  <li class="map_fields">
+		  	<style>table td{ vertical-align:top; }</style>
 		   <table cellspacing="0">
 		      <thead>
 		      	<% @fields.each do |k,v| -%>
 		        <tr>
-		        	<td><%=k%></td>
-					<td><%= select_tag "fields[#{v}]", options_for_select(to_hash(@rows.first)),  :class => 'field_options' %></td>
+		        	<td width="30%"><%= k %></td>
+					<td><%= select_tag "fields[#{v}]", options_for_select(to_hash(@rows.first)),  :class => ((k == "Email")?"required_value_6":"") %></td>
 		        </tr>
 				 <% end -%>
 		      </thead>
 			 </table>
 		  </li>
 		  <li class="checkbox">
-		    <%= check_box_tag 'ignore_first_row', '1', true, :id => 'ignore_first_row_option' %><label for="ignore_first_row_option">Ignore the first row (headings)</label>
+		    <%= check_box_tag 'ignore_first_row', '1', true, :id => 'ignore_first_row_option' %><label for="ignore_first_row_option"><%=t('import_ignore_first_row')%></label>
 		  </li>
+		  <li class="seperator"></li>
+		  <li>
+		  	<p><%= content_tag(:b, t('warning')) %> <%= t('import_warning_info') %></p>
+		  </li>	
+		  <li class="button-container">
+			<%= submit_tag t('import'), { :class => "uiButton" } %>
+		  	<%= link_to t('cancel'), contacts_path, :class => "uiButton"  %>
+		 </li>
 	  </ul>
-	  <div class="button-container">
-	    <%= submit_tag 'Import', :class => "fdbutton" %>
-	  </div>
 	<% end -%>

@@ -9,11 +9,16 @@
 				<% else %>
 					<%= user_avatar( topic.user.avatar ) %>
 				<% end %>
-				<%= content_tag (:b, "STICKY") if (topic.sticky?) %>
-				<%= link_to topic.title, category_forum_topic_path(category, forum, topic), :class => "topic-title" %>
-					<span class="mark_action">
-						<span class="stamp stamp_type_<%=topic.stamp_type%>"><%=h(topic.stamp_name)%></span>
+				<span class="list-badge">
+					<span class="stamp stamp_type_<%=topic.stamp_type%>"> 
+						<%=h(topic.stamp_name)%>
 					</span>
+				</span>
+				
+				<%= content_tag (:b, "STICKY") if (topic.sticky?) %>
+				
+				<%= link_to topic.title, category_forum_topic_path(category, forum, topic), :class => "topic-title" %>
+				
 					<div class="info_data"> 
 						<% if topic.posts_count > 1 %>
 							Last reply <%= time_ago_in_words(last_post.created_at) %> ago 
@@ -32,10 +37,14 @@
 						-
 						<%= t("forum.verb.#{topic.forum.type_name.downcase}") %>   
 						<%= link_to_user topic.user %>
-						<%if @forum.ideas?%>  
-						 |<img src='/images/thumb_up.png' style="position:relative;top:2px;" /> <%= topic.votes_count%> 
+						
+						<%if @forum.ideas?%>
+							|  
+							<span class='idea-likes <%= "leftflat" unless topic.stamp_name.blank? %> '>
+								<span class="like-image"></span>
+								<%= topic.votes_count %> 
+							</span> 
 						<%end%>
-					
 					</div>
 					<%if @forum.questions?%>  
 						<%if topic.posts.answered_posts.count > 0%>
