@@ -2,6 +2,12 @@
 @import "base";
 @import "mixins";  
 
+/* Ticket Show page twitter style icons */ 
+$ticketicon: sprite-map("ticket-icon/*.png");
+
+/* Bullet icon */ 
+$bullet-icon:"listicons/request_nav_seperator.gif";
+
 body { color: #333; background:$background; }
 
 /* PAGE AREA STYLE */ 
@@ -136,12 +142,12 @@ ul.activityfeed li{
 }
 
 .ui-list_with_icon{ 
+	@include pretty-bullets($bullet-icon, 16px, 0px);
 	padding-top:5px;
 	list-style:none;
 	margin:0px;
 	padding:0px; 
-	li{
-		background:url('../images/request_nav_seperator.gif') left 8px no-repeat;
+	li{ 
 		padding:4px 0px 4px 12px; 
 		color:#41658a;
 		position:relative;
@@ -151,17 +157,14 @@ ul.activityfeed li{
 		left:0px; top:4px;
 	}
 	li a{
-		color:#336699;
+		@include link-colors(#444444, #527EAA, #527EAA, #333333);
 		font-size:1.1em; line-height:1.5;
 		text-decoration:none;
-	}
-	li a:hover{
-		color:#663366; 
 	}
 }
 
 .list_with_icon{
-	@include pretty-bullets("../images/forum_bullet.png", 12px, 20px);
+	@include pretty-bullets("/images/listicons/forum-bullet.png", 12px, 16px);
 	padding-top:3px;  
 	li{
 		padding-left:22px;
@@ -245,7 +248,6 @@ h2.content_title{
 	  border-right: 11px solid rgba(0,0,0,0); 
 }
 
-
 .title_corner{
 	left:-10px;
 	top:0px;
@@ -258,28 +260,6 @@ h2.content_title{
 		border-bottom-color:#c5c8dc;
 	}
 }
-
-
-.ltShadow, .rtShadow{
-	top:0px;
-	width:25px;
-	height:100%;
-	z-index:0;	
-	position:absolute;
-	display:none;	
-}
-.ltShadow{  	
-	left:0;
-	top:-5px;
-	margin-left:-25px; 
-	background:url("../images/shadow_lt.png") no-repeat top left;	
-}
-.rtShadow{  
-	right:0; 
-	margin-right:-25px;  	 
-	background:url("../images/shadow_rt.png") no-repeat top right; 
-} 
- 
 
 /* Page Style */
  
@@ -332,10 +312,7 @@ h2.content_title{
 			}
 		}
 	}
-}
-
-
-
+} 
 
 .actionsRight{
 	float:right;
@@ -355,18 +332,6 @@ h2.content_title{
 	ul{ 
 		@include horizontal-list; 
 	} 	
-}
-
-.floatl{
-	float:left;
-}
-
-.floatr{
-	float:right;
-}
-
-.alignright{
-	text-align:right;
 }
 
 ul.secondary-actions{
@@ -400,15 +365,12 @@ div.leader-left{
     border-bottom: 1px dotted #ccc;
 }
 
-
 div.leader-right{
     float: right; 
     font-weight: normal; 
     margin-top: 3px;
 
 }
-
-
 
 .ui-dropdown-button{
 	background:#efefef;
@@ -418,10 +380,7 @@ div.leader-right{
 	margin:0px;
 	padding:3px 6px;
 	
-}
-
-
-
+} 
 
 .forum_type{
 	padding:6px 12px;
@@ -848,7 +807,6 @@ body h5{
 		z-index:9;
 		padding-top:6px;
 		text-align:center;
-		
 		a{
 			display:block;
 			font-size:11px;
@@ -859,30 +817,29 @@ body h5{
 			margin-bottom:10px;
 			text-align:center; 
 			img{
-				@include sprite-background("Ticket_right_icons.jpg", $spritesize, $spritesize);
 				width:44px;
 				height:32px;
 			}
 			img.ticketprop{
-				@include sprite-column(6, $spritesize);
+				background: sprite($ticketicon, properties) no-repeat;
 			}
 			img.suggestsolutions{
-				@include sprite-column(3, $spritesize);
+				background: sprite($ticketicon, solutions) no-repeat;
 			}
-			img.scenario{
-				@include sprite-column(4, $spritesize);
+			img.scenario{ 
+				background: sprite($ticketicon, scenario) no-repeat;
 			}
-			img.requesterinfo{
-				@include sprite-column(2, $spritesize);
+			img.requesterinfo{ 
+				background: sprite($ticketicon, user-info) no-repeat;
 			}
-			img.todo{
-				@include sprite-column(5, $spritesize);
+			img.todo{ 
+				background: sprite($ticketicon, todo) no-repeat;
 			}
-			img.tags{
-				@include sprite-column(1, $spritesize);
+			img.tags{ 
+				background: sprite($ticketicon, tag) no-repeat;
 			}
-			img.activity{
-				@include sprite-column(7, $spritesize);
+			img.activity{ 
+				background: sprite($ticketicon, activity) no-repeat;
 			}
 			
 			em{
@@ -894,27 +851,26 @@ body h5{
 			} 
 		}
 		a.active, a:hover{
-			
-			img.ticketprop{
-				@include sprite-position(6, 2, $spritesize, $spritesize);
+			img.ticketprop{ 
+				background: sprite($ticketicon, properties_active) no-repeat;
 			}
-			img.suggestsolutions{
-				@include sprite-position(3, 2, $spritesize, $spritesize);
+			img.suggestsolutions{ 
+				background: sprite($ticketicon, solutions_active) no-repeat;
 			}
-			img.scenario{
-				@include sprite-position(4, 2, $spritesize, $spritesize);
+			img.scenario{ 
+				background: sprite($ticketicon, scenario_active) no-repeat;
 			}
-			img.requesterinfo{
-				@include sprite-position(2, 2, $spritesize, $spritesize);
+			img.requesterinfo{ 
+				background: sprite($ticketicon, user-info_active) no-repeat;
 			}
-			img.todo{
-				@include sprite-position(5, 2, $spritesize, $spritesize);
+			img.todo{ 
+				background: sprite($ticketicon, todo_active) no-repeat;
 			}
-			img.tags{
-				@include sprite-position(1, 2, $spritesize, $spritesize);
+			img.tags{ 
+				background: sprite($ticketicon, tag_active) no-repeat;
 			}
-			img.activity{
-				@include sprite-position(7, 2, $spritesize, $spritesize);
+			img.activity{ 
+				background: sprite($ticketicon, activity_active) no-repeat;
 			}
 			color:#ffffff;
 		}
@@ -1031,23 +987,23 @@ div.panel_area{
 	}
 }
 
-.action_icons{
-	$asp_xy: 28px;
+.action_icons{ 
 	img{
-		@include sprite-background("action_icons.png", $asp_xy, $asp_xy);
 		background-color:none;
+		width:28px;
+		height:28px;
 	}
-	.monitor img{
-		@include sprite-position(1, 1, $asp_xy, $asp_xy);
+	.monitor img{ 
+		background: sprite($ticketicon, monitor) no-repeat;
 	}
-	.monitor_active img{
-		@include sprite-position(1, 2, $asp_xy, $asp_xy);
+	.monitor_active img{ 
+		background: sprite($ticketicon, monitor_active) no-repeat;
 	}
-	.spam img{
-		@include sprite-position(2, 1, $asp_xy, $asp_xy);
+	.spam img{ 
+		background: sprite($ticketicon, flag-spam) no-repeat;
 	}
-	.spam_active img{
-		@include sprite-position(2, 2, $asp_xy, $asp_xy);
+	.spam_active img{ 
+		background: sprite($ticketicon, flag-spam_active) no-repeat;
 	}
 }
 
@@ -1521,12 +1477,8 @@ h4.list_title{
 		div{
 			margin:0px; padding:0px;
 		}		
-	} 
-	
-		
+	}  
 }
-
-
  
 span.sort_handle{
 			position:relative;

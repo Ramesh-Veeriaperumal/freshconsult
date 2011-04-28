@@ -5,14 +5,15 @@ class AuthorizationsController < ApplicationController
     omniauth = request.env['rack.auth'] 
     @auth = Authorization.find_from_hash(omniauth,current_account.id)
     @current_user = current_account.all_users.find_by_email(omniauth['user_info']['email'])  unless  current_account.blank?
-    if @current_user.deleted?
-      flash[:notice] = "User is deleted!"
-      redirect_to login_url
-      return
-    end
+    
     
     if !@current_user.blank? and !@auth.blank?
       @current_user.active = true unless @current_user.active?
+      if @current_user.deleted?
+        flash[:notice] = "User is deleted!"
+        redirect_to login_url
+      return
+    end
     elsif !@current_user.blank?
       @current_user.authorizations.create(:provider => omniauth['provider'], :uid => omniauth['uid'], :account_id => current_account.id) #Add an auth to existing user
     else  

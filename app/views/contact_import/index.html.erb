@@ -5,12 +5,8 @@
 	  <%= f.error_messages %>
 	  <ul class="ui-form"> 
 		 <li>
-		      <label for="file">Select your CSV file</label>
-		      <%= file_field_tag 'file',:accept => 'csv', :class => "required", :size => "40" %>
-		  </li>
-
 		      <label for="file"><%= content_tag(:b, t('step1')) %>: <%= t('import_step1_info') %></label>
-		      <%= file_field_tag 'file', :class => "required", :size => "40" %>
+		      <%= file_field_tag 'file',:accept => 'csv', :class => "required", :size => "40" %>
 			  <p><%= content_tag(:b, t('warning')) %> <%= t('import_warning_info') %></p>
 			  <p><%= content_tag(:b, t('note')) %> <%= t('import_note_info') %> </p>
 		 </li>
@@ -22,7 +18,7 @@
 		 <li class="seperator"></li> 
 		 <li>	
 			  <%= content_tag(:h4, t('import_example_title'), :class => "title") %>
-			  <div class="intro"><img src="/images/import_csv.png" /></div> 
+			  <div class="intro"><img src="/images/helpimages/import_csv.png" /></div> 
 	  	 </li>
 	  </ul>
  
