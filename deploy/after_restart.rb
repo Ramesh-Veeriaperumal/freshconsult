@@ -2,5 +2,5 @@
 run "sudo monit -g dj_helpkit restart all"
 
 #To give the permissions for omniauth to create temp file
-run "mkdir ./tmp/temp"
-run "chown -R deploy ./tmp/temp"
+run "mkdir -p ./tmp/temp"
+sudo "chown -R deploy ./tmp/temp"
