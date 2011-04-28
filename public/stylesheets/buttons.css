@@ -319,11 +319,11 @@ button.ui-button::-moz-focus-inner {
   cursor: pointer;
   text-shadow: 1px 1px 0 white;
 }
-/* line 7, ../../../../../Library/Ruby/Gems/1.8/gems/compass-0.11.1/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
+/* line 7, /Library/Ruby/Gems/1.8/gems/compass-0.11.1/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
 .uiButton, .uiButton:visited, .fdbutton, .fdbutton:visited {
   *display: inline;
 }
-/* line 75, ../../../../../Library/Ruby/Gems/1.8/gems/compass-0.11.1/frameworks/blueprint/stylesheets/blueprint/_buttons.scss */
+/* line 75, /Library/Ruby/Gems/1.8/gems/compass-0.11.1/frameworks/blueprint/stylesheets/blueprint/_buttons.scss */
 .uiButton img, .uiButton:visited img, .fdbutton img, .fdbutton:visited img {
   margin: 0 3px -3px 0 !important;
   padding: 0;
@@ -397,11 +397,11 @@ button.ui-button::-moz-focus-inner {
   background-position: top left;
   margin-top: 20px;
 }
-/* line 7, ../../../../../Library/Ruby/Gems/1.8/gems/compass-0.11.1/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
+/* line 7, /Library/Ruby/Gems/1.8/gems/compass-0.11.1/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
 .forum_button {
   *display: inline;
 }
-/* line 75, ../../../../../Library/Ruby/Gems/1.8/gems/compass-0.11.1/frameworks/blueprint/stylesheets/blueprint/_buttons.scss */
+/* line 75, /Library/Ruby/Gems/1.8/gems/compass-0.11.1/frameworks/blueprint/stylesheets/blueprint/_buttons.scss */
 .forum_button img {
   margin: 0 3px -3px 0 !important;
   padding: 0;
@@ -466,11 +466,11 @@ button.ui-button::-moz-focus-inner {
   margin: 2px;
   text-align: center;
 }
-/* line 7, ../../../../../Library/Ruby/Gems/1.8/gems/compass-0.11.1/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
+/* line 7, /Library/Ruby/Gems/1.8/gems/compass-0.11.1/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
 .fdbutton {
   *display: inline;
 }
-/* line 75, ../../../../../Library/Ruby/Gems/1.8/gems/compass-0.11.1/frameworks/blueprint/stylesheets/blueprint/_buttons.scss */
+/* line 75, /Library/Ruby/Gems/1.8/gems/compass-0.11.1/frameworks/blueprint/stylesheets/blueprint/_buttons.scss */
 .fdbutton img {
   margin: 0 3px -3px 0 !important;
   padding: 0;
@@ -506,15 +506,15 @@ div.action_buttons a {
   color: #333333;
   text-shadow: white 0px 1px 1px;
 }
-/* line 18, ../../../../../Library/Ruby/Gems/1.8/gems/compass-0.11.1/frameworks/compass/stylesheets/compass/typography/links/_link-colors.scss */
+/* line 18, /Library/Ruby/Gems/1.8/gems/compass-0.11.1/frameworks/compass/stylesheets/compass/typography/links/_link-colors.scss */
 div.action_buttons a:visited {
   color: #333333;
 }
-/* line 24, ../../../../../Library/Ruby/Gems/1.8/gems/compass-0.11.1/frameworks/compass/stylesheets/compass/typography/links/_link-colors.scss */
+/* line 24, /Library/Ruby/Gems/1.8/gems/compass-0.11.1/frameworks/compass/stylesheets/compass/typography/links/_link-colors.scss */
 div.action_buttons a:hover {
   color: #666666;
 }
-/* line 27, ../../../../../Library/Ruby/Gems/1.8/gems/compass-0.11.1/frameworks/compass/stylesheets/compass/typography/links/_link-colors.scss */
+/* line 27, /Library/Ruby/Gems/1.8/gems/compass-0.11.1/frameworks/compass/stylesheets/compass/typography/links/_link-colors.scss */
 div.action_buttons a:active {
   color: #333333;
 }
@@ -614,11 +614,11 @@ button.positive, .buttons a.positive {
   border: 1px solid #afafaf;
   cursor: pointer;
 }
-/* line 7, ../../../../../Library/Ruby/Gems/1.8/gems/compass-0.11.1/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
+/* line 7, /Library/Ruby/Gems/1.8/gems/compass-0.11.1/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
 .button {
   *display: inline;
 }
-/* line 75, ../../../../../Library/Ruby/Gems/1.8/gems/compass-0.11.1/frameworks/blueprint/stylesheets/blueprint/_buttons.scss */
+/* line 75, /Library/Ruby/Gems/1.8/gems/compass-0.11.1/frameworks/blueprint/stylesheets/blueprint/_buttons.scss */
 .button img {
   margin: 0 3px -3px 0 !important;
   padding: 0;
@@ -627,15 +627,15 @@ button.positive, .buttons a.positive {
   height: 16px;
   float: none;
 }
-/* line 18, ../../../../../Library/Ruby/Gems/1.8/gems/compass-0.11.1/frameworks/compass/stylesheets/compass/typography/links/_link-colors.scss */
+/* line 18, /Library/Ruby/Gems/1.8/gems/compass-0.11.1/frameworks/compass/stylesheets/compass/typography/links/_link-colors.scss */
 .button:visited {
   color: #3f3f3f;
 }
-/* line 24, ../../../../../Library/Ruby/Gems/1.8/gems/compass-0.11.1/frameworks/compass/stylesheets/compass/typography/links/_link-colors.scss */
+/* line 24, /Library/Ruby/Gems/1.8/gems/compass-0.11.1/frameworks/compass/stylesheets/compass/typography/links/_link-colors.scss */
 .button:hover {
   color: #666666;
 }
-/* line 27, ../../../../../Library/Ruby/Gems/1.8/gems/compass-0.11.1/frameworks/compass/stylesheets/compass/typography/links/_link-colors.scss */
+/* line 27, /Library/Ruby/Gems/1.8/gems/compass-0.11.1/frameworks/compass/stylesheets/compass/typography/links/_link-colors.scss */
 .button:active {
   color: #3f3f3f;
 }
