@@ -2,9 +2,11 @@
 <% content_for :sidebar do %> 
 	<div class="sidepanel">
 		<div class="element first">
-			<div class="edit" id="sla_button">
-				<a href="javascript:void(0)" onclick="jQuery('#sla_details, #sla_form').toggle(); jQuery('#sla_button').hide()">Edit</a>
-			</div> 
+			<% if feature?(:customer_slas) %>
+				<div class="edit" id="sla_button">
+					<a href="javascript:void(0)" onclick="jQuery('#sla_details, #sla_form').toggle(); jQuery('#sla_button').hide()">Edit</a>
+				</div> 
+			<% end %>
 			<h4 class="title"><%=t('sla_policy.title')%></h4>
 			<div id="sla_details">
 				<strong><%= @customer.sla_policy.name %></strong>
