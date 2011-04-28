@@ -91,10 +91,12 @@
 			<img src="/images/spacer.gif" class="suggestsolutions" width="36px" height="36px"  />
 			<em><%=t('ticket.suggest_solutions')%></em>
 		</a>
-		<a href="javascript:void(0)" cntid="Scenarios">
-			<img src="/images/spacer.gif" class="scenario" width="36px" height="36px"  />
-			<em><%=t('ticket.execute_scenario')%></em>
-		</a>
+		<% if feature?(:scenario_automations) %>
+			<a href="javascript:void(0)" cntid="Scenarios">
+				<img src="/images/spacer.gif" class="scenario" width="36px" height="36px"  />
+				<em><%=t('ticket.execute_scenario')%></em>
+			</a>
+		<% end %>
 		<a href="javascript:void(0)" cntid="RequesterProperties">
 			<img src="/images/spacer.gif" class="requesterinfo" width="36px" height="36px"  />
 			<em><%=t('ticket.requestor_info')%></em>
@@ -117,7 +119,7 @@
 	 <%= render :partial => "helpdesk/tickets/components/tags", :locals => { :ticket => @ticket } %>
 	 <%= render :partial => "helpdesk/tickets/components/todos", :locals => { :ticket => @ticket } %>
 	 <%= render :partial => "helpdesk/tickets/components/related_solutions", :locals => { :ticket => @ticket } %>
-	 <%= render :partial => "helpdesk/tickets/components/scenarios" %>
+	 <%= (render :partial => "helpdesk/tickets/components/scenarios") if feature?(:scenario_automations) %>
 	 <%= render :partial => "helpdesk/tickets/components/activity",  :locals => { :ticket => @ticket } %>	
 </div>
 <% end %>

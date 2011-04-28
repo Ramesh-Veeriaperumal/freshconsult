@@ -32,16 +32,20 @@
 					<img src="/images/spacer.gif" class="virtual_agent" /><div>Dispatch'r</div>
 				</a>
 			</li>
-			<li>
-				<a href="automations">
-					<img src="/images/spacer.gif" class="automation" /><div>Scenario Automations</div>
-				</a>
-			</li>
-			<li>
-				<a href="business_calendars">
-					<img src="/images/spacer.gif" class="business_hours" /><div>Business Hours</div>
-				</a>
-			</li>
+			<% if feature?(:scenario_automations) %>
+				<li>
+					<a href="automations">
+						<img src="/images/spacer.gif" class="automation" /><div>Scenario Automations</div>
+					</a>
+				</li>
+			<% end %>
+			<% if feature?(:business_hours) %>
+				<li>
+					<a href="business_calendars">
+						<img src="/images/spacer.gif" class="business_hours" /><div>Business Hours</div>
+					</a>
+				</li>
+			<% end %>
 			<li>
 				<a href="widget_config">
 					<img src="/images/spacer.gif" class="feedback_widget" /><div>Feedback widget</div>

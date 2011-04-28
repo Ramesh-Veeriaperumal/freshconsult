@@ -13,7 +13,7 @@
 	</div>	
 <% end %>
 <div class="floatr">
-	<%= link_to t('sla_policy.new'), new_helpdesk_sla_policy_path, :class => "uiButton" %>
+	<%= (link_to t('sla_policy.new'), new_helpdesk_sla_policy_path, :class => "uiButton") if feature?(:customer_slas) %>
 </div>
 <h3 class="title"><%=t('sla_policy.title1')%></h3> 
 <ul class="admin_list">
