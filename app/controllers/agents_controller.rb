@@ -1,4 +1,13 @@
 class AgentsController < Admin::AdminController
+  
+  before_filter :check_demo_site, :only => [:destroy,:update,:create]
+  
+  def check_demo_site
+    if AppConfig['demo_site'][RAILS_ENV] == current_account.full_domain
+      flash[:notice] = "Demo site doesn't have this access!"
+      redirect_to :back
+    end
+  end
     
   def index    
     @agents = current_account.agents.find(:all , :include => :user )
