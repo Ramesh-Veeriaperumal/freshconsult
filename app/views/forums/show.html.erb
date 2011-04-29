@@ -29,6 +29,8 @@
 	   </div>
 	   <div class="list-bar"> 
 		   <%= link_to("Popular", category_forum_path( @forum_category, @forum), :class => "first #{ (params[:stamp_type].blank? && params[:order].blank?)? 'active' : '' }" ) if @forum.ideas? %>
+		   <%= params[:order] %>
+		   <%= link_to("Overview", category_forum_path( @forum_category, @forum), :class => "first #{ (params[:order].blank?)? 'active' : '' }" ) unless @forum.ideas? %>
 		   <%= link_to "recent", category_forum_path( @forum_category, @forum, :order => "replied_at"), :class => (!params[:order].blank? ? "active" : "") %>
 		   <% if @forum.ideas? %>
 		   		<% Topic::IDEAS_STAMPS_OPTIONS.each do |k,v| %> 

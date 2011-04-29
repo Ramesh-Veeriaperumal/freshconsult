@@ -94,7 +94,8 @@ div.ui-form ul{
 div.ui-form ul, ul.ui-form{ 
 	list-style:none; 
 	@include pie-clearfix;
-	margin:0px -20px 10px -20px;
+	margin: -1px -12px;
+	@include border-radius(6px);
 }
 
 
@@ -187,25 +188,30 @@ a.addchoice:hover{
 }
 
 .ui-form{
-	padding:15px 20px 15px 26px; 
+	padding:6px 0px 12px 0px;
 	position:relative;
-	border-top:1px solid #dfdfdf;
-	border-bottom:1px solid #dfdfdf; 
-	background-color:#f6f6f6; 
+	border:1px solid #EFEFEF; 
+	background-color:#F8F8F8; 
 	li{
-		padding:0px 0px 5px 0px; 
+		padding:2px 2% 6px 2%; 
 		margin:0px;
 		float:left;		
 		a.fdbutton{
 			@include min-width(110px);
 		}
-		width:100%;
+		width:96%;
+		border-bottom: 1px solid #EFEFEF;
+    	box-shadow: 0 1px 0 white;
 	} 
+	li:last-child{
+		border-bottom: 0px;
+    	box-shadow: none;
+	}
 	li.text, li.paragraph{
-		width:98%;
+		width:96%;
 	}
 	li.dropdown, li.small{
-		width:48%;
+		width:46%;
 	}
 	
 	li.medium{
@@ -634,30 +640,24 @@ span.sort_handle{
 
 
 .ui-sortable-placeholder{
-	background:#DFEFFF !important;
-	border:1px dotted #C2D7EF  !important;
-	visibility: visible !important;
-	padding:20px 6px;
+	background:#ffffff !important; 
+	visibility: visible !important; 
 	position:relative;
 	z-index:99;
 }
 	
 .ui-custom-form{
-	padding:0px;
+	padding:0px 0px 15px 0px;	
 	position:relative;
-	.ui-form{ background:#ffffff; margin-bottom:1px; }		 
 	li{   
-		padding:4px; 
-		position:relative;
-		background:#ffffff;
+		position:relative; 
 		div{ position:relative; }
-		border:1px dotted #ffffff;
 		cursor:move; 
 	} 
 	
 	li:hover, li.hover, li.active{		
-		background:#DFEFFF;
-		border-color:#C2D7EF;
+		background:#ffffff;
+		border-color:#dfdfdf;
 		.ui-field-panel{
 			display:block;
 		}

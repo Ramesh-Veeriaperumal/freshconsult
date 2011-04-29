@@ -1,45 +1,7 @@
-<% unless current_account.preferences.nil? %>
-	<style>
-		<%	
-			$background   = current_account.preferences[:bg_color]
-			$header_color = current_account.preferences[:header_color]
-			$tab_color    = current_account.preferences[:tab_color]
-			
-			$bg_ctxt_color     = contrasting_text_color($background[1..-1])
-			$header_ctxt_color = contrasting_text_color($header_color[1..-1])
-			$tab_ctxt_color	   = contrasting_text_color($tab_color[1..-1])   
-		%>
-		body{ background: <%= $background %>; }
-		
-		.sp_border, .pagearea, .sidepanel, .flash_info,  #errorExplanation { border-color:<%= process_color($background, 0.15, 1) %>; }
-		.reminders:before { border-color:<%= $background %> <%= $background %> #734e3d #734e3d; }
-		
-		/* Header color */
-		.header, .ui-widget-header  { background-color: <%= $header_color %>; }
-		.brand h3, .header_links, .header_links a, .ui-widget-header  { color: <%= $header_ctxt_color %>;}
-		 
-		/* Tab color settings */
-		.top_nav_bg { background: <%= $tab_color %>; }
-		
-		input:focus, textarea:focus{ border-color: <%= $tab_color %> !important; }
-		input:focus, select:focus, textarea:focus{ 
-			  -moz-box-shadow: <%= $tab_color %> 0 0 3px;
-			  -webkit-box-shadow: <%= $tab_color %> 0 0 3px;
-			  box-shadow: <%= $tab_color %> 0 0 3px;
-		}
-		
-		ul.tabs li.active a, ul.tabs li.active a:hover { background: <%= $background %>; color:<%= $bg_ctxt_color %>; }
-		ul.tabs li a  { color: <%= $tab_ctxt_color %>; }
-		ul.tabs li a:hover { background: <%= process_color($tab_color) %>;  color: <%= $tab_ctxt_color %>; }
-		
-		.uiButton:hover, .fdbutton:hover, .forum_button:hover, .ui-state-hover, .ui-widget-content .ui-state-hover, .ui-widget-header .ui-state-hover, .ui-state-focus, .ui-widget-content .ui-state-focus, .ui-widget-header .ui-state-focus  {
-			 background-color:<%= $tab_color %>; 
-			 border-color: <%= process_color($tab_color, 0.2, 1) %>;  
-			 color: <%= $tab_ctxt_color %>; 
-		}
-		
-		.footerContent, .footerContent a{ color:<%= $bg_ctxt_color %>; border-color:<%= $bg_ctxt_color %>;  }
-		.footerContent a:hover{ color:<%= $bg_ctxt_color %>; }
-	</style>
-	
-<% end %>
+<% 
+	cssText = render(:partial=>"/shared/theme_text")
+	engine = Sass::Engine.new(cssText , :syntax => :scss)
+%>
+<style>
+	<%= engine.render %>
+</style>

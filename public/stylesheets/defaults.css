@@ -1,39 +1,31 @@
 /* Theme Colors and layout Defaults */
-/* line 5, ../src/defaults.scss */
 body {
   font: 12px "Lucida Grande", Geneva, Arial, Verdana, sans-serif;
   background-color: transparent;
 }
 
-/* line 8, ../src/defaults.scss */
 body h1, body h2, body h3, body h4, body h5 {
   margin: 0px;
 }
-/* line 11, ../src/defaults.scss */
 body h4 {
   font-size: 12px;
 }
 
-/* line 16, ../src/defaults.scss */
 .font11 {
   font-size: 11px;
 }
 
-/* line 20, ../src/defaults.scss */
 a {
   color: #4d769f;
 }
-/* line 24, ../../../../../Library/Ruby/Gems/1.8/gems/compass-0.11.1/frameworks/compass/stylesheets/compass/typography/links/_link-colors.scss */
 a:hover {
   color: #3399cc;
 }
 
-/* line 21, ../src/defaults.scss */
 a:hover {
   text-decoration: none;
 }
 
-/* line 23, ../src/defaults.scss */
 p {
   color: #555555;
   font-size: 12px;
@@ -42,70 +34,57 @@ p {
   text-align: left;
 }
 
-/* line 31, ../src/defaults.scss */
 .clearfix {
   overflow: hidden;
   *zoom: 1;
 }
 
-/* line 33, ../src/defaults.scss */
 .title {
   color: #2f3733;
   padding: 6px 0px 10px 0px;
   font-weight: bold;
 }
 
-/* line 34, ../src/defaults.scss */
 .title a {
   color: #4d769f;
   text-decoration: none;
 }
-/* line 18, ../../../../../Library/Ruby/Gems/1.8/gems/compass-0.11.1/frameworks/compass/stylesheets/compass/typography/links/_link-colors.scss */
 .title a:visited {
   color: #4d769f;
 }
-/* line 24, ../../../../../Library/Ruby/Gems/1.8/gems/compass-0.11.1/frameworks/compass/stylesheets/compass/typography/links/_link-colors.scss */
 .title a:hover {
   color: #3399cc;
 }
-/* line 27, ../../../../../Library/Ruby/Gems/1.8/gems/compass-0.11.1/frameworks/compass/stylesheets/compass/typography/links/_link-colors.scss */
 .title a:active {
   color: #4d769f;
 }
 
-/* line 35, ../src/defaults.scss */
 h2.title {
   font-size: 1.8em;
 }
 
-/* line 36, ../src/defaults.scss */
 h3.title, h3.sub_title, h3.title-band {
   font-size: 1.3em;
 }
 
-/* line 37, ../src/defaults.scss */
 h3.title-band {
   margin: 12px -20px;
   background-color: #f2f2f2;
   padding: 8px 20px;
 }
 
-/* line 38, ../src/defaults.scss */
 h3.sub_title {
   font-size: 1.1em;
 }
 
-/* line 40, ../src/defaults.scss */
 .floatl {
   float: left;
 }
 
-/* line 41, ../src/defaults.scss */
 .floatr {
   float: right;
 }
 
-/* line 42, ../src/defaults.scss */
 .alignright {
   text-align: right;
 }
