@@ -1,4 +1,8 @@
-class Helpdesk::SlaPoliciesController < Admin::AutomationsController
+class Helpdesk::SlaPoliciesController < Admin::AdminController
+  
+  before_filter :only => [:new, :create] do |c|
+    c.requires_feature :customer_slas
+  end
    
   def index
     

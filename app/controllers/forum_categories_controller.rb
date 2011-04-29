@@ -5,6 +5,8 @@ class ForumCategoriesController < ApplicationController
     c.requires_permission :manage_forums
   end
   
+  before_filter { |c| c.requires_feature :forums }
+  
   before_filter :set_selected_tab
   
   def index

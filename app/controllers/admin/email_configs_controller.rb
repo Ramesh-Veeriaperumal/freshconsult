@@ -1,5 +1,9 @@
 class Admin::EmailConfigsController < Admin::AdminController
   include ModelControllerMethods
+  
+  before_filter :only => [:new, :create] do |c|
+    c.requires_feature :multi_product
+  end
    
   def index
     @email_configs = scoper.find(:all, :order => 'primary_role desc, id')

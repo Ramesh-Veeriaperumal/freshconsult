@@ -8,6 +8,8 @@ class TopicsController < ApplicationController
   before_filter :only => [:update_stamp,:remove_stamp,:destroy] do |c| 
     c.requires_permission :manage_forums
   end
+  
+  before_filter { |c| c.requires_feature :forums }
  
   before_filter :check_user_permission,:only => [:edit,:update] 
   
