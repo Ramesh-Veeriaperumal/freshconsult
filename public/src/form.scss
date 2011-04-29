@@ -98,6 +98,14 @@ div.ui-form ul, ul.ui-form{
 	@include border-radius(6px);
 }
 
+ul.ui-form ul.ui-form{
+	margin: 0px;
+	@include border-radius(0px);
+	border-width:1px 0px;
+	padding:0px;
+	li{ padding-left:0px; }
+}
+
 
 a.addchoice{		
 	padding:5px;			
@@ -120,10 +128,7 @@ a.addchoice:hover{
 	background-color:#e8e8e8;
 }	
 
-.colsets{
-	.customchoices{
-				
-	}
+.colsets{ 
 	fieldset{
 		@include pie-clearfix;
 		margin:1px 0px 0px 0px;
@@ -193,7 +198,7 @@ a.addchoice:hover{
 	border:1px solid #EFEFEF; 
 	background-color:#F8F8F8; 
 	li{
-		padding:2px 2% 6px 2%; 
+		padding:4px 2% 8px 2%; 
 		margin:0px;
 		float:left;		
 		a.fdbutton{
@@ -423,11 +428,9 @@ a.addchoice:hover{
 	}
 	.caption{
 		float:left;
-		width:35%;
 	}
 	div.fields{
-		float:left;
-		width:60%;
+		margin-left:210px;
 		label{
 			font-size:1.1em;
 		}

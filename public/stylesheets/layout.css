@@ -168,12 +168,6 @@ div.bg_pulp {
   color: white;
 }
 
-.info_data, .info-data {
-  color: #888888;
-  font-size: 12px;
-  padding-bottom: 6px;
-}
-
 /* Header styles */
 .header {
   overflow: hidden;

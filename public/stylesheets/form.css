@@ -114,6 +114,22 @@ div.ui-form ul:after, ul.ui-form:after {
   visibility: hidden;
 }
 
+ul.ui-form ul.ui-form {
+  margin: 0px;
+  -moz-border-radius: 0px;
+  -webkit-border-radius: 0px;
+  -o-border-radius: 0px;
+  -ms-border-radius: 0px;
+  -khtml-border-radius: 0px;
+  border-radius: 0px;
+  border-width: 1px 0px;
+  padding: 0px;
+}
+ul.ui-form ul.ui-form li {
+  padding-left: 0px;
+  margin: 0xp;
+}
+
 a.addchoice {
   padding: 5px;
   color: #999999;
@@ -457,11 +473,9 @@ a.addchoice:hover {
 }
 .ui-form .inline-field .caption {
   float: left;
-  width: 35%;
 }
 .ui-form .inline-field div.fields {
-  float: left;
-  width: 60%;
+  margin-left: 210px;
 }
 .ui-form .inline-field div.fields label {
   font-size: 1.1em;
