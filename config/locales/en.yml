@@ -463,3 +463,4 @@ en:
    import_warning_info:             "An email with user activation instructions will be sent to each contact on successful import. If the email is already present in the database we will update the attributes like Name, Company etc."
    import_note_info:                "The fields in your csv file can be in any order. Just ensure that the first row has the header information.(Eg. Name, email etc.) The only required field is email."
    import_ignore_first_row:         "Ignore the first row (headings)"
+   non_covered_feature_error:        "Your current Freshdesk plan does not cover this feature."

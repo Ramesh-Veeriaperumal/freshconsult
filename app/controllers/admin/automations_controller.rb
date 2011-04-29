@@ -2,6 +2,7 @@ class Admin::AutomationsController < Admin::AdminController
   include ModelControllerMethods
    
   before_filter :load_config, :only => [:new, :edit]
+  before_filter :check_automation_feature
   
   def index
     @va_rules = scoper.find(:all)
@@ -131,5 +132,8 @@ class Admin::AutomationsController < Admin::AdminController
       return action_hash
     end
     
+    def check_automation_feature
+      requires_feature :scenario_automations 
+    end
 
 end

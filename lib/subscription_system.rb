@@ -8,6 +8,10 @@ module SubscriptionSystem
     base.send :filter_parameter_logging, :password, :creditcard
   end
   
+  def requires_feature(p)
+    render("/errors/non_covered_feature") unless feature?(p)
+  end
+  
   protected
   
     def current_account
