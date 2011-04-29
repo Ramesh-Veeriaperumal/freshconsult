@@ -1,13 +1,15 @@
-// This import applies a global reset to any page that imports this stylesheet.
+/* This import applies a global reset to any page that imports this stylesheet.*/
 @import "base";
 @import "mixins";  
+
+/* Importing admin icons */
+@import "admin-icon/*.png";
 
 /* Ticket Show page twitter style icons */ 
 $ticketicon: sprite-map("ticket-icon/*.png");
 
 /* Bullet icon */ 
 $bullet-icon:"listicons/request_nav_seperator.gif";
-
 body { color: #333; background:$background; }
 
 /* PAGE AREA STYLE */ 
@@ -43,9 +45,9 @@ ul.activityfeed, ul.summary{
 ul.summary{
 	@include pie;
 	@include corners(6px);
-	@include inset-shadows(#ececec, 1px, 1px, 5px);
+	@include inset-shadows(#ececec, 1px, 1px, 2px);
 	background-color:#f7f7f7; border:1px solid #f7f7f7;
-	margin-bottom:10px;
+	margin-bottom:10px; 
 	li{ 
 		@include float-left; 
 		margin:2px 0px;
@@ -658,7 +660,8 @@ body h5{
 
 
 .seperator{
-	border-top:1px dashed #e3e5e0;
+	border-bottom: 1px solid #BBBBBB;
+    box-shadow: 0 1px 0 white;
 	font-size:0px;
 	display:block;
 	height:1px;
@@ -878,46 +881,8 @@ body h5{
 	}
 }
 
-
-.admin_icons{
-	$aicon_size:32px;
-	img{
-		@include sprite-background("embed/sprites/admin_icons.png", 32px, 32px);
-	}
-	.ticket_field{
-		@include sprite-row(5, $aicon_size);
-	}
-	.sla{
-		@include sprite-row(2, $aicon_size);
-	}
-	.email{
-		@include sprite-row(3, $aicon_size);
-	}
-	.email_notify{
-		@include sprite-row(4, $aicon_size);
-	}								
-	.helpdesk_rebrand{
-		@include sprite-row(1, $aicon_size);
-	}
-	.user{
-		@include sprite-row(9, $aicon_size);
-	}				
-	.user_group{
-		@include sprite-row(6, $aicon_size);
-	}				
-	.virtual_agent{
-		@include sprite-row(7, $aicon_size);
-	}				
-	.automation{
-		@include sprite-row(8, $aicon_size);
-	}	
-	.business_hours{
-		@include sprite-row(10, $aicon_size);
-	}
-	.feedback_widget{
-		@include sprite-row(11, $aicon_size);
-	}								
-}
+.admin_icons img{ height:32px; width:32px;}
+@include all-admin-icon-sprites;
 
 .mark_action{ 
 	a, .stamp{

@@ -161,48 +161,4 @@ module ApplicationHelper
     date_time.strftime("%B %e %Y at %I:%M %p")
   end
   
-  # Color theme helpers for the application. Calculating white or black color based on the background 
-  def convert_to_brightness_value(background_hex_color)
-    (background_hex_color.scan(/../).map {|color| color.hex}).sum
-  end
-
-  def contrasting_text_color(background_hex_color)
-    return if background_hex_color.blank?
-    convert_to_brightness_value(background_hex_color) > 400 ? "#000000" : "#ffffff"
-  end
-  
-  # Lighten color towards white.  0.0 is a no-op, 1.0 will return #FFFFFF
-  def process_color(color_hex, amt = 0.1, type = 0)
-    return self if amt <= 0
-    return "#ffffff" if amt >= 1.0
-    val = color_hex.match /#(..)(..)(..)/
-    if(type == 0)
-      r_color = "##{l_c(val[1], amt)}#{l_c(val[2], amt)}#{l_c(val[3], amt)}"
-    else 
-      r_color = "##{d_c(val[1], amt)}#{d_c(val[2], amt)}#{d_c(val[3], amt)}"
-    end   
-    
-    r_color
-  end
-  
-  protected 
-    
-    # Table for conversion to hex
-    HEXVAL = (('0'..'9').to_a).concat(('A'..'F').to_a).freeze
-    
-    # Convert int to string hex, eg 255 => 'FF'
-    def to_hex(val)
-      HEXVAL[val / 16] + HEXVAL[val % 16]
-    end
-    
-    #Lighten 
-    def l_c(c, a)
-      to_hex(c.hex + ((255 - c.hex.to_i) * a))
-    end
-    
-    #Lighten 
-    def d_c(c, a)
-      to_hex(c.hex - (c.hex.to_i * a))
-    end
-  
 end

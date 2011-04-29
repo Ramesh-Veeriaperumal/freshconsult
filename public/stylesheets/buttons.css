@@ -8,7 +8,6 @@
  *
  * http://docs.jquery.com/UI/Button#theming
  */
-/* line 14, ../src/buttons.scss */
 .ui-button {
   display: inline-block;
   position: relative;
@@ -22,111 +21,92 @@
 }
 
 /* the overflow property removes extra width in IE */
-/* line 15, ../src/buttons.scss */
 .ui-button-icon-only {
   width: 2.2em;
 }
 
 /* to make room for the icon, a width needs to be set here */
-/* line 16, ../src/buttons.scss */
 button.ui-button-icon-only {
   width: 2.4em;
 }
 
 /* button elements seem to need a little more width */
-/* line 17, ../src/buttons.scss */
 .ui-button-icons-only {
   width: 3.4em;
 }
 
-/* line 18, ../src/buttons.scss */
 button.ui-button-icons-only {
   width: 3.7em;
 }
 
 /*button text element */
-/* line 21, ../src/buttons.scss */
 .ui-button .ui-button-text {
   display: block;
   line-height: 1.4;
 }
 
-/* line 22, ../src/buttons.scss */
 .ui-button-text-only .ui-button-text {
   padding: .4em 1em;
 }
 
-/* line 23, ../src/buttons.scss */
 .ui-button-icon-only .ui-button-text, .ui-button-icons-only .ui-button-text {
   padding: .4em;
   text-indent: -9999999px;
 }
 
-/* line 24, ../src/buttons.scss */
 .ui-button-text-icon-primary .ui-button-text, .ui-button-text-icons .ui-button-text {
   padding: .4em 1em .4em 2.1em;
 }
 
-/* line 25, ../src/buttons.scss */
 .ui-button-text-icon-secondary .ui-button-text, .ui-button-text-icons .ui-button-text {
   padding: .4em 2.1em .4em 1em;
 }
 
-/* line 26, ../src/buttons.scss */
 .ui-button-text-icons .ui-button-text {
   padding-left: 2.1em;
   padding-right: 2.1em;
 }
 
 /* no icon support for input elements, provide padding by default */
-/* line 28, ../src/buttons.scss */
 input.ui-button {
   padding: .4em 1em;
 }
 
 /*button icon element(s) */
-/* line 31, ../src/buttons.scss */
 .ui-button-icon-only .ui-icon, .ui-button-text-icon-primary .ui-icon, .ui-button-text-icon-secondary .ui-icon, .ui-button-text-icons .ui-icon, .ui-button-icons-only .ui-icon {
   position: absolute;
   top: 50%;
   margin-top: -8px;
 }
 
-/* line 32, ../src/buttons.scss */
 .ui-button-icon-only .ui-icon {
   left: 50%;
   margin-left: -8px;
 }
 
-/* line 33, ../src/buttons.scss */
 .ui-button-text-icon-primary .ui-button-icon-primary, .ui-button-text-icons .ui-button-icon-primary, .ui-button-icons-only .ui-button-icon-primary {
   left: .5em;
 }
 
-/* line 34, ../src/buttons.scss */
 .ui-button-text-icon-secondary .ui-button-icon-secondary, .ui-button-text-icons .ui-button-icon-secondary, .ui-button-icons-only .ui-button-icon-secondary {
   right: .5em;
 }
 
-/* line 35, ../src/buttons.scss */
 .ui-button-text-icons .ui-button-icon-secondary, .ui-button-icons-only .ui-button-icon-secondary {
   right: .5em;
 }
 
 /*button sets*/
-/* line 38, ../src/buttons.scss */
 .ui-buttonset {
   margin-right: 7px;
 }
 
-/* line 39, ../src/buttons.scss */
 .ui-buttonset .ui-button {
   margin-left: 0;
   margin-right: -0.3em;
 }
 
 /* workarounds */
-/* line 42, ../src/buttons.scss */
 button.ui-button::-moz-focus-inner {
   border: 0;
   padding: 0;
@@ -147,44 +127,37 @@ button.ui-button::-moz-focus-inner {
 /* Component containers
 ----------------------------------*/
 /*.ui-widget { font-family: ; font-size: ; }*/
-/* line 61, ../src/buttons.scss */
 .ui-widget .ui-widget {
   font-size: 1em;
 }
 
-/* line 62, ../src/buttons.scss */
 .ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button {
   /* font-family: ;*/
   font-size: 1em;
 }
 
-/* line 63, ../src/buttons.scss */
 .ui-widget-content {
   border: 1px solid #dfdfdf;
   background: #ffffff;
   color: #222222;
 }
 
-/* line 64, ../src/buttons.scss */
 .ui-widget-content a {
   color: #222222;
 }
 
-/* line 65, ../src/buttons.scss */
 .ui-widget-header {
   background: #d7e8d7;
   color: #3f3f3f;
   font-weight: bold;
 }
 
-/* line 66, ../src/buttons.scss */
 .ui-widget-header a {
   color: #ffffff;
 }
 
 /* Interaction states
 ----------------------------------*/
-/* line 70, ../src/buttons.scss */
 .ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
   border: 1px solid #d4d4d4;
   background-image: url(../images/overlay-button.png);
@@ -194,13 +167,11 @@ button.ui-button::-moz-focus-inner {
   color: #333333;
 }
 
-/* line 75, ../src/buttons.scss */
 .ui-state-default a, .ui-state-default a:link, .ui-state-default a:visited {
   color: #2e6e9e;
   text-decoration: none;
 }
 
-/* line 76, ../src/buttons.scss */
 .ui-state-hover, .ui-widget-content .ui-state-hover, .ui-widget-header .ui-state-hover, .ui-state-focus, .ui-widget-content .ui-state-focus, .ui-widget-header .ui-state-focus {
   background-color: #7cb537;
   border-color: #618e2b;
@@ -209,13 +180,11 @@ button.ui-button::-moz-focus-inner {
   font-weight: normal;
 }
 
-/* line 77, ../src/buttons.scss */
 .ui-state-hover a, .ui-state-hover a:hover {
   color: #1d5987;
   text-decoration: none;
 }
 
-/* line 78, ../src/buttons.scss */
 .ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active {
   border: 1px solid #79b7e7;
   background: #f5f8f9 url("../images/ui-bg_inset-hard_100_f5f8f9_1x100.png") 50% 50% repeat-x;
@@ -223,68 +192,57 @@ button.ui-button::-moz-focus-inner {
   color: #e17009;
 }
 
-/* line 79, ../src/buttons.scss */
 .ui-state-active a, .ui-state-active a:link, .ui-state-active a:visited {
   color: #e17009;
   text-decoration: none;
 }
 
-/* line 80, ../src/buttons.scss */
 .ui-widget :active {
   outline: none;
 }
 
 /* Interaction Cues
 ----------------------------------*/
-/* line 84, ../src/buttons.scss */
 .ui-state-highlight, .ui-widget-content .ui-state-highlight, .ui-widget-header .ui-state-highlight {
   border: 1px solid #fad42e;
   background: #fbec88 url("..images/ui-bg_flat_55_fbec88_40x100.png") 50% 50% repeat-x;
   color: #363636;
 }
 
-/* line 85, ../src/buttons.scss */
 .ui-state-highlight a, .ui-widget-content .ui-state-highlight a, .ui-widget-header .ui-state-highlight a {
   color: #363636;
 }
 
-/* line 86, ../src/buttons.scss */
 .ui-state-error, .ui-widget-content .ui-state-error, .ui-widget-header .ui-state-error {
   border: 1px solid #cd0a0a;
   background: #fef1ec url("../images/ui-bg_glass_95_fef1ec_1x400.png") 50% 50% repeat-x;
   color: #cd0a0a;
 }
 
-/* line 87, ../src/buttons.scss */
 .ui-state-error a, .ui-widget-content .ui-state-error a, .ui-widget-header .ui-state-error a {
   color: #cd0a0a;
 }
 
-/* line 88, ../src/buttons.scss */
 .ui-state-error-text, .ui-widget-content .ui-state-error-text, .ui-widget-header .ui-state-error-text {
   color: #cd0a0a;
 }
 
-/* line 89, ../src/buttons.scss */
 .ui-priority-primary, .ui-widget-content .ui-priority-primary, .ui-widget-header .ui-priority-primary {
   font-weight: bold;
 }
 
-/* line 90, ../src/buttons.scss */
 .ui-priority-secondary, .ui-widget-content .ui-priority-secondary, .ui-widget-header .ui-priority-secondary {
   opacity: .7;
   filter: Alpha(Opacity=70);
   font-weight: normal;
 }
 
-/* line 91, ../src/buttons.scss */
 .ui-state-disabled, .ui-widget-content .ui-state-disabled, .ui-widget-header .ui-state-disabled {
   opacity: .35;
   filter: Alpha(Opacity=35);
   background-image: none;
 }
 
-/* line 95, ../src/buttons.scss */
 .uiButton, .uiButton:visited, .fdbutton, .fdbutton:visited {
   display: -moz-inline-box;
   -moz-box-orient: vertical;
@@ -319,11 +277,9 @@ button.ui-button::-moz-focus-inner {
   cursor: pointer;
   text-shadow: 1px 1px 0 white;
 }
-/* line 7, /Library/Ruby/Gems/1.8/gems/compass-0.11.1/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
 .uiButton, .uiButton:visited, .fdbutton, .fdbutton:visited {
   *display: inline;
 }
-/* line 75, /Library/Ruby/Gems/1.8/gems/compass-0.11.1/frameworks/blueprint/stylesheets/blueprint/_buttons.scss */
 .uiButton img, .uiButton:visited img, .fdbutton img, .fdbutton:visited img {
   margin: 0 3px -3px 0 !important;
   padding: 0;
@@ -333,7 +289,6 @@ button.ui-button::-moz-focus-inner {
   float: none;
 }
 
-/* line 114, ../src/buttons.scss */
 .uiButton:hover, .fdbutton:hover, .forum_button:hover {
   background-color: #7cb537;
   border-color: #618e2b;
@@ -341,29 +296,24 @@ button.ui-button::-moz-focus-inner {
   text-shadow: rgba(0, 0, 0, 0.2) -1px -1px 1px;
 }
 
-/* line 115, ../src/buttons.scss */
 .uiButton:active, .fdbutton:active {
   top: 1px;
 }
 
-/* line 116, ../src/buttons.scss */
 .small.uiButton, .small.uiButton:visited {
   font-size: 11px;
 }
 
-/* line 118, ../src/buttons.scss */
 .uiButton, .fdbutton, .uiButton:visited, .fdbutton:visited,
 .medium.uiButton, .medium.uiButton:visited {
   font-size: 12px;
 }
 
-/* line 119, ../src/buttons.scss */
 .large.uiButton, .large.uiButton:visited {
   font-size: 14px;
   padding: 8px 14px 9px;
 }
 
-/* line 122, ../src/buttons.scss */
 .forum_button {
   display: -moz-inline-box;
   -moz-box-orient: vertical;
@@ -397,11 +347,9 @@ button.ui-button::-moz-focus-inner {
   background-position: top left;
   margin-top: 20px;
 }
-/* line 7, /Library/Ruby/Gems/1.8/gems/compass-0.11.1/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
 .forum_button {
   *display: inline;
 }
-/* line 75, /Library/Ruby/Gems/1.8/gems/compass-0.11.1/frameworks/blueprint/stylesheets/blueprint/_buttons.scss */
 .forum_button img {
   margin: 0 3px -3px 0 !important;
   padding: 0;
@@ -411,13 +359,11 @@ button.ui-button::-moz-focus-inner {
   float: none;
 }
 
-/* line 139, ../src/buttons.scss */
 .small.forum_button {
   font-size: 11px;
   padding: 1px 14px;
 }
 
-/* line 141, ../src/buttons.scss */
 .forum_info {
   background: #fff7b4;
   display: inline;
@@ -429,7 +375,6 @@ button.ui-button::-moz-focus-inner {
   position: relative;
   margin-left: 2px;
 }
-/* line 152, ../src/buttons.scss */
 .forum_info span.bottom-pointer {
   border: 10px solid transparent;
   border-top-color: #fff7b4;
@@ -441,7 +386,6 @@ button.ui-button::-moz-focus-inner {
   position: absolute;
 }
 
-/* line 165, ../src/buttons.scss */
 .fdbutton {
   display: -moz-inline-box;
   -moz-box-orient: vertical;
@@ -466,11 +410,9 @@ button.ui-button::-moz-focus-inner {
   margin: 2px;
   text-align: center;
 }
-/* line 7, /Library/Ruby/Gems/1.8/gems/compass-0.11.1/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
 .fdbutton {
   *display: inline;
 }
-/* line 75, /Library/Ruby/Gems/1.8/gems/compass-0.11.1/frameworks/blueprint/stylesheets/blueprint/_buttons.scss */
 .fdbutton img {
   margin: 0 3px -3px 0 !important;
   padding: 0;
@@ -480,7 +422,6 @@ button.ui-button::-moz-focus-inner {
   float: none;
 }
 
-/* line 175, ../src/buttons.scss */
 div.action_buttons {
   position: relative;
   float: right;
@@ -494,7 +435,6 @@ div.action_buttons {
   padding: 4px 7px 3px 3px;
   border: 1px solid #e5e5e5;
 }
-/* line 185, ../src/buttons.scss */
 div.action_buttons a {
   text-decoration: none;
   float: left;
@@ -506,29 +446,23 @@ div.action_buttons a {
   color: #333333;
   text-shadow: white 0px 1px 1px;
 }
-/* line 18, /Library/Ruby/Gems/1.8/gems/compass-0.11.1/frameworks/compass/stylesheets/compass/typography/links/_link-colors.scss */
 div.action_buttons a:visited {
   color: #333333;
 }
-/* line 24, /Library/Ruby/Gems/1.8/gems/compass-0.11.1/frameworks/compass/stylesheets/compass/typography/links/_link-colors.scss */
 div.action_buttons a:hover {
   color: #666666;
 }
-/* line 27, /Library/Ruby/Gems/1.8/gems/compass-0.11.1/frameworks/compass/stylesheets/compass/typography/links/_link-colors.scss */
 div.action_buttons a:active {
   color: #333333;
 }
-/* line 197, ../src/buttons.scss */
 div.action_buttons a.last {
   border: 0px;
   padding-right: 4px;
 }
-/* line 201, ../src/buttons.scss */
 div.action_buttons a.icon {
   padding-left: 20px;
 }
 
-/* line 206, ../src/buttons.scss */
 div.action_buttons:hover {
   -moz-box-shadow: rgba(0, 0, 0, 0.1) 0 0 2px;
   -webkit-box-shadow: rgba(0, 0, 0, 0.1) 0 0 2px;
@@ -536,19 +470,16 @@ div.action_buttons:hover {
 }
 
 /* POSITIVE */
-/* line 211, ../src/buttons.scss */
 button.positive, .buttons a.positive {
   color: #529214;
 }
 
-/* line 214, ../src/buttons.scss */
 .buttons a.positive:hover, button.positive:hover {
   background-color: #E6EFC2;
   border: 1px solid #C6D880;
   color: #529214;
 }
 
-/* line 219, ../src/buttons.scss */
 .buttons a.positive:active {
   background-color: #529214;
   border: 1px solid #529214;
@@ -556,26 +487,22 @@ button.positive, .buttons a.positive {
 }
 
 /* NEGATIVE */
-/* line 227, ../src/buttons.scss */
 .buttons a.negative, button.negative {
   color: #d12f19;
 }
 
-/* line 230, ../src/buttons.scss */
 .buttons a.negative:hover, button.negative:hover {
   background: #fbe3e4;
   border: 1px solid #fbc2c4;
   color: #d12f19;
 }
 
-/* line 235, ../src/buttons.scss */
 .buttons a.negative:active {
   background-color: #d12f19;
   border: 1px solid #d12f19;
   color: #fff;
 }
 
-/* line 242, ../src/buttons.scss */
 .button {
   display: -moz-inline-box;
   -moz-box-orient: vertical;
@@ -614,11 +541,9 @@ button.positive, .buttons a.positive {
   border: 1px solid #afafaf;
   cursor: pointer;
 }
-/* line 7, /Library/Ruby/Gems/1.8/gems/compass-0.11.1/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
 .button {
   *display: inline;
 }
-/* line 75, /Library/Ruby/Gems/1.8/gems/compass-0.11.1/frameworks/blueprint/stylesheets/blueprint/_buttons.scss */
 .button img {
   margin: 0 3px -3px 0 !important;
   padding: 0;
@@ -627,26 +552,21 @@ button.positive, .buttons a.positive {
   height: 16px;
   float: none;
 }
-/* line 18, /Library/Ruby/Gems/1.8/gems/compass-0.11.1/frameworks/compass/stylesheets/compass/typography/links/_link-colors.scss */
 .button:visited {
   color: #3f3f3f;
 }
-/* line 24, /Library/Ruby/Gems/1.8/gems/compass-0.11.1/frameworks/compass/stylesheets/compass/typography/links/_link-colors.scss */
 .button:hover {
   color: #666666;
 }
-/* line 27, /Library/Ruby/Gems/1.8/gems/compass-0.11.1/frameworks/compass/stylesheets/compass/typography/links/_link-colors.scss */
 .button:active {
   color: #3f3f3f;
 }
 
-/* line 292, ../src/buttons.scss */
 .button:hover {
   background: #eee;
   border-color: rgba(0, 0, 0, 0.3);
 }
 
-/* line 297, ../src/buttons.scss */
 .button.selected {
   z-index: 6;
   border-color: rgba(208, 91, 63, 0.6);

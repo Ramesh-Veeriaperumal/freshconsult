@@ -1,26 +1,48 @@
+<% content_for :sidebar do -%><%- end %>
+<%= content_tag (:h3, "Authentication", :class => "title") %>
 <% form_for :account, @account, :url => { :action => "update" },  :html => { :method => :put, :id => "BusinessHours"  } do |f| %>
-<%= f.error_messages %>
-<fieldset class="inlineLabels">
-		<div class="ctrlHolder">
-		    <%= f.check_box :sso_enabled %> Enable SSO
-		 </div>
-		 <div class="ctrlHolder">
-		 	<%= f.label :shared_secret, "Shared Secret" %>
-		    <%= f.text_field :shared_secret, :value => @account.shared_secret, :class => "textInput small", :disabled => true %>
-		 </div>
-		 <% f.fields_for :sso_options, @account.sso_options do |p| %>
-		 	<div class="ctrlHolder">
-					<%= p.label :login_url, "Login Url" %>
-					<%= p.text_field :login_url, :value => @account[:sso_options].default(:login_url), :class => "textInput small" %>
+	<%= f.error_messages %>
+	<ul class="ui-form">
+		<li class="inline-field">
+			<label class="caption">Single sign-on</label>
+			<div class="fields">
+				<%= f.label :sso_enabled, "#{f.check_box :sso_enabled} Enable SSO" %>
+				<div class="info-data"></div>
+				
+				<ul class="ui-form" id="sso-form" style="display:none;">
+					<li class="inline-field">
+						<%= f.label :shared_secret, "Shared Secret", :class => "caption" %>
+						<div class="fields">
+							<%= f.text_field :shared_secret, :value => @account.shared_secret, :class => "text", :disabled => true %>
+						</div>
+					</li>
+					<% f.fields_for :sso_options, @account.sso_options do |p| %>
+						<li class="inline-field">
+							<%= p.label :login_url, "Login Url", :class => "caption" %>
+							<div class="fields">
+								<%= p.text_field :login_url, :value => @account[:sso_options].default(:login_url), :class => "text url" %>
+							</div>
+						</li>
+						<li class="inline-field">
+							<%= p.label :logout_url, "Logout Url", :class => "caption" %>
+							<div class="fields">
+								<%= p.text_field :logout_url, :value => @account[:sso_options].default(:logout_url), :class => "text" %>
+							</div>
+						</li>
+					<% end %>
+				</ul>
 			</div>
-			<div class="ctrlHolder">
-					<%= p.label :logout_url, "Logout Url" %>
-					<%= p.text_field :logout_url, :value => @account[:sso_options].default(:logout_url), :class => "textInput small" %>
-			</div>
-		 <% end %>
-		</fieldset>
-<div>
-		<%= f.submit t('save'), :class => "fdbutton" %>
-		<%= link_to t('back'), "/admin/home", :class => "fdbutton grey" %>
+		</li>
+	</ul>
+	<div class="button-container">
+		<%= f.submit t('save'), :class => "uiButton" %>
+		<%= link_to t('back'), "/admin/home", :class => "uiButton" %>
 	</div>
+	<% javascript_tag do %>
+		(function($){
+			$("#account_sso_enabled").bind("click", function(e){ 
+				$('#sso-form').toggle(this.checked);
+			});
+		})(jQuery)
 	<% end %>
+<% end %>

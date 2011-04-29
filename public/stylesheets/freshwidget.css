@@ -1,5 +1,4 @@
 /* Theme Colors and layout Defaults */
-/* line 4, ../src/freshwidget.scss */
 .widget-ovelay {
   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=50);
@@ -7,7 +6,6 @@
   background-color: white;
 }
 
-/* line 9, ../src/freshwidget.scss */
 .freshwidget-container, .widget-ovelay {
   position: fixed;
   _position: absolute;
@@ -18,55 +16,44 @@
   z-index: 90002;
 }
 
-/* line 18, ../src/freshwidget.scss */
 .freshwidget-container {
   position: absolute;
 }
 
-/* line 23, ../src/freshwidget.scss */
 .left a {
   left: -2px;
 }
 
-/* line 24, ../src/freshwidget.scss */
 .left a:hover {
   left: 0px;
 }
 
-/* line 26, ../src/freshwidget.scss */
 .right {
   right: -2px;
 }
 
-/* line 27, ../src/freshwidget.scss */
 .right:hover {
   right: 0px;
 }
 
-/* line 29, ../src/freshwidget.scss */
 .top {
   top: -2px;
 }
 
-/* line 30, ../src/freshwidget.scss */
 .top:hover {
   top: 0px;
 }
 
-/* line 32, ../src/freshwidget.scss */
 .bottom {
   bottom: 0px;
 }
-/* line 34, ../src/freshwidget.scss */
 .bottom a {
   bottom: -2px;
 }
-/* line 35, ../src/freshwidget.scss */
 .bottom a:hover {
   bottom: 0px;
 }
 
-/* line 38, ../src/freshwidget.scss */
 .freshwidget-theme {
   -moz-box-shadow: rgba(0, 0, 0, 0.6) 0px 0px 3px;
   -webkit-box-shadow: rgba(0, 0, 0, 0.6) 0px 0px 3px;
@@ -81,22 +68,18 @@
   font-weight: bold;
 }
 
-/* line 50, ../src/freshwidget.scss */
 .freshwidget-theme:hover {
   color: #f3f3f3;
 }
 
-/* line 54, ../src/freshwidget.scss */
 .freshwidget-customimage {
   overflow: visible;
 }
 
-/* line 56, ../src/freshwidget.scss */
 .right .freshwidget-customimage {
   right: 0px;
 }
 
-/* line 58, ../src/freshwidget.scss */
 .freshwidget-button {
   position: absolute;
   display: block !important;
@@ -105,7 +88,6 @@
   z-index: 90000;
   margin: 0px;
 }
-/* line 59, ../src/freshwidget.scss */
 .freshwidget-button a {
   position: fixed;
   white-space: nowrap;
@@ -113,12 +95,10 @@
   _right: 0px;
 }
 
-/* line 73, ../src/freshwidget.scss */
 .left a.freshwidget-theme, .top a.freshwidget-theme {
   border-top-width: 0px;
 }
 
-/* line 74, ../src/freshwidget.scss */
 .left a.freshwidget-theme {
   -moz-transform: rotate(-90deg);
   -moz-transform-origin: top left;
@@ -129,12 +109,10 @@
   filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
 }
 
-/* line 78, ../src/freshwidget.scss */
 .bottom a.freshwidget-theme, .right a.freshwidget-theme {
   border-bottom-width: 0px;
 }
 
-/* line 79, ../src/freshwidget.scss */
 .right a.freshwidget-theme {
   -moz-transform: rotate(-90deg);
   -moz-transform-origin: bottom left;
@@ -146,7 +124,6 @@
 }
 
 /* Widget Form Style */
-/* line 88, ../src/freshwidget.scss */
 .freshwidget-dialog {
   position: absolute;
   padding: 8px 0px;
@@ -155,12 +132,10 @@
   top: 100px;
   z-index: 900010;
 }
-/* line 96, ../src/freshwidget.scss */
 .freshwidget-dialog iframe {
   width: 612px;
   height: 900px;
 }
-/* line 101, ../src/freshwidget.scss */
 .freshwidget-dialog .widget-close {
   position: absolute;
   right: -2px;
