@@ -101,10 +101,17 @@ class Solution::Article < ActiveRecord::Base
   end
   
   def self.suggest_solutions(ticket)
-    search(ticket.subject, :with => { :account_id => ticket.account.id }, :match_mode => :any, :per_page => 10)
+    to_ret = suggest(ticket, ticket.subject)
+    to_ret = suggest(ticket, ticket.description) if to_ret.empty?
+    
+    to_ret
   end
   
-  private
+  def self.suggest(ticket, search_by)
+    search(search_by, :with => { :account_id => ticket.account.id }, :match_mode => :any, :per_page => 10)
+  end
+  
+  private    
     def create_activity
       activities.create(
         :description => "{{user_path}} created a new solution {{notable_path}}",
@@ -113,10 +120,10 @@ class Solution::Article < ActiveRecord::Base
         :user => user,
         :activity_data => {}
       )
-  end
+    end
   
-  def set_un_html_content        
-    self.desc_un_html = (self.description.gsub(/<\/?[^>]*>/, "")).gsub(/&nbsp;/i,"") unless self.description.empty?
-  end
+    def set_un_html_content        
+      self.desc_un_html = (self.description.gsub(/<\/?[^>]*>/, "")).gsub(/&nbsp;/i,"") unless self.description.empty?
+    end
     
 end
