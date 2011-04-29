@@ -1,0 +1,26 @@
+<% form_for :account, @account, :url => { :action => "update" },  :html => { :method => :put, :id => "BusinessHours"  } do |f| %>
+<%= f.error_messages %>
+<fieldset class="inlineLabels">
+		<div class="ctrlHolder">
+		    <%= f.check_box :sso_enabled %> Enable SSO
+		 </div>
+		 <div class="ctrlHolder">
+		 	<%= f.label :shared_secret, "Shared Secret" %>
+		    <%= f.text_field :shared_secret, :value => @account.shared_secret, :class => "textInput small", :disabled => true %>
+		 </div>
+		 <% f.fields_for :sso_options, @account.sso_options do |p| %>
+		 	<div class="ctrlHolder">
+					<%= p.label :login_url, "Login Url" %>
+					<%= p.text_field :login_url, :value => @account[:sso_options].default(:login_url), :class => "textInput small" %>
+			</div>
+			<div class="ctrlHolder">
+					<%= p.label :logout_url, "Logout Url" %>
+					<%= p.text_field :logout_url, :value => @account[:sso_options].default(:logout_url), :class => "textInput small" %>
+			</div>
+		 <% end %>
+		</fieldset>
+<div>
+		<%= f.submit t('save'), :class => "fdbutton" %>
+		<%= link_to t('back'), "/admin/home", :class => "fdbutton grey" %>
+	</div>
+	<% end %>

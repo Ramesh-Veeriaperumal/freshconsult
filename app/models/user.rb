@@ -69,6 +69,7 @@ class User < ActiveRecord::Base
     self.customer_id = params[:user][:customer_id]
     self.job_title = params[:user][:job_title]
     self.user_role = params[:user][:user_role]
+    self.time_zone = params[:user][:time_zone]
     self.import_id = params[:user][:import_id]
     
     
