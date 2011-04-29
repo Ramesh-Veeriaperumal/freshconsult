@@ -99,7 +99,7 @@ class User < ActiveRecord::Base
   end
   
   def has_no_credentials?
-    self.crypted_password.blank? && active? && !deleted#&& self.openid_identifier.blank?
+    self.crypted_password.blank? && active? && !deleted && self.authorizations.empty?
   end
 
   # TODO move this to the "HelpdeskUser" model

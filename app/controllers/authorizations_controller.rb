@@ -8,14 +8,17 @@ class AuthorizationsController < ApplicationController
     
     
     if !@current_user.blank? and !@auth.blank?
-      @current_user.active = true unless @current_user.active?
       if @current_user.deleted?
         flash[:notice] = "User is deleted!"
         redirect_to login_url
       return
+      @current_user.active = true 
+      @current_user.save!
     end
     elsif !@current_user.blank?
       @current_user.authorizations.create(:provider => omniauth['provider'], :uid => omniauth['uid'], :account_id => current_account.id) #Add an auth to existing user
+      @current_user.active = true 
+      @current_user.save!
     else  
       @new_auth = create_from_hash(omniauth) 
       @current_user = @new_auth.user
@@ -32,7 +35,7 @@ class AuthorizationsController < ApplicationController
   
   def create_from_hash(hash)
     user = current_account.users.new
-    user.name =  hash['user_info']['name'].scan(/[a-zA-Z0-9_]/).to_s.downcase
+    user.name =  hash['user_info']['name']
     user.email =  hash['user_info']['email']
     if AppConfig['demo_site'][RAILS_ENV] == current_account.full_domain
       user.user_role = User::USER_ROLES_KEYS_BY_TOKEN[:admin]
