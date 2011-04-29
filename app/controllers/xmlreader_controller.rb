@@ -55,26 +55,33 @@ class XmlreaderController < ApplicationController
     
     logger.debug "import zendesk :: is #{params.inspect}"
     
-    base_dir = params[:base_dir]
-    
+    base_dir = params[:base_dir]    
     file_list = params[:import][:files]
+    
+    create_solution = false
     
     logger.debug "initial arr size:: #{ file_list.size} :: and compact one is #{file_list.reject(&:blank?).size} "    
     
     import_list = file_list.reject(&:blank?)   
     
+    if import_list.include?("solution")
+       create_solution = true
+    end  
+    
     if import_list.include?("customers")
        handle_customer_import base_dir
        handle_user_import base_dir  
     end
-    if import_list.include?("tickets")        
+    if import_list.include?("tickets")       
+       import_flexifields base_dir
        handle_group_import base_dir
-       handle_ticket_import base_dir
+       handle_ticket_import base_dir       
     end
     if import_list.include?("forums")
-       handle_forums_import base_dir
-    end    
+       handle_forums_import base_dir , create_solution
+   end  
    
+      
   end
 
 def handle_customer_import base_dir
@@ -160,6 +167,7 @@ def handle_user_import base_dir
      usr_details = nil 
      org_id = nil
      import_id = nil
+     created_at = nil
      
      user.elements.each("name") do |name|  
      usr_name = name.text         
@@ -183,8 +191,9 @@ def handle_user_import base_dir
        usr_role = 3 if role_id == 0       
      end  
    
-     user.elements.each("time_zone") do |time_zone|   
-       usr_time_zone = time_zone.text         
+     user.elements.each("time-zone") do |time_zone|   
+       usr_time_zone = time_zone.text    
+       logger.debug "user time zone is #{usr_time_zone.inspect}"
      end 
    
      user.elements.each("details") do |details|      
@@ -202,6 +211,13 @@ def handle_user_import base_dir
        import_id = import.text         
      end
      
+     #user.elements.each("created-at") do |created|      
+      # created_time = created.text         
+       #created_at = created_time.to_datetime()
+     #end
+     
+     
+     
      @params_hash ={ :user => { :name => usr_name,
                                 :job_title => "",
                                 :phone => usr_phone,
@@ -210,6 +226,7 @@ def handle_user_import base_dir
                                 :customer_id => org_id,
                                 :import_id => import_id,
                                 :user_role => usr_role,
+                                :time_zone =>usr_time_zone,
                               }
                      }
      @user = current_account.users.find_by_email(usr_email)        
@@ -219,8 +236,10 @@ def handle_user_import base_dir
           end
      else
           @user = current_account.users.new
+          @user.time_zone = usr_time_zone
           #@params_hash[:user][:user_role] = User::USER_ROLES_KEYS_BY_TOKEN[:customer]
-          if @user.signup!(@params_hash)    
+          if @user.signup!(@params_hash) 
+            logger.debug "user has been save #{@user.inspect}"
             created+=1
             if usr_role != 3
                logger.debug "Its an agents and the user_id is :: #{@user.id}"
@@ -355,6 +374,47 @@ def handle_ticket_import base_dir
         logger.debug "failed to save the ticket :: #{@request.errors.inspect}"
       end
       
+      ####handling additional fields
+
+      ff_def_id = FlexifieldDef.find_by_account_id(@request.account_id).id  
+      
+      custom_field = Hash.new
+      
+      req.elements.each("ticket-field-entries/ticket-field-entry") do |add_field|  
+        
+       cust_import_id = nil
+       field_val = nil
+       field_type = nil
+       lable =nil
+       
+       add_field.elements.each("ticket-field-id") do |ticket_field|
+          cust_import_id = ticket_field.text          
+       end      
+      
+       add_field.elements.each("value") do |field_value|
+          field_val = field_value.text          
+       end
+       @flexifield_def_entries = FlexifieldDefEntry.first(:conditions =>{:flexifield_def_id => ff_def_id ,:import_id => cust_import_id.to_i()})
+       
+       unless @flexifield_def_entries.blank?
+         label = @flexifield_def_entries.flexifield_alias  
+       else
+         next
+       end
+       
+          
+       custom_field[label] = field_val
+      
+    end
+    
+    ##saving custom_field
+
+      
+    @request.ff_def = ff_def_id       
+    unless custom_field.nil?          
+      @request.assign_ff_values custom_field    
+    end
+    
       ##handling notes ---
       
       req.elements.each("comments/comment") do |comment|
@@ -428,11 +488,14 @@ def handle_account_import base_dir
   
 end
 
-def handle_forums_import base_dir
+def handle_forums_import base_dir,create_solution
   
+  cat_path = File.join(base_dir , "categories.xml")
   forum_path = File.join(base_dir , "forums.xml")
   posts_path = File.join(base_dir , "posts.xml")
   entry_path = File.join(base_dir , "entries.xml")
+  
+  import_forum_categories cat_path
   
   get_forum_data forum_path
   
@@ -478,14 +541,9 @@ def get_forum_data file_path
        categ_id = cat.text  
        logger.debug "categ_id :: #{categ_id}"
        @category = current_account.forum_categories.find_by_import_id(categ_id.to_i()) unless categ_id.blank?
-       logger.debug "@category after categ_id_blank :: #{@category.inspect}"
-       unless categ_id.blank?
-          @category = add_forum_category categ_id if @category.blank?        
-       else
-          @category =  default_category      
-       end
-       logger.debug "@category after add/default :: #{@category.inspect}"
-       
+       logger.debug "@category after categ_id_blank :: #{@category.inspect}"      
+       @category =  default_category if @category.blank?       
+       logger.debug "@category after add/default :: #{@category.inspect}"       
      end
    
      forum.elements.each("id") do |for_id|      
@@ -507,14 +565,6 @@ def get_forum_data file_path
      logger.debug "error while saving the forum:: #{@forum.errors.inspect}"
      end
   end
-end
-
-def add_forum_category cat_id
-  
-  logger.debug "inside add categories"
-  cat_name = current_account.name+" forum_"+cat_id.to_s()
-  @category = current_account.forum_categories.create(:name =>cat_name,:import_id => cat_id.to_i() )
- 
 end
 
 ##an entry is equivalent to topic in freshdesk
@@ -641,5 +691,376 @@ def get_posts_data file_path
   end
   
 end
+
+def save_custom_field ff_alias , column_type , import_id
+  
+  ff_id =FlexifieldDef.first(:conditions =>{:account_id => current_account.id}).id
+  
+  @flexifield =FlexifieldDefEntry.find_by_import_id_and_flexifield_def_id(import_id,ff_id)
+  
+  return @flexifield.flexifield_alias unless @flexifield.blank?
+  
+  coltype ="text"
+  
+  if ("dropdown".eql?(column_type) || "text".eql?(column_type))
+    coltype = ["text" , "dropdown"]
+  else
+    coltype = column_type
+  end
+  
+  columnId = 0
+  
+  data = get_new_column_details coltype
+  
+  column_name = data["column_name"]
+  
+  ff_def_id = data["ff_def_id"]
+  
+  ff_order = data["ff_order"]
+  
+  logger.debug "type is #{column_type} and new_column#{column_name} and ff_def_id : #{ff_def_id} and ff_alias:: #{ff_alias.inspect} "
+  
+  #saving new column as Untitled
+  
+  @ff_entries = FlexifieldDefEntry.new(:flexifield_name =>column_name , :flexifield_def_id =>ff_def_id ,:flexifield_alias =>ff_alias , :flexifield_order =>ff_order +1, :flexifield_coltype =>column_type ,:import_id =>import_id.to_i())
+ 
+  
+  if @ff_entries.save    
+     columnId = @ff_entries.id     
+   else    
+     logger.debug "error while saving the cusom field #{ff_alias} : Error:: #{@ff_entries.errors.inspect}"
+     columnId = -1    
+  end
+  logger.debug "columnId inside  save methode :: #{columnId}"
+  
+ 
+  
+  return columnId
+  
+  
+end
+
+def update_form_customizer field_prop, column_id, choices=[]
+  @ticket_fields = Helpdesk::FormCustomizer.find(:first ,:conditions =>{:account_id => current_account.id})
+  json_data = @ticket_fields.json_data
+  @data = []
+  @data = ActiveSupport::JSON.decode(json_data)
+  req_view = @ticket_fields.requester_view
+  @endUser = ActiveSupport::JSON.decode(req_view)
+  
+  cust_field = Hash.new  
+  
+  cust_field ={"label"=>field_prop["label"], "setDefault"=>0, "fieldType"=>"custom", 
+                "action"=>"edit", "type"=>field_prop["type"], "agent"=>{"required"=>true, "closure"=>field_prop["agent_rqrd"]}, 
+                "styleClass"=>"", "display_name"=>field_prop["display_name"], "description"=>"",
+                "customer"=>{"required"=>field_prop["cust_rqrd"] , "editable"=>field_prop["cust_editable"], "visible"=>field_prop["cust_visible"]}, 
+                "columnId"=>column_id, "choices"=>choices}
+                
+   @data.push(cust_field)
+   
+   
+    if field_prop["cust_visible"].eql?(true)      
+      @endUser.push(cust_field) 
+    end
+   
+    modified_json = ActiveSupport::JSON.encode(@data)
+    requester_json = ActiveSupport::JSON.encode(@endUser)
+    logger.debug "@data :: before updating :: #{@data.inspect}"
+    if @ticket_fields.update_attributes(:json_data =>modified_json, :agent_view =>@data , :requester_view => requester_json )  
+       logger.debug "Custom fields successfully updated."     
+    else  
+       logger.debug "Custom updation failed."
+    end
+  
+end
+
+def get_new_column_details type
+  
+ 
+  data = Hash.new 
+  
+  ff_def_id =FlexifieldDef.first(:conditions =>{:account_id => current_account.id}).id
+  
+  @flexifield_def_entries = FlexifieldDefEntry.all(:conditions =>{:flexifield_def_id => ff_def_id ,:flexifield_coltype => type})
+  
+  logger.debug "here is the inspection #{@flexifield_def_entries.inspect}"
+   
+  @coulumn_used = []
+   
+  ff_order = 0
+    
+  @flexifield_def_entries.each do |entry|
+      @coulumn_used.push(entry.flexifield_name) 
+      
+      ff_order = entry.flexifield_order
+      
+      end
+ 
+   logger.debug "current occupaid columsn : #{@coulumn_used.inspect}"
+     
+     
+  @column_exist = nil
+    
+  new_column = nil
+ 
+  case type
+    
+  when ["text" , "dropdown"]
+    
+    @column_list = Helpdesk::FormCustomizer::CHARACTER_FIELDS
+    
+    @column_exist = @column_list - @coulumn_used
+    
+    logger.debug "current exist : #{@column_exist.inspect}"
+    
+    new_column = @column_exist[0]
+    
+    logger.debug "new columns : #{new_column}"
+    
+  when "number"
+    
+    @column_list = Helpdesk::FormCustomizer::NUMBER_FIELDS
+    
+    @column_exist = @column_list - @coulumn_used
+    
+    logger.debug "current exist : #{@column_exist.inspect}"
+    
+    new_column = @column_exist[0]
+    
+    logger.debug "new columns : #{new_column}"
+    
+    
+  when "checkbox"
+    
+    @column_list = Helpdesk::FormCustomizer::CHECKBOX_FIELDS
+    
+    @column_exist = @column_list - @coulumn_used
+    
+    logger.debug "current exist : #{@column_exist.inspect}"
+    
+    new_column = @column_exist[0]
+    
+    logger.debug "new columns : #{new_column}"
+    
+  when "date"
+    
+    @column_list = Helpdesk::FormCustomizer::DATE_FIELDS
+    
+    @column_exist = @column_list - @coulumn_used
+    
+    logger.debug "current exist : #{@column_exist.inspect}"
+    
+    new_column = @column_exist[0]
+    
+    logger.debug "new columns : #{new_column}"
+    
+ when "paragraph"
+    
+    @column_list = Helpdesk::FormCustomizer::TEXT_FIELDS
+    
+    @column_exist = @column_list - @coulumn_used
+    
+    logger.debug "current exist : #{@column_exist.inspect}"
+    
+    new_column = @column_exist[0]
+    
+    logger.debug "new columns : #{new_column}"
+    
+    
+  end
+  
+  data ={"ff_def_id" =>ff_def_id, "ff_order" => ff_order,"column_name" =>new_column}
+  
+  return data
+  
+
+end
+
+def get_file_from_zendesk  dest_path  
+  
+  logger.debug "Getting file from zendesk"
+  
+  url = 'http://uknowmewell12.zendesk.com/ticket_fields.xml'
+  file_path = File.join(dest_path , "ticket_fields.xml") 
+  
+  import_file_from_zendesk url,file_path
+  
+  
+  url = 'http://uknowmewell12.zendesk.com/categories.xml'
+  file_path = File.join(dest_path , "categories.xml") 
+  
+  import_file_from_zendesk url,file_path
+  
+  
+end
+
+def import_file_from_zendesk url, file_path
+  
+  usr_name = "uknowmewell@gmail.com"
+  usr_pwd = "Opmanager123$"
+  
+  url = URI.parse(url)  
+  req = Net::HTTP::Get.new(url.path)  
+  req.basic_auth usr_name, usr_pwd
+  res = Net::HTTP.start(url.host, url.port) {|http| http.request(req) }     
+  File.open(file_path, 'w') {|f| f.write(res.body) }
+  logger.debug "successfully imported files from zendesk with file_path:: #{file_path.inspect}"
+end
+
+def import_flexifields base_dir
+  
+  file_path = File.join(base_dir , "ticket_fields.xml")
+  created = 0
+  updated = 0
+  file = File.new(file_path) 
+  doc = REXML::Document.new file
+    
+  REXML::XPath.each(doc,'//record') do |record|    
+    
+     field_type = nil
+     cat_desc = nil
+     import_id = nil
+     title = nil
+     agent_closure = false
+     cust_rqrd = false
+     cust_visible = false
+     cust_editable = false
+     
+     record.elements.each("type") do |type|      
+       field_type = type.text         
+     end
+     
+     record.elements.each("title") do |title|      
+       title = title.text         
+     end
+     
+     record.elements.each("id") do |obj_id|      
+       import_id = obj_id.text         
+     end
+     
+     record.elements.each("is-required") do |required|      
+       agent_closure = required.text         
+     end
+     
+     record.elements.each("is-required-in-portal") do |cust_rq|      
+       cust_rqrd = cust_rq.text         
+     end
+     
+     record.elements.each("is-visible-in-portal") do |cust_view|      
+       cust_visible = cust_view.text         
+     end
+     
+     record.elements.each("is-editable-in-portal") do |cust_edit|      
+       cust_editable = cust_edit.text         
+     end
+     
+     field_prop = Hash.new
+     field_prop["display_name"] = title     
+     field_prop["agent_rqrd"] = agent_closure
+     field_prop["cust_rqrd"] = cust_rqrd
+     field_prop["cust_visible"] = cust_visible
+     field_prop["cust_editable"] = cust_editable
+     
+     label = title.gsub('?','')+"_"+current_account.id.to_s()
+     
+     case field_type
+       
+     when "FieldCheckbox"
+          type = "checkbox"          
+          
+          column_id = save_custom_field label , type , import_id
+          field_prop["label"] = label
+          field_prop["type"] = type
+          unless column_id == -1
+              update_form_customizer field_prop, column_id
+          end
+       
+     when "FieldText"
+          type = "text"
+          column_id = save_custom_field label , type , import_id
+          field_prop["label"] = label
+          field_prop["type"] = type
+          unless column_id == -1
+              update_form_customizer field_prop, column_id  
+          end
+     when "FieldTagger"
+          type = "dropdown"
+          column_id = save_custom_field label , type , import_id
+          
+          choices = Array.new
+          record.elements.each("custom-field-options/custom-field-option") do |options| 
+            option_val =nil
+            tag_val = []
+            select_option = Hash.new
+            options.elements.each("name") { |name| option_val =  name.text }  
+            options.elements.each("value") { |value| tag_val =  value.text }   
+            select_option["tags"]=tag_val
+            select_option["value"]=option_val
+            choices.push(select_option)
+         end
+          field_prop["type"] = type
+          field_prop["label"] = label
+          unless column_id == -1
+              update_form_customizer field_prop, column_id,choices
+          end
+     when "FieldInteger"
+          type = "number"
+          column_id = save_custom_field label , type , import_id
+          field_prop["type"] = type
+          field_prop["label"] = label
+          unless column_id == -1
+              update_form_customizer field_prop, column_id  
+          end
+     when "FieldTextarea"
+          type = "paragraph"
+          column_id = save_custom_field label , type , import_id
+          field_prop["type"] = type
+          field_prop["label"] = label
+          unless column_id == -1
+              update_form_customizer field_prop, column_id
+          end
+       
+     end
+       
+     
+    end
+  
+end
+
+
+def import_forum_categories file_path
+  
+  created = 0
+  updated = 0
+  file = File.new(file_path) 
+  doc = REXML::Document.new file
+    
+  REXML::XPath.each(doc,'//category') do |cat|    
+    
+     cat_name = nil
+     cat_desc = nil
+     import_id = nil     
+     
+     cat.elements.each("name") do |name|      
+       cat_name = name.text         
+     end
+     
+     cat.elements.each("description") do |desc|      
+       cat_desc = desc.text         
+     end
+     
+     cat.elements.each("id") do |imp_id|      
+       import_id = imp_id.text         
+     end
+     
+    @category = current_account.forum_categories.create(:name =>cat_name,:import_id => import_id.to_i(), :description =>cat_desc)
+     
+     
+     
+     #logger.debug " The user data:: name : #{usr_name} e_mail : #{usr_email} :: phone :: #{usr_phone} :: role :: #{usr_role} time_zone :: #{usr_time_zone} and usr_details :#{usr_details}"
+ end
+ 
+end
+
 
 end

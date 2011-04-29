@@ -60,7 +60,7 @@ class CustomersController < ApplicationController
     respond_to do |format|
       if build_and_save
         User.update_all("customer_id = #{@customer.id}", ['email LIKE ? and customer_id is null and account_id = ?',"%@#{get_domain(@customer.domains)}",current_account.id])
-        format.html { redirect_to(@customer, :notice => 'Customer was successfully created.') }
+        format.html { redirect_to(@customer, :notice => 'Company was successfully created.') }
         format.xml  { render :xml => @customer, :status => :created, :location => @customer }
       else
         format.html { render :action => "new" }

@@ -61,6 +61,7 @@ ActionController::Routing::Routes.draw do |map|
     admin.register_email '/register_email/:activation_code', :controller => 'email_configs', :action => 'register_email'
     admin.resources :email_notifications
     admin.resources :business_calender, :member => { :update => :put }
+    admin.resources :security, :member => { :update => :put }
   end
   
   #SAAS copy starts here

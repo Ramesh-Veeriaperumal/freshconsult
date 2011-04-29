@@ -64,10 +64,14 @@
 		<li>
 			<%= render :partial => "/shared/profileavatar", :locals => { :user => @agent.user, :type => type } %>
 		</li>
-		<li> 
-			<%= label(:user , :time_zone,t('account.time_zone')) %>			
-			<%= time_zone_select (:user, :time_zone, ActiveSupport::TimeZone.all, :default => @agent.user.time_zone) %>
-		</li>
+		
+		<% if feature?(:multi_timezone) %>
+			<li> 
+				<%= label(:user , :time_zone,t('account.time_zone')) %>			
+				<%= time_zone_select (:user, :time_zone, ActiveSupport::TimeZone.all, :default => @agent.user.time_zone) %>
+			</li>
+		<% end %>
+		
 		<li>
 			<%= label(:agent, :signature, t('agent.signature')) %>
 			<label class="overlabel" for="user_binfo">

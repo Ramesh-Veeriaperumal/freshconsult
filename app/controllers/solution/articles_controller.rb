@@ -11,13 +11,9 @@ class Solution::ArticlesController < ApplicationController
   
   uses_tiny_mce :options => Helpdesk::LARGE_EDITOR 
   
-  def index
-    @articles = current_account.solution_articles.all
-    
-    @articles = @articles.paginate( 
-      :page => params[:page], 
-      :order => Solution::Article::SORT_SQL_BY_KEY[(params[:sort] || :created_desc).to_sym],
-      :per_page => 20)
+  def index    
+    redirect_to_url = solution_category_folder_url(params[:category_id], params[:folder_id])    
+    redirect_to redirect_to_url    
   end
 
   def show

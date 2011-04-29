@@ -1,5 +1,7 @@
 class Admin::VaRulesController < Admin::AutomationsController
   
+  skip_before_filter :check_automation_feature
+  
   def index
     @inactive_rules = current_account.disabled_va_rules
     super

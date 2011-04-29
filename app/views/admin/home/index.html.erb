@@ -31,17 +31,21 @@
 				<a href="va_rules">
 					<img src="/images/spacer.gif" class="admin-icon-dispatcher" /><div>Dispatch'r</div>
 				</a>
-			</li>
-			<li>
-				<a href="automations">
-					<img src="/images/spacer.gif" class="admin-icon-scenario" /><div>Scenario Automations</div>
-				</a>
-			</li>
-			<li>
-				<a href="business_calendars">
-					<img src="/images/spacer.gif" class="admin-icon-business-hours" /><div>Business Hours</div>
-				</a>
-			</li>
+			</li> 
+			<% if feature?(:scenario_automations) %>
+				<li>
+					<a href="automations">
+						<img src="/images/spacer.gif" class="admin-icon-scenario" /><div>Scenario Automations</div>
+					</a>
+				</li>
+			<% end %>
+			<% if feature?(:business_hours) %>
+				<li>
+					<a href="business_calendars">
+						<img src="/images/spacer.gif" class="admin-icon-business-hours" /><div>Business Hours</div>
+					</a>
+				</li>
+			<% end %> 
 			<li>
 				<a href="widget_config">
 					<img src="/images/spacer.gif" class="admin-icon-feedback" /><div>Feedback widget</div>
@@ -64,7 +68,7 @@
 			</li> 
 		</ul>
 	</div>
-	<!--div class="admin">
+	<div class="admin">
 		<h3 class="title">Account</h3>
 		<ul class="icon_grid admin_icons">
 			<li>
@@ -73,4 +77,4 @@
 				</a>
 			</li> 
 		</ul>
-	</div-->
+	</div>

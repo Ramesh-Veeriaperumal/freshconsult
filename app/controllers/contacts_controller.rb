@@ -2,13 +2,20 @@ class ContactsController < ApplicationController
   
    before_filter { |c| c.requires_permission :manage_tickets }
   
- include ModelControllerMethods
- 
- before_filter :check_user_limit, :only => :make_agent
-
-  #before_filter :check_user_limit, :only => :create 
-  before_filter :set_selected_tab
-  skip_before_filter :build_object , :only => :new
+   include ModelControllerMethods
+   before_filter :check_demo_site, :only => [:destroy,:update,:create]
+   before_filter :check_user_limit, :only => :make_agent
+   before_filter :set_selected_tab
+   skip_before_filter :build_object , :only => :new
+   
+   def check_demo_site
+    if AppConfig['demo_site'][RAILS_ENV] == current_account.full_domain
+      flash[:notice] = "Demo site doesn't have this access!"
+      redirect_to :back
+    end
+  end
+  
+  
   
   
   def index
@@ -61,6 +68,7 @@ class ContactsController < ApplicationController
     unless company_name.blank?      
       params[:user][:customer_id] = add_or_update_company   
     end
+    logger.debug "build_save :: @user is :::#{@user.inspect}"
     @user.signup!(params)
   end
   

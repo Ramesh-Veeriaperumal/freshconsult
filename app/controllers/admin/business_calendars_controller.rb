@@ -1,4 +1,6 @@
 class Admin::BusinessCalendarsController <  Admin::AdminController  
+  
+  before_filter { |c| c.requires_feature :business_hours }
    
   def index
     @business_calendars = BusinessCalendar.find(:first ,:conditions =>{:account_id => current_account.id})    
