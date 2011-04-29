@@ -38,6 +38,43 @@ require 'fileutils'
       @file_list.push(file_det)
     end
     
+    import_files_from_zendesk @out_dir
+    
   end
+  
+  def import_files_from_zendesk base_dir
+    
+    zendesk_uri = params[:dump][:url]
+    usr_name = params[:dump][:user_name]
+    usr_pwd = params[:dump][:user_pwd]
+    
+    #categories
+    
+    url = zendesk_uri+'/categories.xml'
+    file_path = File.join(base_dir , "categories.xml")   
+    import_file url,file_path , usr_name,usr_pwd
+    
+    #ticket_fields
+    url = zendesk_uri+'/ticket_fields.xml'
+    file_path = File.join(base_dir , "ticket_fields.xml")   
+    import_file url,file_path, usr_name , usr_pwd
+    
+  end
+
+ 
+def import_file url, file_path, usr_name , usr_pwd
+  
+  ##need to remove this once everything is done
+  usr_name = "uknowmewell@gmail.com"
+  usr_pwd = "Opmanager123$"
+  
+  url = URI.parse(url)  
+  req = Net::HTTP::Get.new(url.path)  
+  req.basic_auth usr_name, usr_pwd
+  res = Net::HTTP.start(url.host, url.port) {|http| http.request(req) }     
+  File.open(file_path, 'w') {|f| f.write(res.body) }
+  logger.debug "successfully imported files from zendesk with file_path:: #{file_path.inspect}"
+end
+
 
 end

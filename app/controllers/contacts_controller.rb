@@ -61,6 +61,7 @@ class ContactsController < ApplicationController
     unless company_name.blank?      
       params[:user][:customer_id] = add_or_update_company   
     end
+    logger.debug "build_save :: @user is :::#{@user.inspect}"
     @user.signup!(params)
   end
   
