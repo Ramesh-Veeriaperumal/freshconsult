@@ -369,9 +369,20 @@ def handle_ticket_import base_dir
       
       
       if @request.save
+         
         logger.debug "successfully saved"
       else
         logger.debug "failed to save the ticket :: #{@request.errors.inspect}"
+      end
+      
+      ## Create attachemnts
+
+      req.elements.each("attachments/attachment") do |attach| 
+        
+        attachemnt_url = nil        
+        attach.elements.each("url") {|attach_url|   attachemnt_url = attach_url.text  } 
+        #@request.attachments.create(:content => open(attachemnt_url), :description => "", :account_id => @request.account_id)
+       
       end
       
       ####handling additional fields
@@ -452,7 +463,18 @@ def handle_ticket_import base_dir
            logger.debug "successfully saved"
          else
             logger.debug "failed to save the note :: #{@note.errors.inspect}"
-         end
+        end
+        
+        ##adding attachment to notes
+        comment.elements.each("attachments/attachment") do |attach| 
+        
+        attachemnt_url = nil        
+        attach.elements.each("url") {|attach_url|   attachemnt_url = attach_url.text  } 
+        #@note.attachments.create(:content => open(attachemnt_url), :description => "", :account_id => @note.account_id)
+       
+        end
+        
+        
       end    
       
       
@@ -488,18 +510,18 @@ def handle_account_import base_dir
   
 end
 
-def handle_forums_import base_dir,create_solution
+def handle_forums_import base_dir,make_solution
   
   cat_path = File.join(base_dir , "categories.xml")
-  forum_path = File.join(base_dir , "forums.xml")
+  
   posts_path = File.join(base_dir , "posts.xml")
   entry_path = File.join(base_dir , "entries.xml")
   
   import_forum_categories cat_path
   
-  get_forum_data forum_path
+  get_forum_data base_dir,make_solution
   
-  get_entry_data entry_path
+  get_entry_data entry_path , make_solution
   
   get_posts_data posts_path
  
@@ -507,10 +529,11 @@ def handle_forums_import base_dir,create_solution
   
 end
 
-def get_forum_data file_path
+def get_forum_data base_dir,make_solution
   
   created = 0
   updated = 0
+  file_path = File.join(base_dir , "forums.xml")
   file = File.new(file_path) 
   doc = REXML::Document.new file
   
@@ -524,6 +547,7 @@ def get_forum_data file_path
      @category = nil
      import_id = nil
      forum_type = nil
+     display_type = nil
      
      forum.elements.each("name") do |name|      
        name = name.text         
@@ -533,8 +557,14 @@ def get_forum_data file_path
        desc = description.text         
      end
      forum.elements.each("display-type-id") do |display_type|      
-       forum_type = display_type.text.to_i()   
-       forum_type = 1 if forum_type == 3
+       display_type = display_type.text.to_i() 
+       forum_type = display_type
+       forum_type = 1 if display_type == 3
+     end
+     
+     if make_solution && display_type ==1
+       make_solution_folder forum, base_dir
+       next
      end
    
      forum.elements.each("category-id") do |cat|      
@@ -567,8 +597,81 @@ def get_forum_data file_path
   end
 end
 
+def make_solution_folder solution, base_dir
+  
+  cat_id = nil  
+  folder_name = nil
+  description = nil
+  import_id = nil
+  solution.elements.each("category-id") {|cat| cat_id = cat.text}
+  solution.elements.each("name") {|folder| folder_name = folder.text}
+  solution.elements.each("description") {|desc| description = desc.text}
+  solution.elements.each("id") {|import| import_id  = import.text}
+  
+  @category = nil
+  
+  unless cat_id.blank?    
+    @category = current_account.solution_categories.find_by_import_id(cat_id.to_i())
+    @category = add_solution_category(base_dir, cat_id) if @category.blank?
+  else
+    @category = current_account.solution_categories.find_by_name("General")  
+  end
+  logger.debug "@category is #{@category.inspect}"
+  @folder = @category.folders.new
+  @folder.name = folder_name
+  @folder.description= description
+  @folder.import_id = import_id
+  
+  if @folder.save
+    logger.debug "Folder has been saved successfully"
+  else
+    logger.debug "unable to save the folder #{@folder.errors.inspect}"
+  end
+  
+end
+
+def add_solution_category base_dir, cat_id
+  
+  created = 0
+  updated = 0
+  file_path = File.join(base_dir , "categories.xml")
+  file = File.new(file_path) 
+  doc = REXML::Document.new file
+    
+  REXML::XPath.each(doc,'//category') do |cat|    
+    
+     cat_name = nil
+     cat_desc = nil
+     import_id = nil     
+     
+     cat.elements.each("name") do |name|      
+       cat_name = name.text         
+     end
+     
+     cat.elements.each("description") do |desc|      
+       cat_desc = desc.text         
+     end
+     
+     cat.elements.each("id") do |imp_id|      
+       import_id = imp_id.text         
+     end
+     logger.debug "import_id is :: #{import_id}"
+    @category = current_account.solution_categories.new(:name =>cat_name,:import_id => import_id.to_i(), :description =>cat_desc)
+     
+    if @category.save
+     logger.debug "The @categ is saved succesfully"
+    else
+     logger.debug "Unable to save category #{@category.errors.inspect}"
+    end
+     
+     return @category
+     #logger.debug " The user data:: name : #{usr_name} e_mail : #{usr_email} :: phone :: #{usr_phone} :: role :: #{usr_role} time_zone :: #{usr_time_zone} and usr_details :#{usr_details}"
+ end
+
+  
+end
 ##an entry is equivalent to topic in freshdesk
-def get_entry_data file_path
+def get_entry_data file_path, make_solution
   
   created = 0
   updated = 0
@@ -618,6 +721,15 @@ def get_entry_data file_path
     next unless @topic_old.blank?
      
     @forum      = Forum.find_by_import_id_and_account_id(forum_id.to_i(), current_account.id)
+    
+    if (@forum.blank? && make_solution)
+      logger.debug "The forum is blank and make_solu:: #{make_solution}"
+      @sol_folder = Solution::Folder.find_by_import_id(forum_id.to_i())
+      add_solution_article entry ,@sol_folder unless @sol_folder.blank?
+      next
+    end
+    
+    
    
     
     @topic      = @forum.topics.build(:title =>title) 
@@ -659,6 +771,48 @@ def get_entry_data file_path
      
      
   end
+  
+end
+
+def add_solution_article article, curr_folder
+  
+    title = nil
+    desc = nil
+    import_id = nil
+    forum_id= nil
+    submitter_id = nil
+    is_public = true
+    
+     article.elements.each("body") {|body| desc = body.text }    
+     article.elements.each("forum-id") { |forum|  forum_id = forum.text }   
+     article.elements.each("is-public") {|public| is_public = public.text } 
+     article.elements.each("submitter-id") do |submitter|      
+       user = submitter.text 
+       submitter_id = current_account.users.find_by_import_id(user.to_i()).id unless user.blank?
+     end
+   
+     article.elements.each("title") { |forum_title| title = forum_title.text }     
+     article.elements.each("id") { |import|  import_id = import.text }        
+  
+    @article = curr_folder.articles.new
+    
+    @article.title = title
+    @article.description = desc
+    @article.import_id = import_id
+    @article.user_id = submitter_id
+    @article.title = title
+    @article.desc_un_html = desc
+    @article.account_id = current_account.id
+    @article.status = Solution::Article::STATUS_KEYS_BY_TOKEN[:published]
+    @article.art_type = Solution::Article::TYPE_KEYS_BY_TOKEN[:permanent]
+    @article.is_public = is_public
+    
+    
+    if @article.save
+      logger.debug "Article has been saved succesfully"
+    else
+      logger.debug "Article saving has been failed #{@article.errors.inspect}"
+    end
   
 end
 
@@ -1062,5 +1216,9 @@ def import_forum_categories file_path
  
 end
 
+def import_file_attachment attach_url, base_dir, file_name  
+  file_path = File.join(base_dir , file_name)
+  open(file_path, "wb") {|file| file.write open(attach_url).read}
+end
 
 end
