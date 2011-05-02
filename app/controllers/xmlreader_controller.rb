@@ -8,47 +8,7 @@ class XmlreaderController < ApplicationController
   end
 
   def importxml
-    
-    puts "inside import xml"
-    
-    file=params[:dump][:file]
-    
-    doc=REXML::Document.new(file.read)  
-
-    # terating ticket elements
-    REXML::XPath.each(doc,'//ticket') do |req| 
-        
-        sub = nil 
-        desc = nil
-        import_id = nil
-        
-        #filtering each fields
-        
-        req.elements.each("subject") do |subject|
-          
-          puts "subject value is"       
-        
-          sub = subject.text
-         
-        end
-        
-        req.elements.each("description") do |description|    
-       
-          desc = description.text
-         
-        end    
-       
-       puts sub
-       
-       puts desc
-       
-       # saving the data to ticket
-       
-       @request = Helpdesk::Ticket.new(:subject => sub, :description =>desc, :account_id => '1')      
-      
-       @request.save
-        
-       end
+   
   end
   
   def zendesk_import
@@ -86,38 +46,28 @@ class XmlreaderController < ApplicationController
 
 def handle_customer_import base_dir
   
-  file_path = File.join(base_dir , "organizations.xml")
-  
+  file_path = File.join(base_dir , "organizations.xml")  
   created = 0
   updated = 0
   file = File.new(file_path) 
   doc = REXML::Document.new file
-    
-  REXML::XPath.each(doc,'//organization') do |org|    
-    
+  
+  REXML::XPath.each(doc,'//organization') do |org|       
      cust_name = nil
      cust_detail = nil
      import_id = nil     
      
-     org.elements.each("name") do |name|      
-       cust_name = name.text         
-     end
-     
-     org.elements.each("details") do |detail|      
-       cust_detail = detail.text         
-     end
-     
-     org.elements.each("id") do |imp_id|      
-       import_id = imp_id.text         
-     end
-     
+     org.elements.each("name") {|name|  cust_name = name.text}     
+     org.elements.each("details") {|detail| cust_detail = detail.text }    
+     org.elements.each("id") { |imp_id| import_id = imp_id.text }    
+    
      @customer = current_account.customers.new(:name =>cust_name , :description =>cust_detail , :import_id =>import_id )
-     logger.debug "The cust object is :: #{@customer.inspect}"
-     @customer.save
-     
-     
-     
-     #logger.debug " The user data:: name : #{usr_name} e_mail : #{usr_email} :: phone :: #{usr_phone} :: role :: #{usr_role} time_zone :: #{usr_time_zone} and usr_details :#{usr_details}"
+     if @customer.save
+       logger.debug "Customer has been saved with name:: #{cust_name}"
+     else
+       logger.debug "Save customer has been failed:: #{@customer.errors.inspect}"
+     end
+    
   end
   
 end
@@ -331,9 +281,7 @@ def handle_ticket_import base_dir
         created_time = created.text
         created_at = created_time.to_datetime()
       end 
-      
-      
-      
+     
       ###########
       req.elements.each("updated-at") do |updated|  
         updated_at = updated.text
@@ -381,7 +329,7 @@ def handle_ticket_import base_dir
         
         attachemnt_url = nil        
         attach.elements.each("url") {|attach_url|   attachemnt_url = attach_url.text  } 
-        #@request.attachments.create(:content => open(attachemnt_url), :description => "", :account_id => @request.account_id)
+        @request.attachments.create(:content => open(attachemnt_url), :description => "", :account_id => @request.account_id)
        
       end
       
@@ -470,16 +418,12 @@ def handle_ticket_import base_dir
         
         attachemnt_url = nil        
         attach.elements.each("url") {|attach_url|   attachemnt_url = attach_url.text  } 
-        #@note.attachments.create(:content => open(attachemnt_url), :description => "", :account_id => @note.account_id)
+        @note.attachments.create(:content => open(attachemnt_url), :description => "", :account_id => @note.account_id)
        
         end
         
         
       end    
-      
-      
-      logger.debug "The @request :: #{@request.notes.inspect}"
-      
      
         
    end
@@ -525,8 +469,6 @@ def handle_forums_import base_dir,make_solution
   
   get_posts_data posts_path
  
-  
-  
 end
 
 def get_forum_data base_dir,make_solution
@@ -728,9 +670,6 @@ def get_entry_data file_path, make_solution
       add_solution_article entry ,@sol_folder unless @sol_folder.blank?
       next
     end
-    
-    
-   
     
     @topic      = @forum.topics.build(:title =>title) 
     @topic.import_id = import_id
