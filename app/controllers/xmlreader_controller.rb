@@ -299,7 +299,9 @@ def handle_ticket_import base_dir
       req.elements.each("due-date") do |due|  
         due_date = due.text
       end 
-    
+      
+      @check_req = current_account.tickets.find_by_display_id(display_id.to_i())      
+      next unless  @check_req.blank?    
        
       @request = current_account.tickets.new
       @request.subject = sub
@@ -1055,6 +1057,7 @@ def import_flexifields base_dir
      field_prop["cust_editable"] = cust_editable
      
      label = title.gsub('?','')+"_"+current_account.id.to_s()
+     label = label.gsub!(/\s+/,"_")
      
      case field_type
        

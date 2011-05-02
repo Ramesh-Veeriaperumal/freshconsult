@@ -65,8 +65,8 @@ require 'fileutils'
 def import_file url, file_path, usr_name , usr_pwd
   
   ##need to remove this once everything is done
-  usr_name = "uknowmewell@gmail.com"
-  usr_pwd = "Opmanager123$"
+  #usr_name = "uknowmewell@gmail.com"
+  #usr_pwd = "Opmanager123$"
   
   url = URI.parse(url)  
   req = Net::HTTP::Get.new(url.path)  
