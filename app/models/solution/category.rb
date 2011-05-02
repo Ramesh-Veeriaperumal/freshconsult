@@ -8,6 +8,6 @@ class Solution::Category < ActiveRecord::Base
    
    has_many :folders, :class_name =>'Solution::Folder' , :dependent => :destroy
    
-   attr_accessible  :name,:description
+   attr_accessible  :name,:description,:import_id
    
 end

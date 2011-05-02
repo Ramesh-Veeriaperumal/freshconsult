@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110427120743) do
+ActiveRecord::Schema.define(:version => 20110502050956) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -74,7 +74,7 @@ ActiveRecord::Schema.define(:version => 20110427120743) do
     t.text     "note"
     t.text     "domains"
     t.boolean  "delta",                        :default => true, :null => false
-    t.integer  "import_id" , :limit => 8
+    t.integer  "import_id", :limit => 8
   end
 
   add_index "customers", ["account_id", "name"], :name => "index_customers_on_account_id_and_name", :unique => true
@@ -131,7 +131,7 @@ ActiveRecord::Schema.define(:version => 20110427120743) do
     t.string   "flexifield_defVal"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "import_id" ,:limit => 8
+    t.integer  "import_id", :limit => 8
   end
 
   add_index "flexifield_def_entries", ["flexifield_def_id", "flexifield_name"], :name => "idx_ffde_onceperdef", :unique => true
@@ -241,7 +241,7 @@ ActiveRecord::Schema.define(:version => 20110427120743) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "account_id",  :limit => 8
-    t.integer  "import_id" , :limit => 8
+    t.integer  "import_id", :limit => 8
   end
 
   add_index "forum_categories", ["account_id", "name"], :name => "index_forum_categories_on_account_id_and_name", :unique => true
@@ -256,7 +256,7 @@ ActiveRecord::Schema.define(:version => 20110427120743) do
     t.integer "account_id",        :limit => 8
     t.integer "forum_category_id", :limit => 8
     t.integer "forum_type"
-    t.integer "import_id" , :limit => 8
+    t.integer "import_id", :limit => 8
   end
 
   add_index "forums", ["forum_category_id", "name"], :name => "index_forums_on_forum_category_id", :unique => true
@@ -270,7 +270,7 @@ ActiveRecord::Schema.define(:version => 20110427120743) do
     t.integer  "assign_time"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "import_id" ,:limit => 8
+    t.integer  "import_id", :limit => 8
   end
 
   add_index "groups", ["account_id", "name"], :name => "index_groups_on_account_id", :unique => true
@@ -474,7 +474,7 @@ ActiveRecord::Schema.define(:version => 20110427120743) do
     t.integer  "email_config_id", :limit => 8
     t.text     "cc_email"
     t.boolean  "delta",                        :default => true,  :null => false
-    t.integer  "import_id" , :limit => 8
+    t.integer  "import_id", :limit => 8
   end
 
   add_index "helpdesk_tickets", ["account_id", "display_id"], :name => "index_helpdesk_tickets_on_account_id_and_display_id", :unique => true
@@ -534,6 +534,7 @@ ActiveRecord::Schema.define(:version => 20110427120743) do
     t.integer  "account_id",   :limit => 8
     t.boolean  "delta",                              :default => true, :null => false
     t.text     "desc_un_html", :limit => 2147483647
+    t.integer  "import_id", :limit => 8
   end
 
   add_index "solution_articles", ["account_id", "folder_id"], :name => "index_solution_articles_on_account_id"
@@ -545,6 +546,7 @@ ActiveRecord::Schema.define(:version => 20110427120743) do
     t.integer  "account_id",  :limit => 8
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "import_id", :limit => 8
   end
 
   add_index "solution_categories", ["account_id", "name"], :name => "index_solution_categories_on_account_id_and_name", :unique => true
@@ -555,6 +557,7 @@ ActiveRecord::Schema.define(:version => 20110427120743) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "category_id", :limit => 8
+    t.integer  "import_id", :limit => 8
   end
 
   add_index "solution_folders", ["category_id", "name"], :name => "index_solution_folders_on_category_id_and_name", :unique => true
@@ -652,7 +655,7 @@ ActiveRecord::Schema.define(:version => 20110427120743) do
     t.integer  "account_id",   :limit => 8
     t.integer  "stamp_type"
     t.boolean  "delta",                     :default => true,  :null => false
-    t.integer  "import_id" , :limit => 8
+    t.integer  "import_id", :limit => 8
   end
 
   add_index "topics", ["forum_id", "replied_at"], :name => "index_topics_on_forum_id_and_replied_at"
