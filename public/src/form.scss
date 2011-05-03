@@ -241,11 +241,12 @@ a.addchoice:hover{
 	}	 
 	li.checkbox{
 		@include clearfix;
-		padding:10px 0px;
+		padding-top:16px;
+		padding-bottom:16px;		
 		input{
 			float:left;
 			margin-right:6px;
-			margin-top:1px;
+			margin-top:4px;
 		} 
 		label{
 			position:relative;

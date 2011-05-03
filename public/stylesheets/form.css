@@ -292,12 +292,13 @@ a.addchoice:hover {
 .ui-form li.checkbox {
   overflow: hidden;
   *zoom: 1;
-  padding: 10px 0px;
+  padding-top: 16px;
+  padding-bottom: 16px;
 }
 .ui-form li.checkbox input {
   float: left;
   margin-right: 6px;
-  margin-top: 1px;
+  margin-top: 4px;
 }
 .ui-form li.checkbox label {
   position: relative;
