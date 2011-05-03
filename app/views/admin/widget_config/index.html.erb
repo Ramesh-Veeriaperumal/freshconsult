@@ -67,12 +67,13 @@
 			<%= content_tag(:div, t('feedbackwidget_embed_code_intro'), :class => "intro") %>
 			<textarea id="EmbedCode"></textarea>	 
 	  </li>
+	   <li>
+	 	<a href="/admin/home" class="uiButton"><%= t('back_to_admin') %></a>
+	   </li>
 	 </ul>
 	 <input type="hidden" name="url" value='<%= current_account.full_url %>' />
 	 <input type="hidden" name="assetUrl" value='<%= Helpdesk::ASSET_URL %>' />
-	 <div>
-	 	<a href="/admin/home" class="uiButton"><%= t('back_to_admin') %></a>
-	 </div>	
+	 
 <% end %>
 
 <%= javascript_include_tag "freshwidget.js" %> 

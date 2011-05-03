@@ -7,14 +7,14 @@ html {
 .wrapper {
   overflow: hidden;
   *zoom: 1;
-  min-width: 950px;
+  min-width: 982px;
   width: 95%;
   margin: 0 auto;
   overflow: hidden;
   *zoom: 1;
   position: relative;
   text-align: left;
-  max-width: 1220px;
+  max-width: 1280px;
   padding: 0px 8px;
 }
 
@@ -64,7 +64,7 @@ label.overlabel {
   position: relative;
   z-index: 1;
   margin: 12px 0px 0px 0px;
-  padding-right: 310px;
+  padding-right: 290px;
 }
 #inner:after {
   content: "\0020";
@@ -79,10 +79,10 @@ label.overlabel {
   width: 100%;
 }
 #inner .sidebar {
-  width: 310px;
+  width: 290px;
   float: right;
   display: inline;
-  margin-right: -310px;
+  margin-right: -290px;
 }
 
 .single #inner {
@@ -120,19 +120,19 @@ div.bg_pulp {
 
 .twoCol_ltSidebar #inner {
   padding-right: 0px;
-  padding-left: 310px;
+  padding-left: 290px;
   /* The width of the rail */
 }
 .twoCol_ltSidebar #inner .sidebar {
   margin-right: 0px;
-  margin-left: -310px;
+  margin-left: -290px;
 }
 .twoCol_ltSidebar #inner .leftcontent {
   margin-right: 0px;
   border-right: 0px;
-  border-left: 310px solid #f2f8fc;
+  border-left: 290px solid #f2f8fc;
   /* The width and color of the rail */
-  margin-left: -310px;
+  margin-left: -290px;
   /* Hat tip to Ryan Brill */
   float: right;
 }

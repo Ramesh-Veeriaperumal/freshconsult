@@ -98,11 +98,11 @@ div.ui-form ul, ul.ui-form{
 	@include border-radius(6px);
 }
 
-ul.ui-form ul.ui-form{
-	margin: 0px;
+ul.ui-form .ui-form-inline{
+	@include clearfix;
 	@include border-radius(0px);
 	border-width:1px 0px;
-	padding:0px;
+	padding:0px; margin: 0px;
 	li{ padding-left:0px; }
 }
 
@@ -177,13 +177,14 @@ a.addchoice:hover{
 }	
 	
 .choicelist{
+	@include clearfix;
 	label{
 		font-size:1.1em;
 	}
 	label.radiolabel{
 		font-size:1em;
 		float:left; 
-		padding:0px 5px;	
+		padding:0px 5px 0px 0px;	
 		margin-right:10px;		
 	}
 	input.radio{
@@ -318,6 +319,8 @@ a.addchoice:hover{
 	fieldset.addchoice{		
 		padding:0px;			
 		color:#999999;
+		font-size:14px;
+		font-weight:bold;
 		cursor:pointer;
 		
 	} 
@@ -326,7 +329,7 @@ a.addchoice:hover{
 	}	
 	.conditionset{
 		border:1px solid #cfcfcf;
-		padding:0px;
+		margin:4px 0px;
 		fieldset{
 			@include pie-clearfix;			
 			padding:5px 0px 5px 4px;
@@ -345,7 +348,7 @@ a.addchoice:hover{
 				padding:0px;
 				cursor:pointer;
 				right:10px;
-				top:5px;
+				top:2px;
 			}
 			div.controls{
 				width:95%;
@@ -369,14 +372,12 @@ a.addchoice:hover{
 				float:none;
 				display:block;
 				clear:both;
-				width:800px;
 				padding:4px;
-				@include clearfix;	
+				@include clearfix;
 				div{
 					width:100%;
 					padding:4px 0px;
 					font-size:12px;
-					border-bottom:1px solid #cfcfcf;
 					em{
 						font-style:normal;
 					}
@@ -433,6 +434,34 @@ a.addchoice:hover{
 		margin-left:210px;
 		label{
 			font-size:1.1em;
+		}
+	}
+}
+
+.ui-login, .ui-signup{ 
+	text-align:center;
+	display:block;
+	padding:18px 0px;
+	.ui-form{ 
+		background:none;
+		border:0px;
+		margin:4px auto;
+		@include corners(12px);
+		@include shadows(0px, 1px, 6px, rgba(0, 0, 0, 0.10) );
+		text-align:left;
+		padding:25px;
+		border:1px solid #c2c2c2; 
+		background:#ffffff;
+		ul{
+			margin:0px;
+			li{
+				input.text{
+					margin:3px 0px 5px 0px;
+					width:320px;	
+				}
+				border-bottom:0px;
+				padding:5px 0px;
+			}
 		}
 	}
 }
@@ -614,7 +643,7 @@ span.sort_handle{
 
 .button-container{
 	text-align:right;
-	padding:1em 2em 1em 0;
+	padding:1em 0em 1em 0;
 }
 
 .ui-draggable-dragging{
@@ -692,32 +721,6 @@ span.sort_handle{
 
 .ui-signup .ui-form{ 
 	width:560px;
-}
-
-.ui-login, .ui-signup{ 
-	text-align:center;
-	display:block;
-	padding:18px 0px;
-	.ui-form{ 
-		background:none;
-		border:0px;
-		margin:4px auto;
-		@include corners(12px);
-		@include shadows(0px, 1px, 6px, rgba(0, 0, 0, 0.10) );
-		text-align:left;
-		padding:25px;
-		border:1px solid #c2c2c2; 
-		background:#ffffff;
-		ul{
-			margin:0px;
-			li{
-				input.text{
-					margin:3px 0px 5px 0px;
-					width:320px;	
-				}
-			}
-		}
-	}
 }
 
 .ui-widget-container{
