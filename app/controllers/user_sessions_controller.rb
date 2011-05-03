@@ -73,10 +73,12 @@ require 'openid'
     base_domain = AppConfig['base_domain'][RAILS_ENV]
     domain_name = params[:domain] 
     logger.debug "base domain is #{base_domain}"
+    @current_account = Account.find_by_google_domain(domain_name)
     full_domain  = "#{domain_name.split('.').first}.#{AppConfig['base_domain'][RAILS_ENV]}"
-    @current_account = Account.find_by_full_domain(full_domain)
+    @current_account = Account.find_by_full_domain(full_domain) if @current_account.blank?
     cust_url = @current_account.full_domain unless @current_account.blank?
     return :back if @current_account.blank?
+    
     ##Need to handle the case where google is integrated with a seperate domain-- 2 times we need to authenticate
     return_url = "http://"+cust_url+"/authdone/google?domain="+params[:domain] 
     logger.debug "the return_url is :: #{return_url}"
