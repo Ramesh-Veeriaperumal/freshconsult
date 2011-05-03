@@ -3,11 +3,13 @@
 <h3 class= "title"><%= @page_title = 'Billing details' %></h3>
 <% if @subscription.state == 'trial' %>
   <% if @subscription.next_renewal_at > Time.now %>
-    <p>
+ 	<div class="intro">
       Thank you for trying <%= AppConfig['app_name'] %>!  Your trial account will expire in <%= pluralize(@subscription.trial_days, 'day', 'days') %>, at which time you will no longer have access to your account.  To maintain access to your account, enter your credit card information below.  Your first charge will happen on <%= @subscription.next_renewal_at.to_s(:long_day) %>.
-    </p>
+    </div>
   <% else %>
+ 	<div class="intro">
     Thank you for trying <%= AppConfig['app_name'] %>!  Your trial account has expired.  To regain access to your account, enter your credit card information below.  Your first charge will happen immediately, and you will be billed monthly thereafter.
+ 	</div>
   <% end %>
 <% end %>
 
@@ -33,12 +35,12 @@
 		  <% end %>
 		  </div>
   	</li>
-	<li class="inline-field">
-		<% if @subscription.amount > 0 %>
+	<% if @subscription.amount > 0 %>
+		<li class="inline-field">
 		  <% form_for :creditcard, @creditcard, :url => { :action => 'billing' } do |f| %>
 		    <%= render :partial => 'shared/credit_card_form' %>
 		    <%= submit_or_cancel '/account', 'Update billing information' %>
 		  <% end %>
-		<% end %>
-	</li>
+		</li>
+	<% end %>
 </ul>

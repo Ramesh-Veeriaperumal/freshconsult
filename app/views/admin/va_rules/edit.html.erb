@@ -1,4 +1,3 @@
-<% content_for :layoutType do -%>single<%- end %>
 <h3 class="title"><%=t('dispatch.edit')%></h3> 
 <% form_for :va_rule, @va_rule, :url => admin_va_rule_path, :html => { :method => :put , :id => "VirtualAgent" } do |f| %>
 	<%= render :partial => "form", :locals => { :f => f } %>
