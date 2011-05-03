@@ -61,6 +61,21 @@ class Va::Action
   
   protected
   
+    def group_id(act_on)
+      g_id = value.to_i
+      begin
+        group = act_on.account.groups.find(g_id)
+      rescue ActiveRecord::RecordNotFound
+      end
+    
+      if group
+        act_on.group_id = g_id
+        add_activity("Set group as <b>#{group.name}</b>")
+      else
+        add_activity("<b>Unable to set the group, consider updating this scenario if the group has been deleted recently.</b>")
+      end
+    end
+  
     def add_comment(act_on)
       note = act_on.notes.build()
       note.body = act_hash[:comment]
