@@ -2,6 +2,8 @@
 # Likewise, all the methods added will be available for all controllers.
 
 class ApplicationController < ActionController::Base
+  
+  ssl_allowed
 
   before_filter :set_time_zone
   
