@@ -1362,6 +1362,9 @@ a.request_bt:hover {
 .user_details_widget {
   padding: 10px;
 }
+.user_details_widget div {
+  padding: 3px 0px;
+}
 .user_details_widget a, .user_details_widget a.user_name {
   color: #527EAA;
 }
