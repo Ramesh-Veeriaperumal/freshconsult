@@ -36,14 +36,21 @@ class Admin::EmailConfigsController < Admin::AdminController
     if @email_config
       unless @email_config.active
         @email_config.active = true
-        flash[:notice] = "#{@email_config.reply_email} has been activated" if @email_config.save
+        flash[:notice] = "#{@email_config.reply_email} has been activated!" if @email_config.save
       else
-        flash[:warning] = "#{@email_config.reply_email} has been activated already"
+        flash[:warning] = "#{@email_config.reply_email} has been activated already!"
       end
     else
-      flash[:warning] = "The activation code is not valid"
+      flash[:warning] = "The activation code is not valid!"
     end
     
+    redirect_back_or_default redirect_url
+  end
+  
+  def deliver_verification
+    @email_config = scoper.find(params[:id])
+    @email_config.deliver_verification_email
+    flash[:notice] = "Verification email has been sent to #{@email_config.reply_email}!"
     redirect_back_or_default redirect_url
   end
   
