@@ -293,7 +293,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   def notify_on_update
     notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_GROUP) if (group_id != @old_ticket.group_id && group)
-    notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_AGENT) if (responder_id != @old_ticket.responder_id && responder)
+    if (responder_id != @old_ticket.responder_id && responder && responder != User.current)
+      notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_AGENT)
+    end
     
     if status != @old_ticket.status
       return notify_by_email(EmailNotification::TICKET_RESOLVED) if (status == STATUS_KEYS_BY_TOKEN[:resolved])
