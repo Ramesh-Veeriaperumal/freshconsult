@@ -1,5 +1,5 @@
 <%= content_tag (:h3, (params[:formTitle].blank?) ? t('feedbackwidget_defaulttitle') : params[:formTitle], :class => "title") %>
-<% form_for :ticket, @ticket, :url => widgets_feedback_widget_path , :html => {:method => :post}  do |f| %>
+<% form_for :helpdesk_ticket, @ticket, :url => widgets_feedback_widget_path , :html => {:method => :post, :multipart => true }  do |f| %>
   <%= f.error_messages %>
   	<ul class="ui-form"> 
 	    <%= render :partial => 'support/shared/request_form', :object => f %>

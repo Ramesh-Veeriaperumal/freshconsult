@@ -820,3 +820,34 @@ div.addReminder{
 			height:24px;
 		} 
 }
+
+.plans{
+	background:#ededed;
+	border:1px solid #cccccc;
+	table{ width:100%; }
+	td{ width:33%; }
+	.plan-title{
+		padding:8px 13px;
+		border:1px solid #dadada;
+		h2, h4{	text-transform:uppercase; font-weight:bold; }
+		h2{
+			font-size:22px;
+			color:#333333;
+		}
+		h3{
+			font-size:18px;
+			font-weight:normal;
+			padding-bottom:3px;
+		}
+		h4{
+			font-size:14px;
+			color:#5f892c;
+			padding-bottom:6px;
+		}
+	}
+	.active{
+		border-color:#a1a69d;
+		background-color:#f4fded;
+		@include shadows(#a1a69d, 0px, 1px, 3px);
+	}
+}
