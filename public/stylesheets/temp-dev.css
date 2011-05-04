@@ -985,3 +985,43 @@ div.addReminder form label.overlabel {
   background-position: 0px -320px;
   height: 24px;
 }
+
+.plans {
+  background: #ededed;
+  border: 1px solid #cccccc;
+}
+.plans table {
+  width: 100%;
+}
+.plans td {
+  width: 33%;
+}
+.plans .plan-title {
+  padding: 8px 13px;
+  border: 1px solid #dadada;
+}
+.plans .plan-title h2, .plans .plan-title h4 {
+  text-transform: uppercase;
+  font-weight: bold;
+}
+.plans .plan-title h2 {
+  font-size: 22px;
+  color: #333333;
+}
+.plans .plan-title h3 {
+  font-size: 18px;
+  font-weight: normal;
+  padding-bottom: 3px;
+}
+.plans .plan-title h4 {
+  font-size: 14px;
+  color: #5f892c;
+  padding-bottom: 6px;
+}
+.plans .active {
+  border-color: #a1a69d;
+  background-color: #f4fded;
+  -moz-box-shadow: #a1a69d 0px 1px 3px;
+  -webkit-box-shadow: #a1a69d 0px 1px 3px;
+  box-shadow: #a1a69d 0px 1px 3px;
+}

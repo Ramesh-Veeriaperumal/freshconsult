@@ -435,7 +435,7 @@ en:
    feedbackwidget_custom_image:       "Custom image URL"
    feedbackwidget_custom_image_info:  "if you are using a custom image the color and text will be ignored."
    feedbackwidget_offset_label:       "With an offset of"
-   feedbackwidget_offset_info:        "The offset will be the distance of the widget button (pixels/percent) from the left or top of the screen based on the alignment you choose."
+   feedbackwidget_offset_info:        "The offset will be the distance of the widget button (pixels) from the left or top of the screen based on the alignment you choose."
    
    feedbackwidget_formcustomize:      "Form customization"
    feedbackwidget_form_title:         "Widget form title"

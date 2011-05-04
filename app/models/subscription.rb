@@ -63,7 +63,7 @@ class Subscription < ActiveRecord::Base
   end
   
   def trial_days
-    (self.next_renewal_at.to_i - Time.now.to_i) / 86400
+    ((self.next_renewal_at.to_i - Time.now.to_i) / 86400).to_i
   end
   
   def amount_in_pennies
