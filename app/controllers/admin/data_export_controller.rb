@@ -18,7 +18,7 @@ class Admin::DataExportController <  Admin::AdminController
   end
  
   def export 
-    params[:domain] =  current_user.full_domain
+    params[:domain] =  current_account.full_domain
     params[:email] = current_user.email
     Delayed::Job.enqueue Helpdesk::ExportData.new(params)
     flash[:notice] = "Data export will be sent to your mail shortly"
