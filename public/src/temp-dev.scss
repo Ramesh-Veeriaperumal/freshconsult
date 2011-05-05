@@ -357,6 +357,7 @@ div.addReminder{
 .tickets, .tickets-expanded{
 	width:100%; 
 	color:#5f5f5f; 
+	border-top:1px solid #f4f4f4;
 	th{
 		background:none;
 		padding:6px 6px 5px 6px;
@@ -390,7 +391,7 @@ div.addReminder{
 		padding-top:10px;
 	}
 	
-	.name{			
+	.name, .name-user{			
 		width:55%;
 		padding-left:57px;
 		.preview_pic{
@@ -418,6 +419,10 @@ div.addReminder{
 		div{
 			color:#888888;
 		}
+	}
+	
+	.name-user{
+		padding-left:20px;
 	}
 	.assign{
 		ul{
@@ -825,10 +830,8 @@ div.addReminder{
 	background:#ededed;
 	border:1px solid #cccccc;
 	table{ width:100%; }
-	td{ width:33%; }
-	.plan-title{
-		padding:8px 13px;
-		border:1px solid #dadada;
+	td{ width:33%; vertical-align:top;border:1px solid #dadada;	padding:8px 13px; }
+	.plan-title{ 
 		h2, h4{	text-transform:uppercase; font-weight:bold; }
 		h2{
 			font-size:22px;
@@ -844,10 +847,19 @@ div.addReminder{
 			color:#5f892c;
 			padding-bottom:6px;
 		}
+		p{
+			color:#666666;
+			font-size:13px;
+			line-height:20px;
+			@include min-height(80px);
+		}
 	}
 	.active{
-		border-color:#a1a69d;
-		background-color:#f4fded;
-		@include shadows(#a1a69d, 0px, 1px, 3px);
+		border:0px;
+		background-color:#f4fded; 
+	}
+	
+	button{
+		margin-top:6px;
 	}
 }
