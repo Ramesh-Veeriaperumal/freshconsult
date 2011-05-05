@@ -49,10 +49,9 @@ class AccountsController < ApplicationController
   def signup_google
     
     base_domain = AppConfig['base_domain'][RAILS_ENV]
-    logger.debug "base domain is #{base_domain}"
-   
-    return_url = "http://signup."+base_domain+"/google/complete?domain="+params[:domain]+"&callback="+params[:callback]    
-    
+    logger.debug "base domain is #{base_domain}"   
+    return_url = "http://signup."+base_domain+"/google/complete?domain="+params[:domain]     
+    return_url = return_url+"&callback="+params[:callback] unless params[:callback].blank?    
     url = "https://www.google.com/accounts/o8/site-xrds?hd=" + params[:domain]      
     rqrd_data = ["http://axschema.org/contact/email","http://axschema.org/namePerson/first" ,"http://axschema.org/namePerson/last"]
     re_alm = "http://*."+base_domain    
