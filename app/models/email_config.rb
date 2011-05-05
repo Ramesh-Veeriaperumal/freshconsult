@@ -13,6 +13,11 @@ class EmailConfig < ActiveRecord::Base
   after_save :deliver_email_activation
   before_update :reset_activator_token
   
+  def deliver_verification_email
+    set_activator_token
+    save
+  end
+  
   protected
     def set_activator_token
       (self.active = true) and return if reply_email.downcase.ends_with?("@#{account.full_domain.downcase}")
