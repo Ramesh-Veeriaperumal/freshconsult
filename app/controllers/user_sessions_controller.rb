@@ -99,23 +99,29 @@ require 'openid'
     
   resp = request.env[Rack::OpenID::RESPONSE]
   logger.debug "The response is :: #{resp.inspect}"
-  email = get_email resp  
-  domain_name = params[:domain]    
-  full_domain  = "#{domain_name.split('.').first}.#{AppConfig['base_domain'][RAILS_ENV]}"
-  @current_account = Account.find_by_full_domain(full_domain)   
-  @current_user = @current_account.users.find_by_email(email)  unless  @current_account.blank?
-  @current_user = create_user(email,@current_account) if (@current_user.blank? && !@current_account.blank?)
-  @current_user = User.find_by_email(email) if @current_account.blank?  
-  return :back if @current_user.blank?
-  @current_user.email = email   
-  @user_session = @current_user.account.user_sessions.new(@current_user)  
+  identity_url = resp.display_identifier
+  logger.debug "The display identifier is :: #{identity_url.inspect}"
+  provider = 'open_id'  
+  email = get_email resp    
+  @auth = Authorization.find_by_provider_and_uid_and_account_id(provider, identity_url,current_account.id)
+  @current_user = @auth.user unless @auth.blank?
+  @current_user = current_account.all_users.find_by_email(email) if @current_user.blank?
+  if @current_user.blank?  
+    @current_user = create_user(email,identity_url,current_account) 
+  elsif @auth.blank?
+    @current_user.authorizations.create(:provider => provider, :uid => identity_url, :account_id => current_account.id) #Add an auth in existing user
+    @current_user.active = true 
+    @current_user.save!
+  end
+  
+  @user_session = current_account.user_sessions.new(@current_user)  
   if @user_session.save
       logger.debug " @user session has been saved :: #{@user_session.inspect}"
       flash[:notice] = "Login successful!"      
       redirect_back_or_default('/')      
   else
-      note_failed_login
-      render :action => :new
+     flash[:notice] = "Authentication Failed"
+     redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
   end
 end
  
@@ -138,13 +144,14 @@ def get_email(resp)
   end
 end
 
- def create_user(email, account)
+ def create_user(email,identity_url, account)
    logger.debug "create user has beeen called ::"
       @contact = account.users.new
       @contact.email = email
       @contact.user_role = User::USER_ROLES_KEYS_BY_TOKEN[:customer]
       @contact.active = true     
       @contact.save  
+      @contact.authorizations.create(:uid => identity_url , :provider => 'open_id',:account_id => current_account.id)
       return @contact
   end
 
