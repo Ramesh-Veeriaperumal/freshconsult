@@ -1,6 +1,6 @@
 class Admin::DataExportController <  Admin::AdminController
  
-  before_filter :check_export_status
+  before_filter :check_export_status, :only => :export
   
   def check_export_status
     @data_export = current_account.data_export
@@ -9,7 +9,7 @@ class Admin::DataExportController <  Admin::AdminController
       @data_export.save!
     elsif @data_export.status
       flash[:notice] = "Data export will be sent to your mail shortly"
-      redirect_to admin_data_export_index_url
+      return redirect_to(admin_data_export_index_url)
     end
   end
   
