@@ -423,8 +423,8 @@ en:
 #April 25th 2011
     
    feedbackwidget_help_title:         "Feedback widget"
-   feedbackwidget_help_para1:         "The Feedback widget helps you to embed your self service portals ticket form in your own website."
-   feedbackwidget_help_para2:         "Using the widget users can submit support tickets directly from your website. "
+   feedbackwidget_help_para1:         "Collect feedback from your customers by adding a support tab to your website pages."
+   feedbackwidget_help_para2:         "Customizable tab opens into a Support ticket form. "
    feedbackwidget_title:              "Widget Settings"
    feedbackwidget_intro:              "Customize your freshdesk widget below and see a realtime preview."
    
