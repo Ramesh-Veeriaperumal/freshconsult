@@ -440,6 +440,7 @@ div.addReminder form label.overlabel {
 .tickets, .tickets-expanded {
   width: 100%;
   color: #5f5f5f;
+  border-top: 1px solid #f4f4f4;
 }
 .tickets th, .tickets-expanded th {
   background: none;
@@ -473,35 +474,38 @@ div.addReminder form label.overlabel {
 .tickets th.check, .tickets-expanded th.check {
   padding-top: 10px;
 }
-.tickets .name, .tickets-expanded .name {
+.tickets .name, .tickets .name-user, .tickets-expanded .name, .tickets-expanded .name-user {
   width: 55%;
   padding-left: 57px;
 }
-.tickets .name .preview_pic, .tickets-expanded .name .preview_pic {
+.tickets .name .preview_pic, .tickets .name-user .preview_pic, .tickets-expanded .name .preview_pic, .tickets-expanded .name-user .preview_pic {
   margin: 0px;
   margin-top: 2px;
   margin-left: -53px;
 }
-.tickets .name .preview_pic img, .tickets-expanded .name .preview_pic img {
+.tickets .name .preview_pic img, .tickets .name-user .preview_pic img, .tickets-expanded .name .preview_pic img, .tickets-expanded .name-user .preview_pic img {
   padding: 2px;
   width: 36px;
   height: 36px;
 }
-.tickets .name h3, .tickets-expanded .name h3 {
+.tickets .name h3, .tickets .name-user h3, .tickets-expanded .name h3, .tickets-expanded .name-user h3 {
   padding: 0px 0px 4px 0px;
 }
-.tickets .name h3 a, .tickets-expanded .name h3 a {
+.tickets .name h3 a, .tickets .name-user h3 a, .tickets-expanded .name h3 a, .tickets-expanded .name-user h3 a {
   text-transform: capitalize;
   font-size: 1.06em;
   line-height: 22px;
   display: block;
   color: #444444;
 }
-.tickets .name h3 a:hover, .tickets-expanded .name h3 a:hover {
+.tickets .name h3 a:hover, .tickets .name-user h3 a:hover, .tickets-expanded .name h3 a:hover, .tickets-expanded .name-user h3 a:hover {
   color: #000000;
 }
-.tickets .name div, .tickets-expanded .name div {
+.tickets .name div, .tickets .name-user div, .tickets-expanded .name div, .tickets-expanded .name-user div {
   color: #888888;
+}
+.tickets .name-user, .tickets-expanded .name-user {
+  padding-left: 20px;
 }
 .tickets .assign ul, .tickets-expanded .assign ul {
   margin: 0;
@@ -995,10 +999,9 @@ div.addReminder form label.overlabel {
 }
 .plans td {
   width: 33%;
-}
-.plans .plan-title {
-  padding: 8px 13px;
+  vertical-align: top;
   border: 1px solid #dadada;
+  padding: 8px 13px;
 }
 .plans .plan-title h2, .plans .plan-title h4 {
   text-transform: uppercase;
@@ -1018,10 +1021,18 @@ div.addReminder form label.overlabel {
   color: #5f892c;
   padding-bottom: 6px;
 }
+.plans .plan-title p {
+  color: #666666;
+  font-size: 13px;
+  line-height: 20px;
+  min-height: 80px;
+  height: auto !important;
+  height: 80px;
+}
 .plans .active {
-  border-color: #a1a69d;
+  border: 0px;
   background-color: #f4fded;
-  -moz-box-shadow: #a1a69d 0px 1px 3px;
-  -webkit-box-shadow: #a1a69d 0px 1px 3px;
-  box-shadow: #a1a69d 0px 1px 3px;
+}
+.plans button {
+  margin-top: 6px;
 }
