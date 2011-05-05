@@ -1,11 +1,11 @@
 <% content_for :layoutType do -%>single<%- end %>
-<h3 class="title">&nbsp;Your requests</h3>
-
+<h3 class="title">Your requests</h3>
+<div class="tickets-container">
  <table class="tickets">	
 	<tbody>
 		<% @tickets.each do |ticket| %>
 	       	<tr class="<%= cycle('stripe', '') %>">
-			  <td class="name" width="70%">
+			  <td class="name-user" width="70%">
 			      <h3>
 			        <%= link_to( h(ticket.subject) + " (##{ticket.display_id}) ", support_ticket_path(ticket), :title => ticket.description ) %>
 			      </h3>   
@@ -25,3 +25,4 @@
 		<% end %>
 	</tbody>
  </table>
+</div>
