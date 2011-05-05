@@ -1,18 +1,18 @@
-<ul>
+<ul class="ui-form">
 	<li>
 		<%= form.label :name, "Enter a nick name" %>
-		<%= form.text_field :name %>
+		<%= form.text_field :name, :class => "text" %>
 	</li>
 	<li>
 		<label>You will be signing in with</label>
 		<label><%= "<strong>#{@user.email}</strong>" %></label>
 	</li>
-	<li class="small">
+	<li>
 		<%= form.label :password, "Set your password" %>
-		<%= form.password_field :password, :class => "password" %>
+		<%= form.password_field :password, :class => "text password"  %>
 	</li>
 	<li>
 		<%= form.label :password_confirmation %>
-		<%= form.password_field :password_confirmation %>
+		<%= form.password_field :password_confirmation, :class => "text password"  %>
 	</li>
 </ul>

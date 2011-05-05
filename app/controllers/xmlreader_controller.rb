@@ -39,8 +39,14 @@ class XmlreaderController < ApplicationController
     end
     if import_list.include?("forums")
        handle_forums_import base_dir , create_solution
-   end  
+    end  
    
+   #delete the directory...
+   
+   logger.debug "The base_dir for delete is :: #{base_dir}"
+   
+   del_file = FileUtils.rm_rf base_dir
+  
       
   end
 
@@ -183,6 +189,9 @@ def handle_user_import base_dir
      unless @user.nil?
           if @user.update_attributes(@params_hash[:user])
              updated+=1
+              if usr_role != 3               
+               @agent = Agent.find_or_create_by_user_id(@user.id )
+             end
           end
      else
           @user = current_account.users.new
@@ -1021,6 +1030,8 @@ def import_flexifields base_dir
      cust_visible = false
      cust_editable = false
      
+     
+     
      record.elements.each("type") do |type|      
        field_type = type.text         
      end
@@ -1028,6 +1039,8 @@ def import_flexifields base_dir
      record.elements.each("title") do |title|      
        title = title.text         
      end
+     
+     logger.debug "The record title is  ::: #{title}"
      
      record.elements.each("id") do |obj_id|      
        import_id = obj_id.text         
@@ -1057,13 +1070,12 @@ def import_flexifields base_dir
      field_prop["cust_editable"] = cust_editable
      
      label = title.gsub('?','')+"_"+current_account.id.to_s()
-     label = label.gsub!(/\s+/,"_")
+     label = label.gsub(/\s+/,"_")
      
      case field_type
        
      when "FieldCheckbox"
-          type = "checkbox"          
-          
+          type = "checkbox"         
           column_id = save_custom_field label , type , import_id
           field_prop["label"] = label
           field_prop["type"] = type
@@ -1072,6 +1084,7 @@ def import_flexifields base_dir
           end
        
      when "FieldText"
+          
           type = "text"
           column_id = save_custom_field label , type , import_id
           field_prop["label"] = label
@@ -1080,6 +1093,7 @@ def import_flexifields base_dir
               update_form_customizer field_prop, column_id  
           end
      when "FieldTagger"
+          
           type = "dropdown"
           column_id = save_custom_field label , type , import_id
           
@@ -1100,6 +1114,7 @@ def import_flexifields base_dir
               update_form_customizer field_prop, column_id,choices
           end
      when "FieldInteger"
+          
           type = "number"
           column_id = save_custom_field label , type , import_id
           field_prop["type"] = type
@@ -1108,6 +1123,7 @@ def import_flexifields base_dir
               update_form_customizer field_prop, column_id  
           end
      when "FieldTextarea"
+          
           type = "paragraph"
           column_id = save_custom_field label , type , import_id
           field_prop["type"] = type
@@ -1115,7 +1131,8 @@ def import_flexifields base_dir
           unless column_id == -1
               update_form_customizer field_prop, column_id
           end
-       
+     else
+          logger.debug "None of the field type matches:: hope its a system field"
      end
        
      

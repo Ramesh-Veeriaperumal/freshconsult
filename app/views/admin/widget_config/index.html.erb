@@ -1,5 +1,8 @@
 <%= render :partial => "shared/colorpicker" %>
-	
+<% unless current_account.preferences.nil? 
+	$tab_color = current_account.preferences[:tab_color]
+   end %>	
+
 <% content_for :sidebar do -%>
 <div class="sidepanel"> 
 	<%= content_tag( :h3, t('feedbackwidget_help_title'), :class => 'title' ) %>
@@ -49,7 +52,7 @@
 				</label>
 				<label> 
 					<%= t('feedbackwidget_offset_label') %>
-					<input type="text" class="text" name="offset" value="35%" size="3" />
+					<input type="text" class="text" name="offset" value="235px" size="3" />
 					<div class="info-data"><%= t('feedbackwidget_offset_info') %></div>
 				</label> 
 		</div>

@@ -18,6 +18,10 @@ input[type=text], select, input.text {
 	font-size:16px;
 }
 
+input.password {
+	width:240px;
+}
+
 input.text, input[type=text], textarea{
 	border:1px solid #cfcfcf;
 	font-weight:400;

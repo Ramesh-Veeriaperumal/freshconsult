@@ -36,6 +36,7 @@
 		  <input type="hidden" value="<%=@user.name%>" size="24" name="user[name]" id="user_name" class="textfield">
 		  <input type="hidden" value="<%=@user.email%>" size="24" name="user[email]" id="user_email" class="textfield">
 		  <input type="hidden" name="utc_offset" id="account_timezone_offset" />
+		  <input type="hidden" value="<%=@account.google_domain%>" name="account[google_domain]" id="account_google_domain" class="textfield" />
 		  <ul>
 				<label for="account_name">Company Name</label>
 				<input type="text" size="24" name="account[name]" id="account_name" class="text required" value="<%=@account.name%>">

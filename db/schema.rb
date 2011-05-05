@@ -9,7 +9,9 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
+
 ActiveRecord::Schema.define(:version => 20110504103446) do
+
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -25,6 +27,7 @@ ActiveRecord::Schema.define(:version => 20110504103446) do
     t.boolean  "sso_enabled",                    :default => false
     t.string   "shared_secret"
     t.text     "sso_options"
+    t.string   "google_domain"
   end
 
   add_index "accounts", ["full_domain"], :name => "index_accounts_on_full_domain", :unique => true
@@ -397,7 +400,11 @@ ActiveRecord::Schema.define(:version => 20110504103446) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "sla_policy_id",   :limit => 8
+<<<<<<< HEAD
     t.boolean  "override_bhrs",                :default => false
+=======
+    t.boolean  "override_bhrs" , :default => false
+>>>>>>> 7ba53ed5fa5a4bf486556229fe532926b90ccc4d
   end
 
   create_table "helpdesk_sla_policies", :force => true do |t|
