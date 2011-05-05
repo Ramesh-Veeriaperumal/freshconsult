@@ -14,11 +14,7 @@ class Helpdesk::ExportData < Struct.new(:params)
     @out_dir = "#{RAILS_ROOT}/tmp/#{@current_account.id}" 
     zip_file_path = File.join("#{RAILS_ROOT}/tmp/","#{@current_account.id}.zip") 
     
-    # Delete the Zip file and the Directory if exists
-    if(File.exists?(@out_dir))
-        FileUtils.remove_dir(@out_dir,true)
-        FileUtils.rm_f(zip_file_path)
-    end
+    delete_zip_file zip_file_path #cleaning up the directory
     FileUtils.mkdir_p @out_dir
     export_forums_data  #Forums data
     export_solutions_data #Solutions data
@@ -39,6 +35,16 @@ class Helpdesk::ExportData < Struct.new(:params)
     url =  @data_export.attachment.content.url
     update_export_status
     DataExportMailer.deliver_export_email({:email => params[:email], :domain => params[:domain], :url =>  url})
+    delete_zip_file zip_file_path  #cleaning up the directory
+    
+  end
+  
+  def delete_zip_file(zip_file_path)
+    # Delete the Zip file and the Directory if exists
+    if(File.exists?(@out_dir))
+        FileUtils.remove_dir(@out_dir,true)
+        FileUtils.rm_f(zip_file_path)
+    end
     
   end
   
