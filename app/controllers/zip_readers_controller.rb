@@ -40,6 +40,8 @@ require 'fileutils'
     
     import_files_from_zendesk @out_dir
     
+    FileUtils.rm_rf zip_file_name
+    
   end
   
   def import_files_from_zendesk base_dir
