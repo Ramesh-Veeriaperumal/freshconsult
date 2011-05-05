@@ -13,6 +13,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #by Shan temp
   attr_accessor :email, :name, :custom_field ,:customizer, :nscname 
   
+  
   before_validation :populate_requester, :set_default_values
   before_create :set_spam, :set_dueby, :save_ticket_states
   after_create :refresh_display_id, :save_custom_field, :pass_thro_biz_rules, :autoreply 
@@ -504,8 +505,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
   end
   
-  def deep_xml(builder=nil)
-    to_xml(:builder => builder, :skip_instruct => true) do |xml|
+  
+  
+  def to_xml(options = {})
+      options[:indent] ||= 2
+      xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
+      xml.instruct! unless options[:skip_instruct]
+      super(:builder => xml, :skip_instruct => true,:include => :notes) do |xml|
        xml.custom_field do
         self.ff_aliases.each do |label|    
           value = self.get_ff_value(label.to_sym()) 
@@ -514,7 +520,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
        
       end
      end
-  end
+ end
+  
+ 
   
   
 end

@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110503090447) do
+ActiveRecord::Schema.define(:version => 20110504103446) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -78,6 +78,13 @@ ActiveRecord::Schema.define(:version => 20110503090447) do
   end
 
   add_index "customers", ["account_id", "name"], :name => "index_customers_on_account_id_and_name", :unique => true
+
+  create_table "data_exports", :force => true do |t|
+    t.integer  "account_id"
+    t.boolean  "status"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "delayed_jobs", :force => true do |t|
     t.integer  "priority",   :default => 0
@@ -390,7 +397,7 @@ ActiveRecord::Schema.define(:version => 20110503090447) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "sla_policy_id",   :limit => 8
-    t.boolean  "override_bhrs",   :default => false
+    t.boolean  "override_bhrs",                :default => false
   end
 
   create_table "helpdesk_sla_policies", :force => true do |t|
@@ -528,7 +535,7 @@ ActiveRecord::Schema.define(:version => 20110503090447) do
 
   create_table "solution_articles", :force => true do |t|
     t.string   "title"
-    t.text     "description",  :limit => 16777215
+    t.text     "description",  :limit => 2147483647
     t.integer  "user_id",      :limit => 8
     t.integer  "folder_id",    :limit => 8
     t.integer  "status"
