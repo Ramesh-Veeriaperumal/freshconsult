@@ -47,6 +47,10 @@ class Helpdesk::TicketsController < ApplicationController
         render :xml => @items.to_xml
       end
       
+      format.json do
+        render :json => Hash.from_xml(@items.to_xml)
+      end
+      
       format.atom do
         @items = @items.newest(20)
       end
@@ -70,10 +74,10 @@ class Helpdesk::TicketsController < ApplicationController
       format.html  
       format.atom
       format.xml  { 
-      render :xml => @item.deep_xml  
+      render :xml => @item.to_xml  
       }
       format.json {
-      render :json => Hash.from_xml(@item.deep_xml)
+      render :json => Hash.from_xml(@item.to_xml)
       }
     end
   end

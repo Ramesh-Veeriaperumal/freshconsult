@@ -62,6 +62,7 @@ ActionController::Routing::Routes.draw do |map|
     admin.resources :email_notifications
     admin.resources :business_calender, :member => { :update => :put }
     admin.resources :security, :member => { :update => :put }
+    admin.resources :data_export, :collection => {:export => :any }
   end
   
   #SAAS copy starts here
