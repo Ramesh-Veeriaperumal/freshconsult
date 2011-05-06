@@ -3,8 +3,7 @@
 
 class ApplicationController < ActionController::Base
   
-  include SslRequirement
-  ssl_allowed
+  
 
   before_filter :set_time_zone
   
