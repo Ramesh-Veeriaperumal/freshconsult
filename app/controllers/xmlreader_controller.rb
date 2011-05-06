@@ -24,22 +24,28 @@ class XmlreaderController < ApplicationController
     
     import_list = file_list.reject(&:blank?)   
     
+    customers = Hash.new
+    users = Hash.new
+    groups = Hash.new
+    imp_tickets = Hash.new
     if import_list.include?("solution")
        create_solution = true
     end  
     
     if import_list.include?("customers")
-       handle_customer_import base_dir
-       handle_user_import base_dir  
+       customers = handle_customer_import base_dir
+       users = handle_user_import base_dir  
     end
     if import_list.include?("tickets")       
        import_flexifields base_dir
-       handle_group_import base_dir
-       handle_ticket_import base_dir       
+       groups = handle_group_import base_dir
+       imp_tickets = handle_ticket_import base_dir       
     end
     if import_list.include?("forums")
        handle_forums_import base_dir , create_solution
     end  
+   
+   logger.debug "zendes import is completed with customers: #{customers.inspect} \n and users : #{users.inspect} and tickets :: #{imp_tickets.inspect}"
    
    #delete the directory...
    
@@ -55,6 +61,7 @@ def handle_customer_import base_dir
   file_path = File.join(base_dir , "organizations.xml")  
   created = 0
   updated = 0
+  imported_customers = Hash.new
   file = File.new(file_path) 
   doc = REXML::Document.new file
   
@@ -69,19 +76,22 @@ def handle_customer_import base_dir
     
      @customer = current_account.customers.new(:name =>cust_name , :description =>cust_detail , :import_id =>import_id )
      if @customer.save
+       created=+1
        logger.debug "Customer has been saved with name:: #{cust_name}"
      else
        logger.debug "Save customer has been failed:: #{@customer.errors.inspect}"
      end
     
   end
-  
+  imported_customers["created"]=created
+  return imported_customers
 end
 
 def handle_group_import base_dir
   
   created = 0
   updated = 0
+  imported_groups = Hash.new
   file_path = File.join(base_dir , "groups.xml")
   file = File.new(file_path) 
   doc = REXML::Document.new file
@@ -100,15 +110,21 @@ def handle_group_import base_dir
      end
     
      @group = current_account.groups.new(:name =>grp_name, :import_id =>grp_id )
-     @group.save
+     if @group.save
+       created=+1
+     else
+       logger.debug "unable to save the group"
+     end
   end
   
-  
+  imported_groups["created"]=created
+  return imported_groups
 end
 
 def handle_user_import base_dir
   created = 0
   updated = 0
+  imported_users = Hash.new
   file_path = File.join(base_dir , "users.xml")
   file = File.new(file_path) 
   doc = REXML::Document.new file
@@ -208,15 +224,18 @@ def handle_user_import base_dir
       end     
      logger.debug " The user data:: name : #{usr_name} e_mail : #{usr_email} :: phone :: #{usr_phone} :: role :: #{usr_role} time_zone :: #{usr_time_zone} and usr_details :#{usr_details}"
   end
-  
+  imported_users["created"] = created
+  imported_users["updated"] = updated
+  return imported_users
 end
 
 def handle_ticket_import base_dir
   
   logger.debug "handle_ticket_import ::: "
   
-  created = 0
-  updated = 0
+  created_count = 0
+  updated_count = 0
+  imported_tickets = Hash.new
   file_path = File.join(base_dir , "tickets.xml")
   file = File.new(file_path) 
   doc = REXML::Document.new file
@@ -328,7 +347,7 @@ def handle_ticket_import base_dir
       
       
       if @request.save
-         
+         created_count+=1
         logger.debug "successfully saved"
       else
         logger.debug "failed to save the ticket :: #{@request.errors.inspect}"
@@ -438,7 +457,9 @@ def handle_ticket_import base_dir
      
         
    end
-  
+   
+   imported_tickets["created"]=created_count
+    return imported_tickets
 end
 
 #This is helpdesk rebranding....
@@ -472,13 +493,19 @@ def handle_forums_import base_dir,make_solution
   posts_path = File.join(base_dir , "posts.xml")
   entry_path = File.join(base_dir , "entries.xml")
   
-  import_forum_categories cat_path
+  cat_import = Hash.new
+  forum_import = Hash.new
+  topic_import = Hash.new
   
-  get_forum_data base_dir,make_solution
+  cat_import = import_forum_categories cat_path
   
-  get_entry_data entry_path , make_solution
+  forum_import = get_forum_data base_dir,make_solution
+  
+  topic_import = get_entry_data entry_path , make_solution
   
   get_posts_data posts_path
+  
+  logger.debug "Forum has been imported with stats :: categories:: #{cat_import.inspect} \n forums:: #{forum_import.inspect} amd topics::#{topic_import.inspect}"
  
 end
 
@@ -486,6 +513,7 @@ def get_forum_data base_dir,make_solution
   
   created = 0
   updated = 0
+  forum_import_count = Hash.new
   file_path = File.join(base_dir , "forums.xml")
   file = File.new(file_path) 
   doc = REXML::Document.new file
@@ -539,15 +567,20 @@ def get_forum_data base_dir,make_solution
      @forum = @category.forums.build(:name =>name, :description => desc , :import_id =>forum_id.to_i(), :description_html =>desc ,:forum_type =>forum_type )
      @forum.account_id ||= current_account.id
      if @forum.save
+       created=+1
      logger.debug "successfully saved the forum::"
      else     
       @forum = @category.forums.find_by_name(name)
       unless @forum.nil?
+        updated=+1
         @forum.update_attribute(:import_id, forum_id.to_i())
       end
      logger.debug "error while saving the forum:: #{@forum.errors.inspect}"
      end
-  end
+ end
+ logger.debug "forum import :created: #{created} and updated ::#{updated}"
+ forum_import_count["created"]=created
+ forum_import_count["updated"]=updated
 end
 
 def make_solution_folder solution, base_dir
@@ -628,6 +661,7 @@ def get_entry_data file_path, make_solution
   
   created = 0
   updated = 0
+  topic_count = Hash.new
   file = File.new(file_path) 
   doc =  REXML::Document.new file
     
@@ -694,7 +728,11 @@ def get_entry_data file_path, make_solution
     @post.forum_id = @forum.id
     @post.user_id = submitter_id
     
-    @post.save
+    if @post.save
+     created=+1
+    else
+      logger.debug "error while saving topic"
+    end
    
      
     ## we may need to create the forum...first and then posts
@@ -718,10 +756,9 @@ def get_entry_data file_path, make_solution
         
      end
      
-     
-     
   end
-  
+  logger.debug "forum entry import :created: #{created} "
+  topic_count["created"]=created
 end
 
 def add_solution_article article, curr_folder
@@ -741,8 +778,12 @@ def add_solution_article article, curr_folder
        submitter_id = current_account.users.find_by_import_id(user.to_i()).id unless user.blank?
      end
    
-     article.elements.each("title") { |forum_title| title = forum_title.text }     
-     article.elements.each("id") { |import|  import_id = import.text }        
+    article.elements.each("title") { |forum_title| title = forum_title.text }     
+    article.elements.each("id") { |import|  import_id = import.text }    
+     
+    @article_exist= current_account.solution_articles.find_by_import_id(import_id.to_i())
+    
+    return unless @article_exist.blank?
   
     @article = curr_folder.articles.new
     
@@ -797,12 +838,6 @@ def get_posts_data file_path
 end
 
 def save_custom_field ff_alias , column_type , import_id
-  
-  ff_id =FlexifieldDef.first(:conditions =>{:account_id => current_account.id}).id
-  
-  @flexifield =FlexifieldDefEntry.find_by_import_id_and_flexifield_def_id(import_id,ff_id)
-  
-  return @flexifield.flexifield_alias unless @flexifield.blank?
   
   coltype ="text"
   
@@ -1072,17 +1107,21 @@ def import_flexifields base_dir
      label = title.gsub('?','')+"_"+current_account.id.to_s()
      label = label.gsub(/\s+/,"_")
      
+     ff_id =FlexifieldDef.first(:conditions =>{:account_id => current_account.id}).id  
+     @flexifield =FlexifieldDefEntry.find_by_import_id_and_flexifield_def_id(import_id,ff_id)
+     next unless @flexifield.blank? 
+     
      case field_type
        
      when "FieldCheckbox"
-          type = "checkbox"         
+          type = "checkbox"      
           column_id = save_custom_field label , type , import_id
           field_prop["label"] = label
           field_prop["type"] = type
           unless column_id == -1
-              update_form_customizer field_prop, column_id
+            update_form_customizer field_prop, column_id
           end
-       
+         
      when "FieldText"
           
           type = "text"
@@ -1145,6 +1184,7 @@ def import_forum_categories file_path
   
   created = 0
   updated = 0
+  categ_imported = Hash.new
   file = File.new(file_path) 
   doc = REXML::Document.new file
     
@@ -1165,14 +1205,17 @@ def import_forum_categories file_path
      cat.elements.each("id") do |imp_id|      
        import_id = imp_id.text         
      end
-     
+    
+    @categ_existing = current_account.forum_categories.find_by_import_id(import_id.to_i())
+    
+    next unless @categ_existing.blank?
+    created+=1
     @category = current_account.forum_categories.create(:name =>cat_name,:import_id => import_id.to_i(), :description =>cat_desc)
      
-     
-     
-     #logger.debug " The user data:: name : #{usr_name} e_mail : #{usr_email} :: phone :: #{usr_phone} :: role :: #{usr_role} time_zone :: #{usr_time_zone} and usr_details :#{usr_details}"
+    
  end
- 
+ logger.debug "forum categ import :created: #{created} "
+ categ_imported["created"]=created
 end
 
 def import_file_attachment attach_url, base_dir, file_name  
