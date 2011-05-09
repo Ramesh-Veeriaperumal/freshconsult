@@ -1,5 +1,5 @@
-class ZipReadersController < ApplicationController 
-
+class Admin::ZipReadersController < ApplicationController
+  
 require 'zip/zip'
 require 'fileutils'
 
@@ -9,6 +9,7 @@ require 'fileutils'
   
   def extract_zip
         
+    logger.debug "Admin:::::::::::extract....."
     file=params[:dump][:file]    
     @upload_file_name = file.original_filename
     
@@ -77,6 +78,5 @@ def import_file url, file_path, usr_name , usr_pwd
   File.open(file_path, 'w') {|f| f.write(res.body) }
   logger.debug "successfully imported files from zendesk with file_path:: #{file_path.inspect}"
 end
-
 
 end
