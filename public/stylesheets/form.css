@@ -15,6 +15,10 @@ input[type=text], select, input.text {
   font-size: 16px;
 }
 
+input.password {
+  width: 240px;
+}
+
 input.text, input[type=text], textarea {
   border: 1px solid #cfcfcf;
   font-weight: 400;
@@ -114,8 +118,9 @@ div.ui-form ul:after, ul.ui-form:after {
   visibility: hidden;
 }
 
-ul.ui-form ul.ui-form {
-  margin: 0px;
+ul.ui-form .ui-form-inline {
+  overflow: hidden;
+  *zoom: 1;
   -moz-border-radius: 0px;
   -webkit-border-radius: 0px;
   -o-border-radius: 0px;
@@ -124,10 +129,10 @@ ul.ui-form ul.ui-form {
   border-radius: 0px;
   border-width: 1px 0px;
   padding: 0px;
+  margin: 0px;
 }
-ul.ui-form ul.ui-form li {
+ul.ui-form .ui-form-inline li {
   padding-left: 0px;
-  margin: 0xp;
 }
 
 a.addchoice {
@@ -225,13 +230,17 @@ a.addchoice:hover {
   background-color: #f8f8f8;
 }
 
+.choicelist {
+  overflow: hidden;
+  *zoom: 1;
+}
 .choicelist label {
   font-size: 1.1em;
 }
 .choicelist label.radiolabel {
   font-size: 1em;
   float: left;
-  padding: 0px 5px;
+  padding: 0px 5px 0px 0px;
   margin-right: 10px;
 }
 .choicelist input.radio {
@@ -245,7 +254,7 @@ a.addchoice:hover {
   background-color: #F8F8F8;
 }
 .ui-form li {
-  padding: 2px 2% 6px 2%;
+  padding: 4px 2% 8px 2%;
   margin: 0px;
   float: left;
   width: 96%;
@@ -287,12 +296,13 @@ a.addchoice:hover {
 .ui-form li.checkbox {
   overflow: hidden;
   *zoom: 1;
-  padding: 10px 0px;
+  padding-top: 16px;
+  padding-bottom: 16px;
 }
 .ui-form li.checkbox input {
   float: left;
   margin-right: 6px;
-  margin-top: 1px;
+  margin-top: 4px;
 }
 .ui-form li.checkbox label {
   position: relative;
@@ -360,6 +370,8 @@ a.addchoice:hover {
 .ui-form fieldset.addchoice {
   padding: 0px;
   color: #999999;
+  font-size: 14px;
+  font-weight: bold;
   cursor: pointer;
 }
 .ui-form fieldset.addchoice:hover {
@@ -367,7 +379,7 @@ a.addchoice:hover {
 }
 .ui-form .conditionset {
   border: 1px solid #cfcfcf;
-  padding: 0px;
+  margin: 4px 0px;
 }
 .ui-form .conditionset fieldset {
   *zoom: 1;
@@ -417,7 +429,6 @@ a.addchoice:hover {
   float: none;
   display: block;
   clear: both;
-  width: 800px;
   padding: 4px;
   overflow: hidden;
   *zoom: 1;
@@ -426,7 +437,6 @@ a.addchoice:hover {
   width: 100%;
   padding: 4px 0px;
   font-size: 12px;
-  border-bottom: 1px solid #cfcfcf;
 }
 .ui-form .conditionset fieldset div.s_email div em {
   font-style: normal;
@@ -479,6 +489,38 @@ a.addchoice:hover {
 }
 .ui-form .inline-field div.fields label {
   font-size: 1.1em;
+}
+
+.ui-login, .ui-signup {
+  text-align: center;
+  display: block;
+  padding: 18px 0px;
+}
+.ui-login .ui-form, .ui-signup .ui-form {
+  background: none;
+  border: 0px;
+  margin: 4px auto;
+  -moz-border-radius: 12px 12px 12px 12px;
+  -webkit-border-radius: 12px 12px 12px 12px;
+  border-radius: 12px 12px 12px 12px;
+  -moz-box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.1);
+  -webkit-box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.1);
+  text-align: left;
+  padding: 25px;
+  border: 1px solid #c2c2c2;
+  background: #ffffff;
+}
+.ui-login .ui-form ul, .ui-signup .ui-form ul {
+  margin: 0px;
+}
+.ui-login .ui-form ul li, .ui-signup .ui-form ul li {
+  border-bottom: 0px;
+  padding: 5px 0px;
+}
+.ui-login .ui-form ul li input.text, .ui-signup .ui-form ul li input.text {
+  margin: 3px 0px 5px 0px;
+  width: 320px;
 }
 
 .business_hours td {
@@ -671,7 +713,7 @@ span.sort_handle {
 
 .button-container {
   text-align: right;
-  padding: 1em 2em 1em 0;
+  padding: 1em 0em 1em 0;
 }
 
 .ui-draggable-dragging {
@@ -705,11 +747,11 @@ span.sort_handle {
 
 .custom_form_outer .placeHolder {
   height: 50px !important;
-  border: 1px solid #c2d7ef !important;
+  border: 1px solid #C2D7EF !important;
 }
 
 .ui-sortable-placeholder {
-  background: white !important;
+  background: #ffffff !important;
   visibility: visible !important;
   position: relative;
   z-index: 99;
@@ -760,34 +802,6 @@ span.sort_handle {
   width: 560px;
 }
 
-.ui-login, .ui-signup {
-  text-align: center;
-  display: block;
-  padding: 18px 0px;
-}
-.ui-login .ui-form, .ui-signup .ui-form {
-  background: none;
-  border: 0px;
-  margin: 4px auto;
-  -moz-border-radius: 12px 12px 12px 12px;
-  -webkit-border-radius: 12px 12px 12px 12px;
-  border-radius: 12px 12px 12px 12px;
-  -moz-box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.1);
-  -webkit-box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.1);
-  box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.1);
-  text-align: left;
-  padding: 25px;
-  border: 1px solid #c2c2c2;
-  background: #ffffff;
-}
-.ui-login .ui-form ul, .ui-signup .ui-form ul {
-  margin: 0px;
-}
-.ui-login .ui-form ul li input.text, .ui-signup .ui-form ul li input.text {
-  margin: 3px 0px 5px 0px;
-  width: 320px;
-}
-
 .ui-widget-container {
   padding: 10px 20px;
   min-height: 200px;
@@ -814,7 +828,7 @@ span.sort_handle {
 .ui-form-widget {
   padding: 15px;
   margin: 0px -15px !important;
-  border: 1px solid #dfdfdf !important;
+  border: 1px solid #DFDFDF !important;
   background-color: rgba(244, 244, 244, 0.5) !important;
 }
 .ui-form-widget label {

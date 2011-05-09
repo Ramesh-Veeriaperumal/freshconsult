@@ -818,7 +818,7 @@ body h5 {
 }
 
 .seperator {
-  border-bottom: 1px solid #BBBBBB;
+  border-bottom: 1px dotted #BBBBBB;
   box-shadow: 0 1px 0 white;
   font-size: 0px;
   display: block;
@@ -1089,9 +1089,58 @@ body h5 {
   background: url('/images/ticket-icon-7b1d46eeb6.png') 0 -43px no-repeat;
 }
 
-.admin_icons img {
+ul.admin_icons {
+  overflow: hidden;
+  *zoom: 1;
+  list-style: none;
+}
+ul.admin_icons li {
+  float: left;
+  padding-right: 10px;
+  position: relative;
+  min-height: 90px;
+  height: auto !important;
+  height: 90px;
+}
+ul.admin_icons li a {
+  position: relative;
+  display: block;
+  padding: 8px 0px 2px 0px;
+  text-align: center;
+  text-decoration: none;
+  color: #3a3a3a;
+  width: 100px;
+  -moz-border-radius: 6px 6px 6px 6px;
+  -webkit-border-radius: 6px 6px 6px 6px;
+  border-radius: 6px 6px 6px 6px;
+  behavior: url(/stylesheets/PIE.htc);
+}
+ul.admin_icons li a img {
   height: 32px;
   width: 32px;
+}
+ul.admin_icons li a div {
+  white-space: pre-wrap;
+  /* css-3 */
+  white-space: -moz-pre-wrap;
+  /* Mozilla, since 1999 */
+  white-space: -pre-wrap;
+  /* Opera 4-6 */
+  white-space: -o-pre-wrap;
+  /* Opera 7 */
+  word-wrap: break-word;
+  /* Internet Explorer 5.5+ */
+  font-size: 12px;
+  margin: 6px 0px;
+  padding: 1px 3px;
+  position: relative;
+}
+ul.admin_icons li a:hover {
+  color: #000000;
+  background: #f2f2f2;
+  -moz-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
+  -webkit-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .admin-icon-agent {
@@ -1313,6 +1362,9 @@ a.request_bt:hover {
 .user_details_widget {
   padding: 10px;
 }
+.user_details_widget div {
+  padding: 3px 0px;
+}
 .user_details_widget a, .user_details_widget a.user_name {
   color: #527EAA;
 }
@@ -1410,56 +1462,9 @@ a.request_bt:hover {
   text-align: center;
 }
 
-ul.icon_grid {
-  overflow: hidden;
-  *zoom: 1;
-  list-style: none;
-}
-ul.icon_grid li {
-  float: left;
-  padding-right: 10px;
-  position: relative;
-}
-ul.icon_grid li a {
-  position: relative;
-  display: block;
-  padding: 8px 0px 2px 0px;
-  text-align: center;
-  text-decoration: none;
-  color: #3a3a3a;
-  width: 100px;
-  -moz-border-radius: 6px 6px 6px 6px;
-  -webkit-border-radius: 6px 6px 6px 6px;
-  border-radius: 6px 6px 6px 6px;
-  behavior: url(/stylesheets/PIE.htc);
-}
-ul.icon_grid li a div {
-  white-space: pre-wrap;
-  /* css-3 */
-  white-space: -moz-pre-wrap;
-  /* Mozilla, since 1999 */
-  white-space: -pre-wrap;
-  /* Opera 4-6 */
-  white-space: -o-pre-wrap;
-  /* Opera 7 */
-  word-wrap: break-word;
-  /* Internet Explorer 5.5+ */
-  font-size: 12px;
-  margin: 6px 0px;
-  padding: 1px 3px;
-  position: relative;
-}
-ul.icon_grid li a:hover {
-  color: #000000;
-  background: #f2f2f2;
-  -moz-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
-  -webkit-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
-}
-
 .admin {
-  padding: 8px 0px;
-  margin: 0px 16px;
+  padding: 0px 0px 8px 0px;
+  margin: 0px 8px 8px 0px;
   border-bottom: 1px solid #ededed;
 }
 
@@ -2929,7 +2934,7 @@ a.page_title:active {
 }
 
 .text_red {
-  color: red !important;
+  color: #ff0000 !important;
 }
 
 .private {

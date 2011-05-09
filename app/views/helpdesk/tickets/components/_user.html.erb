@@ -8,7 +8,7 @@
         <div><%= auto_link(h(user.email)) %></div>
 		<div><%= h(user.phone) %></div>
 		<div><%= h(user.mobile) %></div>
-		<div>"<%= h(user.job_title) %>" <b><%= (user.customer ? "at #{user.customer.name}" : "")  %></b></div>
+		<div><%= h(user.job_title) %> <b><%= (user.customer ? "at #{user.customer.name}" : "")  %></b></div>
 	</div>
 	<div class="seperator"></div>
 	<h3 class="title"><%=t('ticket.recent_tickets')%></h3>

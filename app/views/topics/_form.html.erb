@@ -9,7 +9,6 @@
     });
   <% end %>
 <% end %>
-
 <ul class="ui-form">
 	<li>
 		<label for="topic_title"><%= t('topic.name') %>*</label>
@@ -29,10 +28,25 @@
 	  		<%= form.select :forum_id, Forum.find(:all,:conditions =>['account_id = ?',current_account.id], :order => "position").map {|x| [x.name, x.id] } %>
 		</li>
 	<% end %>
-	
+	<li class="inlineChecklist">
+		<% if admin? or current_user.moderator_of?(@topic.forum) %>
+			<label>
+				<%= form.check_box :sticky %> <%= t('topic.sticky') %>
+			</label>
+			<label>
+				<%= form.check_box :locked %> <%= t('topic.locked') %>
+			</label>
+		<% end %>
+		<% if ["new"].include? params[:action] %>
+			<label id="monitor-topic-lable">
+				<%=check_box_tag 'monitor'%> Monitor this topic
+			</label>
+		<%end%>
+	</li>	  
 	<li>
 		<%= render :partial=> "/forum_shared/attachment_form" %>
 	</li>
+	
 	<% unless @topic.new_record? %>
 	<div class="attachment-list-container">
 	    <%= content_tag('h5', 'Attachments') unless @topic.posts.first.attachments.empty? %>
@@ -44,17 +58,14 @@
 	    </table>
 	  </div>
 	<%end%>
-	<% if admin? or current_user.moderator_of?(@topic.forum) %>
-		<li class="inlineChecklist">
-			<label>
-				<%= form.check_box :sticky %> <%= t('topic.sticky') %>
-			</label>
-			<label>
-				<%= form.check_box :locked %> <%= t('topic.locked') %>
-			</label>
-		</li>
-	<% end %>
 </ul>
+
+<% javascript_tag do %>
+	jQuery("#topic_locked").click(function(ev){
+		jQuery("#monitor-topic-lable").toggle(!this.checked);
+	});
+	jQuery("#monitor-topic-lable").toggle(!jQuery("#topic_locked").checked);
+<% end %>
 
 <textarea id="file-list-template" style="display:none">
   <tr>

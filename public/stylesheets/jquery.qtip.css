@@ -33,18 +33,6 @@
 	line-height: 16px;
 }
 
-.ui-tooltip-desc{
-	max-width: 650px !important;
-	margin-left:-20px;
-}
-
-.ui-tooltip-desc .ui-tooltip-content{
-	padding:6px 12px;
-	font-size:1em;
-	line-height: 22px;
-	margin-left:-6px;
-}
-
 	.ui-tooltip-content{
 		position: relative;
 		padding: 5px 9px;
@@ -143,6 +131,24 @@
 		border-color: #AAA;
 		color: #111;
 	}
+
+/*! Ticket tooltip style */
+
+.ui-tooltip-ticket{
+	max-width: 650px !important;
+	margin-left:-20px;
+}
+
+.ui-tooltip-ticket .ui-tooltip-content{
+	padding:0.8em 1em;
+	color:#000000;
+	text-align:justify;
+	font-size:1.0em;
+	background-color:#FFFDE1;
+	border-color:#d0cdaa;
+	line-height: 22px;
+	margin-left:-14px; 
+}
 
 
 /*! Light tooltip style */

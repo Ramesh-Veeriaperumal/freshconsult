@@ -24,23 +24,35 @@ class XmlreaderController < ApplicationController
     
     import_list = file_list.reject(&:blank?)   
     
+    customers = Hash.new
+    users = Hash.new
+    groups = Hash.new
+    imp_tickets = Hash.new
     if import_list.include?("solution")
        create_solution = true
     end  
     
     if import_list.include?("customers")
-       handle_customer_import base_dir
-       handle_user_import base_dir  
+       customers = handle_customer_import base_dir
+       users = handle_user_import base_dir  
     end
     if import_list.include?("tickets")       
        import_flexifields base_dir
-       handle_group_import base_dir
-       handle_ticket_import base_dir       
+       groups = handle_group_import base_dir
+       imp_tickets = handle_ticket_import base_dir       
     end
     if import_list.include?("forums")
        handle_forums_import base_dir , create_solution
-   end  
+    end  
    
+   logger.debug "zendes import is completed with customers: #{customers.inspect} \n and users : #{users.inspect} and tickets :: #{imp_tickets.inspect}"
+   
+   #delete the directory...
+   
+   logger.debug "The base_dir for delete is :: #{base_dir}"
+   
+   del_file = FileUtils.rm_rf base_dir
+  
       
   end
 
@@ -61,6 +73,7 @@ def handle_customer_import base_dir
      org.elements.each("name") {|name|  cust_name = name.text}     
      org.elements.each("details") {|detail| cust_detail = detail.text }    
      org.elements.each("id") { |imp_id| import_id = imp_id.text }    
+
      params = {:name =>cust_name , :description =>cust_detail , :import_id =>import_id}
      @customer = current_account.customers.find_by_import_id(import_id.to_i())
      unless @customer.blank?
@@ -78,14 +91,17 @@ def handle_customer_import base_dir
      end
      
   end
+
   customer_count["created"]=created
   customer_count["updated"]=updated
+
 end
 
 def handle_group_import base_dir
   
   created = 0
   updated = 0
+
   group_count = Hash.new
   file_path = File.join(base_dir , "groups.xml")
   file = File.new(file_path) 
@@ -123,12 +139,15 @@ def handle_group_import base_dir
   group_count["created"]=created
   group_count["updated"]=updated
   
+
 end
 
 def handle_user_import base_dir
   created = 0
   updated = 0
+
   user_count = Hash.new
+
   file_path = File.join(base_dir , "users.xml")
   file = File.new(file_path) 
   doc = REXML::Document.new file
@@ -209,6 +228,9 @@ def handle_user_import base_dir
      unless @user.nil?
           if @user.update_attributes(@params_hash[:user])
              updated+=1
+              if usr_role != 3               
+               @agent = Agent.find_or_create_by_user_id(@user.id )
+             end
           end
      else
           @user = current_account.users.new
@@ -224,18 +246,20 @@ def handle_user_import base_dir
           end
       end     
      logger.debug " The user data:: name : #{usr_name} e_mail : #{usr_email} :: phone :: #{usr_phone} :: role :: #{usr_role} time_zone :: #{usr_time_zone} and usr_details :#{usr_details}"
+
  end
  user_count["created"]=created
  user_count["updated"]=updated
-  
+
 end
 
 def handle_ticket_import base_dir
   
   logger.debug "handle_ticket_import ::: "
   
-  created = 0
-  updated = 0
+  created_count = 0
+  updated_count = 0
+  ticket_count = Hash.new
   file_path = File.join(base_dir , "tickets.xml")
   file = File.new(file_path) 
   doc = REXML::Document.new file
@@ -332,17 +356,19 @@ def handle_ticket_import base_dir
      
       if @request.blank?
         @request = current_account.tickets.new 
-        created+=1
+        created_count+=1
       else
-        updated+=1
+        updated_count+=1
       end
+      
+      @display_id_exist = current_account.tickets.find_by_display_id(display_id.to_i())
       
       @request.subject = sub
       @request.description = desc
       @request.requester_id = requester_id
       @request.responder_id = assignee_id
       @request.group_id = group_id
-      @request.display_id = display_id
+      @request.display_id = display_id if @display_id_exist.blank?
       @request.import_id = display_id
       @request.status = status_id
       @request.priority = priority_id
@@ -350,8 +376,7 @@ def handle_ticket_import base_dir
       @request.created_at = created_at
       @request.updated_at = updated_at
       
-      
-      
+
       if @request.save         
         logger.debug "successfully saved"
       else
@@ -360,8 +385,7 @@ def handle_ticket_import base_dir
       
       ## Create attachemnts
 
-      req.elements.each("attachments/attachment") do |attach| 
-        
+      req.elements.each("attachments/attachment") do |attach|         
         attachemnt_url = nil        
         attach.elements.each("url") {|attach_url|   attachemnt_url = attach_url.text  } 
         @request.attachments.create(:content => open(attachemnt_url), :description => "", :account_id => @request.account_id)
@@ -396,9 +420,7 @@ def handle_ticket_import base_dir
          next
        end
        
-          
        custom_field[label] = field_val
-      
     end
     
     ##saving custom_field
@@ -431,8 +453,6 @@ def handle_ticket_import base_dir
           incoming = true if note_created.customer?
        end
        
-      
-       
         @note = @request.notes.build({
         :incoming => incoming,
         :private => is_public,
@@ -446,7 +466,7 @@ def handle_ticket_import base_dir
            logger.debug "successfully saved"
          else
             logger.debug "failed to save the note :: #{@note.errors.inspect}"
-        end
+         end
         
         ##adding attachment to notes
         comment.elements.each("attachments/attachment") do |attach| 
@@ -457,11 +477,12 @@ def handle_ticket_import base_dir
        
         end
         
-        
       end    
      
-        
    end
+   
+   ticket_count["created"]=created_count
+   ticket_count["updated"]= updated_count
   
 end
 
@@ -496,13 +517,19 @@ def handle_forums_import base_dir,make_solution
   posts_path = File.join(base_dir , "posts.xml")
   entry_path = File.join(base_dir , "entries.xml")
   
-  import_forum_categories cat_path
+  cat_import = Hash.new
+  forum_import = Hash.new
+  topic_import = Hash.new
   
-  get_forum_data base_dir,make_solution
+  cat_import = import_forum_categories cat_path
   
-  get_entry_data entry_path , make_solution
+  forum_import = get_forum_data base_dir,make_solution
+  
+  topic_import = get_entry_data entry_path , make_solution
   
   get_posts_data posts_path
+  
+  logger.debug "Forum has been imported with stats :: categories:: #{cat_import.inspect} \n forums:: #{forum_import.inspect} amd topics::#{topic_import.inspect}"
  
 end
 
@@ -510,6 +537,7 @@ def get_forum_data base_dir,make_solution
   
   created = 0
   updated = 0
+  forum_import_count = Hash.new
   file_path = File.join(base_dir , "forums.xml")
   file = File.new(file_path) 
   doc = REXML::Document.new file
@@ -563,15 +591,20 @@ def get_forum_data base_dir,make_solution
      @forum = @category.forums.build(:name =>name, :description => desc , :import_id =>forum_id.to_i(), :description_html =>desc ,:forum_type =>forum_type )
      @forum.account_id ||= current_account.id
      if @forum.save
+       created=+1
      logger.debug "successfully saved the forum::"
      else     
       @forum = @category.forums.find_by_name(name)
       unless @forum.nil?
+        updated=+1
         @forum.update_attribute(:import_id, forum_id.to_i())
       end
      logger.debug "error while saving the forum:: #{@forum.errors.inspect}"
      end
-  end
+ end
+ logger.debug "forum import :created: #{created} and updated ::#{updated}"
+ forum_import_count["created"]=created
+ forum_import_count["updated"]=updated
 end
 
 def make_solution_folder solution, base_dir
@@ -652,6 +685,7 @@ def get_entry_data file_path, make_solution
   
   created = 0
   updated = 0
+  topic_count = Hash.new
   file = File.new(file_path) 
   doc =  REXML::Document.new file
     
@@ -718,7 +752,11 @@ def get_entry_data file_path, make_solution
     @post.forum_id = @forum.id
     @post.user_id = submitter_id
     
-    @post.save
+    if @post.save
+     created=+1
+    else
+      logger.debug "error while saving topic"
+    end
    
      
     ## we may need to create the forum...first and then posts
@@ -742,10 +780,9 @@ def get_entry_data file_path, make_solution
         
      end
      
-     
-     
   end
-  
+  logger.debug "forum entry import :created: #{created} "
+  topic_count["created"]=created
 end
 
 def add_solution_article article, curr_folder
@@ -765,8 +802,12 @@ def add_solution_article article, curr_folder
        submitter_id = current_account.users.find_by_import_id(user.to_i()).id unless user.blank?
      end
    
-     article.elements.each("title") { |forum_title| title = forum_title.text }     
-     article.elements.each("id") { |import|  import_id = import.text }        
+    article.elements.each("title") { |forum_title| title = forum_title.text }     
+    article.elements.each("id") { |import|  import_id = import.text }    
+     
+    @article_exist= current_account.solution_articles.find_by_import_id(import_id.to_i())
+    
+    return unless @article_exist.blank?
   
     @article = curr_folder.articles.new
     
@@ -822,12 +863,6 @@ end
 
 def save_custom_field ff_alias , column_type , import_id
   
-  ff_id =FlexifieldDef.first(:conditions =>{:account_id => current_account.id}).id
-  
-  @flexifield =FlexifieldDefEntry.find_by_import_id_and_flexifield_def_id(import_id,ff_id)
-  
-  return @flexifield.flexifield_alias unless @flexifield.blank?
-  
   coltype ="text"
   
   if ("dropdown".eql?(column_type) || "text".eql?(column_type))
@@ -860,8 +895,6 @@ def save_custom_field ff_alias , column_type , import_id
      columnId = -1    
   end
   logger.debug "columnId inside  save methode :: #{columnId}"
-  
- 
   
   return columnId
   
@@ -1054,6 +1087,8 @@ def import_flexifields base_dir
      cust_visible = false
      cust_editable = false
      
+     
+     
      record.elements.each("type") do |type|      
        field_type = type.text         
      end
@@ -1061,6 +1096,8 @@ def import_flexifields base_dir
      record.elements.each("title") do |title|      
        title = title.text         
      end
+     
+     logger.debug "The record title is  ::: #{title}"
      
      record.elements.each("id") do |obj_id|      
        import_id = obj_id.text         
@@ -1090,21 +1127,25 @@ def import_flexifields base_dir
      field_prop["cust_editable"] = cust_editable
      
      label = title.gsub('?','')+"_"+current_account.id.to_s()
-     label = label.gsub!(/\s+/,"_")
+     label = label.gsub(/\s+/,"_")
+     
+     ff_id =FlexifieldDef.first(:conditions =>{:account_id => current_account.id}).id  
+     @flexifield =FlexifieldDefEntry.find_by_import_id_and_flexifield_def_id(import_id,ff_id)
+     next unless @flexifield.blank? 
      
      case field_type
        
      when "FieldCheckbox"
-          type = "checkbox"          
-          
+          type = "checkbox"      
           column_id = save_custom_field label , type , import_id
           field_prop["label"] = label
           field_prop["type"] = type
           unless column_id == -1
-              update_form_customizer field_prop, column_id
+            update_form_customizer field_prop, column_id
           end
-       
+         
      when "FieldText"
+          
           type = "text"
           column_id = save_custom_field label , type , import_id
           field_prop["label"] = label
@@ -1113,6 +1154,7 @@ def import_flexifields base_dir
               update_form_customizer field_prop, column_id  
           end
      when "FieldTagger"
+          
           type = "dropdown"
           column_id = save_custom_field label , type , import_id
           
@@ -1133,6 +1175,7 @@ def import_flexifields base_dir
               update_form_customizer field_prop, column_id,choices
           end
      when "FieldInteger"
+          
           type = "number"
           column_id = save_custom_field label , type , import_id
           field_prop["type"] = type
@@ -1141,6 +1184,7 @@ def import_flexifields base_dir
               update_form_customizer field_prop, column_id  
           end
      when "FieldTextarea"
+          
           type = "paragraph"
           column_id = save_custom_field label , type , import_id
           field_prop["type"] = type
@@ -1148,7 +1192,8 @@ def import_flexifields base_dir
           unless column_id == -1
               update_form_customizer field_prop, column_id
           end
-       
+     else
+          logger.debug "None of the field type matches:: hope its a system field"
      end
        
      
@@ -1161,6 +1206,7 @@ def import_forum_categories file_path
   
   created = 0
   updated = 0
+  categ_imported = Hash.new
   file = File.new(file_path) 
   doc = REXML::Document.new file
     
@@ -1181,14 +1227,16 @@ def import_forum_categories file_path
      cat.elements.each("id") do |imp_id|      
        import_id = imp_id.text         
      end
-     
+    
+    @categ_existing = current_account.forum_categories.find_by_import_id(import_id.to_i())
+    
+    next unless @categ_existing.blank?
+    created+=1
     @category = current_account.forum_categories.create(:name =>cat_name,:import_id => import_id.to_i(), :description =>cat_desc)
      
-     
-     
-     #logger.debug " The user data:: name : #{usr_name} e_mail : #{usr_email} :: phone :: #{usr_phone} :: role :: #{usr_role} time_zone :: #{usr_time_zone} and usr_details :#{usr_details}"
  end
- 
+ logger.debug "forum categ import :created: #{created} "
+ categ_imported["created"]=created
 end
 
 def import_file_attachment attach_url, base_dir, file_name  

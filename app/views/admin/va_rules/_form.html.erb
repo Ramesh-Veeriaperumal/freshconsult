@@ -1,3 +1,4 @@
+<% content_for :sidebar do -%><%- end %>
 <% content_for :head do %>
 	<%= render :partial => "admin/shared/filter_jsinit", :locals => { :filter_type => "va_rule"} %>
 <% end %>
@@ -18,27 +19,27 @@
 		</label>
 		<%= f.text_area :description, :class => "smallpara" %>
 	</li>
-	<li><span class="seperator"></span></li>								
-	<li class="choicelist">
-		<label><%=t('dispatch.info3')%>?</label>
-		<%= f.radio_button  :match_type, 'any', :class => "radio" %> <%= f.label :match_type_any, t('dispatch.match_any'), :class => "radiolabel" %>
-		<%= f.radio_button  :match_type, 'all', :class => "radio" %> <%= f.label :match_type_all, t('dispatch.match_all'), :class => "radiolabel" %>
-	</li>			
-	<li class="conditionset" id="filterDOM">			
+	<li>			
+		<div class="choicelist">
+			<label><%=t('dispatch.info3')%>?</label>
+			<%= f.radio_button  :match_type, 'any', :class => "radio" %> <%= f.label :match_type_any, t('dispatch.match_any'), :class => "radiolabel" %>
+			<%= f.radio_button  :match_type, 'all', :class => "radio" %> <%= f.label :match_type_all, t('dispatch.match_all'), :class => "radiolabel" %>
+		</div>			
+		<div class="conditionset" id="filterDOM">
 		<div id="RuleList" class="rule_list"></div>
 		<fieldset class="addchoice">
 	         <p><%=t('dispatch.add_condition')%></p> <img alt="<%=t('dispatch.add_new_choice')%>" class="add" src="/images/add.png" />
-	     </fieldset>			
+	    </fieldset>			
+		</div>
 	</li>
-	<li><span class="seperator"></span></li>
-	<li class="choicelist">								
+	<li>
 		<label><%=t('dispatch.act_to_perform')%>?</label>				
-	</li>
-	<li class="conditionset" id="actionDOM">
-		<div id="ActionList" class="rule_list"></div>
-		<fieldset class="addchoice">
-	        <p><%=t('dispatch.add_new_action')%></p> <img alt="<%=t('dispatch.add_new_action')%>" class="add" src="/images/add.png" />
-	    </fieldset>		
+		<div class="conditionset" id="actionDOM">
+			<div id="ActionList" class="rule_list"></div>
+			<fieldset class="addchoice">
+	        	<p><%=t('dispatch.add_new_action')%></p> <img alt="<%=t('dispatch.add_new_action')%>" class="add" src="/images/add.png" />
+	    	</fieldset>		
+		</div>
 	</li>
 </ul>		
 <br />

@@ -5,6 +5,7 @@ $blueprint-grid-columns: 24;
 $blueprint-grid-width: 30px;
 $blueprint-grid-margin: 10px;
 $blueprint-liquid-container-width: 95%; 
+$blueprint-liquid-container-min-width: 982px;
 
 /* Theme Colors and layout Defaults */
 $header_color:#2f3733; 				 
@@ -12,7 +13,7 @@ $tab_color:#7cb537;
 $background:#efefef; 
 
 $sidebar-color:#ffffff;
-$sidebar-width:310px;
+$sidebar-width:290px;
 $invert-side-width:200px;
 $header_height:60px;
 $use-mozilla-ellipsis-binding:true;

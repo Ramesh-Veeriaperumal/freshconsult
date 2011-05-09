@@ -61,6 +61,21 @@ class Va::Action
   
   protected
   
+    def group_id(act_on)
+      g_id = value.to_i
+      begin
+        group = act_on.account.groups.find(g_id)
+      rescue ActiveRecord::RecordNotFound
+      end
+    
+      if group
+        act_on.group_id = g_id
+        add_activity("Set group as <b>#{group.name}</b>")
+      else
+        add_activity("<b>Unable to set the group, consider updating this scenario if the group has been deleted recently.</b>")
+      end
+    end
+  
     def add_comment(act_on)
       note = act_on.notes.build()
       note.body = act_hash[:comment]
@@ -92,7 +107,7 @@ class Va::Action
     
     def send_email_to_group(act_on)
       group = get_group(act_on)
-      if group
+      if group && !group.agent_emails.empty?
         send_internal_email(act_on, group.agent_emails)
         add_activity("Sent an email to the group <b>#{group.name}</b>")
       end
@@ -108,8 +123,11 @@ class Va::Action
     
   private
     def get_group(act_on) # this (g == 0) is kind of hack, same goes for agents also.
-      g_id = act_hash[:email_to].to_i
-      (g_id == 0) ? (act_on.group_id ? act_on.group : nil) : act_on.account.groups.find(g_id)
+      begin
+        g_id = act_hash[:email_to].to_i
+        (g_id == 0) ? (act_on.group_id ? act_on.group : nil) : act_on.account.groups.find(g_id)
+      rescue ActiveRecord::RecordNotFound
+      end
     end
 
     def get_agent(act_on)

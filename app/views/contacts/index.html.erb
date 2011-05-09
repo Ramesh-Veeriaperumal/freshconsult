@@ -49,7 +49,7 @@
 				<% end %> 
 			</div>
 			<div class="info_data">
-		  		<%= content_tag (:span, "#{h(contact.email)}, ") unless contact.email.blank? %>
+		  		<%= content_tag (:span, "#{h(contact.email)} ") unless contact.email.blank? %>
 				<%= content_tag (:span, "#{h(contact.phone)}") unless contact.phone.blank? %>
 			</div>
 	 </div>

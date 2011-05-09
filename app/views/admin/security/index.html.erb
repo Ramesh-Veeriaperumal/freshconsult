@@ -8,26 +8,23 @@
 			<div class="fields">
 				<%= f.label :sso_enabled, "#{f.check_box :sso_enabled} Enable SSO" %>
 				<div class="info-data"></div>
-				
-				<ul class="ui-form" id="sso-form" style="display:none;">
-					<li class="inline-field">
-						<%= f.label :shared_secret, "Shared Secret", :class => "caption" %>
-						<div class="fields">
-							<%= f.text_field :shared_secret, :value => @account.shared_secret, :class => "text", :disabled => true %>
-						</div>
+				<ul class="ui-form-inline" id="sso-form" style="display:<%= current_account.sso_enabled ? "block": "none" %>;">
+					<li>
+						<%= f.label :shared_secret, "Shared Secret" %>
+						<%= f.text_field :shared_secret, :value => @account.shared_secret, :class => "text", :disabled => true %>
 					</li>
 					<% f.fields_for :sso_options, @account.sso_options do |p| %>
-						<li class="inline-field">
-							<%= p.label :login_url, "Login Url", :class => "caption" %>
-							<div class="fields">
-								<%= p.text_field :login_url, :value => @account[:sso_options].default(:login_url), :class => "text url" %>
+						<li>
+							<%= p.label :login_url, "Remote login Url" %>
+							<%= p.text_field :login_url, :value => @account[:sso_options].default(:login_url), :class => "text url" %>
+							<div class="info-data">
+								This is the URL that Zendesk will invoke to attempt remote authentication, e.g. 
+								https://support.yourcompany.com/services/zendesk_auth.asp
 							</div>
 						</li>
-						<li class="inline-field">
-							<%= p.label :logout_url, "Logout Url", :class => "caption" %>
-							<div class="fields">
-								<%= p.text_field :logout_url, :value => @account[:sso_options].default(:logout_url), :class => "text" %>
-							</div>
+						<li>
+							<%= p.label :logout_url, "Remote logout Url" %>
+							<%= p.text_field :logout_url, :value => @account[:sso_options].default(:logout_url), :class => "text" %>
 						</li>
 					<% end %>
 				</ul>
@@ -35,14 +32,14 @@
 		</li>
 	</ul>
 	<div class="button-container">
+		<%= link_to t('back'), "/admin/home", :class => "uiButton floatl" %>
 		<%= f.submit t('save'), :class => "uiButton" %>
-		<%= link_to t('back'), "/admin/home", :class => "uiButton" %>
 	</div>
 	<% javascript_tag do %>
 		(function($){
-			$("#account_sso_enabled").bind("click", function(e){ 
+			$("#account_sso_enabled").bind("click", function(e){
 				$('#sso-form').toggle(this.checked);
-			});
+			}); 
 		})(jQuery)
 	<% end %>
 <% end %>

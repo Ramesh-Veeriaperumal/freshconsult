@@ -7,11 +7,12 @@
 		<h3 class="title"><%= @user.display_name %></h3>
 		<% unless @user.job_title.blank? %>
 		   <b><%= h @user.job_title %></b>
-		<% else %>
-		   Working
+		<% end %>
+		<% if @user.job_title.blank? && !@user.customer.blank? %>
+		   <%= t("working") %>
 		<% end %>
 		<% unless @user.customer.blank? %>
-			at <%= link_to(h(@user.customer.name), @user.customer)  %>
+		   <%= t("at") %> <%= link_to(h(@user.customer.name), @user.customer)  %>
 		<% end %>
 		<div class="user-info">
 			<%= content_tag (:div, "#{content_tag(:span, t('user.email'))}  #{h(@user.email)}") unless @user.email.blank? %>

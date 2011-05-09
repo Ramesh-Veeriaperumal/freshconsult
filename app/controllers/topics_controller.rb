@@ -87,6 +87,7 @@ class TopicsController < ApplicationController
     end
 		
 		if topic_saved && post_saved
+      @topic.monitorships.create(:user_id => current_user.id,:active => true) if params[:monitor] 
       create_attachments  
 			respond_to do |format| 
 				format.html { redirect_to category_forum_topic_path(@forum_category,@forum, @topic) }

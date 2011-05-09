@@ -1,3 +1,5 @@
+<% content_for :sidebar do -%><%- end %>
+
 <% if @subscription && @subscription.errors.any? %>
   <div class="errorExplanation">
     <h2>Errors encountered with your change:</h2>
@@ -7,8 +9,7 @@
   </div>
 <% end %>
 
-<h1><%= @page_title = 'Change Plan' %></h1>
-
+<h3 class="title"><%= @page_title = 'Change Plan' %></h3>
 <p>
   You can change your plan level at any time.  The position limits and other features of the new plan that you select will be effective as soon as you make the change, but your bill amount will not change until your next bill date.  Your next bill date is <%= @subscription.next_renewal_at.to_s(:long_day) %>.
 </p>

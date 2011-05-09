@@ -57,11 +57,12 @@ ActionController::Routing::Routes.draw do |map|
     admin.resources :widget_config, :only => :index
     admin.resources :automations, :member => { :deactivate => :put, :activate => :put }, :collections => { :reorder => :put }
     admin.resources :va_rules, :member => { :deactivate => :put, :activate => :put }, :collections => { :reorder => :put }
-    admin.resources :email_configs, :member => { :make_primary => :put }
+    admin.resources :email_configs, :member => { :make_primary => :put, :deliver_verification => :get }
     admin.register_email '/register_email/:activation_code', :controller => 'email_configs', :action => 'register_email'
     admin.resources :email_notifications
     admin.resources :business_calender, :member => { :update => :put }
     admin.resources :security, :member => { :update => :put }
+    admin.resources :data_export, :collection => {:export => :any }
   end
   
   #SAAS copy starts here

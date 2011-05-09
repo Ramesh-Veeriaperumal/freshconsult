@@ -1,5 +1,8 @@
 <%= render :partial => "shared/colorpicker" %>
-	
+<% unless current_account.preferences.nil? 
+	$tab_color = current_account.preferences[:tab_color]
+   end %>	
+
 <% content_for :sidebar do -%>
 <div class="sidepanel"> 
 	<%= content_tag( :h3, t('feedbackwidget_help_title'), :class => 'title' ) %>
@@ -49,7 +52,7 @@
 				</label>
 				<label> 
 					<%= t('feedbackwidget_offset_label') %>
-					<input type="text" class="text" name="offset" value="35%" size="3" />
+					<input type="text" class="text" name="offset" value="235px" size="3" />
 					<div class="info-data"><%= t('feedbackwidget_offset_info') %></div>
 				</label> 
 		</div>
@@ -67,12 +70,13 @@
 			<%= content_tag(:div, t('feedbackwidget_embed_code_intro'), :class => "intro") %>
 			<textarea id="EmbedCode"></textarea>	 
 	  </li>
+	   <li>
+	 	<a href="/admin/home" class="uiButton"><%= t('back_to_admin') %></a>
+	   </li>
 	 </ul>
 	 <input type="hidden" name="url" value='<%= current_account.full_url %>' />
 	 <input type="hidden" name="assetUrl" value='<%= Helpdesk::ASSET_URL %>' />
-	 <div>
-	 	<a href="/admin/home" class="uiButton"><%= t('back_to_admin') %></a>
-	 </div>	
+	 
 <% end %>
 
 <%= javascript_include_tag "freshwidget.js" %> 

@@ -48,6 +48,7 @@ group :development do
    gem "thoughtbot-shoulda"
    gem "rspec-rails", "1.3.3"
    gem "factory_girl", "1.2.3"  
+   gem "mongrel"
 end
 
 group :production do

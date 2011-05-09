@@ -1,10 +1,7 @@
-<% content_for :layoutType do -%>clean<%-end%>
-<div class="ui-form">
-	<h3 class="title">Activate your account</h3>
-	<span class="seperator"></span>
-	<% form_for @user, :url => activate_path(@user.id), :html => { :method => :post } do |form| %>
-		<%= form.error_messages %>
-		<%= render :partial => "form", :locals => { :form => form }%>
-		<%= form.submit "Activate", :class => "fdbutton" %>
-	<% end %>
-</div>
+<% content_for :sidebar do -%><%-end%>
+<h3 class="title">Activate your account</h3> 
+<% form_for @user, :url => activate_path(@user.id), :html => { :method => :post } do |form| %>
+	<%= form.error_messages %>
+	<%= render :partial => "form", :locals => { :form => form }%>
+	<%= form.submit "Activate", :class => "fdbutton" %>
+<% end %>

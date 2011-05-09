@@ -38,8 +38,10 @@ GEM
       mime-types
       xml-simple
     builder (3.0.0)
+    cgi_multipart_eof_fix (2.5.0)
     closure-compiler (1.1.1)
     columnize (0.3.2)
+    daemons (1.0.10)
     delayed_job (1.8.4)
     factory_girl (1.2.3)
     faraday (0.5.7)
@@ -47,6 +49,8 @@ GEM
       multipart-post (~> 1.1.0)
       rack (>= 1.1.0, < 2)
     fastercsv (1.5.4)
+    fastthread (1.0.1)
+    gem_plugin (0.2.3)
     http_accept_language (1.0.1)
     i18n (0.4.2)
     jammit (0.6.0)
@@ -56,6 +60,11 @@ GEM
     map-fields (1.0.0)
       fastercsv (>= 1.2.3)
     mime-types (1.16)
+    mongrel (1.1.5)
+      cgi_multipart_eof_fix (>= 2.4)
+      daemons (>= 1.0.3)
+      fastthread (>= 1.0.1)
+      gem_plugin (>= 0.2.3)
     multi_json (0.0.5)
     multipart-post (1.1.0)
     mysql (2.8.1)
@@ -165,6 +174,7 @@ DEPENDENCIES
   i18n (= 0.4.2)
   jammit
   map-fields (= 1.0.0)
+  mongrel
   mysql
   net-dns (= 0.6.1)
   newrelic_rpm

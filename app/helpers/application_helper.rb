@@ -5,7 +5,7 @@ module ApplicationHelper
   include Juixe::Acts::Voteable
   
   def show_flash
-    [:notice, :error].collect {|type| content_tag('div', flash[type], :id => type, :class => "flash_info") if flash[type] }
+    [:notice, :warning, :error].collect {|type| content_tag('div', flash[type], :id => type, :class => "flash_info #{type}") if flash[type] }
   end
 
   def tab(title, url, cls = false)

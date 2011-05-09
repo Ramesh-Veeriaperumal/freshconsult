@@ -660,7 +660,7 @@ body h5{
 
 
 .seperator{
-	border-bottom: 1px solid #BBBBBB;
+	border-bottom: 1px dotted #BBBBBB;
     box-shadow: 0 1px 0 white;
 	font-size:0px;
 	display:block;
@@ -881,7 +881,40 @@ body h5{
 	}
 }
 
-.admin_icons img{ height:32px; width:32px;}
+ul.admin_icons{
+	@include clearfix;
+	list-style:none;
+	li{
+		float:left;
+		padding-right:10px;
+		position:relative;
+		@include min-height(90px);
+		a{
+			position:relative;
+			display:block;
+			padding:8px 0px 2px 0px;
+			text-align:center; 
+			text-decoration:none;
+			color:#3a3a3a;
+			width:100px;
+			img{ height:32px; width:32px; }
+			div{
+				@include wrap;
+				font-size:12px;
+				margin:6px 0px;
+				padding:1px 3px;
+				position:relative;
+			}
+			@include corners(6px);
+			@include pie;
+		}
+		a:hover{
+			color:#000000;
+			background:#f2f2f2;
+			@include inset-shadows(rgba(0,0,0, 0.2), 0, 1px, 2px);	
+		}
+	}
+}
 @include all-admin-icon-sprites;
 
 .mark_action{ 
@@ -1034,6 +1067,9 @@ a.request_bt:hover{
  
 .user_details_widget{ 
 	padding:10px;
+	div{
+		padding:3px 0px;
+	}
 	a, a.user_name{
 		color:#527EAA;
 	}
@@ -1098,43 +1134,9 @@ a.request_bt:hover{
 	text-align:center;		
 }
 
-
-ul.icon_grid{
-	@include clearfix;
-	list-style:none;
-	li{
-		float:left;
-		padding-right:10px;
-		position:relative;
-		a{
-			position:relative;
-			display:block;
-			padding:8px 0px 2px 0px;
-			text-align:center; 
-			text-decoration:none;
-			color:#3a3a3a;
-			width:100px;
-			div{
-				@include wrap;
-				font-size:12px;
-				margin:6px 0px;
-				padding:1px 3px;
-				position:relative;
-			}
-			@include corners(6px);
-			@include pie;
-		}
-		a:hover{
-			color:#000000;
-			background:#f2f2f2;
-			@include inset-shadows(rgba(0,0,0, 0.2), 0, 1px, 2px);	
-		}
-	}
-}
-
 .admin{
-	padding:8px 0px;
-	margin:0px 16px;
+	padding:0px 0px 8px 0px;
+	margin:0px 8px 8px 0px;
 	border-bottom:1px solid #ededed;
 } 
 
