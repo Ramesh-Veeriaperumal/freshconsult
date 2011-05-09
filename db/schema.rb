@@ -9,9 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-
-ActiveRecord::Schema.define(:version => 20110504103446) do
-
+ActiveRecord::Schema.define(:version => 20110509122452) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -137,6 +135,8 @@ ActiveRecord::Schema.define(:version => 20110504103446) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "features", ["account_id"], :name => "index_features_on_account_id"
 
   create_table "flexifield_def_entries", :force => true do |t|
     t.integer  "flexifield_def_id",  :limit => 8, :null => false

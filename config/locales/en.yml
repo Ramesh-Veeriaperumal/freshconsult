@@ -464,3 +464,8 @@ en:
    import_note_info:                "The fields in your csv file can be in any order. Just ensure that the first row has the header information.(Eg. Name, email etc.) The only required field is email."
    import_ignore_first_row:         "Ignore the first row (headings)"
    non_covered_feature_error:        "Your current Freshdesk plan does not cover this feature."
+   portal_customizer_title:          "Customize your Customer Portal"
+   portal_customizer_open_forums:    "Allow customers to view 'Forums' without signing in."
+   portal_customizer_anon_tickets:   "Anybody can submit tickets."
+   portal_customizer_open_solutions: "Allow customers to view 'Solutions' without signing in."
+   

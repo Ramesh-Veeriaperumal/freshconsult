@@ -32,7 +32,8 @@
 					<% if current_user and permission?(:manage_tickets) then %>
 						<%= link_to('<img src="/images/add.png" width="16" height="16" /> New Ticket', new_helpdesk_ticket_path, :class => "new_ticket" ) %>
 					<% else %>
-						<%= link_to('<img src="/images/add.png" width="16" height="16" /> Submit a ticket', new_support_ticket_path, :class => "new_ticket" ) %>
+						<%= link_to('<img src="/images/add.png" width="16" height="16" /> Submit a ticket', 
+							new_support_ticket_path, :class => "new_ticket" ) if allowed_in_portal?(:anonymous_tickets) %>
 					<% end %> 
 				</div> 
 			</div>

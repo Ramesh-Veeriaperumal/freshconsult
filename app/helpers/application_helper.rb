@@ -17,8 +17,8 @@ module ApplicationHelper
       ['/home',               'Home',         !permission?(:manage_tickets)],
       ['helpdesk/dashboard',  'Dashboard',    permission?(:manage_tickets)],
       ['helpdesk/tickets',    'Tickets',      permission?(:manage_tickets)],
-      ['solution/categories', 'Solutions',    true],      
-      ['/categories',         'Forums',       feature?(:forums)],
+      ['solution/categories', 'Solutions',    allowed_in_portal?(:open_solutions)],      
+      ['/categories',         'Forums',       (feature?(:forums) && allowed_in_portal?(:open_forums))],
       ['/contacts',           'Customers',    permission?(:manage_tickets)],
       ['support/tickets',     'Check your ticket status',      !permission?(:manage_tickets)],
       ['/admin/home',         'Admin',        permission?(:manage_users)]
