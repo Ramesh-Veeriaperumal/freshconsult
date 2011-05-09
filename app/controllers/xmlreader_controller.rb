@@ -49,6 +49,7 @@ def handle_customer_import base_dir
   file_path = File.join(base_dir , "organizations.xml")  
   created = 0
   updated = 0
+  customer_count = Hash.new
   file = File.new(file_path) 
   doc = REXML::Document.new file
   
@@ -60,22 +61,32 @@ def handle_customer_import base_dir
      org.elements.each("name") {|name|  cust_name = name.text}     
      org.elements.each("details") {|detail| cust_detail = detail.text }    
      org.elements.each("id") { |imp_id| import_id = imp_id.text }    
-    
-     @customer = current_account.customers.new(:name =>cust_name , :description =>cust_detail , :import_id =>import_id )
-     if @customer.save
-       logger.debug "Customer has been saved with name:: #{cust_name}"
+     params = {:name =>cust_name , :description =>cust_detail , :import_id =>import_id}
+     @customer = current_account.customers.find_by_import_id(import_id.to_i())
+     unless @customer.blank?
+        if @customer.update_attributes(params)
+             updated+=1
+        end      
      else
-       logger.debug "Save customer has been failed:: #{@customer.errors.inspect}"
+        @customer = current_account.customers.new(params)
+        if @customer.save
+            created+=1
+            logger.debug "Customer has been saved with name:: #{cust_name}"
+        else
+            logger.debug "Save customer has been failed:: #{@customer.errors.inspect}"
+        end
      end
-    
+     
   end
-  
+  customer_count["created"]=created
+  customer_count["updated"]=updated
 end
 
 def handle_group_import base_dir
   
   created = 0
   updated = 0
+  group_count = Hash.new
   file_path = File.join(base_dir , "groups.xml")
   file = File.new(file_path) 
   doc = REXML::Document.new file
@@ -92,17 +103,32 @@ def handle_group_import base_dir
      group.elements.each("id") do |groupid|      
        grp_id = groupid.text         
      end
-    
-     @group = current_account.groups.new(:name =>grp_name, :import_id =>grp_id )
-     @group.save
+     params = {:name =>grp_name, :import_id =>grp_id}
+     @group = current_account.groups.find_by_import_id(grp_id.to_i())
+     
+     unless @group.blank?
+        if @group.update_attributes(params)
+             updated+=1
+        end      
+     else
+        @group = current_account.groups.new(params)
+        if @group.save
+            created+=1
+            logger.debug "Group has been saved with name:: #{grp_name}"
+        else
+            logger.debug "Save group has been failed:: #{@group.errors.inspect}"
+        end
+     end
   end
-  
+  group_count["created"]=created
+  group_count["updated"]=updated
   
 end
 
 def handle_user_import base_dir
   created = 0
   updated = 0
+  user_count = Hash.new
   file_path = File.join(base_dir , "users.xml")
   file = File.new(file_path) 
   doc = REXML::Document.new file
@@ -198,7 +224,9 @@ def handle_user_import base_dir
           end
       end     
      logger.debug " The user data:: name : #{usr_name} e_mail : #{usr_email} :: phone :: #{usr_phone} :: role :: #{usr_role} time_zone :: #{usr_time_zone} and usr_details :#{usr_details}"
-  end
+ end
+ user_count["created"]=created
+ user_count["updated"]=updated
   
 end
 
@@ -300,16 +328,22 @@ def handle_ticket_import base_dir
         due_date = due.text
       end 
       
-      @check_req = current_account.tickets.find_by_display_id(display_id.to_i())      
-      next unless  @check_req.blank?    
-       
-      @request = current_account.tickets.new
+      @request = current_account.tickets.find_by_import_id(display_id.to_i())    
+     
+      if @request.blank?
+        @request = current_account.tickets.new 
+        created+=1
+      else
+        updated+=1
+      end
+      
       @request.subject = sub
       @request.description = desc
       @request.requester_id = requester_id
       @request.responder_id = assignee_id
       @request.group_id = group_id
       @request.display_id = display_id
+      @request.import_id = display_id
       @request.status = status_id
       @request.priority = priority_id
       @request.ticket_type = ticket_type_id.to_i()
@@ -318,8 +352,7 @@ def handle_ticket_import base_dir
       
       
       
-      if @request.save
-         
+      if @request.save         
         logger.debug "successfully saved"
       else
         logger.debug "failed to save the ticket :: #{@request.errors.inspect}"
