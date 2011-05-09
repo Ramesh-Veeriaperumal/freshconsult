@@ -6,8 +6,6 @@ require 'fileutils'
 class Helpdesk::ExportData < Struct.new(:params)
   
   def perform
-    puts "Perform method is called !"
-    
     @current_account = Account.find_by_full_domain(params[:domain])
     @data_export = @current_account.data_export   
     
@@ -16,6 +14,7 @@ class Helpdesk::ExportData < Struct.new(:params)
     
     delete_zip_file zip_file_path #cleaning up the directory
     FileUtils.mkdir_p @out_dir
+    
     export_forums_data  #Forums data
     export_solutions_data #Solutions data
     export_users_data #Users data
@@ -25,7 +24,6 @@ class Helpdesk::ExportData < Struct.new(:params)
     
     @file = File.open(zip_file_path,  'r')
     
-    #@data_export.attachment = File.open(zip_file_path,  "w+")
     if @data_export.attachment.nil?
       @data_export.build_attachment(:content => @file,  :account_id => @current_account.id)
     else
