@@ -194,12 +194,8 @@ def get_entry_data file_path, make_solution
        stamp_type = 2 if stamp_type == 201
        stamp_type = 3 if stamp_type == 300       
      end
-     
-    @topic_old = Topic.find_by_import_id(import_id)
-     
-    next unless @topic_old.blank?
-     
-    @forum      = Forum.find_by_import_id_and_account_id(forum_id.to_i(), current_account.id)
+    
+    @forum  = Forum.find_by_import_id_and_account_id(forum_id.to_i(), current_account.id)
     
     if (@forum.blank? && make_solution)
       logger.debug "The forum is blank and make_solu:: #{make_solution}"
@@ -208,7 +204,14 @@ def get_entry_data file_path, make_solution
       next
     end
     
-    @topic      = @forum.topics.build(:title =>title) 
+    @topic = Topic.find_by_import_id(import_id)   
+    if @topic.blank?
+       @topic = @forum.topics.new
+       created+=1
+    else
+      updated+=1
+    end
+    @topic.title = title
     @topic.import_id = import_id
     @topic.user_id = submitter_id
     @topic.account_id = current_account.id
@@ -221,12 +224,11 @@ def get_entry_data file_path, make_solution
     @post.user_id = submitter_id
     
     if @post.save
-     created=+1
+      logger.debug "post saved successfully"
     else
-      logger.debug "error while saving topic"
+      logger.debug "error while saving topic #{@post.errors.inspect}"
     end
    
-     
     ## we may need to create the forum...first and then posts
      
     entry.elements.each("posts/post") do |post|
@@ -236,8 +238,7 @@ def get_entry_data file_path, make_solution
        
        post.elements.each("body") do |p_body|
          post_body = p_body.text
-       end
-       
+       end       
        post.elements.each("user-id") do |post_user|
          user = post_user.text         
          created_by = current_account.users.find_by_import_id(user.to_i()).id unless user.blank?
@@ -249,7 +250,7 @@ def get_entry_data file_path, make_solution
      end
      
   end
-  logger.debug "forum entry import :created: #{created} "
+ 
   topic_count["created"]=created
   topic_count["updated"]=updated
   return topic_count
@@ -357,15 +358,30 @@ def import_forum_categories file_path
        import_id = imp_id.text         
      end
     
-    @categ_existing = current_account.forum_categories.find_by_import_id(import_id.to_i())
+    params = {:name =>cat_name,:import_id => import_id.to_i(), :description =>cat_desc}
+    @category = current_account.forum_categories.find_by_import_id(import_id.to_i())
     
-    next unless @categ_existing.blank?
-    created+=1
-    @category = current_account.forum_categories.create(:name =>cat_name,:import_id => import_id.to_i(), :description =>cat_desc)
+    unless @category.blank?
+      if @category.update_attributes(params)
+       updated+=1
+      else
+        logger.debug "Error while updating category :: #{@category.errors.inspect}"
+      end
+    else
+      @category = current_account.forum_categories.new(params)
+      if @category.save
+        created+=1
+      else
+        logger.debug "@category saving has been failed :: #{@category.errors.inspect}"
+      end
+    end
+   
      
  end
- logger.debug "forum categ import :created: #{created} "
+ 
  categ_imported["created"]=created
+ categ_imported["updated"]=updated
+ return categ_imported
 end
 
 
