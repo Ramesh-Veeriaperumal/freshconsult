@@ -241,18 +241,39 @@ class Helpdesk::Ticket < ActiveRecord::Base
       self.due_by = createdTime + sla_detail.resolution_time.seconds      
       self.frDueBy = createdTime + sla_detail.response_time.seconds       
     else      
-      self.due_by = (sla_detail.resolution_time).div(60).business_minute.after(createdTime)      
-      self.frDueBy =  (sla_detail.response_time).div(60).business_minute.after(createdTime)     
+      self.due_by = get_business_time(sla_detail.resolution_time).div(60).business_minute.after(createdTime)      
+      self.frDueBy =  get_business_time(sla_detail.response_time).div(60).business_minute.after(createdTime)     
     end 
      set_user_time_zone if User.current
      logger.debug "sla_detail_id :: #{sla_detail.id} :: and createdTime : #{createdTime} due_by::#{self.due_by} and fr_due:: #{self.frDueBy} "   
   end
+ 
 
+
+def get_business_time time  
+
+ fact = time.div(86400) 
+ logger.debug "The fact is #{fact}" 
+ if fact > 0
+   return business_time*fact
+ else
+   return time
+ end
+end
+
+def business_time
+  logger.debug "business time is called"
+  start_time = Time.parse(self.account.business_calendar.beginning_of_workday)
+  end_time = Time.parse(self.account.business_calendar.end_of_workday)
+  return (end_time - start_time)
+end
 
  def set_account_time_zone  
     self.account.make_current
     Time.zone = self.account.time_zone    
  end
+ 
+ 
  
  def set_user_time_zone 
    Time.zone = User.current.time_zone  

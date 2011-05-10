@@ -18,11 +18,11 @@
 	  		<tr>
 	    		<th><%=t('sla_policy.tickets_with')%> </th>
 	    		<th><%=t('ticket.singular')%> <br /> <%=t('sla_policy.response_time')%></th>
-	    		<th><%=t('ticket.singular')%> <br /> <%=t('sla_policy.resolution_time')%></th>
-	    		<th><%=t('sla_policy.escalate_to')%></th>
+	    		<th><%=t('ticket.singular')%> <br /> <%=t('sla_policy.resolution_time')%></th>	    		
 				<% if feature?(:business_hours) %>
-					<th><%=t('sla_policy.override')%> <br /><%=t('business_hours.title')%></th>
+					<th><%=t('sla_policy.business_time')%>/ <br/><%=t('sla_policy.calendar_time')%></th>
 				<% end %>
+				<th><%=t('sla_policy.escalate_to')%></th>
 	  		</tr>
 	 		<% 
 				sla_size = @sla_policy.sla_details.size
@@ -43,10 +43,11 @@
 						<td>
 						  	<%= sla.select :resolution_time, Helpdesk::SlaDetail::RESOLUTIONTIME_OPTIONS %>
 						</td>
+						<% if feature?(:business_hours) %> <td><%= sla.select :override_bhrs, Helpdesk::SlaDetail::SLA_TIME_OPTIONS %></td> <% end %>
 						<td> 
 							<%= sla.collection_select :escalateto, Agent.technician_list(current_account.id), :id, :name, {:include_blank => '...'} %>
 						</td>
-						<% if feature?(:business_hours) %> <td><%= sla.check_box :override_bhrs%></td> <% end %>
+						
 					</tr>
 		  		<% end %>
 			<% end %>
