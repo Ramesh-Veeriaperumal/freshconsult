@@ -1,10 +1,10 @@
 require 'spec_helper'
 
-describe ZipReadersController do
+describe Admin::PortalController do
 
   #Delete these examples and add some real ones
-  it "should use ZipReadersController" do
-    controller.should be_an_instance_of(ZipReadersController)
+  it "should use Admin::PortalController" do
+    controller.should be_an_instance_of(Admin::PortalController)
   end
 
 

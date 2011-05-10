@@ -6,7 +6,7 @@ class ForumCategoriesController < ApplicationController
   end
   
   before_filter { |c| c.requires_feature :forums }
-  
+  before_filter { |c| c.check_portal_scope :open_forums }
   before_filter :set_selected_tab
   
   def index

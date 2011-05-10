@@ -1,6 +1,5 @@
 class TopicsController < ApplicationController
   before_filter :find_forum_and_topic, :except => :index 
-  #before_filter :login_required, :only => [:new, :create, :edit, :update, :destroy]
   before_filter :except => [:index, :show] do |c| 
     c.requires_permission :post_in_forums
   end
@@ -10,7 +9,7 @@ class TopicsController < ApplicationController
   end
   
   before_filter { |c| c.requires_feature :forums }
- 
+  before_filter { |c| c.check_portal_scope :open_forums }
   before_filter :check_user_permission,:only => [:edit,:update] 
   
   before_filter :set_selected_tab

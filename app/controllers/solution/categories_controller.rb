@@ -4,6 +4,7 @@ class Solution::CategoriesController < ApplicationController
     c.requires_permission :manage_knowledgebase
   end
   
+  before_filter { |c| c.check_portal_scope :open_solutions }
   before_filter :set_selected_tab
   
   def index

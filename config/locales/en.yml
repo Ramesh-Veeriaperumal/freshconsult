@@ -60,6 +60,8 @@ en:
        info1: "	SLA Policy is a set of target response and resolution times based on ticket priority.It is an industry best practice to set Service Levels based on priority. Your SLA policy could be as simple as saying “High Priority tickets should be resolved in 2 hours” etc."
        info2: "Freshdesk uses the SLA Policy to determine the “Due By” time of tickets. You can have a default SLA policy for all of your customers, but if you have a special customer who requires faster response and resolution times, you can always create a special SLA policy for that customer."
        info3: "SLA Policy works in conjunction with Business Hours"
+       business_time: "Business Hours"
+       calendar_time: "Calendar Hours"
        
    tag:
      title: "Tags"    
@@ -349,7 +351,7 @@ en:
        info1: "Are you sure you want to delete this folder"
         
    business_hours:
-       title: "Business Hours"
+       title: "Business Hours"      
        holidays: "Holidays"
        helpdesk_hours: "Helpdesk Hours"
        info1: "Setting up your Business Hours in Freshdesk allows you to get more control on your SLAs. For eg. If your helpdesk works between 9AM to 6PM Mon-Fri and a customer sends a high priority ticket at 4 PM on Tuesday with a SLA target resolution time of 4 hours, then the ticket Due By time is set as 11 AM on Wednesday.You can configure your SLAs to either respect or ignore business hours"
@@ -464,3 +466,8 @@ en:
    import_note_info:                "The fields in your csv file can be in any order. Just ensure that the first row has the header information.(Eg. Name, email etc.) The only required field is email."
    import_ignore_first_row:         "Ignore the first row (headings)"
    non_covered_feature_error:        "Your current Freshdesk plan does not cover this feature."
+   portal_customizer_title:          "Customize your Customer Portal"
+   portal_customizer_open_forums:    "Allow customers to view 'Forums' without signing in."
+   portal_customizer_anon_tickets:   "Anybody can submit tickets."
+   portal_customizer_open_solutions: "Allow customers to view 'Solutions' without signing in."
+   

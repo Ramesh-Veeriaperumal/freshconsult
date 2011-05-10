@@ -125,10 +125,13 @@ class Account < ActiveRecord::Base
     }
   }
   
+  SELECTABLE_FEATURES = [ :open_forums, :open_solutions, :anonymous_tickets ]
+  
   has_features do
     PLANS_AND_FEATURES.each_pair do |k, v|
       feature k, :requires => ( v[:inherits] || [] )
       v[:features].each { |f_n| feature f_n, :requires => k } unless v[:features].nil?
+      SELECTABLE_FEATURES.each { |f_n| feature f_n }
     end
   end
   
@@ -208,6 +211,7 @@ class Account < ActiveRecord::Base
   
   def populate_features
     add_features_of subscription.subscription_plan.name.downcase.to_sym
+    SELECTABLE_FEATURES.each { |f_n| features.send(f_n).create }
   end
   
   def add_features_of(s_plan)

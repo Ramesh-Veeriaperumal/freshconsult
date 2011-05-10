@@ -38,7 +38,7 @@ ActionController::Routing::Routes.draw do |map|
   
   map.openid_done '/google/complete', :controller => 'accounts', :action => 'openid_complete'
   
-  map.zendesk_import '/zendesk/import', :controller => 'zip_readers', :action => 'index'
+  map.zendesk_import '/zendesk/import', :controller => 'admin/zip_readers', :action => 'index'
   
   #map.register '/register', :controller => 'users', :action => 'create'
   #map.signup '/signup', :controller => 'users', :action => 'new'
@@ -63,6 +63,7 @@ ActionController::Routing::Routes.draw do |map|
     admin.resources :business_calender, :member => { :update => :put }
     admin.resources :security, :member => { :update => :put }
     admin.resources :data_export, :collection => {:export => :any }
+    admin.resources :portal, :only => [ :index, :update ]
   end
   
   #SAAS copy starts here

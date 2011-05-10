@@ -1,6 +1,6 @@
 		
 		
-<% form_for :dump, :url=>{:controller=>"xmlreader", :action=>"zendesk_import"}, :html => { :multipart => true } do |f| -%>
+<% form_for :dump, :url=>{:controller=>"admin/xmlreader", :action=>"zendesk_import"}, :html => { :multipart => true } do |f| -%>
 		
 		<%= hidden_field_tag 'base_dir', @out_dir %>
 		<!--%

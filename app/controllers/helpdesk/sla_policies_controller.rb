@@ -48,13 +48,12 @@ class Helpdesk::SlaPoliciesController < Admin::AdminController
   def create
     
     @sla_policy = current_account.sla_policies.new(params[nscname])    
-    params[:SlaDetails].each_value { |sla| @sla_policy.sla_details.build(sla) }
-    
+    params[:SlaDetails].each_value {|sla|  @sla_policy.sla_details.build(sla) }   
     if @sla_policy.save
-        flash[:notice] = "Sla Policy has been created."
+        flash[:notice] = "SLA Policy has been created."
         redirect_to :action => 'index'
     else
-      flash[:notice] = "Unable to save Sla Policy"
+      flash[:notice] = "Unable to save SLA Policy"
        render :action => 'new'
     end  
   end
@@ -102,5 +101,7 @@ class Helpdesk::SlaPoliciesController < Admin::AdminController
   def nscname
     @nscname ||= controller_path.gsub('/', '_').singularize
   end
+  
+     
   
 end
