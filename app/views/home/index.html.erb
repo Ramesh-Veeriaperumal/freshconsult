@@ -1,13 +1,11 @@
-<% content_for :layoutType do -%>single<%- end %>  
-	<h3 class="title">Start typing a question and see answers in real time</h3>			
+	<%= content_tag ( :h3, t('recent_forum_posts'), :class => "title" ) %>
 	<div class="search-grey-box  ignore-margin-20">
 		<%= render :partial => "/search/pagesearch", :locals => { :placeholder => "Search using a keyword or a full question" } %>
 	</div>
 	<div class="two_col_cont">
-		
 		<% if allowed_in_portal? :open_solutions %>
-			<div class="left_col">
-				<h3 class="title">Solutions</h3>
+			<div class="left_col"> 
+				<%= content_tag ( :h3, t('solution.title'), :class => "title" ) %> 
 				<div class="ssp_category_list">	
 				<% @categories.each do |category| %>
 					<div class="<%= cycle('odd', 'even') %>"> 
@@ -18,15 +16,14 @@
 				</div>
 			</div>
 		<% end %>
-
 		<% if allowed_in_portal? :open_forums %>
 			<div class="right_col">
 				<% unless (@topics.size == 0) %> 
-					<h3 class="title">Recent Forum Posts</h3>
+					<%= content_tag ( :h3, t('recent_forum_posts'), :class => "title" ) %>  
 					<ul class="list_with_icon">
 						<% @topics.each do |topic|  %>
 							<li>
-								<%= link_to topic.title,category_forum_topic_path(topic.forum.forum_category_id,topic.forum_id,topic.id), :class => "title" %> 
+								<%= link_to topic.title, category_forum_topic_path(topic.forum.forum_category_id, topic.forum_id, topic.id), :class => "title" %> 
 								<div class="info_data"> by <%= topic.posts.last.user.name %> on <%= formated_date(topic.replied_at) %> </div>
 							</li>	
 						<% end %> 
