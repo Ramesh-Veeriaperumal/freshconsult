@@ -18,7 +18,9 @@ class AgentsController < Admin::AdminController
   end
 
   def show    
-    redirect_to :action => 'edit'
+    @agent = current_account.all_agents.find(params[:id])
+    @user  = @agent.user
+    #redirect_to :action => 'edit'
   end
 
   def new    

@@ -226,29 +226,34 @@ ul.activityfeed li .activity_time {
   background: url('/images/listicons/forum-bullet.png?1303990131') no-repeat 1px 1px;
   list-style-type: none;
 }
-.list_with_icon li {
+.list_with_icon li, .list_with_icon div.list-item {
   padding-left: 22px;
   margin: 3px 0px 12px 0px;
 }
-.list_with_icon li a {
+.list_with_icon li a, .list_with_icon div.list-item a {
   color: #4d769f;
   text-decoration: none;
 }
-.list_with_icon li a:visited {
+.list_with_icon li a:visited, .list_with_icon div.list-item a:visited {
   color: #4d769f;
 }
-.list_with_icon li a:hover {
+.list_with_icon li a:hover, .list_with_icon div.list-item a:hover {
   color: #3399cc;
 }
-.list_with_icon li a:active {
+.list_with_icon li a:active, .list_with_icon div.list-item a:active {
   color: #4d769f;
 }
-.list_with_icon li a.title {
+.list_with_icon li a.title, .list_with_icon div.list-item a.title {
   display: block;
   padding: 0px;
   font-weight: normal;
   padding-bottom: 4px;
   font-size: 13px;
+}
+.list_with_icon div.list-item {
+  background: url("/images/listicons/forum-bullet.png") no-repeat left 2px;
+  margin-bottom: 4px;
+  margin-left: -22px;
 }
 
 .user_name {

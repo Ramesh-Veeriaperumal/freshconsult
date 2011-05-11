@@ -1,4 +1,4 @@
-<% content_for :layoutType do -%>clean<%- end %>
+<% content_for :sidebar do -%><%- end %>
 <% javascript_tag do %>
   jQuery(document).ready(function(){
     jQuery("#ChangePassword").validate({
@@ -12,8 +12,7 @@
   });
 <% end %>
 
-<h3 class="title">Change My Password</h3>
-<span class="seperator"></span>
+<%= content_tag (:h3, t('change_my_password'), :class => 'title') %>
 <% form_for @user, :url => password_reset_path, :method => :put, :html => { :id => "ChangePassword" } do |f| %>
   <%= f.error_messages %>
   <ul class="ui-form">
@@ -25,7 +24,8 @@
   		<%= f.label :password_confirmation %>
   		<%= f.password_field :password_confirmation, :class => "text password", :id => "password_again" %>
 	</li>
+	<li>
+		  <%= f.submit t("update_and_login"), :class => "uiButton" %>
+	</li>
   </ul>
-  
-  <%= f.submit "Update and login", :class => "fdbutton" %>
 <% end %>

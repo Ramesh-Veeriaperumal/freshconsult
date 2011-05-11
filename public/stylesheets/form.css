@@ -253,6 +253,11 @@ a.addchoice:hover {
   border: 1px solid #EFEFEF;
   background-color: #F8F8F8;
 }
+.ui-form div.field-box {
+  padding: 4px 2% 8px 2%;
+  overflow: hidden;
+  *zoom: 1;
+}
 .ui-form li {
   padding: 4px 2% 8px 2%;
   margin: 0px;
@@ -261,10 +266,8 @@ a.addchoice:hover {
   border-bottom: 1px solid #EFEFEF;
   box-shadow: 0 1px 0 white;
 }
-.ui-form li a.fdbutton {
-  min-width: 110px;
-  width: auto !important;
-  width: 110px;
+.ui-form li div.field-box {
+  padding: 4px 0 8px 0;
 }
 .ui-form li:last-child {
   border-bottom: 0px;
@@ -318,9 +321,8 @@ a.addchoice:hover {
 }
 .ui-form span {
   font-weight: normal;
-  font-size: 0.9em;
+  font-size: 0.86em;
   color: #777777;
-  display: block;
 }
 .ui-form .check_box {
   overflow: hidden;
@@ -483,9 +485,11 @@ a.addchoice:hover {
 }
 .ui-form .inline-field .caption {
   float: left;
+  clear: left;
 }
 .ui-form .inline-field div.fields {
   margin-left: 210px;
+  clear: right;
 }
 .ui-form .inline-field div.fields label {
   font-size: 1.1em;

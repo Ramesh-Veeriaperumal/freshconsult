@@ -202,16 +202,20 @@ a.addchoice:hover{
 	position:relative;
 	border:1px solid #EFEFEF; 
 	background-color:#F8F8F8; 
+	div.field-box{
+		padding:4px 2% 8px 2%;
+		@include clearfix; 		
+	}
 	li{
 		padding:4px 2% 8px 2%; 
 		margin:0px;
-		float:left;		
-		a.fdbutton{
-			@include min-width(110px);
-		}
+		float:left;
 		width:96%;
 		border-bottom: 1px solid #EFEFEF;
     	box-shadow: 0 1px 0 white;
+		div.field-box{
+			padding:4px 0 8px 0;
+		}
 	} 
 	li:last-child{
 		border-bottom: 0px;
@@ -269,9 +273,8 @@ a.addchoice:hover{
 	}	
 	span{
 		font-weight:normal;
-		font-size:0.9em;
+		font-size:0.86em;
 		color:#777777;
-		display:block;
 	}
 	.check_box{
 		@include clearfix;
@@ -434,9 +437,11 @@ a.addchoice:hover{
 	}
 	.caption{
 		float:left;
+		clear:left;
 	}
 	div.fields{
 		margin-left:210px;
+		clear:right;
 		label{
 			font-size:1.1em;
 		}
