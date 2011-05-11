@@ -15,6 +15,10 @@ config.action_controller.perform_caching             = true
 config.action_view.cache_template_loading            = true
 config.reload_plugins = true
 
+config.after_initialize do
+  ActiveMerchant::Billing::Base.gateway_mode = :test
+end
+
 
 # Use a different cache store in production
 # config.cache_store = :mem_cache_store

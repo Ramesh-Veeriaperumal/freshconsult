@@ -9,8 +9,10 @@ staging:
   public_key: 'tt6ctjn6r6nxcvm6'
   private_key: '3m5tcpr9ht82bvnc'
 production:
-  login: 'demo'
-  password: 'password'
+  environment: 'production'
+  merchant_id: 'r7vxvwq85324b559'
+  public_key: 'wjk2xzggmhyrm2j4'
+  private_key: 'ng4qmt5xzff8fyft'
 test:
   environment: 'test'
   merchant_id: 'svcr2r64kc272whx'

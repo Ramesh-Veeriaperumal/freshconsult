@@ -7,6 +7,7 @@ class User < ActiveRecord::Base
     [ :admin,       "Admin",            1 ],
     [ :poweruser,   "Power User",       2 ],
     [ :customer,    "Customer",         3 ],
+    [ :account_admin,"Account admin",   4 ]
    ]
 
   USER_ROLES_OPTIONS = USER_ROLES.map { |i| [i[1], i[2]] }
