@@ -213,7 +213,7 @@ class Subscription < ActiveRecord::Base
   protected
   
     def set_billing
-      self.billing_id = @response.token unless @response.token.blank?
+      self.billing_id = @response.params['customer_vault_id'] unless @response.params['customer_vault_id'].blank?
       
       if new_record?
         if !next_renewal_at? || next_renewal_at < 1.day.from_now.at_midnight
