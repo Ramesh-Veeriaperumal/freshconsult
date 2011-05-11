@@ -6,9 +6,9 @@ class AccountsController < ApplicationController
   
   skip_before_filter :set_time_zone
   
-  before_filter :build_user, :only => [:new, :create]
-  before_filter :load_billing, :only => [ :new, :create, :billing, :paypal ]
-  before_filter :load_subscription, :only => [ :billing, :plan, :paypal, :plan_paypal ]
+  before_filter :build_user, :only => [ :new, :create ]
+  before_filter :load_billing, :only => [ :show, :new, :create, :billing, :paypal, :payment_info ]
+  before_filter :load_subscription, :only => [ :show, :billing, :plan, :paypal, :plan_paypal ]
   before_filter :load_discount, :only => [ :plans, :plan, :new, :create ]
   before_filter :build_plan, :only => [:new, :create]
   
@@ -18,6 +18,10 @@ class AccountsController < ApplicationController
    before_filter :only => [:update, :destroy, :edit, :delete_logo, :delete_fav,:show,:cancel,:plan,:plans,:thanks] do |c| 
     c.requires_permission :manage_users
   end
+  
+  def show
+    @plans = SubscriptionPlan.find(:all, :order => 'amount asc').collect {|p| p.discount = @discount; p }  
+  end   
    
   def new
     # render :layout => 'public' # Uncomment if your "public" site has a different layout than the one used for logged-in users
@@ -46,8 +50,7 @@ class AccountsController < ApplicationController
     
   end
   
-  def signup_google
-    
+  def signup_google 
     base_domain = AppConfig['base_domain'][RAILS_ENV]
     logger.debug "base domain is #{base_domain}"   
     return_url = "http://signup."+base_domain+"/google/complete?domain="+params[:domain]     
@@ -158,7 +161,7 @@ class AccountsController < ApplicationController
   
   
   def plans
-    @plans = SubscriptionPlan.find(:all, :order => 'amount desc').collect {|p| p.discount = @discount; p }
+    @plans = SubscriptionPlan.find(:all, :order => 'amount asc').collect {|p| p.discount = @discount; p }
     # render :layout => 'public' # Uncomment if your "public" site has a different layout than the one used for logged-in users
   end
   
@@ -230,9 +233,15 @@ class AccountsController < ApplicationController
       else
         flash[:error] = "Error updating your plan: #{@subscription.errors.full_messages.to_sentence}"
       end
-      redirect_to :action => "plan"
+      
+      if @subscription.state == 'trial'
+        redirect_to :action => "billing"
+      else  
+        redirect_to :action => "plan"
+      end 
     else
-      @plans = SubscriptionPlan.find(:all, :conditions => ['id <> ?', @subscription.subscription_plan_id], :order => 'amount desc').collect {|p| p.discount = @subscription.discount; p }
+      #@plans = SubscriptionPlan.find(:all, :conditions => ['id <> ?', @subscription.subscription_plan_id], :order => 'amount asc').collect {|p| p.discount = @subscription.discount; p }
+      @plans = SubscriptionPlan.find(:all, :order => 'amount asc').collect {|p| p.discount = @discount; p }
     end
   end
   
@@ -317,7 +326,7 @@ class AccountsController < ApplicationController
     
     def choose_layout 
       (action_name == "openid_complete" || action_name == "create_account_google") ? 'signup_google' : 'helpdesk/default'
-	end
+	  end
 	
     def load_object
       @obj = @account = current_account

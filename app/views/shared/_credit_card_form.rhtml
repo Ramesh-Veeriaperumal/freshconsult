@@ -25,64 +25,84 @@
       </ul>
     </div>
   <% end %>
+<table>
+	<tr>
+		<td width="300px"><label>Card Number</label></td>
+		<td width="180px"><label>Expires</label></td>
+		<td><label>Security code</label></td>
+	</tr>
+	<tr>
+		<td><%= text_field :creditcard, :number, :size => 20 %></td>		
+		<td>
+			<%= select :creditcard, :month, (1 .. 12) %>
+			<%= select :creditcard, :year, (Time.now.year .. 10.years.from_now.year) %>
+		</td>
+		<td>
+			<%= text_field :creditcard, :verification_value, :size => 4 %>
+			<%= link_to_function ("What is cvv?", "jQuery('#cvv-info').toggle();") %> 
+			
+			<div id="cvv-info" class="cvv-help-text" style="display:none;">
+				<%= link_to_function ("", "jQuery('#cvv-info').toggle();", :class => "close") %> 
+				<img src="../images/helpimages/card_cvv.gif" width="201px" height="341px" />
+			</div>
+		</td>
+	</tr>
+</table>
+<span class="seperator"></span>
+<h3 class="title">Billing Address</h3>
+<div class="field-box">
+	<label class="caption">First Name</label>
+	<div class="fields">
+		<%= text_field :creditcard, :first_name, :size => 20 %>
+	</div>
+</div>
+<div class="field-box">
+	<label class="caption">Last Name</label>
+	<div class="fields">
+		<%= text_field :creditcard, :last_name, :size => 20 %>
+	</div>
+</div>
+<div class="field-box">
+	<label class="caption">Country</label>
+	<div class="fields small-select">
+	    <%= country_select :address, :country, ['United States', 'Canada'] %>
+	</div>
+</div>
+<div class="field-box">
+	<label class="caption">Address</label>
+	<div class="fields">
+		<%= text_field :address, :address1, :size => 20 %><br/>
+		<%= text_field :address, :address2, :size => 20 %>
+	</div>
+</div>
 
+<div class="field-box">
+	<label class="caption">City</label> 
+	<div class="fields">
+		<%= text_field :address, :city, :size => 20 %>
+	</div>
+</div>
 
-<fieldset>
-  <% if @subscription %>
-    <h2><input type="radio" name="paypal" value=" " <%= 'checked="checked"' unless @subscription.paypal? %>> Pay with a credit card</h2>
-  <% end %>
-  <label class="caption">Name on Card</label>
-  <div class="fields">
-  	<%= text_field :creditcard, :first_name, :size => 20 %>
-  	<%= text_field :creditcard, :last_name, :size => 20 %>
-  </div>
-  <label class="caption">Card Number</label>
-  <div class="fields">
-  	<%= text_field :creditcard, :number, :size => 20 %>
-  </div> 
-  <label class="caption">Type</label>
-  <div class="fields">
+<div class="field-box">
+	<label class="caption">State</label> 
+	<div class="fields">
+		<%= text_field :address, :state, :size => 20 %>
+	</div>
+</div>
+<div class="field-box">
+	<label class="caption">Zip</label> 
+	<div class="fields">
+		<%= text_field :address, :zip, :size => 20 %>
+	</div>
+</div>
+<div class="field-box">
+	<label class="caption">Phone</label> 
+	<div class="fields">
+		<%= text_field :address ,:phone, :size => 20 %>
+	</div>
+</div>
+	
+<!--label class="caption">Type:</label>
+<div class="fields">
   	<%= select :creditcard, :type, [['Visa', 'visa'], ['MasterCard', 'master'], ['American Express', 'american_express']] %>
-  </div>
-  <label class="caption">Expiration</label>
-  <div class="fields">
-  	<%= select :creditcard, :month, (1 .. 12) %>
-  	<%= select :creditcard, :year, (Time.now.year .. 10.years.from_now.year) %>
-  </div>
-  <label class="caption">CVV</label>
-  <div class="fields">
-  	<%= text_field :creditcard, :verification_value, :size => 4 %>
-  	<%= image_tag('cvv.gif', :size => '51x31', :align => 'top') %>
-  </div>
-  <label class="caption">Address</label>
-  <div class="fields">
-    <%= text_field :address, :address1 %><br/>
-    <%= text_field :address, :address2 %>
-  </div>
-  <label class="caption">City</label>
-  <div class="fields">
-    <%= text_field :address, :city %>
-  </div>
-  <label class="caption">State</label>
-  <div class="fields">
-    <%= text_field :address, :state %>
-  </div>
-  <label class="caption">Zip</label>
-  <div class="fields">
-    <%= text_field :address, :zip %>
-  </div>	
-  <label class="caption">Country</label>
-  <div class="fields">
-    <%= country_select :address, :country, ['United States', 'Canada'] %>
-  </div>	
-  <label class="caption">Phone</label>
-  <div class="fields">
-    <%= text_field :address ,:phone %>
-  </div>
-</fieldset>
-
-<% if @subscription %>
-  <fieldset>
-    <h2><input type="radio" name="paypal" value="true" <%= 'checked="checked"' if @subscription.paypal? %>> Pay with PayPal </h2>
-  </fieldset>
-<% end %>
+</div-->

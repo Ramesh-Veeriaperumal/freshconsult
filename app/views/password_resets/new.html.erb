@@ -1,11 +1,14 @@
-<h3 class="title">Forgot Password</h3>
-<div class="intro">Fill out the form below and instructions to reset your password will be emailed to you</div>
+<% content_for :sidebar do -%><%- end %>
+<%= content_tag (:h3, t('forgot_password'), :class => 'title') %>
+<%= content_tag (:div, t('forgot_password_intro')) %>
 <% form_tag password_resets_path do %>
-<ul class="ui-form">
-	<li>
-  		<label>Your email address *</label>
-  		<%= text_field_tag "email", "", { :class => "required" } %>
-	</li>
-</ul>
-<%= submit_tag "Reset my password", :class => "fdbutton" %>
+	<ul class="ui-form">
+		<li> 
+			<%= content_tag (:label, t('your_email_address')) %>
+	  		<%= text_field_tag "email", "", { :class => "required" } %>
+		</li>
+		<li>
+			<%= submit_tag t('reset_my_password'), :class => "uiButton" %>
+		</li>
+	</ul>
 <% end %>

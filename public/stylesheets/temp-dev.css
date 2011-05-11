@@ -1025,9 +1025,9 @@ div.addReminder form label.overlabel {
   color: #666666;
   font-size: 13px;
   line-height: 20px;
-  min-height: 80px;
+  min-height: 100px;
   height: auto !important;
-  height: 80px;
+  height: 100px;
 }
 .plans .active {
   border: 0px;
@@ -1035,4 +1035,73 @@ div.addReminder form label.overlabel {
 }
 .plans button {
   margin-top: 6px;
+}
+.plans .billing {
+  border-top: 1px dotted #afafaf;
+  margin: 8px -10px;
+  padding: 6px 0px;
+  font-size: 14px;
+}
+.plans .billing td {
+  border: 0px;
+  vertical-align: middle;
+  padding: 3px 10px;
+}
+.plans .billing td input {
+  width: auto !important;
+}
+.plans .billing td.numbers {
+  font-size: 18px;
+  text-align: right;
+}
+.plans .billing .tr-total td {
+  border-top: 1px solid #efefef;
+  vertical-align: top;
+}
+.plans .billing .tr-total td .total {
+  font-size: 18px;
+  font-weight: bold;
+  color: #669900;
+  display: block;
+  margin-top: 4px;
+}
+
+.ui-form .info-highlight {
+  margin: 0px -10px 6px -10px;
+  padding: 0px 10px 8px 10px;
+  font-size: 14px;
+  line-height: 22px;
+}
+
+.big-text {
+  font-size: 16px;
+  line-height: 26px;
+}
+
+p.info-text {
+  font-size: 13px;
+  line-height: 22px;
+  margin: 2px 0px 4px 0px;
+  padding: 2px 0px 4px 0px;
+}
+
+.cvv-help-text {
+  background-color: #ece6e1;
+  border: 1px solid #d8ccc2;
+  position: absolute;
+  padding: 0px 8px 0px 8px;
+  width: 200px;
+  text-align: center;
+  z-index: 9999;
+  -moz-border-radius: 8px 8px 8px 8px;
+  -webkit-border-radius: 8px 8px 8px 8px;
+  border-radius: 8px 8px 8px 8px;
+}
+
+.table-padding-5 td {
+  margin: 4px 0px;
+}
+
+.small-select select {
+  width: 180px !important;
 }

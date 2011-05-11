@@ -1,8 +1,67 @@
-Hi, <%= @account.name %>!
-
-<ul>
-  <li><%= link_to('Edit account', edit_account_url) %></li>
-  <li><%= link_to('Change plan', plan_account_url) %></li>
-  <li><%= link_to('Billing info', billing_account_url) %></li>
-  <li><%= link_to('Cancel plan', cancel_account_url) %></li>
+<% content_for :sidebar do -%><%- end %>
+<h3 class= "title"><%= @page_title = t('plans_billing') %></h3>
+<ul class="ui-form">
+	<li class="inline-field">
+		<label class="caption"><%= t('account.name') %></label>
+		<div class="fields">
+			<label><%= current_account.name %></label>
+		</div>
+	</li> 
+	<% if @subscription.state == 'trial' %>
+	<li class="inline-field">
+    	<div class="info-highlight">
+ 		    <%= content_tag(:h3, t('upgrade_trial'), :class => "title") %>
+			<% if current_account.active? %>
+				  <%= t('your_trial_account') %> 
+				  <%= (@subscription.trial_days == 0) ? 
+							t('is_expiring_today') :
+							"#{t('will_expire_in')} #{pluralize(@subscription.trial_days, t('day'), t('days'))}" %>.
+			<% else %>
+			 	<%= "#{t('trial_expired_on')} #{@subscription.next_renewal_at.to_s(:long_day)} " %>.
+			<% end %>
+			<br />
+			<%= t('select_a_plan_gain_access') %>
+		</div>
+	    <%= content_tag(:h3, t('select_a_plan'), :class => "title") %>
+		<%= render :partial => "select_plans", :locals => { :plans => @plans } %>
+		<br />
+		<br />
+	</li> 
+	<% else %>
+	<li class="inline-field">
+		<%= content_tag(:label, t('current_plan'), :class => "caption") %>	
+  		  <div class="fields">
+			<div class="action_buttons">
+				<%= link_to ( t('change_plan'), plan_account_url ,:class => "last" ) %>
+			</div> 
+		  	<p class="info-text">
+				<strong>
+					<%= t('current_plan_details', 
+							:plan_name  => @subscription.subscription_plan.name,
+							:user_limit => @subscription.user_limit,
+							:amount 	=> @subscription.amount.to_i ) %>
+				</strong> 
+			</p>
+		    <% if @subscription.amount > 0 %>
+			  <%= content_tag(:label, t('next_charge_date')) %>	
+		      <%= @subscription.next_renewal_at.to_s(:long_day) %>
+		      <br/>
+			  <%= content_tag(:label, t('next_charge_amount')) %>
+		      <%= number_to_currency @subscription.amount %> 
+		  <% end %>
+		 </div>
+  	</li> 
+		<li class="inline-field">
+		  <%= content_tag(:label, t('payment_info'), :class => "caption") %>
+		  <div class="fields"> 
+			 <div class="action_buttons">
+			 	<%= link_to ( "#{t('edit')} &rsaquo;", billing_account_url ,:class => "last" ) %>
+			 </div>
+			 <label><%= @subscription.paypal? ? 'PayPal' : "#{@subscription.card_number} / #{@subscription.card_expiration}" %></label>
+		  </div>
+		</li>
+    <% end %>
+	
+	<!--li><%= link_to('Cancel plan', cancel_account_url) %></li-->
 </ul>
+ 

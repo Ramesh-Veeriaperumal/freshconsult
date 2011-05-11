@@ -425,8 +425,8 @@ en:
 #April 25th 2011
     
    feedbackwidget_help_title:         "Feedback widget"
-   feedbackwidget_help_para1:         "The Feedback widget helps you to embed your self service portals ticket form in your own website."
-   feedbackwidget_help_para2:         "Using the widget users can submit support tickets directly from your website. "
+   feedbackwidget_help_para1:         "Collect feedback from your customers by adding a support tab to your website pages."
+   feedbackwidget_help_para2:         "Customizable tab opens into a Support ticket form. "
    feedbackwidget_title:              "Widget Settings"
    feedbackwidget_intro:              "Customize your freshdesk widget below and see a realtime preview."
    
@@ -465,9 +465,62 @@ en:
    import_warning_info:             "An email with user activation instructions will be sent to each contact on successful import. If the email is already present in the database we will update the attributes like Name, Company etc."
    import_note_info:                "The fields in your csv file can be in any order. Just ensure that the first row has the header information.(Eg. Name, email etc.) The only required field is email."
    import_ignore_first_row:         "Ignore the first row (headings)"
+   non_covered_feature_error:       "Your current Freshdesk plan does not cover this feature."
    non_covered_feature_error:        "Your current Freshdesk plan does not cover this feature."
    portal_customizer_title:          "Customize your Customer Portal"
    portal_customizer_open_forums:    "Allow customers to view 'Forums' without signing in."
    portal_customizer_anon_tickets:   "Anybody can submit tickets."
    portal_customizer_open_solutions: "Allow customers to view 'Solutions' without signing in."
+      
+#May 5th 2011
+    
+   working:                         "Working"    
+   at:                              "at"
+   forgot_password:                 "Forgot Password"
+   forgot_password_intro:           "Fill out the form below and instructions to reset your password will be emailed to you"
+   your_email_address:              "Your email address"
+   reset_my_password:               "Reset my password"
+   change_my_password:              "Change My Password"
+   update_and_login:                "Update and login"
+   sign_in_info:                    "You will be signing in with"
+   set_password:                    "Set your password"
+   activate_account:                "Activate your account"
+   edit_agent:                      "Edit Agent"
+
+#May 10th 2011
+   plans_billing:                   "Plans &amp; Billing"
+   upgrade_trial:                   "Upgrade your trial!"
+   your_trial_account:              "Your trial account"
+   is_expiring_today:               "is expiring today"
+   will_expire_in:                  "will expire in"
+   day:                             "day"
+   days:                            "days"
+   trial_expired_on:                "Your trial has expired on"
+   select_a_plan_gain_access:       "Select a plan from below to regain access to your account."
+   select_a_plan:                   "Select a Plan"
    
+   basic_brief:                     "For Small teams"
+   pro_brief:                       "For larger Teams"
+   premium_brief:                   "Top-of-the-line"
+
+   basic_details:                   "Email Response Management, Dispatch'r Rules, Default SLA Policy,	Knowledge Base, Self-Service Portal, Domain Mapping, Community Support."
+   pro_details:                     "Everything in &quot;Basic&quot; Plan plus, Scenario Automations, Customer-specific SLAs, Business Hours, Forums, Community &amp; Email Support."
+   premium_details:                 "Everything in &quot;Pro&quot; Plan plus, Multiple Product Support, Multi-timezone support, Community, Email &amp; Phone Support"   
+   choose_plan:                     "Choose Plan"
+   
+   agents:                          "Agents"
+   total_price:                     "Total Price"
+   billed_monthly:                  "Billed monthly"
+   enter_payment:                   "Enter Payment details..."
+   change_my_plan:                  "Change my plan..."
+   
+   current_plan:                    "Current Plan"
+   change_plan:                     "Change plan"
+   current_plan_details:            "%{plan_name} Plan with %{user_limit} agents @ $%{amount} per month"
+   next_charge_date:                "Next charge date:"
+   next_charge_amount:              "Next charge amount:"
+   
+   payment_info:                    "Payment information"
+
+   recent_forum_posts:              "Recent Forum Posts"
+   start_typing_a_question:         "Start typing a question and see answers in real time"

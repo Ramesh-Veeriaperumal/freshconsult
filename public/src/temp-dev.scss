@@ -851,7 +851,7 @@ div.addReminder{
 			color:#666666;
 			font-size:13px;
 			line-height:20px;
-			@include min-height(80px);
+			@include min-height(100px);
 		}
 	}
 	.active{
@@ -862,4 +862,73 @@ div.addReminder{
 	button{
 		margin-top:6px;
 	}
+	.billing{
+		border-top:1px dotted #afafaf;
+		margin:8px -10px;
+		padding:6px 0px;
+		font-size:14px;
+		td{ 
+			border:0px; 
+			vertical-align:middle;
+			padding:3px 10px;
+			input{
+				width:auto !important;
+			}
+		}
+		td.numbers{
+			font-size:18px;
+			text-align:right;
+		}
+		.tr-total td{
+			border-top:1px solid #efefef;
+			vertical-align:top;
+			.total{ 
+				font-size:18px;
+				font-weight:bold;
+				color:#669900;
+				display:block;
+				margin-top:4px;
+			}
+		}
+	}
+}
+
+.ui-form .info-highlight{
+	margin:0px -10px 6px -10px;
+	padding:0px 10px 8px 10px;
+	font-size:14px;
+	line-height:22px;
+}
+
+.big-text{
+	font-size:16px;
+	line-height:26px;
+}
+
+p.info-text{
+	font-size:13px;
+	line-height:22px;
+	margin:2px 0px 4px 0px;
+	padding:2px 0px 4px 0px;
+}
+
+.cvv-help-text{
+	background-color:#ece6e1;
+	border:1px solid darken(#ece6e1, 10%);
+	position:absolute;
+	padding:0px 8px 0px 8px;
+	width:200px;
+	text-align:center;
+	z-index:9999;
+	@include corners(8px);
+}
+
+.table-padding-5{
+	td{
+		margin:4px 0px;
+	}
+}
+
+.small-select select{
+	width:180px !important;
 }
