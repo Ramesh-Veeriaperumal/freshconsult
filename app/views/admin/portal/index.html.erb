@@ -1,0 +1,19 @@
+<h3 class="title"><%=t('portal_customizer_title')%></h3>
+<% form_for(:account, :url => admin_portal_path(@account), :html => { :method => :put }) do |f| %>
+	<h3>
+      <%= f.feature_check_box :anonymous_tickets %> <%=t('portal_customizer_anon_tickets')%>
+    </h3>
+
+	<h3>
+      <%= f.feature_check_box :open_solutions %> <%=t('portal_customizer_open_solutions')%>
+    </h3>
+	
+	<h3>
+      <%= f.feature_check_box :open_forums %> <%=t('portal_customizer_open_forums')%>
+    </h3>
+	
+	<div class="button-container">
+		<%= link_to "&larr; #{t('account.cancel')}", "/admin/home", { :class => "uiButton floatl" } %>
+		<%= f.submit t('save'), { :class => "uiButton" } %>
+	</div>
+<% end %>

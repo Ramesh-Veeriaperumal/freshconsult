@@ -1,9 +1,18 @@
 development:
-  login: 'freshdesk'
-  password: 'opmanager321'
+  environment: 'sandbox'
+  merchant_id: 'svcr2r64kc272whx'
+  public_key: 'tt6ctjn6r6nxcvm6'
+  private_key: '3m5tcpr9ht82bvnc'
+staging:
+  environment: 'sandbox'
+  merchant_id: 'svcr2r64kc272whx'
+  public_key: 'tt6ctjn6r6nxcvm6'
+  private_key: '3m5tcpr9ht82bvnc'
 production:
   login: 'demo'
   password: 'password'
 test:
-  login: 'demo'
-  password: 'password'
+  environment: 'test'
+  merchant_id: 'svcr2r64kc272whx'
+  public_key: 'tt6ctjn6r6nxcvm6'
+  private_key: '3m5tcpr9ht82bvnc'

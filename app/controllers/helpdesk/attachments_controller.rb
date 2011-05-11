@@ -70,6 +70,8 @@ class Helpdesk::AttachmentsController < ApplicationController
         return true
       elsif ['Post'].include? @attachment.attachable_type
         return true
+      elsif ['DataExport'].include? @attachment.attachable_type
+        return true if permission?(:manage_users)
       end 
       redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) 
     end

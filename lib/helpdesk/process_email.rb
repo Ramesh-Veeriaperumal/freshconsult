@@ -111,7 +111,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       if from_email[:domain] == Helpdesk::Ticket::CHAT_SOURCES[:snapengage]
         emailreg = Regexp.new(/\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/)
         chat_email =  params[:subject].scan(emailreg).uniq[0]
-        ticket.email = chat_email unless chat_email.blank?
+        ticket.email = chat_email unless chat_email.blank? && (chat_email == "unknown@example.com")
       end
       ticket
     end

@@ -6,6 +6,7 @@ class ForumsController < ApplicationController
     c.requires_permission :manage_forums
   end
   before_filter { |c| c.requires_feature :forums }
+  before_filter { |c| c.check_portal_scope :open_forums }
   before_filter :find_or_initialize_forum, :except => :index
   before_filter :admin?, :except => [:show, :index]
   before_filter :set_selected_tab

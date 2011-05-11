@@ -10,7 +10,7 @@ base_domain:
     test: freshpo.com
 
 demo_site:
-    development: "localhost"
+    development: "localhost:3000"
     production:  "demo.freshdesk.com"
     staging:     "demo.freshpo.com"
 

@@ -4,7 +4,7 @@ class Solution::ArticlesController < ApplicationController
   before_filter :set_selected_tab
   
   before_filter :check_solution_permission, :only => [:show]
-  
+  before_filter { |c| c.check_portal_scope :open_solutions }
   before_filter :except => [:index, :show] do |c| 
     c.requires_permission :manage_knowledgebase
   end
