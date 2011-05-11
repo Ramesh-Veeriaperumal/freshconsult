@@ -1091,6 +1091,8 @@ p.info-text {
   position: absolute;
   padding: 0px 8px 0px 8px;
   width: 200px;
+  margin-left: 280px;
+  margin-top: -130px;
   text-align: center;
   z-index: 9999;
   -moz-border-radius: 8px 8px 8px 8px;

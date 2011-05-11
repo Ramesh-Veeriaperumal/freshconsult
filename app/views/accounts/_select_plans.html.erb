@@ -20,11 +20,11 @@
 	</div>
 </div>
 <div id="billing-template" class="billing" style="display:none;">
-	<% form_tag plan_account_url do %>
+	<% form_tag plan_account_url, :id => "plan_form" do %>
 	<table>
 		<tr>
 			<td colspan="2"><%= t('agents') %> <input type="text" size="4" value="1" name="plan_user_limit" id="agents-text-box" class="text" /> x <b id="cost-per-agent">$</b>
-			<br />	
+			<br />	  
 			</td>
 		</tr>
 		<tr class="tr-total">
@@ -47,10 +47,16 @@
 </div>
 <% javascript_tag do %>
 	(function($){	
-		selected_plan = null;
-		agents		  = 1;
-		plan_cost	  = null;
-		plan_billing  = null;
+		selected_plan 	= null;
+		agents		  	= 1;
+		plan_cost	  	= null;
+		plan_billing  	= null; 
+		
+		function IsNumeric(input)
+		{
+		   return (input - 0) == input && input.length > 0;
+		}
+		
 		$(".plan-button").click(function(){
 			if(selected_plan != null) selected_plan.removeClass('active');
 			current_plan 	= this.getAttribute("data-plan");
@@ -63,8 +69,14 @@
 		});
 		
 		$("#agents-text-box").change(function(){
-			agents = this.value;
-			calculateCost();
+			console.log(IsNumeric(this.value));
+			if(IsNumeric(this.value) && this.value != 0){
+				this.value = Math.abs(this.value);
+				agents = this.value;
+				calculateCost();
+			}else{
+				this.value = 1;
+			}
 		});
 		
 		function calculateCost(){

@@ -1,23 +1,23 @@
 <% content_for :sidebar do -%><%- end %>
 <h3 class= "title"><%= @page_title = t('plans_billing') %></h3>
-<ul class="ui-form">
-	<li class="inline-field">  
-		<% if @subscription.state == 'trial' %>
-			<div class="info-highlight"> 
-				<h3 class="title">
-					<%= "#{@subscription.subscription_plan.name} Plan with #{@subscription.user_limit} agents"  %>
-				</h3>
-				You will be billed <strong>$<%= @subscription.amount.to_i %> per month</strong> 
-			</div>
-		<% end %>
-		<h3 class="title">Credit card information</h3> 
-		<% form_for :creditcard, @creditcard, :url => { :action => 'billing' } do |f| %>
+<% form_for :creditcard, @creditcard, :url => { :action => 'billing' } do |f| %>
+	<ul class="ui-form">
+		<li class="inline-field">  
+			<% if @subscription.state == 'trial' %>
+				<div class="info-highlight"> 
+					<h3 class="title">
+						<%= t('current_plan_details', :plan_name  => @subscription.subscription_plan.name, :user_limit => @subscription.user_limit)  %>
+					</h3>				
+					<%= content_tag (:strong, t("billed_amount_per_month", :amount => @subscription.amount.to_i )) %>
+				</div>
+			<% end %>
+			<%= content_tag (:h3, t("credit_card_info"), :class => "title") %>
 		   	<%= render :partial => 'shared/credit_card_form' %> 
-			<span class="seperator"></span>
-			<div class="button-container">
-				<%= link_to( "Select another plan", account_url, :class => "uiButton floatl" ) %>
-				<%= submit_tag 'Begin Subscription', :class => "uiButton" %>
-			</div>
-		<% end %>  
-	</li>
-</ul> 
+				<span class="seperator"></span>
+				<div class="button-container">
+					<%= link_to( t('select_another_plan'), account_url, :class => "uiButton floatl" ) %>
+					<%= submit_tag t('begin_subscription'), :class => "uiButton" %>
+				</div>
+		</li>
+	</ul> 
+<% end %>  

@@ -437,7 +437,7 @@ a.addchoice:hover{
 	}
 	.caption{
 		float:left;
-		clear:left;
+		clear:left; 
 	}
 	div.fields{
 		margin-left:210px;
@@ -652,6 +652,7 @@ span.sort_handle{
 
 
 .button-container{
+	@include clearfix;
 	text-align:right;
 	padding:1em 0em 1em 0;
 }

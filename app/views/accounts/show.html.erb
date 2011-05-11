@@ -4,7 +4,7 @@
 	<li class="inline-field">
 		<label class="caption"><%= t('account.name') %></label>
 		<div class="fields">
-			<label><%= current_account.name %></label>
+			<div class="big-text"><%= current_account.name %></div>
 		</div>
 	</li> 
 	<% if @subscription.state == 'trial' %>
@@ -34,32 +34,33 @@
 			<div class="action_buttons">
 				<%= link_to ( t('change_plan'), plan_account_url ,:class => "last" ) %>
 			</div> 
-		  	<p class="info-text">
-				<strong>
-					<%= t('current_plan_details', 
-							:plan_name  => @subscription.subscription_plan.name,
-							:user_limit => @subscription.user_limit,
-							:amount 	=> @subscription.amount.to_i ) %>
-				</strong> 
-			</p>
+			<div class="big-text">
+				<%= " #{ t('current_plan_details', 
+					 	:plan_name  => @subscription.subscription_plan.name,
+						:user_limit => @subscription.user_limit) } " %>
+			</div> 
+
 		    <% if @subscription.amount > 0 %>
-			  <%= content_tag(:label, t('next_charge_date')) %>	
-		      <%= @subscription.next_renewal_at.to_s(:long_day) %>
-		      <br/>
-			  <%= content_tag(:label, t('next_charge_amount')) %>
-		      <%= number_to_currency @subscription.amount %> 
+			  <%= content_tag (:label, t('next_charge_date'), :class => "caption" ) %>
+			  <div class="fields">
+		      	<%= content_tag (:label, @subscription.next_renewal_at.to_s(:long_day) ) %>
+			  </div>
+			  <%= content_tag (:label, t('next_charge_amount'), :class => "caption" ) %>
+			  <div class="fields">
+			  	<%= content_tag (:label, (number_to_currency @subscription.amount) ) %>
+	 		  </div>
 		  <% end %>
 		 </div>
   	</li> 
-		<li class="inline-field">
-		  <%= content_tag(:label, t('payment_info'), :class => "caption") %>
-		  <div class="fields"> 
-			 <div class="action_buttons">
-			 	<%= link_to ( "#{t('edit')} &rsaquo;", billing_account_url ,:class => "last" ) %>
-			 </div>
-			 <label><%= @subscription.paypal? ? 'PayPal' : "#{@subscription.card_number} / #{@subscription.card_expiration}" %></label>
-		  </div>
-		</li>
+	<li class="inline-field">
+	  <%= content_tag(:label, t('payment_info'), :class => "caption") %>
+	  <div class="fields"> 
+		 <div class="action_buttons">
+	 		<%= link_to ( "#{t('change')} &rsaquo;", billing_account_url ,:class => "last" ) %>
+	 	 </div>
+		 <label><%= @subscription.paypal? ? 'PayPal' : "#{@subscription.card_number} / #{@subscription.card_expiration}" %></label>
+	  </div>
+	</li>
     <% end %>
 	
 	<!--li><%= link_to('Cancel plan', cancel_account_url) %></li-->

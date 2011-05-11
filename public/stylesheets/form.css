@@ -716,6 +716,8 @@ span.sort_handle {
 }
 
 .button-container {
+  overflow: hidden;
+  *zoom: 1;
   text-align: right;
   padding: 1em 0em 1em 0;
 }
