@@ -9,7 +9,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       text_retrv = params[:text].blank? ? 'html' : 'text'
 #      unless params[:text].blank?
 #        charset_encoding = (ActiveSupport::JSON.decode charsets)['text']
-#        params[:text] = Iconv.new('utf-8', charset_encoding).iconv(params[:text])
+#        params[:text] = Iconv.new('utf-8//IGNORE', charset_encoding).iconv(params[:text])
 #      else
         charset_encoding = (ActiveSupport::JSON.decode charsets)[text_retrv]
         params[:text] = Iconv.new('utf-8', charset_encoding).iconv(params[text_retrv.to_sym])
