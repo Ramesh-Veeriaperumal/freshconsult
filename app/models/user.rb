@@ -79,7 +79,7 @@ class User < ActiveRecord::Base
     self.avatar_attributes=params[:user][:avatar_attributes] unless params[:user][:avatar_attributes].nil?
    
     return false unless save_without_session_maintenance
-    deliver_activation_instructions!
+    deliver_activation_instructions! unless deleted
   end
   
   def avatar_attributes=(av_attributes)

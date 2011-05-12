@@ -230,19 +230,20 @@ def handle_user_import base_dir
                               }
                      }
      @user = current_account.users.find_by_email(usr_email)   
-     if usr_email.blank?
-       @user.deleted = true
-     end
+    
      unless @user.nil?
           if @user.update_attributes(@params_hash[:user])
              updated+=1
               if usr_role != 3               
-               @agent = Agent.find_or_create_by_user_id(@user.id )
+               @agent = current_account.agents.find_or_create_by_user_id(@user.id )
              end
           end
      else
           @user = current_account.users.new
           @user.time_zone = usr_time_zone
+          if usr_email.blank?
+             @user.deleted = true
+          end
           #@params_hash[:user][:user_role] = User::USER_ROLES_KEYS_BY_TOKEN[:customer]
           if @user.signup!(@params_hash) 
             logger.debug "user has been save #{@user.inspect}"
