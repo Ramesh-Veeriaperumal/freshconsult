@@ -20,6 +20,8 @@ class User < ActiveRecord::Base
   
   has_many :authorizations, :dependent => :destroy
   
+  validates_uniqueness_of :user_role, :scope => :account_id, :if => Proc.new { |user| user.user_role  == USER_ROLES_KEYS_BY_TOKEN[:account_admin] }
+  
   has_one :avatar,
     :as => :attachable,
     :class_name => 'Helpdesk::Attachment',
@@ -135,7 +137,7 @@ class User < ActiveRecord::Base
 
   #implement in your user model 
   def admin?
-    user_role == USER_ROLES_KEYS_BY_TOKEN[:admin]
+    user_role == USER_ROLES_KEYS_BY_TOKEN[:admin] ||  user_role == USER_ROLES_KEYS_BY_TOKEN[:account_admin]
   end
   
   def customer?

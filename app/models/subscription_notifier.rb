@@ -9,7 +9,7 @@ class SubscriptionNotifier < ActionMailer::Base
   end
   
   def welcome(account)
-    setup_email(account.admin, "Welcome to #{AppConfig['app_name']}!")
+    setup_email(account.account_admin, "Welcome to #{AppConfig['app_name']}!")
     @body = { :account => account, :host => account.host }
   end
   
@@ -19,28 +19,28 @@ class SubscriptionNotifier < ActionMailer::Base
   end
   
   def charge_receipt(subscription_payment)
-    setup_email(subscription_payment.subscription.account.admin, "Your #{AppConfig['app_name']} invoice")
+    setup_email(subscription_payment.subscription.account.account_admin, "Your #{AppConfig['app_name']} invoice")
     @body = { :subscription => subscription_payment.subscription, :amount => subscription_payment.amount }
   end
   
   def setup_receipt(subscription_payment)
-    setup_email(subscription_payment.subscription.account.admin, "Your #{AppConfig['app_name']} invoice")
+    setup_email(subscription_payment.subscription.account.account_admin, "Your #{AppConfig['app_name']} invoice")
     @body = { :subscription => subscription_payment.subscription, :amount => subscription_payment.amount }
   end
   
   def misc_receipt(subscription_payment)
-    setup_email(subscription_payment.subscription.account.admin, "Your #{AppConfig['app_name']} invoice")
+    setup_email(subscription_payment.subscription.account.account_admin, "Your #{AppConfig['app_name']} invoice")
     @body = { :subscription => subscription_payment.subscription, :amount => subscription_payment.amount }
   end
   
   def charge_failure(subscription)
-    setup_email(subscription.account.admin, "Your #{AppConfig['app_name']} renewal failed")
+    setup_email(subscription.account.account_admin, "Your #{AppConfig['app_name']} renewal failed")
     @bcc = AppConfig['from_email']
     @body = { :subscription => subscription }    
   end
   
   def plan_changed(subscription)
-    setup_email(subscription.account.admin, "Your #{AppConfig['app_name']} plan has been changed")
+    setup_email(subscription.account.account_admin, "Your #{AppConfig['app_name']} plan has been changed")
     @body = { :subscription => subscription }    
   end
   

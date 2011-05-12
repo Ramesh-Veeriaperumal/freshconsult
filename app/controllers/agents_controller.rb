@@ -1,6 +1,21 @@
 class AgentsController < Admin::AdminController
   
+  before_filter :load_object, :only => [:update,:destroy,:restore,:edit]
+  
   before_filter :check_demo_site, :only => [:destroy,:update,:create]
+  
+  before_filter :check_user_permission, :only => :destroy
+  
+  def load_object
+    @agent = scoper.find(params[:id])
+  end
+  
+  def check_user_permission
+    if (@agent.user == current_user) || (@agent.user.user_role == User::USER_ROLES_KEYS_BY_TOKEN[:account_admin])
+      flash[:notice] = "You don't have access to delete it!"
+      redirect_to :back  
+    end    
+  end
   
   def check_demo_site
     if AppConfig['demo_site'][RAILS_ENV] == current_account.full_domain
@@ -35,7 +50,6 @@ class AgentsController < Admin::AdminController
   end
 
   def edit    
-     @agent = current_account.all_agents.find(params[:id])    
       respond_to do |format|
       format.html # edit.html.erb
       format.xml  { render :xml => @agent }
@@ -69,7 +83,6 @@ class AgentsController < Admin::AdminController
   end
 
   def update
-    @agent = Agent.find(params[:id])
    
       if @agent.update_attributes(params[nscname])            
           @user = User.find(@agent.user_id)          
@@ -89,7 +102,6 @@ class AgentsController < Admin::AdminController
   end
 
   def destroy    
-    @agent = Agent.find(params[:id])
     if @agent.user.update_attribute(:deleted, true)    
        @restorable = true
        flash[:notice] = render_to_string(:partial => '/agents/flash/delete_notice')      
@@ -100,19 +112,20 @@ class AgentsController < Admin::AdminController
 end
 
  def restore
-   
-    @agent = Agent.find(params[:id])
-    if @agent.user.update_attribute(:deleted, false)   
-      flash[:notice] = render_to_string(:partial => '/agents/flash/restore_notice')
-    else
-      flash[:notice] = "Agent could not be able to restore"
-    end
-    
-    redirect_to :back
-   
+   @agent = Agent.find(params[:id])
+   if @agent.user.update_attribute(:deleted, false)   
+    flash[:notice] = render_to_string(:partial => '/agents/flash/restore_notice')
+   else
+    flash[:notice] = "Agent could not be able to restore"
+   end 
+   redirect_to :back  
  end
 
  protected
+ 
+  def scoper
+     current_account.all_agents
+  end
 
   def cname
     @cname ||= controller_name.singularize

@@ -37,7 +37,10 @@ class Account < ActiveRecord::Base
   
   has_many :users, :dependent => :destroy , :conditions =>{:deleted =>false}
   has_many :all_users , :class_name => 'User', :dependent => :destroy
-  has_one :admin, :class_name => "User", :conditions => { :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:admin] } #has_one ?!?!?!?!
+  
+  has_one :account_admin, :class_name => "User", :conditions => { :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:account_admin] } #has_one ?!?!?!?!
+  has_many :admins, :class_name => "User", :conditions => { :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:admin] } ,:order => "created_at"
+  
   has_one :subscription, :dependent => :destroy
   has_many :subscription_payments
   has_many :solution_categories , :class_name =>'Solution::Category',:include =>:folders
@@ -332,7 +335,7 @@ class Account < ActiveRecord::Base
     def create_admin
       self.user.active = true
       self.user.account = self
-      self.user.user_role = User::USER_ROLES_KEYS_BY_TOKEN[:admin]  
+      self.user.user_role = User::USER_ROLES_KEYS_BY_TOKEN[:account_admin]  
       self.user.build_agent()
       self.user.save
       

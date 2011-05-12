@@ -8,7 +8,7 @@ class AccountsController < ApplicationController
   
   before_filter :build_user, :only => [ :new, :create ]
   before_filter :load_billing, :only => [ :show, :new, :create, :billing, :paypal, :payment_info ]
-  before_filter :load_subscription, :only => [ :show, :billing, :plan, :paypal, :plan_paypal ]
+  before_filter :load_subscription, :only => [ :show, :billing, :plan, :paypal, :plan_paypal, :plans ]
   before_filter :load_discount, :only => [ :plans, :plan, :new, :create ]
   before_filter :build_plan, :only => [:new, :create]
   
@@ -49,6 +49,8 @@ class AccountsController < ApplicationController
     end
     
   end
+  
+  
   
   def signup_google 
     base_domain = AppConfig['base_domain'][RAILS_ENV]

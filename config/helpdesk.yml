@@ -137,6 +137,7 @@ ROLES:
             manage_users:           false   # Can assign roles to users?
             post_in_forums:         false   # Can respond to topics or post new ones?
             manage_forums:          false   # Forums administration
+            manage_account:         false   # Account administration
     customer:
         permissions:
             portal_request:         true    # Can sumit request for support?
@@ -146,6 +147,8 @@ ROLES:
             manage_users:           false   # Can assign roles to users?
             post_in_forums:         true    # Can respond to topics or post new ones?
             manage_forums:          false   # Forums administration
+            manage_account:         false   # Account administration
+  
     techsupport:
         title:                      Tech Support
         description:                Allowed to manage tickets, but not edit the knowledgebase
@@ -157,6 +160,7 @@ ROLES:
             manage_users:           false   # Can assign roles to users?
             post_in_forums:         true    # Can respond to topics or post new ones?
             manage_forums:          false   # Forums administration
+            manage_account:         false   # Account administration
     writer:
         title:                      Writer
         description:                Allowed to edit the knowledgebase, but not manage tickets
@@ -168,6 +172,7 @@ ROLES:
             manage_users:           false   # Can assign roles to users?
             post_in_forums:         true    # Can respond to topics or post new ones?
             manage_forums:          false   # Forums administration
+            manage_account:         false   # Account administration
     poweruser:
         title:                      Power User
         description:                Can do everything except user administration
@@ -179,6 +184,7 @@ ROLES:
             manage_users:           false   # Can assign roles to users?
             post_in_forums:         true    # Can respond to topics or post new ones?
             manage_forums:          true    # Forums administration
+            manage_account:         false   # Account administration
     admin:
         title:                      Administrator
         description:                Has total access
@@ -190,6 +196,19 @@ ROLES:
             portal_request:         true    # Can assign / edit / respond to tickets?
             post_in_forums:         true    # Can respond to topics or post new ones?
             manage_forums:          true    # Forums administration
+            manage_account:         false   # Account administration
+    account_admin:
+            title:                      Account Admin
+            description:                Can manage account
+            permissions:
+               manage_tickets:         true    # Can sumit request for support?
+               portal_knowledgebase:   true    # Can browse & search the knowledgebase?
+               manage_knowledgebase:   true    # Can browse & search the knowledgebase?
+               manage_users:           true    # Can create / edit / delete knowledgebase articles & guides?
+               portal_request:         true    # Can assign / edit / respond to tickets?
+               post_in_forums:         true    # Can respond to topics or post new ones?
+               manage_forums:          true    # Forums administration
+               manage_account:         true   # Account administration
 
 
 
