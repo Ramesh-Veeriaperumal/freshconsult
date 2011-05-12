@@ -4,7 +4,7 @@ class CreateAdminAccountForAllAccounts < ActiveRecord::Migration
      account_admin = account.admins.first
      unless account_admin.nil?
   	    account_admin.user_role = User::USER_ROLES_KEYS_BY_TOKEN[:account_admin] 
-  		  account_admin.save!
+  		  account_admin.save
   	 end
     end
   end
