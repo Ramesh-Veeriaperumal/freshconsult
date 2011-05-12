@@ -37,11 +37,11 @@ class UsersController < ApplicationController
    
   def show
     logger.debug "in users controller :: show show"
-    user_role = User.find(params[:id]).user_role    
+    user_role = current_account.all_users.find(params[:id]).user_role    
     if User::USER_ROLES_KEYS_BY_TOKEN[:customer].eql?(user_role)      
       redirect_to :controller =>'contacts' ,:action => 'show', :id => params[:id]    
     else    
-      agent_id = Agent.find_by_user_id(params[:id]).id
+      agent_id = current_account.all_agents.find_by_user_id(params[:id]).id
       redirect_to :controller =>'agents' ,:action => 'show', :id => agent_id    
     end
     
