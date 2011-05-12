@@ -57,7 +57,7 @@ class AgentsController < Admin::AdminController
   end
   
   def delete_avatar
-    @user = User.find(params[:id])
+    @user = current_account.all_users.find(params[:id])
     @user.avatar.destroy
     render :text => "success"
   end
@@ -65,7 +65,7 @@ class AgentsController < Admin::AdminController
   def create   
     
     @user  = current_account.users.new #by Shan need to check later        
-    @agent = Agent.new(params[nscname]) 
+    @agent = current_account.agents.new(params[nscname]) 
     
     if @user.signup!(:user => params[:user])       
       @agent.user_id = @user.id      
@@ -85,7 +85,7 @@ class AgentsController < Admin::AdminController
   def update
    
       if @agent.update_attributes(params[nscname])            
-          @user = User.find(@agent.user_id)          
+          @user = current_account.all_users.find(@agent.user_id)          
           if @user.update_attributes(params[:user])        
              flash[:notice] = "The Agent has been updated sucessfully"
              redirect_to :action => 'index'
@@ -112,7 +112,7 @@ class AgentsController < Admin::AdminController
 end
 
  def restore
-   @agent = Agent.find(params[:id])
+   @agent = current_account.all_agents.find(params[:id])
    if @agent.user.update_attribute(:deleted, false)   
     flash[:notice] = render_to_string(:partial => '/agents/flash/restore_notice')
    else
