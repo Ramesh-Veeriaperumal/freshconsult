@@ -1,8 +1,11 @@
-<% javascript_tag do %>
-
+<%= calendar_date_select_includes %>
+<% javascript_tag do %> 
 	changeAggentList = function(group_id)
 	{
-		jQuery('#assigned_to').children("select").replaceWith("...");
+		jQuery('#assigned_to')
+			.addClass('loading-right')
+			.children("select")
+			.replaceWith("...");
 		
 		jQuery.ajax({type: 'POST',
 					 url: '/helpdesk/tickets/get_agents/'+group_id,
@@ -11,6 +14,7 @@
 					 			jQuery('#assigned_to')
 									.html(data)
 									.hide()
+									.removeClass('loading-right')
 									.show("highlight", {}, 500);
 						  	  }
 					});
@@ -22,8 +26,13 @@
        <ul class="cnt">
            <li>
               <label><%=t('ticket.due_by_time')%></label>
-				<%= ticket.due_by.strftime("%B %e %Y at %I:%M %p") %>
+			  <%= ticket.due_by.strftime("%B %e %Y at %I:%M %p") %>
 	       </li>
+           <li>
+              <label><%=t('ticket.due_by_time')%></label>
+			  When? <%= select_tag "due_by_time", options_for_select(["today", "this week", "specific date"]) %>
+			  <%= calendar_date_select_tag "e_date", nil, :embedded => true, :year_range => 10.years.ago..0.years.ago %>
+	       </li>			
 		   <!--form values starts here-->
 		   <%= render :partial=> "custom_form_partial" ,:locals => { :f => f } %>
 			<!--form values ends here-->
