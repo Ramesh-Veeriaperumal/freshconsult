@@ -39,7 +39,7 @@ class AgentsController < Admin::AdminController
   end
 
   def new    
-    @agent      = Agent.new       
+    @agent      = current_account.agents.new       
     @agent.user = User.new
     @agent.user.avatar = Helpdesk::Attachment.new
     @agent.user.time_zone = current_account.time_zone

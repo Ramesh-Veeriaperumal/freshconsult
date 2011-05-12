@@ -1,30 +1,30 @@
 <% content_for :sidebar do -%><%- end %>
 
-<% if @subscription && @subscription.errors.any? %>
-  <div class="errorExplanation">
-    <h2>Errors encountered with your change:</h2>
-    <ul>
-      <%= @subscription.errors.full_messages.map {|m| content_tag('li', m)} %>
-    </ul>
-  </div>
-<% end %>
+	<% if @subscription && @subscription.errors.any? %>
+	  <div class="errorExplanation">
+	    <h2>Errors encountered with your change:</h2>
+	    <ul>
+	      <%= @subscription.errors.full_messages.map {|m| content_tag('li', m)} %>
+	    </ul>
+	  </div>
+	<% end %>
 
-<h3 class="title"><%= @page_title = 'Change Plan' %></h3> 
-<%= content_tag (:p, "Current plan: <strong>#{@subscription.subscription_plan.name} Plan with #{@subscription.user_limit} agents @ $#{@subscription.amount}</strong> per month", :class => "info-text" ) %>   
-<p class="info-text">
-  You can change your plan level at any time.  The position limits and other features of the new plan that you select will be effective as soon as you make the change, but your bill amount will not change until your next bill date.  Your next bill date is <%= @subscription.next_renewal_at.to_s(:long_day) %>.
-</p>
-<span class="seperator"></span>
-<%= render :partial => "select_plans", :locals => { :plans => @plans } %>
+	<h3 class="title"><%= @page_title = t('change_plan') %></h3> 
+	<strong>
+		<%= content_tag (:p, "#{ t('current_plan') }: #{ t('current_plan_details', :plan_name => @subscription.subscription_plan.name, :user_limit => @subscription.user_limit) } @ #{t('amount_per_month', :amount => @subscription.amount.to_i)}", :class => "info-text") %>
+	</strong>
+	<%= content_tag (:p, t('change_plan_info', :date => @subscription.next_renewal_at.to_s(:long_day)), :class => "info-text") %>
+	<span class="seperator"></span>
+	<%= render :partial => "select_plans", :locals => { :plans => @plans } %>
 
-<div class="button-container">
-	<a class="uiButton" href="/account">Back to Plans & Pricing</a>
-</div>
+	<div class="button-container">
+		<%= link_to( t('back_plans_billing'), account_url, :class => "uiButton floatl" ) %>
+	</div>
 
 <% if @subscription.needs_payment_info? -%>
-  <p>
-    Please make sure you <%= link_to('enter your billing information', billing_account_url) %> before your bill date to prevent an interruption in service.
-  </p>
+  <!--p>
+    Please make sure you <%# link_to('enter your billing information', billing_account_url) %> before your bill date to prevent an interruption in service.
+  </p-->
 <% end %>
  
  

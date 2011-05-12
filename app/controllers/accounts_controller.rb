@@ -174,8 +174,8 @@ class AccountsController < ApplicationController
         @address.last_name = @creditcard.last_name
         if @creditcard.valid? & @address.valid?
           if @subscription.store_card(@creditcard, :billing_address => @address.to_activemerchant, :ip => request.remote_ip)
-            flash[:notice] = "Your billing information has been updated."
-            redirect_to :action => "billing"
+            flash[:notice] = t('billing_info_update')
+            redirect_to :action => "show"
           end
         end
       else
@@ -230,7 +230,7 @@ class AccountsController < ApplicationController
       end
       
       if @subscription.save
-        flash[:notice] = "Your subscription has been changed."
+        flash[:notice] = t('plan_info_update')
         SubscriptionNotifier.deliver_plan_changed(@subscription)
       else
         flash[:error] = "Error updating your plan: #{@subscription.errors.full_messages.to_sentence}"
@@ -239,7 +239,7 @@ class AccountsController < ApplicationController
       if @subscription.state == 'trial'
         redirect_to :action => "billing"
       else  
-        redirect_to :action => "plan"
+        redirect_to :action => "show"
       end 
     else
       #@plans = SubscriptionPlan.find(:all, :conditions => ['id <> ?', @subscription.subscription_plan_id], :order => 'amount asc').collect {|p| p.discount = @subscription.discount; p }

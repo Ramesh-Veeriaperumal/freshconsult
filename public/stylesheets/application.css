@@ -2062,10 +2062,6 @@ h3.t_padding {
   padding: 2px 10px;
 }
 
-label.caption {
-  text-transform: capitalize;
-}
-
 .placeholder-info {
   position: fixed;
   text-align: left;

@@ -86,7 +86,7 @@ class GroupsController < Admin::AdminController
 
   def destroy
     
-      @group = Group.find(params[:id])
+    @group = current_account.groups.find(params[:id])
     @group.destroy
 
     respond_to do |format|
