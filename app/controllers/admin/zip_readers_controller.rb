@@ -1,5 +1,7 @@
 class Admin::ZipReadersController < ApplicationController
   
+before_filter { |c| c.requires_permission :manage_tickets }  
+
 require 'zip/zip'
 require 'fileutils'
 

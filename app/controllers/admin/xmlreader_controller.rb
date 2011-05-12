@@ -1,4 +1,6 @@
 class Admin::XmlreaderController < ApplicationController
+  
+  before_filter { |c| c.requires_permission :manage_tickets }
     require 'rexml/document'
     
     require 'rexml/xpath'
@@ -227,7 +229,10 @@ def handle_user_import base_dir
                                 :time_zone =>usr_time_zone,
                               }
                      }
-     @user = current_account.users.find_by_email(usr_email)        
+     @user = current_account.users.find_by_email(usr_email)   
+     if usr_email.blank?
+       @user.deleted = true
+     end
      unless @user.nil?
           if @user.update_attributes(@params_hash[:user])
              updated+=1
@@ -451,8 +456,8 @@ def handle_ticket_import base_dir
        
        comment.elements.each("author-id") do |author|
           author_id = author.text
-          note_created = current_account.users.find_by_import_id(author_id.to_i())          
-          note_created_by = note_created.id unless note_created.blank?  
+          note_created = current_account.users.find_by_import_id(author_id.to_i())              
+          note_created_by = note_created.id unless note_created.blank?            
           incoming = true if note_created.customer?
        end
        
