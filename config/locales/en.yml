@@ -520,7 +520,7 @@ en:
    current_plan_details:            "%{plan_name} Plan with %{user_limit} agents"
    amount_per_month:                "$%{amount} per month"
    billed_amount_per_month:         "You will be billed $%{amount} per month"
-   next_charge_date:                "You will be charged on:"
+   next_charge_date:                "Next charge will happen on:"
    next_charge_amount:              "Monthly cost:"
 
 #May 11th 2011   
