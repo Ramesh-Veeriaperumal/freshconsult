@@ -34,9 +34,12 @@ class User < ActiveRecord::Base
     c.validations_scope = :account_id
     c.validates_length_of_password_field_options = {:on => :update, :minimum => 4, :if => :has_no_credentials? }
     c.validates_length_of_password_confirmation_field_options = {:on => :update, :minimum => 4, :if => :has_no_credentials?}
+    c.validate_email_field = false
   end
   
-  attr_accessible :name, :email, :password, :password_confirmation , :second_email, :job_title, :phone, :mobile, :twitter_id, :description, :time_zone, :avatar_attributes,:user_role,:customer_id,:import_id
+  validates_format_of :email, :with => Authlogic::Regex.email, :if => :is_not_deleted?
+  
+  attr_accessible :name, :email, :password, :password_confirmation , :second_email, :job_title, :phone, :mobile, :twitter_id, :description, :time_zone, :avatar_attributes,:user_role,:customer_id,:import_id,:deleted
   
   #Sphinx configuration starts
   define_index do
@@ -77,7 +80,7 @@ class User < ActiveRecord::Base
     self.avatar_attributes=params[:user][:avatar_attributes] unless params[:user][:avatar_attributes].nil?
    
     return false unless save_without_session_maintenance
-    deliver_activation_instructions!
+    deliver_activation_instructions! unless deleted
   end
   
   def avatar_attributes=(av_attributes)
@@ -240,6 +243,11 @@ class User < ActiveRecord::Base
   
   def has_manage_solutions?
     self.permission?(:manage_tickets)
+  end
+  
+  def is_not_deleted?
+    logger.debug "not ::deleted ?:: #{!self.deleted}"
+    !self.deleted
   end
   
   def self.filter(letter, page)
