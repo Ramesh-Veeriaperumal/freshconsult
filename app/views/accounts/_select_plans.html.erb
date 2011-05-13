@@ -23,7 +23,7 @@
 	<% form_tag plan_account_url, :id => "plan_form" do %>
 	<table>
 		<tr>
-			<td colspan="2"><%= t('agents') %> <input type="text" size="4" value="1" name="plan_user_limit" id="agents-text-box" class="text" /> x <b id="cost-per-agent">$</b>
+			<td colspan="2"><%= t('agents') %> <input type="text" size="4" value="<%= current_account.agents.size %>" name="plan_user_limit" id="agents-text-box" class="text" /> x <b id="cost-per-agent">$</b>
 			<br />	  
 			</td>
 		</tr>
