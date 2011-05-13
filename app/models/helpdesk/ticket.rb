@@ -14,7 +14,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   attr_accessor :email, :name, :custom_field ,:customizer, :nscname 
   
   
-  before_validation :populate_requester, :set_default_values
+  before_validation :populate_requester, :set_default_values 
   before_create :set_spam, :set_dueby, :save_ticket_states
   after_create :refresh_display_id, :save_custom_field, :pass_thro_biz_rules, :autoreply 
   before_update :cache_old_model, :update_dueby
@@ -129,6 +129,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     self.status = TicketConstants::STATUS_KEYS_BY_TOKEN[:open] unless TicketConstants::STATUS_NAMES_BY_KEY.key?(self.status)
     self.source = TicketConstants::SOURCE_KEYS_BY_TOKEN[:portal] if self.source == 0
     self.ticket_type ||= TicketConstants::TYPE_KEYS_BY_TOKEN[:how_to]
+    self.description = subject if description.blank?
   end
   
   def to_param 
@@ -527,8 +528,6 @@ end
       custom_field[method]
     end
   end
-  
-  
   
   def to_xml(options = {})
       options[:indent] ||= 2
