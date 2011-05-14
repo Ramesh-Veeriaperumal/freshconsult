@@ -22,5 +22,6 @@ I18n.fallbacks.map('it' => 'en')
 I18n.fallbacks.map('es' => 'en')
 I18n.fallbacks.map('de' => 'en')
 I18n.fallbacks.map('fr' => 'en')
+I18n.fallbacks.map('nl' => 'en')
 
 
