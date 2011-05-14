@@ -1,11 +1,8 @@
 class UsersController < ApplicationController 
   
   
-  include ModelControllerMethods
+  include ModelControllerMethods #Need to remove this, all we need is only show.. by Shan. to do must!
 
-  before_filter :check_user_limit, :only => :create
-  #before_filter :require_no_user, :only => [:new, :create] #by Shan need to check later
-  #before_filter :require_user, :only => [:show, :edit, :update]
   before_filter :set_selected_tab
   skip_before_filter :load_object , :only => [ :show, :edit]
   
@@ -62,10 +59,6 @@ class UsersController < ApplicationController
     
     def authorized?
       (logged_in? && self.action_name == 'index') || admin?
-    end
-    
-    def check_user_limit
-      redirect_to new_user_url if current_account.reached_user_limit?
     end
 
     def set_selected_tab

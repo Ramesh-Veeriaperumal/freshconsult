@@ -1,10 +1,9 @@
 class AgentsController < Admin::AdminController
   
   before_filter :load_object, :only => [:update,:destroy,:restore,:edit]
-  
   before_filter :check_demo_site, :only => [:destroy,:update,:create]
-  
   before_filter :check_user_permission, :only => :destroy
+  before_filter :check_agent_limit, :only => :create
   
   def load_object
     @agent = scoper.find(params[:id])
@@ -141,4 +140,7 @@ end
      end    
   end
 
+  def check_agent_limit
+    redirect_to :back if current_account.reached_agent_limit?
+  end
 end

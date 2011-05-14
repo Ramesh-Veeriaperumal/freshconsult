@@ -1,13 +1,7 @@
 <div class="pageContent">
 	<h3 class="content_title"><%= @page_title = 'New User' %></h3>
 	<span class="seperator"></span>
-	<% if current_account.reached_user_limit? %>	
-	  <p>
-	    You have reached the maximum number of users you can have with your account level.  You can either delete some of your users or <a href="/account/plan">upgrade your account</a> to be able to create a new user.
-	  </p>	
-	<% else %>
-	  <% form_for @user, :html => { :multipart => true }  do |f| -%>
+	<% form_for @user, :html => { :multipart => true }  do |f| -%>
 	    <%= render :partial => "form", :locals => { :f => f , :type => "new" } %>
-	  <% end -%>	
 	<% end %>
 </div>

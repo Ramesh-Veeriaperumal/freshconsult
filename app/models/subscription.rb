@@ -21,10 +21,10 @@ class Subscription < ActiveRecord::Base
   # This hash is used for validating the subscription when a plan
   # is changed.  It includes both the validation rules and the error
   # message for each limit to be checked.
-  Limits = {
-    Proc.new {|account, plan| !plan.user_limit || plan.user_limit >= Account::Limits['user_limit'].call(account) } => 
-      'User limit for new plan would be exceeded.  Please delete some users and try again.'
-  }
+#  Limits = {
+#    Proc.new {|account, plan| !plan.user_limit || plan.user_limit >= Account::Limits['user_limit'].call(account) } => 
+#      'User limit for new plan would be exceeded.  Please delete some users and try again.'
+#  }
   
   # Changes the subscription plan, and assigns various properties, 
   # such as limits, etc., to the subscription from the assigned 
@@ -45,7 +45,7 @@ class Subscription < ActiveRecord::Base
       self.state = 'active' if new_record?
     end
     
-    [:amount, :user_limit, :renewal_period].each do |f|
+    [:amount, :renewal_period].each do |f|
       self.send("#{f}=", plan.send(f))
     end
     
@@ -264,14 +264,14 @@ class Subscription < ActiveRecord::Base
       end
     end
     
-    def validate_on_update
-      return unless self.subscription_plan.updated?
-      Limits.each do |rule, message|
-        unless rule.call(self.account, self.subscription_plan)
-          errors.add_to_base(message)
-        end
-      end
-    end
+#    def validate_on_update
+#      return unless self.subscription_plan.updated?
+#      Limits.each do |rule, message|
+#        unless rule.call(self.account, self.subscription_plan)
+#          errors.add_to_base(message)
+#        end
+#      end
+#    end
     
     def gateway
       paypal? ? paypal : cc

@@ -231,7 +231,7 @@ class AccountsController < ApplicationController
       
       if @subscription.save
         flash[:notice] = t('plan_info_update')
-        SubscriptionNotifier.deliver_plan_changed(@subscription)
+        #SubscriptionNotifier.deliver_plan_changed(@subscription)
       else
         flash[:error] = "Error updating your plan: #{@subscription.errors.full_messages.to_sentence}"
       end

@@ -107,7 +107,7 @@ class Account < ActiveRecord::Base
   acts_as_paranoid
   
   Limits = {
-    'user_limit' => Proc.new {|a| a.users.count }
+    'agent_limit' => Proc.new {|a| a.agents.count }
   }
   
   Limits.each do |name, meth|

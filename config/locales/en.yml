@@ -517,7 +517,7 @@ en:
    
    current_plan:                    "Current Plan"
    change_plan:                     "Change plan"
-   current_plan_details:            "%{plan_name} Plan with %{user_limit} agents"
+   current_plan_details:            "%{plan_name} Plan with %{agent_limit} agents"
    amount_per_month:                "$%{amount} per month"
    billed_amount_per_month:         "You will be billed $%{amount} per month"
    next_charge_date:                "Next charge will happen on:"

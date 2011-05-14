@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110511125405) do
+ActiveRecord::Schema.define(:version => 20110514085002) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -624,7 +624,6 @@ ActiveRecord::Schema.define(:version => 20110511125405) do
     t.decimal  "amount",         :precision => 10, :scale => 2
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "user_limit"
     t.integer  "renewal_period",                                :default => 1
     t.decimal  "setup_amount",   :precision => 10, :scale => 2
     t.integer  "trial_period",                                  :default => 1
@@ -640,11 +639,11 @@ ActiveRecord::Schema.define(:version => 20110511125405) do
     t.string   "state",                                                                 :default => "trial"
     t.integer  "subscription_plan_id",      :limit => 8
     t.integer  "account_id",                :limit => 8
-    t.integer  "user_limit"
     t.integer  "renewal_period",                                                        :default => 1
     t.string   "billing_id"
     t.integer  "subscription_discount_id",  :limit => 8
     t.integer  "subscription_affiliate_id", :limit => 8
+    t.integer  "agent_limit"
   end
 
   add_index "subscriptions", ["account_id"], :name => "index_subscriptions_on_account_id"

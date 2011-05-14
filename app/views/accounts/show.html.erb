@@ -37,7 +37,7 @@
 			<div class="big-text">
 				<%= " #{ t('current_plan_details', 
 					 	:plan_name  => @subscription.subscription_plan.name,
-						:user_limit => @subscription.user_limit) } " %>
+						:agent_limit => @subscription.agent_limit) } " %>
 			</div> 
 
 		    <% if @subscription.amount > 0 %>
