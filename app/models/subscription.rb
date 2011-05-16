@@ -264,14 +264,13 @@ class Subscription < ActiveRecord::Base
       end
     end
     
-#    def validate_on_update
-#      return unless self.subscription_plan.updated?
-#      Limits.each do |rule, message|
-#        unless rule.call(self.account, self.subscription_plan)
-#          errors.add_to_base(message)
-#        end
-#      end
-#    end
+    def validate_on_update
+      #return unless self.agent_limit.updated?
+      
+      if(agent_limit < account.agents.count)
+        errors.add_to_base("You Freshdesk currently has #{account.agents.count} agents, you cannot subscripe to lesser number of agents. Please delete some agents and try again.")
+      end
+    end
     
     def gateway
       paypal? ? paypal : cc
