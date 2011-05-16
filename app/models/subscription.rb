@@ -6,8 +6,9 @@ class Subscription < ActiveRecord::Base
   belongs_to :affiliate, :class_name => 'SubscriptionAffiliate', :foreign_key => 'subscription_affiliate_id'
   
   before_create :set_renewal_at
-  before_update :apply_discount
+  before_update :cache_old_model, :apply_discount
   before_destroy :destroy_gateway_record
+  after_update :update_features
   
   attr_accessor :creditcard, :address
   attr_reader :response
@@ -264,12 +265,24 @@ class Subscription < ActiveRecord::Base
       end
     end
     
+    def cache_old_model
+      @old_subscription = Subscription.find id
+    end
+    
     def validate_on_update
       #return unless self.agent_limit.updated?
       
       if(agent_limit < account.agents.count)
         errors.add_to_base("You Freshdesk currently has #{account.agents.count} agents, you cannot subscripe to lesser number of agents. Please delete some agents and try again.")
       end
+    end
+    
+    def update_features
+      return if subscription_plan_id == @old_subscription.subscription_plan_id
+      
+      account.remove_features_of @old_subscription.subscription_plan.canon_name
+      account.reload
+      account.add_features_of subscription_plan.canon_name
     end
     
     def gateway

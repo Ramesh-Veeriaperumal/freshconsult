@@ -227,6 +227,14 @@ class Account < ActiveRecord::Base
     end
   end
   
+  def remove_features_of(s_plan)
+    p_features = PLANS_AND_FEATURES[s_plan]
+    unless p_features.nil?
+      p_features[:inherits].each { |p_n| remove_features_of(p_n) } unless p_features[:inherits].nil?
+      features.send(s_plan).destroy
+    end
+  end
+  
   protected
   
     def valid_domain?
