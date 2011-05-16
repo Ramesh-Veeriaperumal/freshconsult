@@ -230,8 +230,7 @@ class AccountsController < ApplicationController
       end
       
       if @subscription.save
-        flash[:notice] = t('plan_info_update')
-        #SubscriptionNotifier.deliver_plan_changed(@subscription)
+        SubscriptionNotifier.deliver_plan_changed(@subscription)
       else
         flash[:error] = @subscription.errors.full_messages.to_sentence
         load_plans
@@ -240,7 +239,8 @@ class AccountsController < ApplicationController
       
       if @subscription.state == 'trial'
         redirect_to :action => "billing"
-      else  
+      else
+        flash[:notice] = t('plan_info_update')
         redirect_to :action => "show"
       end 
     else
