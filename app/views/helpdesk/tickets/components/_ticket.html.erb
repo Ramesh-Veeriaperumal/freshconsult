@@ -1,29 +1,43 @@
-<% javascript_tag do %>
-
+<% javascript_tag do %> 
 	changeAggentList = function(group_id)
 	{
-		jQuery('#assigned_to').children("select").replaceWith("...");
+		jQuery('#assigned_to')
+			.addClass('loading-right')
+			.children("select")
+			.replaceWith("...");
 		
 		jQuery.ajax({type: 'POST',
 					 url: '/helpdesk/tickets/get_agents/'+group_id,
 					 contentType: 'application/text',
-	      			 success: function(data){
-					 			jQuery('#assigned_to')
+					 success: function(data){
+								jQuery('#assigned_to')
 									.html(data)
 									.hide()
+									.removeClass('loading-right')
 									.show("highlight", {}, 500);
-						  	  }
+							  }
 					});
 	}
+	
+	function dueDateSelected(date){
+		new Date(date);
+	}
+	
 <% end %>
+
 <div class="rtDetails" id="TicketProperties">
+	<h3 class="title"><%=t('ticket_due_by_time')%></h3>
+	<ul class="cnt" id="due-by-time-parent">
+	   <li>
+			<div id="edit-due-by-time">
+				 <span class="edit-item"></span>
+				 <span><%= ticket.due_by.strftime("%B %e %Y at %I:%M %p") %></span>
+			</div> 
+	   </li> 
+	</ul>
 	<h3 class="title"><%=t('ticket.properties')%></h3>	
 	<% form_for ticket, :html => { :id => 'custom_ticket_form' } do |f| %>
-       <ul class="cnt">
-           <li>
-              <label><%=t('ticket.due_by_time')%></label>
-				<%= ticket.due_by.strftime("%B %e %Y at %I:%M %p") %>
-	       </li>
+	   <ul class="cnt">
 		   <!--form values starts here-->
 		   <%= render :partial=> "custom_form_partial" ,:locals => { :f => f } %>
 			<!--form values ends here-->
@@ -34,3 +48,120 @@
 	   </ul>
 	<% end %> 
 </div> 
+
+<% content_for :dialogs do -%>
+	<div id="due-date-dialog-container" style="display:none;">
+		<div class="transparent-overlay" id="due-date-overlay"></div>	
+		<div class="due-date-dialog" id="due-date-dialog" style="display:none;"> 
+			<span class="right_pointer"></span>
+			  <label>When's it Due?</label>
+			  <select name="duedate_options" id="due-date-options">
+				<option value="today">Today</option>
+				<option value="tomorrow">Tomorrow</option>		
+				<option value="thisweek">This week</option>
+				<option value="nextweek">Next week</option>			
+				<option value="specific">Specific date/time...</option>
+			  </select> 
+			  <span id="due-date-button">or <a href="javascript:void(0)" id="set-date-time">Set Date/time</a> </span>
+			  <div class="due-date-calender" id="due-date-calender" style="display:none;">
+				<div id="due-date-picker"></div>
+				<div class="due-date-info">
+					<p>
+						Due:
+						<span id="due-date-value">
+							<%= ticket.due_by.strftime("%a %B %e %Y") %>
+						</span>
+					</p>
+					<p>
+						at	
+						<%= select_tag "hour", options_for_select(%w{ 1 2 3 4 5 6 7 8 9 10 11 12 }, ticket.due_by.strftime("%l").strip) %> :
+						<%= select_tag "minutes", options_for_select(%w{ 00 15 30 45 }, ticket.due_by.strftime("%M").strip) %>
+						<%= select_tag "hrs", options_for_select(%w{ AM PM }, ticket.due_by.strftime("%p").strip) %>
+					</p>
+				</div>
+			  </div>
+			  <div class="calender-buttons">
+				<button id="cancel-due-date">Cancel</button>
+				<button id="save-due-date">Save</button>
+			  </div>
+	   </div>
+	</div>
+	<% javascript_tag do %>
+		(function($){
+			$( "#due-date-picker" )
+				.datepicker({
+					showOtherMonths: true,
+					selectOtherMonths: true,
+					changeMonth: true,
+					changeYear: true,
+					onSelect: function(dateText, inst) {
+						selectedDate = new Date(inst.selectedYear, inst.selectedMonth, inst.selectedDay );
+						$("#due-date-value").html(selectedDate.toDateString());
+					}
+				});
+				
+			$("#due-date-options")
+				.change(function(){
+					if(this.value == 'specific')
+						toggleDateCalender(true);
+					else
+						toggleDateCalender(false);
+				});
+
+			$("#set-date-time")
+				.click(function(){
+					toggleDateCalender(true);
+					$("#due-date-options").val("specific");
+				});
+				
+			function toggleDateCalender(showOrHide){
+				if(showOrHide){
+					$("#due-date-button").hide();
+					$("#due-date-calender").slideDown(300);
+				}	
+				else{
+					$("#due-date-button").show();
+					$("#due-date-calender").slideUp(300);
+				}
+			}
+			
+			$("#due-date-dialog")
+				.position({
+					of: $( "#due-by-time-parent" ),
+					my: "right top",
+					at: "left top"
+				});
+			
+			$("#edit-due-by-time").click(function(){
+				showHideDialog(true);
+			});
+			
+			$("#cancel-due-date").click(function(){ 
+				showHideDialog(false);
+			});
+			
+			$("#save-due-date").click(function(){ 
+				showHideDialog(false);
+			});
+
+			$("#due-date-overlay")	
+				.click(function(){
+					showHideDialog(false);
+			});
+			
+			function showHideDialog(showHide){
+				if(showHide){
+					$("#due-date-dialog-container").show();
+					$("#due-date-dialog").fadeIn();
+					$( "#edit-due-by-time" ).addClass("highlight-text");					
+				}else{
+					$("#due-date-dialog").fadeOut(300, function(){
+														$("#due-date-dialog-container").hide();
+													   });
+					$( "#edit-due-by-time" ).removeClass("highlight-text");					
+				}
+			}
+			
+		})(jQuery);
+	<% end %> 
+<%- end %>

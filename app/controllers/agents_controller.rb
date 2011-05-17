@@ -105,7 +105,7 @@ class AgentsController < Admin::AdminController
        @restorable = true
        flash[:notice] = render_to_string(:partial => '/agents/flash/delete_notice')      
      else
-           flash[:notice] = "Agent could not be able to delete"           
+           flash[:notice] = "Agent could not be deleted"
      end
     redirect_to :back
 end
@@ -115,7 +115,7 @@ end
    if @agent.user.update_attribute(:deleted, false)   
     flash[:notice] = render_to_string(:partial => '/agents/flash/restore_notice')
    else
-    flash[:notice] = "Agent could not be able to restore"
+    flash[:notice] = "Agent could not be restored"
    end 
    redirect_to :back  
  end

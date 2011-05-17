@@ -654,7 +654,7 @@ span.sort_handle{
 .button-container{
 	@include clearfix;
 	text-align:right;
-	padding:1em 0em 1em 0;
+	padding:1em 0em 1em 0; 
 }
 
 .ui-draggable-dragging{
@@ -863,3 +863,79 @@ fieldset.nestedChoices{
 		font-family: "courier";
 	}
 }
+.small_select{
+	font-size:11px;
+	width:110px;
+}
+
+.due-date-dialog{
+	position:absolute;
+	left:0px;
+	top:0px;
+	margin-left:-20px;
+	margin-top:-6px;
+	z-index:99999;
+	width:250px;
+ 	@include shadows(0px, 2px, 4px, rgba(0, 0, 0, 0.5));
+    @include vertical-gradient(#f5f5f5, #e9e9e9);
+    @include corners(4px);
+	padding:8px 10px;
+    border:#e0e0e0 1px solid;
+	.due-date-calender{ 
+		@include vertical-gradient(#f5f5f5, #e9e9e9);
+	  	padding:4px 10px;
+	  	margin:4px 0px 8px 0px;	
+	  	@include corners(4px);
+	  	border:#e0e0e0 1px solid;
+	}
+	.right_pointer{
+	 	background: sprite($symbol, calender-pointer-right) no-repeat;
+		position:absolute;
+		width:10px; height:18px;
+		right:-10px;
+		top:10px;
+	}
+	.ui-datepicker-inline{ margin:0px 0px 8px 0px;}
+	.ui-corner-all{	@include corners(0px); }
+	.ui-widget-content, .ui-widget-header{ background:none; border:0px; }
+	.ui-datepicker .ui-datepicker-title select, .due-date-calender select, #due-date-options{ font-size: 11px; width:auto; margin-right:4px; }
+	.ui-widget-content{ font-size: 13px; }
+	.ui-datepicker-prev, .ui-datepicker-next{ cursor:pointer; }
+	.ui-datepicker-prev:hover, .ui-datepicker-next:hover{ background:#f4f4f4; }	
+	.ui-datepicker-prev .ui-icon{ background: sprite($symbol, calender-left) no-repeat; }
+	.ui-datepicker-next .ui-icon{ background: sprite($symbol, calender-right) no-repeat; } 
+	.ui-datepicker th { font-weight: normal; }
+	.ui-datepicker-inline th, .ui-datepicker-inline td a{ text-align:center; color:#333333;  }
+	.ui-datepicker-inline td .ui-state-default{ border:0px; background:none; }
+	.ui-datepicker-inline td .ui-state-default:hover{ background-color:darken(#dde8ee, 5%); }	
+	.ui-datepicker-inline td .ui-priority-secondary{ color:#888888; }
+	.ui-datepicker-inline td .ui-state-highlight{ background:#FFFFCC; color:#333333;}
+	.ui-datepicker-inline td .ui-state-active, .ui-datepicker-inline td .ui-state-active:hover{ background:#3F3F3F; color:#ffffff; }
+	.due-date-info p{ 
+		text-align:center; 
+		font-size:13px; 
+		margin:0px; 
+		padding:6px 0px;
+	}
+	
+	.ui-widget-header{
+		font-size:14px;
+  		color:black;
+	}
+	.calender-buttons{
+		text-align:right;
+		padding:12px 5px 6px 5px;
+		margin-top:10px;
+		border-top:1px solid #e0e0e0;
+		button{
+			background:none;
+			border:0px;
+			color:#333333;
+			cursor:pointer;
+			font-size:12px;
+		}
+	} 
+}
+
+.transparent-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index:99998; }
+.transparent-overlay { background:none; }

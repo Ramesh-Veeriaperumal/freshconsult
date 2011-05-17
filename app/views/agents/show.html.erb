@@ -13,7 +13,8 @@ function setUserRole()
 }
 </script>
 
-<% content_for :sidebar do -%><%- end %> 
+<% content_for :sidebar do -%> 
+<%- end %> 
 <div class="contact-box clearfix">
 		<div class="action_buttons">
 			<%= link_to t('edit_agent'), edit_agent_path(@agent), :class => "last" %>
@@ -24,7 +25,7 @@ function setUserRole()
 		   <b><%= h @user.job_title %></b>
 		<% end %> 
 		<div class="user-info">
-			<h4 class="title">Contact information</h4>
+			<%= content_tag(:h4, t('agent_info_title'), :class => "title") %>
 			<%= content_tag (:div, "#{content_tag(:span, t('user.email'))}  #{h(@user.email)}") unless @user.email.blank? %> 
 			<%= content_tag (:div, "#{content_tag(:span, t('user.phone_no'))}  #{h(@user.phone)}") unless @user.phone.blank? %>
 			<%= content_tag (:div, "#{content_tag(:span, t('user.mobile'))}  #{h(@user.mobile)}") unless @user.mobile.blank? %> 
@@ -32,9 +33,16 @@ function setUserRole()
 		</div>
 		<% if @user.deleted || !@user.active? %>
 		<div class="info-highlight">
-			<%= content_tag(:div, "#{ t('contacts.deleted_message') } #{ link_to( t('contacts.restore'), { :action => :restore, :id => @user.id }, :method => :put ) }") if @user.deleted %>
-			<%= content_tag(:div, "#{ t('contacts.emailnotverified') }   #{ link_to( 'Send activation email', send_invite_activation_path(@user), :method => :put ) } " ) unless @user.active? %>
+			<%= content_tag(:div, "#{ t('agent_deleted_message') } #{ link_to( t('contacts.restore'), { :action => :restore, :id => @agent.id }, :method => :put ) }") if @user.deleted %>
+			<%= content_tag(:div, "#{ t('agent_emailnotverified') } #{ link_to( 'Send activation email', send_invite_activation_path(@user), :method => :put ) } " ) unless @user.active? %>
 		</div>
 		<% end %>
 </div> 
- 
+<div class="contact-box-additional">
+	<%= content_tag(:h3, t('agent_assigned_title'), :class => "title") %>
+	<% if @recent_unresolved_tickets.size.eql?(0) %>
+		<%= "#{t('agent_assigned_info')}" %>
+	<% else %>  
+		<%= render :partial => "tickets", :object => @recent_unresolved_tickets %> 
+	<% end %>
+</div>	 

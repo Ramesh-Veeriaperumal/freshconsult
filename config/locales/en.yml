@@ -139,7 +139,7 @@ en:
        info6: "Add specific notes regarding this contact"
        deleted_message:     "This is a deleted contact"
        restore:             "Restore"
-       emailnotverified:    "Email has not been verified for this user!"
+       emailnotverified:    "Email has not been verified for this contact!"
        form_placeholder:
            description:     "Add specific notes regarding this contact example - address, LA Lakers fan etc."
       
@@ -545,3 +545,13 @@ en:
    billing_info_update:             "Your billing information has been updated."
    plan_info_update:                "Your plan has been changed."
    change_plan_info:                "You can change your plan level at any time.  The position limits and other features of the new plan that you select will be effective as soon as you make the change, but your bill amount will not change until your next bill date.  Your next bill date is %{date}."
+
+#May 12th 2011   
+
+   agent_deleted_message:           "This is a deleted agent"
+   agent_emailnotverified:          "Email has not been verified for this agent!"
+   agent_assigned_info:             "No open and pending tickets for this agent"
+   agent_assigned_title:            "Recently assigned tickets (Open & Pending)"
+   agent_info_title:                "Agent information"
+   
+   ticket_due_by_time:              "Due by date & time"
