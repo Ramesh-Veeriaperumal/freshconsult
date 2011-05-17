@@ -12,7 +12,7 @@
 	}); 
 			
 	function init(){		
-		var fieldFeed = JSON.parse(document.getElementById('field_values').value, 
+		var fieldFeed = JSON.parse(custom_field_values, 
 							function (key, value) {
 							    var type;
 								if(key == 'action'){
