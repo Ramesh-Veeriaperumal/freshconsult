@@ -92,7 +92,7 @@ module Rack #:nodoc:
     # The server_port is set as 80 forcefully to work in cluster - shihab
     def call(env)
       if RAILS_ENV == "production" or RAILS_ENV == "staging"
-        env["SERVER_PORT"] = 80 
+        env["SERVER_PORT"] = 80 if env["rack.url_scheme"].eql?("http")
       end
       req = Rack::Request.new(env)
       if req.params["openid.mode"]
