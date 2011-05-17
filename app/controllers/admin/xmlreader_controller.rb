@@ -3,16 +3,14 @@ class Admin::XmlreaderController < ApplicationController
   before_filter { |c| c.requires_permission :manage_tickets }
     require 'rexml/document'
     
-    require 'rexml/xpath'
-    
+    require 'rexml/xpath'    
     include Import::CustomField
     include Import::Forums
   
   def xmlreader
   end
 
-  def importxml
-   
+  def importxml   
   end
   
   def zendesk_import
@@ -50,11 +48,7 @@ class Admin::XmlreaderController < ApplicationController
     end  
    
    logger.debug "zendes import is completed with customers: #{@customers_stat.inspect} \n and users : #{@users_stat.inspect} and tickets :: #{@tickets_stat.inspect}"
-   
-   #delete the directory...
-   
-   logger.debug "The base_dir for delete is :: #{base_dir}"
-   
+  
    del_file = FileUtils.rm_rf base_dir
   
       
@@ -126,7 +120,7 @@ def handle_group_import base_dir
      end
      params = {:name =>grp_name, :import_id =>grp_id}
      @group = current_account.groups.find_by_import_id(grp_id.to_i())
-     
+     @group = current_account.groups.find_by_name(grp_name) if @group.blank?
      unless @group.blank?
         if @group.update_attributes(params)
              updated+=1
@@ -409,23 +403,19 @@ def handle_ticket_import base_dir
       req.elements.each("attachments/attachment") do |attach|         
         attachemnt_url = nil        
         attach.elements.each("url") {|attach_url|   attachemnt_url = attach_url.text  } 
-        @request.attachments.create(:content => open(attachemnt_url), :description => "", :account_id => @request.account_id)
+        @request.attachments.create(:content =>  RemoteFile.new(attachemnt_url), :description => "", :account_id => @request.account_id)
        
       end
       
       ####handling additional fields
 
-      ff_def_id = FlexifieldDef.find_by_account_id(@request.account_id).id  
-      
-      custom_field = Hash.new
-      
-      req.elements.each("ticket-field-entries/ticket-field-entry") do |add_field|  
-        
+      ff_def_id = FlexifieldDef.find_by_account_id(@request.account_id).id        
+      custom_field = Hash.new      
+      req.elements.each("ticket-field-entries/ticket-field-entry") do |add_field|          
        cust_import_id = nil
        field_val = nil
        field_type = nil
-       lable =nil
-       
+       lable =nil       
        add_field.elements.each("ticket-field-id") do |ticket_field|
           cust_import_id = ticket_field.text          
        end      
@@ -445,8 +435,7 @@ def handle_ticket_import base_dir
     end
     
     ##saving custom_field
-
-      
+  
     @request.ff_def = ff_def_id       
     unless custom_field.nil?          
       @request.assign_ff_values custom_field    
@@ -494,14 +483,13 @@ def handle_ticket_import base_dir
         
         attachemnt_url = nil        
         attach.elements.each("url") {|attach_url|   attachemnt_url = attach_url.text  } 
-        @note.attachments.create(:content => open(attachemnt_url), :description => "", :account_id => @note.account_id)
+        @note.attachments.create(:content =>  RemoteFile.new(attachemnt_url), :description => "", :account_id => @note.account_id)
        
         end
         
       end    
      
-   end
-   
+   end   
    ticket_count["created"]=created_count
    ticket_count["updated"]= updated_count
    return ticket_count
@@ -524,11 +512,8 @@ def handle_account_import base_dir
   
   doc.elements.each("account/reply-address") { |address| reply_address =  address.text }  
   doc.elements.each("account/name") { |name| acc_name = name.text }
-  doc.elements.each("account/time-zone") { |timezone| time_zone = timezone.text }
-  
-  logger.debug "account import ::  #{reply_address} and acc_name :: #{acc_name} and time_zone :: #{time_zone}"
-  
-  
+  doc.elements.each("account/time-zone") { |timezone| time_zone = timezone.text }  
+  logger.debug "account import ::  #{reply_address} and acc_name :: #{acc_name} and time_zone :: #{time_zone}"  
 end
 
 def handle_forums_import base_dir,make_solution
@@ -562,8 +547,7 @@ def get_file_from_zendesk  dest_path
   url = 'http://uknowmewell12.zendesk.com/ticket_fields.xml'
   file_path = File.join(dest_path , "ticket_fields.xml") 
   
-  import_file_from_zendesk url,file_path
-  
+  import_file_from_zendesk url,file_path  
   
   url = 'http://uknowmewell12.zendesk.com/categories.xml'
   file_path = File.join(dest_path , "categories.xml") 
