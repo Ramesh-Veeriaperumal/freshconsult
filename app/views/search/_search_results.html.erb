@@ -5,6 +5,7 @@
 				<strong class="title">Tickets</strong>
 				<% @searched_tickets.each do |ticket| %>
 					<div class="group">
+						<span class="icon"></span>
 						<%= link_to(Helpdesk::Ticket.search_display(ticket), ticket, :class => "big") %>
 						<span class="light"><%= "Requested by, <b>#{ticket.requester}</b>" %> </span>
 						<p><%= ticket.excerpts.description %></p>
@@ -38,7 +39,10 @@
 			<li class="company_icon"> 
 				<strong class="title">Companies</strong>
 				<% @searched_companies.each do |company| %>
-					<div class="group"><%= link_to(company.name, company, :class => "big") %></div>
+					<div class="group">
+						<span class="icon"></span>
+						<%= link_to(company.name, company, :class => "big") %>
+					</div>
 				<% end %>
 			</li>
 		<% end %>
@@ -48,6 +52,7 @@
 				<% if @skip_title.nil? %><strong class="title">Solutions</strong><% end %>
 				<% @searched_articles.each do |article| %>
 					<div class="group">
+						<span class="icon"></span>
 						<%= link_to(article.excerpts.title, article, :class => "big") %>
 						<p><%= article.excerpts.desc_un_html  %></p>
 					</div>
@@ -60,6 +65,7 @@
 				<% if @skip_title.nil? %><strong class="title">Forums</strong><% end %>
 				<% @searched_topics.each do |topic| %>
 					<div class="group">
+						<span class="icon"></span>
 						<%= link_to(topic.excerpts.title, category_forum_topic_path(topic.forum.forum_category, topic.forum, topic), :class => "big") %>
 						<p><%= truncate(topic.posts.first.body.gsub(/<\/?[^>]*>/, ""), 300)  %></p>
 					</div>

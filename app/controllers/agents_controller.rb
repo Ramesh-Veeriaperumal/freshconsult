@@ -1,10 +1,9 @@
 class AgentsController < Admin::AdminController
   
   before_filter :load_object, :only => [:update,:destroy,:restore,:edit]
-  
   before_filter :check_demo_site, :only => [:destroy,:update,:create]
-  
   before_filter :check_user_permission, :only => :destroy
+  before_filter :check_agent_limit, :only => :create
   
   def load_object
     @agent = scoper.find(params[:id])
@@ -106,7 +105,7 @@ class AgentsController < Admin::AdminController
        @restorable = true
        flash[:notice] = render_to_string(:partial => '/agents/flash/delete_notice')      
      else
-           flash[:notice] = "Agent could not be able to delete"           
+           flash[:notice] = "Agent could not be deleted"
      end
     redirect_to :back
 end
@@ -116,7 +115,7 @@ end
    if @agent.user.update_attribute(:deleted, false)   
     flash[:notice] = render_to_string(:partial => '/agents/flash/restore_notice')
    else
-    flash[:notice] = "Agent could not be able to restore"
+    flash[:notice] = "Agent could not be restored"
    end 
    redirect_to :back  
  end
@@ -141,4 +140,7 @@ end
      end    
   end
 
+  def check_agent_limit
+    redirect_to :back if current_account.reached_agent_limit?
+  end
 end

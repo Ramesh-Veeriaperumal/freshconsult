@@ -107,7 +107,7 @@ class Account < ActiveRecord::Base
   acts_as_paranoid
   
   Limits = {
-    'user_limit' => Proc.new {|a| a.users.count }
+    'agent_limit' => Proc.new {|a| a.agents.count }
   }
   
   Limits.each do |name, meth|
@@ -224,6 +224,14 @@ class Account < ActiveRecord::Base
 
       features.send(s_plan).create
       p_features[:features].each { |f_n| features.send(f_n).create } unless p_features[:features].nil?
+    end
+  end
+  
+  def remove_features_of(s_plan)
+    p_features = PLANS_AND_FEATURES[s_plan]
+    unless p_features.nil?
+      p_features[:inherits].each { |p_n| remove_features_of(p_n) } unless p_features[:inherits].nil?
+      features.send(s_plan).destroy
     end
   end
   

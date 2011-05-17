@@ -11,9 +11,9 @@
 
 	<h3 class="title"><%= @page_title = t('change_plan') %></h3> 
 	<strong>
-		<%= content_tag (:p, "#{ t('current_plan') }: #{ t('current_plan_details', :plan_name => @subscription.subscription_plan.name, :user_limit => @subscription.user_limit) } @ #{t('amount_per_month', :amount => @subscription.amount.to_i)}", :class => "info-text") %>
+		<%= content_tag(:p, "#{ t('current_plan') }: #{ t('current_plan_details', :plan_name => @subscription.subscription_plan.name, :agent_limit => @subscription.agent_limit) } @ #{t('amount_per_month', :amount => @subscription.amount.to_i)}", :class => "info-text") %>
 	</strong>
-	<%= content_tag (:p, t('change_plan_info', :date => @subscription.next_renewal_at.to_s(:long_day)), :class => "info-text") %>
+	<%= content_tag(:p, t('change_plan_info', :date => @subscription.next_renewal_at.to_s(:long_day)), :class => "info-text") %>
 	<span class="seperator"></span>
 	<%= render :partial => "select_plans", :locals => { :plans => @plans } %>
 

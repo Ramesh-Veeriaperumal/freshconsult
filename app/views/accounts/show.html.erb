@@ -32,22 +32,22 @@
 		<%= content_tag(:label, t('current_plan'), :class => "caption") %>	
   		  <div class="fields">
 			<div class="action_buttons">
-				<%= link_to ( t('change_plan'), plan_account_url ,:class => "last" ) %>
+				<%= link_to( t('change_plan'), plan_account_url ,:class => "last" ) %>
 			</div> 
 			<div class="big-text">
 				<%= " #{ t('current_plan_details', 
 					 	:plan_name  => @subscription.subscription_plan.name,
-						:user_limit => @subscription.user_limit) } " %>
+						:agent_limit => @subscription.agent_limit) } " %>
 			</div> 
 
 		    <% if @subscription.amount > 0 %>
-			  <%= content_tag (:label, t('next_charge_date'), :class => "caption" ) %>
+			  <%= content_tag(:label, t('next_charge_date'), :class => "caption" ) %>
 			  <div class="fields">
-		      	<%= content_tag (:label, @subscription.next_renewal_at.to_s(:long_day) ) %>
+		      	<%= content_tag(:label, @subscription.next_renewal_at.to_s(:long_day) ) %>
 			  </div>
-			  <%= content_tag (:label, t('next_charge_amount'), :class => "caption" ) %>
+			  <%= content_tag(:label, t('next_charge_amount'), :class => "caption" ) %>
 			  <div class="fields">
-			  	<%= content_tag (:label, (number_to_currency @subscription.amount) ) %>
+			  	<%= content_tag(:label, (number_to_currency @subscription.amount) ) %>
 	 		  </div>
 		  <% end %>
 		 </div>
@@ -56,7 +56,7 @@
 	  <%= content_tag(:label, t('payment_info'), :class => "caption") %>
 	  <div class="fields"> 
 		 <div class="action_buttons">
-	 		<%= link_to ( "#{t('change')} &rsaquo;", billing_account_url ,:class => "last" ) %>
+	 		<%= link_to( "#{t('change')} &rsaquo;", billing_account_url ,:class => "last" ) %>
 	 	 </div>
 		 <label><%= @subscription.paypal? ? 'PayPal' : "#{@subscription.card_number} / #{@subscription.card_expiration}" %></label>
 	  </div>

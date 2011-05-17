@@ -6,8 +6,9 @@ class Subscription < ActiveRecord::Base
   belongs_to :affiliate, :class_name => 'SubscriptionAffiliate', :foreign_key => 'subscription_affiliate_id'
   
   before_create :set_renewal_at
-  before_update :apply_discount
+  before_update :cache_old_model, :apply_discount
   before_destroy :destroy_gateway_record
+  after_update :update_features
   
   attr_accessor :creditcard, :address
   attr_reader :response
@@ -21,10 +22,10 @@ class Subscription < ActiveRecord::Base
   # This hash is used for validating the subscription when a plan
   # is changed.  It includes both the validation rules and the error
   # message for each limit to be checked.
-  Limits = {
-    Proc.new {|account, plan| !plan.user_limit || plan.user_limit >= Account::Limits['user_limit'].call(account) } => 
-      'User limit for new plan would be exceeded.  Please delete some users and try again.'
-  }
+#  Limits = {
+#    Proc.new {|account, plan| !plan.user_limit || plan.user_limit >= Account::Limits['user_limit'].call(account) } => 
+#      'User limit for new plan would be exceeded.  Please delete some users and try again.'
+#  }
   
   # Changes the subscription plan, and assigns various properties, 
   # such as limits, etc., to the subscription from the assigned 
@@ -45,7 +46,7 @@ class Subscription < ActiveRecord::Base
       self.state = 'active' if new_record?
     end
     
-    [:amount, :user_limit, :renewal_period].each do |f|
+    [:amount, :renewal_period].each do |f|
       self.send("#{f}=", plan.send(f))
     end
     
@@ -264,13 +265,24 @@ class Subscription < ActiveRecord::Base
       end
     end
     
+    def cache_old_model
+      @old_subscription = Subscription.find id
+    end
+    
     def validate_on_update
-      return unless self.subscription_plan.updated?
-      Limits.each do |rule, message|
-        unless rule.call(self.account, self.subscription_plan)
-          errors.add_to_base(message)
-        end
+      #return unless self.agent_limit.updated?
+      
+      if(agent_limit < account.agents.count)
+        errors.add_to_base("You Freshdesk currently has #{account.agents.count} agents, you cannot subscripe to lesser number of agents. Please delete some agents and try again.")
       end
+    end
+    
+    def update_features
+      return if subscription_plan_id == @old_subscription.subscription_plan_id
+      
+      account.remove_features_of @old_subscription.subscription_plan.canon_name
+      account.reload
+      account.add_features_of subscription_plan.canon_name
     end
     
     def gateway

@@ -5,8 +5,8 @@ class ActivationsController < ApplicationController
   end
   
   def send_invite
-    contact = current_account.contacts.find params[:id]
-    contact.deliver_contact_activation if contact
+    user = current_account.all_users.find params[:id]
+    user.deliver_contact_activation if user
     
     flash[:notice] = "Activation email has been sent!"
     redirect_to(:back)

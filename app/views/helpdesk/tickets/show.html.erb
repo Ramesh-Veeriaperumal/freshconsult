@@ -53,32 +53,22 @@
 			//link.addClassName('active');
 			//link.up('li').siblings().each(function(l){ l.removeClassName('active'); });
 		}
-	<% end %>
-<% end %>
+		
+		jQuery(document).ready(function(){
+			var activeCnt = jQuery("#TicketProperties"); 
+			jQuery(".rtPanel a").bind("click", function(ev){
+				activeCnt.hide();
+				//activeCnt = jQuery("#"+this.getAttribute("cntid")).show("slide", { direction: "left" }, 300);
+				activeCnt = jQuery("#"+this.getAttribute("cntid")).show();
 
-<% javascript_tag do %>
+				jQuery(this).parent().find(".active").removeClass("active");
+				jQuery(this).addClass("active");
+			}); 
 
-	jQuery(document).ready(function(){
-		var activeCnt = jQuery("#TicketProperties"); 
-		jQuery(".rtPanel a").bind("click", function(ev){
-			activeCnt.hide();
-			//activeCnt = jQuery("#"+this.getAttribute("cntid")).show("slide", { direction: "left" }, 300);
-			activeCnt = jQuery("#"+this.getAttribute("cntid")).show();
-			
-			jQuery(this).parent().find(".active").removeClass("active");
-			jQuery(this).addClass("active");
+			jQuery('#custom_ticket_form').validate(); 
 		});
-		
-		<% if @ticket.notes.visible.exclude_source('meta').newest_first.blank? then %>
-		//	jQuery("#ReplyButton").trigger('click');
-		<% end %>
-		
-		jQuery('#custom_ticket_form').validate();
-		
-	});
-	
-<% end %>
- 
+	<% end %>
+<% end %> 
 
 <% content_for :sidebar do %> 
 <div class="rtCnt sidepanel ticket-panel">
