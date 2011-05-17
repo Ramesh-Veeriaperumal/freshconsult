@@ -3,7 +3,9 @@
 </style>
 <%= javascript_include_tag "_form_customizer.js" %>
 <%= content_tag(:h3, t("ticketfields.title"), :class => "title") %> 
-<% json_data = @ticket_fields.json_data %>
+<% javascript_tag do %>
+	custom_field_values = <%= @ticket_fields.json_data.to_json %>
+<% end %>
 <% form_tag :action=> :update, :controller => 'ticket_fields', :method => :post do |f| %>
     <div class="admin_form">
         <ul id="custom_fields" class="ui-custom-fields"> 
@@ -27,7 +29,7 @@
 		<span class="seperator"></span> 
 		<div class="custom_form_outer">
 			<%= content_tag(:h4, t("ticketfields.customize_form"), :class => "title") %>
-			<input type="hidden" name="jsonData" id="field_values" value='<%=json_data%>' />
+			<input type="hidden" name="jsonData" id="field_values" value="" />
 			<div class="ui-custom-form">
 	        	<ul id="custom_form" class="ui-form"></ul>
 			</div>
