@@ -735,6 +735,16 @@ body h5 {
   font-size: 13px;
   padding-right: 20px;
   line-height: 1.7em;
+  white-space: pre-wrap;
+  /* css-3 */
+  white-space: -moz-pre-wrap;
+  /* Mozilla, since 1999 */
+  white-space: -pre-wrap;
+  /* Opera 4-6 */
+  white-space: -o-pre-wrap;
+  /* Opera 7 */
+  word-wrap: break-word;
+  /* Internet Explorer 5.5+ */
 }
 .request_details div.description .min_height {
   min-height: 100px;
@@ -997,9 +1007,8 @@ body h5 {
 }
 .rtCnt .rtDetails .cnt {
   list-style: none;
-  margin: 0px;
-  padding: 0px;
-  padding: 8px 10px;
+  margin-top: -6px;
+  padding: 0px 10px 8px 10px;
 }
 .rtCnt .rtDetails .cnt li {
   list-style-image: none;
@@ -1018,6 +1027,14 @@ body h5 {
 }
 .rtCnt .rtDetails .cnt li select {
   font-size: 11px;
+}
+.rtCnt .rtDetails .cnt li span.edit-item {
+  background: url('/images/icons-1fde8ad171.png') 0 -50px no-repeat;
+  float: right;
+  width: 16px;
+  height: 16px;
+  margin-top: -2px;
+  cursor: pointer;
 }
 .rtCnt .rtDetails .cnt li.button-container {
   border-bottom: 0px;
@@ -2500,15 +2517,6 @@ h4.border_title {
   font-size: 12px;
 }
 
-.community_forums {
-  background-image: url("../images/icons/comments_32.png");
-  background-repeat: no-repeat;
-  background-position: 6px 6px;
-  padding: 10px 16px 4px 44px;
-  margin-right: 10px;
-  margin-top: 8px;
-}
-
 .tr_wrap {
   position: fixed;
   right: 0px;
@@ -3003,25 +3011,32 @@ a.page_title:active {
 .results {
   padding-bottom: 8px;
 }
-.results .ticket_icon a {
-  background-image: url("../images/icon_small/page_white.png");
+.results .ticket_icon span.icon {
+  background: url('/images/icons-1fde8ad171.png') 0 -98px no-repeat;
 }
-.results .contact_icon a {
-  background-image: url("../images/icon_small/user.png");
+.results .contact_icon span.icon {
+  background: url('/images/icons-1fde8ad171.png') 0 -130px no-repeat;
 }
-.results .company_icon a {
-  background-image: url("../images/icon_small/building.png");
+.results .company_icon span.icon {
+  background: url('/images/icons-1fde8ad171.png') 0 -18px no-repeat;
 }
-.results .solution_icon a {
-  background-image: url("../images/icon_small/solutions.png");
+.results .solution_icon span.icon {
+  background: url('/images/icons-1fde8ad171.png') 0 -114px no-repeat;
 }
-.results .forum_icon a {
-  background-image: url("../images/icon_small/comments.png");
+.results .forum_icon span.icon {
+  background: url('/images/icons-1fde8ad171.png') 0 -34px no-repeat;
 }
 .results li {
   list-style: none;
   position: relative;
   padding: 6px 0px 8px 0px;
+}
+.results li span.icon {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  margin-left: 4px;
+  margin-top: 5px;
 }
 .results li a {
   display: block;
@@ -3122,6 +3137,10 @@ a.page_title:active {
 }
 .results li div.group span.light {
   color: #888888;
+}
+.results li div.group span.icon {
+  padding: 0px;
+  margin-left: -20px;
 }
 
 .big_results {
@@ -3366,22 +3385,29 @@ a.page_title:active {
 }
 .request-list div.item a.item-title .bulb, .request-list div.item a.item-title .wand {
   position: absolute;
+}
+.request-list div.item a.item-title .bulb {
+  background: url('/images/icons-1fde8ad171.png') 0 -82px no-repeat;
   width: 16px;
   height: 16px;
   left: 6px;
   top: 10px;
-  background-postion: left;
-  background-repeat: no-repeat;
-}
-.request-list div.item a.item-title .bulb {
-  background-image: url("../images/icon_small/lightbulb-grey.gif");
 }
 .request-list div.item a.item-title .wand {
-  background-image: url("../images/icon_small/wand-grey.png");
+  background: url('/images/icons-1fde8ad171.png') 0 -168px no-repeat;
   width: 22px;
   height: 22px;
   left: 2px;
   top: 8px;
+}
+.request-list div.item .private-icon {
+  display: none;
+  background: url('/images/symbols-50bc58c09c.png') 0 -114px no-repeat;
+  width: 16px;
+  height: 16px;
+  position: relative;
+  left: 5px;
+  float: right;
 }
 .request-list div.item a.item-title:hover {
   background-color: #666666;
@@ -3391,15 +3417,13 @@ a.page_title:active {
   border-right-color: #ffffff;
 }
 .request-list div.item a.item-title:hover .bulb {
-  background-image: url("../images/icon_small/lightbulb.png");
+  background: url('/images/icons-1fde8ad171.png') 0 -66px no-repeat;
 }
 .request-list div.item a.item-title:hover .wand {
-  background-image: url("../images/icon_small/wand.png");
+  background: url('/images/icons-1fde8ad171.png') 0 -146px no-repeat;
 }
-.request-list div.item a.private {
-  background-image: url("../images/private_lock_grey.gif");
-  background-position: right 9px;
-  background-repeat: no-repeat;
+.request-list div.item a.private .private-icon {
+  display: block;
 }
 
 .item-menu {
@@ -4558,4 +4582,8 @@ p.info-text {
 
 .small-select select {
   width: 180px !important;
+}
+
+.highlight-text span {
+  background: #ffffcc;
 }

@@ -553,3 +553,5 @@ en:
    agent_assigned_info:             "No open and pending tickets for this agent"
    agent_assigned_title:            "Recently assigned tickets (Open & Pending)"
    agent_info_title:                "Agent information"
+   
+   ticket_due_by_time:              "Due by date & time"
