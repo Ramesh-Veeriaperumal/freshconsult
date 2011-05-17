@@ -69,7 +69,7 @@ class Account < ActiveRecord::Base
   has_one :business_calendar
   
   has_many :tickets, :class_name => 'Helpdesk::Ticket'
-  has_many :solution_folders , :class_name =>'Solution::Folder'
+  has_many :folders , :class_name =>'Solution::Folder' , :through =>:solution_categories
   
   has_one :form_customizer , :class_name =>'Helpdesk::FormCustomizer'
   
