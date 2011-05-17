@@ -271,7 +271,7 @@ module Rack #:nodoc:
       end
       
       def fd_ssl?
-        env["rack.url_scheme"] == 'https'
+        env["rack.url_scheme"].eql?('https')
       end
   end
 end
