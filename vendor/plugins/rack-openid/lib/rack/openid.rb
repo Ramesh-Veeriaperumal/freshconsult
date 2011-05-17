@@ -93,6 +93,7 @@ module Rack #:nodoc:
     def call(env)
       if RAILS_ENV == "production" or RAILS_ENV == "staging"
         env["SERVER_PORT"] = 80 if env["rack.url_scheme"].eql?("http")
+        env["SERVER_PORT"] = 443 if env["rack.url_scheme"].eql?("https")
       end
       req = Rack::Request.new(env)
       if req.params["openid.mode"]
