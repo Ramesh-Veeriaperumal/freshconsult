@@ -7,10 +7,11 @@ class AccountsController < ApplicationController
   skip_before_filter :set_time_zone
   
   before_filter :build_user, :only => [ :new, :create ]
-  before_filter :load_billing, :only => [ :show, :new, :create, :billing, :paypal ]
-  before_filter :load_subscription, :only => [ :show, :billing, :plan, :paypal, :plan_paypal ]
+  before_filter :load_billing, :only => [ :show, :new, :create, :billing, :paypal, :payment_info ]
+  before_filter :load_subscription, :only => [ :show, :billing, :plan, :paypal, :plan_paypal, :plans ]
   before_filter :load_discount, :only => [ :plans, :plan, :new, :create ]
   before_filter :build_plan, :only => [:new, :create]
+  before_filter :load_plans, :only => [:show, :plans]
   
   #ssl_required :billing, :cancel, :new, :create #by Shan temp
   #ssl_allowed :plans, :thanks, :canceled, :paypal
@@ -20,7 +21,6 @@ class AccountsController < ApplicationController
   end
   
   def show
-    @plans = SubscriptionPlan.find(:all, :order => 'amount asc').collect {|p| p.discount = @discount; p }  
   end   
    
   def new
@@ -49,6 +49,8 @@ class AccountsController < ApplicationController
     end
     
   end
+  
+  
   
   def signup_google 
     base_domain = AppConfig['base_domain'][RAILS_ENV]
@@ -161,7 +163,6 @@ class AccountsController < ApplicationController
   
   
   def plans
-    @plans = SubscriptionPlan.find(:all, :order => 'amount asc').collect {|p| p.discount = @discount; p }
     # render :layout => 'public' # Uncomment if your "public" site has a different layout than the one used for logged-in users
   end
   
@@ -201,6 +202,7 @@ class AccountsController < ApplicationController
   def plan
     if request.post?
       @subscription.plan = SubscriptionPlan.find(params[:plan_id])
+      @subscription.agent_limit = params[:agent_limit]
 
       # PayPal subscriptions must get redirected to PayPal when
       # changing the plan because a new recurring profile needs
@@ -228,20 +230,22 @@ class AccountsController < ApplicationController
       end
       
       if @subscription.save
-        flash[:notice] = t('plan_info_update')
         SubscriptionNotifier.deliver_plan_changed(@subscription)
       else
-        flash[:error] = "Error updating your plan: #{@subscription.errors.full_messages.to_sentence}"
+        flash[:error] = @subscription.errors.full_messages.to_sentence
+        load_plans
+        render :action => "show" and return
       end
       
       if @subscription.state == 'trial'
         redirect_to :action => "billing"
-      else  
+      else
+        flash[:notice] = t('plan_info_update')
         redirect_to :action => "show"
       end 
     else
       #@plans = SubscriptionPlan.find(:all, :conditions => ['id <> ?', @subscription.subscription_plan_id], :order => 'amount asc').collect {|p| p.discount = @subscription.discount; p }
-      @plans = SubscriptionPlan.find(:all, :order => 'amount asc').collect {|p| p.discount = @discount; p }
+      load_plans
     end
   end
   
@@ -360,6 +364,10 @@ class AccountsController < ApplicationController
       if params[:discount].blank? || !(@discount = SubscriptionDiscount.find_by_code(params[:discount])) || !@discount.available?
         @discount = nil
       end
+    end
+    
+    def load_plans
+      @plans = SubscriptionPlan.find(:all, :order => 'amount asc').collect {|p| p.discount = @discount; p }
     end
     
     def authorized?

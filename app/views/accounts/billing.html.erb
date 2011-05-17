@@ -6,12 +6,12 @@
 			<% if @subscription.state == 'trial' %>
 				<div class="info-highlight"> 
 					<h3 class="title">
-						<%= t('current_plan_details', :plan_name  => @subscription.subscription_plan.name, :user_limit => @subscription.user_limit)  %>
+						<%= t('current_plan_details', :plan_name  => @subscription.subscription_plan.name, :agent_limit => @subscription.agent_limit)  %>
 					</h3>				
-					<%= content_tag (:strong, t("billed_amount_per_month", :amount => @subscription.amount.to_i )) %>
+					<%= content_tag(:strong, t("billed_amount_per_month", :amount => @subscription.amount.to_i )) %>
 				</div>
 			<% end %>
-			<%= content_tag (:h3, t("credit_card_info"), :class => "title") %>
+			<%= content_tag(:h3, t("credit_card_info"), :class => "title") %>
 		   	<%= render :partial => 'shared/credit_card_form' %> 
 				<span class="seperator"></span>
 				<div class="button-container">

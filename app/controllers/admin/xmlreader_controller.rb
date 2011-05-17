@@ -1,4 +1,6 @@
 class Admin::XmlreaderController < ApplicationController
+  
+  before_filter { |c| c.requires_permission :manage_tickets }
     require 'rexml/document'
     
     require 'rexml/xpath'
@@ -214,7 +216,7 @@ def handle_user_import base_dir
        #created_at = created_time.to_datetime()
      #end
      
-     
+     logger.debug "The email iss :: #{usr_email}"
      
      @params_hash ={ :user => { :name => usr_name,
                                 :job_title => "",
@@ -226,18 +228,31 @@ def handle_user_import base_dir
                                 :user_role => usr_role,
                                 :time_zone =>usr_time_zone,
                               }
-                     }
-     @user = current_account.users.find_by_email(usr_email)        
-     unless @user.nil?
+                     }     
+     @user = nil
+     unless usr_email.blank?
+      @user= current_account.all_users.find_by_email(usr_email)    
+     end
+     @user = current_account.all_users.find_by_import_id(import_id) if @user.blank?     
+     logger.debug "email is :: #{usr_email} and import id :: #{import_id} and \n user: #{@user.inspect}"
+     unless @user.blank?
           if @user.update_attributes(@params_hash[:user])
              updated+=1
               if usr_role != 3               
                @agent = Agent.find_or_create_by_user_id(@user.id )
-             end
+           end
+         else
+            logger.debug "updation of the user has been failed :: #{@user.errors.inspect}"
           end
      else
           @user = current_account.users.new
           @user.time_zone = usr_time_zone
+          if usr_email.blank?
+              logger.debug "Import id is :: #{import_id}"
+             #logger.debug "email is blank:: #{@user.inspect}"
+             @user.deleted=true
+             logger.debug  "after ::email is blank:: #{@user.inspect} is del: #{@user.deleted}"             
+          end
           #@params_hash[:user][:user_role] = User::USER_ROLES_KEYS_BY_TOKEN[:customer]
           if @user.signup!(@params_hash) 
             logger.debug "user has been save #{@user.inspect}"
@@ -246,7 +261,10 @@ def handle_user_import base_dir
                logger.debug "Its an agents and the user_id is :: #{@user.id}"
                @agent = Agent.create(:user_id =>@user.id )
             end
+          else
+            logger.debug "unable to create the user :: #{@user.errors.inspect}" 
           end
+        
       end     
      logger.debug " The user data:: name : #{usr_name} e_mail : #{usr_email} :: phone :: #{usr_phone} :: role :: #{usr_role} time_zone :: #{usr_time_zone} and usr_details :#{usr_details}"
 
@@ -295,12 +313,12 @@ def handle_ticket_import base_dir
       
       req.elements.each("requester-id") do |requester|  
         req_id = requester.text.to_i()
-        requester_id = current_account.users.find_by_import_id(req_id).id       
+        requester_id = current_account.all_users.find_by_import_id(req_id).id       
       end  
       
       req.elements.each("assignee-id") do |assignee|  
         assign_id = assignee.text
-        assignee_id = current_account.users.find_by_import_id(assign_id.to_i()).id unless assign_id.blank?
+        assignee_id = current_account.all_users.find_by_import_id(assign_id.to_i()).id unless assign_id.blank?
         
       end  
       
@@ -451,8 +469,8 @@ def handle_ticket_import base_dir
        
        comment.elements.each("author-id") do |author|
           author_id = author.text
-          note_created = current_account.users.find_by_import_id(author_id.to_i())          
-          note_created_by = note_created.id unless note_created.blank?  
+          note_created = current_account.all_users.find_by_import_id(author_id.to_i())              
+          note_created_by = note_created.id unless note_created.blank?            
           incoming = true if note_created.customer?
        end
        

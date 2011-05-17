@@ -6,10 +6,10 @@
 				<td id = "plan-<%= plan.name %>">
 					<div class="plan-title">			
 						<% plan_name = plan.name.downcase %>		
-						<%= content_tag (:h2, plan.name ) %>
-						<%= content_tag (:h3, "$#{plan.amount.to_i} per agent/month") %>	
-						<%= content_tag (:h4, t("#{plan_name}_brief") ) %>
-						<%= content_tag (:p,  t("#{plan_name}_details") ) %>
+						<%= content_tag(:h2, plan.name ) %>
+						<%= content_tag(:h3, "$#{plan.amount.to_i} per agent/month") %>	
+						<%= content_tag(:h4, t("#{plan_name}_brief") ) %>
+						<%= content_tag(:p,  t("#{plan_name}_details") ) %>
 						<button data-plan="<%= plan.name %>" data-plan-cost="<%= plan.amount.to_i %>" data-plan-id = "<%= plan.id %>" class="plan-button"><%=t('choose_plan')%></button>
 						<div id="billing-<%= plan.name %>"></div>
 					</div>
@@ -23,7 +23,7 @@
 	<% form_tag plan_account_url, :id => "plan_form" do %>
 	<table>
 		<tr>
-			<td colspan="2"><%= t('agents') %> <input type="text" size="4" value="1" name="plan_user_limit" id="agents-text-box" class="text" /> x <b id="cost-per-agent">$</b>
+			<td colspan="2"><%= t('agents') %> <input type="text" size="4" value="<%= @subscription.agent_limit || current_account.agents.count %>" name="agent_limit" id="agents-text-box" class="text" /> x <b id="cost-per-agent">$</b>
 			<br />	  
 			</td>
 		</tr>

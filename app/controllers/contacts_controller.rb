@@ -4,7 +4,7 @@ class ContactsController < ApplicationController
   
    include ModelControllerMethods
    before_filter :check_demo_site, :only => [:destroy,:update,:create]
-   before_filter :check_user_limit, :only => :make_agent
+   before_filter :check_agent_limit, :only => :make_agent
    before_filter :set_selected_tab
    skip_before_filter :build_object , :only => :new
    
@@ -187,10 +187,6 @@ protected
       (logged_in? && self.action_name == 'index') || admin?
   end
     
-   def check_user_limit
-      redirect_to new_user_url if current_account.reached_user_limit?
-   end
-
  def set_selected_tab
       @selected_tab = 'Customers'
  end
@@ -199,8 +195,8 @@ protected
       @obj = self.instance_variable_set('@user',  current_account.all_contacts.find(params[:id]))      
   end
   
-    def check_user_limit
-      redirect_to :back if current_account.reached_user_limit?
+    def check_agent_limit
+      redirect_to :back if current_account.reached_agent_limit?
     end
 
    def check_email_exist

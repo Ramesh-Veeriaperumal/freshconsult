@@ -1,6 +1,20 @@
 class AgentsController < Admin::AdminController
   
+  before_filter :load_object, :only => [:update,:destroy,:restore,:edit]
   before_filter :check_demo_site, :only => [:destroy,:update,:create]
+  before_filter :check_user_permission, :only => :destroy
+  before_filter :check_agent_limit, :only => :create
+  
+  def load_object
+    @agent = scoper.find(params[:id])
+  end
+  
+  def check_user_permission
+    if (@agent.user == current_user) || (@agent.user.user_role == User::USER_ROLES_KEYS_BY_TOKEN[:account_admin])
+      flash[:notice] = "You don't have access to delete it!"
+      redirect_to :back  
+    end    
+  end
   
   def check_demo_site
     if AppConfig['demo_site'][RAILS_ENV] == current_account.full_domain
@@ -20,12 +34,11 @@ class AgentsController < Admin::AdminController
   def show    
     @agent = current_account.all_agents.find(params[:id])
     @user  = @agent.user
-    @recent_unresolved_tickets = current_account.tickets.assigned_to(@user).unresolved.newest(5)
     #redirect_to :action => 'edit'
   end
 
   def new    
-    @agent      = Agent.new       
+    @agent      = current_account.agents.new       
     @agent.user = User.new
     @agent.user.avatar = Helpdesk::Attachment.new
     @agent.user.time_zone = current_account.time_zone
@@ -36,7 +49,6 @@ class AgentsController < Admin::AdminController
   end
 
   def edit    
-     @agent = current_account.all_agents.find(params[:id])    
       respond_to do |format|
       format.html # edit.html.erb
       format.xml  { render :xml => @agent }
@@ -44,7 +56,7 @@ class AgentsController < Admin::AdminController
   end
   
   def delete_avatar
-    @user = User.find(params[:id])
+    @user = current_account.all_users.find(params[:id])
     @user.avatar.destroy
     render :text => "success"
   end
@@ -52,7 +64,7 @@ class AgentsController < Admin::AdminController
   def create   
     
     @user  = current_account.users.new #by Shan need to check later        
-    @agent = Agent.new(params[nscname]) 
+    @agent = current_account.agents.new(params[nscname]) 
     
     if @user.signup!(:user => params[:user])       
       @agent.user_id = @user.id      
@@ -70,10 +82,9 @@ class AgentsController < Admin::AdminController
   end
 
   def update
-    @agent = Agent.find(params[:id])
    
       if @agent.update_attributes(params[nscname])            
-          @user = User.find(@agent.user_id)          
+          @user = current_account.all_users.find(@agent.user_id)          
           if @user.update_attributes(params[:user])        
              flash[:notice] = "The Agent has been updated sucessfully"
              redirect_to :action => 'index'
@@ -90,30 +101,30 @@ class AgentsController < Admin::AdminController
   end
 
   def destroy    
-    @agent = Agent.find(params[:id])
     if @agent.user.update_attribute(:deleted, true)    
        @restorable = true
        flash[:notice] = render_to_string(:partial => '/agents/flash/delete_notice')      
      else
-           flash[:notice] = "Agent could not be deleted"           
+           flash[:notice] = "Agent could not be able to delete"           
      end
     redirect_to :back
 end
 
  def restore
-   
-    @agent = Agent.find(params[:id])
-    if @agent.user.update_attribute(:deleted, false)   
-      flash[:notice] = render_to_string(:partial => '/agents/flash/restore_notice')
-    else
-      flash[:notice] = "Agent could not be restored"
-    end
-    
-    redirect_to :back
-   
+   @agent = current_account.all_agents.find(params[:id])
+   if @agent.user.update_attribute(:deleted, false)   
+    flash[:notice] = render_to_string(:partial => '/agents/flash/restore_notice')
+   else
+    flash[:notice] = "Agent could not be able to restore"
+   end 
+   redirect_to :back  
  end
 
  protected
+ 
+  def scoper
+     current_account.all_agents
+  end
 
   def cname
     @cname ||= controller_name.singularize
@@ -129,4 +140,7 @@ end
      end    
   end
 
+  def check_agent_limit
+    redirect_to :back if current_account.reached_agent_limit?
+  end
 end

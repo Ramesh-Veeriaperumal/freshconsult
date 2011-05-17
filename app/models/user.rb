@@ -20,6 +20,8 @@ class User < ActiveRecord::Base
   
   has_many :authorizations, :dependent => :destroy
   
+  validates_uniqueness_of :user_role, :scope => :account_id, :if => Proc.new { |user| user.user_role  == USER_ROLES_KEYS_BY_TOKEN[:account_admin] }
+  
   has_one :avatar,
     :as => :attachable,
     :class_name => 'Helpdesk::Attachment',
@@ -33,10 +35,16 @@ class User < ActiveRecord::Base
   acts_as_authentic do |c|    
     c.validations_scope = :account_id
     c.validates_length_of_password_field_options = {:on => :update, :minimum => 4, :if => :has_no_credentials? }
-    c.validates_length_of_password_confirmation_field_options = {:on => :update, :minimum => 4, :if => :has_no_credentials?}
+    c.validates_length_of_password_confirmation_field_options = {:on => :update, :minimum => 4, :if => :has_no_credentials?}    
+    #The following is a part to validate email only if its not deleted
+    c.merge_validates_format_of_email_field_options  :if =>:is_not_deleted?
+    c.merge_validates_length_of_email_field_options :if =>:is_not_deleted?
+    c.merge_validates_uniqueness_of_email_field_options :if =>:is_not_deleted?
+   
+    
   end
   
-  attr_accessible :name, :email, :password, :password_confirmation , :second_email, :job_title, :phone, :mobile, :twitter_id, :description, :time_zone, :avatar_attributes,:user_role,:customer_id,:import_id
+  attr_accessible :name, :email, :password, :password_confirmation , :second_email, :job_title, :phone, :mobile, :twitter_id, :description, :time_zone, :avatar_attributes,:user_role,:customer_id,:import_id,:deleted
   
   #Sphinx configuration starts
   define_index do
@@ -77,7 +85,7 @@ class User < ActiveRecord::Base
     self.avatar_attributes=params[:user][:avatar_attributes] unless params[:user][:avatar_attributes].nil?
    
     return false unless save_without_session_maintenance
-    deliver_activation_instructions!
+    deliver_activation_instructions! unless deleted
   end
   
   def avatar_attributes=(av_attributes)
@@ -135,7 +143,7 @@ class User < ActiveRecord::Base
 
   #implement in your user model 
   def admin?
-    user_role == USER_ROLES_KEYS_BY_TOKEN[:admin]
+    user_role == USER_ROLES_KEYS_BY_TOKEN[:admin] ||  user_role == USER_ROLES_KEYS_BY_TOKEN[:account_admin]
   end
   
   def customer?
@@ -240,6 +248,11 @@ class User < ActiveRecord::Base
   
   def has_manage_solutions?
     self.permission?(:manage_tickets)
+  end
+  
+  def is_not_deleted?
+    logger.debug "not ::deleted ?:: #{!self.deleted}"
+    !self.deleted
   end
   
   def self.filter(letter, page)
