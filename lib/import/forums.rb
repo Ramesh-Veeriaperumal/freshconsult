@@ -1,4 +1,5 @@
 module Import::Forums
+  
  def get_forum_data base_dir,make_solution
   
   created = 0
@@ -8,7 +9,7 @@ module Import::Forums
   file = File.new(file_path) 
   doc = REXML::Document.new file
   
-  default_category = current_account.forum_categories.first
+  default_category = current_account.forum_categories.find(:first , :order =>:id)
     
   REXML::XPath.each(doc,'//forum') do |forum|
     
@@ -49,23 +50,28 @@ module Import::Forums
    
      forum.elements.each("id") do |for_id|      
        forum_id = for_id.text         
-   end
-    
-    logger.debug "category is :: #{@category.inspect}"
-    #forum_type = Forum::TYPE_KEYS_BY_TOKEN[:howto]
-   
-     @forum = @category.forums.build(:name =>name, :description => desc , :import_id =>forum_id.to_i(), :description_html =>desc ,:forum_type =>forum_type )
+     end
+     
+     @forum = @category.forums.find_by_import_id(forum_id.to_i())
+     @forum = @category.forums.find_by_name(name) if @forum.blank?
+     if @forum.blank?
+      @forum = @category.forums.new
+      created=+1
+     else
+       updated=+1
+     end
+     
      @forum.account_id ||= current_account.id
-     if @forum.save
-       created=+1
-     logger.debug "successfully saved the forum::"
-     else     
-      @forum = @category.forums.find_by_name(name)
-      unless @forum.nil?
-        updated=+1
-        @forum.update_attribute(:import_id, forum_id.to_i())
-      end
-     logger.debug "error while saving the forum:: #{@forum.errors.inspect}"
+     @forum.name = name
+     @forum.description = desc
+     @forum.import_id = forum_id.to_i()
+     @forum.description_html = desc
+     @forum.forum_type = forum_type
+     
+     if @forum.save      
+        logger.debug "successfully saved the forum::"
+     else    
+        logger.debug "error while saving the forum:: #{@forum.errors.inspect}"
      end
  end
  logger.debug "forum import :created: #{created} and updated ::#{updated}"
@@ -89,13 +95,16 @@ def make_solution_folder solution, base_dir
   @category = nil
   
   unless cat_id.blank?    
-    @category = current_account.solution_categories.find_by_import_id(cat_id.to_i())
+    @category = current_account.solution_categories.find_by_import_id(cat_id.to_i())    
     @category = add_solution_category(base_dir, cat_id) if @category.blank?
   else
     @category = current_account.solution_categories.find_by_name("General")  
   end
   logger.debug "@category is #{@category.inspect}"
-  @folder = @category.folders.new
+  
+  @folder = @category.folders.find_by_import_id(import_id.to_i())
+  @folder = @category.folders.find_by_name(folder_name) if @folder.blank?  
+  @folder = @category.folders.new if @folder.blank?
   @folder.name = folder_name
   @folder.description= description
   @folder.import_id = import_id
@@ -134,7 +143,15 @@ def add_solution_category base_dir, cat_id
        import_id = imp_id.text         
      end
      logger.debug "import_id is :: #{import_id}"
-    @category = current_account.solution_categories.new(:name =>cat_name,:import_id => import_id.to_i(), :description =>cat_desc)
+    param = {:name =>cat_name,:import_id => import_id.to_i(), :description =>cat_desc}
+    @category = current_account.solution_categories.find_by_name(cat_name)
+    if @category.blank?
+      @category = current_account.solution_categories.new(param)
+       created+=1
+    else
+       updated+=1
+    end
+    
      
     if @category.save
      logger.debug "The @categ is saved succesfully"
@@ -359,7 +376,8 @@ def import_forum_categories file_path
      end
     
     params = {:name =>cat_name,:import_id => import_id.to_i(), :description =>cat_desc}
-    @category = current_account.forum_categories.find_by_import_id(import_id.to_i())
+    @category = current_account.forum_categories.find_by_import_id(import_id.to_i())    
+    @category = current_account.forum_categories.find_by_name(cat_name) if @category.blank?   
     
     unless @category.blank?
       if @category.update_attributes(params)
