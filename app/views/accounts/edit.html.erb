@@ -56,20 +56,20 @@
 					<li>
 						<%= p.label :header_color, t('account.page_colors.header') %>
 						<div class="color">
-							<input type="color" id="HeaderColor" class="color_field required" name="account[preferences][header_color]"  data-hex="true" value="<%= @account[:preferences].default(:header_color) %>" />
+							<input type="color" maxlength="7" id="HeaderColor" class="color_field required" name="account[preferences][header_color]"  data-hex="true" value="<%= @account[:preferences].default(:header_color) %>" />
 						</div>
 					</li>
 					<li>
 			        	<%= p.label :header_color_tab, t('account.page_colors.tab_color') %>
 						
 							<div class="color">
-								<input type="color" id="TabColor" class="color_field required" name="account[preferences][tab_color]"  data-hex="true" value="<%= @account[:preferences].default(:tab_color) %>" /> 
+								<input type="color" maxlength="7" id="TabColor" class="color_field required" name="account[preferences][tab_color]"  data-hex="true" value="<%= @account[:preferences].default(:tab_color) %>" /> 
 							</div>
          			</li>
 					<li>	
 			        		<%= p.label :bg_color, t('account.page_colors.background') %>
 							<div class="color"> 
-								<input type="color" id="BackgroundColor" class="color_field required" name="account[preferences][bg_color]"  data-hex="true" value="<%= @account[:preferences].default(:bg_color) %>" />
+								<input type="color" maxlength="7" id="BackgroundColor" class="color_field required" name="account[preferences][bg_color]"  data-hex="true" value="<%= @account[:preferences].default(:bg_color) %>" />
 							</div>	
 					</li>
 					<li><a href="javascript:void(0)" id="ResetColors"><%=t('account.info3')%> </a></li>

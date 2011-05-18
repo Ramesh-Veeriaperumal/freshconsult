@@ -188,7 +188,7 @@ ul.activityfeed li .activity_time {
 }
 .ui-list_with_icon li {
   padding-left: 14px;
-  background: url('/images/listicons/request_nav_seperator.gif?1303990131') no-repeat 3px 9px;
+  background: url('/images/listicons/request_nav_seperator.gif?1305622140') no-repeat 3px 9px;
   list-style-type: none;
 }
 .ui-list_with_icon li {
@@ -223,7 +223,7 @@ ul.activityfeed li .activity_time {
 }
 .list_with_icon li {
   padding-left: 14px;
-  background: url('/images/listicons/forum-bullet.png?1303990131') no-repeat 1px 1px;
+  background: url('/images/listicons/forum-bullet.png?1305622140') no-repeat 1px 1px;
   list-style-type: none;
 }
 .list_with_icon li, .list_with_icon div.list-item {
@@ -1027,6 +1027,7 @@ body h5 {
 }
 .rtCnt .rtDetails .cnt li select {
   font-size: 11px;
+  max-width: 100%;
 }
 .rtCnt .rtDetails .cnt li span.edit-item {
   background: url('/images/icons-1fde8ad171.png') 0 -50px no-repeat;
@@ -1399,6 +1400,7 @@ a.request_bt:hover {
   margin-bottom: 8px;
   width: auto;
   height: auto;
+  border: 1px solid #afafaf;
 }
 
 .ui-rightColSubTab {
@@ -2411,7 +2413,7 @@ h4.border_title {
 }
 .solution-list .odd ul li, .solution-list .even ul li {
   padding-left: 14px;
-  background: url('/images/listicons/request_nav_seperator.gif?1303990131') no-repeat 3.5px 3.5px;
+  background: url('/images/listicons/request_nav_seperator.gif?1305622140') no-repeat 3.5px 3.5px;
   list-style-type: none;
 }
 .solution-list .odd li, .solution-list .even li {
@@ -2615,6 +2617,12 @@ h4.border_title {
 
 .loading-right {
   background-position: right 3px;
+}
+
+.loading-fb {
+  background-image: url("/images/load-fb-style.gif");
+  background-repeat: no-repeat;
+  background-position: 0px 0px;
 }
 
 .search_results {
@@ -3568,7 +3576,7 @@ a.page_title:active {
   -moz-border-radius: 6px 6px 6px 6px;
   -webkit-border-radius: 6px 6px 6px 6px;
   border-radius: 6px 6px 6px 6px;
-  background: url('/images/../images/embed/sprites/16square_sprite.png?1302240294') no-repeat;
+  background: url('/images/../images/embed/sprites/16square_sprite.png?1305622139') no-repeat;
   width: 16px;
   height: 16px;
   overflow: hidden;
@@ -3609,6 +3617,11 @@ div.addReminder form input.text {
   display: block;
   margin: 3px 0px 0px 0px;
   padding: 0px 0px 0px 10px;
+}
+div.addReminder form input:focus {
+  -moz-box-shadow: 0 0 0 0;
+  -webkit-box-shadow: 0 0 0 0;
+  box-shadow: 0 0 0 0;
 }
 div.addReminder form label.overlabel {
   margin: 2px 5px 4px 10px;
@@ -4047,7 +4060,7 @@ div.addReminder form label.overlabel {
   width: 32px;
   height: 32px;
   margin: 0px;
-  background: url('/images/../images/embed/sprites/32square_sprite.png?1303889101') no-repeat;
+  background: url('/images/../images/embed/sprites/32square_sprite.png?1305622139') no-repeat;
   width: 32px;
   height: 32px;
   overflow: hidden;
@@ -4159,7 +4172,7 @@ div.addReminder form label.overlabel {
   position: absolute;
   left: -34px;
   top: 2px;
-  background: url('/images/../images/embed/sprites/32square_sprite.png?1303889101') no-repeat;
+  background: url('/images/../images/embed/sprites/32square_sprite.png?1305622139') no-repeat;
   width: 32px;
   height: 32px;
   overflow: hidden;
@@ -4248,7 +4261,7 @@ div.addReminder form label.overlabel {
   top: 0px;
   width: 32px;
   height: 32px;
-  background: url('/images/../images/embed/sprites/32square_sprite.png?1303889101') no-repeat;
+  background: url('/images/../images/embed/sprites/32square_sprite.png?1305622139') no-repeat;
   width: 32px;
   height: 32px;
   overflow: hidden;
@@ -4458,7 +4471,7 @@ div.addReminder form label.overlabel {
   margin-left: -3px;
   margin-top: -5px;
   position: absolute;
-  background: url('/images/../images/embed/sprites/32square_sprite.png?1303889101') no-repeat;
+  background: url('/images/../images/embed/sprites/32square_sprite.png?1305622139') no-repeat;
   width: 32px;
   height: 32px;
   overflow: hidden;

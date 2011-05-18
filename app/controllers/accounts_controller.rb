@@ -46,12 +46,9 @@ class AccountsController < ApplicationController
       render :json => { :success => true, :url => @account.full_domain }, :callback => params[:callback]
     else
       render :json => { :success => false, :errors => @account.errors.to_json }, :callback => params[:callback] 
-    end
-    
+    end    
   end
-  
-  
-  
+    
   def signup_google 
     base_domain = AppConfig['base_domain'][RAILS_ENV]
     logger.debug "base domain is #{base_domain}"   
@@ -59,7 +56,7 @@ class AccountsController < ApplicationController
     return_url = return_url+"&callback="+params[:callback] unless params[:callback].blank?    
     url = "https://www.google.com/accounts/o8/site-xrds?hd=" + params[:domain]      
     rqrd_data = ["http://axschema.org/contact/email","http://axschema.org/namePerson/first" ,"http://axschema.org/namePerson/last"]
-    re_alm = "http://*."+base_domain    
+    re_alm = "https://*."+base_domain    
     logger.debug "return_url is :: #{return_url.inspect} and :: trusted root is:: #{re_alm.inspect} "
     authenticate_with_open_id(url,{ :required =>rqrd_data , :return_to => return_url ,:trust_root =>re_alm}) do |result, identity_url, registration| 
     end     
@@ -232,9 +229,8 @@ class AccountsController < ApplicationController
       if @subscription.save
         SubscriptionNotifier.deliver_plan_changed(@subscription)
       else
-        flash[:error] = @subscription.errors.full_messages.to_sentence
         load_plans
-        render :action => "show" and return
+        render :action => "plan" and return
       end
       
       if @subscription.state == 'trial'

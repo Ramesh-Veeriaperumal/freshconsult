@@ -11,16 +11,17 @@
 		//makePageNonSelectable($('custom_form'));
 	}); 
 			
-	function init(){		
-		var fieldFeed = JSON.parse(document.getElementById('field_values').value, 
+	function init( ){
+		var fieldFeed = JSON.parse(custom_field_values, 
 							function (key, value) {
 							    var type;
 								if(key == 'action'){
-									value = "";														
+									value = "";
 								} 	
 								return value;
 							});
-		
+							
+	
 		var DialogFieldPref = null;
 		var SourceField 	= null;
 		var sourceDomMap	= null;
@@ -163,6 +164,9 @@
         jQuery("#custom_form")
 			.sortable({
 		            revert: true,  
+					start: function(ev, ui) { 
+						saveDataObj();
+					},
 					stop: function(ev, ui) { 
 						type = ui.item.get(0).getAttribute('type');
 		                if (type) {
@@ -193,9 +197,9 @@
          	hideDialog();
     });
 		
-	jQuery("#SaveForm").click(function(e){			
-			var jsonData = getCustomFieldJson();
-			jQuery("#field_values").val(jsonData.toJSON()); 
+		jQuery("#SaveForm").click(function(e){			
+			var jsonData = getCustomFieldJson(); 
+			jQuery("#field_values").val(jsonData.toJSON());  
 		}); 
         
 		function innerLevelExpand(checkbox){ 
@@ -211,8 +215,21 @@
 		
 		function addChoiceinDialog(data, dom){
 			dom 	= dom || dialogDOMMap.choices;
-			data 	= data || {value:'', tags:''};
-			dom.append('<fieldset><span class="sort_handle"></span><span class="dropchoice"><input type="text" value="'+data.value+'" name="choice" /></span><span class="tags"><input type="text" value="'+data.tags+'" /></span><img class="deleteChoice" src="/images/delete.png" /></fieldset>')
+			data 	= data || {value:'', tags:''}; 
+			
+			var inputData = $("<input type='text' />")
+								.val(data.value);
+			var dropSpan  =	$("<span class='dropchoice'>")
+								.append(inputData);
+
+			$("<fieldset />")
+				.append("<span class='sort_handle' />")
+				.append(dropSpan)
+				.append('<img class="deleteChoice" src="/images/delete.png" />')
+				.appendTo(dom);
+
+				
+//			dom.append('<fieldset><span class="sort_handle"></span><span class="dropchoice"><input type="text" value="'+data.value+'" name="choice" /></span><span class="tags"><input type="text" value="'+data.tags+'" /></span><img class="deleteChoice" src="/images/delete.png" /></fieldset>')
 		}
 		
 		jQuery(".deleteChoice").live('click', 
@@ -315,27 +332,31 @@
 				 
 			}
 		}      
-        
-		jQuery("#SaveField").click(function()
-		{
+		
+		saveDataObj = function(){
 			var sourceData   	         	= $H(jQuery(SourceField).data("raw"));	
-			
+
 			sourceData.set("label" 		 		 , dialogDOMMap.label.val());
 			sourceData.set("display_name" 		 , dialogDOMMap.label.val());
 			sourceData.set("description" 		 , dialogDOMMap.description.val());
-			
+
 			sourceData.get("agent").required	= dialogDOMMap.agent.required.attr("checked");
 			sourceData.get("agent").closure		= dialogDOMMap.agent.closure.attr("checked");
-					
+
 			sourceData.get("customer").visible	= dialogDOMMap.customer.visible.attr("checked");										
 			sourceData.get("customer").editable = dialogDOMMap.customer.editable.attr("checked");
 			sourceData.get("customer").required = dialogDOMMap.customer.required.attr("checked");  											
-				
+
 			sourceData.set("choices", getAllChoices(dialogDOMMap.choices));									
-			
+
 			sourceData.set('action', "edit");			
-			
 			constFieldDOM(sourceData.toObject(), jQuery(SourceField));
+		}
+        
+		jQuery("#SaveField").click(function()
+		{
+			saveDataObj();
+			hideDialog();
 		});
 		
 		$("#CustomFieldsDialog input").live("change", function(){

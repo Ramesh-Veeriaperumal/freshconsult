@@ -6,8 +6,9 @@ class Subscription < ActiveRecord::Base
   belongs_to :affiliate, :class_name => 'SubscriptionAffiliate', :foreign_key => 'subscription_affiliate_id'
   
   before_create :set_renewal_at
-  before_update :cache_old_model, :apply_discount
+  before_update :cache_old_model
   before_destroy :destroy_gateway_record
+  before_validation :update_amount
   after_update :update_features
   
   attr_accessor :creditcard, :address
@@ -46,10 +47,7 @@ class Subscription < ActiveRecord::Base
       self.state = 'active' if new_record?
     end
     
-    [:amount, :renewal_period].each do |f|
-      self.send("#{f}=", plan.send(f))
-    end
-    
+    self.renewal_period = plan.renewal_period
     self.subscription_plan = plan
   end
   
@@ -258,10 +256,10 @@ class Subscription < ActiveRecord::Base
     
     # If the discount is changed, set the amount to the discounted
     # plan amount with the new discount.
-    def apply_discount
-      if subscription_discount_id_changed?
+    def update_amount
+      if subscription_discount_id_changed? || agent_limit_changed? || subscription_plan_id_changed?
         subscription_plan.discount = discount
-        self.amount = subscription_plan.amount
+        self.amount = agent_limit ? (subscription_plan.amount * agent_limit) : subscription_plan.amount
       end
     end
     
