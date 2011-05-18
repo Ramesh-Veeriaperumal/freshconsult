@@ -222,6 +222,13 @@ class Helpdesk::TicketsController < ApplicationController
     flash[:notice] = "All tickets in the spam folder were deleted."
     redirect_to :back
   end
+  
+  def change_due_by 
+    due_date = params[:due_by_date_time]    
+    date = Time.parse(due_date)
+    
+    render :partial => "due_by", :object => date
+  end  
 
   def get_agents
     group_id = params[:id]

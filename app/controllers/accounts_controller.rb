@@ -46,12 +46,9 @@ class AccountsController < ApplicationController
       render :json => { :success => true, :url => @account.full_domain }, :callback => params[:callback]
     else
       render :json => { :success => false, :errors => @account.errors.to_json }, :callback => params[:callback] 
-    end
-    
+    end    
   end
-  
-  
-  
+    
   def signup_google 
     base_domain = AppConfig['base_domain'][RAILS_ENV]
     logger.debug "base domain is #{base_domain}"   
