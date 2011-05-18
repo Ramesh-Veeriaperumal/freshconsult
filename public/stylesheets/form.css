@@ -15,6 +15,14 @@ input[type=text], select, input.text {
   font-size: 16px;
 }
 
+input:focus {
+  outline: none;
+}
+
+textarea, input {
+  outline: none;
+}
+
 input.password {
   width: 240px;
 }
@@ -1066,17 +1074,28 @@ fieldset.nestedChoices {
   color: black;
 }
 .due-date-dialog .calender-buttons {
+  position: relative;
   text-align: right;
   padding: 12px 5px 6px 5px;
   margin-top: 10px;
   border-top: 1px solid #e0e0e0;
 }
-.due-date-dialog .calender-buttons button {
-  background: none;
-  border: 0px;
-  color: #333333;
-  cursor: pointer;
-  font-size: 12px;
+.due-date-dialog .calender-buttons span.loading-item {
+  width: 16px;
+  height: 11px;
+  position: absolute;
+  right: 15px;
+  margin-top: 12px;
+  background-image: url("/images/load-fb-style.gif");
+  background-repeat: no-repeat;
+  visibility: hidden;
+  background-position: 0px 0px;
+}
+.due-date-dialog .saving-items .uiButton {
+  visibility: hidden;
+}
+.due-date-dialog .saving-items span.loading-item {
+  visibility: visible;
 }
 
 .transparent-overlay {
