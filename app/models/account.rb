@@ -97,7 +97,7 @@ class Account < ActiveRecord::Base
 
   before_create :set_default_values, :config_default_email
   
-  before_update :check_default_values
+  before_update :check_default_values, :update_users_time_zone
     
   after_create :create_admin
   after_create :populate_seed_data
@@ -148,6 +148,12 @@ class Account < ActiveRecord::Base
     dis_max_id = get_max_display_id
     if self.ticket_display_id.blank? or (self.ticket_display_id < dis_max_id)
        self.ticket_display_id = dis_max_id
+    end
+  end
+  
+  def update_users_time_zone #Ideally this should be called in after_update
+    if time_zone_changed? && !features.multi_timezone?
+      all_users.update_all(:time_zone => time_zone)
     end
   end
   
