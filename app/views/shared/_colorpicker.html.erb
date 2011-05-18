@@ -22,10 +22,15 @@
 	jQuery.validator.addMethod("hexcolor", function(value, element) {
 	  var regColorcode = /^(#)?([0-9a-fA-F]{3})([0-9a-fA-F]{3})?$/;
 	  colorValid = regColorcode.test(value);
+	  
+	  if(value != '' && value[0] != '#')
+		element.value = '#' + value;
+		
 	  return colorValid; 
 	}, "Please enter a valid color value");
 	
 	jQuery.validator.addClassRules("color_field", {
 	  hexcolor: true
 	});
+	
 <% end %>
