@@ -139,7 +139,7 @@ en:
        info6: "Add specific notes regarding this contact"
        deleted_message:     "This is a deleted contact"
        restore:             "Restore"
-       emailnotverified:    "Email has not been verified for this user!"
+       emailnotverified:    "Email has not been verified for this contact!"
        form_placeholder:
            description:     "Add specific notes regarding this contact example - address, LA Lakers fan etc."
       
@@ -215,8 +215,8 @@ en:
        primary_supp_email: "Primary support email"
        add_supp_emails: "Additional support email(s)"
        reply_emails: "Reply Emails from Freshdesk"
-       inactive_info1: "All your support emails are still unverified, You must verify at least one support email"
-       inactive_info2: "Until then the default email \"%{default_email}\" will be used as the reply-to email."           
+       inactive_info1: "All your support emails are still unverified, you must verify at least one support email"
+       inactive_info2: "Until then, the default email \"%{default_email}\" will be used as the reply-to email."           
        unverified_info1: "An email with the verification link has been sent to this email. Only after verification this support email will become active."
    
    email_notifications:
@@ -517,7 +517,7 @@ en:
    
    current_plan:                    "Current Plan"
    change_plan:                     "Change plan"
-   current_plan_details:            "%{plan_name} Plan with %{user_limit} agents"
+   current_plan_details:            "%{plan_name} Plan with %{agent_limit} agents"
    amount_per_month:                "$%{amount} per month"
    billed_amount_per_month:         "You will be billed $%{amount} per month"
    next_charge_date:                "Next charge will happen on:"
@@ -543,5 +543,15 @@ en:
    zip:                             "Zip"
    
    billing_info_update:             "Your billing information has been updated."
-   plan_info_update:                "Your Plan has been changed."
+   plan_info_update:                "Your plan has been changed."
    change_plan_info:                "You can change your plan level at any time.  The position limits and other features of the new plan that you select will be effective as soon as you make the change, but your bill amount will not change until your next bill date.  Your next bill date is %{date}."
+
+#May 12th 2011   
+
+   agent_deleted_message:           "This is a deleted agent"
+   agent_emailnotverified:          "Email has not been verified for this agent!"
+   agent_assigned_info:             "No open and pending tickets for this agent"
+   agent_assigned_title:            "Recently assigned tickets (Open & Pending)"
+   agent_info_title:                "Agent information"
+   
+   ticket_due_by_time:              "Due by date & time"

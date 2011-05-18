@@ -69,7 +69,7 @@ class Account < ActiveRecord::Base
   has_one :business_calendar
   
   has_many :tickets, :class_name => 'Helpdesk::Ticket'
-  has_many :solution_folders , :class_name =>'Solution::Folder'
+  has_many :folders , :class_name =>'Solution::Folder' , :through =>:solution_categories
   
   has_one :form_customizer , :class_name =>'Helpdesk::FormCustomizer'
   
@@ -107,7 +107,7 @@ class Account < ActiveRecord::Base
   acts_as_paranoid
   
   Limits = {
-    'user_limit' => Proc.new {|a| a.users.count }
+    'agent_limit' => Proc.new {|a| a.agents.count }
   }
   
   Limits.each do |name, meth|
@@ -169,6 +169,10 @@ class Account < ActiveRecord::Base
     self.subscription.next_renewal_at >= Time.now
   end
   
+  def plan_name
+    subscription.subscription_plan.canon_name
+  end
+  
   def domain
     @domain ||= self.full_domain.blank? ? '' : self.full_domain.split('.').first
   end
@@ -224,6 +228,14 @@ class Account < ActiveRecord::Base
 
       features.send(s_plan).create
       p_features[:features].each { |f_n| features.send(f_n).create } unless p_features[:features].nil?
+    end
+  end
+  
+  def remove_features_of(s_plan)
+    p_features = PLANS_AND_FEATURES[s_plan]
+    unless p_features.nil?
+      p_features[:inherits].each { |p_n| remove_features_of(p_n) } unless p_features[:inherits].nil?
+      features.send(s_plan).destroy
     end
   end
   

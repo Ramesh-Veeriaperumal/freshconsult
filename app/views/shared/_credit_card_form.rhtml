@@ -43,10 +43,10 @@
 	<%= content_tag( :label, "#{t('security_code')} *", :class => "caption" ) %> 
 	<div class="fields">
 		<%= text_field :creditcard, :verification_value, :size => 4, :class => "required" %>
-		<%= link_to_function ("What is cvv?", "jQuery('#cvv-info').toggle();") %> 
+		<%= link_to_function("What is cvv?", "jQuery('#cvv-info').toggle();") %> 
 			
 		<div id="cvv-info" class="cvv-help-text" style="display:none;">
-			<%= link_to_function ("", "jQuery('#cvv-info').toggle();", :class => "close") %> 
+			<%= link_to_function("", "jQuery('#cvv-info').toggle();", :class => "close") %> 
 			<img src="../images/helpimages/card_cvv.gif" width="201px" height="341px" />
 		</div>
 	</div>
