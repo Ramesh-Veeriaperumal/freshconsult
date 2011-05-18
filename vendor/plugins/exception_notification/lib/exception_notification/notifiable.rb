@@ -49,10 +49,10 @@ private
     notify_about_exception(exception) 
   end
   
-  def rescue_action_locally(exception)
-    super
-    notify_about_exception(exception) 
-  end
+#  def rescue_action_locally(exception)
+#    super
+#    notify_about_exception(exception) 
+#  end
   
   def deliver_exception_notification?
     !self.class.skip_exception_notifications? && ![404, "404 Not Found"].include?(response.status)

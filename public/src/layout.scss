@@ -223,6 +223,7 @@ div.bg_pulp{
 		padding:0px;
 		background:none;		
 	}
+	input:focus{ @include shadows(0, 0, 0, 0); }
 }
 
 .nav_right{
