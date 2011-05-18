@@ -229,9 +229,8 @@ class AccountsController < ApplicationController
       if @subscription.save
         SubscriptionNotifier.deliver_plan_changed(@subscription)
       else
-        flash[:error] = @subscription.errors.full_messages.to_sentence
         load_plans
-        render :action => "show" and return
+        render :action => "plan" and return
       end
       
       if @subscription.state == 'trial'
