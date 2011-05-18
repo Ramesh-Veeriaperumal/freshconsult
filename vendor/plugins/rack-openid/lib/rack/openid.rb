@@ -93,6 +93,7 @@ module Rack #:nodoc:
     def call(env)
       if RAILS_ENV == "production" or RAILS_ENV == "staging"
         env["SERVER_PORT"] = 80 
+        env["SERVER_PORT"] = 443 if fd_ssl?(env) 
       end
       req = Rack::Request.new(env)
       if req.params["openid.mode"]
@@ -268,5 +269,10 @@ module Rack #:nodoc:
       rescue Timeout::Error
         TimeoutResponse.new
       end
+      
+      def fd_ssl?(env)
+        env["rack.url_scheme"] == 'https'
+      end
+
   end
 end
