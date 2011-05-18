@@ -11,19 +11,20 @@ describe ForumCategory do
   
   #positive test case
   it "should create a new instance given valid attributes" do
-    ForumCategory.create!(@valid_attributes)
+    account = Account.find(1)
+    account.forum_categories.build(@valid_attributes).save!
   end
   
   #negative test case
   it "should require a name" do
-    no_forum_category_name = ForumCategory.new(@valid_attributes.merge(:account_id => ""))
-    no_forum_category_name.should_not be_valid
+    no_forum_category_account = ForumCategory.new(@valid_attributes.merge(:name => ""))
+    no_forum_category_account.should_not be_valid
   end
   
    #negative test case
   it "should require a account" do
-    no_forum_category_account = ForumCategory.new(@valid_attributes.merge(:name => ""))
-    no_forum_category_account.should_not be_valid
+    no_forum_category_name = ForumCategory.new(@valid_attributes.merge(:account_id => ""))
+    no_forum_category_name.should_not be_valid
   end
   
   describe "forums associations" do

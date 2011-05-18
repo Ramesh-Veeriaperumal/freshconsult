@@ -152,7 +152,7 @@ GEM
       activerecord (>= 1.15.6, < 3.0.0)
       after_commit (>= 1.0.7)
       riddle (>= 1.2.2)
-    thoughtbot-shoulda (2.11.1)
+    thoughtbot-shoulda (2.10.2)
     tiny_mce (0.1.4)
     ts-delayed-delta (1.1.0)
       delayed_job (>= 1.8.4)
@@ -198,7 +198,7 @@ DEPENDENCIES
   searchlogic (= 2.4.27)
   stemmer (= 1.0.1)!
   thinking-sphinx (= 1.4.3)
-  thoughtbot-shoulda
+  thoughtbot-shoulda (= 2.10.2)
   tiny_mce (= 0.1.4)
   ts-delayed-delta (= 1.1.0)
   tzinfo

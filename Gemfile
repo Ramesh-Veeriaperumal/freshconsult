@@ -46,7 +46,7 @@ gem "braintree","2.10.0"
 
 group :development do
    gem "rspec", "1.3.1"
-   gem "thoughtbot-shoulda"
+   gem "thoughtbot-shoulda","2.10.2"
    gem "rspec-rails", "1.3.3"
    gem "factory_girl", "1.2.3"  
    gem "mongrel"

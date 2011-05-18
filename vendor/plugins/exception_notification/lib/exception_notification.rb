@@ -1,4 +1,4 @@
-require "actionmailer"
+require "action_mailer"
 
 module ExceptionNotification
   autoload :Notifiable,     'exception_notification/notifiable'
