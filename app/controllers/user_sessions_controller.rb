@@ -83,7 +83,7 @@ require 'openid'
     return_url = "https://"+cust_url+"/authdone/google?domain="+params[:domain] 
     logger.debug "the return_url is :: #{return_url}"
     
-    re_alm = "http://*."+base_domain
+    re_alm = "https://*."+base_domain
     
     logger.debug "domain name is :: #{domain_name}"
     url = nil    
