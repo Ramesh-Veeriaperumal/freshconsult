@@ -8,7 +8,7 @@ class Subscription < ActiveRecord::Base
   before_create :set_renewal_at
   before_update :cache_old_model
   before_destroy :destroy_gateway_record
-  before_save :update_amount
+  before_validation :update_amount
   after_update :update_features
   
   attr_accessor :creditcard, :address
@@ -259,7 +259,7 @@ class Subscription < ActiveRecord::Base
     def update_amount
       if subscription_discount_id_changed? || agent_limit_changed? || subscription_plan_id_changed?
         subscription_plan.discount = discount
-        self.amount = (subscription_plan.amount * agent_limit)
+        self.amount = agent_limit ? (subscription_plan.amount * agent_limit) : subscription_plan.amount
       end
     end
     
