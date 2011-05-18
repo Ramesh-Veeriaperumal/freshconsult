@@ -215,8 +215,8 @@ en:
        primary_supp_email: "Primary support email"
        add_supp_emails: "Additional support email(s)"
        reply_emails: "Reply Emails from Freshdesk"
-       inactive_info1: "All your support emails are still unverified, You must verify at least one support email"
-       inactive_info2: "Until then the default email \"%{default_email}\" will be used as the reply-to email."           
+       inactive_info1: "All your support emails are still unverified, you must verify at least one support email"
+       inactive_info2: "Until then, the default email \"%{default_email}\" will be used as the reply-to email."           
        unverified_info1: "An email with the verification link has been sent to this email. Only after verification this support email will become active."
    
    email_notifications:

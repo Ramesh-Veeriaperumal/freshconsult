@@ -169,6 +169,10 @@ class Account < ActiveRecord::Base
     self.subscription.next_renewal_at >= Time.now
   end
   
+  def plan_name
+    subscription.subscription_plan.canon_name
+  end
+  
   def domain
     @domain ||= self.full_domain.blank? ? '' : self.full_domain.split('.').first
   end

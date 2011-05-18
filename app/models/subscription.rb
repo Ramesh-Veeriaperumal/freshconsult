@@ -279,10 +279,7 @@ class Subscription < ActiveRecord::Base
     
     def update_features
       return if subscription_plan_id == @old_subscription.subscription_plan_id
-      
-      account.remove_features_of @old_subscription.subscription_plan.canon_name
-      account.reload
-      account.add_features_of subscription_plan.canon_name
+      SAAS::SubscriptionActions.new.change_plan(account, @old_subscription)
     end
     
     def gateway
