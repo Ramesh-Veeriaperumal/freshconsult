@@ -168,8 +168,8 @@ end
 ##an entry is equivalent to topic in freshdesk
 def get_entry_data file_path, make_solution
   
-  created = 0
-  updated = 0
+  created_count = 0
+  updated_count = 0
   article_created = 0
   article_updated = 0
   topic_count = Hash.new
@@ -210,14 +210,12 @@ def get_entry_data file_path, make_solution
        import_id = import.text         
      end
      
-     entry.elements.each("created-at") do |created|  
-        created_time = created.text
+     entry.elements.each("created-at") do |created_time|  
+        created_time = created_time.text
         created_at = created_time.to_datetime()
-      end 
-     
-      ###########
-      entry.elements.each("updated-at") do |updated|  
-        updated_at = updated.text
+      end      
+      entry.elements.each("updated-at") do |updated_time|  
+        updated_at = updated_time.text
         updated_at = updated_at.to_datetime()
       end 
      
@@ -246,9 +244,9 @@ def get_entry_data file_path, make_solution
     @topic = Topic.find_by_import_id_and_account_id(import_id, current_account.id)   
     if @topic.blank?
        @topic = @forum.topics.new
-       created+=1
+       created_count+=1
     else
-      updated+=1
+      updated_count+=1
     end
     @topic.title = title
     @topic.import_id = import_id
@@ -327,8 +325,8 @@ def get_entry_data file_path, make_solution
   end
   @article_stat["created"] = article_created
   @article_stat["updated"]= article_updated
-  topic_count["created"]=created
-  topic_count["updated"]=updated
+  topic_count["created"]=created_count
+  topic_count["updated"]=updated_count
   return topic_count
 end
 
