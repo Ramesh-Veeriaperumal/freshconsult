@@ -95,10 +95,15 @@ require 'openid'
   
   
 
-  def google_auth_completed
-    
+  def google_auth_completed    
   resp = request.env[Rack::OpenID::RESPONSE]  
-  email = get_email resp    
+  email = nil
+  if resp.status == :success
+    email = get_email resp
+  else
+    flash[:error] = "Authentication Failed"
+    return redirect_to root_url
+  end
   provider = 'open_id' 
   identity_url = resp.display_identifier
   logger.debug "The display identifier is :: #{identity_url.inspect}"
@@ -139,9 +144,7 @@ def get_email(resp)
     email = ax_response.data["http://axschema.org/contact/email"].first  
     
   else
-    "Error: #{resp.status}"
-    flash[:notice] = "Authentication Failed"
-    redirect_to root_url
+    logger.debug "Error: #{resp.status}"   
   end
 end
 
