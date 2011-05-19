@@ -1,4 +1,4 @@
-class Admin::XmlreaderController < ApplicationController
+class Admin::XmlreaderController < Admin::AdminController
   
   before_filter { |c| c.requires_permission :manage_tickets }
     require 'rexml/document'

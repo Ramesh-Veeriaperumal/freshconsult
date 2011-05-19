@@ -1,37 +1,41 @@
-		
-		
-<% form_for :dump, :url=>{:controller=>"admin/xmlreader", :action=>"zendesk_import"}, :html => { :multipart => true } do |f| -%>
-		
-		<%= hidden_field_tag 'base_dir', @out_dir %>
-		<!--%
-		logger.debug "extract_zip: html : #{@file_list.inspect}"
-		@file_list.each do |file|		
+<% content_for :sidebar do -%><%- end %> 
 
-		%-->
- 		
-		<li class="checkbox">			  
-			<%= check_box("import" , "files" ,{:multiple => true, :checked => true ,:disabled=>true},"customers" , nil) %><label>Users & Organizations</label>		 
+<%= content_tag( :h3,  t('import_zendesk_title'), :class => "title" ) %>
+<% form_for :dump, :url => { :controller=>"admin/xmlreader", :action=>"zendesk_import"}, :html => { :multipart => true } do |f| -%>
+	<%= hidden_field_tag 'base_dir', @out_dir %>
+	<ul class="ui-form">
+		<li>			  
+			<label>
+				<%= check_box( "import", "files", { :multiple => true, :checked => true ,:disabled => true }, "customers" , nil ) %>
+				<%= t('import_user_org') %>
+			</label>
+			<div class="info-data tabbed">
+				<%= t('import_user_org_text') %>				
+			</div>
+		</li>		
+		<li>	
+			<label>		  
+				<%= check_box( "import", "files", { :multiple => true, :checked => true }, "tickets" , nil) %>
+				<%= t('import_ticket_group') %>
+			</label>
+		</li>		
+		<li>
+			<label>
+				<%= check_box( "import", "files", { :multiple => true, :checked => true }, "forums" , nil) %>
+				<%= t('import_forum')  %>
+			</label>
+		</li>		
+		<li>
+			<label>
+				<%= check_box("import", "files", { :multiple => true, :checked => false }, "solution" , nil) %> 
+				<%= t('import_solution_article') %>
+			</label>
+			<div class="info-data tabbed">
+				<%= t('import_solution_article_info') %>
+			</div>
 		</li>
-		
-		<li class="checkbox">			  
-			<%= check_box("import" , "files" ,{:multiple => true, :checked => true},"tickets" , nil) %><label>Tickets & Group</label>		 
-		</li>
-		
-		<li class="checkbox">			  
-			<%= check_box("import" , "files" ,{:multiple => true, :checked => true},"forums" , nil) %><label>Forums</label>		 
-		</li>
-		
-		<li class="checkbox">			  
-			<%= check_box("import" , "files" ,{:multiple => true, :checked => false},"solution" , nil) %><label>Convert Article forum to solution (Note: We will not save the forum comments)</label>		 
-		</li>
-		
-		<!--%
-		end		
-		%-->
-		
-		<tr>
-     		<td colspan='2'>
-       			<%= submit_tag 'Submit' -%>
-    	    </td>
-   		</tr>	
+ 	</ul>
+	<div class="button-container">
+       <%= submit_tag 'Submit', :class => "uiButton" %>	
+	</div>
 <% end -%>

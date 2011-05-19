@@ -1,4 +1,4 @@
-class Admin::WidgetConfigController <  Admin::AdminController
+class Admin::WidgetConfigController < Admin::AdminController
   
   def index
     
