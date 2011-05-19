@@ -234,7 +234,9 @@ def get_entry_data file_path, make_solution
     @topic.account_id = current_account.id
     @topic.stamp_type = stamp_type
     topic_saved = @topic.save
-    @post = @topic.posts.build(:body =>body)
+    @post = @topic.posts.find_by_import_id(import_id)
+    @post = @topic.posts.new if @post.blank?
+    @post.body = body
     @post.account_id = current_account.id
     @post.body_html = body
     @post.forum_id = @forum.id
@@ -252,6 +254,7 @@ def get_entry_data file_path, make_solution
        
        post_body = nil
        created_by = nil
+       imp_id = nil
        
        post.elements.each("body") do |p_body|
          post_body = p_body.text
@@ -259,11 +262,26 @@ def get_entry_data file_path, make_solution
        post.elements.each("user-id") do |post_user|
          user = post_user.text         
          created_by = current_account.users.find_by_import_id(user.to_i()).id unless user.blank?
-       end     
+       end
        
-        @post =  @topic.posts.build(:account_id =>current_account.id , :body_html =>post_body, :forum_id =>@forum.id, :user_id =>created_by )
-        @post.save
-        
+       post.elements.each("id") do |imp|
+         imp_id = imp.text
+       end  
+       
+       @post = @topic.posts.find_by_import_id(imp_id.to_i())
+       @post = @topic.posts.new if @post.blank?
+       @post.body = post_body
+       @post.account_id = current_account.id
+       @post.body_html = post_body
+       @post.forum_id = @forum.id
+       @post.user_id = created_by
+    
+       if @post.save
+          logger.debug "post saved successfully"
+       else
+          logger.debug "error while saving post #{@post.errors.inspect}"
+       end
+      
      end
      
   end
