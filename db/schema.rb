@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110514085002) do
+ActiveRecord::Schema.define(:version => 20110518061532) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -529,6 +529,7 @@ ActiveRecord::Schema.define(:version => 20110514085002) do
     t.text     "body_html"
     t.integer  "account_id", :limit => 8
     t.boolean  "answer",                  :default => false
+    t.integer  "import_id",  :limit => 8
   end
 
   add_index "posts", ["account_id", "created_at"], :name => "index_posts_on_account_id_and_created_at"
@@ -538,7 +539,7 @@ ActiveRecord::Schema.define(:version => 20110514085002) do
 
   create_table "solution_articles", :force => true do |t|
     t.string   "title"
-    t.text     "description",  :limit => 2147483647
+    t.text     "description",  :limit => 16777215
     t.integer  "user_id",      :limit => 8
     t.integer  "folder_id",    :limit => 8
     t.integer  "status"

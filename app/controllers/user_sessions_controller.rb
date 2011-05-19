@@ -97,12 +97,11 @@ require 'openid'
 
   def google_auth_completed
     
-  resp = request.env[Rack::OpenID::RESPONSE]
-  logger.debug "The response is :: #{resp.inspect}"
+  resp = request.env[Rack::OpenID::RESPONSE]  
+  email = get_email resp    
+  provider = 'open_id' 
   identity_url = resp.display_identifier
   logger.debug "The display identifier is :: #{identity_url.inspect}"
-  provider = 'open_id'  
-  email = get_email resp    
   @auth = Authorization.find_by_provider_and_uid_and_account_id(provider, identity_url,current_account.id)
   @current_user = @auth.user unless @auth.blank?
   @current_user = current_account.all_users.find_by_email(email) if @current_user.blank?
@@ -141,6 +140,8 @@ def get_email(resp)
     
   else
     "Error: #{resp.status}"
+    flash[:notice] = "Authentication Failed"
+    redirect_to root_url
   end
 end
 
