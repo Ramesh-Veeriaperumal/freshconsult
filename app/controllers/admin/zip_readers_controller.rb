@@ -1,4 +1,4 @@
-class Admin::ZipReadersController < ApplicationController
+class Admin::ZipReadersController < Admin::AdminController
   
 before_filter { |c| c.requires_permission :manage_tickets }  
 

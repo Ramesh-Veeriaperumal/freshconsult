@@ -1,13 +1,11 @@
 <% content_for :sidebar do -%><%- end %>
-<%= content_tag (:h3, "Authentication", :class => "title") %>
+<%= content_tag (:h3, "Remote Authentication", :class => "title") %>
 <% form_for :account, @account, :url => { :action => "update" },  :html => { :method => :put, :id => "BusinessHours"  } do |f| %>
 	<%= f.error_messages %>
 	<ul class="ui-form">
 		<li class="inline-field">
-			<label class="caption">Single sign-on</label>
-			<div class="fields">
-				<%= f.label :sso_enabled, "#{f.check_box :sso_enabled} Enable" %>
-				<div class="info-data"></div>
+		  <%= f.label :sso_enabled, "#{f.check_box :sso_enabled} Enable Single Sign On" %>
+			<div class="info-data tabbed">				
 				<ul class="ui-form-inline" id="sso-form" style="display:<%= current_account.sso_enabled ? "block": "none" %>;">
 					<li>
 						<%= f.label :shared_secret, "Shared Secret" %>
@@ -32,7 +30,7 @@
 		</li>
 	</ul>
 	<div class="button-container">
-		<%= link_to t('back'), "/admin/home", :class => "uiButton floatl" %>
+		<%= link_to "&larr; #{t('account.cancel')}", "/admin/home", :class => "uiButton floatl" %>
 		<%= f.submit t('save'), :class => "uiButton" %>
 	</div>
 	<% javascript_tag do %>

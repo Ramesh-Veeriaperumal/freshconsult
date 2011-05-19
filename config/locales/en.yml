@@ -454,7 +454,7 @@ en:
    back_to_admin:                     "Back to Admin"
    
 #April 26th 2011
-   
+
    step1:                           "Step 1"
    step2:                           "Step 2" 
    warning:                         "WARNING"
@@ -468,12 +468,15 @@ en:
    non_covered_feature_error:       "Your current Freshdesk plan does not cover this feature."
    non_covered_feature_error:        "Your current Freshdesk plan does not cover this feature."
    portal_customizer_title:          "Customize your Customer Portal"
-   portal_customizer_open_forums:    "Allow customers to view 'Forums' without signing in."
-   portal_customizer_anon_tickets:   "Anybody can submit tickets."
-   portal_customizer_open_solutions: "Allow customers to view 'Solutions' without signing in."
-      
+   portal_customizer_open_forums:    "Anybody can view forums"
+   portal_customizer_anon_tickets:   "Anybody can submit a tickets"
+   portal_customizer_open_solutions: "Anybody can view public solutions"
+   portal_customizer_anon_tickets_i: "Turn this feature off, if you want your users to be signed in to submit a ticket"
+   portal_customizer_open_sol_i:     "Turn this feature off, if you want your users to be signed in to view public solutions"
+   portal_customizer_anon_for_i:     "Turn this feature off, if you want your users to be signed in to view forums"
+
 #May 5th 2011
-    
+
    working:                         "Working"    
    at:                              "at"
    forgot_password:                 "Forgot Password"
@@ -499,7 +502,7 @@ en:
    trial_expired_on:                "Your trial has expired on"
    select_a_plan_gain_access:       "Select a plan from below to regain access to your account."
    select_a_plan:                   "Select a Plan"
-   
+
    basic_brief:                     "For Small teams"
    pro_brief:                       "For larger Teams"
    premium_brief:                   "Top-of-the-line"
@@ -508,13 +511,13 @@ en:
    pro_details:                     "Everything in &quot;Basic&quot; Plan plus, Scenario Automations, Customer-specific SLAs, Business Hours, Forums, Community &amp; Email Support."
    premium_details:                 "Everything in &quot;Pro&quot; Plan plus, Multiple Product Support, Multi-timezone support, Community, Email &amp; Phone Support"   
    choose_plan:                     "Choose Plan"
-   
+
    agents:                          "Agents"
    total_price:                     "Total Price"
    billed_monthly:                  "Billed monthly"
    enter_payment:                   "Enter Payment details..."
    change_my_plan:                  "Change my plan..."
-   
+
    current_plan:                    "Current Plan"
    change_plan:                     "Change plan"
    current_plan_details:            "%{plan_name} Plan with %{agent_limit} agents"
@@ -532,7 +535,7 @@ en:
    credit_card_info:                "Credit card information"
    begin_subscription:              "Begin Subscription"
    select_another_plan:             "Select another plan"
-   
+
    card_number:                     "Card Number"
    expires:                         "Expires"
    security_code:                   "Security code"
@@ -541,7 +544,7 @@ en:
    country:                         "Country"
    state:                           "State"
    zip:                             "Zip"
-   
+
    billing_info_update:             "Your billing information has been updated."
    plan_info_update:                "Your plan has been changed."
    change_plan_info:                "You can change your plan level at any time.  The position limits and other features of the new plan that you select will be effective as soon as you make the change, but your bill amount will not change until your next bill date.  Your next bill date is %{date}."
@@ -551,7 +554,35 @@ en:
    agent_deleted_message:           "This is a deleted agent"
    agent_emailnotverified:          "Email has not been verified for this agent!"
    agent_assigned_info:             "No open and pending tickets for this agent"
-   agent_assigned_title:            "Recently assigned tickets (Open & Pending)"
-   agent_info_title:                "Agent information"
-   
+   agent_assigned_title:            "Recently assigned tickets (Open &amp; Pending)"
+   agent_info_title:                "Agent information"   
    ticket_due_by_time:              "Due by"
+
+#May 19th 2011
+
+   zendesk_credentials:             "Zendesk Credentials"
+   username:                        "Username"
+   password:                        "Password"
+   zendesk_url:                     "Zendesk URL"
+   zendesk_backup_info:             "Select the Zendesk backup file downloaded from zendesk"
+   zendesk_backup:                  "Backup file"
+
+   import_zendesk_title:            "Import from zendesk"
+   import_user_org:                 "Users &amp; Organizations"
+   import_user_org_text:            "All the Users &amp; Organizations in your Zendesk account will be imported into your current Freshdesk account as \"Contacts & Companies\""
+   import_ticket_group:             "Tickets &amp; Group"
+   import_forum:                    "Forums"   
+   import_solution_article:         "Convert Article forum to solution"
+   import_solution_article_info:    "Note: We will not save the forum comments"
+
+   import_zendesk_summary:          "Import from zendesk summary"
+   import_zendesk_summary_info:     "Zendesk date has been successfully imported."
+   import_data:                     "Date Imported"
+   import_added_newly:              "Added Newly"
+   import_updated:                  "Updated"
+   import_tickets:                  "Tickets"
+   import_groups:                   "Groups"
+   import_users_contacts:           "Users &rarr; Contacts"
+   import_org_companies:            "Organizations &rarr; Companies"
+   import_topics:                   "Topics"
+   submit:                          "submit"

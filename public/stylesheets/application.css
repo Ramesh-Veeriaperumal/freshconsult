@@ -1,8 +1,8 @@
 /* This import applies a global reset to any page that imports this stylesheet.*/
 /* Theme Colors and layout Defaults */
 /* Importing admin icons */
-.admin-icon-sprite, .admin-icon-agent, .admin-icon-billing, .admin-icon-business-hours, .admin-icon-dispatcher, .admin-icon-email-notifications, .admin-icon-email-settings, .admin-icon-feedback, .admin-icon-group, .admin-icon-rebranding, .admin-icon-scenario, .admin-icon-sla, .admin-icon-ticket-fields {
-  background: url('/images/admin-icon-8bf1de3534.png') no-repeat;
+.admin-icon-sprite, .admin-icon-agent, .admin-icon-billing, .admin-icon-business-hours, .admin-icon-customer-portal, .admin-icon-dispatcher, .admin-icon-email-notifications, .admin-icon-email-settings, .admin-icon-feedback, .admin-icon-group, .admin-icon-import-export, .admin-icon-rebranding, .admin-icon-remote-authentication, .admin-icon-scenario, .admin-icon-sla, .admin-icon-ticket-fields {
+  background: url('/images/admin-icon-ea84c72c61.png') no-repeat;
 }
 
 /* Ticket Show page twitter style icons */
@@ -1181,40 +1181,52 @@ ul.admin_icons li a:hover {
   background-position: 0 -64px;
 }
 
-.admin-icon-dispatcher {
+.admin-icon-customer-portal {
   background-position: 0 -96px;
 }
 
-.admin-icon-email-notifications {
+.admin-icon-dispatcher {
   background-position: 0 -128px;
 }
 
-.admin-icon-email-settings {
+.admin-icon-email-notifications {
   background-position: 0 -160px;
 }
 
-.admin-icon-feedback {
+.admin-icon-email-settings {
   background-position: 0 -192px;
 }
 
-.admin-icon-group {
+.admin-icon-feedback {
   background-position: 0 -224px;
 }
 
-.admin-icon-rebranding {
+.admin-icon-group {
   background-position: 0 -256px;
 }
 
-.admin-icon-scenario {
+.admin-icon-import-export {
   background-position: 0 -288px;
 }
 
-.admin-icon-sla {
+.admin-icon-rebranding {
   background-position: 0 -320px;
 }
 
-.admin-icon-ticket-fields {
+.admin-icon-remote-authentication {
   background-position: 0 -352px;
+}
+
+.admin-icon-scenario {
+  background-position: 0 -384px;
+}
+
+.admin-icon-sla {
+  background-position: 0 -416px;
+}
+
+.admin-icon-ticket-fields {
+  background-position: 0 -448px;
 }
 
 .mark_action a, .mark_action .stamp {
