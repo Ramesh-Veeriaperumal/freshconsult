@@ -16,18 +16,22 @@
 			<th><%= t('import_updated') %></th>
 			<th></th>
 		</tr>
+		<%if @tickets_stat.size > 0%>
 		<tr>
 			<td class="sub-title"><%= t('import_tickets') %></td>
 			<td><%=@tickets_stat["created"]%></td>
 			<td><%=@tickets_stat["updated"]%></td>
 			<td></td>
 		</tr>
+		<%end%>
+		<%if @groups_stat.size > 0%>
 		<tr>
 			<td class="sub-title"><%= t('import_groups') %></td>
 			<td><%=@groups_stat["created"]%></td>
 			<td><%=@groups_stat["updated"]%></td>
 			<td></td>
 		</tr>
+		<%end%>
 		<tr>
 			<td class="sub-title"><%= t('import_users_contacts') %></td>
 			<td><%=@users_stat["created"]%></td>
@@ -40,17 +44,29 @@
 			<td><%=@customers_stat["updated"]%></td>
 			<td></td>			
 		</tr>
+		<%if @forum_stat%>
 		<tr>
 			<td class="sub-title"><%= t('import_forum') %></td>
 			<td><%=@forum_stat["created"]%></td>
 			<td><%=@forum_stat["updated"]%></td>
 			<td></td>			
 		</tr>
+		<%end%>
+		<%if @topic_stat%>
 		<tr>
 			<td class="sub-title"><%= t('import_topics') %></td>
 			<td><%=@topic_stat["created"]%></td>
 			<td><%=@topic_stat["updated"]%></td>
 			<td></td>			
-		</tr>				
+		</tr>
+		<%end%>
+		<%if @article_stat%>	
+		<tr>
+			<td class="sub-title"><%= t('import_articles') %></td>
+			<td><%=@article_stat["created"]%></td>
+			<td><%=@article_stat["updated"]%></td>
+			<td></td>			
+		</tr>
+		<%end%>			
 	</table>
 </ul>
