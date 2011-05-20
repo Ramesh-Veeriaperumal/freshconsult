@@ -321,7 +321,7 @@ protected
       old_item = item.clone
       message = "#{item.responder ? "Reassigned" : "Assigned"} to #{user.name}"
       item.responder = user
-      item.train(:ham)
+      #item.train(:ham) #Temporarily commented out by Shan
       item.save
       if old_item.responder_id != item.responder_id
         unless item.responder
