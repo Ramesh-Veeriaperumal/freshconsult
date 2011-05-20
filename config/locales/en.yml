@@ -450,7 +450,7 @@ en:
    top:                               "Top"
    bottom:                            "Bottom"
    feedbackwidget_defaultbutton:      "Support"
-   feedbackwidget_defaulttitle:       "Help & Support"
+   feedbackwidget_defaulttitle:       "Help &amp; Support"
    back_to_admin:                     "Back to Admin"
    
 #April 26th 2011
@@ -469,7 +469,7 @@ en:
    non_covered_feature_error:        "Your current Freshdesk plan does not cover this feature."
    portal_customizer_title:          "Customize your Customer Portal"
    portal_customizer_open_forums:    "Anybody can view forums"
-   portal_customizer_anon_tickets:   "Anybody can submit a tickets"
+   portal_customizer_anon_tickets:   "Anybody can submit a ticket"
    portal_customizer_open_solutions: "Anybody can view public solutions"
    portal_customizer_anon_tickets_i: "Turn this feature off, if you want your users to be signed in to submit a ticket"
    portal_customizer_open_sol_i:     "Turn this feature off, if you want your users to be signed in to view public solutions"
@@ -491,8 +491,8 @@ en:
    edit_agent:                      "Edit Agent"
 
 #May 10th 2011
-   plans_billing:                   "Plans & Billing"
-   back_plans_billing:              "Back to Plans & Billing"
+   plans_billing:                   "Plans &amp; Billing"
+   back_plans_billing:              "Back to Plans &amp; Billing"
    upgrade_trial:                   "Upgrade your trial!"
    your_trial_account:              "Your trial account"
    is_expiring_today:               "is expiring today"

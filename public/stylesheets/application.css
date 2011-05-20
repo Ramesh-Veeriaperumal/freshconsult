@@ -1,8 +1,8 @@
 /* This import applies a global reset to any page that imports this stylesheet.*/
 /* Theme Colors and layout Defaults */
 /* Importing admin icons */
-.admin-icon-sprite, .admin-icon-agent, .admin-icon-billing, .admin-icon-business-hours, .admin-icon-customer-portal, .admin-icon-dispatcher, .admin-icon-email-notifications, .admin-icon-email-settings, .admin-icon-feedback, .admin-icon-group, .admin-icon-import-export, .admin-icon-rebranding, .admin-icon-remote-authentication, .admin-icon-scenario, .admin-icon-sla, .admin-icon-ticket-fields {
-  background: url('/images/admin-icon-ea84c72c61.png') no-repeat;
+.admin-icon-sprite, .admin-icon-account-settings, .admin-icon-agent, .admin-icon-business-hours, .admin-icon-customer-portal, .admin-icon-dispatcher, .admin-icon-email-notifications, .admin-icon-email-settings, .admin-icon-feedback, .admin-icon-group, .admin-icon-import, .admin-icon-rebranding, .admin-icon-remote-authentication, .admin-icon-scenario, .admin-icon-sla, .admin-icon-ticket-fields {
+  background: url('/images/admin-icon-55b5049588.png') no-repeat;
 }
 
 /* Ticket Show page twitter style icons */
@@ -1169,11 +1169,11 @@ ul.admin_icons li a:hover {
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
-.admin-icon-agent {
+.admin-icon-account-settings {
   background-position: 0 0;
 }
 
-.admin-icon-billing {
+.admin-icon-agent {
   background-position: 0 -32px;
 }
 
@@ -1205,7 +1205,7 @@ ul.admin_icons li a:hover {
   background-position: 0 -256px;
 }
 
-.admin-icon-import-export {
+.admin-icon-import {
   background-position: 0 -288px;
 }
 

@@ -15,10 +15,6 @@
 						<li>
 							<%= p.label :login_url, "Remote login Url" %>
 							<%= p.text_field :login_url, :value => @account[:sso_options].default(:login_url), :class => "text url" %>
-							<div class="info-data">
-								This is the URL that Zendesk will invoke to attempt remote authentication, e.g. 
-								https://support.yourcompany.com/services/zendesk_auth.asp
-							</div>
 						</li>
 						<li>
 							<%= p.label :logout_url, "Remote logout Url" %>

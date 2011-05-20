@@ -24,7 +24,7 @@ var postProcessCondition = function(filter, id){
 		    Form.Element.activate(id);
 			
 			jQuery("#"+id).trigger("blur");
-		break; 		
+		break;
 	};
 }
 
@@ -203,7 +203,7 @@ rules_filter = function(name, filter_data, parentDom, options){
 			jQuery(parentDom).parents('form:first').submit(function(e){
 				domUtil.get_filter_list('json', this);
 				//console.log(hidden_.val());
-				return true;
+				return false;
 			});
 			
 			jQuery('.l_placeholder').live("click", function(ev){
