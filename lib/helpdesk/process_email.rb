@@ -7,7 +7,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     if !account.nil?
       #Charset Encoding starts
       charsets = params[:charsets]
-      text_retrv = params[:text].blank? ? 'html' : 'text'
+      text_retrv = params[:text].nil? ? 'html' : 'text'
       charset_encoding = (ActiveSupport::JSON.decode charsets)[text_retrv]
       params[:text] = Iconv.new('utf-8//IGNORE', charset_encoding).iconv(params[text_retrv.to_sym]) unless ["utf-8","utf8"].include?(charset_encoding.downcase)
       #Charset Encoding ends

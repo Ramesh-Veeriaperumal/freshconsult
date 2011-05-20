@@ -6,7 +6,10 @@ class EmailConfig < ActiveRecord::Base
   attr_accessible :to_email, :reply_email, :group_id, :primary_role
   
   validates_presence_of :to_email, :reply_email
-  validates_uniqueness_of :to_email, :scope => :account_id
+  validates_uniqueness_of :reply_email, :scope => :account_id
+  #validates_uniqueness_of :to_email, :scope => :account_id #Since it is auto-generated based
+  #on reply email, it's uniqueness is implicit unless we screw up the auto-generation
+  #algorithm
   validates_uniqueness_of :activator_token, :allow_nil => true
   
   before_create :set_activator_token
