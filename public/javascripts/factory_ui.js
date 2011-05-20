@@ -9,41 +9,62 @@ window.fdUtil	 = {
 			variable = variable || "";
 		});	
 	}
-}
+};
 
 window.FactoryUI = {
-	text:function(placeholder, name, value, className){
-		var className   = className	  || "text";
-		placeholder = placeholder || "";
-		name 		= name || "";
-		value 		= value || "";
-		return jQuery("<input type='text' name='"+name+"' class='"+className+"' placeholder='"+placeholder+"' value='"+value+"' />");	
-	}, 
+	text:function(_placeholder, _name, _value, _className){
+		var className	= _className || "text",
+			placeholder = _placeholder || "",
+			name		= _name || "",
+			value		= _value || "";
+
+		return jQuery("<input type='text' />")
+				.attr({ "name": name })
+				.addClass(className)
+				.val(value);
+	},
 	// Template json for choices 
 	// ['choice1', 'choice2'...]
-	dropdown: function(choices, name, className){
+	dropdown: function(choices, _name, _className){
 		if(!choices) return;
-		var className   = className	  || "dropdown";
-		var name		= name		  || "";
-		var	select 		= "<select name='"+name+"' class='"+className+"' >";		
-		choices.each(function(item){ 			
-			select += "<option value='"+item.name+"'>"+item.value+"</option>";			
-		});		
-		select += "</select>";
+		var className   = _className	|| "dropdown",
+			name		= _name			|| "",
+			select		= jQuery("<select />")
+							.attr({ "name": name })
+							.addClass(className);
+		
+		choices.each(function(item){
+			jQuery( "<option />" )
+				.text( item.value )
+				.val( item.name )
+				.appendTo(select);
+		});
 		return jQuery(select);
-	},	
-	paragraph: function(placeholder, name, value, className){
-		var className   = className	  || "paragraph";
-		placeholder = placeholder || "";
-		name 		= name || "";
-		value 		= value || "";
-		return jQuery("<textarea type='text' name='"+name+"' class='"+className+"' placeholder='"+placeholder+"'>"+value+"</textarea>");
 	},
-	checkbox: function(label, name, checked, className){
-		var className = className || "checkbox";
-		label   = label || "";
-		name    = name  || "";
-		checked = (checked == "true")?"checked": "" || "";
-		return jQuery("<label class='"+className+"'><input type='hidden' name='"+name+"' value=false /><input type='checkbox' name='"+name+"' "+checked+" value=true />"+label+"</label>") 
+	paragraph: function(_placeholder, _name, _value, _className){
+		var className   = _className || "paragraph",
+			placeholder = _placeholder || "",
+			name		= _name || "",
+			value		= _value || "";
+			
+		return jQuery("<textarea />")
+					.attr({ "name": name })
+					.addClass(className)
+					.val(value);
+	},
+	checkbox: function(_label, _name, _checked, _className){
+		var className	= _className || "checkbox",
+			label		= _label || "",
+			name		= _name  || "",
+			checked		= (_checked == "true")?"checked": "" || "";
+					
+		labelBox  = jQuery("<label />")
+					.addClass( className );
+		hiddenBox = jQuery("<input type='hidden' />")
+					.attr({ "name" : name, "value" : false });
+		checkBox  = jQuery("<input type='checkbox' />")
+					.attr({ "name" : name, "checked": "checked", value: true });
+
+		return labelBox.append(hiddenBox).append(checkBox).append(label);
 	}
 };
