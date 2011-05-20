@@ -231,7 +231,7 @@ def get_entry_data file_path, make_solution
     if (@forum.blank? && make_solution)
       logger.debug "The forum is blank and make_solu:: #{make_solution}"
       @sol_folder = current_account.folders.find_by_import_id(forum_id.to_i())
-      @article = @sol_folder.find_by_import_id(import_id) unless @sol_folder.blank?
+      @article = @sol_folder.articles.find_by_import_id(import_id) unless @sol_folder.blank?
       if @article.blank?
         article_created+=1
       else
@@ -341,6 +341,8 @@ def save_solution_article article, curr_folder
     created = 0
     updated = 0 
     @article_stat = Hash.new
+    created_at = nil
+    updated_at = nil
     
      article.elements.each("body") {|body| desc = body.text }    
      article.elements.each("forum-id") { |forum|  forum_id = forum.text }   
@@ -349,6 +351,14 @@ def save_solution_article article, curr_folder
        user = submitter.text 
        submitter_id = current_account.users.find_by_import_id(user.to_i()).id unless user.blank?
      end
+     article.elements.each("created-at") do |created_time|  
+        created_time = created_time.text
+        created_at = created_time.to_datetime()
+     end      
+     article.elements.each("updated-at") do |updated_time|  
+        updated_at = updated_time.text
+        updated_at = updated_at.to_datetime()
+     end 
    
     article.elements.each("title") { |forum_title| title = forum_title.text }     
     article.elements.each("id") { |import|  import_id = import.text }    
@@ -373,6 +383,8 @@ def save_solution_article article, curr_folder
     @article.status = Solution::Article::STATUS_KEYS_BY_TOKEN[:published]
     @article.art_type = Solution::Article::TYPE_KEYS_BY_TOKEN[:permanent]
     @article.is_public = is_public    
+    @article.created_at = created_at
+    @article.updated_at = updated_at
     
     if @article.save
       logger.debug "Article has been saved succesfully"

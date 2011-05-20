@@ -585,4 +585,6 @@ en:
    import_users_contacts:           "Users &rarr; Contacts"
    import_org_companies:            "Organizations &rarr; Companies"
    import_topics:                   "Topics"
+   import_articles:                 "Solution Articles"
    submit:                          "submit"
+   
