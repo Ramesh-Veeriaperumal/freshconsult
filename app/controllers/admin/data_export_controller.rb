@@ -1,4 +1,4 @@
-class Admin::DataExportController <  Admin::AdminController
+class Admin::DataExportController < Admin::AdminController
  
   before_filter :check_export_status, :only => :export
   

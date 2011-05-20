@@ -24,7 +24,7 @@ var postProcessCondition = function(filter, id){
 		    Form.Element.activate(id);
 			
 			jQuery("#"+id).trigger("blur");
-		break; 		
+		break;
 	};
 }
 

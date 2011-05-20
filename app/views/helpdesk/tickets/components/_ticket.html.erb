@@ -29,9 +29,9 @@
 	<h3 class="title"><%=t('ticket_due_by_time')%></h3>
 	<ul class="cnt" id="due-by-time-parent">
 	   <li>
-			<div id="edit-due-by-time">
-				 <span class="edit-item"></span>
-				 <span><%= ticket.due_by.strftime("%B %e %Y at %I:%M %p") %></span>
+			<div id="edit-due-by-time" >
+				 <span class="edit-item"></span> 						 
+				 <span><%= formated_date(ticket.due_by) %></span>
 			</div> 
 	   </li> 
 	</ul>

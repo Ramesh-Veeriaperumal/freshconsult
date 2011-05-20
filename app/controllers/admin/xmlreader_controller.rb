@@ -1,4 +1,4 @@
-class Admin::XmlreaderController < ApplicationController
+class Admin::XmlreaderController < Admin::AdminController
   
   before_filter { |c| c.requires_permission :manage_tickets }
     require 'rexml/document'
@@ -403,7 +403,8 @@ def handle_ticket_import base_dir
       req.elements.each("attachments/attachment") do |attach|         
         attachemnt_url = nil        
         attach.elements.each("url") {|attach_url|   attachemnt_url = attach_url.text  } 
-        @request.attachments.create(:content =>  RemoteFile.new(attachemnt_url), :description => "", :account_id => @request.account_id)
+        Delayed::Job.enqueue Import::Attachment.new(@request.id ,attachemnt_url, :ticket )
+        #@request.attachments.create(:content =>  RemoteFile.new(attachemnt_url), :description => "", :account_id => @request.account_id)
        
       end
       
@@ -483,12 +484,12 @@ def handle_ticket_import base_dir
         
         attachemnt_url = nil        
         attach.elements.each("url") {|attach_url|   attachemnt_url = attach_url.text  } 
-        @note.attachments.create(:content =>  RemoteFile.new(attachemnt_url), :description => "", :account_id => @note.account_id)
+        #@note.attachments.create(:content =>  RemoteFile.new(attachemnt_url), :description => "", :account_id => @note.account_id)
+        Delayed::Job.enqueue Import::Attachment.new(@note ,attachemnt_url , :note )
+        end        
+    end
+     #---note saving ends--
        
-        end
-        
-      end    
-     
    end   
    ticket_count["created"]=created_count
    ticket_count["updated"]= updated_count
@@ -569,7 +570,6 @@ def import_file_from_zendesk url, file_path
   File.open(file_path, 'w') {|f| f.write(res.body) }
   logger.debug "successfully imported files from zendesk with file_path:: #{file_path.inspect}"
 end
-
 
 
 
