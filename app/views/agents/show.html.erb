@@ -40,9 +40,9 @@ function setUserRole()
 </div> 
 <div class="contact-box-additional">
 	<%= content_tag(:h3, t('agent_assigned_title'), :class => "title") %>
-	<% if @recent_unresolved_tickets.size.eql?(0) %>
+	<% if @user.tickets.unresolved.empty? %>
 		<%= "#{t('agent_assigned_info')}" %>
 	<% else %>  
-		<%= render :partial => "tickets", :object => @recent_unresolved_tickets %> 
+		<%= render :partial => "tickets", :object => @user.tickets.unresolved %> 
 	<% end %>
 </div>	 
