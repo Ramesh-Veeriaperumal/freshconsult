@@ -7,7 +7,7 @@ class Helpdesk::TicketsController < ApplicationController
   include HelpdeskControllerMethods
   
   before_filter :load_multiple_items, :only => [:destroy, :restore, :spam, :unspam, :assign , :close_multiple ,:pick_tickets]  
-  before_filter :load_item,     :only => [:show, :edit, :update, :execute_scenario, :close ] 
+  before_filter :load_item,     :only => [:show, :edit, :update, :execute_scenario, :close ,:change_due_by] 
   before_filter :load_flexifield , :only =>[:execute_scenario]
   before_filter :set_customizer , :only => [:new ,:edit ,:show]
   
@@ -223,13 +223,29 @@ class Helpdesk::TicketsController < ApplicationController
     redirect_to :back
   end
   
-  def change_due_by 
-    due_date = params[:due_by_date_time]    
-    date = Time.parse(due_date)
-    
-    render :partial => "due_by", :object => date
+  def change_due_by     
+    due_date = get_due_by_time    
+    @item.update_attribute(:due_by , due_date)
+    render :partial => "due_by", :object => due_date
   end  
-
+  
+  def get_due_by_time
+    due_date_option = params[:due_date_options]
+    due_by_time = params[:due_by_date_time] 
+    case due_date_option.to_sym()
+    when :today
+      Time.zone.now.end_of_day
+    when :tomorrow
+      Time.zone.now.tomorrow.end_of_day
+    when :thisweek
+      Time.zone.now.end_of_week
+    when :nextweek
+      Time.zone.now.next_week.end_of_week
+    else
+      Time.parse(due_by_time)
+    end
+  end
+  
   def get_agents
     group_id = params[:id]
     @agents = current_account.agents.all(:include =>:user)    
@@ -305,7 +321,7 @@ protected
       old_item = item.clone
       message = "#{item.responder ? "Reassigned" : "Assigned"} to #{user.name}"
       item.responder = user
-      item.train(:ham)
+      #item.train(:ham) #Temporarily commented out by Shan
       item.save
       if old_item.responder_id != item.responder_id
         unless item.responder

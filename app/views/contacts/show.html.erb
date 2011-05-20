@@ -43,7 +43,7 @@
 		
 		<span class="seperator"></span>
 		<h4 class="title"><%=t('contacts.info4',:nick_name => @user.display_name)%></h4>
-		<% if @user.tickets.size.eql?(0) %>
+		<% if @user_tickets_open_pending.empty? %>
 			<%= "#{t('contacts.info5')}" %>
 		<% end %>
 		<%= render :partial => "tickets", :object => @user_tickets_open_pending %>

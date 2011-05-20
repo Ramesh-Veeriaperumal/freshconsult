@@ -16,7 +16,7 @@
 				</div>
 			</div>
 		<% end %>
-		<% if allowed_in_portal? :open_forums %>
+		<% if feature?(:forums) && allowed_in_portal?(:open_forums) %>
 			<div class="right_col">
 				<% unless (@topics.size == 0) %> 
 					<%= content_tag ( :h3, t('recent_forum_posts'), :class => "title" ) %>  

@@ -168,9 +168,12 @@ end
 ##an entry is equivalent to topic in freshdesk
 def get_entry_data file_path, make_solution
   
-  created = 0
-  updated = 0
+  created_count = 0
+  updated_count = 0
+  article_created = 0
+  article_updated = 0
   topic_count = Hash.new
+  @article_stat = Hash.new
   file = File.new(file_path) 
   doc =  REXML::Document.new file
     
@@ -183,6 +186,8 @@ def get_entry_data file_path, make_solution
      import_id = nil
      topic_id = nil
      stamp_type = nil
+     created_at = nil
+     updated_at = nil
      
      entry.elements.each("body") do |body|      
        body = body.text         
@@ -203,7 +208,16 @@ def get_entry_data file_path, make_solution
      
      entry.elements.each("id") do |import|      
        import_id = import.text         
-     end    
+     end
+     
+     entry.elements.each("created-at") do |created_time|  
+        created_time = created_time.text
+        created_at = created_time.to_datetime()
+      end      
+      entry.elements.each("updated-at") do |updated_time|  
+        updated_at = updated_time.text
+        updated_at = updated_at.to_datetime()
+      end 
      
      entry.elements.each("flag-type-id") do |stamp|
        stamp_type = stamp.text.to_i() unless stamp.blank?
@@ -217,28 +231,40 @@ def get_entry_data file_path, make_solution
     if (@forum.blank? && make_solution)
       logger.debug "The forum is blank and make_solu:: #{make_solution}"
       @sol_folder = current_account.folders.find_by_import_id(forum_id.to_i())
-      add_solution_article entry ,@sol_folder unless @sol_folder.blank?
+      @article = @sol_folder.articles.find_by_import_id(import_id) unless @sol_folder.blank?
+      if @article.blank?
+        article_created+=1
+      else
+        article_updated+=1
+      end
+      save_solution_article entry ,@sol_folder unless @sol_folder.blank?
       next
     end
     
     @topic = Topic.find_by_import_id_and_account_id(import_id, current_account.id)   
     if @topic.blank?
        @topic = @forum.topics.new
-       created+=1
+       created_count+=1
     else
-      updated+=1
+      updated_count+=1
     end
     @topic.title = title
     @topic.import_id = import_id
     @topic.user_id = submitter_id
     @topic.account_id = current_account.id
     @topic.stamp_type = stamp_type
+    @topic.created_at = created_at
+    @topic.updated_at = updated_at
     topic_saved = @topic.save
-    @post = @topic.posts.build(:body =>body)
+    @post = @topic.posts.find_by_import_id(import_id)
+    @post = @topic.posts.new if @post.blank?
+    @post.body = body
     @post.account_id = current_account.id
     @post.body_html = body
     @post.forum_id = @forum.id
     @post.user_id = submitter_id
+    @post.created_at = created_at
+    @post.updated_at = updated_at
     
     if @post.save
       logger.debug "post saved successfully"
@@ -252,6 +278,9 @@ def get_entry_data file_path, make_solution
        
        post_body = nil
        created_by = nil
+       imp_id = nil
+       post_created_at = nil
+       post_updated_at = nil
        
        post.elements.each("body") do |p_body|
          post_body = p_body.text
@@ -259,21 +288,49 @@ def get_entry_data file_path, make_solution
        post.elements.each("user-id") do |post_user|
          user = post_user.text         
          created_by = current_account.users.find_by_import_id(user.to_i()).id unless user.blank?
-       end     
+       end
        
-        @post =  @topic.posts.build(:account_id =>current_account.id , :body_html =>post_body, :forum_id =>@forum.id, :user_id =>created_by )
-        @post.save
-        
+       post.elements.each("id") do |imp|
+         imp_id = imp.text
+       end  
+       
+       post.elements.each("created-at") do |created|  
+        post_created_time = created.text
+        post_created_at = post_created_time.to_datetime()
+       end 
+     
+       post.elements.each("updated-at") do |updated|  
+        post_updated_at = updated.text
+        post_updated_at = post_updated_at.to_datetime()
+       end 
+       
+       @post = @topic.posts.find_by_import_id(imp_id.to_i())
+       @post = @topic.posts.new if @post.blank?
+       @post.body = post_body
+       @post.account_id = current_account.id
+       @post.body_html = post_body
+       @post.forum_id = @forum.id
+       @post.user_id = created_by
+       @post.created_at = post_created_at
+       @post.updated_at = post_updated_at
+    
+       if @post.save
+          logger.debug "post saved successfully"
+       else
+          logger.debug "error while saving post #{@post.errors.inspect}"
+       end
+      
      end
      
   end
- 
-  topic_count["created"]=created
-  topic_count["updated"]=updated
+  @article_stat["created"] = article_created
+  @article_stat["updated"]= article_updated
+  topic_count["created"]=created_count
+  topic_count["updated"]=updated_count
   return topic_count
 end
 
-def add_solution_article article, curr_folder
+def save_solution_article article, curr_folder
   
     title = nil
     desc = nil
@@ -281,6 +338,11 @@ def add_solution_article article, curr_folder
     forum_id= nil
     submitter_id = nil
     is_public = true
+    created = 0
+    updated = 0 
+    @article_stat = Hash.new
+    created_at = nil
+    updated_at = nil
     
      article.elements.each("body") {|body| desc = body.text }    
      article.elements.each("forum-id") { |forum|  forum_id = forum.text }   
@@ -289,15 +351,27 @@ def add_solution_article article, curr_folder
        user = submitter.text 
        submitter_id = current_account.users.find_by_import_id(user.to_i()).id unless user.blank?
      end
+     article.elements.each("created-at") do |created_time|  
+        created_time = created_time.text
+        created_at = created_time.to_datetime()
+     end      
+     article.elements.each("updated-at") do |updated_time|  
+        updated_at = updated_time.text
+        updated_at = updated_at.to_datetime()
+     end 
    
     article.elements.each("title") { |forum_title| title = forum_title.text }     
     article.elements.each("id") { |import|  import_id = import.text }    
      
-    @article_exist= current_account.solution_articles.find_by_import_id(import_id.to_i())
+    @article= current_account.solution_articles.find_by_import_id(import_id.to_i())
     
-    return unless @article_exist.blank?
-  
-    @article = curr_folder.articles.new
+    #return unless @article_exist.blank?
+    if @article.blank?
+      @article = curr_folder.articles.new
+      created+=1
+    else
+      updated+=1
+    end   
     
     @article.title = title
     @article.description = desc
@@ -308,8 +382,9 @@ def add_solution_article article, curr_folder
     @article.account_id = current_account.id
     @article.status = Solution::Article::STATUS_KEYS_BY_TOKEN[:published]
     @article.art_type = Solution::Article::TYPE_KEYS_BY_TOKEN[:permanent]
-    @article.is_public = is_public
-    
+    @article.is_public = is_public    
+    @article.created_at = created_at
+    @article.updated_at = updated_at
     
     if @article.save
       logger.debug "Article has been saved succesfully"

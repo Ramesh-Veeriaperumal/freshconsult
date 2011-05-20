@@ -449,6 +449,11 @@ a.addchoice:hover{
 			font-size:1.1em;
 		}
 	}
+	span.seperator{
+		border-style:solid;
+		border-color:#efefef;
+		margin-bottom:10px;
+	}
 }
 
 .ui-login, .ui-signup{ 
@@ -949,7 +954,42 @@ fieldset.nestedChoices{
 	}
 }
 
-
-
 .transparent-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index:99998; }
 .transparent-overlay { background:none; }
+
+.tabbed{ padding-left:26px; }
+
+.summary-report{
+	width:100%;
+	border:1px solid #ececec;
+	border-width:1px 0px;
+	font-size:13px;
+	td, th{ 
+		padding:8px 8px;
+		width:180px;
+		border-bottom:1px solid #eaeaea;		
+	}
+	th{
+		background:#ededed;
+		font-weight:bold;
+		color:#333333;
+	}
+	.sub-title{
+		background:#f1f1f1;
+		text-align:right;
+		width:280px;
+		padding-right:10px;
+		text-transform:capitalize;
+	}
+	thead{
+		margin:0px 0px 0px 0px;
+		color:#666666;
+		border:1px solid #f4f4e9;
+		background-color:#fffbee;	
+		td{
+			text-align:center;
+			font-weight:bold;	
+			padding:12px 18px;
+		}
+	}
+}
