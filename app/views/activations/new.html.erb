@@ -1,7 +1,6 @@
 <% content_for :sidebar do -%><%-end%>
-<h3 class="title">Activate your account</h3> 
+<%= content_tag (:h3, t('activate_account'), :class => 'title') %>
 <% form_for @user, :url => activate_path(@user.id), :html => { :method => :post } do |form| %>
 	<%= form.error_messages %>
 	<%= render :partial => "form", :locals => { :form => form }%>
-	<%= form.submit "Activate", :class => "fdbutton" %>
 <% end %>

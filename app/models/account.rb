@@ -6,6 +6,9 @@ class Account < ActiveRecord::Base
   #rebranding starts
   serialize :preferences, Hash
   serialize :sso_options, Hash
+  
+  has_one :data_export
+  
   has_one :logo,
     :as => :attachable,
     :class_name => 'Helpdesk::Attachment',
@@ -34,7 +37,10 @@ class Account < ActiveRecord::Base
   
   has_many :users, :dependent => :destroy , :conditions =>{:deleted =>false}
   has_many :all_users , :class_name => 'User', :dependent => :destroy
-  has_one :admin, :class_name => "User", :conditions => { :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:admin] } #has_one ?!?!?!?!
+  
+  has_one :account_admin, :class_name => "User", :conditions => { :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:account_admin] } #has_one ?!?!?!?!
+  has_many :admins, :class_name => "User", :conditions => { :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:admin] } ,:order => "created_at"
+  
   has_one :subscription, :dependent => :destroy
   has_many :subscription_payments
   has_many :solution_categories , :class_name =>'Solution::Category',:include =>:folders
@@ -63,7 +69,7 @@ class Account < ActiveRecord::Base
   has_one :business_calendar
   
   has_many :tickets, :class_name => 'Helpdesk::Ticket'
-  has_many :solution_folders , :class_name =>'Solution::Folder'
+  has_many :folders , :class_name =>'Solution::Folder' , :through =>:solution_categories
   
   has_one :form_customizer , :class_name =>'Helpdesk::FormCustomizer'
   
@@ -91,7 +97,7 @@ class Account < ActiveRecord::Base
 
   before_create :set_default_values, :config_default_email
   
-  before_update :check_default_values
+  before_update :check_default_values, :update_users_time_zone
     
   after_create :create_admin
   after_create :populate_seed_data
@@ -101,7 +107,7 @@ class Account < ActiveRecord::Base
   acts_as_paranoid
   
   Limits = {
-    'user_limit' => Proc.new {|a| a.users.count }
+    'agent_limit' => Proc.new {|a| a.agents.count }
   }
   
   Limits.each do |name, meth|
@@ -122,10 +128,13 @@ class Account < ActiveRecord::Base
     }
   }
   
+  SELECTABLE_FEATURES = [ :open_forums, :open_solutions, :anonymous_tickets ]
+  
   has_features do
     PLANS_AND_FEATURES.each_pair do |k, v|
       feature k, :requires => ( v[:inherits] || [] )
       v[:features].each { |f_n| feature f_n, :requires => k } unless v[:features].nil?
+      SELECTABLE_FEATURES.each { |f_n| feature f_n }
     end
   end
   
@@ -139,6 +148,12 @@ class Account < ActiveRecord::Base
     dis_max_id = get_max_display_id
     if self.ticket_display_id.blank? or (self.ticket_display_id < dis_max_id)
        self.ticket_display_id = dis_max_id
+    end
+  end
+  
+  def update_users_time_zone #Ideally this should be called in after_update
+    if time_zone_changed? && !features.multi_timezone?
+      all_users.update_all(:time_zone => time_zone)
     end
   end
   
@@ -158,6 +173,10 @@ class Account < ActiveRecord::Base
   
   def active?
     self.subscription.next_renewal_at >= Time.now
+  end
+  
+  def plan_name
+    subscription.subscription_plan.canon_name
   end
   
   def domain
@@ -205,6 +224,7 @@ class Account < ActiveRecord::Base
   
   def populate_features
     add_features_of subscription.subscription_plan.name.downcase.to_sym
+    SELECTABLE_FEATURES.each { |f_n| features.send(f_n).create }
   end
   
   def add_features_of(s_plan)
@@ -214,6 +234,14 @@ class Account < ActiveRecord::Base
 
       features.send(s_plan).create
       p_features[:features].each { |f_n| features.send(f_n).create } unless p_features[:features].nil?
+    end
+  end
+  
+  def remove_features_of(s_plan)
+    p_features = PLANS_AND_FEATURES[s_plan]
+    unless p_features.nil?
+      p_features[:inherits].each { |p_n| remove_features_of(p_n) } unless p_features[:inherits].nil?
+      features.send(s_plan).destroy
     end
   end
   
@@ -302,7 +330,7 @@ class Account < ActiveRecord::Base
     
     def set_default_values
       self.time_zone = Time.zone.name if time_zone.nil? #by Shan temp.. to_s is kinda hack.
-      self.helpdesk_name = name.titleize if helpdesk_name.nil?
+      self.helpdesk_name = name if helpdesk_name.nil?
       self.preferences = HashWithIndifferentAccess.new({:bg_color => "#efefef",:header_color => "#2f3733", :tab_color => "#7cb537"})
       self.shared_secret = generate_secret_token
       self.sso_options = set_sso_options_hash
@@ -325,7 +353,7 @@ class Account < ActiveRecord::Base
     def create_admin
       self.user.active = true
       self.user.account = self
-      self.user.user_role = User::USER_ROLES_KEYS_BY_TOKEN[:admin]  
+      self.user.user_role = User::USER_ROLES_KEYS_BY_TOKEN[:account_admin]  
       self.user.build_agent()
       self.user.save
       

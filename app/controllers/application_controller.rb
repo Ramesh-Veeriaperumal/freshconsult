@@ -15,6 +15,8 @@ class ApplicationController < ActionController::Base
   
   include SslRequirement
   include SubscriptionSystem
+  include ExceptionNotification::Notifiable #For sending notifications when error occours in the application
+  
   
   #include SentientController
   

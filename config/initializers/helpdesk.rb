@@ -17,6 +17,12 @@ if Helpdesk::EMAIL[:outgoing] && Helpdesk::EMAIL[:outgoing][RAILS_ENV.to_sym]
   ActionMailer::Base.smtp_settings = Helpdesk::EMAIL[:outgoing][RAILS_ENV.to_sym]
 end
 
+#For sending exception notifications 
+ExceptionNotification::Notifier.exception_recipients = %w(support@freshdesk.com) if RAILS_ENV == "production"
+ExceptionNotification::Notifier.exception_recipients = %w(vijay@freshdesk.com) if RAILS_ENV == "staging"
+ExceptionNotification::Notifier.sender_address =  %("Freshdesk Error" <rachel@freshdesk.com>)
+
+#I18n fallbacks if the it doesn't exists in a prticular language
 I18n.backend.class.send(:include, I18n::Backend::Fallbacks)
 I18n.fallbacks.map('it' => 'en')
 I18n.fallbacks.map('es' => 'en')

@@ -7,6 +7,7 @@
 			<li class="ticket_icon">
 				<h4>Tickets</h4>
 				<% @searched_tickets.each do |ticket| %>
+					<span class="icon"></span>
 					<%= link_to(Helpdesk::Ticket.search_display(ticket), ticket) %>
 				<% end %>
 			</li>
@@ -16,6 +17,7 @@
 			<li class="contact_icon"> 
 				<h4>People</h4>
 				<% @searched_users.each do |user| %> 
+					<span class="icon"></span>
 					<%= link_to(User.search_display(user), user) %>
 				<% end %>
 			</li>
@@ -25,6 +27,7 @@
 			<li class="company_icon">
 				<h4>Companies</h4>
 				<% @searched_companies.each do |company| %>
+					<span class="icon"></span>
 					<%= link_to(company.excerpts.name, company) %>
 				<% end %>
 			</li>
@@ -34,6 +37,7 @@
 			<li class="solution_icon">
 				<h4>Solutions</h4>
 				<% @searched_articles.each do |article| %>
+					<span class="icon"></span>
 					<%= link_to(article.excerpts.title, article) %>
 				<% end %>
 			</li>
@@ -43,6 +47,7 @@
 			<li class="forum_icon">
 				<h4>Forums</h4>
 				<% @searched_topics.each do |topic| %>
+					<span class="icon"></span>
 					<%= link_to(topic.excerpts.title, category_forum_topic_path(topic.forum.forum_category, topic.forum, topic)) %>
 				<% end %>
 			</li>

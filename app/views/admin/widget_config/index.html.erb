@@ -1,5 +1,8 @@
 <%= render :partial => "shared/colorpicker" %>
-	
+<% unless current_account.preferences.nil? 
+	$tab_color = current_account.preferences[:tab_color]
+   end %>	
+
 <% content_for :sidebar do -%>
 <div class="sidepanel"> 
 	<%= content_tag( :h3, t('feedbackwidget_help_title'), :class => 'title' ) %>
@@ -24,7 +27,7 @@
 	  	<%= content_tag(:label, t('feedbackwidget_bgcolor'), :class => "caption" ) %>
 		<div class="fields">
 			<div class="color">
-				<input type="color" id="TabColor" class="color_field required" name="buttonBg"  data-hex="true" value="<%= $tab_color %>" />
+				<input type="color" maxlength="7" id="TabColor" class="color_field required" name="buttonBg"  data-hex="true" value="<%= $tab_color %>" />
 			</div>
 		</div>
 	  </li>

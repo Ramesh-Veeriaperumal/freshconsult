@@ -1,0 +1,29 @@
+<% content_for :sidebar do -%><%- end %> 
+
+<%= content_tag( :h3,  t('portal_customizer_title'),	   :class => "title" ) %>
+<% form_for(:account, :url => admin_portal_path(@account), :html => { :method => :put }) do |f| %>
+	<ul class="ui-form">
+		<li>
+			<label>
+		      <%= f.feature_check_box :anonymous_tickets %> <%=t('portal_customizer_anon_tickets')%>
+		  </label>
+			<%= content_tag( :div, t('portal_customizer_anon_tickets_i'), :class => "info-data tabbed" ) %>
+		</li>
+	 	<li>
+			<label>
+		      <%= f.feature_check_box :open_solutions %> <%=t('portal_customizer_open_solutions')%>
+		    </label>
+			<%= content_tag( :div, t('portal_customizer_open_sol_i'), :class => "info-data tabbed" ) %>
+	 	</li>
+		<li>
+			<label>
+		      <%= f.feature_check_box :open_forums %> <%=t('portal_customizer_open_forums')%>
+		    </label>
+			<%= content_tag( :div, t('portal_customizer_anon_for_i'), :class => "info-data tabbed" ) %>
+		</li>
+	</ul>
+	<div class="button-container">
+		<%= link_to "&larr; #{t('account.cancel')}", "/admin/home", { :class => "uiButton floatl" } %>
+		<%= f.submit t('save'), { :class => "uiButton" } %>
+	</div>
+<% end %>

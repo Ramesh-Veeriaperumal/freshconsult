@@ -1,19 +1,19 @@
 class Helpdesk::SlaDetail < ActiveRecord::Base
   set_table_name "helpdesk_sla_details" 
   
-  belongs_to :account
   belongs_to :sla_policy, :class_name => "Helpdesk::SlaPolicy"
-  
+  has_one :account , :through => :sla_policy 
+    
   RESPONSETIME = [
     [ :half,    "30 Minutes",  1800 ], 
     [ :one,     "1 Hour",      3600 ], 
     [ :two,     "2 Hours",      7200 ], 
     [ :four,    "4 Hours",     14400 ], 
     [ :eight,   "8 Hours",     28800 ], 
-    [ :two,     "12 Hours",    43200 ], 
-    [ :day,     "24 Hours",      86400 ],
-    [ :twoday,  "48 Hours",     172800 ], 
-    [ :threeday,"72 Hours",     259200 ], 
+    [ :twelve,  "12 Hours",    43200 ], 
+    [ :day,     "1 Day",      86400 ],
+    [ :twoday,  "2 Days",     172800 ], 
+    [ :threeday,"3 Days",     259200 ], 
    
    
   ]
@@ -28,10 +28,10 @@ class Helpdesk::SlaDetail < ActiveRecord::Base
     [ :two,     "2 Hours",      7200 ], 
     [ :four,    "4 Hours",     14400 ], 
     [ :eight,   "8 Hours",     28800 ], 
-    [ :two,     "12 Hours",    43200 ], 
-    [ :day,     "24 Hours",      86400 ],
-    [ :twoday,  "48 Hours",     172800 ], 
-    [ :threeday,"72 Hours",     259200 ], 
+    [ :twelve,  "12 Hours",    43200 ], 
+    [ :day,     "1 Day",      86400 ],
+    [ :twoday,  "2 Days",     172800 ], 
+    [ :threeday,"3 Days",     259200 ], 
    
    
   ]
@@ -53,6 +53,14 @@ class Helpdesk::SlaDetail < ActiveRecord::Base
   PRIORITY_NAMES_BY_KEY = Hash[*PRIORITIES.map { |i| [i[2], i[0]] }.flatten]
   PRIORITY_KEYS_BY_TOKEN = Hash[*PRIORITIES.map { |i| [i[0], i[2]] }.flatten]
   
+  SLA_TIME = [
+    [ :business,       "Business Hours",      false ], 
+    [ :calendar,    "Calendar Hours",      true ],        
+  ]
+
+  SLA_TIME_OPTIONS = SLA_TIME.map { |i| [i[1], i[2]] }
+  SLA_TIME_BY_KEY = Hash[*SLA_TIME.map { |i| [i[2], i[0]] }.flatten]
+  SLA_TIME_BY_TOKEN = Hash[*SLA_TIME.map { |i| [i[0], i[2]] }.flatten]
   
-  
+   
 end

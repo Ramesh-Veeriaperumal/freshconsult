@@ -1,0 +1,88 @@
+<div id="ChangePlan">
+	<div class="plans">
+	   	<table>
+			<tr> 
+				<% plans.each do |plan| %>
+				<td id = "plan-<%= plan.name %>">
+					<div class="plan-title">			
+						<% plan_name = plan.name.downcase %>		
+						<%= content_tag(:h2, plan.name ) %>
+						<%= content_tag(:h3, "$#{plan.amount.to_i} per agent/month") %>	
+						<%= content_tag(:h4, t("#{plan_name}_brief") ) %>
+						<%= content_tag(:p,  t("#{plan_name}_details") ) %>
+						<button data-plan="<%= plan.name %>" data-plan-cost="<%= plan.amount.to_i %>" data-plan-id = "<%= plan.id %>" class="plan-button"><%=t('choose_plan')%></button>
+						<div id="billing-<%= plan.name %>"></div>
+					</div>
+				</td>
+				<% end %>  
+			</tr> 
+		</table> 
+	</div>
+</div>
+<div id="billing-template" class="billing" style="display:none;">
+	<% form_tag plan_account_url, :id => "plan_form" do %>
+	<table>
+		<tr>
+			<td colspan="2"><%= t('agents') %> <input type="text" size="4" value="<%= @subscription.agent_limit || current_account.agents.count %>" name="agent_limit" id="agents-text-box" class="text" /> x <b id="cost-per-agent">$</b>
+			<br />	  
+			</td>
+		</tr>
+		<tr class="tr-total">
+			<td>
+				<%= content_tag(:h3, t('total_price'), :class => "title") %>
+				<%= content_tag(:div, t('billed_monthly'), :class => "intro") %>
+			</td>
+			<td class="numbers">
+				<b class="total" id="total-cost-per-agent">$</b>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2">
+				<input type="hidden" id="plan_id" name="plan_id" value="" />
+					<input name="commit" type="submit" id="commit" class="uiButton" value="<%= (@subscription.state == 'trial')? t('enter_payment') : t('change_my_plan') %>" />
+			</td>
+		</tr>
+	</table>
+	<% end %>
+</div>
+<% javascript_tag do %>
+	(function($){	
+		selected_plan 	= null;
+		agents		  	= 1;
+		plan_cost	  	= null;
+		plan_billing  	= null; 
+		
+		function IsNumeric(input)
+		{
+		   return (input - 0) == input && input.length > 0;
+		}
+		
+		$(".plan-button").click(function(){
+			if(selected_plan != null) selected_plan.removeClass('active');
+			current_plan 	= this.getAttribute("data-plan");
+			selected_plan 	= $("#plan-"+current_plan).addClass('active'); 
+			plan_cost 		= this.getAttribute("data-plan-cost");
+			agents			= $("#agents-text-box").val();
+			calculateCost();
+			$("#billing-template").detach().appendTo(selected_plan).show();
+			$("#plan_id").val(this.getAttribute("data-plan-id"));
+		});
+		
+		$("#agents-text-box").change(function(){
+			console.log(IsNumeric(this.value));
+			if(IsNumeric(this.value) && this.value != 0){
+				this.value = Math.abs(this.value);
+				agents = this.value;
+				calculateCost();
+			}else{
+				this.value = 1;
+			}
+		});
+		
+		function calculateCost(){
+			$("#cost-per-agent").text("$"+plan_cost);
+			$("#total-cost-per-agent").text("$"+(agents * plan_cost));
+		}
+		
+	})(jQuery);
+<% end %>

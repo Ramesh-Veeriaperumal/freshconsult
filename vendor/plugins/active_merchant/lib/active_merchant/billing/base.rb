@@ -6,9 +6,9 @@ module ActiveMerchant #:nodoc:
       #   ActiveMerchant::Billing::Base.gateway_mode = :test
       mattr_accessor :gateway_mode
       
-      # Set ActiveMerchant gateways in test mode.
+      # Set ActiveMerchant integrations in test mode.
       #
-      #   ActiveMerchant::Billing::Base.gateway_mode = :test
+      #   ActiveMerchant::Billing::Base.integration_mode = :test
       mattr_accessor :integration_mode
       
       # Set both the mode of both the gateways and integrations
@@ -45,7 +45,11 @@ module ActiveMerchant #:nodoc:
       #   notification = chronopay.notification(raw_post)
       #
       def self.integration(name)
-        Billing::Integrations.const_get("#{name.to_s.downcase}".camelize)
+        puts "############################################################"
+        puts name
+        puts "############################################################"
+        puts Billing.const_get("#{name.to_s.downcase}_gateway".camelize)
+        Billing.const_get("#{name.to_s.downcase}_gateway".camelize)
       end
       
       # A check to see if we're in test mode

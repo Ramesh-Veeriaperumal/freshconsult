@@ -1,3 +1,4 @@
+<% content_for :sidebar do -%><%- end %>
 <div class="contact-box clearfix">
 		<div class="action_buttons">
 			<%= link_to t('contacts.edit_contact'), edit_contact_path(@user) %>
@@ -7,11 +8,12 @@
 		<h3 class="title"><%= @user.display_name %></h3>
 		<% unless @user.job_title.blank? %>
 		   <b><%= h @user.job_title %></b>
-		<% else %>
-		   Working
+		<% end %>
+		<% if @user.job_title.blank? && !@user.customer.blank? %>
+		   <%= t("working") %>
 		<% end %>
 		<% unless @user.customer.blank? %>
-			at <%= link_to(h(@user.customer.name), @user.customer)  %>
+		   <%= t("at") %> <%= link_to(h(@user.customer.name), @user.customer)  %>
 		<% end %>
 		<div class="user-info">
 			<%= content_tag (:div, "#{content_tag(:span, t('user.email'))}  #{h(@user.email)}") unless @user.email.blank? %>
@@ -41,7 +43,7 @@
 		
 		<span class="seperator"></span>
 		<h4 class="title"><%=t('contacts.info4',:nick_name => @user.display_name)%></h4>
-		<% if @user.tickets.size.eql?(0) %>
+		<% if @user_tickets_open_pending.empty? %>
 			<%= "#{t('contacts.info5')}" %>
 		<% end %>
 		<%= render :partial => "tickets", :object => @user_tickets_open_pending %>

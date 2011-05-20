@@ -4,12 +4,16 @@ module SubscriptionSystem
   def self.included(base)
     #base.send :before_filter, :login_required
     base.send :before_filter, :set_affiliate_cookie
-    base.send :helper_method, :current_account, :admin?, :admin_subdomain?, :feature?
+    base.send :helper_method, :current_account, :admin?, :admin_subdomain?, :feature?, :allowed_in_portal?
     base.send :filter_parameter_logging, :password, :creditcard
   end
   
-  def requires_feature(p)
-    render("/errors/non_covered_feature") unless feature?(p)
+  def requires_feature(f)
+    render("/errors/non_covered_feature") unless feature?(f)
+  end
+  
+  def check_portal_scope(f)
+    require_user unless allowed_in_portal?(f)
   end
   
   protected
@@ -31,6 +35,10 @@ module SubscriptionSystem
     
     def feature?(f)
       current_account.features? f
+    end
+    
+    def allowed_in_portal?(f)
+      (logged_in? || feature?(f))
     end
 
     def set_affiliate_cookie

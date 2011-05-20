@@ -60,6 +60,8 @@ en:
        info1: "	SLA Policy is a set of target response and resolution times based on ticket priority.It is an industry best practice to set Service Levels based on priority. Your SLA policy could be as simple as saying “High Priority tickets should be resolved in 2 hours” etc."
        info2: "Freshdesk uses the SLA Policy to determine the “Due By” time of tickets. You can have a default SLA policy for all of your customers, but if you have a special customer who requires faster response and resolution times, you can always create a special SLA policy for that customer."
        info3: "SLA Policy works in conjunction with Business Hours"
+       business_time: "Business Hours"
+       calendar_time: "Calendar Hours"
        
    tag:
      title: "Tags"    
@@ -137,7 +139,7 @@ en:
        info6: "Add specific notes regarding this contact"
        deleted_message:     "This is a deleted contact"
        restore:             "Restore"
-       emailnotverified:    "Email has not been verified for this user!"
+       emailnotverified:    "Email has not been verified for this contact!"
        form_placeholder:
            description:     "Add specific notes regarding this contact example - address, LA Lakers fan etc."
       
@@ -213,8 +215,8 @@ en:
        primary_supp_email: "Primary support email"
        add_supp_emails: "Additional support email(s)"
        reply_emails: "Reply Emails from Freshdesk"
-       inactive_info1: "All your support emails are still unverified, You must verify at least one support email"
-       inactive_info2: "Until then the default email \"%{default_email}\" will be used as the reply-to email."           
+       inactive_info1: "All your support emails are still unverified, you must verify at least one support email"
+       inactive_info2: "Until then, the default email \"%{default_email}\" will be used as the reply-to email."           
        unverified_info1: "An email with the verification link has been sent to this email. Only after verification this support email will become active."
    
    email_notifications:
@@ -349,7 +351,7 @@ en:
        info1: "Are you sure you want to delete this folder"
         
    business_hours:
-       title: "Business Hours"
+       title: "Business Hours"      
        holidays: "Holidays"
        helpdesk_hours: "Helpdesk Hours"
        info1: "Setting up your Business Hours in Freshdesk allows you to get more control on your SLAs. For eg. If your helpdesk works between 9AM to 6PM Mon-Fri and a customer sends a high priority ticket at 4 PM on Tuesday with a SLA target resolution time of 4 hours, then the ticket Due By time is set as 11 AM on Wednesday.You can configure your SLAs to either respect or ignore business hours"
@@ -448,11 +450,11 @@ en:
    top:                               "Top"
    bottom:                            "Bottom"
    feedbackwidget_defaultbutton:      "Support"
-   feedbackwidget_defaulttitle:       "Help & Support"
+   feedbackwidget_defaulttitle:       "Help &amp; Support"
    back_to_admin:                     "Back to Admin"
    
 #April 26th 2011
-   
+
    step1:                           "Step 1"
    step2:                           "Step 2" 
    warning:                         "WARNING"
@@ -463,4 +465,126 @@ en:
    import_warning_info:             "An email with user activation instructions will be sent to each contact on successful import. If the email is already present in the database we will update the attributes like Name, Company etc."
    import_note_info:                "The fields in your csv file can be in any order. Just ensure that the first row has the header information.(Eg. Name, email etc.) The only required field is email."
    import_ignore_first_row:         "Ignore the first row (headings)"
+   non_covered_feature_error:       "Your current Freshdesk plan does not cover this feature."
    non_covered_feature_error:        "Your current Freshdesk plan does not cover this feature."
+   portal_customizer_title:          "Customize your Customer Portal"
+   portal_customizer_open_forums:    "Anybody can view forums"
+   portal_customizer_anon_tickets:   "Anybody can submit a ticket"
+   portal_customizer_open_solutions: "Anybody can view public solutions"
+   portal_customizer_anon_tickets_i: "Turn this feature off, if you want your users to be signed in to submit a ticket"
+   portal_customizer_open_sol_i:     "Turn this feature off, if you want your users to be signed in to view public solutions"
+   portal_customizer_anon_for_i:     "Turn this feature off, if you want your users to be signed in to view forums"
+
+#May 5th 2011
+
+   working:                         "Working"    
+   at:                              "at"
+   forgot_password:                 "Forgot Password"
+   forgot_password_intro:           "Fill out the form below and instructions to reset your password will be emailed to you"
+   your_email_address:              "Your email address"
+   reset_my_password:               "Reset my password"
+   change_my_password:              "Change My Password"
+   update_and_login:                "Update and login"
+   sign_in_info:                    "You will be signing in with"
+   set_password:                    "Set your password"
+   activate_account:                "Activate your account"
+   edit_agent:                      "Edit Agent"
+
+#May 10th 2011
+   plans_billing:                   "Plans &amp; Billing"
+   back_plans_billing:              "Back to Plans &amp; Billing"
+   upgrade_trial:                   "Upgrade your trial!"
+   your_trial_account:              "Your trial account"
+   is_expiring_today:               "is expiring today"
+   will_expire_in:                  "will expire in"
+   day:                             "day"
+   days:                            "days"
+   trial_expired_on:                "Your trial has expired on"
+   select_a_plan_gain_access:       "Select a plan from below to regain access to your account."
+   select_a_plan:                   "Select a Plan"
+
+   basic_brief:                     "For Small teams"
+   pro_brief:                       "For larger Teams"
+   premium_brief:                   "Top-of-the-line"
+
+   basic_details:                   "Email Response Management, Dispatch'r Rules, Default SLA Policy,	Knowledge Base, Self-Service Portal, Domain Mapping, Community Support."
+   pro_details:                     "Everything in &quot;Basic&quot; Plan plus, Scenario Automations, Customer-specific SLAs, Business Hours, Forums, Community &amp; Email Support."
+   premium_details:                 "Everything in &quot;Pro&quot; Plan plus, Multiple Product Support, Multi-timezone support, Community, Email &amp; Phone Support"   
+   choose_plan:                     "Choose Plan"
+
+   agents:                          "Agents"
+   total_price:                     "Total Price"
+   billed_monthly:                  "Billed monthly"
+   enter_payment:                   "Enter Payment details..."
+   change_my_plan:                  "Change my plan..."
+
+   current_plan:                    "Current Plan"
+   change_plan:                     "Change plan"
+   current_plan_details:            "%{plan_name} Plan with %{agent_limit} agents"
+   amount_per_month:                "$%{amount} per month"
+   billed_amount_per_month:         "You will be billed $%{amount} per month"
+   next_charge_date:                "Next charge will happen on:"
+   next_charge_amount:              "Monthly cost:"
+
+#May 11th 2011   
+
+   payment_info:                    "Payment information"
+
+   recent_forum_posts:              "Recent Forum Posts"
+   start_typing_a_question:         "Start typing a question and see answers in real time"
+   credit_card_info:                "Credit card information"
+   begin_subscription:              "Begin Subscription"
+   select_another_plan:             "Select another plan"
+
+   card_number:                     "Card Number"
+   expires:                         "Expires"
+   security_code:                   "Security code"
+   first_name:                      "First Name"
+   last_name:                       "Last Name"
+   country:                         "Country"
+   state:                           "State"
+   zip:                             "Zip"
+
+   billing_info_update:             "Your billing information has been updated."
+   plan_info_update:                "Your plan has been changed."
+   change_plan_info:                "You can change your plan level at any time.  The position limits and other features of the new plan that you select will be effective as soon as you make the change, but your bill amount will not change until your next bill date.  Your next bill date is %{date}."
+
+#May 12th 2011   
+
+   agent_deleted_message:           "This is a deleted agent"
+   agent_emailnotverified:          "Email has not been verified for this agent!"
+   agent_assigned_info:             "No open and pending tickets for this agent"
+   agent_assigned_title:            "Recently assigned tickets (Open &amp; Pending)"
+   agent_info_title:                "Agent information"   
+   ticket_due_by_time:              "Due by"
+
+#May 19th 2011
+
+   zendesk_credentials:             "Zendesk Credentials"
+   username:                        "Username"
+   password:                        "Password"
+   zendesk_url:                     "Zendesk URL"
+   zendesk_backup_info:             "Select the Zendesk backup file downloaded from zendesk"
+   zendesk_backup:                  "Backup file"
+
+   import_zendesk_title:            "Import from zendesk"
+   import_user_org:                 "Users &amp; Organizations"
+   import_user_org_text:            "All the Users &amp; Organizations in your Zendesk account will be imported into your current Freshdesk account as \"Contacts & Companies\""
+   import_ticket_group:             "Tickets &amp; Group"
+   import_forum:                    "Forums"   
+   import_solution_article:         "Convert Article forum to solution"
+   import_solution_article_info:    "Note: We will not save the forum comments"
+
+   import_zendesk_summary:          "Import from zendesk summary"
+   import_zendesk_summary_info:     "Zendesk date has been successfully imported."
+   import_data:                     "Date Imported"
+   import_added_newly:              "Added Newly"
+   import_updated:                  "Updated"
+   import_tickets:                  "Tickets"
+   import_groups:                   "Groups"
+   import_users_contacts:           "Users &rarr; Contacts"
+   import_org_companies:            "Organizations &rarr; Companies"
+   import_topics:                   "Topics"
+   import_articles:                 "Solution Articles"
+   submit:                          "submit"
+   

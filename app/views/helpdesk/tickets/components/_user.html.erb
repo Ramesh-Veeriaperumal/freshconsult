@@ -5,7 +5,7 @@
 			<%= user_avatar(@ticket.requester.avatar, :medium)  %>
 		</div>
 		<div><%= link_to(h(user.name), user, :class => "user_name") %></div>
-        <div><%= auto_link(h(user.email)) %></div>
+        <div class="wrap"><%= auto_link(h(user.email)) %></div>
 		<div><%= h(user.phone) %></div>
 		<div><%= h(user.mobile) %></div>
 		<div><%= h(user.job_title) %> <b><%= (user.customer ? "at #{user.customer.name}" : "")  %></b></div>

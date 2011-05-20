@@ -34,6 +34,7 @@ p{
 .title a{ @include link-colors(#4D769F, #3399cc, #4D769F, #4D769F); text-decoration:none; }
 h2.title{ font-size:1.8em; }
 h3.title, h3.sub_title, h3.title-band{ font-size:1.3em; }
+h4.title { font-size:1.1em; }
 h3.title-band{ margin:12px -20px; background-color:#f2f2f2; padding:8px 20px; }
 h3.sub_title{ font-size:1.1em; }
 
@@ -47,3 +48,6 @@ h3.sub_title{ font-size:1.1em; }
 	line-height:18px;
 	padding-bottom:6px;
 } 
+table td{ 
+	vertical-align:top; 
+}

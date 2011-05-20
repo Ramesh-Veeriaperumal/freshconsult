@@ -1,7 +1,6 @@
-<% content_for :layoutType do -%>clean<%- end %>
+<% content_for :sidebar do -%><%- end %>
+<h3 class="title">Create an account</h3> 
 
-<div class="ui-form">
-	<h3 class="title">Create an account</h3> 
 	<% form_tag :action => 'create' do %>
   		<%= hidden_field_tag 'plan', params[:plan] %>
   		
@@ -12,23 +11,19 @@
 	        <%= @account.errors.full_messages.map {|m| content_tag('li', m)} %>
 	      </ul>
 	    </div>
-	  <% end %>
-	  <span class="seperator"></span>
-	  <fieldset>
-	  	<div class="info_data">
-    		Enter the name of your business and the subdomain you'd like to use for your site.
-  		</div>
-  
+	  <% end %> 
+	<ul class="ui-form"> 
+	  <li>
+	  	<h4 class="title"> Enter the name of your business and the subdomain you'd like to use for your site.</h4>
 	    <% fields_for :account do |f| %>
 	      <label for="account_name">Company</label>
 		  <%= f.text_field :name, :class => "required" %>
 	      <label for="account_domain">Site URL</label>
 		  <%= f.text_field :domain, :class => "very_small required" %>.<%= AppConfig['base_domain'][RAILS_ENV] %>
 	    <% end %>
-	  </fieldset>
-	  <span class="seperator"></span>
-	  <fieldset>
-	  	<div class="info_data">Enter info for the administrator account</div>  
+	  </li> 
+	  <li>
+	  	<h4 class="title">Enter info for the administrator account</h4>  
 	    <% fields_for :user do |f| %>
 	      <label for="user_name">Full Name</label>
 		  <%= f.text_field :name, :class => "text" %>
@@ -39,7 +34,7 @@
 	      <label for="user_password_confirmation">Confirmation</label>
 	      <%= f.password_field :password_confirmation, :class => "text password_confirm" %>
 	    <% end %>
-	  </fieldset>  
+	  </li>  
 	  
 	  <% if @account.needs_payment_info? %>
 	    <p>
@@ -58,15 +53,14 @@
 	  
 	  <br/>
 	  
-	  <fieldset>
+	  <li>
 	    <% content_tag(:p) do %>
 	      Your card will be charged <%= number_to_currency(@account.plan.setup_amount) + ' now and ' if  @account.plan.setup_amount? && !@account.plan.trial_period? %> <%= number_to_currency(@account.plan.amount) %> 
 	      <%= @account.plan.renewal_period == 1 ? 'every month' : "every #{@account.plan.renewal_period} months" %>.
 	    <% end if @account.needs_payment_info? %>
 	
 	    <input type="submit" value="Create my account" class="fdbutton" />
-	  </fieldset>
-	  
+	  </li>
+	  </ul>
 <% end %>
-</div>
-<br />
+ 

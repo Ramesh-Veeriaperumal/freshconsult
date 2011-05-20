@@ -13,7 +13,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #by Shan temp
   attr_accessor :email, :name, :custom_field ,:customizer, :nscname 
   
-  before_validation :populate_requester, :set_default_values
+  
+  before_validation :populate_requester, :set_default_values 
   before_create :set_spam, :set_dueby, :save_ticket_states
   after_create :refresh_display_id, :save_custom_field, :pass_thro_biz_rules, :autoreply 
   before_update :cache_old_model, :update_dueby
@@ -78,7 +79,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   named_scope :newest, lambda { |num| { :limit => num, :order => 'created_at DESC' } }
   named_scope :visible, :conditions => ["spam=? AND helpdesk_tickets.deleted=? AND status > 0", false, false] 
-  
+  named_scope :unresolved, :conditions => ["status in (#{STATUS_KEYS_BY_TOKEN[:open]}, #{STATUS_KEYS_BY_TOKEN[:pending]})"]
+  named_scope :assigned_to, lambda { |agent| { :conditions => ["responder_id=?", agent.id] } }
   named_scope :requester_active, lambda { |user| { :conditions => ["requester_id=? and status in (#{STATUS_KEYS_BY_TOKEN[:open]}, #{STATUS_KEYS_BY_TOKEN[:pending]})",
                                     user.id] } }
   named_scope :requester_completed, lambda { |user| { :conditions => ["requester_id=? and status in (#{STATUS_KEYS_BY_TOKEN[:resolved]}, #{STATUS_KEYS_BY_TOKEN[:closed]})",
@@ -128,6 +130,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     self.status = TicketConstants::STATUS_KEYS_BY_TOKEN[:open] unless TicketConstants::STATUS_NAMES_BY_KEY.key?(self.status)
     self.source = TicketConstants::SOURCE_KEYS_BY_TOKEN[:portal] if self.source == 0
     self.ticket_type ||= TicketConstants::TYPE_KEYS_BY_TOKEN[:how_to]
+    self.description = subject if description.blank?
   end
   
   def to_param 
@@ -240,18 +243,39 @@ class Helpdesk::Ticket < ActiveRecord::Base
       self.due_by = createdTime + sla_detail.resolution_time.seconds      
       self.frDueBy = createdTime + sla_detail.response_time.seconds       
     else      
-      self.due_by = (sla_detail.resolution_time).div(60).business_minute.after(createdTime)      
-      self.frDueBy =  (sla_detail.response_time).div(60).business_minute.after(createdTime)     
+      self.due_by = get_business_time(sla_detail.resolution_time).div(60).business_minute.after(createdTime)      
+      self.frDueBy =  get_business_time(sla_detail.response_time).div(60).business_minute.after(createdTime)     
     end 
      set_user_time_zone if User.current
      logger.debug "sla_detail_id :: #{sla_detail.id} :: and createdTime : #{createdTime} due_by::#{self.due_by} and fr_due:: #{self.frDueBy} "   
   end
+ 
 
+
+def get_business_time time  
+
+ fact = time.div(86400) 
+ logger.debug "The fact is #{fact}" 
+ if fact > 0
+   return business_time*fact
+ else
+   return time
+ end
+end
+
+def business_time
+  logger.debug "business time is called"
+  start_time = Time.parse(self.account.business_calendar.beginning_of_workday)
+  end_time = Time.parse(self.account.business_calendar.end_of_workday)
+  return (end_time - start_time)
+end
 
  def set_account_time_zone  
     self.account.make_current
     Time.zone = self.account.time_zone    
  end
+ 
+ 
  
  def set_user_time_zone 
    Time.zone = User.current.time_zone  
@@ -506,8 +530,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
   end
   
-  def deep_xml(builder=nil)
-    to_xml(:builder => builder, :skip_instruct => true) do |xml|
+  def to_xml(options = {})
+      options[:indent] ||= 2
+      xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
+      xml.instruct! unless options[:skip_instruct]
+      super(:builder => xml, :skip_instruct => true,:include => :notes) do |xml|
        xml.custom_field do
         self.ff_aliases.each do |label|    
           value = self.get_ff_value(label.to_sym()) 
@@ -516,7 +543,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
        
       end
      end
-  end
+ end
+  
+ 
   
   
 end

@@ -19,32 +19,32 @@ class Helpdesk::FormCustomizer < ActiveRecord::Base
                                                                                                                                  "customer": {"visible": true, "editable": false, "required": true}}, 
                              {"fieldType":"default", "type": "dropdown",  "label": "Source",      "display_name": "Source",      "description": "Source of the request",     
                                                                                                                                  "choices": [{"value": "Staff initiated", "tags": []}, {"value": "E-mail", "tags": []}], "setDefault": 0, 
-                                                                                                                                 "agent": {"required": true}, 
+                                                                                                                                 "agent": {"required": false}, 
                                                                                                                                  "customer": {"visible": false, "editable": false, "required": false}}, 
                              {"fieldType":"default", "type": "dropdown",  "label": "Type",        "display_name": "Type",        "description": "Type of the request",     
                                                                                                                                  "choices": [{"value": "How to", "tags": []}, {"value": "How to", "tags": []}], "setDefault": 0, 
-                                                                                                                                 "agent": {"required": true}, 
+                                                                                                                                 "agent": {"required": false}, 
                                                                                                                                  "customer": {"visible": false, "editable": false, "required": false}},                              
                              {"fieldType":"default", "type": "dropdown",  "label": "Status",      "display_name": "Status",      "description": "Status of the request",     
                                                                                                                                  "choices": [{"value": "Open", "tags": []}, {"value": "Closed", "tags": []}], "setDefault": 0, 
-                                                                                                                                 "agent": {"required": true}, 
+                                                                                                                                 "agent": {"required": false}, 
                                                                                                                                  "customer": {"visible": false, "editable": false, "required": false}}, 
                              {"fieldType":"default", "type": "dropdown",  "label": "Priority",    "display_name": "Priority",    "description": "",                          
                                                                                                                                  "choices": [{"value": "Low", "tags": []}, {"value": "High", "tags": []}], "setDefault": 0, 
-                                                                                                                                 "agent": {"required": true}, 
+                                                                                                                                 "agent": {"required": false}, 
                                                                                                                                  "customer": {"visible": false, "editable": false, "required": false}}, 
                              {"fieldType":"default", "type": "dropdown",  "label": "Group",       "display_name": "Group",       "description": "",                          
                                                                                                                                  "choices": [{"value": "Not Assigned", "tags": []}], "setDefault": 0, 
-                                                                                                                                 "agent": {"required": true}, 
+                                                                                                                                 "agent": {"required": false}, 
                                                                                                                                  "customer": {"visible": false, "editable": false, "required": false}}, 
                              {"fieldType":"default", "type": "dropdown",  "label": "Assigned to", "display_name": "Assigned to", "description": "",                          
                                                                                                                                  "choices": [{"value": "Not Assigned", "tags": []}], "setDefault": 0, 
-                                                                                                                                 "agent": {"required": true}, 
+                                                                                                                                 "agent": {"required": false}, 
                                                                                                                                  "customer": {"visible": false, "editable": false, "required": false}}, 
                              {"fieldType":"default", "type": "paragraph", "label": "Description", "display_name": "Description", "description": "",                          
                                                                                                                                  "choices": [], "setDefault": 0, 
-                                                                                                                                 "agent": {"required": true}, 
-                                                                                                                                 "customer": {"visible": true, "editable": false, "required": true}}]'
+                                                                                                                                 "agent": {"required": false}, 
+                                                                                                                                 "customer": {"visible": true, "editable": true, "required": false}}]'
      
    DEFAULT_REQUESTER_FIELDS_JSON   = '[{"fieldType":"default", "type": "text",     "label": "Requester",  "display_name": "Requester",  "description": "Enter requester name",      
                                                                                                   "choices": [],  "setDefault": 0, 
@@ -56,8 +56,8 @@ class Helpdesk::FormCustomizer < ActiveRecord::Base
                                                                                                   "customer": {"visible": true, "editable": true, "required": true}}, 
                              {"fieldType":"default", "type": "paragraph", "label": "Description", "display_name": "Description",  "description": "",                          
                                                                                                   "choices": [], "setDefault": 0, 
-                                                                                                  "agent": {"required": true}, 
-                                                                                                  "customer": {"visible": true, "editable": true, "required": true}}]'
+                                                                                                  "agent": {"required": false}, 
+                                                                                                  "customer": {"visible": true, "editable": true, "required": false}}]'
    
    DEFAULT_FIELDS_BY_KEY = Hash['field', DEFAULT_FIELDS_JSON]
       

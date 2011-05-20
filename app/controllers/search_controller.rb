@@ -1,5 +1,7 @@
 class SearchController < ApplicationController
   before_filter( :only => [ :suggest, :index ] ) { |c| c.requires_permission :manage_tickets }
+  before_filter :forums_allowed_in_portal?, :only => :topics
+  before_filter :solutions_allowed_in_portal?, :only => :solutions
   
   #by Shan
   #To do.. some smart meta-programming
@@ -13,7 +15,10 @@ class SearchController < ApplicationController
   end
   
   def content
-    search_content [Solution::Article, Topic]
+    to_search = content_classes
+    render :nothing => true and return if to_search.empty?
+      
+    search_content to_search
   end
   
   def solutions
@@ -27,6 +32,15 @@ class SearchController < ApplicationController
   end
   
   protected
+    
+    def content_classes
+      to_ret = Array.new
+      to_ret << Solution::Article if allowed_in_portal?(:open_solutions)
+      to_ret << Topic if (feature?(:forums) && allowed_in_portal?(:open_forums))
+      
+      to_ret
+    end
+    
     def search_content(f_classes)
       s_options = { :account_id => current_account.id }
       s_options.merge!(:is_public => true) unless (current_user && !current_user.customer?)
@@ -73,5 +87,13 @@ class SearchController < ApplicationController
       
       @total_results = @items.size
       @search_key = params[:search_key]
+    end
+  
+    def forums_allowed_in_portal?
+      render :nothing => true and return unless (feature?(:forums) && allowed_in_portal?(:open_forums))
+    end
+  
+    def solutions_allowed_in_portal? #Kinda duplicate
+      render :nothing => true and return unless allowed_in_portal?(:open_solutions)
     end
 end

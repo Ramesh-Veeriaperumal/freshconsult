@@ -2,6 +2,7 @@ class Solution::FoldersController < ApplicationController
   before_filter :except => [:index, :show] do |c| 
     c.requires_permission :manage_knowledgebase
   end
+  before_filter { |c| c.check_portal_scope :open_solutions }
   before_filter :set_selected_tab
   
   def index        

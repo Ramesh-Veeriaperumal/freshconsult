@@ -38,7 +38,7 @@ ActionController::Routing::Routes.draw do |map|
   
   map.openid_done '/google/complete', :controller => 'accounts', :action => 'openid_complete'
   
-  map.zendesk_import '/zendesk/import', :controller => 'zip_readers', :action => 'index'
+  map.zendesk_import '/zendesk/import', :controller => 'admin/zip_readers', :action => 'index'
   
   #map.register '/register', :controller => 'users', :action => 'create'
   #map.signup '/signup', :controller => 'users', :action => 'new'
@@ -54,6 +54,7 @@ ActionController::Routing::Routes.draw do |map|
   
   map.namespace :admin do |admin|
     admin.resources :home, :only => :index
+    admin.resources :import_export, :only => :index
     admin.resources :widget_config, :only => :index
     admin.resources :automations, :member => { :deactivate => :put, :activate => :put }, :collections => { :reorder => :put }
     admin.resources :va_rules, :member => { :deactivate => :put, :activate => :put }, :collections => { :reorder => :put }
@@ -62,6 +63,8 @@ ActionController::Routing::Routes.draw do |map|
     admin.resources :email_notifications
     admin.resources :business_calender, :member => { :update => :put }
     admin.resources :security, :member => { :update => :put }
+    admin.resources :data_export, :collection => {:export => :any }
+    admin.resources :portal, :only => [ :index, :update ]
   end
   
   #SAAS copy starts here
@@ -148,8 +151,8 @@ ActionController::Routing::Routes.draw do |map|
 #      ticket.resources :notes, :member => { :restore => :put }, :name_prefix => 'helpdesk_issue_helpdesk_'
 #    end
 
-    helpdesk.resources :tickets, :collection => {:empty_trash => :delete, :empty_spam => :delete, :user_ticket => :get}, 
-                                 :member => { :assign => :put, :restore => :put, :spam => :put, :unspam => :put, :close => :put, :execute_scenario => :post  , :close_multiple => :put, :pick_tickets => :put} do |ticket|
+    helpdesk.resources :tickets, :collection => { :empty_trash => :delete, :empty_spam => :delete, :user_ticket => :get }, 
+                                 :member => { :assign => :put, :restore => :put, :spam => :put, :unspam => :put, :close => :put, :execute_scenario => :post  , :close_multiple => :put, :pick_tickets => :put, :change_due_by => :put } do |ticket|
       ticket.resources :notes, :member => { :restore => :put }, :name_prefix => 'helpdesk_ticket_helpdesk_'
       ticket.resources :subscriptions, :name_prefix => 'helpdesk_ticket_helpdesk_'
       ticket.resources :tag_uses, :name_prefix => 'helpdesk_ticket_helpdesk_'

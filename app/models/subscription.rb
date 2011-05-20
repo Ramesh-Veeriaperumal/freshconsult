@@ -6,8 +6,10 @@ class Subscription < ActiveRecord::Base
   belongs_to :affiliate, :class_name => 'SubscriptionAffiliate', :foreign_key => 'subscription_affiliate_id'
   
   before_create :set_renewal_at
-  before_update :apply_discount
+  before_update :cache_old_model
   before_destroy :destroy_gateway_record
+  before_validation :update_amount
+  after_update :update_features
   
   attr_accessor :creditcard, :address
   attr_reader :response
@@ -21,10 +23,10 @@ class Subscription < ActiveRecord::Base
   # This hash is used for validating the subscription when a plan
   # is changed.  It includes both the validation rules and the error
   # message for each limit to be checked.
-  Limits = {
-    Proc.new {|account, plan| !plan.user_limit || plan.user_limit >= Account::Limits['user_limit'].call(account) } => 
-      'User limit for new plan would be exceeded.  Please delete some users and try again.'
-  }
+#  Limits = {
+#    Proc.new {|account, plan| !plan.user_limit || plan.user_limit >= Account::Limits['user_limit'].call(account) } => 
+#      'User limit for new plan would be exceeded.  Please delete some users and try again.'
+#  }
   
   # Changes the subscription plan, and assigns various properties, 
   # such as limits, etc., to the subscription from the assigned 
@@ -45,10 +47,7 @@ class Subscription < ActiveRecord::Base
       self.state = 'active' if new_record?
     end
     
-    [:amount, :user_limit, :renewal_period].each do |f|
-      self.send("#{f}=", plan.send(f))
-    end
-    
+    self.renewal_period = plan.renewal_period
     self.subscription_plan = plan
   end
   
@@ -213,7 +212,7 @@ class Subscription < ActiveRecord::Base
   protected
   
     def set_billing
-      self.billing_id = @response.token unless @response.token.blank?
+      self.billing_id = @response.params['customer_vault_id'] unless @response.params['customer_vault_id'].blank?
       
       if new_record?
         if !next_renewal_at? || next_renewal_at < 1.day.from_now.at_midnight
@@ -257,20 +256,28 @@ class Subscription < ActiveRecord::Base
     
     # If the discount is changed, set the amount to the discounted
     # plan amount with the new discount.
-    def apply_discount
-      if subscription_discount_id_changed?
+    def update_amount
+      if subscription_discount_id_changed? || agent_limit_changed? || subscription_plan_id_changed?
         subscription_plan.discount = discount
-        self.amount = subscription_plan.amount
+        self.amount = agent_limit ? (subscription_plan.amount * agent_limit) : subscription_plan.amount
       end
     end
     
+    def cache_old_model
+      @old_subscription = Subscription.find id
+    end
+    
     def validate_on_update
-      return unless self.subscription_plan.updated?
-      Limits.each do |rule, message|
-        unless rule.call(self.account, self.subscription_plan)
-          errors.add_to_base(message)
-        end
+      #return unless self.agent_limit.updated?
+      
+      if(agent_limit < account.agents.count)
+        errors.add_to_base("You Freshdesk currently has #{account.agents.count} agents, you cannot subscripe to lesser number of agents. Please delete some agents and try again.")
       end
+    end
+    
+    def update_features
+      return if subscription_plan_id == @old_subscription.subscription_plan_id
+      SAAS::SubscriptionActions.new.change_plan(account, @old_subscription)
     end
     
     def gateway

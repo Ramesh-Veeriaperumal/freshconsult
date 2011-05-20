@@ -6,11 +6,12 @@ class AccountsController < ApplicationController
   
   skip_before_filter :set_time_zone
   
-  before_filter :build_user, :only => [:new, :create]
-  before_filter :load_billing, :only => [ :new, :create, :billing, :paypal ]
-  before_filter :load_subscription, :only => [ :billing, :plan, :paypal, :plan_paypal ]
+  before_filter :build_user, :only => [ :new, :create ]
+  before_filter :load_billing, :only => [ :show, :new, :create, :billing, :paypal, :payment_info ]
+  before_filter :load_subscription, :only => [ :show, :billing, :plan, :paypal, :plan_paypal, :plans ]
   before_filter :load_discount, :only => [ :plans, :plan, :new, :create ]
   before_filter :build_plan, :only => [:new, :create]
+  before_filter :load_plans, :only => [:show, :plans]
   
   #ssl_required :billing, :cancel, :new, :create #by Shan temp
   #ssl_allowed :plans, :thanks, :canceled, :paypal
@@ -18,6 +19,9 @@ class AccountsController < ApplicationController
    before_filter :only => [:update, :destroy, :edit, :delete_logo, :delete_fav,:show,:cancel,:plan,:plans,:thanks] do |c| 
     c.requires_permission :manage_users
   end
+  
+  def show
+  end   
    
   def new
     # render :layout => 'public' # Uncomment if your "public" site has a different layout than the one used for logged-in users
@@ -42,19 +46,17 @@ class AccountsController < ApplicationController
       render :json => { :success => true, :url => @account.full_domain }, :callback => params[:callback]
     else
       render :json => { :success => false, :errors => @account.errors.to_json }, :callback => params[:callback] 
-    end
-    
+    end    
   end
-  
-  def signup_google
     
+  def signup_google 
     base_domain = AppConfig['base_domain'][RAILS_ENV]
     logger.debug "base domain is #{base_domain}"   
-    return_url = "http://signup."+base_domain+"/google/complete?domain="+params[:domain]     
+    return_url = "https://signup."+base_domain+"/google/complete?domain="+params[:domain]     
     return_url = return_url+"&callback="+params[:callback] unless params[:callback].blank?    
     url = "https://www.google.com/accounts/o8/site-xrds?hd=" + params[:domain]      
     rqrd_data = ["http://axschema.org/contact/email","http://axschema.org/namePerson/first" ,"http://axschema.org/namePerson/last"]
-    re_alm = "http://*."+base_domain    
+    re_alm = "https://*."+base_domain    
     logger.debug "return_url is :: #{return_url.inspect} and :: trusted root is:: #{re_alm.inspect} "
     authenticate_with_open_id(url,{ :required =>rqrd_data , :return_to => return_url ,:trust_root =>re_alm}) do |result, identity_url, registration| 
     end     
@@ -85,6 +87,7 @@ class AccountsController < ApplicationController
 	  resp = request.env[Rack::OpenID::RESPONSE]
     logger.debug "The openid _complete resp is :: #{resp.inspect}"
     logger.debug "The resp.status is :: #{resp.status}"
+    logger.debug "identity url :: #{resp.identity_url}"
 	  if resp.status == :success
 	    session[:openid] = resp.display_identifier
 	    ax_response = OpenID::AX::FetchResponse.from_success_response(resp)
@@ -157,7 +160,6 @@ class AccountsController < ApplicationController
   
   
   def plans
-    @plans = SubscriptionPlan.find(:all, :order => 'amount desc').collect {|p| p.discount = @discount; p }
     # render :layout => 'public' # Uncomment if your "public" site has a different layout than the one used for logged-in users
   end
   
@@ -168,8 +170,8 @@ class AccountsController < ApplicationController
         @address.last_name = @creditcard.last_name
         if @creditcard.valid? & @address.valid?
           if @subscription.store_card(@creditcard, :billing_address => @address.to_activemerchant, :ip => request.remote_ip)
-            flash[:notice] = "Your billing information has been updated."
-            redirect_to :action => "billing"
+            flash[:notice] = t('billing_info_update')
+            redirect_to :action => "show"
           end
         end
       else
@@ -197,6 +199,7 @@ class AccountsController < ApplicationController
   def plan
     if request.post?
       @subscription.plan = SubscriptionPlan.find(params[:plan_id])
+      @subscription.agent_limit = params[:agent_limit]
 
       # PayPal subscriptions must get redirected to PayPal when
       # changing the plan because a new recurring profile needs
@@ -224,14 +227,21 @@ class AccountsController < ApplicationController
       end
       
       if @subscription.save
-        flash[:notice] = "Your subscription has been changed."
         SubscriptionNotifier.deliver_plan_changed(@subscription)
       else
-        flash[:error] = "Error updating your plan: #{@subscription.errors.full_messages.to_sentence}"
+        load_plans
+        render :action => "plan" and return
       end
-      redirect_to :action => "plan"
+      
+      if @subscription.state == 'trial'
+        redirect_to :action => "billing"
+      else
+        flash[:notice] = t('plan_info_update')
+        redirect_to :action => "show"
+      end 
     else
-      @plans = SubscriptionPlan.find(:all, :conditions => ['id <> ?', @subscription.subscription_plan_id], :order => 'amount desc').collect {|p| p.discount = @subscription.discount; p }
+      #@plans = SubscriptionPlan.find(:all, :conditions => ['id <> ?', @subscription.subscription_plan_id], :order => 'amount asc').collect {|p| p.discount = @subscription.discount; p }
+      load_plans
     end
   end
   
@@ -316,7 +326,7 @@ class AccountsController < ApplicationController
     
     def choose_layout 
       (action_name == "openid_complete" || action_name == "create_account_google") ? 'signup_google' : 'helpdesk/default'
-	end
+	  end
 	
     def load_object
       @obj = @account = current_account
@@ -350,6 +360,10 @@ class AccountsController < ApplicationController
       if params[:discount].blank? || !(@discount = SubscriptionDiscount.find_by_code(params[:discount])) || !@discount.available?
         @discount = nil
       end
+    end
+    
+    def load_plans
+      @plans = SubscriptionPlan.find(:all, :order => 'amount asc').collect {|p| p.discount = @discount; p }
     end
     
     def authorized?

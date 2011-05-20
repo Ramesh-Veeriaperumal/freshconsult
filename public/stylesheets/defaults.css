@@ -67,6 +67,10 @@ h3.title, h3.sub_title, h3.title-band {
   font-size: 1.3em;
 }
 
+h4.title {
+  font-size: 1.1em;
+}
+
 h3.title-band {
   margin: 12px -20px;
   background-color: #f2f2f2;
@@ -94,4 +98,8 @@ h3.sub_title {
   font-size: 12px;
   line-height: 18px;
   padding-bottom: 6px;
+}
+
+table td {
+  vertical-align: top;
 }

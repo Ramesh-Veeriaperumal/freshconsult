@@ -64,7 +64,7 @@ label.overlabel {
   position: relative;
   z-index: 1;
   margin: 12px 0px 0px 0px;
-  padding-right: 290px;
+  padding-right: 310px;
 }
 #inner:after {
   content: "\0020";
@@ -79,10 +79,10 @@ label.overlabel {
   width: 100%;
 }
 #inner .sidebar {
-  width: 290px;
+  width: 310px;
   float: right;
   display: inline;
-  margin-right: -290px;
+  margin-right: -310px;
 }
 
 .single #inner {
@@ -120,19 +120,19 @@ div.bg_pulp {
 
 .twoCol_ltSidebar #inner {
   padding-right: 0px;
-  padding-left: 290px;
+  padding-left: 310px;
   /* The width of the rail */
 }
 .twoCol_ltSidebar #inner .sidebar {
   margin-right: 0px;
-  margin-left: -290px;
+  margin-left: -310px;
 }
 .twoCol_ltSidebar #inner .leftcontent {
   margin-right: 0px;
   border-right: 0px;
-  border-left: 290px solid #f2f8fc;
+  border-left: 310px solid #f2f8fc;
   /* The width and color of the rail */
-  margin-left: -290px;
+  margin-left: -310px;
   /* Hat tip to Ryan Brill */
   float: right;
 }
@@ -266,6 +266,11 @@ div.bg_pulp {
   width: 100%;
   padding: 0px;
   background: none;
+}
+.nav_search input:focus {
+  -moz-box-shadow: 0 0 0 0;
+  -webkit-box-shadow: 0 0 0 0;
+  box-shadow: 0 0 0 0;
 }
 
 .nav_right {

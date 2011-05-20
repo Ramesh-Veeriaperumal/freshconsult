@@ -1,83 +1,23 @@
 <% content_for :sidebar do -%><%- end %>
-
-<h3 class= "title"><%= @page_title = 'Plans &amp; Billing' %></h3>
-<% if @subscription.state == 'trial' %>
-  <% if @subscription.next_renewal_at > Time.now %>
- 	<div class="intro">
-      Thank you for trying <%= AppConfig['app_name'] %>!  
-	  Your trial account 
-	  <%= (@subscription.trial_days == 0) ? 
-				"is expiring today" :
-				"will expire in #{pluralize(@subscription.trial_days, 'day', 'days')}" %>, at which time you will no longer have access to your account.  To maintain access to your account, enter your credit card information below.  Your first charge will happen on <%= @subscription.next_renewal_at.to_s(:long_day) %>.
-    </div>
-  <% else %>
- 	<div class="intro">
-    Thank you for trying <%= AppConfig['app_name'] %>!  Your trial account has expired.  To regain access to your account, enter your credit card information below.  Your first charge will happen immediately, and you will be billed monthly thereafter.
- 	</div>
-  <% end %>
-<% end %>
-
-<ul class="ui-form">
-	<li class="inline-field">
-  		<label class="caption">Your Current Plan</label>
-  		  <div class="fields">
-		  	<label><%= @subscription.subscription_plan.name %> (<a href="/account/plan">Change plan</a>)</label>
-		  <% if @subscription.state == 'trial' %>
-		    <label>Trial expiration date:</label>
-		    <%= @subscription.next_renewal_at.to_s(:long_day) %>
-		  <% else %>
-		    <% if @subscription.amount > 0 %>
-		      <label>Next charge date:</label>
-		      <%= @subscription.next_renewal_at.to_s(:long_day) %>
-		      <br/>
-		      <label>Next charge amount:</label>
-		      <%= number_to_currency @subscription.amount %>
-		      <br/>
-		      <label>Current payment method:</label>
-		      <%= @subscription.paypal? ? 'PayPal' : "#{@subscription.card_number} / #{@subscription.card_expiration}" %>
-		    <% end %>
-		  <% end %>
-		</div>
-  	</li>
-	<li>
-		<label>Choose plan</label>
-		<div class="plans">
-			<table>
-				<tr>
-					<td>
-						<div class="plan-title">
-							<h2>Basic</h2>
-							<h3>$9 per agent/month</h3>	
-							<h4>For small Teams</h4>
-							<button>Choose Plan</button>
-						</div>
-					</td>
-					<td>
-						<div class="plan-title active">
-							<h2>Pro</h2>
-							<h3>$19 per agent/month</h3>	
-							<h4>For larger Teams</h4>
-							<button>Choose Plan</button>
-						</div>
-					</td>
-					<td>
-						<div class="plan-title">
-							<h2>Premium</h2>
-							<h3>$29 per agent/month</h3>	
-							<h4>Top-of-the-line</h4>
-							<button>Choose Plan</button>							
-						</div>
-					</td>
-				</tr>
-			</table>
-		</div>
-	</li>	
-	<% if @subscription.amount > 0 %>
-		<li class="inline-field">
-		  <% form_for :creditcard, @creditcard, :url => { :action => 'billing' } do |f| %>
-		    <%= render :partial => 'shared/credit_card_form' %>
-		    <%= submit_or_cancel '/account', 'Update billing information' %>
-		  <% end %>
+<h3 class= "title"><%= @page_title = t('plans_billing') %></h3>
+<% form_for :creditcard, @creditcard, :url => { :action => 'billing' } do |f| %>
+	<ul class="ui-form">
+		<li class="inline-field">  
+			<% if @subscription.state == 'trial' %>
+				<div class="info-highlight"> 
+					<h3 class="title">
+						<%= t('current_plan_details', :plan_name  => @subscription.subscription_plan.name, :agent_limit => @subscription.agent_limit)  %>
+					</h3>				
+					<%= content_tag(:strong, t("billed_amount_per_month", :amount => @subscription.amount.to_i )) %>
+				</div>
+			<% end %>
+			<%= content_tag(:h3, t("credit_card_info"), :class => "title") %>
+		   	<%= render :partial => 'shared/credit_card_form' %> 
+				<span class="seperator"></span>
+				<div class="button-container">
+					<%= link_to( t('select_another_plan'), account_url, :class => "uiButton floatl" ) %>
+					<%= submit_tag t('begin_subscription'), :class => "uiButton" %>
+				</div>
 		</li>
-	<% end %>
-</ul>
+	</ul> 
+<% end %>  

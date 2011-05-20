@@ -1,11 +1,8 @@
 class UsersController < ApplicationController 
   
   
-  include ModelControllerMethods
+  include ModelControllerMethods #Need to remove this, all we need is only show.. by Shan. to do must!
 
-  before_filter :check_user_limit, :only => :create
-  #before_filter :require_no_user, :only => [:new, :create] #by Shan need to check later
-  #before_filter :require_user, :only => [:show, :edit, :update]
   before_filter :set_selected_tab
   skip_before_filter :load_object , :only => [ :show, :edit]
   
@@ -37,11 +34,11 @@ class UsersController < ApplicationController
    
   def show
     logger.debug "in users controller :: show show"
-    user_role = User.find(params[:id]).user_role    
+    user_role = current_account.all_users.find(params[:id]).user_role    
     if User::USER_ROLES_KEYS_BY_TOKEN[:customer].eql?(user_role)      
       redirect_to :controller =>'contacts' ,:action => 'show', :id => params[:id]    
     else    
-      agent_id = Agent.find_by_user_id(params[:id]).id
+      agent_id = current_account.all_agents.find_by_user_id(params[:id]).id
       redirect_to :controller =>'agents' ,:action => 'show', :id => agent_id    
     end
     
@@ -62,10 +59,6 @@ class UsersController < ApplicationController
     
     def authorized?
       (logged_in? && self.action_name == 'index') || admin?
-    end
-    
-    def check_user_limit
-      redirect_to new_user_url if current_account.reached_user_limit?
     end
 
     def set_selected_tab

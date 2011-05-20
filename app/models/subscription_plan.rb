@@ -20,6 +20,10 @@ class SubscriptionPlan < ActiveRecord::Base
     self.name
   end
   
+  def canon_name
+    SUBSCRIPTION_PLANS.index(name)
+  end
+  
   def amount(include_discount = true)
     include_discount && @discount && @discount.apply_to_recurring? ? self[:amount] - @discount.calculate(self[:amount]) : self[:amount]
   end
