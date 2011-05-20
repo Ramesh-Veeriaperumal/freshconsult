@@ -485,7 +485,7 @@ def handle_ticket_import base_dir
         attachemnt_url = nil        
         attach.elements.each("url") {|attach_url|   attachemnt_url = attach_url.text  } 
         #@note.attachments.create(:content =>  RemoteFile.new(attachemnt_url), :description => "", :account_id => @note.account_id)
-        Delayed::Job.enqueue Import::ImportFile.new(@note ,attachemnt_url , :note )
+        Delayed::Job.enqueue Import::Attachment.new(@note ,attachemnt_url , :note )
         end        
     end
      #---note saving ends--

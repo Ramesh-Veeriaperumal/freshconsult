@@ -76,9 +76,19 @@ def import_file url, file_path, usr_name , usr_pwd
   url = URI.parse(url)  
   req = Net::HTTP::Get.new(url.path)  
   req.basic_auth usr_name, usr_pwd
-  res = Net::HTTP.start(url.host, url.port) {|http| http.request(req) }     
-  File.open(file_path, 'w') {|f| f.write(res.body) }
-  logger.debug "successfully imported files from zendesk with file_path:: #{file_path.inspect}"
+  res = Net::HTTP.start(url.host, url.port) {|http| http.request(req) } 
+  case res
+  when Net::HTTPSuccess, Net::HTTPRedirection
+      File.open(file_path, 'w') {|f| f.write(res.body) }
+      # OK
+  else
+      flash[:notice] = "Unable to contact zendesk . Please verify your zendesk credentials and try again !!"
+      redirect_to :back
+  end
+
+  #logger.debug "The response is :: #{res.inspect} and status is :: #{res.status}"
+  
+  #logger.debug "successfully imported files from zendesk with file_path:: #{file_path.inspect}"
 end
 
 end
