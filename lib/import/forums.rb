@@ -231,7 +231,7 @@ def get_entry_data file_path, make_solution
     if (@forum.blank? && make_solution)
       logger.debug "The forum is blank and make_solu:: #{make_solution}"
       @sol_folder = current_account.folders.find_by_import_id(forum_id.to_i())
-      @article = @sol_folder.find_by_import_id(import_id) unless @sol_folder.blank?
+      @article = @sol_folder.articles.find_by_import_id(import_id) unless @sol_folder.blank?
       if @article.blank?
         article_created+=1
       else
