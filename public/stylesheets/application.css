@@ -4534,6 +4534,9 @@ div.addReminder form label.overlabel {
   border: 0px;
   background-color: #f4fded;
 }
+.plans .active .plan-button {
+  display: none;
+}
 .plans button {
   margin-top: 6px;
 }

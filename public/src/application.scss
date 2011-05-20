@@ -3687,7 +3687,10 @@ div.addReminder{
 	}
 	.active{
 		border:0px;
-		background-color:#f4fded; 
+		background-color:#f4fded;
+		.plan-button{
+			display:none;
+		}
 	}
 	
 	button{

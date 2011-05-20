@@ -586,3 +586,7 @@ en:
    import_org_companies:            "Organizations &rarr; Companies"
    import_topics:                   "Topics"
    submit:                          "submit"
+
+#May 20th 2011
+   errors_in_plan_change:           "Errors encountered with your change:"
+   
