@@ -34,6 +34,8 @@ module ModelControllerMethods
       end
     end
     else
+      logger.debug "error while creating email_config #{@obj.errors.inspect}"
+      create_error
       render :action => 'new'
     end
   end
@@ -44,6 +46,7 @@ module ModelControllerMethods
       redirect_back_or_default redirect_url
     else
       logger.debug "error while saving #{@obj.errors.inspect}"
+      update_error
       render :action => 'edit'
     end
   end
@@ -109,4 +112,9 @@ module ModelControllerMethods
       "The #{human_name} has been created."
     end
     
+    def create_error
+    end
+    
+    def update_error
+    end
 end
