@@ -269,9 +269,17 @@ module Rack #:nodoc:
       rescue Timeout::Error
         TimeoutResponse.new
       end
+<<<<<<< HEAD
 
       def fd_ssl?(env)
         env["rack.url_scheme"] == 'https'
       end
+=======
+      
+      def fd_ssl?(env)
+        env["rack.url_scheme"] == 'https'
+      end
+
+>>>>>>> 43ed1f076104efbe465ef3dd1f7c872b71e3c9f7
   end
 end

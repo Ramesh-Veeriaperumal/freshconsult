@@ -7,9 +7,10 @@
 	jQuery(document).ready(function(){
 		init();
 		//makePageNonSelectable($('custom_form'));
-	});
+	}); 
+			
+	function init(){		
 
-	function init( ){
 		var fieldFeed = JSON.parse(custom_field_values, 
 							function (key, value) {
 							    var type;
