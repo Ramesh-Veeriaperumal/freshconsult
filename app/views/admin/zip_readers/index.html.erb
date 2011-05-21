@@ -8,7 +8,8 @@
 				<%= t('zendesk_url') %>
 			</label>
 			<div class="fields">
-			   <%= f.text_field :url, :class => "text" %>
+			   <%= f.text_field :url, :class => "text url" %>
+			   <label><%= t('zendesk_url_info') %></label>
 			</div>
 		</li>
 		<li class="inline-field">
@@ -17,7 +18,7 @@
 				<%= t('username') %>
 			</label>
 			<div class="fields">
-				<%= f.text_field :user_name, :class => "text" %>
+				<%= f.text_field :user_name, :class => "text email" %>
 			</div>
 			<span class="seperator"></span>
 			<label class="caption">
