@@ -38,6 +38,7 @@
 				:url => (!type_check) ? (admin_email_configs_path) : (admin_email_config_path), 
 			    :html => { :method => (!type_check) ? (:post) : (:put) } do |f|
 %>
+<%= f.error_messages %>
 <h3 class="title">
 	<% if (type == "edit") %>
 		Edit email

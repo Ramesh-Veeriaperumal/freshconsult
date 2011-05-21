@@ -67,4 +67,13 @@ class Admin::EmailConfigsController < Admin::AdminController
       "The #{human_name} has been added."
     end
     
+    def create_error #Need to refactor this code, after changing helpcard a bit.
+      @email_configs = scoper.all
+      @groups = current_account.groups
+    end
+    
+    def update_error
+      @email_configs = scoper.all
+      @groups = current_account.groups
+    end    
 end
