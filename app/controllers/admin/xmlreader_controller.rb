@@ -1,28 +1,20 @@
 class Admin::XmlreaderController < Admin::AdminController
   
-  before_filter { |c| c.requires_permission :manage_tickets }
-    require 'rexml/document'
+    before_filter { |c| c.requires_permission :manage_tickets }
     
+    require 'rexml/document'    
     require 'rexml/xpath'    
+    
     include Import::CustomField
     include Import::Forums
   
-  def xmlreader
-  end
 
-  def importxml   
-  end
-  
   def zendesk_import
-    
-    logger.debug "import Admin::::::zendesk :: is #{params.inspect}"
     
     base_dir = params[:base_dir]    
     file_list = params[:import][:files]
     
-    create_solution = false
-    
-    logger.debug "initial arr size:: #{ file_list.size} :: and compact one is #{file_list.reject(&:blank?).size} "    
+    create_solution = false   
     
     import_list = file_list.reject(&:blank?)   
     
@@ -47,10 +39,7 @@ class Admin::XmlreaderController < Admin::AdminController
        handle_forums_import base_dir , create_solution
     end  
    
-   logger.debug "zendes import is completed with customers: #{@customers_stat.inspect} \n and users : #{@users_stat.inspect} and tickets :: #{@tickets_stat.inspect}"
-  
-   del_file = FileUtils.rm_rf base_dir
-  
+    del_file = FileUtils.rm_rf base_dir  
       
   end
 
@@ -146,7 +135,7 @@ def handle_user_import base_dir
   updated = 0
 
   user_count = Hash.new
-
+  
   file_path = File.join(base_dir , "users.xml")
   file = File.new(file_path) 
   doc = REXML::Document.new file
@@ -270,8 +259,7 @@ end
 
 def handle_ticket_import base_dir
   
-  logger.debug "handle_ticket_import ::: "
-  
+    
   created_count = 0
   updated_count = 0
   ticket_count = Hash.new
@@ -349,7 +337,6 @@ def handle_ticket_import base_dir
         created_at = created_time.to_datetime()
       end 
      
-      ###########
       req.elements.each("updated-at") do |updated|  
         updated_at = updated.text
         updated_at = updated_at.to_datetime()
@@ -518,13 +505,12 @@ def handle_account_import base_dir
   doc.elements.each("account/reply-address") { |address| reply_address =  address.text }  
   doc.elements.each("account/name") { |name| acc_name = name.text }
   doc.elements.each("account/time-zone") { |timezone| time_zone = timezone.text }  
-  logger.debug "account import ::  #{reply_address} and acc_name :: #{acc_name} and time_zone :: #{time_zone}"  
+  
 end
 
 def handle_forums_import base_dir,make_solution
   
-  cat_path = File.join(base_dir , "categories.xml")
-  
+  cat_path = File.join(base_dir , "categories.xml")  
   posts_path = File.join(base_dir , "posts.xml")
   entry_path = File.join(base_dir , "entries.xml")
   
@@ -532,54 +518,12 @@ def handle_forums_import base_dir,make_solution
   @forum_stat = Hash.new
   @topic_stat = Hash.new
   
-  cat_import = import_forum_categories cat_path
-  
-  @forum_stat = get_forum_data base_dir,make_solution
-  
+  cat_import = import_forum_categories cat_path  
+  @forum_stat = get_forum_data base_dir,make_solution  
   @topic_stat = get_entry_data entry_path , make_solution
   
   get_posts_data posts_path
   
-  logger.debug "Forum has been imported with stats :: categories:: #{cat_import.inspect} \n forums:: #{@forum_stat.inspect} amd topics::#{@topic_stat.inspect}"
- 
-end
-
-
-def get_file_from_zendesk  dest_path  
-  
-  logger.debug "Getting file from zendesk"
-  
-  url = 'http://uknowmewell12.zendesk.com/ticket_fields.xml'
-  file_path = File.join(dest_path , "ticket_fields.xml") 
-  
-  import_file_from_zendesk url,file_path  
-  
-  url = 'http://uknowmewell12.zendesk.com/categories.xml'
-  file_path = File.join(dest_path , "categories.xml") 
-  
-  import_file_from_zendesk url,file_path
-  
-  
-end
-
-def import_file_from_zendesk url, file_path
-  
-  usr_name = "uknowmewell@gmail.com"
-  usr_pwd = "Opmanager123$"
-  
-  url = URI.parse(url)  
-  req = Net::HTTP::Get.new(url.path)  
-  req.basic_auth usr_name, usr_pwd
-  res = Net::HTTP.start(url.host, url.port) {|http| http.request(req) }     
-  File.open(file_path, 'w') {|f| f.write(res.body) }
-  logger.debug "successfully imported files from zendesk with file_path:: #{file_path.inspect}"
-end
-
-
-
-def import_file_attachment attach_url, base_dir, file_name  
-  file_path = File.join(base_dir , file_name)
-  open(file_path, "wb") {|file| file.write open(attach_url).read}
 end
 
 end
