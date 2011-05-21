@@ -566,6 +566,7 @@ en:
    zendesk_url:                     "Zendesk URL"
    zendesk_backup_info:             "Select the Zendesk backup file downloaded from zendesk"
    zendesk_backup:                  "Backup file"
+   zendesk_url_info:                "eg:- http://acme.zendesk.com"
 
    import_zendesk_title:            "Import from zendesk"
    import_user_org:                 "Users &amp; Organizations"
