@@ -61,9 +61,11 @@ def import_file base_dir, file_arr
   usr_name = params[:dump][:user_name]
   usr_pwd = params[:dump][:user_pwd]  
   
+  zendesk_url = zendesk_url+'/' unless zendesk_url.ends_with?('/')
+  
   file_arr.each do |file_name|
     
-    url = zendesk_url+'/'+file_name
+    url = zendesk_url+file_name
     file_path = File.join(base_dir , file_name)      
     url = URI.parse(url)  
     req = Net::HTTP::Get.new(url.path)  
