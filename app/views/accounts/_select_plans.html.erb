@@ -10,7 +10,7 @@
 						<%= content_tag(:h3, "$#{plan.amount.to_i} per agent/month") %>	
 						<%= content_tag(:h4, t("#{plan_name}_brief") ) %>
 						<%= content_tag(:p,  t("#{plan_name}_details") ) %>
-						<button data-plan="<%= plan.name %>" data-plan-cost="<%= plan.amount.to_i %>" data-plan-id = "<%= plan.id %>" class="plan-button"><%=t('choose_plan')%></button>
+						<button data-plan="<%= plan.name %>" data-plan-cost="<%= plan.amount.to_i %>" data-plan-id = "<%= plan.id %>" class="plan-button" id='<%= "#{ plan.name }_button" %>'><%=t('choose_plan')%></button>
 						<div id="billing-<%= plan.name %>"></div>
 					</div>
 				</td>
@@ -59,23 +59,24 @@
 		
 		$(".plan-button").click(function(){
 			if(selected_plan != null) selected_plan.removeClass('active');
-			current_plan 	= this.getAttribute("data-plan");
+
+			current_plan 	  = this.getAttribute("data-plan");
 			selected_plan 	= $("#plan-"+current_plan).addClass('active'); 
-			plan_cost 		= this.getAttribute("data-plan-cost");
-			agents			= $("#agents-text-box").val();
+			plan_cost 		  = this.getAttribute("data-plan-cost");
+			agents			    = $("#agents-text-box").val();
 			calculateCost();
+
 			$("#billing-template").detach().appendTo(selected_plan).show();
 			$("#plan_id").val(this.getAttribute("data-plan-id"));
 		});
 		
 		$("#agents-text-box").change(function(){
-			console.log(IsNumeric(this.value));
 			if(IsNumeric(this.value) && this.value != 0){
 				this.value = Math.abs(this.value);
 				agents = this.value;
 				calculateCost();
 			}else{
-				this.value = 1;
+				this.value = agents;
 			}
 		});
 		

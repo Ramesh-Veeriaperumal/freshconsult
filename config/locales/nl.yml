@@ -54,7 +54,7 @@ nl:
        resolution_time: "Oplostermijn"
        escalate_to: "Escaleren naar"
        override: "Aanpassen"
-       info1: "	SLA beleid zijn regels over responstijd en afhandeltijd gebasseerd op de prioriteit van een ticket. Het is gebruikelijk om Service Levels in te delen naar ticket prioriteit. Het SLA beleid zou zo simpel kunnen zijn als: “Tickets met een hoge prioriteit worden binnen 2 uur opgelost“, etc"
+       info1: "SLA beleid zijn regels over responstijd en afhandeltijd gebasseerd op de prioriteit van een ticket. Het is gebruikelijk om Service Levels in te delen naar ticket prioriteit. Het SLA beleid zou zo simpel kunnen zijn als: “Tickets met een hoge prioriteit worden binnen 2 uur opgelost“, etc"
        info2: "Freshdesk gebruikt het SLA beleid om de “Oplostermijn“ van tickets te bepalen. Een standaard SLA beleid voor alle klanten is mogelijk, maar het is ook mogelijk om voor een specifieke klant, die bijvoorbeeld snellere reactie- en afhandeltijden vereist, een apart SLA beleid te maken."
        info3: "SLA beleid maakt gebruik van Werktijden"
        
@@ -327,6 +327,43 @@ nl:
        current_password : "Huidig wachtwoord"
        new_password     : "Nieuw wachtwoord"
        confirm_password : "Bevestig wachtwoord"
+   
+   datetime:
+    distance_in_words:
+      half_a_minute: "een halve minuut"
+      less_than_x_seconds:
+        one:   "minder dan \xC3\xA9\xC3\xA9n seconde"
+        other: "minder dan %{count} seconden"
+      x_seconds:
+        one:   "1 seconde"
+        other: "%{count} seconden"
+      less_than_x_minutes:
+        one:   "minder dan \xC3\xA9\xC3\xA9n minuut"
+        other: "minder dan %{count} minuten"
+      x_minutes:
+        one:   "1 minuut"
+        other: "%{count} minuten"
+      about_x_hours:
+        one:   "ongeveer \xC3\xA9\xC3\xA9n uur"
+        other: "ongeveer %{count} uur"
+      x_days:
+        one:   "1 dag"
+        other: "%{count} dagen"
+      about_x_months:
+        one: "ongeveer \xC3\xA9\xC3\xA9n maand"
+        other: "ongeveer %{count} maanden"
+      x_months:
+        one:   "1 maand"
+        other: "%{count} maanden"
+      about_x_years:
+        one: "ongeveer \xC3\xA9\xC3\xA9n jaar"
+        other: "ongeveer %{count} jaar"
+      over_x_years:
+        one: "meer dan \xC3\xA9\xC3\xA9n jaar"
+        other: "meer dan %{count} jaar"
+      almost_x_years:
+        one:   "bijna \xC3\xA9\xC3\xA9n jaar"
+        other: "bijna %{count} jaar"
        
    activerecord:
      errors:

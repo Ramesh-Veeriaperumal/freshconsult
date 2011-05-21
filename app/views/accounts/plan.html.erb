@@ -1,25 +1,33 @@
-<% content_for :sidebar do -%><%- end %>
+<% content_for :sidebar do -%>
+  <div class="sidepanel">
+    <%= content_tag(:h4, "#{ t('current_plan') }", :class => "title") %>
+    <%= content_tag(:strong, "#{ t('current_plan_details', :plan_name => @subscription.subscription_plan.name, :agent_limit => @subscription.agent_limit) } @ #{t('amount_per_month', :amount => @subscription.amount.to_i)}", :class => "highlight") %>
+    <%= content_tag(:p, t('change_plan_info', :date => @subscription.next_renewal_at.to_s(:long_day)), :class => "info-text") %>  
+  </div>
+<%- end %>
 
-	<% if @subscription && @subscription.errors.any? %>
-	  <div class="errorExplanation">
-	    <h2>Errors encountered with your change:</h2>
-	    <ul>
-	      <%= @subscription.errors.full_messages.map {|m| content_tag('li', m)} %>
-	    </ul>
-	  </div>
-	<% end %>
+<% if @subscription && @subscription.errors.any? %>
+  <div class="errorExplanation">
+    <%= content_tag( :h2, t("errors_in_plan_change") ) %>
+    <ul>
+      <%= @subscription.errors.full_messages.map {|m| content_tag('li', m)} %>
+    </ul>
+  </div>
+<% end %>
 
-	<h3 class="title"><%= @page_title = t('change_plan') %></h3> 
-	<strong>
-		<%= content_tag(:p, "#{ t('current_plan') }: #{ t('current_plan_details', :plan_name => @subscription.subscription_plan.name, :agent_limit => @subscription.agent_limit) } @ #{t('amount_per_month', :amount => @subscription.amount.to_i)}", :class => "info-text") %>
-	</strong>
-	<%= content_tag(:p, t('change_plan_info', :date => @subscription.next_renewal_at.to_s(:long_day)), :class => "info-text") %>
-	<span class="seperator"></span>
-	<%= render :partial => "select_plans", :locals => { :plans => @plans } %>
+<h3 class="title"><%= @page_title = t('change_plan') %></h3>
+<%= render :partial => "select_plans", :locals => { :plans => @plans } %>
 
-	<div class="button-container">
-		<%= link_to( t('back_plans_billing'), account_url, :class => "uiButton floatl" ) %>
-	</div>
+<% javascript_tag do %>
+  jQuery(document).ready(function(){
+    jQuery('<%="##{@subscription.subscription_plan.name}_button"%>')
+      .trigger("click");
+  })  
+<% end %>
+
+<div class="button-container">
+	<%= link_to( t('back_plans_billing'), account_url, :class => "uiButton floatl" ) %>
+</div>
 
 <% if @subscription.needs_payment_info? -%>
   <!--p>
