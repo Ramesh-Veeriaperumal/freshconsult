@@ -13,7 +13,7 @@ class Helpdesk::Note < ActiveRecord::Base
   attr_accessor :nscname
   attr_protected :attachments, :notable_id
   
-  after_create :save_response_time
+  after_create :save_response_time, :update_parent
 
   named_scope :newest_first, :order => "created_at DESC"
   named_scope :visible, :conditions => { :deleted => false } 
@@ -63,20 +63,36 @@ class Helpdesk::Note < ActiveRecord::Base
     { "commenter"   => user,
       "body"     => body }
   end
-  
-  def save_response_time
-    
-    if ((self.notable.is_a? Helpdesk::Ticket) && user)    
+
+  protected
+    def save_response_time
+      if ((self.notable.is_a? Helpdesk::Ticket) && user)    
         ticket_state = notable.ticket_states     
         if "Customer".eql?(User::USER_ROLES_NAMES_BY_KEY[user.user_role])      
           ticket_state.requester_responded_at=Time.zone.now          
         else
           ticket_state.agent_responded_at=Time.zone.now unless private
           ticket_state.first_response_time=Time.zone.now if ticket_state.first_response_time.nil? && !private
-      end  
-      ticket_state.save
+        end  
+        ticket_state.save
+      end
     end
     
-  end
+    def update_parent #Maybe after_save?!
+      return unless ((self.notable.is_a? Helpdesk::Ticket) && user)
+      
+      if user.customer?
+        unless notable.active?
+          notable.update_attribute(:status, Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open])
+          notification_type = EmailNotification::TICKET_REOPENED
+        end
+        
+        Helpdesk::TicketNotifier.send_later(:notify_by_email, (notification_type ||= 
+              EmailNotification::REPLIED_BY_REQUESTER), notable, self) if notable.responder
+      else
+        Helpdesk::TicketNotifier.send_later(:notify_by_email, EmailNotification::COMMENTED_BY_AGENT, 
+            notable, self) if source.eql?(SOURCE_KEYS_BY_TOKEN["note"]) && !private
+      end
+    end
 
 end

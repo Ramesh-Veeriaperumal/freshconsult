@@ -16,20 +16,9 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       ticket = Helpdesk::Ticket.find_by_account_id_and_display_id(account.id, display_id) if display_id
       if ticket
         return if(from_email[:email] == ticket.reply_email) #Premature handling for email looping..
-        comment = add_email_to_ticket(ticket, from_email, params[:text])
-        if comment.user.customer?
-           unless ticket.active?
-            ticket.update_attribute(:status, Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open])
-            notification_type = EmailNotification::TICKET_REOPENED
-          end
-          
-          Helpdesk::TicketNotifier.notify_by_email((notification_type ||= EmailNotification::REPLIED_BY_REQUESTER), 
-                                                    ticket, comment) if ticket.responder
-        else
-          Helpdesk::TicketNotifier.notify_by_email(EmailNotification::COMMENTED_BY_AGENT, ticket, comment)
-        end
+        add_email_to_ticket(ticket, from_email, params[:text])
       else
-        ticket = create_ticket(account, from_email, to_email)
+        create_ticket(account, from_email, to_email)
       end
     end
   end
