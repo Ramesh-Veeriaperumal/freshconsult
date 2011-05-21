@@ -374,6 +374,7 @@ def handle_ticket_import base_dir
         created_count+=1
       else
         updated_count+=1
+        next
       end
       
       @display_id_exist = current_account.tickets.find_by_display_id(display_id.to_i())
@@ -404,7 +405,6 @@ def handle_ticket_import base_dir
         attachemnt_url = nil        
         attach.elements.each("url") {|attach_url|   attachemnt_url = attach_url.text  } 
         Delayed::Job.enqueue Import::Attachment.new(@request.id ,attachemnt_url, :ticket )
-        #@request.attachments.create(:content =>  RemoteFile.new(attachemnt_url), :description => "", :account_id => @request.account_id)
        
       end
       
@@ -444,8 +444,12 @@ def handle_ticket_import base_dir
     
       ##handling notes ---
       
+      first_comment = true
       req.elements.each("comments/comment") do |comment|
-       
+       if first_comment
+         first_comment = false
+         next
+       end
        note_body = nil
        note_created_by = nil
        note_created_time = nil
@@ -484,9 +488,9 @@ def handle_ticket_import base_dir
         
         attachemnt_url = nil        
         attach.elements.each("url") {|attach_url|   attachemnt_url = attach_url.text  } 
-        #@note.attachments.create(:content =>  RemoteFile.new(attachemnt_url), :description => "", :account_id => @note.account_id)
-        Delayed::Job.enqueue Import::ImportFile.new(@note ,attachemnt_url , :note )
-        end        
+        Delayed::Job.enqueue Import::Attachment.new(@note ,attachemnt_url , :note )
+        end
+        
     end
      #---note saving ends--
        
