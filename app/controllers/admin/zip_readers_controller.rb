@@ -9,9 +9,8 @@ require 'fileutils'
     
   end
   
-  def extract_zip
-        
-    logger.debug "Admin:::::::::::extract....."
+  def extract_zip        
+    
     file=params[:dump][:file]    
     @upload_file_name = file.original_filename
     
@@ -20,8 +19,7 @@ require 'fileutils'
       f.write(file.read)
     end
     
-    @file_list = Array.new
-    
+    @file_list = Array.new   
     
     @out_dir = "#{RAILS_ROOT}/public/files/temp/#{@upload_file_name.gsub('.zip','')}"
     FileUtils.mkdir_p @out_dir    
@@ -39,56 +37,48 @@ require 'fileutils'
       file_det["file_name"] = report_name
       file_det["file_path"] = fpath
       @file_list.push(file_det)
-    end
-    
-    import_files_from_zendesk @out_dir
-    
-    FileUtils.rm_rf zip_file_name
+    end    
+    import_files_from_zendesk @out_dir    
+    delete_zip_file
     
   end
-  
-  def import_files_from_zendesk base_dir
+  def delete_zip_file
+    zip_file_name = "#{RAILS_ROOT}/public/files/#{@upload_file_name}"
+    FileUtils.rm_rf zip_file_name
+  end
+  def import_files_from_zendesk base_dir      
+    file_arr = Array.new       
+    file_arr.push("categories.xml")
+    file_arr.push("ticket_fields.xml")
     
-    zendesk_uri = params[:dump][:url]
-    usr_name = params[:dump][:user_name]
-    usr_pwd = params[:dump][:user_pwd]
-    
-    #categories
-    
-    url = zendesk_uri+'/categories.xml'
-    file_path = File.join(base_dir , "categories.xml")   
-    import_file url,file_path , usr_name,usr_pwd
-    
-    #ticket_fields
-    url = zendesk_uri+'/ticket_fields.xml'
-    file_path = File.join(base_dir , "ticket_fields.xml")   
-    import_file url,file_path, usr_name , usr_pwd
-    
+    import_file base_dir,file_arr     
   end
 
  
-def import_file url, file_path, usr_name , usr_pwd
+def import_file base_dir, file_arr
   
-  ##need to remove this once everything is done
-  #usr_name = "uknowmewell@gmail.com"
-  #usr_pwd = "Opmanager123$"
+  zendesk_url = params[:dump][:url]
+  usr_name = params[:dump][:user_name]
+  usr_pwd = params[:dump][:user_pwd]  
   
-  url = URI.parse(url)  
-  req = Net::HTTP::Get.new(url.path)  
-  req.basic_auth usr_name, usr_pwd
-  res = Net::HTTP.start(url.host, url.port) {|http| http.request(req) } 
-  case res
-  when Net::HTTPSuccess, Net::HTTPRedirection
-      File.open(file_path, 'w') {|f| f.write(res.body) }
-      # OK
-  else
-      flash[:notice] = "Unable to contact zendesk . Please verify your zendesk credentials and try again !!"
-      redirect_to :back
+  file_arr.each do |file_name|
+    
+    url = zendesk_url+'/'+file_name
+    file_path = File.join(base_dir , file_name)      
+    url = URI.parse(url)  
+    req = Net::HTTP::Get.new(url.path)  
+    req.basic_auth usr_name, usr_pwd
+    res = Net::HTTP.start(url.host, url.port) {|http| http.request(req) }     
+    case res
+    when Net::HTTPSuccess, Net::HTTPRedirection
+       File.open(file_path, 'w') {|f| f.write(res.body) }      
+    else
+      flash[:notice] = "Unable to contact zendesk . Please verify your zendesk credentials and try again !!" 
+      delete_zip_file      
+      return redirect_to :back     
+    end
   end
-
-  #logger.debug "The response is :: #{res.inspect} and status is :: #{res.status}"
   
-  #logger.debug "successfully imported files from zendesk with file_path:: #{file_path.inspect}"
 end
 
 end
