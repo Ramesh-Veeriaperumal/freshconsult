@@ -624,3 +624,14 @@ en:
         import:                     "Import data from Zendesk"
         everything_helpdesk:        "Everything Helpdesk"
         everything_else:            "Everything else"
+    security:
+      index:
+        remote_authentication:      "Remote Authentication"
+        enable_sso:                 "Enable Single Sign On"
+        enable_sso_info:            "Single Sign On allows you to use your own application or a centralized Server (like MS Active Directory) to authenticate agents and customers so that they can access Freshdesk without entering a separate username and password."
+        shared_secret:              "Shared Secret"
+        shared_secret_info:         "Shared Secret is a secret key which you must store in your application and is used in generating the secret hash to identify users"
+        remote_login_url:           "Remote login URL"
+        remote_login_url_info:      "is the URL to which Freshdesk will redirect users for authentication when they attempt to access Freshdesk"
+        remote_logout_url:          "Remote logout URL"
+        remote_logout_url_info:     "is the URL to who Freshdesk will redirect users when they click on the Logout link in Freshdesk."

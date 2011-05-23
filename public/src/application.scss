@@ -2358,7 +2358,7 @@ a.page_title{
 }
 
 .highlight{
-	font-size:12px;color:#0078BD;
+	font-size:12px; color:#0078BD;
 }
 
 .company_box, .contact-box{
@@ -3056,106 +3056,6 @@ div.addReminder{
 		}
 	}
 }
-
-
-.email-settings{ 
-	margin:0px -20px 10px;
-	padding:0px;
-	border-top:1px solid #e6e6e6;
-	border-bottom:1px solid #f4f4f4;
-	label{
-		font-size:14px;
-		color:#666666;
-		display:block; 
-	}
-	.action_buttons{
-		margin-top:2px;
-	}
-	.highlight{ 
-		font-size:inherit; 
-		font-size:15px;
-	}
-	.info_data{ font-size:12px; }
-	
-	div.email-item-default, div.email-item{
-		padding:6px 22px 4px;
-		background:#f6f6f6;
-	}
-	
-	div.email-item-default{
-		label{ 
-			line-height:20px;
-		}
-		padding-top:10px;
-		padding-bottom:10px;
-		.info_data{
-			padding-top:4px;
-		}
-	}			
-	div.email-item{
-		border-top:1px solid #ffffff;
-		border-bottom:1px solid #e8e8e8;
-		div.item{
-			margin-bottom:8px;
-			label{ font-size:12px; padding-bottom:2px; }
-			font-size:14px;
-		}	
-	
-	}
-} 
-.email-inactive{
-	.highlight{
-		color:#777777 !important;
-	}	
-}
-
-.email-settings-form{
-	table{ width: 400px; }
-	td{ padding:6px 8px;}
-}
-
-.email_info{
-	border:1px solid #cfcfcf;
-	padding:8px 12px;
-	background:#f2ffda;
-	@include corners(3px);
-	font-size:14px;
-}
-
-.inactive_email{
-	padding:2px 5px;
-	margin-left:15px;
-	border:1px solid darken(#f7e6e6, 5%);
-	background-color:#f7e6e6;
-	color:#b56e6e;
-	font-size:11px;
-	position:relative;
-	top:-1px;
-	text-transform:capitalize;
-	font-weight:bold;
-	@include corners(5px);
-	a{
-		font-size:10px;
-	} 
-}
-
-#primary-email-settings{
-	div.email-item-default, div.email-item{
-		background-color:#f3fde5;
-	}
-}
-
-.email-info{
-	background-color:#fefce5;
-	padding:12px 22px;
-	line-height:22px;
-	margin:0px -20px;
-	font-size:13px;
-	color:#996666;
-	border:1px solid #f4f4f4;
-	margin-bottom:10px;
-}
-
 
 .wordwrap p, .wrap{ @include wrap; }
 
