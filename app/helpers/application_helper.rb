@@ -9,7 +9,7 @@ module ApplicationHelper
   end
 
   def tab(title, url, cls = false)
-    content_tag('li', content_tag('span') + link_to(strip_tags(title), url), :class => cls) 
+    content_tag('li', content_tag('span') + link_to(strip_tags(title), url), :class => cls)
   end
 
   def navigation_tabs
@@ -37,13 +37,13 @@ module ApplicationHelper
 
     navigation = tabs.map do |s| 
       next unless s[2]
-      active = (params[:controller] == s[0]) || (s[1] == @selected_tab || "/#{params[:controller]}" == s[0]) #selected_tab hack by Shan  !history_active && 
+      active = (params[:controller] == s[0]) || (s[1] == @selected_tab || "/#{params[:controller]}" == s[0]) #selected_tab hack by Shan  !history_active &&
       tab(s[1], {:controller => s[0], :action => :index}, active && :active) 
     end
 
     spacer = content_tag('li', '', :class => 'spacer')
 
-    navigation #+ [spacer] + history  
+    navigation #+ [spacer] + history
   end
   
   

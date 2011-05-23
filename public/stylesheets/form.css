@@ -502,6 +502,9 @@ a.addchoice:hover {
 .ui-form .inline-field div.fields label {
   font-size: 1.1em;
 }
+.ui-form .inline-field div.fields div.action_buttons {
+  margin-top: 0px;
+}
 .ui-form .inline-field span.seperator {
   border-style: solid;
   border-color: #efefef;
@@ -1120,36 +1123,43 @@ fieldset.nestedChoices {
   padding-left: 26px;
 }
 
-.summary-report {
+table.summary {
+  width: 100%;
+}
+table.summary td {
+  padding: 8px 10px 2px 0px;
+}
+
+table.summary-report {
   width: 100%;
   border: 1px solid #ececec;
   border-width: 1px 0px;
   font-size: 13px;
 }
-.summary-report td, .summary-report th {
+table.summary-report td, table.summary-report th {
   padding: 8px 8px;
   width: 180px;
   border-bottom: 1px solid #eaeaea;
 }
-.summary-report th {
+table.summary-report th {
   background: #ededed;
   font-weight: bold;
   color: #333333;
 }
-.summary-report .sub-title {
+table.summary-report .sub-title {
   background: #f1f1f1;
   text-align: right;
   width: 280px;
   padding-right: 10px;
   text-transform: capitalize;
 }
-.summary-report thead {
+table.summary-report thead {
   margin: 0px 0px 0px 0px;
   color: #666666;
   border: 1px solid #f4f4e9;
   background-color: #fffbee;
 }
-.summary-report thead td {
+table.summary-report thead td {
   text-align: center;
   font-weight: bold;
   padding: 12px 18px;
