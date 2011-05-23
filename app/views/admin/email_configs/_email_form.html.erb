@@ -49,19 +49,17 @@
 <ul class="ui-form">
 	<li>
 			<label><%=t('email_configs.info6')%> eg. support@yourcompany.com </label>
-			<span class"info_data"><%=t('email_configs.info7')%></span>
+			<div class="info-data"><%= t('email_configs.info7') %> </div>
 			<%= f.text_field :reply_email, :class => "required text", :id => "reply_to_id" %>						
 	</li>
 	<li>	
 			<label><%=t('email_configs.info8')%></label>
-			<div id="div_reply_email" class="email_info">
-				<%= (type_check) ? @email_config.to_email : '&nbsp;' %>
-			</div>
+			<%= content_tag(:div, ( (type_check) ? @email_config.to_email : '&nbsp;' ), :id => "div_reply_email", :class =>"highlight-textbox-info" )  %>
 			<%= f.hidden_field :to_email, :id => "hidden_reply_to" %>
 	</li>	
 	<li>
 			<label><%=t('email_configs.info9')%></label>
-			<span class="info_data"><%=t('email_configs.info10')%> </span>
+			<div class="info-data"><%=t('email_configs.info10')%> </div>
 			<%= collection_select(:email_config, :group_id, @groups, :id, :name, options = {:include_blank => "..."}) %>
 	</li> 
 </ul>
