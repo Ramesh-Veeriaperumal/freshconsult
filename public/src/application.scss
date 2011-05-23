@@ -917,7 +917,8 @@ ul.admin_icons{
 			img{ height:32px; width:32px; }
 			div{
 				@include wrap;
-				font-size:12px;
+				font-size:13px;
+				line-height:18px;
 				margin:6px 0px;
 				padding:1px 3px;
 				position:relative;
@@ -1153,9 +1154,12 @@ a.request_bt:hover{
 }
 
 .admin{
-	padding:0px 0px 8px 0px;
-	margin:0px 8px 8px 0px;
+	padding:0px 0px 10px 0px;
+	margin:0px 8px 10px 10px;
 	border-bottom:1px solid #ededed;
+	h3.title{
+		margin-bottom:16px;
+	}
 } 
 
 .guide_page{

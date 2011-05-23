@@ -12,11 +12,12 @@ class AccountsController < ApplicationController
   before_filter :load_discount, :only => [ :plans, :plan, :new, :create ]
   before_filter :build_plan, :only => [:new, :create]
   before_filter :load_plans, :only => [:show, :plans]
+  before_filter :admin_selected_tab, :only => [ :billing, :show, :edit, :plan ]
   
   #ssl_required :billing, :cancel, :new, :create #by Shan temp
   #ssl_allowed :plans, :thanks, :canceled, :paypal
   
-   before_filter :only => [:update, :destroy, :edit, :delete_logo, :delete_fav,:show,:cancel,:plan,:plans,:thanks] do |c| 
+  before_filter :only => [:update, :destroy, :edit, :delete_logo, :delete_fav,:show,:cancel,:plan,:plans,:thanks] do |c| 
     c.requires_permission :manage_users
   end
   
@@ -28,7 +29,7 @@ class AccountsController < ApplicationController
   end
   
   def edit
-  	@selected_tab = 'Admin'
+
   end
   
   def check_domain
@@ -371,5 +372,9 @@ class AccountsController < ApplicationController
       (self.action_name == 'dashboard' && logged_in?) ||
       admin?
     end 
-        
+    
+    def admin_selected_tab
+      @selected_tab = 'Admin'
+    end
+
 end
