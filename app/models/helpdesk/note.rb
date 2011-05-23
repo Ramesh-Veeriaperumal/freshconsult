@@ -83,7 +83,7 @@ class Helpdesk::Note < ActiveRecord::Base
       
       if user.customer?
         unless notable.active?
-          notable.update_attribute(:status, Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open])
+          notable.status = Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open]
           notification_type = EmailNotification::TICKET_REOPENED
         end
         
@@ -93,6 +93,9 @@ class Helpdesk::Note < ActiveRecord::Base
         Helpdesk::TicketNotifier.send_later(:notify_by_email, EmailNotification::COMMENTED_BY_AGENT, 
             notable, self) if source.eql?(SOURCE_KEYS_BY_TOKEN["note"]) && !private
       end
+      
+      notable.updated_at = created_at
+      notable.save
     end
 
 end
