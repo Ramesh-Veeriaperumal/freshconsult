@@ -448,6 +448,9 @@ a.addchoice:hover{
 		label{
 			font-size:1.1em;
 		}
+		div.action_buttons{
+			margin-top:0px;
+		}
 	}
 	span.seperator{
 		border-style:solid;
@@ -959,7 +962,13 @@ fieldset.nestedChoices{
 
 .tabbed{ padding-left:26px; }
 
-.summary-report{
+table.summary{
+	width:100%;
+	td{ 
+		padding:8px 10px 2px 0px;
+	}
+}
+table.summary-report{
 	width:100%;
 	border:1px solid #ececec;
 	border-width:1px 0px;

@@ -1,5 +1,6 @@
 <% content_for :sidebar do -%><%- end %>
-<h3 class= "title"><%= @page_title = t('plans_billing') %></h3>
+
+<h3 class= "title"><%= @page_title = t('.account_settings') %></h3>
 <ul class="ui-form">
 	<li class="inline-field">
 		<label class="caption"><%= t('account.name') %></label>
@@ -30,39 +31,48 @@
 	<% else %>
 	<li class="inline-field">
 		<%= content_tag(:label, t('current_plan'), :class => "caption") %>	
-  		  <div class="fields">
-			<div class="action_buttons">
-				<%= link_to( t('change_plan'), plan_account_url ,:class => "last" ) %>
+    <div class="fields">
+      <div class="action_buttons">
+        <%= link_to( "#{t('change_plan')} &rsaquo;", plan_account_url ,:class => "last" ) %>
+      </div> 
+      <div class="big-text">
+        <%= " #{ t('current_plan_details',
+            :plan_name  => @subscription.subscription_plan.name,
+            :agent_limit => @subscription.agent_limit) }" %>
 			</div> 
-			<div class="big-text">
-				<%= " #{ t('current_plan_details', 
-					 	:plan_name  => @subscription.subscription_plan.name,
-						:agent_limit => @subscription.agent_limit) } " %>
-			</div> 
-
-		    <% if @subscription.amount > 0 %>
-			  <%= content_tag(:label, t('next_charge_date'), :class => "caption" ) %>
-			  <div class="fields">
-		      	<%= content_tag(:label, @subscription.next_renewal_at.to_s(:long_day) ) %>
-			  </div>
-			  <%= content_tag(:label, t('next_charge_amount'), :class => "caption" ) %>
-			  <div class="fields">
-			  	<%= content_tag(:label, (number_to_currency @subscription.amount) ) %>
-	 		  </div>
-		  <% end %>
-		 </div>
-  	</li> 
-	<li class="inline-field">
-	  <%= content_tag(:label, t('payment_info'), :class => "caption") %>
-	  <div class="fields"> 
-		 <div class="action_buttons">
-	 		<%= link_to( "#{t('change')} &rsaquo;", billing_account_url ,:class => "last" ) %>
-	 	 </div>
-		 <label><%= @subscription.paypal? ? 'PayPal' : "#{@subscription.card_number} / #{@subscription.card_expiration}" %></label>
-	  </div>
-	</li>
-    <% end %>
-	
-	<!--li><%= link_to('Cancel plan', cancel_account_url) %></li-->
+	    <% if @subscription.amount > 0 %>
+        <table class="summary">
+          <tr>
+            <td width="300px"><%= content_tag(:label, t('next_charge_date'), :class => "caption" ) %> </td>
+            <td><%= content_tag(:label, "<strong> #{ @subscription.next_renewal_at.to_s(:long_day)  } </strong>") %></td>
+          </tr>
+          <tr>
+            <td><%= content_tag(:label, t('next_charge_amount'), :class => "caption" ) %> </td>
+            <td><%= content_tag(:label, "<strong> #{ (number_to_currency @subscription.amount) } </strong>" ) %></td>
+          </tr>
+        </table>
+      <% end %>
+    </div>
+  </li> 
+  	<li class="inline-field">
+  	  <%= content_tag(:label, t('payment_info'), :class => "caption") %>
+  	  <div class="fields"> 
+  		 <div class="action_buttons">
+  	 		<%= link_to( "#{t('change')} &rsaquo;", billing_account_url ,:class => "last" ) %>
+  	 	 </div>
+  		 <label><%= @subscription.paypal? ? 'PayPal' : "#{@subscription.card_number} / #{@subscription.card_expiration}" %></label>
+  	  </div>
+  	</li>
+  	<li class="inline-field">
+  	  <%= content_tag(:label, t(".export_data"), :class => "caption") %>
+      <div class="fields"> 
+  		  <div class="action_buttons">        
+          <%= link_to "#{t('.export_now')} &rsaquo;", export_admin_data_export_url, :class => "last" %>
+        </div>
+        <%= content_tag(:label, t('.export_data_text')) %>
+      </div>
+  	</li>
+  <% end %>
+	<!-- <li><%= link_to('Cancel plan', cancel_account_url) %></li> -->
 </ul>
  
