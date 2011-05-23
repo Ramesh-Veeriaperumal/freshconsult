@@ -566,7 +566,7 @@ en:
    zendesk_url:                     "Zendesk URL"
    zendesk_backup_info:             "Select the Zendesk backup file downloaded from zendesk"
    zendesk_backup:                  "Backup file"
-   zendesk_url_info:                "eg:- http://acme.zendesk.com"
+   zendesk_url_info:                "e.g:- http://acme.zendesk.com"
 
    import_zendesk_title:            "Import from zendesk"
    import_user_org:                 "Users &amp; Organizations"
@@ -577,7 +577,7 @@ en:
    import_solution_article_info:    "Note: We will not save the forum comments"
 
    import_zendesk_summary:          "Import from zendesk summary"
-   import_zendesk_summary_info:     "Zendesk date has been successfully imported."
+   import_zendesk_summary_info:     "Zendesk data has been successfully imported."
    import_data:                     "Date Imported"
    import_added_newly:              "Added Newly"
    import_updated:                  "Updated"
@@ -588,6 +588,7 @@ en:
    import_topics:                   "Topics"
    import_articles:                 "Solution Articles"
    submit:                          "submit"
+   import_user_notification:        "Send User activation email while importing "
    
 #May 20th 2011
    errors_in_plan_change:           "Errors encountered with your change:"

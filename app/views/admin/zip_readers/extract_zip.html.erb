@@ -12,11 +12,15 @@
 			<div class="info-data tabbed">
 				<%= t('import_user_org_text') %>				
 			</div>
+			<div class="tabbed">
+				<%= check_box( "import", "files", { :multiple => true, :checked => false }, "user_notify" , nil) %>
+				<%= t('import_user_notification') %>
+			</div>
 		</li>		
 		<li>	
 			<label>		  
 				<%= check_box( "import", "files", { :multiple => true, :checked => true }, "tickets" , nil) %>
-				<%= t('import_ticket_group') %>
+				<%= t('import_ticket_group') %>				
 			</label>
 		</li>		
 		<li>
