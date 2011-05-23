@@ -95,7 +95,7 @@
 			<% unless (@ticket.status == 5) %>
 				<%= link_to_function("Close this ticket", "closeTicket(#{@ticket.display_id})", :class => "uiButton" )  %>
 			<% end %>
-			<a href="javascript:void(0)" class="uiButton" onclick="jQuery('#ReplyToTicket').show(); jQuery(this).hide();">Add comment</a>
+			<a href="javascript:void(0)" class="uiButton" onclick="jQuery('#ReplyToTicket').show(); jQuery(this).hide();">Add note</a>
 		</div>  
 		<br />
 			
@@ -113,7 +113,7 @@
 					    <% end %>
 					</li>
 					<li class="alignright">
-						<%= f.submit "Add comment", {:class => "uiButton"} %>	
+						<%= f.submit "Add note", {:class => "uiButton"} %>	
 					</li>
 				</ul>
 			<% end %>		

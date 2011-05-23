@@ -101,7 +101,7 @@ module ApplicationHelper
     link_to(h(args_hash['name']), user_path(args_hash['id']))
   end
   
-  def comment_path(args_hash, link_display = 'comment')
+  def comment_path(args_hash, link_display = 'note')
     link_to(link_display, "#{helpdesk_ticket_path args_hash['ticket_id']}#note#{args_hash['comment_id']}")
   end
   
