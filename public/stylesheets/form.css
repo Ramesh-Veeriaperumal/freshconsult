@@ -1253,7 +1253,8 @@ table.summary-report thead td {
   width: 96%;
   font-weight: 400;
   border: 1px solid #CFCFCF;
-  padding: 6px 3px 3px 3px;
+  padding: 5px 3px 4px 5px;
+  height: 18px;
 }
 
 .email_info {
