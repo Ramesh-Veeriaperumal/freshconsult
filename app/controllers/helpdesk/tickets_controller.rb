@@ -94,7 +94,7 @@ class Helpdesk::TicketsController < ApplicationController
 
       if old_item.responder_id != @item.responder_id
         unless @item.responder
-          @item.create_activity(current_user, "{{user_path}} assgned the ticket {{notable_path}} to 'Nobody'", {}, 
+          @item.create_activity(current_user, "{{user_path}} assigned the ticket {{notable_path}} to 'Nobody'", {}, 
                                    "Assigned to 'Nobody' by {{user_path}}")
         else
           @item.create_activity(current_user, 

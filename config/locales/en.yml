@@ -491,7 +491,7 @@ en:
    edit_agent:                      "Edit Agent"
 
 #May 10th 2011
-   plans_billing:                   "Plans &amp; Billing"
+   plans_billing:                   "Plans & Billing"
    back_plans_billing:              "Back to Plans &amp; Billing"
    upgrade_trial:                   "Upgrade your trial!"
    your_trial_account:              "Your trial account"
@@ -523,7 +523,7 @@ en:
    current_plan_details:            "%{plan_name} Plan with %{agent_limit} agents"
    amount_per_month:                "$%{amount} per month"
    billed_amount_per_month:         "You will be billed $%{amount} per month"
-   next_charge_date:                "Next charge will happen on:"
+   next_charge_date:                "Your next payment will be processed on:"
    next_charge_amount:              "Monthly cost:"
 
 #May 11th 2011   
@@ -593,4 +593,35 @@ en:
 #May 20th 2011
    errors_in_plan_change:           "Errors encountered with your change:"
    
-
+#May 23rd 2011
+   errors_in_payment_info:          "Errors encountered with your payment information:"
+   errors_in_your_address:          "Errors encountered with your address:"
+   errors_in_payment:               "Errors encountered with your payment:"
+   what_is_cvv:                     "What is cvv?"
+   export_data_successfull:         "Your Help desk data will be sent to your via email shortly!"
+   accounts:
+    show:
+      account_settings:             "Account Settings"
+      export_now:                   "Export now"
+      export_data:                  "Export Data"
+      export_data_text:             "Generate an XML of all available Help desk data and send it via email"
+   admin:
+    home:
+      index:
+        rebranding:                 "Helpdesk Rebranding"
+        ticket-fields:              "Ticket Fields"
+        email-settings:             "Email Settings"
+        email-notifications:        "Email Notifications"
+        sla:                        "SLA Policies"
+        dispatcher:                 "Dispatch'r"
+        scenario:                   "Scenario Automations"
+        business-hours:             "Business Hours"
+        feedback:                   "Feedback widget"
+        customer-portal:            "Customer Portal"
+        agent:                      "Agents"
+        group:                      "Groups"
+        account-settings:           "Account Settings"
+        remote-authentication:      "Remote Authentication"
+        import:                     "Import data from Zendesk"
+        everything_helpdesk:        "Everything Helpdesk"
+        everything_else:            "Everything else"

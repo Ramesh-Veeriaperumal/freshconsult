@@ -1156,7 +1156,8 @@ ul.admin_icons li a div {
   /* Opera 7 */
   word-wrap: break-word;
   /* Internet Explorer 5.5+ */
-  font-size: 12px;
+  font-size: 13px;
+  line-height: 18px;
   margin: 6px 0px;
   padding: 1px 3px;
   position: relative;
@@ -1502,9 +1503,12 @@ a.request_bt:hover {
 }
 
 .admin {
-  padding: 0px 0px 8px 0px;
-  margin: 0px 8px 8px 0px;
+  padding: 0px 0px 10px 0px;
+  margin: 0px 8px 10px 10px;
   border-bottom: 1px solid #ededed;
+}
+.admin h3.title {
+  margin-bottom: 16px;
 }
 
 .guide_page {

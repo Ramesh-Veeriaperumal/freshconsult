@@ -39,4 +39,23 @@ class EmailNotification < ActiveRecord::Base
   def ticket_subject(ticket)
     Liquid::Template.parse(EMAIL_SUBJECTS[notification_type]).render('ticket' => ticket)
   end
+  
+  def agent_notification?
+    agent_notification && allowed_in_thread_local?(:agent_notification)
+  end
+  
+  def requester_notification?
+    requester_notification && allowed_in_thread_local?(:requester_notification)
+  end
+  
+  private
+    #Introduced to restrict notification storm, during other helpdesks data import.
+    #Notification can be disabled for requesters and ticket creation in the import thread.
+    #Format to use is 
+    #Thread.current[:notifications][<notification type>][:agent|:requester_notification]
+    #For ex., Thread.current[:notifications][1][:requester_notification] = false
+    def allowed_in_thread_local?(user_role)
+      (n_hash = Thread.current[:notifications]).nil? || 
+        (my_hash = n_hash[notification_type]).nil? || !my_hash[user_role].eql?(false)
+    end
 end

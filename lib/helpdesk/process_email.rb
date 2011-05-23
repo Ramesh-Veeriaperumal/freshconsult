@@ -16,20 +16,9 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       ticket = Helpdesk::Ticket.find_by_account_id_and_display_id(account.id, display_id) if display_id
       if ticket
         return if(from_email[:email] == ticket.reply_email) #Premature handling for email looping..
-        comment = add_email_to_ticket(ticket, from_email, params[:text])
-        if comment.user.customer?
-           unless ticket.active?
-            ticket.update_attribute(:status, Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open])
-            notification_type = EmailNotification::TICKET_REOPENED
-          end
-          
-          Helpdesk::TicketNotifier.notify_by_email((notification_type ||= EmailNotification::REPLIED_BY_REQUESTER), 
-                                                    ticket, comment) if ticket.responder
-        else
-          Helpdesk::TicketNotifier.notify_by_email(EmailNotification::COMMENTED_BY_AGENT, ticket, comment)
-        end
+        add_email_to_ticket(ticket, from_email, params[:text])
       else
-        ticket = create_ticket(account, from_email, to_email)
+        create_ticket(account, from_email, to_email)
       end
     end
   end
@@ -49,6 +38,12 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       {:name => name, :email => email, :domain => domain}
     end
     
+    def orig_email_from_text #To process mails fwd'ed from agents
+      if params[:text].gsub("\r\n", "\n") =~ /^\s*From:\s*(.*)\s+<(.*)>$/
+        { :name => $1, :email => $2 }
+      end
+    end
+    
     def parse_to_email
       envelope = params[:envelope]
       unless envelope.nil?
@@ -66,15 +61,21 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       end
       return cc_array.uniq
     end
-      
     
     def create_ticket(account, from_email, to_email)
+      user = get_user(account, from_email)
+      unless user.customer?
+        e_email = orig_email_from_text
+        user = get_user(account, e_email) unless e_email.nil?
+      end
+
       ticket = Helpdesk::Ticket.new(
         :account_id => account.id,
         :subject => params[:subject],
         :description => params[:text],
-        :email => from_email[:email],
-        :name => from_email[:name],
+        #:email => from_email[:email],
+        #:name => from_email[:name],
+        :requester => user,
         :to_email => to_email[:email],
         :cc_email => parse_cc_email,
         :email_config => account.email_configs.find_by_to_email(to_email[:email]),
@@ -93,10 +94,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       rescue ActiveRecord::RecordInvalid => e
         FreshdeskErrorsMailer.deliver_error_email(ticket,params,e)
       end
-      
-      
-    
-  end
+    end
   
     def check_for_chat_scources(ticket,from_email)
       ticket.source = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:chat] if Helpdesk::Ticket::CHAT_SOURCES.has_value?(from_email[:domain])
@@ -109,7 +107,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
 
     def add_email_to_ticket(ticket, from_email, mesg)
-      user = get_user(ticket, from_email[:email])
+      user = get_user(ticket.account, from_email)
       note = ticket.notes.build(
           :private => false,
           :incoming => true,
@@ -130,20 +128,20 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       note
     end
     
-    def get_user(ticket, email)
-      user = ticket.account.users.find_by_email(email)
+    def get_user(account, from_email)
+      user = account.users.find_by_email(from_email[:email])
       unless user
-        user = ticket.account.contacts.new
-        user.signup!({:user => {:email => email, :name => '', :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}})
+        user = account.contacts.new
+        user.signup!({:user => {:email => from_email[:email], :name => from_email[:name], 
+          :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}})
       end
-      
       user
     end
 
     def create_attachments(ticket, item)
-        Integer(params[:attachments]).times do |i|
+      Integer(params[:attachments]).times do |i|
         item.attachments.create(:content => params["attachment#{i+1}"], :account_id => ticket.account_id)
-     end
-  end
+      end
+    end
   
 end

@@ -2,7 +2,7 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
   
   def self.notify_by_email(notification_type, ticket, comment = nil)
     e_notification = ticket.account.email_notifications.find_by_notification_type(notification_type)
-    if e_notification.agent_notification
+    if e_notification.agent_notification?
       a_template = Liquid::Template.parse(e_notification.agent_template)
       i_receips = internal_receips(notification_type, ticket)
       deliver_email_notification({ :ticket => ticket,
@@ -13,7 +13,7 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
           }) unless i_receips.nil?
     end
     
-    if e_notification.requester_notification
+    if e_notification.requester_notification?
       r_template = Liquid::Template.parse(e_notification.requester_template)
       deliver_email_notification({ :ticket => ticket,
              :notification_type => notification_type,
