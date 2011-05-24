@@ -11,6 +11,17 @@
 				<%= f.label(:body, t("enter_message"), :for =>"#{id}-#{cntid}-body", :class => "overlabel" ) %>
 				<%= f.text_area :body, { :class => 'auto-expand required', :id => "#{id}-#{cntid}-body" , :value => @signature} %>
 			</li>
+			
+			<!--
+			<% unless @ticket.cc_email.blank? %>
+				<li datafor="ccemail">
+					<label id = "cc_label">
+						<%= check_box_tag :include_cc %> CC: <%= text_field_tag :cc_emails, @ticket.cc_email.join(","), :class => "textInput small" %>
+						
+					</label>
+				</li>
+			<%end%>	-->
+			
 			<% if !@ticket.ticket_topic.nil? and !(@ticket.ticket_topic.topic.locked) %>
 				<li datafor="posts">
 					<label>
