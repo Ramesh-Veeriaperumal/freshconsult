@@ -49,9 +49,10 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
     Liquid::Template.parse(EmailNotification::EMAIL_SUBJECTS[notification_type]).render('ticket' => ticket)
   end
   
-  def reply(ticket, note , reply_email)
+  def reply(ticket, note , reply_email, params)
     subject       formatted_subject(ticket)
     recipients    ticket.requester.email
+    #cc            ticket.cc_email if !params[:include_cc].blank? and !ticket.cc_email.nil?
     from          reply_email
     body          :ticket => ticket, :note => note, :host => ticket.account.host
     headers       "Reply-to" => "#{reply_email}"

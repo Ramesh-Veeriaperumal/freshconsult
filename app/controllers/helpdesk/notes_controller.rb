@@ -44,7 +44,7 @@ class Helpdesk::NotesController < ApplicationController
         unless @item.private
           @parent.tickets.each do |t|
             t.notes << (c = @item.clone)
-            Helpdesk::TicketNotifier.deliver_reply(t, c, reply_email)
+            Helpdesk::TicketNotifier.deliver_reply(t, c, reply_email,params)
           end
         end
         @parent.owner ||= current_user  if @parent.respond_to?(:owner)
@@ -52,10 +52,27 @@ class Helpdesk::NotesController < ApplicationController
 
       @parent.save
     end
+    
+    def add_cc_email
+     if !params[:include_cc].blank? and !params[:cc_emails].blank?
+      cc_array = params[:cc_emails].split(',').collect
+      cc_array.delete_if {|x| (x == @parent.requester.email or !(valid_email?(x))) }
+      @parent.update_attribute(:cc_email,cc_array.uniq)
+     end
+   end
+   
+    def valid_email?(email)
+       if email=~ /^[a-zA-Z][\w\.-]*[a-zA-Z0-9]@[a-zA-Z0-9][\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]$/
+        true
+      else
+        false
+      end
+    end
 
     def send_reply_email
       reply_email = params[:reply_email][:id] unless params[:reply_email].nil?
-      Helpdesk::TicketNotifier.send_later(:deliver_reply, @parent, @item , reply_email)
+      Helpdesk::TicketNotifier.send_later(:deliver_reply, @parent, @item , reply_email,params)
+      #add_cc_email
       flash[:notice] = "The reply has been sent."
     end
 

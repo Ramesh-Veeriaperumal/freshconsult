@@ -30,6 +30,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         email = $2
       elsif email =~ /<(.+?)>/
         email = $1
+      else email =~ /(\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
+        email = $1
       end
       
       name ||= ""
