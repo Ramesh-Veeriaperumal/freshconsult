@@ -1,9 +1,7 @@
-
-<% content_for :layoutType do %>request_view<% end %>
-
-<% content_for :head do %>
+<% content_for :pagefixed do %>
 	<%= javascript_include_tag "helpdesk/expanding_textarea.js" %>
 	<%= javascript_include_tag "helpdesk/multifile.js" %>	
+  <%= javascript_include_tag "helpdesk/page_switcher" %>
 	<% javascript_tag do %>
 		swapEmailNote = function(action, link)
 		{
@@ -19,8 +17,6 @@
 				jQuery('#cnt-note').toggle();
 				setCaretToPos($('add-note-cnt-note-body'), 0);
 			}
-			//link.addClassName('active');
-			//link.siblings().each(function(l){ l.removeClassName('active'); });
 		}
 		Helpdesk.swapEmailNote = function(cls, private, submit, link, id){
 			var el = $(id);
@@ -71,48 +67,50 @@
 	<% end %>
 <% end %> 
 
-<% content_for :sidebar do %> 
-<div class="rtCnt sidepanel ticket-panel">
-	<div class="rtPanel">
-		<a href="javascript:void(0)" class="active" cntid="TicketProperties">
-			<img src="/images/spacer.gif" class="ticketprop" width="36px" height="36px"  />
-			<em><%=t('ticket.properties')%></em>
-		</a>
-		<a href="javascript:void(0)" cntid="RelatedSolutions">
-			<img src="/images/spacer.gif" class="suggestsolutions" width="36px" height="36px"  />
-			<em><%=t('ticket.suggest_solutions')%></em>
-		</a>
-		<% if feature?(:scenario_automations) %>
-			<a href="javascript:void(0)" cntid="Scenarios">
-				<img src="/images/spacer.gif" class="scenario" width="36px" height="36px"  />
-				<em><%=t('ticket.execute_scenario')%></em>
-			</a>
-		<% end %>
-		<a href="javascript:void(0)" cntid="RequesterProperties">
-			<img src="/images/spacer.gif" class="requesterinfo" width="36px" height="36px"  />
-			<em><%=t('ticket.requestor_info')%></em>
-		</a>
-		<a href="javascript:void(0)" cntid="TicketTodos">
-			<img src="/images/spacer.gif" class="todo" width="36px" height="36px"  />
-			<em><%=t('to_do')%></em>
-		</a>
-		<a href="javascript:void(0)" cntid="TicketTags">
-			<img src="/images/spacer.gif" class="tags" width="36px" height="36px"  />
-			<em><%=t('tag.title')%></em>
-		</a>
-		<a href="javascript:void(0)" cntid="Activity">
-			<img src="/images/spacer.gif" class="activity" width="36px" height="36px"  />
-			<em><%=t('activities')%></em>
-		</a>
-	</div>	
-	 <%= render :partial => "helpdesk/tickets/components/ticket", :object => @ticket %>
-	 <%= render :partial => "helpdesk/tickets/components/user", :object => @ticket.requester %>
-	 <%= render :partial => "helpdesk/tickets/components/tags", :locals => { :ticket => @ticket } %>
-	 <%= render :partial => "helpdesk/tickets/components/todos", :locals => { :ticket => @ticket } %>
-	 <%= render :partial => "helpdesk/tickets/components/related_solutions", :locals => { :ticket => @ticket } %>
-	 <%= (render :partial => "helpdesk/tickets/components/scenarios") if feature?(:scenario_automations) %>
-	 <%= render :partial => "helpdesk/tickets/components/activity",  :locals => { :ticket => @ticket } %>	
-</div>
+<% content_for :sidebar do %>
+	<% unless @ticket.deleted %>
+		<div class="rtCnt sidepanel ticket-panel">
+			<div class="rtPanel">
+				<a href="javascript:void(0)" class="active" cntid="TicketProperties">
+					<img src="/images/spacer.gif" class="ticketprop" width="36px" height="36px"  />
+					<em><%=t('ticket.properties')%></em>
+				</a>
+				<a href="javascript:void(0)" cntid="RelatedSolutions">
+					<img src="/images/spacer.gif" class="suggestsolutions" width="36px" height="36px"  />
+					<em><%=t('ticket.suggest_solutions')%></em>
+				</a>
+				<% if feature?(:scenario_automations) %>
+					<a href="javascript:void(0)" cntid="Scenarios">
+						<img src="/images/spacer.gif" class="scenario" width="36px" height="36px"  />
+						<em><%=t('ticket.execute_scenario')%></em>
+					</a>
+				<% end %>
+				<a href="javascript:void(0)" cntid="RequesterProperties">
+					<img src="/images/spacer.gif" class="requesterinfo" width="36px" height="36px"  />
+					<em><%=t('ticket.requestor_info')%></em>
+				</a>
+				<a href="javascript:void(0)" cntid="TicketTodos">
+					<img src="/images/spacer.gif" class="todo" width="36px" height="36px"  />
+					<em><%=t('to_do')%></em>
+				</a>
+				<a href="javascript:void(0)" cntid="TicketTags">
+					<img src="/images/spacer.gif" class="tags" width="36px" height="36px"  />
+					<em><%=t('tag.title')%></em>
+				</a>
+				<a href="javascript:void(0)" cntid="Activity">
+					<img src="/images/spacer.gif" class="activity" width="36px" height="36px"  />
+					<em><%=t('activities')%></em>
+				</a>
+			</div>	
+			 <%= render :partial => "helpdesk/tickets/components/ticket", :object => @ticket %>
+			 <%= render :partial => "helpdesk/tickets/components/user", :object => @ticket.requester %>
+			 <%= render :partial => "helpdesk/tickets/components/tags", :locals => { :ticket => @ticket } %>
+			 <%= render :partial => "helpdesk/tickets/components/todos", :locals => { :ticket => @ticket } %>
+			 <%= render :partial => "helpdesk/tickets/components/related_solutions", :locals => { :ticket => @ticket } %>
+			 <%= render(:partial => "helpdesk/tickets/components/scenarios") if feature?(:scenario_automations) %>
+			 <%= render :partial => "helpdesk/tickets/components/activity",  :locals => { :ticket => @ticket } %>	
+		</div>
+	<% end %>
 <% end %>
 
 <% content_for :main_panel_title do %>
@@ -121,9 +119,17 @@
 <% end %>
 <% content_for :main_panel_summary do %>
 	<div class="request_details">
-	    <div class="requestCnt request-cnt-first">
-	    	<div class="request_status">
-	            <span class="ltSlant"></span>
+		<% if @ticket.deleted %>
+			<div class="info-highlight-deleted">
+				<div class="action_buttons">
+					<%= link_to("Restore this ticket", restore_helpdesk_ticket_path(@ticket), :method => :put, :class => "last", :title => "Restore this ticket from trash" ) %>
+				</div>
+				This ticket has been deleted
+			</div>	
+		<% end %>	
+	    <div class="requestCnt request-cnt-first"> 
+				<% unless @ticket.deleted %>
+						<div class="request_status">
 	            <ul>
 	                <li>
 	                    <b>Status</b>: <span id="status_name_id"><%= h(@ticket.status_name) %></span>
@@ -132,16 +138,17 @@
 	                    <b>Priority</b>: <%= h(@ticket.priority_name) %>
 	                </li>
 	            </ul>
-	        </div>
+ 						</div>
+				<% end %>
 			<h3 class="title">
-		        <em><%= "##{@ticket.display_id}" %></em>
-		        <b><%= h(@ticket.subject) %></b>
-		    </h3>
+				<em><%= "##{@ticket.display_id}" %></em>
+				<b><%= h(@ticket.subject) %></b>
+		  </h3>
 			<div class="description"> 
 		        <div class="user_details">
 		        	<%= user_avatar(@ticket.requester.avatar)  %>
-		          	<div> Reported by <%= link_to(h(@ticket.requester.display_name),@ticket.requester, :class => "user_name") %> </div>
-		            <div> 
+		          <div> Reported by <%= link_to(h(@ticket.requester.display_name),@ticket.requester, :class => "user_name") %> </div>
+		        <div> 
 						Created on <%= formated_date(@ticket.created_at) %>
 						<% metainfo = @ticket.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["meta"]) %>
 						<% unless (metainfo.blank?) %>
@@ -150,13 +157,13 @@
 							</span>
 						<% end %>
 					</div> 
-		        </div>
-				<div class="ticket_actions action_icons">
+        </div>
+				<% unless @ticket.deleted %>
+					<div class="ticket_actions action_icons">
 						<div class="action_buttons clearfix">
 							<%= link_to("Edit", edit_helpdesk_ticket_path(@ticket)  ) %> 
 							<%= link_to("Close", close_helpdesk_ticket_path(@ticket), :method => :put, :title  => "Close this ticket") unless @ticket.closed? %>
-							<%= link_to("Delete", @ticket, :method => :delete, :class => "last", :title => "Move this ticket to trash"   ) unless @ticket.deleted %>
-							<%= link_to("Undelete", restore_helpdesk_ticket_path(@ticket), :method => :put, :class => "last", :title => "Move this ticket to trash" ) if @ticket.deleted %>
+							<%= link_to("Delete", @ticket, :method => :delete, :class => "last", :title => "Move this ticket to trash") %>
 						</div>	
 						<div class="floatr">  
 		            		<%= link_to(image_tag("/images/spacer.gif"), helpdesk_ticket_helpdesk_subscriptions_path(@ticket), :method => :post, :class => "monitor", :title => "Monitor this ticket" ) if not @subscription %>
@@ -164,11 +171,13 @@
 							<%= link_to(image_tag("/images/spacer.gif"), unspam_helpdesk_ticket_path(@ticket), :method => :put, :class => "spam_active", :title => "This is not spam" ) if @ticket.spam %>
 						   	<%= link_to(image_tag("/images/spacer.gif"), spam_helpdesk_ticket_path(@ticket), :method => :put, :class => "spam", :title  => "Mark as spam") unless @ticket.spam %>
 						</div>
-		        </div>	
-		        <div id="description-full" style="display:block" class="details min_height">
-			    	<%= RedCloth.new(auto_link(@ticket.description, :all, :target => "_blank")).to_html %>
-			    </div> 
-			</div>
+        	</div>	
+			<% end %>
+		  <div id="description-full" style="display:block" class="details min_height">
+			 	<%= RedCloth.new(auto_link(@ticket.description, :all, :target => "_blank")).to_html %>
+			</div> 
+		</div>
+
 			<% unless @ticket.attachments.empty? %>
 				<span class="seperator"></span>
 				<h4><%= @ticket.attachments.size %> attachments</h4>
@@ -186,11 +195,19 @@
 			</div>
 			<% end %>
 	    </div>		 
-		<div class="alignright">
-			<%= link_to_function("Reply to ticket",    "swapEmailNote('reply', this)", :class => 'uiButton', :id => "ReplyButton") if @item.requester %>	  
-			<%= link_to_function("Add note", 		   "swapEmailNote('note', this)", :class => 'uiButton', :id => "AddNoteButton") %>		
-		</div>
 		
+		<% unless @ticket_notes.blank? then %>
+			<h3 class="subtitle">Conversation</h3>
+			<div class="requestCnt request-conversation">
+				<%= render :partial => 'note', :collection => @ticket_notes %>
+		    </div>
+		<% end %>
+		<% unless @ticket.deleted %>
+		<div class="alignright">
+			<%= link_to_function("Reply to ticket", "swapEmailNote('reply', this)", :class => 'uiButton', :id => "ReplyButton") if @item.requester %>	  
+			<%= link_to_function("Add note", "swapEmailNote('note', this)", :class => 'uiButton', :id => "AddNoteButton") %>		
+		</div>
+		<% end %>
 		<table>
 			<tr>
 				<td>
@@ -201,25 +218,15 @@
 						<%= render(:partial => '/helpdesk/shared/note_form', :locals => {:id => 'add-note',	:cntid => "cnt-note", :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
 					<% end %>
 				</td>
-			</tr>				
+			</tr>
 		</table>
-		<% unless @ticket_notes.blank? then %>
-			<h3 class="subtitle">Conversation</h3>
-			<div class="requestCnt request-conversation">
-				<%= render :partial => 'note', :collection => @ticket_notes, :spacer_template => "ui/seperator" %>
-		    </div>
-		<% end %>
-		 
 	</div>
-
-<% end %>
-<% content_for :main_panel_toolbar do %>
-	
 <% end %>
 
-<% content_for :main_panel_content do %>
-	
-<div class="clear"></div>
+<% content_for :main_panel_toolbar do -%><%- end %>
 
-<% end %>
+<% content_for :main_panel_content do -%>
+	<div class="clear"></div>
+<%- end %>
+
 <%= render :partial => "/helpdesk/shared/main_panel" %>

@@ -696,11 +696,20 @@ body h5 {
 }
 .request_details .requestCnt .seperator {
   margin: 6px 0px;
-  border-top: 1px solid #f2f2f2;
+  border-bottom: 1px solid #EFEFEF;
+}
+.request_details .request-conversation {
+  padding-top: 0px;
+  padding-right: 0px;
+  padding-bottom: 0px;
+  background-color: #FAFAFA;
 }
 .request_details .request-conversation div.description {
   border-left: 1px solid #efefef;
-  margin-bottom: 12px;
+  background-color: #ffffff;
+  margin: 0px 0px 0px 70px;
+  padding: 12px;
+  border-bottom: 1px solid #efefef;
 }
 .request_details .request-conversation div.description .preview_pic {
   margin-top: -4px;
@@ -1348,22 +1357,6 @@ div.panel_area div.item {
   display: block;
   text-decoration: none;
   padding: 5px;
-}
-
-.request_panel {
-  padding: 0px 0px;
-  margin: 5px 0px;
-}
-.request_panel .ui-form {
-  background-color: #F3F1EC;
-}
-.request_panel .ui-form label {
-  font-size: 12px;
-}
-.request_panel .ui-form label.overlabel {
-  margin: 2px 8px;
-  color: #888888;
-  font-size: 12px;
 }
 
 .expando {
@@ -4006,7 +3999,7 @@ div.addReminder form label.overlabel {
   padding-left: 165px;
 }
 
-.info-highlight {
+.info-highlight, .info-highlight-deleted {
   font-size: 13px;
   margin: 0px 0px 0px 0px;
   padding: 8px 18px;
@@ -4014,8 +4007,14 @@ div.addReminder form label.overlabel {
   border: 1px solid #f4f4e9;
   background-color: #fffbee;
 }
-.info-highlight div {
+.info-highlight div, .info-highlight-deleted div {
   padding: 6px;
+}
+
+.info-highlight-deleted {
+  margin: -13px -20px -10px -20px;
+  padding: 15px 18px 18px 18px;
+  font-size: 15px;
 }
 
 .forum_list {

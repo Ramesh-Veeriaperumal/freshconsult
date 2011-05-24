@@ -17,7 +17,7 @@ class AccountsController < ApplicationController
   #ssl_required :billing, :cancel, :new, :create #by Shan temp
   #ssl_allowed :plans, :thanks, :canceled, :paypal
   
-  before_filter :only => [:update, :destroy, :edit, :delete_logo, :delete_fav,:show,:cancel,:plan,:plans,:thanks] do |c| 
+  before_filter :only => [:update, :destroy, :edit, :delete_logo, :delete_fav, :show, :billing, :cancel, :plan, :plans, :thanks] do |c| 
     c.requires_permission :manage_users
   end
   

@@ -215,7 +215,6 @@ a.addchoice:hover{
 		float:left;
 		width:96%;
 		border-bottom: 1px solid #EFEFEF;
-    	box-shadow: 0 1px 0 white;
 		div.field-box{
 			padding:4px 0 8px 0;
 		}
@@ -1090,7 +1089,8 @@ table.summary-report{
 	width:96%;
 	font-weight:400;
 	border:1px solid #CFCFCF;
-	padding: 6px 3px 3px 3px;
+	padding:5px 3px 4px 5px;
+	height:18px;
 }
 
 .email_info{
@@ -1110,4 +1110,23 @@ table.summary-report{
 	color:#996666;
 	border:1px solid #f4f4f4;
 	margin-bottom:10px;
+}
+
+.request_panel{
+	padding:0px 0px;
+	margin:5px 0px;
+	.ui-form{
+		background-color:#F3F1EC;
+		li{
+			border:0px;
+		}
+		label{
+			font-size:12px;
+		}
+		label.overlabel{
+			margin:2px 8px;
+			color:#888888;
+			font-size:12px;
+		}
+	}
 }

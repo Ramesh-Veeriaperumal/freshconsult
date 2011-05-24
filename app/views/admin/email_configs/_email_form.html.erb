@@ -22,12 +22,15 @@
 	
 	
 	jQuery(document).ready(function(){
-		jQuery("#reply_to_id").bind('change keyup', 
-											function(ev){			
-												reply_email = construct_reply_url(this.value);
-												jQuery("#div_reply_email").text(reply_email);
-												jQuery("#hidden_reply_to").val(reply_email);
-											});
+		jQuery("#reply_to_id").bind("change keyup", 
+											function(ev){
+											  if(this.value != ''){
+												  reply_email = construct_reply_url(this.value);
+												  jQuery("#div_reply_email").text(reply_email);
+												  jQuery("#hidden_reply_to").val(reply_email);
+												}												
+											})
+											.trigger("change");
 	});
 <% end -%>
 
@@ -54,7 +57,7 @@
 	</li>
 	<li>	
 			<label><%=t('email_configs.info8')%></label>
-			<%= content_tag(:div, ( (type_check) ? @email_config.to_email : '&nbsp;' ), :id => "div_reply_email", :class =>"highlight-textbox-info" )  %>
+			<%= content_tag(:div, @email_config.to_email, :id => "div_reply_email", :class =>"highlight-textbox-info" )  %>
 			<%= f.hidden_field :to_email, :id => "hidden_reply_to" %>
 	</li>	
 	<li>
