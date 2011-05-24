@@ -696,11 +696,21 @@ body h5 {
 }
 .request_details .requestCnt .seperator {
   margin: 6px 0px;
-  border-top: 1px solid #f2f2f2;
+  display: none;
+  border-bottom: 1px solid #EFEFEF;
+}
+.request_details .request-conversation {
+  padding-top: 0px;
+  padding-right: 0px;
+  padding-bottom: 0px;
+  background-color: #FAFAFA;
 }
 .request_details .request-conversation div.description {
   border-left: 1px solid #efefef;
-  margin-bottom: 12px;
+  background-color: #ffffff;
+  margin: 0px 0px 0px 70px;
+  padding: 12px;
+  border-bottom: 1px solid #efefef;
 }
 .request_details .request-conversation div.description .preview_pic {
   margin-top: -4px;
@@ -1348,22 +1358,6 @@ div.panel_area div.item {
   display: block;
   text-decoration: none;
   padding: 5px;
-}
-
-.request_panel {
-  padding: 0px 0px;
-  margin: 5px 0px;
-}
-.request_panel .ui-form {
-  background-color: #F3F1EC;
-}
-.request_panel .ui-form label {
-  font-size: 12px;
-}
-.request_panel .ui-form label.overlabel {
-  margin: 2px 8px;
-  color: #888888;
-  font-size: 12px;
 }
 
 .expando {

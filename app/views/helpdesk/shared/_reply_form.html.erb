@@ -1,59 +1,46 @@
-<% content_for :head do %>
-  <%= javascript_include_tag "helpdesk/page_switcher" %>
+<div class="request_panel" id="<%=cntid%>" style="display:none;">
+  <% form_for note, :html => {:multipart => true, :id => "HelpdeskReply" } do |f| %>
+    <%= f.error_messages %>
+		<ul class="ui-form dont-validate">			
+    	<li datafor="email">
+				<%= content_tag( :h3, t("ticket.reply_form.form_title"), :class => "title" ) %>
+				<%= f.label(:reply_email, t("ticket.reply_form.reply_email_id") ) %>
+				<%= select :reply_email, :id, options_for_select(@reply_email, @ticket.reply_email) %>
+			</li>
+			<li>
+				<%= f.label(:body, t("enter_message"), :for =>"#{id}-#{cntid}-body", :class => "overlabel" ) %>
+				<%= f.text_area :body, { :class => 'auto-expand required', :id => "#{id}-#{cntid}-body" , :value => @signature} %>
+			</li>
+			<% if !@ticket.ticket_topic.nil? and !(@ticket.ticket_topic.topic.locked) %>
+				<li datafor="posts">
+					<label>
+						<%= check_box_tag :post_forums %> <%= t("ticket.reply_form.post_to_linked_forum") %>
+					</label>
+				</li>
+			<%end%>	
+			<!-- reply will be always public -->
+				<%=f.hidden_field :private , :value => false %>		
+			<!--reply source will be always email-->
+			<%=f.hidden_field :source , :value=>Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["email"]%>
+			<li class="attachment-options" id="attachment-options-reply">
+			<% unless local_assigns[:no_attachments] %>
+				<%= render :partial => "/helpdesk/shared/attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note" } %>
+		  <% end %>
+			</li>
+			<li class="alignright">
+      		<%= submit_tag(local_assigns[:submit] || ActiveSupport::Inflector.titleize(id), :class => "uiButton" ) %>
+    	</li>      
+		</ul> 	
+  <% end %>
+</div>
+<% content_for :pagefixed do %>
   <% javascript_tag do %>
     document.observe("dom:loaded", function(){
       new Helpdesk.PageSwitcher({
         toggleMode: true,
-        pages: ['attachment-options']
+        pages: ['attachment-options-reply']
       });	
-	  jQuery("#HelpdeskReply").validate(); 
-	   
+	  jQuery("#HelpdeskReply").validate();	   
     }); 
   <% end %>
 <% end %>
-<div class="request_panel" id="<%=cntid%>" style="display:none;">
-  <% form_for note, :html => {:multipart => true, :id => "HelpdeskReply" } do |f| %>
-    <%= f.error_messages %>
-	<ul class="ui-form dont-validate">
-		<li> 
-			<%= content_tag( :h3, t("ticket.reply_form.form_title"), :class => "title" ) %>
-		</li>
-    	<li datafor="email" style="display:block">
-			<%= f.label(:reply_email, t("ticket.reply_form.reply_email_id") ) %>
-			<%= select :reply_email, :id, options_for_select(@reply_email, @ticket.reply_email) %>
-			<span class="seperator"></span>
-		</li>
-		<li>
-			<%= f.label(:body, t("enter_message"), :for =>"#{id}-#{cntid}-body", :class => "overlabel" ) %>
-    		<%= f.text_area :body, { :class => 'auto-expand required', :id => "#{id}-#{cntid}-body" , :value => @signature} %>
-    	</li>
-		
-		
-		<% if !@ticket.ticket_topic.nil? and !(@ticket.ticket_topic.topic.locked) %>
-		<li datafor="posts">
-			<label>
-				<%= check_box_tag :post_forums %> <%= t("ticket.reply_form.post_to_linked_forum") %>
-			</label>
-		</li>
-		<%end%>	
-		
-		<!-- reply will be always public -->
-		
-		<%=f.hidden_field :private , :value => false %>
-		
-		<!--reply source will be always email-->			
-		
-		<%=f.hidden_field :source , :value=>Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["email"]%>
-	
-		<li class="attachment-options"  id="attachment-options">
-			<% unless local_assigns[:no_attachments] %>
-			<%= render :partial => "/helpdesk/shared/attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note" } %>
-		    <% end %>
-		</li>
-		<li class="alignright">
-      		<%= submit_tag(local_assigns[:submit] || ActiveSupport::Inflector.titleize(id), :class => "uiButton" ) %>
-    	</li>      
-	</ul>
- 	
-  <% end %>
-</div>

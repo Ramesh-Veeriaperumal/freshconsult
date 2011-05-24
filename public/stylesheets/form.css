@@ -272,7 +272,6 @@ a.addchoice:hover {
   float: left;
   width: 96%;
   border-bottom: 1px solid #EFEFEF;
-  box-shadow: 0 1px 0 white;
 }
 .ui-form li div.field-box {
   padding: 4px 0 8px 0;
@@ -1276,4 +1275,23 @@ table.summary-report thead td {
   color: #996666;
   border: 1px solid #f4f4f4;
   margin-bottom: 10px;
+}
+
+.request_panel {
+  padding: 0px 0px;
+  margin: 5px 0px;
+}
+.request_panel .ui-form {
+  background-color: #F3F1EC;
+}
+.request_panel .ui-form li {
+  border: 0px;
+}
+.request_panel .ui-form label {
+  font-size: 12px;
+}
+.request_panel .ui-form label.overlabel {
+  margin: 2px 8px;
+  color: #888888;
+  font-size: 12px;
 }

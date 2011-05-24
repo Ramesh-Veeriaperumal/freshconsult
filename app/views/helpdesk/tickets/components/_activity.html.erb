@@ -5,8 +5,7 @@
 			<div class="local_activities">
 				<%= Liquid::Template.parse(h activity.short_descr).render(eval_activity_data(activity.activity_data).merge(
 					'user_path' => link_to(h(activity.user), activity.user),
-					'notable_path' => link_to(h(activity.notable), activity.notable) )) %>    
- 				
+					'notable_path' => link_to(h(activity.notable), activity.notable) )) %>     
 				<div class="activity_time"><%=activity.created_at.strftime("%B %e %Y at %I:%M %p")%></div>
 			</div>
 			<span class="seperator"></span>
