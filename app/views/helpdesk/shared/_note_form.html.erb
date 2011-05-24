@@ -1,42 +1,36 @@
-<% content_for :head do %>
+<div class="request_panel" id="<%=cntid%>" style="display:none;">
+  <% form_for note, :html => {:multipart => true,  :id => "HelpdeskNotes" } do |f| %>
+    <%= f.error_messages %>
+		<ul class="ui-form dont-validate">
+			<li>
+				<%= content_tag( :h3, t("ticket.note_form.form_title"), :class => "title" ) %>
+				<%= f.label(:private, f.check_box(:private, :checked => true) + t("ticket.note_form.private_note")) %>
+				<%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"]%>
+			</li>	
+			<li>
+				<%= f.label(:body, t("enter_message"), :for =>"#{id}-#{cntid}-body", :class => "overlabel" ) %>
+				<%= f.text_area :body, { :class => 'auto-expand required', :id => "#{id}-#{cntid}-body" , :value => @signature} %>
+	    	</li>	
+			<li class="attachment-options" id="attachment-options-note">
+				<% unless local_assigns[:no_attachments] %>
+					<%= render :partial => "/helpdesk/shared/attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note" } %>
+			  <% end %>
+			</li>
+			<li class="alignright">
+		      <%= submit_tag(local_assigns[:submit] || ActiveSupport::Inflector.titleize(id), :class => "uiButton") %>
+		    </li>
+		</ul> 
+  <% end %>
+</div> 
+<% content_for :pagefixed do %>
   <%= javascript_include_tag "helpdesk/page_switcher" %>
   <% javascript_tag do %>
     document.observe("dom:loaded", function(){
       new Helpdesk.PageSwitcher({
         toggleMode: true,
-        pages: ['attachment-options']
+        pages: ['attachment-options-note']
       });
-	  jQuery("#HelpdeskNotes").validate(); 
-	  
+			jQuery("#HelpdeskNotes").validate();	  
     });
   <% end %>
 <% end %>
-<div class="request_panel" id="<%=cntid%>" style="display:none"> 
-  <!--h5 datafor="note" id="note_form_name">&nbsp;Add a note to this conversation</h5>
-  <h5 datafor="edit_note">&nbsp;Edit this note </h5-->
-  <% form_for note, :html => {:multipart => true,  :id => "HelpdeskNotes" } do |f| %>
-    <%= f.error_messages %>
-	<ul class="ui-form dont-validate">
-		<li>
-			<%= content_tag( :h3, t("ticket.note_form.form_title"), :class => "title" ) %>
-		</li>
-		<li class="checkbox">
-			<%= f.check_box :private, :checked => true %>
-			<%= f.label(:private, t("ticket.note_form.private_note")) %>
-			<%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"]%>	
-		</li>	
-		<li>
-			<%= f.label(:body, t("enter_message"), :for =>"#{id}-#{cntid}-body", :class => "overlabel" ) %>
-			<%= f.text_area :body, { :class => 'auto-expand required', :id => "#{id}-#{cntid}-body" , :value => @signature} %>
-    	</li>	
-		<li class="attachment-options"  id="attachment-options">
-			<% unless local_assigns[:no_attachments] %>
-			<%= render :partial => "/helpdesk/shared/attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note" } %>
-		    <% end %>
-		</li>
-		<li class="alignright">
-	      <%= submit_tag(local_assigns[:submit] || ActiveSupport::Inflector.titleize(id), :class => "uiButton") %>
-	    </li>
-	</ul> 
-  <% end %>
-</div> 

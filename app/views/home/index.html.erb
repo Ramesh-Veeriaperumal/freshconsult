@@ -1,16 +1,16 @@
-	<%= content_tag ( :h3, t('start_typing_a_question'), :class => "title" ) %>
+	<%= content_tag( :h3, t('start_typing_a_question'), :class => "title" ) %>
 	<div class="search-grey-box  ignore-margin-20">
 		<%= render :partial => "/search/pagesearch", :locals => { :placeholder => "Search using a keyword or a full question" } %>
 	</div>
 	<div class="two_col_cont">
 		<% if allowed_in_portal? :open_solutions %>
 			<div class="left_col"> 
-				<%= content_tag ( :h3, t('solution.title'), :class => "title" ) %> 
+				<%= content_tag( :h3, t('solution.title'), :class => "title" ) %> 
 				<div class="ssp_category_list">	
 				<% @categories.each do |category| %>
 					<div class="<%= cycle('odd', 'even') %>"> 
 						<%= link_to category.name, category %>
-						<%= content_tag (:span, category.description) %> 
+						<%= content_tag(:span, category.description) %> 
 					</div> 
 				<% end %>
 				</div>
@@ -19,7 +19,7 @@
 		<% if feature?(:forums) && allowed_in_portal?(:open_forums) %>
 			<div class="right_col">
 				<% unless (@topics.size == 0) %> 
-					<%= content_tag ( :h3, t('recent_forum_posts'), :class => "title" ) %>  
+					<%= content_tag( :h3, t('recent_forum_posts'), :class => "title" ) %>  
 					<ul class="list_with_icon">
 						<% @topics.each do |topic|  %>
 							<li>

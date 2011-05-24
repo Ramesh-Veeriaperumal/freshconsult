@@ -1,9 +1,7 @@
-
-<% content_for :layoutType do %>request_view<% end %>
-
-<% content_for :head do %>
+<% content_for :pagefixed do %>
 	<%= javascript_include_tag "helpdesk/expanding_textarea.js" %>
 	<%= javascript_include_tag "helpdesk/multifile.js" %>	
+  <%= javascript_include_tag "helpdesk/page_switcher" %>
 	<% javascript_tag do %>
 		swapEmailNote = function(action, link)
 		{
@@ -19,8 +17,6 @@
 				jQuery('#cnt-note').toggle();
 				setCaretToPos($('add-note-cnt-note-body'), 0);
 			}
-			//link.addClassName('active');
-			//link.siblings().each(function(l){ l.removeClassName('active'); });
 		}
 		Helpdesk.swapEmailNote = function(cls, private, submit, link, id){
 			var el = $(id);
@@ -186,11 +182,17 @@
 			</div>
 			<% end %>
 	    </div>		 
-		<div class="alignright">
-			<%= link_to_function("Reply to ticket",    "swapEmailNote('reply', this)", :class => 'uiButton', :id => "ReplyButton") if @item.requester %>	  
-			<%= link_to_function("Add note", 		   "swapEmailNote('note', this)", :class => 'uiButton', :id => "AddNoteButton") %>		
-		</div>
 		
+		<% unless @ticket_notes.blank? then %>
+			<h3 class="subtitle">Conversation</h3>
+			<div class="requestCnt request-conversation">
+				<%= render :partial => 'note', :collection => @ticket_notes, :spacer_template => "ui/seperator" %>
+		    </div>
+		<% end %>
+		<div class="alignright">
+			<%= link_to_function("Reply to ticket", "swapEmailNote('reply', this)", :class => 'uiButton', :id => "ReplyButton") if @item.requester %>	  
+			<%= link_to_function("Add note", "swapEmailNote('note', this)", :class => 'uiButton', :id => "AddNoteButton") %>		
+		</div>		
 		<table>
 			<tr>
 				<td>
@@ -203,12 +205,7 @@
 				</td>
 			</tr>				
 		</table>
-		<% unless @ticket_notes.blank? then %>
-			<h3 class="subtitle">Conversation</h3>
-			<div class="requestCnt request-conversation">
-				<%= render :partial => 'note', :collection => @ticket_notes, :spacer_template => "ui/seperator" %>
-		    </div>
-		<% end %>
+		
 		 
 	</div>
 

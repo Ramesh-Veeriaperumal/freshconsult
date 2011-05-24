@@ -42,7 +42,6 @@
 		</div>
 	<% end %>
 	<% unless note.attachments.empty? %>
-		<span class="seperator"></span>
 		<h4><%= pluralize(note.attachments.size, 'attachment')%></h4>
 		<ul class="attachment_list">
 		    <%= render :partial => '/helpdesk/shared/attachment', :collection => note.attachments, :locals => {:show_delete => true, :url => [@item] } %>
