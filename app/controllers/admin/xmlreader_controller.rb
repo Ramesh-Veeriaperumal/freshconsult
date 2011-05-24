@@ -14,7 +14,8 @@ class Admin::XmlreaderController < Admin::AdminController
     base_dir = params[:base_dir]    
     file_list = params[:import][:files]
     
-    create_solution = false   
+    create_solution = false
+    user_activation_email = false
     
     import_list = file_list.reject(&:blank?)   
     
@@ -22,15 +23,24 @@ class Admin::XmlreaderController < Admin::AdminController
     @users_stat = Hash.new
     @groups_stat = Hash.new
     @tickets_stat = Hash.new
+    ##setting current notification in thread
+    set_notification_thread
     if import_list.include?("solution")
        create_solution = true
-    end  
+    end 
+    
+    if import_list.include?("user_notify")
+       logger.debug "user_notify is enabled"
+       user_activation_email = true   
+    end    
     
     if import_list.include?("customers")
+       Thread.current[:notifications][EmailNotification::USER_ACTIVATION][:requester_notification] = user_activation_email       
        @customers_stat = handle_customer_import base_dir
        @users_stat = handle_user_import base_dir  
     end
-    if import_list.include?("tickets")       
+    if import_list.include?("tickets")
+       disable_ticket_notification
        import_flexifields base_dir
        @groups_stat = handle_group_import base_dir
        @tickets_stat = handle_ticket_import base_dir       
@@ -38,9 +48,29 @@ class Admin::XmlreaderController < Admin::AdminController
     if import_list.include?("forums")
        handle_forums_import base_dir , create_solution
     end  
-   
+    ##To enable all notifications
+    enable_notifications
     del_file = FileUtils.rm_rf base_dir  
       
+  end
+  def set_notification_thread
+    Thread.current[:notifications] = current_account.email_notifications
+  end
+  def disable_ticket_notification
+     
+     Thread.current[:notifications][EmailNotification::NEW_TICKET][:requester_notification] = false
+     Thread.current[:notifications][EmailNotification::TICKET_ASSIGNED_TO_GROUP][:agent_notification] = false
+     Thread.current[:notifications][EmailNotification::TICKET_ASSIGNED_TO_AGENT][:agent_notification] = false
+     Thread.current[:notifications][EmailNotification::TICKET_RESOLVED][:agent_notification] = false
+     Thread.current[:notifications][EmailNotification::TICKET_CLOSED][:agent_notification] = false
+     Thread.current[:notifications][EmailNotification::COMMENTED_BY_AGENT][:agent_notification] = false
+     Thread.current[:notifications][EmailNotification::TICKET_REOPENED][:requester_notification] = false   
+     Thread.current[:notifications][EmailNotification::REPLIED_BY_REQUESTER][:requester_notification] = false 
+     
+  end
+  
+  def enable_notifications
+    Thread.current[:notifications] = nil
   end
 
 def handle_customer_import base_dir

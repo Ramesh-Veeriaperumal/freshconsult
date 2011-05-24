@@ -1,8 +1,8 @@
 class Helpdesk::Note < ActiveRecord::Base
   set_table_name "helpdesk_notes"
 
-  belongs_to :notable, :polymorphic => true
-
+  belongs_to :notable, :polymorphic => true  
+  belongs_to :account
   belongs_to :user
 
   has_many :attachments,
@@ -85,13 +85,14 @@ class Helpdesk::Note < ActiveRecord::Base
         unless notable.active?
           notable.status = Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open]
           notification_type = EmailNotification::TICKET_REOPENED
-        end
-        
+        end 
+        e_notification = account.email_notifications.find_by_notification_type(notification_type ||= EmailNotification::REPLIED_BY_REQUESTER)
         Helpdesk::TicketNotifier.send_later(:notify_by_email, (notification_type ||= 
-              EmailNotification::REPLIED_BY_REQUESTER), notable, self) if notable.responder
+              EmailNotification::REPLIED_BY_REQUESTER), notable, self) if notable.responder && e_notification.requester_notification?
       else
+        e_notification = account.email_notifications.find_by_notification_type(EmailNotification::COMMENTED_BY_AGENT)
         Helpdesk::TicketNotifier.send_later(:notify_by_email, EmailNotification::COMMENTED_BY_AGENT, 
-            notable, self) if source.eql?(SOURCE_KEYS_BY_TOKEN["note"]) && !private
+            notable, self) if source.eql?(SOURCE_KEYS_BY_TOKEN["note"]) && !private && e_notification.agent_notification?
       end
       
       notable.updated_at = created_at
