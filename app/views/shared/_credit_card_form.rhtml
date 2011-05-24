@@ -1,7 +1,7 @@
 
   <% if @creditcard.errors.any? %>
     <div class="errorExplanation">
-      <h2>Errors encountered with your payment information:</h2>
+      <%= content_tag( :h2, t("errors_in_payment_info") ) %>
       <ul>
         <%= @creditcard.errors.full_messages.map {|m| content_tag('li', m)} %>
       </ul>
@@ -10,7 +10,7 @@
 
   <% if @address.errors.any? %>
     <div class="errorExplanation">
-      <h2>Errors encountered with your address:</h2>
+      <%= content_tag( :h2, t("errors_in_your_address") ) %>
       <ul>
         <%= @address.errors.full_messages.map {|m| content_tag('li', m)} %>
       </ul>
@@ -19,7 +19,7 @@
 
   <% if @subscription && @subscription.errors.any? %>
     <div class="errorExplanation">
-      <h2>Errors encountered with your payment:</h2>
+      <%= content_tag( :h2, t("errors_in_payment") ) %>
       <ul>
         <%= @subscription.errors.full_messages.map {|m| content_tag('li', m)} %>
       </ul>
@@ -42,8 +42,8 @@
 <div class="field-box">
 	<%= content_tag( :label, "#{t('security_code')} *", :class => "caption" ) %> 
 	<div class="fields">
-		<%= text_field :creditcard, :verification_value, :size => 4, :class => "required" %>
-		<%= link_to_function("What is cvv?", "jQuery('#cvv-info').toggle();") %> 
+		<%= text_field :creditcard, :verification_value, :size => 4, :maxlength => 4, :class => "required" %>
+		<%= link_to_function(t("what_is_cvv"), "jQuery('#cvv-info').toggle();") %> 
 			
 		<div id="cvv-info" class="cvv-help-text" style="display:none;">
 			<%= link_to_function("", "jQuery('#cvv-info').toggle();", :class => "close") %> 
