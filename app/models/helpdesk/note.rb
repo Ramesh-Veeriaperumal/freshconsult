@@ -13,7 +13,7 @@ class Helpdesk::Note < ActiveRecord::Base
   attr_accessor :nscname
   attr_protected :attachments, :notable_id
   
-  after_create :save_response_time, :update_parent
+  after_create :save_response_time, :update_parent, :add_activity
 
   named_scope :newest_first, :order => "created_at DESC"
   named_scope :visible, :conditions => { :deleted => false } 
@@ -66,7 +66,7 @@ class Helpdesk::Note < ActiveRecord::Base
 
   protected
     def save_response_time
-      if ((self.notable.is_a? Helpdesk::Ticket) && user)    
+      if human_note_for_ticket?
         ticket_state = notable.ticket_states     
         if "Customer".eql?(User::USER_ROLES_NAMES_BY_KEY[user.user_role])      
           ticket_state.requester_responded_at=Time.zone.now          
@@ -79,7 +79,7 @@ class Helpdesk::Note < ActiveRecord::Base
     end
     
     def update_parent #Maybe after_save?!
-      return unless ((self.notable.is_a? Helpdesk::Ticket) && user)
+      return unless human_note_for_ticket?
       
       if user.customer?
         unless notable.active?
@@ -97,6 +97,35 @@ class Helpdesk::Note < ActiveRecord::Base
       
       notable.updated_at = created_at
       notable.save
+    end
+    
+    def add_activity
+      return unless human_note_for_ticket?
+      
+      if outbound_email?
+        notable.create_activity(user, 
+            "{{user_path}} has sent a {{reply_path}} to the ticket {{notable_path}}",
+            {'eval_args' => {'reply_path' => ['reply_path', 
+                                {'ticket_id' => notable.display_id, 'comment_id' => id}]}},
+            "{{user_path}} has sent a {{reply_path}}")
+      elsif inbound_email?
+        notable.create_activity(user, 
+          "{{user_path}} sent an {{email_response_path}} to the ticket {{notable_path}}", 
+          {'eval_args' => {'email_response_path' => ['email_response_path', 
+                                {'ticket_id' => notable.display_id, 'comment_id' => id}]}},
+          "{{user_path}} sent an {{email_response_path}}")
+      else
+        notable.create_activity(user, 
+          "{{user_path}} added a {{comment_path}} to the ticket {{notable_path}}", 
+          {'eval_args' => {'comment_path' => ['comment_path', 
+                                {'ticket_id' => notable.display_id, 'comment_id' => id}]}},
+          "{{user_path}} added a {{comment_path}}")
+      end
+    end
+    
+  private
+    def human_note_for_ticket?
+      (self.notable.is_a? Helpdesk::Ticket) && user && (source != SOURCE_KEYS_BY_TOKEN['meta'])
     end
 
 end

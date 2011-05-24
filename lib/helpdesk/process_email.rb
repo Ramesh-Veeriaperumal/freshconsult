@@ -118,13 +118,6 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       )
       
       create_attachments(ticket, note) if note.save 
-      
-      ticket.create_activity(note.user, "{{user_path}} sent an {{email_response_path}} to the ticket {{notable_path}}", 
-                    {'eval_args' => {'email_response_path' => ['email_response_path', {
-                                                        'ticket_id' => ticket.display_id, 
-                                                        'comment_id' => note.id}]}},
-                     "{{user_path}} sent an {{email_response_path}}")
-      
       note
     end
     
