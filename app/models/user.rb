@@ -198,7 +198,7 @@ class User < ActiveRecord::Base
 
     e_notification = account.email_notifications.find_by_notification_type(EmailNotification::USER_ACTIVATION)
     if customer?
-      return unless e_notification.requester_notification
+      return unless e_notification.requester_notification?
       template = e_notification.requester_template
       user_key = 'contact'
     else

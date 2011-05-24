@@ -35,7 +35,7 @@ class Admin::XmlreaderController < Admin::AdminController
     end    
     
     if import_list.include?("customers")
-       Thread.current[:notifications][EmailNotification::USER_ACTIVATION][:requester_notification] = false unless user_activation_email
+       Thread.current[:notifications][EmailNotification::USER_ACTIVATION][:requester_notification] = user_activation_email       
        @customers_stat = handle_customer_import base_dir
        @users_stat = handle_user_import base_dir  
     end
@@ -63,6 +63,9 @@ class Admin::XmlreaderController < Admin::AdminController
      Thread.current[:notifications][EmailNotification::TICKET_ASSIGNED_TO_AGENT][:agent_notification] = false
      Thread.current[:notifications][EmailNotification::TICKET_RESOLVED][:agent_notification] = false
      Thread.current[:notifications][EmailNotification::TICKET_CLOSED][:agent_notification] = false
+     Thread.current[:notifications][EmailNotification::COMMENTED_BY_AGENT][:agent_notification] = false
+     Thread.current[:notifications][EmailNotification::TICKET_REOPENED][:requester_notification] = false   
+     Thread.current[:notifications][EmailNotification::REPLIED_BY_REQUESTER][:requester_notification] = false 
      
   end
   

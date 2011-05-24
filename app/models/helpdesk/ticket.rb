@@ -301,7 +301,9 @@ end
     end
   end
   
-  def autoreply
+  def autoreply  
+    
+    
     notify_by_email EmailNotification::NEW_TICKET #Do SPAM check.. by Shan
     
     notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_GROUP) if group_id
@@ -348,8 +350,19 @@ end
     ticket_states.save
   end
   
-  def notify_by_email(notification_type)
-    Helpdesk::TicketNotifier.send_later(:notify_by_email, notification_type, self)
+  def notify_by_email(notification_type)    
+    Helpdesk::TicketNotifier.send_later(:notify_by_email, notification_type, self) if notify_enabled?(notification_type)
+  end
+  
+  def notify_enabled?(notification_type)   
+    notify = true
+    e_notification = account.email_notifications.find_by_notification_type(notification_type)
+    if notification_type == EmailNotification::NEW_TICKET
+        notify = e_notification.requester_notification?
+    else
+        notify = e_notification.agent_notification?
+    end
+    
   end
   
   def custom_fields
