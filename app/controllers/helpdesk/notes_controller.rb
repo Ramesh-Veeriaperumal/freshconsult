@@ -37,7 +37,6 @@ class Helpdesk::NotesController < ApplicationController
     def process_item
       if @parent.is_a? Helpdesk::Ticket      
         send_reply_email if @item.source.eql?(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["email"])
-        add_note if @item.source.eql?(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"])
         @parent.responder ||= current_user                     
       end
 
@@ -57,23 +56,9 @@ class Helpdesk::NotesController < ApplicationController
     def send_reply_email
       reply_email = params[:reply_email][:id] unless params[:reply_email].nil?
       Helpdesk::TicketNotifier.send_later(:deliver_reply, @parent, @item , reply_email)
-      @parent.create_activity(current_user, 
-          "{{user_path}} has sent a {{reply_path}} to the ticket {{notable_path}}", 
-          {'eval_args' => {'reply_path' => ['reply_path', {'ticket_id' => @parent.display_id, 
-                                                            'comment_id' => @item.id}]}},
-          "{{user_path}}has sent a {{reply_path}}") 
-                     
       flash[:notice] = "The reply has been sent."
     end
- 
-    def add_note   
-      @parent.create_activity(current_user, 
-          "{{user_path}} added a {{comment_path}} to the ticket {{notable_path}}", 
-          {'eval_args' => {'comment_path' => ['comment_path', 
-                              {'ticket_id' => @parent.display_id, 'comment_id' => @item.id}]}},
-          "{{user_path}} added a {{comment_path}}")
-    end
- 
+
     def create_error
       redirect_to @parent
     end
