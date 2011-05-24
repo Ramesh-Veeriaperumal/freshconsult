@@ -455,7 +455,7 @@ div.action_buttons a:hover {
 div.action_buttons a:active {
   color: #333333;
 }
-div.action_buttons a.last {
+div.action_buttons a.last, div.action_buttons a:last-child {
   border: 0px;
   padding-right: 4px;
 }

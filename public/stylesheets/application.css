@@ -696,7 +696,6 @@ body h5 {
 }
 .request_details .requestCnt .seperator {
   margin: 6px 0px;
-  display: none;
   border-bottom: 1px solid #EFEFEF;
 }
 .request_details .request-conversation {
@@ -4000,7 +3999,7 @@ div.addReminder form label.overlabel {
   padding-left: 165px;
 }
 
-.info-highlight {
+.info-highlight, .info-highlight-deleted {
   font-size: 13px;
   margin: 0px 0px 0px 0px;
   padding: 8px 18px;
@@ -4008,8 +4007,14 @@ div.addReminder form label.overlabel {
   border: 1px solid #f4f4e9;
   background-color: #fffbee;
 }
-.info-highlight div {
+.info-highlight div, .info-highlight-deleted div {
   padding: 6px;
+}
+
+.info-highlight-deleted {
+  margin: -13px -20px -10px -20px;
+  padding: 15px 18px 18px 18px;
+  font-size: 15px;
 }
 
 .forum_list {

@@ -531,8 +531,7 @@ body h5{
 			margin-top:8px;
 		}
 		.seperator{
-			margin:6px 0px; 
-			display:none;
+			margin:6px 0px;
 			border-bottom: 1px solid #EFEFEF;
 		}
 	}
@@ -3230,7 +3229,7 @@ div.addReminder{
 	}
 }
 
-.info-highlight{
+.info-highlight, .info-highlight-deleted{
 	font-size:13px;
 	margin:0px 0px 0px 0px;
 	padding:8px 18px;
@@ -3242,6 +3241,11 @@ div.addReminder{
 	}
 }
 
+.info-highlight-deleted{
+	margin:-13px -20px -10px -20px;
+	padding:15px 18px 18px 18px;
+	font-size:15px;
+}
 
 .forum_list{
 	margin:0px 0px;
