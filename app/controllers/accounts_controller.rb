@@ -53,11 +53,13 @@ class AccountsController < ApplicationController
   def signup_google 
     base_domain = AppConfig['base_domain'][RAILS_ENV]
     logger.debug "base domain is #{base_domain}"   
-    return_url = "https://signup."+base_domain+"/google/complete?domain="+params[:domain]     
+    return_url = "https://signup."+base_domain+"/google/complete?domain="+params[:domain]  
+    #return_url = "http://localhost:3000/google/complete?domain="+params[:domain]   
     return_url = return_url+"&callback="+params[:callback] unless params[:callback].blank?    
     url = "https://www.google.com/accounts/o8/site-xrds?hd=" + params[:domain]      
     rqrd_data = ["http://axschema.org/contact/email","http://axschema.org/namePerson/first" ,"http://axschema.org/namePerson/last"]
-    re_alm = "https://*."+base_domain    
+    re_alm = "https://*."+base_domain   
+    #re_alm = "http://localhost:3000/" 
     logger.debug "return_url is :: #{return_url.inspect} and :: trusted root is:: #{re_alm.inspect} "
     authenticate_with_open_id(url,{ :required =>rqrd_data , :return_to => return_url ,:trust_root =>re_alm}) do |result, identity_url, registration| 
     end     
@@ -81,6 +83,8 @@ class AccountsController < ApplicationController
     
   end
   
+  
+  
 
   def openid_complete
 	  
@@ -89,6 +93,7 @@ class AccountsController < ApplicationController
     logger.debug "The openid _complete resp is :: #{resp.inspect}"
     logger.debug "The resp.status is :: #{resp.status}"
     logger.debug "identity url :: #{resp.identity_url}"
+    
 	  if resp.status == :success
 	    session[:openid] = resp.display_identifier
 	    ax_response = OpenID::AX::FetchResponse.from_success_response(resp)
@@ -100,6 +105,7 @@ class AccountsController < ApplicationController
 	    "Error: #{resp.status}"
 	  end
 	   logger.debug "here is the retrieved data: #{data.inspect}"
+     @open_id_url = resp.identity_url
 	   @call_back_url = params[:callback]   
 	   @account  = Account.new
 	   @account.domain = params[:domain].split(".")[0] 
@@ -114,6 +120,47 @@ class AccountsController < ApplicationController
 	   render :action => :signup_google
  end
 
+  def associate_google_account
+    open_id_user = verify_open_id_user
+    unless open_id_user.blank?
+       if open_id_user.admin?   
+         update_google_account 
+         ##account has been linked and it will redirect to call_back url
+       else
+         
+         ##No permission...you don't have permission to change this. please login as Administrator
+       end
+    else
+      ##Please enter your login credentials.......case for somebody who created from locally
+      ##redirect to a page where he can get user/pwd and authenticate.. Login page
+      render :associate_google
+    end
+  end
+  
+  def associate_local_to_google
+    ##Get user and pwd.... authenticate...if authenticated redirect_to call_back url
+    
+    @user_session = current_account.user_sessions.new(params[:user_session])
+    if @user_session.save
+      update_google_account
+      ##Login successfull ...return to google URL
+      #flash[:notice] = "Login successful!"
+      #redirect_back_or_default('/')
+    else
+      ##Login failed return to google app associate local..URL
+      note_failed_login
+      render :action => :new
+    end
+    
+  end
+  
+  def verify_open_id_user
+    ##There is not current_account ..we need to set this...
+    provider = 'open_id'
+    @auth = Authorization.find_by_provider_and_uid_and_account_id(provider, identity_url,current_account.id)
+    @current_user = @auth.user unless @auth.blank?
+    @current_user = current_account.all_users.find_by_email(email) if @current_user.blank?    
+  end
  
   def create
     
