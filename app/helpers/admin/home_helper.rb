@@ -21,7 +21,6 @@ module Admin::HomeHelper
     admin_links = [
                     [ t(".everything_helpdesk"), [
                                     ['/account/edit',               'rebranding'              ],
-                                    ['/admin/portal',               'customer-portal'         ],
                                     ['/ticket_fields',              'ticket-fields'           ],
                                     ['/admin/email_configs',        'email-settings'          ],
                                     ['/admin/email_notifications',  'email-notifications'     ],
@@ -32,11 +31,12 @@ module Admin::HomeHelper
                     ]],
                     [ t(".everything_else"), [
                                     ['/account',                    'account-settings'        ],
-                                    ['/admin/security',             'remote-authentication'   ],
-                                    ['/admin/zip_readers',          'import'                  ],
+                                    ['/admin/portal',               'customer-portal'         ],
+                                    ['/admin/widget_config',        'feedback'                ],
                                     ['/agents',                     'agent'                   ],
                                     ['/groups',                     'group'                   ],
-                                    ['/admin/widget_config',        'feedback'                ]
+                                    ['/admin/security',             'remote-authentication'   ],
+                                    ['/admin/zip_readers',          'import'                  ]
                     ]]
 
                     # [ "People & Roles", [
