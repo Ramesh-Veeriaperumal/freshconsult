@@ -57,6 +57,8 @@ en:
   comments: Comments
   import_ignore_first_row: Ignore the first row (headings)
   current_plan_details: "%{plan_name} Plan with %{agent_limit} agents"
+  footer: 
+    helpdesk_software: Help Desk Software by Freshdesk
   feedbackwidget_position: Position
   user: 
     company: Company
@@ -220,6 +222,30 @@ en:
     add_signature: Add signature
     update: Update
   add: Add
+  helpdesk: 
+    tickets: 
+      views: 
+        on_hold: Tickets On Hold
+        new: New Tickets
+        my_resolved: My Resolved Tickets
+        new_and_my_open: New & My Open Tickets
+        all: All Tickets
+        open: Open Tickets
+        closed: Closed Tickets
+        trash: Trash
+        overdue: Overdue Tickets
+        due_today: Tickets Due Today
+        resolved: Resolved Tickets
+        my_overdue: My Overdue Tickets
+        tags: Tags by Ticket
+        my_due_today: My Tickets Due Today
+        my_all: All My Tickets
+        my_on_hold: My Tickets On Hold
+        select: Select View...
+        spam: Spam
+        monitored_by: Tickets I'm Monitoring
+        my_closed: My Closed Tickets
+        my_open: My Open Tickets
   admin: 
     security: 
       index: 
@@ -343,9 +369,9 @@ en:
   feedbackwidget_help_para1: Collect feedback from your customers by adding a support tab to your website pages.
   change: Change
   create: Create
+  feedbackwidget_help_title: Feedback widget
   zendesk_url: Zendesk URL
   feedbackwidget_intro: Customize your freshdesk widget below and see a realtime preview.
-  feedbackwidget_help_title: Feedback widget
   billed_monthly: Billed monthly
   feedbackwidget_help_para2: "Customizable tab opens into a Support ticket form. "
   feedbackwidget_bgcolor: Background Color
@@ -496,6 +522,11 @@ en:
     edit: Edit Category
   your_trial_account: Your trial account
   zendesk_url_info: e.g:- http://acme.zendesk.com
+  users: 
+    activations: 
+      send_invite_success: Activation email has been sent!
+      success: Your account has been activated.
+      code_expired: Your activation code has been expired!
   this_ticket_has_been_deleted: This ticket has been deleted
   description: Description
   add_new_forum: add a new forum
@@ -516,25 +547,26 @@ en:
   deactivate: deactivate
   feedbackwidget_text: Text
   contacts: 
-    edit_contact: Edit contact
     new: New Contact
-    deleted_message: This is a deleted contact
-    save_changes: Save changes
+    edit_contact: Edit contact
     edit: Edit Contact
-    emailnotverified: Email has not been verified for this contact!
+    save_changes: Save changes
+    deleted_message: This is a deleted contact
     title: Contacts
-    info1: Are you sure you want to delete this contact
+    emailnotverified: Email has not been verified for this contact!
     showing: Showing
+    info1: Are you sure you want to delete this contact
     info2: Make this User an Agent
-    info3: Background information from %{nick_name}
-    quick_contact: Quick Contact
+    send_activation: Send activation email
     import_csv: Import users from CSV
+    quick_contact: Quick Contact
+    info3: Background information from %{nick_name}
+    working: Working
+    info4: Recent tickets from %{nick_name}
     form_placeholder: 
       description: Add specific notes regarding this contact example - address, LA Lakers fan etc.
-    info4: Recent tickets from %{nick_name}
-    working: Working
-    restore: Restore
     info5: User has not created any ticket till now
+    restore: Restore
     info6: Add specific notes regarding this contact
   update_and_login: Update and login
   automations: 

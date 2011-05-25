@@ -8,14 +8,14 @@ class ActivationsController < ApplicationController
     user = current_account.all_users.find params[:id]
     user.deliver_contact_activation if user
     
-    flash[:notice] = "Activation email has been sent!"
+    flash[:notice] = t('users.activations.send_invite_success')
     redirect_to(:back)
   end
   
   def new
     @user = current_account.users.find_using_perishable_token(params[:activation_code], 1.weeks) 
     if @user.nil?
-      flash[:notice] = "Your activation code has been expired!"
+      flash[:notice] = t('users.activations.code_expired')
       return redirect_to new_password_reset_path
     end
     raise Exception if @user.active?
@@ -27,7 +27,7 @@ class ActivationsController < ApplicationController
     raise Exception if @user.active?
  
     if @user.activate!(params)
-      flash[:notice] = "Your account has been activated."
+      flash[:notice] = t('users.activations.success')
       redirect_to root_url
     else
       render :action => :new

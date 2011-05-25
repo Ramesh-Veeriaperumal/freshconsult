@@ -4,29 +4,29 @@ module TicketsFilter
   DEFAULT_FILTER = :new_and_my_open
 
   SELECTORS = [
-    [:new_and_my_open,  "New & My Open Tickets", [:visible]  ],
-    [:my_open,          "My Open Tickets", [:visible, :responded_by, :open]  ],
-    [:my_resolved,      "My Resolved Tickets", [:visible, :responded_by, :resolved] ],
-    [:my_closed,        "My Closed Tickets", [:visible, :responded_by, :closed]  ],
-    [:my_due_today,     "My Tickets Due Today", [:visible, :responded_by, :due_today]  ],
-    [:my_overdue,       "My Overdue Tickets", [:visible, :responded_by, :overdue]  ],
-    [:my_on_hold,       "My Tickets On Hold", [:visible, :responded_by, :on_hold]  ],
-    [:monitored_by,     "Tickets I'm Monitoring", [:visible]  ],
-    [:my_all,           "All My Tickets", [:visible, :responded_by]  ],
+    [:new_and_my_open,  I18n.t('helpdesk.tickets.views.new_and_my_open'), [:visible]  ],
+    [:my_open,          I18n.t('helpdesk.tickets.views.my_open'), [:visible, :responded_by, :open]  ],
+    [:my_resolved,      I18n.t('helpdesk.tickets.views.my_resolved'), [:visible, :responded_by, :resolved] ],
+    [:my_closed,        I18n.t('helpdesk.tickets.views.my_closed'), [:visible, :responded_by, :closed]  ],
+    [:my_due_today,     I18n.t('helpdesk.tickets.views.my_due_today'), [:visible, :responded_by, :due_today]  ],
+    [:my_overdue,       I18n.t('helpdesk.tickets.views.my_overdue'), [:visible, :responded_by, :overdue]  ],
+    [:my_on_hold,       I18n.t('helpdesk.tickets.views.my_on_hold'), [:visible, :responded_by, :on_hold]  ],
+    [:monitored_by,     I18n.t('helpdesk.tickets.views.monitored_by'), [:visible]  ],
+    [:my_all,           I18n.t('helpdesk.tickets.views.my_all'), [:visible, :responded_by]  ],
     
-    [:new,              "New Tickets", [:visible]  ],
-    [:open,             "Open Tickets", [:visible]  ],
+    [:new,              I18n.t('helpdesk.tickets.views.new'), [:visible]  ],
+    [:open,             I18n.t('helpdesk.tickets.views.open'), [:visible]  ],
     #[:new_and_open,     "New & Open Tickets", [:visible]  ],
-    [:resolved,         "Resolved Tickets", [:visible]  ],
-    [:closed,           "Closed Tickets", [:visible]  ],
-    [:due_today,        "Tickets Due Today", [:visible]  ],
-    [:overdue,          "Overdue Tickets", [:visible]  ],
-    [:on_hold,          "Tickets On Hold", [:visible]  ],
-    [:all,              "All Tickets ", [:visible]  ],
+    [:resolved,         I18n.t('helpdesk.tickets.views.resolved'), [:visible]  ],
+    [:closed,           I18n.t('helpdesk.tickets.views.closed'), [:visible]  ],
+    [:due_today,        I18n.t('helpdesk.tickets.views.due_today'), [:visible]  ],
+    [:overdue,          I18n.t('helpdesk.tickets.views.overdue'), [:visible]  ],
+    [:on_hold,          I18n.t('helpdesk.tickets.views.on_hold'), [:visible]  ],
+    [:all,              I18n.t('helpdesk.tickets.views.all'), [:visible]  ],
     
-    [:spam,             "Spam"  ],
-    [:deleted,          "Trash"  ],
-    [:tags  ,           "Tags by Ticket" ]
+    [:spam,             I18n.t('helpdesk.tickets.views.spam')  ],
+    [:deleted,          I18n.t('helpdesk.tickets.views.trash')  ],
+    [:tags  ,           I18n.t('helpdesk.tickets.views.tags') ]
   ]
   
   SELECTOR_NAMES = Hash[*SELECTORS.inject([]){ |a, v| a += [v[0], v[1]] }]
