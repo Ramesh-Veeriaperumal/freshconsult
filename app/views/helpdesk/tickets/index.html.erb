@@ -105,7 +105,7 @@
   <div id="pages" class="tickets-container">  
   	  <% if @items.nil? || @items.empty? %>
 	      	<div class="ticket-header">
-	      		<div class="list-noinfo">No tickets in this view</div>
+	      		<div class="list-noinfo"><%= t('helpdesk.tickets.views.no_tickets') %></div>
 	      	</div>
 	  <% else %>
 	  	<div class="ticket-header">

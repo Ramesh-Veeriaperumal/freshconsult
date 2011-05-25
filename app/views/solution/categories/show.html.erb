@@ -8,7 +8,7 @@
 		<%= content_tag (:span, @item.name ) %>
 	</div>
 	
-	<%= render :partial => "/search/pagesearch", :locals => { :placeholder => "Search #{@item.name}", :url => "/search/solutions?category_id=#{@item.id}&search_key=" } %>
+	<%= render :partial => "/search/pagesearch", :locals => { :placeholder => t('solutions.search.placeholder', :name => @item.name), :url => "/search/solutions?category_id=#{@item.id}&search_key=" } %>
 	
 	<% unless (@item.folders.size == 0) %>	
 	  <% if logged_in? && current_user.has_manage_solutions? %>

@@ -61,6 +61,11 @@ en:
   feedbackwidget_defaultbutton: Support
   start_typing_a_question: Start typing a question and see answers in real time
   to_do: To Do
+  forums: 
+    search_all: 
+      placeholder: Search All Topics
+    search: 
+      placeholder: Search %{name}
   agents: Agents
   will_expire_in: will expire in
   card_number: Card Number
@@ -222,6 +227,11 @@ en:
   save_and_create: Save and Create Another
   expires: Expires
   update: Update
+  solutions: 
+    search_all: 
+      placeholder: Search All Solutions
+    search: 
+      placeholder: Search %{name}
   activate_account: Activate your account
   agent: 
     new: New Agent
@@ -240,6 +250,7 @@ en:
   helpdesk: 
     tickets: 
       views: 
+        no_tickets: No tickets in this view
         on_hold: Tickets On Hold
         new: New Tickets
         my_resolved: My Resolved Tickets
@@ -389,6 +400,9 @@ en:
   feedbackwidget_intro: Customize your freshdesk widget below and see a realtime preview.
   billed_monthly: Billed monthly
   feedbackwidget_help_para2: "Customizable tab opens into a Support ticket form. "
+  portal: 
+    search: 
+      placeholder: Search using a keyword or a full question
   feedbackwidget_bgcolor: Background Color
   left: Left
   agent_assigned_info: No open and pending tickets for this agent
