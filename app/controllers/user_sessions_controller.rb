@@ -73,7 +73,7 @@ require 'openid'
     base_domain = AppConfig['base_domain'][RAILS_ENV]
     domain_name = params[:domain] 
     logger.debug "base domain is #{base_domain}"
-    @current_account = Account.find_by_google_domain(domain_name)
+    @current_account = Account.find(:first,:conditions=>{:google_domain=>domain_name},:order=>"updated_at DESC")
     full_domain  = "#{domain_name.split('.').first}.#{AppConfig['base_domain'][RAILS_ENV]}"
     @current_account = Account.find_by_full_domain(full_domain) if @current_account.blank?
     cust_url = @current_account.full_domain unless @current_account.blank?
