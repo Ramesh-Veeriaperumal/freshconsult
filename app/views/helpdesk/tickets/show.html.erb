@@ -124,7 +124,7 @@
 				<div class="action_buttons">
 					<%= link_to("Restore this ticket", restore_helpdesk_ticket_path(@ticket), :method => :put, :class => "last", :title => "Restore this ticket from trash" ) %>
 				</div>
-				This ticket has been deleted
+				<%=t('this_ticket_has_been_deleted') %>
 			</div>	
 		<% end %>	
 	    <div class="requestCnt request-cnt-first"> 
@@ -132,10 +132,10 @@
 						<div class="request_status">
 	            <ul>
 	                <li>
-	                    <b>Status</b>: <span id="status_name_id"><%= h(@ticket.status_name) %></span>
+	                    <b><%= t('ticket.status') %></b>: <span id="status_name_id"><%= h(@ticket.status_name) %></span>
 	                </li>
 	                <li>
-	                    <b>Priority</b>: <%= h(@ticket.priority_name) %>
+	                    <b><%= t('ticket.priority') %></b>: <%= h(@ticket.priority_name) %>
 	                </li>
 	            </ul>
  						</div>
