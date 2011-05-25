@@ -4,17 +4,26 @@ en:
   ticket_due_by_time: Due by
   created_on: Created on
   ticket: 
+    spam_btn_title: Mark as spam
     group: Group
+    ham_btn_title: This is not spam
     edit: Edit ticket
     assigned_to: Assigned To
+    restore_btn: Restore this ticket
+    created_on: Created on %{time}
     suggest_solutions: Suggest Solutions
     unassigned: Unassigned
+    delete_btn_title: Move this ticket to trash
     due_by_time: Due by time
     singular: Ticket
+    restore_btn_title: Restore this ticket from trash
     sort_by: Sort by
     activity: Activity
     to_do: Tickets To-Do
     priority: Priority
+    close_btn_title: Close this ticket
+    close_btn: Close
+    reported_by: Reported by %{requester}
     reply_form: 
       post_to_linked_forum: Post in linked forum
       form_title: Reply to the conversation
@@ -29,13 +38,19 @@ en:
       form_title: Add a Note
     execute_scenario: Execute Scenario
     type: Type
+    monitor_btn_title: Monitor this ticket
+    add_note: Add note
+    reply_to: Reply to ticket
     requestor_info: Requestor Info
+    delete_btn: Delete
     select_to_agent: Select an Agent
     assign_to_agent: Assign To Agent
     flag_spam: Flag Spam
+    edit_btn: Edit
     verify_human: To verify you are human, please type the given scrambled letters
     source: Source
     status: Status
+    stop_monitor_btn_title: Stop monitoring this ticket
     submit_ticket: Submit Ticket
     properties: Ticket Properties
     requester: Requester
