@@ -1,0 +1,25 @@
+	<div id="change-sub-domain" >
+		 <% form_for :account, @account, :url => {:action=> :associate_local_to_google} , :html => { :method => "put" } do |f| %>
+			<%= f.error_messages %>
+			<input type="hidden" name="call_back" id="call_back_url" value="<%=@call_back_url%>" />				
+			<input type="hidden" value="<%=@sub_domain%>" name="account[sub_domain]" id="account_sub_domain" class="textfield" />		
+		 	<input type="hidden" value="<%=@google_domain%>" name="account[google_domain]" id="account_google_domain" class="textfield" />
+		 				
+			<ul>
+		    <li>
+		       <input type="text" value="<%=@full_domain%>" name="account[full_domain]" id="account_full_domain" class="textfield disabled" />	
+		    <li>
+		  	<li class="smallfield">
+		  		<label for="user_session_email"><%=t('user.email')%></label>
+		  		<input class="required text valid" id="user_session_email" name="user_session[email]" size="30" type="text">
+			</li>
+			<li class="smallfield">
+		  		<label for="user_session_password"><%=t('password')%></label>
+		  		<input class="text valid" id="user_session_password" name="user_session[password]" size="30" type="password">
+		  	</li>
+			<li>
+				<%= submit_tag "Login", :class => "uiButton" %>				
+			</li>			
+			</ul>
+		<% end %>	
+	</div>

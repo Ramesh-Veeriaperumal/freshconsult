@@ -89,10 +89,8 @@ class AccountsController < ApplicationController
   def openid_complete
 	  
 	  data = Hash.new
-	  resp = request.env[Rack::OpenID::RESPONSE]
-    logger.debug "The openid _complete resp is :: #{resp.inspect}"
-    logger.debug "The resp.status is :: #{resp.status}"
-    logger.debug "identity url :: #{resp.identity_url}"
+	  resp = request.env[Rack::OpenID::RESPONSE]    
+    logger.debug "The resp.status is :: #{resp.status}"    
     
 	  if resp.status == :success
 	    session[:openid] = resp.display_identifier
@@ -121,45 +119,79 @@ class AccountsController < ApplicationController
  end
 
   def associate_google_account
-    open_id_user = verify_open_id_user
+    @google_domain = params[:account][:google_domain]
+    @call_back_url = params[:call_back]
+    @account = get_account_for_sub_domain
+    if @account.blank?      
+      set_account_values
+      flash[:notice] = "There is no sub-domain like this. please enter again"
+      render  :signup_google and return
+    end
+    open_id_user = verify_open_id_user @account
     unless open_id_user.blank?
        if open_id_user.admin?   
-         update_google_account 
-         ##account has been linked and it will redirect to call_back url
+         if @account.update_attribute(:google_domain,@google_domain)       
+            redirect_to @call_back_url+"&EXTERNAL_CONFIG=true"
+         end        
        else
-         
-         ##No permission...you don't have permission to change this. please login as Administrator
+         flash[:notice] = "You don't have sufficient privilage to change this. Please login as Administrator..!!"
+         render :associate_google         
        end
-    else
-      ##Please enter your login credentials.......case for somebody who created from locally
-      ##redirect to a page where he can get user/pwd and authenticate.. Login page
+    else      
+      flash[:notice] = "Please enter your login credentials"
       render :associate_google
     end
   end
+  def set_account_values
+     @open_id_url = params[:user][:uid]  
+     @call_back_url = params[:call_back]   
+     @account  = Account.new
+     @account.domain = params[:account][:google_domain].split(".")[0] 
+     @account.name = @account.domain.titleize
+     @account.google_domain = params[:account][:google_domain]
+     @user = @account.users.new      
+     @user.email = params[:user][:email]  
+     @user.name = params[:user][:name]      
+  end
   
+  def get_account_for_sub_domain
+    base_domain = AppConfig['base_domain'][RAILS_ENV]    
+    @sub_domain = params[:account][:sub_domain]
+    @full_domain = @sub_domain+"."+base_domain
+    @account =  Account.find_by_full_domain(@full_domain)    
+  end
+ 
   def associate_local_to_google
-    ##Get user and pwd.... authenticate...if authenticated redirect_to call_back url
-    
-    @user_session = current_account.user_sessions.new(params[:user_session])
-    if @user_session.save
-      update_google_account
-      ##Login successfull ...return to google URL
-      #flash[:notice] = "Login successful!"
-      #redirect_back_or_default('/')
-    else
-      ##Login failed return to google app associate local..URL
-      note_failed_login
-      render :action => :new
+    @google_domain = params[:account][:google_domain]
+    @call_back_url = params[:call_back]
+    @account = get_account_for_sub_domain    
+    @check_session = @account.user_sessions.new(params[:user_session])
+    if @check_session.save
+       logger.debug "The session is :: #{@check_session.user}"
+       if @check_session.user.admin?   
+         if @account.update_attribute(:google_domain,@google_domain)
+            @check_session.destroy
+            redirect_to @call_back_url+"&EXTERNAL_CONFIG=true"
+         end        
+       else
+         @check_session.destroy         
+         flash[:notice] = "You don't have sufficient privilage to change this. Please login as Administrator..!!"
+         render :associate_google         
+       end     
+    else       
+      flash[:notice] = "Couldn't log you in . Please verify your credentials"
+      render :associate_google
     end
     
   end
   
-  def verify_open_id_user
-    ##There is not current_account ..we need to set this...
+  def verify_open_id_user account   
     provider = 'open_id'
-    @auth = Authorization.find_by_provider_and_uid_and_account_id(provider, identity_url,current_account.id)
+    identity_url = params[:user][:uid]
+    email = params[:user][:email]
+    @auth = Authorization.find_by_provider_and_uid_and_account_id(provider, identity_url,account.id)
     @current_user = @auth.user unless @auth.blank?
-    @current_user = current_account.all_users.find_by_email(email) if @current_user.blank?    
+    @current_user = account.all_users.find_by_email(email) if @current_user.blank?    
   end
  
   def create
