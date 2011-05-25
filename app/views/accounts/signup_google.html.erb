@@ -1,6 +1,11 @@
 <% javascript_tag do %>
   jQuery(document).ready(function(){    	
-    jQuery("#account_timezone_offset").val(getLocalTimeZoneOffset());  
+    jQuery("#account_timezone_offset").val(getLocalTimeZoneOffset()); 
+	sub_domain = '<%=@sub_domain%>'
+	if (sub_domain != null && sub_domain != "") 
+	{
+		associate_existing_domain()	
+	}
   });
   
   function getLocalTimeZoneOffset()
@@ -23,6 +28,16 @@
 		
 		   return hoursDiffDaylightTime != hoursDiffStdTime;
 		}
+	function associate_existing_domain()
+	{
+		jQuery("#signup-form").hide();
+		jQuery("#change-sub-domain").show();
+	}
+	function new_account()
+	{		
+		jQuery("#change-sub-domain").hide();
+		jQuery("#signup-form").show();
+	}
 <% end %>
  
  
@@ -51,6 +66,7 @@
 			</li>
 			<li>
 				<%= submit_tag "Create my account", :class => "uiButton" %>
+				<div>Already have a FreshDesk account? Click <a href="javascript:associate_existing_domain()" >here</a> to connect it to Google Apps </div>
 			</li>
 		  	<li>
 		  		<span class="seperator"></span>
@@ -59,5 +75,28 @@
 		  	</li>
 		  </ul>	  
 		<% end %>
-	</div>
+	</div>	
 </div>
+
+<div id="change-sub-domain" style="display:none" class="ui-signup">
+		 <% form_for :account, @account, :url => {:action=> :associate_google_account} , :html => { :method => "put" } do |f| %>
+			<%= error_messages_for :account %> 
+			<input type="hidden" name="call_back" id="call_back_url" value="<%=@call_back_url%>" />
+		  	<input type="hidden" value="<%=@user.name%>" size="24" name="user[name]" id="user_name" class="textfield">
+		  	<input type="hidden" value="<%=@user.email%>" size="24" name="user[email]" id="user_email" class="textfield">		 	
+			<input type="hidden" value="<%=@open_id_url%>" name="user[uid]" id="open_id_url" />
+		 	<input type="hidden" value="<%=@account.google_domain%>" name="account[google_domain]" id="account_google_domain" class="textfield" />
+		  
+		    <li>
+		    	<label for="account_sub_domain">Your Helpdesk sub-domain</label>
+				<input type="text"  size="24" name="account[sub_domain]" id="account_sub_domain" class="text very_small required">
+			
+				<td> New Account?  Click <a href="javascript:new_account()" >here</a> </td>
+			</li>				
+			
+			<li>
+				<%= submit_tag "Link to account", :class => "uiButton" %>
+				<%= link_to t('cancel'), @call_back_url+"&EXTERNAL_CONFIG=true", :class => "uiButton" %>
+			</li>
+		<% end %>	
+	</div>
