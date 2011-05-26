@@ -242,7 +242,7 @@ class Helpdesk::TicketsController < ApplicationController
     when :nextweek
       Time.zone.now.next_week.end_of_week
     else
-      Time.zone.parse(due_by_time)
+      Time.parse(due_by_time).to_s(:db)
     end
   end
   
