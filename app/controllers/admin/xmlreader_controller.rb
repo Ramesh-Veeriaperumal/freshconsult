@@ -56,17 +56,15 @@ class Admin::XmlreaderController < Admin::AdminController
   def set_notification_thread
     Thread.current[:notifications] = current_account.email_notifications
   end
-  def disable_ticket_notification
-     
+  def disable_ticket_notification     
      Thread.current[:notifications][EmailNotification::NEW_TICKET][:requester_notification] = false
      Thread.current[:notifications][EmailNotification::TICKET_ASSIGNED_TO_GROUP][:agent_notification] = false
      Thread.current[:notifications][EmailNotification::TICKET_ASSIGNED_TO_AGENT][:agent_notification] = false
-     Thread.current[:notifications][EmailNotification::TICKET_RESOLVED][:agent_notification] = false
-     Thread.current[:notifications][EmailNotification::TICKET_CLOSED][:agent_notification] = false
-     Thread.current[:notifications][EmailNotification::COMMENTED_BY_AGENT][:agent_notification] = false
+     Thread.current[:notifications][EmailNotification::TICKET_RESOLVED][:requester_notification] = false
+     Thread.current[:notifications][EmailNotification::TICKET_CLOSED][:requester_notification] = false
+     Thread.current[:notifications][EmailNotification::COMMENTED_BY_AGENT][:requester_notification] = false
      Thread.current[:notifications][EmailNotification::TICKET_REOPENED][:requester_notification] = false   
-     Thread.current[:notifications][EmailNotification::REPLIED_BY_REQUESTER][:requester_notification] = false 
-     
+     Thread.current[:notifications][EmailNotification::REPLIED_BY_REQUESTER][:agent_notification] = false      
   end
   
   def enable_notifications
