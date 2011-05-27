@@ -1,7 +1,6 @@
 class Helpdesk::TicketsController < ApplicationController  
 
   before_filter :check_user , :only => [:show]
-  
   before_filter { |c| c.requires_permission :manage_tickets }
 
   include HelpdeskControllerMethods
@@ -29,7 +28,6 @@ class Helpdesk::TicketsController < ApplicationController
         render :xml => @tickets.to_xml
       end
     end
-    
   end
  
   def index
@@ -82,13 +80,11 @@ class Helpdesk::TicketsController < ApplicationController
     end
   end
   
-  
   def set_suggested_solutions
     @articles = Solution::Article.suggest_solutions @ticket   
   end
   
   def update
-
     old_item = @item.clone
     if @item.update_attributes(params[nscname])
       create_assigned_activity(old_item, @item) if old_item.responder_id != @item.responder_id
@@ -111,8 +107,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def assign
-    user = params[:responder_id] ? User.find(params[:responder_id]) : current_user
-    
+    user = params[:responder_id] ? User.find(params[:responder_id]) : current_user #Need to use scoping..
     assign_ticket user
 
     flash[:notice] = render_to_string(
@@ -126,32 +121,22 @@ class Helpdesk::TicketsController < ApplicationController
   end
   
   def close_multiple
-    
     status_id = Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:closed]       
     @items.each do |item|
       item.update_attribute(:status , status_id)
     end
     
     flash[:notice] = render_to_string(:inline => "<%= pluralize(@items.length, 'ticket was', 'tickets were') %> closed")  
-    
     redirect_to :back
-    
   end
-  
  
   def pick_tickets
-    
     assign_ticket current_user
-    
     flash[:notice] = render_to_string(:inline => "<%= pluralize(@items.length, 'ticket was', 'tickets were') %> assigned to you")  
-    
     redirect_to :back
-    
   end
   
-  
   def execute_scenario 
-    
     va_rule = current_account.scn_automations.find(params[:scenario_id])    
     va_rule.trigger_actions(@item)
     update_custom_field @item    
@@ -167,7 +152,6 @@ class Helpdesk::TicketsController < ApplicationController
                                   
     redirect_to :back
   end 
-  
 
   def spam
     @items.each do |item|
@@ -214,6 +198,7 @@ class Helpdesk::TicketsController < ApplicationController
   def get_due_by_time
     due_date_option = params[:due_date_options]
     due_by_time = params[:due_by_date_time] 
+
     case due_date_option.to_sym()
     when :today
       Time.zone.now.end_of_day
@@ -228,7 +213,7 @@ class Helpdesk::TicketsController < ApplicationController
     end
   end
   
-  def get_agents
+  def get_agents #This doesn't belong here.. by Shan
     group_id = params[:id]
     @agents = current_account.agents.all(:include =>:user)    
     @agents = AgentGroup.find(:all, :joins=>:user, :conditions =>{:group_id =>group_id ,:users =>{:account_id =>current_account.id} } ) unless group_id.nil?
@@ -269,82 +254,77 @@ class Helpdesk::TicketsController < ApplicationController
     end
   end
  
- def get_solution_detail   
-   sol_desc = current_account.solution_articles.find(params[:id])
-   render :text => (sol_desc.description.gsub(/<\/?[^>]*>/, "")).gsub(/&nbsp;/i,"") || "" 
- end
- 
-protected
-
-  def item_url
-    return new_helpdesk_ticket_path if params[:save_and_create]
-    @item
-  end
-  
-  def after_destroy_url
-    redirect_url
-  end
-  
-  def redirect_url
-    { :action => 'index' }
-  end
-
-  def process_item
-    #if @item.source == 0
-      @item.spam = false
-      @item.create_activity(@item.requester, 'activities.tickets.new_ticket.long', {},
-                            'activities.tickets.new_ticket.short')
-    #end
+  def get_solution_detail   
+    sol_desc = current_account.solution_articles.find(params[:id])
+    render :text => (sol_desc.description.gsub(/<\/?[^>]*>/, "")).gsub(/&nbsp;/i,"") || "" 
   end
  
-  def assign_ticket user
-   
-    @items.each do |item|
-      old_item = item.clone
-      message = "#{item.responder ? "Reassigned" : "Assigned"} to #{user.name}"
-      item.responder = user
-      #item.train(:ham) #Temporarily commented out by Shan
-      item.save
-      create_assigned_activity(old_item, item) if old_item.responder_id != item.responder_id
+  protected
+    def item_url
+      return new_helpdesk_ticket_path if params[:save_and_create]
+      @item
     end
-   
-  end
   
-  def create_assigned_activity(old_item, item)
-    unless item.responder
-      item.create_activity(current_user, 'activities.tickets.assigned_to_nobody.long', {}, 
-                               'activities.tickets.assigned_to_nobody.short')
-    else
-      item.create_activity(current_user, 
-        old_item.responder ? 'activities.tickets.reassigned.long' : 'activities.tickets.assigned.long', 
-        {'eval_args' => {'responder_path' => ['responder_path', 
-          {'id' => item.responder.id, 'name' => item.responder.name}]}}, 
-        'activities.tickets.assigned.short')
+    def after_destroy_url
+      redirect_url
     end
-  end
-
-
-def load_flexifield   
-  flexi_arr = Hash.new
-  @item.ff_aliases.each do |label|    
-    value = @item.get_ff_value(label.to_sym())    
-    flexi_arr[label] = value    
-    @item.write_attribute label, value
-  end  
-  @item.custom_field = flexi_arr  
   
-end
-
-def update_custom_field  evaluate_on
-    flexi_field = evaluate_on.custom_field      
-    evaluate_on.custom_field.each do |key,value|    
-      flexi_field[key] = evaluate_on.read_attribute(key)      
-    end     
-    ff_def_id = FlexifieldDef.find_by_account_id(evaluate_on.account_id).id    
-    evaluate_on.ff_def = ff_def_id       
-    unless flexi_field.nil?     
-      evaluate_on.assign_ff_values flexi_field    
+    def redirect_url
+      { :action => 'index' }
     end
-end
+
+    def process_item
+      #if @item.source == 0
+        @item.spam = false
+        @item.create_activity(@item.requester, 'activities.tickets.new_ticket.long', {},
+                              'activities.tickets.new_ticket.short')
+      #end
+    end
+ 
+    def assign_ticket user
+      @items.each do |item|
+        old_item = item.clone
+        message = "#{item.responder ? "Reassigned" : "Assigned"} to #{user.name}"
+        item.responder = user
+        #item.train(:ham) #Temporarily commented out by Shan
+        item.save
+        create_assigned_activity(old_item, item) if old_item.responder_id != item.responder_id
+      end
+    end
+  
+    def create_assigned_activity(old_item, item)
+      unless item.responder
+        item.create_activity(current_user, 'activities.tickets.assigned_to_nobody.long', {}, 
+                                 'activities.tickets.assigned_to_nobody.short')
+      else
+        item.create_activity(current_user, 
+          old_item.responder ? 'activities.tickets.reassigned.long' : 'activities.tickets.assigned.long', 
+          {'eval_args' => {'responder_path' => ['responder_path', 
+            {'id' => item.responder.id, 'name' => item.responder.name}]}}, 
+          'activities.tickets.assigned.short')
+      end
+    end
+
+    def load_flexifield   
+      flexi_arr = Hash.new
+      @item.ff_aliases.each do |label|    
+        value = @item.get_ff_value(label.to_sym())    
+        flexi_arr[label] = value    
+        @item.write_attribute label, value
+      end  
+      @item.custom_field = flexi_arr  
+    end
+
+    def update_custom_field  evaluate_on
+      flexi_field = evaluate_on.custom_field      
+      evaluate_on.custom_field.each do |key,value|    
+        flexi_field[key] = evaluate_on.read_attribute(key)      
+      end     
+      ff_def_id = FlexifieldDef.find_by_account_id(evaluate_on.account_id).id    
+      evaluate_on.ff_def = ff_def_id       
+      unless flexi_field.nil?     
+        evaluate_on.assign_ff_values flexi_field    
+      end
+    end
 
 end
