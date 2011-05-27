@@ -41,62 +41,75 @@
 <% end %>
  
  
-<div id="signup-form" class="ui-signup">
-	<div class="ui-form">		
-	<h3 class="title">Sign up for a Freshdesk account</h3>
-	<span class="seperator"></span>
-	<% form_for :account, @account, :url => {:action=> :create_account_google} , :html => { :method => "put" } do |f| %>
-		<%= f.error_messages %>
+
+	<div class="ui-form" id="signup-form">
+	<h3 class="title">
+		Sign up!
+	</h3>
+	<div class="intro info-data">
+		Create a new Freshdesk account or <a href="javascript:associate_existing_domain()">Link your existing Freshdesk account.</a>
+	</div>	
+		<% form_for :account, @account, :url => {:action=> :create_account_google} , :html => { :method => "put" } do |f| %>
+			<%= f.error_messages %>
 		  <input type="hidden" name="call_back" id="call_back_url" value="<%=@call_back_url%>" />
 		  <input type="hidden" value="<%=@user.name%>" size="24" name="user[name]" id="user_name" class="textfield">
 		  <input type="hidden" value="<%=@user.email%>" size="24" name="user[email]" id="user_email" class="textfield">
 		  <input type="hidden" name="utc_offset" id="account_timezone_offset" />
 		  <input type="hidden" value="<%=@account.google_domain%>" name="account[google_domain]" id="account_google_domain" class="textfield" />
 		  <ul>
-				<label for="account_name">Company Name</label>
-				<input type="text" size="24" name="account[name]" id="account_name" class="text required" value="<%=@account.name%>">
-			</li>
-			<li>
-		    	<label for="account_domain">Your Helpdesk URL</label>
-				<input type="text" value="<%=@account.domain%>" size="24" name="account[domain]" id="account_domain" class="text very_small required"><strong>.freshdesk.com</strong>
-			</li>
-			<li>
-				<label for="user_email">Phone no.</label>
-		      	<input type="text" size="24" name="user[phone]" id="user_phone" class="text" value="<%=@user.phone%>">
-			</li>
-			<li>
-				<%= submit_tag "Create my account", :class => "uiButton" %>
-				<div>Already have a FreshDesk account? Click <a href="javascript:associate_existing_domain()" >here</a> to connect it to Google Apps </div>
-			</li>
-		  	<li>
-		  		<span class="seperator"></span>
-				
-				<div class="help_text">By clicking <strong>Create my account</strong> you agree to the <a href="http://freshdesk.com/terms.html" target="_blank">terms of Service</a> and <a href="http://freshdesk.com/privacy.html" target="_blank">privacy policy</a></div>
-		  	</li>
-		  </ul>	  
+				<li>
+					<label for="account_name">Company Name</label>
+					<input type="text" size="24" name="account[name]" id="account_name" class="text required" value="<%=@account.name%>">
+				</li>
+				<li>
+					<label for="account_sub_domain">Helpdesk URL</label>
+					<div class="info-data">i.e for "http://apple.freshdesk.com" enter "apple"</div>
+					<input type="text" value="<%=@account.domain%>" size="24" name="account[domain]" id="account_domain" class="text very_small required"><strong class="big-text">.freshdesk.com</strong>
+				</li>
+				<li>
+					<label for="user_email">Phone no.</label>
+			      	<input type="text" size="24" name="user[phone]" id="user_phone" class="text" value="<%=@user.phone%>">
+				</li>
+				<li class="button-container">
+					<%= submit_tag "Create my account", :class => "uiButton floatl" %>					
+					<%= link_to t("cancel"), @call_back_url+"&EXTERNAL_CONFIG=true", :class => "uiButton" %>
+				</li>
+			  <li>
+			  		<span class="seperator"></span>
+						<div class="help_text">
+								By clicking <strong>Create my account</strong> you agree to the 
+								<a href="http://freshdesk.com/terms.html" target="_blank">terms of Service</a> and 
+								<a href="http://freshdesk.com/privacy.html" target="_blank">privacy policy</a>
+						</div>
+			  </li>
+			</ul>	  
 		<% end %>
-	</div>	
-</div>
-
-<div id="change-sub-domain" style="display:none" class="ui-signup">
+	</div>
+	
+	<div class="ui-form" id="change-sub-domain" style="display:none;"> 
+		<h3 class="title">Existing Freshdesk account</h3>
+		<div class="intro info-data">
+			 Link your existing Freshdesk account or <a href="javascript:new_account()">Create a new Freshdesk account.</a>
+		</div>
 		 <% form_for :account, @account, :url => {:action=> :associate_google_account} , :html => { :method => "put" } do |f| %>
 			<%= error_messages_for :account %> 
-			<input type="hidden" name="call_back" id="call_back_url" value="<%=@call_back_url%>" />
+				<input type="hidden" value="<%=@call_back_url%>" name="call_back" id="call_back_url" />
 		  	<input type="hidden" value="<%=@user.name%>" size="24" name="user[name]" id="user_name" class="textfield">
 		  	<input type="hidden" value="<%=@user.email%>" size="24" name="user[email]" id="user_email" class="textfield">		 	
-			<input type="hidden" value="<%=@open_id_url%>" name="user[uid]" id="open_id_url" />
-		 	<input type="hidden" value="<%=@account.google_domain%>" name="account[google_domain]" id="account_google_domain" class="textfield" />
-		  
-		    <li>
-		    	<label for="account_sub_domain">Your Helpdesk sub-domain</label>
-				<input type="text"  size="24" name="account[sub_domain]" id="account_sub_domain" class="text very_small required">
-			
-				<td> New Account?  Click <a href="javascript:new_account()" >here</a> </td>
-			</li>				
-			
-			<li>
-				<%= submit_tag "Link to account", :class => "uiButton" %>
-				<%= link_to t('cancel'), @call_back_url+"&EXTERNAL_CONFIG=true", :class => "uiButton" %>
-			</li>
+				<input type="hidden" value="<%=@open_id_url%>" name="user[uid]" id="open_id_url" />
+				<input type="hidden" value="<%=@account.google_domain%>" name="account[google_domain]" id="account_google_domain" class="textfield" />
+				<ul>
+					<li>
+						<label for="account_sub_domain">Your existing Freshdesk URL</label>
+						<div class="info-data">i.e for "http://apple.freshdesk.com" enter "apple"</div>
+						<input type="text"  size="24" name="account[sub_domain]" id="account_sub_domain" class="text very_small required">
+						<strong class="big-text">.freshdesk.com</strong>
+					</li>				
+					<li class="button-container">
+						<%= submit_tag "Submit", :class => "uiButton floatl" %>
+						<%= link_to t("cancel"), @call_back_url+"&EXTERNAL_CONFIG=true", :class => "uiButton" %>
+					</li>
+				</ul>
 		<% end %>	
 	</div>
+	

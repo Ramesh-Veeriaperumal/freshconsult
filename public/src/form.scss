@@ -275,7 +275,7 @@ a.addchoice:hover{
 	}	
 	span{
 		font-weight:normal;
-		font-size:0.86em;
+		/*font-size:0.86em;*/
 		color:#777777;
 	}
 	.check_box{
@@ -742,6 +742,17 @@ span.sort_handle{
 
 .ui-signup .ui-form{ 
 	width:560px;
+}
+
+.help_text{
+	padding:8px 0px 4px 0px;
+	a{
+		text-decoration:none;
+		color:#336699;
+	}
+	p{
+		font-size:13px;
+	}
 }
 
 .ui-widget-container{

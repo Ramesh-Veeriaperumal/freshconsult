@@ -1,25 +1,27 @@
-	<div id="change-sub-domain" >
+	<div id="change-sub-domain" class="ui-form">
 		 <% form_for :account, @account, :url => {:action=> :associate_local_to_google} , :html => { :method => "put" } do |f| %>
 			<%= f.error_messages %>
 			<input type="hidden" name="call_back" id="call_back_url" value="<%=@call_back_url%>" />				
 			<input type="hidden" value="<%=@sub_domain%>" name="account[sub_domain]" id="account_sub_domain" class="textfield" />		
-		 	<input type="hidden" value="<%=@google_domain%>" name="account[google_domain]" id="account_google_domain" class="textfield" />
-		 				
+			<input type="hidden" value="<%=@google_domain%>" name="account[google_domain]" id="account_google_domain" class="textfield" />		 				
+			<h3 class="title">Login to <span><%= @full_domain %></span></h3>
+			<div class="intro info-data">
+				Login with an account administrator's credentials to associate your Google Apps login to your Freshdesk account.
+			</div>
+			<input type="hidden" value="<%=@full_domain%>" name="account[full_domain]" id="account_full_domain" class="text disabled" />
 			<ul>
-		    <li>
-		       <input type="text" value="<%=@full_domain%>" name="account[full_domain]" id="account_full_domain" class="textfield disabled" />	
-		    <li>
-		  	<li class="smallfield">
+		  	<li>
 		  		<label for="user_session_email"><%=t('user.email')%></label>
 		  		<input class="required text valid" id="user_session_email" name="user_session[email]" size="30" type="text">
-			</li>
-			<li class="smallfield">
+				</li>
+				<li>
 		  		<label for="user_session_password"><%=t('password')%></label>
 		  		<input class="text valid" id="user_session_password" name="user_session[password]" size="30" type="password">
 		  	</li>
-			<li>
-				<%= submit_tag "Login", :class => "uiButton" %>				
-			</li>			
 			</ul>
+			<p class="button-container">
+				<%= submit_tag <%= t('.login_complete_registration') %>, :class => "uiButton floatl" %>				
+				<%= link_to t("cancel"), @call_back_url+"&EXTERNAL_CONFIG=true", :class => "uiButton" %>
+			</p>
 		<% end %>	
 	</div>

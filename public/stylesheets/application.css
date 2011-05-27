@@ -1594,14 +1594,6 @@ a.request_bt:hover {
   display: inline-block;
 }
 
-.help_text {
-  padding: 6px 0px 4px 0px;
-}
-.help_text a {
-  text-decoration: none;
-  color: #336699;
-}
-
 h4.list_title {
   margin: 3px 8px;
   padding: 0px;
@@ -3808,7 +3800,7 @@ div.addReminder form label.overlabel {
   color: #777;
   font-size: 12px;
   line-height: 17px;
-  margin-top: -8px;
+  margin-top: -6px;
   margin-bottom: 10px;
 }
 
