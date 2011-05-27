@@ -103,23 +103,20 @@ class Helpdesk::Note < ActiveRecord::Base
       return unless human_note_for_ticket?
       
       if outbound_email?
-        notable.create_activity(user, 
-            "{{user_path}} has sent a {{reply_path}} to the ticket {{notable_path}}",
+        notable.create_activity(user, 'activities.tickets.conversation.out_email.long',
             {'eval_args' => {'reply_path' => ['reply_path', 
                                 {'ticket_id' => notable.display_id, 'comment_id' => id}]}},
-            "{{user_path}} has sent a {{reply_path}}")
+            'activities.tickets.conversation.out_email.short')
       elsif inbound_email?
-        notable.create_activity(user, 
-          "{{user_path}} sent an {{email_response_path}} to the ticket {{notable_path}}", 
+        notable.create_activity(user, 'activities.tickets.conversation.in_email.long', 
           {'eval_args' => {'email_response_path' => ['email_response_path', 
                                 {'ticket_id' => notable.display_id, 'comment_id' => id}]}},
-          "{{user_path}} sent an {{email_response_path}}")
+          'activities.tickets.conversation.in_email.short')
       else
-        notable.create_activity(user, 
-          "{{user_path}} added a {{comment_path}} to the ticket {{notable_path}}", 
+        notable.create_activity(user, 'activities.tickets.conversation.note.long', 
           {'eval_args' => {'comment_path' => ['comment_path', 
                                 {'ticket_id' => notable.display_id, 'comment_id' => id}]}},
-          "{{user_path}} added a {{comment_path}}")
+          'activities.tickets.conversation.note.short')
       end
     end
     

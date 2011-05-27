@@ -91,33 +91,16 @@ class Helpdesk::TicketsController < ApplicationController
 
     old_item = @item.clone
     if @item.update_attributes(params[nscname])
-
-      if old_item.responder_id != @item.responder_id
-        unless @item.responder
-          @item.create_activity(current_user, "{{user_path}} assigned the ticket {{notable_path}} to 'Nobody'", {}, 
-                                   "Assigned to 'Nobody' by {{user_path}}")
-        else
-          @item.create_activity(current_user, 
-                  "{{user_path}} #{old_item.responder ? "reassigned" : "assigned"} the ticket {{notable_path}} to {{responder_path}}", 
-                  {'eval_args' => {'responder_path' => ['responder_path', {
-                                                          'id' => @item.responder.id, 
-                                                          'name' => @item.responder.name}]}}, 
-                  "Assigned to {{responder_path}} by {{user_path}}")
-        end
-      end
-
+      create_assigned_activity(old_item, @item) if old_item.responder_id != @item.responder_id
+      
       if old_item.status != @item.status
-        @item.create_activity(current_user,
-                "{{user_path}} changed the ticket status of {{notable_path}} to {{status_name}}",
-                {'status_name' => @item.status_name}, 
-                "{{user_path}} changed the status to {{status_name}}")
+        @item.create_activity(current_user, 'activities.tickets.status_change.long',
+          {'status_name' => @item.status_name}, 'activities.tickets.status_change.short')
       end
       
       if old_item.priority != @item.priority
-        @item.create_activity(current_user,
-                "{{user_path}} changed the ticket priority of {{notable_path}} to {{priority_name}}",
-                {'priority_name' => @item.priority_name}, 
-                "{{user_path}} changed the priority to {{priority_name}}")
+        @item.create_activity(current_user, 'activities.tickets.priority_change.long',
+          {'priority_name' => @item.priority_name}, 'activities.tickets.priority_change.short')
       end
 
       flash[:notice] = "The #{cname.humanize.downcase} has been updated"
@@ -173,9 +156,8 @@ class Helpdesk::TicketsController < ApplicationController
     va_rule.trigger_actions(@item)
     update_custom_field @item    
     @item.save
-    @item.create_activity(current_user, "{{user_path}} executed the scenario '{{scenario_name}}' on {{notable_path}}", 
-                            { 'scenario_name' => va_rule.name },
-                            "{{user_path}} executed the scenario '{{scenario_name}}'")
+    @item.create_activity(current_user, 'activities.tickets.execute_scenario.long', 
+      { 'scenario_name' => va_rule.name }, 'activities.tickets.execute_scenario.short')
     
     actions_executed = Va::Action.activities.collect { |a| "<li>#{a}</li>" }
     Va::Action.clear_activities #by Shan
@@ -310,12 +292,12 @@ protected
   def process_item
     #if @item.source == 0
       @item.spam = false
-      @item.create_activity(@item.requester, "{{user_path}} submitted a new ticket {{notable_path}}", {},
-                            "{{user_path}} submitted the ticket")
+      @item.create_activity(@item.requester, 'activities.tickets.new_ticket.long', {},
+                            'activities.tickets.new_ticket.short')
     #end
- end
+  end
  
- def assign_ticket user
+  def assign_ticket user
    
     @items.each do |item|
       old_item = item.clone
@@ -323,22 +305,23 @@ protected
       item.responder = user
       #item.train(:ham) #Temporarily commented out by Shan
       item.save
-      if old_item.responder_id != item.responder_id
-        unless item.responder
-          item.create_activity(current_user, "{{user_path}} assgned the ticket {{notable_path}} to 'Nobody'", {}, 
-                                   "Assigned to 'Nobody' by {{user_path}}")
-        else
-          item.create_activity(current_user, "{{user_path}} #{old_item.responder ? "reassigned" : "assigned"} the ticket {{notable_path}} to {{responder_path}}", 
-                  {'eval_args' => {'responder_path' => ['responder_path', {
-                                                          'id' => item.responder.id, 
-                                                          'name' => item.responder.name}]}}, 
-                  "Assigned to {{responder_path}} by {{user_path}}")
-        end
-      end
-      #item.create_status_note(current_account, message, current_user, "#{item.responder ? "reassigned" : "assigned"} the ticket")
+      create_assigned_activity(old_item, item) if old_item.responder_id != item.responder_id
     end
    
- end
+  end
+  
+  def create_assigned_activity(old_item, item)
+    unless item.responder
+      item.create_activity(current_user, 'activities.tickets.assigned_to_nobody.long', {}, 
+                               'activities.tickets.assigned_to_nobody.short')
+    else
+      item.create_activity(current_user, 
+        old_item.responder ? 'activities.tickets.reassigned.long' : 'activities.tickets.assigned.long', 
+        {'eval_args' => {'responder_path' => ['responder_path', 
+          {'id' => item.responder.id, 'name' => item.responder.name}]}}, 
+        'activities.tickets.assigned.short')
+    end
+  end
 
 
 def load_flexifield   
