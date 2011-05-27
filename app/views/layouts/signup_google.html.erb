@@ -4,18 +4,21 @@
 <!--[if IE 8 ]>    			   <html class="no-js ie8"> <![endif]-->
 <!--[if IE 9 ]>    			   <html class="no-js ie9"> <![endif]-->
 <!--[if (gt IE 9)|!(IE)]><!--> <html class="no-js"> <!--<![endif]-->
-    <%= render :partial => "layouts/shared/head" %>
-    <body class="single">
-    	<div id="wrap"> 
-            <div class="content">
-                <div class="wrapper">
-	                <div id="inner"> 
-					    <div class="leftcontent"> 	
-							<%= yield %> 
+	<%= render :partial => "layouts/shared/head" %>
+		<body class="single">
+			<div id="wrap">
+				<div class="content">
+					<div class="wrapper">						
+						<div id="inner">
+							<div class="leftcontent">
+								<div class="ui-signup">
+									<%= show_flash %>						 
+									<%= yield %> 
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-		</div>
     </body>
 </html>

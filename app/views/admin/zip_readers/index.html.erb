@@ -8,7 +8,7 @@
 				<%= t('zendesk_url') %>
 			</label>
 			<div class="fields">
-			   <%= f.text_field :url, :class => "text url" %>
+			   <%= f.text_field :url, :class => "text url required" %>
 			   <label><%= t('zendesk_url_info') %></label>
 			</div>
 		</li>
@@ -18,21 +18,21 @@
 				<%= t('username') %>
 			</label>
 			<div class="fields">
-				<%= f.text_field :user_name, :class => "text email" %>
+				<%= f.text_field :user_name, :class => "text email required" %>
 			</div>
 			<span class="seperator"></span>
 			<label class="caption">
 				<%= t('password') %>
 			</label>
 			<div class="fields">
-				<%= f.password_field :user_pwd, :class => "text" %>
+				<%= f.password_field :user_pwd, :class => "text required" %>
 			</div>
 		</li>
 		<li class="inline-field">		
 			<label class="caption"><%= t('zendesk_backup') %></label>
 			<div class="fields">
 				<label><%= t('zendesk_backup_info') %></label>
-				<%= f.file_field :file -%>
+				<%= f.file_field :file , :class =>"required" %>
 			</div>		
 		</li>
 	</ul>

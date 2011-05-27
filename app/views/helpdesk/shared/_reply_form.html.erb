@@ -12,7 +12,6 @@
 				<%= f.text_area :body, { :class => 'auto-expand required', :id => "#{id}-#{cntid}-body" , :value => @signature} %>
 			</li>
 			
-			<!--
 			<% unless @ticket.cc_email.blank? %>
 				<li datafor="ccemail">
 					<label id = "cc_label">
@@ -20,7 +19,7 @@
 						
 					</label>
 				</li>
-			<%end%>	-->
+			<%end%>
 			
 			<% if !@ticket.ticket_topic.nil? and !(@ticket.ticket_topic.topic.locked) %>
 				<li datafor="posts">

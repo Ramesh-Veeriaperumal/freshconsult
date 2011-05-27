@@ -3,8 +3,7 @@
 
 class ApplicationController < ActionController::Base
   
-  include SslRequirement
-  ssl_allowed
+  
 
   before_filter :set_time_zone
   
@@ -16,7 +15,7 @@ class ApplicationController < ActionController::Base
   
   include SslRequirement
   include SubscriptionSystem
-  include ExceptionNotification::Notifiable #For sending notifications when error occours in the application
+  #include ExceptionNotification::Notifiable #For sending notifications when error occours in the application
   
   
   #include SentientController
