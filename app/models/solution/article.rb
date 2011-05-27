@@ -32,6 +32,7 @@ class Solution::Article < ActiveRecord::Base
     has account_id, user_id, is_public
     has folder.category_id, :as => :category_id
     has '0', :as => :deleted, :type => :boolean
+    has ['1','2','3'], :as => :visibility, :type => :integer
 
     set_property :delta => :delayed
     set_property :field_weights => {

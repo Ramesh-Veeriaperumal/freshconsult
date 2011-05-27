@@ -8,6 +8,7 @@ class ForumCategoriesController < ApplicationController
   before_filter { |c| c.requires_feature :forums }
   before_filter { |c| c.check_portal_scope :open_forums }
   before_filter :set_selected_tab
+  before_filter :content_scope
   
   def index
      @forum_categories = scoper.all
@@ -49,6 +50,13 @@ class ForumCategoriesController < ApplicationController
   end
     
   protected
+  
+    def content_scope
+      @content_scope = 'portal_' 
+      @content_scope = 'user_'  if permission?(:post_in_forums) 
+      @content_scope = ''  if permission?(:manage_forums)
+    end
+    
     def scoper
       current_account.forum_categories
     end

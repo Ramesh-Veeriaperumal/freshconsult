@@ -11,8 +11,19 @@ class Forum < ActiveRecord::Base
   TYPE_OPTIONS = TYPES.map { |i| [i[1], i[2]] }
   TYPE_NAMES_BY_KEY = Hash[*TYPES.map { |i| [i[2], i[1]] }.flatten] 
   TYPE_KEYS_BY_TOKEN = Hash[*TYPES.map { |i| [i[0], i[2]] }.flatten]
+  
+  VISIBILITY = [
+    [ :anyone,   "Anyone",     1 ], 
+    [ :logged_users,"Logged In Users", 2 ],
+    [ :agents, "Agents",      3 ]
+  ]
+
+  VISIBILITY_OPTIONS = VISIBILITY.map { |i| [i[1], i[2]] }
+  VISIBILITY_NAMES_BY_KEY = Hash[*VISIBILITY.map { |i| [i[2], i[1]] }.flatten] 
+  VISIBILITY_KEYS_BY_TOKEN = Hash[*VISIBILITY.map { |i| [i[0], i[2]] }.flatten]
 
   validates_presence_of :name,:forum_category,:forum_type
+  validates_inclusion_of :forum_visibility, :in => VISIBILITY_KEYS_BY_TOKEN.values.min..VISIBILITY_KEYS_BY_TOKEN.values.max
   validates_inclusion_of :forum_type, :in => TYPE_KEYS_BY_TOKEN.values.min..TYPE_KEYS_BY_TOKEN.values.max
  
   validates_uniqueness_of :name, :scope => :forum_category_id
@@ -23,6 +34,8 @@ class Forum < ActiveRecord::Base
   has_many :moderators, :through => :moderatorships, :source => :user
 
   has_many :topics,  :dependent => :delete_all
+  has_many :portal_topics, :class_name => 'Topic'
+  has_many :user_topics, :class_name => 'Topic'
   #has_many :feature_topics, :class_name => 'Topic',:order => 'votes_count desc', :dependent => :delete_all
   
   has_one  :recent_topic, :class_name => 'Topic', :order => 'sticky desc, replied_at desc'
@@ -37,7 +50,9 @@ class Forum < ActiveRecord::Base
   
   format_attribute :description
   
-  attr_accessible :name,:description, :description_html, :forum_type ,:import_id
+  attr_accessible :name,:description, :description_html, :forum_type ,:import_id, :forum_visibility
+  #validates_inclusion_of :forum_visibility, :in => VISIBILITY_KEYS_BY_TOKEN.values.min..VISIBILITY_KEYS_BY_TOKEN.values.max
+  
   
 #  def self.search(scope, field, value)
 #    return scope unless (field && value)
@@ -69,6 +84,12 @@ class Forum < ActiveRecord::Base
   
   def type_name
     TYPE_NAMES_BY_KEY[forum_type]
+  end
+  
+  def visible?(user)
+    return true if self.forum_visibility == VISIBILITY_KEYS_BY_TOKEN[:anyone]
+    return true if (user and (self.forum_visibility == VISIBILITY_KEYS_BY_TOKEN[:logged_users]))
+    return true if (user and user.has_manage_forums? and (self.forum_visibility == VISIBILITY_KEYS_BY_TOKEN[:agents]) )
   end
    
 end

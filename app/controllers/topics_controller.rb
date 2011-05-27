@@ -204,6 +204,7 @@ end
        @forum_category = scoper.find(params[:category_id])
        @forum = @forum_category.forums.find(params[:forum_id])
        raise(ActiveRecord::RecordNotFound) unless (@forum.account_id == current_account.id)
+       redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) unless @forum.visible?(current_user)
        @topic = @forum.topics.find(params[:id]) if params[:id]
     end
     def scoper
