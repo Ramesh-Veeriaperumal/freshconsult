@@ -56,11 +56,11 @@
 
 
 <div class="rtDetails" id="RelatedSolutions" style="display:none;">
-	<h3 class="title">Suggested Solutions</h3>
+	<h3 class="title"><%= t(:'ticket.suggested_solutions.title') %></h3>
 		
 	<% if (@articles.size == 0) %>
 		<br /> 
-		<div>&nbsp;&nbsp;&nbsp; No Solutions found </div>
+		<div>&nbsp;&nbsp;&nbsp; <%= t(:'ticket.suggested_solutions.no_result') %> </div>
 	<% else %> 
 		<div class="request-list">
 			<% @articles.each do |article| %>
@@ -75,9 +75,9 @@
 								
 					<div class="item-menu">
 						<ul>
-							<li><%= link_to_function "Insert Content", "respondWithSol('content', '#{article.id}', '#{article_url}')", :title => "Insert this solution article to your Reply or Note", :class => "custom-tip" %></li>
+							<li><%= link_to_function t(:'ticket.suggested_solutions.insert_content'), "respondWithSol('content', '#{article.id}', '#{article_url}')", :title => t(:'ticket.suggested_solutions.insert_content_tip'), :class => "custom-tip" %></li>
 							<%if article.is_public?%>
-								<li><%= link_to_function "Insert URL", "respondWithSol('url', '#{article.id}', '#{article_url}')", :title => "Insert this solution URL to your Reply or Note", :class => "custom-tip" %></li>
+								<li><%= link_to_function t(:'ticket.suggested_solutions.insert_url'), "respondWithSol('url', '#{article.id}', '#{article_url}')", :title => t(:'ticket.suggested_solutions.insert_url_tip'), :class => "custom-tip" %></li>
 							<%end%> 
 						</ul>
 					</div>

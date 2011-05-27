@@ -6,6 +6,13 @@ en:
   ticket: 
     spam_btn_title: Mark as spam
     group: Group
+    suggested_solutions: 
+      insert_url: Insert URL
+      title: Suggested Solutions
+      insert_content_tip: Insert this solution article to your Reply or Note
+      insert_url_tip: Insert this solution URL to your Reply or Note
+      no_result: No Solutions found
+      insert_content: Insert Content
     ham_btn_title: This is not spam
     edit: Edit ticket
     assigned_to: Assigned To
@@ -21,6 +28,11 @@ en:
     activity: Activity
     to_do: Tickets To-Do
     priority: Priority
+    tags: 
+      no_match: No matches. Press enter to create tag.
+      create_success: The tag was added
+      destroy_success: The tag was removed from this ticket
+      add_tag: "Add a tag:"
     close_btn_title: Close this ticket
     close_btn: Close
     reported_by: Reported by %{requester}

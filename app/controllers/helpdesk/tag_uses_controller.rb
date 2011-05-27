@@ -14,7 +14,7 @@ class Helpdesk::TagUsesController < ApplicationController
     rescue ActiveRecord::RecordInvalid => e
     end
 
-    flash[:notice] = "The tag was added"
+    flash[:notice] = t(:'ticket.tags.create_success')
 
     redirect_to :back
   end
@@ -34,7 +34,7 @@ class Helpdesk::TagUsesController < ApplicationController
     count = tag.tag_uses_count - 1
     tag.update_attribute(:tag_uses_count,count )
     
-    flash[:notice] = "The tag was removed from this ticket"
+    flash[:notice] = t(:'ticket.tags.destroy_success')
     redirect_to :back
     
   end
