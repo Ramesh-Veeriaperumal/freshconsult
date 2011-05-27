@@ -125,7 +125,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
     
     def get_user(account, from_email)
-      user = account.users.find_by_email(from_email[:email])
+      user = account.all_users.find_by_email(from_email[:email])
       unless user
         user = account.contacts.new
         user.signup!({:user => {:email => from_email[:email], :name => from_email[:name], 
