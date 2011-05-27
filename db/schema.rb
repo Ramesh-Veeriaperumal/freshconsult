@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110518061532) do
+ActiveRecord::Schema.define(:version => 20110525130856) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -274,6 +274,7 @@ ActiveRecord::Schema.define(:version => 20110518061532) do
     t.integer "forum_category_id", :limit => 8
     t.integer "forum_type"
     t.integer "import_id",         :limit => 8
+    t.integer "forum_visibility"
   end
 
   add_index "forums", ["forum_category_id", "name"], :name => "index_forums_on_forum_category_id", :unique => true
@@ -539,7 +540,7 @@ ActiveRecord::Schema.define(:version => 20110518061532) do
 
   create_table "solution_articles", :force => true do |t|
     t.string   "title"
-    t.text     "description",  :limit => 16777215
+    t.text     "description",  :limit => 2147483647
     t.integer  "user_id",      :limit => 8
     t.integer  "folder_id",    :limit => 8
     t.integer  "status"

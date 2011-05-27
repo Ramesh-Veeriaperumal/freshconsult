@@ -1,5 +1,5 @@
 class PostsController < ApplicationController
-  before_filter :find_post,      :except => [:index, :create, :monitored, :search]
+  before_filter :find_post,      :except =>  :monitored
   #before_filter :login_required, :except => [:index, :monitored, :search, :show]
   before_filter :except => [:index, :monitored, :search, :show] do |c| 
     c.requires_permission :post_in_forums
@@ -24,22 +24,16 @@ class PostsController < ApplicationController
   end
 
   def index
-    conditions = []
-    [:user_id, :forum_id, :topic_id].each { |attr| conditions << Post.send(:sanitize_sql, ["#{Post.table_name}.#{attr} = ?", params[attr]]) if params[attr] }
-    conditions << Post.send(:sanitize_sql, ["#{Post.table_name}.account_id = ?", current_account.id]) #by Shan temp
-    conditions = conditions.empty? ? nil : conditions.collect { |c| "(#{c})" }.join(' AND ')
-    #@posts = Post.paginate @@query_options.merge(:conditions => conditions, :page => params[:page], :count => {:select => "#{Post.table_name}.id"}, :order => post_order, :limit =>10 )
-    @posts = Post.find(:all,:conditions => conditions, :order => post_order, :limit =>10 )
-    @users = current_account.users.find(:all, :select => 'distinct *', :conditions => ['id in (?)', @posts.collect(&:user_id).uniq]).index_by(&:id)
-    render_posts_or_xml
+#    conditions = []
+#    [:user_id, :forum_id, :topic_id].each { |attr| conditions << Post.send(:sanitize_sql, ["#{Post.table_name}.#{attr} = ?", params[attr]]) if params[attr] }
+#    conditions << Post.send(:sanitize_sql, ["#{Post.table_name}.account_id = ?", current_account.id]) #by Shan temp
+#    conditions = conditions.empty? ? nil : conditions.collect { |c| "(#{c})" }.join(' AND ')
+#    #@posts = Post.paginate @@query_options.merge(:conditions => conditions, :page => params[:page], :count => {:select => "#{Post.table_name}.id"}, :order => post_order, :limit =>10 )
+#    @posts = Post.find(:all,:conditions => conditions, :order => post_order, :limit =>10 )
+#    @users = current_account.users.find(:all, :select => 'distinct *', :conditions => ['id in (?)', @posts.collect(&:user_id).uniq]).index_by(&:id)
+#    render_posts_or_xml
   end
 
-#  def search		#by Shan temp
-#    conditions = params[:q].blank? ? nil : Post.send(:sanitize_sql, ["LOWER(#{Post.table_name}.body) LIKE ?", "%#{params[:q]}%"])
-#    @posts = Post.paginate @@query_options.merge(:conditions => conditions, :page => params[:page], :count => {:select => "#{Post.table_name}.id"}, :order => post_order)
-#    @users = User.find(:all, :select => 'distinct *', :conditions => ['id in (?)', @posts.collect(&:user_id).uniq]).index_by(&:id)
-#    render_posts_or_xml :index
-#  end
 
   def monitored
     @user = current_account.users.find params[:user_id]
@@ -61,8 +55,7 @@ class PostsController < ApplicationController
 
   def create
     @topic = Topic.find_by_id_and_forum_id_and_account_id(params[:topic_id],params[:forum_id],current_account.id)
-    #raise(ActiveRecord::RecordNotFound) unless (@topic.account_id == current_account.id) #by Shan
-    
+     
     if @topic.locked?
       respond_to do |format|
         format.html do
@@ -157,8 +150,16 @@ class PostsController < ApplicationController
       "#{Post.table_name}.created_at#{params[:forum_id] && params[:topic_id] ? nil : " desc"}"
     end
     
-    def find_post			
-			@post = Post.find_by_id_and_topic_id_and_forum_id(params[:id], params[:topic_id], params[:forum_id]) || raise(ActiveRecord::RecordNotFound)
+    def scoper
+      current_account.forum_categories
+    end
+    
+    def find_post	
+      @forum_category = scoper.find(params[:category_id])
+      @forum = @forum_category.forums.find(params[:forum_id])
+      redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) unless @forum.visible?(current_user)
+      @topic = @forum.topics.find(params[:topic_id]) if params[:topic_id]     
+			@post = @topic.posts.find(params[:id]) || raise(ActiveRecord::RecordNotFound)
       (raise(ActiveRecord::RecordNotFound) unless (@post.account_id == current_account.id)) || @post
     end
     

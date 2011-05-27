@@ -1,7 +1,7 @@
 #To Do Shan - Need to use ModelController or HelpdeskController classes, instead of
 #writing/duplicating all the CRUD methods here.
 class ForumsController < ApplicationController 
-  #before_filter :login_required, :except => [:index, :show]
+  
   before_filter :except => [:index, :show] do |c| 
     c.requires_permission :manage_forums
   end
@@ -14,13 +14,7 @@ class ForumsController < ApplicationController
   cache_sweeper :posts_sweeper, :only => [:create, :update, :destroy]
 
   def index
-   @forum_categories = scoper.all
-     respond_to do |format|
-      format.html 
-      format.xml  { render :xml => @forum_categories }
-      format.json  { render :json => @forum_categories }
-      format.atom 
-    end
+   redirect_to categories_url
   end
 
   def show
@@ -104,6 +98,7 @@ class ForumsController < ApplicationController
     def find_or_initialize_forum # Shan - Should split-up find & initialize as separate methods.
       @forum_category = params[:category_id] ? scoper.find(params[:category_id]) : nil
       @forum = params[:id] ? @forum_category.forums.find(params[:id]) : nil
+      redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) if !@forum.nil? and  !@forum.visible?(current_user) 
    end
     
     def set_selected_tab

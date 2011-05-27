@@ -22,6 +22,7 @@ class Topic < ActiveRecord::Base
   
   has_many :voices, :through => :posts, :source => :user, :uniq => true
   belongs_to :replied_by_user, :foreign_key => "replied_by", :class_name => "User"
+  named_scope :newest, lambda { |num| { :limit => num, :order => 'replied_at DESC' } }
   
   #Sphinx configuration starts
   define_index do
@@ -30,6 +31,7 @@ class Topic < ActiveRecord::Base
 
     has account_id, user_id
     has forum.forum_category_id, :as => :category_id
+    has forum.forum_visibility, :as => :visibility
     has '0', :as => :deleted, :type => :boolean
     has '1', :as => :is_public, :type => :boolean
 

@@ -29,5 +29,10 @@
         	<%= form.label :forum_type, t('forum.type') %>
         	<%= form.select :forum_type, Forum::TYPE_OPTIONS, :class => "select" %>
     </li>
+	<li class="small">
+        	<%= form.label :forum_visibility, t('forum.visibility') %>
+        	<%= form.select :forum_visibility, Forum::VISIBILITY_OPTIONS, :class => "select" %>
+    </li>
+	
 </ul>
  
