@@ -15,7 +15,7 @@
 					<%= link_to t('category.edit') ,edit_category_path(@forum_category), :class => "last" %>  
 				</div> 
 			<% end -%> 
-			<%= render :partial => "/search/pagesearch", :locals => { :placeholder => "Search #{@forum_category.name}", :url => "/search/topics?category_id=#{@forum_category.id}&search_key=" } %>
+			<%= render :partial => "/search/pagesearch", :locals => { :placeholder => t('forums.search.placeholder', :name => @forum_category.name), :url => "/search/topics?category_id=#{@forum_category.id}&search_key=" } %>
 		</div>
 	<%= render :partial => "forum_shared/category", :object => @forum_category %>
 	</div>		

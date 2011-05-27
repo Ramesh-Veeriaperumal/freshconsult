@@ -99,7 +99,7 @@
 				</a>
 				<a href="javascript:void(0)" cntid="Activity">
 					<img src="/images/spacer.gif" class="activity" width="36px" height="36px"  />
-					<em><%=t('activities')%></em>
+					<em><%= t('ticket.activities') %></em>
 				</a>
 			</div>	
 			 <%= render :partial => "helpdesk/tickets/components/ticket", :object => @ticket %>
@@ -122,7 +122,7 @@
 		<% if @ticket.deleted %>
 			<div class="info-highlight-deleted">
 				<div class="action_buttons">
-					<%= link_to("Restore this ticket", restore_helpdesk_ticket_path(@ticket), :method => :put, :class => "last", :title => "Restore this ticket from trash" ) %>
+					<%= link_to(t('ticket.restore_btn'), restore_helpdesk_ticket_path(@ticket), :method => :put, :class => "last", :title => t('ticket.restore_btn_title') ) %>
 				</div>
 				<%=t('this_ticket_has_been_deleted') %>
 			</div>	
@@ -147,9 +147,9 @@
 			<div class="description"> 
 		        <div class="user_details">
 		        	<%= user_avatar(@ticket.requester.avatar)  %>
-		          <div> Reported by <%= link_to(h(@ticket.requester.display_name),@ticket.requester, :class => "user_name") %> </div>
+		          <div> <%= t('ticket.reported_by', :requester => link_to(h(@ticket.requester.display_name),@ticket.requester, :class => "user_name")) %> </div>
 		        <div> 
-						Created on <%= formated_date(@ticket.created_at) %>
+					<%= t('ticket.created_on', :time => formated_date(@ticket.created_at)) %>
 						<% metainfo = @ticket.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["meta"]) %>
 						<% unless (metainfo.blank?) %>
 							<span class="meta_icon" title="<%= metainfo.body %>"> 
@@ -161,15 +161,15 @@
 				<% unless @ticket.deleted %>
 					<div class="ticket_actions action_icons">
 						<div class="action_buttons clearfix">
-							<%= link_to("Edit", edit_helpdesk_ticket_path(@ticket)  ) %> 
-							<%= link_to("Close", close_helpdesk_ticket_path(@ticket), :method => :put, :title  => "Close this ticket") unless @ticket.closed? %>
-							<%= link_to("Delete", @ticket, :method => :delete, :class => "last", :title => "Move this ticket to trash") %>
+							<%= link_to(t('ticket.edit_btn'), edit_helpdesk_ticket_path(@ticket)  ) %> 
+							<%= link_to(t('ticket.close_btn'), close_helpdesk_ticket_path(@ticket), :method => :put, :title  => t('ticket.close_btn_title')) unless @ticket.closed? %>
+							<%= link_to(t('ticket.delete_btn'), @ticket, :method => :delete, :class => "last", :title => t('ticket.delete_btn_title')) %>
 						</div>	
 						<div class="floatr">  
-		            		<%= link_to(image_tag("/images/spacer.gif"), helpdesk_ticket_helpdesk_subscriptions_path(@ticket), :method => :post, :class => "monitor", :title => "Monitor this ticket" ) if not @subscription %>
-							<%= link_to(image_tag("/images/spacer.gif"), helpdesk_ticket_helpdesk_subscription_path(@ticket, @subscription), :method => :delete, :class => "monitor_active",  :title => "Stop monitoring this ticket" ) if @subscription %>
-							<%= link_to(image_tag("/images/spacer.gif"), unspam_helpdesk_ticket_path(@ticket), :method => :put, :class => "spam_active", :title => "This is not spam" ) if @ticket.spam %>
-						   	<%= link_to(image_tag("/images/spacer.gif"), spam_helpdesk_ticket_path(@ticket), :method => :put, :class => "spam", :title  => "Mark as spam") unless @ticket.spam %>
+		            		<%= link_to(image_tag("/images/spacer.gif"), helpdesk_ticket_helpdesk_subscriptions_path(@ticket), :method => :post, :class => "monitor", :title => t('ticket.monitor_btn_title') ) if not @subscription %>
+							<%= link_to(image_tag("/images/spacer.gif"), helpdesk_ticket_helpdesk_subscription_path(@ticket, @subscription), :method => :delete, :class => "monitor_active",  :title => t('ticket.stop_monitor_btn_title') ) if @subscription %>
+							<%= link_to(image_tag("/images/spacer.gif"), unspam_helpdesk_ticket_path(@ticket), :method => :put, :class => "spam_active", :title => t('ticket.ham_btn_title') ) if @ticket.spam %>
+						   	<%= link_to(image_tag("/images/spacer.gif"), spam_helpdesk_ticket_path(@ticket), :method => :put, :class => "spam", :title  => t('ticket.spam_btn_title')) unless @ticket.spam %>
 						</div>
         	</div>	
 			<% end %>
@@ -204,8 +204,8 @@
 		<% end %>
 		<% unless @ticket.deleted %>
 		<div class="alignright">
-			<%= link_to_function("Reply to ticket", "swapEmailNote('reply', this)", :class => 'uiButton', :id => "ReplyButton") if @item.requester %>	  
-			<%= link_to_function("Add note", "swapEmailNote('note', this)", :class => 'uiButton', :id => "AddNoteButton") %>		
+			<%= link_to_function(t('ticket.reply_to'), "swapEmailNote('reply', this)", :class => 'uiButton', :id => "ReplyButton") if @item.requester %>	  
+			<%= link_to_function(t('ticket.add_note'), "swapEmailNote('note', this)", :class => 'uiButton', :id => "AddNoteButton") %>		
 		</div>
 		<% end %>
 		<table>

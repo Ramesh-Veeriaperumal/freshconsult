@@ -301,8 +301,7 @@ end
     end
   end
   
-  def autoreply  
-    
+  def autoreply     
     
     notify_by_email EmailNotification::NEW_TICKET #Do SPAM check.. by Shan
     
@@ -357,7 +356,7 @@ end
   def notify_enabled?(notification_type)   
     notify = true
     e_notification = account.email_notifications.find_by_notification_type(notification_type)
-    if notification_type == EmailNotification::NEW_TICKET
+    if (notification_type == EmailNotification::NEW_TICKET || notification_type == EmailNotification::TICKET_CLOSED || notification_type == EmailNotification::TICKET_RESOLVED)
         notify = e_notification.requester_notification?
     else
         notify = e_notification.agent_notification?

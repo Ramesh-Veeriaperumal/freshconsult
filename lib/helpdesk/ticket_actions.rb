@@ -7,8 +7,8 @@ module Helpdesk::TicketActions
                                                         :message => "Captcha verification failed, try again!"))
     return false unless @ticket.save
     handle_attachments
-    @ticket.create_activity(@ticket.requester, "{{user_path}} submitted a new ticket {{notable_path}}", {}, 
-                                 "{{user_path}} submitted the ticket")
+    @ticket.create_activity(@ticket.requester, 'activities.tickets.new_ticket.long', {}, 
+                                 'activities.tickets.new_ticket.short')
     if params[:meta]
       @ticket.notes.create(
         :body => params[:meta].map { |k, v| "#{k}: #{v}" }.join("\n"),

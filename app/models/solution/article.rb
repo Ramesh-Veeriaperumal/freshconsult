@@ -115,8 +115,8 @@ class Solution::Article < ActiveRecord::Base
   private    
     def create_activity
       activities.create(
-        :description => "{{user_path}} created a new solution {{notable_path}}",
-        :short_descr => "{{user_path}} created the new solution",
+        :description => 'activities.solutions.new_solution.long',
+        :short_descr => 'activities.solutions.new_solution.short',
         :account => account,
         :user => user,
         :activity_data => {}

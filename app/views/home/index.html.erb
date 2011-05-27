@@ -1,6 +1,6 @@
 	<%= content_tag( :h3, t('start_typing_a_question'), :class => "title" ) %>
 	<div class="search-grey-box  ignore-margin-20">
-		<%= render :partial => "/search/pagesearch", :locals => { :placeholder => "Search using a keyword or a full question" } %>
+		<%= render :partial => "/search/pagesearch", :locals => { :placeholder => t('portal.search.placeholder') } %>
 	</div>
 	<div class="two_col_cont">
 		<% if allowed_in_portal? :open_solutions %>
