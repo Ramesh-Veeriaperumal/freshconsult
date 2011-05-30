@@ -18,7 +18,7 @@
 		<div class="article_info">
 		By <b> <%= @article.user.name%></b> 
 		| <%= @article.updated_at.strftime("%B %e %Y at %I:%M %p")%> 
-		<% if( !@article.is_public )%> 
+		<% if( !@article.folder.visible?(current_user) )%> 
 			| <span class="status_text lock" title="This artical is visible only to Agents">Private</span>
 		<% end %>
 		<span class="status_text"><%= @article.type_name %></span>
@@ -32,7 +32,7 @@
 				
 		  	</div>	
 			<span class="topic_icon" style="display:none;">
-				<% if( !@article.is_public )%> 
+				<% if( !@article.folder.visible?(current_user))%> 
 					<img src="/images/private_lock.gif" class="locked" width="20px" height="19px" />
 				<% end %>
 				<% if( @article.art_type == 2 )%> 

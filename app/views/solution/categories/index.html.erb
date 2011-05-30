@@ -60,7 +60,7 @@
 				<% end %>
 			</h4>  
 			<ul>			
-	  		<% category.folders.each do |folder| %>
+	  		<% category.folders.visible(current_user).each do |folder| %>
 				<li><%= link_to h(folder.name),  solution_category_folder_path(category, folder)  %></li>
 			<% end %> 
 			</ul>

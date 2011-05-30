@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110525130856) do
+ActiveRecord::Schema.define(:version => 20110530101029) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -540,12 +540,11 @@ ActiveRecord::Schema.define(:version => 20110525130856) do
 
   create_table "solution_articles", :force => true do |t|
     t.string   "title"
-    t.text     "description",  :limit => 2147483647
+    t.text     "description",  :limit => 16777215
     t.integer  "user_id",      :limit => 8
     t.integer  "folder_id",    :limit => 8
     t.integer  "status"
     t.integer  "art_type"
-    t.boolean  "is_public"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "thumbs_up",                          :default => 0
@@ -577,6 +576,7 @@ ActiveRecord::Schema.define(:version => 20110525130856) do
     t.datetime "updated_at"
     t.integer  "category_id", :limit => 8
     t.integer  "import_id",   :limit => 8
+    t.integer  "visibility",  :limit => 8
   end
 
   add_index "solution_folders", ["category_id", "name"], :name => "index_solution_folders_on_category_id_and_name", :unique => true

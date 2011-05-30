@@ -158,6 +158,7 @@ en:
     status: Solution Status
     info7: No solutions in this folder
     info8: Are you sure you want to delete this solution
+    visibility : visiblity
   import_user_org: Users &amp; Organizations
   posted_by: Posted by
   agent_info_title: Agent information
@@ -677,3 +678,4 @@ en:
   forgot_password_intro: Fill out the form below and instructions to reset your password will be emailed to you
   last_name: Last Name
   zip: Zip
+

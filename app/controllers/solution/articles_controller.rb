@@ -32,8 +32,7 @@ class Solution::ArticlesController < ApplicationController
      logger.debug "params:: #{params.inspect}"
      current_folder = Solution::Folder.first
      current_folder = Solution::Folder.find(params[:folder_id]) unless params[:folder_id].nil?
-     @article = current_folder.articles.new
-     @article.is_public = "true"
+     @article = current_folder.articles.new    
      @article.status = Solution::Article::STATUS_KEYS_BY_TOKEN[:published]
     respond_to do |format|
       format.html # new.html.erb
@@ -168,14 +167,12 @@ protected
       @selected_tab = 'Solutions'
   end
 
-def check_solution_permission
-  
-  @solution = Solution::Article.find(params[:id]) 
-  if ((!@solution.is_public) && (current_user.nil? || current_user.customer?))    
+def check_solution_permission  
+  @solution = current_account.solution_articles.find(params[:id]) 
+  unless @solution.folder.visible?(current_user)    
     flash[:notice] = "You don't have sufficient privileges to access this page"
     redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)  
-  end
-
+  end
 end
 
   def set_solution_tags   
