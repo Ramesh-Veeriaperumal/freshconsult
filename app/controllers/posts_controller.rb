@@ -1,5 +1,6 @@
 class PostsController < ApplicationController
-  before_filter :find_post,      :except =>  :monitored
+  before_filter :find_forum_topic, :only => :create
+  before_filter :find_post,      :except =>  [:monitored, :create]
   #before_filter :login_required, :except => [:index, :monitored, :search, :show]
   before_filter :except => [:index, :monitored, :search, :show] do |c| 
     c.requires_permission :post_in_forums
@@ -154,13 +155,17 @@ class PostsController < ApplicationController
       current_account.forum_categories
     end
     
-    def find_post	
+    def find_forum_topic
       @forum_category = scoper.find(params[:category_id])
       @forum = @forum_category.forums.find(params[:forum_id])
       redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) unless @forum.visible?(current_user)
-      @topic = @forum.topics.find(params[:topic_id]) if params[:topic_id]     
-			@post = @topic.posts.find(params[:id]) || raise(ActiveRecord::RecordNotFound)
+      @topic = @forum.topics.find(params[:topic_id]) if params[:topic_id]
+    end
+    
+    def find_post     
+      @post = Post.find_by_id_and_topic_id_and_forum_id(params[:id], params[:topic_id], params[:forum_id]) || raise(ActiveRecord::RecordNotFound)
       (raise(ActiveRecord::RecordNotFound) unless (@post.account_id == current_account.id)) || @post
+      redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) unless @post.topic.forum.visible?(current_user)
     end
     
     def render_posts_or_xml(template_name = action_name)
