@@ -3193,18 +3193,6 @@ a.page_title:active {
 .solution_list li span {
   color: #888888;
 }
-.solution_list li.active a {
-  color: #4d769f;
-}
-.solution_list li.active a:visited {
-  color: #4d769f;
-}
-.solution_list li.active a:hover {
-  color: #3399cc;
-}
-.solution_list li.active a:active {
-  color: #4d769f;
-}
 
 .artical_section {
   margin-left: 210px;
