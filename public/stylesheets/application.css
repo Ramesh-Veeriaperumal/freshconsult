@@ -48,9 +48,15 @@ ul.activityfeed, ul.summary {
 }
 
 ul.summary {
-  behavior: url(/stylesheets/PIE.htc);
+  behavior: url('/stylesheets/PIE.htc');
+  position: relative;
+  behavior: url('/stylesheets/PIE.htc');
+  position: relative;
   -moz-border-radius: 6px 6px 6px 6px;
   -webkit-border-radius: 6px 6px 6px 6px;
+  -o-border-radius: 6px 6px 6px 6px;
+  -ms-border-radius: 6px 6px 6px 6px;
+  -khtml-border-radius: 6px 6px 6px 6px;
   border-radius: 6px 6px 6px 6px;
   -moz-box-shadow: inset 1px 1px 2px #ececec;
   -webkit-box-shadow: inset 1px 1px 2px #ececec;
@@ -365,7 +371,14 @@ h2.content_title {
   background: -moz-linear-gradient(top, white 0%, #efefef 100%);
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, white), color-stop(100%, #efefef));
   background: linear-gradient(#ffffff, #efefef);
+  behavior: url('/stylesheets/PIE.htc');
+  position: relative;
+  background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #ffffff), color-stop(100%, #efefef));
+  background: -webkit-linear-gradient(#ffffff, #efefef);
+  background: -moz-linear-gradient(#ffffff, #efefef);
+  background: -o-linear-gradient(#ffffff, #efefef);
   -pie-background: linear-gradient(#ffffff, #efefef);
+  background: linear-gradient(#ffffff, #efefef);
 }
 .tab-buttons li a {
   text-decoration: none;
@@ -431,8 +444,13 @@ h2.content_title {
 .actions_bar {
   margin: 10px 0px 4px 0px;
   display: block;
+  behavior: url('/stylesheets/PIE.htc');
+  position: relative;
   -moz-border-radius: 6px 6px 6px 6px;
   -webkit-border-radius: 6px 6px 6px 6px;
+  -o-border-radius: 6px 6px 6px 6px;
+  -ms-border-radius: 6px 6px 6px 6px;
+  -khtml-border-radius: 6px 6px 6px 6px;
   border-radius: 6px 6px 6px 6px;
   padding: 2px 4px;
   background-color: #efefef;
@@ -546,8 +564,13 @@ div.leader-right {
   padding: 6px 12px;
   color: #ffffff;
   text-transform: uppercase;
+  behavior: url('/stylesheets/PIE.htc');
+  position: relative;
   -moz-border-radius: 4px 4px 0px 0px;
   -webkit-border-radius: 4px 4px 0px 0px;
+  -o-border-radius: 4px 4px 0px 0px;
+  -ms-border-radius: 4px 4px 0px 0px;
+  -khtml-border-radius: 4px 4px 0px 0px;
   border-radius: 4px 4px 0px 0px;
   margin: 10px 6px 0px 6px;
   font-weight: bold;
@@ -800,9 +823,14 @@ body h5 {
   background: -moz-linear-gradient(top, #fefedf 0%, #fbfd90 100%);
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #fefedf), color-stop(100%, #fbfd90));
   background: linear-gradient(#fefedf, #fbfd90);
+  behavior: url('/stylesheets/PIE.htc');
+  position: relative;
+  background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #fefedf), color-stop(100%, #fbfd90));
+  background: -webkit-linear-gradient(#fefedf, #fbfd90);
+  background: -moz-linear-gradient(#fefedf, #fbfd90);
+  background: -o-linear-gradient(#fefedf, #fbfd90);
   -pie-background: linear-gradient(#fefedf, #fbfd90);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FEFEDF', endColorstr='#FBFD90',GradientType=0 );
-  /* ie */
+  background: linear-gradient(#fefedf, #fbfd90);
 }
 .request_details .request_status img {
   position: absolute;
@@ -866,8 +894,13 @@ body h5 {
 .attachment_list li {
   overflow: hidden;
   *zoom: 1;
+  behavior: url('/stylesheets/PIE.htc');
+  position: relative;
   -moz-border-radius: 3px 3px 3px 3px;
   -webkit-border-radius: 3px 3px 3px 3px;
+  -o-border-radius: 3px 3px 3px 3px;
+  -ms-border-radius: 3px 3px 3px 3px;
+  -khtml-border-radius: 3px 3px 3px 3px;
   border-radius: 3px 3px 3px 3px;
   float: left;
   font-size: 11px;
@@ -944,8 +977,13 @@ body h5 {
 }
 
 .ticket-panel {
+  behavior: url('/stylesheets/PIE.htc');
+  position: relative;
   -moz-border-radius: 0 12px 12px 0;
   -webkit-border-radius: 0 12px 12px 0;
+  -o-border-radius: 0 12px 12px 0;
+  -ms-border-radius: 0 12px 12px 0;
+  -khtml-border-radius: 0 12px 12px 0;
   border-radius: 0 12px 12px 0;
   background-color: #3f3f3f;
 }
@@ -975,8 +1013,13 @@ body h5 {
   padding: 3px 0px;
 }
 .rtCnt .rtDetails_forum {
+  behavior: url('/stylesheets/PIE.htc');
+  position: relative;
   -moz-border-radius: 6px 6px 6px 6px;
   -webkit-border-radius: 6px 6px 6px 6px;
+  -o-border-radius: 6px 6px 6px 6px;
+  -ms-border-radius: 6px 6px 6px 6px;
+  -khtml-border-radius: 6px 6px 6px 6px;
   border-radius: 6px 6px 6px 6px;
   padding: 14px 14px 6px 14px;
   min-height: 230px;
@@ -1145,10 +1188,16 @@ ul.admin_icons li a {
   text-decoration: none;
   color: #3a3a3a;
   width: 100px;
+  behavior: url('/stylesheets/PIE.htc');
+  position: relative;
   -moz-border-radius: 6px 6px 6px 6px;
   -webkit-border-radius: 6px 6px 6px 6px;
+  -o-border-radius: 6px 6px 6px 6px;
+  -ms-border-radius: 6px 6px 6px 6px;
+  -khtml-border-radius: 6px 6px 6px 6px;
   border-radius: 6px 6px 6px 6px;
-  behavior: url(/stylesheets/PIE.htc);
+  behavior: url('/stylesheets/PIE.htc');
+  position: relative;
 }
 ul.admin_icons li a img {
   height: 32px;
@@ -1242,8 +1291,13 @@ ul.admin_icons li a:hover {
 .mark_action a, .mark_action .stamp {
   padding: 2px 6px;
   margin: 0px 0px 6px 0px;
+  behavior: url('/stylesheets/PIE.htc');
+  position: relative;
   -moz-border-radius: 4px 4px 4px 4px;
   -webkit-border-radius: 4px 4px 4px 4px;
+  -o-border-radius: 4px 4px 4px 4px;
+  -ms-border-radius: 4px 4px 4px 4px;
+  -khtml-border-radius: 4px 4px 4px 4px;
   border-radius: 4px 4px 4px 4px;
   color: white;
   text-shadow: 0 -1px 1px rgba(0, 0, 0, 0.25);
@@ -1301,8 +1355,13 @@ div.panel_area a:hover {
 }
 div.panel_area .tag_item {
   background: #efefef;
+  behavior: url('/stylesheets/PIE.htc');
+  position: relative;
   -moz-border-radius: 6px 6px 6px 6px;
   -webkit-border-radius: 6px 6px 6px 6px;
+  -o-border-radius: 6px 6px 6px 6px;
+  -ms-border-radius: 6px 6px 6px 6px;
+  -khtml-border-radius: 6px 6px 6px 6px;
   border-radius: 6px 6px 6px 6px;
   padding: 3px 8px;
   display: block;
@@ -1348,7 +1407,14 @@ div.panel_area div.item {
   background: -moz-linear-gradient(top, #efefef 0%, #dfdfdf 100%);
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #efefef), color-stop(100%, #dfdfdf));
   background: linear-gradient(#efefef, #dfdfdf);
+  behavior: url('/stylesheets/PIE.htc');
+  position: relative;
+  background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #efefef), color-stop(100%, #dfdfdf));
+  background: -webkit-linear-gradient(#efefef, #dfdfdf);
+  background: -moz-linear-gradient(#efefef, #dfdfdf);
+  background: -o-linear-gradient(#efefef, #dfdfdf);
   -pie-background: linear-gradient(#efefef, #dfdfdf);
+  background: linear-gradient(#efefef, #dfdfdf);
   padding: 3px 8px;
 }
 .request_panel_list div.item a {
@@ -1555,8 +1621,13 @@ a.request_bt:hover {
   display: inline-block;
   border: 1px solid #afafaf;
   padding: 3px 2px;
+  behavior: url('/stylesheets/PIE.htc');
+  position: relative;
   -moz-border-radius: 6px 6px 6px 6px;
   -webkit-border-radius: 6px 6px 6px 6px;
+  -o-border-radius: 6px 6px 6px 6px;
+  -ms-border-radius: 6px 6px 6px 6px;
+  -khtml-border-radius: 6px 6px 6px 6px;
   border-radius: 6px 6px 6px 6px;
   width: 300px;
 }
@@ -1643,8 +1714,13 @@ h4.list_title {
   background-color: #888888;
   color: #ffffff;
   padding: 0px 2px;
+  behavior: url('/stylesheets/PIE.htc');
+  position: relative;
   -moz-border-radius: 3px 3px 3px 3px;
   -webkit-border-radius: 3px 3px 3px 3px;
+  -o-border-radius: 3px 3px 3px 3px;
+  -ms-border-radius: 3px 3px 3px 3px;
+  -khtml-border-radius: 3px 3px 3px 3px;
   border-radius: 3px 3px 3px 3px;
   white-space: nowrap;
   overflow: hidden;
@@ -1656,8 +1732,13 @@ h4.list_title {
 
 .list_icon_large_full_width {
   background: #ffffff;
+  behavior: url('/stylesheets/PIE.htc');
+  position: relative;
   -moz-border-radius: 6px 6px 6px 6px;
   -webkit-border-radius: 6px 6px 6px 6px;
+  -o-border-radius: 6px 6px 6px 6px;
+  -ms-border-radius: 6px 6px 6px 6px;
+  -khtml-border-radius: 6px 6px 6px 6px;
   border-radius: 6px 6px 6px 6px;
   overflow: hidden;
   *zoom: 1;
@@ -1787,8 +1868,13 @@ h4.list_title {
 
 .contact_table {
   border: 3px solid #e8e8e8;
+  behavior: url('/stylesheets/PIE.htc');
+  position: relative;
   -moz-border-radius: 6px 6px 6px 6px;
   -webkit-border-radius: 6px 6px 6px 6px;
+  -o-border-radius: 6px 6px 6px 6px;
+  -ms-border-radius: 6px 6px 6px 6px;
+  -khtml-border-radius: 6px 6px 6px 6px;
   border-radius: 6px 6px 6px 6px;
   list-style: none;
   margin: 0px;
@@ -1833,8 +1919,13 @@ span.sort_handle {
   height: 25px;
   cursor: move;
   background: url(/images/sort_handle.gif) no-repeat;
+  behavior: url('/stylesheets/PIE.htc');
+  position: relative;
   -moz-border-radius: 5px 5px 5px 5px;
   -webkit-border-radius: 5px 5px 5px 5px;
+  -o-border-radius: 5px 5px 5px 5px;
+  -ms-border-radius: 5px 5px 5px 5px;
+  -khtml-border-radius: 5px 5px 5px 5px;
   border-radius: 5px 5px 5px 5px;
 }
 
@@ -1868,8 +1959,13 @@ span.sort_handle {
   border-right-color: #bfbfbfb;
   font-size: 1.2em;
   padding: 5px 5px 0px 5px;
+  behavior: url('/stylesheets/PIE.htc');
+  position: relative;
   -moz-border-radius: 2px 2px 2px 2px;
   -webkit-border-radius: 2px 2px 2px 2px;
+  -o-border-radius: 2px 2px 2px 2px;
+  -ms-border-radius: 2px 2px 2px 2px;
+  -khtml-border-radius: 2px 2px 2px 2px;
   border-radius: 2px 2px 2px 2px;
 }
 .sortable li.ui-sortable-placeholder {
@@ -1985,8 +2081,13 @@ ul.item_list li {
   min-width: 150px;
   width: auto !important;
   width: 150px;
+  behavior: url('/stylesheets/PIE.htc');
+  position: relative;
   -moz-border-radius: 6px 6px 6px 6px;
   -webkit-border-radius: 6px 6px 6px 6px;
+  -o-border-radius: 6px 6px 6px 6px;
+  -ms-border-radius: 6px 6px 6px 6px;
+  -khtml-border-radius: 6px 6px 6px 6px;
   border-radius: 6px 6px 6px 6px;
 }
 ul.item_list li a {
@@ -2094,8 +2195,13 @@ h3.t_padding {
   -moz-box-shadow: #888888 0px 0px 2px;
   -webkit-box-shadow: #888888 0px 0px 2px;
   box-shadow: #888888 0px 0px 2px;
+  behavior: url('/stylesheets/PIE.htc');
+  position: relative;
   -moz-border-radius: 6px 6px 6px 6px;
   -webkit-border-radius: 6px 6px 6px 6px;
+  -o-border-radius: 6px 6px 6px 6px;
+  -ms-border-radius: 6px 6px 6px 6px;
+  -khtml-border-radius: 6px 6px 6px 6px;
   border-radius: 6px 6px 6px 6px;
   margin: 0px 0px;
   padding: 10px 15px;
@@ -2178,8 +2284,13 @@ h3.t_padding {
 
 div.information_tip {
   padding: 15px 20px;
+  behavior: url('/stylesheets/PIE.htc');
+  position: relative;
   -moz-border-radius: 8px 8px 8px 8px;
   -webkit-border-radius: 8px 8px 8px 8px;
+  -o-border-radius: 8px 8px 8px 8px;
+  -ms-border-radius: 8px 8px 8px 8px;
+  -khtml-border-radius: 8px 8px 8px 8px;
   border-radius: 8px 8px 8px 8px;
   margin: 0px 0px 10px 0px;
   background: #F3F1EC;
@@ -2221,8 +2332,13 @@ div.search label, div.search input.search {
 
 .innerContent {
   padding: 8px;
+  behavior: url('/stylesheets/PIE.htc');
+  position: relative;
   -moz-border-radius: 6px 6px 6px 6px;
   -webkit-border-radius: 6px 6px 6px 6px;
+  -o-border-radius: 6px 6px 6px 6px;
+  -ms-border-radius: 6px 6px 6px 6px;
+  -khtml-border-radius: 6px 6px 6px 6px;
   border-radius: 6px 6px 6px 6px;
   background: #efefef;
 }
@@ -2261,8 +2377,13 @@ h4.border_title {
   background-color: #f5f5f5;
   padding: 4px;
   margin-left: 20%;
+  behavior: url('/stylesheets/PIE.htc');
+  position: relative;
   -moz-border-radius: 4px 4px 4px 4px;
   -webkit-border-radius: 4px 4px 4px 4px;
+  -o-border-radius: 4px 4px 4px 4px;
+  -ms-border-radius: 4px 4px 4px 4px;
+  -khtml-border-radius: 4px 4px 4px 4px;
   border-radius: 4px 4px 4px 4px;
 }
 .forum-section .forum-list {
@@ -2510,8 +2631,13 @@ h4.border_title {
 }
 
 .white_curved_cont {
+  behavior: url('/stylesheets/PIE.htc');
+  position: relative;
   -moz-border-radius: 6px 6px 6px 6px;
   -webkit-border-radius: 6px 6px 6px 6px;
+  -o-border-radius: 6px 6px 6px 6px;
+  -ms-border-radius: 6px 6px 6px 6px;
+  -khtml-border-radius: 6px 6px 6px 6px;
   border-radius: 6px 6px 6px 6px;
   background-color: #ffffff;
   padding: 10px;
@@ -2543,8 +2669,13 @@ h4.border_title {
   -moz-box-shadow: #888888 0px 0px 20px;
   -webkit-box-shadow: #888888 0px 0px 20px;
   box-shadow: #888888 0px 0px 20px;
+  behavior: url('/stylesheets/PIE.htc');
+  position: relative;
   -moz-border-radius: 8px 8px 8px 8px;
   -webkit-border-radius: 8px 8px 8px 8px;
+  -o-border-radius: 8px 8px 8px 8px;
+  -ms-border-radius: 8px 8px 8px 8px;
+  -khtml-border-radius: 8px 8px 8px 8px;
   border-radius: 8px 8px 8px 8px;
   padding: 0px;
   margin: 0px;
@@ -2557,8 +2688,13 @@ h4.border_title {
   border: 1px solid #afafaf;
 }
 .tr_wrap .tr_dialog .header_area {
+  behavior: url('/stylesheets/PIE.htc');
+  position: relative;
   -moz-border-radius: 8px 8px 0 0;
   -webkit-border-radius: 8px 8px 0 0;
+  -o-border-radius: 8px 8px 0 0;
+  -ms-border-radius: 8px 8px 0 0;
+  -khtml-border-radius: 8px 8px 0 0;
   border-radius: 8px 8px 0 0;
 }
 .tr_wrap .tr_dialog .page_area {
@@ -2594,8 +2730,13 @@ h4.border_title {
   float: right;
 }
 .header_area .actions a {
+  behavior: url('/stylesheets/PIE.htc');
+  position: relative;
   -moz-border-radius: 6px 6px 6px 6px;
   -webkit-border-radius: 6px 6px 6px 6px;
+  -o-border-radius: 6px 6px 6px 6px;
+  -ms-border-radius: 6px 6px 6px 6px;
+  -khtml-border-radius: 6px 6px 6px 6px;
   border-radius: 6px 6px 6px 6px;
   padding: 8px 2px 0px 2px;
   text-decoration: none;
@@ -2631,8 +2772,13 @@ h4.border_title {
   -moz-box-shadow: inset 1px 1px 1px #aaaaaa;
   -webkit-box-shadow: inset 1px 1px 1px #aaaaaa;
   box-shadow: inset 1px 1px 1px #aaaaaa;
+  behavior: url('/stylesheets/PIE.htc');
+  position: relative;
   -moz-border-radius: 6px 6px 6px 6px;
   -webkit-border-radius: 6px 6px 6px 6px;
+  -o-border-radius: 6px 6px 6px 6px;
+  -ms-border-radius: 6px 6px 6px 6px;
+  -khtml-border-radius: 6px 6px 6px 6px;
   border-radius: 6px 6px 6px 6px;
   border: 1px solid #dfdfdf;
   padding: 10px;
@@ -2683,8 +2829,13 @@ h4.border_title {
   width: 200px;
   display: inline-block;
   margin-left: 10px;
+  behavior: url('/stylesheets/PIE.htc');
+  position: relative;
   -moz-border-radius: 18px 18px 18px 18px;
   -webkit-border-radius: 18px 18px 18px 18px;
+  -o-border-radius: 18px 18px 18px 18px;
+  -ms-border-radius: 18px 18px 18px 18px;
+  -khtml-border-radius: 18px 18px 18px 18px;
   border-radius: 18px 18px 18px 18px;
   background: #333333;
   border-bottom: 1px solid #b4b4b4;
@@ -2701,8 +2852,13 @@ h4.border_title {
 .menu ul {
   list-style: none;
   background: #f5f5f5;
+  behavior: url('/stylesheets/PIE.htc');
+  position: relative;
   -moz-border-radius: 6px 6px 6px 6px;
   -webkit-border-radius: 6px 6px 6px 6px;
+  -o-border-radius: 6px 6px 6px 6px;
+  -ms-border-radius: 6px 6px 6px 6px;
+  -khtml-border-radius: 6px 6px 6px 6px;
   border-radius: 6px 6px 6px 6px;
   border-right: 1px solid #dfdfdf;
   border-bottom: 1px solid #dfdfdf;
@@ -2822,8 +2978,13 @@ a.page_title:active {
   color: #999999;
   text-align: center;
   padding: 1px 5px 2px 5px;
+  behavior: url('/stylesheets/PIE.htc');
+  position: relative;
   -moz-border-radius: 6px 6px 6px 6px;
   -webkit-border-radius: 6px 6px 6px 6px;
+  -o-border-radius: 6px 6px 6px 6px;
+  -ms-border-radius: 6px 6px 6px 6px;
+  -khtml-border-radius: 6px 6px 6px 6px;
   border-radius: 6px 6px 6px 6px;
   font-size: 9px;
 }
@@ -2861,8 +3022,13 @@ a.page_title:active {
   padding: 14px 20px;
   background: #F6F6F6;
   border-bottom: 1px solid #f3f3f3;
+  behavior: url('/stylesheets/PIE.htc');
+  position: relative;
   -moz-border-radius: 6px 6px 0px 0px;
   -webkit-border-radius: 6px 6px 0px 0px;
+  -o-border-radius: 6px 6px 0px 0px;
+  -ms-border-radius: 6px 6px 0px 0px;
+  -khtml-border-radius: 6px 6px 0px 0px;
   border-radius: 6px 6px 0px 0px;
 }
 
@@ -2970,8 +3136,13 @@ a.page_title:active {
   background: #f8f8f8;
   font-family: "Lucida Grande","Lucida sans unicode", Geneva, Arial,Verdana,sans-serif;
   font-size: 14px;
+  behavior: url('/stylesheets/PIE.htc');
+  position: relative;
   -moz-border-radius: 6px 6px 6px 6px;
   -webkit-border-radius: 6px 6px 6px 6px;
+  -o-border-radius: 6px 6px 6px 6px;
+  -ms-border-radius: 6px 6px 6px 6px;
+  -khtml-border-radius: 6px 6px 6px 6px;
   border-radius: 6px 6px 6px 6px;
 }
 
@@ -2980,8 +3151,13 @@ a.page_title:active {
 }
 
 .search_results_bar {
+  behavior: url('/stylesheets/PIE.htc');
+  position: relative;
   -moz-border-radius: 0px 0px 6px 6px;
   -webkit-border-radius: 0px 0px 6px 6px;
+  -o-border-radius: 0px 0px 6px 6px;
+  -ms-border-radius: 0px 0px 6px 6px;
+  -khtml-border-radius: 0px 0px 6px 6px;
   border-radius: 0px 0px 6px 6px;
   -moz-box-shadow: #bbbbbb 0px 3px 10px;
   -webkit-box-shadow: #bbbbbb 0px 3px 10px;
@@ -2997,8 +3173,13 @@ a.page_title:active {
 }
 .search_results_bar .results {
   width: 300px;
+  behavior: url('/stylesheets/PIE.htc');
+  position: relative;
   -moz-border-radius: 0px 0px 6px 0;
   -webkit-border-radius: 0px 0px 6px 0;
+  -o-border-radius: 0px 0px 6px 0;
+  -ms-border-radius: 0px 0px 6px 0;
+  -khtml-border-radius: 0px 0px 6px 0;
   border-radius: 0px 0px 6px 0;
   background: #f6f6f6;
   border-left: 1px solid #dedede;
@@ -3246,8 +3427,13 @@ a.page_title:active {
   border-bottom: 1px solid #E8E8E8;
   color: #999999;
   font-size: 12px;
+  behavior: url('/stylesheets/PIE.htc');
+  position: relative;
   -moz-border-radius: 0 6px 0 0;
   -webkit-border-radius: 0 6px 0 0;
+  -o-border-radius: 0 6px 0 0;
+  -ms-border-radius: 0 6px 0 0;
+  -khtml-border-radius: 0 6px 0 0;
   border-radius: 0 6px 0 0;
   margin: -20px -20px 10px;
   padding: 7px 15px;
@@ -3286,8 +3472,13 @@ a.page_title:active {
 
 .status_text {
   background-color: #888888;
+  behavior: url('/stylesheets/PIE.htc');
+  position: relative;
   -moz-border-radius: 6px 6px 6px 6px;
   -webkit-border-radius: 6px 6px 6px 6px;
+  -o-border-radius: 6px 6px 6px 6px;
+  -ms-border-radius: 6px 6px 6px 6px;
+  -khtml-border-radius: 6px 6px 6px 6px;
   border-radius: 6px 6px 6px 6px;
   color: #ffffff;
   padding: 4px 8px 2px 8px;
@@ -3337,7 +3528,14 @@ a.page_title:active {
   background: -moz-linear-gradient(top, #efefef 0%, #e8e8e8 100%);
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #efefef), color-stop(100%, #e8e8e8));
   background: linear-gradient(#efefef, #e8e8e8);
+  behavior: url('/stylesheets/PIE.htc');
+  position: relative;
+  background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #efefef), color-stop(100%, #e8e8e8));
+  background: -webkit-linear-gradient(#efefef, #e8e8e8);
+  background: -moz-linear-gradient(#efefef, #e8e8e8);
+  background: -o-linear-gradient(#efefef, #e8e8e8);
   -pie-background: linear-gradient(#efefef, #e8e8e8);
+  background: linear-gradient(#efefef, #e8e8e8);
   border-bottom: 1px solid #dfdfdf;
   text-decoration: none;
   font-weight: bold;
@@ -3438,8 +3636,13 @@ a.page_title:active {
   top: 0px;
   width: 170px;
   background: #f6f6f6;
+  behavior: url('/stylesheets/PIE.htc');
+  position: relative;
   -moz-border-radius: 6px 0px 0px 6px;
   -webkit-border-radius: 6px 0px 0px 6px;
+  -o-border-radius: 6px 0px 0px 6px;
+  -ms-border-radius: 6px 0px 0px 6px;
+  -khtml-border-radius: 6px 0px 0px 6px;
   border-radius: 6px 0px 0px 6px;
   -moz-box-shadow: #bbbbbb 0px 3px 10px;
   -webkit-box-shadow: #bbbbbb 0px 3px 10px;
@@ -3562,8 +3765,13 @@ a.page_title:active {
   overflow: hidden;
   text-indent: -99999px;
   background-color: #999999;
+  behavior: url('/stylesheets/PIE.htc');
+  position: relative;
   -moz-border-radius: 6px 6px 6px 6px;
   -webkit-border-radius: 6px 6px 6px 6px;
+  -o-border-radius: 6px 6px 6px 6px;
+  -ms-border-radius: 6px 6px 6px 6px;
+  -khtml-border-radius: 6px 6px 6px 6px;
   border-radius: 6px 6px 6px 6px;
   background: url('/images/../images/embed/sprites/16square_sprite.png?1305622139') no-repeat;
   width: 16px;
@@ -3590,9 +3798,15 @@ div.addReminder {
   position: relative;
 }
 div.addReminder form {
-  behavior: url(/stylesheets/PIE.htc);
+  behavior: url('/stylesheets/PIE.htc');
+  position: relative;
+  behavior: url('/stylesheets/PIE.htc');
+  position: relative;
   -moz-border-radius: 6px 6px 6px 6px;
   -webkit-border-radius: 6px 6px 6px 6px;
+  -o-border-radius: 6px 6px 6px 6px;
+  -ms-border-radius: 6px 6px 6px 6px;
+  -khtml-border-radius: 6px 6px 6px 6px;
   border-radius: 6px 6px 6px 6px;
   border: 2px solid #e3dcc1;
   padding: 3px 0px;
@@ -3648,17 +3862,34 @@ div.addReminder form label.overlabel {
   background: -moz-linear-gradient(top, #fcfcfc 0%, #f1f1f1 100%);
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #fcfcfc), color-stop(100%, #f1f1f1));
   background: linear-gradient(#fcfcfc, #f1f1f1);
+  behavior: url('/stylesheets/PIE.htc');
+  position: relative;
+  background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #fcfcfc), color-stop(100%, #f1f1f1));
+  background: -webkit-linear-gradient(#fcfcfc, #f1f1f1);
+  background: -moz-linear-gradient(#fcfcfc, #f1f1f1);
+  background: -o-linear-gradient(#fcfcfc, #f1f1f1);
   -pie-background: linear-gradient(#fcfcfc, #f1f1f1);
+  background: linear-gradient(#fcfcfc, #f1f1f1);
   border-bottom: 1px solid #eaeaea;
 }
 .tab_panel a.last {
+  behavior: url('/stylesheets/PIE.htc');
+  position: relative;
   -moz-border-radius: 0px 4px 4px 0px;
   -webkit-border-radius: 0px 4px 4px 0px;
+  -o-border-radius: 0px 4px 4px 0px;
+  -ms-border-radius: 0px 4px 4px 0px;
+  -khtml-border-radius: 0px 4px 4px 0px;
   border-radius: 0px 4px 4px 0px;
 }
 .tab_panel a.first {
+  behavior: url('/stylesheets/PIE.htc');
+  position: relative;
   -moz-border-radius: 4px 0px 0px 4px;
   -webkit-border-radius: 4px 0px 0px 4px;
+  -o-border-radius: 4px 0px 0px 4px;
+  -ms-border-radius: 4px 0px 0px 4px;
+  -khtml-border-radius: 4px 0px 0px 4px;
   border-radius: 4px 0px 0px 4px;
 }
 .tab_panel a.active, .tab_panel a:hover {
@@ -3666,7 +3897,14 @@ div.addReminder form label.overlabel {
   background: -moz-linear-gradient(top, #f5f5f5 0%, #e1e1e1 100%);
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #f5f5f5), color-stop(100%, #e1e1e1));
   background: linear-gradient(#f5f5f5, #e1e1e1);
+  behavior: url('/stylesheets/PIE.htc');
+  position: relative;
+  background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #f5f5f5), color-stop(100%, #e1e1e1));
+  background: -webkit-linear-gradient(#f5f5f5, #e1e1e1);
+  background: -moz-linear-gradient(#f5f5f5, #e1e1e1);
+  background: -o-linear-gradient(#f5f5f5, #e1e1e1);
   -pie-background: linear-gradient(#f5f5f5, #e1e1e1);
+  background: linear-gradient(#f5f5f5, #e1e1e1);
 }
 
 .solutions_text {
@@ -3754,8 +3992,13 @@ div.addReminder form label.overlabel {
 }
 .tag_list div.item {
   float: left;
+  behavior: url('/stylesheets/PIE.htc');
+  position: relative;
   -moz-border-radius: 5px 5px 5px 5px;
   -webkit-border-radius: 5px 5px 5px 5px;
+  -o-border-radius: 5px 5px 5px 5px;
+  -ms-border-radius: 5px 5px 5px 5px;
+  -khtml-border-radius: 5px 5px 5px 5px;
   border-radius: 5px 5px 5px 5px;
   height: 17px;
   background-color: #e7e7e7;
@@ -3800,7 +4043,7 @@ div.addReminder form label.overlabel {
 
 .tickets-container {
   margin: 0px -20px;
-  padding: 0px;
+  padding: 0px 0px 0px 0px;
 }
 
 .ticket-header {
@@ -4019,8 +4262,13 @@ div.addReminder form label.overlabel {
   float: right;
   font-size: 10px;
   background-color: #F3F1EC;
+  behavior: url('/stylesheets/PIE.htc');
+  position: relative;
   -moz-border-radius: 6px 6px 6px 6px;
   -webkit-border-radius: 6px 6px 6px 6px;
+  -o-border-radius: 6px 6px 6px 6px;
+  -ms-border-radius: 6px 6px 6px 6px;
+  -khtml-border-radius: 6px 6px 6px 6px;
   border-radius: 6px 6px 6px 6px;
   border: 1px solid #cfcfcf;
   color: #afafaf;
@@ -4187,7 +4435,14 @@ div.addReminder form label.overlabel {
   background: -moz-linear-gradient(top, #fbfbfb 0%, #fafafa 100%);
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #fbfbfb), color-stop(100%, #fafafa));
   background: linear-gradient(#fbfbfb, #fafafa);
+  behavior: url('/stylesheets/PIE.htc');
+  position: relative;
+  background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #fbfbfb), color-stop(100%, #fafafa));
+  background: -webkit-linear-gradient(#fbfbfb, #fafafa);
+  background: -moz-linear-gradient(#fbfbfb, #fafafa);
+  background: -o-linear-gradient(#fbfbfb, #fafafa);
   -pie-background: linear-gradient(#fbfbfb, #fafafa);
+  background: linear-gradient(#fbfbfb, #fafafa);
   color: #656565;
   position: relative;
 }
@@ -4313,13 +4568,23 @@ div.addReminder form label.overlabel {
   font-size: 12px;
   font-weight: bold;
   float: left;
+  behavior: url('/stylesheets/PIE.htc');
+  position: relative;
   -moz-border-radius: 6px 6px 6px 6px;
   -webkit-border-radius: 6px 6px 6px 6px;
+  -o-border-radius: 6px 6px 6px 6px;
+  -ms-border-radius: 6px 6px 6px 6px;
+  -khtml-border-radius: 6px 6px 6px 6px;
   border-radius: 6px 6px 6px 6px;
 }
 .list-badge .leftflat {
+  behavior: url('/stylesheets/PIE.htc');
+  position: relative;
   -moz-border-radius: 0px 6px 6px 0px;
   -webkit-border-radius: 0px 6px 6px 0px;
+  -o-border-radius: 0px 6px 6px 0px;
+  -ms-border-radius: 0px 6px 6px 0px;
+  -khtml-border-radius: 0px 6px 6px 0px;
   border-radius: 0px 6px 6px 0px;
 }
 .list-badge .stamp {
@@ -4351,8 +4616,13 @@ div.addReminder form label.overlabel {
   color: #666666;
   border-color: #dadada;
   padding-left: 24px;
+  behavior: url('/stylesheets/PIE.htc');
+  position: relative;
   -moz-border-radius: 6px 6px 6px 6px;
   -webkit-border-radius: 6px 6px 6px 6px;
+  -o-border-radius: 6px 6px 6px 6px;
+  -ms-border-radius: 6px 6px 6px 6px;
+  -khtml-border-radius: 6px 6px 6px 6px;
   border-radius: 6px 6px 6px 6px;
   position: relative;
   background-color: #f4f4f4;
@@ -4479,8 +4749,13 @@ p.info-text {
   margin-top: -130px;
   text-align: center;
   z-index: 9999;
+  behavior: url('/stylesheets/PIE.htc');
+  position: relative;
   -moz-border-radius: 8px 8px 8px 8px;
   -webkit-border-radius: 8px 8px 8px 8px;
+  -o-border-radius: 8px 8px 8px 8px;
+  -ms-border-radius: 8px 8px 8px 8px;
+  -khtml-border-radius: 8px 8px 8px 8px;
   border-radius: 8px 8px 8px 8px;
 }
 
