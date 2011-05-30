@@ -1,22 +1,22 @@
  /*
- * AutoSuggest
- * Copyright 2009-2010 Drew Wilson
- * www.drewwilson.com
- * code.drewwilson.com/entry/autosuggest-jquery-plugin
- *
- * Version 1.4   -   Updated: Mar. 23, 2010
- *
- * This Plug-In will auto-complete or auto-suggest completed search queries
- * for you as you type. You can add multiple selections and remove them on
- * the fly. It supports keybord navigation (UP + DOWN + RETURN), as well
- * as multiple AutoSuggest fields on the same page.
- *
- * Inspied by the Autocomplete plugin by: Jšrn Zaefferer
- * and the Facelist plugin by: Ian Tearle (iantearle.com)
- *
- * This AutoSuggest jQuery plug-in is dual licensed under the MIT and GPL licenses:
- *   http://www.opensource.org/licenses/mit-license.php
- *   http://www.gnu.org/licenses/gpl.html
+  AutoSuggest
+  Copyright 2009-2010 Drew Wilson
+  www.drewwilson.com
+  code.drewwilson.com/entry/autosuggest-jquery-plugin
+  
+  Version 1.4   -   Updated: Mar. 23, 2010
+  
+  This Plug-In will auto-complete or auto-suggest completed search queries
+  for you as you type. You can add multiple selections and remove them on
+  the fly. It supports keybord navigation (UP + DOWN + RETURN), as well
+  as multiple AutoSuggest fields on the same page.
+  
+  Inspied by the Autocomplete plugin by: Jorn Zaefferer
+  and the Facelist plugin by: Ian Tearle (iantearle.com)
+  
+  This AutoSuggest jQuery plug-in is dual licensed under the MIT and GPL licenses:
+    http://www.opensource.org/licenses/mit-license.php
+    http://www.gnu.org/licenses/gpl.html
  */
 
 (function($){
@@ -40,18 +40,18 @@
 			neverSubmit: false,
 			selectionLimit: false,
 			showResultList: true,
-		  	start: function(){},
-		  	selectionClick: function(elem){},
-		  	selectionAdded: function(elem){},
-		  	selectionRemoved: function(elem){ elem.remove(); },
-		  	formatList: false, //callback function
-		  	beforeRetrieve: function(string){ return string; },
-		  	retrieveComplete: function(data){ return data; },
-		  	resultClick: function(data){},
-		  	resultsComplete: function(){}
-	  	};  
-	 	var opts = $.extend(defaults, options);	 	
-		
+			start: function(){},
+			selectionClick: function(elem){},
+			selectionAdded: function(elem){},
+			selectionRemoved: function(elem){ elem.remove(); },
+			formatList: false, //callback function
+			beforeRetrieve: function(string){ return string; },
+			retrieveComplete: function(data){ return data; },
+			resultClick: function(data){},
+			resultsComplete: function(){}
+		};  
+		var opts = $.extend(defaults, options);
+
 		var d_type = "object";
 		var d_count = 0;
 		if(typeof data == "string") {
@@ -63,12 +63,13 @@
 		}
 		if((d_type == "object" && d_count > 0) || d_type == "string"){
 			return this.each(function(x){
+				var x_id;
 				if(!opts.asHtmlID){
 					x = x+""+Math.floor(Math.random()*100); //this ensures there will be unique IDs on the page if autoSuggest() is called multiple times
-					var x_id = "as-input-"+x;
+					x_id = "as-input-"+x;
 				} else {
 					x = opts.asHtmlID;
-					var x_id = x;
+					x_id = x;
 				}
 				opts.start.call(this);
 				var input = $(this);
@@ -88,7 +89,7 @@
 					for(var i=0; i < vals.length; i++){
 						var v_data = {};
 						v_data[opts.selectedValuesProp] = vals[i];
-						if(vals[i] != ""){
+						if(vals[i] !== ""){
 							add_selected_item(v_data, "000"+i);	
 						}		
 					}
@@ -100,15 +101,15 @@
 					if(prefill_count > 0){
 						for(var i=0; i < prefill_count; i++){
 							var new_v = opts.preFill[i][opts.selectedValuesProp];
-							if(new_v == undefined){ new_v = ""; }
+							if(new_v === undefined){ new_v = ""; }
 							prefill_value = prefill_value+new_v+",";
-							if(new_v != ""){
+							if(new_v !== ""){
 								add_selected_item(opts.preFill[i], "000"+i);	
 							}		
 						}
 					}
 				}
-				if(prefill_value != ""){
+				if(prefill_value !== ""){
 					input.val("");
 					var lastChar = prefill_value.substring(prefill_value.length-1);
 					if(lastChar != ","){ prefill_value = prefill_value+","; }
@@ -128,7 +129,7 @@
 				
 				// Handle input field events
 				input.focus(function(){			
-					if($(this).val() == opts.startText && values_input.val() == ""){
+					if($(this).val() == opts.startText && values_input.val() === ""){
 						$(this).val("");
 					} else if(input_focus){
 						$("li.as-selection-item", selections_holder).removeClass("blur");

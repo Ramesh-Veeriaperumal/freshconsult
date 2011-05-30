@@ -1299,10 +1299,35 @@ table.summary-report thead td {
   border: 0px;
 }
 .request_panel .ui-form label {
-  font-size: 12px;
+  font-size: 13px;
+  color: #333333;
 }
 .request_panel .ui-form label.overlabel {
   margin: 2px 8px;
   color: #888888;
   font-size: 12px;
+}
+.request_panel .ui-form li.inline-field {
+  padding: 1px 18px;
+}
+.request_panel .ui-form li.inline-field label.caption {
+  width: 80px;
+  text-align: right;
+}
+.request_panel .ui-form li.inline-field div.fields {
+  margin-left: 86px;
+  padding-top: 4px;
+}
+.request_panel .ui-form li.inline-field div.fields .info-data {
+  margin-bottom: 6px;
+}
+.request_panel .ui-form li.inline-field input.text, .request_panel .ui-form li.inline-field textarea {
+  width: 98%;
+}
+.request_panel .ui-form li.inline-field div.action_buttons {
+  top: -6px;
+  right: 5px;
+}
+.request_panel .ui-form li.button-container {
+  width: 95%;
 }

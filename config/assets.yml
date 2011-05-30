@@ -43,7 +43,7 @@ stylesheets:
     - public/stylesheets/buttons.css
     - public/stylesheets/jquery-ui.css
     - public/stylesheets/jquery.qtip.css
-    - public/stylesheets/autoSuggest.css
+    - public/stylesheets/jquery-autosuggest.css
     - public/stylesheets/ie.css 
   
   widget:

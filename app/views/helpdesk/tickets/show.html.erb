@@ -180,7 +180,7 @@
 
 			<% unless @ticket.attachments.empty? %>
 				<span class="seperator"></span>
-				<h4><%= @ticket.attachments.size %> attachments</h4>
+				<h4><%= @ticket.attachments.size %> attachment(s)</h4>
 				<ul class="attachment_list">
 				     <%= render :partial => '/helpdesk/shared/attachment', :collection => @ticket.attachments, :locals => {:show_delete => true, :url => [@item] } %>
 				</ul>
@@ -208,18 +208,14 @@
 			<%= link_to_function(t('ticket.add_note'), "swapEmailNote('note', this)", :class => 'uiButton', :id => "AddNoteButton") %>		
 		</div>
 		<% end %>
-		<table>
-			<tr>
-				<td>
+		<div>
 					<% if @item.requester %> 
 						<%= render(:partial => '/helpdesk/shared/note_form', :locals => {:id => 'add-note',	:cntid => "cnt-note", :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
 						<%= render(:partial => '/helpdesk/shared/reply_form', :locals => {:id => 'send-email', :cntid => 'cnt-reply', :note => [@ticket, Helpdesk::Note.new(:private => false)] }) %>
 					<% else %>
 						<%= render(:partial => '/helpdesk/shared/note_form', :locals => {:id => 'add-note',	:cntid => "cnt-note", :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
 					<% end %>
-				</td>
-			</tr>
-		</table>
+		</div>
 	</div>
 <% end %>
 

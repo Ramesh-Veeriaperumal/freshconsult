@@ -1132,12 +1132,37 @@ table.summary-report{
 			border:0px;
 		}
 		label{
-			font-size:12px;
+			font-size:13px;
+			color:#333333;
 		}
 		label.overlabel{
 			margin:2px 8px;
 			color:#888888;
 			font-size:12px;
+		}
+		li.inline-field{
+			padding:1px 18px;
+			label.caption{
+				width:80px;
+				text-align:right;
+			}
+			div.fields{
+				margin-left:86px;
+				padding-top:4px;
+				.info-data{
+					margin-bottom:6px;
+				}
+			}
+			input.text, textarea{
+				width:98%;
+			}
+			div.action_buttons{
+				top:-6px;
+				right:5px;
+			}
+		}
+		li.button-container{
+			width:95%;
 		}
 	}
 }
