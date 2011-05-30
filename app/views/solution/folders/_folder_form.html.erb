@@ -9,5 +9,9 @@
 		 	<%= f.text_area :description, :class => "smallpara" %>
 	    	<!--%= f.text_area :description, :class => "mceEditor" %-->
 		</li>  
+		<li class="small">
+        	<%= f.label :visibility, t('solution.visibility') %>
+        	<%= f.select :visibility, Solution::Folder::VISIBILITY_OPTIONS, :class => "select" %>
+    	</li>
 	</ul>	
 	

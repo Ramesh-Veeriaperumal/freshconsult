@@ -24,7 +24,7 @@ class Support::ArticlesController < ApplicationController
       format.html
       format.xml  { render :xml => @article.to_xml(:include => :folder) }
     end
-     raise ActiveRecord::RecordNotFound unless @article && (@article.account_id == current_account.id) && (@article.is_public?)
+     raise ActiveRecord::RecordNotFound unless @article && (@article.account_id == current_account.id) && (@article.folder.visible?(current_user))
  end
  
   def thumbs_down

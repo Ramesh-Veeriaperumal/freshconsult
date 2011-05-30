@@ -7,7 +7,7 @@
 		<strong class="page_title"><%=t('solution.title')%></strong>
 	</div>	  
 	<div class="page_area">			
-		<% @folders.each do |folder| %>
+		<% @folders.visible(current_user).each do |folder| %>
 			<div class="sol_list">
 				<strong><%= link_to folder.name, solution_category_folder_path(folder.category_id, folder) %></strong>
 				<div><%= folder.description %></div>	

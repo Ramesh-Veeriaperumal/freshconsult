@@ -381,8 +381,7 @@ def save_solution_article article, curr_folder
     @article.desc_un_html = desc
     @article.account_id = current_account.id
     @article.status = Solution::Article::STATUS_KEYS_BY_TOKEN[:published]
-    @article.art_type = Solution::Article::TYPE_KEYS_BY_TOKEN[:permanent]
-    @article.is_public = is_public    
+    @article.art_type = Solution::Article::TYPE_KEYS_BY_TOKEN[:permanent]      
     @article.created_at = created_at
     @article.updated_at = updated_at
     

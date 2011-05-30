@@ -8,8 +8,7 @@ describe Solution::Article do
       :user_id => 1,
       :folder_id => 1,
       :status => 1,
-      :art_type => 1,
-      :is_public => false
+      :art_type => 1      
     }
   end
 
