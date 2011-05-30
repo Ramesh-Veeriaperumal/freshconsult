@@ -1,7 +1,6 @@
-@mixin pie {
-  behavior: url(/stylesheets/PIE.htc); 
-}
- 
+@import "compass/css3/pie";
+@import "compass/css3";
+
 @mixin shadows($color: #aaaaaa, $x: 1px, $y: 2px, $spread: 2px) { 
   -moz-box-shadow: $color $x $y $spread;
   -webkit-box-shadow: $color $x $y $spread;
@@ -20,9 +19,9 @@
     $br: $tl; }
   @if $bl == nil {
     $bl: $tl; }
-  -moz-border-radius: $tl $tr $br $bl;
-  -webkit-border-radius: $tl $tr $br $bl;
-  border-radius: $tl $tr $br $bl; 
+
+  @include pie; // Because $pie-base-class is set, this results in an extend of .pie-element. 
+  @include border-radius($tl $tr $br $bl);
 }
 
 @mixin vertical-gradient($start: black, $end: #cccccc) {
@@ -30,7 +29,9 @@
   background: -moz-linear-gradient(top, $start 0%, $end 100%);
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, $start), color-stop(100%, $end));
   background: linear-gradient($start, $end);
-  -pie-background: linear-gradient($start, $end);
+  
+  @include pie; // Because $pie-base-class is set, this results in an extend of .pie-element.
+  @include background(linear-gradient($start, $end));
 }
 
 @mixin wrap(){

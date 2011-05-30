@@ -1,11 +1,11 @@
-  	<%= yield :main_panel_title %>
+ 	<%= yield :main_panel_title %>
 	
-  	<%= yield :main_panel_summary %>
+ 	<%= yield :main_panel_summary %>
 
 	<div class="toolbar" id="toolbar">
 	  <%= yield :main_panel_toolbar %>
 	</div>  
-	<%= content_tag('div', yield(:main_panel_selected_toolbar), :id => 'selection-toolbar', :class => "toolbar clearfix") if yield(:main_panel_selected_toolbar) %>
 	
+	<%= content_tag('span', yield(:main_panel_selected_toolbar), :id => 'selection-toolbar') if yield(:main_panel_selected_toolbar) %>	
 
 	<%= yield :main_panel_content %>

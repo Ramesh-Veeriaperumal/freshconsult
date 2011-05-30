@@ -3,31 +3,27 @@
   <%= javascript_include_tag "helpdesk/page_switcher" %>
   <%= javascript_include_tag "helpdesk/take_it_button" %>
   <%= javascript_include_tag "helpdesk/id_selector" %>
-  <%= javascript_include_tag "helpdesk/ticket_search" %> 
   <% javascript_tag do %>
-    document.observe("dom:loaded", function(){
-      
+    document.observe("dom:loaded", function(){      
 	  Helpdesk.sel = new Helpdesk.MultiSelector({
 	      form: 'expanded',
 	      cookieName: 'helpdesk-tickets-page'
-	  });
-	
-	  //Helpdesk.sel.submitOnClick('assign-multiple-button', ['responder_id']); 
-	  
-      new Helpdesk.PageSwitcher({
-        toggleMode: true,
-        pages: ['assign-options']
-      });
+	  });		  
+   	
+		new Helpdesk.PageSwitcher({
+       toggleMode: true,
+       pages: ['assign-options']
+    });
 
-      Helpdesk.monitorTakeItButtons();
+    Helpdesk.monitorTakeItButtons();
 	  	
-      Helpdesk.submitOnChange('sort');
+    Helpdesk.submitOnChange('sort');
 	  
 	  Helpdesk.sel.toggleCheckAll = function(source){
 	  	if(source.checked)
-			Helpdesk.sel.checkAll();
-		else
-			Helpdesk.sel.uncheckAll();
+				Helpdesk.sel.checkAll();
+			else
+				Helpdesk.sel.uncheckAll();
 	  };
 		 	
 	  jQuery(".ticket-description-tip").qtip({
@@ -65,16 +61,13 @@
 	  
 	  changeSortOrder = function(){		
 	  	if ('<%=current_sort_order%>' != 'DESC')
-			jQuery('#sort_order_id').val('DESC');
-		else
-		   jQuery('#sort_order_id').val('ASC');
-	  
-	    jQuery('#sort_form').submit();
-	  }
-
-    });
-	
-	
+				jQuery('#sort_order_id').val('DESC');
+			else
+		   	jQuery('#sort_order_id').val('ASC');	  
+		  
+			jQuery('#sort_form').submit();
+		}
+	});
   <% end %>
 <% end %>
  

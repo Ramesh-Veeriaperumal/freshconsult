@@ -44,8 +44,9 @@ stylesheets:
     - public/stylesheets/jquery-ui.css
     - public/stylesheets/jquery.qtip.css
     - public/stylesheets/jquery-autosuggest.css
-    - public/stylesheets/ie.css 
-  
+    - public/stylesheets/ie.css
+    - public/stylesheets/pie.css
+
   widget:
     - public/stylesheets/reset.css   
     - public/stylesheets/defaults.css
