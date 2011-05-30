@@ -17,7 +17,7 @@ var jQ = jQuery.noConflict();
 			onkeyup: false,
 			focusCleanup: true,
 			focusInvalid: false
-		} 
+		};
 		
 		$("ul.ui-form").not(".dont-validate").parents('form:first').validate(validateOptions);
 		$("div.ui-form").not(".dont-validate").find('form:first').validate(validateOptions); 
@@ -29,7 +29,7 @@ var jQ = jQuery.noConflict();
 			$("textarea.auto-expand").autoResize();
 		
 		sidebarHeight = $('#Sidebar').height();
-		if(sidebarHeight != null && sidebarHeight > $('#Pagearea').height())
+		if(sidebarHeight !== null && sidebarHeight > $('#Pagearea').height())
 			$('#Pagearea').css("minHeight", sidebarHeight);
 		
 		// Any object with class custom-tip will be given a different tool tip
@@ -40,7 +40,7 @@ var jQ = jQuery.noConflict();
 			      viewport: jQuery(window) 
 			 }, 
 			 style : {
-			 	classes: 'ui-tooltip-rounded ui-tooltip-shadow'
+				classes: 'ui-tooltip-rounded ui-tooltip-shadow'
 			 }
 		});
 		
@@ -51,7 +51,7 @@ var jQ = jQuery.noConflict();
 			      viewport: jQuery(window) 
 			 }, 
 			 style : {
-			 	classes: 'ui-tooltip-rounded ui-tooltip-shadow'
+				classes: 'ui-tooltip-rounded ui-tooltip-shadow'
 			 }
 		});
 		 
@@ -62,7 +62,7 @@ var jQ = jQuery.noConflict();
 					flash.fadeOut(600);
 				});
 				setTimeout(function() {
-			        flash.hide('blind', {}, 500)
+			        flash.hide('blind', {}, 500);
 			    }, 20000);
 				flash.find('a.show-list').click(function(ev){
 					flash.find('div.list').slideDown(300);
@@ -75,4 +75,4 @@ var jQ = jQuery.noConflict();
 		
 	});
 	
-})(jQuery)
+})(jQuery);

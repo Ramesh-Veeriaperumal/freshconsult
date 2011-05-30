@@ -264,8 +264,13 @@ button.ui-button::-moz-focus-inner {
   color: #333333;
   display: inline-block;
   text-decoration: none;
+  behavior: url('/stylesheets/PIE.htc');
+  position: relative;
   -moz-border-radius: 4px 4px 4px 4px;
   -webkit-border-radius: 4px 4px 4px 4px;
+  -o-border-radius: 4px 4px 4px 4px;
+  -ms-border-radius: 4px 4px 4px 4px;
+  -khtml-border-radius: 4px 4px 4px 4px;
   border-radius: 4px 4px 4px 4px;
   margin: 1px;
   line-height: 17px;
@@ -337,8 +342,13 @@ button.ui-button::-moz-focus-inner {
   font-size: 12px;
   font-weight: bold;
   color: #333333;
+  behavior: url('/stylesheets/PIE.htc');
+  position: relative;
   -moz-border-radius: 14px 14px 14px 14px;
   -webkit-border-radius: 14px 14px 14px 14px;
+  -o-border-radius: 14px 14px 14px 14px;
+  -ms-border-radius: 14px 14px 14px 14px;
+  -khtml-border-radius: 14px 14px 14px 14px;
   border-radius: 14px 14px 14px 14px;
   background-color: #eeeeee;
   background-repeat: repeat-x;
@@ -425,8 +435,13 @@ button.ui-button::-moz-focus-inner {
 div.action_buttons {
   position: relative;
   float: right;
+  behavior: url('/stylesheets/PIE.htc');
+  position: relative;
   -moz-border-radius: 4px 4px 4px 4px;
   -webkit-border-radius: 4px 4px 4px 4px;
+  -o-border-radius: 4px 4px 4px 4px;
+  -ms-border-radius: 4px 4px 4px 4px;
+  -khtml-border-radius: 4px 4px 4px 4px;
   border-radius: 4px 4px 4px 4px;
   margin: -5px 0px 2px 5px;
   background-image: url(../images/overlay-button.png);
@@ -528,17 +543,33 @@ button.positive, .buttons a.positive {
   border: 2px solid #aaa;
   background: #fff;
   color: #3f3f3f;
-  -moz-border-radius: 6px 6px 6px 6px;
-  -webkit-border-radius: 6px 6px 6px 6px;
-  border-radius: 6px 6px 6px 6px;
-  box-shadow: 0 2px rgba(0, 0, 0, 0.05), 0 -2px rgba(0, 0, 0, 0.05) inset;
-  -webkit-box-shadow: 0 2px rgba(0, 0, 0, 0.05), 0 -2px rgba(0, 0, 0, 0.05) inset;
-  -moz-box-shadow: 0 2px rgba(0, 0, 0, 0.05), 0 -2px rgba(0, 0, 0, 0.05) inset;
-  background: -moz-linear-gradient(center top, rgba(255, 255, 255, 0) 50%, rgba(0, 0, 0, 0.03) 0%) repeat scroll 0 0 white;
-  background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(white), to(rgba(0, 0, 0, 0.03)), color-stop(0.5, rgba(255, 255, 255, 0)), color-stop(0.5, rgba(0, 0, 0, 0.03))) repeat scroll 0 0 white;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#ededed',GradientType=0 );
-  /* ie */
-  border: 1px solid #afafaf;
+  behavior: url('/stylesheets/PIE.htc');
+  position: relative;
+  -moz-border-radius: 3px 3px 3px 3px;
+  -webkit-border-radius: 3px 3px 3px 3px;
+  -o-border-radius: 3px 3px 3px 3px;
+  -ms-border-radius: 3px 3px 3px 3px;
+  -khtml-border-radius: 3px 3px 3px 3px;
+  border-radius: 3px 3px 3px 3px;
+  -moz-box-shadow: inset 0px -2px 0px rgba(0, 0, 0, 0.05);
+  -webkit-box-shadow: inset 0px -2px 0px rgba(0, 0, 0, 0.05);
+  box-shadow: inset 0px -2px 0px rgba(0, 0, 0, 0.05);
+  -moz-box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 0px;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 0px;
+  box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 0px;
+  background: white;
+  background: -moz-linear-gradient(top, white 0%, #efefef 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, white), color-stop(100%, #efefef));
+  background: linear-gradient(#ffffff, #efefef);
+  behavior: url('/stylesheets/PIE.htc');
+  position: relative;
+  background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #ffffff), color-stop(100%, #efefef));
+  background: -webkit-linear-gradient(#ffffff, #efefef);
+  background: -moz-linear-gradient(#ffffff, #efefef);
+  background: -o-linear-gradient(#ffffff, #efefef);
+  -pie-background: linear-gradient(#ffffff, #efefef);
+  background: linear-gradient(#ffffff, #efefef);
+  border: 1px solid #cfcfcf;
   cursor: pointer;
 }
 .button {
@@ -564,7 +595,6 @@ button.positive, .buttons a.positive {
 
 .button:hover {
   background: #eee;
-  border-color: rgba(0, 0, 0, 0.3);
 }
 
 .button.selected {

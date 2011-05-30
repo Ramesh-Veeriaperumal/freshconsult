@@ -52,11 +52,20 @@ class SearchController < ApplicationController
       end
     end
     
+    def get_visibility(f_classes)        
+      if ([Solution::Article] == f_classes)        
+        Solution::Folder.get_visibility_array(current_user)
+      else        
+        get_visibility_array
+      end      
+    end
+    
+    
     def search_content(f_classes)
       s_options = { :account_id => current_account.id }
       s_options.merge!(:is_public => true) unless (current_user && !current_user.customer?)
       s_options.merge!(:category_id => params[:category_id]) unless params[:category_id].blank?
-      s_options.merge!(:visibility => get_visibility_array) 
+      s_options.merge!(:visibility => get_visibility(f_classes)) 
       
       @items = ThinkingSphinx.search params[:search_key], 
                                     :with => s_options,#, :star => true

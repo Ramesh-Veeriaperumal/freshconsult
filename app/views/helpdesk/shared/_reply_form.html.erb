@@ -1,44 +1,54 @@
 <div class="request_panel" id="<%=cntid%>" style="display:none;">
   <% form_for note, :html => {:multipart => true, :id => "HelpdeskReply" } do |f| %>
     <%= f.error_messages %>
-		<ul class="ui-form dont-validate">			
-    	<li datafor="email">
-				<%= content_tag( :h3, t("ticket.reply_form.form_title"), :class => "title" ) %>
-				<%= f.label(:reply_email, t("ticket.reply_form.reply_email_id") ) %>
-				<%= select :reply_email, :id, options_for_select(@reply_email, @ticket.reply_email) %>
+		<ul class="ui-form dont-validate">
+			<li class="inline-field">
+				<%= content_tag( :h3, t("ticket.reply_form.form_title"), :class => "title" ) %>				
+				<%= f.label(:reply_email, "From:", :class => "caption" ) %>
+				<div class="fields">
+					<!-- <div class="action_buttons">
+						<%= link_to_function( "Add Cc", "jQuery('#cc-form-container').show(); jQuery(this.parentNode).hide();" ) %>
+					</div> -->
+					<%= select :reply_email, :id, options_for_select(@reply_email, @ticket.reply_email) %>
+					<div class="info-data">
+						<% t("ticket.reply_form.reply_email_id") %>						
+					</div>
+				</div>
 			</li>
-			<li>
-				<%= f.label(:body, t("enter_message"), :for =>"#{id}-#{cntid}-body", :class => "overlabel" ) %>
-				<%= f.text_area :body, { :class => 'auto-expand required', :id => "#{id}-#{cntid}-body" , :value => @signature} %>
+			<!-- <li class="inline-field" id="cc-form-container" style="display:block;">
+				<label class="caption">Cc:</label>
+				<%= hidden_field_tag :include_cc %> 
+				<div class="fields">
+					<%= text_field_tag :cc_emails, ( @ticket.cc_email.join(",") unless @ticket.cc_email.blank? ), :class => "text" %>
+				</div>
+			</li> -->
+			<li class="inline-field">
+				<label class="caption">Message:</label>
+				<div class="fields">
+					<%= f.text_area :body, { :class => 'auto-expand required', :id => "#{id}-#{cntid}-body" , :value => @signature} %>
+				</div>
 			</li>
-			
-			<!--
-			<% unless @ticket.cc_email.blank? %>
-				<li datafor="ccemail">
-					<label id = "cc_label">
-						<%= check_box_tag :include_cc %> CC: <%= text_field_tag :cc_emails, @ticket.cc_email.join(","), :class => "textInput small" %>
-						
-					</label>
+				<% if !@ticket.ticket_topic.nil? and !(@ticket.ticket_topic.topic.locked) %>
+				<li class="inline-field">
+					<div class="fields">
+						<label>
+							<%= check_box_tag :post_forums %> <%= t("ticket.reply_form.post_to_linked_forum") %>
+						</label>
+					</div>
 				</li>
-			<%end%>	-->
-			
-			<% if !@ticket.ticket_topic.nil? and !(@ticket.ticket_topic.topic.locked) %>
-				<li datafor="posts">
-					<label>
-						<%= check_box_tag :post_forums %> <%= t("ticket.reply_form.post_to_linked_forum") %>
-					</label>
-				</li>
-			<%end%>	
-			<!-- reply will be always public -->
-				<%=f.hidden_field :private , :value => false %>		
-			<!--reply source will be always email-->
-			<%=f.hidden_field :source , :value=>Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["email"]%>
-			<li class="attachment-options" id="attachment-options-reply">
-			<% unless local_assigns[:no_attachments] %>
-				<%= render :partial => "/helpdesk/shared/attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note" } %>
-		  <% end %>
+				<% end %>
+				<!-- reply will be always public -->
+				<%= f.hidden_field :private , :value => false %>		
+				<!--reply source will be always email-->
+				<%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["email"]%>
+			<li class="inline-field">
+				<div class="attachment-options fields" id="attachment-options-reply">
+					<% unless local_assigns[:no_attachments] %>
+						<%= render :partial => "/helpdesk/shared/attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note" } %>
+				  <% end %>
+				</div>
 			</li>
-			<li class="alignright">
+			<li class="button-container">
       		<%= submit_tag(local_assigns[:submit] || ActiveSupport::Inflector.titleize(id), :class => "uiButton" ) %>
     	</li>      
 		</ul> 	
@@ -51,7 +61,51 @@
         toggleMode: true,
         pages: ['attachment-options-reply']
       });	
-	  jQuery("#HelpdeskReply").validate();	   
-    }); 
+			jQuery("#HelpdeskReply")
+				.validate({
+					onkeyup: false,
+					focusCleanup: true,
+					focusInvalid: false,
+					errorPlacement: function(error, element) {
+							console.log(element.attr("name"));
+					     if (element.attr("name") === "cc_emails")
+					       error.insertAfter("#as-selections-cc_emails");
+					     else
+					       error.insertAfter(element);
+					   },
+					}); 		
+			
+			jQuery("#cc_emails").rules("add", {
+				email: true,
+				messages: {
+					email: "One or more of the emails that you have entered are invalid",
+				}
+			});
+			
+			data = {items: [
+				{value: "", name: ""}
+			]};
+			/*
+			jQuery("#cc_emails")
+				.autoSuggest(
+						data.items, 
+						{selectedItemProp: "name", 
+						 searchObjProps: "name",
+						 startText: "",
+						 showResultList: false,
+						 asHtmlID: "cc_emails",
+						 selectionAdded: function(elem){
+						 var test_email =
+/^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i.test(jQuery("#cc_emails").val());
+						 if(!test_email)
+							elem.remove();
+
+						 },
+						 selectionClick: function(elem){ 
+							console.log();
+						 }
+						});
+					*/
+		}); 
   <% end %>
 <% end %>

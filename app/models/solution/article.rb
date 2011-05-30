@@ -29,10 +29,11 @@ class Solution::Article < ActiveRecord::Base
     indexes :title, :sortable => true
     indexes :desc_un_html, :as => :description
 
-    has account_id, user_id, is_public
+    has account_id, user_id
     has folder.category_id, :as => :category_id
     has '0', :as => :deleted, :type => :boolean
-    has ['1','2','3'], :as => :visibility, :type => :integer
+    has '1', :as => :is_public, :type => :boolean
+    has folder.visibility , :as => :visibility, :type => :integer
 
     set_property :delta => :delayed
     set_property :field_weights => {
@@ -42,7 +43,7 @@ class Solution::Article < ActiveRecord::Base
   end
 
   after_create :create_activity
-  attr_accessible :title,:description,:status,:status,:art_type,:is_public
+  attr_accessible :title,:description,:status,:status,:art_type
   
   validates_presence_of :title, :description, :user_id , :account_id
   validates_length_of :title, :in => 3..240
@@ -79,7 +80,7 @@ class Solution::Article < ActiveRecord::Base
  SORT_FIELD_OPTIONS = SORT_FIELDS.map { |i| [i[1], i[0]] }    
  SORT_SQL_BY_KEY = Hash[*SORT_FIELDS.map { |i| [i[0], i[2]] }.flatten]
  
- named_scope :visible, :conditions => ['is_public = ? AND status = ?', true, STATUS_KEYS_BY_TOKEN[:published]] 
+ named_scope :visible, :conditions => ['status = ?',STATUS_KEYS_BY_TOKEN[:published]] 
     
   def type_name
     TYPE_NAMES_BY_KEY[art_type]

@@ -65,8 +65,7 @@ class AccountsController < ApplicationController
     end     
   end
   
-  def create_account_google
-   
+  def create_account_google   
     params[:plan] = SubscriptionPlan::SUBSCRIPTION_PLANS[:premium]
     build_object
     build_user
@@ -79,15 +78,10 @@ class AccountsController < ApplicationController
     else
       @call_back_url = params[:call_back]
       render :action => :signup_google 
-    end
-    
+    end    
   end
-  
-  
-  
 
-  def openid_complete
-	  
+  def openid_complete	  
 	  data = Hash.new
 	  resp = request.env[Rack::OpenID::RESPONSE]    
     logger.debug "The resp.status is :: #{resp.status}"    
@@ -124,8 +118,8 @@ class AccountsController < ApplicationController
     @account = get_account_for_sub_domain
     if @account.blank?      
       set_account_values
-      flash[:notice] = "There is no sub-domain like this. please enter again"
-      render  :signup_google and return
+      flash.now[:error] = "There is no subdomain like this. Please try again."
+      render :signup_google and return
     end
     open_id_user = verify_open_id_user @account
     unless open_id_user.blank?
@@ -134,11 +128,11 @@ class AccountsController < ApplicationController
             redirect_to @call_back_url+"&EXTERNAL_CONFIG=true"
          end        
        else
-         flash[:notice] = "You don't have sufficient privilage to change this. Please login as Administrator..!!"
+         flash.now[:error] = "You don't have sufficient privilage to change this. Please login as Administrator !!!"
          render :associate_google         
        end
     else      
-      flash[:notice] = "Please enter your login credentials"
+      #flash[:notice] = "Please enter your login credentials"
       render :associate_google
     end
   end
@@ -179,7 +173,7 @@ class AccountsController < ApplicationController
          render :associate_google         
        end     
     else       
-      flash[:notice] = "Couldn't log you in . Please verify your credentials"
+      flash[:notice] = "Couldn't log you in. Please verify your credentials"
       render :associate_google
     end
     
@@ -194,8 +188,7 @@ class AccountsController < ApplicationController
     @current_user = account.all_users.find_by_email(email) if @current_user.blank?    
   end
  
-  def create
-    
+  def create    
     @account.affiliate = SubscriptionAffiliate.find_by_token(cookies[:affiliate]) unless cookies[:affiliate].blank?
 
     if @account.needs_payment_info?
@@ -405,7 +398,7 @@ class AccountsController < ApplicationController
   end
     
     def choose_layout 
-      (action_name == "openid_complete" || action_name == "create_account_google") ? 'signup_google' : 'helpdesk/default'
+      (action_name == "openid_complete" || action_name == "create_account_google" || action_name == "associate_local_to_google" || action_name == "associate_google_account") ? 'signup_google' : 'helpdesk/default'
 	  end
 	
     def load_object

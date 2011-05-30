@@ -20,7 +20,7 @@ javascripts:
     - public/javascripts/framworks/jquery.validate.js
     - public/javascripts/framworks/jquery.autoresize.js
     - public/javascripts/framworks/jquery.qtip.js
-    - public/javascripts/framworks/jquery.tmpl.js
+    - public/javascripts/framworks/jquery.autoSuggest.js
   workspace: 
     - public/javascripts/utils.js
     - public/javascripts/factory_ui.js
@@ -43,8 +43,10 @@ stylesheets:
     - public/stylesheets/buttons.css
     - public/stylesheets/jquery-ui.css
     - public/stylesheets/jquery.qtip.css
-    - public/stylesheets/ie.css 
-  
+    - public/stylesheets/jquery-autosuggest.css
+    - public/stylesheets/ie.css
+    - public/stylesheets/pie.css
+
   widget:
     - public/stylesheets/reset.css   
     - public/stylesheets/defaults.css

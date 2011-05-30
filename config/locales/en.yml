@@ -36,7 +36,7 @@ en:
     close_btn_title: Close this ticket
     close_btn: Close
     reported_by: Reported by %{requester}
-    reply_form: 
+    reply_form:
       post_to_linked_forum: Post in linked forum
       form_title: Reply to the conversation
       reply_email_id: Send the reply from the following email id

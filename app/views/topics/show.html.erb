@@ -133,10 +133,9 @@
 					<% @posts.each do |post| %>
 						<% unless (post == first_post) %>
 							<%= render :partial => "forum_shared/post", :object => post %>
-							<%= content_tag (:span, "", :class => "seperator") unless ( post == @topic.last_post ) %>
 							<ul class="attachment_list">
 	   							<%= render :partial => '/helpdesk/shared/attachment', :collection => post.attachments, :locals => {:show_delete => true, :url => [post] } %>
-    					 	</ul>
+    					</ul>
 						<% end %>
 						<%= will_paginate @posts %>
 					<% end %> 

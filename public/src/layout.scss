@@ -234,7 +234,6 @@ div.bg_pulp{
 
 a.new_ticket, .nav_search div.search_bar{
 	@include shadows(#777777, 0px, 0px, 2px);
-	@include pie;
 	@include corners(4px);  
 	margin-top:2px;
 } 

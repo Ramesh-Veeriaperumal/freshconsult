@@ -627,7 +627,7 @@ body h5{
 		top:-18px;
 		border:1px solid #d3d497;
 		@include vertical-gradient(#FEFEDF, #FBFD90);
-		filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#FEFEDF', endColorstr='#FBFD90',GradientType=0 ); /* ie */
+		
 		img{
 			position:absolute;
 			left:-6px;
@@ -1243,24 +1243,10 @@ a.request_bt:hover{
 	
 }
 
-.help_text{
-	padding:6px 0px 4px 0px;
-	a{
-		text-decoration:none;
-		color:#336699;
-	}
-}
-
-.assign-agent{
-	
-}
-
 h4.list_title{
 	margin:3px 8px; 
 	padding:0px;
 }
-
-
 
 .forums{
 	border:1px solid #efefef;
@@ -2611,11 +2597,6 @@ a.page_title{
 			color: #888888; 
 		}
 	}
-	li.active{ 
-		a{ 
-			@include link-colors(#4D769F, #3399cc, #4D769F, #4D769F);
-		}
-	}
 }
 
 .artical_section{
@@ -3054,7 +3035,7 @@ div.addReminder{
 	color: #777;
 	font-size:12px; 
 	line-height: 17px;
-	margin-top: -8px;
+	margin-top: -6px;
 	margin-bottom:10px;
 }
 
@@ -3068,22 +3049,22 @@ div.addReminder{
 
 .tickets-container{
 	margin:0px -20px;
-	padding:0px;
+	padding:0px 0px 0px 0px;
 }
 
-.ticket-header{ 
+.ticket-header{
 	background-image:url(../images/overlay-button.png);
 	background-color:#f8f8f8;
 	background-repeat:repeat-x;
 	background-position:bottom; 
 	border:1px solid #dfdfdf;
-	border-width:1px 0px;
+	border-width:1px 0px; 
 }
 
 .tickets, .tickets-expanded{
-	width:100%; 
-	color:#5f5f5f; 
-	border-top:1px solid #f4f4f4;
+	width:100%;
+	color:#5f5f5f;
+	border-top:1px solid #f4f4f4; 
 	th{
 		background:none;
 		padding:6px 6px 5px 6px;
