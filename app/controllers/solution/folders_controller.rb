@@ -8,7 +8,7 @@ class Solution::FoldersController < ApplicationController
   
   def index        
     current_category  = current_account.solution_categories.find(params[:category_id])
-    @folders = current_category.folders.all   
+    @folders = current_category.folders.visible(current_user).all   
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @folders }
