@@ -51,6 +51,9 @@ class Forum < ActiveRecord::Base
   format_attribute :description
   
   attr_accessible :name,:description, :description_html, :forum_type ,:import_id, :forum_visibility
+  
+   after_save :set_topic_delta_flag
+  
   #validates_inclusion_of :forum_visibility, :in => VISIBILITY_KEYS_BY_TOKEN.values.min..VISIBILITY_KEYS_BY_TOKEN.values.max
   
   
@@ -90,6 +93,13 @@ class Forum < ActiveRecord::Base
     return true if self.forum_visibility == VISIBILITY_KEYS_BY_TOKEN[:anyone]
     return true if (user and (self.forum_visibility == VISIBILITY_KEYS_BY_TOKEN[:logged_users]))
     return true if (user and user.has_manage_forums? and (self.forum_visibility == VISIBILITY_KEYS_BY_TOKEN[:agents]) )
+  end
+  
+  def set_topic_delta_flag
+    self.topics.each do |topic|
+      topic.delta = true
+      topic.save
+    end
   end
    
 end
