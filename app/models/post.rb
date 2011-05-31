@@ -1,6 +1,6 @@
 class Post < ActiveRecord::Base
   def self.per_page() 25 end
-  validates_presence_of :user_id, :body, :topic
+  validates_presence_of :user_id, :body_html, :topic
   
   belongs_to :forum
   belongs_to :user
@@ -13,13 +13,14 @@ class Post < ActiveRecord::Base
     :class_name => 'Helpdesk::Attachment',
     :dependent => :destroy
 
-  format_attribute :body
+  #format_attribute :body
   before_create { |r| r.forum_id = r.topic.forum_id }
+  before_save :set_body_content
   after_create  :update_cached_fields,:monitor_reply
   after_destroy :update_cached_fields
 
   
-  attr_accessible :body	
+  attr_accessible :body_html	
 	
   def editable_by?(user)
     user && (user.id == user_id || user.has_manage_forums? || user.moderator_of?(forum_id))
@@ -43,5 +44,11 @@ class Post < ActiveRecord::Base
       Forum.update_all ['posts_count = ?', Post.count(:id, :conditions => {:forum_id => forum_id})], ['id = ?', forum_id]
       User.update_posts_count(user_id)
       topic.update_cached_post_fields(self)
+  end
+    def set_body_content        
+      self.body = (self.body_html.gsub(/<\/?[^>]*>/, "")).gsub(/&nbsp;/i,"") unless self.body_html.empty?
     end
+  
+  
+  
 end
