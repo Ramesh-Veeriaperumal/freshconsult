@@ -30,7 +30,7 @@ module Admin::HomeHelper
                                     ['/admin/business_calendars',   'business-hours',   feature?(:business_hours)        ]
                     ]],
                     [ t(".everything_else"), [
-                                    ['/account',                    'account-settings'        ],
+                                    ['/account',                    'account-settings'  , current_user.account_admin?      ],
                                     ['/admin/portal',               'customer-portal'         ],
                                     ['/admin/widget_config',        'feedback'                ],
                                     ['/agents',                     'agent'                   ],

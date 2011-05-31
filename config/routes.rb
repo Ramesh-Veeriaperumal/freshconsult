@@ -42,7 +42,7 @@ ActionController::Routing::Routes.draw do |map|
   
   #map.register '/register', :controller => 'users', :action => 'create'
   #map.signup '/signup', :controller => 'users', :action => 'new'
-  map.resources :users, :member => { :delete_avatar => :delete }
+  map.resources :users, :member => { :delete_avatar => :delete, :change_account_admin => :put }
   map.resource :user_session
   map.register '/register/:activation_code', :controller => 'activations', :action => 'new'
   map.activate '/activate/:id', :controller => 'activations', :action => 'create'

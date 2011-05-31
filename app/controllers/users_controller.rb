@@ -6,6 +6,10 @@ class UsersController < ApplicationController
   before_filter :set_selected_tab
   skip_before_filter :load_object , :only => [ :show, :edit]
   
+  before_filter :only => :change_account_admin do |c| 
+    c.requires_permission :manage_account
+  end
+  
   ##redirect to contacts
   def index
     redirect_to contacts_url
@@ -48,6 +52,26 @@ class UsersController < ApplicationController
     load_object
     @user.avatar.destroy
     render :text => "success"
+  end
+  
+  def change_account_admin 
+    pre_owner_saved, new_owner_saved = false, false    
+    User.transaction do
+      if current_account.account_admin.id != params[:account_admin].to_i
+        @pre_owner = current_account.account_admin
+        @pre_owner.user_role =  User::USER_ROLES_KEYS_BY_TOKEN[:admin]
+        @new_owner = current_account.admins.find(params[:account_admin])
+        @new_owner.user_role =  User::USER_ROLES_KEYS_BY_TOKEN[:account_admin]
+        pre_owner_saved = @pre_owner.save 
+        new_owner_saved = @new_owner.save 
+      end
+    end
+    if pre_owner_saved and new_owner_saved
+      flash[:notice] = "Account admin has been updated!"
+      redirect_to admin_home_index_url
+    else
+      redirect_to account_url
+    end
   end
 
  
