@@ -67,7 +67,7 @@ class UsersController < ApplicationController
       end
     end
     if pre_owner_saved and new_owner_saved
-      flash[:notice] = "Account admin has been updated!"
+      flash[:notice] = t('account_admin_updated')
       redirect_to admin_home_index_url
     else
       redirect_to account_url

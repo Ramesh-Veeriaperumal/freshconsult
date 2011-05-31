@@ -76,10 +76,10 @@
   <% end %>
   <li class="inline-field">
   	<%form_tag (:action => 'change_account_admin' , :controller => :users,:method => :put) do %>
-  	<%= content_tag(:label,"Account admin", :class => "caption") %> 
+  	<%= content_tag(:label,t('account_admin'), :class => "caption") %> 
 	<div class="fields"> 
   		<div class="action_buttons">        
-            <%= submit_tag 'Change' %>
+            <%= submit_tag t('change') %>
         </div>
 		<%= select_tag :account_admin, options_from_collection_for_select(current_account.all_admins, :id, :name_email,current_account.account_admin.id) %>
         

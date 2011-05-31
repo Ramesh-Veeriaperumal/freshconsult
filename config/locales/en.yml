@@ -677,3 +677,5 @@ en:
   forgot_password_intro: Fill out the form below and instructions to reset your password will be emailed to you
   last_name: Last Name
   zip: Zip
+  account_admin: Account admin
+  account_admin_updated: Account admin has been updated!
