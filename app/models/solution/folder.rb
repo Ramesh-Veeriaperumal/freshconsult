@@ -6,32 +6,34 @@ class Solution::Folder < ActiveRecord::Base
   
   belongs_to :category, :class_name => 'Solution::Category'
   set_table_name "solution_folders"
-   
-   has_many :articles, :class_name =>'Solution::Article' , :dependent => :destroy
-   
-   named_scope :alphabetical, :order => 'name ASC'
-   
+  
+  after_save :set_article_delta_flag
+  
+  has_many :articles, :class_name =>'Solution::Article' , :dependent => :destroy
+  
+  named_scope :alphabetical, :order => 'name ASC'
+  
   VISIBILITY = [
-    [ :anyone,   "Anyone",     1 ], 
-    [ :logged_users,"Logged In Users", 2 ],
-    [ :agents, "Agents",      3 ]
+  [ :anyone,   "Anyone",     1 ], 
+  [ :logged_users,"Logged In Users", 2 ],
+  [ :agents, "Agents",      3 ]
   ]
-
+  
   VISIBILITY_OPTIONS = VISIBILITY.map { |i| [i[1], i[2]] }
   VISIBILITY_NAMES_BY_KEY = Hash[*VISIBILITY.map { |i| [i[2], i[1]] }.flatten] 
   VISIBILITY_KEYS_BY_TOKEN = Hash[*VISIBILITY.map { |i| [i[0], i[2]] }.flatten] 
-   
+  
   validates_inclusion_of :visibility, :in => VISIBILITY_KEYS_BY_TOKEN.values.min..VISIBILITY_KEYS_BY_TOKEN.values.max
   
   
-   
-   def self.folders_for_category category_id
-     
-     self.find_by_category_id(category_id)
-     
-   end
-   
- def self.find_all_folders(account)   
+  
+  def self.folders_for_category category_id
+    
+    self.find_by_category_id(category_id)
+    
+  end
+  
+  def self.find_all_folders(account)   
     self.find(:all).select { |a| a.account_id.eql?(account) }
   end
   
@@ -42,16 +44,23 @@ class Solution::Folder < ActiveRecord::Base
   end
   
   def self.get_visibility_array(user)   
-      vis_arr = Array.new
-      if user && user.has_manage_solutions?
-        vis_arr = VISIBILITY_NAMES_BY_KEY.keys
-      elsif user
-        vis_arr = [VISIBILITY_KEYS_BY_TOKEN[:anyone],VISIBILITY_KEYS_BY_TOKEN[:logged_users]]
-      else
-        vis_arr = [VISIBILITY_KEYS_BY_TOKEN[:anyone]]   
-      end
+    vis_arr = Array.new
+    if user && user.has_manage_solutions?
+      vis_arr = VISIBILITY_NAMES_BY_KEY.keys
+    elsif user
+      vis_arr = [VISIBILITY_KEYS_BY_TOKEN[:anyone],VISIBILITY_KEYS_BY_TOKEN[:logged_users]]
+    else
+      vis_arr = [VISIBILITY_KEYS_BY_TOKEN[:anyone]]   
+    end
   end
   
   named_scope :visible, lambda{|user| {:conditions => {:visibility =>self.get_visibility_array(user)} }}
+  
+  def set_article_delta_flag
+    self.articles.each do |article|
+      article.delta = true
+      article.save
+    end
+  end
   
 end
