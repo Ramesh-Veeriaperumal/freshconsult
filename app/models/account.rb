@@ -40,6 +40,7 @@ class Account < ActiveRecord::Base
   
   has_one :account_admin, :class_name => "User", :conditions => { :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:account_admin] } #has_one ?!?!?!?!
   has_many :admins, :class_name => "User", :conditions => { :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:admin] } ,:order => "created_at"
+  has_many :all_admins, :class_name => "User", :conditions => ["user_role in (?,?) and deleted = ?", User::USER_ROLES_KEYS_BY_TOKEN[:admin],User::USER_ROLES_KEYS_BY_TOKEN[:account_admin],false] ,:order => "name desc"
   
   has_one :subscription, :dependent => :destroy
   has_many :subscription_payments

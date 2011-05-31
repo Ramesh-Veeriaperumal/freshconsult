@@ -153,6 +153,10 @@ class User < ActiveRecord::Base
   def agent?
     user_role == USER_ROLES_KEYS_BY_TOKEN[:poweruser]
   end
+  
+  def account_admin?
+    user_role == USER_ROLES_KEYS_BY_TOKEN[:account_admin]
+  end
 
   #Savage_beast changes end here
 
@@ -169,6 +173,10 @@ class User < ActiveRecord::Base
   
   def permission?(p)
     role[:permissions][p]
+  end
+  
+  def name_email
+    "#{name} <#{email}>"
   end
 
   def self.find_all_by_permission(account, p)

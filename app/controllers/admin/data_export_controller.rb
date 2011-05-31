@@ -1,5 +1,6 @@
 class Admin::DataExportController < Admin::AdminController
-
+  
+  before_filter { |c| c.requires_permission :manage_account }
   before_filter :check_export_status, :only => :export
 
   def check_export_status

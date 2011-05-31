@@ -1,5 +1,6 @@
 <% content_for :sidebar do -%><%- end %>
 
+
 <h3 class= "title"><%= @page_title = t('.account_settings') %></h3>
 <ul class="ui-form">
 	<li class="inline-field">
@@ -73,6 +74,19 @@
       </div>
   	</li>
   <% end %>
+  <li class="inline-field">
+  	<%form_tag (:action => 'change_account_admin' , :controller => :users,:method => :put) do %>
+  	<%= content_tag(:label,"Account admin", :class => "caption") %> 
+	<div class="fields"> 
+  		<div class="action_buttons">        
+            <%= submit_tag 'Change' %>
+        </div>
+		<%= select_tag :account_admin, options_from_collection_for_select(current_account.all_admins, :id, :name_email,current_account.account_admin.id) %>
+        
+      </div>
+	<%end-%>
+	
+  </li>
 	<!-- <li><%= link_to('Cancel plan', cancel_account_url) %></li> -->
 </ul>
  
