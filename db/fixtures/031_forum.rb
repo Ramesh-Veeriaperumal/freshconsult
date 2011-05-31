@@ -17,7 +17,8 @@ Forum.seed_many(:account_id, :forum_category_id, :name, [
       :forum_category_id => category.id,
       :name => f[0],
       :description => f[1],
-      :forum_type => Forum::TYPE_KEYS_BY_TOKEN[f[2]]
+      :forum_type => Forum::TYPE_KEYS_BY_TOKEN[f[2]],
+      :forum_visibility => Forum::VISIBILITY_KEYS_BY_TOKEN[:anyone]
     }
   end
 )
