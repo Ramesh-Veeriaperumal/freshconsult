@@ -1,3 +1,5 @@
+<%= include_tiny_mce_if_needed %>
+
 <% content_for :head do %>
   <%= javascript_include_tag "helpdesk/page_switcher" %>
   <% javascript_tag do %>
@@ -17,9 +19,9 @@
 	<li>
 		<label for="topic_body"><%= t('message') %></label>
 		<% if @topic.new_record? %>
-			<%= form.text_area :body, :rows => 12, :tabindex => 20%>	
+			<%= form.text_area  :body_html, :class => "mceEditor", :id => 'topic_body' %>
 		<% else %>
-			<%= form.text_area :body, :rows => 12, :tabindex => 20, :value => @topic.posts.first.body , :class => "required text"%>
+			<%= form.text_area :body_html, :rows => 12, :tabindex => 20, :value => @topic.posts.first.body_html , :class => "mceEditor"%>
 		<% end %>
 	</li>
 	<% if admin? and not @topic.new_record? %>
@@ -39,7 +41,7 @@
 		<% end %>
 		<% if ["new"].include? params[:action] %>
 			<label id="monitor-topic-lable">
-				<%=check_box_tag 'monitor'%> Monitor this topic
+				<%=check_box_tag 'monitor', '',true%> Monitor this topic
 			</label>
 		<%end%>
 	</li>	  

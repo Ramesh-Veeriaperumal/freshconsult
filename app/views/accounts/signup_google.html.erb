@@ -40,7 +40,13 @@
 	}
 <% end %>
  
- 
+<%
+cancel_url = "https://www.google.com/a/cpanel/"+@google_domain
+
+ if @call_back_url
+    cancel_url = @call_back_url+"&EXTERNAL_CONFIG=true"
+ end
+%>
 
 	<div class="ui-form" id="signup-form">
 	<h3 class="title">
@@ -72,7 +78,7 @@
 				</li>
 				<li class="button-container">
 					<%= submit_tag "Create my account", :class => "uiButton floatl" %>					
-					<%= link_to t("cancel"), @call_back_url+"&EXTERNAL_CONFIG=true", :class => "uiButton" %>
+					<%= link_to t("cancel"), cancel_url , :class => "uiButton" %>
 				</li>
 			  <li>
 			  		<span class="seperator"></span>
@@ -107,7 +113,7 @@
 					</li>				
 					<li class="button-container">
 						<%= submit_tag "Submit", :class => "uiButton floatl" %>
-						<%= link_to t("cancel"), @call_back_url+"&EXTERNAL_CONFIG=true", :class => "uiButton" %>
+						<%= link_to t("cancel"), cancel_url , :class => "uiButton" %>
 					</li>
 				</ul>
 		<% end %>	

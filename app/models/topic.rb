@@ -56,7 +56,7 @@ class Topic < ActiveRecord::Base
   
   attr_accessible :title,:stamp_type
   # to help with the create form
-  attr_accessor :body
+  attr_accessor :body_html
   
   IDEAS_STAMPS = [
     [ :planned,   "Planned",   1 ], 
