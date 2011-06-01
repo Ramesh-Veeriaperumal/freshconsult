@@ -19,19 +19,17 @@
     $br: $tl; }
   @if $bl == nil {
     $bl: $tl; }
-
-  @include pie; // Because $pie-base-class is set, this results in an extend of .pie-element. 
-  @include border-radius($tl $tr $br $bl);
+  -moz-border-radius: $tl $tr $br $bl;
+  -webkit-border-radius: $tl $tr $br $bl;
+  border-radius: $tl $tr $br $bl;
 }
 
 @mixin vertical-gradient($start: black, $end: #cccccc) {
+  @include filter-gradient($start, $end);
+  /* Fallback: */
   background: $start;
-  background: -moz-linear-gradient(top, $start 0%, $end 100%);
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, $start), color-stop(100%, $end));
-  background: linear-gradient($start, $end);
-  
-  @include pie; // Because $pie-base-class is set, this results in an extend of .pie-element.
-  @include background(linear-gradient($start, $end));
+	/* CSS 3 plus vendor prefixes: */
+  @include background-image(linear-gradient($start, $end));
 }
 
 @mixin wrap(){

@@ -96,11 +96,11 @@
   <%= form_tag "", :method => :put, :style=> 'display: none', :id => 'accept-form' do end %>
 
   <div id="pages" class="tickets-container">  
-  	  <% if @items.nil? || @items.empty? %>
-	      	<div class="ticket-header">
-	      		<div class="list-noinfo"><%= t('helpdesk.tickets.views.no_tickets') %></div>
-	      	</div>
-	  <% else %>
+		<% if @items.nil? || @items.empty? %>
+			<div class="ticket-header">
+				<div class="list-noinfo"><%= t('helpdesk.tickets.views.no_tickets') %></div>
+			</div>
+		<% else %>
 	  	<div class="ticket-header">
 	      <table class="tickets" width="100%">
 	      	<thead>

@@ -1,73 +1,54 @@
 <%= include_tiny_mce_if_needed %>
 
 <% content_for :head do %>
-
   <%= javascript_include_tag "helpdesk/page_switcher" %>
   <% javascript_tag do %>
     document.observe("dom:loaded", function(){
-
       new Helpdesk.PageSwitcher({
         toggleMode: true,
         pages: ['attachment-options']
       });
-
     });
   <% end %>
 <% end %>
 
-<!--%logger.debug " here is the folder deta:: #{@article.folder.inspect}"%--> 
-  <%= f.error_messages %>
+	<%= f.error_messages %>
 	<ul class="ui-form">
 		<li>
     		<%= f.label(:title, t('title')) %>
-    		<%= f.text_field :title, :class => "required" %>
+    		<%= f.text_field :title, :class => "text required" %>
+		</li>
+		<li>
     		<%= f.text_area  :description, :class => "mceEditor", :id => 'article-body' %>		
 		</li>
-		 <!--li>
-		 	<a href="#" id="attachment-options-link">Attach a File</a>
-			<div class="attachment-options" id="attachment-options" style="display:none">
-	        <label>Select a file</label>
-	        <input type="file" id="attachment_file" name="emptyfile" nameWhenFilled="helpdesk_article[attachments][][file]" fileList="attachment-list" sendFocusTo="article-body" />
-	
-	        <table class="attachments">
-	          <tbody id="attachment-list">
-	          </tbody>
-	        </table>
-	      </div>	
-		</li-->
-		
 		<li>
 			<%= render :partial=> "/solution/shared/attachment_form" %>
 		</li>
 		
 		
-	 <div class="attachment-list-container">
-	    <%= content_tag('h5', 'Attachments') unless @article.attachments.empty? %>
-	    <table class="attachment-list">
+	 <li class="attachment-list-container">
+	    <%= content_tag('h4', 'Attachments', :class => "title") unless @article.attachments.empty? %>
+	    <ul class="attachment_list">
 	      <%= render(
 	        :partial => '/helpdesk/shared/attachment', 
 	        :collection => @article.attachments,
 	        :locals => {:show_delete => true, :url => [@article] }) %>
-	    </table>
-	  </div>
-			
+	    </ul>
+	  </li>
 		<% fields_for :tags  do |tag| %>
 		<li>
-			<!--label>Tags</label>
-			<input type="text" /-->
 			<%= tag.label(:name, t('tag.title')) %>
-    		<%= tag.text_field :name , :value => @article.tags.collect{|tg| tg.name+"," }%>
+			<%= tag.text_field :name , :value => @article.tags.collect{|tg| tg.name+"," }%>
 		</li>
-		<%end%>
-		
-		<li class="small">
-        	<%= f.label :art_type, t('solution.type') %>
-        	<%= f.select :art_type, Solution::Article::TYPE_OPTIONS, :class => "select" %>
-        </li>	
-		<li class="small">
-          	<%= f.label :status, t('solution.status') %>
-          	<%= f.select :status, Solution::Article::STATUS_OPTIONS, :class => "select" %>
-        </li>
+		<%end%>		
+		<li class="dropdown">
+			<%= f.label :art_type, t('solution.type') %>
+			<%= f.select :art_type, Solution::Article::TYPE_OPTIONS, :class => "select" %>
+		</li>	
+		<li class="dropdown">
+			<%= f.label :status, t('solution.status') %>
+			<%= f.select :status, Solution::Article::STATUS_OPTIONS, :class => "select" %>
+		</li>
 	</ul>
 	
  
