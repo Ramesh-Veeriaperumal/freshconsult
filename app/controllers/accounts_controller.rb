@@ -122,7 +122,7 @@ class AccountsController < ApplicationController
     @account = get_account_for_sub_domain
     if @account.blank?      
       set_account_values
-      flash.now[:error] = "There is no subdomain like this. Please try again."
+      flash.now[:error] = t(:'flash.g_app.no_subdomain')
       render :signup_google and return
     end
     open_id_user = verify_open_id_user @account
@@ -134,7 +134,7 @@ class AccountsController < ApplicationController
             redirect_to rediret_url            
          end        
        else
-         flash.now[:error] = "You don't have sufficient privilage to change this. Please login as Administrator !!!"
+         flash.now[:error] = t(:'flash.general.insufficient_privilege.admin')
          render :associate_google         
        end
     else      

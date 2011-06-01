@@ -154,6 +154,7 @@ en:
     g_app: 
       user_deleted: User is deleted!
       authentication_failed: Authentication Failed
+      no_subdomain: There is no subdomain like this. Please try again.
     sso: 
       update: 
         success: Your account details have been updated.
