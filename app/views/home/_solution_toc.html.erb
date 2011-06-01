@@ -4,7 +4,7 @@
 		<div>
 			<%= category.description %>
 		</div> 
-		<% category.folders.each do |folder| %>
+		<% category.folders.visible(current_user).each do |folder| %>
 			<span class="seperator"></span>
 			<h4 class="title"><%=folder.name%></h4>
 			<div>
