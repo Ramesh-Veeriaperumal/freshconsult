@@ -47,7 +47,7 @@ class CustomersController < ApplicationController
   
   def quick
    if build_and_save  
-      flash[:notice] = "The company has been created !"
+      flash[:notice] = t(:'flash.general.create.success', :human_name => 'company')
    else
      flash[:notice] =  activerecord_error_list(@customer.errors)
    end

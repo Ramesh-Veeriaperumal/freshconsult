@@ -6,8 +6,8 @@ module HelpdeskSystem
   def requires_permission(p)
     unless permission?(p)
       store_location
-      flash[:notice] = current_user ? "You don't have sufficient privileges to access this page" : 
-                                      "You must be logged in to access this page"
+      flash[:notice] = current_user ? I18n.t(:'flash.general.access_denied') : 
+                                      I18n.t(:'flash.general.need_login')
       redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
     end
   end

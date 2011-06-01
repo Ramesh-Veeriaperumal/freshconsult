@@ -27,7 +27,7 @@ class TicketFieldsController < Admin::AdminController
    @ticket_field.account_id = current_account.id
    
    if @ticket_field.save
-      render :text => "successfully saved"
+      render :text => "successfully saved" # Check for i18n -Shan..
      
    else
      
@@ -112,11 +112,11 @@ end
   respond_to do |format|
     
   if @ticket_field.update_attributes(:json_data =>modified_json, :agent_view =>@agentView , :requester_view => requester_json )   
-      flash[:notice] = "Custom fields successfully updated."
+      flash[:notice] = t(:'flash.custom_fields.update.success')
       format.html { redirect_to :action => "index" }
       format.xml  { render :json => @ticket_field }     
   else  
-      flash[:notice] = "Custom updation failed."
+      flash[:notice] = t(:'flash.custom_fields.update.failure')
       format.html { redirect_to :action => "index"}
       format.xml  { render :json => @ticket_field } 
   

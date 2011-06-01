@@ -11,14 +11,14 @@ class AgentsController < Admin::AdminController
   
   def check_user_permission
     if (@agent.user == current_user) || (@agent.user.user_role == User::USER_ROLES_KEYS_BY_TOKEN[:account_admin])
-      flash[:notice] = "You don't have access to delete it!"
+      flash[:notice] = t(:'flash.agents.delete.not_allowed')
       redirect_to :back  
     end    
   end
   
   def check_demo_site
     if AppConfig['demo_site'][RAILS_ENV] == current_account.full_domain
-      flash[:notice] = "Demo site doesn't have this access!"
+      flash[:notice] = t(:'flash.not_allowed_in_demo_site')
       redirect_to :back
     end
   end
@@ -69,7 +69,7 @@ class AgentsController < Admin::AdminController
     if @user.signup!(:user => params[:user])       
       @agent.user_id = @user.id      
       if @agent.save
-         flash[:notice] = "The Agent has been created and activation instructions sent to #{@user.email}!"
+         flash[:notice] = t(:'flash.agents.create.success', :email => @user.email)
          redirect_to :action => 'index'
       else      
         render :action => :new         
@@ -86,7 +86,7 @@ class AgentsController < Admin::AdminController
       if @agent.update_attributes(params[nscname])            
           @user = current_account.all_users.find(@agent.user_id)          
           if @user.update_attributes(params[:user])        
-             flash[:notice] = "The Agent has been updated sucessfully"
+             flash[:notice] = t(:'flash.general.update.success', :human_name => 'Agent')
              redirect_to :action => 'index'
          else
              check_email_exist     
@@ -105,7 +105,7 @@ class AgentsController < Admin::AdminController
        @restorable = true
        flash[:notice] = render_to_string(:partial => '/agents/flash/delete_notice')      
      else
-           flash[:notice] = "Agent could not be deleted"
+       flash[:notice] = t(:'flash.general.destroy.failure', :human_name => 'Agent')
      end
     redirect_to :back
 end
@@ -115,7 +115,7 @@ end
    if @agent.user.update_attribute(:deleted, false)   
     flash[:notice] = render_to_string(:partial => '/agents/flash/restore_notice')
    else
-    flash[:notice] = "Agent could not be restored"
+    flash[:notice] = t(:'flash.general.restore.failure', :human_name => 'Agent')
    end 
    redirect_to :back  
  end

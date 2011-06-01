@@ -40,7 +40,7 @@ class ForumCategoriesController < ApplicationController
     respond_to do |wants|
       wants.html do
         if @result
-          flash[:notice] = "The #{human_name} has been deleted."
+          flash[:notice] = t(:'flash.general.destroy.success', :human_name => human_name)
           redirect_to categories_path
         else
           render :action => 'show'

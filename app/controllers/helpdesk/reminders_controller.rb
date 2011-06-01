@@ -10,7 +10,7 @@ class Helpdesk::RemindersController < ApplicationController
   
   def complete
     @item.update_attribute(:deleted, true)
-    flash[:notice] = "The To-Do has been marked as completed."
+    flash[:notice] = t(:'flash.to_dos.complete.success')
     redirect_to :back
   end
   
@@ -19,7 +19,7 @@ class Helpdesk::RemindersController < ApplicationController
       item.destroy
     end
 
-    flash[:notice] = "The To-Do has been deleted."
+    flash[:notice] = t(:'flash.general.destroy.success', :human_name => "To-Do")
     redirect_to :back
   end
 
@@ -38,7 +38,7 @@ protected
   end
 
   def item_url
-    flash[:notice] = "To-do has been created."
+    flash[:notice] = t(:'flash.general.create.success', :human_name => "To-Do")
     :back
   end
 
