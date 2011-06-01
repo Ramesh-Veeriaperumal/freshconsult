@@ -128,8 +128,10 @@ class AccountsController < ApplicationController
     open_id_user = verify_open_id_user @account
     unless open_id_user.blank?
        if open_id_user.admin?   
-         if @account.update_attribute(:google_domain,@google_domain)       
-            redirect_to @call_back_url+"&EXTERNAL_CONFIG=true"
+         if @account.update_attribute(:google_domain,@google_domain)     
+            rediret_url = @call_back_url+"&EXTERNAL_CONFIG=true" unless @call_back_url.blank?
+            rediret_url = "https://www.google.com/a/cpanel/"+@google_domain if rediret_url.blank?
+            redirect_to rediret_url            
          end        
        else
          flash.now[:error] = "You don't have sufficient privilage to change this. Please login as Administrator !!!"
@@ -161,7 +163,7 @@ class AccountsController < ApplicationController
  
   def associate_local_to_google
     @google_domain = params[:account][:google_domain]
-    @call_back_url = params[:call_back]
+    @call_back_url = params[:call_back]    
     @account = get_account_for_sub_domain    
     @check_session = @account.user_sessions.new(params[:user_session])
     if @check_session.save
@@ -169,7 +171,9 @@ class AccountsController < ApplicationController
        if @check_session.user.admin?   
          if @account.update_attribute(:google_domain,@google_domain)
             @check_session.destroy
-            redirect_to @call_back_url+"&EXTERNAL_CONFIG=true"
+            rediret_url = @call_back_url+"&EXTERNAL_CONFIG=true" unless @call_back_url.blank?
+            rediret_url = "https://www.google.com/a/cpanel/"+@google_domain if rediret_url.blank?
+            redirect_to rediret_url
          end        
        else
          @check_session.destroy         

@@ -20,6 +20,7 @@ module Import::Forums
      import_id = nil
      forum_type = nil
      display_type = nil
+     visibility_id = 1
      
      forum.elements.each("name") do |name|      
        name = name.text         
@@ -28,11 +29,18 @@ module Import::Forums
      forum.elements.each("description") do |description|      
        desc = description.text         
      end
+     
      forum.elements.each("display-type-id") do |display_type|      
        display_type = display_type.text.to_i() 
        forum_type = display_type
        forum_type = 1 if display_type == 3
      end
+     
+     forum.elements.each("visibility-restriction-id") do |visibility|      
+       visibility_id = visibility.text.to_i()        
+     end
+     
+     
      
      if make_solution && display_type ==1
        make_solution_folder forum, base_dir
@@ -67,6 +75,7 @@ module Import::Forums
      @forum.import_id = forum_id.to_i()
      @forum.description_html = desc
      @forum.forum_type = forum_type
+     @forum.forum_visibility = visibility_id
      
      if @forum.save      
         logger.debug "successfully saved the forum::"
@@ -87,11 +96,13 @@ def make_solution_folder solution, base_dir
   folder_name = nil
   description = nil
   import_id = nil
+  visibility_id = 1
   solution.elements.each("category-id") {|cat| cat_id = cat.text}
   solution.elements.each("name") {|folder| folder_name = folder.text}
   solution.elements.each("description") {|desc| description = desc.text}
   solution.elements.each("id") {|import| import_id  = import.text}
-  
+  solution.elements.each("visibility-restriction-id") {|visibility| visibility_id  = visibility.text.to_i()}
+    
   @category = nil
   
   unless cat_id.blank?    
@@ -108,6 +119,7 @@ def make_solution_folder solution, base_dir
   @folder.name = folder_name
   @folder.description= description
   @folder.import_id = import_id
+  @folder.visibility = visibility_id
   
   if @folder.save
     logger.debug "Folder has been saved successfully"
