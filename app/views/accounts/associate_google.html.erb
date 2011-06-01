@@ -1,3 +1,10 @@
+<%
+cancel_url = root_url
+ if @call_back_url
+    cancel_url = @call_back_url+"&EXTERNAL_CONFIG=true"
+ end
+%>
+
 	<div id="change-sub-domain" class="ui-form">
 		 <% form_for :account, @account, :url => {:action=> :associate_local_to_google} , :html => { :method => "put" } do |f| %>
 			<%= f.error_messages %>
@@ -20,8 +27,8 @@
 		  	</li>
 			</ul>
 			<p class="button-container">
-				<%= submit_tag <%= t('.login_complete_registration') %>, :class => "uiButton floatl" %>				
-				<%= link_to t("cancel"), @call_back_url+"&EXTERNAL_CONFIG=true", :class => "uiButton" %>
+				<%= submit_tag  "Login & complete registration" , :class => "uiButton floatl" %>				
+				<%= link_to t("cancel"), cancel_url , :class => "uiButton" %>
 			</p>
 		<% end %>	
 	</div>
