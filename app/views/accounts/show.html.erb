@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-<% content_for :sidebar do -%><%- end %>
-
-
-=======
 <% content_for :sidebar do -%>
 	<div class="sidepanel">
 		<h3 class="title"><%= current_account.name %></h3> 
@@ -11,7 +6,6 @@
 		</ul> 
 	</div>
 <%- end %>
->>>>>>> Dev-Venom
 <h3 class= "title"><%= @page_title = t('.account_settings') %></h3>
 <ul class="ui-form">
 	<li class="inline-field">
@@ -86,15 +80,14 @@
   	</li>
   <% end %>
   <li class="inline-field">
-  	<%form_tag (:action => 'change_account_admin' , :controller => :users,:method => :put) do %>
+  	<% form_tag(:action => 'change_account_admin' , :controller => :users, :method => :put) do %>
   	<%= content_tag(:label,t('account_admin'), :class => "caption") %> 
-	<div class="fields"> 
+		<div class="fields"> 
   		<div class="action_buttons">        
-            <%= submit_tag t('change') %>
+            <%= link_to_function "#{t('change')}", "jQuery(this).parents('form:first').trigger('submit')" %>
         </div>
-		<%= select_tag :account_admin, options_from_collection_for_select(current_account.all_admins, :id, :name_email,current_account.account_admin.id) %>
-        
-      </div>
+				<%= select_tag :account_admin, options_from_collection_for_select(current_account.all_admins, :id, :name_email,current_account.account_admin.id) %>
+    </div>
 	<%end-%>
 	
   </li>
