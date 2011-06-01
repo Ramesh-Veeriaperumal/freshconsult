@@ -659,7 +659,7 @@ en:
     info4: if a ticket remains un-assigned for more than
     info5: Are you sure
     select_agents: Select Agents
-  portal_customizer_anon_for_i: Turn this feature off, if you want your users to be signed in to view forums
+  portal_customizer_anon_for_i: Turn this feature off, if you want to hide 'Forums' tab in public customer portal.
   basic_brief: For Small teams
   import_updated: Updated
   message: Message
@@ -676,7 +676,7 @@ en:
   submit: submit
   reset_my_password: Reset my password
   pro_details: Everything in &quot;Basic&quot; Plan plus, Scenario Automations, Customer-specific SLAs, Business Hours, Forums, Community &amp; Email Support.
-  portal_customizer_title: Customize your Customer Portal
+  portal_customizer_title: Customize your Public Customer Portal
   align_to: Align to
   close: Close
   forum: 
@@ -725,7 +725,7 @@ en:
   feedbackwidget_offset_label: With an offset of
   no_topics_text: No topics in this forum
   formatting_help: Formatting Help
-  portal_customizer_anon_tickets_i: Turn this feature off, if you want your users to be signed in to submit a ticket
+  portal_customizer_anon_tickets_i: Turn this feature off, if you want your users to be signed in to submit a ticket.
   your_email_address: Your email address
   edit_agent: Edit Agent
   total_price: Total Price
@@ -783,7 +783,7 @@ en:
   plan_info_update: Your plan has been changed.
   import_data: Date Imported
   errors_in_plan_change: "Errors encountered with your change:"
-  portal_customizer_open_sol_i: Turn this feature off, if you want your users to be signed in to view public solutions
+  portal_customizer_open_sol_i: Turn this feature off, if you want to hide 'Solutions' tab in public customer portal.
   add_to_do: Add To do
   forgot_password_intro: Fill out the form below and instructions to reset your password will be emailed to you
   last_name: Last Name
