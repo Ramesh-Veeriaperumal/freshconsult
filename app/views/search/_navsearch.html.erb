@@ -9,7 +9,7 @@
 			callbackToSearch = function(string){
 				jQuery.ajax({ url: "/search/suggest?search_key="+string, 
 								  success: function(data){
-								  			$("#SearchResultsBar").show(); 
+								  			$("#SearchResultsBar").css("display", "inline");
 											position   = -1
 											$("#SearchResultsBar .results").html(data);
 							}});
@@ -33,13 +33,13 @@
 			
 			$("#header_search").bind("focusout", function(ev){ 
 				if(!insideSearch)
-					jQuery("#SearchResultsBar").hide();
+					jQuery("#SearchResultsBar").css("display", "inline");
 			});
 			
 			$("#header_search").bind("focusin", function(ev){
 				searchString = this.value.replace(/^\s+|\s+$/g, "");
 				if(searchString != ''){
-					jQuery("#SearchResultsBar").show();
+					jQuery("#SearchResultsBar").css("display", "inline");
 				}
 			}); 
 			
@@ -79,19 +79,15 @@
 						      callbackToSearch(searchString);
 						    }, 200 ); 
 						}else{
-							jQuery("#SearchResultsBar").hide();				
+							jQuery("#SearchResultsBar").hide();
 						}
 					break;
 				}
 			});
-			
-			
-			
-			
 		});
 	})(jQuery);
 <% end %>
 
 <div class="search_results_bar" id="SearchResultsBar"> 
-	<ul class="results">  </ul> 
+	<ul class="results"></ul> 
 </div>

@@ -9,89 +9,67 @@
 		});
 	}); 
 <% end %>
-<% content_for :sidebar do -%>
-	<div class="sidepanel">
-		<h3 class="title"><%= current_account.name %></h3> 
-		<ul class="ui-list_with_icon">
-			<li><b><%=t('account.active_since')%>  </b><br /><%= formated_date(current_account.created_at) %></li>
-		</ul> 
-	</div>
-<%- end %>
-
 <h3 class="title"><%=t('account.rebrand')%></h3> 
-	<% form_for :account, @account, :url => { :action => 'update' }, :html => { :multipart => true ,:method => :put, :class => "uniForm" } do |f| %>
+	<% form_for :account, @account, :url => { :action => 'update' }, :html => { :multipart => true ,:method => :put } do |f| %>
 	  <%= f.error_messages %>
-	  <fieldset class="inlineLabels">
-	  	 <div class="ctrlHolder">
-		    <%= f.label :name, "<em>*</em> #{t('account.name')}" %>
-		    <%= f.text_field :name, :class => "textInput auto required" %> 
-		 </div>
-	     <div class="ctrlHolder"> 
-			<%= f.label :time_zone, t('account.time_zone') %>
-			<%= f.time_zone_select :time_zone, ActiveSupport::TimeZone.all, { :class => "selectInput" } %>
-		 </div>
-		 <div class="ctrlHolder">
-		    <%= f.label :helpdesk_name,t('account.helpdesk_name')%>
-		    <%= f.text_field :helpdesk_name, :class => "textInput auto" %>
-		 </div>
-		 <div class="ctrlHolder">
-		    <%= f.label :helpdesk_url, t('account.helpdesk_url') %>
-		    <%= f.text_field :helpdesk_url, :class => "textInput auto" %> 
-			<p class="formHint">
-			<%=t('account.helpdesk_url')%> - <br />
-			Eg. support.mycompanyname.com 
-			</p>
-			<p class="formHint">
-				<%=t('account.info2',:full_domain => @account.full_domain)%>
-			</p>	
-		 </div>
-	  </fieldset>
-	  <fieldset class="inlineLabels">
-		  <% f.fields_for :preferences, @account.preferences do |p| %>
-        	<div class="ctrlHolder">
-        		<p class="label">
-					<b><%=t('account.page_colors.title')%></b>	
-				</p>
-				<ul>
-					<li>
-						<%= p.label :header_color, t('account.page_colors.header') %>
-						<div class="color">
-							<input type="color" maxlength="7" id="HeaderColor" class="color_field required" name="account[preferences][header_color]"  data-hex="true" value="<%= @account[:preferences].default(:header_color) %>" />
-						</div>
-					</li>
-					<li>
-			        	<%= p.label :header_color_tab, t('account.page_colors.tab_color') %>
-						
-							<div class="color">
-								<input type="color" maxlength="7" id="TabColor" class="color_field required" name="account[preferences][tab_color]"  data-hex="true" value="<%= @account[:preferences].default(:tab_color) %>" /> 
-							</div>
-         			</li>
-					<li>	
-			        		<%= p.label :bg_color, t('account.page_colors.background') %>
-							<div class="color"> 
-								<input type="color" maxlength="7" id="BackgroundColor" class="color_field required" name="account[preferences][bg_color]"  data-hex="true" value="<%= @account[:preferences].default(:bg_color) %>" />
-							</div>	
-					</li>
-					<li><a href="javascript:void(0)" id="ResetColors"><%=t('account.info3')%> </a></li>
-				</ul>
-					
-						 
-          </div>
-		  <% end %>
-		</fieldset>
-		<fieldset class="inlineLabels">
-		  <div class="ctrlHolder">
+		<ul class="ui-form">
+			<li class="inline-field">
+				<%= f.label :helpdesk_name,t('account.helpdesk_name'), :class => "caption" %>
+				<div class="fields">				    
+					<%= f.text_field :helpdesk_name, :class => "text auto" %>
+					<div class="info-data">
+						This will be the help desk name that is show in the header and mail notifications.
+					</div>
+				</div>
+			</li>
 			<%= render :partial => "/shared/logo_image", :locals => { :account => @account } %>
-		  </div>
-		  <div class="ctrlHolder">
 			<%= render :partial => "/shared/fav_image", :locals => { :account => @account } %>
-		  </div> 
-		  <div class="ctrlHolder">
-		    <%= f.label :ticket_display_id, "#{t('next')} Ticket ID #" %>
-			<%= f.text_field :ticket_display_id, :value => @account.get_max_display_id, :class => "textInput small" %>
-			<p class="formHint"><%=t('account.info4')%></p>
-		  </div>			
-		</fieldset>
+			<li class="inline-field">
+				<%= content_tag(:label, t('account.page_colors.title') ) %>
+				<% f.fields_for :preferences, @account.preferences do |p| %>
+					<%= p.label :header_color, t('account.page_colors.header'), :class => "rightalign caption" %>
+					<div class="fields color">
+							<input type="color" maxlength="7" id="HeaderColor" class="color_field required" name="account[preferences][header_color]"  data-hex="true" value="<%= @account[:preferences].default(:header_color) %>" />
+					</div>
+					<%= p.label :header_color_tab, t('account.page_colors.tab_color'), :class => "rightalign caption" %>
+					<div class="color fields">
+							<input type="color" maxlength="7" id="TabColor" class="color_field required" name="account[preferences][tab_color]"  data-hex="true" value="<%= @account[:preferences].default(:tab_color) %>" /> 
+					</div>	
+					<%= p.label :bg_color, t('account.page_colors.background'), :class => "rightalign caption" %>
+					<div class="color fields"> 
+							<input type="color" maxlength="7" id="BackgroundColor" class="color_field required" name="account[preferences][bg_color]"  data-hex="true" value="<%= @account[:preferences].default(:bg_color) %>" />
+							<p>
+								<a href="javascript:void(0)" id="ResetColors"><%=t('account.info3')%> </a>
+							</p>
+					</div>	
+			  <% end %>
+			</li>
+			<li class="inline-field">
+				<%= f.label :helpdesk_url, t('account.helpdesk_url'), :class => "caption" %>
+				<div class="fields">			    
+					<label class="overlabel" for="account_helpdesk_url">
+						Eg. support.mycompanyname.com						
+					</label>
+			    <%= f.text_field :helpdesk_url, :class => "text auto" %> 
+					<div class="info-data">
+						<%=t('account.info2',:full_domain => @account.full_domain)%>
+					</div>	
+			 </div>
+			</li>		
+			<li class="inline-field">
+				<%= f.label :time_zone, t('account.time_zone'), :class => "caption"  %>
+				<div class="fields">
+					<%= f.time_zone_select :time_zone, ActiveSupport::TimeZone.all %>
+		 		</div>
+			</li>
+			<li class="inline-field">
+				<%= f.label :ticket_display_id, "#{t('next')} Ticket ID #", :class => "caption" %>
+				<div class="fields">		    	
+					<%= f.text_field :ticket_display_id, :value => @account.get_max_display_id, :class => "text" %>
+					<div class="info-data"><%=t('account.info4')%></div>
+		  	</div>
+			</li>
+		</ul>
 	  <div class="button-container">
 			<%= link_to "&larr; #{t('account.cancel')}", "/admin/home", :class => "uiButton floatl" %>
 			<%= submit_tag t('account.save'), :class => 'uiButton' %>

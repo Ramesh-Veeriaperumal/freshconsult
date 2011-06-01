@@ -5,28 +5,24 @@
   	margin-top:-45px;
   }*/
 }
-.ie6 a.new_ticket, .ie7 a.new_ticket, .ie8 a.new_ticket, .ie9 a.new_ticket {
-  display: inline;
-}
 .ie6 .wrapper, .ie7 .wrapper, .ie8 .wrapper, .ie9 .wrapper {
+  width: expression((document.body.clientWidth < 982)? "982px" : "95%");
   width: 980px;
 }
-.ie6 .nav_search, .ie7 .nav_search, .ie8 .nav_search, .ie9 .nav_search {
-  margin-top: 4px;
+.ie6 input, .ie6 button, .ie7 input, .ie7 button, .ie8 input, .ie8 button, .ie9 input, .ie9 button {
+  overflow: visible;
 }
-.ie6 .nav_search div.search_bar, .ie7 .nav_search div.search_bar, .ie8 .nav_search div.search_bar, .ie9 .nav_search div.search_bar {
-  padding-top: 4px;
-  padding-bottom: 3px;
-}
-.ie6 .nav_search input, .ie7 .nav_search input, .ie8 .nav_search input, .ie9 .nav_search input {
-  top: 1px;
-  left: 2px;
+.ie6 input.text, .ie7 input.text, .ie8 input.text, .ie9 input.text {
+  overflow-x: hidden;
 }
 .ie6 ul.summary, .ie7 ul.summary, .ie8 ul.summary, .ie9 ul.summary {
-  border-color: ececec;
+  border-color: #ececec;
 }
 .ie6 ul.icon_grid li a div, .ie7 ul.icon_grid li a div, .ie8 ul.icon_grid li a div, .ie9 ul.icon_grid li a div {
   font-weight: bold;
+}
+.ie6 ul.ui-form li.inline-field, .ie7 ul.ui-form li.inline-field, .ie8 ul.ui-form li.inline-field, .ie9 ul.ui-form li.inline-field {
+  width: 96%;
 }
 .ie6 .uniForm, .ie6 .uniForm fieldset, .ie6 .uniForm .ctrlHolder, .ie6 .uniForm .formHint, .ie6 .uniForm .buttonHolder, .ie6 .uniForm .ctrlHolder ul, .ie7 .uniForm, .ie7 .uniForm fieldset, .ie7 .uniForm .ctrlHolder, .ie7 .uniForm .formHint, .ie7 .uniForm .buttonHolder, .ie7 .uniForm .ctrlHolder ul, .ie8 .uniForm, .ie8 .uniForm fieldset, .ie8 .uniForm .ctrlHolder, .ie8 .uniForm .formHint, .ie8 .uniForm .buttonHolder, .ie8 .uniForm .ctrlHolder ul, .ie9 .uniForm, .ie9 .uniForm fieldset, .ie9 .uniForm .ctrlHolder, .ie9 .uniForm .formHint, .ie9 .uniForm .buttonHolder, .ie9 .uniForm .ctrlHolder ul {
   zoom: 1;
@@ -38,7 +34,7 @@
   height: 24px;
 }
 .ie6 #custom_form li, .ie7 #custom_form li, .ie8 #custom_form li, .ie9 #custom_form li {
-  height: 53px !important;
+  height: 65px !important;
 }
 .ie6 .request-list div.item .bulb, .ie6 .request-list div.item .wand, .ie7 .request-list div.item .bulb, .ie7 .request-list div.item .wand, .ie8 .request-list div.item .bulb, .ie8 .request-list div.item .wand, .ie9 .request-list div.item .bulb, .ie9 .request-list div.item .wand {
   left: 0px;
@@ -76,7 +72,12 @@
   margin-left: -50px;
 }
 .ie6 .uiButton, .ie7 .uiButton, .ie8 .uiButton, .ie9 .uiButton {
-  padding: 4px 12px;
+  padding: 4px 8px;
+  font-size: 11px;
+}
+.ie6 a.uiButton, .ie6 a.uiButton:visited, .ie7 a.uiButton, .ie7 a.uiButton:visited, .ie8 a.uiButton, .ie8 a.uiButton:visited, .ie9 a.uiButton, .ie9 a.uiButton:visited {
+  padding-top: 5px;
+  padding-bottom: 6px;
   font-size: 11px;
 }
 .ie6 .ui-login .ui-form, .ie6 .ui-signup .ui-form, .ie7 .ui-login .ui-form, .ie7 .ui-signup .ui-form, .ie8 .ui-login .ui-form, .ie8 .ui-signup .ui-form, .ie9 .ui-login .ui-form, .ie9 .ui-signup .ui-form {
@@ -85,6 +86,29 @@
   box-shadow: 0px 1px 6px #cfcfcf;
   behavior: url('/stylesheets/PIE.htc');
   position: relative;
+}
+.ie6 .ui-form li, .ie6 .ui-form li.text, .ie6 .ui-form li.paragraph, .ie7 .ui-form li, .ie7 .ui-form li.text, .ie7 .ui-form li.paragraph, .ie8 .ui-form li, .ie8 .ui-form li.text, .ie8 .ui-form li.paragraph, .ie9 .ui-form li, .ie9 .ui-form li.text, .ie9 .ui-form li.paragraph {
+  width: 100%;
+}
+.ie6 .ui-form li.dropdown, .ie6 .ui-form li.small, .ie7 .ui-form li.dropdown, .ie7 .ui-form li.small, .ie8 .ui-form li.dropdown, .ie8 .ui-form li.small, .ie9 .ui-form li.dropdown, .ie9 .ui-form li.small {
+  padding-left: 4%;
+  padding-right: 4%;
+  width: 50%;
+}
+.ie6 .ui-form li.checkbox input, .ie7 .ui-form li.checkbox input, .ie8 .ui-form li.checkbox input, .ie9 .ui-form li.checkbox input {
+  margin: 0px;
+}
+.ie6 .dialog-panel, .ie6 .due-date-dialog, .ie7 .dialog-panel, .ie7 .due-date-dialog, .ie8 .dialog-panel, .ie8 .due-date-dialog, .ie9 .dialog-panel, .ie9 .due-date-dialog {
+  -moz-box-shadow: #9f9f9f 0px 2px 4px;
+  -webkit-box-shadow: #9f9f9f 0px 2px 4px;
+  box-shadow: #9f9f9f 0px 2px 4px;
+}
+.ie6 .due-date-dialog, .ie7 .due-date-dialog, .ie8 .due-date-dialog, .ie9 .due-date-dialog {
+  margin-left: 0px;
+  top: -8px;
+}
+.ie6 .ui-form .conditionset fieldset div.s_email div input.text, .ie6 .ui-form .conditionset fieldset div.s_email div textarea.paragraph, .ie7 .ui-form .conditionset fieldset div.s_email div input.text, .ie7 .ui-form .conditionset fieldset div.s_email div textarea.paragraph, .ie8 .ui-form .conditionset fieldset div.s_email div input.text, .ie8 .ui-form .conditionset fieldset div.s_email div textarea.paragraph, .ie9 .ui-form .conditionset fieldset div.s_email div input.text, .ie9 .ui-form .conditionset fieldset div.s_email div textarea.paragraph {
+  width: 550px;
 }
 .ie6 .ui-widget-container, .ie7 .ui-widget-container, .ie8 .ui-widget-container, .ie9 .ui-widget-container {
   -moz-box-shadow: #afafaf -3px 5px 10px;

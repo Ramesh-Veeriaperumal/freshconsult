@@ -207,7 +207,7 @@ class AccountsController < ApplicationController
   end
   
   def update #by shan temp..
-    @account.name = params[:account][:name]
+    #@account.name = params[:account][:name]
     @account.time_zone = params[:account][:time_zone]
     @account.helpdesk_name = params[:account][:helpdesk_name]
     @account.helpdesk_url = params[:account][:helpdesk_url] 

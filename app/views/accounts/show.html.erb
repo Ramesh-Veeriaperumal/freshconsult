@@ -1,5 +1,11 @@
-<% content_for :sidebar do -%><%- end %>
-
+<% content_for :sidebar do -%>
+	<div class="sidepanel">
+		<h3 class="title"><%= current_account.name %></h3> 
+		<ul class="ui-list_with_icon">
+			<li><b><%=t('account.active_since')%>  </b><br /><%= formated_date(current_account.created_at) %></li>
+		</ul> 
+	</div>
+<%- end %>
 <h3 class= "title"><%= @page_title = t('.account_settings') %></h3>
 <ul class="ui-form">
 	<li class="inline-field">
@@ -33,7 +39,7 @@
 		<%= content_tag(:label, t('current_plan'), :class => "caption") %>	
     <div class="fields">
       <div class="action_buttons">
-        <%= link_to( "#{t('change_plan')} &rsaquo;", plan_account_url ,:class => "last" ) %>
+        <%= link_to( "#{t('change_plan')} &rsaquo;", plan_account_url, :class => "last" ) %>
       </div> 
       <div class="big-text">
         <%= " #{ t('current_plan_details',
@@ -43,7 +49,7 @@
 	    <% if @subscription.amount > 0 %>
         <table class="summary">
           <tr>
-            <td width="300px"><%= content_tag(:label, t('next_charge_date'), :class => "caption" ) %> </td>
+            <td width="220px"><%= content_tag(:label, t('next_charge_date'), :class => "caption" ) %> </td>
             <td><%= content_tag(:label, "<strong> #{ @subscription.next_renewal_at.to_s(:long_day)  } </strong>") %></td>
           </tr>
           <tr>
@@ -58,7 +64,7 @@
   	  <%= content_tag(:label, t('payment_info'), :class => "caption") %>
   	  <div class="fields"> 
   		 <div class="action_buttons">
-  	 		<%= link_to( "#{t('change')} &rsaquo;", billing_account_url ,:class => "last" ) %>
+  	 		<%= link_to( "#{t('change')} &rsaquo;", billing_account_url, :class => "last" ) %>
   	 	 </div>
   		 <label><%= @subscription.paypal? ? 'PayPal' : "#{@subscription.card_number} / #{@subscription.card_expiration}" %></label>
   	  </div>
@@ -75,4 +81,7 @@
   <% end %>
 	<!-- <li><%= link_to('Cancel plan', cancel_account_url) %></li> -->
 </ul>
- 
+
+<div class="button-container">
+	<%= link_to "&larr; #{t('account.cancel')}", "/admin/home", :class => "uiButton floatl" %>
+</div>
