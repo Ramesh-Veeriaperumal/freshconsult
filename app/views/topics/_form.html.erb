@@ -41,7 +41,7 @@
 		<% end %>
 		<% if ["new"].include? params[:action] %>
 			<label id="monitor-topic-lable">
-				<%=check_box_tag 'monitor'%> Monitor this topic
+				<%=check_box_tag 'monitor', '',true%> Monitor this topic
 			</label>
 		<%end%>
 	</li>	  
