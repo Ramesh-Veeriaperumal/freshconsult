@@ -10,7 +10,7 @@
 	
 	<%= render :partial => "/search/pagesearch", :locals => { :placeholder => t('solutions.search.placeholder', :name => @item.name), :url => "/search/solutions?category_id=#{@item.id}&search_key=" } %>
 	
-	<% unless (@item.folders.size == 0) %>	
+	<% unless (@item.folders.visible(current_user).size == 0) %>	
 	  <% if logged_in? && current_user.has_manage_solutions? %>
 	  		<%= render :partial => "/solution/shared/solution_list", :locals => { :category => @item, :folder => @item.folders.visible(current_user).first } %>
 	  <%else%>
