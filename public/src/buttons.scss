@@ -181,8 +181,7 @@ div.action_buttons{
 		border-right:1px solid darken(#f2f2f2, 10%);
 		@include link-colors(#333333, #666666, #333333, #333333);
 		@include text-shadow(#ffffff, 0px, 1px, 1px);
-	}
-	
+	}	
 	a.last{ 
 		border-right:0px;
 		padding-right:4px;
