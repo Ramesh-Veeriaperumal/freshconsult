@@ -55,16 +55,17 @@ class ContactImportController < ApplicationController
         
         
       end
-       flash[:notice] = "#{created} contacts has been newly imported and #{updated} existing contacts has been updated !"
+       flash[:notice] = t(:'flash.contacts_import.success', :created_count => created, 
+          :updated_count => updated)
       redirect_to contacts_url
     else
       render
     end
   rescue MapFields::InconsistentStateError
-    flash[:error] = 'Please try again'
+    flash[:error] = t(:'flash.contacts_import.failure')
     redirect_to :action => :new
   rescue MapFields::MissingFileContentsError
-    flash[:error] = 'Please upload a file'
+    flash[:error] = t(:'flash.contacts_import.no_file')
     redirect_to :action => :new
    
   end

@@ -10,7 +10,7 @@ class ContactsController < ApplicationController
    
    def check_demo_site
     if AppConfig['demo_site'][RAILS_ENV] == current_account.full_domain
-      flash[:notice] = "Demo site doesn't have this access!"
+      flash[:notice] = t(:'flash.not_allowed_in_demo_site')
       redirect_to :back
     end
   end
@@ -43,7 +43,7 @@ class ContactsController < ApplicationController
     build_object
     params[:user][:customer_id] = params[:customer_id]
     if build_and_save
-        flash[:notice] = "The contact has been created and activation instructions sent to #{@user.email}!"
+        flash[:notice] = t(:'flash.contacts.create.success')
     else  
         check_email_exist
         flash[:notice] =  activerecord_error_list(@user.errors)        
@@ -54,7 +54,7 @@ class ContactsController < ApplicationController
   
   def create
     if build_and_save    
-      flash[:notice] = "The contact has been created and activation instructions sent to #{@user.email}!"      
+      flash[:notice] = t(:'flash.contacts.create.success')
       redirect_to contacts_url
     else
       check_email_exist

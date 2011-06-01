@@ -37,7 +37,7 @@ module AuthenticationSystem
         respond_to do |wants|
           wants.html do
             store_location
-            flash[:notice] = "You must be logged in to access this page"
+            flash[:notice] = I18n.t(:'flash.general.need_login')
             redirect_to login_url
           end
           
@@ -52,7 +52,7 @@ module AuthenticationSystem
     def require_no_user
       if current_user
         store_location
-        flash[:notice] = "You must be logged out to access this page"
+        flash[:notice] = I18n.t(:'flash.general.login_not_needed')
         redirect_to root_url
         return false
       end

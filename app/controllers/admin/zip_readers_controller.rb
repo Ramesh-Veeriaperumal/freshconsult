@@ -75,7 +75,7 @@ def import_file base_dir, file_arr
     when Net::HTTPSuccess, Net::HTTPRedirection
        File.open(file_path, 'w') {|f| f.write(res.body) }      
     else
-      flash[:notice] = "Unable to contact zendesk . Please verify your zendesk credentials and try again !!" 
+      flash[:notice] = t(:'flash.data_import.zendesk.no_contact')
       delete_zip_file      
       return redirect_to :back     
     end

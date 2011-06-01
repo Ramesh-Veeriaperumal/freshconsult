@@ -12,7 +12,7 @@ class Admin::SecurityController <  Admin::AdminController
     @account.sso_options = params[:account][:sso_options]
    end
    if @account.save
-      flash[:notice] = "Your account details have been updated."
+      flash[:notice] = t(:'flash.sso.update.success')
       redirect_to admin_home_index_path
    else
       render :action => 'index'

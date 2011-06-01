@@ -9,7 +9,7 @@ class AuthorizationsController < ApplicationController
     
     if !@current_user.blank? and !@auth.blank?
       if @current_user.deleted?
-        flash[:notice] = "User is deleted!"
+        flash[:notice] = t(:'flash.g_app.user_deleted')
         redirect_to login_url
       return
       @current_user.active = true 
@@ -28,7 +28,7 @@ class AuthorizationsController < ApplicationController
     if @user_session.save
       redirect_back_or_default('/')
     else
-      flash[:notice] = "Authentication Failed"
+      flash[:notice] = t(:'flash.g_app.authentication_failed')
       redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
     end
   end
@@ -54,7 +54,7 @@ class AuthorizationsController < ApplicationController
   end
   
   def failure
-    flash[:notice] = "Authentication Failed"
+    flash[:notice] = t(:'flash.g_app.authentication_failed')
     redirect_to root_url
   end
   

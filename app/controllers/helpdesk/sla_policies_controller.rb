@@ -50,10 +50,10 @@ class Helpdesk::SlaPoliciesController < Admin::AdminController
     @sla_policy = current_account.sla_policies.new(params[nscname])    
     params[:SlaDetails].each_value {|sla|  @sla_policy.sla_details.build(sla) }   
     if @sla_policy.save
-        flash[:notice] = "SLA Policy has been created."
+        flash[:notice] = t(:'flash.general.create.success', :human_name => "SLA Policy")
         redirect_to :action => 'index'
     else
-      flash[:notice] = "Unable to save SLA Policy"
+      flash[:notice] = t(:'flash.general.create.failure', :human_name => "SLA Policy")
        render :action => 'new'
     end  
   end
@@ -67,7 +67,8 @@ class Helpdesk::SlaPoliciesController < Admin::AdminController
          @sla_detail = Helpdesk::SlaDetail.find(sla[:id])
          @sla_detail.update_attributes(sla)
        end
-        format.html { redirect_to(helpdesk_sla_policies_url, :notice => 'Sla policy was successfully updated.') }
+        format.html { redirect_to(helpdesk_sla_policies_url, :notice => 
+            t(:'flash.general.update.success', :human_name => "SLA Policy")) }
         format.xml  { head :ok }
       else
         format.html { render :action => "edit" }

@@ -138,7 +138,6 @@ class AccountsController < ApplicationController
          render :associate_google         
        end
     else      
-      #flash[:notice] = "Please enter your login credentials"
       render :associate_google
     end
   end
@@ -177,11 +176,11 @@ class AccountsController < ApplicationController
          end        
        else
          @check_session.destroy         
-         flash[:notice] = "You don't have sufficient privilage to change this. Please login as Administrator..!!"
+         flash[:notice] = t(:'flash.general.insufficient_privilege.admin')
          render :associate_google         
        end     
     else       
-      flash[:notice] = "Couldn't log you in. Please verify your credentials"
+      flash[:notice] = t(:'flash.login.verify_credentials')
       render :associate_google
     end
     
@@ -232,7 +231,7 @@ class AccountsController < ApplicationController
       
     
     if @account.save
-      flash[:notice] = "Your account details have been updated."
+      flash[:notice] = t(:'flash.account.update.success')
       redirect_to admin_home_index_path
     else
       render :action => 'edit'

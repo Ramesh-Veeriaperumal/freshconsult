@@ -36,11 +36,11 @@ class Admin::BusinessCalendarsController <  Admin::AdminController
     @business_cal = BusinessCalendar.find(:first ,:conditions =>{:account_id => current_account.id})
     
    if @business_cal.update_attributes(:business_time_data =>business_time, :holiday_data =>holiday_data )     
-     flash[:notice] = "Business Calendar has been updated successfully"
+     flash[:notice] = t(:'flash.business_hours.update.success')
      redirect_back_or_default :action => 'index'
      
    else
-     flash[:notice] = "Failed to update Business Calendar "
+     flash[:notice] = t(:'flash.business_hours.update.failure')
      redirect_back_or_default :action => 'index'
    end
     

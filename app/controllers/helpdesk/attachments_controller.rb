@@ -40,7 +40,7 @@ class Helpdesk::AttachmentsController < ApplicationController
       end
       
           unless  can_destroy
-            flash[:notice] = "You are not allowed access this page !"   
+            flash[:notice] = t(:'flash.general.access_denied')
             redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) 
           end
       

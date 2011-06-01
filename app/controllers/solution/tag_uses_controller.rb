@@ -34,7 +34,7 @@ class Solution::TagUsesController < ApplicationController
     count = tag.tag_uses_count - 1
     tag.update_attribute(:tag_uses_count,count )
 
-    flash[:notice] = "The tag was removed from this Article"
+    flash[:notice] = t(:'flash.solutions.remove_tag.success')
     redirect_to :back
   end
 
