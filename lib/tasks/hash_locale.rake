@@ -1,7 +1,6 @@
 namespace :i18n do
   desc 'Add some random strings around values in en.yml'
   task :rumble => :environment do
-    puts "I18n Test..."
     
     f_name = "#{RAILS_ROOT}/config/locales/en.yml"
     en_content = File.open(f_name, 'r') { |f| f.read }
@@ -9,7 +8,8 @@ namespace :i18n do
 
     n_data = add_hash_to_val(en_data)
     File.open(f_name, 'w+') { |f| f.write YAML.dump(n_data) }
-  end
+  end    
+  
 end
 
 def add_hash_to_val(obj)
@@ -22,6 +22,10 @@ def add_hash_to_val(obj)
     obj.each_with_index { |v,i| array[i] = add_hash_to_val(v) }
     return array
   else
-    return "@@#{obj}@@"
+    if obj.include? "@&!"
+      return obj.gsub(/@&!{1}/,'')
+    else
+      return "@&!#{obj}@&!"
+    end
   end
 end
