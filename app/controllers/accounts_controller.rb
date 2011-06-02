@@ -95,25 +95,37 @@ class AccountsController < ApplicationController
 	    ax_response = OpenID::AX::FetchResponse.from_success_response(resp)
 	    data["email"] = ax_response.data["http://axschema.org/contact/email"].first
 	    data["first_name"] = ax_response.data["http://axschema.org/namePerson/first"].first
-	    data["last_name"] = ax_response.data["http://axschema.org/namePerson/last"].first
+	    data["last_name"] = ax_response.data["http://axschema.org/namePerson/last"].first      
+      
+      deliver_signup_page resp, data
 	    
 	  else
-	    "Error: #{resp.status}"
+      logger.debug "Authentication failed....delivering error page" 
+      deliver_error_page    
+       
 	  end
 	   logger.debug "here is the retrieved data: #{data.inspect}"
+ end
+ 
+ def deliver_signup_page resp,data
      @open_id_url = resp.identity_url
-	   @call_back_url = params[:callback]   
-	   @account  = Account.new
-	   @account.domain = params[:domain].split(".")[0] 
-	   @account.name = @account.domain.titleize
+     @call_back_url = params[:callback]   
+     @account  = Account.new
+     @account.domain = params[:domain].split(".")[0] 
+     @account.name = @account.domain.titleize
      @account.google_domain = params[:domain]
-	   @user = @account.users.new   
-	   unless data.blank?
-	      @user.email = data["email"]
-	      @user.name = data["first_name"] +" "+data["last_name"]
-	    end
-	     
-	   render :action => :signup_google
+     @user = @account.users.new   
+     unless data.blank?
+        @user.email = data["email"]
+        @user.name = data["first_name"] +" "+data["last_name"]
+      end
+       
+     render :action => :signup_google
+
+ end
+ 
+ def deliver_error_page
+   render :action => :signup_google_error
  end
 
   def associate_google_account
