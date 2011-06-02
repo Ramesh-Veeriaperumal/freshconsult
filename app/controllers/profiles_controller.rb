@@ -52,7 +52,7 @@ def update_contact
       @obj.customer_id = nil
     end
     if @obj.update_attributes(params[cname])
-      flash[:notice] = "Your profile has been updated."
+      flash[:notice] = t(:'flash.profile.update.success')
       redirect_to :back
     else
       logger.debug "error while saving #{@obj.errors.inspect}"
@@ -83,12 +83,12 @@ def change_password
     @check_session = current_account.user_sessions.new(:email => current_user.email, :password => params[:user][:current_password], :remember_me => false)
     if @check_session.save      
       reset_password 
-      flash[:notice] = "Password successfully updated. Please login again"
+      flash[:notice] = t(:'flash.profile.change_password.success')
       @check_session.destroy
       current_user_session.destroy
       redirect_to new_user_session_url      
     else     
-      flash[:notice] = "Unable to change your password, Please check your current password"
+      flash[:notice] = t(:'flash.profile.change_password.failure')
       redirect_to :action => :edit
     end
       

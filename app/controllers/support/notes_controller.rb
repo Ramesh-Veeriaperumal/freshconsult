@@ -18,9 +18,9 @@ class Support::NotesController < ApplicationController
 
     if @note.save
       create_attachments
-      flash[:notice] = "The note has been added to your ticket."
+      flash[:notice] = t(:'flash.tickets.notes.create.success')
     else
-      flash[:error] = "There was a problem adding the note to your ticket. Please try again."
+      flash[:error] = t(:'flash.tickets.notes.create.failure')
     end
 
     redirect_to :back

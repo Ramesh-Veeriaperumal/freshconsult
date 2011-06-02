@@ -95,25 +95,37 @@ class AccountsController < ApplicationController
 	    ax_response = OpenID::AX::FetchResponse.from_success_response(resp)
 	    data["email"] = ax_response.data["http://axschema.org/contact/email"].first
 	    data["first_name"] = ax_response.data["http://axschema.org/namePerson/first"].first
-	    data["last_name"] = ax_response.data["http://axschema.org/namePerson/last"].first
+	    data["last_name"] = ax_response.data["http://axschema.org/namePerson/last"].first      
+      
+      deliver_signup_page resp, data
 	    
 	  else
-	    "Error: #{resp.status}"
+      logger.debug "Authentication failed....delivering error page" 
+      deliver_error_page    
+       
 	  end
 	   logger.debug "here is the retrieved data: #{data.inspect}"
+ end
+ 
+ def deliver_signup_page resp,data
      @open_id_url = resp.identity_url
-	   @call_back_url = params[:callback]   
-	   @account  = Account.new
-	   @account.domain = params[:domain].split(".")[0] 
-	   @account.name = @account.domain.titleize
+     @call_back_url = params[:callback]   
+     @account  = Account.new
+     @account.domain = params[:domain].split(".")[0] 
+     @account.name = @account.domain.titleize
      @account.google_domain = params[:domain]
-	   @user = @account.users.new   
-	   unless data.blank?
-	      @user.email = data["email"]
-	      @user.name = data["first_name"] +" "+data["last_name"]
-	    end
-	     
-	   render :action => :signup_google
+     @user = @account.users.new   
+     unless data.blank?
+        @user.email = data["email"]
+        @user.name = data["first_name"] +" "+data["last_name"]
+      end
+       
+     render :action => :signup_google
+
+ end
+ 
+ def deliver_error_page
+   render :action => :signup_google_error
  end
 
   def associate_google_account
@@ -122,7 +134,7 @@ class AccountsController < ApplicationController
     @account = get_account_for_sub_domain
     if @account.blank?      
       set_account_values
-      flash.now[:error] = "There is no subdomain like this. Please try again."
+      flash.now[:error] = t(:'flash.g_app.no_subdomain')
       render :signup_google and return
     end
     open_id_user = verify_open_id_user @account
@@ -134,11 +146,10 @@ class AccountsController < ApplicationController
             redirect_to rediret_url            
          end        
        else
-         flash.now[:error] = "You don't have sufficient privilage to change this. Please login as Administrator !!!"
+         flash.now[:error] = t(:'flash.general.insufficient_privilege.admin')
          render :associate_google         
        end
     else      
-      #flash[:notice] = "Please enter your login credentials"
       render :associate_google
     end
   end
@@ -177,11 +188,11 @@ class AccountsController < ApplicationController
          end        
        else
          @check_session.destroy         
-         flash[:notice] = "You don't have sufficient privilage to change this. Please login as Administrator..!!"
+         flash[:notice] = t(:'flash.general.insufficient_privilege.admin')
          render :associate_google         
        end     
     else       
-      flash[:notice] = "Couldn't log you in. Please verify your credentials"
+      flash[:notice] = t(:'flash.login.verify_credentials')
       render :associate_google
     end
     
@@ -215,7 +226,7 @@ class AccountsController < ApplicationController
   end
   
   def update #by shan temp..
-    @account.name = params[:account][:name]
+    #@account.name = params[:account][:name]
     @account.time_zone = params[:account][:time_zone]
     @account.helpdesk_name = params[:account][:helpdesk_name]
     @account.helpdesk_url = params[:account][:helpdesk_url] 
@@ -232,7 +243,7 @@ class AccountsController < ApplicationController
       
     
     if @account.save
-      flash[:notice] = "Your account details have been updated."
+      flash[:notice] = t(:'flash.account.update.success')
       redirect_to admin_home_index_path
     else
       render :action => 'edit'

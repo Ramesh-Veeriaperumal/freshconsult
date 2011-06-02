@@ -99,7 +99,7 @@ class Helpdesk::TicketsController < ApplicationController
           {'priority_name' => @item.priority_name}, 'activities.tickets.priority_change.short')
       end
 
-      flash[:notice] = "The #{cname.humanize.downcase} has been updated"
+      flash[:notice] = t(:'flash.general.update.success', :human_name => cname.humanize.downcase)
       redirect_to item_url
     else
       edit_error
@@ -110,6 +110,7 @@ class Helpdesk::TicketsController < ApplicationController
     user = params[:responder_id] ? User.find(params[:responder_id]) : current_user #Need to use scoping..
     assign_ticket user
 
+    #by Shan to do i18n
     flash[:notice] = render_to_string(
       :inline => "<%= pluralize(@items.length, 'ticket was', 'tickets were') %> assigned to #{user.name}.")
 
@@ -179,13 +180,13 @@ class Helpdesk::TicketsController < ApplicationController
 
   def empty_trash
     Helpdesk::Ticket.destroy_all(:deleted => true)
-    flash[:notice] = "All tickets in the trash folder were deleted."
+    flash[:notice] = t(:'flash.tickets.empty_trash.success')
     redirect_to :back
   end
 
   def empty_spam
     Helpdesk::Ticket.destroy_all(:spam => true)
-    flash[:notice] = "All tickets in the spam folder were deleted."
+    flash[:notice] = t(:'flash.tickets.empty_spam.success')
     redirect_to :back
   end
   

@@ -39,7 +39,7 @@ class Admin::EmailNotificationsController < Admin::AdminController
         n.update_attributes! new_data[n.id.to_s]
       end
       
-      flash[:notice] = "Email notifications have been updated."
+      flash[:notice] = t(:'flash.email_notifications.update.success')
       redirect_back_or_default admin_email_notifications_url
   end
    

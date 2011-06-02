@@ -10,12 +10,14 @@ Solution::Folder.seed_many(:category_id, :name, [
   {
     :category_id => category.id,
     :name => 'FAQ',
+    :visibility => Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:anyone],
     :description => 'Default solution folder, feel free to edit or delete it.'
   },
   
   {
     :category_id => category.id,
     :name => 'Getting Started',
+    :visibility => Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:anyone],
     :description => 'Default solution folder, feel free to edit or delete it.'
   }
 ])

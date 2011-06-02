@@ -98,9 +98,8 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
 	background-color:#eeeeee;
 	background-repeat:repeat-x; 
 	color: #333333;
-	display:inline-block; 
-	text-decoration: none;
-	@include corners(4px);
+	display:inline-block;
+	text-decoration:none;
 	margin:1px; 
 	line-height:17px;
 	border: 1px solid #d4d4d4;
@@ -110,8 +109,9 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
 	font-weight:bold;
 	cursor: pointer;
 	text-shadow: 1px 1px 0 white;
+	@include corners(4px);
 }
-.uiButton:hover, .fdbutton:hover, .forum_button:hover				{ background-color:$tab_color; border-color: darken($tab_color, 10%); color:#ffffff; @include text-shadow(rgba(0, 0, 0, 0.2), -1px, -1px, 1px); }
+.uiButton:hover, .fdbutton:hover, .forum_button:hover { background-color:$tab_color; border-color: darken($tab_color, 10%); color:#ffffff; @include text-shadow(rgba(0, 0, 0, 0.2), -1px, -1px, 1px); }
 .uiButton:active, .fdbutton:active				{ top: 1px; }
 .small.uiButton, .small.uiButton:visited 		{ font-size: 11px;  }
 .uiButton, .fdbutton, .uiButton:visited, .fdbutton:visited, 
@@ -160,17 +160,6 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
    		position:absolute;
    	} 
 }
- 
-
-.fdbutton{
-	@include anchor-button;
-    @include min-width(80px);
-    padding: 7px 10px 7px 12px;    
-    position:relative;
-    margin: 2px;
-    text-align:center;
-}
-
 
 div.action_buttons{
 	position:relative;
@@ -192,12 +181,15 @@ div.action_buttons{
 		border-right:1px solid darken(#f2f2f2, 10%);
 		@include link-colors(#333333, #666666, #333333, #333333);
 		@include text-shadow(#ffffff, 0px, 1px, 1px);
-	}
-	
-	a.last, a:last-child{ 
-		border:0px;
+	}	
+	a.last{ 
+		border-right:0px;
 		padding-right:4px;
 	}
+ 	a:last-child{ 
+		border-right:0px;
+		padding-right:4px;
+	}	
 	a.icon{
 		padding-left:20px;
 	}
@@ -240,6 +232,7 @@ button.positive, .buttons a.positive{
 
 
 .button {
+	@include pie;
 	@include anchor-button;
     white-space: nowrap;
     text-align: center;

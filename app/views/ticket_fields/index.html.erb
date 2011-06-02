@@ -1,6 +1,9 @@
-<style>
-	html {  height:auto; overflow-y:visible; }
-</style>
+<% content_for :head do %>
+	<style>
+		html {  height:auto; overflow-y:visible; }
+		</style>
+<% end %>
+<% content_for :sidebar do %><% end %>
 <%= javascript_include_tag "_form_customizer.js" %>
 <%= content_tag(:h3, t("ticketfields.title"), :class => "title") %> 
 <% javascript_tag do %>
@@ -40,7 +43,6 @@
 		<%= submit_tag t("ticketfields.save"), :class => "uiButton", :id => "SaveForm" %>
 	</div>
 <%end%>
-<% content_for :sidebar do %><% end %>
 <% content_for :dialogs do %>
 	<%= render :partial => "formfield_props" %>
 <% end %>

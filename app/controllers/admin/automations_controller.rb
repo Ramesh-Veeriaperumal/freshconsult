@@ -17,7 +17,7 @@ class Admin::AutomationsController < Admin::AdminController
     @va_rule.match_type ||= :all
     
     if @va_rule.save
-      flash[:notice] = "The #{human_name} has been created."
+      flash[:notice] = t(:'flash.general.create.success', :human_name => human_name)
       redirect_back_or_default redirect_url
     else
       load_config
@@ -34,7 +34,7 @@ class Admin::AutomationsController < Admin::AdminController
     @va_rule.action_data = ActiveSupport::JSON.decode params[:action_data]
     
     if @va_rule.update_attributes(params[:va_rule])
-      flash[:notice] = "The #{human_name} has been updated."
+      flash[:notice] = t(:'flash.general.update.success', :human_name => human_name)
       redirect_back_or_default redirect_url
     else
       load_config

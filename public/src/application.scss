@@ -623,10 +623,11 @@ body h5{
 	
 	.request_status{
 		float:right; 
-		position:relative;	
+		position:relative;
 		top:-18px;
 		border:1px solid #d3d497;
 		@include vertical-gradient(#FEFEDF, #FBFD90);
+		filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#FEFEDF', endColorstr='#FBFD90',GradientType=0 ); /* IE6-9 */
 		
 		img{
 			position:absolute;
@@ -634,7 +635,7 @@ body h5{
 			top:0px;
 		}
 	
-		ul{ 
+		ul{ 			
 			color:#979866;
 			font-weight:bold;	
 			padding:6px 10px; 
@@ -2466,11 +2467,11 @@ a.page_title{
 
 .results{ 
 	padding-bottom:8px;
-	.ticket_icon  span.icon{ background:sprite($icons, page-white) no-repeat; }
-	.contact_icon span.icon{ background:sprite($icons, user) no-repeat; } 
-	.company_icon  span.icon{ background:sprite($icons, building) no-repeat; } 
-	.solution_icon  span.icon{ background:sprite($icons, solutions) no-repeat; } 
-	.forum_icon  span.icon{ background:sprite($icons, comments) no-repeat; }  
+	.ticket_icon	span.icon{ background:sprite($icons, page-white) no-repeat; }
+	.contact_icon	span.icon{ background:sprite($icons, user) no-repeat; } 
+	.company_icon	span.icon{ background:sprite($icons, building) no-repeat; } 
+	.solution_icon	span.icon{ background:sprite($icons, solutions) no-repeat; } 
+	.forum_icon		span.icon{ background:sprite($icons, comments) no-repeat; }  
 	
 	li{
 		list-style:none;
@@ -2482,6 +2483,7 @@ a.page_title{
 			height:16px;
 			margin-left:4px;
 			margin-top:5px;
+			left:0px;
 		}
 		a{
 			display:block;

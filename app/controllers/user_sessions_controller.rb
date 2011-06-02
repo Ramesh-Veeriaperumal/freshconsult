@@ -18,7 +18,7 @@ require 'openid'
  
   def check_sso_params
     if params[:name].blank? or params[:email].blank? or params[:hash].blank?
-      flash[:notice] = "Expected params are name, email and hash which are not present "
+      flash[:notice] = t(:'flash.login.sso.expected_params')
       redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
     end
   end
@@ -29,7 +29,7 @@ require 'openid'
           @current_user = create_user(params[:email],current_account) if @current_user.blank?  
           @user_session = @current_user.account.user_sessions.new(@current_user)
           if @user_session.save
-              flash[:notice] = "Login successful!"      
+              flash[:notice] = t(:'flash.login.success')
               redirect_back_or_default('/')      
           else
               redirect_to current_account.sso_options[:login_url]
@@ -101,7 +101,7 @@ require 'openid'
   if resp.status == :success
     email = get_email resp
   else
-    flash[:error] = "Authentication Failed"
+    flash[:error] = t(:'flash.g_app.authentication_failed')
     return redirect_to root_url
   end
   provider = 'open_id' 
@@ -121,10 +121,10 @@ require 'openid'
   @user_session = current_account.user_sessions.new(@current_user)  
   if @user_session.save
       logger.debug " @user session has been saved :: #{@user_session.inspect}"
-      flash[:notice] = "Login successful!"      
+      flash[:notice] = t(:'flash.login.success')
       redirect_back_or_default('/')      
   else
-     flash[:notice] = "Authentication Failed"
+     flash[:notice] = t(:'flash.g_app.authentication_failed')
      redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
   end
 end

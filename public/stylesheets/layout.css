@@ -64,7 +64,7 @@ label.overlabel {
   position: relative;
   z-index: 1;
   margin: 12px 0px 0px 0px;
-  padding-right: 310px;
+  padding-right: 318px;
 }
 #inner:after {
   content: "\0020";
@@ -81,7 +81,6 @@ label.overlabel {
 #inner .sidebar {
   width: 310px;
   float: right;
-  display: inline;
   margin-right: -310px;
 }
 
@@ -149,13 +148,8 @@ div.bg_pulp {
   color: white;
   text-decoration: none;
   padding: 3px 10px;
-  behavior: url('/stylesheets/PIE.htc');
-  position: relative;
   -moz-border-radius: 6px 6px 6px 6px;
   -webkit-border-radius: 6px 6px 6px 6px;
-  -o-border-radius: 6px 6px 6px 6px;
-  -ms-border-radius: 6px 6px 6px 6px;
-  -khtml-border-radius: 6px 6px 6px 6px;
   border-radius: 6px 6px 6px 6px;
   background-color: #afafaf;
   text-decoration: none;
@@ -237,110 +231,6 @@ div.bg_pulp {
   -moz-box-shadow: inset 0px -2px 2px rgba(0, 0, 0, 0.1);
   -webkit-box-shadow: inset 0px -2px 2px rgba(0, 0, 0, 0.1);
   box-shadow: inset 0px -2px 2px rgba(0, 0, 0, 0.1);
-}
-
-.nav_search, .nav_right {
-  float: right;
-}
-
-.nav_search {
-  min-width: 260px;
-  width: auto !important;
-  width: 260px;
-  height: 27px;
-  position: relative;
-  margin: 2px 14px 0px 0px;
-}
-.nav_search div.search_bar {
-  height: 26px;
-  background: url("../images/search_icon.gif") 4px 5px no-repeat white;
-  padding: 0px 8px 0px 25px;
-}
-.nav_search label.overlabel, .nav_search input {
-  top: 4px;
-}
-.nav_search label.overlabel {
-  padding: 0px;
-  margin: 2px 3px;
-  font-size: 14px;
-}
-.nav_search input {
-  border: 0px !important;
-  position: relative;
-  font-size: 12px !important;
-  width: 100%;
-  padding: 0px;
-  background: none;
-}
-.nav_search input:focus {
-  -moz-box-shadow: 0 0 0 0;
-  -webkit-box-shadow: 0 0 0 0;
-  box-shadow: 0 0 0 0;
-}
-
-.nav_right {
-  position: relative;
-  z-index: 10;
-  margin: 2px 6px 0px 3px;
-}
-
-a.new_ticket, .nav_search div.search_bar {
-  -moz-box-shadow: #777777 0px 0px 2px;
-  -webkit-box-shadow: #777777 0px 0px 2px;
-  box-shadow: #777777 0px 0px 2px;
-  behavior: url('/stylesheets/PIE.htc');
-  position: relative;
-  -moz-border-radius: 4px 4px 4px 4px;
-  -webkit-border-radius: 4px 4px 4px 4px;
-  -o-border-radius: 4px 4px 4px 4px;
-  -ms-border-radius: 4px 4px 4px 4px;
-  -khtml-border-radius: 4px 4px 4px 4px;
-  border-radius: 4px 4px 4px 4px;
-  margin-top: 2px;
-}
-
-a.new_ticket {
-  background: #fefefe;
-  background: -moz-linear-gradient(top, #fefefe 0%, #dfdfdf 100%);
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #fefefe), color-stop(100%, #dfdfdf));
-  background: linear-gradient(#fefefe, #dfdfdf);
-  behavior: url('/stylesheets/PIE.htc');
-  position: relative;
-  background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #fefefe), color-stop(100%, #dfdfdf));
-  background: -webkit-linear-gradient(#fefefe, #dfdfdf);
-  background: -moz-linear-gradient(#fefefe, #dfdfdf);
-  background: -o-linear-gradient(#fefefe, #dfdfdf);
-  -pie-background: linear-gradient(#fefefe, #dfdfdf);
-  background: linear-gradient(#fefefe, #dfdfdf);
-  padding: 6px 10px 5px 25px;
-  color: #333333;
-  font-size: 12px;
-  text-decoration: none;
-  font-weight: bold;
-  position: relative;
-  display: block;
-}
-a.new_ticket img {
-  position: absolute;
-  left: 6px;
-  top: 5px;
-}
-
-a.new_ticket:hover {
-  background: #606c88;
-  background: -moz-linear-gradient(top, #606c88 0%, #3f4c6b 100%);
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #606c88), color-stop(100%, #3f4c6b));
-  background: linear-gradient(#606c88, #3f4c6b);
-  behavior: url('/stylesheets/PIE.htc');
-  position: relative;
-  background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #606c88), color-stop(100%, #3f4c6b));
-  background: -webkit-linear-gradient(#606c88, #3f4c6b);
-  background: -moz-linear-gradient(#606c88, #3f4c6b);
-  background: -o-linear-gradient(#606c88, #3f4c6b);
-  -pie-background: linear-gradient(#606c88, #3f4c6b);
-  background: linear-gradient(#606c88, #3f4c6b);
-  border-color: #606c88;
-  color: #ffffff;
 }
 
 ul.tabs {

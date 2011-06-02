@@ -116,7 +116,7 @@ class Solution::ArticlesController < ApplicationController
      tag = article.tags.find_by_id(params[:tag_id])      
      raise ActiveRecord::RecordNotFound unless tag
      Helpdesk::TagUse.find_by_article_id_and_tag_id(article.id, tag.id).destroy
-    flash[:notice] = "The tag was removed from this Solution"
+    flash[:notice] = t(:'flash.solutions.remove_tag.success')
     redirect_to :back
 
       
@@ -170,7 +170,7 @@ protected
 def check_solution_permission  
   @solution = current_account.solution_articles.find(params[:id]) 
   unless @solution.folder.visible?(current_user)    
-    flash[:notice] = "You don't have sufficient privileges to access this page"
+    flash[:notice] = t(:'flash.general.access_denied')
     redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)  
   end
 end

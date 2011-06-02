@@ -25,7 +25,8 @@ class Admin::EmailConfigsController < Admin::AdminController
     if @email_config
       current_account.primary_email_config.update_attributes(:primary_role => false)
       if @email_config.update_attributes(:primary_role => true)
-        flash[:notice] = "<b>#{@email_config.reply_email}</b> is now your primary support email!"
+        flash[:notice] = t(:'flash.email_settings.make_primary.success', 
+            :reply_email => @email_config.reply_email)
         redirect_back_or_default redirect_url
       end
     end
@@ -36,12 +37,14 @@ class Admin::EmailConfigsController < Admin::AdminController
     if @email_config
       unless @email_config.active
         @email_config.active = true
-        flash[:notice] = "#{@email_config.reply_email} has been activated!" if @email_config.save
+        flash[:notice] = t(:'flash.email_settings.activation.success', 
+            :reply_email => @email_config.reply_email) if @email_config.save
       else
-        flash[:warning] = "#{@email_config.reply_email} has been activated already!"
+        flash[:warning] = t(:'flash.email_settings.activation.already_activated', 
+            :reply_email => @email_config.reply_email)
       end
     else
-      flash[:warning] = "The activation code is not valid!"
+      flash[:warning] = t(:'flash.email_settings.activation.invalid_code')
     end
     
     redirect_back_or_default redirect_url
@@ -50,7 +53,8 @@ class Admin::EmailConfigsController < Admin::AdminController
   def deliver_verification
     @email_config = scoper.find(params[:id])
     @email_config.deliver_verification_email
-    flash[:notice] = "Verification email has been sent to #{@email_config.reply_email}!"
+    flash[:notice] = t(:'flash.email_settings.send_activation.success', 
+        :reply_email => @email_config.reply_email)
     redirect_back_or_default redirect_url
   end
   
