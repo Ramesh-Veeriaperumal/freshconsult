@@ -9,19 +9,19 @@ module ApplicationHelper
   end
 
   def tab(title, url, cls = false)
-    content_tag('li', content_tag('span') + link_to(strip_tags(title), url), :class => cls)
+    content_tag('li', content_tag('span') + link_to(strip_tags(title), url), :class => ( cls ? "active": "" ) )
   end
 
   def navigation_tabs
     tabs = [
-      ['/home',               'Home',         !permission?(:manage_tickets)],
-      ['helpdesk/dashboard',  'Dashboard',    permission?(:manage_tickets)],
-      ['helpdesk/tickets',    'Tickets',      permission?(:manage_tickets)],
-      ['solution/categories', 'Solutions',    allowed_in_portal?(:open_solutions)],      
-      ['/categories',         'Forums',       (feature?(:forums) && allowed_in_portal?(:open_forums))],
-      ['/contacts',           'Customers',    permission?(:manage_tickets)],
-      ['support/tickets',     'Check your ticket status',      !permission?(:manage_tickets)],
-      ['/admin/home',         'Admin',        permission?(:manage_users)]
+      ['/home',               :home,        !permission?(:manage_tickets)],
+      ['helpdesk/dashboard',  :dashboard,    permission?(:manage_tickets)],
+      ['helpdesk/tickets',    :tickets,      permission?(:manage_tickets)],
+      ['solution/categories', :solutions,    allowed_in_portal?(:open_solutions)],      
+      ['/categories',         :forums,       (feature?(:forums) && allowed_in_portal?(:open_forums))],
+      ['/contacts',           :customers,    permission?(:manage_tickets)],
+      ['support/tickets',     :checkstatus, !permission?(:manage_tickets)],
+      ['/admin/home',         :admin,        permission?(:manage_users)]
     ]
 
 #    history_active = false;
@@ -38,12 +38,9 @@ module ApplicationHelper
     navigation = tabs.map do |s| 
       next unless s[2]
       active = (params[:controller] == s[0]) || (s[1] == @selected_tab || "/#{params[:controller]}" == s[0]) #selected_tab hack by Shan  !history_active &&
-      tab(s[1], {:controller => s[0], :action => :index}, active && :active) 
+      tab( t("headertabs.#{s[1].to_s}"), {:controller => s[0], :action => :index}, active && :active ) 
     end
-
-    spacer = content_tag('li', '', :class => 'spacer')
-
-    navigation #+ [spacer] + history
+    navigation
   end
   
   

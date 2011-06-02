@@ -86,7 +86,7 @@ class UsersController < ApplicationController
     end
 
     def set_selected_tab
-      @selected_tab = 'Customers'
+      @selected_tab = :customers
     end
   
 end
