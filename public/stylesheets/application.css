@@ -2749,7 +2749,7 @@ h4.border_title {
   overflow: hidden;
   *zoom: 1;
 }
-.attachments div.item a {
+.attachments div.item em {
   text-transform: capitalize;
   font-size: 11px;
   color: #527EAA;

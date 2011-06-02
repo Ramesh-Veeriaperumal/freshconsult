@@ -31,11 +31,15 @@
 		height:65px !important;
 	}
 	
-	/*.ui-draggable-dragging{
-		margin-left:-18px;
-		margin-top:-45px;
-	}*/
-	
+	.ui-form{
+		.attachment_list li{
+			width:200px;
+			.delete{
+				display:block;
+			}
+			border:0px;
+		}
+	}
 	.request-list div.item{ 
 		.bulb, .wand{
 			left:0px;

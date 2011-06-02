@@ -1,18 +1,5 @@
 <%= include_tiny_mce_if_needed %>
-
-<% content_for :head do %>
-  <%= javascript_include_tag "helpdesk/page_switcher" %>
-  <% javascript_tag do %>
-    document.observe("dom:loaded", function(){
-      new Helpdesk.PageSwitcher({
-        toggleMode: true,
-        pages: ['attachment-options']
-      });
-    });
-  <% end %>
-<% end %>
-
-	<%= f.error_messages %>
+<%= f.error_messages %>
 	<ul class="ui-form">
 		<li>
     		<%= f.label(:title, t('title')) %>
@@ -22,11 +9,9 @@
     		<%= f.text_area  :description, :class => "mceEditor", :id => 'article-body' %>		
 		</li>
 		<li>
-			<%= render :partial=> "/solution/shared/attachment_form" %>
-		</li>
-		
-		
-	 <li class="attachment-list-container">
+			<%= render :partial => "/solution/shared/attachment_form" %>
+		</li> 
+	 	<li class="attachment-list-container">
 	    <%= content_tag('h4', 'Attachments', :class => "title") unless @article.attachments.empty? %>
 	    <ul class="attachment_list">
 	      <%= render(
@@ -38,7 +23,7 @@
 		<% fields_for :tags  do |tag| %>
 		<li>
 			<%= tag.label(:name, t('tag.title')) %>
-			<%= tag.text_field :name , :value => @article.tags.collect{|tg| tg.name+"," }%>
+			<%= tag.text_field :name , :value => @article.tags.collect{|tg| tg.name+","}, :class => "text" %>
 		</li>
 		<%end%>		
 		<li class="dropdown">
@@ -50,26 +35,3 @@
 			<%= f.select :status, Solution::Article::STATUS_OPTIONS, :class => "select" %>
 		</li>
 	</ul>
-	
- 
-
-<%# 
-  The following is a template used by multifile.js to create rows in
-  the attachments tableee.
-%>
-
-<textarea id="file-list-template" style="display:none">
-  <tr>
-    <td class="remove">
-      <a href="" onclick="Helpdesk.Multifile.remove(this); return false;", inputId="#{inputId}">
-        <%= image_tag("helpdesk/delete.png") %>
-      </a>
-    </td>
-    <td class="name">#{name}</td>
-    <td>
-      <label>Description</label>
-      <input type="text" name="helpdesk_article[attachments][][description]" />
-    </td>
-    </tr>
-</textarea>
-

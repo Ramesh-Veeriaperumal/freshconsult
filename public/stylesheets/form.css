@@ -972,6 +972,8 @@ fieldset.nestedChoices {
   -moz-border-radius: 4px 4px 4px 4px;
   -webkit-border-radius: 4px 4px 4px 4px;
   border-radius: 4px 4px 4px 4px;
+  behavior: url('/stylesheets/PIE.htc');
+  position: relative;
 }
 
 .border-top {
