@@ -1,14 +1,13 @@
 if(!window.Helpdesk) Helpdesk = {};
 
 Helpdesk.Multifile = {
-
+	
     load: function(){
         $$("input[fileList]").each(Helpdesk.Multifile.addEventHandler);
-
         Helpdesk.Multifile.template = new Template($('file-list-template').value);
     },
 
-    onFileSelected: function(input){
+    onFileSelected: function(input){ 
         this.addFileToList(input);
         this.duplicateInput(input);
     },
@@ -17,28 +16,30 @@ Helpdesk.Multifile = {
         i2 = input.cloneNode(true);
         i2.id += "_c";
         i2.value = "";
-        input.insert({before: i2})
+        input.insert({before: i2});
 
         input.name = input.readAttribute('nameWhenFilled');
         input.hide();
         this.removeEventHandler(input);
-        this.addEventHandler(i2);
-
-        return i2
+        this.addEventHandler(i2); 
+        return i2;
     },
-
+	
+	changeUploadFile: function(e){ 
+		Helpdesk.Multifile.onFileSelected(e); 
+	},
+	
     addEventHandler: function(input){
-        input.observe('change', function(e){ Helpdesk.Multifile.onFileSelected(e.target)} );
+        $(input).observe('change', function(e){ Helpdesk.Multifile.onFileSelected(input); } );
     },
 
     removeEventHandler: function(input){
-        input.stopObserving('change');
+       $(input).stopObserving('change');
     },
 
     addFileToList: function(oldInput){
 		var container = $(oldInput.readAttribute('fileContainer'));
 		container.show();
-		
 		
         var target = $(oldInput.readAttribute('fileList'));
         target.insert({
@@ -73,18 +74,15 @@ Helpdesk.Multifile = {
 
 
         });*/
-
     },
-
     remove: function(link){
-        $(link.readAttribute('inputId')).remove();
-        link.up('div').remove();
+		try{
+			$(link.getAttribute('inputId')).remove();
+			$(link).up('div').remove();
+		}catch(e){
+			alert(e);
+		}
     }
-    
-
-
-
-
-}
+};
 
 document.observe("dom:loaded", Helpdesk.Multifile.load);
