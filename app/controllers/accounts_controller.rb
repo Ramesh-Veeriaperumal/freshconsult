@@ -17,11 +17,11 @@ class AccountsController < ApplicationController
   #ssl_required :billing, :cancel, :new, :create #by Shan temp
   #ssl_allowed :plans, :thanks, :canceled, :paypal
   
-  before_filter :only => [:update, :destroy, :edit, :delete_logo, :delete_fav,  :cancel, :plan, :plans, :thanks] do |c| 
+  before_filter :only => [:update, :destroy, :edit, :delete_logo, :delete_fav, :plan, :plans, :thanks] do |c| 
     c.requires_permission :manage_users
   end
   
-  before_filter :only =>  [:billing,:show ] do |c| 
+  before_filter :only =>  [:billing,:show,  :cancel ] do |c| 
     c.requires_permission :manage_account
   end
   
@@ -338,13 +338,14 @@ class AccountsController < ApplicationController
       redirect_to :action => "plan"
     end
   end
+  
 
   def cancel
     if request.post? and !params[:confirm].blank?
       current_account.destroy
-      self.current_user = nil
-      reset_session
-      redirect_to :action => "canceled"
+      #self.current_user = nil
+      #reset_session
+      redirect_to "http://www.freshdesk.com"
     end
   end
   
