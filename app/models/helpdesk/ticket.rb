@@ -72,7 +72,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     
   has_one :ticket_states, :class_name =>'Helpdesk::TicketState', :dependent => :destroy
 
-  has_one :ticket_topic
+  has_one :ticket_topic,:dependent => :destroy
   has_one :topic, :through => :ticket_topic
   
   attr_protected :attachments #by Shan - need to check..
