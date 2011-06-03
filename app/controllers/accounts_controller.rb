@@ -76,8 +76,10 @@ class AccountsController < ApplicationController
     build_plan
     @account.time_zone = (ActiveSupport::TimeZone[params[:utc_offset].to_f]).name
     
-    if @account.save
-       redirect_to params[:call_back]+"&EXTERNAL_CONFIG=true"
+    if @account.save       
+       rediret_url = params[:call_back]+"&EXTERNAL_CONFIG=true" unless params[:call_back].blank?
+       rediret_url = "https://www.google.com/a/cpanel/"+@account.google_domain if rediret_url.blank?
+       redirect_to rediret_url
       #redirect to google.... else to the signup page
     else
       @call_back_url = params[:call_back]
