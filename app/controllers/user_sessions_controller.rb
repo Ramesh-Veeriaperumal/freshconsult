@@ -72,19 +72,21 @@ require 'openid'
   def google_auth
     base_domain = AppConfig['base_domain'][RAILS_ENV]
     domain_name = params[:domain] 
-    logger.debug "base domain is #{base_domain}"
+    signup_url = "https://signup."+base_domain+".com/account/signup_google?domain="+domain_name unless domain_name.blank?   
+    #signup_url = "http://localhost:3000/account/signup_google?domain="+domain_name unless domain_name.blank?
     @current_account = Account.find(:first,:conditions=>{:google_domain=>domain_name},:order=>"updated_at DESC")
-    full_domain  = "#{domain_name.split('.').first}.#{AppConfig['base_domain'][RAILS_ENV]}"
+    full_domain  = "#{domain_name.split('.').first}.#{AppConfig['base_domain'][RAILS_ENV]}" unless domain_name.blank?
     @current_account = Account.find_by_full_domain(full_domain) if @current_account.blank?
-    cust_url = @current_account.full_domain unless @current_account.blank?
-    return :back if @current_account.blank?
-    
+    cust_url = @current_account.full_domain unless @current_account.blank?   
+    if @current_account.blank?      
+      flash[:notice] = "There is no account associated with your domain. You may signup here"
+      redirect_to signup_url and return unless signup_url.blank? 
+      raise URI::InvalidURIError, "Invalid URL"
+    end    
     ##Need to handle the case where google is integrated with a seperate domain-- 2 times we need to authenticate
     return_url = "https://"+cust_url+"/authdone/google?domain="+params[:domain] 
-    logger.debug "the return_url is :: #{return_url}"
-    
-    re_alm = "https://*."+base_domain
-    
+    logger.debug "the return_url is :: #{return_url}"    
+    re_alm = "https://*."+base_domain    
     logger.debug "domain name is :: #{domain_name}"
     url = nil    
     url = ("https://www.google.com/accounts/o8/site-xrds?hd=" + params[:domain]) unless domain_name.blank?
