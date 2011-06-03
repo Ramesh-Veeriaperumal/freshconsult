@@ -14,25 +14,25 @@
 
   <td class="assign">
       <% if ticket.freshness == :new %>
-        Unassigned
+        <%=t('ticket.unassigned')%>
       <% else %>
-        <span>Assigned to <%= link_to(h(ticket.responder.display_name), ticket.responder, :class => 'username') %></span>
+        <span><%=t('assigned_to')%> <%= link_to(h(ticket.responder.display_name), ticket.responder, :class => 'username') %></span>
       <% end %>
 	  	<ul>
 			<li>
-		        Status <span><%= ticket.status_name %></span>
+		        <%=t('ticket.status')%> <span><%= ticket.status_name %></span>
 		    </li>
 			<li class="priority">
-			    Priority <span class="style_<%=ticket.priority%>"><%= ticket.priority_name %></span>
+			    <%=t('ticket.priority')%> <span class="style_<%=ticket.priority%>"><%= ticket.priority_name %></span>
 			</li>
 		</ul>
   </td>
 	
   <td class="sla">
   		<% if(Time.now > ticket.due_by ) %>
-			Already Overdue for <%= distance_of_time_in_words(Time.now, ticket.due_by) %>
+			<%= t('already_overdue',:time_words => distance_of_time_in_words(Time.now, ticket.due_by)) %>
 		<% else %>
-			Due in <%= distance_of_time_in_words(Time.now, ticket.due_by) %> 
+		    <%= t('due_in',:time_words => distance_of_time_in_words(Time.now, ticket.due_by)) %>
 		<% end %>  
   </td>
 </tr>
