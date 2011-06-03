@@ -79,6 +79,7 @@ en:
     start_topic: Start a Topic
     type: Forum Type
     visibility: Forum visibility
+  password_reset_email: Password Reset Email
   import_user_org: Users &amp; Organizations
   to_do: To Do
   feedbackwidget_formcustomize: Form customization
@@ -190,6 +191,7 @@ en:
         success: The %{human_name} has been created.
       update: 
         success: The %{human_name} has been updated.
+  agent_closes_tkt: Agent closes the Ticket
   submit: submit
   export_data_successfull: Your Help desk data will be sent to your via email shortly!
   import_topics: Topics
@@ -261,8 +263,10 @@ en:
       account_settings: Account Settings
       export_data_text: Generate an XML of all available Help desk data and send it via email
   non_covered_feature_error: Your current Freshdesk plan does not cover this feature.
+  requester_replies: Requester replies to Ticket
   start_typing_a_question: Start typing a question and see answers in real time
   delete_topic_msg: Delete this topic forever
+  first_response_sla: First Response SLA Violation
   import_note_info: The fields in your csv file can be in any order. Just ensure that the first row has the header information.(Eg. Name, email etc.) The only required field is email.
   begin_subscription: Begin Subscription
   at: at
@@ -342,6 +346,7 @@ en:
       placeholder: Search All Solutions
     search: 
       placeholder: Search %{name}
+  requester_reopens: Requester reopens the Ticket
   reset: Reset
   import_ignore_first_row: Ignore the first row (headings)
   portal_customizer_open_sol_i: Turn this feature off, if you want to hide 'Solutions' tab in public customer portal.
@@ -424,6 +429,8 @@ en:
   right: Right
   footer: 
     helpdesk_software: Help Desk Software by Freshdesk
+  tkt_unattended_in_grp: Ticket unattended in Group
+  agent_solves_tkt: Agent solves the Ticket
   zendesk_url_info: e.g:- http://acme.zendesk.com
   portal_customizer_anon_for_i: Turn this feature off, if you want to hide 'Forums' tab in public customer portal.
   ticketfields: 
@@ -507,6 +514,7 @@ en:
   feedbackwidget_text: Text
   billed_amount_per_month: You will be billed $%{amount} per month
   import_zendesk_summary: Import from zendesk summary
+  user_activation_email: User Activation Email
   import: Import
   import_solution_article_info: "Note: We will not save the forum comments"
   portal: 
@@ -517,6 +525,7 @@ en:
   first_name: First Name
   pro_brief: For larger Teams
   feedbackwidget_position: Position
+  resolution_time_sla: Resolution time SLA Violation
   import_groups: Groups
   solution: 
     info9: Public (Will be published in self service)
@@ -581,6 +590,7 @@ en:
     title: Tags
   feedbackwidget_help_para2: "Customizable tab opens into a Support ticket form. "
   portal_customizer_anon_tickets: Anybody can submit a ticket
+  agent_adds_comment: Agent adds comment to Ticket
   agents: Agents
   feedbackwidget_defaultbutton: Support
   formatting_help: Formatting Help
@@ -619,6 +629,7 @@ en:
     info8: Forward your emails to
     make_primary: Make primary
   title: Title
+  new_ticket_created: New Ticket Created
   import_forum: Forums
   feedbackwidget_embed_code_intro: Please copy and paste the code below anywhere before the &lt;/body&gt; tag in the html template of your site or every page where you'd like to provide the Freshdesk widget.
   change_plan: Change plan
@@ -688,6 +699,7 @@ en:
     submit_ticket: Submit Ticket
     properties: Ticket Properties
     requester: Requester
+  tkt_assigned_to_agent: Ticket assigned to Agent
   description: Description
   recent_forum_posts: Recent Forum Posts
   company: 
@@ -723,6 +735,8 @@ en:
   will_expire_in: will expire in
   import_step1_info: Select a CSV file and click import
   import_tickets: Tickets
+  tkt_assigned_to_group: Ticket assigned to Group
+  agent_info_title: Agent information
   account: 
     name: Account Name
     page_colors: 
@@ -741,15 +755,10 @@ en:
     rebrand: Rebrand your Helpdesk
     helpdesk_name: Helpdesk Name
     helpdesk_url: Helpdesk URL
-  agent_info_title: Agent information
-  plans_billing: Plans & Billing
-  forum_confirm_msg1: Are you sure you want to delete this category
   comments: Comments
-  reply_topic: Reply to topic
-  your_trial_account: Your trial account
-  portal_customizer_title: Customize your Public Customer Portal
-  add: Add
-  import_org_companies: Organizations &rarr; Companies
+  forum_confirm_msg1: Are you sure you want to delete this category
+  plans_billing: Plans & Billing
+  portal_customizer_open_forums: Anybody can view forums
   business_hours: 
     holiday_name: Holiday name
     title: Business Hours
@@ -762,7 +771,11 @@ en:
     info5: Holidays will be ignored when calculating SLA for a ticket
     holiday_list: Yearly Holiday List
     helpdesk_hours: Helpdesk Hours
-  portal_customizer_open_forums: Anybody can view forums
+  import_org_companies: Organizations &rarr; Companies
+  add: Add
+  portal_customizer_title: Customize your Public Customer Portal
+  your_trial_account: Your trial account
+  reply_topic: Reply to topic
   password: Password
   import_step2_info: Map the following CSV fields with database fields and import.
   feedbackwidget_defaulttitle: Help &amp; Support
