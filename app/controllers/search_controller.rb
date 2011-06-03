@@ -62,8 +62,7 @@ class SearchController < ApplicationController
     
     
     def search_content(f_classes)
-      s_options = { :account_id => current_account.id }
-      s_options.merge!(:is_public => true) unless (current_user && !current_user.customer?)
+      s_options = { :account_id => current_account.id }      
       s_options.merge!(:category_id => params[:category_id]) unless params[:category_id].blank?
       s_options.merge!(:visibility => get_visibility(f_classes)) 
       

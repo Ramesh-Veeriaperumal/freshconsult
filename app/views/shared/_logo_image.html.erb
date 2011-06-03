@@ -10,7 +10,7 @@
 	}
 <%- end %>
 <li class="inline-field">
-	<%= label(:account, :logo, "Header Logo", :class => "caption") %>
+	<%= label(:account, :logo, t('header_logo'), :class => "caption") %>
 	<div class="fields">
 		<% if(account.logo) %>
 			<div class="profile_pic" id="LogoPic">
@@ -22,11 +22,11 @@
 				<% end %>
 			</div>
 			<div id="LogoControls">
-				<%= link_to_function("Change", "changeLogoPic()", :class => "button") %>
-				<%= link_to_remote('Delete',
+				<%= link_to_function(t('change'), "changeLogoPic()", :class => "button") %>
+				<%= link_to_remote(t('delete'),
 						:url => { :action => "delete_logo", :id => account.id },
 						:success => "deleteLogo()",
-						:confirm => 'Are you sure you want to delete this logo',
+						:confirm => t('logo_delete_msg'),
 						:method => 'delete',
 						:html => { :class => "button" }) %>
 			</div>

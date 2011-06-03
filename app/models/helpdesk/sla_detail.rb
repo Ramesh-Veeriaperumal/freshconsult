@@ -5,15 +5,15 @@ class Helpdesk::SlaDetail < ActiveRecord::Base
   has_one :account , :through => :sla_policy 
     
   RESPONSETIME = [
-    [ :half,    "30 Minutes",  1800 ], 
-    [ :one,     "1 Hour",      3600 ], 
-    [ :two,     "2 Hours",      7200 ], 
-    [ :four,    "4 Hours",     14400 ], 
-    [ :eight,   "8 Hours",     28800 ], 
-    [ :twelve,  "12 Hours",    43200 ], 
-    [ :day,     "1 Day",      86400 ],
-    [ :twoday,  "2 Days",     172800 ], 
-    [ :threeday,"3 Days",     259200 ], 
+    [ :half,    I18n.t('half'),  1800 ], 
+    [ :one,      I18n.t('one'),      3600 ], 
+    [ :two,      I18n.t('two'),      7200 ], 
+    [ :four,     I18n.t('four'),     14400 ], 
+    [ :eight,    I18n.t('eight'),     28800 ], 
+    [ :twelve,   I18n.t('twelve'),    43200 ], 
+    [ :day,      I18n.t('day'),      86400 ],
+    [ :twoday,   I18n.t('twoday'),     172800 ], 
+    [ :threeday, I18n.t('threeday'),     259200 ], 
    
    
   ]
@@ -23,15 +23,15 @@ class Helpdesk::SlaDetail < ActiveRecord::Base
   RESPONSETIME_KEYS_BY_TOKEN = Hash[*RESPONSETIME.map { |i| [i[0], i[2]] }.flatten]
   
   RESOLUTIONTIME = [
-    [ :half,    "30 Minutes",  1800 ], 
-    [ :one,     "1 Hour",      3600 ], 
-    [ :two,     "2 Hours",      7200 ], 
-    [ :four,    "4 Hours",     14400 ], 
-    [ :eight,   "8 Hours",     28800 ], 
-    [ :twelve,  "12 Hours",    43200 ], 
-    [ :day,     "1 Day",      86400 ],
-    [ :twoday,  "2 Days",     172800 ], 
-    [ :threeday,"3 Days",     259200 ], 
+    [ :half,    I18n.t('half'),  1800 ], 
+    [ :one,      I18n.t('one'),      3600 ], 
+    [ :two,      I18n.t('two'),      7200 ], 
+    [ :four,     I18n.t('four'),     14400 ], 
+    [ :eight,    I18n.t('eight'),     28800 ], 
+    [ :twelve,   I18n.t('twelve'),    43200 ], 
+    [ :day,      I18n.t('day'),      86400 ],
+    [ :twoday,   I18n.t('twoday'),     172800 ], 
+    [ :threeday, I18n.t('threeday'),     259200 ], 
    
    
   ]
@@ -42,10 +42,10 @@ class Helpdesk::SlaDetail < ActiveRecord::Base
   RESOLUTIONTIME_KEYS_BY_TOKEN = Hash[*RESOLUTIONTIME.map { |i| [i[0], i[2]] }.flatten]
   
   PRIORITIES = [
-    [ 'low',       "Low",         1 ], 
+   [ 'low',       "Low",         1 ], 
     [ 'medium',    "Medium",      2 ], 
     [ 'high',      "High",        3 ], 
-    [ 'urgent',    "Urgent",      4 ], 
+    [ 'urgent',    "Urgent",      4 ],
    
   ]
 
@@ -54,8 +54,8 @@ class Helpdesk::SlaDetail < ActiveRecord::Base
   PRIORITY_KEYS_BY_TOKEN = Hash[*PRIORITIES.map { |i| [i[0], i[2]] }.flatten]
   
   SLA_TIME = [
-    [ :business,       "Business Hours",      false ], 
-    [ :calendar,    "Calendar Hours",      true ],        
+    [ :business,       I18n.t('admin.home.index.business-hours'),      false ], 
+    [ :calendar,    I18n.t('sla_policy.calendar_time'),      true ],        
   ]
 
   SLA_TIME_OPTIONS = SLA_TIME.map { |i| [i[1], i[2]] }

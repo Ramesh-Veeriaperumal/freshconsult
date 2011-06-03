@@ -10,7 +10,7 @@
 	}
 <%- end %>
 <li class="inline-field">
-	<%= label(:account, :fav_icon, "Favicon", :class => "caption") %>
+	<%= label(:account, :fav_icon, t('favicon'), :class => "caption") %>
 	<div class="fields">
 		<% if(account.fav_icon) %>
 		<div class="profile_pic" id="FavPic">
@@ -22,11 +22,11 @@
 			<% end %>
 		</div>
 		<div id="FavControls">
-			<%= link_to_function("Change", "changeFavPic()", :class => "button") %>
-			<%= link_to_remote('Delete',
+			<%= link_to_function(t('change'), "changeFavPic()", :class => "button") %>
+			<%= link_to_remote(t('delete'),
 					:url => { :action => "delete_fav", :id => account.id },
 					:success => "deleteFav()",
-					:confirm => 'Are you sure you want to delete this fav icon',
+					:confirm => t('fav_delete_msg'),
 					:method => 'delete', 
 					:html => { :class => "button" }) %>
 		</div>

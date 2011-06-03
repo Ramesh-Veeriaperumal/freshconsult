@@ -32,8 +32,7 @@ class Topic < ActiveRecord::Base
     has account_id, user_id
     has forum.forum_category_id, :as => :category_id
     has forum.forum_visibility, :as => :visibility
-    has '0', :as => :deleted, :type => :boolean
-    has '1', :as => :is_public, :type => :boolean
+    has '0', :as => :deleted, :type => :boolean   
 
     set_property :delta => :delayed
     set_property :field_weights => {
