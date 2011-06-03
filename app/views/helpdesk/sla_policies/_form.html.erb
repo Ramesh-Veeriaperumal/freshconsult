@@ -33,7 +33,7 @@
 					 priority = Helpdesk::SlaDetail::PRIORITY_NAMES_BY_KEY[priority_id]  %>
 					<tr>
 						<td>
-							<%= sla.label :name , "#{index+1}. <em>#{priority} priority</em>"  %> <%= sla.hidden_field :name, { :value => "SLA for #{priority} priority"} %>
+							<%= sla.label :name , "#{index+1}. <em>#{priority} #{t('ticket.priority')}</em>"  %> <%= sla.hidden_field :name, { :value => "SLA for #{priority} priority"} %>
 							<%= sla.hidden_field :priority, { :value => (priority_id)} %>
 							<%= sla.hidden_field :id, { :value => slas.id} %>		
 						</td>	   
