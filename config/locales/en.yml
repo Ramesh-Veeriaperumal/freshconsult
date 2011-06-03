@@ -4,6 +4,7 @@ en:
   reset_my_password: Reset my password
   trial_expired_on: Your trial has expired on
   upgrade_trial: Upgrade your trial!
+  contact_name: Contact Name
   eight: 8 Hours
   security_code: Security code
   working: Working
@@ -66,6 +67,7 @@ en:
         scenario: Scenario Automations
         remote-authentication: Remote Authentication
         everything_helpdesk: Everything Helpdesk
+  ends_with: Ends with
   last_name: Last Name
   forum: 
     new: New Forum
@@ -84,6 +86,7 @@ en:
   import_user_org: Users &amp; Organizations
   to_do: To Do
   feedbackwidget_formcustomize: Form customization
+  does_not_contain: Does not contain
   flash: 
     portal: 
       tickets: 
@@ -208,9 +211,11 @@ en:
   what_is_cvv: What is cvv?
   pro_details: Everything in &quot;Basic&quot; Plan plus, Scenario Automations, Customer-specific SLAs, Business Hours, Forums, Community &amp; Email Support.
   zendesk_url: Zendesk URL
+  click_to_select_filter: Click to Select Filter
   select_another_plan: Select another plan
   threeday: 3 Days
   logo_delete_msg: Are you sure you want to delete this logo
+  from_email: From Email
   feedbackwidget_custom_image: Custom image URL
   activities: 
     solutions: 
@@ -252,6 +257,7 @@ en:
   zendesk_backup_info: Select the Zendesk backup file downloaded from zendesk
   your_email_address: Your email address
   username: Username
+  is_not: Is not
   feedbackwidget_bgcolor: Background Color
   day: 1 Day
   current_plan: Current Plan
@@ -280,11 +286,15 @@ en:
   name: Name
   import_user_org_text: All the Users &amp; Organizations in your Zendesk account will be imported into your current Freshdesk account as "Contacts & Companies"
   portal_customizer_open_solutions: Anybody can view public solutions
+  to_email: To Email
+  starts_with: Starts with
   portal_customizer_anon_tickets_i: Turn this feature off, if you want your users to be signed in to submit a ticket.
+  set_type_as: Set Type as
   change_my_plan: Change my plan...
   add_new_email: Add new email
   feedbackwidget_title: Widget Settings
   errors_in_your_address: "Errors encountered with your address:"
+  set_priority_as: Set Priority as
   sign_in_info: You will be signing in with
   posted_by: Posted by
   automations: 
@@ -307,6 +317,7 @@ en:
   message: Message
   edit_forum_category: Edit Forum Category
   agent_assigned_title: Recently assigned tickets (Open &amp; Pending)
+  send_email_to_requester: Send Email to Requester
   feedbackwidget_btcustomize: Button customization
   solution_category: 
     new: New solution category
@@ -394,11 +405,13 @@ en:
       full_messages: 
         format: "%{attribute} %{message}"
   top: Top
+  company_name: Company Name
   expires: Expires
   total_price: Total Price
   update: Update
   save_reply: Save Reply
   half: 30 Minutes
+  between_range: Between Range
   back_to_admin: Back to Admin
   group: 
     name: Group Name
@@ -472,6 +485,7 @@ en:
   ticket_due_by_time: Due by
   next: Next
   set_password: Set your password
+  send_email_to_agent: Send Email to Agent
   import_data: Date Imported
   contacts: 
     edit_contact: Edit contact
@@ -495,6 +509,7 @@ en:
     restore: Restore
     info5: User has not created any ticket till now
     info6: Add specific notes regarding this contact
+  between: Between
   add_new_forum: add a new forum
   no_forum_category: No forums in this category
   sla_policy: 
@@ -521,6 +536,7 @@ en:
   import_zendesk_summary: Import from zendesk summary
   user_activation_email: User Activation Email
   import: Import
+  contains: Contains
   import_solution_article_info: "Note: We will not save the forum comments"
   portal: 
     search: 
@@ -563,6 +579,7 @@ en:
   attach_files: Attach files
   current_plan_details: "%{plan_name} Plan with %{agent_limit} agents"
   add_to_do: Add To do
+  subject_or_description: Subject or Description
   premium_details: Everything in &quot;Pro&quot; Plan plus, Multiple Product Support, Multi-timezone support, Community, Email &amp; Phone Support
   zendesk_credentials: Zendesk Credentials
   customers: Customers
@@ -580,6 +597,7 @@ en:
   save_changes: Save Changes
   back: Back
   import_articles: Solution Articles
+  click_select_action: Click to Select Action
   low: Low
   feedbackwidget_help_para1: Collect feedback from your customers by adding a support tab to your website pages.
   is_expiring_today: is expiring today
@@ -636,13 +654,6 @@ en:
     info7: This is also your Reply-to address
     info8: Forward your emails to
     make_primary: Make primary
-  title: Title
-  new_ticket_created: New Ticket Created
-  import_forum: Forums
-  feedbackwidget_embed_code_intro: Please copy and paste the code below anywhere before the &lt;/body&gt; tag in the html template of your site or every page where you'd like to provide the Freshdesk widget.
-  change_plan: Change plan
-  forgot_password: Forgot Password
-  recent_activity: Recent Activity
   ticket: 
     spam_btn_title: Mark as spam
     group: Group
@@ -707,9 +718,23 @@ en:
     submit_ticket: Submit Ticket
     properties: Ticket Properties
     requester: Requester
-  tkt_assigned_to_agent: Ticket assigned to Agent
-  description: Description
+  recent_activity: Recent Activity
+  forgot_password: Forgot Password
+  change_plan: Change plan
+  feedbackwidget_embed_code_intro: Please copy and paste the code below anywhere before the &lt;/body&gt; tag in the html template of your site or every page where you'd like to provide the Freshdesk widget.
+  import_forum: Forums
+  title: Title
+  new_ticket_created: New Ticket Created
   recent_forum_posts: Recent Forum Posts
+  description: Description
+  tkt_assigned_to_agent: Ticket assigned to Agent
+  is: Is
+  forums: 
+    search_all: 
+      placeholder: Search All Topics
+    search: 
+      placeholder: Search %{name}
+  next_charge_amount: "Monthly cost:"
   company: 
     new: New Company
     name: Company name
@@ -725,23 +750,20 @@ en:
     info6: People in %{name}
     info7: No tickets have been created by the people in this company
     info8: More info regarding this company like address, phone number, website etc
-  next_charge_amount: "Monthly cost:"
-  forums: 
-    search_all: 
-      placeholder: Search All Topics
-    search: 
-      placeholder: Search %{name}
-  feedbackwidget_offset_label: With an offset of
-  no_topics_text: No topics in this forum
-  one: 1 Hour
   import_zendesk_summary_info: Zendesk data has been successfully imported.
-  enter_message: Enter your message here
+  one: 1 Hour
+  no_topics_text: No topics in this forum
+  feedbackwidget_offset_label: With an offset of
+  send_email_to_group: Send Email to Group
   activate_account: Activate your account
+  enter_message: Enter your message here
+  not_selected: Not Selected
   will_expire_in: will expire in
   asked_on: Asked on
   this_ticket_has_been_deleted: This ticket has been deleted
   state: State
   deactivate: deactivate
+  add_tags: Add Tag(s)
   import_step1_info: Select a CSV file and click import
   tkt_assigned_to_group: Ticket assigned to Group
   import_tickets: Tickets
@@ -790,6 +812,8 @@ en:
   import_step2_info: Map the following CSV fields with database fields and import.
   feedbackwidget_defaulttitle: Help &amp; Support
   two: 2 Hours
+  set_status_as: Set Status as
+  selected: Selected
   connect_ticket: Link to ticket
   edit_agent: Edit Agent
   high: High
@@ -820,3 +844,30 @@ en:
         monitored_by: Tickets I'm Monitoring
         spam: Spam
   import_ticket_group: Tickets &amp; Group
+  header:
+    search: Search
+    new_ticket: New Ticket
+    submit_a_ticket: Submit a ticket
+    login: login
+    signout: Sign out
+    welcome: Welcome
+    tabs:
+      dashboard: Dashboard
+      customers: Customers
+      solutions: Solutions
+      checkstatus: Check your ticket status
+      admin: Admin
+      tickets: Tickets
+      forums: Forums
+      home: Home
+  topics:
+    last_reply: Last reply %{post_time} ago by %{user_link}
+    posted_at:  Posted %{post_time} ago
+  forums_order:
+    popular: Popular
+    overview: Overview
+    recent: Recent
+  answered:   Answered
+  last:       last
+  reply:      reply
+  replies:    replies
