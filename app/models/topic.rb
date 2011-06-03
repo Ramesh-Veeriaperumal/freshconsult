@@ -11,13 +11,13 @@ class Topic < ActiveRecord::Base
   belongs_to :forum
   belongs_to :user
   belongs_to :last_post, :class_name => "Post", :foreign_key => 'last_post_id'
-  has_many :monitorships
+  has_many :monitorships,:dependent => :destroy
   has_many :monitors, :through => :monitorships, :conditions => ["#{Monitorship.table_name}.active = ?", true], :source => :user
 
   has_many :posts,     :order => "#{Post.table_name}.created_at", :dependent => :destroy
   has_one  :recent_post, :order => "#{Post.table_name}.created_at DESC", :class_name => 'Post'
   
-  has_one :ticket_topic
+  has_one :ticket_topic,:dependent => :destroy
   has_one :ticket,:through => :ticket_topic
   
   has_many :voices, :through => :posts, :source => :user, :uniq => true

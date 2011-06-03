@@ -19,6 +19,7 @@ class User < ActiveRecord::Base
   belongs_to :customer
   
   has_many :authorizations, :dependent => :destroy
+  has_many :votes, :dependent => :destroy
   
   validates_uniqueness_of :user_role, :scope => :account_id, :if => Proc.new { |user| user.user_role  == USER_ROLES_KEYS_BY_TOKEN[:account_admin] }
   
@@ -122,11 +123,11 @@ class User < ActiveRecord::Base
     :through => :subscriptions
 
   has_many :reminders, 
-    :class_name => 'Helpdesk::Reminder'
+    :class_name => 'Helpdesk::Reminder',:dependent => :destroy
     
   has_many :tickets , :class_name => 'Helpdesk::Ticket' ,:foreign_key => "requester_id"
   
-  has_one :agent , :class_name => 'Agent' , :foreign_key => "user_id"
+  has_one :agent , :class_name => 'Agent' , :foreign_key => "user_id", :dependent => :destroy
   
   has_many :agent_groups , :class_name =>'AgentGroup', :foreign_key => "user_id" , :dependent => :destroy
   

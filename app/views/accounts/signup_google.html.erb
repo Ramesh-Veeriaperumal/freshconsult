@@ -43,7 +43,7 @@
 <%
 cancel_url = "https://www.google.com/a/cpanel/"+@account.google_domain
 
- if @call_back_url
+ unless @call_back_url.blank?   
     cancel_url = @call_back_url+"&EXTERNAL_CONFIG=true"
  end
 %>
