@@ -137,7 +137,7 @@
 						<label class="overlabel" for="holiday_name"><%=t('business_hours.holiday_name')%></label>
 						<%= text_field("holiday", "name") %>
 						
-						<%= link_to_function( "Add Holiday", "addHoliday()", :class => "fdbutton grey" ) %>
+						<%= link_to_function( t('add_holiday'), "addHoliday()", :class => "fdbutton grey" ) %>
 						<b class="text_red" id="HolidayValidation" style="display:none;"> <%=t('business_hours.holiday_added')%> </b>
 					</td>
 				</tr>				
