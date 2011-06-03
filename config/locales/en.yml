@@ -28,6 +28,7 @@ en:
   amount_per_month: $%{amount} per month
   agent_deleted_message: This is a deleted agent
   cancel: Cancel
+  last: last
   agent_emailnotverified: Email has not been verified for this agent!
   agent_assigned_info: No open and pending tickets for this agent
   basic_details: Email Response Management, Dispatch'r Rules, Default SLA Policy,	Knowledge Base, Self-Service Portal, Domain Mapping, Community Support.
@@ -35,6 +36,10 @@ en:
   create: Create
   feedbackwidget_custom_image_info: if you are using a custom image the color and text will be ignored.
   account_admin_updated: Account admin has been updated!
+  forums_order: 
+    overview: Overview
+    popular: Popular
+    recent: Recent
   payment_info: Payment information
   admin: 
     security: 
@@ -257,11 +262,13 @@ en:
   zendesk_backup_info: Select the Zendesk backup file downloaded from zendesk
   your_email_address: Your email address
   username: Username
+  reply: reply
   is_not: Is not
   feedbackwidget_bgcolor: Background Color
   day: 1 Day
   current_plan: Current Plan
   medium: Medium
+  delete_confirm_scenario: Are you sure you want to delete this scenario?
   days: days
   basic_brief: For Small teams
   edit: Edit
@@ -271,6 +278,9 @@ en:
       export_now: Export now
       account_settings: Account Settings
       export_data_text: Generate an XML of all available Help desk data and send it via email
+  topics: 
+    last_reply: Last reply %{post_time} ago by %{user_link}
+    posted_at: Posted %{post_time} ago
   non_covered_feature_error: Your current Freshdesk plan does not cover this feature.
   requester_replies: Requester replies to Ticket
   start_typing_a_question: Start typing a question and see answers in real time
@@ -547,6 +557,7 @@ en:
   pro_brief: For larger Teams
   feedbackwidget_position: Position
   resolution_time_sla: Resolution time SLA Violation
+  replies: replies
   urgent: Urgent
   import_groups: Groups
   solution: 
@@ -575,6 +586,7 @@ en:
   import_warning_info: An email with user activation instructions will be sent to each contact on successful import. If the email is already present in the database we will update the attributes like Name, Company etc.
   import_example_title: Following is the example of a CSV file
   change_my_password: Change My Password
+  answered: Answered
   errors_in_payment_info: "Errors encountered with your payment information:"
   attach_files: Attach files
   current_plan_details: "%{plan_name} Plan with %{agent_limit} agents"
@@ -617,16 +629,30 @@ en:
   feedbackwidget_help_para2: "Customizable tab opens into a Support ticket form. "
   portal_customizer_anon_tickets: Anybody can submit a ticket
   agent_adds_comment: Agent adds comment to Ticket
+  header: 
+    welcome: Welcome
+    new_ticket: New Ticket
+    submit_a_ticket: Submit a ticket
+    login: login
+    search: Search
+    signout: Sign out
+    tabs: 
+      dashboard: Dashboard
+      customers: Customers
+      solutions: Solutions
+      checkstatus: Check your ticket status
+      admin: Admin
+      tickets: Tickets
+      forums: Forums
+      home: Home
   agents: Agents
   feedbackwidget_defaultbutton: Support
   formatting_help: Formatting Help
+  step1: Step 1
+  next_charge_date: "Your next payment will be processed on:"
   update_and_login: Update and login
   enter_payment: Enter Payment details...
   errors_in_payment: "Errors encountered with your payment:"
-  next_charge_date: "Your next payment will be processed on:"
-  step1: Step 1
-  import_users_contacts: Users &rarr; Contacts
-  step2: Step 2
   email_configs: 
     info9: Assign to Group
     reply_emails: Reply Emails from Freshdesk
@@ -654,6 +680,8 @@ en:
     info7: This is also your Reply-to address
     info8: Forward your emails to
     make_primary: Make primary
+  step2: Step 2
+  import_users_contacts: Users &rarr; Contacts
   ticket: 
     spam_btn_title: Mark as spam
     group: Group
@@ -817,6 +845,7 @@ en:
   connect_ticket: Link to ticket
   edit_agent: Edit Agent
   high: High
+  scenario_label: Scenario Label
   select_a_plan: Select a Plan
   helpdesk: 
     tickets: 
@@ -844,30 +873,3 @@ en:
         monitored_by: Tickets I'm Monitoring
         spam: Spam
   import_ticket_group: Tickets &amp; Group
-  header:
-    search: Search
-    new_ticket: New Ticket
-    submit_a_ticket: Submit a ticket
-    login: login
-    signout: Sign out
-    welcome: Welcome
-    tabs:
-      dashboard: Dashboard
-      customers: Customers
-      solutions: Solutions
-      checkstatus: Check your ticket status
-      admin: Admin
-      tickets: Tickets
-      forums: Forums
-      home: Home
-  topics:
-    last_reply: Last reply %{post_time} ago by %{user_link}
-    posted_at:  Posted %{post_time} ago
-  forums_order:
-    popular: Popular
-    overview: Overview
-    recent: Recent
-  answered:   Answered
-  last:       last
-  reply:      reply
-  replies:    replies
