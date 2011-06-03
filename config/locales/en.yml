@@ -1,5 +1,5 @@
 --- 
-en: 
+en:
   back_to_admin: Back to Admin
   ticket_due_by_time: Due by
   created_on: Created on
@@ -788,3 +788,12 @@ en:
   forgot_password_intro: Fill out the form below and instructions to reset your password will be emailed to you
   last_name: Last Name
   zip: Zip
+  headertabs:
+      home: Home
+      dashboard: Dashboard  
+      tickets: Tickets
+      solutions: Solutions
+      forums: Forums     
+      customers: Customers  
+      checkstatus: Check your ticket status
+      admin: Admin

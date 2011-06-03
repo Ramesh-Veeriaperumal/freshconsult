@@ -5,7 +5,7 @@ class Admin::AdminController < ApplicationController
   protected
     
     def set_selected_tab
-        @selected_tab = 'Admin'
+        @selected_tab = :admin
     end
     
 end

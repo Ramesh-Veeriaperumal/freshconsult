@@ -107,7 +107,7 @@ end
     @nscname ||= controller_path.gsub('/', '_').singularize
   end
   def set_selected_tab
-      @selected_tab = 'Solutions'
+      @selected_tab = :solutions
   end
 
 end
