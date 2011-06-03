@@ -72,7 +72,7 @@ require 'openid'
   def google_auth
     base_domain = AppConfig['base_domain'][RAILS_ENV]
     domain_name = params[:domain] 
-    signup_url = "https://signup."+base_domain+".com/account/signup_google?domain="+domain_name unless domain_name.blank?   
+    signup_url = "https://signup."+base_domain+"/account/signup_google?domain="+domain_name unless domain_name.blank?   
     #signup_url = "http://localhost:3000/account/signup_google?domain="+domain_name unless domain_name.blank?
     @current_account = Account.find(:first,:conditions=>{:google_domain=>domain_name},:order=>"updated_at DESC")
     full_domain  = "#{domain_name.split('.').first}.#{AppConfig['base_domain'][RAILS_ENV]}" unless domain_name.blank?
@@ -81,7 +81,7 @@ require 'openid'
     if @current_account.blank?      
       flash[:notice] = "There is no account associated with your domain. You may signup here"
       redirect_to signup_url and return unless signup_url.blank? 
-      raise URI::InvalidURIError, "Invalid URL"
+      raise ActiveResource::ResourceNotFound
     end    
     ##Need to handle the case where google is integrated with a seperate domain-- 2 times we need to authenticate
     return_url = "https://"+cust_url+"/authdone/google?domain="+params[:domain] 
