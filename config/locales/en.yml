@@ -1,98 +1,11 @@
 --- 
 en: 
-  back_to_admin: Back to Admin
-  ticket_due_by_time: Due by
-  created_on: Created on
-  ticket: 
-    spam_btn_title: Mark as spam
-    group: Group
-    suggested_solutions: 
-      insert_url: Insert URL
-      title: Suggested Solutions
-      insert_content_tip: Insert this solution article to your Reply or Note
-      insert_url_tip: Insert this solution URL to your Reply or Note
-      no_result: No Solutions found
-      insert_content: Insert Content
-    ham_btn_title: This is not spam
-    edit: Edit ticket
-    assigned_to: Assigned To
-    restore_btn: Restore this ticket
-    created_on: Created on %{time}
-    suggest_solutions: Suggest Solutions
-    unassigned: Unassigned
-    delete_btn_title: Move this ticket to trash
-    due_by_time: Due by time
-    singular: Ticket
-    restore_btn_title: Restore this ticket from trash
-    sort_by: Sort by
-    activity: Activity
-    to_do: Tickets To-Do
-    priority: Priority
-    tags: 
-      no_match: No matches. Press enter to create tag.
-      create_success: The tag was added
-      destroy_success: The tag was removed from this ticket
-      add_tag: "Add a tag:"
-    close_btn_title: Close this ticket
-    close_btn: Close
-    reported_by: Reported by %{requester}
-    reply_form:
-      post_to_linked_forum: Post in linked forum
-      form_title: Reply to the conversation
-      reply_email_id: Send the reply from the following email id
-    submit_ticket_title: Submit a ticket
-    pick_up: Pick Up
-    unflag_spam: Not Spam
-    recent_tickets: Recent tickets
-    subject: Subject
-    activities: Activities
-    note_form: 
-      private_note: This is a private note, don't show this to the requester
-      form_title: Add a Note
-    execute_scenario: Execute Scenario
-    type: Type
-    monitor_btn_title: Monitor this ticket
-    add_note: Add note
-    reply_to: Reply to ticket
-    requestor_info: Requestor Info
-    delete_btn: Delete
-    select_to_agent: Select an Agent
-    assign_to_agent: Assign To Agent
-    flag_spam: Flag Spam
-    edit_btn: Edit
-    verify_human: To verify you are human, please type the given scrambled letters
-    source: Source
-    status: Status
-    stop_monitor_btn_title: Stop monitoring this ticket
-    submit_ticket: Submit Ticket
-    properties: Ticket Properties
-    requester: Requester
-  folder: 
-    edit: Edit Folder
-    info1: Are you sure you want to delete this folder
-    add_folder: Add folder
-  feedbackwidget_defaultbutton: Support
-  start_typing_a_question: Start typing a question and see answers in real time
-  to_do: To Do
-  forums: 
-    search_all: 
-      placeholder: Search All Topics
-    search: 
-      placeholder: Search %{name}
-  agents: Agents
-  will_expire_in: will expire in
-  card_number: Card Number
-  recent_forum_posts: Recent Forum Posts
-  next_charge_amount: "Monthly cost:"
-  feedbackwidget_custom_image: Custom image URL
-  import: Import
-  done: Done
-  comments: Comments
-  import_ignore_first_row: Ignore the first row (headings)
-  current_plan_details: "%{plan_name} Plan with %{agent_limit} agents"
-  footer: 
-    helpdesk_software: Help Desk Software by Freshdesk
-  feedbackwidget_position: Position
+  feedbackwidget_offset_info: The offset will be the distance of the widget button (pixels) from the left or top of the screen based on the alignment you choose.
+  reset_my_password: Reset my password
+  trial_expired_on: Your trial has expired on
+  upgrade_trial: Upgrade your trial!
+  security_code: Security code
+  working: Working
   user: 
     photo: Photo
     company: Company
@@ -106,39 +19,69 @@ en:
     secondary: secondary
     email: Email
     work: Work
-  import_added_newly: Added Newly
-  activate: activate
-  portal_customizer_open_solutions: Anybody can view public solutions
-  country: Country
-  import_zendesk_summary_info: Zendesk data has been successfully imported.
-  pro_brief: For larger Teams
-  email_configs: 
-    info9: Assign to Group
-    reply_emails: Reply Emails from Freshdesk
-    title: Email Settings
-    info10: New tickets to this support email will get automatically assigned to a group
-    change_this: Change this
-    info1: Your users send support emails to
-    info11: Configure incoming and outgoing support email address
-    supp_email_add: Support email address
-    info2: You must forward your support emails to your unique email address
-    info12: Add Another Email address
-    add_supp_emails: Additional support email(s)
-    info3: Freshdesk will fetch those emails and convert them as tickets
-    info13: Your support email address is
-    info4: You can add multiple email addresses if you support multiple products - each having its own support email address
-    info14: Any email sent to this address will be converted as a ticket
-    inactive_info1: All your support emails are still unverified, you must verify at least one support email
-    info5: Reply emails from Freshdesk will automatically use your original support email ids as the From email address
-    info15: You must forward these emails to
-    inactive_info2: Until then, the default email "%{default_email}" will be used as the reply-to email.
-    unverified_info1: An email with the verification link has been sent to this email. Only after verification this support email will become active.
-    info6: Enter your support email
-    info16: Tickets will be assigned to
-    primary_supp_email: Primary support email
-    info7: This is also your Reply-to address
-    info8: Forward your emails to
-    make_primary: Make primary
+  folder: 
+    edit: Edit Folder
+    info1: Are you sure you want to delete this folder
+    add_folder: Add folder
+  amount_per_month: $%{amount} per month
+  agent_deleted_message: This is a deleted agent
+  cancel: Cancel
+  agent_emailnotverified: Email has not been verified for this agent!
+  agent_assigned_info: No open and pending tickets for this agent
+  basic_details: Email Response Management, Dispatch'r Rules, Default SLA Policy,	Knowledge Base, Self-Service Portal, Domain Mapping, Community Support.
+  choose_plan: Choose Plan
+  create: Create
+  feedbackwidget_custom_image_info: if you are using a custom image the color and text will be ignored.
+  account_admin_updated: Account admin has been updated!
+  payment_info: Payment information
+  admin: 
+    security: 
+      index: 
+        shared_secret: Shared Secret
+        remote_login_url: Remote login URL
+        shared_secret_info: Please copy this token and keep it safe. You need this to enable Remote authentication. This is a shared secret between you and Freshdesk.
+        enable_sso_info: Single Sign On allows you to use your own application or a centralized Server (like MS Active Directory) to authenticate agents and customers so that they can access Freshdesk without entering a separate username and password.
+        remote_login_url_info: This is the URL to which Freshdesk will redirect users for authentication when they attempt to access Freshdesk.
+        remote_logout_url_info: This is the URL to which Freshdesk will redirect users when they click on the Logout link in Freshdesk.
+        enable_sso: Enable Single Sign On
+        remote_authentication: Remote Authentication
+        remote_logout_url: Remote logout URL
+    home: 
+      index: 
+        group: Groups
+        business-hours: Business Hours
+        rebranding: Helpdesk Rebranding
+        email-notifications: Email Notifications
+        customer-portal: Customer Portal
+        account-settings: Account Settings
+        dispatcher: Dispatch'r
+        feedback: Feedback widget
+        agent: Agents
+        import: Import data from Zendesk
+        everything_else: Everything else
+        ticket-fields: Ticket Fields
+        sla: SLA Policies
+        email-settings: Email Settings
+        scenario: Scenario Automations
+        remote-authentication: Remote Authentication
+        everything_helpdesk: Everything Helpdesk
+  last_name: Last Name
+  forum: 
+    new: New Forum
+    verb: 
+      questions: Question asked by
+      ideas: Idea shared by
+      problems: Problem Reported by
+      announcement: Announced by
+    confim_msg1: Are you sure you want to delete this forum
+    edit: Edit Forum
+    title: Forums
+    start_topic: Start a Topic
+    type: Forum Type
+    visibility: Forum visibility
+  import_user_org: Users &amp; Organizations
+  to_do: To Do
+  feedbackwidget_formcustomize: Form customization
   flash: 
     portal: 
       tickets: 
@@ -164,6 +107,9 @@ en:
     account: 
       update: 
         success: Your account details have been updated.
+    solutions: 
+      remove_tag: 
+        success: The tag was removed from this Solution
     agents: 
       delete: 
         not_allowed: You don't have access to delete it!
@@ -173,9 +119,6 @@ en:
       failure: Please try again
       no_file: Please upload a file
       success: "%{created_count} contacts has been newly imported and #{updated_count} existing contacts has been updated!"
-    solutions: 
-      remove_tag: 
-        success: The tag was removed from this Solution
     custom_fields: 
       update: 
         failure: Custom Fields update failed.
@@ -247,314 +190,24 @@ en:
         success: The %{human_name} has been created.
       update: 
         success: The %{human_name} has been updated.
-  portal_customizer_open_forums: Anybody can view forums
-  zendesk_backup: Backup file
-  solution: 
-    info9: Public (Will be published in self service)
-    add: Add Solution
-    edit: Edit Solution
-    title: Solutions
-    add_new_solution: Add a new solution
-    info10: Private (Visible to Agents only)
-    info1: Solutions in Freshdesk is  your Knowledge base
-    info2: Solutions can be <b>public</b> or <b>private</b>. Public Solutions are visible in the Self Service Portal and also appear in Search results
-    info3: Private solutions are agent-only solutions used for internal knowledge sharing
-    type: Solution Type
-    info4: Solutions have a 3 level hierarchy - <b>Category --> Folder --> Article</b>
-    info5: Solutions can be of two types - <b>Workaround</b> or <b>Permanent</b> solutions
-    info6: A Solution can have a <b>Draft</b> status when you are working on it and can be  changed to <b>Published</b> status once it is finished and reviewed
-    status: Solution Status
-    info7: No solutions in this folder
-    info8: Are you sure you want to delete this solution
-    visibility : Visibility
-  import_user_org: Users &amp; Organizations
-  posted_by: Posted by
-  agent_info_title: Agent information
-  import_user_org_text: All the Users &amp; Organizations in your Zendesk account will be imported into your current Freshdesk account as "Contacts & Companies"
-  current_plan: Current Plan
-  right: Right
-  profile: 
-    edit: Edit Profile
-    change_password: Change Password
-    current_password: Current password
-    confirm_password: Confirm password
-    new_password: New password
-  billing_info_update: Your billing information has been updated.
-  forum_confirm_msg1: Are you sure you want to delete this category
-  step1: Step 1
-  import_articles: Solution Articles
-  working: Working
-  business_hours: 
-    holiday_name: Holiday name
-    title: Business Hours
-    info1: Setting up your Business Hours in Freshdesk allows you to get more control on your SLAs. For eg. If your helpdesk works between 9AM to 6PM Mon-Fri and a customer sends a high priority ticket at 4 PM on Tuesday with a SLA target resolution time of 4 hours, then the ticket Due By time is set as 11 AM on Wednesday.You can configure your SLAs to either respect or ignore business hours
-    info2: Holidays work exactly like Business hours. For eg. If your helpdesk works between 9AM to 6PM Mon-Fri and a customer sends a medium priority ticket at 8 PM on Friday with a SLA target resolution time of 24 hours, then the ticket Due By time is set as 9AM on Tuesday.(not 8PM on Sat)
-    info3: Specific Working Hours
-    holiday_added: Holiday already added
-    info4: Working Days for your Helpdesk
-    holidays: Holidays
-    info5: Holidays will be ignored when calculating SLA for a ticket
-    holiday_list: Yearly Holiday List
-    helpdesk_hours: Helpdesk Hours
-  password: Password
-  step2: Step 2
-  account_admin: Account admin
-  import_step1_info: Select a CSV file and click import
-  at: at
-  save_reply: Save Reply
-  recent_activity: Recent Activity
-  next_charge_date: "Your next payment will be processed on:"
-  feedbackwidget_btcustomize: Button customization
-  import_zendesk_title: Import from zendesk
-  accounts: 
-    show: 
-      export_data: Export Data
-      export_now: Export now
-      account_settings: Account Settings
-      export_data_text: Generate an XML of all available Help desk data and send it via email
-  activerecord: 
-    errors: 
-      messages: 
-        greater_than_or_equal_to: must be greater than or equal to %{count}
-        record_invalid: "Validation failed: %{errors}"
-        confirmation: doesn't match confirmation
-        less_than_or_equal_to: must be less than or equal to %{count}
-        blank: can't be blank
-        not_an_integer: must be an integer
-        exclusion: is reserved
-        invalid: is invalid
-        odd: must be odd
-        empty: can't be empty
-        too_short: is too short (minimum is %{count} characters)
-        wrong_length: is the wrong length (should be %{count} characters)
-        even: must be even
-        less_than: must be less than %{count}
-        greater_than: must be greater than %{count}
-        equal_to: must be equal to %{count}
-        accepted: must be accepted
-        too_long: is too long (maximum is %{count} characters)
-        inclusion: is not included in the list
-        not_a_number: is not a number
-      template: 
-        body: "There were problems with the following fields:"
-        one: 1 error prohibited this %{model} from being saved
-        other: "%{count} errors prohibited this %{model} from being saved"
-      full_messages: 
-        format: "%{attribute} %{message}"
-  undelete: Restore
-  first_name: First Name
-  select_a_plan: Select a Plan
-  is_expiring_today: is expiring today
-  back: Back
-  import_org_companies: Organizations &rarr; Companies
-  save_and_create: Save and Create Another
-  expires: Expires
-  update: Update
-  solutions: 
-    search_all: 
-      placeholder: Search All Solutions
-    search: 
-      placeholder: Search %{name}
-  activate_account: Activate your account
-  agent: 
-    new: New Agent
-    edit: Edit Agent
-    title: Agents
-    info1: This is a deleted Agent
-    signature: Signature
-    info2: Email has already been taken
-    info3: Are you sure you want delete
-    make_admin: Make this agent an admin
-    restore: restore
-    view_user: View User
-    add_signature: Add signature
-    update: Update
-  add: Add
-  helpdesk: 
-    tickets: 
-      views: 
-        new_and_my_open: New & My Open Tickets
-        my_resolved: My Resolved Tickets
-        new: New Tickets
-        on_hold: Tickets On Hold
-        no_tickets: No tickets in this view
-        open: Open Tickets
-        all: All Tickets
-        closed: Closed Tickets
-        my_overdue: My Overdue Tickets
-        resolved: Resolved Tickets
-        due_today: Tickets Due Today
-        overdue: Overdue Tickets
-        trash: Trash
-        my_due_today: My Tickets Due Today
-        tags: Tags by Ticket
-        my_on_hold: My Tickets On Hold
-        my_all: All My Tickets
-        select: Select View...
-        my_open: My Open Tickets
-        my_closed: My Closed Tickets
-        monitored_by: Tickets I'm Monitoring
-        spam: Spam
-  admin: 
-    security: 
-      index: 
-        shared_secret: Shared Secret
-        remote_login_url: Remote login URL
-        shared_secret_info: Please copy this token and keep it safe. You need this to enable Remote authentication. This is a shared secret between you and Freshdesk.
-        enable_sso_info: Single Sign On allows you to use your own application or a centralized Server (like MS Active Directory) to authenticate agents and customers so that they can access Freshdesk without entering a separate username and password.
-        remote_login_url_info: This is the URL to which Freshdesk will redirect users for authentication when they attempt to access Freshdesk.
-        remote_logout_url_info: This is the URL to which Freshdesk will redirect users when they click on the Logout link in Freshdesk.
-        enable_sso: Enable Single Sign On
-        remote_authentication: Remote Authentication
-        remote_logout_url: Remote logout URL
-    home: 
-      index: 
-        group: Groups
-        business-hours: Business Hours
-        rebranding: Helpdesk Rebranding
-        email-notifications: Email Notifications
-        customer-portal: Customer Portal
-        account-settings: Account Settings
-        dispatcher: Dispatch'r
-        feedback: Feedback widget
-        agent: Agents
-        import: Import data from Zendesk
-        everything_else: Everything else
-        ticket-fields: Ticket Fields
-        sla: SLA Policies
-        email-settings: Email Settings
-        scenario: Scenario Automations
-        remote-authentication: Remote Authentication
-        everything_helpdesk: Everything Helpdesk
-  import_zendesk_summary: Import from zendesk summary
-  begin_subscription: Begin Subscription
-  reset: Reset
-  name: Name
-  warning: WARNING
-  attach_files: Attach files
-  feedbackwidget_formcustomize: Form customization
-  cancel_and_back: Cancel and go back
-  note: "Note: "
-  import_users_contacts: Users &rarr; Contacts
-  zendesk_backup_info: Select the Zendesk backup file downloaded from zendesk
-  dispatch: 
-    new: Dispatch'r - New Rule
-    edit: Dispatch'r - Edit Rule
-    act_to_perform: Actions to Perform
-    add_new_choice: Add New choice
-    title: Dispatch'r
-    rule_name: Rule Name
-    info1: Subscription related tickets
-    inactive_rules: Inactive Rules
-    info2: All Subscription related tickets will be assigned to Susan
-    info3: When should this rule be applied
-    new_rule: New Rule
-    info4: Dispatch'r will automatically dispatch a newly created support ticket based on the rules and actions defined
-    info5: Remember, the order of the rules are important. For each incoming ticket, Dispatch'r will execute the first matching rule and stop
-    reorder: Reorder
-    add_new_action: Add new action
-    add_condition: Add new condition
-    match_any: Match Any
-    match_all: Match All
-    dispatch_rules: Dispatch'r - Rules
-  forgot_password: Forgot Password
-  import_note_info: The fields in your csv file can be in any order. Just ensure that the first row has the header information.(Eg. Name, email etc.) The only required field is email.
-  non_covered_feature_error: Your current Freshdesk plan does not cover this feature.
-  account: 
-    name: Account Name
-    page_colors: 
-      title: Page colors
-      background: Background
-      header: Header
-      tab_color: Tab Color
-    cancel: Cancel and go back
-    info1: You can use this field to setup custom domain mapping for Freshdesk
-    active_since: Active Since
-    info2: Before using this field please ensure that you have created a CNAME DNS record in your DNS Zone file to point support.mycompanyname.com to %{full_domain}. Your Webmaster or Server administrator should be able to help you set this up correctly
-    info3: Reset to Default colors
-    info4: The next ticket ID counter will start with this number (Should be greater than the last ticket ID created). This affects tickets created henceforth.
-    save: Save changes
-    time_zone: Time Zone
-    rebrand: Rebrand your Helpdesk
-    helpdesk_name: Helpdesk Name
-    helpdesk_url: Helpdesk URL
-  set_password: Set your password
-  errors_in_payment_info: "Errors encountered with your payment information:"
-  cancel: Cancel
-  company: 
-    new: New Company
-    name: Company name
-    info9: Freshdesk will automatically associate Contacts with this company if email ids contain these domains
-    edit: Edit Company
-    title: Companies
-    quick_company: Quick Company
-    info1: Are you sure you want to delete this company
-    notes: Notes
-    info2: Domain Names for this company
-    info4: Add a Note about %{name}
-    info5: Add specific notes regarding this company. example - we are negotiating a 100K deal with this company
-    info6: People in %{name}
-    info7: No tickets have been created by the people in this company
-    info8: More info regarding this company like address, phone number, website etc
-  save: Save
-  feedbackwidget_embed_code: Widget embed code
-  portal_customizer_anon_tickets: Anybody can submit a ticket
-  agent_deleted_message: This is a deleted agent
-  feedbackwidget_form_title: Widget form title
-  import_groups: Groups
-  agent_assigned_title: Recently assigned tickets (Open &amp; Pending)
-  change_plan_info: You can change your plan level at any time.  The position limits and other features of the new plan that you select will be effective as soon as you make the change, but your bill amount will not change until your next bill date.  Your next bill date is %{date}.
-  feedbackwidget_defaulttitle: Help &amp; Support
-  edit: Edit
-  back_plans_billing: Back to Plans &amp; Billing
-  import_ticket_group: Tickets &amp; Group
-  day: day
-  feedbackwidget_custom_image_info: if you are using a custom image the color and text will be ignored.
-  payment_info: Payment information
-  upgrade_trial: Upgrade your trial!
-  connect_ticket: Link to ticket
-  feedbackwidget_help_para1: Collect feedback from your customers by adding a support tab to your website pages.
-  credit_card_info: Credit card information
-  username: Username
+  submit: submit
+  export_data_successfull: Your Help desk data will be sent to your via email shortly!
+  import_topics: Topics
   change: Change
-  create: Create
-  feedbackwidget_help_title: Feedback widget
+  back_plans_billing: Back to Plans &amp; Billing
+  save_and_create: Save and Create Another
+  undelete: Restore
+  import_zendesk_title: Import from zendesk
+  plan_info_update: Your plan has been changed.
+  note: "Note: "
+  warning: WARNING
+  import_user_notification: "Send User activation email while importing "
+  what_is_cvv: What is cvv?
+  pro_details: Everything in &quot;Basic&quot; Plan plus, Scenario Automations, Customer-specific SLAs, Business Hours, Forums, Community &amp; Email Support.
   zendesk_url: Zendesk URL
-  feedbackwidget_intro: Customize your freshdesk widget below and see a realtime preview.
-  billed_monthly: Billed monthly
-  feedbackwidget_help_para2: "Customizable tab opens into a Support ticket form. "
-  portal: 
-    search: 
-      placeholder: Search using a keyword or a full question
-  feedbackwidget_bgcolor: Background Color
-  left: Left
-  agent_assigned_info: No open and pending tickets for this agent
-  save_changes: Save Changes
-  sla_policy: 
-    new: New SLA Policy
-    sla_targets: SLA Targets
-    select_policy: Select policy
-    edit: Edit SLA Policy
-    title: SLA Policy
-    resolution_time: Resolution time
-    title1: SLA Policies
-    override: Override
-    info1: "\tSLA Policy is a set of target response and resolution times based on ticket priority.It is an industry best practice to set Service Levels based on priority. Your SLA policy could be as simple as saying “High Priority tickets should be resolved in 2 hours” etc."
-    calendar_time: Calendar Hours
-    response_time: Response time
-    info2: "Freshdesk uses the SLA Policy to determine the “Due By” time of tickets. You can have a default SLA policy for all of your customers, but if you have a special customer who requires faster response and resolution times, you can always create a special SLA policy for that customer."
-    info3: SLA Policy works in conjunction with Business Hours
-    business_time: Business Hours
-    tickets_with: Tickets with
-    escalate_to: Escalate to
-  bottom: Bottom
-  premium_details: Everything in &quot;Pro&quot; Plan plus, Multiple Product Support, Multi-timezone support, Community, Email &amp; Phone Support
-  change_plan: Change plan
-  zendesk_credentials: Zendesk Credentials
-  import_tickets: Tickets
-  errors_in_your_address: "Errors encountered with your address:"
-  asked_on: Asked on
-  edit_forum_category: Edit Forum Category
+  select_another_plan: Select another plan
+  logo_delete_msg: Are you sure you want to delete this logo
+  feedbackwidget_custom_image: Custom image URL
   activities: 
     solutions: 
       new_solution: 
@@ -591,10 +244,188 @@ en:
       status_change: 
         short: "{{user_path}} changed the status to {{status_name}}"
         long: "{{user_path}} changed the ticket status of {{notable_path}} to {{status_name}}"
-  trial_expired_on: Your trial has expired on
-  amount_per_month: $%{amount} per month
-  select_another_plan: Select another plan
-  agent_emailnotverified: Email has not been verified for this agent!
+  credit_card_info: Credit card information
+  zendesk_backup_info: Select the Zendesk backup file downloaded from zendesk
+  your_email_address: Your email address
+  username: Username
+  feedbackwidget_bgcolor: Background Color
+  day: day
+  current_plan: Current Plan
+  days: days
+  basic_brief: For Small teams
+  edit: Edit
+  accounts: 
+    show: 
+      export_data: Export Data
+      export_now: Export now
+      account_settings: Account Settings
+      export_data_text: Generate an XML of all available Help desk data and send it via email
+  non_covered_feature_error: Your current Freshdesk plan does not cover this feature.
+  start_typing_a_question: Start typing a question and see answers in real time
+  delete_topic_msg: Delete this topic forever
+  import_note_info: The fields in your csv file can be in any order. Just ensure that the first row has the header information.(Eg. Name, email etc.) The only required field is email.
+  begin_subscription: Begin Subscription
+  at: at
+  add_a_topic: Start a Topic
+  bottom: Bottom
+  align_to: Align to
+  feedbackwidget_help_title: Feedback widget
+  name: Name
+  import_user_org_text: All the Users &amp; Organizations in your Zendesk account will be imported into your current Freshdesk account as "Contacts & Companies"
+  portal_customizer_open_solutions: Anybody can view public solutions
+  portal_customizer_anon_tickets_i: Turn this feature off, if you want your users to be signed in to submit a ticket.
+  change_my_plan: Change my plan...
+  add_new_email: Add new email
+  feedbackwidget_title: Widget Settings
+  errors_in_your_address: "Errors encountered with your address:"
+  sign_in_info: You will be signing in with
+  posted_by: Posted by
+  automations: 
+    new: New Scenario
+    title: Scenario Automations
+    info1: Every helpdesk has a set of commonly recurring scenarios - Eg. Escalate to Level 2, Assign to QA, Forward to Sales Dept. etc. These scenarios usually involve performing multiple updates to the ticket
+    info2: For example before assigning a ticket to QA you may want to set the ticket type as Bug, assign it to the QA group and email the QA manager about the new bug.
+    available_placeholders: Placeholders
+    info3: Scenario Automation allows you to automate these actions in a single click
+    info4: Select the below Placeholders to append to the email content and they will get converted into the appropriate data
+    reorder: Reorder
+    info5: Assign QA
+    info6: Mark the Ticket as a Bug and assign to QA
+    info7: Actions to Perform
+    info8: Add new action
+  category: 
+    new: New Category
+    edit: Edit Category
+  delete: Delete
+  message: Message
+  edit_forum_category: Edit Forum Category
+  agent_assigned_title: Recently assigned tickets (Open &amp; Pending)
+  feedbackwidget_btcustomize: Button customization
+  solution_category: 
+    new: New solution category
+    name: Category name
+    edit: Edit solution category
+    info1: Are you sure you want to delete this category
+    info2: No folders in this category
+    save_and_create: Save and Create Another
+  billed_monthly: Billed monthly
+  users: 
+    activations: 
+      send_invite_success: Activation email has been sent!
+      success: Your account has been activated.
+      code_expired: Your activation code has been expired!
+  edit_email: Edit email
+  fav_delete_msg: Are you sure you want to delete this fav icon
+  dispatch: 
+    new: Dispatch'r - New Rule
+    edit: Dispatch'r - Edit Rule
+    act_to_perform: Actions to Perform
+    add_new_choice: Add New choice
+    title: Dispatch'r
+    rule_name: Rule Name
+    info1: Subscription related tickets
+    inactive_rules: Inactive Rules
+    info2: All Subscription related tickets will be assigned to Susan
+    info3: When should this rule be applied
+    new_rule: New Rule
+    info4: Dispatch'r will automatically dispatch a newly created support ticket based on the rules and actions defined
+    info5: Remember, the order of the rules are important. For each incoming ticket, Dispatch'r will execute the first matching rule and stop
+    reorder: Reorder
+    add_new_action: Add new action
+    add_condition: Add new condition
+    match_any: Match Any
+    match_all: Match All
+    dispatch_rules: Dispatch'r - Rules
+  header_logo: Header Logo
+  solutions: 
+    search_all: 
+      placeholder: Search All Solutions
+    search: 
+      placeholder: Search %{name}
+  reset: Reset
+  import_ignore_first_row: Ignore the first row (headings)
+  portal_customizer_open_sol_i: Turn this feature off, if you want to hide 'Solutions' tab in public customer portal.
+  topic: 
+    new: New Topic
+    name: Topic Name
+    edit: Edit Topic
+    open: Re-open this Discussion
+    post: Post Topic
+    close: Close this Discussion
+    reply: Reply to this Topic
+    msg1: Comments are closed for this topic
+    sticky: Sticky
+    locked: Locked
+  activerecord: 
+    errors: 
+      messages: 
+        greater_than_or_equal_to: must be greater than or equal to %{count}
+        record_invalid: "Validation failed: %{errors}"
+        confirmation: doesn't match confirmation
+        less_than_or_equal_to: must be less than or equal to %{count}
+        blank: can't be blank
+        not_an_integer: must be an integer
+        exclusion: is reserved
+        invalid: is invalid
+        odd: must be odd
+        empty: can't be empty
+        too_short: is too short (minimum is %{count} characters)
+        wrong_length: is the wrong length (should be %{count} characters)
+        even: must be even
+        less_than: must be less than %{count}
+        greater_than: must be greater than %{count}
+        equal_to: must be equal to %{count}
+        accepted: must be accepted
+        too_long: is too long (maximum is %{count} characters)
+        inclusion: is not included in the list
+        not_a_number: is not a number
+      template: 
+        body: "There were problems with the following fields:"
+        one: 1 error prohibited this %{model} from being saved
+        other: "%{count} errors prohibited this %{model} from being saved"
+      full_messages: 
+        format: "%{attribute} %{message}"
+  top: Top
+  expires: Expires
+  total_price: Total Price
+  update: Update
+  save_reply: Save Reply
+  back_to_admin: Back to Admin
+  group: 
+    name: Group Name
+    new: New Group
+    edit: Edit Group
+    title: Groups
+    info1: Agents in this Group
+    info2: No Agents in this group
+    info3: Send an Escalation email to
+    info4: if a ticket remains un-assigned for more than
+    info5: Are you sure
+    select_agents: Select Agents
+  change_plan_info: You can change your plan level at any time.  The position limits and other features of the new plan that you select will be effective as soon as you make the change, but your bill amount will not change until your next bill date.  Your next bill date is %{date}.
+  created_on: Created on
+  zip: Zip
+  import_solution_article: Convert Article forum to solution
+  close: Close
+  agent: 
+    new: New Agent
+    edit: Edit Agent
+    title: Agents
+    info1: This is a deleted Agent
+    signature: Signature
+    info2: Email has already been taken
+    info3: Are you sure you want delete
+    make_admin: Make this agent an admin
+    restore: restore
+    view_user: View User
+    add_signature: Add signature
+    update: Update
+  account_admin: Account admin
+  right: Right
+  footer: 
+    helpdesk_software: Help Desk Software by Freshdesk
+  zendesk_url_info: e.g:- http://acme.zendesk.com
+  portal_customizer_anon_for_i: Turn this feature off, if you want to hide 'Forums' tab in public customer portal.
   ticketfields: 
     fieldprop: 
       label: Field Label
@@ -614,7 +445,7 @@ en:
       for_customer: For Customers
     add_custom_field: Add a Custom Field
     title: Ticket Fields
-    customize_form: "Customize your “New Ticket” form."
+    customize_form: "Customize your \xE2\x80\x9CNew Ticket\xE2\x80\x9D form."
     field: 
       number: Number
       single_line: Single Line Text
@@ -622,118 +453,14 @@ en:
       checkbox: Checkbox
       dropdown: Dropdown
     save: Save Ticket fields
-  topic: 
-    new: New Topic
-    name: Topic Name
-    edit: Edit Topic
-    open: Re-open this Discussion
-    post: Post Topic
-    close: Close this Discussion
-    reply: Reply to this Topic
-    msg1: Comments are closed for this topic
-    sticky: Sticky
-    locked: Locked
-  email_notifications: 
-    customize_email: Customize Email
-    title: Email notifications
-    requestor_notification: Requestor Notification
-    modify_requester_template: Modify Requester Email Template
-    insert_placeholder: Insert Placeholders
-    modify_agent_template: Modify Agent Email Template
-    event: Event
-    agent_notification: Agent Notification
-  feedbackwidget_embed_code_intro: Please copy and paste the code below anywhere before the &lt;/body&gt; tag in the html template of your site or every page where you'd like to provide the Freshdesk widget.
-  tag: 
-    title: Tags
-  feedbackwidget_title: Widget Settings
-  change_my_password: Change My Password
-  import_example_title: Following is the example of a CSV file
-  group: 
-    name: Group Name
-    new: New Group
-    edit: Edit Group
-    title: Groups
-    info1: Agents in this Group
-    info2: No Agents in this group
-    info3: Send an Escalation email to
-    info4: if a ticket remains un-assigned for more than
-    info5: Are you sure
-    select_agents: Select Agents
-  portal_customizer_anon_for_i: Turn this feature off, if you want to hide 'Forums' tab in public customer portal.
-  basic_brief: For Small teams
-  import_updated: Updated
-  message: Message
-  solution_category: 
-    new: New solution category
-    name: Category name
-    edit: Edit solution category
-    info1: Are you sure you want to delete this category
-    info2: No folders in this category
-    save_and_create: Save and Create Another
-  enter_message: Enter your message here
-  days: days
-  security_code: Security code
-  submit: submit
-  reset_my_password: Reset my password
-  pro_details: Everything in &quot;Basic&quot; Plan plus, Scenario Automations, Customer-specific SLAs, Business Hours, Forums, Community &amp; Email Support.
-  portal_customizer_title: Customize your Public Customer Portal
-  align_to: Align to
-  close: Close
-  forum: 
-    new: New Forum
-    verb: 
-      questions: Question asked by
-      ideas: Idea shared by
-      problems: Problem Reported by
-      announcement: Announced by
-    confim_msg1: Are you sure you want to delete this forum
-    edit: Edit Forum
-    title: Forums
-    start_topic: Start a Topic
-    type: Forum Type
-    visibility: Forum visibility
-  change_my_plan: Change my plan...
-  errors_in_payment: "Errors encountered with your payment:"
-  delete: Delete
+  country: Country
+  card_number: Card Number
+  forgot_password_intro: Fill out the form below and instructions to reset your password will be emailed to you
+  done: Done
+  ticket_due_by_time: Due by
   next: Next
-  import_warning_info: An email with user activation instructions will be sent to each contact on successful import. If the email is already present in the database we will update the attributes like Name, Company etc.
-  sign_in_info: You will be signing in with
-  premium_brief: Top-of-the-line
-  choose_plan: Choose Plan
-  billed_amount_per_month: You will be billed $%{amount} per month
-  feedbackwidget_offset_info: The offset will be the distance of the widget button (pixels) from the left or top of the screen based on the alignment you choose.
-  no_forum_category: No forums in this category
-  top: Top
-  import_step2_info: Map the following CSV fields with database fields and import.
-  category: 
-    new: New Category
-    edit: Edit Category
-  your_trial_account: Your trial account
-  zendesk_url_info: e.g:- http://acme.zendesk.com
-  users: 
-    activations: 
-      send_invite_success: Activation email has been sent!
-      success: Your account has been activated.
-      code_expired: Your activation code has been expired!
-  this_ticket_has_been_deleted: This ticket has been deleted
-  description: Description
-  add_new_forum: add a new forum
-  import_forum: Forums
-  import_topics: Topics
-  what_is_cvv: What is cvv?
-  export_data_successfull: Your Help desk data will be sent to your via email shortly!
-  feedbackwidget_offset_label: With an offset of
-  no_topics_text: No topics in this forum
-  formatting_help: Formatting Help
-  portal_customizer_anon_tickets_i: Turn this feature off, if you want your users to be signed in to submit a ticket.
-  your_email_address: Your email address
-  edit_agent: Edit Agent
-  total_price: Total Price
-  enter_payment: Enter Payment details...
-  state: State
-  import_user_notification: "Send User activation email while importing "
-  deactivate: deactivate
-  feedbackwidget_text: Text
+  set_password: Set your password
+  import_data: Date Imported
   contacts: 
     edit_contact: Edit contact
     new: New Contact
@@ -756,35 +483,315 @@ en:
     restore: Restore
     info5: User has not created any ticket till now
     info6: Add specific notes regarding this contact
-  update_and_login: Update and login
-  automations: 
-    new: New Scenario
-    title: Scenario Automations
-    info1: Every helpdesk has a set of commonly recurring scenarios - Eg. Escalate to Level 2, Assign to QA, Forward to Sales Dept. etc. These scenarios usually involve performing multiple updates to the ticket
-    info2: For example before assigning a ticket to QA you may want to set the ticket type as Bug, assign it to the QA group and email the QA manager about the new bug.
-    available_placeholders: Placeholders
-    info3: Scenario Automation allows you to automate these actions in a single click
-    info4: Select the below Placeholders to append to the email content and they will get converted into the appropriate data
-    reorder: Reorder
-    info5: Assign QA
-    info6: Mark the Ticket as a Bug and assign to QA
-    info7: Actions to Perform
-    info8: Add new action
-  add_a_topic: Start a Topic
-  reply_topic: Reply to topic
-  select_a_plan_gain_access: Select a plan from below to regain access to your account.
-  import_solution_article: Convert Article forum to solution
+  add_new_forum: add a new forum
+  no_forum_category: No forums in this category
+  sla_policy: 
+    new: New SLA Policy
+    sla_targets: SLA Targets
+    select_policy: Select policy
+    edit: Edit SLA Policy
+    title: SLA Policy
+    resolution_time: Resolution time
+    title1: SLA Policies
+    override: Override
+    info1: "\tSLA Policy is a set of target response and resolution times based on ticket priority.It is an industry best practice to set Service Levels based on priority. Your SLA policy could be as simple as saying \xE2\x80\x9CHigh Priority tickets should be resolved in 2 hours\xE2\x80\x9D etc."
+    calendar_time: Calendar Hours
+    response_time: Response time
+    info2: "Freshdesk uses the SLA Policy to determine the \xE2\x80\x9CDue By\xE2\x80\x9D time of tickets. You can have a default SLA policy for all of your customers, but if you have a special customer who requires faster response and resolution times, you can always create a special SLA policy for that customer."
+    info3: SLA Policy works in conjunction with Business Hours
+    business_time: Business Hours
+    tickets_with: Tickets with
+    escalate_to: Escalate to
+  left: Left
+  activate: activate
+  feedbackwidget_text: Text
+  billed_amount_per_month: You will be billed $%{amount} per month
+  import_zendesk_summary: Import from zendesk summary
+  import: Import
   import_solution_article_info: "Note: We will not save the forum comments"
-  account_admin_updated: Account admin has been updated!
-  title: Title
-  delete_topic_msg: Delete this topic forever
-  plans_billing: Plans & Billing
-  basic_details: Email Response Management, Dispatch'r Rules, Default SLA Policy,	Knowledge Base, Self-Service Portal, Domain Mapping, Community Support.
-  plan_info_update: Your plan has been changed.
-  import_data: Date Imported
-  errors_in_plan_change: "Errors encountered with your change:"
-  portal_customizer_open_sol_i: Turn this feature off, if you want to hide 'Solutions' tab in public customer portal.
+  portal: 
+    search: 
+      placeholder: Search using a keyword or a full question
+  feedbackwidget_form_title: Widget form title
+  cancel_and_back: Cancel and go back
+  first_name: First Name
+  pro_brief: For larger Teams
+  feedbackwidget_position: Position
+  import_groups: Groups
+  solution: 
+    info9: Public (Will be published in self service)
+    add: Add Solution
+    edit: Edit Solution
+    title: Solutions
+    add_new_solution: Add a new solution
+    info10: Private (Visible to Agents only)
+    info1: Solutions in Freshdesk is  your Knowledge base
+    info2: Solutions can be <b>public</b> or <b>private</b>. Public Solutions are visible in the Self Service Portal and also appear in Search results
+    info3: Private solutions are agent-only solutions used for internal knowledge sharing
+    type: Solution Type
+    info4: Solutions have a 3 level hierarchy - <b>Category --> Folder --> Article</b>
+    info5: Solutions can be of two types - <b>Workaround</b> or <b>Permanent</b> solutions
+    info6: A Solution can have a <b>Draft</b> status when you are working on it and can be  changed to <b>Published</b> status once it is finished and reviewed
+    status: Solution Status
+    info7: No solutions in this folder
+    visibility: Visibility
+    info8: Are you sure you want to delete this solution
+  import_updated: Updated
+  feedbackwidget_intro: Customize your freshdesk widget below and see a realtime preview.
+  save: Save
+  import_added_newly: Added Newly
+  select_a_plan_gain_access: Select a plan from below to regain access to your account.
+  import_warning_info: An email with user activation instructions will be sent to each contact on successful import. If the email is already present in the database we will update the attributes like Name, Company etc.
+  import_example_title: Following is the example of a CSV file
+  change_my_password: Change My Password
+  errors_in_payment_info: "Errors encountered with your payment information:"
+  attach_files: Attach files
+  current_plan_details: "%{plan_name} Plan with %{agent_limit} agents"
   add_to_do: Add To do
-  forgot_password_intro: Fill out the form below and instructions to reset your password will be emailed to you
-  last_name: Last Name
-  zip: Zip
+  premium_details: Everything in &quot;Pro&quot; Plan plus, Multiple Product Support, Multi-timezone support, Community, Email &amp; Phone Support
+  zendesk_credentials: Zendesk Credentials
+  customers: Customers
+  feedbackwidget_embed_code: Widget embed code
+  billing_info_update: Your billing information has been updated.
+  profile: 
+    edit: Edit Profile
+    change_password: Change Password
+    current_password: Current password
+    confirm_password: Confirm password
+    new_password: New password
+  zendesk_backup: Backup file
+  premium_brief: Top-of-the-line
+  save_changes: Save Changes
+  back: Back
+  import_articles: Solution Articles
+  feedbackwidget_help_para1: Collect feedback from your customers by adding a support tab to your website pages.
+  is_expiring_today: is expiring today
+  favicon: Favicon
+  errors_in_plan_change: "Errors encountered with your change:"
+  email_notifications: 
+    customize_email: Customize Email
+    title: Email notifications
+    requestor_notification: Requestor Notification
+    modify_requester_template: Modify Requester Email Template
+    insert_placeholder: Insert Placeholders
+    modify_agent_template: Modify Agent Email Template
+    event: Event
+    agent_notification: Agent Notification
+  tag: 
+    title: Tags
+  feedbackwidget_help_para2: "Customizable tab opens into a Support ticket form. "
+  portal_customizer_anon_tickets: Anybody can submit a ticket
+  agents: Agents
+  feedbackwidget_defaultbutton: Support
+  formatting_help: Formatting Help
+  update_and_login: Update and login
+  enter_payment: Enter Payment details...
+  errors_in_payment: "Errors encountered with your payment:"
+  next_charge_date: "Your next payment will be processed on:"
+  step1: Step 1
+  import_users_contacts: Users &rarr; Contacts
+  step2: Step 2
+  email_configs: 
+    info9: Assign to Group
+    reply_emails: Reply Emails from Freshdesk
+    title: Email Settings
+    info10: New tickets to this support email will get automatically assigned to a group
+    change_this: Change this
+    info1: Your users send support emails to
+    info11: Configure incoming and outgoing support email address
+    supp_email_add: Support email address
+    info2: You must forward your support emails to your unique email address
+    info12: Add Another Email address
+    add_supp_emails: Additional support email(s)
+    info3: Freshdesk will fetch those emails and convert them as tickets
+    info13: Your support email address is
+    info4: You can add multiple email addresses if you support multiple products - each having its own support email address
+    info14: Any email sent to this address will be converted as a ticket
+    inactive_info1: All your support emails are still unverified, you must verify at least one support email
+    info5: Reply emails from Freshdesk will automatically use your original support email ids as the From email address
+    info15: You must forward these emails to
+    inactive_info2: Until then, the default email "%{default_email}" will be used as the reply-to email.
+    unverified_info1: An email with the verification link has been sent to this email. Only after verification this support email will become active.
+    info6: Enter your support email
+    info16: Tickets will be assigned to
+    primary_supp_email: Primary support email
+    info7: This is also your Reply-to address
+    info8: Forward your emails to
+    make_primary: Make primary
+  title: Title
+  import_forum: Forums
+  feedbackwidget_embed_code_intro: Please copy and paste the code below anywhere before the &lt;/body&gt; tag in the html template of your site or every page where you'd like to provide the Freshdesk widget.
+  change_plan: Change plan
+  forgot_password: Forgot Password
+  recent_activity: Recent Activity
+  ticket: 
+    spam_btn_title: Mark as spam
+    group: Group
+    suggested_solutions: 
+      insert_url: Insert URL
+      title: Suggested Solutions
+      insert_content_tip: Insert this solution article to your Reply or Note
+      insert_url_tip: Insert this solution URL to your Reply or Note
+      no_result: No Solutions found
+      insert_content: Insert Content
+    ham_btn_title: This is not spam
+    edit: Edit ticket
+    assigned_to: Assigned To
+    restore_btn: Restore this ticket
+    created_on: Created on %{time}
+    suggest_solutions: Suggest Solutions
+    unassigned: Unassigned
+    delete_btn_title: Move this ticket to trash
+    due_by_time: Due by time
+    singular: Ticket
+    restore_btn_title: Restore this ticket from trash
+    sort_by: Sort by
+    activity: Activity
+    to_do: Tickets To-Do
+    priority: Priority
+    tags: 
+      no_match: No matches. Press enter to create tag.
+      create_success: The tag was added
+      destroy_success: The tag was removed from this ticket
+      add_tag: "Add a tag:"
+    close_btn_title: Close this ticket
+    close_btn: Close
+    reported_by: Reported by %{requester}
+    reply_form: 
+      post_to_linked_forum: Post in linked forum
+      form_title: Reply to the conversation
+      reply_email_id: Send the reply from the following email id
+    submit_ticket_title: Submit a ticket
+    pick_up: Pick Up
+    unflag_spam: Not Spam
+    recent_tickets: Recent tickets
+    subject: Subject
+    activities: Activities
+    note_form: 
+      private_note: This is a private note, don't show this to the requester
+      form_title: Add a Note
+    execute_scenario: Execute Scenario
+    type: Type
+    monitor_btn_title: Monitor this ticket
+    add_note: Add note
+    reply_to: Reply to ticket
+    requestor_info: Requestor Info
+    delete_btn: Delete
+    select_to_agent: Select an Agent
+    assign_to_agent: Assign To Agent
+    flag_spam: Flag Spam
+    edit_btn: Edit
+    verify_human: To verify you are human, please type the given scrambled letters
+    source: Source
+    status: Status
+    stop_monitor_btn_title: Stop monitoring this ticket
+    submit_ticket: Submit Ticket
+    properties: Ticket Properties
+    requester: Requester
+  description: Description
+  recent_forum_posts: Recent Forum Posts
+  company: 
+    new: New Company
+    name: Company name
+    info9: Freshdesk will automatically associate Contacts with this company if email ids contain these domains
+    edit: Edit Company
+    title: Companies
+    quick_company: Quick Company
+    info1: Are you sure you want to delete this company
+    notes: Notes
+    info2: Domain Names for this company
+    info4: Add a Note about %{name}
+    info5: Add specific notes regarding this company. example - we are negotiating a 100K deal with this company
+    info6: People in %{name}
+    info7: No tickets have been created by the people in this company
+    info8: More info regarding this company like address, phone number, website etc
+  next_charge_amount: "Monthly cost:"
+  forums: 
+    search_all: 
+      placeholder: Search All Topics
+    search: 
+      placeholder: Search %{name}
+  feedbackwidget_offset_label: With an offset of
+  no_topics_text: No topics in this forum
+  import_zendesk_summary_info: Zendesk data has been successfully imported.
+  enter_message: Enter your message here
+  activate_account: Activate your account
+  deactivate: deactivate
+  state: State
+  this_ticket_has_been_deleted: This ticket has been deleted
+  asked_on: Asked on
+  will_expire_in: will expire in
+  import_step1_info: Select a CSV file and click import
+  import_tickets: Tickets
+  account: 
+    name: Account Name
+    page_colors: 
+      title: Page colors
+      background: Background
+      header: Header
+      tab_color: Tab Color
+    cancel: Cancel and go back
+    info1: You can use this field to setup custom domain mapping for Freshdesk
+    active_since: Active Since
+    info2: Before using this field please ensure that you have created a CNAME DNS record in your DNS Zone file to point support.mycompanyname.com to %{full_domain}. Your Webmaster or Server administrator should be able to help you set this up correctly
+    info3: Reset to Default colors
+    info4: The next ticket ID counter will start with this number (Should be greater than the last ticket ID created). This affects tickets created henceforth.
+    save: Save changes
+    time_zone: Time Zone
+    rebrand: Rebrand your Helpdesk
+    helpdesk_name: Helpdesk Name
+    helpdesk_url: Helpdesk URL
+  agent_info_title: Agent information
+  plans_billing: Plans & Billing
+  forum_confirm_msg1: Are you sure you want to delete this category
+  comments: Comments
+  reply_topic: Reply to topic
+  your_trial_account: Your trial account
+  portal_customizer_title: Customize your Public Customer Portal
+  add: Add
+  import_org_companies: Organizations &rarr; Companies
+  business_hours: 
+    holiday_name: Holiday name
+    title: Business Hours
+    info1: Setting up your Business Hours in Freshdesk allows you to get more control on your SLAs. For eg. If your helpdesk works between 9AM to 6PM Mon-Fri and a customer sends a high priority ticket at 4 PM on Tuesday with a SLA target resolution time of 4 hours, then the ticket Due By time is set as 11 AM on Wednesday.You can configure your SLAs to either respect or ignore business hours
+    info2: Holidays work exactly like Business hours. For eg. If your helpdesk works between 9AM to 6PM Mon-Fri and a customer sends a medium priority ticket at 8 PM on Friday with a SLA target resolution time of 24 hours, then the ticket Due By time is set as 9AM on Tuesday.(not 8PM on Sat)
+    info3: Specific Working Hours
+    holiday_added: Holiday already added
+    info4: Working Days for your Helpdesk
+    holidays: Holidays
+    info5: Holidays will be ignored when calculating SLA for a ticket
+    holiday_list: Yearly Holiday List
+    helpdesk_hours: Helpdesk Hours
+  portal_customizer_open_forums: Anybody can view forums
+  password: Password
+  import_step2_info: Map the following CSV fields with database fields and import.
+  feedbackwidget_defaulttitle: Help &amp; Support
+  connect_ticket: Link to ticket
+  edit_agent: Edit Agent
+  select_a_plan: Select a Plan
+  helpdesk: 
+    tickets: 
+      views: 
+        new_and_my_open: New & My Open Tickets
+        my_resolved: My Resolved Tickets
+        new: New Tickets
+        on_hold: Tickets On Hold
+        no_tickets: No tickets in this view
+        open: Open Tickets
+        all: All Tickets
+        closed: Closed Tickets
+        my_overdue: My Overdue Tickets
+        resolved: Resolved Tickets
+        due_today: Tickets Due Today
+        overdue: Overdue Tickets
+        trash: Trash
+        my_due_today: My Tickets Due Today
+        tags: Tags by Ticket
+        my_on_hold: My Tickets On Hold
+        my_all: All My Tickets
+        select: Select View...
+        my_open: My Open Tickets
+        my_closed: My Closed Tickets
+        monitored_by: Tickets I'm Monitoring
+        spam: Spam
+  import_ticket_group: Tickets &amp; Group

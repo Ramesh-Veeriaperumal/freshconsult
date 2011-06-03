@@ -91,7 +91,7 @@
 		
 		<% if feature?(:multi_timezone) %>
 			<li>
-				<%= f.label :time_zone %>
+				<%= label(:user, :time_zone, t('account.time_zone')) %>
 				<%= f.time_zone_select :time_zone, ActiveSupport::TimeZone.all , :default => @user.time_zone %>
 			</li>
 		<% end %>

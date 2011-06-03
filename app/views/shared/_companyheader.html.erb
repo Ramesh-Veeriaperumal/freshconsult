@@ -5,7 +5,7 @@
 		<%= link_to(t('contacts.import_csv'), import_index_path, :class => "uiButton grey") %>
 	</div>
 
-	<h3 class="title"><%= @page_title = 'Customers' %></h3>	
+	<h3 class="title"><%= @page_title = t('customers') %></h3>	
 	<div class="tab_panel">		
 		<b><%=t('contacts.showing')%></b>
 		<%= link_to(t('contacts.title'),'/contacts',   :class => (type == 'user') 	? "active" : "" ) %>
