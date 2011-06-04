@@ -38,7 +38,7 @@ module ApplicationHelper
     navigation = tabs.map do |s| 
       next unless s[2]
       active = (params[:controller] == s[0]) || (s[1] == @selected_tab || "/#{params[:controller]}" == s[0]) #selected_tab hack by Shan  !history_active &&
-      tab( t("headertabs.#{s[1].to_s}"), {:controller => s[0], :action => :index}, active && :active ) 
+      tab( t("header.tabs.#{s[1].to_s}"), {:controller => s[0], :action => :index}, active && :active ) 
     end
     navigation
   end

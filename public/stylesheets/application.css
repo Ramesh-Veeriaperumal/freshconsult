@@ -1108,9 +1108,19 @@ body h5 {
 .rtCnt .rtPanel a em {
   display: block;
   font-style: normal;
-  line-height: 12px;
+  line-height: 11px;
   white-space: normal;
   padding-top: 0px;
+  white-space: pre-wrap;
+  /* css-3 */
+  white-space: -moz-pre-wrap;
+  /* Mozilla, since 1999 */
+  white-space: -pre-wrap;
+  /* Opera 4-6 */
+  white-space: -o-pre-wrap;
+  /* Opera 7 */
+  word-wrap: break-word;
+  /* Internet Explorer 5.5+ */
 }
 .rtCnt .rtPanel a.active, .rtCnt .rtPanel a:hover {
   color: #ffffff;
@@ -1298,6 +1308,16 @@ ul.admin_icons li a:hover {
 }
 .mark_action .stamp.stamp_type_3 {
   background: #993333;
+}
+
+.stamp_answer {
+  background-color: #336600;
+  color: #ffffff;
+  padding: 3px 12px;
+  -moz-border-radius: 4px 4px 4px 4px;
+  -webkit-border-radius: 4px 4px 4px 4px;
+  border-radius: 4px 4px 4px 4px;
+  margin: 2px 5px;
 }
 
 div.panel_area {
@@ -3426,7 +3446,7 @@ a.page_title:active {
 }
 .request-list div.item .private-icon {
   display: none;
-  background: url('/images/symbols-50bc58c09c.png') 0 -114px no-repeat;
+  background: url('/images/symbols-7a45324a2d.png') 0 -137px no-repeat;
   width: 16px;
   height: 16px;
   position: relative;

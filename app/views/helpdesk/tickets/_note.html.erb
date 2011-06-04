@@ -34,7 +34,7 @@
 		<% end %>
 	</div>	
 	<% if note.private && !note.incoming && !note.status? %>
-		<div class="bottom-actions" style="display:none;">
+		<div class="bottom-actions">
 			<%= link_to_remote( "Edit",  :update => note_view_id,
 		                         			 :url => edit_helpdesk_ticket_helpdesk_note_path(@item, note),
 											 :method => :GET) %>
