@@ -17,6 +17,6 @@
 	  		<%= render :partial => "/solution/shared/portal_sol_list", :locals => { :category => @item, :folder => @item.folders.visible(current_user).first } %>
 	  <%end%>
 	<% else %>
-		<span class="info_data">No folders in this category - </span><%= link_to 'add a new folder'[:create_new_folder], new_solution_category_folder_path(@item) %>
+		<span class="info_data">No folders in this category  </span> <% if permission?(:manage_knowledgebase) %> - <%= link_to 'add a new folder'[:create_new_folder], new_solution_category_folder_path(@item) %> <%end%>
 	<% end %>	
 </div> 
