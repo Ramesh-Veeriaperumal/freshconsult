@@ -10,6 +10,7 @@
 body {
   color: #333;
   background: #efefef;
+  min-width: 1002px;
 }
 
 /* PAGE AREA STYLE */
