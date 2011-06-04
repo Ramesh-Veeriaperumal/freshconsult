@@ -115,8 +115,7 @@
 					</td>
 				</tr>
 			</table> 
-	    </li>		
-		<li class="seperator"></li>					
+		</li>
 		<li> 
 			<%= content_tag (:label, t('business_hours.holiday_list'))%> 
 			<span class="info_data"><%=t('business_hours.info5')%></span>
@@ -144,8 +143,8 @@
 			</table>	
 		</li>
 	</ul>
-	<div>
-		<%= f.submit t('save'), :class => "fdbutton" %>
-		<%= link_to t('back'), "/admin/home", :class => "fdbutton grey" %>
+	<div class="button-container">
+		<%= link_to "&larr; #{t('account.cancel')}", "/admin/home", :class => "uiButton floatl" %>
+		<%= f.submit t('save'), :class => "uiButton" %>
 	</div>
 	<% end %>

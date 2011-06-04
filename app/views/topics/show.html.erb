@@ -20,10 +20,8 @@
 						<%end%>
 					<% end %>
 			    </div>
-				<span class="seperator"></span>
 			<% end %>
 			<div>
-				<span class="seperator"></span>
 				<%= link_to(t('connect_ticket') + " &raquo;", new_helpdesk_ticket_path(:topic_id => @topic.id), :class => "uiButton small full-width") if logged_in? and @topic.ticket_topic.nil?  %>
 				<%= link_to(h(@topic.ticket.subject), helpdesk_ticket_path(@topic.ticket)) unless @topic.ticket_topic.nil? %>
 			</div> 
@@ -136,10 +134,7 @@
 					<% last_post = @posts.last %>
 					<% @posts.each do |post| %>
 						<% unless (post == first_post) %>
-							<%= render :partial => "forum_shared/post", :object => post %>
-							<ul class="attachment_list">
-	   							<%= render :partial => '/helpdesk/shared/attachment', :collection => post.attachments, :locals => {:show_delete => true, :url => [post] } %>
-    					</ul>
+							<%= render :partial => "forum_shared/post", :object => post %>							
 						<% end %>
 						<%= will_paginate @posts %>
 					<% end %> 

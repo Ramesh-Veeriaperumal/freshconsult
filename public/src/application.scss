@@ -872,10 +872,11 @@ body h5{
 			
 			em{
 				display:block;
-				font-style:normal;	 
-				line-height:12px;	
-				white-space:normal; 
-				padding-top:0px;		
+				font-style:normal;
+				line-height:11px;
+				white-space:normal;
+				padding-top:0px;
+				@include wrap;
 			} 
 		}
 		a.active, a:hover{
@@ -974,11 +975,18 @@ ul.admin_icons{
 	} 		
 	.stamp.stamp_type_2{
 		background:lighten(#336600, 10%);
-	} 
-	
+	} 	
 	.stamp.stamp_type_3{
 		background:#993333;
-	} 
+	}
+}
+
+.stamp_answer{
+	background-color:#336600;
+	color:#ffffff;
+	padding:3px 12px;
+	@include corners(4px);
+	margin:2px 5px;
 }
 
 div.panel_area{
@@ -2218,7 +2226,7 @@ h4.border_title{
 	border:1px solid #dfdfdf;
 	div.item{
 		padding:5px;
-		a{
+		em{
 			text-transform:capitalize;
 			font-size:11px;
 			color:#527EAA;

@@ -105,7 +105,7 @@ class CustomersController < ApplicationController
   protected
   
     def set_selected_tab
-      @selected_tab = 'Customers'
+      @selected_tab = :customers
   end
    def get_domain(s)
       s.gsub(/^(http:\/\/)?(www\.)?/,'').gsub(/\/.*$/,'')

@@ -54,7 +54,47 @@ var jQ = jQuery.noConflict();
 				classes: 'ui-tooltip-rounded ui-tooltip-shadow'
 			 }
 		});
+		
+		function showOverlay(zIndex, callback){
+			_app_overlay = $("#_app_overlay").get(0) || $("<div class='transparent-overlay' id='_app_overlay' />").appendTo("body");
+			console.log($(behindElement).css("zIndex"));
+			$(_app_overlay)
+				.css("zIndex", zIndex);
+		}
+		
+		menu_box_count = 0;
+		fd_active_drop_box = null;
+		
+		function hideMenuItem(class){
+			$(".nav-drop .menu-trigger").next().hide();
+			$(".nav-drop .menu-trigger").removeClass("selected");
+		}
+		
+		$(".nav-drop .menu-trigger")
+			.bind('click', function(ev){
+				ev.preventDefault();
+				
+				$(this).toggleClass("selected").next().toggle();
+				
+				if( !$(this).attr("data-menu-name") )
+						$(this, $(this).next())
+							.attr("data-menu-name", "page_menu_"+menu_box_count++);
+				
+				if($(this).attr("data-menu-name") !== $(fd_active_drop_box).attr("data-menu-name") ){
+					$(fd_active_drop_box).removeClass("selected").next().hide();
+				}
+				fd_active_drop_box = $(this);
+			});
+		
+		$(".nav-drop li.menu-item a").bind("click", hideMenuItem());
 		 
+		$(document).bind('click', function(e) {
+			var $clicked = $(e.target);
+			if (! $clicked.parents().hasClass("nav-drop")){
+				hideMenuItem();
+			}
+		});
+		
 		flash = $("div.flash_info");
 		if(flash.get(0)){
 			try {

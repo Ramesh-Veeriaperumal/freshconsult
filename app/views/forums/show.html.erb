@@ -17,7 +17,7 @@
 		<div class="search-grey-box">
 			<% if logged_in? && admin? -%>
 				<div class="action_buttons no_margin">
-					<%= link_to "Edit Forum" , edit_category_forum_path(@forum_category, @forum), :class => "last"  %>
+					<%= link_to t("forum.edit"), edit_category_forum_path(@forum_category, @forum), :class => "last"  %>
 				</div>
 			<% end %>
 			<div class="" style="display:none;">
@@ -28,9 +28,9 @@
 			<%= render :partial => "/search/pagesearch", :locals => { :placeholder => t('forums.search.placeholder', :name => @forum_category.name), :url => "/search/topics?category_id=#{@forum_category.id}&search_key=" } %>
 	   </div>
 	   <div class="list-bar"> 
-		   <%= link_to("Popular", category_forum_path( @forum_category, @forum), :class => "first #{ (params[:stamp_type].blank? && params[:order].blank?)? 'active' : '' }" ) if @forum.ideas? %>
-		   <%= link_to("Overview", category_forum_path( @forum_category, @forum), :class => "first #{ (!params[:order].blank? && params[:order] == 'created_at desc' )? 'active' : '' }" ) unless @forum.ideas? %>
-		   <%= link_to "recent", category_forum_path( @forum_category, @forum, :order => "replied_at"), :class => ((!params[:order].blank? && params[:order] == 'replied_at desc')  ? "active" : "") %>
+		   <%= link_to(t("forums_order.popular"), category_forum_path( @forum_category, @forum), :class => "first #{ (params[:stamp_type].blank? && params[:order].blank?)? 'active' : '' }" ) if @forum.ideas? %>
+		   <%= link_to(t("forums_order.overview"), category_forum_path( @forum_category, @forum), :class => "first #{ (!params[:order].blank? && params[:order] == 'created_at desc' )? 'active' : '' }" ) unless @forum.ideas? %>
+		   <%= link_to t("forums_order.recent"), category_forum_path( @forum_category, @forum, :order => "replied_at"), :class => ((!params[:order].blank? && params[:order] == 'replied_at desc')  ? "active" : "") %>
 		   <% if @forum.ideas? %>
 		   		<% Topic::IDEAS_STAMPS_OPTIONS.each do |k,v| %> 
 		   			<%= link_to k, category_forum_path( @forum_category, @forum, :stamp_type  => v ), :class => ((params[:stamp_type] == v.to_s)? "active":"") %>

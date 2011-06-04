@@ -232,7 +232,6 @@ button.positive, .buttons a.positive{
 
 
 .button {
-	@include pie;
 	@include anchor-button;
     white-space: nowrap;
     text-align: center;
@@ -247,7 +246,7 @@ button.positive, .buttons a.positive{
     @include corners(3px);
 	@include inset-shadows(rgba(0, 0, 0, 0.05), 0px, -2px, 0px);
 	@include shadows(rgba(0, 0, 0, 0.05), 0px, 1px, 0px);	
-    @include vertical-gradient(#ffffff, #efefef);
+    @include background(linear-gradient(#ffffff, #efefef));
 		
     border: 1px solid #cfcfcf;
     cursor: pointer;

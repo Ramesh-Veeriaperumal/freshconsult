@@ -468,7 +468,7 @@ class AccountsController < ApplicationController
     end 
     
     def admin_selected_tab
-      @selected_tab = 'Admin'
+      @selected_tab = :admin
     end
 
 end
