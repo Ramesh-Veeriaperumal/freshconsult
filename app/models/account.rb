@@ -285,6 +285,8 @@ class Account < ActiveRecord::Base
       false
     rescue Errno::ECONNREFUSED
       false
+    rescue Errno::ETIMEDOUT
+      false
     end 
     
     def valid_helpdesk_url?

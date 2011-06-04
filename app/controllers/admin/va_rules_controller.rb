@@ -57,30 +57,30 @@ class Admin::VaRulesController < Admin::AutomationsController
     def load_config
       super
       
-    default_filter_hash   = [{:name => 0              , :value => "--- Click to Select Filter ---"},
-                        {:name => "from_email"   , :value => "From Email", :domtype => "autocompelete", :data_url => autocomplete_helpdesk_authorizations_path, 
+    default_filter_hash   = [{:name => 0              , :value => "--- #{t('click_to_select_filter')} ---"},
+                        {:name => "from_email"   , :value => t('from_email'), :domtype => "autocompelete", :data_url => autocomplete_helpdesk_authorizations_path, 
                                                    :operatortype => "email"},
-                        {:name => "to_email"     , :value => "To Email"  , :domtype => "text",
+                        {:name => "to_email"     , :value => t('to_email')  , :domtype => "text",
                                                    :operatortype => "email"},
                         {:name => 0              , :value => "--------------------------"},
-                        {:name => "subject"      , :value => "Subject",       :domtype => "text",
+                        {:name => "subject"      , :value => t('ticket.subject'),       :domtype => "text",
                                                    :operatortype => "text"},
-                        {:name => "description"  , :value => "Description",   :domtype => "text",
+                        {:name => "description"  , :value => t('description'),   :domtype => "text",
                                                    :operatortype => "text"},
-                        {:name => "subject_or_description", :value => "Subject or Description",   :domtype => "text",
+                        {:name => "subject_or_description", :value =>  t('subject_or_description'),   :domtype => "text",
                                                    :operatortype => "text"},
-                        {:name => "priority"     , :value => "Priority",      :domtype => "dropdown", :choices => Helpdesk::Ticket::PRIORITY_NAMES_BY_KEY.sort, 
+                        {:name => "priority"     , :value => t('ticket.priority'),      :domtype => "dropdown", :choices => Helpdesk::Ticket::PRIORITY_NAMES_BY_KEY.sort, 
                                                    :operatortype => "choicelist"},                        
-                        {:name => "ticket_type"  , :value => "Type",          :domtype => "dropdown", :choices => Helpdesk::Ticket::TYPE_NAMES_BY_KEY.sort, 
+                        {:name => "ticket_type"  , :value => t('ticket.type'),          :domtype => "dropdown", :choices => Helpdesk::Ticket::TYPE_NAMES_BY_KEY.sort, 
                                                    :operatortype => "choicelist"},
-                        {:name => "status"       , :value => "Status",        :domtype => "dropdown", :choices => Helpdesk::Ticket::STATUS_NAMES_BY_KEY.sort, 
+                        {:name => "status"       , :value => t('ticket.status'),        :domtype => "dropdown", :choices => Helpdesk::Ticket::STATUS_NAMES_BY_KEY.sort, 
                                                    :operatortype => "choicelist"},
-                        {:name => "source"       , :value => "Source",        :domtype => "dropdown", :choices => Helpdesk::Ticket::SOURCE_NAMES_BY_KEY.sort, 
+                        {:name => "source"       , :value => t('ticket.source'),        :domtype => "dropdown", :choices => Helpdesk::Ticket::SOURCE_NAMES_BY_KEY.sort, 
                                                    :operatortype => "choicelist"},
                         {:name => 0              , :value => "------------------------------"},
-                        {:name => "contact_name" , :value => "Contact Name",  :domtype => "text",
+                        {:name => "contact_name" , :value => t('contact_name'),  :domtype => "text",
                                                    :operatortype => "text"},
-                        {:name => "company_name" , :value => "Company Name",  :domtype => "text", 
+                        {:name => "company_name" , :value => t('company_name'),  :domtype => "text", 
                                                    :operatortype => "text"}]
                                                    
       filter_hash = add_custom_filters default_filter_hash
@@ -94,16 +94,16 @@ class Admin::VaRulesController < Admin::AutomationsController
       
       @op_types        = ActiveSupport::JSON.encode operator_types
       
-      operator_list  =  {:is                =>  "Is",
-                         :is_not            =>  "Is not",
-                         :contains          =>  "Contains",
-                         :does_not_contain  =>  "Does not contain",
-                         :starts_with       =>  "Starts with",
-                         :ends_with         =>  "Ends with",
-                         :between           =>  "Between",
-                         :between_range     =>  "Between Range",
-                         :selected          =>  "Selected",
-                         :not_selected      =>  "Not Selected" } 
+      operator_list  =  {:is                =>  t('is'),
+                         :is_not            =>  t('is_not'),
+                         :contains          =>  t('contains'),
+                         :does_not_contain  =>  t('does_not_contain'),
+                         :starts_with       =>  t('starts_with'),
+                         :ends_with         =>  t('ends_with'),
+                         :between           =>  t('between'),
+                         :between_range     =>  t('between_range'),
+                         :selected          =>  t('selected'),
+                         :not_selected      =>  t('not_selected') } 
       
       @op_list        = ActiveSupport::JSON.encode operator_list
     end

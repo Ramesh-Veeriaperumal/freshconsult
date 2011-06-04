@@ -3,7 +3,7 @@
   
 <% end %> 
 
-<h3 class="title">New Solution</h3>
+<h3 class="title"><%=t('solution.add_new_solution')%></h3>
 <div id="article-form-container">
 	<% form_for @article, :url => solution_category_folder_articles_path(@article.folder.category_id  , @article.folder.id) , :html => {:multipart => true, :id => "article-form"} do |f| %>
 	<%= render :partial => 'article_form', :locals => { :f => f } %>

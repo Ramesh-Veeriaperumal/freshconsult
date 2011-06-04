@@ -4,7 +4,7 @@
 		<div class="element first">
 			<% if feature?(:customer_slas) %>
 				<div class="edit" id="sla_button">
-					<a href="javascript:void(0)" onclick="jQuery('#sla_details, #sla_form').toggle(); jQuery('#sla_button').hide()">Edit</a>
+					<a href="javascript:void(0)" onclick="jQuery('#sla_details, #sla_form').toggle(); jQuery('#sla_button').hide()"><%=t('edit')%></a>
 				</div> 
 			<% end %>
 			<h4 class="title"><%=t('sla_policy.title')%></h4>
@@ -69,7 +69,7 @@
 	</label>
 	<%= f.text_area :note, :class=> "sp_paragraph", :id => "comp_notes" %>
 	<div class="alignright"> 
-		<%= f.submit 'Save', :class=>"uiButton small grey"  %> &nbsp;
+		<%= f.submit t('save'), :class=>"uiButton small grey"  %> &nbsp;
 	</div>
 <% end %>	  
 
