@@ -65,7 +65,7 @@ var jQ = jQuery.noConflict();
 		menu_box_count = 0;
 		fd_active_drop_box = null;
 		
-		function hideMenuItem(class){
+		function hideMenuItem(){
 			$(".nav-drop .menu-trigger").next().hide();
 			$(".nav-drop .menu-trigger").removeClass("selected");
 		}
