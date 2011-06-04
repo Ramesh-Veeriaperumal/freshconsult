@@ -1011,7 +1011,7 @@ body h5 {
   box-shadow: 0 0 40px rgba(0, 0, 0, 0.05) inset;
 }
 .rtCnt .rtDetails {
-  margin: 0px 70px 0px 0px;
+  margin: 0px 78px 0px 0px;
   padding-top: 5px;
   z-index: 10;
   background-color: #ffffff;
@@ -1065,7 +1065,7 @@ body h5 {
 }
 .rtCnt .rtPanel {
   float: right;
-  width: 70px;
+  width: 75px;
   position: relative;
   z-index: 9;
   padding-top: 6px;
