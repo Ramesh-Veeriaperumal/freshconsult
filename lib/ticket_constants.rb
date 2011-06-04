@@ -6,9 +6,9 @@ module TicketConstants
   
   SOURCES = [
     [ :email,       I18n.t('email'),            1 ],
-    [ :portal,     I18n.t('portal'),           2 ],
+    [ :portal,     I18n.t('portal_key'),           2 ],
     [ :phone,       I18n.t('phone'),            3 ],
-    [ :forum,       I18n.t('forum'),            4 ],
+    [ :forum,       I18n.t('forum_key'),            4 ],
     [ :twitter,     I18n.t('twitter'),          5 ],
     [ :facebook,   I18n.t('facebook'),         6 ],
     [ :chat,        I18n.t('chat'),             7 ]
