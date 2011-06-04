@@ -10,7 +10,7 @@ $ticketicon: sprite-map("ticket-icon/*.png");
 
 /* Bullet icon */ 
 $bullet-icon:"listicons/request_nav_seperator.gif";
-body { color: #333; background:$background; }
+body { color: #333; background:$background; min-width:$blueprint-liquid-container-min-width+20; }
 
 /* PAGE AREA STYLE */ 
 
