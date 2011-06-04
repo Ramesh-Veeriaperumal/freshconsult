@@ -1,9 +1,12 @@
 <% content_for :sidebar do -%>
 	<div class="sidepanel">
 		<h3 class="title"><%= current_account.name %></h3> 
-		<ul class="ui-list_with_icon">
-			<li><b><%=t('account.active_since')%>  </b><br /><%= formated_date(current_account.created_at) %></li>
-		</ul> 
+		<p>			
+			<strong><%=t('account.active_since')%></strong>
+			<br />
+			<%= formated_date(current_account.created_at) %>			
+		</p>
+		<%= link_to('Cancel my account', cancel_account_url, :class => "button") %>
 	</div>
 <%- end %>
 <h3 class= "title"><%= @page_title = t('.account_settings') %></h3>
@@ -90,8 +93,7 @@
     </div>
 	<%end-%>
 	
-  </li>
-	<!-- <li><%= link_to('Cancel plan', cancel_account_url) %></li> -->
+  </li>	
 </ul>
 
 <div class="button-container">

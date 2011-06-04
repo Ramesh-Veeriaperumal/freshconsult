@@ -1,18 +1,42 @@
-<h1><%= @page_title = 'Cancel Account' %></h1>
-
-<p>You are about to cancel your account.  This will <strong>permanently delete all your data</strong>.  Once you do this, you will no longer have access to your data, so be sure this is really what you want to do. </p>
-
-<h2>Wait!  Before you go...</h2>
-<p>
-  Instead of canceling your account, perhaps you'd like to just switch your plan.  <a href="/account/plan">Change your subscription level now</a>.
-</p>
+<% content_for :sidebar do -%><%- end %>
+<h3 class="title"><%= @page_title = t(".cancel_account") %></h3>
+<p class="intro"><%= t(".intro") %></p>
 
 <% form_tag :action => 'cancel' do %>
-  <fieldset>
-    <legend>Cancel Confirmation</legend>
-
-    <input type="checkbox" name="confirm" class="checkbox" value="1" />
-    I really do want to cancel my account and delete all my data.
-  </fieldset>
-  <%= submit_or_cancel '/account', 'Delete my Account' %>
+<ul id="CancelFormBox" class="ui-form dont-validate">
+	<li>
+		<div class="info-highlight">
+			<div><%= t(".warning_message") %></div>
+		  <div><%= t(".changeplan_instead_of_cancel") %> <a href="/account/plan"><%= t(".change_your_plan")%> </a> </div>
+		</div>
+		<label>
+			<input type="checkbox" name="confirm" class="checkbox" id="confirm_agree" value="1" />
+			<%= t(".confirm_and_cancel_my_account") %>
+		</label> 
+	</li>
+</ul>
+	<div class="button-container">
+		<%= link_to t(".goback"), '/account', :class => "uiButton floatl" %>
+  	<%= submit_tag  t('.delete_my_account'), :class => "uiButton" %>
+  </div>
+<% end %>
+<% content_for :pagefixed do %>
+	<% javascript_tag do %>
+		jQuery(document).ready(function(){
+			jQuery("#CancelFormBox").parent()
+				.validate({
+					errorPlacement: function(error, element) {
+				     if (element.attr("name") == "confirm")
+								error.insertAfter(element.parent());
+				   }
+				});
+			jQuery("#confirm_agree")
+				.rules("add", {
+			 		required: true,
+					messages: {
+					   required: "<%= t('.you_must_confirm') %>",
+					 }
+				});			
+		});
+	<% end %>
 <% end %>

@@ -287,6 +287,16 @@ en:
       export_now: Export now
       account_settings: Account Settings
       export_data_text: Generate an XML of all available Help desk data and send it via email
+    cancel:
+      cancel_account: Cancel Freshdesk Account
+      intro: You are about to cancel your account.  This will <strong>permanently delete all your data</strong>.
+      warning_message: Once you do this, you will no longer have access to your data, so be sure this is really what you want to do.
+      changeplan_instead_of_cancel: Instead of canceling your account, perhaps you'd like to just switch your plan.
+      change_your_plan: Change your plan
+      confirm_and_cancel_my_account: I confirm that I want to cancel my account and delete all my data...
+      goback: &#x2190; Back to account settings
+      delete_my_account: Delete my Account
+      you_must_confirm: You must confirm your cancellation
   topics: 
     last_reply: Last reply %{post_time} ago by %{user_link}
     posted_at: Posted %{post_time} ago
@@ -893,4 +903,3 @@ en:
   import_ticket_group: Tickets &amp; Group
   portal_key: Portal
   forum_key: Forum
-  
