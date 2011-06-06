@@ -24,7 +24,7 @@ class AgentsController < Admin::AdminController
   end
     
   def index    
-    @agents = current_account.agents.find(:all , :include => :user )
+    @agents = current_account.agents.find(:all , :include => :user , :order =>'name')
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @agents }

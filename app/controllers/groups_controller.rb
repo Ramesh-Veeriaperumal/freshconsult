@@ -1,13 +1,11 @@
 class GroupsController < Admin::AdminController
    
-  def index
-    
-      @groups = current_account.groups.all
+  def index    
+    @groups = current_account.groups.find(:all, :order =>'name')
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @groups }
-    end
-    
+    end    
   end
 
   def show
