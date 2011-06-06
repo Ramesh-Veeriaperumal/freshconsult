@@ -13,10 +13,10 @@ end
 
 Helpdesk::Activity.seed(:account_id, :notable_id, :notable_type) do |s|
   s.account_id = account.id
-  s.description = "{{user_path}} created a new ticket {{notable_path}}"
+  s.description = 'activities.tickets.new_ticket.long'
   s.notable_id = ticket.id
   s.notable_type = "Helpdesk::Ticket"
   s.user_id = ticket.requester_id
-  s.short_descr = "{{user_path}} created the ticket"
+  s.short_descr = 'activities.tickets.new_ticket.short'
   s.activity_data = {}
 end

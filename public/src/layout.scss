@@ -9,7 +9,8 @@ html {  height:100%; overflow-y:scroll; }
 	@include container;
 	position:relative;
 	text-align: left; 
-	max-width:1280px; 
+	max-width:1280px;
+	min-width:auto;
 	padding:0px 8px; 
 }
   
@@ -137,37 +138,27 @@ div.bg_pulp{
 }
 
 .brand{	
+	@include clearfix;
 	position:absolute;
 	left:0px;
 	margin-left:8px;
 	text-decoration:none;
-	a{
-		text-decoration:none;
-	}
+	a{ text-decoration:none; }
+	.logo, .logo_text{ float:left; position:relative; z-index:5; }
 	.logo{
-		@include clearfix; 
-		float:left;
-		margin:0px 0px 0px 5px; 
+		margin:0px 0px 0px 10px;
 	}
-	img, h3{
-		float:left;
-	}
-	h3{
+	.logo_text{
 		font-size:20px;
-		text-decoration:none;
-		font-weight:normal;
-		margin:0px;
-		padding:13px 0px 0px 2px;
-		position:relative;
 		color:#ffffff;
-		text-transform:capitalize;
+		padding:13px 0 0 5px;
 	}	 
 }
 
 .header_links{
 	float:right;
 	text-align:right;
-	height:$header_height;
+	height:55px;
 	margin:0px 12px;
 	color:#ffffff;
 	font-size:12px;		 

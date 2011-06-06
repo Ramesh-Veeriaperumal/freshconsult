@@ -119,7 +119,7 @@ class Solution::FoldersController < ApplicationController
   end
   
   def set_selected_tab
-      @selected_tab = 'Solutions'
+      @selected_tab = :solutions
   end
   
   def check_folder_permission

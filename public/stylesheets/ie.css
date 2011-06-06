@@ -1,10 +1,4 @@
 /* Theme Colors and layout Defaults */
-.ie6, .ie7, .ie8, .ie9 {
-  /*.ui-draggable-dragging{
-  	margin-left:-18px;
-  	margin-top:-45px;
-  }*/
-}
 .ie6 .wrapper, .ie7 .wrapper, .ie8 .wrapper, .ie9 .wrapper {
   width: expression((document.body.clientWidth < 982)? "982px" : "95%");
   width: 980px;
@@ -35,6 +29,13 @@
 }
 .ie6 #custom_form li, .ie7 #custom_form li, .ie8 #custom_form li, .ie9 #custom_form li {
   height: 65px !important;
+}
+.ie6 .ui-form .attachment_list li, .ie7 .ui-form .attachment_list li, .ie8 .ui-form .attachment_list li, .ie9 .ui-form .attachment_list li {
+  width: 200px;
+  border: 0px;
+}
+.ie6 .ui-form .attachment_list li .delete, .ie7 .ui-form .attachment_list li .delete, .ie8 .ui-form .attachment_list li .delete, .ie9 .ui-form .attachment_list li .delete {
+  display: block;
 }
 .ie6 .request-list div.item .bulb, .ie6 .request-list div.item .wand, .ie7 .request-list div.item .bulb, .ie7 .request-list div.item .wand, .ie8 .request-list div.item .bulb, .ie8 .request-list div.item .wand, .ie9 .request-list div.item .bulb, .ie9 .request-list div.item .wand {
   left: 0px;

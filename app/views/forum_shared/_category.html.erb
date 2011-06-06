@@ -1,13 +1,13 @@
 	<ul class="base-set">	
-	    <% unless (category.forums.size == 0) %>
+	    <% unless (category.send("#{@content_scope}forums").size == 0) %>
 			<% reset_cycle %>
 			<% category.send("#{@content_scope}forums").each do |forum| %>
 				<%= render :partial => "forum_shared/forum", :object => forum, :locals => {:category => category }  %>				
 			<% end %>
 		<% else %>
-			<span class="no_info_text"><%=t('no_forum_category')%> -</span>
-			<% if admin? %>
-	  			<%= link_to t('add_new_forum'), new_category_forum_path(category) %>
+			<span class="no_info_text"><%=t('no_forum_category')%> </span>
+			<%  if permission?(:manage_forums)  %>
+	  			- <%= link_to t('add_new_forum'), new_category_forum_path(category) %>
 			<% end %> 
 		<% end %>
 	</ul>

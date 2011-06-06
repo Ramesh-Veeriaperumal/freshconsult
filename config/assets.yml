@@ -34,12 +34,12 @@ stylesheets:
     - public/stylesheets/reset.css
     - public/stylesheets/layout.css
     - public/stylesheets/defaults.css
+    - public/stylesheets/application.css
     - public/stylesheets/uni-form.css
     - public/stylesheets/default.uni-form.css
     - public/stylesheets/validation.css
     - public/stylesheets/form.css
     - public/stylesheets/buttons.css
-    - public/stylesheets/application.css
     - public/stylesheets/jquery-ui.css
     - public/stylesheets/jquery.qtip.css
     - public/stylesheets/jquery-autosuggest.css
@@ -51,6 +51,6 @@ stylesheets:
     - public/stylesheets/form.css
     - public/stylesheets/buttons.css
     - public/stylesheets/ie.css 
-    
-  freshwidget: 
+
+  freshwidget:
     - public/stylesheets/freshwidget.css

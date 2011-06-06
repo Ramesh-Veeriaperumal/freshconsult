@@ -5,13 +5,13 @@ module TicketConstants
 
   
   SOURCES = [
-    [ :email,       "Email",            1 ],
-    [ :portal,      "Portal",           2 ],
-    [ :phone,       "Phone",            3 ],
-    [ :forum,       "Forum",            4 ],
-    [ :twitter,     "Twitter",          5 ],
-    [ :facebook,    "Facebook",         6 ],
-    [ :chat,        "Chat",             7 ]
+    [ :email,       I18n.t('email'),            1 ],
+    [ :portal,     I18n.t('portal_key'),           2 ],
+    [ :phone,       I18n.t('phone'),            3 ],
+    [ :forum,       I18n.t('forum_key'),            4 ],
+    [ :twitter,     I18n.t('twitter'),          5 ],
+    [ :facebook,   I18n.t('facebook'),         6 ],
+    [ :chat,        I18n.t('chat'),             7 ]
     
   ]
 
@@ -21,10 +21,10 @@ module TicketConstants
 
   STATUSES = [
     #[ :new,         "New",        1 ], 
-    [ :open,        "Open",       2 ], 
-    [ :pending,     "Pending",    3 ], 
-    [ :resolved,    "Resolved",   4 ], 
-    [ :closed,      "Closed",     5 ]
+    [ :open,        I18n.t('open'),       2 ], 
+    [ :pending,     I18n.t('pending'),    3 ], 
+    [ :resolved,    I18n.t('resolved'),   4 ], 
+    [ :closed,      I18n.t('closed'),     5 ]
   ]
 
   STATUS_OPTIONS = STATUSES.map { |i| [i[1], i[2]] }
@@ -32,10 +32,10 @@ module TicketConstants
   STATUS_KEYS_BY_TOKEN = Hash[*STATUSES.map { |i| [i[0], i[2]] }.flatten]
   
   PRIORITIES = [
-    [ :low,       "Low",         1 ], 
-    [ :medium,    "Medium",      2 ], 
-    [ :high,      "High",        3 ], 
-    [ :urgent,    "Urgent",      4 ]   
+    [ :low,       I18n.t('low'),         1 ], 
+    [ :medium,    I18n.t('medium'),      2 ], 
+    [ :high,      I18n.t('high'),        3 ], 
+    [ :urgent,    I18n.t('urgent'),      4 ]   
   ]
 
   PRIORITY_OPTIONS = PRIORITIES.map { |i| [i[1], i[2]] }
@@ -43,11 +43,11 @@ module TicketConstants
   PRIORITY_KEYS_BY_TOKEN = Hash[*PRIORITIES.map { |i| [i[0], i[2]] }.flatten]
   
   TYPE = [
-    [ :how_to,    "Question",             1 ], 
-    [ :incident,  "Incident",             2 ], 
-    [ :problem,   "Problem",              3 ], 
-    [ :f_request, "Feature Request",      4 ],
-    [ :lead,      "Lead",                 5 ]   
+    [ :how_to,    I18n.t('how_to'),             1 ], 
+    [ :incident,  I18n.t('incident'),             2 ], 
+    [ :problem,   I18n.t('problem'),              3 ], 
+    [ :f_request, I18n.t('f_request'),      4 ],
+    [ :lead,      I18n.t('lead'),                 5 ]   
   ]
 
   TYPE_OPTIONS = TYPE.map { |i| [i[1], i[2]] }

@@ -10,6 +10,7 @@
 body {
   color: #333;
   background: #efefef;
+  min-width: 1002px;
 }
 
 /* PAGE AREA STYLE */
@@ -1010,7 +1011,7 @@ body h5 {
   box-shadow: 0 0 40px rgba(0, 0, 0, 0.05) inset;
 }
 .rtCnt .rtDetails {
-  margin: 0px 70px 0px 0px;
+  margin: 0px 78px 0px 0px;
   padding-top: 5px;
   z-index: 10;
   background-color: #ffffff;
@@ -1064,7 +1065,7 @@ body h5 {
 }
 .rtCnt .rtPanel {
   float: right;
-  width: 70px;
+  width: 75px;
   position: relative;
   z-index: 9;
   padding-top: 6px;
@@ -1108,9 +1109,19 @@ body h5 {
 .rtCnt .rtPanel a em {
   display: block;
   font-style: normal;
-  line-height: 12px;
+  line-height: 11px;
   white-space: normal;
   padding-top: 0px;
+  white-space: pre-wrap;
+  /* css-3 */
+  white-space: -moz-pre-wrap;
+  /* Mozilla, since 1999 */
+  white-space: -pre-wrap;
+  /* Opera 4-6 */
+  white-space: -o-pre-wrap;
+  /* Opera 7 */
+  word-wrap: break-word;
+  /* Internet Explorer 5.5+ */
 }
 .rtCnt .rtPanel a.active, .rtCnt .rtPanel a:hover {
   color: #ffffff;
@@ -1298,6 +1309,16 @@ ul.admin_icons li a:hover {
 }
 .mark_action .stamp.stamp_type_3 {
   background: #993333;
+}
+
+.stamp_answer {
+  background-color: #336600;
+  color: #ffffff;
+  padding: 3px 12px;
+  -moz-border-radius: 4px 4px 4px 4px;
+  -webkit-border-radius: 4px 4px 4px 4px;
+  border-radius: 4px 4px 4px 4px;
+  margin: 2px 5px;
 }
 
 div.panel_area {
@@ -2749,7 +2770,7 @@ h4.border_title {
   overflow: hidden;
   *zoom: 1;
 }
-.attachments div.item a {
+.attachments div.item em {
   text-transform: capitalize;
   font-size: 11px;
   color: #527EAA;
@@ -3066,7 +3087,6 @@ a.page_title:active {
   height: 16px;
   margin-left: 4px;
   margin-top: 5px;
-  left: 0px;
 }
 .results li a {
   display: block;
@@ -3426,7 +3446,7 @@ a.page_title:active {
 }
 .request-list div.item .private-icon {
   display: none;
-  background: url('/images/symbols-50bc58c09c.png') 0 -114px no-repeat;
+  background: url('/images/symbols-7a45324a2d.png') 0 -137px no-repeat;
   width: 16px;
   height: 16px;
   position: relative;

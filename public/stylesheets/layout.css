@@ -15,6 +15,7 @@ html {
   position: relative;
   text-align: left;
   max-width: 1280px;
+  min-width: auto;
   padding: 0px 8px;
 }
 
@@ -177,6 +178,8 @@ div.bg_pulp {
 }
 
 .brand {
+  overflow: hidden;
+  *zoom: 1;
   position: absolute;
   left: 0px;
   margin-left: 8px;
@@ -185,30 +188,24 @@ div.bg_pulp {
 .brand a {
   text-decoration: none;
 }
-.brand .logo {
-  overflow: hidden;
-  *zoom: 1;
+.brand .logo, .brand .logo_text {
   float: left;
-  margin: 0px 0px 0px 5px;
-}
-.brand img, .brand h3 {
-  float: left;
-}
-.brand h3 {
-  font-size: 20px;
-  text-decoration: none;
-  font-weight: normal;
-  margin: 0px;
-  padding: 13px 0px 0px 2px;
   position: relative;
+  z-index: 5;
+}
+.brand .logo {
+  margin: 0px 0px 0px 10px;
+}
+.brand .logo_text {
+  font-size: 20px;
   color: #ffffff;
-  text-transform: capitalize;
+  padding: 13px 0 0 5px;
 }
 
 .header_links {
   float: right;
   text-align: right;
-  height: 60px;
+  height: 55px;
   margin: 0px 12px;
   color: #ffffff;
   font-size: 12px;

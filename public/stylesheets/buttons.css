@@ -472,8 +472,6 @@ button.positive, .buttons a.positive {
 }
 
 .button {
-  behavior: url('/stylesheets/PIE.htc');
-  position: relative;
   display: -moz-inline-box;
   -moz-box-orient: vertical;
   display: inline-block;
@@ -507,17 +505,12 @@ button.positive, .buttons a.positive {
   -moz-box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 0px;
   -webkit-box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 0px;
   box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 0px;
-  *zoom: 1;
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColorstr='#FFFFFFFF', endColorstr='#FFEFEFEF')";
-  filter: progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColorstr='#FFFFFFFF', endColorstr='#FFEFEFEF');
-  /* Fallback: */
-  background: white;
-  /* CSS 3 plus vendor prefixes: */
-  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #ffffff), color-stop(100%, #efefef));
-  background-image: -webkit-linear-gradient(#ffffff, #efefef);
-  background-image: -moz-linear-gradient(#ffffff, #efefef);
-  background-image: -o-linear-gradient(#ffffff, #efefef);
-  background-image: linear-gradient(#ffffff, #efefef);
+  background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #ffffff), color-stop(100%, #efefef));
+  background: -webkit-linear-gradient(#ffffff, #efefef);
+  background: -moz-linear-gradient(#ffffff, #efefef);
+  background: -o-linear-gradient(#ffffff, #efefef);
+  -pie-background: linear-gradient(#ffffff, #efefef);
+  background: linear-gradient(#ffffff, #efefef);
   border: 1px solid #cfcfcf;
   cursor: pointer;
 }

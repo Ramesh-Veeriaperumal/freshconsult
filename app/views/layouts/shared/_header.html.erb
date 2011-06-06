@@ -1,16 +1,16 @@
 <div class="header">
 	<div class="brand">
-	    	<a class="logo" href="/home">
-				<%= image_tag (current_account.logo.nil? ? "/images/logo.png" : current_account.logo.content.url(:logo)), :class => "logo" %>
+	    <a class="logo" href="/home">
+				<%= image_tag (current_account.logo.nil? ? "/images/logo.png" : current_account.logo.content.url(:logo)) %>
 			</a>
-			<a href="/home"><h3><%= current_account.helpdesk_name %></h3></a>
+			<a class="logo_text" href="/home"><%= current_account.helpdesk_name %></a>
 	</div>		
 	<div class="wrapper">
 	    <div class="header_links">
 	    	<% if current_user then %>              
-				Welcome <span class="font_color"><strong><%= link_to current_user.name, edit_profile_path(current_user) %></strong>-<%= link_to('Sign out', logout_path) %></span>
+				<%= t('header.welcome') %><span class="font_color"><strong><%= link_to current_user.name, edit_profile_path(current_user) %></strong>-<%= link_to(t('header.signout'), logout_path) %></span>
 			<% else %>
-				<%= link_to('login', login_path) %>
+				<%= link_to( t('header.login') , login_path) %>
 			<% end %>				
 		</div>
 	</div>
@@ -19,14 +19,14 @@
 			 <div class="top_nav"> 	
 				<div class="nav_right">
 					<% if current_user and permission?(:manage_tickets) then %>
-						<%= link_to('<img src="/images/add.png" width="16" height="16" /> New Ticket', new_helpdesk_ticket_path, :class => "new_ticket" ) %>
+						<%= link_to( "<span></span> #{t('header.new_ticket')}", new_helpdesk_ticket_path, :class => "new_ticket" ) %>
 					<% else %>
-						<%= link_to('<img src="/images/add.png" width="16" height="16" /> Submit a ticket', new_support_ticket_path, :class => "new_ticket" ) if allowed_in_portal?(:anonymous_tickets) %>
+						<%= link_to( "<span></span> #{t('header.submit_a_ticket')}", new_support_ticket_path, :class => "new_ticket" ) if allowed_in_portal?(:anonymous_tickets) %>
 					<% end %>
 					<% if current_user and permission?(:manage_tickets) then %>
 					 <% form_tag '/search', :method => :get, :class => "nav_search" do %>
 					 	<div class="search_bar">
-							<label class="overlabel" for="header_search">Search</label>				           	
+							<label class="overlabel" for="header_search"><Search><%= t("header.search") %> </label>				           	
 							<input value="" type="text" id="header_search" autocomplete="off" name="search_key" />
 						</div>
 					 <% end %>
@@ -37,6 +37,5 @@
 				</ul>				 
 			</div>			
 		</div>
-	</div>
-	
+	</div>	
 </div>

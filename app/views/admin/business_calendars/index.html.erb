@@ -115,8 +115,7 @@
 					</td>
 				</tr>
 			</table> 
-	    </li>		
-		<li class="seperator"></li>					
+		</li>
 		<li> 
 			<%= content_tag (:label, t('business_hours.holiday_list'))%> 
 			<span class="info_data"><%=t('business_hours.info5')%></span>
@@ -137,15 +136,15 @@
 						<label class="overlabel" for="holiday_name"><%=t('business_hours.holiday_name')%></label>
 						<%= text_field("holiday", "name") %>
 						
-						<%= link_to_function( "Add Holiday", "addHoliday()", :class => "fdbutton grey" ) %>
+						<%= link_to_function( t('add_holiday'), "addHoliday()", :class => "fdbutton grey" ) %>
 						<b class="text_red" id="HolidayValidation" style="display:none;"> <%=t('business_hours.holiday_added')%> </b>
 					</td>
 				</tr>				
 			</table>	
 		</li>
 	</ul>
-	<div>
-		<%= f.submit t('save'), :class => "fdbutton" %>
-		<%= link_to t('back'), "/admin/home", :class => "fdbutton grey" %>
+	<div class="button-container">
+		<%= link_to "&larr; #{t('account.cancel')}", "/admin/home", :class => "uiButton floatl" %>
+		<%= f.submit t('save'), :class => "uiButton" %>
 	</div>
 	<% end %>

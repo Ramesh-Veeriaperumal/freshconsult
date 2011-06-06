@@ -213,7 +213,7 @@
 			
 			var inputData = $("<input type='text' />")
 								.val(data.value);
-			var dropSpan  =	$("<span class='dropchoice'>")
+			var dropSpan  =	$("<span class='dropchoice' />")
 								.append(inputData);
 
 			$("<fieldset />")
@@ -221,7 +221,6 @@
 				.append(dropSpan)
 				.append('<img class="deleteChoice" src="/images/delete.png" />')
 				.appendTo(dom);
-
 
 //			dom.append('<fieldset><span class="sort_handle"></span><span class="dropchoice"><input type="text" value="'+data.value+'" name="choice" /></span><span class="tags"><input type="text" value="'+data.tags+'" /></span><img class="deleteChoice" src="/images/delete.png" /></fieldset>')
 		}
