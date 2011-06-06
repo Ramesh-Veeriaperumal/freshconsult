@@ -41,7 +41,7 @@
 					<%when "Assigned to" then%>	
 						<li class="dropdown" id="assigned_to">
 				          	<%= request_form.label :responder_id, "Assigned To" %>
-				          	<%= request_form.collection_select :responder_id, Helpdesk::Authorization.find_all_by_permission(:manage_tickets), :user_id, :name, {:include_blank => 'Nobody'}, :class => field_class %>
+				          	<%= request_form.collection_select :responder_id, Agent.technician_list(current_account.id), :id, :name, {:include_blank => 'None'}, :class => field_class %>
 				        </li>
 						
 					<%when "Priority" then%>
