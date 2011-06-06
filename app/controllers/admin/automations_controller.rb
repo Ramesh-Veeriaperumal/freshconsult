@@ -84,7 +84,7 @@ class Admin::AutomationsController < Admin::AdminController
       agents = a_users.collect { |au| [au.id, au.name] }
       agents << ([0, '{{ticket.agent}}'])
 
-      groups  = current_account.groups.find(:all).collect { |g| [g.id, g.name]}
+      groups  = current_account.groups.find(:all, :order=>'name' ).collect { |g| [g.id, g.name]}
       groups << ([0, '{{ticket.group}}'])
       
       action_hash     = [{:name => 0              , :value => "--- #{t('click_select_action')} ---"},
