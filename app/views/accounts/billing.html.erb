@@ -1,4 +1,16 @@
-<% content_for :sidebar do -%><%- end %>
+<% content_for :sidebar do -%>
+	<% if @subscription.state == 'trial' %>
+		<div class="sidepanel">
+			<h3 class="title"><%= t(".billing") %></h3>
+			<p>
+			  <strong><%= t('.begin_subscription') %></strong> <%= t(".begin_subscription_info") %>
+			</p>
+			<p>
+			  <strong><%= t('.save_billing_information') %></strong> <%= t(".save_billing_information_info") %>
+			</p>
+		</div>
+	<% end %>
+<%- end %>
 <h3 class= "title"><%= @page_title = t('plans_billing') %></h3>
 <% form_for :creditcard, @creditcard, :url => { :action => 'billing' } do |f| %>
 	<ul class="ui-form">
@@ -6,7 +18,7 @@
 			<% if @subscription.state == 'trial' %>
 				<div class="info-highlight"> 
 					<h3 class="title">
-						<%= t('current_plan_details', :plan_name  => @subscription.subscription_plan.name, :agent_limit => @subscription.agent_limit)  %>
+  					<%= t('current_plan_details', :plan_name  => @subscription.subscription_plan.name, :agent_limit => @subscription.agent_limit) %>
 					</h3>				
 					<%= content_tag(:strong, t("billed_amount_per_month", :amount => @subscription.amount.to_i )) %>
 				</div>
@@ -18,11 +30,11 @@
 				<div class="button-container">
 					<% if @subscription.state == 'trial' %>
 						<%= link_to( "&larr; #{t('select_another_plan')}", account_url, :class => "uiButton floatl" ) %>
-						<%= submit_tag t('save_billing_information'), :class => "uiButton" %>	
-						<%= submit_tag t('begin_subscription'), :class => "uiButton", :id => "begin_subscription" %>	
+						<%= submit_tag t('.save_billing_information'), :class => "uiButton" %>	
+						<%= submit_tag t('.begin_subscription'), :class => "uiButton uiButton-active", :id => "begin_subscription" %>	
 					<% else %>
 						<%= link_to( "&larr; #{t("cancel_and_back")}", account_url, :class => "uiButton floatl" ) %>
-						<%= submit_tag t('update_billing_info'), :class => "uiButton" %>
+						<%= submit_tag t('.update_billing_info'), :class => "uiButton" %>
 					<% end %>
 				</div>
 		</li>
