@@ -5,31 +5,31 @@ class Admin::EmailNotificationsController < Admin::AdminController
     by_type = Hash[*e_notifications.map { |n| [n.notification_type, n] }.flatten]
     
     @notifications = [
-      { :type => "User Activation Email", :requester => true, :agent => true, :placeholder => false, :agentSelect => false,
+      { :type => t('user_activation_email'), :requester => true, :agent => true, :placeholder => false, :agentSelect => false,
                   :obj => by_type[EmailNotification::USER_ACTIVATION] },
-      { :type => "Password Reset Email", :requester => true, :agent => true, :placeholder => false, :agentSelect => false, :userSelect => false,
+      { :type => t('password_reset_email'), :requester => true, :agent => true, :placeholder => false, :agentSelect => false, :userSelect => false,
                   :obj => by_type[EmailNotification::PASSWORD_RESET] },
-      { :type => "New Ticket Created", :requester => true, :agent => false, 
+      { :type => t('new_ticket_created'), :requester => true, :agent => false, 
                   :obj => by_type[EmailNotification::NEW_TICKET] },
-      { :type => "Ticket assigned to Group", :requester => false, :agent => true, 
+      { :type => t('tkt_assigned_to_group'), :requester => false, :agent => true, 
                   :obj => by_type[EmailNotification::TICKET_ASSIGNED_TO_GROUP] },
-      { :type => "Ticket unattended in Group", :requester => false, :agent => true, 
+      { :type => t('tkt_unattended_in_grp'), :requester => false, :agent => true, 
                   :obj => by_type[EmailNotification::TICKET_UNATTENDED_IN_GROUP] },
-      { :type => "Ticket assigned to Agent", :requester => false, :agent => true, 
+      { :type => t('tkt_assigned_to_agent'), :requester => false, :agent => true, 
                   :obj => by_type[EmailNotification::TICKET_ASSIGNED_TO_AGENT] },
-      { :type => "Agent adds comment to Ticket", :requester => true, :agent => false, 
+      { :type => t('agent_adds_comment'), :requester => true, :agent => false, 
                   :obj => by_type[EmailNotification::COMMENTED_BY_AGENT] },
-      { :type => "First Response SLA Violation", :requester => false, :agent => true, 
+      { :type => t('first_response_sla'), :requester => false, :agent => true, 
                   :obj => by_type[EmailNotification::FIRST_RESPONSE_SLA_VIOLATION] },
-      { :type => "Requester replies to Ticket", :requester => false, :agent => true, 
+      { :type => t('requester_replies'), :requester => false, :agent => true, 
                   :obj => by_type[EmailNotification::REPLIED_BY_REQUESTER] },
-      { :type => "Resolution time SLA Violation", :requester => false, :agent => true, 
+      { :type => t('resolution_time_sla'), :requester => false, :agent => true, 
                   :obj => by_type[EmailNotification::RESOLUTION_TIME_SLA_VIOLATION] },
-      { :type => "Agent solves the Ticket", :requester => true, :agent => false, 
+      { :type => t('agent_solves_tkt'), :requester => true, :agent => false, 
                   :obj => by_type[EmailNotification::TICKET_RESOLVED] },
-      { :type => "Agent closes the Ticket", :requester => true, :agent => false, 
+      { :type => t('agent_closes_tkt'), :requester => true, :agent => false, 
                   :obj => by_type[EmailNotification::TICKET_CLOSED] },
-      { :type => "Requester reopens the Ticket", :requester => false, :agent => true, 
+      { :type => t('requester_reopens'), :requester => false, :agent => true, 
                   :obj => by_type[EmailNotification::TICKET_REOPENED] }]
   end
 
@@ -39,7 +39,7 @@ class Admin::EmailNotificationsController < Admin::AdminController
         n.update_attributes! new_data[n.id.to_s]
       end
       
-      flash[:notice] = "Email notifications have been updated."
+      flash[:notice] = t(:'flash.email_notifications.update.success')
       redirect_back_or_default admin_email_notifications_url
   end
    

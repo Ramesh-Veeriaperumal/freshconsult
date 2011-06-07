@@ -1,3 +1,4 @@
+<%= include_tiny_mce_if_needed %>
 <% content_for :layoutType do %><% end %>
 <% @page_title = @topic.title %>
 <% @monitoring = logged_in? && !Monitorship.count(:id, :conditions => ['user_id = ? and topic_id = ? and active = ?', current_user.id, @topic.id, true]).zero? %>
@@ -19,10 +20,8 @@
 						<%end%>
 					<% end %>
 			    </div>
-				<span class="seperator"></span>
 			<% end %>
 			<div>
-				<span class="seperator"></span>
 				<%= link_to(t('connect_ticket') + " &raquo;", new_helpdesk_ticket_path(:topic_id => @topic.id), :class => "uiButton small full-width") if logged_in? and @topic.ticket_topic.nil?  %>
 				<%= link_to(h(@topic.ticket.subject), helpdesk_ticket_path(@topic.ticket)) unless @topic.ticket_topic.nil? %>
 			</div> 
@@ -101,7 +100,10 @@
 					  		<h3 class="title"><%=t('topic.reply')%></h3>
 					  	</li>
 					    <li>
-					       <%= f.text_area :body, :rows => 8 %>
+					       <style>
+					       	.mceEditor .mceLayout{ width:100% !important; }
+					       </style>
+					       <%= f.text_area :body_html, :class => "mceEditor", :id => 'topic_body' %>
 					    </li>
 						<li>
 							<%= render :partial=> "/forum_shared/attachment_form" %>
@@ -132,10 +134,7 @@
 					<% last_post = @posts.last %>
 					<% @posts.each do |post| %>
 						<% unless (post == first_post) %>
-							<%= render :partial => "forum_shared/post", :object => post %>
-							<ul class="attachment_list">
-	   							<%= render :partial => '/helpdesk/shared/attachment', :collection => post.attachments, :locals => {:show_delete => true, :url => [post] } %>
-    					</ul>
+							<%= render :partial => "forum_shared/post", :object => post %>							
 						<% end %>
 						<%= will_paginate @posts %>
 					<% end %> 

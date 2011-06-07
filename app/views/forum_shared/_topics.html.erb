@@ -21,23 +21,21 @@
 				
 					<div class="info_data"> 
 						<% if topic.posts_count > 1 %>
-							Last reply <%= time_ago_in_words(last_post.created_at) %> ago 
-							by <%= link_to_user last_post.user %>
+							<%= t("topics.last_reply", :post_time => time_ago_in_words(last_post.created_at), :user_link => link_to_user(last_post.user) ) %>
 						<% else %>
-							Posted <%= time_ago_in_words(topic.created_at) %> ago
+							<%= t("topics.posted_at", :post_time => time_ago_in_words(topic.created_at)) %>
 						<% end %> 
 						-  
 						<% 
 							count = topic.posts_count
 							if topic.posts_count > 1 
 								count -= 1
-						   	end 
+						  end 
 						%>
-						<%= pluralize(count, "reply") %> 
+						<%= pluralize(count, t("reply"), t("replies")) %> 
 						-
 						<%= t("forum.verb.#{topic.forum.type_name.downcase}") %>   
 						<%= link_to_user topic.user %>
-						
 						<%if @forum.ideas?%>
 							|  
 							<span class='idea-likes <%= "leftflat" unless topic.stamp_name.blank? %> '>
@@ -48,12 +46,12 @@
 					</div>
 					<%if @forum.questions?%>  
 						<%if topic.posts.answered_posts.count > 0%>
-							Answered
+							<%= t('answered') %>
 						<%end%>
 					<%end%> 
-				   	 <% if topic.paged? -%>
-				    	<small><%= link_to 'last'[] %></small>
-				    <% end -%> 
+				  <% if topic.paged? -%>
+				  	<small><%= link_to t('last') %></small>
+				  <% end -%> 
 			</li>
 		<% end %>
 	</ul>

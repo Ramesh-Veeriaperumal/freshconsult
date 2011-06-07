@@ -7,7 +7,10 @@ class Account < ActiveRecord::Base
   serialize :preferences, Hash
   serialize :sso_options, Hash
   
-  has_one :data_export
+  has_many :features,:dependent => :destroy
+  has_many :flexi_field_defs, :class_name => 'FlexifieldDef', :dependent => :destroy
+  
+  has_one :data_export,:dependent => :destroy
   
   has_one :logo,
     :as => :attachable,
@@ -33,7 +36,7 @@ class Account < ActiveRecord::Base
   #
   authenticates_many :user_sessions
   
-  has_many :attachments, :class_name => 'Helpdesk::Attachment'
+  has_many :attachments, :class_name => 'Helpdesk::Attachment', :dependent => :destroy
   
   has_many :users, :dependent => :destroy , :conditions =>{:deleted =>false}
   has_many :all_users , :class_name => 'User', :dependent => :destroy
@@ -44,7 +47,7 @@ class Account < ActiveRecord::Base
   
   has_one :subscription, :dependent => :destroy
   has_many :subscription_payments
-  has_many :solution_categories , :class_name =>'Solution::Category',:include =>:folders
+  has_many :solution_categories , :class_name =>'Solution::Category',:include =>:folders, :dependent => :destroy
   has_many :solution_articles , :class_name =>'Solution::Article'
   
   has_many :customers, :dependent => :destroy
@@ -55,21 +58,22 @@ class Account < ActiveRecord::Base
   has_many :sla_policies , :class_name => 'Helpdesk::SlaPolicy' ,:dependent => :destroy
   
   #Scoping restriction for other models starts here
+  has_many :account_va_rules, :class_name => 'VARule', :dependent => :destroy
   has_many :va_rules, :class_name => 'VARule', :conditions => {:rule_type => VAConfig::BUSINESS_RULE, :active => true}, :order => "position"
   has_many :disabled_va_rules, :class_name => 'VARule', :conditions => {:rule_type => VAConfig::BUSINESS_RULE, :active => false}, :order => "position"
   has_many :all_va_rules, :class_name => 'VARule', :conditions => {:rule_type => VAConfig::BUSINESS_RULE}, :order => "position"
-  
   has_many :scn_automations, :class_name => 'VARule', :conditions => {:rule_type => VAConfig::SCENARIO_AUTOMATION, :active => true}, :order => "position"
-  has_many :all_email_configs, :class_name => 'EmailConfig'
+  
+  has_many :all_email_configs, :class_name => 'EmailConfig', :dependent => :destroy
   has_many :email_configs, :conditions => { :active => true }
   has_one  :primary_email_config, :class_name => 'EmailConfig', :conditions => { :primary_role => true }
-  has_many :email_notifications
-  has_many :groups
-  has_many :forum_categories
+  has_many :email_notifications, :dependent => :destroy
+  has_many :groups, :dependent => :destroy
+  has_many :forum_categories, :dependent => :destroy
   
-  has_one :business_calendar
+  has_one :business_calendar, :dependent => :destroy
   
-  has_many :tickets, :class_name => 'Helpdesk::Ticket'
+  has_many :tickets, :class_name => 'Helpdesk::Ticket', :dependent => :destroy
   has_many :folders , :class_name =>'Solution::Folder' , :through =>:solution_categories
   
   has_many :portal_forums,:through => :forum_categories , :conditions =>{:forum_visibility => Forum::VISIBILITY_KEYS_BY_TOKEN[:anyone]} 
@@ -79,7 +83,7 @@ class Account < ActiveRecord::Base
   has_many :user_topics, :through => :user_forums#, :order => 'replied_at desc', :limit => 5
  
   
-  has_one :form_customizer , :class_name =>'Helpdesk::FormCustomizer'
+  has_one :form_customizer , :class_name =>'Helpdesk::FormCustomizer', :dependent => :destroy
   
   #Scope restriction ends
   
@@ -149,7 +153,10 @@ class Account < ActiveRecord::Base
   def get_max_display_id
     ticket_dis_id = self.ticket_display_id
     max_dis_id = self.tickets.maximum('display_id')
-    return  ticket_dis_id > max_dis_id ? ticket_dis_id : max_dis_id
+    unless max_dis_id.nil?
+      return  ticket_dis_id > max_dis_id ? ticket_dis_id : max_dis_id 
+    end
+    return 0
   end
   
   def check_default_values
@@ -277,6 +284,8 @@ class Account < ActiveRecord::Base
     rescue  ArgumentError
       false
     rescue Errno::ECONNREFUSED
+      false
+    rescue Errno::ETIMEDOUT
       false
     end 
     

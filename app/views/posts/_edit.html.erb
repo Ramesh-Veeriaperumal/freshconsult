@@ -1,3 +1,4 @@
+<%= include_tiny_mce_if_needed %>
 <div id="edit" class="editbox">
 	<div class="request_panel">
 	 	<% form_for :post, :url => post_path(:forum_id => @post.forum_id, :topic_id => @post.topic_id, :id => @post), :html => { :method => :put } do |f| -%>
@@ -7,19 +8,8 @@
 			 	<h3 class="title">Edit Post</h3>
 			</li>
 		    <li>
-		        <%= f.text_area :body, :rows => 10, :id => "edit_post_body", :tabindex => 1 %>
-		    </li>
-		    <li> 
-				<!--h5><%= 'Formatting Help'[] %></h5>
-		
-		        <ul class="help">
-		          <li><%= '*bold*'[:formatting_bold] %></li>
-		          <li><%= '_italics_'[:formatting_italics] %></li>
-		          <li><%= 'bq. <span>(quotes)</span>'[:formatting_blockquote] %></li>
-		          <li>"IBM":http://www.ibm.com</li>
-		          <li><%= '* or # <span>(lists)</span>'[:formatting_list] %></li>
-		        </ul--> 
-		    </li>
+		        <%= f.text_area :body_html,  :class => "mceEditor", :id => "edit_post_body", :tabindex => 1 %>
+		    </li>		    
 		    <li>
 		        <%= ajax_spinner_for "editbox", "/images/load.gif" %>
 				<%= submit_tag 'Save Changes'[], :class => "uiButton floatr", :or => link_to_function('cancel'[], "EditForm.cancel()"), :tabindex => 2 %>

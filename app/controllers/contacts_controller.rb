@@ -10,17 +10,12 @@ class ContactsController < ApplicationController
    
    def check_demo_site
     if AppConfig['demo_site'][RAILS_ENV] == current_account.full_domain
-      flash[:notice] = "Demo site doesn't have this access!"
+      flash[:notice] = t(:'flash.not_allowed_in_demo_site')
       redirect_to :back
     end
   end
   
-  
-  
-  
   def index
-    
-   
     respond_to do |format|
       format.html  do
         @contacts = scoper.filter(params[:letter],params[:page])
@@ -28,8 +23,7 @@ class ContactsController < ApplicationController
       format.atom do
         @contacts = @contacts.newest(20)
       end
-    end
-    
+    end    
   end
 
   def new
@@ -43,7 +37,7 @@ class ContactsController < ApplicationController
     build_object
     params[:user][:customer_id] = params[:customer_id]
     if build_and_save
-        flash[:notice] = "The contact has been created and activation instructions sent to #{@user.email}!"
+        flash[:notice] = t(:'flash.contacts.create.success')
     else  
         check_email_exist
         flash[:notice] =  activerecord_error_list(@user.errors)        
@@ -54,7 +48,7 @@ class ContactsController < ApplicationController
   
   def create
     if build_and_save    
-      flash[:notice] = "The contact has been created and activation instructions sent to #{@user.email}!"      
+      flash[:notice] = t(:'flash.contacts.create.success')
       redirect_to contacts_url
     else
       check_email_exist
@@ -72,8 +66,7 @@ class ContactsController < ApplicationController
     @user.signup!(params)
   end
   
-  def add_or_update_company
-   
+  def add_or_update_company   
     company_name = params[:user][:customer]       
     customer = (current_account.customers.find_by_name(company_name))     
     if customer.nil? 
@@ -82,8 +75,7 @@ class ContactsController < ApplicationController
       customer = @customer
     end
     
-    return customer.id
-    
+    return customer.id    
   end
   
   def show 
@@ -97,8 +89,7 @@ class ContactsController < ApplicationController
     render :text => "success"
   end
   
-  def update
-    
+  def update    
     company_name = params[:user][:customer]
     unless company_name.empty?     
       @obj.customer_id = add_or_update_company    
@@ -117,8 +108,7 @@ class ContactsController < ApplicationController
   end
   
   
-   def destroy
-   
+   def destroy   
       if @obj.respond_to?(:deleted)
         if @obj.update_attribute(:deleted, true)
            @restorable = true
@@ -135,8 +125,7 @@ class ContactsController < ApplicationController
         else
           render :action => 'show'
         end
-      end
-   
+      end   
   end
 
   def restore
@@ -158,51 +147,47 @@ class ContactsController < ApplicationController
     end    
   end
   
-  def autocomplete
-   
-     items = current_account.customers.find(:all, 
+  def autocomplete   
+    items = current_account.customers.find(:all, 
                                             :conditions => ["name like ? ", "%#{params[:v]}%"], 
                                             :limit => 30)
 
     r = {:results => items.map {|i| {:id => i.id, :value => i.name} } }  
     respond_to do |format|
       format.json { render :json => r.to_json }
-    end
-    
+    end    
   end
  
-
 protected
 
- def cname
+  def cname
       @cname ='user'
- end
- def scoper
+  end
+
+  def scoper
       current_account.contacts
   end
-  
-  
-  
+
   def authorized?
       (logged_in? && self.action_name == 'index') || admin?
   end
     
- def set_selected_tab
-      @selected_tab = 'Customers'
- end
+  def set_selected_tab
+      @selected_tab = :customers
+  end
  
   def load_object
       @obj = self.instance_variable_set('@user',  current_account.all_contacts.find(params[:id]))      
   end
   
-    def check_agent_limit
+  def check_agent_limit
       redirect_to :back if current_account.reached_agent_limit?
-    end
+  end
 
-   def check_email_exist
-     if("has already been taken".eql?(@user.errors["email"]))        
-           @existing_user = current_account.all_users.find(:first, :conditions =>{:users =>{:email => @user.email}})
-     end    
-   end
+  def check_email_exist
+    if("has already been taken".eql?(@user.errors["email"]))        
+			@existing_user = current_account.all_users.find(:first, :conditions =>{:users =>{:email => @user.email}})
+		end
+	end
 
 end

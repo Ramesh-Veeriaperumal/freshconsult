@@ -175,17 +175,16 @@
 			<% end %>
 		  <div id="description-full" style="display:block" class="details min_height">
 			 	<%= RedCloth.new(auto_link(@ticket.description, :all, :target => "_blank")).to_html %>
-			</div> 
+			</div>
+				<% unless @ticket.attachments.empty? %>
+					<span class="seperator"></span>
+					<h4><%= @ticket.attachments.size %> attachment(s)</h4>
+					<ul class="attachment_list">
+					     <%= render :partial => '/helpdesk/shared/attachment', :collection => @ticket.attachments, :locals => {:show_delete => true, :url => [@item] } %>
+					</ul>
+				<% end %>
 		</div>
-
-			<% unless @ticket.attachments.empty? %>
-				<span class="seperator"></span>
-				<h4><%= @ticket.attachments.size %> attachment(s)</h4>
-				<ul class="attachment_list">
-				     <%= render :partial => '/helpdesk/shared/attachment', :collection => @ticket.attachments, :locals => {:show_delete => true, :url => [@item] } %>
-				</ul>
-			<% end %>
-			<% unless @ticket.ticket_topic.nil? %>
+		<% unless @ticket.ticket_topic.nil? %>
 			<div class="request_info"> 
 				<ul>
 					<li>

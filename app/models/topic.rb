@@ -11,13 +11,13 @@ class Topic < ActiveRecord::Base
   belongs_to :forum
   belongs_to :user
   belongs_to :last_post, :class_name => "Post", :foreign_key => 'last_post_id'
-  has_many :monitorships
+  has_many :monitorships,:dependent => :destroy
   has_many :monitors, :through => :monitorships, :conditions => ["#{Monitorship.table_name}.active = ?", true], :source => :user
 
   has_many :posts,     :order => "#{Post.table_name}.created_at", :dependent => :destroy
   has_one  :recent_post, :order => "#{Post.table_name}.created_at DESC", :class_name => 'Post'
   
-  has_one :ticket_topic
+  has_one :ticket_topic,:dependent => :destroy
   has_one :ticket,:through => :ticket_topic
   
   has_many :voices, :through => :posts, :source => :user, :uniq => true
@@ -32,8 +32,7 @@ class Topic < ActiveRecord::Base
     has account_id, user_id
     has forum.forum_category_id, :as => :category_id
     has forum.forum_visibility, :as => :visibility
-    has '0', :as => :deleted, :type => :boolean
-    has '1', :as => :is_public, :type => :boolean
+    has '0', :as => :deleted, :type => :boolean   
 
     set_property :delta => :delayed
     set_property :field_weights => {
@@ -56,7 +55,7 @@ class Topic < ActiveRecord::Base
   
   attr_accessible :title,:stamp_type
   # to help with the create form
-  attr_accessor :body
+  attr_accessor :body_html
   
   IDEAS_STAMPS = [
     [ :planned,   "Planned",   1 ], 

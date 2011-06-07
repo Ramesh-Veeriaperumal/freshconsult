@@ -40,11 +40,10 @@
 	}
 <% end %>
  
- 
- 
 <%
 cancel_url = "https://www.google.com/a/cpanel/"+@account.google_domain
- unless @call_back_url.blank?    
+
+ unless @call_back_url.blank?   
     cancel_url = @call_back_url+"&EXTERNAL_CONFIG=true"
  end
 %>
@@ -119,6 +118,4 @@ cancel_url = "https://www.google.com/a/cpanel/"+@account.google_domain
 				</ul>
 		<% end %>	
 	</div>
-	
-	
 	

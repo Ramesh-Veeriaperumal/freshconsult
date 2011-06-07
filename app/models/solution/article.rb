@@ -31,8 +31,7 @@ class Solution::Article < ActiveRecord::Base
 
     has account_id, user_id
     has folder.category_id, :as => :category_id
-    has '0', :as => :deleted, :type => :boolean
-    has '1', :as => :is_public, :type => :boolean
+    has '0', :as => :deleted, :type => :boolean    
     has folder.visibility , :as => :visibility, :type => :integer
 
     set_property :delta => :delayed

@@ -50,18 +50,18 @@
 </div> 
 
 <% content_for :dialogs do -%>
-	<div id="due-date-dialog-container" style="display:none;">
+	<div id="due-date-dialog-container" style="display:none; position:absolute; left:0px; top:0px; width: 100%; height: 100%; ">
 		<div class="transparent-overlay" id="due-date-overlay"></div>	
 		<div class="due-date-dialog" id="due-date-dialog" style="display:none;"> 
 			<span class="right_pointer"></span>
 			<% form_for ticket, :url => { :action => "change_due_by" }, :html => { :id => "DueDateForm", :method => "put" } do |f| %>
-			  <label>When's it Due?</label>
+				<label>When's it Due?</label>
 			  <select name="due_date_options" id="due-date-options">
-				<option value="today">Today</option>
-				<option value="tomorrow">Tomorrow</option>		
-				<option value="thisweek">This week</option>
-				<option value="nextweek">Next week</option>			
-				<option value="specific">Specific date/time...</option>
+					<option value="today">Today</option>
+					<option value="tomorrow">Tomorrow</option>		
+					<option value="thisweek">This week</option>
+					<option value="nextweek">Next week</option>			
+					<option value="specific">Specific date/time...</option>
 			  </select> 
 			  <span id="due-date-button">or <a href="javascript:void(0)" id="set-date-time">Set Date/time</a> </span>
 			  <div class="due-date-calender" id="due-date-calender" style="display:none;">

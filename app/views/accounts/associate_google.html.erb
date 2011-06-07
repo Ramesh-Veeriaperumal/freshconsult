@@ -1,6 +1,7 @@
 <%
 cancel_url = "https://www.google.com/a/cpanel/"+@google_domain
- if @call_back_url
+
+ unless @call_back_url.blank? 
     cancel_url = @call_back_url+"&EXTERNAL_CONFIG=true"
  end
 %>
@@ -27,7 +28,7 @@ cancel_url = "https://www.google.com/a/cpanel/"+@google_domain
 		  	</li>
 			</ul>
 			<p class="button-container">
-				<%= submit_tag  "Login & complete registration" , :class => "uiButton floatl" %>				
+				<%= submit_tag  "Login & complete registration" , :class => "uiButton floatl" %>		
 				<%= link_to t("cancel"), cancel_url , :class => "uiButton" %>
 			</p>
 		<% end %>	

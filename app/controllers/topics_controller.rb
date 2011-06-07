@@ -14,7 +14,7 @@ class TopicsController < ApplicationController
   
   before_filter :set_selected_tab
   
-  #uses_tiny_mce :options => Helpdesk::MEDIUM_EDITOR 
+  uses_tiny_mce :options => Helpdesk::MEDIUM_EDITOR 
 
 	# @WBH@ TODO: This uses the caches_formatted_page method.  In the main Beast project, this is implemented via a Config/Initializer file.  Not
 	# sure what analogous place to put it in this plugin.  It don't work in the init.rb  
@@ -23,7 +23,7 @@ class TopicsController < ApplicationController
 
   def check_user_permission
     if (current_user.id != @topic.user_id and  !current_user.has_manage_forums?)
-          flash[:notice] =  "You don't have sufficient privileges to access this page"
+          flash[:notice] =  t(:'flash.general.access_denied')
           redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
     end
   end
@@ -80,7 +80,7 @@ class TopicsController < ApplicationController
       @post.user  = current_user
       @post.account_id = current_account.id
       # only save topic if post is valid so in the view topic will be a new record if there was an error
-      @topic.body = @post.body # incase save fails and we go back to the form
+      @topic.body_html = @post.body_html # incase save fails and we go back to the form
       topic_saved = @topic.save if @post.valid?
       post_saved = @post.save 
     end
@@ -107,7 +107,7 @@ class TopicsController < ApplicationController
       assign_protected
       @post = @topic.posts.first
       @post.attributes = params[:topic]
-      @topic.body = @post.body 
+      @topic.body_html = @post.body_html 
       topic_saved = @topic.save
       post_saved = @post.save
     end
@@ -212,7 +212,7 @@ end
     end
     
     def set_selected_tab
-      @selected_tab = 'Forums'
+      @selected_tab = :forums
     end
   
     

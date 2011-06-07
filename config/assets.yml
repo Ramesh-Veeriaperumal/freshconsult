@@ -39,13 +39,11 @@ stylesheets:
     - public/stylesheets/default.uni-form.css
     - public/stylesheets/validation.css
     - public/stylesheets/form.css
-    - public/stylesheets/temp-dev.css
     - public/stylesheets/buttons.css
     - public/stylesheets/jquery-ui.css
     - public/stylesheets/jquery.qtip.css
     - public/stylesheets/jquery-autosuggest.css
     - public/stylesheets/ie.css
-    - public/stylesheets/pie.css
 
   widget:
     - public/stylesheets/reset.css   
@@ -53,6 +51,6 @@ stylesheets:
     - public/stylesheets/form.css
     - public/stylesheets/buttons.css
     - public/stylesheets/ie.css 
-    
-  freshwidget: 
+
+  freshwidget:
     - public/stylesheets/freshwidget.css

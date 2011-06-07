@@ -12,20 +12,20 @@
     <%= error_messages_for :user %> 
  	<ul class="ui-form">
 		<li>
-			<%= label(:user, :name, "Full Name" ) %>
+			<%= label(:user, :name, t("user.full_name") ) %>
 				<%= text_field(:user, :name, :class => "text required", :value => user.name )  %>
 		</li>
 		<li>
-			<%= label(:user, :job_title, "Title") %>
+			<%= label(:user, :job_title, t("user.title")) %>
 			<%= text_field(:user, :job_title, :class => "text", :value => user.job_title ) %>
 		</li>	
 		<li class="medium">
-			<%= label(:user, :email, "Email") %>			
+			<%= label(:user, :email, t("user.email")) %>			
 			<%= text_field(:user, :email, :class => "text required email disabled", :id => "email_primary" , :value => user.email , :disabled =>true) %>
 			<%= hidden_field(:user, :user_role, :id=>"user_role", :value => user.user_role) %>			
 		</li>
 		<li class="small">
-			<%= label(:user, :phone, "Phone No.") %>	
+			<%= label(:user, :phone, t("user.phone_no")) %>	
 			<div>
 				<label class="overlabel" for="phone_work">Work</label>
 				<%= text_field(:user, :phone, :class => "text", :id => "phone_work", :value => user.phone ) %> 
@@ -38,7 +38,7 @@
 		
 		<% if current_user.customer?%>
 			<li class="small">
-				<%= label(:user, :twitter_id, "Twitter Id") %>
+				<%= label(:user, :twitter_id, t("user.twitter_id")) %>
 				<%= text_field(:user, :twitter_id, :class => "text" ) %>
 			</li>
 			<li>
@@ -58,15 +58,15 @@
 			</li>
 			<li>
 				
-				<%= label(:user , :time_zone, "Time zone") %>			
+				<%= label(:user , :time_zone, t("account.time_zone")) %>			
 				<%= time_zone_select (:user, :time_zone, ActiveSupport::TimeZone.all, :default => user.time_zone) %>
 			</li>
 		
 		<%unless current_user.customer?%>
 			<li>
-				<%= label(:agent, :signature, "Signature") %>
+				<%= label(:agent, :signature, t("agent.signature")) %>
 				<label class="overlabel" for="user_binfo">
-					Add signature 
+					<%=t('agent.add_signature')%> 
 				</label>
 				<%= text_area(:agent, :signature, :class => "text", :id => "user_binfo" , :value =>@profile.signature  ) %>			
 				<%= hidden_field(:agent, :user_id, :id => "user_id", :value =>@profile.user_id  ) %>

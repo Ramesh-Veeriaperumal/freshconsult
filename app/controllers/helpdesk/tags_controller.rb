@@ -28,7 +28,7 @@ class Helpdesk::TagsController < ApplicationController
   protected
   
    def set_selected_tab
-      @selected_tab = 'Tickets'
+      @selected_tab = :tickets
    end
  
 

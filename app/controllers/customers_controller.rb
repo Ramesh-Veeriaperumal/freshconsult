@@ -47,7 +47,7 @@ class CustomersController < ApplicationController
   
   def quick
    if build_and_save  
-      flash[:notice] = "The company has been created !"
+      flash[:notice] = t(:'flash.general.create.success', :human_name => 'company')
    else
      flash[:notice] =  activerecord_error_list(@customer.errors)
    end
@@ -105,7 +105,7 @@ class CustomersController < ApplicationController
   protected
   
     def set_selected_tab
-      @selected_tab = 'Customers'
+      @selected_tab = :customers
   end
    def get_domain(s)
       s.gsub(/^(http:\/\/)?(www\.)?/,'').gsub(/\/.*$/,'')

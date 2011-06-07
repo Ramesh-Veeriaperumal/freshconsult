@@ -18,7 +18,7 @@ module HelpdeskControllerMethods
   
   def post_persist #Need to check whether this should be called only inside create by Shan to do 
     create_attachments 
-    flash[:notice] = "The #{cname.humanize.downcase} has been created."
+    flash[:notice] = I18n.t(:'flash.general.create.success', :human_name => cname.humanize.downcase)
     process_item #    
     #redirect_back_or_default redirect_url
     respond_to do |format|
@@ -37,7 +37,7 @@ module HelpdeskControllerMethods
   def update
     if @item.update_attributes(params[nscname])
       post_persist
-      flash[:notice] = "The #{cname.humanize.downcase} has been updated."
+      flash[:notice] = I18n.t(:'flash.general.update.success', :human_name => cname.humanize.downcase)
     else
       edit_error
     end

@@ -9,7 +9,7 @@
 			callbackToSearch = function(string){
 				jQuery.ajax({ url: "/search/suggest?search_key="+string, 
 								  success: function(data){
-								  			$("#SearchResultsBar").show(); 
+								  			$("#SearchResultsBar").css("display", "inline"); 
 											position   = -1
 											$("#SearchResultsBar .results").html(data);
 							}});
@@ -39,7 +39,7 @@
 			$("#header_search").bind("focusin", function(ev){
 				searchString = this.value.replace(/^\s+|\s+$/g, "");
 				if(searchString != ''){
-					jQuery("#SearchResultsBar").show();
+					jQuery("#SearchResultsBar").css("display", "inline");
 				}
 			}); 
 			

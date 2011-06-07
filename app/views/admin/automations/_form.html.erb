@@ -6,12 +6,12 @@
 <%= f.error_messages :object_name => 'scenario' %>
 <ul class="ui-form">
 	<li>
-		<%= f.label :name, "Scenario Label *" %>
+		<%= f.label :name, "#{t('scenario_label')} *" %>
 		<label class="overlabel" for="va_rule_name">example: <em>"<%=t('automations.info5')%>"</em> </label>
 		<%= f.text_field :name, :class => "required" %>
 	</li>
 	<li>
-		<%= f.label :description %>
+		<%= f.label :description,t('description') %>
 		<!--label class="overlabel" for="agent_desc">
 			We Know it's pretty boring. <br />
 			But meaningful descriptions can help you later to quickly identify what this rule does,<br /> 

@@ -9,7 +9,8 @@ html {  height:100%; overflow-y:scroll; }
 	@include container;
 	position:relative;
 	text-align: left; 
-	max-width:1280px; 
+	max-width:1280px;
+	min-width:auto;
 	padding:0px 8px; 
 }
   
@@ -45,9 +46,8 @@ label.overlabel{
 	margin:8px;
 }
 
- 
-#inner {    
-	@include pie-clearfix;	
+#inner {
+	@include pie-clearfix;
 	position:relative;
 	.leftcontent{
 		float:left;
@@ -55,11 +55,10 @@ label.overlabel{
 	}
 	z-index:1;  	
 	margin:12px 0px 0px 0px;	
-	padding-right:$sidebar-width;   
+	padding-right:$sidebar-width+8;   
 	.sidebar{ 
 		width:$sidebar-width;
-		float:right; 
-		display: inline;
+		float:right;
 		margin-right:-($sidebar-width);
 	}  
 }
@@ -139,37 +138,27 @@ div.bg_pulp{
 }
 
 .brand{	
+	@include clearfix;
 	position:absolute;
 	left:0px;
 	margin-left:8px;
 	text-decoration:none;
-	a{
-		text-decoration:none;
-	}
+	a{ text-decoration:none; }
+	.logo, .logo_text{ float:left; position:relative; z-index:5; }
 	.logo{
-		@include clearfix; 
-		float:left;
-		margin:0px 0px 0px 5px; 
+		margin:0px 0px 0px 10px;
 	}
-	img, h3{
-		float:left;
-	}
-	h3{
+	.logo_text{
 		font-size:20px;
-		text-decoration:none;
-		font-weight:normal;
-		margin:0px;
-		padding:13px 0px 0px 2px;
-		position:relative;
 		color:#ffffff;
-		text-transform:capitalize;
+		padding:13px 0 0 5px;
 	}	 
 }
 
 .header_links{
 	float:right;
 	text-align:right;
-	height:$header_height;
+	height:55px;
 	margin:0px 12px;
 	color:#ffffff;
 	font-size:12px;		 
@@ -191,68 +180,6 @@ div.bg_pulp{
 .top_nav_bg{
 	background:$tab_color; 
 	@include inset-shadows(rgba(0, 0, 0, 0.1), 0px, -2px, 2px);
-}
-
-.nav_search, .nav_right{
-	float:right; 
-}
-
-.nav_search{
-	@include min-width(260px);
-	div.search_bar{ 
-		height:26px; 
-		background:url("../images/search_icon.gif") 4px 5px no-repeat #ffffff;  
-		padding:0px 8px 0px 25px;
-	}
-	height:27px;
-	position:relative;
-	margin:2px 14px 0px 0px;
-	label.overlabel, input{
-		top:4px;
-	}
-	label.overlabel{
-	 	padding:0px;
-	 	margin:2px 3px;
-	 	font-size:14px;
-	} 
-	input{		
-		border:0px !important;
-		position:relative;
-		font-size:12px !important;
-		width:100%;
-		padding:0px;
-		background:none;		
-	}
-	input:focus{ @include shadows(0, 0, 0, 0); }
-}
-
-.nav_right{
-	position:relative;
-	z-index:10; 
-	margin:2px 6px 0px 3px;
-}
-
-a.new_ticket, .nav_search div.search_bar{
-	@include shadows(#777777, 0px, 0px, 2px);
-	@include corners(4px);  
-	margin-top:2px;
-} 
- 
-a.new_ticket{  
-	@include vertical-gradient(#fefefe, #dfdfdf);  
-	padding:6px 10px 5px 25px;
-	color:#333333; 
-	font-size:12px; 
-	text-decoration:none; font-weight:bold;
-	position:relative; 
-	display:block;
-	img { position:absolute; left:6px; top:5px; }
-}
-
-a.new_ticket:hover{ 
-	@include vertical-gradient(#606c88, #3f4c6b);
-	border-color:#606c88;  
-	color:#ffffff;	 
 }
 
 ul.tabs{

@@ -17,9 +17,11 @@ class PostsController < ApplicationController
   #caches_formatted_page :rss, :index, :monitored
   cache_sweeper :posts_sweeper, :only => [:create, :update, :destroy]
   
+  uses_tiny_mce :options => Helpdesk::MEDIUM_EDITOR
+  
   def check_user_permission
     if (current_user.id != @post.user_id and  !current_user.has_manage_forums?)
-          flash[:notice] =  "You don't have sufficient privileges to access this page"
+          flash[:notice] =  t(:'flash.general.access_denied')
           redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
     end
   end

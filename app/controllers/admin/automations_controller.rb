@@ -17,7 +17,7 @@ class Admin::AutomationsController < Admin::AdminController
     @va_rule.match_type ||= :all
     
     if @va_rule.save
-      flash[:notice] = "The #{human_name} has been created."
+      flash[:notice] = t(:'flash.general.create.success', :human_name => human_name)
       redirect_back_or_default redirect_url
     else
       load_config
@@ -34,7 +34,7 @@ class Admin::AutomationsController < Admin::AdminController
     @va_rule.action_data = ActiveSupport::JSON.decode params[:action_data]
     
     if @va_rule.update_attributes(params[:va_rule])
-      flash[:notice] = "The #{human_name} has been updated."
+      flash[:notice] = t(:'flash.general.update.success', :human_name => human_name)
       redirect_back_or_default redirect_url
     else
       load_config
@@ -84,22 +84,22 @@ class Admin::AutomationsController < Admin::AdminController
       agents = a_users.collect { |au| [au.id, au.name] }
       agents << ([0, '{{ticket.agent}}'])
 
-      groups  = current_account.groups.find(:all).collect { |g| [g.id, g.name]}
+      groups  = current_account.groups.find(:all, :order=>'name' ).collect { |g| [g.id, g.name]}
       groups << ([0, '{{ticket.group}}'])
       
-      action_hash     = [{:name => 0              , :value => "--- Click to Select Action ---"},
-                         {:name => "priority"     , :value => "Set Priority as"  , :domtype => "dropdown", :choices => Helpdesk::Ticket::PRIORITY_NAMES_BY_KEY.sort },
-                         {:name => "ticket_type"  , :value => "Set Type as"      , :domtype => "dropdown", :choices => Helpdesk::Ticket::TYPE_NAMES_BY_KEY.sort },
-                         {:name => "status"       , :value => "Set Status as"    , :domtype => "dropdown", :choices => Helpdesk::Ticket::STATUS_NAMES_BY_KEY.sort},
+      action_hash     = [{:name => 0              , :value => "--- #{t('click_select_action')} ---"},
+                         {:name => "priority"     , :value => t('set_priority_as')  , :domtype => "dropdown", :choices => Helpdesk::Ticket::PRIORITY_NAMES_BY_KEY.sort },
+                         {:name => "ticket_type"  , :value => t('set_type_as')      , :domtype => "dropdown", :choices => Helpdesk::Ticket::TYPE_NAMES_BY_KEY.sort },
+                         {:name => "status"       , :value => t('set_status_as')    , :domtype => "dropdown", :choices => Helpdesk::Ticket::STATUS_NAMES_BY_KEY.sort},
                          {:name => 0              , :value => "------------------------------"},
-                         {:name => "add_tag"      , :value => "Add Tag(s)"       , :domtype => 'text'},
+                         {:name => "add_tag"      , :value => t('add_tags')       , :domtype => 'text'},
                          {:name => 0              , :value => "------------------------------"},
-                         {:name => "responder_id" , :value => "Assign to Agent"  , :domtype => 'dropdown', :choices => agents },
-                         {:name => "group_id"     , :value => "Assign to Group"  , :domtype => 'dropdown', :choices => groups },
+                         {:name => "responder_id" , :value => t('ticket.assign_to_agent')  , :domtype => 'dropdown', :choices => agents },
+                         {:name => "group_id"     , :value => t('email_configs.info9')  , :domtype => 'dropdown', :choices => groups },
                          {:name => 0              , :value => "------------------------------"},
-                         {:name => "send_email_to_group" , :value => "Send Email to Group"  , :domtype => 'email_select', :choices => groups},
-                         {:name => "send_email_to_agent" , :value => "Send Email to Agent"  , :domtype => 'email_select', :choices => agents},
-                         {:name => "send_email_to_requester"  , :value => "Send Email to Requester"   , :domtype => 'email'},
+                         {:name => "send_email_to_group" , :value => t('send_email_to_group')  , :domtype => 'email_select', :choices => groups},
+                         {:name => "send_email_to_agent" , :value => t('send_email_to_agent')  , :domtype => 'email_select', :choices => agents},
+                         {:name => "send_email_to_requester"  , :value => t('send_email_to_requester')   , :domtype => 'email'},
                         ]
                         
       additional_actions.each { |index, value| action_hash.insert(index, value) }

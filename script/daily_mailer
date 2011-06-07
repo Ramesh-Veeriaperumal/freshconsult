@@ -5,9 +5,10 @@ require 'lockfile'
 Lockfile('lock', :retries => 0) do
   require File.dirname(__FILE__) + '/../config/boot'
   require File.dirname(__FILE__) + '/../config/environment'
+  
 
   Subscription.find_expiring_trials.each do |sub|
-    if admin = sub.account.admin
+    if admin = sub.account.account_admin
       SubscriptionNotifier.deliver_trial_expiring(admin, sub)
     end
   end

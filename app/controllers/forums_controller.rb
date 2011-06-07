@@ -102,7 +102,7 @@ class ForumsController < ApplicationController
    end
     
     def set_selected_tab
-      @selected_tab = 'Forums'
+      @selected_tab = :forums
     end
 
     alias authorized? admin?
