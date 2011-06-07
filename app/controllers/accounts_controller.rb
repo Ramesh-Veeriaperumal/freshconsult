@@ -14,7 +14,7 @@ class AccountsController < ApplicationController
   before_filter :load_plans, :only => [:show, :plans]
   before_filter :admin_selected_tab, :only => [ :billing, :show, :edit, :plan, :cancel ]
   
-  #ssl_required :billing, :cancel, :new, :create #by Shan temp
+  ssl_required :billing
   #ssl_allowed :plans, :thanks, :canceled, :paypal
   
   before_filter :only => [:update, :destroy, :edit, :delete_logo, :delete_fav, :plan, :plans, :thanks] do |c| 
