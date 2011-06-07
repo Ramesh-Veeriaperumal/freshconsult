@@ -1,6 +1,8 @@
 <% note_view_id = "note_view_"+note.id.to_s() %>
+<% notedetails  = "note_details_#{note.id.to_s()}" %>
 <div id="<%=note_view_id%>" class="description <%= cycle('stripe', '') %>">
    	<a name="<%= "note#{note.id}" %>"></a> 
+	
 		<div class="conversation-sprite">
 			<% if note.private_note? %>	 
 				<span class="image note-private" title="Private note"></span>
@@ -11,20 +13,38 @@
 			<% elsif note.outbound_email? %>
 				<span class="image email-reply" title="Outbound email"></span>
 			<% end %>
-			
-	    </div>
-		  
+		</div>
+
+		<div class="item-right-actions">		
+			<ul class="nav-drop">
+				<% if note.private_note? || note.public_note? %>
+				<li>
+					<a href="#" class="menu-trigger nav-item-icon"><span class="item-options"></span></a>
+					<ul class="menu-box">
+						<li class="menu-item">
+							<%= link_to_remote( "Edit Note", { :loading => "$('loading_#{notedetails}').show();", 
+																								 :loaded  => "$('loading_#{notedetails}').hide();", 
+																								 :update  => notedetails, 
+																								 :url => edit_helpdesk_ticket_helpdesk_note_path(@item, note), :method => :GET }) %>
+						</li>
+						<li class="menu-item">
+							<%= link_to "Delete", helpdesk_ticket_helpdesk_note_path(@item, note), :method => :delete, :class => "last" %>
+						</li>						
+					</ul>
+				</li>
+				<% end %>
+			</ul>
+		</div>
+
  	<div class="user_details">
 		<% if note.user %>
 			<%= user_avatar(note.user.avatar) %>
-	       	<%= link_to(h(note.user.display_name), note.user, :class => "user_name") %>
-		<% else %>
-			System Generated
+     	<%= link_to(h(note.user.display_name), note.user, :class => "user_name") %>
 		<% end %>
 		 on <%= formated_date(note.created_at) %>
-  	</div>
-	
-	<div class="details">
+		<span class="loading-edit" id='<%= "loading_#{notedetails}" %>' style="display:none;"></span>
+  </div>
+	<div class="details" id='<%= notedetails %>'>
 		<%= simple_format(auto_link(email_before_quoted(strip_tags(note.body)))) %>
 		<% if email_quoted?(note.body) %>
 	    	<%= link_to_function("Show Quoted text", "$('quoted-#{ note.id }').toggle()", :class => 'toggle-quoted') %>
@@ -32,16 +52,9 @@
 	          <%= simple_format(auto_link(email_after_quoted(strip_tags(note.body)))) %>
 	        </blockquote>
 		<% end %>
-	</div>	
-	<% if note.private && !note.incoming && !note.status? %>
-		<div class="bottom-actions">
-			<%= link_to_remote( "Edit",  :update => note_view_id,
-		                         			 :url => edit_helpdesk_ticket_helpdesk_note_path(@item, note),
-											 :method => :GET) %>
-			<%= link_to "Delete", helpdesk_ticket_helpdesk_note_path(@item, note), :method => :delete, :class => "last" %>
-		</div>
-	<% end %>
+	</div>
 	<% unless note.attachments.empty? %>
+		<span class="seperator"></span>
 		<h4><%= pluralize(note.attachments.size, 'attachment')%></h4>
 		<ul class="attachment_list">
 		    <%= render :partial => '/helpdesk/shared/attachment', :collection => note.attachments, :locals => {:show_delete => true, :url => [@item] } %>

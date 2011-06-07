@@ -706,27 +706,6 @@ body h5 {
   margin: 6px 0px;
   border-bottom: 1px solid #EFEFEF;
 }
-.request_details .request-conversation {
-  padding-top: 0px;
-  padding-right: 0px;
-  padding-bottom: 0px;
-  background-color: #FAFAFA;
-}
-.request_details .request-conversation div.description {
-  border-left: 1px solid #efefef;
-  background-color: #ffffff;
-  margin: 0px 0px 0px 70px;
-  padding: 12px;
-  border-bottom: 1px solid #efefef;
-}
-.request_details .request-conversation div.description .preview_pic {
-  margin-top: -4px;
-}
-.request_details .request-conversation div.description .details {
-  border-top: 0px !important;
-  margin-top: 0px !important;
-  padding: 0px !important;
-}
 .request_details .request-cnt-first {
   background: #fafafa;
 }
@@ -742,7 +721,7 @@ body h5 {
   position: relative;
 }
 .request_details div.description .details {
-  padding: 3px 0px 3px 0px;
+  padding: 8px 0px 3px 0px;
   margin-top: 8px;
   border-top: 1px solid #efefef;
   color: #333333;
@@ -762,6 +741,24 @@ body h5 {
   /* Opera 7 */
   word-wrap: break-word;
   /* Internet Explorer 5.5+ */
+  margin: 0px 0 6px 0;
+}
+.request_details div.description .details .ui-form {
+  -moz-border-radius: 0px 0px 0px 0px;
+  -webkit-border-radius: 0px 0px 0px 0px;
+  border-radius: 0px 0px 0px 0px;
+  border-left: 0px;
+  border-right: 0px;
+  padding-top: 16px;
+}
+.request_details div.description .details .ui-form label {
+  font-size: 13px;
+}
+.request_details div.description .details .ui-form li {
+  border: 0px;
+}
+.request_details div.description .details .ui-form .button-container {
+  width: 93%;
 }
 .request_details div.description .min_height {
   min-height: 100px;
@@ -775,6 +772,7 @@ body h5 {
 }
 .request_details div.description .user_details {
   color: #777777;
+  font-size: 13px;
 }
 .request_details div.description .user_details a {
   text-decoration: none;
@@ -786,6 +784,31 @@ body h5 {
 }
 .request_details div.description .user_details div {
   padding: 2px 0px;
+}
+.request_details div.description .user_details .loading-edit {
+  position: absolute;
+  width: 16px;
+  height: 11px;
+  margin: 3px 8px;
+}
+.request_details .request-conversation {
+  padding-top: 0px;
+  padding-right: 0px;
+  padding-bottom: 0px;
+  background-color: #FAFAFA;
+}
+.request_details .request-conversation div.description {
+  border-left: 1px solid #efefef;
+  background-color: #ffffff;
+  margin: 0px 0px 0px 70px;
+  padding: 12px;
+  border-bottom: 1px solid #efefef;
+}
+.request_details .request-conversation div.description .preview_pic {
+  margin-top: -4px;
+}
+.request_details .request-conversation div.description .details {
+  border-top: 0px;
 }
 .request_details .request_desp {
   margin: 0px 10px 0px 10px;
@@ -2661,7 +2684,7 @@ h4.border_title {
   background-position: right 3px;
 }
 
-.loading-fb {
+.loading-fb, .request_details div.description .user_details .loading-edit {
   background-image: url("/images/load-fb-style.gif");
   background-repeat: no-repeat;
   background-position: 0px 0px;
@@ -3997,7 +4020,7 @@ div.addReminder form label.overlabel {
 .conversation-sprite {
   position: relative;
   display: inline;
-  margin-bottom: -30px;
+  margin-top: -10px;
   float: right;
 }
 .conversation-sprite .image {
@@ -4450,31 +4473,47 @@ div.addReminder form label.overlabel {
   border: 1px solid #dadada;
   padding: 8px 13px;
 }
-.plans .plan-title h2, .plans .plan-title h4 {
+.plans .plan-details h2, .plans .plan-details h4 {
   text-transform: uppercase;
   font-weight: bold;
 }
-.plans .plan-title h2 {
+.plans .plan-details h2 {
   font-size: 22px;
   color: #333333;
 }
-.plans .plan-title h3 {
+.plans .plan-details h3 {
   font-size: 18px;
   font-weight: normal;
   padding-bottom: 3px;
 }
-.plans .plan-title h4 {
+.plans .plan-details h4 {
   font-size: 14px;
   color: #5f892c;
   padding-bottom: 6px;
 }
-.plans .plan-title p {
-  color: #666666;
+.plans .plan-details p {
   font-size: 13px;
-  line-height: 20px;
-  min-height: 100px;
+}
+.plans .plan-details p.plan-details {
+  color: #666666;
+  line-height: 1.65em;
+  min-height: 90px;
   height: auto !important;
-  height: 100px;
+  height: 90px;
+}
+.plans .discount-strikethrough {
+  color: #999999;
+  text-decoration: line-through;
+  font-size: 15px;
+}
+.plans .discount-info-text {
+  color: #990000;
+  padding: 0px 0px 3px 0px;
+  font-size: 13px;
+}
+.plans .info-data {
+  font-size: 14px;
+  color: #333333;
 }
 .plans .active {
   border: 0px;

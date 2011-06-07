@@ -161,16 +161,16 @@ div.bg_pulp{
 	height:55px;
 	margin:0px 12px;
 	color:#ffffff;
-	font-size:12px;		 
+	font-size:12px;
 	strong{
-		font-weight:bold;		
-	}	
-	a{			 
+		font-weight:bold;
+	}
+	a{
 		padding:0px 6px; 
 		color:#ffffff;
 		text-decoration:none;
 	}
-	a:hover {	 
+	a:hover{
 		text-decoration:none;
 	}
 } 
@@ -179,7 +179,7 @@ div.bg_pulp{
 
 .top_nav_bg{
 	background:$tab_color; 
-	@include inset-shadows(rgba(0, 0, 0, 0.1), 0px, -2px, 2px);
+	@include inset-shadows(rgba(0, 0, 0, 0.2), 0px, -1px, 1px);
 }
 
 ul.tabs{
@@ -196,31 +196,32 @@ ul.tabs{
 			position:relative;
 			z-index:1;
 			margin-bottom:-2px;
-		}
-		 
+		}		 
 			a{
 				position:relative;
 				z-index:5;
-				text-decoration:none; 
+				text-decoration:none;
 				color:#ffffff;
-				padding:9px 6px 9px 8px; 		
-				font-size:13px;				
+				padding:8px 6px 7px 8px;
+				font-size:13px;
 				font-weight:bold;
-				text-align:center;				
-				display:block;	 
+				text-align:center;
+				display:block;
 				text-transform:capitalize;
 				@include text-shadow(rgba(0, 0, 0, 0.1), 1px, 1px, 1px);
 			}
 			a:hover{
 				background:lighten($tab_color, 10%);
-				@include inset-shadows(rgba(0, 0, 0, 0.1), 0px, -2px, 2px); 
+				@include inset-shadows(rgba(0, 0, 0, 0.1), 0px, -2px, 1px); 
 				color:#ffffff;
 			} 
 	}  
 	li.active a, li.active a:hover{
 		border-color:darken($tab_color, 10%);
-		background:$background; 
-		@include shadows(rgba(0, 0, 0, 0.6), 0px, 0px, 2px);
+		background:$background;
+		padding-top:6px;
+		top:2px;
+		@include shadows(rgba(0, 0, 0, 0.4), 0px, 0px, 1px);
 		color:#000000; 
 	} 
 } 

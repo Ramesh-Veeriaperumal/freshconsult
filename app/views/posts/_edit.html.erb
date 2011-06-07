@@ -1,8 +1,7 @@
 <%= include_tiny_mce_if_needed %>
 <div id="edit" class="editbox">
 	<div class="request_panel">
-	 	<% form_for :post, :url => post_path(:forum_id => @post.forum_id, :topic_id => @post.topic_id, :id => @post), :html => { :method => :put } do |f| -%>
-		
+	 	<% form_for :post, :url => post_path(:forum_id => @post.forum_id, :topic_id => @post.topic_id, :id => @post), :html => { :method => :put } do |f| -%>		
 		  <ul class="note_form ui-form">
 			<li>
 			 	<h3 class="title">Edit Post</h3>

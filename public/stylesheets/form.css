@@ -1410,7 +1410,7 @@ table.summary-report thead td {
   *zoom: 1;
   position: relative;
   z-index: 10;
-  margin: 3px 6px 0px 3px;
+  margin: 1px 0px 0px 3px;
   float: right;
 }
 
@@ -1419,12 +1419,13 @@ a.new_ticket, .nav_search {
 }
 
 a.new_ticket, .nav_search div.search_bar {
-  -moz-box-shadow: #777777 0px 0px 2px;
-  -webkit-box-shadow: #777777 0px 0px 2px;
-  box-shadow: #777777 0px 0px 2px;
-  -moz-border-radius: 4px 4px 4px 4px;
-  -webkit-border-radius: 4px 4px 4px 4px;
-  border-radius: 4px 4px 4px 4px;
+  -moz-box-shadow: rgba(0, 0, 0, 0.4) 0px 0px 1px;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.4) 0px 0px 1px;
+  box-shadow: rgba(0, 0, 0, 0.4) 0px 0px 1px;
+  -moz-border-radius: 3px 3px 3px 3px;
+  -webkit-border-radius: 3px 3px 3px 3px;
+  border-radius: 3px 3px 3px 3px;
+  border: 1px solid #67962d;
 }
 
 a.new_ticket {
@@ -1439,7 +1440,7 @@ a.new_ticket {
   background-image: -moz-linear-gradient(#fefefe, #dfdfdf);
   background-image: -o-linear-gradient(#fefefe, #dfdfdf);
   background-image: linear-gradient(#fefefe, #dfdfdf);
-  padding: 6px 10px 5px 25px;
+  padding: 6px 8px 5px 25px;
   color: #333333;
   font-size: 12px;
   text-decoration: none;
@@ -1449,7 +1450,7 @@ a.new_ticket {
 }
 a.new_ticket span {
   position: absolute;
-  left: 6px;
+  left: 4px;
   top: 5px;
   background: url('/images/symbols-7a45324a2d.png') 0 -16px no-repeat;
   width: 16px;
@@ -1477,6 +1478,7 @@ a.new_ticket:hover {
   float: right;
   z-index: 10;
   position: relative;
+  top: -6px;
 }
 .item-right-actions:after {
   content: "\0020";

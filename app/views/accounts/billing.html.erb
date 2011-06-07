@@ -12,12 +12,28 @@
 				</div>
 			<% end %>
 			<%= content_tag(:h3, t("credit_card_info"), :class => "title") %>
-		   	<%= render :partial => 'shared/credit_card_form' %> 
+		   	<%= render :partial => 'shared/credit_card_form' %>
+				<%= hidden_field_tag :charge_now, "false", :id => "chargenow" %>
 				<span class="seperator"></span>
 				<div class="button-container">
-					<%= link_to( t('select_another_plan'), account_url, :class => "uiButton floatl" ) %>
-					<%= submit_tag t('begin_subscription'), :class => "uiButton" %>
+					<% if @subscription.state == 'trial' %>
+						<%= link_to( "&larr; #{t('select_another_plan')}", account_url, :class => "uiButton floatl" ) %>
+						<%= submit_tag t('save_billing_information'), :class => "uiButton" %>	
+						<%= submit_tag t('begin_subscription'), :class => "uiButton", :id => "begin_subscription" %>	
+					<% else %>
+						<%= link_to( "&larr; #{t("cancel_and_back")}", account_url, :class => "uiButton floatl" ) %>
+						<%= submit_tag t('update_billing_info'), :class => "uiButton" %>
+					<% end %>
 				</div>
 		</li>
 	</ul> 
-<% end %>  
+<% end %>
+<% content_for :pagefixed do %>
+	<% javascript_tag do %>
+		jQuery("#begin_subscription")
+			.click(function(){
+				$("chargenow").value = true;
+				return true;
+			});
+	<% end %>
+<% end %>
