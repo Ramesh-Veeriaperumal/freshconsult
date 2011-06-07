@@ -540,7 +540,7 @@ ActiveRecord::Schema.define(:version => 20110606175031) do
 
   create_table "solution_articles", :force => true do |t|
     t.string   "title"
-    t.text     "description",  :limit => 2147483647
+    t.text     "description",  :limit => 16777215
     t.integer  "user_id",      :limit => 8
     t.integer  "folder_id",    :limit => 8
     t.integer  "status"
