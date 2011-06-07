@@ -296,6 +296,13 @@ button.ui-button::-moz-focus-inner {
   text-shadow: rgba(0, 0, 0, 0.2) -1px -1px 1px;
 }
 
+.uiButton-active {
+  background-color: #67962d;
+  border-color: #618e2b;
+  color: #ffffff;
+  text-shadow: rgba(0, 0, 0, 0.2) -1px -1px 1px;
+}
+
 .uiButton:active, .fdbutton:active {
   top: 1px;
 }

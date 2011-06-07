@@ -297,6 +297,14 @@ en:
       goback: &#x2190; Back to account settings
       delete_my_account: Delete my Account
       you_must_confirm: You must confirm your cancellation
+    billing:
+      billing: Billing
+      begin_subscription: Begin subscription now...
+      begin_subscription_info: will charge your card and begin your subscription immediately.
+      save_billing_information: Save billing information
+      save_billing_information_info: will save your "Plan & billing" information. We will charge your card and begin your subscription only once your trial is over.
+      update_billing_info: Update billing information
+
   topics: 
     last_reply: Last reply %{post_time} ago by %{user_link}
     posted_at: Posted %{post_time} ago
@@ -307,9 +315,6 @@ en:
   first_response_sla: First Response SLA Violation
   add_holiday: Add Holiday
   import_note_info: The fields in your csv file can be in any order. Just ensure that the first row has the header information.(Eg. Name, email etc.) The only required field is email.
-  begin_subscription: Begin subscription now...
-  save_billing_information: Save billing information
-  update_billing_info: Update billing information
   at: at
   add_a_topic: Start a Topic
   bottom: Bottom
