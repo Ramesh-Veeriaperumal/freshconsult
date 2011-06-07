@@ -7,34 +7,38 @@
 				<a href="#" class="menu-trigger nav-item-icon"><span class="item-options"></span></a>
 				<ul class="menu-box">
 					<li class="menu-item">
-						<% if logged_in? && post.editable_by?(current_user) -%> 
-							   <%= ajax_spinner_for "edit-post-#{post.id}", "load.gif" %>
-						       <%= link_to_remote('Edit Post'[],
-						 						 	:update  => "#{post.id}", 
-						             {:url => edit_post_path(:forum_id => @forum, :topic_id => @topic, :id => post), :method => :get,
-						              :before => "EditForm.init(#{post.id});", :condition => "!EditForm.isEditing(#{post.id})" }, 
-						             {:href => edit_post_path(:forum_id => @forum, :topic_id => @topic, :id => post, :page => params[:page]) }) %>
+						<% if logged_in? && post.editable_by?(current_user) -%>
+						       <%= link_to_remote(t('.edit_post'),
+													:loading => "$('loading_#{post.id}').show();", 
+	 	 										  :loaded  => "$('loading_#{post.id}').hide();",
+													:update  => "post_details_#{post.id}", 
+						              :url => edit_post_path(:forum_id => @forum, :topic_id => @topic, :id => post), :method => :get,
+						              :href => edit_post_path(:forum_id => @forum, :topic_id => @topic, :id => post, :page => params[:page]) ) %>
 						<% end -%>
 					</li>
 					<li class="menu-item">
 						<%if post != @posts.first and @forum.questions? %> 
 								<% if logged_in? && current_user.has_manage_forums?  %>
-									<%= link_to ("Unmark this as the answer" , toggle_answer_category_forum_topic_post_path(@forum_category,@forum,@topic,post),  :method=>:put ) if post.answer?  %>
-									<%= link_to ("Mark this as the answer" , toggle_answer_category_forum_topic_post_path(@forum_category,@forum,@topic,post ),  :method=>:put ) if !post.answer?  %>
+									<%= link_to (t(".unmark_answer"), toggle_answer_category_forum_topic_post_path(@forum_category,@forum,@topic,post), :method=>:put ) if post.answer?  %>
+									<%= link_to (t(".mark_answer"), toggle_answer_category_forum_topic_post_path(@forum_category,@forum,@topic,post ),  :method=>:put ) if !post.answer?  %>
 								<%end%> 
 						<%end%>
+					</li>
+					<li class="menu-item">
+							<%= link_to(t(".delete_post"), post_path(:forum_id => @forum, :topic_id => @topic, :id => post, :page => params[:page]), :method => :delete, :confirm => t(".delete_post_confirm")[:delete_post_conf]) %>
 					</li>
 				</ul>
 			</li>
 			<% end %>
 		</ul>
 	</div>
-	<%= content_tag(:div, "Answer", :class => "stamp_answer floatr", :title => "This post is accepted as a good answer to this topic") if post.answer? %>
+	<%= content_tag(:div, t(".answer"), :class => "stamp_answer floatr", :title => t(".post_accepted_as_a_good_answer")) if post.answer? %>
 	<div class="user_details">
 		<%= user_avatar(post.user.avatar)  if post.user %>
-		<%= link_to_user post.user, :class => "user_name" %> on <%= formated_date(post.created_at) %> 
+		<%= t(".posted_on", :user_name => link_to_user(post.user, :class => "user_name"), :post_date => formated_date(post.created_at) ) %>
+		<span class="loading-edit" id='<%= "loading_#{post.id}" %>' style="display:none;"></span>
 	</div>
-	<div class="details">
+	<div class="details" id='<%= "post_details_#{post.id}" %>'>
 		<%= post.body_html %>
 	</div>
 	<% unless post.attachments.empty? %>

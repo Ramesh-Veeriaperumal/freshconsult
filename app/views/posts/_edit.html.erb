@@ -1,21 +1,11 @@
 <%= include_tiny_mce_if_needed %>
-<div id="edit" class="editbox">
-	<div class="request_panel">
-	 	<% form_for :post, :url => post_path(:forum_id => @post.forum_id, :topic_id => @post.topic_id, :id => @post), :html => { :method => :put } do |f| -%>		
-		  <ul class="note_form ui-form">
-			<li>
-			 	<h3 class="title">Edit Post</h3>
-			</li>
-		    <li>
-		        <%= f.text_area :body_html,  :class => "mceEditor", :id => "edit_post_body", :tabindex => 1 %>
-		    </li>		    
-		    <li>
-		        <%= ajax_spinner_for "editbox", "/images/load.gif" %>
-				<%= submit_tag 'Save Changes'[], :class => "uiButton floatr", :or => link_to_function('cancel'[], "EditForm.cancel()"), :tabindex => 2 %>
-				<%= link_to('delete post'[], post_path(:forum_id => @post.topic.forum, :topic_id => @post.topic, :id => @post, :page => params[:page]), 
-	              :class => "uiButton red", :method => :delete, :confirm => "Delete this post?  Are you sure?"[:delete_post_conf]) %>
-		    </li>
-		  </ul>
-		  <% end -%>
-	</div> 
-</div>
+<% form_for :post, :url => post_path(:forum_id => @post.forum_id, :topic_id => @post.topic_id, :id => @post), :html => { :method => :put } do |f| -%>		
+ <ul class="ui-form">
+	<li>
+		<%= f.text_area :body_html,  :class => "mceEditor", :id => "edit_post_#{@post.id}", :tabindex => 1 %>
+	</li>		    
+	<li class="button-container"> 
+		<%= submit_tag(t("update"), :class => "uiButton small") %>			
+	</li>
+ </ul>
+<% end -%>
