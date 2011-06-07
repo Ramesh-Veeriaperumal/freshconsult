@@ -225,9 +225,9 @@ div.bg_pulp {
 /* Header Tab styles */
 .top_nav_bg {
   background: #7cb537;
-  -moz-box-shadow: inset 0px -2px 2px rgba(0, 0, 0, 0.1);
-  -webkit-box-shadow: inset 0px -2px 2px rgba(0, 0, 0, 0.1);
-  box-shadow: inset 0px -2px 2px rgba(0, 0, 0, 0.1);
+  -moz-box-shadow: inset 0px -1px 1px rgba(0, 0, 0, 0.2);
+  -webkit-box-shadow: inset 0px -1px 1px rgba(0, 0, 0, 0.2);
+  box-shadow: inset 0px -1px 1px rgba(0, 0, 0, 0.2);
 }
 
 ul.tabs {
@@ -252,7 +252,7 @@ ul.tabs li a {
   z-index: 5;
   text-decoration: none;
   color: #ffffff;
-  padding: 9px 6px 9px 8px;
+  padding: 8px 6px 7px 8px;
   font-size: 13px;
   font-weight: bold;
   text-align: center;
@@ -262,17 +262,19 @@ ul.tabs li a {
 }
 ul.tabs li a:hover {
   background: #95cb54;
-  -moz-box-shadow: inset 0px -2px 2px rgba(0, 0, 0, 0.1);
-  -webkit-box-shadow: inset 0px -2px 2px rgba(0, 0, 0, 0.1);
-  box-shadow: inset 0px -2px 2px rgba(0, 0, 0, 0.1);
+  -moz-box-shadow: inset 0px -2px 1px rgba(0, 0, 0, 0.1);
+  -webkit-box-shadow: inset 0px -2px 1px rgba(0, 0, 0, 0.1);
+  box-shadow: inset 0px -2px 1px rgba(0, 0, 0, 0.1);
   color: #ffffff;
 }
 ul.tabs li.active a, ul.tabs li.active a:hover {
   border-color: #618e2b;
   background: #efefef;
-  -moz-box-shadow: rgba(0, 0, 0, 0.6) 0px 0px 2px;
-  -webkit-box-shadow: rgba(0, 0, 0, 0.6) 0px 0px 2px;
-  box-shadow: rgba(0, 0, 0, 0.6) 0px 0px 2px;
+  padding-top: 6px;
+  top: 2px;
+  -moz-box-shadow: rgba(0, 0, 0, 0.4) 0px 0px 1px;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.4) 0px 0px 1px;
+  box-shadow: rgba(0, 0, 0, 0.4) 0px 0px 1px;
   color: #000000;
 }
 

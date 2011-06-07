@@ -307,7 +307,9 @@ en:
   first_response_sla: First Response SLA Violation
   add_holiday: Add Holiday
   import_note_info: The fields in your csv file can be in any order. Just ensure that the first row has the header information.(Eg. Name, email etc.) The only required field is email.
-  begin_subscription: Begin Subscription
+  begin_subscription: Begin subscription now...
+  save_billing_information: Save billing information
+  update_billing_info: Update billing information
   at: at
   add_a_topic: Start a Topic
   bottom: Bottom
@@ -903,3 +905,4 @@ en:
   import_ticket_group: Tickets &amp; Group
   portal_key: Portal
   forum_key: Forum
+  plan_amount: per agent/month

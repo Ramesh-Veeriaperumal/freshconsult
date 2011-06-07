@@ -9,7 +9,8 @@
 					<li class="menu-item">
 						<% if logged_in? && post.editable_by?(current_user) -%> 
 							   <%= ajax_spinner_for "edit-post-#{post.id}", "load.gif" %>
-						       <%= link_to_remote('Edit'[], 
+						       <%= link_to_remote('Edit Post'[],
+						 						 	:update  => "#{post.id}", 
 						             {:url => edit_post_path(:forum_id => @forum, :topic_id => @topic, :id => post), :method => :get,
 						              :before => "EditForm.init(#{post.id});", :condition => "!EditForm.isEditing(#{post.id})" }, 
 						             {:href => edit_post_path(:forum_id => @forum, :topic_id => @topic, :id => post, :page => params[:page]) }) %>
@@ -22,10 +23,10 @@
 									<%= link_to ("Mark this as the answer" , toggle_answer_category_forum_topic_post_path(@forum_category,@forum,@topic,post ),  :method=>:put ) if !post.answer?  %>
 								<%end%> 
 						<%end%>
-					</li>					
-					<% end %>
+					</li>
 				</ul>
 			</li>
+			<% end %>
 		</ul>
 	</div>
 	<%= content_tag(:div, "Answer", :class => "stamp_answer floatr", :title => "This post is accepted as a good answer to this topic") if post.answer? %>

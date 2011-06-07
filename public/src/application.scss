@@ -535,27 +535,6 @@ body h5{
 			border-bottom: 1px solid #EFEFEF;
 		}
 	}
-	.request-conversation{
-		padding-top:0px;
-		padding-right:0px;
-		padding-bottom:0px;
-		background-color:#FAFAFA;
-		div.description{
-			border-left:1px solid #efefef;
-			background-color:#ffffff;
-			margin:0px 0px 0px 70px;
-			padding:12px;
-			border-bottom:1px solid #efefef;
-			.preview_pic{
-				margin-top:-4px;
-			}	
-			.details{
-				border-top:0px !important; 
-				margin-top:0px !important;
-				padding:0px !important;
-			}
-		}
-	}
 	
 	.request-cnt-first{
 		background:#fafafa;  
@@ -570,9 +549,9 @@ body h5{
 	div.description{  
 			margin:8px 0px 8px 70px;
 			padding:0px 0px 0px 10px; 
-			position:relative;
+			position: relative;
 			.details{ 
-				padding:3px 0px 3px 0px;
+				padding:8px 0px 3px 0px;
 				margin-top:8px;
 				border-top:1px solid #efefef; 
 				color:#333333;
@@ -582,6 +561,22 @@ body h5{
 					padding-right:20px;
 					line-height:1.7em; 
 					@include wrap;
+					margin:0px 0 6px 0;
+				}
+				.ui-form{
+					@include corners(0px);
+					border-left:0px;
+					border-right:0px;
+					padding-top:16px;
+					label{
+						font-size:13px;
+					}
+					li{ 
+						border:0px;
+					}
+					.button-container{
+						width:93%;
+					}
 				}
 			}
 			.min_height{
@@ -593,7 +588,8 @@ body h5{
 				margin-top:-2px;
 			}
 			.user_details{
-				color:#777777; 
+				color:#777777;
+				font-size:13px;
 				a{
 					text-decoration:none;
 					color:#527eaa;
@@ -601,13 +597,39 @@ body h5{
 				}
 				a:hover{
 					text-decoration:none;
-				} 
-				
+				}
 				div{
 					padding:2px 0px;
 				}
+				.loading-edit{
+					position:absolute;
+					width:16px;
+					height:11px;
+					margin:3px 8px;
+					@extend .loading-fb;
+				}
 			}
 		}
+	
+	.request-conversation{
+		padding-top:0px;
+		padding-right:0px;
+		padding-bottom:0px;
+		background-color:#FAFAFA;
+		div.description{
+			border-left:1px solid #efefef;
+			background-color:#ffffff;
+			margin:0px 0px 0px 70px;
+			padding:12px;
+			border-bottom:1px solid #efefef;
+			.preview_pic{
+				margin-top:-4px;
+			}
+			.details{
+				border-top:0px;
+			}
+		}
+	}
 		
 	.request_desp { 
 		margin:0px 10px 0px 10px;
@@ -3179,7 +3201,7 @@ div.addReminder{
 .conversation-sprite{ 
 	position:relative;
 	display:inline;
-	margin-bottom:-30px; 
+	margin-top:-10px;
 	float:right;
 	.image {
 		float:right;
@@ -3552,7 +3574,7 @@ div.addReminder{
 	border:1px solid #cccccc;
 	table{ width:100%; }
 	td{ width:33%; vertical-align:top;border:1px solid #dadada;	padding:8px 13px; }
-	.plan-title{ 
+	.plan-details{ 
 		h2, h4{	text-transform:uppercase; font-weight:bold; }
 		h2{
 			font-size:22px;
@@ -3569,11 +3591,27 @@ div.addReminder{
 			padding-bottom:6px;
 		}
 		p{
-			color:#666666;
 			font-size:13px;
-			line-height:20px;
-			@include min-height(100px);
 		}
+		p.plan-details{
+			color:#666666;		
+			line-height:1.65em;
+			@include min-height(90px);
+		}
+	}
+	.discount-strikethrough{
+		color:#999999;
+		text-decoration:line-through;
+		font-size:15px;
+	}
+	.discount-info-text{
+		color:#990000;		
+		padding:0px 0px 3px 0px;
+		font-size:13px; 
+	}
+	.info-data{
+		font-size:14px;
+		color:#333333;
 	}
 	.active{
 		border:0px;
