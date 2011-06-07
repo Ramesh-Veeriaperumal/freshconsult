@@ -25,7 +25,7 @@ class SubscriptionPlan < ActiveRecord::Base
   end
   
   def amount(include_discount = true)
-    include_discount && @discount && @discount.apply_to_recurring? ? self[:amount] - @discount.calculate(self[:amount]) : self[:amount]
+    include_discount && @discount && (@discount.plan_id ==self[:id]) && @discount.apply_to_recurring? ? self[:amount] - @discount.calculate(self[:amount]) : self[:amount]
   end
   
   def setup_amount(include_discount = true)

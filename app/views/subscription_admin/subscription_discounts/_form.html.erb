@@ -18,5 +18,6 @@
   <%= form.check_box :apply_to_setup %>
   <%= form.label :trial_period_extension %>
   <%= form.text_field :trial_period_extension %>
+  <%= form.select :plan_id, options_from_collection_for_select(SubscriptionPlan.all, :id, :name) %>
 </fieldset>
 <%= submit_tag %>
