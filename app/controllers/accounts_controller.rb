@@ -9,7 +9,7 @@ class AccountsController < ApplicationController
   before_filter :build_user, :only => [ :new, :create ]
   before_filter :load_billing, :only => [ :show, :new, :create, :billing, :paypal, :payment_info ]
   before_filter :load_subscription, :only => [ :show, :billing, :plan, :paypal, :plan_paypal, :plans ]
-  before_filter :load_discount, :only => [ :plans, :plan, :new, :create, :show ]
+  before_filter :load_discount, :only => [ :plans, :plan, :show ]
   before_filter :build_plan, :only => [:new, :create]
   before_filter :load_plans, :only => [:show, :plans]
   before_filter :admin_selected_tab, :only => [ :billing, :show, :edit, :plan, :cancel ]
