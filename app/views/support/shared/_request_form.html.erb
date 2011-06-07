@@ -2,7 +2,8 @@
 		<% @customizer = ActiveSupport::JSON.decode(@ticket.customizer.requester_view)
 		   @customizer.each do |field|
 				#field_class = field["type"] + ((field["customer"]["required"]) ? " required" : "")
-				field_class = field["type"] 
+				field_class = field["type"] + (field["type"] != 'dropdown' && (field["customer"]["required"]) ? " required" : "")
+				field_madatory  = (field["agent"]["required"]) ? " *" : " " 
 				case field["label"]
 					 when "Requester" then 
 					%>
@@ -12,12 +13,12 @@
 				   	</li>	
 					<% when "Subject" then%>
 						<li>
-				        	<%= request_form.label :subject, "Subject" %>
+				        	<%= request_form.label :subject, t('ticket.subject') + field_madatory  %>
 				          	<%= request_form.text_field :subject, :class => field_class %>
 				   		</li>
 					<%when "Type" then%>		
 						<li class="dropdown">
-          					<%= request_form.label :ticket_type, t('ticket.type') %>
+          					<%= request_form.label :ticket_type, t('ticket.type')  %>
          					<%= request_form.select :ticket_type, Helpdesk::Ticket::TYPE_OPTIONS, :class => field_class %>
         				</li>
 					<%when "Source" then%>
@@ -28,31 +29,31 @@
 								
 					<%when "Status" then%>
 						<li class="dropdown">
-				          	<%= request_form.label :status, "Status" %>
+				          	<%= request_form.label :status, t('ticket.status') %>
 				         	<%= request_form.select :status, Helpdesk::Ticket::STATUS_OPTIONS, :class => field_class %>
 				        </li>
 						
 					<%when "Group" then%>
 						<li class="dropdown">
-				          	<%= request_form.label :group_id, "Group" %>
+				          	<%= request_form.label :group_id,  t('ticket.group') %>
 				          	<%= request_form.collection_select :group_id, Group.find_all_by_account_id(current_account.id , :order=>'name'), :id, :name,{:include_blank => 'None'}, { :onchange => "changeAggentList(this.options[this.selectedIndex].value)" ,:class => field_class} %>
 				        </li>
 						
 					<%when "Assigned to" then%>	
 						<li class="dropdown" id="assigned_to">
-				          	<%= request_form.label :responder_id, "Assigned To" %>
+				          	<%= request_form.label :responder_id, t('ticket.assigned_to') %>
 				          	<%= request_form.collection_select :responder_id, Agent.technician_list(current_account.id), :id, :name, {:include_blank => 'None'}, :class => field_class %>
 				        </li>
 						
 					<%when "Priority" then%>
 						<li class="dropdown">
-				 			<%= request_form.label :priority, "Priority" %>          
+				 			<%= request_form.label :priority, t('ticket.priority') %>          
 							<%= request_form.select :priority, Helpdesk::Ticket::PRIORITY_OPTIONS, :class => field_class %>
 				    	</li>
 					
 					<%when "Description" then%>
 						<li>
-							<%= request_form.label :description, "Description" %>
+							<%= request_form.label :description, t('description') + field_madatory %>
 				    		<%= request_form.text_area :description, :class=> field_class %>
 						</li>				
 					
