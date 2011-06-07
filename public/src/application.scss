@@ -574,6 +574,7 @@ body h5{
 					li{ 
 						border:0px;
 					}
+					textarea{ height:280px; }
 					.button-container{
 						width:93%;
 					}
@@ -1009,6 +1010,8 @@ ul.admin_icons{
 	padding:3px 12px;
 	@include corners(4px);
 	margin:2px 5px;
+	position:relative;
+	top:-6px;
 }
 
 div.panel_area{

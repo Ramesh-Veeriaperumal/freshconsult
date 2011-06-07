@@ -757,6 +757,9 @@ body h5 {
 .request_details div.description .details .ui-form li {
   border: 0px;
 }
+.request_details div.description .details .ui-form textarea {
+  height: 280px;
+}
 .request_details div.description .details .ui-form .button-container {
   width: 93%;
 }
@@ -1342,6 +1345,8 @@ ul.admin_icons li a:hover {
   -webkit-border-radius: 4px 4px 4px 4px;
   border-radius: 4px 4px 4px 4px;
   margin: 2px 5px;
+  position: relative;
+  top: -6px;
 }
 
 div.panel_area {

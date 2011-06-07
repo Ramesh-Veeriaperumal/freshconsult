@@ -906,3 +906,13 @@ en:
   portal_key: Portal
   forum_key: Forum
   plan_amount: per agent/month
+  forum_shared:
+    post:
+      edit_post: Edit Post
+      unmark_answer: Unmark this as the answer
+      mark_answer: Mark this as the answer
+      delete_post: Delete post
+      delete_post_confirm: Delete this post?  Are you sure?
+      answer: Answer
+      post_accepted_as_a_good_answer: This post is accepted as a good answer to this topic
+      posted_on: %{user_name} on %{post_date}
