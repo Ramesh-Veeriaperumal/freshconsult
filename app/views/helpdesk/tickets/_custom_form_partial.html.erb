@@ -32,7 +32,7 @@
 	<%when "Group" then%>
 		<li class="dropdown">
           	<%= f.label :group_id, t('ticket.group') %>
-          	<%= f.collection_select :group_id, Group.find_all_by_account_id(@item.account_id), :id, :name,{:include_blank => '...'}, { :onchange => "changeAggentList(this.options[this.selectedIndex].value)" ,:class => field_class} %>
+          	<%= f.collection_select :group_id, Group.find_all_by_account_id(@item.account_id , :order=>'name'), :id, :name,{:include_blank => '...'}, { :onchange => "changeAggentList(this.options[this.selectedIndex].value)" ,:class => field_class} %>
         </li>
 		
 	<%when "Assigned to" then%> 

@@ -10,7 +10,7 @@ $ticketicon: sprite-map("ticket-icon/*.png");
 
 /* Bullet icon */ 
 $bullet-icon:"listicons/request_nav_seperator.gif";
-body { color: #333; background:$background; }
+body { color: #333; background:$background; min-width:$blueprint-liquid-container-min-width+20; }
 
 /* PAGE AREA STYLE */ 
 
@@ -778,7 +778,7 @@ body h5{
 	}
 	
 	.rtDetails{
-		margin:0px 70px 0px 0px;  
+		margin:0px 78px 0px 0px;  
 		padding-top:5px; 
 		z-index:10; 
 		background-color:#ffffff;
@@ -830,7 +830,7 @@ body h5{
 	
 	.rtPanel{
 		float:right;
-		width:70px;
+		width:75px;
 		position:relative;
 		z-index:9;
 		padding-top:6px;
@@ -2491,7 +2491,6 @@ a.page_title{
 			height:16px;
 			margin-left:4px;
 			margin-top:5px;
-			left:0px;
 		}
 		a{
 			display:block;
