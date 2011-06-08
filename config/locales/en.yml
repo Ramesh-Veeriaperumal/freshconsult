@@ -630,6 +630,7 @@ en:
   customers: Customers
   feedbackwidget_embed_code: Widget embed code
   billing_info_update: Your billing information has been updated.
+  card_process: Thank you for your payment. Your Freshdesk account is now live!
   profile: 
     edit: Edit Profile
     change_password: Change Password

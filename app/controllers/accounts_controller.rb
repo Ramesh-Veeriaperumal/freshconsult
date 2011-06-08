@@ -265,6 +265,7 @@ class AccountsController < ApplicationController
         if @creditcard.valid? & @address.valid?
           if @subscription.store_card(@creditcard, :billing_address => @address.to_activemerchant, :ip => request.remote_ip, :charge_now => params[:charge_now])
             flash[:notice] = t('billing_info_update')
+            flash[:notice] = t('card_process') if params[:charge_now].eql?("true")
             redirect_to :action => "show"
           end
         end
