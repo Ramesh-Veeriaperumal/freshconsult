@@ -62,7 +62,7 @@ require 'openid'
     current_user_session.destroy
     #flash[:notice] = "Logout successful!"
     if current_account.sso_enabled? and !current_account.sso_options[:logout_url].blank?
-      redirect_to current_account.sso_options[:logout_url]
+      return redirect_to current_account.sso_options[:logout_url]
     end
     redirect_to root_url
   end
