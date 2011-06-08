@@ -234,11 +234,7 @@ class AccountsController < ApplicationController
     @account.helpdesk_url = params[:account][:helpdesk_url] 
     @account.preferences = params[:account][:preferences]
     @account.ticket_display_id = params[:account][:ticket_display_id]
-    @account.sso_enabled = params[:account][:sso_enabled]
     
-    if @account.sso_enabled?
-      @account.sso_options = params[:account][:sso_options]
-    end
    
     update_logo_image  
     update_fav_icon_image
