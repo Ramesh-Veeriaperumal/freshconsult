@@ -12,7 +12,8 @@
 <% form_tag :action=> :update, :controller => 'ticket_fields', :method => :post do |f| %>
     <div class="admin_form">
         <ul id="custom_fields" class="ui-custom-fields"> 
-			<%= content_tag(:h4, t("ticketfields.add_custom_field"), :class => "title") %> 
+					<%= content_tag(:h4, t("ticketfields.add_custom_field"), :class => "title") %>
+					<div class="info-data"><%= t('drag_drop_intro') %></div>
             <li type="text"> 
                 <a href="javascript:void(0)" class="button"> <%= t("ticketfields.field.single_line") %> </a>
             </li>
@@ -29,6 +30,7 @@
                 <a href="javascript:void(0)" class="button"> <%= t("ticketfields.field.dropdown") %> </a>
             </li>
         </ul> 
+
 		<span class="seperator"></span> 
 		<div class="custom_form_outer">
 			<%= content_tag(:h4, t("ticketfields.customize_form"), :class => "title") %>
