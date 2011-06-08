@@ -58,12 +58,16 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
     
     def parse_from_email
+      f_email = parse_email(params[:from])
+      return f_email unless(f_email[:email].blank? || f_email[:email] =~ /noreply/)
+      
       headers = params[:headers]
-      unless headers.nil?
-        return parse_email($1) if headers  =~ /Reply-to:(.+)$/
+      if(!headers.nil? && headers =~ /Reply-to:(.+)$/)
+        rt_email = parse_email($1)
+        return rt_email unless rt_email[:email].blank?
       end
       
-      parse_email(params[:from])
+      f_email
     end
     
     def parse_cc_email
