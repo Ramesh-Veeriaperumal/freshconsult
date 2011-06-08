@@ -761,12 +761,9 @@ span.sort_handle {
   float: left;
   position: relative;
 }
-.ui-custom-fields .fdbutton {
-  min-width: 120px;
-  width: auto !important;
-  width: 120px;
-  margin: 2px 4px;
-  font-size: 11px;
+.ui-custom-fields li a {
+  margin: 6px 6px 0px 0px;
+  font-size: 13px;
 }
 
 .custom_form_outer .placeHolder {

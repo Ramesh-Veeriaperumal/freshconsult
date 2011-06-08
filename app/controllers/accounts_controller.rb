@@ -297,7 +297,7 @@ class AccountsController < ApplicationController
       @subscription.plan = subscription_plan
       @subscription.agent_limit = params[:agent_limit]
       if @subscription.save
-        SubscriptionNotifier.deliver_plan_changed(@subscription)
+        #SubscriptionNotifier.deliver_plan_changed(@subscription)
       else
         load_plans
         render :action => "plan" and return
