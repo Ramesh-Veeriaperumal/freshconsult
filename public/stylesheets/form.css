@@ -1327,9 +1327,6 @@ table.summary-report thead td {
   padding: 0px 0px;
   margin: 5px 0px;
 }
-.request_panel .ui-form {
-  background-color: #F3F1EC;
-}
 .request_panel .ui-form li {
   border: 0px;
 }

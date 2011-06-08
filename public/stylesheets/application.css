@@ -757,9 +757,6 @@ body h5 {
 .request_details div.description .details .ui-form li {
   border: 0px;
 }
-.request_details div.description .details .ui-form textarea {
-  height: 280px;
-}
 .request_details div.description .details .ui-form .button-container {
   width: 93%;
 }
