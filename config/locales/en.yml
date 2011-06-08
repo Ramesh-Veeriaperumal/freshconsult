@@ -327,7 +327,7 @@ en:
   starts_with: Starts with
   portal_customizer_anon_tickets_i: Turn this feature off, if you want your users to be signed in to submit a ticket.
   set_type_as: Set Type as
-  change_my_plan: Change my plan...
+  change_my_plan: Choose this plan...
   add_new_email: Add new email
   feedbackwidget_title: Widget Settings
   errors_in_your_address: "Errors encountered with your address:"
@@ -921,3 +921,5 @@ en:
       answer: Answer
       post_accepted_as_a_good_answer: This post is accepted as a good answer to this topic
       posted_on: %{user_name} on %{post_date}
+  special_beta_offer: Special offer for Beta accounts
+  drag_drop_intro: Drag and drop any field type into the "New Ticket" form below to add a new custom field

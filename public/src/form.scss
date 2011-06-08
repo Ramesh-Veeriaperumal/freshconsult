@@ -678,11 +678,10 @@ span.sort_handle{
 	li{
 		float:left;
 		position:relative;
-	}
-	.fdbutton{
-		@include min-width(120px);
-		margin:2px 4px;
-		font-size:11px;
+		a{
+			margin:6px 6px 0px 0px;
+			font-size:13px;
+		}
 	}
 }
 
