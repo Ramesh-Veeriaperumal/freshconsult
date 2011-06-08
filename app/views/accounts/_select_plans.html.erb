@@ -15,7 +15,7 @@
 								<%= content_tag(:h3, "$#{plan.amount.to_i} " + content_tag(:span, t('plan_amount'), :class => "info-data")) %>
 							<% end %>								
 							<%= content_tag(:h4, t("#{plan_name}_brief") ) %>
-							<%= content_tag(:div, (plan_name == "premium") ? "Special offer for Beta accounts" : "&nbsp;", :class => "discount-info-text" ) if(@discount && @discount.name.downcase == "beta users special")  %>
+							<%= content_tag(:div, (plan_name == "premium") ? t("special_beta_offer") : "&nbsp;", :class => "discount-info-text" ) if(@discount && @discount.name.downcase == "beta users special")  %>
 						</div>
 						<%= content_tag(:p,  t("#{plan_name}_details"), :class => "plan-details" ) %>
 					</div>
