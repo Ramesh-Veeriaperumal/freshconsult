@@ -924,3 +924,4 @@ en:
       posted_on: %{user_name} on %{post_date}
   special_beta_offer: Special offer for Beta accounts
   drag_drop_intro: Drag and drop any field type into the "New Ticket" form below to add a new custom field
+  begin_subscription_confirm: Your credit card is going to be charged for the amount of $%{cost}\nand your subscription will begin immediately. \n\nProceed now?
