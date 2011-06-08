@@ -7,7 +7,7 @@
 					<div class="plan-details">			
 						<div class="plan-title">
 							<% plan_name = plan.name.downcase %>
-							<% bool_beta_plan = (plan_name == "premium" && @discount.name.downcase == "beta users special") %>
+							<% bool_beta_plan = (plan_name == "premium" && @discount  && @discount.name.downcase == "beta users special") %>
 							<%= content_tag(:h2, plan.name ) %>
 							<% if(bool_beta_plan) %>
 								<%= content_tag(:h3, "<span class='discount-strikethrough'>$29 </span> $19 " +  content_tag(:span, t('plan_amount'), :class => "info-data")) %>
@@ -15,7 +15,7 @@
 								<%= content_tag(:h3, "$#{plan.amount.to_i} " + content_tag(:span, t('plan_amount'), :class => "info-data")) %>
 							<% end %>								
 							<%= content_tag(:h4, t("#{plan_name}_brief") ) %>
-							<%= content_tag(:div, (plan_name == "premium") ? "Special offer for Beta accounts" : "&nbsp;", :class => "discount-info-text" ) if(@discount.name.downcase == "beta users special")  %>
+							<%= content_tag(:div, (plan_name == "premium") ? "Special offer for Beta accounts" : "&nbsp;", :class => "discount-info-text" ) if(@discount && @discount.name.downcase == "beta users special")  %>
 						</div>
 						<%= content_tag(:p,  t("#{plan_name}_details"), :class => "plan-details" ) %>
 					</div>
