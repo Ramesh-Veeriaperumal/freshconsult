@@ -54,7 +54,9 @@
 				  <% end -%> 
 			</li>
 		<% end %>
+		<div>  <%= will_paginate topics %> </div>
 	</ul>
+	
 <% else %>
 	<div class="big-info">
 		<div class="no-info-text"> <%= t('no_topics_text')%> </div>
