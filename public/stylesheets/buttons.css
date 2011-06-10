@@ -478,7 +478,7 @@ button.positive, .buttons a.positive {
   color: #fff;
 }
 
-.button {
+.button, .slim-button {
   display: -moz-inline-box;
   -moz-box-orient: vertical;
   display: inline-block;
@@ -521,10 +521,10 @@ button.positive, .buttons a.positive {
   border: 1px solid #cfcfcf;
   cursor: pointer;
 }
-.button {
+.button, .slim-button {
   *display: inline;
 }
-.button img {
+.button img, .slim-button img {
   margin: 0 3px -3px 0 !important;
   padding: 0;
   border: none;
@@ -532,14 +532,22 @@ button.positive, .buttons a.positive {
   height: 16px;
   float: none;
 }
-.button:visited {
+.button:visited, .slim-button:visited {
   color: #3f3f3f;
 }
-.button:hover {
+.button:hover, .slim-button:hover {
   color: #666666;
 }
-.button:active {
+.button:active, .slim-button:active {
   color: #3f3f3f;
+}
+
+.slim-button {
+  padding: 1px 8px;
+  font-size: 10px;
+  -moz-border-radius: 8px 8px 8px 8px;
+  -webkit-border-radius: 8px 8px 8px 8px;
+  border-radius: 8px 8px 8px 8px;
 }
 
 .button:hover {

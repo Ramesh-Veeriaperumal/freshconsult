@@ -196,13 +196,10 @@
 	    </div>		 
 
 		<% unless @ticket.deleted %>
-			<div class="floatr">
+			<div class="alignright">
 				<%= link_to_function(t('ticket.reply_to'), "swapEmailNote('reply', this)", :class => 'uiButton', :id => "ReplyButton") if @item.requester %>	  
 				<%= link_to_function(t('ticket.add_note'), "swapEmailNote('note', this)", :class => 'uiButton', :id => "AddNoteButton") %>		
-			</div>			
-		<% end %>
-		<% unless @ticket_notes.blank? then %>
-			<h3 class="subtitle">Conversation</h3>
+			</div>
 			<div>
 						<% if @item.requester %> 
 							<%= render(:partial => '/helpdesk/shared/note_form', :locals => {:id => 'add-note',	:cntid => "cnt-note", :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
@@ -210,7 +207,10 @@
 						<% else %>
 							<%= render(:partial => '/helpdesk/shared/note_form', :locals => {:id => 'add-note',	:cntid => "cnt-note", :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
 						<% end %>
-			</div>
+			</div>			
+		<% end %>		
+		<% unless @ticket_notes.blank? then %>
+			<h3 class="subtitle">Conversation</h3>			
 			<div class="requestCnt request-conversation">
 				<%= render :partial => 'note', :collection => @ticket_notes %>
 		    </div>
