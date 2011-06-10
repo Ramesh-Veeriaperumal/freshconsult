@@ -60,23 +60,11 @@ class ContactsController < ApplicationController
     @user = current_account.users.new #by Shan need to check later  
     company_name = params[:user][:customer]    
     unless company_name.blank?      
-      params[:user][:customer_id] = add_or_update_company   
-    end
-    logger.debug "build_save :: @user is :::#{@user.inspect}"
+     params[:user][:customer_id] = current_account.customers.find_or_create_by_name(company_name).id 
+    end    
     @user.signup!(params)
   end
   
-  def add_or_update_company   
-    company_name = params[:user][:customer]       
-    customer = (current_account.customers.find_by_name(company_name))     
-    if customer.nil? 
-      @customer = current_account.customers.new(:name =>company_name)
-      @customer.save
-      customer = @customer
-    end
-    
-    return customer.id    
-  end
   
   def show 
     @user = current_account.all_users.find(params[:id])
@@ -92,11 +80,10 @@ class ContactsController < ApplicationController
   def update    
     company_name = params[:user][:customer]
     unless company_name.empty?     
-      @obj.customer_id = add_or_update_company    
+      @obj.customer_id = current_account.customers.find_or_create_by_name(company_name).id 
     else
       @obj.customer_id = nil
-    end
-     
+    end     
     if @obj.update_attributes(params[cname])
       #flash[:notice] = "The #{cname.humanize.downcase} has been updated."
       redirect_to contacts_url
@@ -105,8 +92,7 @@ class ContactsController < ApplicationController
       check_email_exist
       render :action => 'edit'
     end
-  end
-  
+  end  
   
    def destroy   
       if @obj.respond_to?(:deleted)

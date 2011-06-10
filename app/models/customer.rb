@@ -8,7 +8,7 @@ class Customer < ActiveRecord::Base
   
   belongs_to :account
   
-  has_many :users , :class_name =>'User' ,:conditions =>{:deleted =>false}
+  has_many :users , :class_name =>'User' ,:conditions =>{:deleted =>false} , :dependent => :nullify
   
   has_many :tickets , :through => :users , :class_name => 'Helpdesk::Ticket'
   
@@ -55,12 +55,14 @@ class Customer < ActiveRecord::Base
            :order => 'name'
   end
 
+  def self.add_or_update(account, name)
+    
+  end
   
   #setting default sla
   def check_sla_policy
     
-    if self.sla_policy_id.nil?      
-      
+    if self.sla_policy_id.nil?            
       self.sla_policy_id = account.sla_policies.find_by_is_default(true).id
       
     end
