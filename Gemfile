@@ -41,6 +41,7 @@ gem "zendesk-features", :require => "features"
 
 gem "sass", "3.1.1"
 gem "braintree","2.10.0"
+gem "lockfile","1.4.3"
 
 #gem "win32-open3", "0.3.2"
 

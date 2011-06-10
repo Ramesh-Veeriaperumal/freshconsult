@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110530101029) do
+ActiveRecord::Schema.define(:version => 20110607072447) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -540,7 +540,7 @@ ActiveRecord::Schema.define(:version => 20110530101029) do
 
   create_table "solution_articles", :force => true do |t|
     t.string   "title"
-    t.text     "description",  :limit => 16777215
+    t.text     "description",  :limit => 2147483647
     t.integer  "user_id",      :limit => 8
     t.integer  "folder_id",    :limit => 8
     t.integer  "status"
@@ -594,15 +594,16 @@ ActiveRecord::Schema.define(:version => 20110530101029) do
   create_table "subscription_discounts", :force => true do |t|
     t.string   "name"
     t.string   "code"
-    t.decimal  "amount",                 :precision => 6, :scale => 2, :default => 0.0
+    t.decimal  "amount",                              :precision => 6, :scale => 2, :default => 0.0
     t.boolean  "percent"
     t.date     "start_on"
     t.date     "end_on"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "apply_to_setup",                                       :default => true
-    t.boolean  "apply_to_recurring",                                   :default => true
-    t.integer  "trial_period_extension",                               :default => 0
+    t.boolean  "apply_to_setup",                                                    :default => true
+    t.boolean  "apply_to_recurring",                                                :default => true
+    t.integer  "trial_period_extension",                                            :default => 0
+    t.integer  "plan_id",                :limit => 8
   end
 
   create_table "subscription_payments", :force => true do |t|

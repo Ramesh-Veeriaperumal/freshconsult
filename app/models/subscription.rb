@@ -72,7 +72,7 @@ class Subscription < ActiveRecord::Base
   def store_card(creditcard, gw_options = {})
     # Clear out payment info if switching to CC from PayPal
     destroy_gateway_record(paypal) if paypal?
-    
+    @charge_now = gw_options[:charge_now]
     @response = if billing_id.blank?
       gateway.store(creditcard, gw_options)
     else
@@ -231,7 +231,7 @@ class Subscription < ActiveRecord::Base
           end
         end
       else
-        if !next_renewal_at? || next_renewal_at < 1.day.from_now.at_midnight
+        if !next_renewal_at? || next_renewal_at < 1.day.from_now.at_midnight || @charge_now.eql?("true")
           if (@response = gateway.purchase(amount_in_pennies, billing_id)).success?
             subscription_payments.build(:account => account, :amount => amount, :transaction_id => @response.authorization)
             self.state = 'active'
@@ -270,7 +270,7 @@ class Subscription < ActiveRecord::Base
     def validate_on_update
       #return unless self.agent_limit.updated?
       
-      if(agent_limit < account.agents.count)
+      if(agent_limit && agent_limit < account.agents.count)
         errors.add_to_base("You Freshdesk currently has #{account.agents.count} agents, you cannot subscripe to lesser number of agents. Please delete some agents and try again.")
       end
     end

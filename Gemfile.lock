@@ -59,6 +59,7 @@ GEM
       closure-compiler (>= 0.1.0)
       yui-compressor (>= 0.9.1)
     linecache (0.43)
+    lockfile (1.4.3)
     map-fields (1.0.0)
       fastercsv (>= 1.2.3)
     mime-types (1.16)
@@ -179,6 +180,7 @@ DEPENDENCIES
   http_accept_language (= 1.0.1)
   i18n (= 0.4.2)
   jammit
+  lockfile (= 1.4.3)
   map-fields (= 1.0.0)
   mongrel
   mysql

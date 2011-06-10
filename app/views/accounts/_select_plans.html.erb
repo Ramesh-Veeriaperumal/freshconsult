@@ -4,19 +4,27 @@
 			<tr> 
 				<% plans.each do |plan| %>
 				<td id = "plan-<%= plan.name %>">
-					<div class="plan-title">			
-						<% plan_name = plan.name.downcase %>		
-						<%= content_tag(:h2, plan.name ) %>
-						<%= content_tag(:h3, "$#{plan.amount.to_i} per agent/month") %>	
-						<%= content_tag(:h4, t("#{plan_name}_brief") ) %>
-						<%= content_tag(:p,  t("#{plan_name}_details") ) %>
-						<button data-plan="<%= plan.name %>" data-plan-cost="<%= plan.amount.to_i %>" data-plan-id = "<%= plan.id %>" class="plan-button" id='<%= "#{ plan.name }_button" %>'><%=t('choose_plan')%></button>
-						<div id="billing-<%= plan.name %>"></div>
+					<div class="plan-details">			
+						<div class="plan-title">
+							<% plan_name = plan.name.downcase %>
+							<% bool_beta_plan = (plan_name == "premium" && @discount  && @discount.name.downcase == "beta users special") %>
+							<%= content_tag(:h2, plan.name ) %>
+							<% if(bool_beta_plan) %>
+								<%= content_tag(:h3, "<span class='discount-strikethrough'>$29 </span> $19 " +  content_tag(:span, t('plan_amount'), :class => "info-data")) %>
+							<% else %>
+								<%= content_tag(:h3, "$#{plan.amount.to_i} " + content_tag(:span, t('plan_amount'), :class => "info-data")) %>
+							<% end %>								
+							<%= content_tag(:h4, t("#{plan_name}_brief") ) %>
+							<%= content_tag(:div, (plan_name == "premium") ? t("special_beta_offer") : "&nbsp;", :class => "discount-info-text" ) if(@discount && @discount.name.downcase == "beta users special")  %>
+						</div>
+						<%= content_tag(:p,  t("#{plan_name}_details"), :class => "plan-details" ) %>
 					</div>
+					<button data-plan="<%= plan.name %>" data-plan-cost="<%= plan.amount.to_i %>" data-plan-id = "<%= plan.id %>" class="plan-button" id='<%= "#{ plan.name }_button" %>'><%=t('choose_plan')%></button>
+					<div id="billing-<%= plan.name %>"></div>
 				</td>
 				<% end %>  
 			</tr> 
-		</table> 
+		</table>
 	</div>
 </div>
 <div id="billing-template" class="billing" style="display:none;">

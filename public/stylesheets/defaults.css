@@ -107,3 +107,7 @@ h3.sub_title {
 table td {
   vertical-align: top;
 }
+
+.strikethrough {
+  text-decoration: line-through;
+}

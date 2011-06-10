@@ -112,6 +112,8 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
 	@include corners(4px);
 }
 .uiButton:hover, .fdbutton:hover, .forum_button:hover { background-color:$tab_color; border-color: darken($tab_color, 10%); color:#ffffff; @include text-shadow(rgba(0, 0, 0, 0.2), -1px, -1px, 1px); }
+.uiButton-active{  background-color:darken($tab_color, 8%); border-color: darken($tab_color, 10%); color:#ffffff; @include text-shadow(rgba(0, 0, 0, 0.2), -1px, -1px, 1px); }
+
 .uiButton:active, .fdbutton:active				{ top: 1px; }
 .small.uiButton, .small.uiButton:visited 		{ font-size: 11px;  }
 .uiButton, .fdbutton, .uiButton:visited, .fdbutton:visited, 
@@ -231,7 +233,7 @@ button.positive, .buttons a.positive{
 }
 
 
-.button {
+.button, .slim-button {
 	@include anchor-button;
     white-space: nowrap;
     text-align: center;
@@ -250,6 +252,12 @@ button.positive, .buttons a.positive{
 		
     border: 1px solid #cfcfcf;
     cursor: pointer;
+}
+
+.slim-button{
+	padding:1px 8px;
+	font-size:10px;
+	@include corners(8px);
 }
 
 .button:hover {

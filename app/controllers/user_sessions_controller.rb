@@ -62,7 +62,7 @@ require 'openid'
     current_user_session.destroy
     #flash[:notice] = "Logout successful!"
     if current_account.sso_enabled? and !current_account.sso_options[:logout_url].blank?
-      redirect_to current_account.sso_options[:logout_url]
+      return redirect_to current_account.sso_options[:logout_url]
     end
     redirect_to root_url
   end
@@ -113,7 +113,7 @@ require 'openid'
   @current_user = @auth.user unless @auth.blank?
   @current_user = current_account.all_users.find_by_email(email) if @current_user.blank?
   if @current_user.blank?  
-    @current_user = create_user(email,identity_url,current_account) 
+    @current_user = create_user(email,current_account,identity_url) 
   elsif @auth.blank?
     @current_user.authorizations.create(:provider => provider, :uid => identity_url, :account_id => current_account.id) #Add an auth in existing user
     @current_user.active = true 
@@ -150,15 +150,16 @@ def get_email(resp)
   end
 end
 
- def create_user(email,identity_url, account)
+ def create_user(email, account,identity_url=nil)
    logger.debug "create user has beeen called ::"
       @contact = account.users.new
       @contact.email = email
       @contact.user_role = User::USER_ROLES_KEYS_BY_TOKEN[:customer]
       @contact.active = true     
       @contact.save  
-      @contact.authorizations.create(:uid => identity_url , :provider => 'open_id',:account_id => current_account.id)
+      @contact.authorizations.create(:uid => identity_url , :provider => 'open_id',:account_id => current_account.id) unless identity_url.nil?
       return @contact
   end
-
+  
+  
 end
