@@ -75,9 +75,6 @@ class PostsController < ApplicationController
     @post  = @topic.posts.build(params[:post])
     @post.user = current_user
     @post.account_id = current_account.id
-		parser = HTMLToTextileParser.new
-		parser.feed(h(@post.body_html))
-	  @post.body_html = parser.to_textile
     @post.save!
     create_attachments
     respond_to do |format|

@@ -6,9 +6,12 @@ body, td, pre {
   margin: 8px;
 }
 
+p, li {
+  line-height: 1.55em;
+}
+
 p {
   font-size: 13px;
-  line-height: 1.55em;
   white-space: pre-wrap;
   /* css-3 */
   white-space: -moz-pre-wrap;
