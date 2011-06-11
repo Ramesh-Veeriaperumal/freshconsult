@@ -10,7 +10,11 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       text_retrv = params[:text].nil? ? 'html' : 'text'
       charset_encoding = (ActiveSupport::JSON.decode charsets)[text_retrv]
       if  !charset_encoding.nil? and  !(["utf-8","utf8"].include?(charset_encoding.downcase))
-        params[:text] = Iconv.new('utf-8//IGNORE', charset_encoding).iconv(params[text_retrv.to_sym]) 
+        begin
+         params[:text] = Iconv.new('utf-8//IGNORE', charset_encoding).iconv(params[text_retrv.to_sym]) 
+        rescue
+         #Do nothing here Need to add rescue code kiran
+        end
       end
       #Charset Encoding ends
       display_id = Helpdesk::Ticket.extract_id_token(params[:subject])
