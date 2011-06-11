@@ -74,6 +74,21 @@ en:
         scenario: Scenario Automations
         remote-authentication: Remote Authentication
         everything_helpdesk: Everything Helpdesk
+        canned-response: Canned Response
+      
+    canned_response:
+      index:
+        new: New Canned Response
+        title: Canned Responses
+        delete_confirm: Are you sure you want to delete this canned response?       
+      edit: Edit Canned Response
+      form:
+        available_for: Available for
+        all_agents: All agents
+        groups: Agents in group
+        me_only: Me only
+        
+             
   ends_with: Ends with
   last_name: Last Name
   forum: 
@@ -726,6 +741,9 @@ en:
       insert_url_tip: Insert this solution URL to your Reply or Note
       no_result: No Solutions found
       insert_content: Insert Content
+    canned_responses:
+      insert_ca_response: Insert Canned Response
+      insert_ca_resp_tip: Insert this canned response 
     ham_btn_title: This is not spam
     edit: Edit ticket
     assigned_to: Assigned To

@@ -64,6 +64,11 @@
 
 			jQuery('#custom_ticket_form').validate(); 
 		});
+		
+		function show_canned_response()
+		{
+			jQuery('#canned_response_list').show()
+		}
 	<% end %>
 <% end %> 
 
@@ -201,6 +206,11 @@
 				<%= link_to_function(t('ticket.add_note'), "swapEmailNote('note', this)", :class => 'uiButton', :id => "AddNoteButton") %>		
 			</div>
 			<div>
+				<!-- un-comment this to see insert caned response -->
+				<!--div class='alignright'><a class='l_placeholder' href='javascript:show_canned_response()'><%=t(:'ticket.canned_responses.insert_ca_response')%> &raquo;</a></div-->			
+				<div style="display:none" id="canned_response_list">
+					<%= render :partial => "helpdesk/tickets/components/canned_responses", :locals => { :ticket => @ticket } %>				
+		    	</div>
 						<% if @item.requester %> 
 							<%= render(:partial => '/helpdesk/shared/note_form', :locals => {:id => 'add-note',	:cntid => "cnt-note", :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
 							<%= render(:partial => '/helpdesk/shared/reply_form', :locals => {:id => 'send-email', :cntid => 'cnt-reply', :note => [@ticket, Helpdesk::Note.new(:private => false)] }) %>
@@ -215,6 +225,8 @@
 				<%= render :partial => 'note', :collection => @ticket_notes %>
 		    </div>
 		<% end %>
+
+		
 	</div>
 <% end %>
 

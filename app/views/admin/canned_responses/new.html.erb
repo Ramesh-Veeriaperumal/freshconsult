@@ -1,0 +1,6 @@
+<h3 class="title"><%=t('admin.canned_response.index.new')%></h3>
+<% form_for @ca_response, :html => { :method => :post , :id => "new_canned_response" } do |f| %>
+	<%= render :partial => "form", :locals => { :f => f } %>
+<% end %>
+
+
