@@ -68,6 +68,8 @@ class Account < ActiveRecord::Base
   has_many :email_configs, :conditions => { :active => true }
   has_one  :primary_email_config, :class_name => 'EmailConfig', :conditions => { :primary_role => true }
   has_many :products, :class_name => 'EmailConfig', :conditions => { :primary_role => false }
+  has_many :portals
+  has_one  :main_portal, :source => :portal, :through => :primary_email_config
   
   has_many :email_notifications, :dependent => :destroy
   has_many :groups, :dependent => :destroy
