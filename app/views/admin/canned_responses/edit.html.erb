@@ -1,0 +1,4 @@
+<h3 class="title"><%=t('admin.canned_response.edit')%></h3>
+<% form_for (@ca_response, :html => {:id => "edit_canned_response" }) do |f| %>
+	<%= render :partial => "form", :locals => { :f => f } %>
+<% end %>

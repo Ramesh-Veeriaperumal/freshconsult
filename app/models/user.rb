@@ -131,6 +131,8 @@ class User < ActiveRecord::Base
   
   has_many :agent_groups , :class_name =>'AgentGroup', :foreign_key => "user_id" , :dependent => :destroy
   
+  has_many :canned_responses , :class_name =>'Admin::CannedResponse' 
+  
    
   #accepts_nested_attributes_for :agent
   
@@ -269,7 +271,7 @@ class User < ActiveRecord::Base
            :conditions => ['name like ?', "#{letter}%"],
            :order => 'name'
   end
-
+ 
   protected
     def set_account_id_in_children
       self.avatar.account_id = account_id unless avatar.nil?
@@ -293,7 +295,5 @@ class User < ActiveRecord::Base
    end
    
  end
- 
- 
   
 end

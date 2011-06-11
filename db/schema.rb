@@ -10,7 +10,7 @@
 # It's strongly recommended to check this file into your version control system.
 
 ActiveRecord::Schema.define(:version => 20110611093552) do
-
+  
   create_table "accounts", :force => true do |t|
     t.string   "name"
     t.datetime "created_at"
@@ -30,6 +30,30 @@ ActiveRecord::Schema.define(:version => 20110611093552) do
 
   add_index "accounts", ["full_domain"], :name => "index_accounts_on_full_domain", :unique => true
   add_index "accounts", ["helpdesk_url"], :name => "index_accounts_on_helpdesk_url"
+
+  create_table "admin_canned_responses", :force => true do |t|
+    t.string   "title"
+    t.text     "content",    :limit => 16777215
+    t.integer  "account_id", :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "admin_canned_responses", ["account_id", "created_at"], :name => "index_admin_canned_responses_on_account_id_and_created_at"
+
+  create_table "admin_user_accesses", :force => true do |t|
+    t.string   "accessible_type"
+    t.integer  "accessible_id"
+    t.integer  "user_id",         :limit => 8
+    t.integer  "visibility",      :limit => 8
+    t.integer  "group_id",        :limit => 8
+    t.integer  "account_id",      :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "admin_user_accesses", ["account_id", "created_at"], :name => "index_admin_user_accesses_on_account_id_and_created_at"
+  add_index "admin_user_accesses", ["user_id"], :name => "index_admin_user_accesses_on_user_id"
 
   create_table "agent_groups", :force => true do |t|
     t.integer  "user_id",    :limit => 8
