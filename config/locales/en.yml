@@ -733,6 +733,9 @@ en:
       insert_url_tip: Insert this solution URL to your Reply or Note
       no_result: No Solutions found
       insert_content: Insert Content
+    canned_responses:
+      insert_ca_response: Insert Canned Response
+      insert_ca_resp_tip: Insert this canned response 
     ham_btn_title: This is not spam
     edit: Edit ticket
     assigned_to: Assigned To

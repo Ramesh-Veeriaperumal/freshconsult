@@ -85,6 +85,9 @@ class Account < ActiveRecord::Base
   
   has_one :form_customizer , :class_name =>'Helpdesk::FormCustomizer', :dependent => :destroy
   
+  has_many :canned_responses , :class_name =>'Admin::CannedResponse' , :dependent => :destroy  
+  has_many :user_accesses , :class_name =>'Admin::UserAccess' , :dependent => :destroy
+  
   #Scope restriction ends
   
   validates_format_of :domain, :with => /\A[a-zA-Z][a-zA-Z0-9]*\Z/

@@ -260,6 +260,11 @@ class Helpdesk::TicketsController < ApplicationController
     render :text => (sol_desc.description.gsub(/<\/?[^>]*>/, "")).gsub(/&nbsp;/i,"") || "" 
   end
  
+  def get_ca_response_content   
+    ca_resp = current_account.canned_responses.find(params[:id])
+    render :text => (ca_resp.content.gsub(/<\/?[^>]*>/, "")).gsub(/&nbsp;/i,"") || "" 
+  end
+  
   protected
     def item_url
       return new_helpdesk_ticket_path if params[:save_and_create]

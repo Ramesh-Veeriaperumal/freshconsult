@@ -27,7 +27,8 @@ module Admin::HomeHelper
                                     ['/helpdesk/sla_policies',      'sla'                     ],
                                     ['/admin/va_rules',             'dispatcher'              ],
                                     ['/admin/automations',          'scenario',         feature?(:scenario_automations)  ],
-                                    ['/admin/business_calendars',   'business-hours',   feature?(:business_hours)        ]
+                                    ['/admin/business_calendars',   'business-hours',   feature?(:business_hours)        ],
+                                    #['/admin/canned_responses',     'canned-response'          ],
                     ]],
                     [ t(".everything_else"), [
                                     ['/account',                    'account-settings'  , current_user.account_admin?      ],
