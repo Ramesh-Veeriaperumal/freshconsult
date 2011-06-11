@@ -39,7 +39,7 @@
 		<span class="loading-edit" id='<%= "loading_#{post.id}" %>' style="display:none;"></span>
 	</div>
 	<div class="details" id='<%= "post_details_#{post.id}" %>'>
-		<%= post.body_html %>
+		<%= auto_link(RedCloth.new(post.body_html).to_html, :all, :target => "_blank") %>
 	</div>
 	<% unless post.attachments.empty? %>
 			<h4><%= pluralize(post.attachments.size, 'attachment')%></h4>

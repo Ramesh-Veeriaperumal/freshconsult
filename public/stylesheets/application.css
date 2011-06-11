@@ -722,15 +722,14 @@ body h5 {
 }
 .request_details div.description .details {
   padding: 8px 0px 3px 0px;
-  margin-top: 8px;
+  margin-top: 4px;
   border-top: 1px solid #efefef;
   color: #333333;
   font-size: 13px;
 }
 .request_details div.description .details p {
   font-size: 13px;
-  padding-right: 20px;
-  line-height: 1.7em;
+  line-height: 1.55em;
   white-space: pre-wrap;
   /* css-3 */
   white-space: -moz-pre-wrap;
@@ -741,7 +740,69 @@ body h5 {
   /* Opera 7 */
   word-wrap: break-word;
   /* Internet Explorer 5.5+ */
-  margin: 0px 0 6px 0;
+  margin: 0px 0 0px 0;
+}
+.request_details div.description .details h1 {
+  font-size: 2em;
+}
+.request_details div.description .details h2 {
+  font-size: 1.5em;
+}
+.request_details div.description .details h3 {
+  font-size: 1.17em;
+}
+.request_details div.description .details h4 {
+  font-size: 1em;
+}
+.request_details div.description .details h5 {
+  font-size: .83em;
+}
+.request_details div.description .details h6 {
+  font-size: .75em;
+}
+.request_details div.description .details img {
+  border: 0;
+}
+.request_details div.description .details table {
+  cursor: default;
+}
+.request_details div.description .details table td, .request_details div.description .details table th {
+  cursor: text;
+}
+.request_details div.description .details ins {
+  border-bottom: 1px solid green;
+  text-decoration: none;
+  color: green;
+}
+.request_details div.description .details del {
+  color: red;
+  text-decoration: line-through;
+}
+.request_details div.description .details cite {
+  border-bottom: 1px dashed blue;
+}
+.request_details div.description .details acronym {
+  border-bottom: 1px dotted #CCC;
+  cursor: help;
+}
+.request_details div.description .details abbr {
+  border-bottom: 1px dashed #CCC;
+  cursor: help;
+}
+.request_details div.description .details ol, .request_details div.description .details ul {
+  margin: 14px 0px 14px 0px;
+  padding: 0px 0px 0px 40px;
+  line-height: 17px;
+}
+.request_details div.description .details ul {
+  list-style: disc outside;
+}
+.request_details div.description .details blockquote {
+  margin: 1em 1em;
+  color: #999;
+  border-left: 2px solid #999;
+  padding: 6px 6px 1px 1em;
+  background-color: #EEE;
 }
 .request_details div.description .details .ui-form {
   -moz-border-radius: 0px 0px 0px 0px;
@@ -749,7 +810,9 @@ body h5 {
   border-radius: 0px 0px 0px 0px;
   border-left: 0px;
   border-right: 0px;
+  padding: 0px;
   padding-top: 16px;
+  margin: -1px -12px;
 }
 .request_details div.description .details .ui-form label {
   font-size: 13px;
