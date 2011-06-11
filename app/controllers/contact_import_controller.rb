@@ -6,20 +6,7 @@ class ContactImportController < ApplicationController
                     :file_field => :file, 
                     :params => [:user]
    
-   
-    
- #duplicate code need to find a way to generalize it 
-  def add_or_update_company
-    company_name = @params_hash[:user][:company]       
-    cust_id = current_account.customers.find_by_name(company_name)    
-    if cust_id.nil? 
-      @customer = current_account.customers.new(:name =>company_name)
-      @customer.save
-      cust_id = @customer.id
-    end
-    return cust_id
-  end
-    
+  
   def create
     created = 0
     updated = 0
@@ -33,14 +20,14 @@ class ContactImportController < ApplicationController
                                 :email =>  row[(params[:fields]["4"]).to_i],
                                 :twitter_id => row[(params[:fields]["5"]).to_i], 
                                 :customer_id => nil,
-                     }
-                                }
-                                email = @params_hash[:user][:email]  
-         unless  @params_hash[:user][:company].nil?      
-                @params_hash[:user][:customer_id]= add_or_update_company   
+                                 }
+                      }
+         email = @params_hash[:user][:email]  
+         company_name = @params_hash[:user][:company]
+         unless company_name.nil?      
+           @params_hash[:user][:customer_id]= current_account.customers.find_or_create_by_name(company_name).id 
          end
-        @user = current_account.users.find_by_email(email)
-        
+        @user = current_account.users.find_by_email(email)        
         unless @user.nil?
           if @user.update_attributes(@params_hash[:user])
              updated+=1
