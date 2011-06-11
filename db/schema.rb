@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110607072447) do
+ActiveRecord::Schema.define(:version => 20110611071730) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -112,6 +112,7 @@ ActiveRecord::Schema.define(:version => 20110607072447) do
     t.boolean  "primary_role",                 :default => false
     t.boolean  "active",                       :default => false
     t.string   "activator_token"
+    t.string   "name"
   end
 
   add_index "email_configs", ["account_id", "to_email"], :name => "index_email_configs_on_account_id_and_to_email", :unique => true
