@@ -36,6 +36,7 @@ gem "net-dns", "0.6.1"
 gem "classifier", "1.3.1", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/classifier-1.3.1"
 gem "stemmer", "1.0.1", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/stemmer-1.0.1"
 gem "tiny_mce", "0.1.4"
+gem "html2textile", "~> 1.0.0.beta1"
 gem "jammit"
 gem "zendesk-features", :require => "features"
 
