@@ -27,8 +27,7 @@ class TopicsController < ApplicationController
           redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
     end
   end
-  
-  
+    
   def index
     respond_to do |format|
       format.html { redirect_to forum_path(params[:forum_id]) }
@@ -43,8 +42,7 @@ class TopicsController < ApplicationController
     @topic = Topic.new
   end
   
-  def show
-    
+  def show    
     respond_to do |format|
       format.html do
         # see notes in application.rb on how this works

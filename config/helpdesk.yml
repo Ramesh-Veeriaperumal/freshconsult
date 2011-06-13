@@ -261,7 +261,7 @@ FRESH_EDITOR:
     theme_advanced_resizing:            true
     content_css:                        "/stylesheets/fresh-mce/content.css"
     skin:                               "fresh"
-    height:                             300
+    height:                             240
     paste_create_paragraphs:            false
     paste_create_linebreaks:            false
     paste_use_dialog:                   true
@@ -271,4 +271,6 @@ FRESH_EDITOR:
     paste_remove_styles:                true
     paste_text_sticky:                  true
     paste_convert_headers_to_strong:    true
+    theme_advanced_styles:              "Code=codeStyle;Quote=quoteStyle"
+    entity_encoding:                    "raw"
   
