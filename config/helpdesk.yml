@@ -249,6 +249,8 @@ FRESH_EDITOR:
        - media
        - advimage
        - paste
+       - inlinepopups
+
     mode:                               "textareas"
     apply_source_formatting:            true
     inline_styles:                      false
@@ -261,7 +263,9 @@ FRESH_EDITOR:
     theme_advanced_resizing:            true
     content_css:                        "/stylesheets/fresh-mce/content.css"
     skin:                               "fresh"
+    inlinepopups_skin:                  "fresh"
     height:                             240
+    width:                              "100%"
     paste_create_paragraphs:            false
     paste_create_linebreaks:            false
     paste_use_dialog:                   true
@@ -273,4 +277,4 @@ FRESH_EDITOR:
     paste_convert_headers_to_strong:    true
     theme_advanced_styles:              "Code=codeStyle;Quote=quoteStyle"
     entity_encoding:                    "raw"
-  
+    dialog_type:                        "modal"
