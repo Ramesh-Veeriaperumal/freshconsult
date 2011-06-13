@@ -25,6 +25,8 @@ class AccountsController < ApplicationController
     c.requires_permission :manage_account
   end
   
+  filter_parameter_logging :creditcard,:password
+  
   def show
   end   
    

@@ -32,10 +32,11 @@ require 'openid'
               flash[:notice] = t(:'flash.login.success')
               redirect_back_or_default('/')      
           else
-              redirect_to current_account.sso_options[:login_url]
+              flash[:notice] = "Login was unscucessfull!"
+              redirect_to login_normal_url
           end
       else
-        redirect_to current_account.sso_options[:login_url]
+        redirect_to login_normal_url
       end
    end
   
