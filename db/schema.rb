@@ -9,8 +9,8 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110611093552) do
-  
+ActiveRecord::Schema.define(:version => 20110613054601) do
+
   create_table "accounts", :force => true do |t|
     t.string   "name"
     t.datetime "created_at"
@@ -33,7 +33,7 @@ ActiveRecord::Schema.define(:version => 20110611093552) do
 
   create_table "admin_canned_responses", :force => true do |t|
     t.string   "title"
-    t.text     "content",    :limit => 16777215
+    t.text     "content",    :limit => 2147483647
     t.integer  "account_id", :limit => 8
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -547,12 +547,14 @@ ActiveRecord::Schema.define(:version => 20110611093552) do
 
   create_table "portals", :force => true do |t|
     t.string   "name"
-    t.integer  "product_id",  :limit => 8
-    t.integer  "account_id",  :limit => 8
+    t.integer  "product_id",           :limit => 8
+    t.integer  "account_id",           :limit => 8
     t.string   "portal_url"
     t.text     "preferences"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "solution_category_id", :limit => 8
+    t.integer  "forum_category_id",    :limit => 8
   end
 
   add_index "portals", ["account_id", "portal_url"], :name => "index_portals_on_account_id_and_portal_url"
