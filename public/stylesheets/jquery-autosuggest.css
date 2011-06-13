@@ -6,7 +6,7 @@ ul.as-selections {
   border-bottom: 1px solid #CFCFCF;
   border-left: 1px solid #CFCFCF;
   border-right: 1px solid #CFCFCF;
-  padding: 2px 3px 0px 1px;
+  padding: 4px 3px 0px 3px;
   margin: 0;
   overflow: auto;
   background-color: #fff;
@@ -18,7 +18,7 @@ div.hide-as-selections-message div.as-results-cc {
 }
 
 ul.as-selections.loading {
-  background-color: #eee;
+  background-position: right top;
 }
 
 ul.as-selections li {
@@ -121,56 +121,44 @@ ul.as-selections li.as-original input {
 ul.as-list {
   position: absolute;
   list-style-type: none;
-  margin: 2px 0 0 0;
-  padding: 0;
-  font-size: 14px;
+  margin: 0px 0 0 0;
+  padding: 0px 0px 0px 0px;
+  font-size: 12px;
   color: #000;
-  font-family: "Lucida Grande", arial, sans-serif;
-  background-color: #fff;
-  background-color: rgba(255, 255, 255, 0.95);
+  background-color: #efefef;
   z-index: 2;
-  box-shadow: 0 2px 12px #222;
-  -webkit-box-shadow: 0 2px 12px #222;
-  -moz-box-shadow: 0 2px 12px #222;
-  border-radius: 5px;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
+  -moz-box-shadow: rgba(0, 0, 0, 0.6) 0 1px 2px;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.6) 0 1px 2px;
+  box-shadow: rgba(0, 0, 0, 0.6) 0 1px 2px;
+  border: 1px solid #999999;
 }
-
-ul.as-selections li.as-result-item, ul.as-selections li.as-message {
+ul.as-list li.as-result-item, ul.as-list li.as-message {
   margin: 0 0 0 0;
-  padding: 5px 12px;
+  padding: 6px 16px;
   background-color: transparent;
-  border: 1px solid #fff;
-  border-bottom: 1px solid #ddd;
   cursor: pointer;
-  border-radius: 5px;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
 }
-ul.as-selections li:first-child.as-result-item {
+ul.as-list li:first-child.as-result-item {
   margin: 0;
 }
-ul.as-selections li.as-message {
+ul.as-list li.as-message {
   margin: 0;
   cursor: default;
 }
-ul.as-selections li.as-result-item.active {
+ul.as-list li.as-result-item.active {
   background-color: #3668d9;
-  background-image: -webkit-gradient(linear, 0% 0%, 0% 64%, from(#6e81f5), to(#3e52f2));
+  background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #6e81f5), color-stop(100%, #3e52f2));
+  background: -webkit-linear-gradient(#6e81f5, #3e52f2);
+  background: -moz-linear-gradient(#6e81f5, #3e52f2);
+  background: -o-linear-gradient(#6e81f5, #3e52f2);
+  -pie-background: linear-gradient(#6e81f5, #3e52f2);
+  background: linear-gradient(#6e81f5, #3e52f2);
   border-color: #3342e8;
   color: #fff;
   text-shadow: 0 1px 2px #122042;
 }
-ul.as-selections li.as-result-item em {
-  font-style: normal;
-  background: #444;
-  padding: 0 2px;
-  color: #fff;
-}
-ul.as-selections li.as-result-item.active em {
-  background: #253f7a;
-  color: #fff;
+ul.as-list li.as-result-item em {
+  font-weight: bold;
 }
 
 /* Webkit Hacks  */

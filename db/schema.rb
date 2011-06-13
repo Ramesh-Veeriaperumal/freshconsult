@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110607072447) do
+ActiveRecord::Schema.define(:version => 20110613054601) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -30,6 +30,30 @@ ActiveRecord::Schema.define(:version => 20110607072447) do
 
   add_index "accounts", ["full_domain"], :name => "index_accounts_on_full_domain", :unique => true
   add_index "accounts", ["helpdesk_url"], :name => "index_accounts_on_helpdesk_url"
+
+  create_table "admin_canned_responses", :force => true do |t|
+    t.string   "title"
+    t.text     "content",    :limit => 2147483647
+    t.integer  "account_id", :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "admin_canned_responses", ["account_id", "created_at"], :name => "index_admin_canned_responses_on_account_id_and_created_at"
+
+  create_table "admin_user_accesses", :force => true do |t|
+    t.string   "accessible_type"
+    t.integer  "accessible_id"
+    t.integer  "user_id",         :limit => 8
+    t.integer  "visibility",      :limit => 8
+    t.integer  "group_id",        :limit => 8
+    t.integer  "account_id",      :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "admin_user_accesses", ["account_id", "created_at"], :name => "index_admin_user_accesses_on_account_id_and_created_at"
+  add_index "admin_user_accesses", ["user_id"], :name => "index_admin_user_accesses_on_user_id"
 
   create_table "agent_groups", :force => true do |t|
     t.integer  "user_id",    :limit => 8
@@ -112,6 +136,7 @@ ActiveRecord::Schema.define(:version => 20110607072447) do
     t.boolean  "primary_role",                 :default => false
     t.boolean  "active",                       :default => false
     t.string   "activator_token"
+    t.string   "name"
   end
 
   add_index "email_configs", ["account_id", "to_email"], :name => "index_email_configs_on_account_id_and_to_email", :unique => true
@@ -519,6 +544,22 @@ ActiveRecord::Schema.define(:version => 20110607072447) do
     t.string   "token"
     t.datetime "created_at"
   end
+
+  create_table "portals", :force => true do |t|
+    t.string   "name"
+    t.integer  "product_id",           :limit => 8
+    t.integer  "account_id",           :limit => 8
+    t.string   "portal_url"
+    t.text     "preferences"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "solution_category_id", :limit => 8
+    t.integer  "forum_category_id",    :limit => 8
+  end
+
+  add_index "portals", ["account_id", "portal_url"], :name => "index_portals_on_account_id_and_portal_url"
+  add_index "portals", ["account_id", "product_id"], :name => "index_portals_on_account_id_and_product_id"
+  add_index "portals", ["portal_url"], :name => "index_portals_on_portal_url"
 
   create_table "posts", :force => true do |t|
     t.integer  "user_id",    :limit => 8

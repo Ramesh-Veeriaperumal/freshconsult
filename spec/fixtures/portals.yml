@@ -1,0 +1,15 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  name: MyString
+  portal_url: MyString
+  preferences: MyText
+  product_id: 
+  account_id: 
+
+two:
+  name: MyString
+  portal_url: MyString
+  preferences: MyText
+  product_id: 
+  account_id: 

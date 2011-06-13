@@ -17,7 +17,7 @@ class PostsController < ApplicationController
   #caches_formatted_page :rss, :index, :monitored
   cache_sweeper :posts_sweeper, :only => [:create, :update, :destroy]
   
-  uses_tiny_mce :options => Helpdesk::MEDIUM_EDITOR
+  uses_tiny_mce :options => Helpdesk::FRESH_EDITOR
   
   def check_user_permission
     if (current_user.id != @post.user_id and  !current_user.has_manage_forums?)
@@ -58,7 +58,6 @@ class PostsController < ApplicationController
 
   def create
     @topic = Topic.find_by_id_and_forum_id_and_account_id(params[:topic_id],params[:forum_id],current_account.id)
-     
     if @topic.locked?
       respond_to do |format|
         format.html do
@@ -71,6 +70,7 @@ class PostsController < ApplicationController
       end
       return
     end
+    
     @forum = @topic.forum
     @post  = @topic.posts.build(params[:post])
     @post.user = current_user

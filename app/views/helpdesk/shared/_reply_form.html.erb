@@ -1,4 +1,4 @@
-<div class="request_panel" id="<%=cntid%>" style="display:none;">
+<div class="request_panel" id="<%=cntid%>" style="display:block;">
   <% form_for note, :html => {:multipart => true, :id => "HelpdeskReply" } do |f| %>
     <%= f.error_messages %>
 		<ul class="ui-form dont-validate">
@@ -6,23 +6,20 @@
 				<%= content_tag( :h4, t("ticket.reply_form.form_title"), :class => "title" ) %>				
 				<%= f.label(:reply_email, "From:", :class => "caption" ) %>
 				<div class="fields">
-					<!-- <div class="action_buttons">
-						<%= link_to_function( "Add Cc", "jQuery('#cc-form-container').show(); jQuery(this.parentNode).hide();" ) %>
-					</div> -->
 					<%= select :reply_email, :id, options_for_select(@reply_email, @ticket.reply_email) %>
-					<div class="info-data">
-						<% t("ticket.reply_form.reply_email_id") %>						
+					<div style="display:none;">
+					<%= link_to_function( "Add Cc", "jQuery('#cc-form-container').show(); jQuery(this.parentNode).hide();", :class => "slim-button" ) %>
 					</div>
 				</div>
 			</li>
-			<!-- <li class="inline-field" id="cc-form-container" style="display:none;">
+			<li class="inline-field" id="cc-form-container" style="display:none;">
 				<label class="caption">Cc:</label>
 				<%= hidden_field_tag :include_cc %> 
 				<div class="fields">
 					<input type="hidden" name="cc_emails" id="cc_emails" />
 					<%= text_field_tag :cc_emails_tag, ( @ticket.cc_email.join(",") unless @ticket.cc_email.blank? ), :class => "text" %>
 				</div>
-			</li> -->
+			</li>
 			<li class="inline-field">
 				<label class="caption">Message:</label>
 				<div class="fields">
@@ -69,43 +66,40 @@
 					focusCleanup: true,
 					focusInvalid: false,
 					errorPlacement: function(error, element) {
-				//	     if (element.attr("name") === "cc_emails_tag")
-				//	       error.insertAfter("#as-selections-cc_emails");
-				//	     else
-					       error.insertAfter(element);
+				  	     if (element.attr("name") === "cc_emails_tag")
+				  	       error.insertAfter("#as-results-cc_emails");
+					     	 else
+					       	error.insertAfter(element);
 					   }
-					}); 		
-			/*
+					}); 	
+
 			jQuery("#cc_emails_tag").rules("add", {
 				email: true,
 				messages: {
 					email: "One or more of the emails that you have entered are invalid",
 				}
-			});
-			
-			data = {items: [
-				{value: "", name: ""}
-			]};
+			}); 
 
 			jQuery("#cc_emails_tag")
 				.autoSuggest(
-						data.items, 
-						{selectedItemProp: "name", 
-						 searchObjProps: "name",
+						"<%= autocomplete_helpdesk_authorizations_path %>", 
+						{selectedValuesProp: "id",
+						 selectedItemProp: "id",
 						 startText: "",
-						 showResultList: false,
-						 asHtmlID: "cc_emails",
-						 selectionAdded: function(elem){
-						 var test_email =
-/^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i.test(jQuery("#cc_emails").val());
-						 if(!test_email)
-								elem.remove();
+ 					 	 //resultsHighlight: false,
+						 queryParam: "v",
+						 minChars: 2,
+   					 emptyText:"",
+						 limit: 5,
+						 formatList: function(data, elem){								
+								return elem.html(data.value + " \<" + data.id + "\>");
 						 },
-						 selectionClick: function(elem){
-							
+						 //showResultList: false,
+						 asHtmlID: "cc_emails",
+						 retrieveComplete: function(data){
+							 return data.results;
 						 }
 						});
-						*/
 		}); 
   <% end %>
 <% end %>
