@@ -92,7 +92,7 @@ class Helpdesk::Note < ActiveRecord::Base
       else
         e_notification = account.email_notifications.find_by_notification_type(EmailNotification::COMMENTED_BY_AGENT)
         Helpdesk::TicketNotifier.send_later(:notify_by_email, EmailNotification::COMMENTED_BY_AGENT, 
-            notable, self) if !private && e_notification.requester_notification?
+            notable, self) if source.eql?(SOURCE_KEYS_BY_TOKEN["note"]) && !private && e_notification.requester_notification?
       end
       
       notable.updated_at = created_at
