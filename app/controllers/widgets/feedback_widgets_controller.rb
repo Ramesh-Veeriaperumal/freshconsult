@@ -8,7 +8,10 @@ class Widgets::FeedbackWidgetsController < ApplicationController
   
   def create
     if create_the_ticket
-      render :action => :thanks
+      respond_to do |format|
+        format.html { render :action => :thanks}
+        format.xml  { head 200}
+      end
     else
       set_customizer
       render :action => :new
