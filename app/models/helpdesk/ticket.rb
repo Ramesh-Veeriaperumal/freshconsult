@@ -11,8 +11,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   has_flexiblefields
   
   #by Shan temp
-  attr_accessor :email, :name, :custom_field ,:customizer, :nscname 
-  
+  attr_accessor :email, :name, :custom_field ,:customizer, :nscname
   
   before_validation :populate_requester, :set_default_values 
   before_create :set_spam, :set_dueby, :save_ticket_states

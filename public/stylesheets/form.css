@@ -363,6 +363,19 @@ a.addchoice:hover {
 .ui-form .inlineChecklist input {
   top: 0px;
 }
+.ui-form .inline-radio {
+  padding: 3px 0px;
+  font-size: 13px;
+}
+.ui-form .inline-radio input.radio {
+  position: relative;
+  top: -3px;
+  margin-right: 4px;
+}
+.ui-form .inline-radio select {
+  font-size: 12px;
+  margin-top: 5px;
+}
 .ui-form li.textleft {
   overflow: hidden;
   *zoom: 1;
@@ -1165,7 +1178,7 @@ fieldset.nestedChoices {
 }
 
 .tabbed {
-  padding-left: 26px;
+  padding-left: 25px;
 }
 
 table.summary {

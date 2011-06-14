@@ -12,7 +12,7 @@ class Support::NotesController < ApplicationController
         "private" => false,
         "source" => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],
         "user_id" => current_user && current_user.id,
-        "account_id" =>current_account && current_account.id
+        "account_id" => current_account && current_account.id
       }.merge(params[:helpdesk_note]))
     
 

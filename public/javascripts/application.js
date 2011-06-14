@@ -73,7 +73,6 @@ var ReplyForm = {
   init: function() {
     EditForm.cancel();
     $('reply').toggle();
-    $('topic_body').focus();
     // for Safari which is sometime weird
 //    setTimeout('$(\"post_body\").focus();',50);
   }

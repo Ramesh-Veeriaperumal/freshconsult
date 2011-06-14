@@ -65,10 +65,9 @@ class ContactsController < ApplicationController
     @user.signup!(params)
   end
   
-  
   def show 
     @user = current_account.all_users.find(params[:id])
-    @user_tickets_open_pending = Helpdesk::Ticket.requester_active(@user)
+    @user_tickets_open_pending = current_account.tickets.requester_active(@user).visible.newest(5)
   end
   
   def delete_avatar
