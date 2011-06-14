@@ -271,7 +271,7 @@ class Subscription < ActiveRecord::Base
       #return unless self.agent_limit.updated?
       
       if(agent_limit && agent_limit < account.agents.count)
-        errors.add_to_base("You Freshdesk currently has #{account.agents.count} agents, you cannot subscripe to lesser number of agents. Please delete some agents and try again.")
+        errors.add_to_base(I18n.t("subscription.error.lesser_agents", {:agent_count => account.agents.count}))
       end
     end
     

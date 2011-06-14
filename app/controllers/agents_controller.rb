@@ -34,6 +34,7 @@ class AgentsController < Admin::AdminController
   def show    
     @agent = current_account.all_agents.find(params[:id])
     @user  = @agent.user
+    @recent_unresolved_tickets = current_account.tickets.assigned_to(@user).unresolved.visible.newest(5)
     #redirect_to :action => 'edit'
   end
 
@@ -61,8 +62,7 @@ class AgentsController < Admin::AdminController
     render :text => "success"
   end
 
-  def create   
-    
+  def create    
     @user  = current_account.users.new #by Shan need to check later        
     @agent = current_account.agents.new(params[nscname]) 
     
@@ -82,7 +82,6 @@ class AgentsController < Admin::AdminController
   end
 
   def update
-   
       if @agent.update_attributes(params[nscname])            
           @user = current_account.all_users.find(@agent.user_id)          
           if @user.update_attributes(params[:user])        
