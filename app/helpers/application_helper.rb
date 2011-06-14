@@ -17,8 +17,8 @@ module ApplicationHelper
       ['/home',               :home,        !permission?(:manage_tickets)],
       ['helpdesk/dashboard',  :dashboard,    permission?(:manage_tickets)],
       ['helpdesk/tickets',    :tickets,      permission?(:manage_tickets)],
-      ['solution/categories', :solutions,    allowed_in_portal?(:open_solutions)],      
-      ['/categories',         :forums,       (feature?(:forums) && allowed_in_portal?(:open_forums))],
+      solutions_tab,      
+      forums_tab,
       ['/contacts',           :customers,    permission?(:manage_tickets)],
       ['support/tickets',     :checkstatus, !permission?(:manage_tickets)],
       ['/admin/home',         :admin,        permission?(:manage_users)]
@@ -157,5 +157,31 @@ module ApplicationHelper
   def formated_date(date_time)
     date_time.strftime("%B %e %Y at %I:%M %p")
   end
+  
+  private
+    def solutions_tab
+      if current_portal.main_portal?
+        ['solution/categories', :solutions, allowed_in_portal?(:open_solutions)]
+      elsif current_portal.solution_category
+        [solution_category_path(current_portal.solution_category), :solutions, 
+              allowed_in_portal?(:open_solutions)]
+      else
+        ['#', :solutions, false]
+      end
+    end
+    
+    def forums_tab
+      if main_portal?
+        ['/categories', :forums,  forums_visibility?]
+      elsif current_portal.forum_category
+        [category_path(current_portal.forum_category), :forums,  forums_visibility?]
+      else
+        ['#', :forums, false]
+      end
+    end
+    
+    def forums_visibility?
+      feature?(:forums) && allowed_in_portal?(:open_forums)
+    end
   
 end

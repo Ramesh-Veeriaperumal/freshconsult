@@ -5,7 +5,7 @@ module SubscriptionSystem
     #base.send :before_filter, :login_required
     base.send :before_filter, :set_affiliate_cookie
     base.send :helper_method, :current_account, :admin?, :admin_subdomain?, :feature?,
-        :allowed_in_portal?, :current_portal
+        :allowed_in_portal?, :current_portal, :main_portal?
     base.send :filter_parameter_logging, :password, :creditcard
   end
   
@@ -26,6 +26,10 @@ module SubscriptionSystem
     def current_portal
       current_account
       @current_portal
+    end
+    
+    def main_portal?
+      current_portal.main_portal?
     end
     
     def admin?

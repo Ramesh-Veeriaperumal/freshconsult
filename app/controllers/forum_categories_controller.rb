@@ -11,7 +11,7 @@ class ForumCategoriesController < ApplicationController
   before_filter :content_scope
   
   def index
-     @forum_categories = scoper.all
+     @forum_categories = current_portal.forum_categories
      respond_to do |format|
       format.html 
       format.xml  { render :xml => @forum_categories }
