@@ -66,9 +66,14 @@ class SearchController < ApplicationController
       s_options.merge!(:category_id => params[:category_id]) unless params[:category_id].blank?
       s_options.merge!(:visibility => get_visibility(f_classes)) 
       
-      @items = ThinkingSphinx.search params[:search_key], 
-                                    :with => s_options,#, :star => true
-                                    :classes => f_classes, :per_page => 10
+      if main_portal?
+        @items = ThinkingSphinx.search params[:search_key], 
+                                      :with => s_options,#, :star => true
+                                      :classes => f_classes, :per_page => 10
+      else
+        search_portal_content(f_classes, s_options)
+      end
+      
       process_results
       respond_to do |format|
         format.html { render :partial => '/search/search_results'  }
@@ -82,6 +87,20 @@ class SearchController < ApplicationController
         }
       end 
            
+    end
+    
+    def search_portal_content(f_classes, s_options)
+      @items = []
+      if f_classes.include?(Solution::Article) && current_portal.solution_category_id
+        s_options[:category_id] = current_portal.solution_category_id
+        @items.concat(Solution::Article.search params[:search_key], :with => s_options, 
+                                  :per_page => 10)
+      end
+      
+      if f_classes.include?(Topic) && current_portal.forum_category_id
+        s_options[:category_id] = current_portal.forum_category_id
+        @items.concat(Topic.search params[:search_key], :with => s_options, :per_page => 10)
+      end
     end
   
     def search
