@@ -199,6 +199,9 @@ end
     end
     
     def find_forum_and_topic
+      wrong_portal unless(main_portal? || 
+            (params[:category_id].to_i == current_portal.forum_category_id)) #Duplicate
+            
        @forum_category = scoper.find(params[:category_id])
        @forum = @forum_category.forums.find(params[:forum_id])
        raise(ActiveRecord::RecordNotFound) unless (@forum.account_id == current_account.id)
