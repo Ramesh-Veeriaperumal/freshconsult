@@ -104,5 +104,9 @@ class ApplicationController < ActionController::Base
     error_list
   end
   
+  def wrong_portal
+    render("/errors/wrong_portal")
+  end
+  
 end
 
