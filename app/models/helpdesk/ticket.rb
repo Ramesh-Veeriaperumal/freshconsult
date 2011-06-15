@@ -11,8 +11,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   has_flexiblefields
   
   #by Shan temp
-  attr_accessor :email, :name, :custom_field ,:customizer, :nscname 
-  
+  attr_accessor :email, :name, :custom_field ,:customizer, :nscname
   
   before_validation :populate_requester, :set_default_values 
   before_create :set_spam, :set_dueby, :save_ticket_states
@@ -376,7 +375,7 @@ end
     "#{ticket.excerpts.subject} (##{ticket.excerpts.display_id})"
   end
   
-  def reply_email
+  def reply_email #To do - active check..
     email_config ? email_config.reply_email : account.default_email
   end
 
@@ -461,7 +460,7 @@ end
       "id"                                => display_id,
       "encoded_id"                        => encode_display_id,
       "subject"                           => subject,
-      "description"                       => description,
+      "description"                       => description_with_attachments,
       "requester"                         => requester,
       "agent"                             => responder,
       "group"                             => group,
@@ -474,34 +473,39 @@ end
       "due_by_hrs"                        => due_by.strftime("%I:%M %p"),
       "fr_due_by_hrs"                     => frDueBy.strftime("%I:%M %p"),
       "url"                               => helpdesk_ticket_url(self, :host => account.host),
-      "attachments"                       => liquidize_attachments(attachments),
-      "latest_comment"                    => liquidize_comment(latest_comment),
-      "latest_public_comment"             => liquidize_comment(latest_public_comment),
-      "latest_comment_attachments"        => liquidize_c_attachments(latest_comment),
-      "latest_public_comment_attachments" => liquidize_c_attachments(latest_public_comment)
+      "portal_url"                        => support_ticket_url(self, :host => portal_host),
+      "portal_name"                       => portal_name,
+      #"attachments"                       => liquidize_attachments(attachments),
+      #"latest_comment"                    => liquidize_comment(latest_comment),
+      "latest_public_comment"             => liquidize_comment(latest_public_comment)
+      #"latest_comment_attachments"        => liquidize_c_attachments(latest_comment),
+      #"latest_public_comment_attachments" => liquidize_c_attachments(latest_public_comment)
     }
+  end
+  
+  def description_with_attachments
+    attachments.empty? ? description : 
+        "#{description}\n\nTicket attachments :\n#{liquidize_attachments(attachments)}\n"
   end
   
   def liquidize_attachments(attachments)
     attachments.each_with_index.map { |a, i| 
-      "#{i+1}. <a href='#{helpdesk_attachment_url(a, :host => account.host)}'>#{a.content_file_name}</a>"
+      "#{i+1}. <a href='#{helpdesk_attachment_url(a, :host => portal_host)}'>#{a.content_file_name}</a>"
       }.join("<br />") #Not a smart way for sure, but donno how to do this in RedCloth?
-  end
-  
-  def latest_comment #There must be a smarter way than this. maybe a proper named scope in Note?!
-    notes.visible.newest_first.first
   end
   
   def latest_public_comment
     notes.visible.public.newest_first.first
   end
   
-  def liquidize_c_attachments(c)
-    liquidize_attachments(c.attachments) if c
-  end
-  
   def liquidize_comment(comm)
-    "#{comm.user ? comm.user.name : 'System'} : #{comm.body}" if comm
+    if comm
+      c_descr = "#{comm.user ? comm.user.name : 'System'} : #{comm.body}"
+      unless comm.attachments.empty?
+        c_descr = "#{c_descr}\n\nAttachments :\n#{liquidize_attachments(comm.attachments)}\n"
+      end
+      c_descr
+    end
   end
   #Liquid ends here
 
@@ -557,7 +561,13 @@ end
      end
  end
   
- 
+  def portal_host
+    (email_config && email_config.portal && !email_config.portal.portal_url.blank?) ? 
+      email_config.portal.portal_url : account.host
+  end
   
+  def portal_name
+    (email_config && email_config.portal) ? email_config.portal.name : account.helpdesk_name
+  end
   
 end

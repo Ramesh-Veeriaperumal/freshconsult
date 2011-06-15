@@ -24,11 +24,11 @@ module Admin::HomeHelper
                                     ['/ticket_fields',              'ticket-fields'           ],
                                     ['/admin/email_configs',        'email-settings'          ],
                                     ['/admin/email_notifications',  'email-notifications'     ],
+                                    ['/admin/canned_responses',     'canned-response'         ],
                                     ['/helpdesk/sla_policies',      'sla'                     ],
+                                    ['/admin/business_calendars',   'business-hours',   feature?(:business_hours)        ],
                                     ['/admin/va_rules',             'dispatcher'              ],
                                     ['/admin/automations',          'scenario',         feature?(:scenario_automations)  ],
-                                    ['/admin/business_calendars',   'business-hours',   feature?(:business_hours)        ],
-                                    #['/admin/canned_responses',     'canned-response'          ],
                     ]],
                     [ t(".everything_else"), [
                                     ['/account',                    'account-settings'  , current_user.account_admin?      ],

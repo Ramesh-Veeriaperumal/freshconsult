@@ -255,8 +255,7 @@ class Subscription < ActiveRecord::Base
     def validate_on_update
       return if self.amount == 0      
       if(agent_limit && agent_limit < account.agents.count)
-        errors.add_to_base("You Freshdesk currently has #{account.agents.count} agents, you cannot subscripe to lesser number of agents. Please delete some agents and try again.")
-      end         
+       errors.add_to_base(I18n.t("subscription.error.lesser_agents", {:agent_count => account.agents.count}))end         
     end
     
     def charge_if_free

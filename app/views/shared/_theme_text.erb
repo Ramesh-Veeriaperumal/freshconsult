@@ -1,7 +1,7 @@
-<% unless current_account.preferences.nil? %>
-	$background: 	<%= current_account.preferences[:bg_color] %>;
-	$header_color: 	<%= current_account.preferences[:header_color] %>;
-	$tab_color:		<%= current_account.preferences[:tab_color] %>;
+<% unless current_portal.preferences.nil? %>
+	$background: 	<%= current_portal.preferences[:bg_color] %>;
+	$header_color: 	<%= current_portal.preferences[:header_color] %>;
+	$tab_color:		<%= current_portal.preferences[:tab_color] %>;
 	
 	$bg_ctxt_color:	    if(lightness($background) > 50, black, white) !default;
 	$header_ctxt_color: if(lightness($header_color) > 50, black, white) !default;

@@ -9,7 +9,7 @@ class Solution::CategoriesController < ApplicationController
   
   def index
     
-    @categories = current_account.solution_categories.all    
+    @categories = current_portal.solution_categories
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @categories }

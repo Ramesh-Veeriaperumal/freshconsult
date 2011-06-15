@@ -53,7 +53,7 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
     subject       formatted_subject(ticket)
     recipients    ticket.requester.email
     from          reply_email
-    body          :ticket => ticket, :note => note, :host => ticket.account.host
+    body          :ticket => ticket, :note => note, :host => ticket.portal_host
     headers       "Reply-to" => "#{reply_email}"
     sent_on       Time.now
     content_type  "multipart/alternative"

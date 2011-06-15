@@ -2,6 +2,7 @@ class Portal < ActiveRecord::Base
   serialize :preferences, Hash
   
   validates_uniqueness_of :portal_url, :allow_blank => true, :allow_nil => true
+  validates_presence_of :product_id
   
   has_one :logo,
     :as => :attachable,
@@ -22,4 +23,17 @@ class Portal < ActiveRecord::Base
   belongs_to :solution_category, :class_name => 'Solution::Category',
               :foreign_key => 'solution_category_id'
   belongs_to :forum_category
+  
+  #Helpers for views
+  def main_portal?
+    product.primary_role
+  end
+  
+  def solution_categories
+    main_portal? ? account.solution_categories : (solution_category ? [solution_category] : [])
+  end
+  
+  def forum_categories
+    main_portal? ? account.forum_categories : (forum_category ? [forum_category] : [])
+  end
 end

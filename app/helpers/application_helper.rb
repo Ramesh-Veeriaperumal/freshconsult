@@ -17,8 +17,8 @@ module ApplicationHelper
       ['/home',               :home,        !permission?(:manage_tickets)],
       ['helpdesk/dashboard',  :dashboard,    permission?(:manage_tickets)],
       ['helpdesk/tickets',    :tickets,      permission?(:manage_tickets)],
-      ['solution/categories', :solutions,    allowed_in_portal?(:open_solutions)],      
-      ['/categories',         :forums,       (feature?(:forums) && allowed_in_portal?(:open_forums))],
+      solutions_tab,      
+      forums_tab,
       ['/contacts',           :customers,    permission?(:manage_tickets)],
       ['support/tickets',     :checkstatus, !permission?(:manage_tickets)],
       ['/admin/home',         :admin,        permission?(:manage_users)]
@@ -112,18 +112,18 @@ module ApplicationHelper
   #Liquid ends here..
   
   #Ticket place-holders, which will be used in email and comment contents.
-  def ticket_placeholders
+  def ticket_placeholders #To do.. i18n
     [
       ['{{ticket.id}}', 		 			'Ticket ID' ,				'Unique ticket ID.'],
       ['{{ticket.subject}}',     			'Subject', 					'Ticket subject.'],
       ['{{ticket.description}}', 			'Description', 				'Ticket description.'],
-      ['{{ticket.url}}', 		 			'Url' ,						'Full URL path to ticket.'],
+      ['{{ticket.url}}', 		 			'Ticket URL' ,						'Full URL path to ticket.'],
+      ['{{ticket.portal_url}}', 'Product specific ticket URL',	'Full URL path to ticket in product portal. Will be useful in multiple product/brand environments.'],
       ['{{ticket.status}}', 	 			'Status' , 					'Ticket status.'],
       ['{{ticket.priority}}', 	 			'Priority', 				'Ticket priority.'],
       ['{{ticket.source}}', 	 			'Source', 					'The source channel of the ticket.'],
       ['{{ticket.ticket_type}}', 			'Ticket type', 				'Ticket type.'],
       ['{{ticket.tags}}', 					'Tags', 					'Ticket tags.'],
-      ['{{ticket.attachments}}',    'Ticket attachments', 'Attachments for the ticket.'],
       ['{{ticket.due_by_time}}', 			'Due by time',				'Ticket due by time.'],
       ['{{ticket.requester.name}}', 		'Requester name', 			'Name of the requester who raised the ticket.'],
       ['{{ticket.requester.email}}',		'Requester email', 			"Requester's email."],
@@ -131,10 +131,9 @@ module ApplicationHelper
       ['{{ticket.group.name}}', 			'Group name',				'Ticket group.'],
       ['{{ticket.agent.name}}', 			'Agent name',				'Name of the agent who is currently working on the ticket.'],
       ['{{ticket.agent.email}}', 			'Agent email',				"Agent's email."],
-      ['{{ticket.latest_comment}}', 		'Latest comment', 			'Latest comment for this ticket.'],
-      ['{{ticket.latest_public_comment}}',  'Latest public comment',	'Latest public comment for this ticket.'],
-      ['{{ticket.latest_comment_attachments}}', 'Latest comment attachments', 'Attachments for the latest comment of the ticket.'],
-      ['{{ticket.latest_public_comment_attachments}}',  'Latest public comment attachments', 'Attachments for the latest public comment of the ticket.']
+      ['{{ticket.latest_public_comment}}',  'Last public comment',	'Latest public comment for this ticket.'],
+      ['{{helpdesk_name}}', 'Helpdesk name', 'Your main helpdesk portal name.'],
+      ['{{ticket.portal_name}}', 'Product portal name', 'Product specific portal name in multiple product/brand environments.']
     ]
   end
   
@@ -157,5 +156,31 @@ module ApplicationHelper
   def formated_date(date_time)
     date_time.strftime("%B %e %Y at %I:%M %p")
   end
+  
+  private
+    def solutions_tab
+      if current_portal.main_portal?
+        ['solution/categories', :solutions, allowed_in_portal?(:open_solutions)]
+      elsif current_portal.solution_category
+        [solution_category_path(current_portal.solution_category), :solutions, 
+              allowed_in_portal?(:open_solutions)]
+      else
+        ['#', :solutions, false]
+      end
+    end
+    
+    def forums_tab
+      if main_portal?
+        ['/categories', :forums,  forums_visibility?]
+      elsif current_portal.forum_category
+        [category_path(current_portal.forum_category), :forums,  forums_visibility?]
+      else
+        ['#', :forums, false]
+      end
+    end
+    
+    def forums_visibility?
+      feature?(:forums) && allowed_in_portal?(:open_forums)
+    end
   
 end
