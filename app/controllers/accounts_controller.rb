@@ -5,6 +5,7 @@ class AccountsController < ApplicationController
   layout :choose_layout 
   
   skip_before_filter :set_time_zone
+  skip_before_filter :check_account_state
   
   before_filter :build_user, :only => [ :new, :create ]
   before_filter :load_billing, :only => [ :show, :new, :create, :billing, :paypal, :payment_info ]
@@ -323,7 +324,7 @@ class AccountsController < ApplicationController
   def check_credit_card
     if request.post?
       if !@subscription_plan.free_plan? and (@subscription.state == 'active') and @subscription.card_number.blank?
-        flash[:notice] = "Please enter the credit card details before you choose the paid plan"
+        flash[:notice] = t('enter_billing_for_free')
         redirect_to :action => "billing"
       end
     end

@@ -6,6 +6,7 @@ require 'uri'
 require 'openid'
   
   skip_before_filter :require_user, :except => :destroy
+  skip_before_filter :check_account_state
   before_filter :check_sso_params, :only => :sso_login
   
   def new

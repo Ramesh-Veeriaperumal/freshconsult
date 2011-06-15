@@ -946,6 +946,10 @@ en:
   special_beta_offer: Special offer for Beta accounts
   drag_drop_intro: Drag and drop any field type into the "New Ticket" form below to add a new custom field
   begin_subscription_confirm: Your credit card is going to be charged for the amount of $%{cost}\nand your subscription will begin immediately. \n\nProceed now?
+  change_to_free_info: Downgrading your plan will result in loss of functionality and data. Are you sure you want to downgrade?
+  suspended_plan_info: Your account has been suspended please select a plan to proceed!
+  suspended_plan_admin_info: Your account has been suspended please contact your account administrator %{email}!
+  enter_billing_for_free: Please enter the credit card details before you choose the paid plan
   subscription:
     error:
       lesser_agents: Your freshdesk account currently has %{agent_count} agents, you cannot subscribe to a lesser number of agents. Please delete some agents and try again.
