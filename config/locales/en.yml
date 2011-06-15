@@ -76,19 +76,22 @@ en:
         everything_helpdesk: Everything Helpdesk
         canned-response: Canned Response
       
-    canned_response:
+    canned_responses:
       index:
-        new: New Canned Response
-        title: Canned Responses
-        delete_confirm: Are you sure you want to delete this canned response?       
-      edit: Edit Canned Response
+        title: Canned responses
+        new: Add Canned response
+      new:
+        title: Add Canned response        
+        delete_confirm: Are you sure you want to delete this canned response?      
+      edit: 
+        title: Edit Canned response
       form:
         available_for: Available for
         all_agents: All agents
         groups: Agents in group
         me_only: Me only
-        
-             
+        response_name: Response title
+
   ends_with: Ends with
   last_name: Last Name
   forum: 
@@ -943,3 +946,6 @@ en:
   special_beta_offer: Special offer for Beta accounts
   drag_drop_intro: Drag and drop any field type into the "New Ticket" form below to add a new custom field
   begin_subscription_confirm: Your credit card is going to be charged for the amount of $%{cost}\nand your subscription will begin immediately. \n\nProceed now?
+  subscription:
+    error:
+      lesser_agents: Your freshdesk account currently has %{agent_count} agents, you cannot subscribe to a lesser number of agents. Please delete some agents and try again.
