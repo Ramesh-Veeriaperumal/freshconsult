@@ -4,7 +4,7 @@
 class ApplicationController < ActionController::Base
   
   
-
+  #before_filter :check_account_state, :only => [:create,:update,:destroy]
   before_filter :set_time_zone
   
   before_filter :set_locale
@@ -71,9 +71,21 @@ class ApplicationController < ActionController::Base
 #      redirect_to(session[:return_to] || default)
 #      session[:return_to] = nil
 #    end
-def set_locale
-  I18n.locale = request.compatible_language_from I18n.available_locales
-end
+  def set_locale
+    I18n.locale = request.compatible_language_from I18n.available_locales
+  end
+ 
+  def check_account_state
+    if !current_account.active? 
+      if permission?(:manage_account)
+        flash[:notice] = "Your account has been suspended please select a plan to proceed!"
+        return redirect_to(plan_account_url)
+      else
+        flash[:notice] = "Your account has been suspended please contact your account admin #{current_account.account_admin.email}!"
+        redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
+      end
+     end
+  end
 
   def set_time_zone
     begin

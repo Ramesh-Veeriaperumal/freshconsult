@@ -13,15 +13,17 @@ class AccountsController < ApplicationController
   before_filter :build_plan, :only => [:new, :create]
   before_filter :load_plans, :only => [:show, :plans]
   before_filter :admin_selected_tab, :only => [ :billing, :show, :edit, :plan, :cancel ]
+  before_filter :load_subscription_plan, :only => [:plan] 
+  before_filter :check_credit_card, :only => [:plan] 
   
   ssl_required :billing
   #ssl_allowed :plans, :thanks, :canceled, :paypal
   
-  before_filter :only => [:update, :destroy, :edit, :delete_logo, :delete_fav, :plan, :plans, :thanks] do |c| 
+  before_filter :only => [:update, :edit, :delete_logo, :delete_fav, :thanks] do |c| 
     c.requires_permission :manage_users
   end
   
-  before_filter :only =>  [:billing,:show,  :cancel ] do |c| 
+  before_filter :only =>  [:billing,:show,:cancel,:destroy, :plan, :plans ] do |c| 
     c.requires_permission :manage_account
   end
   
@@ -290,9 +292,8 @@ class AccountsController < ApplicationController
 
   def plan
     if request.post?
-      subscription_plan = SubscriptionPlan.find(params[:plan_id])
-      subscription_plan.discount = @discount
-      @subscription.plan = subscription_plan
+      @subscription_plan.discount = @discount
+      @subscription.plan = @subscription_plan
       @subscription.agent_limit = params[:agent_limit]
       if @subscription.save
         #SubscriptionNotifier.deliver_plan_changed(@subscription)
@@ -301,7 +302,7 @@ class AccountsController < ApplicationController
         render :action => "plan" and return
       end
       
-      if @subscription.state == 'trial'
+      if (@subscription.amount > 0 and @subscription.card_number.blank?)
         redirect_to :action => "billing"
       else
         flash[:notice] = t('plan_info_update')
@@ -310,6 +311,21 @@ class AccountsController < ApplicationController
     else
       #@plans = SubscriptionPlan.find(:all, :conditions => ['id <> ?', @subscription.subscription_plan_id], :order => 'amount asc').collect {|p| p.discount = @subscription.discount; p }
       load_plans
+    end
+  end
+  
+  def load_subscription_plan
+    if request.post?
+     @subscription_plan = SubscriptionPlan.find(params[:plan_id])
+    end
+  end
+  
+  def check_credit_card
+    if request.post?
+      if !@subscription_plan.free_plan? and (@subscription.state == 'active') and @subscription.card_number.blank?
+        flash[:notice] = "Please enter the credit card details before you choose the paid plan"
+        redirect_to :action => "billing"
+      end
     end
   end
   

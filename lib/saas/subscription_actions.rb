@@ -3,6 +3,11 @@ class SAAS::SubscriptionActions
     update_features(account, old_subscription)
     
     case account.plan_name
+    when :free
+      drop_custom_sla(account)
+      update_timezone_to_users(account)
+      drop_additional_emails(account)
+      drop_except_account_admin(account)
     when :basic
       drop_custom_sla(account)
       update_timezone_to_users(account)
@@ -13,7 +18,18 @@ class SAAS::SubscriptionActions
     end
   end
   
+  def change_to_free(account, old_subscription)
+    free_subscription_plan = SubscriptionPlan.find_by_name(SubscriptionPlan::SUBSCRIPTION_PLANS[:free])
+    old_subscription.subscription_plan = free_subscription_plan
+    old_subscription.save!
+  end
+  
   private
+    
+    def drop_except_account_admin(account)
+      account.users.update_all({:deleted => true}, ["user_role in (?,?)", User::USER_ROLES_KEYS_BY_TOKEN[:admin],User::USER_ROLES_KEYS_BY_TOKEN[:poweruser]] )
+    end
+    
     def update_features(account, old_subscription)
       account.remove_features_of old_subscription.subscription_plan.canon_name
       account.reload

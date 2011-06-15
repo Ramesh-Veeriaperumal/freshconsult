@@ -10,7 +10,7 @@ class SubscriptionPlan < ActiveRecord::Base
   
   attr_accessor :discount
   
-  SUBSCRIPTION_PLANS = {:basic => "Basic", :pro => "Pro" , :premium => "Premium" }
+  SUBSCRIPTION_PLANS = {:basic => "Basic", :pro => "Pro" , :premium => "Premium", :free => "Free" }
 
   def to_s
     "#{self.name} - #{number_to_currency(self.amount)} / month"
@@ -38,6 +38,14 @@ class SubscriptionPlan < ActiveRecord::Base
   
   def revenues
     @revenues ||= subscriptions.calculate(:sum, :amount, :group => 'subscriptions.state')
+  end
+  
+  def self.get_free_plan_id
+    find(:all, :select => :id , :conditions => {:name => SUBSCRIPTION_PLANS[:free]})
+  end
+  
+  def free_plan?
+    name == SUBSCRIPTION_PLANS[:free]
   end
   
 end

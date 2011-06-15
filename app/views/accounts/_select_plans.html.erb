@@ -3,10 +3,12 @@
 	   	<table>
 			<tr> 
 				<% plans.each do |plan| %>
+				<% plan_name = plan.name.downcase %>
+				<%unless plan_name == "free"%>
 				<td id = "plan-<%= plan.name %>">
 					<div class="plan-details">			
 						<div class="plan-title">
-							<% plan_name = plan.name.downcase %>
+							
 							<% bool_beta_plan = (plan_name == "premium" && @discount  && @discount.name.downcase == "beta users special") %>
 							<%= content_tag(:h2, plan.name ) %>
 							<% if(bool_beta_plan) %>
@@ -22,9 +24,13 @@
 					<button data-plan="<%= plan.name %>" data-plan-cost="<%= plan.amount.to_i %>" data-plan-id = "<%= plan.id %>" class="plan-button" id='<%= "#{ plan.name }_button" %>'><%=t('choose_plan')%></button>
 					<div id="billing-<%= plan.name %>"></div>
 				</td>
+				<%else%>
+				<% @free_plan_id =  plan.id %>
 				<% end %>  
+			<%end%>
 			</tr> 
 		</table>
+		
 	</div>
 </div>
 <div id="billing-template" class="billing" style="display:none;">
@@ -53,6 +59,9 @@
 	</table>
 	<% end %>
 </div>
+
+Change the plan to  <%= link_to ("Free", { :action => "plan",:controller => "accounts",:plan_id => @free_plan_id  }, :confirm => "Are you sure you want to change to free plan?", :method => :post) %>
+
 <% javascript_tag do %>
 	(function($){	
 		selected_plan 	= null;
