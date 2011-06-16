@@ -239,6 +239,7 @@ class Helpdesk::TicketsController < ApplicationController
     if @item.save
       post_persist
     else
+      set_customizer
       create_error
     end
   end
