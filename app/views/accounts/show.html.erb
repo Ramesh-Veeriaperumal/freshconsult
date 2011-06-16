@@ -62,7 +62,7 @@
         </table>
       <% end %>
     </div>
-  </li> 
+   </li> 
   	<li class="inline-field">
   	  <%= content_tag(:label, t('payment_info'), :class => "caption") %>
   	  <div class="fields"> 
@@ -72,16 +72,16 @@
   		 <label><%= @subscription.paypal? ? 'PayPal' : "#{@subscription.card_number} / #{@subscription.card_expiration}" %></label>
   	  </div>
   	</li>
-  	<li class="inline-field">
-  	  <%= content_tag(:label, t(".export_data"), :class => "caption") %>
-      <div class="fields"> 
-  		  <div class="action_buttons">        
-          <%= link_to "#{t('.export_now')} &rsaquo;", export_admin_data_export_url, :class => "last" %>
-        </div>
-        <%= content_tag(:label, t('.export_data_text')) %>
-      </div>
-  	</li>
   <% end %>
+	<li class="inline-field">
+ 	  <%= content_tag(:label, t(".export_data"), :class => "caption") %>
+     <div class="fields"> 
+ 		  <div class="action_buttons">        
+         <%= link_to "#{t('.export_now')} &rsaquo;", export_admin_data_export_url, :class => "last" %>
+       </div>
+       <%= content_tag(:label, t('.export_data_text')) %>
+     </div>
+ 	</li>
   <li class="inline-field">
   	<% form_tag(:action => 'change_account_admin' , :controller => :users, :method => :put) do %>
   	<%= content_tag(:label,t('account_admin'), :class => "caption") %> 

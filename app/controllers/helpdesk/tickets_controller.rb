@@ -2,8 +2,11 @@ class Helpdesk::TicketsController < ApplicationController
 
   before_filter :check_user , :only => [:show]
   before_filter { |c| c.requires_permission :manage_tickets }
-
-  include HelpdeskControllerMethods
+  
+  include HelpdeskControllerMethods  
+  include Helpdesk::TicketActions
+  
+  layout :choose_layout 
   
   before_filter :load_multiple_items, :only => [:destroy, :restore, :spam, :unspam, :assign , :close_multiple ,:pick_tickets]  
   before_filter :load_item,     :only => [:show, :edit, :update, :execute_scenario, :close ,:change_due_by] 
@@ -65,7 +68,7 @@ class Helpdesk::TicketsController < ApplicationController
     @agents = Agent.find(:first, :joins=>:user, :conditions =>{:user_id =>current_user.id} )     
     @signature = "\n\n\n#{@agents.signature}" unless (@agents.nil? || @agents.signature.blank?)
      
-    @ticket_notes = @ticket.notes.visible.exclude_source('meta')
+    @ticket_notes = @ticket.notes.visible.exclude_source('meta').newest_first
     set_suggested_solutions 
     
     respond_to do |format|
@@ -239,9 +242,11 @@ class Helpdesk::TicketsController < ApplicationController
     if @item.save
       post_persist
     else
+      set_customizer
       create_error
     end
-  end
+  end  
+  
  
   def close 
     status_id = Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:closed]
@@ -331,6 +336,10 @@ class Helpdesk::TicketsController < ApplicationController
       unless flexi_field.nil?     
         evaluate_on.assign_ff_values flexi_field    
       end
+  end
+  
+    def choose_layout 
+      (action_name == "show_tickets_from_same_user"  || action_name == "confirm_merge") ? 'plainpage' : 'helpdesk/default'
     end
 
 end

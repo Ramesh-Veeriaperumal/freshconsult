@@ -164,6 +164,9 @@ en:
         start: You are now monitoring this ticket
       empty_trash: 
         success: All tickets in the trash folder were deleted.
+      merge:
+        wrong_ticket_id: There is not ticket with this id . Please try again
+        success: Ticket has been successfully merged
     business_hours: 
       update: 
         failure: Failed to update Business Hours
@@ -280,7 +283,13 @@ en:
         long: "{{user_path}} executed the scenario '{{scenario_name}}' on {{notable_path}}"
       status_change: 
         short: "{{user_path}} changed the status to {{status_name}}"
-        long: "{{user_path}} changed the ticket status of {{notable_path}} to {{status_name}}"
+        long: "{{user_path}} changed the ticket status of {{notable_path}} to {{status_name}}"     
+      ticket_split:
+        short: "{{user_path}} has split the ticket {{notable_path}} from {{split_ticket_path}}"
+        long: "{{user_path}} has split the ticket {{notable_path}} from {{split_ticket_path}}"
+      ticket_merge:
+        short: "{{user_path}} has merged the ticket {{notable_path}} to {{merge_ticket_path}} "
+        long: "{{user_path}} has merged the ticket  {{notable_path}} to {{merge_ticket_path}}"
   credit_card_info: Credit card information
   zendesk_backup_info: Select the Zendesk backup file downloaded from zendesk
   your_email_address: Your email address
@@ -312,6 +321,14 @@ en:
       goback: &#x2190; Back to account settings
       delete_my_account: Delete my Account
       you_must_confirm: You must confirm your cancellation
+    billing:
+      billing: Billing
+      begin_subscription: Begin subscription now...
+      begin_subscription_info: will charge your card and begin your subscription immediately.
+      save_billing_information: Save billing information
+      save_billing_information_info: will save your "Plan & billing" information. We will charge your card and begin your subscription only once your trial is over.
+      update_billing_info: Update billing information
+
   topics: 
     last_reply: Last reply %{post_time} ago by %{user_link}
     posted_at: Posted %{post_time} ago
@@ -322,7 +339,6 @@ en:
   first_response_sla: First Response SLA Violation
   add_holiday: Add Holiday
   import_note_info: The fields in your csv file can be in any order. Just ensure that the first row has the header information.(Eg. Name, email etc.) The only required field is email.
-  begin_subscription: Begin Subscription
   at: at
   add_a_topic: Start a Topic
   bottom: Bottom
@@ -335,7 +351,7 @@ en:
   starts_with: Starts with
   portal_customizer_anon_tickets_i: Turn this feature off, if you want your users to be signed in to submit a ticket.
   set_type_as: Set Type as
-  change_my_plan: Change my plan...
+  change_my_plan: Choose this plan...
   add_new_email: Add new email
   feedbackwidget_title: Widget Settings
   errors_in_your_address: "Errors encountered with your address:"
@@ -638,6 +654,7 @@ en:
   customers: Customers
   feedbackwidget_embed_code: Widget embed code
   billing_info_update: Your billing information has been updated.
+  card_process: Thank you for your payment. Your Freshdesk account is now live!
   profile: 
     edit: Edit Profile
     change_password: Change Password
@@ -790,6 +807,8 @@ en:
     submit_ticket: Submit Ticket
     properties: Ticket Properties
     requester: Requester
+    merge_btn: Merge
+    split_ticket: Split as new Ticket
   recent_activity: Recent Activity
   forgot_password: Forgot Password
   change_plan: Change plan
@@ -921,3 +940,17 @@ en:
   import_ticket_group: Tickets &amp; Group
   portal_key: Portal
   forum_key: Forum
+  plan_amount: per agent/month
+  forum_shared:
+    post:
+      edit_post: Edit Post
+      unmark_answer: Unmark this as the answer
+      mark_answer: Mark this as the answer
+      delete_post: Delete post
+      delete_post_confirm: Delete this post?  Are you sure?
+      answer: Answer
+      post_accepted_as_a_good_answer: This post is accepted as a good answer to this topic
+      posted_on: %{user_name} on %{post_date}
+  special_beta_offer: Special offer for Beta accounts
+  drag_drop_intro: Drag and drop any field type into the "New Ticket" form below to add a new custom field
+  begin_subscription_confirm: Your credit card is going to be charged for the amount of $%{cost}\nand your subscription will begin immediately. \n\nProceed now?

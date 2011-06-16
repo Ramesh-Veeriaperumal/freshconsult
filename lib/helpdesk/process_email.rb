@@ -1,7 +1,7 @@
 class Helpdesk::ProcessEmail < Struct.new(:params)
   
   def perform
-    from_email = parse_email params[:from]
+    from_email = parse_from_email
     to_email = parse_to_email
     account = Account.find_by_full_domain(to_email[:domain])
     if !account.nil?
@@ -55,6 +55,19 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       end
       
       parse_email params[:to]
+    end
+    
+    def parse_from_email
+      f_email = parse_email(params[:from])
+      return f_email unless(f_email[:email].blank? || f_email[:email] =~ /noreply/)
+      
+      headers = params[:headers]
+      if(!headers.nil? && headers =~ /Reply-to:(.+)$/)
+        rt_email = parse_email($1)
+        return rt_email unless rt_email[:email].blank?
+      end
+      
+      f_email
     end
     
     def parse_cc_email

@@ -6,6 +6,10 @@ class SubscriptionNotifier < ActionMailer::Base
     @subject = subject
     @recipients = to.respond_to?(:email) ? to.email : to
     @from = from.respond_to?(:email) ? from.email : from
+   end
+  
+  def setup_bcc
+     @bcc = AppConfig['sub_bcc_email'][RAILS_ENV]
   end
   
   def welcome(account)
@@ -15,11 +19,13 @@ class SubscriptionNotifier < ActionMailer::Base
   
   def trial_expiring(user, subscription)
     setup_email(user, 'Trial period expiring')
+    setup_bcc
     @body = { :user => user, :subscription => subscription }
   end
   
   def charge_receipt(subscription_payment)
     setup_email(subscription_payment.subscription.account.account_admin, "Your #{AppConfig['app_name']} invoice")
+    setup_bcc
     @body = { :subscription => subscription_payment.subscription, :amount => subscription_payment.amount }
   end
   
@@ -30,11 +36,13 @@ class SubscriptionNotifier < ActionMailer::Base
   
   def misc_receipt(subscription_payment)
     setup_email(subscription_payment.subscription.account.account_admin, "Your #{AppConfig['app_name']} invoice")
+    setup_bcc
     @body = { :subscription => subscription_payment.subscription, :amount => subscription_payment.amount }
   end
   
   def charge_failure(subscription)
     setup_email(subscription.account.account_admin, "Your #{AppConfig['app_name']} renewal failed")
+    setup_bcc
     @bcc = AppConfig['from_email']
     @body = { :subscription => subscription }    
   end

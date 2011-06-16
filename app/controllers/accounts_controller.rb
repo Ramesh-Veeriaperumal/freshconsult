@@ -9,12 +9,12 @@ class AccountsController < ApplicationController
   before_filter :build_user, :only => [ :new, :create ]
   before_filter :load_billing, :only => [ :show, :new, :create, :billing, :paypal, :payment_info ]
   before_filter :load_subscription, :only => [ :show, :billing, :plan, :paypal, :plan_paypal, :plans ]
-  before_filter :load_discount, :only => [ :plans, :plan, :new, :create ]
+  before_filter :load_discount, :only => [ :plans, :plan, :show ]
   before_filter :build_plan, :only => [:new, :create]
   before_filter :load_plans, :only => [:show, :plans]
   before_filter :admin_selected_tab, :only => [ :billing, :show, :edit, :plan, :cancel ]
   
-  #ssl_required :billing, :cancel, :new, :create #by Shan temp
+  ssl_required :billing
   #ssl_allowed :plans, :thanks, :canceled, :paypal
   
   before_filter :only => [:update, :destroy, :edit, :delete_logo, :delete_fav, :plan, :plans, :thanks] do |c| 
@@ -234,12 +234,7 @@ class AccountsController < ApplicationController
     @account.helpdesk_url = params[:account][:helpdesk_url] 
     @account.preferences = params[:account][:preferences]
     @account.ticket_display_id = params[:account][:ticket_display_id]
-    @account.sso_enabled = params[:account][:sso_enabled]
     
-    if @account.sso_enabled?
-      @account.sso_options = params[:account][:sso_options]
-    end
-   
     update_logo_image  
     update_fav_icon_image
       
@@ -263,8 +258,9 @@ class AccountsController < ApplicationController
         @address.first_name = @creditcard.first_name
         @address.last_name = @creditcard.last_name
         if @creditcard.valid? & @address.valid?
-          if @subscription.store_card(@creditcard, :billing_address => @address.to_activemerchant, :ip => request.remote_ip)
+          if @subscription.store_card(@creditcard, :billing_address => @address.to_activemerchant, :ip => request.remote_ip, :charge_now => params[:charge_now])
             flash[:notice] = t('billing_info_update')
+            flash[:notice] = t('card_process') if params[:charge_now].eql?("true")
             redirect_to :action => "show"
           end
         end
@@ -292,36 +288,12 @@ class AccountsController < ApplicationController
 
   def plan
     if request.post?
-      @subscription.plan = SubscriptionPlan.find(params[:plan_id])
+      subscription_plan = SubscriptionPlan.find(params[:plan_id])
+      subscription_plan.discount = @discount
+      @subscription.plan = subscription_plan
       @subscription.agent_limit = params[:agent_limit]
-
-      # PayPal subscriptions must get redirected to PayPal when
-      # changing the plan because a new recurring profile needs
-      # to be set up with the new charge amount.
-      if @subscription.paypal?
-        # Purge the existing payment profile if the selected plan is free
-        if @subscription.amount == 0
-          logger.info "FREE"
-          if @subscription.purge_paypal
-            logger.info "PAYPAL"
-            flash[:notice] = "Your subscription has been changed."
-            SubscriptionNotifier.deliver_plan_changed(@subscription)
-          else
-            flash[:error] = "Error deleting PayPal profile: #{@subscription.errors.full_messages.to_sentence}"
-          end
-          redirect_to :action => "plan" and return
-        else
-          if redirect_url = @subscription.start_paypal(plan_paypal_account_url(:plan_id => params[:plan_id]), plan_account_url)
-            redirect_to redirect_url and return
-          else
-            flash[:error] = @subscription.errors.full_messages.to_sentence
-            redirect_to :action => "plan" and return
-          end
-        end
-      end
-      
       if @subscription.save
-        SubscriptionNotifier.deliver_plan_changed(@subscription)
+        #SubscriptionNotifier.deliver_plan_changed(@subscription)
       else
         load_plans
         render :action => "plan" and return
@@ -452,9 +424,10 @@ class AccountsController < ApplicationController
     
     # Load the discount by code, but not if it's not available
     def load_discount
-      if params[:discount].blank? || !(@discount = SubscriptionDiscount.find_by_code(params[:discount])) || !@discount.available?
-        @discount = nil
-      end
+#     if params[:discount].blank? || !(@discount = SubscriptionDiscount.find_by_code(params[:discount])) || !@discount.available? || (@subscription.subscription_plan_id != @discount.plan_id)
+#        @discount = nil
+#      end     
+      @discount = @subscription.discount unless @subscription.discount.blank?
     end
     
     def load_plans

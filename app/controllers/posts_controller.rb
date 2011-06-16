@@ -101,10 +101,7 @@ class PostsController < ApplicationController
   end
   
   def edit
-    respond_to do |format| 
-      format.html
-      format.js
-    end
+    render :partial => "edit"
   end
   
   def update

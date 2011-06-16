@@ -55,13 +55,6 @@ var jQ = jQuery.noConflict();
 			 }
 		});
 		
-		function showOverlay(zIndex, callback){
-			_app_overlay = $("#_app_overlay").get(0) || $("<div class='transparent-overlay' id='_app_overlay' />").appendTo("body");
-			console.log($(behindElement).css("zIndex"));
-			$(_app_overlay)
-				.css("zIndex", zIndex);
-		}
-		
 		menu_box_count = 0;
 		fd_active_drop_box = null;
 		
@@ -86,7 +79,9 @@ var jQ = jQuery.noConflict();
 				fd_active_drop_box = $(this);
 			});
 		
-		$(".nav-drop li.menu-item a").bind("click", hideMenuItem());
+		$(".nav-drop li.menu-item a").bind("click", function(){
+			hideMenuItem();
+		});
 		 
 		$(document).bind('click', function(e) {
 			var $clicked = $(e.target);
