@@ -53,7 +53,7 @@ class SearchController < ApplicationController
     end
     
     def get_visibility(f_classes)        
-      if ([Solution::Article] == f_classes)        
+      if (f_classes.include?(Solution::Article))        
         Solution::Folder.get_visibility_array(current_user)
       else        
         get_visibility_array

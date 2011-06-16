@@ -1,0 +1,47 @@
+<% javascript_tag do -%>	
+		
+	function merge_with_this_request(ticket_id){	
+		
+		var parent_id = jQuery('#parent_ticket_id').val();	
+				
+		var url = '/helpdesk/tickets/confirm_merge/'+parent_id+'?target_id='+ticket_id
+	    		 // load remote content
+	   			 ticket_merge_dialog.load(url,{}, function(responseText, textStatus, XMLHttpRequest) {
+	                ticket_merge_dialog.dialog({modal:true, width:'700px', height:'auto', title:"Merge ticket"});
+	            });		
+	
+		return false;
+
+		
+	}
+
+	
+
+<%- end %>
+
+<%= show_flash %>
+#<%=@source_ticket.display_id%>
+<%=@source_ticket.subject%> by <%=@source_ticket.requester.name%>
+
+With
+
+ <input id="merge_target_id" name="merge[target_id]" type="text">
+ <input class="buttonsubmit button" name="commit" onclick="javascript:merge_with_this_request(jQuery('#merge_target_id').val())" value="Merge" type="submit">
+
+
+
+or 
+select one of the following tickets
+
+<div>
+ <input type="hidden" name="parent_ticket" id="parent_ticket_id" value="<%=params[:id]%>" />	
+ 	<table class="tickets">	
+    	<tbody>
+	       	<%= render :partial => "/helpdesk/shared/ticket_to_merge", :collection => @items %>
+		</tbody>
+	</table> 
+</div>
+
+
+			  
+			  

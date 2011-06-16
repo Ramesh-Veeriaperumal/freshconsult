@@ -165,6 +165,9 @@ en:
         start: You are now monitoring this ticket
       empty_trash: 
         success: All tickets in the trash folder were deleted.
+      merge:
+        wrong_ticket_id: There is not ticket with this id . Please try again
+        success: Ticket has been successfully merged
     business_hours: 
       update: 
         failure: Failed to update Business Hours
@@ -283,7 +286,13 @@ en:
         long: "{{user_path}} executed the scenario '{{scenario_name}}' on {{notable_path}}"
       status_change: 
         short: "{{user_path}} changed the status to {{status_name}}"
-        long: "{{user_path}} changed the ticket status of {{notable_path}} to {{status_name}}"
+        long: "{{user_path}} changed the ticket status of {{notable_path}} to {{status_name}}"     
+      ticket_split:
+        short: "{{user_path}} has split the ticket {{notable_path}} from {{split_ticket_path}}"
+        long: "{{user_path}} has split the ticket {{notable_path}} from {{split_ticket_path}}"
+      ticket_merge:
+        short: "{{user_path}} has merged the ticket {{notable_path}} to {{merge_ticket_path}} "
+        long: "{{user_path}} has merged the ticket  {{notable_path}} to {{merge_ticket_path}}"
   credit_card_info: Credit card information
   zendesk_backup_info: Select the Zendesk backup file downloaded from zendesk
   your_email_address: Your email address
@@ -822,6 +831,8 @@ en:
     submit_ticket: Submit Ticket
     properties: Ticket Properties
     requester: Requester
+    merge_btn: Merge
+    split_ticket: Split as new Ticket
   recent_activity: Recent Activity
   forgot_password: Forgot Password
   change_plan: Change plan

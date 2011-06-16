@@ -29,10 +29,18 @@
 						</li>
 						<li class="menu-item">
 							<%= link_to "Delete", helpdesk_ticket_helpdesk_note_path(@item, note), :method => :delete, :class => "last" %>
-						</li>						
+						</li>	
+						
+						<%if note.incoming%>
+						<li class="menu-item">
+							<%= link_to t('ticket.split_ticket'), { :action => :split_the_ticket , :note_id => note.id} , :method => :post, :class => "last" , :title => "Split this as new Ticket"%>
+						</li>	
+						<%end%>
+											
 					</ul>
 				</li>
-				<% end %>
+				<% end %>			
+				
 			</ul>
 		</div>
 
