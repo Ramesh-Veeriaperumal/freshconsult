@@ -5,6 +5,7 @@ class Solution::CategoriesController < ApplicationController
   end
   
   before_filter { |c| c.check_portal_scope :open_solutions }
+  before_filter :portal_category?, :except => :index
   before_filter :set_selected_tab
   
   def index
@@ -106,8 +107,14 @@ end
   def nscname
     @nscname ||= controller_path.gsub('/', '_').singularize
   end
+  
   def set_selected_tab
       @selected_tab = :solutions
+  end
+  
+  def portal_category?
+    wrong_portal unless(main_portal? || 
+          (params[:id] && params[:id].to_i == current_portal.solution_category_id))
   end
 
 end

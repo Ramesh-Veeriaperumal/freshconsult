@@ -109,6 +109,14 @@ module ApplicationHelper
   def reply_path(args_hash)
     comment_path(args_hash, 'reply')
   end
+  
+  def merge_ticket_path(args_hash)    
+    link_to(args_hash['subject']+"(##{args_hash['ticket_id']})", "#{helpdesk_ticket_path args_hash['ticket_id']}}")
+  end
+  
+  def split_ticket_path(args_hash)
+    link_to(args_hash['subject']+"(##{args_hash['ticket_id']})", "#{helpdesk_ticket_path args_hash['ticket_id']}}")
+  end
   #Liquid ends here..
   
   #Ticket place-holders, which will be used in email and comment contents.
@@ -155,6 +163,15 @@ module ApplicationHelper
   # Date and time format that is mostly used in our product
   def formated_date(date_time)
     date_time.strftime("%B %e %Y at %I:%M %p")
+  end
+  
+  # Get Pref color for individual portal
+  def portal_pref(item, type)
+    color = current_account[:preferences].default(type)
+    if !item[:preferences].blank?
+      color = item[:preferences].default(type)
+    end
+    color
   end
   
   private

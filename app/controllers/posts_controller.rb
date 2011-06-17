@@ -155,6 +155,9 @@ class PostsController < ApplicationController
     end
     
     def find_forum_topic
+      wrong_portal unless(main_portal? || 
+            (params[:category_id].to_i == current_portal.forum_category_id)) #Duplicate
+
       @forum_category = scoper.find(params[:category_id])
       @forum = @forum_category.forums.find(params[:forum_id])
       redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) unless @forum.visible?(current_user)

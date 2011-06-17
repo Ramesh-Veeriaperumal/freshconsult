@@ -6,6 +6,7 @@ en:
   upgrade_trial: Upgrade your trial!
   contact_name: Contact Name
   eight: 8 Hours
+  logo: Logo
   security_code: Security code
   pending: Pending
   twitter: Twitter
@@ -43,7 +44,15 @@ en:
     popular: Popular
     recent: Recent
   payment_info: Payment information
-  admin: 
+  admin:
+    products:
+      index:
+        title: Products
+        add_product: Add Product
+      new:
+        title: New Product
+      edit:
+        title: Edit Product
     security: 
       index: 
         shared_secret: Shared Secret
@@ -71,7 +80,8 @@ en:
         new: Add Canned response
         title: Canned responses
     home: 
-      index: 
+      index:
+        title: Admin
         group: Groups
         business-hours: Business Hours
         rebranding: Helpdesk Rebranding
@@ -90,6 +100,25 @@ en:
         scenario: Scenario Automations
         remote-authentication: Remote Authentication
         everything_helpdesk: Everything Helpdesk
+        canned-response: Canned Response
+        multi-product: Multiple Products
+      
+    canned_responses:
+      index:
+        title: Canned responses
+        new: Add Canned response
+      new:
+        title: Add Canned response        
+        delete_confirm: Are you sure you want to delete this canned response?      
+      edit: 
+        title: Edit Canned response
+      form:
+        available_for: Available for
+        all_agents: All agents
+        groups: Agents in group
+        me_only: Me only
+        response_name: Response title
+                
   ends_with: Ends with
   last_name: Last Name
   forum: 
@@ -165,6 +194,9 @@ en:
         start: You are now monitoring this ticket
       empty_trash: 
         success: All tickets in the trash folder were deleted.
+      merge:
+        wrong_ticket_id: There is not ticket with this id . Please try again
+        success: Ticket has been successfully merged
     business_hours: 
       update: 
         failure: Failed to update Business Hours
@@ -283,7 +315,13 @@ en:
         long: "{{user_path}} executed the scenario '{{scenario_name}}' on {{notable_path}}"
       status_change: 
         short: "{{user_path}} changed the status to {{status_name}}"
-        long: "{{user_path}} changed the ticket status of {{notable_path}} to {{status_name}}"
+        long: "{{user_path}} changed the ticket status of {{notable_path}} to {{status_name}}"     
+      ticket_split:
+        short: "{{user_path}} has split the ticket {{notable_path}} from {{split_ticket_path}}"
+        long: "{{user_path}} has split the ticket {{notable_path}} from {{split_ticket_path}}"
+      ticket_merge:
+        short: "{{user_path}} has merged the ticket {{notable_path}} to {{merge_ticket_path}} "
+        long: "{{user_path}} has merged the ticket  {{notable_path}} to {{merge_ticket_path}}"
   credit_card_info: Credit card information
   zendesk_backup_info: Select the Zendesk backup file downloaded from zendesk
   your_email_address: Your email address
@@ -822,6 +860,8 @@ en:
     submit_ticket: Submit Ticket
     properties: Ticket Properties
     requester: Requester
+    merge_btn: Merge
+    split_ticket: Split as new Ticket
   recent_activity: Recent Activity
   forgot_password: Forgot Password
   change_plan: Change plan

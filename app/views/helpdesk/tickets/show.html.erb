@@ -68,6 +68,20 @@
 		function show_canned_response(){
 			jQuery('#canned_response_list').show();			
 		}
+		var ticket_merge_dialog = null;
+		function merge_ticket(ticket_id)
+		{		   
+		   
+				 ticket_merge_dialog = jQuery("<div id='merge_ticket_list' style='display:none;' />").appendTo("body");			
+				 var url = '/helpdesk/tickets/show_tickets_from_same_user/'+ticket_id
+	    		 // load remote content
+	   			 ticket_merge_dialog.load(url,{}, function(responseText, textStatus, XMLHttpRequest) {
+	                ticket_merge_dialog.dialog({modal:true, width:'700px', height:'auto', title:"Merge ticket"});
+	            });
+		
+    		//prevent the browser to follow the link
+    		return false;
+	    }
 	<% end %>
 <% end %>
 
@@ -164,6 +178,7 @@
 				<% unless @ticket.deleted %>
 					<div class="ticket_actions action_icons">
 						<div class="action_buttons clearfix">
+							<%= link_to_function t('ticket.merge_btn'), "merge_ticket(#{@ticket.display_id})"  %> 
 							<%= link_to(t('ticket.edit_btn'), edit_helpdesk_ticket_path(@ticket)  ) %> 
 							<%= link_to(t('ticket.close_btn'), close_helpdesk_ticket_path(@ticket), :method => :put, :title  => t('ticket.close_btn_title')) unless @ticket.closed? %>
 							<%= link_to(t('ticket.delete_btn'), @ticket, :method => :delete, :class => "last", :title => t('ticket.delete_btn_title')) %>
@@ -221,10 +236,11 @@
 				<%= render :partial => 'note', :collection => @ticket_notes %>
 		    </div>
 		<% end %>
-
-		
+			
 	</div>
 <% end %>
+
+
 
 <% content_for :main_panel_toolbar do -%><%- end %>
 

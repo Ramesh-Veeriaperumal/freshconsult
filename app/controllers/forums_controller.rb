@@ -96,6 +96,11 @@ class ForumsController < ApplicationController
   
   protected
     def find_or_initialize_forum # Shan - Should split-up find & initialize as separate methods.
+      if params[:category_id]
+        wrong_portal unless(main_portal? || 
+              (params[:category_id].to_i == current_portal.forum_category_id)) #Duplicate
+      end
+            
       @forum_category = params[:category_id] ? scoper.find(params[:category_id]) : nil
       @forum = params[:id] ? @forum_category.forums.find(params[:id]) : nil
       redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) if !@forum.nil? and  !@forum.visible?(current_user) 
