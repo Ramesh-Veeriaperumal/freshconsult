@@ -165,6 +165,15 @@ module ApplicationHelper
     date_time.strftime("%B %e %Y at %I:%M %p")
   end
   
+  # Get Pref color for individual portal
+  def portal_pref(item, type)
+    color = current_account[:preferences].default(type)
+    if !item[:preferences].blank?
+      color = item[:preferences].default(type)
+    end
+    color
+  end
+  
   private
     def solutions_tab
       if current_portal.main_portal?
