@@ -554,7 +554,7 @@ end
        xml.custom_field do
         self.ff_aliases.each do |label|    
           value = self.get_ff_value(label.to_sym()) 
-          xml.tag!(label, value) unless value.blank?
+          xml.tag!(label.gsub(/[^0-9A-Za-z_]/, ''), value) unless value.blank?
         end
        
       end

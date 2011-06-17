@@ -1,0 +1,11 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  name: Freshdesk Forum Category1
+  description: MyString
+  account_id: 1
+
+two:
+  name: Freshdesk Forum Category2
+  description: MyString
+  account_id: 1
