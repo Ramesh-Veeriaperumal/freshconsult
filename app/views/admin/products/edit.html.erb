@@ -1,0 +1,9 @@
+<% @page_title = t('.title') %>
+<%= content_tag :h3, @page_title, :class => "title" %>
+<% form_for :product, @product, :url => admin_product_path, :html => { :method => :put } do |f| %>
+  <%= render :partial => "form", :object => f %>
+  <div class="button-container">
+  	<%= f.submit t('update'), :class => "uiButton"  %>
+  	<%= link_to(t('cancel'), admin_products_path, :class => "uiButton", :id => "email-form-cancel" )  %>
+  </div>
+<% end %>

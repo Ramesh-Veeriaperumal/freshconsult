@@ -6,6 +6,7 @@ en:
   upgrade_trial: Upgrade your trial!
   contact_name: Contact Name
   eight: 8 Hours
+  logo: Logo
   security_code: Security code
   pending: Pending
   twitter: Twitter
@@ -43,7 +44,15 @@ en:
     popular: Popular
     recent: Recent
   payment_info: Payment information
-  admin: 
+  admin:
+    products:
+      index:
+        title: Products
+        add_product: Add Product
+      new:
+        title: New Product
+      edit:
+        title: Edit Product
     security: 
       index: 
         shared_secret: Shared Secret
@@ -71,7 +80,8 @@ en:
         new: Add Canned response
         title: Canned responses
     home: 
-      index: 
+      index:
+        title: Admin
         group: Groups
         business-hours: Business Hours
         rebranding: Helpdesk Rebranding
@@ -90,6 +100,25 @@ en:
         scenario: Scenario Automations
         remote-authentication: Remote Authentication
         everything_helpdesk: Everything Helpdesk
+        canned-response: Canned Response
+        multi-product: Multiple Products
+      
+    canned_responses:
+      index:
+        title: Canned responses
+        new: Add Canned response
+      new:
+        title: Add Canned response        
+        delete_confirm: Are you sure you want to delete this canned response?      
+      edit: 
+        title: Edit Canned response
+      form:
+        available_for: Available for
+        all_agents: All agents
+        groups: Agents in group
+        me_only: Me only
+        response_name: Response title
+                
   ends_with: Ends with
   last_name: Last Name
   forum: 

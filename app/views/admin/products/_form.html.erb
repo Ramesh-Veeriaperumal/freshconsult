@@ -1,0 +1,141 @@
+<% content_for :sidebar do -%><%- end %>
+<%= render :partial => "shared/colorpicker" %>
+<%= form.error_messages %>
+<ul class="ui-form">
+  <li class="inline-field">
+    <label class="caption">Product name</label>
+    <div class="fields">
+      <%= form.text_field :name, :class => "required text" %>
+    </div>
+  </li>
+  <li class="inline-field">
+    <label class="caption">Configure Email</label>
+    <div class="fields">
+      <label>Enter your support email id</label>
+      <%= form.text_field :reply_email, :class => "required text", :id => "reply_to_id" %>
+      <div class="info-data"><%= t('email_configs.info7') %></div>
+      <span class="seperator"></span>
+      <label><%=t('email_configs.info8')%></label>
+      <%= form.hidden_field :to_email, :id => "hidden_reply_to" %>
+      <%= content_tag(:div, @product.to_email, :id => "div_reply_email", :class =>"highlight-textbox-info" )  %>
+      <span class="seperator"></span>
+      <label><%=t('email_configs.info9')%> <%= collection_select(:product, :group_id, @groups, :id, :name, options = {:include_blank => "..."}) %></label>
+      <div class="info-data"><%=t('email_configs.info10')%></div>
+    </div>
+  </li>
+  <li class="inline-field">
+    <label>
+      <%= check_box "product[portal_attributes]", "enable", {:class => "checkbox", :id => "EnablePortal" } %>
+      Enable Product Portal
+      <div class="info-data tabbed">Configure a separate portal for this product</div>
+    </label>
+    <div id="PortalSettings" style="display:none;">
+      <span class="seperator"></span>
+      <label class="tabbed caption">Portal settings</label>
+      <div class="fields">
+        <label>Portal URL</label>      
+        <%= text_field "product[portal_attributes]", :portal_url, :class => "text" %>
+        <div class="info-data">
+          Before using this field please ensure that you have created a CNAME DNS record in your DNS Zone file to point support.mycompanyname.com to <%= current_account.full_domain %>. Your Webmaster or Server administrator should be able to help you set this up correctly
+        </div>
+        <span class="seperator"></span>
+        <label>Portal name</label>
+        <%= text_field "product[portal_attributes]", :name, :class => "text" %>
+        <div class="info-data">The name will be displayed in your product portal next to the header logo</div>
+        <span class="seperator"></span>
+        <label>Twitter id</label>
+        <%= text_field "product[portal_attributes]", :twitter_id, :class => "text" %> 
+        <span class="seperator"></span>        
+        <label>
+          Top level forum category          
+          <%= collection_select "product[portal_attributes]", :forums_category, @forums_categories, :id, :name, options ={:prompt => "Select a forum category..."} %>
+        </label>
+        <div class="info-data">
+          You can associate a forum category to this product. All other forums will be not be visible to the customers, when viewing the forums tab in this product portal.
+        </div>
+        <span class="seperator"></span>
+        <label>
+          Top level solutions category
+          <%= collection_select "product[portal_attributes]", :solution_category, @solution_categories, :id, :name, options ={:prompt => "Select a solution category..."} %>
+        </label>
+        <div class="info-data">
+          You can associate a solution category to this product. All other solutions will not be shown to the customers, when viewing the solutions tab in this product portal.
+        </div>
+      </div>
+      <span class="seperator"></span>
+      <label class="tabbed caption">Portal rebranding</label>
+      <div class="fields">
+        <%= render :partial => "/shared/logo_image", :locals => { :item => @product.portal, :field_name => "product[portal_attributes]" } %>
+        <span class="seperator"></span>      
+        <%= render :partial => "/shared/fav_image", :locals => { :item => @product.portal, :field_name => "product[portal_attributes]" } %>
+        <span class="seperator"></span>
+          <label><%= content_tag(:strong, t('account.page_colors.title') ) %></label>
+            <% form.fields_for :preferences, @product.portal.preferences do |p| %>
+              <%= p.label :header_color, t('account.page_colors.header'), :class => "caption" %>
+              <div class="color fields">
+                <input type="color" maxlength="7" id="HeaderColor" class="color_field required" name="product[preferences][header_color]" value="<%=portal_pref(@product.portal, :header_color)%>" data-hex="true" />
+    					</div>
+              <%= p.label :header_color_tab, t('account.page_colors.tab_color'), :class => "caption" %>
+              <div class="color fields">
+                <input type="color" maxlength="7" id="TabColor" class="color_field required" name="product[preferences][tab_color]" value="<%=portal_pref(@product.portal, :tab_color)%>" data-hex="true" /> 
+              </div>
+              <%= p.label :bg_color, t('account.page_colors.background'), :class => "caption" %></td>
+              <div class="color fields"> 
+                <input type="color" maxlength="7" id="BackgroundColor" class="color_field required" name="product[preferences][bg_color]" value="<%=portal_pref(@product.portal, :bg_color)%>" data-hex="true" />
+                <div>
+                  <a href="javascript:void(0)" class="slim-button" id="ResetColors"><%=t('account.info3')%> </a>
+                </div>
+              </div>
+            <% end %>
+        </div>
+        <span class="seperator"></span>      
+        <label class="tabbed caption">Portal permissions</label>
+        <div class="fields">
+          <label>
+              <input type="checkbox" class="checkbox" />
+    		      <%=t('portal_customizer_anon_tickets')%>
+    		  </label>
+    			<%= content_tag( :div, t('portal_customizer_anon_tickets_i'), :class => "info-data tabbed" ) %>
+    		  <span class="seperator"></span>
+    			<label>
+              <input type="checkbox" class="checkbox" />
+    		      <%=t('portal_customizer_open_solutions')%>
+    		  </label>
+    			<%= content_tag( :div, t('portal_customizer_open_sol_i'), :class => "info-data tabbed" ) %>
+    			<span class="seperator"></span>
+    			<label>
+              <input type="checkbox" class="checkbox" />
+    		      <%=t('portal_customizer_open_forums')%>
+  		    </label>
+    			<%= content_tag( :div, t('portal_customizer_anon_for_i'), :class => "info-data tabbed" ) %>
+        </div>  
+    </div>
+  </li>  
+</ul>
+<% content_for :pagefixed do -%>
+  <% javascript_tag do %>
+    jQuery(document).ready(function(){
+      jQuery("#reply_to_id")
+        .bind("change keyup", 
+          function(ev){
+            if(this.value != ''){
+              reply_email = construct_reply_url(this.value, "<%= current_account.full_domain %>");
+              console.log(reply_email);
+              jQuery("#div_reply_email").text(reply_email);
+              jQuery("#hidden_reply_to").val(reply_email);
+            }												
+        })
+        .trigger("change");
+
+      jQuery("#EnablePortal")
+        .bind("change", function(ev){
+          if(this.checked)
+            jQuery("#PortalSettings").slideDown(400);
+          else
+            jQuery("#PortalSettings").slideUp(200);
+        })
+        .trigger("change");
+        
+    });
+  <%- end %>
+<%- end %>
