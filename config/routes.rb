@@ -65,6 +65,7 @@ ActionController::Routing::Routes.draw do |map|
     admin.resources :data_export, :collection => {:export => :any }
     admin.resources :portal, :only => [ :index, :update ]
     admin.resources :canned_responses
+    admin.resources :products
   end
   
   #SAAS copy starts here

@@ -1,31 +1,9 @@
-<% javascript_tag do %>
-	construct_reply_url = function(to_email){
-		email_split  = to_email.split("@");
-		email_name   = email_split[0]||'';
-		email_domain = email_split[1]||'';
-		if(email_domain != ''){
-			email_domain = email_domain.split(".")[0];
-		}		
-		account_name = "<%=current_account.full_domain%>".toLowerCase();
-		reply_email  = "@"+account_name;
-		
-		
-		if(email_domain.toLowerCase() == account_name){
-			reply_email = email_name + reply_email;		
-		}
-		else{
-			reply_email = email_domain + email_name + reply_email;
-		}
-		return reply_email;
-	}
-	
-	
-	
+<% javascript_tag do %> 
 	jQuery(document).ready(function(){
 		jQuery("#reply_to_id").bind("change keyup", 
 											function(ev){
 											  if(this.value != ''){
-												  reply_email = construct_reply_url(this.value);
+												  reply_email = construct_reply_url(this.value, "<%=current_account.full_domain%>");
 												  jQuery("#div_reply_email").text(reply_email);
 												  jQuery("#hidden_reply_to").val(reply_email);
 												}												

@@ -6,6 +6,7 @@ en:
   upgrade_trial: Upgrade your trial!
   contact_name: Contact Name
   eight: 8 Hours
+  logo: Logo
   security_code: Security code
   pending: Pending
   twitter: Twitter
@@ -43,7 +44,15 @@ en:
     popular: Popular
     recent: Recent
   payment_info: Payment information
-  admin: 
+  admin:
+    products:
+      index:
+        title: Products
+        add_product: Add Product
+      new:
+        title: New Product
+      edit:
+        title: Edit Product
     security: 
       index: 
         shared_secret: Shared Secret
@@ -56,7 +65,8 @@ en:
         remote_authentication: Remote Authentication
         remote_logout_url: Remote logout URL
     home: 
-      index: 
+      index:
+        title: Admin
         group: Groups
         business-hours: Business Hours
         rebranding: Helpdesk Rebranding
@@ -75,6 +85,7 @@ en:
         remote-authentication: Remote Authentication
         everything_helpdesk: Everything Helpdesk
         canned-response: Canned Response
+        multi-product: Multiple Products
       
     canned_responses:
       index:

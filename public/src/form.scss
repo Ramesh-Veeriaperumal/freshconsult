@@ -32,6 +32,7 @@ input.text, input[type=text], textarea{
 
 div.color{
 	position:relative;
+	padding-top:0px;
 	.mColorPickerTrigger{ 
 		position:absolute;
 		top:3px;
@@ -438,7 +439,7 @@ a.addchoice:hover{
 	}
 	.caption{
 		float:left;
-		clear:left; 
+		/*		clear:left; */
 	}
 	.rightalign{
 		font-size:13px;
@@ -449,10 +450,20 @@ a.addchoice:hover{
 		margin-left:210px;
 		clear:right;
 		label{
-			font-size:1.1em;
+			font-size:1.2em;
 		}
 		div.action_buttons{
 			margin-top:0px;
+		}
+		span.seperator{
+			margin:6px 0px;
+		}
+		.info-data{
+			padding-bottom:0px;
+		}		
+		div.fields{
+		    padding-top:3px;
+		    margin-left:160px;
 		}
 	}
 	span.seperator{
@@ -787,18 +798,6 @@ span.sort_handle{
 	height:220px;
 }
 
-.live_search{
-    text-align:left;
-    padding:0px 0px 0px 0px;
-    margin:8px 0px;
-    .loading{
-    	background-position:right !important;
-    }
-    .overlabel{
-    	padding:0px;
-    }
-} 
-
 input.search{
 	@include corners(3px);
     margin-right: 10px;
@@ -809,6 +808,19 @@ input.search{
     height:18px;
     padding: 5px 7px;
     width: 500px;
+}
+
+.live_search{
+    text-align:left;
+    padding:0px 0px 0px 0px;
+    margin:8px 0px;
+    .loading{
+        background-position:right !important;
+    }
+    .overlabel{
+        padding:0px;
+        font-size:13px;
+    }
 }
 
 .sp_paragraph{
@@ -1106,6 +1118,7 @@ table.summary-report{
 	width:96%;
 	font-weight:400;
 	border:1px solid #CFCFCF;
+	background-color:#efefef;
 	padding:5px 3px 4px 5px;
 	height:18px;
 }
@@ -1155,7 +1168,7 @@ table.summary-report{
 				margin-left:86px;
 				padding-top:4px;
 				.info-data{
-					margin-bottom:6px;
+					margin:8px;
 				}
 			}
 			input.text, textarea{

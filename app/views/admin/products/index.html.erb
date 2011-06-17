@@ -1,0 +1,16 @@
+<% @page_title = t('.title') %>
+<div class="floatr">
+	<%= link_to(t('.add_product'), new_admin_product_path, :class => "uiButton") %>
+</div>
+<%= content_tag :h3, @page_title, :class => "title" %>
+<div>	
+	<ul class="admin_list">
+    <% @products.each do |product| %>
+      <li>
+        <%= link_to(product.name, edit_admin_product_path(product), :class => "item_info") %>
+        <%= content_tag(:div, product.reply_email) %>
+        <%= content_tag(:div, "Active: #{product.active}") %>
+      </li>
+    <% end %>
+	</ul>
+</div>
