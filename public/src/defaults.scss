@@ -30,10 +30,10 @@ p{
 
 .clearfix{ @include clearfix; }
 
-.title{ color:#6f6f6f; padding:6px 0px 10px 3px; }
+.title{ color:#444444; padding:6px 0px 10px 0px; font-weight:normal; }
 .title a{ @include link-colors(#4D769F, #3399cc, #4D769F, #4D769F); text-decoration:none; }
 h2.title{ font-size:1.8em; }
-h3.title, h3.sub_title, h3.title-band{ font-size:1.50em;  }
+h3.title, h3.sub_title, h3.title-band{ font-size:1.45em; }
 h4.title { font-size:1.1em; }
 h3.title-band{ margin:12px -20px; background-color:#f2f2f2; padding:8px 20px; }
 h3.sub_title{ font-size:1.1em; }

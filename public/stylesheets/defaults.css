@@ -40,8 +40,9 @@ p {
 }
 
 .title {
-  color: #6f6f6f;
-  padding: 6px 0px 10px 3px;
+  color: #444444;
+  padding: 6px 0px 10px 0px;
+  font-weight: normal;
 }
 
 .title a {
@@ -63,7 +64,7 @@ h2.title {
 }
 
 h3.title, h3.sub_title, h3.title-band {
-  font-size: 1.50em;
+  font-size: 1.45em;
 }
 
 h4.title {
