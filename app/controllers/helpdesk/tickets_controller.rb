@@ -9,7 +9,7 @@ class Helpdesk::TicketsController < ApplicationController
   layout :choose_layout 
   
   before_filter :load_multiple_items, :only => [:destroy, :restore, :spam, :unspam, :assign , :close_multiple ,:pick_tickets]  
-  before_filter :load_item,           :only => [:show, :edit, :update, :execute_scenario, :close ,:change_due_by] 
+  before_filter :load_item,           :only => [:show, :edit, :update, :execute_scenario, :close ,:change_due_by ,:get_ca_response_content] 
   before_filter :load_flexifield ,    :only => [:execute_scenario]
   before_filter :set_customizer ,     :only => [:new ,:edit ,:show]
   
@@ -266,8 +266,9 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def get_ca_response_content   
-    ca_resp = current_account.canned_responses.find(params[:id])
-    render :text => (ca_resp.content.gsub(/<\/?[^>]*>/, "")).gsub(/&nbsp;/i,"") || "" 
+    ca_resp = current_account.canned_responses.find(params[:ca_resp_id])
+    a_template = Liquid::Template.parse(ca_resp.content).render('ticket' => @item, 'helpdesk_name' => @item.account.helpdesk_name)    
+    render :text => (a_template.gsub(/<\/?[^>]*>/, "")).gsub(/&nbsp;/i,"") || "" 
   end
 
   protected
