@@ -34,6 +34,7 @@ input.text, input[type=text], textarea {
 
 div.color {
   position: relative;
+  padding-top: 0px;
 }
 div.color .mColorPickerTrigger {
   position: absolute;
@@ -363,6 +364,19 @@ a.addchoice:hover {
 .ui-form .inlineChecklist input {
   top: 0px;
 }
+.ui-form .inline-radio {
+  padding: 3px 0px;
+  font-size: 13px;
+}
+.ui-form .inline-radio input.radio {
+  position: relative;
+  top: -3px;
+  margin-right: 4px;
+}
+.ui-form .inline-radio select {
+  font-size: 12px;
+  margin-top: 5px;
+}
 .ui-form li.textleft {
   overflow: hidden;
   *zoom: 1;
@@ -490,7 +504,7 @@ a.addchoice:hover {
 }
 .ui-form .inline-field .caption {
   float: left;
-  clear: left;
+  /*		clear:left; */
 }
 .ui-form .inline-field .rightalign {
   font-size: 13px;
@@ -502,10 +516,20 @@ a.addchoice:hover {
   clear: right;
 }
 .ui-form .inline-field div.fields label {
-  font-size: 1.1em;
+  font-size: 1.2em;
 }
 .ui-form .inline-field div.fields div.action_buttons {
   margin-top: 0px;
+}
+.ui-form .inline-field div.fields span.seperator {
+  margin: 6px 0px;
+}
+.ui-form .inline-field div.fields .info-data {
+  padding-bottom: 0px;
+}
+.ui-form .inline-field div.fields div.fields {
+  padding-top: 3px;
+  margin-left: 160px;
 }
 .ui-form .inline-field span.seperator {
   border-style: solid;
@@ -877,18 +901,6 @@ span.sort_handle {
   height: 220px;
 }
 
-.live_search {
-  text-align: left;
-  padding: 0px 0px 0px 0px;
-  margin: 8px 0px;
-}
-.live_search .loading {
-  background-position: right !important;
-}
-.live_search .overlabel {
-  padding: 0px;
-}
-
 input.search {
   -moz-border-radius: 3px 3px 3px 3px;
   -webkit-border-radius: 3px 3px 3px 3px;
@@ -901,6 +913,19 @@ input.search {
   height: 18px;
   padding: 5px 7px;
   width: 500px;
+}
+
+.live_search {
+  text-align: left;
+  padding: 0px 0px 0px 0px;
+  margin: 8px 0px;
+}
+.live_search .loading {
+  background-position: right !important;
+}
+.live_search .overlabel {
+  padding: 0px;
+  font-size: 13px;
 }
 
 .sp_paragraph {
@@ -1165,7 +1190,7 @@ fieldset.nestedChoices {
 }
 
 .tabbed {
-  padding-left: 26px;
+  padding-left: 25px;
 }
 
 table.summary {
@@ -1298,6 +1323,7 @@ table.summary-report thead td {
   width: 96%;
   font-weight: 400;
   border: 1px solid #CFCFCF;
+  background-color: #efefef;
   padding: 5px 3px 4px 5px;
   height: 18px;
 }
@@ -1351,7 +1377,7 @@ table.summary-report thead td {
   padding-top: 4px;
 }
 .request_panel .ui-form li.inline-field div.fields .info-data {
-  margin-bottom: 6px;
+  margin: 8px;
 }
 .request_panel .ui-form li.inline-field input.text, .request_panel .ui-form li.inline-field textarea {
   width: 98%;

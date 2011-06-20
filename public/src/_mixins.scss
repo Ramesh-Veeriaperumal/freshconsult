@@ -48,3 +48,25 @@
 	-o-transform: rotate($degree);
 	-o-transform-origin: $location;
 }
+
+@mixin text-formatting(){
+	p, li {line-height:1.55em;}
+	p {font-size:13px; @include wrap; margin:0px 0 0px 0;}
+	h1 {font-size: 2em}
+	h2 {font-size: 1.5em}
+	h3 {font-size: 1.17em}
+	h4 {font-size: 1em}
+	h5 {font-size: .83em}
+	h6 {font-size: .75em}
+	img {border:0;}
+	table {cursor:default}
+	table td, table th {cursor:text}
+	ins {border-bottom:1px solid green; text-decoration: none; color:green}
+	del {color:red; text-decoration:line-through}
+	cite {border-bottom:1px dashed blue}
+	acronym {border-bottom:1px dotted #CCC; cursor:help}
+	abbr {border-bottom:1px dashed #CCC; cursor:help}
+	ol, ul{ margin: 14px 0px 14px 0px; padding: 0px 0px 0px 40px; line-height: 17px;}
+	ul{ list-style:disc outside;  }
+	blockquote { margin: 1em 1em; color: #999; border-left: 2px solid #999; padding:6px 6px 1px 1em; background-color: #EEE;}
+}

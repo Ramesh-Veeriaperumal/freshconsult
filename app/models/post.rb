@@ -34,7 +34,7 @@ class Post < ActiveRecord::Base
   
   def monitor_reply
     emailcoll = self.topic.monitorship_emails
-    PostMailer.deliver_monitor_email!(emailcoll,self,self.user)  if emailcoll.count > 0
+    PostMailer.send_later(:deliver_monitor_email,emailcoll,self,self.user)  if emailcoll.count > 0
     
    end
   

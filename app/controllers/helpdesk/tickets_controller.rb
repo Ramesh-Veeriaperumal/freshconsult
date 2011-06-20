@@ -9,9 +9,9 @@ class Helpdesk::TicketsController < ApplicationController
   layout :choose_layout 
   
   before_filter :load_multiple_items, :only => [:destroy, :restore, :spam, :unspam, :assign , :close_multiple ,:pick_tickets]  
-  before_filter :load_item,     :only => [:show, :edit, :update, :execute_scenario, :close ,:change_due_by] 
-  before_filter :load_flexifield , :only =>[:execute_scenario]
-  before_filter :set_customizer , :only => [:new ,:edit ,:show]
+  before_filter :load_item,           :only => [:show, :edit, :update, :execute_scenario, :close ,:change_due_by] 
+  before_filter :load_flexifield ,    :only => [:execute_scenario]
+  before_filter :set_customizer ,     :only => [:new ,:edit ,:show]
   
   def check_user
     if !current_user.nil? and current_user.customer?
@@ -264,12 +264,12 @@ class Helpdesk::TicketsController < ApplicationController
     sol_desc = current_account.solution_articles.find(params[:id])
     render :text => (sol_desc.description.gsub(/<\/?[^>]*>/, "")).gsub(/&nbsp;/i,"") || "" 
   end
- 
+
   def get_ca_response_content   
     ca_resp = current_account.canned_responses.find(params[:id])
     render :text => (ca_resp.content.gsub(/<\/?[^>]*>/, "")).gsub(/&nbsp;/i,"") || "" 
   end
-  
+
   protected
     def item_url
       return new_helpdesk_ticket_path if params[:save_and_create]

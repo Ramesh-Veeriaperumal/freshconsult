@@ -68,6 +68,8 @@ class Account < ActiveRecord::Base
   has_many :email_configs, :conditions => { :active => true }
   has_one  :primary_email_config, :class_name => 'EmailConfig', :conditions => { :primary_role => true }
   has_many :products, :class_name => 'EmailConfig', :conditions => { :primary_role => false }
+  has_many :portals
+  has_one  :main_portal, :source => :portal, :through => :primary_email_config
   
   has_many :email_notifications, :dependent => :destroy
   has_many :groups, :dependent => :destroy
@@ -370,6 +372,9 @@ class Account < ActiveRecord::Base
       d_email = "support@#{full_domain}"
       e_c = email_configs.build(:to_email => d_email, :reply_email => d_email, :primary_role => true)
       e_c.active = true
+      
+      portal = e_c.build_portal(:name => helpdesk_name, :preferences => preferences, 
+                    :account => self)
     end
     
     def create_admin

@@ -4,14 +4,14 @@
 	<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame 
 	     Remove this if you use the .htaccess -->
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">  
-  <title><%= " #{h(current_account.name)} : #{h(@page_title || 'Helpdesk')}"  %></title>
+  <title><%= " #{h(current_portal.name)} : #{h(@page_title || 'Helpdesk')}"  %></title>
 	<meta name="description" content="">
 	<meta name="author" content="">
 	
 	<!--  Mobile viewport optimized: j.mp/bplateviewport -->
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	
-	<link rel="shortcut icon" href="<%=current_account.fav_icon.nil? ? '/images/favicon.ico' : current_account.fav_icon.content.url%>" />
+	<link rel="shortcut icon" href="<%=current_portal.fav_icon.nil? ? '/images/favicon.ico' : current_portal.fav_icon.content.url%>" />
      
 	<%= include_stylesheets :common, :media => "screen, projection" %>
 	<%= render :partial => "shared/theme.css"  %>

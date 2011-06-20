@@ -1,8 +1,8 @@
 /* This import applies a global reset to any page that imports this stylesheet.*/
 /* Theme Colors and layout Defaults */
 /* Importing admin icons */
-.admin-icon-sprite, .admin-icon-account-settings, .admin-icon-agent, .admin-icon-business-hours, .admin-icon-customer-portal, .admin-icon-dispatcher, .admin-icon-email-notifications, .admin-icon-email-settings, .admin-icon-feedback, .admin-icon-group, .admin-icon-import, .admin-icon-rebranding, .admin-icon-remote-authentication, .admin-icon-scenario, .admin-icon-sla, .admin-icon-ticket-fields {
-  background: url('/images/admin-icon-55b5049588.png') no-repeat;
+.admin-icon-sprite, .admin-icon-account-settings, .admin-icon-agent, .admin-icon-business-hours, .admin-icon-canned-response, .admin-icon-customer-portal, .admin-icon-dispatcher, .admin-icon-email-notifications, .admin-icon-email-settings, .admin-icon-feedback, .admin-icon-group, .admin-icon-import, .admin-icon-rebranding, .admin-icon-remote-authentication, .admin-icon-scenario, .admin-icon-sla, .admin-icon-ticket-fields {
+  background: url('/images/admin-icon-2c09239c3a.png') no-repeat;
 }
 
 /* Ticket Show page twitter style icons */
@@ -722,15 +722,16 @@ body h5 {
 }
 .request_details div.description .details {
   padding: 8px 0px 3px 0px;
-  margin-top: 8px;
+  margin-top: 4px;
   border-top: 1px solid #efefef;
   color: #333333;
   font-size: 13px;
 }
+.request_details div.description .details p, .request_details div.description .details li {
+  line-height: 1.55em;
+}
 .request_details div.description .details p {
   font-size: 13px;
-  padding-right: 20px;
-  line-height: 1.7em;
   white-space: pre-wrap;
   /* css-3 */
   white-space: -moz-pre-wrap;
@@ -741,7 +742,69 @@ body h5 {
   /* Opera 7 */
   word-wrap: break-word;
   /* Internet Explorer 5.5+ */
-  margin: 0px 0 6px 0;
+  margin: 0px 0 0px 0;
+}
+.request_details div.description .details h1 {
+  font-size: 2em;
+}
+.request_details div.description .details h2 {
+  font-size: 1.5em;
+}
+.request_details div.description .details h3 {
+  font-size: 1.17em;
+}
+.request_details div.description .details h4 {
+  font-size: 1em;
+}
+.request_details div.description .details h5 {
+  font-size: .83em;
+}
+.request_details div.description .details h6 {
+  font-size: .75em;
+}
+.request_details div.description .details img {
+  border: 0;
+}
+.request_details div.description .details table {
+  cursor: default;
+}
+.request_details div.description .details table td, .request_details div.description .details table th {
+  cursor: text;
+}
+.request_details div.description .details ins {
+  border-bottom: 1px solid green;
+  text-decoration: none;
+  color: green;
+}
+.request_details div.description .details del {
+  color: red;
+  text-decoration: line-through;
+}
+.request_details div.description .details cite {
+  border-bottom: 1px dashed blue;
+}
+.request_details div.description .details acronym {
+  border-bottom: 1px dotted #CCC;
+  cursor: help;
+}
+.request_details div.description .details abbr {
+  border-bottom: 1px dashed #CCC;
+  cursor: help;
+}
+.request_details div.description .details ol, .request_details div.description .details ul {
+  margin: 14px 0px 14px 0px;
+  padding: 0px 0px 0px 40px;
+  line-height: 17px;
+}
+.request_details div.description .details ul {
+  list-style: disc outside;
+}
+.request_details div.description .details blockquote {
+  margin: 1em 1em;
+  color: #999;
+  border-left: 2px solid #999;
+  padding: 6px 6px 1px 1em;
+  background-color: #EEE;
 }
 .request_details div.description .details .ui-form {
   -moz-border-radius: 0px 0px 0px 0px;
@@ -749,7 +812,9 @@ body h5 {
   border-radius: 0px 0px 0px 0px;
   border-left: 0px;
   border-right: 0px;
+  padding: 0px;
   padding-top: 16px;
+  margin: -1px -12px;
 }
 .request_details div.description .details .ui-form label {
   font-size: 13px;
@@ -1239,52 +1304,56 @@ ul.admin_icons li a:hover {
   background-position: 0 -64px;
 }
 
-.admin-icon-customer-portal {
+.admin-icon-canned-response {
   background-position: 0 -96px;
 }
 
-.admin-icon-dispatcher {
+.admin-icon-customer-portal {
   background-position: 0 -128px;
 }
 
-.admin-icon-email-notifications {
+.admin-icon-dispatcher {
   background-position: 0 -160px;
 }
 
-.admin-icon-email-settings {
+.admin-icon-email-notifications {
   background-position: 0 -192px;
 }
 
-.admin-icon-feedback {
+.admin-icon-email-settings {
   background-position: 0 -224px;
 }
 
-.admin-icon-group {
+.admin-icon-feedback {
   background-position: 0 -256px;
 }
 
-.admin-icon-import {
+.admin-icon-group {
   background-position: 0 -288px;
 }
 
-.admin-icon-rebranding {
+.admin-icon-import {
   background-position: 0 -320px;
 }
 
-.admin-icon-remote-authentication {
+.admin-icon-rebranding {
   background-position: 0 -352px;
 }
 
-.admin-icon-scenario {
+.admin-icon-remote-authentication {
   background-position: 0 -384px;
 }
 
-.admin-icon-sla {
+.admin-icon-scenario {
   background-position: 0 -416px;
 }
 
-.admin-icon-ticket-fields {
+.admin-icon-sla {
   background-position: 0 -448px;
+}
+
+.admin-icon-ticket-fields {
+  background-position: 0 -480px;
 }
 
 .mark_action a, .mark_action .stamp {

@@ -10,7 +10,7 @@ class SubscriptionPlan < ActiveRecord::Base
   
   attr_accessor :discount
   
-  SUBSCRIPTION_PLANS = {:basic => "Basic", :pro => "Pro" , :premium => "Premium" }
+  SUBSCRIPTION_PLANS = {:basic => "Basic", :pro => "Pro" , :premium => "Premium", :free => "Free" }
 
   def to_s
     "#{self.name} - #{number_to_currency(self.amount)} / month"
@@ -25,7 +25,11 @@ class SubscriptionPlan < ActiveRecord::Base
   end
   
   def amount(include_discount = true)
-    include_discount && @discount && (@discount.plan_id ==self[:id]) && @discount.apply_to_recurring? ? self[:amount] - @discount.calculate(self[:amount]) : self[:amount]
+    include_discount && @discount && check_right_plan && @discount.apply_to_recurring? ? self[:amount] - @discount.calculate(self[:amount]) : self[:amount]
+  end
+  
+  def check_right_plan
+    @discount.plan_id.nil? || @discount.plan_id ==self[:id]
   end
   
   def setup_amount(include_discount = true)
@@ -38,6 +42,14 @@ class SubscriptionPlan < ActiveRecord::Base
   
   def revenues
     @revenues ||= subscriptions.calculate(:sum, :amount, :group => 'subscriptions.state')
+  end
+  
+  def self.get_free_plan_id
+    find(:all, :select => :id , :conditions => {:name => SUBSCRIPTION_PLANS[:free]})
+  end
+  
+  def free_plan?
+    name == SUBSCRIPTION_PLANS[:free]
   end
   
 end

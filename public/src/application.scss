@@ -552,22 +552,19 @@ body h5{
 			position: relative;
 			.details{ 
 				padding:8px 0px 3px 0px;
-				margin-top:8px;
+				margin-top:4px;
 				border-top:1px solid #efefef; 
-				color:#333333;
+				color:#333333; 
 				font-size:13px;
-				p{
-					font-size:13px;
-					padding-right:20px;
-					line-height:1.7em; 
-					@include wrap;
-					margin:0px 0 6px 0;
-				}
+				@include text-formatting;
+				
 				.ui-form{
 					@include corners(0px);
 					border-left:0px;
 					border-right:0px;
+					padding:0px;
 					padding-top:16px;
+					margin: -1px -12px;
 					label{
 						font-size:13px;
 					}

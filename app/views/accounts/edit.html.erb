@@ -1,3 +1,4 @@
+<% content_for :sidebar do -%><%- end %>
 <%= javascript_include_tag "mColorPicker.min.js" %>
 <%= render :partial => "shared/colorpicker" %>
 <% javascript_tag do %>
@@ -22,8 +23,12 @@
 					</div>
 				</div>
 			</li>
-			<%= render :partial => "/shared/logo_image", :locals => { :account => @account } %>
-			<%= render :partial => "/shared/fav_image", :locals => { :account => @account } %>
+			<li class="inline-field">
+			  <%= render :partial => "/shared/logo_image", :locals => { :item => @account, :field_name => "account" } %>
+			</li>
+			<li class="inline-field">
+			  <%= render :partial => "/shared/fav_image", :locals => { :item => @account, :field_name => "account" } %>
+			</li>
 			<li class="inline-field">
 				<%= content_tag(:label, t('account.page_colors.title') ) %>
 				<% f.fields_for :preferences, @account.preferences do |p| %>

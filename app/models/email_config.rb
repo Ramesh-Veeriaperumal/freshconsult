@@ -1,6 +1,7 @@
 class EmailConfig < ActiveRecord::Base
   belongs_to :account
   belongs_to :group, :foreign_key =>'group_id' #?!?!?! Not a literal belonging in true ER sense.
+  has_one :portal, :foreign_key => 'product_id'
   
   #accepts_nested_attributes_for :group
   attr_accessible :name, :to_email, :reply_email, :group_id, :primary_role
