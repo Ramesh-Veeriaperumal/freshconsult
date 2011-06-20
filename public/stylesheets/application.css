@@ -2930,13 +2930,14 @@ a.page_title:active {
 }
 
 .pagination {
-  padding: 8px 10px;
-  margin: 0px -20px;
+  padding: 8px 20px 10px 20px;
+  margin: 1px -19px;
   background: #efefef;
 }
 .pagination a {
   color: #336699;
   font-weight: bold;
+  text-decoration: none;
 }
 .pagination a:visited {
   color: #336699;

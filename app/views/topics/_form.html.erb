@@ -1,16 +1,4 @@
 <%= include_tiny_mce_if_needed %>
-
-<% content_for :head do %>
-  <%= javascript_include_tag "helpdesk/page_switcher" %>
-  <% javascript_tag do %>
-    document.observe("dom:loaded", function(){
-      new Helpdesk.PageSwitcher({
-        toggleMode: true,
-        pages: ['attachment-options']
-      });
-    });
-  <% end %>
-<% end %>
 <ul class="ui-form">
 	<li>
 		<label for="topic_title"><%= t('topic.name') %>*</label>
