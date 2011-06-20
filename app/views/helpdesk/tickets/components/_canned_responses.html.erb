@@ -1,7 +1,7 @@
 <% javascript_tag do -%>		
-	function getCannedResponse(ca_resp_id){	
+	function getCannedResponse(ticket_id,ca_resp_id){		   
 		jQuery.ajax({	type: 'POST',
-						url: '/helpdesk/tickets/get_ca_response_content/'+ca_resp_id,
+						url: '/helpdesk/tickets/get_ca_response_content/'+ticket_id+'?ca_resp_id='+ca_resp_id,
 						contentType: 'application/text',
 						async: false,						
 						success: function(data){		
@@ -16,6 +16,6 @@
  		my_ca_resp = current_account.canned_responses.my_canned_responses(current_user)
  		my_ca_resp.each do |ca_response|
 	%>
-		<%= link_to_function ca_response.title, "getCannedResponse('#{ca_response.id}')", :title => t(:'ticket.canned_responses.insert_ca_resp_tip') %>
+		<%= link_to_function ca_response.title, "getCannedResponse('#{@ticket.display_id}','#{ca_response.id}')", :title => t(:'ticket.canned_responses.insert_ca_resp_tip') %>
 	<%end%>
 </div>
