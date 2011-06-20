@@ -2312,12 +2312,13 @@ a.page_title{
 }
 
 .pagination{
-	padding:8px 10px; 
-	margin:0px -20px;
+	padding:8px 20px 10px 20px; 
+	margin:1px -19px;
 	background:#efefef;
 	a{
 		@include link-colors(#336699, #333333, #336699, #336699);
 		font-weight:bold;
+		text-decoration:none;
 	}	
 }
 
