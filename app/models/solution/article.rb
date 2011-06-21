@@ -109,6 +109,7 @@ class Solution::Article < ActiveRecord::Base
   end
   
   def self.suggest(ticket, search_by)
+    return [] if search_by.blank? || (search_by = search_by.gsub(/[\^\$]/, '')).blank?
     search(search_by, :with => { :account_id => ticket.account.id }, :match_mode => :any, :per_page => 10)
   end
   
