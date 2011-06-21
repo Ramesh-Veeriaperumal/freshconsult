@@ -364,7 +364,7 @@ end
   end
   
   def custom_fields
-    @custom_fields = FlexifieldDef.all(:include => [:flexifield_def_entries =>:flexifield_picklist_val] , :conditions => ['account_id=? AND module=?',account_id,'Ticket']) 
+    @custom_fields = FlexifieldDef.all(:include => [:flexifield_def_entries =>:flexifield_picklist_vals] , :conditions => ['account_id=? AND module=?',account_id,'Ticket']) 
   end
   
   def to_s
