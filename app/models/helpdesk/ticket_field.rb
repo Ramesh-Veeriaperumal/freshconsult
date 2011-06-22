@@ -4,6 +4,8 @@ class Helpdesk::TicketField < ActiveRecord::Base
   attr_protected  :account_id
   
   belongs_to :account
+  has_many :picklist_values, :as => :pickable, :class_name => 'Helpdesk::PicklistValue',
+    :dependent => :destroy
   
   acts_as_list
   

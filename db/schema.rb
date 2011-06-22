@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110621105831) do
+ActiveRecord::Schema.define(:version => 20110622121833) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -405,6 +405,15 @@ ActiveRecord::Schema.define(:version => 20110621105831) do
   add_index "helpdesk_notes", ["account_id", "notable_type", "notable_id"], :name => "index_helpdesk_notes_on_notables"
   add_index "helpdesk_notes", ["notable_id"], :name => "index_helpdesk_notes_on_notable_id"
   add_index "helpdesk_notes", ["notable_type"], :name => "index_helpdesk_notes_on_notable_type"
+
+  create_table "helpdesk_picklist_values", :force => true do |t|
+    t.integer  "pickable_id",   :limit => 8
+    t.string   "pickable_type"
+    t.integer  "position"
+    t.string   "value"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "helpdesk_reminders", :force => true do |t|
     t.string   "body"
