@@ -1,81 +1,34 @@
 <% type ||= "new" %>
-<% content_for :head do %>
-  <%= stylesheet_link_tag "autosuggest_inquisitor" %>
-  <%= javascript_include_tag "autosuggest" %>
-  
-  <% javascript_tag do %>
-    document.observe("dom:loaded", function(){
-
-     /* new bsn.AutoSuggest('helpdesk_ticket_email', {
-        script: "<%= autocomplete_helpdesk_authorizations_path %>?",
-        varname: "v",
-        json: true,
-        maxresults: 35,
-        timeout: 3600000, 
-		minchars: 2,
-		shownoresults: false,
-		id_as_value: true,
-		cache: false,
-		delay:200
-      });
-
-      Form.Element.activate('helpdesk_ticket_email');*/
-
-    });
-    	
-  <% end %>
-<% end %>
-
 <% javascript_tag do %>
 	function changeAggentList(group_id)
 	{	
 		jQuery('#assigned_to').children("select").replaceWith("...");
 		jQuery.ajax({
 		     	type:        'POST',
-				url: 		 '/helpdesk/tickets/get_agents/'+group_id,
-				contentType: 'application/text',
-		     	success: function(data){
-																			
-									jQuery('#assigned_to').html(data);
-							}
-		});
+				  url: 		     '/helpdesk/tickets/get_agents/'+group_id,
+				  contentType: 'application/text',
+		     	success:     function(data){
+											    jQuery('#assigned_to').html(data);
+							          }
+		                });
 	}
-	jQuery(document).ready(function(){
-		jQuery("#helpdesk_ticket_email").autocomplete({
-			source: function( request, response ) {
-				jQuery.ajax({
-					url: "<%=autocomplete_helpdesk_authorizations_path%>",
-					data: {
-						v: request.term
-					},
-					success: function(data) {
-						response( jQuery.map( data.results, function( item ) {
-							//console.log(item.value);
-							return {
-								label: item.value,
-								value: item.id
-							}
-						}));
-					}
-				});
-			},
-			select: function( event, ui ) {
-				
-			},
-			open: function(){
-				jQuery(this).removeClass('ui-corner-all');
-			}
-		}).data( "autocomplete" )
-			._renderItem = function( ul, item ) {
-									return jQuery( "<li></li>" )
-										.data( "item.autocomplete", item )
-										.append( "<a>" + item.label + "<br>" + item.value + "</a>" )
-										.appendTo( ul );
-								};								
-		
-	});
 <% end %>
-
+<script type="text/javascript" charset="utf-8">
+  function lookup(searchString, callback) { 
+    new Ajax.Request('<%= autocomplete_helpdesk_authorizations_path %>?v='+searchString, 
+                                              { parameters: {name: searchString, rand: (new Date()).getTime()},
+                                              onSuccess: function(response) {
+                                                var choices = $A();
+                                                response.responseJSON.results.each(function(item){
+                                                  choices.push(item.id);
+                                                });                                                
+                                                callback(choices);
+                                              } });
+  }
+  
+  var cachedBackend = new Autocompleter.Cache(lookup, {choices: 20});
+  var cachedLookup = cachedBackend.lookup.bind(cachedBackend);
+</script>
 
 <% form_for @item, :html => {:multipart => true, :id => "NewTicket" } do |f| %>
   <%= f.error_messages %>
@@ -92,9 +45,12 @@
 	<li class="text"> 	
   		<label id="requester-label"><%=t('ticket.requester')%> <%= field_madatory %></label>
   		<input type="text" id="helpdesk_ticket_email" class="<%= field_class %> email" name="helpdesk_ticket[email]" value="<%=@item.requester.email if @item.requester %>"></input>
-   	</li> 
-	  
-			
+  		<div id="helpdesk_ticket_email_choices" class="autocomplete"></div>
+   	</li>  
+	  <script type="text/javascript" charset="utf-8">
+      new Autocompleter.Json("helpdesk_ticket_email", "helpdesk_ticket_email_choices", cachedLookup, {});
+    </script>
+    
 	<% when "Subject" then%>
 		<li class="text">
         	<%= f.label :subject, t('ticket.subject') + field_madatory %>
