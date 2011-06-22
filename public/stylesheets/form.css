@@ -261,6 +261,10 @@ a.addchoice:hover {
   position: relative;
   border: 1px solid #EFEFEF;
   background-color: #F8F8F8;
+  	/*li:last-child{
+  		border-bottom: 0px;
+      	box-shadow: none;
+  	}*/
 }
 .ui-form div.field-box {
   padding: 4px 2% 8px 2%;
@@ -277,10 +281,6 @@ a.addchoice:hover {
 }
 .ui-form li div.field-box {
   padding: 4px 0 8px 0;
-}
-.ui-form li:last-child {
-  border-bottom: 0px;
-  box-shadow: none;
 }
 .ui-form li.text, .ui-form li.paragraph {
   width: 96%;
@@ -959,6 +959,15 @@ input.search {
   font-size: 1.2em;
   margin-top: -5px;
 }
+.ui-dialog-form a.close {
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  width: 28px;
+  height: 28px;
+  background: url("../images/close_delete.png") no-repeat center;
+  z-index: 999;
+}
 
 fieldset.nestedChoices {
   overflow: hidden;
@@ -1353,7 +1362,7 @@ table.summary-report thead td {
   padding: 0px 0px;
   margin: 5px 0px;
 }
-.request_panel .ui-form li {
+.request_panel .ui-form li.field {
   border: 0px;
 }
 .request_panel .ui-form label {
