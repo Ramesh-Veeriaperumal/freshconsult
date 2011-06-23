@@ -1,21 +1,13 @@
 class Admin::ProductsController < Admin::AdminController
 	include ModelControllerMethods
   
-  before_filter :only => [:new, :create] do |c|
-    c.requires_feature :multi_product
-  end
+  before_filter { |c| c.requires_feature :multi_product }
+  before_filter :load_other_objects, :only => [:new, :edit]
   
-  def new
-    @groups = current_account.groups
-    @solution_categories = current_account.solution_categories
-    @forums_categories = current_portal.forum_categories
-    @product.build_portal
-  end
-
-  def edit
-    @groups = current_account.groups
-  end
-
+  # def create
+  #   
+  # end
+  
   protected
     def scoper
       current_account.products
@@ -26,10 +18,17 @@ class Admin::ProductsController < Admin::AdminController
     end
 
     def create_error
-      @groups = current_account.groups
+      load_other_objects
     end
 
     def update_error
+      load_other_objects
+    end
+    
+    def load_other_objects
       @groups = current_account.groups
+      @solution_categories = current_account.solution_categories
+      @forums_categories = current_account.forum_categories
+      @product.build_portal unless @product.portal
     end
 end
