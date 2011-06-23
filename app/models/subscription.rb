@@ -164,7 +164,7 @@ class Subscription < ActiveRecord::Base
   end
   
   def self.find_expiring_trials(renew_at = 7.days.from_now)
-    find(:all, :include => :account, :conditions => { :state => 'trial', :next_renewal_at => (renew_at.beginning_of_day .. Time.now) })
+    find(:all, :include => :account, :conditions => { :state => 'trial', :next_renewal_at => (renew_at.beginning_of_day .. renew_at.end_of_day) })
   end
   
   def self.find_due_trials(renew_at = Time.now)
