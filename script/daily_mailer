@@ -7,7 +7,9 @@ Lockfile('lock', :retries => 0) do
   require File.dirname(__FILE__) + '/../config/environment'
   
   puts "################################################### Daily_mailer_freshdesk"
+  
   Subscription.find_expiring_trials.each do |sub|
+  puts "Account admin email is #{sub.account.account_admin.email}"
     if admin = sub.account.account_admin
       SubscriptionNotifier.deliver_trial_expiring(admin, sub)
     end
