@@ -1,14 +1,32 @@
 class TicketFieldsController < Admin::AdminController
   
-     
   def index
+    @ticket_fields = scoper.find(:all)
+    @ticket_field_json = []
+    @ticket_fields.each do |field|      
+      @ticket_field_json << 
+        { :field_type             => field.field_type,
+          :id                     => field.id,
+          :name                   => field.name,
+          :label                  => field.label,
+          :label_in_portal        => field.label_in_portal,
+          :description            => field.description,
+          :field_type             => field.field_type,
+          :position               => field.position,
+          :active                 => field.active,
+          :required               => field.required,
+          :required_for_closure   => field.required_for_closure,
+          :visible_in_portal      => field.visible_in_portal,
+          :editable_in_portal     => field.editable_in_portal,
+          :required_in_portal     => field.required_in_portal,
+          :choices                => get_pick_list(field) }
+    end 
     
-    @ticket_fields = Helpdesk::FormCustomizer.find(:first ,:conditions =>{:account_id => current_account.id})
+    @ticket_fields_old = Helpdesk::FormCustomizer.find(:first ,:conditions =>{:account_id => current_account.id})
      respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @ticket_fields.agent_view }
-    end
-    
+    end    
   end
   
   #Following method will create first entry for each account
@@ -289,5 +307,28 @@ def get_new_column_details type
 
 end
  
+  protected
+    def scoper
+      current_account.ticket_fields
+    end
+    
+    def get_pick_list(field)
+      case field.field_type
+        when "custom_dropdown" then
+          field.picklist_values.collect { |c| [c.value, c.id] }
+        when "default_priority" then
+          Helpdesk::Ticket::PRIORITY_OPTIONS.sort
+        when "default_source" then
+          Helpdesk::Ticket::SOURCE_OPTIONS.sort
+        when "default_status" then
+          Helpdesk::Ticket::STATUS_OPTIONS.sort
+        when "default_ticket_type" then
+          Helpdesk::Ticket::TYPE_OPTIONS.sort
+        when "default_agent", "default_group" then
+          [["...", "0"]]
+        else
+          []
+      end
+    end
 
 end
