@@ -1,5 +1,7 @@
 class FlexifieldDefEntry < ActiveRecord::Base
+  
   belongs_to :flexifield_def
+  has_one :ticket_field, :class_name => 'Helpdesk::TicketField'
   has_many :flexifield_picklist_vals, :dependent => :destroy
   validates_presence_of :flexifield_name, :flexifield_alias, :flexifield_order
   

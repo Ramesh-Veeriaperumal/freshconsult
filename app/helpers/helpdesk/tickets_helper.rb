@@ -1,5 +1,6 @@
 module Helpdesk::TicketsHelper
   
+  include Wf::HelperMethods
   include TicketsFilter
   
   def filter_select

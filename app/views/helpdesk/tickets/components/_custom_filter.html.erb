@@ -1,0 +1,29 @@
+
+<%=will_filter_scripts_tag %>
+<% form_tag({}, {:method => :get, :name=>'wf_form', :id => 'wf_form', :class => 'wf_form' }) do %>
+	<%= hidden_field_tag(:wf_id, wf_filter.id) %>
+<%= hidden_field_tag(:wf_type, wf_filter.class.name) %>
+<%= hidden_field_tag(:wf_dirty, "false") %>
+<%= hidden_field_tag(:wf_submitted, "false") %>
+<%= hidden_field_tag(:wf_name, wf_filter.name) %>
+<%= hidden_field_tag(:wf_model, wf_filter.model_class_name) %>
+<%= hidden_field_tag(:wf_export_format, "") %>
+<%= hidden_field_tag(:wf_export_fields, "") %>
+	<% i = 0 %>
+	<%wf_filter.definition.each do |k,v| %>
+	    <%operator = v.keys.first %>
+		<%= hidden_field_tag("wf_c#{i}",k) %>
+		<%= hidden_field_tag("wf_o#{i}",v.keys.first) %>
+		<%=k%> 
+		    <%if operator.to_sym == :is_in%>
+			   <%wf_filter.value_options_for(k).each do |o|%>
+			      <%=check_box_tag "wf_v#{i}_0", o %>  <%=o%>
+			   <%end%>
+            <%else%>
+              <input type='text' style='width:99%;' class='wf_input' name='wf_v<%=i%>_0' id='wf_v<%=i%>_0'  value=''>
+			<%end%> 
+			<br>
+		<% i+=1 %>
+	<%end%>
+	<%=link_to_function("<span>Submit Filter</span>", "wfFilter.submit()", :class => "wf_grey_button wf_pcb") %>
+<% end %>

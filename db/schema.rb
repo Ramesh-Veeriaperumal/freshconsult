@@ -9,7 +9,11 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
+<<<<<<< Updated upstream
 ActiveRecord::Schema.define(:version => 20110621105831) do
+=======
+ActiveRecord::Schema.define(:version => 20110615111709) do
+>>>>>>> Stashed changes
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -811,5 +815,17 @@ ActiveRecord::Schema.define(:version => 20110621105831) do
   end
 
   add_index "votes", ["user_id"], :name => "fk_votes_user"
+
+  create_table "wf_filters", :force => true do |t|
+    t.string   "type"
+    t.string   "name"
+    t.text     "data"
+    t.integer  "user_id"
+    t.string   "model_class_name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "wf_filters", ["user_id"], :name => "index_wf_filters_on_user_id"
 
 end

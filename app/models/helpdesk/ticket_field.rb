@@ -4,6 +4,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
   attr_protected  :account_id
   
   belongs_to :account
+  belongs_to :flexifield_def_entry
   
   acts_as_list
   
@@ -16,6 +17,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
   validates_uniqueness_of :name, :scope => :account_id
   
   before_create :populate_label
+  named_scope :custom_fields, :conditions => ["flexifield_def_entry_id is not null"]
   
   protected
     def populate_label

@@ -1,0 +1,8 @@
+<div class='wf_values_table'>
+	<%= hidden_field_tag("wf_v#{index}_0", "") %>
+	<div>
+	<%options.each do |k,v|%>
+		<%=check_box_tag v,k,false, {:class=>"view_checkbox", :data_hidden_id => "wf_v#{index}_0" } %> <%=v%> 
+	<%end%>
+	</div>
+</div>
