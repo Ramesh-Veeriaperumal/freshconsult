@@ -39,6 +39,7 @@ defaults: &defaults
     boolean:              Wf::Containers::Boolean
     list:                 Wf::Containers::List
     filter_list:          Wf::Containers::FilterList
+    dropdown:             Wf::Containers::TextDelimited
     
   data_types:             # mapping between data types and containers 
     nil:                  [nil]
@@ -59,8 +60,8 @@ defaults: &defaults
     boolean:              [nil, boolean]
     tinyint:              [nil, boolean]  
     helpdesk_tickets:
-         text:                [text]
-         drop_down:           [text_delimited]
+         text:               [text]
+         dropdown:           [text_delimited]
  
     
 

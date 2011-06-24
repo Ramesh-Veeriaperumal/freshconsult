@@ -57,8 +57,8 @@ module TicketConstants
   DEFAULT_COLUMNS =  [
     [ :subject,   "subject",             :text ], 
     [ :description, "description",         :text],
-    [ :status, "status",         :drop_down],
-    [ :ticket_type, "ticket_type",         :drop_down]
+    [ :status, "status",         :dropdown],
+    [ :ticket_type, "ticket_type",         :dropdown]
   ]
   
   DEFAULT_COLUMNS_OPTIONS = DEFAULT_COLUMNS.map { |i| [i[1], i[2]] }

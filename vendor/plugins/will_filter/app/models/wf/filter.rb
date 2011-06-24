@@ -350,6 +350,8 @@ class Wf::Filter < ActiveRecord::Base
     end
     
     condition = Wf::FilterCondition.new(self, condition_key, operator_key, container_for(condition_key, operator_key), values)
+    puts "#############################################################################"
+    puts condition.to_s
     @conditions.insert(index, condition)
   end
   
@@ -541,6 +543,7 @@ class Wf::Filter < ActiveRecord::Base
         all_sql_conditions = [" 1 = 2 "] 
       else
         all_sql_conditions = [""]
+        condition_at(0)
         0.upto(size - 1) do |index|
           condition = condition_at(index)
           sql_condition = condition.container.sql_condition
@@ -550,7 +553,7 @@ class Wf::Filter < ActiveRecord::Base
           end
           
           if all_sql_conditions[0].size > 0
-            all_sql_conditions[0] << ( match.to_sym == :all ? " AND " : " OR ")
+            all_sql_conditions[0] << ( match.to_sym == :any ? "  OR" : " AND ")
           end
           
           all_sql_conditions[0] << sql_condition[0]

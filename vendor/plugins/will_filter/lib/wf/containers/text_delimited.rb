@@ -34,7 +34,7 @@ class Wf::Containers::TextDelimited < Wf::FilterContainer
   end
 
   def validate
-    return "Values must be provided. Separate values with '#{TEXT_DELIMITER}'" if value.blank?
+    #return "Values must be provided. Separate values with '#{TEXT_DELIMITER}'" if value.blank?
   end
 
   def split_values
@@ -42,7 +42,8 @@ class Wf::Containers::TextDelimited < Wf::FilterContainer
   end
 
   def sql_condition
-    return [" #{condition.full_key} in (?) ", split_values] if operator == :is_in
+    return [" #{condition.full_key} not in ('') "] if value.empty?
+    return [" #{condition.full_key} in (?) ", split_values] if operator == :is_in 
   end
 
 end

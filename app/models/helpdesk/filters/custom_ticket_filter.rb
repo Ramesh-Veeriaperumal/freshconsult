@@ -1,60 +1,69 @@
 class CustomTicketFilter < Wf::Filter
+#   
+#  def initialize(model_class,account)
+#    super(model_class)
+#    self.model_class_name = model_class.to_s
+#    @current_account = account
+#  end
+#  
+#  def definition
+#    show_definition(@current_account)
+#  end
    
-   def definition
+  def definition
      @definition ||= begin
       defs = {}
-      model_columns.each do |col|
-        defs[col.name.to_sym] = default_condition_definition_for(col.name, col.sql_type) if TicketConstants::DEFAULT_COLUMNS_KEYS_BY_TOKEN.keys.include?(col.name.to_sym)
+      #default fields
+      TicketConstants::DEFAULT_COLUMNS_OPTIONS.each do |name,cont|
+        defs[name.to_sym] = { get_op_list(cont).to_sym => cont  , :name => name, :container => cont,     
+        :operator => get_op_list(cont), :options => get_default_choices(name.to_sym) }
+      end
+      #Custome fields
+      Account.current.ticket_fields.custom_fields(:include => {:flexifield_def_entry => {:include => :flexifield_picklist_vals } } ).each do |col|
+        defs[get_id_from_field(col).to_sym] = {get_op_from_field(col).to_sym => get_container_from_field(col) ,:name => col.label , :container => get_container_from_field(col),     
+        :operator => get_op_from_field(col), :options => get_custom_choices(col) }
       end 
       defs
     end
   end
   
-  def value_options_for(criteria_key)
+  def get_id_from_field(tf)
+    "flexifield.#{tf.flexifield_def_entry.flexifield_name}"
+  end
+  
+  def get_container_from_field(tf)
+    tf.field_type.gsub('custom_', '')
+  end
+  
+  def get_op_from_field(tf)
+    get_op_list(get_container_from_field(tf))    
+  end
+  
+  def get_op_list(name)
+    containers = Wf::Config.data_types[:helpdesk_tickets][name]
+    container_klass = Wf::Config.containers[containers.first].constantize
+    container_klass.operators.first   
+  end
+  
+  def get_custom_choices(tf)
+    choice_array = tf.flexifield_def_entry.flexifield_picklist_vals
+    Hash[*choice_array.collect { |v| [v, v]}.flatten]
+  end
+  
+   def get_default_choices(criteria_key)
     if criteria_key == :status
-      return TicketConstants::STATUS_NAMES_BY_KEY.keys
+      return TicketConstants::STATUS_NAMES_BY_KEY
     end
     
     if criteria_key == :ticket_type
-      return TicketConstants::TYPE_NAMES_BY_KEY.keys
+      return TicketConstants::TYPE_NAMES_BY_KEY
     end
-
+    
     return []
   end
   
-  def container_by_sql_type(type,name=nil)
-    raise Wf::FilterException.new("Unsupported data type #{type}") unless Wf::Config.data_types[type]
-    return Wf::Config.data_types[:helpdesk_tickets][get_tkt_data_type(name)]  
-  end
-  
-  def get_tkt_data_type(name)    
-    TicketConstants::DEFAULT_COLUMNS_KEYS_BY_TOKEN[name.to_sym] 
-  end
-  
-  def default_condition_definition_for(name, sql_data_type)
-    type = sql_data_type.split(" ").first.split("(").first.downcase
-    
-    containers = container_by_sql_type(type,name)
-    operators = {}
-    containers.each do |c|
-      raise Wf::FilterException.new("Unsupported container implementation for #{c}") unless Wf::Config.containers[c]
-      container_klass = Wf::Config.containers[c].constantize
-      container_klass.operators.each do |o|
-        operators[o] = c
-      end
-    end
-    
-    if name == "id"
-      operators[:is_filtered_by] = :filter_list 
-    elsif "_id" == name[-3..-1]
-      begin
-        name[0..-4].camelcase.constantize
-        operators[:is_filtered_by] = :filter_list 
-      rescue  
-      end
-    end
-    
-    operators
-  end
+  def joins
+    ["INNER JOIN flexifields ON flexifields.flexifield_set_id = helpdesk_tickets.id"]
+  end      
   
 end

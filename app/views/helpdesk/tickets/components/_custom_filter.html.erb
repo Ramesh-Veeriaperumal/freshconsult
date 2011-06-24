@@ -1,4 +1,3 @@
-
 <%=will_filter_scripts_tag %>
 <% form_tag({}, {:method => :get, :name=>'wf_form', :id => 'wf_form', :class => 'wf_form' }) do %>
 	<%= hidden_field_tag(:wf_id, wf_filter.id) %>
@@ -10,20 +9,35 @@
 <%= hidden_field_tag(:wf_export_format, "") %>
 <%= hidden_field_tag(:wf_export_fields, "") %>
 	<% i = 0 %>
-	<%wf_filter.definition.each do |k,v| %>
-	    <%operator = v.keys.first %>
+	<% wf_filter.definition.each do |k,v| %> 
 		<%= hidden_field_tag("wf_c#{i}",k) %>
-		<%= hidden_field_tag("wf_o#{i}",v.keys.first) %>
-		<%=k%> 
-		    <%if operator.to_sym == :is_in%>
-			   <%wf_filter.value_options_for(k).each do |o|%>
-			      <%=check_box_tag "wf_v#{i}_0", o %>  <%=o%>
-			   <%end%>
-            <%else%>
-              <input type='text' style='width:99%;' class='wf_input' name='wf_v<%=i%>_0' id='wf_v<%=i%>_0'  value=''>
-			<%end%> 
+		<%= hidden_field_tag("wf_o#{i}",v[:operator]) %>
+		<%=v[:name]%> 
+           <%= render :partial => "/helpdesk/tickets/containers/#{v[:container]}", :locals => {:index => i, :options => v[:options]} %>
+	<% i+=1 %>		
+	<%end%> 
 			<br>
-		<% i+=1 %>
-	<%end%>
+	<span id="wf_loader" class="spinner" style="display:none;"><%=image_tag "/wf/images/spinner.gif", {:style=>"vertical-align:middle"} %> Loading...</span>	
 	<%=link_to_function("<span>Submit Filter</span>", "wfFilter.submit()", :class => "wf_grey_button wf_pcb") %>
+	<%=link_to_function("<span>Save As New...</span>", "wfFilter.saveFilter()", :class => "wf_grey_button wf_pcb") %>
+	   
 <% end %>
+<% javascript_tag do%>
+	jQuery(document).ready(function(){
+		jQuery(".view_checkbox")
+			.bind("change", function(ev){				
+				var hidden_id 		= jQuery(this).attr('data_hidden_id'),
+				    hidden_data 	= $(hidden_id),
+					array_construct = $A();
+					
+				jQuery.each(jQuery(this).parent().children(), function(index, item){					
+					if(item.checked)
+						array_construct.push(item.value)
+				});
+				
+				hidden_data.value = array_construct;
+			});	
+	});
+<% end %>
+
+
