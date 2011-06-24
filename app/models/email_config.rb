@@ -2,12 +2,9 @@ class EmailConfig < ActiveRecord::Base
   belongs_to :account
   belongs_to :group, :foreign_key =>'group_id' #?!?!?! Not a literal belonging in true ER sense.
   has_one :portal, :foreign_key => 'product_id', :dependent => :destroy
-  accepts_nested_attributes_for :portal
-  
-  #accepts_nested_attributes_for :group
-  #attr_accessible :name, :to_email, :reply_email, :group_id, :primary_role
+
   attr_protected :account_id, :active
-  #attr_accessor :enable_portal
+  attr_accessor :enable_portal
   
   #To do - Validation for 'name'
   validates_presence_of :to_email, :reply_email
@@ -17,18 +14,15 @@ class EmailConfig < ActiveRecord::Base
   #algorithm
   validates_uniqueness_of :activator_token, :allow_nil => true
   
-  before_create :set_activator_token#, :populate_portal
+  before_create :set_activator_token
   after_save :deliver_email_activation
   before_update :reset_activator_token
   
   def enable_portal=(p_str)
-    puts "@@@@@@@@@@@@@@ enable_portal set called.. #{p_str}"
     @enable_portal = p_str
-    portal.destroy if !portal_enabled? && portal #Kinda Ugly.. Having problems with order
   end
   
   def enable_portal
-    puts "******* Inside enable_portal-- #{@enable_portal}"
     @enable_portal ||= (portal && !portal.new_record?)? '1' : '0'
   end
   
@@ -56,9 +50,6 @@ class EmailConfig < ActiveRecord::Base
   end
   
   protected
-    # def populate_portal
-    #       self.portal.account_id = account_id if portal
-    #     end
     
     def set_activator_token
       (self.active = true) and return if reply_email.downcase.ends_with?("@#{account.full_domain.downcase}")

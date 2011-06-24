@@ -2,11 +2,34 @@ class Admin::ProductsController < Admin::AdminController
 	include ModelControllerMethods
   
   before_filter { |c| c.requires_feature :multi_product }
+  before_filter :build_object, :only => :new
   before_filter :load_other_objects, :only => [:new, :edit]
   
-  # def create
-  #   
-  # end
+  def create
+    portal_params = params[:product].delete(:portal_attributes)
+    build_object
+    
+    if @product.portal_enabled?
+      @product.build_portal
+      @product.portal.account_id = @product.account_id
+      @product.portal.attributes = portal_params
+    end
+    
+    super
+  end
+  
+  def update
+    portal_params = params[:product].delete(:portal_attributes)
+    
+    if @product.update_attributes(params[:product])
+      post_process_on_update portal_params
+      flash[:notice] = I18n.t(:'flash.general.update.success', :human_name => human_name)
+      redirect_back_or_default redirect_url
+    else
+      update_error
+      render :action => 'edit'
+    end
+  end
   
   protected
     def scoper
@@ -30,5 +53,20 @@ class Admin::ProductsController < Admin::AdminController
       @solution_categories = current_account.solution_categories
       @forums_categories = current_account.forum_categories
       @product.build_portal unless @product.portal
+    end
+    
+    def post_process_on_update(portal_params)
+      unless @product.portal
+        if @product.portal_enabled?
+          @product.build_portal
+          @product.portal.account_id = @product.account_id
+          @product.portal.attributes = portal_params
+          @product.portal.save
+        end
+        return
+      end
+
+      @product.portal.update_attributes(portal_params) and return if @product.portal_enabled?
+      @product.portal.destroy
     end
 end

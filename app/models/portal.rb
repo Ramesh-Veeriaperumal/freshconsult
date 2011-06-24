@@ -28,18 +28,12 @@ class Portal < ActiveRecord::Base
   #accepts_nested_attributes_for :logo, :fav_icon
   
   def logo_attributes=(icon_attr)
-    self.logo = Helpdesk::Attachment.new
-    logo.description = "logo"
-    logo.content = icon_attr[:content]
+    handle_icon 'logo', icon_attr
   end
   
   def fav_icon_attributes=(icon_attr)
-    self.fav_icon = Helpdesk::Attachment.new
-    fav_icon.description = "fav_icon"
-    fav_icon.content = icon_attr[:content]
+    handle_icon 'fav_icon', icon_attr
   end
-  
-  before_create :populate_account_id
   
   #Helpers for views
   def main_portal?
@@ -54,9 +48,16 @@ class Portal < ActiveRecord::Base
     main_portal? ? account.forum_categories : (forum_category ? [forum_category] : [])
   end
   
-  protected
-    def populate_account_id
-      logo.account_id = account_id if logo
-      fav_icon.account_id = account_id if fav_icon
+  private
+    def handle_icon(icon_field, icon_attr)
+      unless send(icon_field)
+        icon = send("build_#{icon_field}")
+        icon.description = icon_field
+        icon.content = icon_attr[:content]
+        icon.account_id = account_id
+      else
+        send(icon_field).update_attributes(icon_attr)
+      end
     end
+  
 end
