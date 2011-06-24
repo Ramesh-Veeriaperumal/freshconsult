@@ -219,10 +219,10 @@ a.addchoice:hover{
 			padding:4px 0 8px 0;
 		}
 	} 
-	li:last-child{
+	/*li:last-child{
 		border-bottom: 0px;
     	box-shadow: none;
-	}
+	}*/
 	li.text, li.paragraph{
 		width:96%;
 	}
@@ -852,6 +852,15 @@ input.search{
 		font-size:1.2em;
 		margin-top:-5px;
 	}
+	a.close{
+    	position:absolute;
+    	right:5px;
+    	top:5px;
+    	width:28px;
+    	height:28px;
+    	background:url("../images/close_delete.png") no-repeat center;
+    	z-index:999;
+    }
 }
 
 fieldset.nestedChoices{
@@ -1146,7 +1155,7 @@ table.summary-report{
 	padding:0px 0px;
 	margin:5px 0px;
 	.ui-form{
-		li{
+		li.field{
 			border:0px;
 		}
 		label{

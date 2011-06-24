@@ -2802,16 +2802,6 @@ h4.border_title {
   text-align: right;
 }
 
-.close {
-  position: absolute;
-  right: 5px;
-  top: 5px;
-  width: 28px;
-  height: 28px;
-  background: url("../images/close_delete.png") no-repeat center;
-  z-index: 999;
-}
-
 .property_selector {
   position: relative;
   padding: 3px 12px;

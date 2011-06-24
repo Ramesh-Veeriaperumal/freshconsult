@@ -61,7 +61,7 @@ class MigrateFormCustomizers < ActiveRecord::Migration
     return if(f_entry = FlexifieldDefEntry.find(t_field.flexifield_def_entry_id)).nil?
     
     attributes[:choices].each do |c| 
-      f_entry.flexifield_picklist_vals << FlexifieldPicklistVal.new(c)
+      f_entry.flexifield_picklist_vals << FlexifieldPicklistVal.new(:value => c["value"])
     end
   end
 
