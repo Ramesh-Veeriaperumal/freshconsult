@@ -21,6 +21,7 @@ class SubscriptionNotifier < ActionMailer::Base
     setup_email(user, 'Trial period expiring')
     setup_bcc
     @body = { :user => user, :subscription => subscription }
+    @content_type = "text/html"
   end
   
   def charge_receipt(subscription_payment)
