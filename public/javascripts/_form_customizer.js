@@ -192,8 +192,6 @@
       $("#SaveForm").click(function(e){
          var jsonData = getCustomFieldJson(); 
          $("#field_values").val(jsonData.toJSON());
-         console.log(jsonData);
-         return false;
       }); 
 
       function innerLevelExpand(checkbox){ 
@@ -360,7 +358,6 @@
 
                if(field_label === '') field_label = "Untitled";
 
-               //sourceData.set("name", field_label);
                sourceData.set("label", field_label);
                sourceData.set("label_in_portal", field_label);
 
