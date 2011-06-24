@@ -5,6 +5,9 @@ class Helpdesk::TicketField < ActiveRecord::Base
   
   belongs_to :account
   belongs_to :flexifield_def_entry
+  has_many :picklist_values, :as => :pickable, :class_name => 'Helpdesk::PicklistValue',
+    :dependent => :destroy
+
   
   acts_as_list
   

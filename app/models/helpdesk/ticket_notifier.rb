@@ -52,7 +52,7 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
   def reply(ticket, note , reply_email, params)
     subject       formatted_subject(ticket)
     recipients    ticket.requester.email
-    cc            ticket.cc_email if !params[:cc_emails].blank? and !ticket.cc_email.nil?
+    cc            ticket.cc_email if !params[:include_cc].blank? and !ticket.cc_email.nil?
     from          reply_email
     body          :ticket => ticket, :note => note, :host => ticket.portal_host
     headers       "Reply-to" => "#{reply_email}"

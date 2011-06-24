@@ -2,12 +2,13 @@ class Portal < ActiveRecord::Base
   serialize :preferences, Hash
   
   validates_uniqueness_of :portal_url, :allow_blank => true, :allow_nil => true
-  validates_presence_of :product_id
+  #validates_presence_of :product_id
   
   has_one :logo,
     :as => :attachable,
     :class_name => 'Helpdesk::Attachment',
-    :conditions => ['description = ?', 'logo' ],
+    #:conditions => ['description = ?', 'logo' ],
+    :conditions => { :description => 'logo' },
     :dependent => :destroy
   
   has_one :fav_icon,
@@ -24,6 +25,16 @@ class Portal < ActiveRecord::Base
               :foreign_key => 'solution_category_id'
   belongs_to :forum_category
   
+  #accepts_nested_attributes_for :logo, :fav_icon
+  
+  def logo_attributes=(icon_attr)
+    handle_icon 'logo', icon_attr
+  end
+  
+  def fav_icon_attributes=(icon_attr)
+    handle_icon 'fav_icon', icon_attr
+  end
+  
   #Helpers for views
   def main_portal?
     product.primary_role
@@ -36,4 +47,17 @@ class Portal < ActiveRecord::Base
   def forum_categories
     main_portal? ? account.forum_categories : (forum_category ? [forum_category] : [])
   end
+  
+  private
+    def handle_icon(icon_field, icon_attr)
+      unless send(icon_field)
+        icon = send("build_#{icon_field}")
+        icon.description = icon_field
+        icon.content = icon_attr[:content]
+        icon.account_id = account_id
+      else
+        send(icon_field).update_attributes(icon_attr)
+      end
+    end
+  
 end
