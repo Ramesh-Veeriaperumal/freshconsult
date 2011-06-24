@@ -31,6 +31,14 @@ class Admin::ProductsController < Admin::AdminController
     end
   end
   
+  def delete_logo
+    delete_icon('logo')
+  end
+  
+  def delete_fav
+    delete_icon('fav_icon')
+  end
+  
   protected
     def scoper
       current_account.products
@@ -68,5 +76,10 @@ class Admin::ProductsController < Admin::AdminController
 
       @product.portal.update_attributes(portal_params) and return if @product.portal_enabled?
       @product.portal.destroy
+    end
+    
+    def delete_icon(icon_type)
+      current_account.portals.find(params[:id]).send(icon_type).destroy
+      render :text => "success"
     end
 end

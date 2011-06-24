@@ -26,7 +26,7 @@ en:
     work: Work
   folder: 
     edit: Edit Folder
-    info1: Are you sure you want to delete this folder
+    info1: Are you sure you want to delete this folder?
     add_folder: Add folder
   amount_per_month: $%{amount} per month
   agent_deleted_message: This is a deleted agent
@@ -128,7 +128,7 @@ en:
       ideas: Idea shared by
       problems: Problem Reported by
       announcement: Announced by
-    confim_msg1: Are you sure you want to delete this forum
+    confim_msg1: Are you sure you want to delete this forum?
     edit: Edit Forum
     title: Forums
     start_topic: Start a Topic
@@ -277,7 +277,7 @@ en:
   select_another_plan: Select another plan
   threeday: 3 Days
   resolved: Resolved
-  logo_delete_msg: Are you sure you want to delete this logo
+  logo_delete_msg: Are you sure you want to delete this logo?
   from_email: From Email
   feedbackwidget_custom_image: Custom image URL
   activities: 
@@ -418,7 +418,7 @@ en:
     new: New solution category
     name: Category name
     edit: Edit solution category
-    info1: Are you sure you want to delete this category
+    info1: Are you sure you want to delete this category?
     info2: No folders in this category
     save_and_create: Save and Create Another
   billed_monthly: Billed monthly
@@ -428,7 +428,7 @@ en:
       success: Your account has been activated.
       code_expired: Your activation code has been expired!
   edit_email: Edit email
-  fav_delete_msg: Are you sure you want to delete this fav icon
+  fav_delete_msg: Are you sure you want to delete this fav icon?
   dispatch: 
     new: Dispatch'r - New Rule
     edit: Dispatch'r - Edit Rule
@@ -604,7 +604,7 @@ en:
     edit: Edit Contact
     emailnotverified: Email has not been verified for this contact!
     title: Contacts
-    info1: Are you sure you want to delete this contact
+    info1: Are you sure you want to delete this contact?
     showing: Showing
     send_activation: Send activation email
     info2: Make this User an Agent
@@ -682,7 +682,7 @@ en:
     status: Solution Status
     info7: No solutions in this folder
     visibility: Visibility
-    info8: Are you sure you want to delete this solution
+    info8: Are you sure you want to delete this solution?
   import_updated: Updated
   feedbackwidget_intro: Customize your freshdesk widget below and see a realtime preview.
   save: Save
@@ -886,7 +886,7 @@ en:
     edit: Edit Company
     title: Companies
     quick_company: Quick Company
-    info1: Are you sure you want to delete this company
+    info1: Are you sure you want to delete this company?
     notes: Notes
     info2: Domain Names for this company
     info4: Add a Note about %{name}
@@ -935,7 +935,7 @@ en:
     helpdesk_url: Helpdesk URL
   lead: Lead
   comments: Comments
-  forum_confirm_msg1: Are you sure you want to delete this category
+  forum_confirm_msg1: Are you sure you want to delete this category?
   plans_billing: Plans & Billing
   portal_customizer_open_forums: Anybody can view forums
   business_hours: 
