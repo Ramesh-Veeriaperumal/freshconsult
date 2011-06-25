@@ -49,7 +49,7 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
     Liquid::Template.parse(EmailNotification::EMAIL_SUBJECTS[notification_type]).render('ticket' => ticket)
   end
   
-  def reply(ticket, note , reply_email, params)
+  def reply(ticket, note , reply_email)
     subject       formatted_subject(ticket)
     recipients    ticket.requester.email
     from          reply_email
