@@ -1,15 +1,5 @@
 class CustomTicketFilter < Wf::Filter
-#   
-#  def initialize(model_class,account)
-#    super(model_class)
-#    self.model_class_name = model_class.to_s
-#    @current_account = account
-#  end
-#  
-#  def definition
-#    show_definition(@current_account)
-#  end
-   
+
   def definition
      @definition ||= begin
       defs = {}
@@ -46,7 +36,7 @@ class CustomTicketFilter < Wf::Filter
   end
   
   def get_custom_choices(tf)
-    choice_array = tf.flexifield_def_entry.flexifield_picklist_vals
+    choice_array = tf.picklist_values
     Hash[*choice_array.collect { |v| [v, v]}.flatten]
   end
   
