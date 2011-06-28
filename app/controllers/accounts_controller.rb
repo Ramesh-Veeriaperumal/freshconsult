@@ -236,17 +236,10 @@ class AccountsController < ApplicationController
     end
   end
   
-  def update #by shan temp..
-    #@account.name = params[:account][:name]
+  def update
     @account.time_zone = params[:account][:time_zone]
-    @account.helpdesk_name = params[:account][:helpdesk_name]
-    @account.helpdesk_url = params[:account][:helpdesk_url] 
-    @account.preferences = params[:account][:preferences]
     @account.ticket_display_id = params[:account][:ticket_display_id]
-    
-    update_logo_image  
-    update_fav_icon_image
-      
+    @account.main_portal_attributes = params[:account][:main_portal_attributes]
     
     if @account.save
       flash[:notice] = t(:'flash.account.update.success')
@@ -371,48 +364,16 @@ class AccountsController < ApplicationController
   end
   
   def delete_logo
-    load_object
-    @account.logo.destroy
+    current_account.main_portal.logo.destroy
     render :text => "success"
   end
   
   def delete_fav
-    load_object
-    @account.fav_icon.destroy
+    current_account.main_portal.fav_icon.destroy
     render :text => "success"
   end
 
   protected
-  
-   def update_logo_image
-    unless  params[:account][:logo_attributes].nil?
-      if @account.logo.nil?
-        @logo_attachment = Helpdesk::Attachment.new
-        @logo_attachment.description = "logo"
-        @logo_attachment.content = params[:account][:logo_attributes][:content]
-        @logo_attachment.account_id = @account.id
-        @account.logo = @logo_attachment
-        #@account.build_logo( :description => 'logo' ,:content => params[:account][:logo_attributes][:content])
-      else
-        @account.logo.update_attributes(:content => params[:account][:logo_attributes][:content], :description => 'logo')
-      end
-    end
-  end
-  
-  def update_fav_icon_image
-   unless  params[:account][:fav_icon_attributes].nil?
-      if @account.fav_icon.nil?
-        @fav_attachment = Helpdesk::Attachment.new
-        @fav_attachment.description = "fav_icon"
-        @fav_attachment.content = params[:account][:fav_icon_attributes][:content]
-        @fav_attachment.account_id = @account.id
-        @account.fav_icon = @fav_attachment
-        #@account.build_fav_icon(:content => params[:account][:fav_icon_attributes][:content], :description => 'fav_icon')
-      else
-        @account.fav_icon.update_attributes(:content => params[:account][:fav_icon_attributes][:content], :description => 'fav_icon')
-      end
-    end
-  end
     
     def choose_layout 
       (action_name == "openid_complete" || action_name == "create_account_google" || action_name == "associate_local_to_google" || action_name == "associate_google_account") ? 'signup_google' : 'helpdesk/default'

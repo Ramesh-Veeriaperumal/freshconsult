@@ -70,6 +70,7 @@ class Account < ActiveRecord::Base
   has_many :products, :class_name => 'EmailConfig', :conditions => { :primary_role => false }
   has_many :portals
   has_one  :main_portal, :source => :portal, :through => :primary_email_config
+  accepts_nested_attributes_for :main_portal
   
   has_many :email_notifications, :dependent => :destroy
   has_many :groups, :dependent => :destroy

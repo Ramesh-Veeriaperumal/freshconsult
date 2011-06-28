@@ -189,7 +189,7 @@ module ApplicationHelper
   
   # Get Pref color for individual portal
   def portal_pref(item, type)
-    color = current_account[:preferences].default(type)
+    color = current_account.main_portal[:preferences].default(type)
     if !item[:preferences].blank?
       color = item[:preferences].default(type)
     end
