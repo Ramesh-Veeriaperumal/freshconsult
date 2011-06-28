@@ -5,7 +5,7 @@ class SubscriptionNotifier < ActionMailer::Base
     @sent_on = Time.now
     @subject = subject
     @recipients = to.respond_to?(:email) ? to.email : to
-    @from = from.respond_to?(:email) ? from.email : from
+    @from = from.respond_to?(:email) ? from.email : from   
    end
   
   def setup_bcc
@@ -18,9 +18,10 @@ class SubscriptionNotifier < ActionMailer::Base
   end
   
   def trial_expiring(user, subscription)
-    setup_email(user, 'Trial period expiring')
+    setup_email(user, "Your Freshdesk trial expires in #{subscription.trial_days} days")
     setup_bcc
     @body = { :user => user, :subscription => subscription }
+    @content_type = "text/html"
   end
   
   def charge_receipt(subscription_payment)
