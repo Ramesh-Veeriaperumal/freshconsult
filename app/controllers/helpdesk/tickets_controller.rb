@@ -267,7 +267,8 @@ class Helpdesk::TicketsController < ApplicationController
 
   def get_ca_response_content   
     ca_resp = current_account.canned_responses.find(params[:ca_resp_id])
-    a_template = Liquid::Template.parse(ca_resp.content).render('ticket' => @item, 'helpdesk_name' => @item.account.helpdesk_name)    
+    a_template = Liquid::Template.parse(ca_resp.content).render('ticket' => @item, 
+      'helpdesk_name' => @item.account.portal_name)    
     render :text => (a_template.gsub(/<\/?[^>]*>/, "")).gsub(/&nbsp;/i,"") || "" 
   end
 

@@ -236,6 +236,10 @@ class Account < ActiveRecord::Base
   end
   #HD hack ends..
   
+  def portal_name #by Shan temp.
+    main_portal.name
+  end
+  
   #Sentient things start here, can move to lib some time later - Shan
   def self.current
     Thread.current[:account]

@@ -567,7 +567,7 @@ end
   end
   
   def portal_name
-    (email_config && email_config.portal) ? email_config.portal.name : account.helpdesk_name
+    (email_config && email_config.portal) ? email_config.portal.name : account.portal_name
   end
   
 end
