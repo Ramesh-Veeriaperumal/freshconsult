@@ -4,28 +4,6 @@ module ApplicationHelper
   include SavageBeast::ApplicationHelper
   include Juixe::Acts::Voteable
 
-  # Enumerator constant for mapping the CSS class name to the field type
-  FIELD_CLASS = { :default_subject      => "text",
-                  :default_requester    => "text",
-                  :default_ticket_type  => "dropdown",
-                  :default_status       => "dropdown", 
-                  :default_priority     => "dropdown",
-                  :default_group        => "dropdown",
-                  :default_agent        => "dropdown",
-                  :default_source       => "dropdown",
-                  :default_description  => "description",
-                  :custom_text          => "text",
-                  :custom_paragraph     => "paragraph",
-                  :custom_checkbox      => "checkbox",
-                  :custom_number        => "number",
-                  :custom_dropdown      => "dropdown"
-                }
-                  
-  def get_field_class(field_type)
-    puts "$$$$$$$$$$$$$$$$$$$$$$$ #{field_type}"
-    FIELD_CLASS[field_type.to_sym]
-  end  
-  
   def show_flash
     [:notice, :warning, :error].collect {|type| content_tag('div', flash[type], :id => type, :class => "flash_info #{type}") if flash[type] }
   end
@@ -64,8 +42,6 @@ module ApplicationHelper
     end
     navigation
   end
-  
-  
   
   def check_box_link(text, checked, check_url, check_method, uncheck_url, uncheck_method = :post)
     form_tag("", :method => :put) +    
@@ -195,7 +171,18 @@ module ApplicationHelper
     end
     color
   end
-  
+
+  def construct_ticket_element(object_name, field)
+    case Helpdesk::TicketField::FIELD_CLASS[field.field_type.to_sym]
+      when "text" then
+        text_field object_name, field.name, :class => "text"
+      when "paragraph" then
+        text_area object_name, field.name, :class => "paragraph"
+      when "dropdown" then
+        select object_name, field.name, :class => "dropdown"
+    end
+  end
+
   private
     def solutions_tab
       if current_portal.main_portal?
