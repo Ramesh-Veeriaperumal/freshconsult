@@ -4,7 +4,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
   attr_protected  :account_id
   
   belongs_to :account
-  belongs_to :flexifield_def_entry
+  belongs_to :flexifield_def_entry, :dependent => :destroy
   has_many :picklist_values, :as => :pickable, :class_name => 'Helpdesk::PicklistValue',
     :dependent => :destroy
 
@@ -21,6 +21,11 @@ class Helpdesk::TicketField < ActiveRecord::Base
   
   before_create :populate_label
   named_scope :custom_fields, :conditions => ["flexifield_def_entry_id is not null"]
+  
+  def choices=(c_attr)
+    picklist_values.clear
+    c_attr.each { |c| picklist_values.build({:value => c[0]}) }
+  end
   
   protected
     def populate_label

@@ -3,6 +3,28 @@ module ApplicationHelper
   
   include SavageBeast::ApplicationHelper
   include Juixe::Acts::Voteable
+
+  # Enumerator constant for mapping the CSS class name to the field type
+  FIELD_CLASS = { :default_subject      => "text",
+                  :default_requester    => "text",
+                  :default_ticket_type  => "dropdown",
+                  :default_status       => "dropdown", 
+                  :default_priority     => "dropdown",
+                  :default_group        => "dropdown",
+                  :default_agent        => "dropdown",
+                  :default_source       => "dropdown",
+                  :default_description  => "description",
+                  :custom_text          => "text",
+                  :custom_paragraph     => "paragraph",
+                  :custom_checkbox      => "checkbox",
+                  :custom_number        => "number",
+                  :custom_dropdown      => "dropdown"
+                }
+                  
+  def get_field_class(field_type)
+    puts "$$$$$$$$$$$$$$$$$$$$$$$ #{field_type}"
+    FIELD_CLASS[field_type.to_sym]
+  end  
   
   def show_flash
     [:notice, :warning, :error].collect {|type| content_tag('div', flash[type], :id => type, :class => "flash_info #{type}") if flash[type] }
