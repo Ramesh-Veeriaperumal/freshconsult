@@ -79,7 +79,11 @@ class AccountsController < ApplicationController
     build_object
     build_user
     build_plan
-    @account.time_zone = (ActiveSupport::TimeZone[params[:utc_offset].to_f]).name
+    begin
+      @account.time_zone = (ActiveSupport::TimeZone[params[:utc_offset].to_f]).name 
+    rescue
+      @account.time_zone = (ActiveSupport::TimeZone["Eastern Time (US & Canada)"]).name 
+    end
     
     if @account.save       
        rediret_url = params[:call_back]+"&EXTERNAL_CONFIG=true" unless params[:call_back].blank?
