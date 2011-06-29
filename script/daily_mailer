@@ -11,7 +11,21 @@ Lockfile('lock', :retries => 0) do
   Subscription.find_expiring_trials.each do |sub|
     puts "Account admin email is #{sub.account.account_admin.email}"
     if admin = sub.account.account_admin
-      SubscriptionNotifier.deliver_trial_expiring(admin, sub)
+      SubscriptionNotifier.deliver_trial_expiring(admin, sub, "#{sub.trial_days} days")
+    end
+  end
+  
+  Subscription.find_expiring_trials(48.hours.from_now).each do |sub|
+    puts "Two day admin email is #{sub.account.account_admin.email}"
+    if admin = sub.account.account_admin
+      SubscriptionNotifier.deliver_trial_expiring(admin, sub, "48 hours")
+    end
+  end
+  
+  Subscription.find_expiring_trials(24.hours.from_now).each do |sub|
+    puts "One day admin email is #{sub.account.account_admin.email}"
+    if admin = sub.account.account_admin
+      SubscriptionNotifier.deliver_trial_expiring(admin, sub, "24 hours")
     end
   end
   
