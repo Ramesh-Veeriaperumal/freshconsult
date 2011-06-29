@@ -171,16 +171,25 @@ module ApplicationHelper
     end
     color
   end
-
-  def construct_ticket_element(object_name, field)
-    case Helpdesk::TicketField::FIELD_CLASS[field.field_type.to_sym]
-      when "text" then
-        text_field object_name, field.name, :class => "text"
+  
+  def construct_ticket_element(object_name, field, field_label, dom_type, required, field_value = "")
+    element_class   = " #{ (required) ? 'required' : '' } #{ dom_type }"
+    field_label    += " #{ (required) ? '*' : '' }"
+    object_name     = "#{object_name.to_s}#{ (/^custom/ =~ field.field_type) ? '[custom_field]' : '' }"
+    label = label_tag object_name+"_"+field.field_name, field_label
+    case dom_type
+      when "requester" then
+        element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email", :locals => { :object_name => object_name, :field => field, :url => autocomplete_helpdesk_authorizations_path, :object_name => object_name }))
+      when "text", "number", "email" then
+        element = label + text_field(object_name, field.field_name, :class => element_class, :value => field_value)
       when "paragraph" then
-        text_area object_name, field.name, :class => "paragraph"
+        element = label + text_area(object_name, field.field_name, :class => element_class, :value => field_value)
       when "dropdown" then
-        select object_name, field.name, :class => "dropdown"
+        element = label + select(object_name, field.field_name, field.choices, :class => element_class, :selected => field_value)
+      when "checkbox" then
+        element = content_tag(:div, check_box(object_name, field.field_name, :class => element_class) + field_label, :value => field_value)
     end
+    content_tag :li, element, :class => dom_type
   end
 
   private
