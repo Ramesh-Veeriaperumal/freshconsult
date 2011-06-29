@@ -38,7 +38,7 @@ class Account < ActiveRecord::Base
   
   has_many :attachments, :class_name => 'Helpdesk::Attachment', :dependent => :destroy
   
-  has_many :users, :dependent => :destroy , :conditions =>{:deleted =>false}
+  has_many :users, :dependent => :destroy, :conditions =>{:deleted =>false}, :order => :name
   has_many :all_users , :class_name => 'User', :dependent => :destroy
   
   has_one :account_admin, :class_name => "User", :conditions => { :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:account_admin] } #has_one ?!?!?!?!
