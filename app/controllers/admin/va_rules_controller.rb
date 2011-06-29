@@ -2,6 +2,11 @@ class Admin::VaRulesController < Admin::AutomationsController
   
   skip_before_filter :check_automation_feature
   
+  OPERATOR_TYPES = {
+    "custom_dropdown" => "choicelist",
+    "custom_checkbox" => "checkbox"
+  }
+  
   def index
     @inactive_rules = current_account.disabled_va_rules
     super
@@ -57,40 +62,41 @@ class Admin::VaRulesController < Admin::AutomationsController
     def load_config
       super
       
-    default_filter_hash   = [{:name => 0              , :value => "--- #{t('click_to_select_filter')} ---"},
-                        {:name => "from_email"   , :value => t('from_email'), :domtype => "autocompelete", :data_url => autocomplete_helpdesk_authorizations_path, 
-                                                   :operatortype => "email"},
-                        {:name => "to_email"     , :value => t('to_email')  , :domtype => "text",
-                                                   :operatortype => "email"},
-                        {:name => 0              , :value => "--------------------------"},
-                        {:name => "subject"      , :value => t('ticket.subject'),       :domtype => "text",
-                                                   :operatortype => "text"},
-                        {:name => "description"  , :value => t('description'),   :domtype => "text",
-                                                   :operatortype => "text"},
-                        {:name => "subject_or_description", :value =>  t('subject_or_description'),   :domtype => "text",
-                                                   :operatortype => "text"},
-                        {:name => "priority"     , :value => t('ticket.priority'),      :domtype => "dropdown", :choices => Helpdesk::Ticket::PRIORITY_NAMES_BY_KEY.sort, 
-                                                   :operatortype => "choicelist"},                        
-                        {:name => "ticket_type"  , :value => t('ticket.type'),          :domtype => "dropdown", :choices => Helpdesk::Ticket::TYPE_NAMES_BY_KEY.sort, 
-                                                   :operatortype => "choicelist"},
-                        {:name => "status"       , :value => t('ticket.status'),        :domtype => "dropdown", :choices => Helpdesk::Ticket::STATUS_NAMES_BY_KEY.sort, 
-                                                   :operatortype => "choicelist"},
-                        {:name => "source"       , :value => t('ticket.source'),        :domtype => "dropdown", :choices => Helpdesk::Ticket::SOURCE_NAMES_BY_KEY.sort, 
-                                                   :operatortype => "choicelist"},
-                        {:name => 0              , :value => "------------------------------"},
-                        {:name => "contact_name" , :value => t('contact_name'),  :domtype => "text",
-                                                   :operatortype => "text"},
-                        {:name => "company_name" , :value => t('company_name'),  :domtype => "text", 
-                                                   :operatortype => "text"}]
+      filter_hash   = [
+        { :name => 0, :value => "--- #{t('click_to_select_filter')} ---" },
+        { :name => "from_email", :value => t('from_email'), :domtype => "autocompelete", 
+          :data_url => autocomplete_helpdesk_authorizations_path, :operatortype => "email" },
+        { :name => "to_email", :value => t('to_email'), :domtype => "text",
+          :operatortype => "email" },
+        { :name => 0, :value => "--------------------------" },
+        { :name => "subject", :value => t('ticket.subject'), :domtype => "text",
+          :operatortype => "text" },
+        { :name => "description", :value => t('description'), :domtype => "text",
+          :operatortype => "text" },
+        { :name => "subject_or_description", :value =>  t('subject_or_description'), 
+          :domtype => "text", :operatortype => "text" },
+        { :name => "priority", :value => t('ticket.priority'), :domtype => "dropdown", 
+          :choices => Helpdesk::Ticket::PRIORITY_NAMES_BY_KEY.sort, :operatortype => "choicelist" },
+        { :name => "ticket_type", :value => t('ticket.type'), :domtype => "dropdown", 
+          :choices => Helpdesk::Ticket::TYPE_NAMES_BY_KEY.sort, :operatortype => "choicelist" },
+        { :name => "status", :value => t('ticket.status'), :domtype => "dropdown", 
+          :choices => Helpdesk::Ticket::STATUS_NAMES_BY_KEY.sort, :operatortype => "choicelist" },
+        { :name => "source", :value => t('ticket.source'), :domtype => "dropdown", 
+          :choices => Helpdesk::Ticket::SOURCE_NAMES_BY_KEY.sort, :operatortype => "choicelist" },
+        { :name => 0, :value => "------------------------------" },
+        { :name => "contact_name", :value => t('contact_name'), :domtype => "text", 
+          :operatortype => "text" },
+        { :name => "company_name", :value => t('company_name'), :domtype => "text", 
+          :operatortype => "text"}]
                                                    
-      filter_hash = add_custom_filters default_filter_hash
-      
+      add_custom_filters filter_hash
       @filter_defs   = ActiveSupport::JSON.encode filter_hash
       
-      operator_types  = {:email       => ["is", "is_not", "contains", "does_not_contain"],
-                         :text        => ["is", "is_not", "contains", "does_not_contain", "starts_with", "ends_with"],
-                         :checkbox    => ["selected", "not_selected"],
-                         :choicelist  => ["is", "is_not"]}
+      operator_types  = {
+        :email       => ["is", "is_not", "contains", "does_not_contain"],
+        :text        => ["is", "is_not", "contains", "does_not_contain", "starts_with", "ends_with"],
+        :checkbox    => ["selected", "not_selected"],
+        :choicelist  => ["is", "is_not"]}
       
       @op_types        = ActiveSupport::JSON.encode operator_types
       
@@ -114,44 +120,17 @@ class Admin::VaRulesController < Admin::AutomationsController
   
   protected
   
-  def add_custom_filters filter_hash
-  
-   @ticket_field = Helpdesk::FormCustomizer.find(:first ,:conditions =>{:account_id => current_account.id})
-   
-   @json_data = ActiveSupport::JSON.decode(@ticket_field.json_data)
-   
-   @json_data.each do |field|
-     
-     if field["fieldType"].eql?("custom")       
-       
-        item = {:name =>  field["label"] , :value =>  field["display_name"] ,  :domtype => field["type"], :action => "set_custom_field"  , :operatortype => "text"}
-        
-        if "dropdown".eql?(field["type"])
-          choice_values = get_choices field
-          item = {:name =>  field["label"] , :value =>  field["display_name"] ,  :domtype => field["type"], :choices => choice_values , :action => "set_custom_field" , :operatortype => "choicelist" }
-        end
-        
-       if "checkbox".eql?(field["type"])
-          choice_values = get_choices field
-          item = {:name =>  field["label"] , :value =>  field["display_name"] ,  :domtype => field["type"], :choices => choice_values , :action => "set_custom_field" , :operatortype => "checkbox" }
-        end
-        
-        filter_hash.push(item)
-     end
-     
-   end
-   
-  return filter_hash
- 
-end
-
-def get_choices field
-  
-  Array values =[]
-          
-  field["choices"].each {|choice| values.push([choice["value"],choice["value"]])}
-                  
-  return values 
-end
+    def add_custom_filters filter_hash
+      current_account.ticket_fields.custom_fields.each do |field|
+        filter_hash.push({
+          :name => field.name,
+          :value => field.label,
+          :domtype => field.flexifield_def_entry.flexifield_coltype,
+          :choices => field.picklist_values.collect { |c| [ c.value, c.value ] },
+          :action => "set_custom_field",
+          :operatortype => OPERATOR_TYPES.fetch(field.field_type, "text")
+        })
+      end
+    end
   
 end
