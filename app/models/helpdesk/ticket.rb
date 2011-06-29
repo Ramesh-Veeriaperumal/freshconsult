@@ -375,8 +375,8 @@ end
     "#{ticket.excerpts.subject} (##{ticket.excerpts.display_id})"
   end
   
-  def reply_email #To do - active check..
-    email_config ? email_config.reply_email : account.default_email
+  def reply_email
+    email_config ? email_config.friendly_email : account.default_email
   end
 
   #Some hackish things for virtual agent rules.
