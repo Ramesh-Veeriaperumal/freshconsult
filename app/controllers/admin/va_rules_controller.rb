@@ -118,8 +118,6 @@ class Admin::VaRulesController < Admin::AutomationsController
       {}
     end
   
-  protected
-  
     def add_custom_filters filter_hash
       current_account.ticket_fields.custom_fields.each do |field|
         filter_hash.push({
