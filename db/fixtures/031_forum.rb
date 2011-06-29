@@ -2,7 +2,7 @@ account = Account.current
 
 category = ForumCategory.seed(:account_id, :name) do |s|
   s.account_id = account.id
-  s.name = "#{account.helpdesk_name} Forums"
+  s.name = "#{account.portal_name} Forums"
   s.description = 'Default forum category, feel free to edit or delete it.'
 end
 

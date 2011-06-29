@@ -1,19 +1,18 @@
-<% if @subscription.needs_payment_info? %>
-	Your <%= AppConfig['app_name'] %> trial period will be ending soon. If you'd
-	like to continue to use your <%= AppConfig['app_name'] %> account, please log
-	in to your account and enter your billing information. Otherwise,
-	your account will be disabled when your trial period ends.
-<% else %>
-	Your <%= AppConfig['app_name'] %> trial period will be ending soon. If your account remains
-	open beyond the trial expiration date, your credit card on file will
-	be charged <%= number_to_currency(@subscription.amount) %> monthly.  
-<% end %>
-
-Billing Information:
-http://<%= @subscription.account.full_domain %>/account/billing
-
-Trial Expiration Date:
-<%= @subscription.next_renewal_at.to_s(:long_day).squeeze(' ') %>
-
-
-If you have any questions, please email <%= AppConfig['from_email'] %>.
+<div>
+	Hi,<div><br></div>
+	<div>We want to let you know that your Freshdesk trial will expire in <%=@subscription.trial_days%> days. We hope Freshdesk was able to meet your requirements.</div>
+	<div><br></div>
+	<div>We want to earn your business so please tell us if all your questions have been answered and let us how we are doing.&nbsp;</div>
+	<div><br></div>
+	<div>If you are ready to sign up please go to the Account Settings page and choose a plan that suits you and enter your credit card information.</div>
+	<div><br></div>
+	<div><%= link_to "Yes, I would like to choose a plan now", "http://#{@subscription.account.full_domain}/account/plans" %></div>
+	<div><br></div>
+	<div>Regards</div>
+	<div><br></div>
+	<div>Vijay Shankar&nbsp;</div>
+	<div><%= AppConfig['from_email'] %></div>
+	<div>Customer Support Advocate</div>
+	<div>Freshdesk - refreshing customer support!</div>
+	<div><br></div>
+</div>

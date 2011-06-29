@@ -8,8 +8,8 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
       deliver_email_notification({ :ticket => ticket,
              :notification_type => notification_type,
              :receips => i_receips,
-             :email_body => a_template.render('ticket' => ticket, 'helpdesk_name' => ticket.account.helpdesk_name, 
-                                              'comment' => comment)
+             :email_body => a_template.render('ticket' => ticket, 
+                'helpdesk_name' => ticket.account.portal_name, 'comment' => comment)
           }) unless i_receips.nil?
     end
     
@@ -18,8 +18,8 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
       deliver_email_notification({ :ticket => ticket,
              :notification_type => notification_type,
              :receips => ticket.requester.email,
-             :email_body => r_template.render('ticket' => ticket, 'helpdesk_name' => ticket.account.helpdesk_name, 
-                                              'comment' => comment)
+             :email_body => r_template.render('ticket' => ticket, 
+                'helpdesk_name' => ticket.account.portal_name, 'comment' => comment)
           })
     end
   end

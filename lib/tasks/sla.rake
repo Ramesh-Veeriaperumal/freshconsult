@@ -60,6 +60,6 @@ def send_email(ticket, agent, n_type)
   return unless e_notification.agent_notification
   
   email_body = Liquid::Template.parse(e_notification.agent_template).render(
-                                'agent' => agent, 'ticket' => ticket, 'helpdesk_name' => ticket.account.helpdesk_name)
+                                'agent' => agent, 'ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name)
   SlaNotifier.deliver_escalation(ticket, agent, :email_body => email_body, :subject => e_notification.ticket_subject(ticket))
 end

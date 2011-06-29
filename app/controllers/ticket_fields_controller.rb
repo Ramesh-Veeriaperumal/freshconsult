@@ -96,13 +96,11 @@ class TicketFieldsController < Admin::AdminController
   private
     def create_field(field_details)
       ff_def_entry = FlexifieldDefEntry.new ff_meta_data(field_details)
-      if ff_def_entry.save
-        field_details.delete(:id)
-        ticket_field = scoper.build(field_details)
-        ticket_field.name = ff_def_entry.flexifield_alias
-        ticket_field.flexifield_def_entry_id = ff_def_entry.id
-        ticket_field.save! # Remove the !
-      end
+      field_details.delete(:id)
+      ticket_field = scoper.build(field_details)
+      ticket_field.name = ff_def_entry.flexifield_alias
+      ticket_field.flexifield_def_entry = ff_def_entry
+      ticket_field.save
     end
     
     def ff_meta_data(field_details)

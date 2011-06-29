@@ -44,6 +44,14 @@ class EmailConfig < ActiveRecord::Base
     portal.destroy
   end
   
+  def active?
+    active
+  end
+  
+  def friendly_email
+    active? ? "#{name} <#{reply_email}>" : "support@#{account.full_domain}"
+  end
+  
   def deliver_verification_email
     set_activator_token
     save

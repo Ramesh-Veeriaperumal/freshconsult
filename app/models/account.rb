@@ -70,6 +70,7 @@ class Account < ActiveRecord::Base
   has_many :products, :class_name => 'EmailConfig', :conditions => { :primary_role => false }
   has_many :portals
   has_one  :main_portal, :source => :portal, :through => :primary_email_config
+  accepts_nested_attributes_for :main_portal
   
   has_many :email_notifications, :dependent => :destroy
   has_many :groups, :dependent => :destroy
@@ -212,7 +213,7 @@ class Account < ActiveRecord::Base
   end
   
   def default_email
-    primary_email_config.active ? primary_email_config.reply_email : "support@#{full_domain}"
+    primary_email_config.friendly_email
   end
   
   def to_s
@@ -230,10 +231,14 @@ class Account < ActiveRecord::Base
   
   #Helpdesk hack starts here
   def reply_emails
-    to_ret = (email_configs.collect { |ec| ec.reply_email }).sort
+    to_ret = (email_configs.collect { |ec| ec.friendly_email }).sort
     to_ret.empty? ? [ "support@#{full_domain}" ] : to_ret #to_email case will come, when none of the emails are active.. 
   end
   #HD hack ends..
+  
+  def portal_name #by Shan temp.
+    main_portal.name
+  end
   
   #Sentient things start here, can move to lib some time later - Shan
   def self.current

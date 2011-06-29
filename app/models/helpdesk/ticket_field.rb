@@ -40,7 +40,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
   
   def choices=(c_attr)
     picklist_values.clear
-    c_attr.each { |c| picklist_values << Helpdesk::PicklistValue.new({:value => c[0]}) }
+    c_attr.each { |c| picklist_values.build({:value => c[0]}) }
   end
   
   protected
