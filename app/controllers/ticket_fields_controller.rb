@@ -10,8 +10,11 @@ class TicketFieldsController < Admin::AdminController
   }
   
   def index
-    @ticket_fields = scoper.find(:all)
-    @ticket_field_json = @ticket_fields.map do |field|      
+    @ticket_fields = scoper.find(:all, :include => :picklist_values )
+    
+    respond_to do |format|
+      format.html { 
+              @ticket_field_json = @ticket_fields.map do |field|      
         { :field_type             => field.field_type,
           :id                     => field.id,
           :name                   => field.name,
@@ -27,15 +30,16 @@ class TicketFieldsController < Admin::AdminController
           :editable_in_portal     => field.editable_in_portal,
           :required_in_portal     => field.required_in_portal,
           :choices                => field.choices }
+          
     end 
-    
-    respond_to do |format|
-      format.html # index.html.erb
-      #format.xml  { render :xml => @ticket_fields.agent_view } #To Do Shan..
+      }
+      format.xml  { render :xml => @ticket_fields.to_xml } 
+      format.json  { render :json => Hash.from_xml(@ticket_fields.to_xml) } 
     end
   end
 
   def update #To Do - Sending proper status messages to UI.
+    @tf_errors = []
     field_data = ActiveSupport::JSON.decode params[:jsonData]
     field_data.each_with_index do |f_d, i|
       f_d.symbolize_keys!
@@ -50,10 +54,15 @@ class TicketFieldsController < Admin::AdminController
         send("#{action}_field", f_d) 
       end
     end
-
-    redirect_to :action => :index 
+     err_str = ""
+     @tf_errors.each do |tf|
+      tf.errors.each { |attr,msg| err_str << " #{tf.label}  #{attr} #{msg} <br />"  }
+     end
+     flash[:error] = err_str unless err_str.empty?
+     redirect_to :action => :index  
   end
   
+ 
   def old_code
     respond_to do |format|
       if @ticket_field.update_attributes(:json_data =>modified_json, :agent_view =>@agentView,
@@ -81,7 +90,9 @@ class TicketFieldsController < Admin::AdminController
       ticket_field = scoper.build(field_details)
       ticket_field.name = ff_def_entry.flexifield_alias
       ticket_field.flexifield_def_entry = ff_def_entry
-      ticket_field.save
+      unless ticket_field.save
+        @tf_errors.push(ticket_field) 
+      end
     end
     
     def ff_meta_data(field_details)
@@ -108,7 +119,10 @@ class TicketFieldsController < Admin::AdminController
     
     def edit_field(field_details)
       field_details.delete(:type)
-      scoper.find(field_details.delete(:id)).update_attributes(field_details)
+      ticket_field = scoper.find(field_details.delete(:id))
+      unless ticket_field.update_attributes(field_details)
+        @tf_errors.push(ticket_field) 
+      end
     end
     
     def delete_field(field_details)

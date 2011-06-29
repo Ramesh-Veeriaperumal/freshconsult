@@ -80,6 +80,24 @@ class Helpdesk::TicketField < ActiveRecord::Base
      end
   end  
   
+  def to_xml(options = {})
+    options[:indent] ||= 2
+    xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
+    xml.instruct! unless options[:skip_instruct]
+    super(:builder => xml, :skip_instruct => true) do |xml|
+    xml.choices do
+      self.choices.each do |k,v|  
+        if v != "0"
+         xml.option do
+          xml.tag!("id",k)
+          xml.tag!("value",v)
+         end
+        end
+      end
+    end
+   end
+ end
+  
   def choices=(c_attr)
     picklist_values.clear
     c_attr.each { |c| picklist_values.build({:value => c[0]}) }
