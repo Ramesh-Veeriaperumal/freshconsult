@@ -1,3 +1,15 @@
 <% content_for :sidebar do -%><%- end %>
-<%= content_tag (:h3, t("ticket.submit_ticket_title"), :class => "title") %> 
-<%= render :partial => "/shared/ticket_form" %>
+<%= content_tag (:h3, t("ticket.submit_ticket_title"), :class => "title") %>
+<% form_for @item, :html => {:multipart => true, :id => "NewTicket" } do |f| %>
+  <ul class="ui-form">  
+    <%= render :partial => "/shared/ticket_form", :object => f %>
+  	<li>
+			<%= render ( :partial => "/helpdesk/shared/attachment_form" ) %>
+		</li>
+  </ul>
+  <div class="button-container">
+  	<%= f.submit t('create'), :class => "uiButton" %>
+  	<%= submit_tag t('save_and_create'), :name => "save_and_create" , :class => "uiButton" %>
+    <%= link_to t('cancel'), (@item.new_record? ? {:action => 'index'} : @item ), :class => "uiButton" %>
+  </div>
+<% end %>  

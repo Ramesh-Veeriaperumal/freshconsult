@@ -1,11 +1,4 @@
-<ul>
-  <% form_for @item, :html => {:multipart => true, :id => "NewTicket" } do |f| %>
-    <%= f.error_messages %>
-      <% current_account.ticket_fields.each do |field| %>
-        <li>
-          <%= label_tag field.name %>
-          <%= construct_ticket_element :helpdesk_ticket, field %>
-        </li>
-    <% end %>
-  <% end %>
-</ul>
+<%= ticket_form.error_messages %>
+<% current_account.ticket_fields.each do |field| %>
+  <%= construct_ticket_element :helpdesk_ticket, field, field.label, field.required %>
+<% end %>

@@ -9,24 +9,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
     :dependent => :destroy
   
   acts_as_list
-  
-  # Enumerator constant for mapping the CSS class name to the field type
-  FIELD_CLASS = { :default_subject      => "text",
-                  :default_requester    => "text",
-                  :default_ticket_type  => "dropdown",
-                  :default_status       => "dropdown", 
-                  :default_priority     => "dropdown",
-                  :default_group        => "dropdown",
-                  :default_agent        => "dropdown",
-                  :default_source       => "dropdown",
-                  :default_description  => "paragraph",
-                  :custom_text          => "text",
-                  :custom_paragraph     => "paragraph",
-                  :custom_checkbox      => "checkbox",
-                  :custom_number        => "number",
-                  :custom_dropdown      => "dropdown"
-                }
-  
+   
   # scope_condition for acts_as_list
   def scope_condition
     "account_id = #{account_id}"
@@ -37,6 +20,65 @@ class Helpdesk::TicketField < ActiveRecord::Base
   
   before_create :populate_label
   named_scope :custom_fields, :conditions => ["flexifield_def_entry_id is not null"]
+  named_scope :customer_visible, :conditions => { :visible_in_portal => true }  
+  named_scope :customer_editable, :conditions => { :editable_in_portal => true }
+  
+  # Enumerator constant for mapping the CSS class name to the field type
+  FIELD_CLASS = { :default_subject      => { :type => :default, :dom_type => "text",
+                                              :form_field => "subject", :visible_in_view_form => false },
+                  :default_requester    => { :type => :default, :dom_type => "requester",
+                                              :form_field => "email"  , :visible_in_view_form => false },
+                  :default_ticket_type  => { :type => :default, :dom_type => "dropdown"},
+                  :default_status       => { :type => :default, :dom_type => "dropdown"}, 
+                  :default_priority     => { :type => :default, :dom_type => "dropdown"},
+                  :default_group        => { :type => :default, :dom_type => "dropdown", :form_field => "group_id"},
+                  :default_agent        => { :type => :default, :dom_type => "dropdown", :form_field => "responder_id"},
+                  :default_source       => { :type => :default, :dom_type => "dropdown"},
+                  :default_description  => { :type => :default, :dom_type => "paragraph", :visible_in_view_form => false },
+                  :custom_text          => { :type => :custom, :dom_type => "text"},
+                  :custom_paragraph     => { :type => :custom, :dom_type => "paragraph"},
+                  :custom_checkbox      => { :type => :custom, :dom_type => "checkbox"},
+                  :custom_number        => { :type => :custom, :dom_type => "number"},
+                  :custom_dropdown      => { :type => :custom, :dom_type => "dropdown"}
+                }
+
+  def dom_type
+    FIELD_CLASS[field_type.to_sym][:dom_type]
+  end
+
+  def field_name
+    FIELD_CLASS[field_type.to_sym][:form_field] || name
+  end
+  
+  def visible_in_view_form?
+    view = FIELD_CLASS[field_type.to_sym][:visible_in_view_form]
+    ( view.nil? || view )
+  end
+  
+  def is_default_field?
+    (FIELD_CLASS[field_type.to_sym][:type] === :default)
+  end
+
+  def choices
+     case field_type
+       when "custom_dropdown" then
+         picklist_values.collect { |c| [c.value, c.id] }
+       when "default_priority" then
+         Helpdesk::Ticket::PRIORITY_OPTIONS.sort
+       when "default_source" then
+         Helpdesk::Ticket::SOURCE_OPTIONS.sort
+       when "default_status" then
+         Helpdesk::Ticket::STATUS_OPTIONS.sort
+       when "default_ticket_type" then
+         Helpdesk::Ticket::TYPE_OPTIONS.sort
+       when "default_agent" then
+         account.users.technicians.collect { |c| [c.name, c.id] }
+       when "default_group" then
+         account.groups.collect { |c| [c.name, c.id] }
+       else
+         []
+     end
+  end  
   
   def choices=(c_attr)
     picklist_values.clear

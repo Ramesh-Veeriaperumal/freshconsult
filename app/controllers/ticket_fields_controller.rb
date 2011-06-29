@@ -26,7 +26,7 @@ class TicketFieldsController < Admin::AdminController
           :visible_in_portal      => field.visible_in_portal,
           :editable_in_portal     => field.editable_in_portal,
           :required_in_portal     => field.required_in_portal,
-          :choices                => get_pick_list(field) }
+          :choices                => field.choices }
     end 
     
     respond_to do |format|
@@ -72,25 +72,6 @@ class TicketFieldsController < Admin::AdminController
   protected
     def scoper
       current_account.ticket_fields
-    end
-    
-    def get_pick_list(field)
-      case field.field_type
-        when "custom_dropdown" then
-          field.picklist_values.collect { |c| [c.value, c.id] }
-        when "default_priority" then
-          Helpdesk::Ticket::PRIORITY_OPTIONS.sort
-        when "default_source" then
-          Helpdesk::Ticket::SOURCE_OPTIONS.sort
-        when "default_status" then
-          Helpdesk::Ticket::STATUS_OPTIONS.sort
-        when "default_ticket_type" then
-          Helpdesk::Ticket::TYPE_OPTIONS.sort
-        when "default_agent", "default_group" then
-          [["...", "0"]]
-        else
-          []
-      end
     end
     
   private

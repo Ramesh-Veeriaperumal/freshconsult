@@ -3,14 +3,20 @@
   <%= f.error_messages %>
   	<%= content_tag ( :h3, t('ticket.submit_ticket_title') ,:class => "title" ) %>
 	<ul class="ui-form">	
-		<%= render :partial => 'support/shared/request_form', :object => f %> 
-		<li>
-			<% if !logged_in? %>
-			  	<%= content_tag ( :label, t('ticket.verify_human') ) %>
-			  	<%= recaptcha_tags :display => { :theme => "white" }  %>
-			<% end %> 
-		</li>		
-	</ul>
+		<%# render :partial => 'support/shared/request_form', :object => f %>
+    <% current_account.ticket_fields.customer_editable.each do |field| %>
+        <%= construct_ticket_element :helpdesk_ticket, field, 
+                                     field.label_in_portal, 
+                                     (field.dom_type == "requester") ? "email": field.dom_type, 
+                                     field.required_in_portal %>
+    <% end %>    
+    <% if !logged_in? %>
+      <li>
+        <%= content_tag ( :label, t('ticket.verify_human') ) %>
+        <%= recaptcha_tags :display => { :theme => "white" }  %>
+      </li>
+    <% end %>
+  </ul>
 	<div class="button-container">
 		<%= f.submit t('ticket.submit_ticket'), :class => "uiButton" %>
 		<%# Any fields named like meta[fieldname] will be saved by the helpdesk as metadata %>

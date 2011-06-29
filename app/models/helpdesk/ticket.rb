@@ -523,8 +523,10 @@ end
       super
     rescue NoMethodError => e
       logger.debug "method_missing :: args is #{args} and method:: #{method} and type is :: #{method.kind_of? String} "
+      load_flexifield if custom_field.nil?
+      custom_field.symbolize_keys!
       
-      if (method.to_s.include? '=') && custom_field.has_key?(method.to_s.chomp("="))
+      if (method.to_s.include? '=') && custom_field.has_key?(method.to_s.chomp("=").to_sym)
         logger.debug "method_missing :: inside custom_field  args is #{args}  and method.chomp:: #{ method.to_s.chomp("=")}"
         
         ff_def_id = FlexifieldDef.find_by_account_id(self.account_id).id
@@ -536,12 +538,7 @@ end
         return
       end
       
-      field =false
-      unless custom_field.nil?
-        field = custom_field.has_key?(method)    
-      end
-      raise e unless field
-      
+      raise e unless custom_field.has_key?(method)
       custom_field[method]
     end
   end
