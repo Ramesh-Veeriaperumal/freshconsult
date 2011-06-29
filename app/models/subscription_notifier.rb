@@ -17,10 +17,10 @@ class SubscriptionNotifier < ActionMailer::Base
     @body = { :account => account, :host => account.host }
   end
   
-  def trial_expiring(user, subscription)
-    setup_email(user, 'Trial period expiring')
-    setup_bcc
-    @body = { :user => user, :subscription => subscription }
+  def trial_expiring(user, subscription, trial_days = nil)
+    setup_email(user,"Your Freshdesk trial expires in #{trial_days}")
+    @bcc = "kiran@freshdesk.com"
+    @body = { :user => user, :subscription => subscription, :trial_days => trial_days }
     @content_type = "text/html"
   end
   
