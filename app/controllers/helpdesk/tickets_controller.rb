@@ -273,6 +273,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   protected
+
     def item_url
       return new_helpdesk_ticket_path if params[:save_and_create]
       @item

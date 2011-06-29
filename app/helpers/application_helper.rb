@@ -4,28 +4,6 @@ module ApplicationHelper
   include SavageBeast::ApplicationHelper
   include Juixe::Acts::Voteable
 
-  # Enumerator constant for mapping the CSS class name to the field type
-  FIELD_CLASS = { :default_subject      => "text",
-                  :default_requester    => "text",
-                  :default_ticket_type  => "dropdown",
-                  :default_status       => "dropdown", 
-                  :default_priority     => "dropdown",
-                  :default_group        => "dropdown",
-                  :default_agent        => "dropdown",
-                  :default_source       => "dropdown",
-                  :default_description  => "description",
-                  :custom_text          => "text",
-                  :custom_paragraph     => "paragraph",
-                  :custom_checkbox      => "checkbox",
-                  :custom_number        => "number",
-                  :custom_dropdown      => "dropdown"
-                }
-                  
-  def get_field_class(field_type)
-    puts "$$$$$$$$$$$$$$$$$$$$$$$ #{field_type}"
-    FIELD_CLASS[field_type.to_sym]
-  end  
-  
   def show_flash
     [:notice, :warning, :error].collect {|type| content_tag('div', flash[type], :id => type, :class => "flash_info #{type}") if flash[type] }
   end
@@ -64,8 +42,6 @@ module ApplicationHelper
     end
     navigation
   end
-  
-  
   
   def check_box_link(text, checked, check_url, check_method, uncheck_url, uncheck_method = :post)
     form_tag("", :method => :put) +    
@@ -196,6 +172,26 @@ module ApplicationHelper
     color
   end
   
+  def construct_ticket_element(object_name, field, field_label, dom_type, required, field_value = "")
+    element_class   = " #{ (required) ? 'required' : '' } #{ dom_type }"
+    field_label    += " #{ (required) ? '*' : '' }"
+    object_name     = "#{object_name.to_s}#{ (/^custom/ =~ field.field_type) ? '[custom_field]' : '' }"
+    label = label_tag object_name+"_"+field.field_name, field_label
+    case dom_type
+      when "requester" then
+        element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email", :locals => { :object_name => object_name, :field => field, :url => autocomplete_helpdesk_authorizations_path, :object_name => object_name }))
+      when "text", "number", "email" then
+        element = label + text_field(object_name, field.field_name, :class => element_class, :value => field_value)
+      when "paragraph" then
+        element = label + text_area(object_name, field.field_name, :class => element_class, :value => field_value)
+      when "dropdown" then
+        element = label + select(object_name, field.field_name, field.choices, :class => element_class, :selected => field_value)
+      when "checkbox" then
+        element = content_tag(:div, check_box(object_name, field.field_name, :class => element_class) + field_label, :value => field_value)
+    end
+    content_tag :li, element, :class => dom_type
+  end
+
   private
     def solutions_tab
       if current_portal.main_portal?

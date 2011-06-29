@@ -32,6 +32,7 @@ class User < ActiveRecord::Base
   before_save :set_account_id_in_children , :set_contact_name
   
   named_scope :contacts, :conditions => ["user_role=?", USER_ROLES_KEYS_BY_TOKEN[:customer]]
+  named_scope :technicians, :conditions => ["user_role != ?", USER_ROLES_KEYS_BY_TOKEN[:customer]]
 
   acts_as_authentic do |c|    
     c.validations_scope = :account_id
