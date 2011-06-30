@@ -293,7 +293,7 @@ a.addchoice:hover {
 .ui-form li.dropdown input, .ui-form li.small input, .ui-form li.dropdown_blank input, .ui-form li.number input {
   width: auto;
 }
-.ui-form .dropdown select {
+.ui-form li.dropdown select, .ui-form li.dropdown_blank select {
   margin-bottom: 8px;
 }
 .ui-form label, .ui-form li.checkbox {

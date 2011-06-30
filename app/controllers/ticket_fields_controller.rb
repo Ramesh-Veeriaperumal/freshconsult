@@ -18,6 +18,7 @@ class TicketFieldsController < Admin::AdminController
         { :field_type             => field.field_type,
           :id                     => field.id,
           :name                   => field.name,
+          :dom_type               => field.dom_type,
           :label                  => field.label,
           :label_in_portal        => field.label_in_portal,
           :description            => field.description,

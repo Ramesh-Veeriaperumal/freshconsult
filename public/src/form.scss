@@ -228,13 +228,13 @@ a.addchoice:hover{
 	li.text, li.paragraph{
 		width:96%;
 	}
-	li.dropdown, li.small, li.dropdown_blank, li.number{
-		width:46%;
-		input{ width:auto; }
-	}
-	.dropdown select{
-	   margin-bottom:8px;
-	}
+   li.dropdown, li.small, li.dropdown_blank, li.number{
+      width:46%;
+      input{ width:auto; }
+   }
+   li.dropdown, li.dropdown_blank{
+      select{ margin-bottom:8px; }
+   }
 	label, li.checkbox{
 		font-weight:normal;
 		margin:0px;
