@@ -78,7 +78,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
       when "default_group" then
         account.groups.collect { |c| [c.name, c.id] }
       when "default_product" then
-        account.all_email_configs.collect { |e| [e.name, e.id] }
+        account.products.collect { |e| [e.name, e.id] }
       else
          []
     end
