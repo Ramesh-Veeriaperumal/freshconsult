@@ -271,8 +271,8 @@ class Account < ActiveRecord::Base
       if self.sso_enabled?
         if self.sso_options[:login_url].blank?  
           self.errors.add(:sso_options, ', Please provide a valid login url') 
-        else
-          self.errors.add(:sso_options, ', Please provide a valid login url') if !external_url_is_valid?(self.sso_options[:login_url])
+        #else
+          #self.errors.add(:sso_options, ', Please provide a valid login url') if !external_url_is_valid?(self.sso_options[:login_url])
         end
       end
     end
