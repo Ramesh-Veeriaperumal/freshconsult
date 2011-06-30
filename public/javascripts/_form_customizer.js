@@ -53,76 +53,58 @@
       function constFieldDOM(dataItem, container){
          var fieldContainer  = container || jQuery("<li />");
          fieldContainer.empty();
-        
+
          var label = jQuery("<label />").append(dataItem.label);
          var field = jQuery("<div />");
-        
-         var fieldAttr = '';
-            switch (dataItem.field_type) {
-               case 'custom_text':
-               case 'default_subject':
-               case 'default_requester':
-                  field.append('<input type="text" '+fieldAttr+' disabled="true" size="80" />');
-                  fieldContainer
-                     .addClass("text")
-                     .append(label)
-                     .append(field);
-               break;
 
-               case 'custom_number':
-                  field.append('<input type="text" '+fieldAttr+' disabled="true" />');
-                  fieldContainer
-                     .addClass("number")
-                     .append(label)
-                     .append(field);
-               break;
-
-               case 'custom_checkbox':
-                  //var selected = (dataItem.setDefault)?'checked':'';
-                  dataItem.type = "checkbox";
-                  field.append('<input type="checkbox" disabled="true" '+ fieldAttr +' />' + dataItem.label );
-                  fieldContainer
-                     .addClass("checkbox")
-                     .append(field);
-               break;
-
-               case 'custom_dropdown':
-               case 'default_ticket_type':
-               case 'default_status':
-               case 'default_priority':
-               case 'default_group':
-               case 'default_agent':
-               case 'default_source':
-                  dataItem.type = "dropdown";
-                  $(dataItem.choices).each(function(ci, choice){
-                     field.append("<option " + choice[1] + ">" + choice[0] + "</option>");
-                  });
-                  
-                  field.wrapInner("<select "+fieldAttr+" disabled='true' />");
-                  fieldContainer
-                     .addClass("dropdown")
-                     .append(label)
-                     .append(field);
-               break;
-
-               case 'custom_paragraph':
-               case 'default_description':
-                  dataItem.type = "paragraph";
-                  fieldContainer.addClass("paragraph");
-                  field.append('<textarea disabled="true"'+fieldAttr+'></textarea>');
-                  fieldContainer
-                     .append(label)
-                     .append(field);
-               break;
-            }
-            
-            $(field).prepend("<span class='overlay-field' />");
-
-            if (dataItem.action) ticket_fields_modified = true;
-
-            fieldContainer.data("raw", dataItem);
-            return fieldContainer;
+         var fieldAttr     = '';
+         
+         switch(dataItem.dom_type) {
+            case 'requester':
+               dataItem.type = "requester";
+            break;
+            case 'dropdown_blank':
+               dataItem.type = "dropdown";
+            break;
+            default:
+               dataItem.type = dataItem.dom_type;
          }
+         
+         switch(dataItem.dom_type) {
+            case 'text':
+            case 'requester':
+            case 'number':
+               field.append('<input type="text" '+fieldAttr+' disabled="true" />');
+               fieldContainer.append(label);
+            break;
+         
+            case 'checkbox':               
+               field.append('<input type="checkbox" disabled="true" '+ fieldAttr +' />' + dataItem.label );
+            break;
+         
+            case 'dropdown':
+            case 'dropdown_blank':
+               $(dataItem.choices).each(function(ci, choice){
+                  field.append("<option " + choice[1] + ">" + choice[0] + "</option>");
+               });
+
+               field.wrapInner("<select "+fieldAttr+" disabled='true' />");
+               fieldContainer.append(label);
+            break;
+         
+            case 'paragraph':
+               field.append('<textarea disabled="true"'+fieldAttr+'></textarea>');
+               fieldContainer.append(label);
+            break;
+         }
+
+         fieldContainer.addClass(dataItem.dom_type).append(field);
+         $(field).prepend("<span class='overlay-field' />");
+         if (dataItem.action) ticket_fields_modified = true;
+         fieldContainer.data("raw", dataItem);
+
+         return fieldContainer;
+      }
 
       function getFreshField(type){
          var freshField = fieldTemplate.toObject();
