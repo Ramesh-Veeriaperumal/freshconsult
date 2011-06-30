@@ -1868,12 +1868,12 @@ div.search{
 }
 
 h4.border_title{
-		font-size:16px;
-		border-bottom:1px dashed #ebebeb;
-		padding-bottom:6px;
-		margin-bottom:8px;
-		text-transform:capitalize;
-} 
+   font-size:16px;
+   border-bottom:1px solid #ebebeb;
+   padding-bottom:6px;
+   margin-bottom:8px;
+   text-transform:capitalize;
+}
 
 .forum-category-list{
 	padding:2px 20px;
@@ -1959,18 +1959,13 @@ h4.border_title{
 		}
 }
 
-.sticky{
-	background:#ffffff;
-}
-
-
-
+.sticky{	background:#ffffff; }
 
 .category-title{ 
 	font-size:14px;
 	background-color:#f6f6f6;
-	border-top:1px solid #e2e2e2; 
-	padding:10px 26px 10px 26px;  
+	border-top:1px solid #e2e2e2;
+	padding:10px 26px 10px 26px;
 	a.title{
 		@include link-colors(#545454, #527EAA, #545454, #545454);
 		text-decoration:none;
@@ -1979,10 +1974,10 @@ h4.border_title{
 
 .solution-list .odd, .solution-list .even{
 	@include clearfix;
-	margin:5px 2% 5px 0px; 
+	margin:5px 2% 5px 1%; 
 	padding:10px 0px;
 	float:left;
-	width:100%;
+	width:47%;
 	font-size:12px;
 	a{
 		@include link-colors(#4D769F, #3399cc, #4D769F, #4D769F);
@@ -2441,14 +2436,6 @@ a.page_title{
 	background:url(../images/private_lock_grey.gif) no-repeat left;
 }
 
-
-.uniForm{
-	background:#f8f8f8;
-	font-family: "Lucida Grande","Lucida sans unicode", Geneva, Arial,Verdana,sans-serif;
-	font-size:14px;
-	@include corners(6px);
-}
-
 .match{
 	font-weight:bold; 
 }
@@ -2582,7 +2569,6 @@ a.page_title{
 				margin-left:-20px;
 			}
 		}
-		
 	}
 }
 
@@ -2597,13 +2583,16 @@ a.page_title{
 	padding-top:15px;
 	h3.title{
 		text-align:center;
-		border-bottom:1px dashed #DCDCDC;
+		border-bottom:1px dotted #DCDCDC;
 		padding: 0 0 20px; 
+	}
+	.active{
+	   a{ 
+	      @include link-colors(#333333, #333333, #333333, #333333); }
 	}
 }
 
 .solution_list{
-	border-bottom:1px dashed #DCDCDC;	
 	margin: 10px 0 0;
 	list-style:none;
 	li{  
@@ -2622,14 +2611,14 @@ a.page_title{
 
 .artical_section{
 	margin-left:210px;
-	border-left:1px solid #efefef;
+	border-left:1px solid darken(#E2E2E2, 5%);
 	@include min-height(450px); 
 	padding: 20px;
 	margin-top:-14px;
 	margin-right:-20px;
-	text-align: left;  
-	.seperator{ border-style:dashed; }
+	text-align: left;
 	.info_data{ margin-bottom:7px; } 
+	.search-grey-box{ margin:-10px -20px 12px -20px; }
 }
 
 .artical_list{

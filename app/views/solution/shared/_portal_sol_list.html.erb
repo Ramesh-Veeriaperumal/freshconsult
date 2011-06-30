@@ -1,4 +1,3 @@
-
 <h4 class="border_title"><%= folder.name %></h4> 
 <div class="info_data"><%= folder.description %></div> 
 
@@ -9,6 +8,6 @@
 		<% end %>
 	</ol>
 <% else %>
-	<span class="no_info_text">No solutions in this folder </span>
+	<%= content_tag :span, t('solution.no_solutions_info'), :class => "no_info_text" %>
 <% end %>
 <span class="seperator"></span>
