@@ -59,13 +59,20 @@
         
          var fieldAttr = '';
             switch (dataItem.field_type) {
-               case 'custom_number':
                case 'custom_text':
                case 'default_subject':
                case 'default_requester':
                   field.append('<input type="text" '+fieldAttr+' disabled="true" size="80" />');
                   fieldContainer
                      .addClass("text")
+                     .append(label)
+                     .append(field);
+               break;
+
+               case 'custom_number':
+                  field.append('<input type="text" '+fieldAttr+' disabled="true" />');
+                  fieldContainer
+                     .addClass("number")
                      .append(label)
                      .append(field);
                break;

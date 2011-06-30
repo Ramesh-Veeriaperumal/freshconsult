@@ -31,9 +31,9 @@ class Helpdesk::TicketField < ActiveRecord::Base
                   :default_ticket_type  => { :type => :default, :dom_type => "dropdown"},
                   :default_status       => { :type => :default, :dom_type => "dropdown"}, 
                   :default_priority     => { :type => :default, :dom_type => "dropdown"},
-                  :default_group        => { :type => :default, :dom_type => "dropdown", :form_field => "group_id"},
-                  :default_agent        => { :type => :default, :dom_type => "dropdown", :form_field => "responder_id"},
-                  :default_source       => { :type => :default, :dom_type => "dropdown"},
+                  :default_group        => { :type => :default, :dom_type => "dropdown_blank", :form_field => "group_id"},
+                  :default_agent        => { :type => :default, :dom_type => "dropdown_blank", :form_field => "responder_id"},
+                  :default_source       => { :type => :default, :dom_type => "hidden"},
                   :default_description  => { :type => :default, :dom_type => "paragraph", :visible_in_view_form => false },
                   :custom_text          => { :type => :custom, :dom_type => "text"},
                   :custom_paragraph     => { :type => :custom, :dom_type => "paragraph"},
@@ -64,13 +64,13 @@ class Helpdesk::TicketField < ActiveRecord::Base
        when "custom_dropdown" then
          picklist_values.collect { |c| [c.value, c.id] }
        when "default_priority" then
-         Helpdesk::Ticket::PRIORITY_OPTIONS.sort
+         Helpdesk::Ticket::PRIORITY_OPTIONS
        when "default_source" then
-         Helpdesk::Ticket::SOURCE_OPTIONS.sort
+         Helpdesk::Ticket::SOURCE_OPTIONS
        when "default_status" then
-         Helpdesk::Ticket::STATUS_OPTIONS.sort
+         Helpdesk::Ticket::STATUS_OPTIONS
        when "default_ticket_type" then
-         Helpdesk::Ticket::TYPE_OPTIONS.sort
+         Helpdesk::Ticket::TYPE_OPTIONS
        when "default_agent" then
          account.users.technicians.collect { |c| [c.name, c.id] }
        when "default_group" then

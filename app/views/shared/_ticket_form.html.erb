@@ -1,4 +1,0 @@
-<%= ticket_form.error_messages %>
-<% current_account.ticket_fields.each do |field| %>
-  <%= construct_ticket_element :helpdesk_ticket, field, field.label, field.dom_type, field.required %>
-<% end %>

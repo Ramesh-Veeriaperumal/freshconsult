@@ -175,7 +175,7 @@ module ApplicationHelper
   def construct_ticket_element(object_name, field, field_label, dom_type, required, field_value = "")
     element_class   = " #{ (required) ? 'required' : '' } #{ dom_type }"
     field_label    += " #{ (required) ? '*' : '' }"
-    object_name     = "#{object_name.to_s}#{ (/^custom/ =~ field.field_type) ? '[custom_field]' : '' }"
+    object_name     = "#{object_name.to_s}#{ ( !field.is_default_field? ) ? '[custom_field]' : '' }"
     label = label_tag object_name+"_"+field.field_name, field_label
     case dom_type
       when "requester" then
@@ -185,9 +185,15 @@ module ApplicationHelper
       when "paragraph" then
         element = label + text_area(object_name, field.field_name, :class => element_class, :value => field_value)
       when "dropdown" then
-        element = label + select(object_name, field.field_name, field.choices, :class => element_class, :selected => field_value)
+        element = label + select(object_name, field.field_name, field.choices, :class => element_class, 
+                                  :selected => field_value)
+      when "dropdown_blank" then
+        element = label + select(object_name, field.field_name, field.choices, :class => element_class, 
+                                  :selected => field_value, :include_blank => "...")
+      when "hidden" then
+        element = hidden_field(:source, :value => field_value)
       when "checkbox" then
-        element = content_tag(:div, check_box(object_name, field.field_name, :class => element_class) + field_label, :value => field_value)
+        element = content_tag(:div, check_box(object_name, field.field_name, :class => element_class, :checked => field_value ) + field_label)
     end
     content_tag :li, element, :class => dom_type
   end
