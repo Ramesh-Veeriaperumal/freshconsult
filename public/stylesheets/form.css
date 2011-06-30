@@ -15,6 +15,19 @@ input[type=text], select, input.text {
   font-size: 16px;
 }
 
+select {
+  padding: 1px;
+  font-size: 13px;
+  font-weight: normal;
+  width: auto;
+}
+
+textarea {
+  height: 100px;
+  width: 96%;
+  font-family: "Lucida Grande", Geneva, Arial, Verdana, sans-serif;
+}
+
 input:focus {
   outline: none;
 }
@@ -84,19 +97,6 @@ input.disabled, select.disabled, textarea.disabled {
   background-color: #F0F0F0;
   border: 1px solid #cfcfcf;
   color: #777777 !important;
-}
-
-select {
-  padding: 1px;
-  font-size: 13px;
-  font-weight: normal;
-  width: auto;
-}
-
-textarea {
-  height: 100px;
-  width: 96%;
-  font-family: "Lucida Grande", Geneva, Arial, Verdana, sans-serif;
 }
 
 form table {
@@ -267,26 +267,34 @@ a.addchoice:hover {
   	}*/
 }
 .ui-form div.field-box {
-  padding: 4px 2% 8px 2%;
+  padding: 6px 2% 10px 2%;
   overflow: hidden;
   *zoom: 1;
 }
 .ui-form li {
-  padding: 4px 2% 8px 2%;
+  padding: 8px 2% 8px 2%;
   margin: 0px;
   display: inline;
   float: left;
   width: 96%;
-  border-bottom: 1px solid #EFEFEF;
 }
 .ui-form li div.field-box {
   padding: 4px 0 8px 0;
 }
+.ui-form .hidden {
+  display: none;
+}
 .ui-form li.text, .ui-form li.paragraph {
   width: 96%;
 }
-.ui-form li.dropdown, .ui-form li.small {
+.ui-form li.dropdown, .ui-form li.small, .ui-form li.dropdown_blank, .ui-form li.number {
   width: 46%;
+}
+.ui-form li.dropdown input, .ui-form li.small input, .ui-form li.dropdown_blank input, .ui-form li.number input {
+  width: auto;
+}
+.ui-form .dropdown select {
+  margin-bottom: 8px;
 }
 .ui-form label, .ui-form li.checkbox {
   font-weight: normal;
@@ -809,6 +817,7 @@ span.sort_handle {
 .ui-custom-form li {
   position: relative;
   cursor: move;
+  border-bottom: 1px solid #efefef;
 }
 .ui-custom-form li div {
   position: relative;
