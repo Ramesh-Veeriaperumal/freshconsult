@@ -2373,7 +2373,7 @@ div.search label, div.search input.search {
 
 h4.border_title {
   font-size: 16px;
-  border-bottom: 1px dashed #ebebeb;
+  border-bottom: 1px solid #ebebeb;
   padding-bottom: 6px;
   margin-bottom: 8px;
   text-transform: capitalize;
@@ -2529,10 +2529,10 @@ h4.border_title {
 .solution-list .odd, .solution-list .even {
   overflow: hidden;
   *zoom: 1;
-  margin: 5px 2% 5px 0px;
+  margin: 5px 2% 5px 1%;
   padding: 10px 0px;
   float: left;
-  width: 100%;
+  width: 47%;
   font-size: 12px;
 }
 .solution-list .odd a, .solution-list .even a {
@@ -3096,15 +3096,6 @@ a.page_title:active {
   background: url(../images/private_lock_grey.gif) no-repeat left;
 }
 
-.uniForm {
-  background: #f8f8f8;
-  font-family: "Lucida Grande","Lucida sans unicode", Geneva, Arial,Verdana,sans-serif;
-  font-size: 14px;
-  -moz-border-radius: 6px 6px 6px 6px;
-  -webkit-border-radius: 6px 6px 6px 6px;
-  border-radius: 6px 6px 6px 6px;
-}
-
 .match {
   font-weight: bold;
 }
@@ -3293,12 +3284,23 @@ a.page_title:active {
 }
 .folder_section h3.title {
   text-align: center;
-  border-bottom: 1px dashed #DCDCDC;
+  border-bottom: 1px dotted #DCDCDC;
   padding: 0 0 20px;
+}
+.folder_section .active a {
+  color: #333333;
+}
+.folder_section .active a:visited {
+  color: #333333;
+}
+.folder_section .active a:hover {
+  color: #333333;
+}
+.folder_section .active a:active {
+  color: #333333;
 }
 
 .solution_list {
-  border-bottom: 1px dashed #DCDCDC;
   margin: 10px 0 0;
   list-style: none;
 }
@@ -3326,7 +3328,7 @@ a.page_title:active {
 
 .artical_section {
   margin-left: 210px;
-  border-left: 1px solid #efefef;
+  border-left: 1px solid #d5d5d5;
   min-height: 450px;
   height: auto !important;
   height: 450px;
@@ -3335,11 +3337,11 @@ a.page_title:active {
   margin-right: -20px;
   text-align: left;
 }
-.artical_section .seperator {
-  border-style: dashed;
-}
 .artical_section .info_data {
   margin-bottom: 7px;
+}
+.artical_section .search-grey-box {
+  margin: -10px -20px 12px -20px;
 }
 
 .artical_list {
