@@ -64,7 +64,7 @@ class Account < ActiveRecord::Base
   has_many :all_va_rules, :class_name => 'VARule', :conditions => {:rule_type => VAConfig::BUSINESS_RULE}, :order => "position"
   has_many :scn_automations, :class_name => 'VARule', :conditions => {:rule_type => VAConfig::SCENARIO_AUTOMATION, :active => true}, :order => "position"
   
-  has_many :all_email_configs, :class_name => 'EmailConfig', :dependent => :destroy
+  has_many :all_email_configs, :class_name => 'EmailConfig', :dependent => :destroy, :order => "name"
   has_many :email_configs, :conditions => { :active => true }
   has_one  :primary_email_config, :class_name => 'EmailConfig', :conditions => { :primary_role => true }
   has_many :products, :class_name => 'EmailConfig', :conditions => { :primary_role => false }

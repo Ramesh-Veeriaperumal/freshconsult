@@ -120,6 +120,7 @@ class TicketFieldsController < Admin::AdminController
     
     def edit_field(field_details)
       field_details.delete(:type)
+      field_details.delete(:dom_type)
       ticket_field = scoper.find(field_details.delete(:id))
       unless ticket_field.update_attributes(field_details)
         @tf_errors.push(ticket_field) 
