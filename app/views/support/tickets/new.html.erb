@@ -4,12 +4,16 @@
   	<%= content_tag ( :h3, t('ticket.submit_ticket_title') ,:class => "title" ) %>
 	<ul class="ui-form">	
 		<%# render :partial => 'support/shared/request_form', :object => f %>
-    <% current_account.ticket_fields.customer_editable.each do |field| %>
+    <% current_portal.customer_editable_ticket_fields.each do |field| %>
         <%= construct_ticket_element :helpdesk_ticket, field, 
-                                     field.label_in_portal, 
+                                     field.label_in_portal,
                                      (field.dom_type == "requester") ? "email": field.dom_type, 
-                                     field.required_in_portal %>
-    <% end %>    
+                                     field.required_in_portal, 
+                                     (field.dom_type == "requester" && logged_in?) ? @ticket.email : "" %>
+    <% end %>
+    <li>
+      <%= render :partial=>"/helpdesk/shared/attachment_form"  %>
+    </li>
     <% if !logged_in? %>
       <li>
         <%= content_tag ( :label, t('ticket.verify_human') ) %>

@@ -27,6 +27,7 @@ module Helpdesk::TicketActions
     @ticket.source = TicketConstants::SOURCE_KEYS_BY_TOKEN[:portal] if @ticket.source == 0
     @ticket.ticket_type ||= TicketConstants::TYPE_KEYS_BY_TOKEN[:how_to]
     @ticket.email ||= current_user && current_user.email
+    @ticket.email_config_id ||= current_portal.product.id
   end
   
   #handle_attachments part ideally should go to the ticket model. And, 'attachments' is a protected attribute, so 

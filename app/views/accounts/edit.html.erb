@@ -21,13 +21,21 @@
 				<div class="fields">				    
 					<%= portal.text_field :name, :class => "text auto" %>
 					<div class="info-data">
-						This will be the help desk name that is show in the header and mail notifications.
+						This will be the help desk name that is shown in the header and mail notifications.
 					</div>
 				</div>
 			</li>
-			<li class="inline-field">
-			  <%= render :partial => "/shared/logo_image", :locals => { :item => @account.main_portal, :field_name => "account[main_portal_attributes]" } %>
-			</li>
+      <li class="inline-field">
+        <%= render :partial => "/shared/logo_image", :locals => { :item => @account.main_portal, :field_name => "account[main_portal_attributes]" } %>
+        <div class="fields">
+          <span class="seperator"></span>
+          <label class="overlabel" for="link_back_text"><%= t("linkback_overlabel") %></label>
+          <input name="account[main_portal_attributes][preferences][logo_link]" id="link_back_text" value="<%=portal_pref(@account.main_portal, :logo_link) %>" class="text url" size="30" />
+          <div class="info-data">
+            <%= t("linkback_info") %>
+          </div>
+        </div>
+      </li>
 			<li class="inline-field">
 			  <%= render :partial => "/shared/fav_image", :locals => { :item => @account.main_portal, :field_name => "account[main_portal_attributes]" } %>
 			</li>

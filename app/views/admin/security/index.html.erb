@@ -18,7 +18,7 @@
 						<li>
 							<%= p.label :login_url, t('.remote_login_url') %>
 							<%= content_tag( :div, t(".remote_login_url_info"), :class => "info-data" ) %>
-							<%= p.text_field :login_url, :value => @account[:sso_options].default(:login_url), :size => 50, :class => "text url" %>
+							<%= p.text_field :login_url, :value => @account[:sso_options].default(:login_url), :size => 50, :class => "text" %>
 						</li>
 						<li>
 							<%= p.label :logout_url, t('.remote_logout_url') %>

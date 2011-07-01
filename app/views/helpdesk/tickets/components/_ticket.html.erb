@@ -39,11 +39,30 @@
 	<% form_for ticket, :html => { :id => 'custom_ticket_form' } do |f| %>
 	   <ul class="cnt">
 		   <!--form values starts here-->
-		   <% current_account.ticket_fields.each do |field| %>
+		   <% current_portal.ticket_fields.each do |field| %>
 		     <% if field.visible_in_view_form? %>
-		      <%  field_value = (field.is_default_field?) ? ticket[field.field_name] : @item.get_ff_value(field.name) %>
-          <%= construct_ticket_element :helpdesk_ticket, field, field.label, field.dom_type, field.required, field_value %>
+		      <% 
+		          field_value = (field.is_default_field?) ? ticket[field.field_name] : @item.get_ff_value(field.name)
+		          dom_type    = (field.field_type == "default_source") ? "dropdown" : field.dom_type
+		      %>
+          <%= construct_ticket_element :helpdesk_ticket, field, field.label, dom_type, field.required, field_value %>
          <% end %>
+       <% end %>
+       <% javascript_tag do %>  
+         jQuery('#helpdesk_ticket_group_id')
+           .bind("change", function(e){
+             jQuery('#helpdesk_ticket_responder_id')
+                     .html("<option value=''>...</option>");
+             jQuery.ajax({
+               type:        'POST',
+               url: 		     '/helpdesk/tickets/get_agents/'+this.value,
+               contentType: 'application/text',
+               success:     function(data){
+                               jQuery('#helpdesk_ticket_responder_id')
+                                 .html(data);
+                            }
+             });
+           });
        <% end %>
 			<!--form values ends here-->
 			<!-- Custom fields ends here-->

@@ -8,6 +8,12 @@ module ApplicationHelper
     [:notice, :warning, :error].collect {|type| content_tag('div', flash[type], :id => type, :class => "flash_info #{type}") if flash[type] }
   end
 
+  def page_title
+    portal_name = h(current_portal.name)
+    portal_name += (portal_name.empty?) ? "" : " : "
+    portal_name += @page_title || t('helpdesk_title')
+  end
+
   def tab(title, url, cls = false)
     content_tag('li', content_tag('span') + link_to(strip_tags(title), url), :class => ( cls ? "active": "" ) )
   end
@@ -175,7 +181,7 @@ module ApplicationHelper
   def construct_ticket_element(object_name, field, field_label, dom_type, required, field_value = "")
     element_class   = " #{ (required) ? 'required' : '' } #{ dom_type }"
     field_label    += " #{ (required) ? '*' : '' }"
-    object_name     = "#{object_name.to_s}#{ (/^custom/ =~ field.field_type) ? '[custom_field]' : '' }"
+    object_name     = "#{object_name.to_s}#{ ( !field.is_default_field? ) ? '[custom_field]' : '' }"
     label = label_tag object_name+"_"+field.field_name, field_label
     case dom_type
       when "requester" then
@@ -186,8 +192,12 @@ module ApplicationHelper
         element = label + text_area(object_name, field.field_name, :class => element_class, :value => field_value)
       when "dropdown" then
         element = label + select(object_name, field.field_name, field.choices, :class => element_class, :selected => field_value)
+      when "dropdown_blank" then
+        element = label + select(object_name, field.field_name, field.choices, :class => element_class, :selected => field_value, :include_blank => "...")
+      when "hidden" then
+        element = hidden_field(:source, :value => field_value)
       when "checkbox" then
-        element = content_tag(:div, check_box(object_name, field.field_name, :class => element_class) + field_label, :value => field_value)
+        element = content_tag(:div, check_box(object_name, field.field_name, :class => element_class, :checked => field_value ) + field_label)
     end
     content_tag :li, element, :class => dom_type
   end

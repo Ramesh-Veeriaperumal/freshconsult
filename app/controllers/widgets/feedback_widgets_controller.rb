@@ -13,7 +13,6 @@ class Widgets::FeedbackWidgetsController < ApplicationController
         format.xml  { head 200}
       end
     else
-      set_customizer
       render :action => :new
     end
     

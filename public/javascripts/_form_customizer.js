@@ -34,7 +34,7 @@
             $H({
                  type:                   "text",
                  field_type:             "",
-                 //name:                   "Untitled",
+                 //name:                 "Untitled",
                  label:                  "Untitled",
                  label_in_portal:        "Untitled", 
                  description:            "",
@@ -53,69 +53,58 @@
       function constFieldDOM(dataItem, container){
          var fieldContainer  = container || jQuery("<li />");
          fieldContainer.empty();
-        
+
          var label = jQuery("<label />").append(dataItem.label);
          var field = jQuery("<div />");
-        
-         var fieldAttr = '';
-            switch (dataItem.field_type) {
-               case 'custom_number':
-               case 'custom_text':
-               case 'default_subject':
-               case 'default_requester':
-                  field.append('<input type="text" '+fieldAttr+' disabled="true" size="80" />');
-                  fieldContainer
-                     .addClass("text")
-                     .append(label)
-                     .append(field);
-               break;
 
-               case 'custom_checkbox':
-                  //var selected = (dataItem.setDefault)?'checked':'';
-                  dataItem.type = "checkbox";
-                  field.append('<input type="checkbox" disabled="true" '+ fieldAttr +' />' + dataItem.label );
-                  fieldContainer
-                     .addClass("checkbox")
-                     .append(field);
-               break;
-
-               case 'custom_dropdown':
-               case 'default_ticket_type':
-               case 'default_status':
-               case 'default_priority':
-               case 'default_group':
-               case 'default_agent':
-               case 'default_source':
-                  dataItem.type = "dropdown";
-                  $(dataItem.choices).each(function(ci, choice){
-                     field.append("<option " + choice[1] + ">" + choice[0] + "</option>");
-                  });
-                  
-                  field.wrapInner("<select "+fieldAttr+" disabled='true' />");
-                  fieldContainer
-                     .addClass("dropdown")
-                     .append(label)
-                     .append(field);
-               break;
-
-               case 'custom_paragraph':
-               case 'default_description':
-                  dataItem.type = "paragraph";
-                  fieldContainer.addClass("paragraph");
-                  field.append('<textarea disabled="true"'+fieldAttr+'></textarea>');
-                  fieldContainer
-                     .append(label)
-                     .append(field);
-               break;
-            }
-            
-            $(field).prepend("<span class='overlay-field' />");
-
-            if (dataItem.action) ticket_fields_modified = true;
-
-            fieldContainer.data("raw", dataItem);
-            return fieldContainer;
+         var fieldAttr     = '';
+         
+         switch(dataItem.dom_type) {
+            case 'requester':
+               dataItem.type = "requester";
+            break;
+            case 'dropdown_blank':
+               dataItem.type = "dropdown";
+            break;
+            default:
+               dataItem.type = dataItem.dom_type;
          }
+         
+         switch(dataItem.dom_type) {
+            case 'text':
+            case 'requester':
+            case 'number':
+               field.append('<input type="text" '+fieldAttr+' disabled="true" />');
+               fieldContainer.append(label);
+            break;
+         
+            case 'checkbox':               
+               field.append('<input type="checkbox" disabled="true" '+ fieldAttr +' />' + dataItem.label );
+            break;
+         
+            case 'dropdown':
+            case 'dropdown_blank':
+               $(dataItem.choices).each(function(ci, choice){
+                  field.append("<option " + choice[1] + ">" + choice[0] + "</option>");
+               });
+
+               field.wrapInner("<select "+fieldAttr+" disabled='true' />");
+               fieldContainer.append(label);
+            break;
+         
+            case 'paragraph':
+               field.append('<textarea disabled="true"'+fieldAttr+'></textarea>');
+               fieldContainer.append(label);
+            break;
+         }
+
+         fieldContainer.addClass(dataItem.dom_type).append(field);
+         $(field).prepend("<span class='overlay-field' />");
+         if (dataItem.action) ticket_fields_modified = true;
+         fieldContainer.data("raw", dataItem);
+
+         return fieldContainer;
+      }
 
       function getFreshField(type){
          var freshField = fieldTemplate.toObject();
@@ -281,6 +270,7 @@
 
             dialogDOMMap.field_type.val(sourceData.type);
             dialogDOMMap.label.val(sourceData.label);
+            dialogDOMMap.label_in_portal.val(sourceData.label_in_portal);
             dialogDOMMap.description.val(sourceData.description);
 
             $("div#CustomFieldsDialog label.overlabel").overlabel();
@@ -302,6 +292,13 @@
             dialogDOMMap.required_in_portal.attr("checked", sourceData.required_in_portal);
 
             $("#DropFieldChoices").hide();
+            $("#AgentMandatory").hide();
+            $("#CustomerConditions").hide();
+            
+            if(sourceData.field_type != "default_requester"){
+               $("#AgentMandatory").show();
+               $("#CustomerConditions").show();
+            }
 
             if (/^default/.test(sourceData.field_type)){
                dialogDOMMap.label.attr("disabled", true);
@@ -322,7 +319,7 @@
 
            // sourceData.set("name"                  , dialogDOMMap.label.val());
             sourceData.set("label"                 , dialogDOMMap.label.val());
-            sourceData.set("label_in_portal"       , dialogDOMMap.label.val());
+            sourceData.set("label_in_portal"       , dialogDOMMap.label_in_portal.val());
             sourceData.set("description"           , dialogDOMMap.description.val());
 
             sourceData.set("required"              , dialogDOMMap.required.attr("checked"));
@@ -355,15 +352,15 @@
 
             case 'customlabel':
                field_label = $.trim(this.value);
-
                if(field_label === '') field_label = "Untitled";
-
                sourceData.set("label", field_label);
                sourceData.set("label_in_portal", field_label);
-
                this.value = field_label;
             break;
-
+            
+            case 'customlabel_in_portal':
+               sourceData.set("label_in_portal", this.value);
+            break;
             case 'customdesc':
                sourceData.set("description", this.value);
             break;	

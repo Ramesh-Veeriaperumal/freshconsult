@@ -11,21 +11,15 @@ module SupportTicketControllerMethods
 
   def new
     @ticket = Helpdesk::Ticket.new 
-    set_customizer
     @ticket.email = current_user.email if current_user
   end
   
-  def set_customizer
-    @ticket.customizer ||= Helpdesk::FormCustomizer.first(:conditions =>{:account_id =>current_account.id})
-  end
-
   def create
     puts "Create method in support controller methods"
     if create_the_ticket(true)
       flash[:notice] = I18n.t(:'flash.portal.tickets.create.success')
       redirect_to redirect_url and return
     else
-      set_customizer
       logger.debug "Ticket Errors is #{@ticket.errors}"
       render :action => :new
     end

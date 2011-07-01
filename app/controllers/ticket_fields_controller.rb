@@ -10,7 +10,7 @@ class TicketFieldsController < Admin::AdminController
   }
   
   def index
-    @ticket_fields = scoper.find(:all, :include => :picklist_values )
+    @ticket_fields = current_portal.ticket_fields
     
     respond_to do |format|
       format.html { 
@@ -18,6 +18,7 @@ class TicketFieldsController < Admin::AdminController
         { :field_type             => field.field_type,
           :id                     => field.id,
           :name                   => field.name,
+          :dom_type               => field.dom_type,
           :label                  => field.label,
           :label_in_portal        => field.label_in_portal,
           :description            => field.description,
@@ -119,6 +120,7 @@ class TicketFieldsController < Admin::AdminController
     
     def edit_field(field_details)
       field_details.delete(:type)
+      field_details.delete(:dom_type)
       ticket_field = scoper.find(field_details.delete(:id))
       unless ticket_field.update_attributes(field_details)
         @tf_errors.push(ticket_field) 
