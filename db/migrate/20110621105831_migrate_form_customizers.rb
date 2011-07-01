@@ -21,7 +21,8 @@ class MigrateFormCustomizers < ActiveRecord::Migration
   def self.up
     Account.all.each do |account|
       f_list = ActiveSupport::JSON.decode(account.form_customizer.json_data)
-      f_list.each do |f|
+      
+      f_list.each_with_index do |f, i|
         f.symbolize_keys!
         f[:agent].symbolize_keys!
         f[:customer].symbolize_keys!
@@ -35,13 +36,13 @@ class MigrateFormCustomizers < ActiveRecord::Migration
         t_field.editable_in_portal = f[:customer][:editable]
         t_field.required_in_portal = f[:customer][:required]
       
-        handle_default_vs_custom(t_field, f)
+        handle_default_vs_custom(t_field, f, i)
         t_field.save!
       end
     end
   end
   
-  def self.handle_default_vs_custom(t_field, attributes)
+  def self.handle_default_vs_custom(t_field, attributes, a_index)
     if DEFAULT_FIELDS_MAPPING.key? attributes[:label]
       t_field.name = DEFAULT_FIELDS_MAPPING[attributes[:label]]
       t_field.field_type = "default_#{t_field.name}"
@@ -50,8 +51,10 @@ class MigrateFormCustomizers < ActiveRecord::Migration
       end
     else
       t_field.name = attributes[:label]
-      t_field.flexifield_def_entry_id = attributes[:columnId]
+      t_field.flexifield_def_entry_id = (attributes[:columnId].is_a? String) ? 
+        t_field.account.flexi_field_defs.first.flexifield_def_entries.find_by_flexifield_alias(attributes[:column_id]) : attributes[:column_id] 
       t_field.field_type = "custom_#{attributes[:type]}"
+      t_field.name = "#{t_field.name}_#{a_index}" unless t_field.valid?
       
       populate_pick_lists(t_field, attributes) if "dropdown".eql?(attributes[:type])
     end

@@ -1,4 +1,4 @@
-class CustomTicketFilter < Wf::Filter
+class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
 
   def definition
      @definition ||= begin
@@ -15,6 +15,56 @@ class CustomTicketFilter < Wf::Filter
       end 
       defs
     end
+  end
+  
+ 
+  
+  def deserialize_from_params(params)
+    @conditions = []
+    @match                = params[:wf_match]       || :all
+    @key                  = params[:wf_key]         || self.id.to_s
+    self.model_class_name = params[:wf_model]       if params[:wf_model]
+    
+    @per_page             = params[:wf_per_page]    || default_per_page
+    @page                 = params[:page]           || 1
+    @order_type           = params[:wf_order_type]  || default_order_type
+    @order                = params[:wf_order]       || default_order
+    
+    self.id   =  params[:wf_id].to_i  unless params[:wf_id].blank?
+    self.name =  params[:wf_name]     unless params[:wf_name].blank?
+    
+    @fields = []
+    unless params[:wf_export_fields].blank?
+      params[:wf_export_fields].split(",").each do |fld|
+        @fields << fld.to_sym
+      end
+    end
+
+    if params[:wf_export_format].blank?
+      @format = :html
+    else  
+      @format = params[:wf_export_format].to_sym
+    end
+    
+    i = 0
+    while params["wf_c#{i}"] do
+      conditon_key = params["wf_c#{i}"]
+      operator_key = params["wf_o#{i}"]
+      values = []
+      j = 0
+      while params["wf_v#{i}_#{j}"] do
+        values << params["wf_v#{i}_#{j}"]
+        j += 1
+      end
+      i += 1
+      add_condition(conditon_key, operator_key.to_sym, values)
+    end
+
+    if params[:wf_submitted] == 'true'
+      validate!
+    end
+
+    return self
   end
   
   def get_id_from_field(tf)
@@ -36,8 +86,8 @@ class CustomTicketFilter < Wf::Filter
   end
   
   def get_custom_choices(tf)
-    choice_array = tf.picklist_values
-    Hash[*choice_array.collect { |v| [v, v]}.flatten]
+    choice_array = tf.choices
+    #Hash[*choice_array.collect { |v| [v, v]}.flatten]
   end
   
    def get_default_choices(criteria_key)

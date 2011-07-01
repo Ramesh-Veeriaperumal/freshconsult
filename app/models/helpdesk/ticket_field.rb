@@ -62,7 +62,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
   def choices
      case field_type
        when "custom_dropdown" then
-         picklist_values.collect { |c| [c.value, c.id] }
+         picklist_values.collect { |c| [c.value, c.value] }
        when "default_priority" then
          Helpdesk::Ticket::PRIORITY_OPTIONS.sort
        when "default_source" then

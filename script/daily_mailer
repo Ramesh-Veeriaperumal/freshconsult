@@ -39,6 +39,7 @@ Lockfile('lock', :retries => 0) do
   end
 
   Subscription.find_due.each do |sub|
+  puts "#{sub.account.full_domain}"
     if !sub.charge
       SubscriptionNotifier.deliver_charge_failure(sub)
     end
