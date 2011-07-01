@@ -29,7 +29,15 @@
 <%= content_tag(:label, t('.portal_rebranding'), :class => "tabbed caption") %>
 <div class="fields">
   <%= render :partial => "/shared/logo_image", :locals => { :item => @product.portal, :field_name => "product[portal_attributes]" } %>
-  <span class="seperator"></span>      
+  <div class="fields">
+    <span class="seperator"></span>
+    <label class="overlabel" for="link_back_text"><%= t("linkback_overlabel") %></label>
+    <input name="product[portal_attributes][preferences][logo_link]" id="link_back_text" value="<%=portal_pref(@product.portal, :logo_link) %>" class="text url" size="30" />
+    <div class="info-data">
+      <%= t("linkback_info") %>
+    </div>
+  </div>
+  <span class="seperator"></span>  
   <%= render :partial => "/shared/fav_image", :locals => { :item => @product.portal, :field_name => "product[portal_attributes]" } %>
   <span class="seperator"></span>
 

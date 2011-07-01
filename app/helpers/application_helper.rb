@@ -8,6 +8,12 @@ module ApplicationHelper
     [:notice, :warning, :error].collect {|type| content_tag('div', flash[type], :id => type, :class => "flash_info #{type}") if flash[type] }
   end
 
+  def page_title
+    portal_name = h(current_portal.name)
+    portal_name += (portal_name.empty?) ? "" : " : "
+    portal_name += @page_title || t('helpdesk_title')
+  end
+
   def tab(title, url, cls = false)
     content_tag('li', content_tag('span') + link_to(strip_tags(title), url), :class => ( cls ? "active": "" ) )
   end

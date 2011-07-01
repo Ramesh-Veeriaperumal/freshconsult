@@ -12,6 +12,7 @@ en:
   twitter: Twitter
   working: Working
   ok: Ok
+  helpdesk_title: Helpdesk
   user: 
     photo: Photo
     company: Company
@@ -1017,3 +1018,5 @@ en:
         monitored_by: Tickets I'm Monitoring
         spam: Spam
   import_ticket_group: Tickets &amp; Group
+  linkback_overlabel: Linkback URL
+  linkback_info: You can choose to Linkback to your own website when the customer clicks on the header logo
