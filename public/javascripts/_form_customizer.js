@@ -292,6 +292,13 @@
             dialogDOMMap.required_in_portal.attr("checked", sourceData.required_in_portal);
 
             $("#DropFieldChoices").hide();
+            $("#AgentMandatory").hide();
+            $("#CustomerConditions").hide();
+            
+            if(sourceData.field_type != "default_requester"){
+               $("#AgentMandatory").show();
+               $("#CustomerConditions").show();
+            }
 
             if (/^default/.test(sourceData.field_type)){
                dialogDOMMap.label.attr("disabled", true);

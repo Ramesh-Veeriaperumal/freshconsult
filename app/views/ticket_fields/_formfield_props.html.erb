@@ -11,7 +11,7 @@
             </div>
             <div class="ctrlHolder">
               <%= content_tag(:label, t(".label_in_portal"), :class => "caption") %>
-              <div class="info_data">The label that is displayed in your self service portal</div>
+              <div class="info_data"><%= t('.label_in_portal_info') %></div>
               <fieldset>
                 <input type="text" name="customlabel_in_portal" size="35" maxlength="50" class="text" value="" />
               </fieldset>
@@ -35,26 +35,26 @@
             <div class="ctrlHolder border-top" id="AgentMandatory">
             	<%= content_tag(:label, t(".for_agents"), :class => "caption") %>
 	            <fieldset> 
-	                <label><input type="checkbox" name="agentrequired" /> <%= t(".agent_mandatory_submission") %> </label>
-					<span class="info-data"> <%= t(".agent_info1") %> </span>
-				</fieldset>
-				<fieldset> 
-					<label><input type="checkbox" name="agentclosure" /> <%= t(".agent_mandatory_closure") %> </label>
-					<span class="info-data"><%= t(".agent_info2") %></span>
-	            </fieldset> 
-            </div> 
-            <div class="ctrlHolder border-top">
-                <%= content_tag(:label, t(".for_customer"), :class => "caption") %>
-                <fieldset id="nestedConfig">
-					<label><input type="checkbox" toggle_ele="nestedlvl2" name="customervisible" /><%= t(".customer_visible") %> </label></li>
-					<fieldset id="nestedlvl2" class="nestedChoices" style="display:none;">
-						<label><input type="checkbox" toggle_ele="nestedlvl3" name="customereditable" /><%= t(".customer_edit") %> </label>
-						<fieldset id="nestedlvl3" class="nestedChoices" style="display:none;">
-							<label><input type="checkbox" name="customerrequired" /> <%= t(".customer_mandatoy") %> </label>
-								<span class="info-data"><%= t(".customer_info1") %></span>
-						</fieldset>
-			        </fieldset>
-                </fieldset>  
+	              <label><input type="checkbox" name="agentrequired" /> <%= t(".agent_mandatory_submission") %> </label>
+                <span class="info-data"> <%= t(".agent_info1") %> </span>
+              </fieldset>				
+              <fieldset> 
+                <label><input type="checkbox" name="agentclosure" /> <%= t(".agent_mandatory_closure") %> </label>
+                <span class="info-data"><%= t(".agent_info2") %></span>
+              </fieldset> 
+            </div>
+            <div class="ctrlHolder border-top" id="CustomerConditions">
+              <%= content_tag(:label, t(".for_customer"), :class => "caption") %>
+              <fieldset id="nestedConfig">
+                 <label><input type="checkbox" toggle_ele="nestedlvl2" name="customervisible" /><%= t(".customer_visible") %> </label></li>
+                 <fieldset id="nestedlvl2" class="nestedChoices" style="display:none;">
+                   <label><input type="checkbox" toggle_ele="nestedlvl3" name="customereditable" /><%= t(".customer_edit") %> </label>
+                   <fieldset id="nestedlvl3" class="nestedChoices" style="display:none;">
+                     <label><input type="checkbox" name="customerrequired" /> <%= t(".customer_mandatory") %> </label>
+                     <span class="info-data"><%= t(".customer_info1") %></span>
+                   </fieldset>
+                 </fieldset>
+               </fieldset>  
             </div> 
 			<span class="seperator"></span> 
 			<div class="alignright">

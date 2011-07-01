@@ -582,6 +582,7 @@ en:
     formfield_props:
       label: Field Label
       label_in_portal: Label in Portal
+      label_in_portal_info: The label that is displayed in your self service portal
       add_new_choice: Add new choice
       agent_info1: Field cannot be blank when submitting the ticket
       customer_edit: Can Edit the field
@@ -592,7 +593,7 @@ en:
       customer_info1: Field cannot be blank when submitting the ticket online.
       description: Description
       customer_visible: Visible to customers
-      customer_mandatoy: Mandatory for ticket submission
+      customer_mandatory: Mandatory for ticket submission
       choices: Choices
       agent_mandatory_closure: Mandatory for closure
       for_customer: For Customers
