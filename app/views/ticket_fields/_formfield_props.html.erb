@@ -4,50 +4,54 @@
         <form class="ui-dialog-form" action="#">
         	<input type="hidden" name="customtype" value="" />
             <div class="ctrlHolder">
-            	<%= content_tag(:label, t("ticketfields.fieldprop.label"), :class => "caption") %>
+            	<%= content_tag(:label, t(".label"), :class => "caption") %>
                 <fieldset>
-                    <input type="text" name="customlabel" size="35" maxlength="50" class="text"  value="" />
+                    <input type="text" name="customlabel" size="35" maxlength="50" class="text" value="" />
                 </fieldset>
             </div>
             <div class="ctrlHolder">
-            	<%= content_tag(:label, t("ticketfields.fieldprop.description"), :class => "caption") %>
-                <fieldset> 
-                    <input type="text" name="customdesc" size="35" maxlength="50" class="text" value="" id="customdesc" />
-                </fieldset> 
+              <%= content_tag(:label, t(".label_in_portal"), :class => "caption") %>
+              <div class="info_data">The label that is displayed in your self service portal</div>
+              <fieldset>
+                <input type="text" name="customlabel_in_portal" size="35" maxlength="50" class="text" value="" />
+              </fieldset>
+            </div>
+            <div class="ctrlHolder" style="display:none;">
+              <%= content_tag(:label, t(".description"), :class => "caption") %>
+              <fieldset> 
+                <input type="text" name="customdesc" size="35" maxlength="50" class="text" value="" id="customdesc" />
+              </fieldset> 
             </div> 
             <div class="ctrlHolder colsets border-top" id="DropFieldChoices">
-            	<%= content_tag(:label, t("ticketfields.fieldprop.dropdown_choices"), :class => "caption") %> 
-					<!--fieldset>
-						<b class="dropchoice">Choices</b><b class="tags">Tags</b>
-					</fieldset-->
-					<div name="customchoices" class="customchoices">
-	                    <fieldset>
-	                    	<span class="sort_handle"></span>
-	                        <span class="dropchoice"><input type="text" name="choice" /></span><span class="tags"><input type="text" /></span><img src="/images/delete.png" />
-	                    </fieldset>
-					</div>
-                    <a class="addchoice" href="javascript:void(0)"> <%= t("ticketfields.fieldprop.add_new_choice") %> </a> 
+              <%= content_tag(:label, t(".dropdown_choices"), :class => "caption") %>
+                <div name="customchoices" class="customchoices">
+                  <fieldset>
+                    <span class="sort_handle"></span>
+                    <span class="dropchoice"><input type="text" name="choice" /></span><span class="tags"><input type="text" /></span><img src="/images/delete.png" />
+                  </fieldset>
+                </div>
+                <a class="addchoice" href="javascript:void(0)"> <%= t(".add_new_choice") %> </a> 
             </div> 
             <div class="ctrlHolder border-top" id="AgentMandatory">
-            	<%= content_tag(:label, t("ticketfields.fieldprop.for_agents"), :class => "caption") %>
+            	<%= content_tag(:label, t(".for_agents"), :class => "caption") %>
 	            <fieldset> 
-	                <label><input type="checkbox" name="agentrequired" /> <%= t("ticketfields.fieldprop.agent_mandatory_submission") %> </label>
-					<span class="info-data"> <%= t("ticketfields.fieldprop.agent_info1") %> </span>
+	                <label><input type="checkbox" name="agentrequired" /> <%= t(".agent_mandatory_submission") %> </label>
+					<span class="info-data"> <%= t(".agent_info1") %> </span>
 				</fieldset>
 				<fieldset> 
-					<label><input type="checkbox" name="agentclosure" /> <%= t("ticketfields.fieldprop.agent_mandatory_closure") %> </label>
-					<span class="info-data"><%= t("ticketfields.fieldprop.agent_info2") %></span>
+					<label><input type="checkbox" name="agentclosure" /> <%= t(".agent_mandatory_closure") %> </label>
+					<span class="info-data"><%= t(".agent_info2") %></span>
 	            </fieldset> 
             </div> 
             <div class="ctrlHolder border-top">
-                <%= content_tag(:label, t("ticketfields.fieldprop.for_customer"), :class => "caption") %>
+                <%= content_tag(:label, t(".for_customer"), :class => "caption") %>
                 <fieldset id="nestedConfig">
-					<label><input type="checkbox" toggle_ele="nestedlvl2" name="customervisible" /><%= t("ticketfields.fieldprop.customer_visible") %> </label></li>
+					<label><input type="checkbox" toggle_ele="nestedlvl2" name="customervisible" /><%= t(".customer_visible") %> </label></li>
 					<fieldset id="nestedlvl2" class="nestedChoices" style="display:none;">
-						<label><input type="checkbox" toggle_ele="nestedlvl3" name="customereditable" /><%= t("ticketfields.fieldprop.customer_edit") %> </label>
+						<label><input type="checkbox" toggle_ele="nestedlvl3" name="customereditable" /><%= t(".customer_edit") %> </label>
 						<fieldset id="nestedlvl3" class="nestedChoices" style="display:none;">
-							<label><input type="checkbox" name="customerrequired" /> <%= t("ticketfields.fieldprop.customer_mandatoy") %> </label>
-								<span class="info-data"><%= t("ticketfields.fieldprop.customer_info1") %></span>
+							<label><input type="checkbox" name="customerrequired" /> <%= t(".customer_mandatoy") %> </label>
+								<span class="info-data"><%= t(".customer_info1") %></span>
 						</fieldset>
 			        </fieldset>
                 </fieldset>  

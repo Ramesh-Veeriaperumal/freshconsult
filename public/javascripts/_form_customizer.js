@@ -34,7 +34,7 @@
             $H({
                  type:                   "text",
                  field_type:             "",
-                 //name:                   "Untitled",
+                 //name:                 "Untitled",
                  label:                  "Untitled",
                  label_in_portal:        "Untitled", 
                  description:            "",
@@ -270,6 +270,7 @@
 
             dialogDOMMap.field_type.val(sourceData.type);
             dialogDOMMap.label.val(sourceData.label);
+            dialogDOMMap.label_in_portal.val(sourceData.label_in_portal);
             dialogDOMMap.description.val(sourceData.description);
 
             $("div#CustomFieldsDialog label.overlabel").overlabel();
@@ -311,7 +312,7 @@
 
            // sourceData.set("name"                  , dialogDOMMap.label.val());
             sourceData.set("label"                 , dialogDOMMap.label.val());
-            sourceData.set("label_in_portal"       , dialogDOMMap.label.val());
+            sourceData.set("label_in_portal"       , dialogDOMMap.label_in_portal.val());
             sourceData.set("description"           , dialogDOMMap.description.val());
 
             sourceData.set("required"              , dialogDOMMap.required.attr("checked"));
@@ -344,15 +345,15 @@
 
             case 'customlabel':
                field_label = $.trim(this.value);
-
                if(field_label === '') field_label = "Untitled";
-
                sourceData.set("label", field_label);
                sourceData.set("label_in_portal", field_label);
-
                this.value = field_label;
             break;
-
+            
+            case 'customlabel_in_portal':
+               sourceData.set("label_in_portal", this.value);
+            break;
             case 'customdesc':
                sourceData.set("description", this.value);
             break;	
