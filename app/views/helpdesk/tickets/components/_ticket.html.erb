@@ -39,7 +39,7 @@
 	<% form_for ticket, :html => { :id => 'custom_ticket_form' } do |f| %>
 	   <ul class="cnt">
 		   <!--form values starts here-->
-		   <% current_account.ticket_fields.each do |field| %>
+		   <% current_portal.ticket_fields.each do |field| %>
 		     <% if field.visible_in_view_form? %>
 		      <% 
 		          field_value = (field.is_default_field?) ? ticket[field.field_name] : @item.get_ff_value(field.name)

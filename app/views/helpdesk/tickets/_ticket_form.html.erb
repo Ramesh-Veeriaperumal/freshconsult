@@ -1,5 +1,5 @@
 <%= ticket_form.error_messages %>
-<% current_account.ticket_fields.each do |field| 
+<% current_portal.ticket_fields.each do |field| 
     if is_edit
       field_value = ((field.is_default_field?) ? @ticket[field.field_name] : @item.get_ff_value(field.name)) 
     end %>
