@@ -50,10 +50,30 @@ en:
       index:
         title: Products
         add_product: Add Product
+        delete_product: Are you sure you want to delete this Product?
       new:
         title: New Product
       edit:
         title: Edit Product
+      form:
+        product_name: Product name
+        configure_email: Configure Email
+        enter_support_email_id: Your support email
+        enable_product_portal: Enable Product Portal
+        configure_seperate_portal: Configure a separate portal for this product
+      portal:  
+        portal_settings: Portal settings
+        portal_url: Portal URL
+        cname_configure_info: Before using this field please ensure that you have created a CNAME DNS record in your DNS Zone file to point support.mycompanyname.com to %{full_domain}. Your Webmaster or Server administrator should be able to help you set this up correctly
+        portal_name: Portal name
+        portal_name_info: The name will be displayed in your product portal next to the header logo
+        top_level_forum: Top level forum category
+        select_forum_category: Select a forum category...
+        top_level_forum_info: You can associate a forum category to this product. All other forums will be not be visible to the customers, when viewing the forums tab in this product portal.
+        top_level_solution: Top level solutions category
+        select_solution_category: Select a forum category...
+        top_level_solution_info: You can associate a solution category to this product. All other solutions will not be shown to the customers, when viewing the solutions tab in this product portal.
+        portal_rebranding: Portal rebranding
     security: 
       index: 
         shared_secret: Shared Secret
