@@ -16,14 +16,14 @@
           <tr>
             <td class="portal-logo">
               <% if(product.portal_enabled?) %>
-                <%= image_tag (product.portal.logo.content.url(:logo), :class => "image_logo") %>
+                <%= image_tag ((product.portal.logo.nil?) ? "/images/fillers/logo_blank.gif" : product.portal.logo.content.url(:logo), :class => "image_logo") %>
                 <div class="color_box">
                   <span class="color_item" style="background-color:<%=portal_pref(product.portal, :header_color)%>"></span>
                   <span class="color_item" style="background-color:<%=portal_pref(product.portal, :tab_color)%>"></span>
                   <span class="color_item" style="background-color:<%=portal_pref(product.portal, :bg_color)%>"></span>
                 </div>
               <% else %>
-                <%= image_tag ("/images/fillers/logo_blank.gif") %>
+                <%= image_tag ("/images/fillers/logo_blank.gif", :class => "image_logo") %>
               <% end %>
             </td>
             <td class="portal-text">
