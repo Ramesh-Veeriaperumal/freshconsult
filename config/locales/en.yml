@@ -524,7 +524,6 @@ en:
   company_name: Company Name
   expires: Expires
   total_price: Total Price
-  drag_drop_intro: Drag and drop any field type into the "New Ticket" form below to add a new custom field
   update: Update
   save_reply: Save Reply
   forum_shared: 
@@ -579,9 +578,10 @@ en:
   agent_solves_tkt: Agent solves the Ticket
   zendesk_url_info: e.g:- http://acme.zendesk.com
   portal_customizer_anon_for_i: Turn this feature off, if you want to hide 'Forums' tab in public customer portal.
-  ticketfields: 
-    fieldprop: 
+  ticket_fields:
+    formfield_props:
       label: Field Label
+      label_in_portal: Label in Portal
       add_new_choice: Add new choice
       agent_info1: Field cannot be blank when submitting the ticket
       customer_edit: Can Edit the field
@@ -596,16 +596,17 @@ en:
       choices: Choices
       agent_mandatory_closure: Mandatory for closure
       for_customer: For Customers
-    add_custom_field: Add a Custom Field
-    title: Ticket Fields
-    customize_form: "Customize your “New Ticket” form."
-    field: 
+    index:
+      add_custom_field: Add a Custom Field
+      title: Ticket Fields
+      drag_drop_intro: Drag and drop any field type into the "New Ticket" form below to add a new custom field
       number: Number
       single_line: Single Line Text
       paragraph: Paragraph Text
       checkbox: Checkbox
       dropdown: Dropdown
-    save: Save Ticket fields
+      customize_form: "Customize your “New Ticket” form."
+      save: Save Ticket fields
   card_process: Thank you for your payment. Your Freshdesk account is now live!
   chat: Chat
   country: Country
