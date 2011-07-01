@@ -102,10 +102,11 @@ class Solution::Article < ActiveRecord::Base
   end
   
   def self.suggest_solutions(ticket)
-    to_ret = suggest(ticket, ticket.subject)
-    to_ret = suggest(ticket, ticket.description) if to_ret.empty?
+    #to_ret = suggest(ticket, ticket.subject)
+    #to_ret = suggest(ticket, ticket.description) if to_ret.empty?
     
-    to_ret
+    #to_ret
+    []
   end
   
   def self.suggest(ticket, search_by)
