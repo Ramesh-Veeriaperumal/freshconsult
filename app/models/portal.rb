@@ -48,6 +48,15 @@ class Portal < ActiveRecord::Base
     main_portal? ? account.forum_categories : (forum_category ? [forum_category] : [])
   end
   
+  #Yeah.. It is ugly.
+  def ticket_fields
+    filter_fields account.ticket_fields
+  end
+  
+  def customer_editable_ticket_fields
+    filter_fields account.ticket_fields.customer_editable
+  end
+  
   private
     def handle_icon(icon_field, icon_attr)
       unless send(icon_field)
@@ -58,6 +67,14 @@ class Portal < ActiveRecord::Base
       else
         send(icon_field).update_attributes(icon_attr)
       end
+    end
+    
+    def filter_fields(f_list)
+      to_ret = []
+      checks = { 'product' => (main_portal? && !account.products.empty?) }
+
+      f_list.each { |field| to_ret.push(field) if checks.fetch(field.name, true) }
+      to_ret
     end
   
 end

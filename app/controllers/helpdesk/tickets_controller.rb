@@ -11,7 +11,6 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :load_multiple_items, :only => [:destroy, :restore, :spam, :unspam, :assign , :close_multiple ,:pick_tickets]  
   before_filter :load_item,           :only => [:show, :edit, :update, :execute_scenario, :close ,:change_due_by ,:get_ca_response_content] 
   before_filter :load_flexifield ,    :only => [:execute_scenario]
-  before_filter :set_customizer ,     :only => [:new ,:edit ,:show]
   
   def check_user
     if !current_user.nil? and current_user.customer?
@@ -242,7 +241,6 @@ class Helpdesk::TicketsController < ApplicationController
     if @item.save
       post_persist
     else
-      set_customizer
       create_error
     end
   end  

@@ -10,7 +10,7 @@ class TicketFieldsController < Admin::AdminController
   }
   
   def index
-    @ticket_fields = scoper.find(:all, :include => :picklist_values )
+    @ticket_fields = current_portal.ticket_fields
     
     respond_to do |format|
       format.html { 

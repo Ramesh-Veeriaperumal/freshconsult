@@ -4,7 +4,7 @@
   	<%= content_tag ( :h3, t('ticket.submit_ticket_title') ,:class => "title" ) %>
 	<ul class="ui-form">	
 		<%# render :partial => 'support/shared/request_form', :object => f %>
-    <% current_account.ticket_fields.customer_editable.each do |field| %>
+    <% current_portal.customer_editable_ticket_fields.each do |field| %>
         <%= construct_ticket_element :helpdesk_ticket, field, 
                                      field.label_in_portal, 
                                      (field.dom_type == "requester") ? "email": field.dom_type, 
