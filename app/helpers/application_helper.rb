@@ -185,11 +185,9 @@ module ApplicationHelper
       when "paragraph" then
         element = label + text_area(object_name, field.field_name, :class => element_class, :value => field_value)
       when "dropdown" then
-        element = label + select(object_name, field.field_name, field.choices, :class => element_class, 
-                                  :selected => field_value)
+        element = label + select(object_name, field.field_name, field.choices, :class => element_class, :selected => field_value)
       when "dropdown_blank" then
-        element = label + select(object_name, field.field_name, field.choices, :class => element_class, 
-                                  :selected => field_value, :include_blank => "...")
+        element = label + select(object_name, field.field_name, field.choices, :class => element_class, :selected => field_value, :include_blank => "...")
       when "hidden" then
         element = hidden_field(:source, :value => field_value)
       when "checkbox" then
