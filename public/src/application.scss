@@ -3439,6 +3439,39 @@ div.addReminder{
 		 	left:8px;
 		 	top:10px;
 		 }
+		 a.big-text{
+		    font-size:1.75em;
+		 }
+		 .text{
+		    font-size:1.2em;
+		    margin-bottom:4px;
+		 }		 
+		 .portal-logo{
+		    width:90px;
+		    padding-right:12px;
+		    text-align:right;
+		    border-right:1px solid #efefef;
+		    padding-top:3px;
+		 }
+		 .portal-text{
+		    padding-left:12px;
+		 }
+		 .color_box{
+		    @include clearfix;
+		 }
+		 .color_item{
+		    width:11px;
+		    height:11px;
+		    float:right;
+		    margin-left:2px;
+		 }
+		 .image_logo, .color_item{
+		    border:1px solid #dbdbdb;
+		 }
+		 .image_logo{
+		    max-height:40px;
+		    max-width:90px;
+		 }
 	}
 	li:hover{
 		background:lighten(#f1f1f1, 2%);  

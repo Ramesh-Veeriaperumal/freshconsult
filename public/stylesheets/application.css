@@ -4405,6 +4405,40 @@ div.addReminder form label.overlabel {
   left: 8px;
   top: 10px;
 }
+.admin_list li a.big-text, .content_list li a.big-text {
+  font-size: 1.75em;
+}
+.admin_list li .text, .content_list li .text {
+  font-size: 1.2em;
+  margin-bottom: 4px;
+}
+.admin_list li .portal-logo, .content_list li .portal-logo {
+  width: 90px;
+  padding-right: 12px;
+  text-align: right;
+  border-right: 1px solid #efefef;
+  padding-top: 3px;
+}
+.admin_list li .portal-text, .content_list li .portal-text {
+  padding-left: 12px;
+}
+.admin_list li .color_box, .content_list li .color_box {
+  overflow: hidden;
+  *zoom: 1;
+}
+.admin_list li .color_item, .content_list li .color_item {
+  width: 11px;
+  height: 11px;
+  float: right;
+  margin-left: 2px;
+}
+.admin_list li .image_logo, .admin_list li .color_item, .content_list li .image_logo, .content_list li .color_item {
+  border: 1px solid #dbdbdb;
+}
+.admin_list li .image_logo, .content_list li .image_logo {
+  max-height: 40px;
+  max-width: 90px;
+}
 .admin_list li:hover, .content_list li:hover {
   background: #f6f6f6;
 }
