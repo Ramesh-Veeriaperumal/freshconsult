@@ -79,6 +79,7 @@ class Account < ActiveRecord::Base
   
   has_many :tickets, :class_name => 'Helpdesk::Ticket', :dependent => :destroy
   has_many :folders , :class_name =>'Solution::Folder' , :through =>:solution_categories
+  has_many :notes, :class_name => 'Helpdesk::Note', :dependent => :destroy
   
   has_many :portal_forums,:through => :forum_categories , :conditions =>{:forum_visibility => Forum::VISIBILITY_KEYS_BY_TOKEN[:anyone]} 
   has_many :portal_topics, :through => :portal_forums# , :order => 'replied_at desc', :limit => 5
@@ -91,6 +92,8 @@ class Account < ActiveRecord::Base
   
   has_many :canned_responses , :class_name =>'Admin::CannedResponse' , :dependent => :destroy  
   has_many :user_accesses , :class_name =>'Admin::UserAccess' , :dependent => :destroy
+  
+  has_many :twitter_handles , :class_name =>'Admin::TwitterHandles' , :dependent => :destroy
   
   #Scope restriction ends
   
@@ -122,6 +125,8 @@ class Account < ActiveRecord::Base
   after_create :populate_seed_data
   after_create :populate_features
   after_create :send_welcome_email
+  
+  before_destroy :update_google_domain
   
   acts_as_paranoid
   
@@ -394,4 +399,7 @@ class Account < ActiveRecord::Base
       SubscriptionNotifier.send_later(:deliver_welcome, self)
     end
     
+    def update_google_domain
+     self.update_attribute(:google_domain, nil)
+    end
 end

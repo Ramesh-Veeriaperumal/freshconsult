@@ -26,7 +26,7 @@ class Helpdesk::Note < ActiveRecord::Base
   }
 
 
-  SOURCES = %w{email form note status meta}
+  SOURCES = %w{email form note status meta twitter}
   SOURCE_KEYS_BY_TOKEN = Hash[*SOURCES.zip((0..SOURCES.size-1).to_a).flatten]
 
   named_scope :exclude_source, lambda { |s| { :conditions => ['source <> ?', SOURCE_KEYS_BY_TOKEN[s]] } }

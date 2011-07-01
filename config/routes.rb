@@ -40,6 +40,8 @@ ActionController::Routing::Routes.draw do |map|
   
   map.zendesk_import '/zendesk/import', :controller => 'admin/zip_readers', :action => 'index'
   
+  map.gauth '/twitter/authdone', :controller => 'admin/twitter', :action => 'authdone'
+  
   #map.register '/register', :controller => 'users', :action => 'create'
   #map.signup '/signup', :controller => 'users', :action => 'new'
   map.resources :users, :member => { :delete_avatar => :delete, :change_account_admin => :put }
@@ -66,6 +68,7 @@ ActionController::Routing::Routes.draw do |map|
     admin.resources :portal, :only => [ :index, :update ]
     admin.resources :canned_responses
     admin.resources :products
+    admin.resources :twitter , :member =>{:signin=> :post}
   end
   
   #SAAS copy starts here
@@ -193,7 +196,8 @@ ActionController::Routing::Routes.draw do |map|
     
     helpdesk.resources :support_plans
     
-    helpdesk.resources :sla_policies
+    helpdesk.resources :sla_policies   
+    
   end
   
    map.namespace :solution do |solution|     

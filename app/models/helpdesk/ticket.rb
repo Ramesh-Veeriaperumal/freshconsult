@@ -11,7 +11,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   has_flexiblefields
   
   #by Shan temp
-  attr_accessor :email, :name, :custom_field ,:customizer, :nscname
+  attr_accessor :email, :name, :custom_field ,:customizer, :nscname ,:twitter_handle
   
   before_validation :populate_requester, :set_default_values 
   before_create :set_spam, :set_dueby, :save_ticket_states
@@ -288,6 +288,7 @@ end
   end
   
   def populate_requester #by Shan temp  
+    logger.debug "populate_requester :: email#{email} and twitter: #{twitter_handle}"
     unless email.blank?
       if(requester_id.nil? or !email.eql?(requester.email))
         @requester = account.all_users.find_by_email(email)
@@ -297,7 +298,21 @@ end
         end        
         self.requester = @requester
       end
-    end
+    else 
+      
+     unless twitter_handle.blank?
+       logger.debug "twitter_handle :: #{twitter_handle.inspect} "
+        if(requester_id.nil? or !twitter_handle.eql?(requester.twitter_id))
+          @requester = account.all_users.find_by_twitter_id(twitter_handle)
+          if @requester.nil?
+            @requester = account.users.new          
+            @requester.signup!({:user => {:deleted =>true, :twitter_id =>twitter_handle , :name => twitter_handle , :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}})
+          end        
+          self.requester = @requester
+        end
+      end 
+    end    
+    
   end
   
   def autoreply     
@@ -332,8 +347,7 @@ end
     self.ticket_states = Helpdesk::TicketState.new
   end
 
-  def update_ticket_states
-    logger.debug "ticket_states :: #{ticket_states.inspect} "
+  def update_ticket_states 
     
     ticket_states.assigned_at=Time.zone.now if (responder_id != @old_ticket.responder_id && responder)    
     ticket_states.first_assigned_at=Time.zone.now if (@old_ticket.responder_id.nil? && responder_id != @old_ticket.responder_id && responder)

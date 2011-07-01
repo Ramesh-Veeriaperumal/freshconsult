@@ -38,11 +38,15 @@ class User < ActiveRecord::Base
     c.validates_length_of_password_field_options = {:on => :update, :minimum => 4, :if => :has_no_credentials? }
     c.validates_length_of_password_confirmation_field_options = {:on => :update, :minimum => 4, :if => :has_no_credentials?}    
     #The following is a part to validate email only if its not deleted
-    c.merge_validates_format_of_email_field_options  :if =>:is_not_deleted?
-    c.merge_validates_length_of_email_field_options :if =>:is_not_deleted?
-    c.merge_validates_uniqueness_of_email_field_options :if =>:is_not_deleted?
+    c.merge_validates_format_of_email_field_options  :if =>:is_not_deleted? 
+    c.merge_validates_length_of_email_field_options :if =>:is_not_deleted? 
+    c.merge_validates_uniqueness_of_email_field_options :if =>:is_not_deleted? 
    
     
+  end
+  
+  def is_not_twitter_user?
+     email.blank? && !twitter_id.blank? 
   end
   
   attr_accessible :name, :email, :password, :password_confirmation , :second_email, :job_title, :phone, :mobile, :twitter_id, :description, :time_zone, :avatar_attributes,:user_role,:customer_id,:import_id,:deleted
@@ -81,6 +85,7 @@ class User < ActiveRecord::Base
     self.user_role = params[:user][:user_role]
     self.time_zone = params[:user][:time_zone]
     self.import_id = params[:user][:import_id]
+    self.deleted = params[:user][:deleted]
     
     
     self.avatar_attributes=params[:user][:avatar_attributes] unless params[:user][:avatar_attributes].nil?
@@ -277,8 +282,7 @@ class User < ActiveRecord::Base
       self.avatar.account_id = account_id unless avatar.nil?
   end
   
-  def set_contact_name
-   
+  def set_contact_name  
     if self.name.empty?
       self.name = (self.email.split("@")[0]).capitalize
     end
