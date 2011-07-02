@@ -20,6 +20,7 @@ module Import::CustomField
   def import_flexifields base_dir
     doc = REXML::Document.new(File.new(File.join(base_dir, "ticket_fields.xml")))
     ff_def = current_account.flexi_field_defs.first
+    @invalid_fields = []
     
     REXML::XPath.each(doc,'//record') do |record|
       field_type = record.elements["type"].text
@@ -56,7 +57,9 @@ module Import::CustomField
     ticket_field = current_account.ticket_fields.build(field_details)
     ticket_field.name = ff_def_entry.flexifield_alias
     ticket_field.flexifield_def_entry = ff_def_entry
-    ticket_field.save!
+    
+    @invalid_fields.push(ticket_field) and return unless ticket_field.save
+    ticket_field.insert_at(field_details[:position]) unless field_details[:position].blank?
   end
   
   def ff_meta_data(field_details)
