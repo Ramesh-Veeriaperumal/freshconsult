@@ -94,6 +94,8 @@ class TicketFieldsController < Admin::AdminController
       unless ticket_field.save
         @tf_errors.push(ticket_field) 
       end
+      
+      ticket_field.insert_at(field_details[:position]) unless field_details[:position].blank?
     end
     
     def ff_meta_data(field_details)
@@ -115,7 +117,7 @@ class TicketFieldsController < Admin::AdminController
     end
     
     def field_name(label)
-      label.strip.gsub(/\s/, '_').gsub(/\W/, '').downcase
+      "#{label.strip.gsub(/\s/, '_').gsub(/\W/, '').downcase}_#{current_account.id}"
     end
     
     def edit_field(field_details)
