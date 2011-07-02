@@ -66,7 +66,7 @@
 		});
 		
 		function show_canned_response(){
-			jQuery('#canned_response_list').show();			
+			jQuery('#canned_response_list').dialog({ width:'400px', height:'auto', show: "blind"});
 		}
 		var ticket_merge_dialog = null;
 		function merge_ticket(ticket_id)
@@ -178,7 +178,7 @@
 				<% unless @ticket.deleted %>
 					<div class="ticket_actions action_icons">
 						<div class="action_buttons clearfix">
-							<%= link_to_function t('ticket.merge_btn'), "merge_ticket(#{@ticket.display_id})"  %> 
+							<%# link_to_function t('ticket.merge_btn'), "merge_ticket(#{@ticket.display_id})"  %> 
 							<%= link_to(t('ticket.edit_btn'), edit_helpdesk_ticket_path(@ticket)  ) %> 
 							<%= link_to(t('ticket.close_btn'), close_helpdesk_ticket_path(@ticket), :method => :put, :title  => t('ticket.close_btn_title')) unless @ticket.closed? %>
 							<%= link_to(t('ticket.delete_btn'), @ticket, :method => :delete, :class => "last", :title => t('ticket.delete_btn_title')) %>
@@ -219,7 +219,7 @@
 				<%= link_to_function(t('ticket.add_note'), "swapEmailNote('note', this)", :class => 'uiButton', :id => "AddNoteButton") %>		
 			</div>
 			<div>
-				<div id="canned_response_list" style="display:none;">
+				<div id="canned_response_list" title="Canned response" style="display:none;">
 					<%= render :partial => "helpdesk/tickets/components/canned_responses" %>
 				</div>
 				<% if @item.requester %>

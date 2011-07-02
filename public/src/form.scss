@@ -1165,7 +1165,7 @@ table.summary-report{
       li.field{
          border:0px;
       }
-      label{
+      label, div.fields label{
          font-size:13px;
          color:#333333;
       }
@@ -1178,7 +1178,6 @@ table.summary-report{
          padding:1px 18px;
          label.caption{
             width:80px;
-            text-align:right;
          }
          div.fields{
             margin-left:86px;
@@ -1195,10 +1194,12 @@ table.summary-report{
             right:5px;
          }
       }
-      li.button-container{
-			width:95%;
-		}
-	}
+      .button-container{
+         padding-top:8px;
+         margin-top:8px;
+         border-top:1px solid #efefef;
+      }
+   }
 }
 
 .nav_search{

@@ -146,16 +146,6 @@ button.ui-button::-moz-focus-inner {
   color: #222222;
 }
 
-.ui-widget-header {
-  background: #d7e8d7;
-  color: #3f3f3f;
-  font-weight: bold;
-}
-
-.ui-widget-header a {
-  color: #ffffff;
-}
-
 /* Interaction states
 ----------------------------------*/
 .ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {

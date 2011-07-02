@@ -1,30 +1,30 @@
 <div class="request_panel" id="<%=cntid%>" style="display:none;">
   <% form_for note, :html => {:multipart => true,  :id => "HelpdeskNotes" } do |f| %>
     <%= f.error_messages %>
-		<ul class="ui-form dont-validate">
-			<li class="inline-field">
-				<%= content_tag( :h4, t("ticket.note_form.form_title"), :class => "title" ) %>
-				<div class="alignright">
-					<%=link_to_function( t(:'ticket.canned_responses.insert_ca_response') + " &raquo;", "show_canned_response()", :class => "slim-button") %>
-				</div>				
-				<label class="caption">Message:</label>
-				<div class="fields">
-					<%= f.text_area :body, { :class => 'auto-expand required', :id => "#{id}-#{cntid}-body" , :value => @signature} %>
-					<%= f.label(:private, f.check_box(:private, :checked => true) + t("ticket.note_form.private_note")) %>
-					<%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"]%>
-				</div>
+    <ul class="ui-form dont-validate">
+      <li class="inline-field field">
+        <div class="floatr">
+          <%#link_to_function( t(:'ticket.canned_responses.insert_ca_response') + " &raquo;", "show_canned_response()", :class => "slim-button") %>
+        </div>
+        <%= content_tag( :h3, t("ticket.note_form.form_title"), :class => "title" ) %>
+        <label class="caption">Message:</label>
+        <div class="fields">
+          <%= f.text_area :body, { :class => 'auto-expand required', :id => "#{id}-#{cntid}-body" , :value => @signature} %>
+          <%= f.label(:private, f.check_box(:private, :checked => true) + t("ticket.note_form.private_note"), :class => "checkbox") %>
+          <%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"]%>
+        </div>
 	    </li>	
-			<li class="inline-field">
+			<li class="inline-field field">
 				<div class="attachment-options fields" id="attachment-options-note">
 					<% unless local_assigns[:no_attachments] %>
 						<%= render :partial => "/helpdesk/shared/attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note" } %>
 			  	<% end %>
 				</div>
 			</li>
-			<li class="button-container">
-		      <%= submit_tag(local_assigns[:submit] || ActiveSupport::Inflector.titleize(id), :class => "uiButton") %>
-		   </li>
-		</ul> 
+      <li class="button-container">
+        <%= submit_tag(local_assigns[:submit] || ActiveSupport::Inflector.titleize(id), :class => "uiButton") %>
+      </li>
+    </ul> 
   <% end %>
 </div> 
 <% content_for :pagefixed do %>
