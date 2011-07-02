@@ -944,8 +944,7 @@ body h5 {
 }
 
 .seperator {
-  border-bottom: 1px dotted #BBBBBB;
-  box-shadow: 0 1px 0 white;
+  border-bottom: 1px solid #efefef;
   font-size: 0px;
   display: block;
   height: 1px;
@@ -4701,4 +4700,14 @@ p.info-text {
 
 .highlight-text span {
   background: #ffffcc;
+}
+
+a.close {
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  width: 28px;
+  height: 28px;
+  background: url(../images/close_delete.png) no-repeat center;
+  z-index: 999;
 }
