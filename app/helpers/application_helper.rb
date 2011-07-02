@@ -171,12 +171,12 @@ module ApplicationHelper
   
   # Get Pref color for individual portal
   def portal_pref(item, type)
-    color = current_account.main_portal[:preferences].default(type)
-    if !item[:preferences].blank?
-      color = item[:preferences].default(type)
-    end
-    color
-  end
+   color = current_account.main_portal[:preferences].fetch(type, '')
+   if !item[:preferences].blank?
+     color = item[:preferences].fetch(type, '')
+   end
+   color
+ end
   
   def construct_ticket_element(object_name, field, field_label, dom_type, required, field_value = "")
     element_class   = " #{ (required) ? 'required' : '' } #{ dom_type }"
