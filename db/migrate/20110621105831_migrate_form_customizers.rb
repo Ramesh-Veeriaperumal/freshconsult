@@ -52,10 +52,11 @@ class MigrateFormCustomizers < ActiveRecord::Migration
     else
       t_field.name = attributes[:label]
       t_field.flexifield_def_entry_id = (attributes[:columnId].is_a? String) ? 
-        t_field.account.flexi_field_defs.first.flexifield_def_entries.find_by_flexifield_alias(attributes[:column_id]) : attributes[:column_id] 
+        t_field.account.flexi_field_defs.first.flexifield_def_entries.find_by_flexifield_alias(attributes[:columnId]) : attributes[:columnId] 
       t_field.field_type = "custom_#{attributes[:type]}"
       t_field.name = "#{t_field.name}_#{a_index}" unless t_field.valid?
-      
+      t_field.name = "#{t_field.name}_#{a_index}" if t_field.name.downcase.eql?("product")
+     
       populate_pick_lists(t_field, attributes) if "dropdown".eql?(attributes[:type])
     end
   end
