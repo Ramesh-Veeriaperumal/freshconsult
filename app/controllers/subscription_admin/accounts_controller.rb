@@ -10,7 +10,7 @@ class SubscriptionAdmin::AccountsController < ApplicationController
   end
   
   def agents
-    @accounts = Account.find(:all, :include => :users, :conditions => ['user_role != ?', User::USER_ROLES_KEYS_BY_TOKEN[:customer]]).sort_by { |u| -u.users.size }
+    @accounts = Account.find(:all, :include => :agents).sort_by { |u| -u.agents.size }
     @accounts = @accounts.paginate( :page => params[:page], :per_page => 30)
   end
   
@@ -20,7 +20,7 @@ class SubscriptionAdmin::AccountsController < ApplicationController
   end
   
   def tickets
-    @accounts = Account.find(:all, :include => :tickets, :conditions => ['user_role != ?', User::USER_ROLES_KEYS_BY_TOKEN[:customer]]).sort_by { |u| -u.tickets.size }   
+    @accounts = Account.find(:all, :include => :tickets).sort_by { |u| -u.tickets.size }   
     @accounts = @accounts.paginate( :page => params[:page], :per_page => 30)
   end
   
