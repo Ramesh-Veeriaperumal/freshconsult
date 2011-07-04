@@ -6,7 +6,7 @@ class SubscriptionAdmin::AccountsController < ApplicationController
   
   def index
     @accounts = search(params[:search])
-    @accounts = @accounts.paginate( :page => params[:page], :per_page => 30, :order => 'accounts.created_at')
+    @accounts = @accounts.paginate( :page => params[:page], :per_page => 30, :order => 'accounts.created_at desc')
   end
   
   def agents
