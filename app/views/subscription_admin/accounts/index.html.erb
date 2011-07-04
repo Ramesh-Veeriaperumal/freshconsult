@@ -1,3 +1,4 @@
+<h1><%= @page_title = 'Accounts' %></h1>
 <% form_tag "/accounts", :method => 'get' do %>
   <p>
   	
@@ -8,7 +9,14 @@
 
 Total number of accounts : <%=Account.all.count%>
 
-<h1><%= @page_title = 'Accounts' %></h1>
+<br>
+<br>
+
+<%=link_to 'Agents', '/accounts/agents'%> || <%=link_to 'Helpdesk urls', '/accounts/helpdesk_urls'%> || <%=link_to 'Tickets', '/accounts/tickets'%>
+
+<br>
+<br>
+
 <table id="accounts">
   <tr>
     <th>Name</th>
