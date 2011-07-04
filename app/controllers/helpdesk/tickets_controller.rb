@@ -226,9 +226,9 @@ class Helpdesk::TicketsController < ApplicationController
   def new
     unless params[:topic_id].nil?
       @topic = Topic.find(params[:topic_id])
-      @item.subject = @topic.title
+      @item.subject     = @topic.title
       @item.description = @topic.posts.first.body
-      @item.requester = @topic.user
+      @item.requester   = @topic.user
     end
   end
  
