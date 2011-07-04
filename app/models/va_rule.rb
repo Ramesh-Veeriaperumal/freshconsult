@@ -25,7 +25,7 @@ class VARule < ActiveRecord::Base
     @conditions = []
     filter_data.each do |f|
       f.symbolize_keys!
-      @conditions << (Va::Condition.new(f, account_id))
+      @conditions << (Va::Condition.new(f, account))
     end unless !filter_data
     
     @actions = action_data.map { |act| deserialize_action act } unless !action_data

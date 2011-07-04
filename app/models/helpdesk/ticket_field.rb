@@ -37,11 +37,16 @@ class Helpdesk::TicketField < ActiveRecord::Base
                   :default_description  => { :type => :default, :dom_type => "paragraph", :visible_in_view_form => false },
                   :default_product      => { :type => :default, :dom_type => "dropdown_blank",
                                              :form_field => "email_config_id" },
-                  :custom_text          => { :type => :custom, :dom_type => "text"},
-                  :custom_paragraph     => { :type => :custom, :dom_type => "paragraph"},
-                  :custom_checkbox      => { :type => :custom, :dom_type => "checkbox"},
-                  :custom_number        => { :type => :custom, :dom_type => "number"},
-                  :custom_dropdown      => { :type => :custom, :dom_type => "dropdown"}
+                  :custom_text          => { :type => :custom, :dom_type => "text", 
+                                             :va_handler => "text" },
+                  :custom_paragraph     => { :type => :custom, :dom_type => "paragraph", 
+                                             :va_handler => "text" },
+                  :custom_checkbox      => { :type => :custom, :dom_type => "checkbox", 
+                                             :va_handler => "checkbox" },
+                  :custom_number        => { :type => :custom, :dom_type => "number", 
+                                             :va_handler => "numeric"},
+                  :custom_dropdown      => { :type => :custom, :dom_type => "dropdown", 
+                                             :va_handler => "dropdown"}
                 }
 
   def dom_type
