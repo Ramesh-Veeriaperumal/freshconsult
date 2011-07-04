@@ -65,7 +65,7 @@ en:
       portal:  
         portal_settings: Portal settings
         portal_url: Portal URL
-        cname_configure_info: Before using this field please ensure that you have created a CNAME DNS record in your DNS Zone file to point support.mycompanyname.com to %{full_domain}. Your Webmaster or Server administrator should be able to help you set this up correctly
+        cname_configure_info: Before using this field please ensure that you have created a CNAME DNS record in your DNS Zone file to point <strong>help.<b id="domain_info_name">mycompanyname</b>.com</strong> to %{full_domain}. Your Webmaster or Server administrator should be able to help you set this up correctly
         portal_name: Portal name
         portal_name_info: The name will be displayed in your product portal next to the header logo
         top_level_forum: Top level forum category
@@ -789,33 +789,36 @@ en:
   update_and_login: Update and login
   enter_payment: Enter Payment details...
   errors_in_payment: "Errors encountered with your payment:"
-  email_configs: 
+  email_configs:
     info9: Assign to Group
     reply_emails: Reply Emails from Freshdesk
     title: Email Settings
     info10: New tickets to this support email will get automatically assigned to a group
     change_this: Change this
     info1: Your users send support emails to
-    info11: Configure incoming and outgoing support email address
+    info11: Configure primary incoming and outgoing support email address
     supp_email_add: Support email address
     info2: You must forward your support emails to your unique email address
     info12: Add Another Email address
     add_supp_emails: Additional support email(s)
     info3: Freshdesk will fetch those emails and convert them as tickets
     info13: Your support email address is
-    info4: If you have multiple email addresses to support multiple products, <a href='{{products_path}}'>you can add them here</a>.
+    info4: <strong>NOTE:</strong> If you have multiple email addresses to support multiple products, <a href='{{products_path}}'>you can add them here</a>.
+    unverified: Unverified
     info14: Any email sent to this address will be converted as a ticket
     inactive_info1: All your support emails are still unverified, you must verify at least one support email
     info5: Reply emails from Freshdesk will automatically use your original support email ids as the From email address
     info15: You must forward these emails to
     inactive_info2: Until then, the default email "%{default_email}" will be used as the reply-to email.
     unverified_info1: An email with the verification link has been sent to this email. Only after verification this support email will become active.
-    info6: Enter your support email
+    reply_email: Your support email
     info16: Tickets will be assigned to
     primary_supp_email: Primary support email
-    info7: This is also your Reply-to address
+    info7: This is also your Reply-to address eg. support@yourcompany.com
     info8: Forward your emails to
     make_primary: Make primary
+    name: Name
+    delete: Are you sure you want to delete this email?
   step2: Step 2
   import_users_contacts: Users &rarr; Contacts
   ticket: 

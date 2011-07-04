@@ -3,7 +3,7 @@
 <%= form.error_messages %>
 <ul class="ui-form">
   <li class="inline-field">
-    <%= content_tag(:label, t('.product_name'), :class => "caption") %>
+    <%= content_tag(:label, t('.product_name') + " *", :class => "caption") %>
     <div class="fields">
       <%= form.text_field :name, :class => "required text" %>
     </div>
@@ -47,19 +47,25 @@
           function(ev){
             if(this.value != ''){
               reply_email = construct_reply_url(this.value, "<%= current_account.full_domain %>");
-              console.log(reply_email);
               jQuery("#div_reply_email").text(reply_email);
               jQuery("#hidden_reply_to").val(reply_email);
-            }												
+            }
         })
         .trigger("change");
 
       jQuery("#EnablePortal")
         .bind("change", function(ev){
-          if(this.checked)
+          if(this.checked){
             jQuery("#PortalSettings").slideDown(400);
-          else
+          }else{
             jQuery("#PortalSettings").slideUp(200);
+          }
+        })
+        .trigger("change");
+        
+        jQuery("#product_name").change(function(e){
+          jQuery("#domain_info_name")
+              .html(this.value.toLowerCase().replace(/\W/g, ''));
         })
         .trigger("change");
         

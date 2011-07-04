@@ -134,7 +134,7 @@ Autocompleter.MultiValue = Class.create({
   dataFetcher: null,
   
   createSelectedElement: function(id, title) {
-    var closeLink = new Element('a', {className: 'close'}).update('x');
+    var closeLink = new Element('a', {className: 'close-link'}).update('x');
     closeLink.observe('click', function(e) {
       this.removeEntry(e.element().up('li'));
       e.stop();
