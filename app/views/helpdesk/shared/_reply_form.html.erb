@@ -3,14 +3,14 @@
     <%= f.error_messages %>
     <ul class="ui-form dont-validate">
         <li class="inline-field field">
-            <%= content_tag( :h4, t("ticket.reply_form.form_title"), :class => "title" ) %>
+            <%= content_tag( :h3, t("ticket.reply_form.form_title"), :class => "title" ) %>
             <%= f.label(:reply_email, "From:", :class => "caption" ) %>
             <div class="fields">
                 <div class="floatr">
                     <a href="javascript:void(0)" onclick="showHideCc(this)" class="slim-button" >
                       <%= (@ticket.cc_email.blank?)? "Add Cc": "Remove Cc" %>
                     </a>
-                    <%= link_to_function( t(:'ticket.canned_responses.insert_ca_response') + " &raquo;", "show_canned_response()", :class => "slim-button") %>
+                    <%# link_to_function( t(:'ticket.canned_responses.insert_ca_response') + " &raquo;", "show_canned_response()", :class => "slim-button") %>
                 </div>
                 <%= select :reply_email, :id, options_for_select(@reply_email, @ticket.reply_email) %>
                 <input type="checkbox" class="hide" id="include_cc" name="include_cc" value="true" <%= (!@ticket.cc_email.blank?)? "checked" : "" %> />
@@ -72,7 +72,7 @@
                 <% end %>
             </div>
         </li>
-        <li class="button-container field">
+        <li class="button-container">
             <%= submit_tag(local_assigns[:submit] || ActiveSupport::Inflector.titleize(id), :class => "uiButton" ) %>
         </li>
     </ul>

@@ -1,13 +1,5 @@
 class TicketFieldsController < Admin::AdminController
-  
-  FIELD_COLUMN_MAPPING = {
-    "text"      => [["text" , "dropdown"], Helpdesk::FormCustomizer::CHARACTER_FIELDS],
-    "dropdown"  => [["text" , "dropdown"], Helpdesk::FormCustomizer::CHARACTER_FIELDS],
-    "number"    => ["number", Helpdesk::FormCustomizer::NUMBER_FIELDS],
-    "checkbox"  => ["checkbox", Helpdesk::FormCustomizer::CHECKBOX_FIELDS],
-    "date"      => ["date", Helpdesk::FormCustomizer::DATE_FIELDS],
-    "paragraph" => ["paragraph", Helpdesk::FormCustomizer::TEXT_FIELDS]
-  }
+  include Import::CustomField
   
   def index
     @ticket_fields = current_portal.ticket_fields
@@ -40,7 +32,7 @@ class TicketFieldsController < Admin::AdminController
   end
 
   def update #To Do - Sending proper status messages to UI.
-    @tf_errors = []
+    @invalid_fields = []
     field_data = ActiveSupport::JSON.decode params[:jsonData]
     field_data.each_with_index do |f_d, i|
       f_d.symbolize_keys!
@@ -55,75 +47,33 @@ class TicketFieldsController < Admin::AdminController
         send("#{action}_field", f_d) 
       end
     end
-     err_str = ""
-     @tf_errors.each do |tf|
+    
+    err_str = ""
+    @invalid_fields.each do |tf|
       tf.errors.each { |attr,msg| err_str << " #{tf.label}  #{attr} #{msg} <br />"  }
-     end
-     flash[:error] = err_str unless err_str.empty?
-     redirect_to :action => :index  
+    end
+     
+    unless err_str.empty?
+      flash[:error] = err_str
+    else
+      flash[:notice] = t(:'flash.custom_fields.update.success')
+    end
+     
+    redirect_to :action => :index
   end
   
- 
-  def old_code
-    respond_to do |format|
-      if @ticket_field.update_attributes(:json_data =>modified_json, :agent_view =>@agentView,
-              :requester_view => requester_json )   
-          flash[:notice] = t(:'flash.custom_fields.update.success')
-          format.html { redirect_to :action => "index" }
-          format.xml  { render :json => @ticket_field }     
-      else  
-          flash[:notice] = t(:'flash.custom_fields.update.failure')
-          format.html { redirect_to :action => "index"}
-          format.xml  { render :json => @ticket_field } 
-      end
-    end
-  end
-
   protected
     def scoper
       current_account.ticket_fields
     end
     
   private
-    def create_field(field_details)
-      ff_def_entry = FlexifieldDefEntry.new ff_meta_data(field_details)
-      field_details.delete(:id)
-      ticket_field = scoper.build(field_details)
-      ticket_field.name = ff_def_entry.flexifield_alias
-      ticket_field.flexifield_def_entry = ff_def_entry
-      unless ticket_field.save
-        @tf_errors.push(ticket_field) 
-      end
-    end
-    
-    def ff_meta_data(field_details)
-      type = field_details.delete(:type)
-      ff_def = current_account.flexi_field_defs.first
-      ff_def_entries = ff_def.flexifield_def_entries.all(:conditions => { 
-        :flexifield_coltype => FIELD_COLUMN_MAPPING[type][0] })
-
-      used_columns = ff_def_entries.collect { |ff_entry| ff_entry.flexifield_name }
-      available_columns = FIELD_COLUMN_MAPPING[type][1] - used_columns
-      
-      { 
-        :flexifield_def_id => ff_def.id, 
-        :flexifield_name => available_columns.first,
-        :flexifield_coltype => type, 
-        :flexifield_alias => field_name(field_details[:label]), 
-        :flexifield_order => field_details[:position] #ofc. there'll be gaps.
-      }
-    end
-    
-    def field_name(label)
-      label.strip.gsub(/\s/, '_').gsub(/\W/, '').downcase
-    end
-    
     def edit_field(field_details)
       field_details.delete(:type)
       field_details.delete(:dom_type)
       ticket_field = scoper.find(field_details.delete(:id))
       unless ticket_field.update_attributes(field_details)
-        @tf_errors.push(ticket_field) 
+        @invalid_fields.push(ticket_field) 
       end
     end
     

@@ -17,7 +17,6 @@
       // Mapping individual dom elements to its data counterparts
       var dialogDOMMap = {
          field_type:             jQuery(dialogContainer+' input[name|="customtype"]'),
-//       name:                   "Untitled",
          label:                  jQuery(dialogContainer+' input[name|="customlabel"]'),
          label_in_portal:        jQuery(dialogContainer+' input[name|="customlabel_in_portal"]'),
          description:            jQuery(dialogContainer+' input[name|="customdesc"]'),
@@ -30,11 +29,11 @@
          choices:                jQuery(dialogContainer+' div[name|="customchoices"]'),
       };
 
-      var fieldTemplate = 
+      var fieldTemplate =
             $H({
                  type:                   "text",
+                 dom_type:               "text",
                  field_type:             "",
-                 //name:                 "Untitled",
                  label:                  "Untitled",
                  label_in_portal:        "Untitled", 
                  description:            "",
@@ -51,7 +50,7 @@
              });
 
       function constFieldDOM(dataItem, container){
-         var fieldContainer  = container || jQuery("<li />");
+         var fieldContainer = container || jQuery("<li />");
          fieldContainer.empty();
 
          var label = jQuery("<label />").append(dataItem.label);
@@ -61,7 +60,7 @@
          
          switch(dataItem.dom_type) {
             case 'requester':
-               dataItem.type = "requester";
+               dataItem.type = "text";
             break;
             case 'dropdown_blank':
                dataItem.type = "dropdown";
@@ -106,11 +105,12 @@
          return fieldContainer;
       }
 
-      function getFreshField(type){
-         var freshField = fieldTemplate.toObject();
-             freshField.field_type = type;	
+      function getFreshField(type, field_type){
+         var freshField             = fieldTemplate.toObject();
+             freshField.field_type  = field_type;
+             freshField.dom_type    = type;
              
-         if (type == 'custom_dropdown')
+         if (type == 'dropdown')
             freshField.choices = [["First Choice", 0], ["Second Choice", 0]];
             
          return freshField;
@@ -119,7 +119,9 @@
       function getCustomFieldJson(){
          var allfields = $A();
          jQuery("#custom_form li").each(function(index, domLi){
-            allfields.push($(domLi).data("raw"));
+            var data = $(domLi).data("raw");
+            delete data.dom_type;
+            allfields.push(data);
          });
          return allfields;
       } 
@@ -148,9 +150,10 @@
                      saveDataObj();
                    },
             stop: function(ev, ui) { 
-                     type = ui.item.get(0).getAttribute('type');
+                     type = ui.item.get(0).getAttribute('data-type');
+                     field_type = ui.item.get(0).getAttribute('data-field-type');                     
                      if (type)
-                        showFieldDialog(constFieldDOM(getFreshField(type), ui.item));
+                        showFieldDialog(constFieldDOM(getFreshField(type, field_type), ui.item));
 
                      ticket_fields_modified = true;
                   }
@@ -177,11 +180,6 @@
       $("#close_button, #close_button_2").click(function(e){
          hideDialog();
       });
-
-      $("#SaveForm").click(function(e){
-         var jsonData = getCustomFieldJson(); 
-         $("#field_values").val(jsonData.toJSON());
-      }); 
 
       function innerLevelExpand(checkbox){ 
          $("#"+checkbox.getAttribute("toggle_ele")).toggle(checkbox.checked);
@@ -443,6 +441,11 @@
          showFieldDialog(this); 
       });
 
+      $("#SaveForm").click(function(e){
+         var jsonData = getCustomFieldJson();
+         $("#field_values").val(jsonData.toJSON());
+         //return false;
+      });
     }
 })(jQuery);
 

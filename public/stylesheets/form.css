@@ -1374,7 +1374,7 @@ table.summary-report thead td {
 .request_panel .ui-form li.field {
   border: 0px;
 }
-.request_panel .ui-form label {
+.request_panel .ui-form label, .request_panel .ui-form div.fields label {
   font-size: 13px;
   color: #333333;
 }
@@ -1388,7 +1388,6 @@ table.summary-report thead td {
 }
 .request_panel .ui-form li.inline-field label.caption {
   width: 80px;
-  text-align: right;
 }
 .request_panel .ui-form li.inline-field div.fields {
   margin-left: 86px;
@@ -1404,8 +1403,10 @@ table.summary-report thead td {
   top: -6px;
   right: 5px;
 }
-.request_panel .ui-form li.button-container {
-  width: 95%;
+.request_panel .ui-form .button-container {
+  padding-top: 8px;
+  margin-top: 8px;
+  border-top: 1px solid #efefef;
 }
 
 .nav_search {
