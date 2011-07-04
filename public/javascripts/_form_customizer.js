@@ -269,6 +269,7 @@
             dialogDOMMap.field_type.val(sourceData.type);
             dialogDOMMap.label.val(sourceData.label);
             dialogDOMMap.label_in_portal.val(sourceData.label_in_portal);
+            dialogDOMMap.label_in_portal.attr("initial-value", sourceData.label_in_portal);
             dialogDOMMap.description.val(sourceData.description);
 
             $("div#CustomFieldsDialog label.overlabel").overlabel();
