@@ -1,28 +1,16 @@
-	<% if (email.reply_email == "support@#{current_account.full_domain}") %>
-		<div class="email-item-default">
-			<div class="action_buttons">
-				<%= link_to ( t('email_configs.make_primary'), make_primary_admin_email_config_path(email), :method => "put" ) unless email.primary_role? %>
-				<%= link_to t('email_configs.change_this'), edit_admin_email_config_path(email), :class => "last edit-email"  %>
-			</div>
-			<label>
-				<%=t('email_configs.info13')%> <span class="highlight"> <%= email.reply_email %> </span> 
-				<div class="info_data"><%=t('email_configs.info14')%></div>
-			</label>
-		</div>
-	<% else %>
 		<div class='email-item <%= "email-inactive" unless email.active?  %>'>
 			<div class="action_buttons">
 				<% if email.active? %> 
 					<%= link_to ( t('email_configs.make_primary'), make_primary_admin_email_config_path(email), :method => "put" ) unless email.primary_role? %>
 				<% end %>
-				<%= link_to t('edit'), edit_admin_email_config_path(email), :class => "edit-email last"  %>
+				<%= link_to t('email_configs.change_this'), edit_admin_email_config_path(email), :class => "last edit-email"  %>
 			</div>
 			<div class="item">
 				<label>
 				 <strong><%=t('email_configs.supp_email_add')%> :  &nbsp;</strong> 
 						<%= content_tag (:span, h(email.friendly_email), :class => "highlight") %>
-						<%= content_tag (:span, "unverified", :class => "inactive_email custom-tip-top", :title => t('email_configs.unverified_info1')) unless email.active? %>
-						<%= link_to("Send verification email again", deliver_verification_admin_email_config_path(email), :class => "font11")  unless email.active?  %>
+						<%= content_tag (:span, t("email_configs.unverified"), :class => "inactive_email custom-tip-top", :title => t('email_configs.unverified_info1')) unless email.active? %>
+						<%= link_to("Send verification email again", deliver_verification_admin_email_config_path(email), :class => "slim-button")  unless email.active?  %>
 				</label>	
 			</div>
 			<% if ( email.active? ) %>
@@ -34,4 +22,3 @@
 			<%= content_tag ( :div, content_tag ( :label, "#{t('email_configs.info16')} <strong>#{email.group.name}</strong> group" ) , :class => "item" ) if email.group %>
 			<% end %>
 		</div>
-	<% end %>

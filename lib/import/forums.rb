@@ -109,7 +109,7 @@ def make_solution_folder solution, base_dir
     @category = current_account.solution_categories.find_by_import_id(cat_id.to_i())    
     @category = add_solution_category(base_dir, cat_id) if @category.blank?
   else
-    @category = current_account.solution_categories.find_by_name("General")  
+    @category = current_account.solution_categories.find_or_create_by_name("General")  
   end
   logger.debug "@category is #{@category.inspect}"
   
