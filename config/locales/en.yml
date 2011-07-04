@@ -200,8 +200,8 @@ en:
       success: "%{created_count} contacts has been newly imported and #{updated_count} existing contacts has been updated!"
     custom_fields: 
       update: 
-        failure: Custom Fields update failed.
-        success: Custom fields successfully updated.
+        failure: Ticket fields update failed.
+        success: Ticket fields successfully updated.
     tickets: 
       notes: 
         create: 
