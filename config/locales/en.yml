@@ -824,6 +824,7 @@ en:
   ticket: 
     spam_btn_title: Mark as spam
     group: Group
+    thanks: Thanks for submitting the ticket
     suggested_solutions: 
       insert_url: Insert URL
       title: Suggested Solutions
