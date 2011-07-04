@@ -35,7 +35,7 @@
                  dom_type:               "text",
                  field_type:             "",
                  label:                  "Untitled",
-                 label_in_portal:        "Untitled", 
+                 label_in_portal:        "", 
                  description:            "",
                  field_type:             "custom",
                  active:                 true,
@@ -353,11 +353,13 @@
                if(field_label === '') field_label = "Untitled";
                sourceData.set("label", field_label);
                sourceData.set("label_in_portal", field_label);
+               dialogDOMMap.label_in_portal.attr("initial-value", field_label);
                this.value = field_label;
             break;
             
             case 'customlabel_in_portal':
                sourceData.set("label_in_portal", this.value);
+               dialogDOMMap.label_in_portal.attr("initial-value", this.value);
             break;
             case 'customdesc':
                sourceData.set("description", this.value);
@@ -412,6 +414,8 @@
 
       $(dialogDOMMap.label).live("keyup", function(ev){
          sourceDomMap.label.text(this.value);
+         if(dialogDOMMap.label_in_portal.attr("initial-value") === '')
+            dialogDOMMap.label_in_portal.val(this.value);
       });
 
       $("#CustomFieldsDialog").draggable();
