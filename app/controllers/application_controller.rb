@@ -4,7 +4,7 @@
 class ApplicationController < ActionController::Base
   
   
-  before_filter :check_account_state, :except => [:show,:index]
+  #before_filter :check_account_state, :except => [:show,:index]
   before_filter :set_time_zone
   
   before_filter :set_locale
