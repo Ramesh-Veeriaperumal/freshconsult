@@ -38,6 +38,10 @@ def self.ticket_fields_data
       
     { :name => "agent", :label => "Assigned to", :description => "Agent",
       :visible_in_portal => true },
+
+    { :name => "product", :label => "Product", 
+      :description => "Select the product, the ticket belongs to.",
+      :visible_in_portal => true, :editable_in_portal => true },
       
     { :name => "description", :label => "Description", :description => "Ticket description",
       :required => true, :visible_in_portal => true, :editable_in_portal => true, 
