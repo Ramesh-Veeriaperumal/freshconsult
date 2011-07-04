@@ -97,30 +97,31 @@ rules_filter = function(_name, filter_data, parentDom, options){
 				r_dom.appendTo(list_C);
 			},
 		// Used to Edit pre-population
-		feed_data:
-			function(dataFeed){
-				dataFeed.each(function(rule){
-					var r_dom	= domUtil.getContainer(name);
-					var inner	= jQuery("<div />");
-					var data_id = rule.name + itemManager.get();
+      feed_data:
+         function(dataFeed){
+            dataFeed.each(function(rule){
+               try{
+                  var r_dom	= domUtil.getContainer(name);
+                  var inner	= jQuery("<div />");
+                  var data_id = rule.name + itemManager.get();
 
-					if(rule.operator){	
-						opType = hg_data.get(rule.name).operatortype;
-						inner.append(FactoryUI.dropdown(operator_types.get(opType), "operator").val(rule.operator));
-					}	
-					inner.append(conditional_dom(hg_data.get(rule.name), data_id, name, rule));
+                  if(rule.operator){	
+                     opType = hg_data.get(rule.name).operatortype;
+                     inner.append(FactoryUI.dropdown(operator_types.get(opType), "operator").val(rule.operator));
+                  }	
+                  inner.append(conditional_dom(hg_data.get(rule.name), data_id, name, rule));
 
-					jQuery.data(r_dom, "inner")
-						  .append(FactoryUI.dropdown(filter_data, "name", "ruCls_"+name).val(rule.name))
-						  .append(inner);	
+                  jQuery.data(r_dom, "inner")
+                     .append(FactoryUI.dropdown(filter_data, "name", "ruCls_"+name).val(rule.name))
+                     .append(inner);	
 
-					list_C = jQuery(parentDom).find(setting.rule_dom);
-					r_dom.appendTo(list_C);
-					  
-					postProcessCondition(hg_data.get(rule.name), data_id);
-				});				
-			},
-		
+                  list_C = jQuery(parentDom).find(setting.rule_dom);
+                  r_dom.appendTo(list_C);
+                  postProcessCondition(hg_data.get(rule.name), data_id);
+               }catch(e){}
+            });
+         },
+
 		get_filter_list:
 			function(_type, c_form){
 				var serialArray		= jQuery(c_form).serializeArray(),
