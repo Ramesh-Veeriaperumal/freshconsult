@@ -9,47 +9,71 @@ Lockfile('lock', :retries => 0) do
   puts "The subscription script file is running "
    
   Subscription.find_expiring_trials.each do |sub|
-    puts "Account admin email is #{sub.account.account_admin.email}"
-    if admin = sub.account.account_admin
-      SubscriptionNotifier.deliver_trial_expiring(admin, sub, "#{sub.trial_days} days")
-    end
+    begin 
+    	puts "Account admin email is #{sub.account.account_admin.email}"
+    	if admin = sub.account.account_admin
+      		SubscriptionNotifier.deliver_trial_expiring(admin, sub, "#{sub.trial_days} days")
+    	end
+   	rescue Exception => err
+   	 SubscriptionNotifier.deliver_sub_error({:error_msg => err.message, :full_domain => sub.account.full_domain, :custom_message => "7 days Email" })
+   	end
   end
   
   Subscription.find_expiring_trials(48.hours.from_now).each do |sub|
-    puts "Two day admin email is #{sub.account.account_admin.email}"
-    if admin = sub.account.account_admin
-      SubscriptionNotifier.deliver_trial_expiring(admin, sub, "48 hours")
-    end
+    begin
+    	puts "Two day admin email is #{sub.account.account_admin.email}"
+    	if admin = sub.account.account_admin
+      		SubscriptionNotifier.deliver_trial_expiring(admin, sub, "48 hours")
+    	end
+    rescue Exception => err
+   	 SubscriptionNotifier.deliver_sub_error({:error_msg => err.message, :full_domain => sub.account.full_domain, :custom_message => "48 hours Email" })
+   	end
   end
   
   Subscription.find_expiring_trials(24.hours.from_now).each do |sub|
-    puts "One day admin email is #{sub.account.account_admin.email}"
-    if admin = sub.account.account_admin
-      SubscriptionNotifier.deliver_trial_expiring(admin, sub, "24 hours")
-    end
+  	begin
+    	puts "One day admin email is #{sub.account.account_admin.email}"
+    	if admin = sub.account.account_admin
+      		SubscriptionNotifier.deliver_trial_expiring(admin, sub, "24 hours")
+    	end
+    rescue Exception => err
+   	 SubscriptionNotifier.deliver_sub_error({:error_msg => err.message, :full_domain => sub.account.full_domain, :custom_message => "24 hours Email" })
+   	end
   end
   
   # Trial subscriptions for which we have payment info.
   # This will always turn up empty unless we are collecting 
   # payment info when creating an account.
   Subscription.find_due_trials.each do |sub|
+   begin
     if !sub.charge
       SubscriptionNotifier.deliver_charge_failure(sub)
     end
+   rescue Exception => err
+   	 SubscriptionNotifier.deliver_sub_error({:error_msg => err.message, :full_domain => sub.account.full_domain, :custom_message => "Trial Charge" })
+   end
   end
 
   Subscription.find_due.each do |sub|
-  puts "#{sub.account.full_domain}"
-    if !sub.charge
-      SubscriptionNotifier.deliver_charge_failure(sub)
-    end
+  	begin
+  		puts "#{sub.account.full_domain}"
+    	if !sub.charge
+      		SubscriptionNotifier.deliver_charge_failure(sub)
+    	end
+    rescue Exception => err
+   	 SubscriptionNotifier.deliver_sub_error({:error_msg => err.message, :full_domain => sub.account.full_domain, :custom_message => "Charge failed" })
+   	end
   end
 
   # Subscriptions overdue for payment (2nd try)
   Subscription.find_due(5.days.ago).each do |sub|
+   begin
     if !sub.charge
       SubscriptionNotifier.deliver_charge_failure(sub)
     end
+   rescue Exception => err
+   	 SubscriptionNotifier.deliver_sub_error({:error_msg => err.message, :full_domain => sub.account.full_domain, :custom_message => "late Charge failed" })
+   end
   end
 
 end

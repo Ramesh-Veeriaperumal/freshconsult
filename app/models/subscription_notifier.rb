@@ -6,7 +6,12 @@ class SubscriptionNotifier < ActionMailer::Base
     @subject = subject
     @recipients = to.respond_to?(:email) ? to.email : to
     @from = from.respond_to?(:email) ? from.email : from   
-   end
+  end
+  
+  def sub_error(options={})
+    setup_email("kiran@freshdesk.com", "Error in Subscription module for #{options[:custom_message]}")
+    @body = {:message => options[:error_msg], :full_domain => options[:full_domain]}
+  end
   
   def setup_bcc
      @bcc = AppConfig['sub_bcc_email'][RAILS_ENV]
