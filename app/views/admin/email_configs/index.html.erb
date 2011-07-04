@@ -3,12 +3,11 @@
 <% end %>
  
 <div id="emailconfig-list">
-	<h3 class="title"><%=t('email_configs.title')%></h3> 
-	<div class="intro"><%=t('email_configs.info11')%></div>
-		<h4 class="title"><%=t('email_configs.primary_supp_email')%></h4>
-		<div id="primary-email-settings" class="email-settings">
-			<%= render (:partial => "email", :object =>  @email_config) %>
-		</div>
-		
-		<% if feature?(:multi_product) %> <div class="intro"><p><%=t('email_configs.info4', :products_path => admin_products_path)%></p></div> <% end %>
+  <h3 class="title"><%=t('email_configs.title')%></h3> 
+  <div class="intro"><%=t('email_configs.info11')%></div>
+    <div class="email-settings">
+      <%= render (:partial => "email", :object =>  @email_config) %>
+    </div>
+
+    <% if feature?(:multi_product) %> <div class="info-data"><p><%=t('email_configs.info4', :products_path => admin_products_path)%></p></div> <% end %>
 </div>
