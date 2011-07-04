@@ -1,6 +1,6 @@
 <% content_for :sidebar do -%><%- end %>
 <%= content_tag (:h3, t(".remote_authentication"), :class => "title") %>
-<% form_for :account, @account, :url => { :action => "update" },  :html => { :method => :put, :id => "BusinessHours"  } do |f| %>
+<% form_for  @account, :url => { :action => "update" },  :html => { :method => :put, :id => "sso_form"  } do |f| %>
 	<%= f.error_messages %>
 	<ul class="ui-form">
 		<li class="inline-field">
