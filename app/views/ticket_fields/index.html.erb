@@ -5,44 +5,44 @@
 <% end %>
 <% content_for :sidebar do %><% end %>
 <%= javascript_include_tag "_form_customizer.js" %>
-<%= content_tag(:h3, t("ticketfields.title"), :class => "title") %> 
+<%= content_tag(:h3, t(".title"), :class => "title") %> 
 <% javascript_tag do %>
-	custom_field_values = <%= @ticket_fields.json_data.to_json %>
-<% end %> 
-<% form_tag :action=> :update, :controller => 'ticket_fields', :method => :post do |f| %>
-    <div class="admin_form">
-        <ul id="custom_fields" class="ui-custom-fields"> 
-					<%= content_tag(:h4, t("ticketfields.add_custom_field"), :class => "title") %>
-					<div class="info-data"><%= t('drag_drop_intro') %></div>
-            <li type="text"> 
-                <a href="javascript:void(0)" class="button"> <%= t("ticketfields.field.single_line") %> </a>
+	custom_field_values = <%= @ticket_field_json.to_json %>;
+<% end %>
+<% form_for :update, @ticket_fields, :url => { :action => "update" }, :html => { :method => :put, :id => "Updateform" } do |f| %>
+  <div class="admin_form">
+    <ul id="custom_fields" class="ui-custom-fields"> 
+      <%= content_tag(:h4, t(".add_custom_field"), :class => "title") %>
+        <div class="info-data"><%= t('.drag_drop_intro') %></div>
+            <li data-type="text" data-field-type="custom_text"> 
+                <a href="javascript:void(0)" class="button"> <%= t(".single_line") %> </a>
             </li>
-            <li type="number">
-                <a href="javascript:void(0)" class="button"> <%= t("ticketfields.field.number") %> </a>
+            <li data-type="number" data-field-type="custom_number">
+                <a href="javascript:void(0)" class="button"> <%= t(".number") %> </a>
             </li>
-            <li type="paragraph">
-                <a href="javascript:void(0)" class="button"> <%= t("ticketfields.field.paragraph") %> </a>
+            <li data-type="paragraph" data-field-type="custom_paragraph">
+                <a href="javascript:void(0)" class="button"> <%= t(".paragraph") %> </a>
             </li>
-            <li type="checkbox">
-                <a href="javascript:void(0)" class="button"> <%= t("ticketfields.field.checkbox") %> </a>
+            <li data-type="checkbox" data-field-type="custom_checkbox">
+                <a href="javascript:void(0)" class="button"> <%= t(".checkbox") %> </a>
             </li>
-            <li type="dropdown">
-                <a href="javascript:void(0)" class="button"> <%= t("ticketfields.field.dropdown") %> </a>
+            <li data-type="dropdown" data-field-type="custom_dropdown">
+                <a href="javascript:void(0)" class="button"> <%= t(".dropdown") %> </a>
             </li>
         </ul> 
 
-		<span class="seperator"></span> 
-		<div class="custom_form_outer">
-			<%= content_tag(:h4, t("ticketfields.customize_form"), :class => "title") %>
-			<input type="hidden" name="jsonData" id="field_values" value="" />
-			<div class="ui-custom-form">
-	        	<ul id="custom_form" class="ui-form"></ul>
-			</div>
-		</div>
-	</div> 
+    <span class="seperator"></span> 
+    <div class="custom_form_outer">
+      <%= content_tag(:h4, t(".customize_form"), :class => "title") %>
+      <input type="hidden" name="jsonData" id="field_values" value="" />
+      <div class="ui-custom-form">
+        <ul id="custom_form" class="ui-form"></ul>
+      </div>
+    </div>
+  </div> 
 	<div class="button-container" id="button_panel">
 		<%= link_to "&larr; #{ t('cancel_and_back') }", "/admin/home", :class => "uiButton floatl" %>
-		<%= submit_tag t("ticketfields.save"), :class => "uiButton", :id => "SaveForm" %>
+		<%= submit_tag t(".save"), :class => "uiButton", :id => "SaveForm" %>
 	</div>
 <%end%>
 <% content_for :dialogs do %>

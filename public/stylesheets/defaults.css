@@ -34,15 +34,19 @@ p {
   text-align: left;
 }
 
+.hide {
+  display: none;
+}
+
 .clearfix {
   overflow: hidden;
   *zoom: 1;
 }
 
 .title {
-  color: #2f3733;
+  color: #444444;
   padding: 6px 0px 10px 0px;
-  font-weight: bold;
+  font-weight: normal;
 }
 
 .title a {
@@ -64,7 +68,7 @@ h2.title {
 }
 
 h3.title, h3.sub_title, h3.title-band {
-  font-size: 1.3em;
+  font-size: 1.45em;
 }
 
 h4.title {

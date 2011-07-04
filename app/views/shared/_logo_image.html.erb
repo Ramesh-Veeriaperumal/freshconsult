@@ -9,31 +9,29 @@
 		jQuery('#LogoInput').show();
 	}
 <%- end %>
-<li class="inline-field">
-	<%= label(:account, :logo, t('header_logo'), :class => "caption") %>
-	<div class="fields">
-		<% if(account.logo) %>
-			<div class="profile_pic" id="LogoPic">
-				<%= image_tag current_account.logo.content.url(:logo) %>
-			</div>
-			<div id="LogoInput" style="display:none;">
-				<% fields_for "account[logo_attributes]", account.logo do |logo_form| %>
-					<%= logo_form.file_field :content %>
-				<% end %>
-			</div>
-			<div id="LogoControls">
-				<%= link_to_function(t('change'), "changeLogoPic()", :class => "button") %>
-				<%= link_to_remote(t('delete'),
-						:url => { :action => "delete_logo", :id => account.id },
-						:success => "deleteLogo()",
-						:confirm => t('logo_delete_msg'),
-						:method => 'delete',
-						:html => { :class => "button" }) %>
-			</div>
+	<%= label(:item, :logo, t('logo'), :class => "caption") %>
+  <div class="fields">
+    <% if(item.logo) %>
+      <div class="profile_pic" id="LogoPic">
+        <%= image_tag item.logo.content.url(:logo) %>
+      </div>
+      <div id="LogoInput" style="display:none;">
+        <% fields_for "#{field_name}[logo_attributes]", item.logo do |logo_form| %>
+          <%= logo_form.file_field :content %>
+        <% end %>
+      </div>
+      <div id="LogoControls">
+        <%= link_to_function(t('change'), "changeLogoPic()", :class => "button") %>
+        <%= link_to_remote(t('delete'),
+            :url => { :action => "delete_logo", :id => item.id },
+            :success => "deleteLogo()",
+            :confirm => t('logo_delete_msg'),
+            :method => 'delete',
+            :html => { :class => "button" }) %>
+      </div>
 		<% else %>
-			<% fields_for "account[logo_attributes]", account.logo do |logo_form| %>
+			<% fields_for "#{field_name}[logo_attributes]", item.logo do |logo_form| %>
 				<%= logo_form.file_field :content, :class => "fileUpload" %>
 			<% end %>
 		<% end %>
 	</div>
-</li>

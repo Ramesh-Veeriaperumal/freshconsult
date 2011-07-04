@@ -23,12 +23,7 @@
 			<p>
 				<%=t('solution.info6')%>.
 		    </p>
-			<span class="seperator"></span>
-			
-			<!--h3 class="title">Organize</h3>
-			<p>
-				You can organize your articals into <b>folders</b> and in-turn order these folders into <b>categories</b>  
-			</p-->
+			<span class="seperator"></span>			
 		</div>
 	<%- end %>
 <%- end %> 
@@ -47,9 +42,8 @@
 		<div class="<%= cycle('odd', 'even') %>">
 			<% if logged_in? && current_user.has_manage_solutions? -%>
 					<div class="action_buttons">
-						<%= link_to t('folder.add_folder'), new_solution_category_folder_path(category), :class => "first icon add_new"  %> 
-						<%= link_to t('edit') ,edit_solution_category_path(category), :class => "last"   %> 
-						<% link_to "RSS", "", :class => "last" %>
+						<%= link_to t('folder.add_folder'), new_solution_category_folder_path(category), :class => "first"  %> 
+						<%= link_to t('edit') ,edit_solution_category_path(category), :class => "last"   %>
 					</div>
 			<% end %>
 			<h4 class="border_title">

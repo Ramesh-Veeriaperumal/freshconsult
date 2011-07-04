@@ -243,6 +243,38 @@ MEDIUM_EDITOR:
 SMALL_EDITOR:
     <<: *common
     height:                             200
+FRESH_EDITOR:
+    plugins:
+       - safari
+       - media
+       - advimage
+       - paste
+       - inlinepopups
 
-    
-  
+    mode:                               "textareas"
+    apply_source_formatting:            true
+    inline_styles:                      false
+    theme:                              advanced
+    theme_advanced_toolbar_location:    top
+    theme_advanced_toolbar_align:       left
+    theme_advanced_buttons1:            "bold,italic,underline,blockquote,bullist,numlist,|,forecolor,backcolor,|,link,unlink,image,media"
+    theme_advanced_buttons2:            ""
+    theme_advanced_buttons3:            ""
+    theme_advanced_resizing:            true
+    content_css:                        "/stylesheets/fresh-mce/content.css"
+    skin:                               "fresh"
+    inlinepopups_skin:                  "fresh"
+    height:                             240
+    width:                              "100%"
+    paste_create_paragraphs:            false
+    paste_create_linebreaks:            false
+    paste_use_dialog:                   true
+    paste_auto_cleanup_on_paste:        true
+    paste_convert_middot_lists:         false
+    paste_unindented_list_class:        "unindentedList"
+    paste_remove_styles:                true
+    paste_text_sticky:                  true
+    paste_convert_headers_to_strong:    true
+    theme_advanced_styles:              "Code=codeStyle;Quote=quoteStyle"
+    entity_encoding:                    "raw"
+    dialog_type:                        "modal"

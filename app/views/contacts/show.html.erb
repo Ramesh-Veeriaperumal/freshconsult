@@ -37,10 +37,9 @@
 			<%= f.label :description, t("contacts.form_placeholder.description"), :class => "overlabel" %>
 			<%= f.text_area :description, :class=> "sp_paragraph" %>
 			<div class="alignright"> 
-				<%= f.submit t('save'), :class=>"uiButton small grey"  %> &nbsp;
+				<%= f.submit t('save'), :class=>"uiButton small"  %> &nbsp;
 			</div>
-		<% end %> 
-		
+		<% end %>
 		<span class="seperator"></span>
 		<h4 class="title"><%=t('contacts.info4',:nick_name => @user.display_name)%></h4>
 		<% if @user_tickets_open_pending.empty? %>

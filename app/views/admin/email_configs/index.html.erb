@@ -3,34 +3,11 @@
 <% end %>
  
 <div id="emailconfig-list">
-	<h3 class="title"><%=t('email_configs.title')%></h3> 
-	<div class="intro"><%=t('email_configs.info11')%></div>
-		<% if current_account.email_configs.count == 0 %>
-			<div class="email-info">
-				<%= t('email_configs.inactive_info1') %>
-				<br />
-				<%= t('email_configs.inactive_info2', :default_email => "support@#{current_account.full_domain}") %>
-			</div>
-		<% end %> 
-		<h4 class="title"><%=t('email_configs.primary_supp_email')%></h4>
-		<div id="primary-email-settings" class="email-settings">
-			<%= render (:partial => "email", :object =>  @email_configs.shift) %>
-		</div>
-		<%  unless @email_configs.empty? %>
-			<%= content_tag( :h4, t('email_configs.add_supp_emails'), :class => "title" ) %>
-			<div id="email-settings-list" class="email-settings">
-				<% @email_configs.each do |email| %>  
-					<%= render (:partial => "email", :object => email) %>
-				<% end %> 
-			</div>
-		<% end %> 
+  <h3 class="title"><%=t('email_configs.title')%></h3> 
+  <div class="intro"><%=t('email_configs.info11')%></div>
+    <div class="email-settings">
+      <%= render (:partial => "email", :object =>  @email_config) %>
+    </div>
 
-	<% if feature?(:multi_product) %>
-		<div class="button-container clearfix">
-			<span class="floatl">
-				<%= link_to t('email_configs.info12'), new_admin_email_config_path, :id => "AddEmail", :class => "uiButton"  %>
-			</span> 
-		</div> 
-	<% end %>
-	
+    <% if feature?(:multi_product) %> <div class="info-data"><p><%=t('email_configs.info4', :products_path => admin_products_path)%></p></div> <% end %>
 </div>

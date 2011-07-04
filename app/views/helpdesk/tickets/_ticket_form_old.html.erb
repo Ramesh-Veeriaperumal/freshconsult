@@ -1,0 +1,164 @@
+<% type ||= "new" %>
+<% javascript_tag do %>
+	function changeAggentList(group_id)
+	{	
+		jQuery('#assigned_to').children("select").replaceWith("...");
+		jQuery.ajax({
+		     	type:        'POST',
+				  url: 		     '/helpdesk/tickets/get_agents/'+group_id,
+				  contentType: 'application/text',
+		     	success:     function(data){
+											    jQuery('#assigned_to').html(data);
+							          }
+		                });
+	}
+<% end %>
+<script type="text/javascript" charset="utf-8">
+  function lookup(searchString, callback) { 
+    new Ajax.Request('<%= autocomplete_helpdesk_authorizations_path %>?v='+searchString, 
+                                              { parameters: {name: searchString, rand: (new Date()).getTime()},
+                                              onSuccess: function(response) {
+                                                var choices = $A();
+                                                response.responseJSON.results.each(function(item){
+                                                  choices.push(item.id);
+                                                });                                                
+                                                callback(choices);
+                                              } });
+  }
+  
+  var cachedBackend = new Autocompleter.Cache(lookup, {choices: 20});
+  var cachedLookup = cachedBackend.lookup.bind(cachedBackend);
+</script>
+
+<% form_for @item, :html => {:multipart => true, :id => "NewTicket" } do |f| %>
+  <%= f.error_messages %>
+  	<%= hidden_field_tag  :topic_id,  params[:topic_id] %>
+	<ul class="ui-form">
+ 	<%	
+		@customizer = ActiveSupport::JSON.decode(@item.customizer.json_data)		
+		@customizer.each do |field|
+			field_class 	= field["type"] + (field["type"] != 'dropdown' && (field["agent"]["required"]) ? " required" : "")
+			field_madatory  = (field["agent"]["required"]) ? " *" : " " 
+			case field["label"]
+			 when "Requester" then
+    %> 
+	<li class="text"> 	
+  		<label id="requester-label"><%=t('ticket.requester')%> <%= field_madatory %></label>
+  		<input type="text" id="helpdesk_ticket_email" class="<%= field_class %> email" name="helpdesk_ticket[email]" value="<%=@item.requester.email if @item.requester %>"></input>
+  		<div id="helpdesk_ticket_email_choices" class="autocomplete"></div>
+   	</li>  
+	  <script type="text/javascript" charset="utf-8">
+      new Autocompleter.Json("helpdesk_ticket_email", "helpdesk_ticket_email_choices", cachedLookup, {});
+    </script>
+    
+	<% when "Subject" then%>
+		<li class="text">
+        	<%= f.label :subject, t('ticket.subject') + field_madatory %>
+          	<%= f.text_field :subject, :class => field_class %>
+   		</li>
+
+	<%when "Type" then%>
+		
+		<li class="dropdown">
+          	<%= f.label :ticket_type, t('ticket.type') %>
+         	<%= f.select :ticket_type, Helpdesk::Ticket::TYPE_OPTIONS, :class => field_class %>
+        </li>
+		
+	<%when "Source" then%>
+	
+	  <!-- default value for source is phone when an agent creates a ticket-->
+	    <%= f.hidden_field :source, :value =>Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:phone] %>	  
+	  <!-- default value for source is phone when an agent creates a ticket-->
+	
+				
+	<%when "Status" then%>
+		<li class="dropdown">
+          	<%= f.label :status, t('ticket.status') %>
+         	<%= f.select :status, Helpdesk::Ticket::STATUS_OPTIONS, :class => field_class %>
+        </li>
+		
+	<%when "Group" then%>
+		<li class="dropdown">
+          	<%= f.label :group_id, t('ticket.group') %>
+          	<%= f.collection_select :group_id, Group.find_all_by_account_id(@item.account_id , :order=>'name') , :id, :name,{:include_blank => 'Nobody'}, { :onchange => "changeAggentList(this.options[this.selectedIndex].value)" ,:class => field_class} %>
+        </li>
+		
+	<%when "Assigned to" then%> 
+		<li class="dropdown" id="assigned_to">
+          	<%= f.label :responder_id, t('ticket.assigned_to') %>
+          	<%= f.collection_select :responder_id, Agent.technician_list(@item.account_id), :id, :name, {:include_blank => 'None'}, :class => field_class %>
+        </li> 
+		
+	<%when "Priority" then%>
+		<li class="dropdown">
+ 			<%= f.label :priority, t('ticket.priority') %>          
+			<%= f.select :priority, Helpdesk::Ticket::PRIORITY_OPTIONS, :class => field_class %>
+    	</li>
+	
+	<%when "Description" then%>
+		<li class="paragraph">
+			<%= f.label :description, t('description') + field_madatory %>
+    		<%= f.text_area :description, :class=>field_class %>
+		</li>				
+	
+	<%else%>		
+		<% f.fields_for :custom_field do |cust_form| %>
+			<% 
+				field_label = (field["agent"]["required"]) ? "#{field["display_name"]} *" : "#{field["display_name"]}" 
+				field_val = nil 
+				field_val = @item.get_ff_value(field["label"]) unless @item.id.nil?
+			%>
+			<% case field["type"] when "text","number" then %>				
+				<li class="text">		 
+
+					<%= cust_form.label "#{field["label"]}", field_label %>  
+ 					<%= cust_form.text_field "#{field["label"]}" , :class => field_class  , :value =>field_val%>
+
+				</li>		 
+						
+			<% when "paragraph" then %>
+				<li class="paragraph">
+
+					<%= cust_form.label "#{field["label"]}", field_label %>  
+ 					<%= cust_form.text_area "#{field["label"]}" ,:class => field_class , :value =>field_val %>
+
+				</li>
+					
+			<% when "dropdown" then %>
+				<li class="dropdown"> 
+					<% Array values =[]
+						field["choices"].each {|choice| values.push(choice["value"])}%>
+
+						 <%= cust_form.label "#{field["label"]}", field_label %>  
+ 						 <%= cust_form.select "#{field["label"]}", values ,:class => field_class , :selected => field_val%>
+
+			    </li>
+							
+		   <% when "checkbox" then %>
+				<li class="checkbox"> 
+					<%= cust_form.check_box "#{field["label"]}" ,:class => field_class , :value => field_val %>					
+					<%= field_label %> 
+			    </li>
+		   <% end %>
+		 <% end %>			 
+		<% end %>
+	<% end %>
+		<li>
+			<%= render ( :partial => "/helpdesk/shared/attachment_form" ) unless (type == "edit") %>
+		</li>
+	</ul>
+	
+    <div class="button-container"> 
+      <% if(type == "edit") %>	
+	  	 <%= f.submit t('update'), :class => "uiButton" %>
+      	<%= link_to t('delete'), @item, :method => :delete, :class => "uiButton" %>
+	  <% else %>
+	  	<%= f.submit t('create'), :class => "uiButton" %>
+	  	<%= submit_tag t('save_and_create'), :name => "save_and_create" , :class => "uiButton" %>
+	  <% end %>
+      <%= link_to t('cancel'), (@item.new_record? ? {:action => 'index'} : @item ), :class => "uiButton" %>
+    </div> 
+	
+  <% end %>
+  
+

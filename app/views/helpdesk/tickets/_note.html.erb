@@ -20,19 +20,27 @@
 				<% if note.note? && permission?(:manage_tickets) %>
 				<li>
 					<a href="#" class="menu-trigger nav-item-icon"><span class="item-options"></span></a>
-					<ul class="menu-box">
-						<li class="menu-item">
-							<%= link_to_remote( "Edit Note", { :loading => "$('loading_#{notedetails}').show();", 
-																								 :loaded  => "$('loading_#{notedetails}').hide();", 
-																								 :update  => notedetails, 
-																								 :url => edit_helpdesk_ticket_helpdesk_note_path(@item, note), :method => :GET }) %>
-						</li>
-						<li class="menu-item">
-							<%= link_to "Delete", helpdesk_ticket_helpdesk_note_path(@item, note), :method => :delete, :class => "last" %>
-						</li>						
+          <ul class="menu-box">
+            <li class="menu-item">
+              <%= link_to_remote( "Edit Note", { :loading => "$('loading_#{notedetails}').show();", 
+                                                 :loaded  => "$('loading_#{notedetails}').hide();", 
+                                                 :update  => notedetails,
+                                                 :url => edit_helpdesk_ticket_helpdesk_note_path(@item, note), :method => :GET }) %>
+            </li>
+            <li class="menu-item">
+              <%= link_to "Delete", helpdesk_ticket_helpdesk_note_path(@item, note), :method => :delete, :class => "last" %>
+            </li>	
+            <!--
+            <% if note.incoming %>
+              <li class="menu-item">
+                <%= link_to t('ticket.split_ticket'), { :action => :split_the_ticket , :note_id => note.id} , :method => :post, :class => "last" , :title => "Split this as new Ticket"%>
+              </li>	
+            <% end %>
+	          -->
 					</ul>
 				</li>
-				<% end %>
+				<% end %>			
+				
 			</ul>
 		</div>
 

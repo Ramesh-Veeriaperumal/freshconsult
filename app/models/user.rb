@@ -32,6 +32,7 @@ class User < ActiveRecord::Base
   before_save :set_account_id_in_children , :set_contact_name
   
   named_scope :contacts, :conditions => ["user_role=?", USER_ROLES_KEYS_BY_TOKEN[:customer]]
+  named_scope :technicians, :conditions => ["user_role != ?", USER_ROLES_KEYS_BY_TOKEN[:customer]]
 
   acts_as_authentic do |c|    
     c.validations_scope = :account_id
@@ -131,6 +132,8 @@ class User < ActiveRecord::Base
   
   has_many :agent_groups , :class_name =>'AgentGroup', :foreign_key => "user_id" , :dependent => :destroy
   
+  has_many :canned_responses , :class_name =>'Admin::CannedResponse' 
+  
    
   #accepts_nested_attributes_for :agent
   
@@ -199,7 +202,7 @@ class User < ActiveRecord::Base
     
     UserNotifier.deliver_password_reset_instructions(self, 
         :email_body => Liquid::Template.parse(template).render((user_key ||= 'agent') => self, 
-          'helpdesk_name' => account.helpdesk_name, 'password_reset_url' => edit_password_reset_url(perishable_token, :host => account.host)))
+          'helpdesk_name' => account.portal_name, 'password_reset_url' => edit_password_reset_url(perishable_token, :host => account.host)))
   end
   
   def deliver_activation_instructions! #Need to refactor this.. Almost similar structure with the above one.
@@ -216,8 +219,8 @@ class User < ActiveRecord::Base
     
     UserNotifier.send_later(:deliver_user_activation, self, 
         :email_body => Liquid::Template.parse(template).render((user_key ||= 'agent') => self, 
-          'helpdesk_name' => account.helpdesk_name, 'activation_url' => register_url(perishable_token, :host => account.host)), 
-        :subject => "#{account.helpdesk_name} user activation")
+          'helpdesk_name' => account.portal_name, 'activation_url' => register_url(perishable_token, :host => account.host)), 
+        :subject => "#{account.portal_name} user activation")
   end
   
   def deliver_contact_activation
@@ -227,8 +230,8 @@ class User < ActiveRecord::Base
       e_notification = account.email_notifications.find_by_notification_type(EmailNotification::USER_ACTIVATION)
       UserNotifier.send_later(:deliver_user_activation, self, 
           :email_body => Liquid::Template.parse(e_notification.requester_template).render('contact' => self, 
-            'helpdesk_name' => account.helpdesk_name, 'activation_url' => register_url(perishable_token, :host => account.host)), 
-          :subject => "#{account.helpdesk_name} user activation")
+            'helpdesk_name' => account.portal_name, 'activation_url' => register_url(perishable_token, :host => account.host)), 
+          :subject => "#{account.portal_name} user activation")
     end
   end
   
@@ -269,7 +272,7 @@ class User < ActiveRecord::Base
            :conditions => ['name like ?', "#{letter}%"],
            :order => 'name'
   end
-
+ 
   protected
     def set_account_id_in_children
       self.avatar.account_id = account_id unless avatar.nil?
@@ -293,7 +296,5 @@ class User < ActiveRecord::Base
    end
    
  end
- 
- 
   
 end

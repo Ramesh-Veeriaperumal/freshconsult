@@ -6,10 +6,10 @@ class Subscription < ActiveRecord::Base
   belongs_to :affiliate, :class_name => 'SubscriptionAffiliate', :foreign_key => 'subscription_affiliate_id'
   
   before_create :set_renewal_at
-  before_update :cache_old_model
+  before_update :cache_old_model, :set_free_plan_agnt_limit, :charge_if_free
   before_destroy :destroy_gateway_record
   before_validation :update_amount
-  after_update :update_features
+  after_update :update_features,:send_invoice
   
   attr_accessor :creditcard, :address
   attr_reader :response
@@ -44,7 +44,7 @@ class Subscription < ActiveRecord::Base
       self.discount = plan.discount if plan.discount && plan.discount > discount
     else
       # Free account from the get-go?  No point in having a trial
-      self.state = 'active' if new_record?
+      self.state = 'active' #if new_record?
     end
     
     self.renewal_period = plan.renewal_period
@@ -98,22 +98,7 @@ class Subscription < ActiveRecord::Base
   # If this subscription is paid via paypal, check to see if paypal
   # made the charge and set the billing date into the future.
   def charge
-    if paypal?
-      if (@response = paypal.get_profile_details(billing_id)).success?
-        next_billing_date = Time.parse(@response.params['next_billing_date'])
-        if next_billing_date > Time.now.utc
-          update_attributes(:next_renewal_at => next_billing_date, :state => 'active')
-          subscription_payments.create(:account => account, :amount => amount) unless amount == 0
-          true
-        else
-          false
-        end
-      else
-        errors.add_to_base(@response.message)
-        false
-      end
-    else
-      if amount == 0 || (@response = gateway.purchase(amount_in_pennies, billing_id)).success?
+    if amount == 0 || (@response = gateway.purchase(amount_in_pennies, billing_id)).success?
         update_attributes(:next_renewal_at => self.next_renewal_at.advance(:months => self.renewal_period), :state => 'active')
         subscription_payments.create(:account => account, :amount => amount, :transaction_id => @response.authorization) unless amount == 0
         true
@@ -121,8 +106,8 @@ class Subscription < ActiveRecord::Base
         errors.add_to_base(@response.message)
         false
       end
-    end
   end
+  
   
   # Charge the card on file any amount you want.  Pass in a dollar
   # amount (1.00 to charge $1).  A SubscriptionPayment record will
@@ -231,7 +216,7 @@ class Subscription < ActiveRecord::Base
           end
         end
       else
-        if !next_renewal_at? || next_renewal_at < 1.day.from_now.at_midnight || @charge_now.eql?("true")
+        if (!next_renewal_at? || next_renewal_at < 1.day.from_now.at_midnight || @charge_now.eql?("true")) and amount > 0
           if (@response = gateway.purchase(amount_in_pennies, billing_id)).success?
             subscription_payments.build(:account => account, :amount => amount, :transaction_id => @response.authorization)
             self.state = 'active'
@@ -268,11 +253,32 @@ class Subscription < ActiveRecord::Base
     end
     
     def validate_on_update
-      #return unless self.agent_limit.updated?
-      
+      return if self.amount == 0      
       if(agent_limit && agent_limit < account.agents.count)
-        errors.add_to_base("You Freshdesk currently has #{account.agents.count} agents, you cannot subscripe to lesser number of agents. Please delete some agents and try again.")
+       errors.add_to_base(I18n.t("subscription.error.lesser_agents", {:agent_count => account.agents.count}))end         
+    end
+    
+    def charge_if_free
+      if (self.amount > 0 and @old_subscription.subscription_plan.free_plan? )
+        if (@response = gateway.purchase(amount_in_pennies, billing_id)).success?
+          self.next_renewal_at = Time.now.advance(:months => renewal_period) 
+          @trans_id = @response.authorization
+          true
+        else
+          errors.add_to_base(@response.message)
+          false
+        end
       end
+    end
+ 
+    def send_invoice
+      unless @trans_id.blank?
+        subscription_payments.create(:account => account, :amount => amount, :transaction_id => @trans_id) 
+      end
+    end
+
+    def free_plan?
+      self.subscription_plan.name == SubscriptionPlan::SUBSCRIPTION_PLANS[:free]
     end
     
     def update_features
@@ -311,4 +317,9 @@ class Subscription < ActiveRecord::Base
     def config_from_file(file)
       YAML.load_file(File.join(RAILS_ROOT, 'config', file))[RAILS_ENV].symbolize_keys
     end
+    
+    def set_free_plan_agnt_limit
+      self.agent_limit = AppConfig['free_plan_agts'] if free_plan?
+    end
+  
 end

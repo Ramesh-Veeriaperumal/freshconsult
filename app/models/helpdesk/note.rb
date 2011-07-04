@@ -42,6 +42,10 @@ class Helpdesk::Note < ActiveRecord::Base
   def email?
     source == SOURCE_KEYS_BY_TOKEN["email"]
   end
+
+  def note?
+  	source == SOURCE_KEYS_BY_TOKEN["note"]
+  end
   
   def note?
     source == SOURCE_KEYS_BY_TOKEN["note"]

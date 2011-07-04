@@ -64,6 +64,8 @@ ActionController::Routing::Routes.draw do |map|
     admin.resources :security, :member => { :update => :put }
     admin.resources :data_export, :collection => {:export => :any }
     admin.resources :portal, :only => [ :index, :update ]
+    admin.resources :canned_responses
+    admin.resources :products
   end
   
   #SAAS copy starts here
@@ -71,7 +73,7 @@ ActionController::Routing::Routes.draw do |map|
     subdom.root :controller => 'subscription_admin/subscriptions', :action => 'index'
     subdom.with_options(:namespace => 'subscription_admin/', :name_prefix => 'admin_', :path_prefix => nil) do |admin|
       admin.resources :subscriptions, :member => { :charge => :post }
-      admin.resources :accounts
+      admin.resources :accounts, :collection => {:agents => :get, :helpdesk_urls => :get, :tickets => :get}
       admin.resources :subscription_plans, :as => 'plans'
       admin.resources :subscription_discounts, :as => 'discounts'
       admin.resources :subscription_affiliates, :as => 'affiliates'
@@ -151,7 +153,8 @@ ActionController::Routing::Routes.draw do |map|
 #    end
 
     helpdesk.resources :tickets, :collection => { :empty_trash => :delete, :empty_spam => :delete, :user_ticket => :get }, 
-                                 :member => { :assign => :put, :restore => :put, :spam => :put, :unspam => :put, :close => :put, :execute_scenario => :post  , :close_multiple => :put, :pick_tickets => :put, :change_due_by => :put } do |ticket|
+                                 :member => { :assign => :put, :restore => :put, :spam => :put, :unspam => :put, :close => :put, :execute_scenario => :post  , :close_multiple => :put, :pick_tickets => :put, :change_due_by => :put , :get_ca_response_content => :post ,:split_the_ticket =>:post , :merge_with_this_request =>:post } do |ticket|
+
       ticket.resources :notes, :member => { :restore => :put }, :name_prefix => 'helpdesk_ticket_helpdesk_'
       ticket.resources :subscriptions, :name_prefix => 'helpdesk_ticket_helpdesk_'
       ticket.resources :tag_uses, :name_prefix => 'helpdesk_ticket_helpdesk_'

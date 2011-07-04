@@ -7,11 +7,12 @@ class ForumCategoriesController < ApplicationController
   
   before_filter { |c| c.requires_feature :forums }
   before_filter { |c| c.check_portal_scope :open_forums }
+  before_filter :portal_category?, :except => :index
   before_filter :set_selected_tab
   before_filter :content_scope
   
   def index
-     @forum_categories = scoper.all
+     @forum_categories = current_portal.forum_categories
      respond_to do |format|
       format.html 
       format.xml  { render :xml => @forum_categories }
@@ -59,6 +60,11 @@ class ForumCategoriesController < ApplicationController
     
     def scoper
       current_account.forum_categories
+    end
+    
+    def portal_category?
+      wrong_portal unless(main_portal? || 
+            (params[:id] && params[:id].to_i == current_portal.forum_category_id))
     end
     
     def set_selected_tab

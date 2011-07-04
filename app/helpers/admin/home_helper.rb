@@ -21,22 +21,24 @@ module Admin::HomeHelper
     admin_links = [
                     [ t(".everything_helpdesk"), [
                                     ['/account/edit',               'rebranding'              ],
-                                    ['/ticket_fields',              'ticket-fields'           ],
                                     ['/admin/email_configs',        'email-settings'          ],
                                     ['/admin/email_notifications',  'email-notifications'     ],
+                                    ['/ticket_fields',              'ticket-fields'           ],
                                     ['/helpdesk/sla_policies',      'sla'                     ],
+                                    ['/admin/business_calendars',   'business-hours',   feature?(:business_hours)        ],
                                     ['/admin/va_rules',             'dispatcher'              ],
                                     ['/admin/automations',          'scenario',         feature?(:scenario_automations)  ],
-                                    ['/admin/business_calendars',   'business-hours',   feature?(:business_hours)        ]
+                                    ['/admin/products',             'multi-product',    feature?(:multi_product)  ]
+#                                    ['/admin/canned_responses',     'canned-response'         ]
                     ]],
                     [ t(".everything_else"), [
                                     ['/account',                    'account-settings'  , current_user.account_admin?      ],
                                     ['/admin/portal',               'customer-portal'         ],
+                                    ['/admin/security',             'remote-authentication'   ],
+                                    ['/admin/zip_readers',          'import'                  ],
                                     ['/admin/widget_config',        'feedback'                ],
                                     ['/agents',                     'agent'                   ],
-                                    ['/groups',                     'group'                   ],
-                                    ['/admin/security',             'remote-authentication'   ],
-                                    ['/admin/zip_readers',          'import'                  ]
+                                    ['/groups',                     'group'                   ]
                     ]]
 
                     # [ "People & Roles", [

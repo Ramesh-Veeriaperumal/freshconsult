@@ -8,8 +8,8 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
       deliver_email_notification({ :ticket => ticket,
              :notification_type => notification_type,
              :receips => i_receips,
-             :email_body => a_template.render('ticket' => ticket, 'helpdesk_name' => ticket.account.helpdesk_name, 
-                                              'comment' => comment)
+             :email_body => a_template.render('ticket' => ticket, 
+                'helpdesk_name' => ticket.account.portal_name, 'comment' => comment)
           }) unless i_receips.nil?
     end
     
@@ -18,8 +18,8 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
       deliver_email_notification({ :ticket => ticket,
              :notification_type => notification_type,
              :receips => ticket.requester.email,
-             :email_body => r_template.render('ticket' => ticket, 'helpdesk_name' => ticket.account.helpdesk_name, 
-                                              'comment' => comment)
+             :email_body => r_template.render('ticket' => ticket, 
+                'helpdesk_name' => ticket.account.portal_name, 'comment' => comment)
           })
     end
   end
@@ -49,11 +49,12 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
     Liquid::Template.parse(EmailNotification::EMAIL_SUBJECTS[notification_type]).render('ticket' => ticket)
   end
   
-  def reply(ticket, note , reply_email)
+  def reply(ticket, note , reply_email, options={})
     subject       formatted_subject(ticket)
     recipients    ticket.requester.email
+    cc            ticket.cc_email if !options[:include_cc].blank? and !ticket.cc_email.nil?
     from          reply_email
-    body          :ticket => ticket, :note => note, :host => ticket.account.host
+    body          :ticket => ticket, :note => note, :host => ticket.portal_host
     headers       "Reply-to" => "#{reply_email}"
     sent_on       Time.now
     content_type  "multipart/alternative"

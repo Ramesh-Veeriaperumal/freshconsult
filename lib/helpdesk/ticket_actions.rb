@@ -27,6 +27,7 @@ module Helpdesk::TicketActions
     @ticket.source = TicketConstants::SOURCE_KEYS_BY_TOKEN[:portal] if @ticket.source == 0
     @ticket.ticket_type ||= TicketConstants::TYPE_KEYS_BY_TOKEN[:how_to]
     @ticket.email ||= current_user && current_user.email
+    @ticket.email_config_id ||= current_portal.product.id
   end
   
   #handle_attachments part ideally should go to the ticket model. And, 'attachments' is a protected attribute, so 
@@ -36,5 +37,125 @@ module Helpdesk::TicketActions
       @ticket.attachments.create(:content => a[:file], :description => a[:description], :account_id => @ticket.account_id)
     end
   end
+  
+  def split_the_ticket        
+    create_ticket_from_note
+    @note.destroy #delete the notes
+    update_split_activity   
+    redirect_to @item
+  end
 
+  def update_split_activity    
+   @item.create_activity(current_user, 'activities.tickets.ticket_split.long',
+            {'eval_args' => {'split_ticket_path' => ['split_ticket_path', 
+            {'ticket_id' => @source_ticket.display_id, 'subject' => @source_ticket.subject}]}}, 'activities.tickets.ticket_split.short') 
+                  
+  end
+  
+  def create_ticket_from_note    
+    @source_ticket = current_account.tickets.find_by_display_id(params[:id])
+    @note = @source_ticket.notes.find(params[:note_id])   
+    params[:helpdesk_ticket] = {:subject =>@source_ticket.subject ,
+                                :description =>@note.body ,
+                                :email =>@note.user.email,
+                                :priority =>@source_ticket.priority,
+                                :group_id =>@source_ticket.group_id,
+                                :status =>@source_ticket.status,
+                                :source =>@source_ticket.source,
+                                :ticket_type =>@source_ticket.ticket_type,                             
+                                
+                               }  
+     
+    build_item
+    if @item.save
+      flash[:notice] = I18n.t(:'flash.general.create.success', :human_name => cname.humanize.downcase)
+      move_attachments      
+    end
+    
+  end
+  ## Need to test in engineyard--also need to test zendesk import
+  def move_attachments   
+    @note.attachments.each do |attachment|      
+      url = attachment.content.url.split('?')[0]
+      @item.attachments.create(:content =>  RemoteFile.new(url), :description => "", :account_id => @item.account_id)    
+    end
+  end
+    
+  
+  def show_tickets_from_same_user
+    @source_ticket = current_account.tickets.find_by_display_id(params[:id])    
+    @items = @source_ticket.requester.tickets #or tickets from customer  
+    render :partial => "merge"  
+  end
+  
+  def confirm_merge    
+    @source_ticket = current_account.tickets.find_by_display_id(params[:id])    
+    @target_ticket = current_account.tickets.find_by_display_id(params[:target_id])  
+    if @target_ticket.blank?
+      flash[:notice] = t(:'flash.tickets.merge.wrong_ticket_id')
+      show_tickets_from_same_user     
+    else
+      render :partial => "helpdesk/shared/confirm_merge"
+    end
+    
+  end
+  
+  def complete_merge    
+    @source_ticket = current_account.tickets.find_by_display_id(params[:source][:ticket_id])
+    @target_ticket = current_account.tickets.find_by_display_id(params[:target][:ticket_id])   
+    handle_merge
+    flash[:notice] = t(:'flash.tickets.merge.success')
+    redirect_to @target_ticket    
+  end
+  
+  def handle_merge      
+    add_note_to_target_ticket
+    move_source_notes_to_target   
+    add_note_to_source_ticket
+    close_source_ticket 
+    update_merge_activity  
+  end
+  
+  def update_merge_activity    
+    @source_ticket.create_activity(current_user, 'activities.tickets.ticket_merge.long',
+            {'eval_args' => {'merge_ticket_path' => ['merge_ticket_path', 
+            {'ticket_id' => @target_ticket.display_id, 'subject' => @target_ticket.subject}]}}, 'activities.tickets.ticket_merge.short') 
+  end
+  
+  def move_source_notes_to_target
+    @source_ticket.notes.each do |note|
+      note.update_attribute(:notable_id, @target_ticket.id)
+    end
+  end
+  
+  def close_source_ticket
+    @source_ticket.update_attribute(:status , Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:closed])
+  end
+  
+  def add_note_to_source_ticket
+      @source_ticket.notes.create(
+        :body => params[:source][:note],
+        :private => params[:source][:is_public] || true ,
+        :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],
+        :account_id => current_account.id,
+        :user_id => current_user && current_user.id
+      )
+  end
+  
+  def add_note_to_target_ticket
+    @target_note = @target_ticket.notes.create(
+        :body => params[:target][:note],
+        :private => params[:target][:is_public] || true ,
+        :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],
+        :account_id => current_account.id,
+        :user_id => current_user && current_user.id
+      )
+      ## handling attachemnt..need to check this
+     @source_ticket.attachments.each do |attachment|      
+      url = attachment.content.url.split('?')[0]
+      @target_note.attachments.create(:content =>  RemoteFile.new(url), :description => "", :account_id => @target_note.account_id)    
+    end
+  end
+  
+ 
 end

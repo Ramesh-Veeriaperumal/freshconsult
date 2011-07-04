@@ -20,6 +20,9 @@ class Solution::ArticlesController < ApplicationController
     
     logger.debug "show is :: #{params.inspect}"
     @article = current_account.solution_articles.find(params[:id], :include => :folder) 
+    wrong_portal and return unless(main_portal? || 
+        (@article.folder.category_id == current_portal.solution_category_id))
+        
     respond_to do |format|
       format.html
       format.xml  { render :xml => @article.to_xml(:include => :folder) }

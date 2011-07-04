@@ -1,19 +1,19 @@
 <div class="header">
-	<div class="brand">
-	    <a class="logo" href="/home">
-				<%= image_tag (current_account.logo.nil? ? "/images/logo.png" : current_account.logo.content.url(:logo)) %>
-			</a>
-			<a class="logo_text" href="/home"><%= current_account.helpdesk_name %></a>
-	</div>		
-	<div class="wrapper">
-	    <div class="header_links">
-	    	<% if current_user then %>              
-				<%= t('header.welcome') %><span class="font_color"><strong><%= link_to current_user.name, edit_profile_path(current_user) %></strong>-<%= link_to(t('header.signout'), logout_path) %></span>
-			<% else %>
-				<%= link_to( t('header.login') , login_path) %>
-			<% end %>				
-		</div>
-	</div>
+  <div class="brand">
+    <% link_to (portal_pref(current_portal, :logo_link).empty?) ? "/home" : portal_pref(current_portal, :logo_link), :class => "logo" do %>
+      <%= image_tag (current_portal.logo.nil? ? "/images/logo.png" : current_portal.logo.content.url(:logo)) %>
+    <% end %>      
+    <%= link_to(current_portal.name, "/home", :class => "logo_text") %>
+  </div>		
+  <div class="wrapper">
+    <div class="header_links">
+      <% if current_user then %>              
+        <%= t('header.welcome') %><span class="font_color"><strong><%= link_to current_user.name, edit_profile_path(current_user) %></strong>-<%= link_to(t('header.signout'), logout_path) %></span>
+      <% else %>
+        <%= link_to( t('header.login') , login_path) %>
+      <% end %>				
+    </div>
+  </div>
 	<div class="top_nav_bg"> 
 		<div class="wrapper">
 			 <div class="top_nav"> 	

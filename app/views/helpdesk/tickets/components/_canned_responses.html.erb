@@ -1,0 +1,21 @@
+<% javascript_tag do -%>		
+	function getCannedResponse(ticket_id,ca_resp_id){		   
+		jQuery.ajax({	type: 'POST',
+						url: '/helpdesk/tickets/get_ca_response_content/'+ticket_id+'?ca_resp_id='+ca_resp_id,
+						contentType: 'application/text',
+						async: false,						
+						success: function(data){		
+									insertIntoConversation(data);
+								}
+						});
+		return true;
+	}
+<%- end %>
+<div>
+	<%
+ 		my_ca_resp = current_account.canned_responses.my_canned_responses(current_user)
+ 		my_ca_resp.each do |ca_response|
+	%>
+		<%= link_to_function ca_response.title, "getCannedResponse('#{@ticket.display_id}','#{ca_response.id}')", :title => t(:'ticket.canned_responses.insert_ca_resp_tip') %>
+	<%end%>
+</div>

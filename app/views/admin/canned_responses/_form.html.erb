@@ -1,0 +1,85 @@
+<% content_for :sidebar do -%><%- end %>
+<% javascript_tag do %>
+jQuery(document).ready(function(){
+  if ('<%=@ca_response.accessible.visibility%>' == '<%=Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents]%>')
+	{
+		jQuery('#accessible_group').show();	
+		jQuery('#admin_canned_response_visibility_group_id').removeAttr('disabled');
+	}
+	else
+	{
+		jQuery('#admin_canned_response_visibility_group_id').attr('disabled','disabled');
+	}
+	
+	jQuery('.l_placeholder').bind("click", function(ev){
+			active_email_body = jQuery("#ca-content");
+			jQuery('#place-dialog').slideDown();			
+	});
+});
+
+
+function toggleGroup(access_id)
+{	
+	if (access_id == '<%=Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents]%>')
+	{
+		jQuery('#accessible_group').show();
+		jQuery('#admin_canned_response_visibility_group_id').removeAttr('disabled');
+	}
+	else
+	{
+		jQuery('#accessible_group').hide();	
+		jQuery('#admin_canned_response_visibility_group_id').attr('disabled','disabled');
+	}
+}
+<% end %> 
+
+
+<%= include_tiny_mce_if_needed %>
+<%= f.error_messages :object_name => 'canned_response' %>
+<ul class="ui-form">
+	<li>
+    		<%= f.label(:title, t('.response_name')) %>
+    		<%= f.text_field :title, :class => "text required" %>
+	</li>
+	<li>
+			<label for="ca-content">
+				<%= t('message') %>
+				<a class='l_placeholder slim-button' href='javascript:void(0)'>Insert Placeholder &raquo;</a>
+			</label>
+   		<%= f.text_area :content, :class => "mceEditor", :id => 'ca-content' %>		
+	</li>
+	<li class="inline-field">
+	<% f.fields_for :visibility  do |access| %>
+		<div>			
+			<label class="caption"><%=t('.available_for')%>:</label>
+			<div class="fields inline-radio">
+				<div class="inline-radio">
+					<%= access.radio_button  :visibility, Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me], {:onclick =>"toggleGroup(this.value)", :class => "radio", :checked => Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me]== @ca_response.accessible.visibility } %> 
+					<%= t('.me_only') %>
+					<%= access.hidden_field :user_id, :value =>current_user.id %>	
+				</div>
+				<div class="inline-radio">
+					<%= access.radio_button  :visibility, Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents], {:onclick =>"toggleGroup(this.value)",:class => "radio" ,:checked => Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents]== @ca_response.accessible.visibility } %> 
+					<%= t('.all_agents') %>
+				</div>
+				<div class="inline-radio">
+					<%= access.radio_button  :visibility, Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents],{:onclick =>"toggleGroup(this.value)" , :class => "radio" , :checked => Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents]== @ca_response.accessible.visibility} %> 
+					<%= t('.groups') %>
+					<div style="display:none;" class="tabbed" id="accessible_group">
+			        <%= access.collection_select :group_id, Group.find_all_by_account_id(current_account.id , :order=>'name') , :id, :name, {:class =>"dropdown", :selected => @ca_response.accessible.group_id} %>
+			    </div>
+				</div>
+			</div>
+		</div>			   
+ 	 	
+	<%end%>
+	</li>
+</ul>
+<div class="button-container">
+	<%= submit_tag t('save'), :class => "uiButton" %>	      	
+	<%= link_to(t('cancel'), admin_canned_responses_path , :class => "uiButton" ) %>
+</div>
+
+<% content_for :pagefixed do %>
+	<%= render :partial => "/shared/placeholder_help" %>
+<% end %>

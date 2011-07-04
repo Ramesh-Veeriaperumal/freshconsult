@@ -2,13 +2,15 @@ class Helpdesk::TicketsController < ApplicationController
 
   before_filter :check_user , :only => [:show]
   before_filter { |c| c.requires_permission :manage_tickets }
-
-  include HelpdeskControllerMethods
+  
+  include HelpdeskControllerMethods  
+  include Helpdesk::TicketActions
+  
+  layout :choose_layout 
   
   before_filter :load_multiple_items, :only => [:destroy, :restore, :spam, :unspam, :assign , :close_multiple ,:pick_tickets]  
-  before_filter :load_item,     :only => [:show, :edit, :update, :execute_scenario, :close ,:change_due_by] 
-  before_filter :load_flexifield , :only =>[:execute_scenario]
-  before_filter :set_customizer , :only => [:new ,:edit ,:show]
+  before_filter :load_item,           :only => [:show, :edit, :update, :execute_scenario, :close ,:change_due_by ,:get_ca_response_content] 
+  before_filter :load_flexifield ,    :only => [:execute_scenario]
   
   def check_user
     if !current_user.nil? and current_user.customer?
@@ -216,17 +218,17 @@ class Helpdesk::TicketsController < ApplicationController
   
   def get_agents #This doesn't belong here.. by Shan
     group_id = params[:id]
-    @agents = current_account.agents.all(:include =>:user)    
-    @agents = AgentGroup.find(:all, :joins=>:user, :conditions =>{:group_id =>group_id ,:users =>{:account_id =>current_account.id} } ) unless group_id.nil?
+    @agents = current_account.agents.all(:include =>:user)
+    @agents = AgentGroup.find(:all, :joins=>:user, :conditions => { :group_id =>group_id ,:users =>{:account_id =>current_account.id} } ) unless group_id.nil?
     render :partial => "agent_groups"
   end
   
   def new
     unless params[:topic_id].nil?
       @topic = Topic.find(params[:topic_id])
-      @item.subject = @topic.title
+      @item.subject     = @topic.title
       @item.description = @topic.posts.first.body
-      @item.requester = @topic.user
+      @item.requester   = @topic.user
     end
   end
  
@@ -242,7 +244,8 @@ class Helpdesk::TicketsController < ApplicationController
       set_customizer
       create_error
     end
-  end
+  end  
+  
  
   def close 
     status_id = Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:closed]
@@ -260,8 +263,16 @@ class Helpdesk::TicketsController < ApplicationController
     sol_desc = current_account.solution_articles.find(params[:id])
     render :text => (sol_desc.description.gsub(/<\/?[^>]*>/, "")).gsub(/&nbsp;/i,"") || "" 
   end
- 
+
+  def get_ca_response_content   
+    ca_resp = current_account.canned_responses.find(params[:ca_resp_id])
+    a_template = Liquid::Template.parse(ca_resp.content).render('ticket' => @item, 
+      'helpdesk_name' => @item.account.portal_name)    
+    render :text => (a_template.gsub(/<\/?[^>]*>/, "")).gsub(/&nbsp;/i,"") || "" 
+  end
+
   protected
+
     def item_url
       return new_helpdesk_ticket_path if params[:save_and_create]
       @item
@@ -327,6 +338,10 @@ class Helpdesk::TicketsController < ApplicationController
       unless flexi_field.nil?     
         evaluate_on.assign_ff_values flexi_field    
       end
+  end
+  
+    def choose_layout 
+      (action_name == "show_tickets_from_same_user"  || action_name == "confirm_merge") ? 'plainpage' : 'helpdesk/default'
     end
 
 end

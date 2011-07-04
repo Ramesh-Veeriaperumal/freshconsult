@@ -1,0 +1,74 @@
+<% content_for :sidebar do -%><%- end %>
+<%= render :partial => "shared/colorpicker" %>
+<%= form.error_messages %>
+<ul class="ui-form">
+  <li class="inline-field">
+    <%= content_tag(:label, t('.product_name') + " *", :class => "caption") %>
+    <div class="fields">
+      <%= form.text_field :name, :class => "required text" %>
+    </div>
+  </li>
+  <li class="inline-field">
+    <%= content_tag(:label, t('.configure_email'), :class => "caption") %>
+    <div class="fields">
+      <%= content_tag(:label, t('.enter_support_email_id')) %>
+      <%= form.text_field :reply_email, :class => "required text", :id => "reply_to_id" %>      
+      <%= content_tag(:div, t('email_configs.info7'), :class => "info-data") %>      
+      <span class="seperator"></span>      
+      <%= content_tag(:label, t('email_configs.info8')) %>
+      <%= form.hidden_field :to_email, :id => "hidden_reply_to" %>
+      <%= content_tag(:div, @product.to_email, :id => "div_reply_email", :class =>"highlight-textbox-info" )  %>      
+      <span class="seperator"></span>      
+      <label>
+        <%= t('email_configs.info9') %> 
+        <%= collection_select(:product, :group_id, @groups, :id, :name, options = {:include_blank => "..."}) %>
+      </label>
+      <%= content_tag(:div, t('email_configs.info10'), :class => "info-data") %>
+    </div>
+  </li>
+  <li class="inline-field">
+    <label>
+      <%= form.check_box :enable_portal, {:class => "checkbox", :id => "EnablePortal" } %>
+      <%= t('.enable_product_portal') %>
+      <%= content_tag(:div, t(".configure_seperate_portal"), :class => "info-data tabbed") %>
+    </label>
+    <div id="PortalSettings" style="display:block;">
+			<% form.fields_for :portal do |portal| %>
+	      <%= render :partial => "portal", :object => portal %>
+      <% end %>
+    </div>
+  </li>  
+</ul>
+<% content_for :pagefixed do -%>
+  <% javascript_tag do %>
+    jQuery(document).ready(function(){
+      jQuery("#reply_to_id")
+        .bind("change keyup", 
+          function(ev){
+            if(this.value != ''){
+              reply_email = construct_reply_url(this.value, "<%= current_account.full_domain %>");
+              jQuery("#div_reply_email").text(reply_email);
+              jQuery("#hidden_reply_to").val(reply_email);
+            }
+        })
+        .trigger("change");
+
+      jQuery("#EnablePortal")
+        .bind("change", function(ev){
+          if(this.checked){
+            jQuery("#PortalSettings").slideDown(400);
+          }else{
+            jQuery("#PortalSettings").slideUp(200);
+          }
+        })
+        .trigger("change");
+        
+        jQuery("#product_name").change(function(e){
+          jQuery("#domain_info_name")
+              .html(this.value.toLowerCase().replace(/\W/g, ''));
+        })
+        .trigger("change");
+        
+    });
+  <%- end %>
+<%- end %>

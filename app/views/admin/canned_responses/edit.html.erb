@@ -1,0 +1,5 @@
+<% content_for :sidebar do -%><%- end %>
+<h3 class="title"><%=t('.title')%></h3>
+<% form_for (@ca_response, :html => {:id => "edit_canned_response" }) do |f| %>
+	<%= render :partial => "form", :locals => { :f => f } %>
+<% end %>

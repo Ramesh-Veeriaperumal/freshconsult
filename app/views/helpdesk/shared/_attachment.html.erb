@@ -17,10 +17,10 @@
 
   <div class="size">
     (<%= number_to_human_size attachment.content_file_size %>)
-	<% if local_assigns[:show_delete] %>
+	  <% if local_assigns[:show_delete] %>
 	    <span class="delete">
 	      <%= link_to image_tag("icons/btn_close_icon.png"), helpdesk_attachment_path(attachment), :method => 'delete', :confirm => "You're about to permanently delete this attachment. Continue?", :class => "delete" %>
 	    </span>
-	<% end %>
+	  <% end %>
   </div>  
 </li>

@@ -53,5 +53,17 @@ module TicketConstants
   TYPE_OPTIONS = TYPE.map { |i| [i[1], i[2]] }
   TYPE_NAMES_BY_KEY = Hash[*TYPE.map { |i| [i[2], i[1]] }.flatten]
   TYPE_KEYS_BY_TOKEN = Hash[*TYPE.map { |i| [i[0], i[2]] }.flatten]
+  
+  DEFAULT_COLUMNS =  [
+    [ :subject,   "subject",             :text ], 
+    [ :description, "description",         :text],
+    [ :status, "status",         :dropdown],
+    [ :ticket_type, "ticket_type",         :dropdown]
+  ]
+  
+  DEFAULT_COLUMNS_OPTIONS = DEFAULT_COLUMNS.map { |i| [i[1], i[2]] }
+  DEFAULT_COLUMNS_BY_KEY = Hash[*DEFAULT_COLUMNS.map { |i| [i[2], i[1]] }.flatten]
+  DEFAULT_COLUMNS_KEYS_BY_TOKEN = Hash[*DEFAULT_COLUMNS.map { |i| [i[0], i[2]] }.flatten]
+ 
 
 end

@@ -3,6 +3,7 @@ class Solution::FoldersController < ApplicationController
     c.requires_permission :manage_knowledgebase
   end
   before_filter { |c| c.check_portal_scope :open_solutions }
+  before_filter :portal_category?
   before_filter :check_folder_permission, :only => [:show]
   before_filter :set_selected_tab
   
@@ -126,6 +127,11 @@ class Solution::FoldersController < ApplicationController
     current_category = current_account.solution_categories.find(params[:category_id])
     @folder = current_category.folders.find(params[:id], :include => :articles)    
     redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) if !@folder.nil? and  !@folder.visible?(current_user)
+  end
+  
+  def portal_category?
+    wrong_portal unless(main_portal? || 
+          (params[:category_id].to_i == current_portal.solution_category_id)) #Duplicate..
   end
 
 end

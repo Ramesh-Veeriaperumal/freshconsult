@@ -54,16 +54,12 @@ class Customer < ActiveRecord::Base
            :conditions => ['name like ?', "#{letter}%"],
            :order => 'name'
   end
-
   
   #setting default sla
-  def check_sla_policy
-    
+  def check_sla_policy    
     if self.sla_policy_id.nil?            
-      self.sla_policy_id = account.sla_policies.find_by_is_default(true).id
-      
-    end
-    
+      self.sla_policy_id = account.sla_policies.find_by_is_default(true).id      
+    end    
   end
   
 end

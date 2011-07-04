@@ -14,7 +14,7 @@ class TopicsController < ApplicationController
   
   before_filter :set_selected_tab
   
-  uses_tiny_mce :options => Helpdesk::MEDIUM_EDITOR 
+  uses_tiny_mce :options => Helpdesk::FRESH_EDITOR
 
 	# @WBH@ TODO: This uses the caches_formatted_page method.  In the main Beast project, this is implemented via a Config/Initializer file.  Not
 	# sure what analogous place to put it in this plugin.  It don't work in the init.rb  
@@ -27,8 +27,7 @@ class TopicsController < ApplicationController
           redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
     end
   end
-  
-  
+    
   def index
     respond_to do |format|
       format.html { redirect_to forum_path(params[:forum_id]) }
@@ -43,8 +42,7 @@ class TopicsController < ApplicationController
     @topic = Topic.new
   end
   
-  def show
-    
+  def show    
     respond_to do |format|
       format.html do
         # see notes in application.rb on how this works
@@ -201,6 +199,9 @@ end
     end
     
     def find_forum_and_topic
+      wrong_portal unless(main_portal? || 
+            (params[:category_id].to_i == current_portal.forum_category_id)) #Duplicate
+            
        @forum_category = scoper.find(params[:category_id])
        @forum = @forum_category.forums.find(params[:forum_id])
        raise(ActiveRecord::RecordNotFound) unless (@forum.account_id == current_account.id)

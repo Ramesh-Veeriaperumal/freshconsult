@@ -8,7 +8,7 @@ makePageNonSelectable = function(source){
 	if (document.all) source.onselectstart = function () { return false; };	// Internet Explorer
 	
 	source.onmousedown = function () { return false; };						// Other browsers
-}
+};
 
 // Delay in typing of search text
 var delay = (function(){
@@ -48,6 +48,26 @@ function setSelRange(inputEl, selStart, selEnd) {
 	 } 
 }
 
-function setCaretToPos (input, pos) {
+function setCaretToPos(input, pos) {
   setSelRange(input, pos, pos);
+}
+
+function construct_reply_url(to_email, account_name){
+	email_split  = to_email.split("@");
+	email_name   = email_split[0]||'';
+	email_domain = email_split[1]||'';
+	if(email_domain !== ''){
+		email_domain = email_domain.split(".")[0];
+	}		
+	account_name = account_name.toLowerCase();
+	reply_email  = "@"+account_name;
+	
+	
+	if(email_domain.toLowerCase() == account_name){
+		reply_email = email_name + reply_email;		
+	}
+	else{
+		reply_email = email_domain + email_name + reply_email;
+	}
+	return reply_email;
 }

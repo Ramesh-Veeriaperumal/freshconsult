@@ -6,7 +6,7 @@ class Admin::EmailConfigsController < Admin::AdminController
   end
    
   def index
-    @email_configs = scoper.find(:all, :order => 'primary_role desc, id')
+    @email_config = current_account.primary_email_config
     @groups = current_account.groups    
   end
   

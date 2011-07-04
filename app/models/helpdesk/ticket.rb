@@ -11,8 +11,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   has_flexiblefields
   
   #by Shan temp
-  attr_accessor :email, :name, :custom_field ,:customizer, :nscname 
-  
+  attr_accessor :email, :name, :custom_field ,:customizer, :nscname
   
   before_validation :populate_requester, :set_default_values 
   before_create :set_spam, :set_dueby, :save_ticket_states
@@ -365,7 +364,7 @@ end
   end
   
   def custom_fields
-    @custom_fields = FlexifieldDef.all(:include => [:flexifield_def_entries =>:flexifield_picklist_val] , :conditions => ['account_id=? AND module=?',account_id,'Ticket']) 
+    @custom_fields = FlexifieldDef.all(:include => [:flexifield_def_entries =>:flexifield_picklist_vals] , :conditions => ['account_id=? AND module=?',account_id,'Ticket']) 
   end
   
   def to_s
@@ -377,7 +376,7 @@ end
   end
   
   def reply_email
-    email_config ? email_config.reply_email : account.default_email
+    email_config ? email_config.friendly_email : account.default_email
   end
 
   #Some hackish things for virtual agent rules.
@@ -461,7 +460,7 @@ end
       "id"                                => display_id,
       "encoded_id"                        => encode_display_id,
       "subject"                           => subject,
-      "description"                       => description,
+      "description"                       => description_with_attachments,
       "requester"                         => requester,
       "agent"                             => responder,
       "group"                             => group,
@@ -474,34 +473,39 @@ end
       "due_by_hrs"                        => due_by.strftime("%I:%M %p"),
       "fr_due_by_hrs"                     => frDueBy.strftime("%I:%M %p"),
       "url"                               => helpdesk_ticket_url(self, :host => account.host),
-      "attachments"                       => liquidize_attachments(attachments),
-      "latest_comment"                    => liquidize_comment(latest_comment),
-      "latest_public_comment"             => liquidize_comment(latest_public_comment),
-      "latest_comment_attachments"        => liquidize_c_attachments(latest_comment),
-      "latest_public_comment_attachments" => liquidize_c_attachments(latest_public_comment)
+      "portal_url"                        => support_ticket_url(self, :host => portal_host),
+      "portal_name"                       => portal_name,
+      #"attachments"                       => liquidize_attachments(attachments),
+      #"latest_comment"                    => liquidize_comment(latest_comment),
+      "latest_public_comment"             => liquidize_comment(latest_public_comment)
+      #"latest_comment_attachments"        => liquidize_c_attachments(latest_comment),
+      #"latest_public_comment_attachments" => liquidize_c_attachments(latest_public_comment)
     }
+  end
+  
+  def description_with_attachments
+    attachments.empty? ? description : 
+        "#{description}\n\nTicket attachments :\n#{liquidize_attachments(attachments)}\n"
   end
   
   def liquidize_attachments(attachments)
     attachments.each_with_index.map { |a, i| 
-      "#{i+1}. <a href='#{helpdesk_attachment_url(a, :host => account.host)}'>#{a.content_file_name}</a>"
+      "#{i+1}. <a href='#{helpdesk_attachment_url(a, :host => portal_host)}'>#{a.content_file_name}</a>"
       }.join("<br />") #Not a smart way for sure, but donno how to do this in RedCloth?
-  end
-  
-  def latest_comment #There must be a smarter way than this. maybe a proper named scope in Note?!
-    notes.visible.newest_first.first
   end
   
   def latest_public_comment
     notes.visible.public.newest_first.first
   end
   
-  def liquidize_c_attachments(c)
-    liquidize_attachments(c.attachments) if c
-  end
-  
   def liquidize_comment(comm)
-    "#{comm.user ? comm.user.name : 'System'} : #{comm.body}" if comm
+    if comm
+      c_descr = "#{comm.user ? comm.user.name : 'System'} : #{comm.body}"
+      unless comm.attachments.empty?
+        c_descr = "#{c_descr}\n\nAttachments :\n#{liquidize_attachments(comm.attachments)}\n"
+      end
+      c_descr
+    end
   end
   #Liquid ends here
 
@@ -519,8 +523,10 @@ end
       super
     rescue NoMethodError => e
       logger.debug "method_missing :: args is #{args} and method:: #{method} and type is :: #{method.kind_of? String} "
+      load_flexifield if custom_field.nil?
+      custom_field.symbolize_keys!
       
-      if (method.to_s.include? '=') && custom_field.has_key?(method.to_s.chomp("="))
+      if (method.to_s.include? '=') && custom_field.has_key?(method.to_s.chomp("=").to_sym)
         logger.debug "method_missing :: inside custom_field  args is #{args}  and method.chomp:: #{ method.to_s.chomp("=")}"
         
         ff_def_id = FlexifieldDef.find_by_account_id(self.account_id).id
@@ -532,12 +538,7 @@ end
         return
       end
       
-      field =false
-      unless custom_field.nil?
-        field = custom_field.has_key?(method)    
-      end
-      raise e unless field
-      
+      raise e unless custom_field.has_key?(method)
       custom_field[method]
     end
   end
@@ -557,7 +558,13 @@ end
      end
  end
   
- 
+  def portal_host
+    (email_config && email_config.portal && !email_config.portal.portal_url.blank?) ? 
+      email_config.portal.portal_url : account.host
+  end
   
+  def portal_name
+    (email_config && email_config.portal) ? email_config.portal.name : account.portal_name
+  end
   
 end

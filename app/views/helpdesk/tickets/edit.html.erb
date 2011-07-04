@@ -1,4 +1,12 @@
 <% content_for :sidebar do -%><%- end %>
-<h3 class="title"><%=t('ticket.edit')%> <span class="info-data"> (#<%= h(@item.display_id) %>) </span></h3>
-<%= render :partial => "ticket_form", :locals => {:type => "edit"} %>
- 
+<%= content_tag (:h3, t("ticket.edit"), :class => "title") %>
+<% form_for @item, :html => {:multipart => true, :id => "NewTicket" } do |f| %>
+  <ul class="ui-form">  
+    <%= render :partial => "ticket_form", :object => f, :locals => { :is_edit => true } %>
+  </ul>
+  <div class="button-container">
+    <%= link_to t('delete'), @item, :method => :delete, :class => "uiButton floatl" %>
+    <%= f.submit t('update'), :class => "uiButton" %>    
+    <%= link_to t('cancel'), (@item.new_record? ? {:action => 'index'} : @item ), :class => "uiButton" %>
+  </div>
+<% end %>  

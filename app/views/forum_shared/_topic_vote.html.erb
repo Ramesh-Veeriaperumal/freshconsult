@@ -1,4 +1,3 @@
- 
 	<span id="votes<%= @topic.id %>">
 		    <% info_text = (@forum.forum_type != 2) ? ((topic_vote.votes_for == 1)?"has":"have"): ((topic_vote.votes_for > 1)?"like":"likes") %>
 			
@@ -6,12 +5,12 @@
 			
 			<% if(topic_vote.voted_by_user? current_user) %>
 				<div class="forum_info">
-				<% if( topic_vote.votes_for == 1 ) %>  
-					You <%= (@forum.forum_type != 2) ? "have" : "like" %> this <%= forum_type_name %>
-				<% else %>
-					<%= pluralize(topic_vote.votes_for, "Person") %>
-					"including you" <%= info_text %> this <%= forum_type_name %>
-				<% end %>
+  				<% if( topic_vote.votes_for == 1 ) %>  
+  					You <%= (@forum.forum_type != 2) ? "have" : "like" %> this <%= forum_type_name %>
+  				<% else %>
+  					<%= pluralize(topic_vote.votes_for, "Person") %>
+  					"including you" <%= info_text %> this <%= forum_type_name %>
+  				<% end %>
 				</div>
 			<% else %>
 				
@@ -50,12 +49,10 @@
 				 <% end %>
 			<% end %>
 			</div>
-		   
-					
+
 		<%# link_to_remote "-(#{@topic.votes_against})",
 			:update => "flash_notice",    
 			:url => { :action=>"vote",:id => @topic.id, :forum_id => @forum.id , :category_id => @forum_category.id,   
 			:id=>@topic.id,  
-			:vote=>"against"} %>
-	  
+			:vote=>"against"} %>	  
 	</span>

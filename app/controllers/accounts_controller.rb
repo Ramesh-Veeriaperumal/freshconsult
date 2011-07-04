@@ -5,6 +5,7 @@ class AccountsController < ApplicationController
   layout :choose_layout 
   
   skip_before_filter :set_time_zone
+  skip_before_filter :check_account_state
   
   before_filter :build_user, :only => [ :new, :create ]
   before_filter :load_billing, :only => [ :show, :new, :create, :billing, :paypal, :payment_info ]
@@ -13,15 +14,17 @@ class AccountsController < ApplicationController
   before_filter :build_plan, :only => [:new, :create]
   before_filter :load_plans, :only => [:show, :plans]
   before_filter :admin_selected_tab, :only => [ :billing, :show, :edit, :plan, :cancel ]
+  before_filter :load_subscription_plan, :only => [:plan] 
+  before_filter :check_credit_card, :only => [:plan] 
   
   ssl_required :billing
   #ssl_allowed :plans, :thanks, :canceled, :paypal
   
-  before_filter :only => [:update, :destroy, :edit, :delete_logo, :delete_fav, :plan, :plans, :thanks] do |c| 
+  before_filter :only => [:update, :edit, :delete_logo, :delete_fav, :thanks] do |c| 
     c.requires_permission :manage_users
   end
   
-  before_filter :only =>  [:billing,:show,  :cancel ] do |c| 
+  before_filter :only =>  [:billing,:show,:cancel,:destroy, :plan, :plans ] do |c| 
     c.requires_permission :manage_account
   end
   
@@ -233,18 +236,10 @@ class AccountsController < ApplicationController
     end
   end
   
-  def update #by shan temp..
-    #@account.name = params[:account][:name]
+  def update
     @account.time_zone = params[:account][:time_zone]
-    @account.helpdesk_name = params[:account][:helpdesk_name]
-    @account.helpdesk_url = params[:account][:helpdesk_url] 
-    @account.preferences = params[:account][:preferences]
     @account.ticket_display_id = params[:account][:ticket_display_id]
-    
-   
-    update_logo_image  
-    update_fav_icon_image
-      
+    @account.main_portal_attributes = params[:account][:main_portal_attributes]
     
     if @account.save
       flash[:notice] = t(:'flash.account.update.success')
@@ -295,9 +290,8 @@ class AccountsController < ApplicationController
 
   def plan
     if request.post?
-      subscription_plan = SubscriptionPlan.find(params[:plan_id])
-      subscription_plan.discount = @discount
-      @subscription.plan = subscription_plan
+      @subscription_plan.discount = @discount
+      @subscription.plan = @subscription_plan
       @subscription.agent_limit = params[:agent_limit]
       if @subscription.save
         #SubscriptionNotifier.deliver_plan_changed(@subscription)
@@ -306,7 +300,7 @@ class AccountsController < ApplicationController
         render :action => "plan" and return
       end
       
-      if @subscription.state == 'trial'
+      if (@subscription.amount > 0 and @subscription.card_number.blank?)
         redirect_to :action => "billing"
       else
         flash[:notice] = t('plan_info_update')
@@ -315,6 +309,21 @@ class AccountsController < ApplicationController
     else
       #@plans = SubscriptionPlan.find(:all, :conditions => ['id <> ?', @subscription.subscription_plan_id], :order => 'amount asc').collect {|p| p.discount = @subscription.discount; p }
       load_plans
+    end
+  end
+  
+  def load_subscription_plan
+    if request.post?
+     @subscription_plan = SubscriptionPlan.find(params[:plan_id])
+    end
+  end
+  
+  def check_credit_card
+    if request.post?
+      if !@subscription_plan.free_plan? and (@subscription.state == 'active') and @subscription.card_number.blank?
+        flash[:notice] = t('enter_billing_for_free')
+        redirect_to :action => "billing"
+      end
     end
   end
   
@@ -355,48 +364,16 @@ class AccountsController < ApplicationController
   end
   
   def delete_logo
-    load_object
-    @account.logo.destroy
+    current_account.main_portal.logo.destroy
     render :text => "success"
   end
   
   def delete_fav
-    load_object
-    @account.fav_icon.destroy
+    current_account.main_portal.fav_icon.destroy
     render :text => "success"
   end
 
   protected
-  
-   def update_logo_image
-    unless  params[:account][:logo_attributes].nil?
-      if @account.logo.nil?
-        @logo_attachment = Helpdesk::Attachment.new
-        @logo_attachment.description = "logo"
-        @logo_attachment.content = params[:account][:logo_attributes][:content]
-        @logo_attachment.account_id = @account.id
-        @account.logo = @logo_attachment
-        #@account.build_logo( :description => 'logo' ,:content => params[:account][:logo_attributes][:content])
-      else
-        @account.logo.update_attributes(:content => params[:account][:logo_attributes][:content], :description => 'logo')
-      end
-    end
-  end
-  
-  def update_fav_icon_image
-   unless  params[:account][:fav_icon_attributes].nil?
-      if @account.fav_icon.nil?
-        @fav_attachment = Helpdesk::Attachment.new
-        @fav_attachment.description = "fav_icon"
-        @fav_attachment.content = params[:account][:fav_icon_attributes][:content]
-        @fav_attachment.account_id = @account.id
-        @account.fav_icon = @fav_attachment
-        #@account.build_fav_icon(:content => params[:account][:fav_icon_attributes][:content], :description => 'fav_icon')
-      else
-        @account.fav_icon.update_attributes(:content => params[:account][:fav_icon_attributes][:content], :description => 'fav_icon')
-      end
-    end
-  end
     
     def choose_layout 
       (action_name == "openid_complete" || action_name == "create_account_google" || action_name == "associate_local_to_google" || action_name == "associate_google_account") ? 'signup_google' : 'helpdesk/default'

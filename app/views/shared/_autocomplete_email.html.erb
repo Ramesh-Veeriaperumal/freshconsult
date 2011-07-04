@@ -1,0 +1,23 @@
+<script type="text/javascript" charset="utf-8">
+  function lookup(searchString, callback) { 
+    new Ajax.Request('<%= url %>?v='+searchString, 
+                        { parameters: {name: searchString, rand: (new Date()).getTime()},
+                          onSuccess:  function(response) {
+                                        var choices = $A();
+                                        response.responseJSON.results
+                                          .each(function(item){
+                                            choices.push(item.id);
+                                          });                                                
+                                        callback(choices);
+                                      } });
+  }
+  var cachedBackend = new Autocompleter.Cache(lookup, {choices: 20});
+  var cachedLookup = cachedBackend.lookup.bind(cachedBackend);
+</script>
+
+<%= text_field object_name, :email, :value => (@item.requester.email if @item.requester), :class => "required email" %>
+<div id="<%=object_name%>_email_choices" class="autocomplete"></div>
+
+<script type="text/javascript" charset="utf-8">
+  new Autocompleter.Json("<%=object_name%>_email", "<%=object_name%>_email_choices", cachedLookup, {});
+</script>

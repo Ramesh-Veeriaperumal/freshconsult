@@ -1,10 +1,12 @@
 class EmailConfig < ActiveRecord::Base
   belongs_to :account
   belongs_to :group, :foreign_key =>'group_id' #?!?!?! Not a literal belonging in true ER sense.
+  has_one :portal, :foreign_key => 'product_id', :dependent => :destroy
+
+  attr_protected :account_id, :active
+  attr_accessor :enable_portal
   
-  #accepts_nested_attributes_for :group
-  attr_accessible :to_email, :reply_email, :group_id, :primary_role
-  
+  #To do - Validation for 'name'
   validates_presence_of :to_email, :reply_email
   validates_uniqueness_of :reply_email, :scope => :account_id
   #validates_uniqueness_of :to_email, :scope => :account_id #Since it is auto-generated based
@@ -16,12 +18,47 @@ class EmailConfig < ActiveRecord::Base
   after_save :deliver_email_activation
   before_update :reset_activator_token
   
+  def enable_portal=(p_str)
+    @enable_portal = p_str
+  end
+  
+  def enable_portal
+    @enable_portal ||= (portal && !portal.new_record?)? '1' : '0'
+  end
+  
+  def portal_enabled?
+    enable_portal.eql? '1'
+  end
+  
+  def portal_attributes=(pt_attr)
+    unless portal
+      if portal_enabled?
+        build_portal
+        portal.account_id = account_id
+        portal.attributes = pt_attr
+      end
+      return
+    end
+    
+    portal.update_attributes(pt_attr) and return if portal_enabled?
+    portal.destroy
+  end
+  
+  def active?
+    active
+  end
+  
+  def friendly_email
+    active? ? "#{name} <#{reply_email}>" : "support@#{account.full_domain}"
+  end
+  
   def deliver_verification_email
     set_activator_token
     save
   end
   
   protected
+    
     def set_activator_token
       (self.active = true) and return if reply_email.downcase.ends_with?("@#{account.full_domain.downcase}")
       

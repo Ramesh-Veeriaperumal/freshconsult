@@ -6,6 +6,7 @@ require 'uri'
 require 'openid'
   
   skip_before_filter :require_user, :except => :destroy
+  skip_before_filter :check_account_state
   before_filter :check_sso_params, :only => :sso_login
   
   def new
@@ -32,10 +33,11 @@ require 'openid'
               flash[:notice] = t(:'flash.login.success')
               redirect_back_or_default('/')      
           else
-              redirect_to current_account.sso_options[:login_url]
+              flash[:notice] = "Login was unscucessfull!"
+              redirect_to login_normal_url
           end
       else
-        redirect_to current_account.sso_options[:login_url]
+        redirect_to login_normal_url
       end
    end
   

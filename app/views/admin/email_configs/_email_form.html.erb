@@ -1,59 +1,15 @@
-<% javascript_tag do %>
-	construct_reply_url = function(to_email){
-		email_split  = to_email.split("@");
-		email_name   = email_split[0]||'';
-		email_domain = email_split[1]||'';
-		if(email_domain != ''){
-			email_domain = email_domain.split(".")[0];
-		}		
-		account_name = "<%=current_account.full_domain%>".toLowerCase();
-		reply_email  = "@"+account_name;
-		
-		
-		if(email_domain.toLowerCase() == account_name){
-			reply_email = email_name + reply_email;		
-		}
-		else{
-			reply_email = email_domain + email_name + reply_email;
-		}
-		return reply_email;
-	}
-	
-	
-	
-	jQuery(document).ready(function(){
-		jQuery("#reply_to_id").bind("change keyup", 
-											function(ev){
-											  if(this.value != ''){
-												  reply_email = construct_reply_url(this.value);
-												  jQuery("#div_reply_email").text(reply_email);
-												  jQuery("#hidden_reply_to").val(reply_email);
-												}												
-											})
-											.trigger("change");
-	});
-<% end -%>
-
-
-<% 
-	type_check = (type == "edit")
-	form_for :email_config, @email_config, 
-				:url => (!type_check) ? (admin_email_configs_path) : (admin_email_config_path), 
-			    :html => { :method => (!type_check) ? (:post) : (:put) } do |f|
-%>
+<% form_for :email_config, @email_config, :url => admin_email_config_path, :html => { :method => :put } do |f| %>
 <%= f.error_messages %>
-<h3 class="title">
-	<% if (type == "edit") %>
-		<%=t('edit_email')%>
-	<% else %>
-		<%=t('add_new_email')%>
-	<% end %>
-</h3>  
+<h3 class="title"><%=t('edit_email')%></h3>
 <ul class="ui-form">
 	<li>
-			<label><%=t('email_configs.info6')%> eg. support@yourcompany.com </label>
+			<label><%=t('email_configs.name')%></label>
+			<%= f.text_field :name, :class => "text" %>
+	</li>
+	<li>
+			<label><%=t('email_configs.reply_email') + " *"%></label>
 			<div class="info-data"><%= t('email_configs.info7') %> </div>
-			<%= f.text_field :reply_email, :class => "required text", :id => "reply_to_id" %>						
+			<%= f.text_field :reply_email, :class => "required text", :id => "reply_to_id" %>
 	</li>
 	<li>	
 			<label><%=t('email_configs.info8')%></label>
@@ -67,9 +23,6 @@
 	</li> 
 </ul>
 <div class="button-container">
-	<div class="floatl">
-		<%= link_to(t('delete'), admin_email_config_path(@email_config), :method => 'delete', :confirm => 'Are you sure you want to delete this email?', :class => "uiButton" ) if (type == "edit" and !@email_config.primary_role) %>
-	</div>
 	<%= f.submit t('save'), :class => "uiButton"  %>
 	<%= link_to(t('cancel'), admin_email_configs_path, :class => "uiButton", :id => "email-form-cancel" )  %>
 </div> 
