@@ -4,7 +4,7 @@
 	<%= f.error_messages %>
 	<ul class="ui-form">
 		<li class="inline-field">
-		  <%= f.label :sso_enabled, "#{f.check_box :sso_enabled} #{t('admin.security.index.enable_sso')}" %>
+		  <%= f.check_box :sso_enabled %> <%=t('admin.security.index.enable_sso')%>
 		  <%= content_tag( :div, t(".enable_sso_info"), :class => "info-data tabbed" ) %>
 			<div class="info-data tabbed">				
 				<ul class="ui-form-inline" id="sso-form" style="display:<%= current_account.sso_enabled ? "block": "none" %>;">
