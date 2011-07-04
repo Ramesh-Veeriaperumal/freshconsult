@@ -10,23 +10,18 @@ class SubscriptionAdmin::AccountsController < ApplicationController
   end
   
   def agents
-    @accounts = Account.all(:select => "#{Account.table_name}.*, COUNT(#{User.table_name}.id) number_of_agents",
-         :joins => :users,
-         :conditions => ['user_role != ?', User::USER_ROLES_KEYS_BY_TOKEN[:customer]],
-         :order => "number_of_agents")
-     @accounts = @accounts.paginate( :page => params[:page], :per_page => 30)
+    @accounts = Account.find(:all, :include => :users, :conditions => ['user_role != ?', User::USER_ROLES_KEYS_BY_TOKEN[:customer]]).sort_by { |u| -u.users.size }
+    @accounts = @accounts.paginate( :page => params[:page], :per_page => 30)
   end
   
   def helpdesk_urls
-    @accounts = Account.all(:conditions => "helpdesk_url is not null")
+    @accounts = Account.all(:conditions => "helpdesk_url is not null and helpdesk_url != ”")
     @accounts = @accounts.paginate( :page => params[:page], :per_page => 30)
   end
   
   def tickets
-    @accounts = Account.all(:select => "#{Account.table_name}.*, COUNT(#{Helpdesk::Ticket.table_name}.id) number_of_tickets",
-         :joins => :tickets,
-          :order => "number_of_tickets")
-     @accounts = @accounts.paginate( :page => params[:page], :per_page => 30)
+    @accounts = Account.find(:all, :include => :tickets, :conditions => ['user_role != ?', User::USER_ROLES_KEYS_BY_TOKEN[:customer]]).sort_by { |u| -u.tickets.size }   
+    @accounts = @accounts.paginate( :page => params[:page], :per_page => 30)
   end
   
   def search(search)
