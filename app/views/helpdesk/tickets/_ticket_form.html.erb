@@ -1,8 +1,13 @@
 <%= ticket_form.error_messages %>
-<% current_portal.ticket_fields.each do |field| 
+<%= hidden_field_tag  :topic_id,  params[:topic_id] %> 
+<% current_portal.ticket_fields.each do |field|
     if is_edit
-      field_value = ((field.is_default_field?) ? @ticket[field.field_name] : @item.get_ff_value(field.name)) 
-    end %>
+      field_value = ((field.is_default_field?) ? @item[field.field_name] : @item.get_ff_value(field.name)) 
+    end
+    unless params[:topic_id].nil? && !field.is_default_field?
+      field_value = @item[field.field_name]
+    end
+  %>
   <%= construct_ticket_element :helpdesk_ticket, field, field.label, field.dom_type, field.required, field_value %>
 <% end %>
 <% javascript_tag do %>  
