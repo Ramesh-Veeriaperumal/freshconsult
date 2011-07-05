@@ -76,6 +76,15 @@ class ApplicationController < ActionController::Base
   end
  
   def check_account_state
+    if !current_account.active? 
+      if permission?(:manage_account)
+        flash[:notice] = t('suspended_plan_info')
+        return redirect_to(plan_account_url)
+      else
+        flash[:notice] = t('suspended_plan_admin_info',:email => current_account.account_admin.email) 
+        redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
+      end
+     end
   end
 
   def set_time_zone
