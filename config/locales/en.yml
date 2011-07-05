@@ -101,6 +101,16 @@ en:
       index: 
         new: Add Canned response
         title: Canned responses
+    twitter:
+      index:
+        new: Add Twitter account
+        title: Twitter accounts
+      change:
+        edit_twitter :  Edit Twitter
+        capture_mention: Convert public mentions as tickets       
+        capture_dm: Convert direct messages as tickets
+        
+        
     home: 
       index:
         title: Admin
@@ -124,6 +134,7 @@ en:
         everything_helpdesk: Everything Helpdesk
         canned-response: Canned Response
         multi-product: Multiple Products
+        twitter-setting: Twitter Settings
       
     canned_responses:
       index:

@@ -9,8 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-
-ActiveRecord::Schema.define(:version => 20110622121833) do
+ActiveRecord::Schema.define(:version => 20110630103031) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -541,9 +540,9 @@ ActiveRecord::Schema.define(:version => 20110622121833) do
   end
 
   create_table "helpdesk_tickets", :force => true do |t|
+    t.text     "description"
     t.integer  "requester_id",    :limit => 8
     t.integer  "responder_id",    :limit => 8
-    t.text     "description"
     t.integer  "status",          :limit => 8, :default => 1
     t.boolean  "urgent",                       :default => false
     t.integer  "source",                       :default => 0
