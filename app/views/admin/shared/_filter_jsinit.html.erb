@@ -11,6 +11,7 @@
 		c_dom = "";
 		switch (type) {
 			case 'text':
+			case 'number':
 			case 'autocompelete':
 				c_dom = FactoryUI.text("", "value", initFeed["value"]);
 				jQuery(c_dom).attr("id", id);			

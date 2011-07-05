@@ -1,8 +1,8 @@
-	<label for="helpdesk_ticket_responder_id">Assigned To</label>
-	<select class="select" id="helpdesk_ticket_responder_id" name="helpdesk_ticket[responder_id]">
-		<option value="">...</option>
-		<% @agents.each do |agent| %>
-			<% user = agent.user %>
-				<option value="<%=user.id%>"><%=user.name%></option>
-			<% end %>
-	</select>
+<% if @agents.blank? %>
+  <option>No agents in selected group</option>
+<% else %>
+  <option>...</option>
+  <% @agents.each do |agent| %>
+	  <option value="<%=agent.user.id%>"><%=agent.user.name%></option>
+  <% end %>
+<% end %>

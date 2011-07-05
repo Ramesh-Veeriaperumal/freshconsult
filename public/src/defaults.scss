@@ -28,6 +28,10 @@ p{
     text-align: left;
 }
 
+.hide{
+    display:none;
+}
+
 .clearfix{ @include clearfix; }
 
 .title{ color:#444444; padding:6px 0px 10px 0px; font-weight:normal; }

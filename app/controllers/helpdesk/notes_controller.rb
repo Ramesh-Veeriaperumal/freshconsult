@@ -44,7 +44,7 @@ class Helpdesk::NotesController < ApplicationController
         unless @item.private
           @parent.tickets.each do |t|
             t.notes << (c = @item.clone)
-            Helpdesk::TicketNotifier.deliver_reply(t, c, reply_email,params)
+            Helpdesk::TicketNotifier.deliver_reply(t, c, reply_email)
           end
         end
         @parent.owner ||= current_user  if @parent.respond_to?(:owner)
@@ -54,25 +54,31 @@ class Helpdesk::NotesController < ApplicationController
     end
     
     def add_cc_email
-     if !params[:cc_emails].blank?
-      cc_array = params[:cc_emails].split(',').collect
-      cc_array.delete_if {|x| (x == @parent.requester.email or !(valid_email?(x))) }
-      @parent.update_attribute(:cc_email,cc_array.uniq)
-     end
-   end
-   
-    def valid_email?(email)
-       if email=~ /^[a-zA-Z][\w\.-]*[a-zA-Z0-9]@[a-zA-Z0-9][\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]$/
-        true
-      else
-        false
+     if !params[:include_cc].blank?# and !params[:cc_emails].blank?
+      #cc_array = params[:cc_emails].split(',').collect
+      cc_array = params[:cc_emails]
+      unless cc_array.empty?
+        cc_array.delete_if {|x| (extract_email(x) == @parent.requester.email or !(valid_email?(x))) }
+        cc_array = cc_array.uniq
       end
+      @parent.update_attribute(:cc_email, cc_array)
+     end
+    end
+    
+    def extract_email(email)
+      email = $1 if email =~ /<(.+?)>/
+      email
+    end
+    
+    def valid_email?(email)
+      email = extract_email(email)
+      (email =~ /\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/) ? true : false
     end
 
     def send_reply_email
       reply_email = params[:reply_email][:id] unless params[:reply_email].nil?
       add_cc_email     
-      Helpdesk::TicketNotifier.send_later(:deliver_reply, @parent, @item , reply_email,params)  
+      Helpdesk::TicketNotifier.send_later(:deliver_reply, @parent, @item , reply_email,{:include_cc => params[:include_cc]})  
       flash[:notice] = t(:'flash.tickets.reply.success')
     end
 

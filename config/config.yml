@@ -17,7 +17,7 @@ demo_site:
 
 sub_bcc_email:
     development: "kiran@freshdesk.com"
-    production:  "support@freshdesk.com"
+    production:  "team@freshdesk.com"
     staging:     "support@freshpo.com"
 
 # Set this to true if you want to require CC info when creating a trial account for a paid plan

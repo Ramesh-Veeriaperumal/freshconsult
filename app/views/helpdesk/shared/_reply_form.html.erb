@@ -2,35 +2,58 @@
     <% form_for note, :html => {:multipart => true, :id => "HelpdeskReply" } do |f| %>
     <%= f.error_messages %>
     <ul class="ui-form dont-validate">
-        <li class="inline-field">
-            <%= content_tag( :h4, t("ticket.reply_form.form_title"), :class => "title" ) %>
+        <li class="inline-field field">
+            <%= content_tag( :h3, t("ticket.reply_form.form_title"), :class => "title" ) %>
             <%= f.label(:reply_email, "From:", :class => "caption" ) %>
             <div class="fields">
                 <div class="floatr">
-                    <%= link_to_function( "Add Cc", "jQuery('#cc-form-container').show(); jQuery(this).hide();", :class => "slim-button" ) if @ticket.cc_email.blank? %>
-                    <%= link_to_function( t(:'ticket.canned_responses.insert_ca_response') + " &raquo;", "show_canned_response()", :class => "slim-button") %>
+                    <a href="javascript:void(0)" onclick="showHideCc(this)" class="slim-button" >
+                      <%= (@ticket.cc_email.blank?)? "Add Cc": "Remove Cc" %>
+                    </a>
+                    <%# link_to_function( t(:'ticket.canned_responses.insert_ca_response') + " &raquo;", "show_canned_response()", :class => "slim-button") %>
                 </div>
                 <%= select :reply_email, :id, options_for_select(@reply_email, @ticket.reply_email) %>
+                <input type="checkbox" class="hide" id="include_cc" name="include_cc" value="true" <%= (!@ticket.cc_email.blank?)? "checked" : "" %> />
+                
             </div>
         </li>
-        <li class="inline-field" id="cc-form-container" style="display:<%= @ticket.cc_email.blank? ? "none": "block" %>;">
+        <li class="inline-field field" id="cc-form-container" style="display:<%= @ticket.cc_email.blank? ? "none": "block" %>;">
             <label class="caption">
                 Cc:
             </label>
             <div class="fields">
-                <%= text_field_tag :cc_emails_tag, ( @ticket.cc_email.join(",") unless @ticket.cc_email.blank? ), :class => "text" %>
+                <script type="text/javascript" charset="utf-8">
+                  function lookup(searchString, callback) { 
+                    new Ajax.Request('<%= autocomplete_helpdesk_authorizations_path %>?v='+searchString, 
+                                                              { parameters: {name: searchString, rand: (new Date()).getTime()},
+                                                              onSuccess: function(response) {
+                                                                var choices = $A();
+                                                                response.responseJSON.results.each(function(item){
+                                                                  choices.push([item.value +" <"+item.id+">", item.value +" <"+item.id+">" ]);
+                                                                });                                                
+                                                                callback(choices);
+                                                              } });
+                  }
+
+                  var cachedBackend = new Autocompleter.Cache(lookup, {choices: 10});
+                  var cachedLookup = cachedBackend.lookup.bind(cachedBackend);
+                </script>
+                  <input type="text" id="cc_emails" name="cc_emails" />
+                  <script type="text/javascript" charset="utf-8">
+                    new Autocompleter.MultiValue("cc_emails", cachedLookup, $A(<%= @ticket.cc_email.map{|item|[item, item]}.to_json unless @ticket.cc_email.blank? %>), {frequency: 0.1, acceptNewValues: true});
+                  </script>
             </div>
         </li>
-        <li class="inline-field">
+        <li class="inline-field field">
             <label class="caption">
                 Message:
             </label>
-            <div class="fields">
+            <div class="fields">              
                 <%= f.text_area :body, { :class => 'auto-expand required', :id => "#{id}-#{cntid}-body" , :value => @signature} %>
             </div>
         </li>
         <% if !@ticket.ticket_topic.nil? and !(@ticket.ticket_topic.topic.locked) %>
-        <li class="inline-field">
+        <li class="inline-field field">
             <div class="fields">
                 <label>
                     <%= check_box_tag :post_forums %><%= t("ticket.reply_form.post_to_linked_forum") %>
@@ -42,7 +65,7 @@
         <%= f.hidden_field :private , :value => false %>
         <!--reply source will be always email-->
         <%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["email"] %>
-        <li class="inline-field">
+        <li class="inline-field field">
             <div class="attachment-options fields" id="attachment-options-reply">
                 <% unless local_assigns[:no_attachments] %>
                 <%= render :partial => "/helpdesk/shared/attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note" } %>
@@ -56,52 +79,16 @@
     <% end %>
 </div>
 <% content_for :pagefixed do %>
-<% javascript_tag do %>
-function validateEmail(field) { var regex=/\b[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}\b/i; return (regex.test(field)) ? true : false; }
-document.observe("dom:loaded", function(){
-new Helpdesk.PageSwitcher({ 
-toggleMode: true, 
-pages: ['attachment-options-reply']  
-}); 
-var prefillData = []; 
-$(jQuery("#cc_emails_tag").val().split(",")).each(function(item){ 
-prefillData.push({"id":item});  
-}); 
-jQuery("#cc_emails_tag")
-.autoSuggest(
-"
-<%= autocomplete_helpdesk_authorizations_path %>", 
-{selectedValuesProp: "id",
-selectedItemProp: "id",
-startText: "",
-queryParam: "v",
-minChars: 2,
-emptyText:"", 
-retrieveLimit: 5, 
-preFill: prefillData,  
-formatList: function(data, elem){ 
-return elem.html(data.value + " \
-<" + data.id + "\>");
-},
-//showResultList: false,
-asHtmlID: "cc_emails",
-retrieveComplete: function(data){
-return data.results;
-}
-});
-jQuery("#as-values-cc_emails").attr("name", "cc_emails");
-jQuery("#HelpdeskReply")
-.validate({
-onkeyup: false,
-focusCleanup: true,
-focusInvalid: false,
-errorPlacement: function(error, element) {
-if (element.attr("name") === "cc_emails")
-error.insertAfter("#as-results-cc_emails");
-else 
-error.insertAfter(element); 
-}  
-}); 
-}); 
-<% end %>
+  <% javascript_tag do %>
+    function showHideCc(link){
+       jQuery("#cc-form-container").toggle();
+       if( $("include_cc").checked ){
+         jQuery(link).text("Add Cc");
+         $("include_cc").checked = false;
+       }else{
+         jQuery(link).text("Remove Cc");
+         $("include_cc").checked = true;
+       }
+    }
+  <% end %>
 <% end %>

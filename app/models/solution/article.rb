@@ -106,9 +106,11 @@ class Solution::Article < ActiveRecord::Base
     to_ret = suggest(ticket, ticket.description) if to_ret.empty?
     
     to_ret
+    
   end
   
   def self.suggest(ticket, search_by)
+    return [] if search_by.blank? || (search_by = search_by.gsub(/[\^\$]/, '')).blank?
     search(search_by, :with => { :account_id => ticket.account.id }, :match_mode => :any, :per_page => 10)
   end
   

@@ -1,8 +1,8 @@
 /* This import applies a global reset to any page that imports this stylesheet.*/
 /* Theme Colors and layout Defaults */
 /* Importing admin icons */
-.admin-icon-sprite, .admin-icon-account-settings, .admin-icon-agent, .admin-icon-business-hours, .admin-icon-canned-response, .admin-icon-customer-portal, .admin-icon-dispatcher, .admin-icon-email-notifications, .admin-icon-email-settings, .admin-icon-feedback, .admin-icon-group, .admin-icon-import, .admin-icon-rebranding, .admin-icon-remote-authentication, .admin-icon-scenario, .admin-icon-sla, .admin-icon-ticket-fields {
-  background: url('/images/admin-icon-2c09239c3a.png') no-repeat;
+.admin-icon-sprite, .admin-icon-account-settings, .admin-icon-agent, .admin-icon-business-hours, .admin-icon-canned-response, .admin-icon-customer-portal, .admin-icon-dispatcher, .admin-icon-email-notifications, .admin-icon-email-settings, .admin-icon-feedback, .admin-icon-group, .admin-icon-import, .admin-icon-multi-product, .admin-icon-rebranding, .admin-icon-remote-authentication, .admin-icon-scenario, .admin-icon-sla, .admin-icon-ticket-fields {
+  background: url('/images/admin-icon-a9c25ee344.png') no-repeat;
 }
 
 /* Ticket Show page twitter style icons */
@@ -944,8 +944,7 @@ body h5 {
 }
 
 .seperator {
-  border-bottom: 1px dotted #BBBBBB;
-  box-shadow: 0 1px 0 white;
+  border-bottom: 1px solid #efefef;
   font-size: 0px;
   display: block;
   height: 1px;
@@ -1336,24 +1335,28 @@ ul.admin_icons li a:hover {
   background-position: 0 -320px;
 }
 
-.admin-icon-rebranding {
+.admin-icon-multi-product {
   background-position: 0 -352px;
 }
 
-.admin-icon-remote-authentication {
+.admin-icon-rebranding {
   background-position: 0 -384px;
 }
 
-.admin-icon-scenario {
+.admin-icon-remote-authentication {
   background-position: 0 -416px;
 }
 
-.admin-icon-sla {
+.admin-icon-scenario {
   background-position: 0 -448px;
 }
 
-.admin-icon-ticket-fields {
+.admin-icon-sla {
   background-position: 0 -480px;
+}
+
+.admin-icon-ticket-fields {
+  background-position: 0 -512px;
 }
 
 .mark_action a, .mark_action .stamp {
@@ -2369,7 +2372,7 @@ div.search label, div.search input.search {
 
 h4.border_title {
   font-size: 16px;
-  border-bottom: 1px dashed #ebebeb;
+  border-bottom: 1px solid #ebebeb;
   padding-bottom: 6px;
   margin-bottom: 8px;
   text-transform: capitalize;
@@ -2525,10 +2528,10 @@ h4.border_title {
 .solution-list .odd, .solution-list .even {
   overflow: hidden;
   *zoom: 1;
-  margin: 5px 2% 5px 0px;
+  margin: 5px 2% 5px 1%;
   padding: 10px 0px;
   float: left;
-  width: 100%;
+  width: 47%;
   font-size: 12px;
 }
 .solution-list .odd a, .solution-list .even a {
@@ -2802,16 +2805,6 @@ h4.border_title {
   text-align: right;
 }
 
-.close {
-  position: absolute;
-  right: 5px;
-  top: 5px;
-  width: 28px;
-  height: 28px;
-  background: url("../images/close_delete.png") no-repeat center;
-  z-index: 999;
-}
-
 .property_selector {
   position: relative;
   padding: 3px 12px;
@@ -2930,13 +2923,14 @@ a.page_title:active {
 }
 
 .pagination {
-  padding: 8px 10px;
-  margin: 0px -20px;
+  padding: 8px 20px 10px 20px;
+  margin: 1px -19px;
   background: #efefef;
 }
 .pagination a {
   color: #336699;
   font-weight: bold;
+  text-decoration: none;
 }
 .pagination a:visited {
   color: #336699;
@@ -3099,15 +3093,6 @@ a.page_title:active {
 .private {
   padding-left: 20px;
   background: url(../images/private_lock_grey.gif) no-repeat left;
-}
-
-.uniForm {
-  background: #f8f8f8;
-  font-family: "Lucida Grande","Lucida sans unicode", Geneva, Arial,Verdana,sans-serif;
-  font-size: 14px;
-  -moz-border-radius: 6px 6px 6px 6px;
-  -webkit-border-radius: 6px 6px 6px 6px;
-  border-radius: 6px 6px 6px 6px;
 }
 
 .match {
@@ -3298,12 +3283,23 @@ a.page_title:active {
 }
 .folder_section h3.title {
   text-align: center;
-  border-bottom: 1px dashed #DCDCDC;
+  border-bottom: 1px dotted #DCDCDC;
   padding: 0 0 20px;
+}
+.folder_section .active a {
+  color: #333333;
+}
+.folder_section .active a:visited {
+  color: #333333;
+}
+.folder_section .active a:hover {
+  color: #333333;
+}
+.folder_section .active a:active {
+  color: #333333;
 }
 
 .solution_list {
-  border-bottom: 1px dashed #DCDCDC;
   margin: 10px 0 0;
   list-style: none;
 }
@@ -3331,7 +3327,7 @@ a.page_title:active {
 
 .artical_section {
   margin-left: 210px;
-  border-left: 1px solid #efefef;
+  border-left: 1px solid #d5d5d5;
   min-height: 450px;
   height: auto !important;
   height: 450px;
@@ -3340,11 +3336,11 @@ a.page_title:active {
   margin-right: -20px;
   text-align: left;
 }
-.artical_section .seperator {
-  border-style: dashed;
-}
 .artical_section .info_data {
   margin-bottom: 7px;
+}
+.artical_section .search-grey-box {
+  margin: -10px -20px 12px -20px;
 }
 
 .artical_list {
@@ -4408,6 +4404,40 @@ div.addReminder form label.overlabel {
   left: 8px;
   top: 10px;
 }
+.admin_list li a.big-text, .content_list li a.big-text {
+  font-size: 1.75em;
+}
+.admin_list li .text, .content_list li .text {
+  font-size: 1.2em;
+  margin-bottom: 4px;
+}
+.admin_list li .portal-logo, .content_list li .portal-logo {
+  width: 90px;
+  padding-right: 12px;
+  text-align: right;
+  border-right: 1px solid #efefef;
+  padding-top: 3px;
+}
+.admin_list li .portal-text, .content_list li .portal-text {
+  padding-left: 12px;
+}
+.admin_list li .color_box, .content_list li .color_box {
+  overflow: hidden;
+  *zoom: 1;
+}
+.admin_list li .color_item, .content_list li .color_item {
+  width: 11px;
+  height: 11px;
+  float: right;
+  margin-left: 2px;
+}
+.admin_list li .image_logo, .admin_list li .color_item, .content_list li .image_logo, .content_list li .color_item {
+  border: 1px solid #dbdbdb;
+}
+.admin_list li .image_logo, .content_list li .image_logo {
+  max-height: 40px;
+  max-width: 90px;
+}
 .admin_list li:hover, .content_list li:hover {
   background: #f6f6f6;
 }
@@ -4670,4 +4700,14 @@ p.info-text {
 
 .highlight-text span {
   background: #ffffcc;
+}
+
+a.close {
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  width: 28px;
+  height: 28px;
+  background: url(../images/close_delete.png) no-repeat center;
+  z-index: 999;
 }

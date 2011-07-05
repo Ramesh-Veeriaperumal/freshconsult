@@ -1,11 +1,11 @@
 <% content_for :sidebar do -%><%- end %>
 <%= content_tag (:h3, t(".remote_authentication"), :class => "title") %>
-<% form_for :account, @account, :url => { :action => "update" },  :html => { :method => :put, :id => "BusinessHours"  } do |f| %>
+<% form_for  :account,@account, :url=> update_admin_security_path(@account) ,  :html => { :method => :put, :id => "sso_form"  } do |f| %>
 	<%= f.error_messages %>
 	<ul class="ui-form">
 		<li class="inline-field">
-		  <%= f.label :sso_enabled, "#{f.check_box :sso_enabled} #{t('.enable_sso')}" %>
-		  <%= content_tag( :div, t(".enable_sso_info"), :class => "info-data tabbed" ) %>
+		  <%= check_box('account', 'sso_enabled', options = { :checked => current_account.sso_enabled}, checked_value = "1", unchecked_value = "0") %> <%=t(".enable_sso")%>
+		<%= content_tag( :div, t(".enable_sso_info"), :class => "info-data tabbed" ) %>
 			<div class="info-data tabbed">				
 				<ul class="ui-form-inline" id="sso-form" style="display:<%= current_account.sso_enabled ? "block": "none" %>;">
 					<li>
@@ -18,7 +18,7 @@
 						<li>
 							<%= p.label :login_url, t('.remote_login_url') %>
 							<%= content_tag( :div, t(".remote_login_url_info"), :class => "info-data" ) %>
-							<%= p.text_field :login_url, :value => @account[:sso_options].default(:login_url), :size => 50, :class => "text url" %>
+							<%= p.text_field :login_url, :value => @account[:sso_options].default(:login_url), :size => 50, :class => "text" %>
 						</li>
 						<li>
 							<%= p.label :logout_url, t('.remote_logout_url') %>

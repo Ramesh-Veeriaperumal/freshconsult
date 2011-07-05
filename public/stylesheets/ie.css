@@ -91,7 +91,7 @@
 .ie6 .ui-form li, .ie6 .ui-form li.text, .ie6 .ui-form li.paragraph, .ie7 .ui-form li, .ie7 .ui-form li.text, .ie7 .ui-form li.paragraph, .ie8 .ui-form li, .ie8 .ui-form li.text, .ie8 .ui-form li.paragraph, .ie9 .ui-form li, .ie9 .ui-form li.text, .ie9 .ui-form li.paragraph {
   width: 100%;
 }
-.ie6 .ui-form li.dropdown, .ie6 .ui-form li.small, .ie7 .ui-form li.dropdown, .ie7 .ui-form li.small, .ie8 .ui-form li.dropdown, .ie8 .ui-form li.small, .ie9 .ui-form li.dropdown, .ie9 .ui-form li.small {
+.ie6 .ui-form li.dropdown, .ie6 .ui-form li.small, .ie6 .ui-form li.dropdown_blank, .ie7 .ui-form li.dropdown, .ie7 .ui-form li.small, .ie7 .ui-form li.dropdown_blank, .ie8 .ui-form li.dropdown, .ie8 .ui-form li.small, .ie8 .ui-form li.dropdown_blank, .ie9 .ui-form li.dropdown, .ie9 .ui-form li.small, .ie9 .ui-form li.dropdown_blank {
   padding-left: 4%;
   padding-right: 4%;
   width: 50%;

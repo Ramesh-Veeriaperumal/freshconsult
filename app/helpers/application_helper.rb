@@ -3,9 +3,15 @@ module ApplicationHelper
   
   include SavageBeast::ApplicationHelper
   include Juixe::Acts::Voteable
-  
+
   def show_flash
     [:notice, :warning, :error].collect {|type| content_tag('div', flash[type], :id => type, :class => "flash_info #{type}") if flash[type] }
+  end
+
+  def page_title
+    portal_name = h(current_portal.name)
+    portal_name += (portal_name.empty?) ? "" : " : "
+    portal_name += @page_title || t('helpdesk_title')
   end
 
   def tab(title, url, cls = false)
@@ -42,8 +48,6 @@ module ApplicationHelper
     end
     navigation
   end
-  
-  
   
   def check_box_link(text, checked, check_url, check_method, uncheck_url, uncheck_method = :post)
     form_tag("", :method => :put) +    
@@ -167,13 +171,37 @@ module ApplicationHelper
   
   # Get Pref color for individual portal
   def portal_pref(item, type)
-    color = current_account[:preferences].default(type)
-    if !item[:preferences].blank?
-      color = item[:preferences].default(type)
-    end
-    color
-  end
+   color = current_account.main_portal[:preferences].fetch(type, '')
+   if !item[:preferences].blank?
+     color = item[:preferences].fetch(type, '')
+   end
+   color
+ end
   
+  def construct_ticket_element(object_name, field, field_label, dom_type, required, field_value = "")
+    element_class   = " #{ (required) ? 'required' : '' } #{ dom_type }"
+    field_label    += " #{ (required) ? '*' : '' }"
+    object_name     = "#{object_name.to_s}#{ ( !field.is_default_field? ) ? '[custom_field]' : '' }"
+    label = label_tag object_name+"_"+field.field_name, field_label
+    case dom_type
+      when "requester" then
+        element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email", :locals => { :object_name => object_name, :field => field, :url => autocomplete_helpdesk_authorizations_path, :object_name => object_name }))
+      when "text", "number", "email" then
+        element = label + text_field(object_name, field.field_name, :class => element_class, :value => field_value)
+      when "paragraph" then
+        element = label + text_area(object_name, field.field_name, :class => element_class, :value => field_value)
+      when "dropdown" then
+        element = label + select(object_name, field.field_name, field.choices, :class => element_class, :selected => field_value)
+      when "dropdown_blank" then
+        element = label + select(object_name, field.field_name, field.choices, :class => element_class, :selected => field_value, :include_blank => "...")
+      when "hidden" then
+        element = hidden_field(:source, :value => field_value)
+      when "checkbox" then
+        element = content_tag(:div, check_box(object_name, field.field_name, :class => element_class, :checked => field_value ) + field_label)
+    end
+    content_tag :li, element, :class => dom_type
+  end
+
   private
     def solutions_tab
       if current_portal.main_portal?

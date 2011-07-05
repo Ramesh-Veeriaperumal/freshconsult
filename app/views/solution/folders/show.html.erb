@@ -8,8 +8,9 @@
 		<%= link_to @item.category.name, solution_category_path(@item.category) %> &rarr;
 		<%= content_tag (:span, @item.name ) %>
 	</div>
-	<%= render :partial => "/search/pagesearch", :locals => { :placeholder => t('solutions.search.placeholder', :name => @item.category.name), :url => "/search/solutions?category_id=#{@item.category.id}&search_key=" } %>
-	
+	<div class="search-grey-box">
+	  <%= render :partial => "/search/pagesearch", :locals => { :placeholder => t('solutions.search.placeholder', :name => @item.category.name), :url => "/search/solutions?category_id=#{@item.category.id}&search_key=" } %>
+	</div>
 	 <% if logged_in? && current_user.has_manage_solutions? %>
 	  		<%= render :partial => "/solution/shared/solution_list", :locals => { :category => @item.category, :folder => @item } %>
 	  <%else%>
@@ -17,5 +18,4 @@
 	  <%end%>
 	
 </div>
-
  

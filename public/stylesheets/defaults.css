@@ -34,6 +34,10 @@ p {
   text-align: left;
 }
 
+.hide {
+  display: none;
+}
+
 .clearfix {
   overflow: hidden;
   *zoom: 1;

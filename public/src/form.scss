@@ -4,18 +4,31 @@
 /* generic form styles */
 
 label{
-    display: block; 
-    color: #666;
-	padding:6px 0px 3px 0px;
-	font-size:1.4em;
+   display: block; 
+   color: #666;
+   padding:6px 0px 3px 0px;
+   font-size:1.4em;
 }
 
 input[type=text], select, input.text { 
+   width: 96%;
+   margin:0px 0px 3px 0px;
+   color:#3f3f3f;
+   padding:3px;
+   font-size:16px;
+}
+
+select {
+   padding:1px;
+   font-size:13px; 
+   font-weight:normal;
+   width:auto;
+}
+
+textarea { 
+    height: 100px;
     width: 96%;
-	margin:0px 0px 3px 0px;
-	color:#3f3f3f;
-	padding:3px;
-	font-size:16px;
+    font-family:$blueprint-font-family;
 }
 
 input:focus { outline: none; }
@@ -49,11 +62,11 @@ div.color{
 }
 
 textarea{  
-	overflow:auto;
-	font-size:1.0em;
-	line-height:1.4em;
-	resize:none;
-	padding:3px;
+   overflow:auto;
+   font-size:1.0em;
+   line-height:1.4em;
+   resize:none;
+   padding:3px;
 }
 
 input.very_small{
@@ -75,19 +88,6 @@ input.disabled, select.disabled, textarea.disabled{
 	background-color:#F0F0F0;  
 	border:	1px solid #cfcfcf;
 	color:#777777 !important;
-}
-
-select {
-    padding: 1px;
-	font-size:13px; 
-	font-weight:normal;
-	width:auto;
-}
-
-textarea { 
-    height: 100px;
-    width: 96%;
-    font-family:$blueprint-font-family;
 }
 
 form table {
@@ -114,14 +114,14 @@ ul.ui-form .ui-form-inline{
 }
 
 
-a.addchoice{		
-	padding:5px;			
+a.addchoice{
+	padding:5px;
 	color:#999999;
 	border:1px solid #cfcfcf;
 	border-width:1px 0px;
 	text-decoration:none;
 	cursor:pointer;
-	padding:8px 10px 8px 28px;			
+	padding:8px 10px 8px 28px;
 	font-weight:bold;
 	@include link-colors(#333333, #336699, #333333, #333333, #333333);
 	display:block;
@@ -149,9 +149,9 @@ a.addchoice:hover{
 		}
 		.dropchoice, .tags{
 			@include pie-clearfix;
-			float:left; 
+			float:left;
 			margin:0px 5px 0px 0px;
-			padding:0px;				
+			padding:0px;
 			input{
 				margin-right:5px;
 				width:100%;
@@ -206,29 +206,35 @@ a.addchoice:hover{
 	border:1px solid #EFEFEF; 
 	background-color:#F8F8F8; 
 	div.field-box{
-		padding:4px 2% 8px 2%;
+		padding:6px 2% 10px 2%;
 		@include clearfix; 		
 	}
 	li{
-		padding:4px 2% 8px 2%; 
+		padding:8px 2% 8px 2%; 
 		margin:0px;
 		@include float-left;
 		width:96%;
-		border-bottom: 1px solid #EFEFEF;
 		div.field-box{
 			padding:4px 0 8px 0;
 		}
 	} 
-	li:last-child{
+	/*li:last-child{
 		border-bottom: 0px;
     	box-shadow: none;
+	}*/
+	.hidden{
+	   display:none;
 	}
 	li.text, li.paragraph{
 		width:96%;
 	}
-	li.dropdown, li.small{
-		width:46%;
-	}
+   li.dropdown, li.small, li.dropdown_blank, li.number{
+      width:46%;
+      input{ width:auto; }
+   }
+   li.dropdown, li.dropdown_blank{
+      select{ margin-bottom:8px; }
+   }
 	label, li.checkbox{
 		font-weight:normal;
 		margin:0px;
@@ -402,7 +408,6 @@ a.addchoice:hover{
 						float:right;
 						font-size:11px; 
 						text-decoration:none;
-						color:#0078BD;
 						border-bottom: 1px dotted #0078BD;
 					}
 					a.l_placeholder:hover {
@@ -601,7 +606,7 @@ input.time{
 				}
 			}
 			background-color:#efefef;
-			border-top:1px solid #cfcfcf;				
+			border-top:1px solid #cfcfcf;
 		}
 		tr.even{
 			td{
@@ -720,9 +725,10 @@ span.sort_handle{
 		position:relative; 
 		div{ position:relative; }
 		cursor:move; 
+		border-bottom:1px solid #efefef;
 	} 
 	
-	li:hover, li.hover, li.active{		
+	li:hover, li.hover, li.active{
 		background:#ffffff;
 		border-color:#dfdfdf;
 		.ui-field-panel{
@@ -852,6 +858,15 @@ input.search{
 		font-size:1.2em;
 		margin-top:-5px;
 	}
+	a.close{
+    	position:absolute;
+    	right:5px;
+    	top:5px;
+    	width:28px;
+    	height:28px;
+    	background:url("../images/close_delete.png") no-repeat center;
+    	z-index:999;
+    }
 }
 
 fieldset.nestedChoices{
@@ -1143,46 +1158,47 @@ table.summary-report{
 }
 
 .request_panel{
-	padding:0px 0px;
-	margin:5px 0px;
-	.ui-form{
-		li{
-			border:0px;
-		}
-		label{
-			font-size:13px;
-			color:#333333;
-		}
-		label.overlabel{
-			margin:2px 8px;
-			color:#888888;
-			font-size:12px;
-		}
-		li.inline-field{
-			padding:1px 18px;
-			label.caption{
-				width:80px;
-				text-align:right;
-			}
-			div.fields{
-				margin-left:86px;
-				padding-top:4px;
-				.info-data{
-					margin:8px;
-				}
-			}
-			input.text, textarea{
-				width:98%;
-			}
-			div.action_buttons{
-				top:-6px;
-				right:5px;
-			}
-		}
-		li.button-container{
-			width:95%;
-		}
-	}
+   padding:0px 0px;
+   margin:5px 0px;
+   .ui-form{
+      li.field{
+         border:0px;
+      }
+      label, div.fields label{
+         font-size:13px;
+         color:#333333;
+      }
+      label.overlabel{
+         margin:2px 8px;
+         color:#888888;
+         font-size:12px;
+      }
+      li.inline-field{
+         padding:1px 18px;
+         label.caption{
+            width:80px;
+         }
+         div.fields{
+            margin-left:86px;
+            padding-top:4px;
+            .info-data{
+               margin:8px;
+            }
+         }
+         input.text, textarea{
+            width:98%;
+         }
+         div.action_buttons{
+            top:-6px;
+            right:5px;
+         }
+      }
+      .button-container{
+         padding-top:8px;
+         margin-top:8px;
+         border-top:1px solid #efefef;
+      }
+   }
 }
 
 .nav_search{
@@ -1282,7 +1298,7 @@ a.new_ticket:hover{
 				text-decoration:none;
 			}
 			a:hover{
-				background-color:#4D769F;
+				background-color:#555555;
 				color:#ffffff;
 			}
 		}

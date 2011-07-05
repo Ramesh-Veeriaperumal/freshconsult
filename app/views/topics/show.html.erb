@@ -21,7 +21,7 @@
 			    </div>
 			<% end %>
 			<div>
-				<%= link_to(t('connect_ticket') + " &raquo;", new_helpdesk_ticket_path(:topic_id => @topic.id), :class => "uiButton small full-width") if logged_in? and @topic.ticket_topic.nil?  %>
+				<%= link_to(t('connect_ticket') + " &raquo;", new_helpdesk_ticket_path(:topic_id => @topic.id), :class => "uiButton full-width") if logged_in? and @topic.ticket_topic.nil?  %>
 				<%= link_to(h(@topic.ticket.subject), helpdesk_ticket_path(@topic.ticket)) unless @topic.ticket_topic.nil? %>
 			</div> 
 		<% end %>
@@ -54,12 +54,12 @@
 						<div> <%= h(@topic.created_at.strftime("%B %e %Y at %I:%M %p")) %>  </div>
 		        	</div>
 					<div class="ticket_actions action_icons">
-						<% if logged_in? %>
-						  <div class="action_buttons">
-						     <% if @topic.editable_by?(current_user) -%>
-						        <%= link_to(t('topic.edit'), edit_category_forum_topic_path(@forum_category,@forum, @topic) , :class => "last" ) %> 
-	 					     <% end %>
-						  </div>		
+            <% if logged_in? %>
+              <% if @topic.editable_by?(current_user) -%>
+                <div class="action_buttons">
+                  <%= link_to(t('topic.edit'), edit_category_forum_topic_path(@forum_category,@forum, @topic) , :class => "last" ) %>
+                </div>		
+              <% end %>
 						  <div class="floatr">	
 							  <%= link_to(image_tag("/images/spacer.gif"), category_forum_topic_monitorship_path(@forum_category,@forum, @topic), :method => :post, :class => "monitor", :title => "Monitor this topic" ) unless @monitoring %>
 							  <%= link_to(image_tag("/images/spacer.gif"), category_forum_topic_monitorship_path(@forum_category,@forum, @topic), :method => :delete, :class => "monitor_active",  :title => "Stop monitoring this topic" ) if @monitoring %>
@@ -69,42 +69,45 @@
 		        	 
 					<div class="details min_height">
 						<%= first_post.body_html %>
-						 <ul class="attachment_list">
-	   						<%= render :partial => '/helpdesk/shared/attachment', :collection => first_post.attachments, :locals => { :url => [first_post] } %>
-    					 </ul>
 					</div>
-					
+					<% unless first_post.attachments.empty? %>
+  					<span class="seperator"></span>
+					  <h4><%= first_post.attachments.size %> attachment(s)</h4>
+					  <ul class="attachment_list">
+              <%= render :partial => '/helpdesk/shared/attachment', :collection => first_post.attachments, 
+                :locals => { :url => [first_post], :show_delete => (logged_in? && @topic.editable_by?(current_user)) } %>
+ 					  </ul>
+ 					<% end %>
 					<% unless @topic.forum.announcement? %>
+					  <span class="seperator"></span>					
+					  <br />
 						<div class="status" id="voting_container"> 
 							  <%= render (:partial => "/forum_shared/topic_vote", :object => @topic) if logged_in? %> 
 						</div>
 					<% end %>
-				</div>
-	    	</div>
-			<div class="alignright">
-				<%= content_tag(:h4, t('topic.msg1'), :class => "title" ) if @topic.locked? %>
-				<%= link_to( (@topic.locked)?t('topic.open'):t('topic.close'), 
-							 update_lock_category_forum_topic_path(@forum_category,@forum, @topic), 
-							 :method => :put,  :title => "Discussion comments", :class => "uiButton" ) 	if logged_in? && current_user.has_manage_forums? %>
-					
-				<%= link_to_function (t('reply_topic'), "ReplyForm.init()", :class => "uiButton") if logged_in? && !@topic.locked? %>
-			</div>
-			<% if logged_in? %>
-				<%= render :partial => "reply_to_post" %>
-			<% end %> 
-				
-			<% if (@posts.size > 1) %>
-				<h3 class="title"><%=t('comments')%></h3> 
-				<div class="requestCnt request-conversation">
-					<% last_post = @posts.last %>
-					<% @posts.each do |post| %>
-						<% unless (post == first_post) %>
-							<%= render :partial => "forum_shared/post", :object => post %>							
-						<% end %>
-						<%= will_paginate @posts %>
-					<% end %> 
-				</div>  
-			<% end %>
-			
-			<div id="edit"></div>
-		</div>
+        </div>
+      </div>
+      <div class="alignright">
+        <%= content_tag(:h4, t('topic.msg1'), :class => "title" ) if @topic.locked? %>
+        <%= link_to( (@topic.locked)?t('topic.open'):t('topic.close'),
+            update_lock_category_forum_topic_path(@forum_category,@forum, @topic),
+            :method => :put,  :title => "Discussion comments", :class => "uiButton" )	if logged_in? && current_user.has_manage_forums? %>
+            <%= link_to_function (t('reply_topic'), "ReplyForm.init()", :class => "uiButton") if logged_in? && !@topic.locked? %>
+      </div>
+      <% if logged_in? %>
+        <%= render :partial => "reply_to_post" %>
+      <% end %>
+      <% if (@posts.size > 1) %>
+        <h3 class="title"><%=t('comments')%></h3> 
+        <div class="requestCnt request-conversation">
+        <% last_post = @posts.last %>
+          <% @posts.each do |post| %>
+            <% unless (post == first_post) %>
+              <%= render :partial => "forum_shared/post", :object => post %>							
+            <% end %>
+            <%= will_paginate @posts %>
+          <% end %> 
+        </div>  
+      <% end %>
+      <div id="edit"></div>
+    </div>

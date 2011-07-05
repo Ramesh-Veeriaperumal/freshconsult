@@ -64,12 +64,8 @@ class Helpdesk::AttachmentsController < ApplicationController
   
       # Is the attachment on a solution  If so, it's always downloadable.
       
-      elsif ['Solution::Article'].include? @attachment.attachable_type      
+      elsif ['Solution::Article', 'Post', 'Account', 'Portal'].include? @attachment.attachable_type
         return  true     
-      elsif ['Account'].include? @attachment.attachable_type
-        return true
-      elsif ['Post'].include? @attachment.attachable_type
-        return true
       elsif ['DataExport'].include? @attachment.attachable_type
         return true if permission?(:manage_users)
       end 

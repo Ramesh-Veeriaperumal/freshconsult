@@ -34,7 +34,6 @@ module ModelControllerMethods
       end
     end
     else
-      logger.debug "error while creating email_config #{@obj.errors.inspect}"
       create_error
       render :action => 'new'
     end
@@ -90,7 +89,6 @@ module ModelControllerMethods
     end
     
     def load_object
-      puts "SCOPER is #{scoper} and cname is #{cname}"
       @obj = self.instance_variable_set('@' + cname,  scoper.find(params[:id]))
     end
     

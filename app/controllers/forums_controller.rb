@@ -33,7 +33,6 @@ class ForumsController < ApplicationController
     
     @topics = @topics.paginate(
           :page => params[:page], 
-          :order => params[:order],
           :per_page => 10)
     
     #@topics = @topics.paginate :page => params[:page]

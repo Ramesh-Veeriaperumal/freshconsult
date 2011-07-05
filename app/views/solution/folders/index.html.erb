@@ -1,18 +1,19 @@
 <% content_for :layoutType do%>single<% end %>  
-<div>
-	<div class="header_area">
-		<div class="right_panel" >
-	  		<%= link_to t('solution_category.new'), new_solution_category_folder_path, :class => "fdbutton" %>
-		</div>
-		<strong class="page_title"><%=t('solution.title')%></strong>
-	</div>	  
-	<div class="page_area">			
-		<% @folders.visible(current_user).each do |folder| %>
-			<div class="sol_list">
-				<strong><%= link_to folder.name, solution_category_folder_path(folder.category_id, folder) %></strong>
-				<div><%= folder.description %></div>	
-				<span class="seperator"></span>
-			</div>
-		<%end%>
+<div class="folder_section">
+	<%= render :partial => "/solution/shared/category_folder_list", :locals => { :category => @item.category, :selected => @item } %>
+</div>
+<div class="artical_section"> 
+	<div class="crumbs">
+		<%= link_to t('solution.title'), solution_categories_path %> &rarr; 
+		<%= link_to @item.category.name, solution_category_path(@item.category) %> &rarr;
+		<%= content_tag (:span, @item.name ) %>
 	</div>
+	<%= render :partial => "/search/pagesearch", :locals => { :placeholder => t('solutions.search.placeholder', :name => @item.category.name), :url => "/search/solutions?category_id=#{@item.category.id}&search_key=" } %>
+	
+	 <% if logged_in? && current_user.has_manage_solutions? %>
+	  		<%= render :partial => "/solution/shared/solution_list", :locals => { :category => @item.category, :folder => @item } %>
+	  <%else%>
+	  		<%= render :partial => "/solution/shared/portal_sol_list", :locals => { :category => @item.category, :folder => @item } %>
+	  <%end%>
+	
 </div>

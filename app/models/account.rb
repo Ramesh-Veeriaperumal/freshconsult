@@ -38,7 +38,7 @@ class Account < ActiveRecord::Base
   
   has_many :attachments, :class_name => 'Helpdesk::Attachment', :dependent => :destroy
   
-  has_many :users, :dependent => :destroy , :conditions =>{:deleted =>false}
+  has_many :users, :dependent => :destroy, :conditions =>{:deleted =>false}, :order => :name
   has_many :all_users , :class_name => 'User', :dependent => :destroy
   
   has_one :account_admin, :class_name => "User", :conditions => { :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:account_admin] } #has_one ?!?!?!?!
@@ -64,12 +64,13 @@ class Account < ActiveRecord::Base
   has_many :all_va_rules, :class_name => 'VARule', :conditions => {:rule_type => VAConfig::BUSINESS_RULE}, :order => "position"
   has_many :scn_automations, :class_name => 'VARule', :conditions => {:rule_type => VAConfig::SCENARIO_AUTOMATION, :active => true}, :order => "position"
   
-  has_many :all_email_configs, :class_name => 'EmailConfig', :dependent => :destroy
+  has_many :all_email_configs, :class_name => 'EmailConfig', :dependent => :destroy, :order => "name"
   has_many :email_configs, :conditions => { :active => true }
   has_one  :primary_email_config, :class_name => 'EmailConfig', :conditions => { :primary_role => true }
-  has_many :products, :class_name => 'EmailConfig', :conditions => { :primary_role => false }
+  has_many :products, :class_name => 'EmailConfig', :conditions => { :primary_role => false }, :order => "name"
   has_many :portals
   has_one  :main_portal, :source => :portal, :through => :primary_email_config
+  accepts_nested_attributes_for :main_portal
   
   has_many :email_notifications, :dependent => :destroy
   has_many :groups, :dependent => :destroy
@@ -89,6 +90,8 @@ class Account < ActiveRecord::Base
  
   
   has_one :form_customizer , :class_name =>'Helpdesk::FormCustomizer', :dependent => :destroy
+  has_many :ticket_fields, :class_name => 'Helpdesk::TicketField', :dependent => :destroy, 
+    :include => [:picklist_values, :flexifield_def_entry], :order => "position"
   
   has_many :canned_responses , :class_name =>'Admin::CannedResponse' , :dependent => :destroy  
   has_many :user_accesses , :class_name =>'Admin::UserAccess' , :dependent => :destroy
@@ -216,7 +219,7 @@ class Account < ActiveRecord::Base
   end
   
   def default_email
-    primary_email_config.active ? primary_email_config.reply_email : "support@#{full_domain}"
+    primary_email_config.friendly_email
   end
   
   def to_s
@@ -234,10 +237,14 @@ class Account < ActiveRecord::Base
   
   #Helpdesk hack starts here
   def reply_emails
-    to_ret = (email_configs.collect { |ec| ec.reply_email }).sort
+    to_ret = (email_configs.collect { |ec| ec.friendly_email }).sort
     to_ret.empty? ? [ "support@#{full_domain}" ] : to_ret #to_email case will come, when none of the emails are active.. 
   end
   #HD hack ends..
+  
+  def portal_name #by Shan temp.
+    main_portal.name
+  end
   
   #Sentient things start here, can move to lib some time later - Shan
   def self.current
@@ -283,8 +290,8 @@ class Account < ActiveRecord::Base
       if self.sso_enabled?
         if self.sso_options[:login_url].blank?  
           self.errors.add(:sso_options, ', Please provide a valid login url') 
-        else
-          self.errors.add(:sso_options, ', Please provide a valid login url') if !external_url_is_valid?(self.sso_options[:login_url])
+        #else
+          #self.errors.add(:sso_options, ', Please provide a valid login url') if !external_url_is_valid?(self.sso_options[:login_url])
         end
       end
     end

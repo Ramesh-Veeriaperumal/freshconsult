@@ -2,8 +2,34 @@ class SubscriptionAdmin::AccountsController < ApplicationController
   include ModelControllerMethods
   include AdminControllerMethods
   
+  skip_before_filter :check_account_state
+  
   def index
-    @accounts = Account.paginate(:include => :subscription, :page => params[:page], :per_page => 30, :order => 'accounts.created_at desc')
+    @accounts = search(params[:search])
+    @accounts = @accounts.paginate( :page => params[:page], :per_page => 30, :order => 'accounts.created_at desc')
+  end
+  
+  def agents
+    @accounts = Account.find(:all, :include => :all_agents).sort_by { |u| -u.all_agents.size }
+    @accounts = @accounts.paginate( :page => params[:page], :per_page => 30)
+  end
+  
+  def helpdesk_urls
+    @accounts = Account.all(:conditions => "helpdesk_url is not null and helpdesk_url != 'NULL'")
+    @accounts = @accounts.paginate( :page => params[:page], :per_page => 30)
+  end
+  
+  def tickets
+    @accounts = Account.find(:all, :include => :tickets).sort_by { |u| -u.tickets.size }   
+    @accounts = @accounts.paginate( :page => params[:page], :per_page => 30)
+  end
+  
+  def search(search)
+    if search
+      Account.find(:all, :conditions => ['full_domain LIKE ?', "%#{search}%"],:include => :subscription)
+    else
+      Account.find(:all,:include => :subscription)
+    end
   end
   
 end

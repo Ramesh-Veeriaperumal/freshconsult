@@ -15,6 +15,19 @@ input[type=text], select, input.text {
   font-size: 16px;
 }
 
+select {
+  padding: 1px;
+  font-size: 13px;
+  font-weight: normal;
+  width: auto;
+}
+
+textarea {
+  height: 100px;
+  width: 96%;
+  font-family: "Lucida Grande", Geneva, Arial, Verdana, sans-serif;
+}
+
 input:focus {
   outline: none;
 }
@@ -84,19 +97,6 @@ input.disabled, select.disabled, textarea.disabled {
   background-color: #F0F0F0;
   border: 1px solid #cfcfcf;
   color: #777777 !important;
-}
-
-select {
-  padding: 1px;
-  font-size: 13px;
-  font-weight: normal;
-  width: auto;
-}
-
-textarea {
-  height: 100px;
-  width: 96%;
-  font-family: "Lucida Grande", Geneva, Arial, Verdana, sans-serif;
 }
 
 form table {
@@ -261,32 +261,40 @@ a.addchoice:hover {
   position: relative;
   border: 1px solid #EFEFEF;
   background-color: #F8F8F8;
+  	/*li:last-child{
+  		border-bottom: 0px;
+      	box-shadow: none;
+  	}*/
 }
 .ui-form div.field-box {
-  padding: 4px 2% 8px 2%;
+  padding: 6px 2% 10px 2%;
   overflow: hidden;
   *zoom: 1;
 }
 .ui-form li {
-  padding: 4px 2% 8px 2%;
+  padding: 8px 2% 8px 2%;
   margin: 0px;
   display: inline;
   float: left;
   width: 96%;
-  border-bottom: 1px solid #EFEFEF;
 }
 .ui-form li div.field-box {
   padding: 4px 0 8px 0;
 }
-.ui-form li:last-child {
-  border-bottom: 0px;
-  box-shadow: none;
+.ui-form .hidden {
+  display: none;
 }
 .ui-form li.text, .ui-form li.paragraph {
   width: 96%;
 }
-.ui-form li.dropdown, .ui-form li.small {
+.ui-form li.dropdown, .ui-form li.small, .ui-form li.dropdown_blank, .ui-form li.number {
   width: 46%;
+}
+.ui-form li.dropdown input, .ui-form li.small input, .ui-form li.dropdown_blank input, .ui-form li.number input {
+  width: auto;
+}
+.ui-form li.dropdown select, .ui-form li.dropdown_blank select {
+  margin-bottom: 8px;
 }
 .ui-form label, .ui-form li.checkbox {
   font-weight: normal;
@@ -473,7 +481,6 @@ a.addchoice:hover {
   float: right;
   font-size: 11px;
   text-decoration: none;
-  color: #0078BD;
   border-bottom: 1px dotted #0078BD;
 }
 .ui-form .conditionset fieldset div.s_email div a.l_placeholder:hover {
@@ -809,6 +816,7 @@ span.sort_handle {
 .ui-custom-form li {
   position: relative;
   cursor: move;
+  border-bottom: 1px solid #efefef;
 }
 .ui-custom-form li div {
   position: relative;
@@ -958,6 +966,15 @@ input.search {
   display: block;
   font-size: 1.2em;
   margin-top: -5px;
+}
+.ui-dialog-form a.close {
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  width: 28px;
+  height: 28px;
+  background: url("../images/close_delete.png") no-repeat center;
+  z-index: 999;
 }
 
 fieldset.nestedChoices {
@@ -1353,10 +1370,10 @@ table.summary-report thead td {
   padding: 0px 0px;
   margin: 5px 0px;
 }
-.request_panel .ui-form li {
+.request_panel .ui-form li.field {
   border: 0px;
 }
-.request_panel .ui-form label {
+.request_panel .ui-form label, .request_panel .ui-form div.fields label {
   font-size: 13px;
   color: #333333;
 }
@@ -1370,7 +1387,6 @@ table.summary-report thead td {
 }
 .request_panel .ui-form li.inline-field label.caption {
   width: 80px;
-  text-align: right;
 }
 .request_panel .ui-form li.inline-field div.fields {
   margin-left: 86px;
@@ -1386,8 +1402,10 @@ table.summary-report thead td {
   top: -6px;
   right: 5px;
 }
-.request_panel .ui-form li.button-container {
-  width: 95%;
+.request_panel .ui-form .button-container {
+  padding-top: 8px;
+  margin-top: 8px;
+  border-top: 1px solid #efefef;
 }
 
 .nav_search {
@@ -1537,7 +1555,7 @@ a.new_ticket:hover {
   text-decoration: none;
 }
 .nav-drop .menu-box .menu-item a:hover {
-  background-color: #4D769F;
+  background-color: #555555;
   color: #ffffff;
 }
 .nav-drop .nav-item-icon {

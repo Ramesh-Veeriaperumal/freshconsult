@@ -1,6 +1,6 @@
 <%= render :partial => "shared/colorpicker" %>
-<% unless current_account.preferences.nil? 
-	$tab_color = current_account.preferences[:tab_color]
+<% unless current_account.main_portal.preferences.nil? 
+	$tab_color = current_account.main_portal.preferences[:tab_color]
    end %>	
 
 <% content_for :sidebar do -%>

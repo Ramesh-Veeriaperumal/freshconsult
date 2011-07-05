@@ -28,7 +28,8 @@ module Admin::HomeHelper
                                     ['/admin/business_calendars',   'business-hours',   feature?(:business_hours)        ],
                                     ['/admin/va_rules',             'dispatcher'              ],
                                     ['/admin/automations',          'scenario',         feature?(:scenario_automations)  ],
-                                    ['/admin/products',             'multi-product',    feature?(:multi_product)  ],
+                                    ['/admin/products',             'multi-product',    feature?(:multi_product)  ]
+#                                    ['/admin/canned_responses',     'canned-response'         ]
                     ]],
                     [ t(".everything_else"), [
                                     ['/account',                    'account-settings'  , current_user.account_admin?      ],
@@ -37,8 +38,7 @@ module Admin::HomeHelper
                                     ['/admin/zip_readers',          'import'                  ],
                                     ['/admin/widget_config',        'feedback'                ],
                                     ['/agents',                     'agent'                   ],
-                                    ['/groups',                     'group'                   ],
-                                    ['/admin/canned_responses',     'canned-response'         ]
+                                    ['/groups',                     'group'                   ]
                     ]]
 
                     # [ "People & Roles", [

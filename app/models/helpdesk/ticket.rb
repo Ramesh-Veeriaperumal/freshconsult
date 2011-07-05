@@ -378,7 +378,7 @@ end
   end
   
   def custom_fields
-    @custom_fields = FlexifieldDef.all(:include => [:flexifield_def_entries =>:flexifield_picklist_val] , :conditions => ['account_id=? AND module=?',account_id,'Ticket']) 
+    @custom_fields = FlexifieldDef.all(:include => [:flexifield_def_entries =>:flexifield_picklist_vals] , :conditions => ['account_id=? AND module=?',account_id,'Ticket']) 
   end
   
   def to_s
@@ -389,8 +389,8 @@ end
     "#{ticket.excerpts.subject} (##{ticket.excerpts.display_id})"
   end
   
-  def reply_email #To do - active check..
-    email_config ? email_config.reply_email : account.default_email
+  def reply_email
+    email_config ? email_config.friendly_email : account.default_email
   end
 
   #Some hackish things for virtual agent rules.
@@ -537,8 +537,10 @@ end
       super
     rescue NoMethodError => e
       logger.debug "method_missing :: args is #{args} and method:: #{method} and type is :: #{method.kind_of? String} "
+      load_flexifield if custom_field.nil?
+      custom_field.symbolize_keys!
       
-      if (method.to_s.include? '=') && custom_field.has_key?(method.to_s.chomp("="))
+      if (method.to_s.include? '=') && custom_field.has_key?(method.to_s.chomp("=").to_sym)
         logger.debug "method_missing :: inside custom_field  args is #{args}  and method.chomp:: #{ method.to_s.chomp("=")}"
         
         ff_def_id = FlexifieldDef.find_by_account_id(self.account_id).id
@@ -550,12 +552,7 @@ end
         return
       end
       
-      field =false
-      unless custom_field.nil?
-        field = custom_field.has_key?(method)    
-      end
-      raise e unless field
-      
+      raise e unless custom_field.has_key?(method)
       custom_field[method]
     end
   end
@@ -581,7 +578,7 @@ end
   end
   
   def portal_name
-    (email_config && email_config.portal) ? email_config.portal.name : account.helpdesk_name
+    (email_config && email_config.portal) ? email_config.portal.name : account.portal_name
   end
   
 end

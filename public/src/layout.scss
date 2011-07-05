@@ -147,12 +147,16 @@ div.bg_pulp{
 	.logo, .logo_text{ float:left; position:relative; z-index:5; }
 	.logo{
 		margin:0px 0px 0px 10px;
+		top:-4px;
 	}
 	.logo_text{
-		font-size:20px;
-		color:#ffffff;
-		padding:13px 0 0 5px;
-	}	 
+	   font-size:1.6em;
+	   border-left:1px solid lighten(#ffffff, 4%);
+      color:#ffffff;
+      padding:0px 0 0px 10px;
+      margin-left:10px;
+      margin-top:10px;
+   }
 }
 
 .header_links{

@@ -69,9 +69,9 @@ rules_filter = function(_name, filter_data, parentDom, options){
 		add_to_hash:
 			function(h_data){
 				// Hash list for dropdown
-				h_data.each(function(option){ 
-					hg_data.set(option.name, option);					
-				});							
+				h_data.each(function(option){
+					hg_data.set(option.name, option);
+				});
 			},
 		getContainer:
 			function(name){
@@ -80,47 +80,48 @@ rules_filter = function(_name, filter_data, parentDom, options){
 								.append("<input type=\"hidden\" name=\""+name+"\" value=\"start\" />")
 								.append("<span class='sort_handle'></span>")
 								.append("<img class=\"delete\" src=\"/images/delete.png\" />")
-								.append(inner)											 
+								.append(inner)
 								.append("<input type=\"hidden\" name=\""+name+"\" value=\"end\" />");
 				jQuery.data(outer, "inner", inner);
-				return outer;								
+				return outer;
 			},
 		add_dom: 
 			function(){
-				// Adding a new Filter DOM element to the Filter Container								
-				var r_dom = domUtil.getContainer(name);			
+				// Adding a new Filter DOM element to the Filter Container
+				var r_dom = domUtil.getContainer(name);
 				jQuery.data(r_dom, "inner")
 					  .append(FactoryUI.dropdown(filter_data, "name", "ruCls_"+name))
 					  .append("<div />");
-					 
+
 				list_C = jQuery(parentDom).find(setting.rule_dom);
-				r_dom.appendTo(list_C);								
+				r_dom.appendTo(list_C);
 			},
 		// Used to Edit pre-population
-		feed_data:
-			function(dataFeed){
-				dataFeed.each(function(rule){
-					var r_dom	= domUtil.getContainer(name);			
-					var inner	= jQuery("<div />");
-					var data_id = rule.name + itemManager.get();
+      feed_data:
+         function(dataFeed){
+            dataFeed.each(function(rule){
+               try{
+                  var r_dom	= domUtil.getContainer(name);
+                  var inner	= jQuery("<div />");
+                  var data_id = rule.name + itemManager.get();
 
-					if(rule.operator){	
-						opType = hg_data.get(rule.name).operatortype;
-						inner.append(FactoryUI.dropdown(operator_types.get(opType), "operator").val(rule.operator));
-					}	
-					inner.append(conditional_dom(hg_data.get(rule.name), data_id, name, rule));
+                  if(rule.operator){	
+                     opType = hg_data.get(rule.name).operatortype;
+                     inner.append(FactoryUI.dropdown(operator_types.get(opType), "operator").val(rule.operator));
+                  }	
+                  inner.append(conditional_dom(hg_data.get(rule.name), data_id, name, rule));
 
-					jQuery.data(r_dom, "inner")
-						  .append(FactoryUI.dropdown(filter_data, "name", "ruCls_"+name).val(rule.name))
-						  .append(inner);	
+                  jQuery.data(r_dom, "inner")
+                     .append(FactoryUI.dropdown(filter_data, "name", "ruCls_"+name).val(rule.name))
+                     .append(inner);	
 
-					list_C = jQuery(parentDom).find(setting.rule_dom);
-					r_dom.appendTo(list_C);
-					  
-					postProcessCondition(hg_data.get(rule.name), data_id);					
-				});				
-			},
-		
+                  list_C = jQuery(parentDom).find(setting.rule_dom);
+                  r_dom.appendTo(list_C);
+                  postProcessCondition(hg_data.get(rule.name), data_id);
+               }catch(e){}
+            });
+         },
+
 		get_filter_list:
 			function(_type, c_form){
 				var serialArray		= jQuery(c_form).serializeArray(),
@@ -128,9 +129,9 @@ rules_filter = function(_name, filter_data, parentDom, options){
 					setValue		= [],
 					tempConstruct	= $H(),
 					type			= _type || "object";
-					flag			= false;		
+					flag			= false;
 
-				serialArray.each(function(item){					
+				serialArray.each(function(item){
 					if(item.name == name || flag){
 						if(!serialHash.get(name)) 
 							serialHash.set(name, $A());	
@@ -187,12 +188,12 @@ rules_filter = function(_name, filter_data, parentDom, options){
 			jQuery(parentDom).parents('form:first').submit(function(e){
 				domUtil.get_filter_list('json', this);
 				//console.log(hidden_.val());
-				return true;
+				//return true;
 			});
 
 			jQuery('.l_placeholder').live("click", function(ev){
 					active_email_body = jQuery(this).prev();
-					jQuery('#place-dialog').slideDown();			
+					jQuery('#place-dialog').slideDown();
 			});
 
 			// Binding Events to Containers
@@ -204,8 +205,8 @@ rules_filter = function(_name, filter_data, parentDom, options){
 
 							if(this.value !== 0){
 								var hg_item = hg_data.get(this.value);
-								var data_id = hg_item.name + itemManager.get();  
-																
+								var data_id = hg_item.name + itemManager.get();
+
 								if(hg_item.operatortype)
 									rule_drop.append(FactoryUI.dropdown(operator_types.get(hg_item.operatortype), "operator"));
 
@@ -226,10 +227,10 @@ rules_filter = function(_name, filter_data, parentDom, options){
 						function(){
 							filter = jQuery(this).parent();
 							if(filter.parent().children().size() != 1)
-								filter.remove();										
+								filter.remove();
 						});
 
-			domUtil.init();		
+			domUtil.init();
 		}init();
 
 		return pub_Methods;
