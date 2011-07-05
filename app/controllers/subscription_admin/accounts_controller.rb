@@ -6,16 +6,16 @@ class SubscriptionAdmin::AccountsController < ApplicationController
   
   def index
     @accounts = search(params[:search])
-    @accounts = @accounts.paginate( :page => params[:page], :per_page => 30, :order => 'accounts.created_at desc')
+    @accounts = @accounts.paginate( :page => params[:page], :per_page => 30)
   end
   
   def agents
-    @accounts = Account.find(:all, :include => :all_agents).sort_by { |u| -u.all_agents.size }
+    @accounts = Account.find(:all, :include => :all_agents).sort_by { |u| -u.all_agents.count }
     @accounts = @accounts.paginate( :page => params[:page], :per_page => 30)
   end
   
   def helpdesk_urls
-    @accounts = Account.all(:conditions => "helpdesk_url is not null and helpdesk_url != 'NULL'")
+    @accounts = Account.all(:conditions => ["helpdesk_url is not null and helpdesk_url != ?",""])
     @accounts = @accounts.paginate( :page => params[:page], :per_page => 30)
   end
   
@@ -28,7 +28,7 @@ class SubscriptionAdmin::AccountsController < ApplicationController
     if search
       Account.find(:all, :conditions => ['full_domain LIKE ?', "%#{search}%"],:include => :subscription)
     else
-      Account.find(:all,:include => :subscription)
+      Account.find(:all,:include => :subscription, :order => 'accounts.created_at desc')
     end
   end
   
