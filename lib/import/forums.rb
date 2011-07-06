@@ -270,11 +270,12 @@ def get_entry_data file_path, make_solution
     topic_saved = @topic.save
     @post = @topic.posts.find_by_import_id(import_id)
     @post = @topic.posts.new if @post.blank?
-    @post.body = body
+    @post.body = body || title
     @post.account_id = current_account.id
-    @post.body_html = body
+    @post.body_html = body || title
     @post.forum_id = @forum.id
     @post.user_id = submitter_id
+    @post.import_id = import_id
     @post.created_at = created_at
     @post.updated_at = updated_at
     
@@ -323,6 +324,7 @@ def get_entry_data file_path, make_solution
        @post.body_html = post_body
        @post.forum_id = @forum.id
        @post.user_id = created_by
+       @post.import_id = imp_id.to_i()
        @post.created_at = post_created_at
        @post.updated_at = post_updated_at
     
