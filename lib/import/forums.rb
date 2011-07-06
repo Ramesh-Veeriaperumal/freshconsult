@@ -319,9 +319,9 @@ def get_entry_data file_path, make_solution
        
        @post = @topic.posts.find_by_import_id(imp_id.to_i())
        @post = @topic.posts.new if @post.blank?
-       @post.body = post_body
+       @post.body = post_body || " "
        @post.account_id = current_account.id
-       @post.body_html = post_body
+       @post.body_html = post_body || " "
        @post.forum_id = @forum.id
        @post.user_id = created_by
        @post.import_id = imp_id.to_i()

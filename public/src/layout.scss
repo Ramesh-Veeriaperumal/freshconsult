@@ -137,7 +137,7 @@ div.bg_pulp{
 	background:$header_color;
 }
 
-.brand{	
+.brand{
 	@include clearfix;
 	position:absolute;
 	left:0px;
@@ -147,7 +147,6 @@ div.bg_pulp{
 	.logo, .logo_text{ float:left; position:relative; z-index:5; }
 	.logo{
 		margin:0px 0px 0px 10px;
-		top:-4px;
 	}
 	.logo_text{
 	   font-size:1.6em;
