@@ -247,7 +247,7 @@ def handle_user_import base_dir
      @user = current_account.all_users.find_by_import_id(import_id) if @user.blank?     
      logger.debug "email is :: #{usr_email} and import id :: #{import_id} and \n user: #{@user.inspect}"
      unless @user.blank?
-          if @user.update_attributes(@params_hash[:user])
+          if @user.update_attribute(:import_id , import_id )
              updated+=1
               if usr_role != 3               
                @agent = Agent.find_or_create_by_user_id(@user.id )
@@ -394,7 +394,7 @@ def handle_ticket_import base_dir
       
       @display_id_exist = current_account.tickets.find_by_display_id(display_id.to_i())
       
-      @request.subject = sub
+      @request.subject = sub || 'no subject'
       @request.description = desc
       @request.requester_id = requester_id
       @request.responder_id = assignee_id
