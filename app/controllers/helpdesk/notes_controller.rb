@@ -44,7 +44,7 @@ class Helpdesk::NotesController < ApplicationController
         unless @item.private
           @parent.tickets.each do |t|
             t.notes << (c = @item.clone)
-            Helpdesk::TicketNotifier.deliver_reply(t, c, reply_email,params)
+            Helpdesk::TicketNotifier.deliver_reply(t, c, reply_email)
           end
         end
         @parent.owner ||= current_user  if @parent.respond_to?(:owner)

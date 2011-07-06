@@ -106,6 +106,7 @@ class Solution::Article < ActiveRecord::Base
     to_ret = suggest(ticket, ticket.description) if to_ret.empty?
     
     to_ret
+    
   end
   
   def self.suggest(ticket, search_by)

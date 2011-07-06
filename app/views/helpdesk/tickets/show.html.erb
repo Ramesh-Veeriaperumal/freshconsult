@@ -231,7 +231,7 @@
 			</div>
 		<% end %>
 		<% unless @ticket_notes.blank? then %>
-			<h3 class="subtitle">Conversation</h3>			
+			<h3 class="subtitle">Conversation</h3>
 			<div class="requestCnt request-conversation">
 				<%= render :partial => 'note', :collection => @ticket_notes %>
 		    </div>

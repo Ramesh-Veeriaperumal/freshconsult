@@ -48,7 +48,6 @@ class SubscriptionNotifier < ActionMailer::Base
   
   def charge_failure(subscription)
     setup_email(subscription.account.account_admin, "Your #{AppConfig['app_name']} renewal failed")
-    setup_bcc
     @bcc = AppConfig['from_email']
     @body = { :subscription => subscription }    
   end
