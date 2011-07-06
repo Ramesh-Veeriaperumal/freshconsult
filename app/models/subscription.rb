@@ -11,7 +11,7 @@ class Subscription < ActiveRecord::Base
   before_validation :update_amount
   after_update :update_features,:send_invoice
   
-  attr_accessor :creditcard, :address
+  attr_accessor :creditcard, :address, :billing_cycle
   attr_reader :response
   
   # renewal_period is the number of months to bill at a time
@@ -47,7 +47,7 @@ class Subscription < ActiveRecord::Base
       self.state = 'active' #if new_record?
     end
     
-    self.renewal_period = plan.renewal_period
+    self.renewal_period = self.billing_cycle
     self.subscription_plan = plan
   end
   
@@ -242,10 +242,20 @@ class Subscription < ActiveRecord::Base
     # If the discount is changed, set the amount to the discounted
     # plan amount with the new discount.
     def update_amount
-      if subscription_discount_id_changed? || agent_limit_changed? || subscription_plan_id_changed?
-        subscription_plan.discount = discount
-        self.amount = agent_limit ? (subscription_plan.amount * agent_limit) : subscription_plan.amount
+      if subscription_discount_id_changed? || agent_limit_changed? || subscription_plan_id_changed? || renewal_period_changed?
+        subscription_plan.discount = discount 
+        total_amount
       end
+    end
+    
+    def total_amount
+      apply_the_cycle
+      self.amount = agent_limit ? (self.amount * agent_limit) : subscription_plan.amount
+    end
+    
+    def apply_the_cycle
+      self.amount = (subscription_plan.amount * subscription_plan.fetch_discount(self.billing_cycle)).round.to_f
+      self.amount = (self.amount * self.billing_cycle)
     end
     
     def cache_old_model
