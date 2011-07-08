@@ -9,8 +9,8 @@
     <td><%= @account.full_domain %></td>
   </tr>
   <tr>
-    <th>Created</th>
-    <td><%= @account.created_at.to_s(:short_day) %></td>
+    <th>Next renewal</th>
+    <td><%= @account.subscription.next_renewal_at.to_s(:short_day) %></td>
   </tr>
   <tr>
     <th>Plan</th>

@@ -9,12 +9,12 @@ class AccountsController < ApplicationController
   
   before_filter :build_user, :only => [ :new, :create ]
   before_filter :load_billing, :only => [ :show, :new, :create, :billing, :paypal, :payment_info ]
-  before_filter :load_subscription, :only => [ :show, :billing, :plan, :paypal, :plan_paypal, :plans ]
-  before_filter :load_discount, :only => [ :plans, :plan, :show ]
+  before_filter :load_subscription, :only => [ :show, :billing, :plan, :paypal, :plan_paypal, :plans, :calculate_amount ]
+  before_filter :load_discount, :only => [ :plans, :plan, :show, :calculate_amount ]
   before_filter :build_plan, :only => [:new, :create]
   before_filter :load_plans, :only => [:show, :plans]
   before_filter :admin_selected_tab, :only => [ :billing, :show, :edit, :plan, :cancel ]
-  before_filter :load_subscription_plan, :only => [:plan] 
+  before_filter :load_subscription_plan, :only => [:plan, :calculate_amount] 
   before_filter :check_credit_card, :only => [:plan] 
   
   ssl_required :billing
@@ -24,7 +24,7 @@ class AccountsController < ApplicationController
     c.requires_permission :manage_users
   end
   
-  before_filter :only =>  [:billing,:show,:cancel,:destroy, :plan, :plans ] do |c| 
+  before_filter :only =>  [:billing,:show,:cancel,:destroy, :plan, :plans, :calculate_amount ] do |c| 
     c.requires_permission :manage_account
   end
   
@@ -287,10 +287,20 @@ class AccountsController < ApplicationController
       redirect_to :action => "billing"
     end
   end
+  
+  def calculate_amount
+      @subscription_plan.discount = @discount
+      @subscription.billing_cycle = params[:billing_cycle].to_i
+      @subscription.plan = @subscription_plan
+      @subscription.agent_limit = params[:agent_limit]
+      #@subscription.update_amount
+      render :text => @subscription.total_amount
+  end
 
   def plan
     if request.post?
       @subscription_plan.discount = @discount
+      @subscription.billing_cycle = params[:billing_cycle].to_i
       @subscription.plan = @subscription_plan
       @subscription.agent_limit = params[:agent_limit]
       if @subscription.save

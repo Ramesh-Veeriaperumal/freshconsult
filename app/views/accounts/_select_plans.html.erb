@@ -35,6 +35,7 @@
 </div>
 <div id="billing-template" class="billing" style="display:none;">
 	<% form_tag plan_account_url, :id => "plan_form" do %>
+	<%=select_tag :billing_cycle,options_for_select(SubscriptionPlan::BILLING_CYCLE_OPTIONS.to_a) %>
 	<table>
 		<tr>
 			<td colspan="2"><%= t('agents') %> <input type="text" size="4" value="<%= @subscription.agent_limit || current_account.agents.count %>" name="agent_limit" id="agents-text-box" class="text" /> x <b id="cost-per-agent">$</b>
