@@ -30,6 +30,10 @@
               <%= link_to(product.name, edit_admin_product_path(product), :class => "big-text") %>
               <%= content_tag(:div, product.reply_email, :class => "text") %>
               <%= link_to(product.portal.portal_url, product.portal.portal_url, {:class => "text", :target => "_blank"}) if(product.portal_enabled?) %>
+              <div class="not-verified">
+                <%= content_tag (:span, t(".email_not_verified"), :class => "inactive_email custom-tip-top", :title => t('email_configs.unverified_info1')) unless product.active? %>
+    						<%= link_to(t("email_configs.send_verification_email"), deliver_verification_admin_email_config_path(product), :class => "slim-button")  unless product.active?  %>                
+              </div>
             </td>
           </tr>
         </table>

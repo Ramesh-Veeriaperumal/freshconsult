@@ -190,7 +190,7 @@ ul.activityfeed li .activity_time {
 }
 .ui-list_with_icon li {
   padding-left: 14px;
-  background: url('/images/listicons/request_nav_seperator.gif?1305622140') no-repeat 3px 9px;
+  background: url('/images/listicons/request_nav_seperator.gif?1309788881') no-repeat 3px 9px;
   list-style-type: none;
 }
 .ui-list_with_icon li {
@@ -225,7 +225,7 @@ ul.activityfeed li .activity_time {
 }
 .list_with_icon li {
   padding-left: 14px;
-  background: url('/images/listicons/forum-bullet.png?1305622140') no-repeat 1px 1px;
+  background: url('/images/listicons/forum-bullet.png?1309788881') no-repeat 1px 1px;
   list-style-type: none;
 }
 .list_with_icon li, .list_with_icon div.list-item {
@@ -2552,7 +2552,7 @@ h4.border_title {
 }
 .solution-list .odd ul li, .solution-list .even ul li {
   padding-left: 14px;
-  background: url('/images/listicons/request_nav_seperator.gif?1305622140') no-repeat 3.5px 3.5px;
+  background: url('/images/listicons/request_nav_seperator.gif?1309788881') no-repeat 3.5px 3.5px;
   list-style-type: none;
 }
 .solution-list .odd li, .solution-list .even li {
@@ -3702,7 +3702,7 @@ a.page_title:active {
   -moz-border-radius: 6px 6px 6px 6px;
   -webkit-border-radius: 6px 6px 6px 6px;
   border-radius: 6px 6px 6px 6px;
-  background: url('/images/../images/embed/sprites/16square_sprite.png?1305622139') no-repeat;
+  background: url('/images/../images/embed/sprites/16square_sprite.png?1309788881') no-repeat;
   width: 16px;
   height: 16px;
   overflow: hidden;
@@ -4096,7 +4096,7 @@ div.addReminder form label.overlabel {
   width: 32px;
   height: 32px;
   margin: 0px;
-  background: url('/images/../images/embed/sprites/32square_sprite.png?1305622139') no-repeat;
+  background: url('/images/../images/embed/sprites/32square_sprite.png?1309788881') no-repeat;
   width: 32px;
   height: 32px;
   overflow: hidden;
@@ -4214,7 +4214,7 @@ div.addReminder form label.overlabel {
   position: absolute;
   left: -34px;
   top: 2px;
-  background: url('/images/../images/embed/sprites/32square_sprite.png?1305622139') no-repeat;
+  background: url('/images/../images/embed/sprites/32square_sprite.png?1309788881') no-repeat;
   width: 32px;
   height: 32px;
   overflow: hidden;
@@ -4303,7 +4303,7 @@ div.addReminder form label.overlabel {
   top: 0px;
   width: 32px;
   height: 32px;
-  background: url('/images/../images/embed/sprites/32square_sprite.png?1305622139') no-repeat;
+  background: url('/images/../images/embed/sprites/32square_sprite.png?1309788881') no-repeat;
   width: 32px;
   height: 32px;
   overflow: hidden;
@@ -4420,6 +4420,16 @@ div.addReminder form label.overlabel {
 }
 .admin_list li .portal-text, .content_list li .portal-text {
   padding-left: 12px;
+}
+.admin_list li .portal-text .not-verified, .content_list li .portal-text .not-verified {
+  padding: 12px 0px;
+}
+.admin_list li .portal-text .inactive_email, .content_list li .portal-text .inactive_email {
+  margin: 0px;
+}
+.admin_list li .portal-text .slim-button, .content_list li .portal-text .slim-button {
+  margin-top: -3px;
+  color: #333333;
 }
 .admin_list li .color_box, .content_list li .color_box {
   overflow: hidden;
@@ -4553,7 +4563,7 @@ div.addReminder form label.overlabel {
   margin-left: -3px;
   margin-top: -5px;
   position: absolute;
-  background: url('/images/../images/embed/sprites/32square_sprite.png?1305622139') no-repeat;
+  background: url('/images/../images/embed/sprites/32square_sprite.png?1309788881') no-repeat;
   width: 32px;
   height: 32px;
   overflow: hidden;
