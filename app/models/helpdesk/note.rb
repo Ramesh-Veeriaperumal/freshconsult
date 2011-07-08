@@ -68,8 +68,10 @@ class Helpdesk::Note < ActiveRecord::Base
   end
   
   def to_liquid
-    { "commenter"   => user,
-      "body"     => body }
+    { 
+      "commenter" => user,
+      "body"      => liquidize_body
+    }
   end
 
   protected
@@ -132,5 +134,9 @@ class Helpdesk::Note < ActiveRecord::Base
     def human_note_for_ticket?
       (self.notable.is_a? Helpdesk::Ticket) && user && (source != SOURCE_KEYS_BY_TOKEN['meta'])
     end
-
+    
+    def liquidize_body
+      attachments.empty? ? body : 
+        "#{body}\n\nAttachments :\n#{notable.liquidize_attachments(attachments)}\n"
+    end
 end
