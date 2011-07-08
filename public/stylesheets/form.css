@@ -1,5 +1,9 @@
 /* Theme Colors and layout Defaults */
 /* generic form styles */
+.loading-center {
+  background-position: center 40%;
+}
+
 label {
   display: block;
   color: #666;
@@ -866,7 +870,7 @@ span.sort_handle {
   font-size: 13px;
 }
 
-.ui-widget-container {
+.ui-widget-container, .ui-dialog {
   padding: 10px 20px;
   min-height: 200px;
   *zoom: 1;
@@ -890,7 +894,7 @@ span.sort_handle {
   _background: #ffffff;
   margin: 10px;
 }
-.ui-widget-container .button-container {
+.ui-widget-container .button-container, .ui-dialog .button-container {
   width: 96% !important;
   padding-right: 0px !important;
 }
@@ -903,6 +907,102 @@ span.sort_handle {
 }
 .ui-form-widget label {
   font-size: 1.2em;
+}
+
+/*
+ * jQuery UI Dialog 1.8.7
+ *
+ * Copyright 2010, AUTHORS.txt (http://jqueryui.com/about)
+ * Dual licensed under the MIT or GPL Version 2 licenses.
+ * http://jquery.org/license
+ *
+ * http://docs.jquery.com/UI/Dialog#theming
+ */
+.ui-dialog {
+  padding: 8px;
+}
+
+.ui-dialog .ui-dialog-titlebar {
+  padding: 0px;
+  position: relative;
+  color: #444;
+  padding: 6px 0px 10px 8px;
+}
+
+.ui-dialog .ui-dialog-title {
+  float: left;
+  margin: 0em;
+  color: #333333;
+  font-size: 18px;
+  font-weight: normal;
+}
+
+.ui-dialog .ui-dialog-titlebar-close {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  width: 19px;
+  margin: -10px 0 0 0;
+  padding: 1px;
+  height: 18px;
+}
+
+.ui-dialog .ui-dialog-titlebar-close span {
+  display: block;
+  margin: 1px;
+}
+
+.ui-dialog .ui-dialog-titlebar-close:hover, .ui-dialog .ui-dialog-titlebar-close:focus {
+  background-color: #efefef;
+}
+
+.ui-dialog .ui-dialog-content {
+  position: relative;
+  border: 0;
+  padding: 8px 20px;
+  overflow: auto;
+  zoom: 1;
+  margin-bottom: 20px;
+}
+.ui-dialog .ui-dialog-content .info-highlight {
+  margin: -8px -20px 0px -20px;
+  font-size: 13px;
+  padding: 14px 20px;
+}
+.ui-dialog .ui-dialog-content .ui-form {
+  margin: 0px -20px;
+  padding: 8px 20px;
+}
+.ui-dialog .ui-dialog-content label {
+  font-size: 13px;
+}
+
+.ui-dialog .ui-dialog-buttonpane {
+  text-align: left;
+  border-width: 1px 0 0 0;
+  background-image: none;
+  margin: .5em 0 0 0;
+  padding: .3em 1em .5em .4em;
+}
+
+.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset {
+  float: right;
+}
+
+.ui-dialog .ui-dialog-buttonpane button {
+  margin: .5em .4em .5em 0;
+  cursor: pointer;
+}
+
+.ui-dialog .ui-resizable-se {
+  width: 14px;
+  height: 14px;
+  right: 3px;
+  bottom: 3px;
+}
+
+.ui-draggable .ui-dialog-titlebar {
+  cursor: move;
 }
 
 .requesteremail, .agentemail {
@@ -1586,4 +1686,38 @@ a.new_ticket:hover {
   background-image: -moz-linear-gradient(#fbfdfc, #eaeaea);
   background-image: -o-linear-gradient(#fbfdfc, #eaeaea);
   background-image: linear-gradient(#fbfdfc, #eaeaea);
+}
+
+.ticket-highlight {
+  padding: 10px 20px 6px 20px;
+  border-bottom: 1px solid #efefef;
+  margin: -0.5em -19px 0.5em -19px;
+  font-size: 1.20em;
+  *zoom: 1;
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColorstr='#FFFCFCFC', endColorstr='#FFF9F9F9')";
+  filter: progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColorstr='#FFFCFCFC', endColorstr='#FFF9F9F9');
+  /* Fallback: */
+  background: #fcfcfc;
+  /* CSS 3 plus vendor prefixes: */
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #fcfcfc), color-stop(100%, #f9f9f9));
+  background-image: -webkit-linear-gradient(#fcfcfc, #f9f9f9);
+  background-image: -moz-linear-gradient(#fcfcfc, #f9f9f9);
+  background-image: -o-linear-gradient(#fcfcfc, #f9f9f9);
+  background-image: linear-gradient(#fcfcfc, #f9f9f9);
+  color: #666666;
+}
+
+h3.merge-title {
+  font-size: 1.2em;
+  color: #666666;
+  padding-top: 4px;
+}
+h3.merge-title .uiButton {
+  font-size: 0.8em;
+}
+
+.or {
+  padding: 10px 0px;
+  font-size: 1.45em;
+  color: #afafaf;
 }

@@ -1,38 +1,26 @@
-You are going to merge ticket #<%=@source_ticket.display_id%> into ticket #<%=@target_ticket.display_id%>
- 
+	<div class="info-highlight">  
+  	Merge ticket #<%=@source_ticket.display_id%> into ticket #<%=@target_ticket.display_id%>
+	</div>
  <% form_tag :action => :complete_merge, :controller => 'helpdesk/tickets', :method => :post do |f| %>
-  			<%= hidden_field_tag 'source[ticket_id]', params[:id] %>
-			<%= hidden_field_tag 'target[ticket_id]', params[:target_id] %>
- 
- 	 <div>
-        <div>
-          <span>#<%=@source_ticket.display_id%></span>
-  		  <h3><%=@source_ticket.subject%></h3>  by <%=@source_ticket.requester.name%>
-        </div>
-        <div>
-          <p>This ticket will be closed with the following comment:</p>
-          <textarea id="source_note" name="source[note]">This ticket is closed and merged into ticket #<%=@target_ticket.display_id%>..  </textarea>
-          <p><input checked="checked" id="source_public" name="source[is_public]"  type="checkbox"> Contacts can see this note</p>
-        </div>
+   <%= hidden_field_tag 'source[ticket_id]', params[:id] %>
+   <%= hidden_field_tag 'target[ticket_id]', params[:target_id] %>
+   <div class="ui-form">
+     <label><%= h(@source_ticket.subject) + " ##{@source_ticket.display_id}" %></label>
+     <div class="info-data">This ticket will be closed with the following comment:</div>
+     <textarea id="source_note" rows="2" class="auto-height" name="source[note]">This ticket is closed and merged into ticket #<%=@target_ticket.display_id%>..  </textarea>
+     <label><input checked="checked" id="source_public" name="source[is_public]"  type="checkbox"> Contacts can see this note</label>
+  </div>
+   <div class="ui-form">
+     <label><%= h(@target_ticket.subject) + " ##{@target_ticket.display_id}" %></label>
+     <div class="info-data">This ticket will be updated with the following comment and all conversations will be moved:</div>
+     <textarea id="target_note" class="auto-height" rows="4" name="target[note]">Ticket #<%=@source_ticket.display_id%> <%=@source_ticket.subject%> is merged with this request:
+Description in ticket #<%=@source_ticket.display_id%>:
+<%=@source_ticket.description%>
+      </textarea>
+    <p><input id="target_public" name="target[is_public]"  type="checkbox"> Contact can see this comment</p>
+  </div>
 
-      </div>
-	  
-       <div>
-          <span>#<%=@target_ticket.display_id%></span>  		 
-   	 	<h3><%=@target_ticket.subject%></h3>
-       </div>
-        <div>
-            <p>This ticket will be updated with the following comment and all conversations will be moved:</p>
-						
-        <textarea id="target_note" name="target[note]">Ticket #<%=@source_ticket.display_id%> <%=@source_ticket.subject%> is merged with this request:
-		 Description in ticket #<%=@source_ticket.display_id%>:
-		 <%=@source_ticket.description%>
-		</textarea>
-        <p><input id="target_public" name="target[is_public]"  type="checkbox"> Contact can see this comment</p>
-        </div>
-		
-		<div class="button-container">
-  				<%= submit_tag "Confirm and merge", :class => "uiButton" %>
-			</div>
-
+  <div class="button-container">
+    <%= submit_tag "Confirm and merge", :class => "uiButton" %>
+  </div>
 <%end%>

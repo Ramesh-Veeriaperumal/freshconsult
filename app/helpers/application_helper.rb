@@ -9,8 +9,7 @@ module ApplicationHelper
   end
 
   def page_title
-    portal_name = h(current_portal.name)
-    portal_name += (portal_name.empty?) ? "" : " : "
+    portal_name = h( (current_portal.name.blank?) ? current_portal.product.name : current_portal.name ) + " : "
     portal_name += @page_title || t('helpdesk_title')
   end
 
