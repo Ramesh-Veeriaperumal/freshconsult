@@ -4425,6 +4425,16 @@ div.addReminder form label.overlabel {
 .admin_list li .portal-text, .content_list li .portal-text {
   padding-left: 12px;
 }
+.admin_list li .portal-text .not-verified, .content_list li .portal-text .not-verified {
+  padding: 12px 0px;
+}
+.admin_list li .portal-text .inactive_email, .content_list li .portal-text .inactive_email {
+  margin: 0px;
+}
+.admin_list li .portal-text .slim-button, .content_list li .portal-text .slim-button {
+  margin-top: -3px;
+  color: #333333;
+}
 .admin_list li .color_box, .content_list li .color_box {
   overflow: hidden;
   *zoom: 1;

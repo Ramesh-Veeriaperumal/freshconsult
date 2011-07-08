@@ -3456,6 +3456,16 @@ div.addReminder{
 		 }
 		 .portal-text{
 		    padding-left:12px;
+		    .not-verified{
+		       padding:12px 0px;
+		    }
+		    .inactive_email{
+		       margin:0px;
+		    }
+		    .slim-button{
+		       margin-top:-3px;
+		       color:#333333;
+		    }
 		 }
 		 .color_box{
 		    @include clearfix;

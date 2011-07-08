@@ -27,18 +27,19 @@ module Admin::HomeHelper
                                     ['/helpdesk/sla_policies',      'sla'                     ],
                                     ['/admin/business_calendars',   'business-hours',   feature?(:business_hours)        ],
                                     ['/admin/va_rules',             'dispatcher'              ],
-                                    ['/admin/automations',          'scenario',         feature?(:scenario_automations)  ],
-                                    ['/admin/products',             'multi-product',    feature?(:multi_product)  ]
+                                    ['/admin/automations',          'scenario',         feature?(:scenario_automations)  ]
 #                                    ['/admin/canned_responses',     'canned-response'         ]
                     ]],
                     [ t(".everything_else"), [
                                     ['/account',                    'account-settings'  , current_user.account_admin?      ],
+                                    ['/admin/products',             'multi-product',    feature?(:multi_product)  ],
                                     ['/admin/portal',               'customer-portal'         ],
                                     ['/admin/security',             'remote-authentication'   ],
                                     ['/admin/zip_readers',          'import'                  ],
                                     ['/admin/widget_config',        'feedback'                ],
                                     ['/agents',                     'agent'                   ],
                                     ['/groups',                     'group'                   ]
+                                
                     ]]
 
                     # [ "People & Roles", [

@@ -55,7 +55,7 @@ class Admin::EmailConfigsController < Admin::AdminController
     @email_config.deliver_verification_email
     flash[:notice] = t(:'flash.email_settings.send_activation.success', 
         :reply_email => @email_config.reply_email)
-    redirect_back_or_default redirect_url
+    redirect_to :back
   end
   
   protected

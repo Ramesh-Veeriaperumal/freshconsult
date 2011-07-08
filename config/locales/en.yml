@@ -52,6 +52,7 @@ en:
         title: Products
         add_product: Add Product
         delete_product: Are you sure you want to delete this Product?
+        email_not_verified: Email not verified
       new:
         title: New Product
       edit:
@@ -123,7 +124,7 @@ en:
         remote-authentication: Remote Authentication
         everything_helpdesk: Everything Helpdesk
         canned-response: Canned Response
-        multi-product: Multiple Products
+        multi-product: Multi-Product Settings
       
     canned_responses:
       index:
@@ -790,6 +791,7 @@ en:
   enter_payment: Enter Payment details...
   errors_in_payment: "Errors encountered with your payment:"
   email_configs:
+    send_verification_email: "Send verification email again"
     info9: Assign to Group
     reply_emails: Reply Emails from Freshdesk
     title: Email Settings
