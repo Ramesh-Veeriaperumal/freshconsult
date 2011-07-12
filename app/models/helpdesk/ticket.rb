@@ -14,7 +14,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   attr_accessor :email, :name, :custom_field ,:customizer, :nscname
   
   before_validation :populate_requester, :set_default_values 
-  before_create :set_spam, :set_dueby, :save_ticket_states
+  before_create :set_dueby, :save_ticket_states
   after_create :refresh_display_id, :save_custom_field, :pass_thro_biz_rules, :autoreply 
   before_update :cache_old_model, :update_dueby
   after_update :save_custom_field, :update_ticket_states, :notify_on_update 
@@ -188,10 +188,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     "[##{display_id}]"
   end
 
-  def train(category)   
-    classifier.untrain(spam ? :spam : :ham, spam_text) if trained
-    classifier.train(category, spam_text)
-    classifier.save
+  def train(category)
     self[:trained] = true
     self[:spam] = (category == :spam)
   end
@@ -199,20 +196,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def self.extract_id_token(text)
     pieces = text.match(/\[#([0-9]*)\]/) #by Shan changed to just numeric
     pieces && pieces[1]
-  end
-
-  def classifier
-    @classifier ||= Helpdesk::Classifier.find_by_name("spam")
-  end
-
-  def set_spam
-    self[:spam] ||= (classifier.category?(spam_text) == "Spam") if spam_text && !Helpdesk::SPAM_TRAINING_MODE
-    true
-  end
-
-  def spam_text
-    #@spam_text ||= notes.empty? ? description : notes.find(:first).body
-    @spam_text ||= description #by Shan
   end
 
   #shihab-- date format may need to handle later. methode will set both due_by and first_resp
