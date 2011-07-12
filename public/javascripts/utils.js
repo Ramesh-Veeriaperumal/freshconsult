@@ -79,17 +79,21 @@ function construct_reply_url(to_email, account_name){
         init : function( options ) {
           return this.each(function(){
             $this = $(this);
-            
-            var dialog = $("<div class='loading-center' id='Merge-dialog' />")
-                           .html("<br />")
-                           .dialog({ modal:true, width:'650px', height:'auto', position:'center', show: "scale", title: $this.title, resizable: false });
-
-                dialog.load(this.href,{}, function(responseText, textStatus, XMLHttpRequest) {
-                dialog.removeClass("loading-center");
-             });
-                
+            var dialog = null;
             $this.click(function(e){
-               e.preventDefault();           
+               e.preventDefault();
+               if(dialog == null){
+                  dialog = $("<div class='loading-center' />")
+                              .html("<br />")
+                              .dialog({ modal:true, width:'750px', height:'auto', position:'top', show: "scale", title: this.title, resizable: false });
+
+                   dialog.load(this.href,{}, function(responseText, textStatus, XMLHttpRequest) {
+                      dialog.removeClass("loading-center");
+                      dialog.css("height", "auto");
+                   });
+               }else{
+                  dialog.dialog("open");
+               }
             });
           });
         },

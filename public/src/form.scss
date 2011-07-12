@@ -812,21 +812,20 @@ span.sort_handle{
  * http://docs.jquery.com/UI/Dialog#theming
  */
 .ui-dialog{ padding:8px; }
-.ui-dialog .ui-dialog-titlebar { padding:0px; position: relative; color: #444;
-padding: 6px 0px 10px 8px; }
+.ui-dialog .ui-dialog-titlebar { padding:0px; position: relative; color: #444; padding: 6px 12px 6px 12px; }
 .ui-dialog .ui-dialog-title { float: left; margin:0em; color:#333333; font-size:18px; font-weight:normal; } 
-.ui-dialog .ui-dialog-titlebar-close { position: absolute; right:14px; top: 50%; width: 19px; margin: -10px 0 0 0; padding: 1px; height: 18px; }
+.ui-dialog .ui-dialog-titlebar-close { position: absolute; right:4px; top: 50%; width: 19px; margin: -14px 0 0 0; padding: 1px; height: 18px; }
 .ui-dialog .ui-dialog-titlebar-close span { display: block; margin: 1px; }
 .ui-dialog .ui-dialog-titlebar-close:hover, .ui-dialog .ui-dialog-titlebar-close:focus { background-color:#efefef; }
 .ui-dialog .ui-dialog-content { 
-   position: relative; border: 0; padding: 8px 20px; overflow: auto; zoom: 1; margin-bottom:20px; 
+   position: relative; border: 0; padding: 0px 0px; overflow: auto; zoom: 1; margin-bottom:20px; 
    .info-highlight{
-      margin:-8px -20px 0px -20px;
+      margin:0px 0px 6px 0px;
       font-size:13px;
-      padding:14px 20px;
+      padding:10px 12px;
    }
    .ui-form{
-      margin:0px -20px;
+      margin:0px 0px;
       padding:8px 20px;
    }
    label{font-size:13px;}
@@ -1360,27 +1359,91 @@ a.new_ticket:hover{
 	}
 }
 
-
-.ticket-highlight{
-   padding:10px 20px 6px 20px;
-   border-bottom:1px solid #efefef;
-   margin:-0.5em -19px 0.5em -19px;
-   font-size:1.20em;
-   @include vertical-gradient(#fcfcfc, #f9f9f9);
-   color:#666666;
+.title-highlight{
+   background-color:$tab_color;
+   color:#ffffff;
+   font-size:13px;
+   padding:4px 12px;
+   margin:1px 1px 1px 1px;
 }
 
-h3.merge-title{
-   font-size:1.2em; 
-   color: #666666;
-   padding-top:4px;
-   .uiButton{
-      font-size:0.8em;
+.dialog-special{
+   padding:8px 0px 5px 0px;
+   margin:0px 0px;
+   border:1px solid #cfcfcf;
+   background-color:#f4f4f4;
+   .content{
+      padding:6px 12px 4px 12px;
+   }   
+   .button{
+      font-size:11px;
+      margin:0px;
+   }
+   h4.title{
+      font-weight:bold;
+   }
+   .pagination{
+      margin:6px 0px 0px 0px;
+      padding:10px 6px;
+      color:#666666;
+      a{ @include link-colors(#4D769F, #3399cc, #4D769F, #4D769F); font-weight:normal; }
    }
 }
 
-.or{
-   padding:10px 0px;
-   font-size:1.45em;
-   color:#afafaf;
+#MergeTable{
+   td{
+      padding: 3px 6px;
+   }
+   .left-area, .right-area{
+      width:50%;
+   }
+    .right-area{
+       padding-left:30px;
+    }
+   .or{
+      margin:0px 0px 0px 0px;
+      border-left:1px solid #dfdfdf;
+      span{
+         font-size:1em;
+         color:#ffffff;
+         text-transform:uppercase;
+         font-style: italic;
+         background:#afafaf;
+         @include corners(18px);
+         padding:5px 7px 5px 5px;
+         border:3px solid #f1f1f1;
+         position:absolute;
+         margin-left:-25px;
+         margin-top:10px;
+      }
+   }
+}
+
+
+
+.ticket-simple-list{
+   font-size:13px;
+   width:100%;
+   li{
+      padding:0px 8px 5px 40px;
+      position:relative;
+      .title{
+         font-size:13px;
+         padding:0px 0px 2px 0px; 
+         font-weight:bold;         
+      }
+      .ticket-id{
+         font-weight:bold;
+         position:absolute;
+         left:2px;
+         top:1px;
+      }
+      a{
+         @include link-colors(#4D769F, #3399cc, #4D769F, #4D769F);
+         text-decoration:none;
+      }
+      textarea{
+         font-size:12px;
+      }
+   }   
 }

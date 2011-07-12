@@ -1,0 +1,45 @@
+ <% form_tag :action => :complete_merge, :controller => 'helpdesk/tickets', :method => :post do |f| %>
+   <%= hidden_field_tag 'source[ticket_id]', params[:id] %>
+   <%= hidden_field_tag 'target[ticket_id]', params[:target_id] %>
+   <div class="dialog-special">
+     <div class="content">
+       <ul class="ticket-simple-list">
+         <li>
+           <%= content_tag( :b, "##{@source_ticket.display_id}", :class => "ticket-id") %>
+           <h4 class="title"><%= h(@source_ticket.subject) %></h4>
+           <%= content_tag :div, t("helpdesk.ticket_created_on_n_by", :requester => h(@source_ticket.requester), :date_time => formated_date(@source_ticket.requester.created_at)), :class => "info-data" %>
+           <%= content_tag :label, t(".source_ticket_close_info") %>
+           <textarea id="source_note" rows="2" class="auto-height" name="source[note]"><%= t(".source_merge_description", :ticket_id => @target_ticket.display_id) %></textarea>
+           <div class="info-data">
+             <input checked="checked" id="source_public" name="source[is_public]" type="checkbox"> 
+             <%= t("ticket.note_form.private_note") %>
+           </div>
+         </li>
+       </ul>
+     </div>
+
+     <h4 class="title-highlight"><%= t(".will_be_merged_into") %></h4>
+     <div class="content">
+        <ul class="ticket-simple-list">
+         <li>
+           <%= content_tag( :b, "##{@target_ticket.display_id}", :class => "ticket-id") %>
+           <h4 class="title"><%= h(@target_ticket.subject) %></h4>
+           <%= content_tag :div, t("helpdesk.ticket_created_on_n_by", :requester => h(@target_ticket.requester), :date_time => formated_date(@target_ticket.requester.created_at)), :class => "info-data" %>
+           <%= content_tag :label, t(".target_ticket_updated_info") %>
+           <textarea id="target_note" class="auto-height" rows="4" name="target[note]"><%= t(".target_merge_description1", :ticket_id => @source_ticket.display_id, :ticket_subject => @source_ticket.subject) %>
+<%= t(".target_merge_description2", :ticket_id => @source_ticket.display_id ) %>
+<%= @source_ticket.description %>
+          </textarea>
+          <div class="info-data">
+            <input id="target_public" name="target[is_public]"  type="checkbox"> 
+            <%= t("ticket.note_form.private_note") %>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="button-container">
+    <%= link_to_function(t("back"), "jQuery('#mergeboxconfirm').hide(); jQuery('#mergebox').show();", :class => "uiButton" ) %>
+    <%= submit_tag t(".confirm_and_merge"), :class => "uiButton" %>
+  </div>
+<%end%>
