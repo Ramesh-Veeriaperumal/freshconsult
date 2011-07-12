@@ -70,7 +70,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :dependent => :destroy
     
   has_one :ticket_states, :class_name =>'Helpdesk::TicketState', :dependent => :destroy
-
   has_one :ticket_topic,:dependent => :destroy
   has_one :topic, :through => :ticket_topic
   
@@ -125,7 +124,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   validates_numericality_of :requester_id, :responder_id, :only_integer => true, :allow_nil => true
   validates_inclusion_of :source, :in => 1..SOURCES.size
   validates_inclusion_of :status, :in => STATUS_KEYS_BY_TOKEN.values.min..STATUS_KEYS_BY_TOKEN.values.max
-  #validates_format_of :email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, :allow_nil => false, :allow_blank => false
+  #validates_format_of :email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, 
+  #:allow_nil => false, :allow_blank => false
 
   def set_default_values
     self.status = TicketConstants::STATUS_KEYS_BY_TOKEN[:open] unless TicketConstants::STATUS_NAMES_BY_KEY.key?(self.status)
@@ -143,12 +143,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def freshness #Need to clean it up later.. by Shan
-    return :new if !responder
-    return :closed if status <= 0
-
-    last_note = notes.find_by_private(false, :order => "created_at DESC")
-
-    (last_note && last_note.incoming) ? :reply : :waiting
+    responder ? :reply : :new
   end
 
   def status=(val)
@@ -221,24 +216,18 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   #shihab-- date format may need to handle later. methode will set both due_by and first_resp
-
   def update_dueby
-     if priority != @old_ticket.priority
-       set_dueby
-     end
+    set_dueby unless priority == @old_ticket.priority
   end
   
   def set_dueby 
     set_account_time_zone   
     createdTime = created_at || Time.zone.now
-    self.priority = PRIORITY_KEYS_BY_TOKEN[:low] if priority.nil? 
+    self.priority = PRIORITY_KEYS_BY_TOKEN[:low] if priority.nil?
      
-    sla_policy_id = nil
-    unless self.requester.customer.nil?     
-      sla_policy_id = self.requester.customer.sla_policy_id     
-    end      
+    sla_policy_id = requester.customer.sla_policy_id unless requester.customer.nil?
     sla_policy_id = Helpdesk::SlaPolicy.find_by_account_id_and_is_default(account_id, true) if sla_policy_id.nil?     
-    sla_detail = Helpdesk::SlaDetail.find(:first , :conditions =>{:sla_policy_id =>sla_policy_id, :priority =>self.priority})
+    sla_detail = Helpdesk::SlaDetail.find(:first, :conditions =>{:sla_policy_id =>sla_policy_id, :priority =>self.priority})
      
     if sla_detail.override_bhrs      
       self.due_by = createdTime + sla_detail.resolution_time.seconds      
@@ -253,11 +242,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
  
   def get_business_time time
     fact = time.div(86400) 
-    if fact > 0
-      return business_time*fact
-    else
-      return time
-    end
+    (fact > 0) ? (business_time*fact) : time
   end
 
   def business_time
