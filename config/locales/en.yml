@@ -12,6 +12,7 @@ en:
   twitter: Twitter
   working: Working
   ok: Ok
+  back: Back
   helpdesk_title: Helpdesk
   user: 
     photo: Photo
@@ -218,7 +219,7 @@ en:
       empty_trash: 
         success: All tickets in the trash folder were deleted.
       merge:
-        wrong_ticket_id: There is not ticket with this id . Please try again
+        wrong_ticket_id: Please enter a valid ticket ID.
         success: Ticket has been successfully merged
     business_hours: 
       update: 
@@ -998,7 +999,8 @@ en:
   scenario_label: Scenario Label
   email: Email
   select_a_plan: Select a Plan
-  helpdesk: 
+  helpdesk:
+    ticket_created_on_n_by: by %{requester} on %{date_time}    
     tickets: 
       views: 
         new_and_my_open: New & My Open Tickets
@@ -1023,6 +1025,21 @@ en:
         my_closed: My Closed Tickets
         monitored_by: Tickets I'm Monitoring
         spam: Spam
+    merge:
+      merge:
+        merge_into: Merge into?
+        other_tickets: Other tickets reported by %{requester}
+        enter_ticket_id: Enter a ticket id #
+        merge: Merge
+      confirm_merge:
+        source_merge_description: This ticket is closed and merged into ticket %{ticket_id}.
+        source_ticket_close_info: This ticket will be closed with the following note
+        target_ticket_updated_info: This ticket will be updated with the following note and all conversations will be moved
+        will_be_merged_into: Will be merged into...
+        target_merge_description1: Ticket %{ticket_id} %{ticket_subject} is merged with this request
+        target_merge_description2: Description in ticket %{ticket_id}
+        confirm_and_merge: Confirm and merge
   import_ticket_group: Tickets &amp; Group
   linkback_overlabel: Linkback URL
   linkback_info: You can choose to Linkback to your own website when the customer clicks on the header logo
+  or: or

@@ -926,7 +926,7 @@ span.sort_handle {
   padding: 0px;
   position: relative;
   color: #444;
-  padding: 6px 0px 10px 8px;
+  padding: 6px 12px 6px 12px;
 }
 
 .ui-dialog .ui-dialog-title {
@@ -939,10 +939,10 @@ span.sort_handle {
 
 .ui-dialog .ui-dialog-titlebar-close {
   position: absolute;
-  right: 14px;
+  right: 4px;
   top: 50%;
   width: 19px;
-  margin: -10px 0 0 0;
+  margin: -14px 0 0 0;
   padding: 1px;
   height: 18px;
 }
@@ -959,18 +959,18 @@ span.sort_handle {
 .ui-dialog .ui-dialog-content {
   position: relative;
   border: 0;
-  padding: 8px 20px;
+  padding: 0px 0px;
   overflow: auto;
   zoom: 1;
   margin-bottom: 20px;
 }
 .ui-dialog .ui-dialog-content .info-highlight {
-  margin: -8px -20px 0px -20px;
+  margin: 0px 0px 6px 0px;
   font-size: 13px;
-  padding: 14px 20px;
+  padding: 10px 12px;
 }
 .ui-dialog .ui-dialog-content .ui-form {
-  margin: 0px -20px;
+  margin: 0px 0px;
   padding: 8px 20px;
 }
 .ui-dialog .ui-dialog-content label {
@@ -1688,36 +1688,110 @@ a.new_ticket:hover {
   background-image: linear-gradient(#fbfdfc, #eaeaea);
 }
 
-.ticket-highlight {
-  padding: 10px 20px 6px 20px;
-  border-bottom: 1px solid #efefef;
-  margin: -0.5em -19px 0.5em -19px;
-  font-size: 1.20em;
-  *zoom: 1;
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColorstr='#FFFCFCFC', endColorstr='#FFF9F9F9')";
-  filter: progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColorstr='#FFFCFCFC', endColorstr='#FFF9F9F9');
-  /* Fallback: */
-  background: #fcfcfc;
-  /* CSS 3 plus vendor prefixes: */
-  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #fcfcfc), color-stop(100%, #f9f9f9));
-  background-image: -webkit-linear-gradient(#fcfcfc, #f9f9f9);
-  background-image: -moz-linear-gradient(#fcfcfc, #f9f9f9);
-  background-image: -o-linear-gradient(#fcfcfc, #f9f9f9);
-  background-image: linear-gradient(#fcfcfc, #f9f9f9);
-  color: #666666;
+.title-highlight {
+  background-color: #7cb537;
+  color: #ffffff;
+  font-size: 13px;
+  padding: 4px 12px;
+  margin: 1px 1px 1px 1px;
 }
 
-h3.merge-title {
-  font-size: 1.2em;
-  color: #666666;
-  padding-top: 4px;
+.dialog-special {
+  padding: 8px 0px 5px 0px;
+  margin: 0px 0px;
+  border: 1px solid #cfcfcf;
+  background-color: #f4f4f4;
 }
-h3.merge-title .uiButton {
-  font-size: 0.8em;
+.dialog-special .content {
+  padding: 6px 12px 4px 12px;
+}
+.dialog-special .button {
+  font-size: 11px;
+  margin: 0px;
+}
+.dialog-special h4.title {
+  font-weight: bold;
+}
+.dialog-special .pagination {
+  margin: 6px 0px 0px 0px;
+  padding: 10px 6px;
+  color: #666666;
+}
+.dialog-special .pagination a {
+  color: #4d769f;
+  font-weight: normal;
+}
+.dialog-special .pagination a:visited {
+  color: #4d769f;
+}
+.dialog-special .pagination a:hover {
+  color: #3399cc;
+}
+.dialog-special .pagination a:active {
+  color: #4d769f;
 }
 
-.or {
-  padding: 10px 0px;
-  font-size: 1.45em;
-  color: #afafaf;
+#MergeTable td {
+  padding: 3px 6px;
+}
+#MergeTable .left-area, #MergeTable .right-area {
+  width: 50%;
+}
+#MergeTable .right-area {
+  padding-left: 30px;
+}
+#MergeTable .or {
+  margin: 0px 0px 0px 0px;
+  border-left: 1px solid #dfdfdf;
+}
+#MergeTable .or span {
+  font-size: 1em;
+  color: #ffffff;
+  text-transform: uppercase;
+  font-style: italic;
+  background: #afafaf;
+  -moz-border-radius: 18px 18px 18px 18px;
+  -webkit-border-radius: 18px 18px 18px 18px;
+  border-radius: 18px 18px 18px 18px;
+  padding: 5px 7px 5px 5px;
+  border: 3px solid #f1f1f1;
+  position: absolute;
+  margin-left: -25px;
+  margin-top: 10px;
+}
+
+.ticket-simple-list {
+  font-size: 13px;
+  width: 100%;
+}
+.ticket-simple-list li {
+  padding: 0px 8px 5px 40px;
+  position: relative;
+}
+.ticket-simple-list li .title {
+  font-size: 13px;
+  padding: 0px 0px 2px 0px;
+  font-weight: bold;
+}
+.ticket-simple-list li .ticket-id {
+  font-weight: bold;
+  position: absolute;
+  left: 2px;
+  top: 1px;
+}
+.ticket-simple-list li a {
+  color: #4d769f;
+  text-decoration: none;
+}
+.ticket-simple-list li a:visited {
+  color: #4d769f;
+}
+.ticket-simple-list li a:hover {
+  color: #3399cc;
+}
+.ticket-simple-list li a:active {
+  color: #4d769f;
+}
+.ticket-simple-list li textarea {
+  font-size: 12px;
 }

@@ -1,4 +1,7 @@
 <li>
-  <%= link_to_function(h(ticket_to_merge.subject) + " (##{ticket_to_merge.display_id})", "merge_with_this_request(#{ticket_to_merge.display_id})", :title => ticket_to_merge.description, :class => "title" ) %>
-    <div class="info-data"> <%= t('ticket.created_on', :time => formated_date(ticket_to_merge.requester.created_at)) %> </div>   
+  <%= content_tag( :b, "##{ticket_to_merge.display_id}", :class => "ticket-id") %>
+  <%= link_to_function( h(ticket_to_merge.subject), "merge_with_this_request(#{ticket_to_merge.display_id})", :title => ticket_to_merge.description, :class => "title" ) %>
+  <div class="info-data">
+    <%= ticket_to_merge.requester.created_at.strftime("%B %e %Y at %I:%M %p") %> | <%= ticket_to_merge.status_name %>
+  </div>
 </li>
