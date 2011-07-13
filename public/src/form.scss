@@ -2,7 +2,9 @@
 @import "mixins";
 
 /* generic form styles */
-
+.loading-center{
+	background-position: center 40%;
+}
 label{
    display: block; 
    color: #666;
@@ -775,7 +777,7 @@ span.sort_handle{
 	}
 }
 
-.ui-widget-container{
+.ui-widget-container, .ui-dialog{
 	padding:10px 20px;
 	min-height:200px;
 	@include vertical-gradient(#ffffff, #f4f4f4);
@@ -799,6 +801,40 @@ span.sort_handle{
 		font-size:1.2em;
 	}
 }	
+
+/*
+ * jQuery UI Dialog 1.8.7
+ *
+ * Copyright 2010, AUTHORS.txt (http://jqueryui.com/about)
+ * Dual licensed under the MIT or GPL Version 2 licenses.
+ * http://jquery.org/license
+ *
+ * http://docs.jquery.com/UI/Dialog#theming
+ */
+.ui-dialog{ padding:8px; }
+.ui-dialog .ui-dialog-titlebar { padding:0px; position: relative; color: #444; padding: 6px 12px 6px 12px; }
+.ui-dialog .ui-dialog-title { float: left; margin:0em; color:#333333; font-size:18px; font-weight:normal; } 
+.ui-dialog .ui-dialog-titlebar-close { position: absolute; right:4px; top: 50%; width: 19px; margin: -14px 0 0 0; padding: 1px; height: 18px; }
+.ui-dialog .ui-dialog-titlebar-close span { display: block; margin: 1px; }
+.ui-dialog .ui-dialog-titlebar-close:hover, .ui-dialog .ui-dialog-titlebar-close:focus { background-color:#efefef; }
+.ui-dialog .ui-dialog-content { 
+   position: relative; border: 0; padding: 0px 0px; overflow: auto; zoom: 1; margin-bottom:20px; 
+   .info-highlight{
+      margin:0px 0px 6px 0px;
+      font-size:13px;
+      padding:10px 12px;
+   }
+   .ui-form{
+      margin:0px 0px;
+      padding:8px 20px;
+   }
+   label{font-size:13px;}
+}
+.ui-dialog .ui-dialog-buttonpane { text-align: left; border-width: 1px 0 0 0; background-image: none; margin: .5em 0 0 0; padding: .3em 1em .5em .4em; }
+.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset { float: right; }
+.ui-dialog .ui-dialog-buttonpane button { margin: .5em .4em .5em 0; cursor: pointer; }
+.ui-dialog .ui-resizable-se { width: 14px; height: 14px; right: 3px; bottom: 3px; }
+.ui-draggable .ui-dialog-titlebar { cursor: move; }
  
 .requesteremail, .agentemail{
 	height:220px;
@@ -1323,3 +1359,91 @@ a.new_ticket:hover{
 	}
 }
 
+.title-highlight{
+   background-color:$tab_color;
+   color:#ffffff;
+   font-size:13px;
+   padding:4px 12px;
+   margin:1px 1px 1px 1px;
+}
+
+.dialog-special{
+   padding:8px 0px 5px 0px;
+   margin:0px 0px;
+   border:1px solid #cfcfcf;
+   background-color:#f4f4f4;
+   .content{
+      padding:6px 12px 4px 12px;
+   }   
+   .button{
+      font-size:11px;
+      margin:0px;
+   }
+   h4.title{
+      font-weight:bold;
+   }
+   .pagination{
+      margin:6px 0px 0px 0px;
+      padding:10px 6px;
+      color:#666666;
+      a{ @include link-colors(#4D769F, #3399cc, #4D769F, #4D769F); font-weight:normal; }
+   }
+}
+
+#MergeTable{
+   td{
+      padding: 3px 6px;
+   }
+   .left-area, .right-area{
+      width:50%;
+   }
+    .right-area{
+       padding-left:30px;
+    }
+   .or{
+      margin:0px 0px 0px 0px;
+      border-left:1px solid #dfdfdf;
+      span{
+         font-size:1em;
+         color:#ffffff;
+         text-transform:uppercase;
+         font-style: italic;
+         background:#afafaf;
+         @include corners(18px);
+         padding:5px 7px 5px 5px;
+         border:3px solid #f1f1f1;
+         position:absolute;
+         margin-left:-25px;
+         margin-top:10px;
+      }
+   }
+}
+
+
+
+.ticket-simple-list{
+   font-size:13px;
+   width:100%;
+   li{
+      padding:0px 8px 5px 40px;
+      position:relative;
+      .title{
+         font-size:13px;
+         padding:0px 0px 2px 0px; 
+         font-weight:bold;         
+      }
+      .ticket-id{
+         font-weight:bold;
+         position:absolute;
+         left:2px;
+         top:1px;
+      }
+      a{
+         @include link-colors(#4D769F, #3399cc, #4D769F, #4D769F);
+         text-decoration:none;
+      }
+      textarea{
+         font-size:12px;
+      }
+   }   
+}

@@ -65,23 +65,25 @@
 			jQuery('#custom_ticket_form').validate(); 
 		});
 		
-		function show_canned_response(){
-			jQuery('#canned_response_list').dialog({ width:'400px', height:'auto', show: "blind"});
-		}
-		var ticket_merge_dialog = null;
-		function merge_ticket(ticket_id)
-		{		   
-		   
-				 ticket_merge_dialog = jQuery("<div id='merge_ticket_list' style='display:none;' />").appendTo("body");			
-				 var url = '/helpdesk/tickets/show_tickets_from_same_user/'+ticket_id
-	    		 // load remote content
-	   			 ticket_merge_dialog.load(url,{}, function(responseText, textStatus, XMLHttpRequest) {
-	                ticket_merge_dialog.dialog({modal:true, width:'700px', height:'auto', title:"Merge ticket"});
-	            });
-		
-    		//prevent the browser to follow the link
-    		return false;
-	    }
+    function show_canned_response(){
+      jQuery('#canned_response_list').dialog({ width:'400px', height:'auto', show: "blind"});
+    }
+    var ticket_merge_dialog = null;
+    
+    jQuery("#Merge").dialog2();
+    
+    function merge_ticket(ticket_id){
+      ticket_merge_dialog = jQuery("<div id='merge_ticket_list' style='display:none;' />").appendTo("body");			
+      var url = '/helpdesk/tickets/show_tickets_from_same_user/'+ticket_id
+      
+      // load remote content
+      ticket_merge_dialog.load(url,{}, function(responseText, textStatus, XMLHttpRequest) {
+        ticket_merge_dialog.dialog({modal:true, width:'700px', height:'auto', title:"Merge ticket"});
+      });
+
+      //prevent the browser to follow the link
+      return false;
+    }
 	<% end %>
 <% end %>
 
@@ -135,18 +137,18 @@
 <% content_for :main_panel_actions do %>
 <% end %>
 <% content_for :main_panel_summary do %>
-	<div class="request_details">
-		<% if @ticket.deleted %>
-			<div class="info-highlight-deleted">
-				<div class="action_buttons">
-					<%= link_to(t('ticket.restore_btn'), restore_helpdesk_ticket_path(@ticket), :method => :put, :class => "last", :title => t('ticket.restore_btn_title') ) %>
-				</div>
-				<%=t('this_ticket_has_been_deleted') %>
-			</div>	
-		<% end %>	
-	    <div class="requestCnt request-cnt-first"> 
-				<% unless @ticket.deleted %>
-						<div class="request_status">
+  <div class="request_details">
+    <% if @ticket.deleted %>
+      <div class="info-highlight-deleted">
+        <div class="action_buttons">
+          <%= link_to(t('ticket.restore_btn'), restore_helpdesk_ticket_path(@ticket), :method => :put, :class => "last", :title => t('ticket.restore_btn_title') ) %>
+        </div>
+        <%=t('this_ticket_has_been_deleted') %>
+      </div>	
+      <% end %>	
+      <div class="requestCnt request-cnt-first"> 
+        <% unless @ticket.deleted %>
+          <div class="request_status">
 	            <ul>
 	                <li>
 	                    <b><%= t('ticket.status') %></b>: <span id="status_name_id"><%= h(@ticket.status_name) %></span>
@@ -162,33 +164,35 @@
 				<b><%= h(@ticket.subject) %></b>
 		  </h3>
 			<div class="description"> 
-		        <div class="user_details">
-		        	<%= user_avatar(@ticket.requester.avatar)  %>
-		          <div> <%= t('ticket.reported_by', :requester => link_to(h(@ticket.requester.display_name),@ticket.requester, :class => "user_name")) %> </div>
-		        <div> 
-					<%= t('ticket.created_on', :time => formated_date(@ticket.created_at)) %>
-						<% metainfo = @ticket.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["meta"]) %>
-						<% unless (metainfo.blank?) %>
-							<span class="meta_icon" title="<%= metainfo.body %>"> 
-								meta
-							</span>
-						<% end %>
-					</div> 
+        <div class="user_details">
+          <%= user_avatar(@ticket.requester.avatar)  %>
+          <div>
+            <%= t('ticket.reported_by', :requester => link_to(h(@ticket.requester.display_name),@ticket.requester, :class => "user_name")) %>     
+          </div>
+          <div> 
+            <%= t('ticket.created_on', :time => formated_date(@ticket.created_at)) %>
+            <% metainfo = @ticket.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["meta"]) %>
+            <% unless (metainfo.blank?) %>
+              <span class="meta_icon" title="<%= metainfo.body %>"> 
+                meta
+              </span>
+            <% end %>
+          </div> 
         </div>
-				<% unless @ticket.deleted %>
-					<div class="ticket_actions action_icons">
-						<div class="action_buttons clearfix">
-							<%# link_to_function t('ticket.merge_btn'), "merge_ticket(#{@ticket.display_id})"  %> 
-							<%= link_to(t('ticket.edit_btn'), edit_helpdesk_ticket_path(@ticket)  ) %> 
-							<%= link_to(t('ticket.close_btn'), close_helpdesk_ticket_path(@ticket), :method => :put, :title  => t('ticket.close_btn_title')) unless @ticket.closed? %>
-							<%= link_to(t('ticket.delete_btn'), @ticket, :method => :delete, :class => "last", :title => t('ticket.delete_btn_title')) %>
-						</div>	
-						<div class="floatr">  
-		            		<%= link_to(image_tag("/images/spacer.gif"), helpdesk_ticket_helpdesk_subscriptions_path(@ticket), :method => :post, :class => "monitor", :title => t('ticket.monitor_btn_title') ) if not @subscription %>
-							<%= link_to(image_tag("/images/spacer.gif"), helpdesk_ticket_helpdesk_subscription_path(@ticket, @subscription), :method => :delete, :class => "monitor_active",  :title => t('ticket.stop_monitor_btn_title') ) if @subscription %>
-							<%= link_to(image_tag("/images/spacer.gif"), unspam_helpdesk_ticket_path(@ticket), :method => :put, :class => "spam_active", :title => t('ticket.ham_btn_title') ) if @ticket.spam %>
-						   	<%= link_to(image_tag("/images/spacer.gif"), spam_helpdesk_ticket_path(@ticket), :method => :put, :class => "spam", :title  => t('ticket.spam_btn_title')) unless @ticket.spam %>
-						</div>
+        <% unless @ticket.deleted %>
+          <div class="ticket_actions action_icons">
+            <div class="action_buttons clearfix">
+              <%= link_to(t('ticket.edit_btn'), edit_helpdesk_ticket_path(@ticket)  ) %> 
+              <%= link_to(t('ticket.close_btn'), close_helpdesk_ticket_path(@ticket), :method => :put, :title  => t('ticket.close_btn_title')) unless @ticket.closed? %>
+              <%= link_to t('ticket.merge_btn'), "/helpdesk/tickets/show_tickets_from_same_user/#{@ticket.display_id}", :id => "Merge", :title => "Merge ticket"  %>
+              <%= link_to(t('ticket.delete_btn'), @ticket, :method => :delete, :class => "last", :title => t('ticket.delete_btn_title')) %>
+            </div>	
+            <div class="floatr">  
+              <%= link_to(image_tag("/images/spacer.gif"), helpdesk_ticket_helpdesk_subscriptions_path(@ticket), :method => :post, :class => "monitor", :title => t('ticket.monitor_btn_title') ) if not @subscription %>
+              <%= link_to(image_tag("/images/spacer.gif"), helpdesk_ticket_helpdesk_subscription_path(@ticket, @subscription), :method => :delete, :class => "monitor_active",  :title => t('ticket.stop_monitor_btn_title') ) if @subscription %>
+              <%= link_to(image_tag("/images/spacer.gif"), unspam_helpdesk_ticket_path(@ticket), :method => :put, :class => "spam_active", :title => t('ticket.ham_btn_title') ) if @ticket.spam %>
+              <%= link_to(image_tag("/images/spacer.gif"), spam_helpdesk_ticket_path(@ticket), :method => :put, :class => "spam", :title  => t('ticket.spam_btn_title')) unless @ticket.spam %>
+            </div>
         	</div>	
 			<% end %>
 		  <div id="description-full" style="display:block" class="details min_height">
@@ -202,16 +206,16 @@
 					</ul>
 				<% end %>
 		</div>
-		<% unless @ticket.ticket_topic.nil? %>
-			<div class="request_info"> 
-				<ul>
-					<li>
-						This ticket is linked to the forum "<%= link_to("#{@ticket.topic.title}" , category_forum_topic_path(@ticket.topic.forum.forum_category.id,@ticket.topic.forum.id,@ticket.topic.id), :class => "link_to") %>"
-					</li>
-				</ul>
-			</div>
-			<% end %>
-	    </div>		 
+    <% unless @ticket.ticket_topic.nil? %>
+      <div class="request_info"> 
+        <ul>
+          <li>
+            This ticket is linked to the forum "<%= link_to("#{@ticket.topic.title}" , category_forum_topic_path(@ticket.topic.forum.forum_category.id,@ticket.topic.forum.id,@ticket.topic.id), :class => "link_to") %>"
+          </li>
+        </ul>
+      </div>
+    <% end %>
+  </div>		 
 
 		<% unless @ticket.deleted %>
 			<div class="alignright">
@@ -223,10 +227,10 @@
 					<%= render :partial => "helpdesk/tickets/components/canned_responses" %>
 				</div>
 				<% if @item.requester %>
-					<%= render(:partial => '/helpdesk/shared/note_form', :locals => {:id => 'add-note',	:cntid => "cnt-note", :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
-					<%= render(:partial => '/helpdesk/shared/reply_form', :locals => {:id => 'send-email', :cntid => 'cnt-reply', :note => [@ticket, Helpdesk::Note.new(:private => false)] }) %>
+					<%= render(:partial => '/helpdesk/shared/note_form', :locals => { :id => 'add-note',	:cntid => "cnt-note", :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
+					<%= render(:partial => '/helpdesk/shared/reply_form', :locals => { :id => 'send-email', :cntid => 'cnt-reply', :note => [@ticket, Helpdesk::Note.new(:private => false)] }) %>
 				<% else %>
-					<%= render(:partial => '/helpdesk/shared/note_form', :locals => {:id => 'add-note',	:cntid => "cnt-note", :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
+					<%= render(:partial => '/helpdesk/shared/note_form', :locals => { :id => 'add-note',	:cntid => "cnt-note", :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
 				<% end %>
 			</div>
 		<% end %>

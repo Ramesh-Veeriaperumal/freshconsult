@@ -1,40 +1,7 @@
-<tr class="<%= cycle('stripe', '') %>">
-
-  <td class="check">  	
-	<div class="preview_pic"><img alt="Profile_blank_thumb" src="/images/fillers/profile_blank_thumb.gif?1305897775"  onclick="javascript:merge_with_this_request('<%=ticket_to_merge.display_id%>');"></div>
-	
-  	<!--merge button -->	
-    <!--%= check_box_tag('ids[]', ticket.to_param,  false, :class => 'selector') %-->
-  </td>
-
-  <td class="name">
-      <h3>
-        <%= link_to_function(h(ticket_to_merge.subject) + " (##{ticket_to_merge.display_id})", "merge_with_this_request(#{ticket_to_merge.display_id})", :title => ticket_to_merge.description ) %>
-      </h3>
-	  <% unless ticket_to_merge.requester.nil? %>
-		from <%= link_to(h(ticket_to_merge.requester.display_name), ticket_to_merge.requester, :class => 'user_name' ) %>
-	  <% end %>
-	  <% unless ticket_to_merge.group.nil? %>
-	  	in <%= link_to( h(ticket_to_merge.group.name), ticket_to_merge.group ) %>
-	  <% end %>
-	  
-  </td>
-
-  <td class="assign">
-      <% if ticket_to_merge.freshness == :new %>
-        <%=t('ticket.unassigned')%>
-      <% else %>
-        <span><%=t('assigned_to')%> <%= link_to(h(ticket_to_merge.responder.display_name), ticket_to_merge.responder, :class => 'username') %></span>
-      <% end %>
-	  	<ul>
-			<li>
-		        <%=t('ticket.status')%> <span><%= ticket_to_merge.status_name %></span>
-		    </li>
-			<li class="priority">
-			    <%=t('ticket.priority')%> <span class="style_<%=ticket_to_merge.priority%>"><%= ticket_to_merge.priority_name %></span>
-			</li>
-		</ul>
-  </td>
-	
-  
-</tr>
+<li>
+  <%= content_tag( :b, "##{ticket_to_merge.display_id}", :class => "ticket-id") %>
+  <%= link_to_function( h(ticket_to_merge.subject), "merge_with_this_request(#{ticket_to_merge.display_id})", :title => ticket_to_merge.description, :class => "title" ) %>
+  <div class="info-data">
+    <%= ticket_to_merge.requester.created_at.strftime("%B %e %Y at %I:%M %p") %> | <%= ticket_to_merge.status_name %>
+  </div>
+</li>

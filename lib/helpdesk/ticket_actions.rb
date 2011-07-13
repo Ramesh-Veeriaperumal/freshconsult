@@ -80,32 +80,30 @@ module Helpdesk::TicketActions
       @item.attachments.create(:content =>  RemoteFile.new(url), :description => "", :account_id => @item.account_id)    
     end
   end
-    
   
   def show_tickets_from_same_user
     @source_ticket = current_account.tickets.find_by_display_id(params[:id])    
-    @items = @source_ticket.requester.tickets #or tickets from customer  
-    render :partial => "merge"  
+    @items = @source_ticket.requester.tickets.find(:all,:conditions => [" id != ? and deleted = ?", @source_ticket.id, false], :order => :status)
+    @items = @items.paginate(:page => params[:page], :per_page => 5) #or tickets from customer
+    if params[:page]
+      render :partial => "helpdesk/merge/same_user_tickets"
+    else
+      render :partial => "helpdesk/merge/merge"
+    end      
   end
   
   def confirm_merge    
-    @source_ticket = current_account.tickets.find_by_display_id(params[:id])    
-    @target_ticket = current_account.tickets.find_by_display_id(params[:target_id])  
-    if @target_ticket.blank?
-      flash[:notice] = t(:'flash.tickets.merge.wrong_ticket_id')
-      show_tickets_from_same_user     
-    else
-      render :partial => "helpdesk/shared/confirm_merge"
-    end
-    
+    @source_ticket = current_account.tickets.find_by_display_id(params[:id])
+    @target_ticket = current_account.tickets.find_by_display_id(params[:target_id])    
+    render :partial => "helpdesk/merge/merge_script"
   end
   
   def complete_merge    
     @source_ticket = current_account.tickets.find_by_display_id(params[:source][:ticket_id])
     @target_ticket = current_account.tickets.find_by_display_id(params[:target][:ticket_id])   
     handle_merge
-    flash[:notice] = t(:'flash.tickets.merge.success')
-    redirect_to @target_ticket    
+    flash.now[:notice] = t(:'flash.tickets.merge.success')
+    redirect_to @target_ticket
   end
   
   def handle_merge      
@@ -153,7 +151,7 @@ module Helpdesk::TicketActions
       ## handling attachemnt..need to check this
      @source_ticket.attachments.each do |attachment|      
       url = attachment.content.url.split('?')[0]
-      @target_note.attachments.create(:content =>  RemoteFile.new(url), :description => "", :account_id => @target_note.account_id)    
+      @target_note.attachments.create(:content =>  open(url), :description => "", :account_id => @target_note.account_id)    
     end
   end
   

@@ -1,0 +1,9 @@
+if @target_ticket.blank?
+  page.show :invalidticket 
+  page.replace_html :invalidticket, t(:"flash.tickets.merge.wrong_ticket_id")
+else
+  page.hide :mergebox
+  page.hide :invalidticket 
+  page.replace_html :mergeboxconfirm, :partial => "helpdesk/merge/confirm_merge"
+  page.show :mergeboxconfirm  
+end

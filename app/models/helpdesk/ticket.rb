@@ -14,7 +14,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   attr_accessor :email, :name, :custom_field ,:customizer, :nscname
   
   before_validation :populate_requester, :set_default_values 
-  before_create :set_spam, :set_dueby, :save_ticket_states
+  before_create :set_dueby, :save_ticket_states
   after_create :refresh_display_id, :save_custom_field, :pass_thro_biz_rules, :autoreply 
   before_update :cache_old_model, :update_dueby
   after_update :save_custom_field, :update_ticket_states, :notify_on_update 
@@ -70,7 +70,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :dependent => :destroy
     
   has_one :ticket_states, :class_name =>'Helpdesk::TicketState', :dependent => :destroy
-
   has_one :ticket_topic,:dependent => :destroy
   has_one :topic, :through => :ticket_topic
   
@@ -80,10 +79,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
   named_scope :visible, :conditions => ["spam=? AND helpdesk_tickets.deleted=? AND status > 0", false, false] 
   named_scope :unresolved, :conditions => ["status in (#{STATUS_KEYS_BY_TOKEN[:open]}, #{STATUS_KEYS_BY_TOKEN[:pending]})"]
   named_scope :assigned_to, lambda { |agent| { :conditions => ["responder_id=?", agent.id] } }
-  named_scope :requester_active, lambda { |user| { :conditions => ["requester_id=? and status in (#{STATUS_KEYS_BY_TOKEN[:open]}, #{STATUS_KEYS_BY_TOKEN[:pending]})",
-                                    user.id] } }
-  named_scope :requester_completed, lambda { |user| { :conditions => ["requester_id=? and status in (#{STATUS_KEYS_BY_TOKEN[:resolved]}, #{STATUS_KEYS_BY_TOKEN[:closed]})",
-                                    user.id] } }
+  named_scope :requester_active, lambda { |user| { :conditions => 
+    [ "requester_id=? and status in (#{STATUS_KEYS_BY_TOKEN[:open]}, #{STATUS_KEYS_BY_TOKEN[:pending]})",
+      user.id ] } }
+  named_scope :requester_completed, lambda { |user| { :conditions => 
+    [ "requester_id=? and status in (#{STATUS_KEYS_BY_TOKEN[:resolved]}, #{STATUS_KEYS_BY_TOKEN[:closed]})",
+      user.id ] } }
   
   #Sphinx configuration starts
   define_index do
@@ -123,7 +124,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   validates_numericality_of :requester_id, :responder_id, :only_integer => true, :allow_nil => true
   validates_inclusion_of :source, :in => 1..SOURCES.size
   validates_inclusion_of :status, :in => STATUS_KEYS_BY_TOKEN.values.min..STATUS_KEYS_BY_TOKEN.values.max
-  #validates_format_of :email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, :allow_nil => false, :allow_blank => false
+  #validates_format_of :email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, 
+  #:allow_nil => false, :allow_blank => false
 
   def set_default_values
     self.status = TicketConstants::STATUS_KEYS_BY_TOKEN[:open] unless TicketConstants::STATUS_NAMES_BY_KEY.key?(self.status)
@@ -141,12 +143,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def freshness #Need to clean it up later.. by Shan
-    return :new if !responder
-    return :closed if status <= 0
-
-    last_note = notes.find_by_private(false, :order => "created_at DESC")
-
-    (last_note && last_note.incoming) ? :reply : :waiting
+    responder ? :reply : :new
   end
 
   def status=(val)
@@ -191,10 +188,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     "[##{display_id}]"
   end
 
-  def train(category)   
-    classifier.untrain(spam ? :spam : :ham, spam_text) if trained
-    classifier.train(category, spam_text)
-    classifier.save
+  def train(category)
     self[:trained] = true
     self[:spam] = (category == :spam)
   end
@@ -204,39 +198,19 @@ class Helpdesk::Ticket < ActiveRecord::Base
     pieces && pieces[1]
   end
 
-  def classifier
-    @classifier ||= Helpdesk::Classifier.find_by_name("spam")
-  end
-
-  def set_spam
-    self[:spam] ||= (classifier.category?(spam_text) == "Spam") if spam_text && !Helpdesk::SPAM_TRAINING_MODE
-    true
-  end
-
-  def spam_text
-    #@spam_text ||= notes.empty? ? description : notes.find(:first).body
-    @spam_text ||= description #by Shan
-  end
-
   #shihab-- date format may need to handle later. methode will set both due_by and first_resp
-
   def update_dueby
-     if priority != @old_ticket.priority
-       set_dueby
-     end
+    set_dueby unless priority == @old_ticket.priority
   end
+  
   def set_dueby 
-    
     set_account_time_zone   
     createdTime = created_at || Time.zone.now
-    self.priority = PRIORITY_KEYS_BY_TOKEN[:low] if priority.nil? 
+    self.priority = PRIORITY_KEYS_BY_TOKEN[:low] if priority.nil?
      
-    sla_policy_id = nil
-    unless self.requester.customer.nil?     
-      sla_policy_id = self.requester.customer.sla_policy_id     
-    end      
+    sla_policy_id = requester.customer.sla_policy_id unless requester.customer.nil?
     sla_policy_id = Helpdesk::SlaPolicy.find_by_account_id_and_is_default(account_id, true) if sla_policy_id.nil?     
-    sla_detail = Helpdesk::SlaDetail.find(:first , :conditions =>{:sla_policy_id =>sla_policy_id, :priority =>self.priority})
+    sla_detail = Helpdesk::SlaDetail.find(:first, :conditions =>{:sla_policy_id =>sla_policy_id, :priority =>self.priority})
      
     if sla_detail.override_bhrs      
       self.due_by = createdTime + sla_detail.resolution_time.seconds      
@@ -246,40 +220,29 @@ class Helpdesk::Ticket < ActiveRecord::Base
       self.frDueBy =  get_business_time(sla_detail.response_time).div(60).business_minute.after(createdTime)     
     end 
      set_user_time_zone if User.current
-     logger.debug "sla_detail_id :: #{sla_detail.id} :: and createdTime : #{createdTime} due_by::#{self.due_by} and fr_due:: #{self.frDueBy} "   
+     logger.debug "sla_detail_id :: #{sla_detail.id} :: due_by::#{self.due_by} and fr_due:: #{self.frDueBy} "   
   end
  
+  def get_business_time time
+    fact = time.div(86400) 
+    (fact > 0) ? (business_time*fact) : time
+  end
 
+  def business_time
+    logger.debug "business time is called"
+    start_time = Time.parse(self.account.business_calendar.beginning_of_workday)
+    end_time = Time.parse(self.account.business_calendar.end_of_workday)
+    return (end_time - start_time)
+  end
 
-def get_business_time time  
-
- fact = time.div(86400) 
- logger.debug "The fact is #{fact}" 
- if fact > 0
-   return business_time*fact
- else
-   return time
- end
-end
-
-def business_time
-  logger.debug "business time is called"
-  start_time = Time.parse(self.account.business_calendar.beginning_of_workday)
-  end_time = Time.parse(self.account.business_calendar.end_of_workday)
-  return (end_time - start_time)
-end
-
- def set_account_time_zone  
+  def set_account_time_zone  
     self.account.make_current
     Time.zone = self.account.time_zone    
- end
+  end
  
- 
- 
- def set_user_time_zone 
-   Time.zone = User.current.time_zone  
- end
-  
+  def set_user_time_zone 
+    Time.zone = User.current.time_zone  
+  end
   
   def refresh_display_id #by Shan temp
     if display_id.nil?
@@ -293,7 +256,10 @@ end
         @requester = account.all_users.find_by_email(email)
         if @requester.nil?
           @requester = account.users.new          
-          @requester.signup!({:user => {:email => self.email, :name => (name || ''), :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}})
+          @requester.signup!({:user => {
+            :email => self.email, 
+            :name => (name || ''), 
+            :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}})
         end        
         self.requester = @requester
       end
@@ -301,7 +267,6 @@ end
   end
   
   def autoreply     
-    
     notify_by_email EmailNotification::NEW_TICKET #Do SPAM check.. by Shan
     
     notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_GROUP) if group_id
@@ -336,7 +301,9 @@ end
     logger.debug "ticket_states :: #{ticket_states.inspect} "
     
     ticket_states.assigned_at=Time.zone.now if (responder_id != @old_ticket.responder_id && responder)    
-    ticket_states.first_assigned_at=Time.zone.now if (@old_ticket.responder_id.nil? && responder_id != @old_ticket.responder_id && responder)
+    if (@old_ticket.responder_id.nil? && responder_id != @old_ticket.responder_id && responder)
+      ticket_states.first_assigned_at = Time.zone.now
+    end
     
     if status != @old_ticket.status
       ticket_states.opened_at=Time.zone.now if (status == STATUS_KEYS_BY_TOKEN[:open])
@@ -352,19 +319,20 @@ end
     Helpdesk::TicketNotifier.send_later(:notify_by_email, notification_type, self) if notify_enabled?(notification_type)
   end
   
-  def notify_enabled?(notification_type)   
-    notify = true
+  REQUESTER_NOTIFICATIONS = [ EmailNotification::NEW_TICKET, 
+    EmailNotification::TICKET_CLOSED, EmailNotification::TICKET_RESOLVED  ]
+  
+  def notify_enabled?(notification_type)
     e_notification = account.email_notifications.find_by_notification_type(notification_type)
-    if (notification_type == EmailNotification::NEW_TICKET || notification_type == EmailNotification::TICKET_CLOSED || notification_type == EmailNotification::TICKET_RESOLVED)
-        notify = e_notification.requester_notification?
-    else
-        notify = e_notification.agent_notification?
-    end
     
+    REQUESTER_NOTIFICATIONS.include?(notification_type) ? e_notification.requester_notification? : 
+      e_notification.agent_notification?
   end
   
   def custom_fields
-    @custom_fields = FlexifieldDef.all(:include => [:flexifield_def_entries =>:flexifield_picklist_vals] , :conditions => ['account_id=? AND module=?',account_id,'Ticket']) 
+    @custom_fields = FlexifieldDef.all(:include => 
+      [:flexifield_def_entries =>:flexifield_picklist_vals], 
+      :conditions => ['account_id=? AND module=?',account_id,'Ticket'] ) 
   end
   
   def to_s
@@ -556,7 +524,7 @@ end
        
       end
      end
- end
+  end
   
   def portal_host
     (email_config && email_config.portal && !email_config.portal.portal_url.blank?) ? 

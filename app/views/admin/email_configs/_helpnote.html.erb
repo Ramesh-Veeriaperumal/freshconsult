@@ -9,7 +9,7 @@
 		<h3 class="title"><%=t('email_configs.reply_emails')%></h3> 
 		
 		<p><%=t('email_configs.info5')%>.</p>
-		<p>While most of your emails will be delivered, to be on the safer side you must create an <a target="_blank" title="Learn more about creating SPF records" href="http://support.freshdesk.com/solution/categories/4/folders/7/articles/5-spf-record">SPF record</a> in your DNS zone file if you are using emails in your own domain. This helps in ensuring proper delivery of email.</p> 
+		<p><%= t(:'email_configs.spf_info', :solution_url => 'http://support.freshdesk.com/solution/categories/4/folders/7/articles/5-spf-record') %></p> 
 		
-		<a target="_blank" href="http://support.freshdesk.com/solution/categories/4/folders/7/articles/2-converting-your-support-email-into-freshdesk-tickets">Read our Email Settings article for more information...</a>
+		<a target="_blank" href="http://support.freshdesk.com/solution/categories/4/folders/7/articles/2-converting-your-support-email-into-freshdesk-tickets"><%= t(:'email_configs.help_link_info') %></a>
 </div>	

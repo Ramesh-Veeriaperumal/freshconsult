@@ -115,3 +115,11 @@ table td {
 .strikethrough {
   text-decoration: line-through;
 }
+
+input.auto {
+  width: auto !important;
+}
+
+textarea.auto-height {
+  height: auto !important;
+}

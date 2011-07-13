@@ -15,12 +15,12 @@ javascripts:
     - public/javascripts/application.js
     - public/javascripts/fast_autocompleter.js
   frameworks:
-    - public/javascripts/framworks/jquery.js
-    - public/javascripts/framworks/jquery-ui.js
-    - public/javascripts/framworks/jquery.overlabel.js
-    - public/javascripts/framworks/jquery.validate.js
-    - public/javascripts/framworks/jquery.autoresize.js
-    - public/javascripts/framworks/jquery.qtip.js
+    - public/javascripts/frameworks/jquery.js
+    - public/javascripts/frameworks/jquery-plugins/jquery-ui.js
+    - public/javascripts/frameworks/jquery-plugins/jquery.overlabel.js
+    - public/javascripts/frameworks/jquery-plugins/jquery.validate.js
+    - public/javascripts/frameworks/jquery-plugins/jquery.autoresize.js
+    - public/javascripts/frameworks/jquery-plugins/jquery.qtip.js
   workspace: 
     - public/javascripts/utils.js
     - public/javascripts/factory_ui.js

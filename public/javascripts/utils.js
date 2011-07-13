@@ -53,21 +53,74 @@ function setCaretToPos(input, pos) {
 }
 
 function construct_reply_url(to_email, account_name){
-	email_split  = to_email.split("@");
-	email_name   = email_split[0]||'';
-	email_domain = email_split[1]||'';
-	if(email_domain !== ''){
-		email_domain = email_domain.split(".")[0];
-	}		
-	account_name = account_name.toLowerCase();
-	reply_email  = "@"+account_name;
-	
-	
-	if(email_domain.toLowerCase() == account_name){
-		reply_email = email_name + reply_email;		
-	}
-	else{
-		reply_email = email_domain + email_name + reply_email;
-	}
-	return reply_email;
+   email_split  = to_email.split("@");
+   email_name   = email_split[0]||'';
+   email_domain = email_split[1]||'';
+   if(email_domain !== ''){
+      email_domain = email_domain.split(".")[0];
+   }
+   account_name = account_name.toLowerCase();
+   reply_email  = "@"+account_name;
+
+   if(email_domain.toLowerCase() == account_name){
+      reply_email = email_name + reply_email;		
+   }
+   else{
+      reply_email = email_domain + email_name + reply_email;
+   }
+   return reply_email;
 }
+
+
+// JQuery plugin that customizes the dialog widget to load an ajax infomation
+(function( $ ){
+
+   var methods = {
+        init : function( options ) {
+          return this.each(function(){
+            $this = $(this);
+            var dialog = null;
+            $this.click(function(e){
+               e.preventDefault();
+               if(dialog == null){
+                  dialog = $("<div class='loading-center' />")
+                              .html("<br />")
+                              .dialog({ modal:true, width:'750px', height:'auto', position:'top', show: "scale", title: this.title, resizable: false });
+
+                   dialog.load(this.href,{}, function(responseText, textStatus, XMLHttpRequest) {
+                      dialog.removeClass("loading-center");
+                      dialog.css("height", "auto");
+                   });
+               }else{
+                  dialog.dialog("open");
+               }
+            });
+          });
+        },
+        destroy : function( ) {
+          return this.each(function(){
+            var $this = $(this),
+                data = $this.data('dialog2');
+            // Namespacing FTW
+            $(window).unbind('.dialog2');
+            data.tooltip.remove();
+            $this.removeData('dialog2');
+          })
+        },
+        show : function( ) { },
+        hide : function( ) { },
+        update : function( content ) { }
+   };
+   
+  $.fn.dialog2 = function( method ) {    
+    // Method calling logic
+    if ( methods[method] ) {
+      return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));
+    } else if ( typeof method === 'object' || ! method ) {
+      return methods.init.apply( this, arguments );
+    } else {
+      $.error( 'Method ' +  method + ' does not exist on jQuery.dialog2' );
+    }
+  };
+
+})( jQuery );

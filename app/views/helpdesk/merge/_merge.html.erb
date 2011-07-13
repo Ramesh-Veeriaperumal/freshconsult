@@ -1,0 +1,53 @@
+<div id="mergeboxconfirm"></div>
+<div id="mergebox">
+  <div class="dialog-special">
+    <div class="content">
+      <ul class="ticket-simple-list">
+        <li>
+          <%= content_tag( :b, "##{@source_ticket.display_id}", :class => "ticket-id") %>
+          <h4 class="title"><%= h(@source_ticket.subject) %></h4>
+          <%= content_tag :div, t("helpdesk.ticket_created_on_n_by", :requester => h(@source_ticket.requester), :date_time => formated_date(@source_ticket.requester.created_at)), :class => "info-data" %>
+        </li>
+      </ul>
+    </div>
+    <%= content_tag :h4, t(".merge_into"), :class => "title-highlight" %>
+    <div class="content">
+    <table id="MergeTable">
+      <tr>
+        <td class="left-area">
+          <%= content_tag :h4, t(".other_tickets", :requester => @source_ticket.requester.name), :class => "title" %>
+          <input type="hidden" name="parent_ticket" id="parent_ticket_id" value="<%=params[:id]%>" />	
+          <div id="tickets_from_user">
+            <%= render :partial => "helpdesk/merge/same_user_tickets" %>
+          </div>
+        </td>
+        <td class="or">
+           <%= content_tag :span, t("or") %>
+        </td>
+        <td class="right-area">
+          <%= content_tag :h4, t(".enter_ticket_id"), :class => "title" %>
+          <div>
+            <input id="merge_target_id" name="merge[target_id]" size="30" class="number auto" type="text">
+            <br />            
+            <div id="invalidticket" class="info-highlight" style="display:none;"></div>
+            <%= link_to_function t(".merge"), "merge_with_this_request(jQuery('#merge_target_id').val())", :class => "button" %>
+          </div>
+        </td>
+      </tr>
+    </table>        
+    </div>
+  </div>
+</div>  
+<% javascript_tag do -%>
+	function merge_with_this_request(ticket_id){		
+		var parent_id = jQuery('#parent_ticket_id').val();
+		var url = '/helpdesk/tickets/confirm_merge/'+parent_id+'?target_id='+ticket_id            
+    jQuery.getScript(url, function() {});
+		return false;	
+	}
+	//ajax search
+  jQuery('.pagination a').live('click',function (){  
+    jQuery("#tickets_from_user").load(this.href, {}, function(responseText, textStatus, XMLHttpRequest) {});  
+      return false;  
+  });  
+<%- end %>

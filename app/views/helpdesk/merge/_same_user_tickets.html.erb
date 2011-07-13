@@ -1,0 +1,4 @@
+<ul class="ticket-simple-list">
+  <%= render :partial => "/helpdesk/shared/ticket_to_merge", :collection => @items %>
+</ul>
+<%= will_paginate @items %>
