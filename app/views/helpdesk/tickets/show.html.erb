@@ -8,14 +8,24 @@
 			if (action == "reply")
 			{
 				jQuery('#cnt-note').hide();
+				jQuery('#cnt-tweet').hide();
 				jQuery('#cnt-reply').toggle();
 				setCaretToPos($('send-email-cnt-reply-body'), 0);
+			}
+			else if (action == "note")
+			{
+				jQuery('#cnt-reply').hide();
+				jQuery('#cnt-tweet').hide();
+				jQuery('#cnt-note').toggle();
+				setCaretToPos($('add-note-cnt-note-body'), 0);
 			}
 			else
 			{
 				jQuery('#cnt-reply').hide();
-				jQuery('#cnt-note').toggle();
-				setCaretToPos($('add-note-cnt-note-body'), 0);
+				jQuery('#cnt-note').hide();
+				jQuery('#cnt-tweet').toggle();
+				setCaretToPos($('send-tweet-cnt-tweet-body'), 0);
+			
 			}
 		}
 		Helpdesk.swapEmailNote = function(cls, private, submit, link, id){
@@ -178,7 +188,7 @@
 				<% unless @ticket.deleted %>
 					<div class="ticket_actions action_icons">
 						<div class="action_buttons clearfix">
-							<%# link_to_function t('ticket.merge_btn'), "merge_ticket(#{@ticket.display_id})"  %> 
+							<%= link_to_function t('ticket.merge_btn'), "merge_ticket(#{@ticket.display_id})"  %> 
 							<%= link_to(t('ticket.edit_btn'), edit_helpdesk_ticket_path(@ticket)  ) %> 
 							<%= link_to(t('ticket.close_btn'), close_helpdesk_ticket_path(@ticket), :method => :put, :title  => t('ticket.close_btn_title')) unless @ticket.closed? %>
 							<%= link_to(t('ticket.delete_btn'), @ticket, :method => :delete, :class => "last", :title => t('ticket.delete_btn_title')) %>
@@ -217,6 +227,7 @@
 			<div class="alignright">
 				<%= link_to_function(t('ticket.reply_to'), "swapEmailNote('reply', this)", :class => 'uiButton', :id => "ReplyButton") if @item.requester %>
 				<%= link_to_function(t('ticket.add_note'), "swapEmailNote('note', this)", :class => 'uiButton', :id => "AddNoteButton") %>		
+				<%= link_to_function("Tweet", "swapEmailNote('tweet', this)", :class => 'uiButton', :id => "TweetButton") if @item.requester && @item.is_twitter?%>
 			</div>
 			<div>
 				<div id="canned_response_list" title="Canned response" style="display:none;">
@@ -225,6 +236,8 @@
 				<% if @item.requester %>
 					<%= render(:partial => '/helpdesk/shared/note_form', :locals => {:id => 'add-note',	:cntid => "cnt-note", :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
 					<%= render(:partial => '/helpdesk/shared/reply_form', :locals => {:id => 'send-email', :cntid => 'cnt-reply', :note => [@ticket, Helpdesk::Note.new(:private => false)] }) %>
+					<%= render(:partial => '/helpdesk/shared/tweet_form', :locals => {:id => 'send-tweet', :cntid => 'cnt-tweet', :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
+					
 				<% else %>
 					<%= render(:partial => '/helpdesk/shared/note_form', :locals => {:id => 'add-note',	:cntid => "cnt-note", :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
 				<% end %>

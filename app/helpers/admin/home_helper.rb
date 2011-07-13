@@ -29,7 +29,7 @@ module Admin::HomeHelper
                                     ['/admin/va_rules',             'dispatcher'              ],
                                     ['/admin/automations',          'scenario',         feature?(:scenario_automations)  ],
                                     ['/admin/products',             'multi-product',    feature?(:multi_product)  ] ,
-                                    ['/admin/twitter',     'twitter-setting'         ]
+                                    ['/admin/twitters',     'twitter-setting'         ]
                     ]],
                     [ t(".everything_else"), [
                                     ['/account',                    'account-settings'  , current_user.account_admin?      ],

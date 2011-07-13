@@ -157,5 +157,46 @@ module Helpdesk::TicketActions
     end
   end
   
+  def search_tweets
+    @search_keys = current_account.twitter_search_keys.all   
+  end  
+  
+  
+   def create_ticket_from_tweet
+    
+    
+    ## need to capture no language by encoding....
+     
+     data = params[:data]
+     
+     @ticket = current_account.tickets.new
+     @ticket.subject = data[:tweet]
+     @ticket.description = data[:tweet]
+     @ticket.twitter_id = data[:screen_name]
+     @ticket.source = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:twitter]
+     @ticket.tweet_id = data[:tweet_id]
+     @ticket.twitter_handle_id = reply_twitter_handle(data[:query])
+     res = Hash.new
+     if @ticket.save
+       res["success"] = true      
+       res["message"]="Successfully saved the ticket from tweet"
+       render :json => ActiveSupport::JSON.encode(res)
+     else
+       logger.debug "unable to save :: #{@ticket.errors.inspect}"
+       res["success"] = false
+       res["message"]="Unable to convert the tweet as ticket"
+       render :json => ActiveSupport::JSON.encode(res)
+     end
+    
+  end
+  
+   def reply_twitter_handle query
+    current_account.twitter_search_keys.find_by_search_query(query).twitter_handle.id
+  end
+   
+   def decode_utf8_b64(string)
+      URI.unescape(CGI::escape(Base64.decode64(string)))
+   end
+  
  
 end

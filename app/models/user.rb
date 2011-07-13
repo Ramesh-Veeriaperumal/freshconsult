@@ -294,7 +294,7 @@ class User < ActiveRecord::Base
    
    if (self.customer_id.nil? && self.email)      
        email_domain =  self.email.split("@")[1]
-       cust = Customer.account_id_like(account_id).domains_like(email_domain).first
+       cust = account.customers.domains_like(email_domain).first
        self.customer_id = cust.id unless cust.nil?    
      
    end

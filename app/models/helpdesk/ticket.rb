@@ -11,7 +11,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   has_flexiblefields
   
   #by Shan temp
-  attr_accessor :email, :name, :custom_field ,:customizer, :nscname ,:twitter_handle
+  attr_accessor :email, :name, :custom_field ,:customizer, :nscname ,:twitter_id
   
   before_validation :populate_requester, :set_default_values 
   before_create :set_spam, :set_dueby, :save_ticket_states
@@ -22,6 +22,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   belongs_to :account
   belongs_to :email_config
   belongs_to :group
+  belongs_to :twitter_handle , :class_name =>'Admin::TwitterHandle' 
 
   belongs_to :responder,
     :class_name => 'User'
@@ -157,6 +158,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     STATUS_NAMES_BY_KEY[status]
   end
   
+   def is_twitter?
+    source == SOURCE_KEYS_BY_TOKEN[:twitter]
+  end
+  
   def priority=(val)
     self[:priority] = PRIORITY_KEYS_BY_TOKEN[val] || val
   end
@@ -288,7 +293,7 @@ end
   end
   
   def populate_requester #by Shan temp  
-    logger.debug "populate_requester :: email#{email} and twitter: #{twitter_handle}"
+    logger.debug "populate_requester :: email#{email} and twitter: #{twitter_id}"
     unless email.blank?
       if(requester_id.nil? or !email.eql?(requester.email))
         @requester = account.all_users.find_by_email(email)
@@ -300,13 +305,13 @@ end
       end
     else 
       
-     unless twitter_handle.blank?
-       logger.debug "twitter_handle :: #{twitter_handle.inspect} "
-        if(requester_id.nil? or !twitter_handle.eql?(requester.twitter_id))
-          @requester = account.all_users.find_by_twitter_id(twitter_handle)
+     unless twitter_id.blank?
+       logger.debug "twitter_handle :: #{twitter_id.inspect} "
+        if(requester_id.nil? or twitter_id.eql?(requester.twitter_id))
+          @requester = account.all_users.find_by_twitter_id(twitter_id)
           if @requester.nil?
             @requester = account.users.new          
-            @requester.signup!({:user => {:deleted =>true, :twitter_id =>twitter_handle , :name => twitter_handle , :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}})
+            @requester.signup!({:user => {:deleted =>true, :twitter_id =>twitter_id , :name => twitter_id , :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}})
           end        
           self.requester = @requester
         end
@@ -391,6 +396,10 @@ end
   
   def reply_email
     email_config ? email_config.friendly_email : account.default_email
+  end
+  
+  def reply_twitter
+    twitter_handle || account.default_twitter
   end
 
   #Some hackish things for virtual agent rules.

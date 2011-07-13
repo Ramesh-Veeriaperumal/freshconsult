@@ -1,0 +1,23 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  twitter_handle: MyString
+  access_token: MyString
+  access_secret: MyString
+  capture_dm_as_ticket: false
+  capture_mention_as_ticket: false
+  primary: false
+  group_id: 1
+  product_id: 1
+  account_id: 1
+
+two:
+  twitter_handle: MyString
+  access_token: MyString
+  access_secret: MyString
+  capture_dm_as_ticket: false
+  capture_mention_as_ticket: false
+  primary: false
+  group_id: 1
+  product_id: 1
+  account_id: 1

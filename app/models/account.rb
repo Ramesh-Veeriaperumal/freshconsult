@@ -96,7 +96,9 @@ class Account < ActiveRecord::Base
   has_many :canned_responses , :class_name =>'Admin::CannedResponse' , :dependent => :destroy  
   has_many :user_accesses , :class_name =>'Admin::UserAccess' , :dependent => :destroy
   
-  has_many :twitter_handles , :class_name =>'Admin::TwitterHandles' , :dependent => :destroy
+  has_many :twitter_handles , :class_name =>'Admin::TwitterHandle' , :dependent => :destroy
+  has_many :twitter_search_keys , :class_name =>'Admin::TwitterSearchKey' , :dependent => :destroy
+  has_one  :primary_twitter_handle, :class_name => 'Admin::TwitterHandle', :conditions => { :primary=> true }
   
   #Scope restriction ends
   
@@ -220,6 +222,10 @@ class Account < ActiveRecord::Base
   
   def default_email
     primary_email_config.friendly_email
+  end
+  
+  def default_twitter
+    primary_twitter_handle
   end
   
   def to_s

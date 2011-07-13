@@ -1,0 +1,31 @@
+<% form_for :twitter, @item, :url => admin_twitter_path, :html => { :method => :put } do |f| %>
+<%= f.error_messages %>
+<h3 class="title"><%=t('admin.twitters.change.edit_twitter')%></h3>
+<ul class="ui-form">
+	<li>
+			<label><%=t('admin.twitters.change.screen_name')%></label>		
+			<%= text_field(:user, :twitter_id, :class => "text disabled", :disabled =>true , :value => @item.user.twitter_id )  %>
+	</li>
+	<li>
+		<label>
+		    <%= f.check_box :capture_mention_as_ticket %> <%=t('admin.twitters.change.capture_mention')%>
+		 </label>		  
+    </li>
+	
+	<li>
+		<label>
+		    <%= f.check_box :capture_dm_as_ticket %> <%=t('admin.twitters.change.capture_dm')%>
+		 </label>		  
+    </li>	
+
+	
+	<li>
+			<label><%=t('admin.twitters.change.default_group')%></label>			
+			<%= collection_select(:twitter, :group_id, @groups, :id, :name, options = {:include_blank => "..."}) %>
+	</li> 
+</ul>
+<div class="button-container">
+	<%= f.submit t('save'), :class => "uiButton"  %>
+	<%= link_to(t('cancel'), admin_twitters_url, :class => "uiButton", :id => "twitter-form-cancel" )  %>
+</div> 
+<% end %>
