@@ -94,7 +94,7 @@ function construct_reply_url(to_email, account_name){
                }else{
                   dialog.dialog("open");
                }
-            });
+            }).trigger("click");
           });
         },
         destroy : function( ) {

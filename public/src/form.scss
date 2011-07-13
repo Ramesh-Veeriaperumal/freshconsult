@@ -1425,18 +1425,21 @@ a.new_ticket:hover{
    font-size:13px;
    width:100%;
    li{
-      padding:0px 8px 5px 40px;
+      @include clearfix;
+      padding:0px 4px 5px 40px;
       position:relative;
       .title{
          font-size:13px;
          padding:0px 0px 2px 0px; 
-         font-weight:bold;         
+         font-weight:bold;
+         display:block;
       }
       .ticket-id{
          font-weight:bold;
-         position:absolute;
-         left:2px;
-         top:1px;
+         float:left;
+         padding-right:4px;
+         color:#666666;
+         margin-left:-40px;
       }
       a{
          @include link-colors(#4D769F, #3399cc, #4D769F, #4D769F);
