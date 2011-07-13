@@ -133,7 +133,7 @@ module Helpdesk::TicketActions
   def add_note_to_source_ticket
       @source_ticket.notes.create(
         :body => params[:source][:note],
-        :private => params[:source][:is_public] || true ,
+        :private => params[:source][:is_private] || false,
         :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],
         :account_id => current_account.id,
         :user_id => current_user && current_user.id
@@ -143,7 +143,7 @@ module Helpdesk::TicketActions
   def add_note_to_target_ticket
     @target_note = @target_ticket.notes.create(
         :body => params[:target][:note],
-        :private => params[:target][:is_public] || true ,
+        :private => params[:target][:is_private] || false,
         :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],
         :account_id => current_account.id,
         :user_id => current_user && current_user.id
