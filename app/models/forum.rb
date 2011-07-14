@@ -2,10 +2,10 @@ class Forum < ActiveRecord::Base
   acts_as_list
   
   TYPES = [
-    [ :howto,   "Questions",     1 ], 
-    [ :ideas,   "Ideas",         2 ],
-    [ :problem, "Problems",      3 ],
-    [ :announce, "Announcement", 4 ]
+    [ :howto,   "questions",     1 ], 
+    [ :ideas,   "ideas",         2 ],
+    [ :problem, "problems",      3 ],
+    [ :announce, "announcement", 4 ]
   ]
 
   TYPE_OPTIONS = TYPES.map { |i| [i[1], i[2]] }
@@ -13,9 +13,9 @@ class Forum < ActiveRecord::Base
   TYPE_KEYS_BY_TOKEN = Hash[*TYPES.map { |i| [i[0], i[2]] }.flatten]
   
   VISIBILITY = [
-    [ :anyone,   "Anyone",     1 ], 
-    [ :logged_users,"Logged In Users", 2 ],
-    [ :agents, "Agents",      3 ]
+    [ :anyone,       "Anyone",          1 ], 
+    [ :logged_users, "Logged In Users", 2 ],
+    [ :agents,       "Agents",          3 ]
   ]
 
   VISIBILITY_OPTIONS = VISIBILITY.map { |i| [i[1], i[2]] }
@@ -88,7 +88,7 @@ class Forum < ActiveRecord::Base
   def type_name
     TYPE_NAMES_BY_KEY[forum_type]
   end
-  
+
   def visible?(user)
     return true if self.forum_visibility == VISIBILITY_KEYS_BY_TOKEN[:anyone]
     return true if (user and (self.forum_visibility == VISIBILITY_KEYS_BY_TOKEN[:logged_users]))

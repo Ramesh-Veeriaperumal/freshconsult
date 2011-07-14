@@ -951,7 +951,7 @@ body h5 {
   margin: 5px 0px;
 }
 
-.attachment_list {
+.attachment_list, .ui-form .attachment_list {
   list-style: none;
   color: #888987;
   margin-top: 3px;
@@ -959,12 +959,12 @@ body h5 {
   overflow: hidden;
   *zoom: 1;
 }
-.attachment_list li {
+.attachment_list li, .ui-form .attachment_list li {
   list-style-image: none;
   list-style-type: none;
   margin-left: 0px;
 }
-.attachment_list li {
+.attachment_list li, .ui-form .attachment_list li {
   overflow: hidden;
   *zoom: 1;
   -moz-border-radius: 3px 3px 3px 3px;
@@ -980,32 +980,32 @@ body h5 {
   height: 40px;
   position: relative;
 }
-.attachment_list li .preview_img {
+.attachment_list li .preview_img, .ui-form .attachment_list li .preview_img {
   margin: 8px 0px;
   position: absolute;
   width: 34px;
   left: 5px;
   top: 0px;
 }
-.attachment_list li .preview_img img.image {
+.attachment_list li .preview_img img.image, .ui-form .attachment_list li .preview_img img.image {
   margin: 0px 0px 0px 0px;
   width: 32px;
   height: 32px;
 }
-.attachment_list li a {
+.attachment_list li a, .ui-form .attachment_list li a {
   color: #6699cc;
   text-decoration: none;
 }
-.attachment_list li a:visited {
+.attachment_list li a:visited, .ui-form .attachment_list li a:visited {
   color: #6699cc;
 }
-.attachment_list li a:hover {
+.attachment_list li a:hover, .ui-form .attachment_list li a:hover {
   color: #336699;
 }
-.attachment_list li a:active {
+.attachment_list li a:active, .ui-form .attachment_list li a:active {
   color: #6699cc;
 }
-.attachment_list li name a {
+.attachment_list li name a, .ui-form .attachment_list li name a {
   white-space: nowrap;
   overflow: hidden;
   -o-text-overflow: ellipsis;
@@ -1013,29 +1013,29 @@ body h5 {
   text-overflow: ellipsis;
   -moz-binding: url('/stylesheets/xml/ellipsis.xml#ellipsis');
 }
-.attachment_list li .delete {
+.attachment_list li .delete, .ui-form .attachment_list li .delete {
   position: absolute;
   right: 0px;
   display: none;
   top: 0px;
 }
-.attachment_list li:hover {
+.attachment_list li:hover, .ui-form .attachment_list li:hover {
   background: #f2e9d1;
 }
-.attachment_list li:hover a {
+.attachment_list li:hover a, .ui-form .attachment_list li:hover a {
   color: #993333;
   text-decoration: none;
 }
-.attachment_list li:hover a:visited {
+.attachment_list li:hover a:visited, .ui-form .attachment_list li:hover a:visited {
   color: #993333;
 }
-.attachment_list li:hover a:hover {
+.attachment_list li:hover a:hover, .ui-form .attachment_list li:hover a:hover {
   color: #333333;
 }
-.attachment_list li:hover a:active {
+.attachment_list li:hover a:active, .ui-form .attachment_list li:hover a:active {
   color: #993333;
 }
-.attachment_list li:hover .delete {
+.attachment_list li:hover .delete, .ui-form .attachment_list li:hover .delete {
   display: block;
 }
 
@@ -3536,7 +3536,7 @@ a.page_title:active {
 }
 .request-list div.item .private-icon {
   display: none;
-  background: url('/images/symbols-7a45324a2d.png') 0 -137px no-repeat;
+  background: url('/images/symbols-9f939784fd.png') 0 -137px no-repeat;
   width: 16px;
   height: 16px;
   position: relative;

@@ -1,4 +1,4 @@
-<div class="request_panel" id="<%=cntid%>" style="display:none;">
+<div class="request_panel" id="<%=cntid%>" style="display:block;">
     <% form_for note, :html => {:multipart => true, :id => "HelpdeskReply" } do |f| %>
     <%= f.error_messages %>
     <ul class="ui-form dont-validate">
@@ -10,7 +10,7 @@
                     <a href="javascript:void(0)" onclick="showHideCc(this)" class="slim-button" >
                       <%= (@ticket.cc_email.blank?)? "Add Cc": "Remove Cc" %>
                     </a>
-                    <%# link_to_function( t(:'ticket.canned_responses.insert_ca_response') + " &raquo;", "show_canned_response()", :class => "slim-button") %>
+                    <%= link_to_function( t(:'ticket.canned_responses.insert_ca_response') + " &raquo;", "show_canned_response(this)", :class => "slim-button") %>
                 </div>
                 <%= select :reply_email, :id, options_for_select(@reply_email, @ticket.reply_email) %>
                 <input type="checkbox" class="hide" id="include_cc" name="include_cc" value="true" <%= (!@ticket.cc_email.blank?)? "checked" : "" %> />

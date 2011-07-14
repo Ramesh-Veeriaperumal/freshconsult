@@ -135,27 +135,14 @@
 					
 					<li agent_thumb="<%=avatar_agent%>" agent_id="<%= agent.user.id %>" agent_name="<%= agent.user.name %>">
 						<%= user_avatar(agent.user.avatar, :thumb) %>
-						<a href="javascript:void(0)" class="button control">remove</a>				
+						<a href="javascript:void(0)" class="button control"><%= t("remove") %></a>				
 						<b><%= agent.user.name %></b>
 					</li>
 					<% end %>
 				
 					<div class="info padding6"><%=t('group.info2')%></div>
 							
-			</ul>			
-			<!--
-			<ul class="item_list inactive" id="Inactive_list">
-				<% @agents = User.find_all_by_permission(current_account, :manage_tickets) %>
-				<% @agents.each do |agent| %>
-				<li>	
-					<a href="javascript:void">					
-						<img src="/images/icons/profile_blank.gif" width="32px" height="32px" />
-						<img src="/images/spacer.gif" class="selected_tick" width="16px" height="16px" />
-						<b><%= agent.name %></b>
-					</a>
-				</li>
-				<% end %>
-			</ul>-->
+			</ul>		
 			<br />	
 		  </li>
 		 

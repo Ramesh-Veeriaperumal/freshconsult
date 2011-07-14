@@ -8,7 +8,7 @@
 		<div class="rtDetails_forum">
 		<% if logged_in? && current_user.has_manage_forums? %>
 			<% if @forum.ideas? %>
-				<h4 class="title"> Mark this idea as </h4>
+				<%= content_tag(:h4, t(".mark_this_idea_as"), :class => "title") %>
 				<div class="mark_action">
 					 <% Topic::IDEAS_STAMPS_OPTIONS.each do |k,v| %>
 					 	<% class_name = "stamp_type_#{v}" %>

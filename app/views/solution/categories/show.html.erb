@@ -4,7 +4,7 @@
 </div>
 <div class="artical_section"> 
 	<div class="crumbs">
-		<%= link_to "Solutions", solution_categories_path %> &rarr; 
+		<%= link_to t('solution.title'), solution_categories_path %> &rarr; 
 		<%= content_tag (:span, @item.name ) %>
 	</div>
 	
@@ -17,6 +17,6 @@
 	  		<%= render :partial => "/solution/shared/portal_sol_list", :locals => { :category => @item, :folder => @item.folders.visible(current_user).first } %>
 	  <%end%>
 	<% else %>
-		<span class="info_data">No folders in this category  </span> <% if permission?(:manage_knowledgebase) %> - <%= link_to 'add a new folder'[:create_new_folder], new_solution_category_folder_path(@item) %> <%end%>
+		<span class="info_data"><%= t("solution_category.info2") %></span> <% if permission?(:manage_knowledgebase) %> - <%= link_to 'add a new folder'[:create_new_folder], new_solution_category_folder_path(@item) %> <%end%>
 	<% end %>	
 </div> 
