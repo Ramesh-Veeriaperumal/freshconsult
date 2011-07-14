@@ -23,8 +23,6 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         return if(from_email[:email] == ticket.reply_email) #Premature handling for email looping..
         add_email_to_ticket(ticket, from_email, params[:text])
       else
-        return if params[:subject] && params[:subject].include?('Away from the office')
-        
         create_ticket(account, from_email, to_email)
       end
     end
