@@ -1,4 +1,4 @@
-<h3 class="title">Edit Scenario</h3>
+<%= content_tag :h3, t(".title"), :class => "title" %>
 <% form_for :va_rule, @va_rule, :url => admin_automation_path, :html => { :method => :put , :id => "Automations" } do |f| %>
 	<%= render :partial => "form", :locals => { :f => f } %>
 <% end %>

@@ -59,7 +59,7 @@ var jQ = jQuery.noConflict();
 		fd_active_drop_box = null;
 		
 		function hideMenuItem(){
-			$(".nav-drop .menu-trigger").next().hide();
+			$(".nav-drop .menu-box").hide();
 			$(".nav-drop .menu-trigger").removeClass("selected");
 		}
 		

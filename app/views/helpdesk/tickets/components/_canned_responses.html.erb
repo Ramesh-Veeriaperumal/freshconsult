@@ -11,11 +11,17 @@
 		return true;
 	}
 <%- end %>
-<div>
-	<%
- 		my_ca_resp = current_account.canned_responses.my_canned_responses(current_user)
- 		my_ca_resp.each do |ca_response|
-	%>
-		<%= link_to_function ca_response.title, "getCannedResponse('#{@ticket.display_id}','#{ca_response.id}')", :title => t(:'ticket.canned_responses.insert_ca_resp_tip') %>
-	<%end%>
+<div class="canned-response-menu" id="canned_response_list">
+  <ul>
+    <span class="divider"></span>
+	  <%
+      my_ca_resp = current_account.canned_responses.my_canned_responses(current_user)
+      my_ca_resp.each do |ca_response|
+    %>
+      <li class="menu-item">
+        <span class="bullet"></span>
+        <%= link_to_function truncate(ca_response.title, :length => 35), "getCannedResponse('#{@ticket.display_id}','#{ca_response.id}')", :title => t(:'ticket.canned_responses.insert_ca_resp_tip') %>
+      </li>
+    <% end %>
+  </ul>
 </div>

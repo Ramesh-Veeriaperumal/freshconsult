@@ -116,7 +116,7 @@ class Admin::AutomationsController < Admin::AdminController
     end
     
     def additional_actions
-      {5, {:name => "add_comment"  , :value => "Add Note"      , :domtype => 'comment'}}
+      {5, {:name => "add_comment"  , :value => t('add_note')      , :domtype => 'comment'}}
     end
     
     def add_custom_actions action_hash

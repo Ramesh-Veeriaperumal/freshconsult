@@ -1,5 +1,5 @@
 <% content_for :sidebar do -%><%-end %>
-<h3 class="title">New Folder</h3>
+<%= content_tag :h3, t(".new_folder"), :class => "title" %>
 <% form_for (@folder), :url => solution_category_folders_path(@folder.category_id) , :html => {:multipart => true, :id => "folder-form"} do |f| %>
 	<%= render :partial => "folder_form" , :locals => { :f => f }%>
 	<div class="button-container">

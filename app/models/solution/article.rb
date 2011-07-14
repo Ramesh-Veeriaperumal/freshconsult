@@ -49,8 +49,8 @@ class Solution::Article < ActiveRecord::Base
   validates_numericality_of :user_id
     
   STATUSES = [
-                  [ :draft,       "Draft",        1 ], 
-                  [ :published,   "Published",    2 ]
+                  [ :draft,       I18n.t("solutions.status.draft"),        1 ], 
+                  [ :published,   I18n.t("solutions.status.published"),    2 ]
               ]
 
   STATUS_OPTIONS = STATUSES.map { |i| [i[1], i[2]] }
@@ -58,8 +58,8 @@ class Solution::Article < ActiveRecord::Base
   STATUS_KEYS_BY_TOKEN = Hash[*STATUSES.map { |i| [i[0], i[2]] }.flatten]
   
   TYPES = [
-            [ :permanent,    "Permanent",    1 ],
-            [ :workaround,   "Workaround",   2 ]
+            [ :permanent,    I18n.t("solutions.types.permanent"),   1 ],
+            [ :workaround,   I18n.t("solutions.types.workaround"),  2 ]
           ]
 
   TYPE_OPTIONS = TYPES.map { |i| [i[1], i[2]] }

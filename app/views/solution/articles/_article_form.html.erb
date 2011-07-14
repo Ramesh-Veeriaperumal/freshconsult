@@ -12,10 +12,10 @@
 			<%= render :partial => "/solution/shared/attachment_form" %>
 		</li> 
 	 	<li class="attachment-list-container">
-	    <%= content_tag('h4', 'Attachments', :class => "title") unless @article.attachments.empty? %>
+	    <%= content_tag('h4', t("attachments"), :class => "title") unless @article.attachments.empty? %>
 	    <ul class="attachment_list">
 	      <%= render(
-	        :partial => '/helpdesk/shared/attachment', 
+	        :partial => '/helpdesk/shared/attachment',
 	        :collection => @article.attachments,
 	        :locals => {:show_delete => true, :url => [@article] }) %>
 	    </ul>

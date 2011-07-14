@@ -1,14 +1,10 @@
 <% content_for :head do %>
-	<style>
-		html {  height:auto; overflow-y:visible; }
-		</style>
+  <style> html {  height:auto; overflow-y:visible; } </style>
 <% end %>
 <% content_for :sidebar do %><% end %>
-<%= javascript_include_tag "_form_customizer.js" %>
 <%= content_tag(:h3, t(".title"), :class => "title") %> 
-<% javascript_tag do %>
-	custom_field_values = <%= @ticket_field_json.to_json %>;
-<% end %>
+<%= render :partial => "customizer_js" %>
+
 <% form_for :update, @ticket_fields, :url => { :action => "update" }, :html => { :method => :put, :id => "Updateform" } do |f| %>
   <div class="admin_form">
     <ul id="custom_fields" class="ui-custom-fields"> 

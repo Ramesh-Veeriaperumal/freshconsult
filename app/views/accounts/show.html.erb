@@ -6,7 +6,7 @@
 			<br />
 			<%= formated_date(current_account.created_at) %>			
 		</p>
-		<%= link_to('Cancel my account', cancel_account_url, :class => "button") %>
+		<%= link_to(t("cancel_my_account"), cancel_account_url, :class => "button") %>
 	</div>
 <%- end %>
 <h3 class= "title"><%= @page_title = t('.account_settings') %></h3>
