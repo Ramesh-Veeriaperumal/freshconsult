@@ -2,6 +2,7 @@
 en: 
   feedbackwidget_offset_info: The offset will be the distance of the widget button (pixels) from the left or top of the screen based on the alignment you choose.
   reset_my_password: Reset my password
+  assign: Assign
   trial_expired_on: Your trial has expired on
   upgrade_trial: Upgrade your trial!
   contact_name: Contact Name
@@ -1056,11 +1057,31 @@ en:
   linkback_overlabel: Linkback URL
   select_a_plan: Select a Plan
   helpdesk: 
+    dashboard:
+      index:
+        todo_title: To-Dos
+      summary:
+        title: Ticket summary
+        overdue: Overdue
+        open: Open
+        due_today: Due Today
+        unassigned: Unassigned
     rebranding: 
       name: 
         info: This will be the help desk name that is shown in the header and mail notifications.
     ticket_created_on_n_by: by %{requester} on %{date_time}
-    tickets: 
+    tickets:
+      components:
+        due_date:
+          when_is_it_due: When's it Due?
+          today: Today
+          tomorrow: Tomorrow
+          this_week: This week
+          next_week: Next week
+          specific_date: "Specific date/time..."
+          set_date_time: "Set Date/time"
+          due: Due
+          earlier_date_and_time: Please give a date & time that is newer than the ticket's created date & time
       views: 
         no_tickets: No tickets in this view
         on_hold: Tickets On Hold
@@ -1100,3 +1121,21 @@ en:
         confirm_and_merge: Confirm and merge    
   import_ticket_group: Tickets &amp; Group
   or: or
+  tickets_filter:
+    sort_fields:
+      due_by: Due by time
+      date_created: Date Created
+      last_modified: Last Modified
+      priority: Priority
+      status: Status
+  click_to_change_sort_order: Click to change sort order
+  user_sessions:
+      new:
+        email: Email
+        password: Password
+        remember: Remember me on this computer
+        login: Login
+        forgot: I forgot my password?
+        sign_in_using: Sign In using
+        sign_in_using_google: Sign in using your Google account
+        help: Help

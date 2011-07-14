@@ -51,7 +51,7 @@
 	 			  title:  '<%= t('ticket.assign_to_agent') %>',
 	 			  closeOnEscape: true,
 	 			  buttons: [{
-        				text: "Assign",
+        				text: '<%= t("assign") %>',
         				click: function() { 
         					 Helpdesk.sel.submit("<%= assign_helpdesk_ticket_path('multiple') %>", "put", ['responder_id']);
         				}
@@ -125,7 +125,7 @@
 							<%= link_to_function(t('close'), "Helpdesk.sel.submit('#{ close_multiple_helpdesk_ticket_path('multiple') }', 'put')", :class => "button") %>
 							<%= link_to_function(t('ticket.pick_up'), "Helpdesk.sel.submit('#{ pick_tickets_helpdesk_ticket_path('multiple') }', 'put')", :class => "button") %> 
 						
-							<a href="javascript:void(0)" id="agent-assign-link" class="button"><%=t('ticket.assign_to_agent')%></a>
+							<a href="javascript:void(0)" id="agent-assign-link" class="button"><%= t('ticket.assign_to_agent') %></a>
 							<div id="assign-options" style="display:none;">
 							    <%= content_tag( :label, t('ticket.select_to_agent')) %> 
 							    <%= select_tag 'responder_id', options_from_collection_for_select(Agent.technician_list(current_account), :id, :name, current_user) %>
@@ -134,8 +134,8 @@
 					</th>	
 					<th>	
 						<form class="sort" id="sort_form" action="#" >
-							<a href="javascript:void(0);changeSortOrder();" class="sort_order">
-								<%= content_tag (:span, "", :class => "image #{current_sort_order}", :title => "Click to change sort order", :id => "sort_order_img" ) %>
+							<a href="javascript:void(0); changeSortOrder();" class="sort_order">
+								<%= content_tag (:span, "", :class => "image #{current_sort_order}", :title => t("click_to_change_sort_order"), :id => "sort_order_img" ) %>
 							</a>
 							<input type="hidden" name="sort_order" id="sort_order_id" value="<%= current_sort_order %>" />	
 							

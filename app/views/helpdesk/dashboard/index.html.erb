@@ -9,7 +9,7 @@
   <%= render :partial => '/helpdesk/shared/reminders', :locals => {
     :parent => false,
     :reminders => current_user.reminders,
-    :reminder_title => "To-Dos"} %> 
+    :reminder_title => t('.todo_title')} %> 
   <%= render :partial => '/helpdesk/shared/history' %>
 <% end %>
 
@@ -19,8 +19,8 @@
 	<h3 class="title"><%=t('recent_activity')%></h3>
 	<ul id="Pages" class="activityfeed">
 		<% @items.each_with_index do |item, i| %>
-	          <%= render(:partial => "ticket_note", :object => item) %> 
-	     <% end %>
+			<%= render(:partial => "ticket_note", :object => item) %> 
+		<% end %>
 	</ul>
 </div>
 <%= will_paginate @items %>

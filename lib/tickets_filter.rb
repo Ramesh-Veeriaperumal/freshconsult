@@ -45,11 +45,11 @@ module TicketsFilter
   DEFAULT_SORT_ORDER 	= :ASC
 	
   SORT_FIELDS = [
-    [ :due_by     ,   'Due by time'  ],
-    [ :created_at ,   'Date Created' ],
-    [ :updated_at ,   'Last Modified'],
-    [ :priority   ,   'Priority',    ],
-    [ :status,        'Status',      ],        
+    [ :due_by     , I18n.t("tickets_filter.sort_fields.due_by")        ],
+    [ :created_at , I18n.t("tickets_filter.sort_fields.date_created")  ],
+    [ :updated_at , I18n.t("tickets_filter.sort_fields.last_modified") ],
+    [ :priority   , I18n.t("tickets_filter.sort_fields.priority")      ],
+    [ :status     , I18n.t("tickets_filter.sort_fields.status")        ]
   ]
 
   SORT_FIELD_OPTIONS = SORT_FIELDS.map { |i| [i[1], i[0]] }
