@@ -129,6 +129,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     self.status = TicketConstants::STATUS_KEYS_BY_TOKEN[:open] unless TicketConstants::STATUS_NAMES_BY_KEY.key?(self.status)
     self.source = TicketConstants::SOURCE_KEYS_BY_TOKEN[:portal] if self.source == 0
     self.ticket_type ||= TicketConstants::TYPE_KEYS_BY_TOKEN[:how_to]
+    self.subject ||= ''
     self.description = subject if description.blank?
   end
   
