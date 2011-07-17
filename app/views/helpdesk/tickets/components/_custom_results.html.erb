@@ -1,0 +1,175 @@
+<% content_for :head do %>
+  <%= javascript_include_tag "helpdesk/core" %>
+  <%= javascript_include_tag "helpdesk/page_switcher" %>
+  <%= javascript_include_tag "helpdesk/take_it_button" %>
+  <%= javascript_include_tag "helpdesk/id_selector" %>
+  <% javascript_tag do %>
+    document.observe("dom:loaded", function(){      
+	  Helpdesk.sel = new Helpdesk.MultiSelector({
+	      form: 'expanded',
+	      cookieName: 'helpdesk-tickets-page'
+	  });		  
+   	
+		new Helpdesk.PageSwitcher({
+       toggleMode: true,
+       pages: ['assign-options']
+    });
+
+    Helpdesk.monitorTakeItButtons();
+	  	
+    Helpdesk.submitOnChange('sort');
+	  
+	  Helpdesk.sel.toggleCheckAll = function(source){
+	  	if(source.checked)
+				Helpdesk.sel.checkAll();
+			else
+				Helpdesk.sel.uncheckAll();
+	  };
+		 	
+	  jQuery(".ticket-description-tip").qtip({
+			 position: { 
+			      my: 'bottom left',
+			      at: 'top  left', 
+			      viewport: jQuery(window) 
+			 }, 
+			 style : {
+			 	classes: 'ui-tooltip-ticket ui-tooltip-rounded ui-tooltip-shadow'
+			 },
+			 show: {
+			    solo: true,
+			    delay: 200,
+			    effect: function(offset) {
+			        jQuery(this).show("fade", 240); // "this" refers to the tooltip
+			    }
+			 }
+	  });
+	  
+	  jQuery("#agent-assign-link").click(function(){
+	  	jQuery("#assign-options")
+	 		.dialog({ modal : true, 
+	 			  show : 'puff', 
+	 			  title:  '<%= t('ticket.assign_to_agent') %>',
+	 			  closeOnEscape: true,
+	 			  buttons: [{
+        				text: "Assign",
+        				click: function() { 
+        					 Helpdesk.sel.submit("<%= assign_helpdesk_ticket_path('multiple') %>", "put", ['responder_id']);
+        				}
+    				}] 
+	 			});
+	  });	
+	  
+	  changeSortOrder = function(){		
+	  	if ('<%=current_sort_order%>' != 'DESC')
+				jQuery('#sort_order_id').val('DESC');
+			else
+		   	jQuery('#sort_order_id').val('ASC');	  
+		  
+			jQuery('#sort_form').submit();
+		}
+	});
+  <% end %>
+<% end %>
+ 
+<% content_for :main_panel_title do %>
+  <h3 class="title">
+  	<%= current_selector_name %>
+	<%= render :partial => "filters" %>
+  </h3>
+<% end %>
+
+<% content_for :main_panel_toolbar do %>
+   
+<% end %>
+
+<% content_for :main_panel_selected_toolbar do %>
+ 
+<% end %>
+
+
+<% content_for :main_panel_content do %>
+  <%# 
+    This form is used by JS to submit "Take It" button clicks 
+    We couldn't use the button_to helper because it resulted in a 
+    form within a form.
+  %>
+  <%= form_tag "", :method => :put, :style=> 'display: none', :id => 'accept-form' do end %>
+
+  <div id="pages" class="tickets-container">  
+		<% if @items.nil? || @items.empty? %>
+			<div class="ticket-header">
+				<div class="list-noinfo"><%= t('helpdesk.tickets.views.no_tickets') %></div>
+			</div>
+		<% else %>
+	  	<div class="ticket-header">
+	      <table class="tickets" width="100%">
+	      	<thead>
+	      		<tr>
+		      		<th class="check">
+		      			<input type="checkbox" onclick="Helpdesk.sel.toggleCheckAll(this)"  />
+		      		</th>
+					<th> 
+						<% if current_selector == :deleted %>
+						  <%= link_to_function(t('undelete'), "Helpdesk.sel.submit('#{ restore_helpdesk_ticket_path('multiple') }', 'put')", :class => "button") %>
+						<% else %>
+						  <%= link_to_function(t('delete'), "Helpdesk.sel.submit('#{ helpdesk_ticket_path('multiple') }', 'delete')", :class => "button") %>
+						<% end %>
+						
+						<% if current_selector == :spam %>
+						  <%= link_to_function(t('ticket.unflag_spam'), "Helpdesk.sel.submit('#{ unspam_helpdesk_ticket_path('multiple') }', 'put')", :class => "button") %> 
+						<% else %>
+						  <%= link_to_function(t('ticket.flag_spam'), "Helpdesk.sel.submit('#{ spam_helpdesk_ticket_path('multiple') }', 'put')", :class => "button") %> 
+						<% end %> 
+						
+						<% if current_selector != :deleted && current_selector != :spam %>
+							<%= link_to_function(t('close'), "Helpdesk.sel.submit('#{ close_multiple_helpdesk_ticket_path('multiple') }', 'put')", :class => "button") %>
+							<%= link_to_function(t('ticket.pick_up'), "Helpdesk.sel.submit('#{ pick_tickets_helpdesk_ticket_path('multiple') }', 'put')", :class => "button") %> 
+						
+							<a href="javascript:void(0)" id="agent-assign-link" class="button"><%=t('ticket.assign_to_agent')%></a>
+							<div id="assign-options" style="display:none;">
+							    <%= content_tag( :label, t('ticket.select_to_agent')) %> 
+							    <%= select_tag 'responder_id', options_from_collection_for_select(Agent.technician_list(current_account), :id, :name, current_user) %>
+							</div>
+						<% end %>
+					</th>	
+					<th>	
+						<form class="sort" id="sort_form" action="#" >
+							<a href="javascript:void(0);changeSortOrder();" class="sort_order">
+								<%= content_tag (:span, "", :class => "image #{current_sort_order}", :title => "Click to change sort order", :id => "sort_order_img" ) %>
+							</a>
+							<input type="hidden" name="sort_order" id="sort_order_id" value="<%= current_sort_order %>" />	
+							
+						    <%= t('ticket.sort_by') %>
+							<%= select_tag :sort, options_for_select(TicketsFilter::SORT_FIELD_OPTIONS, (current_sort).to_sym) %> 
+						</form>
+					</th>
+				</tr>
+	      	</thead>
+		  </table>
+		 </div>
+		  <!--div class="caption-text">
+		  	Showing Open tickets ordered by status from open to closed
+		  </div-->
+		  <% form_tag "", { :id => "expanded",  :method => :put } do %>
+			  <table class="tickets">	
+				<tbody>
+		        	<%= render :partial => "/helpdesk/shared/expanded/ticket", :collection => @items %>
+				</tbody>
+		      </table> 
+		  <% end %>
+	  
+	  <% end %> 
+  </div>
+
+  <%= will_paginate @items %>
+  
+  <!--
+  <%= link_to(
+    image_tag("helpdesk/feed.png", :alt => "Feed") + " Subscribe", 
+    helpdesk_tickets_url(:format => 'atom'), 
+    :class => "feed") unless params[:f] %>
+  -->
+  <div class="clear"></div>
+
+<% end %>
+<%= render :partial => "/helpdesk/shared/main_panel" %>
