@@ -1,31 +1,31 @@
 <div id="TicketSummary">
-	<h3 class="title">Ticket summary</h3>
+	<%= content_tag :h3, t(".title"),:class => "title" %>
 	<ul class="summary clearfix">  
 	  <li>
-	  	 <a class="overdue" href="/helpdesk/tickets/filter/overdue">
-		  <span>Overdue</span> 
-		  <h4><%= filter_count(:overdue)%></h4>
-		</a>
+	  	<a class="overdue" href="/helpdesk/tickets/filter/overdue">
+				<%= content_tag :span, t(".overdue") %>
+				<h4><%= filter_count(:overdue)%></h4>
+			</a>
 	  </li>
 	  <% if (filter_count(:open)) %>
 	  <li>
-	      <a href="/helpdesk/tickets/filter/open">
-	       <span>Open</span> 
-		   <h4><%= filter_count(:open) %></h4>
-	      </a>
+	     <a href="/helpdesk/tickets/filter/open">
+				<%= content_tag :span, t(".open") %>
+		   	<h4><%= filter_count(:open) %></h4>
+	     </a>
 	  </li>
 	  <% end %>
 	  <% if (filter_count(:due_today)) %>
 	  <li>
-	      <a href="/helpdesk/tickets/filter/due_today">
-		   <span>Due Today</span> 
+	    <a href="/helpdesk/tickets/filter/due_today">
+			 <%= content_tag :span, t(".due_today") %>
 		   <h4><%= filter_count(:due_today)%></h4>
 		  </a>
 	  </li>
 	  <% end %>
 	  <li class="last">
 	      <a href="/helpdesk/tickets/filter/new">
-		  	 <span>Unassigned</span> 
+ 				 <%= content_tag :span, t(".unassigned") %>
 			 <h4><%= filter_count(:new)%></h4>
 		  </a>
 	  </li>

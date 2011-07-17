@@ -2,6 +2,7 @@
 en: 
   feedbackwidget_offset_info: The offset will be the distance of the widget button (pixels) from the left or top of the screen based on the alignment you choose.
   reset_my_password: Reset my password
+  assign: Assign
   trial_expired_on: Your trial has expired on
   upgrade_trial: Upgrade your trial!
   contact_name: Contact Name
@@ -10,6 +11,9 @@ en:
   pending: Pending
   twitter: Twitter
   working: Working
+  attachments: Attachments
+  cancel_my_account: Cancel my account
+  remove: remove
   user: 
     company: Company
     photo: Photo
@@ -23,7 +27,22 @@ en:
     phone_no: Phone No
     work: Work
     email: Email
-  ticket_fields: 
+  ticket_fields:
+    fields:
+      subject: Subject
+      requester: Requester
+      status: Status
+      group: Group
+      agent: Agent
+      priority: Priority
+      description: Description
+      product: Product
+      ticket_type: Type
+    customizer_js:
+      untitled: Untitled
+      first_choice: First Choice
+      second_choice: Second Choice
+      confirm_delete: Are you sure you want to delete this field?
     index: 
       number: Number
       add_custom_field: Add a Custom Field
@@ -74,6 +93,9 @@ en:
     popular: Popular
   payment_info: Payment information
   admin: 
+    automations:
+      edit:
+        title: Edit Scenario
     security: 
       index: 
         shared_secret: Shared Secret
@@ -215,7 +237,7 @@ en:
     tickets: 
       merge: 
         success: Ticket has been successfully merged
-        wrong_ticket_id: There is not ticket with this id . Please try again
+        wrong_ticket_id: Please enter a valid ticket id
       reply: 
         success: The reply has been sent.
       notes: 
@@ -394,7 +416,9 @@ en:
       export_data_text: Generate an XML of all available Help desk data and send it via email
       account_settings: Account Settings
   forum_key: Forum
-  topics: 
+  topics:
+    show:
+      mark_this_idea_as: Mark this idea as
     last_reply: Last reply %{post_time} ago by %{user_link}
     posted_at: Posted %{post_time} ago
   non_covered_feature_error: Your current Freshdesk plan does not cover this feature.
@@ -482,7 +506,17 @@ en:
     match_any: Match Any
     add_condition: Add new condition
   header_logo: Header Logo
-  solutions: 
+  solutions:
+    status:
+      draft: Draft
+      published: Published
+    visibility:
+      anyone: Anyone
+      logged_in_users: Logged In Users
+      agents: Agents
+    types:
+      permanent: Permanent
+      workaround: Workaround
     search_all: 
       placeholder: Search All Solutions
     search: 
@@ -491,7 +525,11 @@ en:
   reset: Reset
   import_ignore_first_row: Ignore the first row (headings)
   portal_customizer_open_sol_i: Turn this feature off, if you want to hide 'Solutions' tab in public customer portal.
-  topic: 
+  topic:
+    ideas_stamps:
+      planned: Planned
+      implemented: Implemented
+      nottaken: Not Taken
     name: Topic Name
     new: New Topic
     open: Re-open this Discussion
@@ -537,8 +575,28 @@ en:
   total_price: Total Price
   update: Update
   save_reply: Save Reply
-  forum_shared: 
-    post: 
+  forum_shared:
+    topic_vote:
+      unlike: Unlike
+      ideas:
+        vote_button: I like this Idea
+        vote_info_1: %{vote} Person likes this Idea
+        vote_info_2: %{vote} People like this Idea
+        vote_info_include_1: You like this Idea
+        vote_info_include_2: %{vote} People "including you" like this Idea
+      problems:
+        vote_button: I have this Problem
+        vote_info_1: %{vote} Person has this Problem
+        vote_info_2: %{vote} People have this Problem
+        vote_info_include_1: You have this Problem
+        vote_info_include_2: %{vote} People "including you" have this Problem
+      questions:
+        vote_button: I have this Question
+        vote_info_1: %{vote} Person has this Question
+        vote_info_2: %{vote} People have this Question
+        vote_info_include_1: You have this Question
+        vote_info_include_2: %{vote} People "including you" have this Question        
+    post:
       posted_on: "%{user_name} on %{post_date}"
       edit_post: Edit Post
       unmark_answer: Unmark this as the answer
@@ -561,6 +619,16 @@ en:
     info4: if a ticket remains un-assigned for more than
     info5: Are you sure
     select_agents: Select Agents
+    assigntime:
+      half: 30 Minutes
+      one: 1 Hour
+      two: 2 Hours
+      four: 4 Hours
+      eight: 8 Hours
+      two: 12 Hours
+      day: 1 Day
+      twoday: 2 Days
+      threeday: 3 Days
   four: 4 Hours
   problem: Problem
   change_plan_info: You can change your plan level at any time.  The position limits and other features of the new plan that you select will be effective as soon as you make the change, but your bill amount will not change until your next bill date.  Your next bill date is %{date}.
@@ -669,7 +737,10 @@ en:
   replies: replies
   urgent: Urgent
   import_groups: Groups
-  solution: 
+  solution:    
+    folders:
+      new:
+        new_folder: New Folder
     info9: Public (Will be published in self service)
     edit: Edit Solution
     add: Add Solution
@@ -986,11 +1057,31 @@ en:
   linkback_overlabel: Linkback URL
   select_a_plan: Select a Plan
   helpdesk: 
+    dashboard:
+      index:
+        todo_title: To-Dos
+      summary:
+        title: Ticket summary
+        overdue: Overdue
+        open: Open
+        due_today: Due Today
+        unassigned: Unassigned
     rebranding: 
       name: 
         info: This will be the help desk name that is shown in the header and mail notifications.
     ticket_created_on_n_by: by %{requester} on %{date_time}
-    tickets: 
+    tickets:
+      components:
+        due_date:
+          when_is_it_due: When's it Due?
+          today: Today
+          tomorrow: Tomorrow
+          this_week: This week
+          next_week: Next week
+          specific_date: "Specific date/time..."
+          set_date_time: "Set Date/time"
+          due: Due
+          earlier_date_and_time: Please give a date & time that is newer than the ticket's created date & time
       views: 
         no_tickets: No tickets in this view
         on_hold: Tickets On Hold
@@ -1030,3 +1121,21 @@ en:
         confirm_and_merge: Confirm and merge    
   import_ticket_group: Tickets &amp; Group
   or: or
+  tickets_filter:
+    sort_fields:
+      due_by: Due by time
+      date_created: Date Created
+      last_modified: Last Modified
+      priority: Priority
+      status: Status
+  click_to_change_sort_order: Click to change sort order
+  user_sessions:
+      new:
+        email: Email
+        password: Password
+        remember: Remember me on this computer
+        login: Login
+        forgot: I forgot my password?
+        sign_in_using: Sign In using
+        sign_in_using_google: Sign in using your Google account
+        help: Help

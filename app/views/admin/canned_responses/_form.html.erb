@@ -49,7 +49,7 @@ function toggleGroup(access_id)
    		<%= f.text_area :content, :class => "mceEditor", :id => 'ca-content' %>		
 	</li>
 	<li class="inline-field">
-	<% f.fields_for :visibility  do |access| %>
+	<% f.fields_for :visibility do |access| %>
 		<div>			
 			<label class="caption"><%=t('.available_for')%>:</label>
 			<div class="fields inline-radio">

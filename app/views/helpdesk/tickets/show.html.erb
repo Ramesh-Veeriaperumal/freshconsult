@@ -21,16 +21,11 @@
 		Helpdesk.swapEmailNote = function(cls, private, submit, link, id){
 			var el = $(id);
 			el.show();
-			//el.attributes['class'].nodeValue = cls;
 			if(private){
-				//el.down('h5[datafor=note]').show();
 				el.down('li[datafor=note]').show();
-				//el.down('h5[datafor=email]').hide();
 				el.down('li[datafor=email]').hide();	
 			}else{
-				//el.down('h5[datafor=email]').show();
 				el.down('li[datafor=email]').show();
-				//el.down('h5[datafor=note]').hide();
 				el.down('li[datafor=note]').hide();
 			}
 			el.down('input[type=submit]').value = submit;
@@ -41,21 +36,16 @@
 		}
 		Helpdesk.submitToTicket = function(cls, private, submit, link){			 
 			var el = $('note-form-container');
-			//el.attributes['class'].nodeValue = cls;
-			//el.down('input[type=submit]').value = submit;
 			el.down('input[id$=private]').value = private;
 			if(el.down('textarea').value.trim() != ''){
 				el.down('form').submit();
-			} 
-			//link.addClassName('active');
-			//link.up('li').siblings().each(function(l){ l.removeClassName('active'); });
+			}
 		}
 		
 		jQuery(document).ready(function(){
 			var activeCnt = jQuery("#TicketProperties"); 
 			jQuery(".rtPanel a").bind("click", function(ev){
 				activeCnt.hide();
-				//activeCnt = jQuery("#"+this.getAttribute("cntid")).show("slide", { direction: "left" }, 300);
 				activeCnt = jQuery("#"+this.getAttribute("cntid")).show();
 
 				jQuery(this).parent().find(".active").removeClass("active");
@@ -65,26 +55,13 @@
 			jQuery('#custom_ticket_form').validate(); 
 		});
 		
-    function show_canned_response(){
-      jQuery('#canned_response_list').dialog({ width:'400px', height:'auto', show: "blind"});
-    }
-    var ticket_merge_dialog = null;
-    
-    jQuery("#Merge").dialog2();
-    
-    function merge_ticket(ticket_id){
-      ticket_merge_dialog = jQuery("<div id='merge_ticket_list' style='display:none;' />").appendTo("body");			
-      var url = '/helpdesk/tickets/show_tickets_from_same_user/'+ticket_id
+		
+    function show_canned_response(source){
       
-      // load remote content
-      ticket_merge_dialog.load(url,{}, function(responseText, textStatus, XMLHttpRequest) {
-        ticket_merge_dialog.dialog({modal:true, width:'700px', height:'auto', title:"Merge ticket"});
-      });
-
-      //prevent the browser to follow the link
-      return false;
     }
-	<% end %>
+    jQuery("#Merge").dialog2();
+
+  <% end %>
 <% end %>
 
 <% content_for :sidebar do %>
@@ -222,16 +199,14 @@
 				<%= link_to_function(t('ticket.reply_to'), "swapEmailNote('reply', this)", :class => 'uiButton', :id => "ReplyButton") if @item.requester %>
 				<%= link_to_function(t('ticket.add_note'), "swapEmailNote('note', this)", :class => 'uiButton', :id => "AddNoteButton") %>		
 			</div>
-			<div>
-				<div id="canned_response_list" title="Canned response" style="display:none;">
-					<%= render :partial => "helpdesk/tickets/components/canned_responses" %>
-				</div>
-				<% if @item.requester %>
+			<div style="position:relative;">
+				<% if @item.requester %>				
+				  <%= render :partial => "helpdesk/tickets/components/canned_responses" %>
 					<%= render(:partial => '/helpdesk/shared/note_form', :locals => { :id => 'add-note',	:cntid => "cnt-note", :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
-					<%= render(:partial => '/helpdesk/shared/reply_form', :locals => { :id => 'send-email', :cntid => 'cnt-reply', :note => [@ticket, Helpdesk::Note.new(:private => false)] }) %>
+					<%= render(:partial => '/helpdesk/shared/reply_form', :locals => { :id => 'send-email', :cntid => 'cnt-reply', :note => [@ticket, Helpdesk::Note.new(:private => false)] }) %>  				
 				<% else %>
 					<%= render(:partial => '/helpdesk/shared/note_form', :locals => { :id => 'add-note',	:cntid => "cnt-note", :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
-				<% end %>
+				<% end %>				
 			</div>
 		<% end %>
 		<% unless @ticket_notes.blank? then %>

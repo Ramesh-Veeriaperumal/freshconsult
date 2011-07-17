@@ -58,9 +58,9 @@ class Topic < ActiveRecord::Base
   attr_accessor :body_html
   
   IDEAS_STAMPS = [
-    [ :planned,   "Planned",   1 ], 
-    [ :implemented,    "Implemented",    2 ],
-    [ :nottaken,    "Not Taken",    3 ]
+    [ :planned,      I18n.t("topic.ideas_stamps.planned"),       1 ], 
+    [ :implemented,  I18n.t("topic.ideas_stamps.implemented"),   2 ],
+    [ :nottaken,     I18n.t("topic.ideas_stamps.nottaken"),      3 ]
   ]
 
   IDEAS_STAMPS_OPTIONS = IDEAS_STAMPS.map { |i| [i[1], i[2]] }
@@ -77,9 +77,8 @@ class Topic < ActiveRecord::Base
    
   def stamp_name
     IDEAS_STAMPS_BY_KEY[stamp_type]
-  end
-  
-	
+  end  
+
 	def hit!
     self.class.increment_counter :hits, id
   end
@@ -108,9 +107,7 @@ class Topic < ActiveRecord::Base
       self.destroy
     end
   end
-  
- 
-  
+
   protected
     def set_default_replied_at_and_sticky
       self.replied_at = Time.now.utc
@@ -143,15 +140,13 @@ class Topic < ActiveRecord::Base
         forum_conditions       << Post.count(:id, :conditions => {:forum_id => forum_id})
       end
       # User doesn't have update_posts_count method in SB2, as reported by Ryan
-			#@voices.each &:update_posts_count if @voices
+      # @voices.each &:update_posts_count if @voices
       Forum.update_all forum_conditions, ['id = ?', forum_id]
       @old_forum_id = @voices = nil
     end
-    
+
     def update_post_user_counts
       @voices = voices.to_a
   end
-   
-  
-  
+
 end

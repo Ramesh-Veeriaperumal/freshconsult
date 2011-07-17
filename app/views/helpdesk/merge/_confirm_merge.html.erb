@@ -11,7 +11,7 @@
            <%= content_tag :label, t(".source_ticket_close_info") %>
            <textarea id="source_note" rows="2" class="auto-height" name="source[note]"><%= t(".source_merge_description", :ticket_id => @target_ticket.display_id) %></textarea>
            <div class="info-data">
-             <input checked="checked" id="source_public" name="source[is_public]" type="checkbox"> 
+             <input id="source_private" name="source[is_private]" value="true" type="checkbox"> 
              <%= t("ticket.note_form.private_note") %>
            </div>
          </li>
@@ -26,12 +26,12 @@
            <h4 class="title"><%= h(@target_ticket.subject) %></h4>
            <%= content_tag :div, t("helpdesk.ticket_created_on_n_by", :requester => h(@target_ticket.requester), :date_time => formated_date(@target_ticket.requester.created_at)), :class => "info-data" %>
            <%= content_tag :label, t(".target_ticket_updated_info") %>
-           <textarea id="target_note" class="auto-height" rows="4" name="target[note]"><%= t(".target_merge_description1", :ticket_id => @source_ticket.display_id, :ticket_subject => @source_ticket.subject) %>
+           <textarea id="target_note" class="auto-height" rows="6" name="target[note]"><%= t(".target_merge_description1", :ticket_id => @source_ticket.display_id, :ticket_subject => @source_ticket.subject) %>
 <%= t(".target_merge_description2", :ticket_id => @source_ticket.display_id ) %>
 <%= @source_ticket.description %>
           </textarea>
           <div class="info-data">
-            <input id="target_public" name="target[is_public]"  type="checkbox"> 
+            <input id="target_private" checked="checked" name="target[is_private]" value="true" type="checkbox"> 
             <%= t("ticket.note_form.private_note") %>
           </div>
         </li>

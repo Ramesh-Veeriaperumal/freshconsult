@@ -7,8 +7,9 @@
     unless params[:topic_id].nil? && !field.is_default_field?
       field_value = @item[field.field_name]
     end
+    field_label = ( field.is_default_field? ) ? I18n.t("ticket_fields.fields.#{field.name}") : field.label
   %>
-  <%= construct_ticket_element :helpdesk_ticket, field, field.label, field.dom_type, field.required, field_value %>
+  <%= construct_ticket_element :helpdesk_ticket, field, field_label, field.dom_type, field.required, field_value %>
 <% end %>
 <% javascript_tag do %>  
   jQuery('#helpdesk_ticket_group_id')

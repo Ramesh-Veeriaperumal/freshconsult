@@ -1,58 +1,38 @@
-	<span id="votes<%= @topic.id %>">
-		    <% info_text = (@forum.forum_type != 2) ? ((topic_vote.votes_for == 1)?"has":"have"): ((topic_vote.votes_for > 1)?"like":"likes") %>
-			
-			<% forum_type_name = @forum.type_name.singularize %>
-			
-			<% if(topic_vote.voted_by_user? current_user) %>
-				<div class="forum_info">
-  				<% if( topic_vote.votes_for == 1 ) %>  
-  					You <%= (@forum.forum_type != 2) ? "have" : "like" %> this <%= forum_type_name %>
-  				<% else %>
-  					<%= pluralize(topic_vote.votes_for, "Person") %>
-  					"including you" <%= info_text %> this <%= forum_type_name %>
-  				<% end %>
-				</div>
-			<% else %>
-				
-				<% if (topic_vote.votes_for != 0) %>
-					<div class="forum_info">
-						<%= pluralize(topic_vote.votes_for, "Person") %>
-						<%= info_text %>  this <%= forum_type_name %>
-						<span class="bottom-pointer"></span>
-					</div>
-				<% end %>
-				
-			<% end %>
-		
-			
-			<div>
-			<%	like_text = ((@forum.forum_type != 2)?"I have":"I like") + " this " + forum_type_name %>
-			<% unless(topic_vote.voted_by_user? current_user) %>
-				<%= link_to_remote like_text,  
-						:update => "voting_container",  
-						:url => { :action=>"vote", :id => @topic.id, :forum_id => @forum.id , :category_id => @forum_category.id,  
-									:id => @topic.id,  
-									:vote => "for"}, 
-						:html => { :class => "forum_button" }
-				%>
-			<% else %>
-				<% if (@forum.forum_type == 2) %> 
-					<%= link_to_remote ("Unlike"),  
-						:update => "voting_container",  
-						:url => { :action=>"destroy_vote", :id => @topic.id, :forum_id => @forum.id , :category_id => @forum_category.id,  
-						:id=>@topic.id,  
-						:vote=>"for"},
-						:html => { :class => "forum_button small" }
-					 %>
-				 <% else %>
-				 			 
-				 <% end %>
-			<% end %>
-			</div>
+  <span id="votes<%= @topic.id %>">
+      <% if(topic_vote.voted_by_user? current_user) %>
+        <div class="forum_info">
+          <%= t(".#{@forum.type_name}.vote_info_include_#{topic_vote.votes_for}", :vote => topic_vote.votes_for) %>
+        </div>
+      <% else %>				
+        <% if (topic_vote.votes_for != 0) %>
+          <div class="forum_info">
+            <%= t(".#{@forum.type_name}.vote_info_#{topic_vote.votes_for}", :vote => topic_vote.votes_for) %>
+            <span class="bottom-pointer"></span>
+          </div>
+        <% end %>				
+      <% end %>
 
-		<%# link_to_remote "-(#{@topic.votes_against})",
-			:update => "flash_notice",    
-			:url => { :action=>"vote",:id => @topic.id, :forum_id => @forum.id , :category_id => @forum_category.id,   
-			:id=>@topic.id,  
-			:vote=>"against"} %>	  
-	</span>
+
+      <div>
+        <% unless(topic_vote.voted_by_user? current_user) %>
+          <%= link_to_remote t(".#{@forum.type_name}.vote_button"), 
+                                        :update => "voting_container",
+                                        :url    => {  :action => "vote",
+                                                      :id => @topic.id,
+                                                      :forum_id => @forum.id,
+                                                      :category_id => @forum_category.id,
+                                                      :vote => "for" },
+                                        :html   => {  :class => "forum_button" } %>
+        <% else %>
+          <% if (@forum.forum_type == 2) %>
+            <%= link_to_remote t(".unlike"), :update => "voting_container",  
+                                            :url    => { :action=>"destroy_vote", 
+                                                         :id => @topic.id, 
+                                                         :forum_id => @forum.id, 
+                                                         :category_id => @forum_category.id,
+                                                         :vote   => "for" },
+                                            :html => { :class => "forum_button small" } %>
+        <% end %>
+      <% end %>
+    </div>
+  </span>

@@ -700,7 +700,7 @@ body h5{
 	margin:5px 0px;
 }
 
-.attachment_list{
+.attachment_list, .ui-form .attachment_list{
 	@include no-bullets;
 	color:#888987; 
 	margin-top:3px;

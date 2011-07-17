@@ -14,9 +14,9 @@ class Solution::Folder < ActiveRecord::Base
   named_scope :alphabetical, :order => 'name ASC'
   
   VISIBILITY = [
-  [ :anyone,   "Anyone",     1 ], 
-  [ :logged_users,"Logged In Users", 2 ],
-  [ :agents, "Agents",      3 ]
+  [ :anyone,       I18n.t("solutions.visibility.anyone"),          1 ], 
+  [ :logged_users, I18n.t("solutions.visibility.logged_in_users"), 2 ],
+  [ :agents,       I18n.t("solutions.visibility.agents"),          3 ]
   ]
   
   VISIBILITY_OPTIONS = VISIBILITY.map { |i| [i[1], i[2]] }
@@ -24,19 +24,15 @@ class Solution::Folder < ActiveRecord::Base
   VISIBILITY_KEYS_BY_TOKEN = Hash[*VISIBILITY.map { |i| [i[0], i[2]] }.flatten] 
   
   validates_inclusion_of :visibility, :in => VISIBILITY_KEYS_BY_TOKEN.values.min..VISIBILITY_KEYS_BY_TOKEN.values.max
-  
-  
-  
-  def self.folders_for_category category_id
-    
-    self.find_by_category_id(category_id)
-    
+
+  def self.folders_for_category category_id    
+    self.find_by_category_id(category_id)    
   end
-  
+
   def self.find_all_folders(account)   
     self.find(:all).select { |a| a.account_id.eql?(account) }
   end
-  
+
   def visible?(user)    
     return true if self.visibility == VISIBILITY_KEYS_BY_TOKEN[:anyone]
     return true if (user and (self.visibility == VISIBILITY_KEYS_BY_TOKEN[:logged_users]))
