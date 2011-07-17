@@ -5,7 +5,7 @@ class Helpdesk::NotesController < ApplicationController
   include HelpdeskControllerMethods
   
   def create  
-    if @item.save! 
+    if @item.save
       if params[:post_forums]
         @topic = Topic.find_by_id_and_account_id(@parent.ticket_topic.topic_id,current_account.id)
         if !@topic.locked?
