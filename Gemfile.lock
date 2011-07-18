@@ -168,8 +168,6 @@ GEM
       multi_json (~> 0.0.4)
       oauth (~> 0.4.3)
     tzinfo (0.3.26)
-    win32-open3 (0.3.2)
-    win32-open3 (0.3.2-x86-mingw32)
     xml-simple (1.0.15)
     yui-compressor (0.9.6)
       POpen4 (>= 0.1.4)
@@ -216,5 +214,4 @@ DEPENDENCIES
   ts-delayed-delta (= 1.1.0)
   twitter (= 0.9.12)
   tzinfo
-  win32-open3
   zendesk-features

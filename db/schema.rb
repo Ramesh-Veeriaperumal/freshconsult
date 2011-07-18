@@ -33,7 +33,7 @@ ActiveRecord::Schema.define(:version => 20110712093741) do
 
   create_table "admin_canned_responses", :force => true do |t|
     t.string   "title"
-    t.text     "content",    :limit => 16777215
+    t.text     "content",    :limit => 2147483647
     t.integer  "account_id", :limit => 8
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -641,7 +641,7 @@ ActiveRecord::Schema.define(:version => 20110712093741) do
 
   create_table "solution_articles", :force => true do |t|
     t.string   "title"
-    t.text     "description",  :limit => 16777215
+    t.text     "description",  :limit => 2147483647
     t.integer  "user_id",      :limit => 8
     t.integer  "folder_id",    :limit => 8
     t.integer  "status"
