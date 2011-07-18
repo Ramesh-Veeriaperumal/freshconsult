@@ -1217,6 +1217,7 @@ table.summary-report{
          div.fields{
             margin-left:86px;
             padding-top:4px;
+            position:relative;
             .info-data{
                margin:8px;
             }
@@ -1227,6 +1228,15 @@ table.summary-report{
          div.action_buttons{
             top:-6px;
             right:5px;
+         }
+      }
+      .request_form_options{
+         position:absolute;
+         right:26px;
+         top:20px;
+         .insert-canned-response{
+            position:relative;
+            z-index:1001;
          }
       }
       .button-container{
@@ -1452,15 +1462,22 @@ a.new_ticket:hover{
       }
    }   
 }
-
+.canned-response-menu.loading{
+   background-image:url('/images/load.gif');
+   background-repeat:no-repeat;
+   background-position: 8px 8px;
+}
 .canned-response-menu{
    border:1px solid #cfcfcf;
-   background:#ffffff;
-   @include corners(6px);
+   background-color:#ffffff;
    @include shadows( rgba(0, 0, 0, 0.2), 0px, 2px, 4px);
    padding:30px 6px 16px 6px;
    width:600px;
-   position:relative;
+   position:absolute;
+   z-index:1000;
+   right:6px;
+   top:12px;
+   
    ul{
       border-top:1px solid #efefef;
       position:relative;

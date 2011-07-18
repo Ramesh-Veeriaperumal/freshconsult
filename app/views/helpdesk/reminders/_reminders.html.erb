@@ -6,7 +6,7 @@
 <div class="addReminder">
 	<% form_remote_for(form_controller) do |f| %>
   	<%= f.label :body, t('add_to_do'), :class => "overlabel", :for => "helpdesk_reminder_body" %>
-  	<%= f.text_field :body, :class => "text" %>
+  	<%= f.text_field :body, :class => "text", :autocomplete => "off" %>
 	<% end %>
 </div> 
 <ul id="compeleted_reminders">

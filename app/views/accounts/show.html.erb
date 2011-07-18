@@ -19,27 +19,27 @@
 	</li> 
 	<% if @subscription.state == 'trial' %>
 	<li class="inline-field">
-    	<div class="info-highlight">
- 		    <%= content_tag(:h3, t('upgrade_trial'), :class => "title") %>
-			<% if current_account.active? %>
-				  <%= t('your_trial_account') %> 
-				  <%= (@subscription.trial_days == 0) ? 
-							t('is_expiring_today') :
-							"#{t('will_expire_in')} #{pluralize(@subscription.trial_days, t('day'), t('days'))}" %>.
-			<% else %>
-			 	<%= "#{t('trial_expired_on')} #{@subscription.next_renewal_at.to_s(:long_day)} " %>.
-			<% end %>
-			<br />
-			<%= t('select_a_plan_gain_access') %>
-		</div>
-	    <%= content_tag(:h3, t('select_a_plan'), :class => "title") %>
-		<%= render :partial => "select_plans", :locals => { :plans => @plans } %>
-		<br />
-		<br />
-	</li> 
-	<% else %>
-	<li class="inline-field">
-		<%= content_tag(:label, t('current_plan'), :class => "caption") %>	
+    <div class="info-highlight">
+      <%= content_tag(:h3, t('upgrade_trial'), :class => "title") %>
+      <% if current_account.active? %>
+        <%= t('your_trial_account') %> 
+        <%= (@subscription.trial_days == 0) ? 
+              t('is_expiring_today') :
+              "#{t('will_expire_in')} #{pluralize(@subscription.trial_days, t('day'), t('days'))}" %>.
+      <% else %>
+	      <%= "#{t('trial_expired_on')} #{@subscription.next_renewal_at.to_s(:long_day)} " %>.
+      <% end %>
+      <br />
+      <%= t('select_a_plan_gain_access') %>
+    </div>
+    <%= content_tag(:h3, t('select_a_plan'), :class => "title") %>
+    <%= render :partial => "select_plans", :locals => { :plans => @plans } %>
+    <br />
+    <br />
+  </li> 
+  <% else %>
+  <li class="inline-field">
+    <%= content_tag(:label, t('current_plan'), :class => "caption") %>	
     <div class="fields">
       <div class="action_buttons">
         <%= link_to( "#{t('change_plan')} &rsaquo;", plan_account_url, :class => "last" ) %>
@@ -56,7 +56,10 @@
             <td><%= content_tag(:label, "<strong> #{ @subscription.next_renewal_at.to_s(:long_day)  } </strong>") %></td>
           </tr>
           <tr>
-            <td><%= content_tag(:label, t('next_charge_amount'), :class => "caption" ) %> </td>
+            <td>
+            <%= content_tag(:label, t('next_charge_amount', 
+                            :type => SubscriptionPlan::BILLING_CYCLE_NAMES_BY_KEY[@subscription.renewal_period] ), 
+                            :class => "caption" ) %> </td>
             <td><%= content_tag(:label, "<strong> #{ (number_to_currency @subscription.amount) } </strong>" ) %></td>
           </tr>
         </table>

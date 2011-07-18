@@ -3,8 +3,8 @@
     <%= f.error_messages %>
     <ul class="ui-form dont-validate">
       <li class="inline-field field">
-        <div class="floatr">
-          <%= link_to_function( t(:'ticket.canned_responses.insert_ca_response') + " &raquo;", "show_canned_response(this)", :class => "slim-button") %>
+        <div class="request_form_options">
+          <%= link_to_function( t(:'ticket.canned_responses.insert_ca_response') + " &raquo;", "show_canned_response()", :class => "slim-button insert-canned-response") %>
         </div>
         <%= content_tag( :h3, t("ticket.note_form.form_title"), :class => "title" ) %>
         <label class="caption">Message:</label>

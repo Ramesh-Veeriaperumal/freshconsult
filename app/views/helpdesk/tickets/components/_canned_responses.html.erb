@@ -1,17 +1,21 @@
 <% javascript_tag do -%>		
-	function getCannedResponse(ticket_id,ca_resp_id){		   
+	function getCannedResponse(ticket_id,ca_resp_id){
+	  jQuery("#canned_response_list").addClass("loading")
 		jQuery.ajax({	type: 'POST',
 						url: '/helpdesk/tickets/get_ca_response_content/'+ticket_id+'?ca_resp_id='+ca_resp_id,
 						contentType: 'application/text',
 						async: false,						
 						success: function(data){		
 									insertIntoConversation(data);
+							    jQuery("#canned_response_list")
+							      .removeClass("loading")
+							      .hide(300);
 								}
 						});
 		return true;
 	}
 <%- end %>
-<div class="canned-response-menu" id="canned_response_list">
+<div class="canned-response-menu" id="canned_response_list" style="display:none"> 
   <ul>
     <span class="divider"></span>
 	  <%

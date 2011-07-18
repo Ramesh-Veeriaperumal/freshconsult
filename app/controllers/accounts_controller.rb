@@ -298,7 +298,7 @@ class AccountsController < ApplicationController
       @subscription.plan = @subscription_plan
       @subscription.agent_limit = params[:agent_limit]
       #@subscription.update_amount
-      render :text => @subscription.total_amount
+      render :partial => "calculate_amount", :locals => { :amount => @subscription.total_amount }
   end
 
   def plan

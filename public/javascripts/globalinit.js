@@ -85,9 +85,12 @@ var jQ = jQuery.noConflict();
 		 
 		$(document).bind('click', function(e) {
 			var $clicked = $(e.target);
-			if (! $clicked.parents().hasClass("nav-drop")){
+			if (! $clicked.parents().hasClass("nav-drop"))
 				hideMenuItem();
-			}
+			
+			if (! $clicked.parent().hasClass("request_form_options")){
+			  $("#canned_response_list").hide();
+		  }
 		});
 		
 		flash = $("div.flash_info");

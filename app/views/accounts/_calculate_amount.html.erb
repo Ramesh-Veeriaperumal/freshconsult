@@ -1,0 +1,37 @@
+<% form_tag plan_account_url, :id => "plan_form" do %>
+	<table>
+		<tr>
+			<td>
+			  <%= t('agents') %>
+			</td>
+			<td>
+			  <input type="text" size="4" value="<%= @subscription.agent_limit || current_account.agents.count %>" name="agent_limit" id="agents-text-box" class="text" /> x <b id="cost-per-agent">$<%= @subscription.subscription_plan.amount %></b>
+			<br />	  
+			</td>
+		</tr>
+		<tr>
+		  <td>
+		    Billing
+		  </td>
+		  <td>
+	    	<%= select_tag :billing_cycle, options_for_select(SubscriptionPlan::BILLING_CYCLE_OPTIONS.to_a, @subscription.renewal_period) %>
+		  </td>
+		</tr>  
+		
+    <tr class="tr-total" id="total-cost">
+    	<td>
+    		<%= content_tag(:h3, t('total_price'), :class => "title") %>
+    	</td>
+    	<td class="numbers">
+    		<b class="total" id="total-cost-per-agent">$<%= amount %></b>
+    	</td>
+    </tr>
+		<tr>
+			<td colspan="2">
+				<input type="hidden" id="plan_id" name="plan_id" value="" />
+					<input name="commit" type="submit" id="commit" class="uiButton" value="<%= (@subscription.state == 'trial')? t('enter_payment') : t('change_my_plan') %>" />
+			</td>
+		</tr>
+	</table>
+<% end %>
+	

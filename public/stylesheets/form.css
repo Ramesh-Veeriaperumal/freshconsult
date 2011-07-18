@@ -1491,6 +1491,7 @@ table.summary-report thead td {
 .request_panel .ui-form li.inline-field div.fields {
   margin-left: 86px;
   padding-top: 4px;
+  position: relative;
 }
 .request_panel .ui-form li.inline-field div.fields .info-data {
   margin: 8px;
@@ -1501,6 +1502,15 @@ table.summary-report thead td {
 .request_panel .ui-form li.inline-field div.action_buttons {
   top: -6px;
   right: 5px;
+}
+.request_panel .ui-form .request_form_options {
+  position: absolute;
+  right: 26px;
+  top: 20px;
+}
+.request_panel .ui-form .request_form_options .insert-canned-response {
+  position: relative;
+  z-index: 1001;
 }
 .request_panel .ui-form .button-container {
   padding-top: 8px;
@@ -1802,18 +1812,24 @@ a.new_ticket:hover {
   font-size: 12px;
 }
 
+.canned-response-menu.loading {
+  background-image: url("/images/load.gif");
+  background-repeat: no-repeat;
+  background-position: 8px 8px;
+}
+
 .canned-response-menu {
   border: 1px solid #cfcfcf;
-  background: #ffffff;
-  -moz-border-radius: 6px 6px 6px 6px;
-  -webkit-border-radius: 6px 6px 6px 6px;
-  border-radius: 6px 6px 6px 6px;
+  background-color: #ffffff;
   -moz-box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 4px;
   -webkit-box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 4px;
   box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 4px;
   padding: 30px 6px 16px 6px;
   width: 600px;
-  position: relative;
+  position: absolute;
+  z-index: 1000;
+  right: 6px;
+  top: 12px;
 }
 .canned-response-menu ul {
   border-top: 1px solid #efefef;

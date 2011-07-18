@@ -5,7 +5,7 @@
 	<% javascript_tag do %>
 		swapEmailNote = function(action, link)
 		{
-			if (action == "reply")
+			if(action == "reply")
 			{
 				jQuery('#cnt-note').hide();
 				jQuery('#cnt-reply').toggle();
@@ -54,11 +54,11 @@
 
 			jQuery('#custom_ticket_form').validate(); 
 		});
-		
-		
-    function show_canned_response(source){
-      
+
+    function show_canned_response(){
+      jQuery("#canned_response_list").show();
     }
+    
     jQuery("#Merge").dialog2();
 
   <% end %>

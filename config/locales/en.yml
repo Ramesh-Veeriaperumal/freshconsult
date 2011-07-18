@@ -976,7 +976,7 @@ en:
     form:
       type: Forum Type
       visibility: Forum visibility    
-  next_charge_amount: "Monthly cost:"
+  next_charge_amount: "%{type} cost:"
   company: 
     info9: Freshdesk will automatically associate Contacts with this company if email ids contain these domains
     name: Company name
@@ -1150,3 +1150,8 @@ en:
         sign_in_using_google: Sign in using your Google account
         help: Help
   delete_reminder: Delete this ToDo?
+  subscription_plan:
+    billing_cycle:
+      annual: Annual
+      quarterly: Quarterly
+      monthly: Monthly

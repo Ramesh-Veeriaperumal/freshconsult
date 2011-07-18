@@ -4,7 +4,7 @@
 			<tr> 
 				<% plans.each do |plan| %>
 				<% plan_name = plan.name.downcase %>
-				<%unless plan_name == "free"%>
+				<% unless plan_name == "free" %>
 				<td id = "plan-<%= plan.name %>">
 					<div class="plan-details">			
 						<div class="plan-title">
@@ -24,8 +24,8 @@
 					<button data-plan="<%= plan.name %>" data-plan-cost="<%= plan.amount.to_i %>" data-plan-id = "<%= plan.id %>" class="plan-button" id='<%= "#{ plan.name }_button" %>'><%=t('choose_plan')%></button>
 					<div id="billing-<%= plan.name %>"></div>
 				</td>
-				<%else%>
-				<% @free_plan_id =  plan.id %>
+				<% else %>
+				  <% @free_plan_id = plan.id %>
 				<% end %>  
 			<%end%>
 			</tr> 
@@ -34,43 +34,19 @@
 	</div>
 </div>
 <div id="billing-template" class="billing" style="display:none;">
-	<% form_tag plan_account_url, :id => "plan_form" do %>
-	<%=select_tag :billing_cycle,options_for_select(SubscriptionPlan::BILLING_CYCLE_OPTIONS.to_a) %>
-	<table>
-		<tr>
-			<td colspan="2"><%= t('agents') %> <input type="text" size="4" value="<%= @subscription.agent_limit || current_account.agents.count %>" name="agent_limit" id="agents-text-box" class="text" /> x <b id="cost-per-agent">$</b>
-			<br />	  
-			</td>
-		</tr>
-		<tr class="tr-total">
-			<td>
-				<%= content_tag(:h3, t('total_price'), :class => "title") %>
-				<%= content_tag(:div, t('billed_monthly'), :class => "intro") %>
-			</td>
-			<td class="numbers">
-				<b class="total" id="total-cost-per-agent">$</b>
-			</td>
-		</tr>
-		<tr>
-			<td colspan="2">
-				<input type="hidden" id="plan_id" name="plan_id" value="" />
-					<input name="commit" type="submit" id="commit" class="uiButton" value="<%= (@subscription.state == 'trial')? t('enter_payment') : t('change_my_plan') %>" />
-			</td>
-		</tr>
-	</table>
-	<% end %>
+  <%= render :partial => "calculate_amount", :locals => { :amount => 0 } %>
 </div>
-
 
 <% javascript_tag do %>
 	(function($){	
 		selected_plan 	= null;
-		agents		  	= 1;
-		plan_cost	  	= null;
+		agents		  	  = null;
+		plan_cost	  	  = null;
 		plan_billing  	= null; 
+		current_plan_id = null;
+		billing_cycle   = <%= @subscription.renewal_period %>;
 		
-		function IsNumeric(input)
-		{
+		function IsNumeric(input){
 		   return (input - 0) == input && input.length > 0;
 		}
 		
@@ -80,27 +56,38 @@
 			current_plan 	  = this.getAttribute("data-plan");
 			selected_plan 	= $("#plan-"+current_plan).addClass('active'); 
 			plan_cost 		  = this.getAttribute("data-plan-cost");
+			current_plan_id = this.getAttribute("data-plan-id");
 			agents			    = $("#agents-text-box").val();
+			
+      $("#billing-template").detach().appendTo(selected_plan).show();
 			calculateCost();
+		});
+		
+		$("#agents-text-box").live("change", function(){
+			                                      if(IsNumeric(this.value) && this.value != 0){
+                                              this.value = Math.abs(this.value);
+                                              agents = this.value;
+                                              calculateCost();
+                                            }else{
+                                              this.value = agents;
+                                            }
+                                          });
 
-			$("#billing-template").detach().appendTo(selected_plan).show();
-			$("#plan_id").val(this.getAttribute("data-plan-id"));
-		});
-		
-		$("#agents-text-box").change(function(){
-			if(IsNumeric(this.value) && this.value != 0){
-				this.value = Math.abs(this.value);
-				agents = this.value;
-				calculateCost();
-			}else{
-				this.value = agents;
-			}
-		});
-		
-		function calculateCost(){
-			$("#cost-per-agent").text("$"+plan_cost);
-			$("#total-cost-per-agent").text("$"+(agents * plan_cost));
-		}
-		
-	})(jQuery);
+    $("#billing_cycle").live("change", function(){
+                                          billing_cycle = this.value;
+                                          calculateCost();
+                                       });
+
+    function calculateCost(){
+      //$("#cost-per-agent").text("$"+plan_cost);
+      //$("#total-cost-per-agent").text("$"+(agents * plan_cost));
+      $.post( "calculate_amount",
+              { "billing_cycle": billing_cycle, "agent_limit" : agents, "plan_id" : current_plan_id },              
+              function(data){
+                  $("#billing-template").html(data);
+            			$("#plan_id").val(current_plan_id);
+                } );
+    }
+
+  })(jQuery);
 <% end %>

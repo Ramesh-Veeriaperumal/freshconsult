@@ -1,20 +1,19 @@
-<div class="request_panel" id="<%=cntid%>" style="display:block;">
+<div class="request_panel" id="<%=cntid%>" style="display:none;">
     <% form_for note, :html => {:multipart => true, :id => "HelpdeskReply" } do |f| %>
     <%= f.error_messages %>
     <ul class="ui-form dont-validate">
         <li class="inline-field field">
+            <div class="request_form_options">
+              <a href="javascript:void(0)" onclick="showHideCc(this)" class="slim-button" >
+                <%= (@ticket.cc_email.blank?)? "Add Cc": "Remove Cc" %>
+              </a>
+              <%= link_to_function( t(:'ticket.canned_responses.insert_ca_response') + " &raquo;", "show_canned_response()", :class => "slim-button insert-canned-response") %>
+            </div>
             <%= content_tag( :h3, t("ticket.reply_form.form_title"), :class => "title" ) %>
             <%= f.label(:reply_email, "From:", :class => "caption" ) %>
             <div class="fields">
-                <div class="floatr">
-                    <a href="javascript:void(0)" onclick="showHideCc(this)" class="slim-button" >
-                      <%= (@ticket.cc_email.blank?)? "Add Cc": "Remove Cc" %>
-                    </a>
-                    <%= link_to_function( t(:'ticket.canned_responses.insert_ca_response') + " &raquo;", "show_canned_response(this)", :class => "slim-button") %>
-                </div>
-                <%= select :reply_email, :id, options_for_select(@reply_email, @ticket.reply_email) %>
-                <input type="checkbox" class="hide" id="include_cc" name="include_cc" value="true" <%= (!@ticket.cc_email.blank?)? "checked" : "" %> />
-                
+              <%= select :reply_email, :id, options_for_select(@reply_email, @ticket.reply_email) %>
+              <input type="checkbox" class="hide" id="include_cc" name="include_cc" value="true" <%= (!@ticket.cc_email.blank?)? "checked" : "" %> />              
             </div>
         </li>
         <li class="inline-field field" id="cc-form-container" style="display:<%= @ticket.cc_email.blank? ? "none": "block" %>;">
@@ -90,5 +89,7 @@
          $("include_cc").checked = true;
        }
     }
+    
+  	jQuery("#HelpdeskReply").validate();	
   <% end %>
 <% end %>
