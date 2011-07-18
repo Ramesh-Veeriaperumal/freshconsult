@@ -361,9 +361,8 @@ class AccountsController < ApplicationController
 
   def cancel
     if request.post? and !params[:confirm].blank?
+      SubscriptionNotifier.deliver_account_deleted(current_account)
       current_account.destroy
-      #self.current_user = nil
-      #reset_session
       redirect_to "http://www.freshdesk.com"
     end
   end

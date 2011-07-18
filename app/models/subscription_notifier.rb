@@ -57,6 +57,11 @@ class SubscriptionNotifier < ActionMailer::Base
     @body = { :subscription => subscription }    
   end
   
+  def account_deleted(account)
+    setup_email(AppConfig['from_email'], "#{account.full_domain} is deleted")
+    @body = { :account => account }    
+  end
+  
   def password_reset(reset)
     setup_email(reset.user, 'Password Reset Request')
     @body = { :reset => reset }
