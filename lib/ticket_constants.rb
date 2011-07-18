@@ -1,9 +1,9 @@
 module TicketConstants
   
   CHAT_SOURCES = { :snapengage =>  "snapengage.com", :olark => "olark.com"}
-   
-
   
+  OUT_OF_OFF_SUBJECTS = [ "away from the office", "out of office", "away from office" ]
+   
   SOURCES = [
     [ :email,       I18n.t('email'),            1 ],
     [ :portal,     I18n.t('portal_key'),           2 ],
@@ -55,13 +55,15 @@ module TicketConstants
   TYPE_KEYS_BY_TOKEN = Hash[*TYPE.map { |i| [i[0], i[2]] }.flatten]
   
   DEFAULT_COLUMNS =  [
-    [ :subject,   "subject",             :text ], 
-    [ :description, "description",         :text],
-    [ :status, "status",         :dropdown],
-    [ :ticket_type, "ticket_type",         :dropdown]
+    [ :status, "Status",         :dropdown],
+    [ :ticket_type, "Type",         :dropdown],
+    [ :responder_id, "Agents",         :dropdown],
+    [ :group_id, "Groups",         :dropdown],
+    [ :source, "Source",         :dropdown],
+    [ :priority, "Priority",         :dropdown]
   ]
   
-  DEFAULT_COLUMNS_OPTIONS = DEFAULT_COLUMNS.map { |i| [i[1], i[2]] }
+  DEFAULT_COLUMNS_OPTIONS = Hash[*DEFAULT_COLUMNS.map { |i| [i[0], i[1]] }.flatten]
   DEFAULT_COLUMNS_BY_KEY = Hash[*DEFAULT_COLUMNS.map { |i| [i[2], i[1]] }.flatten]
   DEFAULT_COLUMNS_KEYS_BY_TOKEN = Hash[*DEFAULT_COLUMNS.map { |i| [i[0], i[2]] }.flatten]
  

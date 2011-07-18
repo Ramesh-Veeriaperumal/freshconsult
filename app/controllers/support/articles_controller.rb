@@ -5,6 +5,8 @@ class Support::ArticlesController < ApplicationController
   before_filter { |c| c.requires_permission :portal_knowledgebase }
   
   rescue_from ActionController::UnknownAction, :with => :handle_unknown
+  
+  newrelic_ignore :only => [:thumbs_up,:thumbs_down]
 
   def handle_unknown
      redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)

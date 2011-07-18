@@ -350,8 +350,6 @@ class Wf::Filter < ActiveRecord::Base
     end
     
     condition = Wf::FilterCondition.new(self, condition_key, operator_key, container_for(condition_key, operator_key), values)
-    puts "#############################################################################"
-    puts condition.to_s
     @conditions.insert(index, condition)
   end
   

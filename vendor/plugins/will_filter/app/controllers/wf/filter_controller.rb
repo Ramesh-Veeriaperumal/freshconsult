@@ -66,16 +66,14 @@ class Wf::FilterController < ApplicationController
   def save_filter
     params.delete(:wf_id)
     
-    wf_filter = Wf::Filter.deserialize_from_params(params)
+    wf_filter = Helpdesk::Filters::CustomTicketFilter.deserialize_from_params(params)
     wf_filter.validate!
     
     unless wf_filter.errors?
       wf_filter.save
     end
-    
     wf_filter.key= wf_filter.id.to_s 
-    
-    render(:partial => '/wf/filter/conditions', :layout=>false, :locals => {:wf_filter => wf_filter})
+    render :nothing => true 
   end
 
   def update_filter

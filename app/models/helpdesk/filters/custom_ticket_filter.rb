@@ -1,10 +1,14 @@
 class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
+  
+  include Search::TicketSearch
+  
+  attr_accessor :query_hash 
 
   def definition
      @definition ||= begin
       defs = {}
       #default fields
-      TicketConstants::DEFAULT_COLUMNS_OPTIONS.each do |name,cont|
+      TicketConstants::DEFAULT_COLUMNS_KEYS_BY_TOKEN.each do |name,cont|
         defs[name.to_sym] = { get_op_list(cont).to_sym => cont  , :name => name, :container => cont,     
         :operator => get_op_list(cont), :options => get_default_choices(name.to_sym) }
       end
@@ -17,11 +21,13 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     end
   end
   
+  
  
   
   def deserialize_from_params(params)
+   
     @conditions = []
-    @match                = params[:wf_match]       || :all
+    @match                =  :and
     @key                  = params[:wf_key]         || self.id.to_s
     self.model_class_name = params[:wf_model]       if params[:wf_model]
     
@@ -31,7 +37,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     @order                = params[:wf_order]       || default_order
     
     self.id   =  params[:wf_id].to_i  unless params[:wf_id].blank?
-    self.name =  params[:wf_name]     unless params[:wf_name].blank?
+    self.name =  params[:filter_name]     unless params[:filter_name].blank?
     
     @fields = []
     unless params[:wf_export_fields].blank?
@@ -46,61 +52,37 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       @format = params[:wf_export_format].to_sym
     end
     
-    i = 0
-    while params["wf_c#{i}"] do
-      conditon_key = params["wf_c#{i}"]
-      operator_key = params["wf_o#{i}"]
-      values = []
-      j = 0
-      while params["wf_v#{i}_#{j}"] do
-        values << params["wf_v#{i}_#{j}"]
-        j += 1
-      end
-      i += 1
-      add_condition(conditon_key, operator_key.to_sym, values)
+    action_hash = []
+    action_hash = ActiveSupport::JSON.decode params[:data_hash] unless params[:data_hash].blank?
+    
+    self.query_hash = action_hash
+    
+    action_hash.each do |filter|
+      add_condition(filter["condition"], filter["operator"].to_sym, filter["value"]) unless filter["value"].blank?
     end
 
     if params[:wf_submitted] == 'true'
       validate!
     end
-
+    
     return self
   end
   
-  def get_id_from_field(tf)
-    "flexifield.#{tf.flexifield_def_entry.flexifield_name}"
-  end
-  
-  def get_container_from_field(tf)
-    tf.field_type.gsub('custom_', '')
-  end
-  
-  def get_op_from_field(tf)
-    get_op_list(get_container_from_field(tf))    
-  end
-  
-  def get_op_list(name)
-    containers = Wf::Config.data_types[:helpdesk_tickets][name]
-    container_klass = Wf::Config.containers[containers.first].constantize
-    container_klass.operators.first   
-  end
-  
-  def get_custom_choices(tf)
-    choice_array = tf.choices
-    #Hash[*choice_array.collect { |v| [v, v]}.flatten]
-  end
-  
-   def get_default_choices(criteria_key)
-    if criteria_key == :status
-      return TicketConstants::STATUS_NAMES_BY_KEY
-    end
+  def serialize_to_params(merge_params = {})
+    params = {}
+    params[:wf_type]        = self.class.name
+    params[:wf_match]       = match
+    params[:wf_model]       = model_class_name
+    params[:wf_order]       = order
+    params[:wf_order_type]  = order_type
+    params[:wf_per_page]    = per_page
     
-    if criteria_key == :ticket_type
-      return TicketConstants::TYPE_NAMES_BY_KEY
-    end
     
-    return []
+    params[:data_hash] = self.query_hash
+    params
+  
   end
+  
   
   def joins
     ["INNER JOIN flexifields ON flexifields.flexifield_set_id = helpdesk_tickets.id"]
