@@ -1,21 +1,19 @@
   <span id="votes<%= @topic.id %>">
       <% if(topic_vote.voted_by_user? current_user) %>
         <div class="forum_info">
-          <%= t(".#{@forum.type_name}.vote_info_include_#{topic_vote.votes_for}", :vote => topic_vote.votes_for) %>
+          <%= t(".#{@forum.type_symbol}.vote_info_include_#{topic_vote.votes_for}", :vote => topic_vote.votes_for) %>
         </div>
       <% else %>				
         <% if (topic_vote.votes_for != 0) %>
           <div class="forum_info">
-            <%= t(".#{@forum.type_name}.vote_info_#{topic_vote.votes_for}", :vote => topic_vote.votes_for) %>
+            <%= t(".#{@forum.type_symbol}.vote_info_#{topic_vote.votes_for}", :vote => topic_vote.votes_for) %>
             <span class="bottom-pointer"></span>
           </div>
-        <% end %>				
+        <% end %>
       <% end %>
-
-
       <div>
         <% unless(topic_vote.voted_by_user? current_user) %>
-          <%= link_to_remote t(".#{@forum.type_name}.vote_button"), 
+          <%= link_to_remote t(".#{@forum.type_symbol}.vote_button"), 
                                         :update => "voting_container",
                                         :url    => {  :action => "vote",
                                                       :id => @topic.id,
@@ -25,13 +23,14 @@
                                         :html   => {  :class => "forum_button" } %>
         <% else %>
           <% if (@forum.forum_type == 2) %>
-            <%= link_to_remote t(".unlike"), :update => "voting_container",  
-                                            :url    => { :action=>"destroy_vote", 
-                                                         :id => @topic.id, 
-                                                         :forum_id => @forum.id, 
-                                                         :category_id => @forum_category.id,
-                                                         :vote   => "for" },
-                                            :html => { :class => "forum_button small" } %>
+            <%= link_to_remote t(".unlike"), 
+                                        :update => "voting_container",  
+                                        :url    => { :action=>"destroy_vote", 
+                                                     :id => @topic.id, 
+                                                     :forum_id => @forum.id, 
+                                                     :category_id => @forum_category.id,
+                                                     :vote   => "for" },
+                                        :html => { :class => "forum_button small" } %>
         <% end %>
       <% end %>
     </div>

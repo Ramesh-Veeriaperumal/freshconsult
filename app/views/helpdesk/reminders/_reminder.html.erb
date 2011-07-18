@@ -1,0 +1,19 @@
+<%
+  show_info ||= false
+	r = reminder
+	text = "#{h(r.body)} #{(r.ticket && show_info ? link_to("Re: #{truncate(r.ticket.subject)}", r.ticket, :class => "request_link") : '')}";
+%>	
+<li id="reminder_<%=r.id%>">  
+    <%  form_action = (r.deleted) ? restore_helpdesk_reminder_path(r) : complete_helpdesk_reminder_path(r) %>
+    <%  form_remote_tag(:url => form_action, :method => :put) do %>
+      <%= hidden_field_tag "show_info", show_info if show_info %>
+      <%= check_box_tag("", 1, r.deleted , :onchange => %{ jQuery(this.form).trigger("submit"); }) %>
+    <%  end %>
+    <%= link_to_remote( t('delete'),
+                        :url => helpdesk_reminder_path(r),
+                        :method => 'delete',                        
+                        #:confirm => t("delete_reminder"),
+                        :html => { :class => 'delete' } ) %>
+		<%= content_tag("label", text, :class=>"reminder #{ r.deleted ? "checked" : "unchecked" }") %>
+</li>
+

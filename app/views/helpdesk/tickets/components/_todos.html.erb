@@ -1,16 +1,7 @@
 <div class="rtDetails reminders-ticket" id="TicketTodos" style="display:none;">
-	<h3 class="title"><%=t('ticket.to_do')%></h3> 
 	<div class="panel_area">
-		<table width="100%">	
-			<% ticket.reminders.visible.map do |r| %>
-				<%= render :partial => "/helpdesk/shared/reminder_list", :locals => { :parent => ticket, :r => r, :checked =>r.deleted, :check_url => complete_helpdesk_reminder_path(r), :check_method => :compelete, :uncheck_url =>restore_helpdesk_reminder_path(r), :uncheck_method =>:put} %>
-			<% end %>
-		</table>
-		<div class="addReminder">
-			<% form_for ticket ? [ticket, Helpdesk::Reminder.new()] : Helpdesk::Reminder.new() do |f| %>
-				<%= f.label :body, t('add_to_do'), :class => "overlabel" %>
-				<%= f.text_field :body, :class => "text" %>
-			<% end %> 
-		</div>
+	<h3 class="title"><%=t('ticket.to_do')%></h3>
+    <%= render :partial => '/helpdesk/reminders/reminders', 
+               :locals  => { :show_info => false, :reminders => ticket.reminders, :form_controller => [ticket, Helpdesk::Reminder.new()] } %> 
 	</div>
 </div>

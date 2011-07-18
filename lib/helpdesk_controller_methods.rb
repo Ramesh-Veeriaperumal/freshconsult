@@ -18,12 +18,13 @@ module HelpdeskControllerMethods
   
   def post_persist #Need to check whether this should be called only inside create by Shan to do 
     create_attachments 
-    flash[:notice] = I18n.t(:'flash.general.create.success', :human_name => cname.humanize.downcase)
+    flash.now[:notice] = I18n.t(:'flash.general.create.success', :human_name => cname.humanize.downcase)
     process_item #    
     #redirect_back_or_default redirect_url
     respond_to do |format|
       format.html { redirect_to params[:redirect_to].present? ? params[:redirect_to] : item_url }
-      format.xml  { head 200}
+      format.xml  { head 200 }
+      format.js
     end
   end
 
