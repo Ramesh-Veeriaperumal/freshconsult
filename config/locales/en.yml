@@ -175,7 +175,12 @@ en:
         everything_helpdesk: Everything Helpdesk
   ends_with: Ends with
   last_name: Last Name
-  forum: 
+  forum:
+    types:
+      howto: Questions
+      ideas: Ideas
+      announce: Announcement
+      problem: Problems
     confim_msg1: Are you sure you want to delete this forum?
     verb: 
       questions: Question asked by
@@ -186,8 +191,10 @@ en:
     edit: Edit Forum
     title: Forums
     start_topic: Start a Topic
-    type: Forum Type
-    visibility: Forum visibility
+    visibility:
+      anyone: Anyone
+      logged_users: Logged In Users
+      agents: Agents      
   password_reset_email: Password Reset Email
   import_user_org: Users &amp; Organizations
   to_do: To Do
@@ -584,13 +591,13 @@ en:
         vote_info_2: %{vote} People like this Idea
         vote_info_include_1: You like this Idea
         vote_info_include_2: %{vote} People "including you" like this Idea
-      problems:
+      problem:
         vote_button: I have this Problem
         vote_info_1: %{vote} Person has this Problem
         vote_info_2: %{vote} People have this Problem
         vote_info_include_1: You have this Problem
         vote_info_include_2: %{vote} People "including you" have this Problem
-      questions:
+      howto:
         vote_button: I have this Question
         vote_info_1: %{vote} Person has this Question
         vote_info_2: %{vote} People have this Question
@@ -966,6 +973,9 @@ en:
       placeholder: Search All Topics
     search: 
       placeholder: Search %{name}
+    form:
+      type: Forum Type
+      visibility: Forum visibility    
   next_charge_amount: "Monthly cost:"
   company: 
     info9: Freshdesk will automatically associate Contacts with this company if email ids contain these domains
@@ -1139,3 +1149,4 @@ en:
         sign_in_using: Sign In using
         sign_in_using_google: Sign in using your Google account
         help: Help
+  delete_reminder: Delete this ToDo?

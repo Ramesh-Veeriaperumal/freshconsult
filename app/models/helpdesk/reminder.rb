@@ -7,7 +7,8 @@ class Helpdesk::Reminder < ActiveRecord::Base
   belongs_to :ticket,
     :class_name => 'Helpdesk::Ticket'
 
-  named_scope :visible, :conditions => ["deleted = ? OR updated_at > ?", false, 1.day.ago], :order => 'deleted ASC, updated_at DESC, created_at DESC' 
+  named_scope :visible, :conditions => [ "deleted = ?", false ], :order => 'updated_at ASC, created_at ASC'
+  named_scope :logged, :conditions => [ "deleted = ? AND updated_at > ?", true, 1.day.ago ], :order => 'deleted ASC, updated_at DESC, created_at DESC' 
 
   attr_accessible :body,:deleted
   

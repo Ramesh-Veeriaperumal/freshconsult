@@ -1,0 +1,3 @@
+page.insert_html :bottom, :reminderlist, :partial => '/helpdesk/reminders/reminder', :object => @item
+page["reminder_#{@item.id}"].visual_effect :highlight
+page << "$('helpdesk_reminder_body').value = '';"

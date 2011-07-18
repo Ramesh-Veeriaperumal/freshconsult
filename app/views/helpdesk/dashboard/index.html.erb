@@ -5,11 +5,11 @@
 <% end %>
 
 <% content_for :sidebar do %>
-  <%# render :partial => '/helpdesk/shared/tag_search_navigate' %>  
-  <%= render :partial => '/helpdesk/shared/reminders', :locals => {
-    :parent => false,
-    :reminders => current_user.reminders,
-    :reminder_title => t('.todo_title')} %> 
+  <div id="reminders" class="reminders sidepanel">    
+  	<h3 class="title"><%= t(".todo_title") %></h3>
+    <%= render :partial => '/helpdesk/reminders/reminders', 
+               :locals  => { :reminders => current_user.reminders, :form_controller => Helpdesk::Reminder.new(), :show_info => true } %> 
+  </div>                           
   <%= render :partial => '/helpdesk/shared/history' %>
 <% end %>
 

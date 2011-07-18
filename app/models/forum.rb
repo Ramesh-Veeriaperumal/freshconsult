@@ -2,20 +2,21 @@ class Forum < ActiveRecord::Base
   acts_as_list
   
   TYPES = [
-    [ :howto,   "questions",     1 ], 
-    [ :ideas,   "ideas",         2 ],
-    [ :problem, "problems",      3 ],
-    [ :announce, "announcement", 4 ]
+    [ :howto,    I18n.t("forum.types.howto"),    1 ],
+    [ :ideas,    I18n.t("forum.types.ideas"),    2 ],
+    [ :problem,  I18n.t("forum.types.problem"),  3 ],
+    [ :announce, I18n.t("forum.types.announce"), 4 ]
   ]
 
   TYPE_OPTIONS = TYPES.map { |i| [i[1], i[2]] }
   TYPE_NAMES_BY_KEY = Hash[*TYPES.map { |i| [i[2], i[1]] }.flatten] 
   TYPE_KEYS_BY_TOKEN = Hash[*TYPES.map { |i| [i[0], i[2]] }.flatten]
+  TYPE_SYMBOL_BY_KEY = Hash[*TYPES.map { |i| [i[2], i[0]] }.flatten]
   
   VISIBILITY = [
-    [ :anyone,       "Anyone",          1 ], 
-    [ :logged_users, "Logged In Users", 2 ],
-    [ :agents,       "Agents",          3 ]
+    [ :anyone,       I18n.t("forum.visibility.anyone"),       1 ],
+    [ :logged_users, I18n.t("forum.visibility.logged_users"), 2 ],
+    [ :agents,       I18n.t("forum.visibility.agents"),       3 ]
   ]
 
   VISIBILITY_OPTIONS = VISIBILITY.map { |i| [i[1], i[2]] }
@@ -89,6 +90,10 @@ class Forum < ActiveRecord::Base
     TYPE_NAMES_BY_KEY[forum_type]
   end
 
+  def type_symbol
+    TYPE_SYMBOL_BY_KEY[forum_type].to_s
+  end
+    
   def visible?(user)
     return true if self.forum_visibility == VISIBILITY_KEYS_BY_TOKEN[:anyone]
     return true if (user and (self.forum_visibility == VISIBILITY_KEYS_BY_TOKEN[:logged_users]))
