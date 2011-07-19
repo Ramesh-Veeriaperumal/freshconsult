@@ -6,7 +6,7 @@ class Subscription < ActiveRecord::Base
   belongs_to :affiliate, :class_name => 'SubscriptionAffiliate', :foreign_key => 'subscription_affiliate_id'
   
   before_create :set_renewal_at
-  before_update :cache_old_model, :set_free_plan_agnt_limit, :charge_if_free
+  before_update  :cache_old_model,:set_free_plan_agnt_limit, :charge_if_free,:charge_plan_change_mis
   before_destroy :destroy_gateway_record
   before_validation :update_amount
   after_update :update_features,:send_invoice
@@ -47,7 +47,7 @@ class Subscription < ActiveRecord::Base
       self.state = 'active' #if new_record?
     end
     
-    self.renewal_period = self.billing_cycle
+    self.renewal_period = billing_cycle unless billing_cycle.nil?
     self.subscription_plan = plan
   end
   
@@ -63,6 +63,10 @@ class Subscription < ActiveRecord::Base
   
   def trial_days
     ((self.next_renewal_at.to_i - Time.now.to_i) / 86400).to_i
+  end
+  
+  def no_of_days(from,to)
+    ((from.to_i - to.to_i) / 86400).to_i
   end
   
   def amount_in_pennies
@@ -113,7 +117,7 @@ class Subscription < ActiveRecord::Base
   # amount (1.00 to charge $1).  A SubscriptionPayment record will
   # be created, but the subscription itself is not modified.
   def misc_charge(amount)
-    if amount == 0 || (@response = gateway.purchase((amount.to_f * 100).to_i, billing_id)).success?
+    if amount == 0 || (@response = gateway.purchase((amount * 100).to_i, billing_id)).success?
       subscription_payments.create(:account => account, :amount => amount, :transaction_id => @response.authorization, :misc => true)
       true
     else
@@ -242,10 +246,28 @@ class Subscription < ActiveRecord::Base
     # If the discount is changed, set the amount to the discounted
     # plan amount with the new discount.
     def update_amount
-      if subscription_discount_id_changed? || agent_limit_changed? || subscription_plan_id_changed? || renewal_period_changed?
+      if subscription_discount_id_changed? || agent_limit_changed? || subscription_plan_id_changed? || renewal_period_changed?        
         subscription_plan.discount = discount 
         total_amount
       end
+    end
+    
+    def charge_plan_change_mis
+      if  (amount > @old_subscription.amount) and paid_account?     
+        misc_charge(cal_plan_change_amount.round.to_f)
+      end
+    end
+    
+    def paid_account?
+      (state == 'active') and (subscription_payments.count > 0)
+    end
+    
+    def cal_plan_change_amount
+     ((trial_days ) * (amount - @old_subscription.amount)) / no_of_days_in_term
+    end
+    
+    def no_of_days_in_term
+      no_of_days(renewal_period.months.from_now,Time.now)
     end
     
     def total_amount
@@ -254,8 +276,14 @@ class Subscription < ActiveRecord::Base
     end
     
     def apply_the_cycle
-      self.amount = (subscription_plan.amount * subscription_plan.fetch_discount(self.billing_cycle)).round.to_f
-      self.amount = (self.amount * self.billing_cycle)
+      self.amount = (subscription_plan.amount * subscription_plan.fetch_discount(renewal_period)).round.to_f
+      self.amount = (amount * renewal_period) 
+    end
+    
+    def chk_change_billing_cycle
+      if renewal_period and (account.subscription.renewal_period > renewal_period) and paid_account? and (trial_days > 30)
+        errors.add_to_base("You can't downgrade to lower billing cycle")
+      end
     end
     
     def cache_old_model
@@ -263,6 +291,7 @@ class Subscription < ActiveRecord::Base
     end
     
     def validate_on_update
+      chk_change_billing_cycle
       return if self.amount == 0      
       if(agent_limit && agent_limit < account.agents.count)
        errors.add_to_base(I18n.t("subscription.error.lesser_agents", {:agent_count => account.agents.count}))end         

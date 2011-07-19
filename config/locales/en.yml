@@ -236,7 +236,7 @@ en:
     contacts_import: 
       failure: Please try again
       no_file: Please upload a file
-      success: "%{created_count} contacts has been newly imported and #{updated_count} existing contacts has been updated!"
+      success: "%{created_count} contacts has been newly imported and %{updated_count} existing contacts has been updated!"
     business_hours: 
       update: 
         failure: Failed to update Business Hours
@@ -1155,3 +1155,4 @@ en:
       annual: Annual
       quarterly: Quarterly
       monthly: Monthly
+      sixmonth: Half Yearly
