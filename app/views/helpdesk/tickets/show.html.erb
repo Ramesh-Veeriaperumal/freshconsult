@@ -65,7 +65,8 @@
           activeCnt = jQuery("#"+this.getAttribute("cntid")).show();
         }        
         activeCnt.parent().addClass(link.getAttribute("classname"));
-        jQuery(this).addClass("active").parent().find(".active").removeClass("active");
+        jQuery(link).parent().find(".active").removeClass("active");
+        jQuery(link).addClass("active")
       });
       
       jQuery('#custom_ticket_form').validate(); 
