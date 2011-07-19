@@ -1,0 +1,2 @@
+component = params[:component]
+page.insert_html :bottom, :componentlist, :partial => "helpdesk/tickets/components/#{component}"

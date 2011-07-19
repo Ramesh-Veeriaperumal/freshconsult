@@ -42,25 +42,39 @@
 			}
 		}
 		
-		jQuery(document).ready(function(){
-			var activeCnt = jQuery("#TicketProperties"); 
-			jQuery(".rtPanel a").bind("click", function(ev){
-				activeCnt.hide();
-				activeCnt = jQuery("#"+this.getAttribute("cntid")).show();
+    jQuery(document).ready(function(){
+      var activeCnt = jQuery("#TicketProperties"); 
+      jQuery(".rtPanel a").bind("click", function(e){
+        e.preventDefault();
+        
+        var link = this;
+        activeCnt.hide().removeClass(link.getAttribute("classname"));
+        activeCnt.parent().get(0).className = "rtDetails";
+        if(!$(link.getAttribute("cntid"))){
+          jQuery("#componentlist").addClass("loading-center");
+          jQuery.ajax({
+              url:      link.href, 
+              success:  function(data){
+                          activeCnt = jQuery("<div class='' />")
+                                        .attr("id", link.getAttribute("cntid"))
+                                        .append(data).appendTo("#componentlist");
+                          jQuery("#componentlist").removeClass("loading-center");
+                        }
+                      });
+        }else{
+          activeCnt = jQuery("#"+this.getAttribute("cntid")).show();
+        }        
+        activeCnt.parent().addClass(link.getAttribute("classname"));
+        jQuery(this).addClass("active").parent().find(".active").removeClass("active");
+      });
+      
+      jQuery('#custom_ticket_form').validate(); 
+    });
 
-				jQuery(this).parent().find(".active").removeClass("active");
-				jQuery(this).addClass("active");
-			}); 
-
-			jQuery('#custom_ticket_form').validate(); 
-		});
-
-    function show_canned_response(){
-      jQuery("#canned_response_list").show();
-    }
-    
+    function show_canned_response(){ jQuery("#canned_response_list").show(); }
+        
     jQuery("#Merge").dialog2();
-
+    
   <% end %>
 <% end %>
 
@@ -72,42 +86,42 @@
 					<img src="/images/spacer.gif" class="ticketprop" width="36px" height="36px"  />
 					<em><%=t('ticket.properties')%></em>
 				</a>
-				<a href="javascript:void(0)" cntid="RelatedSolutions">
-					<img src="/images/spacer.gif" class="suggestsolutions" width="36px" height="36px"  />
-					<em><%=t('ticket.suggest_solutions')%></em>
-				</a>
-				<% if feature?(:scenario_automations) %>
-					<a href="javascript:void(0)" cntid="Scenarios">
-						<img src="/images/spacer.gif" class="scenario" width="36px" height="36px"  />
-						<em><%=t('ticket.execute_scenario')%></em>
-					</a>
-				<% end %>
-				<a href="javascript:void(0)" cntid="RequesterProperties">
-					<img src="/images/spacer.gif" class="requesterinfo" width="36px" height="36px"  />
-					<em><%=t('ticket.requestor_info')%></em>
-				</a>
-				<a href="javascript:void(0)" cntid="TicketTodos">
-					<img src="/images/spacer.gif" class="todo" width="36px" height="36px"  />
-					<em><%=t('to_do')%></em>
-				</a>
-				<a href="javascript:void(0)" cntid="TicketTags">
-					<img src="/images/spacer.gif" class="tags" width="36px" height="36px"  />
-					<em><%=t('tag.title')%></em>
-				</a>
-				<a href="javascript:void(0)" cntid="Activity">
-					<img src="/images/spacer.gif" class="activity" width="36px" height="36px"  />
-					<em><%= t('ticket.activities') %></em>
-				</a>
-			</div>	
-			 <%= render :partial => "helpdesk/tickets/components/ticket", :object => @ticket %>
-			 <%= render :partial => "helpdesk/tickets/components/user", :object => @ticket.requester %>
-			 <%= render :partial => "helpdesk/tickets/components/tags", :locals => { :ticket => @ticket } %>
-			 <%= render :partial => "helpdesk/tickets/components/todos", :locals => { :ticket => @ticket } %>
-			 <%= render :partial => "helpdesk/tickets/components/related_solutions", :locals => { :ticket => @ticket } %>
-			 <%= render(:partial => "helpdesk/tickets/components/scenarios") if feature?(:scenario_automations) %>
-			 <%= render :partial => "helpdesk/tickets/components/activity",  :locals => { :ticket => @ticket } %>	
-		</div>
-	<% end %>
+        <% link_to({ :action => "component", :component => "related_solutions", :id => @ticket.id }, :classname => "suggestsolutions", :cntid => "related-solutions-div") do %>
+          <img src="/images/spacer.gif" class="suggestsolutions" width="36px" height="36px"  />
+          <em><%= t('ticket.suggest_solutions') %></em>          
+        <% end %>
+        <% if feature?(:scenario_automations) %>
+          <% link_to({ :action => "component", :component => "scenarios", :id => @ticket.id }, :classname => "scenario", :cntid => "scenario-div") do %>
+            <img src="/images/spacer.gif" class="scenario" width="36px" height="36px"  />
+            <em><%= t('ticket.execute_scenario') %></em>
+          <% end %>
+        <% end %>
+        
+        <% link_to({ :action => "component", :component => "user", :id => @ticket.id }, :classname => "requesterinfo", :cntid => "user-div") do %>
+          <img src="/images/spacer.gif" class="requesterinfo" width="36px" height="36px"  />
+          <em><%= t('ticket.requestor_info') %></em>
+        <% end %>        
+
+        <% link_to({ :action => "component", :component => "todos", :id => @ticket.id }, :classname => "reminders-ticket", :cntid => "todos-div") do %>
+          <img src="/images/spacer.gif" class="todo" width="36px" height="36px"  />
+          <em><%= t('to_do') %></em>
+        <% end %>
+                
+        <% link_to({ :action => "component", :component => "tags", :id => @ticket.id }, :classname => "tags", :cntid => "tags-div") do %>
+          <img src="/images/spacer.gif" class="tags" width="36px" height="36px"  />      
+          <em><%= t('tag.title') %></em>
+        <% end %>
+                
+        <% link_to({ :action => "component", :component => "activity", :id => @ticket.id }, :classname => "activity", :cntid => "activity-div") do %>
+          <img src="/images/spacer.gif" class="activity" width="36px" height="36px"  />
+          <em><%= t('ticket.activities') %></em>
+        <% end %>
+      </div>
+      <div class="rtDetails" id="componentlist">
+        <%= render :partial => "helpdesk/tickets/components/ticket", :object => @ticket %>
+      </div>
+    </div>
+  <% end %>
 <% end %>
 <% content_for :main_panel_title do %>
 <% end %>

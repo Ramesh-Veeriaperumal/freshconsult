@@ -1,7 +1,5 @@
-<div class="rtDetails reminders-ticket" id="TicketTodos" style="display:none;">
-	<div class="panel_area">
+<div class="panel_area">
 	<h3 class="title"><%=t('ticket.to_do')%></h3>
-    <%= render :partial => '/helpdesk/reminders/reminders', 
-               :locals  => { :show_info => false, :reminders => ticket.reminders, :form_controller => [ticket, Helpdesk::Reminder.new()] } %> 
-	</div>
+  <%= render :partial => '/helpdesk/reminders/reminders', 
+             :locals  => { :show_info => false, :reminders => ticket.reminders, :form_controller => [ticket, Helpdesk::Reminder.new()] } %> 
 </div>

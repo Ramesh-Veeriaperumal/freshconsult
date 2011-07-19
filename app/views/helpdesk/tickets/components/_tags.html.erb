@@ -1,13 +1,10 @@
-<div class="rtDetails" id="TicketTags" style="display:none;">
-	<h3 class="title"><%=t('tag.title')%></h3>
-	<div class="panel_area">
-	    <% ticket.tags.map.each do |t| %> 
-			<div class="item">
-				<%= link_to(image_tag('icons/btn_close_icon.png'), helpdesk_ticket_helpdesk_tag_use_path(ticket, t), :method => 'delete', :class => 'tag_delete') %>
-				<%= link_to(h(t.name), t, :class => "tag_item")  %>
-			</div>
-		<% end %>
-		<%= render :partial => '/helpdesk/shared/tag_search', :locals => {:action => helpdesk_ticket_helpdesk_tag_uses_path(ticket), :on_select => %{ $('tag-search-form').submit(); }, :label_text => t('ticket.tags.add_tag'), :no_result_text => t('ticket.tags.no_match') } %>
-	</div>
-			
+<h3 class="title"><%=t('tag.title')%></h3>
+<div class="panel_area">
+  <% ticket.tags.map.each do |t| %> 
+    <div class="item">
+      <%= link_to(image_tag('icons/btn_close_icon.png'), helpdesk_ticket_helpdesk_tag_use_path(ticket, t), :method => 'delete', :class => 'tag_delete') %>
+      <%= link_to(h(t.name), t, :class => "tag_item")  %>
+    </div>
+  <% end %>
+  <%= render :partial => '/helpdesk/shared/tag_search', :locals => {:action => helpdesk_ticket_helpdesk_tag_uses_path(ticket), :on_select => %{ $('tag-search-form').submit(); }, :label_text => t('ticket.tags.add_tag'), :no_result_text => t('ticket.tags.no_match') } %>
 </div>

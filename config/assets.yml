@@ -35,8 +35,6 @@ stylesheets:
     - public/stylesheets/layout.css
     - public/stylesheets/defaults.css
     - public/stylesheets/application.css
-    - public/stylesheets/uni-form.css
-    - public/stylesheets/default.uni-form.css
     - public/stylesheets/validation.css
     - public/stylesheets/form.css
     - public/stylesheets/buttons.css

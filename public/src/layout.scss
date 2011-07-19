@@ -133,7 +133,7 @@ div.bg_pulp{
 .header {  
 	@include clearfix;
 	position:relative;
-	padding:10px 0px 0px 0px;
+	padding:5px 0px 0px 0px;
 	background:$header_color;
 }
 
@@ -146,15 +146,15 @@ div.bg_pulp{
 	a{ text-decoration:none; }
 	.logo, .logo_text{ float:left; position:relative; z-index:5; }
 	.logo{
-		margin:0px 0px 0px 10px;
+		margin:0px 0px 0px 4px;
 	}
 	.logo_text{
 	   font-size:1.6em;
-	   border-left:1px solid lighten(#ffffff, 4%);
+	   border-left:1px solid lighten(#ffffff, 1%);
       color:#ffffff;
-      padding:0px 0 0px 10px;
+      padding:0px 0 0px 12px;
       margin-left:10px;
-      margin-top:10px;
+      margin-top:13px;
    }
 }
 

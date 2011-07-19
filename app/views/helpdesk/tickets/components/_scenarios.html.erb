@@ -1,10 +1,8 @@
-<div class="rtDetails" id="Scenarios" style="display:none;">
-	<h3 class="title"><%=t('ticket.execute_scenario')%></h3>	
-	 <div class="request-list">
-	 	<% current_account.scn_automations.each do |scenario| %>
-	 		<div class="item">	 			
-	 			<%= link_to ( "<span class='wand'></span> #{scenario.name}", { :action => :execute_scenario , :scenario_id => scenario.id} , :method => :post, :class => "item-title", :title => "Execute this scenario" ) %>			
-			</div>
-		<% end %>
-	 </div> 
+<h3 class="title"><%=t('ticket.execute_scenario')%></h3>	
+<div class="request-list">
+  <% current_account.scn_automations.each do |scenario| %>
+    <div class="item">	 			
+      <%= link_to ( "<span class='wand'></span> #{scenario.name}", { :action => :execute_scenario , :scenario_id => scenario.id} , :method => :post, :class => "item-title", :title => "Execute this scenario" ) %>			
+    </div>
+  <% end %>
 </div>

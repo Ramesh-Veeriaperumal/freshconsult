@@ -67,23 +67,19 @@ class Helpdesk::TicketsController < ApplicationController
     @agents = Agent.find(:first, :joins=>:user, :conditions =>{:user_id =>current_user.id} )     
     @signature = "\n\n\n#{@agents.signature}" unless (@agents.nil? || @agents.signature.blank?)
      
-    @ticket_notes = @ticket.notes.visible.exclude_source('meta').newest_first
-    set_suggested_solutions 
+    @ticket_notes = @ticket.notes.visible.exclude_source('meta').newest_first     
     
     respond_to do |format|
       format.html  
       format.atom
       format.xml  { 
-      render :xml => @item.to_xml  
+        render :xml => @item.to_xml  
       }
       format.json {
-      render :json => Hash.from_xml(@item.to_xml)
+        render :json => Hash.from_xml(@item.to_xml)
       }
+      format.js
     end
-  end
-  
-  def set_suggested_solutions
-    @articles = Solution::Article.suggest_solutions @ticket   
   end
   
   def update
@@ -269,7 +265,7 @@ class Helpdesk::TicketsController < ApplicationController
       'helpdesk_name' => @item.account.portal_name)    
     render :text => (a_template.gsub(/<\/?[^>]*>/, "")).gsub(/&nbsp;/i,"") || "" 
   end
-
+    
   protected
 
     def item_url

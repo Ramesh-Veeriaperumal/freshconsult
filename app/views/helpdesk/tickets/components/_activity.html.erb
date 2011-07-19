@@ -1,14 +1,12 @@
-<div class="rtDetails" id="Activity" style="display:none;">
-	<h3 class="title"><%=t('ticket.activity')%></h3>
-	<div class="panel_area">
-		<% ticket.activities.each do |activity| %>
-			<div class="local_activities">
-				<%= Liquid::Template.parse(h t(activity.short_descr)).render(eval_activity_data(activity.activity_data).merge(
-					'user_path' => link_to(h(activity.user), activity.user),
-					'notable_path' => link_to(h(activity.notable), activity.notable) )) %>     
-				<div class="activity_time"><%=activity.created_at.strftime("%B %e %Y at %I:%M %p")%></div>
-			</div>
-			<span class="seperator"></span>
-		<% end %> 
-	</div>	
+<h3 class="title"><%=t('ticket.activity')%></h3>
+<div class="panel_area">
+  <% ticket.activities.each do |activity| %>
+    <div class="local_activities">
+      <%= Liquid::Template.parse(h t(activity.short_descr)).render(eval_activity_data(activity.activity_data).merge(
+            'user_path' => link_to(h(activity.user), activity.user),
+            'notable_path' => link_to(h(activity.notable), activity.notable) )) %>     
+      <div class="activity_time"><%=activity.created_at.strftime("%B %e %Y at %I:%M %p")%></div>
+    </div>
+    <span class="seperator"></span>
+  <% end %> 
 </div>
