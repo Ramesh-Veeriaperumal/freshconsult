@@ -52,17 +52,19 @@
         activeCnt.parent().get(0).className = "rtDetails";
         if(!$(link.getAttribute("cntid"))){
           jQuery("#componentlist").addClass("loading-center");
+          activeCnt = jQuery("<div class='' />")
+                        .attr("id", link.getAttribute("cntid"))
+                        .appendTo("#componentlist");
           jQuery.ajax({
               url:      link.href, 
               success:  function(data){
-                          activeCnt = jQuery("<div class='' />")
-                                        .attr("id", link.getAttribute("cntid"))
-                                        .append(data).appendTo("#componentlist");
+                          jQuery("#"+link.getAttribute("cntid"))
+                              .append(data);
                           jQuery("#componentlist").removeClass("loading-center");
                         }
                       });
         }else{
-          activeCnt = jQuery("#"+this.getAttribute("cntid")).show();
+          activeCnt = jQuery("#"+link.getAttribute("cntid")).show();
         }        
         activeCnt.parent().addClass(link.getAttribute("classname"));
         jQuery(link).parent().find(".active").removeClass("active");
