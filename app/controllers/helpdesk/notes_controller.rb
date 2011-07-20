@@ -9,7 +9,7 @@ class Helpdesk::NotesController < ApplicationController
       if params[:post_forums]
         @topic = Topic.find_by_id_and_account_id(@parent.ticket_topic.topic_id,current_account.id)
         if !@topic.locked?
-          @post  = @topic.posts.build(:body => params[:helpdesk_note][:body])
+          @post  = @topic.posts.build(:body_html => params[:helpdesk_note][:body])
           @post.user = current_user
           @post.account_id = current_account.id
           @post.save!
