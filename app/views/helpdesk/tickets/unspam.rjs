@@ -1,0 +1,2 @@
+page.replace_html :spamicon, :partial => "spam", :locals => { :ticket => @items.first }
+show_ajax_flash page

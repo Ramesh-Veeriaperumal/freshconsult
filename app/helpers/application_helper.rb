@@ -16,6 +16,13 @@ module ApplicationHelper
   def tab(title, url, cls = false)
     content_tag('li', content_tag('span') + link_to(strip_tags(title), url), :class => ( cls ? "active": "" ) )
   end
+  
+  def show_ajax_flash(page)
+    page.replace_html :noticeajax, flash[:notice]
+    page << "$('noticeajax').show()"
+    page << "closeableFlash('#noticeajax')"
+    flash.discard
+  end
 
   def navigation_tabs
     tabs = [

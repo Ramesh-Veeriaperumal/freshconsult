@@ -29,60 +29,39 @@
 				<% end %>
 			<% end %>
 		</div>
-	<% end %> 
-	
-<% javascript_tag do -%>
-	function insertIntoConversation(value){
-		note_area  = jQuery('#cnt-note');
-		reply_area = jQuery('#cnt-reply');
-		if(note_area.css("display") == 'block'){
-			insertTextAtCursor( $('add-note-cnt-note-body'), value );
-			jQuery('#add-note-cnt-note-body').trigger("focus");
-		} 
-		else{
-			if(reply_area.css("display") == 'none')
-				jQuery('#ReplyButton').trigger("click");
-			
-			insertTextAtCursor( $('send-email-cnt-reply-body'), value );
-			jQuery('#send-email-cnt-reply-body').trigger("focus");
+	<% end %> 	
+	<% javascript_tag do -%>
+		 function respondWithSol(select, sol_id, url){	
+			if (select == "url"){
+				insertIntoConversation(url);
+			}
+			else if(select == "none"){
+				return true;		
+			}
+			else{
+				handleSolutionDetail(sol_id);		
+			}
 		}
-	}
-		
-	function respondWithSol(select, sol_id, url){	
-		if (select == "url"){
-			insertIntoConversation(url);
-		}
-		else if(select == "none"){
-			return true;		
-		}
-		else{
-			handleSolutionDetail(sol_id);		
-		}
-	}
 
-	function handleSolutionDetail(sol_id){
-		jQuery.ajax({	type: 'POST',
-						url: '/helpdesk/tickets/get_solution_detail/'+sol_id,
-						contentType: 'application/text',
-						async: false,						
-						success: function(data){		
-									insertIntoConversation(data);
-								}
-						});
-		return true;
-	};
+		function handleSolutionDetail(sol_id){
+			jQuery.ajax({	type: 'POST',
+							url: '/helpdesk/tickets/get_solution_detail/'+sol_id,
+							contentType: 'application/text',
+							async: false,						
+							success: function(data){		
+										insertIntoConversation(data);
+									}
+							});
+			return true;
+		};
 
-(function($){	  
-	$(document).ready(function(){
-		$("div.item")
-			.hover(function(ev){
-				   		$(this).find(".item-menu").show();
-				   }, 
-				   function(ev){
-				   		$(this).find(".item-menu").hide();
-				   });
-	});
-})(jQuery);
+		jQuery("div.item").live("mouseover mouseout", function(event) {
+		  if ( event.type == "mouseover" ) {
+		    jQuery(this).find(".item-menu").show();
+		  } else {
+		    jQuery(this).find(".item-menu").hide();
+		  }
+		});
 
 
-<%- end %>
+	<%- end %>

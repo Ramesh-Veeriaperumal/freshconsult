@@ -482,13 +482,10 @@ a.addchoice:hover {
 }
 .ui-form .conditionset fieldset div.s_email div a.l_placeholder {
   clear: left;
-  float: right;
+  margin-left: 190px;
+  margin-top: 4px;
   font-size: 11px;
   text-decoration: none;
-  border-bottom: 1px dotted #0078BD;
-}
-.ui-form .conditionset fieldset div.s_email div a.l_placeholder:hover {
-  border-bottom: 1px solid #0078BD;
 }
 .ui-form .conditionset fieldset span {
   margin: 0px;
@@ -1624,7 +1621,6 @@ a.new_ticket:hover {
 .item-right-actions {
   *zoom: 1;
   float: right;
-  z-index: 10;
   position: relative;
   top: -6px;
 }
@@ -1650,9 +1646,8 @@ a.new_ticket:hover {
   -webkit-box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 1px;
   box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 1px;
   position: absolute;
-  z-index: 26;
+  z-index: 99999;
   display: none;
-  top: 30px;
 }
 .menu-box .menu-item {
   display: block;
@@ -1667,9 +1662,6 @@ a.new_ticket:hover {
   color: #ffffff;
 }
 
-.nav-drop {
-  position: relative;
-}
 .nav-drop .nav-item-icon {
   overflow: hidden;
   *zoom: 1;

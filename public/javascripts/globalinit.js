@@ -82,35 +82,34 @@ var jQ = jQuery.noConflict();
 		$(".nav-drop li.menu-item a").bind("click", function(){
 			hideMenuItem();
 		});
-		 
+
 		$(document).bind('click', function(e) {
 			var $clicked = $(e.target);
 			if (! $clicked.parents().hasClass("nav-drop"))
 				hideMenuItem();
-			
+
 			if (! $clicked.parent().hasClass("request_form_options")){
 			  $("#canned_response_list").hide();
 		  }
 		});
-		
-		flash = $("div.flash_info");
-		if(flash.get(0)){
-			try {
-				close = $("<a />").addClass("close").attr("href", "#").appendTo(flash).click(function(ev){
-					flash.fadeOut(600);
-				});
-				setTimeout(function() {
-			        flash.hide('blind', {}, 500);
-			    }, 20000);
-				flash.find('a.show-list').click(function(ev){
-					flash.find('div.list').slideDown(300);
-					$(this).hide();
-				});
-			} catch(e){
-				
-			}			
-		}
-		
-	});
-	
+
+      flash = $("div.flash_info");
+      if(flash.get(0)){
+         try {
+            closeableFlash(flash);            
+         } catch(e){}
+      }
+   });
+
 })(jQuery);
+
+function closeableFlash(flash){
+   flash = jQuery(flash);
+   jQuery("<a />").addClass("close").attr("href", "#").appendTo(flash).click(function(ev){
+      flash.fadeOut(600);
+   });
+   setTimeout(function() {
+      if(flash.css("display") != 'none')
+         flash.hide('blind', {}, 500);
+    }, 20000);
+}

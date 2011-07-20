@@ -5,13 +5,17 @@ en:
   assign: Assign
   trial_expired_on: Your trial has expired on
   upgrade_trial: Upgrade your trial!
+  add_note: Add Note
   contact_name: Contact Name
   eight: 8 Hours
   security_code: Security code
+  example: example
   pending: Pending
   twitter: Twitter
   working: Working
+  attachment: Attachment
   attachments: Attachments
+  show_quoted_text: Show Quoted text
   cancel_my_account: Cancel my account
   remove: remove
   user: 
@@ -93,6 +97,13 @@ en:
     popular: Popular
   payment_info: Payment information
   admin: 
+    shared:
+      filter_jsinit:
+        insert_placeholder: Insert Placeholder
+        body: Body
+        to: To
+        selected: Selected
+        not_selected: Not selected
     automations:
       edit:
         title: Edit Scenario
@@ -945,7 +956,7 @@ en:
       insert_ca_resp_tip: Insert this canned response
     split_ticket: Split as new Ticket
     flag_spam: Flag Spam
-    assign_to_agent: Assign To Agent
+    assign_to_agent: Assign to Agent
     select_to_agent: Select an Agent
     delete_btn: Delete
     status: Status
@@ -1066,7 +1077,25 @@ en:
   email: Email
   linkback_overlabel: Linkback URL
   select_a_plan: Select a Plan
-  helpdesk: 
+  message: Message
+  ticket_was: ticket was
+  tickets_were: tickets were
+  undo: Undo
+  helpdesk:
+    flash:
+      assignedto: %{tickets} assigned to %{username}.
+      tickets_closed: %{tickets} closed
+      assigned_to_you: %{tickets} assigned to you
+      removed_from_spam: %{tickets} removed from the spam folder.
+      closing_the_ticket_failed: Closing the ticket failed
+      assigned_reassigned: %{type} to %{username}
+      flagged_spam: %{tickets} flagged as spam. %{undo}
+      flagged_unspam: %{tickets} removed from the spam folder.
+    shared:
+      reply_form:
+        cc: Cc
+        addcc: Add Cc
+        removecc: Remove Cc
     dashboard:
       index:
         todo_title: To-Dos
@@ -1081,7 +1110,19 @@ en:
         info: This will be the help desk name that is shown in the header and mail notifications.
     ticket_created_on_n_by: by %{requester} on %{date_time}
     tickets:
+      execute_scenario_notice: 
+        view_details: view details
+        execute_the_scenario: "Executed the scenario <b>%{rule_name}</b>"
+        actions_performed: Actions performed
+      close_notice:
+        ticket_has_been_cloased: The ticket has been closed.
+        view_ticket: View ticket
+      show:
+        meta: meta
+        linked_ticket: This ticket is linked to the forum
       components:
+        scenarios:
+          execute_this_scenario: Execute this scenario
         due_date:
           when_is_it_due: When's it Due?
           today: Today
@@ -1115,6 +1156,14 @@ en:
         monitored_by: Tickets I'm Monitoring
         my_closed: My Closed Tickets
         my_open: My Open Tickets
+      note:
+        posted_on: "%{user_name} on %{note_date}"
+        edit_note: Edit Note
+        split_this_as_new_ticket: Split this as new Ticket
+        private_note: Private note
+        public_note: Public note
+        incoming_email: Incoming email
+        outbound_email: Outbound email
     merge:
       merge:
         merge_into: Merge into?

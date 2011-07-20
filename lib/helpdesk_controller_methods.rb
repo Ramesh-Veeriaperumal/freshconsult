@@ -63,9 +63,7 @@ module HelpdeskControllerMethods
         process_destroy_message  
         redirect_to after_destroy_url
       end
-      expects.js do
-        render(:update) { |page| @items.each { |i| page.visual_effect('fade', dom_id(i)) } }
-      end
+      expects.js { after_destory_js }
     end
 
   end
@@ -192,6 +190,10 @@ protected
 
   def after_destroy_url
     :back
+  end
+  
+  def after_destory_js
+    render(:update) { |page| @items.each { |i| page.visual_effect('fade', dom_id(i)) } }
   end
   
   def after_restore_url

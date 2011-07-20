@@ -55,31 +55,27 @@
 				
 				if (type != 'email') {
 					jQuery(control).val(initFeed["email_to"]);
-					var to = jQuery('<div />').append("<b>To </b>").append(control);
+					var to = jQuery('<div />').append("<b><%= t(".to") %> </b>").append(control);
 				}
 				
-				/*var subject = jQuery('<div />')
-								.append("<b>Subject </b>")
-								.append(FactoryUI.text("", "email_subject", initFeed["email_subject"]));*/
 				var body	= jQuery('<div />')
-								.append("<b>Body</b>")
+								.append("<b><%= t('.body') %></b>")
 								.append(FactoryUI.paragraph("", "email_body", initFeed["email_body"]))
-								.append("<div class='alignright'><a class='l_placeholder' href='javascript:void'>Insert Placeholder &raquo;</a></div>");
+								.append("<a class='l_placeholder slim-button' href='javascript:void(0)'><%= t('.insert_placeholder') %> &raquo;</a>");
 
 				c_dom = jQuery("<div class=\"s_email\" />")
-							.append(to || "")												
-							//.append(subject)
-							.append(body);								
+							.append(to || "")
+							.append(body);
 				break;	
 			
 			case 'checkbox':
 				if (compName == 'action') {
 					var choices = [{
 						name: 1,
-						value: "Selected"
+						value: "<%= t(".selected") %>"
 					}, {
 						name: 0,
-						value: "Not selected"
+						value: "<%= t(".not_selected") %>"
 					}];
 					c_dom = FactoryUI.dropdown(choices, "value");
 					jQuery(c_dom).val(initFeed["value"]);

@@ -7,7 +7,7 @@
           <%= link_to_function( t(:'ticket.canned_responses.insert_ca_response') + " &raquo;", "show_canned_response()", :class => "slim-button insert-canned-response") %>
         </div>
         <%= content_tag( :h3, t("ticket.note_form.form_title"), :class => "title" ) %>
-        <label class="caption">Message:</label>
+        <label class="caption"><%= t("message")%>:</label>
         <div class="fields">
           <%= f.text_area :body, { :class => 'auto-expand required', :id => "#{id}-#{cntid}-body" , :value => @signature} %>
           <%= f.label(:private, f.check_box(:private, :checked => true) + t("ticket.note_form.private_note"), :class => "checkbox") %>

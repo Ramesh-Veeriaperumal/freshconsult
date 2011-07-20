@@ -448,10 +448,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
       "url"                               => helpdesk_ticket_url(self, :host => account.host),
       "portal_url"                        => support_ticket_url(self, :host => portal_host),
       "portal_name"                       => portal_name,
-      #"attachments"                       => liquidize_attachments(attachments),
-      #"latest_comment"                    => liquidize_comment(latest_comment),
+      #"attachments"                      => liquidize_attachments(attachments),
+      #"latest_comment"                   => liquidize_comment(latest_comment),
       "latest_public_comment"             => liquidize_comment(latest_public_comment)
-      #"latest_comment_attachments"        => liquidize_c_attachments(latest_comment),
+      #"latest_comment_attachments"       => liquidize_c_attachments(latest_comment),
       #"latest_public_comment_attachments" => liquidize_c_attachments(latest_public_comment)
     }
   end

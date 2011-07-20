@@ -75,6 +75,26 @@
     function show_canned_response(){ jQuery("#canned_response_list").show(); }
         
     jQuery("#Merge").dialog2();
+
+		function insertIntoConversation(value){
+			note_area  = jQuery('#cnt-note');
+			reply_area = jQuery('#cnt-reply');
+			if(note_area.css("display") == 'block'){
+				insertTextAtCursor( $('add-note-cnt-note-body'), value );
+				jQuery('#add-note-cnt-note-body')
+						.trigger("focus")
+						.trigger("keydown");
+			} 
+			else{
+				if(reply_area.css("display") == 'none')
+					jQuery('#ReplyButton').trigger("click");
+
+				insertTextAtCursor( $('send-email-cnt-reply-body'), value );
+				jQuery('#send-email-cnt-reply-body')
+						.trigger("focus")
+						.trigger("keydown");
+			}
+		}
     
   <% end %>
 <% end %>
@@ -166,7 +186,7 @@
             <% metainfo = @ticket.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["meta"]) %>
             <% unless (metainfo.blank?) %>
               <span class="meta_icon" title="<%= metainfo.body %>"> 
-                meta
+                <%= t(".meta") %>
               </span>
             <% end %>
           </div> 
@@ -179,11 +199,13 @@
               <%= link_to t('ticket.merge_btn'), "/helpdesk/tickets/show_tickets_from_same_user/#{@ticket.display_id}", :id => "Merge", :title => "Merge ticket"  %>
               <%= link_to(t('ticket.delete_btn'), @ticket, :method => :delete, :class => "last", :title => t('ticket.delete_btn_title')) %>
             </div>	
-            <div class="floatr">  
-              <%= link_to(image_tag("/images/spacer.gif"), helpdesk_ticket_helpdesk_subscriptions_path(@ticket), :method => :post, :class => "monitor", :title => t('ticket.monitor_btn_title') ) if not @subscription %>
-              <%= link_to(image_tag("/images/spacer.gif"), helpdesk_ticket_helpdesk_subscription_path(@ticket, @subscription), :method => :delete, :class => "monitor_active",  :title => t('ticket.stop_monitor_btn_title') ) if @subscription %>
-              <%= link_to(image_tag("/images/spacer.gif"), unspam_helpdesk_ticket_path(@ticket), :method => :put, :class => "spam_active", :title => t('ticket.ham_btn_title') ) if @ticket.spam %>
-              <%= link_to(image_tag("/images/spacer.gif"), spam_helpdesk_ticket_path(@ticket), :method => :put, :class => "spam", :title  => t('ticket.spam_btn_title')) unless @ticket.spam %>
+            <div class="floatr">              
+              <span id="monitor">
+                <%= render :partial => "/helpdesk/subscriptions/monitor" %>
+              </span>
+              <span id="spamicon">
+                <%= render :partial => "spam", :locals => { :ticket => @ticket } %>
+              </span>
             </div>
         	</div>	
 			<% end %>
@@ -192,21 +214,18 @@
 			</div>
 				<% unless @ticket.attachments.empty? %>
 					<span class="seperator"></span>
-					<h4><%= @ticket.attachments.size %> attachment(s)</h4>
+					<h4><%= pluralize(@ticket.attachments.size, t("attachment"), t("attachments")) %></h4>
 					<ul class="attachment_list">
 					     <%= render :partial => '/helpdesk/shared/attachment', :collection => @ticket.attachments, :locals => {:show_delete => true, :url => [@item] } %>
 					</ul>
 				<% end %>
+				<% unless @ticket.ticket_topic.nil? %>
+          <div class="info-highlight">
+            <%= t(".linked_ticket")%>
+            "<%= link_to("#{truncate(@ticket.topic.title)}" , category_forum_topic_path(@ticket.topic.forum.forum_category.id, @ticket.topic.forum.id, @ticket.topic.id), :class => "link_to") %>"
+          </div>
+        <% end %>        
 		</div>
-    <% unless @ticket.ticket_topic.nil? %>
-      <div class="request_info"> 
-        <ul>
-          <li>
-            This ticket is linked to the forum "<%= link_to("#{@ticket.topic.title}" , category_forum_topic_path(@ticket.topic.forum.forum_category.id,@ticket.topic.forum.id,@ticket.topic.id), :class => "link_to") %>"
-          </li>
-        </ul>
-      </div>
-    <% end %>
   </div>		 
 
 		<% unless @ticket.deleted %>
@@ -225,7 +244,7 @@
 			</div>
 		<% end %>
 		<% unless @ticket_notes.blank? then %>
-			<h3 class="subtitle">Conversation</h3>
+      <h3 class="title"><%=t('comments')%></h3> 
 			<div class="requestCnt request-conversation">
 				<%= render :partial => 'note', :collection => @ticket_notes %>
 		    </div>

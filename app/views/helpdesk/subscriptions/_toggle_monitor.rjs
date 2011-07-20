@@ -1,0 +1,2 @@
+page.replace_html :monitor, :partial => "monitor"
+show_ajax_flash page

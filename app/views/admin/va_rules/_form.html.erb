@@ -9,13 +9,13 @@
 <ul class="ui-form">
 	<li>
 		<%= f.label :name, "#{t('dispatch.rule_name')} *" %>
-		<label class="overlabel" for="va_rule_name">example: <em>"<%=t('dispatch.info1')%>"</em> </label>
+		<label class="overlabel" for="va_rule_name"><%= t("example") %>: <em>"<%=t('dispatch.info1')%>"</em> </label>
 		<%= f.text_field :name, :class => "required text" %>
 	</li>
 	<li>
 		<%= f.label :description %>				
 		<label class="overlabel" for="va_rule_description">
-			example: <em>"<%=t('dispatch.info2')%>"</em>
+			<%= t("example") %>: <em>"<%=t('dispatch.info2')%>"</em>
 		</label>
 		<%= f.text_area :description, :class => "smallpara" %>
 	</li>

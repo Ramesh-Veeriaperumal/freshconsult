@@ -1,4 +1,6 @@
 class Helpdesk::TicketsController < ApplicationController  
+  
+  include ActionView::Helpers::TextHelper
 
   before_filter :check_user , :only => [:show]
   before_filter { |c| c.requires_permission :manage_tickets }
@@ -9,7 +11,7 @@ class Helpdesk::TicketsController < ApplicationController
   layout :choose_layout 
   
   before_filter :load_multiple_items, :only => [:destroy, :restore, :spam, :unspam, :assign , :close_multiple ,:pick_tickets]  
-  before_filter :load_item,           :only => [:show, :edit, :update, :execute_scenario, :close ,:change_due_by ,:get_ca_response_content] 
+  before_filter :load_item,           :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :get_ca_response_content] 
   before_filter :load_flexifield ,    :only => [:execute_scenario]
   
   def check_user
@@ -64,7 +66,7 @@ class Helpdesk::TicketsController < ApplicationController
       :conditions => {:user_id => current_user.id})
       
     @signature = ""
-    @agents = Agent.find(:first, :joins=>:user, :conditions =>{:user_id =>current_user.id} )     
+    @agents = Agent.find(:first, :joins=>:user, :conditions =>{:user_id => current_user.id} )     
     @signature = "\n\n\n#{@agents.signature}" unless (@agents.nil? || @agents.signature.blank?)
      
     @ticket_notes = @ticket.notes.visible.exclude_source('meta').newest_first     
@@ -107,10 +109,10 @@ class Helpdesk::TicketsController < ApplicationController
   def assign
     user = params[:responder_id] ? User.find(params[:responder_id]) : current_user #Need to use scoping..
     assign_ticket user
-
-    #by Shan to do i18n
+    
     flash[:notice] = render_to_string(
-      :inline => "<%= pluralize(@items.length, 'ticket was', 'tickets were') %> assigned to #{user.name}.")
+      :inline => t("helpdesk.flash.assignedto", :tickets => get_updated_ticket_count, 
+                                                :username => user.name ))
 
     if user === current_user && @items.size == 1
       redirect_to helpdesk_ticket_path(@items.first)
@@ -125,13 +127,15 @@ class Helpdesk::TicketsController < ApplicationController
       item.update_attribute(:status , status_id)
     end
     
-    flash[:notice] = render_to_string(:inline => "<%= pluralize(@items.length, 'ticket was', 'tickets were') %> closed")  
+    flash[:notice] = render_to_string(
+        :inline => t("helpdesk.flash.tickets_closed", :tickets => get_updated_ticket_count ))
     redirect_to :back
   end
  
   def pick_tickets
     assign_ticket current_user
-    flash[:notice] = render_to_string(:inline => "<%= pluralize(@items.length, 'ticket was', 'tickets were') %> assigned to you")  
+    flash[:notice] = render_to_string(
+        :inline => t("helpdesk.flash.assigned_to_you", :tickets => get_updated_ticket_count ))
     redirect_to :back
   end
   
@@ -142,14 +146,14 @@ class Helpdesk::TicketsController < ApplicationController
     @item.save
     @item.create_activity(current_user, 'activities.tickets.execute_scenario.long', 
       { 'scenario_name' => va_rule.name }, 'activities.tickets.execute_scenario.short')
-    
-    actions_executed = Va::Action.activities.collect { |a| "<li>#{a}</li>" }
-    Va::Action.clear_activities #by Shan
-    
-    flash[:notice] = render_to_string(:inline => "Executed the scenario <b>'#{va_rule.name}'</b> <a href='#' class='show-list'>view details</a> 
-                                                <div class='list'> <h4 class='title'>Actions performed</h4> <ul> #{actions_executed.join} </ul> </div>")
-                                  
-    redirect_to :back
+
+    flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/execute_scenario_notice', 
+                                      :locals => { :actions_executed => Va::Action.activities, :rule_name => va_rule.name })
+
+    respond_to do |format|
+      format.html { redirect_to :back }
+      format.js
+    end
   end 
 
   def spam
@@ -159,9 +163,15 @@ class Helpdesk::TicketsController < ApplicationController
     end
 
     flash[:notice] = render_to_string(
-      :inline => "<%= pluralize(@items.length, 'ticket was', 'tickets were') %> flagged as spam. <%= link_to('Undo', { :action => :unspam, :ids => params[:ids] }, { :method => :put }) %>")
-
-    redirect_to :back
+      :inline => t("helpdesk.flash.flagged_spam", 
+                      :tickets => get_updated_ticket_count,
+                      :undo => "<%= link_to(t('undo'), { :action => :unspam, :ids => params[:ids] }, { :method => :put }) %>"
+                  ))
+      
+    respond_to do |format|
+      format.html { redirect_to redirect_url  }
+      format.js
+    end
   end
 
   def unspam
@@ -171,9 +181,13 @@ class Helpdesk::TicketsController < ApplicationController
     end
 
     flash[:notice] = render_to_string(
-      :inline => "<%= pluralize(@items.length, 'ticket was', 'tickets were') %> removed from the spam folder.")
+      :inline => t("helpdesk.flash.flagged_unspam", 
+                      :tickets => get_updated_ticket_count ))
 
-    redirect_to :back
+    respond_to do |format|
+      format.html { redirect_to (@items.size == 1) ? helpdesk_ticket_path(@items.first) : :back }
+      format.js
+    end
   end
 
   def empty_trash
@@ -239,17 +253,16 @@ class Helpdesk::TicketsController < ApplicationController
     else
       create_error
     end
-  end  
-  
- 
+  end
+
   def close 
     status_id = Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:closed]
-    logger.debug "close the ticket...with status id  #{status_id}"
+    logger.debug "Closed the ticket with status id #{status_id}"
     if @item.update_attribute(:status , status_id)
       flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/close_notice')
       redirect_to redirect_url
     else
-      flash[:error] = "Closing the ticket failed"
+      flash[:error] = t("helpdesk.flash.closing_the_ticket_failed")
       redirect_to :back
     end
   end
@@ -261,9 +274,8 @@ class Helpdesk::TicketsController < ApplicationController
 
   def get_ca_response_content   
     ca_resp = current_account.canned_responses.find(params[:ca_resp_id])
-    a_template = Liquid::Template.parse(ca_resp.content).render('ticket' => @item, 
-      'helpdesk_name' => @item.account.portal_name)    
-    render :text => (a_template.gsub(/<\/?[^>]*>/, "")).gsub(/&nbsp;/i,"") || "" 
+    a_template = Liquid::Template.parse(ca_resp.content).render('ticket' => @item, 'helpdesk_name' => @item.account.portal_name)    
+    render :text => (a_template.gsub(/<\/?[^>]*>/, "")).gsub(/&nbsp;/i,"") || ""
   end
     
   protected
@@ -292,7 +304,6 @@ class Helpdesk::TicketsController < ApplicationController
     def assign_ticket user
       @items.each do |item|
         old_item = item.clone
-        message = "#{item.responder ? "Reassigned" : "Assigned"} to #{user.name}"
         item.responder = user
         #item.train(:ham) #Temporarily commented out by Shan
         item.save
@@ -333,10 +344,14 @@ class Helpdesk::TicketsController < ApplicationController
       unless flexi_field.nil?     
         evaluate_on.assign_ff_values flexi_field    
       end
-  end
-  
+    end
+
     def choose_layout 
       (action_name == "show_tickets_from_same_user"  || action_name == "confirm_merge") ? 'plainpage' : 'helpdesk/default'
+    end
+    
+    def get_updated_ticket_count
+      pluralize(@items.length, t('ticket_was'), t('tickets_were'))
     end
 
 end

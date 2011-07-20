@@ -5,7 +5,7 @@
         <li class="inline-field field">
             <div class="request_form_options">
               <a href="javascript:void(0)" onclick="showHideCc(this)" class="slim-button" >
-                <%= (@ticket.cc_email.blank?)? "Add Cc": "Remove Cc" %>
+                <%= (@ticket.cc_email.blank?)? t(".addcc"): t(".removecc") %>
               </a>
               <%= link_to_function( t(:'ticket.canned_responses.insert_ca_response') + " &raquo;", "show_canned_response()", :class => "slim-button insert-canned-response") %>
             </div>
@@ -18,7 +18,7 @@
         </li>
         <li class="inline-field field" id="cc-form-container" style="display:<%= @ticket.cc_email.blank? ? "none": "block" %>;">
             <label class="caption">
-                Cc:
+                <%= t(".cc") %>:
             </label>
             <div class="fields">
                 <script type="text/javascript" charset="utf-8">
@@ -45,7 +45,7 @@
         </li>
         <li class="inline-field field">
             <label class="caption">
-                Message:
+                <%= t("message") %>:
             </label>
             <div class="fields">              
                 <%= f.text_area :body, { :class => 'auto-expand required', :id => "#{id}-#{cntid}-body" , :value => @signature} %>
@@ -82,10 +82,10 @@
     function showHideCc(link){
        jQuery("#cc-form-container").toggle();
        if( $("include_cc").checked ){
-         jQuery(link).text("Add Cc");
+         jQuery(link).text('<%= t(".addcc") %>');
          $("include_cc").checked = false;
        }else{
-         jQuery(link).text("Remove Cc");
+         jQuery(link).text('<%= t(".removecc") %>');
          $("include_cc").checked = true;
        }
     }
