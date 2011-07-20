@@ -302,6 +302,7 @@ class AccountsController < ApplicationController
   end
 
   def plan
+    @current_subscription = Subscription.find( current_account.subscription.id )
     if request.post?
       @subscription_plan.discount = @discount
       @subscription.billing_cycle = params[:billing_cycle].to_i
@@ -310,7 +311,7 @@ class AccountsController < ApplicationController
       if @subscription.save
         #SubscriptionNotifier.deliver_plan_changed(@subscription)
       else
-        load_plans
+        load_plans        
         render :action => "plan" and return
       end
       
