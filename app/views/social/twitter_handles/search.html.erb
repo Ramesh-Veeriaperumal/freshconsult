@@ -4,12 +4,17 @@
  jQuery(document).ready(function(){  
  
  	default_query = '<%=@search_keys.first%>';
-	search_twitter(default_query);
+	if(!default_query)
+	{
+		jQuery("#twitter_search_results").html("No search queries!");
+	}else
+	{
+		search_twitter(default_query);
+	}
       
   });
   
   function search_twitter(query){
-     alert("query "+query);	 
 	 var data;
 	 var url = "https://search.twitter.com/search.json?q="+ query +"&rpp=20&callback=?"; 
 	 jQuery.getJSON(url, function(data){	 
@@ -21,7 +26,6 @@
 			{
 				
 				//alert("res"+JSON.stringify(data.results));
-				console.log(data);
 				deliver_search_result(data)
 				
 				//jQuery.ajax({data:'query_url='+escape(data.query)+'&page='+escape(data.page)+'&next_page_url='+escape(data.next_page)+'&previous_page_url='+escape(data.previous_page)+'&refresh_url='+escape(data.refresh_url)+'&ctsid='+local_current_twitter_search_id+'&results='+encodeURIComponent(JSON.stringify(data.results)), dataType:'script', type:'post', url:'/tickets/search_tweets'})
@@ -32,40 +36,29 @@
  
  function convert_as_ticket(tweet, screen_name,tweet_id , query)
  {
-  alert("inside convert as ticket");
-  //alert(tweet);
   
-  var json_data = {"tweet":tweet,"screen_name":screen_name ,"tweet_id":tweet_id,"query":query};
+  var json_data = {"description":tweet,"twitter_id":screen_name ,"tweet_id":tweet_id,"twitter_handle_id":'<%=@item.id%>',"group_id":'<%=@item.product.group_id%>'};
   
   jQuery.ajax({
-	      					type: 'POST',
-							url: '/helpdesk/tickets/create_ticket_from_tweet',									
-							data:JSON.stringify({data: json_data}),
-							datatype:'json'	,		
-							contentType: 'application/json',
-	      					success: function(data){
-
-											if(data.success)
-											{
-												//console.log(data.message);
-												//jQuery('#status_name_id').text(data.status).show("highlight", 500);
-												//jQuery('#helpdesk_ticket_status').val(data.value);	
-											}								
-											//Need to show the message some where data.message
-									}
-				});
-  
-  
-  
+  		type: 'POST',
+		url: '<%=create_twicket_social_twitter_path(@item.id)%>',
+		data: {
+			helpdesk_tickets: json_data,
+		},									
+		datatype:'json'	,		
+		success: function(data){
+			if(data.success) {}								
+	 		}
+		});
  }
  
  function deliver_search_result(data)
  {
-   //alert("inside the search result");
-    
-	console.log(data.results);
+    jQuery("#twitter_search_results").html("");
+	//console.log(data.results);
 	
 	var search_result ; 
+	
 	
 	jQuery.each(data.results, function() { 
 	    

@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110712093741) do
+ActiveRecord::Schema.define(:version => 20110721070042) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -638,6 +638,30 @@ ActiveRecord::Schema.define(:version => 20110712093741) do
   add_index "posts", ["forum_id", "created_at"], :name => "index_posts_on_forum_id"
   add_index "posts", ["topic_id", "created_at"], :name => "index_posts_on_topic_id"
   add_index "posts", ["user_id", "created_at"], :name => "index_posts_on_user_id"
+
+  create_table "social_twitter_handles", :force => true do |t|
+    t.integer  "twitter_user_id",           :limit => 8
+    t.integer  "user_id",                   :limit => 8
+    t.string   "access_token"
+    t.string   "access_secret"
+    t.boolean  "capture_dm_as_ticket",                   :default => true
+    t.boolean  "capture_mention_as_ticket",              :default => true
+    t.integer  "product_id",                :limit => 8
+    t.integer  "last_dm_id",                :limit => 8
+    t.integer  "last_mention_id",           :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.text     "search_keys"
+  end
+
+  add_index "social_twitter_handles", ["product_id", "twitter_user_id"], :name => "index_product_twitter_id", :unique => true
+
+  create_table "social_twitter_search_keys", :force => true do |t|
+    t.string   "search_query"
+    t.integer  "twitter_handle_id", :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "solution_articles", :force => true do |t|
     t.string   "title"

@@ -96,10 +96,7 @@ class Account < ActiveRecord::Base
   has_many :canned_responses , :class_name =>'Admin::CannedResponse' , :dependent => :destroy  
   has_many :user_accesses , :class_name =>'Admin::UserAccess' , :dependent => :destroy
   
-  has_many :twitter_handles , :class_name =>'Admin::TwitterHandle' , :dependent => :destroy
-  has_many :twitter_search_keys , :class_name =>'Admin::TwitterSearchKey' , :dependent => :destroy
-  has_one  :primary_twitter_handle, :class_name => 'Admin::TwitterHandle', :conditions => { :primary=> true }
-  
+  has_many :twitter_handles, :through =>:products , :class_name =>'Social::TwitterHandle' 
   #Scope restriction ends
   
   validates_format_of :domain, :with => /\A[a-zA-Z][a-zA-Z0-9]*\Z/

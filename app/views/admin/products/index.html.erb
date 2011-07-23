@@ -6,9 +6,10 @@
 <%= content_tag :h3, @page_title, :class => "title" %>
 <div>	
 	<ul class="admin_list">
-    <% @products.each do |product| %>
-      <li>
+    <% @products.each do |product| %>	  
+      <li>      	
         <div class="item_actions">
+           
           <%= link_to(t('edit'), edit_admin_product_path(product), :class => "button") %>
           <%= link_to(t('delete'), admin_product_path(product), :method => 'delete', :confirm => t(".delete_product"), :class => "button" ) %>
         </div>
@@ -28,7 +29,15 @@
             </td>
             <td class="portal-text">
               <%= link_to(product.name, edit_admin_product_path(product), :class => "big-text") %>
-              <%= content_tag(:div, product.reply_email, :class => "text") %>
+			  <br>
+			   
+			  <%= link_to_function "Add Twitter", "twitter_signin(#{product.id})" if product.twitter_handle.nil?%> 
+			  <% unless product.twitter_handle.nil? %>
+			    @<%=product.twitter_handle.screen_name%>
+			  	<%= link_to "settings", edit_social_twitter_path(product.twitter_handle) %> 
+				<%= link_to "Search", search_social_twitter_path(product.twitter_handle) %>
+              <%end%>
+			  <%= content_tag(:div, product.reply_email, :class => "text") %>
               <%= link_to(product.portal.portal_url, product.portal.portal_url, {:class => "text", :target => "_blank"}) if(product.portal_enabled?) %>
             </td>
           </tr>
@@ -37,3 +46,46 @@
     <% end %>
 	</ul>
 </div>
+<% javascript_tag do %>
+
+var twitter_signin_dialog = null;
+
+function twitter_signin(pro_id)
+{		   
+	twitter_signin_dialog = jQuery("<div id='twitter_new_handle' style='display:none;' />").appendTo("body");		
+	var url = '/social/twitters/signin?product_id='+pro_id;
+	// load remote content
+	twitter_signin_dialog.load(url,{}, function(responseText, textStatus, XMLHttpRequest) {
+	       twitter_signin_dialog.dialog({modal:true, width:'700px', height:'auto', title:"Twitter signin"});
+	});
+		
+    //prevent the browser to follow the link
+    return false;
+}	
+var twitter_search_dialog = null
+function add_search()
+{	
+	twitter_search_dialog = jQuery("<div id='new_twitter_search' style='display:none;' />").appendTo("body");
+	var url = '/admin/twitters/new_search/'
+	// load remote content
+	twitter_search_dialog.load(url,{}, function(responseText, textStatus, XMLHttpRequest) {
+	       twitter_search_dialog.dialog({modal:true, width:'700px', height:'auto', title:"Twitter search key"});
+	});
+		
+    //prevent the browser to follow the link
+    return false;
+}	
+
+function edit_search(search_id)
+{		  
+	twitter_search_dialog = jQuery("<div id='edit_twitter_search' style='display:none;' />").appendTo("body");
+	var url = '/admin/twitters/edit_search/'+search_id
+	// load remote content
+	twitter_search_dialog.load(url,{}, function(responseText, textStatus, XMLHttpRequest) {
+	       twitter_search_dialog.dialog({modal:true, width:'700px', height:'auto', title:"Twitter search key"});
+	});
+		
+    //prevent the browser to follow the link
+    return false;
+}	
+<% end %>
