@@ -27,8 +27,9 @@ class ContactImportController < ApplicationController
          unless company_name.nil?      
            @params_hash[:user][:customer_id]= current_account.customers.find_or_create_by_name(company_name).id 
          end
-        @user = current_account.users.find_by_email(email)        
+        @user = current_account.all_users.find_by_email(email)        
         unless @user.nil?
+          @params_hash[:user][:deleted] = false #To make already deleted user active
           if @user.update_attributes(@params_hash[:user])
              updated+=1
           end
