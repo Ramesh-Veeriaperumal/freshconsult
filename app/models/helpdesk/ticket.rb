@@ -131,7 +131,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     self.status = TicketConstants::STATUS_KEYS_BY_TOKEN[:open] unless TicketConstants::STATUS_NAMES_BY_KEY.key?(self.status)
     self.source = TicketConstants::SOURCE_KEYS_BY_TOKEN[:portal] if self.source == 0
     self.ticket_type ||= TicketConstants::TYPE_KEYS_BY_TOKEN[:how_to]
-    self.subject ||= '' 
+    self.subject ||= ''
     self.description = subject if description.blank?
   end
   
@@ -268,13 +268,16 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def autoreply     
-    notify_by_email EmailNotification::NEW_TICKET unless out_off_office?#Do SPAM check.. by Shan
-    
+    notify_by_email EmailNotification::NEW_TICKET unless out_off_office? #Do SPAM check.. by Shan
     notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_GROUP) if group_id
     notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_AGENT) if responder_id
     
     return notify_by_email(EmailNotification::TICKET_RESOLVED) if (status == STATUS_KEYS_BY_TOKEN[:resolved])
     return notify_by_email(EmailNotification::TICKET_CLOSED) if (status == STATUS_KEYS_BY_TOKEN[:closed])
+  end
+
+  def out_off_office?
+    TicketConstants::OUT_OF_OFF_SUBJECTS.any? { |s| subject.downcase.include?(s) }
   end
   
   def out_off_office?

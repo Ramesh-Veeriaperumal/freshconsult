@@ -223,7 +223,7 @@ class Account < ActiveRecord::Base
   
   #Will be used as :host in emails
   def host
-    helpdesk_url.blank? ? full_domain : helpdesk_url
+    main_portal.portal_url.blank? ? full_domain : main_portal.portal_url
   end
   
   def full_url

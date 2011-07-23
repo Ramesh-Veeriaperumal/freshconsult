@@ -47,6 +47,15 @@ class AccountsController < ApplicationController
   end
    
   def signup_free
+    create_account
+    if @account.save
+      render :json => { :success => true, :url => @account.full_domain }, :callback => params[:callback]
+    else
+      render :json => { :success => false, :errors => @account.errors.to_json }, :callback => params[:callback] 
+    end    
+  end
+
+  def create_account
     params[:plan] = SubscriptionPlan::SUBSCRIPTION_PLANS[:premium]
     build_object
     build_user
@@ -56,11 +65,6 @@ class AccountsController < ApplicationController
     rescue
       @account.time_zone = (ActiveSupport::TimeZone["Eastern Time (US & Canada)"]).name 
     end
-    if @account.save
-      render :json => { :success => true, :url => @account.full_domain }, :callback => params[:callback]
-    else
-      render :json => { :success => false, :errors => @account.errors.to_json }, :callback => params[:callback] 
-    end    
   end
     
   def signup_google 
@@ -79,16 +83,7 @@ class AccountsController < ApplicationController
   end
   
   def create_account_google   
-    params[:plan] = SubscriptionPlan::SUBSCRIPTION_PLANS[:premium]
-    build_object
-    build_user
-    build_plan
-    begin
-      @account.time_zone = (ActiveSupport::TimeZone[params[:utc_offset].to_f]).name 
-    rescue
-      @account.time_zone = (ActiveSupport::TimeZone["Eastern Time (US & Canada)"]).name 
-    end
-    
+    create_account
     if @account.save       
        rediret_url = params[:call_back]+"&EXTERNAL_CONFIG=true" unless params[:call_back].blank?
        rediret_url = "https://www.google.com/a/cpanel/"+@account.google_domain if rediret_url.blank?
