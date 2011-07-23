@@ -23,8 +23,8 @@ class SubscriptionPlan < ActiveRecord::Base
   BILLING_CYCLE_NAMES_BY_KEY = Hash[*BILLING_CYCLE.map { |i| [i[2], i[1]] }.flatten]
   BILLING_CYCLE_KEYS_BY_TOKEN = Hash[*BILLING_CYCLE.map { |i| [i[0], i[2]] }.flatten]
   
-  BILLING_CYCLE_DISCOUNT = {SUBSCRIPTION_PLANS[:premium] => {BILLING_CYCLE_KEYS_BY_TOKEN[:annual] => 0.85,BILLING_CYCLE_KEYS_BY_TOKEN[:six_month] => 0.85},
-                            SUBSCRIPTION_PLANS[:pro] => {BILLING_CYCLE_KEYS_BY_TOKEN[:annual] => 0.85,BILLING_CYCLE_KEYS_BY_TOKEN[:six_month] => 0.85},
+  BILLING_CYCLE_DISCOUNT = {SUBSCRIPTION_PLANS[:premium] => {BILLING_CYCLE_KEYS_BY_TOKEN[:annual] => 0.85,BILLING_CYCLE_KEYS_BY_TOKEN[:six_month] => 0.95},
+                            SUBSCRIPTION_PLANS[:pro] => {BILLING_CYCLE_KEYS_BY_TOKEN[:annual] => 0.85,BILLING_CYCLE_KEYS_BY_TOKEN[:six_month] => 0.95},
                             SUBSCRIPTION_PLANS[:basic] => {}}
 
   def fetch_discount(billing_cycle)
