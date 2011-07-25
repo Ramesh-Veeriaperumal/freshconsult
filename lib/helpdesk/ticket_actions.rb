@@ -156,7 +156,7 @@ module Helpdesk::TicketActions
       ## handling attachemnt..need to check this
      @source_ticket.attachments.each do |attachment|      
       url = attachment.content.url.split('?')[0]
-      @target_note.attachments.create(:content =>  RemoteFile.new(url), :description => "", :account_id => @target_note.account_id)    
+      @target_note.attachments.create(:content =>  RemoteFile.new(URI.encode(url)), :description => "", :account_id => @target_note.account_id)    
     end
   end
   
