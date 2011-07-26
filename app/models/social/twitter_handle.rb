@@ -8,5 +8,9 @@ class Social::TwitterHandle < ActiveRecord::Base
    def screen_name
      user.twitter_id
    end
+   
+   def search_keys_string
+     search_keys.blank? ? "" : search_keys.join(",")
+   end
 
 end

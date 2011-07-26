@@ -9,11 +9,19 @@ class Helpdesk::Note < ActiveRecord::Base
     :as => :attachable,
     :class_name => 'Helpdesk::Attachment',
     :dependent => :destroy
+    
+  has_one :tweet,
+    :as => :tweetable,
+    :class_name => 'Social::Tweet',
+    :dependent => :destroy
 
   attr_accessor :nscname
   attr_protected :attachments, :notable_id
   
   after_create :save_response_time, :update_parent, :add_activity
+  
+  accepts_nested_attributes_for :tweet
+
 
   named_scope :newest_first, :order => "created_at DESC"
   named_scope :visible, :conditions => { :deleted => false } 

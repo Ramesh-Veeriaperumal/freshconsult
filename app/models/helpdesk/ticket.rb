@@ -11,7 +11,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   has_flexiblefields
   
   #by Shan temp
-  attr_accessor :email, :name, :custom_field ,:customizer, :nscname ,:twitter_id
+  attr_accessor :email, :name, :custom_field ,:customizer, :nscname, :twitter_id 
   
   before_validation :populate_requester, :set_default_values 
   before_create :set_spam, :set_dueby, :save_ticket_states
@@ -22,8 +22,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   belongs_to :account
   belongs_to :email_config
   belongs_to :group
-  belongs_to :twitter_handle , :class_name =>'Admin::TwitterHandle' 
-
+ 
   belongs_to :responder,
     :class_name => 'User'
 
@@ -69,6 +68,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :as => :attachable,
     :class_name => 'Helpdesk::Attachment',
     :dependent => :destroy
+  
+  has_one :tweet,
+    :as => :tweetable,
+    :class_name => 'Social::Tweet',
+    :dependent => :destroy
     
   has_one :ticket_states, :class_name =>'Helpdesk::TicketState', :dependent => :destroy
 
@@ -76,6 +80,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   has_one :topic, :through => :ticket_topic
   
   attr_protected :attachments #by Shan - need to check..
+  
+  accepts_nested_attributes_for :tweet
 
   named_scope :newest, lambda { |num| { :limit => num, :order => 'created_at DESC' } }
   named_scope :visible, :conditions => ["spam=? AND helpdesk_tickets.deleted=? AND status > 0", false, false] 
@@ -179,6 +185,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
       :activity_data => activity_data
     )
   end
+  
+  
 
   def source=(val)
     self[:source] = SOURCE_KEYS_BY_TOKEN[val] || val
@@ -398,9 +406,7 @@ end
     email_config ? email_config.friendly_email : account.default_email
   end
   
-  def reply_twitter
-    twitter_handle || account.default_twitter
-  end
+  
 
   #Some hackish things for virtual agent rules.
   def tag_names

@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110721070042) do
+ActiveRecord::Schema.define(:version => 20110726070832) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -40,32 +40,6 @@ ActiveRecord::Schema.define(:version => 20110721070042) do
   end
 
   add_index "admin_canned_responses", ["account_id", "created_at"], :name => "index_admin_canned_responses_on_account_id_and_created_at"
-
-  create_table "admin_twitter_handles", :force => true do |t|
-    t.integer  "twitter_user_id",           :limit => 8
-    t.integer  "user_id",                   :limit => 8
-    t.string   "access_token"
-    t.string   "access_secret"
-    t.boolean  "capture_dm_as_ticket",                   :default => true
-    t.boolean  "capture_mention_as_ticket",              :default => true
-    t.boolean  "primary",                                :default => false
-    t.integer  "group_id",                  :limit => 8
-    t.integer  "product_id",                :limit => 8
-    t.integer  "account_id",                :limit => 8
-    t.integer  "last_dm_id",                :limit => 8
-    t.integer  "last_mention_id",           :limit => 8
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "admin_twitter_search_keys", :force => true do |t|
-    t.string   "name"
-    t.string   "search_query"
-    t.integer  "twitter_handle_id", :limit => 8
-    t.integer  "account_id",        :limit => 8
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
 
   create_table "admin_user_accesses", :force => true do |t|
     t.string   "accessible_type"
@@ -426,7 +400,6 @@ ActiveRecord::Schema.define(:version => 20110721070042) do
     t.integer  "notable_id",   :limit => 8
     t.string   "notable_type"
     t.integer  "account_id",   :limit => 8
-    t.integer  "tweet_id",     :limit => 8
   end
 
   add_index "helpdesk_notes", ["account_id", "notable_type", "notable_id"], :name => "index_helpdesk_notes_on_notables"
@@ -550,34 +523,32 @@ ActiveRecord::Schema.define(:version => 20110721070042) do
 
   create_table "helpdesk_tickets", :force => true do |t|
     t.text     "description"
-    t.integer  "requester_id",      :limit => 8
-    t.integer  "responder_id",      :limit => 8
-    t.integer  "status",            :limit => 8, :default => 1
-    t.boolean  "urgent",                         :default => false
-    t.integer  "source",                         :default => 0
-    t.boolean  "spam",                           :default => false
-    t.boolean  "deleted",                        :default => false
+    t.integer  "requester_id",    :limit => 8
+    t.integer  "responder_id",    :limit => 8
+    t.integer  "status",          :limit => 8, :default => 1
+    t.boolean  "urgent",                       :default => false
+    t.integer  "source",                       :default => 0
+    t.boolean  "spam",                         :default => false
+    t.boolean  "deleted",                      :default => false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "trained",                        :default => false
-    t.integer  "account_id",        :limit => 8
+    t.boolean  "trained",                      :default => false
+    t.integer  "account_id",      :limit => 8
     t.string   "subject"
-    t.integer  "display_id",        :limit => 8
-    t.integer  "owner_id",          :limit => 8
-    t.integer  "group_id",          :limit => 8
+    t.integer  "display_id",      :limit => 8
+    t.integer  "owner_id",        :limit => 8
+    t.integer  "group_id",        :limit => 8
     t.datetime "due_by"
     t.datetime "frDueBy"
-    t.boolean  "isescalated",                    :default => false
-    t.integer  "priority",          :limit => 8, :default => 1
-    t.boolean  "fr_escalated",                   :default => false
-    t.integer  "ticket_type",       :limit => 8
+    t.boolean  "isescalated",                  :default => false
+    t.integer  "priority",        :limit => 8, :default => 1
+    t.boolean  "fr_escalated",                 :default => false
+    t.integer  "ticket_type",     :limit => 8
     t.string   "to_email"
-    t.integer  "email_config_id",   :limit => 8
+    t.integer  "email_config_id", :limit => 8
     t.text     "cc_email"
-    t.boolean  "delta",                          :default => true,  :null => false
-    t.integer  "import_id",         :limit => 8
-    t.integer  "tweet_id",          :limit => 8
-    t.integer  "twitter_handle_id", :limit => 8
+    t.boolean  "delta",                        :default => true,  :null => false
+    t.integer  "import_id",       :limit => 8
   end
 
   add_index "helpdesk_tickets", ["account_id", "display_id"], :name => "index_helpdesk_tickets_on_account_id_and_display_id", :unique => true
@@ -639,6 +610,14 @@ ActiveRecord::Schema.define(:version => 20110721070042) do
   add_index "posts", ["topic_id", "created_at"], :name => "index_posts_on_topic_id"
   add_index "posts", ["user_id", "created_at"], :name => "index_posts_on_user_id"
 
+  create_table "social_tweets", :force => true do |t|
+    t.integer  "tweet_id",       :limit => 8
+    t.integer  "tweetable_id",   :limit => 8
+    t.string   "tweetable_type"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "social_twitter_handles", :force => true do |t|
     t.integer  "twitter_user_id",           :limit => 8
     t.integer  "user_id",                   :limit => 8
@@ -649,19 +628,12 @@ ActiveRecord::Schema.define(:version => 20110721070042) do
     t.integer  "product_id",                :limit => 8
     t.integer  "last_dm_id",                :limit => 8
     t.integer  "last_mention_id",           :limit => 8
-    t.datetime "created_at"
-    t.datetime "updated_at"
     t.text     "search_keys"
-  end
-
-  add_index "social_twitter_handles", ["product_id", "twitter_user_id"], :name => "index_product_twitter_id", :unique => true
-
-  create_table "social_twitter_search_keys", :force => true do |t|
-    t.string   "search_query"
-    t.integer  "twitter_handle_id", :limit => 8
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "social_twitter_handles", ["product_id"], :name => "index_product_id", :unique => true
 
   create_table "solution_articles", :force => true do |t|
     t.string   "title"

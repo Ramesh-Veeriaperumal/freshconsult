@@ -10,13 +10,14 @@ class CreateSocialTwitterHandles < ActiveRecord::Migration
       t.boolean :capture_mention_as_ticket , :default => true
       t.integer :product_id ,:limit => 8
       t.integer :last_dm_id ,:limit => 8
-      t.integer :last_mention_id ,:limit => 8      
+      t.integer :last_mention_id ,:limit => 8
+      t.text    :search_keys
       t.timestamps
       
     end
     
-    add_index :social_twitter_handles, [:product_id, :twitter_user_id], 
-          :name => "index_product_twitter_id", :unique => true
+    add_index :social_twitter_handles, :product_id, 
+          :name => "index_product_id", :unique => true
     
   end
 

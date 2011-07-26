@@ -6,7 +6,7 @@ class TwitterWrapper
 
   def initialize(twitter_handle , options = {} )
     @product = options[:product] || twitter_handle.product
-    @account = options[:current_account]
+    @account = options[:current_account]  || twitter_handle.product.account
     @config = File.join(Rails.root, 'config', 'twitter.yml')
     @tokens = YAML::load_file @config
     @callback_url = @tokens['callback_url'][Rails.env]

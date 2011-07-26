@@ -1,0 +1,11 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  account_id: 1
+  tweetable_id: 
+  tweetable_type: MyString
+
+two:
+  account_id: 1
+  tweetable_id: 
+  tweetable_type: MyString

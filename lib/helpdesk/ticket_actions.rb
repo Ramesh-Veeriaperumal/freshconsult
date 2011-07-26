@@ -159,8 +159,6 @@ module Helpdesk::TicketActions
   
   def search_tweets
     @search_keys = (current_account.twitter_handles.first.search_keys) || [] 
-    puts "#################################################################"
-    puts @search_keys
     @search_keys
   end  
   

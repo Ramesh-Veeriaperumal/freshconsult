@@ -1,5 +1,0 @@
-<% content_for :sidebar do -%><%- end %>
-<h3 class="title"><%=t('admin.twitters.search.add_key')%></h3>
-<% form_for :twitter, @twitter_handles ,  :url => { :action => "add_search_key" } , :html => { :method => :post } do |f| %>
-	<%= render :partial => "search_query_form", :locals => { :f => f } %>
-<% end %>

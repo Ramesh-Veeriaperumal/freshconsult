@@ -221,9 +221,7 @@ class Account < ActiveRecord::Base
     primary_email_config.friendly_email
   end
   
-  def default_twitter
-    primary_twitter_handle
-  end
+  
   
   def to_s
     name.blank? ? full_domain : "#{name} (#{full_domain})"

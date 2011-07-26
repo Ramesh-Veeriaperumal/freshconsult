@@ -39,16 +39,18 @@ class User < ActiveRecord::Base
     c.validates_length_of_password_field_options = {:on => :update, :minimum => 4, :if => :has_no_credentials? }
     c.validates_length_of_password_confirmation_field_options = {:on => :update, :minimum => 4, :if => :has_no_credentials?}    
     #The following is a part to validate email only if its not deleted
-    c.merge_validates_format_of_email_field_options  :if =>:is_not_deleted? 
-    c.merge_validates_length_of_email_field_options :if =>:is_not_deleted? 
-    c.merge_validates_uniqueness_of_email_field_options :if =>:is_not_deleted? 
+    c.merge_validates_format_of_email_field_options  :if =>:chk_email_validation? 
+    c.merge_validates_length_of_email_field_options :if =>:chk_email_validation? 
+    c.merge_validates_uniqueness_of_email_field_options :if =>:chk_email_validation? 
    
     
   end
   
-  def is_not_twitter_user?
-     email.blank? && !twitter_id.blank? 
+  def chk_email_validation?
+    (is_not_deleted?) and (twitter_id.blank?)
   end
+  
+  
   
   attr_accessible :name, :email, :password, :password_confirmation , :second_email, :job_title, :phone, :mobile, :twitter_id, :description, :time_zone, :avatar_attributes,:user_role,:customer_id,:import_id,:deleted
   
@@ -115,7 +117,7 @@ class User < ActiveRecord::Base
   end
   
   def has_no_credentials?
-    self.crypted_password.blank? && active? && !deleted && self.authorizations.empty?
+    self.crypted_password.blank? && active? && !deleted && self.authorizations.empty? && self.twitter_id.blank?
   end
 
   # TODO move this to the "HelpdeskUser" model

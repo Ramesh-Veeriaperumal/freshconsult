@@ -1,6 +1,0 @@
-<% content_for :sidebar do -%><%- end %>
-<h3 class="title"><%=t('admin.twitters.search.edit_key')%></h3>
-<% form_for :twitter, @twitter_search ,  :url => { :action => "update_search_key" } , :html => { :method => :post } do |f| %>
-		<%= hidden_field(:twitter , :id , :value => @twitter_search.id)  %>
-	<%= render :partial => "search_query_form", :locals => { :f => f  } %>
-<% end %>

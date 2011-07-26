@@ -66,26 +66,19 @@ class Social::TwitterHandlesController < ApplicationController
   end
   
   def create_twicket
-#    data = params[:data]
     @ticket = current_account.tickets.build(params[:helpdesk_tickets])
-#    @ticket.subject = data[:tweet]
-#    @ticket.description = data[:tweet]
-#    @ticket.twitter_id = data[:screen_name]
     @ticket.source = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:twitter]
-#    @ticket.tweet_id = data[:tweet_id]
-#    @ticket.twitter_handle_id = reply_twitter_handle(data[:query])
     res = Hash.new
     if @ticket.save
       res["success"] = true      
       res["message"]="Successfully saved the ticket from tweet"
       render :json => ActiveSupport::JSON.encode(res)
     else
-      logger.debug "unable to save :: #{@ticket.errors.inspect}"
+      logger.debug "unable to save :: #{@ticket.errors.to_json}"
       res["success"] = false
       res["message"]="Unable to convert the tweet as ticket"
       render :json => ActiveSupport::JSON.encode(res)
     end
-    
   end
   
 
