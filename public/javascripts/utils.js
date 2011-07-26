@@ -85,7 +85,7 @@ function construct_reply_url(to_email, account_name){
                if(dialog == null){
                   dialog = $("<div class='loading-center' />")
                               .html("<br />")
-                              .dialog({ modal:true, width:'750px', height:'auto', position:'top', show: "scale", title: this.title, resizable: false });
+                              .dialog({ modal:true, width:'750px', height:'auto', position:'top', show: "blind",hide: 'blind', title: this.title, resizable: false });
 
                    dialog.load(this.href,{}, function(responseText, textStatus, XMLHttpRequest) {
                       dialog.removeClass("loading-center");

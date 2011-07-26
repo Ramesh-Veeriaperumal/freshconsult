@@ -10,7 +10,7 @@
 				<% @categories.each do |category| %>
 					<div class="<%= cycle('odd', 'even') %>"> 
 						<%= link_to category.name, category %>
-						<%= content_tag(:span, category.description) %> 
+						<%= content_tag(:span, truncate(category.description, :length => 80)) %> 
 					</div> 
 				<% end %>
 				</div>
@@ -23,6 +23,7 @@
 					<ul class="list_with_icon">
 						<% @topics.each do |topic|  %>
 							<li>
+								<span class="forum-bullet"></span>
 								<%= link_to topic.title, category_forum_topic_path(topic.forum.forum_category_id, topic.forum_id, topic.id), :class => "title" %> 
 								<div class="info_data"> by <%= topic.posts.last.user.name %> on <%= formated_date(topic.replied_at) %> </div>
 							</li>	

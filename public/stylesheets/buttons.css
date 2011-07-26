@@ -386,7 +386,6 @@ button.positive, .buttons a.positive {
   background: -webkit-linear-gradient(#ffffff, #efefef);
   background: -moz-linear-gradient(#ffffff, #efefef);
   background: -o-linear-gradient(#ffffff, #efefef);
-  -pie-background: linear-gradient(#ffffff, #efefef);
   background: linear-gradient(#ffffff, #efefef);
   border: 1px solid #cfcfcf;
   cursor: pointer;

@@ -869,7 +869,6 @@ span.sort_handle {
 
 .ui-widget-container, .ui-dialog {
   padding: 10px 20px;
-  min-height: 200px;
   *zoom: 1;
   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColorstr='#FFFFFFFF', endColorstr='#FFF4F4F4')";
   filter: progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColorstr='#FFFFFFFF', endColorstr='#FFF4F4F4');
@@ -881,15 +880,15 @@ span.sort_handle {
   background-image: -moz-linear-gradient(#ffffff, #f4f4f4);
   background-image: -o-linear-gradient(#ffffff, #f4f4f4);
   background-image: linear-gradient(#ffffff, #f4f4f4);
-  -moz-border-radius: 6px 6px 6px 6px;
-  -webkit-border-radius: 6px 6px 6px 6px;
-  border-radius: 6px 6px 6px 6px;
+  -moz-border-radius: 0 0 6px 6px;
+  -webkit-border-radius: 0 0 6px 6px;
+  border-radius: 0 0 6px 6px;
   -moz-box-shadow: rgba(0, 0, 0, 0.5) -3px 5px 10px;
   -webkit-box-shadow: rgba(0, 0, 0, 0.5) -3px 5px 10px;
   box-shadow: rgba(0, 0, 0, 0.5) -3px 5px 10px;
   _border: 1px solid #afafaf;
   _background: #ffffff;
-  margin: 10px;
+  margin: 0px;
 }
 .ui-widget-container .button-container, .ui-dialog .button-container {
   width: 96% !important;
@@ -922,8 +921,8 @@ span.sort_handle {
 .ui-dialog .ui-dialog-titlebar {
   padding: 0px;
   position: relative;
-  color: #444;
-  padding: 6px 12px 6px 12px;
+  color: #333333;
+  padding: 6px 8px 6px 8px;
 }
 
 .ui-dialog .ui-dialog-title {
@@ -959,7 +958,7 @@ span.sort_handle {
   padding: 0px 0px;
   overflow: auto;
   zoom: 1;
-  margin-bottom: 20px;
+  margin-bottom: 0px;
 }
 .ui-dialog .ui-dialog-content .info-highlight {
   margin: 0px 0px 6px 0px;
@@ -976,10 +975,10 @@ span.sort_handle {
 
 .ui-dialog .ui-dialog-buttonpane {
   text-align: left;
-  border-width: 1px 0 0 0;
+  border-width: 0px 0 0 0;
   background-image: none;
-  margin: .5em 0 0 0;
-  padding: .3em 1em .5em .4em;
+  margin: 0;
+  padding: 0;
 }
 
 .ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset {
@@ -987,8 +986,11 @@ span.sort_handle {
 }
 
 .ui-dialog .ui-dialog-buttonpane button {
-  margin: .5em .4em .5em 0;
+  margin: .5em 0 .5em 0;
   cursor: pointer;
+  -moz-border-radius: 3px 3px 3px 3px;
+  -webkit-border-radius: 3px 3px 3px 3px;
+  border-radius: 3px 3px 3px 3px;
 }
 
 .ui-dialog .ui-resizable-se {
@@ -1108,8 +1110,7 @@ fieldset.nestedChoices {
   -moz-border-radius: 4px 4px 4px 4px;
   -webkit-border-radius: 4px 4px 4px 4px;
   border-radius: 4px 4px 4px 4px;
-  behavior: url('/stylesheets/PIE.htc');
-  position: relative;
+  /*	@include pie;*/
 }
 
 .border-top {
@@ -1191,7 +1192,7 @@ fieldset.nestedChoices {
   border: #e0e0e0 1px solid;
 }
 .due-date-dialog .right_pointer {
-  background: url('/images/symbols-9f939784fd.png') 0 -64px no-repeat;
+  background: url('/images/symbols-a58d0ef158.png') 0 -64px no-repeat;
   position: absolute;
   width: 10px;
   height: 18px;
@@ -1225,10 +1226,10 @@ fieldset.nestedChoices {
   background: #f4f4f4;
 }
 .due-date-dialog .ui-datepicker-prev .ui-icon {
-  background: url('/images/symbols-9f939784fd.png') 0 -48px no-repeat;
+  background: url('/images/symbols-a58d0ef158.png') 0 -48px no-repeat;
 }
 .due-date-dialog .ui-datepicker-next .ui-icon {
-  background: url('/images/symbols-9f939784fd.png') 0 -82px no-repeat;
+  background: url('/images/symbols-a58d0ef158.png') 0 -82px no-repeat;
 }
 .due-date-dialog .ui-datepicker th {
   font-weight: normal;
@@ -1597,7 +1598,7 @@ a.new_ticket span {
   position: absolute;
   left: 4px;
   top: 5px;
-  background: url('/images/symbols-9f939784fd.png') 0 -16px no-repeat;
+  background: url('/images/symbols-a58d0ef158.png') 0 -16px no-repeat;
   width: 16px;
   height: 16px;
 }
@@ -1675,7 +1676,7 @@ a.new_ticket:hover {
   float: left;
 }
 .nav-drop .nav-item-icon .item-options {
-  background: url('/images/symbols-9f939784fd.png') 0 -114px no-repeat;
+  background: url('/images/symbols-a58d0ef158.png') 0 -130px no-repeat;
 }
 .nav-drop .nav-item-icon:hover, .nav-drop a.selected {
   border: 1px solid #cdcdcd;
@@ -1850,7 +1851,7 @@ a.new_ticket:hover {
   text-decoration: none;
 }
 .canned-response-menu li span.bullet {
-  background: url('/images/symbols-9f939784fd.png') 0 -153px no-repeat;
+  background: url('/images/symbols-a58d0ef158.png') 0 -169px no-repeat;
   position: absolute;
   width: 16px;
   height: 16px;

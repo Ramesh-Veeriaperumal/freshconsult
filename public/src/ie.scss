@@ -1,11 +1,19 @@
 @import "base";
 @import "mixins";
 
-.ie6, .ie7, .ie8, .ie9{
+.ie6, .ie7{
 	.wrapper{ 
 		width: expression((document.body.clientWidth < 982)? "982px" : "#{$blueprint-liquid-container-width}");
-		width:980px; 
+		width: 980px; 
 	}
+	
+	ul.tabs{
+		li.active a, li.active a:hover{
+			top:1px;
+			padding-top:7px;
+		}
+	}
+	
 	input, button {
 		overflow: visible;
 	}
@@ -97,7 +105,7 @@
 	.ui-login, .ui-signup{
 		.ui-form{ 
 			@include shadows(0px, 1px, 6px, #cfcfcf );
-			@include pie;
+//       @include pie;
 		}
 	}
 	
@@ -127,6 +135,6 @@
 	}
 	.ui-widget-container{
 		@include shadows(#afafaf, -3px, 5px, 10px);
-		@include pie;
+//		@include pie;
 	}
 }

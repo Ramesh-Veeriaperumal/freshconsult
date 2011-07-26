@@ -1,120 +1,120 @@
 /* Theme Colors and layout Defaults */
-.ie6 .wrapper, .ie7 .wrapper, .ie8 .wrapper, .ie9 .wrapper {
+.ie6 .wrapper, .ie7 .wrapper {
   width: expression((document.body.clientWidth < 982)? "982px" : "95%");
   width: 980px;
 }
-.ie6 input, .ie6 button, .ie7 input, .ie7 button, .ie8 input, .ie8 button, .ie9 input, .ie9 button {
+.ie6 ul.tabs li.active a, .ie6 ul.tabs li.active a:hover, .ie7 ul.tabs li.active a, .ie7 ul.tabs li.active a:hover {
+  top: 1px;
+  padding-top: 7px;
+}
+.ie6 input, .ie6 button, .ie7 input, .ie7 button {
   overflow: visible;
 }
-.ie6 input.text, .ie7 input.text, .ie8 input.text, .ie9 input.text {
+.ie6 input.text, .ie7 input.text {
   overflow-x: hidden;
 }
-.ie6 ul.summary, .ie7 ul.summary, .ie8 ul.summary, .ie9 ul.summary {
+.ie6 ul.summary, .ie7 ul.summary {
   border-color: #ececec;
 }
-.ie6 ul.icon_grid li a div, .ie7 ul.icon_grid li a div, .ie8 ul.icon_grid li a div, .ie9 ul.icon_grid li a div {
+.ie6 ul.icon_grid li a div, .ie7 ul.icon_grid li a div {
   font-weight: bold;
 }
-.ie6 ul.ui-form li.inline-field, .ie7 ul.ui-form li.inline-field, .ie8 ul.ui-form li.inline-field, .ie9 ul.ui-form li.inline-field {
+.ie6 ul.ui-form li.inline-field, .ie7 ul.ui-form li.inline-field {
   width: 96%;
 }
-.ie6 .uniForm, .ie6 .uniForm fieldset, .ie6 .uniForm .ctrlHolder, .ie6 .uniForm .formHint, .ie6 .uniForm .buttonHolder, .ie6 .uniForm .ctrlHolder ul, .ie7 .uniForm, .ie7 .uniForm fieldset, .ie7 .uniForm .ctrlHolder, .ie7 .uniForm .formHint, .ie7 .uniForm .buttonHolder, .ie7 .uniForm .ctrlHolder ul, .ie8 .uniForm, .ie8 .uniForm fieldset, .ie8 .uniForm .ctrlHolder, .ie8 .uniForm .formHint, .ie8 .uniForm .buttonHolder, .ie8 .uniForm .ctrlHolder ul, .ie9 .uniForm, .ie9 .uniForm fieldset, .ie9 .uniForm .ctrlHolder, .ie9 .uniForm .formHint, .ie9 .uniForm .buttonHolder, .ie9 .uniForm .ctrlHolder ul {
+.ie6 .uniForm, .ie6 .uniForm fieldset, .ie6 .uniForm .ctrlHolder, .ie6 .uniForm .formHint, .ie6 .uniForm .buttonHolder, .ie6 .uniForm .ctrlHolder ul, .ie7 .uniForm, .ie7 .uniForm fieldset, .ie7 .uniForm .ctrlHolder, .ie7 .uniForm .formHint, .ie7 .uniForm .buttonHolder, .ie7 .uniForm .ctrlHolder ul {
   zoom: 1;
 }
 .ie6 .uniForm .textInput,
 .ie6 .uniForm .fileUpload,
 .ie6 .uniForm .selectInput,
-.ie6 .uniForm select, .ie7 .uniForm .textInput, .ie7 .uniForm .fileUpload, .ie7 .uniForm .selectInput, .ie7 .uniForm select, .ie8 .uniForm .textInput, .ie8 .uniForm .fileUpload, .ie8 .uniForm .selectInput, .ie8 .uniForm select, .ie9 .uniForm .textInput, .ie9 .uniForm .fileUpload, .ie9 .uniForm .selectInput, .ie9 .uniForm select {
+.ie6 .uniForm select, .ie7 .uniForm .textInput, .ie7 .uniForm .fileUpload, .ie7 .uniForm .selectInput, .ie7 .uniForm select {
   height: 24px;
 }
-.ie6 #custom_form li, .ie7 #custom_form li, .ie8 #custom_form li, .ie9 #custom_form li {
+.ie6 #custom_form li, .ie7 #custom_form li {
   height: 65px !important;
 }
-.ie6 .ui-form .attachment_list li, .ie7 .ui-form .attachment_list li, .ie8 .ui-form .attachment_list li, .ie9 .ui-form .attachment_list li {
+.ie6 .ui-form .attachment_list li, .ie7 .ui-form .attachment_list li {
   width: 200px;
   border: 0px;
 }
-.ie6 .ui-form .attachment_list li .delete, .ie7 .ui-form .attachment_list li .delete, .ie8 .ui-form .attachment_list li .delete, .ie9 .ui-form .attachment_list li .delete {
+.ie6 .ui-form .attachment_list li .delete, .ie7 .ui-form .attachment_list li .delete {
   display: block;
 }
-.ie6 .request-list div.item .bulb, .ie6 .request-list div.item .wand, .ie7 .request-list div.item .bulb, .ie7 .request-list div.item .wand, .ie8 .request-list div.item .bulb, .ie8 .request-list div.item .wand, .ie9 .request-list div.item .bulb, .ie9 .request-list div.item .wand {
+.ie6 .request-list div.item .bulb, .ie6 .request-list div.item .wand, .ie7 .request-list div.item .bulb, .ie7 .request-list div.item .wand {
   left: 0px;
   margin-left: -25px;
 }
-.ie6 input.search, .ie7 input.search, .ie8 input.search, .ie9 input.search {
+.ie6 input.search, .ie7 input.search {
   height: 28px;
 }
-.ie6 div.description, .ie7 div.description, .ie8 div.description, .ie9 div.description {
+.ie6 div.description, .ie7 div.description {
   margin-top: 0px;
   margin-bottom: 0px;
   padding-top: 0px;
   padding-bottom: 0px;
 }
-.ie6 div.description .details, .ie7 div.description .details, .ie8 div.description .details, .ie9 div.description .details {
+.ie6 div.description .details, .ie7 div.description .details {
   padding: 0px;
 }
-.ie6 .reminders, .ie7 .reminders, .ie8 .reminders, .ie9 .reminders {
+.ie6 .reminders, .ie7 .reminders {
   width: 100%;
 }
-.ie6 .rtCnt .rtDetails h3.title, .ie7 .rtCnt .rtDetails h3.title, .ie8 .rtCnt .rtDetails h3.title, .ie9 .rtCnt .rtDetails h3.title {
+.ie6 .rtCnt .rtDetails h3.title, .ie7 .rtCnt .rtDetails h3.title {
   margin-top: 14px;
   padding-bottom: 0px;
 }
-.ie6 div.panel_area .tag_delete, .ie7 div.panel_area .tag_delete, .ie8 div.panel_area .tag_delete, .ie9 div.panel_area .tag_delete {
+.ie6 div.panel_area .tag_delete, .ie7 div.panel_area .tag_delete {
   right: 12px;
 }
-.ie6 .placeholder-list dl dt a, .ie7 .placeholder-list dl dt a, .ie8 .placeholder-list dl dt a, .ie9 .placeholder-list dl dt a {
+.ie6 .placeholder-list dl dt a, .ie7 .placeholder-list dl dt a {
   width: 180px;
 }
-.ie6 .auto-expand, .ie7 .auto-expand, .ie8 .auto-expand, .ie9 .auto-expand {
+.ie6 .auto-expand, .ie7 .auto-expand {
   overflow-x: hidden;
 }
-.ie6 .search_results_bar .results li h4, .ie7 .search_results_bar .results li h4, .ie8 .search_results_bar .results li h4, .ie9 .search_results_bar .results li h4 {
+.ie6 .search_results_bar .results li h4, .ie7 .search_results_bar .results li h4 {
   margin-left: -50px;
 }
-.ie6 .uiButton, .ie7 .uiButton, .ie8 .uiButton, .ie9 .uiButton {
+.ie6 .uiButton, .ie7 .uiButton {
   padding: 4px 8px;
   font-size: 11px;
 }
-.ie6 a.uiButton, .ie6 a.uiButton:visited, .ie7 a.uiButton, .ie7 a.uiButton:visited, .ie8 a.uiButton, .ie8 a.uiButton:visited, .ie9 a.uiButton, .ie9 a.uiButton:visited {
+.ie6 a.uiButton, .ie6 a.uiButton:visited, .ie7 a.uiButton, .ie7 a.uiButton:visited {
   padding-top: 5px;
   padding-bottom: 6px;
   font-size: 11px;
 }
-.ie6 .ui-login .ui-form, .ie6 .ui-signup .ui-form, .ie7 .ui-login .ui-form, .ie7 .ui-signup .ui-form, .ie8 .ui-login .ui-form, .ie8 .ui-signup .ui-form, .ie9 .ui-login .ui-form, .ie9 .ui-signup .ui-form {
+.ie6 .ui-login .ui-form, .ie6 .ui-signup .ui-form, .ie7 .ui-login .ui-form, .ie7 .ui-signup .ui-form {
   -moz-box-shadow: 0px 1px 6px #cfcfcf;
   -webkit-box-shadow: 0px 1px 6px #cfcfcf;
   box-shadow: 0px 1px 6px #cfcfcf;
-  behavior: url('/stylesheets/PIE.htc');
-  position: relative;
 }
-.ie6 .ui-form li, .ie6 .ui-form li.text, .ie6 .ui-form li.paragraph, .ie7 .ui-form li, .ie7 .ui-form li.text, .ie7 .ui-form li.paragraph, .ie8 .ui-form li, .ie8 .ui-form li.text, .ie8 .ui-form li.paragraph, .ie9 .ui-form li, .ie9 .ui-form li.text, .ie9 .ui-form li.paragraph {
+.ie6 .ui-form li, .ie6 .ui-form li.text, .ie6 .ui-form li.paragraph, .ie7 .ui-form li, .ie7 .ui-form li.text, .ie7 .ui-form li.paragraph {
   width: 100%;
 }
-.ie6 .ui-form li.dropdown, .ie6 .ui-form li.small, .ie6 .ui-form li.dropdown_blank, .ie7 .ui-form li.dropdown, .ie7 .ui-form li.small, .ie7 .ui-form li.dropdown_blank, .ie8 .ui-form li.dropdown, .ie8 .ui-form li.small, .ie8 .ui-form li.dropdown_blank, .ie9 .ui-form li.dropdown, .ie9 .ui-form li.small, .ie9 .ui-form li.dropdown_blank {
+.ie6 .ui-form li.dropdown, .ie6 .ui-form li.small, .ie6 .ui-form li.dropdown_blank, .ie7 .ui-form li.dropdown, .ie7 .ui-form li.small, .ie7 .ui-form li.dropdown_blank {
   padding-left: 4%;
   padding-right: 4%;
   width: 50%;
 }
-.ie6 .ui-form li.checkbox input, .ie7 .ui-form li.checkbox input, .ie8 .ui-form li.checkbox input, .ie9 .ui-form li.checkbox input {
+.ie6 .ui-form li.checkbox input, .ie7 .ui-form li.checkbox input {
   margin: 0px;
 }
-.ie6 .dialog-panel, .ie6 .due-date-dialog, .ie7 .dialog-panel, .ie7 .due-date-dialog, .ie8 .dialog-panel, .ie8 .due-date-dialog, .ie9 .dialog-panel, .ie9 .due-date-dialog {
+.ie6 .dialog-panel, .ie6 .due-date-dialog, .ie7 .dialog-panel, .ie7 .due-date-dialog {
   -moz-box-shadow: #9f9f9f 0px 2px 4px;
   -webkit-box-shadow: #9f9f9f 0px 2px 4px;
   box-shadow: #9f9f9f 0px 2px 4px;
 }
-.ie6 .due-date-dialog, .ie7 .due-date-dialog, .ie8 .due-date-dialog, .ie9 .due-date-dialog {
+.ie6 .due-date-dialog, .ie7 .due-date-dialog {
   margin-left: 0px;
   top: -8px;
 }
-.ie6 .ui-form .conditionset fieldset div.s_email div input.text, .ie6 .ui-form .conditionset fieldset div.s_email div textarea.paragraph, .ie7 .ui-form .conditionset fieldset div.s_email div input.text, .ie7 .ui-form .conditionset fieldset div.s_email div textarea.paragraph, .ie8 .ui-form .conditionset fieldset div.s_email div input.text, .ie8 .ui-form .conditionset fieldset div.s_email div textarea.paragraph, .ie9 .ui-form .conditionset fieldset div.s_email div input.text, .ie9 .ui-form .conditionset fieldset div.s_email div textarea.paragraph {
+.ie6 .ui-form .conditionset fieldset div.s_email div input.text, .ie6 .ui-form .conditionset fieldset div.s_email div textarea.paragraph, .ie7 .ui-form .conditionset fieldset div.s_email div input.text, .ie7 .ui-form .conditionset fieldset div.s_email div textarea.paragraph {
   width: 550px;
 }
-.ie6 .ui-widget-container, .ie7 .ui-widget-container, .ie8 .ui-widget-container, .ie9 .ui-widget-container {
+.ie6 .ui-widget-container, .ie7 .ui-widget-container {
   -moz-box-shadow: #afafaf -3px 5px 10px;
   -webkit-box-shadow: #afafaf -3px 5px 10px;
   box-shadow: #afafaf -3px 5px 10px;
-  behavior: url('/stylesheets/PIE.htc');
-  position: relative;
 }

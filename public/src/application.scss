@@ -9,7 +9,7 @@
 $ticketicon: sprite-map("ticket-icon/*.png");
 
 /* Bullet icon */ 
-$bullet-icon:"listicons/request_nav_seperator.gif";
+$bullet-icon:"symbols/request_nav_seperator.gif";
 body { color: #333; background:$background; min-width:$blueprint-liquid-container-min-width+20; }
 
 /* PAGE AREA STYLE */ 
@@ -23,7 +23,7 @@ body { color: #333; background:$background; min-width:$blueprint-liquid-containe
 }
 
 .pagearea, .sidepanel, .rtCnt, .no-helpdesk, #errorExplanation, .flash_info{  
-    @extend .sp_border;
+   @extend .sp_border;
 	padding:14px 20px; margin:0px 10px 10px 0px;
 }
 
@@ -43,7 +43,7 @@ ul.activityfeed, ul.summary{
 }
 
 ul.summary{
-	@include pie;
+// @include pie;
 	@include corners(6px);
 	@include inset-shadows(#ececec, 1px, 1px, 2px);
 	background-color:#f7f7f7; border:1px solid #f7f7f7;
@@ -162,31 +162,6 @@ ul.activityfeed li{
 		@include link-colors(#444444, #527EAA, #527EAA, #333333);
 		font-size:1.0em; line-height:1.5;
 		text-decoration:none;
-	}
-}
-
-.list_with_icon{
-	@include pretty-bullets("/images/listicons/forum-bullet.png", 12px, 16px);
-	padding-top:3px;  
-	li, div.list-item{
-		padding-left:22px;
-		margin:3px 0px 12px 0px;
-		a{
-			@include link-colors(#4D769F, #3399cc, #4D769F, #4D769F);
-			text-decoration:none;
-		}
-		a.title{
-			display:block;
-			padding:0px;
-			font-weight:normal;
-			padding-bottom:4px;
-			font-size:13px;
-		}
-	}
-	div.list-item{
-		background:url("/images/listicons/forum-bullet.png") no-repeat left 2px;
-		margin-bottom:4px;
-		margin-left:-22px;
 	}
 }
 
@@ -950,7 +925,7 @@ ul.admin_icons{
 				position:relative;
 			}
 			@include corners(6px);
-			@include pie;
+//       @include pie;
 		}
 		a:hover{
 			color:#000000;
@@ -1921,41 +1896,7 @@ h4.border_title{
 		}
 	}
 }
-.topic-list-view{ 
-		padding:0px;
-		margin:0px 0px;
-		border:1px solid #f1f1f1;
-		border-width:1px 0px; 
-		li{
-			@include clearfix;
-			border-bottom:1px dotted #eaeaea;
-			padding:14px 25px 10px 70px;
-			position:relative;
-			a{ 
-				@include link-colors(#4D769F, #3399cc, #4D769F, #4D769F);
-				text-decoration:none;  
-			}
-			a.topic-title{  
-				font-size:14px; 
-				font-weight:500;
-			}
-			.info_data{
-				padding:6px 0px 4px 0px;
-				font-size:12px;
-				color:#888888;
-			}
-			.preview_pic{
-				border-color:#d2d2d2;
-				position:absolute;
-				left:20px;
-				top:16px;
-				img{ width:36px; height:36px; padding:0px; border:0px; }
-			}
-		}
-		li:hover{
-			background:#f4f4f4;
-		}
-}
+
 
 .sticky{	background:#ffffff; }
 
@@ -2047,7 +1988,6 @@ h4.border_title{
 		}
 		span{
 			color:#888888;
-			@include ellipsis;
 		}
 		a, span{
 			display:block;
@@ -2934,7 +2874,7 @@ div.addReminder{
 	padding:0px;
 	position:relative;
 	form{
-		@include pie;
+//    @include pie;
 		@include corners(6px);
 		border:2px solid #e3dcc1;
 		padding:3px 0px;
@@ -3246,92 +3186,7 @@ div.addReminder{
 	font-size:15px;
 }
 
-.forum_list{
-	margin:0px 0px;
-	a{ text-decoration:none; }
-	a.title{ @include link-colors(#545454, #527EAA, #545454, #545454); }
-	.item_actions{
-		float:right;
-		font-size:10px;
-		background-color:#F3F1EC;
-		@include corners(6px);
-		border:1px solid #cfcfcf;
-		color:#afafaf;
-		padding:2px 8px;
-		a.highlight{
-			background-color:#ffffcc;
-			padding:1px 3px;
-		}
-	}
-	.subcounter{ 
-		color:#afafaf;
-	}
-	ul.base-set{
-		@include no-bullets;
-		@include clearfix;
-		margin:0px; 
-		padding:5px 26px;
-		li{
-			float:left;
-			width:44%;
-			padding:0px 0px 0px 30px;
-			margin:0px 3% 0px 0px;
-			h4.forum_title{
-				margin:3px 0px 0px 0px;
-				padding:6px 0px 4px 0px; 
-				font-size:16px;
-				a{
-					font-weight:normal;
-				}
-				position:relative;
-			}
-			span.icon{
-				position:absolute;
-				left:-34px; top:2px;
-				@include sprite-background("../images/embed/sprites/32square_sprite.png", 32px, 32px);
-			}
-			// Help icon
-			span.forum_type_1{ 
-				@include sprite-row(7, 32px, 0); 
-			}
-			// Ideas icon
-			span.forum_type_2{ 
-				@include sprite-row(8, 32px, 0); 
-			}
-			// Problem Icon
-			span.forum_type_3{ 
-				@include sprite-row(6, 32px, 0); 
-			}
-			// Announcements Icon
-			span.forum_type_4{ 
-				@include sprite-row(5, 32px, 0); 
-			}
-						
-			.topic-list{ 
-				padding:6px 0px 12px 0px;
-				margin-bottom:8px;
-				border-top:1px solid #f1f1f1;  
-				a.topic{
-					@include ellipsis;
-					display:block;
-					padding:5px 0px;
-					font-size:13px;
-				}
-				a{ 
-					@include link-colors(#4D769F, #3399cc, #4D769F, #4D769F);	
-				}
-			}
-		}
-		li.odd{
-			clear:left;
-		}
-		li.even{
-			margin-right:0px;
-			width:46%;
-		}
-	}
-	
-}
+
 
 .forum-group{
 	margin:0px -20px; 

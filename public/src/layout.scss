@@ -5,7 +5,7 @@
 html {  height:100%; overflow-y:scroll; }
 
 .wrapper{
-    @include clearfix;
+   @include clearfix;
 	@include container;
 	position:relative;
 	text-align: left; 
@@ -30,7 +30,7 @@ html {  height:100%; overflow-y:scroll; }
 
 #wrap{
 	margin-bottom:0px;
-	text-align:center;   
+	text-align:center;
 } 
 
 #minwidthfix{

@@ -46,18 +46,23 @@
 	  
 	  jQuery("#agent-assign-link").click(function(){
 	  	jQuery("#assign-options")
-	 		.dialog({ modal : true, 
-	 			  show : 'puff', 
+	 		.dialog({ 
+	 		    modal : true, 
+	 			  show : 'blind',
+	 			  hide: 'blind',
 	 			  title:  '<%= t('ticket.assign_to_agent') %>',
 	 			  closeOnEscape: true,
+	 			  resizable: false,
+	 			  height:'auto', 
+	 			  position:'top',
 	 			  buttons: [{
         				text: '<%= t("assign") %>',
-        				click: function() { 
+        				click: function() {
         					 Helpdesk.sel.submit("<%= assign_helpdesk_ticket_path('multiple') %>", "put", ['responder_id']);
         				}
     				}] 
 	 			});
-	  });	
+	  }).animate({ top: "40%" }, 1000);	
 	  
 	  changeSortOrder = function(){		
 	  	if ('<%=current_sort_order%>' != 'DESC')
@@ -127,8 +132,12 @@
 						
 							<a href="javascript:void(0)" id="agent-assign-link" class="button"><%= t('ticket.assign_to_agent') %></a>
 							<div id="assign-options" style="display:none;">
-							    <%= content_tag( :label, t('ticket.select_to_agent')) %> 
-							    <%= select_tag 'responder_id', options_from_collection_for_select(Agent.technician_list(current_account), :id, :name, current_user) %>
+							  <div class="dialog-special">
+							    <div class="content">
+							      <%= content_tag( :label, t('ticket.select_to_agent')) %> 
+							      <%= select_tag 'responder_id', options_from_collection_for_select(Agent.technician_list(current_account), :id, :name, current_user) %>
+							    </div>
+							  </div>
 							</div>
 						<% end %>
 					</th>	
