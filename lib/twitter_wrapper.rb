@@ -9,7 +9,8 @@ class TwitterWrapper
     @account = options[:current_account]  || twitter_handle.product.account
     @config = File.join(Rails.root, 'config', 'twitter.yml')
     @tokens = YAML::load_file @config
-    @callback_url = @tokens['callback_url'][Rails.env]
+    #@callback_url = @tokens['callback_url'][Rails.env]
+    @callback_url = "#{options[:callback_url]}"
     @callback_url = "#{@callback_url}?product_id=#{@product.id}"
     @auth = Twitter::OAuth.new @tokens['consumer_token'], @tokens['consumer_secret']
     @twitter_handle = twitter_handle
@@ -27,8 +28,9 @@ class TwitterWrapper
   def auth(rtoken, rsecret, verifier)    
     @auth.authorize_from_request(rtoken, rsecret, verifier)        
     @twitter_handle.access_token, @twitter_handle.access_secret = @auth.access_token.token, @auth.access_token.secret
+    @twitter_handle.account_id = @account.id
     set_twitter_user   
-    @twitter_handle.save    
+       
   end
   
   def set_twitter_user

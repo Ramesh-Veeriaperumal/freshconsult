@@ -62,30 +62,4 @@ function twitter_signin(pro_id)
     //prevent the browser to follow the link
     return false;
 }	
-var twitter_search_dialog = null
-function add_search()
-{	
-	twitter_search_dialog = jQuery("<div id='new_twitter_search' style='display:none;' />").appendTo("body");
-	var url = '/admin/twitters/new_search/'
-	// load remote content
-	twitter_search_dialog.load(url,{}, function(responseText, textStatus, XMLHttpRequest) {
-	       twitter_search_dialog.dialog({modal:true, width:'700px', height:'auto', title:"Twitter search key"});
-	});
-		
-    //prevent the browser to follow the link
-    return false;
-}	
-
-function edit_search(search_id)
-{		  
-	twitter_search_dialog = jQuery("<div id='edit_twitter_search' style='display:none;' />").appendTo("body");
-	var url = '/admin/twitters/edit_search/'+search_id
-	// load remote content
-	twitter_search_dialog.load(url,{}, function(responseText, textStatus, XMLHttpRequest) {
-	       twitter_search_dialog.dialog({modal:true, width:'700px', height:'auto', title:"Twitter search key"});
-	});
-		
-    //prevent the browser to follow the link
-    return false;
-}	
 <% end %>

@@ -5,6 +5,10 @@ class Social::TwitterHandle < ActiveRecord::Base
    belongs_to :product, :class_name => 'EmailConfig'
    belongs_to :user
    
+  validates_uniqueness_of :twitter_user_id, :scope => :account_id
+  validates_uniqueness_of :product_id
+  validates_presence_of :product_id, :twitter_user_id, :account_id
+   
    def screen_name
      user.twitter_id
    end

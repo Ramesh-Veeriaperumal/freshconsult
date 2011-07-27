@@ -628,11 +628,13 @@ ActiveRecord::Schema.define(:version => 20110726070832) do
     t.integer  "product_id",                :limit => 8
     t.integer  "last_dm_id",                :limit => 8
     t.integer  "last_mention_id",           :limit => 8
+    t.integer  "account_id"
     t.text     "search_keys"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
+  add_index "social_twitter_handles", ["account_id", "twitter_user_id"], :name => "index_account_product_id", :unique => true
   add_index "social_twitter_handles", ["product_id"], :name => "index_product_id", :unique => true
 
   create_table "solution_articles", :force => true do |t|

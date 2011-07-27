@@ -1,8 +1,19 @@
 class Social::TwitterHandlesController < ApplicationController
  
+  before_filter :except => [:search, :create_twicket] do |c| 
+    c.requires_permission :manage_users
+  end
+  
+  before_filter :only => [:search, :create_twicket] do |c| 
+    c.requires_permission :manage_forums
+  end
+  
   include HelpdeskControllerMethods 
   
+  
+  
   prepend_before_filter :load_product, :only => [:signin,:authdone]
+  before_filter :load_main_product, :only => [:index]
   before_filter :build_item, :only => [:signin,:authdone]
   before_filter :load_item,  :only => [:tweet , :edit , :update, :search]       
   before_filter :twitter_wrapper , :except => [:create_twicket]
@@ -16,14 +27,22 @@ class Social::TwitterHandlesController < ApplicationController
   end
 
   def authdone
+    add_to_db
+    redirect_to redirect_url
+  end
+  
+  def add_to_db
     logger.debug "call back url called @time:: #{Time.now}"
-    #begin      
-      @wrapper.auth( session[:request_token] , session[:request_secret] , params[:oauth_verifier])    
-      flash[:notice] = "Successfully signed in with Twitter."
-    #rescue
-    #  flash[:error] = 'You were not authorized by Twitter!'
-    #end
-    redirect_to admin_products_url
+    begin      
+      twitter_handle = @wrapper.auth( session[:request_token] , session[:request_secret] , params[:oauth_verifier]) 
+      if twitter_handle.save 
+        flash[:notice] = "Successfully signed in with Twitter."
+      else
+        flash[:notice] = "User is aleady there."
+      end
+    rescue
+      flash[:error] = 'You were not authorized by Twitter!'
+    end
   end
   
   def show_time_lines
@@ -48,7 +67,7 @@ class Social::TwitterHandlesController < ApplicationController
     @item.search_keys = params[:search_keys_string].split(",")
     if @item.update_attributes(params[:social_twitter_handle])    
       flash[:notice] = I18n.t(:'flash.general.update.success', :human_name => human_name)
-       redirect_back_or_default admin_products_url
+       redirect_back_or_default redirect_url
     else
       update_error
       render :action => 'edit'
@@ -82,12 +101,18 @@ class Social::TwitterHandlesController < ApplicationController
   end
   
 
-  private
+  protected
   #current_user is the user who's logged in
   
-  def twitter_wrapper   
-    @wrapper = TwitterWrapper.new @item ,{ :product => @current_product, :current_account => current_account}
+  def load_main_product
+    @current_product = current_account.primary_email_config
   end
+  
+  def twitter_wrapper   
+    @wrapper = TwitterWrapper.new @item ,{ :product => @current_product, 
+                                           :current_account => current_account,
+                                           :callback_url => url_for(:action => 'authdone')}
+    end
   
   def scoper
     @current_product
@@ -107,6 +132,15 @@ class Social::TwitterHandlesController < ApplicationController
 
   def human_name
     'Twitter'
+  end
+  
+  def redirect_url
+    if @item.product.primary_role?
+      channel_twitters_url
+    else
+      admin_products_url      
+    end
+    
   end
 
 end

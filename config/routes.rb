@@ -68,7 +68,10 @@ ActionController::Routing::Routes.draw do |map|
     admin.resources :portal, :only => [ :index, :update ]
     admin.resources :canned_responses
     admin.resources :products
-    #admin.resources :twitters , :collection =>{:signin => :any}
+  end
+  
+  map.namespace :channel do |channel|
+    channel.resources :twitters, :controller => 'social/twitter_handles', :collection =>{:signin => :any}
   end
   
   map.namespace :social do |social|
