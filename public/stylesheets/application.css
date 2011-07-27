@@ -188,11 +188,7 @@ ul.activityfeed li .activity_time {
 }
 .ui-list_with_icon li {
   padding-left: 14px;
-<<<<<<< Updated upstream
-  background: url('/images/listicons/request_nav_seperator.gif?1311689236') no-repeat 3px 9px;
-=======
   background: url('/images/symbols/request_nav_seperator.gif?1309788881') no-repeat 3px 9px;
->>>>>>> Stashed changes
   list-style-type: none;
 }
 .ui-list_with_icon li {
@@ -221,48 +217,6 @@ ul.activityfeed li .activity_time {
   color: #527eaa;
 }
 
-<<<<<<< Updated upstream
-.list_with_icon {
-  margin-left: 0;
-  padding-top: 3px;
-}
-.list_with_icon li {
-  padding-left: 14px;
-  background: url('/images/listicons/forum-bullet.png?1311689236') no-repeat 1px 1px;
-  list-style-type: none;
-}
-.list_with_icon li, .list_with_icon div.list-item {
-  padding-left: 22px;
-  margin: 3px 0px 12px 0px;
-}
-.list_with_icon li a, .list_with_icon div.list-item a {
-  color: #4d769f;
-  text-decoration: none;
-}
-.list_with_icon li a:visited, .list_with_icon div.list-item a:visited {
-  color: #4d769f;
-}
-.list_with_icon li a:hover, .list_with_icon div.list-item a:hover {
-  color: #3399cc;
-}
-.list_with_icon li a:active, .list_with_icon div.list-item a:active {
-  color: #4d769f;
-}
-.list_with_icon li a.title, .list_with_icon div.list-item a.title {
-  display: block;
-  padding: 0px;
-  font-weight: normal;
-  padding-bottom: 4px;
-  font-size: 13px;
-}
-.list_with_icon div.list-item {
-  background: url("/images/listicons/forum-bullet.png") no-repeat left 2px;
-  margin-bottom: 4px;
-  margin-left: -22px;
-}
-
-=======
->>>>>>> Stashed changes
 .user_name {
   font-weight: bold;
   color: #527eaa;
@@ -2504,11 +2458,7 @@ h4.border_title {
 }
 .solution-list .odd ul li, .solution-list .even ul li {
   padding-left: 14px;
-<<<<<<< Updated upstream
-  background: url('/images/listicons/request_nav_seperator.gif?1311689236') no-repeat 3.5px 3.5px;
-=======
   background: url('/images/symbols/request_nav_seperator.gif?1309788881') no-repeat 3.5px 3.5px;
->>>>>>> Stashed changes
   list-style-type: none;
 }
 .solution-list .odd li, .solution-list .even li {
@@ -3614,14 +3564,15 @@ a.page_title:active {
 }
 .reminders ul li, .reminders-ticket ul li {
   vertical-align: top;
-  padding: 6px 0px 6px 0px;
+  padding: 6px 0px 6px 20px;
   border-bottom: 1px solid #f1edd1;
   text-transform: capitalize;
   position: relative;
 }
 .reminders ul li input, .reminders-ticket ul li input {
   float: left;
-  margin-right: 6px;
+  margin-left: -16px;
+  position: absolute;
 }
 .reminders ul li label, .reminders-ticket ul li label {
   font-size: 13px;

@@ -1921,12 +1921,10 @@ h4.border_title{
 	a{
 		@include link-colors(#4D769F, #3399cc, #4D769F, #4D769F);
 		text-decoration:none;
-	}
-	
+	}	
 	ul{
 		@include pretty-bullets($bullet-icon);
-	}
-	
+	}	
 	li{ 
 		line-height:18px;
 		padding:0px 0px 4px 18px;
@@ -2811,13 +2809,14 @@ a.page_title{
 		border-top:1px solid #f1edd1;
 		li{
 			vertical-align:top;
-			padding:6px 0px 6px 0px;
+			padding:6px 0px 6px 20px;
 			border-bottom:1px solid #f1edd1;
 			text-transform:capitalize;
 			position:relative;
 			input{
 			   float:left;
-			   margin-right:6px;
+			   margin-left:-16px;
+			   position:absolute;
 			}
 			label{
 				font-size:13px;
