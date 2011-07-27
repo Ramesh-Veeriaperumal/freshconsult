@@ -1,5 +1,5 @@
 <div id="footer" class="wrapper">  
 	<div class="footerContent">
-		<a href="http://www.freshdesk.com" target="_blank"><%= t('footer.helpdesk_software') %></a>
+		<%= link_to(t('footer.helpdesk_software'), "http://www.freshdesk.com", :target => "_blank") unless(current_account.subscription.paid_account?) %>
 	</div> 
 </div>
