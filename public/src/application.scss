@@ -3395,7 +3395,7 @@ div.addReminder{
 			padding:2px 0px;
 			position:relative;
 			top:-4px;
-			visibility:hidden;
+			/*visibility:hidden;*/
 			a{
 				color:#333333;
 				font-weight:bold;
@@ -3473,10 +3473,14 @@ div.addReminder{
 		 }
 	}
 	li:hover{
-		background:lighten(#f1f1f1, 2%);  
 		div.item_actions{
 			visibility:visible;
 		}
+		background-color:#f4f4f4;
+		background-image:url(../images/overlay-top-shadow.png);
+		background-position:top left;
+		border-bottom:1px solid #dfdfdf;
+		background-repeat:repeat-x;
 	} 
 }
 
