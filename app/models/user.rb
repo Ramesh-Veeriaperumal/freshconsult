@@ -22,6 +22,7 @@ class User < ActiveRecord::Base
   has_many :votes, :dependent => :destroy
   
   validates_uniqueness_of :user_role, :scope => :account_id, :if => Proc.new { |user| user.user_role  == USER_ROLES_KEYS_BY_TOKEN[:account_admin] }
+  validates_uniqueness_of :twitter_id, :scope => :account_id, :allow_nil => true
   
   has_one :avatar,
     :as => :attachable,
@@ -88,7 +89,6 @@ class User < ActiveRecord::Base
     self.user_role = params[:user][:user_role]
     self.time_zone = params[:user][:time_zone]
     self.import_id = params[:user][:import_id]
-    self.deleted = params[:user][:deleted]
     
     
     self.avatar_attributes=params[:user][:avatar_attributes] unless params[:user][:avatar_attributes].nil?

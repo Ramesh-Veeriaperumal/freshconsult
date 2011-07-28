@@ -6,7 +6,7 @@
 <ul class="ui-form">
 	<li>
 			<label><%=t('admin.twitters.change.screen_name')%></label>		
-			<%= text_field(:user, :twitter_id, :class => "text disabled", :disabled =>true , :value => @item.user.twitter_id )  %>
+			<%= text_field(:social_twitter_handle, :screen_name, :class => "text disabled", :disabled =>true , :value => @item.screen_name )  %>
 	</li>
 	<li>
 		<label>
@@ -28,6 +28,7 @@
 </ul>
 <div class="button-container">
 	<%= f.submit t('save'), :class => "uiButton"  %>
+	<%= link_to(t('delete'), social_twitter_path(current_account.primary_email_config.twitter_handle), :method => 'delete', :confirm => t('admin.canned_response.index.delete_confirm'), :class => "button" ) %>	
 	<%= link_to(t('cancel'), admin_products_url, :class => "uiButton", :id => "twitter-form-cancel" )  %>
 </div> 
 <% end %>

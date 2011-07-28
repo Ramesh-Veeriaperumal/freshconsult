@@ -3,7 +3,7 @@ class CreateSocialTwitterHandles < ActiveRecord::Migration
     create_table :social_twitter_handles do |t|
      
       t.integer :twitter_user_id ,:limit => 8
-      t.integer :user_id ,:limit => 8
+      t.string  :screen_name 
       t.string  :access_token
       t.string  :access_secret
       t.boolean :capture_dm_as_ticket ,:default => true

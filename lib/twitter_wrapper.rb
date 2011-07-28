@@ -42,7 +42,7 @@ class TwitterWrapper
     @user = @account.all_users.find_by_twitter_id(screen_name)   
     if @user.blank?
        @user = @account.users.new          
-       @user.signup!({:user => {:deleted =>true, :twitter_id =>screen_name , :name => screen_name , :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}})
+       @user.signup!({:user => {:twitter_id =>screen_name , :name => screen_name , :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}})
     end            
     @twitter_handle.user = @user
     @twitter_handle.twitter_user_id = twitter_id.to_i()

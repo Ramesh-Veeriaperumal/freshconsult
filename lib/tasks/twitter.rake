@@ -70,34 +70,40 @@ namespace :twitter do
      end
   end
   
+  def get_user(account, screen_name)
+    user = account.all_users.find_by_twitter_id(screen_name)
+    unless user
+      user = account.contacts.new
+      user.signup!({:user => {:twitter_id => screen_name, :name => screen_name, 
+         :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}})
+      end
+     user
+  end
+  
   def add_tweet_as_note twt,twt_handle 
-    puts "Note creation !"
     sender = twt.sender || twt.user
     tweet = (Social::Tweet.find_by_tweet_id(twt.in_reply_to_status_id))  
     unless tweet.blank?
        @ticket = tweet.tweetable if tweet.tweetable_type == 'Helpdesk::Ticket'
        @ticket = tweet.tweetable.notable if tweet.tweetable_type == 'Helpdesk::Note'
     end
+    
+    
    
     
     unless @ticket.blank?
-      puts "#{@ticket.description}"
+      user = get_user(@ticket.account, sender.screen_name)
       @note = @ticket.notes.create(
         :body => twt.text,
         :private => true ,
         :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:twitter],
         :account_id => twt_handle.product.account_id,
-        :user_id => User.first && User.first.id ,
+        :user_id => user.id ,
         :tweet_attributes => {:tweet_id => twt.id}
        )
-#       else
-#        puts "error while saving the note #{@ticket.notes.errors.to_json}"
-#       end
-       puts "Note json is #{@note.to_json}"
-    else
+   else
       add_tweet_as_ticket (twt,twt_handle)
     end
-    #need to change user_id as system user/twitter account user
   end
   
 end

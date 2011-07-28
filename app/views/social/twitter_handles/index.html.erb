@@ -6,6 +6,7 @@
 	@<%=current_account.primary_email_config.twitter_handle.screen_name%>
 	<%= link_to "settings", edit_social_twitter_path(current_account.primary_email_config.twitter_handle) %> 
 	<%= link_to "Search", search_social_twitter_path(current_account.primary_email_config.twitter_handle) %>
+	
 <%end%>
 
 </div>
@@ -15,7 +16,7 @@ var twitter_signin_dialog = null;
 function twitter_signin(pro_id)
 {		   
 	twitter_signin_dialog = jQuery("<div id='twitter_new_handle' style='display:none;' />").appendTo("body");		
-	var url = '/channel/twitters/signin?product_id='+pro_id;
+	var url = '/social/twitters/signin?product_id='+pro_id;
 	// load remote content
 	twitter_signin_dialog.load(url,{}, function(responseText, textStatus, XMLHttpRequest) {
 	       twitter_signin_dialog.dialog({modal:true, width:'700px', height:'auto', title:"Twitter signin"});

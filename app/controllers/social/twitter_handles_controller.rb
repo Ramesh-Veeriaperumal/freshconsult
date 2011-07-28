@@ -136,7 +136,7 @@ class Social::TwitterHandlesController < ApplicationController
   
   def redirect_url
     if @item.product.primary_role?
-      channel_twitters_url
+      social_twitters_url
     else
       admin_products_url      
     end

@@ -70,9 +70,8 @@ ActionController::Routing::Routes.draw do |map|
     admin.resources :products
   end
   
-  map.namespace :channel do |channel|
-    channel.resources :twitters, :controller => 'social/twitter_handles', :collection =>{:signin => :any}
-  end
+  
+ 
   
   map.namespace :social do |social|
     social.resources :twitters, :controller=>'twitter_handles' , :collection =>{:signin => :any}, 
