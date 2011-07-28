@@ -1,5 +1,4 @@
-
-<% content_for :head do %>
+<% content_for :pagefixed do %>
   <%= javascript_include_tag "helpdesk/core" %>
   <%= javascript_include_tag "helpdesk/id_selector" %>
   <% javascript_tag do %>
@@ -18,21 +17,15 @@
   <% end %>
 <% end %>
 
-
-
-
 <% content_for :sidebar do %>
-  <%= render :partial => '/helpdesk/shared/tag_search_navigate' %>
+  <%= render :partial => 'tag_search_navigate' %>
 <% end %>
 
 <% content_for :main_panel_title do %>
-
-<div class="header_area"> 
-  <h4>
-  	Tags
-	<%= render :partial => "/helpdesk/tickets/filters" %>
-  </h4>
-</div>
+  <h3 class="title">
+	  <%= t(".title") %>
+	  <%= render :partial => "/helpdesk/tickets/filters" %>
+  </h3>
   <!--All Tags--> <!--sup><%= Helpdesk::Tag.all(:conditions => { :account_id => current_account.id }).size %></sup-->
 <% end %>
 
@@ -40,51 +33,41 @@
 <% end %>
 
 <% content_for :main_panel_toolbar do %>
- 
-  &nbsp;
+  
 <% end %>
 
 <% content_for :main_panel_selected_toolbar do %>
-
-  <!--ul class="secondary-actions">
-    <%= content_tag('li', link_to_function("Select All", "Helpdesk.sel.checkAll()")) %>
-    <%= content_tag('li', link_to_function("Deselect All", "Helpdesk.sel.uncheckAll()")) %> 
-  </ul>
-
-  <ul>
-    <li><%= link_to_function "Delete tags",  "if(confirm('Really delete?')) Helpdesk.sel.submit('#{helpdesk_tag_path('multiple')}', 'delete')" %></li>
-  </ul-->
-
-<% end %>
-
+<% end %> 
 
 <% content_for :main_panel_content do %> 
-  <div id="pages"> 
-      <table class="tickets">
+  <div id="pages" class="tickets-container"> 
+    <div class="ticket-header">
+      <table class="tickets" width="100%">
       	<thead>
       		<tr>
 	      		<th class="check">
 	      			<input type="checkbox" onclick="Helpdesk.sel.toggleCheckAll(this)"  />
 	      		</th>
-				<th>
-			       <%= link_to_function("Delete", "if(confirm('Really delete?')) Helpdesk.sel.submit('#{ helpdesk_tag_path('multiple') }', 'delete')", :class => "button") %>
-				</th>	
-				<th>
-			 <div class="actions">
-    			<form class="sort">
-      				Sort by&nbsp;&nbsp; 
-      				<%= select_tag :sort, options_for_select(Helpdesk::Tag::SORT_FIELD_OPTIONS, (params[:sort] || :created_asc).to_sym) %>
-    			</form>
-  			 </div>
-			</th>	
-			</tr>
-      	</thead>
+				    <th>
+			       <%= link_to_function(t('delete'), "if(confirm('Really delete?')) Helpdesk.sel.submit('#{ helpdesk_tag_path('multiple') }', 'delete')", :class => "button") %>
+				   </th>	
+				   <th>
+			       <div class="actions">
+    			     <form class="sort">
+      				   <%= t('ticket.sort_by') %>
+      				   <%= select_tag :sort, options_for_select(Helpdesk::Tag::SORT_FIELD_OPTIONS, (params[:sort] || :created_asc).to_sym) %>
+    			     </form>
+  			     </div>
+			    </th>	
+			  </tr>
+      </thead>
 	  </table>
+	</div>
 	  <% form_tag "", { :method => :put, :id => :list } do  %>
-	     <table class="tickets">	
-			<tbody>
-          <%= render :partial => "/helpdesk/tags/tag", :collection => @tags %>
-		  </thead>
+	    <table class="tickets">	
+			  <tbody>
+          <%= render :partial => "tag", :collection => @tags %>
+		    </thead>
       </table>
     <% end %>
   </div>

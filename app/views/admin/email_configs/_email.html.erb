@@ -8,7 +8,7 @@
 			<div class="item">
 				<label>
 				 <strong><%=t('email_configs.supp_email_add')%> :  &nbsp;</strong> 
-						<%= content_tag (:span, h(email.friendly_email), :class => "highlight") %>
+						<%= content_tag (:span, h("#{email.name} <#{email.reply_email}>"), :class => "highlight") %>
 						<%= content_tag (:span, t("email_configs.unverified"), :class => "inactive_email custom-tip-top", :title => t('email_configs.unverified_info1')) unless email.active? %>
 						<%= link_to(t("email_configs.send_verification_email"), deliver_verification_admin_email_config_path(email), :class => "slim-button")  unless email.active?  %>
 				</label>	

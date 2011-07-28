@@ -1,11 +1,19 @@
 @import "base";
 @import "mixins";
 
-.ie6, .ie7, .ie8, .ie9{
+.ie6, .ie7{
 	.wrapper{ 
 		width: expression((document.body.clientWidth < 982)? "982px" : "#{$blueprint-liquid-container-width}");
-		width:980px; 
+		width: 980px; 
 	}
+	
+	ul.tabs{
+		li.active a, li.active a:hover{
+			top:1px;
+			padding-top:7px;
+		}
+	}
+	
 	input, button {
 		overflow: visible;
 	}
@@ -20,6 +28,10 @@
 	ul.ui-form li.inline-field{
 		width:96%;
 	}
+	
+	.reminders, .reminders-ticket{
+	   ul li{display:inline-block;}
+   }
 	
 	.uniForm, .uniForm fieldset, .uniForm .ctrlHolder, .uniForm .formHint, .uniForm .buttonHolder, .uniForm .ctrlHolder ul{ zoom:1; }
 	.uniForm .textInput,
@@ -61,9 +73,6 @@
 		}
 	}
 	
-	.reminders{
-		width:100%;
-	}
 	
 	.rtCnt .rtDetails h3.title{
 		margin-top:14px;
@@ -81,8 +90,7 @@
 	.auto-expand{
 		overflow-x:hidden;
 	}
-	
-	.search_results_bar .results li h4{ margin-left:-50px;}
+	.search_bar{width:220px;}
 	
 	.uiButton{
 		padding:4px 8px;
@@ -97,7 +105,7 @@
 	.ui-login, .ui-signup{
 		.ui-form{ 
 			@include shadows(0px, 1px, 6px, #cfcfcf );
-			@include pie;
+//       @include pie;
 		}
 	}
 	
@@ -127,6 +135,6 @@
 	}
 	.ui-widget-container{
 		@include shadows(#afafaf, -3px, 5px, 10px);
-		@include pie;
+//		@include pie;
 	}
 }

@@ -79,9 +79,9 @@ Helpdesk.MultiSelector.prototype = {
             var source = $(p);
             var field = new Element('input', {
                 type: 'hidden',
-                value: source.value,
-                name: source.name
+                value: source.value
             });
+            field.name = source.name;
             form.appendChild(field);
         });
         form.action = url;

@@ -1,6 +1,6 @@
 <li class="<%= cycle('odd', 'even') %>"> 
 	<h4 class="forum_title">
-		<span class="<%= "forum_type_#{forum.forum_type}" %> icon"></span>
+		<span class="<%= "forum_type_#{forum.type_symbol}" %> icon"></span>
 		<%= link_to ( h(forum.name), category_forum_path(category, forum), :class => "title" )  %>
 		<span class="subcounter">(<%= content_tag(:span, forum.topics.size, :class => "sub_counter") %>)</span>
 	</h4>

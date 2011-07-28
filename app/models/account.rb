@@ -377,7 +377,7 @@ class Account < ActiveRecord::Base
     
     def config_default_email
       d_email = "support@#{full_domain}"
-      e_c = email_configs.build(:to_email => d_email, :reply_email => d_email, :primary_role => true)
+      e_c = email_configs.build(:to_email => d_email, :reply_email => d_email, :name => name, :primary_role => true)
       e_c.active = true
       
       portal = e_c.build_portal(:name => helpdesk_name, :preferences => preferences, 

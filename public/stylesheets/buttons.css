@@ -314,40 +314,6 @@ div.action_buttons:hover {
   box-shadow: rgba(0, 0, 0, 0.1) 0 0 2px;
 }
 
-/* POSITIVE */
-button.positive, .buttons a.positive {
-  color: #529214;
-}
-
-.buttons a.positive:hover, button.positive:hover {
-  background-color: #E6EFC2;
-  border: 1px solid #C6D880;
-  color: #529214;
-}
-
-.buttons a.positive:active {
-  background-color: #529214;
-  border: 1px solid #529214;
-  color: #fff;
-}
-
-/* NEGATIVE */
-.buttons a.negative, button.negative {
-  color: #d12f19;
-}
-
-.buttons a.negative:hover, button.negative:hover {
-  background: #fbe3e4;
-  border: 1px solid #fbc2c4;
-  color: #d12f19;
-}
-
-.buttons a.negative:active {
-  background-color: #d12f19;
-  border: 1px solid #d12f19;
-  color: #fff;
-}
-
 .button, .slim-button {
   display: -moz-inline-box;
   -moz-box-orient: vertical;
@@ -370,24 +336,18 @@ button.positive, .buttons a.positive {
   overflow: hidden;
   padding: 4px 8px;
   margin: 2px;
-  border: 2px solid #aaa;
-  background: #fff;
   color: #3f3f3f;
-  -moz-border-radius: 3px 3px 3px 3px;
-  -webkit-border-radius: 3px 3px 3px 3px;
-  border-radius: 3px 3px 3px 3px;
+  -moz-border-radius: 4px 4px 4px 4px;
+  -webkit-border-radius: 4px 4px 4px 4px;
+  border-radius: 4px 4px 4px 4px;
   -moz-box-shadow: inset 0px -2px 0px rgba(0, 0, 0, 0.05);
   -webkit-box-shadow: inset 0px -2px 0px rgba(0, 0, 0, 0.05);
   box-shadow: inset 0px -2px 0px rgba(0, 0, 0, 0.05);
   -moz-box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 0px;
   -webkit-box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 0px;
   box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 0px;
-  background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #ffffff), color-stop(100%, #efefef));
-  background: -webkit-linear-gradient(#ffffff, #efefef);
-  background: -moz-linear-gradient(#ffffff, #efefef);
-  background: -o-linear-gradient(#ffffff, #efefef);
-  -pie-background: linear-gradient(#ffffff, #efefef);
-  background: linear-gradient(#ffffff, #efefef);
+  background-image: url(../images/overlay-button.png);
+  background-color: #f8f8f8;
   border: 1px solid #cfcfcf;
   cursor: pointer;
 }

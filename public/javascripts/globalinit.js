@@ -6,9 +6,11 @@ var jQ = jQuery.noConflict();
 (function($){
 	// Global Jquery Plugin initialisation
 	$.fn.qtip.baseIndex = 10000;
-	  
+	
 	// App initialisation  
 	$(document).ready(function() {
+		SyntaxHighlighter.all();
+			
 		// - Labels with overlabel will act a Placeholder for form elements 
 	    $("label.overlabel").overlabel();
 	

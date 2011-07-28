@@ -1,0 +1,7 @@
+<div class="sidepanel">
+  <%= render :partial => 'tag_search', :locals => { 
+                                            :on_select => "if(tag) window.location = \"#{ helpdesk_tags_path }/\" + tag.id",
+                                            :label_text => "Search tags by name:",
+                                            :no_result_text => "No matches"}
+  %>
+</div>

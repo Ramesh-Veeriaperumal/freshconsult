@@ -26,9 +26,14 @@ javascripts:
     - public/javascripts/factory_ui.js
     - public/javascripts/json2.js
     - public/javascripts/globalinit.js
+    - public/javascripts/hackz.js
   freshwidget:
     - public/javascripts/freshwidget.js
-
+  syntaxhighlighter:
+    - public/javascripts/syntax-highlighter/shCore.js 
+    - public/javascripts/syntax-highlighter/shBrushJScript.js 
+    - public/javascripts/syntax-highlighter/shBrushRuby.js
+    
 stylesheets:
   common:
     - public/stylesheets/reset.css
@@ -42,6 +47,7 @@ stylesheets:
     - public/stylesheets/jquery-ui.css
     - public/stylesheets/jquery.qtip.css
     - public/stylesheets/ie.css
+    - public/stylesheets/test.css
 
   widget:
     - public/stylesheets/reset.css   
@@ -52,3 +58,7 @@ stylesheets:
 
   freshwidget:
     - public/stylesheets/freshwidget.css
+    
+  syntaxhighlighter:
+    - public/stylesheets/syntax-highlighter/shCore.css
+    - public/stylesheets/syntax-highlighter/shThemeDefault.css

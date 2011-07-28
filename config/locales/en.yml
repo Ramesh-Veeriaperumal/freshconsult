@@ -33,6 +33,7 @@ en:
     email: Email
   ticket_fields:
     fields:
+      source: Source
       subject: Subject
       requester: Requester
       status: Status
@@ -1082,6 +1083,9 @@ en:
   tickets_were: tickets were
   undo: Undo
   helpdesk:
+    tags:
+      index:
+        title: Tags
     flash:
       assignedto: %{tickets} assigned to %{username}.
       tickets_closed: %{tickets} closed
