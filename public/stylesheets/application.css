@@ -3044,6 +3044,9 @@ a.page_title:active {
 .results {
   padding-bottom: 8px;
 }
+.results .ticket_icon, .results .contact_icon, .results .company_icon, .results .solution_icon, .results .forum_icon {
+  display: inline-block;
+}
 .results .ticket_icon span.icon {
   background: url('/images/icons-1fde8ad171.png') 0 -98px no-repeat;
 }
@@ -3563,7 +3566,6 @@ a.page_title:active {
   border-top: 1px solid #f1edd1;
 }
 .reminders ul li, .reminders-ticket ul li {
-  vertical-align: top;
   padding: 6px 0px 6px 20px;
   border-bottom: 1px solid #f1edd1;
   text-transform: capitalize;

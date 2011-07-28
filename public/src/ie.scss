@@ -29,6 +29,10 @@
 		width:96%;
 	}
 	
+	.reminders, .reminders-ticket{
+	   ul li{display:inline-block;}
+   }
+	
 	.uniForm, .uniForm fieldset, .uniForm .ctrlHolder, .uniForm .formHint, .uniForm .buttonHolder, .uniForm .ctrlHolder ul{ zoom:1; }
 	.uniForm .textInput,
 	      .uniForm .fileUpload,
@@ -69,9 +73,6 @@
 		}
 	}
 	
-	.reminders{
-		width:100%;
-	}
 	
 	.rtCnt .rtDetails h3.title{
 		margin-top:14px;
@@ -89,8 +90,7 @@
 	.auto-expand{
 		overflow-x:hidden;
 	}
-	
-	.search_results_bar .results li h4{ margin-left:-50px;}
+	.search_bar{width:220px;}
 	
 	.uiButton{
 		padding:4px 8px;

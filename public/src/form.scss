@@ -1285,8 +1285,6 @@ a.new_ticket, .nav_search{
 }
 
 a.new_ticket, .nav_search div.search_bar{
-	@include shadows(rgba(0,0,0, 0.4), 0px, 0px, 1px);
-	@include corners(3px);
 	border:1px solid darken($tab_color, 8%);
 } 
  
@@ -1297,7 +1295,7 @@ a.new_ticket{
 	font-size:12px; 
 	text-decoration:none; font-weight:bold;
 	position:relative; 
-	display:block;	
+	@include inline-block;	
 	span { 
 		position:absolute; left:4px; top:5px;
 		background:sprite($symbol, add) no-repeat;

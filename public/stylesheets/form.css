@@ -1565,12 +1565,6 @@ a.new_ticket, .nav_search {
 }
 
 a.new_ticket, .nav_search div.search_bar {
-  -moz-box-shadow: rgba(0, 0, 0, 0.4) 0px 0px 1px;
-  -webkit-box-shadow: rgba(0, 0, 0, 0.4) 0px 0px 1px;
-  box-shadow: rgba(0, 0, 0, 0.4) 0px 0px 1px;
-  -moz-border-radius: 3px 3px 3px 3px;
-  -webkit-border-radius: 3px 3px 3px 3px;
-  border-radius: 3px 3px 3px 3px;
   border: 1px solid #67962d;
 }
 
@@ -1592,7 +1586,14 @@ a.new_ticket {
   text-decoration: none;
   font-weight: bold;
   position: relative;
-  display: block;
+  display: -moz-inline-box;
+  -moz-box-orient: vertical;
+  display: inline-block;
+  vertical-align: middle;
+  *vertical-align: auto;
+}
+a.new_ticket {
+  *display: inline;
 }
 a.new_ticket span {
   position: absolute;

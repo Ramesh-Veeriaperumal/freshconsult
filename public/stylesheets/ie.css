@@ -22,6 +22,9 @@
 .ie6 ul.ui-form li.inline-field, .ie7 ul.ui-form li.inline-field {
   width: 96%;
 }
+.ie6 .reminders ul li, .ie6 .reminders-ticket ul li, .ie7 .reminders ul li, .ie7 .reminders-ticket ul li {
+  display: inline-block;
+}
 .ie6 .uniForm, .ie6 .uniForm fieldset, .ie6 .uniForm .ctrlHolder, .ie6 .uniForm .formHint, .ie6 .uniForm .buttonHolder, .ie6 .uniForm .ctrlHolder ul, .ie7 .uniForm, .ie7 .uniForm fieldset, .ie7 .uniForm .ctrlHolder, .ie7 .uniForm .formHint, .ie7 .uniForm .buttonHolder, .ie7 .uniForm .ctrlHolder ul {
   zoom: 1;
 }
@@ -57,9 +60,6 @@
 .ie6 div.description .details, .ie7 div.description .details {
   padding: 0px;
 }
-.ie6 .reminders, .ie7 .reminders {
-  width: 100%;
-}
 .ie6 .rtCnt .rtDetails h3.title, .ie7 .rtCnt .rtDetails h3.title {
   margin-top: 14px;
   padding-bottom: 0px;
@@ -73,8 +73,8 @@
 .ie6 .auto-expand, .ie7 .auto-expand {
   overflow-x: hidden;
 }
-.ie6 .search_results_bar .results li h4, .ie7 .search_results_bar .results li h4 {
-  margin-left: -50px;
+.ie6 .search_bar, .ie7 .search_bar {
+  width: 220px;
 }
 .ie6 .uiButton, .ie7 .uiButton {
   padding: 4px 8px;

@@ -2397,7 +2397,7 @@ a.page_title{
 		background:#f6f6f6;
 		border-left:1px solid #dedede;
 		li{
-			padding:6px 0px 0px 0px;
+			padding:6px 0px 0px 0px;			
 			border-bottom:1px solid #efefef;
 			a:hover, a.active{
 				background-color:#333333;
@@ -2414,6 +2414,7 @@ a.page_title{
 
 .results{ 
 	padding-bottom:8px;
+	.ticket_icon, 	.contact_icon, .company_icon, .solution_icon, .forum_icon { display:inline-block; }
 	.ticket_icon	span.icon{ background:sprite($icons, page-white) no-repeat; }
 	.contact_icon	span.icon{ background:sprite($icons, user) no-repeat; } 
 	.company_icon	span.icon{ background:sprite($icons, building) no-repeat; } 
@@ -2808,7 +2809,6 @@ a.page_title{
 		margin:2px 0px;
 		border-top:1px solid #f1edd1;
 		li{
-			vertical-align:top;
 			padding:6px 0px 6px 20px;
 			border-bottom:1px solid #f1edd1;
 			text-transform:capitalize;

@@ -266,7 +266,6 @@ FRESH_EDITOR:
     content_css:                        "/stylesheets/fresh-mce/content.css"
     skin:                               "fresh"
     inlinepopups_skin:                  "fresh"
-    height:                             240
     width:                              "100%"
     paste_create_paragraphs:            false
     paste_create_linebreaks:            false
