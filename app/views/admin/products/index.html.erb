@@ -1,4 +1,15 @@
-<% content_for :sidebar do -%><%-end %>
+<% content_for :sidebar do -%>
+  <div class="sidepanel">
+    <h3 class="title">Multiple Products</h3>
+    <p>
+      Multiple products helps you to provide product or brand specific support.
+    </p>
+    <h4 class="title"><strong>Add twitter</strong></h4>
+    <p>
+      Enable your products twitter channel for the products.
+    </p>
+  </div>
+<%-end %>
 <% @page_title = t('.title') %>
 <div class="floatr">
 	<%= link_to(t('.add_product'), new_admin_product_path, :class => "uiButton") %>
@@ -7,11 +18,11 @@
 <div>	
 	<ul class="admin_list">
     <% @products.each do |product| %>	  
-      <li>      	
-        <div class="item_actions">
-           
-          <%= link_to(t('edit'), edit_admin_product_path(product), :class => "button") %>
-          <%= link_to(t('delete'), admin_product_path(product), :method => 'delete', :confirm => t(".delete_product"), :class => "button" ) %>
+      <li>    
+        <div class="item_actions">           
+          <%= link_to_function "Add Twitter", "twitter_signin(#{product.id})", :class => "slim-button" if product.twitter_handle.nil? %> 
+          <%= link_to(t('edit'), edit_admin_product_path(product), :class => "slim-button") %>
+          <%= link_to(t('delete'), admin_product_path(product), :method => 'delete', :confirm => t(".delete_product"), :class => "slim-button" ) %>
         </div>
         <table>
           <tr>
@@ -29,16 +40,9 @@
             </td>
             <td class="portal-text">
               <%= link_to(product.name, edit_admin_product_path(product), :class => "big-text") %>
-			  <br>
-			   
-			  <%= link_to_function "Add Twitter", "twitter_signin(#{product.id})" if product.twitter_handle.nil?%> 
-			  <% unless product.twitter_handle.nil? %>
-			    @<%=product.twitter_handle.screen_name%>
-			  	<%= link_to "settings", edit_social_twitter_path(product.twitter_handle) %> 
-				<%= link_to "Search", search_social_twitter_path(product.twitter_handle) %>
-              <%end%>
-			  <%= content_tag(:div, product.reply_email, :class => "text") %>
+			        <%= content_tag(:div, product.reply_email, :class => "text") %>
               <%= link_to(product.portal.portal_url, product.portal.portal_url, {:class => "text", :target => "_blank"}) if(product.portal_enabled?) %>
+              <%= render :partial => "twitter", :locals => { :product => product } %>
             </td>
           </tr>
         </table>
