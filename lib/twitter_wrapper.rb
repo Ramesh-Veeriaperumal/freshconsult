@@ -30,7 +30,6 @@ class TwitterWrapper
     @twitter_handle.access_token, @twitter_handle.access_secret = @auth.access_token.token, @auth.access_token.secret
     @twitter_handle.account_id = @account.id
     set_twitter_user   
-       
   end
   
   def set_twitter_user
@@ -38,13 +37,7 @@ class TwitterWrapper
     twitter = Twitter::Base.new @auth
     cred = twitter.verify_credentials
     twitter_id = cred.id_str
-    screen_name = cred.screen_name        
-    @user = @account.all_users.find_by_twitter_id(screen_name)   
-    if @user.blank?
-       @user = @account.users.new          
-       @user.signup!({:user => {:twitter_id =>screen_name , :name => screen_name , :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}})
-    end            
-    @twitter_handle.user = @user
+    @twitter_handle.screen_name = cred.screen_name   
     @twitter_handle.twitter_user_id = twitter_id.to_i()
     @twitter_handle
   end

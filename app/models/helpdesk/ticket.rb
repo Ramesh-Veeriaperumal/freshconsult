@@ -319,7 +319,8 @@ end
           @requester = account.all_users.find_by_twitter_id(twitter_id)
           if @requester.nil?
             @requester = account.users.new          
-            @requester.signup!({:user => {:twitter_id =>twitter_id , :name => twitter_id , :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}})
+            @requester.signup!({:user => {:twitter_id =>twitter_id , :name => twitter_id ,
+            :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}})
           end        
           self.requester = @requester
         end

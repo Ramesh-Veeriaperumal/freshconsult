@@ -8,15 +8,15 @@ class Social::TwitterHandlesController < ApplicationController
     c.requires_permission :manage_forums
   end
   
-  include HelpdeskControllerMethods 
+  #include HelpdeskControllerMethods 
   
   
   
   prepend_before_filter :load_product, :only => [:signin,:authdone]
   before_filter :load_main_product, :only => [:index]
   before_filter :build_item, :only => [:signin,:authdone]
-  before_filter :load_item,  :only => [:tweet , :edit , :update, :search]       
-  before_filter :twitter_wrapper , :except => [:create_twicket]
+  before_filter :load_item,  :only => [:tweet , :edit , :update, :search,:destroy]       
+  before_filter :twitter_wrapper , :only => [:signin,:authdone]
  
 
   def signin
@@ -45,9 +45,14 @@ class Social::TwitterHandlesController < ApplicationController
     end
   end
   
+  def destroy
+    @item.destroy   
+    flash[:notice] = "Twitter account is deleted!"
+    redirect_back_or_default redirect_url
+  end
+  
   def show_time_lines
      @tweets = @wrapper.get_twitter 
-     logger.debug "The time line is :: #{@tweets.inspect}"
   end
 
   def tweet
@@ -63,7 +68,6 @@ class Social::TwitterHandlesController < ApplicationController
   
  
   def update
-    logger.debug "Inside update :: #{params.inspect} and item :: #{@item.inspect}"
     @item.search_keys = params[:search_keys_string].split(",")
     if @item.update_attributes(params[:social_twitter_handle])    
       flash[:notice] = I18n.t(:'flash.general.update.success', :human_name => human_name)
@@ -119,7 +123,7 @@ class Social::TwitterHandlesController < ApplicationController
   end
   
   def load_product
-    @current_product = current_account.products.find(params[:product_id])
+    @current_product = current_account.all_email_configs.find(params[:product_id])
   end  
   
   def build_item
