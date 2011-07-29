@@ -268,7 +268,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def autoreply     
-    notify_by_email EmailNotification::NEW_TICKET unless out_off_office? #Do SPAM check.. by Shan
+    notify_by_email EmailNotification::NEW_TICKET  #Do SPAM check.. by Shan
     notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_GROUP) if group_id
     notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_AGENT) if responder_id
     
@@ -276,11 +276,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     return notify_by_email(EmailNotification::TICKET_CLOSED) if (status == STATUS_KEYS_BY_TOKEN[:closed])
   end
 
-  def out_off_office?
-    TicketConstants::OUT_OF_OFF_SUBJECTS.any? { |s| subject.downcase.include?(s) }
-  end
-  
-  def out_off_office?
+  def out_of_office?
     TicketConstants::OUT_OF_OFF_SUBJECTS.any? { |s| subject.downcase.include?(s) }
   end
   
