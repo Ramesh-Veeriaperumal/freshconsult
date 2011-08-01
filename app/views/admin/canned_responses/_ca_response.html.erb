@@ -1,0 +1,10 @@
+<li class="<%=cycle('stripe', '') %>"> 
+	<div class="item_actions">
+		<%= link_to(t('delete'), admin_canned_response_path(ca_response), :method => 'delete', :confirm => t('.delete_confirm'), :class => "button" ) %>					
+		<%= link_to(t('edit')  , edit_admin_canned_response_path(ca_response), :class => "button") %> 					
+	</div>
+	<%= link_to(h(ca_response.title), edit_admin_canned_response_path(ca_response), :class => "item_info") %>								
+	<div class="info-data">
+    <%= truncate(ca_response.content, :length => 100) %>
+	</div>
+</li>

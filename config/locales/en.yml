@@ -147,15 +147,17 @@ en:
         enter_support_email_id: Your support email
         configure_email: Configure Email
         product_name: Product name
+      product:
+        email_not_verified: Email not verified  
       index: 
-        title: Products
-        email_not_verified: Email not verified
+        title: Products        
         delete_product: Are you sure you want to delete this Product?
         add_product: Add Product
-    canned_responses: 
-      new: 
-        title: Add Canned response
+    canned_responses:
+      ca_response:
         delete_confirm: Are you sure you want to delete this canned response?
+      new: 
+        title: Add Canned response        
       edit: 
         title: Edit Canned response
       form: 
@@ -958,7 +960,7 @@ en:
     add_note: Add note
     monitor_btn_title: Monitor this ticket
     canned_responses: 
-      insert_ca_response: Insert Canned Response
+      insert_ca_response: Canned Response
       insert_ca_resp_tip: Insert this canned response
     split_ticket: Split as new Ticket
     flag_spam: Flag Spam
@@ -1214,3 +1216,6 @@ en:
       quarterly: Quarterly
       monthly: Monthly
       sixmonth: Half Yearly
+  no_message:
+    canned_responses: No canned responses available.
+    products: You have not created any product yet.

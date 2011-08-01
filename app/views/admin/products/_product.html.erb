@@ -1,0 +1,31 @@
+<li>
+  <div class="item_actions">
+    <%= link_to(t('edit'), edit_admin_product_path(product), :class => "button") %>
+    <%= link_to(t('delete'), admin_product_path(product), :method => 'delete', :confirm => t(".delete_product"), :class => "button" ) %>
+  </div>
+  <table>
+    <tr>
+      <td class="portal-logo">
+        <% if(product.portal_enabled?) %>
+          <%= image_tag ((product.portal.logo.nil?) ? "/images/fillers/logo_blank.gif" : product.portal.logo.content.url(:logo), :class => "image_logo") %>
+          <div class="color_box">
+            <span class="color_item" style="background-color:<%=portal_pref(product.portal, :header_color)%>"></span>
+            <span class="color_item" style="background-color:<%=portal_pref(product.portal, :tab_color)%>"></span>
+            <span class="color_item" style="background-color:<%=portal_pref(product.portal, :bg_color)%>"></span>
+          </div>
+        <% else %>
+          <%= image_tag ("/images/fillers/logo_blank.gif", :class => "image_logo") %>
+        <% end %>
+      </td>
+      <td class="portal-text">
+        <%= link_to(product.name, edit_admin_product_path(product), :class => "big-text") %>
+        <%= content_tag(:div, product.reply_email, :class => "text") %>
+        <%= link_to(product.portal.portal_url, product.portal.portal_url, {:class => "text", :target => "_blank"}) if(product.portal_enabled?) %>
+        <div class="not-verified">
+          <%= content_tag (:span, t(".email_not_verified"), :class => "inactive_email custom-tip-top", :title => t('email_configs.unverified_info1')) unless product.active? %>
+					<%= link_to(t("email_configs.send_verification_email"), deliver_verification_admin_email_config_path(product), :class => "slim-button")  unless product.active?  %>                
+        </div>
+      </td>
+    </tr>
+  </table>
+</li>

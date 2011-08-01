@@ -1,12 +1,12 @@
 /* Theme Colors and layout Defaults */
 /* Used suggestions on all examples */
 div.autocomplete ul {
-  background: #EEE;
   list-style-type: none;
   position: absolute;
   z-index: 99999;
   padding: 0px;
   margin: 0px;
+  width: 100%;
 }
 
 div.autocomplete ul li {
