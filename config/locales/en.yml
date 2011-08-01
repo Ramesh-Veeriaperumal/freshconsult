@@ -97,7 +97,11 @@ en:
     recent: Recent
     popular: Popular
   payment_info: Payment information
-  admin: 
+  admin:
+    supervisor_rules:
+      index:
+        help_title: Supervisor
+        title: Supervisor - Rules
     shared:
       filter_jsinit:
         insert_placeholder: Insert Placeholder
@@ -179,6 +183,7 @@ en:
         agent: Agents
         feedback: Feedback widget
         dispatcher: Dispatch'r
+        supervisor: Supervisor
         sla: SLA Policies
         ticket-fields: Ticket Fields
         remote-authentication: Remote Authentication
