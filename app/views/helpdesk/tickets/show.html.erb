@@ -74,7 +74,16 @@
       jQuery('#custom_ticket_form').validate(); 
     });
 
-    function show_canned_response(){ jQuery("#canned_response_list").show(); }
+    function show_canned_response(ticket_id){
+      jQuery("#canned_response_container")
+        .show().addClass("loading");
+      jQuery("#canned_response_list")
+        .load("/helpdesk/tickets/canned_reponse/"+ticket_id, function(){
+          jQuery("#canned_response_container")
+            .removeClass("loading");
+        });
+        
+    }
         
     jQuery("#Merge").dialog2();
 
@@ -97,6 +106,22 @@
 						.trigger("keydown");
 			}
 		}
+		
+		function getCannedResponse(ticket_id,ca_resp_id){
+  	  jQuery("#canned_response_container").addClass("loading")
+  		jQuery.ajax({	type: 'POST',
+  						url: '/helpdesk/tickets/get_ca_response_content/'+ticket_id+'?ca_resp_id='+ca_resp_id,
+  						contentType: 'application/text',
+  						async: false,						
+  						success: function(data){		
+  									insertIntoConversation(data);
+  							    jQuery("#canned_response_list")
+  							      .removeClass("loading")
+  							      .hide(300);
+  								}
+  						});
+  		return true;
+  	}
     
   <% end %>
 <% end %>
@@ -237,7 +262,12 @@
 			</div>
 			<div style="position:relative;">
 				<% if @item.requester %>				
-				  <%= render :partial => "helpdesk/tickets/components/canned_responses" %>
+				  <div class="canned-response-menu" id="canned_response_container" style="display:none;"> 
+            <div>
+              <%= link_to("Add Canned response", new_admin_canned_response_path, :target => "_blank", :class => "button") if(current_user.admin?) %>
+            </div>
+            <div id="canned_response_list"></div>
+				  </div>
 					<%= render(:partial => '/helpdesk/shared/note_form', :locals => { :id => 'add-note',	:cntid => "cnt-note", :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
 					<%= render(:partial => '/helpdesk/shared/reply_form', :locals => { :id => 'send-email', :cntid => 'cnt-reply', :note => [@ticket, Helpdesk::Note.new(:private => false)] }) %>  				
 				<% else %>

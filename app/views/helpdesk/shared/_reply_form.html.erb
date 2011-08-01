@@ -7,7 +7,7 @@
               <a href="javascript:void(0)" onclick="showHideCc(this)" class="slim-button" >
                 <%= (@ticket.cc_email.blank?)? t(".addcc"): t(".removecc") %>
               </a>
-              <%= link_to_function( t(:'ticket.canned_responses.insert_ca_response') + " &raquo;", "show_canned_response()", :class => "slim-button insert-canned-response") %>
+              <%= link_to_function( t(:'ticket.canned_responses.insert_ca_response') + " &raquo;", "show_canned_response(#{@ticket.id})", :class => "slim-button insert-canned-response") %>
             </div>
             <%= content_tag( :h3, t("ticket.reply_form.form_title"), :class => "title" ) %>
             <%= f.label(:reply_email, "From:", :class => "caption" ) %>
@@ -32,15 +32,14 @@
                                                                 });                                                
                                                                 callback(choices);
                                                               } });
-                  }
-
+                                                            }
                   var cachedBackend = new Autocompleter.Cache(lookup, {choices: 10});
                   var cachedLookup = cachedBackend.lookup.bind(cachedBackend);
                 </script>
-                  <input type="text" id="cc_emails" name="cc_emails" />
-                  <script type="text/javascript" charset="utf-8">
-                    new Autocompleter.MultiValue("cc_emails", cachedLookup, $A(<%= @ticket.cc_email.map{|item|[item, item]}.to_json unless @ticket.cc_email.blank? %>), {frequency: 0.1, acceptNewValues: true});
-                  </script>
+                <input type="text" id="cc_emails" name="cc_emails" />
+                <script type="text/javascript" charset="utf-8">
+                  new Autocompleter.MultiValue("cc_emails", cachedLookup, $A(<%= @ticket.cc_email.map{|item|[item, item]}.to_json unless @ticket.cc_email.blank? %>), {frequency: 0.1, acceptNewValues: true});
+                </script>
             </div>
         </li>
         <li class="inline-field field">
