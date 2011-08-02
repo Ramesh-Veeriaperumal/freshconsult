@@ -97,7 +97,15 @@ en:
     recent: Recent
     popular: Popular
   payment_info: Payment information
-  admin: 
+  admin:
+    supervisor_rules:
+      index:
+        help_title: Supervisor
+        title: Supervisor - Rules
+      new:
+        title: Supervisor - New Rule
+      edit:
+        title: Supervisor - Edit Rule
     shared:
       filter_jsinit:
         insert_placeholder: Insert Placeholder
@@ -181,6 +189,7 @@ en:
         agent: Agents
         feedback: Feedback widget
         dispatcher: Dispatch'r
+        supervisor: Supervisor
         sla: SLA Policies
         ticket-fields: Ticket Fields
         remote-authentication: Remote Authentication
@@ -403,6 +412,8 @@ en:
   username: Username
   reply: reply
   is_not: Is not
+  less_than: Less than
+  greater_than: Greater than
   feedbackwidget_bgcolor: Background Color
   day: 1 Day
   current_plan: Current Plan
@@ -928,6 +939,17 @@ en:
     sort_by: Sort by
     restore_btn_title: Restore this ticket from trash
     subject: Subject
+    created_at: Hours since created
+    opened_at: Hours since opened
+    pending_since: Hours since pending
+    resolved_at: Hours since resolved
+    closed_at: Hours since closed
+    first_assigned_at: Hours since first assigned
+    assigned_at: Hours since assigned
+    requester_responded_at: Hours since requester responded
+    agent_responded_at: Hours since agent responded
+    first_response_due: Hours since first response due
+    due_by: Hours since ticket overdue
     recent_tickets: Recent tickets
     unflag_spam: Not Spam
     pick_up: Pick Up
