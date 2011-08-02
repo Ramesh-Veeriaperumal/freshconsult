@@ -185,7 +185,7 @@ Autocompleter.MultiValue = Class.create({
     this.choicesHolderList = new Element('ul');
     this.choicesHolder = new Element('div').update(this.choicesHolderList);
     this.choicesHolder.className = 'autocomplete';
-    this.choicesHolder.style     = 'position: absolute;';
+    this.choicesHolder.style.position = 'absolute';
     this.holder.insert({after: this.choicesHolder});
     this.choicesHolder.hide();
     
