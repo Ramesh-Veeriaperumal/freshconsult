@@ -1,10 +1,11 @@
 module Reports::ConstructReport
   
-  def tkts_by_status(tkts)
+  def tkts_by_status(tkts,info)
    data = {}
    tkts.each do |tkt|
     status_hash = {}
-    responder = tkt.responder.blank? ? "Unassigned" : tkt.responder.email
+    info_val = info.eql?("responder") ? "email" : "name"
+    responder = tkt.send("#{info}").blank? ? "Unassigned" : tkt.send("#{info}").send("#{info_val}")
     if data.has_key?(responder)
       status_hash = data.fetch(responder)
     end

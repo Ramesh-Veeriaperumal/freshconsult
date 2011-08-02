@@ -1,10 +1,10 @@
-<h1>Reporting</h1>
+<h1>Reporting - Agents</h1>
 
 <br>
 
 <h1>Values wrt status</h1>
 <br>
-<%=@tkts_by_status.to_json%>
+<%=@agts_tkts_by_status.to_json%>
 
 <br>
 <br>
@@ -12,7 +12,7 @@
 
 <h1>Values wrt resolution time</h1>
 <br>
-<%=@tkts_res_by_time.to_json%>
+<%=@agts_tkts_res_by_time.to_json%>
 
 <br>
 <br>
@@ -20,4 +20,31 @@
 
 <h1>Values wrt overdue tkts</h1>
 <br>
-<%=@tkts_over_due.to_json%>
+<%=@agts_tkts_over_due.to_json%>
+
+<br>
+<h1>Reporting - Groups</h1>
+
+<br>
+
+<h1>Values wrt status</h1>
+<br>
+<%=@grps_tkts_by_status.to_json%>
+
+<br>
+<br>
+<br>
+
+<h1>Values wrt resolution time</h1>
+<br>
+<%=@grps_tkts_res_by_time.to_json%>
+
+<br>
+<br>
+<br>
+
+<h1>Values wrt overdue tkts</h1>
+<br>
+<%=@grps_tkts_over_due.to_json%>
+
+
