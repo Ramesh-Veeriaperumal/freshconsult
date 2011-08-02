@@ -2061,7 +2061,8 @@ Element.Methods = {
   },
 
   getOffsetParent: function(element) {
-    if (element.offsetParent) return $(element.offsetParent);
+    // if (element.offsetParent) return $(element.offsetParent);
+    if (element.offsetParent  && Element.visible(element)) return $(element.offsetParent);
     if (element == document.body) return $(element);
 
     while ((element = element.parentNode) && element != document.body)
