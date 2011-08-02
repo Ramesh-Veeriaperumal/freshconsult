@@ -4,15 +4,7 @@
 </div>
 <h3 class="title"><%=t('.title')%></h3>
 <div>	
-	<ul class="admin_list" id="normal">
-		<% @ca_responses.each do |ca_response| %>
-			<li class="<%=cycle('stripe', '') %>"> 
-				<div class="item_actions">
-					<%= link_to(t('delete'), admin_canned_response_path(ca_response), :method => 'delete', :confirm => t('admin.canned_response.index.delete_confirm'), :class => "button" ) %>					
-					<%= link_to(t('edit')  , edit_admin_canned_response_path(ca_response), :class => "button") %> 					
-				</div>
-				<%= link_to(h(ca_response.title), edit_admin_canned_response_path(ca_response), :class => "item_info") %>								
-			</li>
-		<% end %>
+	<ul class="admin_list">
+	  <%= each_or_message("ca_response", @ca_responses, t("no_message.canned_responses")) %>
 	</ul>
 </div>

@@ -550,6 +550,10 @@ body h5{
 					}
 				}
 			}
+			.ticketdetails{
+			   p{ margin-bottom: 12px; }
+			   br{ display:none; }
+			}
 			.min_height{
 				@include min-height(100px);
 			}

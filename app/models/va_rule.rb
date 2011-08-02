@@ -10,6 +10,8 @@ class VARule < ActiveRecord::Base
   
   belongs_to :account
   
+  named_scope :disabled, :conditions => { :active => false }
+  
   acts_as_list
   
   # scope_condition for acts_as_list

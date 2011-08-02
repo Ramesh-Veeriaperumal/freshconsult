@@ -94,9 +94,9 @@
   width: 100%;
 }
 .ie6 .ui-form li.dropdown, .ie6 .ui-form li.small, .ie6 .ui-form li.dropdown_blank, .ie7 .ui-form li.dropdown, .ie7 .ui-form li.small, .ie7 .ui-form li.dropdown_blank {
-  padding-left: 4%;
-  padding-right: 4%;
-  width: 50%;
+  padding-left: 2%;
+  padding-right: 2%;
+  width: 48%;
 }
 .ie6 .ui-form li.checkbox input, .ie7 .ui-form li.checkbox input {
   margin: 0px;

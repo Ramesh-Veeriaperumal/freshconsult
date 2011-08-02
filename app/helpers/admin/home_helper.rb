@@ -19,39 +19,30 @@ module Admin::HomeHelper
   
   def admin_pref_links
     admin_links = [
-                    [ t(".everything_helpdesk"), [
-                                    ['/account/edit',               'rebranding'              ],
-                                    ['/admin/email_configs',        'email-settings'          ],
-                                    ['/admin/email_notifications',  'email-notifications'     ],
-                                    ['/ticket_fields',              'ticket-fields'           ],
-                                    ['/helpdesk/sla_policies',      'sla'                     ],
-                                    ['/admin/business_calendars',   'business-hours',   feature?(:business_hours)        ],
-                                    ['/admin/va_rules',             'dispatcher'              ],
-                                    ['/admin/automations',          'scenario',         feature?(:scenario_automations)  ],
-                                    ['/admin/canned_responses',     'canned-response'         ]
-                    ]],
-                    [ t(".everything_else"), [
-                                    ['/account',                    'account-settings'  , current_user.account_admin?      ],
-                                    ['/admin/products',             'multi-product',    feature?(:multi_product)  ],
-                                    ['/admin/portal',               'customer-portal'         ],
-                                    ['/admin/security',             'remote-authentication'   ],
-                                    ['/admin/zip_readers',          'import'                  ],
-                                    ['/admin/widget_config',        'feedback'                ],
-                                    ['/agents',                     'agent'                   ],
-                                    ['/groups',                     'group'                   ]
-                                
-                    ]]
-
-                    # [ "People & Roles", [
-                    #                 ['/agents',   'agent' ],
-                    #                 ['/groups',   'group' ]
-                    # ]],
-                    # [ "Account", [
-                    #                 ['/account',            'account-settings' ],
-                    #                 ['/admin/security',     'remote-authentication' ],
-                    #                 ['/admin/zip_readers',  'import' ]
-                    # ]]
-                  ]
+      [ t(".everything_helpdesk"), [
+          ['/account/edit',               'rebranding'              ],
+          ['/admin/email_configs',        'email-settings'          ],
+          ['/admin/email_notifications',  'email-notifications'     ],
+          ['/ticket_fields',              'ticket-fields'           ],
+          ['/helpdesk/sla_policies',      'sla'                     ],
+          ['/admin/business_calendars',   'business-hours', feature?(:business_hours) ],
+          ['/admin/va_rules',             'dispatcher'              ],
+          ['/admin/supervisor_rules',     'supervisor'              ],
+          ['/admin/automations',          'scenario',       feature?(:scenario_automations) ],
+          ['/admin/canned_responses',     'canned-response'         ]
+          ]],
+        
+      [ t(".everything_else"), [
+          ['/account',                    'account-settings', current_user.account_admin? ],
+          ['/admin/products',             'multi-product',    feature?(:multi_product)  ],
+          ['/admin/portal',               'customer-portal'         ],
+          ['/admin/security',             'remote-authentication'   ],
+          ['/admin/zip_readers',          'import'                  ],
+          ['/admin/widget_config',        'feedback'                ],
+          ['/agents',                     'agent'                   ],
+          ['/groups',                     'group'                   ]
+        ]]
+    ]
 
     admin_html = 
       admin_links.map do |group|

@@ -188,7 +188,7 @@ ul.activityfeed li .activity_time {
 }
 .ui-list_with_icon li {
   padding-left: 14px;
-  background: url('/images/symbols/request_nav_seperator.gif?1309788881') no-repeat 3px 9px;
+  background: url('/images/symbols/request_nav_seperator.gif?1311844442') no-repeat 3px 9px;
   list-style-type: none;
 }
 .ui-list_with_icon li {
@@ -783,6 +783,12 @@ body h5 {
 }
 .request_details div.description .details .ui-form .button-container {
   width: 93%;
+}
+.request_details div.description .ticketdetails p {
+  margin-bottom: 12px;
+}
+.request_details div.description .ticketdetails br {
+  display: none;
 }
 .request_details div.description .min_height {
   min-height: 100px;
@@ -2458,7 +2464,7 @@ h4.border_title {
 }
 .solution-list .odd ul li, .solution-list .even ul li {
   padding-left: 14px;
-  background: url('/images/symbols/request_nav_seperator.gif?1309788881') no-repeat 3.5px 3.5px;
+  background: url('/images/symbols/request_nav_seperator.gif?1311844442') no-repeat 3.5px 3.5px;
   list-style-type: none;
 }
 .solution-list .odd li, .solution-list .even li {

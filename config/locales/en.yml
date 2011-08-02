@@ -97,7 +97,15 @@ en:
     recent: Recent
     popular: Popular
   payment_info: Payment information
-  admin: 
+  admin:
+    supervisor_rules:
+      index:
+        help_title: Supervisor
+        title: Supervisor - Rules
+      new:
+        title: Supervisor - New Rule
+      edit:
+        title: Supervisor - Edit Rule
     shared:
       filter_jsinit:
         insert_placeholder: Insert Placeholder
@@ -143,15 +151,17 @@ en:
         enter_support_email_id: Your support email
         configure_email: Configure Email
         product_name: Product name
+      product:
+        email_not_verified: Email not verified  
       index: 
-        title: Products
-        email_not_verified: Email not verified
+        title: Products        
         delete_product: Are you sure you want to delete this Product?
         add_product: Add Product
-    canned_responses: 
-      new: 
-        title: Add Canned response
+    canned_responses:
+      ca_response:
         delete_confirm: Are you sure you want to delete this canned response?
+      new: 
+        title: Add Canned response        
       edit: 
         title: Edit Canned response
       form: 
@@ -179,6 +189,7 @@ en:
         agent: Agents
         feedback: Feedback widget
         dispatcher: Dispatch'r
+        supervisor: Supervisor
         sla: SLA Policies
         ticket-fields: Ticket Fields
         remote-authentication: Remote Authentication
@@ -401,6 +412,8 @@ en:
   username: Username
   reply: reply
   is_not: Is not
+  less_than: Less than
+  greater_than: Greater than
   feedbackwidget_bgcolor: Background Color
   day: 1 Day
   current_plan: Current Plan
@@ -926,6 +939,17 @@ en:
     sort_by: Sort by
     restore_btn_title: Restore this ticket from trash
     subject: Subject
+    created_at: Hours since created
+    opened_at: Hours since opened
+    pending_since: Hours since pending
+    resolved_at: Hours since resolved
+    closed_at: Hours since closed
+    first_assigned_at: Hours since first assigned
+    assigned_at: Hours since assigned
+    requester_responded_at: Hours since requester responded
+    agent_responded_at: Hours since agent responded
+    first_response_due: Hours since first response due
+    due_by: Hours since ticket overdue
     recent_tickets: Recent tickets
     unflag_spam: Not Spam
     pick_up: Pick Up
@@ -953,7 +977,7 @@ en:
     add_note: Add note
     monitor_btn_title: Monitor this ticket
     canned_responses: 
-      insert_ca_response: Insert Canned Response
+      insert_ca_response: Canned Response
       insert_ca_resp_tip: Insert this canned response
     split_ticket: Split as new Ticket
     flag_spam: Flag Spam
@@ -1209,3 +1233,6 @@ en:
       quarterly: Quarterly
       monthly: Monthly
       sixmonth: Half Yearly
+  no_message:
+    canned_responses: No canned responses available.
+    products: You have not created any product yet.

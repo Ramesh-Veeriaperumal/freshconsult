@@ -3,13 +3,13 @@
 <% form_for @item, :html => {:multipart => true, :id => "NewTicket" } do |f| %>
   <ul class="ui-form">  
     <%= render :partial => "ticket_form", :object => f, :locals => { :is_edit => false } %>
-  	<li>
-			<%= render ( :partial => "/helpdesk/shared/attachment_form" ) %>
-		</li>
+    <li>
+      <%= render ( :partial => "/helpdesk/shared/attachment_form" ) %>
+    </li>
   </ul>
   <div class="button-container">
-  	<%= f.submit t('create'), :class => "uiButton" %>
-  	<%= submit_tag t('save_and_create'), :name => "save_and_create" , :class => "uiButton" %>
+    <%= f.submit t('create'), :class => "uiButton" %>
+    <%= submit_tag t('save_and_create'), :name => "save_and_create" , :class => "uiButton" %>
     <%= link_to t('cancel'), (@item.new_record? ? {:action => 'index'} : @item ), :class => "uiButton" %>
   </div>
-<% end %>  
+<% end %>

@@ -79,8 +79,8 @@ textarea.smallpara{
 	height:50px;
 }
 	
-input:focus, textarea:focus{ border-color:$tab_color !important; }
-input:focus, select:focus, textarea:focus{ @include shadows($tab_color, 0, 0, 3px);}
+/*input:focus, textarea:focus{ border-color:$tab_color !important; }
+input:focus, select:focus, textarea:focus{ @include shadows($tab_color, 0, 0, 3px);}*/
 
 #header_search{
 	border:0px;
@@ -1276,7 +1276,7 @@ table.summary-report{
 	@include clearfix;
 	position:relative;
 	z-index:10; 
-	margin:1px 0px 0px 3px;
+	margin:0px 0px 0px 3px;
 	float:right; 
 }
 
@@ -1285,7 +1285,7 @@ a.new_ticket, .nav_search{
 }
 
 a.new_ticket, .nav_search div.search_bar{
-	border:1px solid darken($tab_color, 8%);
+	border:2px solid darken($tab_color, 8%);
 } 
  
 a.new_ticket{
@@ -1456,13 +1456,13 @@ a.new_ticket:hover{
 .canned-response-menu.loading{
    background-image:url('/images/load.gif');
    background-repeat:no-repeat;
-   background-position: 8px 8px;
+   background-position: center 8px;
 }
 .canned-response-menu{
    border:1px solid #cfcfcf;
    background-color:#ffffff;
    @include shadows( rgba(0, 0, 0, 0.2), 0px, 2px, 4px);
-   padding:30px 6px 16px 6px;
+   padding:6px 6px 16px 6px;
    width:600px;
    position:absolute;
    z-index:1000;

@@ -243,7 +243,7 @@
       }
 
       function hideDialog(){ 
-         jQuery("#CustomFieldsDialog").css({"left":-999999});
+         jQuery("#CustomFieldsDialog").css({"visibility":"hidden"});
          dialogHidden = true;
       }
 
@@ -439,7 +439,7 @@
             });
 
          if (dialogHidden) {
-            $("#CustomFieldsDialog").show("slide", { direction: "left" }, 500);
+            $("#CustomFieldsDialog").show().css("visibility", "visible")
             dialogHidden = false;
          }
       };
