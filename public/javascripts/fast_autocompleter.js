@@ -16,7 +16,7 @@ Autocompleter.Json = Class.create(Autocompleter.Base, {
     this.updateChoices('<ul>' + choices.slice(0, this.options.choices).map(this.jsonChoiceToListChoice.bind(this)).join('') + '</ul>');
   },
   
-  jsonChoiceToListChoice: function(choice, mark) {
+  jsonChoiceToListChoice: function(choice, mark) { 
     return '<li>' + choice.escapeHTML() + '</li>';
   }
 });
@@ -165,7 +165,7 @@ Autocompleter.MultiValue = Class.create({
           update.style.position = 'absolute';
           try {
             // To be changed later
-            //update.clonePosition(element, {setHeight: false, offsetTop: element.offsetHeight});            
+            update.clonePosition(element, {setHeight: false, offsetTop: element.offsetHeight});            
           } catch(e) {
           }
         }

@@ -4,6 +4,7 @@
 /* Used suggestions on all examples */
 $choicebg: #DEE7F8;
 
+div.autocomplete{  position:relative;  }
 div.autocomplete ul {
   list-style-type: none;
   position:absolute;
@@ -16,8 +17,7 @@ div.autocomplete ul {
 div.autocomplete ul li {
   background: #EEE;
   border: 1px solid #CCC;
-  border-top: none;
-  font-size: 13px;
+  border-top: none; 
   padding: 4px 12px;
   font-family: "Lucida Grande","Verdana";
   font-size: 11px;

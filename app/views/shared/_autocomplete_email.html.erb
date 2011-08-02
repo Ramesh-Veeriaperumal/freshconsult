@@ -16,12 +16,7 @@
 </script>
 
 <%= text_field object_name, :email, :value => (@item.requester.email if @item.requester), :class => "required email" %>
-<div id="<%=object_name%>_email_choices" class="autocomplete">
-  <ul>
-    <li class="selected">spidy.venom@gmail.com</li>
-    <li>Williamson@gmail.com</li>
-  </ul>
-</div>
+<div id="<%=object_name%>_email_choices" class="autocomplete"></div>
 
 <script type="text/javascript" charset="utf-8">
   new Autocompleter.Json("<%=object_name%>_email", "<%=object_name%>_email_choices", cachedLookup, {});
