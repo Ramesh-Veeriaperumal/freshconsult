@@ -1,23 +1,28 @@
-<h1>Reporting</h1>
-
-<br>
-
+<% content_for :sidebar do -%><%- end %>
+<h3 class="title">Reporting</h3>
+<div class="grid">
+	<label class="caption">Agent ticket summary</label>
+	<table width="100%">
+		<tr>
+			<th>Agent</th>
+			<th>Total tickets</th>
+			<th>Open</th>
+			<th>Closed</th>
+			<th>Resolved on time</th>
+			<th>Overdue</th>
+			<th>Resolved on First Contact(FCR)</th>
+			<th>FCR %</th>
+		</tr>
+		<% @tkts_by_status.each do |agent| %>
+		<% end %>
+	</table>
+	
+</div>
 <h1>Values wrt status</h1>
-<br>
 <%=@tkts_by_status.to_json%>
 
-<br>
-<br>
-<br>
-
 <h1>Values wrt resolution time</h1>
-<br>
 <%=@tkts_res_by_time.to_json%>
 
-<br>
-<br>
-<br>
-
 <h1>Values wrt overdue tkts</h1>
-<br>
 <%=@tkts_over_due.to_json%>

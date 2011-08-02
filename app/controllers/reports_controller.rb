@@ -1,16 +1,17 @@
-class ReportsController < Admin::AdminController
+class ReportsController < ApplicationController
   
   include Reports::ConstructReport
+  
+  before_filter { |c| c.requires_permission :manage_users }
   
   def index
    rep_tkts = fetch_tkts_by_status
    @tkts_by_status = tkts_by_status(rep_tkts)
    
    @tkts_res_by_time = fetch_tkt_res_on_time
-   @tkts_over_due = fetch_overdue_tkts
-   
+   @tkts_over_due = fetch_overdue_tkts   
   end
- 
+  
  protected
  
  def fetch_tkts_by_status

@@ -840,7 +840,8 @@ en:
     new_ticket: New Ticket
     submit_a_ticket: Submit a ticket
     login: login
-    tabs: 
+    tabs:
+      reports: Reports
       dashboard: Dashboard
       customers: Customers
       admin: Admin
