@@ -1,7 +1,12 @@
 <% content_for :sidebar do -%><%- end %>
-<h3 class="title">Reporting</h3>
-<div class="grid">
-	<label class="caption">Agent ticket summary</label>
+<h3 class="title">
+	Agent ticket summary
+</h3>
+<div class="intro">
+	Last 30 Days
+</div>
+
+<div class="grid report">
 	<table width="100%">
 		<tr>
 			<th>Agent</th>
@@ -13,16 +18,45 @@
 			<th>Resolved on First Contact(FCR)</th>
 			<th>FCR %</th>
 		</tr>
-		<% @tkts_by_status.each do |agent| %>
-		<% end %>
-	</table>
-	
+		<tr class="odd">
+			<td>Kiran</td>
+			<td>200</td>
+			<td>10</td>
+			<td>190</td>
+			<td>150</td>
+			<td>40</td>
+			<td>90</td>
+			<td>47</td>
+		</tr>
+		<tr class="even">
+			<td>Shan</td>
+			<td>216</td>
+			<td>6</td>
+			<td>210</td>
+			<td>168</td>
+			<td>42</td>
+			<td>120</td>
+			<td>57</td>
+		</tr>
+		<tr class="odd">
+			<td>Girish</td>
+			<td>108</td>
+			<td>8</td>
+			<td>100</td>
+			<td>70</td>
+			<td>30</td>
+			<td>50</td>
+			<td>50</td>
+		</tr>
+		<tr class="even">
+			<td>Vijay</td>
+			<td>348</td>
+			<td>8</td>
+			<td>340</td>
+			<td>308</td>
+			<td>32</td>
+			<td>205</td>
+			<td>60</td>
+		</tr>
+	</table>	
 </div>
-<h1>Values wrt status</h1>
-<%=@tkts_by_status.to_json%>
-
-<h1>Values wrt resolution time</h1>
-<%=@tkts_res_by_time.to_json%>
-
-<h1>Values wrt overdue tkts</h1>
-<%=@tkts_over_due.to_json%>

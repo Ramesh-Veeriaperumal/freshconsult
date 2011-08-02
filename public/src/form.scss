@@ -575,7 +575,7 @@ input.time{
 	label.caption{
 	   font-size:13px;
 	   padding:8px 10px;
-	   background:#efefaf;
+	   background:#fefeee;
 	   font-weight:bold;
 	   border-bottom:1px solid #afafaf;
 	   color:#000000;
@@ -635,6 +635,15 @@ input.time{
 			padding:0px 10px 10px 0px;
 		}
 	}
+}
+
+.report table{
+   tr.odd td{
+      background:#ffffff;
+   }
+   tr.even td{
+      background:#f8f8f8;
+   }
 }
 
 .grid{
