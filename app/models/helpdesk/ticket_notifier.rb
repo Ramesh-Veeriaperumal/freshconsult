@@ -13,7 +13,7 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
           }) unless i_receips.nil?
     end
     
-    if e_notification.requester_notification?
+    if e_notification.requester_notification? and !ticket.out_of_office?
       r_template = Liquid::Template.parse(e_notification.requester_template)
       deliver_email_notification({ :ticket => ticket,
              :notification_type => notification_type,
@@ -23,6 +23,8 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
           })
     end
   end
+  
+  
   
   def self.internal_receips(notification_type, ticket)
     if(notification_type == EmailNotification::TICKET_ASSIGNED_TO_GROUP)

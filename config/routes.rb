@@ -68,6 +68,8 @@ ActionController::Routing::Routes.draw do |map|
     admin.resources :products
   end
   
+  map.resources :reports
+  
   #SAAS copy starts here
   map.with_options(:conditions => {:subdomain => AppConfig['admin_subdomain']}) do |subdom|
     subdom.root :controller => 'subscription_admin/subscriptions', :action => 'index'
