@@ -1,4 +1,5 @@
-class ReportsController < Admin::AdminController
+class ReportsController < ApplicationController
+  before_filter { |c| c.requires_permission :manage_users }
   
   include Reports::ConstructReport
   

@@ -572,6 +572,14 @@ input.time{
 	border:1px solid #cfcfcf;
 	padding:0px;
 	background:#f6f6f6;
+	label.caption{
+	   font-size:13px;
+	   padding:8px 10px;
+	   background:#fefeee;
+	   font-weight:bold;
+	   border-bottom:1px solid #afafaf;
+	   color:#000000;
+	}
 	table{
 		padding:0px; margin:0px;
 		border:0px;
@@ -627,6 +635,15 @@ input.time{
 			padding:0px 10px 10px 0px;
 		}
 	}
+}
+
+.report table{
+   tr.odd td{
+      background:#ffffff;
+   }
+   tr.even td{
+      background:#f8f8f8;
+   }
 }
 
 .grid{
