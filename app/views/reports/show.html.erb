@@ -1,0 +1,41 @@
+<% content_for :sidebar do -%><%- end %>
+<span class="floatr">
+	<%= link_to("&larr; Back to reports", reports_url, :class => "slim-button") %>
+</span>
+<h3 class="title">
+	<%= @current_report[:label] %>
+</h3>
+<div class="intro">
+	Last 30 Days
+</div>
+<div class="grid report">
+	<table width="100%">
+		<tr>
+			<th><%= @current_report[:title] %></th>
+			<th>Total tickets</th>
+			<th>Open</th>
+			<th>Closed</th>
+			<th>Resolved on time</th>
+			<th>Overdue</th>
+			<!--th>Resolved on First Contact(FCR)</th>
+			<th>FCR %</th-->
+		</tr>
+		<% @current_object.each do |obj| %>
+		<tr class="<%= cycle("odd", "even") %>">
+			<% case @current_report[:name] 
+					when "responder" %>
+						<td><%= obj.user.name_email %></td>
+						<% data = @report_data.fetch(obj.user_id, {}) %>
+			<%	when "group" %>
+						<td><%= obj.name %></td>
+						<% data = @report_data.fetch(obj.id, {}) %>	
+			<% end %>
+			<td><%= data.fetch(:tot_tkts, 0) %></td>
+			<td><%= data.fetch("Open", 0) %></td>
+			<td><%= data.fetch("Closed", 0) %></td>
+			<td><%= data.fetch(:tkt_res_on_time, 0) %></td>
+			<td><%= data.fetch(:over_due_tkts, 0) %></td>
+		</tr>
+		<% end %>
+	</table>	
+</div>
