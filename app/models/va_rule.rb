@@ -66,6 +66,20 @@ class VARule < ActiveRecord::Base
     actions.each { |a| a.trigger(evaluate_on) }
   end
   
+  def filter_query
+    query_strings = []
+    params = []
+    c_operator = (match_type.to_sym == :any ) ? ' or ' : ' and '
+    
+    conditions.each do |c|
+      c_query = c.filter_query
+      query_strings << c_query.shift
+      params = params + c_query
+    end
+    
+    query_strings.empty? ? [] : ([ query_strings.join(c_operator) ] + params)
+  end
+  
   private
     def has_actions?
       deserialize_them

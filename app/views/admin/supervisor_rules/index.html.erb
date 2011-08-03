@@ -1,8 +1,3 @@
-<% 
-  def item_actions(rule)
-    link_to(t('delete'), admin_supervisor_rule_path(rule), :method => 'delete', :confirm => 'Are you sure you want to delete this rule?', :class => "button" )
-  end
-%>
 <% content_for :sidebar do %>
 	<div class="sidepanel">
 		<h3 class="title"><%=t('.help_title')%></h3>
@@ -15,13 +10,18 @@
   <%= t('.title') %>
 <%- end %>
 
+<% content_for :page_toolbar do -%>
+  <%= link_to (t('dispatch.reorder'), "#", :id => "Reorder", :class => "uiButton") if ( @va_rules.size > 1 ) %>
+  <%= link_to t('dispatch.new_rule'), new_admin_supervisor_rule_path, :class => "uiButton"  %>
+<% end %>
+
 <% content_for :page_active_list do -%>
   <% @va_rules.each do |supervisor_rule| %>
     <% content_tag :li, :ruleid => supervisor_rule.id, :class => cycle('odd', 'even') do %>
       <div class="item_actions">
-        <%= item_actions(supervisor_rule) %>					
+        <%= link_to(t('delete'), admin_supervisor_rule_path(supervisor_rule), :method => 'delete', :confirm => 'Are you sure you want to delete this rule?', :class => "button" ) %>					
         <%= link_to(t('deactivate'), deactivate_admin_supervisor_rule_path(supervisor_rule), :method => 'put', :class => "button") %>
-        <%= link_to(t('edit'), edit_admin_supervisor_rule_path(supervisor_rule), :class => "button") %> 					
+        <%= link_to(t('edit'), edit_admin_supervisor_rule_path(supervisor_rule), :class => "button") %>
       </div>
       <%= link_to(h(supervisor_rule.name), edit_admin_supervisor_rule_path(supervisor_rule), :class => "item_info") %>
       <%= content_tag :div, truncate(h(supervisor_rule.description), :length => 80), :title => h(supervisor_rule.description)  %>
@@ -31,10 +31,10 @@
 
 <% content_for :page_reorder_list do -%>
   <% @va_rules.each do |supervisor_rule| %>
-    <li ruleid="<%=supervisor_rule.id%>"> 
+    <% content_tag :li, :ruleid => supervisor_rule.id do %>
       <span class="sort_handle"></span>
       <%= h(supervisor_rule.name) %> 
-    </li>
+    <% end %>
   <% end %>     
 <% end %>
 
@@ -43,9 +43,9 @@
     <% @inactive_rules.each do |supervisor_rule| %>
       <% content_tag :li, :ruleid => supervisor_rule.id, :class => cycle('odd', 'even') do %>
         <div class="item_actions">
-          <%= link_to(t('delete'), admin_supervisor_rule_path(supervisor_rule), :method => 'delete', :confirm => 'Are you sure you want to delete this rule', :class => "button" ) %>					
-          <%= link_to(t('activate'), activate_admin_supervisor_rule_path(supervisor_rule), :method => 'put', :class => "button") %>
-          <%= link_to(t('edit'), edit_admin_supervisor_rule_path(supervisor_rule), :class => "button") %> 					
+          <%= link_to(t('delete'), admin_supervisor_rule_path(supervisor_rule), :method => 'delete', :confirm => 'Are you sure you want to delete this rule?', :class => "button" ) %>					
+          <%= link_to(t('deactivate'), deactivate_admin_supervisor_rule_path(supervisor_rule), :method => 'put', :class => "button") %>
+          <%= link_to(t('edit'), edit_admin_supervisor_rule_path(supervisor_rule), :class => "button") %>
         </div>
         <%= link_to(h(supervisor_rule.name), edit_admin_supervisor_rule_path(supervisor_rule), :class => "item_info") %> 
       <% end %>
@@ -53,4 +53,4 @@
   <% end %>
 <% end %>
 
-<%= render :partial => "/admin/shared/page" %>
+<%= render :partial => "/admin/shared/rule_page" %>

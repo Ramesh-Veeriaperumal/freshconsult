@@ -24,4 +24,28 @@ class Va::Handlers::Text < Va::RuleHandler
     def ends_with(evaluate_on_value)
       evaluate_on_value && evaluate_on_value.downcase.ends_with?(value.downcase)
     end
+    
+    def filter_query_is
+      [ "#{condition.db_column} = ?", value ]
+    end
+    
+    def filter_query_is_not
+      [ "#{condition.db_column} != ?", value ]
+    end
+    
+    def filter_query_contains
+      [ "#{condition.db_column} like ?", "%#{value}%" ]
+    end
+    
+    def filter_query_does_not_contain
+      [ "#{condition.db_column} not like ?", "%#{value}%" ]
+    end
+    
+    def filter_query_starts_with
+      [ "#{condition.db_column} like ?", "#{value}%" ]
+    end
+    
+    def filter_query_ends_with
+      [ "#{condition.db_column} like ?", "%#{value}" ]
+    end
 end

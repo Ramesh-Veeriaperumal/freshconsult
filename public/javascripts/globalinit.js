@@ -1,7 +1,7 @@
 /*
  * @author venom
  */
-var jQ = jQuery.noConflict();
+var $J = jQuery.noConflict();
 
 (function($){
 	// Global Jquery Plugin initialisation

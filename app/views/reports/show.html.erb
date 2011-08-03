@@ -17,8 +17,8 @@
 			<th>Closed</th>
 			<th>Resolved on time</th>
 			<th>Overdue</th>
-			<!--th>Resolved on First Contact(FCR)</th>
-			<th>FCR %</th-->
+			<th>Resolved on First Contact(FCR)</th>
+			<th>FCR %</th>
 		</tr>
 		<% @current_object.each do |obj| %>
 		<tr class="<%= cycle("odd", "even") %>">
@@ -35,6 +35,8 @@
 			<td><%= data.fetch("Closed", 0) %></td>
 			<td><%= data.fetch(:tkt_res_on_time, 0) %></td>
 			<td><%= data.fetch(:over_due_tkts, 0) %></td>
+			<td><%= data.fetch(:fcr, 0) %></td>
+			<td><%= data.fetch(:fcr_per, 0) %> %</td>
 		</tr>
 		<% end %>
 	</table>	

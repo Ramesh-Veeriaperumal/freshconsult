@@ -13,7 +13,7 @@ class Helpdesk::Note < ActiveRecord::Base
   attr_accessor :nscname
   attr_protected :attachments, :notable_id
   
-  after_create :save_response_time, :update_parent, :add_activity
+  after_create :save_response_time, :update_parent, :add_activity, :update_in_bound_count
 
   named_scope :newest_first, :order => "created_at DESC"
   named_scope :visible, :conditions => { :deleted => false } 
@@ -108,6 +108,14 @@ class Helpdesk::Note < ActiveRecord::Base
       notable.updated_at = created_at
       notable.save
     end
+    
+    def update_in_bound_count
+     if incoming?
+      inbound_count = notable.notes.find(:all,:conditions => {:incoming => true}).count
+      notable.ticket_states.update_attribute(:inbound_count,inbound_count+=1)
+     end
+    end
+      
     
     def add_activity
       return unless human_note_for_ticket?
