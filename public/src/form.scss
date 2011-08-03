@@ -637,13 +637,17 @@ input.time{
 	}
 }
 
-.report table{
-   tr.odd td{
-      background:#ffffff;
-   }
-   tr.even td{
-      background:#f8f8f8;
-   }
+.report{ 
+   margin:0 -5px; 
+   table{
+      border:0px;
+      tr.odd td{
+         background:#ffffff;
+      }
+      tr.even td{
+         background:#f8f8f8;
+      }
+   }  
 }
 
 .grid{

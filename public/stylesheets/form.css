@@ -702,6 +702,12 @@ input.time {
   padding: 0px 10px 10px 0px;
 }
 
+.report {
+  margin: 0 -5px;
+}
+.report table {
+  border: 0px;
+}
 .report table tr.odd td {
   background: #ffffff;
 }
