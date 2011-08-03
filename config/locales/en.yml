@@ -747,7 +747,7 @@ en:
   subscription: 
     error: 
       lesser_agents: Your freshdesk account currently has %{agent_count} agents, you cannot subscribe to a lesser number of agents. Please delete some agents and try again.
-  activate: activate
+  activate: Activate
   feedbackwidget_text: Text
   billed_amount_per_month: You will be billed $%{amount} per month
   import_zendesk_summary: Import from zendesk summary
@@ -1042,7 +1042,7 @@ en:
   asked_on: Asked on
   this_ticket_has_been_deleted: This ticket has been deleted
   state: State
-  deactivate: deactivate
+  deactivate: Deactivate
   add_tags: Add Tag(s)
   change_to_free_info: Downgrading your plan will result in loss of functionality and data. Are you sure you want to downgrade?
   import_step1_info: Select a CSV file and click import

@@ -1,8 +1,8 @@
 /* This import applies a global reset to any page that imports this stylesheet.*/
 /* Theme Colors and layout Defaults */
 /* Importing admin icons */
-.admin-icon-sprite, .admin-icon-account-settings, .admin-icon-agent, .admin-icon-business-hours, .admin-icon-canned-response, .admin-icon-customer-portal, .admin-icon-dispatcher, .admin-icon-email-notifications, .admin-icon-email-settings, .admin-icon-feedback, .admin-icon-group, .admin-icon-import, .admin-icon-multi-product, .admin-icon-rebranding, .admin-icon-remote-authentication, .admin-icon-scenario, .admin-icon-sla, .admin-icon-ticket-fields {
-  background: url('/images/admin-icon-a9c25ee344.png') no-repeat;
+.admin-icon-sprite, .admin-icon-account-settings, .admin-icon-agent, .admin-icon-business-hours, .admin-icon-canned-response, .admin-icon-customer-portal, .admin-icon-dispatcher, .admin-icon-email-notifications, .admin-icon-email-settings, .admin-icon-feedback, .admin-icon-group, .admin-icon-import, .admin-icon-multi-product, .admin-icon-rebranding, .admin-icon-remote-authentication, .admin-icon-scenario, .admin-icon-sla, .admin-icon-supervisor, .admin-icon-ticket-fields {
+  background: url('/images/admin-icon-680c225e7c.png') no-repeat;
 }
 
 /* Ticket Show page twitter style icons */
@@ -188,7 +188,7 @@ ul.activityfeed li .activity_time {
 }
 .ui-list_with_icon li {
   padding-left: 14px;
-  background: url('/images/symbols/request_nav_seperator.gif?1311844442') no-repeat 3px 9px;
+  background: url('/images/symbols/request_nav_seperator.gif?1312204165') no-repeat 3px 9px;
   list-style-type: none;
 }
 .ui-list_with_icon li {
@@ -1318,8 +1318,12 @@ ul.admin_icons li a:hover {
   background-position: 0 -480px;
 }
 
-.admin-icon-ticket-fields {
+.admin-icon-supervisor {
   background-position: 0 -512px;
+}
+
+.admin-icon-ticket-fields {
+  background-position: 0 -544px;
 }
 
 .mark_action a, .mark_action .stamp {
@@ -1939,41 +1943,34 @@ span.sort_handle {
   border-radius: 5px 5px 5px 5px;
 }
 
-.deactivated li {
-  background: #f6f6f6;
-}
-.deactivated li a.item_info {
-  color: #666666;
-}
-
 .sortable {
-  background: #efefef;
-  border-top: 1px solid #cfcfcf;
+  background: #f5f5f5;
+  border: 1px solid #cfcfcf;
+  border-width: 1px 0px;
   padding: 2px 20px 10px 20px;
   margin: 0px -20px;
 }
-.sortable span.sort_handle {
+
+.sort-list {
+  margin: 0px -16px;
+}
+.sort-list span.sort_handle {
   margin: 0px 5px 0px 0px;
   position: relative;
-  top: -1px !important;
+  top: -3px;
 }
-.sortable .actions {
-  padding: 3px 10px 6px 3px;
-  text-align: right;
-}
-.sortable li {
+.sort-list li {
   cursor: move;
+  background: #ffffff;
   border: 1px solid #dfdfdf;
   margin: 1px 10px;
-  border-bottom-color: #bfbfbfb;
-  border-right-color: #bfbfbfb;
   font-size: 1.2em;
-  padding: 5px 5px 0px 5px;
-  -moz-border-radius: 2px 2px 2px 2px;
-  -webkit-border-radius: 2px 2px 2px 2px;
-  border-radius: 2px 2px 2px 2px;
+  padding: 8px 5px;
+  -moz-border-radius: 4px 4px 4px 4px;
+  -webkit-border-radius: 4px 4px 4px 4px;
+  border-radius: 4px 4px 4px 4px;
 }
-.sortable li.ui-sortable-placeholder {
+.sort-list li.ui-sortable-placeholder {
   border-color: #efefef;
   background-color: #efefef !important;
 }
@@ -2464,7 +2461,7 @@ h4.border_title {
 }
 .solution-list .odd ul li, .solution-list .even ul li {
   padding-left: 14px;
-  background: url('/images/symbols/request_nav_seperator.gif?1311844442') no-repeat 3.5px 3.5px;
+  background: url('/images/symbols/request_nav_seperator.gif?1312204165') no-repeat 3.5px 3.5px;
   list-style-type: none;
 }
 .solution-list .odd li, .solution-list .even li {
@@ -4120,7 +4117,7 @@ div.addReminder form label.overlabel {
 
 .admin_list, .content_list {
   list-style: none;
-  margin: 0px -20px;
+  margin: 0px -20px 10px -20px;
   padding: 0px 0px;
   border: 1px solid #f2f2f2;
   border-width: 1px 0px;
@@ -4155,7 +4152,9 @@ div.addReminder form label.overlabel {
   margin-top: -3px;
 }
 .admin_list li div, .content_list li div {
-  padding-top: 1px;
+  padding-top: 3px;
+  font-size: 1.1em;
+  padding-bottom: 5px;
 }
 .admin_list li div.item_actions, .content_list li div.item_actions {
   float: right;
@@ -4199,7 +4198,20 @@ div.addReminder form label.overlabel {
 .admin_list li a.item_info, .content_list li a.item_info {
   font-size: 1.25em;
   color: #336699;
+  color: #3e71a4;
   text-decoration: none;
+}
+.admin_list li a.item_info:visited, .content_list li a.item_info:visited {
+  color: #3e71a4;
+}
+.admin_list li a.item_info:focus, .content_list li a.item_info:focus {
+  color: #3e71a4;
+}
+.admin_list li a.item_info:hover, .content_list li a.item_info:hover {
+  color: #3e71a4;
+}
+.admin_list li a.item_info:active, .content_list li a.item_info:active {
+  color: #3e71a4;
 }
 .admin_list li input.checkbox, .content_list li input.checkbox {
   position: absolute;
@@ -4255,6 +4267,29 @@ div.addReminder form label.overlabel {
 }
 .admin_list li:hover div.item_actions, .content_list li:hover div.item_actions {
   visibility: visible;
+}
+
+.deactivated li {
+  background: #f8f8f8;
+  padding-bottom: 0px;
+}
+.deactivated li a.item_info {
+  color: #666666;
+  font-size: 1.16em;
+  padding-top: 4px;
+  display: block;
+}
+.deactivated li a.item_info:visited {
+  color: #666666;
+}
+.deactivated li a.item_info:focus {
+  color: #3e71a4;
+}
+.deactivated li a.item_info:hover {
+  color: #3e71a4;
+}
+.deactivated li a.item_info:active {
+  color: #666666;
 }
 
 .footerContent {

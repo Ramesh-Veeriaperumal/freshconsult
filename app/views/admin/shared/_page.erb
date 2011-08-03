@@ -1,0 +1,62 @@
+<script type="text/javascript"> 
+  jQuery(document).ready(function(e){
+    jQuery('div#Sortable ul.sort-list')
+      .sortable({
+        containment: "parent", 
+        tolerance: "pointer"
+      });
+
+    jQuery("#Reorder").click(function(e){
+      jQuery("#normal").hide();
+      jQuery(this).hide();
+      jQuery("#Sortable").fadeIn(300);
+    });
+
+    jQuery("#reorder_cancel").click(function(e){
+      jQuery("#Sortable").hide();
+      jQuery("#normal").fadeIn(300);
+      jQuery("#Reorder").show();
+    });
+
+    jQuery("#Reorderform").submit(function(e){
+      var position_hash = $H();
+      jQuery.each(jQuery("div#Sortable ul.admin_list li"), function(index, item){
+        var rule_id = item.getAttribute("ruleid");
+          position_hash.set(rule_id, index+1);
+      });
+      this['reorderlist'].value = position_hash.toJSON();
+    });
+    va_rules
+  });
+</script>
+
+
+<div class="pageContent">
+	<div class="floatr"> 
+		<%= link_to (t('dispatch.reorder'), "#", :id => "Reorder", :class => "uiButton") if ( @va_rules.size > 1 ) %>
+		<%= link_to t('dispatch.new_rule'), new_admin_supervisor_rule_path, :class => "uiButton"  %>
+	</div>	
+	<%= content_tag(:h3, yield(:page_title), :class => "title" )%>
+  <ul class="admin_list" id="normal">
+	  <%= yield :page_active_list %>
+  </ul>
+  <div class="sortable" id="Sortable" style="display:none;">
+    <h4 class="title"><%=t('dispatch.reorder')%></h4>
+    <% form_for :reorder, @va_rules, :url => { :action => "reorder" }, :html => { :method => :reorder, :id => "Reorderform" } do |f| %>
+      <input name="reorderlist" type="hidden" value="" />
+      <ul class="sort-list">
+        <%= yield :page_reorder_list %>
+      </ul>
+      <div class="button-container">
+        <a href="javascript:void(0)" class="uiButton" id="reorder_cancel">Cancel</a>
+        <input type="submit" class="uiButton" id="reorder_done" value="Save" />				
+      </div>
+    <% end %>
+  </div>
+  <% if yield(:page_inactive_list) %>
+	  <h4 class="title"><%=t('dispatch.inactive_rules')%></h4>
+	  <ul class="admin_list deactivated">
+      <%= yield :page_inactive_list %>    
+	  </ul>
+	<% end %>
+</div>
