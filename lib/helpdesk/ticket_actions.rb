@@ -46,8 +46,8 @@ module Helpdesk::TicketActions
   end
   
   def component
-    @ticket = current_account.tickets.find_by_id(params[:id])
-    render :partial => "helpdesk/tickets/components/#{params[:component]}", :locals => { :ticket => @ticket } 
+    @ticket = current_account.tickets.find_by_id(params[:id])   
+    render :partial => "helpdesk/tickets/components/#{params[:component]}", :locals => { :ticket => @ticket , :search_query =>params[:q] } 
   end
   
   def canned_reponse
