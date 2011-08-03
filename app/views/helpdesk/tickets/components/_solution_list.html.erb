@@ -1,0 +1,103 @@
+
+<h3 class="title"><%= t(:'ticket.suggested_solutions.title') %></h3>
+		
+<% if (@articles.size == 0) %>
+	<br /> 
+	<div>&nbsp;&nbsp;&nbsp; <%= t(:'ticket.suggested_solutions.no_result') %> </div>	
+	
+<% else %> 
+		<div class="request-list">
+			<% @articles.each do |article| %>
+			 <% unless article.nil? %>
+			 	<% article_url = solution_category_folder_article_url(article.folder.category_id,article.folder_id,article) %> 
+				<div class="item">
+					<%= link_to( "<span class='bulb'></span> <span class='private-icon'></span> #{article.excerpts.title} ", 
+								article_url, 
+								:target => "blank", 
+								:class => "item-title #{( !article.folder.visible?(current_user) ) ? 'private' : '' }",  
+								:title => truncate ( article.desc_un_html, 100) ) %>
+								
+					<div class="item-menu">
+						<ul>
+							<li><%= link_to_function t(:'ticket.suggested_solutions.insert_content'), "respondWithSol('content', '#{article.id}', '#{article_url}')", :title => t(:'ticket.suggested_solutions.insert_content_tip'), :class => "custom-tip" %></li>
+							<%if article.folder.visible?(current_user)%>
+								<li><%= link_to_function t(:'ticket.suggested_solutions.insert_url'), "respondWithSol('url', '#{article.id}', '#{article_url}')", :title => t(:'ticket.suggested_solutions.insert_url_tip'), :class => "custom-tip" %></li>
+							<%end%> 
+						</ul>
+					</div>
+				</div>
+				<% end %>
+			<% end %>
+		</div>
+	<% end %> 	
+
+
+ <!--li> 
+ 	<label for="solution_search">Didn't match anything search here :</label> 
+	<input id="solution_search" name="solution[search]" size="30" type="text" /> 
+ </li> 
+<%= link_to_function("Find", "search_solutions(#{@ticket.id})", :class => 'uiButton', :id => "AddNoteButton") %>
+<-->
+
+
+
+	<% javascript_tag do -%>
+		 function respondWithSol(select, sol_id, url){	
+			if (select == "url"){
+				insertIntoConversation(url);
+			}
+			else if(select == "none"){
+				return true;		
+			}
+			else{
+				handleSolutionDetail(sol_id);		
+			}
+		}
+
+		function handleSolutionDetail(sol_id){
+			jQuery.ajax({	type: 'POST',
+							url: '/helpdesk/tickets/get_solution_detail/'+sol_id,
+							contentType: 'application/text',
+							async: false,						
+							success: function(data){		
+										insertIntoConversation(data);
+									}
+							});
+			return true;
+		};
+
+		jQuery("div.item").live("mouseover mouseout", function(event) {
+		  if ( event.type == "mouseover" ) {
+		    jQuery(this).find(".item-menu").show();
+		  } else {
+		    jQuery(this).find(".item-menu").hide();
+		  }
+		});
+		
+		/*jQuery(document).ready(function(){
+		jQuery(".rtPanel a").bind("click", function(e){
+		
+		});
+		});*/
+		
+		
+		
+	    function search_solutions(ticket_id){
+		    var query = jQuery('#solution_search').val();					
+			jQuery("#related-solutions-div").html('');
+			jQuery("#componentlist").addClass("loading-center");
+			jQuery.ajax({	type: 'POST',
+							url: '/helpdesk/tickets/component/'+ticket_id+'?component=search_solutions&q='+query,
+							contentType: 'application/text',
+							async: false,						
+							success: function(data){		
+										jQuery("#related-solutions-div")
+                              				.append(data);
+                       					jQuery("#componentlist").removeClass("loading-center");
+									}
+							});
+			return true;
+		};
+
+
+	<%- end %>
