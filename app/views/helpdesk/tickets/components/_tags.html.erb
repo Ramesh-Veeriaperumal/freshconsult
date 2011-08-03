@@ -6,5 +6,5 @@
       <%= link_to(h(t.name), t, :class => "tag_item")  %>
     </div>
   <% end %>
-  <%= render :partial => '/helpdesk/shared/tag_search', :locals => {:action => helpdesk_ticket_helpdesk_tag_uses_path(ticket), :on_select => %{ $('tag-search-form').submit(); }, :label_text => t('ticket.tags.add_tag'), :no_result_text => t('ticket.tags.no_match') } %>
+  <%= render :partial => '/helpdesk/tags/tag_search', :locals => {:action => helpdesk_ticket_helpdesk_tag_uses_path(ticket), :on_select => %{ $('tag-search-form').submit(); }, :label_text => t('ticket.tags.add_tag'), :no_result_text => t('ticket.tags.no_match') } %>
 </div>

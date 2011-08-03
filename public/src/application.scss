@@ -85,7 +85,7 @@ ul.activityfeed li{
 	}
 	a{ 
 		@include link-colors(#3e71a4, #3e71a4, #3e71a4, #3e71a4, #3e71a4);
-	   	text-decoration:none; 
+   	text-decoration:none; 
 	}
 	.activity_time{ color:#a6a6a6; padding-top:3px;}
 }
@@ -549,6 +549,10 @@ body h5{
 						width:93%;
 					}
 				}
+			}
+			.ticketdetails{
+			   p{ margin-bottom: 12px; }
+			   br{ display:none; }
 			}
 			.min_height{
 				@include min-height(100px);
@@ -1450,59 +1454,47 @@ h4.list_title{
 }
  
 span.sort_handle{
-			position:relative;
-			float:left;
-			left:0px;
-			top:1px;
-			width:25px;
-			height:25px;
-			cursor:move;
-			background:url(/images/sort_handle.gif) no-repeat;
-			@include corners(5px);
+	position:relative;
+	float:left;
+	left:0px;
+	top:1px;
+	width:25px;
+	height:25px;
+	cursor:move;
+	background:url(/images/sort_handle.gif) no-repeat;
+	@include corners(5px);
 }
-
-.deactivated{
-	li{
-		background:#f6f6f6;
-		a.item_info{
-			color:#666666;
-			}
-	}
-}
-
 
 
 .sortable{
-	background:#efefef;
-	border-top:1px solid #cfcfcf;
+	background:#f5f5f5;
+	border:1px solid #cfcfcf;
+	border-width:1px 0px;
 	padding:2px 20px 10px 20px;
-	margin:0px -20px;
-	
+	margin:0px -20px;	
+}
+
+.sort-list{
+	margin:0px -16px;	
 	span.sort_handle{
 		margin:0px 5px 0px 0px;
 		position:relative;
-		top:-1px !important;
-	}
-	.actions{
-		padding:3px 10px 6px 3px;
-		text-align:right;
+		top:-3px;
 	}
 	li{
 		cursor:move;
+		background:#ffffff;
 		border:1px solid #dfdfdf;
 		margin:1px 10px;
-		border-bottom-color:#bfbfbfb;
-		border-right-color:#bfbfbfb;
 		font-size:1.2em;
-		padding:5px 5px 0px 5px;
-		@include corners(2px);
+		padding:8px 5px;
+		@include corners(4px);
 	}
 	li.ui-sortable-placeholder{
 		border-color:#efefef;
 		background-color:#efefef !important;
-	}
+	}	
 }
-
  
 
 .infoPage{	
@@ -3234,7 +3226,7 @@ div.addReminder{
 
 .admin_list, .content_list{
 	@include no-bullets;
-	margin:0px -20px;
+	margin:0px -20px 10px -20px;
 	padding:0px 0px;
 	border:1px solid #f2f2f2;
 	border-width:1px 0px;
@@ -3251,7 +3243,9 @@ div.addReminder{
 			margin-top:-3px;
 		}
 		div{
-			padding-top:1px;
+			padding-top:3px;
+			font-size:1.1em;
+			padding-bottom: 5px;
 		}
 		div.item_actions{
 			float:right;
@@ -3294,6 +3288,7 @@ div.addReminder{
 		a.item_info{
 			font-size:1.25em;
 			color:#336699;
+			@include link-colors(#3e71a4, #3e71a4, #3e71a4, #3e71a4, #3e71a4);
 			text-decoration:none;
 		 }
 		 input.checkbox{
@@ -3351,6 +3346,19 @@ div.addReminder{
 			visibility:visible;
 		}
 	} 
+}
+
+.deactivated{
+   li{
+	   background:#f8f8f8;
+	   padding-bottom:0px;
+	   a.item_info{
+		   @include link-colors(#666666, #3e71a4, #666666, #666666, #3e71a4);
+		   font-size:1.16em;
+		   padding-top:4px;
+		   display:block;
+	   }
+   }
 }
 
 .footerContent{

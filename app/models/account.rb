@@ -59,9 +59,17 @@ class Account < ActiveRecord::Base
   
   #Scoping restriction for other models starts here
   has_many :account_va_rules, :class_name => 'VARule', :dependent => :destroy
-  has_many :va_rules, :class_name => 'VARule', :conditions => {:rule_type => VAConfig::BUSINESS_RULE, :active => true}, :order => "position"
-  has_many :disabled_va_rules, :class_name => 'VARule', :conditions => {:rule_type => VAConfig::BUSINESS_RULE, :active => false}, :order => "position"
-  has_many :all_va_rules, :class_name => 'VARule', :conditions => {:rule_type => VAConfig::BUSINESS_RULE}, :order => "position"
+  
+  has_many :va_rules, :class_name => 'VARule', :conditions => { 
+    :rule_type => VAConfig::BUSINESS_RULE, :active => true }, :order => "position"
+  has_many :all_va_rules, :class_name => 'VARule', :conditions => {
+    :rule_type => VAConfig::BUSINESS_RULE }, :order => "position"
+    
+  has_many :supervisor_rules, :class_name => 'VARule', :conditions => { 
+    :rule_type => VAConfig::SUPERVISOR_RULE, :active => true }, :order => "position"
+  has_many :all_supervisor_rules, :class_name => 'VARule', :conditions => {
+    :rule_type => VAConfig::SUPERVISOR_RULE }, :order => "position"
+  
   has_many :scn_automations, :class_name => 'VARule', :conditions => {:rule_type => VAConfig::SCENARIO_AUTOMATION, :active => true}, :order => "position"
   
   has_many :all_email_configs, :class_name => 'EmailConfig', :dependent => :destroy, :order => "name"
@@ -223,7 +231,7 @@ class Account < ActiveRecord::Base
   
   #Will be used as :host in emails
   def host
-    helpdesk_url.blank? ? full_domain : helpdesk_url
+    main_portal.portal_url.blank? ? full_domain : main_portal.portal_url
   end
   
   def full_url

@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110630103031) do
+ActiveRecord::Schema.define(:version => 20110803093522) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -33,7 +33,7 @@ ActiveRecord::Schema.define(:version => 20110630103031) do
 
   create_table "admin_canned_responses", :force => true do |t|
     t.string   "title"
-    t.text     "content",    :limit => 16777215
+    t.text     "content",    :limit => 2147483647
     t.integer  "account_id", :limit => 8
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -519,6 +519,7 @@ ActiveRecord::Schema.define(:version => 20110630103031) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "group_escalated",                     :default => false
+    t.integer  "inbound_count",                       :default => 1
   end
 
   create_table "helpdesk_tickets", :force => true do |t|

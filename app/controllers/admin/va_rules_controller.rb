@@ -1,32 +1,43 @@
 class Admin::VaRulesController < Admin::AutomationsController
   
   skip_before_filter :check_automation_feature
+  before_filter :set_filter_data, :only => [ :create, :update ]
   
   OPERATOR_TYPES = {
+    :email       => [ "is", "is_not", "contains", "does_not_contain" ],
+    :text        => [ "is", "is_not", "contains", "does_not_contain", "starts_with", "ends_with" ],
+    :checkbox    => [ "selected", "not_selected" ],
+    :choicelist  => [ "is", "is_not" ],
+    :number      => [ "is", "is_not" ],
+    :hours       => [ "less_than", "greater_than", "is" ]
+  }
+  
+  CF_OPERATOR_TYPES = {
     "custom_dropdown" => "choicelist",
     "custom_checkbox" => "checkbox",
     "custom_number"   => "number",
   }
+
+  OPERATOR_LIST =  {
+    :is                =>  I18n.t('is'),
+    :is_not            =>  I18n.t('is_not'),
+    :contains          =>  I18n.t('contains'),
+    :does_not_contain  =>  I18n.t('does_not_contain'),
+    :starts_with       =>  I18n.t('starts_with'),
+    :ends_with         =>  I18n.t('ends_with'),
+    :between           =>  I18n.t('between'),
+    :between_range     =>  I18n.t('between_range'),
+    :selected          =>  I18n.t('selected'),
+    :not_selected      =>  I18n.t('not_selected'),
+    :less_than         =>  I18n.t('less_than'),
+    :greater_than      =>  I18n.t('greater_than')
+  }
   
   def index
-    @inactive_rules = current_account.disabled_va_rules
+    @inactive_rules = all_scoper.disabled
     super
   end
-  
-  def create
-    set_filter_data
-    super
-  end
-  
-  def update
-    set_filter_data
-    super
-  end
-  
-  def set_filter_data
-    @va_rule.filter_data = params[:filter_data].blank? ? [] : ActiveSupport::JSON.decode(params[:filter_data])
-  end
-   
+    
   def deactivate
     va_rule = scoper.find(params[:id])
     va_rule.active = false
@@ -35,7 +46,7 @@ class Admin::VaRulesController < Admin::AutomationsController
   end
   
   def activate
-    va_rule = current_account.disabled_va_rules.find(params[:id])
+    va_rule = all_scoper.disabled.find(params[:id])
     va_rule.active = true
     va_rule.save
     redirect_back_or_default redirect_url
@@ -46,8 +57,16 @@ class Admin::VaRulesController < Admin::AutomationsController
       current_account.va_rules
     end
     
+    def all_scoper
+      current_account.all_va_rules
+    end
+    
     def human_name
       "Dispatch'r rule"
+    end
+    
+    def set_filter_data
+      @va_rule.filter_data = params[:filter_data].blank? ? [] : ActiveSupport::JSON.decode(params[:filter_data])
     end
     
     def edit_data
@@ -56,7 +75,7 @@ class Admin::VaRulesController < Admin::AutomationsController
     end
     
     def load_object
-      @va_rule = current_account.all_va_rules.find(params[:id])
+      @va_rule = all_scoper.find(params[:id])
       @obj = @va_rule #Destroy of model-controller-methods needs @obj
     end
     
@@ -90,34 +109,19 @@ class Admin::VaRulesController < Admin::AutomationsController
         { :name => "company_name", :value => t('company_name'), :domtype => "text", 
           :operatortype => "text"}]
                                                    
+      filter_hash = filter_hash + additional_filters
       add_custom_filters filter_hash
       @filter_defs   = ActiveSupport::JSON.encode filter_hash
-      
-      operator_types  = {
-        :email       => ["is", "is_not", "contains", "does_not_contain"],
-        :text        => ["is", "is_not", "contains", "does_not_contain", "starts_with", "ends_with"],
-        :checkbox    => ["selected", "not_selected"],
-        :choicelist  => ["is", "is_not"],
-        :number      => ["is", "is_not"]}
-      
-      @op_types        = ActiveSupport::JSON.encode operator_types
-      
-      operator_list  =  {:is                =>  t('is'),
-                         :is_not            =>  t('is_not'),
-                         :contains          =>  t('contains'),
-                         :does_not_contain  =>  t('does_not_contain'),
-                         :starts_with       =>  t('starts_with'),
-                         :ends_with         =>  t('ends_with'),
-                         :between           =>  t('between'),
-                         :between_range     =>  t('between_range'),
-                         :selected          =>  t('selected'),
-                         :not_selected      =>  t('not_selected') } 
-      
-      @op_list        = ActiveSupport::JSON.encode operator_list
+      @op_types        = ActiveSupport::JSON.encode OPERATOR_TYPES
+      @op_list        = ActiveSupport::JSON.encode OPERATOR_LIST
     end
     
     def additional_actions
       {}
+    end
+    
+    def additional_filters
+      []
     end
   
     def add_custom_filters filter_hash
@@ -128,7 +132,7 @@ class Admin::VaRulesController < Admin::AutomationsController
           :domtype => field.flexifield_def_entry.flexifield_coltype,
           :choices => field.picklist_values.collect { |c| [ c.value, c.value ] },
           :action => "set_custom_field",
-          :operatortype => OPERATOR_TYPES.fetch(field.field_type, "text")
+          :operatortype => CF_OPERATOR_TYPES.fetch(field.field_type, "text")
         })
       end
     end

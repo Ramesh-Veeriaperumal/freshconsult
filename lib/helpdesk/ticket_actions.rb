@@ -50,6 +50,11 @@ module Helpdesk::TicketActions
     render :partial => "helpdesk/tickets/components/#{params[:component]}", :locals => { :ticket => @ticket , :search_query =>params[:q] } 
   end
   
+  def canned_reponse
+    @ticket = current_account.tickets.find_by_id(params[:id])
+    render :partial => "helpdesk/tickets/components/canned_responses"
+  end
+  
   def update_split_activity    
    @item.create_activity(current_user, 'activities.tickets.ticket_split.long',
             {'eval_args' => {'split_ticket_path' => ['split_ticket_path', 

@@ -24,6 +24,10 @@ module ApplicationHelper
     flash.discard
   end
 
+  def each_or_message(partial, collection, message)
+    render(:partial => partial, :collection => collection) || content_tag(:div, message, :class => "info-highlight")
+  end
+
   def navigation_tabs
     tabs = [
       ['/home',               :home,        !permission?(:manage_tickets)],
@@ -33,6 +37,7 @@ module ApplicationHelper
       forums_tab,
       ['/contacts',           :customers,    permission?(:manage_tickets)],
       ['support/tickets',     :checkstatus, !permission?(:manage_tickets)],
+      ['/reports',            :reports,      permission?(:manage_users)],
       ['/admin/home',         :admin,        permission?(:manage_users)]
     ]
 

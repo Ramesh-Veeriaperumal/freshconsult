@@ -57,6 +57,8 @@ ActionController::Routing::Routes.draw do |map|
     admin.resources :widget_config, :only => :index
     admin.resources :automations, :member => { :deactivate => :put, :activate => :put }, :collections => { :reorder => :put }
     admin.resources :va_rules, :member => { :deactivate => :put, :activate => :put }, :collections => { :reorder => :put }
+    admin.resources :supervisor_rules, :member => { :deactivate => :put, :activate => :put }, 
+      :collections => { :reorder => :put }
     admin.resources :email_configs, :member => { :make_primary => :put, :deliver_verification => :get }
     admin.register_email '/register_email/:activation_code', :controller => 'email_configs', :action => 'register_email'
     admin.resources :email_notifications
@@ -67,6 +69,8 @@ ActionController::Routing::Routes.draw do |map|
     admin.resources :canned_responses
     admin.resources :products
   end
+  
+  map.resources :reports
   
   #SAAS copy starts here
   map.with_options(:conditions => {:subdomain => AppConfig['admin_subdomain']}) do |subdom|

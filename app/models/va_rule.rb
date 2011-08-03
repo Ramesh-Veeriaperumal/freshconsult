@@ -10,6 +10,8 @@ class VARule < ActiveRecord::Base
   
   belongs_to :account
   
+  named_scope :disabled, :conditions => { :active => false }
+  
   acts_as_list
   
   # scope_condition for acts_as_list
@@ -62,6 +64,20 @@ class VARule < ActiveRecord::Base
   def trigger_actions(evaluate_on)
     Va::Action.initialize_activities
     actions.each { |a| a.trigger(evaluate_on) }
+  end
+  
+  def filter_query
+    query_strings = []
+    params = []
+    c_operator = (match_type.to_sym == :any ) ? ' or ' : ' and '
+    
+    conditions.each do |c|
+      c_query = c.filter_query
+      query_strings << c_query.shift
+      params = params + c_query
+    end
+    
+    query_strings.empty? ? [] : ([ query_strings.join(c_operator) ] + params)
   end
   
   private

@@ -1,0 +1,55 @@
+<% content_for :sidebar do -%><%- end %>
+<% content_for :head do %>
+	<%= render :partial => "admin/shared/filter_jsinit", :locals => { :filter_type => "va_rule"} %>
+<% end %>
+
+<%= f.error_messages :object_name => 'rule' %>
+<input type="hidden" name="id"   value="" />
+<input type="hidden" name="type" value="virtual_agents" />
+<ul class="ui-form">
+	<li>
+		<%= f.label :name, "#{t('dispatch.rule_name')} *" %>
+		<label class="overlabel" for="va_rule_name"><%= t("example") %>: <em>"<%=t('dispatch.info1')%>"</em> </label>
+		<%= f.text_field :name, :class => "required text" %>
+	</li>
+	<li>
+		<%= f.label :description %>				
+		<label class="overlabel" for="va_rule_description">
+			<%= t("example") %>: <em>"<%=t('dispatch.info2')%>"</em>
+		</label>
+		<%= f.text_area :description, :class => "smallpara" %>
+	</li>
+	<li>			
+		<div class="choicelist">
+			<label><%=t('dispatch.info3')%>?</label>
+			<%= f.radio_button  :match_type, 'any', :class => "radio" %> <%= f.label :match_type_any, t('dispatch.match_any'), :class => "radiolabel" %>
+			<%= f.radio_button  :match_type, 'all', :class => "radio" %> <%= f.label :match_type_all, t('dispatch.match_all'), :class => "radiolabel" %>
+		</div>			
+		<div class="conditionset" id="filterDOM">
+		<div id="RuleList" class="rule_list"></div>
+		<fieldset class="addchoice">
+	         <p><%=t('dispatch.add_condition')%></p> <img alt="<%=t('dispatch.add_new_choice')%>" class="add" src="/images/add.png" />
+	    </fieldset>			
+		</div>
+	</li>
+	<li>
+		<label><%=t('dispatch.act_to_perform')%>?</label>				
+		<div class="conditionset" id="actionDOM">
+			<div id="ActionList" class="rule_list"></div>
+			<fieldset class="addchoice">
+	        	<p><%=t('dispatch.add_new_action')%></p> <img alt="<%=t('dispatch.add_new_action')%>" class="add" src="/images/add.png" />
+	    	</fieldset>		
+		</div>
+	</li>
+</ul>		
+<br />
+<div class="button-container">
+	<input type="hidden" name="save_json" id="savejson" value="" />
+	<input type="submit" class="uiButton" value="<%=t('save')%>" />
+	<%= link_to t('cancel'), {:action => 'index'}, :class => "uiButton" %>
+</div>
+
+<% content_for :pagefixed do %>
+	<%= render :partial => "/shared/placeholder_help" %>
+<% end %>
+

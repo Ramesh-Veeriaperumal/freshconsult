@@ -16,7 +16,7 @@ Autocompleter.Json = Class.create(Autocompleter.Base, {
     this.updateChoices('<ul>' + choices.slice(0, this.options.choices).map(this.jsonChoiceToListChoice.bind(this)).join('') + '</ul>');
   },
   
-  jsonChoiceToListChoice: function(choice, mark) {
+  jsonChoiceToListChoice: function(choice, mark) { 
     return '<li>' + choice.escapeHTML() + '</li>';
   }
 });
@@ -58,7 +58,6 @@ Autocompleter.RateLimiting.prototype = {
   _callback: function(data) {
     this.currentRequest.callback(data);
     this.currentRequest = null;
-
     if (this.scheduledRequest) {
       this._sendRequest();
     }
@@ -165,7 +164,8 @@ Autocompleter.MultiValue = Class.create({
         if(!update.style.position || update.style.position=='absolute') {
           update.style.position = 'absolute';
           try {
-            //update.clonePosition(element, {setHeight: false, offsetTop: element.offsetHeight});            
+            // To be changed later
+            update.clonePosition(element, {setHeight: false, offsetTop: element.offsetHeight});            
           } catch(e) {
           }
         }
@@ -185,7 +185,7 @@ Autocompleter.MultiValue = Class.create({
     this.choicesHolderList = new Element('ul');
     this.choicesHolder = new Element('div').update(this.choicesHolderList);
     this.choicesHolder.className = 'autocomplete';
-//    this.choicesHolder.style     = 'position: absolute;';
+    this.choicesHolder.style.position = 'absolute';
     this.holder.insert({after: this.choicesHolder});
     this.choicesHolder.hide();
     

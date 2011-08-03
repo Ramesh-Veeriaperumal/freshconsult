@@ -76,6 +76,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   attr_protected :attachments #by Shan - need to check..
 
   named_scope :newest, lambda { |num| { :limit => num, :order => 'created_at DESC' } }
+  named_scope :updated_in, lambda { |duration| { :conditions => [ 
+    "helpdesk_tickets.updated_at > ?", duration ] } }
   named_scope :visible, :conditions => ["spam=? AND helpdesk_tickets.deleted=? AND status > 0", false, false] 
   named_scope :unresolved, :conditions => ["status in (#{STATUS_KEYS_BY_TOKEN[:open]}, #{STATUS_KEYS_BY_TOKEN[:pending]})"]
   named_scope :assigned_to, lambda { |agent| { :conditions => ["responder_id=?", agent.id] } }
@@ -131,7 +133,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     self.status = TicketConstants::STATUS_KEYS_BY_TOKEN[:open] unless TicketConstants::STATUS_NAMES_BY_KEY.key?(self.status)
     self.source = TicketConstants::SOURCE_KEYS_BY_TOKEN[:portal] if self.source == 0
     self.ticket_type ||= TicketConstants::TYPE_KEYS_BY_TOKEN[:how_to]
-    self.subject ||= '' 
+    self.subject ||= ''
     self.description = subject if description.blank?
   end
   
@@ -268,16 +270,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def autoreply     
-    notify_by_email EmailNotification::NEW_TICKET unless out_off_office?#Do SPAM check.. by Shan
-    
+    notify_by_email EmailNotification::NEW_TICKET #Do SPAM check.. by Shan
     notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_GROUP) if group_id
     notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_AGENT) if responder_id
     
     return notify_by_email(EmailNotification::TICKET_RESOLVED) if (status == STATUS_KEYS_BY_TOKEN[:resolved])
     return notify_by_email(EmailNotification::TICKET_CLOSED) if (status == STATUS_KEYS_BY_TOKEN[:closed])
   end
-  
-  def out_off_office?
+
+  def out_of_office?
     TicketConstants::OUT_OF_OFF_SUBJECTS.any? { |s| subject.downcase.include?(s) }
   end
   
@@ -311,14 +312,26 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
     
     if status != @old_ticket.status
-      ticket_states.opened_at=Time.zone.now if (status == STATUS_KEYS_BY_TOKEN[:open])
+      if (status == STATUS_KEYS_BY_TOKEN[:open])
+        ticket_states.opened_at=Time.zone.now
+        ticket_states.reset_tkt_states
+      end
+      
       ticket_states.pending_since=Time.zone.now if (status == STATUS_KEYS_BY_TOKEN[:pending])
-      ticket_states.resolved_at=Time.zone.now if (status == STATUS_KEYS_BY_TOKEN[:resolved])
-      ticket_states.closed_at=Time.zone.now if (status == STATUS_KEYS_BY_TOKEN[:closed])       
+      ticket_states.set_resolved_at_state if (status == STATUS_KEYS_BY_TOKEN[:resolved])
+      
+      if (status == STATUS_KEYS_BY_TOKEN[:closed]) 
+        ticket_states.resolved_at ||= ticket_states.set_closed_at_state
+      end
     end
     
     ticket_states.save
   end
+  
+  
+  
+  
+
   
   def notify_by_email(notification_type)    
     Helpdesk::TicketNotifier.send_later(:notify_by_email, notification_type, self) if notify_enabled?(notification_type)
@@ -485,6 +498,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #When the requester responds to this ticket, need to know whether to reopen?
   def active?
     !([STATUS_KEYS_BY_TOKEN[:resolved], STATUS_KEYS_BY_TOKEN[:closed]].include?(status))
+  end
+  
+  def open?
+    (status == STATUS_KEYS_BY_TOKEN[:open])
   end
   
   def closed?

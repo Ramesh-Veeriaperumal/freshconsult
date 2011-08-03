@@ -21,6 +21,12 @@ var jQ = jQuery.noConflict();
 			focusInvalid: false
 		};
 		
+		$(".admin_list li")
+			.hover(
+				function(){ $(this).children(".item_actions").css("visibility", "visible"); }, 
+				function(){ $(this).children(".item_actions").css("visibility", "hidden"); }
+			);
+		
 		$("ul.ui-form").not(".dont-validate").parents('form:first').validate(validateOptions);
 		$("div.ui-form").not(".dont-validate").find('form:first').validate(validateOptions); 
 		$("form.uniForm").validate(validateOptions);
@@ -91,7 +97,7 @@ var jQ = jQuery.noConflict();
 				hideMenuItem();
 
 			if (! $clicked.parent().hasClass("request_form_options")){
-			  $("#canned_response_list").hide();
+			  $("#canned_response_container").hide();
 		  }
 		});
 

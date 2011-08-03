@@ -20,4 +20,8 @@ class Va::RuleHandler
     #return evaluate_on_value.send(:casecmp, value)   
     send(condition.operator, evaluate_on_value)
   end
+  
+  def filter_query
+    send("filter_query_#{condition.operator}")
+  end
 end
