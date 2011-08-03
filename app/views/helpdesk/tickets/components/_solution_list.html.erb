@@ -1,6 +1,5 @@
 
-<h3 class="title"><%= t(:'ticket.suggested_solutions.title') %></h3>
-		
+<h3 class="title"><%= t(:'ticket.suggested_solutions.title') %></h3>		
 <% if (@articles.size == 0) %>
 	<br /> 
 	<div>&nbsp;&nbsp;&nbsp; <%= t(:'ticket.suggested_solutions.no_result') %> </div>	
@@ -29,9 +28,8 @@
 				<% end %>
 			<% end %>
 		</div>
-	<% end %> 	
-
-
+	<% end %> 
+	
  <!--li> 
  	<label for="solution_search">Didn't match anything search here :</label> 
 	<input id="solution_search" name="solution[search]" size="30" type="text" /> 
@@ -73,13 +71,6 @@
 		    jQuery(this).find(".item-menu").hide();
 		  }
 		});
-		
-		/*jQuery(document).ready(function(){
-		jQuery(".rtPanel a").bind("click", function(e){
-		
-		});
-		});*/
-		
 		
 		
 	    function search_solutions(ticket_id){
