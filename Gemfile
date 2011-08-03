@@ -47,7 +47,7 @@ gem "lockfile","1.4.3"
 #gem "win32-open3", "0.3.2"
 
 gem "twitter" , "0.9.12"
-
+gem "newrelic_rpm"
 
 
 group :development do
@@ -58,6 +58,4 @@ group :development do
    gem "mongrel"
 end
 
-group :production do
-  gem "newrelic_rpm"
-end
+

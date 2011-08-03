@@ -1,11 +1,9 @@
-#require 'lib/helpdesk_controller_methods'
-#include HelpdeskControllerMethods
 namespace :twitter do
   desc 'Check for New twitter feeds..'
   task :fetch => :environment do    
     twitter_handles = Social::TwitterHandle.find(:all, :conditions =>{:capture_dm_as_ticket =>true , :capture_mention_as_ticket =>true})    
     twitter_handles.each do |twt_handle| 
-      
+     sandbox do ### starts ####
       @wrapper = TwitterWrapper.new twt_handle
       twitter = @wrapper.get_twitter
       #From id to Id....
@@ -33,7 +31,7 @@ namespace :twitter do
         create_ticket_from_tweet tweets ,twt_handle        
         twt_handle.update_attribute(:last_mention_id, last_tweet_id) unless last_tweet_id.blank?
       end       
-      
+     end ### ends ####
     end
     
   end
@@ -99,5 +97,35 @@ namespace :twitter do
       add_tweet_as_ticket (twt,twt_handle)
     end
   end
+  
+  def sandbox
+      begin
+        yield
+      rescue Errno::ECONNRESET => e
+        RAILS_DEFAULT_LOGGER.debug "Something wrong happened in twitter!"
+        RAILS_DEFAULT_LOGGER.debug e.to_s
+      rescue Timeout::Error => e
+        RAILS_DEFAULT_LOGGER.debug "Something wrong happened in twitter!"
+        RAILS_DEFAULT_LOGGER.debug e.to_s
+      rescue EOFError => e
+        RAILS_DEFAULT_LOGGER.debug "Something wrong happened in twitter!"
+        RAILS_DEFAULT_LOGGER.debug e.to_s
+      rescue Errno::ETIMEDOUT => e
+        RAILS_DEFAULT_LOGGER.debug "Something wrong happened in twitter!"
+        RAILS_DEFAULT_LOGGER.debug e.to_s
+      rescue OpenSSL::SSL::SSLError => e
+        RAILS_DEFAULT_LOGGER.debug "Something wrong happened in twitter!"
+        RAILS_DEFAULT_LOGGER.debug e.to_s
+      rescue SystemStackError => e
+        RAILS_DEFAULT_LOGGER.debug "Something wrong happened in twitter!"
+        RAILS_DEFAULT_LOGGER.debug e.to_s
+      rescue Exception => e
+        NewRelic::Agent.notice_error(e)
+        RAILS_DEFAULT_LOGGER.debug "Something wrong happened in twitter!"
+        RAILS_DEFAULT_LOGGER.debug e.to_s
+      rescue 
+        RAILS_DEFAULT_LOGGER.debug "Something wrong happened in twitter!"
+      end
+    end
   
 end
