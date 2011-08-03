@@ -3,7 +3,11 @@ class Va::Condition
   attr_accessor :handler, :key, :operator
   
   QUERY_COLUMNS = {
-    
+    'tag_names'               => [ 'helpdesk_tags.name' ],
+    'subject_or_description'  => [ 'helpdesk_tickets.subject', 'helpdesk_tickets.description' ],
+    'from_email'              => 'users.email',
+    'contact_name'            => 'users.name',
+    'company_name'            => 'customers.name'
   }
   
   def initialize(rule, account)
@@ -21,8 +25,11 @@ class Va::Condition
   end
   
   def db_column
+    return QUERY_COLUMNS[key] if QUERY_COLUMNS.key? key
+    
     #method_defined? doesn't work..
     return "helpdesk_tickets.#{key}" if Helpdesk::Ticket.column_names.include? key
+    return "helpdesk_ticket_states.#{key}" if Helpdesk::TicketState.column_names.include? key
     
     key
   end
