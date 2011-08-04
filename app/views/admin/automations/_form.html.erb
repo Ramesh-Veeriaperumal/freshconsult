@@ -1,6 +1,4 @@
-<% content_for :head do %>
-	<%= render :partial => "admin/shared/filter_jsinit", :locals => { :filter_type => "automation"} %>
-<% end %>
+<%= render :partial => "admin/shared/filter_jsinit", :locals => { :filter_type => "automation"} %>
 
 <%= f.error_messages :object_name => 'scenario' %>
 <ul class="ui-form">
@@ -11,12 +9,6 @@
 	</li>
 	<li>
 		<%= f.label :description,t('description') %>
-		<!--label class="overlabel" for="agent_desc">
-			We Know it's pretty boring. <br />
-			But meaningful descriptions can help you later to quickly identify what this rule does,<br /> 
-			when you have a tons of rules. <br />
-			Go Ahead and type something like - <br /><em>"All Subscription related tickets will be assigned to Susan"</em>
-		</label-->
 		<label class="overlabel" for="va_rule_description">
 			<%= t("example") %>: <em>"<%=t('automations.info6')%>"</em>
 		</label>
@@ -37,7 +29,6 @@
 	<input type="submit" class="uiButton" value="<%=t('save')%>" />
 	<%= link_to t('cancel'), {:action => 'index'}, :class => "uiButton" %>
 </div>
-
 
 <% content_for :pagefixed do %>
 	<%= render :partial => "/shared/placeholder_help" %>

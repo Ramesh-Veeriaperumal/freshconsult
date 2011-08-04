@@ -13,7 +13,6 @@ javascripts:
     - public/javascripts/dragdrop.js
     - public/javascripts/controls.js
     - public/javascripts/application.js
-    - public/javascripts/fast_autocompleter.js
   frameworks:
     - public/javascripts/frameworks/jquery.js
     - public/javascripts/frameworks/jquery-plugins/jquery-ui.js
@@ -21,12 +20,13 @@ javascripts:
     - public/javascripts/frameworks/jquery-plugins/jquery.validate.js
     - public/javascripts/frameworks/jquery-plugins/jquery.autoresize.js
     - public/javascripts/frameworks/jquery-plugins/jquery.qtip.js
+    - public/javascripts/hackz.js    
   workspace: 
+    - public/javascripts/fast_autocompleter.js  
     - public/javascripts/utils.js
     - public/javascripts/factory_ui.js
     - public/javascripts/json2.js
     - public/javascripts/globalinit.js
-    - public/javascripts/hackz.js
   freshwidget:
     - public/javascripts/freshwidget.js
   syntaxhighlighter:
