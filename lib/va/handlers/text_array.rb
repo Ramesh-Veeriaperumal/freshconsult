@@ -35,4 +35,34 @@ class Va::Handlers::TextArray < Va::RuleHandler
       end
       false
     end
+    
+    def filter_query_is
+      construct_query('=', value)
+    end
+    
+    def filter_query_is_not
+      construct_query('!=', value)
+    end
+    
+    def filter_query_contains
+      construct_query('like', "%#{value}%")
+    end
+    
+    def filter_query_does_not_contain
+      construct_query('not like', "%#{value}%")
+    end
+    
+    def filter_query_starts_with
+      construct_query('like', "#{value}%")
+    end
+    
+    def filter_query_ends_with
+      construct_query('like', "%#{value}")
+    end
+    
+    def construct_query(q_operator, q_value)
+      columns = condition.db_column
+      q_str = columns.collect { |db_column| "#{db_column} #{q_operator} ?" }.join(' or ')
+      columns.size.times.collect { |n| q_value }.unshift("(#{q_str})")
+    end
 end

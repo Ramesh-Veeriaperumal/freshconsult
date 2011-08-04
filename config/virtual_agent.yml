@@ -1,5 +1,8 @@
 
 default_fields:
+    date_time: &date_time
+        handler: date_time
+    
     from_email:
         handler: text
         
@@ -35,6 +38,29 @@ default_fields:
 
     company:
         handler: text
+        
+    created_at:
+        <<: *date_time
+    opened_at:
+        <<: *date_time
+    pending_since:
+        <<: *date_time
+    resolved_at:
+        <<: *date_time
+    closed_at:
+        <<: *date_time
+    first_assigned_at:
+        <<: *date_time
+    assigned_at:
+        <<: *date_time
+    requester_responded_at:
+        <<: *date_time
+    agent_responded_at:
+        <<: *date_time
+    first_response_due:
+        <<: *date_time
+    due_by:
+        <<: *date_time
 
 handlers:
     text: Va::Handlers::Text

@@ -1,42 +1,43 @@
-<% javascript_tag do %>
-	(function($){
-		$(document).ready(function(){
-			 
-			var currentactive,
-				position   		= -1, 
-				insideSearch 	= false;
+<div class="search_results_bar" id="SearchResultsBar"> 
+	<ul class="results">  </ul> 
+</div>
+
+<%- content_for :onload_script do -%>
+  var currentactive,
+      position   		= -1, 
+      insideSearch 	= false;
+
+  callbackToSearch = function(string){
+    jQuery.ajax({ url: "/search/suggest?search_key="+string, 
+                  success: function(data){
+                            $J("#SearchResultsBar").css("display", "inline"); 
+                            position   = -1;
+                            $J("#SearchResultsBar .results").html(data);
+                          }});
+                        }
 			
-			callbackToSearch = function(string){
-				jQuery.ajax({ url: "/search/suggest?search_key="+string, 
-								  success: function(data){
-								  			$("#SearchResultsBar").css("display", "inline"); 
-											position   = -1
-											$("#SearchResultsBar .results").html(data);
-							}});
-			}
-			
-			$("#SearchResultsBar a").live("click", function(){
+			$J("#SearchResultsBar a").live("click", function(){
 				window.location = this.href; 
 			});
 			
-			$("#SearchResultsBar a").live("hover", function(){
+			$J("#SearchResultsBar a").live("hover", function(){
 				$(currentactive).removeClass("active");
-				currentactive = $(this).addClass("active");
+				currentactive = $J(this).addClass("active");
 			});
 			
-			$("#SearchResultsBar")
+			$J("#SearchResultsBar")
 				.hover(function(){
 					insideSearch = true;
 				}, function(){
 					insideSearch = false;
 				});
 			
-			$("#header_search").bind("focusout", function(ev){ 
+			$J("#header_search").bind("focusout", function(ev){ 
 				if(!insideSearch)
 					jQuery("#SearchResultsBar").hide();
 			});
 			
-			$("#header_search").bind("focusin", function(ev){
+			$J("#header_search").bind("focusin", function(ev){
 				searchString = this.value.replace(/^\s+|\s+$/g, "");
 				if(searchString != ''){
 					jQuery("#SearchResultsBar").css("display", "inline");
@@ -44,10 +45,10 @@
 			}); 
 			
 			var move = function(diff){
-				searchlist 	= $("#SearchResultsBar a");
-				$(currentactive).removeClass("active");
+				searchlist 	= $J("#SearchResultsBar a");
+				$J(currentactive).removeClass("active");
 				position = Math.min((searchlist.size()-1), Math.max(0, position + diff)); 
-				currentactive = $(searchlist.get(position)).addClass("active"); 
+				currentactive = $J(searchlist.get(position)).addClass("active"); 
 			};
 			
 			var executeAction = function (keyCode){ 
@@ -59,12 +60,12 @@
 						move(-1); 
 			            break;
 					case 13:
-						$(currentactive).trigger("click");
+						$J(currentactive).trigger("click");
 						break; 
 				}
 			} 
 			
-			$("#header_search").bind("keyup", function(e){
+			$J("#header_search").bind("keyup", function(e){
 				 switch (e.keyCode) {
 				 	case 40:
 					case 38:
@@ -84,14 +85,4 @@
 					break;
 				}
 			});
-			
-			
-			
-			
-		});
-	})(jQuery);
-<% end %>
-
-<div class="search_results_bar" id="SearchResultsBar"> 
-	<ul class="results">  </ul> 
-</div>
+<%- end -%>

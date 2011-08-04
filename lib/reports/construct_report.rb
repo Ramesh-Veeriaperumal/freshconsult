@@ -49,47 +49,50 @@ module Reports::ConstructReport
  end
  
  def date_condition
-   " helpdesk_tickets.created_at between '#{30.days.ago}' and now() "
+   " helpdesk_tickets.created_at between '#{30.days.ago.to_s(:db)}' and now() "
  end
  
  def fetch_tkts_by_status
-   scoper.tickets.find( 
+   tkt_scoper.find( 
      :all,
      :include => @val, 
      :select => "count(*) count, #{@val}_id,status", 
-     :conditions => "#{date_condition}",
      :group => "#{@val}_id,status")
  end
  
  def fetch_tkt_res_on_time
-   scoper.tickets.find(
+   tkt_scoper.find(
      :all, 
      :select => "count(*) count, #{@val}_id", 
      :include => @val,
      :joins => "INNER JOIN helpdesk_ticket_states on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id", 
-     :conditions => ["helpdesk_tickets.status IN (?,?) and helpdesk_tickets.due_by >  helpdesk_ticket_states.resolved_at and #{date_condition}",TicketConstants::STATUS_KEYS_BY_TOKEN[:resolved],TicketConstants::STATUS_KEYS_BY_TOKEN[:closed]],
+     :conditions => ["helpdesk_tickets.status IN (?,?) and helpdesk_tickets.due_by >  helpdesk_ticket_states.resolved_at",TicketConstants::STATUS_KEYS_BY_TOKEN[:resolved],TicketConstants::STATUS_KEYS_BY_TOKEN[:closed]],
      :group => "#{@val}_id")
  end
  
   
  def fetch_overdue_tkts
-   scoper.tickets.find(
+   tkt_scoper.find(
      :all, 
      :select => "count(*) count, #{@val}_id", 
      :include => @val,
      :joins => "INNER JOIN helpdesk_ticket_states on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id", 
-     :conditions => " (helpdesk_tickets.due_by <  helpdesk_ticket_states.resolved_at  || (helpdesk_ticket_states.resolved_at is null and   helpdesk_tickets.due_by < now() ))  and #{date_condition} ",
+     :conditions => " (helpdesk_tickets.due_by <  helpdesk_ticket_states.resolved_at  || (helpdesk_ticket_states.resolved_at is null and   helpdesk_tickets.due_by < now() )) ",
      :group => "#{@val}_id")
  end
  
  def fetch_fcr
-   scoper.tickets.find(
+   tkt_scoper.find(
      :all, 
      :select => "count(*) count, #{@val}_id", 
      :include => @val,
      :joins => "INNER JOIN helpdesk_ticket_states on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id", 
-     :conditions => " (helpdesk_ticket_states.resolved_at is not null || helpdesk_ticket_states.resolved_at is not null)  and  helpdesk_ticket_states.inbound_count = 1  and #{date_condition} ",
+     :conditions => " (helpdesk_ticket_states.resolved_at is not null || helpdesk_ticket_states.resolved_at is not null)  and  helpdesk_ticket_states.inbound_count = 1 ",
      :group => "#{@val}_id")
+ end
+ 
+ def tkt_scoper
+   scoper.tickets.created_in(1.month.ago)
  end
  
  def scoper
