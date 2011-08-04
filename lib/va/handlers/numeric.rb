@@ -6,13 +6,19 @@ class Va::Handlers::Numeric < Va::RuleHandler
     end
   
     def is(evaluate_on_value)
-      puts "IN Va::Handlers::Numeric evaluate_on_value is #{evaluate_on_value}"
-      puts "IN Va::Handlers::Numeric numeric_value is #{numeric_value}"
       evaluate_on_value == numeric_value
     end
 
     def is_not(evaluate_on_value)
       !is(evaluate_on_value)
+    end
+    
+    def filter_query_is
+      [ "#{condition.db_column} = ?", numeric_value ]
+    end
+    
+    def filter_query_is_not
+      [ "#{condition.db_column} != ?", numeric_value ]
     end
 
 end

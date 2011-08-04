@@ -78,6 +78,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   named_scope :newest, lambda { |num| { :limit => num, :order => 'created_at DESC' } }
   named_scope :updated_in, lambda { |duration| { :conditions => [ 
     "helpdesk_tickets.updated_at > ?", duration ] } }
+  
+  named_scope :created_in, lambda { |duration| { :conditions => [ 
+    "helpdesk_tickets.created_at > ?", duration ] } }
+ 
   named_scope :visible, :conditions => ["spam=? AND helpdesk_tickets.deleted=? AND status > 0", false, false] 
   named_scope :unresolved, :conditions => ["status in (#{STATUS_KEYS_BY_TOKEN[:open]}, #{STATUS_KEYS_BY_TOKEN[:pending]})"]
   named_scope :assigned_to, lambda { |agent| { :conditions => ["responder_id=?", agent.id] } }
@@ -301,6 +305,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   def save_ticket_states
     self.ticket_states = Helpdesk::TicketState.new
+    ticket_states.assigned_at=Time.zone.now if responder_id
+    ticket_states.first_assigned_at = Time.zone.now if responder_id
+    ticket_states.opened_at=Time.zone.now  
+    ticket_states.pending_since=Time.zone.now if (status == STATUS_KEYS_BY_TOKEN[:pending])
+    ticket_states.set_resolved_at_state if (status == STATUS_KEYS_BY_TOKEN[:resolved])
+    ticket_states.resolved_at ||= ticket_states.set_closed_at_state if (status == STATUS_KEYS_BY_TOKEN[:closed])     
   end
 
   def update_ticket_states
@@ -323,8 +333,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       if (status == STATUS_KEYS_BY_TOKEN[:closed]) 
         ticket_states.resolved_at ||= ticket_states.set_closed_at_state
       end
-    end
-    
+    end    
     ticket_states.save
   end
   
