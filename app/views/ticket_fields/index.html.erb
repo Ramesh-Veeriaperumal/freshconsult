@@ -3,7 +3,6 @@
 <% end %>
 <% content_for :sidebar do %><% end %>
 <%= content_tag(:h3, t(".title"), :class => "title") %> 
-<%= render :partial => "customizer_js" %>
 
 <% form_for :update, @ticket_fields, :url => { :action => "update" }, :html => { :method => :put, :id => "Updateform" } do |f| %>
   <div class="admin_form">
@@ -43,4 +42,7 @@
 <%end%>
 <% content_for :dialogs do %>
 	<%= render :partial => "formfield_props" %>
+<% end %>
+<% content_for :pagefixed do %>
+  <%= render :partial => "customizer_js" %>
 <% end %>
