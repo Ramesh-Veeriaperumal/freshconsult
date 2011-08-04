@@ -31,7 +31,9 @@ class Va::Condition
     return "helpdesk_tickets.#{key}" if Helpdesk::Ticket.column_names.include? key
     return "helpdesk_ticket_states.#{key}" if Helpdesk::TicketState.column_names.include? key
     
-    key
+    #Following things will have a high penalty due to higher number of db queries.
+    #Need to optimize.
+    "flexifields.#{FlexifieldDefEntry.ticket_db_column key}"
   end
   
 end
