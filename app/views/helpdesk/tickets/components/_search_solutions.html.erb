@@ -1,0 +1,3 @@
+
+<% @articles = Solution::Article.suggest (@ticket ,search_query)  %>
+<%= render :partial => "helpdesk/tickets/components/solution_list" ,  :object => @ticket  %>
