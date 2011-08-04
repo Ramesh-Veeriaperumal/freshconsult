@@ -3,7 +3,6 @@ class Va::Condition
   attr_accessor :handler, :key, :operator
   
   QUERY_COLUMNS = {
-    'tag_names'               => [ 'helpdesk_tags.name' ],
     'subject_or_description'  => [ 'helpdesk_tickets.subject', 'helpdesk_tickets.description' ],
     'from_email'              => 'users.email',
     'contact_name'            => 'users.name',
