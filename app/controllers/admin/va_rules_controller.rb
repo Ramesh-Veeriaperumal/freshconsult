@@ -9,7 +9,7 @@ class Admin::VaRulesController < Admin::AutomationsController
     :checkbox    => [ "selected", "not_selected" ],
     :choicelist  => [ "is", "is_not" ],
     :number      => [ "is", "is_not" ],
-    :hours       => [ "less_than", "greater_than" ]
+    :hours       => [ "greater_than", "less_than" ]
   }
   
   CF_OPERATOR_TYPES = {

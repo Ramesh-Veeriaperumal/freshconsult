@@ -61,6 +61,8 @@ default_fields:
         <<: *date_time
     due_by:
         <<: *date_time
+    inbound_count:
+        handler: numeric
 
 handlers:
     text: Va::Handlers::Text

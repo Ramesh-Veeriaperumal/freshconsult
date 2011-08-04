@@ -951,6 +951,7 @@ en:
     agent_responded_at: Hours since agent responded
     first_response_due: Hours since first response due
     due_by: Hours since ticket overdue
+    inbound_count: Number of requester interactions
     recent_tickets: Recent tickets
     unflag_spam: Not Spam
     pick_up: Pick Up
