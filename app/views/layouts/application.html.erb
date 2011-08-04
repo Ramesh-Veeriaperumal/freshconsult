@@ -1,1 +1,33 @@
-<%= render :file => 'layouts/helpdesk/default' %> 
+<!doctype html>
+  <%= render :partial => "layouts/shared/html" %>
+	<%= render :partial => "layouts/shared/head" %>
+	<body class="<% unless @content_for_sidebar %>single<% end %> <%= yield :layoutType %>">
+		<div id="wrap"> 
+			<%= render(:partial => '/layouts/shared/header') %>
+				<div class="content">
+					<div class="wrapper">
+						<%= render(:partial => '/search/navsearch') %>
+						<div id="inner"> 
+						<% if @content_for_sidebar %>
+							<div class="sidebar" id="Sidebar"> 
+								<%= yield :sidebar %>					
+							</div>
+						<% end %>  
+						<div class="leftcontent">
+							<%= show_flash %> 
+							<div class="flash_info notice" id="noticeajax" style="display:none;"></div>
+							<%= yield :breadcrumb %>
+							<div class="pagearea" id="Pagearea">				
+								<%= yield %>
+							</div>
+						</div>
+					</div> 
+				</div> 
+			</div>
+			<%= render :partial => "layouts/shared/footer" %>  
+    </div>		 
+    <%= render :partial => "layouts/shared/scripts" %>
+    <%= yield :dialogs   %>
+    <%= yield :pagefixed %>
+  </body>
+</html>
