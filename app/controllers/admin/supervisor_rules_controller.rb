@@ -24,6 +24,8 @@ class Admin::SupervisorRulesController < Admin::VaRulesController
       :domtype => "number", :operatortype => "hours" },
     { :name => "due_by", :value => I18n.t('ticket.due_by'), :domtype => "number",
       :operatortype => "hours" },
+    { :name => "inbound_count", :value => I18n.t('ticket.inbound_count'), :domtype => "number",
+      :operatortype => "hours" },
     { :name => 0, :value => "------------------------------" }
   ]
   

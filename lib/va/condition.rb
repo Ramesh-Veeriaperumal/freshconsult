@@ -3,7 +3,6 @@ class Va::Condition
   attr_accessor :handler, :key, :operator
   
   QUERY_COLUMNS = {
-    'tag_names'               => [ 'helpdesk_tags.name' ],
     'subject_or_description'  => [ 'helpdesk_tickets.subject', 'helpdesk_tickets.description' ],
     'from_email'              => 'users.email',
     'contact_name'            => 'users.name',
@@ -31,7 +30,9 @@ class Va::Condition
     return "helpdesk_tickets.#{key}" if Helpdesk::Ticket.column_names.include? key
     return "helpdesk_ticket_states.#{key}" if Helpdesk::TicketState.column_names.include? key
     
-    key
+    #Following things will have a high penalty due to higher number of db queries.
+    #Need to optimize.
+    "flexifields.#{FlexifieldDefEntry.ticket_db_column key}"
   end
   
 end

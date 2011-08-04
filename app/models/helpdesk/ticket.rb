@@ -517,6 +517,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
     (status == STATUS_KEYS_BY_TOKEN[:closed])
   end
   
+  def resolved?
+    (status == STATUS_KEYS_BY_TOKEN[:resolved])
+  end
+  
+   def pending?
+    (status == STATUS_KEYS_BY_TOKEN[:pending])
+  end
+  
   def method_missing(method, *args, &block)
     begin
       super
