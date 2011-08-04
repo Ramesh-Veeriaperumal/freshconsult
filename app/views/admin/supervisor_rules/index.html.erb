@@ -2,6 +2,9 @@
 	<div class="sidepanel">
 		<h3 class="title"><%=t('.help_title')%></h3>
 		<div class="help_text">
+		  <p><%= t(".help_info_1") %></p>
+		  <p><%= t(".help_info_2") %></p>		
+		  <p><%= t(".help_info_3") %></p>
 		</div>
 	</div>
 <% end %>
@@ -19,7 +22,7 @@
   <% @va_rules.each do |supervisor_rule| %>
     <% content_tag :li, :ruleid => supervisor_rule.id, :class => cycle('odd', 'even') do %>
       <div class="item_actions">
-        <%= link_to(t('delete'), admin_supervisor_rule_path(supervisor_rule), :method => 'delete', :confirm => 'Are you sure you want to delete this rule?', :class => "button" ) %>					
+        <%= link_to(t('delete'), admin_supervisor_rule_path(supervisor_rule), :method => 'delete', :confirm => t("dispatch.delete"), :class => "button" ) %>					
         <%= link_to(t('deactivate'), deactivate_admin_supervisor_rule_path(supervisor_rule), :method => 'put', :class => "button") %>
         <%= link_to(t('edit'), edit_admin_supervisor_rule_path(supervisor_rule), :class => "button") %>
       </div>
@@ -43,8 +46,8 @@
     <% @inactive_rules.each do |supervisor_rule| %>
       <% content_tag :li, :ruleid => supervisor_rule.id, :class => cycle('odd', 'even') do %>
         <div class="item_actions">
-          <%= link_to(t('delete'), admin_supervisor_rule_path(supervisor_rule), :method => 'delete', :confirm => 'Are you sure you want to delete this rule?', :class => "button" ) %>					
-          <%= link_to(t('deactivate'), deactivate_admin_supervisor_rule_path(supervisor_rule), :method => 'put', :class => "button") %>
+          <%= link_to(t('delete'), admin_supervisor_rule_path(supervisor_rule), :method => 'delete', :confirm => t("dispatch.delete"), :class => "button" ) %>					
+          <%= link_to(t('activate'), activate_admin_supervisor_rule_path(supervisor_rule), :method => 'put', :class => "button") %>
           <%= link_to(t('edit'), edit_admin_supervisor_rule_path(supervisor_rule), :class => "button") %>
         </div>
         <%= link_to(h(supervisor_rule.name), edit_admin_supervisor_rule_path(supervisor_rule), :class => "item_info") %> 

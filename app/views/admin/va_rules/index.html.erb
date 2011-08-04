@@ -4,7 +4,6 @@
 		<div class="help_text">
 			<p><%=t('dispatch.info4')%>.</p>
 			<p><%=t('dispatch.info5')%>.</p>
-			<p>You can use the <b>Reorder</b> functionality to change the order of the rules.</p>
 		</div>
 	</div>
 <% end %>
@@ -22,7 +21,7 @@
   <% @va_rules.each do |va_rule| %>
     <% content_tag :li, :ruleid => va_rule.id, :class => cycle('odd', 'even') do %>
   		<div class="item_actions">
-  			<%= link_to(t('delete'), admin_va_rule_path(va_rule), :method => 'delete', :confirm => 'Are you sure you want to delete this rule?', :class => "button" ) %>					
+  			<%= link_to(t('delete'), admin_va_rule_path(va_rule), :method => 'delete', :confirm => t("dispatch.delete"), :class => "button" ) %>					
   			<%= link_to(t('deactivate'), deactivate_admin_va_rule_path(va_rule), :method => 'put', :class => "button") %>
   			<%= link_to(t('edit'), edit_admin_va_rule_path(va_rule), :class => "button") %> 					
   		</div>
@@ -46,7 +45,7 @@
     <% @inactive_rules.each do |va_rule| %>
       <% content_tag :li, :ruleid => va_rule.id, :class => cycle('odd', 'even') do %>
         <div class="item_actions">
-          <%= link_to(t('delete'), admin_va_rule_path(va_rule), :method => 'delete', :confirm => 'Are you sure you want to delete this rule', :class => "button" ) %>					
+          <%= link_to(t('delete'), admin_va_rule_path(va_rule), :method => 'delete', :confirm => t("dispatch.delete"), :class => "button" ) %>					
           <%= link_to(t('activate'), activate_admin_va_rule_path(va_rule), :method => 'put', :class => "button") %>
           <%= link_to(t('edit'), edit_admin_va_rule_path(va_rule), :class => "button") %> 					
         </div>
