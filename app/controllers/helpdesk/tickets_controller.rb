@@ -347,7 +347,7 @@ class Helpdesk::TicketsController < ApplicationController
     end
 
     def choose_layout 
-      (action_name == "show_tickets_from_same_user"  || action_name == "confirm_merge") ? 'plainpage' : 'helpdesk/default'
+      (action_name == "show_tickets_from_same_user"  || action_name == "confirm_merge") ? 'plainpage' : 'application'
     end
     
     def get_updated_ticket_count
