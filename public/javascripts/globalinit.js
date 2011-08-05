@@ -9,7 +9,7 @@ var $J = jQuery.noConflict();
 	
 	// App initialisation  
 	$(document).ready(function() {
-		SyntaxHighlighter.all();
+//		SyntaxHighlighter.all();
 			
 		// - Labels with overlabel will act a Placeholder for form elements 
 	    $("label.overlabel").overlabel();
