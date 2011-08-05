@@ -57,7 +57,7 @@ class Helpdesk::NotesController < ApplicationController
      if !params[:include_cc].blank?# and !params[:cc_emails].blank?
       #cc_array = params[:cc_emails].split(',').collect
       cc_array = params[:cc_emails]
-      unless cc_array.empty?
+      unless cc_array.blank?
         cc_array.delete_if {|x| (extract_email(x) == @parent.requester.email or !(valid_email?(x))) }
         cc_array = cc_array.uniq
       end
