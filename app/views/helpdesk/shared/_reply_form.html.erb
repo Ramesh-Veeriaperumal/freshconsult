@@ -21,7 +21,7 @@
                 <%= t(".cc") %>:
             </label>
             <div class="fields">
-                <script type="text/javascript" charset="utf-8">
+                <% content_for :onload_script do -%>
                   function lookup(searchString, callback) { 
                     new Ajax.Request('<%= autocomplete_helpdesk_authorizations_path %>?v='+searchString, 
                                                               { parameters: {name: searchString, rand: (new Date()).getTime()},
@@ -35,11 +35,9 @@
                                                             }
                   var cachedBackend = new Autocompleter.Cache(lookup, {choices: 10});
                   var cachedLookup = cachedBackend.lookup.bind(cachedBackend);
-                </script>
-                <input type="text" id="cc_emails" name="cc_emails" />
-                <script type="text/javascript" charset="utf-8">
                   new Autocompleter.MultiValue("cc_emails", cachedLookup, $A(<%= @ticket.cc_email.map{|item|[item, item]}.to_json unless @ticket.cc_email.blank? %>), {frequency: 0.1, acceptNewValues: true});
-                </script>
+								<%- end %>
+                <input type="text" id="cc_emails" name="cc_emails" />
             </div>
         </li>
         <li class="inline-field field">

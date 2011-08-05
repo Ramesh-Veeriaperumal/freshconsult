@@ -81,6 +81,11 @@ class VARule < ActiveRecord::Base
   end
   
   private
+    def has_conditions?
+      return unless(rule_type == VAConfig::SUPERVISOR_RULE)
+      errors.add_to_base("Conditions can't be empty") if(filter.nil? || filter.empty?)
+    end
+    
     def has_actions?
       deserialize_them
       errors.add_to_base("Actions can't be empty") if(actions.nil? || actions.empty?)
