@@ -46,6 +46,12 @@ class FlexifieldDefEntry < ActiveRecord::Base
       a.last.content= lastcss
     end
   end
+  
+  def self.ticket_db_column(alias_name)
+    ff_entry = Account.current.flexi_field_defs.first.flexifield_def_entries.find_by_flexifield_alias(alias_name)
+    raise ActiveRecord::RecordNotFound unless ff_entry
+    ff_entry.flexifield_name
+  end
 
   def to_ff_field ff_alias = nil
     (ff_alias.nil? || flexifield_alias == ff_alias) ? flexifield_name : nil

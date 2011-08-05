@@ -14,11 +14,23 @@ class Va::Handlers::Numeric < Va::RuleHandler
     end
     
     def filter_query_is
-      [ "#{condition.db_column} = ?", numeric_value ]
+      construct_query '='
     end
     
     def filter_query_is_not
-      [ "#{condition.db_column} != ?", numeric_value ]
+      construct_query '!='
+    end
+    
+    def filter_query_greater_than
+      construct_query '>'
+    end
+    
+    def filter_query_less_than
+      construct_query '<'
+    end
+    
+    def construct_query(q_operator)
+      [ "#{condition.db_column} #{q_operator} ?", numeric_value ]
     end
 
 end

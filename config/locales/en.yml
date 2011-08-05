@@ -102,6 +102,9 @@ en:
       index:
         help_title: Supervisor
         title: Supervisor - Rules
+        help_info_1: Use Supervisor to periodically check recent tickets and perform certain time-based activities like sending reminders to customers or escalating tickets or reassigning tickets etc.
+        help_info_2: For example - If a ticket is waiting for customer response for more than 24 hours send a reminder email to the customer or Automatically close a ticket that is in "Resolved" status for more than 48 hours.
+        help_info_3: Supervisor rules are processed sequentially, so the order of the rules is important. A rule may cause certain actions that trigger subsequent rules.
       new:
         title: Supervisor - New Rule
       edit:
@@ -537,6 +540,7 @@ en:
     match_all: Match All
     match_any: Match Any
     add_condition: Add new condition
+    delete: "Are you sure you want to delete this rule?"
   header_logo: Header Logo
   solutions:
     status:
@@ -941,7 +945,7 @@ en:
     restore_btn_title: Restore this ticket from trash
     subject: Subject
     created_at: Hours since created
-    opened_at: Hours since opened
+    opened_at: Hours since reopened
     pending_since: Hours since pending
     resolved_at: Hours since resolved
     closed_at: Hours since closed
@@ -951,6 +955,7 @@ en:
     agent_responded_at: Hours since agent responded
     first_response_due: Hours since first response due
     due_by: Hours since ticket overdue
+    inbound_count: Number of requester interactions
     recent_tickets: Recent tickets
     unflag_spam: Not Spam
     pick_up: Pick Up
