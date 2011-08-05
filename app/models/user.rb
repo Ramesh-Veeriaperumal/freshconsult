@@ -126,7 +126,7 @@ class User < ActiveRecord::Base
   has_many :reminders, 
     :class_name => 'Helpdesk::Reminder',:dependent => :destroy
     
-  has_many :tickets , :class_name => 'Helpdesk::Ticket' ,:foreign_key => "requester_id"
+  has_many :tickets , :class_name => 'Helpdesk::Ticket' ,:foreign_key => "requester_id" , :dependent => :destroy
   
   has_one :agent , :class_name => 'Agent' , :foreign_key => "user_id", :dependent => :destroy
   
