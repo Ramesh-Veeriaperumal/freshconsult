@@ -360,6 +360,10 @@ a.addchoice:hover{
 				width:auto;
 				margin:2px 4px;
 			}
+			
+			label.error, label.warning{
+			   clear:left;
+			}
 			.add, .delete{
 				position:absolute;
 				margin:0px;
