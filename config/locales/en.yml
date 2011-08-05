@@ -1243,3 +1243,7 @@ en:
   no_message:
     canned_responses: No canned responses available.
     products: You have not created any product yet.
+  errors: 
+    conditions_empty: "Conditions can't be empty"
+    actions_empty: "Actions can't be empty"
+    

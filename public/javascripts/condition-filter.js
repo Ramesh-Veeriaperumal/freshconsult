@@ -151,14 +151,15 @@ rules_filter = function(_name, filter_data, parentDom, options){
 				});		
 				var current_filter = serialHash.get(name);
 				var save_data	   = [];
-				if( ! (current_filter.length == 1 && current_filter[0].name === 0) ) {
+				if( ! (current_filter.length == 1 && current_filter[0].name == 0) ) {
 					save_data = (type != 'json') ? current_filter.toObject() : current_filter.toJSON();
 				}
+				
 				hidden_.val(save_data); 
 				return save_data;
 			},
 		init: 
-			function(){				
+			function(){
 				domUtil.add_to_hash(filter_data);
 				//console.log(setting.init_feed.size());
 				if(setting.init_feed.size())
@@ -187,8 +188,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
 
 			jQuery(parentDom).parents('form:first').submit(function(e){
 				domUtil.get_filter_list('json', this);
-				console.log(hidden_.val());
-			   return false;
+			   return true;
 			});
 
 			jQuery('.l_placeholder').live("click", function(ev){
