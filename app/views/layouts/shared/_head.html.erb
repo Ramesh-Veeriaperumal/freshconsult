@@ -15,5 +15,10 @@
 	<%= include_stylesheets :common, :media => "screen, projection" %>
 	<%= include_stylesheets :syntaxhighlighter, :media => "screen, projection" %>
   <%= render :partial => "shared/theme.css"  %>	
+	<%= include_javascripts :defaults  %>
+	<%= include_javascripts :frameworks %>
+	<%= include_javascripts :workspace %>
+	<%#= include_javascripts :syntaxhighlighter %>
+	
 	<%= yield :head %>
 </head>

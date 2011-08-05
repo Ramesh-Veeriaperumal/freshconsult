@@ -4,7 +4,7 @@ class VARule < ActiveRecord::Base
   
   validates_presence_of :name, :rule_type
   validates_uniqueness_of :name, :scope => [:account_id, :rule_type]
-  validate :has_actions?
+  validate :has_conditions?, :has_actions?
   
   attr_accessor :conditions, :actions
   
@@ -81,9 +81,14 @@ class VARule < ActiveRecord::Base
   end
   
   private
+    def has_conditions?
+      return unless(rule_type == VAConfig::SUPERVISOR_RULE)
+      errors.add_to_base(I18n.t("errors.conditions_empty")) if(filter_data.blank?)
+    end
+    
     def has_actions?
       deserialize_them
-      errors.add_to_base("Actions can't be empty") if(actions.nil? || actions.empty?)
+      errors.add_to_base(I18n.t("errors.actions_empty")) if(action_data.blank?)
     end
   
 end
