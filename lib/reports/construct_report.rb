@@ -15,9 +15,9 @@ module Reports::ConstructReport
      status_hash = @global_hash.fetch(responder)
      status_hash.store(key,tkt.count)
      tot_tkts = status_hash.fetch(:tot_tkts)
-     fcr_per = (tkt.count.to_i/tot_tkts.to_i) * 100
+     fcr_per = (tkt.count.to_f/tot_tkts.to_f) * 100
      status_hash.store(key,tkt.count)
-     status_hash.store(:fcr_per,fcr_per)
+     status_hash.store(:fcr_per,sprintf( "%0.02f", fcr_per))
      @global_hash.store(responder,status_hash)
   end
  end
