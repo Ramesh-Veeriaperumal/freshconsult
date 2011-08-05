@@ -52,6 +52,14 @@ module Reports::ConstructReport
    " helpdesk_tickets.created_at between '#{30.days.ago.to_s(:db)}' and now() "
  end
  
+ def fetch_tkts_by_type
+   tkt_scoper.find( 
+     :all,
+     :include => @val, 
+     :select => "count(*) count, ticket_type", 
+     :group => "ticket_type")
+ end
+ 
  def fetch_tkts_by_status
    tkt_scoper.find( 
      :all,
