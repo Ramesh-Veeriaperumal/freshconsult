@@ -15,11 +15,7 @@ javascripts:
     - public/javascripts/application.js
   frameworks:
     - public/javascripts/frameworks/jquery.js
-    - public/javascripts/frameworks/jquery-plugins/jquery-ui.js
-    - public/javascripts/frameworks/jquery-plugins/jquery.overlabel.js
-    - public/javascripts/frameworks/jquery-plugins/jquery.validate.js
-    - public/javascripts/frameworks/jquery-plugins/jquery.autoresize.js
-    - public/javascripts/frameworks/jquery-plugins/jquery.qtip.js
+    - public/javascripts/frameworks/plugins/*.js
     - public/javascripts/hackz.js    
   workspace: 
     - public/javascripts/fast_autocompleter.js  

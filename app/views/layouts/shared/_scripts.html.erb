@@ -1,7 +1,7 @@
 <%= include_javascripts :defaults  %>
 <%= include_javascripts :frameworks %>
 <%= include_javascripts :workspace %>
-<%= include_javascripts :syntaxhighlighter %>
+<%#= include_javascripts :syntaxhighlighter %>
 <%- javascript_tag do -%>
   $J(document).ready(function() {
     <%= yield :onload_script -%>

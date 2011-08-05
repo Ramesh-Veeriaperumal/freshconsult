@@ -1,9 +1,5 @@
 <% @page_title = "Dashboard" %>
 
-<% content_for :head do %> 
-  <%= javascript_include_tag 'jquery.pageless' %>
-<% end %>
-
 <% content_for :sidebar do %>
   <div id="reminders" class="reminders sidepanel">    
   	<h3 class="title"><%= t(".todo_title") %></h3>
@@ -23,4 +19,8 @@
 	</ul>
 </div>
 <%= will_paginate @items %>
-<%= pageless(@items.total_pages, helpdesk_dashboard_path) %>
+<% content_for :pagefixed do %> 
+  <%= pageless(@items.total_pages, helpdesk_dashboard_path) %>  
+<% end %>
+
+
