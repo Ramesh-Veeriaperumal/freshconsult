@@ -2,7 +2,7 @@ module TicketConstants
   
   CHAT_SOURCES = { :snapengage =>  "snapengage.com", :olark => "olark.com"}
   
-  OUT_OF_OFF_SUBJECTS = [ "away from the office", "out of office", "away from office","mail delivery failed","vacation" ]
+  OUT_OF_OFF_SUBJECTS = [ "away from the office", "out of office", "away from office","mail delivery failed","returning your reply to helpdesk message", "vacation" ]
    
   SOURCES = [
     [ :email,       I18n.t('email'),            1 ],
