@@ -960,7 +960,6 @@
 */
 /* Overlays */
 .ui-widget-overlay {
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=60)";
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=60);
   opacity: 0.6;
   background-color: black;
