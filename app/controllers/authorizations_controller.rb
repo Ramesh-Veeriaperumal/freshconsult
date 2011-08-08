@@ -9,7 +9,10 @@ class AuthorizationsController < ApplicationController
     elsif
       create_for_twitter
     end
-     @user_session = @current_user.account.user_sessions.new(@current_user)
+  end
+  
+  def create_session
+    @user_session = @current_user.account.user_sessions.new(@current_user)
     if @user_session.save
       redirect_back_or_default('/')
     else
@@ -27,7 +30,11 @@ class AuthorizationsController < ApplicationController
       @current_user.authorizations.create(:provider => @omniauth['provider'], 
       :uid => @omniauth['uid'], :account_id => current_account.id)
       make_usr_active
-    end   
+    else
+      flash[:notice] = "User is not there!"
+      return redirect_to login_url
+    end  
+    create_session
   end
   
   def chk_if_deleted
@@ -51,9 +58,10 @@ class AuthorizationsController < ApplicationController
       @current_user.authorizations.create(:provider => @omniauth['provider'], :uid => @omniauth['uid'], :account_id => current_account.id) #Add an auth to existing user
       make_usr_active
     else  
-      @new_auth = create_from_hash(omniauth) 
+      @new_auth = create_from_hash(@omniauth) 
       @current_user = @new_auth.user
     end
+    create_session
   end
   
   def create_from_hash(hash)
