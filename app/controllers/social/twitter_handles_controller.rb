@@ -8,10 +8,6 @@ class Social::TwitterHandlesController < ApplicationController
     c.requires_permission :manage_forums
   end
   
-  #include HelpdeskControllerMethods 
-  
-  
-  
   prepend_before_filter :load_product, :only => [:signin,:authdone]
   before_filter :load_main_product, :only => [:index]
   before_filter :build_item, :only => [:signin,:authdone]
@@ -106,7 +102,6 @@ class Social::TwitterHandlesController < ApplicationController
   
 
   protected
-  #current_user is the user who's logged in
   
   def load_main_product
     @current_product = current_account.primary_email_config
