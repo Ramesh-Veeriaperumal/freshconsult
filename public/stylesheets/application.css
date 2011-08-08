@@ -1,8 +1,8 @@
 /* This import applies a global reset to any page that imports this stylesheet.*/
 /* Theme Colors and layout Defaults */
 /* Importing admin icons */
-.admin-icon-sprite, .admin-icon-account-settings, .admin-icon-agent, .admin-icon-business-hours, .admin-icon-canned-response, .admin-icon-customer-portal, .admin-icon-dispatcher, .admin-icon-email-notifications, .admin-icon-email-settings, .admin-icon-feedback, .admin-icon-group, .admin-icon-import, .admin-icon-multi-product, .admin-icon-rebranding, .admin-icon-remote-authentication, .admin-icon-scenario, .admin-icon-sla, .admin-icon-ticket-fields {
-  background: url('/images/admin-icon-a9c25ee344.png') no-repeat;
+.admin-icon-sprite, .admin-icon-account-settings, .admin-icon-agent, .admin-icon-business-hours, .admin-icon-canned-response, .admin-icon-customer-portal, .admin-icon-dispatcher, .admin-icon-email-notifications, .admin-icon-email-settings, .admin-icon-feedback, .admin-icon-group, .admin-icon-import, .admin-icon-multi-product, .admin-icon-rebranding, .admin-icon-remote-authentication, .admin-icon-scenario, .admin-icon-sla, .admin-icon-supervisor, .admin-icon-ticket-fields, .admin-icon-twitter-setting {
+  background: url('/images/admin-icon-s551b010e2a.png') no-repeat;
 }
 
 /* Ticket Show page twitter style icons */
@@ -49,8 +49,6 @@ ul.activityfeed, ul.summary {
 }
 
 ul.summary {
-  behavior: url('/stylesheets/PIE.htc');
-  position: relative;
   -moz-border-radius: 6px 6px 6px 6px;
   -webkit-border-radius: 6px 6px 6px 6px;
   border-radius: 6px 6px 6px 6px;
@@ -190,7 +188,7 @@ ul.activityfeed li .activity_time {
 }
 .ui-list_with_icon li {
   padding-left: 14px;
-  background: url('/images/listicons/request_nav_seperator.gif?1311832442') no-repeat 3px 9px;
+  background: url('/images/symbols/request_nav_seperator.gif?1312630649') no-repeat 3px 9px;
   list-style-type: none;
 }
 .ui-list_with_icon li {
@@ -217,45 +215,6 @@ ul.activityfeed li .activity_time {
 }
 .ui-list_with_icon li a:active {
   color: #527eaa;
-}
-
-.list_with_icon {
-  margin-left: 0;
-  padding-top: 3px;
-}
-.list_with_icon li {
-  padding-left: 14px;
-  background: url('/images/listicons/forum-bullet.png?1311832442') no-repeat 1px 1px;
-  list-style-type: none;
-}
-.list_with_icon li, .list_with_icon div.list-item {
-  padding-left: 22px;
-  margin: 3px 0px 12px 0px;
-}
-.list_with_icon li a, .list_with_icon div.list-item a {
-  color: #4d769f;
-  text-decoration: none;
-}
-.list_with_icon li a:visited, .list_with_icon div.list-item a:visited {
-  color: #4d769f;
-}
-.list_with_icon li a:hover, .list_with_icon div.list-item a:hover {
-  color: #3399cc;
-}
-.list_with_icon li a:active, .list_with_icon div.list-item a:active {
-  color: #4d769f;
-}
-.list_with_icon li a.title, .list_with_icon div.list-item a.title {
-  display: block;
-  padding: 0px;
-  font-weight: normal;
-  padding-bottom: 4px;
-  font-size: 13px;
-}
-.list_with_icon div.list-item {
-  background: url("/images/listicons/forum-bullet.png") no-repeat left 2px;
-  margin-bottom: 4px;
-  margin-left: -22px;
 }
 
 .user_name {
@@ -364,7 +323,6 @@ h2.content_title {
   border-radius: 0.8em;
   border: 1px solid #afafaf;
   *zoom: 1;
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColorstr='#FFFFFFFF', endColorstr='#FFEFEFEF')";
   filter: progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColorstr='#FFFFFFFF', endColorstr='#FFEFEFEF');
   /* Fallback: */
   background: white;
@@ -373,6 +331,7 @@ h2.content_title {
   background-image: -webkit-linear-gradient(#ffffff, #efefef);
   background-image: -moz-linear-gradient(#ffffff, #efefef);
   background-image: -o-linear-gradient(#ffffff, #efefef);
+  background-image: -ms-linear-gradient(#ffffff, #efefef);
   background-image: linear-gradient(#ffffff, #efefef);
 }
 .tab-buttons li a {
@@ -825,6 +784,12 @@ body h5 {
 .request_details div.description .details .ui-form .button-container {
   width: 93%;
 }
+.request_details div.description .ticketdetails p {
+  margin-bottom: 12px;
+}
+.request_details div.description .ticketdetails br {
+  display: none;
+}
 .request_details div.description .min_height {
   min-height: 100px;
   height: auto !important;
@@ -893,7 +858,6 @@ body h5 {
   top: -18px;
   border: 1px solid #d3d497;
   *zoom: 1;
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColorstr='#FFFEFEDF', endColorstr='#FFFBFD90')";
   filter: progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColorstr='#FFFEFEDF', endColorstr='#FFFBFD90');
   /* Fallback: */
   background: #fefedf;
@@ -902,6 +866,7 @@ body h5 {
   background-image: -webkit-linear-gradient(#fefedf, #fbfd90);
   background-image: -moz-linear-gradient(#fefedf, #fbfd90);
   background-image: -o-linear-gradient(#fefedf, #fbfd90);
+  background-image: -ms-linear-gradient(#fefedf, #fbfd90);
   background-image: linear-gradient(#fefedf, #fbfd90);
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FEFEDF', endColorstr='#FBFD90',GradientType=0 );
   /* IE6-9 */
@@ -951,7 +916,7 @@ body h5 {
   margin: 5px 0px;
 }
 
-.attachment_list {
+.attachment_list, .ui-form .attachment_list {
   list-style: none;
   color: #888987;
   margin-top: 3px;
@@ -959,12 +924,12 @@ body h5 {
   overflow: hidden;
   *zoom: 1;
 }
-.attachment_list li {
+.attachment_list li, .ui-form .attachment_list li {
   list-style-image: none;
   list-style-type: none;
   margin-left: 0px;
 }
-.attachment_list li {
+.attachment_list li, .ui-form .attachment_list li {
   overflow: hidden;
   *zoom: 1;
   -moz-border-radius: 3px 3px 3px 3px;
@@ -980,32 +945,32 @@ body h5 {
   height: 40px;
   position: relative;
 }
-.attachment_list li .preview_img {
+.attachment_list li .preview_img, .ui-form .attachment_list li .preview_img {
   margin: 8px 0px;
   position: absolute;
   width: 34px;
   left: 5px;
   top: 0px;
 }
-.attachment_list li .preview_img img.image {
+.attachment_list li .preview_img img.image, .ui-form .attachment_list li .preview_img img.image {
   margin: 0px 0px 0px 0px;
   width: 32px;
   height: 32px;
 }
-.attachment_list li a {
+.attachment_list li a, .ui-form .attachment_list li a {
   color: #6699cc;
   text-decoration: none;
 }
-.attachment_list li a:visited {
+.attachment_list li a:visited, .ui-form .attachment_list li a:visited {
   color: #6699cc;
 }
-.attachment_list li a:hover {
+.attachment_list li a:hover, .ui-form .attachment_list li a:hover {
   color: #336699;
 }
-.attachment_list li a:active {
+.attachment_list li a:active, .ui-form .attachment_list li a:active {
   color: #6699cc;
 }
-.attachment_list li name a {
+.attachment_list li name a, .ui-form .attachment_list li name a {
   white-space: nowrap;
   overflow: hidden;
   -o-text-overflow: ellipsis;
@@ -1013,29 +978,29 @@ body h5 {
   text-overflow: ellipsis;
   -moz-binding: url('/stylesheets/xml/ellipsis.xml#ellipsis');
 }
-.attachment_list li .delete {
+.attachment_list li .delete, .ui-form .attachment_list li .delete {
   position: absolute;
   right: 0px;
   display: none;
   top: 0px;
 }
-.attachment_list li:hover {
+.attachment_list li:hover, .ui-form .attachment_list li:hover {
   background: #f2e9d1;
 }
-.attachment_list li:hover a {
+.attachment_list li:hover a, .ui-form .attachment_list li:hover a {
   color: #993333;
   text-decoration: none;
 }
-.attachment_list li:hover a:visited {
+.attachment_list li:hover a:visited, .ui-form .attachment_list li:hover a:visited {
   color: #993333;
 }
-.attachment_list li:hover a:hover {
+.attachment_list li:hover a:hover, .ui-form .attachment_list li:hover a:hover {
   color: #333333;
 }
-.attachment_list li:hover a:active {
+.attachment_list li:hover a:active, .ui-form .attachment_list li:hover a:active {
   color: #993333;
 }
-.attachment_list li:hover .delete {
+.attachment_list li:hover .delete, .ui-form .attachment_list li:hover .delete {
   display: block;
 }
 
@@ -1140,7 +1105,7 @@ body h5 {
   max-width: 100%;
 }
 .rtCnt .rtDetails .cnt li span.edit-item {
-  background: url('/images/icons-1fde8ad171.png') 0 -50px no-repeat;
+  background: url('/images/icons-s1fde8ad171.png') 0 -50px no-repeat;
   float: right;
   width: 16px;
   height: 16px;
@@ -1173,25 +1138,25 @@ body h5 {
   height: 32px;
 }
 .rtCnt .rtPanel a img.ticketprop {
-  background: url('/images/ticket-icon-7b1d46eeb6.png') 0 -198px no-repeat;
+  background: url('/images/ticket-icon-s7b1d46eeb6.png') 0 -198px no-repeat;
 }
 .rtCnt .rtPanel a img.suggestsolutions {
-  background: url('/images/ticket-icon-7b1d46eeb6.png') 0 -370px no-repeat;
+  background: url('/images/ticket-icon-s7b1d46eeb6.png') 0 -370px no-repeat;
 }
 .rtCnt .rtPanel a img.scenario {
-  background: url('/images/ticket-icon-7b1d46eeb6.png') 0 -284px no-repeat;
+  background: url('/images/ticket-icon-s7b1d46eeb6.png') 0 -284px no-repeat;
 }
 .rtCnt .rtPanel a img.requesterinfo {
-  background: url('/images/ticket-icon-7b1d46eeb6.png') 0 -628px no-repeat;
+  background: url('/images/ticket-icon-s7b1d46eeb6.png') 0 -628px no-repeat;
 }
 .rtCnt .rtPanel a img.todo {
-  background: url('/images/ticket-icon-7b1d46eeb6.png') 0 -542px no-repeat;
+  background: url('/images/ticket-icon-s7b1d46eeb6.png') 0 -542px no-repeat;
 }
 .rtCnt .rtPanel a img.tags {
-  background: url('/images/ticket-icon-7b1d46eeb6.png') 0 -456px no-repeat;
+  background: url('/images/ticket-icon-s7b1d46eeb6.png') 0 -456px no-repeat;
 }
 .rtCnt .rtPanel a img.activity {
-  background: url('/images/ticket-icon-7b1d46eeb6.png') 0 0 no-repeat;
+  background: url('/images/ticket-icon-s7b1d46eeb6.png') 0 0 no-repeat;
 }
 .rtCnt .rtPanel a em {
   display: block;
@@ -1214,25 +1179,25 @@ body h5 {
   color: #ffffff;
 }
 .rtCnt .rtPanel a.active img.ticketprop, .rtCnt .rtPanel a:hover img.ticketprop {
-  background: url('/images/ticket-icon-7b1d46eeb6.png') 0 -241px no-repeat;
+  background: url('/images/ticket-icon-s7b1d46eeb6.png') 0 -241px no-repeat;
 }
 .rtCnt .rtPanel a.active img.suggestsolutions, .rtCnt .rtPanel a:hover img.suggestsolutions {
-  background: url('/images/ticket-icon-7b1d46eeb6.png') 0 -413px no-repeat;
+  background: url('/images/ticket-icon-s7b1d46eeb6.png') 0 -413px no-repeat;
 }
 .rtCnt .rtPanel a.active img.scenario, .rtCnt .rtPanel a:hover img.scenario {
-  background: url('/images/ticket-icon-7b1d46eeb6.png') 0 -327px no-repeat;
+  background: url('/images/ticket-icon-s7b1d46eeb6.png') 0 -327px no-repeat;
 }
 .rtCnt .rtPanel a.active img.requesterinfo, .rtCnt .rtPanel a:hover img.requesterinfo {
-  background: url('/images/ticket-icon-7b1d46eeb6.png') 0 -671px no-repeat;
+  background: url('/images/ticket-icon-s7b1d46eeb6.png') 0 -671px no-repeat;
 }
 .rtCnt .rtPanel a.active img.todo, .rtCnt .rtPanel a:hover img.todo {
-  background: url('/images/ticket-icon-7b1d46eeb6.png') 0 -585px no-repeat;
+  background: url('/images/ticket-icon-s7b1d46eeb6.png') 0 -585px no-repeat;
 }
 .rtCnt .rtPanel a.active img.tags, .rtCnt .rtPanel a:hover img.tags {
-  background: url('/images/ticket-icon-7b1d46eeb6.png') 0 -499px no-repeat;
+  background: url('/images/ticket-icon-s7b1d46eeb6.png') 0 -499px no-repeat;
 }
 .rtCnt .rtPanel a.active img.activity, .rtCnt .rtPanel a:hover img.activity {
-  background: url('/images/ticket-icon-7b1d46eeb6.png') 0 -43px no-repeat;
+  background: url('/images/ticket-icon-s7b1d46eeb6.png') 0 -43px no-repeat;
 }
 
 ul.admin_icons {
@@ -1259,8 +1224,6 @@ ul.admin_icons li a {
   -moz-border-radius: 6px 6px 6px 6px;
   -webkit-border-radius: 6px 6px 6px 6px;
   border-radius: 6px 6px 6px 6px;
-  behavior: url('/stylesheets/PIE.htc');
-  position: relative;
 }
 ul.admin_icons li a img {
   height: 32px;
@@ -1355,8 +1318,16 @@ ul.admin_icons li a:hover {
   background-position: 0 -480px;
 }
 
-.admin-icon-ticket-fields {
+.admin-icon-supervisor {
   background-position: 0 -512px;
+}
+
+.admin-icon-ticket-fields {
+  background-position: 0 -544px;
+}
+
+.admin-icon-twitter-setting {
+  background-position: 0 -576px;
 }
 
 .mark_action a, .mark_action .stamp {
@@ -1459,16 +1430,16 @@ div.panel_area div.item {
   height: 28px;
 }
 .action_icons .monitor img {
-  background: url('/images/ticket-icon-7b1d46eeb6.png') 0 -142px no-repeat;
+  background: url('/images/ticket-icon-s7b1d46eeb6.png') 0 -142px no-repeat;
 }
 .action_icons .monitor_active img {
-  background: url('/images/ticket-icon-7b1d46eeb6.png') 0 -170px no-repeat;
+  background: url('/images/ticket-icon-s7b1d46eeb6.png') 0 -170px no-repeat;
 }
 .action_icons .spam img {
-  background: url('/images/ticket-icon-7b1d46eeb6.png') 0 -86px no-repeat;
+  background: url('/images/ticket-icon-s7b1d46eeb6.png') 0 -86px no-repeat;
 }
 .action_icons .spam_active img {
-  background: url('/images/ticket-icon-7b1d46eeb6.png') 0 -114px no-repeat;
+  background: url('/images/ticket-icon-s7b1d46eeb6.png') 0 -114px no-repeat;
 }
 
 .request_panel_list {
@@ -1477,7 +1448,6 @@ div.panel_area div.item {
 }
 .request_panel_list div.item {
   *zoom: 1;
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColorstr='#FFEFEFEF', endColorstr='#FFDFDFDF')";
   filter: progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColorstr='#FFEFEFEF', endColorstr='#FFDFDFDF');
   /* Fallback: */
   background: #efefef;
@@ -1486,6 +1456,7 @@ div.panel_area div.item {
   background-image: -webkit-linear-gradient(#efefef, #dfdfdf);
   background-image: -moz-linear-gradient(#efefef, #dfdfdf);
   background-image: -o-linear-gradient(#efefef, #dfdfdf);
+  background-image: -ms-linear-gradient(#efefef, #dfdfdf);
   background-image: linear-gradient(#efefef, #dfdfdf);
   padding: 3px 8px;
 }
@@ -1976,41 +1947,34 @@ span.sort_handle {
   border-radius: 5px 5px 5px 5px;
 }
 
-.deactivated li {
-  background: #f6f6f6;
-}
-.deactivated li a.item_info {
-  color: #666666;
-}
-
 .sortable {
-  background: #efefef;
-  border-top: 1px solid #cfcfcf;
+  background: #f5f5f5;
+  border: 1px solid #cfcfcf;
+  border-width: 1px 0px;
   padding: 2px 20px 10px 20px;
   margin: 0px -20px;
 }
-.sortable span.sort_handle {
+
+.sort-list {
+  margin: 0px -16px;
+}
+.sort-list span.sort_handle {
   margin: 0px 5px 0px 0px;
   position: relative;
-  top: -1px !important;
+  top: -3px;
 }
-.sortable .actions {
-  padding: 3px 10px 6px 3px;
-  text-align: right;
-}
-.sortable li {
+.sort-list li {
   cursor: move;
+  background: #ffffff;
   border: 1px solid #dfdfdf;
   margin: 1px 10px;
-  border-bottom-color: #bfbfbfb;
-  border-right-color: #bfbfbfb;
   font-size: 1.2em;
-  padding: 5px 5px 0px 5px;
-  -moz-border-radius: 2px 2px 2px 2px;
-  -webkit-border-radius: 2px 2px 2px 2px;
-  border-radius: 2px 2px 2px 2px;
+  padding: 8px 5px;
+  -moz-border-radius: 4px 4px 4px 4px;
+  -webkit-border-radius: 4px 4px 4px 4px;
+  border-radius: 4px 4px 4px 4px;
 }
-.sortable li.ui-sortable-placeholder {
+.sort-list li.ui-sortable-placeholder {
   border-color: #efefef;
   background-color: #efefef !important;
 }
@@ -2168,13 +2132,11 @@ ul.active .selected_tick {
 }
 
 ul.inactive a {
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=60)";
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=60);
   opacity: 0.6;
   color: #333333;
 }
 ul.inactive a:hover {
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
   opacity: 1;
 }
@@ -2450,57 +2412,6 @@ h4.border_title {
   color: #4d769f;
 }
 
-.topic-list-view {
-  padding: 0px;
-  margin: 0px 0px;
-  border: 1px solid #f1f1f1;
-  border-width: 1px 0px;
-}
-.topic-list-view li {
-  overflow: hidden;
-  *zoom: 1;
-  border-bottom: 1px dotted #eaeaea;
-  padding: 14px 25px 10px 70px;
-  position: relative;
-}
-.topic-list-view li a {
-  color: #4d769f;
-  text-decoration: none;
-}
-.topic-list-view li a:visited {
-  color: #4d769f;
-}
-.topic-list-view li a:hover {
-  color: #3399cc;
-}
-.topic-list-view li a:active {
-  color: #4d769f;
-}
-.topic-list-view li a.topic-title {
-  font-size: 14px;
-  font-weight: 500;
-}
-.topic-list-view li .info_data {
-  padding: 6px 0px 4px 0px;
-  font-size: 12px;
-  color: #888888;
-}
-.topic-list-view li .preview_pic {
-  border-color: #d2d2d2;
-  position: absolute;
-  left: 20px;
-  top: 16px;
-}
-.topic-list-view li .preview_pic img {
-  width: 36px;
-  height: 36px;
-  padding: 0px;
-  border: 0px;
-}
-.topic-list-view li:hover {
-  background: #f4f4f4;
-}
-
 .sticky {
   background: #ffffff;
 }
@@ -2552,7 +2463,7 @@ h4.border_title {
 }
 .solution-list .odd ul li, .solution-list .even ul li {
   padding-left: 14px;
-  background: url('/images/listicons/request_nav_seperator.gif?1311832442') no-repeat 3.5px 3.5px;
+  background: url('/images/symbols/request_nav_seperator.gif?1312630649') no-repeat 3.5px 3.5px;
   list-style-type: none;
 }
 .solution-list .odd li, .solution-list .even li {
@@ -2636,12 +2547,6 @@ h4.border_title {
 }
 .ssp_category_list div.odd span, .ssp_category_list div.even span {
   color: #888888;
-  white-space: nowrap;
-  overflow: hidden;
-  -o-text-overflow: ellipsis;
-  -ms-text-overflow: ellipsis;
-  text-overflow: ellipsis;
-  -moz-binding: url('/stylesheets/xml/ellipsis.xml#ellipsis');
 }
 .ssp_category_list div.odd a, .ssp_category_list div.odd span, .ssp_category_list div.even a, .ssp_category_list div.even span {
   display: block;
@@ -2673,7 +2578,6 @@ h4.border_title {
   left: 0px;
   top: 0px;
   background: #888888;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=30);
   opacity: 0.3;
 }
@@ -2748,10 +2652,14 @@ h4.border_title {
   right: 10px;
 }
 
-.ajax-loader, .loading, .loading-right {
+.ajax-loader, .loading, .loading-right, .loading-center {
   background-image: url("/images/load.gif");
   background-repeat: no-repeat;
   background-position: 10px 10px;
+}
+
+.loading-center {
+  background-position: center center;
 }
 
 .loading-right {
@@ -3140,20 +3048,23 @@ a.page_title:active {
 .results {
   padding-bottom: 8px;
 }
+.results .ticket_icon, .results .contact_icon, .results .company_icon, .results .solution_icon, .results .forum_icon {
+  display: inline-block;
+}
 .results .ticket_icon span.icon {
-  background: url('/images/icons-1fde8ad171.png') 0 -98px no-repeat;
+  background: url('/images/icons-s1fde8ad171.png') 0 -98px no-repeat;
 }
 .results .contact_icon span.icon {
-  background: url('/images/icons-1fde8ad171.png') 0 -130px no-repeat;
+  background: url('/images/icons-s1fde8ad171.png') 0 -130px no-repeat;
 }
 .results .company_icon span.icon {
-  background: url('/images/icons-1fde8ad171.png') 0 -18px no-repeat;
+  background: url('/images/icons-s1fde8ad171.png') 0 -18px no-repeat;
 }
 .results .solution_icon span.icon {
-  background: url('/images/icons-1fde8ad171.png') 0 -114px no-repeat;
+  background: url('/images/icons-s1fde8ad171.png') 0 -114px no-repeat;
 }
 .results .forum_icon span.icon {
-  background: url('/images/icons-1fde8ad171.png') 0 -34px no-repeat;
+  background: url('/images/icons-s1fde8ad171.png') 0 -34px no-repeat;
 }
 .results li {
   list-style: none;
@@ -3465,7 +3376,6 @@ a.page_title:active {
   display: block;
   color: #444444;
   *zoom: 1;
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColorstr='#FFEFEFEF', endColorstr='#FFE8E8E8')";
   filter: progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColorstr='#FFEFEFEF', endColorstr='#FFE8E8E8');
   /* Fallback: */
   background: #efefef;
@@ -3474,6 +3384,7 @@ a.page_title:active {
   background-image: -webkit-linear-gradient(#efefef, #e8e8e8);
   background-image: -moz-linear-gradient(#efefef, #e8e8e8);
   background-image: -o-linear-gradient(#efefef, #e8e8e8);
+  background-image: -ms-linear-gradient(#efefef, #e8e8e8);
   background-image: linear-gradient(#efefef, #e8e8e8);
   border-bottom: 1px solid #dfdfdf;
   text-decoration: none;
@@ -3521,14 +3432,14 @@ a.page_title:active {
   position: absolute;
 }
 .request-list div.item a.item-title .bulb {
-  background: url('/images/icons-1fde8ad171.png') 0 -82px no-repeat;
+  background: url('/images/icons-s1fde8ad171.png') 0 -82px no-repeat;
   width: 16px;
   height: 16px;
   left: 6px;
   top: 10px;
 }
 .request-list div.item a.item-title .wand {
-  background: url('/images/icons-1fde8ad171.png') 0 -168px no-repeat;
+  background: url('/images/icons-s1fde8ad171.png') 0 -168px no-repeat;
   width: 22px;
   height: 22px;
   left: 2px;
@@ -3536,7 +3447,7 @@ a.page_title:active {
 }
 .request-list div.item .private-icon {
   display: none;
-  background: url('/images/symbols-7a45324a2d.png') 0 -137px no-repeat;
+  background: url('/images/symbols-sa58d0ef158.png') 0 -153px no-repeat;
   width: 16px;
   height: 16px;
   position: relative;
@@ -3551,10 +3462,10 @@ a.page_title:active {
   border-right-color: #ffffff;
 }
 .request-list div.item a.item-title:hover .bulb {
-  background: url('/images/icons-1fde8ad171.png') 0 -66px no-repeat;
+  background: url('/images/icons-s1fde8ad171.png') 0 -66px no-repeat;
 }
 .request-list div.item a.item-title:hover .wand {
-  background: url('/images/icons-1fde8ad171.png') 0 -146px no-repeat;
+  background: url('/images/icons-s1fde8ad171.png') 0 -146px no-repeat;
 }
 .request-list div.item a.private .private-icon {
   display: block;
@@ -3630,36 +3541,46 @@ a.page_title:active {
   font-size: 0px;
 }
 
-.reminders h3.title {
-  border-bottom: 1px solid #e3dcc1;
+.reminders h3.title, .reminders-ticket h3.title {
+  border-bottom: 1px solid #f1edd1;
   color: #734e3d;
   display: block;
 }
 
-.reminders-ticket label {
+.rtCnt .rtDetails.reminders-ticket {
+  background-color: #ffffe2;
+}
+.rtCnt .rtDetails.reminders-ticket label {
   font-size: 14px;
+}
+.rtCnt .rtDetails.reminders-ticket h3.title {
+  padding: 1px 0px 5px 0px;
+}
+.rtCnt .rtDetails.reminders-ticket .panel_area {
+  padding-top: 0px;
 }
 
 .reminders, .reminders-ticket {
   position: relative;
-  background-color: #ffffe2 !important;
+  background-color: #ffffe2;
 }
-.reminders table, .reminders-ticket table {
+.reminders ul, .reminders-ticket ul {
   display: block;
   margin: 2px 0px;
-  border-top: 1px solid #e3dcc1;
+  border-top: 1px solid #f1edd1;
 }
-.reminders table tbody, .reminders table tr, .reminders-ticket table tbody, .reminders-ticket table tr {
-  display: block;
-}
-.reminders table td, .reminders-ticket table td {
-  vertical-align: top;
-  padding: 6px 0px 6px 0px;
+.reminders ul li, .reminders-ticket ul li {
+  padding: 6px 0px 6px 20px;
   border-bottom: 1px solid #f1edd1;
   text-transform: capitalize;
   position: relative;
 }
-.reminders table td label, .reminders-ticket table td label {
+.reminders ul li input, .reminders-ticket ul li input {
+  float: left;
+  margin-left: -16px;
+  position: absolute;
+}
+.reminders ul li label, .reminders-ticket ul li label {
   font-size: 13px;
   font-weight: normal;
   color: #734e3d;
@@ -3668,31 +3589,31 @@ a.page_title:active {
   padding-top: 0px;
   display: block;
 }
-.reminders table td a.request_link, .reminders-ticket table td a.request_link {
+.reminders ul li a.request_link, .reminders-ticket ul li a.request_link {
   display: block;
   color: #666666;
   font-size: 12px;
   text-decoration: none;
 }
-.reminders table td a.request_link:visited, .reminders-ticket table td a.request_link:visited {
+.reminders ul li a.request_link:visited, .reminders-ticket ul li a.request_link:visited {
   color: #6f8698;
 }
-.reminders table td a.request_link:hover, .reminders-ticket table td a.request_link:hover {
+.reminders ul li a.request_link:hover, .reminders-ticket ul li a.request_link:hover {
   color: #6f8698;
 }
-.reminders table td a.request_link:active, .reminders-ticket table td a.request_link:active {
+.reminders ul li a.request_link:active, .reminders-ticket ul li a.request_link:active {
   color: #6f8698;
 }
-.reminders table td .checked, .reminders-ticket table td .checked {
+.reminders ul li .checked, .reminders-ticket ul li .checked {
   font-size: 12px;
   color: #a98e6d;
   text-decoration: line-through;
 }
-.reminders table td .checked a.request_link, .reminders-ticket table td .checked a.request_link {
+.reminders ul li .checked a.request_link, .reminders-ticket ul li .checked a.request_link {
   font-size: 10px;
   color: #a98e6d;
 }
-.reminders table td .delete, .reminders-ticket table td .delete {
+.reminders ul li .delete, .reminders-ticket ul li .delete {
   float: right;
   width: 16px;
   height: 16px;
@@ -3710,30 +3631,29 @@ a.page_title:active {
   position: relative;
   left: -3px;
 }
-.reminders table tr:hover, .reminders table tr.active, .reminders-ticket table tr:hover, .reminders-ticket table tr.active {
+.reminders ul li:hover, .reminders ul li.active, .reminders-ticket ul li:hover, .reminders-ticket ul li.active {
   background-color: #fefed2;
   background-image: url(../images/overlay-top-shadow.png);
   background-repeat: repeat-x;
 }
-.reminders table tr:hover .delete, .reminders table tr.active .delete, .reminders-ticket table tr:hover .delete, .reminders-ticket table tr.active .delete {
+.reminders ul li:hover .delete, .reminders ul li.active .delete, .reminders-ticket ul li:hover .delete, .reminders-ticket ul li.active .delete {
   visibility: visible;
 }
 
 div.addReminder {
-  margin: 8px 0px;
+  margin: 0px 0px;
   display: block;
-  height: 20px;
+  height: 35px;
   padding: 0px;
   position: relative;
 }
 div.addReminder form {
-  behavior: url('/stylesheets/PIE.htc');
-  position: relative;
   -moz-border-radius: 6px 6px 6px 6px;
   -webkit-border-radius: 6px 6px 6px 6px;
   border-radius: 6px 6px 6px 6px;
   border: 2px solid #e3dcc1;
   padding: 3px 0px;
+  margin: 8px 0px 8px 0px;
   background-color: #fefef2;
 }
 div.addReminder form input.text {
@@ -3742,7 +3662,7 @@ div.addReminder form input.text {
   background: 0px;
   font-size: 14px;
   display: block;
-  margin: 3px 0px 0px 0px;
+  margin: 2px 0px 0px 0px;
   padding: 0px 0px 0px 10px;
 }
 div.addReminder form input:focus {
@@ -3783,7 +3703,6 @@ div.addReminder form label.overlabel {
   border-bottom: 0px;
   font-size: 13px;
   *zoom: 1;
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColorstr='#FFFCFCFC', endColorstr='#FFF1F1F1')";
   filter: progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColorstr='#FFFCFCFC', endColorstr='#FFF1F1F1');
   /* Fallback: */
   background: #fcfcfc;
@@ -3792,6 +3711,7 @@ div.addReminder form label.overlabel {
   background-image: -webkit-linear-gradient(#fcfcfc, #f1f1f1);
   background-image: -moz-linear-gradient(#fcfcfc, #f1f1f1);
   background-image: -o-linear-gradient(#fcfcfc, #f1f1f1);
+  background-image: -ms-linear-gradient(#fcfcfc, #f1f1f1);
   background-image: linear-gradient(#fcfcfc, #f1f1f1);
   border-bottom: 1px solid #eaeaea;
 }
@@ -3807,7 +3727,6 @@ div.addReminder form label.overlabel {
 }
 .tab_panel a.active, .tab_panel a:hover {
   *zoom: 1;
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColorstr='#FFF5F5F5', endColorstr='#FFE1E1E1')";
   filter: progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColorstr='#FFF5F5F5', endColorstr='#FFE1E1E1');
   /* Fallback: */
   background: #f5f5f5;
@@ -3816,6 +3735,7 @@ div.addReminder form label.overlabel {
   background-image: -webkit-linear-gradient(#f5f5f5, #e1e1e1);
   background-image: -moz-linear-gradient(#f5f5f5, #e1e1e1);
   background-image: -o-linear-gradient(#f5f5f5, #e1e1e1);
+  background-image: -ms-linear-gradient(#f5f5f5, #e1e1e1);
   background-image: linear-gradient(#f5f5f5, #e1e1e1);
 }
 
@@ -4147,126 +4067,6 @@ div.addReminder form label.overlabel {
   font-size: 15px;
 }
 
-.forum_list {
-  margin: 0px 0px;
-}
-.forum_list a {
-  text-decoration: none;
-}
-.forum_list a.title {
-  color: #545454;
-}
-.forum_list a.title:visited {
-  color: #545454;
-}
-.forum_list a.title:hover {
-  color: #527eaa;
-}
-.forum_list a.title:active {
-  color: #545454;
-}
-.forum_list .item_actions {
-  float: right;
-  font-size: 10px;
-  background-color: #F3F1EC;
-  -moz-border-radius: 6px 6px 6px 6px;
-  -webkit-border-radius: 6px 6px 6px 6px;
-  border-radius: 6px 6px 6px 6px;
-  border: 1px solid #cfcfcf;
-  color: #afafaf;
-  padding: 2px 8px;
-}
-.forum_list .item_actions a.highlight {
-  background-color: #ffffcc;
-  padding: 1px 3px;
-}
-.forum_list .subcounter {
-  color: #afafaf;
-}
-.forum_list ul.base-set {
-  list-style: none;
-  overflow: hidden;
-  *zoom: 1;
-  margin: 0px;
-  padding: 5px 26px;
-}
-.forum_list ul.base-set li {
-  list-style-image: none;
-  list-style-type: none;
-  margin-left: 0px;
-}
-.forum_list ul.base-set li {
-  float: left;
-  width: 44%;
-  padding: 0px 0px 0px 30px;
-  margin: 0px 3% 0px 0px;
-}
-.forum_list ul.base-set li h4.forum_title {
-  margin: 3px 0px 0px 0px;
-  padding: 6px 0px 4px 0px;
-  font-size: 16px;
-  position: relative;
-}
-.forum_list ul.base-set li h4.forum_title a {
-  font-weight: normal;
-}
-.forum_list ul.base-set li span.icon {
-  position: absolute;
-  left: -34px;
-  top: 2px;
-  background: url('/images/../images/embed/sprites/32square_sprite.png?1309788881') no-repeat;
-  width: 32px;
-  height: 32px;
-  overflow: hidden;
-}
-.forum_list ul.base-set li span.forum_type_1 {
-  background-position: 0px -192px;
-}
-.forum_list ul.base-set li span.forum_type_2 {
-  background-position: 0px -224px;
-}
-.forum_list ul.base-set li span.forum_type_3 {
-  background-position: 0px -160px;
-}
-.forum_list ul.base-set li span.forum_type_4 {
-  background-position: 0px -128px;
-}
-.forum_list ul.base-set li .topic-list {
-  padding: 6px 0px 12px 0px;
-  margin-bottom: 8px;
-  border-top: 1px solid #f1f1f1;
-}
-.forum_list ul.base-set li .topic-list a.topic {
-  white-space: nowrap;
-  overflow: hidden;
-  -o-text-overflow: ellipsis;
-  -ms-text-overflow: ellipsis;
-  text-overflow: ellipsis;
-  -moz-binding: url('/stylesheets/xml/ellipsis.xml#ellipsis');
-  display: block;
-  padding: 5px 0px;
-  font-size: 13px;
-}
-.forum_list ul.base-set li .topic-list a {
-  color: #4d769f;
-}
-.forum_list ul.base-set li .topic-list a:visited {
-  color: #4d769f;
-}
-.forum_list ul.base-set li .topic-list a:hover {
-  color: #3399cc;
-}
-.forum_list ul.base-set li .topic-list a:active {
-  color: #4d769f;
-}
-.forum_list ul.base-set li.odd {
-  clear: left;
-}
-.forum_list ul.base-set li.even {
-  margin-right: 0px;
-  width: 46%;
-}
-
 .forum-group {
   margin: 0px -20px;
 }
@@ -4318,7 +4118,7 @@ div.addReminder form label.overlabel {
 
 .admin_list, .content_list {
   list-style: none;
-  margin: 0px -20px;
+  margin: 0px -20px 10px -20px;
   padding: 0px 0px;
   border: 1px solid #f2f2f2;
   border-width: 1px 0px;
@@ -4334,7 +4134,6 @@ div.addReminder form label.overlabel {
   padding: 8px 20px 8px 20px;
   border-bottom: 1px solid #efefef;
   *zoom: 1;
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColorstr='#FFFBFBFB', endColorstr='#FFFAFAFA')";
   filter: progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColorstr='#FFFBFBFB', endColorstr='#FFFAFAFA');
   /* Fallback: */
   background: #fbfbfb;
@@ -4343,6 +4142,7 @@ div.addReminder form label.overlabel {
   background-image: -webkit-linear-gradient(#fbfbfb, #fafafa);
   background-image: -moz-linear-gradient(#fbfbfb, #fafafa);
   background-image: -o-linear-gradient(#fbfbfb, #fafafa);
+  background-image: -ms-linear-gradient(#fbfbfb, #fafafa);
   background-image: linear-gradient(#fbfbfb, #fafafa);
   color: #656565;
   position: relative;
@@ -4353,7 +4153,9 @@ div.addReminder form label.overlabel {
   margin-top: -3px;
 }
 .admin_list li div, .content_list li div {
-  padding-top: 1px;
+  padding-top: 3px;
+  font-size: 1.1em;
+  padding-bottom: 5px;
 }
 .admin_list li div.item_actions, .content_list li div.item_actions {
   float: right;
@@ -4397,7 +4199,20 @@ div.addReminder form label.overlabel {
 .admin_list li a.item_info, .content_list li a.item_info {
   font-size: 1.25em;
   color: #336699;
+  color: #3e71a4;
   text-decoration: none;
+}
+.admin_list li a.item_info:visited, .content_list li a.item_info:visited {
+  color: #3e71a4;
+}
+.admin_list li a.item_info:focus, .content_list li a.item_info:focus {
+  color: #3e71a4;
+}
+.admin_list li a.item_info:hover, .content_list li a.item_info:hover {
+  color: #3e71a4;
+}
+.admin_list li a.item_info:active, .content_list li a.item_info:active {
+  color: #3e71a4;
 }
 .admin_list li input.checkbox, .content_list li input.checkbox {
   position: absolute;
@@ -4420,6 +4235,16 @@ div.addReminder form label.overlabel {
 }
 .admin_list li .portal-text, .content_list li .portal-text {
   padding-left: 12px;
+}
+.admin_list li .portal-text .not-verified, .content_list li .portal-text .not-verified {
+  padding: 12px 0px;
+}
+.admin_list li .portal-text .inactive_email, .content_list li .portal-text .inactive_email {
+  margin: 0px;
+}
+.admin_list li .portal-text .slim-button, .content_list li .portal-text .slim-button {
+  margin-top: -3px;
+  color: #333333;
 }
 .admin_list li .color_box, .content_list li .color_box {
   overflow: hidden;
@@ -4449,9 +4274,31 @@ div.addReminder form label.overlabel {
   visibility: visible;
 }
 
+.deactivated li {
+  background: #f8f8f8;
+  padding-bottom: 0px;
+}
+.deactivated li a.item_info {
+  color: #666666;
+  font-size: 1.16em;
+  padding-top: 4px;
+  display: block;
+}
+.deactivated li a.item_info:visited {
+  color: #666666;
+}
+.deactivated li a.item_info:focus {
+  color: #3e71a4;
+}
+.deactivated li a.item_info:hover {
+  color: #3e71a4;
+}
+.deactivated li a.item_info:active {
+  color: #666666;
+}
+
 .footerContent {
   color: #000000;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=60)";
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=60);
   opacity: 0.6;
 }
