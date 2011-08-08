@@ -205,7 +205,7 @@ class Account < ActiveRecord::Base
   end
   
   def active?
-    self.subscription.next_renewal_at >= Time.now
+    5.days.since(self.subscription.next_renewal_at) >= Time.now
   end
   
   def plan_name
