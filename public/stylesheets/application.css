@@ -2,7 +2,7 @@
 /* Theme Colors and layout Defaults */
 /* Importing admin icons */
 .admin-icon-sprite, .admin-icon-account-settings, .admin-icon-agent, .admin-icon-business-hours, .admin-icon-canned-response, .admin-icon-customer-portal, .admin-icon-dispatcher, .admin-icon-email-notifications, .admin-icon-email-settings, .admin-icon-feedback, .admin-icon-group, .admin-icon-import, .admin-icon-multi-product, .admin-icon-rebranding, .admin-icon-remote-authentication, .admin-icon-scenario, .admin-icon-sla, .admin-icon-supervisor, .admin-icon-ticket-fields {
-  background: url('/images/admin-icon-680c225e7c.png') no-repeat;
+  background: url('/images/admin-icon-s680c225e7c.png') no-repeat;
 }
 
 /* Ticket Show page twitter style icons */
@@ -188,7 +188,7 @@ ul.activityfeed li .activity_time {
 }
 .ui-list_with_icon li {
   padding-left: 14px;
-  background: url('/images/symbols/request_nav_seperator.gif?1312204165') no-repeat 3px 9px;
+  background: url('/images/symbols/request_nav_seperator.gif?1312466010') no-repeat 3px 9px;
   list-style-type: none;
 }
 .ui-list_with_icon li {
@@ -323,7 +323,6 @@ h2.content_title {
   border-radius: 0.8em;
   border: 1px solid #afafaf;
   *zoom: 1;
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColorstr='#FFFFFFFF', endColorstr='#FFEFEFEF')";
   filter: progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColorstr='#FFFFFFFF', endColorstr='#FFEFEFEF');
   /* Fallback: */
   background: white;
@@ -332,6 +331,7 @@ h2.content_title {
   background-image: -webkit-linear-gradient(#ffffff, #efefef);
   background-image: -moz-linear-gradient(#ffffff, #efefef);
   background-image: -o-linear-gradient(#ffffff, #efefef);
+  background-image: -ms-linear-gradient(#ffffff, #efefef);
   background-image: linear-gradient(#ffffff, #efefef);
 }
 .tab-buttons li a {
@@ -858,7 +858,6 @@ body h5 {
   top: -18px;
   border: 1px solid #d3d497;
   *zoom: 1;
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColorstr='#FFFEFEDF', endColorstr='#FFFBFD90')";
   filter: progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColorstr='#FFFEFEDF', endColorstr='#FFFBFD90');
   /* Fallback: */
   background: #fefedf;
@@ -867,6 +866,7 @@ body h5 {
   background-image: -webkit-linear-gradient(#fefedf, #fbfd90);
   background-image: -moz-linear-gradient(#fefedf, #fbfd90);
   background-image: -o-linear-gradient(#fefedf, #fbfd90);
+  background-image: -ms-linear-gradient(#fefedf, #fbfd90);
   background-image: linear-gradient(#fefedf, #fbfd90);
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FEFEDF', endColorstr='#FBFD90',GradientType=0 );
   /* IE6-9 */
@@ -1105,7 +1105,7 @@ body h5 {
   max-width: 100%;
 }
 .rtCnt .rtDetails .cnt li span.edit-item {
-  background: url('/images/icons-1fde8ad171.png') 0 -50px no-repeat;
+  background: url('/images/icons-s1fde8ad171.png') 0 -50px no-repeat;
   float: right;
   width: 16px;
   height: 16px;
@@ -1138,25 +1138,25 @@ body h5 {
   height: 32px;
 }
 .rtCnt .rtPanel a img.ticketprop {
-  background: url('/images/ticket-icon-7b1d46eeb6.png') 0 -198px no-repeat;
+  background: url('/images/ticket-icon-s7b1d46eeb6.png') 0 -198px no-repeat;
 }
 .rtCnt .rtPanel a img.suggestsolutions {
-  background: url('/images/ticket-icon-7b1d46eeb6.png') 0 -370px no-repeat;
+  background: url('/images/ticket-icon-s7b1d46eeb6.png') 0 -370px no-repeat;
 }
 .rtCnt .rtPanel a img.scenario {
-  background: url('/images/ticket-icon-7b1d46eeb6.png') 0 -284px no-repeat;
+  background: url('/images/ticket-icon-s7b1d46eeb6.png') 0 -284px no-repeat;
 }
 .rtCnt .rtPanel a img.requesterinfo {
-  background: url('/images/ticket-icon-7b1d46eeb6.png') 0 -628px no-repeat;
+  background: url('/images/ticket-icon-s7b1d46eeb6.png') 0 -628px no-repeat;
 }
 .rtCnt .rtPanel a img.todo {
-  background: url('/images/ticket-icon-7b1d46eeb6.png') 0 -542px no-repeat;
+  background: url('/images/ticket-icon-s7b1d46eeb6.png') 0 -542px no-repeat;
 }
 .rtCnt .rtPanel a img.tags {
-  background: url('/images/ticket-icon-7b1d46eeb6.png') 0 -456px no-repeat;
+  background: url('/images/ticket-icon-s7b1d46eeb6.png') 0 -456px no-repeat;
 }
 .rtCnt .rtPanel a img.activity {
-  background: url('/images/ticket-icon-7b1d46eeb6.png') 0 0 no-repeat;
+  background: url('/images/ticket-icon-s7b1d46eeb6.png') 0 0 no-repeat;
 }
 .rtCnt .rtPanel a em {
   display: block;
@@ -1179,25 +1179,25 @@ body h5 {
   color: #ffffff;
 }
 .rtCnt .rtPanel a.active img.ticketprop, .rtCnt .rtPanel a:hover img.ticketprop {
-  background: url('/images/ticket-icon-7b1d46eeb6.png') 0 -241px no-repeat;
+  background: url('/images/ticket-icon-s7b1d46eeb6.png') 0 -241px no-repeat;
 }
 .rtCnt .rtPanel a.active img.suggestsolutions, .rtCnt .rtPanel a:hover img.suggestsolutions {
-  background: url('/images/ticket-icon-7b1d46eeb6.png') 0 -413px no-repeat;
+  background: url('/images/ticket-icon-s7b1d46eeb6.png') 0 -413px no-repeat;
 }
 .rtCnt .rtPanel a.active img.scenario, .rtCnt .rtPanel a:hover img.scenario {
-  background: url('/images/ticket-icon-7b1d46eeb6.png') 0 -327px no-repeat;
+  background: url('/images/ticket-icon-s7b1d46eeb6.png') 0 -327px no-repeat;
 }
 .rtCnt .rtPanel a.active img.requesterinfo, .rtCnt .rtPanel a:hover img.requesterinfo {
-  background: url('/images/ticket-icon-7b1d46eeb6.png') 0 -671px no-repeat;
+  background: url('/images/ticket-icon-s7b1d46eeb6.png') 0 -671px no-repeat;
 }
 .rtCnt .rtPanel a.active img.todo, .rtCnt .rtPanel a:hover img.todo {
-  background: url('/images/ticket-icon-7b1d46eeb6.png') 0 -585px no-repeat;
+  background: url('/images/ticket-icon-s7b1d46eeb6.png') 0 -585px no-repeat;
 }
 .rtCnt .rtPanel a.active img.tags, .rtCnt .rtPanel a:hover img.tags {
-  background: url('/images/ticket-icon-7b1d46eeb6.png') 0 -499px no-repeat;
+  background: url('/images/ticket-icon-s7b1d46eeb6.png') 0 -499px no-repeat;
 }
 .rtCnt .rtPanel a.active img.activity, .rtCnt .rtPanel a:hover img.activity {
-  background: url('/images/ticket-icon-7b1d46eeb6.png') 0 -43px no-repeat;
+  background: url('/images/ticket-icon-s7b1d46eeb6.png') 0 -43px no-repeat;
 }
 
 ul.admin_icons {
@@ -1426,16 +1426,16 @@ div.panel_area div.item {
   height: 28px;
 }
 .action_icons .monitor img {
-  background: url('/images/ticket-icon-7b1d46eeb6.png') 0 -142px no-repeat;
+  background: url('/images/ticket-icon-s7b1d46eeb6.png') 0 -142px no-repeat;
 }
 .action_icons .monitor_active img {
-  background: url('/images/ticket-icon-7b1d46eeb6.png') 0 -170px no-repeat;
+  background: url('/images/ticket-icon-s7b1d46eeb6.png') 0 -170px no-repeat;
 }
 .action_icons .spam img {
-  background: url('/images/ticket-icon-7b1d46eeb6.png') 0 -86px no-repeat;
+  background: url('/images/ticket-icon-s7b1d46eeb6.png') 0 -86px no-repeat;
 }
 .action_icons .spam_active img {
-  background: url('/images/ticket-icon-7b1d46eeb6.png') 0 -114px no-repeat;
+  background: url('/images/ticket-icon-s7b1d46eeb6.png') 0 -114px no-repeat;
 }
 
 .request_panel_list {
@@ -1444,7 +1444,6 @@ div.panel_area div.item {
 }
 .request_panel_list div.item {
   *zoom: 1;
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColorstr='#FFEFEFEF', endColorstr='#FFDFDFDF')";
   filter: progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColorstr='#FFEFEFEF', endColorstr='#FFDFDFDF');
   /* Fallback: */
   background: #efefef;
@@ -1453,6 +1452,7 @@ div.panel_area div.item {
   background-image: -webkit-linear-gradient(#efefef, #dfdfdf);
   background-image: -moz-linear-gradient(#efefef, #dfdfdf);
   background-image: -o-linear-gradient(#efefef, #dfdfdf);
+  background-image: -ms-linear-gradient(#efefef, #dfdfdf);
   background-image: linear-gradient(#efefef, #dfdfdf);
   padding: 3px 8px;
 }
@@ -2128,13 +2128,11 @@ ul.active .selected_tick {
 }
 
 ul.inactive a {
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=60)";
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=60);
   opacity: 0.6;
   color: #333333;
 }
 ul.inactive a:hover {
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
   opacity: 1;
 }
@@ -2461,7 +2459,7 @@ h4.border_title {
 }
 .solution-list .odd ul li, .solution-list .even ul li {
   padding-left: 14px;
-  background: url('/images/symbols/request_nav_seperator.gif?1312204165') no-repeat 3.5px 3.5px;
+  background: url('/images/symbols/request_nav_seperator.gif?1312466010') no-repeat 3.5px 3.5px;
   list-style-type: none;
 }
 .solution-list .odd li, .solution-list .even li {
@@ -2576,7 +2574,6 @@ h4.border_title {
   left: 0px;
   top: 0px;
   background: #888888;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=30);
   opacity: 0.3;
 }
@@ -3051,19 +3048,19 @@ a.page_title:active {
   display: inline-block;
 }
 .results .ticket_icon span.icon {
-  background: url('/images/icons-1fde8ad171.png') 0 -98px no-repeat;
+  background: url('/images/icons-s1fde8ad171.png') 0 -98px no-repeat;
 }
 .results .contact_icon span.icon {
-  background: url('/images/icons-1fde8ad171.png') 0 -130px no-repeat;
+  background: url('/images/icons-s1fde8ad171.png') 0 -130px no-repeat;
 }
 .results .company_icon span.icon {
-  background: url('/images/icons-1fde8ad171.png') 0 -18px no-repeat;
+  background: url('/images/icons-s1fde8ad171.png') 0 -18px no-repeat;
 }
 .results .solution_icon span.icon {
-  background: url('/images/icons-1fde8ad171.png') 0 -114px no-repeat;
+  background: url('/images/icons-s1fde8ad171.png') 0 -114px no-repeat;
 }
 .results .forum_icon span.icon {
-  background: url('/images/icons-1fde8ad171.png') 0 -34px no-repeat;
+  background: url('/images/icons-s1fde8ad171.png') 0 -34px no-repeat;
 }
 .results li {
   list-style: none;
@@ -3375,7 +3372,6 @@ a.page_title:active {
   display: block;
   color: #444444;
   *zoom: 1;
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColorstr='#FFEFEFEF', endColorstr='#FFE8E8E8')";
   filter: progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColorstr='#FFEFEFEF', endColorstr='#FFE8E8E8');
   /* Fallback: */
   background: #efefef;
@@ -3384,6 +3380,7 @@ a.page_title:active {
   background-image: -webkit-linear-gradient(#efefef, #e8e8e8);
   background-image: -moz-linear-gradient(#efefef, #e8e8e8);
   background-image: -o-linear-gradient(#efefef, #e8e8e8);
+  background-image: -ms-linear-gradient(#efefef, #e8e8e8);
   background-image: linear-gradient(#efefef, #e8e8e8);
   border-bottom: 1px solid #dfdfdf;
   text-decoration: none;
@@ -3431,14 +3428,14 @@ a.page_title:active {
   position: absolute;
 }
 .request-list div.item a.item-title .bulb {
-  background: url('/images/icons-1fde8ad171.png') 0 -82px no-repeat;
+  background: url('/images/icons-s1fde8ad171.png') 0 -82px no-repeat;
   width: 16px;
   height: 16px;
   left: 6px;
   top: 10px;
 }
 .request-list div.item a.item-title .wand {
-  background: url('/images/icons-1fde8ad171.png') 0 -168px no-repeat;
+  background: url('/images/icons-s1fde8ad171.png') 0 -168px no-repeat;
   width: 22px;
   height: 22px;
   left: 2px;
@@ -3446,7 +3443,7 @@ a.page_title:active {
 }
 .request-list div.item .private-icon {
   display: none;
-  background: url('/images/symbols-a58d0ef158.png') 0 -153px no-repeat;
+  background: url('/images/symbols-sa58d0ef158.png') 0 -153px no-repeat;
   width: 16px;
   height: 16px;
   position: relative;
@@ -3461,10 +3458,10 @@ a.page_title:active {
   border-right-color: #ffffff;
 }
 .request-list div.item a.item-title:hover .bulb {
-  background: url('/images/icons-1fde8ad171.png') 0 -66px no-repeat;
+  background: url('/images/icons-s1fde8ad171.png') 0 -66px no-repeat;
 }
 .request-list div.item a.item-title:hover .wand {
-  background: url('/images/icons-1fde8ad171.png') 0 -146px no-repeat;
+  background: url('/images/icons-s1fde8ad171.png') 0 -146px no-repeat;
 }
 .request-list div.item a.private .private-icon {
   display: block;
@@ -3702,7 +3699,6 @@ div.addReminder form label.overlabel {
   border-bottom: 0px;
   font-size: 13px;
   *zoom: 1;
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColorstr='#FFFCFCFC', endColorstr='#FFF1F1F1')";
   filter: progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColorstr='#FFFCFCFC', endColorstr='#FFF1F1F1');
   /* Fallback: */
   background: #fcfcfc;
@@ -3711,6 +3707,7 @@ div.addReminder form label.overlabel {
   background-image: -webkit-linear-gradient(#fcfcfc, #f1f1f1);
   background-image: -moz-linear-gradient(#fcfcfc, #f1f1f1);
   background-image: -o-linear-gradient(#fcfcfc, #f1f1f1);
+  background-image: -ms-linear-gradient(#fcfcfc, #f1f1f1);
   background-image: linear-gradient(#fcfcfc, #f1f1f1);
   border-bottom: 1px solid #eaeaea;
 }
@@ -3726,7 +3723,6 @@ div.addReminder form label.overlabel {
 }
 .tab_panel a.active, .tab_panel a:hover {
   *zoom: 1;
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColorstr='#FFF5F5F5', endColorstr='#FFE1E1E1')";
   filter: progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColorstr='#FFF5F5F5', endColorstr='#FFE1E1E1');
   /* Fallback: */
   background: #f5f5f5;
@@ -3735,6 +3731,7 @@ div.addReminder form label.overlabel {
   background-image: -webkit-linear-gradient(#f5f5f5, #e1e1e1);
   background-image: -moz-linear-gradient(#f5f5f5, #e1e1e1);
   background-image: -o-linear-gradient(#f5f5f5, #e1e1e1);
+  background-image: -ms-linear-gradient(#f5f5f5, #e1e1e1);
   background-image: linear-gradient(#f5f5f5, #e1e1e1);
 }
 
@@ -4133,7 +4130,6 @@ div.addReminder form label.overlabel {
   padding: 8px 20px 8px 20px;
   border-bottom: 1px solid #efefef;
   *zoom: 1;
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColorstr='#FFFBFBFB', endColorstr='#FFFAFAFA')";
   filter: progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColorstr='#FFFBFBFB', endColorstr='#FFFAFAFA');
   /* Fallback: */
   background: #fbfbfb;
@@ -4142,6 +4138,7 @@ div.addReminder form label.overlabel {
   background-image: -webkit-linear-gradient(#fbfbfb, #fafafa);
   background-image: -moz-linear-gradient(#fbfbfb, #fafafa);
   background-image: -o-linear-gradient(#fbfbfb, #fafafa);
+  background-image: -ms-linear-gradient(#fbfbfb, #fafafa);
   background-image: linear-gradient(#fbfbfb, #fafafa);
   color: #656565;
   position: relative;
@@ -4294,7 +4291,6 @@ div.addReminder form label.overlabel {
 
 .footerContent {
   color: #000000;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=60)";
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=60);
   opacity: 0.6;
 }

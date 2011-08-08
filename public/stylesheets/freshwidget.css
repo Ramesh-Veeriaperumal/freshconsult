@@ -1,6 +1,5 @@
 /* Theme Colors and layout Defaults */
 .widget-ovelay {
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=50);
   opacity: 0.5;
   background-color: white;

@@ -1,4 +1,3 @@
-<% content_for :sidebar do -%><%- end %>
 <span class="floatr">
 	<%= link_to("&larr; Back to reports", reports_url, :class => "slim-button") %>
 </span>
@@ -18,7 +17,7 @@
 			<th>Resolved on time</th>
 			<th>Overdue</th>
 			<th>Resolved on First Contact(FCR)</th>
-			<th>FCR %</th>
+			<th width="80px">FCR %</th>
 		</tr>
 		<% @current_object.each do |obj| %>
 		<tr class="<%= cycle("odd", "even") %>">

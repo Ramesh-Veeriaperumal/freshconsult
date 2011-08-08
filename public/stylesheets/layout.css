@@ -68,12 +68,9 @@ label.overlabel {
   padding-right: 318px;
 }
 #inner:after {
-  content: "\0020";
-  display: block;
-  height: 0;
+  content: "";
+  display: table;
   clear: both;
-  overflow: hidden;
-  visibility: hidden;
 }
 #inner .leftcontent {
   float: left;

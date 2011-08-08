@@ -104,7 +104,8 @@ en:
         title: Supervisor - Rules
         help_info_1: Use Supervisor to periodically check recent tickets and perform certain time-based activities like sending reminders to customers or escalating tickets or reassigning tickets etc.
         help_info_2: For example - If a ticket is waiting for customer response for more than 24 hours send a reminder email to the customer or Automatically close a ticket that is in "Resolved" status for more than 48 hours.
-        help_info_3: Supervisor rules are processed sequentially, so the order of the rules is important. A rule may cause certain actions that trigger subsequent rules.
+        help_info_3: Supervisor will run every hour and precess tickets that have been updated within the past 30 days.
+        help_info_4: Supervisor rules are processed sequentially, so the order of the rules is important. A rule may cause certain actions that trigger subsequent rules.
       new:
         title: Supervisor - New Rule
       edit:
@@ -1242,3 +1243,7 @@ en:
   no_message:
     canned_responses: No canned responses available.
     products: You have not created any product yet.
+  errors: 
+    conditions_empty: "Conditions can't be empty"
+    actions_empty: "Actions can't be empty"
+    

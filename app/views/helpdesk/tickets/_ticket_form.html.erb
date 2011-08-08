@@ -11,7 +11,7 @@
   %>
   <%= construct_ticket_element :helpdesk_ticket, field, field_label, field.dom_type, field.required, field_value %>
 <% end %>
-<% javascript_tag do %>  
+<% content_for :onload_script do -%> 
   jQuery('#helpdesk_ticket_group_id')
     .bind("change", function(e){
       jQuery('#helpdesk_ticket_responder_id')
@@ -26,4 +26,4 @@
                      }
       });
     });
-<% end %>
+<%- end %>
