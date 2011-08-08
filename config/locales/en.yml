@@ -954,6 +954,8 @@ en:
   step2: Step 2
   import_users_contacts: Users &rarr; Contacts
   linkback_info: You can choose to Linkback to your own website when the customer clicks on the header logo
+  twitter:
+    associate_twitter: Associate your helpdesk's twitter account, to receive tweets from your customers.
   logo: Logo
   ok: Ok
   back: Back

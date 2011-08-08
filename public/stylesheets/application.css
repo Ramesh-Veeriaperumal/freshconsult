@@ -188,7 +188,7 @@ ul.activityfeed li .activity_time {
 }
 .ui-list_with_icon li {
   padding-left: 14px;
-  background: url('/images/symbols/request_nav_seperator.gif?1312630649') no-repeat 3px 9px;
+  background: url('/images/symbols/request_nav_seperator.gif?1312801243') no-repeat 3px 9px;
   list-style-type: none;
 }
 .ui-list_with_icon li {
@@ -2463,7 +2463,7 @@ h4.border_title {
 }
 .solution-list .odd ul li, .solution-list .even ul li {
   padding-left: 14px;
-  background: url('/images/symbols/request_nav_seperator.gif?1312630649') no-repeat 3.5px 3.5px;
+  background: url('/images/symbols/request_nav_seperator.gif?1312801243') no-repeat 3.5px 3.5px;
   list-style-type: none;
 }
 .solution-list .odd li, .solution-list .even li {
