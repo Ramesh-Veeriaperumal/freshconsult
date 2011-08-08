@@ -385,7 +385,7 @@ class AccountsController < ApplicationController
   protected
     
     def choose_layout 
-      (action_name == "openid_complete" || action_name == "create_account_google" || action_name == "associate_local_to_google" || action_name == "associate_google_account") ? 'signup_google' : 'helpdesk/default'
+      (action_name == "openid_complete" || action_name == "create_account_google" || action_name == "associate_local_to_google" || action_name == "associate_google_account") ? 'signup_google' : 'application'
 	  end
 	
     def load_object

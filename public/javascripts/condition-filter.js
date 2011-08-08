@@ -41,7 +41,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
 	var setting = {
 			init_feed	 : [],
 			add_dom		 : ".addchoice",
-			rule_dom	 : ".rule_list",
+			rule_dom	    : ".rule_list",
 			rem_dom		 : ".delete",
 			operators	 : false,
 			onRuleSelect : function(){}
@@ -51,10 +51,10 @@ rules_filter = function(_name, filter_data, parentDom, options){
 	// Setting initial data elements	
 	var hg_data			= $H(),
 		operator_types	= setting.operators,
-		name			= _name || "default",
+		name			   = _name || "default",
 		hidden_			= null,
 		// Setting initial dom elements
-		RULE_DOM		= parentDom + " " + setting.rule_dom,
+		RULE_DOM	   	= parentDom + " " + setting.rule_dom,
 		ADD_DOM			= parentDom + " " + setting.add_dom;
 
 	var itemManager = {
@@ -124,14 +124,14 @@ rules_filter = function(_name, filter_data, parentDom, options){
 
 		get_filter_list:
 			function(_type, c_form){
-				var serialArray		= jQuery(c_form).serializeArray(),
-					serialHash		= $H(),
-					setValue		= [],
-					tempConstruct	= $H(),
-					type			= _type || "object";
-					flag			= false;
+				var serialArray	= jQuery(c_form).serializeArray(),
+					 serialHash		= $H(),
+				 	 setValue		= [],
+				    tempConstruct	= $H(),
+					 type			   = _type || "object";
+				  	 flag			   = false;
 
-				serialArray.each(function(item){
+				serialArray.each(function(item){				   
 					if(item.name == name || flag){
 						if(!serialHash.get(name)) 
 							serialHash.set(name, $A());	
@@ -141,27 +141,33 @@ rules_filter = function(_name, filter_data, parentDom, options){
 							flag = true;
 						}
 						else if (item.value == 'end') {
-							serialHash.get(name).push(tempConstruct.toObject());
+						   if(tempConstruct.size())
+							   serialHash.get(name).push(tempConstruct.toObject());
+
 							flag = false;
 						}
-						else { 
+						else if(item.value != 0) { 
 							tempConstruct.set(item.name, item.value);
-						}			
+						}
 					}
-				});		
-				var current_filter = serialHash.get(name);
-				var save_data	   = [];
-				if( ! (current_filter.length == 1 && current_filter[0].name == 0) ) {
+				});
+				var current_filter = [],
+				    save_data	    = [];
+				
+				current_filter = serialHash.get(name);
+				   
+				if( current_filter.length != 0 ){
 					save_data = (type != 'json') ? current_filter.toObject() : current_filter.toJSON();
 				}
 				
-				hidden_.val(save_data); 
+				
+				hidden_.val(save_data);
 				return save_data;
 			},
 		init: 
 			function(){
 				domUtil.add_to_hash(filter_data);
-				//console.log(setting.init_feed.size());
+
 				if(setting.init_feed.size())
 					domUtil.feed_data(setting.init_feed);
 				else
@@ -188,7 +194,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
 
 			jQuery(parentDom).parents('form:first').submit(function(e){
 				domUtil.get_filter_list('json', this);
-			   return true;
+			   //return true;
 			});
 
 			jQuery('.l_placeholder').live("click", function(ev){
