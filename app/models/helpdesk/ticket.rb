@@ -169,7 +169,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
    def is_twitter?
-    source == SOURCE_KEYS_BY_TOKEN[:twitter]
+    (source == SOURCE_KEYS_BY_TOKEN[:twitter]) and (fetch_twitter_handle) 
   end
   
   def priority=(val)
@@ -592,6 +592,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
        
       end
      end
+  end
+  
+  def fetch_twitter_handle
+   email_config.nil? ? email_config.twitter_handle : account.primary_email_config.twitter_handle
   end
   
   def portal_host

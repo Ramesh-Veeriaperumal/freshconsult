@@ -91,10 +91,12 @@ class Helpdesk::NotesController < ApplicationController
     end
     
     def send_tweet
-      reply_twitter = @parent.email_config.twitter_handle
-      @wrapper = TwitterWrapper.new reply_twitter
-      twitter = @wrapper.get_twitter
-      twitter.update(@item.body)
+      reply_twitter = @parent.fetch_twitter_handle
+      unless reply_twitter.nil?
+        @wrapper = TwitterWrapper.new reply_twitter
+        twitter = @wrapper.get_twitter
+        twitter.update(@item.body)
+      end
     end
   
 

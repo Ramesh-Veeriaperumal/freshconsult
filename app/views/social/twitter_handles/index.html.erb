@@ -14,7 +14,9 @@
 <% unless current_account.primary_email_config.twitter_handle.nil? %>
 	@<%=current_account.primary_email_config.twitter_handle.screen_name%>
 	<%= link_to "settings", edit_social_twitter_path(current_account.primary_email_config.twitter_handle) %> 
-	<%= link_to "Search", search_social_twitter_path(current_account.primary_email_config.twitter_handle) %>	
+	<%= link_to "Search", search_social_twitter_path(current_account.primary_email_config.twitter_handle) %>
+	<%= link_to(t('delete'), social_twitter_path(current_account.primary_email_config.twitter_handle), :method => 'delete', :confirm => "Are you sure you want to delete this twitter account?" ) %>
+     	
 <%end%>
 
 <% content_for :pagefixed do %>

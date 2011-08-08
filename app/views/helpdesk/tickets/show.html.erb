@@ -267,7 +267,7 @@
 
 		<% unless @ticket.deleted %>
 			<div class="alignright">
-				<%= link_to_function(t('ticket.reply_to'), "swapEmailNote('reply', this)", :class => 'uiButton', :id => "ReplyButton") if @item.requester %>
+				<%= link_to_function(t('ticket.reply_to'), "swapEmailNote('reply', this)", :class => 'uiButton', :id => "ReplyButton") unless @item.from_email.nil? %>
 				<%= link_to_function(t('ticket.add_note'), "swapEmailNote('note', this)", :class => 'uiButton', :id => "AddNoteButton") %>		
 				<%= link_to_function("Tweet", "swapEmailNote('tweet', this)", :class => 'uiButton', :id => "TweetButton") if @item.requester && @item.is_twitter?%>
 			</div>
