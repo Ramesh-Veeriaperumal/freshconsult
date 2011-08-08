@@ -22,6 +22,7 @@ class User < ActiveRecord::Base
   has_many :votes, :dependent => :destroy
   
   validates_uniqueness_of :user_role, :scope => :account_id, :if => Proc.new { |user| user.user_role  == USER_ROLES_KEYS_BY_TOKEN[:account_admin] }
+  validates_uniqueness_of :twitter_id, :scope => :account_id, :allow_nil => true
   
   has_one :avatar,
     :as => :attachable,
@@ -39,12 +40,18 @@ class User < ActiveRecord::Base
     c.validates_length_of_password_field_options = {:on => :update, :minimum => 4, :if => :has_no_credentials? }
     c.validates_length_of_password_confirmation_field_options = {:on => :update, :minimum => 4, :if => :has_no_credentials?}    
     #The following is a part to validate email only if its not deleted
-    c.merge_validates_format_of_email_field_options  :if =>:is_not_deleted?
-    c.merge_validates_length_of_email_field_options :if =>:is_not_deleted?
-    c.merge_validates_uniqueness_of_email_field_options :if =>:is_not_deleted?
+    c.merge_validates_format_of_email_field_options  :if =>:chk_email_validation? 
+    c.merge_validates_length_of_email_field_options :if =>:chk_email_validation? 
+    c.merge_validates_uniqueness_of_email_field_options :if =>:chk_email_validation? 
    
     
   end
+  
+  def chk_email_validation?
+    (is_not_deleted?) and (twitter_id.blank?)
+  end
+  
+  
   
   attr_accessible :name, :email, :password, :password_confirmation , :second_email, :job_title, :phone, :mobile, :twitter_id, :description, :time_zone, :avatar_attributes,:user_role,:customer_id,:import_id,:deleted
   
@@ -110,7 +117,7 @@ class User < ActiveRecord::Base
   end
   
   def has_no_credentials?
-    self.crypted_password.blank? && active? && !deleted && self.authorizations.empty?
+    self.crypted_password.blank? && active? && !deleted && self.authorizations.empty? && self.twitter_id.blank?
   end
 
   # TODO move this to the "HelpdeskUser" model
@@ -127,6 +134,10 @@ class User < ActiveRecord::Base
     :class_name => 'Helpdesk::Reminder',:dependent => :destroy
     
   has_many :tickets , :class_name => 'Helpdesk::Ticket' ,:foreign_key => "requester_id" , :dependent => :destroy
+  
+  has_many :open_tickets, :class_name => 'Helpdesk::Ticket' ,:foreign_key => "requester_id",
+  :conditions => {:status => [TicketConstants::STATUS_KEYS_BY_TOKEN[:open],TicketConstants::STATUS_KEYS_BY_TOKEN[:pending]]},
+  :order => "created_at desc"
   
   has_one :agent , :class_name => 'Agent' , :foreign_key => "user_id", :dependent => :destroy
   
@@ -278,8 +289,7 @@ class User < ActiveRecord::Base
       self.avatar.account_id = account_id unless avatar.nil?
   end
   
-  def set_contact_name
-   
+  def set_contact_name  
     if self.name.empty?
       self.name = (self.email.split("@")[0]).capitalize
     end
@@ -290,7 +300,7 @@ class User < ActiveRecord::Base
    
    if (self.customer_id.nil? && self.email)      
        email_domain =  self.email.split("@")[1]
-       cust = Customer.account_id_like(account_id).domains_like(email_domain).first
+       cust = account.customers.domains_like(email_domain).first
        self.customer_id = cust.id unless cust.nil?    
      
    end

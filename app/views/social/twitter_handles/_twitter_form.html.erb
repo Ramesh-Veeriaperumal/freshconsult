@@ -1,0 +1,34 @@
+
+<% form_for @item, :url => social_twitter_path, :html => { :method => :put } do |f| %>
+<%= f.error_messages %>
+<%=hidden_field_tag 'product_id',@item.product.id%>
+<h3 class="title"><%=t('admin.twitters.change.edit_twitter')%></h3>
+<ul class="ui-form">
+	<li>
+			<label><%=t('admin.twitters.change.screen_name')%></label>		
+			<%= text_field(:social_twitter_handle, :screen_name, :class => "text disabled", :disabled =>true , :value => @item.screen_name )  %>
+	</li>
+	<li>
+		<label>
+		    <%= f.check_box :capture_mention_as_ticket%> Capture Mention as ticket
+		 </label>	  
+    </li>
+	<li>
+		<label>
+		    <%= f.check_box :capture_dm_as_ticket%> Capture DM as ticket
+		 </label>	  
+    </li>
+	
+	<li>
+		<label>
+		    Search Keys <%= text_field_tag "search_keys_string",@item.search_keys_string %>  
+		 </label>	  
+    </li>
+	
+</ul>
+<div class="button-container">
+	<%= f.submit t('save'), :class => "uiButton"  %>
+	<%= link_to(t('delete'), social_twitter_path(current_account.primary_email_config.twitter_handle), :method => 'delete', :confirm => t('admin.canned_response.index.delete_confirm'), :class => "button" ) %>	
+	<%= link_to(t('cancel'), admin_products_url, :class => "uiButton", :id => "twitter-form-cancel" )  %>
+</div> 
+<% end %>

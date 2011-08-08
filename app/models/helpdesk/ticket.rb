@@ -11,7 +11,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   has_flexiblefields
   
   #by Shan temp
-  attr_accessor :email, :name, :custom_field ,:customizer, :nscname
+  attr_accessor :email, :name, :custom_field ,:customizer, :nscname, :twitter_id 
   
   before_validation :populate_requester, :set_default_values 
   before_create :set_dueby, :save_ticket_states
@@ -22,7 +22,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   belongs_to :account
   belongs_to :email_config
   belongs_to :group
-
+ 
   belongs_to :responder,
     :class_name => 'User'
 
@@ -68,12 +68,19 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :as => :attachable,
     :class_name => 'Helpdesk::Attachment',
     :dependent => :destroy
+  
+  has_one :tweet,
+    :as => :tweetable,
+    :class_name => 'Social::Tweet',
+    :dependent => :destroy
     
   has_one :ticket_states, :class_name =>'Helpdesk::TicketState', :dependent => :destroy
   has_one :ticket_topic,:dependent => :destroy
   has_one :topic, :through => :ticket_topic
   
   attr_protected :attachments #by Shan - need to check..
+  
+  accepts_nested_attributes_for :tweet
 
   named_scope :newest, lambda { |num| { :limit => num, :order => 'created_at DESC' } }
   named_scope :updated_in, lambda { |duration| { :conditions => [ 
@@ -161,6 +168,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     STATUS_NAMES_BY_KEY[status]
   end
   
+   def is_twitter?
+    source == SOURCE_KEYS_BY_TOKEN[:twitter]
+  end
+  
   def priority=(val)
     self[:priority] = PRIORITY_KEYS_BY_TOKEN[val] || val
   end
@@ -178,6 +189,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
       :activity_data => activity_data
     )
   end
+  
+  
 
   def source=(val)
     self[:source] = SOURCE_KEYS_BY_TOKEN[val] || val
@@ -258,6 +271,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def populate_requester #by Shan temp  
+    logger.debug "populate_requester :: email#{email} and twitter: #{twitter_id}"
     unless email.blank?
       if(requester_id.nil? or !email.eql?(requester.email))
         @requester = account.all_users.find_by_email(email)
@@ -270,7 +284,22 @@ class Helpdesk::Ticket < ActiveRecord::Base
         end        
         self.requester = @requester
       end
-    end
+    else 
+      
+     unless twitter_id.blank?
+       logger.debug "twitter_handle :: #{twitter_id.inspect} "
+        if(requester_id.nil? or twitter_id.eql?(requester.twitter_id))
+          @requester = account.all_users.find_by_twitter_id(twitter_id)
+          if @requester.nil?
+            @requester = account.users.new          
+            @requester.signup!({:user => {:twitter_id =>twitter_id , :name => twitter_id ,
+            :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}})
+          end        
+          self.requester = @requester
+        end
+      end 
+    end    
+    
   end
   
   def autoreply     
@@ -312,8 +341,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     ticket_states.resolved_at ||= ticket_states.set_closed_at_state if (status == STATUS_KEYS_BY_TOKEN[:closed])     
   end
 
-  def update_ticket_states
-    logger.debug "ticket_states :: #{ticket_states.inspect} "
+  def update_ticket_states 
     
     ticket_states.assigned_at=Time.zone.now if (responder_id != @old_ticket.responder_id && responder)    
     if (@old_ticket.responder_id.nil? && responder_id != @old_ticket.responder_id && responder)
@@ -372,6 +400,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def reply_email
     email_config ? email_config.friendly_email : account.default_email
   end
+  
+  
 
   #Some hackish things for virtual agent rules.
   def tag_names

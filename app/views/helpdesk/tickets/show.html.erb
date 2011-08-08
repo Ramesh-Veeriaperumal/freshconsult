@@ -8,14 +8,24 @@
 			if(action == "reply")
 			{
 				jQuery('#cnt-note').hide();
+				jQuery('#cnt-tweet').hide();
 				jQuery('#cnt-reply').toggle();
 				setCaretToPos($('send-email-cnt-reply-body'), 0);
+			}
+			else if (action == "note")
+			{
+				jQuery('#cnt-reply').hide();
+				jQuery('#cnt-tweet').hide();
+				jQuery('#cnt-note').toggle();
+				setCaretToPos($('add-note-cnt-note-body'), 0);
 			}
 			else
 			{
 				jQuery('#cnt-reply').hide();
-				jQuery('#cnt-note').toggle();
-				setCaretToPos($('add-note-cnt-note-body'), 0);
+				jQuery('#cnt-note').hide();
+				jQuery('#cnt-tweet').toggle();
+				setCaretToPos($('send-tweet-cnt-tweet-body'), 0);
+			
 			}
 		}
 		Helpdesk.swapEmailNote = function(cls, private, submit, link, id){
@@ -234,7 +244,7 @@
                 <%= render :partial => "spam", :locals => { :ticket => @ticket } %>
               </span>
             </div>
-        	</div>	
+     	</div>	
 			<% end %>
 		  <div id="description-full" style="display:block" class="details min_height">
 			 	<%= RedCloth.new(auto_link(@ticket.description, :all, :target => "_blank")).to_html %>
@@ -259,6 +269,7 @@
 			<div class="alignright">
 				<%= link_to_function(t('ticket.reply_to'), "swapEmailNote('reply', this)", :class => 'uiButton', :id => "ReplyButton") if @item.requester %>
 				<%= link_to_function(t('ticket.add_note'), "swapEmailNote('note', this)", :class => 'uiButton', :id => "AddNoteButton") %>		
+				<%= link_to_function("Tweet", "swapEmailNote('tweet', this)", :class => 'uiButton', :id => "TweetButton") if @item.requester && @item.is_twitter?%>
 			</div>
 			<div style="position:relative;">
 				<% if @item.requester %>				
@@ -269,7 +280,8 @@
             <div id="canned_response_list"></div>
 				  </div>
 					<%= render(:partial => '/helpdesk/shared/note_form', :locals => { :id => 'add-note',	:cntid => "cnt-note", :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
-					<%= render(:partial => '/helpdesk/shared/reply_form', :locals => { :id => 'send-email', :cntid => 'cnt-reply', :note => [@ticket, Helpdesk::Note.new(:private => false)] }) %>  				
+					<%= render(:partial => '/helpdesk/shared/reply_form', :locals => { :id => 'send-email', :cntid => 'cnt-reply', :note => [@ticket, Helpdesk::Note.new(:private => false)] }) %>
+					<%= render(:partial => '/helpdesk/shared/tweet_form', :locals => {:id => 'send-tweet', :cntid => 'cnt-tweet', :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
 				<% else %>
 					<%= render(:partial => '/helpdesk/shared/note_form', :locals => { :id => 'add-note',	:cntid => "cnt-note", :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
 				<% end %>				

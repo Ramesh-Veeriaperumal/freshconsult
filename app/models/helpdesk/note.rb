@@ -9,11 +9,17 @@ class Helpdesk::Note < ActiveRecord::Base
     :as => :attachable,
     :class_name => 'Helpdesk::Attachment',
     :dependent => :destroy
+    
+  has_one :tweet,
+    :as => :tweetable,
+    :class_name => 'Social::Tweet',
+    :dependent => :destroy
 
   attr_accessor :nscname
   attr_protected :attachments, :notable_id
   
   after_create :save_response_time, :update_parent, :add_activity, :update_in_bound_count
+  accepts_nested_attributes_for :tweet
 
   named_scope :newest_first, :order => "created_at DESC"
   named_scope :visible, :conditions => { :deleted => false } 
@@ -26,7 +32,7 @@ class Helpdesk::Note < ActiveRecord::Base
   }
 
 
-  SOURCES = %w{email form note status meta}
+  SOURCES = %w{email form note status meta twitter}
   SOURCE_KEYS_BY_TOKEN = Hash[*SOURCES.zip((0..SOURCES.size-1).to_a).flatten]
 
   named_scope :exclude_source, lambda { |s| { :conditions => ['source <> ?', SOURCE_KEYS_BY_TOKEN[s]] } }

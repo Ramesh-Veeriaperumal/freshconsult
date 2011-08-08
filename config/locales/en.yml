@@ -177,6 +177,26 @@ en:
       index: 
         new: Add Canned response
         title: Canned responses
+    twitters:
+      index:
+        new: Add Twitter account
+        title: Twitter accounts
+        search_keys: Search Keys
+        add_search: Add Search
+      search:
+        name: Search Name
+        search_key: Search Query
+        screen_name: Twitter account
+        add_key: Add Search Query
+        edit_key: Edit Search Query
+        
+      change:
+        edit_twitter :  Edit Twitter
+        capture_mention: Convert public mentions as tickets       
+        capture_dm: Convert direct messages as tickets
+        screen_name: Screen Name
+        default_group : Default Group       
+        
     home: 
       index: 
         group: Groups
@@ -200,6 +220,26 @@ en:
         scenario: Scenario Automations
         email-settings: Email Settings
         everything_helpdesk: Everything Helpdesk
+        canned-response: Canned Response
+        multi-product: Multiple Products
+        twitter-setting: Twitter Settings
+      
+    canned_responses:
+      index:
+        title: Canned responses
+        new: Add Canned response
+      new:
+        title: Add Canned response        
+        delete_confirm: Are you sure you want to delete this canned response?      
+      edit: 
+        title: Edit Canned response
+      form:
+        available_for: Available for
+        all_agents: All agents
+        groups: Agents in group
+        me_only: Me only
+        response_name: Response title
+                
   ends_with: Ends with
   last_name: Last Name
   forum:
@@ -999,6 +1039,9 @@ en:
     properties: Ticket Properties
     submit_ticket: Submit Ticket
     stop_monitor_btn_title: Stop monitoring this ticket
+    merge_btn: Merge
+    split_ticket: Split as new Ticket
+    tweets: Tweets
   recent_activity: Recent Activity
   forgot_password: Forgot Password
   change_plan: Change plan

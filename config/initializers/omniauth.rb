@@ -3,7 +3,7 @@ require 'openid/store/filesystem'
 
 
 ActionController::Dispatcher.middleware.use OmniAuth::Builder do
-  provider :twitter,  'KEY', 'SECRET'
+  provider :twitter,  'dr1GMNCkYqUqjPTvWoY4nQ', 'QUbXWcl5dOAdylf3eSCjD0XnFRpUOErUVId3RKMc'
   provider :facebook, 'APP_ID', 'APP_SECRET'
   provider :linked_in, 'KEY', 'SECRET'
   provider :open_id,  OpenID::Store::Filesystem.new('./omnitmp')

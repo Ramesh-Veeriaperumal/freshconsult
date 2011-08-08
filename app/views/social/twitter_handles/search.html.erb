@@ -1,0 +1,98 @@
+ <% javascript_tag do %>
+ 
+ 
+ jQuery(document).ready(function(){  
+ 
+ 	default_query = '<%=@search_keys.first%>';
+	if(!default_query)
+	{
+		jQuery("#twitter_search_results").html("No search queries!");
+	}else
+	{
+		search_twitter(default_query);
+	}
+      
+  });
+  
+  function search_twitter(query){
+	 var data;
+	 var url = "https://search.twitter.com/search.json?q="+ query +"&rpp=20&callback=?"; 
+	 jQuery.getJSON(url, function(data){	 
+	 		if( (data.error && data.error!="") || (data.results=="undefined") )
+			{
+				alert("unable to get the data from twitter");
+			} 
+			else
+			{
+				
+				//alert("res"+JSON.stringify(data.results));
+				deliver_search_result(data)
+				
+				//jQuery.ajax({data:'query_url='+escape(data.query)+'&page='+escape(data.page)+'&next_page_url='+escape(data.next_page)+'&previous_page_url='+escape(data.previous_page)+'&refresh_url='+escape(data.refresh_url)+'&ctsid='+local_current_twitter_search_id+'&results='+encodeURIComponent(JSON.stringify(data.results)), dataType:'script', type:'post', url:'/tickets/search_tweets'})
+			}
+		});
+ 
+ }
+ 
+ function convert_as_ticket(tweet, screen_name,tweet_id , query)
+ {
+  
+  var json_data = {"subject":screen_name+' - '+tweet,"description":tweet,"twitter_id":screen_name ,"tweet_attributes": { "tweet_id":tweet_id },"email_config_id":'<%=@item.product_id%>',"group_id":'<%=@item.product.group_id%>'};
+  
+  jQuery.ajax({
+  		type: 'POST',
+		url: '<%=create_twicket_social_twitter_path(@item.id)%>',
+		data: {
+			helpdesk_tickets: json_data,
+		},									
+		datatype:'json'	,		
+		success: function(data){
+			if(data.success) {}								
+	 		}
+		});
+ }
+ 
+ function deliver_search_result(data)
+ {
+    jQuery("#twitter_search_results").html("");
+	//console.log(data.results);
+	
+	var search_result ; 
+	
+	
+	jQuery.each(data.results, function() { 
+	    
+	    //console.log(this.profile_image_url);
+		//console.log(this.text);
+		 var tweet = jQuery("<div />");
+		 jQuery("<img/>").attr("src", this.profile_image_url).appendTo(tweet);
+		 tweet.append("<a onclick=\"convert_as_ticket('" + this.text + "' , '"+this.from_user+"' , '"+this.id+"' , '"+data.query+"'); return false;\" href=\"#\">Capture as Ticket</a>");
+		 
+		 jQuery(tweet).append(this.text).appendTo('#twitter_search_results');
+		
+		//console.log(this.profile_image_url);
+		
+	});   
+  
+ 
+ }
+ 
+ <%end%>
+ 
+ 
+ <div id="twitter_search_keys">
+ 	
+	search keys :
+	<% @search_keys.each do |search_key| %>
+	
+	<%= link_to_function(h(search_key), "search_twitter('#{search_key}')", :class => "item_info") %>	
+	<% end %>
+ 	
+</div>
+
+<div id="twitter_search_results">
+	
+	
+</div>
+
+

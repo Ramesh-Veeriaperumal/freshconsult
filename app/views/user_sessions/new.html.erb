@@ -23,6 +23,7 @@
 			</li>
 			<li>
 				<div><b><%= t(".sign_in_using") %>:</b> <%= link_to (image_tag("google.png", :alt => t(".sign_in_using_google")) + "Google", "/auth/open_id?openid_url=https://www.google.com/accounts/o8/id", :class => "button") %></div>
+				<a href="/auth/twitter" class="auth_provider"><%= image_tag "twitter_64.png", :size => "64x64", :alt => "Twitter" %></a>
 			</li>
 		</ul>
 	<% end %>

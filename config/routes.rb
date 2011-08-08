@@ -40,6 +40,8 @@ ActionController::Routing::Routes.draw do |map|
   
   map.zendesk_import '/zendesk/import', :controller => 'admin/zip_readers', :action => 'index'
   
+  map.gauth '/twitter/authdone', :controller => 'social/twitter_handles', :action => 'authdone'
+  
   #map.register '/register', :controller => 'users', :action => 'create'
   #map.signup '/signup', :controller => 'users', :action => 'new'
   map.resources :users, :member => { :delete_avatar => :delete, :change_account_admin => :put }
@@ -71,6 +73,11 @@ ActionController::Routing::Routes.draw do |map|
   end
   
   map.resources :reports
+  
+  map.namespace :social do |social|
+    social.resources :twitters, :controller=>'twitter_handles' , :collection =>{:signin => :any}, 
+    :member => { :search => :any, :create_twicket => :post }
+  end
   
   #SAAS copy starts here
   map.with_options(:conditions => {:subdomain => AppConfig['admin_subdomain']}) do |subdom|
@@ -156,7 +163,7 @@ ActionController::Routing::Routes.draw do |map|
 #      ticket.resources :notes, :member => { :restore => :put }, :name_prefix => 'helpdesk_issue_helpdesk_'
 #    end
 
-    helpdesk.resources :tickets, :collection => { :empty_trash => :delete, :empty_spam => :delete, :user_ticket => :get }, 
+    helpdesk.resources :tickets, :collection => { :empty_trash => :delete, :empty_spam => :delete, :user_ticket => :get, :search_tweets => :any }, 
                                  :member => { :assign => :put, :restore => :put, :spam => :put, :unspam => :put, :close => :put, :execute_scenario => :post  , :close_multiple => :put, :pick_tickets => :put, :change_due_by => :put , :get_ca_response_content => :post ,:split_the_ticket =>:post , :merge_with_this_request =>:post } do |ticket|
 
       ticket.resources :notes, :member => { :restore => :put }, :name_prefix => 'helpdesk_ticket_helpdesk_'
@@ -197,7 +204,8 @@ ActionController::Routing::Routes.draw do |map|
     
     helpdesk.resources :support_plans
     
-    helpdesk.resources :sla_policies
+    helpdesk.resources :sla_policies   
+    
   end
   
    map.namespace :solution do |solution|     

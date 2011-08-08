@@ -47,8 +47,8 @@ class AccountsController < ApplicationController
   end
    
   def signup_free
-    create_account
-    if @account.save
+   create_account 
+   if @account.save
       render :json => { :success => true, :url => @account.full_domain }, :callback => params[:callback]
     else
       render :json => { :success => false, :errors => @account.errors.to_json }, :callback => params[:callback] 
