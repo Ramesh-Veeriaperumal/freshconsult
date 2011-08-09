@@ -15,7 +15,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   before_validation :populate_requester, :set_default_values 
   before_create :set_dueby, :save_ticket_states
-  after_create :refresh_display_id, :save_custom_field, :pass_thro_biz_rules, :autoreply 
+  after_create :refresh_display_id, :save_custom_field, :pass_thro_biz_rules, :autoreply,:create_initial_activity
   before_update :cache_old_model, :update_dueby
   after_update :save_custom_field, :update_ticket_states, :notify_on_update 
   
@@ -169,7 +169,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
    def is_twitter?
-    source == SOURCE_KEYS_BY_TOKEN[:twitter]
+    (source == SOURCE_KEYS_BY_TOKEN[:twitter]) and (fetch_twitter_handle) 
   end
   
   def priority=(val)
@@ -190,7 +190,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     )
   end
   
-  
+  def create_initial_activity
+    create_activity(requester, 'activities.tickets.new_ticket.long', {},
+                              'activities.tickets.new_ticket.short')
+  end
 
   def source=(val)
     self[:source] = SOURCE_KEYS_BY_TOKEN[val] || val
@@ -592,6 +595,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
        
       end
      end
+  end
+  
+  def fetch_twitter_handle
+   email_config.nil? ? email_config.twitter_handle : account.primary_email_config.twitter_handle
   end
   
   def portal_host

@@ -296,9 +296,9 @@ class Helpdesk::TicketsController < ApplicationController
     def process_item
       #if @item.source == 0
         @item.spam = false
-        @item.create_activity(@item.requester, 'activities.tickets.new_ticket.long', {},
-                              'activities.tickets.new_ticket.short')
-      #end
+#        @item.create_activity(@item.requester, 'activities.tickets.new_ticket.long', {},
+#                              'activities.tickets.new_ticket.short')
+#      #end
     end
  
     def assign_ticket user

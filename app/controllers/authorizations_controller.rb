@@ -31,7 +31,7 @@ class AuthorizationsController < ApplicationController
       :uid => @omniauth['uid'], :account_id => current_account.id)
       make_usr_active
     else
-      flash[:notice] = "User is not there!"
+      flash[:notice] = t('twitter.usr_not_thr')
       return redirect_to login_url
     end  
     create_session
