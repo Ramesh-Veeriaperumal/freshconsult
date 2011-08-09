@@ -1300,4 +1300,5 @@ en:
     error_sending: Error sending the tweet! Twitter might be unstable. Please try again.
     ticket_save: Successfully saved the ticket from tweet
     tkt_err_save: Unable to convert the tweet as ticket
+    usr_not_thr: User is not there
     
