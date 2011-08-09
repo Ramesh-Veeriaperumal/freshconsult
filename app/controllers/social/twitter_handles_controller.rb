@@ -28,22 +28,21 @@ class Social::TwitterHandlesController < ApplicationController
   end
   
   def add_to_db
-    logger.debug "call back url called @time:: #{Time.now}"
     begin      
       twitter_handle = @wrapper.auth( session[:request_token] , session[:request_secret] , params[:oauth_verifier]) 
       if twitter_handle.save 
-        flash[:notice] = "Successfully signed in with Twitter."
+        flash[:notice] = t('twitter.success_signin')
       else
-        flash[:notice] = "User is aleady there."
+        flash[:notice] = t('twitter.user_exists')
       end
     rescue
-      flash[:error] = 'You were not authorized by Twitter!'
+      flash[:error] = t('twitter.not_authorized')
     end
   end
   
   def destroy
     @item.destroy   
-    flash[:notice] = "Twitter account is deleted!"
+    flash[:notice] = t('twitter.deleted')
     redirect_back_or_default redirect_url
   end
   
@@ -55,9 +54,9 @@ class Social::TwitterHandlesController < ApplicationController
     begin
       @twitter = @wrapper.get_twitter
       @twitter.update params[:tweet]
-      flash[:notice] = "Tweet successfully sent!"
+      flash[:notice] = t('twitter.sent')
     rescue
-      flash[:error] = "Error sending the tweet! Twitter might be unstable. Please try again."
+      flash[:error] = t('twitter.error_sending')
     end
     redirect_to :action => :index
   end
@@ -90,12 +89,11 @@ class Social::TwitterHandlesController < ApplicationController
     res = Hash.new
     if @ticket.save
       res["success"] = true      
-      res["message"]="Successfully saved the ticket from tweet"
+      res["message"]= t('twitter.ticket_save')
       render :json => ActiveSupport::JSON.encode(res)
     else
-      logger.debug "unable to save :: #{@ticket.errors.to_json}"
       res["success"] = false
-      res["message"]="Unable to convert the tweet as ticket"
+      res["message"]= t('twitter.tkt_err_save')
       render :json => ActiveSupport::JSON.encode(res)
     end
   end
