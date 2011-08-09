@@ -10,8 +10,8 @@ class Social::TwitterHandlesController < ApplicationController
   
   prepend_before_filter :load_product, :only => [:signin,:authdone]
   before_filter :load_main_product, :only => [:index]
-  before_filter :build_item, :only => [:signin,:authdone]
-  before_filter :load_item,  :only => [:tweet , :edit , :update, :search,:destroy]       
+  before_filter :build_item, :only => [:signin, :authdone]
+  before_filter :load_item,  :only => [:tweet, :edit, :update, :search, :destroy]       
   before_filter :twitter_wrapper , :only => [:signin,:authdone]
  
 
@@ -81,6 +81,7 @@ class Social::TwitterHandlesController < ApplicationController
   end
   
   def search
+    @products    = current_account.products
     @search_keys = (@item.search_keys) || [] 
   end
   
@@ -105,6 +106,7 @@ class Social::TwitterHandlesController < ApplicationController
   
   def load_main_product
     @current_product = current_account.primary_email_config
+    @twitter_handle  = current_account.primary_email_config.twitter_handle
   end
   
   def twitter_wrapper   

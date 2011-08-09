@@ -54,45 +54,63 @@
  
  function deliver_search_result(data)
  {
-    jQuery("#twitter_search_results").html("");
-	//console.log(data.results);
-	
-	var search_result ; 
-	
-	
-	jQuery.each(data.results, function() { 
-	    
-	    //console.log(this.profile_image_url);
-		//console.log(this.text);
-		 var tweet = jQuery("<div />");
-		 jQuery("<img/>").attr("src", this.profile_image_url).appendTo(tweet);
-		 tweet.append("<a onclick=\"convert_as_ticket('" + this.text + "' , '"+this.from_user+"' , '"+this.id+"' , '"+data.query+"'); return false;\" href=\"#\">Capture as Ticket</a>");
+		console.log(data.results);
+		jQuery( "#tweetTemplate" )
+						.tmpl( data.results )
+						.appendTo( "#twitter_search_results" );
+    /*jQuery("#twitter_search_results").html("");
+		//console.log(data.results);
+		var search_result ; 
+		jQuery.each(data.results, function() { 
+	    console.log(this);
+		 	var tweet = jQuery("<div />");
+		 	jQuery("<img/>").attr("src", this.profile_image_url).appendTo(tweet);
+		 	tweet.append("<a onclick=\"convert_as_ticket('" + this.text + "' , '"+this.from_user+"' , '"+this.id+"' , '"+data.query+"'); return false;\" href=\"#\">Capture as Ticket</a>");
 		 
 		 jQuery(tweet).append(this.text).appendTo('#twitter_search_results');
-		
-		//console.log(this.profile_image_url);
-		
 	});   
-  
+   */
  
  }
  
  <%end%>
  
- 
- <div id="twitter_search_keys">
- 	
-	search keys :
-	<% @search_keys.each do |search_key| %>
-	
-	<%= link_to_function(h(search_key), "search_twitter('#{search_key}')", :class => "item_info") %>	
-	<% end %>
- 	
+<% content_for :sidebar do -%><%-end %>
+<h3 class="title">
+	Twitter
+</h3>
+<div id="twitter_search_keys"> 	
+	<h4 class="title">Search keys</h4>
+	<% @search_keys.each do |search_key| %>	
+		<%= link_to_function(h(search_key), "search_twitter('#{search_key}')", :class => "item_info") %>	
+	<% end %> 	
 </div>
-
-<div id="twitter_search_results">
-	
-	
+<div class="page-list">
+	<table>
+		<tr>
+			<td>
+				<% @products.each do |product| %>
+					<%= link_to_function product.name, "show_search(#{product.id})" %>
+					<% unless product.twitter_handle.nil? %>
+						<% product.twitter_handle.search_keys do |search_key| %>
+							<%= link_to_function(h(search_key), "search_twitter('#{search_key}')", :class => "item_info") %>	
+						<% end %>
+					<% end %>
+				<% end %>				
+			</td>
+			<td>
+				<div id="twitter_search_results" class="list-group"></div>
+				<script id="tweetTemplate" type="text/x-jquery-tmpl">
+				  <div class="list-item">
+						<div class="preview-pic">
+							<img src="${profile_image_url}" />
+						</div>
+						<div class="primary-text">${text}</div>
+						<div class="info-text">${from_user}</div>			
+					</div>
+				</script>
+				</div>
+			</td>
+		</tr>
+	</table>
 </div>
-
-

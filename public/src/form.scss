@@ -237,6 +237,16 @@ a.addchoice:hover{
    li.dropdown, li.dropdown_blank{
       select{ margin-bottom:8px; }
    }
+   div.checkbox{
+      padding-left: 24px;
+      padding-bottom: 5px;
+      font-size:1.3em;
+      position:relative;
+	   input{
+	      position:absolute;
+	      left:1px;
+	   }
+   }
 	label, li.checkbox{
 		font-weight:normal;
 		margin:0px;
@@ -429,7 +439,7 @@ a.addchoice:hover{
 			
 			label.checkbox{
 				width:100%;
-				font-size:13px;				
+				font-size:13px;
 			}
 		}
 		div{
@@ -440,7 +450,7 @@ a.addchoice:hover{
 }
 
 .ui-form .inline-field{
-	border-bottom:1px dotted #cfcfcf;
+	/*border-bottom:1px dotted #cfcfcf;*/
 	padding-top:8px;
 	input[type=text], select, input.text {
 		width:auto;
