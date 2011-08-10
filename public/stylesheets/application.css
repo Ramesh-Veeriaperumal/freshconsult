@@ -1,8 +1,8 @@
 /* This import applies a global reset to any page that imports this stylesheet.*/
 /* Theme Colors and layout Defaults */
 /* Importing admin icons */
-.admin-icon-sprite, .admin-icon-account-settings, .admin-icon-agent, .admin-icon-business-hours, .admin-icon-canned-response, .admin-icon-customer-portal, .admin-icon-dispatcher, .admin-icon-email-notifications, .admin-icon-email-settings, .admin-icon-feedback, .admin-icon-group, .admin-icon-import, .admin-icon-multi-product, .admin-icon-rebranding, .admin-icon-remote-authentication, .admin-icon-scenario, .admin-icon-sla, .admin-icon-supervisor, .admin-icon-ticket-fields {
-  background: url('/images/admin-icon-s680c225e7c.png') no-repeat;
+.admin-icon-sprite, .admin-icon-account-settings, .admin-icon-agent, .admin-icon-business-hours, .admin-icon-canned-response, .admin-icon-customer-portal, .admin-icon-dispatcher, .admin-icon-email-notifications, .admin-icon-email-settings, .admin-icon-feedback, .admin-icon-group, .admin-icon-import, .admin-icon-multi-product, .admin-icon-rebranding, .admin-icon-remote-authentication, .admin-icon-scenario, .admin-icon-sla, .admin-icon-supervisor, .admin-icon-ticket-fields, .admin-icon-twitter-setting {
+  background: url('/images/admin-icon-s551b010e2a.png') no-repeat;
 }
 
 /* Ticket Show page twitter style icons */
@@ -188,7 +188,7 @@ ul.activityfeed li .activity_time {
 }
 .ui-list_with_icon li {
   padding-left: 14px;
-  background: url('/images/symbols/request_nav_seperator.gif?1312466010') no-repeat 3px 9px;
+  background: url('/images/symbols/request_nav_seperator.gif?1312801243') no-repeat 3px 9px;
   list-style-type: none;
 }
 .ui-list_with_icon li {
@@ -1326,6 +1326,10 @@ ul.admin_icons li a:hover {
   background-position: 0 -544px;
 }
 
+.admin-icon-twitter-setting {
+  background-position: 0 -576px;
+}
+
 .mark_action a, .mark_action .stamp {
   padding: 2px 6px;
   margin: 0px 0px 6px 0px;
@@ -2459,7 +2463,7 @@ h4.border_title {
 }
 .solution-list .odd ul li, .solution-list .even ul li {
   padding-left: 14px;
-  background: url('/images/symbols/request_nav_seperator.gif?1312466010') no-repeat 3.5px 3.5px;
+  background: url('/images/symbols/request_nav_seperator.gif?1312801243') no-repeat 3.5px 3.5px;
   list-style-type: none;
 }
 .solution-list .odd li, .solution-list .even li {
@@ -4158,7 +4162,7 @@ div.addReminder form label.overlabel {
   padding: 2px 0px;
   position: relative;
   top: -4px;
-  visibility: hidden;
+  /*visibility:hidden;*/
 }
 .admin_list li div.item_actions a, .content_list li div.item_actions a {
   color: #333333;
@@ -4260,7 +4264,11 @@ div.addReminder form label.overlabel {
   max-width: 90px;
 }
 .admin_list li:hover, .content_list li:hover {
-  background: #f6f6f6;
+  background-color: #f4f4f4;
+  background-image: url(../images/overlay-top-shadow.png);
+  background-position: top left;
+  border-bottom: 1px solid #dfdfdf;
+  background-repeat: repeat-x;
 }
 .admin_list li:hover div.item_actions, .content_list li:hover div.item_actions {
   visibility: visible;

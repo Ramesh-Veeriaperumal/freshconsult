@@ -1,6 +1,7 @@
 source :gemcutter
 source "http://gems.github.com"
 
+
 gem "rake", "0.8.7"
 gem "rails", "2.3.8"
 gem "mysql"
@@ -45,6 +46,10 @@ gem "lockfile","1.4.3"
 gem "newrelic_rpm"
 
 #gem "win32-open3", "0.3.2"
+
+gem "twitter" , "0.9.12"
+gem "newrelic_rpm"
+
 
 group :development do
    gem "rspec", "1.3.1"

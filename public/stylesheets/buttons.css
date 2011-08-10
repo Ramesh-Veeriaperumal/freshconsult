@@ -371,6 +371,10 @@ div.action_buttons:hover {
 .button:active, .slim-button:active {
   color: #3f3f3f;
 }
+.button img, .slim-button img {
+  width: auto;
+  height: auto;
+}
 
 .slim-button {
   padding: 1px 8px;

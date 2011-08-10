@@ -165,7 +165,7 @@ div.action_buttons:hover{
 	@include shadows(rgba(0, 0, 0, 0.05), 0px, 1px, 0px);	
    background-image:url(../images/overlay-button.png);
 	background-color:#f8f8f8;
-		
+	img{ width:auto; height:auto; }	
    border: 1px solid #cfcfcf;
    cursor: pointer;
 }

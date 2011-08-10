@@ -37,6 +37,10 @@ class Helpdesk::NotesController < ApplicationController
     def process_item
       if @parent.is_a? Helpdesk::Ticket      
         send_reply_email if @item.source.eql?(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["email"])
+        if  @item.source.eql?(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["twitter"])
+          twt = send_tweet
+          @item.create_tweet({:tweet_id => twt.id})
+        end
         @parent.responder ||= current_user                     
       end
 
@@ -85,5 +89,15 @@ class Helpdesk::NotesController < ApplicationController
     def create_error
       redirect_to @parent
     end
+    
+    def send_tweet
+      reply_twitter = @parent.fetch_twitter_handle
+      unless reply_twitter.nil?
+        @wrapper = TwitterWrapper.new reply_twitter
+        twitter = @wrapper.get_twitter
+        twitter.update(@item.body)
+      end
+    end
+  
 
 end

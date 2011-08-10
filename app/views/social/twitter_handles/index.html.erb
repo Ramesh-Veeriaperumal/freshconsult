@@ -1,0 +1,61 @@
+<% content_for :sidebar do -%><%-end %>
+<h3 class="title">Twitter settings</h3>
+<% form_for :twitter_handle, :url => social_twitter_path(@twitter_handle), :html => { :method => :put } do |f| %>			
+<ul class="ui-form">
+	<li class="inline-field">
+    <div class="checkbox">
+			<input type="checkbox" id="show_twitter" onclick="jQuery('#twitterverify').toggle()" checked="<%=@twitter_handle.nil?%>" />
+	  	Enable twitter
+		</div>
+	  <%= content_tag( :div, t("twitter.associate_twitter"), :class => "info-data tabbed" ) %>
+	  <div class="info-data tabbed" id="twitterverify" style="display:block;"></div>
+		<div class="tabbed" id="twittersetting">
+			<% unless @twitter_handle.nil? %>
+				<span class="seperator"></span>
+				<label class="caption">
+					Settings
+				</label>
+				<div class="fields">
+				<div class="highlight big-text">@<%= @twitter_handle.screen_name%></div>
+				<span class="seperator"></span>
+				<label>
+					Search Keys	
+				</label>
+ 			  <%= text_field_tag "search_keys_string", @twitter_handle.search_keys_string, :class => "text", :size => 50 %>  
+				<span class="seperator"></span>
+				<label class="checkbox">
+					<%= check_box "social_twitter_handle", :capture_mention_as_ticket, { :checked => @twitter_handle.capture_mention_as_ticket } %> Capture <strong>"Mention"</strong> as ticket
+				</label>
+				<span class="seperator"></span>
+				<label class="checkbox">
+					<%= check_box "social_twitter_handle", :capture_dm_as_ticket, { :checked => @twitter_handle.capture_dm_as_ticket } %> Capture <strong>"Direct message"</strong> as ticket
+				</label>
+				</div>
+				<% link_to "Search", search_social_twitter_path(current_account.primary_email_config.twitter_handle) %>	
+			<%end%>
+		</div>
+	</li>
+</ul> 
+<div class="button-container">
+	<%= link_to t("cancel_and_back"), "/admin/home", :class => "uiButton floatl" %>
+	<%= f.submit "Update settings", :class => "uiButton"  %>
+</div>
+<% end %> 
+<%= link_to_function "Add Twitter", "twitter_signin(#{current_account.primary_email_config.id})" if current_account.primary_email_config.twitter_handle.nil?%> 
+
+<% unless current_account.primary_email_config.twitter_handle.nil? %>
+	@<%=current_account.primary_email_config.twitter_handle.screen_name%>
+	<%= link_to "settings", edit_social_twitter_path(current_account.primary_email_config.twitter_handle) %> 
+	<%= link_to "Search", search_social_twitter_path(current_account.primary_email_config.twitter_handle) %>
+	<%= link_to(t('delete'), social_twitter_path(current_account.primary_email_config.twitter_handle), :method => 'delete', :confirm => "Are you sure you want to delete this twitter account?" ) %>
+     	
+<%end%>
+ 
+<% content_for :pagefixed do %>
+  <% javascript_tag do %>
+		<% if @twitter_handle.nil? %>
+    	jQuery("#twitterverify")
+      	.load('/social/twitters/signin?product_id='+<%=current_account.primary_email_config.id %>, function() { });      
+		<% end %>
+  <% end %>
+<% end %>			 

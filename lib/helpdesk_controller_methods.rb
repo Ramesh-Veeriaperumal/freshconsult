@@ -140,6 +140,7 @@ protected
   end
   
   def build_item
+    logger.debug "testing the caller class:: #{nscname} and cname::#{cname}"
     @item = self.instance_variable_set('@' + cname,
       scoper.is_a?(Class) ? scoper.new(params[nscname]) : scoper.build(params[nscname]))
     set_item_user

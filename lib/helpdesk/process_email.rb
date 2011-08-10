@@ -108,8 +108,6 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       begin
         ticket.save!
         create_attachments(ticket, ticket)
-        ticket.create_activity(ticket.requester, 'activities.tickets.new_ticket.long', {}, 
-                                   'activities.tickets.new_ticket.short')
         ticket
       rescue ActiveRecord::RecordInvalid => e
         FreshdeskErrorsMailer.deliver_error_email(ticket,params,e)

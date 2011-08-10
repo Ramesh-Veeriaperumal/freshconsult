@@ -19,6 +19,7 @@ module Admin::HomeHelper
   
   def admin_pref_links
     admin_links = [
+
       [ t(".everything_helpdesk"), [
           ['/account/edit',               'rebranding'              ],
           ['/admin/email_configs',        'email-settings'          ],
@@ -29,7 +30,8 @@ module Admin::HomeHelper
           ['/admin/va_rules',             'dispatcher'              ],
           ['/admin/supervisor_rules',     'supervisor'              ],
           ['/admin/automations',          'scenario',       feature?(:scenario_automations) ],
-          ['/admin/canned_responses',     'canned-response'         ]
+          ['/admin/canned_responses',     'canned-response'         ],
+          ['/social/twitters',     'twitter-setting'         ]
           ]],
         
       [ t(".everything_else"), [
@@ -43,6 +45,18 @@ module Admin::HomeHelper
           ['/groups',                     'group'                   ]
         ]]
     ]
+
+                    # [ "People & Roles", [
+                    #                 ['/agents',   'agent' ],
+                    #                 ['/groups',   'group' ]
+                    # ]],
+                    # [ "Account", [
+                    #                 ['/account',            'account-settings' ],
+                    #                 ['/admin/security',     'remote-authentication' ],
+                    #                 ['/admin/zip_readers',  'import' ]
+                    # ]]
+                  
+
 
     admin_html = 
       admin_links.map do |group|

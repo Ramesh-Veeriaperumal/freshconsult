@@ -165,5 +165,18 @@ module Helpdesk::TicketActions
     end
   end
   
+  def search_tweets
+    @search_keys = (current_account.twitter_handles.first.search_keys) || [] 
+    @search_keys
+  end  
+  
+  def reply_twitter_handle query
+    current_account.twitter_search_keys.find_by_search_query(query).twitter_handle.id
+  end
+   
+   def decode_utf8_b64(string)
+      URI.unescape(CGI::escape(Base64.decode64(string)))
+   end
+  
  
 end

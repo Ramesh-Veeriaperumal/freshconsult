@@ -2,6 +2,9 @@ class EmailConfig < ActiveRecord::Base
   belongs_to :account
   belongs_to :group, :foreign_key =>'group_id' #?!?!?! Not a literal belonging in true ER sense.
   has_one :portal, :foreign_key => 'product_id', :dependent => :destroy
+  has_one :twitter_handle, :foreign_key => 'product_id', :class_name => 'Social::TwitterHandle', 
+    :dependent => :destroy
+
 
   attr_protected :account_id, :active
   attr_accessor :enable_portal

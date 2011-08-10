@@ -33,32 +33,17 @@ class Group < ActiveRecord::Base
   ASSIGNTIME_NAMES_BY_KEY = Hash[*ASSIGNTIME.map { |i| [i[2], i[1]] }.flatten]
   ASSIGNTIME_KEYS_BY_TOKEN = Hash[*ASSIGNTIME.map { |i| [i[0], i[2]] }.flatten]
   
-  def self.find_excluded_agents(group_id, account_id)
-    
-    
-     logger.debug "@exclude_list group_id:: #{group_id} and account_id :: #{account_id}"
-    
-    unless group_id.nil?
-    
-      @exclude_list = Agent.find(:all, :joins=>:user, :conditions => "users.account_id=#{account_id} AND users.deleted=#{false} AND users.id NOT IN (select user_id from agent_groups where group_id=#{group_id})" , :order =>'name')
-     
-   else
-     
-      @exclude_list = Agent.find(:all, :joins=>:user, :conditions => "users.account_id=#{account_id} AND users.deleted=#{false}" , :order =>'name')
-      
-          
-    end
-   
-   
-   
+  def self.find_excluded_agents(group_id, account_id)      
+    unless group_id.nil?    
+      @exclude_list = Agent.find(:all, :joins=>:user, :conditions => "users.account_id=#{account_id} AND users.deleted=#{false} AND users.id NOT IN (select user_id from agent_groups where group_id=#{group_id})" , :order =>'name')   
+    else     
+      @exclude_list = Agent.find(:all, :joins=>:user, :conditions => "users.account_id=#{account_id} AND users.deleted=#{false}" , :order =>'name')      
+    end    
   end
   
-  def self.find_included_agents(group_id)
-    
-    @include_list = AgentGroup.find(:all, :joins=>:user, :conditions =>{:group_id =>group_id} )    
-        
-    return @include_list
-    
+  def self.find_included_agents(group_id)    
+    @include_list = AgentGroup.find(:all, :joins=>:user, :conditions =>{:group_id =>group_id} )         
+    return @include_list    
   end
   
   def agent_emails
