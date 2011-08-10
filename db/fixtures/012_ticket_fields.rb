@@ -22,11 +22,12 @@ def self.ticket_fields_data
     { :name => "subject", :label => "Subject", :description => "Ticket subject",
       :required => true, :visible_in_portal => true, :editable_in_portal => true, 
       :required_in_portal => true },
+       
+    { :name => "ticket_type", :label => "Type", :description => "Ticket type",
+      :required => true, :choices => [["Question"],["Incident"],["Problem"],["Future Request"],["Lead"] ]
+    },
       
     { :name => "source", :label => "Source", :description => "Ticket source" },
-      
-    { :name => "ticket_type", :label => "Type", :description => "Ticket type",
-      :required => true },
       
     { :name => "status", :label => "Status", :description => "Ticket status",
       :required => true, :visible_in_portal => true },
@@ -46,6 +47,8 @@ def self.ticket_fields_data
     { :name => "description", :label => "Description", :description => "Ticket description",
       :required => true, :visible_in_portal => true, :editable_in_portal => true, 
       :required_in_portal => true }
+      
+ 
   ]
 end
 
@@ -63,7 +66,8 @@ Helpdesk::TicketField.seed_many(:account_id, :name,
       :visible_in_portal => f[:visible_in_portal] || false,
       :editable_in_portal => f[:editable_in_portal] || false,
       :required_in_portal => f[:required_in_portal] || false,
-      :required_for_closure => f[:required_for_closure] || false
+      :required_for_closure => f[:required_for_closure] || false,
+      :choices => f[:choices] || []
     }
   end
 )

@@ -100,8 +100,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         :cc_email => parse_cc_email,
         :email_config => account.email_configs.find_by_to_email(to_email[:email]),
         :status => Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open],
-        :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email],
-        :ticket_type =>Helpdesk::Ticket::TYPE_KEYS_BY_TOKEN[:how_to]
+        :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email]
+        #:ticket_type =>Helpdesk::Ticket::TYPE_KEYS_BY_TOKEN[:how_to]
       )
       ticket = check_for_chat_scources(ticket,from_email)
       ticket.group_id = ticket.email_config.group_id unless ticket.email_config.nil?

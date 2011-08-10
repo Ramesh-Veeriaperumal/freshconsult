@@ -143,7 +143,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def set_default_values
     self.status = TicketConstants::STATUS_KEYS_BY_TOKEN[:open] unless TicketConstants::STATUS_NAMES_BY_KEY.key?(self.status)
     self.source = TicketConstants::SOURCE_KEYS_BY_TOKEN[:portal] if self.source == 0
-    self.ticket_type ||= TicketConstants::TYPE_KEYS_BY_TOKEN[:how_to]
+    self.ticket_type ||= Account.ticket_type_values.first.value
     self.subject ||= ''
     self.description = subject if description.blank?
   end
@@ -494,7 +494,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       "status"                            => STATUS_NAMES_BY_KEY[status],
       "priority"                          => PRIORITY_NAMES_BY_KEY[priority],
       "source"                            => SOURCE_NAMES_BY_KEY[source],
-      "ticket_type"                       => TYPE_NAMES_BY_KEY[ticket_type],
+      "ticket_type"                       => ticket_type,
       "tags"                              => tag_names.join(', '),
       "due_by_time"                       => due_by.strftime("%B %e %Y at %I:%M %p"),
       "due_by_hrs"                        => due_by.strftime("%I:%M %p"),

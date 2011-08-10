@@ -31,7 +31,7 @@ class Va::Action
     when 'status'
       "Changed the status to <b>#{TicketConstants::STATUS_NAMES_BY_KEY[value.to_i]}</b>"
     when 'ticket_type'
-      "Changed the ticket type to <b>#{TicketConstants::TYPE_NAMES_BY_KEY[value.to_i]}</b>"
+      "Changed the ticket type to <b>#{value}</b>"
     when 'responder_id'
       "Assigned to the agent <b>#{act_on.account.users.find(value.to_i)}</b>"
     when 'group_id'

@@ -288,6 +288,10 @@ class Account < ActiveRecord::Base
     end
   end
   
+  def ticket_type_values
+    ticket_fields.type_field.first.picklist_values
+  end
+  
   protected
   
     def valid_domain?
