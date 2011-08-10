@@ -46,7 +46,7 @@ class ContactsController < ApplicationController
     redirect_to(customer_url(customer))
   end
   
-  def create
+  def create   
     if build_and_save    
       flash[:notice] = t(:'flash.contacts.create.success')
       redirect_to contacts_url
@@ -150,7 +150,7 @@ protected
   end
 
   def scoper
-      current_account.contacts
+      current_account.users
   end
 
   def authorized?
@@ -162,7 +162,7 @@ protected
   end
  
   def load_object
-      @obj = self.instance_variable_set('@user',  current_account.all_contacts.find(params[:id]))      
+      @obj = self.instance_variable_set('@user',  current_account.all_users.find(params[:id]))      
   end
   
   def check_agent_limit
