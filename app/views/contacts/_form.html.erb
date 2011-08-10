@@ -33,6 +33,21 @@
 								};	
 	});
 	
+	function enable_role_change()
+	{
+		var company = jQuery('#contact_customer').val();
+		if (company != null && company != "")
+		{
+			jQuery('#contact_role').removeAttr("disabled");
+		}
+		else
+		{			
+			jQuery('#contact_role').removeAttr('checked');
+			jQuery('#contact_role').attr( "disabled" , true );
+		}
+	
+	}
+	
 <% end %>
 
  	 <% if @existing_user %>
@@ -62,12 +77,17 @@
 		<li>
 			<%
 				company_name = "";
+				role_disabled = true
 				unless @user.customer.nil?
 					company_name =  @user.customer.name
+					role_disabled = false
 				end
 			%>
 			<%= label(:user, :customer, t('user.company')) %>
-			<%= text_field(:user, :customer, :class => "text" , :value => company_name, :id => "contact_customer" ) %>
+			<%= text_field(:user, :customer, :class => "text" , :value => company_name, :id => "contact_customer" ,:onchange => "enable_role_change()") %>
+		</li>
+		<li>			
+			<%= check_box(:user, :user_role,{:disabled => role_disabled  , :id =>'contact_role' , :checked => @user.user_role == User::USER_ROLES_KEYS_BY_TOKEN[:client_manager] },User::USER_ROLES_KEYS_BY_TOKEN[:client_manager] , User::USER_ROLES_KEYS_BY_TOKEN[:customer] )%> <%=t('contacts.role.info')%>
 		</li>
 		<li class="small">	
 			<%= label(:user, :phone, "#{t('user.phone_no')}.") %>	
@@ -106,15 +126,3 @@
 		</li>		
 		
 	</ul>	 
-
-<!-- We can remove the following as the default role is customer-->
-<div style="display:none">
-<%= f.label :role %>
-<ul>
-	<li><%= f.radio_button  :user_role, User::USER_ROLES_KEYS_BY_TOKEN[:admin] %> <%= f.label :user_role_admin, "Administrator" %></li>
-	<li><%= f.radio_button  :user_role, User::USER_ROLES_KEYS_BY_TOKEN[:poweruser] %> <%= f.label :user_role_poweruser, "Agent" %></li>
-	<li><%= f.radio_button  :user_role, User::USER_ROLES_KEYS_BY_TOKEN[:customer], :checked => true %> <%= f.label :user_role_customer, "Customer" %></li>
-</ul>
-</div>
-
-<!-- role section ends here-->

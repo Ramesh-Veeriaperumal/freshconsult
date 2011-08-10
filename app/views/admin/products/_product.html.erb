@@ -1,5 +1,6 @@
-<li>
+	<li>
   <div class="item_actions">
+		<%= link_to_function "Add Twitter", "twitter_signin(#{product.id})", :class => "slim-button" if product.twitter_handle.nil? %>	
     <%= link_to(t('edit'), edit_admin_product_path(product), :class => "button") %>
     <%= link_to(t('delete'), admin_product_path(product), :method => 'delete', :confirm => t(".delete_product"), :class => "button" ) %>
   </div>
@@ -25,6 +26,7 @@
           <%= content_tag (:span, t(".email_not_verified"), :class => "inactive_email custom-tip-top", :title => t('email_configs.unverified_info1')) unless product.active? %>
 					<%= link_to(t("email_configs.send_verification_email"), deliver_verification_admin_email_config_path(product), :class => "slim-button")  unless product.active?  %>                
         </div>
+				<%= render :partial => "twitter", :locals => { :product => product } %>
       </td>
     </tr>
   </table>

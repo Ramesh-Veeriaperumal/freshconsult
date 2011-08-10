@@ -1,4 +1,3 @@
-
 <% form_for @item, :url => social_twitter_path, :html => { :method => :put } do |f| %>
 <%= f.error_messages %>
 <%=hidden_field_tag 'product_id',@item.product.id%>

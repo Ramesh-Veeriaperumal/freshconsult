@@ -767,6 +767,8 @@ en:
     info5: User has not created any ticket till now
     restore: Restore
     info6: Add specific notes regarding this contact
+    role:
+      info: can see all tickets from this company 
   between: Between
   portal_key: Portal
   add_new_forum: add a new forum
@@ -895,6 +897,7 @@ en:
       forums: Forums
       tickets: Tickets
       home: Home
+      company_tickets: Company Tickets
     signout: Sign out
     search: Search
   agent_adds_comment: Agent adds comment to Ticket
@@ -955,7 +958,7 @@ en:
   import_users_contacts: Users &rarr; Contacts
   linkback_info: You can choose to Linkback to your own website when the customer clicks on the header logo
   twitter:
-    associate_twitter: Associate your helpdesk's twitter account, to receive tweets from your customers.
+    associate_twitter: Associate a twitter account to your helpdesk, so that you can start supporting your customers via twitters.
   logo: Logo
   ok: Ok
   back: Back
@@ -1236,6 +1239,7 @@ en:
         monitored_by: Tickets I'm Monitoring
         my_closed: My Closed Tickets
         my_open: My Open Tickets
+        tickets_by: Tickets by
       note:
         posted_on: "%{user_name} on %{note_date}"
         edit_note: Edit Note

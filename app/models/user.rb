@@ -7,7 +7,8 @@ class User < ActiveRecord::Base
     [ :admin,       "Admin",            1 ],
     [ :poweruser,   "Power User",       2 ],
     [ :customer,    "Customer",         3 ],
-    [ :account_admin,"Account admin",   4 ]
+    [ :account_admin,"Account admin",   4 ],
+    [ :client_manager,"Client Manager", 5 ]
    ]
 
   USER_ROLES_OPTIONS = USER_ROLES.map { |i| [i[1], i[2]] }
@@ -32,8 +33,8 @@ class User < ActiveRecord::Base
   before_create :set_time_zone , :set_company_name
   before_save :set_account_id_in_children , :set_contact_name
   
-  named_scope :contacts, :conditions => ["user_role=?", USER_ROLES_KEYS_BY_TOKEN[:customer]]
-  named_scope :technicians, :conditions => ["user_role != ?", USER_ROLES_KEYS_BY_TOKEN[:customer]]
+  named_scope :contacts, :conditions => ["user_role in (#{USER_ROLES_KEYS_BY_TOKEN[:customer]}, #{USER_ROLES_KEYS_BY_TOKEN[:client_manager]})" ]
+  named_scope :technicians, :conditions => ["user_role not in (#{USER_ROLES_KEYS_BY_TOKEN[:customer]}, #{USER_ROLES_KEYS_BY_TOKEN[:client_manager]})"]
 
   acts_as_authentic do |c|    
     c.validations_scope = :account_id
@@ -51,10 +52,8 @@ class User < ActiveRecord::Base
     (is_not_deleted?) and (twitter_id.blank?)
   end
   
-  
-  
   attr_accessible :name, :email, :password, :password_confirmation , :second_email, :job_title, :phone, :mobile, :twitter_id, :description, :time_zone, :avatar_attributes,:user_role,:customer_id,:import_id,:deleted
-  
+
   #Sphinx configuration starts
   define_index do
     indexes :name, :sortable => true
@@ -76,7 +75,7 @@ class User < ActiveRecord::Base
   end
   #Sphinx configuration ends here..
 
-  def signup!(params)
+  def signup!(params)   
     self.email = params[:user][:email]
     self.name = params[:user][:name]
     self.phone = params[:user][:phone]
@@ -162,7 +161,7 @@ class User < ActiveRecord::Base
   end
   
   def customer?
-    user_role == USER_ROLES_KEYS_BY_TOKEN[:customer]
+    user_role == USER_ROLES_KEYS_BY_TOKEN[:customer] || user_role == USER_ROLES_KEYS_BY_TOKEN[:client_manager]
   end
   
   def agent?
@@ -171,6 +170,10 @@ class User < ActiveRecord::Base
   
   def account_admin?
     user_role == USER_ROLES_KEYS_BY_TOKEN[:account_admin]
+  end
+  
+  def client_manager?
+    user_role == USER_ROLES_KEYS_BY_TOKEN[:client_manager]
   end
 
   #Savage_beast changes end here

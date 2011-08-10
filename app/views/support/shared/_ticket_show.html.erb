@@ -1,0 +1,134 @@
+<% content_for :pagefixed do %>
+  <%= javascript_include_tag "helpdesk/expanding_textarea.js" %>
+  <%= javascript_include_tag "helpdesk/page_switcher" %>
+  <% javascript_tag do -%>
+    document.observe("dom:loaded", function(){
+      new Helpdesk.PageSwitcher({
+        toggleMode: true,
+        pages: ['attachment-options']
+      });
+    });	
+
+		function closeTicket(ticket_id)
+		{
+			jQuery.ajax({
+		      					type: 'POST',
+										url: '/support/tickets/close_ticket/'+ticket_id,
+										contentType: 'application/text',
+		      					success: function(data){											
+												if(data.success)
+												{
+													jQuery('#status_name_id').text(data.status).show("highlight", 500);
+													jQuery('#close_ticket_btn').css("display", "none");
+												
+												}								
+												//Need to show the message some where data.message
+										}
+					});	
+		}	
+  <%- end %>
+<% end %>
+
+<% content_for :sidebar do %>
+	<% if @ticket.responder && !@ticket.deleted %>
+		<div class="sidepanel clearfix">
+			<h4 class="title">Agent working on this ticket</h4>
+			<%= user_avatar(@ticket.responder.avatar, :thumb)  %>
+			<%= content_tag (:b, h(@ticket.responder.name)) %>
+			<!--%= h(@ticket.responder.email) %-->
+			<!--%= content_tag ( :div, content_tag(:span, "phone", :class => "info_data") + " " + h(@ticket.responder.phone) ) unless @ticket.responder.phone.empty? %-->
+			<!--%= content_tag ( :div, content_tag(:span, "mobile", :class => "info_data") + " " + h(@ticket.responder.mobile) ) unless @ticket.responder.mobile.empty? %-->			
+		</div>
+	<% end %>
+<% end %>
+	
+<div class="request_details">
+		<% if @ticket.deleted %>
+			<div class="info-highlight-deleted">		
+				This ticket has been deleted
+			</div>
+		<% end %>
+    <div class="requestCnt request-cnt-first">
+			<% unless @ticket.deleted %>
+    		<div class="request_status">
+					<span class="ltSlant"></span>
+						<ul>
+							<li>
+								<b>Status</b>: <span id="status_name_id"><%= h(@ticket.status_name) %></span>
+							</li>
+						</ul>
+				</div>
+			<% end %>
+				<h3 class="title">
+					<em><%= "##{@ticket.display_id}" %></em>
+					<b><%= h(@ticket.subject) %></b>
+				</h3>
+				<div class="description">
+					<div class="ticket_actions action_icons" id="close_ticket_btn"></div>	 
+		        <div class="user_details">
+		        	<%= user_avatar(@ticket.requester.avatar)  %>
+		          	<div> Reported by <%= link_to(h(@ticket.requester.display_name),@ticket.requester, :class => "user_name") %> </div>
+		        <div> 
+						Created on <%= formated_date(@ticket.created_at) %>
+						<% metainfo = @ticket.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["meta"]) %>
+						<% unless (metainfo.blank?) %>
+							<span class="meta_icon" title="<%= metainfo.body %>"> 
+								meta
+							</span>
+						<% end %>
+					 </div>
+					
+		        </div>
+		        <div id="description-full" class="details min_height">
+			    	<%= RedCloth.new(auto_link(@ticket.description, :all, :target => "_blank")).to_html %>
+			    </div>  
+			</div>
+			
+			<% unless @ticket.attachments.empty? %>
+				<span class="seperator"></span>
+				<h4><%= @ticket.attachments.size %> attachments</h4>
+				<ul class="attachment_list">
+				     <%= render :partial => '/helpdesk/shared/attachment', :collection => @ticket.attachments, :locals => {:show_delete => true, :url => [@item] } %>
+				</ul>
+			<% end %> 
+	    </div>
+		<% unless @ticket.deleted %>
+			<div class="alignright">		
+				<% unless (@ticket.status == 5) %>
+					<%= link_to_function("Close this ticket", "closeTicket(#{@ticket.display_id})", :class => "uiButton" )  %>
+				<% end %>
+				<a href="javascript:void(0)" class="uiButton" onclick="jQuery('#ReplyToTicket').show(); jQuery(this).hide();">Add note</a>
+			</div>  
+		<% end %>
+		<br />			
+		<div id="ReplyToTicket" class="request_panel" style="display:none;">
+			<% form_for Helpdesk::Note.new, :url => support_ticket_helpdesk_notes_path(@ticket), :html => {:multipart => true }  do |f| %>
+				<%= f.error_messages %>
+				<ul class="ui-form">
+			    <li> 
+							<%= content_tag( :h3, "Add a note", :class => "title" ) %>
+			    		<%= f.label :body, "Add additional information to your ticket", :class => "overlabel" %>
+			  			<%= f.text_area :body, :class => "expando required" %>
+					</li>
+					<li class="attachment-options"  id="attachment-options">
+						<% unless local_assigns[:no_attachments] %>
+							<%= render :partial => "/helpdesk/shared/attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note" } %>
+					    <% end %>
+					</li>
+					<li class="alignright">
+						<%= f.submit "Add note", {:class => "uiButton"} %>	
+					</li>
+				</ul>
+			<% end %>		
+		</div>
+		
+		<% unless @ticket.notes.public.exclude_source('meta').newest_first.blank? then %>
+			<h3 class="subtitle">Conversation</h3>
+			<div class="requestCnt request-conversation">
+				<%= render :partial => '/helpdesk/tickets/note', :collection => @ticket.notes.public.exclude_source('meta') %>
+		    </div>
+		<% end %>
+	</div>
+ 
+ 
+

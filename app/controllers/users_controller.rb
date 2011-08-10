@@ -23,8 +23,7 @@ class UsersController < ApplicationController
     redirect_to edit_contact_url
   end
   
-  def create
-    
+  def create    
     @user = current_account.users.new #by Shan need to check later       
     if @user.signup!(params)
       #@user.deliver_activation_instructions! #Have moved it to signup! method in the model itself.
@@ -38,8 +37,8 @@ class UsersController < ApplicationController
    
   def show
     logger.debug "in users controller :: show show"
-    user_role = current_account.all_users.find(params[:id]).user_role    
-    if User::USER_ROLES_KEYS_BY_TOKEN[:customer].eql?(user_role)      
+    user = current_account.all_users.find(params[:id])        
+    if(user.customer? )
       redirect_to :controller =>'contacts' ,:action => 'show', :id => params[:id]    
     else    
       agent_id = current_account.all_agents.find_by_user_id(params[:id]).id

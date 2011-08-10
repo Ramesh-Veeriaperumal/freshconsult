@@ -214,3 +214,42 @@
 .topic-list-view li:hover {
   background: #f4f4f4;
 }
+
+.page-list {
+  margin: 0 -20px;
+}
+.page-list .list-group {
+  padding: 0px;
+  margin: 0px 0px;
+  border: 1px solid #f1f1f1;
+  border-width: 1px 0px;
+}
+.page-list .list-group .list-item {
+  overflow: hidden;
+  *zoom: 1;
+  border-bottom: 1px dotted #eaeaea;
+  padding: 14px 25px 10px 70px;
+  position: relative;
+}
+.page-list .list-group .list-item .primary-text {
+  font-size: 13px;
+  line-height: 19px;
+  color: #444;
+}
+.page-list .list-group .list-item .info-text {
+  padding: 6px 0px 4px 0px;
+  font-size: 12px;
+  color: #888888;
+}
+.page-list .list-group .list-item .preview-pic {
+  border-color: #d2d2d2;
+  position: absolute;
+  left: 20px;
+  top: 16px;
+}
+.page-list .list-group .list-item .preview-pic img {
+  width: 36px;
+  height: 36px;
+  padding: 0px;
+  border: 0px;
+}
