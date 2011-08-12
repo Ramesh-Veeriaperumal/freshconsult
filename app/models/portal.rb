@@ -49,8 +49,8 @@ class Portal < ActiveRecord::Base
   end
   
   #Yeah.. It is ugly.
-  def ticket_fields
-    filter_fields account.ticket_fields
+  def ticket_fields(additional_scope = :all)
+    filter_fields account.ticket_fields.send(additional_scope)
   end
   
   def customer_editable_ticket_fields
