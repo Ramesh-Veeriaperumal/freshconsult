@@ -166,16 +166,17 @@
    .list-group{
       padding:0px;
       margin:0px 0px;
-      border:1px solid #f1f1f1;
+      border:1px solid #dfdfdf;
       border-width:1px 0px;
       .list-item{
          @include clearfix;
          border-bottom:1px dotted #eaeaea;
-         padding:14px 25px 10px 70px;
+         padding:14px 25px 6px 70px;
          position:relative;
 			.primary-text{  
 				font-size:13px; 
 				line-height: 19px;
+				padding: 2px 0px 6px;
 				color:#444;
 			}
 			.info-text{
@@ -190,6 +191,83 @@
 				top:16px;
 				img{ width:36px; height:36px; padding:0px; border:0px; }
 			}
+			.username{
+			   display:block;
+			   padding:0px 0px 3px 0px;
+			   font-weight:bold;
+			   font-size:13px;
+			}
+			.item_actions{
+			   visibility:hidden;
+			}
+			.info-data{
+			   a{ 
+			      text-decoration:none;
+			      padding-left:8px;
+			      margin-left:6px;
+			      border-left:1px solid #cfcfcf;
+			   }
+			}
+      }
+      .list-item:hover{
+         background-color:#e6f3f9;
+   		background-image:url(../images/overlay-top-shadow.png);
+   		background-position:top left;
+   		border-bottom:1px solid #dfdfdf;
+   		background-repeat:repeat-x;
+   		.item_actions{
+   		   visibility:visible;
+   		}
       }
    }
+}
+
+.results-info{
+   font-style:italic;
+   font-size:13px;
+   padding:6px 18px;
+   color:#999999;
+   background:#f8f8f8;
+}
+
+.left-panel{
+   width:150px;
+   padding:6px 20px;
+   background-color:#f8f8f8;
+   background-image:url(../images/overlay-right-shadow.png);
+	background-position:top right;
+	background-repeat:repeat-y;
+}
+
+.tweet-table{
+   border:1px solid #eaeaea;
+   border-width:1px 0px;
+   width:100%;
+}
+
+.search-keys{
+   margin:-10px 0px 8px 0px;
+   li{
+		padding:3px 8px 5px 18px;
+		position:relative;
+		span.icon{
+		   background:sprite($symbol, search) no-repeat;
+		   position:absolute;
+		   left:0px;
+		   width:15px; height:15px;
+	   }
+	   a{
+	      font-weight:bold;
+	   }
+	   a.selected{ 
+	      color:#444444;
+	      text-decoration:none;
+	   }
+   }
+}
+
+
+.more_results{
+   padding:8px 12px;
+   background-color:#f4f4f4;
 }

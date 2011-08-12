@@ -92,6 +92,7 @@ class Helpdesk::NotesController < ApplicationController
     
     def send_tweet
       reply_twitter = @parent.fetch_twitter_handle
+      puts "$$$$$$$$$$$$$$$ #{reply_twitter.screen_name}"
       unless reply_twitter.nil?
         @wrapper = TwitterWrapper.new reply_twitter
         twitter = @wrapper.get_twitter

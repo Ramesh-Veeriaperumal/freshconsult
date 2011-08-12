@@ -79,12 +79,7 @@
 <% content_for :main_panel_title do %>
   <h3 class="title">
   	<%= current_selector_name %>
-	<%= render :partial => "filters" %>
-	
-	<div>
-		<%= link_to(t('ticket.tweets'), "tickets/search_tweets", :method => :post, :class => "last", :title => t('ticket.tweets') ) %>
-    </div>
-	
+		<%= render :partial => "filters" %>	
   </h3>
 <% end %>
 

@@ -80,7 +80,7 @@ class Social::TwitterHandlesController < ApplicationController
   end
   
   def search
-    @products    = current_account.products
+    @products   = current_account.email_configs.find(:all, :order => "primary_role desc")
     @search_keys = (@item.search_keys) || [] 
   end
   
@@ -111,7 +111,7 @@ class Social::TwitterHandlesController < ApplicationController
     @wrapper = TwitterWrapper.new @item ,{ :product => @current_product, 
                                            :current_account => current_account,
                                            :callback_url => url_for(:action => 'authdone')}
-    end
+  end
   
   def scoper
     @current_product

@@ -1,46 +1,59 @@
- <% javascript_tag do %>
- 
- 
+<% javascript_tag do %>
+ twitter_feed  = null;
+ latestResults = [];
+ next_page     = null;
+ loading_new   = false;
+ page_loading  = false;
  jQuery(document).ready(function(){  
  
  	default_query = '<%=@search_keys.first%>';
-	if(!default_query)
-	{
-		jQuery("#twitter_search_results").html("No search queries!");
-	}else
-	{
-		search_twitter(default_query);
-	}
-      
-  });
+		if(!default_query)
+		{
+			jQuery("#twitter_search_results")
+					.html("No search queries!")
+					.css("height","auto")
+					.removeClass("loading-center");
+		}else{
+			search_twitter(default_query);
+		}
+    setInterval(refreshDate, 30000);  
+	});
   
+	function refreshDate(){
+		if(!page_loading)
+			jQuery("#twitter_search_results span.prettydate").prettyDate();
+	}
+
   function search_twitter(query){
 	 var data;
 	 var url = "https://search.twitter.com/search.json?q="+ query +"&rpp=20&callback=?"; 
-	 jQuery.getJSON(url, function(data){	 
+	 loading_new = true;
+	 jQuery("#moreTweets").hide();
+	 jQuery( "#twitter_search_results" )
+		.empty()
+		.css("height","300")
+		.addClass("loading-center");
+	 	jQuery.getJSON(url, function(data){	 
 	 		if( (data.error && data.error!="") || (data.results=="undefined") )
 			{
 				alert("unable to get the data from twitter");
 			} 
 			else
 			{
-				
-				//alert("res"+JSON.stringify(data.results));
-				deliver_search_result(data)
-				
-				//jQuery.ajax({data:'query_url='+escape(data.query)+'&page='+escape(data.page)+'&next_page_url='+escape(data.next_page)+'&previous_page_url='+escape(data.previous_page)+'&refresh_url='+escape(data.refresh_url)+'&ctsid='+local_current_twitter_search_id+'&results='+encodeURIComponent(JSON.stringify(data.results)), dataType:'script', type:'post', url:'/tickets/search_tweets'})
+				deliver_search_result(data);			
+				setInterval(function(){ refreshUrl(); }, 30000);  
+ 			  jQuery("#moreTweets").show();
 			}
-		});
- 
+		}); 
  }
  
- function convert_as_ticket(tweet, screen_name,tweet_id , query)
- {
-  
+ query = null;
+ function convert_as_ticket(tweet, screen_name,tweet_id)
+ {	
   var json_data = {"subject":screen_name+' - '+tweet,"description":tweet,"twitter_id":screen_name ,"tweet_attributes": { "tweet_id":tweet_id },"email_config_id":'<%=@item.product_id%>',"group_id":'<%=@item.product.group_id%>'};
   
   jQuery.ajax({
-  		type: 'POST',
+  	type: 'POST',
 		url: '<%=create_twicket_social_twitter_path(@item.id)%>',
 		data: {
 			helpdesk_tickets: json_data,
@@ -52,63 +65,125 @@
 		});
  }
  
- function deliver_search_result(data)
- {
-		console.log(data.results);
+	 function deliver_search_result(data){	
+			twitter_feed = data;
+			jQuery( "#twitter_search_results" )
+					.empty()
+					.css("height","auto")
+					.removeClass("loading-center");
+			jQuery( "#tweetTemplate" )
+							.tmpl( data.results )
+							.appendTo( "#twitter_search_results" );
+		
+			jQuery("#twitter_search_results .primary-text").autoLink();
+			
+			next_page = data.next_page;		
+			query = data.query;
+ 		  loading_new = false;
+	 }
+	 
+	function refreshUrl(){
+	 		var url = "https://search.twitter.com/search.json" + twitter_feed.refresh_url + "&callback=?"; 
+			jQuery.getJSON(url,	function(data){
+												if(!loading_new){
+													latestResults = latestResults.concat(data.results);
+													twitter_feed = data;
+													if(latestResults.length){
+														jQuery("#newTweets a").html(latestResults.length + " new tweets");
+														jQuery("#newTweets").show();
+													}
+												}
+											});
+	}
+	
+	
+	function prependLatestTweets(){
+		jQuery("#newTweets").hide();
 		jQuery( "#tweetTemplate" )
-						.tmpl( data.results )
-						.appendTo( "#twitter_search_results" );
-    /*jQuery("#twitter_search_results").html("");
-		//console.log(data.results);
-		var search_result ; 
-		jQuery.each(data.results, function() { 
-	    console.log(this);
-		 	var tweet = jQuery("<div />");
-		 	jQuery("<img/>").attr("src", this.profile_image_url).appendTo(tweet);
-		 	tweet.append("<a onclick=\"convert_as_ticket('" + this.text + "' , '"+this.from_user+"' , '"+this.id+"' , '"+data.query+"'); return false;\" href=\"#\">Capture as Ticket</a>");
-		 
-		 jQuery(tweet).append(this.text).appendTo('#twitter_search_results');
-	});   
-   */
+						.tmpl( latestResults )
+						.prependTo( "#twitter_search_results" );
+						
+		latestResults = [];
+	}
+	
+	function showMoreResults(){
+	  page_loading = false;
+		jQuery("#moreTweets").addClass("loading-center");
+	 	var url = "https://search.twitter.com/search.json" + next_page + "&callback=?"; 		
+		jQuery.getJSON(url,	function(data){
+													next_page = data.next_page;
+													jQuery("#moreTweets").removeClass("loading-center");
+													jQuery( "#tweetTemplate" )
+														.tmpl( data.results )
+														.appendTo( "#twitter_search_results" );
+													page_loading = true;
+												});
+	}
  
- }
- 
- <%end%>
+<%end%>
  
 <% content_for :sidebar do -%><%-end %>
 <h3 class="title">
 	Twitter
 </h3>
-<div id="twitter_search_keys"> 	
-	<h4 class="title">Search keys</h4>
-	<% @search_keys.each do |search_key| %>	
-		<%= link_to_function(h(search_key), "search_twitter('#{search_key}')", :class => "item_info") %>	
-	<% end %> 	
+<div id="twitter_search_keys"> 
+	<%# @search_keys.each do |search_key| %>	
+		<%#= link_to_function(h(search_key), "search_twitter('#{search_key}')", :class => "item_info") %>	
+	<%# end %> 	
 </div>
 <div class="page-list">
-	<table>
+	<table class="tweet-table">
 		<tr>
-			<td>
+			<td class="left-panel">
 				<% @products.each do |product| %>
-					<%= link_to_function product.name, "show_search(#{product.id})" %>
+					<h4 class="title"><%= product.name %></h4>
 					<% unless product.twitter_handle.nil? %>
-						<% product.twitter_handle.search_keys do |search_key| %>
-							<%= link_to_function(h(search_key), "search_twitter('#{search_key}')", :class => "item_info") %>	
+						<ul class="search-keys">
+						<% product.twitter_handle.search_keys.each do |search_key| %>
+							<li>
+								<span class="icon"></span>
+								<% search_selected = (@search_keys.first == search_key)? "selected" : "" %>
+								<%= link_to_function(h(search_key), "search_twitter('#{search_key}')", :class => "item_info #{search_selected}") %>
+							</li>
 						<% end %>
+						</ul>
 					<% end %>
-				<% end %>				
+				<% end %>
 			</td>
 			<td>
-				<div id="twitter_search_results" class="list-group"></div>
+				<div class="search-grey-box">
+					<div class="live_search">
+						<form action="#" name="search_twitter" id="search_twitter">
+							<label class="overlabel" for="twittersearch">Search twitter</label>
+							<input class="search" type="text" id="twittersearch" />
+							<submit value="Search" onclick="javascript:search_twitter(jQuery('#twittersearch').val())" class="uiButton" />
+						</form>
+					</div>
+				</div>
+				<div class="info-highlight center" id="newTweets" style="display:none;">
+					<a href="javascript:prependLatestTweets()"></a>
+				</div>
+				<div id="twitter_search_results" class="list-group loading-center"></div>
 				<script id="tweetTemplate" type="text/x-jquery-tmpl">
 				  <div class="list-item">
 						<div class="preview-pic">
 							<img src="${profile_image_url}" />
 						</div>
+						<div class="item_actions action_buttons">
+							<a onclick='convert_as_ticket("${text}", "${from_user}", "${id}")' href="#">
+								Convert to Ticket
+							</a>
+						</div>
+						<a href="http://twitter.com/${from_user}" target="_blank" class="username">${from_user}</a>
 						<div class="primary-text">${text}</div>
-						<div class="info-text">${from_user}</div>			
+						<div class="info-data">
+							<span class="prettydate" title="${created_at}">${prettyDate(created_at)}</span>
+						</div>
 					</div>
 				</script>
+				<div id="moreTweets" class="more_results">
+					<a href="javascript:showMoreResults()" class="uiButton">Show more results</a>
+				</div>
 				</div>
 			</td>
 		</tr>
