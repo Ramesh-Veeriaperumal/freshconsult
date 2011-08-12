@@ -143,7 +143,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def set_default_values
     self.status = TicketConstants::STATUS_KEYS_BY_TOKEN[:open] unless TicketConstants::STATUS_NAMES_BY_KEY.key?(self.status)
     self.source = TicketConstants::SOURCE_KEYS_BY_TOKEN[:portal] if self.source == 0
-    self.ticket_type ||= Account.ticket_type_values.first.value
+    self.ticket_type ||= Account.current.ticket_type_values.first.value
     self.subject ||= ''
     self.description = subject if description.blank?
   end
@@ -205,6 +205,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def nickname
     subject
+  end
+  
+  def requester_info
+    requester.get_info if requester
+  end
+  
+  def requester_has_email?
+    (requester) and (requester.email.nil?)
   end
 
   def encode_display_id
