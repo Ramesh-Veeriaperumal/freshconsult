@@ -19,16 +19,19 @@ class Helpdesk::TicketField < ActiveRecord::Base
   validates_uniqueness_of :name, :scope => :account_id
   
   before_create :populate_label
+  
+  
   named_scope :custom_fields, :conditions => ["flexifield_def_entry_id is not null"]
   named_scope :customer_visible, :conditions => { :visible_in_portal => true }  
   named_scope :customer_editable, :conditions => { :editable_in_portal => true }
+  named_scope :type_field, :conditions => { :name => "ticket_type" }
   
   # Enumerator constant for mapping the CSS class name to the field type
   FIELD_CLASS = { :default_subject      => { :type => :default, :dom_type => "text",
                                               :form_field => "subject", :visible_in_view_form => false },
                   :default_requester    => { :type => :default, :dom_type => "requester",
                                               :form_field => "email"  , :visible_in_view_form => false },
-                  :default_ticket_type  => { :type => :default, :dom_type => "dropdown"},
+                  :default_ticket_type  => { :type => :default, :dom_type => "dropdown" },
                   :default_status       => { :type => :default, :dom_type => "dropdown"}, 
                   :default_priority     => { :type => :default, :dom_type => "dropdown"},
                   :default_group        => { :type => :default, :dom_type => "dropdown_blank", :form_field => "group_id"},
@@ -77,7 +80,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
        when "default_status" then
          Helpdesk::Ticket::STATUS_OPTIONS
        when "default_ticket_type" then
-         Helpdesk::Ticket::TYPE_OPTIONS
+         picklist_values.collect { |c| [c.value, c.value] }
        when "default_agent" then
          account.users.technicians.collect { |c| [c.name, c.id] }
        when "default_group" then

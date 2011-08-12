@@ -227,6 +227,7 @@ ActionController::Routing::Routes.draw do |map|
        support.resources :tickets do |ticket|
       ticket.resources :notes, :name_prefix => 'support_ticket_helpdesk_'
     end
+    support.resources :company_tickets
     support.resources :minimal_tickets
     support.map '', :controller => 'guides', :action => 'index'
   end

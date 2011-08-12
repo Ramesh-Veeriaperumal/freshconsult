@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110808112218) do
+ActiveRecord::Schema.define(:version => 20110810065837) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -544,12 +544,12 @@ ActiveRecord::Schema.define(:version => 20110808112218) do
     t.boolean  "isescalated",                  :default => false
     t.integer  "priority",        :limit => 8, :default => 1
     t.boolean  "fr_escalated",                 :default => false
-    t.integer  "ticket_type",     :limit => 8
     t.string   "to_email"
     t.integer  "email_config_id", :limit => 8
     t.text     "cc_email"
     t.boolean  "delta",                        :default => true,  :null => false
     t.integer  "import_id",       :limit => 8
+    t.string   "ticket_type"
   end
 
   add_index "helpdesk_tickets", ["account_id", "display_id"], :name => "index_helpdesk_tickets_on_account_id_and_display_id", :unique => true

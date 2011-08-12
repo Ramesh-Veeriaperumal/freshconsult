@@ -30,7 +30,7 @@ module ApplicationHelper
 
   def navigation_tabs
     tabs = [
-      ['/home',               :home,        !permission?(:manage_tickets)],
+      ['/home',               :home,        !permission?(:manage_tickets) ],
       ['helpdesk/dashboard',  :dashboard,    permission?(:manage_tickets)],
       ['helpdesk/tickets',    :tickets,      permission?(:manage_tickets)],
       solutions_tab,      
@@ -38,7 +38,8 @@ module ApplicationHelper
       ['/contacts',           :customers,    permission?(:manage_tickets)],
       ['support/tickets',     :checkstatus, !permission?(:manage_tickets)],
       ['/reports',            :reports,      permission?(:manage_users)],
-      ['/admin/home',         :admin,        permission?(:manage_users)]
+      ['/admin/home',         :admin,        permission?(:manage_users)],
+      company_tickets_tab
     ]
 
 #    history_active = false;
@@ -55,7 +56,7 @@ module ApplicationHelper
     navigation = tabs.map do |s| 
       next unless s[2]
       active = (params[:controller] == s[0]) || (s[1] == @selected_tab || "/#{params[:controller]}" == s[0]) #selected_tab hack by Shan  !history_active &&
-      tab( t("header.tabs.#{s[1].to_s}"), {:controller => s[0], :action => :index}, active && :active ) 
+      tab( s[3] || t("header.tabs.#{s[1].to_s}") , {:controller => s[0], :action => :index}, active && :active ) 
     end
     navigation
   end
@@ -237,6 +238,11 @@ module ApplicationHelper
     
     def forums_visibility?
       feature?(:forums) && allowed_in_portal?(:open_forums)
-    end
+  end
+  
+  def company_tickets_tab
+    tab = ['support/company_tickets', :company_tickets , !permission?(:manage_tickets) , current_user.customer.name] if current_user && current_user.customer
+    tab || ""
+  end
   
 end
