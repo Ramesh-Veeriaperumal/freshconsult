@@ -7,6 +7,12 @@ class Admin::XmlreaderController < Admin::AdminController
     
     include Import::CustomField
     include Import::Forums
+    
+    ZENDESK_TICKET_TYPES = {0 => "No Type Set", 
+                            1 => "Question",
+                            2 => "Incident",
+                            3 => "Problem",
+                            4 => "Task"}
   
 
   def zendesk_import
@@ -303,7 +309,7 @@ def handle_ticket_import base_dir
       assignee_id = nil
       status_id = nil
       priority_id = nil
-      ticket_type_id = nil
+      ticket_type = nil
       tags= nil
       due_date = nil
       group_id = nil
@@ -347,7 +353,7 @@ def handle_ticket_import base_dir
       end 
       
       req.elements.each("ticket-type-id") do |ticket_type|  
-        ticket_type_id = ticket_type.text
+        ticket_type = ZENDESK_TICKET_TYPES[ticket_type.text.to_i]
       end      
      
       
@@ -403,7 +409,7 @@ def handle_ticket_import base_dir
       @request.import_id = display_id
       @request.status = status_id
       @request.priority = priority_id
-      @request.ticket_type = ticket_type_id.to_i()
+      @request.ticket_type = ticket_type
       @request.created_at = created_at
       @request.updated_at = updated_at
       

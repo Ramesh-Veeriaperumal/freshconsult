@@ -14,8 +14,11 @@
   var cachedBackend = new Autocompleter.Cache(lookup, {choices: 20});
   var cachedLookup = cachedBackend.lookup.bind(cachedBackend);
 </script>
-
-<%= text_field object_name, :email, :value => (@item.requester.email if @item.requester), :class => "required email" %>
+<%if @item.requester_has_email?%>
+ <%= text_field object_name, :twitter_id, :value => (@item.requester_info), :disabled => true %>
+<%else%>
+ <%= text_field object_name, :email, :value => (@item.requester_info) %>
+<%end%>
 <div id="<%=object_name%>_email_choices" class="autocomplete"></div>
 
 <script type="text/javascript" charset="utf-8">

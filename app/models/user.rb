@@ -194,7 +194,7 @@ class User < ActiveRecord::Base
   end
   
   def name_email
-    "#{name} <#{email}>"
+    "#{name} <#{email}>" unless email.nil?
   end
 
   def self.find_all_by_permission(account, p)
@@ -285,6 +285,14 @@ class User < ActiveRecord::Base
   paginate :per_page => 10, :page => page,
            :conditions => ['name like ?', "#{letter}%"],
            :order => 'name'
+  end
+  
+  def get_info
+    (email) || (twitter_id)
+  end
+  
+  def twitter_style_id
+    "@#{twitter_id}"
   end
  
   protected

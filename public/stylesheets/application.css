@@ -2,7 +2,7 @@
 /* Theme Colors and layout Defaults */
 /* Importing admin icons */
 .admin-icon-sprite, .admin-icon-account-settings, .admin-icon-agent, .admin-icon-business-hours, .admin-icon-canned-response, .admin-icon-customer-portal, .admin-icon-dispatcher, .admin-icon-email-notifications, .admin-icon-email-settings, .admin-icon-feedback, .admin-icon-group, .admin-icon-import, .admin-icon-multi-product, .admin-icon-rebranding, .admin-icon-remote-authentication, .admin-icon-scenario, .admin-icon-sla, .admin-icon-supervisor, .admin-icon-ticket-fields, .admin-icon-twitter-setting {
-  background: url('/images/admin-icon-s551b010e2a.png') no-repeat;
+  background: url('/images/admin-icon-s09b17acd2c.png') no-repeat;
 }
 
 /* Ticket Show page twitter style icons */
@@ -3447,7 +3447,7 @@ a.page_title:active {
 }
 .request-list div.item .private-icon {
   display: none;
-  background: url('/images/symbols-sa58d0ef158.png') 0 -153px no-repeat;
+  background: url('/images/symbols-s92c7676b4d.png') 0 -153px no-repeat;
   width: 16px;
   height: 16px;
   position: relative;
@@ -4264,7 +4264,7 @@ div.addReminder form label.overlabel {
   max-width: 90px;
 }
 .admin_list li:hover, .content_list li:hover {
-  background-color: #f4f4f4;
+  background-color: #e6f3f9;
   background-image: url(../images/overlay-top-shadow.png);
   background-position: top left;
   border-bottom: 1px solid #dfdfdf;

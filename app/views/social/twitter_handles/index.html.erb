@@ -1,6 +1,6 @@
 <% content_for :sidebar do -%><%-end %>
 <h3 class="title">Twitter settings</h3>
-<% form_for :twitter_handle, :url => social_twitter_path(@twitter_handle), :html => { :method => :put } do |f| %>			
+<% form_for :twitter_handle, :url => (social_twitter_path(@twitter_handle) unless @twitter_handle.nil?), :html => { :method => :put } do |f| %>			
 <ul class="ui-form">
 	<li class="inline-field">
     <div class="checkbox">
@@ -16,7 +16,7 @@
 					Settings
 				</label>
 				<div class="fields">
-				<div class="highlight big-text">@<%= @twitter_handle.screen_name%></div>
+				<div class="highlight big-text">@<%= @twitter_handle.screen_name %></div>
 				<span class="seperator"></span>
 				<label>
 					Search Keys	
