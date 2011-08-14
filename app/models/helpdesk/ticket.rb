@@ -169,7 +169,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
    def is_twitter?
-    (source == SOURCE_KEYS_BY_TOKEN[:twitter]) and (fetch_twitter_handle) 
+    (tweet) and (fetch_twitter_handle) 
   end
   
   def priority=(val)
@@ -212,7 +212,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def requester_has_email?
-    (requester) and (requester.email.nil?)
+    (requester) and (requester.email.blank?)
   end
 
   def encode_display_id
@@ -304,7 +304,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
           if @requester.nil?
             @requester = account.users.new          
             @requester.signup!({:user => {:twitter_id =>twitter_id , :name => twitter_id ,
-            :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}})
+            :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer],:active => true, :email => nil}})
           end        
           self.requester = @requester
         end

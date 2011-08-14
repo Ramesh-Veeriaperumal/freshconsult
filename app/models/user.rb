@@ -23,14 +23,14 @@ class User < ActiveRecord::Base
   has_many :votes, :dependent => :destroy
   
   validates_uniqueness_of :user_role, :scope => :account_id, :if => Proc.new { |user| user.user_role  == USER_ROLES_KEYS_BY_TOKEN[:account_admin] }
-  validates_uniqueness_of :twitter_id, :scope => :account_id, :allow_nil => true
+  validates_uniqueness_of :twitter_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
   
   has_one :avatar,
     :as => :attachable,
     :class_name => 'Helpdesk::Attachment',
     :dependent => :destroy
 
-  before_create :set_time_zone , :set_company_name
+  before_create :set_time_zone , :set_company_name, :check_email_value
   before_save :set_account_id_in_children , :set_contact_name
   
   named_scope :contacts, :conditions => ["user_role in (#{USER_ROLES_KEYS_BY_TOKEN[:customer]}, #{USER_ROLES_KEYS_BY_TOKEN[:client_manager]})" ]
@@ -44,12 +44,16 @@ class User < ActiveRecord::Base
     c.merge_validates_format_of_email_field_options  :if =>:chk_email_validation? 
     c.merge_validates_length_of_email_field_options :if =>:chk_email_validation? 
     c.merge_validates_uniqueness_of_email_field_options :if =>:chk_email_validation? 
-   
-    
+  end
+  
+  def check_email_value
+    if email.empty?
+      self.email = nil
+    end
   end
   
   def chk_email_validation?
-    (is_not_deleted?) and (twitter_id.blank?)
+    (is_not_deleted?) and (twitter_id.blank? || !email.blank?)
   end
   
   attr_accessible :name, :email, :password, :password_confirmation , :second_email, :job_title, :phone, :mobile, :twitter_id, :description, :time_zone, :avatar_attributes,:user_role,:customer_id,:import_id,:deleted
@@ -93,7 +97,7 @@ class User < ActiveRecord::Base
     self.avatar_attributes=params[:user][:avatar_attributes] unless params[:user][:avatar_attributes].nil?
    
     return false unless save_without_session_maintenance
-    deliver_activation_instructions! unless deleted
+    deliver_activation_instructions! if (!deleted and !email.blank?)
   end
   
   def avatar_attributes=(av_attributes)
