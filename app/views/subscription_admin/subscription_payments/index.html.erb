@@ -1,0 +1,48 @@
+<%= javascript_include_tag :defaults %>
+<%= calendar_date_select_includes 'silver' %>
+<%CalendarDateSelect.format = :iso_date%>
+
+<% form_tag "/payments", :method => 'get' do %>
+  <p>
+  	
+    <%= calendar_date_select_tag 'start_date', "" %>
+     
+	 to
+
+    <%= calendar_date_select_tag 'end_date', "" %>
+    <%= submit_tag "Search", :name => nil %>
+  </p>
+<% end %>
+
+<table id="accounts">
+	
+  
+	
+  <tr>
+  	<th>Total Revenue</th>
+	<th><%=@total_revenue%></th>
+  </tr>
+  <tr>
+  	<th>Revenue</th>
+	<th><%=@revenue%></th>
+  </tr>
+  <tr>
+    <th>Name</th>
+    <th>Domain</th>
+    <th>Next Renewal Date</th>
+	<th>Renewal Period</th>
+	<th>Agent Count</th>
+  </tr>
+  <% @payments.each do |payment| %>
+    <tr>
+      <td><%= link_to(h(payment.account.name), [:admin, payment.account]) %></td>
+      <td><%= payment.account.full_domain %></td>
+      <td><%= payment.subscription.next_renewal_at.to_s(:short_day) %></td>
+	  <td><%= payment.subscription.renewal_period %></td>
+	  <td><%= payment.subscription.agent_limit %></td>
+    </tr>
+  <% end %>
+ 
+</table>
+
+<%= will_paginate(@payments) %>
