@@ -1,7 +1,7 @@
 class SubscriptionNotifier < ActionMailer::Base
   include ActionView::Helpers::NumberHelper
   
-  def setup_email(to, subject, from = AppConfig['from_email'])
+  def setup_email(to, subject, from = AppConfig['billing_email'])
     @sent_on = Time.now
     @subject = subject
     @recipients = to.respond_to?(:email) ? to.email : to
@@ -18,7 +18,7 @@ class SubscriptionNotifier < ActionMailer::Base
   end
   
   def welcome(account)
-    setup_email(account.account_admin, "Welcome to #{AppConfig['app_name']}!")
+    setup_email(account.account_admin, "Welcome to #{AppConfig['app_name']}!","vijay@freshdesk.com")
     @body = { :account => account, :host => account.host }
   end
   
