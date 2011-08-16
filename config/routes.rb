@@ -70,6 +70,7 @@ ActionController::Routing::Routes.draw do |map|
     admin.resources :portal, :only => [ :index, :update ]
     admin.resources :canned_responses
     admin.resources :products
+    admin.resources :surveys, :only => [ :index ]
   end
   
   map.resources :reports

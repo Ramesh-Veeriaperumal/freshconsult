@@ -223,6 +223,7 @@ en:
         canned-response: Canned Response
         multi-product: Multiple Products
         twitter-setting: Twitter Settings
+        survey: Survey Settings
       
     canned_responses:
       index:
