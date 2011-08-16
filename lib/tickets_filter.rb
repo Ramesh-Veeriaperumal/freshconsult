@@ -27,7 +27,7 @@ module TicketsFilter
     [:spam,             I18n.t('helpdesk.tickets.views.spam')  ],
     [:deleted,          I18n.t('helpdesk.tickets.views.trash')  ],
     [:tags  ,           I18n.t('helpdesk.tickets.views.tags') ],
-    [:twitter  ,        "Tickets through twitter"]
+    [:twitter  ,        I18n.t('helpdesk.tickets.views.tickets_twitter')]
   ]
   
   SELECTOR_NAMES = Hash[*SELECTORS.inject([]){ |a, v| a += [v[0], v[1]] }]

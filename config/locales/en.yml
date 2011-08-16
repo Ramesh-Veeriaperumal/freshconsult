@@ -1249,6 +1249,7 @@ en:
         my_closed: My Closed Tickets
         my_open: My Open Tickets
         tickets_by: Tickets by
+        tickets_twitter: Tickets through twitter
       note:
         posted_on: "%{user_name} on %{note_date}"
         edit_note: Edit Note
