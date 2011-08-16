@@ -1304,5 +1304,29 @@ en:
   errors: 
     conditions_empty: "Conditions can't be empty"
     actions_empty: "Actions can't be empty"
-    
-    
+  twitter:
+    success_signin: Successfully signed in with Twitter.
+    user_exists: User is aleady there.
+    not_authorized: You were not authorized by Twitter
+    deleted: Your Twitter handle is deleted
+    sent: Tweet successfully sent
+    error_sending: Error sending the tweet! Twitter might be unstable. Please try again.
+    ticket_save: Successfully saved the ticket from tweet
+    tkt_err_save: Unable to convert the tweet as ticket
+    usr_not_thr: User is not there
+  date:
+    ago: Ago
+    from: From Now
+    now: Just Now
+    minute: Minute
+    minutes: Minutes
+    hour: Hour
+    hours: Hours
+    day: Day
+    days: Days
+    week: Week
+    weeks: Weeks
+    month: Month
+    months: Months
+    year: Year
+    years: Years

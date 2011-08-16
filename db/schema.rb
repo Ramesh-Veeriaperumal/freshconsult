@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110810065837) do
+ActiveRecord::Schema.define(:version => 20110816100818) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -750,6 +750,55 @@ ActiveRecord::Schema.define(:version => 20110810065837) do
   end
 
   add_index "subscriptions", ["account_id"], :name => "index_subscriptions_on_account_id"
+
+  create_table "survey_handles", :force => true do |t|
+    t.integer  "account_id",       :limit => 8
+    t.integer  "surveyable_id",    :limit => 8
+    t.string   "surveyable_type"
+    t.string   "id_token"
+    t.integer  "sent_while"
+    t.integer  "response_note_id", :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "survey_points", :force => true do |t|
+    t.integer  "survey_id",        :limit => 8
+    t.integer  "resolution_speed"
+    t.integer  "customer_mood"
+    t.integer  "score"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "survey_remarks", :force => true do |t|
+    t.integer  "survey_score_id", :limit => 8
+    t.integer  "note_id",         :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "survey_scores", :force => true do |t|
+    t.integer  "account_id",       :limit => 8
+    t.integer  "surveyable_id",    :limit => 8
+    t.string   "surveyable_type"
+    t.integer  "customer_id",      :limit => 8
+    t.integer  "agent_id",         :limit => 8
+    t.integer  "response_note_id", :limit => 8
+    t.integer  "resolution_speed"
+    t.integer  "customer_mood"
+    t.integer  "score"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "surveys", :force => true do |t|
+    t.integer  "account_id", :limit => 8
+    t.text     "link_text"
+    t.integer  "send_while"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "ticket_topics", :force => true do |t|
     t.integer  "ticket_id",  :limit => 8

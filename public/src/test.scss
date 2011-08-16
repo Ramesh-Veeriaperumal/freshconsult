@@ -191,8 +191,7 @@
 				top:16px;
 				img{ width:36px; height:36px; padding:0px; border:0px; }
 			}
-			.username{
-			   display:block;
+			.username{ 
 			   padding:0px 0px 3px 0px;
 			   font-weight:bold;
 			   font-size:13px;
@@ -219,6 +218,12 @@
    		   visibility:visible;
    		}
       }
+      .loadingbox{
+         background-image:url('/images/load.gif');
+   	   background-repeat:no-repeat;
+   	   background-position: center center;
+   	   height:200px;
+      }
    }
 }
 
@@ -228,6 +233,10 @@
    padding:6px 18px;
    color:#999999;
    background:#f8f8f8;
+}
+
+#tweet_noresults{
+   height:200px;
 }
 
 .left-panel{
@@ -246,7 +255,7 @@
 }
 
 .search-keys{
-   margin:-10px 0px 8px 0px;
+   margin:0px 0px 8px 0px;
    li{
 		padding:3px 8px 5px 18px;
 		position:relative;
@@ -270,4 +279,13 @@
 .more_results{
    padding:8px 12px;
    background-color:#f4f4f4;
+}
+
+
+.info-results{
+   font-size:1.26em;
+   padding:10px 20px;
+   color:#666666;
+   background-color:#f6f6f6;
+   border-top:1px solid #f0f0f0;
 }

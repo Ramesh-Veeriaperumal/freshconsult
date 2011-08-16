@@ -20,6 +20,7 @@ javascripts:
   workspace: 
     - public/javascripts/fast_autocompleter.js  
     - public/javascripts/utils.js
+    - public/javascripts/humane.js
     - public/javascripts/factory_ui.js
     - public/javascripts/json2.js
     - public/javascripts/globalinit.js

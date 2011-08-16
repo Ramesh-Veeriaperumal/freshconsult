@@ -1,4 +1,23 @@
 <%- javascript_tag do -%>
+  // Localizing js elements
+	date_lang = {
+	          ago: "<%= t("date.ago") %>",
+	          from: "<%= t("date.from") %>",
+	          now: "<%= t("date.now") %>",
+	          minute: "<%= t("date.minute") %>",
+	          minutes: "<%= t("date.minutes") %>",
+	          hour: "<%= t("date.hour") %>",
+	          hours: "<%= t("date.hours") %>",
+	          day: "<%= t("date.day") %>",
+	          days: "<%= t("date.days") %>",
+	          week: "<%= t("date.week") %>",
+	          weeks: "<%= t("date.weeks") %>",
+	          month: "<%= t("date.month") %>",
+	          months: "<%= t("date.months") %>",
+	          year: "<%= t("date.year") %>",
+	          years: "<%= t("date.years") %>"
+	};
+	
   $J(document).ready(function() {
     <%= yield :onload_script -%>
   });
