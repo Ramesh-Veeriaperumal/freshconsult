@@ -11,7 +11,7 @@ en:
   security_code: Security code
   example: example
   pending: Pending
-  twitter: Twitter
+  twitter_source: Twitter
   working: Working
   attachment: Attachment
   attachments: Attachments
