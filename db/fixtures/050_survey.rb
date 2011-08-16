@@ -6,7 +6,7 @@ survey = Survey.seed(:account_id) do |s|
   s.send_while = Survey::RESOLVED_NOTIFICATION
 end
 
-SurveyPoint.seed_many(:survey_id, :resolution_speed, :customer_mood, [
+SurveyPoint.seed_many(:survey_id, :resolution_speed, :customer_rating, [
     [ SurveyPoint::FAST_RESOLUTION, SurveyPoint::HAPPY, 5 ],
     [ SurveyPoint::FAST_RESOLUTION, SurveyPoint::NEUTRAL, 3 ],
     [ SurveyPoint::FAST_RESOLUTION, SurveyPoint::UNHAPPY, 0 ],
@@ -23,7 +23,7 @@ SurveyPoint.seed_many(:survey_id, :resolution_speed, :customer_mood, [
     {
       :survey_id => survey.id,
       :resolution_speed => f[0],
-      :customer_mood => f[1],
+      :customer_rating => f[1],
       :score => f[2]
     }
   end

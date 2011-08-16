@@ -5,7 +5,7 @@ describe SurveyPoint do
     @valid_attributes = {
       :survey_id => 1,
       :resolution_speed => 1,
-      :customer_mood => 1,
+      :customer_rating => 1,
       :score => 1
     }
   end

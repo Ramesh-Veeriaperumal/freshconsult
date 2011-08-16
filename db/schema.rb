@@ -765,7 +765,7 @@ ActiveRecord::Schema.define(:version => 20110816100818) do
   create_table "survey_points", :force => true do |t|
     t.integer  "survey_id",        :limit => 8
     t.integer  "resolution_speed"
-    t.integer  "customer_mood"
+    t.integer  "customer_rating"
     t.integer  "score"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -786,7 +786,7 @@ ActiveRecord::Schema.define(:version => 20110816100818) do
     t.integer  "agent_id",         :limit => 8
     t.integer  "response_note_id", :limit => 8
     t.integer  "resolution_speed"
-    t.integer  "customer_mood"
+    t.integer  "customer_rating"
     t.integer  "score"
     t.datetime "created_at"
     t.datetime "updated_at"
