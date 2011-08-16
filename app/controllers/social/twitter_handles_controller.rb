@@ -84,6 +84,10 @@ class Social::TwitterHandlesController < ApplicationController
     @search_keys = (@item.search_keys) || [] 
   end
   
+  def tweet_feed
+    @products   = current_account.email_configs.find(:all, :order => "primary_role desc")
+  end
+  
   def create_twicket
     @ticket = current_account.tickets.build(params[:helpdesk_tickets])
     @ticket.source = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:twitter]

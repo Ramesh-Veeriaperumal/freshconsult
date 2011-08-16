@@ -1,0 +1,108 @@
+<% content_for :onload_script do -%>
+  jQuery("#twitter_results")
+		.tweetfeed({ "query" : "flipkart", 
+								 "templateid" : "#tweetTemplate",
+  								onbeforeload: function(setting){
+										jQuery("#tweet_results_info").hide();
+										jQuery("#tweet_noresults").hide();
+										jQuery("#moreTweets").css("visibility", "hidden");
+									},
+									onafterload: function(setting, hasresults){									  
+									  if(hasresults){										  
+									    jQuery("#tweet_results_info").show();
+  									  jQuery("#tweet_results_string").html(setting.query);
+										  jQuery("#moreTweets").css("visibility", "visible"); 
+										}else{
+										  jQuery("#tweet_noresults").show();
+										  jQuery("#tweet_noresults_string")
+										    .html(setting.query);
+										}
+									}
+ 							  });
+
+ 	setInterval(function(){
+							 jQuery("#twitter_results span.prettydate").humaneDates();
+					   }, 60000);
+	
+	jQuery("#search_keys .item_info")
+			.click(function(e){
+			        e.preventDefault();
+			        jQuery("#search_keys .item_info").removeClass("selected");
+			        jQuery(this).addClass("selected");
+			        jQuery('#twittersearch').val(jQuery.trim(this.title));
+			        jQuery("#search_twitter").trigger("submit");
+						});
+						
+	jQuery("#search_twitter")
+			.submit(function(){
+				jQuery('#twitter_results').tweetfeed('search_query', jQuery('#twittersearch').val());
+				return false;
+			});
+<%- end %>
+ 
+<% content_for :sidebar do -%><%-end %>
+<h3 class="title">
+	Twitter
+</h3>
+<div class="page-list">
+	<table class="tweet-table">
+		<tr>
+			<td class="left-panel">
+				<% @products.each do |product| %>
+				  <% unless product.twitter_handle.nil? %>
+					  <h4 class="title"><%= product.name %></h4>
+					  <div class="intro"><%= "@#{h(product.twitter_handle.screen_name)}" %></div>
+						<ul class="search-keys" id="search_keys">
+						<% product.twitter_handle.search_keys.each do |search_key| %>
+							<li>
+								<span class="icon"></span>
+								<%= link_to( h(search_key), "#", :class => "item_info", :title => h(search_key) ) %>
+							</li>
+						<% end %>
+						</ul>
+						<span class="seperator"></span>
+					<% end %>
+				<% end %>
+			</td>
+			<td>
+				<div class="search-grey-box">
+					<div class="live_search">
+						<form action="#" name="search_twitter" id="search_twitter">
+							<label class="overlabel" for="twittersearch">Search twitter</label>
+							<input class="search" type="text" id="twittersearch" />
+							<input type="submit" value="Search twitter" class="uiButton" />
+						</form>
+					</div>
+				</div>
+				<div class="info-results" id="tweet_results_info" style="display:none;">
+					Results for <strong id="tweet_results_string"></strong>
+				</div>
+				<div class="info-highlight" id="tweet_noresults">
+				  No Tweet results for <strong id="tweet_noresults_string"></strong>.
+				</div>
+				<div id="twitter_results" class="list-group"></div>
+				<script id="tweetTemplate" type="text/x-jquery-tmpl">
+				  <div class="list-item">
+						<div class="preview-pic">
+							<img src="${profile_image_url}" />
+						</div>
+						<div class="item_actions action_buttons">
+							<a onclick='convert_as_ticket("${text}", "${from_user}", "${id}")' href="#">
+								Convert to Ticket
+							</a>
+						</div>
+						<a href="http://twitter.com/${from_user}" target="_blank" class="username">${from_user}</a>
+						<div class="primary-text autolink">${text}</div>
+						<div class="info-data">
+							<span class="prettydate" title="${created_at}">${humaneDate(new Date(created_at))}</span>
+						</div>
+					</div>
+				</script>
+				<div class="more_results">
+					<a id="moreTweets" href="javascript: jQuery('#twitter_results').tweetfeed('nextpage')" class="uiButton">Show more results</a>
+				</div>
+				</div>
+			</td>
+		</tr>
+	</table>
+</div>
