@@ -1,6 +1,7 @@
 # Used for subscription emails (subscription_notifier.rb)
 app_name: Freshdesk
 from_email: support@freshdesk.com
+billing_email: billing@freshdesk.com
 free_plan_agts: 1
 
 # Used in account creation (account.rb)
