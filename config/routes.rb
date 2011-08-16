@@ -89,6 +89,7 @@ ActionController::Routing::Routes.draw do |map|
       admin.resources :subscription_plans, :as => 'plans'
       admin.resources :subscription_discounts, :as => 'discounts'
       admin.resources :subscription_affiliates, :as => 'affiliates'
+      admin.resources :subscription_payments, :as => 'payments'
     end
   end
   

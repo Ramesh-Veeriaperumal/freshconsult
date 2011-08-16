@@ -126,14 +126,18 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
 
     def add_email_to_ticket(ticket, from_email, mesg)
       user = get_user(ticket.account, from_email)
-      note = ticket.notes.build(
+      if (ticket.requester.email.include?(user.email) || ticket.included_in_cc?(user.email) || !user.customer?) 
+        note = ticket.notes.build(
           :private => false,
           :incoming => true,
           :body => mesg,
           :source => 0, #?!?! use SOURCE_KEYS_BY_TOKEN - by Shan
           :user => user, #by Shan temp
           :account_id => ticket.account_id
-      )
+        )
+      else
+        return create_ticket(ticket.account, from_email, parse_to_email)
+      end
       
       create_attachments(ticket, note) if note.save 
       note

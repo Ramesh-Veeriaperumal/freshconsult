@@ -143,7 +143,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def set_default_values
     self.status = TicketConstants::STATUS_KEYS_BY_TOKEN[:open] unless TicketConstants::STATUS_NAMES_BY_KEY.key?(self.status)
     self.source = TicketConstants::SOURCE_KEYS_BY_TOKEN[:portal] if self.source == 0
-    self.ticket_type ||= Account.ticket_type_values.first.value
+    self.ticket_type ||= account.ticket_type_values.first.value
     self.subject ||= ''
     self.description = subject if description.blank?
   end
@@ -169,7 +169,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
    def is_twitter?
-    (source == SOURCE_KEYS_BY_TOKEN[:twitter]) and (fetch_twitter_handle) 
+    (tweet) and (fetch_twitter_handle) 
   end
   
   def priority=(val)
@@ -205,6 +205,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def nickname
     subject
+  end
+  
+  def requester_info
+    requester.get_info if requester
+  end
+  
+  def requester_has_email?
+    (requester) and (requester.email.blank?)
   end
 
   def encode_display_id
@@ -296,7 +304,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
           if @requester.nil?
             @requester = account.users.new          
             @requester.signup!({:user => {:twitter_id =>twitter_id , :name => twitter_id ,
-            :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}})
+            :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer],:active => true, :email => nil}})
           end        
           self.requester = @requester
         end
@@ -316,6 +324,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def out_of_office?
     TicketConstants::OUT_OF_OFF_SUBJECTS.any? { |s| subject.downcase.include?(s) }
+  end
+  
+  def included_in_cc?(from_email)
+    (cc_email) and  (cc_email.any? {|email| email.include?(from_email) })
   end
   
   def cache_old_model

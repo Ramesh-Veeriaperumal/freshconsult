@@ -1,0 +1,13 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  survey_id: 1
+  resolution_speed: 1
+  customer_mood: 1
+  score: 1
+
+two:
+  survey_id: 1
+  resolution_speed: 1
+  customer_mood: 1
+  score: 1

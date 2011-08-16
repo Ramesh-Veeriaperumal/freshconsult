@@ -30,16 +30,29 @@
 <% end %>
 
 <% content_for :sidebar do %>
+
+	<div class="sidepanel clearfix">
 	<% if @ticket.responder && !@ticket.deleted %>
-		<div class="sidepanel clearfix">
 			<h4 class="title">Agent working on this ticket</h4>
 			<%= user_avatar(@ticket.responder.avatar, :thumb)  %>
 			<%= content_tag (:b, h(@ticket.responder.name)) %>
 			<!--%= h(@ticket.responder.email) %-->
 			<!--%= content_tag ( :div, content_tag(:span, "phone", :class => "info_data") + " " + h(@ticket.responder.phone) ) unless @ticket.responder.phone.empty? %-->
 			<!--%= content_tag ( :div, content_tag(:span, "mobile", :class => "info_data") + " " + h(@ticket.responder.mobile) ) unless @ticket.responder.mobile.empty? %-->			
-		</div>
+			
 	<% end %>
+	
+	<!--h3 class="title"><%=t('ticket.properties')%></h3-->	
+	<% current_portal.ticket_fields(:customer_visible).each do |field| %>
+		     <% if field.visible_in_view_form? %>
+		      <% 
+		          field_value = (field.is_default_field?) ? @ticket[field.field_name] : @ticket.get_ff_value(field.name)
+		          dom_type    = (field.field_type == "default_source") ? "dropdown" : field.dom_type
+		      %>			  
+             <!--need to create the design here-->
+   		  <% end %>
+    <%end%> 
+	</div>
 <% end %>
 	
 <div class="request_details">
