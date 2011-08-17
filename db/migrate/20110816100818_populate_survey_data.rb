@@ -10,29 +10,29 @@ class PopulateSurveyData < ActiveRecord::Migration
       
       survey.survey_points.create(
         [
-          { :resolution_speed => SurveyPoint::FAST_RESOLUTION, :customer_mood => 
+          { :resolution_speed => SurveyPoint::FAST_RESOLUTION, :customer_rating => 
             SurveyPoint::HAPPY, :score => 5 },
-          { :resolution_speed => SurveyPoint::FAST_RESOLUTION, :customer_mood => 
+          { :resolution_speed => SurveyPoint::FAST_RESOLUTION, :customer_rating => 
             SurveyPoint::NEUTRAL, :score => 3 },
-          { :resolution_speed => SurveyPoint::FAST_RESOLUTION, :customer_mood => 
+          { :resolution_speed => SurveyPoint::FAST_RESOLUTION, :customer_rating => 
             SurveyPoint::UNHAPPY, :score => 0 },
-          { :resolution_speed => SurveyPoint::ON_TIME_RESOLUTION, :customer_mood => 
+          { :resolution_speed => SurveyPoint::ON_TIME_RESOLUTION, :customer_rating => 
             SurveyPoint::HAPPY, :score => 3 },
-          { :resolution_speed => SurveyPoint::ON_TIME_RESOLUTION, :customer_mood => 
+          { :resolution_speed => SurveyPoint::ON_TIME_RESOLUTION, :customer_rating => 
             SurveyPoint::NEUTRAL, :score => 1 },
-          { :resolution_speed => SurveyPoint::ON_TIME_RESOLUTION, :customer_mood => 
+          { :resolution_speed => SurveyPoint::ON_TIME_RESOLUTION, :customer_rating => 
             SurveyPoint::UNHAPPY, :score => -1 },
-          { :resolution_speed => SurveyPoint::LATE_RESOLUTION, :customer_mood => 
+          { :resolution_speed => SurveyPoint::LATE_RESOLUTION, :customer_rating => 
             SurveyPoint::HAPPY, :score => 1 },
-          { :resolution_speed => SurveyPoint::LATE_RESOLUTION, :customer_mood => 
+          { :resolution_speed => SurveyPoint::LATE_RESOLUTION, :customer_rating => 
             SurveyPoint::NEUTRAL, :score => 0 },
-          { :resolution_speed => SurveyPoint::LATE_RESOLUTION, :customer_mood => 
+          { :resolution_speed => SurveyPoint::LATE_RESOLUTION, :customer_rating => 
             SurveyPoint::UNHAPPY, :score => -3 },
-          { :resolution_speed => SurveyPoint::REGULAR_EMAIL, :customer_mood => 
+          { :resolution_speed => SurveyPoint::REGULAR_EMAIL, :customer_rating => 
             SurveyPoint::HAPPY, :score => 5 },
-          { :resolution_speed => SurveyPoint::REGULAR_EMAIL, :customer_mood => 
+          { :resolution_speed => SurveyPoint::REGULAR_EMAIL, :customer_rating => 
             SurveyPoint::NEUTRAL, :score => 3 },
-          { :resolution_speed => SurveyPoint::REGULAR_EMAIL, :customer_mood => 
+          { :resolution_speed => SurveyPoint::REGULAR_EMAIL, :customer_rating => 
             SurveyPoint::UNHAPPY, :score => 0 }
         ])
     end

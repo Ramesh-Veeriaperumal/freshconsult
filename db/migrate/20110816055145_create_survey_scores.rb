@@ -8,7 +8,7 @@ class CreateSurveyScores < ActiveRecord::Migration
       t.integer :agent_id, :limit => 8
       t.integer :response_note_id, :limit => 8
       t.integer :resolution_speed
-      t.integer :customer_mood
+      t.integer :customer_rating
       t.integer :score
 
       t.timestamps
