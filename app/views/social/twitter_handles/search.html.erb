@@ -50,7 +50,11 @@
  query = null;
  function convert_as_ticket(tweet, screen_name,tweet_id)
  {	
-  var json_data = {"subject":screen_name+' - '+tweet,"description":tweet,"twitter_id":screen_name ,"tweet_attributes": { "tweet_id":tweet_id },"email_config_id":'<%=@item.product_id%>',"group_id":'<%=@item.product.group_id%>'};
+  var json_data = { "subject":screen_name+' - '+tweet,
+                   "description":tweet,
+				   "twitter_id":screen_name ,
+				   "tweet_attributes": { "tweet_id":tweet_id, "account_id": <%=current_account.id%> },
+				   "email_config_id":'<%=@item.product_id%>',"group_id":'<%=@item.product.group_id%>'};
   
   jQuery.ajax({
   	type: 'POST',

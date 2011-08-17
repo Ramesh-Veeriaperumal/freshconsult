@@ -24,7 +24,13 @@ class Helpdesk::Note < ActiveRecord::Base
   named_scope :newest_first, :order => "created_at DESC"
   named_scope :visible, :conditions => { :deleted => false } 
   named_scope :public, :conditions => { :private => false } 
-
+  
+  named_scope :latest_twitter_comment,
+              :conditions => [" incoming = 1 and social_tweets.tweetable_type = 'Helpdesk::Note'"], 
+              :joins => "INNER join social_tweets on helpdesk_notes.id = social_tweets.tweetable_id", 
+              :order => "created_at desc"
+  
+  
   named_scope :freshest, lambda { |account|
     { :conditions => ["deleted = ? and account_id = ? ", false, account], 
       :order => "helpdesk_notes.created_at DESC"
