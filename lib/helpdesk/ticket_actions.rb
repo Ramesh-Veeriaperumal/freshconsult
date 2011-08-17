@@ -40,7 +40,6 @@ module Helpdesk::TicketActions
   
   def split_the_ticket        
     create_ticket_from_note
-    @note.destroy #delete the notes
     update_split_activity   
     redirect_to @item
   end
@@ -67,19 +66,27 @@ module Helpdesk::TicketActions
     @note = @source_ticket.notes.find(params[:note_id])   
     params[:helpdesk_ticket] = {:subject =>@source_ticket.subject ,
                                 :description =>@note.body ,
-                                :email =>@note.user.email,
+                                :email => @note.user.email,
                                 :priority =>@source_ticket.priority,
                                 :group_id =>@source_ticket.group_id,
+                                :email_config_id => @source_ticket.email_config_id,
                                 :status =>@source_ticket.status,
                                 :source =>@source_ticket.source,
                                 :ticket_type =>@source_ticket.ticket_type,                             
                                 
                                }  
-     
+    unless @note.tweet.nil?
+      tweet_hash = {:twitter_id => @note.user.twitter_id,
+                    :tweet_attributes => {:tweet_id => @note.tweet.id, :account_id => current_account.id}}
+      params[:helpdesk_ticket] = params[:helpdesk_ticket].merge(tweet_hash)
+    end
     build_item
+    @note.destroy #delete the notes
     if @item.save
       flash[:notice] = I18n.t(:'flash.general.create.success', :human_name => cname.humanize.downcase)
-      move_attachments      
+      move_attachments   
+    else
+      puts @item.errors.to_json
     end
     
   end
