@@ -1,0 +1,10 @@
+<% form_for :survey_handle,
+    :url  => support_survey_feedback_path(@survey_handle.id_token, @rating), :html => { :method => :post } do |f| -%>
+
+	Give a text area for optional feedback...
+
+	<div class="button-container">
+		<div class="floatl">
+		<%= f.submit t('save'), :class => "uiButton" %>
+	</div>
+<% end -%>

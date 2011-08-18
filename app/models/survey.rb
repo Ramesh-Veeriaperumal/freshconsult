@@ -6,4 +6,7 @@ class Survey < ActiveRecord::Base
   belongs_to :account
   has_many :survey_points, :dependent => :destroy
   
+  def can_send?(ticket, s_while)
+    ticket.requester && ticket.requester.customer? && (send_while == s_while)
+  end
 end

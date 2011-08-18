@@ -40,7 +40,9 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
   def email_notification(params)
     subject       get_subject(params[:notification_type], params[:ticket])
     recipients    params[:receips]
-    body          RedCloth.new(params[:email_body]).to_html
+    body          :ticket => params[:ticket], :body => RedCloth.new(params[:email_body]).to_html,
+                  :survey_handle => SurveyHandle.create_handle_for_notification(params[:ticket], 
+                    params[:notification_type])
     from          params[:ticket].reply_email
     headers       "Reply-to" => "#{params[:ticket].reply_email}"
     sent_on       Time.now
@@ -56,7 +58,8 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
     recipients    ticket.requester.email
     cc            ticket.cc_email if !options[:include_cc].blank? and !ticket.cc_email.nil?
     from          reply_email
-    body          :ticket => ticket, :note => note, :host => ticket.portal_host
+    body          :ticket => ticket, :body => RedCloth.new(note.body).to_html,
+                  :survey_handle => SurveyHandle.create_handle(ticket, note)
     headers       "Reply-to" => "#{reply_email}"
     sent_on       Time.now
     content_type  "multipart/alternative"
@@ -67,7 +70,7 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
                   :filename => a.content_file_name
     end
     
-    content_type  "text/plain"
+    content_type  "text/html"
   end
   
   def email_to_requester(ticket, content)

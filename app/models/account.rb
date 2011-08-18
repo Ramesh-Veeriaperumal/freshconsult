@@ -108,6 +108,7 @@ class Account < ActiveRecord::Base
   
   has_one :survey, :dependent => :destroy
   has_many :survey_points, :through => :survey
+  has_many :survey_handles, :dependent => :destroy
   #Scope restriction ends
   
   validates_format_of :domain, :with => /\A[a-zA-Z][a-zA-Z0-9]*\Z/

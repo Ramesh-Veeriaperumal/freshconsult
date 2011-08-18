@@ -10,5 +10,13 @@ class SurveyPoint < ActiveRecord::Base
   NEUTRAL = 2
   UNHAPPY = 3
   
+  CUSTOMER_RATINGS = {
+    HAPPY => 'happy',
+    NEUTRAL => 'neutral',
+    UNHAPPY => 'unhappy'
+  }
+  
+  CUSTOMER_RATINGS_BY_TOKEN = CUSTOMER_RATINGS.invert
+  
   belongs_to :survey
 end
