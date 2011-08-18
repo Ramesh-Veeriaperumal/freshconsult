@@ -1188,6 +1188,8 @@ en:
         cc: Cc
         addcc: Add Cc
         removecc: Remove Cc
+      tweet_form:
+        title: "Reply to %{user}"
     dashboard:
       index:
         todo_title: To-Dos

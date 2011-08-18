@@ -268,6 +268,9 @@
   margin-left: 6px;
   border-left: 1px solid #cfcfcf;
 }
+.page-list .list-group .list-item .info-data .floatr {
+  margin-top: -5px;
+}
 .page-list .list-group .list-item:hover {
   background-color: #e6f3f9;
   background-image: url(../images/overlay-top-shadow.png);
@@ -283,6 +286,24 @@
   background-repeat: no-repeat;
   background-position: center center;
   height: 200px;
+}
+
+.goto_ticket {
+  display: none;
+}
+
+.tweet_converted {
+  background-color: #ffffee;
+}
+.tweet_converted .convert_as_ticket {
+  display: none;
+}
+.tweet_converted .goto_ticket {
+  display: inline;
+}
+
+.tweet_converted:hover {
+  background-color: #ffffdd !important;
 }
 
 .results-info {
@@ -330,7 +351,7 @@
   font-weight: bold;
 }
 .search-keys li a.selected {
-  color: #444444;
+  color: #3399CC;
   text-decoration: none;
 }
 

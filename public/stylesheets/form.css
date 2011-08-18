@@ -888,9 +888,9 @@ span.sort_handle {
   background-image: -o-linear-gradient(#ffffff, #f4f4f4);
   background-image: -ms-linear-gradient(#ffffff, #f4f4f4);
   background-image: linear-gradient(#ffffff, #f4f4f4);
-  -moz-border-radius: 0 0 6px 6px;
-  -webkit-border-radius: 0 0 6px 6px;
-  border-radius: 0 0 6px 6px;
+  -moz-border-radius: 6px 6px 6px 6px;
+  -webkit-border-radius: 6px 6px 6px 6px;
+  border-radius: 6px 6px 6px 6px;
   -moz-box-shadow: rgba(0, 0, 0, 0.5) -3px 5px 10px;
   -webkit-box-shadow: rgba(0, 0, 0, 0.5) -3px 5px 10px;
   box-shadow: rgba(0, 0, 0, 0.5) -3px 5px 10px;

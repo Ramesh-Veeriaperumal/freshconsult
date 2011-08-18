@@ -80,11 +80,11 @@ class Social::TwitterHandlesController < ApplicationController
   end
   
   def search
-    @products   = current_account.email_configs.find(:all, :order => "primary_role desc")
+    @products    = current_account.email_configs.find(:all, :order => "primary_role desc")
     @search_keys = (@item.search_keys) || [] 
   end
   
-  def tweet_feed
+  def feed
     @products   = current_account.email_configs.find(:all, :order => "primary_role desc")
   end
   
@@ -93,14 +93,25 @@ class Social::TwitterHandlesController < ApplicationController
     @ticket.source = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:twitter]
     res = Hash.new
     if @ticket.save
-      res["success"] = true      
-      res["message"]= t('twitter.ticket_save')
+      res["success"] = true
+      res["message"] = t('twitter.ticket_save')
+      res["ticket_link"] = helpdesk_ticket_path(@ticket)
       render :json => ActiveSupport::JSON.encode(res)
     else
       res["success"] = false
       res["message"]= t('twitter.tkt_err_save')
       render :json => ActiveSupport::JSON.encode(res)
     end
+  end
+  
+  def send_tweet
+    reply_twitter = current_account.twitter_handles.find(params[:twitter_handle])
+    unless reply_twitter.nil?
+      @wrapper = TwitterWrapper.new reply_twitter
+      twitter  = @wrapper.get_twitter
+      twitter.update(params[:tweet][:body])
+    end
+    redirect_to :back
   end
   
 

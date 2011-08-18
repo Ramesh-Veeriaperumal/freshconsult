@@ -206,6 +206,9 @@
 			      margin-left:6px;
 			      border-left:1px solid #cfcfcf;
 			   }
+			   .floatr{
+			      margin-top:-5px;
+			   }
 			}
       }
       .list-item:hover{
@@ -225,6 +228,20 @@
    	   height:200px;
       }
    }
+}
+
+.goto_ticket{
+   display:none;
+}
+
+.tweet_converted{
+   background-color:#ffffee;
+   .convert_as_ticket{ display:none; }
+   .goto_ticket{ display:inline; }
+}
+
+.tweet_converted:hover {
+   background-color:#ffffdd !important;   
 }
 
 .results-info{
@@ -269,7 +286,7 @@
 	      font-weight:bold;
 	   }
 	   a.selected{ 
-	      color:#444444;
+	      color:#3399CC;
 	      text-decoration:none;
 	   }
    }

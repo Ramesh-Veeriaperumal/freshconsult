@@ -19,7 +19,7 @@
                 onafterload       : function(){}
   };
   
-  populateTweets = function(response){
+  populateTweets = function(response){ 
      if(encodeURIComponent(settings.query) == response.query){
         loading.remove(); 
         var newTweets = $(tweetsettings.template) 
@@ -37,13 +37,15 @@
   }
   
   refreshData = function(response){  
-     fresh_results = fresh_results.concat(response.results);
-     tweetsettings.refresh_url = response.refresh_url;
+     if(encodeURIComponent(settings.query) == response.query){
+        fresh_results = fresh_results.concat(response.results);
+        tweetsettings.refresh_url = response.refresh_url;
      
-     if(response.results.length){
-       counter.html(fresh_results.length + " new tweets");
-       new_result.show();
-     }
+        if(response.results.length){
+          counter.html(fresh_results.length + " new tweets");
+          new_result.show();
+        }
+   }
   }
   
   prependTweets = function(){
