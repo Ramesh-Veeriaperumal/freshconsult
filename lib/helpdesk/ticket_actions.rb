@@ -77,7 +77,8 @@ module Helpdesk::TicketActions
                                }  
     unless @note.tweet.nil?
       tweet_hash = {:twitter_id => @note.user.twitter_id,
-                    :tweet_attributes => {:tweet_id => @note.tweet.id, :account_id => current_account.id}}
+                    :tweet_attributes => {:tweet_id => @note.tweet.tweet_id, 
+                                          :account_id => current_account.id}}
       params[:helpdesk_ticket] = params[:helpdesk_ticket].merge(tweet_hash)
     end
     build_item

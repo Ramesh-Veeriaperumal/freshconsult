@@ -144,6 +144,11 @@ class Account < ActiveRecord::Base
   after_create :send_welcome_email
   
   before_destroy :update_google_domain
+    
+  named_scope :active_accounts,
+              :conditions => [" subscriptions.next_renewal_at > now() "], 
+              :joins => [:subscription]
+             
   
   acts_as_paranoid
   
@@ -171,7 +176,7 @@ class Account < ActiveRecord::Base
   }
   
   SELECTABLE_FEATURES = [ :open_forums, :open_solutions, :anonymous_tickets, 
-    :survey_links ] #:surveys & ::survey_links $^&WE^%$E
+    :survey_links,:google_signin, :twitter_signin ] #:surveys & ::survey_links $^&WE^%$E
   
   has_features do
     PLANS_AND_FEATURES.each_pair do |k, v|
