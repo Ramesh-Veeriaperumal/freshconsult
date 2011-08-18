@@ -11,7 +11,7 @@ en:
   security_code: Security code
   example: example
   pending: Pending
-  twitter: Twitter
+  twitter_source: Twitter
   working: Working
   attachment: Attachment
   attachments: Attachments
@@ -223,6 +223,7 @@ en:
         canned-response: Canned Response
         multi-product: Multiple Products
         twitter-setting: Twitter Settings
+        survey: Survey Settings
       
     canned_responses:
       index:
@@ -1251,6 +1252,7 @@ en:
         my_closed: My Closed Tickets
         my_open: My Open Tickets
         tickets_by: Tickets by
+        tickets_twitter: Tickets through twitter
       note:
         posted_on: "%{user_name} on %{note_date}"
         edit_note: Edit Note

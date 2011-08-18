@@ -35,30 +35,32 @@ namespace :twitter do
     end
     
   end
+  
   ##Need to consider the 
   def create_ticket_from_tweet tweets , twt_handle
       tweets.each do |twt|
          @sender = twt.sender || twt.user 
-         @user = get_user(twt_handle.product.account, @sender.screen_name)
+         @account = twt_handle.account
+         @user = get_user(@sender.screen_name)
          
-         if @user.blank?         
-          add_tweet_as_ticket twt , twt_handle
-         else
-          add_tweet_as_note twt , twt_handle 
-         end
+          if twt.in_reply_to_status_id.blank?         
+            add_tweet_as_ticket twt , twt_handle
+          else
+            add_tweet_as_note twt , twt_handle
+          end
      end
   end
   
   def add_tweet_as_ticket twt , twt_handle
      
-     @ticket = twt_handle.product.account.tickets.build(
+     @ticket = @account.tickets.build(
       :subject => twt.text,
       :description => twt.text,
       :twitter_id => @sender.screen_name,
       :email_config_id => twt_handle.product_id,
       :group_id => twt_handle.product.group_id,
       :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:twitter],
-      :tweet_attributes => {:tweet_id => twt.id} )
+      :tweet_attributes => {:tweet_id => twt.id, :account_id => @account.id} )
       
       if @ticket.save
         puts "This ticket has been saved"
@@ -67,31 +69,36 @@ namespace :twitter do
       end
   end
   
-  def get_user(account, screen_name)
-    user = account.all_users.find_by_twitter_id(screen_name)
+  def get_user(screen_name)
+    user = @account.all_users.find_by_twitter_id(screen_name)
     unless user
-      user = account.contacts.new
+      user = @account.contacts.new
       user.signup!({:user => {:twitter_id => screen_name, :name => screen_name, 
-         :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}})
+                    :active => true,
+                    :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}})
       end
      user
   end
   
-  def get_open_tkt
-    @user.open_tickets.first
-  end
-  
   def add_tweet_as_note twt,twt_handle 
-
-    @ticket = get_open_tkt
+    
+    puts twt.in_reply_to_status_id
+    tweet = @account.tweets.find_by_tweet_id(twt.in_reply_to_status_id)
+    
+    unless tweet.nil?  
+      @ticket = tweet.tweetable.notable if  tweet.tweetable_type.eql?('Helpdesk::Note')
+      @ticket = tweet.tweetable if  tweet.tweetable_type.eql?('Helpdesk::Ticket')
+    end
+    
     unless @ticket.blank?
       @note = @ticket.notes.create(
         :body => twt.text,
         :private => true ,
+        :incoming => true,
         :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:twitter],
-        :account_id => twt_handle.product.account_id,
+        :account_id => twt_handle.account_id,
         :user_id => @user.id ,
-        :tweet_attributes => {:tweet_id => twt.id}
+        :tweet_attributes => {:tweet_id => twt.id, :account_id => @account.id}
        )
     else
       add_tweet_as_ticket (twt,twt_handle)
@@ -102,24 +109,31 @@ namespace :twitter do
       begin
         yield
       rescue Errno::ECONNRESET => e
+        NewRelic::Agent.notice_error(e)
         RAILS_DEFAULT_LOGGER.debug "Something wrong happened in twitter!"
         RAILS_DEFAULT_LOGGER.debug e.to_s
       rescue Timeout::Error => e
+        NewRelic::Agent.notice_error(e)
         RAILS_DEFAULT_LOGGER.debug "Something wrong happened in twitter!"
         RAILS_DEFAULT_LOGGER.debug e.to_s
       rescue EOFError => e
+        NewRelic::Agent.notice_error(e)
         RAILS_DEFAULT_LOGGER.debug "Something wrong happened in twitter!"
         RAILS_DEFAULT_LOGGER.debug e.to_s
       rescue Errno::ETIMEDOUT => e
+        NewRelic::Agent.notice_error(e)
         RAILS_DEFAULT_LOGGER.debug "Something wrong happened in twitter!"
         RAILS_DEFAULT_LOGGER.debug e.to_s
       rescue OpenSSL::SSL::SSLError => e
+        NewRelic::Agent.notice_error(e)
         RAILS_DEFAULT_LOGGER.debug "Something wrong happened in twitter!"
         RAILS_DEFAULT_LOGGER.debug e.to_s
       rescue SystemStackError => e
+        NewRelic::Agent.notice_error(e)
         RAILS_DEFAULT_LOGGER.debug "Something wrong happened in twitter!"
         RAILS_DEFAULT_LOGGER.debug e.to_s
       rescue Exception => e
+        puts e.to_s
         NewRelic::Agent.notice_error(e)
         RAILS_DEFAULT_LOGGER.debug "Something wrong happened in twitter!"
         RAILS_DEFAULT_LOGGER.debug e.to_s

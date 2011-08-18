@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110816055438) do
+ActiveRecord::Schema.define(:version => 20110817055322) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -617,6 +617,7 @@ ActiveRecord::Schema.define(:version => 20110816055438) do
     t.string   "tweetable_type"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "account_id"
   end
 
   create_table "social_twitter_handles", :force => true do |t|
@@ -765,7 +766,7 @@ ActiveRecord::Schema.define(:version => 20110816055438) do
   create_table "survey_points", :force => true do |t|
     t.integer  "survey_id",        :limit => 8
     t.integer  "resolution_speed"
-    t.integer  "customer_mood"
+    t.integer  "customer_rating"
     t.integer  "score"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -786,7 +787,7 @@ ActiveRecord::Schema.define(:version => 20110816055438) do
     t.integer  "agent_id",         :limit => 8
     t.integer  "response_note_id", :limit => 8
     t.integer  "resolution_speed"
-    t.integer  "customer_mood"
+    t.integer  "customer_rating"
     t.integer  "score"
     t.datetime "created_at"
     t.datetime "updated_at"

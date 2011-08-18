@@ -26,7 +26,8 @@ module TicketsFilter
     
     [:spam,             I18n.t('helpdesk.tickets.views.spam')  ],
     [:deleted,          I18n.t('helpdesk.tickets.views.trash')  ],
-    [:tags  ,           I18n.t('helpdesk.tickets.views.tags') ]
+    [:tags  ,           I18n.t('helpdesk.tickets.views.tags') ],
+    [:twitter  ,        I18n.t('helpdesk.tickets.views.tickets_twitter')]
   ]
   
   SELECTOR_NAMES = Hash[*SELECTORS.inject([]){ |a, v| a += [v[0], v[1]] }]
@@ -118,7 +119,8 @@ module TicketsFilter
                                  Time.zone.now.end_of_day.to_s(:db), STATUS_KEYS_BY_TOKEN[:resolved], STATUS_KEYS_BY_TOKEN[:closed]],
         :overdue          => ["due_by <= ? and status not in (?, ?)", Time.zone.now.to_s(:db), 
                                         STATUS_KEYS_BY_TOKEN[:resolved], STATUS_KEYS_BY_TOKEN[:closed]],
-        :on_hold          => ["status = ?", STATUS_KEYS_BY_TOKEN[:pending]]
+        :on_hold          => ["status = ?", STATUS_KEYS_BY_TOKEN[:pending]],
+        :twitter          => ["source = ?", SOURCE_KEYS_BY_TOKEN[:twitter]]
       }
     end
 

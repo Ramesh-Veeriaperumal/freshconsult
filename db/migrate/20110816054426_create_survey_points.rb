@@ -3,7 +3,7 @@ class CreateSurveyPoints < ActiveRecord::Migration
     create_table :survey_points do |t|
       t.integer :survey_id, :limit => 8
       t.integer :resolution_speed
-      t.integer :customer_mood
+      t.integer :customer_rating
       t.integer :score
 
       t.timestamps

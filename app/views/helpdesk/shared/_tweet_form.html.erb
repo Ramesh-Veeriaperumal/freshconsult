@@ -1,6 +1,7 @@
 <div class="request_panel" id="<%=cntid%>" style="display:block;">
   <% form_for note, :html => {:multipart => true,  :id => "HelpdeskTweets" } do |f| %>
     <%= f.error_messages %>
+	<%= hidden_field_tag :tweet, "true", :id => "tweet" %>
     <ul class="ui-form dont-validate">
       <li class="inline-field field">       
         <%= content_tag( :h3, t(".title", :user=>"@#{@ticket.requester.twitter_id}"), :class => "title") %>

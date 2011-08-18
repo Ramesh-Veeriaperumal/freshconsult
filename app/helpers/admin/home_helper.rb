@@ -31,8 +31,9 @@ module Admin::HomeHelper
           ['/admin/supervisor_rules',     'supervisor'              ],
           ['/admin/automations',          'scenario',       feature?(:scenario_automations) ],
           ['/admin/canned_responses',     'canned-response'         ],
-          ['/social/twitters',     'twitter-setting'         ]
-          ]],
+          ['/social/twitters',            'twitter-setting'         ],
+          ['/admin/surveys',              'survey', current_account.features?(:surveys, :survey_links) ]
+      ]],
         
       [ t(".everything_else"), [
           ['/account',                    'account-settings', current_user.account_admin? ],
@@ -43,7 +44,7 @@ module Admin::HomeHelper
           ['/admin/widget_config',        'feedback'                ],
           ['/agents',                     'agent'                   ],
           ['/groups',                     'group'                   ]
-        ]]
+      ]]
     ]
 
                     # [ "People & Roles", [

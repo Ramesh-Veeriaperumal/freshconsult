@@ -104,7 +104,13 @@ class Account < ActiveRecord::Base
   has_many :canned_responses , :class_name =>'Admin::CannedResponse' , :dependent => :destroy  
   has_many :user_accesses , :class_name =>'Admin::UserAccess' , :dependent => :destroy
   
-  has_many :twitter_handles, :through => :all_email_configs , :class_name =>'Social::TwitterHandle' 
+  has_many :twitter_handles, :class_name =>'Social::TwitterHandle' 
+  
+  has_many :tweets, :class_name =>'Social::Tweet' 
+  
+  
+  has_one :survey, :dependent => :destroy
+  has_many :survey_points, :through => :survey
   #Scope restriction ends
   
   validates_format_of :domain, :with => /\A[a-zA-Z][a-zA-Z0-9]*\Z/
@@ -153,7 +159,8 @@ class Account < ActiveRecord::Base
   
   PLANS_AND_FEATURES = {
     :pro => {
-      :features => [ :scenario_automations, :customer_slas, :business_hours, :forums ]
+      :features => [ :scenario_automations, :customer_slas, :business_hours, :forums, 
+        :surveys ]
     },
     
     :premium => {
@@ -162,7 +169,8 @@ class Account < ActiveRecord::Base
     }
   }
   
-  SELECTABLE_FEATURES = [ :open_forums, :open_solutions, :anonymous_tickets ]
+  SELECTABLE_FEATURES = [ :open_forums, :open_solutions, :anonymous_tickets, 
+    :survey_links ] #:surveys & ::survey_links $^&WE^%$E
   
   has_features do
     PLANS_AND_FEATURES.each_pair do |k, v|
