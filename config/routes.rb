@@ -233,6 +233,10 @@ ActionController::Routing::Routes.draw do |map|
     support.resources :company_tickets
     support.resources :minimal_tickets
     support.map '', :controller => 'guides', :action => 'index'
+    
+    support.customer_survey '/surveys/:survey_code/:rating/new', :controller => 'surveys', :action => 'new'
+    support.survey_feedback '/surveys/:survey_code/:rating', :controller => 'surveys', :action => 'create', 
+        :conditions => { :method => :post }
   end
   
   map.namespace :anonymous do |anonymous|
