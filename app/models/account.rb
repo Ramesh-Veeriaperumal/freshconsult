@@ -104,7 +104,10 @@ class Account < ActiveRecord::Base
   has_many :canned_responses , :class_name =>'Admin::CannedResponse' , :dependent => :destroy  
   has_many :user_accesses , :class_name =>'Admin::UserAccess' , :dependent => :destroy
   
-  has_many :twitter_handles, :through => :all_email_configs , :class_name =>'Social::TwitterHandle' 
+  has_many :twitter_handles, :class_name =>'Social::TwitterHandle' 
+  
+  has_many :tweets, :class_name =>'Social::Tweet' 
+  
   
   has_one :survey, :dependent => :destroy
   has_many :survey_points, :through => :survey

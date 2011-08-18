@@ -47,7 +47,7 @@ class User < ActiveRecord::Base
   end
   
   def check_email_value
-    if email.empty?
+    if email.blank?
       self.email = nil
     end
   end
