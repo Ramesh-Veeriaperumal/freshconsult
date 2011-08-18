@@ -232,6 +232,7 @@ ActionController::Routing::Routes.draw do |map|
     end
     support.resources :company_tickets
     support.resources :minimal_tickets
+    support.resources :registrations
     support.map '', :controller => 'guides', :action => 'index'
     
     support.customer_survey '/surveys/:survey_code/:rating/new', :controller => 'surveys', :action => 'new'

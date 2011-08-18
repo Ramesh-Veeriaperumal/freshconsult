@@ -176,7 +176,7 @@ class Account < ActiveRecord::Base
   }
   
   SELECTABLE_FEATURES = [ :open_forums, :open_solutions, :anonymous_tickets, 
-    :survey_links,:google_signin, :twitter_signin ] #:surveys & ::survey_links $^&WE^%$E
+    :survey_links,:google_signin, :twitter_signin, :signup_link ] #:surveys & ::survey_links $^&WE^%$E
   
   has_features do
     PLANS_AND_FEATURES.each_pair do |k, v|
