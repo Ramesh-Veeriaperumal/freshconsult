@@ -253,8 +253,9 @@ class Subscription < ActiveRecord::Base
     end
     
     def charge_plan_change_mis
-      if  (amount > @old_subscription.amount) and paid_account?     
-        misc_charge(cal_plan_change_amount.round.to_f)
+      if  (amount > @old_subscription.amount) and paid_account?  
+        amt_to_charge = cal_plan_change_amount.round.to_f
+        misc_charge(amt_to_charge) if amt_to_charge > 0
       end
     end
     
