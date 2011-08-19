@@ -1,0 +1,24 @@
+<% form_for :user, :url => {:controller => 'support/registrations', :action => 'create' } do |f| -%>
+    <%= error_messages_for :user %>
+	<%= hidden_field_tag "user[user_role]", User::USER_ROLES_KEYS_BY_TOKEN[:customer], :id => "user[user_role]" %>
+	<ul class="ui-form">
+		<li> 
+			<label for="user_name"><%=t('user.full_name')%></label> 
+			<input class="text" id="user_name" name="user[name]" size="30" type="text" value="" /> 
+		</li> 
+		<li>
+			<label for="email_primary"><%=t('user.email')%></label> 
+			<input class="text required email" id="email_primary" name="user[email]" size="30" type="text" />
+		</li>
+		<li>
+        	<%= content_tag ( :label, t('ticket.verify_human') ) %>
+        	<%= recaptcha_tags :display => { :theme => "white" }  %>
+      </li>
+	</ul>
+  	
+	
+	<div class="button-container">	
+		<%= submit_tag t('save'), { :class => "uiButton" } -%> 
+		<%= link_to(t('cancel'), '/home', :class => "uiButton grey" ) -%>
+	</div>
+<% end -%>

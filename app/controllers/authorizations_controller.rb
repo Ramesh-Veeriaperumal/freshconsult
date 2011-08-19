@@ -1,15 +1,26 @@
 class AuthorizationsController < ApplicationController
   before_filter :require_user, :only => [:destroy]
-
-  def create
+  before_filter :fetch_request_details,:only => :create
+  
+  def fetch_request_details
     @omniauth = request.env['rack.auth'] 
     @auth = Authorization.find_from_hash(@omniauth,current_account.id)
-    if @omniauth['provider'] == 'open_id'
+     if @omniauth['provider'] == 'open_id' 
+      requires_feature(:google_signin)
+    elsif
+      requires_feature(:twitter_signin)
+    end
+  end
+  
+  def create
+     if @omniauth['provider'] == 'open_id' 
       create_for_google
     elsif
       create_for_twitter
     end
   end
+  
+ 
   
   def create_session
     @user_session = @current_user.account.user_sessions.new(@current_user)

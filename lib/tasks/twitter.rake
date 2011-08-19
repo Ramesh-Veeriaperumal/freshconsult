@@ -1,39 +1,41 @@
 namespace :twitter do
   desc 'Check for New twitter feeds..'
   task :fetch => :environment do    
-    twitter_handles = Social::TwitterHandle.find(:all, :conditions =>{:capture_dm_as_ticket =>true , :capture_mention_as_ticket =>true})    
-    twitter_handles.each do |twt_handle| 
-     sandbox do ### starts ####
-      @wrapper = TwitterWrapper.new twt_handle
-      twitter = @wrapper.get_twitter
-      #From id to Id....
-      if twt_handle.capture_dm_as_ticket
-        tweets = nil
-        if twt_handle.last_dm_id.blank?
-           tweets = twitter.direct_messages
-        else
-           tweets = twitter.direct_messages({:since_id =>twt_handle.last_dm_id})
-        end
+    Account.active_accounts.each do |account|
+      twitter_handles = account.twitter_handles.find(:all, :conditions => ["capture_dm_as_ticket = 1 or capture_mention_as_ticket = 1"])    
+      twitter_handles.each do |twt_handle| 
+        sandbox do ### starts ####
+          @wrapper = TwitterWrapper.new twt_handle
+          twitter = @wrapper.get_twitter
+          #From id to Id....
+          if twt_handle.capture_dm_as_ticket
+            tweets = nil
+            if twt_handle.last_dm_id.blank?
+              tweets = twitter.direct_messages
+            else
+              tweets = twitter.direct_messages({:since_id =>twt_handle.last_dm_id})
+            end
         
-        last_tweet_id = tweets[0].id unless tweets.blank?       
-        create_ticket_from_tweet tweets , twt_handle        
-        twt_handle.update_attribute(:last_dm_id, last_tweet_id)
+            last_tweet_id = tweets[0].id unless tweets.blank?       
+            create_ticket_from_tweet tweets , twt_handle        
+            twt_handle.update_attribute(:last_dm_id, last_tweet_id)
+          end
+        
+          #From id to Id....
+          if twt_handle.capture_mention_as_ticket
+            tweets = nil
+            if twt_handle.last_mention_id.blank?
+              tweets = twitter.mentions
+            else
+              tweets = twitter.mentions({:since_id =>twt_handle.last_mention_id})
+            end       
+            last_tweet_id = tweets[0].id unless tweets.blank?   
+            create_ticket_from_tweet tweets ,twt_handle        
+            twt_handle.update_attribute(:last_mention_id, last_tweet_id) unless last_tweet_id.blank?
+         end       
+       end ### ends ####
       end
-      #From id to Id....
-      if twt_handle.capture_mention_as_ticket
-        tweets = nil
-        if twt_handle.last_mention_id.blank?
-           tweets = twitter.mentions
-        else
-           tweets = twitter.mentions({:since_id =>twt_handle.last_mention_id})
-        end       
-        last_tweet_id = tweets[0].id unless tweets.blank?   
-        create_ticket_from_tweet tweets ,twt_handle        
-        twt_handle.update_attribute(:last_mention_id, last_tweet_id) unless last_tweet_id.blank?
-      end       
-     end ### ends ####
     end
-    
   end
   
   ##Need to consider the 

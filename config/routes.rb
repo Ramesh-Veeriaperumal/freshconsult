@@ -40,7 +40,7 @@ ActionController::Routing::Routes.draw do |map|
   
   map.zendesk_import '/zendesk/import', :controller => 'admin/zip_readers', :action => 'index'
   
-  map.gauth '/twitter/authdone', :controller => 'social/twitter_handles', :action => 'authdone'
+  map.tauth '/twitter/authdone', :controller => 'social/twitter_handles', :action => 'authdone'
   
   #map.register '/register', :controller => 'users', :action => 'create'
   #map.signup '/signup', :controller => 'users', :action => 'new'
@@ -232,6 +232,7 @@ ActionController::Routing::Routes.draw do |map|
     end
     support.resources :company_tickets
     support.resources :minimal_tickets
+    support.resources :registrations
     support.map '', :controller => 'guides', :action => 'index'
     
     support.customer_survey '/surveys/:survey_code/:rating/new', :controller => 'surveys', :action => 'new'
