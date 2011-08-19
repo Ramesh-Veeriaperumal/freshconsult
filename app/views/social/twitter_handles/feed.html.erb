@@ -130,10 +130,13 @@
 	  .live("click", function(e){
 	    e.preventDefault(); 
 	    var user = jQuery(this).attr("data-user");
+	    
 	    jQuery("#tweet_form").dialog({  modal:true, width:'600px', height:'auto', position:'top',
                                       title: "Reply to @" + user, resizable: false, draggable: false });
-	    
-	  })
+
+	    jQuery("#tweet_text_area").val("@"+user+" ").trigger("focus");	    
+	  });
+	 
 			
 	jQuery("#twitter_results a.convert_as_ticket")
 	  .live("click", function(e){
@@ -144,8 +147,8 @@
 	        tweet_id    = jQuery(this).attr("data-tweet-id"),
 	        json_data   = { "subject"          : screen_name + ' - ' + tweet_text,
 	                        "description"      : tweet_text,
-	                        "twitter_id"       : screen_name ,
-	                        "tweet_attributes" : { "tweet_id": tweet_id }};
+	                        "twitter_id"       : screen_name,
+	                        "tweet_attributes" : { "tweet_id": tweet_id, "account_id": <%= current_account.id %>  }};
       link = jQuery(this);
        
       jQuery.ajax({
@@ -167,7 +170,7 @@
 <%- end %> 
 
 <div id="tweet_form" style="display:none;">  
-  <% form_for :tweet, :url => { :action => "send_tweet" } do |f| %>
+  <% form_remote_tag :url => { :action => "send_tweet" }, :html => { :class => "uniForm" } do %>
   <div class="dialog-special">
    <div class="content">
     <table>
@@ -184,14 +187,14 @@
 	        Tweet:
 	      </td>
         <td>
-	        <%= text_area "tweet", :body, { :class => 'required' } %>
+	        <%= text_area "tweet", :body, { :class => 'required tweet', :id => 'tweet_text_area' } %>
 	      </td>
 	    </tr>
     </table>  
    </div>
   </div>  
-  <div class="button-container">    
-    <%= f.submit "Tweet", :class => "uiButton" %>
+  <div class="button-container">     
+    <%= submit_tag "Tweet", :class => "uiButton" %>
   </div>
   <% end %>
 </div>

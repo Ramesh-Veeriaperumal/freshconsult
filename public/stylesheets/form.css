@@ -283,13 +283,13 @@ a.addchoice:hover {
 .ui-form li.dropdown select, .ui-form li.dropdown_blank select {
   margin-bottom: 8px;
 }
-.ui-form div.checkbox {
+.ui-form div.checkbox, .ui-form label.checkbox {
   padding-left: 24px;
   padding-bottom: 5px;
   font-size: 1.3em;
   position: relative;
 }
-.ui-form div.checkbox input {
+.ui-form div.checkbox input, .ui-form label.checkbox input {
   position: absolute;
   left: 1px;
 }
@@ -515,6 +515,7 @@ a.addchoice:hover {
 .ui-form .inline-field div.fields {
   margin-left: 210px;
   clear: right;
+  position: relative;
 }
 .ui-form .inline-field div.fields label {
   font-size: 1.2em;
@@ -888,9 +889,9 @@ span.sort_handle {
   background-image: -o-linear-gradient(#ffffff, #f4f4f4);
   background-image: -ms-linear-gradient(#ffffff, #f4f4f4);
   background-image: linear-gradient(#ffffff, #f4f4f4);
-  -moz-border-radius: 6px 6px 6px 6px;
-  -webkit-border-radius: 6px 6px 6px 6px;
-  border-radius: 6px 6px 6px 6px;
+  -moz-border-radius: 0 0 6px 6px;
+  -webkit-border-radius: 0 0 6px 6px;
+  border-radius: 0 0 6px 6px;
   -moz-box-shadow: rgba(0, 0, 0, 0.5) -3px 5px 10px;
   -webkit-box-shadow: rgba(0, 0, 0, 0.5) -3px 5px 10px;
   box-shadow: rgba(0, 0, 0, 0.5) -3px 5px 10px;
@@ -1049,8 +1050,10 @@ input.search {
   border-radius: 3px 3px 3px 3px;
   background-color: #FFFFFF;
   border: 1px solid #C7C7C7;
-  color: #747472;
+  color: #666666;
+  padding: 6px 8px;
   margin-bottom: 8px;
+  font-size: 18px;
 }
 
 .search-grey-box {
@@ -1862,4 +1865,13 @@ a.new_ticket:hover {
   height: 16px;
   left: 0px;
   top: 7px;
+}
+
+.tweet_counter {
+  position: absolute;
+  right: 0;
+  top: 0;
+  font-size: 20px;
+  font-weight: bold;
+  color: #ccc;
 }

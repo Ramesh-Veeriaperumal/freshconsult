@@ -299,7 +299,7 @@
   display: none;
 }
 .tweet_converted .goto_ticket {
-  display: inline;
+  display: inline-block;
 }
 
 .tweet_converted:hover {
@@ -366,4 +366,27 @@
   color: #666666;
   background-color: #f6f6f6;
   border-top: 1px solid #f0f0f0;
+}
+
+.admin_help_image {
+  margin: 30px 15px;
+  overflow: hidden;
+  *zoom: 1;
+}
+.admin_help_image .help_image {
+  float: left;
+}
+.admin_help_image .content {
+  margin: 0px 0px 0px 230px;
+}
+.admin_help_image .content p.info-data {
+  font-family: verdana;
+  font-size: 15px;
+  line-height: 26px;
+  padding-right: 8%;
+}
+
+h2.title {
+  font-size: 18px;
+  font-weight: normal;
 }

@@ -8,13 +8,18 @@ class Social::TwitterHandlesController < ApplicationController
     c.requires_permission :manage_forums
   end
   
-  prepend_before_filter :load_product, :only => [:signin,:authdone]
+  prepend_before_filter :load_product, :only => [ :signin, :authdone ]
   before_filter :load_main_product, :only => [:index]
   before_filter :build_item, :only => [:signin, :authdone]
   before_filter :load_item,  :only => [:tweet, :edit, :update, :search, :destroy]       
-  before_filter :twitter_wrapper , :only => [:signin,:authdone]
+  before_filter :twitter_wrapper , :only => [:signin, :authdone, :index]
  
-
+  def index
+    request_token = @wrapper.request_tokens          
+    session[:request_token] = request_token.token
+    session[:request_secret] = request_token.secret
+  end
+  
   def signin
     request_token = @wrapper.request_tokens          
     session[:request_token] = request_token.token
@@ -110,8 +115,12 @@ class Social::TwitterHandlesController < ApplicationController
       @wrapper = TwitterWrapper.new reply_twitter
       twitter  = @wrapper.get_twitter
       twitter.update(params[:tweet][:body])
+      flash.now[:notice] = "Successfully sent a tweet"
     end
-    redirect_to :back
+    respond_to do |format|
+      format.html { redirect_to :back }
+      format.js
+    end
   end
   
 
