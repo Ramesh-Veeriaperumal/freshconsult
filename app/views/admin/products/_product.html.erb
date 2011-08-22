@@ -1,8 +1,7 @@
-	<li>
+<li>
   <div class="item_actions">
-		<%= link_to_function "Add Twitter", "twitter_signin(#{product.id})", :class => "slim-button" if product.twitter_handle.nil? %>	
     <%= link_to(t('edit'), edit_admin_product_path(product), :class => "button") %>
-    <%= link_to(t('delete'), admin_product_path(product), :method => 'delete', :confirm => t(".delete_product"), :class => "button" ) %>
+    <%= link_to(t('delete'), admin_product_path(product), :method => 'delete', :confirm => t(".delete"), :class => "button" ) %>
   </div>
   <table>
     <tr>
@@ -20,13 +19,39 @@
       </td>
       <td class="portal-text">
         <%= link_to(product.name, edit_admin_product_path(product), :class => "big-text") %>
-        <%= content_tag(:div, product.reply_email, :class => "text") %>
-        <%= link_to(product.portal.portal_url, product.portal.portal_url, {:class => "text", :target => "_blank"}) if(product.portal_enabled?) %>
-        <div class="not-verified">
-          <%= content_tag (:span, t(".email_not_verified"), :class => "inactive_email custom-tip-top", :title => t('email_configs.unverified_info1')) unless product.active? %>
-					<%= link_to(t("email_configs.send_verification_email"), deliver_verification_admin_email_config_path(product), :class => "slim-button")  unless product.active?  %>                
-        </div>
-				<%= render :partial => "twitter", :locals => { :product => product } %>
+				<div class="channel-text">					
+        	<%= product.reply_email %>
+					<% if product.active? %>	
+						<span class='icon email-active'></span>
+					<% else %>
+						<span class='icon email'></span>
+        		<span class="not-verified">
+          		<%= content_tag (:span, t(".email_not_verified"), :class => "inactive_email custom-tip-top", :title => t('email_configs.unverified_info1')) %>
+							<%= link_to(t("email_configs.send_verification_email"), deliver_verification_admin_email_config_path(product), :class => "slim-button") %>                
+        		</span> 
+					 <% end %>
+				</div>	
+ 				<div class="channel-text">
+					<% if(product.portal_enabled?) %>
+						<span class='icon url-active'></span>
+       			<%= link_to(product.portal.portal_url, product.portal.portal_url, { :target => "_blank" }) %>
+					<% else %>
+						<span class='icon url'></span>
+						<%= link_to("Enable Portal", edit_admin_product_path(product, :enable_portal => true), :class => "slim-button") %>
+					<% end %>
+				</div>
+				
+				<div class="channel-text">
+					<% if product.twitter_handle.nil? %>					
+						<span class='icon twitter'></span>
+						<%= link_to("Add Twitter", signin_social_twitters_path(:product_id => product.id), :class => "dialog2 slim-button") %>
+ 	 			  <% else %>
+						<span class='icon twitter-active'></span>				
+						<%= link_to("@"+product.twitter_handle.screen_name, edit_social_twitter_path(product.twitter_handle), :class => "dialog2", :title => "Edit Twitter Account <b>@#{product.twitter_handle.screen_name}</b>") %>
+						<%= link_to( image_tag("symbols/setting.png"), edit_social_twitter_path(product.twitter_handle), :class => "dialog2", :title => "Edit Twitter Account <b>@#{product.twitter_handle.screen_name}</b>") %>
+					<% end %>				
+				</div>
+				
       </td>
     </tr>
   </table>

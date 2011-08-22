@@ -283,13 +283,13 @@ a.addchoice:hover {
 .ui-form li.dropdown select, .ui-form li.dropdown_blank select {
   margin-bottom: 8px;
 }
-.ui-form div.checkbox {
+.ui-form div.checkbox, .ui-form label.checkbox {
   padding-left: 24px;
   padding-bottom: 5px;
   font-size: 1.3em;
   position: relative;
 }
-.ui-form div.checkbox input {
+.ui-form div.checkbox input, .ui-form label.checkbox input {
   position: absolute;
   left: 1px;
 }
@@ -515,6 +515,7 @@ a.addchoice:hover {
 .ui-form .inline-field div.fields {
   margin-left: 210px;
   clear: right;
+  position: relative;
 }
 .ui-form .inline-field div.fields label {
   font-size: 1.2em;
@@ -1049,8 +1050,10 @@ input.search {
   border-radius: 3px 3px 3px 3px;
   background-color: #FFFFFF;
   border: 1px solid #C7C7C7;
-  color: #747472;
+  color: #666666;
+  padding: 6px 8px;
   margin-bottom: 8px;
+  font-size: 18px;
 }
 
 .search-grey-box {
@@ -1200,7 +1203,7 @@ fieldset.nestedChoices {
   border: #e0e0e0 1px solid;
 }
 .due-date-dialog .right_pointer {
-  background: url('/images/symbols-s92c7676b4d.png') 0 -64px no-repeat;
+  background: url('/images/symbols-s294d1d3dee.png') 0 -64px no-repeat;
   position: absolute;
   width: 10px;
   height: 18px;
@@ -1234,10 +1237,10 @@ fieldset.nestedChoices {
   background: #f4f4f4;
 }
 .due-date-dialog .ui-datepicker-prev .ui-icon {
-  background: url('/images/symbols-s92c7676b4d.png') 0 -48px no-repeat;
+  background: url('/images/symbols-s294d1d3dee.png') 0 -48px no-repeat;
 }
 .due-date-dialog .ui-datepicker-next .ui-icon {
-  background: url('/images/symbols-s92c7676b4d.png') 0 -82px no-repeat;
+  background: url('/images/symbols-s294d1d3dee.png') 0 -82px no-repeat;
 }
 .due-date-dialog .ui-datepicker th {
   font-weight: normal;
@@ -1606,7 +1609,7 @@ a.new_ticket span {
   position: absolute;
   left: 4px;
   top: 5px;
-  background: url('/images/symbols-s92c7676b4d.png') 0 -16px no-repeat;
+  background: url('/images/symbols-s294d1d3dee.png') 0 -16px no-repeat;
   width: 16px;
   height: 16px;
 }
@@ -1681,7 +1684,7 @@ a.new_ticket:hover {
   float: left;
 }
 .nav-drop .nav-item-icon .item-options {
-  background: url('/images/symbols-s92c7676b4d.png') 0 -130px no-repeat;
+  background: url('/images/symbols-s294d1d3dee.png') 0 -130px no-repeat;
 }
 .nav-drop .nav-item-icon:hover, .nav-drop a.selected {
   border: 1px solid #cdcdcd;
@@ -1856,10 +1859,19 @@ a.new_ticket:hover {
   text-decoration: none;
 }
 .canned-response-menu li span.bullet {
-  background: url('/images/symbols-s92c7676b4d.png') 0 -169px no-repeat;
+  background: url('/images/symbols-s294d1d3dee.png') 0 -277px no-repeat;
   position: absolute;
   width: 16px;
   height: 16px;
   left: 0px;
   top: 7px;
+}
+
+.tweet_counter {
+  position: absolute;
+  right: 0;
+  top: 0;
+  font-size: 20px;
+  font-weight: bold;
+  color: #ccc;
 }

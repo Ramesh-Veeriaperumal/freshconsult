@@ -1,0 +1,200 @@
+<% content_for :sidebar do -%>
+  <div class="sidepanel">
+    <h4 class="title">Twitter channel</h4>
+    <p>
+      You can respond to a customers tweets via the twitter channel to give instant support.
+      All responded tweets will automatically be converted into a ticket.
+    </p>
+  </div>  
+<%-end %>
+<% first_search = nil %>
+<h3 class="title">
+	Twitter
+</h3>
+<div class="page-list">
+	<table class="tweet-table">
+		<tr>
+			<td class="left-panel">
+				<% @products.each do |product| %>
+				  <% unless product.twitter_handle.nil? %>
+					  <h4 class="title"><%= product.name %></h4>
+					  <div class="intro"><%= "@#{h(product.twitter_handle.screen_name)}" %></div>
+						<ul class="search-keys" id="search_keys">						
+						<% product.twitter_handle.search_keys.each do |search_key| %>
+							<li>
+								<span class="icon"></span>
+								<% selected_class = (first_search.nil?) ? "selected" : "" %>
+								<%= link_to( h(search_key), "#", :class => "item_info #{selected_class}", :datatwitter => product.twitter_handle.id, :title => h(search_key) ) %>
+								<% first_search ||= h(search_key)  %>
+							</li>
+						<% end %>
+						</ul>
+						<span class="seperator"></span>
+					<% end %>
+				<% end %>
+			</td>
+			<td>
+				<div class="search-grey-box">
+					<div class="live_search">
+						<form action="#" name="search_twitter" id="search_twitter">
+							<label class="overlabel" for="twittersearch">Search twitter</label>
+							<input class="search" type="text" id="twittersearch" />
+							<input type="submit" value="Search twitter" class="uiButton" />
+						</form>
+					</div>
+				</div>
+				<div class="info-results" id="tweet_results_info" style="display:none;">
+					Results for <strong id="tweet_results_string"></strong>
+				</div>
+				<div class="info-highlight" id="tweet_noresults">
+				  No Tweet results for <strong id="tweet_noresults_string"></strong>.
+				</div>
+				<div id="twitter_results" class="list-group"></div>
+				<script id="tweetTemplate" type="text/x-jquery-tmpl">
+				  <div class="list-item" id="TWEET_DIV_${id}">
+						<div class="preview-pic">
+							<img src="${profile_image_url}" />
+						</div>
+						<a href="http://twitter.com/${from_user}" target="_blank" class="username">${from_user}</a>
+						<div class="primary-text autolink">${text}</div>
+						<div class="info-data">
+						  <div class="floatr">
+						    <span class="item_actions">
+						      <a href="#" data-user="${from_user}" class="button reply_button">
+						        Reply
+					        </a>
+  						    <a href="#" data-text="${text}" data-user="${from_user}" data-tweet-id="${id}" class="button convert_as_ticket">
+  							    Convert to Ticket
+  						    </a>
+  						  </span>
+						    <a href="#" class="button goto_ticket" target="_blank">
+						      Go to Ticket
+						    </a>
+						  </div>
+							<span class="prettydate" title="${created_at}">${humaneDate(new Date(created_at))}</span>
+						</div>
+					</div>
+				</script>
+				<div class="more_results">
+					<a id="moreTweets" href="javascript: jQuery('#twitter_results').tweetfeed('nextpage')" class="uiButton">Show more results</a>
+				</div>
+				</div>
+			</td>
+		</tr>
+	</table>
+</div>
+
+<% content_for :onload_script do -%>
+  jQuery("#twitter_results")
+		.tweetfeed({ "query" : "<%= first_search %>", 
+								 "templateid" : "#tweetTemplate",
+  								onbeforeload: function(setting){
+										jQuery("#tweet_results_info").hide();
+										jQuery("#tweet_noresults").hide();
+										jQuery("#moreTweets").css("visibility", "hidden");
+									},
+									onafterload: function(setting, hasresults){									  
+									  if(hasresults){										  
+									    jQuery("#tweet_results_info").show();
+  									  jQuery("#tweet_results_string").html(setting.query);
+										  jQuery("#moreTweets").css("visibility", "visible"); 
+										}else{
+										  jQuery("#tweet_noresults").show();
+										  jQuery("#tweet_noresults_string")
+										    .html(setting.query);
+										}
+									}
+ 							  });
+
+ 	setInterval(function(){
+							 jQuery("#twitter_results span.prettydate").humaneDates();
+					   }, 60000);
+	
+	jQuery("#search_keys .item_info")
+			.click(function(e){
+			        e.preventDefault();
+			        jQuery("#search_keys .item_info").removeClass("selected");
+			        jQuery(this).addClass("selected");
+			        jQuery('#twittersearch').val(jQuery.trim(this.title)).trigger("focus");
+			        current_search_id = jQuery(this).attr("datatwitter");
+			        jQuery("#search_twitter").trigger("submit");
+						});
+						
+	jQuery("#search_twitter")
+			.submit(function(){
+				jQuery('#twitter_results').tweetfeed('search_query', jQuery('#twittersearch').val());
+				return false;
+			});
+			
+	jQuery("#twitter_results a.reply_button")
+	  .live("click", function(e){
+	    e.preventDefault(); 
+	    var user = jQuery(this).attr("data-user");
+	    
+	    jQuery("#tweet_form").dialog({  modal:true, width:'600px', height:'auto', position:'top',
+                                      title: "Reply to @" + user, resizable: false, draggable: false });
+
+	    jQuery("#tweet_text_area").val("@"+user+" ").trigger("focus");	    
+	  });
+	 
+			
+	jQuery("#twitter_results a.convert_as_ticket")
+	  .live("click", function(e){
+	    e.preventDefault();
+	    
+	    var screen_name = jQuery(this).attr("data-user"),
+	        tweet_text  = jQuery(this).attr("data-text"),
+	        tweet_id    = jQuery(this).attr("data-tweet-id"),
+	        json_data   = { "subject"          : screen_name + ' - ' + tweet_text,
+	                        "description"      : tweet_text,
+	                        "twitter_id"       : screen_name,
+	                        "tweet_attributes" : { "tweet_id": tweet_id, "account_id": <%= current_account.id %>  }};
+      link = jQuery(this);
+       
+      jQuery.ajax({
+      	type: 'POST',
+      	url : 'create_twicket',
+      	data: {	helpdesk_tickets: json_data },
+      	datatype:'json',
+      	success: function(data){
+      		if(data.success){
+      		  jQuery("#TWEET_DIV_"+tweet_id)
+      		    .effect("highlight", {}, 2500)
+      		    .addClass("tweet_converted")
+      		    .find(".goto_ticket")
+      		    .attr("href", data.ticket_link);      		    
+      		}
+      	}
+      });
+	  });
+<%- end %> 
+
+<div id="tweet_form" style="display:none;">  
+  <% form_remote_tag :url => { :action => "send_tweet" }, :html => { :class => "uniForm" } do %>
+  <div class="dialog-special">
+   <div class="content">
+    <table>
+      <tr>
+        <td>
+          Send From:
+        </td>
+        <td>
+          <%= select_tag :twitter_handle, options_from_collection_for_select(current_account.twitter_handles, :id, :screen_name) %>
+        </td>
+   	  </tr>				
+	    <tr>
+	      <td>
+	        Tweet:
+	      </td>
+        <td>
+	        <%= text_area "tweet", :body, { :class => 'required tweet', :id => 'tweet_text_area' } %>
+	      </td>
+	    </tr>
+    </table>  
+   </div>
+  </div>  
+  <div class="button-container">     
+    <%= submit_tag "Tweet", :class => "uiButton" %>
+  </div>
+  <% end %>
+</div>

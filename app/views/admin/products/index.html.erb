@@ -20,20 +20,3 @@
 	  <%= each_or_message("product", @products, t("no_message.products")) %>
 	</ul>
 </div>
-<% javascript_tag do %>
-
-var twitter_signin_dialog = null;
-
-function twitter_signin(pro_id)
-{		   
-	twitter_signin_dialog = jQuery("<div id='twitter_new_handle' style='display:none;' />").appendTo("body");		
-	var url = '/social/twitters/signin?product_id='+pro_id;
-	// load remote content
-	twitter_signin_dialog.load(url,{}, function(responseText, textStatus, XMLHttpRequest) {
-	       twitter_signin_dialog.dialog({modal:true, width:'700px', height:'auto', title:"Twitter signin"});
-	});
-		
-    //prevent the browser to follow the link
-    return false;
-}	
-<% end %>

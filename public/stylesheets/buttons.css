@@ -113,7 +113,7 @@ button.ui-button::-moz-focus-inner {
 }
 
 /* reset extra padding in Firefox */
-.uiButton, .uiButton:visited, .fdbutton, .fdbutton:visited {
+.uiButton, .uiButton:visited, .special-button, .special-button:visited, .uiButton-active {
   display: -moz-inline-box;
   -moz-box-orient: vertical;
   display: inline-block;
@@ -147,10 +147,10 @@ button.ui-button::-moz-focus-inner {
   -webkit-border-radius: 4px 4px 4px 4px;
   border-radius: 4px 4px 4px 4px;
 }
-.uiButton, .uiButton:visited, .fdbutton, .fdbutton:visited {
+.uiButton, .uiButton:visited, .special-button, .special-button:visited, .uiButton-active {
   *display: inline;
 }
-.uiButton img, .uiButton:visited img, .fdbutton img, .fdbutton:visited img {
+.uiButton img, .uiButton:visited img, .special-button img, .special-button:visited img, .uiButton-active img {
   margin: 0 3px -3px 0 !important;
   padding: 0;
   border: none;
@@ -159,7 +159,7 @@ button.ui-button::-moz-focus-inner {
   float: none;
 }
 
-.uiButton:hover, .fdbutton:hover, .forum_button:hover {
+.uiButton:hover, .fdbutton:hover, .forum_button:hover, .uiButton-active:hover {
   background-color: #7cb537;
   border-color: #618e2b;
   color: #ffffff;
@@ -167,13 +167,13 @@ button.ui-button::-moz-focus-inner {
 }
 
 .uiButton-active {
-  background-color: #67962d;
-  border-color: #618e2b;
+  background-color: #6c9e30;
+  border-color: #598228;
   color: #ffffff;
   text-shadow: rgba(0, 0, 0, 0.2) -1px -1px 1px;
 }
 
-.uiButton:active, .fdbutton:active {
+.uiButton:active, .fdbutton:active, .uiButton-active:active {
   top: 1px;
 }
 
@@ -186,8 +186,8 @@ button.ui-button::-moz-focus-inner {
   font-size: 12px;
 }
 
-.large.uiButton, .large.uiButton:visited {
-  font-size: 14px;
+.large.uiButton, .large.uiButton:visited, .uiButton-active {
+  font-size: 13px;
   padding: 8px 14px 9px;
 }
 

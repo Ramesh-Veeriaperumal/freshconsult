@@ -3,18 +3,20 @@
     <%= f.error_messages %>
 	<%= hidden_field_tag :tweet, "true", :id => "tweet" %>
     <ul class="ui-form dont-validate">
-      <li class="inline-field field">
-       
-        <!--%= content_tag( :h3, t("ticket.note_form.form_title"), :class => "title" ) %-->
-        <label class="caption">Tweet:</label>
+      <li class="inline-field field">       
+        <%= content_tag( :h3, t(".title", :user=>"@#{@ticket.requester.twitter_id}"), :class => "title") %>
+        <label class="caption">From:</label>
         <div class="fields">
            <%= select_tag :twitter_handle, options_from_collection_for_select(current_account.twitter_handles, :id, :screen_name) %>
-  
-          <%= f.text_area :body, { :class => 'auto-expand required', :id => "#{id}-#{cntid}-body" , :value =>"@#{@ticket.requester.twitter_id}" } %>
-          <!--%= f.label(:private, f.check_box(:private, :checked => true) + t("ticket.note_form.private_note"), :class => "checkbox") %-->
-          <%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["twitter"]%>
         </div>
 	  </li>				
+	  <li class="inline-field field">
+	    <label class="caption">Message:</label>
+	    <div class="fields">
+	    <%= f.text_area :body, { :class => 'auto-expand required', :id => "#{id}-#{cntid}-body", :value =>"@#{@ticket.requester.twitter_id}" } %>
+      <%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["twitter"]%>          
+	    </div>
+	  </li>
       <li class="button-container">
         <%= submit_tag(local_assigns[:submit] || ActiveSupport::Inflector.titleize(id), :class => "uiButton") %>
       </li>

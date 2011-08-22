@@ -1,7 +1,10 @@
-<span class="seperator"></span>
-<p>Sign in with the Twitter account for this helpdesk.</p>
-<p>
-  <a href="<%=@wrapper.authorize_url%>">
-		<img height="24" width="151" src="http://si0.twimg.com/images/dev/buttons/sign-in-with-twitter-l.png" alt="Sign In Twitter">
-	</a>
-</p>
+<div class="admin_help_image">
+  <%= get_img("twitter-admin-page.png", :help) %>
+  <div class="content">
+    <h2 class="title">Engage your customers, directly on twitter</h2>
+    <p class="info-data">
+      Associate a twitter account to <b> <%= @item.product.name %> </b> and respond to your customers with a tweet or message from within Freshdesk.
+    </p>
+    <a href="<%=@wrapper.authorize_url%>" class="uiButton-active">Add twitter account</a>
+  </div>
+</div>

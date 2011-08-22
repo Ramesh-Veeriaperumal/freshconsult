@@ -3,7 +3,9 @@ module ApplicationHelper
   
   include SavageBeast::ApplicationHelper
   include Juixe::Acts::Voteable
-
+  
+  ASSETIMAGE = { :help => "/images/helpimages" }
+  
   def show_flash
     [:notice, :warning, :error].collect {|type| content_tag('div', flash[type], :id => type, :class => "flash_info #{type}") if flash[type] }
   end
@@ -26,6 +28,10 @@ module ApplicationHelper
 
   def each_or_message(partial, collection, message)
     render(:partial => partial, :collection => collection) || content_tag(:div, message, :class => "info-highlight")
+  end
+  
+  def get_img(file_name, type)
+    image_tag("#{ASSETIMAGE[type]}/#{file_name}", :class => "#{type}_image")
   end
 
   def navigation_tabs
@@ -108,6 +114,15 @@ module ApplicationHelper
     end
     
     data
+  end
+  
+  def store_location
+    session[:return_to] = request.request_uri
+  end
+
+  def redirect_back_or_default(default)
+    redirect_to(session[:return_to] || default)
+    session[:return_to] = nil
   end
   
   def responder_path(args_hash)

@@ -88,7 +88,7 @@ en:
   last: last
   agent_emailnotverified: Email has not been verified for this agent!
   agent_assigned_info: No open and pending tickets for this agent
-  basic_details: Email Response Management, Dispatch'r Rules, Default SLA Policy,	Knowledge Base, Self-Service Portal, Domain Mapping, Community Support.
+  basic_details: Email Response Management, Dispatch'r Rules, Default SLA Policy, Knowledge Base, Self-Service Portal, Domain Mapping, Community Support.
   choose_plan: Choose Plan
   create: Create
   feedbackwidget_custom_image_info: if you are using a custom image the color and text will be ignored.
@@ -158,9 +158,9 @@ en:
         product_name: Product name
       product:
         email_not_verified: Email not verified  
+        delete: Are you sure you want to delete this Product?
       index: 
         title: Products        
-        delete_product: Are you sure you want to delete this Product?
         add_product: Add Product
     canned_responses:
       ca_response:
@@ -662,22 +662,22 @@ en:
       unlike: Unlike
       ideas:
         vote_button: I like this Idea
-        vote_info_1: %{vote} Person likes this Idea
-        vote_info_2: %{vote} People like this Idea
+        vote_info_1: "%{vote} Person likes this Idea"
+        vote_info_2: "%{vote} People like this Idea"
         vote_info_include_1: You like this Idea
-        vote_info_include_2: %{vote} People "including you" like this Idea
+        vote_info_include_2: "%{vote} People \"including you\" like this Idea"
       problem:
         vote_button: I have this Problem
-        vote_info_1: %{vote} Person has this Problem
-        vote_info_2: %{vote} People have this Problem
+        vote_info_1: "%{vote} Person has this Problem"
+        vote_info_2: "%{vote} People have this Problem"
         vote_info_include_1: You have this Problem
-        vote_info_include_2: %{vote} People "including you" have this Problem
+        vote_info_include_2: "%{vote} People \"including you\" have this Problem"
       howto:
         vote_button: I have this Question
-        vote_info_1: %{vote} Person has this Question
-        vote_info_2: %{vote} People have this Question
+        vote_info_1: "%{vote} Person has this Question"
+        vote_info_2: "%{vote} People have this Question"
         vote_info_include_1: You have this Question
-        vote_info_include_2: %{vote} People "including you" have this Question        
+        vote_info_include_2: "%{vote} People \"including you\" have this Question"        
     post:
       posted_on: "%{user_name} on %{post_date}"
       edit_post: Edit Post
@@ -970,7 +970,7 @@ en:
     success_signin: Successfully signed in with Twitter.
     user_exists: User is aleady there.
     not_authorized: You were not authorized by Twitter
-    deleted: Your Twitter handle is deleted
+    deleted: The twitter account %{twitter_screen_name} has been removed.
     sent: Tweet successfully sent
     error_sending: Error sending the tweet! Twitter might be unstable. Please try again.
     ticket_save: Successfully saved the ticket from tweet
@@ -980,7 +980,7 @@ en:
   ok: Ok
   back: Back
   ticket: 
-    thanks: Thanks for submitting the ticket
+    thanks: Thanks for submitting a feedback
     group: Group
     spam_btn_title: Mark as spam
     assigned_to: Assigned To
@@ -1183,19 +1183,21 @@ en:
       index:
         title: Tags
     flash:
-      assignedto: %{tickets} assigned to %{username}.
-      tickets_closed: %{tickets} closed
-      assigned_to_you: %{tickets} assigned to you
-      removed_from_spam: %{tickets} removed from the spam folder.
+      assignedto: "%{tickets} assigned to %{username}."
+      tickets_closed: "%{tickets} closed"
+      assigned_to_you: "%{tickets} assigned to you"
+      removed_from_spam: "%{tickets} removed from the spam folder."
       closing_the_ticket_failed: Closing the ticket failed
-      assigned_reassigned: %{type} to %{username}
-      flagged_spam: %{tickets} flagged as spam. %{undo}
-      flagged_unspam: %{tickets} removed from the spam folder.
+      assigned_reassigned: "%{type} to %{username}"
+      flagged_spam: "%{tickets} flagged as spam. %{undo}"
+      flagged_unspam: "%{tickets} removed from the spam folder."
     shared:
       reply_form:
         cc: Cc
         addcc: Add Cc
         removecc: Remove Cc
+      tweet_form:
+        title: "Reply to %{user}"
     dashboard:
       index:
         todo_title: To-Dos
@@ -1339,3 +1341,4 @@ en:
     months: Months
     year: Year
     years: Years
+  go_back_admin: Go back to Admin

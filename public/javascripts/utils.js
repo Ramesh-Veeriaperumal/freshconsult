@@ -71,6 +71,8 @@ function construct_reply_url(to_email, account_name){
    return reply_email;
 }
 
+active_dialog = null;
+
 // JQuery plugin that customizes the dialog widget to load an ajax infomation
 (function( $ ){
 
@@ -84,15 +86,13 @@ function construct_reply_url(to_email, account_name){
                if(dialog == null){
                   dialog = $("<div class='loading-center' />")
                               .html("<br />")
-                              .dialog({  modal:true, width:'750px', height:'auto', position:'top', 
-                                      // show: "blind", 
-                                      // hide: 'blind', 
+                              .dialog({  modal:true, width:'750px', height:'auto', position:'top',
                                          title: this.title, resizable: false });
 
-                   dialog.load(this.href,{}, function(responseText, textStatus, XMLHttpRequest) {
-                      dialog.removeClass("loading-center");
-                      dialog.css("height", "auto");
-                   });
+                   active_dialog = dialog.load(this.href,{}, function(responseText, textStatus, XMLHttpRequest) {
+                                                   dialog.removeClass("loading-center");
+                                                   dialog.css({"height": "auto"});
+                                                });
                }else{
                   dialog.dialog("open");
                }
@@ -138,6 +138,6 @@ function construct_reply_url(to_email, account_name){
       }
     );
     return this;
-  };
+  }; 
 
 })( jQuery );

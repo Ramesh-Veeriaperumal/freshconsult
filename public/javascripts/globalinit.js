@@ -6,10 +6,19 @@ var $J = jQuery.noConflict();
 (function($){
 	// Global Jquery Plugin initialisation
 	$.fn.qtip.baseIndex = 10000;
+	$.validator
+	   .addClassRules({
+	      tweet: { 
+	         maxlength: 140, 
+	         messages:{
+	            maxlength : "Your Tweet is over 140 characters" 
+	         } 
+	      }
+	   });
 	
 	// App initialisation  
 	$(document).ready(function() {
-//		SyntaxHighlighter.all();
+      // SyntaxHighlighter.all();
 			
 		// - Labels with overlabel will act a Placeholder for form elements 
 	    $("label.overlabel").overlabel();

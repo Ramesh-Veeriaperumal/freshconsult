@@ -28,9 +28,9 @@ select {
 }
 
 textarea { 
-    height: 100px;
-    width: 96%;
-    font-family:$blueprint-font-family;
+   height: 100px;
+   width: 96%;
+   font-family:$blueprint-font-family;
 }
 
 input:focus { outline: none; }
@@ -237,8 +237,8 @@ a.addchoice:hover{
    li.dropdown, li.dropdown_blank{
       select{ margin-bottom:8px; }
    }
-   div.checkbox{
-      padding-left: 24px;
+   div.checkbox, label.checkbox{
+      padding-left: 24px ;
       padding-bottom: 5px;
       font-size:1.3em;
       position:relative;
@@ -467,6 +467,7 @@ a.addchoice:hover{
 	div.fields{
 		margin-left:210px;
 		clear:right;
+		position:relative;
 		label{
 			font-size:1.2em;
 		}
@@ -900,8 +901,10 @@ input.search{
 	@include corners(3px);
     background-color: #FFFFFF;
     border: 1px solid #C7C7C7;
-    color: #747472;
+    color: #666666;
+    padding:6px 8px;
     margin-bottom:8px;
+    font-size:18px;
 }
 
 
@@ -1537,4 +1540,13 @@ a.new_ticket:hover{
          top:7px;
       }
    }
+}
+
+.tweet_counter{
+   position:absolute;
+	right:0;
+	top:0;
+	font-size:20px;
+	font-weight:bold;
+	color:#ccc;
 }
