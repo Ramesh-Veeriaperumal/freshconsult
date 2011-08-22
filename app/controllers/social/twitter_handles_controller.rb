@@ -106,7 +106,6 @@ class Social::TwitterHandlesController < ApplicationController
   end
   
   def create_twicket
-    params[:helpdesk_tickets][:description] = Iconv.new('utf-8//IGNORE', "utf-8").iconv(params[:helpdesk_tickets][:description])
     @ticket = current_account.tickets.build(params[:helpdesk_tickets])
     @ticket.source = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:twitter]
     res = Hash.new
