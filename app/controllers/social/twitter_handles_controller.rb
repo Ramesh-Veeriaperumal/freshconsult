@@ -1,4 +1,6 @@
 class Social::TwitterHandlesController < ApplicationController
+  
+  require 'twitter'
  
   before_filter :except => [:search, :create_twicket] do |c| 
     c.requires_permission :manage_users
@@ -88,11 +90,61 @@ class Social::TwitterHandlesController < ApplicationController
     @products   = current_account.email_configs.find(:all, :order => "primary_role desc")
   end
   
-  def create_twicket
+  def create_ticket_from_tweet
     @ticket = current_account.tickets.build(params[:helpdesk_tickets])
     @ticket.source = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:twitter]
+    @ticket
+  end
+  
+  def get_twitter_user(screen_name)
+    user = current_account.all_users.find_by_twitter_id(screen_name)
+    unless user
+      user = current_account.contacts.new
+      user.signup!({:user => {:twitter_id => screen_name, :name => screen_name, 
+                    :active => true,
+                    :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}})
+      end
+     user 
+  end
+  
+  def create_note_from_tweet(in_reply_to_status_id)
+    tweet = current_account.tweets.find_by_tweet_id(in_reply_to_status_id)
+    user = get_twitter_user(params[:helpdesk_tickets][:twitter_id])
+    
+    unless tweet.nil?  
+      @ticket = tweet.tweetable.notable if  tweet.tweetable_type.eql?('Helpdesk::Note')
+      @ticket = tweet.tweetable if  tweet.tweetable_type.eql?('Helpdesk::Ticket')
+    end
+    
+    unless @ticket.blank?
+      @note = @ticket.notes.build(
+        :body => params[:helpdesk_tickets][:description],
+        :private => true ,
+        :incoming => true,
+        :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:twitter],
+        :account_id => current_account.id,
+        :user_id => user.id ,
+        :tweet_attributes => {:tweet_id => params[:helpdesk_tickets][:tweet_attributes][:tweet_id], 
+                                          :account_id => current_account.id}
+       )
+       @note
+    else
+      create_ticket_from_tweet 
+    end
+  end
+  
+  def create_twicket
+    in_reply_to_status_id = nil
+    sandbox do 
+      in_reply_to_status_id = Twitter.status(params[:helpdesk_tickets][:tweet_attributes][:tweet_id]).in_reply_to_status_id_str
+    end
+    if in_reply_to_status_id.blank?
+      @item = create_ticket_from_tweet
+    else
+      @item = create_note_from_tweet(in_reply_to_status_id)
+    end
     res = Hash.new
-    if @ticket.save
+    if @item.save
       res["success"] = true      
       res["message"]= t('twitter.ticket_save')
       render :json => ActiveSupport::JSON.encode(res)
@@ -145,5 +197,41 @@ class Social::TwitterHandlesController < ApplicationController
     end
     
   end
+  
+  def sandbox
+      begin
+        yield
+      rescue Errno::ECONNRESET => e
+        NewRelic::Agent.notice_error(e)
+        RAILS_DEFAULT_LOGGER.debug "Something wrong happened in twitter!"
+        RAILS_DEFAULT_LOGGER.debug e.to_s
+      rescue Timeout::Error => e
+        NewRelic::Agent.notice_error(e)
+        RAILS_DEFAULT_LOGGER.debug "Something wrong happened in twitter!"
+        RAILS_DEFAULT_LOGGER.debug e.to_s
+      rescue EOFError => e
+        NewRelic::Agent.notice_error(e)
+        RAILS_DEFAULT_LOGGER.debug "Something wrong happened in twitter!"
+        RAILS_DEFAULT_LOGGER.debug e.to_s
+      rescue Errno::ETIMEDOUT => e
+        NewRelic::Agent.notice_error(e)
+        RAILS_DEFAULT_LOGGER.debug "Something wrong happened in twitter!"
+        RAILS_DEFAULT_LOGGER.debug e.to_s
+      rescue OpenSSL::SSL::SSLError => e
+        NewRelic::Agent.notice_error(e)
+        RAILS_DEFAULT_LOGGER.debug "Something wrong happened in twitter!"
+        RAILS_DEFAULT_LOGGER.debug e.to_s
+      rescue SystemStackError => e
+        NewRelic::Agent.notice_error(e)
+        RAILS_DEFAULT_LOGGER.debug "Something wrong happened in twitter!"
+        RAILS_DEFAULT_LOGGER.debug e.to_s
+      rescue Exception => e
+        NewRelic::Agent.notice_error(e)
+        RAILS_DEFAULT_LOGGER.debug "Something wrong happened in twitter!"
+        RAILS_DEFAULT_LOGGER.debug e.to_s
+      rescue 
+        RAILS_DEFAULT_LOGGER.debug "Something wrong happened in twitter!"
+      end
+    end
 
 end

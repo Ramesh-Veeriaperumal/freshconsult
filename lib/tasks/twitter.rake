@@ -84,7 +84,6 @@ namespace :twitter do
   
   def add_tweet_as_note twt,twt_handle 
     
-    puts twt.in_reply_to_status_id
     tweet = @account.tweets.find_by_tweet_id(twt.in_reply_to_status_id)
     
     unless tweet.nil?  
@@ -111,26 +110,32 @@ namespace :twitter do
       begin
         yield
       rescue Errno::ECONNRESET => e
+        puts e.to_s
         NewRelic::Agent.notice_error(e)
         RAILS_DEFAULT_LOGGER.debug "Something wrong happened in twitter!"
         RAILS_DEFAULT_LOGGER.debug e.to_s
       rescue Timeout::Error => e
+        puts e.to_s
         NewRelic::Agent.notice_error(e)
         RAILS_DEFAULT_LOGGER.debug "Something wrong happened in twitter!"
         RAILS_DEFAULT_LOGGER.debug e.to_s
       rescue EOFError => e
+        puts e.to_s
         NewRelic::Agent.notice_error(e)
         RAILS_DEFAULT_LOGGER.debug "Something wrong happened in twitter!"
         RAILS_DEFAULT_LOGGER.debug e.to_s
       rescue Errno::ETIMEDOUT => e
+        puts e.to_s
         NewRelic::Agent.notice_error(e)
         RAILS_DEFAULT_LOGGER.debug "Something wrong happened in twitter!"
         RAILS_DEFAULT_LOGGER.debug e.to_s
       rescue OpenSSL::SSL::SSLError => e
+        puts e.to_s
         NewRelic::Agent.notice_error(e)
         RAILS_DEFAULT_LOGGER.debug "Something wrong happened in twitter!"
         RAILS_DEFAULT_LOGGER.debug e.to_s
       rescue SystemStackError => e
+        puts e.to_s
         NewRelic::Agent.notice_error(e)
         RAILS_DEFAULT_LOGGER.debug "Something wrong happened in twitter!"
         RAILS_DEFAULT_LOGGER.debug e.to_s
@@ -140,6 +145,7 @@ namespace :twitter do
         RAILS_DEFAULT_LOGGER.debug "Something wrong happened in twitter!"
         RAILS_DEFAULT_LOGGER.debug e.to_s
       rescue 
+        puts e.to_s
         RAILS_DEFAULT_LOGGER.debug "Something wrong happened in twitter!"
       end
     end

@@ -3,7 +3,9 @@ class Social::TwitterHandle < ActiveRecord::Base
   set_table_name "social_twitter_handles" 
   serialize   :search_keys, Array
   belongs_to :product, :class_name => 'EmailConfig'
-  belongs_to :account
+  belongs_to :account 
+  
+  before_create :add_default_search
    
   validates_uniqueness_of :twitter_user_id, :scope => :account_id
   validates_uniqueness_of :product_id
@@ -11,6 +13,14 @@ class Social::TwitterHandle < ActiveRecord::Base
    
   def search_keys_string
     search_keys.blank? ? "" : search_keys.join(",")
+  end
+  
+  def add_default_search
+    if search_keys.blank?
+      searches = Array.new
+      searches.push(screen_name)
+      self.search_keys = searches
+    end
   end
 
 end
