@@ -88,7 +88,7 @@ en:
   last: last
   agent_emailnotverified: Email has not been verified for this agent!
   agent_assigned_info: No open and pending tickets for this agent
-  basic_details: Email Response Management, Dispatch'r Rules, Default SLA Policy,	Knowledge Base, Self-Service Portal, Domain Mapping, Community Support.
+  basic_details: Email Response Management, Dispatch'r Rules, Default SLA Policy, Knowledge Base, Self-Service Portal, Domain Mapping, Community Support.
   choose_plan: Choose Plan
   create: Create
   feedbackwidget_custom_image_info: if you are using a custom image the color and text will be ignored.
@@ -662,22 +662,22 @@ en:
       unlike: Unlike
       ideas:
         vote_button: I like this Idea
-        vote_info_1: %{vote} Person likes this Idea
-        vote_info_2: %{vote} People like this Idea
+        vote_info_1: "%{vote} Person likes this Idea"
+        vote_info_2: "%{vote} People like this Idea"
         vote_info_include_1: You like this Idea
-        vote_info_include_2: %{vote} People "including you" like this Idea
+        vote_info_include_2: "%{vote} People \"including you\" like this Idea"
       problem:
         vote_button: I have this Problem
-        vote_info_1: %{vote} Person has this Problem
-        vote_info_2: %{vote} People have this Problem
+        vote_info_1: "%{vote} Person has this Problem"
+        vote_info_2: "%{vote} People have this Problem"
         vote_info_include_1: You have this Problem
-        vote_info_include_2: %{vote} People "including you" have this Problem
+        vote_info_include_2: "%{vote} People \"including you\" have this Problem"
       howto:
         vote_button: I have this Question
-        vote_info_1: %{vote} Person has this Question
-        vote_info_2: %{vote} People have this Question
+        vote_info_1: "%{vote} Person has this Question"
+        vote_info_2: "%{vote} People have this Question"
         vote_info_include_1: You have this Question
-        vote_info_include_2: %{vote} People "including you" have this Question        
+        vote_info_include_2: "%{vote} People \"including you\" have this Question"        
     post:
       posted_on: "%{user_name} on %{post_date}"
       edit_post: Edit Post
@@ -1183,14 +1183,14 @@ en:
       index:
         title: Tags
     flash:
-      assignedto: %{tickets} assigned to %{username}.
-      tickets_closed: %{tickets} closed
-      assigned_to_you: %{tickets} assigned to you
-      removed_from_spam: %{tickets} removed from the spam folder.
+      assignedto: "%{tickets} assigned to %{username}."
+      tickets_closed: "%{tickets} closed"
+      assigned_to_you: "%{tickets} assigned to you"
+      removed_from_spam: "%{tickets} removed from the spam folder."
       closing_the_ticket_failed: Closing the ticket failed
-      assigned_reassigned: %{type} to %{username}
-      flagged_spam: %{tickets} flagged as spam. %{undo}
-      flagged_unspam: %{tickets} removed from the spam folder.
+      assigned_reassigned: "%{type} to %{username}"
+      flagged_spam: "%{tickets} flagged as spam. %{undo}"
+      flagged_unspam: "%{tickets} removed from the spam folder."
     shared:
       reply_form:
         cc: Cc
