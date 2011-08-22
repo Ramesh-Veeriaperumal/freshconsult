@@ -573,6 +573,7 @@ div.preview_pic {
   display: inline;
   float: left;
   margin-right: 10px;
+  position: relative;
 }
 div.preview_pic img {
   padding: 3px;
@@ -580,6 +581,15 @@ div.preview_pic img {
   border: 1px solid #efefef;
   width: 50px;
   height: 50px;
+}
+div.preview_pic span.tweet_pic {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border: 1px solid #ffffff;
+  bottom: 5px;
+  right: 1px;
+  background: url('/images/symbols-s294d1d3dee.png') 0 -205px no-repeat white;
 }
 
 div.profile_pic img {
@@ -3447,7 +3457,7 @@ a.page_title:active {
 }
 .request-list div.item .private-icon {
   display: none;
-  background: url('/images/symbols-s92c7676b4d.png') 0 -153px no-repeat;
+  background: url('/images/symbols-s294d1d3dee.png') 0 -153px no-repeat;
   width: 16px;
   height: 16px;
   position: relative;
@@ -4220,11 +4230,10 @@ div.addReminder form label.overlabel {
   top: 10px;
 }
 .admin_list li a.big-text, .content_list li a.big-text {
-  font-size: 1.75em;
-}
-.admin_list li .text, .content_list li .text {
-  font-size: 1.2em;
-  margin-bottom: 4px;
+  font-size: 1.85em;
+  display: block;
+  padding-left: 24px;
+  padding-bottom: 2px;
 }
 .admin_list li .portal-logo, .content_list li .portal-logo {
   width: 90px;
@@ -4236,6 +4245,37 @@ div.addReminder form label.overlabel {
 .admin_list li .portal-text, .content_list li .portal-text {
   padding-left: 12px;
 }
+.admin_list li .portal-text .channel-text, .content_list li .portal-text .channel-text {
+  position: relative;
+  font-size: 1.35em;
+  margin-top: 1px;
+  padding-left: 24px;
+}
+.admin_list li .portal-text .channel-text span.icon, .content_list li .portal-text .channel-text span.icon {
+  position: absolute;
+  left: 0px;
+  top: 5px;
+  width: 18px;
+  height: 18px;
+}
+.admin_list li .portal-text .channel-text span.email, .content_list li .portal-text .channel-text span.email {
+  background: url('/images/symbols-s294d1d3dee.png') 0 -187px no-repeat;
+}
+.admin_list li .portal-text .channel-text span.url, .content_list li .portal-text .channel-text span.url {
+  background: url('/images/symbols-s294d1d3dee.png') 0 -259px no-repeat;
+}
+.admin_list li .portal-text .channel-text span.twitter, .content_list li .portal-text .channel-text span.twitter {
+  background: url('/images/symbols-s294d1d3dee.png') 0 -223px no-repeat;
+}
+.admin_list li .portal-text .channel-text span.email-active, .content_list li .portal-text .channel-text span.email-active {
+  background: url('/images/symbols-s294d1d3dee.png') 0 -169px no-repeat;
+}
+.admin_list li .portal-text .channel-text span.url-active, .content_list li .portal-text .channel-text span.url-active {
+  background: url('/images/symbols-s294d1d3dee.png') 0 -241px no-repeat;
+}
+.admin_list li .portal-text .channel-text span.twitter-active, .content_list li .portal-text .channel-text span.twitter-active {
+  background: url('/images/symbols-s294d1d3dee.png') 0 -205px no-repeat;
+}
 .admin_list li .portal-text .not-verified, .content_list li .portal-text .not-verified {
   padding: 12px 0px;
 }
@@ -4244,6 +4284,7 @@ div.addReminder form label.overlabel {
 }
 .admin_list li .portal-text .slim-button, .content_list li .portal-text .slim-button {
   margin-top: -3px;
+  margin-left: -2px;
   color: #333333;
 }
 .admin_list li .color_box, .content_list li .color_box {
@@ -4262,6 +4303,9 @@ div.addReminder form label.overlabel {
 .admin_list li .image_logo, .content_list li .image_logo {
   max-height: 40px;
   max-width: 90px;
+}
+.admin_list li div.item_actions, .content_list li div.item_actions {
+  visibility: hidden;
 }
 .admin_list li:hover, .content_list li:hover {
   background-color: #e6f3f9;

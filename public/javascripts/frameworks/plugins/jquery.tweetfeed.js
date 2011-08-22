@@ -19,8 +19,8 @@
                 onafterload       : function(){}
   };
   
-  populateTweets = function(response){ 
-     if(encodeURIComponent(settings.query) == response.query){
+  populateTweets = function(response, status, xhr){
+     if($.param({q:settings.query}) == ("q="+response.query)){
         loading.remove(); 
         var newTweets = $(tweetsettings.template) 
                            .tmpl( response.results )
@@ -37,7 +37,7 @@
   }
   
   refreshData = function(response){  
-     if(encodeURIComponent(settings.query) == response.query){
+     if($.param({q:settings.query}) == ("q="+response.query)){
         fresh_results = fresh_results.concat(response.results);
         tweetsettings.refresh_url = response.refresh_url;
      
@@ -45,7 +45,7 @@
           counter.html(fresh_results.length + " new tweets");
           new_result.show();
         }
-   }
+     }
   }
   
   prependTweets = function(){
@@ -58,7 +58,11 @@
      fresh_results = [];
   }
   
-  getData = function( url, callback, data ){
+  errorTweets = function(){ 
+     settings.onafterload(settings, false);
+  }
+  
+  getData = function( url, callback, data ){ 
     $.ajax({
       url: url,
       dataType: 'jsonp',

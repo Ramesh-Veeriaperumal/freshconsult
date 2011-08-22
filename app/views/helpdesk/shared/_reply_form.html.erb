@@ -45,7 +45,7 @@
                 <%= t("message") %>:
             </label>
             <div class="fields">              
-                <%= f.text_area :body, { :class => 'auto-expand required', :id => "#{id}-#{cntid}-body" , :value => @signature} %>
+                <%= f.text_area :body, { :class => 'auto-expand required', :id => "#{id}-#{cntid}-body" , :value => @signature } %>
             </div>
         </li>
         <% if !@ticket.ticket_topic.nil? and !(@ticket.ticket_topic.topic.locked) %>

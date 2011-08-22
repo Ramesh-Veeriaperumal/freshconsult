@@ -1,8 +1,14 @@
+<% content_for :onload_script do %>
+	jQuery("#PortalUrl")
+		.rules("add", {
+	  			required: function(element) { return jQuery("#EnablePortal").attr("checked"); }
+	   });
+<% end %>
 <span class="seperator"></span>
 <%= content_tag(:label, t('.portal_settings'), :class => "tabbed caption") %>
 <div class="fields">
-  <%= content_tag(:label, t('.portal_url')) %>
-	<%= portal.text_field :portal_url, :class => "text" %>
+  <%= content_tag(:label, t('.portal_url') + "*") %>
+	<%= portal.text_field :portal_url, :class => "text", :id => "PortalUrl" %>
 	<%= content_tag(:div, t('.cname_configure_info', :full_domain => current_account.full_domain), :class => "info-data") %>
 	<span class="seperator"></span>
 

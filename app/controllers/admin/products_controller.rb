@@ -20,15 +20,16 @@ class Admin::ProductsController < Admin::AdminController
   
   def update
     portal_params = params[:product].delete(:portal_attributes)
-    
+        
     if @product.update_attributes(params[:product])
       post_process_on_update portal_params
-      flash[:notice] = I18n.t(:'flash.general.update.success', :human_name => human_name)
-      redirect_back_or_default redirect_url
+      flash.now[:notice] = I18n.t(:'flash.general.update.success', :human_name => human_name)
+      redirect_to :action => 'index'
     else
       update_error
-      render :action => 'edit'
+      redirect_to :action => 'edit'
     end
+    
   end
   
   def delete_logo
