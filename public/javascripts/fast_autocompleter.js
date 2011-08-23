@@ -157,6 +157,7 @@ Autocompleter.MultiValue = Class.create({
     this.active = false;
     this.acceptNewValues      = this.options.acceptNewValues || false;
     this.options.frequency    = this.options.frequency || 0.4;
+    this.options.allowSpaces  = this.options.allowSpaces || false;
     this.options.minChars     = this.options.minChars || 2;
     this.options.tabindex     = this.options.tabindex || outputElement.readAttribute('tabindex') || '';
     this.options.onShow       = this.options.onShow ||
@@ -275,7 +276,7 @@ Autocompleter.MultiValue = Class.create({
       var separatorIndex = 0;
       if (event.keyCode == 188) {
         separatorIndex = fieldValue.indexOf(',');
-      } else if (event.keyCode == 32) {
+      } else if (event.keyCode == 32 && !this.options.allowSpaces) {
         separatorIndex = fieldValue.indexOf(' ');
       };
       newValue = fieldValue.substr(0, separatorIndex).toLowerCase().strip();

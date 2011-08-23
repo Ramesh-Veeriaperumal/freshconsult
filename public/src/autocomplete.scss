@@ -65,7 +65,15 @@ ul.multi_value_field li, ul.multi_value_field input {
 
 ul.multi_value_field li.search_field_item{
     padding:0px;
-    border:0px;
+    border:0px; 
+    input{
+       border: 0 !important;
+       margin: 0 !important;
+       outline: 0 !important;
+       padding: 3px 0 3px !important;
+       width:auto;
+       background: none !important;
+    }
 }
 
 ul.multi_value_field li.choice {
@@ -86,15 +94,7 @@ ul.multi_value_field li.choice a.close-link {
   outline: none;
   background:none;
 }
-
-ul.multi_value_field li input {
-  border: 0 !important;
-  margin: 0 !important;
-  outline: 0 !important;
-  padding: 3px 0 3px !important;
-  width: 100px !important;
-  background: none !important;
-}
+ 
 
 ul.multi_value_field li.choice:hover {
   background-color: #BBCEF1;

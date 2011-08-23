@@ -1,1 +1,10 @@
-<%= render :partial => 'twitter_form' %>
+<% content_for :sidebar do -%><%- end %>
+<h3 class="title">Twitter settings for <%= @item.product.name %></h3>
+<% form_for :twitter_handle, :url => social_twitter_path(@item), :html => { :method => :put } do |f| %>
+	<%= render :partial => 'form', :locals => { :twitter_handle => @item } %>
+	<div class="button-container">
+	  <%= link_to("Back to admin", "/admin/home", :class => "uiButton floatl") if @item.product.primary_role? %>
+    <%= link_to(t('remove'), social_twitter_path(@item), :method => 'delete', :confirm => "Are you sure you want to remove this twitter account's association with #{@item.product.name}?", :class => "uiButton" ) %>
+    <%= submit_tag "Update", :class => "uiButton"  %>
+  </div>
+<% end %>

@@ -1,4 +1,4 @@
-class Social::TwitterHandlesController < ApplicationController
+class Social::TwitterHandlesController < Admin::AdminController
  
   before_filter :except => [:search, :create_twicket] do |c| 
     c.requires_permission :manage_users
@@ -14,26 +14,25 @@ class Social::TwitterHandlesController < ApplicationController
   before_filter :load_item,  :only => [:tweet, :edit, :update, :search, :destroy]       
   before_filter :twitter_wrapper , :only => [:signin, :authdone, :index]
  
-  def index
-    request_token = @wrapper.request_tokens          
-    session[:request_token] = request_token.token
-    session[:request_secret] = request_token.secret
+  def index    
     store_location
     if @twitter_handle
-      @twitter_user = Twitter.user(@twitter_handle.screen_name)
+      redirect_to edit_social_twitter_url(@twitter_handle)
+    else
+      request_token = @wrapper.request_tokens          
+      session[:request_token] = request_token.token
+      session[:request_secret] = request_token.secret
     end
   end
   
   def edit
     @twitter_user = Twitter.user(@item.screen_name)
-    render :partial => "twitter_form"
   end 
   
   def signin
     request_token = @wrapper.request_tokens          
     session[:request_token] = request_token.token
     session[:request_secret] = request_token.secret    
-    render :partial => "twitter_signin"   
   end
 
   def authdone
@@ -45,19 +44,19 @@ class Social::TwitterHandlesController < ApplicationController
     begin      
       twitter_handle = @wrapper.auth( session[:request_token], session[:request_secret], params[:oauth_verifier] )
       if twitter_handle.save 
-        flash.now[:notice] = t('twitter.success_signin')
+        flash[:notice] = t('twitter.success_signin', :twitter_screen_name => twitter_handle.screen_name, :helpdesk => twitter_handle.product.name)
       else
-        flash.now[:notice] = t('twitter.user_exists')
+        flash[:notice] = t('twitter.user_exists')
       end
     rescue
-      flash.now[:error] = t('twitter.not_authorized')
+      flash[:error] = t('twitter.not_authorized')
     end
   end
   
   def destroy
+    flash[:notice] = t('twitter.deleted', :twitter_screen_name => @item.screen_name)
     @item.destroy   
-    flash.now[:notice] = t('twitter.deleted')
-    redirect_to :back
+    redirect_back_or_default redirect_url 
   end
   
   def show_time_lines
@@ -77,14 +76,13 @@ class Social::TwitterHandlesController < ApplicationController
   
  
   def update
-    @item.search_keys = params[:search_keys_string].split(",")
     if @item.update_attributes(params[:social_twitter_handle])    
-      flash.now[:notice] = I18n.t(:'flash.general.update.success', :human_name => human_name)
+      flash[:notice] = I18n.t(:'flash.twitter.updated')
     else
       update_error
     end   
     respond_to do |format|
-      format.html { redirect_to :back }
+      format.html { redirect_back_or_default redirect_url }
       format.js
     end
   end
@@ -101,6 +99,7 @@ class Social::TwitterHandlesController < ApplicationController
   end
   
   def feed
+    @selected_tab = :social
     @products   = current_account.email_configs.find(:all, :order => "primary_role desc")
     @twitter_accounts = current_account.twitter_handles
   end
@@ -173,8 +172,7 @@ class Social::TwitterHandlesController < ApplicationController
         social_twitters_url
       else
         admin_products_url      
-      end
-    
+      end    
     end
 
 end
