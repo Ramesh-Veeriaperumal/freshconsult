@@ -25,7 +25,7 @@ default_fields:
         handler: text_array
         
     ticket_type:
-        handler: numeric
+        handler: text
     
     status:
         handler: numeric

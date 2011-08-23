@@ -7,8 +7,7 @@ module Helpdesk::TicketActions
                                                         :message => "Captcha verification failed, try again!"))
     return false unless @ticket.save
     handle_attachments
-    @ticket.create_activity(@ticket.requester, 'activities.tickets.new_ticket.long', {}, 
-                                 'activities.tickets.new_ticket.short')
+
     if params[:meta]
       @ticket.notes.create(
         :body => params[:meta].map { |k, v| "#{k}: #{v}" }.join("\n"),
@@ -25,7 +24,6 @@ module Helpdesk::TicketActions
   def set_default_values
     @ticket.status = TicketConstants::STATUS_KEYS_BY_TOKEN[:open] unless TicketConstants::STATUS_NAMES_BY_KEY.key?(@ticket.status)
     @ticket.source = TicketConstants::SOURCE_KEYS_BY_TOKEN[:portal] if @ticket.source == 0
-    @ticket.ticket_type ||= TicketConstants::TYPE_KEYS_BY_TOKEN[:how_to]
     @ticket.email ||= current_user && current_user.email
     @ticket.email_config_id ||= current_portal.product.id
   end

@@ -8,7 +8,7 @@ ticket = Helpdesk::Ticket.seed(:account_id, :subject) do |s|
   s.status = TicketConstants::STATUS_KEYS_BY_TOKEN[:open]
   s.source = TicketConstants::SOURCE_KEYS_BY_TOKEN[:portal]
   s.priority = TicketConstants::PRIORITY_KEYS_BY_TOKEN[:low]
-  s.ticket_type = TicketConstants::TYPE_NAMES_BY_SYMBOL[:how_to]
+  s.ticket_type = "Question"
 end
 
 Helpdesk::Activity.seed(:account_id, :notable_id, :notable_type) do |s|
