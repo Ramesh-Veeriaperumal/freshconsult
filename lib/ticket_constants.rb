@@ -67,6 +67,20 @@ module TicketConstants
   DEFAULT_COLUMNS_OPTIONS = Hash[*DEFAULT_COLUMNS.map { |i| [i[0], i[1]] }.flatten]
   DEFAULT_COLUMNS_BY_KEY = Hash[*DEFAULT_COLUMNS.map { |i| [i[2], i[1]] }.flatten]
   DEFAULT_COLUMNS_KEYS_BY_TOKEN = Hash[*DEFAULT_COLUMNS.map { |i| [i[0], i[2]] }.flatten]
+  
+  
+  ACTIVITY_HASH = {:status =>"create_status_activity",
+                   :priority =>"create_priority_activity",
+                   :source => "create_source_activity",
+                   :group_id => "create_group_activity",
+                   :deleted => "create_deleted_activity",
+                   :responder_id => "create_assigned_activity",
+                   :email_config_id => "create_product_activity",
+                   :ticket_type => "create_ticket_type_activity",
+                   
+                  }
+  
+  
  
 
 end
