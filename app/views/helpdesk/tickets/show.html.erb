@@ -213,7 +213,7 @@
 		  </h3>
 			<div class="description"> 
         <div class="user_details">
-          <%= user_avatar(@ticket.requester.avatar)  %>
+          <%= user_avatar(@ticket.requester)  %>
           <div>
             <%= t('ticket.reported_by', :requester => link_to(h(@ticket.requester.display_name),@ticket.requester, :class => "user_name")) %>     
           </div>

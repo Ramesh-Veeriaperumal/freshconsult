@@ -25,10 +25,6 @@ class Social::TwitterHandlesController < Admin::AdminController
     end
   end
   
-  def edit
-    @twitter_user = Twitter.user(@item.screen_name)
-  end 
-  
   def signin
     request_token = @wrapper.request_tokens          
     session[:request_token] = request_token.token

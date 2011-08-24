@@ -23,17 +23,13 @@
 			<% if @product.twitter_handle.nil? %>
 				<%= link_to("Add Twitter", signin_social_twitters_path(:product_id => @product.id), :class => "uiButton") %>
 		  <% else %>
-				<% @twitter_user = Twitter.user(@product.twitter_handle.screen_name) %>
 				<div>
 					<div class="preview_pic">
 						<span class="tweet_pic"></span>
-						<%= image_tag(@twitter_user.profile_image_url)  %>
+						<%= image_tag( twitter_avatar(@product.twitter_handle.screen_name) )  %>
 					</div>
-					<%= content_tag(:h4, link_to(@twitter_user.name, edit_social_twitter_path(@product.twitter_handle), :title => "Edit Twitter Account <b>@#{@product.twitter_handle.screen_name}</b>"), :class => "title") %>
-					<div class="intro">
-						<%= link_to("@"+@product.twitter_handle.screen_name, edit_social_twitter_path(@product.twitter_handle), :title => "Edit Twitter Account <b>@#{@product.twitter_handle.screen_name}</b>") %>
-						
-					</div>
+					<%= content_tag(:h3, link_to( "@#{@product.twitter_handle.screen_name}", edit_social_twitter_path(@product.twitter_handle), :title => "Edit Twitter Account <b>@#{@product.twitter_handle.screen_name}</b>"), :class => "title") %>
+					<br /><br />
 				</div>
 			<% end %> 
 	</div>

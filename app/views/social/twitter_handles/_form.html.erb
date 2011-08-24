@@ -2,10 +2,10 @@
   <li class="inline-field">
     <label class="caption">
       <div class="preview_pic">
-        <%= image_tag(@twitter_user.profile_image_url) %><span class="tweet_pic"></span>
+        <%= image_tag(twitter_avatar(twitter_handle.screen_name)) %>
+        <span class="tweet_pic"></span>
       </div>
-      <%= content_tag(:h2, @twitter_user.name, :class => "title") %>
-      <div class="intro">@<%= @twitter_user.screen_name %></div>
+      <%= content_tag(:h2, "@#{twitter_handle.screen_name}", :class => "title") %>
     </label>
     <div class="fields">
       <label>Search Keywords</label>
@@ -44,6 +44,6 @@
       <div class="info-data tabbed">
         Freshdesk will convert any Direct messages to this Twitter account into tickets.
       </div>	 
-    </div>
+    </div> 
   </li>
 </ul>

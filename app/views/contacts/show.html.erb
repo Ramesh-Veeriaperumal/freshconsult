@@ -4,7 +4,7 @@
 			<%= link_to t('contacts.edit_contact'), edit_contact_path(@user) %>
 			<%= link_to ( t('contacts.info2'), { :action => :make_agent, :id => @user.id }, :method => :put , :class => "last" ) %>
 		</div>
-		<%= user_avatar(@user.avatar, :medium, "profile_pic") %>	
+		<%= user_avatar(@user, :medium, "profile_pic") %>	
 		<h3 class="title"><%= @user.display_name %></h3>
 		<% unless @user.job_title.blank? %>
 		   <b><%= h @user.job_title %></b>
