@@ -8,7 +8,12 @@
       <%= content_tag(:h2, "@#{twitter_handle.screen_name}", :class => "title") %>
     </label>
     <div class="fields">
-      <label>Search Keywords</label>
+      <label class="caption">Product</label>
+      <div class="fields">
+  	    <%= collection_select(:social_twitter_handle, :product_id, current_account.products, :id, :name, { :include_blank => '...', :selected => twitter_handle.product_id })%>
+  	  </div>
+  	  <span class="seperator"></span>
+      <label class="caption">Search Keywords</label>
       <% content_for :onload_script do -%>
         function lookup(searchString, callback) { }; 
         search_keys = $("social_twitter_handle_search_keys").value;
@@ -23,7 +28,9 @@
         new Autocompleter.MultiValue("social_twitter_handle_search_keys", cachedLookup, search_keys, { frequency: 0.1, acceptNewValues: true, allowSpaces: true });
         jQuery("li.search_field_item input").autoGrowInput();
       <%- end %>
-      <%= text_field "social_twitter_handle", :search_keys, { :value => twitter_handle.search_keys_string }   %>
+      <div class="fields">
+        <%= text_field "social_twitter_handle", :search_keys, { :value => twitter_handle.search_keys_string }   %>
+      </div>
       <div class="info-data">
         Helps you to quickly monitor twitter search relating to your product/brand/service.<br />
         <strong>Note:</strong> You can add multiple search keywords separated by comma.

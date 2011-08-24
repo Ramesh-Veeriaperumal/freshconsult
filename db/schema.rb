@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110818071440) do
+ActiveRecord::Schema.define(:version => 20110824144030) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -636,8 +636,7 @@ ActiveRecord::Schema.define(:version => 20110818071440) do
     t.datetime "updated_at"
   end
 
-  add_index "social_twitter_handles", ["account_id", "twitter_user_id"], :name => "index_account_product_id", :unique => true
-  add_index "social_twitter_handles", ["product_id"], :name => "index_product_id", :unique => true
+  add_index "social_twitter_handles", ["account_id", "twitter_user_id"], :name => "social_twitter_handle_product_id", :unique => true
 
   create_table "solution_articles", :force => true do |t|
     t.string   "title"

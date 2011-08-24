@@ -8,7 +8,6 @@ class Social::TwitterHandle < ActiveRecord::Base
   before_create :add_default_search
    
   validates_uniqueness_of :twitter_user_id, :scope => :account_id
-  validates_uniqueness_of :product_id
   validates_presence_of :product_id, :twitter_user_id, :account_id,:screen_name
    
   def search_keys_string

@@ -166,7 +166,7 @@ button.ui-button::-moz-focus-inner {
   text-shadow: rgba(0, 0, 0, 0.2) -1px -1px 1px;
 }
 
-.uiButton-active {
+.special.uiButton {
   background-color: #6c9e30;
   border-color: #598228;
   color: #ffffff;
@@ -186,7 +186,7 @@ button.ui-button::-moz-focus-inner {
   font-size: 12px;
 }
 
-.large.uiButton, .large.uiButton:visited, .uiButton-active {
+.large.uiButton, .large.uiButton:visited {
   font-size: 13px;
   padding: 8px 14px 9px;
 }

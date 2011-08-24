@@ -1,5 +1,6 @@
 class Social::TwitterHandlesController < Admin::AdminController
-  
+
+  before_filter :store_location => [:index]  
   before_filter :except => [:search, :create_twicket] do |c| 
     c.requires_permission :manage_users
   end
@@ -9,20 +10,16 @@ class Social::TwitterHandlesController < Admin::AdminController
   end
   
   prepend_before_filter :load_product, :only => [ :signin, :authdone ]
-  before_filter :load_main_product, :only => [:index]
   before_filter :build_item, :only => [:signin, :authdone]
   before_filter :load_item,  :only => [:tweet, :edit, :update, :search, :destroy]       
   before_filter :twitter_wrapper , :only => [:signin, :authdone, :index]
  
-  def index    
-    store_location
-    if @twitter_handle
-      redirect_to edit_social_twitter_url(@twitter_handle)
-    else
-      request_token = @wrapper.request_tokens          
-      session[:request_token] = request_token.token
-      session[:request_secret] = request_token.secret
-    end
+  def index
+    request_token = @wrapper.request_tokens          
+    session[:request_token] = request_token.token
+    session[:request_secret] = request_token.secret
+    
+    @twitter_handles = all_twitters    
   end
   
   def signin
@@ -39,13 +36,13 @@ class Social::TwitterHandlesController < Admin::AdminController
   def add_to_db
     begin      
       twitter_handle = @wrapper.auth( session[:request_token], session[:request_secret], params[:oauth_verifier] )
-      if twitter_handle.save 
+      if twitter_handle.save!
         flash[:notice] = t('twitter.success_signin', :twitter_screen_name => twitter_handle.screen_name, :helpdesk => twitter_handle.product.name)
       else
         flash[:notice] = t('twitter.user_exists')
       end
-    rescue
-      flash[:error] = t('twitter.not_authorized')
+    #rescue
+      #`flash[:error] = t('twitter.not_authorized')
     end
   end
   
@@ -189,19 +186,19 @@ class Social::TwitterHandlesController < Admin::AdminController
   
   protected
   
-    def load_main_product
-      @current_product = current_account.primary_email_config
-      @twitter_handle  = current_account.primary_email_config.twitter_handle
-    end
-  
+   
     def twitter_wrapper   
-      @wrapper = TwitterWrapper.new @item ,{ :product => @current_product, 
+      @wrapper = TwitterWrapper.new @item ,{ :product => scoper, 
                                              :current_account => current_account,
                                              :callback_url => url_for(:action => 'authdone')}
     end
   
     def scoper
-      @current_product
+      @current_product ||= current_account.primary_email_config
+    end
+    
+    def all_twitters
+      current_account.twitter_handles
     end
   
     def load_product
@@ -209,7 +206,7 @@ class Social::TwitterHandlesController < Admin::AdminController
     end  
   
     def build_item
-      @item = scoper.build_twitter_handle
+      @item = scoper.twitter_handles.build
     end
   
     def load_item
