@@ -105,9 +105,7 @@ class Account < ActiveRecord::Base
   has_many :user_accesses , :class_name =>'Admin::UserAccess' , :dependent => :destroy
   
   has_many :twitter_handles, :class_name =>'Social::TwitterHandle' 
-  
-  has_many :tweets, :class_name =>'Social::Tweet' 
-  
+  has_many :tweets, :class_name =>'Social::Tweet'  , :dependent => :destroy
   
   has_one :survey, :dependent => :destroy
   has_many :survey_points, :through => :survey

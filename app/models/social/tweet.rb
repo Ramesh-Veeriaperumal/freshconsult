@@ -20,12 +20,13 @@ class Social::Tweet < ActiveRecord::Base
   
   
   def get_ticket
+    
     if is_ticket?
-      tweetable
+      return tweetable
     end
     
     if is_note?
-      tweetable.notable
+     return tweetable.notable
     end
     
   end

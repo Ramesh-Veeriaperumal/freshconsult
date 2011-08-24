@@ -5,7 +5,7 @@ class Social::TwitterHandle < ActiveRecord::Base
   belongs_to :product, :class_name => 'EmailConfig'
   belongs_to :account 
   
-  before_validate :check_product_id
+  before_validation :check_product_id
   before_create :add_default_search
   
    
@@ -25,9 +25,7 @@ class Social::TwitterHandle < ActiveRecord::Base
   end
   
   def check_product_id
-   if (product_id.nil? or !product_id.is_numeric?)
-    self.product_id = Account.current.primary_email_config.id 
-   end
+    self.product_id ||= Account.current.primary_email_config.id 
   end
 
 end

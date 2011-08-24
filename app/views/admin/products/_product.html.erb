@@ -42,13 +42,10 @@
 				</div>
 				
 				<div class="channel-text">
-					<% if product.twitter_handle.nil? %>
-						<span class='icon twitter'></span>
-						<%= link_to("Add Twitter", signin_social_twitters_path(:product_id => product.id), :class => "slim-button") %>
- 	 			  <% else %>
+					<% product.twitter_handles.each do |twitter_handle| %>
 						<span class='icon twitter-active'></span>				
-						<%= link_to("@"+product.twitter_handle.screen_name, edit_social_twitter_path(product.twitter_handle), :class => "", :title => "Edit Twitter Account <b>@#{product.twitter_handle.screen_name}</b>") %>
-						<%= link_to( image_tag("symbols/setting.png"), edit_social_twitter_path(product.twitter_handle), :class => "", :title => "Edit Twitter Account <b>@#{product.twitter_handle.screen_name}</b>") %>
+						<%= link_to("@#{twitter_handle.screen_name}", edit_social_twitter_path(twitter_handle), :class => "", :title => "Edit Twitter Account <b>@#{twitter_handle.screen_name}</b>") %>
+						<%= link_to( image_tag("symbols/setting.png"), edit_social_twitter_path(twitter_handle), :class => "", :title => "Edit Twitter Account <b>@#{twitter_handle.screen_name}</b>") %>
 					<% end %>				
 				</div>
 				

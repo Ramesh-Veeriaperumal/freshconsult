@@ -1,6 +1,9 @@
 class Social::TwitterHandlesController < Admin::AdminController
+  
+  include ErrorHandle
 
   before_filter :store_location => [:index]  
+  
   before_filter :except => [:search, :create_twicket] do |c| 
     c.requires_permission :manage_users
   end
@@ -13,6 +16,22 @@ class Social::TwitterHandlesController < Admin::AdminController
   before_filter :build_item, :only => [:signin, :authdone]
   before_filter :load_item,  :only => [:tweet, :edit, :update, :search, :destroy]       
   before_filter :twitter_wrapper , :only => [:signin, :authdone, :index]
+  
+  def tweet_exists
+    #params[:tweet_ids] = "106251007524216832,106251505983688704"
+    converted_tweets = current_account.tweets.find(:all,
+                              :conditions => { :tweet_id => params[:tweet_ids].split(",")},
+                              :include => :tweetable)
+    @tweet_tkt_hsh = {}
+    converted_tweets.each do |tweet|
+      @tweet_tkt_hsh.store(tweet.tweet_id,tweet.get_ticket.id)
+    end
+    
+    respond_to do |format|
+      format.json  { render :json => @tweet_tkt_hsh.to_json }
+    end
+    
+  end
  
   def index
     request_token = @wrapper.request_tokens          
@@ -119,8 +138,7 @@ class Social::TwitterHandlesController < Admin::AdminController
     user = get_twitter_user(params[:helpdesk_tickets][:twitter_id])
     
     unless tweet.nil?  
-      @ticket = tweet.tweetable.notable if  tweet.tweetable_type.eql?('Helpdesk::Note')
-      @ticket = tweet.tweetable if  tweet.tweetable_type.eql?('Helpdesk::Ticket')
+      @ticket = tweet.get_ticket
     end
     
     unless @ticket.blank?
@@ -142,9 +160,16 @@ class Social::TwitterHandlesController < Admin::AdminController
   
   def create_twicket
     in_reply_to_status_id = nil
-    sandbox do 
-      in_reply_to_status_id = Twitter.status(params[:helpdesk_tickets][:tweet_attributes][:tweet_id]).in_reply_to_status_id_str
+    
+    return_value = sandbox(0) { 
+     in_reply_to_status_id = Twitter.status(params[:helpdesk_tickets][:tweet_attributes][:tweet_id]).in_reply_to_status_id_str
+    }
+    
+    if return_value == 0
+      flash.now[:notice] = "Something wrong with the twitter API"
+      return  render :partial => "create_twicket"
     end
+    
     if in_reply_to_status_id.blank?
       @item = create_ticket_from_tweet
     else
@@ -158,16 +183,6 @@ class Social::TwitterHandlesController < Admin::AdminController
       flash.now[:notice] = t('twitter.tkt_err_save')
     end 
     render :partial => "create_twicket"
-    # if @item.save
-    #   res["success"] = true      
-    #   res["ticket_link"] = helpdesk_ticket_url(@item, :open_tweet_form => true)
-    #   res["message"] = t('twitter.ticket_save')
-    #   render :json => ActiveSupport::JSON.encode(res)
-    # else
-    #   res["success"] = false
-    #   res["message"] = t('twitter.tkt_err_save')
-    #   render :json => ActiveSupport::JSON.encode(res)
-    # end
   end
   
   def send_tweet
@@ -225,40 +240,5 @@ class Social::TwitterHandlesController < Admin::AdminController
       end
     end
   
-    def sandbox
-      begin
-        yield
-      rescue Errno::ECONNRESET => e
-        NewRelic::Agent.notice_error(e)
-        RAILS_DEFAULT_LOGGER.debug "Something wrong happened in twitter!"
-        RAILS_DEFAULT_LOGGER.debug e.to_s
-      rescue Timeout::Error => e
-        NewRelic::Agent.notice_error(e)
-        RAILS_DEFAULT_LOGGER.debug "Something wrong happened in twitter!"
-        RAILS_DEFAULT_LOGGER.debug e.to_s
-      rescue EOFError => e
-        NewRelic::Agent.notice_error(e)
-        RAILS_DEFAULT_LOGGER.debug "Something wrong happened in twitter!"
-        RAILS_DEFAULT_LOGGER.debug e.to_s
-      rescue Errno::ETIMEDOUT => e
-        NewRelic::Agent.notice_error(e)
-        RAILS_DEFAULT_LOGGER.debug "Something wrong happened in twitter!"
-        RAILS_DEFAULT_LOGGER.debug e.to_s
-      rescue OpenSSL::SSL::SSLError => e
-        NewRelic::Agent.notice_error(e)
-        RAILS_DEFAULT_LOGGER.debug "Something wrong happened in twitter!"
-        RAILS_DEFAULT_LOGGER.debug e.to_s
-      rescue SystemStackError => e
-        NewRelic::Agent.notice_error(e)
-        RAILS_DEFAULT_LOGGER.debug "Something wrong happened in twitter!"
-        RAILS_DEFAULT_LOGGER.debug e.to_s
-      rescue Exception => e
-        NewRelic::Agent.notice_error(e)
-        RAILS_DEFAULT_LOGGER.debug "Something wrong happened in twitter!"
-        RAILS_DEFAULT_LOGGER.debug e.to_s
-      rescue 
-        RAILS_DEFAULT_LOGGER.debug "Something wrong happened in twitter!"
-      end
-    end
-
+    
 end

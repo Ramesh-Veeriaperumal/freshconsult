@@ -171,7 +171,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
    def is_twitter?
-    (tweet) and (fetch_twitter_handle) 
+    (tweet) and (!account.twitter_handles.blank?) 
   end
   
   def priority=(val)
@@ -608,7 +608,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def fetch_twitter_handle
-   email_config.nil? ? account.primary_email_config.twitter_handle : email_config.twitter_handle
+   email_config.nil? ? account.primary_email_config.twitter_handles.first : email_config.twitter_handles.first
   end
   
   def portal_host
