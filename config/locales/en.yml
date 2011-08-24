@@ -453,17 +453,23 @@ en:
         short: "{{user_path}} changed the status to {{status_name}}"
         long: "{{user_path}} changed the ticket status of {{notable_path}} to {{status_name}}"
       deleted:
-        short: "{{user_path}} has deleted the ticket {{notable_path}}"
+        short: "{{user_path}} has deleted this ticket"
         long: "{{user_path}} has deleted the ticket {{notable_path}}"
       product_change:
         short: "{{user_path}} changed the product to {{product_name}}"
         long: "{{user_path}} changed the product of {{notable_path}} to {{product_name}}"
+      product_change_none: 
+        short: "{{user_path}} changed the product to 'none'"
+        long: "{{user_path}} changed the product of {{notable_path}} to 'none'"
       ticket_type_change:
         short: "{{user_path}} changed the ticket type to {{ticket_type}}"
         long: "{{user_path}} changed the ticket type of {{notable_path}} to {{ticket_type}}"
       group_change:
         short: "{{user_path}} changed the group to {{group_name}}"
         long: "{{user_path}} changed the group of {{notable_path}} to {{group_name}}"
+      group_change_none: 
+        short: "{{user_path}} changed the group to 'none'"
+        long: "{{user_path}} changed the group of {{notable_path}} to 'none'"
       source_change:
         short: "{{user_path}} changed the source to {{source_name}}"
         long: "{{user_path}} changed the ticket source of {{notable_path}} to {{source_name}}"
