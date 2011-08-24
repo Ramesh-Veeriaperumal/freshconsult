@@ -4,10 +4,36 @@ class Social::Tweet < ActiveRecord::Base
   
   belongs_to :tweetable, :polymorphic => true
   belongs_to :account
+  before_validate :check_product_id
   
   attr_protected :tweetable_id
   
   validates_presence_of   :tweet_id, :account_id
   validates_uniqueness_of :tweet_id, :scope => :account_id, :message => "Tweet already converted as a ticket"
+  
+  def is_ticket?
+    tweetable_type.eql?('Helpdesk::Ticket')
+  end
+  
+  def is_note?
+    tweetable_type.eql?('Helpdesk::Note')
+  end
+  
+  def check_product_id
+   if (product_id.nil? or !product_id.is_numeric?)
+    self.product_id = Account.current.primary_email_config.id 
+   end
+  end
+  
+  def get_ticket
+    if is_ticket?
+      tweetable
+    end
+    
+    if is_note?
+      tweetable.notable
+    end
+    
+  end
   
 end

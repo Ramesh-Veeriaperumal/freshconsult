@@ -49,7 +49,7 @@
 				</div>
 				<div id="twitter_results" class="list-group"></div>
 				<script id="tweetTemplate" type="text/x-jquery-tmpl">
-				  <div class="list-item" id="TWEET_DIV_${id}">
+				  <div class="list-item" id="TWEET_DIV_${id_str}">
 						<div class="preview-pic">
 							<img src="${profile_image_url}" />
 						</div>
@@ -61,7 +61,7 @@
 						      <a href="#" data-user="${from_user}" class="button reply_button">
 						        Reply
 					        </a>
-  						    <a href="#" data-text="${text}" data-user="${from_user}" data-tweet-id="${id}" class="button convert_as_ticket">
+  						    <a href="#" data-text="${text}" data-user="${from_user}" data-tweet-id="${id_str}" class="button convert_as_ticket">
   							    Convert to Ticket
   						    </a>
   						  </span>
