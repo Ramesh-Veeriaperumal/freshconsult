@@ -1,0 +1,49 @@
+<ul class="ui-form">
+  <li class="inline-field">
+    <label class="caption">
+      <div class="preview_pic">
+        <%= image_tag(@twitter_user.profile_image_url) %><span class="tweet_pic"></span>
+      </div>
+      <%= content_tag(:h2, @twitter_user.name, :class => "title") %>
+      <div class="intro">@<%= @twitter_user.screen_name %></div>
+    </label>
+    <div class="fields">
+      <label>Search Keywords</label>
+      <% content_for :onload_script do -%>
+        function lookup(searchString, callback) { }; 
+        search_keys = $("social_twitter_handle_search_keys").value;
+        if(search_keys == ""){
+          search_keys = [];
+        }else{
+          search_keys = search_keys.split(",");
+        } 
+        var cachedBackend = new Autocompleter.Cache(lookup, {choices: 10}),
+            cachedLookup = cachedBackend.lookup.bind(cachedBackend);
+
+        new Autocompleter.MultiValue("social_twitter_handle_search_keys", cachedLookup, search_keys, { frequency: 0.1, acceptNewValues: true, allowSpaces: true });
+        jQuery("li.search_field_item input").autoGrowInput();
+      <%- end %>
+      <%= text_field "social_twitter_handle", :search_keys, { :value => twitter_handle.search_keys_string }   %>
+      <div class="info-data">
+        Helps you to quickly monitor twitter search relating to your product/brand/service.<br />
+        <strong>Note:</strong> You can add multiple search keywords separated by comma.
+      </div>
+      <span class="seperator"></span>
+      <label class="checkbox">
+        <%= check_box "social_twitter_handle", :capture_mention_as_ticket, { :checked => twitter_handle.capture_mention_as_ticket } %> 	
+        Capture <strong>"Mentions"</strong> as ticket
+      </label>
+      <div class="info-data tabbed">
+        Freshdesk will convert any mentions of this Twitter account into tickets.
+      </div>				
+      <span class="seperator"></span>
+      <label class="checkbox">
+        <%= check_box "social_twitter_handle", :capture_dm_as_ticket, { :checked => twitter_handle.capture_dm_as_ticket } %> 
+        Capture <strong>"Direct messages"</strong> as ticket
+      </label>
+      <div class="info-data tabbed">
+        Freshdesk will convert any Direct messages to this Twitter account into tickets.
+      </div>	 
+    </div>
+  </li>
+</ul>

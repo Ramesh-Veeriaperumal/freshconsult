@@ -1,8 +1,0 @@
-<div>
-  <span class="seperator"></span>
-  <h4 class="title">Twitter settings</h4>
-  <% unless product.twitter_handle.nil? %>
-    @<%= product.twitter_handle.screen_name %>
-    <%= link_to "edit", edit_social_twitter_path(product.twitter_handle) %>
-  <% end %>
-</div>

@@ -87,18 +87,6 @@ class Helpdesk::TicketsController < ApplicationController
   def update
     old_item = @item.clone
     if @item.update_attributes(params[nscname])
-      create_assigned_activity(old_item, @item) if old_item.responder_id != @item.responder_id
-      
-      if old_item.status != @item.status
-        @item.create_activity(current_user, 'activities.tickets.status_change.long',
-          {'status_name' => @item.status_name}, 'activities.tickets.status_change.short')
-      end
-      
-      if old_item.priority != @item.priority
-        @item.create_activity(current_user, 'activities.tickets.priority_change.long',
-          {'priority_name' => @item.priority_name}, 'activities.tickets.priority_change.short')
-      end
-
       flash[:notice] = t(:'flash.general.update.success', :human_name => cname.humanize.downcase)
       redirect_to item_url
     else
@@ -307,22 +295,10 @@ class Helpdesk::TicketsController < ApplicationController
         item.responder = user
         #item.train(:ham) #Temporarily commented out by Shan
         item.save
-        create_assigned_activity(old_item, item) if old_item.responder_id != item.responder_id
       end
     end
   
-    def create_assigned_activity(old_item, item)
-      unless item.responder
-        item.create_activity(current_user, 'activities.tickets.assigned_to_nobody.long', {}, 
-                                 'activities.tickets.assigned_to_nobody.short')
-      else
-        item.create_activity(current_user, 
-          old_item.responder ? 'activities.tickets.reassigned.long' : 'activities.tickets.assigned.long', 
-          {'eval_args' => {'responder_path' => ['responder_path', 
-            {'id' => item.responder.id, 'name' => item.responder.name}]}}, 
-          'activities.tickets.assigned.short')
-      end
-    end
+   
 
     def load_flexifield   
       flexi_arr = Hash.new

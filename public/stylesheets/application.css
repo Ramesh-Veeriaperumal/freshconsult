@@ -589,7 +589,7 @@ div.preview_pic span.tweet_pic {
   border: 1px solid #ffffff;
   bottom: 5px;
   right: 1px;
-  background: url('/images/symbols-s294d1d3dee.png') 0 -205px no-repeat white;
+  background: url('/images/symbols-s0a35592ce3.png') 0 -205px no-repeat white;
 }
 
 div.profile_pic img {
@@ -3457,7 +3457,7 @@ a.page_title:active {
 }
 .request-list div.item .private-icon {
   display: none;
-  background: url('/images/symbols-s294d1d3dee.png') 0 -153px no-repeat;
+  background: url('/images/symbols-s0a35592ce3.png') 0 -153px no-repeat;
   width: 16px;
   height: 16px;
   position: relative;
@@ -4248,7 +4248,6 @@ div.addReminder form label.overlabel {
 .admin_list li .portal-text .channel-text, .content_list li .portal-text .channel-text {
   position: relative;
   font-size: 1.35em;
-  margin-top: 1px;
   padding-left: 24px;
 }
 .admin_list li .portal-text .channel-text span.icon, .content_list li .portal-text .channel-text span.icon {
@@ -4259,22 +4258,22 @@ div.addReminder form label.overlabel {
   height: 18px;
 }
 .admin_list li .portal-text .channel-text span.email, .content_list li .portal-text .channel-text span.email {
-  background: url('/images/symbols-s294d1d3dee.png') 0 -187px no-repeat;
+  background: url('/images/symbols-s0a35592ce3.png') 0 -187px no-repeat;
 }
 .admin_list li .portal-text .channel-text span.url, .content_list li .portal-text .channel-text span.url {
-  background: url('/images/symbols-s294d1d3dee.png') 0 -259px no-repeat;
+  background: url('/images/symbols-s0a35592ce3.png') 0 -259px no-repeat;
 }
 .admin_list li .portal-text .channel-text span.twitter, .content_list li .portal-text .channel-text span.twitter {
-  background: url('/images/symbols-s294d1d3dee.png') 0 -223px no-repeat;
+  background: url('/images/symbols-s0a35592ce3.png') 0 -223px no-repeat;
 }
 .admin_list li .portal-text .channel-text span.email-active, .content_list li .portal-text .channel-text span.email-active {
-  background: url('/images/symbols-s294d1d3dee.png') 0 -169px no-repeat;
+  background: url('/images/symbols-s0a35592ce3.png') 0 -169px no-repeat;
 }
 .admin_list li .portal-text .channel-text span.url-active, .content_list li .portal-text .channel-text span.url-active {
-  background: url('/images/symbols-s294d1d3dee.png') 0 -241px no-repeat;
+  background: url('/images/symbols-s0a35592ce3.png') 0 -241px no-repeat;
 }
 .admin_list li .portal-text .channel-text span.twitter-active, .content_list li .portal-text .channel-text span.twitter-active {
-  background: url('/images/symbols-s294d1d3dee.png') 0 -205px no-repeat;
+  background: url('/images/symbols-s0a35592ce3.png') 0 -205px no-repeat;
 }
 .admin_list li .portal-text .not-verified, .content_list li .portal-text .not-verified {
   padding: 12px 0px;
@@ -4283,7 +4282,7 @@ div.addReminder form label.overlabel {
   margin: 0px;
 }
 .admin_list li .portal-text .slim-button, .content_list li .portal-text .slim-button {
-  margin-top: -3px;
+  margin-top: 0px;
   margin-left: -2px;
   color: #333333;
 }

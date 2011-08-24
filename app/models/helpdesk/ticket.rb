@@ -16,8 +16,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   before_validation :populate_requester, :set_default_values 
   before_create :set_dueby, :save_ticket_states
   after_create :refresh_display_id, :save_custom_field, :pass_thro_biz_rules, :autoreply,:create_initial_activity
-  before_update :cache_old_model, :update_dueby
-  after_update :save_custom_field, :update_ticket_states, :notify_on_update 
+  before_update :cache_old_model, :update_dueby 
+  after_update :save_custom_field, :update_ticket_states, :notify_on_update , :update_activity 
   
   belongs_to :account
   belongs_to :email_config
@@ -381,11 +381,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     ticket_states.save
   end
   
-  
-  
-  
-
-  
+    
   def notify_by_email(notification_type)    
     Helpdesk::TicketNotifier.send_later(:notify_by_email, notification_type, self) if notify_enabled?(notification_type)
   end
@@ -623,5 +619,74 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def portal_name
     (email_config && email_config.portal) ? email_config.portal.name : account.portal_name
   end
+  
+  def update_activity
+    self.changed.each do |attr|
+      send(ACTIVITY_HASH[attr.to_sym()]) unless ACTIVITY_HASH[attr.to_sym()].blank?
+    end
+  end
+  
+  private
+  
+  def create_source_activity
+    create_activity(User.current, 'activities.tickets.source_change.long',
+        {'source_name' => source_name}, 'activities.tickets.source_change.short')
+  end
+  
+  def create_product_activity
+    unless email_config
+      create_activity(User.current, 'activities.tickets.product_change_none.long', {}, 
+                                 'activities.tickets.product_change_none.short')
+    else
+      create_activity(User.current, 'activities.tickets.product_change.long',
+        {'product_name' => email_config.name}, 'activities.tickets.product_change.short')
+    end
+    
+  end
+  
+  def create_ticket_type_activity
+     create_activity(User.current, 'activities.tickets.ticket_type_change.long',
+        {'ticket_type' => ticket_type}, 'activities.tickets.ticket_type_change.short')
+  end
+  
+  def create_group_activity
+    unless group
+        create_activity(User.current, 'activities.tickets.group_change_none.long', {}, 
+                                 'activities.tickets.group_change_none.short')
+    else
+    create_activity(User.current, 'activities.tickets.group_change.long',
+        {'group_name' => group.name}, 'activities.tickets.group_change.short')
+    end
+  end
+  
+  def create_status_activity
+    create_activity(User.current, 'activities.tickets.status_change.long',
+        {'status_name' => status_name}, 'activities.tickets.status_change.short')
+  end
+  
+  def create_priority_activity
+     create_activity(User.current, 'activities.tickets.priority_change.long', 
+        {'priority_name' => priority_name}, 'activities.tickets.priority_change.short')
+ 
+ end
+
+  def create_deleted_activity
+    create_activity(User.current, 'activities.tickets.deleted.long',
+       {'ticket_id' => display_id}, 'activities.tickets.deleted.short')
+  end
+  
+  def create_assigned_activity
+      unless responder
+        create_activity(User.current, 'activities.tickets.assigned_to_nobody.long', {}, 
+                                 'activities.tickets.assigned_to_nobody.short')
+      else
+        create_activity(User.current, 
+          @old_ticket.responder ? 'activities.tickets.reassigned.long' : 'activities.tickets.assigned.long', 
+          {'eval_args' => {'responder_path' => ['responder_path', 
+            {'id' => responder.id, 'name' => responder.name}]}}, 
+          'activities.tickets.assigned.short')
+      end
+  end
+
   
 end
