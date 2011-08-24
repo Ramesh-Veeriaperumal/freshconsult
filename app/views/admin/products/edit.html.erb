@@ -1,5 +1,4 @@
 <% @page_title = t('.title') %>
-<% store_location %>
 <%= content_tag :h3, @page_title, :class => "title" %>
 <% form_for :product, @product, :url => admin_product_path, :html => { :multipart => true, :method => :put, :id => "ProductForm" } do |f| %>
   <%= render :partial => "form", :object => f %>
