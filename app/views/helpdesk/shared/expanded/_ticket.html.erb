@@ -8,7 +8,11 @@
   	  <%= user_avatar(ticket.requester.avatar) %>
       <h3> <%= link_to(h(ticket.subject) + " (##{ticket.display_id})", ticket, :title => truncate(ticket.description, 350, "..."), :class => "ticket-description-tip" ) %> </h3>
 	  <% unless ticket.requester.nil? %>
-		<div> Reported by <%= link_to(h(ticket.requester.display_name), ticket.requester, :class => 'user_name' ) %>, on <%= formated_date(ticket.created_at) %> </div>
+		<div class=""> 
+		  Reported by 
+		  <%= link_to(h(ticket.requester.display_name), ticket.requester, :class => 'user_name' ) %>, 
+		  on <%= formated_date(ticket.created_at) %> 
+		</div>
 	  <% end %>
   </td>
 

@@ -37,7 +37,7 @@ class Social::TwitterHandlesController < Admin::AdminController
 
   def authdone
     add_to_db
-    redirect_back_or_default redirect_url
+    redirect_to redirect_url
   end
   
   def add_to_db
@@ -157,16 +157,24 @@ class Social::TwitterHandlesController < Admin::AdminController
     else
       @item = create_note_from_tweet(in_reply_to_status_id)
     end
-    res = Hash.new
+    @saved = false
     if @item.save
-      res["success"] = true      
-      res["message"]= t('twitter.ticket_save')
-      render :json => ActiveSupport::JSON.encode(res)
+      @saved = true
+      flash.now[:notice] = t('twitter.ticket_save')
     else
-      res["success"] = false
-      res["message"]= t('twitter.tkt_err_save')
-      render :json => ActiveSupport::JSON.encode(res)
-    end
+      flash.now[:notice] = t('twitter.tkt_err_save')
+    end 
+    render :partial => "create_twicket"
+    # if @item.save
+    #   res["success"] = true      
+    #   res["ticket_link"] = helpdesk_ticket_url(@item, :open_tweet_form => true)
+    #   res["message"] = t('twitter.ticket_save')
+    #   render :json => ActiveSupport::JSON.encode(res)
+    # else
+    #   res["success"] = false
+    #   res["message"] = t('twitter.tkt_err_save')
+    #   render :json => ActiveSupport::JSON.encode(res)
+    # end
   end
   
   def send_tweet
@@ -220,7 +228,7 @@ class Social::TwitterHandlesController < Admin::AdminController
       if @item.product.primary_role?
         social_twitters_url
       else
-        admin_products_url
+        edit_social_twitter_url(@item)
       end
     end
   

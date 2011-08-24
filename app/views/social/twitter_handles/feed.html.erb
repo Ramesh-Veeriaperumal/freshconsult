@@ -15,23 +15,21 @@
 	<table class="tweet-table">
 		<tr>
 			<td class="left-panel">
-				<% @products.each do |product| %>
-				  <% unless product.twitter_handle.nil? %>
-					  <h4 class="title"><%= product.name %></h4>
-					  <div class="intro"><%= "@#{h(product.twitter_handle.screen_name)}" %></div>
-						<ul class="search-keys" id="search_keys">						
-						<% product.twitter_handle.search_keys.each do |search_key| %>
-							<li>
-								<span class="icon"></span>
-								<% selected_class = (first_search.nil?) ? "selected" : "" %>
-								<%= link_to( h(search_key), "#", :class => "item_info #{selected_class}", :datatwitter => product.twitter_handle.id, :title => h(search_key) ) %>
-								<% first_search ||= h(search_key)  %>
-							</li>
-						<% end %>
-						</ul>
-						<span class="seperator"></span>
-					<% end %>
-				<% end %>
+			  <% @twitter_accounts.each do |twitter_handle| %>
+			    <h4 class="title"><%= twitter_handle.product.name %></h4>
+			    <div class="intro">@<%= twitter_handle.screen_name %></div>
+			    <ul class="search-keys" id="search_keys">						
+					  <% twitter_handle.search_keys.each do |search_key| %>
+  					  <li>
+  							<span class="icon"></span>
+  							<% selected_class = (first_search.nil?) ? "selected" : "" %>
+  							<%= link_to( h(search_key), "#", :class => "item_info #{selected_class}", :twitter_id => twitter_handle.id,:product_id => twitter_handle.product.id, :title => h(search_key) ) %>
+  							<% first_search ||= h(search_key)  %>
+  						</li>
+					  <% end %>
+					</ul>
+					<span class="seperator"></span>
+			  <% end %>
 			</td>
 			<td>
 				<div class="search-grey-box">
@@ -85,6 +83,9 @@
 </div>
 
 <% content_for :onload_script do -%>
+  var current_product_id = <%= @twitter_accounts.first.product.id %>;
+  var current_twitter_id = <%= @twitter_accounts.first.id %>;
+  
   jQuery("#twitter_results")
 		.tweetfeed({ "query" : "<%= first_search %>", 
 								 "templateid" : "#tweetTemplate",
@@ -116,7 +117,8 @@
 			        jQuery("#search_keys .item_info").removeClass("selected");
 			        jQuery(this).addClass("selected");
 			        jQuery('#twittersearch').val(jQuery.trim(this.title)).trigger("focus");
-			        current_search_id = jQuery(this).attr("datatwitter");
+			        current_product_id = jQuery(this).attr("product_id");
+			        current_twitter_id = jQuery(this).attr("twitter_id");
 			        jQuery("#search_twitter").trigger("submit");
 						});
 						
@@ -126,11 +128,17 @@
 				return false;
 			});
 			
+	jQuery("#twittersearch")
+	  .change(function(){
+	    current_product_id = null;
+	    current_twitter_id = 0;
+	  });
+			
 	jQuery("#twitter_results a.reply_button")
 	  .live("click", function(e){
-	    e.preventDefault(); 
+	    e.preventDefault();  
 	    var user = jQuery(this).attr("data-user");
-	    
+	    jQuery("#twitter_handle").val(current_twitter_id);
 	    jQuery("#tweet_form").dialog({  modal:true, width:'600px', height:'auto', position:'top',
                                       title: "Reply to @" + user, resizable: false, draggable: false });
 
@@ -147,6 +155,7 @@
 	        tweet_id    = jQuery(this).attr("data-tweet-id"),
 	        json_data   = { "subject"          : screen_name + ' - ' + tweet_text,
 	                        "description"      : tweet_text,
+	                        "email_config_id"  : current_product_id,
 	                        "twitter_id"       : screen_name,
 	                        "tweet_attributes" : { "tweet_id": tweet_id, "account_id": <%= current_account.id %>  }};
       link = jQuery(this);
@@ -163,7 +172,9 @@
       		    .addClass("tweet_converted")
       		    .find(".goto_ticket")
       		    .attr("href", data.ticket_link);      		    
-      		}
+      		}else{ 
+      		  
+      		}      		
       	}
       });
 	  });
@@ -188,6 +199,9 @@
 	      </td>
         <td>
 	        <%= text_area "tweet", :body, { :class => 'required tweet', :id => 'tweet_text_area' } %>
+	        <div class="info-data">
+	          <strong>Note:</strong> The current reply will not be registered as a ticket or a conversation.
+          </div>
 	      </td>
 	    </tr>
     </table>  
