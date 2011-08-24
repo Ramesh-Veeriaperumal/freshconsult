@@ -150,6 +150,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         user.signup!({:user => {:email => from_email[:email], :name => from_email[:name], 
           :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}})
       end
+      user.make_current
       user
     end
 

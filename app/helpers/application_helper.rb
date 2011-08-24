@@ -4,6 +4,8 @@ module ApplicationHelper
   include SavageBeast::ApplicationHelper
   include Juixe::Acts::Voteable
   
+  require "twitter"
+  
   ASSETIMAGE = { :help => "/images/helpimages" }
   
   def show_flash
@@ -179,8 +181,21 @@ module ApplicationHelper
   
   # Avatar helper for user profile image
   # :medium and :small size of the original image will be saved as an attachment to the user 
-  def user_avatar( avatar, profile_size = :thumb, profile_class = "preview_pic" )
-    content_tag( :div, (image_tag (avatar) ? avatar.content.url(profile_size) : "/images/fillers/profile_blank_#{profile_size}.gif"), :class => profile_class)
+  def user_avatar( user, profile_size = :thumb, profile_class = "preview_pic" )
+    content_tag( :div, (image_tag (user.avatar) ? user.avatar.content.url(profile_size) : is_user_social(user, profile_size)), :class => profile_class )
+  end
+  
+  def is_user_social( user, profile_size )
+    if user.twitter_id
+      profile_size = (profile_size == :medium) ? "bigger" : "normal"
+      twitter_avatar(user.twitter_id, profile_size)
+    else
+      "/images/fillers/profile_blank_#{profile_size}.gif"
+    end
+  end   
+  
+  def twitter_avatar( screen_name, profile_size = "normal" )
+    "http://api.twitter.com/1/users/profile_image?screen_name=#{screen_name}&size=#{profile_size}"
   end
   
   # User details page link should be shown only to agents and admin

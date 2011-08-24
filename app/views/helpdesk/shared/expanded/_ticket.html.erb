@@ -5,14 +5,15 @@
   </td>
 
   <td class="name">
-  	  <%= user_avatar(ticket.requester.avatar) %>
+  	  <%= user_avatar(ticket.requester) %>
       <h3> <%= link_to(h(ticket.subject) + " (##{ticket.display_id})", ticket, :title => truncate(ticket.description, 350, "..."), :class => "ticket-description-tip" ) %> </h3>
 	  <% unless ticket.requester.nil? %>
-		<div class=""> 
-		  Reported by 
+		<% content_tag :div, :class => "info-data" do %>
+		  <%= content_tag :span, "", :class => "custom-tip-bottom icon source-#{ticket.source_name.downcase}", :title => "Reported from #{ticket.source_name.downcase}" %>
+		  from
 		  <%= link_to(h(ticket.requester.display_name), ticket.requester, :class => 'user_name' ) %>, 
 		  on <%= formated_date(ticket.created_at) %> 
-		</div>
+		<% end %>
 	  <% end %>
   </td>
 

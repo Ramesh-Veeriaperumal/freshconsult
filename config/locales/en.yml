@@ -1362,3 +1362,7 @@ en:
     year: Year
     years: Years
   go_back_admin: Go back to Admin
+  social:
+    twitter_handles:
+      index:
+        title: "Twitter Accounts"

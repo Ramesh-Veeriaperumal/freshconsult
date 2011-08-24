@@ -19,6 +19,7 @@
 			<label for="user_phone"><%=t('user.phone_no')%></label> 
 			<input class="text" id="phone_work" name="user[phone]" size="30" type="text" /> 
 		</li>
+		<%= hidden_field(:user, :user_role, :id=>"user_role", :value => User::USER_ROLES_KEYS_BY_TOKEN[:customer] ) %>
 	</ul>
   	<div class="button-container"><%= submit_tag t('create'), :class => "uiButton small" %></div>
 	<% end %>
@@ -33,7 +34,7 @@
 	  	<%= link_to(t('edit'), edit_contact_path(contact), :class => "button") %>
       	<%= link_to(t('delete'), {:controller => "contacts", :action => "destroy", :id => contact} , :method => 'delete', :confirm => "#{t('contacts.info1')}?", :class => "button") unless contact == current_user %>
 	  </div>	   
-	  <%= user_avatar( contact.avatar ) %>
+	  <%= user_avatar( contact ) %>
 	  <div class="item_information">
         	<%= link_to(h(contact.display_name), {:controller => "contacts", :action => "show", :id => contact}, :class => "item_info" ) %>
 			<div class="info_data">

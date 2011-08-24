@@ -589,7 +589,7 @@ div.preview_pic span.tweet_pic {
   border: 1px solid #ffffff;
   bottom: 5px;
   right: 1px;
-  background: url('/images/symbols-s0a35592ce3.png') 0 -205px no-repeat white;
+  background: url('/images/symbols-sc0241e3f4c.png') 0 -205px no-repeat white;
 }
 
 div.profile_pic img {
@@ -3457,7 +3457,7 @@ a.page_title:active {
 }
 .request-list div.item .private-icon {
   display: none;
-  background: url('/images/symbols-s0a35592ce3.png') 0 -153px no-repeat;
+  background: url('/images/symbols-sc0241e3f4c.png') 0 -153px no-repeat;
   width: 16px;
   height: 16px;
   position: relative;
@@ -3931,27 +3931,53 @@ div.addReminder form label.overlabel {
 }
 .tickets .name, .tickets .name-user, .tickets-expanded .name, .tickets-expanded .name-user {
   width: 55%;
-  padding-left: 57px;
+  padding-left: 60px;
 }
 .tickets .name .preview_pic, .tickets .name-user .preview_pic, .tickets-expanded .name .preview_pic, .tickets-expanded .name-user .preview_pic {
   margin: 0px;
-  margin-top: 2px;
-  margin-left: -53px;
+  margin-top: 1px;
+  margin-left: -55px;
 }
 .tickets .name .preview_pic img, .tickets .name-user .preview_pic img, .tickets-expanded .name .preview_pic img, .tickets-expanded .name-user .preview_pic img {
   padding: 2px;
   width: 36px;
   height: 36px;
 }
+.tickets .name .icon, .tickets .name-user .icon, .tickets-expanded .name .icon, .tickets-expanded .name-user .icon {
+  float: left;
+  width: 18px;
+  height: 18px;
+  margin-right: 6px;
+}
+.tickets .name .source-email, .tickets .name-user .source-email, .tickets-expanded .name .source-email, .tickets-expanded .name-user .source-email {
+  background: url('/images/symbols-sc0241e3f4c.png') 0 -342px no-repeat;
+}
+.tickets .name .source-facebook, .tickets .name-user .source-facebook, .tickets-expanded .name .source-facebook, .tickets-expanded .name-user .source-facebook {
+  background: url('/images/symbols-sc0241e3f4c.png') 0 -360px no-repeat;
+}
+.tickets .name .source-twitter, .tickets .name-user .source-twitter, .tickets-expanded .name .source-twitter, .tickets-expanded .name-user .source-twitter {
+  background: url('/images/symbols-sc0241e3f4c.png') 0 -432px no-repeat;
+}
+.tickets .name .source-portal, .tickets .name-user .source-portal, .tickets-expanded .name .source-portal, .tickets-expanded .name-user .source-portal {
+  background: url('/images/symbols-sc0241e3f4c.png') 0 -414px no-repeat;
+}
+.tickets .name .source-phone, .tickets .name-user .source-phone, .tickets-expanded .name .source-phone, .tickets-expanded .name-user .source-phone {
+  background: url('/images/symbols-sc0241e3f4c.png') 0 -396px no-repeat;
+}
+.tickets .name .source-chat, .tickets .name-user .source-chat, .tickets-expanded .name .source-chat, .tickets-expanded .name-user .source-chat {
+  background: url('/images/symbols-sc0241e3f4c.png') 0 -324px no-repeat;
+}
+.tickets .name .source-forum, .tickets .name-user .source-forum, .tickets-expanded .name .source-forum, .tickets-expanded .name-user .source-forum {
+  background: url('/images/symbols-sc0241e3f4c.png') 0 -378px no-repeat;
+}
 .tickets .name h3, .tickets .name-user h3, .tickets-expanded .name h3, .tickets-expanded .name-user h3 {
-  padding: 0px 0px 4px 0px;
+  padding: 0px 0px 8px 0px;
 }
 .tickets .name h3 a, .tickets .name-user h3 a, .tickets-expanded .name h3 a, .tickets-expanded .name-user h3 a {
-  text-transform: capitalize;
-  font-size: 1.06em;
+  color: #333333;
+  font-size: 13px;
   line-height: 22px;
-  display: block;
-  color: #444444;
+  padding: 2px 0 6px 2px;
 }
 .tickets .name h3 a:hover, .tickets .name-user h3 a:hover, .tickets-expanded .name h3 a:hover, .tickets-expanded .name-user h3 a:hover {
   color: #000000;
@@ -4258,22 +4284,22 @@ div.addReminder form label.overlabel {
   height: 18px;
 }
 .admin_list li .portal-text .channel-text span.email, .content_list li .portal-text .channel-text span.email {
-  background: url('/images/symbols-s0a35592ce3.png') 0 -187px no-repeat;
+  background: url('/images/symbols-sc0241e3f4c.png') 0 -187px no-repeat;
 }
 .admin_list li .portal-text .channel-text span.url, .content_list li .portal-text .channel-text span.url {
-  background: url('/images/symbols-s0a35592ce3.png') 0 -259px no-repeat;
+  background: url('/images/symbols-sc0241e3f4c.png') 0 -259px no-repeat;
 }
 .admin_list li .portal-text .channel-text span.twitter, .content_list li .portal-text .channel-text span.twitter {
-  background: url('/images/symbols-s0a35592ce3.png') 0 -223px no-repeat;
+  background: url('/images/symbols-sc0241e3f4c.png') 0 -223px no-repeat;
 }
 .admin_list li .portal-text .channel-text span.email-active, .content_list li .portal-text .channel-text span.email-active {
-  background: url('/images/symbols-s0a35592ce3.png') 0 -169px no-repeat;
+  background: url('/images/symbols-sc0241e3f4c.png') 0 -169px no-repeat;
 }
 .admin_list li .portal-text .channel-text span.url-active, .content_list li .portal-text .channel-text span.url-active {
-  background: url('/images/symbols-s0a35592ce3.png') 0 -241px no-repeat;
+  background: url('/images/symbols-sc0241e3f4c.png') 0 -241px no-repeat;
 }
 .admin_list li .portal-text .channel-text span.twitter-active, .content_list li .portal-text .channel-text span.twitter-active {
-  background: url('/images/symbols-s0a35592ce3.png') 0 -205px no-repeat;
+  background: url('/images/symbols-sc0241e3f4c.png') 0 -205px no-repeat;
 }
 .admin_list li .portal-text .not-verified, .content_list li .portal-text .not-verified {
   padding: 12px 0px;

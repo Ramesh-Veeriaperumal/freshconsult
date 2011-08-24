@@ -9,7 +9,7 @@
 		  	<%= link_to('edit', edit_user_path(user), :class => "button") %>
 	      	<%= link_to('delete', user, :method => 'delete', :confirm => 'Are you sure you want to delete this user?', :class => "button") unless user == current_user %>
 		  </div>
-		  <%= user_avatar(user.avatar) %>
+		  <%= user_avatar(user) %>
 	      <%= link_to(h(user.name), user, :class => "item_info" ) %>
 		  	<div><%= h user.email %></div>
 			<div><%= h user.phone %></div>

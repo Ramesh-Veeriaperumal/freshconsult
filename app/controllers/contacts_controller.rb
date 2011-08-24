@@ -150,7 +150,7 @@ protected
   end
 
   def scoper
-      current_account.users
+      current_account.contacts
   end
 
   def authorized?
@@ -163,6 +163,10 @@ protected
  
   def load_object
       @obj = self.instance_variable_set('@user',  current_account.all_users.find(params[:id]))      
+  end
+  
+  def build_object  
+    @obj = self.instance_variable_set('@' + cname, current_account.all_users.new(params[cname]) )
   end
   
   def check_agent_limit
