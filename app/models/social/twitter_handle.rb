@@ -5,7 +5,9 @@ class Social::TwitterHandle < ActiveRecord::Base
   belongs_to :product, :class_name => 'EmailConfig'
   belongs_to :account 
   
+  before_validate :check_product_id
   before_create :add_default_search
+  
    
   validates_uniqueness_of :twitter_user_id, :scope => :account_id
   validates_presence_of :product_id, :twitter_user_id, :account_id,:screen_name
@@ -20,6 +22,12 @@ class Social::TwitterHandle < ActiveRecord::Base
       searches.push("@#{screen_name}")
       self.search_keys = searches
     end
+  end
+  
+  def check_product_id
+   if (product_id.nil? or !product_id.is_numeric?)
+    self.product_id = Account.current.primary_email_config.id 
+   end
   end
 
 end
