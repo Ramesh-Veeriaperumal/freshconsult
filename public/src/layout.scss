@@ -193,8 +193,7 @@ ul.tabs{
 		span{
 			background:none;
 			height:1px;
-			display:block;
-			width:90px;
+			display:block; 
 			font-size:0px;
 			position:relative;
 			z-index:1;
@@ -205,7 +204,7 @@ ul.tabs{
 				z-index:5;
 				text-decoration:none;
 				color:#ffffff;
-				padding:8px 6px 7px 8px;
+				padding:8px 16px 7px 16px;
 				font-size:13px;
 				font-weight:bold;
 				text-align:center;

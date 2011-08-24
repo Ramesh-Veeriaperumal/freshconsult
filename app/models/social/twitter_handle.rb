@@ -18,7 +18,7 @@ class Social::TwitterHandle < ActiveRecord::Base
   def add_default_search
     if search_keys.blank?
       searches = Array.new
-      searches.push(screen_name)
+      searches.push("@#{screen_name}")
       self.search_keys = searches
     end
   end

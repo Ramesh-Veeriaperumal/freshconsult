@@ -7,7 +7,7 @@ class Social::Tweet < ActiveRecord::Base
   
   attr_protected :tweetable_id
   
-  validates_presence_of :tweet_id,:account_id
-  validates_uniqueness_of :tweet_id, :scope => :account_id
+  validates_presence_of   :tweet_id, :account_id
+  validates_uniqueness_of :tweet_id, :scope => :account_id, :message => "Tweet already converted as a ticket"
   
 end
