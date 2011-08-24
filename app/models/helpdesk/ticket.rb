@@ -622,7 +622,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   def update_activity
     self.changed.each do |attr|
-      send(ACTIVITY_HASH[attr.to_sym()]) unless ACTIVITY_HASH[attr.to_sym()].blank?
+      send(ACTIVITY_HASH[attr.to_sym()]) if ACTIVITY_HASH.has_key?(attr.to_sym())
     end
   end
   

@@ -5,7 +5,13 @@ class ForumCategoriesControllerTest < ActionController::TestCase
   
   def setup
     activate_authlogic
-    UserSession.create(User.first)
+    UserSession.create(users(:one))
+    controller.request.host = 'localhost'
+  end
+  
+  def destroy_session
+    @current_user_session = UserSession.find
+    @current_user_session.destroy
   end
   
   test "should get index" do
@@ -34,6 +40,13 @@ class ForumCategoriesControllerTest < ActionController::TestCase
   test "should get edit" do
     get :edit, :id => forum_categories(:one).to_param
     assert_response :success
+  end
+  
+  test "should not get edit" do
+    destroy_session
+    get :edit, :id => forum_categories(:one).to_param
+    assert_response :redirect
+    assert_redirected_to login_url
   end
 
   test "should update forum_category" do

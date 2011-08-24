@@ -92,7 +92,7 @@ namespace :twitter do
     end
     
     unless @ticket.blank?
-      @note = @ticket.notes.create(
+      @note = @ticket.notes.build(
         :body => twt.text,
         :private => true ,
         :incoming => true,
@@ -101,6 +101,11 @@ namespace :twitter do
         :user_id => @user.id ,
         :tweet_attributes => {:tweet_id => twt.id, :account_id => @account.id}
        )
+      if @note.save
+        puts "This note has been added"
+      else
+        puts "error while saving the ticket:: #{@note.errors.to_json}"
+      end
     else
       add_tweet_as_ticket (twt,twt_handle)
     end

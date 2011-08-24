@@ -7,6 +7,7 @@ describe ForumCategoriesController do
       ForumCategory.stub(:find_by_id).with("1").and_return(@forum_category)
       #ForumCategory.should_receive(:find_by_id).with("1").and_return(@forum_category)
       #ForumCategory.find_by_id("1")
+      controller.request.host = 'localhost'
   end
   
   it "should use ForumCategorysController" do
