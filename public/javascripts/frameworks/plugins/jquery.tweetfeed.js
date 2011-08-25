@@ -25,14 +25,14 @@
         var newTweets = $(tweetsettings.template) 
                            .tmpl( response.results )
                            .appendTo("<div />");
-                        
-        newTweets.appendTo(tweetlist);       
+                           
+        newTweets.appendTo(tweetlist);
         newTweets.find(".autolink").autoLink();
  
         tweetsettings.next_page   = response.next_page;
         tweetsettings.refresh_url = response.refresh_url;
         hasresults = (response.results.length == 0 && response.page == 1)?false:true;
-        settings.onafterload(settings, hasresults);
+        settings.onafterload(settings, hasresults, newTweets);
      }
   }
   
@@ -56,10 +56,6 @@
      newTweets.prependTo(tweetlist);       
      newTweets.find(".autolink").autoLink();
      fresh_results = [];
-  }
-  
-  errorTweets = function(){ 
-     settings.onafterload(settings, false);
   }
   
   getData = function( url, callback, data ){ 

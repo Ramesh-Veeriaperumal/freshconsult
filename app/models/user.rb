@@ -104,7 +104,6 @@ class User < ActiveRecord::Base
     return build_avatar(av_attributes) if avatar.nil?
     avatar.update_attributes(av_attributes)
   end
-
  
   def active?
     active

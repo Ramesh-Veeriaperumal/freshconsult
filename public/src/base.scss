@@ -32,4 +32,5 @@ $use-mozilla-ellipsis-binding:true;
 $blueprint-font-family: "Lucida Grande", Geneva, Arial,Verdana,sans-serif;
  
 $symbol: sprite-map("symbols/*.png");
-$icons:  sprite-map("icons/*.png");
+$ticketicon: sprite-map("ticket-icon/*.png");
+$icons: sprite-map("icons/*.png");

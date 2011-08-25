@@ -49,7 +49,7 @@
 				</div>
 				<div id="twitter_results" class="list-group"></div>
 				<script id="tweetTemplate" type="text/x-jquery-tmpl">
-				  <div class="list-item" id="TWEET_DIV_${id_str}">
+				  <div class="list-item" id="TWEET_DIV_${id_str}" data-tweet-id="${id_str}">
 						<div class="preview-pic">
 							<img src="${profile_image_url}" />
 						</div>
@@ -81,11 +81,37 @@
 		</tr>
 	</table>
 </div>
+<% javascript_tag do -%>
+  function check_tweets_with_tickets( update_div ){
+    var tweet_ids = [];
+    jQuery.each(update_div, function(index, item){
+      tweet_ids.push(item.getAttribute("data-tweet-id"));
+    })
+    data = { tweet_ids : tweet_ids.toString() };
+    jQuery.ajax({ 
+        url: "<%= tweet_exists_social_twitters_url %>",
+        dataType: 'json',
+        data: data,
+        success: function(data){ 
+          try{
+            $H(data).each(function(item){            
+              tweet_converted_to_ticket(item[0], item[1]);            
+            });
+          }catch(e){}
+        }
+    });
+  }
+  function tweet_converted_to_ticket( tweet_id, ticket_id ){ 
+    jQuery("#TWEET_DIV_"+tweet_id)
+	    .addClass("tweet_converted")
+	    .find(".goto_ticket")
+	    .attr("href", "<%= helpdesk_tickets_url %>/"+ticket_id);
+  } 
+<%- end %>
 
 <% content_for :onload_script do -%>
   var current_product_id = <%= @twitter_accounts.first.product.id %>;
   var current_twitter_id = <%= @twitter_accounts.first.id %>;
-  
   jQuery("#twitter_results")
 		.tweetfeed({ "query" : "<%= first_search %>", 
 								 "templateid" : "#tweetTemplate",
@@ -94,7 +120,7 @@
 										jQuery("#tweet_noresults").hide();
 										jQuery("#moreTweets").css("visibility", "hidden");
 									},
-									onafterload: function(setting, hasresults){									  
+									onafterload: function(setting, hasresults, update_div){
 									  if(hasresults){										  
 									    jQuery("#tweet_results_info").show();
   									  jQuery("#tweet_results_string").html(setting.query);
@@ -104,6 +130,8 @@
 										  jQuery("#tweet_noresults_string")
 										    .html(setting.query);
 										}
+										
+										check_tweets_with_tickets( update_div );
 									}
  							  });
 

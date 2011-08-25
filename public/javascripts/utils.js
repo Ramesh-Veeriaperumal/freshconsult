@@ -10,6 +10,14 @@ makePageNonSelectable = function(source){
 	source.onmousedown = function () { return false; };						// Other browsers
 };
 
+//Image error problem
+function imgerror(source){
+    source.src = "/images/fillers/profile_blank_thumb.gif";
+    source.onerror = "";
+    return true;
+}
+
+
 // Delay in typing of search text
 var delay = (function(){
 	var timer = 0;

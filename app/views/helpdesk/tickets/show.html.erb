@@ -215,6 +215,7 @@
         <div class="user_details">
           <%= user_avatar(@ticket.requester)  %>
           <div>
+						<%= content_tag :span, "", :class => "custom-tip-bottom icon-image source-#{@ticket.source_name.downcase}", :title => t("ticket.reported_from_souce", :source => @ticket.source_name.downcase) %>
             <%= t('ticket.reported_by', :requester => link_to(h(@ticket.requester.display_name),@ticket.requester, :class => "user_name")) %>     
           </div>
           <div> 
