@@ -110,6 +110,10 @@ class User < ActiveRecord::Base
     active
   end
   
+  def has_email?
+    !email.blank?
+  end
+  
   def activate!(params)
     self.active = true
     self.name = params[:user][:name]

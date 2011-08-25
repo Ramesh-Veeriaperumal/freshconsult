@@ -18,7 +18,6 @@ class Social::TwitterHandlesController < Admin::AdminController
   before_filter :twitter_wrapper , :only => [:signin, :authdone, :index]
   
   def tweet_exists
-    #params[:tweet_ids] = "106251007524216832,106251505983688704"
     converted_tweets = current_account.tweets.find(:all,
                               :conditions => { :tweet_id => params[:tweet_ids].split(",")},
                               :include => :tweetable)
@@ -60,8 +59,8 @@ class Social::TwitterHandlesController < Admin::AdminController
       else
         flash[:notice] = t('twitter.user_exists')
       end
-    #rescue
-      #`flash[:error] = t('twitter.not_authorized')
+    rescue
+       flash[:error] = t('twitter.not_authorized')
     end
   end
   
