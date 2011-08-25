@@ -5,9 +5,6 @@
 /* Importing admin icons */
 @import "admin-icon/*.png";
 
-/* Ticket Show page twitter style icons */ 
-$ticketicon: sprite-map("ticket-icon/*.png");
-
 /* Bullet icon */ 
 $bullet-icon:"symbols/request_nav_seperator.gif";
 body { color: #333; background:$background; min-width:$blueprint-liquid-container-min-width+20; }
@@ -427,30 +424,25 @@ div.preview_pic{
 	margin-right:10px;
 	position:relative;
 	img{			
-		padding:3px;
 		background:#ffffff;
-		border:1px solid #efefef;
 		width:50px;
 		height:50px;
+		@include corners(6px); 
 	}
 	span.tweet_pic{
 	   position:absolute;
 	   width:18px;
 	   height:18px;
-	   border:1px solid #ffffff;
-	   bottom:5px;
-	   right:1px;
+	   bottom:3px;
+	   right:0px;
 	   background:sprite($symbol, product-twitter-active) no-repeat #ffffff;
 	}
 }
 
-div.profile_pic{
-	img{
-		padding:3px;
-		background:#ffffff;
-		border:1px solid #cfcfcf;		
-		@include shadows(#dfdfdf, 0px, 1px, 3px);
-	}
+div.profile_pic img{
+   @include shadows(#dfdfdf, 0px, 1px, 3px);
+   @include corners(6px);
+   @include shadows;
 }
 
 body h5{
@@ -497,6 +489,7 @@ body h5{
 		border-width:1px 0px;
 		.title{ 			
 			color:#555555; 
+			font-size:1.35em;
 			em{ 			
 				font-style:normal;
 				font-weight:normal;
@@ -1106,6 +1099,7 @@ a.request_bt:hover{
 		width:auto;
 		height:auto;
 		border:1px solid #afafaf;
+		max-width:180px;
 	}
 } 
 
@@ -2309,7 +2303,6 @@ a.page_title{
 }
 
 .user-info{ 
-	margin-top:12px;
 	padding-top:8px;
 	border-top:1px solid #f1f1f1;
 	div{
@@ -2851,7 +2844,7 @@ a.page_title{
 				text-indent:-99999px;
 				background-color:#999999;
 				@include corners(6px);
-				@include sprite-background("../images/embed/sprites/16square_sprite.png", 16px, 16px);
+				background: sprite($symbol, trash) no-repeat;
 				visibility:hidden;
 				position:relative;
 				left:-3px;
@@ -3020,6 +3013,20 @@ div.addReminder{
 	border-width:1px 0px; 
 }
 
+.icon-image{
+   float:left;
+   width:18px;
+   height:18px;
+   margin-right:6px;
+}
+.source-email{   background: sprite($symbol, source-email) no-repeat; }
+.source-facebook{   background: sprite($symbol, source-facebook) no-repeat; }
+.source-twitter{   background: sprite($symbol, source-twitter) no-repeat; }
+.source-portal{   background: sprite($symbol, source-portal) no-repeat; }
+.source-phone{   background: sprite($symbol, source-phone) no-repeat; }
+.source-chat{   background: sprite($symbol, source-chat) no-repeat; }
+.source-forum{   background: sprite($symbol, source-forum) no-repeat; }
+
 .tickets, .tickets-expanded{
 	width:100%;
 	color:#5f5f5f;
@@ -3057,48 +3064,33 @@ div.addReminder{
 		padding-top:10px;
 	}
 	
-	.name, .name-user{			
-		width:55%;
-		padding-left:60px;
-		.preview_pic{
-			margin:0px; 
-			margin-top:1px;
-			margin-left:-55px;
-			img{ 
-				padding:2px;
-				width:36px; height:36px;
-			}
-		}
-		.icon{
-		   float:left;
-		   width:18px;
-		   height:18px;
-		   margin-right:6px;
-		}
-		.source-email{   background: sprite($symbol, source-email) no-repeat; }
-		.source-facebook{   background: sprite($symbol, source-facebook) no-repeat; }
-		.source-twitter{   background: sprite($symbol, source-twitter) no-repeat; }
-		.source-portal{   background: sprite($symbol, source-portal) no-repeat; }
-		.source-phone{   background: sprite($symbol, source-phone) no-repeat; }
-		.source-chat{   background: sprite($symbol, source-chat) no-repeat; }
-		.source-forum{   background: sprite($symbol, source-forum) no-repeat; }
-		
-		h3{
-			padding:0px 0px 8px 0px;
-			a{
-				color: #333333;
+	.name, .name-user{
+      width:55%;
+      padding-left:60px;
+      .preview_pic{
+         margin:0px; 
+         margin-top:1px;
+         margin-left:-55px;
+         img{ 
+            padding:2px;
+            width:36px; height:36px;
+         }
+      }
+
+      h3{
+         padding:0px 0px 8px 0px;
+         a{
+            color: #333333;
             font-size: 13px;
             line-height: 22px;
             padding: 2px 0 6px 2px;
-			}
-			a:hover{
-				color:#000000;
-			}
-		} 
-		div{
-			color:#888888;
-		}
-	}
+         }
+         a:hover{
+            color:#000000;
+         }
+      }
+      div{ color:#888888; }
+   }
 	
 	.name-user{
 		padding-left:20px;
@@ -3149,20 +3141,19 @@ div.addReminder{
 	    content: ""; 
 	    width: 32px;
 	    height: 32px;
-	    margin: 0px;
-	    @include sprite-background("../images/embed/sprites/32square_sprite.png", 32px, 32px);
+	    margin: 0px; 
 	}
-	.email-reply{
-		@include sprite-row(1, 32px, 0);
+	.email-reply{ 
+		background: sprite($ticketicon, email-reply);
 	}
 	.email-receive{
-		@include sprite-row(2, 32px, 0);
+		background: sprite($ticketicon, email-receive);
 	}
 	.note-public{
-		@include sprite-row(3, 32px, 0);
+		background: sprite($ticketicon, note-public);
 	}
 	.note-private{
-		@include sprite-row(4, 32px, 0);
+		background: sprite($ticketicon, note-private);
 	}
 	
 }
@@ -3171,10 +3162,14 @@ div.addReminder{
 	padding-left:170px;
 	div.profile_pic{
 		float:left;
+		position:absolute;
 		margin-left:-150px;
 		width:127px;
 		margin-top:5px;
 		text-align:center; 
+		img{
+		   max-width:130px;
+		}
 	}
 	.info-highlight{
 		margin:8px 0px 0px -170px;
@@ -3235,15 +3230,9 @@ div.addReminder{
 			right:0px;
 			top:0px;
 			width:32px; height:32px;
-			@include sprite-background("../images/embed/sprites/32square_sprite.png", 32px, 32px);
-			@include sprite-row(10, 32px, 0);
 		}
-		.ASC{
-			@include sprite-row(9, 32px, 0);
-		}
-		.DESC{
-			@include sprite-row(10, 32px, 0);
-		}
+		.ASC{ background:sprite($icons, sort-asc); }
+		.DESC{ background:sprite($icons, sort-desc); }
 	}
 }
 
@@ -3264,6 +3253,9 @@ div.addReminder{
 			float:left;
 			margin-right:10px;
 			margin-top:-3px;
+			img{
+			   margin:6px 3px 0px 3px;
+			}
 		}
 		div{
 			padding-top:3px;
@@ -3511,14 +3503,12 @@ div.addReminder{
 		position:relative;
 		background-color:#f4f4f4;
 		.like-image{
-			left:0px;
-			top: 0px;
-			margin-left:-3px;
-			margin-top:-5px;
+			left:3px;
+			top: 1px;
 			position:absolute;
-			@include sprite-background("../images/embed/sprites/32square_sprite.png");
-			@include sprite-row(11, 32px, 0);
-			height:24px;
+			background: sprite($symbol, like);
+			width:18px;
+			height:18px;
 		} 
 }
 
@@ -3660,4 +3650,311 @@ a.close{
    height: 28px;
    background: url(../images/close_delete.png) no-repeat center;
    z-index: 999;
+}
+
+.list_with_icon{
+	padding-top:3px;	
+	li, div.list-item{
+		margin:0px 0px 8px 0px;
+		padding-left:24px;
+		position:relative;
+		display:inline-block;
+		width:100%;
+		span.forum-bullet{
+			background:sprite($symbol, forum-bullet) no-repeat;
+			position:absolute;
+			left:0px;
+			top:1px;
+			width:16px;
+			height:16px;
+		}
+		a{
+			@include link-colors(#4D769F, #3399cc, #4D769F, #4D769F);
+			text-decoration:none;
+		}
+		a.title{
+			display:block;
+			padding:0px;
+			font-weight:normal;
+			padding-bottom:4px;
+			font-size:13px;
+			position:relative;			
+		}
+	}
+	div.list-item{
+		margin-bottom:4px;
+		margin-left:-22px;
+	}
+}
+
+.forum_list{
+	margin:0px 0px;
+	a{ text-decoration:none; }
+	a.title{ @include link-colors(#545454, #527EAA, #545454, #545454); }
+	.item_actions{
+		float:right;
+		font-size:10px;
+		background-color:#F3F1EC;
+		@include corners(6px);
+		border:1px solid #cfcfcf;
+		color:#afafaf;
+		padding:2px 8px;
+		a.highlight{
+			background-color:#ffffcc;
+			padding:1px 3px;
+		}
+	}
+	.subcounter{ 
+		color:#afafaf;
+	}
+	ul.base-set{
+		@include no-bullets;
+		@include clearfix;
+		margin:0px; 
+		padding:5px 26px;
+		li{
+			float:left;
+			width:44%;
+			padding:0px 0px 0px 0px;
+			margin:0px 3% 0px 0px;
+			h4.forum_title{
+				margin:8px 0px 0px 0px;
+				padding:6px 0px 8px 33px; 
+				font-size:16px;
+				a{
+					font-weight:normal;
+				}
+				position:relative;
+			}
+			span.icon{
+            position:absolute;
+            left:3px; top:-1px;
+            width:32px; height:32px;
+			} 
+			span.forum_type_howto{ background: sprite($icons, forum_howto) no-repeat; }
+			span.forum_type_ideas{ background: sprite($icons, forum_ideas) no-repeat; }
+			span.forum_type_problem{ background: sprite($icons, forum_problem) no-repeat;	}
+			span.forum_type_announce{ background: sprite($icons, forum_announce) no-repeat; }
+			.topic-list{ 
+				padding:6px 0px 12px 0px;
+				margin-left:34px;
+				margin-bottom:8px;
+				border-top:1px solid #efefef;
+				a.topic{
+					@include ellipsis;
+					display:block;
+					padding:5px 0px;
+					font-size:13px;
+				}
+				a{ 
+					@include link-colors(#4D769F, #3399cc, #4D769F, #4D769F);	
+				}
+			}
+		}
+		li.odd{
+			clear:left;
+		}
+		li.even{
+			margin-right:0px;
+			width:46%;
+		}
+	}
+	
+}
+
+.topic-list-view{ 
+		padding:0px;
+		margin:0px 0px;
+		border:1px solid #f1f1f1;
+		border-width:1px 0px; 
+		li{
+			@include clearfix;
+			border-bottom:1px dotted #eaeaea;
+			padding:14px 25px 10px 70px;
+			position:relative;
+			a{ 
+				@include link-colors(#4D769F, #3399cc, #4D769F, #4D769F);
+				text-decoration:none;  
+			}
+			a.topic-title{  
+				font-size:14px; 
+				font-weight:500;
+			}
+			.info_data{
+				padding:6px 0px 4px 0px;
+				font-size:12px;
+				color:#888888;
+			}
+			.preview_pic{
+				border-color:#d2d2d2;
+				position:absolute;
+				left:20px;
+				top:16px;
+				img{ width:36px; height:36px; padding:0px; border:0px; }
+			}
+		}
+		li:hover{
+			background:#f4f4f4;
+		}
+}
+
+.page-list{
+   margin: 0 -20px;
+   .list-group{
+      padding:0px;
+      margin:0px 0px;
+      border:1px solid #dfdfdf;
+      border-width:1px 0px;
+      .list-item{
+         @include clearfix;
+         border-bottom:1px dotted #eaeaea;
+         padding:14px 25px 6px 70px;
+         position:relative;
+			.primary-text{  
+				font-size:13px; 
+				line-height: 19px;
+				padding: 2px 0px 6px;
+				color:#444;
+			}
+			.info-text{
+				padding:6px 0px 4px 0px;
+				font-size:12px;
+				color:#888888;
+			}
+			.preview-pic{
+				border-color:#d2d2d2;
+				position:absolute;
+				left:20px;
+				top:16px;
+				img{ width:36px; height:36px; padding:0px; border:0px; }
+			}
+			.username{ 
+			   padding:0px 0px 3px 0px;
+			   font-weight:bold;
+			   font-size:13px;
+			}
+			.item_actions{
+			   visibility:hidden;
+			}
+			.info-data{
+			   a{ 
+			      text-decoration:none;
+			      padding-left:8px;
+			      margin-left:6px;
+			      border-left:1px solid #cfcfcf;
+			   }
+			   .floatr{
+			      margin-top:-5px;
+			   }
+			}
+      }
+      .list-item:hover{
+         background-color:#e6f3f9;
+   		background-image:url(../images/overlay-top-shadow.png);
+   		background-position:top left;
+   		border-bottom:1px solid #dfdfdf;
+   		background-repeat:repeat-x;
+   		.item_actions{
+   		   visibility:visible;
+   		}
+      }
+      .loadingbox{
+         background-image:url('/images/load.gif');
+   	   background-repeat:no-repeat;
+   	   background-position: center center;
+   	   height:200px;
+      }
+   }
+}
+
+.goto_ticket{
+   display:none;
+}
+
+.tweet_converted{
+   background-color:#ffffee;
+   .convert_as_ticket{ display:none; }
+   .goto_ticket{ display:inline-block; }
+}
+
+.tweet_converted:hover {
+   background-color:#ffffdd !important;   
+}
+
+.results-info{
+   font-style:italic;
+   font-size:13px;
+   padding:6px 18px;
+   color:#999999;
+   background:#f8f8f8;
+}
+
+#tweet_noresults{
+   height:200px;
+}
+
+.left-panel{
+   width:150px;
+   padding:6px 20px;
+   background-color:#f8f8f8;
+   background-image:url(../images/overlay-right-shadow.png);
+	background-position:top right;
+	background-repeat:repeat-y;
+}
+
+.tweet-table{
+   border:1px solid #eaeaea;
+   border-width:1px 0px;
+   width:100%;
+}
+
+.search-keys{
+   margin:0px 0px 8px 0px;
+   li{
+		padding:3px 8px 5px 18px;
+		position:relative;
+		span.icon{
+		   background:sprite($symbol, search) no-repeat;
+		   position:absolute;
+		   left:0px;
+		   width:15px; height:15px;
+	   }
+	   a{
+	      font-weight:bold;
+	   }
+	   a.selected{ 
+	      color:#3399CC;
+	      text-decoration:none;
+	   }
+   }
+}
+
+.more_results{
+   padding:8px 12px;
+   background-color:#f4f4f4;
+}
+
+.info-results{
+   font-size:1.26em;
+   padding:10px 20px;
+   color:#666666;
+   background-color:#f6f6f6;
+   border-top:1px solid #f0f0f0;
+}
+
+.admin_help_image{
+   margin:30px 15px;
+   @include clearfix;
+   .help_image{
+      float:left;
+   }
+   .content{
+      margin:0px 0px 0px 230px;
+      p.info-data{
+         font-family:verdana;
+         font-size:15px;
+         line-height:26px;
+         padding-right:8%;
+      }
+   }
 }

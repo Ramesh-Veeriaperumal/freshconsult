@@ -1,7 +1,7 @@
 --- 
 en: 
   feedbackwidget_offset_info: The offset will be the distance of the widget button (pixels) from the left or top of the screen based on the alignment you choose.
-  reset_my_password: Reset my password
+  reset_my_password: Reset my password 
   assign: Assign
   signup: sign up
   trial_expired_on: Your trial has expired on
@@ -794,7 +794,7 @@ en:
     send_activation: Send activation email
     import_csv: Import users from CSV
     quick_contact: Quick Contact
-    info3: Background information from %{nick_name}
+    info3: Background information of %{nick_name}
     working: Working
     info4: Recent tickets from %{nick_name}
     form_placeholder: 
@@ -1008,13 +1008,15 @@ en:
   logo: Logo
   ok: Ok
   back: Back
-  ticket: 
+  ticket:
+    reported_on: "from %{username}, on %{date}"
     thanks: Thank you for submitting a feedback
     group: Group
     spam_btn_title: Mark as spam
     assigned_to: Assigned To
     edit: Edit ticket
     ham_btn_title: This is not spam
+    reported_from_souce: Reported from %{source}
     suggested_solutions: 
       insert_url: Insert URL
       title: Suggested Solutions
@@ -1056,7 +1058,7 @@ en:
       post_to_linked_forum: Post in linked forum
       form_title: Reply to the conversation
       reply_email_id: Send the reply from the following email id
-    reported_by: Reported by %{requester}
+    reported_by: from %{requester}
     close_btn: Close
     close_btn_title: Close this ticket
     tags: 

@@ -8,11 +8,6 @@
       <%= content_tag(:h2, "@#{twitter_handle.screen_name}", :class => "title") %>
     </label>
     <div class="fields">
-      <label class="caption">Product</label>
-      <div class="fields">
-  	    <%= collection_select(:social_twitter_handle, :product_id, current_account.products, :id, :name, { :include_blank => '...', :selected => twitter_handle.product_id })%>
-  	  </div>
-  	  <span class="seperator"></span>
       <label class="caption">Search Keywords</label>
       <% content_for :onload_script do -%>
         function lookup(searchString, callback) { }; 
@@ -38,10 +33,10 @@
       <span class="seperator"></span>
       <label class="checkbox">
         <%= check_box "social_twitter_handle", :capture_mention_as_ticket, { :checked => twitter_handle.capture_mention_as_ticket } %> 	
-        Capture <strong>"Mentions"</strong> as ticket
+        Capture <strong>"@Mentions"</strong> as tickets
       </label>
       <div class="info-data tabbed">
-        Freshdesk will convert any mentions of this Twitter account into tickets.
+        Freshdesk will automatically convert any @mentions of this Twitter account into tickets.
       </div>				
       <span class="seperator"></span>
       <label class="checkbox">
@@ -49,8 +44,13 @@
         Capture <strong>"Direct messages"</strong> as ticket
       </label>
       <div class="info-data tabbed">
-        Freshdesk will convert any Direct messages to this Twitter account into tickets.
+        Freshdesk will automatically convert any Direct messages to this Twitter account into tickets.
       </div>	 
+      <span class="seperator"></span>
+      <label class="caption">Product</label>
+      <div class="fields">
+  	    <%= collection_select(:social_twitter_handle, :product_id, current_account.products, :id, :name, { :include_blank => '...', :selected => twitter_handle.product_id })%>
+  	  </div>      
     </div> 
   </li>
 </ul>
