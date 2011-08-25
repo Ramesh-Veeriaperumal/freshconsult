@@ -3155,7 +3155,9 @@ div.addReminder{
 	.note-private{
 		background: sprite($ticketicon, note-private);
 	}
-	
+	.tweet-note{
+	   background: sprite($ticketicon, tweet-note);
+	}
 }
 
 .contact-box{

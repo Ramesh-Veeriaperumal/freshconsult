@@ -62,6 +62,10 @@ class Helpdesk::Note < ActiveRecord::Base
   def note?
     source == SOURCE_KEYS_BY_TOKEN["note"]
   end
+  
+  def tweet?
+    source == SOURCE_KEYS_BY_TOKEN["twitter"]    
+  end
 
   def private_note?
     source == SOURCE_KEYS_BY_TOKEN["note"] && private

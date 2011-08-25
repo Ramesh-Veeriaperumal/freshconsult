@@ -99,12 +99,21 @@
 		function insertIntoConversation(value){
 			note_area  = jQuery('#cnt-note');
 			reply_area = jQuery('#cnt-reply');
+			tweet_area = jQuery('#cnt-tweet');
 			if(note_area.css("display") == 'block'){
 				insertTextAtCursor( $('add-note-cnt-note-body'), value );
 				jQuery('#add-note-cnt-note-body')
 						.trigger("focus")
 						.trigger("keydown");
 			} 
+			else if(tweet_area.css("display") == 'block'){
+				get_short_url(value, function(bitly){
+						insertTextAtCursor( $('send-tweet-cnt-tweet-body'), bitly || value );
+						jQuery('#send-tweet-cnt-tweet-body')
+								.trigger("focus")
+								.trigger("keydown");
+				});			
+			}
 			else{
 				if(reply_area.css("display") == 'none')
 					jQuery('#ReplyButton').trigger("click");
@@ -133,7 +142,7 @@
   	}
     
   <% end %>
-<% end %>
+<% end %> 
 
 <% content_for :sidebar do %>
 	<% unless @ticket.deleted %>

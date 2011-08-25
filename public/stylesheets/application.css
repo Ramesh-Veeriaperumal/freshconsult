@@ -1151,25 +1151,25 @@ body h5 {
   height: 32px;
 }
 .rtCnt .rtPanel a img.ticketprop {
-  background: url('/images/ticket-icon-s5d6760aa83.png') 0 -326px no-repeat;
+  background: url('/images/ticket-icon-sf65bc88f67.png') 0 -326px no-repeat;
 }
 .rtCnt .rtPanel a img.suggestsolutions {
-  background: url('/images/ticket-icon-s5d6760aa83.png') 0 -498px no-repeat;
+  background: url('/images/ticket-icon-sf65bc88f67.png') 0 -498px no-repeat;
 }
 .rtCnt .rtPanel a img.scenario {
-  background: url('/images/ticket-icon-s5d6760aa83.png') 0 -412px no-repeat;
+  background: url('/images/ticket-icon-sf65bc88f67.png') 0 -412px no-repeat;
 }
 .rtCnt .rtPanel a img.requesterinfo {
-  background: url('/images/ticket-icon-s5d6760aa83.png') 0 -756px no-repeat;
+  background: url('/images/ticket-icon-sf65bc88f67.png') 0 -788px no-repeat;
 }
 .rtCnt .rtPanel a img.todo {
-  background: url('/images/ticket-icon-s5d6760aa83.png') 0 -670px no-repeat;
+  background: url('/images/ticket-icon-sf65bc88f67.png') 0 -670px no-repeat;
 }
 .rtCnt .rtPanel a img.tags {
-  background: url('/images/ticket-icon-s5d6760aa83.png') 0 -584px no-repeat;
+  background: url('/images/ticket-icon-sf65bc88f67.png') 0 -584px no-repeat;
 }
 .rtCnt .rtPanel a img.activity {
-  background: url('/images/ticket-icon-s5d6760aa83.png') 0 0 no-repeat;
+  background: url('/images/ticket-icon-sf65bc88f67.png') 0 0 no-repeat;
 }
 .rtCnt .rtPanel a em {
   display: block;
@@ -1192,25 +1192,25 @@ body h5 {
   color: #ffffff;
 }
 .rtCnt .rtPanel a.active img.ticketprop, .rtCnt .rtPanel a:hover img.ticketprop {
-  background: url('/images/ticket-icon-s5d6760aa83.png') 0 -369px no-repeat;
+  background: url('/images/ticket-icon-sf65bc88f67.png') 0 -369px no-repeat;
 }
 .rtCnt .rtPanel a.active img.suggestsolutions, .rtCnt .rtPanel a:hover img.suggestsolutions {
-  background: url('/images/ticket-icon-s5d6760aa83.png') 0 -541px no-repeat;
+  background: url('/images/ticket-icon-sf65bc88f67.png') 0 -541px no-repeat;
 }
 .rtCnt .rtPanel a.active img.scenario, .rtCnt .rtPanel a:hover img.scenario {
-  background: url('/images/ticket-icon-s5d6760aa83.png') 0 -455px no-repeat;
+  background: url('/images/ticket-icon-sf65bc88f67.png') 0 -455px no-repeat;
 }
 .rtCnt .rtPanel a.active img.requesterinfo, .rtCnt .rtPanel a:hover img.requesterinfo {
-  background: url('/images/ticket-icon-s5d6760aa83.png') 0 -799px no-repeat;
+  background: url('/images/ticket-icon-sf65bc88f67.png') 0 -831px no-repeat;
 }
 .rtCnt .rtPanel a.active img.todo, .rtCnt .rtPanel a:hover img.todo {
-  background: url('/images/ticket-icon-s5d6760aa83.png') 0 -713px no-repeat;
+  background: url('/images/ticket-icon-sf65bc88f67.png') 0 -713px no-repeat;
 }
 .rtCnt .rtPanel a.active img.tags, .rtCnt .rtPanel a:hover img.tags {
-  background: url('/images/ticket-icon-s5d6760aa83.png') 0 -627px no-repeat;
+  background: url('/images/ticket-icon-sf65bc88f67.png') 0 -627px no-repeat;
 }
 .rtCnt .rtPanel a.active img.activity, .rtCnt .rtPanel a:hover img.activity {
-  background: url('/images/ticket-icon-s5d6760aa83.png') 0 -43px no-repeat;
+  background: url('/images/ticket-icon-sf65bc88f67.png') 0 -43px no-repeat;
 }
 
 ul.admin_icons {
@@ -1443,16 +1443,16 @@ div.panel_area div.item {
   height: 28px;
 }
 .action_icons .monitor img {
-  background: url('/images/ticket-icon-s5d6760aa83.png') 0 -206px no-repeat;
+  background: url('/images/ticket-icon-sf65bc88f67.png') 0 -206px no-repeat;
 }
 .action_icons .monitor_active img {
-  background: url('/images/ticket-icon-s5d6760aa83.png') 0 -234px no-repeat;
+  background: url('/images/ticket-icon-sf65bc88f67.png') 0 -234px no-repeat;
 }
 .action_icons .spam img {
-  background: url('/images/ticket-icon-s5d6760aa83.png') 0 -150px no-repeat;
+  background: url('/images/ticket-icon-sf65bc88f67.png') 0 -150px no-repeat;
 }
 .action_icons .spam_active img {
-  background: url('/images/ticket-icon-s5d6760aa83.png') 0 -178px no-repeat;
+  background: url('/images/ticket-icon-sf65bc88f67.png') 0 -178px no-repeat;
 }
 
 .request_panel_list {
@@ -4062,16 +4062,19 @@ div.addReminder form label.overlabel {
   margin: 0px;
 }
 .conversation-sprite .email-reply {
-  background: url('/images/ticket-icon-s5d6760aa83.png') 0 -118px;
+  background: url('/images/ticket-icon-sf65bc88f67.png') 0 -118px;
 }
 .conversation-sprite .email-receive {
-  background: url('/images/ticket-icon-s5d6760aa83.png') 0 -86px;
+  background: url('/images/ticket-icon-sf65bc88f67.png') 0 -86px;
 }
 .conversation-sprite .note-public {
-  background: url('/images/ticket-icon-s5d6760aa83.png') 0 -294px;
+  background: url('/images/ticket-icon-sf65bc88f67.png') 0 -294px;
 }
 .conversation-sprite .note-private {
-  background: url('/images/ticket-icon-s5d6760aa83.png') 0 -262px;
+  background: url('/images/ticket-icon-sf65bc88f67.png') 0 -262px;
+}
+.conversation-sprite .tweet-note {
+  background: url('/images/ticket-icon-sf65bc88f67.png') 0 -756px;
 }
 
 .contact-box {

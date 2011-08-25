@@ -11,6 +11,8 @@
 				<span class="image email-receive" title='<%= t(".incoming_email") %>'></span>
 			<% elsif note.outbound_email? %>
 				<span class="image email-reply" title='<%= t(".outbound_email") %>'></span>
+			<% elsif note.tweet? %>
+				<span class="image tweet-note" title='Tweet'></span>
 			<% end %>
 		</div>
 
