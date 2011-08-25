@@ -53,7 +53,7 @@ class Social::TwitterHandlesController < Admin::AdminController
   def add_to_db
     begin      
       twitter_handle = @wrapper.auth( session[:request_token], session[:request_secret], params[:oauth_verifier] )
-      if twitter_handle.save!
+      if twitter_handle.save
         flash[:notice] = t('twitter.success_signin', :twitter_screen_name => twitter_handle.screen_name, :helpdesk => twitter_handle.product.name)        
         redirect_to edit_social_twitter_url(twitter_handle)
       else
