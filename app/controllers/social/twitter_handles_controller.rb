@@ -33,11 +33,17 @@ class Social::TwitterHandlesController < Admin::AdminController
   end
  
   def index
+   returned_val = sandbox(0) {
     request_token = @wrapper.request_tokens          
     session[:request_token] = request_token.token
     session[:request_secret] = request_token.secret
-    
-    @twitter_handles = all_twitters    
+    @twitter_handles = all_twitters   
+   }
+      
+      if returned_val == 0
+        flash[:error] = t('twitter.not_authorized')
+        redirect_to admin_home_index_url
+      end
   end
   
   def signin
@@ -199,10 +205,12 @@ class Social::TwitterHandlesController < Admin::AdminController
     end
   end 
   
-  protected 
+  protected
+  
    
     def twitter_wrapper   
-      @wrapper = TwitterWrapper.new @item, { :product => scoper, 
+      
+      @wrapper = TwitterWrapper.new @item ,{ :product => scoper, 
                                              :current_account => current_account,
                                              :callback_url => url_for(:action => 'authdone')}
     end
