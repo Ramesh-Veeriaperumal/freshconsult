@@ -2,20 +2,20 @@
 
 one:
   account_id: 1
+  survey_id: 1
   surveyable_id: 1
   surveyable_type: MyString
   customer_id: 1
   agent_id: 1
-  resolution_speed: 1
-  customer_rating: 1
-  score: 1
+  response_note_id: 1
+  rating: 1
 
 two:
   account_id: 1
+  survey_id: 1
   surveyable_id: 1
   surveyable_type: MyString
   customer_id: 1
   agent_id: 1
-  resolution_speed: 1
-  customer_rating: 1
-  score: 1
+  response_note_id: 1
+  rating: 1
