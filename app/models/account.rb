@@ -108,8 +108,8 @@ class Account < ActiveRecord::Base
   has_many :tweets, :class_name =>'Social::Tweet'  , :dependent => :destroy
   
   has_one :survey, :dependent => :destroy
-  has_many :survey_points, :through => :survey
-  has_many :survey_handles, :dependent => :destroy
+  has_many :scoreboard_ratings, :dependent => :destroy
+  has_many :survey_handles, :through => :survey
   #Scope restriction ends
   
   validates_format_of :domain, :with => /\A[a-zA-Z][a-zA-Z0-9]*\Z/
@@ -173,8 +173,8 @@ class Account < ActiveRecord::Base
     }
   }
   
-  SELECTABLE_FEATURES = [ :open_forums, :open_solutions, :anonymous_tickets, 
-    :survey_links,:google_signin, :twitter_signin, :signup_link ] #:surveys & ::survey_links $^&WE^%$E
+  SELECTABLE_FEATURES = [ :open_forums, :open_solutions, :anonymous_tickets, :scoreboard, 
+    :survey_links, :google_signin, :twitter_signin, :signup_link ] #:surveys & ::survey_links $^&WE^%$E
   
   has_features do
     PLANS_AND_FEATURES.each_pair do |k, v|
