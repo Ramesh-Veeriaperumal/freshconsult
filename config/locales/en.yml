@@ -1277,8 +1277,8 @@ en:
         my_resolved: My Resolved Tickets
         new_and_my_open: New & My Open Tickets
         all: All Tickets
-        open: Open Tickets
-        closed: Closed Tickets
+        open: Open tickets
+        closed: Resolved tickets
         trash: Trash
         overdue: Overdue Tickets
         due_today: Tickets Due Today

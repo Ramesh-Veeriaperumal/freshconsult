@@ -21,7 +21,7 @@ class Social::TwitterHandlesController < Admin::AdminController
                               :include => :tweetable)
     @tweet_tkt_hsh = {}
     converted_tweets.each do |tweet|
-      @tweet_tkt_hsh.store(tweet.tweet_id,tweet.get_ticket.id)
+      @tweet_tkt_hsh.store(tweet.tweet_id,tweet.get_ticket.display_id)
     end
     
     respond_to do |format|
