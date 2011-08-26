@@ -96,7 +96,6 @@ namespace :twitter do
     unless @ticket.blank?
       @note = @ticket.notes.build(
         :body => twt.text,
-        :private => true ,
         :incoming => true,
         :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:twitter],
         :account_id => twt_handle.account_id,
