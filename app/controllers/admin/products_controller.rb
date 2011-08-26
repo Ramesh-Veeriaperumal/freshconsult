@@ -4,7 +4,7 @@ class Admin::ProductsController < Admin::AdminController
   before_filter { |c| c.requires_feature :multi_product }
   before_filter :build_object, :only => :new
   before_filter :load_other_objects, :only => [:new, :edit]
-  before_filter :store_location, :only => [:index, :edit]
+  before_filter :store_location, :only => [:index]
   
   def create
     portal_params = params[:product].delete(:portal_attributes)
