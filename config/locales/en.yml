@@ -439,6 +439,9 @@ en:
         note: 
           short: "{{user_path}} added a {{comment_path}}"
           long: "{{user_path}} added a {{comment_path}} to the ticket {{notable_path}}"
+        twitter: 
+          short: "{{user_path}} added a {{twitter_path}}"
+          long: "{{user_path}} added a {{twitter_path}} to the ticket {{notable_path}}"
       assigned: 
         short: Assigned to {{responder_path}} by {{user_path}}
         long: "{{user_path}} assigned the ticket {{notable_path}} to {{responder_path}}"

@@ -144,6 +144,10 @@ module ApplicationHelper
     comment_path(args_hash, 'reply')
   end
   
+  def twitter_path(args_hash)
+    comment_path(args_hash, 'tweet')
+  end
+  
   def merge_ticket_path(args_hash)    
     link_to(args_hash['subject']+"(##{args_hash['ticket_id']})", "#{helpdesk_ticket_path args_hash['ticket_id']}}")
   end
