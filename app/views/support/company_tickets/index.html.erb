@@ -3,8 +3,8 @@
 		<h4 class="title"><%= current_user.customer.name %></h4>
 		<ul class="ui-list_with_icon">
 			<li><%= link_to(t('helpdesk.tickets.views.all'), "/support/company_tickets" ) %></li>
-			<li><%= link_to(t('helpdesk.tickets.views.open'),"/support/company_tickets/filter/open" ) %></li>
-			<li><%= link_to(t('helpdesk.tickets.views.closed') ,"/support/company_tickets/filter/closed" ) %></li>
+			<li><%= link_to(t('helpdesk.tickets.views.open'),"/support/company_tickets/filter/open_or_pending" ) %></li>
+			<li><%= link_to(t('helpdesk.tickets.views.closed') ,"/support/company_tickets/filter/resolved_or_closed" ) %></li>
 		</ul>
 		<% unless current_user.customer.users.empty? %>
 			<span class="seperator"></span>
