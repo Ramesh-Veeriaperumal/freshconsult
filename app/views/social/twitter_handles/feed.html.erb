@@ -58,7 +58,7 @@
   							    Convert to Ticket
   						    </a>
   						  </span>
-						    <a href="#" class="button goto_ticket" target="_blank">
+						    <a href="#" class="button goto_ticket" style="display:none;" target="_blank">
 						      Go to Ticket
 						    </a>
 						  </div>
@@ -98,6 +98,7 @@
     jQuery("#TWEET_DIV_"+tweet_id)
 	    .addClass("tweet_converted")
 	    .find(".goto_ticket")
+			.show()
 	    .attr("href", "<%= helpdesk_tickets_url %>/"+ticket_id);
   } 
 <%- end %>
@@ -192,6 +193,7 @@
       		    .effect("highlight", {}, 2500)
       		    .addClass("tweet_converted")
       		    .find(".goto_ticket")
+							.show()
       		    .attr("href", data.ticket_link);      		    
       		}else{ 
       		  
