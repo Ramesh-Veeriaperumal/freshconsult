@@ -3,6 +3,7 @@ class Helpdesk::NotesController < ApplicationController
   before_filter :load_parent_ticket_or_issue
   
   include HelpdeskControllerMethods
+  include ErrorHandle 
   
   def create  
     if @item.save
@@ -102,7 +103,7 @@ class Helpdesk::NotesController < ApplicationController
           twitter = @wrapper.get_twitter
           latest_comment = @parent.notes.latest_twitter_comment.first
           status_id = latest_comment.nil? ? @parent.tweet.tweet_id : latest_comment.tweet.tweet_id
-          twitter.update(@item.body, {:in_reply_to_status_id => status_id})
+          return twitter.update(@item.body, {:in_reply_to_status_id => status_id})
         }
         if returned_value == 0
           flash.now[:notice] =  t('twitter.not_authorized')
