@@ -1,9 +1,10 @@
 module ErrorHandle
   
-  def sandbox(return_value = yield)
+  def sandbox(return_value = nil)
       begin
         return_value = yield
       rescue Errno::ECONNRESET => e
+        
         NewRelic::Agent.notice_error(e)
         RAILS_DEFAULT_LOGGER.debug "Something wrong happened in twitter!"
         RAILS_DEFAULT_LOGGER.debug e.to_s
