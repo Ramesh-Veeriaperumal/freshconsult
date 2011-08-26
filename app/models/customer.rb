@@ -8,7 +8,7 @@ class Customer < ActiveRecord::Base
   
   belongs_to :account
   
-  has_many :users , :class_name =>'User' ,:conditions =>{:deleted =>false} , :dependent => :nullify
+  has_many :users , :class_name =>'User' ,:conditions =>{:deleted =>false} , :dependent => :nullify , :order => :name
   
   has_many :tickets , :through => :users , :class_name => 'Helpdesk::Ticket'
   

@@ -1296,6 +1296,8 @@ en:
         my_open: My Open Tickets
         tickets_by: Tickets by
         tickets_twitter: Tickets through twitter
+        open_or_pending: Open or Pending
+        resolved_or_closed: Resolved or Closed
       note:
         posted_on: "%{user_name} on %{note_date}"
         edit_note: Edit Note

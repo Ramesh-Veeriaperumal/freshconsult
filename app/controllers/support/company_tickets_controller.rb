@@ -18,7 +18,7 @@ class Support::CompanyTicketsController < ApplicationController
   end
   
   def filter   
-    @page_title = t("helpdesk.tickets.views.#{current_filter}")
+    @page_title = TicketsFilter::SELECTOR_NAMES[current_filter.to_sym]
     build_tickets
     render :index
   end
@@ -32,7 +32,7 @@ class Support::CompanyTicketsController < ApplicationController
   
   protected  
     def current_filter
-      params[:id] || 'visible'
+      params[:id] || 'all'
     end
   
     def build_tickets
