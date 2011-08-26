@@ -99,12 +99,21 @@
 		function insertIntoConversation(value){
 			note_area  = jQuery('#cnt-note');
 			reply_area = jQuery('#cnt-reply');
+			tweet_area = jQuery('#cnt-tweet');
 			if(note_area.css("display") == 'block'){
 				insertTextAtCursor( $('add-note-cnt-note-body'), value );
 				jQuery('#add-note-cnt-note-body')
 						.trigger("focus")
 						.trigger("keydown");
 			} 
+			else if(tweet_area.css("display") == 'block'){
+				get_short_url(value, function(bitly){
+						insertTextAtCursor( $('send-tweet-cnt-tweet-body'), bitly || value );
+						jQuery('#send-tweet-cnt-tweet-body')
+								.trigger("focus")
+								.trigger("keydown");
+				});			
+			}
 			else{
 				if(reply_area.css("display") == 'none')
 					jQuery('#ReplyButton').trigger("click");
@@ -133,7 +142,7 @@
   	}
     
   <% end %>
-<% end %>
+<% end %> 
 
 <% content_for :sidebar do %>
 	<% unless @ticket.deleted %>
@@ -213,8 +222,9 @@
 		  </h3>
 			<div class="description"> 
         <div class="user_details">
-          <%= user_avatar(@ticket.requester.avatar)  %>
+          <%= user_avatar(@ticket.requester)  %>
           <div>
+						<%= content_tag :span, "", :class => "custom-tip-bottom icon-image source-#{@ticket.source_name.downcase}", :title => t("ticket.reported_from_souce", :source => @ticket.source_name.downcase) %>
             <%= t('ticket.reported_by', :requester => link_to(h(@ticket.requester.display_name),@ticket.requester, :class => "user_name")) %>     
           </div>
           <div> 

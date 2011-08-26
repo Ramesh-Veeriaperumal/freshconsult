@@ -4,6 +4,8 @@ module ApplicationHelper
   include SavageBeast::ApplicationHelper
   include Juixe::Acts::Voteable
   
+  require "twitter"
+  
   ASSETIMAGE = { :help => "/images/helpimages" }
   
   def show_flash
@@ -116,16 +118,7 @@ module ApplicationHelper
     
     data
   end
-  
-  def store_location
-    session[:return_to] = request.request_uri
-  end
-
-  def redirect_back_or_default(default)
-    redirect_to(session[:return_to] || default)
-    session[:return_to] = nil
-  end
-  
+   
   def responder_path(args_hash)
     link_to(h(args_hash['name']), user_path(args_hash['id']))
   end
@@ -140,6 +133,10 @@ module ApplicationHelper
   
   def reply_path(args_hash)
     comment_path(args_hash, 'reply')
+  end
+  
+  def twitter_path(args_hash)
+    comment_path(args_hash, 'tweet')
   end
   
   def merge_ticket_path(args_hash)    
@@ -179,8 +176,21 @@ module ApplicationHelper
   
   # Avatar helper for user profile image
   # :medium and :small size of the original image will be saved as an attachment to the user 
-  def user_avatar( avatar, profile_size = :thumb, profile_class = "preview_pic" )
-    content_tag( :div, (image_tag (avatar) ? avatar.content.url(profile_size) : "/images/fillers/profile_blank_#{profile_size}.gif"), :class => profile_class)
+  def user_avatar( user, profile_size = :thumb, profile_class = "preview_pic" )
+    content_tag( :div, (image_tag (user.avatar) ? user.avatar.content.url(profile_size) : is_user_social(user, profile_size), :onerror => "imgerror(this)", :alt => ""), :class => profile_class, :size_type => profile_size )
+  end
+  
+  def is_user_social( user, profile_size )
+    if user.twitter_id
+      profile_size = (profile_size == :medium) ? "original" : "normal"
+      twitter_avatar(user.twitter_id, profile_size)
+    else
+      "/images/fillers/profile_blank_#{profile_size}.gif"
+    end
+  end   
+  
+  def twitter_avatar( screen_name, profile_size = "normal" )
+    "http://api.twitter.com/1/users/profile_image?screen_name=#{screen_name}&size=#{profile_size}"
   end
   
   # User details page link should be shown only to agents and admin

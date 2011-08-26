@@ -63,8 +63,15 @@ p {
   color: #4d769f;
 }
 
+h1.title {
+  font-size: 2em;
+  text-transform: capitalize;
+  font-weight: normal;
+}
+
 h2.title {
-  font-size: 1.8em;
+  font-size: 1.65em;
+  font-weight: normal;
 }
 
 h3.title, h3.sub_title, h3.title-band {

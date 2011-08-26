@@ -5,9 +5,9 @@
 			<% last_post = topic.last_post %>
 			<li class="<%= className %>"> 
 				<% if topic.posts_count > 1 %>
-					<%= user_avatar( last_post.user.avatar ) %>
+					<%= user_avatar( last_post.user ) %>
 				<% else %>
-					<%= user_avatar( topic.user.avatar ) %>
+					<%= user_avatar( topic.user ) %>
 				<% end %>
 				<span class="list-badge">
 					<span class="stamp stamp_type_<%=topic.stamp_type%>"> 

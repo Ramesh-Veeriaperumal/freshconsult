@@ -134,7 +134,7 @@
 					%>
 					
 					<li agent_thumb="<%=avatar_agent%>" agent_id="<%= agent.user.id %>" agent_name="<%= agent.user.name %>">
-						<%= user_avatar(agent.user.avatar, :thumb) %>
+						<%= user_avatar(agent.user, :thumb) %>
 						<a href="javascript:void(0)" class="button control"><%= t("remove") %></a>				
 						<b><%= agent.user.name %></b>
 					</li>

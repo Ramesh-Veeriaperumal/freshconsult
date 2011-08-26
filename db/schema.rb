@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110818071440) do
+ActiveRecord::Schema.define(:version => 20110825053014) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -611,6 +611,14 @@ ActiveRecord::Schema.define(:version => 20110818071440) do
   add_index "posts", ["topic_id", "created_at"], :name => "index_posts_on_topic_id"
   add_index "posts", ["user_id", "created_at"], :name => "index_posts_on_user_id"
 
+  create_table "scoreboard_ratings", :force => true do |t|
+    t.integer  "account_id",       :limit => 8
+    t.integer  "resolution_speed"
+    t.integer  "score"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "social_tweets", :force => true do |t|
     t.integer  "tweet_id",       :limit => 8
     t.integer  "tweetable_id",   :limit => 8
@@ -636,8 +644,7 @@ ActiveRecord::Schema.define(:version => 20110818071440) do
     t.datetime "updated_at"
   end
 
-  add_index "social_twitter_handles", ["account_id", "twitter_user_id"], :name => "index_account_product_id", :unique => true
-  add_index "social_twitter_handles", ["product_id"], :name => "index_product_id", :unique => true
+  add_index "social_twitter_handles", ["account_id", "twitter_user_id"], :name => "social_twitter_handle_product_id", :unique => true
 
   create_table "solution_articles", :force => true do |t|
     t.string   "title"
@@ -752,8 +759,17 @@ ActiveRecord::Schema.define(:version => 20110818071440) do
 
   add_index "subscriptions", ["account_id"], :name => "index_subscriptions_on_account_id"
 
+  create_table "support_scores", :force => true do |t|
+    t.integer  "account_id",    :limit => 8
+    t.integer  "agent_id",      :limit => 8
+    t.integer  "scorable_id",   :limit => 8
+    t.string   "scorable_type"
+    t.integer  "score"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "survey_handles", :force => true do |t|
-    t.integer  "account_id",       :limit => 8
     t.integer  "surveyable_id",    :limit => 8
     t.string   "surveyable_type"
     t.string   "id_token"
@@ -761,34 +777,26 @@ ActiveRecord::Schema.define(:version => 20110818071440) do
     t.integer  "response_note_id", :limit => 8
     t.datetime "created_at"
     t.datetime "updated_at"
-  end
-
-  create_table "survey_points", :force => true do |t|
     t.integer  "survey_id",        :limit => 8
-    t.integer  "resolution_speed"
-    t.integer  "customer_rating"
-    t.integer  "score"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.integer  "survey_result_id", :limit => 8
   end
 
   create_table "survey_remarks", :force => true do |t|
-    t.integer  "survey_score_id", :limit => 8
-    t.integer  "note_id",         :limit => 8
+    t.integer  "note_id",          :limit => 8
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "survey_result_id", :limit => 8
   end
 
-  create_table "survey_scores", :force => true do |t|
+  create_table "survey_results", :force => true do |t|
     t.integer  "account_id",       :limit => 8
+    t.integer  "survey_id",        :limit => 8
     t.integer  "surveyable_id",    :limit => 8
     t.string   "surveyable_type"
     t.integer  "customer_id",      :limit => 8
     t.integer  "agent_id",         :limit => 8
     t.integer  "response_note_id", :limit => 8
-    t.integer  "resolution_speed"
-    t.integer  "customer_rating"
-    t.integer  "score"
+    t.integer  "rating"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

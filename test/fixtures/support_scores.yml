@@ -1,0 +1,15 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  account_id: 1
+  agent_id: 1
+  scorable_id: 1
+  scorable_type: MyString
+  score: 1
+
+two:
+  account_id: 1
+  agent_id: 1
+  scorable_id: 1
+  scorable_type: MyString
+  score: 1

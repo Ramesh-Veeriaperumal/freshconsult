@@ -1,2 +1,2 @@
-<%= link_to_remote(image_tag("/images/spacer.gif"), { :url => helpdesk_ticket_helpdesk_subscriptions_path(@ticket), :method => :post}, :class => "monitor", :title => t('ticket.monitor_btn_title') ) if not @subscription %>
-<%= link_to_remote(image_tag("/images/spacer.gif"), { :url => helpdesk_ticket_helpdesk_subscription_path(@ticket, @subscription), :method => :delete }, :class => "monitor_active",  :title => t('ticket.stop_monitor_btn_title') ) if @subscription %>
+<%= link_to_remote(image_tag("/images/spacer.gif"), { :url => helpdesk_ticket_helpdesk_subscriptions_path(@ticket), :method => :post}, :class => "custom-tip-bottom monitor", :title => t('ticket.monitor_btn_title') ) if not @subscription %>
+<%= link_to_remote(image_tag("/images/spacer.gif"), { :url => helpdesk_ticket_helpdesk_subscription_path(@ticket, @subscription), :method => :delete }, :class => "custom-tip-bottom monitor_active",  :title => t('ticket.stop_monitor_btn_title') ) if @subscription %>

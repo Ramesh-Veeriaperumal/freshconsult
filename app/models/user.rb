@@ -104,10 +104,13 @@ class User < ActiveRecord::Base
     return build_avatar(av_attributes) if avatar.nil?
     avatar.update_attributes(av_attributes)
   end
-
  
   def active?
     active
+  end
+  
+  def has_email?
+    !email.blank?
   end
   
   def activate!(params)

@@ -1,3 +1,6 @@
+require 'lib/error_handle.rb' 
+include ErrorHandle 
+
 namespace :twitter do
   desc 'Check for New twitter feeds..'
   task :fetch => :environment do    
@@ -87,14 +90,12 @@ namespace :twitter do
     tweet = @account.tweets.find_by_tweet_id(twt.in_reply_to_status_id)
     
     unless tweet.nil?  
-      @ticket = tweet.tweetable.notable if  tweet.tweetable_type.eql?('Helpdesk::Note')
-      @ticket = tweet.tweetable if  tweet.tweetable_type.eql?('Helpdesk::Ticket')
+      @ticket = tweet.get_ticket
     end
     
     unless @ticket.blank?
       @note = @ticket.notes.build(
         :body => twt.text,
-        :private => true ,
         :incoming => true,
         :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:twitter],
         :account_id => twt_handle.account_id,
@@ -110,49 +111,5 @@ namespace :twitter do
       add_tweet_as_ticket (twt,twt_handle)
     end
   end
-  
-  def sandbox
-      begin
-        yield
-      rescue Errno::ECONNRESET => e
-        puts e.to_s
-        NewRelic::Agent.notice_error(e)
-        RAILS_DEFAULT_LOGGER.debug "Something wrong happened in twitter!"
-        RAILS_DEFAULT_LOGGER.debug e.to_s
-      rescue Timeout::Error => e
-        puts e.to_s
-        NewRelic::Agent.notice_error(e)
-        RAILS_DEFAULT_LOGGER.debug "Something wrong happened in twitter!"
-        RAILS_DEFAULT_LOGGER.debug e.to_s
-      rescue EOFError => e
-        puts e.to_s
-        NewRelic::Agent.notice_error(e)
-        RAILS_DEFAULT_LOGGER.debug "Something wrong happened in twitter!"
-        RAILS_DEFAULT_LOGGER.debug e.to_s
-      rescue Errno::ETIMEDOUT => e
-        puts e.to_s
-        NewRelic::Agent.notice_error(e)
-        RAILS_DEFAULT_LOGGER.debug "Something wrong happened in twitter!"
-        RAILS_DEFAULT_LOGGER.debug e.to_s
-      rescue OpenSSL::SSL::SSLError => e
-        puts e.to_s
-        NewRelic::Agent.notice_error(e)
-        RAILS_DEFAULT_LOGGER.debug "Something wrong happened in twitter!"
-        RAILS_DEFAULT_LOGGER.debug e.to_s
-      rescue SystemStackError => e
-        puts e.to_s
-        NewRelic::Agent.notice_error(e)
-        RAILS_DEFAULT_LOGGER.debug "Something wrong happened in twitter!"
-        RAILS_DEFAULT_LOGGER.debug e.to_s
-      rescue Exception => e
-        puts e.to_s
-        NewRelic::Agent.notice_error(e)
-        RAILS_DEFAULT_LOGGER.debug "Something wrong happened in twitter!"
-        RAILS_DEFAULT_LOGGER.debug e.to_s
-      rescue 
-        puts e.to_s
-        RAILS_DEFAULT_LOGGER.debug "Something wrong happened in twitter!"
-      end
-    end
   
 end

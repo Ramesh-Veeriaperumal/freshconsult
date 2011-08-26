@@ -2,7 +2,7 @@ unless @saved
   page << "jQuery('body,html').animate({scrollTop: 0}, 800);" 
 else  
   tweet_id = params[:helpdesk_tickets][:tweet_attributes][:tweet_id]
-  page << "jQuery('#TWEET_DIV_#{tweet_id}').effect('highlight', {}, 2500).addClass('tweet_converted').find('.goto_ticket').attr('href', '#{helpdesk_ticket_url(@item, :tweet_reply => true)}');"
+  page << "jQuery('#TWEET_DIV_#{tweet_id}').effect('highlight', {}, 2500).addClass('tweet_converted').find('.goto_ticket').attr('href', '#{helpdesk_ticket_url(@item.tweet.get_ticket.display_id)}');"
 end
 
 show_ajax_flash page

@@ -72,6 +72,17 @@ var $J = jQuery.noConflict();
 			 }
 		});
 		
+		$(".custom-tip-bottom").qtip({
+			 position: {
+			      my: 'top center',  // Position my top left...
+			      at: 'bottom center', // at the bottom right of...
+			      viewport: jQuery(window) 
+			 }, 
+			 style : {
+				classes: 'ui-tooltip-rounded ui-tooltip-shadow'
+			 }
+		});
+		
 		menu_box_count = 0;
 		fd_active_drop_box = null;
 		

@@ -19,7 +19,7 @@ function setUserRole()
 		<div class="action_buttons">
 			<%= link_to t('edit_agent'), edit_agent_path(@agent), :class => "last" %>
 		</div>
-		<%= user_avatar(@user.avatar, :medium, "profile_pic") %>	
+		<%= user_avatar(@user, :medium, "profile_pic") %>	
 		<h3 class="title"><%= @user.display_name %></h3>
 		<% unless @user.job_title.blank? %>
 		   <b><%= h @user.job_title %></b>

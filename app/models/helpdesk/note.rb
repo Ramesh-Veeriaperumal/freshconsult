@@ -40,6 +40,8 @@ class Helpdesk::Note < ActiveRecord::Base
 
   SOURCES = %w{email form note status meta twitter}
   SOURCE_KEYS_BY_TOKEN = Hash[*SOURCES.zip((0..SOURCES.size-1).to_a).flatten]
+  
+  ACTIVITIES_HASH = { Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:twitter] => "twitter" }
 
   named_scope :exclude_source, lambda { |s| { :conditions => ['source <> ?', SOURCE_KEYS_BY_TOKEN[s]] } }
 
@@ -61,6 +63,10 @@ class Helpdesk::Note < ActiveRecord::Base
   
   def note?
     source == SOURCE_KEYS_BY_TOKEN["note"]
+  end
+  
+  def tweet?
+    source == SOURCE_KEYS_BY_TOKEN["twitter"]    
   end
 
   def private_note?
@@ -143,10 +149,10 @@ class Helpdesk::Note < ActiveRecord::Base
                                 {'ticket_id' => notable.display_id, 'comment_id' => id}]}},
           'activities.tickets.conversation.in_email.short')
       else
-        notable.create_activity(user, 'activities.tickets.conversation.note.long', 
-          {'eval_args' => {'comment_path' => ['comment_path', 
+        notable.create_activity(user, "activities.tickets.conversation.#{ACTIVITIES_HASH.fetch(source, "note")}.long", 
+          {'eval_args' => {"#{ACTIVITIES_HASH.fetch(source, "comment")}_path" => ["#{ACTIVITIES_HASH.fetch(source, "comment")}_path", 
                                 {'ticket_id' => notable.display_id, 'comment_id' => id}]}},
-          'activities.tickets.conversation.note.short')
+          "activities.tickets.conversation.#{ACTIVITIES_HASH.fetch(source, "note")}.short")
       end
     end
     

@@ -1,9 +1,24 @@
-<% content_for :layoutType do -%>single<%- end %>
-<h3 class="title"> <%= link_to(t('helpdesk.tickets.views.all') ,"/support/company_tickets" ) %></h3>
-<h3 class="title"><%= link_to(t('helpdesk.tickets.views.open'),"/support/company_tickets/filter/open" ) %></h3>
-<h3 class="title"><%= link_to(t('helpdesk.tickets.views.closed') ,"/support/company_tickets/filter/closed" ) %></h3>
-<%current_user.customer.users.each do |contact|%>
-<h3 class="title"> <%= link_to(t('helpdesk.tickets.views.tickets_by')+" #{contact.name}" ,"/support/company_tickets/requester/#{contact.id}" ) %></h3>
-<%end%>
-
-<%= render :partial => "/support/shared/ticket_list_view" %>
+<% content_for :sidebar do -%>
+	<div class="sidepanel">
+		<h4 class="title"><%= current_user.customer.name %></h4>
+		<ul class="ui-list_with_icon">
+			<li><%= link_to(t('helpdesk.tickets.views.all'), "/support/company_tickets" ) %></li>
+			<li><%= link_to(t('helpdesk.tickets.views.open'),"/support/company_tickets/filter/open" ) %></li>
+			<li><%= link_to(t('helpdesk.tickets.views.closed') ,"/support/company_tickets/filter/closed" ) %></li>
+		</ul>
+		<% unless current_user.customer.users.empty? %>
+			<span class="seperator"></span>
+			<h4 class="title">Tickets by</h4>
+			<ul class="ui-list_with_icon">
+				<% current_user.customer.users.each do |contact|%>
+					<li>
+						<%= link_to(contact.name ,"/support/company_tickets/requester/#{contact.id}" ) %>
+					</li>	
+				<% end %>
+			</ul>
+		<% end %>
+		</br>
+	</div> 
+<%- end %>
+<h3 class="title"><%= @page_title %></h3>
+<%= render :partial => "/support/shared/ticket_list_view"  %>

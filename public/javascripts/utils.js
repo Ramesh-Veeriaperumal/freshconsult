@@ -10,6 +10,31 @@ makePageNonSelectable = function(source){
 	source.onmousedown = function () { return false; };						// Other browsers
 };
 
+//Image error problem
+function imgerror(source){
+    source.src = "/images/fillers/profile_blank_thumb.gif";
+    source.onerror = "";
+    return true;
+}
+
+//Bitly url shortner
+function get_short_url(long_url, callback)
+{
+    jQuery.getJSON(
+        "http://api.bitly.com/v3/shorten?callback=?", 
+        { 
+            "format": "json",
+            "apiKey": "R_8ae5a67d8d9930440f0d1d4b794332f0",
+            "login": "freshdesk",
+            "longUrl": long_url
+        },
+        function(response)
+        {
+            callback(response.data.url);
+        }
+    );
+}
+
 // Delay in typing of search text
 var delay = (function(){
 	var timer = 0;

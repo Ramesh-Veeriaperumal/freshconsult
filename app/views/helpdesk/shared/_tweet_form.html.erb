@@ -2,6 +2,7 @@
   <% form_for note, :html => {:multipart => true,  :id => "HelpdeskTweets" } do |f| %>
     <%= f.error_messages %>
 	  <%= hidden_field_tag :tweet, "true", :id => "tweet" %>
+	  <%= hidden_field_tag "helpdesk_note[private]", "false", :id => "helpdesk_notes[private]" %>
     <ul class="ui-form dont-validate">
       <li class="inline-field field">       
         <%= content_tag( :h3, t(".title", :user=>"@#{@ticket.requester.twitter_id}"), :class => "title") %>

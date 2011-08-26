@@ -2,10 +2,10 @@
 <div class="contact-box clearfix">
 		<div class="action_buttons">
 			<%= link_to t('contacts.edit_contact'), edit_contact_path(@user) %>
-			<%= link_to ( t('contacts.info2'), { :action => :make_agent, :id => @user.id }, :method => :put , :class => "last" ) %>
+			<%= link_to ( t('contacts.info2'), { :action => :make_agent, :id => @user.id }, :method => :put , :class => "last" ) if @user.has_email?%>
 		</div>
-		<%= user_avatar(@user.avatar, :medium, "profile_pic") %>	
-		<h3 class="title"><%= @user.display_name %></h3>
+		<%= user_avatar(@user, :medium, "profile_pic") %>	
+		<h1 class="title"><%= @user.display_name %></h1>
 		<% unless @user.job_title.blank? %>
 		   <b><%= h @user.job_title %></b>
 		<% end %>
@@ -20,13 +20,13 @@
 			<%= content_tag (:div, "#{content_tag(:span, t('user.secondary'))}  #{h(@user.second_email)}") unless @user.second_email.blank? %>
 			<%= content_tag (:div, "#{content_tag(:span, t('user.phone_no'))}  #{h(@user.phone)}") unless @user.phone.blank? %>
 			<%= content_tag (:div, "#{content_tag(:span, t('user.mobile'))}  #{h(@user.mobile)}") unless @user.mobile.blank? %>
-			<%= content_tag (:div, "#{content_tag(:span, t('user.twitter_id'))}  #{h(@user.twitter_id)}") unless @user.twitter_id.blank? %>
+			<%= content_tag (:div, "#{content_tag(:span, t('user.twitter_id'))} @#{h(@user.twitter_id)}") unless @user.twitter_id.blank? %>
 			<%= content_tag (:div, "#{content_tag(:span, t('account.time_zone'))}  #{h(@user.time_zone)}") %>
 		</div>
-		<% if @user.deleted || !@user.active? %>
+		<% if @user.deleted || (!@user.active? and @user.has_email?) %>
 		<div class="info-highlight">
 			<%= content_tag(:div, "#{ t('contacts.deleted_message') } #{ link_to( t('contacts.restore'), { :action => :restore, :id => @user.id }, :method => :put ) }") if @user.deleted %>
-			<%= content_tag(:div, "#{ t('contacts.emailnotverified') }   #{ link_to( t('contacts.send_activation'), send_invite_activation_path(@user), :method => :put ) } " ) unless @user.active? %>
+			<%= content_tag(:div, "#{ t('contacts.emailnotverified') }   #{ link_to( t('contacts.send_activation'), send_invite_activation_path(@user), :method => :put ) } " ) if !@user.active? and @user.has_email? %>
 		</div>
 		<% end %>
 </div>

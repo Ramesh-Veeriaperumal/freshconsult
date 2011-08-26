@@ -1,11 +1,4 @@
 <% content_for :sidebar do -%>
-  <div class="sidepanel">
-    <h4 class="title">Twitter channel</h4>
-    <p>
-      You can respond to a customers tweets via the twitter channel to give instant support.
-      All responded tweets will automatically be converted into a ticket.
-    </p>
-  </div>  
 <%-end %>
 <% first_search = nil %>
 <h3 class="title">
@@ -49,7 +42,7 @@
 				</div>
 				<div id="twitter_results" class="list-group"></div>
 				<script id="tweetTemplate" type="text/x-jquery-tmpl">
-				  <div class="list-item" id="TWEET_DIV_${id}">
+				  <div class="list-item" id="TWEET_DIV_${id_str}" data-tweet-id="${id_str}">
 						<div class="preview-pic">
 							<img src="${profile_image_url}" />
 						</div>
@@ -61,11 +54,11 @@
 						      <a href="#" data-user="${from_user}" class="button reply_button">
 						        Reply
 					        </a>
-  						    <a href="#" data-text="${text}" data-user="${from_user}" data-tweet-id="${id}" class="button convert_as_ticket">
+  						    <a href="#" data-text="${text}" data-user="${from_user}" data-tweet-id="${id_str}" class="button convert_as_ticket">
   							    Convert to Ticket
   						    </a>
   						  </span>
-						    <a href="#" class="button goto_ticket" target="_blank">
+						    <a href="#" class="button goto_ticket" style="display:none;" target="_blank">
 						      Go to Ticket
 						    </a>
 						  </div>
@@ -81,11 +74,38 @@
 		</tr>
 	</table>
 </div>
+<% javascript_tag do -%>
+  function check_tweets_with_tickets( update_div ){
+    var tweet_ids = [];
+    jQuery.each(update_div, function(index, item){
+      tweet_ids.push(item.getAttribute("data-tweet-id"));
+    })
+    data = { tweet_ids : tweet_ids.toString() };
+    jQuery.ajax({ 
+        url: "<%= tweet_exists_social_twitters_url %>",
+        dataType: 'json',
+        data: data,
+        success: function(data){ 
+          try{
+            $H(data).each(function(item){            
+              tweet_converted_to_ticket(item[0], item[1]);            
+            });
+          }catch(e){}
+        }
+    });
+  }
+  function tweet_converted_to_ticket( tweet_id, ticket_id ){ 
+    jQuery("#TWEET_DIV_"+tweet_id)
+	    .addClass("tweet_converted")
+	    .find(".goto_ticket")
+			.show()
+	    .attr("href", "<%= helpdesk_tickets_url %>/"+ticket_id);
+  } 
+<%- end %>
 
 <% content_for :onload_script do -%>
   var current_product_id = <%= @twitter_accounts.first.product.id %>;
   var current_twitter_id = <%= @twitter_accounts.first.id %>;
-  
   jQuery("#twitter_results")
 		.tweetfeed({ "query" : "<%= first_search %>", 
 								 "templateid" : "#tweetTemplate",
@@ -94,7 +114,7 @@
 										jQuery("#tweet_noresults").hide();
 										jQuery("#moreTweets").css("visibility", "hidden");
 									},
-									onafterload: function(setting, hasresults){									  
+									onafterload: function(setting, hasresults, update_div){
 									  if(hasresults){										  
 									    jQuery("#tweet_results_info").show();
   									  jQuery("#tweet_results_string").html(setting.query);
@@ -104,6 +124,8 @@
 										  jQuery("#tweet_noresults_string")
 										    .html(setting.query);
 										}
+										
+										check_tweets_with_tickets( update_div );
 									}
  							  });
 
@@ -171,6 +193,7 @@
       		    .effect("highlight", {}, 2500)
       		    .addClass("tweet_converted")
       		    .find(".goto_ticket")
+							.show()
       		    .attr("href", data.ticket_link);      		    
       		}else{ 
       		  

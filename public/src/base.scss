@@ -5,7 +5,7 @@ $blueprint-grid-columns: 24;
 $blueprint-grid-width: 30px;
 $blueprint-grid-margin: 10px;
 $blueprint-liquid-container-width: 95%; 
-$blueprint-liquid-container-min-width: 982px;
+$blueprint-liquid-container-min-width: 1102px;
 
 /* Theme Colors and layout Defaults */
 $header_color:#2f3733;
@@ -32,4 +32,5 @@ $use-mozilla-ellipsis-binding:true;
 $blueprint-font-family: "Lucida Grande", Geneva, Arial,Verdana,sans-serif;
  
 $symbol: sprite-map("symbols/*.png");
-$icons:  sprite-map("icons/*.png");
+$ticketicon: sprite-map("ticket-icon/*.png");
+$icons: sprite-map("icons/*.png");
