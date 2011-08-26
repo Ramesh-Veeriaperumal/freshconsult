@@ -222,13 +222,13 @@ ul.activityfeed li .activity_time {
   top: 4px;
 }
 .ui-list_with_icon li a {
-  color: #444444;
+  color: #527eaa;
   font-size: 1.0em;
   line-height: 1.5;
   text-decoration: none;
 }
 .ui-list_with_icon li a:visited {
-  color: #333333;
+  color: #527eaa;
 }
 .ui-list_with_icon li a:hover {
   color: #527eaa;

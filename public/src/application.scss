@@ -165,7 +165,7 @@ ul.activityfeed li{
 		left:0px; top:4px;
 	}
 	li a{
-		@include link-colors(#444444, #527EAA, #527EAA, #333333);
+		@include link-colors(#527eaa, #527EAA, #527eaa, #527eaa);
 		font-size:1.0em; line-height:1.5;
 		text-decoration:none;
 	}
