@@ -65,7 +65,7 @@ class Social::TwitterHandlesController < Admin::AdminController
         redirect_to social_twitters_url
       end
    }
-   if returned_valu==0
+   if returned_value == 0
      flash[:notice] = t('twitter.not_authorized')
      redirect_to social_twitters_url
    end
