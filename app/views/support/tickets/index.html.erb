@@ -1,3 +1,28 @@
 <% content_for :layoutType do -%>single<%- end %>
 <h3 class="title">Your Tickets</h3>
-<%= render :partial => "/support/shared/ticket_list_view" %>
+<div class="tickets-container">
+ <table class="tickets">  
+	<tbody>
+		<% @tickets.each do |ticket| %>
+	       	<tr class="<%= cycle('stripe', '') %>">
+			  <td class="name-user" width="70%">
+			      <h3>
+			        <%= link_to( h(ticket.subject) + " (##{ticket.display_id}) ", support_ticket_path(ticket), :title => ticket.description ) %>
+			      </h3>   
+			      <div class="info_data"><%= time_ago_in_words(ticket.created_at) %> ago </div>
+			  </td> 
+			  <td class="assign">
+			  	  <% if ticket.freshness != :new %>
+			        <span>Assigned to <b><%=h(ticket.responder.display_name)%></b></span>
+			      <% end %>
+				  	<ul>
+						<li>
+					        Status <span><%= ticket.status_name %></span>
+					    </li>
+					</ul>
+			  </td> 
+			</tr>
+		<% end %>
+	</tbody>
+ </table>
+</div>
