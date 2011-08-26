@@ -2,7 +2,7 @@ class Social::TwitterHandlesController < Admin::AdminController
   
   include ErrorHandle
 
-  before_filter :store_location => [:index]  
+  before_filter :store_location, :only => [:index]  
   
   before_filter :except => [:search, :create_twicket] do |c| 
     c.requires_permission :manage_users
@@ -74,7 +74,7 @@ class Social::TwitterHandlesController < Admin::AdminController
   def destroy
     flash[:notice] = t('twitter.deleted', :twitter_screen_name => @item.screen_name)
     @item.destroy   
-    redirect_back_or_default redirect_url 
+    redirect_back_or_default social_twitters_url 
   end
   
   def show_time_lines
@@ -100,7 +100,7 @@ class Social::TwitterHandlesController < Admin::AdminController
       update_error
     end   
     respond_to do |format|
-      format.html { redirect_back_or_default redirect_url }
+      format.html { redirect_back_or_default :back }
       format.js
     end
   end
@@ -238,14 +238,6 @@ class Social::TwitterHandlesController < Admin::AdminController
     def human_name
       'Twitter'
     end
-  
-    def redirect_url
-      if @item.product.primary_role?
-        social_twitters_url
-      else
-        edit_social_twitter_url(@item)
-      end
-    end
-  
+   
     
 end
