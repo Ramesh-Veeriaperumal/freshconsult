@@ -73,15 +73,24 @@ ul.summary{
 
 ul.activityfeed li{ 
 	border-bottom:1px solid #f7f7f7;
-	padding:8px 0px 4px 70px;
+	padding:10px 20px 8px 66px;
 	display:block; 
 	color:#666666;
-	font-size:1.1em; line-height:1.5;
+	font-size:1.1em; line-height:1.6;
 	.preview_pic{
-		margin-left:-68px;
+		margin-left:-62px;
+		margin-top:3px; 
+	}
+	.username{
+	   font-weight:bold;
+	   text-transform:capitalize;
+	}
+	.notelink{
+	   display:block; 
+	   @include link-colors(#333333, #3e71a4, #333333, #333333, #333333);
 	}
 	a{ 
-		@include link-colors(#3e71a4, #3e71a4, #3e71a4, #3e71a4, #3e71a4);
+		@include link-colors(#4D769F, #3e71a4, #4D769F, #4D769F, #4D769F);
    	text-decoration:none; 
 	}
 	.activity_time{ color:#a6a6a6; padding-top:3px;}

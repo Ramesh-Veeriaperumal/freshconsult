@@ -9,7 +9,7 @@
 body {
   color: #333;
   background: #efefef;
-  min-width: 1002px;
+  min-width: 1122px;
 }
 
 /* PAGE AREA STYLE */
@@ -95,30 +95,51 @@ ul.summary li.last {
 
 ul.activityfeed li {
   border-bottom: 1px solid #f7f7f7;
-  padding: 8px 0px 4px 70px;
+  padding: 10px 20px 8px 66px;
   display: block;
   color: #666666;
   font-size: 1.1em;
-  line-height: 1.5;
+  line-height: 1.6;
 }
 ul.activityfeed li .preview_pic {
-  margin-left: -68px;
+  margin-left: -62px;
+  margin-top: 3px;
+}
+ul.activityfeed li .username {
+  font-weight: bold;
+  text-transform: capitalize;
+}
+ul.activityfeed li .notelink {
+  display: block;
+  color: #333333;
+}
+ul.activityfeed li .notelink:visited {
+  color: #333333;
+}
+ul.activityfeed li .notelink:focus {
+  color: #333333;
+}
+ul.activityfeed li .notelink:hover {
+  color: #3e71a4;
+}
+ul.activityfeed li .notelink:active {
+  color: #333333;
 }
 ul.activityfeed li a {
-  color: #3e71a4;
+  color: #4d769f;
   text-decoration: none;
 }
 ul.activityfeed li a:visited {
-  color: #3e71a4;
+  color: #4d769f;
 }
 ul.activityfeed li a:focus {
-  color: #3e71a4;
+  color: #4d769f;
 }
 ul.activityfeed li a:hover {
   color: #3e71a4;
 }
 ul.activityfeed li a:active {
-  color: #3e71a4;
+  color: #4d769f;
 }
 ul.activityfeed li .activity_time {
   color: #a6a6a6;

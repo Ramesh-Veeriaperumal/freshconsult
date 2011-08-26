@@ -1,8 +1,6 @@
 class Social::TwitterHandlesController < Admin::AdminController
   
-  include ErrorHandle
-
-  before_filter :store_location, :only => [:index]  
+  include ErrorHandle 
   
   before_filter :except => [:search, :create_twicket] do |c| 
     c.requires_permission :manage_users
@@ -100,7 +98,7 @@ class Social::TwitterHandlesController < Admin::AdminController
       update_error
     end   
     respond_to do |format|
-      format.html { redirect_back_or_default :back }
+      format.html { redirect_back_or_default social_twitters_url }
       format.js
     end
   end

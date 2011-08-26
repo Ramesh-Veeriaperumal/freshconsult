@@ -43,8 +43,12 @@ class Support::CompanyTicketsController < ApplicationController
   end
   
   def verify_permission
-    params.symbolize_keys!  
-    return redirect_to(send(Helpdesk::ACCESS_DENIED_ROUTE)) unless current_user && current_user.client_manager?   
+    params.symbolize_keys!      
+    unless current_user && current_user.client_manager?
+      flash[:notice] = t("flash.general.access_denied")
+      #redirect_to Helpdesk::ACCESS_DENIED_ROUTE 
+      redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) 
+    end
   end
   
 end
