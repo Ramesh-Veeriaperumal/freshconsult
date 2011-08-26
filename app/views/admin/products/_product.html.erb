@@ -40,15 +40,12 @@
 						<%= link_to("Enable Portal", edit_admin_product_path(product, :enable_portal => true), :class => "slim-button") %>
 					<% end %>
 				</div>
-				
-				<div class="channel-text">
-					<% product.twitter_handles.each do |twitter_handle| %>
+				<% product.twitter_handles.each do |twitter_handle| %>
+				<div class="channel-text">				
 						<span class='icon twitter-active'></span>				
-						<%= link_to("@#{twitter_handle.screen_name}", edit_social_twitter_path(twitter_handle), :class => "", :title => "Edit Twitter Account <b>@#{twitter_handle.screen_name}</b>") %>
-						<%= link_to( image_tag("symbols/setting.png"), edit_social_twitter_path(twitter_handle), :class => "", :title => "Edit Twitter Account <b>@#{twitter_handle.screen_name}</b>") %>
-					<% end %>				
+						<%= link_to("@#{twitter_handle.screen_name}", edit_social_twitter_path(twitter_handle), :class => "", :title => "Edit Twitter Account @#{twitter_handle.screen_name}") %> 
 				</div>
-				
+ 			  <% end %>
       </td>
     </tr>
   </table>
