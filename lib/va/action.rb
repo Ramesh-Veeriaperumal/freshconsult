@@ -101,10 +101,12 @@ class Va::Action
     end
 
     def send_email_to_requester(act_on)
-      Helpdesk::TicketNotifier.send_later(:deliver_email_to_requester, 
+      if act_on.requester_has_email?
+        Helpdesk::TicketNotifier.send_later(:deliver_email_to_requester, 
                 act_on, Liquid::Template.parse(act_hash[:email_body]).render('ticket' => act_on, 
-                              'helpdesk_name' => act_on.account.portal_name))
-      add_activity("Sent an email to the requester")
+                              'helpdesk_name' => act_on.account.portal_name)) 
+        add_activity("Sent an email to the requester") 
+      end
     end
     
     def send_email_to_group(act_on)

@@ -14,6 +14,14 @@ class Social::TwitterHandlesController < Admin::AdminController
   before_filter :build_item, :only => [:signin, :authdone]
   before_filter :load_item,  :only => [:tweet, :edit, :update, :search, :destroy]       
   before_filter :twitter_wrapper , :only => [:signin, :authdone, :index]
+  before_filter :check_if_handles_exist, :only => [:feed]
+  
+  def check_if_handles_exist
+    if current_account.twitter_handles.blank?
+      flash[:notice] = t('no_twitter_handle')
+      redirect_to social_twitters_url
+    end
+  end
   
   def tweet_exists
     converted_tweets = current_account.tweets.find(:all,

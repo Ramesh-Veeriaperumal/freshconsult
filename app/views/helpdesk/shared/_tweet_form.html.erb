@@ -8,7 +8,7 @@
         <%= content_tag( :h3, t(".title", :user=>"@#{@ticket.requester.twitter_id}"), :class => "title") %>
         <label class="caption">From:</label>
         <div class="fields">
-           <%= select_tag :twitter_handle, options_from_collection_for_select(current_account.twitter_handles, :id, :screen_name) %>
+           <%= select_tag :twitter_handle, options_from_collection_for_select(current_account.twitter_handles, :id, :screen_name, {:selected => @ticket.fetch_twitter_handle}) %>
         </div>
 	  </li>				
 	  <li class="inline-field field">
