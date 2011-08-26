@@ -28,8 +28,8 @@ module TicketsFilter
     [:deleted,          I18n.t('helpdesk.tickets.views.trash')  ],
     [:tags  ,           I18n.t('helpdesk.tickets.views.tags') ],
     [:twitter  ,        I18n.t('helpdesk.tickets.views.tickets_twitter')],
-    [:open_or_pending, I18n.t('helpdesk.tickets.views.open') ],
-    [:resolved_or_closed,  I18n.t('helpdesk.tickets.views.resolved')]
+    [:open_or_pending, I18n.t('helpdesk.tickets.views.open_or_pending') ],
+    [:resolved_or_closed,  I18n.t('helpdesk.tickets.views.resolved_or_closed')]
     
   ]
   
