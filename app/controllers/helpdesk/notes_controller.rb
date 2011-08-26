@@ -97,11 +97,15 @@ class Helpdesk::NotesController < ApplicationController
     def send_tweet
       reply_twitter = current_account.twitter_handles.find(params[:twitter_handle])
       unless reply_twitter.nil?
+       begin
         @wrapper = TwitterWrapper.new reply_twitter
         twitter = @wrapper.get_twitter
         latest_comment = @parent.notes.latest_twitter_comment.first
         status_id = latest_comment.nil? ? @parent.tweet.tweet_id : latest_comment.tweet.tweet_id
         twitter.update(@item.body, {:in_reply_to_status_id => status_id})
+      rescue
+         flash.now[:notice] = t('twitter.not_authorized')
+        end
       end
     end
   

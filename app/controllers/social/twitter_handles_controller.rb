@@ -21,7 +21,7 @@ class Social::TwitterHandlesController < Admin::AdminController
                               :include => :tweetable)
     @tweet_tkt_hsh = {}
     converted_tweets.each do |tweet|
-      @tweet_tkt_hsh.store(tweet.tweet_id,tweet.get_ticket.id)
+      @tweet_tkt_hsh.store(tweet.tweet_id,tweet.get_ticket.display_id)
     end
     
     respond_to do |format|
@@ -55,7 +55,7 @@ class Social::TwitterHandlesController < Admin::AdminController
   end
   
   def add_to_db
-    begin      
+    returned_value = sandbox(0) {      
       twitter_handle = @wrapper.auth( session[:request_token], session[:request_secret], params[:oauth_verifier] )
       if twitter_handle.save
         flash[:notice] = t('twitter.success_signin', :twitter_screen_name => twitter_handle.screen_name, :helpdesk => twitter_handle.product.name)        
@@ -64,9 +64,11 @@ class Social::TwitterHandlesController < Admin::AdminController
         flash[:notice] = t('twitter.user_exists')
         redirect_to social_twitters_url
       end
-    rescue
-       flash[:error] = t('twitter.not_authorized')
-    end
+   }
+   if returned_value == 0
+     flash[:notice] = t('twitter.not_authorized')
+     redirect_to social_twitters_url
+   end
   end
   
   def destroy
