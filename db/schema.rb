@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110818071440) do
+ActiveRecord::Schema.define(:version => 20110825075247) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -610,6 +610,26 @@ ActiveRecord::Schema.define(:version => 20110818071440) do
   add_index "posts", ["forum_id", "created_at"], :name => "index_posts_on_forum_id"
   add_index "posts", ["topic_id", "created_at"], :name => "index_posts_on_topic_id"
   add_index "posts", ["user_id", "created_at"], :name => "index_posts_on_user_id"
+
+  create_table "social_facebook_pages", :force => true do |t|
+    t.integer  "profile_id",           :limit => 8
+    t.string   "access_token"
+    t.integer  "page_id",              :limit => 8
+    t.string   "page_name"
+    t.string   "page_token"
+    t.string   "page_img_url"
+    t.string   "page_link"
+    t.boolean  "import_visitor_posts",              :default => true
+    t.boolean  "import_company_posts",              :default => false
+    t.boolean  "enable_page",                       :default => false
+    t.integer  "product_id",           :limit => 8
+    t.integer  "account_id",           :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "social_facebook_pages", ["account_id", "page_id"], :name => "index_account_page_id", :unique => true
+  add_index "social_facebook_pages", ["product_id"], :name => "index_product_id", :unique => true
 
   create_table "social_tweets", :force => true do |t|
     t.integer  "tweet_id",       :limit => 8

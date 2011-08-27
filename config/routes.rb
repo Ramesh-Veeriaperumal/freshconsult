@@ -79,6 +79,10 @@ ActionController::Routing::Routes.draw do |map|
     social.resources :twitters, :controller => 'twitter_handles', 
                 :collection =>  { :feed => :any, :create_twicket => :post, :send_tweet => :any, :signin => :any },
                 :member     =>  { :search => :any, :edit => :any }
+                
+    social.resources :facebook, :controller => 'facebook_pages', 
+                :collection =>  { :signin => :any ,:authdone => :any  },
+                :member     =>  { :edit => :any }
   end
   
   #SAAS copy starts here
