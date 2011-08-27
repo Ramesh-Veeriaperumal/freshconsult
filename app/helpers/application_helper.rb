@@ -41,7 +41,7 @@ module ApplicationHelper
       ['/home',               :home,        !permission?(:manage_tickets) ],
       ['helpdesk/dashboard',  :dashboard,    permission?(:manage_tickets)],
       ['helpdesk/tickets',    :tickets,      permission?(:manage_tickets)],
-      ['/social/twitters/feed', :social,      permission?(:manage_tickets)],
+      ['/social/twitters/feed', :social,      permission?(:manage_tickets) && !current_account.twitter_handles.blank?],
       solutions_tab,      
       forums_tab,
       ['/contacts',           :customers,    permission?(:manage_tickets)],

@@ -2,17 +2,17 @@ class Social::TwitterHandlesController < Admin::AdminController
   
   include ErrorHandle 
   
-  before_filter :except => [:search, :create_twicket] do |c| 
+  before_filter :except => [:create_twicket] do |c| 
     c.requires_permission :manage_users
   end
   
-  before_filter :only => [:search, :create_twicket] do |c| 
+  before_filter :only => [ :create_twicket] do |c| 
     c.requires_permission :manage_forums
   end
   
   prepend_before_filter :load_product, :only => [ :signin, :authdone ]
   before_filter :build_item, :only => [:signin, :authdone]
-  before_filter :load_item,  :only => [:tweet, :edit, :update, :search, :destroy]       
+  before_filter :load_item,  :only => [:tweet, :edit, :update, :destroy]       
   before_filter :twitter_wrapper , :only => [:signin, :authdone, :index]
   before_filter :check_if_handles_exist, :only => [:feed]
   
@@ -102,6 +102,8 @@ class Social::TwitterHandlesController < Admin::AdminController
   
  
   def update
+    params[:social_twitter_handle][:search_keys] = [] if(params[:social_twitter_handle][:search_keys].blank?)
+
     if @item.update_attributes(params[:social_twitter_handle])    
       flash[:notice] = I18n.t(:'flash.twitter.updated')
     else
@@ -117,16 +119,10 @@ class Social::TwitterHandlesController < Admin::AdminController
     @twitter_handles = scoper.find(:all, :include => :user)
     @twitter_search = current_account.twitter_search_keys.new
     render :partial => "new_search_key"   
-  end
-  
-  def search
-    @products    = current_account.email_configs.find(:all, :order => "primary_role desc")
-    @search_keys = (@item.search_keys) || [] 
-  end
+  end 
   
   def feed
     @selected_tab = :social
-    @products   = current_account.email_configs.find(:all, :order => "primary_role desc")
     @twitter_accounts = current_account.twitter_handles
   end
   
@@ -143,8 +139,8 @@ class Social::TwitterHandlesController < Admin::AdminController
       user.signup!({:user => {:twitter_id => screen_name, :name => screen_name, 
                     :active => true,
                     :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}})
-      end
-     user 
+    end
+    user 
   end
   
   def create_note_from_tweet(in_reply_to_status_id)
@@ -214,31 +210,28 @@ class Social::TwitterHandlesController < Admin::AdminController
   end 
   
   protected
-  
-   
-    def twitter_wrapper   
-      
+    def twitter_wrapper
       @wrapper = TwitterWrapper.new @item ,{ :product => scoper, 
                                              :current_account => current_account,
                                              :callback_url => url_for(:action => 'authdone')}
     end
-  
+
     def scoper
       @current_product ||= current_account.primary_email_config
     end
-    
+
     def all_twitters
       current_account.twitter_handles
     end
-  
+
     def load_product
       @current_product = current_account.all_email_configs.find(params[:product_id])
-    end  
-  
+    end
+
     def build_item
       @item = scoper.twitter_handles.build
     end
-  
+
     def load_item
       @item = current_account.twitter_handles.find(params[:id]) 
     end
@@ -246,6 +239,5 @@ class Social::TwitterHandlesController < Admin::AdminController
     def human_name
       'Twitter'
     end
-   
-    
+
 end

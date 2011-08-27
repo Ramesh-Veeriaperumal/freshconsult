@@ -1,5 +1,5 @@
 <%= include_tiny_mce_if_needed %>
-<div id="reply" class="editbox" style="display:block;">
+<div id="reply" class="editbox" style="display:none;">
 	<div class="request_panel">
 	  <%= content_tag 'p', h(flash[:bad_reply]), :class => 'notice' if flash[:bad_reply] %>
 	  <% form_for :post, :url => posts_path(:category_id => @forum_category,:forum_id => @forum, :topic_id => @topic, :page => @topic.last_page), :html => {:multipart => true} do |f| -%>

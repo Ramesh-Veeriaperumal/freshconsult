@@ -11,7 +11,7 @@
 			  <% @twitter_accounts.each do |twitter_handle| %>
 			    <h4 class="title"><%= twitter_handle.product.name %></h4>
 			    <div class="intro">@<%= twitter_handle.screen_name %></div>
-			    <ul class="search-keys" id="search_keys">						
+			    <ul class="search-keys" id="search_keys">
 					  <% twitter_handle.search_keys.each do |search_key| %>
   					  <li>
   							<span class="icon"></span>
@@ -37,7 +37,10 @@
 				<div class="info-results" id="tweet_results_info" style="display:none;">
 					Results for <strong id="tweet_results_string"></strong>
 				</div>
-				<div class="info-highlight" id="tweet_noresults">
+				<div class="info-highlight" id="tweet_no_search">
+				  No Search Default search keywords are defined for any of your twitter handle.				  
+				</div>
+				<div class="info-highlight" id="tweet_noresults" style="display:none;">
 				  No Tweet results for <strong id="tweet_noresults_string"></strong>.
 				</div>
 				<div id="twitter_results" class="list-group"></div>
@@ -67,7 +70,7 @@
 					</div>
 				</script>
 				<div class="more_results">
-					<a id="moreTweets" href="javascript: jQuery('#twitter_results').tweetfeed('nextpage')" class="uiButton">Show more results</a>
+					<a id="moreTweets" style="visibility:hidden;" href="javascript: jQuery('#twitter_results').tweetfeed('nextpage')" class="uiButton">Show more results</a>
 				</div>
 				</div>
 			</td>
@@ -103,36 +106,41 @@
   } 
 <%- end %>
 
-<% content_for :onload_script do -%>
-  var current_product_id = <%= @twitter_accounts.first.product.id %>;
-  var current_twitter_id = <%= @twitter_accounts.first.id %>;
-  jQuery("#twitter_results")
-		.tweetfeed({ "query" : "<%= first_search %>", 
-								 "templateid" : "#tweetTemplate",
-  								onbeforeload: function(setting){
-										jQuery("#tweet_results_info").hide();
-										jQuery("#tweet_noresults").hide();
-										jQuery("#moreTweets").css("visibility", "hidden");
-									},
-									onafterload: function(setting, hasresults, update_div){
-									  if(hasresults){										  
-									    jQuery("#tweet_results_info").show();
-  									  jQuery("#tweet_results_string").html(setting.query);
-										  jQuery("#moreTweets").css("visibility", "visible"); 
-										}else{
-										  jQuery("#tweet_noresults").show();
-										  jQuery("#tweet_noresults_string")
-										    .html(setting.query);
-										}
-										
-										check_tweets_with_tickets( update_div );
-									}
- 							  });
+<% javascript_tag do -%>
+  var current_product_id = <%= @twitter_accounts.first.product.id %>,
+      current_twitter_id = <%= @twitter_accounts.first.id %>,
+      feed = null;
+      
+	function initTweetFeed(query){
+	  jQuery("#tweet_no_search").hide();
+		feed = jQuery("#twitter_results").tweetfeed({ 
+                    "query"       : query, 
+                    "templateid"  : "#tweetTemplate",
+                    onbeforeload  : function(setting){
+                      jQuery("#tweet_results_info").hide();
+                      jQuery("#tweet_noresults").hide();
+                      jQuery("#moreTweets").css("visibility", "hidden");
+                    },
+                    onafterload   : function(setting, hasresults, update_div){
+                      if(hasresults){										  
+                        jQuery("#tweet_results_info").show();
+                        jQuery("#tweet_results_string").html(setting.query);
+                        jQuery("#moreTweets").css("visibility", "visible"); 
+                      }else{
+                        jQuery("#tweet_noresults").show();
+                        jQuery("#tweet_noresults_string").html(setting.query);
+                      }										
+                      check_tweets_with_tickets( update_div );
+                    }
+                  });
 
- 	setInterval(function(){
-							 jQuery("#twitter_results span.prettydate").humaneDates();
-					   }, 60000);
-	
+     setInterval(function(){ jQuery("#twitter_results span.prettydate").humaneDates(); }, 60000);
+	}
+<%- end %>
+<% content_for :onload_script do -%>
+  <% unless first_search.blank? %>
+    initTweetFeed("<%= first_search %>");
+  <% end %>   
 	jQuery("#search_keys .item_info")
 			.click(function(e){
 			        e.preventDefault();
@@ -146,7 +154,11 @@
 						
 	jQuery("#search_twitter")
 			.submit(function(){
-				jQuery('#twitter_results').tweetfeed('search_query', jQuery('#twittersearch').val());
+			  if(!feed){
+			    initTweetFeed(jQuery('#twittersearch').val());
+			  }else{  
+				  jQuery('#twitter_results').tweetfeed('search_query', jQuery('#twittersearch').val());
+			  }
 				return false;
 			});
 			
@@ -177,7 +189,7 @@
 	        tweet_id    = jQuery(this).attr("data-tweet-id"),
 	        json_data   = { "subject"          : screen_name + ' - ' + tweet_text,
 	                        "description"      : tweet_text,
-	                        "email_config_id"  : current_product_id,
+	                        "email_config_id"  : current_product_id, 
 	                        "twitter_id"       : screen_name,
 	                        "tweet_attributes" : { "tweet_id": tweet_id, "account_id": <%= current_account.id %>  }};
       link = jQuery(this);
@@ -187,18 +199,7 @@
       	url : 'create_twicket',
       	data: {	helpdesk_tickets: json_data },
       	datatype:'json',
-      	success: function(data){
-      		if(data.success){
-      		  jQuery("#TWEET_DIV_"+tweet_id)
-      		    .effect("highlight", {}, 2500)
-      		    .addClass("tweet_converted")
-      		    .find(".goto_ticket")
-							.show()
-      		    .attr("href", data.ticket_link);      		    
-      		}else{ 
-      		  
-      		}      		
-      	}
+      	success: function(data){}
       });
 	  });
 <%- end %> 
@@ -223,7 +224,7 @@
         <td>
 	        <%= text_area "tweet", :body, { :class => 'required tweet', :id => 'tweet_text_area' } %>
 	        <div class="info-data">
-	          <strong>Note:</strong> The current reply will not be registered as a ticket or a conversation.
+	          <strong>Note:</strong> The current reply will not be registered as a ticket or a conversation inside Freshdesk.
           </div>
 	      </td>
 	    </tr>
