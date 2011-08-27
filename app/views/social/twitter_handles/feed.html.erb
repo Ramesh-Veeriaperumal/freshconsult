@@ -70,7 +70,7 @@
 					</div>
 				</script>
 				<div class="more_results">
-					<a id="moreTweets" style="display:none;" href="javascript: jQuery('#twitter_results').tweetfeed('nextpage')" class="uiButton">Show more results</a>
+					<a id="moreTweets" style="visibility:hidden;" href="javascript: jQuery('#twitter_results').tweetfeed('nextpage')" class="uiButton">Show more results</a>
 				</div>
 				</div>
 			</td>
@@ -154,7 +154,11 @@
 						
 	jQuery("#search_twitter")
 			.submit(function(){
-				jQuery('#twitter_results').tweetfeed('search_query', jQuery('#twittersearch').val());
+			  if(!feed){
+			    initTweetFeed(jQuery('#twittersearch').val());
+			  }else{  
+				  jQuery('#twitter_results').tweetfeed('search_query', jQuery('#twittersearch').val());
+			  }
 				return false;
 			});
 			
@@ -185,8 +189,7 @@
 	        tweet_id    = jQuery(this).attr("data-tweet-id"),
 	        json_data   = { "subject"          : screen_name + ' - ' + tweet_text,
 	                        "description"      : tweet_text,
-	                        "email_config_id"  : current_product_id,
-	                        "group_id"         : current_group_id,
+	                        "email_config_id"  : current_product_id, 
 	                        "twitter_id"       : screen_name,
 	                        "tweet_attributes" : { "tweet_id": tweet_id, "account_id": <%= current_account.id %>  }};
       link = jQuery(this);
@@ -196,16 +199,7 @@
       	url : 'create_twicket',
       	data: {	helpdesk_tickets: json_data },
       	datatype:'json',
-      	success: function(data){
-      		if(data.success){
-      		  jQuery("#TWEET_DIV_"+tweet_id)
-      		    .effect("highlight", {}, 2500)
-      		    .addClass("tweet_converted")
-      		    .find(".goto_ticket")
-							.show()
-      		    .attr("href", data.ticket_link);      		    
-      		}      		
-      	}
+      	success: function(data){}
       });
 	  });
 <%- end %> 
