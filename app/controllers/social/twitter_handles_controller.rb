@@ -14,6 +14,14 @@ class Social::TwitterHandlesController < Admin::AdminController
   before_filter :build_item, :only => [:signin, :authdone]
   before_filter :load_item,  :only => [:tweet, :edit, :update, :destroy]       
   before_filter :twitter_wrapper , :only => [:signin, :authdone, :index]
+  before_filter :check_if_handles_exist, :only => [:feed]
+  
+  def check_if_handles_exist
+    if current_account.twitter_handles.blank?
+      flash[:notice] = t('no_twitter_handle')
+      redirect_to social_twitters_url
+    end
+  end
   
   def tweet_exists
     converted_tweets = current_account.tweets.find(:all,
@@ -55,7 +63,7 @@ class Social::TwitterHandlesController < Admin::AdminController
   end
   
   def add_to_db
-    begin      
+    returned_value = sandbox(0) {      
       twitter_handle = @wrapper.auth( session[:request_token], session[:request_secret], params[:oauth_verifier] )
       if twitter_handle.save
         flash[:notice] = t('twitter.success_signin', :twitter_screen_name => twitter_handle.screen_name, :helpdesk => twitter_handle.product.name)        
@@ -64,9 +72,11 @@ class Social::TwitterHandlesController < Admin::AdminController
         flash[:notice] = t('twitter.user_exists')
         redirect_to social_twitters_url
       end
-    rescue
-       flash[:error] = t('twitter.not_authorized')
-    end
+   }
+   if returned_value == 0
+     flash[:notice] = t('twitter.not_authorized')
+     redirect_to social_twitters_url
+   end
   end
   
   def destroy

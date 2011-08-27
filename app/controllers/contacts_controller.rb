@@ -5,7 +5,6 @@ class ContactsController < ApplicationController
    include ModelControllerMethods
    before_filter :check_demo_site, :only => [:destroy,:update,:create]
    before_filter :check_agent_limit, :only => :make_agent
-   before_filter :check_email, :only => :make_agent
    before_filter :set_selected_tab
    skip_before_filter :build_object , :only => :new
    
@@ -172,10 +171,6 @@ protected
   
   def check_agent_limit
       redirect_to :back if current_account.reached_agent_limit?
-  end
-  
-  def check_email
-    redirect_to :back unless @obj.has_email?
   end
 
   def check_email_exist

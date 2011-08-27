@@ -1,6 +1,7 @@
 --- 
 en: 
   feedbackwidget_offset_info: The offset will be the distance of the widget button (pixels) from the left or top of the screen based on the alignment you choose.
+  no_twitter_handle: Please configure atleast one twitter account
   reset_my_password: Reset my password 
   assign: Assign
   signup: sign up
@@ -1295,6 +1296,8 @@ en:
         my_open: My Open Tickets
         tickets_by: Tickets by
         tickets_twitter: Tickets through twitter
+        open_or_pending: Open or Pending
+        resolved_or_closed: Resolved or Closed
       note:
         posted_on: "%{user_name} on %{note_date}"
         edit_note: Edit Note
