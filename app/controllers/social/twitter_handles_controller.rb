@@ -1,4 +1,4 @@
-class Social::TwitterHandlesController < Admin::AdminController
+class Social::TwitterHandlesController < ApplicationController
   
   include ErrorHandle 
   
