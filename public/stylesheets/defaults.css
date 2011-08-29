@@ -142,3 +142,7 @@ textarea.auto-height {
 .padding {
   padding: 3px 6px;
 }
+
+.error {
+  color: red;
+}

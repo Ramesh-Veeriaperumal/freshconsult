@@ -109,22 +109,6 @@ ul.activityfeed li .username {
   font-weight: bold;
   text-transform: capitalize;
 }
-ul.activityfeed li .notelink {
-  display: block;
-  color: #333333;
-}
-ul.activityfeed li .notelink:visited {
-  color: #333333;
-}
-ul.activityfeed li .notelink:focus {
-  color: #333333;
-}
-ul.activityfeed li .notelink:hover {
-  color: #3e71a4;
-}
-ul.activityfeed li .notelink:active {
-  color: #333333;
-}
 ul.activityfeed li a {
   color: #4d769f;
   text-decoration: none;
@@ -3991,13 +3975,15 @@ div.addReminder form label.overlabel {
 }
 .tickets .name .preview_pic, .tickets .name-user .preview_pic, .tickets-expanded .name .preview_pic, .tickets-expanded .name-user .preview_pic {
   margin: 0px;
-  margin-top: 1px;
-  margin-left: -55px;
+  margin-top: 5px;
+  margin-left: -56px;
 }
 .tickets .name .preview_pic img, .tickets .name-user .preview_pic img, .tickets-expanded .name .preview_pic img, .tickets-expanded .name-user .preview_pic img {
-  padding: 2px;
-  width: 36px;
-  height: 36px;
+  width: 46px;
+  height: 46px;
+  -moz-border-radius: 6px 6px 6px 6px;
+  -webkit-border-radius: 6px 6px 6px 6px;
+  border-radius: 6px 6px 6px 6px;
 }
 .tickets .name h3, .tickets .name-user h3, .tickets-expanded .name h3, .tickets-expanded .name-user h3 {
   padding: 0px 0px 8px 0px;
