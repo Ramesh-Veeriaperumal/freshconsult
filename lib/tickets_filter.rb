@@ -28,13 +28,19 @@ module TicketsFilter
     [:deleted,          I18n.t('helpdesk.tickets.views.trash')  ],
     [:tags  ,           I18n.t('helpdesk.tickets.views.tags') ],
     [:twitter  ,        I18n.t('helpdesk.tickets.views.tickets_twitter')],
-    [:open_or_pending, I18n.t('helpdesk.tickets.views.open_or_pending') ],
-    [:resolved_or_closed,  I18n.t('helpdesk.tickets.views.resolved_or_closed')]
+    
     
   ]
   
   SELECTOR_NAMES = Hash[*SELECTORS.inject([]){ |a, v| a += [v[0], v[1]] }]
   ADDITIONAL_FILTERS = Hash[*SELECTORS.inject([]){ |a, v| a += [v[0], v[2]] }]
+  
+  CUSTOMER_SELECTORS = [ [:all,              I18n.t('helpdesk.tickets.views.all'), [:visible]  ],
+                         [:open_or_pending, I18n.t('helpdesk.tickets.views.open_or_pending') ],
+                         [:resolved_or_closed,  I18n.t('helpdesk.tickets.views.resolved_or_closed')]
+                       ]
+  CUSTOMER_SELECTOR_NAMES = Hash[*CUSTOMER_SELECTORS.inject([]){ |a, v| a += [v[0], v[1]] }]
+  CUSTOMER_ADDITIONAL_FILTERS = Hash[*CUSTOMER_SELECTORS.inject([]){ |a, v| a += [v[0], v[2]] }]
   
   SEARCH_FIELDS = [
     [ :display_id,    'Ticket ID'           ],
