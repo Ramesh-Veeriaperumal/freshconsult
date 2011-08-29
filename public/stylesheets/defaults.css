@@ -79,7 +79,8 @@ h3.title, h3.sub_title, h3.title-band {
 }
 
 h4.title {
-  font-size: 1.1em;
+  font-size: 1.36em;
+  font-weight: normal;
 }
 
 h3.title-band {
@@ -143,6 +144,6 @@ textarea.auto-height {
   padding: 3px 6px;
 }
 
-.error {
+label.error {
   color: red;
 }

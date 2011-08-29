@@ -30,7 +30,7 @@
 						<form action="#" name="search_twitter" id="search_twitter">
 							<label class="overlabel" for="twittersearch">Search twitter</label>
 							<input class="search" type="text" id="twittersearch" />
-							<input type="submit" value="Search twitter" class="uiButton" />
+							<input type="submit" value="Search" class="uiButton" />
 						</form>
 					</div>
 				</div>
@@ -170,20 +170,21 @@
 			
 	jQuery("#twitter_results a.reply_button")
 	  .live("click", function(e){
-	    e.preventDefault();  
+	    e.preventDefault();   
+	     
 	    var user = jQuery(this).attr("data-user");
 	    jQuery("#twitter_handle").val(current_twitter_id);
 	    jQuery("#tweet_form").dialog({  modal:true, width:'600px', height:'auto', position:'top',
                                       title: "Reply to @" + user, resizable: false, draggable: false });
 
-	    jQuery("#tweet_text_area").val("@"+user+" ").trigger("focus");	    
+	    jQuery("#tweet_text_area").val("@"+user+" ").trigger("focus");	  
+	    jQuery('#SendTweetCounter').html(140 - jQuery.trim($('tweet_text_area').value.length));
 	  });
 	 
 			
 	jQuery("#twitter_results a.convert_as_ticket")
 	  .live("click", function(e){
-	    e.preventDefault();
-	    
+	    e.preventDefault(); 
 	    var screen_name = jQuery(this).attr("data-user"),
 	        tweet_text  = jQuery(this).attr("data-text"),
 	        tweet_id    = jQuery(this).attr("data-tweet-id"),
@@ -202,6 +203,8 @@
       	success: function(data){}
       });
 	  });
+
+  jQuery('#tweet_text_area').NobleCount('#SendTweetCounter', { on_negative : "error", in_dom: true }); 	  
 <%- end %> 
 
 <div id="tweet_form" style="display:none;">  
@@ -210,8 +213,8 @@
    <div class="content">
     <table>
       <tr>
-        <td>
-          Send From:
+        <td width="120px">
+          From:
         </td>
         <td>
           <%= select_tag :twitter_handle, options_from_collection_for_select(current_account.twitter_handles, :id, :screen_name) %>
@@ -222,7 +225,7 @@
 	        Tweet:
 	      </td>
         <td>
-	        <%= text_area "tweet", :body, { :class => 'required tweet', :id => 'tweet_text_area' } %>
+	        <%= text_area "tweet", :body, { :class => 'required tweet auto-height', :id => 'tweet_text_area', :rows => "3" } %>
 	        <div class="info-data">
 	          <strong>Note:</strong> The current reply will not be registered as a ticket or a conversation inside Freshdesk.
           </div>
@@ -231,7 +234,8 @@
     </table>  
    </div>
   </div>  
-  <div class="button-container">     
+  <div class="button-container">  
+    <span class="tweet-counter" id="SendTweetCounter">140</span>   
     <%= submit_tag "Tweet", :class => "uiButton" %>
   </div>
   <% end %>
