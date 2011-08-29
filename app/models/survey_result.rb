@@ -17,5 +17,16 @@ class SurveyResult < ActiveRecord::Base
     create_survey_remark({
       :note_id => note.id
     })
+    
+    add_support_score
   end
+  
+  def happy?
+    (rating == Survey::HAPPY)
+  end
+  
+  private
+    def add_support_score
+      SupportScore.happy_customer(surveyable) if happy?
+    end
 end
