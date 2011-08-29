@@ -79,6 +79,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   has_one :topic, :through => :ticket_topic
   
   has_many :survey_handles, :as => :surveyable, :dependent => :destroy
+  has_many :support_scores, :as => :scorable, :dependent => :destroy
   
   attr_protected :attachments #by Shan - need to check..
   
