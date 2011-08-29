@@ -72,7 +72,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
   def choices
      case field_type
        when "custom_dropdown" then
-         picklist_values.collect { |c| [c.value, c.id] }
+         picklist_values.collect { |c| [c.value, c.value] }
        when "default_priority" then
          Helpdesk::Ticket::PRIORITY_OPTIONS
        when "default_source" then
@@ -80,7 +80,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
        when "default_status" then
          Helpdesk::Ticket::STATUS_OPTIONS
        when "default_ticket_type" then
-         picklist_values.collect { |c| [c.value, c.id] }
+         picklist_values.collect { |c| [c.value, c.value] }
        when "default_agent" then
          account.users.technicians.collect { |c| [c.name, c.id] }
        when "default_group" then
