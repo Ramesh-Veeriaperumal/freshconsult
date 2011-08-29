@@ -214,7 +214,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def requester_has_email?
-    (requester) and (requester.email.blank?)
+    (requester) and (!requester.email.blank?)
   end
 
   def encode_display_id
