@@ -5027,3 +5027,15 @@ a.close {
   line-height: 26px;
   padding-right: 8%;
 }
+
+.tweet-counter {
+  font-size: 16px;
+  position: relative;
+  top: 3px;
+  right: 5px;
+  color: #333333;
+}
+
+.tweet-counter.error {
+  color: red;
+}

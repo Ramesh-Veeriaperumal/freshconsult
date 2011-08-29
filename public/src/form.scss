@@ -873,15 +873,15 @@ span.sort_handle{
 }
 
 input.search{
-	@include corners(3px);
-    margin-right: 10px;
-    background-color: #FFFFFF;
-    border: 1px solid #C7C7C7;
-    color: #747472;
-    font-size: 13px;
-    height:18px;
-    padding: 5px 7px;
-    width: 500px;
+   @include corners(3px);
+   margin-right: 10px;
+   background-color: #FFFFFF;
+   border: 1px solid #C7C7C7;
+   color: #747472;
+   font-size: 13px;
+   height:18px;
+   padding: 5px 7px;
+   width: 425px;
 }
 
 .live_search{
@@ -1542,11 +1542,9 @@ a.new_ticket:hover{
    }
 }
 
-.tweet_counter{
-   position:absolute;
-	right:0;
-	top:0;
-	font-size:20px;
-	font-weight:bold;
-	color:#ccc;
+textarea.tweet{
+   font-size:14px;
+   line-height:22px;
+   padding:2px 4px;
+   @include corners(4px);
 }
