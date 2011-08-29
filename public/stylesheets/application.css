@@ -2,7 +2,7 @@
 /* Theme Colors and layout Defaults */
 /* Importing admin icons */
 .admin-icon-sprite, .admin-icon-account-settings, .admin-icon-agent, .admin-icon-business-hours, .admin-icon-canned-response, .admin-icon-customer-portal, .admin-icon-dispatcher, .admin-icon-email-notifications, .admin-icon-email-settings, .admin-icon-feedback, .admin-icon-group, .admin-icon-import, .admin-icon-multi-product, .admin-icon-rebranding, .admin-icon-remote-authentication, .admin-icon-scenario, .admin-icon-sla, .admin-icon-supervisor, .admin-icon-ticket-fields, .admin-icon-twitter-setting {
-  background: url('/images/admin-icon-s09b17acd2c.png') no-repeat;
+  background: url('/images/admin-icon-s551b010e2a.png') no-repeat;
 }
 
 /* Bullet icon */
@@ -208,7 +208,7 @@ ul.activityfeed li .activity_time {
 }
 .ui-list_with_icon li {
   padding-left: 14px;
-  background: url('/images/symbols/request_nav_seperator.gif?1312801243') no-repeat 3px 9px;
+  background: url('/images/symbols/request_nav_seperator.gif?1314427912') no-repeat 3px 9px;
   list-style-type: none;
 }
 .ui-list_with_icon li {
@@ -1172,25 +1172,25 @@ body h5 {
   height: 32px;
 }
 .rtCnt .rtPanel a img.ticketprop {
-  background: url('/images/ticket-icon-sf65bc88f67.png') 0 -326px no-repeat;
+  background: url('/images/ticket-icon-sb6b060aee2.png') 0 -326px no-repeat;
 }
 .rtCnt .rtPanel a img.suggestsolutions {
-  background: url('/images/ticket-icon-sf65bc88f67.png') 0 -498px no-repeat;
+  background: url('/images/ticket-icon-sb6b060aee2.png') 0 -498px no-repeat;
 }
 .rtCnt .rtPanel a img.scenario {
-  background: url('/images/ticket-icon-sf65bc88f67.png') 0 -412px no-repeat;
+  background: url('/images/ticket-icon-sb6b060aee2.png') 0 -412px no-repeat;
 }
 .rtCnt .rtPanel a img.requesterinfo {
-  background: url('/images/ticket-icon-sf65bc88f67.png') 0 -788px no-repeat;
+  background: url('/images/ticket-icon-sb6b060aee2.png') 0 -788px no-repeat;
 }
 .rtCnt .rtPanel a img.todo {
-  background: url('/images/ticket-icon-sf65bc88f67.png') 0 -670px no-repeat;
+  background: url('/images/ticket-icon-sb6b060aee2.png') 0 -670px no-repeat;
 }
 .rtCnt .rtPanel a img.tags {
-  background: url('/images/ticket-icon-sf65bc88f67.png') 0 -584px no-repeat;
+  background: url('/images/ticket-icon-sb6b060aee2.png') 0 -584px no-repeat;
 }
 .rtCnt .rtPanel a img.activity {
-  background: url('/images/ticket-icon-sf65bc88f67.png') 0 0 no-repeat;
+  background: url('/images/ticket-icon-sb6b060aee2.png') 0 0 no-repeat;
 }
 .rtCnt .rtPanel a em {
   display: block;
@@ -1213,25 +1213,25 @@ body h5 {
   color: #ffffff;
 }
 .rtCnt .rtPanel a.active img.ticketprop, .rtCnt .rtPanel a:hover img.ticketprop {
-  background: url('/images/ticket-icon-sf65bc88f67.png') 0 -369px no-repeat;
+  background: url('/images/ticket-icon-sb6b060aee2.png') 0 -369px no-repeat;
 }
 .rtCnt .rtPanel a.active img.suggestsolutions, .rtCnt .rtPanel a:hover img.suggestsolutions {
-  background: url('/images/ticket-icon-sf65bc88f67.png') 0 -541px no-repeat;
+  background: url('/images/ticket-icon-sb6b060aee2.png') 0 -541px no-repeat;
 }
 .rtCnt .rtPanel a.active img.scenario, .rtCnt .rtPanel a:hover img.scenario {
-  background: url('/images/ticket-icon-sf65bc88f67.png') 0 -455px no-repeat;
+  background: url('/images/ticket-icon-sb6b060aee2.png') 0 -455px no-repeat;
 }
 .rtCnt .rtPanel a.active img.requesterinfo, .rtCnt .rtPanel a:hover img.requesterinfo {
-  background: url('/images/ticket-icon-sf65bc88f67.png') 0 -831px no-repeat;
+  background: url('/images/ticket-icon-sb6b060aee2.png') 0 -831px no-repeat;
 }
 .rtCnt .rtPanel a.active img.todo, .rtCnt .rtPanel a:hover img.todo {
-  background: url('/images/ticket-icon-sf65bc88f67.png') 0 -713px no-repeat;
+  background: url('/images/ticket-icon-sb6b060aee2.png') 0 -713px no-repeat;
 }
 .rtCnt .rtPanel a.active img.tags, .rtCnt .rtPanel a:hover img.tags {
-  background: url('/images/ticket-icon-sf65bc88f67.png') 0 -627px no-repeat;
+  background: url('/images/ticket-icon-sb6b060aee2.png') 0 -627px no-repeat;
 }
 .rtCnt .rtPanel a.active img.activity, .rtCnt .rtPanel a:hover img.activity {
-  background: url('/images/ticket-icon-sf65bc88f67.png') 0 -43px no-repeat;
+  background: url('/images/ticket-icon-sb6b060aee2.png') 0 -43px no-repeat;
 }
 
 ul.admin_icons {
@@ -1464,16 +1464,16 @@ div.panel_area div.item {
   height: 28px;
 }
 .action_icons .monitor img {
-  background: url('/images/ticket-icon-sf65bc88f67.png') 0 -206px no-repeat;
+  background: url('/images/ticket-icon-sb6b060aee2.png') 0 -206px no-repeat;
 }
 .action_icons .monitor_active img {
-  background: url('/images/ticket-icon-sf65bc88f67.png') 0 -234px no-repeat;
+  background: url('/images/ticket-icon-sb6b060aee2.png') 0 -234px no-repeat;
 }
 .action_icons .spam img {
-  background: url('/images/ticket-icon-sf65bc88f67.png') 0 -150px no-repeat;
+  background: url('/images/ticket-icon-sb6b060aee2.png') 0 -150px no-repeat;
 }
 .action_icons .spam_active img {
-  background: url('/images/ticket-icon-sf65bc88f67.png') 0 -178px no-repeat;
+  background: url('/images/ticket-icon-sb6b060aee2.png') 0 -178px no-repeat;
 }
 
 .request_panel_list {
@@ -2498,7 +2498,7 @@ h4.border_title {
 }
 .solution-list .odd ul li, .solution-list .even ul li {
   padding-left: 14px;
-  background: url('/images/symbols/request_nav_seperator.gif?1312801243') no-repeat 3.5px 3.5px;
+  background: url('/images/symbols/request_nav_seperator.gif?1314427912') no-repeat 3.5px 3.5px;
   list-style-type: none;
 }
 .solution-list .odd li, .solution-list .even li {
@@ -4083,19 +4083,19 @@ div.addReminder form label.overlabel {
   margin: 0px;
 }
 .conversation-sprite .email-reply {
-  background: url('/images/ticket-icon-sf65bc88f67.png') 0 -118px;
+  background: url('/images/ticket-icon-sb6b060aee2.png') 0 -118px;
 }
 .conversation-sprite .email-receive {
-  background: url('/images/ticket-icon-sf65bc88f67.png') 0 -86px;
+  background: url('/images/ticket-icon-sb6b060aee2.png') 0 -86px;
 }
 .conversation-sprite .note-public {
-  background: url('/images/ticket-icon-sf65bc88f67.png') 0 -294px;
+  background: url('/images/ticket-icon-sb6b060aee2.png') 0 -294px;
 }
 .conversation-sprite .note-private {
-  background: url('/images/ticket-icon-sf65bc88f67.png') 0 -262px;
+  background: url('/images/ticket-icon-sb6b060aee2.png') 0 -262px;
 }
 .conversation-sprite .tweet-note {
-  background: url('/images/ticket-icon-sf65bc88f67.png') 0 -756px;
+  background: url('/images/ticket-icon-sb6b060aee2.png') 0 -756px;
 }
 
 .contact-box {

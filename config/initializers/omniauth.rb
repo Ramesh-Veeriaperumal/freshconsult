@@ -3,7 +3,13 @@ require 'openid/store/filesystem'
 
 
 ActionController::Dispatcher.middleware.use OmniAuth::Builder do
-  provider :twitter,  'dr1GMNCkYqUqjPTvWoY4nQ', 'QUbXWcl5dOAdylf3eSCjD0XnFRpUOErUVId3RKMc'
+  if Rails.env.production?
+   provider :twitter,  'dJ8tRu32g8UfWpPgs3bg', 'Brp3pT6z9JTGvCB1dWLEIHLBEre8Yy9lEFGZXwfUo'
+  elsif Rails.env.staging?
+   provider :twitter,  'dr1GMNCkYqUqjPTvWoY4nQ', 'QUbXWcl5dOAdylf3eSCjD0XnFRpUOErUVId3RKMc'
+  elsif Rails.env.development?
+   provider :twitter,  'dr1GMNCkYqUqjPTvWoY4nQ', 'QUbXWcl5dOAdylf3eSCjD0XnFRpUOErUVId3RKMc'
+  end
   provider :facebook, 'APP_ID', 'APP_SECRET'
   provider :linked_in, 'KEY', 'SECRET'
   provider :open_id,  OpenID::Store::Filesystem.new('./omnitmp')

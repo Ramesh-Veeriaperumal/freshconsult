@@ -30,8 +30,8 @@ class User < ActiveRecord::Base
     :class_name => 'Helpdesk::Attachment',
     :dependent => :destroy
 
-  before_create :set_time_zone , :set_company_name, :check_email_value
-  before_save :set_account_id_in_children , :set_contact_name
+  before_create :set_time_zone , :set_company_name
+  before_save :set_account_id_in_children , :set_contact_name, :check_email_value
   
   named_scope :contacts, :conditions => ["user_role in (#{USER_ROLES_KEYS_BY_TOKEN[:customer]}, #{USER_ROLES_KEYS_BY_TOKEN[:client_manager]})" ]
   named_scope :technicians, :conditions => ["user_role not in (#{USER_ROLES_KEYS_BY_TOKEN[:customer]}, #{USER_ROLES_KEYS_BY_TOKEN[:client_manager]})"]
@@ -45,6 +45,8 @@ class User < ActiveRecord::Base
     c.merge_validates_length_of_email_field_options :if =>:chk_email_validation? 
     c.merge_validates_uniqueness_of_email_field_options :if =>:chk_email_validation? 
   end
+  
+  validates_presence_of :email, :unless => :customer?
   
   def check_email_value
     if email.blank?

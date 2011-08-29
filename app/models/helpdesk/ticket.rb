@@ -608,7 +608,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def fetch_twitter_handle
-   email_config.nil? ? account.primary_email_config.twitter_handles.first : email_config.twitter_handles.first
+    twt_handles = email_config.nil? ? account.primary_email_config.twitter_handles : email_config.twitter_handles
+    twt_handles.first.id unless twt_handles.blank?
   end
   
   def portal_host

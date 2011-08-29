@@ -33,7 +33,7 @@ class AuthorizationsController < ApplicationController
   end
   
   def create_for_twitter
-   @current_user = current_account.all_users.find_by_twitter_id(@omniauth['user_info']['name'])  unless  current_account.blank?
+   @current_user = current_account.all_users.find_by_twitter_id(@omniauth['user_info']['nickname'])  unless  current_account.blank?
    if !@current_user.blank? and !@auth.blank?
       chk_if_deleted
       make_usr_active

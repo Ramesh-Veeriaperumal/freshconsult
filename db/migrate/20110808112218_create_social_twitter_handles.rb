@@ -6,8 +6,8 @@ class CreateSocialTwitterHandles < ActiveRecord::Migration
       t.string  :screen_name 
       t.string  :access_token
       t.string  :access_secret
-      t.boolean :capture_dm_as_ticket ,:default => true
-      t.boolean :capture_mention_as_ticket , :default => true
+      t.boolean :capture_dm_as_ticket ,:default => false
+      t.boolean :capture_mention_as_ticket , :default => false
       t.integer :product_id ,:limit => 8
       t.integer :last_dm_id ,:limit => 8
       t.integer :last_mention_id ,:limit => 8
