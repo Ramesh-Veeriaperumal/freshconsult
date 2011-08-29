@@ -18,7 +18,7 @@ class Support::CompanyTicketsController < ApplicationController
   end
   
   def filter   
-    @page_title = TicketsFilter::SELECTOR_NAMES[current_filter.to_sym]
+    @page_title = TicketsFilter::CUSTOMER_SELECTOR_NAMES[current_filter.to_sym]
     build_tickets
     render :index
   end

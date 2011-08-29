@@ -1279,7 +1279,7 @@ en:
         new_and_my_open: New & My Open Tickets
         all: All Tickets
         open: Open tickets
-        closed: Resolved tickets
+        closed: Closed Tickets
         trash: Trash
         overdue: Overdue Tickets
         due_today: Tickets Due Today
