@@ -32,10 +32,18 @@
   </td>
 	
   <td class="sla">
-  		<% if(Time.now > ticket.due_by ) %>
-			<%= t('already_overdue',:time_words => distance_of_time_in_words(Time.now, ticket.due_by)) %>
-		<% else %>
+    <% if( ticket.active? ) %>
+  	  <% if(Time.now > ticket.due_by ) %>
+			  <%= t('already_overdue',:time_words => distance_of_time_in_words(Time.now, ticket.due_by)) %>
+		  <% else %>
 		    <%= t('due_in',:time_words => distance_of_time_in_words(Time.now, ticket.due_by)) %>
-		<% end %>  
+	    <% end %>  
+	  <% else %>
+	    <% if( ticket.ticket_states.resolved_at < ticket.due_by ) %>
+	      <%= t('resolved_on_time') %>	      
+	    <% else %>
+	      <%= t('resolved_late') %>	    
+	    <% end %>
+	  <% end %>
   </td>
 </tr>
