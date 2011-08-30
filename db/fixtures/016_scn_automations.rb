@@ -3,12 +3,12 @@ account = Account.current
 VARule.seed_many(:account_id, :name, :rule_type, [
     [ 'Assign to QA', 'Customer reported bugs are assigned to QA in a single click',
         [
-          { :name => "ticket_type", :value => TicketConstants::TYPE_KEYS_BY_TOKEN[:problem] },
+          { :name => "ticket_type", :value => "Problem" },
           { :name => "group_id", :value => account.groups.find_by_name("QA").id }
         ]],
     [ 'Mark as Feature Request', 'Feature Requests from customers can be marked accordingly and assigned to Product Management team.',
         [
-          { :name => "ticket_type", :value => TicketConstants::TYPE_KEYS_BY_TOKEN[:f_request] },
+          { :name => "ticket_type", :value => "Feature Request" },
           { :name => "group_id", :value => account.groups.find_by_name("Product Management").id }
         ]],
     [ 'Send Welcome Email - Canned Response', 'You can use scenario automations to send canned responses to users.',
