@@ -239,11 +239,25 @@
         </div>
         <% unless @ticket.deleted %>
           <div class="ticket_actions action_icons">
+            <div class="item-right-actions">
+        			<ul class="nav-drop"> 
+        				<li>
+        					<a href="#" class="menu-trigger nav-item-icon"><span class="item-options"></span></a>
+                  <ul class="menu-box">
+                    <li class="menu-item"> 
+                       <%= link_to(t('ticket.edit_btn'), edit_helpdesk_ticket_path(@ticket)  ) %>     
+                    </li>	 
+                    <li class="menu-item">
+                      <%= link_to(t('ticket.delete_btn'), @ticket, :method => :delete, :title => t('ticket.delete_btn_title')) %>
+                    </li>
+                  </ul>
+                </li> 
+              </ul>
+            </div>
             <div class="action_buttons clearfix">
-              <%= link_to(t('ticket.edit_btn'), edit_helpdesk_ticket_path(@ticket)  ) %> 
-              <%= link_to(t('ticket.close_btn'), close_helpdesk_ticket_path(@ticket), :method => :put, :title  => t('ticket.close_btn_title')) unless @ticket.closed? %>
+              <%= link_to( "Print", print_helpdesk_ticket_path(@ticket), :target => "_blank") %>
               <%= link_to t('ticket.merge_btn'), "/helpdesk/tickets/show_tickets_from_same_user/#{@ticket.display_id}", :id => "Merge", :title => "Merge ticket"  %>
-              <%= link_to(t('ticket.delete_btn'), @ticket, :method => :delete, :class => "last", :title => t('ticket.delete_btn_title')) %>
+              <%= link_to(t('ticket.close_btn'), close_helpdesk_ticket_path(@ticket), :method => :put, :title  => t('ticket.close_btn_title'), :class => "last") unless @ticket.closed? %> 
             </div>	
             <div class="floatr">              
               <span id="monitor">

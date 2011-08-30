@@ -19,6 +19,8 @@ en:
   attachments: Attachments
   show_quoted_text: Show Quoted text
   cancel_my_account: Cancel my account
+  resolved_on_time: Resolved on time
+  resolved_late: Resolved late
   remove: Remove
   user: 
     company: Company

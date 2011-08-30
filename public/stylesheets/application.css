@@ -647,6 +647,10 @@ body h5 {
 .request_details .ticket_actions .action_buttons {
   margin-top: 0px;
 }
+.request_details .ticket_actions .item-right-actions {
+  margin-top: 8px;
+  margin-left: 6px;
+}
 .request_details .bookmark {
   display: none;
 }
