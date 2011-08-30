@@ -9,7 +9,7 @@ VARule.seed(:account_id, :name, :rule_type) do |s|
       { :name => "subject_or_description", :operator => "contains", :value => "credit card" },
       { :name => "subject_or_description", :operator => "contains", :value => "purchase" } ]
   s.action_data = [
-      { :name => "ticket_type", :value => TicketConstants::TYPE_KEYS_BY_TOKEN[:lead] }, #should we need to_s?
+      { :name => "ticket_type", :value => "Lead" }, #should we need to_s?
       { :name => "group_id", :value => account.groups.find_by_name("Sales").id } ]
   s.active = true
   s.description = 'This is a sample rule to help you understand how Dispatch\'r works. Feel free to edit or delete this rule.
