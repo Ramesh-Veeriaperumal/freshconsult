@@ -76,7 +76,6 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
 .medium.uiButton, .medium.uiButton:visited 		{ font-size: 12px;}
 .large.uiButton, .large.uiButton:visited { font-size: 13px; padding: 8px 14px 9px; }
 
-
 .forum_button{
 	@include anchor-button;
     padding: 4px 14px;    
@@ -206,4 +205,3 @@ div.action_buttons:hover{
         0 -2px rgba(0, 0, 0, 0.05) inset;
 }
 
- 

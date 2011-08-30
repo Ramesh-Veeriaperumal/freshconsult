@@ -50,6 +50,7 @@ en:
       first_choice: First Choice
       second_choice: Second Choice
       confirm_delete: Are you sure you want to delete this field?
+      no_choice_message: "At least one valid choice has to be present"
     index: 
       number: Number
       add_custom_field: Add a Custom Field
@@ -1279,7 +1280,7 @@ en:
         new_and_my_open: New & My Open Tickets
         all: All Tickets
         open: Open tickets
-        closed: Resolved tickets
+        closed: Closed Tickets
         trash: Trash
         overdue: Overdue Tickets
         due_today: Tickets Due Today

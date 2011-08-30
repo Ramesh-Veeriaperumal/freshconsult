@@ -6,15 +6,10 @@ var $J = jQuery.noConflict();
 (function($){
 	// Global Jquery Plugin initialisation
 	$.fn.qtip.baseIndex = 10000;
-	$.validator
-	   .addClassRules({
-	      tweet: { 
-	         maxlength: 140, 
-	         messages:{
-	            maxlength : "Your Tweet is over 140 characters" 
-	         } 
-	      }
-	   });
+	
+	// Tweet custom class
+	$.validator.addMethod("tweet", $.validator.methods.maxlength, "Your Tweet was over 140 characters. You'll have to be more clever." );   
+	$.validator.addClassRules("tweet", { tweet: 140 });
 	
 	// App initialisation  
 	$(document).ready(function() {

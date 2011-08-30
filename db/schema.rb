@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110825053014) do
+ActiveRecord::Schema.define(:version => 20110829062730) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -436,7 +436,7 @@ ActiveRecord::Schema.define(:version => 20110825053014) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "sla_policy_id",   :limit => 8
-    t.boolean  "override_bhrs",   :default => false
+    t.boolean  "override_bhrs",                :default => false
   end
 
   create_table "helpdesk_sla_policies", :force => true do |t|
@@ -767,6 +767,7 @@ ActiveRecord::Schema.define(:version => 20110825053014) do
     t.integer  "score"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "score_trigger"
   end
 
   create_table "survey_handles", :force => true do |t|

@@ -39,7 +39,7 @@ p{
 h1.title{ font-size:2em; text-transform:capitalize; font-weight:normal; }
 h2.title{ font-size:1.65em; font-weight:normal; }
 h3.title, h3.sub_title, h3.title-band{ font-size:1.45em; }
-h4.title { font-size:1.1em; }
+h4.title { font-size:1.36em; font-weight:normal; }
 h3.title-band{ margin:12px -20px; background-color:#f2f2f2; padding:8px 20px; }
 h3.sub_title{ font-size:1.1em; }
 
@@ -79,4 +79,8 @@ textarea.auto-height{
 
 .padding{
    padding:3px 6px;
+}
+
+label.error{
+   color:red;
 }

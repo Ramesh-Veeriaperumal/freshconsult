@@ -14,6 +14,8 @@ class Helpdesk::Note < ActiveRecord::Base
     :as => :tweetable,
     :class_name => 'Social::Tweet',
     :dependent => :destroy
+    
+  has_one :survey_remark, :foreign_key => 'note_id', :dependent => :destroy
 
   attr_accessor :nscname
   attr_protected :attachments, :notable_id
@@ -38,7 +40,7 @@ class Helpdesk::Note < ActiveRecord::Base
   }
 
 
-  SOURCES = %w{email form note status meta twitter}
+  SOURCES = %w{email form note status meta twitter feedback}
   SOURCE_KEYS_BY_TOKEN = Hash[*SOURCES.zip((0..SOURCES.size-1).to_a).flatten]
   
   ACTIVITIES_HASH = { Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:twitter] => "twitter" }
