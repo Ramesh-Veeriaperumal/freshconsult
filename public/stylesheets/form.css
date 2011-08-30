@@ -284,14 +284,15 @@ a.addchoice:hover {
   margin-bottom: 8px;
 }
 .ui-form div.checkbox, .ui-form label.checkbox {
-  padding-left: 24px;
   padding-bottom: 5px;
   font-size: 1.3em;
   position: relative;
 }
 .ui-form div.checkbox input, .ui-form label.checkbox input {
-  position: absolute;
-  left: 1px;
+  float: left;
+  margin-left: 0px;
+  margin-top: 1px;
+  margin-right: 3px;
 }
 .ui-form label, .ui-form li.checkbox {
   font-weight: normal;
