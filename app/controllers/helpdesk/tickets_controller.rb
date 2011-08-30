@@ -11,7 +11,7 @@ class Helpdesk::TicketsController < ApplicationController
   layout :choose_layout 
   
   before_filter :load_multiple_items, :only => [:destroy, :restore, :spam, :unspam, :assign , :close_multiple ,:pick_tickets]  
-  before_filter :load_item,           :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :get_ca_response_content] 
+  before_filter :load_item,           :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :get_ca_response_content, :print] 
   before_filter :load_flexifield ,    :only => [:execute_scenario]
   
   def check_user
@@ -265,6 +265,10 @@ class Helpdesk::TicketsController < ApplicationController
     a_template = Liquid::Template.parse(ca_resp.content).render('ticket' => @item, 'helpdesk_name' => @item.account.portal_name)    
     render :text => (a_template.gsub(/<\/?[^>]*>/, "")).gsub(/&nbsp;/i,"") || ""
   end
+  
+  def print
+    
+  end
     
   protected
 
@@ -288,7 +292,7 @@ class Helpdesk::TicketsController < ApplicationController
 #                              'activities.tickets.new_ticket.short')
 #      #end
     end
- 
+
     def assign_ticket user
       @items.each do |item|
         old_item = item.clone
@@ -297,8 +301,6 @@ class Helpdesk::TicketsController < ApplicationController
         item.save
       end
     end
-  
-   
 
     def load_flexifield   
       flexi_arr = Hash.new
@@ -323,7 +325,12 @@ class Helpdesk::TicketsController < ApplicationController
     end
 
     def choose_layout 
-      (action_name == "show_tickets_from_same_user"  || action_name == "confirm_merge") ? 'plainpage' : 'application'
+      layout_name = 'application'
+      case action_name
+        when "print"
+          layout_name = 'print'
+      end
+      layout_name
     end
     
     def get_updated_ticket_count

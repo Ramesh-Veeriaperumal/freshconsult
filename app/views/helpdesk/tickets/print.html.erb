@@ -1,0 +1,92 @@
+<% @header_right = "##{@ticket.display_id}" %>  
+<h3>Ticket Details</h3>
+<div class="properties">
+  <span>
+    <b>Status</b>
+    <%= h(@ticket.status_name) %>
+  </span>
+  <span>
+    <b>Priority</b>
+    <%= h(@ticket.priority_name) %>
+  </span>
+  <span>
+    <b>Source</b>
+    <%= h(@ticket.source_name) %>
+  </span>
+  <span>
+    <b>Type</b>
+    <%= h(@ticket.ticket_type) %>
+  </span> 
+  <% unless @ticket.group.nil? %>
+    <span>
+      <b>Group</b>
+      <%= h(@ticket.group.name) %>
+    </span>
+  <% end %>
+  <span>
+    <b>Agent</b>
+    <% unless @ticket.responder.nil? %>
+      <%= h(@ticket.responder.name) %>
+    <% else %>  
+      Unassigned
+    <% end %>  
+  </span> 
+  <% unless feature?(:multi_product) %>
+  <span>
+    <b>Product</b>
+    <%= h(@ticket.email_config.name) %>
+  </span>
+  <% end %>
+<% current_portal.ticket_fields.each do |field| %>
+  <% if field.visible_in_view_form? && field.flexifield_def_entry %>
+    <span>
+      <b><%= field.label %></b>
+      <%= (field.is_default_field?) ? @ticket[field.field_name] : @item.get_ff_value(field.name) %>      
+    </span>
+  <% end %>  
+<% end %>  
+</div>
+  <span class="seperator"></span>
+  <div>
+     by <strong><%= h(@ticket.requester.display_name) %></strong> on <strong><%= formated_date(@ticket.created_at)  %></strong> via <strong><%= h(@ticket.source_name) %></strong>
+  </div>  
+
+  <h3><%= h(@ticket.subject) %></h3>
+  <div class="description"> 
+    <%= RedCloth.new(auto_link(@ticket.description, :all, :target => "_blank")).to_html %>
+  </div>  
+  <span class="seperator"></span>
+  <% @ticket_notes = @ticket.notes.visible.newest_first %>
+  <% unless @ticket_notes.empty? %>
+  <h3>Comments</h3>  
+  <div>
+    <% @ticket_notes.each do |note| %>
+      <div>
+        by <strong><%= h(note.user.display_name) %></strong> on <strong><%= formated_date(note.created_at)  %></strong> as 
+        <strong>
+        <% if note.private_note? %>	 
+  				<%= t("helpdesk.tickets.note.private_note") %>
+  			<% elsif note.public_note? %>
+  				<%= t("helpdesk.tickets.note.public_note") %>
+  			<% elsif note.inbound_email? %>
+  				<%= t("helpdesk.tickets.note.incoming_email") %>
+  			<% elsif note.outbound_email? %>
+  				<%= t("helpdesk.tickets.note.outbound_email") %>
+  			<% elsif note.tweet? %>
+  				tweet
+  			<% end %>  
+  			</strong>
+      </div>
+      <div class="description"> 
+        <%= RedCloth.new(auto_link( note.body, :all, :target => "_blank")).to_html %>      
+      </div>
+      <span class="seperator"></span>
+    <% end %>
+  </div>
+  <% end %>
+</div>
+
+
+<% javascript_tag do %>
+  setTimeout("window.print()",1)
+<% end %>

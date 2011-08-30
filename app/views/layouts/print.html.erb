@@ -1,10 +1,23 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<head>
-	<%= include_stylesheets :print, :media => "screen, projection" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<head xmlns="http://www.w3.org/1999/xhtml">
+	<%= include_stylesheets :print, :media => "screen, print, projection" %>
 </head>
 <body class="print">
-	<div class="content">
-		<h1>Freshdesk</h1>
+	<div class="header">
+		<h3>
+			<table width="100%">
+				<tr>
+					<td>
+						<%= current_account.name %>
+					</td>
+					<td align="right">
+						<span class="ticket-number"><%= @header_right %></span>
+					</td>
+				</tr>
+			</table>
+		</h3>
+	</div>
+	<div class="wrapper">
 		<%= yield %>
 	</div>
 </body>

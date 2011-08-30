@@ -238,13 +238,14 @@ a.addchoice:hover{
       select{ margin-bottom:8px; }
    }
    div.checkbox, label.checkbox{
-      padding-left: 24px ;
       padding-bottom: 5px;
       font-size:1.3em;
       position:relative;
 	   input{
-	      position:absolute;
-	      left:1px;
+         float:left;
+	      margin-left:0px;
+	      margin-top:1px;
+	      margin-right:3px;
 	   }
    }
 	label, li.checkbox{
