@@ -7,6 +7,7 @@ class Helpdesk::TicketsController < ApplicationController
   
   include HelpdeskControllerMethods  
   include Helpdesk::TicketActions
+  include Search::TicketSearch
   
   layout :choose_layout 
   
@@ -35,14 +36,14 @@ class Helpdesk::TicketsController < ApplicationController
   end
  
   def index
-    @items = TicketsFilter.filter(@template.current_filter, current_user, current_account.tickets)
-    @items = TicketsFilter.search(@items, params[:f], params[:v])
+    @items = Helpdesk::Ticket.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
+    
+    @show_options = show_options
+    @show_options_json = ActiveSupport::JSON.encode @show_options
+    
     respond_to do |format|
+      
       format.html  do
-        @items = @items.paginate(
-          :page => params[:page], 
-          :order => @template.cookie_sort,
-          :per_page => 10)
       end
       
       format.xml do
@@ -54,10 +55,23 @@ class Helpdesk::TicketsController < ApplicationController
       end
       
       format.atom do
-        @items = @items.newest(20)
       end
     end
   end
+  
+  def custom_search
+    @show_options = show_options
+    @show_options_json = ActiveSupport::JSON.encode @show_options
+    @items = Helpdesk::Ticket.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
+    respond_to do |format|
+      format.html  do
+        render :partial => "helpdesk/tickets/components/custom_results", :locals => {:items => @items}
+      end
+    end
+    
+    
+  end
+
 
   def show
     @reply_email = current_account.reply_emails

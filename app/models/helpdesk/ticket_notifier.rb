@@ -20,7 +20,7 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
              :receips => ticket.requester.email,
              :email_body => r_template.render('ticket' => ticket, 
                 'helpdesk_name' => ticket.account.portal_name, 'comment' => comment)
-          }) unless ticket.requester_has_email?
+          }) if ticket.requester_has_email?
     end
   end
   
