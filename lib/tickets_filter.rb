@@ -14,10 +14,10 @@ module TicketsFilter
     [:monitored_by,     I18n.t('helpdesk.tickets.views.monitored_by'), [:visible]  ],
     [:my_all,           I18n.t('helpdesk.tickets.views.my_all'), [:visible, :responded_by]  ],
     
-    [ :my_groups_open,    I18n.t('helpdesk.tickets.views.my_groups_open'), [:my_groups, :open] ],
-    [ :my_groups_new,     I18n.t('helpdesk.tickets.views.my_groups_new'), [:my_groups, :new] ],
-    [ :my_groups_pending, I18n.t('helpdesk.tickets.views.my_groups_pending'), [:my_groups, :on_hold] ],
-    [ :my_groups_all,     I18n.t('helpdesk.tickets.views.my_groups_all'), [:my_groups] ],
+    [ :my_groups_open,    I18n.t('helpdesk.tickets.views.my_groups_open'), [:visible, :my_groups, :open] ],
+    [ :my_groups_new,     I18n.t('helpdesk.tickets.views.my_groups_new'), [:visible, :my_groups, :new] ],
+    [ :my_groups_pending, I18n.t('helpdesk.tickets.views.my_groups_pending'), [:visible, :my_groups, :on_hold] ],
+    [ :my_groups_all,     I18n.t('helpdesk.tickets.views.my_groups_all'), [:visible, :my_groups] ],
     
     [:new,              I18n.t('helpdesk.tickets.views.new'), [:visible]  ],
     [:open,             I18n.t('helpdesk.tickets.views.open'), [:visible]  ],
