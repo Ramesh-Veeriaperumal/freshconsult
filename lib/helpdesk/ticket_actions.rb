@@ -38,7 +38,8 @@ module Helpdesk::TicketActions
   
   def split_the_ticket        
     create_ticket_from_note
-    update_split_activity   
+    @note.destroy #delete the notes
+    update_split_activity
     redirect_to @item
   end
   
@@ -78,9 +79,9 @@ module Helpdesk::TicketActions
                     :tweet_attributes => {:tweet_id => @note.tweet.tweet_id, 
                                           :account_id => current_account.id}}
       params[:helpdesk_ticket] = params[:helpdesk_ticket].merge(tweet_hash)
+      @note.tweet.destroy
     end
     build_item
-    @note.destroy #delete the notes
     if @item.save
       flash[:notice] = I18n.t(:'flash.general.create.success', :human_name => cname.humanize.downcase)
       move_attachments   
