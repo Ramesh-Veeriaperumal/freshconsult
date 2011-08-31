@@ -14,6 +14,11 @@ module TicketsFilter
     [:monitored_by,     I18n.t('helpdesk.tickets.views.monitored_by'), [:visible]  ],
     [:my_all,           I18n.t('helpdesk.tickets.views.my_all'), [:visible, :responded_by]  ],
     
+    [ :my_groups_open,    I18n.t('helpdesk.tickets.views.my_groups_open'), [:my_groups, :open] ],
+    [ :my_groups_new,     I18n.t('helpdesk.tickets.views.my_groups_new'), [:my_groups, :new] ],
+    [ :my_groups_pending, I18n.t('helpdesk.tickets.views.my_groups_pending'), [:my_groups, :on_hold] ],
+    [ :my_groups_all,     I18n.t('helpdesk.tickets.views.my_groups_all'), [:my_groups] ],
+    
     [:new,              I18n.t('helpdesk.tickets.views.new'), [:visible]  ],
     [:open,             I18n.t('helpdesk.tickets.views.open'), [:visible]  ],
     #[:new_and_open,     "New & Open Tickets", [:visible]  ],
@@ -110,11 +115,15 @@ module TicketsFilter
   
   protected
     def self.load_conditions(user)
+      group_ids = user.agent_groups.find(:all, :select => 'group_id').map(&:group_id)
+      group_ids = [-1] if group_ids.empty? #The whole group thing is a hack till new views come..
+      
       {
         :spam         =>    { :spam => true, :deleted => false },
         :deleted      =>    { :deleted => true },
         :visible      =>    { :deleted => false, :spam => false },
         :responded_by =>    { :responder_id => (user && user.id) || -1 },
+        :my_groups    =>    { :group_id => group_ids },
         
         :new_and_my_open  => ["status = ? and (responder_id is NULL or responder_id = ?)", 
                                         STATUS_KEYS_BY_TOKEN[:open], user.id],

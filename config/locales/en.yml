@@ -1298,6 +1298,10 @@ en:
         tickets_twitter: Tickets through twitter
         open_or_pending: Open or Pending
         resolved_or_closed: Resolved or Closed
+        my_groups_open: Open Tickets in My Groups
+        my_groups_new: New Tickets in My Groups
+        my_groups_pending: Pending Tickets in My Groups
+        my_groups_all: All Tickets in My Groups
       note:
         posted_on: "%{user_name} on %{note_date}"
         edit_note: Edit Note
