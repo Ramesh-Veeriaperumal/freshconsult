@@ -10,6 +10,19 @@ class UsersController < ApplicationController
     c.requires_permission :manage_account
   end
   
+   ##redirect to contacts
+  def index
+    redirect_to contacts_url
+  end
+    
+  def new
+    redirect_to new_contact_url
+  end
+  
+  def edit
+    redirect_to edit_contact_url
+  end
+  
   def create    
     @user = current_account.users.new #by Shan need to check later       
     if @user.signup!(params)
