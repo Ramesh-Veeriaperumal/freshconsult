@@ -32,6 +32,8 @@ javascripts:
     - public/javascripts/syntax-highlighter/shBrushRuby.js
     
 stylesheets:
+  print:
+    - public/stylesheets/print.css
   common:
     - public/stylesheets/reset.css
     - public/stylesheets/layout.css

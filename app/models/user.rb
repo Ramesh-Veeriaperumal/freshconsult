@@ -31,7 +31,7 @@ class User < ActiveRecord::Base
     :dependent => :destroy
 
   before_create :set_time_zone , :set_company_name
-  before_save :set_account_id_in_children , :set_contact_name, :check_email_value
+  before_save :set_account_id_in_children , :set_contact_name, :check_email_value , :set_default_role
   
   named_scope :contacts, :conditions => ["user_role in (#{USER_ROLES_KEYS_BY_TOKEN[:customer]}, #{USER_ROLES_KEYS_BY_TOKEN[:client_manager]})" ]
   named_scope :technicians, :conditions => ["user_role not in (#{USER_ROLES_KEYS_BY_TOKEN[:customer]}, #{USER_ROLES_KEYS_BY_TOKEN[:client_manager]})"]
@@ -314,6 +314,10 @@ class User < ActiveRecord::Base
       self.name = (self.email.split("@")[0]).capitalize
     end
    
+ end
+ 
+ def set_default_role
+   self.user_role = USER_ROLES_KEYS_BY_TOKEN[:customer] if self.user_role.blank?
  end
  
  def set_company_name
