@@ -68,6 +68,8 @@ module TicketConstants
   DEFAULT_COLUMNS_BY_KEY = Hash[*DEFAULT_COLUMNS.map { |i| [i[2], i[1]] }.flatten]
   DEFAULT_COLUMNS_KEYS_BY_TOKEN = Hash[*DEFAULT_COLUMNS.map { |i| [i[0], i[2]] }.flatten]
   
+  DEFAULT_FILTER =  [{ "condition" => "status", "operator" => "is_in", "value" => "2"}]
+  
   
   ACTIVITY_HASH = {:status =>"create_status_activity",
                    :priority =>"create_priority_activity",

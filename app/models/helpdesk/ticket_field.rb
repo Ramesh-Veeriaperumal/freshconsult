@@ -22,6 +22,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
   
   
   named_scope :custom_fields, :conditions => ["flexifield_def_entry_id is not null"]
+  named_scope :custom_dropdown_fields, :conditions => ["flexifield_def_entry_id is not null and field_type = 'custom_dropdown'"]
   named_scope :customer_visible, :conditions => { :visible_in_portal => true }  
   named_scope :customer_editable, :conditions => { :editable_in_portal => true }
   named_scope :type_field, :conditions => { :name => "ticket_type" }
