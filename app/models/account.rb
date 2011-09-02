@@ -112,7 +112,7 @@ class Account < ActiveRecord::Base
   has_many :survey_handles, :through => :survey
   #Scope restriction ends
   
-  validates_format_of :domain, :with => /\A[a-zA-Z][a-zA-Z0-9]*\Z/
+  validates_format_of :domain, :with => /(?=.*?[A-Za-z])[a-zA-Z0-9]*\Z/
   validates_exclusion_of :domain, :in => RESERVED_DOMAINS, :message => "The domain <strong>{{value}}</strong> is not available."
   validates_length_of :helpdesk_url, :maximum=>255, :allow_blank => true
   validate :valid_domain?
