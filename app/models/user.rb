@@ -317,7 +317,6 @@ class User < ActiveRecord::Base
  end
  
  def set_default_role
-   logger.debug "user_role is ::#{self.user_role}"
    self.user_role = USER_ROLES_KEYS_BY_TOKEN[:customer] if self.user_role.blank?
  end
  
