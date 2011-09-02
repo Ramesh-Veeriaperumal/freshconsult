@@ -85,10 +85,6 @@ ul.activityfeed li{
 	   font-weight:bold;
 	   text-transform:capitalize;
 	}
-	.notelink{
-	   display:block; 
-	   @include link-colors(#333333, #3e71a4, #333333, #333333, #333333);
-	}
 	a{ 
 		@include link-colors(#4D769F, #3e71a4, #4D769F, #4D769F, #4D769F);
    	text-decoration:none; 
@@ -484,6 +480,10 @@ body h5{
 		.action_buttons{
 			margin-top:0px;
 		} 
+		.item-right-actions{
+		   margin-top:8px;
+		   margin-left:6px;
+		}
 	} 
 	.bookmark{
 		display:none;
@@ -3078,11 +3078,11 @@ div.addReminder{
       padding-left:60px;
       .preview_pic{
          margin:0px; 
-         margin-top:1px;
-         margin-left:-55px;
+         margin-top:5px;
+         margin-left:-56px;
          img{ 
-            padding:2px;
-            width:36px; height:36px;
+            width:46px; height:46px;
+            @include corners(6px);
          }
       }
 
@@ -3966,4 +3966,16 @@ a.close{
          padding-right:8%;
       }
    }
+}
+
+.tweet-counter{
+   font-size:16px; 
+   position:relative;
+   top:3px;
+   right:5px;
+   color:#333333;
+}
+
+.tweet-counter.error{
+   color:red;
 }

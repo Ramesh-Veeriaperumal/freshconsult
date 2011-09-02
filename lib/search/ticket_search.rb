@@ -50,7 +50,7 @@ module Search::TicketSearch
     end
     
     if criteria_key == :ticket_type
-      return TicketConstants::TYPE_NAMES_BY_KEY
+      return Account.current.ticket_type_values.collect { |tt| [tt.value, tt.value] }
     end
     
     if criteria_key == :source

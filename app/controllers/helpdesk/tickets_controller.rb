@@ -7,11 +7,12 @@ class Helpdesk::TicketsController < ApplicationController
   
   include HelpdeskControllerMethods  
   include Helpdesk::TicketActions
+  include Search::TicketSearch
   
   layout :choose_layout 
   
   before_filter :load_multiple_items, :only => [:destroy, :restore, :spam, :unspam, :assign , :close_multiple ,:pick_tickets]  
-  before_filter :load_item,           :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :get_ca_response_content] 
+  before_filter :load_item,           :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :get_ca_response_content, :print] 
   before_filter :load_flexifield ,    :only => [:execute_scenario]
   
   def check_user
@@ -35,14 +36,14 @@ class Helpdesk::TicketsController < ApplicationController
   end
  
   def index
-    @items = TicketsFilter.filter(@template.current_filter, current_user, current_account.tickets)
-    @items = TicketsFilter.search(@items, params[:f], params[:v])
+    @items = Helpdesk::Ticket.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
+    
+    @show_options = show_options
+    @show_options_json = ActiveSupport::JSON.encode @show_options
+    
     respond_to do |format|
+      
       format.html  do
-        @items = @items.paginate(
-          :page => params[:page], 
-          :order => @template.cookie_sort,
-          :per_page => 10)
       end
       
       format.xml do
@@ -54,10 +55,23 @@ class Helpdesk::TicketsController < ApplicationController
       end
       
       format.atom do
-        @items = @items.newest(20)
       end
     end
   end
+  
+  def custom_search
+    @show_options = show_options
+    @show_options_json = ActiveSupport::JSON.encode @show_options
+    @items = Helpdesk::Ticket.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
+    respond_to do |format|
+      format.html  do
+        render :partial => "helpdesk/tickets/components/custom_results", :locals => {:items => @items}
+      end
+    end
+    
+    
+  end
+
 
   def show
     @reply_email = current_account.reply_emails
@@ -265,6 +279,10 @@ class Helpdesk::TicketsController < ApplicationController
     a_template = Liquid::Template.parse(ca_resp.content).render('ticket' => @item, 'helpdesk_name' => @item.account.portal_name)    
     render :text => (a_template.gsub(/<\/?[^>]*>/, "")).gsub(/&nbsp;/i,"") || ""
   end
+  
+  def print
+    
+  end
     
   protected
 
@@ -288,7 +306,7 @@ class Helpdesk::TicketsController < ApplicationController
 #                              'activities.tickets.new_ticket.short')
 #      #end
     end
- 
+
     def assign_ticket user
       @items.each do |item|
         old_item = item.clone
@@ -297,8 +315,6 @@ class Helpdesk::TicketsController < ApplicationController
         item.save
       end
     end
-  
-   
 
     def load_flexifield   
       flexi_arr = Hash.new
@@ -323,7 +339,12 @@ class Helpdesk::TicketsController < ApplicationController
     end
 
     def choose_layout 
-      (action_name == "show_tickets_from_same_user"  || action_name == "confirm_merge") ? 'plainpage' : 'application'
+      layout_name = 'application'
+      case action_name
+        when "print"
+          layout_name = 'print'
+      end
+      layout_name
     end
     
     def get_updated_ticket_count

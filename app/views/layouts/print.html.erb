@@ -1,0 +1,23 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<head xmlns="http://www.w3.org/1999/xhtml">
+	<%= include_stylesheets :print, :media => "screen, print, projection" %>
+</head>
+<body class="print">
+	<div class="header">
+		<h3>
+			<table width="100%">
+				<tr>
+					<td>
+						<%= current_account.name %>
+					</td>
+					<td align="right">
+						<span class="ticket-number"><%= @header_right %></span>
+					</td>
+				</tr>
+			</table>
+		</h3>
+	</div>
+	<div class="wrapper">
+		<%= yield %>
+	</div>
+</body>

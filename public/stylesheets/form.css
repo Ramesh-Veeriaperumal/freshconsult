@@ -284,14 +284,15 @@ a.addchoice:hover {
   margin-bottom: 8px;
 }
 .ui-form div.checkbox, .ui-form label.checkbox {
-  padding-left: 24px;
   padding-bottom: 5px;
   font-size: 1.3em;
   position: relative;
 }
 .ui-form div.checkbox input, .ui-form label.checkbox input {
-  position: absolute;
-  left: 1px;
+  float: left;
+  margin-left: 0px;
+  margin-top: 1px;
+  margin-right: 3px;
 }
 .ui-form label, .ui-form li.checkbox {
   font-weight: normal;
@@ -1028,7 +1029,7 @@ input.search {
   font-size: 13px;
   height: 18px;
   padding: 5px 7px;
-  width: 500px;
+  width: 425px;
 }
 
 .live_search {
@@ -1867,11 +1868,11 @@ a.new_ticket:hover {
   top: 7px;
 }
 
-.tweet_counter {
-  position: absolute;
-  right: 0;
-  top: 0;
-  font-size: 20px;
-  font-weight: bold;
-  color: #ccc;
+textarea.tweet {
+  font-size: 14px;
+  line-height: 22px;
+  padding: 2px 4px;
+  -moz-border-radius: 4px 4px 4px 4px;
+  -webkit-border-radius: 4px 4px 4px 4px;
+  border-radius: 4px 4px 4px 4px;
 }

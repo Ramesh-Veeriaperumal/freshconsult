@@ -19,6 +19,8 @@ en:
   attachments: Attachments
   show_quoted_text: Show Quoted text
   cancel_my_account: Cancel my account
+  resolved_on_time: Resolved on time
+  resolved_late: Resolved late
   remove: Remove
   user: 
     company: Company
@@ -50,6 +52,7 @@ en:
       first_choice: First Choice
       second_choice: Second Choice
       confirm_delete: Are you sure you want to delete this field?
+      no_choice_message: "At least one valid choice has to be present"
     index: 
       number: Number
       add_custom_field: Add a Custom Field
