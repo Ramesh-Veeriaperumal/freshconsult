@@ -3,6 +3,11 @@ development:
  secret_key: 81297d69e2deaf8152a7b0b96508c161
  callback_url: http://localhost.local:3000/social/facebook/authdone 
  event_listener_url: http://localhost.local:3000/social/facebook/event_listener 
+staging:
+ app_id: 177912822282439
+ secret_key: 81297d69e2deaf8152a7b0b96508c161
+ callback_url: http://login.freshpo.com/social/facebook/authdone 
+ event_listener_url: http://login.freshpo.com/social/facebook/event_listener
 test:
  app_id: 177912822282439
  secret_key: 81297d69e2deaf8152a7b0b96508c161
