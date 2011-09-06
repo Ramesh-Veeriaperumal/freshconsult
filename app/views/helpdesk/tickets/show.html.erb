@@ -90,8 +90,8 @@
         .load("/helpdesk/tickets/canned_reponse/"+ticket_id, function(){
           jQuery("#canned_response_container")
             .removeClass("loading");
-        });
-        
+        })
+        .show();        
     }
         
     jQuery("#Merge").dialog2();
@@ -101,10 +101,7 @@
 			reply_area = jQuery('#cnt-reply');
 			tweet_area = jQuery('#cnt-tweet');
 			if(note_area.css("display") == 'block'){
-				insertTextAtCursor( $('add-note-cnt-note-body'), value );
-				jQuery('#add-note-cnt-note-body')
-						.trigger("focus")
-						.trigger("keydown");
+				tinyMCE.execInstanceCommand("send-email-cnt-reply-body","mceInsertContent",false, value);
 			} 
 			else if(tweet_area.css("display") == 'block'){
 				get_short_url(value, function(bitly){
