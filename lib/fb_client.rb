@@ -11,7 +11,7 @@ class FBClient
     @callback_url = "#{options[:callback_url]}"
 
     RAILS_DEFAULT_LOGGER.debug "app id::#{@tokens['app_id']} and secret: #{@tokens['secret_key']} and call_back_url: #{@callback_url}"
-    @auth = Koala::Facebook::OAuth.new(@tokens['app_id'], @tokens['secret_key'], @callback_url)
+    @oauth = Koala::Facebook::OAuth.new(@tokens['app_id'], @tokens['secret_key'], @callback_url)
     #@oauth = Koala::Facebook::OAuth.new('177912822282439','81297d69e2deaf8152a7b0b96508c161','http://localhost.local:3000/social/facebook/authdone')
     @fb_page = fb_page
   end
