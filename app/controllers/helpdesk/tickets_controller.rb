@@ -14,7 +14,9 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :load_multiple_items, :only => [:destroy, :restore, :spam, :unspam, :assign , :close_multiple ,:pick_tickets]  
   before_filter :load_item,           :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :get_ca_response_content, :print] 
   before_filter :load_flexifield ,    :only => [:execute_scenario]
-  
+
+  uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
+
   def check_user
     if !current_user.nil? and current_user.customer?
       return redirect_to(support_ticket_url(@ticket))
@@ -81,7 +83,7 @@ class Helpdesk::TicketsController < ApplicationController
       
     @signature = ""
     @agents = Agent.find(:first, :joins=>:user, :conditions =>{:user_id => current_user.id} )     
-    @signature = "\n\n\n#{@agents.signature}" unless (@agents.nil? || @agents.signature.blank?)
+    @signature = RedCloth.new("\n\n#{@agents.signature}").to_html unless (@agents.nil? || @agents.signature.blank?)
      
     @ticket_notes = @ticket.notes.visible.exclude_source('meta').newest_first     
     

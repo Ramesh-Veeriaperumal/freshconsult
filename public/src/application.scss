@@ -541,7 +541,6 @@ body h5{
 				padding:8px 0px 3px 0px;
 				margin-top:4px;
 				border-top:1px solid #efefef; 
-				color:#333333; 
 				font-size:13px;
 				@include text-formatting;
 				.ui-form{
@@ -561,10 +560,6 @@ body h5{
 						width:93%;
 					}
 				}
-			}
-			.ticketdetails{
-			   p{ margin-bottom: 12px; }
-			   br{ display:none; }
 			}
 			.min_height{
 				@include min-height(100px);

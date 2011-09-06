@@ -28,29 +28,21 @@
 		}	
   <%- end %>
 <% end %>
-
+<%= include_tiny_mce_if_needed %>
 <% content_for :sidebar do %>
-
 	<div class="sidepanel clearfix">
-	<% if @ticket.responder && !@ticket.deleted %>
-			<h4 class="title">Agent working on this ticket</h4>
-			<%= user_avatar(@ticket.responder, :thumb)  %>
-			<%= content_tag (:b, h(@ticket.responder.name)) %>
-			<!--%= h(@ticket.responder.email) %-->
-			<!--%= content_tag ( :div, content_tag(:span, "phone", :class => "info_data") + " " + h(@ticket.responder.phone) ) unless @ticket.responder.phone.empty? %-->
-			<!--%= content_tag ( :div, content_tag(:span, "mobile", :class => "info_data") + " " + h(@ticket.responder.mobile) ) unless @ticket.responder.mobile.empty? %-->			
-			
-	<% end %>
-	
-	<!--h3 class="title"><%=t('ticket.properties')%></h3-->	
-	<% current_portal.ticket_fields(:customer_visible).each do |field| %>
-		     <% if field.visible_in_view_form? %>
-		      <% 
-		          field_value = (field.is_default_field?) ? @ticket[field.field_name] : @ticket.get_ff_value(field.name)
-		          dom_type    = (field.field_type == "default_source") ? "dropdown" : field.dom_type
-		      %>			  
-             <!--need to create the design here-->
-   		  <% end %>
+	  <% if @ticket.responder && !@ticket.deleted %>
+  			<h4 class="title">Agent working on this ticket</h4>
+  			<%= user_avatar(@ticket.responder, :thumb)  %>
+  			<%= content_tag (:b, h(@ticket.responder.name)) %>			
+  	<% end %>
+    <% current_portal.ticket_fields(:customer_visible).each do |field| %>
+      <% if field.visible_in_view_form? %>
+        <% 
+          field_value = (field.is_default_field?) ? @ticket[field.field_name] : @ticket.get_ff_value(field.name)
+          dom_type    = (field.field_type == "default_source") ? "dropdown" : field.dom_type
+        %>			  
+      <% end %>
     <%end%> 
 	</div>
 <% end %>
@@ -93,7 +85,7 @@
 					
 		        </div>
 		        <div id="description-full" class="details min_height">
-			    	<%= RedCloth.new(auto_link(@ticket.description, :all, :target => "_blank")).to_html %>
+			    	<%= @ticket.description_html %>
 			    </div>  
 			</div>
 			
@@ -119,9 +111,8 @@
 				<%= f.error_messages %>
 				<ul class="ui-form">
 			    <li> 
-							<%= content_tag( :h3, "Add a note", :class => "title" ) %>
-			    		<%= f.label :body, "Add additional information to your ticket", :class => "overlabel" %>
-			  			<%= f.text_area :body, :class => "expando required" %>
+							<%= content_tag( :h4, "Add a note", :class => "title" ) %>
+			  			<%= f.text_area :body_html, :class => "mceEditor" %>
 					</li>
 					<li class="attachment-options"  id="attachment-options">
 						<% unless local_assigns[:no_attachments] %>

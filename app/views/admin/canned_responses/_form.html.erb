@@ -46,7 +46,7 @@ function toggleGroup(access_id)
 				<%= t('message') %>
 				<a class='l_placeholder slim-button' href='javascript:void(0)'>Insert Placeholder &raquo;</a>
 			</label>
-   		<%= f.text_area :content, :class => "mceEditor", :id => 'ca-content' %>		
+   		<%= f.text_area :content_html, :class => "mceEditor", :id => 'ca-content' %>		
 	</li>
 	<li class="inline-field">
 	<% f.fields_for :visibility do |access| %>

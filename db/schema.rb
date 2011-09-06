@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110830103354) do
+ActiveRecord::Schema.define(:version => 20110905144312) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -33,10 +33,11 @@ ActiveRecord::Schema.define(:version => 20110830103354) do
 
   create_table "admin_canned_responses", :force => true do |t|
     t.string   "title"
-    t.text     "content",    :limit => 2147483647
-    t.integer  "account_id", :limit => 8
+    t.text     "content",      :limit => 2147483647
+    t.integer  "account_id",   :limit => 8
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "content_html", :limit => 2147483647
   end
 
   add_index "admin_canned_responses", ["account_id", "created_at"], :name => "index_admin_canned_responses_on_account_id_and_created_at"
@@ -635,8 +636,8 @@ ActiveRecord::Schema.define(:version => 20110830103354) do
     t.string   "screen_name"
     t.string   "access_token"
     t.string   "access_secret"
-    t.boolean  "capture_dm_as_ticket",                   :default => false
-    t.boolean  "capture_mention_as_ticket",              :default => false
+    t.boolean  "capture_dm_as_ticket",                   :default => true
+    t.boolean  "capture_mention_as_ticket",              :default => true
     t.integer  "product_id",                :limit => 8
     t.integer  "last_dm_id",                :limit => 8
     t.integer  "last_mention_id",           :limit => 8

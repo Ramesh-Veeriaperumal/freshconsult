@@ -10,14 +10,14 @@
 				jQuery('#cnt-note').hide();
 				jQuery('#cnt-tweet').hide();
 				jQuery('#cnt-reply').toggle();
-				setCaretToPos($('send-email-cnt-reply-body'), 0);
+				tinyMCE.execInstanceCommand("send-email-cnt-reply-body","mceFocus",false);
 			}
 			else if (action == "note")
 			{
 				jQuery('#cnt-reply').hide();
 				jQuery('#cnt-tweet').hide();
 				jQuery('#cnt-note').toggle();
-				setCaretToPos($('add-note-cnt-note-body'), 0);
+				//setCaretToPos($('add-note-cnt-note-body'), 0);
 			}
 			else
 			{
@@ -117,11 +117,8 @@
 			else{
 				if(reply_area.css("display") == 'none')
 					jQuery('#ReplyButton').trigger("click");
-
-				insertTextAtCursor( $('send-email-cnt-reply-body'), value );
-				jQuery('#send-email-cnt-reply-body')
-						.trigger("focus")
-						.trigger("keydown");
+               
+        tinyMCE.execInstanceCommand("send-email-cnt-reply-body","mceInsertContent",false, value);
 			}
 		}
 		
@@ -143,7 +140,7 @@
     
   <% end %>
 <% end %> 
-
+<%= include_tiny_mce_if_needed %>
 <% content_for :sidebar do %>
 	<% unless @ticket.deleted %>
 		<div class="rtCnt sidepanel ticket-panel">
@@ -268,35 +265,35 @@
               </span>
             </div>
      	</div>	
-			<% end %>
-		  <div id="description-full" style="display:block" class="details min_height">
-			 	<%= RedCloth.new(auto_link(@ticket.description, :all, :target => "_blank")).to_html %>
-			</div>
-				<% unless @ticket.attachments.empty? %>
-					<span class="seperator"></span>
-					<h4><%= pluralize(@ticket.attachments.size, t("attachment"), t("attachments")) %></h4>
-					<ul class="attachment_list">
-					     <%= render :partial => '/helpdesk/shared/attachment', :collection => @ticket.attachments, :locals => {:show_delete => true, :url => [@item] } %>
-					</ul>
-				<% end %>
-				<% unless @ticket.ticket_topic.nil? %>
-          <div class="info-highlight">
-            <%= t(".linked_ticket")%>
-            "<%= link_to("#{truncate(@ticket.topic.title)}" , category_forum_topic_path(@ticket.topic.forum.forum_category.id, @ticket.topic.forum.id, @ticket.topic.id), :class => "link_to") %>"
-          </div>
-        <% end %>        
-		</div>
+      <% end %>
+      <div id="description-full" style="display:block" class="details min_height">
+    		<%= @ticket.description_html %>
+      </div>
+      <% unless @ticket.attachments.empty? %>
+        <span class="seperator"></span>
+        <h4><%= pluralize(@ticket.attachments.size, t("attachment"), t("attachments")) %></h4>
+        <ul class="attachment_list">
+          <%= render :partial => '/helpdesk/shared/attachment', :collection => @ticket.attachments, :locals => {:show_delete => true, :url => [@item] } %>
+        </ul>
+      <% end %>
+      <% unless @ticket.ticket_topic.nil? %>
+        <div class="info-highlight">
+          <%= t(".linked_ticket")%>
+          "<%= link_to("#{truncate(@ticket.topic.title)}", category_forum_topic_path(@ticket.topic.forum.forum_category.id, @ticket.topic.forum.id, @ticket.topic.id), :class => "link_to") %>"
+        </div>
+      <% end %>
+    </div>
   </div>		 
 
-		<% unless @ticket.deleted %>
-			<div class="alignright">
-				<%= link_to_function(t('ticket.reply_to'), "swapEmailNote('reply', this)", :class => 'uiButton', :id => "ReplyButton") unless @item.from_email.nil? %>
-				<%= link_to_function(t('ticket.add_note'), "swapEmailNote('note', this)", :class => 'uiButton', :id => "AddNoteButton") %>		
-				<%= link_to_function("Tweet", "swapEmailNote('tweet', this)", :class => 'uiButton', :id => "TweetButton") if @item.requester && @item.is_twitter?%>
-			</div>
-			<div style="position:relative;">
-				<% if @item.requester %>				
-				  <div class="canned-response-menu" id="canned_response_container" style="display:none;"> 
+  <% unless @ticket.deleted %>
+    <div class="alignright">
+      <%= link_to_function(t('ticket.reply_to'), "swapEmailNote('reply', this)", :class => 'uiButton', :id => "ReplyButton") unless @item.from_email.nil? %>
+      <%= link_to_function(t('ticket.add_note'), "swapEmailNote('note', this)", :class => 'uiButton', :id => "AddNoteButton") %>		
+      <%= link_to_function("Tweet", "swapEmailNote('tweet', this)", :class => 'uiButton', :id => "TweetButton") if @item.requester && @item.is_twitter?%>
+    </div>
+    <div style="position:relative;">
+      <% if @item.requester %>				
+      <div class="canned-response-menu" id="canned_response_container" style="display:none;"> 
             <div>
               <%= link_to("Add Canned response", new_admin_canned_response_path, :target => "_blank", :class => "button") if(current_user.admin?) %>
             </div>
