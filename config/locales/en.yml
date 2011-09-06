@@ -1023,7 +1023,7 @@ en:
     assigned_to: Assigned To
     edit: Edit ticket
     ham_btn_title: This is not spam
-    reported_from_souce: Reported from %{source}
+    reported_from_source: Reported via %{source}
     suggested_solutions: 
       insert_url: Insert URL
       title: Suggested Solutions

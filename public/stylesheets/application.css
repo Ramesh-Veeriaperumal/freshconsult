@@ -775,6 +775,9 @@ body h5 {
   padding: 6px 6px 1px 1em;
   background-color: #EEE;
 }
+.request_details div.description .details p {
+  margin-right: 2em;
+}
 .request_details div.description .details .ui-form {
   -moz-border-radius: 0px 0px 0px 0px;
   -webkit-border-radius: 0px 0px 0px 0px;
@@ -1398,6 +1401,9 @@ div.panel_area {
 }
 div.panel_area label {
   display: inline;
+}
+div.panel_area label.overlabel {
+  margin: 2px 7px !important;
 }
 div.panel_area a {
   text-decoration: none;
@@ -3417,6 +3423,7 @@ a.page_title:active {
 .request-list {
   background-color: #f4f4f4;
   margin: 4px 1px;
+  border-bottom: 1px solid #cfcfcf;
 }
 .request-list div.item {
   border-bottom: 1px dotted #dedede;

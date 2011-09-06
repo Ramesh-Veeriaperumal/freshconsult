@@ -90,8 +90,8 @@
         .load("/helpdesk/tickets/canned_reponse/"+ticket_id, function(){
           jQuery("#canned_response_container")
             .removeClass("loading");
-        });
-        
+        })
+        .show();        
     }
         
     jQuery("#Merge").dialog2();
@@ -101,10 +101,7 @@
 			reply_area = jQuery('#cnt-reply');
 			tweet_area = jQuery('#cnt-tweet');
 			if(note_area.css("display") == 'block'){
-				insertTextAtCursor( $('add-note-cnt-note-body'), value );
-				jQuery('#add-note-cnt-note-body')
-						.trigger("focus")
-						.trigger("keydown");
+				tinyMCE.execInstanceCommand("send-email-cnt-reply-body","mceInsertContent",false, value);
 			} 
 			else if(tweet_area.css("display") == 'block'){
 				get_short_url(value, function(bitly){
@@ -221,7 +218,7 @@
         <div class="user_details">
           <%= user_avatar(@ticket.requester)  %>
           <div>
-						<%= content_tag :span, "", :class => "custom-tip-bottom icon-image source-#{@ticket.source_name.downcase}", :title => t("ticket.reported_from_souce", :source => @ticket.source_name.downcase) %>
+						<%= content_tag :span, "", :class => "custom-tip-bottom icon-image source-#{@ticket.source_name.downcase}", :title => t("ticket.reported_from_source", :source => @ticket.source_name.downcase) %>
             <%= t('ticket.reported_by', :requester => link_to(h(@ticket.requester.display_name),@ticket.requester, :class => "user_name")) %>     
           </div>
           <div> 
