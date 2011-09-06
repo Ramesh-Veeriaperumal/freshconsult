@@ -270,6 +270,8 @@ en:
   feedbackwidget_formcustomize: Form customization
   does_not_contain: Does not contain
   flash: 
+    facebook:
+      updated: Facebook setting has been updated
     twitter: 
       updated: Twitter setting has been updated
     not_allowed_in_demo_site: Demo site doesn't have this access!
@@ -1005,6 +1007,8 @@ en:
     ticket_save: Successfully converted the tweet as a ticket
     tkt_err_save: Unable to convert the tweet to ticket or already converted
     usr_not_thr: User is not there.    
+  facebook:
+    deleted: The facebook page @%{facebook_page} has been removed.
   logo: Logo
   ok: Ok
   back: Back
@@ -1362,3 +1366,7 @@ en:
     year: Year
     years: Years
   go_back_admin: Go back to Admin
+  social:
+    facebook_pages:
+      index:
+        title: "Facebook Pages"

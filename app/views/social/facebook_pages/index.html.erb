@@ -1,0 +1,27 @@
+<% content_for :sidebar do -%><%-end %>
+<% unless @fb_pages.empty? %>
+  <div class="floatr">
+    <%= link_to "Add Account", @fb_client.authorize_url, :class => "uiButton special medium" %> 
+  </div>
+  <h3 class="title"><%=t('.title')%></h3>
+  <ul class="admin_list">
+    <% @fb_pages.each do |page| %>
+      <li>
+  		  <div class="item_actions">
+  		    <%= link_to t("edit"),  edit_social_facebook_url(page), :class => "button" %>
+  		    <%= link_to(t('remove'), social_facebook_path(page), :method => 'delete', :confirm => "Are you sure you want to remove this facebook page?", :class => "button" ) %>    
+  		  </div>
+  		  <div class="preview_pic">
+  		    <span class="tweet_pic"></span>
+  		    <!--%= image_tag (twitter_avatar(page.page_name)) %-->
+  		  </div>		
+  		    <h2 class="title">
+            <%= link_to "#{page.page_name}", edit_social_facebook_url(page) %> 
+          </h2>
+          <div class="intro"> <!--%= page.product.name %--> </div> 
+      </li>
+    <% end %>
+  </ul>
+<% else %>
+  <%= render :partial => "engage_info"%>
+<% end %>

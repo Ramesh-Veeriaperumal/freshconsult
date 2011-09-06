@@ -81,7 +81,7 @@ ActionController::Routing::Routes.draw do |map|
                 :member     =>  { :search => :any, :edit => :any }
                 
     social.resources :facebook, :controller => 'facebook_pages', 
-                :collection =>  { :signin => :any ,:authdone => :any  },
+                :collection =>  { :signin => :any ,:authdone => :any , :event_listener =>:any },
                 :member     =>  { :edit => :any }
   end
   

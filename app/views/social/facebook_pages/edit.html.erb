@@ -1,0 +1,10 @@
+<% content_for :sidebar do -%><%- end %>
+<h3 class="title">Facebook settings</h3>
+<% form_for :facebook_page, :url => social_facebook_path(@item), :html => { :method => :put } do |f| %>
+	<%= render :partial => 'form', :locals => { :facebook_page => @item } %>
+	<div class="button-container">
+	  <%= link_to("Back to admin", "/admin/home", :class => "uiButton floatl")  %>
+    <%= link_to(t('remove'), social_facebook_path(@item), :method => 'delete', :confirm => "Are you sure you want to remove this facebook page", :class => "uiButton floatl" ) %>
+    <%= submit_tag "Update", :class => "uiButton"  %>
+  </div>
+<% end %>

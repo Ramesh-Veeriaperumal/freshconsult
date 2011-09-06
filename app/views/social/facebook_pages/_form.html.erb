@@ -1,0 +1,28 @@
+<ul class="ui-form">
+  <li class="inline-field">
+    <label class="caption">
+      <div class="preview_pic">
+        <!--%= image_tag(@facebook_page.profile_image_url) %--><span class="tweet_pic"></span>
+      </div>
+      <%= content_tag(:h2, @item.page_name, :class => "title") %>
+      <div class="intro"><!--%= @twitter_user.screen_name %--></div>
+    </label>
+    <div class="fields">
+      <label class="checkbox">
+        <%= check_box "social_facebook_page", :import_visitor_posts, { :checked => facebook_page.import_visitor_posts } %> 	
+        Import <strong>"Visitor posts"</strong> as ticket
+      </label>
+      <div class="info-data tabbed">
+        Freshdesk will convert all visitor posts on this Facebook page as tickets.
+      </div>				
+      <span class="seperator"></span>
+      <label class="checkbox">
+        <%= check_box "social_facebook_page", :import_company_posts, { :checked => facebook_page.import_company_posts } %> 
+        Import <strong>"Company posts"</strong> as ticket
+      </label>
+      <div class="info-data tabbed">
+        Freshdesk will convert all Company posts on this Facebook page into tickets.
+      </div>	 
+    </div>
+  </li>
+</ul>
