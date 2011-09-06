@@ -13,7 +13,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
         :operator => get_op_list(cont), :options => get_default_choices(name.to_sym) }
       end
       #Custome fields
-      Account.current.ticket_fields.custom_fields(:include => {:flexifield_def_entry => {:include => :flexifield_picklist_vals } } ).each do |col|
+      Account.current.ticket_fields.custom_dropdown_fields(:include => {:flexifield_def_entry => {:include => :flexifield_picklist_vals } } ).each do |col|
         defs[get_id_from_field(col).to_sym] = {get_op_from_field(col).to_sym => get_container_from_field(col) ,:name => col.label , :container => get_container_from_field(col),     
         :operator => get_op_from_field(col), :options => get_custom_choices(col) }
       end 
@@ -21,7 +21,13 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     end
   end
   
+  def default_order
+    'created_at'
+  end
   
+  def default_filter
+    TicketConstants::DEFAULT_FILTER
+  end
  
   
   def deserialize_from_params(params)
@@ -54,9 +60,8 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     
     action_hash = []
     action_hash = ActiveSupport::JSON.decode params[:data_hash] unless params[:data_hash].blank?
-    
-    self.query_hash = action_hash
-    
+    action_hash = default_filter  if params[:data_hash].blank?
+     
     action_hash.each do |filter|
       add_condition(filter["condition"], filter["operator"].to_sym, filter["value"]) unless filter["value"].blank?
     end

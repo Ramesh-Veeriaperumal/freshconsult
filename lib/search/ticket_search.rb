@@ -11,7 +11,7 @@ module Search::TicketSearch
         i = i+ 1
       end
       #Custom fields
-      Account.current.ticket_fields.custom_fields(:include => {:flexifield_def_entry => {:include => :flexifield_picklist_vals } } ).each do |col|
+      Account.current.ticket_fields.custom_dropdown_fields(:include => {:flexifield_def_entry => {:include => :flexifield_picklist_vals } } ).each do |col|
         defs.insert(i,{get_op_from_field(col).to_sym => get_container_from_field(col),:condition => get_id_from_field(col).to_sym ,:name => col.label , :container => get_container_from_field(col),     
         :operator => get_op_from_field(col), :options => get_custom_choices(col), :value => "" })
         i = i+ 1     

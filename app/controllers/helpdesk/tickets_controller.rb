@@ -38,7 +38,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
  
   def index
-    @items = Helpdesk::Ticket.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
+    @items = current_account.tickets.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
     
     @show_options = show_options
     @show_options_json = ActiveSupport::JSON.encode @show_options
@@ -62,16 +62,12 @@ class Helpdesk::TicketsController < ApplicationController
   end
   
   def custom_search
-    @show_options = show_options
-    @show_options_json = ActiveSupport::JSON.encode @show_options
-    @items = Helpdesk::Ticket.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
+    @items = current_account.tickets.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
     respond_to do |format|
       format.html  do
         render :partial => "helpdesk/tickets/components/custom_results", :locals => {:items => @items}
       end
     end
-    
-    
   end
 
 
