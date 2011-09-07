@@ -1,0 +1,17 @@
+<% unless article.nil? %>
+<% article_url = solution_category_folder_article_url(article.folder.category_id,article.folder_id,article) %> 
+<div class="item">
+<% link_to article_url, :target => "blank", :class => "item-title #{( !article.folder.visible?(current_user) ) ? 'private' : '' }", :title => truncate ( article.desc_un_html, 100) do %>
+  <span class='bulb'></span> <span class='private-icon'></span> 
+  <%= article.excerpts.title %>
+<% end %>
+	<div class="item-menu">
+		<ul>
+			<li><%= link_to_function t(:'ticket.suggested_solutions.insert_content'), "respondWithSol('content', '#{article.id}', '#{article_url}')", :title => t(:'ticket.suggested_solutions.insert_content_tip'), :class => "custom-tip" %></li>
+			<%if article.folder.visible?(current_user)%>
+				<li><%= link_to_function t(:'ticket.suggested_solutions.insert_url'), "respondWithSol('url', '#{article.id}', '#{article_url}')", :title => t(:'ticket.suggested_solutions.insert_url_tip'), :class => "custom-tip" %></li>
+			<%end%> 
+		</ul>
+	</div>
+</div>
+<% end %>

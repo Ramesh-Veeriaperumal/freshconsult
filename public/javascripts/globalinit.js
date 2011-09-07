@@ -4,41 +4,41 @@
 var $J = jQuery.noConflict();
 
 (function($){
-	// Global Jquery Plugin initialisation
-	$.fn.qtip.baseIndex = 10000;
-	
-	// Tweet custom class
-	$.validator.addMethod("tweet", $.validator.methods.maxlength, "Your Tweet was over 140 characters. You'll have to be more clever." );   
-	$.validator.addClassRules("tweet", { tweet: 140 });
-	
-	// App initialisation  
-	$(document).ready(function() {
+   // Global Jquery Plugin initialisation
+   $.fn.qtip.baseIndex = 10000;
+
+   // Tweet custom class
+   $.validator.addMethod("tweet", $.validator.methods.maxlength, "Your Tweet was over 140 characters. You'll have to be more clever." );   
+   $.validator.addClassRules("tweet", { tweet: 140 });
+   
+   // App initialisation  
+   $(document).ready(function() {
       // SyntaxHighlighter.all();
-			
-		// - Labels with overlabel will act a Placeholder for form elements 
-	    $("label.overlabel").overlabel();
-	
-		// - jQuery Validation for forms with class .ui-form ( ...An optional dont-validate written for the form element will make the selectors ignore those form alone )
-		validateOptions = {
-			onkeyup: false,
-			focusCleanup: true,
-			focusInvalid: false
-		};
-		
-		$(".admin_list li")
-			.hover(
-				function(){ $(this).children(".item_actions").css("visibility", "visible"); }, 
-				function(){ $(this).children(".item_actions").css("visibility", "hidden"); }
-			);
-		
-		$("ul.ui-form").not(".dont-validate").parents('form:first').validate(validateOptions);
-		$("div.ui-form").not(".dont-validate").find('form:first').validate(validateOptions); 
-		$("form.uniForm").validate(validateOptions);
-		
-		// Make Textareas to expand automatically when editing it
-		// Auto Resize in IE seems to be screwing up the horizontal scroll bar... hence removing it
-		if(!$.browser.msie)
-			$("textarea.auto-expand").autoResize();
+
+      // - Labels with overlabel will act a Placeholder for form elements 
+      $("label.overlabel").overlabel();
+
+      // - jQuery Validation for forms with class .ui-form ( ...An optional dont-validate written for the form element will make the selectors ignore those form alone )
+      validateOptions = {
+         onkeyup: false,
+         focusCleanup: true,
+         focusInvalid: false
+      };
+
+      $(".admin_list li")
+         .hover(
+            function(){ $(this).children(".item_actions").css("visibility", "visible"); }, 
+            function(){ $(this).children(".item_actions").css("visibility", "hidden"); }
+         );
+
+      $("ul.ui-form").not(".dont-validate").parents('form:first').validate(validateOptions);
+      $("div.ui-form").not(".dont-validate").find('form:first').validate(validateOptions); 
+      $("form.uniForm").validate(validateOptions);
+
+      // Make Textareas to expand automatically when editing it
+      // Auto Resize in IE seems to be screwing up the horizontal scroll bar... hence removing it
+      if(!$.browser.msie)
+         $("textarea.auto-expand").autoResize();
 		
 		sidebarHeight = $('#Sidebar').height();
 		if(sidebarHeight !== null && sidebarHeight > $('#Pagearea').height())

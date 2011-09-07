@@ -541,9 +541,11 @@ body h5{
 				padding:8px 0px 3px 0px;
 				margin-top:4px;
 				border-top:1px solid #efefef; 
-				color:#333333; 
 				font-size:13px;
 				@include text-formatting;
+				p{
+				   margin-right:2em; 
+				}
 				.ui-form{
 					@include corners(0px);
 					border-left:0px;
@@ -561,10 +563,6 @@ body h5{
 						width:93%;
 					}
 				}
-			}
-			.ticketdetails{
-			   p{ margin-bottom: 12px; }
-			   br{ display:none; }
 			}
 			.min_height{
 				@include min-height(100px);
@@ -1000,14 +998,13 @@ ul.admin_icons{
 }
 
 div.panel_area{
-	padding:10px;
-	label{
-		display:inline;
-	}
-	a{
-		text-decoration:none;
-		@include link-colors(#333333, #527EAA);
-	}
+   padding:10px;
+   label{ display:inline; }
+   label.overlabel{ margin:2px 7px !important; }
+   a{
+      text-decoration:none;
+      @include link-colors(#333333, #527EAA);
+   }
 	.tag_item{
 		background:#efefef; 
 		@include corners(6px);
@@ -2679,6 +2676,7 @@ a.page_title{
 .request-list{
 	background-color:#f4f4f4;
 	margin:4px 1px;
+	border-bottom:1px solid #cfcfcf;
 	div.item{ 
 		border-bottom:1px dotted #dedede;
 		position:relative;

@@ -705,25 +705,13 @@ body h5 {
   padding: 8px 0px 3px 0px;
   margin-top: 4px;
   border-top: 1px solid #efefef;
-  color: #333333;
   font-size: 13px;
 }
 .request_details div.description .details p, .request_details div.description .details li {
-  line-height: 1.55em;
-}
-.request_details div.description .details p {
   font-size: 13px;
-  white-space: pre-wrap;
-  /* css-3 */
-  white-space: -moz-pre-wrap;
-  /* Mozilla, since 1999 */
-  white-space: -pre-wrap;
-  /* Opera 4-6 */
-  white-space: -o-pre-wrap;
-  /* Opera 7 */
-  word-wrap: break-word;
-  /* Internet Explorer 5.5+ */
-  margin: 0px 0 0px 0;
+  line-height: 18px;
+  font-style: normal;
+  margin: 0;
 }
 .request_details div.description .details h1 {
   font-size: 2em;
@@ -787,6 +775,9 @@ body h5 {
   padding: 6px 6px 1px 1em;
   background-color: #EEE;
 }
+.request_details div.description .details p {
+  margin-right: 2em;
+}
 .request_details div.description .details .ui-form {
   -moz-border-radius: 0px 0px 0px 0px;
   -webkit-border-radius: 0px 0px 0px 0px;
@@ -805,12 +796,6 @@ body h5 {
 }
 .request_details div.description .details .ui-form .button-container {
   width: 93%;
-}
-.request_details div.description .ticketdetails p {
-  margin-bottom: 12px;
-}
-.request_details div.description .ticketdetails br {
-  display: none;
 }
 .request_details div.description .min_height {
   min-height: 100px;
@@ -1416,6 +1401,9 @@ div.panel_area {
 }
 div.panel_area label {
   display: inline;
+}
+div.panel_area label.overlabel {
+  margin: 2px 7px !important;
 }
 div.panel_area a {
   text-decoration: none;
@@ -3435,6 +3423,7 @@ a.page_title:active {
 .request-list {
   background-color: #f4f4f4;
   margin: 4px 1px;
+  border-bottom: 1px solid #cfcfcf;
 }
 .request-list div.item {
   border-bottom: 1px dotted #dedede;

@@ -14,7 +14,9 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :load_multiple_items, :only => [:destroy, :restore, :spam, :unspam, :assign , :close_multiple ,:pick_tickets]  
   before_filter :load_item,           :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :get_ca_response_content, :print] 
   before_filter :load_flexifield ,    :only => [:execute_scenario]
-  
+
+  uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
+
   def check_user
     if !current_user.nil? and current_user.customer?
       return redirect_to(support_ticket_url(@ticket))
@@ -77,7 +79,7 @@ class Helpdesk::TicketsController < ApplicationController
       
     @signature = ""
     @agents = Agent.find(:first, :joins=>:user, :conditions =>{:user_id => current_user.id} )     
-    @signature = "\n\n\n#{@agents.signature}" unless (@agents.nil? || @agents.signature.blank?)
+    @signature = RedCloth.new("<br />#{@agents.signature}").to_html unless (@agents.nil? || @agents.signature.blank?)
      
     @ticket_notes = @ticket.notes.visible.exclude_source('meta').newest_first     
     
@@ -267,13 +269,13 @@ class Helpdesk::TicketsController < ApplicationController
  
   def get_solution_detail   
     sol_desc = current_account.solution_articles.find(params[:id])
-    render :text => (sol_desc.description.gsub(/<\/?[^>]*>/, "")).gsub(/&nbsp;/i,"") || "" 
+    render :text => sol_desc.description || "" 
   end
 
   def get_ca_response_content   
     ca_resp = current_account.canned_responses.find(params[:ca_resp_id])
-    a_template = Liquid::Template.parse(ca_resp.content).render('ticket' => @item, 'helpdesk_name' => @item.account.portal_name)    
-    render :text => (a_template.gsub(/<\/?[^>]*>/, "")).gsub(/&nbsp;/i,"") || ""
+    a_template = Liquid::Template.parse(ca_resp.content_html).render('ticket' => @item, 'helpdesk_name' => @item.account.portal_name)    
+    render :text => a_template || ""
   end
   
   def print

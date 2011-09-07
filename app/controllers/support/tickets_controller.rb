@@ -6,6 +6,8 @@ class Support::TicketsController < ApplicationController
   before_filter :only => [:new, :create] do |c| 
     c.check_portal_scope :anonymous_tickets
   end
+
+  uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
   
   def index
     return redirect_to(send(Helpdesk::ACCESS_DENIED_ROUTE)) unless current_user

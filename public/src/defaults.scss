@@ -20,14 +20,6 @@ body {
 a{ @include link-colors(#4D769F, #3399cc); }
 a:hover{text-decoration:none;}
 
-p{
-	color: #555555;
-    font-size: 12px;
-    line-height: 1.35em;
-    margin:5px 0px 1.3em 0px;
-    text-align: left;
-}
-
 .hide{
     display:none;
 }

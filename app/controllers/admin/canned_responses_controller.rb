@@ -1,7 +1,8 @@
 class Admin::CannedResponsesController < Admin::AdminController 
   #can give this feature only to hire end plans
   #before_filter { |c| c.requires_feature :canned_response }
-
+  uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
+  
   def index
     @ca_responses = scoper.find(:all)
   end

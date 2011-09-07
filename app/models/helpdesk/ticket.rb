@@ -14,6 +14,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   attr_accessor :email, :name, :custom_field ,:customizer, :nscname, :twitter_id 
   
   before_validation :populate_requester, :set_default_values 
+  before_save :set_body_content
   before_create :set_dueby, :save_ticket_states
   after_create :refresh_display_id, :save_custom_field, :pass_thro_biz_rules, :autoreply, 
       :create_initial_activity, :support_score_on_create
@@ -707,5 +708,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
     
     def add_support_score
       SupportScore.add_support_score(self, ScoreboardRating.resolution_speed(self))
+    end
+    
+    def set_body_content        
+      self.description = (self.description_html.gsub(/<\/?[^>]*>/, "")).gsub(/&nbsp;/i,"") unless self.description_html.empty?
     end
 end
