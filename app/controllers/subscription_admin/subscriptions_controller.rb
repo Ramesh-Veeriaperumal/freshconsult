@@ -19,6 +19,11 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
     end
   end
   
+  def customers
+    @subscriptions = Subscription.paginate(:include => :account, :page => params[:page], :per_page => 30, :order => 'accounts.created_at desc',
+                                           :conditions => ['card_number is not null and state = ? ','active'] )
+  end
+  
   protected
     
     def redirect_url

@@ -9,7 +9,7 @@
      
 	 to
 
-    <%= calendar_date_select_tag 'end_date', "" %>
+    <%= calendar_date_select_tag :end_date, "" %>
     <%= submit_tag "Search", :name => nil %>
   </p>
 <% end %>
@@ -34,6 +34,7 @@
 	<th>Agent Count</th>
   </tr>
   <% @payments.each do |payment| %>
+   <%unless payment.account.nil?%>
     <tr>
       <td><%= link_to(h(payment.account.name), [:admin, payment.account]) %></td>
       <td><%= payment.account.full_domain %></td>
@@ -41,6 +42,7 @@
 	  <td><%= payment.subscription.renewal_period %></td>
 	  <td><%= payment.subscription.agent_limit %></td>
     </tr>
+	<%end%>
   <% end %>
  
 </table>

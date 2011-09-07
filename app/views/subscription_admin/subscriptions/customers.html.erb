@@ -1,25 +1,5 @@
-<% @page_title = 'Subscriptions' %>
-<% if @stats %>
-  <h1>Revenue Summary</h1>
-  <table id="stats">
-    <tr>
-      <th>Last Month</th>
-      <td><%= number_to_currency(@stats[:last_month]) %></td>
-    </tr>
-    <tr>
-      <th>Last 30 Days</th>
-      <td><%= number_to_currency(@stats[:last_30]) %></td>
-    </tr>
-    <tr>
-      <th>This Month</th>
-      <td><%= number_to_currency(@stats[:this_month]) %></td>
-    </tr>
-  </table>
-<% end %>
+<% @page_title = 'Customers' %>
 
-<br>
- <%=link_to 'customers', customers_admin_subscriptions_path%>
-<br>
 
 <h1><%= @page_title %></h1>
 <table id="subscriptions">
@@ -27,8 +7,11 @@
     <th>Account</th>
     <th>Amount</th>
     <th>Created</th>
-    <th>Next Renewal</th>
-    <th>State</th>
+    <th>Renewal</th>
+	<th>Place</th>
+	<th>Agents</th>
+	<th>Plan</th>
+    
   </tr>
   <% @subscriptions.each do |subscription| %>
     <tr class="<%= 'expired' unless subscription.current? %>">
@@ -36,7 +19,9 @@
       <td><%= number_to_currency(subscription.amount) %> <%= "(#{subscription.discount.name})" if subscription.discount %></td>
       <td><%= subscription.created_at.to_s(:short_day) %></td>
       <td><%= subscription.next_renewal_at.to_s(:short_day) %></td>
-      <td><%= subscription.state %></td>
+	  <td><%= subscription.account.time_zone %></td>
+	  <td><%= subscription.agent_limit %></td>
+	  <td><%=SubscriptionPlan::BILLING_CYCLE_NAMES_BY_KEY[subscription.renewal_period]%> <%= subscription.subscription_plan.name %></td>
     </tr>
   <% end %>
 </table>
