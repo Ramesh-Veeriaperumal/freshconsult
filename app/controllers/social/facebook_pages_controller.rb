@@ -1,4 +1,8 @@
-class Social::FacebookPagesController < Admin::AdminController
+class Social::FacebookPagesController < ApplicationController
+  
+   before_filter :except => [:event_listener] do |c| 
+    c.requires_permission :manage_users
+  end
   
   before_filter :fb_client , :only => [:signin, :authdone, :index]
   before_filter :build_item, :only => [:signin, :authdone]
@@ -6,6 +10,7 @@ class Social::FacebookPagesController < Admin::AdminController
   
   def index
     @fb_pages = scoper
+    
   end
 
   def edit
