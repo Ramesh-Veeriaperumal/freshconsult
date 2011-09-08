@@ -2,7 +2,6 @@
 <% form_tag({:action => :custom_search}, { :method => :post, :name=>'wf_form', :id => 'wf_form', :class => 'wf_form' }) do %>
 <%= hidden_field_tag(:wf_type, "Helpdesk::Filters::CustomTicketFilter") %>
 <%= hidden_field_tag(:wf_model, "Helpdesk::Ticket") %>
-<%= hidden_field_tag(:filter_name, "") %>
 	<% i = 0 %>
 	<% @show_options.each do |c_hash| %> 
 		<%=c_hash[:name]%> 
@@ -10,13 +9,51 @@
 	<% i+=1 %>		
 	<%end%> 
 	<br>
-	<span id="wf_loader" class="spinner" style="display:none;"><%=image_tag "/wf/images/spinner.gif", {:style=>"vertical-align:middle"} %> Loading...</span>	
-	<%=link_to_function("<span>Save As New...</span>", "saveFilter()", :class => "wf_grey_button wf_pcb") %>
-<% end %>
+	<span id="wf_loader" class="spinner" style="display:none;"><%=image_tag "/wf/images/spinner.gif", {:style=>"vertical-align:middle"} %> Loading...</span>
+	Filter name : <%=text_field_tag(:filter_name, @ticket_filter.name )%>
+	<%=@ticket_filter.accessible.visibility%>
+	<div>			
+	  <label class="caption"><%=t('admin.canned_responses.form.available_for')%>:</label>
+		<div class="fields inline-radio">
+			<div class="inline-radio">
+				<%= radio_button_tag :visibility, Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me], Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me] == @ticket_filter.accessible.visibility, {:onclick =>"toggleGroup(this.value)", :class => "radio" } %> 
+				<%= t('admin.canned_responses.form.me_only') %>
+			</div>
+			<div class="inline-radio">
+				<%= radio_button_tag :visibility, Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents],  Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents] == @ticket_filter.accessible.visibility, {:onclick =>"toggleGroup(this.value)",:class => "radio"  } %> 
+				<%= t('admin.canned_responses.form.all_agents') %>
+			</div>
+			<div class="inline-radio">
+				<%= radio_button_tag :visibility, Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents], Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents] == @ticket_filter.accessible.visibility,{:onclick =>"toggleGroup(this.value)" , :class => "radio" } %> 
+				<%= t('admin.canned_responses.form.groups') %>
+				<div style="display:none;" class="tabbed" id="accessible_group">
+				    <%= select_tag :visibility_group_id, options_from_collection_for_select(current_account.groups, :id, :name,@ticket_filter.accessible.group_id) %>
+ 			    </div>
+			</div>
+		 </div>
+		</div>	
+		<%=link_to_function("<span>Save As New...</span>", "saveFilter()", :class => "wf_grey_button wf_pcb") %>
+	<% end %>
 <% javascript_tag do%>
     var global_hash = <%=@show_options_json%>
 	var query_hash  = $A();
+	
 	jQuery(document).ready(function(){
+	   
+		if ('<%=@ticket_filter.accessible.visibility%>' == '<%=Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents]%>')
+		{
+			jQuery('#accessible_group').show();	
+			jQuery('#visibility_group_id').removeAttr('disabled');
+		}
+		else
+		{
+			jQuery('#visibility_group_id').attr('disabled','disabled');
+		}
+	
+		jQuery('.l_placeholder').bind("click", function(ev){
+			active_email_body = jQuery("#ca-content");
+			jQuery('#place-dialog').slideDown();			
+		});
 	    
 		jQuery('.view_textbox').blur(function() {	
 				var index = jQuery(this).attr('text_index');
@@ -72,16 +109,16 @@
 			
 	});
 	function saveFilter() {
-			
-  			var filter_name = prompt("Please provide a name for the new filter:", "");
-    		if (filter_name == null) return;	
-			 jQuery.ajax({
-					url: "/wf/filter/save_filter",
-					type: "POST",
-					data: {
-						data_hash: query_hash.compact().toJSON(),
-						filter_name: filter_name,
-						wf_model: "Helpdesk::Ticket"
+		 jQuery.ajax({
+			url: "/wf/filter/save_filter",
+			type: "POST",
+			data: {
+				data_hash: query_hash.compact().toJSON(),
+				filter_name: jQuery('#filter_name').val(),
+				wf_model: "Helpdesk::Ticket",
+				visibility: { "visibility": jQuery('#wf_form input[name="visibility"]:checked').val(), 
+						      "user_id": <%=current_user.id%>,
+							  "group_id":  jQuery('#visibility_group_id').val() }
 						
 					},
 					success: function(msg){
@@ -89,6 +126,21 @@
 				   }
 				});
 			}
+	function toggleGroup(access_id)
+	{	
+		if (access_id == '<%=Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents]%>')
+		{
+			jQuery('#accessible_group').show();
+			jQuery('#visibility_group_id').removeAttr('disabled');
+		}
+		else
+		{
+			jQuery('#accessible_group').hide();	
+			jQuery('#visibility_group_id').attr('disabled','disabled');
+		}
+	}
+	
+	
 <% end %>
 
 

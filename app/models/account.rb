@@ -104,6 +104,8 @@ class Account < ActiveRecord::Base
   has_many :canned_responses , :class_name =>'Admin::CannedResponse' , :dependent => :destroy  
   has_many :user_accesses , :class_name =>'Admin::UserAccess' , :dependent => :destroy
   
+  has_many :ticket_filters , :class_name =>'Helpdesk::Filters::CustomTicketFilter' , :dependent => :destroy 
+  
   has_many :twitter_handles, :class_name =>'Social::TwitterHandle' 
   has_many :tweets, :class_name =>'Social::Tweet'  , :dependent => :destroy
   

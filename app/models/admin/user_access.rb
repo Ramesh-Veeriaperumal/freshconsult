@@ -16,4 +16,16 @@ class Admin::UserAccess < ActiveRecord::Base
   VISIBILITY_NAMES_BY_KEY = Hash[*VISIBILITY.map { |i| [i[2], i[1]] }.flatten] 
   VISIBILITY_KEYS_BY_TOKEN = Hash[*VISIBILITY.map { |i| [i[0], i[2]] }.flatten] 
   
+  before_save :check_visibility
+  
+  def check_visibility
+    if !group_agents_visibility?
+      self.group_id = nil
+    end
+  end
+  
+  def group_agents_visibility?
+    visibility == VISIBILITY_KEYS_BY_TOKEN[:group_agents]
+  end
+  
 end

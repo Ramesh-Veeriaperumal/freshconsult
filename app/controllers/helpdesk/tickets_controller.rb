@@ -3,6 +3,7 @@ class Helpdesk::TicketsController < ApplicationController
   include ActionView::Helpers::TextHelper
 
   before_filter :check_user , :only => [:show]
+  before_filter :load_ticket_filter , :only => [:index]
   before_filter { |c| c.requires_permission :manage_tickets }
   
   include HelpdeskControllerMethods  
@@ -16,6 +17,18 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :load_flexifield ,    :only => [:execute_scenario]
 
   uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
+  
+  def load_ticket_filter
+   if params[:filter_key].blank?
+    @ticket_filter = current_account.ticket_filters.new(Helpdesk::Filters::CustomTicketFilter::MODEL_NAME)
+    @ticket_filter.accessible = current_account.user_accesses.new
+    @ticket_filter.accessible.visibility = Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents]
+  else
+    @ticket_filter = current_account.ticket_filters.find(params[:filter_key])
+    params.merge(@ticket_filter.attributes)
+   end
+  
+  end
 
   def check_user
     if !current_user.nil? and current_user.customer?

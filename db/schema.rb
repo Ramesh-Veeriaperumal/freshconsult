@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110905144312) do
+ActiveRecord::Schema.define(:version => 20110907184713) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -636,8 +636,8 @@ ActiveRecord::Schema.define(:version => 20110905144312) do
     t.string   "screen_name"
     t.string   "access_token"
     t.string   "access_secret"
-    t.boolean  "capture_dm_as_ticket",                   :default => true
-    t.boolean  "capture_mention_as_ticket",              :default => true
+    t.boolean  "capture_dm_as_ticket",                   :default => false
+    t.boolean  "capture_mention_as_ticket",              :default => false
     t.integer  "product_id",                :limit => 8
     t.integer  "last_dm_id",                :limit => 8
     t.integer  "last_mention_id",           :limit => 8
@@ -919,6 +919,7 @@ ActiveRecord::Schema.define(:version => 20110905144312) do
     t.string   "model_class_name"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "account_id"
   end
 
   add_index "wf_filters", ["user_id"], :name => "index_wf_filters_on_user_id"

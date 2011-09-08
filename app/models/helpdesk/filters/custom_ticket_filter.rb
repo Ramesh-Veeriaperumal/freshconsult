@@ -3,6 +3,8 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   include Search::TicketSearch
   
   attr_accessor :query_hash 
+  
+  MODEL_NAME = "Helpdesk::Ticket"
 
   def definition
      @definition ||= begin
@@ -27,6 +29,11 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   
   def default_filter
     TicketConstants::DEFAULT_FILTER
+  end
+  
+  def self.deserialize_from_params(params)
+    filter = Account.current.ticket_filters.new(params[:wf_model])
+    filter.deserialize_from_params(params)
   end
  
   
@@ -61,7 +68,8 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     action_hash = []
     action_hash = ActiveSupport::JSON.decode params[:data_hash] unless params[:data_hash].blank?
     action_hash = default_filter  if params[:data_hash].blank?
-     
+    self.query_hash = action_hash
+   
     action_hash.each do |filter|
       add_condition(filter["condition"], filter["operator"].to_sym, filter["value"]) unless filter["value"].blank?
     end
