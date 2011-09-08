@@ -20,9 +20,10 @@ class Helpdesk::Note < ActiveRecord::Base
   attr_accessor :nscname
   attr_protected :attachments, :notable_id
   
-  before_save :set_body_content
   after_create :save_response_time, :update_parent, :add_activity, :update_in_bound_count
   accepts_nested_attributes_for :tweet
+  
+  unhtml_it :body
 
   named_scope :newest_first, :order => "created_at DESC"
   named_scope :visible, :conditions => { :deleted => false } 
@@ -107,10 +108,6 @@ class Helpdesk::Note < ActiveRecord::Base
         end  
         ticket_state.save
       end
-    end
-    
-    def set_body_content        
-      self.body = (self.body_html.gsub(/<\/?[^>]*>/, "")).gsub(/&nbsp;/i,"") unless self.body_html.empty?
     end
     
     def update_parent #Maybe after_save?!
