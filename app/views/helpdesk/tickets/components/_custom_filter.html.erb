@@ -1,16 +1,6 @@
-<%=will_filter_scripts_tag %>
-<% form_tag({:action => :custom_search}, { :method => :post, :name=>'wf_form', :id => 'wf_form', :class => 'wf_form' }) do %>
-<%= hidden_field_tag(:wf_type, "Helpdesk::Filters::CustomTicketFilter") %>
-<%= hidden_field_tag(:wf_model, "Helpdesk::Ticket") %>
-	<% i = 0 %>
-	<% @show_options.each do |c_hash| %> 
-		<%=c_hash[:name]%> 
-           <%= render :partial => "/helpdesk/tickets/containers/#{c_hash[:container]}", :locals => {:index => i, :options => c_hash[:options]} %>
-	<% i+=1 %>		
-	<%end%> 
-	<br>
-	<span id="wf_loader" class="spinner" style="display:none;"><%=image_tag "/wf/images/spinner.gif", {:style=>"vertical-align:middle"} %> Loading...</span>
-	Filter name : <%=text_field_tag(:filter_name, @ticket_filter.name )%>
+<%= will_filter_scripts_tag %>
+<div class="leftFilter">
+	 Filter name : <%=text_field_tag(:filter_name, @ticket_filter.name )%>
 	<%=@ticket_filter.accessible.visibility%>
 	<div>			
 	  <label class="caption"><%=t('admin.canned_responses.form.available_for')%>:</label>
@@ -33,14 +23,27 @@
 		 </div>
 		</div>	
 		<%=link_to_function("<span>Save As New...</span>", "saveFilter()", :class => "wf_grey_button wf_pcb") %>
-	<% end %>
-<% javascript_tag do%>
-    var global_hash = <%=@show_options_json%>
-	var query_hash  = $A();
+ 
+  <% form_tag({:action => :custom_search}, { :method => :post, :name => 'wf_form', :id => 'wf_form', :class => 'wf_form' }) do %>
+    <%= hidden_field_tag(:wf_type, "Helpdesk::Filters::CustomTicketFilter") %>
+    <%= hidden_field_tag(:wf_model, "Helpdesk::Ticket") %>
+    <% @show_options.each_with_index do |c_hash, i| %> 
+  	  <div class="title"><%= c_hash[:name] %></div> 
+      <%= render :partial => "/helpdesk/tickets/containers/#{c_hash[:container]}", :locals => { :index => i, :filter_obj => c_hash } %>
+      <span class="seperator"></span>
+	 
+    <% end %> 
 	
-	jQuery(document).ready(function(){
-	   
-		if ('<%=@ticket_filter.accessible.visibility%>' == '<%=Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents]%>')
+  <% end %>
+</div>
+
+<% javascript_tag do%>
+  var global_hash = <%= @show_options_json %>
+	var query_hash  = $A();
+
+	jQuery(document).ready(function(){	
+	
+	      if ('<%=@ticket_filter.accessible.visibility%>' == '<%=Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents]%>')
 		{
 			jQuery('#accessible_group').show();	
 			jQuery('#visibility_group_id').removeAttr('disabled');
@@ -49,66 +52,64 @@
 		{
 			jQuery('#visibility_group_id').attr('disabled','disabled');
 		}
-	
-		jQuery('.l_placeholder').bind("click", function(ev){
-			active_email_body = jQuery("#ca-content");
-			jQuery('#place-dialog').slideDown();			
-		});
-	    
+   
 		jQuery('.view_textbox').blur(function() {	
-				var index = jQuery(this).attr('text_index');
-				ind_query = {"condition": global_hash[index].condition, "operator" : global_hash[index].operator, "value": this.value }
-				query_hash.push(ind_query)
-				jQuery.ajax({
-					url: "/helpdesk/tickets/custom_search",
-					 type: "POST",
-					data: {
-						data_hash: query_hash.toJSON()
-					},
-					success: function(msg){
-				     jQuery("#ticket-list").html(msg);
-				   }
-				});
-		});
+      var index = jQuery(this).attr('text_index');
+          ind_query = { "condition":  global_hash[index].condition, 
+                        "operator":   global_hash[index].operator, 
+                        "value":      this.value }
+
+      query_hash.push(ind_query);
+      jQuery.ajax({
+          url: "/helpdesk/tickets/custom_search",
+          type: "POST",
+          data: { data_hash: query_hash.toJSON() },
+          success: function(msg){
+            jQuery("#ticket-list").html(msg);
+          }
+        });
+      });
 	 
-		jQuery(".view_checkbox")
-			.bind("change", function(ev){				
-				var hidden_id 		= jQuery(this).attr('data_hidden_id'),
-				    hidden_data 	= $(hidden_id),
-					array_construct = $A();
-					
-				jQuery.each(jQuery(this).parent().children(), function(index, item){					
-					if(item.checked)
-						array_construct.push(item.value)
-				});
-				
-				hidden_data.value = array_construct;
-				var index = jQuery(this).attr('dropdown_index');
-				if (query_hash[index] === undefined)
-				{
-					ind_query = {"condition": global_hash[index].condition, "operator" : global_hash[index].operator, "value": array_construct.toString() }
-					query_hash[index] = ind_query
-				} else
-				{
-				   ind_query = query_hash[index];
-				   ind_query.value = array_construct.toString();
-				}	
-				
-				jQuery.ajax({
-					url: "/helpdesk/tickets/custom_search",
-					 type: "POST",
-					data: {
-						data_hash: query_hash.compact().toJSON()
-					},
-					success: function(msg){
-				     jQuery("#ticket-list").html(msg);
-				   }
-				});
-			});	
-			
-			
-	});
-	function saveFilter() {
+
+  jQuery(".view_checkbox").bind("change", function(ev){
+    var hidden_id 		= jQuery(this).attr('data_hidden_id'),
+        hidden_data 	= $(hidden_id),
+        array_construct = $A();
+
+        jQuery.each(jQuery(this).parent().children(), function(index, item){
+          if(item.checked) array_construct.push(item.value)
+        });
+        
+        jQuery("#div_"+hidden_id)
+          .find("input")
+          .each(function(index, item){
+            //console.log(item.value);
+          })
+
+        hidden_data.value = array_construct;
+        var index = jQuery(this).attr('dropdown_index');
+        if (query_hash[index] === undefined){
+          ind_query = { "condition": global_hash[index].condition, "operator" : global_hash[index].operator, "value": array_construct.toString() }
+          query_hash[index] = ind_query
+        } else {
+          ind_query = query_hash[index];
+          ind_query.value = array_construct.toString();
+        }	
+
+        jQuery.ajax({
+          url: "/helpdesk/tickets/custom_search",
+          type: "POST",
+          data: {
+            data_hash: query_hash.compact().toJSON()
+          },
+          success: function(msg){
+            jQuery("#ticket-list").html(msg);
+          }
+        });
+      });	
+  });
+  
+  function saveFilter() {
 		 jQuery.ajax({
 			url: "/wf/filter/save_filter",
 			type: "POST",
@@ -141,6 +142,8 @@
 	}
 	
 	
+  
+ 
 <% end %>
 
 

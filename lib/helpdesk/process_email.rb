@@ -5,23 +5,12 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     to_email = parse_to_email
     account = Account.find_by_full_domain(to_email[:domain])
     if !account.nil? and account.active?
-      #Charset Encoding starts
-      charsets = params[:charsets]
-      text_retrv = params[:text].nil? ? 'html' : 'text'
-      charset_encoding = (ActiveSupport::JSON.decode charsets)[text_retrv]
-      if  !charset_encoding.nil? and  !(["utf-8","utf8"].include?(charset_encoding.downcase))
-        begin
-         params[:text] = Iconv.new('utf-8//IGNORE', charset_encoding).iconv(params[text_retrv.to_sym]) 
-        rescue
-         #Do nothing here Need to add rescue code kiran
-        end
-      end
-      #Charset Encoding ends
+      encode_stuffs
       display_id = Helpdesk::Ticket.extract_id_token(params[:subject])
       ticket = Helpdesk::Ticket.find_by_account_id_and_display_id(account.id, display_id) if display_id
       if ticket
         return if(from_email[:email] == ticket.reply_email) #Premature handling for email looping..
-        add_email_to_ticket(ticket, from_email, params[:text])
+        add_email_to_ticket(ticket, from_email)
       else
         create_ticket(account, from_email, to_email)
       end
@@ -29,6 +18,22 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
   end
   
   private
+    def encode_stuffs
+      charsets = ActiveSupport::JSON.decode params[:charsets]
+      [ :html, :text ].each do |t_format|
+        unless params[t_format].nil?
+          charset_encoding = charsets[t_format.to_s]
+          if !charset_encoding.nil? and !(["utf-8","utf8"].include?(charset_encoding.downcase))
+            begin
+              params[t_format] = Iconv.new('utf-8//IGNORE', charset_encoding).iconv(params[t_format])
+            rescue
+              #Do nothing here Need to add rescue code kiran
+            end
+          end
+        end
+      end
+    end
+    
     def parse_email(email)
       if email =~ /(.+) <(.+?)>/
         name = $1
@@ -94,6 +99,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         :account_id => account.id,
         :subject => params[:subject],
         :description => params[:text],
+        :description_html => params[:html],
         #:email => from_email[:email],
         #:name => from_email[:name],
         :requester => user,
@@ -125,13 +131,14 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       ticket
     end
 
-    def add_email_to_ticket(ticket, from_email, mesg)
+    def add_email_to_ticket(ticket, from_email)
       user = get_user(ticket.account, from_email)
       if (ticket.requester.email.include?(user.email) || ticket.included_in_cc?(user.email) || !user.customer?) 
         note = ticket.notes.build(
           :private => false,
           :incoming => true,
-          :body => mesg,
+          :body => params[:text],
+          :body_html => params[:html],
           :source => 0, #?!?! use SOURCE_KEYS_BY_TOKEN - by Shan
           :user => user, #by Shan temp
           :account_id => ticket.account_id

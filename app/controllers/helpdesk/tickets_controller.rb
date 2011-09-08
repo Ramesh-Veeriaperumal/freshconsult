@@ -51,6 +51,8 @@ class Helpdesk::TicketsController < ApplicationController
   end
  
   def index
+    @tkt_filter = Wf::Filter.find(1)
+    
     @items = current_account.tickets.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
     
     @show_options = show_options
