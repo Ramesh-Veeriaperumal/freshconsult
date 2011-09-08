@@ -1,11 +1,23 @@
 ActiveRecord::Base.class_eval do
   include ActionView::Helpers::TagHelper, ActionView::Helpers::TextHelper,ActionView::Helpers::UrlHelper, WhiteListHelper
   def self.format_attribute(attr_name)
+    prepare(attr_name)
+    before_save :format_content
+  end
+  
+  def self.unhtml_it(attr_name)
+    prepare(attr_name)
+    before_create :create_content
+    before_update :update_content
+  end
+  
+  def self.prepare(attr_name)
+    #include part will get ugly, if we are gonna use this for more than one attribute.. Shan
     class << self; include ActionView::Helpers::TagHelper, ActionView::Helpers::TextHelper, WhiteListHelper; end
     define_method(:body)       { read_attribute attr_name }
+    define_method(:body=)      { |value| write_attribute attr_name, value }
     define_method(:body_html)  { read_attribute "#{attr_name}_html" }
     define_method(:body_html=) { |value| write_attribute "#{attr_name}_html", value }
-    before_save :format_content
   end
 
   def dom_id
@@ -19,9 +31,23 @@ ActiveRecord::Base.class_eval do
     end
     
     def body_html_with_formatting
-      body_html = auto_link(body) { |text| truncate(text, 50) }
+      body_html = auto_link(body) { |text| truncate(text, 100) }
       textilized = RedCloth.new(body_html, [ :hard_breaks ])
       textilized.hard_breaks = true if textilized.respond_to?("hard_breaks=")
       white_list(textilized.to_html)
+    end
+    
+    def create_content
+      if body.blank? && !body_html.blank?
+        self.body = (body_html.gsub(/<\/?[^>]*>/, " ")).gsub(/&nbsp;/i," ")
+      elsif body_html.blank? && !body.blank?
+        self.body_html = body_html_with_formatting
+      elsif body.blank? && body_html.blank?
+        self.body = self.body_html = "Not given."
+      end
+    end
+    
+    def update_content # To do :: need to use changed_body_html?
+      self.body = (body_html.gsub(/<\/?[^>]*>/, " ")).gsub(/&nbsp;/i," ") unless body_html.blank?
     end
 end
