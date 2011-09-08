@@ -57,8 +57,8 @@ module TicketConstants
   
   DEFAULT_COLUMNS =  [
     [ :status, "Status",         :dropdown],
-    [ :ticket_type, "Type",         :dropdown],
     [ :responder_id, "Agents",         :dropdown],
+    [ :ticket_type, "Type",         :dropdown],  
     [ :group_id, "Groups",         :dropdown],
     [ :source, "Source",         :dropdown],
     [ :priority, "Priority",         :dropdown]

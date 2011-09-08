@@ -1,1 +1,33 @@
 /* Theme Colors and layout Defaults */
+#leftcol {
+  width: 220px;
+  float: left;
+}
+
+.hasRightCol {
+  margin-left: 220px;
+}
+
+.contentCol {
+  border-left: 1px solid #c9c9c9;
+}
+
+.leftFilter {
+  padding: 8px 12px;
+}
+.leftFilter .title {
+  text-transform: uppercase;
+  font-size: 12px;
+  padding: 3px 0 3px 0;
+  color: #999999;
+}
+.leftFilter .checkboxSet {
+  margin-bottom: 10px;
+}
+.leftFilter .checkboxSet .item {
+  padding: 3px 0 2px 0;
+  color: #333333;
+}
+.leftFilter .checkboxSet .item input {
+  margin: 0 4px 3px 0;
+}

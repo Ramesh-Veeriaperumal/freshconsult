@@ -53,7 +53,7 @@
 
   <h3><%= h(@ticket.subject) %></h3>
   <div class="description"> 
-    <%= RedCloth.new(auto_link(@ticket.description, :all, :target => "_blank")).to_html %>
+    <%= @ticket.description_html %>
   </div>  
   <span class="seperator"></span>
   <% @ticket_notes = @ticket.notes.visible.newest_first %>
@@ -78,7 +78,7 @@
   			</strong>
       </div>
       <div class="description"> 
-        <%= RedCloth.new(auto_link( note.body, :all, :target => "_blank")).to_html %>      
+        <%= note.body_html %>
       </div>
       <span class="seperator"></span>
     <% end %>

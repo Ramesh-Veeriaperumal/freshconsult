@@ -740,6 +740,9 @@ body h5 {
 .request_details div.description .details table td, .request_details div.description .details table th {
   cursor: text;
 }
+.request_details div.description .details em {
+  font-style: italic;
+}
 .request_details div.description .details ins {
   border-bottom: 1px solid green;
   text-decoration: none;
@@ -761,7 +764,7 @@ body h5 {
   cursor: help;
 }
 .request_details div.description .details ol, .request_details div.description .details ul {
-  margin: 14px 0px 14px 0px;
+  margin: 8px 0px 4px 0px;
   padding: 0px 0px 0px 40px;
   line-height: 17px;
 }
@@ -1112,7 +1115,7 @@ body h5 {
   max-width: 100%;
 }
 .rtCnt .rtDetails .cnt li span.edit-item {
-  background: url('/images/icons-s8fa47786fa.png') 0 -50px no-repeat;
+  background: url('/images/icons-sb908a56253.png') 0 -50px no-repeat;
   float: right;
   width: 16px;
   height: 16px;
@@ -2843,7 +2846,6 @@ a.page_title:active {
 
 .pagination {
   padding: 8px 20px 10px 20px;
-  margin: 1px -19px;
   background: #efefef;
 }
 .pagination a {
@@ -3062,19 +3064,19 @@ a.page_title:active {
   display: inline-block;
 }
 .results .ticket_icon span.icon {
-  background: url('/images/icons-s8fa47786fa.png') 0 -226px no-repeat;
+  background: url('/images/icons-sb908a56253.png') 0 -226px no-repeat;
 }
 .results .contact_icon span.icon {
-  background: url('/images/icons-s8fa47786fa.png') 0 -322px no-repeat;
+  background: url('/images/icons-sb908a56253.png') 0 -322px no-repeat;
 }
 .results .company_icon span.icon {
-  background: url('/images/icons-s8fa47786fa.png') 0 -18px no-repeat;
+  background: url('/images/icons-sb908a56253.png') 0 -18px no-repeat;
 }
 .results .solution_icon span.icon {
-  background: url('/images/icons-s8fa47786fa.png') 0 -242px no-repeat;
+  background: url('/images/icons-sb908a56253.png') 0 -242px no-repeat;
 }
 .results .forum_icon span.icon {
-  background: url('/images/icons-s8fa47786fa.png') 0 -34px no-repeat;
+  background: url('/images/icons-sb908a56253.png') 0 -34px no-repeat;
 }
 .results li {
   list-style: none;
@@ -3423,7 +3425,8 @@ a.page_title:active {
 .request-list {
   background-color: #f4f4f4;
   margin: 4px 1px;
-  border-bottom: 1px solid #cfcfcf;
+  border: 1px solid #cfcfcf;
+  border-width: 1px 0px;
 }
 .request-list div.item {
   border-bottom: 1px dotted #dedede;
@@ -3443,14 +3446,14 @@ a.page_title:active {
   position: absolute;
 }
 .request-list div.item a.item-title .bulb {
-  background: url('/images/icons-s8fa47786fa.png') 0 -210px no-repeat;
+  background: url('/images/icons-sb908a56253.png') 0 -210px no-repeat;
   width: 16px;
   height: 16px;
   left: 6px;
   top: 10px;
 }
 .request-list div.item a.item-title .wand {
-  background: url('/images/icons-s8fa47786fa.png') 0 -360px no-repeat;
+  background: url('/images/icons-sb908a56253.png') 0 -360px no-repeat;
   width: 22px;
   height: 22px;
   left: 2px;
@@ -3473,10 +3476,10 @@ a.page_title:active {
   border-right-color: #ffffff;
 }
 .request-list div.item a.item-title:hover .bulb {
-  background: url('/images/icons-s8fa47786fa.png') 0 -194px no-repeat;
+  background: url('/images/icons-sb908a56253.png') 0 -194px no-repeat;
 }
 .request-list div.item a.item-title:hover .wand {
-  background: url('/images/icons-s8fa47786fa.png') 0 -338px no-repeat;
+  background: url('/images/icons-sb908a56253.png') 0 -338px no-repeat;
 }
 .request-list div.item a.private .private-icon {
   display: block;
@@ -3876,18 +3879,31 @@ div.addReminder form label.overlabel {
   line-height: 17px;
 }
 
-.tickets-container {
-  margin: 0px -20px;
+.containerFull {
+  margin: -14px -20px;
   padding: 0px 0px 0px 0px;
 }
 
-.ticket-header {
-  background-image: url(../images/overlay-button.png);
+.geryImageHeader, .geryPlainHeader {
   background-color: #f8f8f8;
+  position: relative;
+  border: 1px solid #dfdfdf;
+  border-top-color: #ffffff;
+  border-width: 1px 0px;
+  padding: 5px 8px;
+  height: 28px;
+}
+.geryImageHeader h3, .geryPlainHeader h3 {
+  font-size: 1.2em;
+  color: #666666;
+  padding: 6px;
+  text-transform: uppercase;
+}
+
+.geryImageHeader {
+  background-image: url(../images/overlay-button.png);
   background-repeat: repeat-x;
   background-position: bottom;
-  border: 1px solid #dfdfdf;
-  border-width: 1px 0px;
 }
 
 .icon-image {
@@ -3928,19 +3944,18 @@ div.addReminder form label.overlabel {
 .tickets, .tickets-expanded {
   width: 100%;
   color: #5f5f5f;
-  border-top: 1px solid #f4f4f4;
 }
 .tickets th, .tickets-expanded th {
   background: none;
-  padding: 6px 6px 5px 6px;
+  padding: 0px 6px;
 }
 .tickets td, .tickets th, .tickets-expanded td, .tickets-expanded th {
   vertical-align: top;
-  border-bottom: 1px solid #efefef;
 }
 .tickets td, .tickets-expanded td {
   padding: 10px 8px 10px 10px;
   background-color: #ffffff;
+  border-bottom: 1px solid #efefef;
 }
 .tickets td a, .tickets-expanded td a {
   text-decoration: none;
@@ -3960,7 +3975,7 @@ div.addReminder form label.overlabel {
   text-align: right;
 }
 .tickets th.check, .tickets-expanded th.check {
-  padding-top: 10px;
+  padding: 0px;
 }
 .tickets .name, .tickets .name-user, .tickets-expanded .name, .tickets-expanded .name-user {
   width: 55%;
@@ -3968,24 +3983,24 @@ div.addReminder form label.overlabel {
 }
 .tickets .name .preview_pic, .tickets .name-user .preview_pic, .tickets-expanded .name .preview_pic, .tickets-expanded .name-user .preview_pic {
   margin: 0px;
-  margin-top: 5px;
+  margin-top: 3px;
   margin-left: -56px;
 }
 .tickets .name .preview_pic img, .tickets .name-user .preview_pic img, .tickets-expanded .name .preview_pic img, .tickets-expanded .name-user .preview_pic img {
-  width: 46px;
-  height: 46px;
-  -moz-border-radius: 6px 6px 6px 6px;
-  -webkit-border-radius: 6px 6px 6px 6px;
-  border-radius: 6px 6px 6px 6px;
+  width: 40px;
+  height: 40px;
+  -moz-border-radius: 4px 4px 4px 4px;
+  -webkit-border-radius: 4px 4px 4px 4px;
+  border-radius: 4px 4px 4px 4px;
 }
 .tickets .name h3, .tickets .name-user h3, .tickets-expanded .name h3, .tickets-expanded .name-user h3 {
-  padding: 0px 0px 8px 0px;
+  padding-bottom: 4px;
 }
 .tickets .name h3 a, .tickets .name-user h3 a, .tickets-expanded .name h3 a, .tickets-expanded .name-user h3 a {
-  color: #333333;
   font-size: 13px;
   line-height: 22px;
-  padding: 2px 0 6px 2px;
+  padding: 0px 0 4px 2px;
+  color: #333333;
 }
 .tickets .name h3 a:hover, .tickets .name-user h3 a:hover, .tickets-expanded .name h3 a:hover, .tickets-expanded .name-user h3 a:hover {
   color: #000000;
@@ -4043,9 +4058,9 @@ div.addReminder form label.overlabel {
   color: #cc6633;
 }
 .tickets .sla, .tickets-expanded .sla {
-  vertical-align: top;
   text-align: right;
-  font-size: 11px;
+  padding-right: 15px;
+  vertical-align: top;
 }
 
 .conversation-sprite {
@@ -4135,27 +4150,28 @@ div.addReminder form label.overlabel {
 }
 
 .sort {
-  text-align: right;
+  float: right;
   position: relative;
-  padding: 6px 40px 0px 0px;
+  padding: 0px 35px 0px 0px;
 }
-.sort .sort_order {
-  position: absolute;
-  right: 0px;
-  top: 0px;
+.sort .label {
+  float: left;
+  padding: 6px 10px;
+  font-size: 12px;
+  text-transform: uppercase;
 }
 .sort .sort_order .image {
   position: absolute;
   right: 0px;
-  top: 0px;
+  top: -2px;
   width: 32px;
   height: 32px;
 }
 .sort .sort_order .ASC {
-  background: url('/images/icons-s8fa47786fa.png') 0 -258px;
+  background: url('/images/icons-sb908a56253.png') 0 -258px;
 }
 .sort .sort_order .DESC {
-  background: url('/images/icons-s8fa47786fa.png') 0 -290px;
+  background: url('/images/icons-sb908a56253.png') 0 -290px;
 }
 
 .admin_list, .content_list {
@@ -4751,16 +4767,16 @@ a.close {
   height: 32px;
 }
 .forum_list ul.base-set li span.forum_type_howto {
-  background: url('/images/icons-s8fa47786fa.png') 0 -98px no-repeat;
+  background: url('/images/icons-sb908a56253.png') 0 -98px no-repeat;
 }
 .forum_list ul.base-set li span.forum_type_ideas {
-  background: url('/images/icons-s8fa47786fa.png') 0 -130px no-repeat;
+  background: url('/images/icons-sb908a56253.png') 0 -130px no-repeat;
 }
 .forum_list ul.base-set li span.forum_type_problem {
-  background: url('/images/icons-s8fa47786fa.png') 0 -162px no-repeat;
+  background: url('/images/icons-sb908a56253.png') 0 -162px no-repeat;
 }
 .forum_list ul.base-set li span.forum_type_announce {
-  background: url('/images/icons-s8fa47786fa.png') 0 -66px no-repeat;
+  background: url('/images/icons-sb908a56253.png') 0 -66px no-repeat;
 }
 .forum_list ul.base-set li .topic-list {
   padding: 6px 0px 12px 0px;

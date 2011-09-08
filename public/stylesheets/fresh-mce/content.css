@@ -38,6 +38,9 @@ body table {
 body table td, body table th {
   cursor: text;
 }
+body em {
+  font-style: italic;
+}
 body ins {
   border-bottom: 1px solid green;
   text-decoration: none;
@@ -59,7 +62,7 @@ body abbr {
   cursor: help;
 }
 body ol, body ul {
-  margin: 14px 0px 14px 0px;
+  margin: 8px 0px 4px 0px;
   padding: 0px 0px 0px 40px;
   line-height: 17px;
 }

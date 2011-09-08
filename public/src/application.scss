@@ -2239,8 +2239,7 @@ a.page_title{
 }
 
 .pagination{
-	padding:8px 20px 10px 20px; 
-	margin:1px -19px;
+	padding:8px 20px 10px 20px;
 	background:#efefef;
 	a{
 		@include link-colors(#336699, #333333, #336699, #336699);
@@ -2676,7 +2675,8 @@ a.page_title{
 .request-list{
 	background-color:#f4f4f4;
 	margin:4px 1px;
-	border-bottom:1px solid #cfcfcf;
+	border:1px solid #cfcfcf;
+	border-width:1px 0px;
 	div.item{ 
 		border-bottom:1px dotted #dedede;
 		position:relative;
@@ -2998,26 +2998,38 @@ div.addReminder{
 	margin-bottom:10px;
 }
 
-.info-description{
-	p{
-		font-size:12px;
-		color:#000000;
-		line-height: 17px;
-	}
+.info-description p{
+	font-size:12px;
+	color:#000000;
+	line-height: 17px;
+ 
 }
 
-.tickets-container{
-	margin:0px -20px;
+.containerFull{
+	margin:-14px -20px;
 	padding:0px 0px 0px 0px;
 }
 
-.ticket-header{
-	background-image:url(../images/overlay-button.png);
+.geryImageHeader, .geryPlainHeader{
 	background-color:#f8f8f8;
-	background-repeat:repeat-x;
-	background-position:bottom; 
+	position:relative;
 	border:1px solid #dfdfdf;
+	border-top-color:#ffffff;
 	border-width:1px 0px; 
+	padding:5px 8px;
+	height:28px;
+	h3{
+		font-size:1.2em;
+		color:#666666;		
+		padding: 6px;
+		text-transform:uppercase;
+	}
+}
+
+.geryImageHeader{
+	background-image:url(../images/overlay-button.png);
+	background-repeat:repeat-x;
+	background-position:bottom;
 }
 
 .icon-image{
@@ -3037,18 +3049,17 @@ div.addReminder{
 .tickets, .tickets-expanded{
 	width:100%;
 	color:#5f5f5f;
-	border-top:1px solid #f4f4f4; 
 	th{
 		background:none;
-		padding:6px 6px 5px 6px;
+		padding:0px 6px;
 	}		 
 	td, th{
 		vertical-align:top;
-		border-bottom:1px solid #efefef;
 	}
 	td{
 		padding:10px 8px 10px 10px;
 		background-color:#ffffff;
+		border-bottom:1px solid #efefef;
 		a{
 			text-decoration:none;
 			color:#5a8ec1; 
@@ -3068,7 +3079,7 @@ div.addReminder{
 		text-align:right;
 	}
 	th.check{
-		padding-top:10px;
+		padding:0px;
 	}
 	
 	.name, .name-user{
@@ -3076,21 +3087,21 @@ div.addReminder{
       padding-left:60px;
       .preview_pic{
          margin:0px; 
-         margin-top:5px;
+         margin-top:3px;
          margin-left:-56px;
          img{ 
-            width:46px; height:46px;
-            @include corners(6px);
+            width:40px; height:40px;
+            @include corners(4px);
          }
       }
 
       h3{
-         padding:0px 0px 8px 0px;
+         padding-bottom:4px;
          a{
-            color: #333333;
             font-size: 13px;
             line-height: 22px;
-            padding: 2px 0 6px 2px;
+            padding: 0px 0 4px 2px;
+            color:#333333;
          }
          a:hover{
             color:#000000;
@@ -3131,11 +3142,11 @@ div.addReminder{
 				}
 		}
 	}
-	.sla{
-		vertical-align:top;
-		text-align:right;
-		font-size:11px;
-	}
+   .sla{
+      text-align:right;
+      padding-right:15px;
+      vertical-align:top;
+   }
 }	  
  
 .conversation-sprite{ 
@@ -3226,18 +3237,21 @@ div.addReminder{
 	color:#999999;
 }
 
-.sort{
-	text-align:right;
-	position:relative;
-	padding: 6px 40px 0px 0px;
+.sort{   
+   float:right;
+   position:relative;
+	padding:0px 35px 0px 0px;
+	.label{
+	   float:left;
+	   padding:6px 10px;
+	   font-size:12px;
+	   text-transform:uppercase;
+	}
 	.sort_order{
-		position:absolute;
-		right:0px;
-		top:0px;
 		.image{
 			position:absolute;
 			right:0px;
-			top:0px;
+			top:-2px;
 			width:32px; height:32px;
 		}
 		.ASC{ background:sprite($icons, sort-asc); }
