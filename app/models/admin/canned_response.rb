@@ -10,7 +10,7 @@ class Admin::CannedResponse < ActiveRecord::Base
   
   attr_accessor :visibility 
   
-  before_save :set_body_content
+  unhtml_it :content
   
   has_one :accessible, 
     :class_name => 'Admin::UserAccess',
@@ -36,10 +36,4 @@ class Admin::CannedResponse < ActiveRecord::Base
   def self.my_canned_responses(user)
     self.find(:all, :joins =>"JOIN admin_user_accesses acc ON acc.accessible_id = admin_canned_responses.id AND acc.accessible_type = 'Admin::CannedResponse' LEFT JOIN agent_groups ON acc.group_id=agent_groups.group_id", :conditions =>["acc.VISIBILITY=#{Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents]} OR agent_groups.user_id=#{user.id} OR (acc.VISIBILITY=#{Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me]} and acc.user_id=#{user.id})"])
   end
-  
-  protected
-    def set_body_content        
-      self.content = (self.content_html.gsub(/<\/?[^>]*>/, "")).gsub(/&nbsp;/i,"") unless self.content_html.blank?
-    end  
-    
 end
