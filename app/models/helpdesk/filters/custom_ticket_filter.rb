@@ -14,8 +14,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       end
       #Custome fields
       Account.current.ticket_fields.custom_dropdown_fields(:include => {:flexifield_def_entry => {:include => :flexifield_picklist_vals } } ).each do |col|
-        defs[get_id_from_field(col).to_sym] = {get_op_from_field(col).to_sym => get_container_from_field(col) ,:name => col.label , :container => get_container_from_field(col),     
-        :operator => get_op_from_field(col), :options => get_custom_choices(col) }
+        defs[get_id_from_field(col).to_sym] = {get_op_from_field(col).to_sym => get_container_from_field(col) ,:name => col.label, :container => get_container_from_field(col), :operator => get_op_from_field(col), :options => get_custom_choices(col) }
       end 
       defs
     end
@@ -30,10 +29,9 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   end
  
   
-  def deserialize_from_params(params)
-   
+  def deserialize_from_params(params)   
     @conditions = []
-    @match                =  :and
+    @match                = :and
     @key                  = params[:wf_key]         || self.id.to_s
     self.model_class_name = params[:wf_model]       if params[:wf_model]
     

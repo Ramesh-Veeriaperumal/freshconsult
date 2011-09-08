@@ -17,7 +17,7 @@ body {
 	font-size:11px;
 }
 
-a{ @include link-colors(#4D769F, #3399cc); }
+a{ @include link-colors(#336699, #65a2e6); }
 a:hover{text-decoration:none;}
 
 .hide{

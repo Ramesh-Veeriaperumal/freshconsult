@@ -42,6 +42,7 @@ stylesheets:
     - public/stylesheets/validation.css
     - public/stylesheets/form.css
     - public/stylesheets/buttons.css
+    - public/stylesheets/chosen.css    
     - public/stylesheets/autocomplete.css
     - public/stylesheets/jquery-ui.css
     - public/stylesheets/jquery.qtip.css

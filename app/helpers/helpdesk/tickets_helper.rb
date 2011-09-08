@@ -3,10 +3,10 @@ module Helpdesk::TicketsHelper
   include Wf::HelperMethods
   include TicketsFilter
   
-  def filter_select
+  def filter_select( prompt = t('helpdesk.tickets.views.select')  )
     
     selector = select("select_view", "id", SELECTORS.collect { |v| [v[1], helpdesk_filter_tickets_path(filter(v[0]))] },
-              {:prompt => t('helpdesk.tickets.views.select')})
+              {:prompt => prompt}, { :class => "customSelect", :style => "width:280px;" })
         
   end
 
