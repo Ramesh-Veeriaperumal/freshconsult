@@ -26,7 +26,7 @@ class Social::FacebookPagesController < ApplicationController
   def event_listener
     logger.debug "verify_token has been called..meet challenge will be executed :: with params:: #{params.inspect}"
     verify_token = "freshdesktoken"
-    Koala::Facebook::RealtimeUpdates.meet_challenge(params, verify_token)
+    return Koala::Facebook::RealtimeUpdates.meet_challenge(params, verify_token)
   end
   
    def authdone
