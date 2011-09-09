@@ -166,7 +166,7 @@ class Helpdesk::Note < ActiveRecord::Base
     end
     
     def liquidize_body
-      attachments.empty? ? body : 
-        "#{body}\n\nAttachments :\n#{notable.liquidize_attachments(attachments)}\n"
+      attachments.empty? ? body_html : 
+        "#{body_html}\n\nAttachments :\n#{notable.liquidize_attachments(attachments)}\n"
     end
 end
