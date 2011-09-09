@@ -5,7 +5,8 @@ module Search::TicketSearch
       defs = []
       i = 0
       #default fields
-      TicketConstants::DEFAULT_COLUMNS_KEYS_BY_TOKEN.each do |name,cont|
+      TicketConstants::DEFAULT_COLUMNS_ORDER.each do |name|
+        cont = TicketConstants::DEFAULT_COLUMNS_KEYS_BY_TOKEN[name]
         defs.insert(i,{ get_op_list(cont).to_sym => cont  , :condition => name , :name => TicketConstants::DEFAULT_COLUMNS_OPTIONS[name], :container => cont,     
         :operator => get_op_list(cont), :options => get_default_choices(name), :value => "" })
         i = i+ 1

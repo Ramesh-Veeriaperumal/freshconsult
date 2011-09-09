@@ -55,6 +55,8 @@ module TicketConstants
   TYPE_KEYS_BY_TOKEN = Hash[*TYPE.map { |i| [i[0], i[2]] }.flatten]
   TYPE_NAMES_BY_SYMBOL = Hash[*TYPE.map { |i| [i[0], i[1]] }.flatten]
   
+  DEFAULT_COLUMNS_ORDER = [:status,:source,:responder_id,:ticket_type,:group_id,:priority]
+  
   DEFAULT_COLUMNS =  [
     [ :status, "Status",         :dropdown],
     [ :responder_id, "Agents",         :dropdown],

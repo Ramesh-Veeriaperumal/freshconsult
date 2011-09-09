@@ -84,7 +84,7 @@ class Wf::FilterController < ApplicationController
     wf_filter.validate!
     
     unless wf_filter.errors?
-      #wf_filter.save
+      wf_filter.save
     end
     
     wf_filter.key= wf_filter.id.to_s 

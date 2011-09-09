@@ -1,7 +1,8 @@
 <%= will_filter_scripts_tag %>
 <div class="leftFilter">
-	 Filter name : <%=text_field_tag(:filter_name, @ticket_filter.name )%>
-	<%=@ticket_filter.accessible.visibility%>
+	 
+  <% form_tag({:action => :custom_search}, { :method => :post, :name => 'wf_form', :id => 'wf_form', :class => 'wf_form' }) do %>
+    Filter name : <%=text_field_tag(:filter_name, @ticket_filter.name )%>
 	<div>			
 	  <label class="caption"><%=t('admin.canned_responses.form.available_for')%>:</label>
 		<div class="fields inline-radio">
@@ -24,7 +25,6 @@
 		</div>	
 		<%=link_to_function("<span>Save As New...</span>", "saveFilter()", :class => "wf_grey_button wf_pcb") %>
  
-  <% form_tag({:action => :custom_search}, { :method => :post, :name => 'wf_form', :id => 'wf_form', :class => 'wf_form' }) do %>
     <%= hidden_field_tag(:wf_type, "Helpdesk::Filters::CustomTicketFilter") %>
     <%= hidden_field_tag(:wf_model, "Helpdesk::Ticket") %>
     <% @show_options.each_with_index do |c_hash, i| %> 
