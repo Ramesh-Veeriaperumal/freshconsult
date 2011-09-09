@@ -108,10 +108,12 @@ active_dialog = null;
             var dialog = null;
             $this.click(function(e){
                e.preventDefault();
+               width = $this.attr("dialogWidth") || '750px';
+               
                if(dialog == null){
                   dialog = $("<div class='loading-center' />")
                               .html("<br />")
-                              .dialog({  modal:true, width:'750px', height:'auto', position:'top',
+                              .dialog({  modal:true, width: width, height:'auto', position:'top',
                                          title: this.title, resizable: false });
 
                    active_dialog = dialog.load(this.href,{}, function(responseText, textStatus, XMLHttpRequest) {

@@ -1,32 +1,6 @@
 <%= will_filter_scripts_tag %>
-<div class="leftFilter">
-  <% form_tag({:action => :custom_search}, { :method => :post, :name => 'wf_form', :id => 'wf_form', :class => 'wf_form' }) do %>
-    Filter name : <%=text_field_tag(:filter_name, @ticket_filter.name )%>
-	<div>			
-	  <label class="caption"><%=t('admin.canned_responses.form.available_for')%>:</label>
-		<div class="fields inline-radio">
-			<div class="inline-radio">
-				<%= radio_button_tag :visibility, Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me], Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me] == @ticket_filter.accessible.visibility, {:onclick =>"toggleGroup(this.value)", :class => "radio" } %> 
-				<%= t('admin.canned_responses.form.me_only') %>
-			</div>
-			<div class="inline-radio">
-				<%= radio_button_tag :visibility, Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents],  Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents] == @ticket_filter.accessible.visibility, {:onclick =>"toggleGroup(this.value)",:class => "radio"  } %> 
-				<%= t('admin.canned_responses.form.all_agents') %>
-			</div>
-			<div class="inline-radio">
-				<%= radio_button_tag :visibility, Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents], Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents] == @ticket_filter.accessible.visibility,{:onclick =>"toggleGroup(this.value)" , :class => "radio" } %> 
-				<%= t('admin.canned_responses.form.groups') %>
-				<div style="display:none;" class="tabbed" id="accessible_group">
-          <%= select_tag :visibility_group_id, options_from_collection_for_select(current_account.groups, :id, :name,@ticket_filter.accessible.group_id) %>
-        </div>
-			</div>
-		 </div>
-		 	
-		</div>	
-	<%=link_to_function("<span>Save As New...</span>", "saveFilter()", :class => "slim-button") %>
-    <%= hidden_field_tag(:wf_type, "Helpdesk::Filters::CustomTicketFilter") %>
-    <%= hidden_field_tag(:wf_model, "Helpdesk::Ticket") %>
-
+<div class="leftFilter">    
+	  <%= link_to("Save this View...", "/helpdesk/tickets/custom_view_save", :title => "Save ticket view", :class => "slim-button floatr dialog2", :dialogWidth => "540px") %>
     <% @show_options.each_with_index do |c_hash, i| %> 
   	  <div class="title"><%= c_hash[:name] %></div> 
   	  <% content_tag :div, { :id          => "div_ff_#{c_hash[:condition]}", 
@@ -36,13 +10,10 @@
           <%= render :partial => "/helpdesk/tickets/containers/#{c_hash[:container]}", :locals => { :options => c_hash[:options] } %>
       <% end %>  
       <span class="seperator"></span>	 
-    <% end %> 
-  <% end %>
-  
+    <% end %>
 </div>
 
-<% javascript_tag do%>
-  var global_hash = <%= @show_options_json %>
+<% javascript_tag do %> 
 	var query_hash  = $A();
 
 	jQuery(document).ready(function(){	
@@ -59,7 +30,7 @@
    
 
     jQuery(".view_checkbox").bind("change", function(ev){
-     var filter_array = $A();
+     query_hash = $A();
      jQuery("div.ff_item").map(function () {
             condition = this.getAttribute("condition");
             operator  = this.getAttribute("operator");
@@ -68,7 +39,7 @@
                           }).get();
                           
             if(value.length){
-              filter_array.push({ 
+              query_hash.push({ 
                 condition : this.getAttribute("condition"), 
                 operator  : this.getAttribute("operator"),
                 value     : value.toString()
@@ -79,7 +50,7 @@
      jQuery.ajax({
         url: "/helpdesk/tickets/custom_search",
         type: "POST",
-        data: { data_hash: filter_array.toJSON() },
+        data: { data_hash: query_hash.toJSON() },
         success: function(msg){
           jQuery("#ticket-list").html(msg);
         }
@@ -87,24 +58,7 @@
     });	
   });
   
-  function saveFilter() {
-		 jQuery.ajax({
-			url: "/wf/filter/save_filter",
-			type: "POST",
-			data: {
-				data_hash: query_hash.compact().toJSON(),
-				filter_name: jQuery('#filter_name').val(),
-				wf_model: "Helpdesk::Ticket",
-				visibility: { "visibility": jQuery('#wf_form input[name="visibility"]:checked').val(), 
-						      "user_id": <%=current_user.id%>,
-							  "group_id":  jQuery('#visibility_group_id').val() }
-						
-					},
-					success: function(msg){
-				     jQuery("#ticket-list").html(msg);
-				   }
-				});
-			}
+  
 	function toggleGroup(access_id)
 	{	
 		if (access_id == '<%=Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents]%>')
