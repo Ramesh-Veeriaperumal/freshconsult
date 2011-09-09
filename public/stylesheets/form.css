@@ -977,10 +977,7 @@ span.sort_handle {
 }
 .ui-dialog .ui-dialog-content .ui-form {
   margin: 0px 0px;
-  padding: 8px 20px;
-}
-.ui-dialog .ui-dialog-content label {
-  font-size: 13px;
+  padding: 0px 0px;
 }
 
 .ui-dialog .ui-dialog-buttonpane {

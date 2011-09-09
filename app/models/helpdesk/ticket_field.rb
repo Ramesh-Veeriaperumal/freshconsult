@@ -7,8 +7,30 @@ class Helpdesk::TicketField < ActiveRecord::Base
   belongs_to :flexifield_def_entry, :dependent => :destroy
   has_many :picklist_values, :as => :pickable, :class_name => 'Helpdesk::PicklistValue',
     :dependent => :destroy
+    
+  before_destroy :delete_from_ticket_filter
+  before_update :delete_from_ticket_filter
   
   acts_as_list
+  
+  def delete_from_ticket_filter
+    if is_dropdown_field?
+      Account.current.ticket_filters.each do |filter|
+        con_arr = filter.data[:data_hash]
+        unless  con_arr.blank?
+          con_arr.each do |condition|
+            con_arr.delete(condition) if condition["condition"].include?(flexifield_def_entry.flexifield_name)
+          end
+          filter.query_hash = con_arr
+          filter.save
+        end
+      end
+    end
+  end
+  
+  def is_dropdown_field?
+    field_type.include?("dropdown")
+  end
    
   # scope_condition for acts_as_list
   def scope_condition

@@ -1,49 +1,24 @@
 <%= will_filter_scripts_tag %>
-<div class="leftFilter">
-	 Filter name : <%=text_field_tag(:filter_name, @ticket_filter.name )%>
-	<%=@ticket_filter.accessible.visibility%>
-	<div>			
-	  <label class="caption"><%=t('admin.canned_responses.form.available_for')%>:</label>
-		<div class="fields inline-radio">
-			<div class="inline-radio">
-				<%= radio_button_tag :visibility, Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me], Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me] == @ticket_filter.accessible.visibility, {:onclick =>"toggleGroup(this.value)", :class => "radio" } %> 
-				<%= t('admin.canned_responses.form.me_only') %>
-			</div>
-			<div class="inline-radio">
-				<%= radio_button_tag :visibility, Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents],  Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents] == @ticket_filter.accessible.visibility, {:onclick =>"toggleGroup(this.value)",:class => "radio"  } %> 
-				<%= t('admin.canned_responses.form.all_agents') %>
-			</div>
-			<div class="inline-radio">
-				<%= radio_button_tag :visibility, Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents], Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents] == @ticket_filter.accessible.visibility,{:onclick =>"toggleGroup(this.value)" , :class => "radio" } %> 
-				<%= t('admin.canned_responses.form.groups') %>
-				<div style="display:none;" class="tabbed" id="accessible_group">
-				    <%= select_tag :visibility_group_id, options_from_collection_for_select(current_account.groups, :id, :name,@ticket_filter.accessible.group_id) %>
- 			    </div>
-			</div>
-		 </div>
-		</div>	
-		<%=link_to_function("<span>Save As New...</span>", "saveFilter()", :class => "wf_grey_button wf_pcb") %>
- 
-  <% form_tag({:action => :custom_search}, { :method => :post, :name => 'wf_form', :id => 'wf_form', :class => 'wf_form' }) do %>
-    <%= hidden_field_tag(:wf_type, "Helpdesk::Filters::CustomTicketFilter") %>
-    <%= hidden_field_tag(:wf_model, "Helpdesk::Ticket") %>
+<div class="leftFilter">    
+	  <%= link_to("Save this View...", "/helpdesk/tickets/custom_view_save", :title => "Save ticket view", :class => "slim-button floatr dialog2", :dialogWidth => "540px") %>
     <% @show_options.each_with_index do |c_hash, i| %> 
   	  <div class="title"><%= c_hash[:name] %></div> 
-      <%= render :partial => "/helpdesk/tickets/containers/#{c_hash[:container]}", :locals => { :index => i, :filter_obj => c_hash } %>
-      <span class="seperator"></span>
-	 
-    <% end %> 
-	
-  <% end %>
+  	  <% content_tag :div, { :id          => "div_ff_#{c_hash[:condition]}", 
+                             :class       => "ff_item", 
+                             :condition   => c_hash[:condition],
+                             :operator    => c_hash[:operator] } do %>
+          <%= render :partial => "/helpdesk/tickets/containers/#{c_hash[:container]}", :locals => { :options => c_hash[:options] } %>
+      <% end %>  
+      <span class="seperator"></span>	 
+    <% end %>
 </div>
 
-<% javascript_tag do%>
-  var global_hash = <%= @show_options_json %>
+<% javascript_tag do %> 
 	var query_hash  = $A();
 
 	jQuery(document).ready(function(){	
 	
-	      if ('<%=@ticket_filter.accessible.visibility%>' == '<%=Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents]%>')
+	if ('<%=@ticket_filter.accessible.visibility%>' == '<%=Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents]%>')
 		{
 			jQuery('#accessible_group').show();	
 			jQuery('#visibility_group_id').removeAttr('disabled');
@@ -53,80 +28,37 @@
 			jQuery('#visibility_group_id').attr('disabled','disabled');
 		}
    
-		jQuery('.view_textbox').blur(function() {	
-      var index = jQuery(this).attr('text_index');
-          ind_query = { "condition":  global_hash[index].condition, 
-                        "operator":   global_hash[index].operator, 
-                        "value":      this.value }
 
-      query_hash.push(ind_query);
-      jQuery.ajax({
-          url: "/helpdesk/tickets/custom_search",
-          type: "POST",
-          data: { data_hash: query_hash.toJSON() },
-          success: function(msg){
-            jQuery("#ticket-list").html(msg);
-          }
-        });
-      });
-	 
-
-  jQuery(".view_checkbox").bind("change", function(ev){
-    var hidden_id 		= jQuery(this).attr('data_hidden_id'),
-        hidden_data 	= $(hidden_id),
-        array_construct = $A();
-
-        jQuery.each(jQuery(this).parent().children(), function(index, item){
-          if(item.checked) array_construct.push(item.value)
-        });
-        
-        jQuery("#div_"+hidden_id)
-          .find("input")
-          .each(function(index, item){
-            //console.log(item.value);
-          })
-
-        hidden_data.value = array_construct;
-        var index = jQuery(this).attr('dropdown_index');
-        if (query_hash[index] === undefined){
-          ind_query = { "condition": global_hash[index].condition, "operator" : global_hash[index].operator, "value": array_construct.toString() }
-          query_hash[index] = ind_query
-        } else {
-          ind_query = query_hash[index];
-          ind_query.value = array_construct.toString();
-        }	
-
-        jQuery.ajax({
-          url: "/helpdesk/tickets/custom_search",
-          type: "POST",
-          data: {
-            data_hash: query_hash.compact().toJSON()
-          },
-          success: function(msg){
-            jQuery("#ticket-list").html(msg);
-          }
-        });
-      });	
+    jQuery(".view_checkbox").bind("change", function(ev){
+     query_hash = $A();
+     jQuery("div.ff_item").map(function () {
+            condition = this.getAttribute("condition");
+            operator  = this.getAttribute("operator");
+            value     = jQuery(this).find('input:checkbox:checked').map(function () {
+                            return this.value;
+                          }).get();
+                          
+            if(value.length){
+              query_hash.push({ 
+                condition : this.getAttribute("condition"), 
+                operator  : this.getAttribute("operator"),
+                value     : value.toString()
+              })
+            };
+     });
+     
+     jQuery.ajax({
+        url: "/helpdesk/tickets/custom_search",
+        type: "POST",
+        data: { data_hash: query_hash.toJSON() },
+        success: function(msg){
+          jQuery("#ticket-list").html(msg);
+        }
+      });  
+    });	
   });
   
-  function saveFilter() {
-		 jQuery.ajax({
-			url: "/wf/filter/save_filter",
-			type: "POST",
-			data: {
-				data_hash: query_hash.compact().toJSON(),
-				filter_name: jQuery('#filter_name').val(),
-				wf_model: "Helpdesk::Ticket",
-				visibility: { "visibility": jQuery('#wf_form input[name="visibility"]:checked').val(), 
-						      "user_id": <%=current_user.id%>,
-							  "group_id":  jQuery('#visibility_group_id').val() }
-						
-					},
-					success: function(msg){
-				     jQuery("#ticket-list").html(msg);
-				   }
-				});
-			}
+  
 	function toggleGroup(access_id)
 	{	
 		if (access_id == '<%=Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents]%>')
