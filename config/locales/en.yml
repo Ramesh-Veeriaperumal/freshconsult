@@ -767,7 +767,8 @@ en:
   account_admin: Account admin
   right: Right
   footer: 
-    helpdesk_software: Help Desk Software by Freshdesk
+    helpdesk_software: Help Desk Software
+    by_freshdesk: by Freshdesk
   tkt_unattended_in_grp: Ticket unattended in Group
   agent_solves_tkt: Agent solves the Ticket
   zendesk_url_info: e.g:- http://acme.zendesk.com

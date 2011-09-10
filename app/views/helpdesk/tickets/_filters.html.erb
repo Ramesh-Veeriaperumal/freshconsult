@@ -9,3 +9,4 @@
 <% end %>
 
 <%= filter_select(current_selector_name) %>
+<%= select_tag :custom_fitlers, options_for_select(@all_filters.map {|u| [u.name,u.id]}), { :class => "customSelect" } %>

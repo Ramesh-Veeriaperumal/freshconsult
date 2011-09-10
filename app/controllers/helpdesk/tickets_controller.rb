@@ -53,6 +53,8 @@ class Helpdesk::TicketsController < ApplicationController
   def index
     @items = current_account.tickets.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
     
+    @all_filters = current_account.ticket_filters.my_ticket_filters(current_user)
+    
     @show_options = show_options
     @show_options_json = ActiveSupport::JSON.encode @show_options
     

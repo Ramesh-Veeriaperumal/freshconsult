@@ -3,11 +3,9 @@ module Helpdesk::TicketsHelper
   include Wf::HelperMethods
   include TicketsFilter
   
-  def filter_select( prompt = t('helpdesk.tickets.views.select')  )
-    
+  def filter_select( prompt = t('helpdesk.tickets.views.select'))    
     selector = select("select_view", "id", SELECTORS.collect { |v| [v[1], helpdesk_filter_tickets_path(filter(v[0]))] },
-              {:prompt => prompt}, { :class => "customSelect", :style => "width:280px;" })
-        
+              {:prompt => prompt}, { :class => "customSelect", :style => "width:280px;" })        
   end
 
   def filter(selector = nil)
@@ -19,13 +17,13 @@ module Helpdesk::TicketsHelper
   end
   
   def sort_by_text(sort_key, order)
-  	help_text = [
-  		[ :due_by     ,   'Showing Latest Due by time'  ],
-		[ :created_at ,   'Showing Tickets Date Created' ],
-		[ :updated_at ,   'Showing Tickets Last Modified'],
-		[ :priority   ,   'Priority',    ],
-		[ :status,        'Status',      ],
-	]
+    help_text = [
+      [ :due_by     ,   'Showing Latest Due by time'  ],
+      [ :created_at ,   'Showing Tickets Date Created' ],
+      [ :updated_at ,   'Showing Tickets Last Modified'],
+      [ :priority   ,   'Priority',    ],
+      [ :status,        'Status',      ],
+    ]
   end
 
   def current_filter
