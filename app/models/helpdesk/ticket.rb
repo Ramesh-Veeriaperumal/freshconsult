@@ -526,8 +526,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def description_with_attachments
-    attachments.empty? ? description : 
-        "#{description}\n\nTicket attachments :\n#{liquidize_attachments(attachments)}\n"
+    attachments.empty? ? description_html : 
+        "#{description_html}\n\nTicket attachments :\n#{liquidize_attachments(attachments)}\n"
   end
   
   def liquidize_attachments(attachments)
@@ -542,7 +542,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   def liquidize_comment(comm)
     if comm
-      c_descr = "#{comm.user ? comm.user.name : 'System'} : #{comm.body}"
+      c_descr = "#{comm.user ? comm.user.name : 'System'} : #{comm.body_html}"
       unless comm.attachments.empty?
         c_descr = "#{c_descr}\n\nAttachments :\n#{liquidize_attachments(comm.attachments)}\n"
       end

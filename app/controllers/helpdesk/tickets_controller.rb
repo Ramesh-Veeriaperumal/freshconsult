@@ -3,7 +3,7 @@ class Helpdesk::TicketsController < ApplicationController
   include ActionView::Helpers::TextHelper
 
   before_filter :check_user , :only => [:show]
-  before_filter :load_ticket_filter , :only => [:index]
+  before_filter :load_ticket_filter , :only => [:index, :custom_view_save]
   before_filter { |c| c.requires_permission :manage_tickets }
   
   include HelpdeskControllerMethods  
@@ -72,6 +72,10 @@ class Helpdesk::TicketsController < ApplicationController
       format.atom do
       end
     end
+  end
+  
+  def custom_view_save
+     render :partial => "helpdesk/tickets/customview/new"
   end
   
   def custom_search
