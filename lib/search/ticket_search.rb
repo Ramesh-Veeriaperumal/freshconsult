@@ -63,13 +63,22 @@ module Search::TicketSearch
     end
     
     if criteria_key == :responder_id
-      agents =  Account.current.users.technicians.collect { |au| [au.id, au.name] }
+      agents = []
+      agents.push([0, "Me" ])
+      agents.concat(Account.current.users.technicians.collect { |au| [au.id, au.name] })
       return agents
     end
     
     if criteria_key == :group_id
-      groups  = Account.current.groups.find(:all, :order=>'name' ).collect { |g| [g.id, g.name]}
+      groups = []
+      groups.push([0, "My Groups" ])
+      groups.concat(Account.current.groups.find(:all, :order=>'name' ).collect { |g| [g.id, g.name]})
       return groups
+    end
+    
+    if criteria_key == :due_by
+      overdue = [[1,"All Overdue"],[2,"Due Today"]]
+      return overdue
     end
       
    
