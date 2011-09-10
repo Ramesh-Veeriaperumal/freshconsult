@@ -27,7 +27,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   end
   
   def default_filter
-    TicketConstants::DEFAULT_FILTER
+    [{ "condition" => "status", "operator" => "is_in", "value" => "2"},{ "condition" => "responder_id", "operator" => "is_in", "value" => User.current.id.to_s}]
   end
   
   def self.deserialize_from_params(params)
@@ -77,6 +77,49 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     end
     
     return self
+  end
+  
+  def sql_conditions
+    @sql_conditions  ||= begin
+
+      if errors? 
+        all_sql_conditions = [" 1 = 2 "] 
+      else
+        all_sql_conditions = [""]
+        condition_at(0)
+        0.upto(size - 1) do |index|
+          condition = condition_at(index)
+          if condition.key.to_s.include?("responder_id")
+            condition.container.values.push(User.current.id.to_s) if condition.container.values.delete("0")
+          end
+          
+          if condition.key.to_s.include?("group_id")
+            if condition.container.values.delete("0")
+              group_ids = User.current.agent_groups.find(:all, :select => 'group_id').map(&:group_id)
+              group_ids = ["-1"] if group_ids.empty?
+              condition.container.values.concat(group_ids) 
+            end
+          end
+          
+          sql_condition = condition.container.sql_condition
+          
+          unless sql_condition
+            raise Wf::FilterException.new("Unsupported operator  for container #{condition.container.class.name}")
+          end
+          
+          if all_sql_conditions[0].size > 0
+            all_sql_conditions[0] << ( match.to_sym == :any ? "  OR" : " AND ")
+          end
+          
+          all_sql_conditions[0] << sql_condition[0]
+          sql_condition[1..-1].each do |c|
+            all_sql_conditions << c
+          end
+        end
+      end
+      
+      all_sql_conditions
+    end
   end
   
   def serialize_to_params(merge_params = {})

@@ -55,7 +55,7 @@ module TicketConstants
   TYPE_KEYS_BY_TOKEN = Hash[*TYPE.map { |i| [i[0], i[2]] }.flatten]
   TYPE_NAMES_BY_SYMBOL = Hash[*TYPE.map { |i| [i[0], i[1]] }.flatten]
   
-  DEFAULT_COLUMNS_ORDER = [:status,:source,:responder_id,:ticket_type,:group_id,:priority]
+  DEFAULT_COLUMNS_ORDER = [:due_by,:status,:source,:responder_id,:ticket_type,:group_id,:priority]
   
   DEFAULT_COLUMNS =  [
     [ :status, "Status",         :dropdown],
@@ -63,14 +63,14 @@ module TicketConstants
     [ :ticket_type, "Type",         :dropdown],  
     [ :group_id, "Groups",         :dropdown],
     [ :source, "Source",         :dropdown],
-    [ :priority, "Priority",         :dropdown]
+    [ :priority, "Priority",         :dropdown],
+    [ :due_by, "Overdue",         :due_by]
   ]
   
   DEFAULT_COLUMNS_OPTIONS = Hash[*DEFAULT_COLUMNS.map { |i| [i[0], i[1]] }.flatten]
   DEFAULT_COLUMNS_BY_KEY = Hash[*DEFAULT_COLUMNS.map { |i| [i[2], i[1]] }.flatten]
   DEFAULT_COLUMNS_KEYS_BY_TOKEN = Hash[*DEFAULT_COLUMNS.map { |i| [i[0], i[2]] }.flatten]
   
-  DEFAULT_FILTER =  [{ "condition" => "status", "operator" => "is_in", "value" => "2"}]
   
   
   ACTIVITY_HASH = {:status =>"create_status_activity",
