@@ -1,4 +1,4 @@
-TICKETS_THRESHOLD = 20 #Allowed number of tickets in 30 minutes window..
+TICKETS_THRESHOLD = 60 #Allowed number of tickets in 30 minutes window..
 CONVERSATIONS_THRESHOLD = 40
 #We might need to make the time window also as configurable. Right now, 30 minutes looks like a good guess!
 
