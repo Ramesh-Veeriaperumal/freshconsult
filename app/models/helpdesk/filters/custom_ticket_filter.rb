@@ -135,11 +135,27 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     params[:data_hash] = self.query_hash
     params
   
+end
+
+  def results
+    @results ||= begin
+      handle_empty_filter! 
+      all_joins = joins
+      all_conditions = sql_conditions
+      all_joins[0].concat(tag_joins) if all_conditions[0].include?("helpdesk_tags.name")
+      recs = model_class.paginate(:order => order_clause, :page => page, :per_page => per_page, :conditions => all_conditions, :joins => all_joins)
+      recs.wf_filter = self
+      recs
+    end
   end
+
+ def tag_joins
+   " INNER JOIN helpdesk_tag_uses ON helpdesk_tag_uses.taggable_id = helpdesk_tickets.id INNER JOIN helpdesk_tags ON helpdesk_tag_uses.tag_id = helpdesk_tags.id  "
+ end
   
   
   def joins
-    ["INNER JOIN flexifields ON flexifields.flexifield_set_id = helpdesk_tickets.id"]
+    ["INNER JOIN flexifields ON flexifields.flexifield_set_id = helpdesk_tickets.id  "]
   end      
   
 end

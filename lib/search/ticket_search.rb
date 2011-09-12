@@ -42,7 +42,6 @@ module Search::TicketSearch
   
   def get_custom_choices(tf)
     choice_array = tf.choices
-    #Hash[*choice_array.collect { |v| [v, v]}.flatten]
   end
   
    def get_default_choices(criteria_key)
@@ -78,6 +77,10 @@ module Search::TicketSearch
     
     if criteria_key == :due_by
        return TicketConstants::DUE_BY_TYPES_NAMES_BY_KEY
+    end
+    
+     if criteria_key == "helpdesk_tags.name"
+       return Account.current.tag_uses.collect { |au| [au.tags.name, au.tags.name] }
     end
       
    
