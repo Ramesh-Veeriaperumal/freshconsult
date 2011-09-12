@@ -77,8 +77,7 @@ module Search::TicketSearch
     end
     
     if criteria_key == :due_by
-      overdue = [[1,"All Overdue"],[2,"Due Today"]]
-      return overdue
+       return TicketConstants::DUE_BY_TYPES_NAMES_BY_KEY
     end
       
    

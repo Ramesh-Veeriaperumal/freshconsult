@@ -71,6 +71,18 @@ module TicketConstants
   DEFAULT_COLUMNS_BY_KEY = Hash[*DEFAULT_COLUMNS.map { |i| [i[2], i[1]] }.flatten]
   DEFAULT_COLUMNS_KEYS_BY_TOKEN = Hash[*DEFAULT_COLUMNS.map { |i| [i[0], i[2]] }.flatten]
   
+  DUE_BY_TYPES = [
+    [ :all_due,    I18n.t('all_due'),             1 ], 
+    [ :due_today,  I18n.t('due_today'),             2 ], 
+    [ :due_tomo,   I18n.t('due_tomo'),              3 ], 
+    [ :due_next_eight, I18n.t('due_next_eight'),      4 ]
+  ]
+
+  DUE_BY_TYPES_OPTIONS = DUE_BY_TYPES.map { |i| [i[1], i[2]] }
+  DUE_BY_TYPES_NAMES_BY_KEY = Hash[*DUE_BY_TYPES.map { |i| [i[2], i[1]] }.flatten]
+  DUE_BY_TYPES_KEYS_BY_TOKEN = Hash[*DUE_BY_TYPES.map { |i| [i[0], i[2]] }.flatten]
+  DUE_BY_TYPES_NAMES_BY_SYMBOL = Hash[*DUE_BY_TYPES.map { |i| [i[0], i[1]] }.flatten]
+  
   
   
   ACTIVITY_HASH = {:status =>"create_status_activity",

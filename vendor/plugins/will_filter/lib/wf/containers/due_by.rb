@@ -23,31 +23,34 @@
 
 class Wf::Containers::DueBy < Wf::FilterContainer
   
+  include TicketConstants
+  
   TEXT_DELIMITER = ","
   
   EIGHT_HOURS = Time.zone.now + 8.hours
   
   STATUS_QUERY = "status not in (#{TicketConstants::STATUS_KEYS_BY_TOKEN[:resolved]},#{TicketConstants::STATUS_KEYS_BY_TOKEN[:closed]})"
   
-  DUEBY_CON_HASH = { 1 => "due_by <= '#{Time.zone.now.to_s(:db)}'",
-                     2 => "due_by >= '#{Time.zone.now.beginning_of_day.to_s(:db)}' and due_by <= '#{Time.zone.now.end_of_day.to_s(:db)}' ",
-                     3 => "due_by >= '#{Time.zone.now.tomorrow.beginning_of_day.to_s(:db)}' and due_by <= '#{Time.zone.now.tomorrow.end_of_day.to_s(:db)}' ",
-                     4 => "due_by >= '#{Time.zone.now.to_s(:db)}' and due_by <= '#{EIGHT_HOURS.to_s(:db)}' "}
+  DUEBY_CON_HASH = { DUE_BY_TYPES_KEYS_BY_TOKEN[:all_due] => "due_by <= '#{Time.zone.now.to_s(:db)}'",
+                     DUE_BY_TYPES_KEYS_BY_TOKEN[:due_today] => "due_by >= '#{Time.zone.now.beginning_of_day.to_s(:db)}' and due_by <= '#{Time.zone.now.end_of_day.to_s(:db)}' ",
+                     DUE_BY_TYPES_KEYS_BY_TOKEN[:due_tomo] => "due_by >= '#{Time.zone.now.tomorrow.beginning_of_day.to_s(:db)}' and due_by <= '#{Time.zone.now.tomorrow.end_of_day.to_s(:db)}' ",
+                     DUE_BY_TYPES_KEYS_BY_TOKEN[:due_next_eight] => "due_by >= '#{Time.zone.now.to_s(:db)}' and due_by <= '#{EIGHT_HOURS.to_s(:db)}' "}
 
   def self.operators
     [:due_by_op]
   end
   
   def split_values
-    val_arr = value.split(TEXT_DELIMITER)
-    val_arr.each do |val|
-      value.gsub(val,DUEBY_CON_HASH[val])
-    end
-    value.gsub(TEXT_DELIMITER,' || ')
+    cond_str = ""
+    cond_arr = values[0].split(TEXT_DELIMITER).collect! {|n| n}
+    cond_arr.each do |val|
+     cond_str <<  " (#{DUEBY_CON_HASH[val.to_i]}) ||"
+   end
+   cond_str.chomp("||")
   end
 
   def sql_condition
-    return [" #{STATUS_QUERY} and  #{split_values} "] 
+    return [" #{STATUS_QUERY} and  (#{split_values}) "] 
   end
   
 end
