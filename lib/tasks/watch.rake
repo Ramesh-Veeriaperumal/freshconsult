@@ -1,5 +1,5 @@
-TICKETS_THRESHOLD = 60 #Allowed number of tickets in 30 minutes window..
-CONVERSATIONS_THRESHOLD = 40
+TICKETS_THRESHOLD = 50 #Allowed number of tickets in 30 minutes window..
+CONVERSATIONS_THRESHOLD = 100
 #We might need to make the time window also as configurable. Right now, 30 minutes looks like a good guess!
 
 namespace :watch do
