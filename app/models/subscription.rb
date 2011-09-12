@@ -88,6 +88,7 @@ class Subscription < ActiveRecord::Base
       self.card_expiration = "%02d-%d" % [creditcard.expiry_date.month, creditcard.expiry_date.year]
       set_billing
     else
+      puts errors.to_json
       errors.add_to_base(@response.message)
       false
     end
