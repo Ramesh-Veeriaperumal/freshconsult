@@ -64,6 +64,7 @@ defaults: &defaults
          text:               [text]
          dropdown:           [text_delimited]
          due_by:             [due_by]
+         boolean:            [boolean]
  
     
 

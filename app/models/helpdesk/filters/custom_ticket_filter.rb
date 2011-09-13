@@ -5,7 +5,28 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   attr_accessor :query_hash 
   
   MODEL_NAME = "Helpdesk::Ticket"
-
+  
+   def self.deleted_condition(input)
+      { "condition" => "deleted", "operator" => "is", "value" => input}
+    end
+  
+    def self.spam_condition(input)
+      { "condition" => "spam", "operator" => "is", "value" => input}
+   end
+  
+  
+  DEFAULT_FILTERS ={ 
+                      "spam" => [spam_condition(true),deleted_condition(false)],
+                      "deleted" =>  [spam_condition(false),deleted_condition(true)],
+                      "overdue" =>  [{ "condition" => "due_by", "operator" => "due_by_op", "value" => TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN[:all_due]},spam_condition(false),deleted_condition(false) ],
+                      "on_hold" => [{ "condition" => "status", "operator" => "is_in", "value" => TicketConstants::STATUS_KEYS_BY_TOKEN[:pending]},spam_condition(false),deleted_condition(false)],
+                      "open" => [{ "condition" => "status", "operator" => "is_in", "value" => TicketConstants::STATUS_KEYS_BY_TOKEN[:open]},spam_condition(false),deleted_condition(false)],
+                      "due_today" => [{ "condition" => "due_by", "operator" => "due_by_op", "value" => TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN[:due_today]},spam_condition(false),deleted_condition(false)],
+                      "new" => [{ "condition" => "responder_id", "operator" => "is_in", "value" => ""},spam_condition(false),deleted_condition(false)],
+                      "new_my_open" => [{ "condition" => "status", "operator" => "is_in", "value" => TicketConstants::STATUS_KEYS_BY_TOKEN[:open]},{ "condition" => "responder_id", "operator" => "is_in", "value" => User.current.id.to_s},spam_condition(false),deleted_condition(false)]
+                      
+                   }
+  
   def definition
      @definition ||= begin
       defs = {}
@@ -18,6 +39,11 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       Account.current.ticket_fields.custom_dropdown_fields(:include => {:flexifield_def_entry => {:include => :flexifield_picklist_vals } } ).each do |col|
         defs[get_id_from_field(col).to_sym] = {get_op_from_field(col).to_sym => get_container_from_field(col) ,:name => col.label, :container => get_container_from_field(col), :operator => get_op_from_field(col), :options => get_custom_choices(col) }
       end 
+      
+      ##### Some hack for default values
+      defs[:spam] = ({:operator => :is,:is => :boolean, :options => [], :name => :spam, :container => :boolean})
+      defs[:deleted] = ({:operator => :is,:is => :boolean, :options => [], :name => :deleted, :container => :boolean})
+      
       defs
     end
   end
@@ -26,8 +52,8 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     'created_at'
   end
   
-  def default_filter
-    [{ "condition" => "status", "operator" => "is_in", "value" => "2"},{ "condition" => "responder_id", "operator" => "is_in", "value" => User.current.id.to_s}]
+  def default_filter(params)
+     DEFAULT_FILTERS.fetch(params[:filter_name],DEFAULT_FILTERS["new_my_open"])
   end
   
   def self.deserialize_from_params(params)
@@ -65,11 +91,13 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     
     action_hash = []
     action_hash = ActiveSupport::JSON.decode params[:data_hash] unless params[:data_hash].blank?
-    action_hash = default_filter  if params[:data_hash].blank?
+    action_hash.push({ "condition" => "spam", "operator" => "is", "value" => false})
+    action_hash.push({ "condition" => "deleted", "operator" => "is", "value" => false})
+    action_hash = default_filter(params)  if params[:data_hash].blank?
     self.query_hash = action_hash
    
     action_hash.each do |filter|
-      add_condition(filter["condition"], filter["operator"].to_sym, filter["value"]) unless filter["value"].blank?
+      add_condition(filter["condition"], filter["operator"].to_sym, filter["value"]) unless filter["value"].nil?
     end
 
     if params[:wf_submitted] == 'true'
@@ -135,7 +163,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     params[:data_hash] = self.query_hash
     params
   
-end
+  end
 
   def results
     @results ||= begin

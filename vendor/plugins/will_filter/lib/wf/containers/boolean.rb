@@ -28,7 +28,7 @@ class Wf::Containers::Boolean < Wf::FilterContainer
   end
 
   def selected?
-    value == "1"
+    value == "true"
   end
 
   def sql_condition

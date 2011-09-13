@@ -42,7 +42,7 @@ class Wf::Containers::TextDelimited < Wf::FilterContainer
   end
 
   def sql_condition
-    return [" #{condition.full_key} not in ('') "] if value.empty?
+    return [" #{condition.full_key} is NULL "] if value.empty?
     return [" #{condition.full_key} in (?) ", split_values] if operator == :is_in 
   end
 

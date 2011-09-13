@@ -1,5 +1,7 @@
 module Search::TicketSearch
   
+  
+  
   def show_options
      @show_options ||= begin
       defs = []
@@ -80,7 +82,7 @@ module Search::TicketSearch
     end
     
      if criteria_key == "helpdesk_tags.name"
-       return Account.current.tag_uses.collect { |au| [au.tags.name, au.tags.name] }
+       return Account.current.tags.collect { |au| [au.name, au.name] }
     end
       
    

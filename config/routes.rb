@@ -183,7 +183,7 @@ ActionController::Routing::Routes.draw do |map|
 
     helpdesk.filter_tag_tickets '/tags/:id/*filters', :controller => 'tags', :action => 'show'
     helpdesk.filter_tickets '/tickets/filter/tags', :controller => 'tags', :action => 'index'
-    helpdesk.filter_tickets '/tickets/filter/*filters', :controller => 'tickets', :action => 'index'
+    helpdesk.filter_tickets '/tickets/filter/:filter_name', :controller => 'tickets', :action => 'index'
 
     #helpdesk.filter_issues '/issues/filter/*filters', :controller => 'issues', :action => 'index'
 

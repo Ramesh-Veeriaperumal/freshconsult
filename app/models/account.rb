@@ -114,7 +114,7 @@ class Account < ActiveRecord::Base
   has_many :survey_handles, :through => :survey
   #Scope restriction ends
   
-  has_many :tag_uses, :through => :tickets, :class_name =>'Helpdesk::TagUse'  
+  has_many :tags, :class_name =>'Helpdesk::Tag'  
   
   validates_format_of :domain, :with => /(?=.*?[A-Za-z])[a-zA-Z0-9]*\Z/
   validates_exclusion_of :domain, :in => RESERVED_DOMAINS, :message => "The domain <strong>{{value}}</strong> is not available."

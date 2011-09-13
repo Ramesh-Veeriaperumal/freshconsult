@@ -95,7 +95,7 @@ module Reports::ConstructReport
      :select => "count(*) count, #{@val}_id", 
      :include => @val,
      :joins => "INNER JOIN helpdesk_ticket_states on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id", 
-     :conditions => " (helpdesk_ticket_states.resolved_at is not null || helpdesk_ticket_states.resolved_at is not null)  and  helpdesk_ticket_states.inbound_count = 1 ",
+     :conditions => " (helpdesk_ticket_states.resolved_at is not null)  and  helpdesk_ticket_states.inbound_count = 1 ",
      :group => "#{@val}_id")
  end
  
