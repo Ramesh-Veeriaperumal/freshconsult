@@ -1,17 +1,17 @@
 <%= will_filter_scripts_tag %>
-<div class="leftFilter">    
-	  <%= link_to("Save this View...", "/helpdesk/tickets/custom_view_save", :title => "Save ticket view", :class => "slim-button floatr dialog2", :dialogWidth => "540px") %>
+<h3 class="title">
+  Filters
+</h3>
+<% link_to("Save this View...", "/helpdesk/tickets/custom_view_save", :title => "Save ticket view", :class => "slim-button floatr dialog2", :dialogWidth => "540px") %>
     <% @show_options.each_with_index do |c_hash, i| %> 
-  	  <div class="title"><%= c_hash[:name] %></div> 
   	  <% content_tag :div, { :id          => "div_ff_#{c_hash[:condition]}", 
                              :class       => "ff_item", 
                              :condition   => c_hash[:condition],
                              :operator    => c_hash[:operator] } do %>
+          <h4 class="title"><%= c_hash[:name] %></h4>                              
           <%= render :partial => "/helpdesk/tickets/containers/#{c_hash[:container]}", :locals => { :options => c_hash[:options] } %>
-      <% end %>  
-      <span class="seperator"></span>	 
+      <% end %>
     <% end %>
-</div>
 
 <% javascript_tag do %> 
 	var query_hash  = $A();

@@ -1,9 +1,5 @@
 /* Theme Colors and layout Defaults */
 /* @group Base */
-.customSelect {
-  min-width: 180px;
-}
-
 .chzn-container {
   font-size: 13px;
   position: relative;
@@ -72,11 +68,11 @@
 .chzn-container-single .chzn-single span {
   margin-right: 26px;
   display: block;
-  overflow: hidden;
   white-space: nowrap;
+  /*overflow: hidden;
   -o-text-overflow: ellipsis;
   -ms-text-overflow: ellipsis;
-  text-overflow: ellipsis;
+  text-overflow: ellipsis;*/
 }
 
 .chzn-container-single .chzn-single div {

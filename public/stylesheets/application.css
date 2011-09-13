@@ -593,7 +593,7 @@ div.preview_pic span.tweet_pic {
   height: 18px;
   bottom: 3px;
   right: 0px;
-  background: url('/images/symbols-s56deeab7d8.png') 0 -241px no-repeat white;
+  background: url('/images/symbols-s04c801f4dd.png') 0 -256px no-repeat white;
 }
 
 div.profile_pic img {
@@ -3461,7 +3461,7 @@ a.page_title:active {
 }
 .request-list div.item .private-icon {
   display: none;
-  background: url('/images/symbols-s56deeab7d8.png') 0 -189px no-repeat;
+  background: url('/images/symbols-s04c801f4dd.png') 0 -204px no-repeat;
   width: 16px;
   height: 16px;
   position: relative;
@@ -3637,7 +3637,7 @@ a.page_title:active {
   -moz-border-radius: 6px 6px 6px 6px;
   -webkit-border-radius: 6px 6px 6px 6px;
   border-radius: 6px 6px 6px 6px;
-  background: url('/images/symbols-s56deeab7d8.png') 0 -486px no-repeat;
+  background: url('/images/symbols-s04c801f4dd.png') 0 -511px no-repeat;
   visibility: hidden;
   position: relative;
   left: -3px;
@@ -3879,11 +3879,6 @@ div.addReminder form label.overlabel {
   line-height: 17px;
 }
 
-.containerFull {
-  margin: -14px -20px;
-  padding: 0px 0px 0px 0px;
-}
-
 .geryImageHeader, .geryPlainHeader {
   background-color: #f8f8f8;
   position: relative;
@@ -3914,31 +3909,31 @@ div.addReminder form label.overlabel {
 }
 
 .source-email {
-  background: url('/images/symbols-s56deeab7d8.png') 0 -378px no-repeat;
+  background: url('/images/symbols-s04c801f4dd.png') 0 -403px no-repeat;
 }
 
 .source-facebook {
-  background: url('/images/symbols-s56deeab7d8.png') 0 -396px no-repeat;
+  background: url('/images/symbols-s04c801f4dd.png') 0 -421px no-repeat;
 }
 
 .source-twitter {
-  background: url('/images/symbols-s56deeab7d8.png') 0 -468px no-repeat;
+  background: url('/images/symbols-s04c801f4dd.png') 0 -493px no-repeat;
 }
 
 .source-portal {
-  background: url('/images/symbols-s56deeab7d8.png') 0 -450px no-repeat;
+  background: url('/images/symbols-s04c801f4dd.png') 0 -475px no-repeat;
 }
 
 .source-phone {
-  background: url('/images/symbols-s56deeab7d8.png') 0 -432px no-repeat;
+  background: url('/images/symbols-s04c801f4dd.png') 0 -457px no-repeat;
 }
 
 .source-chat {
-  background: url('/images/symbols-s56deeab7d8.png') 0 -360px no-repeat;
+  background: url('/images/symbols-s04c801f4dd.png') 0 -385px no-repeat;
 }
 
 .source-forum {
-  background: url('/images/symbols-s56deeab7d8.png') 0 -414px no-repeat;
+  background: url('/images/symbols-s04c801f4dd.png') 0 -439px no-repeat;
 }
 
 .tickets, .tickets-expanded {
@@ -3970,12 +3965,12 @@ div.addReminder form label.overlabel {
 }
 .tickets .check, .tickets-expanded .check {
   width: 25px;
-  padding-left: 8px;
+  padding-left: 0px;
   padding-top: 12px;
   text-align: right;
 }
 .tickets th.check, .tickets-expanded th.check {
-  padding: 0px;
+  padding: 5px 5px 0 0;
 }
 .tickets .name, .tickets .name-user, .tickets-expanded .name, .tickets-expanded .name-user {
   width: 55%;
@@ -4150,7 +4145,6 @@ div.addReminder form label.overlabel {
 }
 
 .sort {
-  float: right;
   position: relative;
   padding: 0px 35px 0px 0px;
 }
@@ -4309,22 +4303,22 @@ div.addReminder form label.overlabel {
   height: 18px;
 }
 .admin_list li .portal-text .channel-text span.email, .content_list li .portal-text .channel-text span.email {
-  background: url('/images/symbols-s56deeab7d8.png') 0 -223px no-repeat;
+  background: url('/images/symbols-s04c801f4dd.png') 0 -238px no-repeat;
 }
 .admin_list li .portal-text .channel-text span.url, .content_list li .portal-text .channel-text span.url {
-  background: url('/images/symbols-s56deeab7d8.png') 0 -295px no-repeat;
+  background: url('/images/symbols-s04c801f4dd.png') 0 -310px no-repeat;
 }
 .admin_list li .portal-text .channel-text span.twitter, .content_list li .portal-text .channel-text span.twitter {
-  background: url('/images/symbols-s56deeab7d8.png') 0 -259px no-repeat;
+  background: url('/images/symbols-s04c801f4dd.png') 0 -274px no-repeat;
 }
 .admin_list li .portal-text .channel-text span.email-active, .content_list li .portal-text .channel-text span.email-active {
-  background: url('/images/symbols-s56deeab7d8.png') 0 -205px no-repeat;
+  background: url('/images/symbols-s04c801f4dd.png') 0 -220px no-repeat;
 }
 .admin_list li .portal-text .channel-text span.url-active, .content_list li .portal-text .channel-text span.url-active {
-  background: url('/images/symbols-s56deeab7d8.png') 0 -277px no-repeat;
+  background: url('/images/symbols-s04c801f4dd.png') 0 -292px no-repeat;
 }
 .admin_list li .portal-text .channel-text span.twitter-active, .content_list li .portal-text .channel-text span.twitter-active {
-  background: url('/images/symbols-s56deeab7d8.png') 0 -241px no-repeat;
+  background: url('/images/symbols-s04c801f4dd.png') 0 -256px no-repeat;
 }
 .admin_list li .portal-text .not-verified, .content_list li .portal-text .not-verified {
   padding: 12px 0px;
@@ -4496,7 +4490,7 @@ div.addReminder form label.overlabel {
   left: 3px;
   top: 1px;
   position: absolute;
-  background: url('/images/symbols-s56deeab7d8.png') 0 -171px;
+  background: url('/images/symbols-s04c801f4dd.png') 0 -171px;
   width: 18px;
   height: 18px;
 }
@@ -4663,7 +4657,7 @@ a.close {
   width: 100%;
 }
 .list_with_icon li span.forum-bullet, .list_with_icon div.list-item span.forum-bullet {
-  background: url('/images/symbols-s56deeab7d8.png') 0 -114px no-repeat;
+  background: url('/images/symbols-s04c801f4dd.png') 0 -114px no-repeat;
   position: absolute;
   left: 0px;
   top: 1px;
@@ -4992,7 +4986,7 @@ a.close {
   position: relative;
 }
 .search-keys li span.icon {
-  background: url('/images/symbols-s56deeab7d8.png') 0 -329px no-repeat;
+  background: url('/images/symbols-s04c801f4dd.png') 0 -344px no-repeat;
   position: absolute;
   left: 0px;
   width: 15px;

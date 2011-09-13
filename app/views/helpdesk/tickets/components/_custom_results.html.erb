@@ -1,10 +1,10 @@
   <div id="pages" class="tickets-container">      
 		<% if @items.nil? || @items.empty? %>
-			<div class="geryPlainHeader">
+			<div class="toolbar">
 				<div class="list-noinfo"><%= t('helpdesk.tickets.views.no_tickets') %></div>
 			</div>
 		<% else %>
-	  	<div class="geryPlainHeader">
+	  	<div class="toolbar">
 	      <table class="tickets" width="100%">
 	      	<thead>
 	      		<tr>
@@ -42,6 +42,18 @@
 	      	</thead>
 		  </table>
 		 </div>  
+		 
+       <div class="geryImageHeader" style="display:none;"> 
+         <form class="sort" id="sort_form" action="#" >
+           <a href="javascript:void(0);changeSortOrder();" class="sort_order">
+             <%= content_tag (:span, "", :class => "image #{current_sort_order} custom-tip-bottom", :title => "Click to change sort order", :id => "sort_order_img" ) %>
+           </a>
+           <input type="hidden" name="sort_order" id="sort_order_id" value="<%= current_sort_order %>" />
+           <span class="label"><%= t('ticket.sort_by') %></span>        
+           <%= select_tag :sort, options_for_select(TicketsFilter::SORT_FIELD_OPTIONS, (current_sort).to_sym) %>        
+         </form>
+       </div>
+
      <% form_tag "", { :id => "expanded",  :method => :put } do %>
       <table class="tickets">	
         <tbody>
@@ -55,20 +67,23 @@
 
   <%= will_paginate @items %> 
 
-<% content_for :main_panel_title do %>
-  
-<% end %>
 
-<% content_for :main_panel_toolbar do %>
-   
+<% javascript_tag do %>
+jQuery(".ticket-description-tip").qtip({
+	 position: { 
+	      my: 'bottom left',
+	      at: 'top  left', 
+	      viewport: jQuery(window) 
+	 }, 
+	 style : {
+	 	classes: 'ui-tooltip-ticket ui-tooltip-rounded ui-tooltip-shadow'
+	 },
+	 show: {
+	    solo: true,
+	    delay: 200,
+	    effect: function(offset) {
+	        jQuery(this).show("fade", 240); // "this" refers to the tooltip
+	    }
+	 }
+});  
 <% end %>
-
-<% content_for :main_panel_selected_toolbar do %>
- 
-<% end %>
-
-<% content_for :main_panel_content do %> 
-  
-<% end %>
-
-<%= render :partial => "/helpdesk/shared/main_panel" %>

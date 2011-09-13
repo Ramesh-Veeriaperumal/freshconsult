@@ -7,6 +7,10 @@
 			jQuery(this).hide();
 		});	
 <% end %>
-
-<%= filter_select(current_selector_name) %>
-<%= select_tag :custom_fitlers, options_for_select(@all_filters.map {|u| [u.name,u.id]}), { :class => "customSelect" } %>
+<div class="view_filters">
+  <%= select_tag :custom_fitlers, options_for_select(@all_filters.map {|u| [u.name,u.id]}), { :class => "customSelect" } %>
+  <% filter_select(current_selector_name) %>
+  <a href="#" class="link-item">Tickets I’m Monitoring</a>
+  <a href="#" class="link-item">Trash</a>
+  <a href="#" class="link-item">Spam</a>
+</div>
