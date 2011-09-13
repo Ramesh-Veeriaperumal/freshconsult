@@ -1094,7 +1094,7 @@ en:
     edit_btn: Edit
     requester: Requester
     properties: Ticket Properties
-    submit_ticket: Submit Ticket
+    submit_ticket: Submit
     stop_monitor_btn_title: Stop monitoring this ticket
     merge_btn: Merge
     split_ticket: Split as new Ticket
