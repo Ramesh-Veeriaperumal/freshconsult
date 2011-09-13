@@ -3956,8 +3956,11 @@ div.addReminder form label.overlabel {
   text-decoration: none;
   color: #5a8ec1;
 }
-.tickets tr:hover td, .tickets tr.active td, .tickets-expanded tr:hover td, .tickets-expanded tr.active td {
-  background-color: #f4f4f4;
+.tickets tr.even td, .tickets-expanded tr.even td {
+  background-color: #f9f9f9;
+}
+.tickets tr:hover td, .tickets tr.active td, .tickets tr:hover.even td, .tickets-expanded tr:hover td, .tickets-expanded tr.active td, .tickets-expanded tr:hover.even td {
+  background-color: #e6f3f9;
   background-image: url(../images/overlay-top-shadow.png);
   background-position: top left;
   border-bottom: 1px solid #dfdfdf;

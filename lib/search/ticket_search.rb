@@ -1,7 +1,5 @@
 module Search::TicketSearch
   
-  
-  
   def show_options
      @show_options ||= begin
       defs = []
