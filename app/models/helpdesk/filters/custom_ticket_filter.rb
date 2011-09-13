@@ -23,6 +23,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
                       "open" => [{ "condition" => "status", "operator" => "is_in", "value" => TicketConstants::STATUS_KEYS_BY_TOKEN[:open]},spam_condition(false),deleted_condition(false)],
                       "due_today" => [{ "condition" => "due_by", "operator" => "due_by_op", "value" => TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN[:due_today]},spam_condition(false),deleted_condition(false)],
                       "new" => [{ "condition" => "responder_id", "operator" => "is_in", "value" => ""},spam_condition(false),deleted_condition(false)],
+                      "monitored_by" => [{ "condition" => "helpdesk_subscriptions.user_id", "operator" => "is_in", "value" => User.current.id.to_s}],
                       "new_my_open" => [{ "condition" => "status", "operator" => "is_in", "value" => TicketConstants::STATUS_KEYS_BY_TOKEN[:open]},{ "condition" => "responder_id", "operator" => "is_in", "value" => User.current.id.to_s},spam_condition(false),deleted_condition(false)]
                       
                    }
@@ -41,6 +42,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       end 
       
       ##### Some hack for default values
+      defs["helpdesk_subscriptions.user_id".to_sym] = ({:operator => :is_in,:is_in => :dropdown, :options => [], :name => "helpdesk_subscriptions.user_id", :container => :dropdown})
       defs[:spam] = ({:operator => :is,:is => :boolean, :options => [], :name => :spam, :container => :boolean})
       defs[:deleted] = ({:operator => :is,:is => :boolean, :options => [], :name => :deleted, :container => :boolean})
       
@@ -168,14 +170,24 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   def results
     @results ||= begin
       handle_empty_filter! 
-      all_joins = joins
       all_conditions = sql_conditions
-      all_joins[0].concat(tag_joins) if all_conditions[0].include?("helpdesk_tags.name")
+      all_joins = get_joins(sql_conditions)
       recs = model_class.paginate(:order => order_clause, :page => page, :per_page => per_page, :conditions => all_conditions, :joins => all_joins)
       recs.wf_filter = self
       recs
     end
   end
+  
+  def get_joins(all_conditions)
+    all_joins = joins
+    all_joins[0].concat(tag_joins) if all_conditions[0].include?("helpdesk_tags.name")
+    all_joins[0].concat(monitor_ships_join) if all_conditions[0].include?("helpdesk_subscriptions.user_id")
+    all_joins
+  end
+  
+ def monitor_ships_join
+   " INNER JOIN helpdesk_subscriptions ON helpdesk_subscriptions.ticket_id = helpdesk_tickets.id  "
+ end
 
  def tag_joins
    " INNER JOIN helpdesk_tag_uses ON helpdesk_tag_uses.taggable_id = helpdesk_tickets.id INNER JOIN helpdesk_tags ON helpdesk_tag_uses.tag_id = helpdesk_tags.id  "
