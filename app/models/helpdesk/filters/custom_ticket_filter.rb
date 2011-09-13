@@ -120,14 +120,14 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
         0.upto(size - 1) do |index|
           condition = condition_at(index)
           if condition.key.to_s.include?("responder_id")
-            condition.container.values.push(User.current.id.to_s) if condition.container.values.delete("0")
+            condition.container.values[0] = condition.container.value.gsub("0",Account.current.id.to_s) 
           end
           
           if condition.key.to_s.include?("group_id")
-            if condition.container.values.delete("0")
+            if condition.container.value.include?("0")
               group_ids = User.current.agent_groups.find(:all, :select => 'group_id').map(&:group_id)
               group_ids = ["-1"] if group_ids.empty?
-              condition.container.values.concat(group_ids) 
+              condition.container.values[0] = condition.container.value.gsub("0",group_ids.join(",")) 
             end
           end
           
