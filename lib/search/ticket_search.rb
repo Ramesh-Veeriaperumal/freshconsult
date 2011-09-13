@@ -67,6 +67,7 @@ module Search::TicketSearch
       agents = []
       agents.push([0, "Me" ])
       agents.concat(Account.current.users.technicians.collect { |au| [au.id, au.name] })
+      agents.push([-1, "Unassigned" ])
       return agents
     end
     
