@@ -5,7 +5,7 @@ module Helpdesk::TicketsHelper
   
   def filter_select( prompt = t('helpdesk.tickets.views.select'))    
     selector = select("select_view", "id", SELECTORS.collect { |v| [v[1], helpdesk_filter_tickets_path(filter(v[0]))] },
-              {:prompt => prompt}, { :class => "customSelect", :style => "width:280px;" })        
+              {:prompt => prompt}, { :class => "customSelect" })        
   end
 
   def filter(selector = nil)

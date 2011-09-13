@@ -3005,11 +3005,6 @@ div.addReminder{
  
 }
 
-.containerFull{
-	margin:-14px -20px;
-	padding:0px 0px 0px 0px;
-}
-
 .geryImageHeader, .geryPlainHeader{
 	background-color:#f8f8f8;
 	position:relative;
@@ -3074,12 +3069,12 @@ div.addReminder{
 	}
 	.check{
 		width:25px;
-		padding-left:8px;
+		padding-left:0px;
 		padding-top:12px; 
 		text-align:right;
 	}
 	th.check{
-		padding:0px;
+		padding:5px 5px 0 0;
 	}
 	
 	.name, .name-user{
@@ -3238,7 +3233,6 @@ div.addReminder{
 }
 
 .sort{   
-   float:right;
    position:relative;
 	padding:0px 35px 0px 0px;
 	.label{

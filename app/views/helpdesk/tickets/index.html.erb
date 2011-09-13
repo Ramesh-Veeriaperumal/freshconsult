@@ -26,23 +26,6 @@
 				Helpdesk.sel.uncheckAll();
 	  };
 		 	
-	  jQuery(".ticket-description-tip").qtip({
-			 position: { 
-			      my: 'bottom left',
-			      at: 'top  left', 
-			      viewport: jQuery(window) 
-			 }, 
-			 style : {
-			 	classes: 'ui-tooltip-ticket ui-tooltip-rounded ui-tooltip-shadow'
-			 },
-			 show: {
-			    solo: true,
-			    delay: 200,
-			    effect: function(offset) {
-			        jQuery(this).show("fade", 240); // "this" refers to the tooltip
-			    }
-			 }
-	  });
 	  
 	  jQuery("#agent-assign-link").click(function(){
 	  	jQuery("#assign-options")
@@ -70,29 +53,26 @@
 	});
   <% end %>
 <% end %>
-        
-<div class="containerFull clearfix">
+
+<% content_for :onload_script do %>
+  var ticketLeftPanel = jQuery('#leftcol').height();
+	if(ticketLeftPanel > jQuery('#rightCol').height())
+	  jQuery('#rightCol').css("minHeight", ticketLeftPanel);		
+<% end %>
+
+<div class="containerFull greyImage clearfix">
   <div id="leftcol">
-    <div class="geryImageHeader">
-      <h3>
-        Filters
-      </h3>
-    </div>
-    <%= render :partial => "helpdesk/tickets/components/custom_filter" %>
-  </div>
-  <div class="contentCol clearfix hasRightCol">
-    <div class="geryImageHeader"> 
-      <form class="sort" id="sort_form" action="#" >
-        <a href="javascript:void(0);changeSortOrder();" class="sort_order">
-          <%= content_tag (:span, "", :class => "image #{current_sort_order} custom-tip-bottom", :title => "Click to change sort order", :id => "sort_order_img" ) %>
-        </a>
-        <input type="hidden" name="sort_order" id="sort_order_id" value="<%= current_sort_order %>" />
-        <span class="label"><%= t('ticket.sort_by') %></span>        
-        <%= select_tag :sort, options_for_select(TicketsFilter::SORT_FIELD_OPTIONS, (current_sort).to_sym), { :class => "customSelect" } %>
-        
-      </form>
+    <div class="leftFilter">   
+	    <h3 class="title">Views</h3>
+			<span class="paperFold"></span>
       <%= render :partial => "filters" %>
     </div>
+		<div class="leftFilter">   
+			<span class="paperFold"></span>
+    	<%= render :partial => "helpdesk/tickets/components/custom_filter" %>
+		</div>
+  </div>
+  <div id="rightCol" class="contentCol hasRightCol">
     <div id="ticket-list">
   	  <%= render :partial => "helpdesk/tickets/components/custom_results", :locals => {:items => @items} %> 
   	</div>

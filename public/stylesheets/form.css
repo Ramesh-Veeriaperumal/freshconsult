@@ -905,6 +905,10 @@ span.sort_handle {
   padding-right: 0px !important;
 }
 
+.ui-widget-container {
+  margin: 10px 20px;
+}
+
 .ui-form-widget {
   padding: 15px;
   margin: 0px -15px !important;
@@ -1201,7 +1205,7 @@ fieldset.nestedChoices {
   border: #e0e0e0 1px solid;
 }
 .due-date-dialog .right_pointer {
-  background: url('/images/symbols-s56deeab7d8.png') 0 -64px no-repeat;
+  background: url('/images/symbols-s04c801f4dd.png') 0 -64px no-repeat;
   position: absolute;
   width: 10px;
   height: 18px;
@@ -1235,10 +1239,10 @@ fieldset.nestedChoices {
   background: #f4f4f4;
 }
 .due-date-dialog .ui-datepicker-prev .ui-icon {
-  background: url('/images/symbols-s56deeab7d8.png') 0 -48px no-repeat;
+  background: url('/images/symbols-s04c801f4dd.png') 0 -48px no-repeat;
 }
 .due-date-dialog .ui-datepicker-next .ui-icon {
-  background: url('/images/symbols-s56deeab7d8.png') 0 -82px no-repeat;
+  background: url('/images/symbols-s04c801f4dd.png') 0 -82px no-repeat;
 }
 .due-date-dialog .ui-datepicker th {
   font-weight: normal;
@@ -1533,8 +1537,11 @@ table.summary-report thead td {
   margin: 0px 14px 0px 6px;
 }
 .nav_search div.search_bar {
-  height: 26px;
-  background: url("../images/search_icon.gif") 4px 5px no-repeat white;
+  height: 24px;
+  -moz-border-radius: 12px 12px 12px 12px;
+  -webkit-border-radius: 12px 12px 12px 12px;
+  border-radius: 12px 12px 12px 12px;
+  background: url("../images/search_icon.gif") 4px 3px no-repeat white;
   padding: 0px 8px 0px 25px;
 }
 .nav_search div.search_bar label.overlabel, .nav_search div.search_bar input {
@@ -1542,7 +1549,7 @@ table.summary-report thead td {
 }
 .nav_search div.search_bar label.overlabel {
   padding: 0px;
-  margin: 2px 3px;
+  margin: 1px 3px;
   font-size: 14px;
 }
 .nav_search div.search_bar input {
@@ -1564,7 +1571,7 @@ table.summary-report thead td {
   *zoom: 1;
   position: relative;
   z-index: 10;
-  margin: 0px 0px 0px 3px;
+  margin: 1px 0px 0px 3px;
   float: right;
 }
 
@@ -1574,6 +1581,9 @@ a.new_ticket, .nav_search {
 
 a.new_ticket, .nav_search div.search_bar {
   border: 2px solid #67962d;
+  -moz-border-radius: 18px 18px 18px 18px;
+  -webkit-border-radius: 18px 18px 18px 18px;
+  border-radius: 18px 18px 18px 18px;
 }
 
 a.new_ticket {
@@ -1588,7 +1598,7 @@ a.new_ticket {
   background-image: -o-linear-gradient(#fefefe, #dfdfdf);
   background-image: -ms-linear-gradient(#fefefe, #dfdfdf);
   background-image: linear-gradient(#fefefe, #dfdfdf);
-  padding: 6px 8px 5px 25px;
+  padding: 5px 13px 4px 28px;
   color: #333333;
   font-size: 12px;
   text-decoration: none;
@@ -1606,8 +1616,8 @@ a.new_ticket {
 a.new_ticket span {
   position: absolute;
   left: 4px;
-  top: 5px;
-  background: url('/images/symbols-s56deeab7d8.png') 0 -16px no-repeat;
+  top: 4px;
+  background: url('/images/symbols-s04c801f4dd.png') 0 -16px no-repeat;
   width: 16px;
   height: 16px;
 }
@@ -1682,7 +1692,7 @@ a.new_ticket:hover {
   float: left;
 }
 .nav-drop .nav-item-icon .item-options {
-  background: url('/images/symbols-s56deeab7d8.png') 0 -130px no-repeat;
+  background: url('/images/symbols-s04c801f4dd.png') 0 -130px no-repeat;
 }
 .nav-drop .nav-item-icon:hover, .nav-drop a.selected {
   border: 1px solid #cdcdcd;
@@ -1857,7 +1867,7 @@ a.new_ticket:hover {
   text-decoration: none;
 }
 .canned-response-menu li span.bullet {
-  background: url('/images/symbols-s56deeab7d8.png') 0 -313px no-repeat;
+  background: url('/images/symbols-s04c801f4dd.png') 0 -328px no-repeat;
   position: absolute;
   width: 16px;
   height: 16px;

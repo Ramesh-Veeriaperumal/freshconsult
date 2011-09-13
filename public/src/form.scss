@@ -825,6 +825,10 @@ span.sort_handle{
 	}
 }
 
+.ui-widget-container{
+   margin:10px 20px;
+}
+
 .ui-form-widget{
 	padding:15px;
 	margin:0px -15px !important;
@@ -860,7 +864,7 @@ span.sort_handle{
    .ui-form{
       margin:0px 0px;
       padding:0px 0px;
-   }
+   }  
 }
 .ui-dialog .ui-dialog-buttonpane { text-align: left; border-width: 0px 0 0 0; background-image: none; margin: 0; padding: 0; }
 .ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset { float: right; }
@@ -1287,15 +1291,16 @@ table.summary-report{
 	position:relative;
 	margin:0px 14px 0px 6px;
 	div.search_bar{ 
-		height:26px; 
-		background:url("../images/search_icon.gif") 4px 5px no-repeat #ffffff;  
+		height:24px; 
+		@include corners(12px);
+		background:url("../images/search_icon.gif") 4px 3px no-repeat #ffffff;  
 		padding:0px 8px 0px 25px;
 		label.overlabel, input{
 			top:4px;
 		}
 		label.overlabel{
 		 	padding:0px;
-		 	margin:2px 3px;
+		 	margin:1px 3px;
 		 	font-size:14px;
 		} 
 		input{		
@@ -1314,7 +1319,7 @@ table.summary-report{
 	@include clearfix;
 	position:relative;
 	z-index:10; 
-	margin:0px 0px 0px 3px;
+	margin:1px 0px 0px 3px;
 	float:right; 
 }
 
@@ -1324,18 +1329,19 @@ a.new_ticket, .nav_search{
 
 a.new_ticket, .nav_search div.search_bar{
 	border:2px solid darken($tab_color, 8%);
+	@include corners(18px);
 } 
  
 a.new_ticket{
  	@include vertical-gradient(#fefefe, #dfdfdf);	
-	padding:6px 8px 5px 25px;
+	padding:5px 13px 4px 28px;
 	color:#333333; 
 	font-size:12px; 
 	text-decoration:none; font-weight:bold;
 	position:relative; 
 	@include inline-block;	
 	span { 
-		position:absolute; left:4px; top:5px;
+		position:absolute; left:4px; top:4px;
 		background:sprite($symbol, add) no-repeat;
 		width:16px; height:16px;
 	}	
