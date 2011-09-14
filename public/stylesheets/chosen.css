@@ -69,10 +69,10 @@
   margin-right: 26px;
   display: block;
   white-space: nowrap;
-  /*overflow: hidden;
+  overflow: hidden;
   -o-text-overflow: ellipsis;
   -ms-text-overflow: ellipsis;
-  text-overflow: ellipsis;*/
+  text-overflow: ellipsis;
 }
 
 .chzn-container-single .chzn-single div {

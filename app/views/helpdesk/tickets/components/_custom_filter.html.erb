@@ -4,13 +4,14 @@
 </h3>
 <% link_to("Save this View...", "/helpdesk/tickets/custom_view_save", :title => "Save ticket view", :class => "slim-button floatr dialog2", :dialogWidth => "540px") %>
     <% @show_options.each_with_index do |c_hash, i| %> 
+      <% container = (c_hash[:options].size < 5)? "dropdown" : "multi_select" %> 
   	  <% content_tag :div, { :id          => "div_ff_#{c_hash[:condition]}", 
                              :class       => "ff_item", 
                              :condition   => c_hash[:condition],
                              :operator    => c_hash[:operator],
-                             :container   => c_hash[:container] } do %>
-          <h4 class="title"><%= c_hash[:name] %></h4>                              
-          <%= render :partial => "/helpdesk/tickets/containers/#{c_hash[:container]}", :locals => { :options => c_hash[:options], :name => c_hash[:name] } %>
+                             :container   => container } do %>
+          <h4 class="title"><%= c_hash[:name] %></h4>           
+          <%= render :partial => "/helpdesk/tickets/containers/#{container}", :locals => { :options => c_hash[:options], :name => c_hash[:name] } %>
       <% end %>
     <% end %>
 
@@ -37,9 +38,9 @@
             container = this.getAttribute("container");
             operator  = this.getAttribute("operator");
             _selector = 'input:checkbox:checked'; 
-            if(container == "multi_select"){
+            
+            if(container == "multi_select")
               _selector = 'option:selected';
-            }
             
             value     = jQuery(this).find(_selector).map(function () {
                             return this.value;
