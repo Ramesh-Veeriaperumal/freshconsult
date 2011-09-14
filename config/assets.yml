@@ -1,5 +1,5 @@
 package_assets:         on          # (on, off, always)
-embed_assets:           off         # (on, off, datauri)
+embed_assets:           on          # (on, off, datauri)
 compress_assets:        on          # (on, off)
 package_path:           packages    # (defaults to assets)
 javascript_compressor:  closure     # (yui, closure)
