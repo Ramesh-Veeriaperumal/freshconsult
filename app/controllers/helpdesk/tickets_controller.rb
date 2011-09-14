@@ -25,7 +25,7 @@ class Helpdesk::TicketsController < ApplicationController
     @ticket_filter.accessible.visibility = Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents]
   else
     @ticket_filter = current_account.ticket_filters.find(params[:filter_key])
-    params.merge(@ticket_filter.attributes)
+    params.merge!(@ticket_filter.attributes["data"])
    end
   
   end
