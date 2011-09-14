@@ -44,7 +44,7 @@ class Wf::Filter < ActiveRecord::Base
   #############################################################################
   # Basics 
   #############################################################################
-  def initialize(model_class)
+  def initialize(model_class = 'Helpdesk::Ticket')
     super()
     self.model_class_name = model_class.to_s
   end
