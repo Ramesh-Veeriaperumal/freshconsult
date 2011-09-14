@@ -1,10 +1,11 @@
 package_assets:         on          # (on, off, always)
-embed_assets:           false       # (on, off, datauri)
+embed_assets:           on          # (on, off, datauri)
 compress_assets:        on          # (on, off)
 package_path:           packages    # (defaults to assets)
 javascript_compressor:  closure     # (yui, closure)
+css_compressor_options: 
 compressor_options:
-  compilation_level: "ADVANCED_OPTIMIZATIONS"
+  compilation_level: "SIMPLE_OPTIMIZATIONS"
   
 javascripts:
   defaults:
@@ -33,6 +34,7 @@ stylesheets:
   common:
     - public/stylesheets/reset.css
     - public/stylesheets/layout.css
+    - public/stylesheets/test.css
     - public/stylesheets/defaults.css
     - public/stylesheets/application.css
     - public/stylesheets/validation.css
@@ -43,7 +45,6 @@ stylesheets:
     - public/stylesheets/jquery-ui.css
     - public/stylesheets/jquery.qtip.css
     - public/stylesheets/ie.css
-    - public/stylesheets/test.css
 
   widget:
     - public/stylesheets/reset.css   
