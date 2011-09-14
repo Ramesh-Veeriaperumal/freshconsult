@@ -23,10 +23,26 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
                       "open" => [{ "condition" => "status", "operator" => "is_in", "value" => TicketConstants::STATUS_KEYS_BY_TOKEN[:open]},spam_condition(false),deleted_condition(false)],
                       "due_today" => [{ "condition" => "due_by", "operator" => "due_by_op", "value" => TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN[:due_today]},spam_condition(false),deleted_condition(false)],
                       "new" => [{ "condition" => "responder_id", "operator" => "is_in", "value" => ""},spam_condition(false),deleted_condition(false)],
-                      "monitored_by" => [{ "condition" => "helpdesk_subscriptions.user_id", "operator" => "is_in", "value" => User.current.id.to_s}],
-                      "new_my_open" => [{ "condition" => "status", "operator" => "is_in", "value" => TicketConstants::STATUS_KEYS_BY_TOKEN[:open]},{ "condition" => "responder_id", "operator" => "is_in", "value" => User.current.id.to_s},spam_condition(false),deleted_condition(false)]
-                      
+                      "monitored_by" => [{ "condition" => "helpdesk_subscriptions.user_id", "operator" => "is_in", "value" => "0"}],
+                      "new_my_open" => [{ "condition" => "status", "operator" => "is_in", "value" => TicketConstants::STATUS_KEYS_BY_TOKEN[:open]},{ "condition" => "responder_id", "operator" => "is_in", "value" => "-1,0"},spam_condition(false),deleted_condition(false)],
                    }
+                   
+                   
+  after_create :create_accesible
+  after_update :save_accessible
+   
+  def create_accesible     
+    self.accessible = Admin::UserAccess.new( {:account_id => account_id }.merge(self.visibility)  )
+    self.save
+  end
+  
+  def save_accessible
+    self.accessible.update_attributes(self.visibility)    
+  end
+  
+  def self.my_ticket_filters(user)
+    self.find(:all, :joins =>"JOIN admin_user_accesses acc ON acc.accessible_id = wf_filters.id AND acc.accessible_type = 'Wf::Filter' LEFT JOIN agent_groups ON acc.group_id=agent_groups.group_id", :conditions =>["acc.VISIBILITY=#{Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents]} OR agent_groups.user_id=#{user.id} OR (acc.VISIBILITY=#{Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me]} and acc.user_id=#{user.id})"])
+  end
   
   def definition
      @definition ||= begin
@@ -64,7 +80,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   end
  
   
-  def deserialize_from_params(params)   
+  def deserialize_from_params(params) 
     @conditions = []
     @match                = :and
     @key                  = params[:wf_key]         || self.id.to_s
@@ -92,7 +108,10 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     end
     
     action_hash = []
-    action_hash = ActiveSupport::JSON.decode params[:data_hash] unless params[:data_hash].blank?
+    if !params[:data_hash].blank? 
+      action_hash = params[:data_hash]
+      action_hash = ActiveSupport::JSON.decode params[:data_hash] if !params[:data_hash].kind_of?(Array)
+    end
     action_hash.push({ "condition" => "spam", "operator" => "is", "value" => false})
     action_hash.push({ "condition" => "deleted", "operator" => "is", "value" => false})
     action_hash = default_filter(params)  if params[:data_hash].blank?
@@ -119,7 +138,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
         condition_at(0)
         0.upto(size - 1) do |index|
           condition = condition_at(index)
-          if condition.key.to_s.include?("responder_id")
+          if condition.key.to_s.include?("responder_id") or condition.key.to_s.include?("helpdesk_subscriptions.user_id") 
             condition.container.values[0] = condition.container.value.gsub("0",Account.current.id.to_s) 
           end
           

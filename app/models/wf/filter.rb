@@ -39,21 +39,7 @@ class Wf::Filter < ActiveRecord::Base
   
   has_many :agent_groups , :through =>:accessible , :foreign_key => "group_id" , :source => :group
   
-  after_create :create_accesible
-  after_update :save_accessible
-   
-  def create_accesible     
-    self.accessible = Admin::UserAccess.new( {:account_id => account_id }.merge(self.visibility)  )
-    self.save
-  end
-  
-  def save_accessible
-    self.accessible.update_attributes(self.visibility)    
-  end
-  
-  def self.my_ticket_filters(user)
-    self.find(:all, :joins =>"JOIN admin_user_accesses acc ON acc.accessible_id = wf_filters.id AND acc.accessible_type = 'Wf::Filter' LEFT JOIN agent_groups ON acc.group_id=agent_groups.group_id", :conditions =>["acc.VISIBILITY=#{Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents]} OR agent_groups.user_id=#{user.id} OR (acc.VISIBILITY=#{Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me]} and acc.user_id=#{user.id})"])
-  end
+ 
   
   #############################################################################
   # Basics 
