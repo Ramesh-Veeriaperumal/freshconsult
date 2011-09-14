@@ -9,7 +9,7 @@
   </ul>
   <div class="button-container">
     <%= f.submit t('create'), :class => "uiButton" %>
-    <%= submit_tag t('save_and_create'), :name => "save_and_create" , :class => "uiButton" %>
+    <%= submit_tag t('save_and_create'), :name => "save_and_create", :class => "uiButton" %>
     <%= link_to t('cancel'), (@item.new_record? ? {:action => 'index'} : @item ), :class => "uiButton" %>
   </div>
 <% end %>

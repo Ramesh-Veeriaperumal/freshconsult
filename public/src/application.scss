@@ -719,9 +719,6 @@ body h5{
 			@include link-colors(#6699cc, #336699, #6699cc, #6699cc);
 			text-decoration:none;
 		} 
-		name a{
-			@include ellipsis;
-		}
 		.delete{
 			position:absolute;
 			right:0px;
@@ -1310,7 +1307,6 @@ h4.list_title{
 	color:#ffffff;
 	padding:0px 2px;
 	@include corners(3px);
-	@include ellipsis;
 }
 
 .list_icon_large_full_width{
@@ -1681,7 +1677,6 @@ ul.user_list{
 		}
 		.username{
 			display:block;
-			@include ellipsis;
 		}
 	}
 }
@@ -1882,7 +1877,6 @@ h4.border_title{
 		    padding-left:20px;
 			a{
 				@include link-colors(#4D769F, #3399cc, #4D769F, #4D769F);
-				@include ellipsis;
 				text-decoration:none;
 				font-weight:400; 
 			}
@@ -2957,8 +2951,8 @@ div.addReminder{
 	p{  font-size:14px; line-height: 1.5em; margin-bottom: 1.3em; text-align: left; width: 90%;  }
     table td, table th { border:1px solid #BBB; padding:4px 5px; }
     ins {border-bottom:1px solid green; text-decoration: none; color:green}
-	del {color:red; text-decoration:line-through}
-	cite {border-bottom:1px dashed blue}
+	del {color:#FF0000; text-decoration:line-through}
+	cite {border-bottom:1px dashed #0000FF}
 	acronym {border-bottom:1px dotted #CCC; cursor:help}
 	abbr {border-bottom:1px dashed #CCC; cursor:help}
 }
@@ -3759,7 +3753,6 @@ a.close{
 				margin-bottom:8px;
 				border-top:1px solid #efefef;
 				a.topic{
-					@include ellipsis;
 					display:block;
 					padding:5px 0px;
 					font-size:13px;
@@ -3984,5 +3977,116 @@ a.close{
 }
 
 .tweet-counter.error{
-   color:red;
+   color:#FF0000;
+}
+
+.containerFull{
+	margin:-14px -20px;
+	padding:0px 0px 0px 0px;
+}
+
+.ticket-leftcol{
+   width:230px;
+   float:left;
+   min-height:100%;
+   border:1px solid #ffffff; 
+   border-width:1px 1px 1px 0;
+   @include linear-gradient(color-stops(#F8F8F8, #F8F8F8 99%, #efefef 100%), left);
+   h3.title{
+      color:#666666;
+      font-size:13px;
+		text-transform:uppercase;
+      padding:10px 0 10px 0;
+      margin:0;
+   }
+   h4.title{
+      padding:0 0 6px 0;
+      font-size:13px;
+      color:#666;
+   }
+   .customSelect{ width:100%; } 
+   
+   .view_filters{
+      .chzn-container a{
+         background:#f6f6f6;
+         border:1px solid #dfdfdf;
+         font-size:13px;
+         display:block;
+         text-decoration:none;
+         padding:2px 8px 2px 8px;
+			margin:0;
+         div{
+            background:none;
+            border:0;
+         }
+      }
+		.chzn-drop{
+			border:1px solid #dfdfdf;
+		}
+      .link-item{ 
+         font-size:13px;
+         display:block;
+         color:#666666;
+         text-decoration:none;
+         padding:5px 8px 5px 8px;
+         position:relative;
+			span.icon{
+				display:none;
+			}
+      }
+      a.link-item:hover{ 
+         color:#333333;
+      }
+      .chzn-single, .active{
+         color:#336699;
+         font-weight:bold;
+         span.icon{
+            position:absolute;
+            right:5px;
+            margin-top:3px;
+            width:10px;
+            height:10px;
+            background:sprite($symbol, selected-arrow);            
+         }
+      }
+   }
+   
+   .leftFilter{
+   	padding:0 14px 10px 14px;
+		position:relative;
+		border-bottom:1px solid #e0e0e0;  
+   	.checkboxSet{
+   		margin-bottom:10px;
+   	}
+   	.ff_item{
+         padding:0 0 8px 12px;
+      }
+   	.item{
+   		padding:1px 0 1px 2px;
+   		font-size:11px;
+   		color:#333333;
+   		input{margin:0 4px 3px 0; }
+   	}
+   }
+}
+
+.hasRightCol{
+   margin-left:231px;
+} 
+
+.contentCol{
+   border-left:1px solid #cfcfcf;
+   background-color:#ffffff;
+}
+
+
+.greyImage{
+   background-color:#f7f7f7;
+}
+
+.toolbar{
+   @include linear-gradient(color-stops(#f4f4f4, #efefef), top);
+   padding:5px 8px 5px 0;
+	border-bottom:1px solid #dfdfdf;
+	border-top:1px solid #ffffff;
 }
