@@ -1,11 +1,11 @@
 package_assets:         on          # (on, off, always)
-embed_assets:           on          # (on, off, datauri)
+embed_assets:           false       # (on, off, datauri)
 compress_assets:        on          # (on, off)
 package_path:           packages    # (defaults to assets)
 javascript_compressor:  closure     # (yui, closure)
 compressor_options:
-  compilation_level: SIMPLE_OPTIMIZATIONS
-
+  compilation_level: "ADVANCED_OPTIMIZATIONS"
+  
 javascripts:
   defaults:
     - public/javascripts/prototype.js
@@ -26,11 +26,7 @@ javascripts:
     - public/javascripts/globalinit.js
   freshwidget:
     - public/javascripts/freshwidget.js
-  syntaxhighlighter:
-    - public/javascripts/syntax-highlighter/shCore.js 
-    - public/javascripts/syntax-highlighter/shBrushJScript.js 
-    - public/javascripts/syntax-highlighter/shBrushRuby.js
-    
+
 stylesheets:
   print:
     - public/stylesheets/print.css
@@ -59,6 +55,3 @@ stylesheets:
   freshwidget:
     - public/stylesheets/freshwidget.css
     
-  syntaxhighlighter:
-    - public/stylesheets/syntax-highlighter/shCore.css
-    - public/stylesheets/syntax-highlighter/shThemeDefault.css

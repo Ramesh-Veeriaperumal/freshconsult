@@ -4,12 +4,14 @@
 </h3>
 <% link_to("Save this View...", "/helpdesk/tickets/custom_view_save", :title => "Save ticket view", :class => "slim-button floatr dialog2", :dialogWidth => "540px") %>
     <% @show_options.each_with_index do |c_hash, i| %> 
+      <% container = (c_hash[:options].size < 5)? "dropdown" : "multi_select" %> 
   	  <% content_tag :div, { :id          => "div_ff_#{c_hash[:condition]}", 
                              :class       => "ff_item", 
                              :condition   => c_hash[:condition],
-                             :operator    => c_hash[:operator] } do %>
-          <h4 class="title"><%= c_hash[:name] %></h4>                              
-          <%= render :partial => "/helpdesk/tickets/containers/#{c_hash[:container]}", :locals => { :options => c_hash[:options] } %>
+                             :operator    => c_hash[:operator],
+                             :container   => container } do %>
+          <h4 class="title"><%= c_hash[:name] %></h4>           
+          <%= render :partial => "/helpdesk/tickets/containers/#{container}", :locals => { :options => c_hash[:options], :name => c_hash[:name] } %>
       <% end %>
     <% end %>
 
@@ -29,12 +31,18 @@
 		}
    
 
-    jQuery(".view_checkbox").bind("change", function(ev){
-     query_hash = $A();
+    jQuery(".filter_item").bind("change", function(ev){
+     query_hash = $A(); 
      jQuery("div.ff_item").map(function () {
             condition = this.getAttribute("condition");
+            container = this.getAttribute("container");
             operator  = this.getAttribute("operator");
-            value     = jQuery(this).find('input:checkbox:checked').map(function () {
+            _selector = 'input:checkbox:checked'; 
+            
+            if(container == "multi_select")
+              _selector = 'option:selected';
+            
+            value     = jQuery(this).find(_selector).map(function () {
                             return this.value;
                           }).get();
                           

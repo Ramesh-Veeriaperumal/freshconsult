@@ -8,20 +8,18 @@
 }
 
 #leftcol{
-   width:220px;
+   width:230px;
    float:left;
    min-height:100%;
    border:1px solid #ffffff; 
    border-width:1px 1px 1px 0;
-   @include linear-gradient(color-stops(#fbfbfb, #fbfbfb 99%, #efefef 100%), left);
+   @include linear-gradient(color-stops(#F8F8F8, #F8F8F8 99%, #efefef 100%), left);
    h3.title{
-      font-weight:bold;
-      color:#999999;
+      color:#666666;
       font-size:13px;
-      text-transform:uppercase;
-      padding:10px 0 8px 0;
+		text-transform:uppercase;
+      padding:10px 0 10px 0;
       margin:0px;
-		text-shadow: 0px 2px 1px #fff;
    }
    h4.title{
       padding:0px 0px 6px 0px;
@@ -76,22 +74,14 @@
    }
    
    .leftFilter{
-   	padding:0px 12px 10px 12px;
+   	padding:0px 14px 10px 14px;
 		position:relative;
-		border-bottom:2px solid #e0e0e0;  
-		span.paperFold{
-			position:absolute;
-			width:15px;
-			height:15px;
-			top:-1px;
-			right:-1px;
-			background:sprite($symbol, list-view-paper-fold); 
-		}
+		border-bottom:1px solid #e0e0e0;  
    	.checkboxSet{
    		margin-bottom:10px;
    	}
    	.ff_item{
-         padding:0 8px 8px;
+         padding:0 0 8px 12px;
       }
    	.item{
    		padding:1px 0 1px 2px;
@@ -103,11 +93,11 @@
 }
 
 .hasRightCol{
-   margin-left:221px;
+   margin-left:231px;
 } 
 
 .contentCol{
-   border-left:1px solid #a1a1a1;
+   border-left:1px solid #cfcfcf;
    background-color:#ffffff;
 }
 

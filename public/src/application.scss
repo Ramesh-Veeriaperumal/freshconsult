@@ -3060,8 +3060,9 @@ div.addReminder{
 			color:#5a8ec1; 
 		}
 	}
-	tr:hover td, tr.active td{
-		background-color:#f4f4f4;
+	tr.even td{ background-color:#f9f9f9; }
+	tr:hover td, tr.active td, tr:hover.even td{
+		background-color:#e6f3f9;
 		background-image:url(../images/overlay-top-shadow.png);
 		background-position:top left;
 		border-bottom:1px solid #dfdfdf;

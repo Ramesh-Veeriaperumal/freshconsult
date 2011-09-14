@@ -5,26 +5,24 @@
 }
 
 #leftcol {
-  width: 220px;
+  width: 230px;
   float: left;
   min-height: 100%;
   border: 1px solid #ffffff;
   border-width: 1px 1px 1px 0;
-  background-image: -webkit-gradient(linear, 0% 50%, 100% 50%, color-stop(0%, #fbfbfb), color-stop(99%, #fbfbfb), color-stop(100%, #efefef));
-  background-image: -webkit-linear-gradient(left, #fbfbfb, #fbfbfb 99%, #efefef 100%);
-  background-image: -moz-linear-gradient(left, #fbfbfb, #fbfbfb 99%, #efefef 100%);
-  background-image: -o-linear-gradient(left, #fbfbfb, #fbfbfb 99%, #efefef 100%);
-  background-image: -ms-linear-gradient(left, #fbfbfb, #fbfbfb 99%, #efefef 100%);
-  background-image: linear-gradient(left, #fbfbfb, #fbfbfb 99%, #efefef 100%);
+  background-image: -webkit-gradient(linear, 0% 50%, 100% 50%, color-stop(0%, #f8f8f8), color-stop(99%, #f8f8f8), color-stop(100%, #efefef));
+  background-image: -webkit-linear-gradient(left, #f8f8f8, #f8f8f8 99%, #efefef 100%);
+  background-image: -moz-linear-gradient(left, #f8f8f8, #f8f8f8 99%, #efefef 100%);
+  background-image: -o-linear-gradient(left, #f8f8f8, #f8f8f8 99%, #efefef 100%);
+  background-image: -ms-linear-gradient(left, #f8f8f8, #f8f8f8 99%, #efefef 100%);
+  background-image: linear-gradient(left, #f8f8f8, #f8f8f8 99%, #efefef 100%);
 }
 #leftcol h3.title {
-  font-weight: bold;
-  color: #999999;
+  color: #666666;
   font-size: 13px;
   text-transform: uppercase;
-  padding: 10px 0 8px 0;
+  padding: 10px 0 10px 0;
   margin: 0px;
-  text-shadow: 0px 2px 1px #fff;
 }
 #leftcol h4.title {
   padding: 0px 0px 6px 0px;
@@ -74,26 +72,18 @@
   margin-top: 3px;
   width: 10px;
   height: 10px;
-  background: url('/images/symbols-s04c801f4dd.png') 0 -359px;
+  background: url('/images/symbols-s8768357d87.png') 0 -344px;
 }
 #leftcol .leftFilter {
-  padding: 0px 12px 10px 12px;
+  padding: 0px 14px 10px 14px;
   position: relative;
-  border-bottom: 2px solid #e0e0e0;
-}
-#leftcol .leftFilter span.paperFold {
-  position: absolute;
-  width: 15px;
-  height: 15px;
-  top: -1px;
-  right: -1px;
-  background: url('/images/symbols-s04c801f4dd.png') 0 -189px;
+  border-bottom: 1px solid #e0e0e0;
 }
 #leftcol .leftFilter .checkboxSet {
   margin-bottom: 10px;
 }
 #leftcol .leftFilter .ff_item {
-  padding: 0 8px 8px;
+  padding: 0 0 8px 12px;
 }
 #leftcol .leftFilter .item {
   padding: 1px 0 1px 2px;
@@ -105,11 +95,11 @@
 }
 
 .hasRightCol {
-  margin-left: 221px;
+  margin-left: 231px;
 }
 
 .contentCol {
-  border-left: 1px solid #a1a1a1;
+  border-left: 1px solid #cfcfcf;
   background-color: #ffffff;
 }
 

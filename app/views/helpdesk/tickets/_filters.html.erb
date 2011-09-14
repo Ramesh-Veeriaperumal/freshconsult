@@ -8,7 +8,7 @@
 		});	
 <% end %>
 <div class="view_filters">
-  <%= select_tag :custom_fitlers, options_for_select(@all_filters.map {|u| [u.name,u.id]}), { :class => "customSelect" } %>
+  <%= select_tag :custom_fitlers, options_from_collection_for_select(current_account.ticket_filters.my_ticket_filters(current_user), :id, :name), { :class => "customSelect"} %>
   <% filter_select(current_selector_name) %>
   <a href="#" class="link-item">Tickets I’m Monitoring</a>
   <a href="#" class="link-item">Trash</a>

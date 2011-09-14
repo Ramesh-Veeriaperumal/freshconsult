@@ -59,16 +59,13 @@
 	if(ticketLeftPanel > jQuery('#rightCol').height())
 	  jQuery('#rightCol').css("minHeight", ticketLeftPanel);		
 <% end %>
-
 <div class="containerFull greyImage clearfix">
   <div id="leftcol">
     <div class="leftFilter">   
-	    <h3 class="title">Views</h3>
-			<span class="paperFold"></span>
+	    <h3 class="title">Views</h3> 
       <%= render :partial => "filters" %>
     </div>
-		<div class="leftFilter">   
-			<span class="paperFold"></span>
+		<div class="leftFilter">    
     	<%= render :partial => "helpdesk/tickets/components/custom_filter" %>
 		</div>
   </div>
