@@ -303,6 +303,15 @@ class User < ActiveRecord::Base
   def twitter_style_id
     "@#{twitter_id}"
   end
+  
+  
+    def to_xml(options = {})
+      options[:indent] ||= 2
+      xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
+      xml.instruct! unless options[:skip_instruct]
+      super(:builder => xml, :skip_instruct => true,:except => [:crypted_password,:password_salt,:perishable_token,:persistence_token,:single_access_token]) 
+  end
+  
  
   protected
     def set_account_id_in_children
@@ -330,5 +339,7 @@ class User < ActiveRecord::Base
    end
    
  end
+ 
+ 
   
 end
