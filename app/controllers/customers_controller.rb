@@ -6,11 +6,13 @@ class CustomersController < ApplicationController
   before_filter :set_selected_tab
   
   def index
-    
+    @customers =current_account.customers.filter(params[:letter],params[:page])
     respond_to do |format|
       format.html  do
-        @customers =current_account.customers.filter(params[:letter],params[:page])
-
+        @customers
+      end
+      format.xml  do
+        render :xml => @customers.to_xml
       end
       format.atom do
         @customers = @customers.newest(20)
