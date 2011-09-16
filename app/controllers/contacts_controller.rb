@@ -16,9 +16,13 @@ class ContactsController < ApplicationController
   end
   
   def index
+    @contacts = scoper.filter(params[:letter],params[:page])
     respond_to do |format|
-      format.html  do
-        @contacts = scoper.filter(params[:letter],params[:page])
+      format.html do
+        @contacts
+      end
+      format.xml  do
+       render :xml => @contacts.to_xml
       end
       format.atom do
         @contacts = @contacts.newest(20)
@@ -49,10 +53,16 @@ class ContactsController < ApplicationController
   def create   
     if build_and_save    
       flash[:notice] = t(:'flash.contacts.create.success')
-      redirect_to contacts_url
+      respond_to do |format|
+        format.html { redirect_to contacts_url }
+        format.xml  { head 200 }
+      end
     else
       check_email_exist
-      render :action => :new
+       respond_to do |format|
+        format.html { render :action => :new}
+        format.xml  { head :failed} # bad request
+      end
     end
   end
   
@@ -68,6 +78,10 @@ class ContactsController < ApplicationController
   def show 
     @user = current_account.all_users.find(params[:id])
     @user_tickets_open_pending = current_account.tickets.requester_active(@user).visible.newest(5)
+    respond_to do |format|
+      format.html { }
+      format.xml  { render :xml => @user.to_xml} # bad request
+    end
   end
   
   def delete_avatar
@@ -78,20 +92,25 @@ class ContactsController < ApplicationController
   
   def update    
     company_name = params[:user][:customer]
-    unless company_name.empty?     
+    unless company_name.blank?     
       @obj.customer_id = current_account.customers.find_or_create_by_name(company_name).id 
     else
       @obj.customer_id = nil
     end     
     if @obj.update_attributes(params[cname])
-      #flash[:notice] = "The #{cname.humanize.downcase} has been updated."
-      redirect_to contacts_url
+      respond_to do |format|
+        format.html { redirect_to contacts_url }
+        format.xml  { head 200}
+      end
     else
       logger.debug "error while saving #{@obj.errors.inspect}"
       check_email_exist
-      render :action => 'edit'
+      respond_to do |format|
+        format.html { render :action => 'edit' }
+        format.xml  { head 400} #Bad request
+      end
     end
-  end  
+  end    
   
    def destroy   
       if @obj.respond_to?(:deleted)
