@@ -45,7 +45,7 @@ class Wf::Containers::TextDelimited < Wf::FilterContainer
   def handle_unassigned
     array_values = split_values
     array_values.delete("-1")
-    [" #{condition.full_key} is NULL or #{condition.full_key} in (?) ",array_values]
+    [" (#{condition.full_key} is NULL or #{condition.full_key} in (?)) ",array_values]
   end
 
   def sql_condition

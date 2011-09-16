@@ -198,8 +198,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def create_initial_activity
+   unless spam?
     create_activity(requester, 'activities.tickets.new_ticket.long', {},
                               'activities.tickets.new_ticket.short')
+   end
   end
 
   def source=(val)

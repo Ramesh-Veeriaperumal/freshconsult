@@ -6,15 +6,13 @@ class CustomersController < ApplicationController
   before_filter :set_selected_tab
   
   def index
-    
-    @customers =current_account.customers.filter(params[:letter],params[:page])
-    
     respond_to do |format|
       format.html  do
-        @customers
+        @customers =current_account.customers.filter(params[:letter],params[:page])
       end
       
       format.xml  do
+        @customers =current_account.customers.all
         render :xml => @customers.to_xml
       end
       

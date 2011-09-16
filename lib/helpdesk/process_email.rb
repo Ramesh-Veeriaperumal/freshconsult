@@ -111,6 +111,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         #:ticket_type =>Helpdesk::Ticket::TYPE_KEYS_BY_TOKEN[:how_to]
       )
       ticket = check_for_chat_scources(ticket,from_email)
+      ticket = check_for_spam(ticket)
       ticket.group_id = ticket.email_config.group_id unless ticket.email_config.nil?
       begin
         ticket.save!
@@ -119,6 +120,11 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       rescue ActiveRecord::RecordInvalid => e
         FreshdeskErrorsMailer.deliver_error_email(ticket,params,e)
       end
+    end
+    
+    def check_for_spam(ticket)
+      ticket.spam = true if ticket.requester.deleted?
+      ticket  
     end
   
     def check_for_chat_scources(ticket,from_email)

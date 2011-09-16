@@ -172,11 +172,18 @@ class Helpdesk::TicketsController < ApplicationController
       format.js
     end
   end 
+  
+  def mark_requester_deleted(item,opt)
+    req = item.requester
+    req.deleted = opt
+    req.save if req.customer?
+  end
 
   def spam
     @items.each do |item|
-      item.train(:spam)
+      item.spam = true 
       item.save
+      mark_requester_deleted(item,true)
     end
 
     flash[:notice] = render_to_string(
@@ -193,8 +200,9 @@ class Helpdesk::TicketsController < ApplicationController
 
   def unspam
     @items.each do |item|
-      item.train(:ham)
+      item.spam = false
       item.save
+      mark_requester_deleted(item,false)
     end
 
     flash[:notice] = render_to_string(

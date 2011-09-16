@@ -16,13 +16,12 @@ class ContactsController < ApplicationController
   end
   
   def index
-    
-    @contacts = scoper.filter(params[:letter],params[:page])
     respond_to do |format|
       format.html do
-        @contacts
+        @contacts = scoper.filter(params[:letter],params[:page])
       end
       format.xml  do
+        @contacts = scoper.all
        render :xml => @contacts.to_xml
       end
       format.atom do
@@ -80,6 +79,7 @@ class ContactsController < ApplicationController
     @user = current_account.all_users.find(params[:id])
     @user_tickets_open_pending = current_account.tickets.requester_active(@user).visible.newest(5)
     respond_to do |format|
+      format.html { }
       format.xml  { render :xml => @user.to_xml} # bad request
     end
   end
