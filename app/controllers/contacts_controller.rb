@@ -16,12 +16,12 @@ class ContactsController < ApplicationController
   end
   
   def index
-    @contacts = scoper.filter(params[:letter],params[:page])
     respond_to do |format|
       format.html do
-        @contacts
+        @contacts = scoper.filter(params[:letter],params[:page])
       end
       format.xml  do
+        @contacts = scoper.all
        render :xml => @contacts.to_xml
       end
       format.atom do
