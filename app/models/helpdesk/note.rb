@@ -49,7 +49,7 @@ class Helpdesk::Note < ActiveRecord::Base
 
   named_scope :exclude_source, lambda { |s| { :conditions => ['source <> ?', SOURCE_KEYS_BY_TOKEN[s]] } }
 
-  validates_presence_of :body_html, :source, :notable_id
+  validates_presence_of  :source, :notable_id
   validates_numericality_of :source
   validates_inclusion_of :source, :in => 0..SOURCES.size-1
 
