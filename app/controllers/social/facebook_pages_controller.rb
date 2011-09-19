@@ -4,69 +4,56 @@ class Social::FacebookPagesController < ApplicationController
     c.requires_permission :manage_users
   end
   
-  before_filter :fb_client , :only => [:signin, :authdone, :index]
-  before_filter :build_item, :only => [:signin, :authdone]
+  before_filter :fb_client , :only => [:authdone, :index]
+  before_filter :build_item, :only => [:authdone]
   before_filter :load_item,  :only => [:edit, :update, :destroy]  
   
   def index
-    @fb_pages = scoper
+    @fb_pages = scoper.active
     
   end
 
-  def edit
-    
-  end
-  
-  def signin
-    #request_token = @fb_client.request_tokens          
-    #session[:request_token] = request_token.token
-    #session[:request_secret] = request_token.secret    
-  end
-  
-  def event_listener
-    logger.debug "verify_token has been called..meet challenge will be executed :: with params:: #{params.inspect}"
-    verify_token = "freshdesktoken"
-    return Koala::Facebook::RealtimeUpdates.meet_challenge(params, verify_token)
-  end
-  
    def authdone
-     add_to_db
-     @fb_client.subscribe(url_for(:action => 'event_listener'))
-     redirect_to :action =>:index
-    #add_to_db
-    #redirect_to redirect_url
+     fb_pages = nil
+     begin      
+        fb_pages = @fb_client.auth(params[:code] )
+     rescue
+        flash[:error] = t('facebook.not_authorized')
+     end
+     
+     @fb_pages = add_to_db fb_pages
+   
+   
+  end
+ 
+  def enable_pages
+    
+    page_ids = params[:enable][:pages]
+    page_ids = page_ids.reject(&:blank?)   
+    scoper.update_all({:enable_page => false})
+    scoper.update_all({:enable_page => true} , :page_id =>page_ids)
+    redirect_to :action => :index
   end
   
-  def add_to_db
-    begin      
-      fb_pages = @fb_client.auth(params[:code] )
-      if scoper.create(fb_pages)
-       # flash[:notice] = t('twitter.success_signin', :twitter_screen_name => twitter_handle.screen_name, :helpdesk => twitter_handle.product.name)
-      else
-       # flash[:notice] = t('twitter.user_exists')
-      end
-    rescue
-      flash[:error] = t('twitter.not_authorized')
-    end
+  
+  def add_to_db fb_pages
+    
+    fb_pages.each do |fb_page|
+        begin
+          scoper.create(fb_page)
+        rescue
+        
+        end
+     end
   end
   
   def destroy
     @item.destroy   
     flash[:notice] = t('facebook.deleted', :facebook_page => @item.page_name)
-    redirect_back_or_default social_facebook_url 
+    redirect_to :action => :index 
   end
   
-  def comment_on_post
-    begin
-      @facebook = @fb_client
-      @facebook.put_comment params[:tweet]
-      flash[:notice] = t('twitter.sent')
-    rescue
-      flash[:error] = t('twitter.error_sending')
-    end
-    redirect_to :action => :index
-  end
-  
+ 
  
   def update
     

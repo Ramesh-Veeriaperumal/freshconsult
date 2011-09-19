@@ -1,0 +1,24 @@
+
+<% form_for :facebook_page, :url => { :controller=>"social/facebook_pages", :action=>"enable_pages"}, :html => { :multipart => true , :method => :put } do |f| %>
+
+<ul class="ui-form">
+	
+	<%@fb_pages.size%>
+	
+	<%@fb_pages.each do |fb_page|%>
+	
+	<%debug fb_page%>
+        <li>
+			<label>
+				<%= check_box( "enable", "pages", { :multiple => true, :checked => true }, fb_page[:page_id] , nil) %>
+				<%= fb_page[:page_name]  %>
+			</label>
+		</li>	
+		
+	<%end%>
+
+</ul>
+<div class="button-container">
+       <%= submit_tag 'Save', :class => "uiButton" %>	
+</div>
+<% end %>

@@ -11,6 +11,7 @@ class CreateSocialFacebookPages < ActiveRecord::Migration
       t.boolean :import_visitor_posts , :default => true
       t.boolean :import_company_posts , :default => false
       t.boolean :enable_page , :default => false
+      t.integer :fetch_since , :limit => 8
       t.integer :product_id , :limit => 8
       t.integer :account_id , :limit => 8
 

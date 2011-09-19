@@ -40,6 +40,10 @@ class Helpdesk::NotesController < ApplicationController
         if tweet?
           twt = send_tweet
           @item.create_tweet({:tweet_id => twt.id, :account_id => current_account.id})
+        elsif facebook?
+          fb_comment = add_facebook_comment
+          fb_comment.symbolize_keys!
+          @item.create_fb_post({:post_id => fb_comment[:id], :facebook_page_id =>@parent.fb_post.facebook_page_id ,:account_id => current_account.id})
         end
         @parent.responder ||= current_user                     
       end
@@ -103,7 +107,23 @@ class Helpdesk::NotesController < ApplicationController
         status_id = latest_comment.nil? ? @parent.tweet.tweet_id : latest_comment.tweet.tweet_id
         twitter.update(@item.body, {:in_reply_to_status_id => status_id})
       end
-    end
+  end
+  
+    def facebook?
+      (!@parent.fb_post.nil?) and (!params[:fb_post].blank?)  and (params[:fb_post].eql?("true")) 
+  end
+  
+  def add_facebook_comment
+    
+      fb_page =  @parent.fb_post.facebook_page
+    
+      unless fb_page.nil?
+        @fb_client = FBClient.new fb_page,{:current_account => current_account}
+        facebook_page = @fb_client.get_page
+        post_id =  @parent.fb_post.post_id
+        comment = facebook_page.put_comment(post_id, @item.body) 
+      end
+  end
   
 
 end

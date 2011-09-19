@@ -14,12 +14,17 @@ class Helpdesk::Note < ActiveRecord::Base
     :as => :tweetable,
     :class_name => 'Social::Tweet',
     :dependent => :destroy
+ 
+  has_one :fb_post,
+    :as => :postable,
+    :class_name => 'Social::FbPost',
+    :dependent => :destroy
 
   attr_accessor :nscname
   attr_protected :attachments, :notable_id
   
   after_create :save_response_time, :update_parent, :add_activity, :update_in_bound_count
-  accepts_nested_attributes_for :tweet
+  accepts_nested_attributes_for :tweet , :fb_post
 
   named_scope :newest_first, :order => "created_at DESC"
   named_scope :visible, :conditions => { :deleted => false } 
@@ -38,7 +43,7 @@ class Helpdesk::Note < ActiveRecord::Base
   }
 
 
-  SOURCES = %w{email form note status meta twitter}
+  SOURCES = %w{email form note status meta twitter facebook}
   SOURCE_KEYS_BY_TOKEN = Hash[*SOURCES.zip((0..SOURCES.size-1).to_a).flatten]
 
   named_scope :exclude_source, lambda { |s| { :conditions => ['source <> ?', SOURCE_KEYS_BY_TOKEN[s]] } }

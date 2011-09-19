@@ -1,0 +1,31 @@
+<div class="request_panel" id="<%=cntid%>" style="display:none;">
+  <% form_for note, :html => {:multipart => true,  :id => "HelpdeskFbComment" } do |f| %>
+    <%= f.error_messages %>
+	  <%= hidden_field_tag :fb_post, "true", :id => "fb_comment" %>
+    <ul class="ui-form dont-validate">
+      <li class="inline-field field">       
+        <!--%= content_tag( :h3, t(".title", :user=>"@#{@ticket.requester.twitter_id}"), :class => "title") %-->
+        <label class="caption">From:</label>
+        <div class="fields">
+        	<%=@ticket.fb_post.facebook_page.page_name if  @ticket.fb_post && @ticket.fb_post.facebook_page%>
+           <!--%= select_tag :twitter_handle, options_from_collection_for_select(current_account.twitter_handles, :id, :screen_name) %-->
+        </div>
+	  </li>				
+	  <!-- need to impliment the 8000 character limit for facebook comment-->
+	  <li class="inline-field field">
+	    <label class="caption">Comment:</label>
+	    <div class="fields">
+	    <%= f.text_area :body, { :class => 'required tweet auto-height', :id => "#{id}-#{cntid}-body", :rows => "6" } %>
+      <%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["facebook"]%>          
+	    </div>
+	  </li>
+      <li class="button-container">
+        <%= submit_tag(local_assigns[:submit] || ActiveSupport::Inflector.titleize(id), :class => "uiButton") %>
+      </li>
+    </ul> 
+  <% end %>
+</div> 
+
+<% content_for :onload_script do %>
+  <!--jQuery("#HelpdeskTweets").validate();	-->
+<% end %>

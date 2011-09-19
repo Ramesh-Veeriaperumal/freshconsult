@@ -12,12 +12,11 @@ class FBClient
 
     RAILS_DEFAULT_LOGGER.debug "app id::#{@tokens['app_id']} and secret: #{@tokens['secret_key']} and call_back_url: #{@callback_url}"
     @oauth = Koala::Facebook::OAuth.new(@tokens['app_id'], @tokens['secret_key'], @callback_url)
-    #@oauth = Koala::Facebook::OAuth.new('177912822282439','81297d69e2deaf8152a7b0b96508c161','http://localhost.local:3000/social/facebook/authdone')
     @fb_page = fb_page
   end
   
   def authorize_url
-    @oauth.url_for_oauth_code(:permissions => ["manage_pages","offline_access","read_stream","publish_stream"])
+    @oauth.url_for_oauth_code(:permissions => ["manage_pages","offline_access","read_stream","publish_stream","manage_notifications"])
   end
   
   def auth(code)
@@ -34,7 +33,7 @@ class FBClient
       page_info = @graph.get_object(page_id)
       page_info.symbolize_keys!
       fb_pages << {:profile_id => profile_id , :access_token =>oauth_access_token, :page_id=> page_id,:page_name => page_info[:name], 
-                   :page_token => page[:access_token],:page_img_url => page_info[:picture], :page_link => page_info[:link]}
+                   :page_token => page[:access_token],:page_img_url => page_info[:picture], :page_link => page_info[:link] , :fetch_since => Time.zone.now.to_i()}
     
     end
     fb_pages

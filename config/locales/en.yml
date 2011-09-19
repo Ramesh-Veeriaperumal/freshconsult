@@ -13,6 +13,7 @@ en:
   example: example
   pending: Pending
   twitter_source: Twitter
+  facebook_source: Facebook
   working: Working
   attachment: Attachment
   attachments: Attachments
@@ -225,6 +226,7 @@ en:
         multi-product: Multiple Products
         twitter-setting: Twitter Settings
         survey: Survey Settings
+        facebook-setting: Facebook Settings
       
     canned_responses:
       index:
@@ -1008,7 +1010,8 @@ en:
     tkt_err_save: Unable to convert the tweet to ticket or already converted
     usr_not_thr: User is not there.    
   facebook:
-    deleted: The facebook page @%{facebook_page} has been removed.
+    deleted: The facebook page %{facebook_page} has been removed.
+    not_authorized: You were not authorized by Facebook
   logo: Logo
   ok: Ok
   back: Back

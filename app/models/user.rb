@@ -53,10 +53,13 @@ class User < ActiveRecord::Base
   end
   
   def chk_email_validation?
-    (is_not_deleted?) and (twitter_id.blank? || !email.blank?)
+    puts "The profile is is :: #{fb_profile_id}"
+    (is_not_deleted?) and (twitter_id.blank? || !email.blank?) and (fb_profile_id.blank? || !email.blank?)
   end
   
-  attr_accessible :name, :email, :password, :password_confirmation , :second_email, :job_title, :phone, :mobile, :twitter_id, :description, :time_zone, :avatar_attributes,:user_role,:customer_id,:import_id,:deleted
+  attr_accessible :name, :email, :password, :password_confirmation , :second_email, :job_title, :phone, :mobile, 
+                  :twitter_id, :description, :time_zone, :avatar_attributes,:user_role,:customer_id,:import_id,
+                  :deleted , :fb_profile_id
 
   #Sphinx configuration starts
   define_index do
@@ -92,6 +95,7 @@ class User < ActiveRecord::Base
     self.user_role = params[:user][:user_role]
     self.time_zone = params[:user][:time_zone]
     self.import_id = params[:user][:import_id]
+    self.fb_profile_id = params[:user][:fb_profile_id]
     
     
     self.avatar_attributes=params[:user][:avatar_attributes] unless params[:user][:avatar_attributes].nil?
