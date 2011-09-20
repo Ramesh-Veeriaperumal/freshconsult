@@ -1,7 +1,7 @@
 class PopulateFacebookFeatureData < ActiveRecord::Migration
   def self.up
      Account.all.each do |account|
-      account.features.facebook.create
+      account.features.facebook.create if account.features.forums.available?
     end
   end
 
