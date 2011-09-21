@@ -25,7 +25,7 @@ class FBClient
     profile = @graph.get_object("me")     
     profile_id=profile["id"]
     pages = @graph.get_connections(profile_id, "accounts")
-    
+    pages = pages.collect{|p| p  unless p["category"].eql?("Application")}.compact
     fb_pages = Array.new
     pages.each do |page|
       page.symbolize_keys!
@@ -33,7 +33,7 @@ class FBClient
       page_info = @graph.get_object(page_id)
       page_info.symbolize_keys!
       fb_pages << {:profile_id => profile_id , :access_token =>oauth_access_token, :page_id=> page_id,:page_name => page_info[:name], 
-                   :page_token => page[:access_token],:page_img_url => page_info[:picture], :page_link => page_info[:link] , :fetch_since => Time.zone.now.to_i()}
+                   :page_token => page[:access_token],:page_img_url => page_info[:picture], :page_link => page_info[:link] , :fetch_since => Time.zone.now.to_i()} unless page[:access_token].blank?
     
     end
     fb_pages
