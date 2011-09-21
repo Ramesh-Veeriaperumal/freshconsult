@@ -25,7 +25,7 @@ class Wf::FilterController < ApplicationController
   
   before_filter { |c| c.requires_permission :manage_tickets }
   
-  before_filter :chk_usr_permission, :only => :delete_filter
+  before_filter :chk_usr_permission, :only => [:delete_filter,:update_filter]
 
  
   def chk_usr_permission 
