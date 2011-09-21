@@ -22,47 +22,26 @@
 #++
 
 class Wf::FilterController < ApplicationController
+  
+  before_filter { |c| c.requires_permission :manage_tickets }
+  
+  before_filter :chk_usr_permission, :only => :delete_filter
 
-  def index
-    @filters = Wf::Filter.new(Wf::Filter).deserialize_from_params(params).results
+ 
+  def chk_usr_permission 
+     @wf_filter = current_account.ticket_filters.find_by_id(params[:wf_id])
+     if @wf_filter.accessible.user_id != current_user.id and !current_user.admin? 
+      flash[:notice] =  t(:'flash.general.access_denied')
+      redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
+     end
   end
-
-  def update_condition
-    wf_filter = Wf::Filter.deserialize_from_params(params)
-    condition = wf_filter.condition_at(params[:at_index].to_i)
-    condition.container.reset_values
-    render(:partial => '/wf/filter/conditions', :layout=>false, :locals => {:wf_filter => wf_filter})
+  
+  def update_filter
+    @wf_filter.name = params[:filter_name]
+    @wf_filter.visibility = params[:visibility]
+    @wf_filter.save
   end
-
-  def remove_condition
-    wf_filter = Wf::Filter.deserialize_from_params(params)
-    wf_filter.remove_condition_at(params[:at_index].to_i)
-    render(:partial => '/wf/filter/conditions', :layout=>false, :locals => {:wf_filter => wf_filter})
-  end
-
-  def add_condition
-    wf_filter = Wf::Filter.deserialize_from_params(params)
-    index = params[:after_index].to_i
-    if index == -1
-      wf_filter.add_default_condition_at(wf_filter.size)
-    else
-      wf_filter.add_default_condition_at(params[:after_index].to_i + 1)
-    end
-    render(:partial => '/wf/filter/conditions', :layout=>false, :locals => {:wf_filter => wf_filter})
-  end
-
-  def remove_all_conditions
-    wf_filter = Wf::Filter.deserialize_from_params(params)
-    wf_filter.remove_all
-    render(:partial => '/wf/filter/conditions', :layout=>false, :locals => {:wf_filter => wf_filter})
-  end
-
-  def load_filter
-    wf_filter = Wf::Filter.deserialize_from_params(params)
-    wf_filter = wf_filter.load_filter!(params[:wf_key])
-    render(:partial => '/wf/filter/conditions', :layout=>false, :locals => {:wf_filter => wf_filter})
-  end
-
+  
   def save_filter
     params.delete(:wf_id)
     
@@ -78,30 +57,8 @@ class Wf::FilterController < ApplicationController
     render :nothing => true 
   end
 
-  def update_filter
-    wf_filter = Wf::Filter.find_by_id(params.delete(:wf_id))
-    wf_filter.deserialize_from_params(params)
-    wf_filter.validate!
-    
-    unless wf_filter.errors?
-      wf_filter.save
-    end
-    
-    wf_filter.key= wf_filter.id.to_s 
-    
-    render(:partial => '/wf/filter/conditions', :layout=>false, :locals => {:wf_filter => wf_filter})
-  end
-
   def delete_filter
-    wf_filter = Wf::Filter.find_by_id(params[:wf_id])
-    wf_filter.destroy if wf_filter
-
-    wf_filter = Wf::Filter.deserialize_from_params(params)
-    wf_filter.id=nil
-    wf_filter.key=nil
-    wf_filter.remove_all
-    
-    render(:partial => '/wf/filter/conditions', :layout=>false, :locals => {:wf_filter => wf_filter})
+    @wf_filter.destroy if @wf_filter
   end
 
 end
