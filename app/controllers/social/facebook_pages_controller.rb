@@ -27,11 +27,14 @@ class Social::FacebookPagesController < ApplicationController
   end
  
   def enable_pages
-    
+    usr_prof_id = params[:user][:profile_id]
     page_ids = params[:enable][:pages]
     page_ids = page_ids.reject(&:blank?)   
-    scoper.update_all({:enable_page => false})
+    scoper.update_all({:enable_page => false} , :profile_id =>usr_prof_id)
     scoper.update_all({:enable_page => true} , :page_id =>page_ids)
+    
+    fetch_fb_wall_posts page_ids
+    
     redirect_to :action => :index
   end
   
@@ -96,6 +99,15 @@ class Social::FacebookPagesController < ApplicationController
   
   def redirect_url
       edit_social_facebook_url(@item)
+  end
+  
+  def fetch_fb_wall_posts page_ids
+      page_ids.each do |page_id|
+        fb_page = scoper.find_by_page_id(page_id)
+        fb_posts = Social::FacebookPosts.new(fb_page)
+        fb_posts.fetch
+      end
+      
   end
   
   

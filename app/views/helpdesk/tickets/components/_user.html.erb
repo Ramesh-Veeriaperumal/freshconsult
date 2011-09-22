@@ -5,6 +5,7 @@
 	<div><%= link_to(h(user.name), user, :class => "user_name") %></div>
   <div class="wrap"><%= auto_link(h(user.email)) %></div>
         <div><%= h(user.twitter_id) %></div>
+		<div><%= "<a target=_blank href=http://facebook.com/#{h(user.fb_profile_id) }>http://facebook.com/people/#{h(user.fb_profile_id)}</a>" %></div>
 		<div><%= h(user.phone) %></div>
 		<div><%= h(user.mobile) %></div>
 		<div><%= h(user.job_title) %> <b><%= (user.customer ? "at #{user.customer.name}" : "")  %></b></div>

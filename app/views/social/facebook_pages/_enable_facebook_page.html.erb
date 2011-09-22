@@ -1,9 +1,13 @@
 
 <% form_for :facebook_page, :url => { :controller=>"social/facebook_pages", :action=>"enable_pages"}, :html => { :multipart => true , :method => :put } do |f| %>
 
+
 <ul class="ui-form">
 	
-	<%@fb_pages.size%>
+	<span> Here is the list of facebook pages you admin. We will fetch the visitor posts from the following pages and convert as tickets in Freshdesk . 
+If you don't want to enable the page please uncheck!!! </span>
+
+	<%= hidden_field(:user, :profile_id, :id => "profile_id", :value =>@fb_pages.first[:profile_id]  ) %>
 	
 	<%@fb_pages.each do |fb_page|%>
 	

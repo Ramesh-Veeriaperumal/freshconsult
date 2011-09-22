@@ -227,7 +227,10 @@
         <div class="user_details">
           <%= user_avatar(@ticket.requester.avatar)  %>
           <div>
-            <%= t('ticket.reported_by', :requester => link_to(h(@ticket.requester.display_name),@ticket.requester, :class => "user_name")) %>     
+            <%= t('ticket.reported_by', :requester => link_to(h(@ticket.requester.display_name),@ticket.requester, :class => "user_name")) %>
+			<%if @ticket.requester.fb_profile_id %>
+			<a href="http://facebook.com/<%=h(@ticket.requester.fb_profile_id)%>" target=_blank>fb</a>
+			<%end%>
           </div>
           <div> 
             <%= t('ticket.created_on', :time => formated_date(@ticket.created_at)) %>
