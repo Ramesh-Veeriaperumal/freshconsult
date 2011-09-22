@@ -46,7 +46,7 @@ module Search::TicketSearch
   
    def get_default_choices(criteria_key)
     if criteria_key == :status
-      return TicketConstants::STATUS_NAMES_BY_KEY
+      return TicketConstants::STATUS_NAMES_BY_KEY.sort
     end
     
     if criteria_key == :ticket_type
@@ -54,11 +54,11 @@ module Search::TicketSearch
     end
     
     if criteria_key == :source
-      return TicketConstants::SOURCE_NAMES_BY_KEY
+      return TicketConstants::SOURCE_NAMES_BY_KEY.sort
     end
     
     if criteria_key == :priority
-      return TicketConstants::PRIORITY_NAMES_BY_KEY
+      return TicketConstants::PRIORITY_NAMES_BY_KEY.sort
     end
     
     if criteria_key == :responder_id

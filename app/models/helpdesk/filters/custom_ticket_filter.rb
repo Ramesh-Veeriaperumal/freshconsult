@@ -71,6 +71,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   end
   
   def default_filter(params)
+     self.name = params[:filter_name].blank? ? "new_my_open" : params[:filter_name]
      DEFAULT_FILTERS.fetch(params[:filter_name],DEFAULT_FILTERS["new_my_open"])
   end
   

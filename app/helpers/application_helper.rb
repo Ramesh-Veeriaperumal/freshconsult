@@ -241,7 +241,7 @@ module ApplicationHelper
     end
     content_tag :li, element, :class => dom_type
   end
-
+   
   private
     def solutions_tab
       if current_portal.main_portal?
