@@ -198,7 +198,7 @@ class Helpdesk::TicketsController < ApplicationController
                     :users => "<%= link_to_remote('users', :url => block_user_path(:ids => req_list),  :method => :put ) %>"
                     ),:locals => { :req_list => req_list}) 
                              
-    flash[:notice] =  "#{msg1} #{msg2}" 
+    flash[:notice] =  "#{msg1} or #{msg2}" 
     respond_to do |format|
       format.html { redirect_to redirect_url  }
       format.js
