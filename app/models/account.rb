@@ -152,8 +152,6 @@ class Account < ActiveRecord::Base
               :joins => [:subscription]
              
   
-  acts_as_paranoid
-  
   Limits = {
     'agent_limit' => Proc.new {|a| a.agents.count }
   }

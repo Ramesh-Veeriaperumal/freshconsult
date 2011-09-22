@@ -178,18 +178,25 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def spam
+    req_list = []
     @items.each do |item|
       item.spam = true 
-      item.save
-      mark_requester_deleted(item,true)
+      req_list << item.requester.id
+      #item.save
     end
-
-    flash[:notice] = render_to_string(
+    
+    msg1 = render_to_string(
       :inline => t("helpdesk.flash.flagged_spam", 
                       :tickets => get_updated_ticket_count,
                       :undo => "<%= link_to(t('undo'), { :action => :unspam, :ids => params[:ids] }, { :method => :put }) %>"
                   ))
-      
+                  #block_user_path(:ids => req_list)
+    msg2 =  render_to_string(
+      :inline =>t("block_users",
+                    :users => "<%= link_to_remote('users', :url => block_user_path(:ids => req_list),  :method => :put ) %>"
+                    ),:locals => { :req_list => req_list}) 
+                             
+    flash[:notice] =  "#{msg1} or #{msg2}" 
     respond_to do |format|
       format.html { redirect_to redirect_url  }
       format.js
@@ -200,7 +207,7 @@ class Helpdesk::TicketsController < ApplicationController
     @items.each do |item|
       item.spam = false
       item.save
-      mark_requester_deleted(item,false)
+      #mark_requester_deleted(item,false)
     end
 
     flash[:notice] = render_to_string(
