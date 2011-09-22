@@ -41,23 +41,12 @@
     				}] 
 	 			});
 	  });	
-	  
-	  changeSortOrder = function(){		
-	  	if ('<%=current_sort_order%>' != 'DESC')
-				jQuery('#sort_order_id').val('DESC');
-			else
-		   	jQuery('#sort_order_id').val('ASC');	  
-		  
-			jQuery('#sort_form').submit();
-		}
 	});
   <% end %>
 <% end %>
 
 <% content_for :onload_script do %>
-  var ticketLeftPanel = jQuery('#leftcol').height();
-	if(ticketLeftPanel > jQuery('#rightCol').height())
-	  jQuery('#rightCol').css("minHeight", ticketLeftPanel);		
+  $J('#rightCol').css("minHeight", jQuery('#leftcol').height());		
 <% end %>
 <div class="containerFull greyImage clearfix">
   <div id="leftcol" class="ticket-leftcol">
@@ -66,12 +55,10 @@
       <%= render :partial => "filters" %>
     </div>
 		<div class="leftFilter">    
-    	<%= render :partial => "helpdesk/tickets/components/custom_filter" %>
+    	<%= render :partial => "helpdesk/shared/filter_options", :locals => { :current_filter => @ticket_filter } %>
 		</div>
   </div>
   <div id="rightCol" class="contentCol hasRightCol">
-    <div id="ticket-list">
-  	  <%= render :partial => "helpdesk/tickets/components/custom_results", :locals => {:items => @items} %> 
-  	</div>
+	  <%= render :partial => "helpdesk/shared/ticket_view", :locals => { :items => @items } %>
   </div>
 </div>

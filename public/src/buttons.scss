@@ -205,3 +205,36 @@ div.action_buttons:hover{
         0 -2px rgba(0, 0, 0, 0.05) inset;
 }
 
+.toolbar .button{
+   padding:5px 10px;
+   @include single-text-shadow(#ffffff);
+   @include single-box-shadow(#ffffff, 1px, 0, 1px);   
+}
+
+.toolbar_pagination{
+   float:right;
+   margin-left:6px;
+   .prev_page, .next_page{
+      @extend .button;
+      font-size:1px;
+      width:7px; height:11px;
+      float:left;
+      position:relative;
+      span{
+         left:2px; top:-1px;
+         position:absolute; width:22px; height:22px;  
+      }
+   }
+   .prev_page{ 
+      @include corners(6px, 0, 0, 6px); margin-right:0px; 
+      span{ background: sprite($symbol, arrow-left) no-repeat; }
+   }
+   .next_page{ 
+      @include corners(0, 6px, 6px, 0); margin-left:0px;  border-left:0; 
+      span{ background: sprite($symbol, arrow-right) no-repeat; }
+   }   
+   .disabled.prev_page, .disabled.next_page{ 
+      background:#efefef;
+      span{ @include opacity(0.3); }  
+   }
+}

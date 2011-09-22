@@ -130,7 +130,6 @@ active_dialog = null;
           return this.each(function(){
             var $this = $(this),
                 data = $this.data('dialog2');
-            // Namespacing FTW
             $(window).unbind('.dialog2');
             data.tooltip.remove();
             $this.removeData('dialog2');
@@ -151,7 +150,7 @@ active_dialog = null;
       $.error( 'Method ' +  method + ' does not exist on jQuery.dialog2' );
     }
   };
-  
+     
   // usage: $('p').autoLink()
   $.fn.autoLink = function() {
     this.contents()
@@ -165,33 +164,33 @@ active_dialog = null;
       }
     );
     return this;
-  }; 
-  
-  $.fn.limit = function( limit, element ) {
-     var interval, f;
-     var self = $(this);
+ }; 
 
-     $(this).focus(function(){ interval = window.setInterval(substring,100); });
+ $(document).bind('mousedown', function(e) {
+    if($(this).data("active-menu") && !$(e.target).data("menu-active")){
+       $($(this).data("active-menu-element")).hide().removeClass("active-nav-menu");
+       $($(this).data("active-menu-parent")).removeClass("selected");
+       $(this).data("active-menu", false);
+    }
+ });
 
-     $(this).blur(function(){
-        clearInterval(interval);
-        substring();
-     });
-
-     substringFunction = "function substring(){ var val = $(self).val();var length = val.length;if(length > limit){$(self).val($(self).val().substring(0,limit));}";
-     
-     if(typeof element != 'undefined')
-      substringFunction += "if($(element).html() != limit-length){$(element).html((limit-length<=0)?'0':limit-length);}"
-      
-      substringFunction += "}";
-
-     eval(substringFunction);
-
-     substring();
-     
-     return this;
-  } 
-  
+ $.fn.showAsMenu = function(id){
+    this.each(function(i, node){
+       $(node)
+         .bind({
+            "mouseup": function(ev){
+               elementid = id || node.getAttribute("menuid");
+               element = $(elementid).show(); 
+               $(document).data({ "active-menu": true, "active-menu-element": element, "active-menu-parent": this });
+               $(element).find("a").data("menu-active", true);
+               $(node).addClass("selected");
+            }, 
+            "click": function (ev){ 
+               ev.preventDefault(); 
+            }
+         });
+      });      
+   }
   // jQuery autoGrowInput plugin by James Padolsey
   // See related thread: http://stackoverflow.com/questions/931207/is-there-a-jquery-autogrow-plugin-for-text-fields
   $.fn.autoGrowInput = function(o) {
@@ -232,22 +231,20 @@ active_dialog = null;
                     currentWidth = input.width(),
                     isValidWidthChange = (newWidth < currentWidth && newWidth >= minWidth)
                                          || (newWidth > minWidth && newWidth < o.maxWidth);
-                
+
                 // Animate width
                 if (isValidWidthChange) {
                     input.width(newWidth);
                 }
-                
+
             };
-            
+
         testSubject.insertAfter(input);
-        
+
         $(this).bind('keyup keydown blur update', check);
-        
+
     });
-    
     return this;
-    
   };
 
 })( jQuery );

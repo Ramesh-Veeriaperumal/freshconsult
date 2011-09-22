@@ -1,7 +1,7 @@
 class Helpdesk::TicketsController < ApplicationController  
   
   include ActionView::Helpers::TextHelper
-
+  
   before_filter :check_user , :only => [:show]
   before_filter :load_ticket_filter , :only => [:index, :custom_view_save]
   before_filter { |c| c.requires_permission :manage_tickets }
@@ -19,12 +19,14 @@ class Helpdesk::TicketsController < ApplicationController
   uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
   
   def load_ticket_filter
-   if params[:filter_key].blank?
+   if params[:filter_key].blank?   
     @ticket_filter = current_account.ticket_filters.new(Helpdesk::Filters::CustomTicketFilter::MODEL_NAME)
+    @ticket_filter.query_hash = @ticket_filter.default_filter(params)
     @ticket_filter.accessible = current_account.user_accesses.new
     @ticket_filter.accessible.visibility = Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents]
   else
     @ticket_filter = current_account.ticket_filters.find(params[:filter_key])
+    @ticket_filter.query_hash = @ticket_filter.data[:data_hash]
     params.merge!(@ticket_filter.attributes["data"])
    end
   
@@ -52,23 +54,19 @@ class Helpdesk::TicketsController < ApplicationController
  
   def index
     @items = current_account.tickets.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter') 
-    
+    @filters_options = scoper_user_filters.map { |i| {:id => i[:id], :name => i[:name] } }
+    @current_options = @ticket_filter.query_hash.map{|i|{ i["condition"] => i["value"] }}.inject({}){|h, e|h.merge! e}
     @show_options = show_options
-    @show_options_json = ActiveSupport::JSON.encode @show_options
-    
-    respond_to do |format|
-      
+        
+    respond_to do |format|      
       format.html  do
-      end
-      
+      end      
       format.xml do
         render :xml => @items.to_xml
-      end
-      
+      end      
       format.json do
         render :json => Hash.from_xml(@items.to_xml)
-      end
-      
+      end      
       format.atom do
       end
     end
@@ -81,8 +79,8 @@ class Helpdesk::TicketsController < ApplicationController
   def custom_search
     @items = current_account.tickets.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
     respond_to do |format|
-      format.html  do
-        render :partial => "helpdesk/tickets/components/custom_results", :locals => {:items => @items}
+      format.html  do        
+        render :partial => "helpdesk/shared/tickets", :object => @items
       end
     end
   end
@@ -124,7 +122,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def assign
-    user = params[:responder_id] ? User.find(params[:responder_id]) : current_user #Need to use scoping..
+    user = params[:responder_id] ? User.find(params[:responder_id]) : current_user 
     assign_ticket user
     
     flash[:notice] = render_to_string(
@@ -327,6 +325,10 @@ class Helpdesk::TicketsController < ApplicationController
   
     def redirect_url
       { :action => 'index' }
+    end
+    
+    def scoper_user_filters
+      current_account.ticket_filters.my_ticket_filters(current_user)
     end
 
     def process_item

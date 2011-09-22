@@ -21,6 +21,7 @@ $use-mozilla-ellipsis-binding:true;
 @import "compass/utilities";
 @import "compass/css3";
 @import "compass/support"; 
+@import "compass/typography/text/ellipsis";
 
 // Import the non-default scaffolding module.
 @import "blueprint/liquid";

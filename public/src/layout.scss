@@ -204,7 +204,7 @@ ul.tabs{
 				z-index:5;
 				text-decoration:none;
 				color:#ffffff;
-				padding:8px 16px 7px 16px;
+				padding:9px 16px 8px 16px;
 				font-size:13px;
 				font-weight:bold;
 				text-align:center;
@@ -221,7 +221,7 @@ ul.tabs{
 	li.active a, li.active a:hover{
 		border-color:darken($tab_color, 10%);
 		background:$background;
-		padding-top:6px;
+		padding-top:7px;
 		top:2px;
 		@include shadows(rgba(0, 0, 0, 0.4), 0px, 0px, 1px);
 		color:#000000; 
