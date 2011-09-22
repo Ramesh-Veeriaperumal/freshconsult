@@ -1384,3 +1384,4 @@ en:
   due_today: Today
   due_tomo: Tomorrow
   due_next_eight: Next 8 hours
+  block_users: Add the %{users} to block list 
