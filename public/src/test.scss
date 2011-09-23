@@ -14,7 +14,7 @@
 .drop-right{
    padding:2px 18px 2px 6px;
    margin-left:-6px;
-   color: #666666;
+   color:#666666;
    @include corners(4px);
    text-decoration:none;
 }
@@ -75,7 +75,7 @@
          display:block;
          color:#444444;
          text-decoration:none;
-         padding:5px 18px 5px 8px;
+         padding:5px 8px;
          position:relative;
       } 
    }
@@ -83,10 +83,10 @@
    .leftFilter{
 		$bordercolor:#cfcfcf;
 		@include corners(3px);		
-	   @include linear-gradient(color-stops(#ffffff, #fefefe 98%, #efefef 100%), left); 
+	   @include linear-gradient(color-stops(#fbfbfb, #fafafa 98%, #efefef 100%), left); 
 		@include single-box-shadow(#ffffff, 0px, 1px, 1px);
-		margin:6px 6px 10px 6px;
-   	padding:0 5px 16px;
+		margin:6px;
+   	padding:0 5px 5px;
 		position:relative;
 		border:1px solid $bordercolor;  
 		border-bottom-color:darken($bordercolor, 5%);
@@ -123,6 +123,10 @@
    margin-left:231px;
 } 
 
+.page_info{
+   margin-right:6px;
+}
+
 .contentCol{
    border-left:1px solid #cfcfcf;
    background-color:#ffffff;
@@ -134,10 +138,11 @@
 	border-bottom:1px solid #dfdfdf;
 	border-top:1px solid #ffffff;
 }
+
 .sort-bar{
 	font-size:11px;
 	color:#777777;
-	padding: 5px 15px 5px 40px;
+	padding: 5px 10px 5px 40px;
 	b{ color:#666666; }
 }
 
@@ -167,7 +172,7 @@
          width:16px;
          height:16px;
       }
-      .selected{ background: sprite($symbol, selected) no-repeat; }      
+      .ticksymbol{ background: sprite($symbol, selected) no-repeat; }      
    }
    a:hover{
       @include linear-gradient(color-stops(#5469f9, #2433f6), top);

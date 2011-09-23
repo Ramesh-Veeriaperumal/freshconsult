@@ -15,16 +15,6 @@ module Helpdesk::TicketsHelper
   def filter_count(selector=nil)
     TicketsFilter.filter(filter(selector), current_user, current_account.tickets).count
   end
-  
-  def sort_by_text(sort_key, order)
-    help_text = [
-      [ :due_by     ,   'Showing Latest Due by time'  ],
-      [ :created_at ,   'Showing Tickets Date Created' ],
-      [ :updated_at ,   'Showing Tickets Last Modified'],
-      [ :priority   ,   'Priority',    ],
-      [ :status,        'Status',      ],
-    ]
-  end
 
   def current_filter
     cookies[:filters] = (params[:filters] ? params[:filters][0] : ( (!cookies[:filters].blank?) ? cookies[:filters] : DEFAULT_FILTER )).to_sym
@@ -36,6 +26,14 @@ module Helpdesk::TicketsHelper
  
   def current_sort_order 
   	cookies[:sort_order] = (params[:sort_order] ? params[:sort_order] : ( (!cookies[:sort_order].blank?) ? cookies[:sort_order] : DEFAULT_SORT_ORDER )).to_sym
+  end
+  
+  def current_wf_order 
+  	cookies[:wf_order] = (params[:wf_order] ? params[:wf_order] : ( (!cookies[:wf_order].blank?) ? cookies[:wf_order] : DEFAULT_SORT )).to_sym
+  end
+
+  def current_wf_order_type 
+  	cookies[:wf_order_type] = (params[:wf_order_type] ? params[:wf_order_type] : ( (!cookies[:wf_order_type].blank?) ? cookies[:wf_order_type] : DEFAULT_SORT_ORDER )).to_sym
   end
   
   def cookie_sort 

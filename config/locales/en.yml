@@ -1335,6 +1335,8 @@ en:
       last_modified: Last Modified
       priority: Priority
       status: Status
+      asc: Ascending
+      desc: Descending
   click_to_change_sort_order: Click to change sort order
   user_sessions:
       new:

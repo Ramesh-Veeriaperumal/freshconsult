@@ -78,11 +78,7 @@ class Helpdesk::TicketsController < ApplicationController
   
   def custom_search
     @items = current_account.tickets.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
-    respond_to do |format|
-      format.html  do        
-        render :partial => "helpdesk/shared/tickets", :object => @items
-      end
-    end
+    render :partial => "custom_search", :object => @items
   end
 
 

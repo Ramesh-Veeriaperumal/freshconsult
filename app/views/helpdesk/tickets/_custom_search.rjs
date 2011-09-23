@@ -1,0 +1,2 @@
+page.replace_html 'ticket-list', :partial => '/helpdesk/shared/tickets'
+page.replace_html 'ticket-sub-toolbar', :partial => '/helpdesk/shared/ticket_sort'

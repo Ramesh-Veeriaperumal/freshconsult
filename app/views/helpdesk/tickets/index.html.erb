@@ -5,15 +5,15 @@
   <%= javascript_include_tag "helpdesk/id_selector" %>
   <% javascript_tag do %>
     document.observe("dom:loaded", function(){      
-	  Helpdesk.sel = new Helpdesk.MultiSelector({
-	      form: 'expanded',
-	      cookieName: 'helpdesk-tickets-page'
-	  });		  
+	    Helpdesk.sel = new Helpdesk.MultiSelector({
+	        form: 'expanded',
+	        cookieName: 'helpdesk-tickets-page'
+	      });		  
    	
-		new Helpdesk.PageSwitcher({
-       toggleMode: true,
-       pages: ['assign-options']
-    });
+      new Helpdesk.PageSwitcher({
+          toggleMode: true,
+          pages: ['assign-options']
+      });
 
     Helpdesk.monitorTakeItButtons();
 	  	
@@ -46,7 +46,7 @@
 <% end %>
 
 <% content_for :onload_script do %>
-  $J('#rightCol').css("minHeight", jQuery('#leftcol').height());		
+  $J('#rightCol').css("minHeight", jQuery('#leftcol').height());
 <% end %>
 <div class="containerFull greyImage clearfix">
   <div id="leftcol" class="ticket-leftcol">

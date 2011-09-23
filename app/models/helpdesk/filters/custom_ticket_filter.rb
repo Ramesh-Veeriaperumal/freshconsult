@@ -90,7 +90,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   end
  
   
-  def deserialize_from_params(params) 
+  def deserialize_from_params(params)  
     @conditions = []
     @match                = :and
     @key                  = params[:wf_key]         || self.id.to_s

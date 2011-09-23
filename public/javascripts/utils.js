@@ -17,6 +17,20 @@ function imgerror(source){
     return true;
 }
 
+// Getting Paramater Value
+function getParameterByName(name, url)
+{
+  url = url || window.location.href;
+  name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+  var regexS = "[\\?&]" + name + "=([^&#]*)";
+  var regex = new RegExp(regexS);
+  var results = regex.exec(url);
+  if(results == null)
+    return "";
+  else
+    return decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+
 //Bitly url shortner
 function get_short_url(long_url, callback)
 {
@@ -100,7 +114,6 @@ active_dialog = null;
 
 // JQuery plugin that customizes the dialog widget to load an ajax infomation
 (function( $ ){
-
    var methods = {
         init : function( options ) {
           return this.each(function(){
@@ -165,32 +178,36 @@ active_dialog = null;
     );
     return this;
  }; 
+ 
 
  $(document).bind('mousedown', function(e) {
-    if($(this).data("active-menu") && !$(e.target).data("menu-active")){
-       $($(this).data("active-menu-element")).hide().removeClass("active-nav-menu");
-       $($(this).data("active-menu-parent")).removeClass("selected");
-       $(this).data("active-menu", false);
-    }
+    if($(this).data("active-menu")){
+      if(!$(e.target).data("menu-active")) hideActiveMenu();
+      else setTimeout(hideActiveMenu, 100);         
+    } 
  });
+ 
+ function hideActiveMenu(){
+    $($(document).data("active-menu-element")).hide().removeClass("active-nav-menu");
+    $($(document).data("active-menu-parent")).removeClass("selected");
+    $(document).data("active-menu", false);
+ }
 
  $.fn.showAsMenu = function(id){
     this.each(function(i, node){
-       $(node)
-         .bind({
-            "mouseup": function(ev){
-               elementid = id || node.getAttribute("menuid");
-               element = $(elementid).show(); 
-               $(document).data({ "active-menu": true, "active-menu-element": element, "active-menu-parent": this });
-               $(element).find("a").data("menu-active", true);
-               $(node).addClass("selected");
-            }, 
-            "click": function (ev){ 
-               ev.preventDefault(); 
-            }
-         });
-      });      
-   }
+       if($(node).data("showAsMenu")) return; 
+       
+       $(node).bind("click", function(ev){
+           ev.preventDefault(); 
+           elementid = id || node.getAttribute("menuid");
+           element = $(elementid).show(); 
+           $(document).data({ "active-menu": true, "active-menu-element": element, "active-menu-parent": this });
+           $(element).find("a").data("menu-active", true);
+           $(node).addClass("selected");
+        });
+        $(node).data("showAsMenu", true);
+     });
+   };
   // jQuery autoGrowInput plugin by James Padolsey
   // See related thread: http://stackoverflow.com/questions/931207/is-there-a-jquery-autogrow-plugin-for-text-fields
   $.fn.autoGrowInput = function(o) {
