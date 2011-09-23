@@ -4,9 +4,10 @@
 
 <ul class="ui-form">
 	
-	<span> Here is the list of facebook pages you admin. We will fetch the visitor posts from the following pages and convert as tickets in Freshdesk . 
-If you don't want to enable the page please uncheck!!! </span>
-
+	<b>Your Facebook Pages </b>
+	<p>
+	<span> Wall Posts from your visitors will be automatically converted as Freshdesk tickets.   </span>
+    </p>
 	<%= hidden_field(:user, :profile_id, :id => "profile_id", :value =>@fb_pages.first[:profile_id]  ) %>
 	
 	<%@fb_pages.each do |fb_page|%>
