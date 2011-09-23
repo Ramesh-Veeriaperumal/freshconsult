@@ -40,7 +40,7 @@ class Wf::Filter < ActiveRecord::Base
   has_many :agent_groups , :through =>:accessible , :foreign_key => "group_id" , :source => :group
   
   def validation_arr
-    [:name,:account_id,:model_class_name,:user_id]
+    [:name,:account_id,:model_class_name]
   end
   
  

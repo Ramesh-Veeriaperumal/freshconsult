@@ -26,11 +26,14 @@ class Wf::FilterController < ApplicationController
   before_filter { |c| c.requires_permission :manage_tickets }
   
   before_filter :chk_usr_permission, :only => [:delete_filter,:update_filter]
-
+  
+  def index
+    @edit_filters = scoper.edit_ticket_filters(current_user)
+  end
  
   def chk_usr_permission 
-     @wf_filter = current_account.ticket_filters.find_by_id(params[:wf_id])
-     if @wf_filter.accessible.user_id != current_user.id and !current_user.admin? 
+     @wf_filter = current_account.ticket_filters.find_by_id(params[:id])
+     if @wf_filter and @wf_filter.accessible.user_id != current_user.id and !current_user.admin? 
       flash[:notice] =  t(:'flash.general.access_denied')
       redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
      end
@@ -58,7 +61,17 @@ class Wf::FilterController < ApplicationController
   end
 
   def delete_filter
-    @wf_filter.destroy if @wf_filter
+     if @wf_filter
+       @wf_filter.destroy
+       flash[:notice] = "Filter is successfully deleted !"
+     end
+    redirect_to '/my/views'
+  end
+  
+  protected
+  
+  def scoper
+    current_account.ticket_filters
   end
 
 end
