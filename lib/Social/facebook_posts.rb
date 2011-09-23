@@ -16,23 +16,15 @@ class Social::FacebookPosts
    end
           
    feeds = @rest.fql_query(query)
-            ### We need to handle time - zone problem.
    until_time = feeds.collect {|f| f["updated_time"]}.compact.max unless feeds.blank?        
    create_ticket_from_feeds feeds               
    @fb_page.update_attribute(:fetch_since, until_time) unless until_time.blank?
  end
  
   def create_ticket_from_feeds feeds
-    
       feeds.each do |feed|
-         
-         feed.symbolize_keys!
-         @account = @fb_page.account
-         puts "create_ticket_from_feeds: created_time  is #{feed[:created_time]}"
-         #post_created_time = feed["created_time"]
-         
+        feed.symbolize_keys!
          if feed[:created_time] >  @fb_page.fetch_since  
-            puts "create_ticket_from_feeds :: gonna cal add_wall_post"
             add_wall_post_as_ticket feed 
          else
             add_comment_as_note feed
@@ -53,6 +45,7 @@ class Social::FacebookPosts
       :email_config_id => @fb_page.product_id,
       :group_id => group_id,
       :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:facebook],
+      :created_at => Time.at(feed[:created_time]).to_s(:db),
       :fb_post_attributes => {:post_id => feed[:post_id], :facebook_page_id =>@fb_page.id ,:account_id => @account.id} )
       
       if @ticket.save
@@ -83,20 +76,11 @@ class Social::FacebookPosts
   end
   
   def add_comment_as_note feed
-    puts "add_comment_as_note :: post_id :#{feed[:post_id]}"
-    ## we need to 
+  
     post_id = feed[:post_id]
     post = @account.facebook_posts.find_by_post_id(post_id)
-    comment_count =feed[:comments]["count"]
-    
-    comments = nil
-    if comment_count >2
-      comments = @rest.get_connections(post_id, "comments" , {:since =>@fb_page.fetch_since})
-     
-    else
-      comments = feed[:comments]["comment_list"].collect {|c| c  if c["time"].to_i > @fb_page.fetch_since}
-    end
    
+    comments = @rest.get_connections(post_id, "comments" , {:since =>@fb_page.fetch_since})  
     comments = comments.reject(&:blank?)
    
     unless post.blank?  
@@ -108,21 +92,22 @@ class Social::FacebookPosts
     unless @ticket.blank?    
       comments.each do |comment|
         comment.symbolize_keys!
-        
-        profile_id = comment[:fromid] || comment[:from]["id"]
+        profile_id = comment[:from]["id"]
         user = get_facebook_user(profile_id)
+        created_at  =  Time.parse(comment[:created_time])
         
         @note = @ticket.notes.build(
-                        :body => comment[:text] || comment[:message],
+                        :body => comment[:message],
                         :private => true ,
                         :incoming => true,
                         :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["facebook"],
                         :account_id => @fb_page.account_id,
                         :user => user,
+                        :created_at => created_at.to_s(:db),
                         :fb_post_attributes => {:post_id => comment[:id], :facebook_page_id =>@fb_page.id ,:account_id => @account.id}
                                   )
       if @note.save
-        puts "This note has been added"
+        
       else
         puts "error while saving the note #{@note.errors.to_json}"
       end
