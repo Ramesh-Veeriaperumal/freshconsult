@@ -20,6 +20,17 @@ sub_bcc_email:
     development: "kiran@freshdesk.com"
     production:  "team@freshdesk.com"
     staging:     "support@freshpo.com"
+    
+crm:
+    development: 
+       api_key: "08a70b1b65d5775a1138db79ed84313b"
+       domain:  "freshdesk-dev"
+    production: 
+       api_key: "08a70b1b65d5775a1138db79ed84313b"
+       domain:  "freshdesk"
+    staging:  
+       api_key: "08a70b1b65d5775a1138db79ed84313b"
+       domain:  "freshdesk-dev"
 
 # Set this to true if you want to require CC info when creating a trial account for a paid plan
 require_payment_info_for_trials: false
