@@ -1287,21 +1287,34 @@ table.summary-report{
 
 .nav_search{
 	@include min-width(260px);
-	height:27px;
+	height:31px;
 	position:relative;
-	margin:0 14px 0 6px;
+	margin:0 11px 0 6px;
 	div.search_bar{ 
-		height:24px; 
+		height:25px; 
 		@include corners(12px);
-		background:url("../images/search_icon.gif") 4px 3px no-repeat #ffffff;  
-		padding:0 8px 0 25px;
+		@include opacity(0.8);
+		background:#ffffff;
+		padding:0 25px 0 5px;
+		.searchIcon{
+		   position:absolute;
+		   right:0px;
+		   width:15px;
+		   height:15px;
+		   top:8px;
+		   right:5px;
+		   background: sprite($symbol, search);
+		   @include opacity(0.6);
+		}
 		label.overlabel, input{
 			top:4px;
+			left:2px;
 		}
 		label.overlabel{
 		 	padding:0;
-		 	margin:1px 3px;
-		 	font-size:14px;
+		 	margin:4px 6px;
+		 	font-size:13px;
+		 	color:#777777;
 		} 
 		input{		
 			border:0;
@@ -1311,8 +1324,14 @@ table.summary-report{
 			padding:0;
 			background:none;		
 		}
-		input:focus{ @include shadows(0, 0, 0, 0); }		
+		input:focus{ @include shadows(#ffffff, 0, 0, 0); }		
 	}
+	div.search_bar.active{
+	   @include opacity(1);
+	   .searchIcon{
+	      @include opacity(1);
+	   }
+   }
 }
 
 .nav_right{
@@ -1328,13 +1347,15 @@ a.new_ticket, .nav_search{
 }
 
 a.new_ticket, .nav_search div.search_bar{
-	border:2px solid darken($tab_color, 8%);
-	@include corners(18px);
+	border:1px solid darken($tab_color, 8%);
+	@include single-box-shadow(rgba(255, 255, 255, 0.4), 1px, 1px, 1px);
+	margin-top:2px;
+	@include corners(4px);
 } 
  
 a.new_ticket{
  	@include vertical-gradient(#fefefe, #dfdfdf);	
-	padding:5px 13px 4px 28px;
+	padding:5px 8px 5px 28px;
 	color:#333333; 
 	font-size:12px; 
 	text-decoration:none; font-weight:bold;

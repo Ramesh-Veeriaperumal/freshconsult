@@ -39,6 +39,10 @@ class Wf::Filter < ActiveRecord::Base
   
   has_many :agent_groups , :through =>:accessible , :foreign_key => "group_id" , :source => :group
   
+  def validation_arr
+    [:name,:account_id,:model_class_name]
+  end
+  
  
   
   #############################################################################
@@ -535,6 +539,10 @@ class Wf::Filter < ActiveRecord::Base
       condition = condition_at(index)
       err = condition.validate
       @errors[index] = err if err
+    end
+    
+    validation_arr.each do |attr|
+     @errors[attr] = "is blank" if self.send(attr.to_s).blank?
     end
     
     unless required_conditions_met?

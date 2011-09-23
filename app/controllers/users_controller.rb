@@ -2,6 +2,7 @@ class UsersController < ApplicationController
   
   
   include ModelControllerMethods #Need to remove this, all we need is only show.. by Shan. to do must!
+  include HelpdeskControllerMethods
 
   before_filter :set_selected_tab
   skip_before_filter :load_object , :only => [ :show, :edit]
@@ -9,6 +10,9 @@ class UsersController < ApplicationController
   before_filter :only => :change_account_admin do |c| 
     c.requires_permission :manage_account
   end
+  
+  before_filter { |c| c.requires_permission :manage_tickets }
+  before_filter :load_multiple_items, :only => :block
   
   def create    
     @user = current_account.users.new #by Shan need to check later       
@@ -18,6 +22,13 @@ class UsersController < ApplicationController
       redirect_to users_url
     else
       render :action => :new
+    end
+  end
+  
+  def block
+    @items.each do |item|
+      item.deleted = true 
+      item.save if item.customer?
     end
   end
   

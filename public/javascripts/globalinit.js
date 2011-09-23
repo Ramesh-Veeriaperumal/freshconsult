@@ -80,6 +80,7 @@ var $J = jQuery.noConflict();
 			 }
 		});
 		
+		$(".nav-trigger").showAsMenu();
 		menu_box_count = 0;
 		fd_active_drop_box = null;
 		
@@ -120,9 +121,7 @@ var $J = jQuery.noConflict();
 
       flash = $("div.flash_info");
       if(flash.get(0)){
-         try {
-            closeableFlash(flash);            
-         } catch(e){}
+         try{ closeableFlash(flash); } catch(e){}
       }
    });
 
