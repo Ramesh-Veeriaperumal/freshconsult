@@ -29,11 +29,15 @@ module Helpdesk::TicketsHelper
   end
   
   def current_wf_order 
-  	cookies[:wf_order] = (params[:wf_order] ? params[:wf_order] : ( (!cookies[:wf_order].blank?) ? cookies[:wf_order] : DEFAULT_SORT )).to_sym
+  	cookies[:tic_wf_order] = (params[:tic_wf_order] ? params[:tic_wf_order] : ( (!cookies[:tic_wf_order].blank?) ? cookies[:tic_wf_order] : DEFAULT_SORT )).to_sym
   end
 
   def current_wf_order_type 
-  	cookies[:wf_order_type] = (params[:wf_order_type] ? params[:wf_order_type] : ( (!cookies[:wf_order_type].blank?) ? cookies[:wf_order_type] : DEFAULT_SORT_ORDER )).to_sym
+  	cookies[:tic_wf_order_type] = (params[:tic_wf_order_type] ? params[:tic_wf_order_type] : ( (!cookies[:tic_wf_order_type].blank?) ? cookies[:tic_wf_order_type] : DEFAULT_SORT_ORDER )).to_sym
+  end
+  
+  def current_custom_view
+    @ticket_filter.name
   end
   
   def cookie_sort 

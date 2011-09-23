@@ -302,11 +302,7 @@ class Helpdesk::TicketsController < ApplicationController
     ca_resp = current_account.canned_responses.find(params[:ca_resp_id])
     a_template = Liquid::Template.parse(ca_resp.content_html).render('ticket' => @item, 'helpdesk_name' => @item.account.portal_name)    
     render :text => a_template || ""
-  end
-  
-  def print
-    
-  end
+  end 
     
   protected
 
