@@ -198,3 +198,11 @@
    }
 }
 
+.setting_bottom{
+   position:absolute;
+   right:7px;
+   bottom:10px;
+   width:16px;
+   height:16px;
+   background:sprite($symbol, setting) no-repeat;
+}

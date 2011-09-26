@@ -1,7 +1,8 @@
-<%if @edit_filters.blank?%>
-No views available !
-<%end%>
-<%@edit_filters.each do |filter|%>
-  <%=filter.name%> <%=link_to t('delete'), {:controller => "wf/filter", :action => "delete_filter", :id => filter},{:method => :delete} %>
-  <br>
-<%end%>
+<% content_for :sidebar do %><% end %>
+<span class="floatr">
+	<%= link_to t(".back"), helpdesk_tickets_path, :class => "slim-button" %>
+</span>
+<h3 class="title"><%= t(".title") %></h3>
+<ul class="admin_list">
+	<%= each_or_message("view", @edit_filters, t(".no_custom_view")) %>
+</ul>
