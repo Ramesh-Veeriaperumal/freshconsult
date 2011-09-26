@@ -1386,4 +1386,5 @@ en:
   due_today: Today
   due_tomo: Tomorrow
   due_next_eight: Next 8 hours
-  block_users: Add the %{users} to block list 
+  block_users: Do you want to block the contact(s) as well?
+  user_block: "Yes"

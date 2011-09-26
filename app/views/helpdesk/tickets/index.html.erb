@@ -4,54 +4,48 @@
   <%= javascript_include_tag "helpdesk/take_it_button" %>
   <%= javascript_include_tag "helpdesk/id_selector" %>
   <% javascript_tag do %>
-    document.observe("dom:loaded", function(){      
-	    Helpdesk.sel = new Helpdesk.MultiSelector({
-	        form: 'expanded',
-	        cookieName: 'helpdesk-tickets-page'
-	      });		  
-   	
-      new Helpdesk.PageSwitcher({
-          toggleMode: true,
-          pages: ['assign-options']
-      });
+		function helpdesk_submit(url, method, params){ 
+			var form = $("tickets-expanded");
+      if(method) form.down('input[name=_method]').value = method;
 
-    Helpdesk.monitorTakeItButtons();
-	  	
-    Helpdesk.submitOnChange('sort');
-	  
-	  Helpdesk.sel.toggleCheckAll = function(source){
-	  	if(source.checked)
-				Helpdesk.sel.checkAll();
-			else
-				Helpdesk.sel.uncheckAll();
-	  };
-		 	
-	  
-	  jQuery("#agent-assign-link").click(function(){
-	  	jQuery("#assign-options")
-	 		.dialog({ modal : true, 
-	 			  show : 'puff', 
-	 			  title:  '<%= t('ticket.assign_to_agent') %>',
-	 			  closeOnEscape: true,
-	 			  buttons: [{
-        				text: "Assign",
-        				click: function() { 
-        					 Helpdesk.sel.submit("<%= assign_helpdesk_ticket_path('multiple') %>", "put", ['responder_id']);
-        				}
-    				}] 
-	 			});
-	  });	
-	});
+			(params || []).each(function(p){
+			    var source = $(p);
+			    var field = new Element('input', {
+			        type: 'hidden',
+			        value: source.value
+			    });
+			    field.name = source.name;
+			    form.appendChild(field);
+			});
+			form.action = url;
+			form.submit();
+	}
   <% end %>
 <% end %>
 
 <% content_for :onload_script do %>
-  $J('#rightCol').css("minHeight", jQuery('#leftcol').height());
+  $J('#rightCol').css("minHeight", $J('#leftcol').height());
+	$J("#agent-assign-link").click(function(){
+  	$J("#assign-options")
+ 			.dialog({ modal : true, 
+ 			  			  show : 'puff', 
+ 			  				title:  '<%= t('ticket.assign_to_agent') %>',
+ 			  				closeOnEscape: true,
+ 			  				buttons: [{
+      						text: "Assign",
+      						click: function() { 
+      					 		helpdesk_submit("<%= assign_helpdesk_ticket_path('multiple') %>", "put", ['responder_id']);
+      						}
+  							}] 
+ 						 });
+  				});
+	$J("#helpdesk-select-all").live("click", function(ev){
+		$J("#tickets-expanded input[type=checkbox]").attr("checked", $J(this).attr("checked"));
+	});	
 <% end %>
 <div class="containerFull greyImage clearfix">
   <div id="leftcol" class="ticket-leftcol">
-    <div class="leftFilter">   
-	    <h3 class="title">Views</h3> 
+    <div class="leftFilter">
       <%= render :partial => "filters" %>
     </div>
 		<div class="leftFilter">    
