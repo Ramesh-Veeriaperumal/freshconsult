@@ -23,7 +23,7 @@ class Helpdesk::TicketsController < ApplicationController
    if !is_num?(filter_name)
     params[:filter_name] = filter_name
     @ticket_filter = current_account.ticket_filters.new(Helpdesk::Filters::CustomTicketFilter::MODEL_NAME)
-    @ticket_filter.query_hash = @ticket_filter.default_filter(params)
+    @ticket_filter.query_hash = @ticket_filter.default_filter(params[:filter_name])
     @ticket_filter.accessible = current_account.user_accesses.new
     @ticket_filter.accessible.visibility = Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents]
   else
@@ -56,7 +56,7 @@ class Helpdesk::TicketsController < ApplicationController
  
   def index
     @items = current_account.tickets.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter') 
-    @filters_options = scoper_user_filters.map { |i| {:id => i[:id], :name => i[:name] } }
+    @filters_options = scoper_user_filters.map { |i| {:id => i[:id], :name => i[:name], :default => false} }
     @current_options = @ticket_filter.query_hash.map{|i|{ i["condition"] => i["value"] }}.inject({}){|h, e|h.merge! e}
     @show_options = show_options
         
@@ -80,11 +80,7 @@ class Helpdesk::TicketsController < ApplicationController
   
   def custom_search
     @items = current_account.tickets.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
-    respond_to do |format|
-      format.html  do        
-        render :partial => "helpdesk/shared/tickets", :object => @items
-      end
-    end
+    render :partial => "custom_search", :object => @items
   end
 
 
@@ -308,14 +304,10 @@ class Helpdesk::TicketsController < ApplicationController
     ca_resp = current_account.canned_responses.find(params[:ca_resp_id])
     a_template = Liquid::Template.parse(ca_resp.content_html).render('ticket' => @item, 'helpdesk_name' => @item.account.portal_name)    
     render :text => a_template || ""
-  end
-  
-  def print
-    
-  end
+  end 
     
   protected
-
+  
     def item_url
       return new_helpdesk_ticket_path if params[:save_and_create]
       @item
@@ -340,7 +332,7 @@ class Helpdesk::TicketsController < ApplicationController
 #                              'activities.tickets.new_ticket.short')
 #      #end
     end
-
+    
     def assign_ticket user
       @items.each do |item|
         old_item = item.clone

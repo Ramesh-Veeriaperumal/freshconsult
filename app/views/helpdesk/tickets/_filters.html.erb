@@ -8,24 +8,6 @@
 		});
 <% end %>
 <div class="view_filters">
-  <% current_value = @ticket_filter.id || @ticket_filter.name %>
-  <% select_tag :custom_views,  @filters_options, { :class => "customSelect" } %> 
-  <%= link_to "New and My Open Tickets", "/helpdesk/tickets/filter/new_my_open", :class => "link-item" %>
-  <%= link_to "Tickets I'm Monitoring", "/helpdesk/tickets/filter/monitored_by", :class => "link-item" %>
-  <%= link_to "Last selected" , helpdesk_tickets_url({:filter_key => current_value }), :class => "link-item" %>
-  <div class="link-item">
-    <%= link_to "#{@filters_options.size - 1} more", "", {:class => "drop-right nav-trigger", :id => "viewlistdrop", :menuid => "#ViewList"} %>
-  </div>
-    <div class="fd-menu" id="ViewList" style="display:none; width:250px;">
-      <ul>
-        <% @filters_options.each_with_index do |filter, index| %>
-            <li><%= link_to filter[:name], helpdesk_tickets_url({:filter_key => filter[:id] }) %></li>
-        <% end %>
-      </ul>
-      <span class="seperator"></span>
-      <ul>
-        <li><a href="/helpdesk/tickets/filter/spam">Spam</a></li>
-        <li><a href="/helpdesk/tickets/filter/deleted">Trash</a></li>
-      </ul>
-    </div>
+  <% current_view = @ticket_filter.id || @ticket_filter.name %>  
+  <%= top_views(current_view, @filters_options) %>
 </div>

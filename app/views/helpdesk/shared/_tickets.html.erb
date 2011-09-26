@@ -1,25 +1,29 @@
 <table class="tickets">	
   <tbody>
-    <%= render :partial => "/helpdesk/shared/expanded/ticket", :collection => tickets %>
+    <%= render :partial => "/helpdesk/shared/expanded/ticket", :collection => @items %>
   </tbody>
 </table> 
-<%= will_paginate @items %>
+<div class="toolbar clearfix">
+  <%= will_paginate @items, :class => "toolbar_pagination_full" %>  
+</div>
+
 <% javascript_tag do %>
-jQuery(".ticket-description-tip").qtip({
-	 position: { 
-	      my: 'bottom left',
-	      at: 'top  left',
-	      viewport: jQuery(window) 
-	 }, 
-	 style : {
-	 	classes: 'ui-tooltip-ticket ui-tooltip-rounded ui-tooltip-shadow'
-	 },
-	 show: {
-	    solo: true,
-	    delay: 200,
-	    effect: function(offset) {
-	        jQuery(this).show("fade", 240); // "this" refers to the tooltip
-	    }
-	 }
-});  
+  jQuery(".ticket-description-tip").qtip({
+  	 position: { 
+  	      my: 'bottom left',
+  	      at: 'top  left',
+  	      viewport: jQuery(window) 
+  	 }, 
+  	 style : {
+  	 	classes: 'ui-tooltip-ticket ui-tooltip-rounded ui-tooltip-shadow'
+  	 },
+  	 show: {
+  	    solo: true,
+  	    delay: 200,
+  	    effect: function(offset) {
+  	        jQuery(this).show("fade", 240); // "this" refers to the tooltip
+  	    }
+  	 }
+  });  
+  jQuery(".nav-trigger").showAsMenu();
 <% end %>

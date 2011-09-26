@@ -4,19 +4,16 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   
   attr_accessor :query_hash 
   
-  
-  
   MODEL_NAME = "Helpdesk::Ticket"
   
-   def self.deleted_condition(input)
-      { "condition" => "deleted", "operator" => "is", "value" => input}
-    end
+  def self.deleted_condition(input)
+    { "condition" => "deleted", "operator" => "is", "value" => input}
+  end
   
-    def self.spam_condition(input)
-      { "condition" => "spam", "operator" => "is", "value" => input}
-   end
-  
-  
+  def self.spam_condition(input)
+    { "condition" => "spam", "operator" => "is", "value" => input}
+  end
+
   DEFAULT_FILTERS ={ 
                       "spam" => [spam_condition(true),deleted_condition(false)],
                       "deleted" =>  [spam_condition(false),deleted_condition(true)],
@@ -27,6 +24,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
                       "new" => [{ "condition" => "responder_id", "operator" => "is_in", "value" => ""},spam_condition(false),deleted_condition(false)],
                       "monitored_by" => [{ "condition" => "helpdesk_subscriptions.user_id", "operator" => "is_in", "value" => "0"}],
                       "new_my_open" => [{ "condition" => "status", "operator" => "is_in", "value" => TicketConstants::STATUS_KEYS_BY_TOKEN[:open]},{ "condition" => "responder_id", "operator" => "is_in", "value" => "-1,0"},spam_condition(false),deleted_condition(false)],
+                      "all_tickets" => [spam_condition(false),deleted_condition(false)]
                    }
                    
                    
@@ -79,9 +77,9 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     'created_at'
   end
   
-  def default_filter(params)
-     self.name = params[:filter_name].blank? ? "new_my_open" : params[:filter_name]
-     DEFAULT_FILTERS.fetch(params[:filter_name],DEFAULT_FILTERS["new_my_open"])
+  def default_filter(filter_name)
+     self.name = filter_name.blank? ? "new_my_open" : filter_name
+     DEFAULT_FILTERS.fetch(filter_name, DEFAULT_FILTERS["new_my_open"])
   end
   
   def self.deserialize_from_params(params)
@@ -90,7 +88,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   end
  
   
-  def deserialize_from_params(params) 
+  def deserialize_from_params(params)  
     @conditions = []
     @match                = :and
     @key                  = params[:wf_key]         || self.id.to_s
@@ -101,7 +99,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     @order_type           = params[:wf_order_type]  || default_order_type
     @order                = params[:wf_order]       || default_order
     
-    self.id   =  params[:wf_id].to_i  unless params[:wf_id].blank?
+    self.id   =  params[:wf_id].to_i      unless params[:wf_id].blank?
     self.name =  params[:filter_name]     unless params[:filter_name].blank?
     
     @fields = []

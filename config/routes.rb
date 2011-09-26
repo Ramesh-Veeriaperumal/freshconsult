@@ -110,8 +110,6 @@ ActionController::Routing::Routes.draw do |map|
   
   map.resources :search, :only => :index, :member => { :suggest => :get }
   
-
-  
   
   #SAAS copy ends here
 
@@ -183,10 +181,10 @@ ActionController::Routing::Routes.draw do |map|
 
     helpdesk.resources :reminders, :member => { :complete => :put, :restore => :put }
 
-    helpdesk.filter_tag_tickets '/tags/:id/*filters', :controller => 'tags', :action => 'show'
-    helpdesk.filter_tickets '/tickets/filter/tags', :controller => 'tags', :action => 'index'
-    helpdesk.filter_tickets '/tickets/filter/:filter_name', :controller => 'tickets', :action => 'index'
-    helpdesk.filter_tickets '/tickets/view/:filter_key', :controller => 'tickets', :action => 'index'
+    helpdesk.filter_tag_tickets    '/tags/:id/*filters', :controller => 'tags', :action => 'show'
+    helpdesk.filter_tickets        '/tickets/filter/tags', :controller => 'tags', :action => 'index'
+    helpdesk.filter_view_default   '/tickets/filter/:filter_name', :controller => 'tickets', :action => 'index'
+    helpdesk.filter_view_custom    '/tickets/view/:filter_key', :controller => 'tickets', :action => 'index'
 
 
     #helpdesk.filter_issues '/issues/filter/*filters', :controller => 'issues', :action => 'index'

@@ -213,28 +213,46 @@ div.action_buttons:hover{
 
 .toolbar_pagination{
    float:right;
-   margin-left:6px;
+   top:-6px;
    .prev_page, .next_page{
-      @extend .button;
-      font-size:1px;
-      width:7px; height:11px;
-      float:left;
-      position:relative;
+      float:left; font-size:1px; width:7px; height:9px;   
+      right:0px;
+      top:-37px;
+      height:14px;
+      position:absolute;      
       span{
-         left:2px; top:-1px;
+         left:2px; top:0px;
          position:absolute; width:22px; height:22px;  
       }
-   }
+   }      
    .prev_page{ 
-      @include corners(6px, 0, 0, 6px); margin-right:0px; 
+      @include corners(3px, 0, 0, 3px); margin-right:0px; 
+      right:30px;
       span{ background: sprite($symbol, arrow-left) no-repeat; }
    }
    .next_page{ 
-      @include corners(0, 6px, 6px, 0); margin-left:0px;  border-left:0; 
+      @include corners(0, 3px, 3px, 0); margin-left:0px;  border-left:0; 
       span{ background: sprite($symbol, arrow-right) no-repeat; }
    }   
+}
+
+.toolbar_pagination_full{
+   a, span{
+      @extend .button;
+   }
+   text-align:center;
+}
+.toolbar_pagination, .toolbar_pagination_full{
+   position:relative;
+   .prev_page, .next_page{
+      @extend .button;
+      border-color:#dfdfdf;
+   }
    .disabled.prev_page, .disabled.next_page{ 
       background:#efefef;
       span{ @include opacity(0.3); }  
+   }
+   .current{
+      background:#ffffff; border-color:#dfdfdf;
    }
 }
