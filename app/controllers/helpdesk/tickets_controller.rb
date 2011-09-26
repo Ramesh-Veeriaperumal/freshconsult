@@ -19,13 +19,15 @@ class Helpdesk::TicketsController < ApplicationController
   uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
   
   def load_ticket_filter
-   if params[:filter_key].blank?
+   filter_name = @template.current_filter
+   if !is_num?(filter_name)
+    params[:filter_name] = filter_name
     @ticket_filter = current_account.ticket_filters.new(Helpdesk::Filters::CustomTicketFilter::MODEL_NAME)
     @ticket_filter.query_hash = @ticket_filter.default_filter(params[:filter_name])
     @ticket_filter.accessible = current_account.user_accesses.new
     @ticket_filter.accessible.visibility = Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents]
   else
-    @ticket_filter = current_account.ticket_filters.find(params[:filter_key])
+    @ticket_filter = current_account.ticket_filters.find(filter_name)
     @ticket_filter.query_hash = @ticket_filter.data[:data_hash]
     params.merge!(@ticket_filter.attributes["data"])
    end
@@ -371,6 +373,14 @@ class Helpdesk::TicketsController < ApplicationController
     
     def get_updated_ticket_count
       pluralize(@items.length, t('ticket_was'), t('tickets_were'))
-    end
+  end
+  
+   def is_num?(str)
+    Integer(str)
+   rescue ArgumentError
+    false
+   else
+    true
+   end
 
 end

@@ -1,0 +1,7 @@
+<%if @edit_filters.blank?%>
+No views available !
+<%end%>
+<%@edit_filters.each do |filter|%>
+  <%=filter.name%> <%=link_to t('delete'), {:controller => "wf/filter", :action => "delete_filter", :id => filter},{:method => :delete} %>
+  <br>
+<%end%>
