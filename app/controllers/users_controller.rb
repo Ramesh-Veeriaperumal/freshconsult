@@ -30,6 +30,7 @@ class UsersController < ApplicationController
       item.deleted = true 
       item.save if item.customer?
     end
+    flash[:notice] = "The following users have been blocked #{ @items.map {|u| u.name}.join(', ') }"
   end
   
    
@@ -75,7 +76,7 @@ class UsersController < ApplicationController
   protected
   
     def scoper
-      current_account.users
+      current_account.all_users
     end
     
     def authorized?

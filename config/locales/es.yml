@@ -8,9 +8,9 @@ es:
   agent_info_title: "Información del agente"
   import_tickets: "Tiquetes"
   plans_billing: "Planes & facturación"
-  suspended_plan_admin_info: "Su cuenta ha sido suspendida por favor contacte a su administrador de cuenta %{email}!"
+  suspended_plan_admin_info: "Su cuenta ha sido suspendida por favor contacte a su administrador de cuentas %{email}!"
   title: "Title"
-  portal_customizer_option_tickets_i: "Disable this feature if you want to force users to login before submitting a ticket"
+  portal_customizer_option_tickets_i: "Apague esta característica si quiere obligar a los usuarios a conectarse antes de enviar un tiquete"
   helpdesk:
     tickets:
       note:
@@ -31,7 +31,7 @@ es:
           this_week: "Esta semana"
           next_week: "Próxima semana"
           due: "Vencido"
-          when_is_it_due: "Cuando se venció?"
+          when_is_it_due: "Cuando vence?"
           today: "Hoy"
           earlier_date_and_time: "Por favor establezca una fecha & hora más reciente que la fecha y hora de creación del tiquete"
           set_date_time: "Establezca Fecha/hora"
@@ -110,7 +110,7 @@ es:
     ticket_created_on_n_by: "por %{requester} el %{date_time}"
     shared:
       tweet_form:
-        title: "Reply to %{user}"
+        title: "Responder a %{user}"
       reply_form:
         cc: "Cc"
         removecc: "Eliminar Cc"
@@ -131,9 +131,9 @@ es:
         invalid_token: "Lo sentimos, pero no encontramos su cuenta. Si tiene dificultades intente copiar y pegar la URL desde su correo en su navegador o vuelva a empezar el proceso de reestablecimiento de clave."
       email:
         user_not_found: "No se ha encontrado un usuario con esa dirección de correo"
-        success: "Le hemos enviado un correo con las instrucciones para reestablecer su clave. Por favor verifique su correo."
+        success: "Le hemos enviado un correo con las instrucciones para reestablecer su clave. Por favor consulte su buzón."
     twitter:
-      updated: "Twitter setting has been updated"
+      updated: "Se actualizó la configuración de Twitter"
     portal_settings:
       update:
         success: "Se actualizaron las configuraciones del portal del cliente."
@@ -204,7 +204,7 @@ es:
     contacts_import:
       failure: "Por favor inténtelo de nuevo"
       no_file: "Por favor cargue un archivo"
-      success: "Se importaron %{created_count} nuevos contacto y  se actualizaron %{updated_count} contactos existentes!"
+      success: "Se importaron %{created_count} nuevos contactos y se actualizaron %{updated_count} contactos existentes!"
     contacts:
       create:
         success: "Se creó exitosamente el contacto."
@@ -228,14 +228,14 @@ es:
       sso:
         expected_params: "No están presentes los parámetros esperados: nombre, correo y hash."
       success: "Conexión exitosa!."
-  portal_customizer_google_signin: "Allow users to Sign in using Google"
+  portal_customizer_google_signin: "Permitir a los usuarios inscribirse mediante Google"
   state: "Estado"
   answered: "Respondido"
   send_email_to_group: "Enviar correo a grupo"
   import_solution_article: "Convertir artículo del foro en solución"
   attach_files: "Attach files"
   billed_monthly: "Facturado mensualmente"
-  portal_customizer_option_sol_i: "Disable this feature if you want users to login to view solutions"
+  portal_customizer_option_sol_i: "Apague esta característica si quiere que los usuarios se conecten para poder ver las soluciones"
   folder:
     edit: "Edit Folder"
     info1: "Are you sure you want to delete this folder"
@@ -248,14 +248,14 @@ es:
         short: "{{user_path}} dividió el tiquete {{notable_path}} desde {{split_ticket_path}}"
         long: "{{user_path}} dividió el tiquete {{notable_path}} desde {{split_ticket_path}}"
       source_change:
-        short: "{{user_path}} changed the source to {{source_name}}"
-        long: "{{user_path}} changed the ticket source of {{notable_path}} to {{source_name}}"
+        short: "{{user_path}} cambió el origen a {{source_name}}"
+        long: "{{user_path}} cambió el origen del tiquete de {{notable_path}} a {{source_name}}"
       deleted:
-        short: "{{user_path}} has deleted this ticket"
-        long: "{{user_path}} has deleted the ticket {{notable_path}}"
+        short: "{{user_path}} borró este tiquete"
+        long: "{{user_path}} borró el tiquete {{notable_path}}"
       product_change_none:
-        short: "{{user_path}} changed the product to 'none'"
-        long: "{{user_path}} changed the product of {{notable_path}} to 'none'"
+        short: "{{user_path}} cambió el producto a 'ninguno'"
+        long: "{{user_path}} cambió el producto de {{notable_path}} a 'ninguno'"
       assigned_to_nobody:
         short: "Asignado a 'Nadie' por {{user_path}}"
         long: "{{user_path}} asignó el tiquete {{notable_path}} a 'Nadie'"
@@ -275,19 +275,19 @@ es:
         short: "{{user_path}} cambió la prioridad a {{priority_name}}"
         long: "{{user_path}} cambió la prioridad del tiquete de {{notable_path}} a {{priority_name}}"
       group_change:
-        short: "{{user_path}} changed the group to {{group_name}}"
-        long: "{{user_path}} changed the group of {{notable_path}} to {{group_name}}"
+        short: "{{user_path}} cambió el grupo a {{group_name}}"
+        long: "{{user_path}} cambió el grupo de {{notable_path}} a {{group_name}}"
       product_change:
-        short: "{{user_path}} changed the product to {{product_name}}"
-        long: "{{user_path}} changed the product of {{notable_path}} to {{product_name}}"
+        short: "{{user_path}} cambió el producto a {{product_name}}"
+        long: "{{user_path}} cambió el producto de {{notable_path}} a {{product_name}}"
       reassigned:
         long: "{{user_path}} reasignó el tiquete {{notable_path}} a {{responder_path}}"
       group_change_none:
-        short: "{{user_path}} changed the group to 'none'"
-        long: "{{user_path}} changed the group of {{notable_path}} to 'none'"
+        short: "{{user_path}} cambió el grupo a 'ninguno'"
+        long: "{{user_path}} cambió el grupo de {{notable_path}} a 'ninguno'"
       ticket_type_change:
-        short: "{{user_path}} changed the ticket type to {{ticket_type}}"
-        long: "{{user_path}} changed the ticket type of {{notable_path}} to {{ticket_type}}"
+        short: "{{user_path}} cambió el tipo de tiquete a {{ticket_type}}"
+        long: "{{user_path}} cambió el tipo de tiquete de {{notable_path}} a {{ticket_type}}"
       conversation:
         out_email:
           short: "{{user_path}} envió un(a) {{reply_path}}"
@@ -296,8 +296,8 @@ es:
           short: "{{user_path}} envió un(a) {{email_response_path}}"
           long: "{{user_path}} envió un(a) {{email_response_path}} al tiquete {{notable_path}}"
         twitter:
-          short: "{{user_path}} added a {{twitter_path}}"
-          long: "{{user_path}} added a {{twitter_path}} to the ticket {{notable_path}}"
+          short: "{{user_path}} agregó un {{twitter_path}}"
+          long: "{{user_path}} agregó un {{twitter_path}} al tiquete {{notable_path}}"
         note:
           short: "{{user_path}} agregó un(a) {{comment_path}}"
           long: "{{user_path}} agregó un(a) {{comment_path}} al tiquete {{notable_path}}"
@@ -328,14 +328,14 @@ es:
     close_btn: "Cerrar"
     restore_btn_title: "Recuperar este tiquete desde la papelera"
     unassigned: "No asignados"
-    thanks: "Thank you for submitting a feedback"
+    thanks: "Gracias por enviarnos su opinión"
     closed_at: "Horas de cerrado"
     stop_monitor_btn_title: "Dejar de monitorear este tiquete"
     split_ticket: "Dividir como tiquete nuevo"
     group: "Grupo"
     due_by: "Horas desde demorado"
     first_response_due: "Horas transcurridas desde la primera respuesta"
-    reported_from_souce: "Reported from %{source}"
+    reported_from_souce: "Reportado desde %{source}"
     priority: "Prioridad"
     source: "Fuente"
     merge_btn: "Combinar"
@@ -352,7 +352,7 @@ es:
     assigned_at: "Horas desde asignado"
     delete_btn: "Eliminar"
     add_note: "Agregar nota"
-    reported_on: "from %{username}, on %{date}"
+    reported_on: " de %{username}, el %{date}"
     edit: "Edit Ticket"
     type: "Tipo"
     suggested_solutions:
@@ -364,7 +364,7 @@ es:
       insert_url: "Insertar URL"
     unflag_spam: "Unflag Spam"
     sort_by: "Sort by"
-    reported_by: "from %{requester}"
+    reported_by: "Proviene de %{requester}"
     activity: "Activity"
     requestor_info: "Requestor Info"
     execute_scenario: "Execute Scenario"
@@ -433,7 +433,7 @@ es:
     add: "Add Solution"
     status: "Solution Status"
     type: "Solution Type"
-  remove: "Remove"
+  remove: "Eliminar"
   feedbackwidget_defaultbutton: "Soporte"
   scenario_label: "Etiqueta del escenario"
   card_process: "Gracias por su pago. Su cuenta de Freshdesk esta activa ahora!"
@@ -523,7 +523,7 @@ es:
   social:
     twitter_handles:
       index:
-        title: "Twitter Accounts"
+        title: "Cuentas de twitter"
   feedbackwidget_custom_image: "URL de la imagen personalizada"
   delete: "Eliminar"
   already_overdue: "Ya está atrasado por %{time_words}"
@@ -569,7 +569,7 @@ es:
       solutions: "Soluciones"
     login: "Conectar"
     welcome: "Bienvenido"
-    signout: "Desconectarse"
+    signout: "Cancelar la inscripción"
   agents: "Agentes"
   cancel: "Cancel"
   portal_customizer_anon_tickets: "Cualquiera puede crear un tiquete"
@@ -697,7 +697,7 @@ es:
         title: "Productos"
       product:
         email_not_verified: "Correo no verificado"
-        delete: "Are you sure you want to delete this Product?"
+        delete: "Está seguro de borrar este producto?"
       portal:
         select_forum_category: "Seleccione una categoría del foro..."
         top_level_solution: "Categoría de soluciones de nivel superior"
@@ -788,17 +788,17 @@ es:
   import_zendesk_summary: "Importar el resúmen de Zendesk"
   start_typing_a_question: "Empiece a escribir la pregunta y vea las respuestas en tiempo real"
   is: "Es"
-  portal_customizer_anon_for_g: "Enable this feature if you want customers to be able to sign in using their Google username and password."
+  portal_customizer_anon_for_g: "Active esta función si quiere que sus clientes puedan conectarse usando su usuario y contraseña de Google"
   portal_key: "Portal"
   agent:
     make_admin: "Make this agent an admin"
     restore: "restore"
     title: "Agentes"
     edit: "Editar agente"
-    signature: "Signature"
+    signature: "Firma"
     update: "Update"
     view_user: "View User"
-    add_signature: "Add signature"
+    add_signature: "Agregar Firma"
     info1: "This is a deleted Agent"
     new: "New Agent"
     info3: "Are you sure you want delete"
@@ -807,7 +807,7 @@ es:
   current_plan_details: "%{plan_name} Plan con %{agent_limit} agentes"
   tag:
     title: "Etiquetas"
-  portal_customizer_anon_for_t: "Enable this feature if you want users to be able to sign in using their Twitter username and password."
+  portal_customizer_anon_for_t: "Active esta función si quiere que sus clientes puedan conectarse usando su usuario y contraseña de Twitter"
   portal_customizer_open_sol_i: "Apague esta función si desea ocultar el tabulador de \"Soluciones\" en el portal público de clientes"
   click_to_select_filter: "Seleccione el filtro"
   account_admin_updated: "Se actualizó la cuenta de administrador!"
@@ -875,7 +875,7 @@ es:
   or: "o"
   plan_amount: "Por agente/mes"
   tkt_unattended_in_grp: "Tiquete sin atender en el grupo"
-  portal_signup: "Allow customers to Sign Up from the customer portal"
+  portal_signup: "Permitir a los clientes inscribirse desde el portal del cliente"
   starts_with: "Empezar con"
   new_ticket_created: "Nuevo tiquete creado"
   left: "Izquierda"
@@ -943,7 +943,7 @@ es:
   feedbackwidget_help_title: "Botón de contacto"
   back_to_admin: "Regresar al Administrador"
   set_status_as: "Cambiar estado a"
-  portal_customizer_option_forums: "Users can view Forums without logging in"
+  portal_customizer_option_forums: "Los usuarios pueden ver los Foros sin conectarse"
   import_user_org: "Usuarios &amp; Organizaciones"
   accounts:
     cancel:
@@ -982,14 +982,14 @@ es:
   attachments: "Adjuntos"
   portal_customizer_anon_tickets_i: "Apague esta característica, si desea que sus usuarios deban conectarse antes de enviar un tiquete."
   twitter:
-    success_signin: "Successfully associated @%{twitter_screen_name} with %{helpdesk}."
-    deleted: "The twitter account @%{twitter_screen_name} has been removed."
-    user_exists: "Twitter account already associated with another product."
+    success_signin: "Se asoció exitosamente a @%{twitter_screen_name} con %{helpdesk}."
+    deleted: "La cuenta de twitter @%{twitter_screen_name} ha sido eliminada."
+    user_exists: "Esta cuenta de Twitter ya está asociada a otro producto"
     error_sending: "Error enviando el trino! Twitter podría estar intermitente. Por favor intente de nuevo."
-    associate_twitter: "Associate a twitter account to your helpdesk, so that you can start supporting your customers via twitters."
-    usr_not_thr: "User is not there."
-    ticket_save: "Successfully converted the tweet as a ticket"
-    tkt_err_save: "Unable to convert the tweet to ticket or already converted"
+    associate_twitter: "Asocie una cuenta de twitter a su mesa de ayuda, para que pueda empezar a brindar el soporte a sus clientes via twitter"
+    usr_not_thr: "El usuario no existe aquí"
+    ticket_save: "El trino se convirtió exitosamente en tiquete"
+    tkt_err_save: "No fué posible convertir el trino en tiquete, o ya se había convertido"
     sent: "Trino enviado exitosamente"
     not_authorized: "Ud no ha sido autorizado por Twitter"
   back: "Back"
@@ -1000,9 +1000,9 @@ es:
   portal_customizer_open_solutions: "Cualquiera puede ver las soluciones públicas"
   user_sessions:
     new:
-      sign_in_using: "Conectarse usando"
+      sign_in_using: "Inscribirse mediante"
       remember: "Recordarme en este equipo"
-      sign_in_using_google: "Conectarse usando su cuenta de Google"
+      sign_in_using_google: "Inscribirse usando su cuenta de Google"
       forgot: "Olvidé mi contraseña?"
       login: "Conectar"
       password: "Contraseña"
@@ -1014,11 +1014,11 @@ es:
     available_placeholders: "Available placeholders"
     info8: "Add new action"
     reorder: "Reorder"
-    info1: "Every helpdesk has a set of commonly recurring scenarios - Eg. Escalate to Level 2, Assign to QA, Forward to Sales Dept. etc. These scenarios usually involve performing multiple updates to the ticket"
+    info1: "Todas  las mesas de ayuda tienen un conjunto de escenarios comunes y recurrentes - p.e.: Escalar al nivel 2, Assignar a QA, Reenviar a Ventas, etc. Estos escenarios usualmente involucran la ejecución de múltiples actualizaciones al tiquete."
     new: "New Scenario"
     info3: "Scenario Automations allow you to automate these actions to a single click"
-    info2: "For example before assigning a ticket to QA you may want to set the ticket type as Bug, assign it to the QA group and email the QA manager about the new bug."
-    info5: "Assign QA"
+    info2: "Pro ejemplo antes de asignar un tiquete a QA ud podría querer tipificar el tiquet como un bug, asignarlo al grupo de QA y enviarle un mensaje al gerente de QA sobre el nuevo bug."
+    info5: "Asignar a QA"
     info4: "Select the below placeholders to append to the email content and they will get converted into the appropriate data"
     info7: "Actions to Perform"
     info6: "Mark the Ticket as a Bug and assign to QA"
@@ -1037,7 +1037,7 @@ es:
   connect_ticket: "Link to ticket"
   save_and_create: "Save and Create Another"
   zendesk_url_info: "p.e:- http://acme.zendesk.com"
-  portal_customizer_option_tickets: "Users can Submit a ticket without logging in"
+  portal_customizer_option_tickets: "Los usuarios pueden crear un tiquete in conectarse"
   add_a_topic: "Start a Topic"
   portal_customizer_open_forums: "Cualquiera puede ver los foros"
   import_org_companies: "Organizaciones &rarr; Companías"
@@ -1135,11 +1135,11 @@ es:
         one: "1 error prohibited this %{model} from being saved"
   enter_message: "Escriba aquí su mensaje"
   days: "días"
-  portal_signup_anon: "Enable this feature if you want users to be able to sign up and create their own user accounts. This will enable users to login and participate in forum discussions, vote on ideas etc."
+  portal_signup_anon: "Active esta característica si quiere que los usuarios puedan vincularse y crear sus propias cuentas de usuario. Esto permitirá a los usuarios participar en las discusiones en los foros, votas sobre las ideas propuestas, etc."
   select_another_plan: "Escojer otro plan"
   assign: "Asignar"
   current_plan: "Plan actual"
-  portal_customizer_twitter_signin: "Allow users to Sign in using Twitter"
+  portal_customizer_twitter_signin: "Permitir a los usuarios isncribirse mediante Twitter"
   twelve: "12 Horas"
   one: "1 Hora"
   logo_delete_msg: "Está seguro de borrar este logo?"
@@ -1196,12 +1196,12 @@ es:
   low: "Bajo"
   change_to_free_info: "Asignar un plan de nivel inferior implica una pérdida de funcionalidad y de datos. Está seguro de asignar un nivel inferior?"
   import_zendesk_title: "Importar desde Zendesk"
-  portal_customizer_option_solutions: "Users can view public solutions without logging in"
+  portal_customizer_option_solutions: "Los usuarios pueden ver las soluciones públicas sin conectarse"
   twitter_source: "Twitter"
   medium: "Medio"
   agent_adds_comment: "El agente agrega un comentario al tiquete"
   your_email_address: "Su dirección de correo"
-  signup: "sign up"
+  signup: "Inscribirse"
   show_quoted_text: "Mostrar el texto citado"
   errors_in_your_address: "Se presentaron errores con su dirección:"
   import_users_contacts: "Usuarios &rarr; Contactos"
@@ -1256,7 +1256,7 @@ es:
     info1: "Are you sure you want to delete this contact"
     form_placeholder:
       description: "Add specific notes regarding this contact example - address, LA Lakers fan etc."
-    info3: "Background information of %{nick_name}"
+    info3: "Información de %{nick_name}"
     info2: "Make this User an Agent"
     info5: "User has not created any ticket till now"
     info4: "Recent tickets from %{nick_name}"
@@ -1311,7 +1311,7 @@ es:
       send_invite_success: "Se ha enviado el correo de activación!"
       success: "Su cuenta ha sido activada."
       code_expired: "Su código de activación ha expirado!"
-  portal_customizer_option_for_i: "Disable this feature  if you want users to login to view solutions"
+  portal_customizer_option_for_i: "Apague esta característica si quiere que los usuarios se conecten para poder ver las soluciones"
   expires: "Expira"
   update: "Update"
   sla_policy:
@@ -1338,7 +1338,7 @@ es:
   how_to: "Pregunta"
   upgrade_trial: "Actualice su prueba!"
   bottom: "Fondo"
-  go_back_admin: "Go back to Admin"
+  go_back_admin: "Regresar al Administrador"
   feedbackwidget_form_title: "Título de la forma del botón"
   is_expiring_today: "Expira hoy"
   assigned_to: "Asignado a"

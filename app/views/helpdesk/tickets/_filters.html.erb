@@ -8,6 +8,7 @@
 		});
 <% end %>
 <div class="view_filters">
-  <% current_view = @ticket_filter.id || @ticket_filter.name %>  
+  <% current_view = @ticket_filter.id || @ticket_filter.name %>
   <%= top_views(current_view, @filters_options) %>
+	<%= link_to "", '/my_views', :class => "setting_bottom custom-tip-bottom", :title => "Manage custom views" %>
 </div>
