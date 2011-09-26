@@ -1,8 +1,4 @@
 <% content_for :pagefixed do %>
-  <%= javascript_include_tag "helpdesk/core" %>
-  <%= javascript_include_tag "helpdesk/page_switcher" %>
-  <%= javascript_include_tag "helpdesk/take_it_button" %>
-  <%= javascript_include_tag "helpdesk/id_selector" %>
   <% javascript_tag do %>
 		function helpdesk_submit(url, method, params){ 
 			var form = $("tickets-expanded");
