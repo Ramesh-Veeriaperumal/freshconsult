@@ -25,9 +25,11 @@ module Helpdesk::TicketsHelper
       [ :status,        'Status',      ],
     ]
   end
+  
 
   def current_filter
-    cookies[:filters] = (params[:filters] ? params[:filters][0] : ( (!cookies[:filters].blank?) ? cookies[:filters] : DEFAULT_FILTER )).to_sym
+    stored_key = params[:filter_key] || params[:filter_name]
+    cookies[:filter_name] = (stored_key ? stored_key : (!cookies[:filter_name].blank?) ? cookies[:filter_name] : "new_my_open" )
   end
    
   def current_sort
