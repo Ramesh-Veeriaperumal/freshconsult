@@ -21,9 +21,8 @@ class Helpdesk::TicketsController < ApplicationController
   def load_ticket_filter
    filter_name = @template.current_filter
    if !is_num?(filter_name)
-    params[:filter_name] = filter_name
     @ticket_filter = current_account.ticket_filters.new(Helpdesk::Filters::CustomTicketFilter::MODEL_NAME)
-    @ticket_filter.query_hash = @ticket_filter.default_filter(params[:filter_name])
+    @ticket_filter.query_hash = @ticket_filter.default_filter(filter_name)
     @ticket_filter.accessible = current_account.user_accesses.new
     @ticket_filter.accessible.visibility = Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents]
   else
