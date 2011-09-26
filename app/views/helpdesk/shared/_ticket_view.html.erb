@@ -8,29 +8,29 @@
 	      	<thead>
 	      		<tr>
 		      		<th class="check">
-		      			<input type="checkbox" onclick="Helpdesk.sel.toggleCheckAll(this)"  />
+		      			<input type="checkbox" id="helpdesk-select-all"  />
 		      		</th>
 					    <th> 
 						<% if current_selector == :deleted %>
-						  <%= link_to_function(t('undelete'), "Helpdesk.sel.submit('#{ restore_helpdesk_ticket_path('multiple') }', 'put')", :class => "button") %>
+						  <%= link_to_function(t('undelete'), "helpdesk_submit('#{ restore_helpdesk_ticket_path('multiple') }', 'put')", :class => "button") %>
 						<% else %>
-						  <%= link_to_function(t('delete'), "Helpdesk.sel.submit('#{ helpdesk_ticket_path('multiple') }', 'delete')", :class => "button") %>
+						  <%= link_to_function(t('delete'), "helpdesk_submit('#{ helpdesk_ticket_path('multiple') }', 'delete')", :class => "button") %>
 						<% end %>
 						
 						<% if current_selector == :spam %>
-						  <%= link_to_function(t('ticket.unflag_spam'), "Helpdesk.sel.submit('#{ unspam_helpdesk_ticket_path('multiple') }', 'put')", :class => "button") %> 
+						  <%= link_to_function(t('ticket.unflag_spam'), "helpdesk_submit('#{ unspam_helpdesk_ticket_path('multiple') }', 'put')", :class => "button") %> 
 						<% else %>
-						  <%= link_to_function(t('ticket.flag_spam'), "Helpdesk.sel.submit('#{ spam_helpdesk_ticket_path('multiple') }', 'put')", :class => "button") %> 
+						  <%= link_to_function(t('ticket.flag_spam'), "helpdesk_submit('#{ spam_helpdesk_ticket_path('multiple') }', 'put')", :class => "button") %> 
 						<% end %> 
 						
 						<% if current_selector != :deleted && current_selector != :spam %>
-							<%= link_to_function(t('close'), "Helpdesk.sel.submit('#{ close_multiple_helpdesk_ticket_path('multiple') }', 'put')", :class => "button") %>
-							<%= link_to_function(t('ticket.pick_up'), "Helpdesk.sel.submit('#{ pick_tickets_helpdesk_ticket_path('multiple') }', 'put')", :class => "button") %> 
+							<%= link_to_function(t('close'), "helpdesk_submit('#{ close_multiple_helpdesk_ticket_path('multiple') }', 'put')", :class => "button") %>
+							<%= link_to_function(t('ticket.pick_up'), "helpdesk_submit('#{ pick_tickets_helpdesk_ticket_path('multiple') }', 'put')", :class => "button") %> 
 						
 							<a href="javascript:void(0)" id="agent-assign-link" class="button"><%=t('ticket.assign_to_agent')%></a>
 							<div id="assign-options" style="display:none;">
 							    <%= content_tag( :label, t('ticket.select_to_agent')) %> 
-							    <%= select_tag 'responder_id', options_from_collection_for_select(Agent.technician_list(current_account), :id, :name, current_user) %>
+							    <%= select_tag 'responder_id', options_from_collection_for_select( Agent.technician_list(current_account), :id, :name, current_user) %>
 							</div>
 						<% end %>
 					</th>
@@ -45,7 +45,7 @@
        <%= render :partial => "/helpdesk/shared/ticket_sort" %>
      </div>
      
-       <% form_tag "", { :id => "expanded",  :method => :put } do %>
+       <% form_tag "", { :id => "tickets-expanded",  :method => :put } do %>
           <div id="ticket-list">
             <%= render :partial => "/helpdesk/shared/tickets" %>
           </div>

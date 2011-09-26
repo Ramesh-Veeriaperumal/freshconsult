@@ -37,7 +37,7 @@
 }
 
 .drop-right.selected{
-   background-color:#999999;
+   background-color:#888888;
    @include single-box-shadow(rgba(0, 0, 0, 0.6), 0px, 1px, 2px, false, true);
 }
 
@@ -65,10 +65,25 @@
    .customSelect{ width:100%; } 
    
    .view_filters{
+		.link-item.active, a.link-item:hover{
+         margin:0px -5px;
+         padding-left:13px;
+         background: #e2f1fa;
+		}
 		.link-item.active{
 		   color:#336699;
          font-weight:bold;
-		   @include corners(6px);
+         @include linear-gradient(color-stops(darken(#e2f1fa, 2%), lighten(#e2f1fa, 2%)), bottom);
+		   @include single-box-shadow( rgba(0, 0, 0, 0.07), 0px, 0px, 2px, false, true);         
+		}
+		.link-item.active:after{
+		   content:"";
+		   position:absolute;
+		   right:4px;
+		   top:7px;
+		   width:11px;
+		   height:11px;
+		   background: sprite($symbol, arrow-selected-right) no-repeat;
 		}
       .link-item{ 
          font-size:13px;
@@ -86,7 +101,7 @@
 	   @include linear-gradient(color-stops(#fbfbfb, #fafafa 98%, #efefef 100%), left); 
 		@include single-box-shadow(#ffffff, 0px, 1px, 1px);
 		margin:6px;
-   	padding:0 5px 5px;
+   	padding:5px;
 		position:relative;
 		border:1px solid $bordercolor;  
 		border-bottom-color:darken($bordercolor, 5%);

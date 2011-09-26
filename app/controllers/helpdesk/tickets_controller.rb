@@ -179,7 +179,7 @@ class Helpdesk::TicketsController < ApplicationController
     @items.each do |item|
       item.spam = true 
       req_list << item.requester.id
-      #item.save
+      item.save
     end
     
     msg1 = render_to_string(
@@ -187,13 +187,11 @@ class Helpdesk::TicketsController < ApplicationController
                       :tickets => get_updated_ticket_count,
                       :undo => "<%= link_to(t('undo'), { :action => :unspam, :ids => params[:ids] }, { :method => :put }) %>"
                   ))
-                  #block_user_path(:ids => req_list)
-    msg2 =  render_to_string(
-      :inline =>t("block_users",
-                    :users => "<%= link_to_remote('users', :url => block_user_path(:ids => req_list),  :method => :put ) %>"
-                    ),:locals => { :req_list => req_list}) 
-                             
-    flash[:notice] =  "#{msg1} or #{msg2}" 
+                    
+    link = render_to_string( :inline => "<%= link_to_remote(t('user_block'), :url=>block_user_path(:ids => req_list), :method => :put ) %>" ,
+      :locals => { :req_list => req_list.uniq } )
+    
+    flash[:notice] =  "#{msg1}. <br />#{t("block_users")} #{link}" 
     respond_to do |format|
       format.html { redirect_to redirect_url  }
       format.js
