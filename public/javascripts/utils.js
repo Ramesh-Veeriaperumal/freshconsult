@@ -183,7 +183,7 @@ active_dialog = null;
  $(document).bind('mousedown', function(e) {
     if($(this).data("active-menu")){
       if(!$(e.target).data("menu-active")) hideActiveMenu();
-      else setTimeout(hideActiveMenu, 100);         
+      else setTimeout(hideActiveMenu, 500);         
     } 
  });
  

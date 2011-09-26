@@ -19,9 +19,9 @@ class Helpdesk::TicketsController < ApplicationController
   uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
   
   def load_ticket_filter
-   if params[:filter_key].blank?   
+   if params[:filter_key].blank?
     @ticket_filter = current_account.ticket_filters.new(Helpdesk::Filters::CustomTicketFilter::MODEL_NAME)
-    @ticket_filter.query_hash = @ticket_filter.default_filter(params)
+    @ticket_filter.query_hash = @ticket_filter.default_filter(params[:filter_name])
     @ticket_filter.accessible = current_account.user_accesses.new
     @ticket_filter.accessible.visibility = Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents]
   else
@@ -54,7 +54,7 @@ class Helpdesk::TicketsController < ApplicationController
  
   def index
     @items = current_account.tickets.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter') 
-    @filters_options = scoper_user_filters.map { |i| {:id => i[:id], :name => i[:name] } }
+    @filters_options = scoper_user_filters.map { |i| {:id => i[:id], :name => i[:name], :default => false} }
     @current_options = @ticket_filter.query_hash.map{|i|{ i["condition"] => i["value"] }}.inject({}){|h, e|h.merge! e}
     @show_options = show_options
         
@@ -305,7 +305,7 @@ class Helpdesk::TicketsController < ApplicationController
   end 
     
   protected
-
+  
     def item_url
       return new_helpdesk_ticket_path if params[:save_and_create]
       @item
@@ -330,7 +330,7 @@ class Helpdesk::TicketsController < ApplicationController
 #                              'activities.tickets.new_ticket.short')
 #      #end
     end
-
+    
     def assign_ticket user
       @items.each do |item|
         old_item = item.clone

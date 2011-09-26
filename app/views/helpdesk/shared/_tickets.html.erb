@@ -1,4 +1,3 @@
-
 <table class="tickets">	
   <tbody>
     <%= render :partial => "/helpdesk/shared/expanded/ticket", :collection => @items %>
@@ -7,6 +6,7 @@
 <div class="toolbar clearfix">
   <%= will_paginate @items, :class => "toolbar_pagination_full" %>  
 </div>
+
 <% javascript_tag do %>
   jQuery(".ticket-description-tip").qtip({
   	 position: { 

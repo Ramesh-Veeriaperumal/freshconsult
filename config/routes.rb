@@ -110,8 +110,6 @@ ActionController::Routing::Routes.draw do |map|
   
   map.resources :search, :only => :index, :member => { :suggest => :get }
   
-
-  
   
   #SAAS copy ends here
 

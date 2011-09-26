@@ -80,6 +80,8 @@ var $J = jQuery.noConflict();
 			 }
 		});
 		
+		$(".nav-trigger").showAsMenu();
+		
 		menu_box_count = 0;
 		fd_active_drop_box = null;
 		
