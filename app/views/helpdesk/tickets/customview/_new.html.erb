@@ -3,11 +3,12 @@
   <%= hidden_field_tag(:wf_model, "Helpdesk::Ticket") %>
   <ul class="ui-form">
     <li class="inline-field">
-      <label class="caption">Filter name</label> 
+      <label class="caption">Custom view name</label> 
       <div class="fields inline-radio">
-        <%=text_field_tag( :filter_name, "", :class => "required text" )%>
+        <%= text_field_tag( :filter_name, "", :class => "required text") %>
       </div>
     </li>
+    <% if permission?(:manage_users) %>
     <li class="inline-field">
       <label class="caption"><%= t('admin.canned_responses.form.available_for') %>:</label>
       <div class="fields inline-radio">
@@ -23,11 +24,12 @@
   		    <%= radio_button_tag :visibility, Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents], Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents] == @ticket_filter.accessible.visibility,{:onclick =>"toggleGroup(this.value)" , :class => "radio" } %> 
   		    <%= t('admin.canned_responses.form.groups') %>
   		    <div style="display:none;" class="tabbed" id="accessible_group">
-            <%= select_tag :visibility_group_id, options_from_collection_for_select(current_account.groups, :id, :name,@ticket_filter.accessible.group_id) %>
+            <%= select_tag :visibility_group_id, options_from_collection_for_select(current_account.groups, :id, :name, @ticket_filter.accessible.group_id) %>
           </div>
   	    </div>
       </div>
     </li>
+    <% end %>
   </ul>
   <div class="button-container">
     <%= submit_tag "Save", :class => "uiButton" %>
@@ -48,11 +50,21 @@
             "group_id":  jQuery('#visibility_group_id').val() }
           },
           success: function(msg){
-            active_dialog.dialog("close");
+            console.log(msg);
           }
         });
         return false;
     }
-  }); 
-	 
+  });
+  function toggleGroup(access_id){	
+		if (access_id == '<%=Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents]%>')		{
+			jQuery('#accessible_group').show();
+			jQuery('#visibility_group_id').removeAttr('disabled');
+		}
+		else
+		{
+			jQuery('#accessible_group').hide();	
+			jQuery('#visibility_group_id').attr('disabled','disabled');
+		}
+	}
 <% end %>

@@ -1,14 +1,4 @@
-<% content_for :onload_script do %>
-		jQuery("#select_view_id").bind("change", function(ev){
-			window.location = this.value;
-		});
-		jQuery("#assign-options-link").bind("click", function(ev){
-			jQuery("#assign-options").show();
-			jQuery(this).hide();
-		});
-<% end %>
-<div class="view_filters">
-  <% current_view = @ticket_filter.id || @ticket_filter.name %>
-  <%= top_views(current_view, @filters_options) %>
+<div class="view_filters">  
+  <%= top_views(selected, custom_filters) %>
 	<%= link_to "", '/my_views', :class => "setting_bottom custom-tip-bottom", :title => "Manage custom views" %>
 </div>

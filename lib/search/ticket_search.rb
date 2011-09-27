@@ -23,7 +23,7 @@ module Search::TicketSearch
   
   
   def get_id_from_field(tf)
-    "flexifield.#{tf.flexifield_def_entry.flexifield_name}"
+    "flexifields.#{tf.flexifield_def_entry.flexifield_name}"
   end
   
   def get_container_from_field(tf)

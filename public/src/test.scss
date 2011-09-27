@@ -3,6 +3,8 @@
 @import "mixins";
 
 .containerFull{
+   @include clearfix;
+   overflow:visible;
 	margin:-14px -20px;
 	padding:0px 0px 0px 0px;
 }
@@ -44,7 +46,7 @@
 .ticket-leftcol{
    width:230px;
    float:left;
-   min-height:100%;
+	@include min-height(477px);
    border:1px solid #ffffff; 
    border-width:1px 1px 0 0;
 	@include linear-gradient(color-stops(#f4f4f4, #F1F1F1), top);
@@ -205,4 +207,16 @@
    width:16px;
    height:16px;
    background:sprite($symbol, setting) no-repeat;
+}
+
+.content .wrapper{
+   overflow:visible;
+}
+
+.list-noinfo{
+	padding-top:60px; 
+	font-size:1.4em;
+	text-align:center;
+	color:#666666;
+	@include text-shadow(#ffffff, 0px, 1px, 1px);
 }

@@ -33,19 +33,12 @@ class Group < ActiveRecord::Base
   ASSIGNTIME_NAMES_BY_KEY = Hash[*ASSIGNTIME.map { |i| [i[2], i[1]] }.flatten]
   ASSIGNTIME_KEYS_BY_TOKEN = Hash[*ASSIGNTIME.map { |i| [i[0], i[2]] }.flatten]
   
-  def self.find_excluded_agents(group_id, account_id)      
-    unless group_id.nil?    
-      @exclude_list = Agent.find(:all, :joins=>:user, :conditions => "users.account_id=#{account_id} AND users.deleted=#{false} AND users.id NOT IN (select user_id from agent_groups where group_id=#{group_id})" , :order =>'name')   
-    else     
-      @exclude_list = Agent.find(:all, :joins=>:user, :conditions => "users.account_id=#{account_id} AND users.deleted=#{false}" , :order =>'name')      
-    end    
+  def excluded_agents(account)      
+   cust_roles=  User::USER_ROLES_KEYS_BY_TOKEN[:customer],User::USER_ROLES_KEYS_BY_TOKEN[:client_manager]
+   return account.users.find(:all , :conditions=>['user_role not in(?) and id not in (?)', cust_roles, agents.map(&:id)]) unless agents.blank? 
+   return account.users.find(:all , :conditions=>['user_role not in(?)', cust_roles])  
   end
-  
-  def self.find_included_agents(group_id)    
-    @include_list = AgentGroup.find(:all, :joins=>:user, :conditions =>{:group_id =>group_id} )         
-    return @include_list    
-  end
-  
+
   def agent_emails
     agents.collect { |a| a.email }
   end
