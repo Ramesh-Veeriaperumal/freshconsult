@@ -1,0 +1,8 @@
+<% content_for :sidebar do %><% end %>
+<span class="floatr">
+	<%= link_to t(".back"), helpdesk_tickets_path, :class => "slim-button" %>
+</span>
+<h3 class="title"><%= t(".title") %></h3>
+<ul class="admin_list">
+	<%= each_or_message("view", @edit_filters, t(".no_custom_view")) %>
+</ul>

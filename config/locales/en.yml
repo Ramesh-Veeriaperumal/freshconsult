@@ -274,6 +274,8 @@ en:
   feedbackwidget_formcustomize: Form customization
   does_not_contain: Does not contain
   flash: 
+    filter:
+      delete_success: "Filter has been delete successfully!"
     twitter: 
       updated: Twitter setting has been updated
     not_allowed_in_demo_site: Demo site doesn't have this access!
@@ -1335,6 +1337,8 @@ en:
       last_modified: Last Modified
       priority: Priority
       status: Status
+      asc: Ascending
+      desc: Descending
   click_to_change_sort_order: Click to change sort order
   user_sessions:
       new:
@@ -1384,4 +1388,13 @@ en:
   due_today: Today
   due_tomo: Tomorrow
   due_next_eight: Next 8 hours
-  block_users: Add the %{users} to block list 
+  block_users: Do you want to block the contact(s) as well?
+  user_block: "Yes"
+  wf:
+    filter:
+      index:
+        title: "Manage custom views"
+        back: "&larr; Back to Tickets"
+        no_custom_view: "No custom views available!"        
+      view:
+        delete: "Are you sure you want to delete this view?" 

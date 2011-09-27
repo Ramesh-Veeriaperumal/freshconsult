@@ -8,12 +8,12 @@ account = Account.current
     { "condition" => "spam", "operator" => "is", "value" => input}
   end
   
-  DEFAULT_CUSTOM_FILTERS ={ 
-    "My Open Tickets" => [{ "condition" => "status", "operator" => "is_in", "value" => "#{TicketConstants::STATUS_KEYS_BY_TOKEN[:open]},#{TicketConstants::STATUS_KEYS_BY_TOKEN[:pending]}"},{ "condition" => "responder_id", "operator" => "is_in", "value" => 0 },spam_condition(false),deleted_condition(false)],
+   DEFAULT_CUSTOM_FILTERS ={ 
+    "My Open and Pending Tickets" => [{ "condition" => "status", "operator" => "is_in", "value" => "#{TicketConstants::STATUS_KEYS_BY_TOKEN[:open]},#{TicketConstants::STATUS_KEYS_BY_TOKEN[:pending]}"},{ "condition" => "responder_id", "operator" => "is_in", "value" => 0 },spam_condition(false),deleted_condition(false)],
     "My Overdue Tickets" => [{ "condition" => "due_by", "operator" => "due_by_op", "value" => TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN[:all_due]},{ "condition" => "responder_id", "operator" => "is_in", "value" => 0 },spam_condition(false),deleted_condition(false)],
-    "All Tickets" => [spam_condition(false),deleted_condition(false)],
-    "New and My Open Tickets" => [{ "condition" => "status", "operator" => "is_in", "value" => TicketConstants::STATUS_KEYS_BY_TOKEN[:open]},{ "condition" => "responder_id", "operator" => "is_in", "value" => "-1,0" },spam_condition(false),deleted_condition(false)]
- 
+    "Open Tickets in My Groups" => [{ "condition" => "group_id", "operator" => "is_in", "value" => 0 },spam_condition(false),deleted_condition(false)],
+    "Urgent and High priority tickets" => [{ "condition" => "priority", "operator" => "is_in", "value" => "#{TicketConstants::PRIORITY_KEYS_BY_TOKEN[:urgent]},#{TicketConstants::PRIORITY_KEYS_BY_TOKEN[:high]}" },spam_condition(false),deleted_condition(false)]
+     
    }
    
    filter_array = []

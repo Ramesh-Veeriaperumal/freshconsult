@@ -63,9 +63,9 @@ class Wf::FilterController < ApplicationController
   def delete_filter
      if @wf_filter
        @wf_filter.destroy
-       flash[:notice] = "Filter is successfully deleted !"
+       flash[:notice] = t("flash.filter.delete_success")
      end
-    redirect_to '/my/views'
+    redirect_to :back
   end
   
   protected

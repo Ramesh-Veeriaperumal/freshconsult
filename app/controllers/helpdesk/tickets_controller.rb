@@ -19,13 +19,14 @@ class Helpdesk::TicketsController < ApplicationController
   uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
   
   def load_ticket_filter
-   if params[:filter_key].blank?   
+   filter_name = @template.current_filter
+   if !is_num?(filter_name)
     @ticket_filter = current_account.ticket_filters.new(Helpdesk::Filters::CustomTicketFilter::MODEL_NAME)
-    @ticket_filter.query_hash = @ticket_filter.default_filter(params)
+    @ticket_filter.query_hash = @ticket_filter.default_filter(filter_name)
     @ticket_filter.accessible = current_account.user_accesses.new
     @ticket_filter.accessible.visibility = Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents]
   else
-    @ticket_filter = current_account.ticket_filters.find(params[:filter_key])
+    @ticket_filter = current_account.ticket_filters.find(filter_name)
     @ticket_filter.query_hash = @ticket_filter.data[:data_hash]
     params.merge!(@ticket_filter.attributes["data"])
    end
@@ -54,7 +55,7 @@ class Helpdesk::TicketsController < ApplicationController
  
   def index
     @items = current_account.tickets.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter') 
-    @filters_options = scoper_user_filters.map { |i| {:id => i[:id], :name => i[:name] } }
+    @filters_options = scoper_user_filters.map { |i| {:id => i[:id], :name => i[:name], :default => false} }
     @current_options = @ticket_filter.query_hash.map{|i|{ i["condition"] => i["value"] }}.inject({}){|h, e|h.merge! e}
     @show_options = show_options
         
@@ -78,11 +79,7 @@ class Helpdesk::TicketsController < ApplicationController
   
   def custom_search
     @items = current_account.tickets.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
-    respond_to do |format|
-      format.html  do        
-        render :partial => "helpdesk/shared/tickets", :object => @items
-      end
-    end
+    render :partial => "custom_search", :object => @items
   end
 
 
@@ -182,7 +179,7 @@ class Helpdesk::TicketsController < ApplicationController
     @items.each do |item|
       item.spam = true 
       req_list << item.requester.id
-      #item.save
+      item.save
     end
     
     msg1 = render_to_string(
@@ -190,13 +187,11 @@ class Helpdesk::TicketsController < ApplicationController
                       :tickets => get_updated_ticket_count,
                       :undo => "<%= link_to(t('undo'), { :action => :unspam, :ids => params[:ids] }, { :method => :put }) %>"
                   ))
-                  #block_user_path(:ids => req_list)
-    msg2 =  render_to_string(
-      :inline =>t("block_users",
-                    :users => "<%= link_to_remote('users', :url => block_user_path(:ids => req_list),  :method => :put ) %>"
-                    ),:locals => { :req_list => req_list}) 
-                             
-    flash[:notice] =  "#{msg1} or #{msg2}" 
+                    
+    link = render_to_string( :inline => "<%= link_to_remote(t('user_block'), :url=>block_user_path(:ids => req_list), :method => :put ) %>" ,
+      :locals => { :req_list => req_list.uniq } )
+    
+    flash[:notice] =  "#{msg1}. <br />#{t("block_users")} #{link}" 
     respond_to do |format|
       format.html { redirect_to redirect_url  }
       format.js
@@ -306,14 +301,10 @@ class Helpdesk::TicketsController < ApplicationController
     ca_resp = current_account.canned_responses.find(params[:ca_resp_id])
     a_template = Liquid::Template.parse(ca_resp.content_html).render('ticket' => @item, 'helpdesk_name' => @item.account.portal_name)    
     render :text => a_template || ""
-  end
-  
-  def print
-    
-  end
+  end 
     
   protected
-
+  
     def item_url
       return new_helpdesk_ticket_path if params[:save_and_create]
       @item
@@ -338,7 +329,7 @@ class Helpdesk::TicketsController < ApplicationController
 #                              'activities.tickets.new_ticket.short')
 #      #end
     end
-
+    
     def assign_ticket user
       @items.each do |item|
         old_item = item.clone
@@ -381,6 +372,14 @@ class Helpdesk::TicketsController < ApplicationController
     
     def get_updated_ticket_count
       pluralize(@items.length, t('ticket_was'), t('tickets_were'))
-    end
+  end
+  
+   def is_num?(str)
+    Integer(str)
+   rescue ArgumentError
+    false
+   else
+    true
+   end
 
 end

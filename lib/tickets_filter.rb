@@ -1,7 +1,7 @@
 module TicketsFilter
   include TicketConstants
   
-  DEFAULT_FILTER = :new_and_my_open
+  DEFAULT_FILTER = "new_and_my_open"
 
   SELECTORS = [
     [:new_and_my_open,  I18n.t('helpdesk.tickets.views.new_and_my_open'), [:visible]  ],
@@ -51,9 +51,9 @@ module TicketsFilter
 
   SEARCH_FIELD_OPTIONS = SEARCH_FIELDS.map { |i| [i[1], i[0]] }
 
-  DEFAULT_SORT 			= :due_by
-  DEFAULT_SORT_ORDER 	= :ASC
-	
+  DEFAULT_SORT        = :due_by
+  DEFAULT_SORT_ORDER  = :asc
+
   SORT_FIELDS = [
     [ :due_by     , I18n.t("tickets_filter.sort_fields.due_by")        ],
     [ :created_at , I18n.t("tickets_filter.sort_fields.date_created")  ],
@@ -64,6 +64,13 @@ module TicketsFilter
 
   SORT_FIELD_OPTIONS = SORT_FIELDS.map { |i| [i[1], i[0]] }
   SORT_SQL_BY_KEY    = Hash[*SORT_FIELDS.map { |i| [i[0], i[0]] }.flatten]
+
+  SORT_ORDER_FIELDS = [
+    [ :asc     , I18n.t("tickets_filter.sort_fields.asc")   ],
+    [ :desc    , I18n.t("tickets_filter.sort_fields.desc")  ]
+  ]
+  SORT_ORDER_FIELDS_OPTIONS = SORT_ORDER_FIELDS.map { |i| [i[1], i[0]] }
+  SORT_ORDER_FIELDS_BY_KEY  = Hash[*SORT_ORDER_FIELDS.map { |i| [i[0], i[0]] }.flatten]
 
   def self.filter(filter, user = nil, scope = nil)
     to_ret = (scope ||= default_scope)
