@@ -7,10 +7,10 @@ class Helpdesk::TagsController < ApplicationController
   include HelpdeskControllerMethods
 
   def index
-    @tags = Helpdesk::Tag.paginate(
+    @tags = current_account.tags.paginate(
       :page => params[:page], 
-      :include =>[:tag_uses, :tickets],
-      :conditions => { :account_id => current_account , :helpdesk_tag_uses =>{:taggable_type =>'Helpdesk::Ticket'} }, 
+      :include =>[:tag_uses],
+      :conditions => { :helpdesk_tag_uses =>{:taggable_type =>'Helpdesk::Ticket'} }, 
       :order => Helpdesk::Tag::SORT_SQL_BY_KEY[(params[:sort] || :activity_desc).to_sym],
       :per_page => 30)
   end

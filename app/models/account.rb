@@ -110,6 +110,8 @@ class Account < ActiveRecord::Base
   has_one :survey, :dependent => :destroy
   has_many :scoreboard_ratings, :dependent => :destroy
   has_many :survey_handles, :through => :survey
+  
+  has_many :tags, :class_name =>'Helpdesk::Tag'
   #Scope restriction ends
   
   validates_format_of :domain, :with => /(?=.*?[A-Za-z])[a-zA-Z0-9]*\Z/
