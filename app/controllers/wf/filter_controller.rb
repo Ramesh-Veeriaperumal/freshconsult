@@ -52,12 +52,23 @@ class Wf::FilterController < ApplicationController
     wf_filter.visibility = params[:visibility]
     wf_filter.account_id = current_account.id
     wf_filter.validate!
-    
-    unless wf_filter.errors?
+    err_str = ""
+    if wf_filter.errors?
+      wf_filter.errors.each do |name,value|
+        err_str << "#{name}  #{value} <br />"  
+      end
+    else  
       wf_filter.save
     end
-    wf_filter.key= wf_filter.id.to_s 
-    render :nothing => true 
+    wf_filter.key = wf_filter.id.to_s 
+    
+    unless err_str.empty?
+      flash[:error] = err_str
+    else
+      flash[:notice] = t(:'flash.filter.save_success')
+    end
+    
+    render :partial => "save_filter",  :locals => { :redirect_path => helpdesk_filter_view_custom_path(wf_filter.key) }
   end
 
   def delete_filter

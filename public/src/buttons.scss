@@ -1,6 +1,16 @@
 @import "base";
 @import "mixins";
 
+.ui-datepicker{
+   background:#ffffff;
+   @include opacity(0.95);
+   @include corners(5px);
+}
+
+.ui-datepicker-title{
+   color:#333333;
+}
+
 /*
  * jQuery UI Button 1.8.7
  *

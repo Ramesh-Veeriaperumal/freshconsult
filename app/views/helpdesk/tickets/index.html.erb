@@ -1,24 +1,3 @@
-<% content_for :pagefixed do %>
-  <% javascript_tag do %>
-		function helpdesk_submit(url, method, params){ 
-			var form = $("tickets-expanded");
-      if(method) form.down('input[name=_method]').value = method;
-
-			(params || []).each(function(p){
-			    var source = $(p);
-			    var field = new Element('input', {
-			        type: 'hidden',
-			        value: source.value
-			    });
-			    field.name = source.name;
-			    form.appendChild(field);
-			});
-			form.action = url;
-			form.submit();
-	}
-  <% end %>
-<% end %>
-
 <% content_for :onload_script do %>
   $J('#rightCol').css("minHeight", $J('#leftcol').height());
 	$J("#agent-assign-link").click(function(){
@@ -36,17 +15,29 @@
  						 });
   				});
 	$J("#helpdesk-select-all").live("click", function(ev){
+	  console.log(this);
 		$J("#tickets-expanded input[type=checkbox]").attr("checked", $J(this).attr("checked"));
 	});	
+
+  $J("#select_view_id").live("change", function(ev){
+    window.location = this.value;
+  });
+  
+  $J("#assign-options-link").live("click", function(ev){
+    jQuery("#assign-options").show();
+    jQuery(this).hide();
+  });
 <% end %>
-<div class="containerFull greyImage clearfix">
+<div class="containerFull greyImage">
   <div id="leftcol" class="ticket-leftcol">
-    <div class="leftFilter">
-      <%= render :partial => "filters" %>
+    <div class="leftFilter" id="all-views">
+      <%= render :partial => "filters", :locals =>{ :selected => @current_view, :custom_filters => @filters_options } %>
     </div>
-		<div class="leftFilter">    
-    	<%= render :partial => "helpdesk/shared/filter_options", :locals => { :current_filter => @ticket_filter } %>
-		</div>
+    <% if @current_view != "deleted" && @current_view != "spam" %>
+		  <div class="leftFilter">    
+    	  <%= render :partial => "helpdesk/shared/filter_options", :locals => { :current_filter => @ticket_filter } %>
+		  </div>
+		<% end %>
   </div>
   <div id="rightCol" class="contentCol hasRightCol">
 	  <%= render :partial => "helpdesk/shared/ticket_view", :locals => { :items => @items } %>

@@ -137,4 +137,10 @@
 		@include shadows(#afafaf, -3px, 5px, 10px);
 //		@include pie;
 	}
+	.fd-menu a:hover{
+	   background: #2433f6;
+   }
+   .ticket-leftcol .leftFilter{ 
+      background: #fbfbfb;
+	}
 }

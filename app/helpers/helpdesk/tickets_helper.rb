@@ -14,20 +14,20 @@ module Helpdesk::TicketsHelper
   def drop_down_views(viewlist, menuid = "leftViewMenu")
     unless viewlist.empty?
       more_menu_drop = 
-        content_tag(:div, ( link_to "#{viewlist.size} more", "", { :class => "drop-right nav-trigger", :menuid => "##{menuid}" }), :class => "link-item" ) +
+        content_tag(:div, ( link_to "#{viewlist.size-1} more views", "", { :class => "drop-right nav-trigger", :menuid => "##{menuid}" }), :class => "link-item" ) +
         content_tag(:div, viewlist.map { |s| view_menu_links(s) }, :class => "fd-menu", :id => menuid)
     end
   end
   
-  def top_views(selected = "new_my_open", dynamic_view = [], show_max = 3)
+  def top_views(selected = "new_my_open", dynamic_view = [], show_max = 1)
     top_views_array = [ 
-      { :id => "new_my_open", :name => t("helpdesk.tickets.views.new_and_my_open"), :default => true },
-      { :id => "all_tickets", :name => t("helpdesk.tickets.views.all"),             :default => true }
     ].concat(dynamic_view).concat([
       { :id => -1 },
-      { :id => "monitored_by", :name => t("helpdesk.tickets.views.monitored_by"),   :default => true },
-      { :id => "spam"   ,      :name => t("helpdesk.tickets.views.spam"),           :default => true },
-      { :id => "deleted",      :name => t("helpdesk.tickets.views.trash"),          :default => true }
+      { :id => "new_my_open",  :name => t("helpdesk.tickets.views.new_my_open"),     :default => true },
+      { :id => "all_tickets",  :name => t("helpdesk.tickets.views.all_tickets"),     :default => true },      
+      { :id => "monitored_by", :name => t("helpdesk.tickets.views.monitored_by"),    :default => true },
+      { :id => "spam"   ,      :name => t("helpdesk.tickets.views.spam"),            :default => true },
+      { :id => "deleted",      :name => t("helpdesk.tickets.views.deleted"),         :default => true }
     ])
     top_index = top_views_array.index{|v| v[:id] == selected} || 0
 
@@ -37,7 +37,7 @@ module Helpdesk::TicketsHelper
     
     top_view_html = 
         (top_views_array.shift(show_max).map do |s|
-            view_menu_links(s, "link-item", (s[:id] == selected.to_s)) unless( s[:id] == -1 )
+            view_menu_links(s, "link-item", (s[:id] == selected)) unless( s[:id] == -1 )
         end).to_s + drop_down_views(top_views_array).to_s
   end
   

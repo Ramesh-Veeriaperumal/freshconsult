@@ -1,5 +1,5 @@
 <%= will_filter_scripts_tag %>
-<%= link_to("Save this View...", "/helpdesk/tickets/custom_view_save", :title => "Save ticket view", :class => "slim-button floatr dialog2", :dialogWidth => "540px", :id => "save_filter") %> 
+<%= link_to("Save this View...", "/helpdesk/tickets/custom_view_save", :title => "Save View", :class => "slim-button floatr dialog2", :dialogWidth => "540px", :id => "save_filter") %> 
     <h3 class="title">Filters</h3>
     <form id="FilterOptions" action="#">
       <input type="hidden" name="data_hash" value="" />
@@ -60,6 +60,7 @@
 		getFilterData();
     jQuery(".filter_item").bind("change", function(){
       jQuery("#save_filter").show();
+      jQuery(".view_filters .active").removeClass("active");
       getFilterData();
       jQuery("#FilterOptions input[name=data_hash]").val(query_hash.toJSON()).trigger("change");  
     });	
@@ -69,6 +70,7 @@
     });	
 		jQuery(".toolbar_pagination a, .toolbar_pagination_full a").live("click", function(ev){
 			ev.preventDefault();
+			jQuery(document).scrollTop(0);
 			jQuery("#FilterOptions input[name=page]").val(getParameterByName("page", this.href)).trigger("change");
 		});		
   });
@@ -85,19 +87,4 @@
         }
       }); 
   });
-  
-  
-	function toggleGroup(access_id){	
-		if (access_id == '<%=Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents]%>')
-		{
-			jQuery('#accessible_group').show();
-			jQuery('#visibility_group_id').removeAttr('disabled');
-		}
-		else
-		{
-			jQuery('#accessible_group').hide();	
-			jQuery('#visibility_group_id').attr('disabled','disabled');
-		}
-	}
- 
 <% end %>
