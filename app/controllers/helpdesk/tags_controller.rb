@@ -16,13 +16,10 @@ class Helpdesk::TagsController < ApplicationController
   end
 
   def show
-    
-    logger.debug "tag.tickets :: #{@tag.tickets.inspect}"
     @tickets = (params[:show_all] ? @tag.tickets : @tag.tickets.visible).paginate(
       :page => params[:page], 
       :order => TicketsFilter::SORT_SQL_BY_KEY[(params[:sort] || :created_asc).to_sym],
       :per_page => 10)
-      logger.debug "Tickets for the tag are :: #{@tickets.inspect}"
   end
   
   protected
