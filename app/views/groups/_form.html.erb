@@ -91,7 +91,7 @@
 					if account_id.nil?
 						account_id = current_account.id
 					end
-					 @exclude_list = Group.find_excluded_agents(@group.id, account_id) %>
+					 @exclude_list = @group.excluded_agents(current_account) %>
 			<%  
 				if(@exclude_list.nil? ||@exclude_list.size == 0)
 					showagent = "display:none"
@@ -100,9 +100,8 @@
 			<span id="All_Agents" style="<%=showagent%>">
 					<b><%=t('group.select_agents')%> </b>							  			
 					<select id="group_escalate_to">
-						<% @exclude_list.each do |agent| %>
+						<% @exclude_list.each do |user| %>
 							<% 
-								user = agent.user 
 								avatar_url = '/images/icons/profile_blank.gif'
 								unless user.avatar.nil?
 									avatar_url =user.avatar.content.url(:thumb)
@@ -123,20 +122,19 @@
 						
 			
 			
-			<ul class="item_list active" id="Active_list">		
-				<% @include_list = Group.find_included_agents(@group.id) %>		
+			<ul class="item_list active" id="Active_list">	
 					<%  
-						@include_list.each do |agent| 
+						@group.agents.each do |user| 
 						avatar_agent = '/images/icons/profile_blank.gif'
-						unless agent.user.avatar.nil?
-							avatar_agent = agent.user.avatar.content.url(:thumb)
+						unless user.avatar.nil?
+							avatar_agent = user.avatar.content.url(:thumb)
 						end
 					%>
 					
-					<li agent_thumb="<%=avatar_agent%>" agent_id="<%= agent.user.id %>" agent_name="<%= agent.user.name %>">
-						<%= user_avatar(agent.user, :thumb) %>
+					<li agent_thumb="<%=avatar_agent%>" agent_id="<%=user.id %>" agent_name="<%= user.name %>">
+						<%= user_avatar(user, :thumb) %>
 						<a href="javascript:void(0)" class="button control"><%= t("remove") %></a>				
-						<b><%= agent.user.name %></b>
+						<b><%= user.name %></b>
 					</li>
 					<% end %>
 				
