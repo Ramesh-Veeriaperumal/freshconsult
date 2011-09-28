@@ -36,7 +36,7 @@ class Helpdesk::TicketsController < ApplicationController
     @ticket_filter = current_account.ticket_filters.new(Helpdesk::Filters::CustomTicketFilter::MODEL_NAME)
     @ticket_filter.query_hash = @ticket_filter.default_filter(filter_name)
     @ticket_filter.accessible = current_account.user_accesses.new
-    @ticket_filter.accessible.visibility = Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents]
+    @ticket_filter.accessible.visibility = Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me]
   end
 
   def check_user
