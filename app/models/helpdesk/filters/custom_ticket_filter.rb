@@ -120,8 +120,8 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       action_hash = params[:data_hash]
       action_hash = ActiveSupport::JSON.decode params[:data_hash] if !params[:data_hash].kind_of?(Array)
     end
-    action_hash.push({ "condition" => "spam", "operator" => "is", "value" => false})
-    action_hash.push({ "condition" => "deleted", "operator" => "is", "value" => false})
+    # action_hash.push({ "condition" => "spam", "operator" => "is", "value" => false})
+    # action_hash.push({ "condition" => "deleted", "operator" => "is", "value" => false})
     action_hash = default_filter(params[:filter_name])  if params[:data_hash].blank?
     self.query_hash = action_hash
    
