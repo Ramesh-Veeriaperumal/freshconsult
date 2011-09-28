@@ -1,29 +1,40 @@
-<table class="tickets">	
-  <tbody>
-    <%= render :partial => "/helpdesk/shared/expanded/ticket", :collection => @items %>
-  </tbody>
-</table> 
-<div class="toolbar clearfix">
-  <%= will_paginate @items, :class => "toolbar_pagination_full" %>  
-</div>
-
-<% javascript_tag do %>
-  jQuery(".ticket-description-tip").qtip({
-  	 position: { 
-  	      my: 'bottom left',
-  	      at: 'top  left',
-  	      viewport: jQuery(window) 
-  	 }, 
-  	 style : {
-  	 	classes: 'ui-tooltip-ticket ui-tooltip-rounded ui-tooltip-shadow'
-  	 },
-  	 show: {
-  	    solo: true,
-  	    delay: 200,
-  	    effect: function(offset) {
-  	        jQuery(this).show("fade", 240); // "this" refers to the tooltip
-  	    }
-  	 }
-  });  
-  jQuery(".nav-trigger").showAsMenu();
+<% unless @items.empty? %>
+  <table class="tickets">	
+    <tbody>
+      <%= render :partial => "/helpdesk/shared/expanded/ticket", :collection => @items %>
+    </tbody>
+  </table>
+  <div class="toolbar">
+    <%= will_paginate @items, :class => "toolbar_pagination_full" %>  
+  </div>
+  <% javascript_tag do %>
+      jQuery(".ticket-description-tip").qtip({
+    	  position: { 
+    	      my: 'bottom left',
+    	      at: 'top  left',
+    	      viewport: jQuery(window) 
+    	 }, 
+    	 style : {
+    	 	classes: 'ui-tooltip-ticket ui-tooltip-rounded ui-tooltip-shadow'
+    	 },
+    	 show: {
+    	    solo: true,
+    	    delay: 200,
+    	    effect: function(offset) {
+    	        jQuery(this).show("fade", 240); // "this" refers to the tooltip
+    	    }
+    	 }
+     });  
+     jQuery(".nav-trigger").showAsMenu();
+  <% end %>
+<% else %>
+	<div class="list-noinfo">
+	  <% view_name = t("helpdesk.tickets.views.this_view") %>
+	  <% unless @is_default_filter.nil? %>
+	    <% view_name = (@is_default_filter)? t("helpdesk.tickets.views.#{@current_view}") : @ticket_filter.name %>
+	  <% else %>
+	  
+	  <% end %>
+	  <%= t('wf.messages.no_tickets_in_view', :view_name => view_name) %>
+	</div>
 <% end %>

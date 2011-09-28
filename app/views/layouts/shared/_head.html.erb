@@ -12,8 +12,9 @@
 	
 	<link rel="shortcut icon" href="<%=current_portal.fav_icon.nil? ? '/images/favicon.ico' : current_portal.fav_icon.content.url%>" />
      
-	<%= include_stylesheets :common, :media => "screen, projection" %>
+	<%# include_stylesheets :common, :media => "screen, projection" %>
 	<%# include_stylesheets :syntaxhighlighter, :media => "screen, projection" %>
+	<%= stylesheet_link_tag "reset", "layout", "defaults", "application", "test", "validation", "form", "buttons", "chosen", "autocomplete", "jquery-ui", "jquery.qtip", "ie", :cache => true, :concat => true %>
   <%= render :partial => "shared/theme.css"  %>	
 	<%= include_javascripts :defaults  %>
 	<%= include_javascripts :frameworks %>

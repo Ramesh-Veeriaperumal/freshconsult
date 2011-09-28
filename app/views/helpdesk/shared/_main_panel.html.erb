@@ -2,9 +2,7 @@
 	
  	<%= yield :main_panel_summary %>
 
-	<div class="toolbar" id="toolbar">
-	  <%= yield :main_panel_toolbar %>
-	</div>  
+  <%= yield :main_panel_toolbar %>
 	
 	<%= content_tag('span', yield(:main_panel_selected_toolbar), :id => 'selection-toolbar') if yield(:main_panel_selected_toolbar) %>	
 

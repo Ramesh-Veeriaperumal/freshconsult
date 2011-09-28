@@ -21,17 +21,22 @@ class Helpdesk::TicketsController < ApplicationController
   def load_ticket_filter
    filter_name = @template.current_filter
    if !is_num?(filter_name)
+    load_default_filter(filter_name)
+   else
+    @ticket_filter = current_account.ticket_filters.find_by_id(filter_name)
+    return load_default_filter(TicketsFilter::DEFAULT_FILTER) if @ticket_filter.nil?
+    @ticket_filter.query_hash = @ticket_filter.data[:data_hash]
+    params.merge!(@ticket_filter.attributes["data"])
+   end
+  
+  end
+
+  def load_default_filter(filter_name)
     params[:filter_name] = filter_name
     @ticket_filter = current_account.ticket_filters.new(Helpdesk::Filters::CustomTicketFilter::MODEL_NAME)
     @ticket_filter.query_hash = @ticket_filter.default_filter(filter_name)
     @ticket_filter.accessible = current_account.user_accesses.new
     @ticket_filter.accessible.visibility = Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents]
-  else
-    @ticket_filter = current_account.ticket_filters.find(filter_name)
-    @ticket_filter.query_hash = @ticket_filter.data[:data_hash]
-    params.merge!(@ticket_filter.attributes["data"])
-   end
-  
   end
 
   def check_user
@@ -59,6 +64,8 @@ class Helpdesk::TicketsController < ApplicationController
     @filters_options = scoper_user_filters.map { |i| {:id => i[:id], :name => i[:name], :default => false} }
     @current_options = @ticket_filter.query_hash.map{|i|{ i["condition"] => i["value"] }}.inject({}){|h, e|h.merge! e}
     @show_options = show_options
+    @current_view = @ticket_filter.id || @ticket_filter.name
+    @is_default_filter = (!is_num?(@template.current_filter))
         
     respond_to do |format|      
       format.html  do
@@ -80,7 +87,7 @@ class Helpdesk::TicketsController < ApplicationController
   
   def custom_search
     @items = current_account.tickets.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
-    render :partial => "custom_search", :object => @items
+    render :partial => "custom_search"
   end
 
 

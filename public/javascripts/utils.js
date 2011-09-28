@@ -74,6 +74,23 @@ function insertTextAtCursor(el, text) {
     }
 }
 
+function helpdesk_submit(url, method, params){ 
+   var form = $("tickets-expanded");
+   if(method) form.down('input[name=_method]').value = method;
+
+   (params || []).each(function(p){
+      var source = $(p);
+      var field = new Element('input', {
+                     type: 'hidden',
+                     value: source.value
+                  });
+          field.name = source.name;
+          form.appendChild(field);
+   });
+   form.action = url;
+   form.submit();
+}
+
 function setSelRange(inputEl, selStart, selEnd) { 
 	 if (inputEl.setSelectionRange) { 
 	  inputEl.focus(); 

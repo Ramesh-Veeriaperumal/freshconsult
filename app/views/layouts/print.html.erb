@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <head xmlns="http://www.w3.org/1999/xhtml">
-	<%= include_stylesheets :print, :media => "screen, print, projection" %>
+	<%= stylesheet_link_tag "print", :media => "screen, print, projection", :cache => true, :concat => true  %>
 </head>
 <body class="print">
 	<div class="header">
