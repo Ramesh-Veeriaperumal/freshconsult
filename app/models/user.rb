@@ -32,9 +32,11 @@ class User < ActiveRecord::Base
 
   before_create :set_time_zone , :set_company_name
   before_save :set_account_id_in_children , :set_contact_name, :check_email_value , :set_default_role
+  after_update :drop_authorization
   
   named_scope :contacts, :conditions => ["user_role in (#{USER_ROLES_KEYS_BY_TOKEN[:customer]}, #{USER_ROLES_KEYS_BY_TOKEN[:client_manager]})" ]
   named_scope :technicians, :conditions => ["user_role not in (#{USER_ROLES_KEYS_BY_TOKEN[:customer]}, #{USER_ROLES_KEYS_BY_TOKEN[:client_manager]})"]
+  named_scope :visible, :conditions => { :deleted => false }
 
   acts_as_authentic do |c|    
     c.validations_scope = :account_id
@@ -339,6 +341,14 @@ class User < ActiveRecord::Base
    end
    
  end
+ 
+ def drop_authorization
+   authorizations.each do |auth|
+     auth.destroy
+   end 
+ end
+ 
+ 
  
  
   
