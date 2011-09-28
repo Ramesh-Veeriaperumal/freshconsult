@@ -101,7 +101,7 @@
    .leftFilter{
 		$bordercolor:#cfcfcf;
 		@include corners(3px);		
-	   @include linear-gradient(color-stops(#fbfbfb, #fafafa 98%, #efefef 100%), left); 
+   	background: #fafafa;
 		@include single-box-shadow(#ffffff, 0px, 1px, 1px);
 		margin:6px;
    	padding:5px;
@@ -142,7 +142,11 @@
 } 
 
 .page_info{
+   float:right;
+   width:200px;
+   text-align:right;
    margin-right:6px;
+   position:relative;
 }
 
 .contentCol{
@@ -194,8 +198,9 @@
       .ticksymbol{ background: sprite($symbol, selected) no-repeat; }      
    }
    a:hover{
-      @include linear-gradient(color-stops(#5469f9, #2433f6), top);
+      @include background(linear-gradient(top, #5469f9, #2433f6));
       @include single-box-shadow( rgba(0, 0, 0, 0.6), 0, 0px, 1px, false, true );
+      @include filter-gradient(#5469f9, #2433f6, vertical); 
       color:#ffffff;
       .selected{ background: sprite($symbol, selected-negtive) no-repeat; }      
    }
