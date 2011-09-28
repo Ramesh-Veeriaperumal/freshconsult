@@ -1296,7 +1296,7 @@ table.summary-report{
 	position:relative;
 	margin:0 11px 0 6px;
 	div.search_bar{ 
-		height:25px; 
+		height:24px; 
 		@include corners(12px);
 		@include opacity(0.8);
 		background:#ffffff;
@@ -1353,14 +1353,14 @@ a.new_ticket, .nav_search{
 
 a.new_ticket, .nav_search div.search_bar{
 	border:1px solid darken($tab_color, 8%);
-	@include single-box-shadow(rgba(255, 255, 255, 0.4), 1px, 1px, 1px);
+	@include single-box-shadow(rgba(255, 255, 255, 0.4), 0px, 1px, 0px);
 	margin-top:2px;
 	@include corners(4px);
 } 
  
 a.new_ticket{
  	@include vertical-gradient(#fefefe, #dfdfdf);	
-	padding:5px 8px 5px 28px;
+	padding:5px 8px 4px 28px;
 	color:#333333; 
 	font-size:12px; 
 	text-decoration:none; font-weight:bold;

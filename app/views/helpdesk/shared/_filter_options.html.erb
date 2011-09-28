@@ -51,6 +51,7 @@
 		jQuery("#FilterOptions input[name=data_hash]").val($A(<%= @ticket_filter.query_hash.to_json %>).toJSON());
     jQuery(".filter_item").bind("change", function(){
       jQuery("#save_filter").show();
+			jQuery("#FilterOptions input[name=filter_name]").val("");
       jQuery(".view_filters .active").removeClass("active");
       getFilterData();
       jQuery("#FilterOptions input[name=data_hash]").val(query_hash.toJSON()).trigger("change");  
