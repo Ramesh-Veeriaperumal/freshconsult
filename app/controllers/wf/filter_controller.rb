@@ -29,7 +29,7 @@ class Wf::FilterController < ApplicationController
   
   def index
     @edit_filters = []
-    view_filters = scoper.edit_ticket_filters(current_user)
+    view_filters = scoper.my_ticket_filters(current_user)
     view_filters.each do |filter|
       if (filter.accessible.user_id == current_user.id) or current_user.admin?
         @edit_filters.push(filter)
