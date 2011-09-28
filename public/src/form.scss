@@ -1436,8 +1436,8 @@ a.new_ticket:hover{
    background-color:$tab_color;
    color:#ffffff;
    font-size:13px;
-   padding:4px 12px;
-   margin:1px 1px 1px 1px;
+   padding:5px 12px;
+   margin:1px 0px;
 }
 
 .dialog-special{
@@ -1533,7 +1533,7 @@ a.new_ticket:hover{
    background-color:#ffffff;
    @include shadows( rgba(0, 0, 0, 0.2), 0, 2px, 4px);
    padding:6px 6px 16px 6px;
-   width:600px;
+   width:400px;
    position:absolute;
    z-index:1000;
    right:6px;
@@ -1545,6 +1545,8 @@ a.new_ticket:hover{
       padding:12px 0 0 0;
       margin:6px 0 0 0;      
       @include clearfix;
+      max-height:300px;
+      overflow:auto;
    }
    span.divider{
       position:absolute;
@@ -1553,11 +1555,9 @@ a.new_ticket:hover{
       left:49%;
       width:1px;
    }
-   li{      
-      float:left;
-      width:240px;
+   li{       
       padding: 6px 8px 6px 24px;
-      margin-left:20px;
+      margin-left:10px;
       position:relative;
       a{
          font-size:13px;
@@ -1579,4 +1579,8 @@ textarea.tweet{
    line-height:22px;
    padding:2px 4px;
    @include corners(4px);
+}
+
+.ticket-simple-list label{
+   font-size:13px; 
 }
