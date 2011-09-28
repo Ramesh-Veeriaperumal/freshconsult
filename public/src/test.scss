@@ -2,6 +2,8 @@
 @import "base";
 @import "mixins";
 
+.customSelect{ width:100%; } 
+   
 .containerFull{
    @include clearfix;
    overflow:visible;
@@ -64,7 +66,6 @@
 		text-transform:uppercase;
       color:#666666;
    }
-   .customSelect{ width:100%; } 
    
    .view_filters{
 		.link-item.active, a.link-item:hover{
@@ -81,8 +82,8 @@
 		.link-item.active:after{
 		   content:"";
 		   position:absolute;
-		   right:4px;
-		   top:7px;
+		   right:9px;
+		   top:8px;
 		   width:11px;
 		   height:11px;
 		   background: sprite($symbol, arrow-selected-right) no-repeat;

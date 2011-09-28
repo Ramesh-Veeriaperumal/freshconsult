@@ -35,6 +35,7 @@ class User < ActiveRecord::Base
   
   named_scope :contacts, :conditions => ["user_role in (#{USER_ROLES_KEYS_BY_TOKEN[:customer]}, #{USER_ROLES_KEYS_BY_TOKEN[:client_manager]})" ]
   named_scope :technicians, :conditions => ["user_role not in (#{USER_ROLES_KEYS_BY_TOKEN[:customer]}, #{USER_ROLES_KEYS_BY_TOKEN[:client_manager]})"]
+  named_scope :visible, :conditions => { :deleted => false }
 
   acts_as_authentic do |c|    
     c.validations_scope = :account_id

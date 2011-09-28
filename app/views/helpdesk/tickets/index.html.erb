@@ -1,21 +1,6 @@
 <% content_for :onload_script do %>
   $J('#rightCol').css("minHeight", $J('#leftcol').height());
-	$J("#agent-assign-link").click(function(){
-  	$J("#assign-options")
- 			.dialog({ modal : true, 
- 			  			  show : 'puff', 
- 			  				title:  '<%= t('ticket.assign_to_agent') %>',
- 			  				closeOnEscape: true,
- 			  				buttons: [{
-      						text: "Assign",
-      						click: function() { 
-      					 		helpdesk_submit("<%= assign_helpdesk_ticket_path('multiple') %>", "put", ['responder_id']);
-      						}
-  							}] 
- 						 });
-  				});
 	$J("#helpdesk-select-all").live("click", function(ev){
-	  console.log(this);
 		$J("#tickets-expanded input[type=checkbox]").attr("checked", $J(this).attr("checked"));
 	});	
 
