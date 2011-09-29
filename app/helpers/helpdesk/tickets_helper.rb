@@ -20,9 +20,12 @@ module Helpdesk::TicketsHelper
   end
   
   def top_views(selected = "new_my_open", dynamic_view = [], show_max = 1)
+    unless dynamic_view.empty?
+      dynamic_view.concat([{ :id => -1 }])
+    end
+    
     top_views_array = [ 
     ].concat(dynamic_view).concat([
-      { :id => -1 },
       { :id => "new_my_open",  :name => t("helpdesk.tickets.views.new_my_open"),     :default => true },
       { :id => "all_tickets",  :name => t("helpdesk.tickets.views.all_tickets"),     :default => true },      
       { :id => "monitored_by", :name => t("helpdesk.tickets.views.monitored_by"),    :default => true },

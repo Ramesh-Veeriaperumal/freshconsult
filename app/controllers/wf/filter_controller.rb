@@ -28,7 +28,14 @@ class Wf::FilterController < ApplicationController
   before_filter :chk_usr_permission, :only => [:delete_filter,:update_filter]
   
   def index
-    @edit_filters = scoper.edit_ticket_filters(current_user)
+    @edit_filters = []
+    view_filters = scoper.my_ticket_filters(current_user)
+    view_filters.each do |filter|
+      if (filter.accessible.user_id == current_user.id) or current_user.admin?
+        @edit_filters.push(filter)
+      end
+    end
+    
   end
  
   def chk_usr_permission 

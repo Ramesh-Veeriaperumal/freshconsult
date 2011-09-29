@@ -1,4 +1,4 @@
 <li class="menu-item">
   <span class="bullet"></span>
-  <%= link_to_function truncate(ca_response.title, :length => 35), "getCannedResponse('#{@ticket.display_id}','#{ca_response.id}')", :title => t(:'ticket.canned_responses.insert_ca_resp_tip') %>
+  <%= link_to_function ca_response.title, "getCannedResponse('#{@ticket.display_id}','#{ca_response.id}')", :title => t(:'ticket.canned_responses.insert_ca_resp_tip') %>
 </li>

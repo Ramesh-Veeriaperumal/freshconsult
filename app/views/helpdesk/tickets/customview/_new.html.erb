@@ -3,15 +3,15 @@
   <%= hidden_field_tag(:wf_model, "Helpdesk::Ticket") %>
   <ul class="ui-form">
     <li class="inline-field">
-      <label class="caption">Custom view name</label> 
-      <div class="fields inline-radio">
-        <%= text_field_tag( :filter_name, "", :class => "required text") %>
+      <label>Custom view name</label> 
+      <div class="inline-radio">
+        <%= text_field_tag( :filter_name, "", :class => "required text", :size => 30) %>
       </div>
     </li>
     <% if permission?(:manage_users) %>
     <li class="inline-field">
-      <label class="caption"><%= t('admin.canned_responses.form.available_for') %>:</label>
-      <div class="fields inline-radio">
+      <label><%= t('admin.canned_responses.form.available_for') %>:</label>
+      <div class="inline-radio">
   	    <div class="inline-radio">
   		    <%= radio_button_tag :visibility, Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me], Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me] == @ticket_filter.accessible.visibility, {:onclick =>"toggleGroup(this.value)", :class => "radio" } %> 
   		    <%= t('admin.canned_responses.form.me_only') %>

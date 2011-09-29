@@ -1402,3 +1402,4 @@ en:
         delete: "Are you sure you want to delete this view?"
     messages:
       no_tickets_in_view: You don't have any tickets in %{view_name}.
+  conversation: Conversation

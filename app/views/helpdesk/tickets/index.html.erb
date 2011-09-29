@@ -1,21 +1,6 @@
 <% content_for :onload_script do %>
   $J('#rightCol').css("minHeight", $J('#leftcol').height());
-	$J("#agent-assign-link").click(function(){
-  	$J("#assign-options")
- 			.dialog({ modal : true, 
- 			  			  show : 'puff', 
- 			  				title:  '<%= t('ticket.assign_to_agent') %>',
- 			  				closeOnEscape: true,
- 			  				buttons: [{
-      						text: "Assign",
-      						click: function() { 
-      					 		helpdesk_submit("<%= assign_helpdesk_ticket_path('multiple') %>", "put", ['responder_id']);
-      						}
-  							}] 
- 						 });
-  				});
 	$J("#helpdesk-select-all").live("click", function(ev){
-	  console.log(this);
 		$J("#tickets-expanded input[type=checkbox]").attr("checked", $J(this).attr("checked"));
 	});	
 
@@ -32,12 +17,10 @@
   <div id="leftcol" class="ticket-leftcol">
     <div class="leftFilter" id="all-views">
       <%= render :partial => "filters", :locals =>{ :selected => @current_view, :custom_filters => @filters_options } %>
-    </div>
-    <% if @current_view != "deleted" && @current_view != "spam" %>
-		  <div class="leftFilter">    
-    	  <%= render :partial => "helpdesk/shared/filter_options", :locals => { :current_filter => @ticket_filter } %>
-		  </div>
-		<% end %>
+    </div>  
+	  <div class="leftFilter" style="display:<%=(@current_view != "deleted" && @current_view != "spam")?"block":"none"%>">    
+  	  <%= render :partial => "helpdesk/shared/filter_options", :locals => { :current_filter => @ticket_filter } %>
+	  </div>
   </div>
   <div id="rightCol" class="contentCol hasRightCol">
 	  <%= render :partial => "helpdesk/shared/ticket_view", :locals => { :items => @items } %>
