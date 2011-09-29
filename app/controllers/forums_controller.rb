@@ -27,8 +27,8 @@ class ForumsController < ApplicationController
       @topics = @forum.topics.find(:all, :include => :votes, :conditions => conditions).sort_by { |u| -u.votes.size }
     else
       params[:order] = "created_at" if params[:order].blank? 
-      params[:order] = params[:order] + " desc";
-      @topics = @forum.topics
+      params[:order] = params[:order] + " desc" unless params[:order].include?("desc")
+      @topics = @forum.topics.find(:all,:order => params[:order])
     end
     
     @topics = @topics.paginate(
