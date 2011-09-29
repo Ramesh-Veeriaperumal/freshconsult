@@ -41,7 +41,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   end
   
   def has_permission?(user)
-    (accessible.all_agents?) or (accessible.only_me? and accessible.user_id == user.id) or (accessible.group_agents_visibility? and !user.agent_groups.find(accessible.group_id).nil?)
+    (accessible.all_agents?) or (accessible.only_me? and accessible.user_id == user.id) or (accessible.group_agents_visibility? and !user.agent_groups.find_by_group_id(accessible.group_id).nil?)
   end
   
   def self.my_ticket_filters(user)
