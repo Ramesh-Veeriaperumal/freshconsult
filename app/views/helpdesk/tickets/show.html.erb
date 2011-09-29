@@ -222,6 +222,7 @@
             <%= t('ticket.reported_by', :requester => link_to(h(@ticket.requester.display_name),@ticket.requester, :class => "user_name"))%>  
 			<%="< #{@ticket.requester.email} >" if @ticket.requester.email%>
           </div>
+
           <div> 
             <%= t('ticket.created_on', :time => formated_date(@ticket.created_at)) %>
             <% metainfo = @ticket.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["meta"]) %>
@@ -306,7 +307,7 @@
 			</div>
 		<% end %>
 		<% unless @ticket_notes.blank? then %>
-      <h3 class="title"><%=t('comments')%></h3> 
+      <h3 class="title"><%=t('conversation')%></h3> 
 			<div class="requestCnt request-conversation">
 				<%= render :partial => 'note', :collection => @ticket_notes %>
 		    </div>
