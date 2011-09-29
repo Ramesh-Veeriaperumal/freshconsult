@@ -24,7 +24,7 @@ class Helpdesk::TicketsController < ApplicationController
     load_default_filter(filter_name)
    else
     @ticket_filter = current_account.ticket_filters.find_by_id(filter_name)
-    return load_default_filter(TicketsFilter::DEFAULT_FILTER) if @ticket_filter.nil?
+    return load_default_filter(TicketsFilter::DEFAULT_FILTER) if @ticket_filter.nil? or !@ticket_filter.has_permission?(current_user)
     @ticket_filter.query_hash = @ticket_filter.data[:data_hash]
     params.merge!(@ticket_filter.attributes["data"])
    end
