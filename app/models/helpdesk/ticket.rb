@@ -227,6 +227,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def encode_display_id
     "[##{display_id}]"
   end
+  
+  def conversation(page = nil, no_of_records = 5)
+    notes.visible.exclude_source('meta').newest_first.paginate(:page => page, :per_page => no_of_records)
+  end
 
   def train(category)
     self[:trained] = true

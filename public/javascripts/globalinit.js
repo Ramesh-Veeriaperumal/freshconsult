@@ -91,7 +91,7 @@ var $J = jQuery.noConflict();
 		}
 		
 		$(".nav-drop .menu-trigger")
-			.bind('click', function(ev){
+			.live('click', function(ev){
 				ev.preventDefault();
 				
 				$(this).toggleClass("selected").next().toggle();

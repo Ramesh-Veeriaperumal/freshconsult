@@ -242,6 +242,16 @@ module ApplicationHelper
     content_tag :li, element, :class => dom_type
   end
    
+  def pageless(total_pages, url, message=t("loading.items"))
+    opts = {
+      :totalPages => total_pages,
+      :url        => url,
+      :loaderMsg  => message
+    }
+        
+    javascript_tag("jQuery('#Pages').pageless(#{opts.to_json});")
+  end
+   
   private
     def solutions_tab
       if current_portal.main_portal?

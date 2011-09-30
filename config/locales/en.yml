@@ -1410,3 +1410,6 @@ en:
       no_tickets_in_view: You don't have any tickets in %{view_name}.
   conversation: Conversation
   save_this_view: "Save this View..."
+  loading:
+    activities: Loading more activities
+    items: Loading more items

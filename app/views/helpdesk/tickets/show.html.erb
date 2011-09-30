@@ -308,15 +308,13 @@
 		<% end %>
 		<% unless @ticket_notes.blank? then %>
       <h3 class="title"><%=t('conversation')%></h3> 
-			<div class="requestCnt request-conversation">
+			<div class="requestCnt request-conversation" id="Pages">
 				<%= render :partial => 'note', :collection => @ticket_notes %>
-		    </div>
-		<% end %>
-			
+		  </div>
+			<%= will_paginate @ticket_notes %>		
+		<% end %>			
 	</div>
 <% end %>
-
-
 
 <% content_for :main_panel_toolbar do -%><%- end %>
 
@@ -325,3 +323,8 @@
 <%- end %>
 
 <%= render :partial => "/helpdesk/shared/main_panel" %>
+
+<% content_for :pagefixed do %> 
+  <%= pageless(@ticket_notes.total_pages, helpdesk_ticket_helpdesk_notes_path(@ticket)) %>  
+<% end %>
+
