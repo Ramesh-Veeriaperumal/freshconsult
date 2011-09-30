@@ -250,6 +250,9 @@ div.action_buttons:hover{
    a, span{
       @extend .button;
    }
+   .disabled.prev_page, .disabled.next_page{ 
+      @include single-box-shadow( rgba(0, 0, 0, 0.3), 0px, -0px, 1px, false, true );      
+   }
    text-align:center;
 }
 .toolbar_pagination, .toolbar_pagination_full{

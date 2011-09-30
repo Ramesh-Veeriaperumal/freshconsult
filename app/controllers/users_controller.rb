@@ -18,7 +18,7 @@ class UsersController < ApplicationController
     @user = current_account.users.new #by Shan need to check later       
     if @user.signup!(params)
       #@user.deliver_activation_instructions! #Have moved it to signup! method in the model itself.
-      flash[:notice] = "The user has been created and activation instructions sent to #{@user.email}!"
+      flash[:notice] = t("user_activation_message_sent", :user_email => @user.email)
       redirect_to users_url
     else
       render :action => :new
@@ -30,7 +30,7 @@ class UsersController < ApplicationController
       item.deleted = true 
       item.save if item.customer?
     end
-    flash[:notice] = "The following users have been blocked #{ @items.map {|u| u.name}.join(', ') }"
+    flash[:notice] = t("users_blocked_message", :users => @items.map {|u| u.name}.join(', '))
   end
   
    

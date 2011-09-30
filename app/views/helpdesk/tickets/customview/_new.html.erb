@@ -3,36 +3,36 @@
   <%= hidden_field_tag(:wf_model, "Helpdesk::Ticket") %>
   <ul class="ui-form">
     <li class="inline-field">
-      <label>Custom view name</label> 
+      <label><%= t(".give_a_name") %></label> 
       <div class="inline-radio">
         <%= text_field_tag( :filter_name, "", :class => "required text", :size => 30) %>
       </div>
     </li>
     <% if permission?(:manage_users) %>
     <li class="inline-field">
-      <label><%= t('admin.canned_responses.form.available_for') %>:</label>
+      <label><%= t('.visible_to') %>:</label>
       <div class="inline-radio">
-  	    <div class="inline-radio">
+  	    <label class="inline-radio">
   		    <%= radio_button_tag :visibility, Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me], Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me] == @ticket_filter.accessible.visibility, {:onclick =>"toggleGroup(this.value)", :class => "radio" } %> 
   		    <%= t('admin.canned_responses.form.me_only') %>
-  	    </div>
-  	    <div class="inline-radio">
+  	    </label>
+  	    <label class="inline-radio">
   		    <%= radio_button_tag :visibility, Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents],  Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents] == @ticket_filter.accessible.visibility, {:onclick =>"toggleGroup(this.value)",:class => "radio"  } %> 
   		    <%= t('admin.canned_responses.form.all_agents') %>
-  	    </div>
-  	    <div class="inline-radio">
+  	    </label>
+  	    <label class="inline-radio">
   		    <%= radio_button_tag :visibility, Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents], Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents] == @ticket_filter.accessible.visibility,{:onclick =>"toggleGroup(this.value)" , :class => "radio" } %> 
   		    <%= t('admin.canned_responses.form.groups') %>
+  	    </label>
   		    <div style="display:none;" class="tabbed" id="accessible_group">
             <%= select_tag :visibility_group_id, options_from_collection_for_select(current_account.groups, :id, :name, @ticket_filter.accessible.group_id) %>
           </div>
-  	    </div>
       </div>
     </li>
     <% end %>
   </ul>
   <div class="button-container">
-    <%= submit_tag "Save", :class => "uiButton" %>
+    <%= submit_tag t("save"), :class => "uiButton" %>
   </div>
 <% end %>
 <% javascript_tag do %>

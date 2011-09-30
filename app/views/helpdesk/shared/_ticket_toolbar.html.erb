@@ -21,7 +21,7 @@
     				<%= link_to_function(t('close'), "helpdesk_submit('#{ close_multiple_helpdesk_ticket_path('multiple') }', 'put')", :class => "button") %>
     				<%= link_to_function(t('ticket.pick_up'), "helpdesk_submit('#{ pick_tickets_helpdesk_ticket_path('multiple') }', 'put')", :class => "button") %> 
 
-            <%= link_to(t('ticket.select_to_agent'), { :action => "assign_to_agent" }, :class => "button dialog2", :title => t('ticket.assign_to_agent'), :dialogWidth => "360" ) %>
+            <%= link_to(t('ticket.assign_to_agent'), { :action => "assign_to_agent" }, :class => "button dialog2", :title => t('ticket.assign_to_agent'), :dialogWidth => "360" ) %>
           <% end %>
           </th>
           <th class="toolbar_right">	
