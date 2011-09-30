@@ -18,7 +18,7 @@
     <div class="leftFilter" id="all-views">
       <%= render :partial => "filters", :locals =>{ :selected => @current_view, :custom_filters => @filters_options } %>
     </div>  
-	  <div class="leftFilter" style="display:<%=(@current_view != "deleted" && @current_view != "spam")?"block":"none"%>">    
+	  <div class="leftFilter" style="display:<%=(@current_view != "deleted" && @current_view != "spam" && @current_view != "monitored_by")?"block":"none"%>">    
   	  <%= render :partial => "helpdesk/shared/filter_options", :locals => { :current_filter => @ticket_filter } %>
 	  </div>
   </div>

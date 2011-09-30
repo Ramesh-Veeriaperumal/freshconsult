@@ -40,6 +40,10 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     self.accessible.update_attributes(self.visibility)    
   end
   
+  def has_permission?(user)
+    (accessible.all_agents?) or (accessible.only_me? and accessible.user_id == user.id) or (accessible.group_agents_visibility? and !user.agent_groups.find_by_group_id(accessible.group_id).nil?)
+  end
+  
   def self.my_ticket_filters(user)
     self.find(:all, :joins =>"JOIN admin_user_accesses acc ON acc.accessible_id = wf_filters.id AND acc.accessible_type = 'Wf::Filter' LEFT JOIN agent_groups ON acc.group_id=agent_groups.group_id", :order => 'created_at desc', :conditions =>["acc.VISIBILITY=#{Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents]} OR agent_groups.user_id=#{user.id} OR (acc.VISIBILITY=#{Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me]} and acc.user_id=#{user.id})"])
   end
@@ -120,10 +124,13 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       action_hash = params[:data_hash]
       action_hash = ActiveSupport::JSON.decode params[:data_hash] if !params[:data_hash].kind_of?(Array)
     end
-    if params[:filter_name].blank?
+    
+    #### Very bad condition need to change -- error prone
+    if !params[:filter_name].eql?("spam") or !params[:filter_name].eql?("deleted")
       action_hash.push({ "condition" => "spam", "operator" => "is", "value" => false})
       action_hash.push({ "condition" => "deleted", "operator" => "is", "value" => false})
     end
+    
     action_hash = default_filter(params[:filter_name])  if params[:data_hash].blank?
     self.query_hash = action_hash
    

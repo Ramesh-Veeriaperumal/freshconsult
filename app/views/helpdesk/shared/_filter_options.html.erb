@@ -1,5 +1,5 @@
   <%= will_filter_scripts_tag %>
-  <%= link_to("Save this View...", "/helpdesk/tickets/custom_view_save", :title => "Save View", :class => "slim-button floatr dialog2", :dialogWidth => "540px", :id => "save_filter") %> 
+  <%= link_to(t("save_this_view"), "/helpdesk/tickets/custom_view_save", :title => t("save_this_view"), :class => "slim-button floatr dialog2", :dialogWidth => "540px", :id => "save_filter") %> 
     <h3 class="title">Filters</h3>
     <form id="FilterOptions" action="#">
       <input type="hidden" name="data_hash" value="" />

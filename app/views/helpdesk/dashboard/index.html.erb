@@ -20,7 +20,7 @@
 </div>
 <%= will_paginate @items %>
 <% content_for :pagefixed do %> 
-  <%= pageless(@items.total_pages, helpdesk_dashboard_path) %>  
+  <%= pageless(@items.total_pages, helpdesk_dashboard_path, t("loading.activities")) %>  
 <% end %>
 
 

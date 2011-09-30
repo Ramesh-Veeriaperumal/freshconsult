@@ -227,7 +227,6 @@ EDITOR_OPTIONS: &common
     apply_source_formatting:            false
     inline_styles:                      false
     theme:                              advanced
-    valid_elements:                     "a[href|target=_blank],strong/b,br,span[style],p,i,em,ol,ul,li"
     theme_advanced_toolbar_location:    top
     theme_advanced_toolbar_align:       left
     theme_advanced_buttons2:            ""
@@ -268,7 +267,9 @@ FRESH_EDITOR:
     <<: *common    
     theme_advanced_buttons1:            "bold,italic,underline,strikethrough,blockquote,bullist,numlist,|,forecolor,backcolor,|,link,unlink,image,media"
     height:                             200
+    valid_elements:                     "a[href|target=_blank],strong/b,br,span[style],p,i,em,ol,ul,li"    
 TICKET_EDITOR:
     <<: *common    
     theme_advanced_buttons1:            "bold,italic,|,underline,bullist,numlist,|,forecolor,backcolor"
     height:                            200
+    valid_elements:                     "a[href|target=_blank],strong/b,br,span[style],p,i,em,ol,ul,li"    
