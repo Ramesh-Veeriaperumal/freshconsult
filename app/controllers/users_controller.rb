@@ -30,7 +30,7 @@ class UsersController < ApplicationController
       item.deleted = true 
       item.save if item.customer?
     end
-    flash[:notice] = "The following users have been blocked #{ @items.map {|u| u.name}.join(', ') }"
+    flash[:notice] = "Following contacts #{ @items.map {|u| u.name}.join(', ') } has been blocked "
   end
   
    

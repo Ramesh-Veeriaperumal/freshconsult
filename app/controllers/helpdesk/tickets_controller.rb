@@ -186,7 +186,8 @@ class Helpdesk::TicketsController < ApplicationController
     req_list = []
     @items.each do |item|
       item.spam = true 
-      req_list << item.requester.id
+      req = item.requester
+      req_list << req.id if req.customer?
       item.save
     end
     
@@ -198,8 +199,11 @@ class Helpdesk::TicketsController < ApplicationController
                     
     link = render_to_string( :inline => "<%= link_to_remote(t('user_block'), :url=>block_user_path(:ids => req_list), :method => :put ) %>" ,
       :locals => { :req_list => req_list.uniq } )
+      
+    notice_msg =  msg1
+    notice_msg << " <br />#{t("block_users")} #{link}" unless req_list.blank?
     
-    flash[:notice] =  "#{msg1}. <br />#{t("block_users")} #{link}" 
+    flash[:notice] =  notice_msg 
     respond_to do |format|
       format.html { redirect_to redirect_url  }
       format.js
