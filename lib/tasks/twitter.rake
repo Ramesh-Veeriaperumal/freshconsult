@@ -8,8 +8,8 @@ namespace :twitter do
       twitter_handles = account.twitter_handles.find(:all, :conditions => ["capture_dm_as_ticket = 1 or capture_mention_as_ticket = 1"])    
       twitter_handles.each do |twt_handle| 
         sandbox do ### starts ####
-          @wrapper = TwitterWrapper.new twt_handle
-          twitter = @wrapper.get_twitter
+          wrapper = TwitterWrapper.new twt_handle
+          twitter = wrapper.get_twitter
           #From id to Id....
           if twt_handle.capture_dm_as_ticket
             tweets = nil
@@ -21,7 +21,7 @@ namespace :twitter do
         
             last_tweet_id = tweets[0].id unless tweets.blank?       
             create_ticket_from_tweet tweets , twt_handle        
-            twt_handle.update_attribute(:last_dm_id, last_tweet_id)
+            twt_handle.update_attribute(:last_dm_id, last_tweet_id) unless last_tweet_id.blank?
           end
         
           #From id to Id....
@@ -58,7 +58,7 @@ namespace :twitter do
   
   def add_tweet_as_ticket twt , twt_handle
      
-     @ticket = @account.tickets.build(
+     ticket = @account.tickets.build(
       :subject => twt.text,
       :description => twt.text,
       :twitter_id => @sender.screen_name,
@@ -67,10 +67,10 @@ namespace :twitter do
       :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:twitter],
       :tweet_attributes => {:tweet_id => twt.id, :account_id => @account.id} )
       
-      if @ticket.save
+      if ticket.save
         puts "This ticket has been saved"
       else
-        puts "error while saving the ticket:: #{@ticket.errors.to_json}"
+        puts "error while saving the ticket:: #{ticket.errors.to_json}"
       end
   end
   
@@ -86,15 +86,15 @@ namespace :twitter do
   end
   
   def add_tweet_as_note twt,twt_handle 
-    
     tweet = @account.tweets.find_by_tweet_id(twt.in_reply_to_status_id)
     
     unless tweet.nil?  
-      @ticket = tweet.get_ticket
+      ticket = tweet.get_ticket
     end
     
-    unless @ticket.blank?
-      @note = @ticket.notes.build(
+    unless ticket.blank?
+      puts "Ticket id is #{ticket.id}"
+      note = ticket.notes.build(
         :body => twt.text,
         :incoming => true,
         :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:twitter],
@@ -102,10 +102,10 @@ namespace :twitter do
         :user_id => @user.id ,
         :tweet_attributes => {:tweet_id => twt.id, :account_id => @account.id}
        )
-      if @note.save
+      if note.save
         puts "This note has been added"
       else
-        puts "error while saving the ticket:: #{@note.errors.to_json}"
+        puts "error while saving the ticket:: #{note.errors.to_json}"
       end
     else
       add_tweet_as_ticket (twt,twt_handle)

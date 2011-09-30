@@ -29,4 +29,12 @@ class Admin::UserAccess < ActiveRecord::Base
     visibility == VISIBILITY_KEYS_BY_TOKEN[:group_agents]
   end
   
+  def all_agents?
+    visibility == VISIBILITY_KEYS_BY_TOKEN[:all_agents]
+  end
+  
+  def only_me?
+    visibility == VISIBILITY_KEYS_BY_TOKEN[:only_me]
+  end
+  
 end

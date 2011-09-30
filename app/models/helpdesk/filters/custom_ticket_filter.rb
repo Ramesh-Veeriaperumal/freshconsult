@@ -22,7 +22,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
                       "open" => [{ "condition" => "status", "operator" => "is_in", "value" => TicketConstants::STATUS_KEYS_BY_TOKEN[:open]},spam_condition(false),deleted_condition(false)],
                       "due_today" => [{ "condition" => "due_by", "operator" => "due_by_op", "value" => TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN[:due_today]},spam_condition(false),deleted_condition(false)],
                       "new" => [{ "condition" => "responder_id", "operator" => "is_in", "value" => ""},spam_condition(false),deleted_condition(false)],
-                      "monitored_by" => [{ "condition" => "helpdesk_subscriptions.user_id", "operator" => "is_in", "value" => "0"}],
+                      "monitored_by" => [{ "condition" => "helpdesk_subscriptions.user_id", "operator" => "is_in", "value" => "0"},spam_condition(false),deleted_condition(false)],
                       "new_my_open" => [{ "condition" => "status", "operator" => "is_in", "value" => TicketConstants::STATUS_KEYS_BY_TOKEN[:open]},{ "condition" => "responder_id", "operator" => "is_in", "value" => "-1,0"},spam_condition(false),deleted_condition(false)],
                       "all_tickets" => [spam_condition(false),deleted_condition(false)]
                    }
@@ -38,6 +38,10 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   
   def save_accessible
     self.accessible.update_attributes(self.visibility)    
+  end
+  
+  def has_permission?(user)
+    (accessible.all_agents?) or (accessible.only_me? and accessible.user_id == user.id) or (accessible.group_agents_visibility? and !user.agent_groups.find_by_group_id(accessible.group_id).nil?)
   end
   
   def self.my_ticket_filters(user)
@@ -120,10 +124,13 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       action_hash = params[:data_hash]
       action_hash = ActiveSupport::JSON.decode params[:data_hash] if !params[:data_hash].kind_of?(Array)
     end
-    if params[:filter_name].blank?
+    
+    #### Very bad condition need to change -- error prone
+    if !params[:filter_name].eql?("spam") or !params[:filter_name].eql?("deleted")
       action_hash.push({ "condition" => "spam", "operator" => "is", "value" => false})
       action_hash.push({ "condition" => "deleted", "operator" => "is", "value" => false})
     end
+    
     action_hash = default_filter(params[:filter_name])  if params[:data_hash].blank?
     self.query_hash = action_hash
    
@@ -149,7 +156,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
         0.upto(size - 1) do |index|
           condition = condition_at(index)
           if condition.key.to_s.include?("responder_id") or condition.key.to_s.include?("helpdesk_subscriptions.user_id") 
-            condition.container.values[0] = condition.container.value.gsub("0",Account.current.id.to_s) 
+            condition.container.values[0] = condition.container.value.gsub("0",User.current.id.to_s) 
           end
           
           if condition.key.to_s.include?("group_id")
