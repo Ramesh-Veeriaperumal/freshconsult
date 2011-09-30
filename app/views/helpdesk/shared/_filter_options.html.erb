@@ -1,8 +1,9 @@
-<%= will_filter_scripts_tag %>
-<%= link_to("Save this View...", "/helpdesk/tickets/custom_view_save", :title => "Save ticket view", :class => "slim-button floatr dialog2", :dialogWidth => "540px", :id => "save_filter") %> 
+  <%= will_filter_scripts_tag %>
+  <%= link_to(t("save_this_view"), "/helpdesk/tickets/custom_view_save", :title => t("save_this_view"), :class => "slim-button floatr dialog2", :dialogWidth => "540px", :id => "save_filter") %> 
     <h3 class="title">Filters</h3>
     <form id="FilterOptions" action="#">
       <input type="hidden" name="data_hash" value="" />
+      <input type="hidden" name="filter_name" value="<%= @current_view %>" />
       <input type="hidden" name="wf_order" value="<%= current_wf_order %>" />
       <input type="hidden" name="wf_order_type" value="<%= current_wf_order_type %>" />    
   		<input type="hidden" name="page" value="1" />
@@ -46,20 +47,12 @@
 		jQuery("#FilterOptions input[name=page]").val(1);
   }
   
-	jQuery(document).ready(function(){	  
-	  if('<%=@ticket_filter.accessible.visibility%>' == '<%=Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents]%>')
-		{
-			jQuery('#accessible_group').show();	
-			jQuery('#visibility_group_id').removeAttr('disabled');
-		}
-		else
-		{
-			jQuery('#visibility_group_id').attr('disabled','disabled');
-		}
-		
-		getFilterData();
+	jQuery(document).ready(function(){
+		jQuery("#FilterOptions input[name=data_hash]").val($A(<%= @ticket_filter.query_hash.to_json %>).toJSON());
     jQuery(".filter_item").bind("change", function(){
       jQuery("#save_filter").show();
+			jQuery("#FilterOptions input[name=filter_name]").val("");
+      jQuery(".view_filters .active").removeClass("active");
       getFilterData();
       jQuery("#FilterOptions input[name=data_hash]").val(query_hash.toJSON()).trigger("change");  
     });	
@@ -69,6 +62,7 @@
     });	
 		jQuery(".toolbar_pagination a, .toolbar_pagination_full a").live("click", function(ev){
 			ev.preventDefault();
+			jQuery(document).scrollTop(0);
 			jQuery("#FilterOptions input[name=page]").val(getParameterByName("page", this.href)).trigger("change");
 		});		
   });
@@ -85,19 +79,4 @@
         }
       }); 
   });
-  
-  
-	function toggleGroup(access_id){	
-		if (access_id == '<%=Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents]%>')
-		{
-			jQuery('#accessible_group').show();
-			jQuery('#visibility_group_id').removeAttr('disabled');
-		}
-		else
-		{
-			jQuery('#accessible_group').hide();	
-			jQuery('#visibility_group_id').attr('disabled','disabled');
-		}
-	}
- 
 <% end %>

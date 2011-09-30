@@ -26,10 +26,10 @@
               <%= link_to_remote( t(".edit_note"), { :loading => "$('loading_#{notedetails}').show();", 
                                                      :loaded  => "$('loading_#{notedetails}').hide();", 
                                                      :update  => notedetails,
-                                                     :url => edit_helpdesk_ticket_helpdesk_note_path(@item, note), :method => :GET }) %>
+                                                     :url => edit_helpdesk_ticket_helpdesk_note_path(note.notable, note), :method => :GET }) %>
             </li>
             <li class="menu-item">
-              <%= link_to t("delete"), helpdesk_ticket_helpdesk_note_path(@item, note), :method => :delete, :class => "last" %>
+              <%= link_to t("delete"), helpdesk_ticket_helpdesk_note_path(note.notable, note), :method => :delete, :class => "last" %>
             </li>	
             
             <% if note.incoming %>

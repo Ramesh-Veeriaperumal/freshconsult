@@ -11,9 +11,9 @@
 		     Remove this if you use the .htaccess -->
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	  
-	    <title><%= "#{h(current_account.name)} Widget" %></title>
+	  <title><%= "#{h(current_account.name)} Widget" %></title>
+		<%= stylesheet_link_tag "reset", "defaults", "form", "buttons", "ie", :media => "screen, projection", :cache => true, :concat => true  %>
 		
-		<%= include_stylesheets :widget, :media => "screen, projection" %> 
 		<%= render :partial => "shared/theme.css"  %>
 		
 		<%= include_javascripts :defaults  %>

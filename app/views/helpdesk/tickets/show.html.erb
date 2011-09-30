@@ -218,9 +218,11 @@
         <div class="user_details">
           <%= user_avatar(@ticket.requester)  %>
           <div>
-						<%= content_tag :span, "", :class => "custom-tip-bottom icon-image source-#{@ticket.source_name.downcase}", :title => t("ticket.reported_from_source", :source => @ticket.source_name.downcase) %>
-            <%= t('ticket.reported_by', :requester => link_to(h(@ticket.requester.display_name),@ticket.requester, :class => "user_name")) %>     
+			<%= content_tag :span, "", :class => "custom-tip-bottom icon-image source-#{@ticket.source_name.downcase}", :title => t("ticket.reported_from_source", :source => @ticket.source_name.downcase) %>
+            <%= t('ticket.reported_by', :requester => link_to(h(@ticket.requester.display_name),@ticket.requester, :class => "user_name"))%>  
+			<%="< #{@ticket.requester.email} >" if @ticket.requester.email%>
           </div>
+
           <div> 
             <%= t('ticket.created_on', :time => formated_date(@ticket.created_at)) %>
             <% metainfo = @ticket.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["meta"]) %>
@@ -305,16 +307,14 @@
 			</div>
 		<% end %>
 		<% unless @ticket_notes.blank? then %>
-      <h3 class="title"><%=t('comments')%></h3> 
-			<div class="requestCnt request-conversation">
+      <h3 class="title"><%=t('conversation')%></h3> 
+			<div class="requestCnt request-conversation" id="Pages">
 				<%= render :partial => 'note', :collection => @ticket_notes %>
-		    </div>
-		<% end %>
-			
+		  </div>
+			<%= will_paginate @ticket_notes %>		
+		<% end %>			
 	</div>
 <% end %>
-
-
 
 <% content_for :main_panel_toolbar do -%><%- end %>
 
@@ -323,3 +323,8 @@
 <%- end %>
 
 <%= render :partial => "/helpdesk/shared/main_panel" %>
+
+<% content_for :pagefixed do %> 
+  <%= pageless(@ticket_notes.total_pages, helpdesk_ticket_helpdesk_notes_path(@ticket)) %>  
+<% end %>
+

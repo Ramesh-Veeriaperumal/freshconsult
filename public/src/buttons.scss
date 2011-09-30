@@ -1,6 +1,16 @@
 @import "base";
 @import "mixins";
 
+.ui-datepicker{
+   background:#ffffff;
+   @include opacity(0.95);
+   @include corners(5px);
+}
+
+.ui-datepicker-title{
+   color:#333333;
+}
+
 /*
  * jQuery UI Button 1.8.7
  *
@@ -239,6 +249,9 @@ div.action_buttons:hover{
 .toolbar_pagination_full{
    a, span{
       @extend .button;
+   }
+   .disabled.prev_page, .disabled.next_page{ 
+      @include single-box-shadow( rgba(0, 0, 0, 0.3), 0px, -0px, 1px, false, true );      
    }
    text-align:center;
 }

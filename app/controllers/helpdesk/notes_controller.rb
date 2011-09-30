@@ -5,6 +5,13 @@ class Helpdesk::NotesController < ApplicationController
   include HelpdeskControllerMethods
     
   uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
+
+  def index
+    @notes = @parent.conversation(params[:page])
+    if request.xhr?
+      render(:partial => "helpdesk/tickets/note", :collection => @notes)
+    end    
+  end
   
   def create      
     if @item.save

@@ -42,6 +42,10 @@ module Helpdesk::TicketActions
     redirect_to @item
   end
   
+  def assign_to_agent
+    render :partial => "assign_agent"
+  end
+  
   def component
     @ticket = current_account.tickets.find_by_id(params[:id])   
     render :partial => "helpdesk/tickets/components/#{params[:component]}", :locals => { :ticket => @ticket , :search_query =>params[:q] } 

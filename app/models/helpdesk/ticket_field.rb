@@ -19,7 +19,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
         con_arr = filter.data[:data_hash]
         unless  con_arr.blank?
           con_arr.each do |condition|
-            con_arr.delete(condition) if condition["condition"].eql?("flexifield.#{flexifield_def_entry.flexifield_name}")
+            con_arr.delete(condition) if condition["condition"].eql?("flexifields.#{flexifield_def_entry.flexifield_name}")
           end
           filter.query_hash = con_arr
           filter.save

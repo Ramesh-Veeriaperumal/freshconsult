@@ -9,14 +9,13 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110913185855) do
+ActiveRecord::Schema.define(:version => 20110927134902) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "full_domain"
-    t.datetime "deleted_at"
     t.string   "time_zone"
     t.string   "helpdesk_name"
     t.string   "helpdesk_url"
@@ -390,14 +389,14 @@ ActiveRecord::Schema.define(:version => 20110913185855) do
   end
 
   create_table "helpdesk_notes", :force => true do |t|
-    t.text     "body",         :limit => 2147483647
+    t.text     "body",         :limit => 16777215
     t.integer  "user_id",      :limit => 8
-    t.integer  "source",                             :default => 0
-    t.boolean  "incoming",                           :default => false
-    t.boolean  "private",                            :default => true
+    t.integer  "source",                           :default => 0
+    t.boolean  "incoming",                         :default => false
+    t.boolean  "private",                          :default => true
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "deleted",                            :default => false
+    t.boolean  "deleted",                          :default => false
     t.integer  "notable_id",   :limit => 8
     t.string   "notable_type"
     t.integer  "account_id",   :limit => 8
@@ -438,7 +437,7 @@ ActiveRecord::Schema.define(:version => 20110913185855) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "sla_policy_id",   :limit => 8
-    t.boolean  "override_bhrs",                :default => false
+    t.boolean  "override_bhrs",   :default => false
   end
 
   create_table "helpdesk_sla_policies", :force => true do |t|
@@ -525,17 +524,17 @@ ActiveRecord::Schema.define(:version => 20110913185855) do
   end
 
   create_table "helpdesk_tickets", :force => true do |t|
-    t.text     "description",      :limit => 2147483647
+    t.text     "description",      :limit => 16777215
     t.integer  "requester_id",     :limit => 8
     t.integer  "responder_id",     :limit => 8
-    t.integer  "status",           :limit => 8,          :default => 1
-    t.boolean  "urgent",                                 :default => false
-    t.integer  "source",                                 :default => 0
-    t.boolean  "spam",                                   :default => false
-    t.boolean  "deleted",                                :default => false
+    t.integer  "status",           :limit => 8,        :default => 1
+    t.boolean  "urgent",                               :default => false
+    t.integer  "source",                               :default => 0
+    t.boolean  "spam",                                 :default => false
+    t.boolean  "deleted",                              :default => false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "trained",                                :default => false
+    t.boolean  "trained",                              :default => false
     t.integer  "account_id",       :limit => 8
     t.string   "subject"
     t.integer  "display_id",       :limit => 8
@@ -543,13 +542,13 @@ ActiveRecord::Schema.define(:version => 20110913185855) do
     t.integer  "group_id",         :limit => 8
     t.datetime "due_by"
     t.datetime "frDueBy"
-    t.boolean  "isescalated",                            :default => false
-    t.integer  "priority",         :limit => 8,          :default => 1
-    t.boolean  "fr_escalated",                           :default => false
+    t.boolean  "isescalated",                          :default => false
+    t.integer  "priority",         :limit => 8,        :default => 1
+    t.boolean  "fr_escalated",                         :default => false
     t.string   "to_email"
     t.integer  "email_config_id",  :limit => 8
     t.text     "cc_email"
-    t.boolean  "delta",                                  :default => true,  :null => false
+    t.boolean  "delta",                                :default => true,  :null => false
     t.integer  "import_id",        :limit => 8
     t.string   "ticket_type"
     t.text     "description_html", :limit => 16777215

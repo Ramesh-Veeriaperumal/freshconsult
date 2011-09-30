@@ -1,5 +1,3 @@
-
-
 <span class="floatr">
 	<%= link_to("&larr; Back to reports", reports_url, :class => "slim-button") %>
 </span>
@@ -9,9 +7,11 @@
 <% javascript_tag do %> 
 	jQuery(document).ready(function() {
 		var dates = jQuery( "#start_date, #end_date" ).datepicker({
-			defaultDate: "+1w",
-			changeMonth: true,
+			changeMonth: true, 
+			changeYear: true,
 			numberOfMonths: 3,
+			showButtonPanel: true,
+			maxDate: "today",
 			onSelect: function( selectedDate ) {
 				var option = this.id == "start_date" ? "minDate" : "maxDate",
 					instance = jQuery( this ).data( "datepicker" ),
@@ -20,24 +20,42 @@
 						jQuery.datepicker._defaults.dateFormat,
 						selectedDate, instance.settings );
 				dates.not( this ).datepicker( "option", option, date );
+				jQuery(this).attr("date", date);
 			}
+		});
+		
+		jQuery("#report_search").submit(function(){
+			
 		});
 	});
 <%end%>
 
-	<form id = "fd_report_form">
-		<div class="demo">
-
-		<label for="from">Start</label>
-		<input type="text" id="start_date"  name="start_date"/>
-		<label for="to">End</label>
-		<input type="text" id="end_date"  name="end_date"/>
-
-		</div><!-- End demo -->
-		<%= submit_tag "Search", :name => nil %>
+<% content_for :sidebar do %>
+<div class="sidepanel">
+  <h4 class="title">View report between</h4>
+	<form id="report_search">
+		<ul class="ui-form">
+			<li class="inline-field">
+				<table>
+					<tr>
+						<td width="100px"><label>From</label></td>
+						<td><input type="text" id="start_date" date="" name="start_date" class="text  auto" value="<%= params[:start_date] %>" size="10" /></td>
+					</tr>
+					<tr>
+						<td><label>To</label></td>
+						<td><input type="text" id="end_date" date="" class="text auto" name="end_date" value="<%= params[:end_date] %>"  size="10" /></td>
+					</tr>
+				</table>
+			</li>
+		</ul>
+		<div class="button-container">
+			<%= submit_tag "Show report", :class => "uiButton" %>
+		</div>
 	</form>
+</div>
+<% end %>
 
-<div class="grid report">
+<div class="grid report">	
 	<table width="100%">
 		<tr>
 			<th><%= @current_report[:title] %></th>

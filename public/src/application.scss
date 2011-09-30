@@ -538,7 +538,7 @@ body h5{
 			padding:0px 0px 0px 10px; 
 			position: relative;
 			.details{ 
-				padding:8px 0px 3px 0px;
+				padding:8px 14px 3px 0px;
 				margin-top:4px;
 				border-top:1px solid #efefef; 
 				font-size:13px;
@@ -3212,20 +3212,10 @@ div.addReminder{
 	margin:-13px -20px -10px -20px;
 	padding:15px 18px 18px 18px;
 	font-size:15px;
-}
-
-
+} 
 
 .forum-group{
 	margin:0px -20px; 
-}
-
-.list-noinfo{
-	padding:10px 20px;
-	font-size:1.1em;
-	font-weight:bold;
-	color:#666666;
-	@include text-shadow(#ffffff, -1px, -1px, 1px);
 }
 
 .caption-text{

@@ -21,16 +21,22 @@ class Helpdesk::TicketsController < ApplicationController
   def load_ticket_filter
    filter_name = @template.current_filter
    if !is_num?(filter_name)
-    @ticket_filter = current_account.ticket_filters.new(Helpdesk::Filters::CustomTicketFilter::MODEL_NAME)
-    @ticket_filter.query_hash = @ticket_filter.default_filter(filter_name)
-    @ticket_filter.accessible = current_account.user_accesses.new
-    @ticket_filter.accessible.visibility = Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents]
-  else
-    @ticket_filter = current_account.ticket_filters.find(filter_name)
+    load_default_filter(filter_name)
+   else
+    @ticket_filter = current_account.ticket_filters.find_by_id(filter_name)
+    return load_default_filter(TicketsFilter::DEFAULT_FILTER) if @ticket_filter.nil? or !@ticket_filter.has_permission?(current_user)
     @ticket_filter.query_hash = @ticket_filter.data[:data_hash]
     params.merge!(@ticket_filter.attributes["data"])
    end
   
+  end
+
+  def load_default_filter(filter_name)
+    params[:filter_name] = filter_name
+    @ticket_filter = current_account.ticket_filters.new(Helpdesk::Filters::CustomTicketFilter::MODEL_NAME)
+    @ticket_filter.query_hash = @ticket_filter.default_filter(filter_name)
+    @ticket_filter.accessible = current_account.user_accesses.new
+    @ticket_filter.accessible.visibility = Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me]
   end
 
   def check_user
@@ -58,6 +64,8 @@ class Helpdesk::TicketsController < ApplicationController
     @filters_options = scoper_user_filters.map { |i| {:id => i[:id], :name => i[:name], :default => false} }
     @current_options = @ticket_filter.query_hash.map{|i|{ i["condition"] => i["value"] }}.inject({}){|h, e|h.merge! e}
     @show_options = show_options
+    @current_view = @ticket_filter.id || @ticket_filter.name
+    @is_default_filter = (!is_num?(@template.current_filter))
         
     respond_to do |format|      
       format.html  do
@@ -79,7 +87,7 @@ class Helpdesk::TicketsController < ApplicationController
   
   def custom_search
     @items = current_account.tickets.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
-    render :partial => "custom_search", :object => @items
+    render :partial => "custom_search"
   end
 
 
@@ -93,7 +101,7 @@ class Helpdesk::TicketsController < ApplicationController
     @agents = Agent.find(:first, :joins=>:user, :conditions =>{:user_id => current_user.id} )     
     @signature = RedCloth.new("<br />#{@agents.signature}").to_html unless (@agents.nil? || @agents.signature.blank?)
      
-    @ticket_notes = @ticket.notes.visible.exclude_source('meta').newest_first     
+    @ticket_notes = @ticket.conversation
     
     respond_to do |format|
       format.html  
@@ -178,7 +186,8 @@ class Helpdesk::TicketsController < ApplicationController
     req_list = []
     @items.each do |item|
       item.spam = true 
-      req_list << item.requester.id
+      req = item.requester
+      req_list << req.id if req.customer?
       item.save
     end
     
@@ -188,10 +197,13 @@ class Helpdesk::TicketsController < ApplicationController
                       :undo => "<%= link_to(t('undo'), { :action => :unspam, :ids => params[:ids] }, { :method => :put }) %>"
                   ))
                     
-    link = render_to_string( :inline => "<%= link_to_remote(t('user_block'), :url=>block_user_path(:ids => req_list), :method => :put ) %>" ,
+    link = render_to_string( :inline => "<%= link_to_remote(t('user_block'), :url => block_user_path(:ids => req_list), :method => :put ) %>" ,
       :locals => { :req_list => req_list.uniq } )
+      
+    notice_msg =  msg1
+    notice_msg << " <br />#{t("block_users")} #{link}" unless req_list.blank?
     
-    flash[:notice] =  "#{msg1}. <br />#{t("block_users")} #{link}" 
+    flash[:notice] =  notice_msg 
     respond_to do |format|
       format.html { redirect_to redirect_url  }
       format.js

@@ -1,3 +1,4 @@
+<%= include_tiny_mce_if_needed %>
  <% form_tag :action => :complete_merge, :controller => 'helpdesk/tickets', :method => :post do |f| %>
    <%= hidden_field_tag 'source[ticket_id]', params[:id] %>
    <%= hidden_field_tag 'target[ticket_id]', params[:target_id] %>
@@ -26,9 +27,11 @@
            <h4 class="title"><%= h(@target_ticket.subject) %></h4>
            <%= content_tag :div, t("helpdesk.ticket_created_on_n_by", :requester => h(@target_ticket.requester), :date_time => formated_date(@target_ticket.requester.created_at)), :class => "info-data" %>
            <%= content_tag :label, t(".target_ticket_updated_info") %>
-           <textarea id="target_note" class="auto-height" rows="6" name="target[note]"><%= t(".target_merge_description1", :ticket_id => @source_ticket.display_id, :ticket_subject => @source_ticket.subject) %>
-<%= t(".target_merge_description2", :ticket_id => @source_ticket.display_id ) %>
-<%= @source_ticket.description %>
+           <textarea id="target_note" class="auto-height mceEditor" rows="6" name="target[note]">
+              <%= t(".target_merge_description1", :ticket_id => @source_ticket.display_id, :ticket_subject => " <strong>#{@source_ticket.subject}</strong>" ) %>
+              <p>&nbsp;</p>
+              <p><strong><%= t(".target_merge_description2", :ticket_id => @source_ticket.display_id ) %></strong></p>
+              <%= @source_ticket.description_html %>
           </textarea>
           <div class="info-data">
             <input id="target_private" checked="checked" name="target[is_private]" value="true" type="checkbox"> 

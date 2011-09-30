@@ -18,7 +18,7 @@ class AddDefaultCustomViews < ActiveRecord::Migration
   
   def self.up
     
-    Account.all.each do |account|
+    Account.find(:all,:conditions => ["deleted_at is NULL"]).each do |account|
      DEFAULT_CUSTOM_FILTERS.each do |name,filter_data|
       ticket_filter = account.ticket_filters.new(Helpdesk::Filters::CustomTicketFilter::MODEL_NAME)
       ticket_filter.name = name
@@ -27,7 +27,7 @@ class AddDefaultCustomViews < ActiveRecord::Migration
       ticket_filter.query_hash = filter_data
       ticket_filter.visibility = {:visibility => Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents], :user_id => account.account_admin.id}
       ticket_filter.account_id = account.id
-      ticket_filter.save!
+      ticket_filter.save
      end
     end
     
@@ -35,4 +35,6 @@ class AddDefaultCustomViews < ActiveRecord::Migration
 
   def self.down
   end
+ 
+
 end

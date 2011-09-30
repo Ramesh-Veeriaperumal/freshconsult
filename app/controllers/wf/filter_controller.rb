@@ -28,7 +28,14 @@ class Wf::FilterController < ApplicationController
   before_filter :chk_usr_permission, :only => [:delete_filter,:update_filter]
   
   def index
-    @edit_filters = scoper.edit_ticket_filters(current_user)
+    @edit_filters = []
+    view_filters = scoper.my_ticket_filters(current_user)
+    view_filters.each do |filter|
+      if (filter.accessible.user_id == current_user.id) or current_user.admin?
+        @edit_filters.push(filter)
+      end
+    end
+    
   end
  
   def chk_usr_permission 
@@ -52,12 +59,23 @@ class Wf::FilterController < ApplicationController
     wf_filter.visibility = params[:visibility]
     wf_filter.account_id = current_account.id
     wf_filter.validate!
-    
-    unless wf_filter.errors?
+    err_str = ""
+    if wf_filter.errors?
+      wf_filter.errors.each do |name,value|
+        err_str << "#{name}  #{value} <br />"  
+      end
+    else  
       wf_filter.save
     end
-    wf_filter.key= wf_filter.id.to_s 
-    render :nothing => true 
+    wf_filter.key = wf_filter.id.to_s 
+    
+    unless err_str.empty?
+      flash[:error] = err_str
+    else
+      flash[:notice] = t(:'flash.filter.save_success')
+    end
+    
+    render :partial => "save_filter",  :locals => { :redirect_path => helpdesk_filter_view_custom_path(wf_filter.key) }
   end
 
   def delete_filter

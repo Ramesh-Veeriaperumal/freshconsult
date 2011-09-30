@@ -22,10 +22,19 @@ class Admin::UserAccess < ActiveRecord::Base
     if !group_agents_visibility?
       self.group_id = nil
     end
+    self.visibility = VISIBILITY_KEYS_BY_TOKEN[:only_me] if visibility.blank?
   end
   
   def group_agents_visibility?
     visibility == VISIBILITY_KEYS_BY_TOKEN[:group_agents]
+  end
+  
+  def all_agents?
+    visibility == VISIBILITY_KEYS_BY_TOKEN[:all_agents]
+  end
+  
+  def only_me?
+    visibility == VISIBILITY_KEYS_BY_TOKEN[:only_me]
   end
   
 end
