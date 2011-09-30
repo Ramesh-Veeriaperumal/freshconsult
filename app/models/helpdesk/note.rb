@@ -14,12 +14,16 @@ class Helpdesk::Note < ActiveRecord::Base
     :as => :tweetable,
     :class_name => 'Social::Tweet',
     :dependent => :destroy
+    
+  has_one :survey_remark, :foreign_key => 'note_id', :dependent => :destroy
 
   attr_accessor :nscname
   attr_protected :attachments, :notable_id
   
   after_create :save_response_time, :update_parent, :add_activity, :update_in_bound_count
   accepts_nested_attributes_for :tweet
+  
+  unhtml_it :body
 
   named_scope :newest_first, :order => "created_at DESC"
   named_scope :visible, :conditions => { :deleted => false } 
@@ -38,14 +42,14 @@ class Helpdesk::Note < ActiveRecord::Base
   }
 
 
-  SOURCES = %w{email form note status meta twitter}
+  SOURCES = %w{email form note status meta twitter feedback}
   SOURCE_KEYS_BY_TOKEN = Hash[*SOURCES.zip((0..SOURCES.size-1).to_a).flatten]
   
   ACTIVITIES_HASH = { Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:twitter] => "twitter" }
 
   named_scope :exclude_source, lambda { |s| { :conditions => ['source <> ?', SOURCE_KEYS_BY_TOKEN[s]] } }
 
-  validates_presence_of :body, :source, :notable_id
+  validates_presence_of  :source, :notable_id
   validates_numericality_of :source
   validates_inclusion_of :source, :in => 0..SOURCES.size-1
 
@@ -162,7 +166,7 @@ class Helpdesk::Note < ActiveRecord::Base
     end
     
     def liquidize_body
-      attachments.empty? ? body : 
-        "#{body}\n\nAttachments :\n#{notable.liquidize_attachments(attachments)}\n"
+      attachments.empty? ? body_html : 
+        "#{body_html}\n\nAttachments :\n#{notable.liquidize_attachments(attachments)}\n"
     end
 end

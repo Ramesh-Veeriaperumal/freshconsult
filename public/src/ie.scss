@@ -137,4 +137,8 @@
 		@include shadows(#afafaf, -3px, 5px, 10px);
 //		@include pie;
 	}
+   .fd-menu{ z-index:999999 }
+}
+.ie6, .ie7, .ie8{
+   .fd-menu{ border:1px solid #afafaf; a:hover{ background: #5469f9; } }
 }

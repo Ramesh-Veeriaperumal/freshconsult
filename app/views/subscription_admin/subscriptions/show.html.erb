@@ -50,6 +50,14 @@
   <input type="submit" value="Charge card" />
 <% end %>
 
+<h2>Extend trail</h2>
+
+<% form_tag({:action => 'extend_trial'}, :id => 'trial_form') do %>
+  <label>No. of trial days</label>
+  <input type="text" name="trial_days" id="trial_days" />
+  <input type="submit" value="Extend trial" />
+<% end %>
+
 <h2>Transactions</h2>
 <table id="transactions">
   <tr>

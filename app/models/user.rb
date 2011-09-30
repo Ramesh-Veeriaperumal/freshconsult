@@ -31,10 +31,12 @@ class User < ActiveRecord::Base
     :dependent => :destroy
 
   before_create :set_time_zone , :set_company_name
-  before_save :set_account_id_in_children , :set_contact_name, :check_email_value
+  before_save :set_account_id_in_children , :set_contact_name, :check_email_value , :set_default_role
+  after_update :drop_authorization
   
   named_scope :contacts, :conditions => ["user_role in (#{USER_ROLES_KEYS_BY_TOKEN[:customer]}, #{USER_ROLES_KEYS_BY_TOKEN[:client_manager]})" ]
   named_scope :technicians, :conditions => ["user_role not in (#{USER_ROLES_KEYS_BY_TOKEN[:customer]}, #{USER_ROLES_KEYS_BY_TOKEN[:client_manager]})"]
+  named_scope :visible, :conditions => { :deleted => false }
 
   acts_as_authentic do |c|    
     c.validations_scope = :account_id
@@ -303,6 +305,15 @@ class User < ActiveRecord::Base
   def twitter_style_id
     "@#{twitter_id}"
   end
+  
+  
+    def to_xml(options = {})
+      options[:indent] ||= 2
+      xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
+      xml.instruct! unless options[:skip_instruct]
+      super(:builder => xml, :skip_instruct => true,:except => [:crypted_password,:password_salt,:perishable_token,:persistence_token,:single_access_token]) 
+  end
+  
  
   protected
     def set_account_id_in_children
@@ -316,6 +327,10 @@ class User < ActiveRecord::Base
    
  end
  
+ def set_default_role
+   self.user_role = USER_ROLES_KEYS_BY_TOKEN[:customer] if self.user_role.blank?
+ end
+ 
  def set_company_name
    
    if (self.customer_id.nil? && self.email)      
@@ -326,5 +341,15 @@ class User < ActiveRecord::Base
    end
    
  end
+ 
+ def drop_authorization
+   authorizations.each do |auth|
+     auth.destroy
+   end 
+ end
+ 
+ 
+ 
+ 
   
 end

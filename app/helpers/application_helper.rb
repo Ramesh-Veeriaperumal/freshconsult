@@ -236,10 +236,22 @@ module ApplicationHelper
         element = hidden_field(:source, :value => field_value)
       when "checkbox" then
         element = content_tag(:div, check_box(object_name, field.field_name, :class => element_class, :checked => field_value ) + field_label)
+      when "html_paragraph" then
+        element = label + text_area(object_name, field.field_name, :class => "mceEditor", :value => field_value)
     end
     content_tag :li, element, :class => dom_type
   end
-
+   
+  def pageless(total_pages, url, message=t("loading.items"))
+    opts = {
+      :totalPages => total_pages,
+      :url        => url,
+      :loaderMsg  => message
+    }
+        
+    javascript_tag("jQuery('#Pages').pageless(#{opts.to_json});")
+  end
+   
   private
     def solutions_tab
       if current_portal.main_portal?

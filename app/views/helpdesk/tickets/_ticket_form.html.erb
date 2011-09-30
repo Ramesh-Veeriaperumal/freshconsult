@@ -1,3 +1,4 @@
+<%= include_tiny_mce_if_needed %>
 <%= ticket_form.error_messages %>
 <%= hidden_field_tag  :topic_id,  params[:topic_id] %> 
 <% current_portal.ticket_fields.each do |field|

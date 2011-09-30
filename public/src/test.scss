@@ -1,3 +1,228 @@
 // This import applies a global reset to any page that imports this stylesheet.
 @import "base";
 @import "mixins";
+
+.customSelect{ width:100%; } 
+   
+.containerFull{
+   @include clearfix;
+   overflow:visible;
+	margin:-14px -20px;
+	padding:0px 0px 0px 0px;
+}
+
+.greyImage{
+   background-color:#F1F1F1;
+}
+
+.drop-right{
+   padding:2px 18px 2px 6px;
+   margin-left:-6px;
+   color:#666666;
+   @include corners(4px);
+   text-decoration:none;
+}
+
+.drop-right:after{
+   content:"";
+   position:absolute;
+   width:13px; height:12px;
+   margin-top:2px; margin-left: 3px;
+   background: sprite($symbol, drrow-down) no-repeat;   
+}
+
+.drop-right:hover, .drop-right.selected{
+   color:#ffffff;
+   *{ color:#ffffff; }
+}
+
+.drop-right:hover{
+   background-color:#afafaf;   
+}
+
+.drop-right.selected{
+   background-color:#888888;
+   @include single-box-shadow(rgba(0, 0, 0, 0.6), 0px, 1px, 2px, false, true);
+}
+
+.ticket-leftcol{
+   width:230px;
+   float:left;
+	@include min-height(477px);
+   border:1px solid #ffffff; 
+   border-width:1px 1px 0 0;
+	@include linear-gradient(color-stops(#f4f4f4, #F1F1F1), top);
+	
+   h3.title{
+      color:#888888;
+      font-size:12px;
+      text-transform:uppercase;
+      padding:8px 8px 4px 8px;
+      margin:0;
+   }
+   h4.title{
+      padding:0 6px 3px 0;
+      font-size:11px;
+		text-transform:uppercase;
+      color:#666666;
+   }
+   
+   .view_filters{
+		.link-item.active, a.link-item:hover{
+         margin:0px -5px;
+         padding-left:13px;
+         background: #e2f1fa;
+		}
+		.link-item.active{
+		   color:#336699;
+         font-weight:bold;
+         @include linear-gradient(color-stops(darken(#e2f1fa, 2%), lighten(#e2f1fa, 2%)), bottom);
+		   @include single-box-shadow( rgba(0, 0, 0, 0.07), 0px, 0px, 2px, false, true);         
+		}
+		.link-item.active:after{
+		   content:"";
+		   position:absolute;
+		   right:9px;
+		   top:8px;
+		   width:11px;
+		   height:11px;
+		   background: sprite($symbol, arrow-selected-right) no-repeat;
+		}
+      .link-item{ 
+         font-size:13px;
+         display:block;
+         color:#444444;
+         text-decoration:none;
+         padding:5px 8px;
+         position:relative;
+      } 
+   }
+   
+   .leftFilter{
+		$bordercolor:#cfcfcf;
+		@include corners(3px);		
+   	background: #fafafa;
+		@include single-box-shadow(#ffffff, 0px, 1px, 1px);
+		margin:6px;
+   	padding:5px;
+		position:relative;
+		border:1px solid $bordercolor;  
+		border-bottom-color:darken($bordercolor, 5%);
+		border-right-color:darken($bordercolor, 5%);
+   	.checkboxSet{
+   		margin-bottom:10px;
+   	}
+   	#save_filter{
+         position:relative;
+         top:4px;
+         left:2px;
+         display:none;
+      }
+   	.ff_item{
+         margin:0 6px 4px 6px;
+			padding:4px 2px;
+			border-bottom:1px dotted #cfcfcf;
+      }
+   	.item{
+   		padding-bottom:2px;
+			padding-top:2px;
+   		font-size:12px;
+   		color:#444444; 
+   		input{margin:0 4px 3px 0; }
+   	} 
+		.item:hover span{
+			background:#ffffcc;
+			color:#000000;
+		}
+   }
+}
+
+.hasRightCol{
+   margin-left:231px;
+} 
+
+.page_info{
+   float:right;
+   width:200px;
+   text-align:right;
+   margin-right:6px;
+   position:relative;
+}
+
+.contentCol{
+   border-left:1px solid #cfcfcf;
+   background-color:#ffffff;
+}
+
+.toolbar{
+   background:#f4f4f4;
+	padding:5px 8px 8px 0;
+	border-bottom:1px solid #dfdfdf;
+	border-top:1px solid #ffffff;
+}
+
+.sort-bar{
+	font-size:11px;
+	color:#777777;
+	padding: 5px 10px 5px 40px;
+	b{ color:#666666; }
+}
+
+
+.fd-menu{
+   position:absolute;
+   display:none;
+   font-size:13px;
+   background:#ffffff;
+   padding:5px 0;
+   z-index:999999;
+   min-width:200px;
+   @include opacity(0.95);
+   @include corners(5px);
+   @include single-box-shadow( rgba(0, 0, 0, 0.6), 0px, 2px, 4px );
+   li{ padding:0px; margin:0px; }
+   .seperator{ border-color:#e0e0e0; }
+   a{
+      display:block;
+      padding:2px 12px 2px 24px;
+      color:#333333;
+      text-decoration:none;
+      position:relative;
+      .icon{
+         position:absolute;
+         left:5px;
+         top:2px;
+         width:16px;
+         height:16px;
+      }
+      .ticksymbol{ background: sprite($symbol, selected) no-repeat; }      
+   }
+   a:hover{
+      @include background(linear-gradient(top, #5469f9, #2433f6));
+      @include single-box-shadow( rgba(0, 0, 0, 0.6), 0, 0px, 1px, false, true );
+      @include filter-gradient(#5469f9, #2433f6, vertical); 
+      color:#ffffff;
+      .selected{ background: sprite($symbol, selected-negtive) no-repeat; }      
+   }
+}
+
+.setting_bottom{
+   position:absolute;
+   right:7px;
+   bottom:10px;
+   width:16px;
+   height:16px;
+   background:sprite($symbol, setting) no-repeat;
+}
+
+.content .wrapper{
+   overflow:visible;
+}
+
+.list-noinfo{
+	padding-top:60px; 
+	font-size:1.4em;
+	text-align:center;
+	color:#666666;
+	@include text-shadow(#ffffff, 0px, 1px, 1px);
+}

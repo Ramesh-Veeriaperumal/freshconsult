@@ -40,9 +40,17 @@ class Wf::Containers::TextDelimited < Wf::FilterContainer
   def split_values
     value.split(TEXT_DELIMITER)
   end
+  
+  # -1 represents unassigned 
+  def handle_unassigned
+    array_values = split_values
+    array_values.delete("-1")
+    [" (#{condition.full_key} is NULL or #{condition.full_key} in (?)) ",array_values]
+  end
 
   def sql_condition
-    return [" #{condition.full_key} not in ('') "] if value.empty?
+    return [" #{condition.full_key} is NULL "] if value.empty?
+    return handle_unassigned if value.include?("-1")
     return [" #{condition.full_key} in (?) ", split_values] if operator == :is_in 
   end
 

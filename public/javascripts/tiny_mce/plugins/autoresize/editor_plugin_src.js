@@ -57,7 +57,7 @@
 			t.editor = ed;
 
 			// Define minimum height
-			t.autoresize_min_height = ed.getElement().offsetHeight;
+			t.autoresize_min_height = ed.getParam('height');
 
 			// Add appropriate listeners for resizing content area
 			ed.onChange.add(resize);

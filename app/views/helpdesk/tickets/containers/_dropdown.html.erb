@@ -1,8 +1,7 @@
-<div class='wf_values_table'>
-	<%= hidden_field_tag("wf_v#{index}_0", "") %>
-	<div>
-	<%options.each do |k,v|%>
-		<%=check_box_tag v,k,false, {:class=>"view_checkbox", :data_hidden_id => "wf_v#{index}_0", :dropdown_index => "#{index}" } %> <%=v%> 
-	<%end%>
-	</div>
-</div>
+<% options.each do |key, value| %>
+  <label class="item"> 
+    <%= check_box_tag value, key, (selected_val.include? key.to_s), { :class => "filter_item" } %> 
+    <span><%= value %></span>
+  </label>
+<% end %>
+

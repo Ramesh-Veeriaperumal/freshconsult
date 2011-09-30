@@ -85,10 +85,6 @@ ul.activityfeed li{
 	   font-weight:bold;
 	   text-transform:capitalize;
 	}
-	.notelink{
-	   display:block; 
-	   @include link-colors(#333333, #3e71a4, #333333, #333333, #333333);
-	}
 	a{ 
 		@include link-colors(#4D769F, #3e71a4, #4D769F, #4D769F, #4D769F);
    	text-decoration:none; 
@@ -484,6 +480,10 @@ body h5{
 		.action_buttons{
 			margin-top:0px;
 		} 
+		.item-right-actions{
+		   margin-top:8px;
+		   margin-left:6px;
+		}
 	} 
 	.bookmark{
 		display:none;
@@ -538,12 +538,14 @@ body h5{
 			padding:0px 0px 0px 10px; 
 			position: relative;
 			.details{ 
-				padding:8px 0px 3px 0px;
+				padding:8px 14px 3px 0px;
 				margin-top:4px;
 				border-top:1px solid #efefef; 
-				color:#333333; 
 				font-size:13px;
 				@include text-formatting;
+				p{
+				   margin-right:2em; 
+				}
 				.ui-form{
 					@include corners(0px);
 					border-left:0px;
@@ -561,10 +563,6 @@ body h5{
 						width:93%;
 					}
 				}
-			}
-			.ticketdetails{
-			   p{ margin-bottom: 12px; }
-			   br{ display:none; }
 			}
 			.min_height{
 				@include min-height(100px);
@@ -721,9 +719,6 @@ body h5{
 			@include link-colors(#6699cc, #336699, #6699cc, #6699cc);
 			text-decoration:none;
 		} 
-		name a{
-			@include ellipsis;
-		}
 		.delete{
 			position:absolute;
 			right:0px;
@@ -1000,14 +995,13 @@ ul.admin_icons{
 }
 
 div.panel_area{
-	padding:10px;
-	label{
-		display:inline;
-	}
-	a{
-		text-decoration:none;
-		@include link-colors(#333333, #527EAA);
-	}
+   padding:10px;
+   label{ display:inline; }
+   label.overlabel{ margin:2px 7px !important; }
+   a{
+      text-decoration:none;
+      @include link-colors(#333333, #527EAA);
+   }
 	.tag_item{
 		background:#efefef; 
 		@include corners(6px);
@@ -1313,7 +1307,6 @@ h4.list_title{
 	color:#ffffff;
 	padding:0px 2px;
 	@include corners(3px);
-	@include ellipsis;
 }
 
 .list_icon_large_full_width{
@@ -1684,7 +1677,6 @@ ul.user_list{
 		}
 		.username{
 			display:block;
-			@include ellipsis;
 		}
 	}
 }
@@ -1885,7 +1877,6 @@ h4.border_title{
 		    padding-left:20px;
 			a{
 				@include link-colors(#4D769F, #3399cc, #4D769F, #4D769F);
-				@include ellipsis;
 				text-decoration:none;
 				font-weight:400; 
 			}
@@ -2081,14 +2072,18 @@ h4.border_title{
 	}
 }		
 
-.ajax-loader, .loading, .loading-right, .loading-center{
+.ajax-loader, .loading, .loading-right, .loading-center, .loading-box{
 	background-image:url('/images/load.gif');
 	background-repeat:no-repeat;
 	background-position: 10px 10px;
 }
 
-.loading-center{
+.loading-center, .loading-box{
 	background-position: center center;	
+}
+
+.loading-box{
+	height:100px;
 }
 
 .loading-right{
@@ -2242,14 +2237,34 @@ a.page_title{
 }
 
 .pagination{
-	padding:8px 20px 10px 20px; 
-	margin:1px -19px;
-	background:#efefef;
+   background:#f1f1f1;
+   padding:5px 8px 8px 0;
+	border-bottom:1px solid #dfdfdf;
+	border-top:1px solid #ffffff;
+   text-align: center;
+   padding: 1em;
+   cursor: default;
+   a, span { padding: 0.2em 0.3em; }
+   .disabled { color: #aaaaaa; }
+   .current {
+       font-style: normal;
+       font-weight: bold;
+       background-color: #bebebe;
+       display: inline-block;
+       width: 1.4em;
+       height: 1.4em;
+       line-height: 1.5;
+       -moz-border-radius: 1em;
+       -webkit-border-radius: 1em;
+       border-radius: 1em;
+       text-shadow: rgba(255, 255, 255, 0.8) 1px 1px 1px; 
+   }
 	a{
 		@include link-colors(#336699, #333333, #336699, #336699);
 		font-weight:bold;
 		text-decoration:none;
 	}	
+	a:hover, a:focus { text-decoration: underline; }
 }
 
 .meta_info{
@@ -2679,6 +2694,8 @@ a.page_title{
 .request-list{
 	background-color:#f4f4f4;
 	margin:4px 1px;
+	border:1px solid #cfcfcf;
+	border-width:1px 0px;
 	div.item{ 
 		border-bottom:1px dotted #dedede;
 		position:relative;
@@ -2959,8 +2976,8 @@ div.addReminder{
 	p{  font-size:14px; line-height: 1.5em; margin-bottom: 1.3em; text-align: left; width: 90%;  }
     table td, table th { border:1px solid #BBB; padding:4px 5px; }
     ins {border-bottom:1px solid green; text-decoration: none; color:green}
-	del {color:red; text-decoration:line-through}
-	cite {border-bottom:1px dashed blue}
+	del {color:#FF0000; text-decoration:line-through}
+	cite {border-bottom:1px dashed #0000FF}
 	acronym {border-bottom:1px dotted #CCC; cursor:help}
 	abbr {border-bottom:1px dashed #CCC; cursor:help}
 }
@@ -3000,28 +3017,12 @@ div.addReminder{
 	margin-bottom:10px;
 }
 
-.info-description{
-	p{
-		font-size:12px;
-		color:#000000;
-		line-height: 17px;
-	}
+.info-description p{
+	font-size:12px;
+	color:#000000;
+	line-height: 17px;
+ 
 }
-
-.tickets-container{
-	margin:0px -20px;
-	padding:0px 0px 0px 0px;
-}
-
-.ticket-header{
-	background-image:url(../images/overlay-button.png);
-	background-color:#f8f8f8;
-	background-repeat:repeat-x;
-	background-position:bottom; 
-	border:1px solid #dfdfdf;
-	border-width:1px 0px; 
-}
-
 .icon-image{
    float:left;
    width:18px;
@@ -3039,25 +3040,25 @@ div.addReminder{
 .tickets, .tickets-expanded{
 	width:100%;
 	color:#5f5f5f;
-	border-top:1px solid #f4f4f4; 
 	th{
 		background:none;
-		padding:6px 6px 5px 6px;
+		padding:0px 6px;
 	}		 
 	td, th{
 		vertical-align:top;
-		border-bottom:1px solid #efefef;
 	}
 	td{
 		padding:10px 8px 10px 10px;
 		background-color:#ffffff;
+		border-bottom:1px solid #efefef;
 		a{
 			text-decoration:none;
 			color:#5a8ec1; 
 		}
 	}
-	tr:hover td, tr.active td{
-		background-color:#f4f4f4;
+	tr.even td{ background-color:#f9f9f9; }
+	tr:hover td, tr.active td, tr:hover.even td{
+		background-color:#e6f3f9;
 		background-image:url(../images/overlay-top-shadow.png);
 		background-position:top left;
 		border-bottom:1px solid #dfdfdf;
@@ -3065,34 +3066,41 @@ div.addReminder{
 	}
 	.check{
 		width:25px;
-		padding-left:8px;
+		padding-left:0px;
 		padding-top:12px; 
 		text-align:right;
 	}
 	th.check{
-		padding-top:10px;
+		padding:5px 5px 0 0;
 	}
+	
+	th.toolbar_right{
+      text-align:right;
+      vertical-align:middle;
+      padding-right:0px;
+   }
 	
 	.name, .name-user{
       width:55%;
       padding-left:60px;
       .preview_pic{
          margin:0px; 
-         margin-top:1px;
-         margin-left:-55px;
+         margin-top:3px;
+         margin-left:-56px;         
          img{ 
-            padding:2px;
-            width:36px; height:36px;
+            width:40px; height:40px;
+            @include corners(4px);
+            border:1px solid #cfcfcf;
          }
       }
 
       h3{
-         padding:0px 0px 8px 0px;
+         padding-bottom:4px;
          a{
-            color: #333333;
             font-size: 13px;
             line-height: 22px;
-            padding: 2px 0 6px 2px;
+            padding: 0px 0 4px 2px;
+            color:#333333;
          }
          a:hover{
             color:#000000;
@@ -3133,11 +3141,11 @@ div.addReminder{
 				}
 		}
 	}
-	.sla{
-		vertical-align:top;
-		text-align:right;
-		font-size:11px;
-	}
+   .sla{
+      text-align:right;
+      padding-right:15px;
+      vertical-align:top;
+   }
 }	  
  
 .conversation-sprite{ 
@@ -3204,42 +3212,34 @@ div.addReminder{
 	margin:-13px -20px -10px -20px;
 	padding:15px 18px 18px 18px;
 	font-size:15px;
-}
-
-
+} 
 
 .forum-group{
 	margin:0px -20px; 
 }
 
-.list-noinfo{
-	padding:10px 20px;
-	font-size:1.1em;
-	font-weight:bold;
-	color:#666666;
-	@include text-shadow(#ffffff, -1px, -1px, 1px);
-}
-
 .caption-text{
 	background:#f6f6f6;
-	padding:6px 8px 6px 50px;
+	padding:6px 8px;
 	border-bottom:1px solid #efefef;
 	font-size:12px;
 	color:#999999;
 }
 
-.sort{
-	text-align:right;
-	position:relative;
-	padding: 6px 40px 0px 0px;
+.sort{   
+   position:relative;
+	padding:0px 35px 0px 0px;
+	.label{
+	   float:left;
+	   padding:6px 10px;
+	   font-size:12px;
+	   text-transform:uppercase;
+	}
 	.sort_order{
-		position:absolute;
-		right:0px;
-		top:0px;
 		.image{
 			position:absolute;
 			right:0px;
-			top:0px;
+			top:-2px;
 			width:32px; height:32px;
 		}
 		.ASC{ background:sprite($icons, sort-asc); }
@@ -3752,7 +3752,6 @@ a.close{
 				margin-bottom:8px;
 				border-top:1px solid #efefef;
 				a.topic{
-					@include ellipsis;
 					display:block;
 					padding:5px 0px;
 					font-size:13px;
@@ -3966,4 +3965,16 @@ a.close{
          padding-right:8%;
       }
    }
+}
+
+.tweet-counter{
+   font-size:16px; 
+   position:relative;
+   top:3px;
+   right:5px;
+   color:#333333;
+}
+
+.tweet-counter.error{
+   color:#FF0000;
 }

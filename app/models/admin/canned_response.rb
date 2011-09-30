@@ -5,18 +5,19 @@ class Admin::CannedResponse < ActiveRecord::Base
   belongs_to :account
  
   belongs_to :user
-  
 
-  attr_accessible :title,:content ,:visibility
+  attr_accessible :title, :content, :visibility, :content_html
   
   attr_accessor :visibility 
+  
+  unhtml_it :content
   
   has_one :accessible, 
     :class_name => 'Admin::UserAccess',
     :as => 'accessible',
     :dependent => :destroy
   
-  has_many :agent_groups , :through =>:accessible , :foreign_key => "group_id" , :source =>:group
+  has_many :agent_groups , :through =>:accessible , :foreign_key => "group_id" , :source => :group
   
    validates_length_of :title, :in => 3..240
    
@@ -35,5 +36,4 @@ class Admin::CannedResponse < ActiveRecord::Base
   def self.my_canned_responses(user)
     self.find(:all, :joins =>"JOIN admin_user_accesses acc ON acc.accessible_id = admin_canned_responses.id AND acc.accessible_type = 'Admin::CannedResponse' LEFT JOIN agent_groups ON acc.group_id=agent_groups.group_id", :conditions =>["acc.VISIBILITY=#{Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents]} OR agent_groups.user_id=#{user.id} OR (acc.VISIBILITY=#{Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me]} and acc.user_id=#{user.id})"])
   end
-  
 end

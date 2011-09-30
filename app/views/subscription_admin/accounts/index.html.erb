@@ -8,14 +8,17 @@ Next Renewal
 
 <% form_tag "/accounts", :method => 'get' do %>
   <p>
-  	
     <%= calendar_date_select_tag 'start_date', "" %>
-     
 	 to
-
     <%= calendar_date_select_tag 'end_date', "" %>
     <%= submit_tag "Search", :name => nil %>
   </p>
+<% end %>
+
+<% form_tag "/accounts/renewal_csv", :method => 'get' do %>
+  <%=hidden_field_tag 'from_date', @start_date%>
+  <%=hidden_field_tag 'to_date', @end_date%>
+  <%= submit_tag "trials.csv", :name => nil %>
 <% end %>
 
 Host name

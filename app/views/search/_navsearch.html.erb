@@ -33,14 +33,17 @@
 				});
 			
 			$J("#header_search").bind("focusout", function(ev){ 
-				if(!insideSearch)
-					jQuery("#SearchResultsBar").hide();
+				if(!insideSearch){
+					$J("#SearchResultsBar").hide();
+				  $J("#SearchBar").removeClass("active");					
+				}
 			});
 			
 			$J("#header_search").bind("focusin", function(ev){
 				searchString = this.value.replace(/^\s+|\s+$/g, "");
+				$J("#SearchBar").addClass("active");
 				if(searchString != ''){
-					jQuery("#SearchResultsBar").css("display", "inline");
+					$J("#SearchResultsBar").css("display", "inline");
 				}
 			}); 
 			

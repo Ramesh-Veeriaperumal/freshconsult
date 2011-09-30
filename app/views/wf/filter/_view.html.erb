@@ -1,0 +1,3 @@
+<li>
+	<div class="item_info"><b><%= view.name %></b> | <%= link_to t('delete'), {:controller => "wf/filter", :action => "delete_filter", :id => view}, {:method => :delete, :confirm => t(".delete")} %> </div>
+</li>

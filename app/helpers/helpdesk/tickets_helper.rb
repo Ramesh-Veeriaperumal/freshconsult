@@ -3,11 +3,50 @@ module Helpdesk::TicketsHelper
   include Wf::HelperMethods
   include TicketsFilter
   
-  def filter_select
+  def view_menu_links( view, cls = "", selected = false )
+    unless(view[:id] == -1)
+      link_to(strip_tags(view[:name]), (view[:default] ? helpdesk_filter_view_default_path(view[:id]) : helpdesk_filter_view_custom_path(view[:id])), :class => ( selected ? "active #{cls}": "#{cls}" ))
+    else
+      content_tag(:span, "", :class => "seperator")
+    end  
+  end
+  
+  def drop_down_views(viewlist, menuid = "leftViewMenu")
+    unless viewlist.empty?
+      more_menu_drop = 
+        content_tag(:div, ( link_to "#{viewlist.size-1} more views", "", { :class => "drop-right nav-trigger", :menuid => "##{menuid}" }), :class => "link-item" ) +
+        content_tag(:div, viewlist.map { |s| view_menu_links(s) }, :class => "fd-menu", :id => menuid)
+    end
+  end
+  
+  def top_views(selected = "new_my_open", dynamic_view = [], show_max = 1)
+    unless dynamic_view.empty?
+      dynamic_view.concat([{ :id => -1 }])
+    end
     
+    top_views_array = [ 
+    ].concat(dynamic_view).concat([
+      { :id => "new_my_open",  :name => t("helpdesk.tickets.views.new_my_open"),     :default => true },
+      { :id => "all_tickets",  :name => t("helpdesk.tickets.views.all_tickets"),     :default => true },      
+      { :id => "monitored_by", :name => t("helpdesk.tickets.views.monitored_by"),    :default => true },
+      { :id => "spam"   ,      :name => t("helpdesk.tickets.views.spam"),            :default => true },
+      { :id => "deleted",      :name => t("helpdesk.tickets.views.deleted"),         :default => true }
+    ])
+    top_index = top_views_array.index{|v| v[:id] == selected} || 0
+
+    if( show_max-1 < top_index )
+      top_views_array.insert(show_max-1, top_views_array.slice!(top_index))
+    end
+    
+    top_view_html = 
+        (top_views_array.shift(show_max).map do |s|
+            view_menu_links(s, "link-item", (s[:id] == selected)) unless( s[:id] == -1 )
+        end).to_s + drop_down_views(top_views_array).to_s
+  end
+  
+  def filter_select( prompt = t('helpdesk.tickets.views.select'))    
     selector = select("select_view", "id", SELECTORS.collect { |v| [v[1], helpdesk_filter_tickets_path(filter(v[0]))] },
-              {:prompt => t('helpdesk.tickets.views.select')})
-        
+              {:prompt => prompt}, { :class => "customSelect" })        
   end
 
   def filter(selector = nil)
@@ -19,17 +58,19 @@ module Helpdesk::TicketsHelper
   end
   
   def sort_by_text(sort_key, order)
-  	help_text = [
-  		[ :due_by     ,   'Showing Latest Due by time'  ],
-		[ :created_at ,   'Showing Tickets Date Created' ],
-		[ :updated_at ,   'Showing Tickets Last Modified'],
-		[ :priority   ,   'Priority',    ],
-		[ :status,        'Status',      ],
-	]
+    help_text = [
+      [ :due_by     ,   'Showing Latest Due by time'  ],
+      [ :created_at ,   'Showing Tickets Date Created' ],
+      [ :updated_at ,   'Showing Tickets Last Modified'],
+      [ :priority   ,   'Priority',    ],
+      [ :status,        'Status',      ],
+    ]
   end
+  
 
   def current_filter
-    cookies[:filters] = (params[:filters] ? params[:filters][0] : ( (!cookies[:filters].blank?) ? cookies[:filters] : DEFAULT_FILTER )).to_sym
+    stored_key = params[:filter_key] || params[:filter_name]
+    cookies[:filter_name] = (stored_key ? stored_key : (!cookies[:filter_name].blank?) ? cookies[:filter_name] : "new_my_open" )
   end
    
   def current_sort
@@ -40,6 +81,14 @@ module Helpdesk::TicketsHelper
   	cookies[:sort_order] = (params[:sort_order] ? params[:sort_order] : ( (!cookies[:sort_order].blank?) ? cookies[:sort_order] : DEFAULT_SORT_ORDER )).to_sym
   end
   
+  def current_wf_order 
+  	cookies[:wf_order] = (params[:wf_order] ? params[:wf_order] : ( (!cookies[:wf_order].blank?) ? cookies[:wf_order] : DEFAULT_SORT )).to_sym
+  end
+
+  def current_wf_order_type 
+  	cookies[:wf_order_type] = (params[:wf_order_type] ? params[:wf_order_type] : ( (!cookies[:wf_order_type].blank?) ? cookies[:wf_order_type] : DEFAULT_SORT_ORDER )).to_sym
+  end
+
   def cookie_sort 
   	 "#{current_sort} #{current_sort_order}"
   end
@@ -103,12 +152,5 @@ module Helpdesk::TicketsHelper
 
     o.join
   end
-
-  def search_clear
- end
-
- 
-
-
-
+   
 end

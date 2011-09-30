@@ -9,7 +9,7 @@
               </a>
               <%= link_to_function( t(:'ticket.canned_responses.insert_ca_response') + " &raquo;", "show_canned_response(#{@ticket.id})", :class => "slim-button insert-canned-response") %>
             </div>
-            <%= content_tag( :h3, t("ticket.reply_form.form_title"), :class => "title" ) %>
+            <%= content_tag( :h4, t(".title", :email => @ticket.requester.email), :class => "title" ) %>
             <%= f.label(:reply_email, "From:", :class => "caption" ) %>
             <div class="fields">
               <%= select :reply_email, :id, options_for_select(@reply_email, @ticket.reply_email) %>
@@ -44,8 +44,8 @@
             <label class="caption">
                 <%= t("message") %>:
             </label>
-            <div class="fields">              
-                <%= f.text_area :body, { :class => 'auto-expand required', :id => "#{id}-#{cntid}-body" , :value => @signature } %>
+            <div class="fields">
+                <%= f.text_area :body_html, :class => "mceEditor", :id => "#{id}-#{cntid}-body", :value => @signature %>
             </div>
         </li>
         <% if !@ticket.ticket_topic.nil? and !(@ticket.ticket_topic.topic.locked) %>

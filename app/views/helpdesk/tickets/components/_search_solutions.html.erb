@@ -1,3 +1,4 @@
-
 <% @articles = Solution::Article.suggest (@ticket ,search_query)  %>
-<%= render :partial => "helpdesk/tickets/components/solution_list" ,  :object => @ticket  %>
+<div class="request-list">
+  <%= each_or_message( "helpdesk/tickets/components/article", @articles, t(:'ticket.suggested_solutions.no_result') ) %>
+</div>

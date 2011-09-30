@@ -25,7 +25,11 @@
 			<%= tag.label(:name, t('tag.title')) %>
 			<%= tag.text_field :name , :value => @article.tags.collect{|tg| tg.name+","}, :class => "text" %>
 		</li>
-		<%end%>		
+		<%end%>
+		<li class="dropdown">
+			<%= f.label :folder_id, t('solution.folder') %>
+			<%= f.select :folder_id , option_groups_from_collection_for_select(current_account.solution_categories, :folders ,:name, :id,:name,@article.folder_id) , :class => "customSelect" %>
+		</li>			
 		<li class="dropdown">
 			<%= f.label :art_type, t('solution.type') %>
 			<%= f.select :art_type, Solution::Article::TYPE_OPTIONS, :class => "select" %>

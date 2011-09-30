@@ -1,19 +1,19 @@
 <div id="CustomFieldsDialog" style="display:none;position:absolute;">
 <div class="dialog-panel sidepanel">
 	<a href="javascript:void(0)" id="close_button" class="close"></a>
-        <form class="ui-dialog-form" action="#">
+        <form class="ui-dialog-form" id="TicketProperties" action="#">
         	<input type="hidden" name="customtype" value="" />
             <div class="ctrlHolder">
             	<%= content_tag(:label, t(".label"), :class => "caption") %>
                 <fieldset>
-                    <input type="text" name="customlabel" size="35" maxlength="50" class="text" value="" />
+                    <input type="text" autocompelete="off" name="customlabel" size="35" maxlength="50" class="required text" value="" />
                 </fieldset>
             </div>
             <div class="ctrlHolder">
               <%= content_tag(:label, t(".label_in_portal"), :class => "caption") %>
               <div class="info_data"><%= t('.label_in_portal_info') %></div>
               <fieldset>
-                <input type="text" initial-value="" name="customlabel_in_portal" size="35" maxlength="50" class="text" value="" />
+                <input type="text" initial-value="" name="customlabel_in_portal" size="35" maxlength="50" class="required text" value="" />
               </fieldset>
             </div>
             <div class="ctrlHolder" style="display:none;">
@@ -24,6 +24,7 @@
             </div> 
             <div class="ctrlHolder colsets border-top" id="DropFieldChoices">
               <%= content_tag(:label, t(".dropdown_choices"), :class => "caption") %>
+              <input type="hidden" name="choicelist" id="ChoiceListValidation" value="" />
                 <div name="customchoices" class="customchoices">
                   <fieldset>
                     <span class="sort_handle"></span>
@@ -59,8 +60,8 @@
 			<span class="seperator"></span> 
 			<div class="alignright">
 				<!--input type="button" class="button" id="SaveField" value="Save" /-->
-				<a class="uiButton delete small floatl" id="DeleteField"><%= t("delete") %></a>
-				<a class="uiButton small" id="SaveField"><%= t("ok") %></a>
+				<a class="uiButton delete small floatl" id="DeleteField"><%= t("delete") %></a> 
+				<input type="submit" value="<%= t("ok") %>" class="uiButton small" /> 
 			</div>
     </form>   
 </div>

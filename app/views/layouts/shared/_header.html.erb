@@ -26,8 +26,9 @@
 					<% end %>
 					<% if current_user and permission?(:manage_tickets) then %>
 					 <% form_tag '/search', :method => :get, :class => "nav_search" do %>
-					 	<div class="search_bar">
-							<label class="overlabel" for="header_search"><Search><%= t("header.search") %> </label>				           	
+					 	<div class="search_bar" id="SearchBar">
+					 	  <span class="searchIcon"></span>
+							<label class="overlabel" for="header_search"><%= t("header.search") %></label>
 							<input value="" type="text" id="header_search" autocomplete="off" name="search_key" />
 						</div>
 					 <% end %>

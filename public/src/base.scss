@@ -4,7 +4,7 @@
 $blueprint-grid-columns: 24;
 $blueprint-grid-width: 30px;
 $blueprint-grid-margin: 10px;
-$blueprint-liquid-container-width: 95%; 
+$blueprint-liquid-container-width: 95%;
 $blueprint-liquid-container-min-width: 1102px;
 
 /* Theme Colors and layout Defaults */
@@ -21,6 +21,7 @@ $use-mozilla-ellipsis-binding:true;
 @import "compass/utilities";
 @import "compass/css3";
 @import "compass/support"; 
+@import "compass/typography/text/ellipsis";
 
 // Import the non-default scaffolding module.
 @import "blueprint/liquid";
