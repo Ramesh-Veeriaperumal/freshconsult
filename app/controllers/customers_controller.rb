@@ -10,8 +10,7 @@ class CustomersController < ApplicationController
       format.html  do
         @customers =current_account.customers.filter(params[:letter],params[:page])
       end
-      
-      format.xml  do
+     format.xml  do
         @customers =current_account.customers.all
         render :xml => @customers.to_xml
       end

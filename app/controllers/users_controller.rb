@@ -13,6 +13,19 @@ class UsersController < ApplicationController
   
   before_filter { |c| c.requires_permission :manage_tickets }
   before_filter :load_multiple_items, :only => :block
+
+   ##redirect to contacts
+  def index
+    redirect_to contacts_url
+  end
+    
+  def new
+    redirect_to new_contact_url
+  end
+  
+  def edit
+    redirect_to edit_contact_url
+  end
   
   def create    
     @user = current_account.users.new #by Shan need to check later       

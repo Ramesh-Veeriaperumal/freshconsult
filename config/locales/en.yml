@@ -275,8 +275,8 @@ en:
   does_not_contain: Does not contain
   flash: 
     filter:
-      delete_success: "Filter has been delete successfully!"
-      save_success: "Filter has been saved successfully!"
+      delete_success: "View has been delete successfully!"
+      save_success: "View has been saved successfully!"
     twitter: 
       updated: Twitter setting has been updated
     not_allowed_in_demo_site: Demo site doesn't have this access!
@@ -1102,7 +1102,7 @@ en:
     edit_btn: Edit
     requester: Requester
     properties: Ticket Properties
-    submit_ticket: Submit Ticket
+    submit_ticket: Submit 
     stop_monitor_btn_title: Stop monitoring this ticket
     merge_btn: Merge
     split_ticket: Split as new Ticket
