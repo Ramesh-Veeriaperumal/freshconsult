@@ -48,6 +48,14 @@ class EmailNotification < ActiveRecord::Base
     requester_notification && allowed_in_thread_local?(:requester_notification)
   end
   
+  def formatted_agent_template
+    format_template agent_template
+  end
+  
+  def formatted_requester_template
+    format_template requester_template
+  end
+  
   private
     #Introduced to restrict notification storm, during other helpdesks data import.
     #Notification can be disabled for requesters and ticket creation in the import thread.
@@ -57,5 +65,9 @@ class EmailNotification < ActiveRecord::Base
     def allowed_in_thread_local?(user_role)
       (n_hash = Thread.current[:notifications]).nil? || 
         (my_hash = n_hash[notification_type]).nil? || !my_hash[user_role].eql?(false)
+    end
+    
+    def format_template(template)
+      RedCloth.new(template).to_html if template
     end
 end
