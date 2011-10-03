@@ -26,7 +26,7 @@ class AgentsController < Admin::AdminController
   end
     
   def index    
-    @agents = current_account.agents.find(:all , :include => :user , :order =>'name')
+    @agents = current_account.agents.find(:all , :include => :user , :order =>'name').paginate(:page => params[:page], :per_page => 30)
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @agents }
