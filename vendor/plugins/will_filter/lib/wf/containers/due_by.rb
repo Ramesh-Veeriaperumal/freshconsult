@@ -27,8 +27,6 @@ class Wf::Containers::DueBy < Wf::FilterContainer
   
   TEXT_DELIMITER = ","
   
-  
-  
   STATUS_QUERY = "status not in (#{TicketConstants::STATUS_KEYS_BY_TOKEN[:resolved]},#{TicketConstants::STATUS_KEYS_BY_TOKEN[:closed]})"
   
   
