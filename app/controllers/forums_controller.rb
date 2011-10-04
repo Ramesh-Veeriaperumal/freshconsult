@@ -35,10 +35,6 @@ class ForumsController < ApplicationController
           :page => params[:page], 
           :per_page => 10)
     
-    #@topics = @topics.paginate :page => params[:page]
-    
-    
-    
     respond_to do |format|
       format.html do
         # keep track of when we last viewed this forum for activity indicators

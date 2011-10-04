@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110927134902) do
+ActiveRecord::Schema.define(:version => 20111004070713) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -52,7 +52,7 @@ ActiveRecord::Schema.define(:version => 20110927134902) do
     t.datetime "updated_at"
   end
 
-  add_index "admin_user_accesses", ["account_id", "created_at"], :name => "index_admin_user_accesses_on_account_id_and_created_at"
+  add_index "admin_user_accesses", ["account_id", "accessible_type", "accessible_id"], :name => "index_admin_user_accesses_on_account_id_and_acc_type_and_acc_id"
   add_index "admin_user_accesses", ["user_id"], :name => "index_admin_user_accesses_on_user_id"
 
   create_table "agent_groups", :force => true do |t|
@@ -61,6 +61,8 @@ ActiveRecord::Schema.define(:version => 20110927134902) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "agent_groups", ["group_id", "user_id"], :name => "agent_groups_group_user_ids"
 
   create_table "agents", :force => true do |t|
     t.integer  "user_id",    :limit => 8
@@ -522,6 +524,8 @@ ActiveRecord::Schema.define(:version => 20110927134902) do
     t.boolean  "group_escalated",                     :default => false
     t.integer  "inbound_count",                       :default => 1
   end
+
+  add_index "helpdesk_ticket_states", ["ticket_id"], :name => "index_helpdesk_ticket_states_on_ticket_id"
 
   create_table "helpdesk_tickets", :force => true do |t|
     t.text     "description",      :limit => 16777215

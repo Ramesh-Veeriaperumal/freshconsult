@@ -1,12 +1,12 @@
-class Social::TwitterHandlesController < Admin::AdminController
+class Social::TwitterHandlesController < ApplicationController
   
   include ErrorHandle 
   
-  before_filter :except => [:create_twicket] do |c| 
+  before_filter :except => [:create_twicket,:feed] do |c| 
     c.requires_permission :manage_users
   end
   
-  before_filter :only => [ :create_twicket] do |c| 
+  before_filter :only => [ :create_twicket,:feed] do |c| 
     c.requires_permission :manage_forums
   end
   

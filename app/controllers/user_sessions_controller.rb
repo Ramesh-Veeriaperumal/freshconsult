@@ -61,7 +61,7 @@ require 'openid'
   end
   
   def destroy
-    current_user_session.destroy
+    current_user_session.destroy unless current_user_session.nil? 
     #flash[:notice] = "Logout successful!"
     if current_account.sso_enabled? and !current_account.sso_options[:logout_url].blank?
       return redirect_to current_account.sso_options[:logout_url]

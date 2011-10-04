@@ -109,7 +109,7 @@ en:
         title: Supervisor - Rules
         help_info_1: Use Supervisor to periodically check recent tickets and perform certain time-based activities like sending reminders to customers or escalating tickets or reassigning tickets etc.
         help_info_2: For example - If a ticket is waiting for customer response for more than 24 hours send a reminder email to the customer or Automatically close a ticket that is in "Resolved" status for more than 48 hours.
-        help_info_3: Supervisor will run every hour and precess tickets that have been updated within the past 30 days.
+        help_info_3: Supervisor will run every hour and process tickets that have been updated within the past 30 days.
         help_info_4: Supervisor rules are processed sequentially, so the order of the rules is important. A rule may cause certain actions that trigger subsequent rules.
       new:
         title: Supervisor - New Rule
@@ -275,8 +275,8 @@ en:
   does_not_contain: Does not contain
   flash: 
     filter:
-      delete_success: "Filter has been delete successfully!"
-      save_success: "Filter has been saved successfully!"
+      delete_success: "View has been delete successfully!"
+      save_success: "View has been saved successfully!"
     twitter: 
       updated: Twitter setting has been updated
     not_allowed_in_demo_site: Demo site doesn't have this access!
@@ -1102,7 +1102,7 @@ en:
     edit_btn: Edit
     requester: Requester
     properties: Ticket Properties
-    submit_ticket: Submit Ticket
+    submit_ticket: Submit 
     stop_monitor_btn_title: Stop monitoring this ticket
     merge_btn: Merge
     split_ticket: Split as new Ticket
