@@ -3,7 +3,7 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
   def self.notify_by_email(notification_type, ticket, comment = nil)
     e_notification = ticket.account.email_notifications.find_by_notification_type(notification_type)
     if e_notification.agent_notification?
-      a_template = Liquid::Template.parse(e_notification.agent_template)
+      a_template = Liquid::Template.parse(e_notification.formatted_agent_template)
       i_receips = internal_receips(notification_type, ticket)
       deliver_email_notification({ :ticket => ticket,
              :notification_type => notification_type,
@@ -14,7 +14,7 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
     end
     
     if e_notification.requester_notification? and !ticket.out_of_office?
-      r_template = Liquid::Template.parse(e_notification.requester_template)
+      r_template = Liquid::Template.parse(e_notification.formatted_requester_template)
       deliver_email_notification({ :ticket => ticket,
              :notification_type => notification_type,
              :receips => ticket.requester.email,
@@ -40,7 +40,7 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
   def email_notification(params)
     subject       get_subject(params[:notification_type], params[:ticket])
     recipients    params[:receips]
-    body          :ticket => params[:ticket], :body => RedCloth.new(params[:email_body]).to_html,
+    body          :ticket => params[:ticket], :body => params[:email_body],
                   :survey_handle => SurveyHandle.create_handle_for_notification(params[:ticket], 
                     params[:notification_type])
     from          params[:ticket].reply_email
@@ -77,7 +77,7 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
     subject       formatted_subject(ticket)
     recipients    ticket.requester.email
     from          ticket.reply_email
-    body          RedCloth.new(content).to_html
+    body          content
     headers       "Reply-to" => "#{ticket.reply_email}"
     sent_on       Time.now
     content_type  "text/html"
@@ -87,7 +87,7 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
     subject       formatted_subject(ticket)
     recipients    receips
     from          ticket.reply_email
-    body          RedCloth.new(content).to_html
+    body          content
     headers       "Reply-to" => "#{ticket.reply_email}"
     sent_on       Time.now
     content_type  "text/html"

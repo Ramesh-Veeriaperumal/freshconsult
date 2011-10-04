@@ -1,5 +1,5 @@
 package_assets:         on          # (on, off, always)
-embed_assets:           on          # (on, off, datauri)
+embed_assets:           off         # (on, off, datauri)
 compress_assets:        on          # (on, off)
 package_path:           packages    # (defaults to assets)
 javascript_compressor:  closure     # (yui, closure)
@@ -26,14 +26,14 @@ compressor_options:
 #     - public/stylesheets/jquery-ui.css
 #     - public/stylesheets/jquery.qtip.css
 #     - public/stylesheets/ie.css
-# 
+#   
 #   widget:
 #     - public/stylesheets/reset.css   
 #     - public/stylesheets/defaults.css
 #     - public/stylesheets/form.css
 #     - public/stylesheets/buttons.css
 #     - public/stylesheets/ie.css 
-# 
+#   
 #   freshwidget:
 #     - public/stylesheets/freshwidget.css
 
