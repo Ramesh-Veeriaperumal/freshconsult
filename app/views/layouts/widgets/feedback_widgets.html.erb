@@ -12,7 +12,8 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	  
 	  <title><%= "#{h(current_account.name)} Widget" %></title>
-		<%= stylesheet_link_tag "widget", :media => "screen, projection", :cache => true, :concat => true  %>
+
+		<%= stylesheet_link_tag "widget", :media => "screen, projection", :cache => true %>
 		
 		<%= render :partial => "shared/theme.css"  %>
 		
@@ -22,7 +23,7 @@
 	  <%= yield :head %>
 	</head>
     <body>
-    	<style> body{background:transparent;}</style>
+    	<style> body{ background:transparent; }</style>
 		  <div class="content ui-widget-container" id="ui-widget-container">
 			  <%= yield %>
 		  </div>
