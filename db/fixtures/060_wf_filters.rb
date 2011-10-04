@@ -12,7 +12,7 @@ account = Account.current
     "My Open and Pending Tickets" => [{ "condition" => "status", "operator" => "is_in", "value" => "#{TicketConstants::STATUS_KEYS_BY_TOKEN[:open]},#{TicketConstants::STATUS_KEYS_BY_TOKEN[:pending]}"},{ "condition" => "responder_id", "operator" => "is_in", "value" => 0 },spam_condition(false),deleted_condition(false)],
     "My Overdue Tickets" => [{ "condition" => "due_by", "operator" => "due_by_op", "value" => TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN[:all_due]},{ "condition" => "responder_id", "operator" => "is_in", "value" => 0 },spam_condition(false),deleted_condition(false)],
     "Open Tickets in My Groups" => [{ "condition" => "status", "operator" => "is_in", "value" => "#{TicketConstants::STATUS_KEYS_BY_TOKEN[:open]}"},{ "condition" => "group_id", "operator" => "is_in", "value" => 0 },spam_condition(false),deleted_condition(false)],
-    "Urgent and High priority tickets" => [{ "condition" => "priority", "operator" => "is_in", "value" => "#{TicketConstants::PRIORITY_KEYS_BY_TOKEN[:urgent]},#{TicketConstants::PRIORITY_KEYS_BY_TOKEN[:high]}" },spam_condition(false),deleted_condition(false)]
+    "Urgent and High priority Tickets" => [{ "condition" => "priority", "operator" => "is_in", "value" => "#{TicketConstants::PRIORITY_KEYS_BY_TOKEN[:urgent]},#{TicketConstants::PRIORITY_KEYS_BY_TOKEN[:high]}" },spam_condition(false),deleted_condition(false)]
      
    }
    
