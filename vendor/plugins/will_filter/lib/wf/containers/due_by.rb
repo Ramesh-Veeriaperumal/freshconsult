@@ -27,15 +27,10 @@ class Wf::Containers::DueBy < Wf::FilterContainer
   
   TEXT_DELIMITER = ","
   
-  EIGHT_HOURS = Time.zone.now + 8.hours
   
   STATUS_QUERY = "status not in (#{TicketConstants::STATUS_KEYS_BY_TOKEN[:resolved]},#{TicketConstants::STATUS_KEYS_BY_TOKEN[:closed]})"
   
-  DUEBY_CON_HASH = { DUE_BY_TYPES_KEYS_BY_TOKEN[:all_due] => "due_by <= '#{Time.zone.now.to_s(:db)}'",
-                     DUE_BY_TYPES_KEYS_BY_TOKEN[:due_today] => "due_by >= '#{Time.zone.now.beginning_of_day.to_s(:db)}' and due_by <= '#{Time.zone.now.end_of_day.to_s(:db)}' ",
-                     DUE_BY_TYPES_KEYS_BY_TOKEN[:due_tomo] => "due_by >= '#{Time.zone.now.tomorrow.beginning_of_day.to_s(:db)}' and due_by <= '#{Time.zone.now.tomorrow.end_of_day.to_s(:db)}' ",
-                     DUE_BY_TYPES_KEYS_BY_TOKEN[:due_next_eight] => "due_by >= '#{Time.zone.now.to_s(:db)}' and due_by <= '#{EIGHT_HOURS.to_s(:db)}' "}
-
+  
   def self.operators
     [:due_by_op]
   end
@@ -44,9 +39,20 @@ class Wf::Containers::DueBy < Wf::FilterContainer
     cond_str = ""
     cond_arr = values[0].split(TEXT_DELIMITER).collect! {|n| n}
     cond_arr.each do |val|
-     cond_str <<  " (#{DUEBY_CON_HASH[val.to_i]}) ||"
+     cond_str <<  " (#{get_due_by_con(val)}) ||"
    end
    cond_str.chomp("||")
+ end
+ 
+  def get_due_by_con(val)
+    eight_hours = Time.zone.now + 8.hours
+    
+   due_by_hash = { DUE_BY_TYPES_KEYS_BY_TOKEN[:all_due] => "due_by <= '#{Time.zone.now.to_s(:db)}'",
+      DUE_BY_TYPES_KEYS_BY_TOKEN[:due_today] => "due_by >= '#{Time.zone.now.beginning_of_day.to_s(:db)}' and due_by <= '#{Time.zone.now.end_of_day.to_s(:db)}' ",
+      DUE_BY_TYPES_KEYS_BY_TOKEN[:due_tomo] => "due_by >= '#{Time.zone.now.tomorrow.beginning_of_day.to_s(:db)}' and due_by <= '#{Time.zone.now.tomorrow.end_of_day.to_s(:db)}' ",
+      DUE_BY_TYPES_KEYS_BY_TOKEN[:due_next_eight] => "due_by >= '#{Time.zone.now.to_s(:db)}' and due_by <= '#{eight_hours.to_s(:db)}' "}
+      
+   due_by_hash[val.to_i]
   end
 
   def sql_condition
