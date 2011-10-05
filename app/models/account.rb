@@ -12,6 +12,8 @@ class Account < ActiveRecord::Base
   
   has_one :data_export,:dependent => :destroy
   
+
+  
   has_one :logo,
     :as => :attachable,
     :class_name => 'Helpdesk::Attachment',
@@ -112,6 +114,10 @@ class Account < ActiveRecord::Base
   has_one :survey, :dependent => :destroy
   has_many :scoreboard_ratings, :dependent => :destroy
   has_many :survey_handles, :through => :survey
+
+  
+  has_one :data_import,:class_name => 'Admin::DataImport' ,:dependent => :destroy
+
   
   has_many :tags, :class_name =>'Helpdesk::Tag'
   #Scope restriction ends

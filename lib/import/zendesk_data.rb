@@ -1,9 +1,11 @@
-class Admin::XmlreaderController < Admin::AdminController
-  
-    before_filter { |c| c.requires_permission :manage_tickets }
-    
-    require 'rexml/document'    
-    require 'rexml/xpath'    
+
+
+
+class Import::ZendeskData < Struct.new(:params)
+   require 'rexml/document'    
+   require 'rexml/xpath'   
+   require 'zip/zip'
+   require 'fileutils'
     
     include Import::CustomField
     include Import::Forums
@@ -13,17 +15,38 @@ class Admin::XmlreaderController < Admin::AdminController
                             2 => "Incident",
                             3 => "Problem",
                             4 => "Task"}
+    ZENDESK_TICKET_STATUS = {1 => 2, 
+                             2=> 3,
+                             3=> 4
+                            }
+                            
+   ZENDESK_ROLE_MAP = {0 =>3,
+                       4 => 2,
+                       2 => 1
+                      }
+                          
   
+  def perform
 
-  def zendesk_import
+    @current_account = Account.find_by_full_domain(params[:domain])
     
-    base_dir = params[:base_dir]    
     file_list = params[:import][:files]
+    
+    base_dir = nil
+    
+    begin
+        base_dir = extract_zendesk_zip
+    rescue
+       puts "Unable to connect ::rescue"
+       return true
+    end
+    
+    puts "The base directory is ::#{base_dir}"
     
     create_solution = false
     user_activation_email = false
     
-    import_list = file_list.reject(&:blank?)   
+    import_list = file_list.reject(&:blank?)  
     
     @customers_stat = Hash.new
     @users_stat = Hash.new
@@ -36,7 +59,7 @@ class Admin::XmlreaderController < Admin::AdminController
     end 
     
     if import_list.include?("user_notify")
-       logger.debug "user_notify is enabled"
+       puts "user_notify is enabled"
        user_activation_email = true   
     end    
     
@@ -47,7 +70,7 @@ class Admin::XmlreaderController < Admin::AdminController
     end
     if import_list.include?("tickets")
        disable_ticket_notification
-       import_flexifields base_dir
+       import_flexifields (base_dir, @current_account)
        @groups_stat = handle_group_import base_dir
        @tickets_stat = handle_ticket_import base_dir       
     end
@@ -56,11 +79,18 @@ class Admin::XmlreaderController < Admin::AdminController
     end  
     ##To enable all notifications
     enable_notifications
-    del_file = FileUtils.rm_rf base_dir  
-      
+    email_params = {:email => params[:email], :domain => params[:domain], 
+                     :tickets_stat =>  @tickets_stat ,:groups_stat => @groups_stat,
+                     :users_stat => @users_stat , :customers_stat => @customers_stat , 
+                     :topic_stat => @topic_stat,:article_stat => @article_stat}
+     Admin::DataImportMailer.deliver_import_email(email_params)
+     FileUtils.remove_dir(base_dir,true)  
+     @current_account.data_import.destroy
   end
+  
+
   def set_notification_thread
-    Thread.current[:notifications] = current_account.email_notifications
+    Thread.current[:notifications] = @current_account.email_notifications
   end
   def disable_ticket_notification     
      Thread.current[:notifications][EmailNotification::NEW_TICKET][:requester_notification] = false
@@ -96,18 +126,18 @@ def handle_customer_import base_dir
      org.elements.each("id") { |imp_id| import_id = imp_id.text }    
 
      params = {:name =>cust_name , :description =>cust_detail , :import_id =>import_id}
-     @customer = current_account.customers.find_by_import_id(import_id.to_i())
+     @customer = @current_account.customers.find_by_import_id(import_id.to_i())
      unless @customer.blank?
         if @customer.update_attributes(params)
              updated+=1
         end      
      else
-        @customer = current_account.customers.new(params)
+        @customer = @current_account.customers.new(params)
         if @customer.save
             created+=1
-            logger.debug "Customer has been saved with name:: #{cust_name}"
+            puts "Customer has been saved with name:: #{cust_name}"
         else
-            logger.debug "Save customer has been failed:: #{@customer.errors.inspect}"
+            puts "Save customer has been failed:: #{@customer.errors.inspect}"
         end
      end
      
@@ -131,30 +161,23 @@ def handle_group_import base_dir
     
   REXML::XPath.each(doc,'//group') do |group|
     
-     grp_name = nil
-     grp_id = nil
-          
-     group.elements.each("name") do |name|      
-       grp_name = name.text         
-     end
-     
-     group.elements.each("id") do |groupid|      
-       grp_id = groupid.text         
-     end
+     grp_name = group.elements["name"].text
+     grp_id = group.elements["id"].text
+       
      params = {:name =>grp_name, :import_id =>grp_id}
-     @group = current_account.groups.find_by_import_id(grp_id.to_i())
-     @group = current_account.groups.find_by_name(grp_name) if @group.blank?
+     @group = @current_account.groups.find_by_import_id(grp_id.to_i())
+     @group = @current_account.groups.find_by_name(grp_name) if @group.blank?
      unless @group.blank?
         if @group.update_attributes(params)
              updated+=1
         end      
      else
-        @group = current_account.groups.new(params)
+        @group = @current_account.groups.new(params)
         if @group.save
             created+=1
-            logger.debug "Group has been saved with name:: #{grp_name}"
+            puts "Group has been saved with name:: #{grp_name}"
         else
-            logger.debug "Save group has been failed:: #{@group.errors.inspect}"
+            puts "Save group has been failed:: #{@group.errors.inspect}"
         end
      end
   end
@@ -176,64 +199,23 @@ def handle_user_import base_dir
     
   REXML::XPath.each(doc,'//user') do |user|    
     
-     usr_name = nil
-     usr_email = nil
-     usr_phone = nil
      usr_role = 3
-     usr_time_zone = nil
-     usr_details = nil 
-     org_id = nil
-     import_id = nil
+     usr_name =  user.elements["name"].text
+     usr_email = user.elements["email"].text
+     usr_phone = user.elements["phone"].text
+     zen_usr_role = user.elements["roles"].text
+     role_id = zen_usr_role.to_i()
+     usr_time_zone = user.elements["time-zone"].text
+     usr_details = user.elements["details"].text 
+     import_id = user.elements["id"].text
      created_at = nil
      
-     user.elements.each("name") do |name|  
-     usr_name = name.text         
-     end
+     usr_role = ZENDESK_ROLE_MAP[role_id]
+          
+     cust_id = user.elements["organization-id"].text 
+     customer = @current_account.customers.find_by_import_id(cust_id) 
+     org_id = customer.id unless customer.blank?
    
-     user.elements.each("email") do |email|           
-      usr_email = email.text         
-     end  
-   
-     user.elements.each("phone") do |phone|            
-       usr_phone = phone.text         
-     end  
-   
-     user.elements.each("roles") do |role|     
-       role_id = role.text 
-       role_id = role_id.to_i()
-       logger.debug "role_id is :: #{role_id}"  
-       
-       usr_role = 1 if role_id == 2
-       usr_role = 2 if role_id == 4
-       usr_role = 3 if role_id == 0       
-     end  
-   
-     user.elements.each("time-zone") do |time_zone|   
-       usr_time_zone = time_zone.text    
-       logger.debug "user time zone is #{usr_time_zone.inspect}"
-     end 
-   
-     user.elements.each("details") do |details|      
-       usr_details = details.text         
-     end
-     
-     user.elements.each("organization-id") do |org|       
-       cust_id = org.text
-       logger.debug "Cust id while importing is :: #{cust_id}"
-       customer = current_account.customers.find_by_import_id(cust_id) 
-       org_id = customer.id unless customer.blank?
-     end
-     
-     user.elements.each("id") do |import|      
-       import_id = import.text         
-     end
-     
-     #user.elements.each("created-at") do |created|      
-      # created_time = created.text         
-       #created_at = created_time.to_datetime()
-     #end
-     
-     logger.debug "The email iss :: #{usr_email}"
      
      @params_hash ={ :user => { :name => usr_name,
                                 :job_title => "",
@@ -248,10 +230,10 @@ def handle_user_import base_dir
                      }     
      @user = nil
      unless usr_email.blank?
-      @user= current_account.all_users.find_by_email(usr_email)    
+      @user= @current_account.all_users.find_by_email(usr_email)    
      end
-     @user = current_account.all_users.find_by_import_id(import_id) if @user.blank?     
-     logger.debug "email is :: #{usr_email} and import id :: #{import_id} and \n user: #{@user.inspect}"
+     @user = @current_account.all_users.find_by_import_id(import_id) if @user.blank?     
+     puts "email is :: #{usr_email} and import id :: #{import_id} and \n user: #{@user.inspect}"
      unless @user.blank?
           if @user.update_attribute(:import_id , import_id )
              updated+=1
@@ -259,31 +241,32 @@ def handle_user_import base_dir
                @agent = Agent.find_or_create_by_user_id(@user.id )
            end
          else
-            logger.debug "updation of the user has been failed :: #{@user.errors.inspect}"
+            puts "updation of the user has been failed :: #{@user.errors.inspect}"
           end
      else
-          @user = current_account.users.new
+          @user = @current_account.users.new
           @user.time_zone = usr_time_zone
           if usr_email.blank?
-              logger.debug "Import id is :: #{import_id}"
-             #logger.debug "email is blank:: #{@user.inspect}"
+              puts "Import id is :: #{import_id}"
+             #puts "email is blank:: #{@user.inspect}"
              @user.deleted=true
-             logger.debug  "after ::email is blank:: #{@user.inspect} is del: #{@user.deleted}"             
+             @params_hash[:user][:user_role] = User::USER_ROLES_KEYS_BY_TOKEN[:customer]
+             puts  "after ::email is blank:: #{@user.inspect} is del: #{@user.deleted}"             
           end
           #@params_hash[:user][:user_role] = User::USER_ROLES_KEYS_BY_TOKEN[:customer]
           if @user.signup!(@params_hash) 
-            logger.debug "user has been save #{@user.inspect}"
+            puts "user has been save #{@user.inspect}"
             created+=1
             if usr_role != 3
-               logger.debug "Its an agents and the user_id is :: #{@user.id}"
+               puts "Its an agents and the user_id is :: #{@user.id}"
                @agent = Agent.create(:user_id =>@user.id )
             end
           else
-            logger.debug "unable to create the user :: #{@user.errors.inspect}" 
+            puts "unable to create the user :: #{@user.errors.inspect}" 
           end
         
       end     
-     logger.debug " The user data:: name : #{usr_name} e_mail : #{usr_email} :: phone :: #{usr_phone} :: role :: #{usr_role} time_zone :: #{usr_time_zone} and usr_details :#{usr_details}"
+     puts " The user data:: name : #{usr_name} e_mail : #{usr_email} :: phone :: #{usr_phone} :: role :: #{usr_role} time_zone :: #{usr_time_zone} and usr_details :#{usr_details}"
 
  end
  user_count["created"]=created
@@ -303,107 +286,57 @@ def handle_ticket_import base_dir
   
   REXML::XPath.each(doc,'//ticket') do |req| 
         
-      sub = nil 
-      desc = nil
-      requester_id = nil
-      assignee_id = nil
-      status_id = nil
-      priority_id = nil
-      ticket_type = nil
-      tags= nil
-      due_date = nil
-      group_id = nil
-      display_id = nil  #nice_id
-      created_at = nil
-      updated_at = nil      
-      resolution_time= nil
+      sub = req.elements["subject"].text 
+      desc = req.elements["description"].text 
+      display_id = req.elements["nice-id"].text  
+      tags= req.elements["current-tags"].text
+      due_date = req.elements["due-date"].text   
+      resolution_time= req.elements["resolution-time"].text 
       import_id = nil
         
-      req.elements.each("subject") do |subject|       
-        sub = subject.text         
-      end
+      assign_id = req.elements["assignee-id"].text
+      assignee = @current_account.all_users.find_by_import_id(assign_id.to_i()) unless assign_id.blank? 
         
-      req.elements.each("description") do |description|  
-        desc = description.text
-      end 
-      
-      req.elements.each("requester-id") do |requester|  
-        req_id = requester.text.to_i()
-        requester_id = current_account.all_users.find_by_import_id(req_id).id       
-      end  
-      
-      req.elements.each("assignee-id") do |assignee|  
-        assign_id = assignee.text
-        assignee_id = current_account.all_users.find_by_import_id(assign_id.to_i()).id unless assign_id.blank?
-        
-      end  
-      
-      req.elements.each("status-id") do |status|  
-        stat_id = status.text.to_i()
-        status_id = 2 if stat_id == 1
-        status_id = 3 if stat_id == 2
-        status_id = 4 if stat_id == 3
-        
-      end 
-      
-      req.elements.each("priority-id") do |priority|  
-        priority_id = priority.text.to_i()
-        priority_id = 1 if priority_id < 1
-        
-      end 
-      
-      req.elements.each("ticket-type-id") do |ticket_type|  
-        ticket_type = ZENDESK_TICKET_TYPES[ticket_type.text.to_i]
-      end      
+      req_id = req.elements["requester-id"].text
+      requester = @current_account.all_users.find_by_import_id(req_id.to_i())  unless req_id.blank?
+   
+            
+      status = req.elements["status-id"].text
+      stat_id = status.to_i() unless status.blank?
+      status_id = ZENDESK_TICKET_STATUS[stat_id]
      
+      priority = req.elements["priority-id"].text
+      priority_id = priority.to_i() unless priority.blank?
+      priority_id = 1 if priority_id < 1
       
-      req.elements.each("group-id") do |group|  
-        imp_id = group.text        
-        group_id = current_account.groups.find_by_import_id(imp_id.to_i()).id unless imp_id.blank?
-      end 
+      ticket_type_id = req.elements["ticket-type-id"].text
+      ticket_type = ZENDESK_TICKET_TYPES[ticket_type_id.to_i]
       
-      req.elements.each("nice-id") do |display|  
-        display_id = display.text
-      end 
-      
-      req.elements.each("created-at") do |created|  
-        created_time = created.text
-        created_at = created_time.to_datetime()
-      end 
+      imp_id = req.elements["group-id"].text
+      group_id = @current_account.groups.find_by_import_id(imp_id.to_i()).id unless imp_id.blank?
      
-      req.elements.each("updated-at") do |updated|  
-        updated_at = updated.text
-        updated_at = updated_at.to_datetime()
-      end 
-      
-      req.elements.each("resolution-time") do |res|  
-        resolution_time = res.text
-      end       
-        
-      req.elements.each("current-tags") do |tag|  
-        tags = tag.text
-      end 
-      
-      req.elements.each("due-date") do |due|  
-        due_date = due.text
-      end 
-      
-      @request = current_account.tickets.find_by_import_id(display_id.to_i())    
+      created_time =  req.elements["created-at"].text
+      created_at = created_time.to_datetime()
+   
+      updated_at = req.elements["updated-at"].text
+      updated_at = updated_at.to_datetime()
+     
+      @request = @current_account.tickets.find_by_import_id(display_id.to_i())    
      
       if @request.blank?
-        @request = current_account.tickets.new 
+        @request = @current_account.tickets.new 
         created_count+=1
       else
         updated_count+=1
         next
       end
       
-      @display_id_exist = current_account.tickets.find_by_display_id(display_id.to_i())
+      @display_id_exist = @current_account.tickets.find_by_display_id(display_id.to_i())
       
       @request.subject = sub || 'no subject'
       @request.description = desc
-      @request.requester_id = requester_id
-      @request.responder_id = assignee_id
+      @request.requester = requester
+      @request.responder = assignee if (assignee && !assignee.customer?)
       @request.group_id = group_id
       @request.display_id = display_id if @display_id_exist.blank?
       @request.import_id = display_id
@@ -415,9 +348,9 @@ def handle_ticket_import base_dir
       
 
       if @request.save         
-        logger.debug "successfully saved"
+        puts "successfully saved"
       else
-        logger.debug "failed to save the ticket :: #{@request.errors.inspect}"
+        puts "failed to save the ticket :: #{@request.errors.inspect}"
       end
       
       ## Create attachemnts
@@ -425,7 +358,7 @@ def handle_ticket_import base_dir
       req.elements.each("attachments/attachment") do |attach|         
         attachemnt_url = nil        
         attach.elements.each("url") {|attach_url|   attachemnt_url = attach_url.text  } 
-        Delayed::Job.enqueue Import::Attachment.new(@request.id ,attachemnt_url, :ticket )
+        Import::Attachment.new(@request.id ,attachemnt_url, :ticket )
        
       end
       
@@ -476,7 +409,7 @@ def handle_ticket_import base_dir
        note_created_time = nil
        is_public = false
        incoming = false
-       #logger.debug "post :: #{post.inspect}"
+       #puts "post :: #{post.inspect}"
        
        comment.elements.each("value") { |val| note_body =  val.text } 
        comment.elements.each("is-public") { |public| is_public =  public.text } 
@@ -484,7 +417,7 @@ def handle_ticket_import base_dir
        
        comment.elements.each("author-id") do |author|
           author_id = author.text
-          note_created = current_account.all_users.find_by_import_id(author_id.to_i())              
+          note_created = @current_account.all_users.find_by_import_id(author_id.to_i())              
           note_created_by = note_created.id unless note_created.blank?            
           incoming = true if note_created.customer?
        end
@@ -494,14 +427,14 @@ def handle_ticket_import base_dir
         :private => is_public,
         :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],
         :user_id => note_created_by,
-        :account_id =>current_account && current_account.id,
+        :account_id =>@current_account && @current_account.id,
         :body =>note_body        
         })
          @note.created_at = note_created_time.to_datetime()
          if @note.save
-           logger.debug "successfully saved"
+           puts "successfully saved"
          else
-            logger.debug "failed to save the note :: #{@note.errors.inspect}"
+            puts "failed to save the note :: #{@note.errors.inspect}"
          end
         
         ##adding attachment to notes
@@ -509,7 +442,7 @@ def handle_ticket_import base_dir
         
         attachemnt_url = nil        
         attach.elements.each("url") {|attach_url|   attachemnt_url = attach_url.text  } 
-        Delayed::Job.enqueue Import::Attachment.new(@note ,attachemnt_url , :note )
+        Import::Attachment.new(@note ,attachemnt_url , :note )
         end
 
     end
@@ -525,7 +458,7 @@ end
 #
 def handle_account_import base_dir
   
-  logger.debug "Here its :: handle_account_import"
+  puts "Here its :: handle_account_import"
   created = 0
   updated = 0
   file_path = File.join(base_dir , "accounts.xml")
@@ -559,5 +492,96 @@ def handle_forums_import base_dir,make_solution
   get_posts_data posts_path
   
 end
+
+def extract_zendesk_zip
+  
+    puts "extract_sen_zip :: curr time:: #{Time.now}"
+  
+    file=  @current_account.data_import.attachments.first.content.to_file
+    
+    @upload_file_name = file.original_filename
+    
+    puts "@upload_file_name:: #{@upload_file_name}"
+    
+    zip_file_name = "#{RAILS_ROOT}/public/files/#{@upload_file_name}"
+    File.open(zip_file_name , "wb") do |f|
+      f.write(file.read)
+    end
+    
+    @file_list = Array.new   
+    
+    @out_dir = "#{RAILS_ROOT}/public/files/temp/#{@upload_file_name.gsub('.zip','')}"
+    FileUtils.mkdir_p @out_dir    
+    zf = Zip::ZipFile.open(zip_file_name)
+    
+    zf.each do |zip_file|        
+      report_name = File.basename(zip_file.name).gsub('zip','xml')
+      fpath = File.join(@out_dir , report_name)    
+      
+      if(File.exists?(fpath))
+        FileUtils.rm_f(fpath)
+      end
+      zf.extract(zip_file, fpath)
+      file_det = Hash.new
+      file_det["file_name"] = report_name
+      file_det["file_path"] = fpath
+      @file_list.push(file_det)
+    end    
+    import_files_from_zendesk @out_dir  
+    puts "after the import_files_from_zendesk"
+    delete_zip_file
+    return @out_dir
+end
+
+
+def delete_zip_file
+    zip_file_name = "#{RAILS_ROOT}/public/files/#{@upload_file_name}"
+    FileUtils.rm_rf zip_file_name
+  end
+  def import_files_from_zendesk base_dir      
+    file_arr = Array.new       
+    file_arr.push("categories.xml")
+    file_arr.push("ticket_fields.xml")
+    
+    import_file base_dir,file_arr     
+  end
+
+ 
+def import_file base_dir, file_arr
+  
+  zendesk_url = params[:zendesk][:url]
+  usr_name = params[:zendesk][:user_name]
+  usr_pwd = params[:zendesk][:user_pwd]  
+  
+  zendesk_url = zendesk_url+'/' unless zendesk_url.ends_with?('/')
+  
+  file_arr.each do |file_name|
+    
+    url = zendesk_url+file_name
+    file_path = File.join(base_dir , file_name)      
+    url = URI.parse(url)  
+    req = Net::HTTP::Get.new(url.path)  
+    req.basic_auth usr_name, usr_pwd
+    res = Net::HTTP.start(url.host, url.port) {|http| http.request(req) }     
+    case res
+    when Net::HTTPSuccess, Net::HTTPRedirection
+       File.open(file_path, 'w') {|f| f.write(res.body) }      
+    else 
+      handle_error
+      raise ArgumentError, "Unable to connect zendesk" 
+    end
+  end
+  
+end
+
+def handle_error
+     delete_zip_file
+     email_params = {:email => params[:email], :domain => params[:domain]}
+     Admin::DataImportMailer.deliver_import_error_email(email_params)
+     FileUtils.remove_dir(@out_dir,true)  
+     @current_account.data_import.destroy
+    
+end
+
 
 end
