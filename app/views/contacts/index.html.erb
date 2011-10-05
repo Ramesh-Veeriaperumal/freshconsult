@@ -34,7 +34,7 @@
 	  	<%= link_to(t('edit'), edit_contact_path(contact), :class => "button") %>
       	<%= link_to(t('delete'), {:controller => "contacts", :action => "destroy", :id => contact} , :method => 'delete', :confirm => "#{t('contacts.info1')}?", :class => "button") unless contact == current_user %>
 	  </div>	   
-	  <%= user_avatar( contact.avatar ) %>
+	  <%= user_avatar( contact ) %>
 	  <div class="item_information">
         	<%= link_to(h(contact.display_name), {:controller => "contacts", :action => "show", :id => contact}, :class => "item_info" ) %>
 			<div class="info_data">

@@ -1,3 +1,28 @@
 <% content_for :sidebar do -%><%-end %>
-<%= render :partial => "signin_info", :locals => { :product => @current_product } %>
+<% unless @twitter_handles.empty? %>
+  <div class="floatr">
+    <%= link_to "Add Account", @wrapper.authorize_url, :class => "uiButton special medium" %> 
+  </div>
+  <h3 class="title"><%=t('.title')%></h3>
+  <ul class="admin_list">
+    <% @twitter_handles.each do |twitter_handle| %>
+      <li>
+  		  <div class="item_actions">
+  		    <%= link_to t("edit"),  edit_social_twitter_url(twitter_handle), :class => "button" %>
+  		    <%= link_to(t('remove'), social_twitter_path(twitter_handle), :method => 'delete', :confirm => "Are you sure you want to remove this twitter account?", :class => "button" ) %>    
+  		  </div>
+  		  <div class="preview_pic">
+  		    <span class="tweet_pic"></span>
+  		    <%= image_tag (twitter_avatar(twitter_handle.screen_name)) %>
+  		  </div>		
+  		    <h2 class="title">
+            <%= link_to "@#{twitter_handle.screen_name}", edit_social_twitter_url(twitter_handle) %> 
+          </h2>
+          <div class="intro"> <%= twitter_handle.product.name %> </div> 
+      </li>
+    <% end %>
+  </ul>
+<% else %>
+  <%= render :partial => "signin_info", :locals => { :product => @current_product } %>
+<% end %>
    

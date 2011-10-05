@@ -3,8 +3,17 @@ class Helpdesk::NotesController < ApplicationController
   before_filter :load_parent_ticket_or_issue
   
   include HelpdeskControllerMethods
+    
+  uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
+
+  def index
+    @notes = @parent.conversation(params[:page])
+    if request.xhr?
+      render(:partial => "helpdesk/tickets/note", :collection => @notes)
+    end    
+  end
   
-  def create  
+  def create      
     if @item.save
       if params[:post_forums]
         @topic = Topic.find_by_id_and_account_id(@parent.ticket_topic.topic_id,current_account.id)
@@ -101,11 +110,15 @@ class Helpdesk::NotesController < ApplicationController
     def send_tweet
       reply_twitter = current_account.twitter_handles.find(params[:twitter_handle])
       unless reply_twitter.nil?
+       begin
         @wrapper = TwitterWrapper.new reply_twitter
         twitter = @wrapper.get_twitter
         latest_comment = @parent.notes.latest_twitter_comment.first
         status_id = latest_comment.nil? ? @parent.tweet.tweet_id : latest_comment.tweet.tweet_id
         twitter.update(@item.body, {:in_reply_to_status_id => status_id})
+      rescue
+         flash.now[:notice] = t('twitter.not_authorized')
+        end
       end
   end
   

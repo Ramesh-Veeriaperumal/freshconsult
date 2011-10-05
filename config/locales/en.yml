@@ -1,7 +1,8 @@
 --- 
 en: 
   feedbackwidget_offset_info: The offset will be the distance of the widget button (pixels) from the left or top of the screen based on the alignment you choose.
-  reset_my_password: Reset my password
+  no_twitter_handle: Please configure atleast one twitter account
+  reset_my_password: Reset my password 
   assign: Assign
   signup: sign up
   trial_expired_on: Your trial has expired on
@@ -19,6 +20,8 @@ en:
   attachments: Attachments
   show_quoted_text: Show Quoted text
   cancel_my_account: Cancel my account
+  resolved_on_time: Resolved on time
+  resolved_late: Resolved late
   remove: Remove
   user: 
     company: Company
@@ -50,6 +53,7 @@ en:
       first_choice: First Choice
       second_choice: Second Choice
       confirm_delete: Are you sure you want to delete this field?
+      no_choice_message: "At least one valid choice has to be present"
     index: 
       number: Number
       add_custom_field: Add a Custom Field
@@ -106,7 +110,7 @@ en:
         title: Supervisor - Rules
         help_info_1: Use Supervisor to periodically check recent tickets and perform certain time-based activities like sending reminders to customers or escalating tickets or reassigning tickets etc.
         help_info_2: For example - If a ticket is waiting for customer response for more than 24 hours send a reminder email to the customer or Automatically close a ticket that is in "Resolved" status for more than 48 hours.
-        help_info_3: Supervisor will run every hour and precess tickets that have been updated within the past 30 days.
+        help_info_3: Supervisor will run every hour and process tickets that have been updated within the past 30 days.
         help_info_4: Supervisor rules are processed sequentially, so the order of the rules is important. A rule may cause certain actions that trigger subsequent rules.
       new:
         title: Supervisor - New Rule
@@ -274,6 +278,9 @@ en:
   flash: 
     facebook:
       updated: Facebook setting has been updated
+    filter:
+      delete_success: "View has been delete successfully!"
+      save_success: "View has been saved successfully!"
     twitter: 
       updated: Twitter setting has been updated
     not_allowed_in_demo_site: Demo site doesn't have this access!
@@ -443,6 +450,9 @@ en:
         note: 
           short: "{{user_path}} added a {{comment_path}}"
           long: "{{user_path}} added a {{comment_path}} to the ticket {{notable_path}}"
+        twitter: 
+          short: "{{user_path}} added a {{twitter_path}}"
+          long: "{{user_path}} added a {{twitter_path}} to the ticket {{notable_path}}"
       assigned: 
         short: Assigned to {{responder_path}} by {{user_path}}
         long: "{{user_path}} assigned the ticket {{notable_path}} to {{responder_path}}"
@@ -764,7 +774,8 @@ en:
   account_admin: Account admin
   right: Right
   footer: 
-    helpdesk_software: Help Desk Software by Freshdesk
+    helpdesk_software: Help Desk Software
+    by_freshdesk: by Freshdesk
   tkt_unattended_in_grp: Ticket unattended in Group
   agent_solves_tkt: Agent solves the Ticket
   zendesk_url_info: e.g:- http://acme.zendesk.com
@@ -798,7 +809,7 @@ en:
     send_activation: Send activation email
     import_csv: Import users from CSV
     quick_contact: Quick Contact
-    info3: Background information from %{nick_name}
+    info3: Background information of %{nick_name}
     working: Working
     info4: Recent tickets from %{nick_name}
     form_placeholder: 
@@ -877,6 +888,7 @@ en:
     info7: No solutions in this folder
     status: Solution Status
     info8: Are you sure you want to delete this solution?
+    folder: Folder
   import_updated: Updated
   feedbackwidget_intro: Customize your freshdesk widget below and see a realtime preview.
   save: Save
@@ -1015,13 +1027,15 @@ en:
   logo: Logo
   ok: Ok
   back: Back
-  ticket: 
+  ticket:
+    reported_on: "from %{username}, on %{date}"
     thanks: Thank you for submitting a feedback
     group: Group
     spam_btn_title: Mark as spam
     assigned_to: Assigned To
     edit: Edit ticket
     ham_btn_title: This is not spam
+    reported_from_source: Reported via %{source}
     suggested_solutions: 
       insert_url: Insert URL
       title: Suggested Solutions
@@ -1063,7 +1077,7 @@ en:
       post_to_linked_forum: Post in linked forum
       form_title: Reply to the conversation
       reply_email_id: Send the reply from the following email id
-    reported_by: Reported by %{requester}
+    reported_by: from %{requester}
     close_btn: Close
     close_btn_title: Close this ticket
     tags: 
@@ -1095,7 +1109,7 @@ en:
     edit_btn: Edit
     requester: Requester
     properties: Ticket Properties
-    submit_ticket: Submit Ticket
+    submit_ticket: Submit 
     stop_monitor_btn_title: Stop monitoring this ticket
     merge_btn: Merge
     split_ticket: Split as new Ticket
@@ -1230,6 +1244,7 @@ en:
       flagged_unspam: "%{tickets} removed from the spam folder."
     shared:
       reply_form:
+        title: Reply to %{email}
         cc: Cc
         addcc: Add Cc
         removecc: Remove Cc
@@ -1244,11 +1259,16 @@ en:
         open: Open
         due_today: Due Today
         unassigned: Unassigned
+        pending: Pending
     rebranding: 
       name: 
         info: This will be the help desk name that is shown in the header and mail notifications.
     ticket_created_on_n_by: by %{requester} on %{date_time}
     tickets:
+      customview:
+        new:
+          give_a_name: Give a name for this view
+          visible_to: This view is visible to
       execute_scenario_notice: 
         view_details: view details
         execute_the_scenario: "Executed the scenario <b>%{rule_name}</b>"
@@ -1273,15 +1293,15 @@ en:
           due: Due
           earlier_date_and_time: Please give a date & time that is newer than the ticket's created date & time
       views: 
-        no_tickets: No tickets in this view
         on_hold: Tickets On Hold
         new: New Tickets
         my_resolved: My Resolved Tickets
-        new_and_my_open: New & My Open Tickets
-        all: All Tickets
-        open: Open Tickets
+        new_my_open: New & My Open Tickets
+        this_view: this view
+        all_tickets: All Tickets
+        open: Open tickets
         closed: Closed Tickets
-        trash: Trash
+        deleted: Trash
         overdue: Overdue Tickets
         due_today: Tickets Due Today
         resolved: Resolved Tickets
@@ -1297,6 +1317,8 @@ en:
         my_open: My Open Tickets
         tickets_by: Tickets by
         tickets_twitter: Tickets through twitter
+        open_or_pending: Open or Pending
+        resolved_or_closed: Resolved or Closed
       note:
         posted_on: "%{user_name} on %{note_date}"
         edit_note: Edit Note
@@ -1328,6 +1350,8 @@ en:
       last_modified: Last Modified
       priority: Priority
       status: Status
+      asc: Ascending
+      desc: Descending
   click_to_change_sort_order: Click to change sort order
   user_sessions:
       new:
@@ -1373,3 +1397,30 @@ en:
     facebook_pages:
       index:
         title: "Facebook Pages"
+    twitter_handles:
+      index:
+        title: "Twitter Accounts"
+  all_due: All 
+  due_today: Today
+  due_tomo: Tomorrow
+  due_next_eight: Next 8 hours
+  block_users: Do you want to block the contact(s) as well?
+  user_block: "Yes"
+  users_blocked_message: "Following contact(s) (%{users}) have been blocked"
+  user_activation_message_sent: "The user has been created and activation instructions sent to %{user_email}!"
+  wf:
+    filter:
+      index:
+        title: "Manage custom views"
+        back: "&larr; Back to Tickets"
+        no_custom_view: "No custom views available!"        
+      view:
+        delete: "Are you sure you want to delete this view?"
+    messages:
+      no_tickets_in_view: You don't have any tickets in %{view_name}.
+  conversation: Conversation
+  save_this_view: "Save this View..."
+  loading:
+    activities: Loading more activities
+    items: Loading more items
+>>>>>>> b3a0a5fe6610634d2da766d78fff987af8869596

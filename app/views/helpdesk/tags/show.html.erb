@@ -38,25 +38,6 @@
 
 
 
-
-<% content_for :sidebar do %>
-
-  <!--%= 
-    d = (@item.tag_uses_count || 0) - (@item.tickets.visible.count || 0) 
-    if(d > 0 && !params[:show_all])
-      content_tag(:div, "#{d} Tickets are hidden due to deletion / spam. " + link_to("(show them)", helpdesk_tag_path(@item, :show_all => true)), :class => "spam")
-
-    elsif(d > 0 && params[:show_all])
-      content_tag(:div, "Spam & deleted tickets are shown. " + link_to("(hide them)", helpdesk_tag_path(@item)), :class => "spam")
-    end
-  %-->
-
-  <!--%= render :partial => '/helpdesk/shared/tag_search_navigate' %-->
-
-  <!--h4>Options</h4-->
-  
-<% end %>
-
 <% content_for :main_panel_title do %>
 <h3 class="title">
 	Tickets Tagged: <span class="tag"><%= @item.name %></span>  	
@@ -69,37 +50,9 @@
 <% end %>
 
 <% content_for :main_panel_toolbar do %>
-  <!--div class="actions">
-    <form class="sort">
-      Sort by&nbsp;&nbsp; 
-    </form>
-  </div>
-  <ul>
-    <li><a href="#" id="expanded-link">Expanded View</a></li>
-    <li><a href="#" id="list-link">List View</a></li>
-  </ul-->
 <% end %>
 
 <% content_for :main_panel_selected_toolbar do %>
-
-  <!--ul class="secondary-actions">
-    <%= content_tag('li', link_to_function("Select All", "Helpdesk.sel.checkAll()")) %>
-    <%= content_tag('li', link_to_function("Deselect All", "Helpdesk.sel.uncheckAll()")) %> 
-  </ul>
-
-  <ul>
-    <li><a href="#" id="assign-options-link">Assign To User</a></li>
-    <%= content_tag('li', link_to_function("Delete", "Helpdesk.sel.submit('#{ helpdesk_ticket_path('multiple') }', 'delete')")) %>
-    <%= content_tag('li', link_to_function("Flag Spam", "Helpdesk.sel.submit('#{ spam_helpdesk_ticket_path('multiple') }', 'put')")) %> 
-  </ul>
-
-  <div class="selection-options">
-    <div id="assign-options" style="display:none">
-      <%= select_tag 'responder_id', options_from_collection_for_select(User.all, :id, :name, current_user) %>
-      <button id="assign-multiple-button" action="<%= assign_helpdesk_ticket_path('multiple') %>">Assign</button>
-    </div>
-  </div-->
-
 <% end %>
 
 

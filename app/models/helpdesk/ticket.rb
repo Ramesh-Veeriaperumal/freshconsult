@@ -10,14 +10,18 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   has_flexiblefields
   
+  unhtml_it :description
+  
   #by Shan temp
   attr_accessor :email, :name, :custom_field ,:customizer, :nscname, :twitter_id 
   
-  before_validation :populate_requester, :set_default_values 
+  before_validation :populate_requester, :set_default_values
   before_create :set_dueby, :save_ticket_states
-  after_create :refresh_display_id, :save_custom_field, :pass_thro_biz_rules, :autoreply,:create_initial_activity
+  after_create :refresh_display_id, :save_custom_field, :pass_thro_biz_rules, :autoreply, 
+      :create_initial_activity, :support_score_on_create
   before_update :cache_old_model, :update_dueby 
-  after_update :save_custom_field, :update_ticket_states, :notify_on_update , :update_activity 
+  after_update :save_custom_field, :update_ticket_states, :notify_on_update, :update_activity, 
+      :support_score_on_update
   
   belongs_to :account
   belongs_to :email_config
@@ -84,6 +88,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   has_one :topic, :through => :ticket_topic
   
   has_many :survey_handles, :as => :surveyable, :dependent => :destroy
+  has_many :support_scores, :as => :scorable, :dependent => :destroy
   
   attr_protected :attachments #by Shan - need to check..
   
@@ -152,7 +157,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     self.source = TicketConstants::SOURCE_KEYS_BY_TOKEN[:portal] if self.source == 0
     self.ticket_type ||= account.ticket_type_values.first.value
     self.subject ||= ''
-    self.description = subject if description.blank?
+    #self.description = subject if description.blank?
   end
   
   def to_param 
@@ -176,7 +181,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
    def is_twitter?
-    (tweet) and (fetch_twitter_handle) 
+    (tweet) and (!account.twitter_handles.blank?) 
   end
  
   
@@ -199,8 +204,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def create_initial_activity
+   unless spam?
     create_activity(requester, 'activities.tickets.new_ticket.long', {},
                               'activities.tickets.new_ticket.short')
+   end
   end
 
   def source=(val)
@@ -220,11 +227,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def requester_has_email?
-    (requester) and (requester.email.blank?)
+    (requester) and (!requester.email.blank?)
   end
 
   def encode_display_id
     "[##{display_id}]"
+  end
+  
+  def conversation(page = nil, no_of_records = 5)
+    notes.visible.exclude_source('meta').newest_first.paginate(:page => page, :per_page => no_of_records)
   end
 
   def train(category)
@@ -301,7 +312,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
             :name => (name || ''), 
             :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}})
         end        
-        self.requester = @requester
+        self.requester = @requester  if @requester.valid?
       end
     else 
       
@@ -527,8 +538,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def description_with_attachments
-    attachments.empty? ? description : 
-        "#{description}\n\nTicket attachments :\n#{liquidize_attachments(attachments)}\n"
+    attachments.empty? ? description_html : 
+        "#{description_html}\n\nTicket attachments :\n#{liquidize_attachments(attachments)}\n"
   end
   
   def liquidize_attachments(attachments)
@@ -543,7 +554,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   def liquidize_comment(comm)
     if comm
-      c_descr = "#{comm.user ? comm.user.name : 'System'} : #{comm.body}"
+      c_descr = "#{comm.user ? comm.user.name : 'System'} : #{comm.body_html}"
       unless comm.attachments.empty?
         c_descr = "#{c_descr}\n\nAttachments :\n#{liquidize_attachments(comm.attachments)}\n"
       end
@@ -614,7 +625,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def fetch_twitter_handle
-   email_config.nil? ? account.primary_email_config.twitter_handle : email_config.twitter_handle
+    twt_handles = email_config.nil? ? account.primary_email_config.twitter_handles : email_config.twitter_handles
+    twt_handles.first.id unless twt_handles.blank?
   end
   
   def portal_host
@@ -634,65 +646,80 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   private
   
-  def create_source_activity
-    create_activity(User.current, 'activities.tickets.source_change.long',
-        {'source_name' => source_name}, 'activities.tickets.source_change.short')
-  end
-  
-  def create_product_activity
-    unless email_config
-      create_activity(User.current, 'activities.tickets.product_change_none.long', {}, 
-                                 'activities.tickets.product_change_none.short')
-    else
-      create_activity(User.current, 'activities.tickets.product_change.long',
-        {'product_name' => email_config.name}, 'activities.tickets.product_change.short')
+    def create_source_activity
+      create_activity(User.current, 'activities.tickets.source_change.long',
+          {'source_name' => source_name}, 'activities.tickets.source_change.short')
     end
+  
+    def create_product_activity
+      unless email_config
+        create_activity(User.current, 'activities.tickets.product_change_none.long', {}, 
+                                   'activities.tickets.product_change_none.short')
+      else
+        create_activity(User.current, 'activities.tickets.product_change.long',
+          {'product_name' => email_config.name}, 'activities.tickets.product_change.short')
+      end
     
-  end
-  
-  def create_ticket_type_activity
-     create_activity(User.current, 'activities.tickets.ticket_type_change.long',
-        {'ticket_type' => ticket_type}, 'activities.tickets.ticket_type_change.short')
-  end
-  
-  def create_group_activity
-    unless group
-        create_activity(User.current, 'activities.tickets.group_change_none.long', {}, 
-                                 'activities.tickets.group_change_none.short')
-    else
-    create_activity(User.current, 'activities.tickets.group_change.long',
-        {'group_name' => group.name}, 'activities.tickets.group_change.short')
     end
-  end
   
-  def create_status_activity
-    create_activity(User.current, 'activities.tickets.status_change.long',
-        {'status_name' => status_name}, 'activities.tickets.status_change.short')
-  end
+    def create_ticket_type_activity
+       create_activity(User.current, 'activities.tickets.ticket_type_change.long',
+          {'ticket_type' => ticket_type}, 'activities.tickets.ticket_type_change.short')
+    end
   
-  def create_priority_activity
-     create_activity(User.current, 'activities.tickets.priority_change.long', 
-        {'priority_name' => priority_name}, 'activities.tickets.priority_change.short')
+    def create_group_activity
+      unless group
+          create_activity(User.current, 'activities.tickets.group_change_none.long', {}, 
+                                   'activities.tickets.group_change_none.short')
+      else
+      create_activity(User.current, 'activities.tickets.group_change.long',
+          {'group_name' => group.name}, 'activities.tickets.group_change.short')
+      end
+    end
+  
+    def create_status_activity
+      create_activity(User.current, 'activities.tickets.status_change.long',
+          {'status_name' => status_name}, 'activities.tickets.status_change.short')
+    end
+  
+    def create_priority_activity
+       create_activity(User.current, 'activities.tickets.priority_change.long', 
+          {'priority_name' => priority_name}, 'activities.tickets.priority_change.short')
  
- end
+    end
 
-  def create_deleted_activity
-    create_activity(User.current, 'activities.tickets.deleted.long',
-       {'ticket_id' => display_id}, 'activities.tickets.deleted.short')
-  end
+    def create_deleted_activity
+      create_activity(User.current, 'activities.tickets.deleted.long',
+         {'ticket_id' => display_id}, 'activities.tickets.deleted.short')
+    end
   
-  def create_assigned_activity
+    def create_assigned_activity
       unless responder
         create_activity(User.current, 'activities.tickets.assigned_to_nobody.long', {}, 
-                                 'activities.tickets.assigned_to_nobody.short')
+                                   'activities.tickets.assigned_to_nobody.short')
       else
         create_activity(User.current, 
           @old_ticket.responder ? 'activities.tickets.reassigned.long' : 'activities.tickets.assigned.long', 
-          {'eval_args' => {'responder_path' => ['responder_path', 
-            {'id' => responder.id, 'name' => responder.name}]}}, 
-          'activities.tickets.assigned.short')
+            {'eval_args' => {'responder_path' => ['responder_path', 
+              {'id' => responder.id, 'name' => responder.name}]}}, 
+            'activities.tickets.assigned.short')
       end
-  end
-
-  
+    end
+    
+    def support_score_on_create
+      add_support_score unless active?
+    end
+    
+    def support_score_on_update
+      if active? && !@old_ticket.active?
+        s_score = support_scores.find_by_score_trigger SupportScore::TICKET_CLOSURE
+        s_score.destroy if s_score
+      elsif !active? && @old_ticket.active?
+        add_support_score
+      end
+    end
+    
+    def add_support_score
+      SupportScore.add_support_score(self, ScoreboardRating.resolution_speed(self))
+    end    
 end

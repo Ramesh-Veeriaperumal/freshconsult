@@ -10,7 +10,7 @@ class ReportsController < ApplicationController
     end
     unless @current_report.nil?
    	  @current_object  = current_account.send(@current_report[:object])
-      @report_data     = build_tkts_hash(@current_report[:name])
+      @report_data     = build_tkts_hash(@current_report[:name],params)
     else
       redirect_to :action => "index"
     end

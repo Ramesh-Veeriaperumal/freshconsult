@@ -11,7 +11,7 @@
 				jQuery('#cnt-tweet').hide();
 				jQuery('#cnt-fb-post').hide();
 				jQuery('#cnt-reply').toggle();
-				setCaretToPos($('send-email-cnt-reply-body'), 0);
+				tinyMCE.execInstanceCommand("send-email-cnt-reply-body","mceFocus",false);
 			}
 			else if (action == "note")
 			{
@@ -19,7 +19,7 @@
 				jQuery('#cnt-tweet').hide();
 				jQuery('#cnt-fb-post').hide();
 				jQuery('#cnt-note').toggle();
-				setCaretToPos($('add-note-cnt-note-body'), 0);
+				//setCaretToPos($('add-note-cnt-note-body'), 0);
 			}
 			else if (action == "fb_post")
 			{
@@ -102,8 +102,8 @@
         .load("/helpdesk/tickets/canned_reponse/"+ticket_id, function(){
           jQuery("#canned_response_container")
             .removeClass("loading");
-        });
-        
+        })
+        .show();        
     }
         
     jQuery("#Merge").dialog2();
@@ -111,20 +111,23 @@
 		function insertIntoConversation(value){
 			note_area  = jQuery('#cnt-note');
 			reply_area = jQuery('#cnt-reply');
+			tweet_area = jQuery('#cnt-tweet');
 			if(note_area.css("display") == 'block'){
-				insertTextAtCursor( $('add-note-cnt-note-body'), value );
-				jQuery('#add-note-cnt-note-body')
-						.trigger("focus")
-						.trigger("keydown");
+				tinyMCE.execInstanceCommand("send-email-cnt-reply-body","mceInsertContent",false, value);
 			} 
+			else if(tweet_area.css("display") == 'block'){
+				get_short_url(value, function(bitly){
+						insertTextAtCursor( $('send-tweet-cnt-tweet-body'), bitly || value );
+						jQuery('#send-tweet-cnt-tweet-body')
+								.trigger("focus")
+								.trigger("keydown");
+				});			
+			}
 			else{
 				if(reply_area.css("display") == 'none')
 					jQuery('#ReplyButton').trigger("click");
-
-				insertTextAtCursor( $('send-email-cnt-reply-body'), value );
-				jQuery('#send-email-cnt-reply-body')
-						.trigger("focus")
-						.trigger("keydown");
+               
+        tinyMCE.execInstanceCommand("send-email-cnt-reply-body","mceInsertContent",false, value);
 			}
 		}
 		
@@ -145,8 +148,8 @@
   	}
     
   <% end %>
-<% end %>
-
+<% end %> 
+<%= include_tiny_mce_if_needed %>
 <% content_for :sidebar do %>
 	<% unless @ticket.deleted %>
 		<div class="rtCnt sidepanel ticket-panel">
@@ -225,13 +228,16 @@
 		  </h3>
 			<div class="description"> 
         <div class="user_details">
-          <%= user_avatar(@ticket.requester.avatar)  %>
+          <%= user_avatar(@ticket.requester)  %>
           <div>
-            <%= t('ticket.reported_by', :requester => link_to(h(@ticket.requester.display_name),@ticket.requester, :class => "user_name")) %>
-			<%if @ticket.requester.fb_profile_id %>
-			<a href="http://facebook.com/<%=h(@ticket.requester.fb_profile_id)%>" target=_blank>fb</a>
-			<%end%>
+						<%= content_tag :span, "", :class => "custom-tip-bottom icon-image source-#{@ticket.source_name.downcase}", :title => t("ticket.reported_from_source", :source => @ticket.source_name.downcase) %>
+      			<%= t('ticket.reported_by', :requester => link_to(h(@ticket.requester.display_name),@ticket.requester, :class => "user_name"))%>  
+						<%="<#{@ticket.requester.email}>" if @ticket.requester.email%>
+						<%if @ticket.requester.fb_profile_id %>
+							<a href="http://facebook.com/<%=h(@ticket.requester.fb_profile_id)%>" target=_blank>fb</a>
+						<%end%>
           </div>
+
           <div> 
             <%= t('ticket.created_on', :time => formated_date(@ticket.created_at)) %>
             <% metainfo = @ticket.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["meta"]) %>
@@ -244,11 +250,25 @@
         </div>
         <% unless @ticket.deleted %>
           <div class="ticket_actions action_icons">
+            <div class="item-right-actions">
+        			<ul class="nav-drop"> 
+        				<li>
+        					<a href="#" class="menu-trigger nav-item-icon"><span class="item-options"></span></a>
+                  <ul class="menu-box">
+                    <li class="menu-item"> 
+                       <%= link_to(t('ticket.edit_btn'), edit_helpdesk_ticket_path(@ticket)  ) %>     
+                    </li>	 
+                    <li class="menu-item">
+                      <%= link_to(t('ticket.delete_btn'), @ticket, :method => :delete, :title => t('ticket.delete_btn_title')) %>
+                    </li>
+                  </ul>
+                </li> 
+              </ul>
+            </div>
             <div class="action_buttons clearfix">
-              <%= link_to(t('ticket.edit_btn'), edit_helpdesk_ticket_path(@ticket)  ) %> 
-              <%= link_to(t('ticket.close_btn'), close_helpdesk_ticket_path(@ticket), :method => :put, :title  => t('ticket.close_btn_title')) unless @ticket.closed? %>
+              <%= link_to( "Print", print_helpdesk_ticket_path(@ticket), :target => "_blank") %>
               <%= link_to t('ticket.merge_btn'), "/helpdesk/tickets/show_tickets_from_same_user/#{@ticket.display_id}", :id => "Merge", :title => "Merge ticket"  %>
-              <%= link_to(t('ticket.delete_btn'), @ticket, :method => :delete, :class => "last", :title => t('ticket.delete_btn_title')) %>
+              <%= link_to(t('ticket.close_btn'), close_helpdesk_ticket_path(@ticket), :method => :put, :title  => t('ticket.close_btn_title'), :class => "last") unless @ticket.closed? %> 
             </div>	
             <div class="floatr">              
               <span id="monitor">
@@ -259,24 +279,24 @@
               </span>
             </div>
      	</div>	
-			<% end %>
-		  <div id="description-full" style="display:block" class="details min_height">
-			 	<%= RedCloth.new(auto_link(@ticket.description, :all, :target => "_blank")).to_html %>
-			</div>
-				<% unless @ticket.attachments.empty? %>
-					<span class="seperator"></span>
-					<h4><%= pluralize(@ticket.attachments.size, t("attachment"), t("attachments")) %></h4>
-					<ul class="attachment_list">
-					     <%= render :partial => '/helpdesk/shared/attachment', :collection => @ticket.attachments, :locals => {:show_delete => true, :url => [@item] } %>
-					</ul>
-				<% end %>
-				<% unless @ticket.ticket_topic.nil? %>
-          <div class="info-highlight">
-            <%= t(".linked_ticket")%>
-            "<%= link_to("#{truncate(@ticket.topic.title)}" , category_forum_topic_path(@ticket.topic.forum.forum_category.id, @ticket.topic.forum.id, @ticket.topic.id), :class => "link_to") %>"
-          </div>
-        <% end %>        
-		</div>
+      <% end %>
+      <div id="description-full" style="display:block" class="details min_height">
+    		<%= @ticket.description_html %>
+      </div>
+      <% unless @ticket.attachments.empty? %>
+        <span class="seperator"></span>
+        <h4><%= pluralize(@ticket.attachments.size, t("attachment"), t("attachments")) %></h4>
+        <ul class="attachment_list">
+          <%= render :partial => '/helpdesk/shared/attachment', :collection => @ticket.attachments, :locals => {:show_delete => true, :url => [@item] } %>
+        </ul>
+      <% end %>
+      <% unless @ticket.ticket_topic.nil? %>
+        <div class="info-highlight">
+          <%= t(".linked_ticket")%>
+          "<%= link_to("#{truncate(@ticket.topic.title)}", category_forum_topic_path(@ticket.topic.forum.forum_category.id, @ticket.topic.forum.id, @ticket.topic.id), :class => "link_to") %>"
+        </div>
+      <% end %>
+    </div>
   </div>		 
 
 		<% unless @ticket.deleted %>
@@ -305,16 +325,14 @@
 			</div>
 		<% end %>
 		<% unless @ticket_notes.blank? then %>
-      <h3 class="title"><%=t('comments')%></h3> 
-			<div class="requestCnt request-conversation">
+      <h3 class="title"><%=t('conversation')%></h3> 
+			<div class="requestCnt request-conversation" id="Pages">
 				<%= render :partial => 'note', :collection => @ticket_notes %>
-		    </div>
-		<% end %>
-			
+		  </div>
+			<%= will_paginate @ticket_notes %>		
+		<% end %>			
 	</div>
 <% end %>
-
-
 
 <% content_for :main_panel_toolbar do -%><%- end %>
 
@@ -323,3 +341,8 @@
 <%- end %>
 
 <%= render :partial => "/helpdesk/shared/main_panel" %>
+
+<% content_for :pagefixed do %> 
+  <%= pageless(@ticket_notes.total_pages, helpdesk_ticket_helpdesk_notes_path(@ticket)) %>  
+<% end %>
+

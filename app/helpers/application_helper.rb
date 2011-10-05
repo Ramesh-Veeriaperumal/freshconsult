@@ -4,6 +4,8 @@ module ApplicationHelper
   include SavageBeast::ApplicationHelper
   include Juixe::Acts::Voteable
   
+  require "twitter"
+  
   ASSETIMAGE = { :help => "/images/helpimages" }
   
   def show_flash
@@ -39,7 +41,7 @@ module ApplicationHelper
       ['/home',               :home,        !permission?(:manage_tickets) ],
       ['helpdesk/dashboard',  :dashboard,    permission?(:manage_tickets)],
       ['helpdesk/tickets',    :tickets,      permission?(:manage_tickets)],
-      ['/social/twitters/feed', :social,      permission?(:manage_tickets)],
+      ['/social/twitters/feed', :social,      permission?(:manage_tickets) && !current_account.twitter_handles.blank?],
       solutions_tab,      
       forums_tab,
       ['/contacts',           :customers,    permission?(:manage_tickets)],
@@ -116,16 +118,7 @@ module ApplicationHelper
     
     data
   end
-  
-  def store_location
-    session[:return_to] = request.request_uri
-  end
-
-  def redirect_back_or_default(default)
-    redirect_to(session[:return_to] || default)
-    session[:return_to] = nil
-  end
-  
+   
   def responder_path(args_hash)
     link_to(h(args_hash['name']), user_path(args_hash['id']))
   end
@@ -140,6 +133,10 @@ module ApplicationHelper
   
   def reply_path(args_hash)
     comment_path(args_hash, 'reply')
+  end
+  
+  def twitter_path(args_hash)
+    comment_path(args_hash, 'tweet')
   end
   
   def merge_ticket_path(args_hash)    
@@ -179,8 +176,21 @@ module ApplicationHelper
   
   # Avatar helper for user profile image
   # :medium and :small size of the original image will be saved as an attachment to the user 
-  def user_avatar( avatar, profile_size = :thumb, profile_class = "preview_pic" )
-    content_tag( :div, (image_tag (avatar) ? avatar.content.url(profile_size) : "/images/fillers/profile_blank_#{profile_size}.gif"), :class => profile_class)
+  def user_avatar( user, profile_size = :thumb, profile_class = "preview_pic" )
+    content_tag( :div, (image_tag (user.avatar) ? user.avatar.content.url(profile_size) : is_user_social(user, profile_size), :onerror => "imgerror(this)", :alt => ""), :class => profile_class, :size_type => profile_size )
+  end
+  
+  def is_user_social( user, profile_size )
+    if user.twitter_id
+      profile_size = (profile_size == :medium) ? "original" : "normal"
+      twitter_avatar(user.twitter_id, profile_size)
+    else
+      "/images/fillers/profile_blank_#{profile_size}.gif"
+    end
+  end   
+  
+  def twitter_avatar( screen_name, profile_size = "normal" )
+    "http://api.twitter.com/1/users/profile_image?screen_name=#{screen_name}&size=#{profile_size}"
   end
   
   # User details page link should be shown only to agents and admin
@@ -226,10 +236,22 @@ module ApplicationHelper
         element = hidden_field(:source, :value => field_value)
       when "checkbox" then
         element = content_tag(:div, check_box(object_name, field.field_name, :class => element_class, :checked => field_value ) + field_label)
+      when "html_paragraph" then
+        element = label + text_area(object_name, field.field_name, :class => "mceEditor", :value => field_value)
     end
     content_tag :li, element, :class => dom_type
   end
-
+   
+  def pageless(total_pages, url, message=t("loading.items"))
+    opts = {
+      :totalPages => total_pages,
+      :url        => url,
+      :loaderMsg  => message
+    }
+        
+    javascript_tag("jQuery('#Pages').pageless(#{opts.to_json});")
+  end
+   
   private
     def solutions_tab
       if current_portal.main_portal?

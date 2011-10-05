@@ -1,19 +1,44 @@
 class Helpdesk::TicketsController < ApplicationController  
   
   include ActionView::Helpers::TextHelper
-
+  
   before_filter :check_user , :only => [:show]
+  before_filter :load_ticket_filter , :only => [:index, :custom_view_save]
   before_filter { |c| c.requires_permission :manage_tickets }
   
   include HelpdeskControllerMethods  
   include Helpdesk::TicketActions
+  include Search::TicketSearch
   
   layout :choose_layout 
   
   before_filter :load_multiple_items, :only => [:destroy, :restore, :spam, :unspam, :assign , :close_multiple ,:pick_tickets]  
-  before_filter :load_item,           :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :get_ca_response_content] 
+  before_filter :load_item,           :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :get_ca_response_content, :print] 
   before_filter :load_flexifield ,    :only => [:execute_scenario]
+
+  uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
   
+  def load_ticket_filter
+   filter_name = @template.current_filter
+   if !is_num?(filter_name)
+    load_default_filter(filter_name)
+   else
+    @ticket_filter = current_account.ticket_filters.find_by_id(filter_name)
+    return load_default_filter(TicketsFilter::DEFAULT_FILTER) if @ticket_filter.nil? or !@ticket_filter.has_permission?(current_user)
+    @ticket_filter.query_hash = @ticket_filter.data[:data_hash]
+    params.merge!(@ticket_filter.attributes["data"])
+   end
+  
+  end
+
+  def load_default_filter(filter_name)
+    params[:filter_name] = filter_name
+    @ticket_filter = current_account.ticket_filters.new(Helpdesk::Filters::CustomTicketFilter::MODEL_NAME)
+    @ticket_filter.query_hash = @ticket_filter.default_filter(filter_name)
+    @ticket_filter.accessible = current_account.user_accesses.new
+    @ticket_filter.accessible.visibility = Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me]
+  end
+
   def check_user
     if !current_user.nil? and current_user.customer?
       return redirect_to(support_ticket_url(@ticket))
@@ -35,29 +60,36 @@ class Helpdesk::TicketsController < ApplicationController
   end
  
   def index
-    @items = TicketsFilter.filter(@template.current_filter, current_user, current_account.tickets)
-    @items = TicketsFilter.search(@items, params[:f], params[:v])
-    respond_to do |format|
+    @items = current_account.tickets.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter') 
+    @filters_options = scoper_user_filters.map { |i| {:id => i[:id], :name => i[:name], :default => false} }
+    @current_options = @ticket_filter.query_hash.map{|i|{ i["condition"] => i["value"] }}.inject({}){|h, e|h.merge! e}
+    @show_options = show_options
+    @current_view = @ticket_filter.id || @ticket_filter.name
+    @is_default_filter = (!is_num?(@template.current_filter))
+        
+    respond_to do |format|      
       format.html  do
-        @items = @items.paginate(
-          :page => params[:page], 
-          :order => @template.cookie_sort,
-          :per_page => 10)
-      end
-      
+      end      
       format.xml do
         render :xml => @items.to_xml
-      end
-      
+      end      
       format.json do
         render :json => Hash.from_xml(@items.to_xml)
-      end
-      
+      end      
       format.atom do
-        @items = @items.newest(20)
       end
     end
   end
+  
+  def custom_view_save
+     render :partial => "helpdesk/tickets/customview/new"
+  end
+  
+  def custom_search
+    @items = current_account.tickets.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
+    render :partial => "custom_search"
+  end
+
 
   def show
     @reply_email = current_account.reply_emails
@@ -67,9 +99,9 @@ class Helpdesk::TicketsController < ApplicationController
       
     @signature = ""
     @agents = Agent.find(:first, :joins=>:user, :conditions =>{:user_id => current_user.id} )     
-    @signature = "\n\n\n#{@agents.signature}" unless (@agents.nil? || @agents.signature.blank?)
+    @signature = RedCloth.new("<br />#{@agents.signature}").to_html unless (@agents.nil? || @agents.signature.blank?)
      
-    @ticket_notes = @ticket.notes.visible.exclude_source('meta').newest_first     
+    @ticket_notes = @ticket.conversation
     
     respond_to do |format|
       format.html  
@@ -95,7 +127,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def assign
-    user = params[:responder_id] ? User.find(params[:responder_id]) : current_user #Need to use scoping..
+    user = params[:responder_id] ? User.find(params[:responder_id]) : current_user 
     assign_ticket user
     
     flash[:notice] = render_to_string(
@@ -143,19 +175,35 @@ class Helpdesk::TicketsController < ApplicationController
       format.js
     end
   end 
+  
+  def mark_requester_deleted(item,opt)
+    req = item.requester
+    req.deleted = opt
+    req.save if req.customer?
+  end
 
   def spam
+    req_list = []
     @items.each do |item|
-      item.train(:spam)
+      item.spam = true 
+      req = item.requester
+      req_list << req.id if req.customer?
       item.save
     end
-
-    flash[:notice] = render_to_string(
+    
+    msg1 = render_to_string(
       :inline => t("helpdesk.flash.flagged_spam", 
                       :tickets => get_updated_ticket_count,
                       :undo => "<%= link_to(t('undo'), { :action => :unspam, :ids => params[:ids] }, { :method => :put }) %>"
                   ))
+                    
+    link = render_to_string( :inline => "<%= link_to_remote(t('user_block'), :url => block_user_path(:ids => req_list), :method => :put ) %>" ,
+      :locals => { :req_list => req_list.uniq } )
       
+    notice_msg =  msg1
+    notice_msg << " <br />#{t("block_users")} #{link}" unless req_list.blank?
+    
+    flash[:notice] =  notice_msg 
     respond_to do |format|
       format.html { redirect_to redirect_url  }
       format.js
@@ -164,8 +212,9 @@ class Helpdesk::TicketsController < ApplicationController
 
   def unspam
     @items.each do |item|
-      item.train(:ham)
+      item.spam = false
       item.save
+      #mark_requester_deleted(item,false)
     end
 
     flash[:notice] = render_to_string(
@@ -257,17 +306,17 @@ class Helpdesk::TicketsController < ApplicationController
  
   def get_solution_detail   
     sol_desc = current_account.solution_articles.find(params[:id])
-    render :text => (sol_desc.description.gsub(/<\/?[^>]*>/, "")).gsub(/&nbsp;/i,"") || "" 
+    render :text => sol_desc.description || "" 
   end
 
   def get_ca_response_content   
     ca_resp = current_account.canned_responses.find(params[:ca_resp_id])
-    a_template = Liquid::Template.parse(ca_resp.content).render('ticket' => @item, 'helpdesk_name' => @item.account.portal_name)    
-    render :text => (a_template.gsub(/<\/?[^>]*>/, "")).gsub(/&nbsp;/i,"") || ""
-  end
+    a_template = Liquid::Template.parse(ca_resp.content_html).render('ticket' => @item, 'helpdesk_name' => @item.account.portal_name)    
+    render :text => a_template || ""
+  end 
     
   protected
-
+  
     def item_url
       return new_helpdesk_ticket_path if params[:save_and_create]
       @item
@@ -280,6 +329,10 @@ class Helpdesk::TicketsController < ApplicationController
     def redirect_url
       { :action => 'index' }
     end
+    
+    def scoper_user_filters
+      current_account.ticket_filters.my_ticket_filters(current_user)
+    end
 
     def process_item
       #if @item.source == 0
@@ -288,7 +341,7 @@ class Helpdesk::TicketsController < ApplicationController
 #                              'activities.tickets.new_ticket.short')
 #      #end
     end
- 
+    
     def assign_ticket user
       @items.each do |item|
         old_item = item.clone
@@ -297,8 +350,6 @@ class Helpdesk::TicketsController < ApplicationController
         item.save
       end
     end
-  
-   
 
     def load_flexifield   
       flexi_arr = Hash.new
@@ -323,11 +374,24 @@ class Helpdesk::TicketsController < ApplicationController
     end
 
     def choose_layout 
-      (action_name == "show_tickets_from_same_user"  || action_name == "confirm_merge") ? 'plainpage' : 'application'
+      layout_name = 'application'
+      case action_name
+        when "print"
+          layout_name = 'print'
+      end
+      layout_name
     end
     
     def get_updated_ticket_count
       pluralize(@items.length, t('ticket_was'), t('tickets_were'))
-    end
+  end
+  
+   def is_num?(str)
+    Integer(str)
+   rescue ArgumentError
+    false
+   else
+    true
+   end
 
 end

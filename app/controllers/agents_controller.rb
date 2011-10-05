@@ -1,5 +1,7 @@
 class AgentsController < Admin::AdminController
   
+  skip_before_filter :check_account_state
+  
   before_filter :load_object, :only => [:update,:destroy,:restore,:edit]
   before_filter :check_demo_site, :only => [:destroy,:update,:create]
   before_filter :check_user_permission, :only => :destroy
@@ -24,7 +26,7 @@ class AgentsController < Admin::AdminController
   end
     
   def index    
-    @agents = current_account.agents.find(:all , :include => :user , :order =>'name')
+    @agents = current_account.agents.find(:all , :include => :user , :order =>'name').paginate(:page => params[:page], :per_page => 30)
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @agents }

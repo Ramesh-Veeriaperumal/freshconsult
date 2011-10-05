@@ -17,16 +17,8 @@ body {
 	font-size:11px;
 }
 
-a{ @include link-colors(#4D769F, #3399cc); }
+a{ @include link-colors(#336699, #65a2e6); }
 a:hover{text-decoration:none;}
-
-p{
-	color: #555555;
-    font-size: 12px;
-    line-height: 1.35em;
-    margin:5px 0px 1.3em 0px;
-    text-align: left;
-}
 
 .hide{
     display:none;
@@ -36,14 +28,15 @@ p{
 
 .title{ color:#444444; padding:6px 0px 10px 0px;font-weight:bold;}
 .title a{ @include link-colors(#4D769F, #3399cc, #4D769F, #4D769F); text-decoration:none; }
-h2.title{ font-size:1.8em;  }
+h1.title{ font-size:2em; text-transform:capitalize; font-weight:normal; }
+h2.title{ font-size:1.65em; font-weight:normal; }
 h3.title, h3.sub_title, h3.title-band{ font-size:1.45em; }
-h4.title { font-size:1.1em; }
+h4.title { font-size:1.36em; font-weight:normal; }
 h3.title-band{ margin:12px -20px; background-color:#f2f2f2; padding:8px 20px; }
 h3.sub_title{ font-size:1.1em; }
 
-.floatl{float:left;}
-.floatr{float:right;}
+.floatl{ @include float-left; }
+.floatr{ @include float-right; }
 .alignright{text-align:right;}
 .aligncenter{text-align:center;}
 .info_data, .info-data{
@@ -78,4 +71,8 @@ textarea.auto-height{
 
 .padding{
    padding:3px 6px;
+}
+
+label.error{
+   color:red;
 }

@@ -1,0 +1,23 @@
+<tr class="<%= cycle('stripe', '') %>">
+	<td width="1px"></td>
+  <td class="name" width="70%">
+      <%= user_avatar(ticket.requester) %>
+      <h3> <%= link_to(h(ticket.subject) + " (##{ticket.display_id})", ticket, :title => truncate(ticket.description, 350, "..."), :class => "ticket-description-tip" ) %> </h3>
+			<% unless ticket.requester.nil? %>
+				<% content_tag :div, :class => "info-data" do %>
+				  <%= content_tag :span, "", :class => "custom-tip-bottom icon-image source-#{ticket.source_name.downcase}", :title => t("ticket.reported_from_source", :source => ticket.source_name.downcase) %> 
+				  <%= t("ticket.reported_on", :username => h(ticket.requester.display_name), :date => formated_date(ticket.created_at)) %>
+				<% end %>
+		  <% end %>
+  </td> 
+  <td class="assign">
+  	<% if ticket.freshness != :new %>
+       <span>Assigned to <b><%=h(ticket.responder.display_name)%></b></span>
+    <% end %>
+	  <ul>
+			<li>
+		    Status <span><%= ticket.status_name %></span>
+		  </li>
+		</ul>
+  </td> 
+</tr>

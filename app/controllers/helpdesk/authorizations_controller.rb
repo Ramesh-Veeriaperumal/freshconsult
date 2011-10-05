@@ -14,8 +14,8 @@ class Helpdesk::AuthorizationsController < ApplicationController
   def autocomplete #Copied from HelpDeskControllerMethods -Shan
     items = autocomplete_scoper.find(
       :all, 
-      :conditions => ["name like ? or email like ? ", "%#{params[:v]}%", "%#{params[:v]}%"], 
-      :limit => 50)
+      :conditions => ["email is not null and name like ? or email like ?", "%#{params[:v]}%", "%#{params[:v]}%"], 
+      :limit => 10)
 
     r = {:results => items.map {|i| {:id => i.email, :value => i.name} } } 
 

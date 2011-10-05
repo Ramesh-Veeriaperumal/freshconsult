@@ -17,8 +17,7 @@ class Solution::ArticlesController < ApplicationController
   end
 
   def show
-    
-    logger.debug "show is :: #{params.inspect}"
+   
     @article = current_account.solution_articles.find(params[:id], :include => :folder) 
     wrong_portal and return unless(main_portal? || 
         (@article.folder.category_id == current_portal.solution_category_id))
@@ -32,7 +31,6 @@ class Solution::ArticlesController < ApplicationController
   end
 
   def new
-     logger.debug "params:: #{params.inspect}"
      current_folder = Solution::Folder.first
      current_folder = Solution::Folder.find(params[:folder_id]) unless params[:folder_id].nil?
      @article = current_folder.articles.new    
@@ -44,7 +42,6 @@ class Solution::ArticlesController < ApplicationController
   end
 
   def edit
-    
     @article = current_account.solution_articles.find(params[:id])      
       respond_to do |format|
       format.html # edit.html.erb
@@ -54,18 +51,13 @@ class Solution::ArticlesController < ApplicationController
   end
 
   def create
-  
-   current_folder = Solution::Folder.find(params[:folder_id]) 
+   current_folder = Solution::Folder.find(params[:solution_article][:folder_id]) 
    @article = current_folder.articles.new(params[nscname]) 
-    set_item_user
-    
-    redirect_to_url = solution_category_folder_url(params[:category_id], params[:folder_id])
-    redirect_to_url = new_solution_category_folder_article_path(params[:category_id], params[:folder_id]) unless params[:save_and_create].nil?
-   
-    respond_to do |format|
+   set_item_user 
+   respond_to do |format|
       if @article.save
         post_persist 
-        format.html { redirect_to redirect_to_url }        
+        format.html { redirect_to @article }        
         format.xml  { render :xml => @article, :status => :created, :location => @article }
       else
         format.html { render :action => "new" }
@@ -81,17 +73,11 @@ class Solution::ArticlesController < ApplicationController
   end
 
   def update
-    
-    redirect_to_url = solution_category_folder_url(params[:category_id], params[:folder_id])
-    
-    logger.debug "Inside update :: #{params.inspect}"
     @article = current_account.solution_articles.find(params[:id])     
-    redirect_to_url = solution_category_folder_url(params[:category_id], params[:folder_id])       
-    respond_to do |format|
-     
+    respond_to do |format|    
        if @article.update_attributes(params[nscname])  
           post_persist
-          format.html { redirect_to redirect_to_url }
+          format.html { redirect_to @article }
           format.xml  { render :xml => @article, :status => :created, :location => @article }     
        else
           format.html { render :action => "edit" }
@@ -101,7 +87,6 @@ class Solution::ArticlesController < ApplicationController
   end
 
   def destroy
-    logger.debug "params::: #{params.inspect}"
     @article = current_account.solution_articles.find(params[:id])
     @article.destroy
     

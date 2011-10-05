@@ -19,7 +19,7 @@
 				<strong class="title">People</strong>
 				<% @searched_users.each do |user| %>
 					<div class="group"> 
-						<%= user_avatar(user.avatar) %>
+						<%= user_avatar(user) %>
 						<%= link_to user, user, :class => "user" %>
 						<% if user.customer? %>
 							<% if user.customer %>

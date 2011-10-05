@@ -4,46 +4,43 @@
 var $J = jQuery.noConflict();
 
 (function($){
-	// Global Jquery Plugin initialisation
-	$.fn.qtip.baseIndex = 10000;
-	$.validator
-	   .addClassRules({
-	      tweet: { 
-	         maxlength: 140, 
-	         messages:{
-	            maxlength : "Your Tweet is over 140 characters" 
-	         } 
-	      }
-	   });
-	
-	// App initialisation  
-	$(document).ready(function() {
+   // Global Jquery Plugin initialisation
+   $.fn.qtip.baseIndex = 10000;
+
+   // Tweet custom class
+   $.validator.addMethod("tweet", $.validator.methods.maxlength, "Your Tweet was over 140 characters. You'll have to be more clever." );   
+   $.validator.addClassRules("tweet", { tweet: 140 });
+   
+   // App initialisation  
+   $(document).ready(function() {
       // SyntaxHighlighter.all();
-			
-		// - Labels with overlabel will act a Placeholder for form elements 
-	    $("label.overlabel").overlabel();
-	
-		// - jQuery Validation for forms with class .ui-form ( ...An optional dont-validate written for the form element will make the selectors ignore those form alone )
-		validateOptions = {
-			onkeyup: false,
-			focusCleanup: true,
-			focusInvalid: false
-		};
-		
-		$(".admin_list li")
-			.hover(
-				function(){ $(this).children(".item_actions").css("visibility", "visible"); }, 
-				function(){ $(this).children(".item_actions").css("visibility", "hidden"); }
-			);
-		
-		$("ul.ui-form").not(".dont-validate").parents('form:first').validate(validateOptions);
-		$("div.ui-form").not(".dont-validate").find('form:first').validate(validateOptions); 
-		$("form.uniForm").validate(validateOptions);
-		
-		// Make Textareas to expand automatically when editing it
-		// Auto Resize in IE seems to be screwing up the horizontal scroll bar... hence removing it
-		if(!$.browser.msie)
-			$("textarea.auto-expand").autoResize();
+
+      // - Labels with overlabel will act a Placeholder for form elements 
+      $("label.overlabel").overlabel();
+      
+      $(".customSelect").chosen();
+
+      // - jQuery Validation for forms with class .ui-form ( ...An optional dont-validate written for the form element will make the selectors ignore those form alone )
+      validateOptions = {
+         onkeyup: false,
+         focusCleanup: true,
+         focusInvalid: false
+      };
+
+      $(".admin_list li")
+         .hover(
+            function(){ $(this).children(".item_actions").css("visibility", "visible"); }, 
+            function(){ $(this).children(".item_actions").css("visibility", "hidden"); }
+         );
+
+      $("ul.ui-form").not(".dont-validate").parents('form:first').validate(validateOptions);
+      $("div.ui-form").not(".dont-validate").find('form:first').validate(validateOptions); 
+      $("form.uniForm").validate(validateOptions);
+
+      // Make Textareas to expand automatically when editing it
+      // Auto Resize in IE seems to be screwing up the horizontal scroll bar... hence removing it
+      if(!$.browser.msie)
+         $("textarea.auto-expand").autoResize();
 		
 		sidebarHeight = $('#Sidebar').height();
 		if(sidebarHeight !== null && sidebarHeight > $('#Pagearea').height())
@@ -72,6 +69,19 @@ var $J = jQuery.noConflict();
 			 }
 		});
 		
+		$(".custom-tip-bottom").qtip({
+			 position: {
+			      my: 'top center',  // Position my top left...
+			      at: 'bottom center', // at the bottom right of...
+			      viewport: jQuery(window) 
+			 }, 
+			 style : {
+				classes: 'ui-tooltip-rounded ui-tooltip-shadow'
+			 }
+		});
+		
+		$(".nav-trigger").showAsMenu();
+		
 		menu_box_count = 0;
 		fd_active_drop_box = null;
 		
@@ -81,7 +91,7 @@ var $J = jQuery.noConflict();
 		}
 		
 		$(".nav-drop .menu-trigger")
-			.bind('click', function(ev){
+			.live('click', function(ev){
 				ev.preventDefault();
 				
 				$(this).toggleClass("selected").next().toggle();
@@ -112,9 +122,7 @@ var $J = jQuery.noConflict();
 
       flash = $("div.flash_info");
       if(flash.get(0)){
-         try {
-            closeableFlash(flash);            
-         } catch(e){}
+         try{ closeableFlash(flash); } catch(e){}
       }
    });
 

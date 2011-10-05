@@ -14,18 +14,22 @@ class Helpdesk::Note < ActiveRecord::Base
     :as => :tweetable,
     :class_name => 'Social::Tweet',
     :dependent => :destroy
- 
+    
   has_one :fb_post,
     :as => :postable,
     :class_name => 'Social::FbPost',
     :dependent => :destroy
+    
+  has_one :survey_remark, :foreign_key => 'note_id', :dependent => :destroy
 
   attr_accessor :nscname
   attr_protected :attachments, :notable_id
   
   after_create :save_response_time, :update_parent, :add_activity, :update_in_bound_count
   accepts_nested_attributes_for :tweet , :fb_post
-
+  
+  unhtml_it :body
+  
   named_scope :newest_first, :order => "created_at DESC"
   named_scope :visible, :conditions => { :deleted => false } 
   named_scope :public, :conditions => { :private => false } 
@@ -42,13 +46,15 @@ class Helpdesk::Note < ActiveRecord::Base
     }
   }
 
-
-  SOURCES = %w{email form note status meta twitter facebook}
+  SOURCES = %w{email form note status meta twitter feedback facebook}
+  
   SOURCE_KEYS_BY_TOKEN = Hash[*SOURCES.zip((0..SOURCES.size-1).to_a).flatten]
+  
+  ACTIVITIES_HASH = { Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:twitter] => "twitter" }
 
   named_scope :exclude_source, lambda { |s| { :conditions => ['source <> ?', SOURCE_KEYS_BY_TOKEN[s]] } }
 
-  validates_presence_of :body, :source, :notable_id
+  validates_presence_of  :source, :notable_id
   validates_numericality_of :source
   validates_inclusion_of :source, :in => 0..SOURCES.size-1
 
@@ -66,6 +72,10 @@ class Helpdesk::Note < ActiveRecord::Base
   
   def note?
     source == SOURCE_KEYS_BY_TOKEN["note"]
+  end
+  
+  def tweet?
+    source == SOURCE_KEYS_BY_TOKEN["twitter"]    
   end
 
   def private_note?
@@ -148,10 +158,10 @@ class Helpdesk::Note < ActiveRecord::Base
                                 {'ticket_id' => notable.display_id, 'comment_id' => id}]}},
           'activities.tickets.conversation.in_email.short')
       else
-        notable.create_activity(user, 'activities.tickets.conversation.note.long', 
-          {'eval_args' => {'comment_path' => ['comment_path', 
+        notable.create_activity(user, "activities.tickets.conversation.#{ACTIVITIES_HASH.fetch(source, "note")}.long", 
+          {'eval_args' => {"#{ACTIVITIES_HASH.fetch(source, "comment")}_path" => ["#{ACTIVITIES_HASH.fetch(source, "comment")}_path", 
                                 {'ticket_id' => notable.display_id, 'comment_id' => id}]}},
-          'activities.tickets.conversation.note.short')
+          "activities.tickets.conversation.#{ACTIVITIES_HASH.fetch(source, "note")}.short")
       end
     end
     
@@ -161,7 +171,7 @@ class Helpdesk::Note < ActiveRecord::Base
     end
     
     def liquidize_body
-      attachments.empty? ? body : 
-        "#{body}\n\nAttachments :\n#{notable.liquidize_attachments(attachments)}\n"
+      attachments.empty? ? body_html : 
+        "#{body_html}\n\nAttachments :\n#{notable.liquidize_attachments(attachments)}\n"
     end
 end

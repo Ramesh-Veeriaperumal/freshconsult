@@ -3,15 +3,21 @@
 		jQuery("textarea").live("focus", function(){
 			active_email_body = jQuery(this);
 		});
-		jQuery("#placeholder-list-1 a").click(function(ev){ 
-			insertTextAtCursor(active_email_body.get(0), jQuery(this).attr("placeholder"));
+		jQuery("#placeholder-list-1 a").click(function(ev){       
+      if(active_email_body.get(0)){
+        var placeHolderText = jQuery(this).attr("placeholder");
+        if(active_email_body.hasClass("mceEditor")){
+          tinyMCE.execInstanceCommand(active_email_body.attr("id"), "mceInsertContent", false, placeHolderText);  	      
+        }else{
+          insertTextAtCursor(active_email_body.get(0), placeHolderText);
+        }
+		  }
 		});
 		jQuery('#placeholder_close').click(function(){
 			jQuery('#place-dialog')
 					.hide();	
 		});
-		jQuery('#place-dialog').draggable();
-		
+		jQuery('#place-dialog').draggable();		
 	});
 <% end %>
 

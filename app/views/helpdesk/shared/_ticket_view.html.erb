@@ -1,0 +1,13 @@
+<div id="ticket-toolbar" class="toolbar">
+  <%= render :partial => "/helpdesk/shared/ticket_toolbar" %>
+</div>
+
+<div id="ticket-sub-toolbar">
+  <%= render :partial => "/helpdesk/shared/ticket_sort" unless @items.empty? %>
+</div>
+     
+<% form_tag "", { :id => "tickets-expanded",  :method => :put } do %>
+  <div id="ticket-list">
+    <%= render :partial => "/helpdesk/shared/tickets" %>
+  </div>    
+<% end %>

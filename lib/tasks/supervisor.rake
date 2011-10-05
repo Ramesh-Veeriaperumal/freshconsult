@@ -3,7 +3,7 @@ namespace :supervisor do
   task :run => :environment do
     puts "Supervisor rule check called at #{Time.zone.now}."
     
-    Account.all.each do |account|
+    Account.active_accounts.each do |account|
       account.make_current
       account.supervisor_rules.each do |rule|
         begin

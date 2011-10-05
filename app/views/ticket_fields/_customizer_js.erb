@@ -198,7 +198,8 @@
          data	= data || [ '', 0 ];
          var inputData = $("<input type='text' />")
                               .val(data[0])
-                              .attr("data_id", data[1]);
+                              .attr("data_id", data[1])
+                              .change(function(){$("#ChoiceListValidation").next("label").hide();});
          var dropSpan  = $("<span class='dropchoice' />").append(inputData);
 
          $("<fieldset />")
@@ -218,7 +219,7 @@
                 temp[1]     = input_box.attr("data_id");
                 
             if($.trim(temp[0]) !== '') choices.push(temp);
-         });         
+         });
          return choices;
       }
 
@@ -258,6 +259,7 @@
       function DialogOnLoad(sourceField){ 
          // Dialog Population Method
          try {
+            $("#ChoiceListValidation").next("label").hide();
             $(SourceField).removeClass("active");
             SourceField = sourceField;
             sourceDomMap = {
@@ -308,17 +310,18 @@
             } else {
                $('#DeleteField').show();
                dialogDOMMap.label.attr("disabled", false);
-               dialogDOMMap.label.removeClass("disabled");
-               if(sourceData.field_type == 'custom_dropdown') $("#DropFieldChoices").show();
-            }
+               dialogDOMMap.label.removeClass("disabled");               
+            } 
+            if(sourceData.field_type == 'custom_dropdown' || sourceData.field_type == 'default_ticket_type') 
+               $("#DropFieldChoices").show();
+               
          }catch(e){}
       }
 
       function saveDataObj(){
          if(SourceField !== null){
-            var sourceData = $H($(SourceField).data("raw"));	
-
-           // sourceData.set("name"                  , dialogDOMMap.label.val());
+            var sourceData = $H($(SourceField).data("raw"));
+         // sourceData.set("name"                  , dialogDOMMap.label.val());
             sourceData.set("label"                 , dialogDOMMap.label.val());
             sourceData.set("label_in_portal"       , dialogDOMMap.label_in_portal.val());
             sourceData.set("description"           , dialogDOMMap.description.val());
@@ -338,12 +341,36 @@
          }
       }
 
-      $("#SaveField")
-         .click(function(){
-            saveDataObj();
-            hideDialog();
+      $("#TicketProperties")
+         .submit(function(){ return false; })
+         .validate({
+            submitHandler: function(){
+               saveDataObj();
+               hideDialog();
+            },
+            rules: {
+               choicelist: {
+                  "required":{
+                     depends: function(element) {
+                                $("#ChoiceListValidation").val("");
+                                if($("#DropFieldChoices").css("display") == "block"){
+                                    choiceValues = "";
+                                    $.each($("#DropFieldChoices").find("input"), function(index, item){
+                                       choiceValues += item.value;
+                                    });
+                                    return ($.trim(choiceValues) == "");
+                                }else{
+                                   return false;
+                                }
+                             }
+                          }
+                       }
+                    },
+            messages: {
+               choicelist: "<%= t('.no_choice_message') %>"
+            }
          });
-
+         
       $("#CustomFieldsDialog input").live("change", function(){
          var sourceData = $H($(SourceField).data("raw"));
          switch(this.name){
@@ -431,7 +458,7 @@
 
          $("#CustomFieldsDialog")
             .position({
-               my:"left top",
+               my:"center",
                at:"right top",
                of: element,
                collision: "fit fit",

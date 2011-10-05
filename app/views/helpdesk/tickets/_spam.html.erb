@@ -1,2 +1,2 @@
-<%= link_to(image_tag("/images/spacer.gif"), spam_helpdesk_ticket_path(ticket), :method => :put, :class => "spam", :title  => t('ticket.spam_btn_title')) unless ticket.spam %>
-<%= link_to_remote(image_tag("/images/spacer.gif"), { :url => unspam_helpdesk_ticket_path(ticket), :method => :put }, :class => "spam_active", :title => t('ticket.ham_btn_title')) if ticket.spam %>
+<%= link_to(image_tag("/images/spacer.gif"), spam_helpdesk_ticket_path(ticket), :method => :put, :class => "custom-tip-bottom spam", :title  => t('ticket.spam_btn_title')) unless ticket.spam %>
+<%= link_to_remote(image_tag("/images/spacer.gif"), { :url => unspam_helpdesk_ticket_path(ticket), :method => :put }, :class => "custom-tip-bottom spam_active", :title => t('ticket.ham_btn_title')) if ticket.spam %>

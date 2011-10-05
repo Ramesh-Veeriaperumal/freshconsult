@@ -1,0 +1,21 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  account_id: 1
+  survey_id: 1
+  surveyable_id: 1
+  surveyable_type: MyString
+  customer_id: 1
+  agent_id: 1
+  response_note_id: 1
+  rating: 1
+
+two:
+  account_id: 1
+  survey_id: 1
+  surveyable_id: 1
+  surveyable_type: MyString
+  customer_id: 1
+  agent_id: 1
+  response_note_id: 1
+  rating: 1

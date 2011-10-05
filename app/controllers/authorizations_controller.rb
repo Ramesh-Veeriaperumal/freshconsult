@@ -33,9 +33,9 @@ class AuthorizationsController < ApplicationController
   end
   
   def create_for_twitter
-   @current_user = current_account.all_users.find_by_twitter_id(@omniauth['user_info']['name'])  unless  current_account.blank?
+   @current_user = current_account.all_users.find_by_twitter_id(@omniauth['user_info']['nickname'])  unless  current_account.blank?
    if !@current_user.blank? and !@auth.blank?
-      chk_if_deleted
+      return show_deleted_message if @current_user.deleted?
       make_usr_active
     elsif !@current_user.blank?
       @current_user.authorizations.create(:provider => @omniauth['provider'], 
@@ -48,11 +48,9 @@ class AuthorizationsController < ApplicationController
     create_session
   end
   
-  def chk_if_deleted
-    if @current_user.deleted?
-      flash[:notice] = t(:'flash.g_app.user_deleted')
-      return redirect_to login_url
-    end
+  def show_deleted_message
+    flash[:notice] = t(:'flash.g_app.user_deleted')
+    redirect_to login_url
   end
   
   def make_usr_active
@@ -63,7 +61,7 @@ class AuthorizationsController < ApplicationController
   def create_for_google
     @current_user = current_account.all_users.find_by_email(@omniauth['user_info']['email'])  unless  current_account.blank?
     if !@current_user.blank? and !@auth.blank?
-      chk_if_deleted
+      return show_deleted_message if @current_user.deleted?
       make_usr_active
     elsif !@current_user.blank?
       @current_user.authorizations.create(:provider => @omniauth['provider'], :uid => @omniauth['uid'], :account_id => current_account.id) #Add an auth to existing user
