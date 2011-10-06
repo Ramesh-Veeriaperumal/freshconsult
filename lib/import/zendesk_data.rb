@@ -30,7 +30,7 @@ class Import::ZendeskData < Struct.new(:params)
 
     @current_account = Account.find_by_full_domain(params[:domain])
     
-    file_list = params[:import][:files]
+    file_list = params[:zendesk][:files]
     
     base_dir = nil
     
