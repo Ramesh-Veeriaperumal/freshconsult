@@ -24,8 +24,15 @@ before_filter { |c| c.requires_permission :manage_tickets }
   end
   
   def handle_zen_import 
-    params[:domain] =  current_account.full_domain
-    params[:email] = current_user.email
-    Delayed::Job.enqueue Import::ZendeskData.new(params)
+    zen_params = {:domain =>current_account.full_domain,
+                  :email => current_user.email,
+                  :zendesk =>{:url => params[:zendesk][:url], 
+                              :user_name => params[:zendesk][:user_name],
+                              :user_pwd => params[:zendesk][:user_pwd],
+                              :files => params[:import][:files]
+                              }
+                  }
+   
+    Delayed::Job.enqueue Import::ZendeskData.new(zen_params)
   end
 end
