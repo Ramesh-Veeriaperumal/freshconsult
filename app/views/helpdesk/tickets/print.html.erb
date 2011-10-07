@@ -31,7 +31,7 @@
       Unassigned
     <% end %>  
   </span> 
-  <% unless feature?(:multi_product) %>
+  <% if feature?(:multi_product) && @ticket.email_config %>
   <span>
     <b>Product</b>
     <%= h(@ticket.email_config.name) %>
@@ -56,7 +56,7 @@
     <%= @ticket.description_html %>
   </div>  
   <span class="seperator"></span>
-  <% @ticket_notes = @ticket.notes.visible.newest_first %>
+  <% @ticket_notes = @ticket.notes.visible.exclude_source('meta').newest_first %>
   <% unless @ticket_notes.empty? %>
   <h3>Comments</h3>  
   <div>

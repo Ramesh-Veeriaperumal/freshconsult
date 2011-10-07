@@ -12,6 +12,8 @@ class Account < ActiveRecord::Base
   
   has_one :data_export,:dependent => :destroy
   
+
+  
   has_one :logo,
     :as => :attachable,
     :class_name => 'Helpdesk::Attachment',
@@ -112,9 +114,13 @@ class Account < ActiveRecord::Base
   has_one :survey, :dependent => :destroy
   has_many :scoreboard_ratings, :dependent => :destroy
   has_many :survey_handles, :through => :survey
-  #Scope restriction ends
+
   
-  has_many :tags, :class_name =>'Helpdesk::Tag'  
+  has_one :data_import,:class_name => 'Admin::DataImport' ,:dependent => :destroy
+
+  
+  has_many :tags, :class_name =>'Helpdesk::Tag'
+  #Scope restriction ends
   
   validates_format_of :domain, :with => /(?=.*?[A-Za-z])[a-zA-Z0-9]*\Z/
   validates_exclusion_of :domain, :in => RESERVED_DOMAINS, :message => "The domain <strong>{{value}}</strong> is not available."

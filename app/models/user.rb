@@ -32,7 +32,7 @@ class User < ActiveRecord::Base
 
   before_create :set_time_zone , :set_company_name
   before_save :set_account_id_in_children , :set_contact_name, :check_email_value , :set_default_role
-  after_update :drop_authorization
+  after_update :drop_authorization , :if => :email_changed?
   
   named_scope :contacts, :conditions => ["user_role in (#{USER_ROLES_KEYS_BY_TOKEN[:customer]}, #{USER_ROLES_KEYS_BY_TOKEN[:client_manager]})" ]
   named_scope :technicians, :conditions => ["user_role not in (#{USER_ROLES_KEYS_BY_TOKEN[:customer]}, #{USER_ROLES_KEYS_BY_TOKEN[:client_manager]})"]
@@ -308,12 +308,11 @@ class User < ActiveRecord::Base
   
   
     def to_xml(options = {})
-      options[:indent] ||= 2
+     options[:indent] ||= 2
       xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
       super(:builder => xml, :skip_instruct => true,:except => [:crypted_password,:password_salt,:perishable_token,:persistence_token,:single_access_token]) 
   end
-  
  
   protected
     def set_account_id_in_children

@@ -306,7 +306,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
             :name => (name || ''), 
             :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}})
         end        
-        self.requester = @requester
+        self.requester = @requester  if @requester.valid?
       end
     else 
       

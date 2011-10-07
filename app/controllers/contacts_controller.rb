@@ -110,7 +110,7 @@ class ContactsController < ApplicationController
         format.xml  { head 400} #Bad request
       end
     end
-  end  
+  end    
   
    def destroy   
       if @obj.respond_to?(:deleted)

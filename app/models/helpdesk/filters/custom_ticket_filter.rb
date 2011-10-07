@@ -45,7 +45,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   end
   
   def self.my_ticket_filters(user)
-    self.find(:all, :joins =>"JOIN admin_user_accesses acc ON acc.accessible_id = wf_filters.id AND acc.accessible_type = 'Wf::Filter' LEFT JOIN agent_groups ON acc.group_id=agent_groups.group_id", :order => 'created_at desc', :conditions =>["acc.VISIBILITY=#{Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents]} OR agent_groups.user_id=#{user.id} OR (acc.VISIBILITY=#{Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me]} and acc.user_id=#{user.id})"])
+    self.find(:all, :joins =>"JOIN admin_user_accesses acc ON acc.account_id =  wf_filters.account_id AND acc.accessible_id = wf_filters.id AND acc.accessible_type = 'Wf::Filter' LEFT JOIN agent_groups ON acc.group_id=agent_groups.group_id", :order => 'created_at desc', :conditions =>["acc.VISIBILITY=#{Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents]} OR agent_groups.user_id=#{user.id} OR (acc.VISIBILITY=#{Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me]} and acc.user_id=#{user.id})"])
   end
   
   def self.edit_ticket_filters(user)
@@ -208,7 +208,9 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       handle_empty_filter! 
       all_conditions = sql_conditions
       all_joins = get_joins(sql_conditions)
-      recs = model_class.paginate(:order => order_clause, :page => page, :per_page => per_page, :conditions => all_conditions, :joins => all_joins)
+      recs = model_class.paginate(:include => [:ticket_states,:responder, {:requester =>  :avatar}],
+                                  :order => order_clause, :page => page, 
+                                  :per_page => per_page, :conditions => all_conditions, :joins => all_joins)
       recs.wf_filter = self
       recs
     end

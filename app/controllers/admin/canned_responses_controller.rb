@@ -36,10 +36,10 @@ class Admin::CannedResponsesController < Admin::AdminController
         format.html {redirect_to(admin_canned_responses_url, :notice => 'Canned Response was successfully created.') }        
         format.xml  { render :xml => @ca_response, :status => :created, :location => @ca_response }
       else
-         @ca_response.accessible = current_account.user_accesses.new
-         @ca_response.accessible.visibility = params[:admin_canned_response][:visibility][:visibility]
-        format.html { render :action => "new" }
-        format.xml  { render :xml => @ca_response.errors, :status => :unprocessable_entity }
+       @ca_response.accessible = current_account.user_accesses.new
+       @ca_response.accessible.visibility = params[:admin_canned_response][:visibility][:visibility]
+       format.html { render :action => "new" }
+       format.xml  { render :xml => @ca_response.errors, :status => :unprocessable_entity }
       end
     end
   end

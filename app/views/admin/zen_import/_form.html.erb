@@ -1,0 +1,87 @@
+<% form_for :zendesk, :url=>{:controller=>"admin/zen_import", :action=>"import_data"}, :html => { :multipart => true } do |f| -%>
+  <ul class="ui-form">
+		<li class="inline-field">
+			<label class="caption">
+				<%= t('zendesk_url') %>
+			</label>
+			<div class="fields">
+			   <%= f.text_field :url, :class => "text url required" %>
+			   <label><%= t('zendesk_url_info') %></label>
+			</div>
+		</li>
+		<li class="inline-field">
+			<h4 class="title"><%= t('zendesk_credentials') %></h4>			
+			<label class="caption">
+				<%= t('username') %>
+			</label>
+			<div class="fields">
+				<%= f.text_field :user_name, :class => "text email required" %>
+			</div>
+			<span class="seperator"></span>
+			<label class="caption">
+				<%= t('password') %>
+			</label>
+			<div class="fields">
+				<%= f.password_field :user_pwd, :class => "text required" %>
+			</div>
+		</li>
+		<li class="inline-field">		
+			<label class="caption"><%= t('zendesk_backup') %></label>
+			<div class="fields">
+				<label><%= t('zendesk_backup_info') %></label>
+				<%= f.file_field :file , :accept => 'zip', :class =>"required" %>
+			</div>		
+		</li>
+		
+		
+		<!-- here it is -->
+		
+		
+		<li>			  
+			<label>
+				<%= check_box( "import", "files", { :multiple => true, :checked => true ,:disabled => true }, "customers" , nil ) %>
+				<%= t('import_user_org') %>
+			</label>
+			<div class="info-data tabbed">
+				<%= t('import_user_org_text') %>				
+			</div>
+			<label class="tabbed">
+				<%= check_box( "import", "files", { :multiple => true, :checked => false }, "user_notify" , nil) %>
+				<%= t('import_user_notification') %>
+			</label>
+		</li>		
+		<li>	
+			<label>		  
+				<%= check_box( "import", "files", { :multiple => true, :checked => true }, "tickets" , nil) %>
+				<%= t('import_ticket_group') %>				
+			</label>
+		</li>		
+		<li>
+			<label>
+				<%= check_box( "import", "files", { :multiple => true, :checked => true }, "forums" , nil) %>
+				<%= t('import_forum')  %>
+			</label>
+		</li>		
+		<li>
+			<label>
+				<%= check_box("import", "files", { :multiple => true, :checked => false }, "solution" , nil) %> 
+				<%= t('import_solution_article') %>
+			</label>
+			<div class="info-data tabbed">
+				<%= t('import_solution_article_info') %>
+			</div>
+		</li>
+		
+		
+		
+		
+		
+		
+		<!-- ends here -->
+		
+		
+	</ul>
+	<div class="button-container">
+	   <%= submit_tag t('submit'), :class => "uiButton" %> 
+	</div>
+<% end -%>
