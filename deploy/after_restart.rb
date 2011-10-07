@@ -6,5 +6,5 @@ on_utilities("sphinx_sla") do
   run "bundle exec rake thinking_sphinx:configure"
   run "bundle exec rake thinking_sphinx:index"
   run "bundle exec rake thinking_sphinx:start"
-  execute "monit reload"
+  #execute "monit reload"
 end
