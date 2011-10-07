@@ -38,25 +38,53 @@ class Social::FacebookPosts
      puts "add_wall_post_as_ticket ::post_id::  #{feed[:post_id]}"
      profile_id = feed[:actor_id]
      requester = get_facebook_user(profile_id)
-     @ticket = @account.tickets.build(
-      :subject => feed[:message],
-      :description => feed[:message],
-      :requester => requester,
-      :email_config_id => @fb_page.product_id,
-      :group_id => group_id,
-      :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:facebook],
-      :created_at => Time.at(feed[:created_time]).to_s(:db),
-      :fb_post_attributes => {:post_id => feed[:post_id], :facebook_page_id =>@fb_page.id ,:account_id => @account.id} )
+     unless feed[:message].blank?
+        @ticket = @account.tickets.build(
+          :subject => feed[:message],
+          :description => feed[:message],
+          :description_html => get_html_content(feed[:post_id]),
+          :requester => requester,
+          :email_config_id => @fb_page.product_id,
+          :group_id => group_id,
+          :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:facebook],
+          :created_at => Time.at(feed[:created_time]).to_s(:db),
+          :fb_post_attributes => {:post_id => feed[:post_id], :facebook_page_id =>@fb_page.id ,:account_id => @account.id} )
       
-      if @ticket.save
+       if @ticket.save
         if feed[:comments]["count"] > 0
            puts"ticket is saved and it has more comments :: #{feed[:comments]["count"]}"
            add_comment_as_note feed
         end
         puts "This ticket has been saved"
-      else
+       else
         puts "error while saving the ticket:: #{@ticket.errors.to_json}"
-      end
+       end
+     end
+  end
+  
+  def get_html_content post_id
+    
+    post = @rest.get_object(post_id)
+    post.symbolize_keys!
+    html_content =  post[:message]
+    if "video".eql?(post[:type]) 
+      
+     html_content =  "<div><a href=\"#{post[:link]}\" target=\"_blank\"><img  src=\"#{post[:picture]}\"></a></div>" +
+                     "<div><a href=\"#{post[:link]}\" style=\"vertical-align:top\" target=\"_blank\">"+post[:name]+"</a>"+
+                     "<div>"+post[:caption]+"</div>"+
+                     "<div>"+post[:description] +"</div>"+
+                     "</div>"
+      
+    elsif "photo".eql?(post[:type]) 
+      
+      html_content =  "<div>"+post[:message]+"<div style=\"padding:5px 0\"><div style=\"float:left;margin: 5px 10px 10px 0;\">"+
+                      "<a href=\"#{post[:link]}\" target=\"_blank\"><img src=\"#{post[:picture]}\"></a></div>"+
+                      "<div style=\"vertical-align:top;\"><a href=\"#{post[:link]}\" style=\"vertical-align:top\" target=\"_blank\">Wall Photos</a>"+
+                      +"<div class=\"agent_light_text\"></div></div></div>"
+    end
+    
+    return html_content
+    
   end
   
   def get_facebook_user(profile_id)
