@@ -1,4 +1,4 @@
-class Social::FacebookPagesController < ApplicationController
+class Social::FacebookPagesController < Admin::AdminController
   
    before_filter :except => [:event_listener] do |c| 
     c.requires_permission :manage_users
@@ -10,7 +10,7 @@ class Social::FacebookPagesController < ApplicationController
   
   def index
     @fb_pages = scoper.active
-    
+  
   end
 
    def authdone

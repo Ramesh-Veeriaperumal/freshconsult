@@ -9,14 +9,13 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110919053641) do
+ActiveRecord::Schema.define(:version => 20111004070713) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "full_domain"
-    t.datetime "deleted_at"
     t.string   "time_zone"
     t.string   "helpdesk_name"
     t.string   "helpdesk_url"
@@ -33,10 +32,11 @@ ActiveRecord::Schema.define(:version => 20110919053641) do
 
   create_table "admin_canned_responses", :force => true do |t|
     t.string   "title"
-    t.text     "content",    :limit => 2147483647
-    t.integer  "account_id", :limit => 8
+    t.text     "content",      :limit => 2147483647
+    t.integer  "account_id",   :limit => 8
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "content_html", :limit => 2147483647
   end
 
   add_index "admin_canned_responses", ["account_id", "created_at"], :name => "index_admin_canned_responses_on_account_id_and_created_at"
@@ -52,7 +52,7 @@ ActiveRecord::Schema.define(:version => 20110919053641) do
     t.datetime "updated_at"
   end
 
-  add_index "admin_user_accesses", ["account_id", "created_at"], :name => "index_admin_user_accesses_on_account_id_and_created_at"
+  add_index "admin_user_accesses", ["account_id", "accessible_type", "accessible_id"], :name => "index_admin_user_accesses_on_account_id_and_acc_type_and_acc_id"
   add_index "admin_user_accesses", ["user_id"], :name => "index_admin_user_accesses_on_user_id"
 
   create_table "agent_groups", :force => true do |t|
@@ -61,6 +61,8 @@ ActiveRecord::Schema.define(:version => 20110919053641) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "agent_groups", ["group_id", "user_id"], :name => "agent_groups_group_user_ids"
 
   create_table "agents", :force => true do |t|
     t.integer  "user_id",    :limit => 8
@@ -389,17 +391,18 @@ ActiveRecord::Schema.define(:version => 20110919053641) do
   end
 
   create_table "helpdesk_notes", :force => true do |t|
-    t.text     "body"
+    t.text     "body",         :limit => 16777215
     t.integer  "user_id",      :limit => 8
-    t.integer  "source",                    :default => 0
-    t.boolean  "incoming",                  :default => false
-    t.boolean  "private",                   :default => true
+    t.integer  "source",                           :default => 0
+    t.boolean  "incoming",                         :default => false
+    t.boolean  "private",                          :default => true
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "deleted",                   :default => false
+    t.boolean  "deleted",                          :default => false
     t.integer  "notable_id",   :limit => 8
     t.string   "notable_type"
     t.integer  "account_id",   :limit => 8
+    t.text     "body_html",    :limit => 16777215
   end
 
   add_index "helpdesk_notes", ["account_id", "notable_type", "notable_id"], :name => "index_helpdesk_notes_on_notables"
@@ -436,7 +439,7 @@ ActiveRecord::Schema.define(:version => 20110919053641) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "sla_policy_id",   :limit => 8
-    t.boolean  "override_bhrs",                :default => false
+    t.boolean  "override_bhrs",   :default => false
   end
 
   create_table "helpdesk_sla_policies", :force => true do |t|
@@ -522,34 +525,37 @@ ActiveRecord::Schema.define(:version => 20110919053641) do
     t.integer  "inbound_count",                       :default => 1
   end
 
+  add_index "helpdesk_ticket_states", ["ticket_id"], :name => "index_helpdesk_ticket_states_on_ticket_id"
+
   create_table "helpdesk_tickets", :force => true do |t|
-    t.text     "description"
-    t.integer  "requester_id",    :limit => 8
-    t.integer  "responder_id",    :limit => 8
-    t.integer  "status",          :limit => 8, :default => 1
-    t.boolean  "urgent",                       :default => false
-    t.integer  "source",                       :default => 0
-    t.boolean  "spam",                         :default => false
-    t.boolean  "deleted",                      :default => false
+    t.text     "description",      :limit => 16777215
+    t.integer  "requester_id",     :limit => 8
+    t.integer  "responder_id",     :limit => 8
+    t.integer  "status",           :limit => 8,        :default => 1
+    t.boolean  "urgent",                               :default => false
+    t.integer  "source",                               :default => 0
+    t.boolean  "spam",                                 :default => false
+    t.boolean  "deleted",                              :default => false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "trained",                      :default => false
-    t.integer  "account_id",      :limit => 8
+    t.boolean  "trained",                              :default => false
+    t.integer  "account_id",       :limit => 8
     t.string   "subject"
-    t.integer  "display_id",      :limit => 8
-    t.integer  "owner_id",        :limit => 8
-    t.integer  "group_id",        :limit => 8
+    t.integer  "display_id",       :limit => 8
+    t.integer  "owner_id",         :limit => 8
+    t.integer  "group_id",         :limit => 8
     t.datetime "due_by"
     t.datetime "frDueBy"
-    t.boolean  "isescalated",                  :default => false
-    t.integer  "priority",        :limit => 8, :default => 1
-    t.boolean  "fr_escalated",                 :default => false
+    t.boolean  "isescalated",                          :default => false
+    t.integer  "priority",         :limit => 8,        :default => 1
+    t.boolean  "fr_escalated",                         :default => false
     t.string   "to_email"
-    t.integer  "email_config_id", :limit => 8
+    t.integer  "email_config_id",  :limit => 8
     t.text     "cc_email"
-    t.boolean  "delta",                        :default => true,  :null => false
-    t.integer  "import_id",       :limit => 8
+    t.boolean  "delta",                                :default => true,  :null => false
+    t.integer  "import_id",        :limit => 8
     t.string   "ticket_type"
+    t.text     "description_html", :limit => 16777215
   end
 
   add_index "helpdesk_tickets", ["account_id", "display_id"], :name => "index_helpdesk_tickets_on_account_id_and_display_id", :unique => true
@@ -611,33 +617,10 @@ ActiveRecord::Schema.define(:version => 20110919053641) do
   add_index "posts", ["topic_id", "created_at"], :name => "index_posts_on_topic_id"
   add_index "posts", ["user_id", "created_at"], :name => "index_posts_on_user_id"
 
-  create_table "social_facebook_pages", :force => true do |t|
-    t.integer  "profile_id",           :limit => 8
-    t.string   "access_token"
-    t.integer  "page_id",              :limit => 8
-    t.string   "page_name"
-    t.string   "page_token"
-    t.string   "page_img_url"
-    t.string   "page_link"
-    t.boolean  "import_visitor_posts",              :default => true
-    t.boolean  "import_company_posts",              :default => false
-    t.boolean  "enable_page",                       :default => false
-    t.integer  "fetch_since",          :limit => 8
-    t.integer  "product_id",           :limit => 8
-    t.integer  "account_id",           :limit => 8
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "social_facebook_pages", ["account_id", "page_id"], :name => "index_account_page_id", :unique => true
-  add_index "social_facebook_pages", ["product_id"], :name => "index_product_id", :unique => true
-
-  create_table "social_fb_posts", :force => true do |t|
-    t.string   "post_id"
-    t.integer  "postable_id",      :limit => 8
-    t.string   "postable_type"
-    t.integer  "facebook_page_id", :limit => 8
+  create_table "scoreboard_ratings", :force => true do |t|
     t.integer  "account_id",       :limit => 8
+    t.integer  "resolution_speed"
+    t.integer  "score"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -656,8 +639,8 @@ ActiveRecord::Schema.define(:version => 20110919053641) do
     t.string   "screen_name"
     t.string   "access_token"
     t.string   "access_secret"
-    t.boolean  "capture_dm_as_ticket",                   :default => true
-    t.boolean  "capture_mention_as_ticket",              :default => true
+    t.boolean  "capture_dm_as_ticket",                   :default => false
+    t.boolean  "capture_mention_as_ticket",              :default => false
     t.integer  "product_id",                :limit => 8
     t.integer  "last_dm_id",                :limit => 8
     t.integer  "last_mention_id",           :limit => 8
@@ -667,8 +650,7 @@ ActiveRecord::Schema.define(:version => 20110919053641) do
     t.datetime "updated_at"
   end
 
-  add_index "social_twitter_handles", ["account_id", "twitter_user_id"], :name => "index_account_product_id", :unique => true
-  add_index "social_twitter_handles", ["product_id"], :name => "index_product_id", :unique => true
+  add_index "social_twitter_handles", ["account_id", "twitter_user_id"], :name => "social_twitter_handle_product_id", :unique => true
 
   create_table "solution_articles", :force => true do |t|
     t.string   "title"
@@ -783,8 +765,18 @@ ActiveRecord::Schema.define(:version => 20110919053641) do
 
   add_index "subscriptions", ["account_id"], :name => "index_subscriptions_on_account_id"
 
+  create_table "support_scores", :force => true do |t|
+    t.integer  "account_id",    :limit => 8
+    t.integer  "agent_id",      :limit => 8
+    t.integer  "scorable_id",   :limit => 8
+    t.string   "scorable_type"
+    t.integer  "score"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "score_trigger"
+  end
+
   create_table "survey_handles", :force => true do |t|
-    t.integer  "account_id",       :limit => 8
     t.integer  "surveyable_id",    :limit => 8
     t.string   "surveyable_type"
     t.string   "id_token"
@@ -792,34 +784,26 @@ ActiveRecord::Schema.define(:version => 20110919053641) do
     t.integer  "response_note_id", :limit => 8
     t.datetime "created_at"
     t.datetime "updated_at"
-  end
-
-  create_table "survey_points", :force => true do |t|
     t.integer  "survey_id",        :limit => 8
-    t.integer  "resolution_speed"
-    t.integer  "customer_rating"
-    t.integer  "score"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.integer  "survey_result_id", :limit => 8
   end
 
   create_table "survey_remarks", :force => true do |t|
-    t.integer  "survey_score_id", :limit => 8
-    t.integer  "note_id",         :limit => 8
+    t.integer  "note_id",          :limit => 8
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "survey_result_id", :limit => 8
   end
 
-  create_table "survey_scores", :force => true do |t|
+  create_table "survey_results", :force => true do |t|
     t.integer  "account_id",       :limit => 8
+    t.integer  "survey_id",        :limit => 8
     t.integer  "surveyable_id",    :limit => 8
     t.string   "surveyable_type"
     t.integer  "customer_id",      :limit => 8
     t.integer  "agent_id",         :limit => 8
     t.integer  "response_note_id", :limit => 8
-    t.integer  "resolution_speed"
-    t.integer  "customer_rating"
-    t.integer  "score"
+    t.integer  "rating"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -894,7 +878,6 @@ ActiveRecord::Schema.define(:version => 20110919053641) do
     t.integer  "user_role"
     t.boolean  "delta",                            :default => true,  :null => false
     t.integer  "import_id",           :limit => 8
-    t.string   "fb_profile_id"
   end
 
   add_index "users", ["account_id", "email"], :name => "index_users_on_account_id_and_email", :unique => true
@@ -939,6 +922,7 @@ ActiveRecord::Schema.define(:version => 20110919053641) do
     t.string   "model_class_name"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "account_id"
   end
 
   add_index "wf_filters", ["user_id"], :name => "index_wf_filters_on_user_id"

@@ -43,7 +43,7 @@ class TicketFieldsController < Admin::AdminController
       end
       
       unless (action = f_d.delete(:action)).nil?
-        f_d.delete(:choices) unless "custom_dropdown".eql?(f_d[:field_type])
+        f_d.delete(:choices) unless("custom_dropdown".eql?(f_d[:field_type]) || "default_ticket_type".eql?(f_d[:field_type]))
         send("#{action}_field", f_d) 
       end
     end

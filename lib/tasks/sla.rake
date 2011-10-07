@@ -3,7 +3,7 @@ namespace :sla do
   desc 'Check for SLA violation and trigger emails..'
   task :escalate => :environment do
     puts "SLA Escalation task initialized at #{Time.zone.now}"
-    accounts = Account.all
+    accounts = Account.active_accounts
     accounts.each do |account|     
     
     overdue_tickets = account.tickets.visible.find(:all, :readonly => false, :conditions =>['due_by <=? AND isescalated=? AND status=?', Time.zone.now.to_s(:db),false,Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open]] )

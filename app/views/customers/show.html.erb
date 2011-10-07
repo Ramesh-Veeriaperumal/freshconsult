@@ -50,6 +50,7 @@
 			<label for="user_phone"><%=t('user.phone_no')%></label> 
 			<input class="text" id="phone_work" name="user[phone]" size="30" type="text" /> 
 		</li>
+		<%= hidden_field(:user, :user_role, :id=>"user_role", :value => User::USER_ROLES_KEYS_BY_TOKEN[:customer] ) %>
 		</ul>
 		<div class="button-container"><%= submit_tag t('create'), :class => "uiButton grey small" %></div>
 		<% end %>
@@ -79,7 +80,7 @@
 	<ul class="user_list">	  
 			  <% @customer.users.each do |user| %>
 			  <li>
-			  	<%= link_to (user_avatar(user.avatar, :thumb), user, :title => h(user.name) ) %> 
+			  	<%= link_to(user_avatar(user, :thumb), user, :title => h(user.name) ) %> 
 				<%# link_to (h(user.name), user, :class => 'username') %>
 				<%# user.job_title %>
 			  </li>  

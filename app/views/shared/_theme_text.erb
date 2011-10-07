@@ -19,7 +19,8 @@
 		 
 	/* Tab color settings */
 	.top_nav_bg { background: $tab_color; }
-		
+	
+	.title-highlight{ background: $tab_color; color: $tab_ctxt_color;  }
 	input:focus, textarea:focus{ border-color: $tab_color !important; }
 	input:focus, select:focus, textarea:focus{ 
 		  -moz-box-shadow: $tab_color 0 0 3px;
@@ -36,6 +37,12 @@
 		 background-color:$tab_color; 
 		 border-color: darken($tab_color, 20%);  
 		 color:$tab_ctxt_color; 
+	}
+	
+	.special.uiButton{ 
+	   background-color:darken($tab_color, 6%); 
+	   border-color: darken($tab_color, 13%); 
+	   color:$tab_ctxt_color;  
 	}
 		
 	.footerContent, .footerContent a{ color:$bg_ctxt_color; border-color:$bg_ctxt_color;  }

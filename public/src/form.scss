@@ -8,13 +8,13 @@
 label{
    display: block; 
    color: #666;
-   padding:6px 0px 3px 0px;
+   padding:6px 0 3px 0;
    font-size:1.4em;
 }
 
 input[type=text], select, input.text { 
    width: 96%;
-   margin:0px 0px 3px 0px;
+   margin:0 0 3px 0;
    color:#3f3f3f;
    padding:3px;
    font-size:16px;
@@ -109,10 +109,10 @@ div.ui-form ul, ul.ui-form{
 
 ul.ui-form .ui-form-inline{
 	@include clearfix;
-	@include border-radius(0px);
-	border-width:1px 0px;
-	padding:0px; margin: 0px;
-	li{ padding-left:0px; }
+	@include border-radius(0);
+	border-width:1px 0;
+	padding: 0; margin: 0;
+	li{ padding-left: 0; }
 }
 
 
@@ -120,7 +120,7 @@ a.addchoice{
 	padding:5px;
 	color:#999999;
 	border:1px solid #cfcfcf;
-	border-width:1px 0px;
+	border-width:1px 0;
 	text-decoration:none;
 	cursor:pointer;
 	padding:8px 10px 8px 28px;
@@ -140,9 +140,9 @@ a.addchoice:hover{
 .colsets{ 
 	fieldset{
 		@include pie-clearfix;
-		margin:1px 0px 0px 0px;
+		margin:1px 0 0 0;
 		padding:2px 1px;
-		border:0px;
+		border:0;
 		position:relative;
 		background-color:#f1f1f1;
 		border:1px solid #cfcfcf;
@@ -152,8 +152,8 @@ a.addchoice:hover{
 		.dropchoice, .tags{
 			@include pie-clearfix;
 			float:left;
-			margin:0px 5px 0px 0px;
-			padding:0px;
+			margin:0 5px 0 0;
+			padding:0;
 			input{
 				margin-right:5px;
 				width:100%;
@@ -193,7 +193,7 @@ a.addchoice:hover{
 	label.radiolabel{
 		font-size:1em;
 		float:left; 
-		padding:0px 5px 0px 0px;	
+		padding:0 5px 0 0;	
 		margin-right:10px;		
 	}
 	input.radio{
@@ -203,7 +203,7 @@ a.addchoice:hover{
 }
 
 .ui-form{
-	padding:6px 0px 12px 0px;
+	padding:6px 0 12px 0;
 	position:relative;
 	border:1px solid #EFEFEF; 
 	background-color:#F8F8F8; 
@@ -213,7 +213,7 @@ a.addchoice:hover{
 	}
 	li{
 		padding:8px 2% 8px 2%; 
-		margin:0px;
+		margin:0;
 		@include float-left;
 		width:96%;
 		div.field-box{
@@ -221,7 +221,7 @@ a.addchoice:hover{
 		}
 	} 
 	/*li:last-child{
-		border-bottom: 0px;
+		border-bottom: 0;
     	box-shadow: none;
 	}*/
 	.hidden{
@@ -238,18 +238,19 @@ a.addchoice:hover{
       select{ margin-bottom:8px; }
    }
    div.checkbox, label.checkbox{
-      padding-left: 24px ;
       padding-bottom: 5px;
       font-size:1.3em;
       position:relative;
 	   input{
-	      position:absolute;
-	      left:1px;
+         float:left;
+	      margin-left:0;
+	      margin-top:1px;
+	      margin-right:3px;
 	   }
    }
 	label, li.checkbox{
 		font-weight:normal;
-		margin:0px;
+		margin:0;
 		line-height:18px;
 		color:#565656;
 		font-size:1.3em;
@@ -259,7 +260,7 @@ a.addchoice:hover{
 	label.overlabel{
 		color:#999999;
 		margin-left:8px;
-		margin-top:0px;
+		margin-top:0;
 		font-size:14px;	
 	}	 
 	li.checkbox{
@@ -304,14 +305,14 @@ a.addchoice:hover{
 	}
 	
 	.seperator{
-		margin-bottom:0px;
+		margin-bottom:0;
 		padding:1px;
 	}
 	.inline_field{
-		margin:0px 0px 10px 30px;
+		margin:0 0 10px 30px;
 		input{		
 			width:45%;
-			margin:0px;
+			margin:0;
 		}
 		label{ 
 			font-size:1.2em;
@@ -321,17 +322,17 @@ a.addchoice:hover{
 		label{
 			float:left;
 			font-size:1em; 
-			padding:5px 16px 0px 0px; 
+			padding:5px 16px 0 0; 
 		}
 		input{
-			top:0px;
+			top:0;
 		}
 	}
 	
 	.inline-radio{
 		input.radio{ position:relative; top:-3px; margin-right:4px; }
 		select{font-size:12px; margin-top:5px; }
-		padding:3px 0px;
+		padding:3px 0;
 		font-size:13px;
 	}
 	li.textleft{
@@ -345,7 +346,7 @@ a.addchoice:hover{
 		}		
 	}
 	fieldset.addchoice{		
-		padding:0px;			
+		padding:0;			
 		color:#999999;
 		font-size:14px;
 		font-weight:bold;
@@ -357,10 +358,10 @@ a.addchoice:hover{
 	}	
 	.conditionset{
 		border:1px solid #cfcfcf;
-		margin:4px 0px;
+		margin:4px 0;
 		fieldset{
 			@include pie-clearfix;			
-			padding:5px 0px 5px 4px;
+			padding:5px 0 5px 4px;
 			border-bottom:1px solid #cfcfcf;
 			background:#efefef;
 			position:relative;
@@ -376,8 +377,8 @@ a.addchoice:hover{
 			}
 			.add, .delete{
 				position:absolute;
-				margin:0px;
-				padding:0px;
+				margin:0;
+				padding:0;
 				cursor:pointer;
 				right:10px;
 				top:5px;
@@ -408,7 +409,7 @@ a.addchoice:hover{
 				@include clearfix;
 				div{
 					width:100%;
-					padding:4px 0px;
+					padding:4px 0;
 					font-size:12px;
 					em{
 						font-style:normal;
@@ -430,7 +431,7 @@ a.addchoice:hover{
 			}
 			
 			span{
-				margin:0px; padding:0px;
+				margin:0; padding:0;
 			}
 			
 			span.sort_handle:hover{
@@ -443,7 +444,7 @@ a.addchoice:hover{
 			}
 		}
 		div{
-			margin:0px;padding:0px;
+			margin:0;padding:0;
 		}
 		
 	}
@@ -472,13 +473,13 @@ a.addchoice:hover{
 			font-size:1.2em;
 		}
 		div.action_buttons{
-			margin-top:0px;
+			margin-top:0;
 		}
 		span.seperator{
-			margin:6px 0px;
+			margin:6px 0;
 		}
 		.info-data{
-			padding-bottom:0px;
+			padding-bottom:0;
 		}		
 		div.fields{
 		    padding-top:3px;
@@ -495,26 +496,26 @@ a.addchoice:hover{
 .ui-login, .ui-signup{ 
 	text-align:center;
 	display:block;
-	padding:18px 0px;
+	padding:18px 0;
 	.ui-form{ 
 		background:none;
-		border:0px;
+		border:0;
 		margin:4px auto;
 		@include corners(12px);
-		@include shadows(0px, 1px, 6px, rgba(0, 0, 0, 0.10) );
+		@include shadows(0, 1px, 6px, rgba(0, 0, 0, 0.10) );
 		text-align:left;
 		padding:25px;
 		border:1px solid #c2c2c2; 
 		background:#ffffff;
 		ul{
-			margin:0px;
+			margin:0;
 			li{
 				input.text{
-					margin:3px 0px 5px 0px;
+					margin:3px 0 5px 0;
 					width:320px;	
 				}
-				border-bottom:0px;
-				padding:5px 0px;
+				border-bottom:0;
+				padding:5px 0;
 			}
 		}
 	}
@@ -541,7 +542,7 @@ a.addchoice:hover{
 			}
 			strong{
 				font-weight:normal;
-				padding:0px 10px;
+				padding:0 10px;
 			}
 		}
 	}
@@ -553,13 +554,13 @@ a.addchoice:hover{
 		}
 	}
 	.holidaylist{
-		padding-left:0px;
+		padding-left:0;
 		ul{
 			color:#444444;
 			@include clearfix;
 			background-color:lighten(#f3f3f3, 5%);
 			padding:10px 5px 5px 10px;
-			margin:0px;
+			margin:0;
 			@include corners(6px);
 			li{
 				position:relative;
@@ -570,7 +571,7 @@ a.addchoice:hover{
 					width:18px;
 					height:18px;
 					right:6px;
-					top:0px;
+					top:0;
 				}
 			}
 		}
@@ -585,7 +586,7 @@ input.time{
  
 .grid{
 	border:1px solid #cfcfcf;
-	padding:0px;
+	padding:0;
 	background:#f6f6f6;
 	label.caption{
 	   font-size:13px;
@@ -596,14 +597,14 @@ input.time{
 	   color:#000000;
 	}
 	table{
-		padding:0px; margin:0px;
-		border:0px;
+		padding:0; margin:0;
+		border:0;
 		font-size:13px;
 		border-bottom:2px solid #cfcfcf;
 		th, td{
 			padding:8px 10px;
 			vertical-align:top;
-			border:0px;			
+			border:0;			
 		}
 		th{			
 			line-height:18px;	
@@ -618,7 +619,7 @@ input.time{
 		td{			
 			label{
 				font-size:12px;
-				padding:0px 6px;
+				padding:0 6px;
 				color:#555555;
 				em{
 					font-style:normal;
@@ -641,21 +642,26 @@ input.time{
 	}
 	.grid_form{	
 		td{
-			border:0px;
-			padding:6px 10px 0px 10px;
+			border:0;
+			padding:6px 10px 0 10px;
 			background:#fafafa;
 		}
 		.button-container{
 			text-align:right;
-			padding:0px 10px 10px 0px;
+			padding:0 10px 10px 0;
 		}
 	}
+}
+
+.sidepanel .ui-form{
+   margin:0px -16px;
+   padding:4px 10px;
 }
 
 .report{ 
    margin:0 -5px; 
    table{
-      border:0px;
+      border:0;
       tr.odd td{
          background:#ffffff;
       }
@@ -668,13 +674,13 @@ input.time{
 .grid{
    ul{
       @include no-bullets;
-      margin:0px; padding:0px;
+      margin:0; padding:0;
       background:#efefef;
       border-top:1px solid #cfcfcf;
       padding:8px 12px;
       @include clearfix;
       li{
-         margin:0px; padding:0px;
+         margin:0; padding:0;
          float:left;
          width:33%;
       }
@@ -684,7 +690,7 @@ input.time{
 
 span.sort_handle{
    position:relative;
-   left:0px;
+   left:0;
    top:1px;
    width:25px;
    height:25px;
@@ -695,23 +701,23 @@ span.sort_handle{
 
 .ui-custom-fields, .ui-custom-form{
    @include no-bullets;	
-   margin:0px 0px 0px 0px; 
-   padding:0px;
+   margin:0 0 0 0; 
+   padding:0;
 }
 
 .admin_form{
 	@include clearfix;
 	background-color:#f3f3f3; 
-	padding:8px 20px 0px 20px;
-	margin:0px -20px;
+	padding:8px 20px 0 20px;
+	margin:0 -20px;
 	li{
 		position:relative;
 	}
 	h4.title{
 		color:#555; 
 		font-weight:bold;
-		margin:0px;
-		padding:8px 0px 6px 0px;
+		margin:0;
+		padding:8px 0 6px 0;
 	}
 }
 
@@ -734,7 +740,7 @@ span.sort_handle{
 		float:left;
 		position:relative;
 		a{
-			margin:6px 6px 0px 0px;
+			margin:6px 6px 0 0;
 			font-size:13px;
 		}
 	}
@@ -754,7 +760,7 @@ span.sort_handle{
 }
 	
 .ui-custom-form{
-	padding:0px 0px 15px 0px;	
+	padding:0 0 15px 0;	
 	position:relative;
 	li{   
 		position:relative; 
@@ -800,7 +806,7 @@ span.sort_handle{
 }
 
 .help_text{
-	padding:8px 0px 4px 0px;
+	padding:8px 0 4px 0;
 	a{
 		text-decoration:none;
 		color:#336699;
@@ -817,16 +823,20 @@ span.sort_handle{
 	@include shadows(rgba(0,0,0,0.5), -3px, 5px, 10px); 
 	_border:1px solid #afafaf;
 	_background:#ffffff;
-	margin:0px;
+	margin:0;
 	.button-container{
 		width:96% !important;
-		padding-right:0px !important;
+		padding-right:0 !important;
 	}
+}
+
+.ui-widget-container{
+   margin:10px 20px;
 }
 
 .ui-form-widget{
 	padding:15px;
-	margin:0px -15px !important;
+	margin:0 -15px !important;
 	border:1px solid #DFDFDF !important;
 	background-color:rgba(244, 244, 244, 0.5) !important;
 	label{
@@ -844,25 +854,24 @@ span.sort_handle{
  * http://docs.jquery.com/UI/Dialog#theming
  */
 .ui-dialog{ padding:8px; }
-.ui-dialog .ui-dialog-titlebar { padding:0px; position: relative; color: #333333; padding: 6px 8px 6px 8px; }
+.ui-dialog .ui-dialog-titlebar { padding:0; position: relative; color: #333333; padding: 6px 8px 6px 8px; }
 .ui-dialog .ui-dialog-title { float: left; margin:0em; color:#333333; font-size:18px; font-weight:normal; } 
 .ui-dialog .ui-dialog-titlebar-close { position: absolute; right:4px; top: 50%; width: 19px; margin: -14px 0 0 0; padding: 1px; height: 18px; }
 .ui-dialog .ui-dialog-titlebar-close span { display: block; margin: 1px; }
 .ui-dialog .ui-dialog-titlebar-close:hover, .ui-dialog .ui-dialog-titlebar-close:focus { background-color:#efefef; }
 .ui-dialog .ui-dialog-content { 
-   position: relative; border: 0; padding: 0px 0px; overflow: auto; zoom: 1; margin-bottom:0px; 
+   position: relative; border: 0; padding: 0 0; overflow: auto; zoom: 1; margin-bottom:0; 
    .info-highlight{
-      margin:0px 0px 6px 0px;
+      margin:0 0 6px 0;
       font-size:13px;
       padding:10px 12px;
    }
    .ui-form{
-      margin:0px 0px;
-      padding:8px 20px;
-   }
-   label{font-size:13px;}
+      margin:0 0;
+      padding:0 0;
+   }  
 }
-.ui-dialog .ui-dialog-buttonpane { text-align: left; border-width: 0px 0 0 0; background-image: none; margin: 0; padding: 0; }
+.ui-dialog .ui-dialog-buttonpane { text-align: left; border-width: 0 0 0 0; background-image: none; margin: 0; padding: 0; }
 .ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset { float: right; }
 .ui-dialog .ui-dialog-buttonpane button { margin: .5em 0 .5em 0; cursor: pointer; @include corners(3px); }
 .ui-dialog .ui-resizable-se { width: 14px; height: 14px; right: 3px; bottom: 3px; }
@@ -873,26 +882,26 @@ span.sort_handle{
 }
 
 input.search{
-	@include corners(3px);
-    margin-right: 10px;
-    background-color: #FFFFFF;
-    border: 1px solid #C7C7C7;
-    color: #747472;
-    font-size: 13px;
-    height:18px;
-    padding: 5px 7px;
-    width: 500px;
+   @include corners(3px);
+   margin-right: 10px;
+   background-color: #FFFFFF;
+   border: 1px solid #C7C7C7;
+   color: #747472;
+   font-size: 13px;
+   height:18px;
+   padding: 5px 7px;
+   width: 425px;
 }
 
 .live_search{
     text-align:left;
-    padding:0px 0px 0px 0px;
-    margin:8px 0px;
+    padding:0 0 0 0;
+    margin:8px 0;
     .loading{
         background-position:right !important;
     }
     .overlabel{
-        padding:0px;
+        padding:0;
         font-size:13px;
     }
 }
@@ -942,7 +951,7 @@ input.search{
 fieldset.nestedChoices{
 	@include clearfix;
 	display:block;
-	margin:1px 0px;
+	margin:1px 0;
 	padding:2px;
 	border:1px dotted #cfcfcf;
 	border-right-color:#e2e2e2;
@@ -956,7 +965,7 @@ fieldset.nestedChoices{
 	position:absolute;
 	width:320px;
 	z-index:999999;
-	@include shadows(0px, 2px, 4px, rgba(0, 0, 0, 0.5));
+	@include shadows(0, 2px, 4px, rgba(0, 0, 0, 0.5));
     @include vertical-gradient(#f5f5f5, #e9e9e9);
     @include corners(4px);
 /*	@include pie;*/
@@ -995,13 +1004,13 @@ fieldset.nestedChoices{
 
 .due-date-dialog{
 	position:absolute;
-	left:0px;
-	top:0px;
+	left:0;
+	top:0;
 	margin-left:-20px;
 	margin-top:-6px;
 	z-index:99999;
 	width:250px;
- 	@include shadows(0px, 2px, 4px, rgba(0, 0, 0, 0.5));
+ 	@include shadows(0, 2px, 4px, rgba(0, 0, 0, 0.5));
     @include vertical-gradient(#f5f5f5, #e9e9e9);
     @include corners(4px);
 	padding:8px 10px;
@@ -1009,7 +1018,7 @@ fieldset.nestedChoices{
 	.due-date-calender{ 
 		@include vertical-gradient(#f5f5f5, #e9e9e9);
 	  	padding:4px 10px;
-	  	margin:4px 0px 8px 0px;	
+	  	margin:4px 0 8px 0;	
 	  	@include corners(4px);
 	  	border:#e0e0e0 1px solid;
 	}
@@ -1020,9 +1029,9 @@ fieldset.nestedChoices{
 		right:-10px;
 		top:10px;
 	}
-	.ui-datepicker-inline{ margin:0px 0px 8px 0px;}
-	.ui-corner-all{	@include corners(0px); }
-	.ui-widget-content, .ui-widget-header{ background:none; border:0px; }
+	.ui-datepicker-inline{ margin:0 0 8px 0;}
+	.ui-corner-all{	@include corners(0); }
+	.ui-widget-content, .ui-widget-header{ background:none; border:0; }
 	.ui-datepicker .ui-datepicker-title select, .due-date-calender select, #due-date-options{ font-size: 11px; width:auto; margin-right:4px; }
 	.ui-widget-content{ font-size: 13px; }
 	.ui-datepicker-prev, .ui-datepicker-next{ cursor:pointer; }
@@ -1031,7 +1040,7 @@ fieldset.nestedChoices{
 	.ui-datepicker-next .ui-icon{ background: sprite($symbol, calender-right) no-repeat; } 
 	.ui-datepicker th { font-weight: normal; }
 	.ui-datepicker-inline th, .ui-datepicker-inline td a{ text-align:center; color:#333333;  }
-	.ui-datepicker-inline td .ui-state-default{ border:0px; background:none; }
+	.ui-datepicker-inline td .ui-state-default{ border:0; background:none; }
 	.ui-datepicker-inline td .ui-state-default:hover{ background-color:darken(#dde8ee, 5%); }	
 	.ui-datepicker-inline td .ui-priority-secondary{ color:#888888; }
 	.ui-datepicker-inline td .ui-state-highlight{ background:#FFFFCC; color:#333333;}
@@ -1039,8 +1048,8 @@ fieldset.nestedChoices{
 	.due-date-info p{ 
 		text-align:center; 
 		font-size:13px; 
-		margin:0px; 
-		padding:6px 0px;
+		margin:0; 
+		padding:6px 0;
 	}
 	
 	.ui-widget-header{
@@ -1062,7 +1071,7 @@ fieldset.nestedChoices{
 			background-image:url('/images/load-fb-style.gif');
 			background-repeat:no-repeat;
 			visibility:hidden;
-			background-position: 0px 0px;
+			background-position: 0 0;
 		}
 	}
 	.saving-items{
@@ -1078,13 +1087,13 @@ fieldset.nestedChoices{
 table.summary{
 	width:100%;
 	td{ 
-		padding:8px 10px 2px 0px;
+		padding:8px 10px 2px 0;
 	}
 }
 table.summary-report{
 	width:100%;
 	border:1px solid #ececec;
-	border-width:1px 0px;
+	border-width:1px 0;
 	font-size:13px;
 	td, th{ 
 		padding:8px 8px;
@@ -1104,7 +1113,7 @@ table.summary-report{
 		text-transform:capitalize;
 	}
 	thead{
-		margin:0px 0px 0px 0px;
+		margin:0 0 0 0;
 		color:#666666;
 		border:1px solid #f4f4e9;
 		background-color:#fffbee;	
@@ -1119,8 +1128,8 @@ table.summary-report{
 
 
 .email-settings{ 
-	margin:0px -20px 10px;
-	padding:0px;
+	margin:0 -20px 10px;
+	padding:0;
 	border-top:1px solid #e6e6e6;
 	border-bottom:1px solid #f4f4f4;
 	label{
@@ -1220,7 +1229,7 @@ table.summary-report{
 	background-color:#fefce5;
 	padding:12px 22px;
 	line-height:22px;
-	margin:0px -20px;
+	margin:0 -20px;
 	font-size:13px;
 	color:#996666;
 	border:1px solid #f4f4f4;
@@ -1228,11 +1237,11 @@ table.summary-report{
 }
 
 .request_panel{
-   padding:0px 0px;
-   margin:5px 0px;
+   padding:0 0;
+   margin:5px 0;
    .ui-form{
       li.field{
-         border:0px;
+         border:0;
       }
       label, div.fields label{
          font-size:13px;
@@ -1283,38 +1292,58 @@ table.summary-report{
 
 .nav_search{
 	@include min-width(260px);
-	height:27px;
+	height:31px;
 	position:relative;
-	margin:0px 14px 0px 6px;
+	margin:0 11px 0 6px;
 	div.search_bar{ 
-		height:26px; 
-		background:url("../images/search_icon.gif") 4px 5px no-repeat #ffffff;  
-		padding:0px 8px 0px 25px;
+		height:24px; 
+		@include corners(12px);
+		@include opacity(0.8);
+		background:#ffffff;
+		padding:0 25px 0 5px;
+		.searchIcon{
+		   position:absolute;
+		   right:0px;
+		   width:15px;
+		   height:15px;
+		   top:8px;
+		   right:5px;
+		   background: sprite($symbol, search);
+		   @include opacity(0.6);
+		}
 		label.overlabel, input{
 			top:4px;
+			left:2px;
 		}
 		label.overlabel{
-		 	padding:0px;
-		 	margin:2px 3px;
-		 	font-size:14px;
+		 	padding:0;
+		 	margin:4px 6px;
+		 	font-size:13px;
+		 	color:#777777;
 		} 
 		input{		
-			border:0px;
+			border:0;
 			position:relative;
 			font-size:14px;
 			width:100%;
-			padding:0px;
+			padding:0;
 			background:none;		
 		}
-		input:focus{ @include shadows(0, 0, 0, 0); }		
+		input:focus{ @include shadows(#ffffff, 0, 0, 0); }		
 	}
+	div.search_bar.active{
+	   @include opacity(1);
+	   .searchIcon{
+	      @include opacity(1);
+	   }
+   }
 }
 
 .nav_right{
 	@include clearfix;
 	position:relative;
 	z-index:10; 
-	margin:0px 0px 0px 3px;
+	margin:1px 0 0 3px;
 	float:right; 
 }
 
@@ -1323,19 +1352,22 @@ a.new_ticket, .nav_search{
 }
 
 a.new_ticket, .nav_search div.search_bar{
-	border:2px solid darken($tab_color, 8%);
+	border:1px solid darken($tab_color, 8%);
+	@include single-box-shadow(rgba(255, 255, 255, 0.4), 0px, 1px, 0px);
+	margin-top:2px;
+	@include corners(4px);
 } 
  
 a.new_ticket{
  	@include vertical-gradient(#fefefe, #dfdfdf);	
-	padding:6px 8px 5px 25px;
+	padding:5px 8px 4px 28px;
 	color:#333333; 
 	font-size:12px; 
 	text-decoration:none; font-weight:bold;
 	position:relative; 
 	@include inline-block;	
 	span { 
-		position:absolute; left:4px; top:5px;
+		position:absolute; left:4px; top:4px;
 		background:sprite($symbol, add) no-repeat;
 		width:16px; height:16px;
 	}	
@@ -1357,11 +1389,11 @@ a.new_ticket:hover{
 .menu-box{
 	border:1px solid #cecece;
 	background-color:#ffffff;
-	right:0px;
+	right:0;
 	top:24px;
 	padding:6px 4px;
 	@include min-width(230px);
-	@include shadows(rgba(0,0,0, 0.3), 0px, 1px, 1px);
+	@include shadows(rgba(0,0,0, 0.3), 0, 1px, 1px);
 	position:absolute;
 	z-index:99999;
 	display:none;
@@ -1387,7 +1419,7 @@ a.new_ticket:hover{
 		span{
 			width:23px;
 			height:23px;
-			margin:0px 3px;
+			margin:0 3px;
 			float:left;
 		}
 		.item-options{
@@ -1404,13 +1436,13 @@ a.new_ticket:hover{
    background-color:$tab_color;
    color:#ffffff;
    font-size:13px;
-   padding:4px 12px;
-   margin:1px 1px 1px 1px;
+   padding:5px 12px;
+   margin:1px 0px;
 }
 
 .dialog-special{
-   padding:8px 0px 5px 0px;
-   margin:0px 0px;
+   padding:8px 0 5px 0;
+   margin:0 0;
    border:1px solid #cfcfcf;
    background-color:#f4f4f4;
    .content{
@@ -1418,13 +1450,13 @@ a.new_ticket:hover{
    }   
    .button{
       font-size:11px;
-      margin:0px;
+      margin:0;
    }
    h4.title{
       font-weight:bold;
    }
    .pagination{
-      margin:6px 0px 0px 0px;
+      margin:6px 0 0 0;
       padding:10px 6px;
       color:#666666;
       a{ @include link-colors(#4D769F, #3399cc, #4D769F, #4D769F); font-weight:normal; }
@@ -1442,7 +1474,7 @@ a.new_ticket:hover{
        padding-left:30px;
     }
    .or{
-      margin:0px 0px 0px 0px;
+      margin:0 0 0 0;
       border-left:1px solid #dfdfdf;
       span{
          font-size:1em;
@@ -1467,11 +1499,11 @@ a.new_ticket:hover{
    width:100%;
    li{
       @include clearfix;
-      padding:0px 4px 5px 40px;
+      padding:0 4px 5px 40px;
       position:relative;
       .title{
          font-size:13px;
-         padding:0px 0px 2px 0px; 
+         padding:0 0 2px 0; 
          font-weight:bold;
          display:block;
       }
@@ -1499,9 +1531,9 @@ a.new_ticket:hover{
 .canned-response-menu{
    border:1px solid #cfcfcf;
    background-color:#ffffff;
-   @include shadows( rgba(0, 0, 0, 0.2), 0px, 2px, 4px);
+   @include shadows( rgba(0, 0, 0, 0.2), 0, 2px, 4px);
    padding:6px 6px 16px 6px;
-   width:600px;
+   width:400px;
    position:absolute;
    z-index:1000;
    right:6px;
@@ -1510,9 +1542,11 @@ a.new_ticket:hover{
    ul{
       border-top:1px solid #efefef;
       position:relative;
-      padding:12px 0px 0px 0px;
-      margin:6px 0px 0px 0px;      
+      padding:12px 0 0 0;
+      margin:6px 0 0 0;      
       @include clearfix;
+      max-height:300px;
+      overflow:auto;
    }
    span.divider{
       position:absolute;
@@ -1521,11 +1555,9 @@ a.new_ticket:hover{
       left:49%;
       width:1px;
    }
-   li{      
-      float:left;
-      width:240px;
+   li{       
       padding: 6px 8px 6px 24px;
-      margin-left:20px;
+      margin-left:10px;
       position:relative;
       a{
          font-size:13px;
@@ -1536,17 +1568,19 @@ a.new_ticket:hover{
          position:absolute;
          width:16px;
          height:16px;
-         left:0px;
+         left:0;
          top:7px;
       }
    }
 }
 
-.tweet_counter{
-   position:absolute;
-	right:0;
-	top:0;
-	font-size:20px;
-	font-weight:bold;
-	color:#ccc;
+textarea.tweet{
+   font-size:14px;
+   line-height:22px;
+   padding:2px 4px;
+   @include corners(4px);
+}
+
+.ticket-simple-list label{
+   font-size:13px; 
 }

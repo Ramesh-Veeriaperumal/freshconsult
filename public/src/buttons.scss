@@ -1,6 +1,16 @@
 @import "base";
 @import "mixins";
 
+.ui-datepicker{
+   background:#ffffff;
+   @include opacity(0.95);
+   @include corners(5px);
+}
+
+.ui-datepicker-title{
+   color:#333333;
+}
+
 /*
  * jQuery UI Button 1.8.7
  *
@@ -62,14 +72,19 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
 	@include corners(4px);
 }
 .uiButton:hover, .fdbutton:hover, .forum_button:hover, .uiButton-active:hover { background-color:$tab_color; border-color: darken($tab_color, 10%); color:#ffffff; @include text-shadow(rgba(0, 0, 0, 0.2), -1px, -1px, 1px); }
-.uiButton-active{  background-color:darken($tab_color, 6%); border-color: darken($tab_color, 13%); color:#ffffff; @include text-shadow(rgba(0, 0, 0, 0.2), -1px, -1px, 1px); }
 
-.uiButton:active, .fdbutton:active, .uiButton-active:active				{ top: 1px; }
+.special.uiButton{ 
+   background-color:darken($tab_color, 6%); 
+   border-color: darken($tab_color, 13%); 
+   color:#ffffff; 
+   @include text-shadow(rgba(0, 0, 0, 0.2), -1px, -1px, 1px); 
+}
+
+.uiButton:active, .fdbutton:active, .uiButton-active:active { top: 1px; }
 .small.uiButton, .small.uiButton:visited 		{ font-size: 11px;  }
 .uiButton, .fdbutton, .uiButton:visited, .fdbutton:visited, 
 .medium.uiButton, .medium.uiButton:visited 		{ font-size: 12px;}
-.large.uiButton, .large.uiButton:visited, .uiButton-active 		{ font-size: 13px; padding: 8px 14px 9px; }
-
+.large.uiButton, .large.uiButton:visited { font-size: 13px; padding: 8px 14px 9px; }
 
 .forum_button{
 	@include anchor-button;
@@ -200,4 +215,57 @@ div.action_buttons:hover{
         0 -2px rgba(0, 0, 0, 0.05) inset;
 }
 
- 
+.toolbar .button{
+   padding:5px 10px;
+   @include single-text-shadow(#ffffff);
+   @include single-box-shadow(#ffffff, 1px, 0, 1px);   
+}
+
+.toolbar_pagination{
+   float:right;
+   top:-6px;
+   .prev_page, .next_page{
+      float:left; font-size:1px; width:7px; height:9px;   
+      right:0px;
+      top:-37px;
+      height:14px;
+      position:absolute;      
+      span{
+         left:2px; top:0px;
+         position:absolute; width:22px; height:22px;  
+      }
+   }      
+   .prev_page{ 
+      @include corners(3px, 0, 0, 3px); margin-right:0px; 
+      right:30px;
+      span{ background: sprite($symbol, arrow-left) no-repeat; }
+   }
+   .next_page{ 
+      @include corners(0, 3px, 3px, 0); margin-left:0px;  border-left:0; 
+      span{ background: sprite($symbol, arrow-right) no-repeat; }
+   }   
+}
+
+.toolbar_pagination_full{
+   a, span{
+      @extend .button;
+   }
+   .disabled.prev_page, .disabled.next_page{ 
+      @include single-box-shadow( rgba(0, 0, 0, 0.3), 0px, -0px, 1px, false, true );      
+   }
+   text-align:center;
+}
+.toolbar_pagination, .toolbar_pagination_full{
+   position:relative;
+   .prev_page, .next_page{
+      @extend .button;
+      border-color:#dfdfdf;
+   }
+   .disabled.prev_page, .disabled.next_page{ 
+      background:#efefef;
+      span{ @include opacity(0.3); }  
+   }
+   .current{
+      background:#ffffff; border-color:#dfdfdf;
+   }
+}

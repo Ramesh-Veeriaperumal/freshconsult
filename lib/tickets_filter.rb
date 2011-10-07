@@ -1,7 +1,7 @@
 module TicketsFilter
   include TicketConstants
   
-  DEFAULT_FILTER = :new_and_my_open
+  DEFAULT_FILTER = "new_and_my_open"
 
   SELECTORS = [
     [:new_and_my_open,  I18n.t('helpdesk.tickets.views.new_and_my_open'), [:visible]  ],
@@ -13,6 +13,11 @@ module TicketsFilter
     [:my_on_hold,       I18n.t('helpdesk.tickets.views.my_on_hold'), [:visible, :responded_by, :on_hold]  ],
     [:monitored_by,     I18n.t('helpdesk.tickets.views.monitored_by'), [:visible]  ],
     [:my_all,           I18n.t('helpdesk.tickets.views.my_all'), [:visible, :responded_by]  ],
+    
+    [ :my_groups_open,    I18n.t('helpdesk.tickets.views.my_groups_open'), [:visible, :my_groups, :open] ],
+    [ :my_groups_new,     I18n.t('helpdesk.tickets.views.my_groups_new'), [:visible, :my_groups, :new] ],
+    [ :my_groups_pending, I18n.t('helpdesk.tickets.views.my_groups_pending'), [:visible, :my_groups, :on_hold] ],
+    [ :my_groups_all,     I18n.t('helpdesk.tickets.views.my_groups_all'), [:visible, :my_groups] ],
     
     [:new,              I18n.t('helpdesk.tickets.views.new'), [:visible]  ],
     [:open,             I18n.t('helpdesk.tickets.views.open'), [:visible]  ],
@@ -27,11 +32,20 @@ module TicketsFilter
     [:spam,             I18n.t('helpdesk.tickets.views.spam')  ],
     [:deleted,          I18n.t('helpdesk.tickets.views.trash')  ],
     [:tags  ,           I18n.t('helpdesk.tickets.views.tags') ],
-    [:twitter  ,        I18n.t('helpdesk.tickets.views.tickets_twitter')]
+    [:twitter  ,        I18n.t('helpdesk.tickets.views.tickets_twitter')],
+    
+    
   ]
   
   SELECTOR_NAMES = Hash[*SELECTORS.inject([]){ |a, v| a += [v[0], v[1]] }]
   ADDITIONAL_FILTERS = Hash[*SELECTORS.inject([]){ |a, v| a += [v[0], v[2]] }]
+  
+  CUSTOMER_SELECTORS = [ [:all,              I18n.t('helpdesk.tickets.views.all'), [:visible]  ],
+                         [:open_or_pending, I18n.t('helpdesk.tickets.views.open_or_pending') ],
+                         [:resolved_or_closed,  I18n.t('helpdesk.tickets.views.resolved_or_closed')]
+                       ]
+  CUSTOMER_SELECTOR_NAMES = Hash[*CUSTOMER_SELECTORS.inject([]){ |a, v| a += [v[0], v[1]] }]
+  CUSTOMER_ADDITIONAL_FILTERS = Hash[*CUSTOMER_SELECTORS.inject([]){ |a, v| a += [v[0], v[2]] }]
   
   SEARCH_FIELDS = [
     [ :display_id,    'Ticket ID'           ],
@@ -42,9 +56,9 @@ module TicketsFilter
 
   SEARCH_FIELD_OPTIONS = SEARCH_FIELDS.map { |i| [i[1], i[0]] }
 
-  DEFAULT_SORT 			= :due_by
-  DEFAULT_SORT_ORDER 	= :ASC
-	
+  DEFAULT_SORT        = :due_by
+  DEFAULT_SORT_ORDER  = :asc
+
   SORT_FIELDS = [
     [ :due_by     , I18n.t("tickets_filter.sort_fields.due_by")        ],
     [ :created_at , I18n.t("tickets_filter.sort_fields.date_created")  ],
@@ -55,6 +69,13 @@ module TicketsFilter
 
   SORT_FIELD_OPTIONS = SORT_FIELDS.map { |i| [i[1], i[0]] }
   SORT_SQL_BY_KEY    = Hash[*SORT_FIELDS.map { |i| [i[0], i[0]] }.flatten]
+
+  SORT_ORDER_FIELDS = [
+    [ :asc     , I18n.t("tickets_filter.sort_fields.asc")   ],
+    [ :desc    , I18n.t("tickets_filter.sort_fields.desc")  ]
+  ]
+  SORT_ORDER_FIELDS_OPTIONS = SORT_ORDER_FIELDS.map { |i| [i[1], i[0]] }
+  SORT_ORDER_FIELDS_BY_KEY  = Hash[*SORT_ORDER_FIELDS.map { |i| [i[0], i[0]] }.flatten]
 
   def self.filter(filter, user = nil, scope = nil)
     to_ret = (scope ||= default_scope)
@@ -101,11 +122,15 @@ module TicketsFilter
   
   protected
     def self.load_conditions(user)
+      group_ids = user.agent_groups.find(:all, :select => 'group_id').map(&:group_id)
+      group_ids = [-1] if group_ids.empty? #The whole group thing is a hack till new views come..
+      
       {
         :spam         =>    { :spam => true, :deleted => false },
         :deleted      =>    { :deleted => true },
         :visible      =>    { :deleted => false, :spam => false },
         :responded_by =>    { :responder_id => (user && user.id) || -1 },
+        :my_groups    =>    { :group_id => group_ids },
         
         :new_and_my_open  => ["status = ? and (responder_id is NULL or responder_id = ?)", 
                                         STATUS_KEYS_BY_TOKEN[:open], user.id],
@@ -120,7 +145,9 @@ module TicketsFilter
         :overdue          => ["due_by <= ? and status not in (?, ?)", Time.zone.now.to_s(:db), 
                                         STATUS_KEYS_BY_TOKEN[:resolved], STATUS_KEYS_BY_TOKEN[:closed]],
         :on_hold          => ["status = ?", STATUS_KEYS_BY_TOKEN[:pending]],
-        :twitter          => ["source = ?", SOURCE_KEYS_BY_TOKEN[:twitter]]
+        :twitter          => ["source = ?", SOURCE_KEYS_BY_TOKEN[:twitter]],
+        :open_or_pending  => ["status in (?, ?)" , STATUS_KEYS_BY_TOKEN[:open], STATUS_KEYS_BY_TOKEN[:pending]],
+        :resolved_or_closed  => ["status in (?, ?)" , STATUS_KEYS_BY_TOKEN[:resolved], STATUS_KEYS_BY_TOKEN[:closed]]
       }
     end
 

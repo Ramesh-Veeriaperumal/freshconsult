@@ -40,6 +40,7 @@ defaults: &defaults
     list:                 Wf::Containers::List
     filter_list:          Wf::Containers::FilterList
     dropdown:             Wf::Containers::TextDelimited
+    due_by:               Wf::Containers::DueBy
     
   data_types:             # mapping between data types and containers 
     nil:                  [nil]
@@ -62,6 +63,8 @@ defaults: &defaults
     helpdesk_tickets:
          text:               [text]
          dropdown:           [text_delimited]
+         due_by:             [due_by]
+         boolean:            [boolean]
  
     
 
@@ -82,6 +85,7 @@ defaults: &defaults
     is_greater_than:      1400
     is_less_than:         1500
     is_filtered_by:       1600
+    due_by_op:            1700
     
     
 #############################################################################
@@ -97,7 +101,7 @@ test:
 qa:
   <<: *defaults
 
-stage:
+staging:
   <<: *defaults
 
 production:

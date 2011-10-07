@@ -7,8 +7,30 @@ class Helpdesk::TicketField < ActiveRecord::Base
   belongs_to :flexifield_def_entry, :dependent => :destroy
   has_many :picklist_values, :as => :pickable, :class_name => 'Helpdesk::PicklistValue',
     :dependent => :destroy
+    
+  before_destroy :delete_from_ticket_filter
+  before_update :delete_from_ticket_filter
   
   acts_as_list
+  
+  def delete_from_ticket_filter
+    if is_dropdown_field?
+      Account.current.ticket_filters.each do |filter|
+        con_arr = filter.data[:data_hash]
+        unless  con_arr.blank?
+          con_arr.each do |condition|
+            con_arr.delete(condition) if condition["condition"].eql?("flexifields.#{flexifield_def_entry.flexifield_name}")
+          end
+          filter.query_hash = con_arr
+          filter.save
+        end
+      end
+    end
+  end
+  
+  def is_dropdown_field?
+    field_type.include?("dropdown")
+  end
    
   # scope_condition for acts_as_list
   def scope_condition
@@ -22,6 +44,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
   
   
   named_scope :custom_fields, :conditions => ["flexifield_def_entry_id is not null"]
+  named_scope :custom_dropdown_fields, :conditions => ["flexifield_def_entry_id is not null and field_type = 'custom_dropdown'"]
   named_scope :customer_visible, :conditions => { :visible_in_portal => true }  
   named_scope :customer_editable, :conditions => { :editable_in_portal => true }
   named_scope :type_field, :conditions => { :name => "ticket_type" }
@@ -37,7 +60,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
                   :default_group        => { :type => :default, :dom_type => "dropdown_blank", :form_field => "group_id"},
                   :default_agent        => { :type => :default, :dom_type => "dropdown_blank", :form_field => "responder_id"},
                   :default_source       => { :type => :default, :dom_type => "hidden"},
-                  :default_description  => { :type => :default, :dom_type => "paragraph", :visible_in_view_form => false },
+                  :default_description  => { :type => :default, :dom_type => "html_paragraph", :visible_in_view_form => false, :form_field => "description_html" },
                   :default_product      => { :type => :default, :dom_type => "dropdown_blank",
                                              :form_field => "email_config_id" },
                   :custom_text          => { :type => :custom, :dom_type => "text", 

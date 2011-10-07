@@ -1,5 +1,7 @@
 class Helpdesk::Tag < ActiveRecord::Base
   set_table_name "helpdesk_tags"
+  
+  belongs_to :account
 
   has_many :tag_uses,
     :class_name => 'Helpdesk::TagUse',

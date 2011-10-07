@@ -38,8 +38,8 @@
  
         label_class:   'overlabel-apply',
         wrapper_class: 'overlabel-wrapper',
-        hide_css:      { 'text-indent': '-10000px' },
-        show_css:      { 'text-indent': '0px', 'cursor': 'text' },
+        hide_css:      { 'display': 'none' },
+        show_css:      { 'display': 'block', 'cursor': 'text' },
         filter:        false
  
     };

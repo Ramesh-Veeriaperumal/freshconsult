@@ -15,6 +15,14 @@
 	     </a>
 	  </li>
 	  <% end %>
+	  <% if (filter_count(:on_hold)) %>
+	  <li>
+	     <a href="/helpdesk/tickets/filter/on_hold">
+				<%= content_tag :span, t(".pending") %>
+		   	<h4><%= filter_count(:on_hold) %></h4>
+	     </a>
+	  </li>
+	  <% end %>
 	  <% if (filter_count(:due_today)) %>
 	  <li>
 	    <a href="/helpdesk/tickets/filter/due_today">

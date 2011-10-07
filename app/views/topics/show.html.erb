@@ -49,7 +49,7 @@
 				<% first_post = @posts.first %>
 				<div class="description">
 					<div class="user_details">
-						<%= user_avatar( @topic.user.avatar ) %>
+						<%= user_avatar( @topic.user ) %>
 		          		<div> <%=t('posted_by')%> <%= link_to_user @topic.user, :class => "user_name" %> </div>
 						<div> <%= h(@topic.created_at.strftime("%B %e %Y at %I:%M %p")) %>  </div>
 		        	</div>

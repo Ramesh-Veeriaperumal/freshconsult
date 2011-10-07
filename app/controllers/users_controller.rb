@@ -2,6 +2,7 @@ class UsersController < ApplicationController
   
   
   include ModelControllerMethods #Need to remove this, all we need is only show.. by Shan. to do must!
+  include HelpdeskControllerMethods
 
   before_filter :set_selected_tab
   skip_before_filter :load_object , :only => [ :show, :edit]
@@ -10,7 +11,10 @@ class UsersController < ApplicationController
     c.requires_permission :manage_account
   end
   
-  ##redirect to contacts
+  before_filter { |c| c.requires_permission :manage_tickets }
+  before_filter :load_multiple_items, :only => :block
+
+   ##redirect to contacts
   def index
     redirect_to contacts_url
   end
@@ -27,11 +31,19 @@ class UsersController < ApplicationController
     @user = current_account.users.new #by Shan need to check later       
     if @user.signup!(params)
       #@user.deliver_activation_instructions! #Have moved it to signup! method in the model itself.
-      flash[:notice] = "The user has been created and activation instructions sent to #{@user.email}!"
+      flash[:notice] = t("user_activation_message_sent", :user_email => @user.email)
       redirect_to users_url
     else
       render :action => :new
     end
+  end
+  
+  def block
+    @items.each do |item|
+      item.deleted = true 
+      item.save if item.customer?
+    end
+    flash[:notice] = t("users_blocked_message", :users => @items.map {|u| u.name}.join(', '))
   end
   
    
@@ -77,7 +89,7 @@ class UsersController < ApplicationController
   protected
   
     def scoper
-      current_account.users
+      current_account.all_users
     end
     
     def authorized?

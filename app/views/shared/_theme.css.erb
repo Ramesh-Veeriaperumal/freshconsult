@@ -1,6 +1,6 @@
 <% 
 	cssText = render(:partial=>"/shared/theme_text")
-	engine = Sass::Engine.new(cssText , :syntax => :scss)
+	engine = Sass::Engine.new(cssText , :syntax => :scss, :cache => true, :style => :compressed)
 %>
 <style>
 	<%= engine.render %>

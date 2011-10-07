@@ -30,11 +30,13 @@ class User < ActiveRecord::Base
     :class_name => 'Helpdesk::Attachment',
     :dependent => :destroy
 
-  before_create :set_time_zone , :set_company_name, :check_email_value
-  before_save :set_account_id_in_children , :set_contact_name
+  before_create :set_time_zone , :set_company_name
+  before_save :set_account_id_in_children , :set_contact_name, :check_email_value , :set_default_role
+  after_update :drop_authorization , :if => :email_changed?
   
   named_scope :contacts, :conditions => ["user_role in (#{USER_ROLES_KEYS_BY_TOKEN[:customer]}, #{USER_ROLES_KEYS_BY_TOKEN[:client_manager]})" ]
   named_scope :technicians, :conditions => ["user_role not in (#{USER_ROLES_KEYS_BY_TOKEN[:customer]}, #{USER_ROLES_KEYS_BY_TOKEN[:client_manager]})"]
+  named_scope :visible, :conditions => { :deleted => false }
 
   acts_as_authentic do |c|    
     c.validations_scope = :account_id
@@ -45,6 +47,8 @@ class User < ActiveRecord::Base
     c.merge_validates_length_of_email_field_options :if =>:chk_email_validation? 
     c.merge_validates_uniqueness_of_email_field_options :if =>:chk_email_validation? 
   end
+  
+  validates_presence_of :email, :unless => :customer?
   
   def check_email_value
     if email.blank?
@@ -108,10 +112,13 @@ class User < ActiveRecord::Base
     return build_avatar(av_attributes) if avatar.nil?
     avatar.update_attributes(av_attributes)
   end
-
  
   def active?
     active
+  end
+  
+  def has_email?
+    !email.blank?
   end
   
   def activate!(params)
@@ -302,6 +309,14 @@ class User < ActiveRecord::Base
   def twitter_style_id
     "@#{twitter_id}"
   end
+  
+  
+    def to_xml(options = {})
+     options[:indent] ||= 2
+      xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
+      xml.instruct! unless options[:skip_instruct]
+      super(:builder => xml, :skip_instruct => true,:except => [:crypted_password,:password_salt,:perishable_token,:persistence_token,:single_access_token]) 
+  end
  
   protected
     def set_account_id_in_children
@@ -315,6 +330,10 @@ class User < ActiveRecord::Base
    
  end
  
+ def set_default_role
+   self.user_role = USER_ROLES_KEYS_BY_TOKEN[:customer] if self.user_role.blank?
+ end
+ 
  def set_company_name
    
    if (self.customer_id.nil? && self.email)      
@@ -325,5 +344,15 @@ class User < ActiveRecord::Base
    end
    
  end
+ 
+ def drop_authorization
+   authorizations.each do |auth|
+     auth.destroy
+   end 
+ end
+ 
+ 
+ 
+ 
   
 end

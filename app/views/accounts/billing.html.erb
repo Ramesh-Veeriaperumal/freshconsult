@@ -31,7 +31,7 @@
 					<% if @subscription.state == 'trial' %>
 						<%= link_to( "&larr; #{t('select_another_plan')}", account_url, :class => "uiButton floatl" ) %>
 						<%= submit_tag t('.save_billing_information'), :class => "uiButton" %>	
-						<%= submit_tag t('.begin_subscription'), :class => "uiButton uiButton-active", :id => "begin_subscription" %>	
+						<%= submit_tag t('.begin_subscription'), :class => "uiButton special", :id => "begin_subscription" %>	
 					<% else %>
 						<%= link_to( "&larr; #{t("cancel_and_back")}", account_url, :class => "uiButton floatl" ) %>
 						<%= submit_tag t('.update_billing_info'), :class => "uiButton" %>

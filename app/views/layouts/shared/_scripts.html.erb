@@ -19,7 +19,8 @@
 	};
 	
   $J(document).ready(function() {
-		jQuery("a.dialog2").dialog2();
+		$J("a.dialog2").dialog2();
+		
     <%= yield :onload_script -%>
   });
 <%- end -%>

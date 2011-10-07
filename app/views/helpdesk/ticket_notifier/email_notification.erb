@@ -1,8 +1,8 @@
 <%= @body %>
 
 <% if @survey_handle %>
-	<%= @survey_handle.account.survey.link_text %>
-	<%= link_to "Great experience", @survey_handle.survey_url(@ticket, SurveyPoint::HAPPY) %>
-	<%= link_to "OK experience", @survey_handle.survey_url(@ticket, SurveyPoint::NEUTRAL) %>
-	<%= link_to "Not good", @survey_handle.survey_url(@ticket, SurveyPoint::UNHAPPY) %>
+	<%= @survey_handle.survey.link_text %>
+	<%= link_to "Great experience", @survey_handle.survey_url(@ticket, Survey::HAPPY) %>
+	<%= link_to "OK experience", @survey_handle.survey_url(@ticket, Survey::NEUTRAL) %>
+	<%= link_to "Not good", @survey_handle.survey_url(@ticket, Survey::UNHAPPY) %>
 <% end %>

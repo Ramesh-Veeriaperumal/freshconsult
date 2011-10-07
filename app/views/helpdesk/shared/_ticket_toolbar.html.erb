@@ -1,0 +1,32 @@
+  <table class="tickets" width="100%">
+	  <thead>
+	  	<tr>
+				<th class="check">
+					<input type="checkbox" id="helpdesk-select-all"  />
+				</th>
+		    <th> 
+		    	<% if @current_view == "deleted" %>
+    			  <%= link_to_function(t('undelete'), "helpdesk_submit('#{ restore_helpdesk_ticket_path('multiple') }', 'put')", :class => "button") %>
+    			<% else %>
+    			  <%= link_to_function(t('delete'), "helpdesk_submit('#{ helpdesk_ticket_path('multiple') }', 'delete')", :class => "button") %>
+    			<% end %>
+			
+    			<% if @current_view == "spam" %>
+    			  <%= link_to_function(t('ticket.unflag_spam'), "helpdesk_submit('#{ unspam_helpdesk_ticket_path('multiple') }', 'put')", :class => "button") %> 
+    			<% else %>
+    			  <%= link_to_function(t('ticket.flag_spam'), "helpdesk_submit('#{ spam_helpdesk_ticket_path('multiple') }', 'put')", :class => "button") %> 
+    			<% end %> 
+			
+    			<% if @current_view != "deleted" && @current_view != "spam" %>
+    				<%= link_to_function(t('close'), "helpdesk_submit('#{ close_multiple_helpdesk_ticket_path('multiple') }', 'put')", :class => "button") %>
+    				<%= link_to_function(t('ticket.pick_up'), "helpdesk_submit('#{ pick_tickets_helpdesk_ticket_path('multiple') }', 'put')", :class => "button") %> 
+
+            <%= link_to(t('ticket.assign_to_agent'), { :action => "assign_to_agent" }, :class => "button dialog2", :title => t('ticket.assign_to_agent'), :dialogWidth => "360" ) %>
+          <% end %>
+          </th>
+          <th class="toolbar_right">	
+
+          </th>
+      </tr>
+    </thead>
+  </table>

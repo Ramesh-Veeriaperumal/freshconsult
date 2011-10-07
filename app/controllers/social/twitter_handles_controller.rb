@@ -1,33 +1,56 @@
-class Social::TwitterHandlesController < Admin::AdminController
+class Social::TwitterHandlesController < ApplicationController
   
-  before_filter :except => [:search, :create_twicket] do |c| 
+  include ErrorHandle 
+  
+  before_filter :except => [:create_twicket,:feed] do |c| 
     c.requires_permission :manage_users
   end
   
-  before_filter :only => [:search, :create_twicket] do |c| 
+  before_filter :only => [ :create_twicket,:feed] do |c| 
     c.requires_permission :manage_forums
   end
   
   prepend_before_filter :load_product, :only => [ :signin, :authdone ]
-  before_filter :load_main_product, :only => [:index]
   before_filter :build_item, :only => [:signin, :authdone]
-  before_filter :load_item,  :only => [:tweet, :edit, :update, :search, :destroy]       
+  before_filter :load_item,  :only => [:tweet, :edit, :update, :destroy]       
   before_filter :twitter_wrapper , :only => [:signin, :authdone, :index]
- 
-  def index    
-    store_location
-    if @twitter_handle
-      redirect_to edit_social_twitter_url(@twitter_handle)
-    else
-      request_token = @wrapper.request_tokens          
-      session[:request_token] = request_token.token
-      session[:request_secret] = request_token.secret
+  before_filter :check_if_handles_exist, :only => [:feed]
+  
+  def check_if_handles_exist
+    if current_account.twitter_handles.blank?
+      flash[:notice] = t('no_twitter_handle')
+      redirect_to social_twitters_url
     end
   end
   
-  def edit
-    @twitter_user = Twitter.user(@item.screen_name)
-  end 
+  def tweet_exists
+    converted_tweets = current_account.tweets.find(:all,
+                              :conditions => { :tweet_id => params[:tweet_ids].split(",")},
+                              :include => :tweetable)
+    @tweet_tkt_hsh = {}
+    converted_tweets.each do |tweet|
+      @tweet_tkt_hsh.store(tweet.tweet_id,tweet.get_ticket.display_id)
+    end
+    
+    respond_to do |format|
+      format.json  { render :json => @tweet_tkt_hsh.to_json }
+    end
+    
+  end
+ 
+  def index
+   returned_val = sandbox(0) {
+    request_token = @wrapper.request_tokens          
+    session[:request_token] = request_token.token
+    session[:request_secret] = request_token.secret
+    @twitter_handles = all_twitters   
+   }
+      
+      if returned_val == 0
+        flash[:error] = t('twitter.not_authorized')
+        redirect_to admin_home_index_url
+      end
+  end
   
   def signin
     request_token = @wrapper.request_tokens          
@@ -37,26 +60,29 @@ class Social::TwitterHandlesController < Admin::AdminController
 
   def authdone
     add_to_db
-    redirect_to redirect_url
   end
   
   def add_to_db
-    begin      
+    returned_value = sandbox(0) {      
       twitter_handle = @wrapper.auth( session[:request_token], session[:request_secret], params[:oauth_verifier] )
-      if twitter_handle.save 
-        flash[:notice] = t('twitter.success_signin', :twitter_screen_name => twitter_handle.screen_name, :helpdesk => twitter_handle.product.name)
+      if twitter_handle.save
+        flash[:notice] = t('twitter.success_signin', :twitter_screen_name => twitter_handle.screen_name, :helpdesk => twitter_handle.product.name)        
+        redirect_to edit_social_twitter_url(twitter_handle)
       else
         flash[:notice] = t('twitter.user_exists')
+        redirect_to social_twitters_url
       end
-    rescue
-      flash[:error] = t('twitter.not_authorized')
-    end
+   }
+   if returned_value == 0
+     flash[:notice] = t('twitter.not_authorized')
+     redirect_to social_twitters_url
+   end
   end
   
   def destroy
     flash[:notice] = t('twitter.deleted', :twitter_screen_name => @item.screen_name)
     @item.destroy   
-    redirect_back_or_default redirect_url 
+    redirect_back_or_default social_twitters_url 
   end
   
   def show_time_lines
@@ -76,13 +102,15 @@ class Social::TwitterHandlesController < Admin::AdminController
   
  
   def update
+    params[:social_twitter_handle][:search_keys] = [] if(params[:social_twitter_handle][:search_keys].blank?)
+
     if @item.update_attributes(params[:social_twitter_handle])    
       flash[:notice] = I18n.t(:'flash.twitter.updated')
     else
       update_error
     end   
     respond_to do |format|
-      format.html { redirect_back_or_default redirect_url }
+      format.html { redirect_back_or_default social_twitters_url }
       format.js
     end
   end
@@ -91,16 +119,10 @@ class Social::TwitterHandlesController < Admin::AdminController
     @twitter_handles = scoper.find(:all, :include => :user)
     @twitter_search = current_account.twitter_search_keys.new
     render :partial => "new_search_key"   
-  end
-  
-  def search
-    @products    = current_account.email_configs.find(:all, :order => "primary_role desc")
-    @search_keys = (@item.search_keys) || [] 
-  end
+  end 
   
   def feed
     @selected_tab = :social
-    @products   = current_account.email_configs.find(:all, :order => "primary_role desc")
     @twitter_accounts = current_account.twitter_handles
   end
   
@@ -117,8 +139,8 @@ class Social::TwitterHandlesController < Admin::AdminController
       user.signup!({:user => {:twitter_id => screen_name, :name => screen_name, 
                     :active => true,
                     :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}})
-      end
-     user 
+    end
+    user 
   end
   
   def create_note_from_tweet(in_reply_to_status_id)
@@ -126,8 +148,7 @@ class Social::TwitterHandlesController < Admin::AdminController
     user = get_twitter_user(params[:helpdesk_tickets][:twitter_id])
     
     unless tweet.nil?  
-      @ticket = tweet.tweetable.notable if  tweet.tweetable_type.eql?('Helpdesk::Note')
-      @ticket = tweet.tweetable if  tweet.tweetable_type.eql?('Helpdesk::Ticket')
+      @ticket = tweet.get_ticket
     end
     
     unless @ticket.blank?
@@ -149,9 +170,16 @@ class Social::TwitterHandlesController < Admin::AdminController
   
   def create_twicket
     in_reply_to_status_id = nil
-    sandbox do 
-      in_reply_to_status_id = Twitter.status(params[:helpdesk_tickets][:tweet_attributes][:tweet_id]).in_reply_to_status_id_str
+    
+    return_value = sandbox(0) { 
+     in_reply_to_status_id = Twitter.status(params[:helpdesk_tickets][:tweet_attributes][:tweet_id]).in_reply_to_status_id_str
+    }
+    
+    if return_value == 0
+      flash.now[:notice] = "Something wrong with the twitter API"
+      return  render :partial => "create_twicket"
     end
+    
     if in_reply_to_status_id.blank?
       @item = create_ticket_from_tweet
     else
@@ -165,16 +193,6 @@ class Social::TwitterHandlesController < Admin::AdminController
       flash.now[:notice] = t('twitter.tkt_err_save')
     end 
     render :partial => "create_twicket"
-    # if @item.save
-    #   res["success"] = true      
-    #   res["ticket_link"] = helpdesk_ticket_url(@item, :open_tweet_form => true)
-    #   res["message"] = t('twitter.ticket_save')
-    #   render :json => ActiveSupport::JSON.encode(res)
-    # else
-    #   res["success"] = false
-    #   res["message"] = t('twitter.tkt_err_save')
-    #   render :json => ActiveSupport::JSON.encode(res)
-    # end
   end
   
   def send_tweet
@@ -192,80 +210,34 @@ class Social::TwitterHandlesController < Admin::AdminController
   end 
   
   protected
-  
-    def load_main_product
-      @current_product = current_account.primary_email_config
-      @twitter_handle  = current_account.primary_email_config.twitter_handle
-    end
-  
-    def twitter_wrapper   
-      @wrapper = TwitterWrapper.new @item ,{ :product => @current_product, 
+    def twitter_wrapper
+      @wrapper = TwitterWrapper.new @item ,{ :product => scoper, 
                                              :current_account => current_account,
                                              :callback_url => url_for(:action => 'authdone')}
     end
-  
+
     def scoper
-      @current_product
+      @current_product ||= current_account.primary_email_config
     end
-  
+
+    def all_twitters
+      current_account.twitter_handles
+    end
+
     def load_product
       @current_product = current_account.all_email_configs.find(params[:product_id])
-    end  
-  
-    def build_item
-      @item = scoper.build_twitter_handle
     end
-  
+
+    def build_item
+      @item = scoper.twitter_handles.build
+    end
+
     def load_item
       @item = current_account.twitter_handles.find(params[:id]) 
     end
 
     def human_name
       'Twitter'
-    end
-  
-    def redirect_url
-      if @item.product.primary_role?
-        social_twitters_url
-      else
-        edit_social_twitter_url(@item)
-      end
-    end
-  
-    def sandbox
-      begin
-        yield
-      rescue Errno::ECONNRESET => e
-        NewRelic::Agent.notice_error(e)
-        RAILS_DEFAULT_LOGGER.debug "Something wrong happened in twitter!"
-        RAILS_DEFAULT_LOGGER.debug e.to_s
-      rescue Timeout::Error => e
-        NewRelic::Agent.notice_error(e)
-        RAILS_DEFAULT_LOGGER.debug "Something wrong happened in twitter!"
-        RAILS_DEFAULT_LOGGER.debug e.to_s
-      rescue EOFError => e
-        NewRelic::Agent.notice_error(e)
-        RAILS_DEFAULT_LOGGER.debug "Something wrong happened in twitter!"
-        RAILS_DEFAULT_LOGGER.debug e.to_s
-      rescue Errno::ETIMEDOUT => e
-        NewRelic::Agent.notice_error(e)
-        RAILS_DEFAULT_LOGGER.debug "Something wrong happened in twitter!"
-        RAILS_DEFAULT_LOGGER.debug e.to_s
-      rescue OpenSSL::SSL::SSLError => e
-        NewRelic::Agent.notice_error(e)
-        RAILS_DEFAULT_LOGGER.debug "Something wrong happened in twitter!"
-        RAILS_DEFAULT_LOGGER.debug e.to_s
-      rescue SystemStackError => e
-        NewRelic::Agent.notice_error(e)
-        RAILS_DEFAULT_LOGGER.debug "Something wrong happened in twitter!"
-        RAILS_DEFAULT_LOGGER.debug e.to_s
-      rescue Exception => e
-        NewRelic::Agent.notice_error(e)
-        RAILS_DEFAULT_LOGGER.debug "Something wrong happened in twitter!"
-        RAILS_DEFAULT_LOGGER.debug e.to_s
-      rescue 
-        RAILS_DEFAULT_LOGGER.debug "Something wrong happened in twitter!"
-      end
     end
 
 end

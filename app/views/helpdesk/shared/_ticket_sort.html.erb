@@ -1,0 +1,41 @@
+<div class="sort-bar toolbar">
+  <div class="page_info">
+    <%= will_paginate @items, :page_links => false, :class => "toolbar_pagination", :previous_label => "<span></span>", :next_label => "<span></span>" %>  
+    <span>
+      Showing 
+      <b><%= @items.offset + 1 %></b> - <b><%= @items.offset + @items.length %></b> of 
+      <b><%= @items.total_entries %></b>
+    </span>          
+  </div>
+
+  <div class="fd-menu" id="SortMenu" style="display:none; margin-left:-5px; margin-top:18px;">
+    <ul>             
+       <% current_sort_name = "" %>
+       <% TicketsFilter::SORT_FIELD_OPTIONS.each do |sort_item| %>       
+         <% content_tag :li do %>
+           <% link_to "#", :class => "wf_order", :wf_order => sort_item[1] do %>                      
+             <% if( sort_item[1] == current_wf_order ) %>
+                <% current_sort_name = sort_item[0] %>
+                <%= content_tag(:span, "", :class => "icon ticksymbol") %>
+             <% end %>            
+             <%= sort_item[0] %>
+           <% end %>                  
+         <% end %>
+       <% end %>
+    </ul>
+    <span class="seperator"></span>
+    <ul>
+      <% TicketsFilter::SORT_ORDER_FIELDS_OPTIONS.each do |sort_order_item| %>
+        <% content_tag :li do %>
+          <% link_to "#", :class => "wf_order_type", :wf_order_type => sort_order_item[1] do %>
+            <%= content_tag(:span, "", :class => "icon ticksymbol") if( sort_order_item[1] == current_wf_order_type ) %>
+            <%= sort_order_item[0] %>
+          <% end %>
+        <% end %>
+      <% end %>
+    </ul>   
+  </div>
+  <a class="drop-right nav-trigger" href="#" menuid="#SortMenu">
+    <%= t('ticket.sort_by') %> <b><%= current_sort_name %></b>
+  </a>
+</div>

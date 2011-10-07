@@ -1,0 +1,70 @@
+<% form_tag({:action => :custom_search}, { :method => :post, :id => 'freshFilter' }) do %>
+  <%= hidden_field_tag(:wf_type, "Helpdesk::Filters::CustomTicketFilter") %>
+  <%= hidden_field_tag(:wf_model, "Helpdesk::Ticket") %>
+  <ul class="ui-form">
+    <li class="inline-field">
+      <label><%= t(".give_a_name") %></label> 
+      <div class="inline-radio">
+        <%= text_field_tag( :filter_name, "", :class => "required text", :size => 30) %>
+      </div>
+    </li>
+    <% if permission?(:manage_users) %>
+    <li class="inline-field">
+      <label><%= t('.visible_to') %>:</label>
+      <div class="inline-radio">
+  	    <label class="inline-radio">
+  		    <%= radio_button_tag :visibility, Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me], Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me] == @ticket_filter.accessible.visibility, {:onclick =>"toggleGroup(this.value)", :class => "radio" } %> 
+  		    <%= t('admin.canned_responses.form.me_only') %>
+  	    </label>
+  	    <label class="inline-radio">
+  		    <%= radio_button_tag :visibility, Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents],  Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents] == @ticket_filter.accessible.visibility, {:onclick =>"toggleGroup(this.value)",:class => "radio"  } %> 
+  		    <%= t('admin.canned_responses.form.all_agents') %>
+  	    </label>
+  	    <label class="inline-radio">
+  		    <%= radio_button_tag :visibility, Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents], Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents] == @ticket_filter.accessible.visibility,{:onclick =>"toggleGroup(this.value)" , :class => "radio" } %> 
+  		    <%= t('admin.canned_responses.form.groups') %>
+  	    </label>
+  		    <div style="display:none;" class="tabbed" id="accessible_group">
+            <%= select_tag :visibility_group_id, options_from_collection_for_select(current_account.groups, :id, :name, @ticket_filter.accessible.group_id) %>
+          </div>
+      </div>
+    </li>
+    <% end %>
+  </ul>
+  <div class="button-container">
+    <%= submit_tag t("save"), :class => "uiButton" %>
+  </div>
+<% end %>
+<% javascript_tag do %>
+  jQuery("#freshFilter").validate({
+    submitHandler: function(){
+        jQuery.ajax({
+          url: "/wf/filter/save_filter",
+          type: "POST",
+          data: {
+            data_hash: query_hash.toJSON(),
+            filter_name: jQuery('#filter_name').val(),
+            wf_model: "Helpdesk::Ticket",
+            visibility: { "visibility": jQuery('#freshFilter input[name="visibility"]:checked').val(), 
+            "user_id": <%= current_user.id %>,
+            "group_id":  jQuery('#visibility_group_id').val() }
+          },
+          success: function(msg){
+            console.log(msg);
+          }
+        });
+        return false;
+    }
+  });
+  function toggleGroup(access_id){	
+		if (access_id == '<%=Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents]%>')		{
+			jQuery('#accessible_group').show();
+			jQuery('#visibility_group_id').removeAttr('disabled');
+		}
+		else
+		{
+			jQuery('#accessible_group').hide();	
+			jQuery('#visibility_group_id').attr('disabled','disabled');
+		}
+	}
+<% end %>
