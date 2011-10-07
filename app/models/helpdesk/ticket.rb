@@ -88,6 +88,23 @@ class Helpdesk::Ticket < ActiveRecord::Base
   attr_protected :attachments #by Shan - need to check..
   
   accepts_nested_attributes_for :tweet
+  
+  named_scope :created_at_inside, lambda { |start, stop|
+          { :conditions => [" helpdesk_tickets.created_at >= ? and helpdesk_tickets.created_at <= ?", start, stop] }
+        }
+  named_scope :resolved_and_closed_tickets, :conditions => {:status => [STATUS_KEYS_BY_TOKEN[:resolved],STATUS_KEYS_BY_TOKEN[:closed]]}
+  
+  named_scope :all_company_tickets,lambda { |customer| { 
+        :joins => :requester,
+        :conditions => [" users.customer_id = ?",customer]
+  } 
+  }
+  
+  named_scope :company_tickets_resolved_on_time,lambda { |customer| { 
+        :joins => [:ticket_states,:requester],
+        :conditions => ["helpdesk_tickets.due_by >  helpdesk_ticket_states.resolved_at AND users.customer_id = ?",customer]
+  } 
+  }
 
   named_scope :newest, lambda { |num| { :limit => num, :order => 'created_at DESC' } }
   named_scope :updated_in, lambda { |duration| { :conditions => [ 
