@@ -247,6 +247,7 @@ EDITOR_OPTIONS: &common
     theme_advanced_styles:              "Code=codeStyle;Quote=quoteStyle"
     entity_encoding:                    "raw"
     dialog_type:                        "modal" 
+    convert_urls:                       false
     
 LARGE_EDITOR:
     <<: *common
@@ -268,6 +269,6 @@ FRESH_EDITOR:
     height:                             200
 TICKET_EDITOR:
     <<: *common    
-    theme_advanced_buttons1:            "bold,italic,|,underline,bullist,numlist,|,forecolor,backcolor"
+    theme_advanced_buttons1:            "bold,italic,|,underline,bullist,numlist,|,forecolor,backcolor,|,link,unlink"
     height:                            200
     valid_elements:                     "a[href|target=_blank],strong/b,br,span[style],p,i,em,ol,ul,li"    
