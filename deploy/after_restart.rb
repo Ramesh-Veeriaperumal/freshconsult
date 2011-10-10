@@ -1,9 +1,8 @@
 #To restart delayed_job workers..
 run "sudo monit -g dj_helpkit restart all"
 
-#Not a smart way...
 on_utilities("sphinx_sla") do
-  unless FileTest.exist?("#{release_path}/config/#{environment}.sphinx.conf")
+  if `ps aux | grep search[d]`.blank? #Need to revisit this again..
     run "bundle exec rake thinking_sphinx:configure"
     run "bundle exec rake thinking_sphinx:index"
     run "bundle exec rake thinking_sphinx:start"
