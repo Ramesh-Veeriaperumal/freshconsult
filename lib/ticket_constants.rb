@@ -10,7 +10,7 @@ module TicketConstants
     [ :phone,      I18n.t('phone'),            3 ],
     [ :forum,      I18n.t('forum_key'),        4 ],
     [ :twitter,    I18n.t('twitter_source'),   5 ],
-    [ :facebook,   I18n.t('facebook'),         6 ],
+    [ :facebook,   I18n.t('facebook_source'),         6 ],
     [ :chat,       I18n.t('chat'),             7 ]    
   ]
 

@@ -40,7 +40,7 @@ class Social::FacebookPosts
      requester = get_facebook_user(profile_id)
      unless feed[:message].blank?
         @ticket = @account.tickets.build(
-          :subject => feed[:message],
+          :subject => truncate_subject(feed[:message], 100),
           :description => feed[:message],
           :description_html => get_html_content(feed[:post_id]),
           :requester => requester,
@@ -77,10 +77,10 @@ class Social::FacebookPosts
       
     elsif "photo".eql?(post[:type]) 
       
-      html_content =  "<div>"+post[:message]+"<div style=\"padding:5px 0\"><div style=\"float:left;margin: 5px 10px 10px 0;\">"+
+      html_content =  "<div>"+post[:message]+"</div><div style=\"padding:5px 0\"><div style=\"float:left;margin: 5px 10px 10px 0;\">"+
                       "<a href=\"#{post[:link]}\" target=\"_blank\"><img src=\"#{post[:picture]}\"></a></div>"+
-                      "<div style=\"vertical-align:top;\"><a href=\"#{post[:link]}\" style=\"vertical-align:top\" target=\"_blank\">Wall Photos</a>"+
-                      +"<div class=\"agent_light_text\"></div></div></div>"
+                      "<div style=\"vertical-align:top;\"><a href=\"#{post[:link]}\" style=\"vertical-align:top\" target=\"_blank\">Wall Photos</a></div></div>"
+                      
     end
     
     return html_content
@@ -144,5 +144,9 @@ class Social::FacebookPosts
     
    end
  end 
-  
+
+  def truncate_subject(subject , count)
+    (subject.length > count) ? "#{subject[0..(count - 1)]}..." : subject
+  end
+    
 end

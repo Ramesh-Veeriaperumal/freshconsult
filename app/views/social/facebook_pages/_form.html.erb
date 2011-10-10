@@ -22,7 +22,12 @@
       </label>
       <div class="info-data tabbed">
         Freshdesk will convert all Company posts on this Facebook page into tickets.
-      </div>	 
+      </div>
+	   <span class="seperator"></span>
+      <label class="caption">Product</label>
+      <div class="fields">
+  	    <%= collection_select(:social_facebook_page, :product_id, current_account.products, :id, :name, { :include_blank => '...', :selected => facebook_page.product_id })%>
+  	  </div>	 
     </div>
   </li>
 </ul>
