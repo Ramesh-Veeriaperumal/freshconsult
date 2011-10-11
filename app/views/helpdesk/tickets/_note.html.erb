@@ -50,13 +50,7 @@
 		<span class="loading-edit" id='<%= "loading_#{notedetails}" %>' style="display:none;"></span>
   </div>
 	<div class="details ticketdetails" id='<%= notedetails %>'>
-		<%= email_before_quoted(note.body_html) %>
-		<% if email_quoted?(note.body) %>
-	    	<%= link_to_function(t('show_quoted_text'), "$('quoted-#{ note.id }').toggle()", :class => 'toggle-quoted') %>
-	        <blockquote id="quoted-<%= note.id %>" style="display:none">
-	          <%= simple_format(auto_link(email_after_quoted(strip_tags(note.body)))) %>
-	        </blockquote>
-		<% end %>
+		<%= note.body_html %>
 	</div>
 	<% unless note.attachments.empty? %>
 		<span class="seperator"></span>
