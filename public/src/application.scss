@@ -2577,7 +2577,7 @@ a.page_title{
 	margin-top:-14px;
 	margin-right:-20px;
 	text-align: left;
-	.info_data{ margin-bottom:7px; } 
+	.info_data{ margin-top:-10px; padding:0px; } 
 	.search-grey-box{ margin:-10px -20px 12px -20px; }
 }
 
@@ -2960,26 +2960,7 @@ div.addReminder{
 
 .solutions_text{
 	padding-top:8px;
-	font-family: Georgia, Verdana, Arial, Helvetica, sans-serif; 
-	font-size:14px;
-	img{ max-width:100%; height:auto;}
-	ol, ul{ margin: 14px 0px 14px 0px; padding: 0px 0px 0px 40px; line-height: 17px;}
-	blockquote { margin: 1em 1em; color: #999; border-left: 2px solid #999; padding:6px 6px 1px 1em; background-color: #EEE;}
-	ul{ list-style:disc outside;  }
-	h1, h2, h3, h4{ font-weight:400; }
-	h1 {font-size: 2em}
-	h2 {font-size: 1.5em}
-	h3 {font-size: 1.17em}
-	h4 {font-size: 1em}
-	h5 {font-size: .83em}
-	h6 {font-size: .75em}
-	p{  font-size:14px; line-height: 1.5em; margin-bottom: 1.3em; text-align: left; width: 90%;  }
-    table td, table th { border:1px solid #BBB; padding:4px 5px; }
-    ins {border-bottom:1px solid green; text-decoration: none; color:green}
-	del {color:#FF0000; text-decoration:line-through}
-	cite {border-bottom:1px dashed #0000FF}
-	acronym {border-bottom:1px dotted #CCC; cursor:help}
-	abbr {border-bottom:1px dashed #CCC; cursor:help}
+	@include text-formatting;
 }
 
 

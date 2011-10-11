@@ -35,11 +35,6 @@
 				<% if( !@article.folder.visible?(current_user))%> 
 					<img src="/images/private_lock.gif" class="locked" width="20px" height="19px" />
 				<% end %>
-				<% if( @article.art_type == 2 )%> 
-					<img src="/images/solution_type.png" title="<%= @article.type_name %>" width="32px" height="32px" />
-				<% else %>
-					<img src="/images/solution_workaround_type.png" title="<%= @article.type_name %>"  width="32px" height="32px" />
-				<% end %>
 				<div class="icon_text"><%= @article.type_name %></div>
 			</span>	
 	  		 
