@@ -31,7 +31,7 @@
       Unassigned
     <% end %>  
   </span> 
-  <% unless feature?(:multi_product) %>
+  <% if feature?(:multi_product) && @ticket.email_config %>
   <span>
     <b>Product</b>
     <%= h(@ticket.email_config.name) %>

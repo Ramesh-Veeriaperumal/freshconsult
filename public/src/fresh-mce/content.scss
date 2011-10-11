@@ -1,5 +1,7 @@
 @import "base";
 @import "mixins";
+@import "reset";
 
 body, td, pre { color:#333333; font-family:$blueprint-font-family; margin:8px; }
-body{ @include text-formatting; }
+
+@include text-formatting; 

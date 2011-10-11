@@ -75,6 +75,8 @@ ActionController::Routing::Routes.draw do |map|
   end
   
   map.resources :reports
+  map.customer_activity   '/activity_reports/customer', :controller => 'reports/customer_reports', :action => 'index'
+
   
   map.namespace :social do |social|
     social.resources :twitters, :controller => 'twitter_handles', 
