@@ -68,7 +68,7 @@ module Helpdesk::TicketActions
     @source_ticket = current_account.tickets.find_by_display_id(params[:id])
     @note = @source_ticket.notes.find(params[:note_id])   
     params[:helpdesk_ticket] = {:subject =>@source_ticket.subject ,
-                                :description =>@note.body ,
+                                :description_html =>@note.body_html ,
                                 :email => @note.user.email,
                                 :priority =>@source_ticket.priority,
                                 :group_id =>@source_ticket.group_id,
@@ -163,7 +163,7 @@ module Helpdesk::TicketActions
   
   def add_note_to_target_ticket
     @target_note = @target_ticket.notes.create(
-        :body => params[:target][:note],
+        :body_html => params[:target][:note],
         :private => params[:target][:is_private] || false,
         :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],
         :account_id => current_account.id,
