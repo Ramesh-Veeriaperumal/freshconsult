@@ -38,7 +38,7 @@ ActionController::Routing::Routes.draw do |map|
   
   map.openid_done '/google/complete', :controller => 'accounts', :action => 'openid_complete'
   
-  map.zendesk_import '/zendesk/import', :controller => 'admin/zip_readers', :action => 'index'
+  map.zendesk_import '/zendesk/import', :controller => 'admin/zen_import', :action => 'index'
   
   map.tauth '/twitter/authdone', :controller => 'social/twitter_handles', :action => 'authdone'
   
@@ -71,9 +71,12 @@ ActionController::Routing::Routes.draw do |map|
     admin.resources :canned_responses
     admin.resources :products
     admin.resources :surveys, :only => [ :index ]
+    admin.resources :zen_import, :collection => {:import_data => :any }
   end
   
   map.resources :reports
+  map.customer_activity   '/activity_reports/customer', :controller => 'reports/customer_reports', :action => 'index'
+
   
   map.namespace :social do |social|
     social.resources :twitters, :controller => 'twitter_handles', 

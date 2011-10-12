@@ -1,0 +1,14 @@
+<% content_for :sidebar do -%><%- end %> 
+
+<%= content_tag( :h3,  t('import_zendesk_title'), :class => "title" ) %>
+
+<%if  @import_status && @import_status.status%>
+
+<%="Currently one import is running. WE will email you once its done. "%>
+
+<%else%>
+
+<%= render :partial => "form"%>
+<%end%>
+
+

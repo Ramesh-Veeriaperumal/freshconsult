@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111003092130) do
+ActiveRecord::Schema.define(:version => 20111004070713) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -524,6 +524,8 @@ ActiveRecord::Schema.define(:version => 20111003092130) do
     t.boolean  "group_escalated",                     :default => false
     t.integer  "inbound_count",                       :default => 1
   end
+
+  add_index "helpdesk_ticket_states", ["ticket_id"], :name => "index_helpdesk_ticket_states_on_ticket_id"
 
   create_table "helpdesk_tickets", :force => true do |t|
     t.text     "description",      :limit => 16777215

@@ -20,6 +20,7 @@ class SubscriptionNotifier < ActionMailer::Base
   def welcome(account)
     setup_email(account.account_admin, "Welcome to #{AppConfig['app_name']}!","vijay@freshdesk.com")
     @body = { :account => account, :host => account.host }
+    @content_type = "text/html"
   end
   
   def trial_expiring(user, subscription, trial_days = nil)
