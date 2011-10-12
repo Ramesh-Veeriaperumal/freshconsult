@@ -75,12 +75,16 @@ class Helpdesk::NotesController < ApplicationController
       #cc_array = params[:cc_emails].split(',').collect
       cc_array = params[:cc_emails]
       unless cc_array.blank?
-        cc_array.delete_if {|x| (extract_email(x) == @parent.requester.email or !(valid_email?(x))) }
-        cc_array = cc_array.uniq
+        cc_array = validate_emails cc_array
       end
       @parent.update_attribute(:cc_email, cc_array)
      end
-    end
+   end
+   
+   def validate_emails email_array
+     email_array.delete_if {|x| (extract_email(x) == @parent.requester.email or !(valid_email?(x))) }
+     email_array = email_array.uniq
+   end
     
     def extract_email(email)
       email = $1 if email =~ /<(.+?)>/
@@ -95,7 +99,7 @@ class Helpdesk::NotesController < ApplicationController
     def send_reply_email
       reply_email = params[:reply_email][:id] unless params[:reply_email].nil?
       add_cc_email     
-      Helpdesk::TicketNotifier.send_later(:deliver_reply, @parent, @item , reply_email,{:include_cc => params[:include_cc]})  
+      Helpdesk::TicketNotifier.send_later(:deliver_reply, @parent, @item , reply_email,{:include_cc => params[:include_cc] , :bcc_emails =>validate_emails(params[:bcc_emails])})  
       flash[:notice] = t(:'flash.tickets.reply.success')
     end
 
