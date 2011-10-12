@@ -73,17 +73,17 @@ class Helpdesk::NotesController < ApplicationController
     def add_cc_email
      if !params[:include_cc].blank?# and !params[:cc_emails].blank?
       #cc_array = params[:cc_emails].split(',').collect
-      cc_array = params[:cc_emails]
-      unless cc_array.blank?
-        cc_array = validate_emails cc_array
-      end
-      @parent.update_attribute(:cc_email, cc_array)
+       cc_array = validate_emails params[:cc_emails]
+       @parent.update_attribute(:cc_email, cc_array) unless cc_array.blank?
+        
      end
    end
    
    def validate_emails email_array
+     unless email_array.blank?
      email_array.delete_if {|x| (extract_email(x) == @parent.requester.email or !(valid_email?(x))) }
      email_array = email_array.uniq
+     end
    end
     
     def extract_email(email)
