@@ -57,6 +57,7 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
     subject       formatted_subject(ticket)
     recipients    ticket.requester.email
     cc            ticket.cc_email if !options[:include_cc].blank? and !ticket.cc_email.nil?
+    bcc           options[:bcc_emails]
     from          reply_email
     body          :ticket => ticket, :body => note.body_html,
                   :survey_handle => SurveyHandle.create_handle(ticket, note)

@@ -1241,6 +1241,9 @@ en:
         cc: Cc
         addcc: Add Cc
         removecc: Remove Cc
+        bcc: Bcc
+        addbcc: Add Bcc
+        removebcc: Remove Bcc
       tweet_form:
         title: "Reply to %{user}"
     dashboard:
