@@ -109,8 +109,8 @@ module CapsuleCRM
     def self.find_all(options={})
       params = query_params(options)
       @@last_response = get(get_path, :query => params)
-      #init_many(last_response)
-      @@last_response
+      init_many(last_response)
+      #@@last_response
     end
 
 

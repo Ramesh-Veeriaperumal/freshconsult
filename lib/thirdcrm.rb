@@ -10,8 +10,10 @@ class ThirdCRM
   end
   
   def contact_capsule
-    person = CapsuleCRM::Person.find_by_email 'kiran@freshdesk.com'
-    person
+    #person = CapsuleCRM::Person.find_by_email 'kiran@freshdesk.com'
+    #person
+    partys = CapsuleCRM::Organisation.find :all
+    partys
   end
   
   #Account name,helpdesk_url,creation_date,renewal_date,time_zone
