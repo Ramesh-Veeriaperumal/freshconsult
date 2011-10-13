@@ -47,6 +47,7 @@ Total number of accounts : <%=Account.all.count%>
     <th>Domain</th>
     <th>Created</th>
 	<th>Email</th>
+	<th>Google Domain</th>
   </tr>
   <% @accounts.each do |account| %>
     <tr>
@@ -54,6 +55,7 @@ Total number of accounts : <%=Account.all.count%>
       <td><%= account.full_domain %></td>
       <td><%= account.created_at.to_s(:short_day) %></td>
 	  <td><%= account.account_admin.email %></td>
+	  <td><%= account.google_domain %></td>
     </tr>
   <% end %>
 </table>
