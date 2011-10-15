@@ -12,7 +12,15 @@ class Helpdesk::AuthorizationsController < ApplicationController
   end
   
   def autocomplete #Copied from HelpDeskControllerMethods -Shan
-    items = autocomplete_scoper.find(
+      deliver_autocomplete autocomplete_scoper
+  end
+  
+  def agent_autocomplete
+     deliver_autocomplete autocomplete_scoper.technicians
+  end
+  
+  def deliver_autocomplete auto_scoper
+    items = auto_scoper.find(
       :all, 
       :conditions => ["email is not null and name like ? or email like ?", "%#{params[:v]}%", "%#{params[:v]}%"], 
       :limit => 10)
@@ -22,6 +30,7 @@ class Helpdesk::AuthorizationsController < ApplicationController
     respond_to do |format|
       format.json { render :json => r.to_json }
     end
+
   end
 
 protected
@@ -35,7 +44,6 @@ protected
   end
 
   def autocomplete_scoper
-    return current_account.users.technicians if params[:r].eql?('agents')
     current_account.users
   end
   

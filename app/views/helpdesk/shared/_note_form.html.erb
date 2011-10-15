@@ -24,7 +24,7 @@
 
                 <% content_for :onload_script do -%>
 				    function agent_lookup(searchString, callback) { 
-                    new Ajax.Request('<%= autocomplete_helpdesk_authorizations_path %>?v='+searchString+'&r=agents', 
+                    new Ajax.Request('<%= agent_autocomplete_helpdesk_authorizations_path %>?v='+searchString, 
                                                               { parameters: {name: searchString, rand: (new Date()).getTime()},
                                                               onSuccess: function(response) {
                                                                 var choices = $A();
