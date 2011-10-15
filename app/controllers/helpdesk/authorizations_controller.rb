@@ -35,6 +35,7 @@ protected
   end
 
   def autocomplete_scoper
+    return current_account.users.technicians if params[:r].eql?('agents')
     current_account.users
   end
   

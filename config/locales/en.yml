@@ -1072,6 +1072,7 @@ en:
       post_to_linked_forum: Post in linked forum
       form_title: Reply to the conversation
       reply_email_id: Send the reply from the following email id
+      send_and_resolve: Send and Resolve
     reported_by: from %{requester}
     close_btn: Close
     close_btn_title: Close this ticket
@@ -1085,6 +1086,10 @@ en:
     note_form: 
       private_note: This is a private note, don't show this to the requester
       form_title: Add a Note
+      add_and_resolve: Add and Resolve
+      notify_agents: Notify Agents
+    tweet_form:
+      tweet_and_resolve: Tweet and Resolve
     activities: Activities
     requestor_info: Requestor Info
     reply_to: Reply to ticket
@@ -1109,6 +1114,9 @@ en:
     merge_btn: Merge
     split_ticket: Split as new Ticket
     tweets: Tweets
+    agent_notify: added a note and wants you to have a look
+    note_content: Note content 
+    ticket_url: Ticket URL
   recent_activity: Recent Activity
   forgot_password: Forgot Password
   change_plan: Change plan

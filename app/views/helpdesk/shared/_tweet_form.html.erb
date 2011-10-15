@@ -17,11 +17,13 @@
 			</label>
 	    <div class="fields">
 	    	<%= f.text_area :body, { :class => 'required tweet auto-height', :id => "tweet-box", :value =>"@#{@ticket.requester.twitter_id}", :rows => "3" } %>
-      	<%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["twitter"]%>          
+      	<%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["twitter"]%>  
+		<%= hidden_field_tag(:ticket_status , params[:ticket_status], :id=>:tweet_ticket_status  )%>        
 	    </div>
 	  </li>
     <li class="button-container">
        <span class="tweet-counter" id="SendTweetCounter">140</span>
+	   <%= submit_tag(t('ticket.tweet_form.tweet_and_resolve'), :onclick => "jQuery('#tweet_ticket_status').val('resolved');" , :class => "uiButton") %>
        <%= submit_tag(local_assigns[:submit] || ActiveSupport::Inflector.titleize(id), :class => "uiButton" ) %>
     </li>
    </ul> 
