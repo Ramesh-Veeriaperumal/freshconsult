@@ -110,6 +110,7 @@ module CapsuleCRM
       params = query_params(options)
       @@last_response = get(get_path, :query => params)
       init_many(last_response)
+      #@@last_response
     end
 
 

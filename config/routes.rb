@@ -75,6 +75,8 @@ ActionController::Routing::Routes.draw do |map|
   end
   
   map.resources :reports
+  map.customer_activity   '/activity_reports/customer', :controller => 'reports/customer_reports', :action => 'index'
+
   
   map.namespace :social do |social|
     social.resources :twitters, :controller => 'twitter_handles', 
@@ -202,7 +204,7 @@ ActionController::Routing::Routes.draw do |map|
 
     helpdesk.resources :guides, :member => { :reorder_articles => :put, :privatize => :put, :publicize => :put }, :collection => { :reorder => :put }
     
-    helpdesk.resources :authorizations, :collection => { :autocomplete => :get }
+    helpdesk.resources :authorizations, :collection => { :autocomplete => :get, :agent_autocomplete => :get }
     
     helpdesk.resources :mailer, :collection => { :fetch => :get }
     

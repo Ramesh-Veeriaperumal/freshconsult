@@ -4,7 +4,7 @@
 	nsc_param = nsc_param || "helpdesk_ticket"
 %>
 
-<label>Attach</label>
+<label>Attach a file</label>
 <input type="file" id="<%=attach_id%>_file" name="emptyfile" nameWhenFilled="<%=nsc_param%>[attachments][][file]" fileContainer="<%=attach_id%>-container" fileList="<%=attach_id%>-attachments" sendFocusTo="<%=attach_id%>-body" />
 <div class="attachments" id="<%=attach_id%>-container" style="display:none">
   <div id="<%=attach_id%>-attachments"></div>

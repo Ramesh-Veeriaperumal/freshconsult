@@ -29,6 +29,10 @@
     <th>State</th>
     <td><%= @subscription.state %></td>
   </tr>
+  <tr>
+    <th>Agents</th>
+    <td><%= @subscription.account.agents.count %></td>
+  </tr>
 </table>
 
 <h2>Charge Subscription</h2>

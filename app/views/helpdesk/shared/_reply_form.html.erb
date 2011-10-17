@@ -1,28 +1,5 @@
-<div class="request_panel" id="<%=cntid%>" style="display:none;">
-    <% form_for note, :html => {:multipart => true, :id => "HelpdeskReply" } do |f| %>
-    <%= f.error_messages %>
-    <ul class="ui-form dont-validate">
-        <li class="inline-field field">
-            <div class="request_form_options">
-              <a href="javascript:void(0)" onclick="showHideCc(this)" class="slim-button" >
-                <%= (@ticket.cc_email.blank?)? t(".addcc"): t(".removecc") %>
-              </a>
-              <%= link_to_function( t(:'ticket.canned_responses.insert_ca_response') + " &raquo;", "show_canned_response(#{@ticket.id})", :class => "slim-button insert-canned-response") %>
-            </div>
-            <%= content_tag( :h4, t(".title", :email => @ticket.requester.email), :class => "title" ) %>
-            <%= f.label(:reply_email, "From:", :class => "caption" ) %>
-            <div class="fields">
-              <%= select :reply_email, :id, options_for_select(@reply_email, @ticket.reply_email) %>
-              <input type="checkbox" class="hide" id="include_cc" name="include_cc" value="true" <%= (!@ticket.cc_email.blank?)? "checked" : "" %> />              
-            </div>
-        </li>
-        <li class="inline-field field" id="cc-form-container" style="display:<%= @ticket.cc_email.blank? ? "none": "block" %>;">
-            <label class="caption">
-                <%= t(".cc") %>:
-            </label>
-            <div class="fields">
-                <% content_for :onload_script do -%>
-                  function lookup(searchString, callback) { 
+<% content_for :onload_script do -%>
+                  function lookup(searchString ,callback) { 
                     new Ajax.Request('<%= autocomplete_helpdesk_authorizations_path %>?v='+searchString, 
                                                               { parameters: {name: searchString, rand: (new Date()).getTime()},
                                                               onSuccess: function(response) {
@@ -35,11 +12,53 @@
                                                             }
                   var cachedBackend = new Autocompleter.Cache(lookup, {choices: 10});
                   var cachedLookup = cachedBackend.lookup.bind(cachedBackend);
+<%- end %>
+
+
+<div class="request_panel" id="<%=cntid%>" style="display:none;">
+    <% form_for note, :html => {:multipart => true, :id => "HelpdeskReply" } do |f| %>
+    <%= f.error_messages %>
+    <ul class="ui-form dont-validate">
+        <li class="inline-field field">
+            <div class="request_form_options">
+              <a href="javascript:void(0)" onclick="showHideCc(this)" class="slim-button" >
+                <%= (@ticket.cc_email.blank?)? t(".addcc"): t(".removecc") %>
+              </a>
+			  <a href="javascript:void(0)" onclick="showHideBcc(this)" class="slim-button" >
+			  	<%=t(".addbcc")%>
+              </a>
+              <%= link_to_function( t(:'ticket.canned_responses.insert_ca_response') + " &raquo;", "show_canned_response(#{@ticket.id})", :class => "slim-button insert-canned-response") %>
+            </div>
+            <%= content_tag( :h4, t(".title", :email => @ticket.requester.email), :class => "title" ) %>
+            <%= f.label(:reply_email, "From:", :class => "caption" ) %>
+            <div class="fields">
+              <%= select :reply_email, :id, options_for_select(@reply_email, @ticket.reply_email) %>
+              <input type="checkbox" class="hide" id="include_cc" name="include_cc" value="true" <%= (!@ticket.cc_email.blank?)? "checked" : "" %> />              
+              <input type="checkbox" class="hide" id="include_bcc" name="include_bcc" value="true"  />
+			</div>
+        </li>
+        <li class="inline-field field" id="cc-form-container" style="display:<%= @ticket.cc_email.blank? ? "none": "block" %>;">
+            <label class="caption">
+                <%= t(".cc") %>:
+            </label>
+            <div class="fields">
+                <% content_for :onload_script do -%>
                   new Autocompleter.MultiValue("cc_emails", cachedLookup, $A(<%= @ticket.cc_email.map{|item|[item, item]}.to_json unless @ticket.cc_email.blank? %>), {frequency: 0.1, acceptNewValues: true});
-								<%- end %>
+				<%- end %>
                 <input type="text" id="cc_emails" name="cc_emails" />
             </div>
         </li>
+		<li class="inline-field field" id="bcc-form-container" style="display:none">
+			 <label class="caption">
+                <%= t(".bcc") %>:
+            </label>
+            <div class="fields">
+                <% content_for :onload_script do -%>
+				new Autocompleter.MultiValue("bcc_emails", cachedLookup, $A(), {frequency: 0.1, acceptNewValues: true});
+                <%- end %>
+                <input type="text" id="bcc_emails" name="bcc_emails" />
+            </div>
+		</li>
         <li class="inline-field field">
             <label class="caption">
                 <%= t("message") %>:
@@ -61,6 +80,7 @@
         <%= f.hidden_field :private , :value => false %>
         <!--reply source will be always email-->
         <%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["email"] %>
+		<%= hidden_field_tag(:ticket_status , params[:ticket_status], :id=>:reply_ticket_status  )%>
         <li class="inline-field field">
             <div class="attachment-options fields" id="attachment-options-reply">
                 <% unless local_assigns[:no_attachments] %>
@@ -69,6 +89,7 @@
             </div>
         </li>
         <li class="button-container">
+        	<%= submit_tag(t('ticket.reply_form.send_and_resolve'), :onclick => "jQuery('#reply_ticket_status').val('resolved');" , :class => "uiButton") %>
             <%= submit_tag(local_assigns[:submit] || ActiveSupport::Inflector.titleize(id), :class => "uiButton" ) %>
         </li>
     </ul>
@@ -84,6 +105,17 @@
        }else{
          jQuery(link).text('<%= t(".removecc") %>');
          $("include_cc").checked = true;
+       }
+    }
+	
+	 function showHideBcc(link){
+       jQuery("#bcc-form-container").toggle();
+       if( $("include_bcc").checked ){
+         jQuery(link).text('<%= t(".addbcc") %>');
+         $("include_bcc").checked = false;
+       }else{
+         jQuery(link).text('<%= t(".removebcc") %>');
+         $("include_bcc").checked = true;
        }
     }
     

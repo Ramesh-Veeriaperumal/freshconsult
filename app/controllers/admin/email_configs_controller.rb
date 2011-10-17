@@ -1,3 +1,5 @@
+require "httparty"
+
 class Admin::EmailConfigsController < Admin::AdminController
   include ModelControllerMethods
   
@@ -53,11 +55,29 @@ class Admin::EmailConfigsController < Admin::AdminController
   def deliver_verification
     @email_config = scoper.find(params[:id])
     @email_config.deliver_verification_email
+    remove_bounced_email(@email_config.reply_email) # remove the email from bounced email list so that 'resend verification' will send mail again.
     flash[:notice] = t(:'flash.email_settings.send_activation.success', 
         :reply_email => @email_config.reply_email)
     redirect_to :back
   end
   
+  private
+    # This method uses send grid api to remove the supplied email from send grid bounce list
+    def remove_bounced_email (bounced_email_addr)
+      send_grid_credentials = Helpdesk::EMAIL[:outgoing][RAILS_ENV.to_sym]
+      Rails.logger.debug "Start remove_bounced_email " +bounced_email_addr
+      begin
+        unless (bounced_email_addr.blank? or send_grid_credentials.blank?)
+          send_grid_response = HTTParty.get("https://sendgrid.com/api/bounces.delete.xml?api_user=#{send_grid_credentials[:user_name]}&api_key=#{send_grid_credentials[:password]}&email=#{bounced_email_addr}", {}) 
+          send_grid_res_hash = Hash.from_xml(send_grid_response)
+          result_msg = send_grid_res_hash["result"] || send_grid_res_hash["errors"] unless (send_grid_res_hash.nil?)
+        end
+        Rails.logger.info "Removing email id " +bounced_email_addr+" from send gird bounced list resulted in "+result_msg.to_s
+      rescue => e
+        Rails.logger.error("Error during removing bounced email #{bounced_email_addr} from send grid. \n#{e.message}\n#{e.backtrace.join("\n")}")
+      end
+    end
+
   protected
     def scoper
       current_account.all_email_configs

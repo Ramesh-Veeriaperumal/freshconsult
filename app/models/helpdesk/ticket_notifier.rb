@@ -57,6 +57,7 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
     subject       formatted_subject(ticket)
     recipients    ticket.requester.email
     cc            ticket.cc_email if !options[:include_cc].blank? and !ticket.cc_email.nil?
+    bcc           options[:bcc_emails]
     from          reply_email
     body          :ticket => ticket, :body => note.body_html,
                   :survey_handle => SurveyHandle.create_handle(ticket, note)
@@ -70,6 +71,16 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
                   :filename => a.content_file_name
     end
     
+    content_type  "text/html"
+  end
+  
+  def notify_comment(ticket, note , reply_email, options={})
+    subject       formatted_subject(ticket)
+    recipients    options[:notify_emails]     
+    body          :ticket => ticket, :note => note , :ticket_url => helpdesk_ticket_url(ticket,:host => ticket.account.host)          
+    from          reply_email
+    headers       "Reply-to" => "#{reply_email}"
+    sent_on       Time.now
     content_type  "text/html"
   end
   
