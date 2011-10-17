@@ -1,5 +1,7 @@
 class Helpdesk::ProcessEmail < Struct.new(:params)
   
+  EMAIL_REGEX = /(\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
+  
   def perform
     from_email = parse_from_email
     to_email = parse_to_email
@@ -40,7 +42,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         email = $2
       elsif email =~ /<(.+?)>/
         email = $1
-      else email =~ /(\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
+      else email =~ EMAIL_REGEX
         email = $1
       end
       
@@ -53,7 +55,11 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     def orig_email_from_text #To process mails fwd'ed from agents
       if (params[:text] && (params[:text].gsub("\r\n", "\n") =~ /^>*\s*From:\s*(.*)\s+<(.*)>$/ or 
                             params[:text].gsub("\r\n", "\n") =~ /^>>>+\s(.*)\s+<(.*)>$/))
-        { :name => $1, :email => $2 }
+        name = $1
+        email = $2
+        if email =~ EMAIL_REGEX
+          { :name => name, :email => email }
+        end
       end
     end
     
@@ -99,7 +105,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         :account_id => account.id,
         :subject => params[:subject],
         :description => params[:text],
-        :description_html => params[:html],
+        :description_html => Helpdesk::HTMLSanitizer.clean(params[:html]),
         #:email => from_email[:email],
         #:name => from_email[:name],
         :requester => user,
@@ -144,7 +150,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
           :private => false,
           :incoming => true,
           :body => params[:text],
-          :body_html => params[:html],
+          :body_html => Helpdesk::HTMLSanitizer.clean(params[:html]),
           :source => 0, #?!?! use SOURCE_KEYS_BY_TOKEN - by Shan
           :user => user, #by Shan temp
           :account_id => ticket.account_id
