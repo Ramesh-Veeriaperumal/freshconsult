@@ -105,7 +105,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         :account_id => account.id,
         :subject => params[:subject],
         :description => params[:text],
-        :description_html => params[:html],
+        :description_html => Helpdesk::HTMLSanitizer.clean(params[:html]),
         #:email => from_email[:email],
         #:name => from_email[:name],
         :requester => user,
@@ -150,7 +150,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
           :private => false,
           :incoming => true,
           :body => params[:text],
-          :body_html => params[:html],
+          :body_html => Helpdesk::HTMLSanitizer.clean(params[:html]),
           :source => 0, #?!?! use SOURCE_KEYS_BY_TOKEN - by Shan
           :user => user, #by Shan temp
           :account_id => ticket.account_id

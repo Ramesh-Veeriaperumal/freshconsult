@@ -50,7 +50,7 @@ gem "newrelic_rpm"
 
 gem "twitter" , "0.9.12"
 gem "newrelic_rpm"
-
+gem "sanitize", "2.0.3"
 
 group :development do
    gem "rspec", "1.3.1"
