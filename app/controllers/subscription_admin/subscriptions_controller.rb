@@ -47,7 +47,7 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
         user = account.account_admin
         discount_name = "#{sub.discount.name} ($#{sub.discount.amount} per agent)" if sub.discount
         csv << [account.name, account.full_domain, user.name,user.email,account.created_at,sub.next_renewal_at,sub.amount,sub.agent_limit,
-                sub.subscription_plan.name,discount_name ||= 'NULL'] 
+                sub.subscription_plan.name,sub.renewal_period,discount_name ||= 'NULL'] 
       end 
     end 
  

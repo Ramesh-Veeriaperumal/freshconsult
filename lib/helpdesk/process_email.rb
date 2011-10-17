@@ -21,10 +21,10 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
   
   private
     def encode_stuffs
-      charsets = ActiveSupport::JSON.decode params[:charsets]
+      charsets = ActiveSupport::JSON.decode params[:charsets] unless params[:charsets].blank?
       [ :html, :text ].each do |t_format|
         unless params[t_format].nil?
-          charset_encoding = charsets[t_format.to_s]
+          charset_encoding = charsets[t_format.to_s] unless charsets.blank?
           if !charset_encoding.nil? and !(["utf-8","utf8"].include?(charset_encoding.downcase))
             begin
               params[t_format] = Iconv.new('utf-8//IGNORE', charset_encoding).iconv(params[t_format])
