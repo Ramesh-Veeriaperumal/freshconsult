@@ -74,6 +74,16 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
     content_type  "text/html"
   end
   
+  def notify_comment(ticket, note , reply_email, options={})
+    subject       formatted_subject(ticket)
+    recipients    options[:notify_emails]     
+    body          :ticket => ticket, :note => note , :ticket_url => helpdesk_ticket_url(ticket,:host => ticket.account.host)          
+    from          reply_email
+    headers       "Reply-to" => "#{reply_email}"
+    sent_on       Time.now
+    content_type  "text/html"
+  end
+  
   def email_to_requester(ticket, content)
     subject       formatted_subject(ticket)
     recipients    ticket.requester.email

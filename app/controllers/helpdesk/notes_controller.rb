@@ -44,13 +44,22 @@ class Helpdesk::NotesController < ApplicationController
     end
 
     def process_item
+      Thread.current[:notifications] = current_account.email_notifications
       if @parent.is_a? Helpdesk::Ticket      
         send_reply_email if @item.source.eql?(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["email"])
         if tweet?
           twt = send_tweet
           @item.create_tweet({:tweet_id => twt.id, :account_id => current_account.id})
         end
-        @parent.responder ||= current_user                     
+        @parent.responder ||= current_user 
+        unless params[:ticket_status].blank?
+          Thread.current[:notifications][EmailNotification::TICKET_RESOLVED][:requester_notification] = false
+          @parent.status = Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[params[:ticket_status].to_sym()]
+        end
+        unless params[:notify_emails].blank?
+          Helpdesk::TicketNotifier.send_later(:deliver_notify_comment, @parent, @item ,@parent.reply_email,{:notify_emails =>validate_emails(params[:notify_emails])}) 
+        end
+        
       end
 
       if @parent.is_a? Helpdesk::Issue
@@ -62,8 +71,8 @@ class Helpdesk::NotesController < ApplicationController
         end
         @parent.owner ||= current_user  if @parent.respond_to?(:owner)
       end
-
       @parent.save
+      Thread.current[:notifications] = nil
     end
     
     def tweet?
