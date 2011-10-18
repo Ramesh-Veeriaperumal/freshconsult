@@ -18,6 +18,7 @@ ActiveRecord::Base.class_eval do
     define_method(:body=)      { |value| write_attribute attr_name, value }
     define_method(:body_html)  { read_attribute "#{attr_name}_html" }
     define_method(:body_html=) { |value| write_attribute "#{attr_name}_html", value }
+    define_method(:body_html_changed?)  { send "#{attr_name}_html_changed?" }
   end
 
   def dom_id
@@ -39,7 +40,7 @@ ActiveRecord::Base.class_eval do
     
     def create_content
       if body.blank? && !body_html.blank?
-        self.body = (body_html.gsub(/<\/?[^>]*>/, " ")).gsub(/&nbsp;/i," ")
+        self.body = Helpdesk::HTMLSanitizer.plain(body_html)
       elsif body_html.blank? && !body.blank?
         self.body_html = body_html_with_formatting
       elsif body.blank? && body_html.blank?
@@ -47,7 +48,7 @@ ActiveRecord::Base.class_eval do
       end
     end
     
-    def update_content # To do :: need to use changed_body_html?
-      self.body = (body_html.gsub(/<\/?[^>]*>/, " ")).gsub(/&nbsp;/i," ") unless body_html.blank?
+    def update_content
+      self.body = Helpdesk::HTMLSanitizer.plain(body_html) if body_html_changed?
     end
 end
