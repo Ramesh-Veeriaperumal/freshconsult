@@ -101,7 +101,7 @@
 			reply_area = jQuery('#cnt-reply');
 			tweet_area = jQuery('#cnt-tweet');
 			if(note_area.css("display") == 'block'){
-				tinyMCE.execInstanceCommand("send-email-cnt-reply-body","mceInsertContent",false, value);
+				tinyMCE.execInstanceCommand("add-note-cnt-note-body","mceInsertContent",false, value);
 			} 
 			else if(tweet_area.css("display") == 'block'){
 				get_short_url(value, function(bitly){
