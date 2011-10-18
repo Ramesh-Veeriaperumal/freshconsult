@@ -27,7 +27,7 @@ module TicketsFilter
     [:due_today,        I18n.t('helpdesk.tickets.views.due_today'), [:visible]  ],
     [:overdue,          I18n.t('helpdesk.tickets.views.overdue'), [:visible]  ],
     [:on_hold,          I18n.t('helpdesk.tickets.views.on_hold'), [:visible]  ],
-    [:all,              I18n.t('helpdesk.tickets.views.all'), [:visible]  ],
+    [:all,              I18n.t('helpdesk.tickets.views.all_tickets'), [:visible]  ],
     
     [:spam,             I18n.t('helpdesk.tickets.views.spam')  ],
     [:deleted,          I18n.t('helpdesk.tickets.views.trash')  ],
