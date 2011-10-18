@@ -57,7 +57,8 @@ class Helpdesk::NotesController < ApplicationController
           @parent.status = Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[params[:ticket_status].to_sym()]
         end
         unless params[:notify_emails].blank?
-          Helpdesk::TicketNotifier.send_later(:deliver_notify_comment, @parent, @item ,@parent.reply_email,{:notify_emails =>validate_emails(params[:notify_emails])}) 
+          notify_array = validate_emails(params[:notify_emails])
+          Helpdesk::TicketNotifier.send_later(:deliver_notify_comment, @parent, @item ,@parent.reply_email,{:notify_emails =>notify_array}) unless notify_array.blank? 
         end
         
       end
