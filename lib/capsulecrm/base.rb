@@ -110,6 +110,7 @@ module CapsuleCRM
       params = query_params(options)
       @@last_response = get(get_path, :query => params)
       init_many(last_response)
+      #@@last_response
     end
 
 
@@ -135,9 +136,7 @@ module CapsuleCRM
 
     # creates a new object, and returns the ID
     # returns false if something went wrong (use last_response() to debug)
-    def self.create(attributes, options={})
-      return false if attributes.empty?
-      xml = attributes_to_xml(attributes, options.delete(:root))
+    def self.create(xml, options={})
       @@last_response = post options[:path], xml_request_options(xml)
       return false unless last_response.code == 201
       last_response.headers['location'].split('/').last

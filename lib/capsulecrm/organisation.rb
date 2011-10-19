@@ -26,6 +26,13 @@ class CapsuleCRM::Organisation < CapsuleCRM::Party
     data = response['organisation']
     new(attributes_from_xml_hash(data))
   end
+  
+   # nodoc
+  def save
+    new_record?? create : update
+  end
+  
+  
 
 
   # nodoc
@@ -36,6 +43,29 @@ class CapsuleCRM::Organisation < CapsuleCRM::Party
     }
     super.merge map
   end
-
+  
+  private
+  
+  # nodoc
+  def create
+    return false if name.empty?
+    path = '/api/organisation'
+    options = {:root => 'organisation', :path => path}
+    hsh = attributes_hash
+    xml_out = hsh.to_xml :root => 'organisation'
+    puts xml_out
+    new_id = self.class.create xml_out, options
+    unless new_id
+      errors << self.class.last_response.response.message
+      return false
+    end
+    @errors = []
+    self.id = new_id
+  end
+  
+  def attributes_hash
+    hsh = {  "name" => name  }
+    hsh
+  end
 
 end

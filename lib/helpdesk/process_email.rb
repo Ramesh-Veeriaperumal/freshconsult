@@ -2,6 +2,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
 
   EMAIL_REGEX = /(\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
   
+  EMAIL_REGEX = /(\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
+  
   def perform
     from_email = parse_from_email
     to_email = parse_to_email
@@ -21,10 +23,10 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
   
   private
     def encode_stuffs
-      charsets = ActiveSupport::JSON.decode params[:charsets]
+      charsets = params[:charsets].blank? ? {} : ActiveSupport::JSON.decode(params[:charsets])
       [ :html, :text ].each do |t_format|
         unless params[t_format].nil?
-          charset_encoding = charsets[t_format.to_s]
+          charset_encoding = charsets[t_format.to_s] 
           if !charset_encoding.nil? and !(["utf-8","utf8"].include?(charset_encoding.downcase))
             begin
               params[t_format] = Iconv.new('utf-8//IGNORE', charset_encoding).iconv(params[t_format])

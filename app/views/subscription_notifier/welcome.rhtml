@@ -1,9 +1,27 @@
-Hi <%= @account.account_admin %>,
-
-Welcome to <%= AppConfig['app_name'] %>! We are glad that you are evaluating <%= AppConfig['app_name'] %> for your customer support and we're here to help.
-Your helpdesk is available at <%= @account.full_domain %>
-
-To contact us, email <%= AppConfig['from_email'] %>
-
-Vijay Shankar 
-<%= AppConfig['app_name'] %> Customer Support
+<div>
+	Hi <%= @account.account_admin.name %>,<div><br></div>
+	<div>Welcome to Freshdesk!</div>
+	<div><br></div>
+	<div>We are glad that you are evaluating Freshdesk for your customer support and we're delighted to be able to help.</div>
+	<div><br></div>
+	<div>Let’s get you started immediately.</div>
+	<div><br></div>
+	<div>Your helpdesk is now available at &nbsp;<%= link_to "#{@account.full_domain}", "http://#{@account.full_domain}" %></div>
+	<div><br></div>
+	<div>Here are links to a few documents that you might need,</div>
+	<div><br></div>
+	<div><%= link_to "Converting your Support Email into Freshdesk tickets", "http://support.freshdesk.com/solution/articles/2-converting-your-support-email-into-freshdesk-tickets?utm_source=evalmail&utm_medium=firstmail&utm_campaign=mails" %></div>
+	<div><br></div>
+	<div><%= link_to "Using Freshdesk in your Domain", "http://support.freshdesk.com/solution/categories/4/folders/9/articles/20-using-custom-domain-name?utm_source=evalmail&utm_medium=firstmail&utm_campaign=mails" %></div>
+	<div><br></div>
+	<div><%= link_to "Rebranding your help desk", "http://support.freshdesk.com/solution/categories/4/folders/9/articles/21-rebranding-your-helpdesk?utm_source=evalmail&utm_medium=firstmail&utm_campaign=mails" %></div>
+	<div><br></div>
+	<div>If you have queries of any kind, please do not hesitate to contact us: support@freshdesk.com</div>
+	<div><br></div>
+	<div>You may reach me at +1 877-485-0317 </div>
+	<div><br></div>
+	<div>Regards</div>
+	<div><br></div>
+	<div>Vijay Shankar&nbsp;</div>
+	<div><br></div>
+</div>

@@ -24,6 +24,10 @@ class CapsuleCRM::CustomField < CapsuleCRM::Child
   def value
     date || text || boolean
   end
+  
+  def create_as_list
+    
+  end
 
 
   # nodoc

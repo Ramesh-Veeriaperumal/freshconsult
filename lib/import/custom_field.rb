@@ -17,9 +17,9 @@ module Import::CustomField
     "paragraph" => ["paragraph", Helpdesk::FormCustomizer::TEXT_FIELDS]
   }
 
-  def import_flexifields base_dir
+  def import_flexifields (base_dir, account = current_account)
     doc = REXML::Document.new(File.new(File.join(base_dir, "ticket_fields.xml")))
-    ff_def = current_account.flexi_field_defs.first
+    ff_def = account.flexi_field_defs.first
     @invalid_fields = []
     
     REXML::XPath.each(doc,'//record') do |record|
@@ -47,14 +47,14 @@ module Import::CustomField
         [op.elements["name"].text]
       end
       
-      create_field field_prop
+      create_field field_prop, account
     end
   end
   
-  def create_field(field_details)
-    ff_def_entry = FlexifieldDefEntry.new ff_meta_data(field_details)
+  def create_field(field_details , account=current_account)
+    ff_def_entry = FlexifieldDefEntry.new ff_meta_data(field_details,account)
     field_details.delete(:id)
-    ticket_field = current_account.ticket_fields.build(field_details)
+    ticket_field = account.ticket_fields.build(field_details)
     ticket_field.name = ff_def_entry.flexifield_alias
     ticket_field.flexifield_def_entry = ff_def_entry
     
@@ -62,9 +62,9 @@ module Import::CustomField
     ticket_field.insert_at(field_details[:position]) unless field_details[:position].blank?
   end
   
-  def ff_meta_data(field_details)
+  def ff_meta_data(field_details, account=current_account)
     type = field_details.delete(:type)
-    ff_def = current_account.flexi_field_defs.first
+    ff_def = account.flexi_field_defs.first
     ff_def_entries = ff_def.flexifield_def_entries.all(:conditions => { 
       :flexifield_coltype => FIELD_COLUMN_MAPPING[type][0] })
 
@@ -75,13 +75,13 @@ module Import::CustomField
       :flexifield_def_id => ff_def.id, 
       :flexifield_name => available_columns.first,
       :flexifield_coltype => type, 
-      :flexifield_alias => field_name(field_details[:label]), 
+      :flexifield_alias => field_name(field_details[:label], account), 
       :flexifield_order => field_details[:position], #ofc. there'll be gaps.
       :import_id => field_details.delete(:import_id)
     }
   end
   
-  def field_name(label)
-    "#{label.strip.gsub(/\s/, '_').gsub(/\W/, '').downcase}_#{current_account.id}"
+  def field_name(label,account=current_account)
+    "#{label.strip.gsub(/\s/, '_').gsub(/\W/, '').downcase}_#{account.id}"
   end
 end
