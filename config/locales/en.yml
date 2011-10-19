@@ -354,6 +354,7 @@ en:
         no_contact: Unable to contact zendesk . Please verify your zendesk credentials and try again !!
         success: Your data import has started and you will receive an email when it is completed. The import process may take several minutes depending on the volume of your data
         failure: Unable to import from zendesk...please try again
+        running: Currently one zendesk import is running. you may try later !!
     contacts: 
       create: 
         success: The contact has been created successfully.
