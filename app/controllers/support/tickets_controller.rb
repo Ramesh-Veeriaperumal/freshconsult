@@ -6,18 +6,16 @@ class Support::TicketsController < ApplicationController
   before_filter :only => [:new, :create] do |c| 
     c.check_portal_scope :anonymous_tickets
   end
-
+  before_filter :require_user_login , :only =>[:index,:filter,:close_ticket]
   uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
   
   def index
-    return redirect_to(send(Helpdesk::ACCESS_DENIED_ROUTE)) unless current_user
     @page_title = t('helpdesk.tickets.views.all_tickets')
     build_tickets
     respond_to do |format|
       format.html
       format.xml  { render :xml => @tickets.to_xml }
     end
-    
   end
   
   def filter   
@@ -58,7 +56,11 @@ class Support::TicketsController < ApplicationController
        @tickets = TicketsFilter.filter(current_filter.to_sym, current_user, current_user.tickets)
        @tickets = @tickets.paginate(:page => params[:page], :per_page => 10) 
        @tickets ||= []    
-    end
+   end
+   
+   def require_user_login
+     return redirect_to(send(Helpdesk::ACCESS_DENIED_ROUTE)) unless current_user
+   end
   
    
 
