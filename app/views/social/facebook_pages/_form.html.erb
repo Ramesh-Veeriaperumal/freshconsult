@@ -2,7 +2,8 @@
   <li class="inline-field">
     <label class="caption">
       <div class="preview_pic">
-        <!--%= image_tag(@facebook_page.profile_image_url) %--><span class="tweet_pic"></span>
+        <%= image_tag (@item.page_img_url) %>  		    
+				<span class="fb_pic"></span>
       </div>
       <%= content_tag(:h2, @item.page_name, :class => "title") %>
       <div class="intro"><!--%= @twitter_user.screen_name %--></div>

@@ -35,7 +35,7 @@ class Social::FacebookPosts
   def add_wall_post_as_ticket (feed)
     
      group_id = @fb_page.product.group_id unless @fb_page.product.blank?
-     puts "add_wall_post_as_ticket ::post_id::  #{feed[:post_id]}"
+     puts "add_wall_post_as_ticket ::post_id::  #{feed[:post_id]} :time: #{feed[:created_time]}"
      profile_id = feed[:actor_id]
      requester = get_facebook_user(profile_id)
      unless feed[:message].blank?
@@ -63,16 +63,17 @@ class Social::FacebookPosts
   end
   
   def get_html_content post_id
-    
+    puts "get_html_content"
     post = @rest.get_object(post_id)
     post.symbolize_keys!
     html_content =  post[:message]
     if "video".eql?(post[:type]) 
       
+     desc = post[:description] || ""
      html_content =  "<div><a href=\"#{post[:link]}\" target=\"_blank\"><img  src=\"#{post[:picture]}\"></a></div>" +
                      "<div><a href=\"#{post[:link]}\" style=\"vertical-align:top\" target=\"_blank\">"+post[:name]+"</a>"+
                      "<div>"+post[:caption]+"</div>"+
-                     "<div>"+post[:description] +"</div>"+
+                     "<div>"+desc+"</div>"+
                      "</div>"
       
     elsif "photo".eql?(post[:type]) 
@@ -146,6 +147,7 @@ class Social::FacebookPosts
  end 
 
   def truncate_subject(subject , count)
+    puts "truncate subject #{subject}"
     (subject.length > count) ? "#{subject[0..(count - 1)]}..." : subject
   end
     

@@ -58,17 +58,13 @@ class Social::FacebookPagesController < Admin::AdminController
   
  
  
-  def update
-    
+  def update    
     if @item.update_attributes(params[:social_facebook_page])    
       flash[:notice] = I18n.t(:'flash.facebook.updated')
     else
       update_error
     end   
-    respond_to do |format|
-      format.html { redirect_to redirect_url }
-      format.js
-    end
+    redirect_to :action => :index
   end
   
   

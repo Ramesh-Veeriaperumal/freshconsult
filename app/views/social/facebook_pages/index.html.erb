@@ -12,13 +12,12 @@
   		    <%= link_to(t('remove'), social_facebook_path(page), :method => 'delete', :confirm => "Are you sure you want to remove this facebook page?", :class => "button" ) %>    
   		  </div>
   		  <div class="preview_pic">
-  		    <span class="fb_pic"></span>
   		    <%= image_tag (page.page_img_url) %>
+  		    <span class="fb_pic"></span>
   		  </div>		
   		    <h2 class="title">
             <%= link_to "#{page.page_name}", edit_social_facebook_url(page) %> 
           </h2>
-          <div class="intro"> <!--%= page.product.name %--> </div> 
       </li>
     <% end %>
   </ul>
