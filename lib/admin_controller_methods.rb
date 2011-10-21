@@ -45,7 +45,7 @@ module AdminControllerMethods
        #logger.debug "LOGIN FROM BASIC AUTH called in AdminControllerMethods..."
        authenticate_or_request_with_http_basic do |username, password|
          # This has to return true to let the user in
-         username == 'freshdesk' && password == 'Opmanager12#'
+         username == 'freshdesk' && password == 'USD40$'
        end
      end
     
