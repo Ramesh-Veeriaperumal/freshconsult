@@ -25,10 +25,6 @@ class CapsuleCRM::CustomField < CapsuleCRM::Child
     date || text || boolean
   end
   
-  def create_as_list
-    
-  end
-
 
   # nodoc
   def self.xml_map

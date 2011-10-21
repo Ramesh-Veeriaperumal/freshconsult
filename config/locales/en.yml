@@ -394,7 +394,7 @@ en:
         success: The %{human_name} has been updated.
   agent_closes_tkt: Agent closes the Ticket
   submit: submit
-  export_data_successfull: Your Help desk data will be sent to your via email shortly!
+  export_data_successfull: Your Help desk data will be sent to your email shortly!
   import_topics: Topics
   assigned_to: Assigned to
   change: Change

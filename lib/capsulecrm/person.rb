@@ -8,6 +8,7 @@ class CapsuleCRM::Person < CapsuleCRM::Party
   attr_accessor :title
   attr_accessor :organisation_name
   attr_accessor :email
+  attr_accessor :phone
 
 
 
@@ -17,7 +18,7 @@ class CapsuleCRM::Person < CapsuleCRM::Party
   # nodoc
   def attributes
     attrs = {}
-    arr = [:about, :name, :last_name, :title, :job_title,:organisation_name,:email,:organisation_id]
+    arr = [:about, :name, :last_name, :title, :job_title,:organisation_name,:email,:organisation_id,:phone]
     arr.each do |key|
       attrs[key] = self.send(key)
     end
@@ -77,7 +78,8 @@ class CapsuleCRM::Person < CapsuleCRM::Party
   
   def attributes_hash
     hsh = {  "firstName" => name ,
-             "contacts" => {"email" => {"emailAddress" => email, "type" => "Work"}} ,
+             "contacts" => {"email" => {"emailAddress" => email, "type" => "Work"},
+                            "phone" => {"phoneNumber" => phone, "type" => "Work"}} ,
              "organisationId" => organisation_id }
     hsh
   end

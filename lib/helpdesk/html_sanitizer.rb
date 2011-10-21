@@ -1,5 +1,5 @@
 module Helpdesk::HTMLSanitizer
-  SANITIZE_CONFIG = Sanitize::Config::BASIC.merge(:remove_contents => [ 'style' ])
+  SANITIZE_CONFIG = Sanitize::Config::RELAXED.merge(:remove_contents => [ 'style' ])
   SANITIZE_CONFIG[:attributes].merge!('span' => ['style'])
   SANITIZE_CONFIG[:elements] << 'span'
   

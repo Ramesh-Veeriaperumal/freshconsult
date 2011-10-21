@@ -1,5 +1,6 @@
 require 'digest/md5'
 
+
 class Helpdesk::Ticket < ActiveRecord::Base 
   include ActionController::UrlWriter
   include TicketConstants
@@ -655,8 +656,51 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
   end
   
+  def self.csv_headers
+    [
+      ["Ticket ID" , "display_id"],
+      ["Subject"   ,   "subject"],
+      ["Description" , "description"],
+      ["Status" ,      "status_name"],
+      ["Priority" ,   "priority_name"],
+      ["Source" ,   "source_name"],
+      ["Customer" , "customer_name"],
+      ["Requester" , "requester_info"],
+      ["Agent" , "responder_name"],
+      ["Group" , "group_name"],
+      ["Product" , "product_name"],
+      ["Product" , "product_name"],
+      ["Created Time" ,   "created_at"],
+      ["Dueby Time " ,   "due_by"]
+    ]
+  end
+  
+
+
+   def group_name
+      group.nil? ? "No Group" : group.name
+    end
+    
+   def product_name
+      email_config.nil? ? "No Product" : email_config.name
+   end
+   
+   def responder_name
+      responder.nil? ? "No Agent" : responder.name
+    end
+    
+    def customer_name
+      requester.customer.nil? ? "No company" : requester.customer.name
+    end
+    
+    def priority_name
+      PRIORITY_NAMES_BY_KEY[priority]
+    end
+  
   private
   
+    
+    
     def create_source_activity
       create_activity(User.current, 'activities.tickets.source_change.long',
           {'source_name' => source_name}, 'activities.tickets.source_change.short')

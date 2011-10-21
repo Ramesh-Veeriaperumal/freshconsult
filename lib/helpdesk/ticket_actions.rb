@@ -47,6 +47,40 @@ module Helpdesk::TicketActions
     render :partial => "assign_agent"
   end
   
+  def set_date_filter
+   unless params[:date_filter] == TicketConstants::CREATED_BY_KEYS_BY_TOKEN[:custom_filter]
+    params[:start_date] = params[:date_filter].to_i.days.ago
+    params[:end_date] = Time.now
+   end
+  end
+  
+  def configure_export
+    flexi_fields = current_account.ticket_fields.custom_fields(:include => :flexifield_def_entry)
+    csv_headers = Helpdesk::Ticket.csv_headers + flexi_fields.collect { |ff| [ff.label, ff.name] }
+    render :partial => "configure_export", :locals => {:csv_headers => csv_headers }
+  end
+  
+  def export_csv
+    params[:wf_per_page] = "100000"
+    params[:page] = "1"
+    @items = current_account.tickets.created_at_inside(params[:start_date],params[:end_date]).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
+    csv_hash = params[:export_fields]
+    csv_string = FasterCSV.generate do |csv|
+      headers = csv_hash.keys.sort
+      csv << headers
+       @items.each do |record|
+        csv_data = []
+        headers.each do |val|
+          csv_data << record.send(csv_hash[val])
+        end
+        csv << csv_data
+      end
+    end
+    send_data csv_string, 
+            :type => 'text/csv; charset=utf-8; header=present', 
+            :disposition => "attachment; filename=tickets.csv"
+  end
+  
   def component
     @ticket = current_account.tickets.find_by_id(params[:id])   
     render :partial => "helpdesk/tickets/components/#{params[:component]}", :locals => { :ticket => @ticket , :search_query =>params[:q] } 

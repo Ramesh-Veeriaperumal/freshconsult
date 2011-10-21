@@ -84,7 +84,9 @@ module Search::TicketSearch
        return Account.current.tags.collect { |au| [au.name, au.name] }
     end
       
-   
+   if criteria_key == "users.customer_id"
+       return Account.current.customers.collect { |au| [au.id, au.name] }
+    end
     
     return []
   end
