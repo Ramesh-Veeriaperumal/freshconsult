@@ -10,7 +10,7 @@
                                      field.label_in_portal,
                                      (field.dom_type == "requester") ? "email": field.dom_type, 
                                      field.required_in_portal, 
-                                     (field.dom_type == "requester" && logged_in?) ? @ticket.email : "" %>
+                                     (field.dom_type == "requester") ? @ticket.email : (field.is_default_field?) ? @ticket[field.field_name] : (@ticket.custom_field) ? @ticket.custom_field[field.field_name] : ""  %>
     <% end %>
     <li>
       <%= render :partial=>"/helpdesk/shared/attachment_form"  %>
