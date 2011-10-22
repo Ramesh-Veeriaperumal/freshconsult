@@ -6,9 +6,9 @@
 
   <td class="name">
   	  <%= user_avatar(ticket.requester) %>
-      <h3> 
+      <h3 style="<%=subject_style(ticket)%>">
         <%= link_to( truncate(h(ticket.subject), { :length => 80 }) + content_tag(:span, " ##{ticket.display_id}", :class => "info-data"), ticket, :title => truncate(ticket.description, { :length => 350, :omission => "..." }), :class => "ticket-description-tip" ) %> 
-      </h3>
+	  </h3>
 	  <% unless ticket.requester.nil? %>
 			<% content_tag :div, :class => "info-data" do %>
 			  <%= content_tag :span, "", :class => "custom-tip-bottom icon-image source-#{ticket.source_name.downcase}", :title => t("ticket.reported_from_source", :source => ticket.source_name.downcase) %> 

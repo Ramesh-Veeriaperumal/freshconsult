@@ -152,5 +152,12 @@ module Helpdesk::TicketsHelper
 
     o.join
   end
+  
+  def subject_style ticket
+    subject_style = "font-weight: normal;"
+    if ticket.active? && ticket.ticket_states.need_attention 
+        subject_style = "font-weight: bold;"
+    end
+  end
    
 end
