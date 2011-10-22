@@ -17,8 +17,8 @@
 	 </div>
 	 <% csv_headers.each do |head| %>
   		<label class="item"> 
-    	<%= check_box_tag "export_fields[#{head[0]}]", head[1], true %> 
-		<span><%= head[0] %></span>
+    	<%= check_box_tag "export_fields[#{head[:label]}]", head[:value], head[:selected] %> 
+		<span><%= head[:label] %></span>
   	</label>
 	<% end %>
      <%= submit_tag "Export", :class => "uiButton" %>

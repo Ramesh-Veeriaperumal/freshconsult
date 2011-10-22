@@ -56,7 +56,7 @@ module Helpdesk::TicketActions
   
   def configure_export
     flexi_fields = current_account.ticket_fields.custom_fields(:include => :flexifield_def_entry)
-    csv_headers = Helpdesk::Ticket.csv_headers + flexi_fields.collect { |ff| [ff.label, ff.name] }
+    csv_headers = Helpdesk::TicketModelExtension.csv_headers + flexi_fields.collect { |ff| { :label => ff.label, :value => ff.name, :selected => false} }
     render :partial => "configure_export", :locals => {:csv_headers => csv_headers }
   end
   

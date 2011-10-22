@@ -4,6 +4,7 @@ require 'digest/md5'
 class Helpdesk::Ticket < ActiveRecord::Base 
   include ActionController::UrlWriter
   include TicketConstants
+  include Helpdesk::TicketModelExtension
   
   set_table_name "helpdesk_tickets"
   
@@ -656,27 +657,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
   end
   
-  def self.csv_headers
-    [
-      ["Ticket ID" , "display_id"],
-      ["Subject"   ,   "subject"],
-      ["Description" , "description"],
-      ["Status" ,      "status_name"],
-      ["Priority" ,   "priority_name"],
-      ["Source" ,   "source_name"],
-      ["Customer" , "customer_name"],
-      ["Requester" , "requester_info"],
-      ["Agent" , "responder_name"],
-      ["Group" , "group_name"],
-      ["Product" , "product_name"],
-      ["Product" , "product_name"],
-      ["Created Time" ,   "created_at"],
-      ["Dueby Time " ,   "due_by"]
-    ]
-  end
-  
-
-
+   
    def group_name
       group.nil? ? "No Group" : group.name
     end
