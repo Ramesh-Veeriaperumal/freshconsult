@@ -18,7 +18,7 @@ ActiveRecord::Base.class_eval do
     define_method(:body=)      { |value| write_attribute attr_name, value }
     define_method(:body_html)  { read_attribute "#{attr_name}_html" }
     define_method(:body_html=) { |value| write_attribute "#{attr_name}_html", value }
-    define_method(:body_html_changed?)  { send "#{attr_name}_html_changed?" }
+    define_method(:body_f_html_changed?)  { send "#{attr_name}_html_changed?" }
   end
 
   def dom_id
@@ -48,7 +48,7 @@ ActiveRecord::Base.class_eval do
       end
     end
     
-    def update_content
-      self.body = Helpdesk::HTMLSanitizer.plain(body_html) if body_html_changed?
+    def update_content # To do :: need to use changed_body_html?
+      self.body = Helpdesk::HTMLSanitizer.plain(body_html) if body_f_html_changed?
     end
 end

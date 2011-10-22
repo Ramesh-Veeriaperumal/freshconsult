@@ -7,7 +7,7 @@ class SlaNotifier < ActionMailer::Base
     from          ticket.account.default_email
     sent_on       Time.now    
     headers       "Reply-to" => "#{ticket.account.default_email}"
-    content_type  "text/plain"
+    content_type  "text/html"
   end
   
 end
