@@ -1,8 +1,10 @@
 require 'digest/md5'
 
+
 class Helpdesk::Ticket < ActiveRecord::Base 
   include ActionController::UrlWriter
   include TicketConstants
+  include Helpdesk::TicketModelExtension
   
   set_table_name "helpdesk_tickets"
   
@@ -655,8 +657,31 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
   end
   
+   
+   def group_name
+      group.nil? ? "No Group" : group.name
+    end
+    
+   def product_name
+      email_config.nil? ? "No Product" : email_config.name
+   end
+   
+   def responder_name
+      responder.nil? ? "No Agent" : responder.name
+    end
+    
+    def customer_name
+      requester.customer.nil? ? "No company" : requester.customer.name
+    end
+    
+    def priority_name
+      PRIORITY_NAMES_BY_KEY[priority]
+    end
+  
   private
   
+    
+    
     def create_source_activity
       create_activity(User.current, 'activities.tickets.source_change.long',
           {'source_name' => source_name}, 'activities.tickets.source_change.short')

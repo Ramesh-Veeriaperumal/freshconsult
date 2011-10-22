@@ -1,0 +1,57 @@
+<% form_tag({:action => :export_csv}, { :method => :post, :id => 'exportFilter' }) do %>
+     <input type="hidden" name="data_hash" value="" />
+	 <span>Date Selection</span>  <%=select_tag "date_filter",options_for_select(TicketConstants::CREATED_BY_OPTIONS), :class => "select"%>
+	 <div id ="datepicker" style="display: none;">
+		<li class="inline-field">
+			<table>
+				<tr>
+					<td width="100px"><label>From</label></td>
+					<td><input type="text" id="start_date" date="" name="start_date" class="text  auto" size="10" /></td>
+				</tr>
+				<tr>
+					<td><label>To</label></td>
+					<td><input type="text" id="end_date" date="" class="text auto" name="end_date"  size="10" /></td>
+				</tr>
+			</table>
+		</li>
+	 </div>
+	 <% csv_headers.each do |head| %>
+  		<label class="item"> 
+    	<%= check_box_tag "export_fields[#{head[:label]}]", head[:value], head[:selected] %> 
+		<span><%= head[:label] %></span>
+  	</label>
+	<% end %>
+     <%= submit_tag "Export", :class => "uiButton" %>
+<%end%>
+<% javascript_tag do %>
+  jQuery("#exportFilter").submit(function() {
+  		 getFilterData()
+ 		 jQuery("#exportFilter input[name=data_hash]").val(query_hash.toJSON())
+  });
+  jQuery("#date_filter").change(function(){
+  	jQuery("#datepicker").toggle(jQuery("#date_filter").val() == "<%=TicketConstants::CREATED_BY_KEYS_BY_TOKEN[:custom_filter]%>");
+  });
+  jQuery(document).ready(function() {
+		var dates = jQuery( "#start_date, #end_date" ).datepicker({
+			changeMonth: true, 
+			changeYear: true,
+			numberOfMonths: 3,
+			showButtonPanel: true,
+			maxDate: "today",
+			onSelect: function( selectedDate ) {
+				var option = this.id == "start_date" ? "minDate" : "maxDate",
+					instance = jQuery( this ).data( "datepicker" ),
+					date = jQuery.datepicker.parseDate(
+						instance.settings.dateFormat ||
+						jQuery.datepicker._defaults.dateFormat,
+						selectedDate, instance.settings );
+				dates.not( this ).datepicker( "option", option, date );
+				jQuery(this).attr("date", date);
+			}
+		});
+		
+		jQuery("#report_search").submit(function(){
+			
+		});
+	});
+<% end %>

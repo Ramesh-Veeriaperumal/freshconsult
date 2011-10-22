@@ -220,6 +220,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     all_joins = joins
     all_joins[0].concat(tag_joins) if all_conditions[0].include?("helpdesk_tags.name")
     all_joins[0].concat(monitor_ships_join) if all_conditions[0].include?("helpdesk_subscriptions.user_id")
+    all_joins[0].concat(users_join) if all_conditions[0].include?("users.customer_id")
     all_joins
   end
   
@@ -229,6 +230,10 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
 
  def tag_joins
    " INNER JOIN helpdesk_tag_uses ON helpdesk_tag_uses.taggable_id = helpdesk_tickets.id INNER JOIN helpdesk_tags ON helpdesk_tag_uses.tag_id = helpdesk_tags.id  "
+ end
+ 
+ def users_join
+   " INNER JOIN users ON users.id = helpdesk_tickets.requester_id "
  end
   
   
