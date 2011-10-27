@@ -49,8 +49,8 @@ module Helpdesk::TicketActions
   
   def set_date_filter
    unless params[:date_filter] == TicketConstants::CREATED_BY_KEYS_BY_TOKEN[:custom_filter]
-    params[:start_date] = params[:date_filter].to_i.days.ago
-    params[:end_date] = Time.now
+     params[:start_date] = params[:date_filter].to_i.days.ago.to_s(:db)
+     params[:end_date] = Time.now.end_of_day.to_s(:db)
    end
   end
   
