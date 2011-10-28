@@ -15,7 +15,7 @@ class HttpRequestProxyController < ApplicationController
     entity_name = params[:entity_name]
     content_type = params[:content_type] || "application/xml"
     auth_header = request.headers['HTTP_AUTHORIZATION']
-    if(content_type.include? "xml")
+    if(content_type.include? "xml") # Based on the content type convert the form data into xml or json.
       post_request_body = (params[entity_name].to_xml :root => entity_name) unless entity_name.nil?
     else
       post_request_body = (params[entity_name].to_json :root => entity_name) unless entity_name.nil?
@@ -24,9 +24,9 @@ class HttpRequestProxyController < ApplicationController
     http_s = ssl_enabled == "true"?"https":"http";
     remote_url = http_s+"://"+ domain + "/" + resource
     options = Hash.new
-    options.store(:body, post_request_body) unless post_request_body.nil?
+    options.store(:body, post_request_body) unless post_request_body.nil?  # if the form-data is sent from the integrated widget then set the data in the body to the 3rd party api.
     options.store(:headers, {"Authorization" => auth_header, "Accept" => "application/json", "Content-Type" => content_type}.delete_if{ |k,v| v.nil? })  # TODO: remove delete_if use and find any better way to do it in single line
-    puts "sending request to=" + remote_url + ", options="+options.to_s+", method="+method+", http_s="+http_s+", username="+user.to_s
+    Rails.logger.debug "sending request to=" + remote_url + ", options="+options.to_s+", method="+method+", http_s="+http_s+", username="+user.to_s
     self.class.basic_auth(user, pass) unless (user.nil? || pass.nil?)
 
     begin
@@ -38,7 +38,8 @@ class HttpRequestProxyController < ApplicationController
           remote_response = self.class.post(remote_url, options)
       end
 
-      puts "reponse code: " + remote_response.code.to_s + ", body:" + remote_response.body
+      # TODO Need to audit all the request and response calls to 3rd party api.
+      Rails.logger.debug "reponse code: " + remote_response.code.to_s + ", body:" + remote_response.body
       remote_response_body = remote_response.body
       @response = remote_response_body #"{responseJSON:{'#{remote_response_body}'}}"
     rescue => e

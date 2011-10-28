@@ -2,7 +2,7 @@ class Integrations::ApplicationsController < ApplicationController
 
   include Integrations::AppsUtil
 
-  def index #index
+  def index
     @applications = Integrations::Application.all
     @installed_applications = get_installed_apps
   end
