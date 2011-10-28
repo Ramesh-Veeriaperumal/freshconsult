@@ -25,7 +25,7 @@ module Reports::CompanyReport
        avg_last_month = (last_month_resolved_count.to_f/last_month_tickets_count.to_f) * 100
      end
    
-     if !avg_last_month.nil?
+     if !avg_last_month.nil? and !@avg_current_month.nil?
        @sla_diff = @avg_current_month - avg_last_month
      end
    
