@@ -1,6 +1,6 @@
 class Social::FacebookPagesController < Admin::AdminController
   
-   before_filter :except => [:event_listener] do |c| 
+  before_filter :except => [:event_listener] do |c| 
     c.requires_permission :manage_users
   end
   
@@ -9,21 +9,18 @@ class Social::FacebookPagesController < Admin::AdminController
   before_filter :load_item,  :only => [:edit, :update, :destroy]  
   
   def index
-    @fb_pages = scoper.active
-  
+    @fb_pages = scoper.active  
   end
 
-   def authdone
-     fb_pages = nil
-     begin      
-        fb_pages = @fb_client.auth(params[:code] )
-     rescue
-        flash[:error] = t('facebook.not_authorized')
-     end
-     
-     @fb_pages = add_to_db fb_pages
-   
-   
+  def authdone
+    fb_pages = nil
+    begin      
+      fb_pages = @fb_client.auth(params[:code])
+    rescue
+      flash[:error] = t('facebook.not_authorized')
+    end
+
+    @fb_pages = add_to_db fb_pages 
   end
  
   def enable_pages
@@ -32,32 +29,25 @@ class Social::FacebookPagesController < Admin::AdminController
     page_ids = page_ids.reject(&:blank?)   
     scoper.update_all({:enable_page => false} , :profile_id =>usr_prof_id)
     scoper.update_all({:enable_page => true} , :page_id =>page_ids)
-    
     fetch_fb_wall_posts page_ids
-    
     redirect_to :action => :index
   end
   
-  
   def add_to_db fb_pages
-    
     fb_pages.each do |fb_page|
         begin
           scoper.create(fb_page)
-        rescue
-        
+        rescue        
         end
      end
   end
-  
+
   def destroy
     @item.destroy   
     flash[:notice] = t('facebook.deleted', :facebook_page => @item.page_name)
     redirect_to :action => :index 
   end
-  
- 
- 
+
   def update    
     if @item.update_attributes(params[:social_facebook_page])    
       flash[:notice] = I18n.t(:'flash.facebook.updated')
@@ -67,11 +57,7 @@ class Social::FacebookPagesController < Admin::AdminController
     redirect_to :action => :index
   end
   
-  
-  
-  
-  protected
-  
+  protected  
    def scoper
       current_account.facebook_pages
     end

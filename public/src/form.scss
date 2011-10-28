@@ -459,6 +459,11 @@ a.addchoice:hover{
 	.caption{
 		float:left;
 		/*		clear:left; */
+		h2.title{
+			line-height:28px;
+			top:-8px;
+			position:relative;
+		}
 	}
 	.rightalign{
 		font-size:13px;

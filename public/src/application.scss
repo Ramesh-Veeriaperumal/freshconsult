@@ -445,7 +445,7 @@ div.preview_pic{
 	   background:sprite($symbol, product-twitter-active) no-repeat #ffffff;
 	}
 	span.fb_pic{
-	   background:sprite($symbol, source-facebook) no-repeat #ffffff;	
+	   background:sprite($symbol, product-facebook-active) no-repeat #ffffff;	
 	}
 }
 
@@ -536,6 +536,12 @@ body h5{
 				margin-left:-70px;
 			}	
 		}
+	}
+	
+	.facebook_post{
+		@include clearfix;
+		.thumbnail{ float:left; margin-right:10px; }
+		
 	}
 	
 	div.description{  
@@ -1094,9 +1100,12 @@ a.request_bt:hover{
 
  
 .user_details_widget{ 
-	padding:10px;
+	padding:0 10px;
 	div{
 		padding:3px 0px; 
+	}
+	a.user_name{
+		font-size:15px;
 	}
 	a, a.user_name{
 		color:#527EAA;
@@ -3204,7 +3213,7 @@ div.addReminder{
 	}
 }
 
-.info-highlight, .info-highlight-deleted{
+.info-highlight, .info-highlight-deleted, .info-error{
 	font-size:13px;
 	margin:0px 0px 0px 0px;
 	padding:8px 18px;
@@ -3221,6 +3230,18 @@ div.addReminder{
 	padding:15px 18px 18px 18px;
 	font-size:15px;
 } 
+
+.text-red{
+	color:#993333;	
+}
+
+.info-error{
+	padding:18px;
+	line-height:24px;
+	p{
+		font-size:16px;
+	}
+}
 
 .forum-group{
 	margin:0px -20px; 
@@ -3352,7 +3373,7 @@ div.addReminder{
 		       span.icon{
    		       position:absolute;
    		       left:0px; 
-   		       top:5px;
+   		       top:3px;
    		       width:18px;
    		       height:18px;
    		    }   
@@ -3374,7 +3395,9 @@ div.addReminder{
     		    span.twitter-active{
                   background: sprite($symbol, product-twitter-active) no-repeat;	
      		    }
-     		    
+    		    span.facebook-active{
+                  background: sprite($symbol, product-facebook-active) no-repeat;	
+     		    }
 		    }
 		    .not-verified{
 		       padding:12px 0px;

@@ -22,7 +22,7 @@ class CreateSocialFacebookPages < ActiveRecord::Migration
           :name => "index_account_page_id", :unique => true
     
     add_index :social_facebook_pages, :product_id, 
-          :name => "index_product_id", :unique => true
+          :name => "index_product_id"
           
   end
 

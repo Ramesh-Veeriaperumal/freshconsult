@@ -233,9 +233,6 @@
 						<%= content_tag :span, "", :class => "custom-tip-bottom icon-image source-#{@ticket.source_name.downcase}", :title => t("ticket.reported_from_source", :source => @ticket.source_name.downcase) %>
       			<%= t('ticket.reported_by', :requester => link_to(h(@ticket.requester.display_name),@ticket.requester, :class => "user_name"))%>  
 						<%="<#{@ticket.requester.email}>" if @ticket.requester.email%>
-						<%if @ticket.requester.fb_profile_id %>
-							<a href="http://facebook.com/<%=h(@ticket.requester.fb_profile_id)%>" target=_blank>fb</a>
-						<%end%>
           </div>
 
           <div> 
@@ -304,7 +301,7 @@
 				<%= link_to_function(t('ticket.reply_to'), "swapEmailNote('reply', this)", :class => 'uiButton', :id => "ReplyButton") unless @item.from_email.nil? %>
 				<%= link_to_function(t('ticket.add_note'), "swapEmailNote('note', this)", :class => 'uiButton', :id => "AddNoteButton") %>		
 				<%= link_to_function("Tweet", "swapEmailNote('tweet', this)", :class => 'uiButton', :id => "TweetButton") if @item.requester && @item.is_twitter?%>
-				<%= link_to_function("Fb Reply", "swapEmailNote('fb_post', this)", :class => 'uiButton', :id => "FacebookButton") if @item.requester && @item.fb_post%>
+				<%= link_to_function("Comment", "swapEmailNote('fb_post', this)", :class => 'uiButton', :id => "FacebookButton") if @item.requester && @item.fb_post%>
 			</div>
 			<div style="position:relative;">
 				<% if @item.requester %>				

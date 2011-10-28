@@ -1,9 +1,9 @@
 <% content_for :sidebar do -%><%-end %>
 <% unless @fb_pages.empty? %>
   <div class="floatr">
-    <%= link_to "Add Facebook page", @fb_client.authorize_url, :class => "uiButton special medium" %> 
+    <%= link_to "Add Facebook Page", @fb_client.authorize_url, :class => "uiButton special medium" %> 
   </div>
-  <h3 class="title"><%=t('.title')%></h3>
+	<h3 class="title"><%= t('.title') %></h3>
   <ul class="admin_list">
     <% @fb_pages.each do |page| %>
       <li>
@@ -14,13 +14,16 @@
   		  <div class="preview_pic">
   		    <%= image_tag (page.page_img_url) %>
   		    <span class="fb_pic"></span>
-  		  </div>		
-  		    <h2 class="title">
-            <%= link_to "#{page.page_name}", edit_social_facebook_url(page) %> 
-          </h2>
+  		  </div>
+  		  <h2 class="title">
+          <%= link_to "#{page.page_name}", edit_social_facebook_url(page) %> 
+        </h2>
+				<div class="intro">
+					<%= link_to page.page_link, page.page_link, { :target => "_blank" } %>
+				</div>
       </li>
     <% end %>
   </ul>
 <% else %>
-  <%= render :partial => "engage_info"%>
+  <%= render :partial => "engage_info" %>
 <% end %>

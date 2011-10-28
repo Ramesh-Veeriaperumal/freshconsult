@@ -68,19 +68,18 @@ class Social::FacebookPosts
     post.symbolize_keys!
     html_content =  post[:message]
     if "video".eql?(post[:type]) 
-      
+            
      desc = post[:description] || ""
-     html_content =  "<div><a href=\"#{post[:link]}\" target=\"_blank\"><img  src=\"#{post[:picture]}\"></a></div>" +
-                     "<div><a href=\"#{post[:link]}\" style=\"vertical-align:top\" target=\"_blank\">"+post[:name]+"</a>"+
-                     "<div>"+post[:caption]+"</div>"+
-                     "<div>"+desc+"</div>"+
-                     "</div>"
+     html_content =  "<div class=\"facebook_post\"><a class=\"thumbnail\" href=\"#{post[:link]}\" target=\"_blank\"><img src=\"#{post[:picture]}\"></a>" +
+                     "<div><p><a href=\"#{post[:link]}\" target=\"_blank\">"+post[:name]+"</a></p>"+
+                     "<p><strong>"+post[:caption]+"</strong></p>"+
+                     "<p>"+desc+"</p>"+
+                     "</div></div>"
       
-    elsif "photo".eql?(post[:type]) 
+    elsif "photo".eql?(post[:type])
       
-      html_content =  "<div>"+post[:message]+"</div><div style=\"padding:5px 0\"><div style=\"float:left;margin: 5px 10px 10px 0;\">"+
-                      "<a href=\"#{post[:link]}\" target=\"_blank\"><img src=\"#{post[:picture]}\"></a></div>"+
-                      "<div style=\"vertical-align:top;\"><a href=\"#{post[:link]}\" style=\"vertical-align:top\" target=\"_blank\">Wall Photos</a></div></div>"
+      html_content =  "<div class=\"facebook_post\"><p>"+post[:message]+"</p>"+
+                      "<p><a href=\"#{post[:link]}\" target=\"_blank\"><img src=\"#{post[:picture]}\"></a></p></div>"
                       
     end
     
