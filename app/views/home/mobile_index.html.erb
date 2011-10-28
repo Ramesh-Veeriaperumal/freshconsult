@@ -1,0 +1,38 @@
+<div class="ui-form">
+	<% form_for @user_session, :url => user_session_path do |f| %>
+	  <%= f.error_messages %>
+		  <ul>
+		  	<li class="largefield">
+		  		<%= f.label t('.email') %>
+		  		<%= f.text_field :email, :class => "required text" %>
+			</li>
+			<li class="largefield">
+		  		<%= f.label t('.password') %>
+		  		<%= f.password_field :password, :class => "text" %>
+		  	</li>
+		  	<li class="checkbox">
+				<%= f.check_box :remember_me %>
+				<%= f.label :remember_me, t('.remember') %>
+		  	</li>
+		  	<li>
+		  		<%= f.submit t('.login'), { :class => "uiButton"} %>
+				<%if feature?(:signup_link)%>
+				 or <%= link_to( t('signup') , new_support_registration_path)%>
+				<%end%>
+			</li>
+			<li>
+				<span class="seperator"></span>
+				<div class="help_text"><b><Help><%= t('.help') %>:</b> <%= link_to(t('.forgot'), new_password_reset_path ) %> </div>
+			</li>
+			<%if feature?(:google_signin) or feature?(:twitter_signin) %>
+			 <li>
+				<div>
+					<b><%= t(".sign_in_using") %>:</b>
+					<%= link_to(image_tag("google.png", :alt => t(".sign_in_using_google")) + "Google", "/auth/open_id?openid_url=https://www.google.com/accounts/o8/id", :class => "button") if feature?(:google_signin) %>
+					<%= link_to(image_tag("twitter.png", :alt => "Twitter") + "Twitter", "/auth/twitter", :class => "button") if feature?(:twitter_signin) %>
+				</div>
+			 </li>
+			<%end%>
+		</ul>
+	<% end %>
+</div>

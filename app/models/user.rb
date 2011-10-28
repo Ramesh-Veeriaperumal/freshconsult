@@ -270,8 +270,14 @@ class User < ActiveRecord::Base
   
   def to_liquid
     to_ret = { 
+      "id"   => id,
       "name"  => to_s,
-      "email" => email
+      "email" => email,
+      "phone" => phone,
+      "mobile" => mobile,
+      "job_title" => job_title,
+      "user_role" => user_role,
+      "time_zone" => time_zone,
     }
     
     to_ret["company_name"] = customer.name if customer_id

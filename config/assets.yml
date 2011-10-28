@@ -57,4 +57,5 @@ javascripts:
     - public/javascripts/globalinit.js
   freshwidget:
     - public/javascripts/freshwidget.js
-  
+  custom_widget:
+    - public/javascripts/custom_widget.js

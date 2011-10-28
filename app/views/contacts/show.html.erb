@@ -47,3 +47,6 @@
 		<% end %>
 		<%= render :partial => "tickets", :object => @user_tickets_open_pending %>
 </div>
+<br><br>
+<% @liquid_objects = {"requester" => @user}%>
+<%= get_app_widget_script("capsule_crm", "contact_widget", @liquid_objects)%>

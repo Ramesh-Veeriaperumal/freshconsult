@@ -1,0 +1,22 @@
+<% content_for :sidebar do -%><%-end %>
+<div class="floatr">
+	<%= link_to t('application.new'), new_integrations_application_path, :class => "uiButton"  %>
+</div>	
+<h3 class="title"><%=t('application.title')%></h3>
+<ul class="admin_list">
+	<% @applications.each do |application| %>
+	  	<li>
+	  		<div class="item_actions">
+	  			<% i_app_index=@installed_applications.index { |i_app| true if(i_app.application == application) }
+				  if i_app_index.nil?%>
+	  	    		<%= link_to t('application.install'), show_integrations_application_path(application), :class => "button" %>	
+				<%else%>
+	  	    		<%= link_to t('application.configure'), configure_integrations_installed_application_path(@installed_applications[i_app_index]), :class => "button" %>	
+	  	    		<%= link_to t('application.uninstall'), uninstall_integrations_installed_application_path(@installed_applications[i_app_index]), :class => "button" %>	
+				<%end%>
+			</div>
+			<%= link_to(h(application.name), install_integrations_installed_application_path(application), :class => "item_info") %>
+			<div><%=h(application.description)%></div>
+	 	</li>
+	<% end %>
+</ul>

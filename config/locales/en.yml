@@ -202,7 +202,7 @@ en:
         screen_name: Screen Name
         default_group : Default Group       
         
-    home: 
+    home:
       index: 
         group: Groups
         business-hours: Business Hours
@@ -274,6 +274,8 @@ en:
   feedbackwidget_formcustomize: Form customization
   does_not_contain: Does not contain
   flash: 
+    application:
+      already: Application already installed.
     filter:
       delete_success: "View has been delete successfully!"
       save_success: "View has been saved successfully!"
@@ -1418,3 +1420,19 @@ en:
   loading:
     activities: Loading more activities
     items: Loading more items
+  application:
+    new: Create New Application
+    title: Available Applications
+    install: Install
+    uninstall: Uninstall
+    configure: Configure
+  home:
+      mobile_index:
+        email: Email
+        password: Password
+        remember: Remember me on this computer
+        login: Login
+        forgot: I forgot my password?
+        sign_in_using: Sign In using
+        sign_in_using_google: Sign in using your Google account
+        help: Help

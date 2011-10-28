@@ -19,3 +19,5 @@
 		<% end %>
 	</ul>
 </div>
+<% @liquid_objects = {"requester" => user}%>
+<%= get_app_widget_script("capsule_crm", "contact_widget", @liquid_objects)%> 
