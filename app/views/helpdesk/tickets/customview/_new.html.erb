@@ -32,12 +32,13 @@
     <% end %>
   </ul>
   <div class="button-container">
-    <%= submit_tag t("save"), :class => "uiButton" %>
+    <%= submit_tag t("save"), :class => "uiButton", :id => "freshFilterSave" %>
   </div>
 <% end %>
 <% javascript_tag do %>
   jQuery("#freshFilter").validate({
     submitHandler: function(){
+	    jQuery("#freshFilterSave").attr("disabled",true);
         jQuery.ajax({
           url: "/wf/filter/save_filter",
           type: "POST",
@@ -52,6 +53,7 @@
           success: function(msg){
             console.log(msg);
           }
+		  
         });
         return false;
     }
