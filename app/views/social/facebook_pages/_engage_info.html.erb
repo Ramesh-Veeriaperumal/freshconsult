@@ -1,0 +1,16 @@
+<% content_for :sidebar do -%><%-end %>
+<h3 class="title">Add your Facebook pages</h3>
+<ul class="ui-form">
+  <li class="inline-field">
+	  <div class="admin_help_image">
+      <%= get_img("facebook-admin-page.png", :help) %>
+      <div class="content">
+        <h2 class="title">Engage your customers, directly on Facebook</h2>
+       	<p class="info-data">
+Associate a Facebook page to <b> <%= current_account.name %> </b> and respond to your customers from within freshdesk when they comment or post to your wall.
+        </p>
+        <a href="<%= @fb_client.authorize_url %>" class="uiButton special medium">Add Facebook Page</a>
+      </div>
+    </div>
+  </li>
+</ul>

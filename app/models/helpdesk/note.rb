@@ -15,16 +15,21 @@ class Helpdesk::Note < ActiveRecord::Base
     :class_name => 'Social::Tweet',
     :dependent => :destroy
     
+  has_one :fb_post,
+    :as => :postable,
+    :class_name => 'Social::FbPost',
+    :dependent => :destroy
+    
   has_one :survey_remark, :foreign_key => 'note_id', :dependent => :destroy
 
   attr_accessor :nscname
   attr_protected :attachments, :notable_id
   
   after_create :save_response_time, :update_parent, :add_activity, :update_in_bound_count
-  accepts_nested_attributes_for :tweet
+  accepts_nested_attributes_for :tweet , :fb_post
   
   unhtml_it :body
-
+  
   named_scope :newest_first, :order => "created_at DESC"
   named_scope :visible, :conditions => { :deleted => false } 
   named_scope :public, :conditions => { :private => false } 
@@ -41,8 +46,8 @@ class Helpdesk::Note < ActiveRecord::Base
     }
   }
 
-
-  SOURCES = %w{email form note status meta twitter feedback}
+  SOURCES = %w{email form note status meta twitter feedback facebook}
+  
   SOURCE_KEYS_BY_TOKEN = Hash[*SOURCES.zip((0..SOURCES.size-1).to_a).flatten]
   
   ACTIVITIES_HASH = { Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:twitter] => "twitter" }

@@ -105,6 +105,10 @@ class Account < ActiveRecord::Base
   
   has_many :canned_responses , :class_name =>'Admin::CannedResponse' , :dependent => :destroy  
   has_many :user_accesses , :class_name =>'Admin::UserAccess' , :dependent => :destroy
+
+  has_many :facebook_pages, :class_name =>'Social::FacebookPage' ,:dependent => :destroy
+  
+  has_many :facebook_posts, :class_name =>'Social::FbPost' ,:dependent => :destroy
   
   has_many :ticket_filters , :class_name =>'Helpdesk::Filters::CustomTicketFilter' , :dependent => :destroy 
   
@@ -172,7 +176,7 @@ class Account < ActiveRecord::Base
   PLANS_AND_FEATURES = {
     :pro => {
       :features => [ :scenario_automations, :customer_slas, :business_hours, :forums, 
-        :surveys ]
+        :surveys ,:facebook ]
     },
     
     :premium => {

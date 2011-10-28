@@ -82,6 +82,8 @@ Rails::Initializer.run do |config|
   # config.active_record.observers = :cacher, :garbage_collector
 
   #config.reload_plugins = true if RAILS_ENV == 'development'
+  
+  config.action_controller.allow_forgery_protection = false
 
 end
 

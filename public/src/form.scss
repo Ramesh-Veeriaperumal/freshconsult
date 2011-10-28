@@ -243,9 +243,9 @@ a.addchoice:hover{
       position:relative;
 	   input{
          float:left;
-	      margin-left:0;
-	      margin-top:1px;
-	      margin-right:3px;
+	      margin-left:4px;
+	      margin-top:4px;
+	      margin-right:9px;
 	   }
    }
 	label, li.checkbox{
@@ -459,6 +459,11 @@ a.addchoice:hover{
 	.caption{
 		float:left;
 		/*		clear:left; */
+		h2.title{
+			line-height:28px;
+			top:-8px;
+			position:relative;
+		}
 	}
 	.rightalign{
 		font-size:13px;

@@ -46,6 +46,12 @@
 						<%= link_to("@#{twitter_handle.screen_name}", edit_social_twitter_path(twitter_handle), :class => "", :title => "Edit Twitter Account @#{twitter_handle.screen_name}") %> 
 				</div>
  			  <% end %>
+				<% product.facebook_pages.each do |facebook_page| %>
+				<div class="channel-text">				
+						<span class='icon facebook-active'></span>				
+						<%= link_to(facebook_page.page_name, edit_social_facebook_path(facebook_page), :class => "", :title => "Edit Facebook page #{facebook_page.page_name}") %> 
+				</div>
+				<% end %>
       </td>
     </tr>
   </table>
