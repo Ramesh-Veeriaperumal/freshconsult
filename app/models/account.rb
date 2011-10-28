@@ -312,6 +312,10 @@ class Account < ActiveRecord::Base
     ticket_fields.type_field.first.picklist_values
   end
   
+  def has_multiple_products?
+    !products.empty?
+  end
+  
   protected
   
     def valid_domain?
