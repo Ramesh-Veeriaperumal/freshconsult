@@ -63,7 +63,7 @@ module Search::TicketSearch
     
     if criteria_key == :responder_id
       agents = []
-      agents.push([0, "Me" ])
+      agents.push([-2, "Me" ])
       agents.concat(Account.current.users.technicians.collect { |au| [au.id, au.name] })
       agents.push([-1, "Unassigned" ])
       return agents
@@ -71,7 +71,7 @@ module Search::TicketSearch
     
     if criteria_key == :group_id
       groups = []
-      groups.push([0, "My Groups" ])
+      groups.push([-2, "My Groups" ])
       groups.concat(Account.current.groups.find(:all, :order=>'name' ).collect { |g| [g.id, g.name]})
       return groups
     end
