@@ -12,7 +12,6 @@ module Helpdesk::TicketModelExtension
       {:label => "Requester", :value => "requester_info", :selected => true},
       {:label => "Agent", :value => "responder_name", :selected => false},
       {:label => "Group", :value => "group_name", :selected => false},
-      {:label => "Product", :value => "product_name", :selected => false},
       {:label => "Created Time", :value => "created_at", :selected => false},
       {:label => "Due by Time", :value => "due_by", :selected => false},
      ]
