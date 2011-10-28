@@ -106,7 +106,8 @@ class SearchController < ApplicationController
     def search
       @items = ThinkingSphinx.search params[:search_key], 
                                         :with => { :account_id => current_account.id, :deleted => false }, 
-                                        :star => true, :page => params[:page], :per_page => 10
+                                        :star => true, :match_mode => :any, 
+                                        :page => params[:page], :per_page => 10
   
       process_results
     end
