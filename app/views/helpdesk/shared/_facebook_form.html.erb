@@ -15,6 +15,7 @@
 	    <div class="fields">
 	    <%= f.text_area :body, { :class => 'required facebook auto-height', :id => "#{id}-#{cntid}-body", :rows => "6" } %>
       <%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["facebook"]%>          
+      <%= f.hidden_field :private , :value => "false" %>
 	    </div>
 	  </li>
       <li class="button-container">
