@@ -86,10 +86,10 @@ module TicketConstants
   DUE_BY_TYPES_NAMES_BY_SYMBOL = Hash[*DUE_BY_TYPES.map { |i| [i[0], i[1]] }.flatten]
   
   CREATED_BY_VALUES = [
-    [ :thirt_days,  "Last 30 Days",               30 ], 
-    [ :seven_days,  "Last 7 Days",             7 ], 
-    [ :twenty_four,   "Last 24 hours",              1 ],
-    [ :custom_filter,   "Custom Filter",              4 ]
+    [ :thirt_days,    I18n.t("export_data.thirt_days"),   30 ], 
+    [ :seven_days,    I18n.t("export_data.seven_days"),    7 ], 
+    [ :twenty_four,   I18n.t("export_data.twenty_four"),   1 ],
+    [ :custom_filter, I18n.t("export_data.custom_filter"), 4 ]
   ]
 
   CREATED_BY_OPTIONS = CREATED_BY_VALUES.map { |i| [i[1], i[2]] }

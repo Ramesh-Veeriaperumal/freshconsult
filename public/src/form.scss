@@ -115,6 +115,15 @@ ul.ui-form .ui-form-inline{
 	li{ padding-left: 0; }
 }
 
+.ui-datepicker-trigger{
+	background: sprite($symbol, calendar) no-repeat;
+	border:0;
+	margin:1px 3px;
+	cursor:pointer;
+	width:18px;
+	height:20px;
+	text-indent:-9999px;
+}
 
 a.addchoice{
 	padding:5px;
@@ -239,7 +248,7 @@ a.addchoice:hover{
    }
    div.checkbox, label.checkbox{
       padding-bottom: 5px;
-      font-size:1.3em;
+      font-size:1.1em;
       position:relative;
 	   input{
          float:left;
@@ -450,6 +459,11 @@ a.addchoice:hover{
 	}
 }
 
+.threecol-form label{
+	float:left;
+	width:33%
+}
+
 .ui-form .inline-field{
 	/*border-bottom:1px dotted #cfcfcf;*/
 	padding-top:8px;
@@ -470,6 +484,7 @@ a.addchoice:hover{
 		width:195px;
 		text-align:right;
 	}
+
 	div.fields{
 		margin-left:210px;
 		clear:right;

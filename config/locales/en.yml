@@ -1391,6 +1391,11 @@ en:
   errors: 
     conditions_empty: "Conditions can't be empty"
     actions_empty: "Actions can't be empty"
+  export_data:
+    thirt_days: "Last 30 Days"
+    seven_days: "Last 7 Days"
+    twenty_four: "From yesterday"
+    custom_filter: "Select specific dates?"
   date:
     ago: Ago
     from: From Now
