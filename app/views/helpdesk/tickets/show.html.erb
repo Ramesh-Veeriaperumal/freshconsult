@@ -9,6 +9,7 @@
 			{
 				jQuery('#cnt-note').hide();
 				jQuery('#cnt-tweet').hide();
+				jQuery('#cnt-fb-post').hide();
 				jQuery('#cnt-reply').toggle();
 				tinyMCE.execInstanceCommand("send-email-cnt-reply-body","mceFocus",false);
 			}
@@ -16,13 +17,24 @@
 			{
 				jQuery('#cnt-reply').hide();
 				jQuery('#cnt-tweet').hide();
+				jQuery('#cnt-fb-post').hide();
 				jQuery('#cnt-note').toggle();
 				//setCaretToPos($('add-note-cnt-note-body'), 0);
+			}
+			else if (action == "fb_post")
+			{
+				jQuery('#cnt-reply').hide();
+				jQuery('#cnt-tweet').hide();
+				jQuery('#cnt-note').hide();
+				jQuery('#cnt-fb-post').toggle();
+				setCaretToPos($('send-fb-post-cnt-fb-post-body'), 0);
+			
 			}
 			else
 			{
 				jQuery('#cnt-reply').hide();
 				jQuery('#cnt-note').hide();
+				jQuery('#cnt-fb-post').hide();
 				jQuery('#cnt-tweet').toggle();
 				setCaretToPos($('send-tweet-cnt-tweet-body'), 0);			
 			}
@@ -218,9 +230,9 @@
         <div class="user_details">
           <%= user_avatar(@ticket.requester)  %>
           <div>
-			<%= content_tag :span, "", :class => "custom-tip-bottom icon-image source-#{@ticket.source_name.downcase}", :title => t("ticket.reported_from_source", :source => @ticket.source_name.downcase) %>
-            <%= t('ticket.reported_by', :requester => link_to(h(@ticket.requester.display_name),@ticket.requester, :class => "user_name"))%>  
-			<%="< #{@ticket.requester.email} >" if @ticket.requester.email%>
+						<%= content_tag :span, "", :class => "custom-tip-bottom icon-image source-#{@ticket.source_name.downcase}", :title => t("ticket.reported_from_source", :source => @ticket.source_name.downcase) %>
+      			<%= t('ticket.reported_by', :requester => link_to(h(@ticket.requester.display_name),@ticket.requester, :class => "user_name"))%>  
+						<%="<#{@ticket.requester.email}>" if @ticket.requester.email%>
           </div>
 
           <div> 
@@ -284,15 +296,16 @@
     </div>
   </div>		 
 
-  <% unless @ticket.deleted %>
-    <div class="alignright">
-      <%= link_to_function(t('ticket.reply_to'), "swapEmailNote('reply', this)", :class => 'uiButton', :id => "ReplyButton") unless @item.from_email.nil? %>
-      <%= link_to_function(t('ticket.add_note'), "swapEmailNote('note', this)", :class => 'uiButton', :id => "AddNoteButton") %>		
-      <%= link_to_function("Tweet", "swapEmailNote('tweet', this)", :class => 'uiButton', :id => "TweetButton") if @item.requester && @item.is_twitter?%>
-    </div>
-    <div style="position:relative;">
-      <% if @item.requester %>				
-      <div class="canned-response-menu" id="canned_response_container" style="display:none;"> 
+		<% unless @ticket.deleted %>
+			<div class="alignright">
+				<%= link_to_function(t('ticket.reply_to'), "swapEmailNote('reply', this)", :class => 'uiButton', :id => "ReplyButton") unless @item.from_email.nil? %>
+				<%= link_to_function(t('ticket.add_note'), "swapEmailNote('note', this)", :class => 'uiButton', :id => "AddNoteButton") %>		
+				<%= link_to_function("Tweet", "swapEmailNote('tweet', this)", :class => 'uiButton', :id => "TweetButton") if @item.requester && @item.is_twitter?%>
+				<%= link_to_function("Comment", "swapEmailNote('fb_post', this)", :class => 'uiButton', :id => "FacebookButton") if @item.requester && @item.fb_post%>
+			</div>
+			<div style="position:relative;">
+				<% if @item.requester %>				
+				  <div class="canned-response-menu" id="canned_response_container" style="display:none;"> 
             <div>
               <%= link_to("Add Canned response", new_admin_canned_response_path, :target => "_blank", :class => "button") if(current_user.admin?) %>
             </div>
@@ -301,6 +314,8 @@
 					<%= render(:partial => '/helpdesk/shared/note_form', :locals => { :id => 'add-note',	:cntid => "cnt-note", :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
 					<%= render(:partial => '/helpdesk/shared/reply_form', :locals => { :id => 'send-email', :cntid => 'cnt-reply', :note => [@ticket, Helpdesk::Note.new(:private => false)] }) %>
 					<%= render(:partial => '/helpdesk/shared/tweet_form', :locals => {:id => 'send-tweet', :cntid => 'cnt-tweet', :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
+					<%= render(:partial => '/helpdesk/shared/facebook_form', :locals => {:id => 'send-fb-post', :cntid => 'cnt-fb-post', :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
+			
 				<% else %>
 					<%= render(:partial => '/helpdesk/shared/note_form', :locals => { :id => 'add-note',	:cntid => "cnt-note", :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
 				<% end %>				

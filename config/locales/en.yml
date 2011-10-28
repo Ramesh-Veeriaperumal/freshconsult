@@ -14,6 +14,7 @@ en:
   example: example
   pending: Pending
   twitter_source: Twitter
+  facebook_source: Facebook
   working: Working
   attachment: Attachment
   attachments: Attachments
@@ -229,6 +230,7 @@ en:
         multi-product: Multiple Products
         twitter-setting: Twitter Settings
         survey: Survey Settings
+        facebook-setting: Facebook Settings
       
     canned_responses:
       index:
@@ -274,6 +276,8 @@ en:
   feedbackwidget_formcustomize: Form customization
   does_not_contain: Does not contain
   flash: 
+    facebook:
+      updated: Facebook setting has been updated
     filter:
       delete_success: "View has been delete successfully!"
       save_success: "View has been saved successfully!"
@@ -1020,6 +1024,9 @@ en:
     ticket_save: Successfully converted the tweet as a ticket
     tkt_err_save: Unable to convert the tweet to ticket or already converted
     usr_not_thr: User is not there.    
+  facebook:
+    deleted: The facebook page %{facebook_page} has been removed.
+    not_authorized: You were not authorized by Facebook
   logo: Logo
   ok: Ok
   back: Back
@@ -1402,6 +1409,9 @@ en:
     years: Years
   go_back_admin: Go back to Admin
   social:
+    facebook_pages:
+      index:
+        title: "Facebook Pages"
     twitter_handles:
       index:
         title: "Twitter Accounts"
@@ -1428,3 +1438,4 @@ en:
   loading:
     activities: Loading more activities
     items: Loading more items
+

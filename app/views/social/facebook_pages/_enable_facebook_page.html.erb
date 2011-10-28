@@ -1,0 +1,23 @@
+<% form_for :facebook_page, :url => { :controller=>"social/facebook_pages", :action=>"enable_pages"}, :html => { :multipart => true , :method => :put } do |f| %>
+<p class="intro">
+	Select the facebook pages you would like to associate to the Helpdesk.
+</p> 
+<ul class="admin_list">
+	<%= hidden_field(:user, :profile_id, :id => "profile_id", :value => @fb_pages.first[:profile_id]) %>	
+	<% @fb_pages.each do |fb_page| %>	
+	<li>
+		<div class="preview_pic">
+    	<%= image_tag (fb_page[:page_img_url]) %>
+    	<span class="fb_pic"></span>
+  	</div>		
+    <h2 class="title">
+			<%= check_box( "enable", "pages", { :multiple => true, :checked => true }, fb_page[:page_id] , nil) %>
+			<%= fb_page[:page_name] %>
+		</h2>
+	</li>			
+	<%end%>
+</ul>
+<div class="button-container">
+	<%= submit_tag t("save"), :class => "uiButton" %>	
+</div>
+<% end %>

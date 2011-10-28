@@ -1,0 +1,14 @@
+development:
+ app_id: 282574098423372
+ secret_key: f7f90af5765bf0b51f8346f97faac898
+ callback_url: http://localhost.local:3000/social/facebook/authdone  
+staging:
+ app_id: 177912822282439
+ secret_key: 81297d69e2deaf8152a7b0b96508c161
+ callback_url: http://login.freshpo.com/social/facebook/authdone 
+test:
+ app_id: 177912822282439
+ secret_key: 81297d69e2deaf8152a7b0b96508c161
+ callback_url: http://login.freshpo.com/social/facebook/authdone 
+production:
+ ...

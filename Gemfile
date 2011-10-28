@@ -51,7 +51,7 @@ gem "newrelic_rpm"
 gem "twitter" , "0.9.12"
 gem "newrelic_rpm"
 gem "sanitize", "2.0.3"
-
+gem "koala", "~> 1.0.0"
 
 group :development do
    gem "rspec", "1.3.1"

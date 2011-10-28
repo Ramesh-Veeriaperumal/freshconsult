@@ -79,6 +79,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :as => :tweetable,
     :class_name => 'Social::Tweet',
     :dependent => :destroy
+  
+  has_one :fb_post,
+    :as => :postable,
+    :class_name => 'Social::FbPost',
+    :dependent => :destroy
     
   has_one :ticket_states, :class_name =>'Helpdesk::TicketState', :dependent => :destroy
   has_one :ticket_topic,:dependent => :destroy
@@ -89,7 +94,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   attr_protected :attachments #by Shan - need to check..
   
-  accepts_nested_attributes_for :tweet
+  accepts_nested_attributes_for :tweet, :fb_post
   
   named_scope :created_at_inside, lambda { |start, stop|
           { :conditions => [" helpdesk_tickets.created_at >= ? and helpdesk_tickets.created_at <= ?", start, stop] }
@@ -197,6 +202,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
    def is_twitter?
     (tweet) and (!account.twitter_handles.blank?) 
   end
+ 
   
   def priority=(val)
     self[:priority] = PRIORITY_KEYS_BY_TOKEN[val] || val

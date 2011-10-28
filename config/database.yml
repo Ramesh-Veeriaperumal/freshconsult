@@ -10,9 +10,9 @@ development:
 staging:
   adapter: mysql
   encoding: utf8
-  database: helpkit1
-  username: root
-  password: 
+  database: facebook_testing
+  username: deploy
+  password: 584BKS2NRD
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
