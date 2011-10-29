@@ -20,7 +20,7 @@ class Social::FacebookPagesController < Admin::AdminController
       flash[:error] = t('facebook.not_authorized')
     end
 
-    @fb_pages = add_to_db fb_pages 
+    @fb_pages = add_to_db fb_pages unless fb_pages.blank?
   end
  
   def enable_pages
