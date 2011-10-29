@@ -57,7 +57,6 @@ class User < ActiveRecord::Base
   end
   
   def chk_email_validation?
-    puts "The profile is is :: #{fb_profile_id}"
     (is_not_deleted?) and (twitter_id.blank? || !email.blank?) and (fb_profile_id.blank? || !email.blank?)
   end
   

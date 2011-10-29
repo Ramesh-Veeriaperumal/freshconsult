@@ -112,6 +112,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
         :conditions => ["helpdesk_tickets.due_by >  helpdesk_ticket_states.resolved_at AND users.customer_id = ?",customer]
   } 
   }
+  
+   named_scope :resolved_on_time,
+        :joins => :ticket_states,
+        :conditions => ["helpdesk_tickets.due_by >  helpdesk_ticket_states.resolved_at"]
+   
+  
 
   named_scope :newest, lambda { |num| { :limit => num, :order => 'created_at DESC' } }
   named_scope :updated_in, lambda { |duration| { :conditions => [ 
