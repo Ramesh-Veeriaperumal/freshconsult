@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111004070713) do
+ActiveRecord::Schema.define(:version => 20111025060325) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -40,6 +40,14 @@ ActiveRecord::Schema.define(:version => 20111004070713) do
   end
 
   add_index "admin_canned_responses", ["account_id", "created_at"], :name => "index_admin_canned_responses_on_account_id_and_created_at"
+
+  create_table "admin_data_imports", :force => true do |t|
+    t.string   "import_type"
+    t.boolean  "status"
+    t.integer  "account_id",  :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "admin_user_accesses", :force => true do |t|
     t.string   "accessible_type"
@@ -625,6 +633,37 @@ ActiveRecord::Schema.define(:version => 20111004070713) do
     t.datetime "updated_at"
   end
 
+  create_table "social_facebook_pages", :force => true do |t|
+    t.integer  "profile_id",           :limit => 8
+    t.string   "access_token"
+    t.integer  "page_id",              :limit => 8
+    t.string   "page_name"
+    t.string   "page_token"
+    t.string   "page_img_url"
+    t.string   "page_link"
+    t.boolean  "import_visitor_posts",              :default => true
+    t.boolean  "import_company_posts",              :default => false
+    t.boolean  "enable_page",                       :default => false
+    t.integer  "fetch_since",          :limit => 8
+    t.integer  "product_id",           :limit => 8
+    t.integer  "account_id",           :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "social_facebook_pages", ["account_id", "page_id"], :name => "index_account_page_id", :unique => true
+  add_index "social_facebook_pages", ["product_id"], :name => "index_product_id"
+
+  create_table "social_fb_posts", :force => true do |t|
+    t.string   "post_id"
+    t.integer  "postable_id",      :limit => 8
+    t.string   "postable_type"
+    t.integer  "facebook_page_id", :limit => 8
+    t.integer  "account_id",       :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "social_tweets", :force => true do |t|
     t.integer  "tweet_id",       :limit => 8
     t.integer  "tweetable_id",   :limit => 8
@@ -878,6 +917,7 @@ ActiveRecord::Schema.define(:version => 20111004070713) do
     t.integer  "user_role"
     t.boolean  "delta",                            :default => true,  :null => false
     t.integer  "import_id",           :limit => 8
+    t.string   "fb_profile_id"
   end
 
   add_index "users", ["account_id", "email"], :name => "index_users_on_account_id_and_email", :unique => true
