@@ -1,4 +1,4 @@
-<tr class="<%= cycle('odd', 'even') %>">
+<tr class="<%= cycle('odd', 'even') %> <%= subject_style(ticket, "need-attention") %>">
 	
   <td class="check">
     <%= check_box_tag('ids[]', ticket.to_param, false, :class => 'selector') %>
@@ -6,9 +6,10 @@
 
   <td class="name">
   	  <%= user_avatar(ticket.requester) %>
-      <h3 style="<%=subject_style(ticket)%>">
+			<span class="need-attention-icon"></span>
+      <h3>
         <%= link_to( truncate(h(ticket.subject), { :length => 80 }) + content_tag(:span, " ##{ticket.display_id}", :class => "info-data"), ticket, :title => truncate(ticket.description, { :length => 350, :omission => "..." }), :class => "ticket-description-tip" ) %> 
-	  </h3>
+	  	</h3>
 	  <% unless ticket.requester.nil? %>
 			<% content_tag :div, :class => "info-data" do %>
 			  <%= content_tag :span, "", :class => "custom-tip-bottom icon-image source-#{ticket.source_name.to_s.downcase}", :title => t("ticket.reported_from_source", :source => ticket.source_name.to_s.downcase) %> 
