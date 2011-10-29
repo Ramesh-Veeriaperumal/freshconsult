@@ -79,8 +79,12 @@ ActionController::Routing::Routes.draw do |map|
 
   
   map.namespace :social do |social|
-    social.resources :twitters, :controller => 'twitter_handles', 
+    social.resources :twitters, :controller => 'twitter_handles',
                 :collection =>  { :feed => :any, :create_twicket => :post, :send_tweet => :any, :signin => :any, :tweet_exists => :get },
+                :member     =>  { :search => :any, :edit => :any }
+
+    social.resources :facebook, :controller => 'facebook_pages', 
+                :collection =>  { :signin => :any ,:authdone => :any , :event_listener =>:any , :enable_pages =>:any },
                 :member     =>  { :edit => :any }
   end
   
@@ -169,7 +173,7 @@ ActionController::Routing::Routes.draw do |map|
 #      ticket.resources :notes, :member => { :restore => :put }, :name_prefix => 'helpdesk_issue_helpdesk_'
 #    end
 
-    helpdesk.resources :tickets, :collection => { :empty_trash => :delete, :empty_spam => :delete, :user_ticket => :get, :search_tweets => :any, :custom_search => :get }, 
+    helpdesk.resources :tickets, :collection => { :empty_trash => :delete, :empty_spam => :delete, :user_ticket => :get, :search_tweets => :any, :custom_search => :get, :export_csv => :post }, 
                                  :member => { :assign => :put, :restore => :put, :spam => :put, :unspam => :put, :close => :put, :execute_scenario => :post  , :close_multiple => :put, :pick_tickets => :put, :change_due_by => :put , :get_ca_response_content => :post ,:split_the_ticket =>:post , :merge_with_this_request => :post, :print => :any } do |ticket|
 
       ticket.resources :notes, :member => { :restore => :put }, :name_prefix => 'helpdesk_ticket_helpdesk_'

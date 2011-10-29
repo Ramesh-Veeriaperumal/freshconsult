@@ -1,0 +1,35 @@
+<% content_for :sidebar do %><% end %>
+<ul class="ui-form">
+  <li class="inline-field">
+    <label class="caption">
+      <div class="preview_pic">
+        <%= image_tag (@item.page_img_url) %>  		    
+				<span class="fb_pic"></span>
+      </div>
+      <%= content_tag(:h2, @item.page_name, :class => "title") %>
+      <div class="intro"><!--%= @twitter_user.screen_name %--></div>
+    </label>
+    <div class="fields">
+      <label class="checkbox">
+        <%= check_box "social_facebook_page", :import_visitor_posts, { :checked => facebook_page.import_visitor_posts } %> 	
+        Import <strong>"Visitor posts"</strong> as ticket
+      </label>
+      <div class="info-data tabbed">
+        Freshdesk will convert all visitor posts on this Facebook page as tickets.
+      </div>				
+      <span class="seperator"></span>
+      <label class="checkbox">
+        <%= check_box "social_facebook_page", :import_company_posts, { :checked => facebook_page.import_company_posts } %> 
+        Import <strong>"Company posts"</strong> as ticket
+      </label>
+      <div class="info-data tabbed">
+        Freshdesk will convert all Company posts on this Facebook page into tickets.
+      </div>
+	   <span class="seperator"></span>
+      <label class="caption">Product</label>
+      <div class="fields">
+  	    <%= collection_select(:social_facebook_page, :product_id, current_account.products, :id, :name, { :include_blank => '...', :selected => facebook_page.product_id })%>
+  	  </div>	 
+    </div>
+  </li>
+</ul>

@@ -1,8 +1,10 @@
 require 'digest/md5'
 
+
 class Helpdesk::Ticket < ActiveRecord::Base 
   include ActionController::UrlWriter
   include TicketConstants
+  include Helpdesk::TicketModelExtension
   
   set_table_name "helpdesk_tickets"
   
@@ -77,6 +79,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :as => :tweetable,
     :class_name => 'Social::Tweet',
     :dependent => :destroy
+  
+  has_one :fb_post,
+    :as => :postable,
+    :class_name => 'Social::FbPost',
+    :dependent => :destroy
     
   has_one :ticket_states, :class_name =>'Helpdesk::TicketState', :dependent => :destroy
   has_one :ticket_topic,:dependent => :destroy
@@ -87,7 +94,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   attr_protected :attachments #by Shan - need to check..
   
-  accepts_nested_attributes_for :tweet
+  accepts_nested_attributes_for :tweet, :fb_post
   
   named_scope :created_at_inside, lambda { |start, stop|
           { :conditions => [" helpdesk_tickets.created_at >= ? and helpdesk_tickets.created_at <= ?", start, stop] }
@@ -195,6 +202,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
    def is_twitter?
     (tweet) and (!account.twitter_handles.blank?) 
   end
+ 
   
   def priority=(val)
     self[:priority] = PRIORITY_KEYS_BY_TOKEN[val] || val
@@ -655,8 +663,31 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
   end
   
+   
+   def group_name
+      group.nil? ? "No Group" : group.name
+    end
+    
+   def product_name
+      email_config.nil? ? "No Product" : email_config.name
+   end
+   
+   def responder_name
+      responder.nil? ? "No Agent" : responder.name
+    end
+    
+    def customer_name
+      requester.customer.nil? ? "No company" : requester.customer.name
+    end
+    
+    def priority_name
+      PRIORITY_NAMES_BY_KEY[priority]
+    end
+  
   private
   
+    
+    
     def create_source_activity
       create_activity(User.current, 'activities.tickets.source_change.long',
           {'source_name' => source_name}, 'activities.tickets.source_change.short')

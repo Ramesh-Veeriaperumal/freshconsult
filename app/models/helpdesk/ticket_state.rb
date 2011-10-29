@@ -14,4 +14,9 @@ class Helpdesk::TicketState < ActiveRecord::Base
   def set_closed_at_state
     self.closed_at=Time.zone.now
   end
+  
+  def need_attention
+    first_response_time.blank? or (requester_responded_at && agent_responded_at && requester_responded_at > agent_responded_at)
+  end
+  
 end
