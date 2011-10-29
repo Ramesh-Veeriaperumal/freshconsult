@@ -929,7 +929,7 @@ ul.admin_icons{
 		float:left;
 		padding-right:10px;
 		position:relative;
-		@include min-height(90px);
+		@include min-height(120px);
 		a{
 			position:relative;
 			display:block;
@@ -4006,4 +4006,14 @@ a.close{
 
 .tweet-counter.error{
    color:#FF0000;
+}
+
+
+.loading-amount{
+   background-image:url('/images/load.gif');
+	background-repeat:no-repeat;
+	background-position: center;
+   table{
+      visibility:hidden;
+   }
 }

@@ -58,7 +58,7 @@
 			plan_cost 		  = this.getAttribute("data-plan-cost");
 			current_plan_id = this.getAttribute("data-plan-id");
 			agents			    = $("#agents-text-box").val();
-			
+			$("#billing-template").addClass("loading-amount");
       $("#billing-template").detach().appendTo(selected_plan).show();
 			calculateCost();
 		});
@@ -80,10 +80,11 @@
 
     function calculateCost(){
       //$("#cost-per-agent").text("$"+plan_cost);
-      //$("#total-cost-per-agent").text("$"+(agents * plan_cost));
+      //$("#total-cost-per-agent").text("$"+(agents * plan_cost));			
       $.post( "/account/calculate_amount",
               { "billing_cycle": billing_cycle, "agent_limit" : agents, "plan_id" : current_plan_id },              
               function(data){
+									$("#billing-template").removeClass("loading-amount");
                   $("#billing-template").html(data);
             			$("#plan_id").val(current_plan_id);
                 } );

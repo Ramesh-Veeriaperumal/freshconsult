@@ -38,24 +38,21 @@
 <% javascript_tag do %>
   jQuery("#freshFilter").validate({
     submitHandler: function(){
-	    jQuery("#freshFilterSave").attr("disabled",true);
-        jQuery.ajax({
-          url: "/wf/filter/save_filter",
-          type: "POST",
-          data: {
-            data_hash: query_hash.toJSON(),
-            filter_name: jQuery('#filter_name').val(),
-            wf_model: "Helpdesk::Ticket",
-            visibility: { "visibility": jQuery('#freshFilter input[name="visibility"]:checked').val(), 
-            "user_id": <%= current_user.id %>,
-            "group_id":  jQuery('#visibility_group_id').val() }
-          },
-          success: function(msg){
-            console.log(msg);
-          }
-		  
-        });
-        return false;
+	 		jQuery("#freshFilterSave").attr('disabled', 'disabled').switchClass("uiButton", "ui-after-submit", 0);
+      jQuery.ajax({
+        url: "/wf/filter/save_filter",
+        type: "POST",
+        data: {
+          data_hash: query_hash.toJSON(),
+          filter_name: jQuery('#filter_name').val(),
+          wf_model: "Helpdesk::Ticket",
+          visibility: { "visibility": jQuery('#freshFilter input[name="visibility"]:checked').val(), 
+          "user_id": <%= current_user.id %>,
+          "group_id":  jQuery('#visibility_group_id').val() }
+        },
+        success: function(msg){}
+      });
+      return false;
     }
   });
   function toggleGroup(access_id){	
