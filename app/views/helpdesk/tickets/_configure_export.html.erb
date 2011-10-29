@@ -37,14 +37,16 @@
 		<li>
 	</ul>	
 	<div class="button-container">
-		<%= submit_tag "Export to CSV", :class => "uiButton" %>
+		<%= submit_tag "Export to CSV", :class => "uiButton", :id => "ExportToCSV" %>
 	</div>
 <%end%>
 
 <% javascript_tag do %>
   jQuery("#exportFilter").submit(function() {
-  	 getFilterData()
- 		 jQuery("#exportFilter input[name=data_hash]").val(query_hash.toJSON())
+  	 getFilterData();
+ 		 jQuery("#exportFilter input[name=data_hash]").val(query_hash.toJSON());
+ 		 jQuery("#ExportToCSV").attr('disabled', 'disabled').switchClass("uiButton", "ui-after-submit", 0);
+		 setTimeout('active_dialog.dialog("close")', 1000);
   });
 
   jQuery("#date_filter").change(function(){
