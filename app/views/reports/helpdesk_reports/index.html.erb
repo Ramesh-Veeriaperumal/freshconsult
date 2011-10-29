@@ -1,0 +1,31 @@
+<% form_tag :action => :index, :controller => "reports/helpdesk_reports" do %>
+	<%=select_month(Date.today)%>
+	<%= submit_tag 'Submit' %>
+<% end %>
+<%if !@total_tickets.nil? and @total_tickets > 0 %>
+<br>
+<br>
+Status: <%=@status_hash.to_json%>
+<br>
+<br>
+Ticket type: <%=@ticket_type_hash.to_json%>
+<br>
+<br>
+Priority: <%=@priority_hash.to_json%>
+<br>
+<br>
+Average Resolved Tickets this month: <%=@avg_current_month%>
+<br>
+<br>
+Sla difference:<%=@sla_diff%> 
+<%= get_sla_image(@sla_diff) %>
+<br>
+<br>
+Total tickets: <%=@total_tickets%>
+<br>
+<br>
+Timeline: <%=@all_hash.to_json%> 
+Resolved_hash: <%=@resolved_hash.to_json%>
+<%else%>
+No data to display!
+<%end%>
