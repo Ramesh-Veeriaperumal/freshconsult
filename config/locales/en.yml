@@ -1395,7 +1395,7 @@ en:
     thirt_days: "Last 30 Days"
     seven_days: "Last 7 Days"
     twenty_four: "From yesterday"
-    custom_filter: "Select specific dates?"
+    custom_filter: "Set date"
   date:
     ago: Ago
     from: From Now

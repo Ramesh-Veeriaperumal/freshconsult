@@ -929,7 +929,7 @@ ul.admin_icons{
 		float:left;
 		padding-right:10px;
 		position:relative;
-		@include min-height(90px);
+		@include min-height(120px);
 		a{
 			position:relative;
 			display:block;
@@ -3065,6 +3065,7 @@ div.addReminder{
 		padding-left:0px;
 		padding-top:12px; 
 		text-align:right;
+		position:relative;
 	}
 	th.check{
 		padding:5px 5px 0 0;
@@ -3077,15 +3078,15 @@ div.addReminder{
    }
 	
 	.name, .name-user{
-      width:55%;
-      padding-left:60px;
+      width:63%;
+      padding-left:65px;
       .preview_pic{
          margin:0px; 
          margin-top:3px;
-         margin-left:-56px;         
+         margin-left:-65px;         
          @include corners(5px);
          border:1px solid #cfcfcf;
-         background-color:#afafaf;
+         height:40px;
          img{ 
             width:40px; height:40px;
             @include corners(5px);
@@ -3096,19 +3097,38 @@ div.addReminder{
          padding-bottom:4px;
          a{
             font-size: 13px;
-            line-height: 22px;
+            line-height: 20px;
             padding: 0px 0 4px 2px;
-            color:#333333;
+            color:#888;
          }
          a:hover{
-            color:#000000;
+            color:#000;
          }
       }
-      div{ color:#888888; }
+      div{ color:#888; }
    }
 	
 	.name-user{
 		padding-left:20px;
+	}
+	
+	.need-attention .name h3 a{
+		font-weight:bold;
+		color:#444;
+	}
+	
+	.need-attention-icon{ 
+	   width:13px; 
+	   height:13px; 
+	   padding:0px;
+	   float:left;
+	   background:none; 
+	   position:absolute;
+	   margin-left:-16px;
+	   margin-top:3px;
+	}
+	.need-attention .need-attention-icon{
+      background: sprite($symbol, need-attention) no-repeat;  
 	}
 	.assign{
 		ul{
@@ -3120,7 +3140,6 @@ div.addReminder{
 				span{
 					color:#444444;
 					text-transform:capitalize;
-					
 				}					
 			}
 			.priority{
@@ -3139,10 +3158,8 @@ div.addReminder{
 				}
 		}
 	}
-   .sla{
-      text-align:right;
-      padding-right:15px;
-      vertical-align:top;
+   .assign, .even .assign{
+      border-left:1px dotted #dfdfdf;
    }
 }	  
  
