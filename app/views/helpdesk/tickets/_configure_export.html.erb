@@ -4,7 +4,7 @@
 	<ul class="ui-form">
 		<li class="inline-field">
 			<label class="caption">
-				Tickets created
+				Filter tickets created in
 			</label>	 					
 			<div class="fields">
 				<label>
@@ -25,7 +25,7 @@
 		</li>
 		<li class="inline-field">
 	 		<span class="seperator"></span>
-			<label>Information to export</label>
+			<label>Select fields to export</label>
 			<div class="threecol-form">
 	 			<% csv_headers.each do |head| %>
   			<label class="checkbox"> 
@@ -37,7 +37,7 @@
 		<li>
 	</ul>	
 	<div class="button-container">
-		<%= submit_tag "Export data to CSV", :class => "uiButton" %>
+		<%= submit_tag "Export to CSV", :class => "uiButton" %>
 	</div>
 <%end%>
 
