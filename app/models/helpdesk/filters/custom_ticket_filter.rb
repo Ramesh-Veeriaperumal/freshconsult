@@ -155,13 +155,13 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
         condition_at(0)
         0.upto(size - 1) do |index|
           condition = condition_at(index)
-          if condition.key.to_s.include?("responder_id") or condition.key.to_s.include?("helpdesk_subscriptions.user_id")
+          if condition.key.to_s.include?("responder_id") or condition.key.to_s.include?("helpdesk_subscriptions.user_id") 
             arr = condition.container.value.split(",")
             if arr.include?("0")
               arr.delete("0")
               arr << User.current.id.to_s
             end
-            condition.container.values[0] = arr.join(",") 
+            condition.container.values[0] = arr.join(",")  
           end
           
           if condition.key.to_s.include?("group_id")
