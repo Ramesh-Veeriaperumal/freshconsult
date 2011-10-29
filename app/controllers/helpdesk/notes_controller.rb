@@ -52,8 +52,10 @@ class Helpdesk::NotesController < ApplicationController
           @item.create_tweet({:tweet_id => twt.id, :account_id => current_account.id})
         elsif facebook?
           fb_comment = add_facebook_comment
-          fb_comment.symbolize_keys!
-          @item.create_fb_post({:post_id => fb_comment[:id], :facebook_page_id =>@parent.fb_post.facebook_page_id ,:account_id => current_account.id})
+          unless fb_comment.blank?
+            fb_comment.symbolize_keys!
+            @item.create_fb_post({:post_id => fb_comment[:id], :facebook_page_id =>@parent.fb_post.facebook_page_id ,:account_id => current_account.id})
+          end
         end
         @parent.responder ||= current_user 
         unless params[:ticket_status].blank?
@@ -144,10 +146,15 @@ class Helpdesk::NotesController < ApplicationController
       fb_page =  @parent.fb_post.facebook_page
     
       unless fb_page.nil?
+       begin 
         @fb_client = FBClient.new fb_page,{:current_account => current_account}
         facebook_page = @fb_client.get_page
         post_id =  @parent.fb_post.post_id
         comment = facebook_page.put_comment(post_id, @item.body) 
+       rescue
+        flash[:notice] = t('facebook.not_authorized')
+        return nil
+       end
       end
   end
   
