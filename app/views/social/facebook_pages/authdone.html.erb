@@ -1,6 +1,6 @@
 <% content_for :sidebar do %><% end %>
 <h3 class="title">Associate "Facebook" pages</h3>
-<% unless @fb_pages.empty? %>
+<% if @fb_pages %>
 	<%= render :partial => 'enable_facebook_page'%>
 <% else %>
 <ul class="admin_list">
