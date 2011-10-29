@@ -46,7 +46,10 @@
   	 getFilterData();
  		 jQuery("#exportFilter input[name=data_hash]").val(query_hash.toJSON());
  		 jQuery("#ExportToCSV").attr('disabled', 'disabled').switchClass("uiButton", "ui-after-submit", 0);
-		 setTimeout('active_dialog.dialog("close")', 1000);
+	  	 setTimeout(function(){
+			active_dialog.dialog("close");
+			jQuery("#ExportToCSV").removeAttr('disabled', 'disabled').switchClass("ui-after-submit", "uiButton", 0);
+		 }, 1000);
   });
 
   jQuery("#date_filter").change(function(){
