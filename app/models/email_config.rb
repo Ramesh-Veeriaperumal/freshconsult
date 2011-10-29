@@ -4,7 +4,8 @@ class EmailConfig < ActiveRecord::Base
   has_one :portal, :foreign_key => 'product_id', :dependent => :destroy
   has_many :twitter_handles, :foreign_key => 'product_id', :class_name => 'Social::TwitterHandle', 
     :dependent => :destroy
-
+  has_many :facebook_pages, :foreign_key => 'product_id', :class_name => 'Social::FacebookPage', 
+    :dependent => :nullify
 
   attr_protected :account_id, :active
   attr_accessor :enable_portal

@@ -1,0 +1,82 @@
+<% form_tag({:action => :export_csv}, { :method => :post, :id => 'exportFilter' }) do %>
+  <input type="hidden" name="data_hash" value="" />
+	<div class="info-highlight">Quickly export ticket information available in the current view to a CSV file.</div>
+	<ul class="ui-form">
+		<li class="inline-field">
+			<label class="caption">
+				Filter tickets created in
+			</label>	 					
+			<div class="fields">
+				<label>
+					<%= select_tag "date_filter", options_for_select(TicketConstants::CREATED_BY_OPTIONS), :class => "dropdown" %>
+				</label>
+	 			<div id="datepicker" style="display:none;">
+					<span class="seperator"></span>
+					<label class="caption">From</label>
+					<div class="fields">						
+						<input type="text" id="start_date" date="" name="start_date" class="text auto" size="15" />
+					</div>
+					<label class="caption">To</label>
+					<div class="fields">
+						<input type="text" id="end_date" date="" class="text auto" name="end_date" size="15" />		
+					</div>
+				</div>
+		</div>
+		</li>
+		<li class="inline-field">
+	 		<span class="seperator"></span>
+			<label>Select fields to export</label>
+			<div class="threecol-form">
+	 			<% csv_headers.each do |head| %>
+  			<label class="checkbox"> 
+    			<%= check_box_tag "export_fields[#{head[:label]}]", head[:value], head[:selected] %> 
+					<%= head[:label] %>
+  			</label>
+	 			<% end %>
+			</div>
+		<li>
+	</ul>	
+	<div class="button-container">
+		<%= submit_tag "Export to CSV", :class => "uiButton", :id => "ExportToCSV" %>
+	</div>
+<%end%>
+
+<% javascript_tag do %>
+  jQuery("#exportFilter").submit(function() {
+  	 getFilterData();
+ 		 jQuery("#exportFilter input[name=data_hash]").val(query_hash.toJSON());
+ 		 jQuery("#ExportToCSV").attr('disabled', 'disabled').switchClass("uiButton", "ui-after-submit", 0);
+		 setTimeout('active_dialog.dialog("close")', 1000);
+  });
+
+  jQuery("#date_filter").change(function(){
+  	jQuery("#datepicker").toggle(jQuery("#date_filter").val() == "<%=TicketConstants::CREATED_BY_KEYS_BY_TOKEN[:custom_filter]%>");
+  });
+
+	var date_today = new Date();
+  jQuery(document).ready(function() {
+		var dates = jQuery( "#start_date, #end_date" ).datepicker({
+			changeMonth: true, 
+			changeYear: true,
+			numberOfMonths: 3,
+			showButtonPanel: true,
+			maxDate: "today",
+			showOn: "both", 
+			disabled: true,
+			onSelect: function( selectedDate ) {
+				var option = this.id == "start_date" ? "minDate" : "maxDate",
+					instance = jQuery( this ).data( "datepicker" ),
+					date = jQuery.datepicker.parseDate(
+						instance.settings.dateFormat ||
+						jQuery.datepicker._defaults.dateFormat,
+						selectedDate, instance.settings );
+				dates.not( this ).datepicker( "option", option, date );
+				jQuery(this).attr("date", date);
+			}
+		});
+		
+		jQuery("#start_date").val((date_today.getMonth()) + '/' + date_today.getDate() + '/' + date_today.getFullYear());
+		jQuery("#end_date").val((date_today.getMonth()+1) + '/' + date_today.getDate() + '/' + date_today.getFullYear());		
+		
+	});
+<% end %>

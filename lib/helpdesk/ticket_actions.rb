@@ -47,6 +47,46 @@ module Helpdesk::TicketActions
     render :partial => "assign_agent"
   end
   
+  def set_date_filter
+   if !(params[:date_filter].to_i == TicketConstants::CREATED_BY_KEYS_BY_TOKEN[:custom_filter])
+    params[:start_date] = params[:date_filter].to_i.days.ago.beginning_of_day.to_s(:db)
+    params[:end_date] = Time.now.end_of_day.to_s(:db)
+  else
+    params[:start_date] = Date.parse(params[:start_date]).beginning_of_day.to_s(:db)
+    params[:end_date] = Date.parse(params[:end_date]).end_of_day.to_s(:db)
+   end
+  end
+  
+  def configure_export
+    flexi_fields = current_account.ticket_fields.custom_fields(:include => :flexifield_def_entry)
+    csv_headers = Helpdesk::TicketModelExtension.csv_headers 
+    #Product entry
+    csv_headers = csv_headers + [ {:label => "Product", :value => "product_name", :selected => false} ] if current_account.has_multiple_products?
+    csv_headers = csv_headers + flexi_fields.collect { |ff| { :label => ff.label, :value => ff.name, :selected => false} }
+    render :partial => "configure_export", :locals => {:csv_headers => csv_headers }
+  end
+  
+  def export_csv
+    params[:wf_per_page] = "100000"
+    params[:page] = "1"
+    @items = current_account.tickets.created_at_inside(params[:start_date],params[:end_date]).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
+    csv_hash = params[:export_fields]
+    csv_string = FasterCSV.generate do |csv|
+      headers = csv_hash.keys.sort
+      csv << headers
+       @items.each do |record|
+        csv_data = []
+        headers.each do |val|
+          csv_data << record.send(csv_hash[val])
+        end
+        csv << csv_data
+      end
+    end
+    send_data csv_string, 
+            :type => 'text/csv; charset=utf-8; header=present', 
+            :disposition => "attachment; filename=tickets.csv"
+  end
+  
   def component
     @ticket = current_account.tickets.find_by_id(params[:id])   
     render :partial => "helpdesk/tickets/components/#{params[:component]}", :locals => { :ticket => @ticket , :search_query =>params[:q] } 

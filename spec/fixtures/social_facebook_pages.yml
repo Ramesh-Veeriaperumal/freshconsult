@@ -1,0 +1,27 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  profile_id: 1
+  access_token: MyString
+  page_id: 1
+  page_name: MyString
+  page_token: MyString
+  page_img_url: MyString
+  page_link: MyString
+  import_visitor_posts: false
+  import_company_posts: false
+  product_id: 1
+  account_id: 1
+
+two:
+  profile_id: 1
+  access_token: MyString
+  page_id: 1
+  page_name: MyString
+  page_token: MyString
+  page_img_url: MyString
+  page_link: MyString
+  import_visitor_posts: false
+  import_company_posts: false
+  product_id: 1
+  account_id: 1

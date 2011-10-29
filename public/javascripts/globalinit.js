@@ -9,8 +9,9 @@ var $J = jQuery.noConflict();
 
    // Tweet custom class
    $.validator.addMethod("tweet", $.validator.methods.maxlength, "Your Tweet was over 140 characters. You'll have to be more clever." );   
+   $.validator.addMethod("facebook", $.validator.methods.maxlength, "Your Facebook reply was over 8000 characters. You'll have to be more clever." );   
    $.validator.addClassRules("tweet", { tweet: 140 });
-   
+   $.validator.addClassRules("facebook", { tweet: 8000 });
    // App initialisation  
    $(document).ready(function() {
       // SyntaxHighlighter.all();

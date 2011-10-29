@@ -7,6 +7,7 @@ class Support::TicketsController < ApplicationController
     c.check_portal_scope :anonymous_tickets
   end
   before_filter :require_user_login , :only =>[:index,:filter,:close_ticket]
+  
   uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
   
   def index

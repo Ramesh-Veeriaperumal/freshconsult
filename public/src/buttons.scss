@@ -52,7 +52,7 @@ input.ui-button { padding: .4em 1em; }
 button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra padding in Firefox */
 
 
-.uiButton, .uiButton:visited, .special-button, .special-button:visited, .uiButton-active	 {
+.uiButton, .uiButton:visited, .special-button, .special-button:visited, .uiButton-active, .ui-after-submit{
 	@include button-base; 
 	background-image:url(../images/overlay-button.png);
 	background-color:#eeeeee;
@@ -78,6 +78,16 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
    border-color: darken($tab_color, 13%); 
    color:#ffffff; 
    @include text-shadow(rgba(0, 0, 0, 0.2), -1px, -1px, 1px); 
+}
+
+.ui-after-submit{
+   border-color:#cfcfcf;
+	background-color:#eeeeee;
+	background-image:url('/images/load.gif');
+	background-repeat:no-repeat; 
+	background-position: center;	
+   color:rgba(0, 0, 0, 0);
+	text-shadow: 1px 1px 0 rgba(0, 0, 0, 0);   
 }
 
 .uiButton:active, .fdbutton:active, .uiButton-active:active { top: 1px; }
