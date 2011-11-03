@@ -1,4 +1,6 @@
 nl:
+   meta:
+     language_name: 'Dutch'
    edit: "Wijzig"
    back: "Terug"
    delete: "Verwijder"

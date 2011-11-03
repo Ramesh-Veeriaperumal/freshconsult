@@ -138,7 +138,7 @@ class Account < ActiveRecord::Base
   validate_on_create :valid_subscription?
   validates_uniqueness_of :google_domain ,:allow_blank => true, :allow_nil => true
   
-  attr_accessible :name, :domain, :user, :plan, :plan_start, :creditcard, :address,:preferences,:logo_attributes,:fav_icon_attributes,:ticket_display_id,:google_domain
+  attr_accessible :name, :domain, :user, :plan, :plan_start, :creditcard, :address,:preferences,:logo_attributes,:fav_icon_attributes,:ticket_display_id,:google_domain ,:language
   attr_accessor :user, :plan, :plan_start, :creditcard, :address, :affiliate
   
   validates_numericality_of :ticket_display_id,
@@ -180,7 +180,7 @@ class Account < ActiveRecord::Base
     },
     
     :premium => {
-      :features => [ :multi_product, :multi_timezone ],
+      :features => [ :multi_product, :multi_timezone , :multi_language],
       :inherits => [ :pro ] #To make the hierarchy easier
     }
   }

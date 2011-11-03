@@ -62,7 +62,7 @@ class User < ActiveRecord::Base
   
   attr_accessible :name, :email, :password, :password_confirmation , :second_email, :job_title, :phone, :mobile, 
                   :twitter_id, :description, :time_zone, :avatar_attributes,:user_role,:customer_id,:import_id,
-                  :deleted , :fb_profile_id
+                  :deleted , :fb_profile_id , :language
 
   #Sphinx configuration starts
   define_index do
@@ -99,6 +99,7 @@ class User < ActiveRecord::Base
     self.time_zone = params[:user][:time_zone]
     self.import_id = params[:user][:import_id]
     self.fb_profile_id = params[:user][:fb_profile_id]
+    self.language = params[:user][:language]
     
     
     self.avatar_attributes=params[:user][:avatar_attributes] unless params[:user][:avatar_attributes].nil?

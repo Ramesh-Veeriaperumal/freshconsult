@@ -72,7 +72,7 @@ class ApplicationController < ActionController::Base
 #      session[:return_to] = nil
 #    end
   def set_locale
-    I18n.locale = request.compatible_language_from I18n.available_locales
+    I18n.locale =  (current_user && current_user.language) ? current_user.language : current_account.language 
   end
  
   def check_account_state

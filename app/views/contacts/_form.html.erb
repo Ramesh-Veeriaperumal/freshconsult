@@ -116,6 +116,13 @@
 			</li>
 		<% end %>
 		
+		<% if feature?(:multi_language) %>  
+			<li>
+				<%= label(:user, :language, t('account.language')) %>
+				<%= f.select :language, I18n.available_locales_with_name , {:include_blank => "...", :selected =>  (@user.language.to_sym() if @user.language) }%>
+			</li>
+		<% end %>
+		
 		<li>
 			<%= label(:user, :description, t('user.back_info')) %>
 			<label class="overlabel" for="user_binfo">
