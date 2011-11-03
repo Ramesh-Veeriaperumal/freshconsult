@@ -65,6 +65,13 @@ class AccountsController < ApplicationController
     rescue
       @account.time_zone = (ActiveSupport::TimeZone["Eastern Time (US & Canada)"]).name 
     end
+    
+    begin 
+      @account.language = request.compatible_language_from I18n.available_locales
+    rescue
+      @account.language = I18n.default_locale
+    end
+    
   end
     
   def signup_google 
@@ -237,6 +244,7 @@ class AccountsController < ApplicationController
   
   def update
     @account.time_zone = params[:account][:time_zone]
+    @account.language = params[:account][:language]
     @account.ticket_display_id = params[:account][:ticket_display_id]
     @account.main_portal_attributes = params[:account][:main_portal_attributes]
     

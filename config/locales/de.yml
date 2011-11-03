@@ -1,4 +1,6 @@
 de:
+  meta:
+    language_name: 'German'
   import_step2_info: "Bilden Sie die folgenden CSV-Felder auf die Datenbankfelder zum Importieren ab."
   last_name: "Nachname"
   import_ticket_group: "Tickets &amp; Gruppen"

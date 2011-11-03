@@ -70,6 +70,13 @@
 			</li>
 		<% end %>
 		
+	    <% if feature?(:multi_language) %>
+				<li>
+					<%= label(:user, :language, t('account.language')) %>
+					<%= select(:user, :language, I18n.available_locales_with_name , {:include_blank => "...", :selected =>  ( @agent.user.language.to_sym() if  @agent.user.language) })%>
+				</li>
+     	<% end %>
+		
 		<li>
 			<%= label(:agent, :signature, t('agent.signature')) %>
 			<label class="overlabel" for="user_binfo">
