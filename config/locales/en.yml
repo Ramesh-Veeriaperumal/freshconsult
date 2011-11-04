@@ -572,7 +572,7 @@ en:
   set_priority_as: Set Priority as
   sign_in_info: You will be signing in with
   posted_by: Posted by
-  already_overdue: Already Overdue for %{time_words}
+  already_overdue: Overdue for %{time_words}
   automations: 
     new: New Scenario
     title: Scenario Automations

@@ -1,14 +1,16 @@
 <tr class="<%= cycle('odd', 'even') %> <%= subject_style(ticket, "need-attention") %>">
 	
   <td class="check">
-    <%= check_box_tag('ids[]', ticket.to_param, false, :class => 'selector') %>
+   	<%= check_box_tag('ids[]', ticket.to_param, false, :class => 'selector') %>
   </td>
 
   <td class="name">
   	  <%= user_avatar(ticket.requester) %>
 			<span class="need-attention-icon"></span>
+	</td>		
+	<td class="name-user">
       <h3>
-        <%= link_to( truncate(h(ticket.subject), { :length => 80 }) + content_tag(:span, " ##{ticket.display_id}", :class => "info-data"), ticket, :title => truncate(ticket.description, { :length => 350, :omission => "..." }), :class => "ticket-description-tip" ) %> 
+        <%= link_to( truncate(h(ticket.subject), { :length => 80 }) + content_tag(:strong, " ##{ticket.display_id}"), ticket, :title => truncate(ticket.description, { :length => 350, :omission => "..." }), :class => "ticket-description-tip" ) %> 
 	  	</h3>
 	  <% unless ticket.requester.nil? %>
 			<% content_tag :div, :class => "info-data" do %>
@@ -18,28 +20,29 @@
 	  <% end %>
   </td>
 
-  <td class="assign">
+  <td class="assign style_<%=ticket.priority%>">
+	  <ul>
+			<li class="status">
+		    <%= ticket.status_name %>
+		  </li>
+			<li class="priority">
+			  <%= ticket.priority_name %>
+			</li>
+		</ul>
+
       <% if ticket.freshness == :new %>
         <%=t('ticket.unassigned')%>
       <% else %>
         <span><%=t('assigned_to')%> <%= link_to(h(ticket.responder.display_name), ticket.responder, :class => 'username') %></span>
       <% end %>
-	  	<ul>
-			<li>
-		    <%=t('ticket.status')%> <span><%= ticket.status_name %></span>
-		  </li>
-			<li class="priority">
-			  <%=t('ticket.priority')%> <span class="style_<%=ticket.priority%>"><%= ticket.priority_name %></span>
-			</li>
-		</ul>
   </td>
 	
   <td class="sla">
     <% if( ticket.active? ) %>
   	  <% if(Time.now > ticket.due_by ) %>
-			  <%= t('already_overdue',:time_words => distance_of_time_in_words(Time.now, ticket.due_by)) %>
+				<span class="overdue"><%= t('already_overdue', :time_words => distance_of_time_in_words(Time.now, ticket.due_by)) %></span>
 		  <% else %>
-		    <%= t('due_in',:time_words => distance_of_time_in_words(Time.now, ticket.due_by)) %>
+		    <%= t('due_in', :time_words => distance_of_time_in_words(Time.now, ticket.due_by)) %>
 	    <% end %>  
 	  <% else %>
 	    <% if( ticket.ticket_states.resolved_at < ticket.due_by ) %>

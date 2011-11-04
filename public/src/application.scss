@@ -3024,6 +3024,8 @@ div.addReminder{
    width:18px;
    height:18px;
    margin-right:6px;
+   position:relative;
+   top:-2px;
 }
 .source-email{   background: sprite($symbol, source-email) no-repeat; }
 .source-facebook{   background: sprite($symbol, source-facebook) no-repeat; }
@@ -3044,7 +3046,7 @@ div.addReminder{
 		vertical-align:top;
 	}
 	td{
-		padding:10px 8px 10px 10px;
+		padding:12px 8px 9px 10px;
 		background-color:#ffffff;
 		border-bottom:1px solid #efefef;
 		a{
@@ -3052,7 +3054,7 @@ div.addReminder{
 			color:#5a8ec1; 
 		}
 	}
-	tr.even td{ background-color:#f9f9f9; }
+	tr.even td{ background-color:#fafafa; }
 	tr:hover td, tr.active td, tr:hover.even td{
 		background-color:#e6f3f9;
 		background-image:url(../images/overlay-top-shadow.png);
@@ -3064,8 +3066,7 @@ div.addReminder{
 		width:25px;
 		padding-left:0px;
 		padding-top:12px; 
-		text-align:right;
-		position:relative;
+		text-align:right; 
 	}
 	th.check{
 		padding:5px 5px 0 0;
@@ -3077,44 +3078,54 @@ div.addReminder{
       padding-right:0px;
    }
 	
-	.name, .name-user{
-      width:63%;
-      padding-left:65px;
-      .preview_pic{
-         margin:0px; 
-         margin-top:3px;
-         margin-left:-65px;         
-         @include corners(5px);
-         border:1px solid #cfcfcf;
-         height:40px;
+	.name{
+	   padding-left:0px;
+	   width:55px;
+	   .preview_pic{
+         margin:0px;   
          img{ 
-            width:40px; height:40px;
-            @include corners(5px);
+            width:36px; height:36px;
+            @include corners(6px);
          }
       }
-
+      
+	}
+	.name-user{
+      width:58%;  
+      .user_name{
+         font-weight:normal;
+      }
       h3{
          padding-bottom:4px;
+         padding-top:0;
+         margin-top:-3px;
          a{
-            font-size: 13px;
-            line-height: 20px;
-            padding: 0px 0 4px 2px;
+            line-height: 18px;
+            padding:0 0 4px 2px;
             color:#888;
          }
          a:hover{
             color:#000;
          }
+         strong{
+            color:#6699cc;
+            font-size:1.0em;
+         }
+      }
+      .info-data{
+         margin:3px 0;
+         font-size:12px;
       }
       div{ color:#888; }
    }
 	
 	.name-user{
-		padding-left:20px;
+		padding-left:2px;
 	}
 	
-	.need-attention .name h3 a{
-		font-weight:bold;
-		color:#444;
+	.need-attention .name-user h3 a{
+		color:#333333; 
+		font-size:13px;
 	}
 	
 	.need-attention-icon{ 
@@ -3124,43 +3135,44 @@ div.addReminder{
 	   float:left;
 	   background:none; 
 	   position:absolute;
-	   margin-left:-16px;
-	   margin-top:3px;
+	   margin-left:8px;
+	   margin-top:0px;
 	}
 	.need-attention .need-attention-icon{
       background: sprite($symbol, need-attention) no-repeat;  
 	}
+	
 	.assign{
-		ul{
-			@include inline-block-list;
+	   width:15%; 
+	   padding-left:15px;
+      border-left:4px solid;	   
+		ul{ 
+		   @include clearfix;
+		   margin-bottom:10px;
 			li{
-				padding:4px 7px 0px 0px; 
-				color:#999999;
-				font-size:12px;
+				padding:0px 7px 0px 0px; 
+				color:#333333;
+            fonts-size:1em;
+            float:left;
 				span{
 					color:#444444;
 					text-transform:capitalize;
-				}					
-			}
-			.priority{
-					span.style_1{		/* Low priority style */
-						color:#666666
-					}
-					span.style_2{		/* Medium priority style */
-						color:#cc6633
-					}
-					span.style_3{		/* High priority style */
-						color:#cc6633
-					}
-					span.style_4{		/* Urgent priority style */
-						color:#cc6633
-					}					
 				}
+			}
 		}
 	}
-   .assign, .even .assign{
-      border-left:1px dotted #dfdfdf;
+   .assign.style_1{	/* Low priority style */
+      border-left-color:#63a0d8; 
    }
+   .assign.style_2{		/* Medium priority style */
+		border-left-color:#fff003; 	
+	}
+	.assign.style_3{		/* High priority style */
+		border-left-color:#ff9966; 		
+	}
+	.assign.style_4{		/* Urgent priority style */
+		border-left-color:#cc3333; 		
+	}
 }	  
  
 .conversation-sprite{ 
