@@ -65,7 +65,7 @@
 			<% if feature?(:multi_language) %>
 				<li>
 					<%= label(:user, :language, t('account.language')) %>
-					<%= select(:user, :language, I18n.available_locales_with_name , {:include_blank => "...", :selected =>  (user.language.to_sym() if user.language) })%>
+					<%= select(:user, :language, I18n.available_locales_with_name , {:selected => user.language.to_sym()})%>
 				</li>
 			<% end %>
 		
