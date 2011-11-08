@@ -154,6 +154,7 @@ class Account < ActiveRecord::Base
   after_create :populate_seed_data
   after_create :populate_features
   after_create :send_welcome_email
+  after_update :update_users_language
   
   before_destroy :update_google_domain
     
@@ -216,6 +217,10 @@ class Account < ActiveRecord::Base
     if time_zone_changed? && !features.multi_timezone?
       all_users.update_all(:time_zone => time_zone)
     end
+  end
+  
+  def update_users_language
+    all_users.update_all(:language => language) unless features.multi_language?
   end
   
   def needs_payment_info?

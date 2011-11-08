@@ -30,7 +30,7 @@ class User < ActiveRecord::Base
     :class_name => 'Helpdesk::Attachment',
     :dependent => :destroy
 
-  before_create :set_time_zone , :set_company_name
+  before_create :set_time_zone , :set_company_name , :set_language
   before_save :set_account_id_in_children , :set_contact_name, :check_email_value , :set_default_role
   after_update :drop_authorization , :if => :email_changed?
   
@@ -266,6 +266,10 @@ class User < ActiveRecord::Base
   
   def set_time_zone
     self.time_zone = account.time_zone if time_zone.nil? #by Shan temp
+  end
+  
+   def set_language
+    self.language = account.language if language.nil? 
   end
   
   def to_s
