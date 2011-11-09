@@ -86,7 +86,7 @@ class User < ActiveRecord::Base
   #Sphinx configuration ends here..
 
   def signup!(params)   
-    self.email = (params[:user][:email]).strip
+    self.email = (params[:user][:email]).strip if params[:user][:email]
     self.name = params[:user][:name]
     self.phone = params[:user][:phone]
     self.mobile = params[:user][:mobile]
