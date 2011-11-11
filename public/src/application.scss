@@ -4007,3 +4007,13 @@ a.close{
 .tweet-counter.error{
    color:#FF0000;
 }
+
+
+.loading-amount{
+   background-image:url('/images/load.gif');
+	background-repeat:no-repeat;
+	background-position: center;
+   table{
+      visibility:hidden;
+   }
+}

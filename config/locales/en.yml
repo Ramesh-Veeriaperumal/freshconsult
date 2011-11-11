@@ -1,5 +1,7 @@
 --- 
 en: 
+  meta:
+    language_name: 'English'
   feedbackwidget_offset_info: The offset will be the distance of the widget button (pixels) from the left or top of the screen based on the alignment you choose.
   no_twitter_handle: Please configure atleast one twitter account
   reset_my_password: Reset my password 
@@ -1200,6 +1202,7 @@ en:
     helpdesk_name: Helpdesk Name
     rebrand: Rebrand your Helpdesk
     helpdesk_url: Helpdesk URL
+    language: Language
   lead: Lead
   comments: Comments
   forum_confirm_msg1: Are you sure you want to delete this category?

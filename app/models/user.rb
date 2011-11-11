@@ -30,7 +30,7 @@ class User < ActiveRecord::Base
     :class_name => 'Helpdesk::Attachment',
     :dependent => :destroy
 
-  before_create :set_time_zone , :set_company_name
+  before_create :set_time_zone , :set_company_name , :set_language
   before_save :set_account_id_in_children , :set_contact_name, :check_email_value , :set_default_role
   after_update :drop_authorization , :if => :email_changed?
   
@@ -62,7 +62,7 @@ class User < ActiveRecord::Base
   
   attr_accessible :name, :email, :password, :password_confirmation , :second_email, :job_title, :phone, :mobile, 
                   :twitter_id, :description, :time_zone, :avatar_attributes,:user_role,:customer_id,:import_id,
-                  :deleted , :fb_profile_id
+                  :deleted , :fb_profile_id , :language
 
   #Sphinx configuration starts
   define_index do
@@ -99,6 +99,7 @@ class User < ActiveRecord::Base
     self.time_zone = params[:user][:time_zone]
     self.import_id = params[:user][:import_id]
     self.fb_profile_id = params[:user][:fb_profile_id]
+    self.language = params[:user][:language]
     
     
     self.avatar_attributes=params[:user][:avatar_attributes] unless params[:user][:avatar_attributes].nil?
@@ -265,6 +266,10 @@ class User < ActiveRecord::Base
   
   def set_time_zone
     self.time_zone = account.time_zone if time_zone.nil? #by Shan temp
+  end
+  
+   def set_language
+    self.language = account.language if language.nil? 
   end
   
   def to_s

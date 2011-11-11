@@ -56,11 +56,18 @@
 			<li>
 				<%= render :partial => "/shared/profileavatar", :locals => { :user => user, :type => "edit" } %>
 			</li>
+			<% if feature?(:multi_timezone) %>
 			<li>
-				
 				<%= label(:user , :time_zone, t("account.time_zone")) %>			
 				<%= time_zone_select (:user, :time_zone, ActiveSupport::TimeZone.all, :default => user.time_zone) %>
 			</li>
+			<% end %>
+			<% if feature?(:multi_language) %>
+				<li>
+					<%= label(:user, :language, t('account.language')) %>
+					<%= select(:user, :language, I18n.available_locales_with_name , {:selected => user.language.to_sym()})%>
+				</li>
+			<% end %>
 		
 		<%unless current_user.customer?%>
 			<li>
