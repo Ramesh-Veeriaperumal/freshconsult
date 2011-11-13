@@ -119,7 +119,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
     options[:indent] ||= 2
     xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
     xml.instruct! unless options[:skip_instruct]
-    super(:builder => xml, :skip_instruct => true) do |xml|
+    super(:builder => xml, :skip_instruct => true,:except => [:account_id,:import_id]) do |xml|
       xml.choices do
         self.choices.each do |k,v|  
           if v != "0"
