@@ -86,7 +86,7 @@ class User < ActiveRecord::Base
   #Sphinx configuration ends here..
 
   def signup!(params)   
-    self.email = params[:user][:email]
+    self.email = (params[:user][:email]).strip if params[:user][:email]
     self.name = params[:user][:name]
     self.phone = params[:user][:phone]
     self.mobile = params[:user][:mobile]
@@ -314,7 +314,7 @@ class User < ActiveRecord::Base
      options[:indent] ||= 2
       xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
-      super(:builder => xml, :skip_instruct => true,:except => [:crypted_password,:password_salt,:perishable_token,:persistence_token,:single_access_token]) 
+      super(:builder => xml, :skip_instruct => true,:except => [:crypted_password,:password_salt,:perishable_token,:persistence_token,:single_access_token,:account_id]) 
   end
  
   protected

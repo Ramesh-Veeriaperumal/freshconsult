@@ -21,6 +21,22 @@ class ForumCategoriesController < ApplicationController
     end
   end
   
+  def create
+    if @obj.save
+      flash[:notice] = create_flash
+      respond_to do |format|
+      format.html { redirect_back_or_default redirect_url }
+      format.xml { render :xml => @obj, :status => :created, :location => category_url(@obj) }
+    end
+    else
+      create_error
+      respond_to do |format|
+        format.html  { render :action => 'new' }
+        format.xml { render :xml => @obj.errors, :status => :unprocessable_entity }
+      end
+    end
+  end
+  
   def show
     
     @forum_category = scoper.find(params[:id])
