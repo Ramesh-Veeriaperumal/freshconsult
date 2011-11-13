@@ -138,7 +138,7 @@ class Account < ActiveRecord::Base
   validate_on_create :valid_subscription?
   validates_uniqueness_of :google_domain ,:allow_blank => true, :allow_nil => true
   
-  attr_accessible :name, :domain, :user, :plan, :plan_start, :creditcard, :address,:preferences,:logo_attributes,:fav_icon_attributes,:ticket_display_id,:google_domain
+  attr_accessible :name, :domain, :user, :plan, :plan_start, :creditcard, :address,:preferences,:logo_attributes,:fav_icon_attributes,:ticket_display_id,:google_domain ,:language
   attr_accessor :user, :plan, :plan_start, :creditcard, :address, :affiliate
   
   validates_numericality_of :ticket_display_id,
@@ -154,6 +154,7 @@ class Account < ActiveRecord::Base
   after_create :populate_seed_data
   after_create :populate_features
   after_create :send_welcome_email
+  after_update :update_users_language
   
   before_destroy :update_google_domain
     
@@ -180,7 +181,7 @@ class Account < ActiveRecord::Base
     },
     
     :premium => {
-      :features => [ :multi_product, :multi_timezone ],
+      :features => [ :multi_product, :multi_timezone , :multi_language],
       :inherits => [ :pro ] #To make the hierarchy easier
     }
   }
@@ -216,6 +217,10 @@ class Account < ActiveRecord::Base
     if time_zone_changed? && !features.multi_timezone?
       all_users.update_all(:time_zone => time_zone)
     end
+  end
+  
+  def update_users_language
+    all_users.update_all(:language => language) unless features.multi_language?
   end
   
   def needs_payment_info?

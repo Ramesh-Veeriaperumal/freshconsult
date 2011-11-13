@@ -1,4 +1,6 @@
 it:
+  meta:
+    language_name: 'Italian'
   import_step2_info: "Mappa i seguenti campi del file CSV e procedi all' importazione"
   last_name: "Cognome"
   import_ticket_group: "Gruppo Ticket"

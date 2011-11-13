@@ -1,4 +1,6 @@
 es:
+  meta:
+    language_name: 'Spanish'
   import_step2_info: "Relacione los campos CSV con los campos de la base de datos e importe."
   last_name: "Apellido"
   import_ticket_group: "Tiquetes &amp; Grupo"

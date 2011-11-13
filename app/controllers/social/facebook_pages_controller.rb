@@ -20,7 +20,7 @@ class Social::FacebookPagesController < Admin::AdminController
       flash[:error] = t('facebook.not_authorized')
     end
 
-    @fb_pages = add_to_db fb_pages 
+    @fb_pages = add_to_db fb_pages unless fb_pages.blank?
   end
  
   def enable_pages
@@ -64,7 +64,7 @@ class Social::FacebookPagesController < Admin::AdminController
   
    def fb_client   
      @fb_client = FBClient.new @item ,{   :current_account => current_account,
-                                          :callback_url => url_for(:action => 'authdone')}
+                                          :callback_url => fb_call_back_url}
     end
     
    def build_item
@@ -90,6 +90,10 @@ class Social::FacebookPagesController < Admin::AdminController
         fb_posts.fetch
       end
       
+  end
+  
+  def fb_call_back_url
+   url_for(:host => current_account.full_domain, :action => 'authdone')
   end
   
   
