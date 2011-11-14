@@ -638,7 +638,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       options[:indent] ||= 2
       xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
-      super(:builder => xml, :skip_instruct => true,:include => :notes) do |xml|
+      super(:builder => xml, :skip_instruct => true,:include => :notes,:except => [:account_id,:import_id]) do |xml|
        xml.custom_field do
         self.ff_aliases.each do |label|    
           value = self.get_ff_value(label.to_sym()) 

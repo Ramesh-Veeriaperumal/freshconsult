@@ -36,7 +36,14 @@ class Post < ActiveRecord::Base
     emailcoll = self.topic.monitorship_emails
     PostMailer.send_later(:deliver_monitor_email,emailcoll,self,self.user)  if emailcoll.count > 0
     
-   end
+  end
+  
+  def to_xml(options = {})
+     options[:indent] ||= 2
+      xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
+      xml.instruct! unless options[:skip_instruct]
+      super(:builder => xml, :skip_instruct => true,:except => [:account_id,:import_id]) 
+  end
   
   protected
     # using count isn't ideal but it gives us correct caches each time

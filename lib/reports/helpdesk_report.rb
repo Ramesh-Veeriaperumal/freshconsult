@@ -11,9 +11,9 @@ module Reports::HelpdeskReport
   def helpdesk_activity(params)
     columns.each do |column_name|
       tickets_count = group_tkts_by_columns(params,{:column_name => column_name })
-        tickets_hash = get_tickets_hash(tickets_count,column_name)
-        @total_tickets = tickets_hash[:total_tickets]
-        self.instance_variable_set("@#{column_name}_hash", tickets_hash)
+      tickets_hash = get_tickets_hash(tickets_count,column_name)
+      #@total_tickets = tickets_hash[:total_tickets]
+      self.instance_variable_set("@#{column_name}_hash", tickets_hash)
     end
   end
   
@@ -58,7 +58,7 @@ module Reports::HelpdeskReport
     tickets_hash = {}
     tickets_count.each do |ticket|
       tot_count += ticket.count.to_i
-      tickets_hash.store(ticket.send(column_name),ticket.count)
+      tickets_hash.store(ticket.month,{ :value => ticket.send(column_name),:count => ticket.count})
     end
     tickets_hash[:total_tickets] = tot_count
     tickets_hash
@@ -67,8 +67,8 @@ module Reports::HelpdeskReport
   def group_tkts_by_columns(params,vals={})
     scoper(params[:date][:month]).find( 
      :all,
-     :select => "count(*) count, #{vals[:column_name]}",
-     :group => "#{vals[:column_name]}")
+     :select => "count(*) count, #{vals[:column_name]}, MONTH(created_at) month",
+     :group => "#{vals[:column_name]},MONTH(created_at)")
   end
   
   def group_tkts_by_timeline(params,type)
@@ -86,7 +86,7 @@ module Reports::HelpdeskReport
   
   
   def scoper(month=Time.current.month)
-    Account.current.tickets.created_at_inside(start_of_month(month.to_i),end_of_month(month.to_i))
+    Account.current.tickets.created_at_inside(start_of_last_month(month.to_i),end_of_month(month.to_i))
   end
   
   def valid_month?(time)

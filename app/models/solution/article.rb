@@ -114,6 +114,13 @@ class Solution::Article < ActiveRecord::Base
     search(search_by, :with => { :account_id => ticket.account.id }, :match_mode => :any, :per_page => 10)
   end
   
+  def to_xml(options = {})
+     options[:indent] ||= 2
+      xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
+      xml.instruct! unless options[:skip_instruct]
+      super(:builder => xml, :skip_instruct => true,:except => [:account_id,:import_id]) 
+  end
+  
   private    
     def create_activity
       activities.create(
