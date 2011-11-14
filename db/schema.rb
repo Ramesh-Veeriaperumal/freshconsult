@@ -919,7 +919,7 @@ ActiveRecord::Schema.define(:version => 20111102103440) do
     t.boolean  "delta",                            :default => true,  :null => false
     t.integer  "import_id",           :limit => 8
     t.string   "fb_profile_id"
-    t.string   "language"
+    t.string   "language" ,                       :default => "en"
   end
 
   add_index "users", ["account_id", "email"], :name => "index_users_on_account_id_and_email", :unique => true
