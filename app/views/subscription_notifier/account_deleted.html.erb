@@ -1,4 +1,7 @@
 <%="The email of the admin is  #{@account.account_admin.email} and the state is #{@account.subscription.state}"%>
+<br>
+Discount is <%=@account.subscription.subscription_discount_id%>
+<br>
 <%unless @account.subscription_payments.blank?%>
      
    
