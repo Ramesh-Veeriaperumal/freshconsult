@@ -1,3 +1,13 @@
 <%="The email of the admin is  #{@account.account_admin.email} and the state is #{@account.subscription.state}"%>
-
-
+<%unless @account.subscription_payments.blank?%>
+     
+   
+	 <ol>
+	 	<dl>&nbsp;ID &nbsp; Amount &nbsp; Paid On</dl>
+	<%@account.subscription_payments.each do |payment|%>
+	 <li>
+	 	<%=payment.id%> &nbsp; $<%=payment.amount%> &nbsp; <%=payment.created_at.to_s(:short_day).strip%>
+	 </li>
+	<%end%>
+	</ol>
+<%end%>
