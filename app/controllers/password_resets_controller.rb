@@ -9,7 +9,7 @@ class PasswordResetsController < ApplicationController
   def create
     @user = current_account.users.find_by_email(params[:email])
     if @user
-      @user.deliver_password_reset_instructions!
+      @user.deliver_password_reset_instructions! current_portal
       flash[:notice] = t(:'flash.password_resets.email.success')
       redirect_to root_url
     else
