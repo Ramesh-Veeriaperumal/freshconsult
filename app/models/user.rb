@@ -219,6 +219,7 @@ class User < ActiveRecord::Base
   ##Authorization copy ends here
   
   def deliver_password_reset_instructions!(portal) #Do we need delayed_jobs here?! by Shan
+    portal ||= account.main_portal
     reset_perishable_token!
     
     e_notification = account.email_notifications.find_by_notification_type(EmailNotification::PASSWORD_RESET)
@@ -236,6 +237,7 @@ class User < ActiveRecord::Base
   end
   
   def deliver_activation_instructions!(portal) #Need to refactor this.. Almost similar structure with the above one.
+    portal ||= account.main_portal
     reset_perishable_token!
 
     e_notification = account.email_notifications.find_by_notification_type(EmailNotification::USER_ACTIVATION)
@@ -254,6 +256,7 @@ class User < ActiveRecord::Base
   end
   
   def deliver_contact_activation(portal)
+    portal ||= account.main_portal
     unless active?
       reset_perishable_token!
   

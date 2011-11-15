@@ -9,15 +9,14 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     to_email = parse_to_email
     account = Account.find_by_full_domain(to_email[:domain])
     if !account.nil? and account.active?
-      portal =  account.email_configs.find_by_to_email(to_email[:email]).portal
       encode_stuffs
       display_id = Helpdesk::Ticket.extract_id_token(params[:subject])
       ticket = Helpdesk::Ticket.find_by_account_id_and_display_id(account.id, display_id) if display_id
       if ticket
         return if(from_email[:email] == ticket.reply_email) #Premature handling for email looping..
-        add_email_to_ticket(ticket, from_email , portal)
+        add_email_to_ticket(ticket, from_email )
       else
-        create_ticket(account, from_email, to_email ,portal)
+        create_ticket(account, from_email, to_email)
       end
     end
   end
@@ -97,11 +96,12 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       return cc_array.uniq
     end
     
-    def create_ticket(account, from_email, to_email ,portal=nil)
-      user = get_user(account, from_email,portal)
+    def create_ticket(account, from_email, to_email)
+      email_config = account.email_configs.find_by_to_email(to_email[:email])
+      user = get_user(account, from_email,email_config)
       unless user.customer?
         e_email = orig_email_from_text
-        user = get_user(account, e_email , portal) unless e_email.nil?
+        user = get_user(account, e_email , email_config) unless e_email.nil?
       end
 
       ticket = Helpdesk::Ticket.new(
@@ -114,7 +114,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         :requester => user,
         :to_email => to_email[:email],
         :cc_email => parse_cc_email,
-        :email_config => account.email_configs.find_by_to_email(to_email[:email]),
+        :email_config => email_config,
         :status => Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open],
         :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email]
         #:ticket_type =>Helpdesk::Ticket::TYPE_KEYS_BY_TOKEN[:how_to]
@@ -146,8 +146,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       ticket
     end
 
-    def add_email_to_ticket(ticket, from_email,portal=nil)
-      user = get_user(ticket.account, from_email,portal)
+    def add_email_to_ticket(ticket, from_email)
+      user = get_user(ticket.account, from_email, ticket.email_config)
       if (ticket.requester.email.include?(user.email) || ticket.included_in_cc?(user.email) || !user.customer?) 
         note = ticket.notes.build(
           :private => false,
@@ -159,14 +159,15 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
           :account_id => ticket.account_id
         )
       else
-        return create_ticket(ticket.account, from_email, parse_to_email,portal)
+        return create_ticket(ticket.account, from_email, parse_to_email)
       end
       
       create_attachments(ticket, note) if note.save 
       note
     end
     
-    def get_user(account, from_email ,portal=nil)
+    def get_user(account, from_email, email_config)
+      portal = email_config ? email_config.portal : account.main_portal
       user = account.all_users.find_by_email(from_email[:email])
       unless user
         user = account.contacts.new
