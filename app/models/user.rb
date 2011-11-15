@@ -85,7 +85,7 @@ class User < ActiveRecord::Base
   end
   #Sphinx configuration ends here..
 
-  def signup!(params)   
+  def signup!(params , portal=nil)   
     self.email = (params[:user][:email]).strip if params[:user][:email]
     self.name = params[:user][:name]
     self.phone = params[:user][:phone]
@@ -105,7 +105,7 @@ class User < ActiveRecord::Base
     self.avatar_attributes=params[:user][:avatar_attributes] unless params[:user][:avatar_attributes].nil?
    
     return false unless save_without_session_maintenance
-    deliver_activation_instructions! if (!deleted and !email.blank?)
+    deliver_activation_instructions!(portal) if (!deleted and !email.blank?)
   end
   
   def avatar_attributes=(av_attributes)
@@ -218,7 +218,7 @@ class User < ActiveRecord::Base
   end
   ##Authorization copy ends here
   
-  def deliver_password_reset_instructions!(portal)#Do we need delayed_jobs here?! by Shan
+  def deliver_password_reset_instructions!(portal) #Do we need delayed_jobs here?! by Shan
     reset_perishable_token!
     
     e_notification = account.email_notifications.find_by_notification_type(EmailNotification::PASSWORD_RESET)
@@ -231,10 +231,10 @@ class User < ActiveRecord::Base
     
     UserNotifier.deliver_password_reset_instructions(self, 
         :email_body => Liquid::Template.parse(template).render((user_key ||= 'agent') => self, 
-          'helpdesk_name' => account.portal_name, 'password_reset_url' => edit_password_reset_url(perishable_token, :host => (!portal.portal_url.blank?) ? portal.portal_url : account.host)))
+          'helpdesk_name' => portal.name || account.portal_name, 'password_reset_url' => edit_password_reset_url(perishable_token, :host => (!portal.portal_url.blank?) ? portal.portal_url : account.host)) , :reply_email => portal.product.friendly_email)
   end
   
-  def deliver_activation_instructions! #Need to refactor this.. Almost similar structure with the above one.
+  def deliver_activation_instructions!(portal) #Need to refactor this.. Almost similar structure with the above one.
     reset_perishable_token!
 
     e_notification = account.email_notifications.find_by_notification_type(EmailNotification::USER_ACTIVATION)
@@ -248,19 +248,19 @@ class User < ActiveRecord::Base
     
     UserNotifier.send_later(:deliver_user_activation, self, 
         :email_body => Liquid::Template.parse(template).render((user_key ||= 'agent') => self, 
-          'helpdesk_name' => account.portal_name, 'activation_url' => register_url(perishable_token, :host => account.host)), 
-        :subject => "#{account.portal_name} user activation")
+          'helpdesk_name' => portal.name || account.portal_name, 'activation_url' => register_url(perishable_token, :host => (!portal.portal_url.blank?) ? portal.portal_url : account.host)), 
+        :subject => "#{portal.name || account.portal_name} user activation" , :reply_email => portal.product.friendly_email)
   end
   
-  def deliver_contact_activation
+  def deliver_contact_activation(portal)
     unless active?
       reset_perishable_token!
   
       e_notification = account.email_notifications.find_by_notification_type(EmailNotification::USER_ACTIVATION)
       UserNotifier.send_later(:deliver_user_activation, self, 
           :email_body => Liquid::Template.parse(e_notification.requester_template).render('contact' => self, 
-            'helpdesk_name' => account.portal_name, 'activation_url' => register_url(perishable_token, :host => account.host)), 
-          :subject => "#{account.portal_name} user activation")
+            'helpdesk_name' => portal.name || account.portal_name, 'activation_url' => register_url(perishable_token, :host => (!portal.portal_url.blank?) ? portal.portal_url : account.host)), 
+          :subject => "#{portal.name || account.portal_name} user activation" , :reply_email => portal.product.friendly_email)
     end
   end
   
@@ -319,7 +319,7 @@ class User < ActiveRecord::Base
      options[:indent] ||= 2
       xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
-      super(:builder => xml, :skip_instruct => true,:except => [:crypted_password,:password_salt,:perishable_token,:persistence_token,:single_access_token,:account_id]) 
+      super(:builder => xml, :skip_instruct => true,:except => [:crypted_password,:password_salt,:perishable_token,:persistence_token,:single_access_token]) 
   end
  
   protected

@@ -326,7 +326,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def populate_requester #by Shan temp  
-    logger.debug "populate_requester :: email#{email} and twitter: #{twitter_id}"
+    portal =  email_config.portal if email_config
     unless email.blank?
       if(requester_id.nil? or !email.eql?(requester.email))
         @requester = account.all_users.find_by_email(email)
@@ -335,7 +335,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
           @requester.signup!({:user => {
             :email => self.email, 
             :name => (name || ''), 
-            :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}})
+            :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}},portal)
         end        
         self.requester = @requester  if @requester.valid?
       end
