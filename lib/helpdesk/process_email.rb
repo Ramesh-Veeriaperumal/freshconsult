@@ -14,7 +14,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       ticket = Helpdesk::Ticket.find_by_account_id_and_display_id(account.id, display_id) if display_id
       if ticket
         return if(from_email[:email] == ticket.reply_email) #Premature handling for email looping..
-        add_email_to_ticket(ticket, from_email)
+        add_email_to_ticket(ticket, from_email )
       else
         create_ticket(account, from_email, to_email)
       end
@@ -97,10 +97,11 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
     
     def create_ticket(account, from_email, to_email)
-      user = get_user(account, from_email)
+      email_config = account.email_configs.find_by_to_email(to_email[:email])
+      user = get_user(account, from_email,email_config)
       unless user.customer?
         e_email = orig_email_from_text
-        user = get_user(account, e_email) unless e_email.nil?
+        user = get_user(account, e_email , email_config) unless e_email.nil?
       end
 
       ticket = Helpdesk::Ticket.new(
@@ -113,7 +114,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         :requester => user,
         :to_email => to_email[:email],
         :cc_email => parse_cc_email,
-        :email_config => account.email_configs.find_by_to_email(to_email[:email]),
+        :email_config => email_config,
         :status => Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open],
         :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email]
         #:ticket_type =>Helpdesk::Ticket::TYPE_KEYS_BY_TOKEN[:how_to]
@@ -146,7 +147,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
 
     def add_email_to_ticket(ticket, from_email)
-      user = get_user(ticket.account, from_email)
+      user = get_user(ticket.account, from_email, ticket.email_config)
       if (ticket.requester.email.include?(user.email) || ticket.included_in_cc?(user.email) || !user.customer?) 
         note = ticket.notes.build(
           :private => false,
@@ -165,12 +166,13 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       note
     end
     
-    def get_user(account, from_email)
+    def get_user(account, from_email, email_config)
+      portal = email_config ? email_config.portal : account.main_portal
       user = account.all_users.find_by_email(from_email[:email])
       unless user
         user = account.contacts.new
         user.signup!({:user => {:email => from_email[:email], :name => from_email[:name], 
-          :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}})
+          :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}},portal)
       end
       user.make_current
       user
