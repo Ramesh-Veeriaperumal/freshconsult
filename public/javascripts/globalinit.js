@@ -26,12 +26,14 @@ var $J = jQuery.noConflict();
          focusCleanup: true,
          focusInvalid: false
       };
+      
+       
 
-      $(".admin_list li")
-         .hover(
-            function(){ $(this).children(".item_actions").css("visibility", "visible"); }, 
-            function(){ $(this).children(".item_actions").css("visibility", "hidden"); }
-         );
+      // $(".admin_list li")
+      //    .hover(
+      //       function(){ $(this).children(".item_actions").css("visibility", "visible"); }, 
+      //       function(){ $(this).children(".item_actions").css("visibility", "hidden"); }
+      //    );
 
       $("ul.ui-form").not(".dont-validate").parents('form:first').validate(validateOptions);
       $("div.ui-form").not(".dont-validate").find('form:first').validate(validateOptions); 

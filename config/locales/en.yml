@@ -217,6 +217,7 @@ en:
         import: Import data from Zendesk
         agent: Agents
         feedback: Feedback widget
+        integrations: "Integrations"
         dispatcher: Dispatch'r
         supervisor: Supervisor
         sla: SLA Policies
@@ -1422,10 +1423,11 @@ en:
     items: Loading more items
   application:
     new: Create New Application
-    title: Available Applications
-    install: Install
-    uninstall: Uninstall
+    title: Addons & Integration
+    disabled: Disabled
+    enabled: Enabled
     configure: Configure
+    enable: Enable
   home:
       mobile_index:
         email: Email

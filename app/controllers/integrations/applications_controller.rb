@@ -1,4 +1,4 @@
-class Integrations::ApplicationsController < ApplicationController
+class Integrations::ApplicationsController < Admin::AdminController
 
   include Integrations::AppsUtil
 

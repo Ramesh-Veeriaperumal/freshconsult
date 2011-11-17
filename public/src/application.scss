@@ -4,6 +4,7 @@
 
 /* Importing admin icons */
 @import "admin-icon/*.png";
+@import "application-logo/*.png";
 
 /* Bullet icon */ 
 $bullet-icon:"symbols/request_nav_seperator.gif";
@@ -2992,11 +2993,11 @@ div.addReminder{
 .wordwrap p, .wrap{ @include wrap; }
 
 .intro{
-	color: #777;
-	font-size:12px; 
+	color:#666666;
+	font-size:13px; 
 	line-height: 17px;
-	margin-top: -6px;
-	margin-bottom:10px;
+	margin-bottom:13px;
+	margin-top:-8px;
 }
 
 .info-description p{
@@ -3231,7 +3232,7 @@ div.addReminder{
 	}
 }
 
-.admin_list, .content_list{
+.admin_list, .content_list, .table-list{
 	@include no-bullets;
 	margin:0px -20px 10px -20px;
 	padding:0px 0px;
@@ -3380,9 +3381,9 @@ div.addReminder{
 		    max-height:40px;
 		    max-width:90px;
 		 }
-		 div.item_actions{
+/*		 div.item_actions{
  			visibility:hidden;
- 		}
+ 		}*/
 	}
 	li:hover{
 		div.item_actions{
@@ -3394,7 +3395,38 @@ div.addReminder{
 		border-bottom:1px solid #dfdfdf;
 		background-repeat:repeat-x;
 	} 
+	
+	.application {
+	   padding:10px 10px 10px 130px;
+	   .logo{
+   	   float:left;
+   	   width:110px;
+   	   height:35px;
+   	   margin-left:-130px;
+   	   margin-top:0px;
+	   }
+	   .item_info{
+	      font-size:18px;
+	      font-weight:bold;
+	   }
+	   h2{
+        font-size:18px; 
+        font-weight:bold;
+	   }
+	   .info-data{
+	      color:#888;
+	      font-size:13px;
+	   }
+	   .col-center{
+	      width:380px; 
+	   }
+	   .actions{
+	      @include float-right;
+	   }
+   }
 }
+
+@include all-application-logo-sprites;
 
 .deactivated{
    li{
@@ -3962,3 +3994,11 @@ a.close{
 .tweet-counter.error{
    color:#FF0000;
 }
+
+.adminTitle{
+   font-size:20px;
+   color:#333;
+   text-transform:uppercase;
+   font-weight:bold;
+}
+

@@ -1,11 +1,16 @@
 <% content_for :sidebar do -%><%- end %>
-<%= content_tag (:h3, @installing_application.name, :class => "title") %>
+<%= content_tag (:h3, @installing_application.name + " Settings", :class => "title") %>
 <% form_for @installing_application, :url => { :controller=> "installed_applications", :action => "install" }, :html => {:multipart => true, :id => "InstallApplication" } do |f| %>
   <ul class="ui-form">  
-    <%= render :partial => "application_form", :object => f, :locals => { :is_edit => false } %>
+		<li class="inline-field">
+			<label class="caption">
+				<div class="logo application-logo-<%= @installing_application.p_name %>"></div>
+			</label>
+   	<%= render :partial => "application_form", :object => f, :locals => { :is_edit => false } %>
+		</li>
   </ul>
   <div class="button-container">
-    <%= f.submit t('application.install'), :class => "uiButton" %>
-    <%= link_to t('cancel'), {:controller => 'applications', :action => 'index'}, :class => "uiButton" %>
+    <%= link_to t('back'), {:controller => 'applications', :action => 'index'}, :class => "uiButton floatl" %>
+    <%= f.submit t('application.enable'), :class => "uiButton special" %>
   </div>
 <% end %>

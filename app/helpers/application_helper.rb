@@ -257,7 +257,7 @@ module ApplicationHelper
       when "html_paragraph" then
         element = label + text_area(object_name, field_name, :class => "mceEditor", :value => field_value)
     end
-    content_tag :li, element, :class => dom_type
+    element
   end
 
   def construct_ticket_element(object_name, field, field_label, dom_type, required, field_value = "")
