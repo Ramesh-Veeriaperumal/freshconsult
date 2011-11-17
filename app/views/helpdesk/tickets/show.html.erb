@@ -220,7 +220,7 @@
           <div>
 			<%= content_tag :span, "", :class => "custom-tip-bottom icon-image source-#{@ticket.source_name.downcase}", :title => t("ticket.reported_from_source", :source => @ticket.source_name.downcase) %>
             <%= t('ticket.reported_by', :requester => link_to(h(@ticket.requester.display_name),@ticket.requester, :class => "user_name"))%>  
-			<%="< #{@ticket.requester.email} >" if @ticket.requester.email%>
+			<%="&lt;#{@ticket.requester.email}&gt;" if @ticket.requester.email%>
           </div>
 
           <div> 
