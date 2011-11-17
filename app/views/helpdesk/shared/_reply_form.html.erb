@@ -55,9 +55,18 @@
                 <%= t(".bcc") %>:
             </label>
             <div class="fields">
-                <% content_for :onload_script do -%>
+                <% content_for :onload_script do
+					capsule_config = get_app_config('capsule_crm')
+					if capsule_config.blank?
+				-%>
 				new Autocompleter.MultiValue("bcc_emails", cachedLookup, $A(), {frequency: 0.1, acceptNewValues: true});
-                <%- end %>
+				<%
+					else
+				-%>
+				new Autocompleter.MultiValue("bcc_emails", cachedLookup, $A(["<%=capsule_config["bcc_drop_box_mail"]%>"]), {frequency: 0.1, acceptNewValues: true});
+                <%-
+					end 
+				end %>
                 <input type="text" id="bcc_emails" name="bcc_emails" />
             </div>
 		</li>

@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111014162346) do
+ActiveRecord::Schema.define(:version => 20111114162346) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -325,6 +325,16 @@ ActiveRecord::Schema.define(:version => 20111014162346) do
 
   add_index "forums", ["forum_category_id", "name"], :name => "index_forums_on_forum_category_id", :unique => true
 
+  create_table "google_accounts", :force => true do |t|
+    t.string   "name"
+    t.string   "email"
+    t.string   "token"
+    t.string   "secret"
+    t.integer  "account_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "groups", :force => true do |t|
     t.string   "name"
     t.text     "description"
@@ -581,9 +591,11 @@ ActiveRecord::Schema.define(:version => 20111014162346) do
   add_index "helpdesk_tickets", ["account_id", "responder_id"], :name => "index_helpdesk_tickets_on_account_id_and_responder_id"
 
   create_table "installed_applications", :force => true do |t|
-    t.integer "application_id"
-    t.integer "account_id"
-    t.string  "configs"
+    t.integer  "application_id"
+    t.integer  "account_id"
+    t.string   "configs"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "moderatorships", :force => true do |t|
@@ -840,6 +852,10 @@ ActiveRecord::Schema.define(:version => 20111014162346) do
     t.datetime "updated_at"
   end
 
+  create_table "temp", :id => false, :force => true do |t|
+    t.binary "skey", :limit => 255
+  end
+
   create_table "ticket_topics", :force => true do |t|
     t.integer  "ticket_id",  :limit => 8
     t.integer  "topic_id",   :limit => 8
@@ -902,6 +918,7 @@ ActiveRecord::Schema.define(:version => 20111014162346) do
     t.integer  "user_role"
     t.boolean  "delta",                            :default => true,  :null => false
     t.integer  "import_id",           :limit => 8
+    t.string   "google_id"
   end
 
   add_index "users", ["account_id", "email"], :name => "index_users_on_account_id_and_email", :unique => true
