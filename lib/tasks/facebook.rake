@@ -12,8 +12,8 @@ namespace :facebook do
          
          end ### ends ####
      end
-      puts "Facebook task finished at #{Time.zone.now}"
-    end
+   end
+    puts "Facebook task finished at #{Time.zone.now}"
   end
   
   ##Need to consider the 

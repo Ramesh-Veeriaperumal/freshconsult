@@ -39,8 +39,8 @@ namespace :twitter do
          end       
        end ### ends ####
      end
-     puts "Twitter closed at #{Time.zone.now}"
-    end
+   end
+   puts "Twitter closed at #{Time.zone.now}"
   end
   
   ##Need to consider the 
