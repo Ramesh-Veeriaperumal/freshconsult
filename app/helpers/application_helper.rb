@@ -216,9 +216,15 @@ module ApplicationHelper
    color
  end
   
+  def get_app_config(app_name)
+    installed_app = Integrations::InstalledApplication.find(:all, :joins=>:application, 
+                  :conditions => {:applications => {:p_name => app_name}, :account_id => current_account})
+    return installed_app[0].configs[:inputs] unless installed_app.blank?
+  end
+
   def is_application_installed?(app_name)
-    installed_app = Integrations::InstalledApplication.find(:all, :joins=>{:application => :widgets}, 
-                  :conditions => {:applications => {:p_name => app_name, :widgets => {:name => widget_name}}, :account_id => current_account})[0]
+    installed_app = Integrations::InstalledApplication.find(:all, :joins=>:application, 
+                  :conditions => {:applications => {:p_name => app_name}, :account_id => current_account})
     return !(installed_app.blank? or installed_app.application.blank?)
   end
 
