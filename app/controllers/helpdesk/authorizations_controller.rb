@@ -1,6 +1,6 @@
 class Helpdesk::AuthorizationsController < ApplicationController
  
-  before_filter { |c| c.requires_permission :manage_users }
+  before_filter { |c| c.requires_permission :manage_tickets }
 
   include HelpdeskControllerMethods
 
