@@ -94,7 +94,7 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
 .small.uiButton, .small.uiButton:visited 		{ font-size: 11px;  }
 .uiButton, .fdbutton, .uiButton:visited, .fdbutton:visited, 
 .medium.uiButton, .medium.uiButton:visited 		{ font-size: 12px;}
-.large.uiButton, .large.uiButton:visited { font-size: 13px; padding: 8px 14px 9px; }
+.large.uiButton, .large.uiButton:visited { font-size: 1.36em; padding: 8px 14px 9px; }
 
 .forum_button{
 	@include anchor-button;
@@ -193,6 +193,20 @@ div.action_buttons:hover{
 	img{ width:auto; height:auto; }	
    border: 1px solid #cfcfcf;
    cursor: pointer;
+   position:relative;   
+}
+
+.icon-detail{
+   padding-left:25px;
+   span{
+      position:absolute;
+      left:4px;
+      top:3px;
+      width:16px; height:16px; 
+   }
+   .symbols-add{
+       background:sprite($symbol, add) no-repeat;
+   }
 }
 
 .slim-button{
