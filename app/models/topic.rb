@@ -72,7 +72,7 @@ class Topic < ActiveRecord::Base
     for monitorship in self.monitorships.active_monitors
       user_emails = monitorships.collect {|a| a.user.email}
     end
-    return user_emails
+    return user_emails.compact
   end
    
   def stamp_name
