@@ -2,7 +2,7 @@
   <%= render :partial => "layouts/shared/html" %>
 	<%= render :partial => "layouts/shared/head" %>
 	<body class="<% unless @content_for_sidebar %>single<% end %> <%= yield :layoutType %>">
-		<div id="wrap"> 
+		<div id="wrap">
 			<%= render(:partial => '/layouts/shared/header') %>
 				<div class="content">
 					<div class="wrapper">
