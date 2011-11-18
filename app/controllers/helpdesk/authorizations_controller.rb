@@ -22,7 +22,7 @@ class Helpdesk::AuthorizationsController < ApplicationController
   def deliver_autocomplete auto_scoper
     items = auto_scoper.find(
       :all, 
-      :conditions => ["email is not null and email like ?", "%#{params[:v]}%"], 
+      :conditions => ["email is not null and name like ? or email like ?", "%#{params[:v]}%", "%#{params[:v]}%"], 
       :limit => 1000)
 
     r = {:results => items.map {|i| {:id => i.email, :value => i.name} } } 
