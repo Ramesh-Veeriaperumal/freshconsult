@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111102103440) do
+ActiveRecord::Schema.define(:version => 20111119094928) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -343,6 +343,7 @@ ActiveRecord::Schema.define(:version => 20111102103440) do
   end
 
   add_index "helpdesk_activities", ["account_id", "notable_type", "notable_id"], :name => "index_helpdesk_activities_on_notables"
+  add_index "helpdesk_activities", ["notable_type", "notable_id"], :name => "helpdesk_activities_notable_type_and_id"
 
   create_table "helpdesk_attachments", :force => true do |t|
     t.text     "description"
@@ -570,6 +571,7 @@ ActiveRecord::Schema.define(:version => 20111102103440) do
   add_index "helpdesk_tickets", ["account_id", "display_id"], :name => "index_helpdesk_tickets_on_account_id_and_display_id", :unique => true
   add_index "helpdesk_tickets", ["account_id", "requester_id"], :name => "index_helpdesk_tickets_on_account_id_and_requester_id"
   add_index "helpdesk_tickets", ["account_id", "responder_id"], :name => "index_helpdesk_tickets_on_account_id_and_responder_id"
+  add_index "helpdesk_tickets", ["requester_id"], :name => "index_helpdesk_tickets_on_requester_id"
 
   create_table "moderatorships", :force => true do |t|
     t.integer "forum_id", :limit => 8
