@@ -8,6 +8,7 @@ class Reports::HelpdeskReportsController < ApplicationController
    unless params[:date].nil?
     helpdesk_activity(params)
     calculate_resolved_on_time(params)
+    calculate_fcr(params)
     get_tickets_time_line(params)
    end
   end

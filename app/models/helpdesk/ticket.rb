@@ -119,7 +119,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
         :joins => :ticket_states,
         :conditions => ["helpdesk_tickets.due_by >  helpdesk_ticket_states.resolved_at"]
    
-  
+  named_scope :first_call_resolution,
+           :joins  => :ticket_states,
+           :conditions => ["(helpdesk_ticket_states.resolved_at is not null)  and  helpdesk_ticket_states.inbound_count = 1"]
+      
 
   named_scope :newest, lambda { |num| { :limit => num, :order => 'created_at DESC' } }
   named_scope :updated_in, lambda { |duration| { :conditions => [ 
