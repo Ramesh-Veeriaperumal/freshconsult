@@ -214,9 +214,14 @@
 				<em><%= "##{@ticket.display_id}" %></em>
 				<b><%= h(@ticket.subject) %></b>
 		  </h3>
-			<div class="description"> 
+			<div class="description">         
         <div class="user_details">
           <%= user_avatar(@ticket.requester)  %>
+          <div class="app-link">
+            <a href="#">
+              <%= image_tag("application-logo-small/capsule_crm.png") %>
+            </a>
+          </div>
           <div>
 			<%= content_tag :span, "", :class => "custom-tip-bottom icon-image source-#{@ticket.source_name.downcase}", :title => t("ticket.reported_from_source", :source => @ticket.source_name.downcase) %>
             <%= t('ticket.reported_by', :requester => link_to(h(@ticket.requester.display_name),@ticket.requester, :class => "user_name"))%>  

@@ -74,7 +74,7 @@ CapsuleWidget = {
             summary += name + '</a></h5>';
 
             if (contact.jobTitle || contact.organisationName){
-                summary += '<p class="minimum" style="margin: 0px;">'
+                summary += '<p>'
                 if (contact.jobTitle) {
                     summary += contact.jobTitle;
                 }
@@ -96,7 +96,7 @@ CapsuleWidget = {
         }
 
         if (contact.name) {
-            summary += '<tr><td style="width:60px;"><img src="' + contact.pictureURL + '"  width="50" height="50" /></td><td>'
+            summary += '<tr><td><img src="' + contact.pictureURL + '"  width="50" height="50" /></td><td>'
 
             summary += '<h5 style="font-size:16px"><a target="_capsule" href="https://' + capsuleResource.options.domain.escapeHTML() + '/party/' + contact.id.escapeHTML() +'">';
             summary += contact.name.escapeHTML();
@@ -227,12 +227,12 @@ CapsuleWidget = {
             if (typeof(capsuleBundle)!='undefined' && capsuleBundle.reqEmail && capsuleBundle.reqEmail != '') {
                 notFoundText += 'To add this contact to Capsule use the form below.</p>';
                 notFoundText += '<form id="cap-person" onsubmit="CapsuleWidget.addContact(this,capsuleResource);return false;">';
-                notFoundText += '<label for="name"><h5>Name</h5></label><input style="width:180px" type="text" id="name" name="name" value="' + capsuleBundle.reqName.escapeHTML() + '">';
-                notFoundText += '<label for="org"><h5>Company</h5></label><input type="text" style="width:180px" id="org" name="org" value="' + capsuleBundle.reqOrg.escapeHTML() + '">';
-                notFoundText += '<label for="phone"><h5>Phone Number</h5></label><input type="text" style="width:180px" id="phone" name="phone" value="' + capsuleBundle.reqPhone.escapeHTML() + '">';
+                notFoundText += '<label for="name"><h5>Name</h5></label><input type="text" id="name" name="name" value="' + capsuleBundle.reqName.escapeHTML() + '">';
+                notFoundText += '<label for="org"><h5>Company</h5></label><input type="text" id="org" name="org" value="' + capsuleBundle.reqOrg.escapeHTML() + '">';
+                notFoundText += '<label for="phone"><h5>Phone Number</h5></label><input type="text" id="phone" name="phone" value="' + capsuleBundle.reqPhone.escapeHTML() + '">';
                 notFoundText += '<h5>Email</h5>' + capsuleBundle.reqEmail.escapeHTML();
                 notFoundText += '<input type="hidden" name="email" value="' + capsuleBundle.reqEmail.escapeHTML() + '"/><br/>';
-                notFoundText += '<input type="submit" style="margin-top:5px;" id="submit" value="Add contact">';
+                notFoundText += '<input type="submit" id="submit" value="Add contact">';
                 notFoundText += '</form>'
             } else {
                 notFoundText += '</p>';
@@ -340,7 +340,7 @@ if (typeof(capsuleBundle)!='undefined' && capsuleBundle.t) {
         application_content: function() {
             var content = "<div id='capsule-content'>";
             content += '<form id="cap-search" onsubmit="CapsuleWidget.searchContacts(this,capsuleResource); return false;">';
-            content += '<input type="text" style="margin-bottom:5px;width:180px;" name="q" value="' + CapsuleWidget.searchTerm() + '"/>';
+            content += '<input type="text" name="q" value="' + CapsuleWidget.searchTerm() + '"/>';
             content += '<input type="submit" id="submit" value="Search Capsule"/>'
             content += '</form>';
             content += '<div id="cap-search-result"></div>';
@@ -365,7 +365,7 @@ if (typeof(capsuleBundle)!='undefined' && capsuleBundle.t) {
         application_content: function() {
             var content = "<div id='capsule-content'>";
             content += '<form id="cap-search" onsubmit="CapsuleWidget.searchContacts(this,capsuleResource); return false;">';
-            content += '<input type="text" style="margin-bottom:5px;width:180px;" name="q" value="' + CapsuleWidget.searchTerm() + '"/>';
+            content += '<input type="text" name="q" value="' + CapsuleWidget.searchTerm() + '"/>';
             content += '<input type="submit" id="submit" value="Search Capsule"/>'
             content += '</form>';
             content += '<div id="cap-search-result"></div>';

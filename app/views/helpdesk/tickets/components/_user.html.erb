@@ -10,6 +10,9 @@
 		<div><%= h(user.job_title) %> <b><%= (user.customer ? "at #{user.customer.name}" : "")  %></b></div>
 	</div>
 	<div class="seperator"></div>
+	<% @liquid_objects = {"requester" => user} %>
+  <%= get_app_widget_script("capsule_crm", "contact_widget", @liquid_objects) %>
+	<div class="seperator"></div>
 	<h3 class="title"><%=t('ticket.recent_tickets')%></h3>
 	<ul class="ui-list_with_icon">
 	    <% user.tickets.newest(5).each do |ticket| %>	
@@ -19,5 +22,3 @@
 		<% end %>
 	</ul>
 </div>
-<% @liquid_objects = {"requester" => user}%>
-<%= get_app_widget_script("capsule_crm", "contact_widget", @liquid_objects)%> 
