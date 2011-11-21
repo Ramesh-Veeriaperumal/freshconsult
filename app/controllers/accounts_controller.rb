@@ -68,9 +68,9 @@ class AccountsController < ApplicationController
     end
     
     begin 
-      @account.language = request.compatible_language_from I18n.available_locales || I18n.default_locale.to_s()
+      @account.language = request.compatible_language_from I18n.available_locales || 'en'
     rescue
-      @account.language = I18n.default_locale.to_s()
+      @account.language = 'en'
     end
     
   end
