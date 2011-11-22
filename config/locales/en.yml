@@ -1423,11 +1423,15 @@ en:
     items: Loading more items
   application:
     new: Create New Application
+    desc: Integrate with other apps. to make your Freshdesk experience more awesome.
     title: Addons & Integration
     disabled: Disabled
     enabled: Enabled
     configure: Configure
     enable: Enable
+    click_to_disable: Click to disable Addon
+    click_to_enable: Click to enable Addon    
+    confirm_disable: "Are you sure you want to disable this Addon?"
   home:
       mobile_index:
         email: Email
@@ -1438,3 +1442,19 @@ en:
         sign_in_using: Sign In using
         sign_in_using_google: Sign in using your Google account
         help: Help
+  settings: settings        
+  capsule_crm: "Capsule CRM"        
+  integrations:
+    capsule:
+      label: "Capsule CRM Application"
+      desc: "Capsule crm contact widget will be displyed in ticket and contact view page."
+      form:
+        bcc_drop_box_mail: "Drop box email address"
+        bcc_drop_box_mail_info: "By default this email will be added to bcc of all replies"
+        domain: "Domain"
+        domain_info: "ex: example.capsulecrm.com"
+        api_key: "Api Key"
+        widget_title: "Widget Title"
+  widgets:
+    contact_widget:
+      description: "Display a contact or option to add the contact into capsule."

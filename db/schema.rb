@@ -83,7 +83,7 @@ ActiveRecord::Schema.define(:version => 20111114162346) do
 
   create_table "applications", :force => true do |t|
     t.string  "name"
-    t.string  "p_name"
+    t.string  "display_name"
     t.string  "description"
     t.integer "widget_id"
     t.text    "options"
@@ -430,7 +430,7 @@ ActiveRecord::Schema.define(:version => 20111114162346) do
     t.integer  "notable_id",   :limit => 8
     t.string   "notable_type"
     t.integer  "account_id",   :limit => 8
-    t.text     "body_html",    :limit => 16777215
+    t.text     "body_html",    :limit => 2147483647
   end
 
   add_index "helpdesk_notes", ["account_id", "notable_type", "notable_id"], :name => "index_helpdesk_notes_on_notables"
@@ -583,7 +583,7 @@ ActiveRecord::Schema.define(:version => 20111114162346) do
     t.boolean  "delta",                                  :default => true,  :null => false
     t.integer  "import_id",        :limit => 8
     t.string   "ticket_type"
-    t.text     "description_html", :limit => 16777215
+    t.text     "description_html", :limit => 2147483647
   end
 
   add_index "helpdesk_tickets", ["account_id", "display_id"], :name => "index_helpdesk_tickets_on_account_id_and_display_id", :unique => true

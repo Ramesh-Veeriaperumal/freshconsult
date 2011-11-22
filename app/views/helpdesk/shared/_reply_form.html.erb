@@ -63,8 +63,8 @@
 				<%
 					else
 				-%>
-				new Autocompleter.MultiValue("bcc_emails", cachedLookup, $A(["<%=capsule_config["bcc_drop_box_mail"]%>"]), {frequency: 0.1, acceptNewValues: true});
-                <%-
+				new Autocompleter.MultiValue("bcc_emails", cachedLookup, "<%=capsule_config["bcc_drop_box_mail"]%>".split( new RegExp( "\\s*,\\s*", "gi" ) ), {frequency: 0.1, acceptNewValues: true});
+        <%-
 					end 
 				end %>
                 <input type="text" id="bcc_emails" name="bcc_emails" />

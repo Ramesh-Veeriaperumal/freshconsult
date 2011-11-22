@@ -218,7 +218,7 @@ module ApplicationHelper
   
   def get_app_config(app_name)
     installed_app = Integrations::InstalledApplication.find(:all, :joins=>:application, 
-                  :conditions => {:applications => {:p_name => app_name}, :account_id => current_account})
+                  :conditions => {:applications => {:name => app_name}, :account_id => current_account})
     return installed_app[0].configs[:inputs] unless installed_app.blank?
   end
 
@@ -230,14 +230,14 @@ module ApplicationHelper
 
   def get_app_widget_script(app_name, widget_name, liquid_objs)
     installed_app = Integrations::InstalledApplication.find(:all, :joins=>{:application => :widgets}, 
-                  :conditions => {:applications => {:p_name => app_name, :widgets => {:name => widget_name}}, :account_id => current_account})[0]
+                  :conditions => {:applications => {:name => app_name, :widgets => {:name => widget_name}}, :account_id => current_account}).first
     if installed_app.blank? or installed_app.application.blank?
       return ""
     else
       widget = installed_app.application.widgets[0]
-      replace_objs = {installed_app.application.p_name.to_s => installed_app}
+      replace_objs = {installed_app.application.name.to_s => installed_app}
       replace_objs = liquid_objs.blank? ? replace_objs : liquid_objs.merge(replace_objs)
-      return Liquid::Template.parse(widget.script).render(replace_objs)
+      return Liquid::Template.parse(render :partial => "/integrations/script_include/#{widget.script}").render(replace_objs)
     end
   end
 
@@ -248,7 +248,7 @@ module ApplicationHelper
     label = label_tag object_name+"_"+field_name, field_label
     dom_type = dom_type.to_s
     case dom_type
-      when "text", "number", "email" then
+      when "text", "number", "email", "multiemail" then
         element = label + text_field(object_name, field_name, :class => element_class, :value => field_value)
       when "paragraph" then
         element = label + text_area(object_name, field_name, :class => element_class, :value => field_value)

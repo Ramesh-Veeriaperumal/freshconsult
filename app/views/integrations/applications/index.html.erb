@@ -1,23 +1,23 @@
 <% content_for :sidebar do -%><%-end %>
 <h3 class="title"><%=t('application.title')%></h3>
-<div class="intro">Integrate with other apps. to make your Freshdesk experience more awesome.</div>
+<div class="intro"><%=t('application.desc')%></div>
 <ul class="table-list">
 	<% @applications.each do |application| %>
 	  	<li>
 				<div class="application">
-					<div class="logo application-logo-<%= application.p_name %>"></div>
+					<div class="logo application-logo-<%= application.name %>"></div>
 		  		<div class="actions"> 
 		  			<% i_app_index=@installed_applications.index { |i_app| true if(i_app.application == application) }
 					  if i_app_index.nil?%>
-		  	    		<%= link_to "<strong> #{t('application.disabled')} </strong><span></span>", show_integrations_application_path(application), :class => "uiButton special iphone-inactive custom-tip-bottom", :title => "Click to enable Addon" %>	
+		  	    		<%= link_to "<strong> #{t('application.disabled')} </strong><span></span>", show_integrations_application_path(application), :class => "uiButton special iphone-inactive custom-tip-bottom", :title => t("application.click_to_enable") %>	
 					<%else%>
-		  	    		<%= link_to t('application.enabled') + "<span></span>", uninstall_integrations_installed_application_path(@installed_applications[i_app_index]), :class => "uiButton special iphone-active custom-tip-bottom", :title => "Click to disable Addon" %>	
+		  	    		<%= link_to t('application.enabled') + "<span></span>", uninstall_integrations_installed_application_path(@installed_applications[i_app_index]), :class => "uiButton special iphone-active custom-tip-bottom", :confirm => t("application.confirm_disable"), :title => t("application.click_to_disable") %>	
 		  	    		<%= link_to image_tag("symbols/setting.png"), configure_integrations_installed_application_path(@installed_applications[i_app_index]), :class => "button" %>		
 					<%end%>
 				</div>
 				<div class="col-center">
-					<%= content_tag(:h2, h(application.name)) %>
-					<div class="info-data"><%=h(application.description)%></div>
+					<%= content_tag(:h2, t(application.display_name)) %>
+					<div class="info-data"><%= t(application.description) %></div>
 				</div>
 			</div>
 	 	</li>
