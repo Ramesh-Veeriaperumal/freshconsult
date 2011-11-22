@@ -59,7 +59,7 @@ class SubscriptionAdmin::AccountsController < ApplicationController
       Account.find(:all,
                    :joins => "INNER JOIN subscriptions on accounts.id = subscriptions.account_id ",
                    :conditions => ['next_renewal_at between ? and ? and state = ? ', "#{params[:start_date]}","#{params[:end_date]}","trial"]) 
-    else
+   else
       Account.find(:all,:include => :subscription, :order => 'accounts.created_at desc')
     end
   end

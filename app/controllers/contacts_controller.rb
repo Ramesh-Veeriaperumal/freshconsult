@@ -35,6 +35,7 @@ class ContactsController < ApplicationController
     @user.user_role = User::USER_ROLES_KEYS_BY_TOKEN[:customer]
     @user.avatar = Helpdesk::Attachment.new
     @user.time_zone = current_account.time_zone
+    @user.language = current_account.language
   end
   
   def quick_customer
@@ -55,13 +56,13 @@ class ContactsController < ApplicationController
       flash[:notice] = t(:'flash.contacts.create.success')
       respond_to do |format|
         format.html { redirect_to contacts_url }
-        format.xml  { head 200 }
+        format.xml  { render :xml => @user, :status => :created, :location => contacts_url(@user) }
       end
     else
       check_email_exist
        respond_to do |format|
         format.html { render :action => :new}
-        format.xml  { head :failed} # bad request
+        format.xml  { render :xml => @user.errors, :status => :unprocessable_entity} # bad request
       end
     end
   end
@@ -107,7 +108,7 @@ class ContactsController < ApplicationController
       check_email_exist
       respond_to do |format|
         format.html { render :action => 'edit' }
-        format.xml  { head 400} #Bad request
+        format.xml  { render :xml => @obj.errors, :status => :unprocessable_entity} #Bad request
       end
     end
   end    

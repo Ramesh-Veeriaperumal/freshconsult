@@ -2,9 +2,10 @@ class Admin::ZenImportController < Admin::AdminController
   
 before_filter { |c| c.requires_permission :manage_tickets }  
 
+before_filter :check_data_import_status, :only => :index
 
   def index  
-    @import_status = current_account.data_import
+    
   end
   
   def import_data
@@ -34,5 +35,15 @@ before_filter { |c| c.requires_permission :manage_tickets }
                   }
    
     Delayed::Job.enqueue Import::ZendeskData.new(zen_params)
+  end
+  
+  protected
+  
+  def check_data_import_status
+   @import_status = current_account.data_import
+   if  @import_status && @import_status.status
+     flash[:notice] = t(:'flash.data_import.zendesk.running') 
+     redirect_to  admin_home_index_url
+   end
   end
 end

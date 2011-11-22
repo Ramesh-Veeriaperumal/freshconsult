@@ -12,9 +12,7 @@
                                                             }
                   var cachedBackend = new Autocompleter.Cache(lookup, {choices: 10});
                   var cachedLookup = cachedBackend.lookup.bind(cachedBackend);
- 
 <%- end %>
-
 
 
 <div class="request_panel" id="<%=cntid%>" style="display:none;">
@@ -91,6 +89,7 @@
         <%= f.hidden_field :private , :value => false %>
         <!--reply source will be always email-->
         <%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["email"] %>
+		<%= hidden_field_tag(:ticket_status , params[:ticket_status], :id=>:reply_ticket_status  )%>
         <li class="inline-field field">
             <div class="attachment-options fields" id="attachment-options-reply">
                 <% unless local_assigns[:no_attachments] %>
@@ -99,6 +98,7 @@
             </div>
         </li>
         <li class="button-container">
+        	<%= submit_tag(t('ticket.reply_form.send_and_resolve'), :onclick => "jQuery('#reply_ticket_status').val('resolved');" , :class => "uiButton") %>
             <%= submit_tag(local_assigns[:submit] || ActiveSupport::Inflector.titleize(id), :class => "uiButton" ) %>
         </li>
     </ul>

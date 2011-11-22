@@ -9,8 +9,9 @@ var $J = jQuery.noConflict();
 
    // Tweet custom class
    $.validator.addMethod("tweet", $.validator.methods.maxlength, "Your Tweet was over 140 characters. You'll have to be more clever." );   
+   $.validator.addMethod("facebook", $.validator.methods.maxlength, "Your Facebook reply was over 8000 characters. You'll have to be more clever." );   
    $.validator.addClassRules("tweet", { tweet: 140 });
-   
+   $.validator.addClassRules("facebook", { tweet: 8000 });
    $.validator.addMethod("multiemail", function(value, element) {
        if (this.optional(element)) // return true on optional element
          return true;
@@ -38,11 +39,11 @@ var $J = jQuery.noConflict();
          focusInvalid: false
       };
       
-      // $(".admin_list li")
-      //    .hover(
-      //       function(){ $(this).children(".item_actions").css("visibility", "visible"); }, 
-      //       function(){ $(this).children(".item_actions").css("visibility", "hidden"); }
-      //    );
+      $(".admin_list li")
+          .hover(
+             function(){ $(this).children(".item_actions").css("visibility", "visible"); }, 
+             function(){ $(this).children(".item_actions").css("visibility", "hidden"); }
+          );
 
       $("ul.ui-form").not(".dont-validate").parents('form:first').validate(validateOptions);
       $("div.ui-form").not(".dont-validate").find('form:first').validate(validateOptions); 

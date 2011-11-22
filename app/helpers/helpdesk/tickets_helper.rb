@@ -152,5 +152,11 @@ module Helpdesk::TicketsHelper
 
     o.join
   end
+  
+  def subject_style(ticket, class_name = "need-attention")
+    if ticket.active? && ticket.ticket_states.need_attention 
+      class_name
+    end
+  end
    
 end

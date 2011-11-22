@@ -1,28 +1,23 @@
-<% content_for :layoutType do -%>single<%- end %>
-<h3 class="title">Your Tickets</h3>
+<% content_for :sidebar do -%>
+	<div class="sidepanel">
+		<ul class="ui-list_with_icon">
+			<li><%= link_to(t('helpdesk.tickets.views.all_tickets'), "/support/tickets" ) %></li>
+			<li><%= link_to(t('helpdesk.tickets.views.open_or_pending'),"/support/tickets/filter/open_or_pending" ) %></li>
+			<li><%= link_to(t('helpdesk.tickets.views.resolved_or_closed') ,"/support/tickets/filter/resolved_or_closed" ) %></li>
+		</ul>
+		</br>
+	</div> 
+<%- end %>
+
+<h3 class="title"><%= @page_title %></h3>
 <div class="tickets-container">
  <table class="tickets">	
 	<tbody>
-		<% @tickets.each do |ticket| %>
-	       	<tr class="<%= cycle('stripe', '') %>">
-			  <td class="name-user" width="70%">
-			      <h3>
-			        <%= link_to( h(ticket.subject) + " (##{ticket.display_id}) ", support_ticket_path(ticket), :title => ticket.description ) %>
-			      </h3>   
-			      <div class="info_data"><%= time_ago_in_words(ticket.created_at) %> ago </div>
-			  </td> 
-			  <td class="assign">
-			  	  <% if ticket.freshness != :new %>
-			        <span>Assigned to <b><%=h(ticket.responder.display_name)%></b></span>
-			      <% end %>
-				  	<ul>
-						<li>
-					        Status <span><%= ticket.status_name %></span>
-					    </li>
-					</ul>
-			  </td> 
-			</tr>
-		<% end %>
+		<%= each_or_message("/support/shared/ticket", @tickets, t("helpdesk.tickets.views.no_tickets")) %>
 	</tbody>
  </table>
 </div>
+
+ <div class="toolbar">
+    <%= will_paginate @tickets, :class => "toolbar_pagination_full" %>  
+ </div>

@@ -9,8 +9,8 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111114162346) do
-
+ActiveRecord::Schema.define(:version => 20111119094928) do
+  
   create_table "accounts", :force => true do |t|
     t.string   "name"
     t.datetime "created_at"
@@ -25,6 +25,7 @@ ActiveRecord::Schema.define(:version => 20111114162346) do
     t.string   "shared_secret"
     t.text     "sso_options"
     t.string   "google_domain"
+    t.string   "language",                       :default => "en"
   end
 
   add_index "accounts", ["full_domain"], :name => "index_accounts_on_full_domain", :unique => true
@@ -50,7 +51,7 @@ ActiveRecord::Schema.define(:version => 20111114162346) do
   end
 
   add_index "admin_data_imports", ["account_id", "created_at"], :name => "index_data_imports_on_account_id_and_created_at"
-
+  
   create_table "admin_user_accesses", :force => true do |t|
     t.string   "accessible_type"
     t.integer  "accessible_id"
@@ -362,6 +363,7 @@ ActiveRecord::Schema.define(:version => 20111114162346) do
   end
 
   add_index "helpdesk_activities", ["account_id", "notable_type", "notable_id"], :name => "index_helpdesk_activities_on_notables"
+  add_index "helpdesk_activities", ["notable_type", "notable_id"], :name => "helpdesk_activities_notable_type_and_id"
 
   create_table "helpdesk_attachments", :force => true do |t|
     t.text     "description"
@@ -589,6 +591,7 @@ ActiveRecord::Schema.define(:version => 20111114162346) do
   add_index "helpdesk_tickets", ["account_id", "display_id"], :name => "index_helpdesk_tickets_on_account_id_and_display_id", :unique => true
   add_index "helpdesk_tickets", ["account_id", "requester_id"], :name => "index_helpdesk_tickets_on_account_id_and_requester_id"
   add_index "helpdesk_tickets", ["account_id", "responder_id"], :name => "index_helpdesk_tickets_on_account_id_and_responder_id"
+  add_index "helpdesk_tickets", ["requester_id"], :name => "index_helpdesk_tickets_on_requester_id"
 
   create_table "installed_applications", :force => true do |t|
     t.integer  "application_id"
@@ -657,6 +660,37 @@ ActiveRecord::Schema.define(:version => 20111114162346) do
     t.integer  "account_id",       :limit => 8
     t.integer  "resolution_speed"
     t.integer  "score"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "social_facebook_pages", :force => true do |t|
+    t.integer  "profile_id",           :limit => 8
+    t.string   "access_token"
+    t.integer  "page_id",              :limit => 8
+    t.string   "page_name"
+    t.string   "page_token"
+    t.string   "page_img_url"
+    t.string   "page_link"
+    t.boolean  "import_visitor_posts",              :default => true
+    t.boolean  "import_company_posts",              :default => false
+    t.boolean  "enable_page",                       :default => false
+    t.integer  "fetch_since",          :limit => 8
+    t.integer  "product_id",           :limit => 8
+    t.integer  "account_id",           :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "social_facebook_pages", ["account_id", "page_id"], :name => "index_account_page_id", :unique => true
+  add_index "social_facebook_pages", ["product_id"], :name => "index_product_id"
+
+  create_table "social_fb_posts", :force => true do |t|
+    t.string   "post_id"
+    t.integer  "postable_id",      :limit => 8
+    t.string   "postable_type"
+    t.integer  "facebook_page_id", :limit => 8
+    t.integer  "account_id",       :limit => 8
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -919,6 +953,8 @@ ActiveRecord::Schema.define(:version => 20111114162346) do
     t.boolean  "delta",                            :default => true,  :null => false
     t.integer  "import_id",           :limit => 8
     t.string   "google_id"
+    t.string   "fb_profile_id"
+    t.string   "language" ,                       :default => "en"
   end
 
   add_index "users", ["account_id", "email"], :name => "index_users_on_account_id_and_email", :unique => true

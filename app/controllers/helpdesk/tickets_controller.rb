@@ -1,3 +1,5 @@
+require 'fastercsv'
+
 class Helpdesk::TicketsController < ApplicationController  
   
   include ActionView::Helpers::TextHelper
@@ -16,6 +18,7 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :load_multiple_items, :only => [:destroy, :restore, :spam, :unspam, :assign , :close_multiple ,:pick_tickets]  
   before_filter :load_item,           :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :get_ca_response_content, :print] 
   before_filter :load_flexifield ,    :only => [:execute_scenario]
+  before_filter :set_date_filter ,    :only => [:export_csv]
 
   uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
   
@@ -98,8 +101,7 @@ class Helpdesk::TicketsController < ApplicationController
     @items = current_account.tickets.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
     render :partial => "custom_search"
   end
-
-
+  
   def show
     @reply_email = current_account.reply_emails
     @subscription = current_user && @item.subscriptions.find(

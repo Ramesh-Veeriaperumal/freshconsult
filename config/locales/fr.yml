@@ -1,4 +1,6 @@
 fr:
+  meta:
+    language_name: 'French'
   import_step2_info: "Lier les champs CSV suivants avec des champs de la base de données et procédez à l'importation."
   last_name: "Nom"
   import_ticket_group: "Tickets &amp; Groupes"

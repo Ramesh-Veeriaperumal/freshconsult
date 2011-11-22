@@ -157,14 +157,24 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
         0.upto(size - 1) do |index|
           condition = condition_at(index)
           if condition.key.to_s.include?("responder_id") or condition.key.to_s.include?("helpdesk_subscriptions.user_id") 
-            condition.container.values[0] = condition.container.value.gsub("0",User.current.id.to_s) 
+            arr = condition.container.value.split(",")
+            if arr.include?("0")
+              arr.delete("0")
+              arr << User.current.id.to_s
+            end
+            condition.container.values[0] = arr.join(",")  
           end
           
           if condition.key.to_s.include?("group_id")
             if condition.container.value.include?("0")
               group_ids = User.current.agent_groups.find(:all, :select => 'group_id').map(&:group_id)
-              group_ids = ["-1"] if group_ids.empty?
-              condition.container.values[0] = condition.container.value.gsub("0",group_ids.join(",")) 
+              group_ids = ["-2"] if group_ids.empty?
+              garr = condition.container.value.split(",")
+              if garr.include?("0")
+                garr.delete("0")
+                garr << group_ids
+              end
+              condition.container.values[0] = garr.join(",")
             end
           end
           
@@ -221,6 +231,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     all_joins = joins
     all_joins[0].concat(tag_joins) if all_conditions[0].include?("helpdesk_tags.name")
     all_joins[0].concat(monitor_ships_join) if all_conditions[0].include?("helpdesk_subscriptions.user_id")
+    all_joins[0].concat(users_join) if all_conditions[0].include?("users.customer_id")
     all_joins
   end
   
@@ -230,6 +241,10 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
 
  def tag_joins
    " INNER JOIN helpdesk_tag_uses ON helpdesk_tag_uses.taggable_id = helpdesk_tickets.id INNER JOIN helpdesk_tags ON helpdesk_tag_uses.tag_id = helpdesk_tags.id  "
+ end
+ 
+ def users_join
+   " INNER JOIN users ON users.id = helpdesk_tickets.requester_id "
  end
   
   

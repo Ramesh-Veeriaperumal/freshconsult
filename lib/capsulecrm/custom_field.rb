@@ -24,7 +24,7 @@ class CapsuleCRM::CustomField < CapsuleCRM::Child
   def value
     date || text || boolean
   end
-
+  
 
   # nodoc
   def self.xml_map

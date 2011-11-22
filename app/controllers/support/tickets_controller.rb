@@ -6,19 +6,23 @@ class Support::TicketsController < ApplicationController
   before_filter :only => [:new, :create] do |c| 
     c.check_portal_scope :anonymous_tickets
   end
-
+  before_filter :require_user_login , :only =>[:index,:filter,:close_ticket]
+  
   uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
   
   def index
-    return redirect_to(send(Helpdesk::ACCESS_DENIED_ROUTE)) unless current_user
-    @tickets = Helpdesk::Ticket.find_all_by_requester_id(current_user.id)
-    @tickets ||= []
-    
+    @page_title = t('helpdesk.tickets.views.all_tickets')
+    build_tickets
     respond_to do |format|
       format.html
       format.xml  { render :xml => @tickets.to_xml }
     end
-    
+  end
+  
+  def filter   
+    @page_title = TicketsFilter::CUSTOMER_SELECTOR_NAMES[current_filter.to_sym]
+    build_tickets
+    render :index
   end
   
   def close_ticket
@@ -44,5 +48,21 @@ class Support::TicketsController < ApplicationController
     def redirect_url
       current_user ? support_ticket_url(@ticket) : root_path
     end
+  
+   def current_filter
+      params[:id] || 'all'
+    end
+  
+    def build_tickets
+       @tickets = TicketsFilter.filter(current_filter.to_sym, current_user, current_user.tickets)
+       @tickets = @tickets.paginate(:page => params[:page], :per_page => 10) 
+       @tickets ||= []    
+   end
+   
+   def require_user_login
+     return redirect_to(send(Helpdesk::ACCESS_DENIED_ROUTE)) unless current_user
+   end
+  
+   
 
 end

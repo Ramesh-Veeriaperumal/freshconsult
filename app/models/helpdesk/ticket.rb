@@ -1,8 +1,12 @@
 require 'digest/md5'
 
+
 class Helpdesk::Ticket < ActiveRecord::Base 
   include ActionController::UrlWriter
   include TicketConstants
+  include Helpdesk::TicketModelExtension
+  
+  EMAIL_REGEX = /(\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
   
   set_table_name "helpdesk_tickets"
   
@@ -77,6 +81,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :as => :tweetable,
     :class_name => 'Social::Tweet',
     :dependent => :destroy
+  
+  has_one :fb_post,
+    :as => :postable,
+    :class_name => 'Social::FbPost',
+    :dependent => :destroy
     
   has_one :ticket_states, :class_name =>'Helpdesk::TicketState', :dependent => :destroy
   has_one :ticket_topic,:dependent => :destroy
@@ -87,7 +96,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   attr_protected :attachments #by Shan - need to check..
   
-  accepts_nested_attributes_for :tweet
+  accepts_nested_attributes_for :tweet, :fb_post
   
   named_scope :created_at_inside, lambda { |start, stop|
           { :conditions => [" helpdesk_tickets.created_at >= ? and helpdesk_tickets.created_at <= ?", start, stop] }
@@ -105,6 +114,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
         :conditions => ["helpdesk_tickets.due_by >  helpdesk_ticket_states.resolved_at AND users.customer_id = ?",customer]
   } 
   }
+  
+   named_scope :resolved_on_time,
+        :joins => :ticket_states,
+        :conditions => ["helpdesk_tickets.due_by >  helpdesk_ticket_states.resolved_at"]
+   
+  named_scope :first_call_resolution,
+           :joins  => :ticket_states,
+           :conditions => ["(helpdesk_ticket_states.resolved_at is not null)  and  helpdesk_ticket_states.inbound_count = 1"]
+      
 
   named_scope :newest, lambda { |num| { :limit => num, :order => 'created_at DESC' } }
   named_scope :updated_in, lambda { |duration| { :conditions => [ 
@@ -195,6 +213,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
    def is_twitter?
     (tweet) and (!account.twitter_handles.blank?) 
   end
+ 
   
   def priority=(val)
     self[:priority] = PRIORITY_KEYS_BY_TOKEN[val] || val
@@ -312,8 +331,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def populate_requester #by Shan temp  
-    logger.debug "populate_requester :: email#{email} and twitter: #{twitter_id}"
+    portal =  email_config.portal if email_config
     unless email.blank?
+      self.email = parse_email email
       if(requester_id.nil? or !email.eql?(requester.email))
         @requester = account.all_users.find_by_email(email)
         if @requester.nil?
@@ -321,7 +341,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
           @requester.signup!({:user => {
             :email => self.email, 
             :name => (name || ''), 
-            :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}})
+            :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}},portal)
         end        
         self.requester = @requester  if @requester.valid?
       end
@@ -624,7 +644,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       options[:indent] ||= 2
       xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
-      super(:builder => xml, :skip_instruct => true,:include => :notes) do |xml|
+      super(:builder => xml, :skip_instruct => true,:include => :notes,:except => [:account_id,:import_id]) do |xml|
        xml.custom_field do
         self.ff_aliases.each do |label|    
           value = self.get_ff_value(label.to_sym()) 
@@ -655,8 +675,31 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
   end
   
+   
+   def group_name
+      group.nil? ? "No Group" : group.name
+    end
+    
+   def product_name
+      email_config.nil? ? "No Product" : email_config.name
+   end
+   
+   def responder_name
+      responder.nil? ? "No Agent" : responder.name
+    end
+    
+    def customer_name
+      requester.customer.nil? ? "No company" : requester.customer.name
+    end
+    
+    def priority_name
+      PRIORITY_NAMES_BY_KEY[priority]
+    end
+  
   private
   
+    
+    
     def create_source_activity
       create_activity(User.current, 'activities.tickets.source_change.long',
           {'source_name' => source_name}, 'activities.tickets.source_change.short')
@@ -732,5 +775,19 @@ class Helpdesk::Ticket < ActiveRecord::Base
     
     def add_support_score
       SupportScore.add_support_score(self, ScoreboardRating.resolution_speed(self))
-    end    
+  end
+  
+    
+  def parse_email(email)
+      if email =~ /(.+) <(.+?)>/
+        name = $1
+        email = $2
+      elsif email =~ /<(.+?)>/
+        email = $1
+      else email =~ EMAIL_REGEX
+        email = $1
+      end  
+     email
+   end
 end
+  

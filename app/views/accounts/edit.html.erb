@@ -79,6 +79,13 @@
 					<%= f.time_zone_select :time_zone, ActiveSupport::TimeZone.all %>
 		 		</div>
 			</li>
+			
+			<li class="inline-field">
+				<%= f.label :language, t('account.language'), :class => "caption"  %>
+				<div class="fields">
+					<%= f.select :language, I18n.available_locales_with_name , {:selected =>  @account.language.to_sym() }%>
+				</div>
+			</li>
 			<li class="inline-field">
 				<%= f.label :ticket_display_id, "#{t('next')} Ticket ID #", :class => "caption" %>
 				<div class="fields">		    	

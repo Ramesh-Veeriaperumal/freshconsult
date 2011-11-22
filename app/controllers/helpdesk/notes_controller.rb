@@ -44,13 +44,29 @@ class Helpdesk::NotesController < ApplicationController
     end
 
     def process_item
+      Thread.current[:notifications] = current_account.email_notifications
       if @parent.is_a? Helpdesk::Ticket      
         send_reply_email if @item.source.eql?(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["email"])
         if tweet?
           twt = send_tweet
           @item.create_tweet({:tweet_id => twt.id, :account_id => current_account.id})
+        elsif facebook?
+          fb_comment = add_facebook_comment
+          unless fb_comment.blank?
+            fb_comment.symbolize_keys!
+            @item.create_fb_post({:post_id => fb_comment[:id], :facebook_page_id =>@parent.fb_post.facebook_page_id ,:account_id => current_account.id})
+          end
         end
-        @parent.responder ||= current_user                     
+        @parent.responder ||= current_user 
+        unless params[:ticket_status].blank?
+          Thread.current[:notifications][EmailNotification::TICKET_RESOLVED][:requester_notification] = false
+          @parent.status = Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[params[:ticket_status].to_sym()]
+        end
+        unless params[:notify_emails].blank?
+          notify_array = validate_emails(params[:notify_emails])
+          Helpdesk::TicketNotifier.send_later(:deliver_notify_comment, @parent, @item ,@parent.reply_email,{:notify_emails =>notify_array}) unless notify_array.blank? 
+        end
+        
       end
 
       if @parent.is_a? Helpdesk::Issue
@@ -62,8 +78,8 @@ class Helpdesk::NotesController < ApplicationController
         end
         @parent.owner ||= current_user  if @parent.respond_to?(:owner)
       end
-
       @parent.save
+      Thread.current[:notifications] = nil
     end
     
     def tweet?
@@ -119,7 +135,28 @@ class Helpdesk::NotesController < ApplicationController
          flash.now[:notice] = t('twitter.not_authorized')
         end
       end
-    end
+  end
+  
+    def facebook?
+      (!@parent.fb_post.nil?) and (!params[:fb_post].blank?)  and (params[:fb_post].eql?("true")) 
+  end
+  
+  def add_facebook_comment
+    
+      fb_page =  @parent.fb_post.facebook_page
+    
+      unless fb_page.nil?
+       begin 
+        @fb_client = FBClient.new fb_page,{:current_account => current_account}
+        facebook_page = @fb_client.get_page
+        post_id =  @parent.fb_post.post_id
+        comment = facebook_page.put_comment(post_id, @item.body) 
+       rescue
+        flash[:notice] = t('facebook.not_authorized')
+        return nil
+       end
+      end
+  end
   
 
 end

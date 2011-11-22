@@ -2,7 +2,7 @@
 	<div class="sidepanel">
 		<h4 class="title"><%= current_user.customer.name %></h4>
 		<ul class="ui-list_with_icon">
-			<li><%= link_to(t('helpdesk.tickets.views.all'), "/support/company_tickets" ) %></li>
+			<li><%= link_to(t('helpdesk.tickets.views.all_tickets'), "/support/company_tickets" ) %></li>
 			<li><%= link_to(t('helpdesk.tickets.views.open_or_pending'),"/support/company_tickets/filter/open_or_pending" ) %></li>
 			<li><%= link_to(t('helpdesk.tickets.views.resolved_or_closed') ,"/support/company_tickets/filter/resolved_or_closed" ) %></li>
 		</ul>

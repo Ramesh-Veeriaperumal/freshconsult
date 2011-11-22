@@ -34,7 +34,7 @@
             
             <% if note.incoming %>
               <li class="menu-item">
-                <%= link_to t('ticket.split_ticket'), { :action => :split_the_ticket , :note_id => note.id } , :method => :post, :class => "last" , :title => t(".split_this_as_new_ticket") %>
+                <%= link_to t('ticket.split_ticket'), { :action => :split_the_ticket , :note_id => note.id } , :method => :post, :class => "last" , :title => t(".split_this_as_new_ticket")  if @item && !@item.fb_post%>
               </li>	
             <% end %>
             	         

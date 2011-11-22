@@ -1,6 +1,6 @@
 class Helpdesk::AuthorizationsController < ApplicationController
  
-  before_filter { |c| c.requires_permission :manage_users }
+  before_filter { |c| c.requires_permission :manage_tickets }
 
   include HelpdeskControllerMethods
 
@@ -12,16 +12,25 @@ class Helpdesk::AuthorizationsController < ApplicationController
   end
   
   def autocomplete #Copied from HelpDeskControllerMethods -Shan
-    items = autocomplete_scoper.find(
+      deliver_autocomplete autocomplete_scoper
+  end
+  
+  def agent_autocomplete
+     deliver_autocomplete autocomplete_scoper.technicians
+  end
+  
+  def deliver_autocomplete auto_scoper
+    items = auto_scoper.find(
       :all, 
       :conditions => ["email is not null and name like ? or email like ?", "%#{params[:v]}%", "%#{params[:v]}%"], 
-      :limit => 10)
+      :limit => 1000)
 
     r = {:results => items.map {|i| {:id => i.email, :value => i.name} } } 
 
     respond_to do |format|
       format.json { render :json => r.to_json }
     end
+
   end
 
 protected

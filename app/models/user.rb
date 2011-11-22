@@ -30,7 +30,7 @@ class User < ActiveRecord::Base
     :class_name => 'Helpdesk::Attachment',
     :dependent => :destroy
 
-  before_create :set_time_zone , :set_company_name
+  before_create :set_time_zone , :set_company_name , :set_language
   before_save :set_account_id_in_children , :set_contact_name, :check_email_value , :set_default_role
   after_update :drop_authorization , :if => :email_changed?
   
@@ -57,10 +57,12 @@ class User < ActiveRecord::Base
   end
   
   def chk_email_validation?
-    (is_not_deleted?) and (twitter_id.blank? || !email.blank?)
+    (is_not_deleted?) and (twitter_id.blank? || !email.blank?) and (fb_profile_id.blank? || !email.blank?)
   end
   
-  attr_accessible :name, :email, :password, :password_confirmation , :second_email, :job_title, :phone, :mobile, :twitter_id, :description, :time_zone, :avatar_attributes,:user_role,:customer_id,:import_id,:deleted
+  attr_accessible :name, :email, :password, :password_confirmation , :second_email, :job_title, :phone, :mobile, 
+                  :twitter_id, :description, :time_zone, :avatar_attributes,:user_role,:customer_id,:import_id,
+                  :deleted , :fb_profile_id , :language
 
   #Sphinx configuration starts
   define_index do
@@ -83,8 +85,8 @@ class User < ActiveRecord::Base
   end
   #Sphinx configuration ends here..
 
-  def signup!(params)   
-    self.email = params[:user][:email]
+  def signup!(params , portal=nil)   
+    self.email = (params[:user][:email]).strip if params[:user][:email]
     self.name = params[:user][:name]
     self.phone = params[:user][:phone]
     self.mobile = params[:user][:mobile]
@@ -96,12 +98,14 @@ class User < ActiveRecord::Base
     self.user_role = params[:user][:user_role]
     self.time_zone = params[:user][:time_zone]
     self.import_id = params[:user][:import_id]
+    self.fb_profile_id = params[:user][:fb_profile_id]
+    self.language = params[:user][:language]
     
     
     self.avatar_attributes=params[:user][:avatar_attributes] unless params[:user][:avatar_attributes].nil?
    
     return false unless save_without_session_maintenance
-    deliver_activation_instructions! if (!deleted and !email.blank?)
+    deliver_activation_instructions!(portal) if (!deleted and !email.blank?)
   end
   
   def avatar_attributes=(av_attributes)
@@ -214,7 +218,8 @@ class User < ActiveRecord::Base
   end
   ##Authorization copy ends here
   
-  def deliver_password_reset_instructions! #Do we need delayed_jobs here?! by Shan
+  def deliver_password_reset_instructions!(portal) #Do we need delayed_jobs here?! by Shan
+    portal ||= account.main_portal
     reset_perishable_token!
     
     e_notification = account.email_notifications.find_by_notification_type(EmailNotification::PASSWORD_RESET)
@@ -227,10 +232,12 @@ class User < ActiveRecord::Base
     
     UserNotifier.deliver_password_reset_instructions(self, 
         :email_body => Liquid::Template.parse(template).render((user_key ||= 'agent') => self, 
-          'helpdesk_name' => account.portal_name, 'password_reset_url' => edit_password_reset_url(perishable_token, :host => account.host)))
+          'helpdesk_name' => (!portal.name.blank?) ? portal.name : account.portal_name , 'password_reset_url' => edit_password_reset_url(perishable_token, :host => (!portal.portal_url.blank?) ? portal.portal_url : account.host)) , 
+          :subject => "#{ (!portal.name.blank?) ? portal.name : account.portal_name} password reset instructions" ,:reply_email => portal.product.friendly_email)
   end
   
-  def deliver_activation_instructions! #Need to refactor this.. Almost similar structure with the above one.
+  def deliver_activation_instructions!(portal) #Need to refactor this.. Almost similar structure with the above one.
+    portal ||= account.main_portal
     reset_perishable_token!
 
     e_notification = account.email_notifications.find_by_notification_type(EmailNotification::USER_ACTIVATION)
@@ -244,24 +251,29 @@ class User < ActiveRecord::Base
     
     UserNotifier.send_later(:deliver_user_activation, self, 
         :email_body => Liquid::Template.parse(template).render((user_key ||= 'agent') => self, 
-          'helpdesk_name' => account.portal_name, 'activation_url' => register_url(perishable_token, :host => account.host)), 
-        :subject => "#{account.portal_name} user activation")
+          'helpdesk_name' =>  (!portal.name.blank?) ? portal.name : account.portal_name, 'activation_url' => register_url(perishable_token, :host => (!portal.portal_url.blank?) ? portal.portal_url : account.host)), 
+        :subject => "#{ (!portal.name.blank?) ? portal.name : account.portal_name} user activation" , :reply_email => portal.product.friendly_email)
   end
   
-  def deliver_contact_activation
+  def deliver_contact_activation(portal)
+    portal ||= account.main_portal
     unless active?
       reset_perishable_token!
   
       e_notification = account.email_notifications.find_by_notification_type(EmailNotification::USER_ACTIVATION)
       UserNotifier.send_later(:deliver_user_activation, self, 
           :email_body => Liquid::Template.parse(e_notification.requester_template).render('contact' => self, 
-            'helpdesk_name' => account.portal_name, 'activation_url' => register_url(perishable_token, :host => account.host)), 
-          :subject => "#{account.portal_name} user activation")
+            'helpdesk_name' =>  (!portal.name.blank?) ? portal.name : account.portal_name , 'activation_url' => register_url(perishable_token, :host => (!portal.portal_url.blank?) ? portal.portal_url : account.host)), 
+          :subject => "#{ (!portal.name.blank?) ? portal.name : account.portal_name} user activation" , :reply_email => portal.product.friendly_email)
     end
   end
   
   def set_time_zone
     self.time_zone = account.time_zone if time_zone.nil? #by Shan temp
+  end
+  
+   def set_language
+    self.language = account.language if language.nil? 
   end
   
   def to_s

@@ -3,7 +3,8 @@ module ApplicationHelper
   
   include SavageBeast::ApplicationHelper
   include Juixe::Acts::Voteable
-  
+  include ActionView::Helpers::TextHelper
+    
   require "twitter"
   
   ASSETIMAGE = { :help => "/images/helpimages" }
@@ -34,6 +35,19 @@ module ApplicationHelper
   
   def get_img(file_name, type)
     image_tag("#{ASSETIMAGE[type]}/#{file_name}", :class => "#{type}_image")
+  end
+
+  def render_item(value, type = "text")
+    unless value.blank?
+      case type
+        when "text" then
+          content_tag :div, value
+        when "facebook" then
+          auto_link("http://facebook.com/#{value}")
+        when "link" then
+          auto_link(value)
+      end
+    end
   end
 
   def navigation_tabs
@@ -183,7 +197,10 @@ module ApplicationHelper
   def is_user_social( user, profile_size )
     if user.twitter_id
       profile_size = (profile_size == :medium) ? "original" : "normal"
-      twitter_avatar(user.twitter_id, profile_size)
+      twitter_avatar(user.twitter_id, profile_size) 
+    elsif user.fb_profile_id
+      profile_size = (profile_size == :medium) ? "large" : "square"
+      facebook_avatar(user.fb_profile_id, profile_size)
     else
       "/images/fillers/profile_blank_#{profile_size}.gif"
     end
@@ -191,6 +208,10 @@ module ApplicationHelper
   
   def twitter_avatar( screen_name, profile_size = "normal" )
     "http://api.twitter.com/1/users/profile_image?screen_name=#{screen_name}&size=#{profile_size}"
+  end
+  
+  def facebook_avatar( facebook_id, profile_size = "square")
+    "http://graph.facebook.com/#{facebook_id}/picture?type=#{profile_size}"
   end
   
   # User details page link should be shown only to agents and admin
@@ -279,9 +300,9 @@ module ApplicationHelper
       when "paragraph" then
         element = label + text_area(object_name, field.field_name, :class => element_class, :value => field_value)
       when "dropdown" then
-        element = label + select(object_name, field.field_name, field.choices, :class => element_class, :selected => field_value)
+        element = label + select(object_name, field.field_name, field.choices, {:selected => field_value},{:class => element_class})
       when "dropdown_blank" then
-        element = label + select(object_name, field.field_name, field.choices, :class => element_class, :selected => field_value, :include_blank => "...")
+        element = label + select(object_name, field.field_name, field.choices, {:include_blank => "...", :selected => field_value}, {:class => element_class})
       when "hidden" then
         element = hidden_field(:source, :value => field_value)
       when "checkbox" then

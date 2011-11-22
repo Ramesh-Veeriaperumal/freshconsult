@@ -1,29 +1,30 @@
 class CapsuleCRM::Person < CapsuleCRM::Party
 
   attr_accessor :about
-  attr_accessor :first_name
+  attr_accessor :name
   attr_accessor :job_title
   attr_accessor :last_name
   attr_accessor :organisation_id
   attr_accessor :title
   attr_accessor :organisation_name
+  attr_accessor :email
+  attr_accessor :phone
 
 
 
-  #define_attribute_methods [:about, :first_name, :last_name, :job_title, :organisation_id, :title]
+  #define_attribute_methods [:about, :first_name, :last_name, :job_title, :organisation_name, :title,:email,:organisation_id]
 
 
   # nodoc
   def attributes
     attrs = {}
-    arr = [:about, :first_name, :last_name, :title, :job_title,:organisation_name]
+    arr = [:about, :name, :last_name, :title, :job_title,:organisation_name,:email,:organisation_id,:phone]
     arr.each do |key|
       attrs[key] = self.send(key)
     end
     attrs
   end
-
-
+  
   # nodoc
   def first_name=(value)
     @first_name = value
@@ -60,16 +61,27 @@ class CapsuleCRM::Person < CapsuleCRM::Party
 
   # nodoc
   def create
+    return false if attributes.empty?
     path = '/api/person'
     options = {:root => 'person', :path => path}
-    new_id = self.class.create dirty_attributes, options
+    hsh = attributes_hash
+    xml_out = hsh.to_xml :root => 'person'
+    puts xml_out
+    new_id = self.class.create xml_out, options
     unless new_id
       errors << self.class.last_response.response.message
       return false
     end
     @errors = []
     self.id = new_id
-    self
+  end
+  
+  def attributes_hash
+    hsh = {  "firstName" => name ,
+             "contacts" => {"email" => {"emailAddress" => email, "type" => "Work"},
+                            "phone" => {"phoneNumber" => phone, "type" => "Work"}} ,
+             "organisationId" => organisation_id }
+    hsh
   end
 
 
@@ -114,6 +126,7 @@ class CapsuleCRM::Person < CapsuleCRM::Party
       'jobTitle' => 'job_title',
       'lastName' => 'last_name',
       'organisationId' => 'organisation_id',
+      'organisationName' => 'organisation_name',
       'title' => 'title'
     }
     super.merge map

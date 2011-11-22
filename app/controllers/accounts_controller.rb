@@ -4,6 +4,7 @@ class AccountsController < ApplicationController
   
   layout :choose_layout 
   
+  skip_before_filter :set_locale
   skip_before_filter :set_time_zone
   skip_before_filter :check_account_state
   
@@ -65,6 +66,14 @@ class AccountsController < ApplicationController
     rescue
       @account.time_zone = (ActiveSupport::TimeZone["Eastern Time (US & Canada)"]).name 
     end
+    
+    begin 
+      locale = request.compatible_language_from I18n.available_locales || I18n.default_locale
+      @account.language = locale.to_s()
+    rescue
+      @account.language = I18n.default_locale.to_s()
+    end
+    
   end
     
   def signup_google 
@@ -237,6 +246,7 @@ class AccountsController < ApplicationController
   
   def update
     @account.time_zone = params[:account][:time_zone]
+    @account.language = params[:account][:language]
     @account.ticket_display_id = params[:account][:ticket_display_id]
     @account.main_portal_attributes = params[:account][:main_portal_attributes]
     

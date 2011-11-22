@@ -1,3 +1,5 @@
+require 'mime/types'
+
 class Helpdesk::Attachment < ActiveRecord::Base
 
   set_table_name "helpdesk_attachments"
@@ -16,7 +18,12 @@ class Helpdesk::Attachment < ActiveRecord::Base
   
     #before_validation_on_create :set_random_secret
     before_post_process :image?
+    #before_create :set_content_type
   
+  def set_content_type
+    mime_content_type = MIME::Types.type_for(content_file_name).to_s
+    self.content_content_type = mime_content_type unless mime_content_type.blank?
+  end
   
   def attachment_url
     class_string =  self.class

@@ -12,7 +12,7 @@ class Support::RegistrationsController < ApplicationController
   def create
     @user = current_account.users.new
     return render :action => 'new' if  !verify_recaptcha(:model => @user,:message => "Captcha verification failed, try again!")
-    if @user.signup!(params)
+    if @user.signup!(params , current_portal)
       flash[:notice] = "successfully registered activation link has been sent to #{params[:user][:email]}"
       redirect_to login_url
     else

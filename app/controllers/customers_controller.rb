@@ -111,7 +111,7 @@ class CustomersController < ApplicationController
       @selected_tab = :customers
   end
    def get_domain(s)
-      s.gsub(/^(http:\/\/)?(www\.)?/,'').gsub(/\/.*$/,'')
+      s.gsub(/^(http:\/\/)?(www\.)?/,'').gsub(/\/.*$/,'') unless s.blank?
    end 
   
 end

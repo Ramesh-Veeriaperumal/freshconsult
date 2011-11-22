@@ -68,6 +68,10 @@ GEM
     jammit (0.6.0)
       closure-compiler (>= 0.1.0)
       yui-compressor (>= 0.9.1)
+    json (1.5.3)
+    koala (1.0.0)
+      json (~> 1.0)
+      multipart-post (~> 1.0)
     linecache (0.43)
     lockfile (1.4.3)
     map-fields (1.0.0)
@@ -156,6 +160,8 @@ GEM
     rubyzip (0.9.4)
     rufus-scheduler (2.0.9)
       tzinfo (>= 0.3.23)
+    sanitize (2.0.3)
+      nokogiri (>= 1.4.4, < 1.6)
     sass (3.1.1)
     searchlogic (2.4.27)
       activerecord (>= 2.0.0)
@@ -196,6 +202,7 @@ DEPENDENCIES
   http_accept_language (= 1.0.1)
   i18n (= 0.4.2)
   jammit
+  koala (~> 1.0.0)
   lockfile (= 1.4.3)
   map-fields (= 1.0.0)
   mongrel
@@ -212,6 +219,7 @@ DEPENDENCIES
   ruby-openid-apps-discovery (= 1.2.0)
   rubyzip (= 0.9.4)
   rufus-scheduler
+  sanitize (= 2.0.3)
   sass (= 3.1.1)
   searchlogic (= 2.4.27)
   stemmer (= 1.0.1)!

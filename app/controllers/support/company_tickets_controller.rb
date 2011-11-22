@@ -9,7 +9,7 @@ class Support::CompanyTicketsController < ApplicationController
   before_filter :verify_permission
   
   def index    
-    @page_title = t('helpdesk.tickets.views.all')
+    @page_title = t('helpdesk.tickets.views.all_tickets')
     build_tickets
     respond_to do |format|
       format.html
@@ -37,6 +37,7 @@ class Support::CompanyTicketsController < ApplicationController
   
     def build_tickets
        @tickets = TicketsFilter.filter(current_filter.to_sym, current_user, ticket_scope.tickets)
+       @tickets = @tickets.paginate(:page => params[:page], :per_page => 10) 
        @tickets ||= []    
     end
   
