@@ -804,6 +804,11 @@ body h5{
 		.ui-list_with_icon{
 			margin:6px;
 		}
+      .cnt-special{
+         padding-top:4px;
+         border-top:1px dotted #cfcfcf;
+         background-color:#f3f3f3;
+      }
 		.cnt{
 			@include no-bullets;
 			margin-top:-6px;

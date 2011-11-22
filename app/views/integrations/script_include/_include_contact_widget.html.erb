@@ -1,5 +1,11 @@
-<div id="capsule_widget" domain="{{capsule_crm.domain}}" title="{{capsule_crm.widget_title}}">
-  <div id="content"></div>
+<div id="capsule_widget" domain="{{capsule_crm.domain}}" class="cnt-special">
+	<h3 class="title">
+		<span class="floatr"><%= image_tag("application-logo-small/capsule_crm.png") %></span>
+		{{capsule_crm.title}}
+	</h3>
+  <div id="content" class="user_details_widget">
+  	
+  </div>
 </div>
 <script type="text/javascript">
   CustomWidget.include_js("/javascripts/capsule_crm.js");
