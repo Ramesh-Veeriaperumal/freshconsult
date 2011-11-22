@@ -60,11 +60,7 @@ class SubscriptionNotifier < ActionMailer::Base
   
   def account_deleted(account)
     setup_email(AppConfig['from_email'], "#{account.full_domain} is deleted")
-<<<<<<< HEAD
     @body = { :account => account }    
-=======
-    @body = { :account => account } 
->>>>>>> freshdesk_staging
     @content_type = "text/html"
   end
   
