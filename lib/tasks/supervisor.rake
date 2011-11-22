@@ -30,5 +30,6 @@ namespace :supervisor do
         end
       end
     end
+    puts "Supervisor rule check finished at #{Time.zone.now}."
   end
 end

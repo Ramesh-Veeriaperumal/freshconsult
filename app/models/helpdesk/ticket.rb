@@ -6,6 +6,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include TicketConstants
   include Helpdesk::TicketModelExtension
   
+  EMAIL_REGEX = /(\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
+  
   set_table_name "helpdesk_tickets"
   
   serialize :cc_email
@@ -117,7 +119,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
         :joins => :ticket_states,
         :conditions => ["helpdesk_tickets.due_by >  helpdesk_ticket_states.resolved_at"]
    
-  
+  named_scope :first_call_resolution,
+           :joins  => :ticket_states,
+           :conditions => ["(helpdesk_ticket_states.resolved_at is not null)  and  helpdesk_ticket_states.inbound_count = 1"]
+      
 
   named_scope :newest, lambda { |num| { :limit => num, :order => 'created_at DESC' } }
   named_scope :updated_in, lambda { |duration| { :conditions => [ 
@@ -328,6 +333,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def populate_requester #by Shan temp  
     portal =  email_config.portal if email_config
     unless email.blank?
+      self.email = parse_email email
       if(requester_id.nil? or !email.eql?(requester.email))
         @requester = account.all_users.find_by_email(email)
         if @requester.nil?
@@ -638,7 +644,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       options[:indent] ||= 2
       xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
-      super(:builder => xml, :skip_instruct => true,:include => :notes) do |xml|
+      super(:builder => xml, :skip_instruct => true,:include => :notes,:except => [:account_id,:import_id]) do |xml|
        xml.custom_field do
         self.ff_aliases.each do |label|    
           value = self.get_ff_value(label.to_sym()) 
@@ -769,5 +775,19 @@ class Helpdesk::Ticket < ActiveRecord::Base
     
     def add_support_score
       SupportScore.add_support_score(self, ScoreboardRating.resolution_speed(self))
-    end    
+  end
+  
+    
+  def parse_email(email)
+      if email =~ /(.+) <(.+?)>/
+        name = $1
+        email = $2
+      elsif email =~ /<(.+?)>/
+        email = $1
+      else email =~ EMAIL_REGEX
+        email = $1
+      end  
+     email
+   end
 end
+  

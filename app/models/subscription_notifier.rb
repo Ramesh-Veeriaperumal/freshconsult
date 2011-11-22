@@ -33,7 +33,7 @@ class SubscriptionNotifier < ActionMailer::Base
   def charge_receipt(subscription_payment)
     setup_email(subscription_payment.subscription.account.account_admin, "Your #{AppConfig['app_name']} invoice")
     setup_bcc
-    @body = { :subscription => subscription_payment.subscription, :amount => subscription_payment.amount }
+    @body = { :subscription => subscription_payment.subscription, :amount => subscription_payment.amount, :subscription_payment => subscription_payment }
   end
   
   def setup_receipt(subscription_payment)
@@ -60,7 +60,11 @@ class SubscriptionNotifier < ActionMailer::Base
   
   def account_deleted(account)
     setup_email(AppConfig['from_email'], "#{account.full_domain} is deleted")
+<<<<<<< HEAD
     @body = { :account => account }    
+=======
+    @body = { :account => account } 
+>>>>>>> freshdesk_staging
     @content_type = "text/html"
   end
   

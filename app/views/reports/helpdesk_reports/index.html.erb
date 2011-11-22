@@ -2,7 +2,6 @@
 	<%=select_month(Date.today)%>
 	<%= submit_tag 'Submit' %>
 <% end %>
-<%if !@total_tickets.nil? and @total_tickets > 0 %>
 <br>
 <br>
 Status: <%=@status_hash.to_json%>
@@ -14,18 +13,27 @@ Ticket type: <%=@ticket_type_hash.to_json%>
 Priority: <%=@priority_hash.to_json%>
 <br>
 <br>
-Average Resolved Tickets this month: <%=@avg_current_month%>
+Source: <%=@source_hash.to_json%>
+<br>
+<br>
+Average Resolved Tickets this month: <%=@avg_sla_current_month%>
 <br>
 <br>
 Sla difference:<%=@sla_diff%> 
 <%= get_sla_image(@sla_diff) %>
 <br>
 <br>
-Total tickets: <%=@total_tickets%>
+Total tickets: <%=@current_month_tot_tickets%>
+<br>
+<br>
+Last month Total tickets: <%=@last_month_tot_tickets%>
+<br>
+<br>
+FCR current month: <%=@avg_fcr_month%>
+<br>
+<br>
+FCR difference: <%=@fcr_diff%>
 <br>
 <br>
 Timeline: <%=@all_hash.to_json%> 
 Resolved_hash: <%=@resolved_hash.to_json%>
-<%else%>
-No data to display!
-<%end%>

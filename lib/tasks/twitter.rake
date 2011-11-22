@@ -4,6 +4,7 @@ include ErrorHandle
 namespace :twitter do
   desc 'Check for New twitter feeds..'
   task :fetch => :environment do    
+    puts "Twitter task initialized at #{Time.zone.now}"
     Account.active_accounts.each do |account|
       twitter_handles = account.twitter_handles.find(:all, :conditions => ["capture_dm_as_ticket = 1 or capture_mention_as_ticket = 1"])    
       twitter_handles.each do |twt_handle| 
@@ -37,8 +38,9 @@ namespace :twitter do
             twt_handle.update_attribute(:last_mention_id, last_tweet_id) unless last_tweet_id.blank?
          end       
        end ### ends ####
-      end
-    end
+     end
+   end
+   puts "Twitter closed at #{Time.zone.now}"
   end
   
   ##Need to consider the 

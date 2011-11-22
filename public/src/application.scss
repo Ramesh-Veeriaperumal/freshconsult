@@ -1934,14 +1934,14 @@ h4.border_title{
 		text-decoration:none;
 	}	
 	ul{
-		@include pretty-bullets($bullet-icon);
+		@include pretty-bullets($bullet-icon, 15px, 8px);
 	}	
 	li{ 
-		line-height:18px;
+		line-height:22px;
 		padding:0px 0px 4px 18px;
 		color:black;
 		a{ 
-			font-size:14px; 
+			font-size:13px; 
 			@include link-colors(#21759B, #3399cc, #21759B, #21759B); 
 		}
 	} 
@@ -2551,6 +2551,9 @@ a.page_title{
 	padding:8px 14px 12px 14px;
 }
 
+.folder-2col{
+   @include pie-clearfix;
+}
 
 .folder_section{
 	float:left;
@@ -2593,7 +2596,9 @@ a.page_title{
 	margin-right:-20px;
 	text-align: left;
 	.info_data{ margin-top:-10px; padding:0px; } 
-	.search-grey-box{ margin:-10px -20px 12px -20px; }
+	.search-grey-box{ 
+	   margin:-10px -20px 12px -20px; border-bottom:1px solid #E2E2E2; border-top:0;
+	}
 }
 
 .artical_list{
@@ -2603,8 +2608,7 @@ a.page_title{
     margin-top:12px;
     margin-bottom: 20px;
     margin-left: 37px; 
-    text-align: left;
-    
+    text-align: left; 
     li{
     	margin-top:4px; 
     	a{ @include link-colors(#4D769F, #3399cc, #4D769F, #4D769F);   }

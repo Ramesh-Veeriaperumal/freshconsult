@@ -1,19 +1,19 @@
 namespace :facebook do
   desc 'Check for New facebook feeds..'
   task :fetch => :environment do    
-    puts "facebook..fetch is called"
+    puts "Facebook task initialized at #{Time.zone.now}"
     Account.active_accounts.each do |account|
       facebook_pages = account.facebook_pages.find(:all, :conditions => ["enable_page = 1"])    
       facebook_pages.each do |fan_page| 
-        puts "facebook---fetch has been called for page :: #{fan_page.page_name}"
         sandbox do ### starts ####
  
            fb_posts = Social::FacebookPosts.new(fan_page)
            fb_posts.fetch
          
          end ### ends ####
-      end
-    end
+     end
+   end
+    puts "Facebook task finished at #{Time.zone.now}"
   end
   
   ##Need to consider the 
