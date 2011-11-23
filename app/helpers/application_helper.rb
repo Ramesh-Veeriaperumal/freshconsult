@@ -258,7 +258,7 @@ module ApplicationHelper
       widget = installed_app.application.widgets[0]
       replace_objs = {installed_app.application.name.to_s => installed_app}
       replace_objs = liquid_objs.blank? ? replace_objs : liquid_objs.merge(replace_objs)
-      return Liquid::Template.parse(render :partial => "/integrations/script_include/#{widget.script}").render(replace_objs)
+      return Liquid::Template.parse(widget.script).render(replace_objs)
     end
   end
 

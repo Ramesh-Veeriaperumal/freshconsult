@@ -1,20 +1,3 @@
-/*
-<div id="capsule_widget" domain="hirickross.capsulecrm.com">
-	<div id="content">Capsule widget</div>
-</div>
-<script type="text/javascript"> 
-	CustomWidget.include_js('capsule_crm.js');
-	capsuleBundle={
-		t:"748b80fb0f4ecd19b68561dcc39c9f4f",
-		reqId:"{{requester.id}}", 
-		reqName:"{{requester.name}}",
-		reqOrg:"{{requester.organization.name}}", 
-		reqPhone:"{{requester.phone}}",
-		reqEmail:"{{requester.email}}"};
-</script> 
-
-*/
-
 CapsuleWidget = {
     toArray: function(objectOrArray) {
         if (!objectOrArray) {return new Array();}
@@ -74,7 +57,7 @@ CapsuleWidget = {
             summary += name + '</a></h5>';
 
             if (contact.jobTitle || contact.organisationName){
-                summary += '<p>'
+                summary += '<div>'
                 if (contact.jobTitle) {
                     summary += contact.jobTitle;
                 }
@@ -83,7 +66,7 @@ CapsuleWidget = {
                     summary += contact.organisationName.escapeHTML();
                     summary += '</a>';
                 }
-                summary += '</p>';
+                summary += '</div>';
             }
 
             if (!contact.contacts.email && !contact.contacts.phone && !contact.about) {

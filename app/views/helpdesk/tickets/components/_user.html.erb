@@ -12,13 +12,12 @@
 	</div>
 	<% @liquid_objects = {"requester" => user} %>
   <%= get_app_widget_script("capsule_crm", "contact_widget", @liquid_objects) %>
-	<div class="seperator"></div>
 	<h3 class="title"><%=t('ticket.recent_tickets')%></h3>
 	<ul class="ui-list_with_icon">
 	    <% user.tickets.newest(5).each do |ticket| %>	
 			<li>
 				<%= link_to( truncate("##{ticket.display_id} " + h(ticket.subject), 60), ticket ) %>
-			</li>		
+			</li>
 		<% end %>
 	</ul>
 </div>
