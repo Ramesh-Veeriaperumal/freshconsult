@@ -254,11 +254,13 @@ class Account < ActiveRecord::Base
     self.full_domain = "#{domain}.#{AppConfig['base_domain'][RAILS_ENV]}"
   end
   
-  def default_email
+  def default_friendly_email
     primary_email_config.friendly_email
   end
   
-  
+  def default_email
+    primary_email_config.reply_email
+  end
   
   def to_s
     name.blank? ? full_domain : "#{name} (#{full_domain})"

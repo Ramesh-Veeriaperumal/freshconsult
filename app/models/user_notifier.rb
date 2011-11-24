@@ -13,10 +13,10 @@ class UserNotifier < ActionMailer::Base
   end
   
   def send_the_mail(user , reply_email =nil)
-    from          reply_email || user.account.default_email
+    from          reply_email || user.account.default_friendly_email
     recipients    user.email
     sent_on       Time.now
-    headers       "Reply-to" => "#{user.account.default_email}"
+    headers       "Reply-to" => "#{user.account.default_friendly_email}"
     content_type  "text/plain"
   end
   

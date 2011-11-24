@@ -32,7 +32,7 @@
             <%= content_tag( :h4, t(".title", :email => @ticket.requester.email), :class => "title" ) %>
             <%= f.label(:reply_email, "From:", :class => "caption" ) %>
             <div class="fields">
-              <%= select :reply_email, :id, options_for_select(@reply_email, @ticket.reply_email) %>
+              <%= select :reply_email, :id, options_for_select(@reply_email, @ticket.friendly_reply_email) %>
               <input type="checkbox" class="hide" id="include_cc" name="include_cc" value="true" <%= (!@ticket.cc_email.blank?)? "checked" : "" %> />              
               <input type="checkbox" class="hide" id="include_bcc" name="include_bcc" value="true"  />
 			</div>

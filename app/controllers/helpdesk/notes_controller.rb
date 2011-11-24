@@ -64,7 +64,7 @@ class Helpdesk::NotesController < ApplicationController
         end
         unless params[:notify_emails].blank?
           notify_array = validate_emails(params[:notify_emails])
-          Helpdesk::TicketNotifier.send_later(:deliver_notify_comment, @parent, @item ,@parent.reply_email,{:notify_emails =>notify_array}) unless notify_array.blank? 
+          Helpdesk::TicketNotifier.send_later(:deliver_notify_comment, @parent, @item ,@parent.friendly_reply_email,{:notify_emails =>notify_array}) unless notify_array.blank? 
         end
         
       end
