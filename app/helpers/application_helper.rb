@@ -250,8 +250,8 @@ module ApplicationHelper
   end
 
   def get_app_widget_script(app_name, widget_name, liquid_objs)
-    installed_app = Integrations::InstalledApplication.find(:all, :joins=>{:application => :widgets}, 
-                  :conditions => {:applications => {:name => app_name, :widgets => {:name => widget_name}}, :account_id => current_account}).first
+    installed_app = Integrations::InstalledApplication.find(:first, :joins=>{:application => :widgets}, 
+                  :conditions => {:applications => {:name => app_name, :widgets => {:name => widget_name}}, :account_id => current_account})
     if installed_app.blank? or installed_app.application.blank?
       return ""
     else
@@ -262,7 +262,10 @@ module ApplicationHelper
     end
   end
 
-  def construct_ui_element(object_name, field_name, field_label, dom_type, required, field_value = "")
+  def construct_ui_element(object_name, field_name, field, field_value = "")
+    field_label = t(field[:label])
+    dom_type = field[:type]
+    required = field[:required]
     element_class   = " #{ (required) ? 'required' : '' } #{ dom_type }"
     field_label    += " #{ (required) ? '*' : '' }"
     object_name     = "#{object_name.to_s}"
@@ -274,9 +277,9 @@ module ApplicationHelper
       when "paragraph" then
         element = label + text_area(object_name, field_name, :class => element_class, :value => field_value)
       when "dropdown" then
-        element = label + select(object_name, field_name, field.choices, :class => element_class, :selected => field_value)
+        element = label + select(object_name, field_name, field[:choices], :class => element_class, :selected => field_value)
       when "dropdown_blank" then
-        element = label + select(object_name, field_name, field.choices, :class => element_class, :selected => field_value, :include_blank => "...")
+        element = label + select(object_name, field_name, field[:choices], :class => element_class, :selected => field_value, :include_blank => "...")
       when "hidden" then
         element = hidden_field(:source, :value => field_value)
       when "checkbox" then

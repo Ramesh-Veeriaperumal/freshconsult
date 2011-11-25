@@ -13,17 +13,13 @@
 				puts "field_value "+field_value.to_s
 
 				# TODO: In case of edit these values should be obtained from @installed_application variable to make it upgrade(in case if we introduce new param for any installed app) proof. 
-				field_name = input_key.to_s
 				unless input_value.blank?
-					field_label = t(input_value[:label])
-					field_info = t(input_value[:info])
-					field_dom_type = input_value[:type]
-					field_required = input_value[:required]
-				%>
-				<%= construct_ui_element :configs, field_name, field_label, field_dom_type, field_required, field_value %>
-				<%= content_tag(:div, field_info, :class => "info-data") unless input_value[:info].blank? %>
-				<span class="seperator"></span>
-			<% end
+			%>
+					<%= construct_ui_element :configs, input_key.to_s, input_value, field_value%>
+					<%# Move the below line into construct_ui_element method.%>
+					<%= content_tag(:div, input_value[:info], :class => "info-data") unless input_value[:info].blank? %>
+					<span class="seperator"></span>
+			 <% end
 			  end %>
 		<% end %>
 	</div>
