@@ -99,6 +99,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     def create_ticket(account, from_email, to_email)
       email_config = account.email_configs.find_by_to_email(to_email[:email])
       user = get_user(account, from_email,email_config)
+      return if user.blocked? #Mails are dropped if the user is blocked
       unless user.customer?
         e_email = orig_email_from_text
         user = get_user(account, e_email , email_config) unless e_email.nil?
@@ -148,6 +149,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
 
     def add_email_to_ticket(ticket, from_email)
       user = get_user(ticket.account, from_email, ticket.email_config)
+      return if user.blocked? #Mails are dropped if the user is blocked
       if (ticket.requester.email.include?(user.email) || ticket.included_in_cc?(user.email) || !user.customer?) 
         note = ticket.notes.build(
           :private => false,
