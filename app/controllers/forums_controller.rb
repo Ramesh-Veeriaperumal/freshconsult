@@ -70,8 +70,10 @@ class ForumsController < ApplicationController
         format.xml  { head 200 }
       end
     else
+     respond_to do |format|
       format.html {render :action => 'edit'}
       format.xml  {render :xml => @forum.errors }
+     end
     end
   end
   
