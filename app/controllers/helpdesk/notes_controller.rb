@@ -90,7 +90,7 @@ class Helpdesk::NotesController < ApplicationController
      if !params[:include_cc].blank?# and !params[:cc_emails].blank?
       #cc_array = params[:cc_emails].split(',').collect
        cc_array = validate_emails params[:cc_emails]
-       @parent.update_attribute(:cc_email, cc_array)    
+       @parent.update_attribute(:cc_email, cc_array.compact)    
      end
    end
    
