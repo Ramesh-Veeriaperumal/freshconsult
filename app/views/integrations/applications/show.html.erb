@@ -5,6 +5,7 @@
 		<li class="inline-field">
 			<label class="caption">
 				<div class="logo application-logo-<%= @installing_application.name %>"></div>
+				<div><%= t(@installing_application.desc) %></div>
 			</label>
    		<%= render :partial => "application_form", :object => f, :locals => { :is_edit => false } %>
 		</li>

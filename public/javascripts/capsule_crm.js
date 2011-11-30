@@ -313,59 +313,39 @@ CapsuleWidget = {
     }
 }
 
-if (typeof(capsuleBundle)!='undefined' && capsuleBundle.t) {
-    capsuleResource = new Freshdesk.Widget({
-        anchor: "capsule_widget",
-        domain: $('capsule_widget').getAttribute('domain').escapeHTML(),
-        ssl_enabled: true,
-        content_type: "application/xml",
-        enable_resource_cache: false,
-        application_content: function() {
-            var content = "<div id='capsule-content'>";
-            content += '<form id="cap-search" onsubmit="CapsuleWidget.searchContacts(this,capsuleResource); return false;">';
-            content += '<input type="text" name="q" value="' + CapsuleWidget.searchTerm() + '"/>';
-            content += '<input type="submit" id="submit" value="Search Capsule"/>'
-            content += '</form>';
-            content += '<div id="cap-search-result"></div>';
-            content += '<div id="cap-contact-summary"></div>';
-            content += "</div>"; // close capsule-content
-            return content;
-        },
-        username: capsuleBundle.t,
-        password: "x",
-        application_resources: [ {
-                resource: 'api/party?limit=10&stamp=' + new Date().valueOf() + '&qe=' + encodeURI(CapsuleWidget.searchTerm()),
-                on_success: CapsuleWidget.processSearch
-            } ]
-    });
-} else {
-    capsuleResource = new Freshdesk.Widget({
-        anchor: "capsule_widget",
-        domain: $('capsule_widget').getAttribute('domain').escapeHTML(),
-        ssl_enabled: true,
-        content_type: "application/xml",
-        enable_resource_cache: false,
-        application_content: function() {
-            var content = "<div id='capsule-content'>";
-            content += '<form id="cap-search" onsubmit="CapsuleWidget.searchContacts(this,capsuleResource); return false;">';
-            content += '<input type="text" name="q" value="' + CapsuleWidget.searchTerm() + '"/>';
-            content += '<input type="submit" id="submit" value="Search Capsule"/>'
-            content += '</form>';
-            content += '<div id="cap-search-result"></div>';
-            content += '<div id="cap-contact-summary"></div>';
-            content += "</div>"; // close capsule-content
-            return content;
-        },
-        login_content: function () {
-            return  '<form onsubmit="capsuleResource.login(this); return false;" class="form">' +
-                '<label>Authentication Key</label><input type="password" id="username"/>' +
-                '<input type="hidden" id="password" value="X"/>' +
-                '<input type="submit" value="Login" id="submit">' +
-                '</form>';
-        },
-        application_resources: [ {
-                resource: 'api/party?limit=10&stamp=' + new Date().valueOf() + '&qe=' + encodeURI(CapsuleWidget.searchTerm()),
-                on_success: CapsuleWidget.processSearch
-            } ]
-    });
+capsuleResourceOptions = {
+	anchor: "capsule_widget",
+	domain: $('capsule_widget').getAttribute('domain').escapeHTML(),
+	ssl_enabled: true,
+	content_type: "application/xml",
+	enable_resource_cache: false,
+	application_content: function() {
+		var content = "<div id='capsule-content' class='cnt-special'>";
+		content += '<h3 class="title">' + $("capsule_widget").title.escapeHTML() + '</h3>';
+		content += '<div class="user_details_widget">';
+		content += '<div style="display:none;"><form id="cap-search" onsubmit="CapsuleWidget.searchContacts(this,capsuleResource); return false;">';
+		content += '<input type="text" name="q" value="' + CapsuleWidget.searchTerm() + '"/>';
+		content += '<input type="submit" id="submit" value="Search Capsule"/>'
+		content += '</form></div>';
+		content += '<div id="cap-search-result"></div>';
+		content += '<div id="cap-contact-summary"></div>';
+		content += '</div></div>'; // close capsule-content
+		return content;
+	},
+	application_resources: [{
+		resource: 'api/party?limit=10&stamp=' + new Date().valueOf() + '&qe=' + encodeURI(CapsuleWidget.searchTerm()),
+		on_success: CapsuleWidget.processSearch
+	}]
 };
+
+   if (typeof(capsuleBundle) != 'undefined' && capsuleBundle.t) {
+   	capsuleResourceOptions.username = capsuleBundle.t;
+   	capsuleResourceOptions.password = "x";
+   	capsuleResource = new Freshdesk.Widget(capsuleResourceOptions);
+   } else {
+   	capsuleResourceOptions.login_content = function() {
+   		return '<form onsubmit="capsuleResource.login(this); return false;" class="form">' + '<label>Authentication Key</label><input type="password" id="username"/>' + '<input type="hidden" id="password" value="X"/>' + '<input type="submit" value="Login" id="submit">' + '</form>';
+   	};
+   	capsuleResource = new Freshdesk.Widget(capsuleResourceOptions);
+   };
+   

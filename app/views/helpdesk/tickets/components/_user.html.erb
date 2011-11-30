@@ -9,9 +9,10 @@
 		<%= render_item(h(user.phone)) %>
 		<%= render_item(h(user.mobile)) %></div>
 		<div><%= h(user.job_title) %> <b><%= (user.customer ? "at #{user.customer.name}" : "")  %></b></div>
-	</div>
+</div> 
 	<% @liquid_objects = {"requester" => user} %>
-  <%= get_app_widget_script("capsule_crm", "contact_widget", @liquid_objects) %>
+  <%= get_app_widget_script("capsule_crm", "contact_widget", @liquid_objects) %> 
+
 	<h3 class="title"><%=t('ticket.recent_tickets')%></h3>
 	<ul class="ui-list_with_icon">
 	    <% user.tickets.newest(5).each do |ticket| %>	
