@@ -11,9 +11,9 @@
 			backgroundImage: null, 
 			alignment:  	"left", 
 			offset:     	"35%",
-			url:			"http://support.freshdesk.com",
-			assetUrl: 		"http://www.freshdesk.com/assets/",
-			queryString:    ""
+			url:			   "http://support.freshdesk.com",
+			assetUrl: 		"https://s3.amazonaws.com/assets.freshdesk.com/widget",
+			queryString:   ""
 		},
 		iframe, button, closeButton, overlay, dialog
 		container = null;
@@ -58,7 +58,7 @@
 		var prop;
 	    for (prop in params) {
 	      if (options.hasOwnProperty(prop)) {
-	        if (prop === 'url' || prop === 'assetHost') {
+	        if (prop === 'url' || prop === 'assetUrl') {
 	          options[prop] = prependSchemeIfNecessary(params[prop]);
 	        } else {
 	          options[prop] = params[prop];
@@ -184,6 +184,7 @@
 			createButton();
 			createContainer();
 		});
+		loadcssfile(options.assetUrl+"/freshwidget.css");
 	 }
 	 
 	 function updateWidget(params){
@@ -210,8 +211,6 @@
 						catchException(function(){ return updateWidget(params); });
 					  }
 	 }; 
-	 
-	 loadcssfile(options.assetUrl+"/freshwidget.css");
-	 
+	 	 
 	 if(!window.FreshWidget){window.FreshWidget=FreshWidget;}
 })();

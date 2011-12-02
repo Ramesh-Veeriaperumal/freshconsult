@@ -1,11 +1,19 @@
 <%= content_tag (:h3, (params[:formTitle].blank?) ? t('feedbackwidget_defaulttitle') : params[:formTitle], :class => "title") %>
-<% form_for :helpdesk_ticket, @ticket, :url => widgets_feedback_widget_path , :html => {:method => :post, :multipart => true }  do |f| %>
+<% form_for :helpdesk_ticket, @ticket, :url => widgets_feedback_widget_path(:submit_message => params[:submitThanks]) , :html => {:method => :post, :multipart => true }  do |f| %>
   <%= f.error_messages %>
     <ul class="ui-form"> 
       <% current_portal.customer_editable_ticket_fields.each do |field| %>
+				<% 
+					dom_type_correction = 
+						(case field.dom_type
+							when "requester" then "email"
+							when "html_paragraph" then "paragraph"
+							else field.dom_type
+						 end)
+				%>  
         <%= construct_ticket_element :helpdesk_ticket, field, 
                                        field.label_in_portal,
-                                       (field.dom_type == "requester") ? "email": field.dom_type, 
+                                       dom_type_correction, 
                                        field.required_in_portal, 
                                        (field.dom_type == "requester" && logged_in?) ? @ticket.email : "" %>
       <% end %>
