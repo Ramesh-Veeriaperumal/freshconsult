@@ -29,15 +29,12 @@ class Import::ZendeskData < Struct.new(:params)
   def perform
 
     @current_account = Account.find_by_full_domain(params[:domain])
-    
     file_list = params[:zendesk][:files]
-    
-    base_dir = nil
     
     begin
         base_dir = extract_zendesk_zip
         disable_notification 
-        handle_migration(file_list)
+        handle_migration(file_list , base_dir)
         enable_notification
         send_success_email(params[:email] , params[:domain])
         delete_import_files base_dir
@@ -51,7 +48,7 @@ class Import::ZendeskData < Struct.new(:params)
   end
  
   
-  def handle_migration file_list
+  def handle_migration (file_list , base_dir)
     create_solution = false
     user_activation_email = false
     
@@ -557,7 +554,6 @@ def import_file base_dir, file_arr
        File.open(file_path, 'w') {|f| f.write(res.body) }      
     else 
       delete_zip_file
-      handle_error
       raise ArgumentError, "Unable to connect zendesk" 
     end
   end
