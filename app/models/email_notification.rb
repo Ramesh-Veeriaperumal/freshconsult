@@ -77,7 +77,7 @@ class EmailNotification < ActiveRecord::Base
     #Thread.current[:notifications][<notification type>][:agent|:requester_notification]
     #For ex., Thread.current[:notifications][1][:requester_notification] = false
     def allowed_in_thread_local?(user_role)
-      (n_hash = Thread.current['notifications_'+account.id.to_s()]).nil? || 
+      (n_hash = Thread.current["notifications_#{account_id}"]).nil? || 
         (my_hash = n_hash[notification_type]).nil? || !my_hash[user_role].eql?(false)
     end
     

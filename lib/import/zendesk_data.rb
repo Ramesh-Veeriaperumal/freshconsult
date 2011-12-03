@@ -69,7 +69,7 @@ class Import::ZendeskData < Struct.new(:params)
     end    
     
     if import_list.include?("customers")
-       Thread.current['notifications_'+@current_account.id.to_s()][EmailNotification::USER_ACTIVATION][:requester_notification] = user_activation_email       
+       Thread.current["notifications_#{@current_account.id}"][EmailNotification::USER_ACTIVATION][:requester_notification] = user_activation_email       
        @customers_stat = handle_customer_import base_dir
        @users_stat = handle_user_import base_dir  
     end
@@ -86,11 +86,11 @@ class Import::ZendeskData < Struct.new(:params)
 
 
   def disable_notification    
-     Thread.current['notifications_'+@current_account.id.to_s()] = EmailNotification::DISABLE_NOTIFICATION   
+     Thread.current["notifications_#{@current_account.id}"] = EmailNotification::DISABLE_NOTIFICATION   
   end
   
   def enable_notification
-    Thread.current['notifications_'+@current_account.id.to_s()] = nil
+    Thread.current["notifications_#{@current_account.id}"] = nil
   end
 
 def handle_customer_import base_dir
