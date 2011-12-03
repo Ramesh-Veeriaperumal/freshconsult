@@ -258,7 +258,7 @@ module ApplicationHelper
       when "checkbox" then
         element = content_tag(:div, check_box(object_name, field.field_name, :class => element_class, :checked => field_value ) + field_label)
       when "html_paragraph" then
-        element = label + text_area(object_name, field.field_name, :class => "mceEditor", :value => field_value)
+        element = label + text_area(object_name, field.field_name+"_html", :class => "mceEditor", :value => field_value)
     end
     content_tag :li, element, :class => dom_type
   end

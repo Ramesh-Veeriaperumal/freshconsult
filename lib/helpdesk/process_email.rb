@@ -56,6 +56,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     
     def orig_email_from_text #To process mails fwd'ed from agents
       if (params[:text] && (params[:text].gsub("\r\n", "\n") =~ /^>*\s*From:\s*(.*)\s+<(.*)>$/ or 
+                            params[:text].gsub("\r\n", "\n") =~ /^>*\s*From:\s*(.*)\s+[mailto:(.*)]$/ or  
                             params[:text].gsub("\r\n", "\n") =~ /^>>>+\s(.*)\s+<(.*)>$/))
         name = $1
         email = $2
