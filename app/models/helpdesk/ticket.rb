@@ -335,7 +335,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     unless email.blank?
       self.email = parse_email email
       if(requester_id.nil? or !email.eql?(requester.email))
-        @requester = account.all_users.find_by_email(email)
+        @requester = account.all_users.find_by_email(email) unless email.nil?
         if @requester.nil?
           @requester = account.users.new          
           @requester.signup!({:user => {
