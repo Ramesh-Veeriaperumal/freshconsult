@@ -29,20 +29,26 @@ class Import::ZendeskData < Struct.new(:params)
   def perform
 
     @current_account = Account.find_by_full_domain(params[:domain])
-    
     file_list = params[:zendesk][:files]
-    
-    base_dir = nil
     
     begin
         base_dir = extract_zendesk_zip
+        disable_notification 
+        handle_migration(file_list , base_dir)
+        enable_notification
+        send_success_email(params[:email] , params[:domain])
+        delete_import_files base_dir
     rescue
+       enable_notification
+       handle_error
        puts "Unable to connect ::rescue"
        return true
     end
-    
-    puts "The base directory is ::#{base_dir}"
-    
+      
+  end
+ 
+  
+  def handle_migration (file_list , base_dir)
     create_solution = false
     user_activation_email = false
     
@@ -52,8 +58,7 @@ class Import::ZendeskData < Struct.new(:params)
     @users_stat = Hash.new
     @groups_stat = Hash.new
     @tickets_stat = Hash.new
-    ##setting current notification in thread
-    set_notification_thread
+    
     if import_list.include?("solution")
        create_solution = true
     end 
@@ -64,47 +69,28 @@ class Import::ZendeskData < Struct.new(:params)
     end    
     
     if import_list.include?("customers")
-       Thread.current[:notifications][EmailNotification::USER_ACTIVATION][:requester_notification] = user_activation_email       
+       Thread.current["notifications_#{@current_account.id}"][EmailNotification::USER_ACTIVATION][:requester_notification] = user_activation_email       
        @customers_stat = handle_customer_import base_dir
        @users_stat = handle_user_import base_dir  
     end
     if import_list.include?("tickets")
-       disable_ticket_notification
-       import_flexifields (base_dir, @current_account)
+       import_flexifields(base_dir, @current_account)
        @groups_stat = handle_group_import base_dir
        @tickets_stat = handle_ticket_import base_dir       
     end
     if import_list.include?("forums")
        handle_forums_import base_dir , create_solution
     end  
-    ##To enable all notifications
-    enable_notifications
-    email_params = {:email => params[:email], :domain => params[:domain], 
-                     :tickets_stat =>  @tickets_stat ,:groups_stat => @groups_stat,
-                     :users_stat => @users_stat , :customers_stat => @customers_stat , 
-                     :topic_stat => @topic_stat,:article_stat => @article_stat}
-     Admin::DataImportMailer.deliver_import_email(email_params)
-     FileUtils.remove_dir(base_dir,true)  
-     @current_account.data_import.destroy
-  end
-  
 
-  def set_notification_thread
-    Thread.current[:notifications] = @current_account.email_notifications
   end
-  def disable_ticket_notification     
-     Thread.current[:notifications][EmailNotification::NEW_TICKET][:requester_notification] = false
-     Thread.current[:notifications][EmailNotification::TICKET_ASSIGNED_TO_GROUP][:agent_notification] = false
-     Thread.current[:notifications][EmailNotification::TICKET_ASSIGNED_TO_AGENT][:agent_notification] = false
-     Thread.current[:notifications][EmailNotification::TICKET_RESOLVED][:requester_notification] = false
-     Thread.current[:notifications][EmailNotification::TICKET_CLOSED][:requester_notification] = false
-     Thread.current[:notifications][EmailNotification::COMMENTED_BY_AGENT][:requester_notification] = false
-     Thread.current[:notifications][EmailNotification::TICKET_REOPENED][:requester_notification] = false   
-     Thread.current[:notifications][EmailNotification::REPLIED_BY_REQUESTER][:agent_notification] = false      
+
+
+  def disable_notification    
+     Thread.current["notifications_#{@current_account.id}"] = EmailNotification::DISABLE_NOTIFICATION   
   end
   
-  def enable_notifications
-    Thread.current[:notifications] = nil
+  def enable_notification
+    Thread.current["notifications_#{@current_account.id}"] = nil
   end
 
 def handle_customer_import base_dir
@@ -567,7 +553,6 @@ def import_file base_dir, file_arr
     when Net::HTTPSuccess, Net::HTTPRedirection
        File.open(file_path, 'w') {|f| f.write(res.body) }      
     else 
-      handle_error
       raise ArgumentError, "Unable to connect zendesk" 
     end
   end
@@ -582,6 +567,21 @@ def handle_error
      @current_account.data_import.destroy
     
 end
+
+ 
+  def send_success_email (email,domain)
+    email_params = {:email => email, :domain => domain, 
+                     :tickets_stat =>  @tickets_stat ,:groups_stat => @groups_stat,
+                     :users_stat => @users_stat , :customers_stat => @customers_stat , 
+                     :topic_stat => @topic_stat,:article_stat => @article_stat}
+     Admin::DataImportMailer.deliver_import_email(email_params)
+  end
+ 
+  
+  def delete_import_files base_dir
+    FileUtils.remove_dir(base_dir,true)  
+    @current_account.data_import.destroy
+  end
 
 
 end
