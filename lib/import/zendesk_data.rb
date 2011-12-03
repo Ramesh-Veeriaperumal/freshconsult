@@ -553,7 +553,6 @@ def import_file base_dir, file_arr
     when Net::HTTPSuccess, Net::HTTPRedirection
        File.open(file_path, 'w') {|f| f.write(res.body) }      
     else 
-      delete_zip_file
       raise ArgumentError, "Unable to connect zendesk" 
     end
   end
@@ -561,6 +560,7 @@ def import_file base_dir, file_arr
 end
 
 def handle_error
+     delete_zip_file
      email_params = {:email => params[:email], :domain => params[:domain]}
      Admin::DataImportMailer.deliver_import_error_email(email_params)
      FileUtils.remove_dir(@out_dir,true)  
