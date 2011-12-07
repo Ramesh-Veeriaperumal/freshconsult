@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 Gem::Specification.new do |s|
   s.name = "tiny_mce"
-  s.version = "0.1.8"
+  s.version = "0.1.9"
   s.authors = ["Blake Watters", "Kieran Pilkington", "Sergio Cambra", "Alexander Semyonov", "Marian Theisen", "Walter McGinnis", "Frederico Macedo de Assunção", "Josh Proehl", "Sasha Gerrand"]
   s.email = "kete@katipo.co.nz"
   s.homepage = "http://github.com/kete/tiny_mce"
-  s.summary = "TinyMCE editor for your rails applications."
+  s.summary = "TinyMCE editor for your rails applications. Forked and updated"
   s.description = "Gem that allows easy implementation of the TinyMCE editor into your applications."
 
   s.files = Dir["lib/**/*", "[A-Z]*", "init.rb", "install.rb", "tiny_mce.gemspec"]

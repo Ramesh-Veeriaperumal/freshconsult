@@ -9,9 +9,9 @@ PATH
     stemmer (1.0.1)
 
 PATH
-  remote: vendor/gems/tiny_mce-0.1.8
+  remote: vendor/gems/tiny_mce-0.1.9
   specs:
-    tiny_mce (0.1.8)
+    tiny_mce (0.1.9)
 
 GEM
   remote: http://rubygems.org/
@@ -229,7 +229,7 @@ DEPENDENCIES
   stemmer (= 1.0.1)!
   thinking-sphinx (= 1.4.3)
   thoughtbot-shoulda (= 2.10.2)
-  tiny_mce (= 0.1.8)!
+  tiny_mce (= 0.1.9)!
   ts-delayed-delta (= 1.1.0)
   twitter (= 0.9.12)
   tzinfo
