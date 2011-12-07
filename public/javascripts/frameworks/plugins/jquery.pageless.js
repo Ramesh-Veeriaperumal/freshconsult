@@ -154,7 +154,12 @@
     if (settings.totalPages <= settings.currentPage) {
       stopListener();
       // if there is a afterStopListener callback we call it
-      if (settings.end) settings.end.call();
+	  if (settings.end) {
+	  	if(typeof settings.end == "string")
+			eval(settings.end);
+		else
+	  		settings.end.call();
+	  }
       return;
     }
     
@@ -174,7 +179,12 @@
                loader ? loader.before(data) : element.append(data);
                loading(FALSE);
                // if there is a complete callback we call it
-               if (settings.complete) settings.complete.call();
+               if (settings.complete){
+			   	if(typeof settings.complete == "string")
+					eval(settings.complete);
+				else
+			  		settings.complete.call();
+			   } 
            });
     }
   };
