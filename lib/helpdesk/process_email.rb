@@ -154,7 +154,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
           :private => false,
           :incoming => true,
           :body => show_quoted_text(params[:text],parse_to_email[:email]),
-          :body_html => Helpdesk::HTMLSanitizer.clean(show_quoted_text(params[:html], parse_to_email[:email])),
+          :body_html => show_quoted_text(Helpdesk::HTMLSanitizer.clean(params[:html] ), to_email[:email]),
           :source => 0, #?!?! use SOURCE_KEYS_BY_TOKEN - by Shan
           :user => user, #by Shan temp
           :account_id => ticket.account_id

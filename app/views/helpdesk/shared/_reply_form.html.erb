@@ -89,8 +89,8 @@
             </div>
         </li>
         <li class="button-container">
-        	<%= submit_tag(t('ticket.reply_form.send_and_resolve'), :onclick => "jQuery('#reply_ticket_status').val('resolved');" , :class => "uiButton") %>
-            <%= submit_tag(local_assigns[:submit] || ActiveSupport::Inflector.titleize(id), :class => "uiButton" ) %>
+        	<%= submit_tag(local_assigns[:submit] || ActiveSupport::Inflector.titleize(id), :class => "uiButton" ) %>
+        	<%= submit_tag(t('ticket.reply_form.send_and_resolve'), :onclick => "jQuery('#reply_ticket_status').val('resolved');" , :class => "uiButton") %>    
         </li>
     </ul>
     <% end %>
