@@ -81,7 +81,7 @@ require 'openid'
       @current_user.active = false
       @current_user.deliver_account_admin_activation
       SubscriptionNotifier.deliver_welcome!(current_account)
-      flash[:notice] = "Please verify the activation link sent to your email"
+      flash[:notice] = "Alright! We've sent you an email with the activation link."
       redirect_to root_url     
      else
       flash[:notice] = "Please provide valid login details!"
