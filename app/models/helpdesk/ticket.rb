@@ -459,8 +459,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
     "#{ticket.excerpts.subject} (##{ticket.excerpts.display_id})"
   end
   
+  def friendly_reply_email
+    email_config ? email_config.friendly_email : account.default_friendly_email
+  end
+  
   def reply_email
-    email_config ? email_config.friendly_email : account.default_email
+    email_config ? email_config.reply_email : account.default_email
   end
   
   

@@ -254,11 +254,13 @@ class Account < ActiveRecord::Base
     self.full_domain = "#{domain}.#{AppConfig['base_domain'][RAILS_ENV]}"
   end
   
-  def default_email
+  def default_friendly_email
     primary_email_config.friendly_email
   end
   
-  
+  def default_email
+    primary_email_config.reply_email
+  end
   
   def to_s
     name.blank? ? full_domain : "#{name} (#{full_domain})"
@@ -436,7 +438,7 @@ class Account < ActiveRecord::Base
     end
     
     def create_admin
-      self.user.active = true
+      self.user.active = true  #unless google_domain.blank?
       self.user.account = self
       self.user.user_role = User::USER_ROLES_KEYS_BY_TOKEN[:account_admin]  
       self.user.build_agent()
@@ -448,8 +450,8 @@ class Account < ActiveRecord::Base
       PopulateAccountSeed.populate_for(self)
     end
 
-    def send_welcome_email
-      SubscriptionNotifier.send_later(:deliver_welcome, self)
+   def send_welcome_email
+      SubscriptionNotifier.send_later(:deliver_welcome, self) #unless google_domain.blank?
     end
     
     def update_google_domain

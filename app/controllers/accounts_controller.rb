@@ -137,7 +137,7 @@ class AccountsController < ApplicationController
      @user = @account.users.new   
      unless data.blank?
         @user.email = data["email"]
-        @user.name = data["first_name"] +" "+data["last_name"]
+        @user.name = (data["first_name"] || '') +" "+ (data["last_name"] || '') 
       end
        
      render :action => :signup_google

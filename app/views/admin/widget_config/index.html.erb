@@ -17,7 +17,7 @@
 <% form_for "widget_config", "widget_config", :html => { :name => "widget_config", :id => "WidgetConfig" } do |f| %>
 	<ul class="ui-form">	
 	  <li class="inline-field">
-	  	 <%= content_tag(:h4, t('feedbackwidget_btcustomize'), :class => "title" ) %> 
+	  	 <%= content_tag(:h3, t('feedbackwidget_btcustomize'), :class => "title" ) %> 
 		 <%= content_tag(:label, t('feedbackwidget_text'), :class => "caption" ) %>
 		 <div class="fields">
 		 	<input type="text" class="text" size="18" name="buttonText" value="<%=t('feedbackwidget_defaultbutton')%>" />
@@ -52,21 +52,29 @@
 				</label>
 				<label> 
 					<%= t('feedbackwidget_offset_label') %>
-					<input type="text" class="text" name="offset" value="235px" size="3" />
+					<input type="text" class="text" name="offset" value="235px" size="4" />
 					<div class="info-data"><%= t('feedbackwidget_offset_info') %></div>
 				</label> 
 		</div>
 	  </li>
 	  <li class="inline-field">
-			<%= content_tag(:h4, t('feedbackwidget_formcustomize'), :class => "title" ) %> 
+			<%= content_tag(:h3, t('feedbackwidget_formcustomize'), :class => "title" ) %> 
 			<%= content_tag(:label, t('feedbackwidget_form_title'), :class => "caption" ) %>
 			<div class="fields">
 				<label class="overlabel" for="FormTitle"><%= t('feedbackwidget_defaulttitle') %></label>
 			 	<input type="text" class="text" size="35" name="formTitle" id="FormTitle" value="" />
 			</div>
 	  </li>	
+	  <li class="inline-field">
+			<%= content_tag(:label, t(".thankyou_label"), :class => "caption" ) %>
+			<div class="fields">
+				<label class="overlabel" for="submitThanks"><%= t('.thankyou_default') %></label>
+			 	<textarea class="paragraph auto-height" rows="2" name="submitThanks" id="submitThanks"></textarea>
+				<div class="info-data"> <%= t(".thankyou_info") %> </div>
+			</div>
+		</li>
 	  <li class="code-view">
-		 	<%= content_tag(:h4, t('feedbackwidget_embed_code'), :class => "title" ) %>
+		 	<%= content_tag(:h3, t('feedbackwidget_embed_code'), :class => "title" ) %>
 			<%= content_tag(:div, t('feedbackwidget_embed_code_intro'), :class => "intro") %>
 			<textarea id="EmbedCode"></textarea>	 
 	  </li>
@@ -92,7 +100,10 @@
 					switch (item['name']){
 					 	case "authenticity_token":
 					 	break;
-						case "formTitle": 
+						case "submitThanks":
+							WidgetFormHash.set("queryString", WidgetFormHash.get("queryString") + "&" + $("#submitThanks").serialize());
+						break;
+						case "formTitle":
 							WidgetFormHash.set("queryString", WidgetFormHash.get("queryString") + "&" + $("#FormTitle").serialize());
 						break;
 						case "buttonBg":
@@ -119,9 +130,9 @@
 		}	
 		
 		$(document).ready(function () {
-			$("#WidgetConfig select, #WidgetConfig :text").change(changeCode);
+			$("#WidgetConfig").change(changeCode);
 	    	$('#TabColor').bind('colorpicked', changeCode);
-			changeCode();
+				changeCode();
 	  	});
 	})(jQuery)
 <% end %>

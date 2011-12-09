@@ -4021,3 +4021,11 @@ a.close{
       visibility:hidden;
    }
 }
+
+.quoted_button{
+  margin:10px 0;
+  background:sprite($symbol, quote_button) no-repeat;
+  display:inline-block;
+  width:31px;
+  height:14px;  
+}

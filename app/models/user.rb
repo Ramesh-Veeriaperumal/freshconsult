@@ -268,6 +268,12 @@ class User < ActiveRecord::Base
     end
   end
   
+  def deliver_account_admin_activation
+      self.active = false
+      reset_perishable_token!
+      UserNotifier.deliver_account_admin_activation!(self)
+  end
+  
   def set_time_zone
     self.time_zone = account.time_zone if time_zone.nil? #by Shan temp
   end

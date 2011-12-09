@@ -34,6 +34,7 @@ class SubscriptionNotifier < ActionMailer::Base
     setup_email(subscription_payment.subscription.account.account_admin, "Your #{AppConfig['app_name']} invoice")
     setup_bcc
     @body = { :subscription => subscription_payment.subscription, :amount => subscription_payment.amount, :subscription_payment => subscription_payment }
+    @content_type = "text/html"
   end
   
   def setup_receipt(subscription_payment)
@@ -51,6 +52,7 @@ class SubscriptionNotifier < ActionMailer::Base
     setup_email(subscription.account.account_admin, "Your #{AppConfig['app_name']} renewal failed")
     @bcc = AppConfig['from_email']
     @body = { :subscription => subscription }    
+    @content_type = "text/html"
   end
   
   def plan_changed(subscription)

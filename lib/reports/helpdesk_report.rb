@@ -1,5 +1,7 @@
 module Reports::HelpdeskReport
   
+  include Reports::ChartGenerator
+  
   def columns
    [:status,:ticket_type,:priority,:source] 
  end
@@ -83,11 +85,24 @@ module Reports::HelpdeskReport
     post_processing(processed_hash,column_name)
   end
   
+  def get_tickets_hash(tickets_count,column_name)
+    tot_count = 0
+    tickets_hash = {}
+    tickets_count.each do |ticket|
+      tot_count += ticket.count.to_i
+      tickets_hash.store(ticket.send(column_name),{:count => ticket.count})
+    end
+    @current_month_tot_tickets = tot_count
+    tickets_hash
+  end
+  
   def post_processing(processed_hash,column_name)
      @last_month_tot_tickets = calculate_tickets_count(processed_hash.fetch(:last_month)) 
      @current_month_tot_tickets = calculate_tickets_count(processed_hash.fetch(:current_month))
      processed_hash.store(:last_month,calculate_percentage_for_columns(processed_hash.fetch(:last_month),@last_month_tot_tickets))
-     processed_hash.store(:current_month,calculate_percentage_for_columns(processed_hash.fetch(:current_month),@current_month_tot_tickets))
+     current_month_value_arr = calculate_percentage_for_columns(processed_hash.fetch(:current_month),@current_month_tot_tickets)
+     gen_pie_chart(current_month_value_arr,column_name) unless current_month_value_arr.blank?
+     processed_hash.store(:current_month,current_month_value_arr)
      processed_hash
   end
   
@@ -116,8 +131,8 @@ module Reports::HelpdeskReport
   def group_tkts_by_columns(params,vals={})
     scoper(params[:date][:month]).find( 
      :all,
-     :select => "count(*) count, #{vals[:column_name]}, MONTH(created_at) month",
-     :group => "#{vals[:column_name]},MONTH(created_at)")
+     :select => "count(*) count, #{vals[:column_name]}",
+     :group => "#{vals[:column_name]}")
   end
   
   def group_tkts_by_timeline(params,type)
