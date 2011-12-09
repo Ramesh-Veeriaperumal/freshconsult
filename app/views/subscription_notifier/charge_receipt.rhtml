@@ -42,7 +42,13 @@
 		<div style="overflow: hidden;">
       <table style="border-collapse: collapse; float: left; margin-top: 1px; width: 300px; float: left;">
         <tr>
-          <td style="border: 1px solid #dfdfdf; padding: 5px; text-align: left; vertical-align:top; background: #f4f4f4; width:40%;">Invoice For</td>
+          <td style="border: 1px solid #dfdfdf; padding: 5px; text-align: left; vertical-align:top; background: #f4f4f4; width:40%;">Name</td>
+          <td style="border: 1px solid #dfdfdf; padding: 5px; text-align: left; vertical-align:top;">
+            <div><strong><strong><%=@subscription.account.account_admin.name%></strong></strong></div>
+            </td>
+        </tr>
+		<tr>
+          <td style="border: 1px solid #dfdfdf; padding: 5px; text-align: left; vertical-align:top; background: #f4f4f4; width:40%;">Company Name</td>
           <td style="border: 1px solid #dfdfdf; padding: 5px; text-align: left; vertical-align:top;">
             <div><strong><strong><%=@subscription.account.name%></strong></strong></div>
             </td>
