@@ -1,4 +1,9 @@
-<% content_for :sidebar do -%><%- end %>
+<% content_for :sidebar do -%>
+  <div class="sidepanel">
+    <%= content_tag (:h3, "Setting up your Addon", :class => "title") %>
+    <%= t(@installing_application.name+"_helptext") %>
+  </div>
+<%- end %>
 <%= content_tag (:h3, t(@installing_application.name) + " " + t("settings"), :class => "title") %>
 <% form_for @installed_application, :url => { :controller=> "installed_applications", :action => "update" }, :html => {:multipart => true, :id => "ConfigureApplication" } do |f| %>
   <ul class="ui-form">  

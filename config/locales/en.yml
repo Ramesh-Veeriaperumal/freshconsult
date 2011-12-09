@@ -283,6 +283,8 @@ en:
       updated: Facebook setting has been updated 
     application:
       already: Application already installed.
+      configure:
+        success: "The Addon has been updated successfully!"
     filter:
       delete_success: "View has been delete successfully!"
       save_success: "View has been saved successfully!"
@@ -1459,6 +1461,7 @@ en:
     click_to_disable: Click to disable Addon
     click_to_enable: Click to enable Addon    
     confirm_disable: "Are you sure you want to disable this Addon?"
+    configure_addon: "Click to configure this Addon"
   home:
       mobile_index:
         email: Email
@@ -1474,14 +1477,16 @@ en:
   integrations:
     capsule:
       label: "Capsule CRM Application"
-      desc: "Capsule crm contact widget will be displyed in ticket and contact view page."
+      desc: "Capsule CRM contact widget will be displayed in the ticket view page and the contact view page."
       form:
         bcc_drop_box_mail: "Drop box email address"
         bcc_drop_box_mail_info: "By default this email will be added to bcc of all replies"
         domain: "Domain"
         domain_info: "ex: example.capsulecrm.com"
         api_key: "Api Key"
+        api_key_info: "To get your unique API key, log on to your Capsule CRM and click on “Preferences”. This will appear on the top right hand corner of your Capsule CRM. Click on “API Authentication Token”, and you can find your unique API key."
         widget_title: "Widget Title"
   widgets:
     contact_widget:
       description: "Display a contact or option to add the contact into capsule."
+  capsule_crm_helptext: "<p><strong>API Key</strong><br />To get your unique API key, log on to your Capsule CRM and click on “Preferences”. This will appear on the top right hand corner of your Capsule CRM. Click on “API Authentication Token”, and you can find your unique API key.</p>"
