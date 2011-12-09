@@ -61,7 +61,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
                   :default_agent        => { :type => :default, :dom_type => "dropdown_blank", :form_field => "responder_id"},
                   :default_source       => { :type => :default, :dom_type => "hidden"},
                   :default_description  => { :type => :default, :dom_type => "html_paragraph", :visible_in_view_form => false, :form_field => "description" },
-                  :default_product      => { :type => :default, :dom_type => "dropdown_blank",
+                  :default_product      => { :type => :default, :dom_type => "dropdown",
                                              :form_field => "email_config_id" },
                   :custom_text          => { :type => :custom, :dom_type => "text", 
                                              :va_handler => "text" },
@@ -109,7 +109,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
        when "default_group" then
          account.groups.collect { |c| [c.name, c.id] }
        when "default_product" then
-         account.products.collect { |e| [e.name, e.id] }
+         account.products.collect { |e| [e.name, e.id] }.insert(0, ['...', account.primary_email_config.id])
        else
          []
     end
