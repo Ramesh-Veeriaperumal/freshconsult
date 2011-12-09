@@ -1,8 +1,8 @@
 class CreateApplications < ActiveRecord::Migration
   def self.up
     create_table :applications do |t|
-      t.string :name
-      t.string :display_name #TODO make it as unique key
+      t.string :name  #TODO make it as unique key
+      t.string :display_name
       t.string :description
       t.integer :widget_id
       t.text :options
