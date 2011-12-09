@@ -160,7 +160,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
           :user => user, #by Shan temp
           :account_id => ticket.account_id
         )
-        #note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] unless user.customer?
+        note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] unless user.customer?
       else
         return create_ticket(ticket.account, from_email, parse_to_email)
       end
