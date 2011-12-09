@@ -245,8 +245,14 @@ module ApplicationHelper
 
   def is_application_installed?(app_name)
     installed_app = Integrations::InstalledApplication.find(:all, :joins=>:application, 
-                  :conditions => {:applications => {:p_name => app_name}, :account_id => current_account})
-    return !(installed_app.blank? or installed_app.application.blank?)
+                  :conditions => {:applications => {:name => app_name}, :account_id => current_account})
+    return !(installed_app.blank?)
+  end
+  
+  def get_app_details(app_name)
+    installed_app = Integrations::InstalledApplication.find(:all, :joins=>:application, 
+                  :conditions => {:applications => {:name => app_name}, :account_id => current_account})
+    return installed_app
   end
 
   def get_app_widget_script(app_name, widget_name, liquid_objs)

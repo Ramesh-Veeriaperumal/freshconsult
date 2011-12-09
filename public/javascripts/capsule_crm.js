@@ -19,7 +19,9 @@ CapsuleWidget = {
             content_type: 'application/json',
             resource: 'api/party/' + escape(id)
         });
-
+        
+        $('capsule-title').addClassName('paddingloading');
+     
         new Ajax.Request('/http_request_proxy/fetch', {
             asynchronous: true,
             evalScripts: true,
@@ -33,20 +35,21 @@ CapsuleWidget = {
                     if (person) {CapsuleWidget.renderContact(person);}
                     if (organisation) {CapsuleWidget.renderContact(organisation);}
                 }
+                $('capsule-title').removeClassName('paddingloading'); 
             }
         });
     },
     renderContact: function(contact) {
         // clear search result div
         $('cap-search-result').update("");
-        var summary = '<br/>';
-
-        summary += '<table>';
+        $('cap-contact-summary').className = "user-details"; 
+        var summary = '';
+ 
         if (contact.firstName || contact.lastName) {
-            summary += '<tr><td style="width:60px;"><img src="' + contact.pictureURL + '"  width="50" height="50" /></td><td>'
+            summary += '<div class="preview_pic"><img src="' + contact.pictureURL + '" /></div>'
 
             // build contact summary
-            summary += '<h5 style="font-size:16px; margin: 0px;"><a target="_capsule" href="https://' + capsuleResource.options.domain.escapeHTML() + '/party/' + contact.id.escapeHTML() +'">';
+            summary += '<a class="name" target="_blank" href="https://' + capsuleResource.options.domain.escapeHTML() + '/party/' + contact.id.escapeHTML() +'">';
             var name = '';
             if (contact.firstName) {
                 name += contact.firstName.escapeHTML() + " "
@@ -54,15 +57,15 @@ CapsuleWidget = {
             if (contact.lastName) {
                 name += contact.lastName.escapeHTML()
             }
-            summary += name + '</a></h5>';
+            summary += name + '</a>';
 
             if (contact.jobTitle || contact.organisationName){
-                summary += '<div>'
+                summary += '<div class="jobtitle">'
                 if (contact.jobTitle) {
                     summary += contact.jobTitle;
                 }
                 if (contact.organisationName) {
-                    summary += ' at <a target="_capsule" href="https://' + capsuleResource.options.domain.escapeHTML() + '/party/' + contact.organisationId.escapeHTML() +'">';
+                    summary += ' at <a target="_blank" href="https://' + capsuleResource.options.domain.escapeHTML() + '/party/' + contact.organisationId.escapeHTML() +'">';
                     summary += contact.organisationName.escapeHTML();
                     summary += '</a>';
                 }
@@ -70,33 +73,30 @@ CapsuleWidget = {
             }
 
             if (!contact.contacts.email && !contact.contacts.phone && !contact.about) {
-                summary += '<p>no contact details have been recorded for ';
+                summary += '<div class="info-data">no contact details have been recorded for ';
                 summary += name.escapeHTML();
-                summary += '</p>';
+                summary += '</div>';
             }
-
-            summary += "</td></tr>";
+            
         }
 
         if (contact.name) {
-            summary += '<tr><td><img src="' + contact.pictureURL + '"  width="50" height="50" /></td><td>'
+            summary += '<div class="preview_pic"><img src="' + contact.pictureURL + '" /></div>'
 
-            summary += '<h5 style="font-size:16px"><a target="_capsule" href="https://' + capsuleResource.options.domain.escapeHTML() + '/party/' + contact.id.escapeHTML() +'">';
+            summary += '<a class="name" target="_blank" href="https://' + capsuleResource.options.domain.escapeHTML() + '/party/' + contact.id.escapeHTML() +'">';
             summary += contact.name.escapeHTML();
-            summary += '</a></h5>';
+            summary += '</a>';
 
             if (!contact.contacts.email && !contact.contacts.phone && !contact.about) {
-                summary += '<p>no contact details have been recorded for ';
+                summary += '<div class="info-data">no contact details have been recorded for ';
                 summary += contact.name.escapeHTML();
-                summary += '</p>';
-            }
-
-            summary += "</td></tr>";
+                summary += '</div>';
+            } 
         }
-        summary += '</table>'
-
+        summary += '<span class="seperator"></span>';
+        
         if (contact.contacts.email) {
-            summary += '<h5>Email</h5><p class="minimum">';
+            summary += '<h5>Email</h5><div class="minimum">';
             var emails = CapsuleWidget.toArray(contact.contacts.email);
             for (i=0; i < emails.length; i++) {
                 if (i>0) {
@@ -104,11 +104,12 @@ CapsuleWidget = {
                 }
                 summary += CapsuleWidget.showContactEmail(emails[i]);
             }
-            summary += '</p>';
+            summary += '</div>';
         }
+        
 
         if (contact.contacts.phone) {
-            summary += '<h5>Phone</h5><p class="minimum">';
+            summary += '<h5>Phone</h5><div class="minimum">';
             var phones = CapsuleWidget.toArray(contact.contacts.phone);
             for (i=0; i < phones.length; i++) {
                 if (i>0) {
@@ -116,39 +117,42 @@ CapsuleWidget = {
                 }
                 summary += CapsuleWidget.showContactPhone(phones[i]);
             }
-            summary += '</p>';
+            summary += '</div>';
         }
 
         if (contact.about) {
-            summary += '<h5>About</h5><p class="minimum">';
+            summary += '<h5>About</h5><div class="minimum">';
             summary += contact.about.escapeHTML();
-            summary += '</p>';
+            summary += '</div>';
         }
-
+        
+        summary += '<span class="seperator"></span>';
         // add note to contact
-        summary += '<h5>Add note to Capsule</h5>'
-        summary += '<form id="cap-note" onsubmit="CapsuleWidget.addNote(this,capsuleResource);return false;"><textarea style="width:180px;" name="note"></textarea><input type="submit" id="submit" value="Add a note">';
-        summary += '<input type="hidden" name="contactId" value="' + contact.id.escapeHTML() + '"/><span id="cap-note-added"></span>';
-        summary += '</form>'
-
+        summary += '<h5>Add note to Capsule</h5>';
+        summary += '<span id="cap-note-added" class="error"></span>';
+        summary += '<form id="cap-note" onsubmit="CapsuleWidget.addNote(this,capsuleResource);return false;"><textarea id="capsule-note-text" name="note"></textarea><div><input type="submit" class="button" id="submit" value="Add a note"></div>';
+        summary += '<input type="hidden" name="contactId" value="' + contact.id.escapeHTML() + '"/>';
+        summary += '</form>';
+         
         $('cap-contact-summary').update(summary);
+        $('capsule-title').removeClassName('paddingloading'); 
     },
     showContactEmail: function(email) {
         var content = '<a href="mailto:' + email.emailAddress.escapeHTML() + '">' + email.emailAddress.escapeHTML() + '</a>';
-        if (email.type) {content += '<span class="sub"> ' + email.type.escapeHTML() + '</span>';}
+        if (email.type) {content += '<span class="sub"> (' + email.type.escapeHTML() + ')</span>';}
         return content;
     },
     showContactPhone: function(phone) {
         var content = phone.phoneNumber.escapeHTML();
-        if (phone.type) {content += '<span class="sub"> ' + phone.type.escapeHTML() + '</span>';}
+        if (phone.type) {content += '<span class="sub"> (' + phone.type.escapeHTML() + ')</span>';}
         return content;
     },
     searchContacts: function(theForm, resource) {
         if (theForm['q'].value == '') {
-            alert('please enter a name to search.');
+            alert('Please enter a name or email to search.');
             return;
-        }
-
+        } 
+        $('capsule-title').addClassName('paddingloading'); 
         //disable_submit($('cap-search'));
         $('cap-contact-summary').update('');
         var parameters = $H({
@@ -170,6 +174,7 @@ CapsuleWidget = {
             onSuccess: function (response) {
                 CapsuleWidget.processSearch(response.responseJSON);
                 // enable_submit($('cap-search'));
+                $('capsule-title').removeClassName('paddingloading');  
             }
         });
     },
@@ -184,7 +189,7 @@ CapsuleWidget = {
                 return;
             }
 
-            var searchResults = '<p>' + found + ' matching contacts found in Capsule. Click the contact for more details</p><ul>';
+            var searchResults = '<div class="info-data">' + found + ' Matching contacts found in Capsule.<br /> Click the contact for more details</div><ul>';
 
             if (response.parties.person) {
                 var people = CapsuleWidget.toArray(response.parties.person);
@@ -205,17 +210,18 @@ CapsuleWidget = {
             searchResults += "</ul>";
             $('cap-search-result').update(searchResults);
         } else {
-            var notFoundText = '<p>No matching contacts found.';
-
+            var notFoundText = '<div class="info-data">No matching contacts found.</div>';
+                notFoundText += '<span class="seperator"></span>';
             if (typeof(capsuleBundle)!='undefined' && capsuleBundle.reqEmail && capsuleBundle.reqEmail != '') {
-                notFoundText += 'To add this contact to Capsule use the form below.</p>';
+                notFoundText += '<div  class="highlight">Add this contact to Capsule CRM?</div>';
                 notFoundText += '<form id="cap-person" onsubmit="CapsuleWidget.addContact(this,capsuleResource);return false;">';
                 notFoundText += '<label for="name"><h5>Name</h5></label><input type="text" id="name" name="name" value="' + capsuleBundle.reqName.escapeHTML() + '">';
                 notFoundText += '<label for="org"><h5>Company</h5></label><input type="text" id="org" name="org" value="' + capsuleBundle.reqOrg.escapeHTML() + '">';
                 notFoundText += '<label for="phone"><h5>Phone Number</h5></label><input type="text" id="phone" name="phone" value="' + capsuleBundle.reqPhone.escapeHTML() + '">';
-                notFoundText += '<h5>Email</h5>' + capsuleBundle.reqEmail.escapeHTML();
-                notFoundText += '<input type="hidden" name="email" value="' + capsuleBundle.reqEmail.escapeHTML() + '"/><br/>';
-                notFoundText += '<input type="submit" id="submit" value="Add contact">';
+                notFoundText += '<label>Email</label>';
+                notFoundText += '<input type="text" name="email" value="' + capsuleBundle.reqEmail.escapeHTML() + '" />';
+                notFoundText += '<span class="seperator"></span>';
+                notFoundText += '<input class="uiButton" type="submit" id="submit" value="Add contact">';
                 notFoundText += '</form>'
             } else {
                 notFoundText += '</p>';
@@ -223,6 +229,7 @@ CapsuleWidget = {
 
             $('cap-search-result').update(notFoundText);
         }
+        $('capsule-title').removeClassName('paddingloading');
     },
 
     searchTerm: function() {
@@ -237,10 +244,10 @@ CapsuleWidget = {
 
     addContact: function(theForm, resource) {
         if (theForm['name'].value == '') {
-            alert('name is required.');
+            alert('Name is required.');
             return;
         }
-
+        $('capsule-title').addClassName('paddingloading'); 
         //disable_submit($('cap-person'));
         var parameters = $H({
             username: resource.options.username,
@@ -277,12 +284,14 @@ CapsuleWidget = {
     },
     addNote: function(theForm,resource) {
         $('cap-note-added').update('');
+        $('capsule-title').addClassName('paddingloading');
         if (theForm['note'].value == '') {
             alert('please enter a note.');
             return;
         }
         //disable_submit($('cap-note'));
-        var note = theForm.note.value; // + '\nfor Freshdesk ticket #' + ticket_id;
+        var more_info = "\n- Added via freshdesk by - " + window.location;
+        var note = theForm.note.value + more_info; // + '\nfor Freshdesk ticket #' + ticket_id;
 
         // clear the note out
         theForm.note.value = '';
@@ -307,7 +316,8 @@ CapsuleWidget = {
             parameters: parameters,
             onSuccess: function (response) {
                 // enable_submit($('cap-note'));
-                $('cap-note-added').update(' note added');
+                $('capsule-title').removeClassName('paddingloading');                
+                $('cap-note-added').update('Note successfully added to Capsule CRM');
             }
         });
     }
@@ -320,13 +330,13 @@ capsuleResourceOptions = {
 	content_type: "application/xml",
 	enable_resource_cache: false,
 	application_content: function() {
-		var content = "<div id='capsule-content' class='cnt-special'>";
-		content += '<h3 class="title">' + $("capsule_widget").title.escapeHTML() + '</h3>';
-		content += '<div class="user_details_widget">';
-		content += '<div style="display:none;"><form id="cap-search" onsubmit="CapsuleWidget.searchContacts(this,capsuleResource); return false;">';
-		content += '<input type="text" name="q" value="' + CapsuleWidget.searchTerm() + '"/>';
-		content += '<input type="submit" id="submit" value="Search Capsule"/>'
-		content += '</form></div>';
+		var content = '<div class="negtive-margin"><h3 id="capsule-title" class="title paddingloading">';
+		content += '<span class="searchicon" onclick="$(\'cap-search\').toggle()"></span>';
+		content += $('capsule_widget').getAttribute('title').escapeHTML() + '</h3>';
+	   content += '<div id="capsule-content" class="content">';
+		content += '<form style="display:none;" id="cap-search" onsubmit="CapsuleWidget.searchContacts(this,capsuleResource); return false;">';
+		content += '<input placeholder="Search Capsule" type="text" name="q" value=""/>';
+		content += '</form>';
 		content += '<div id="cap-search-result"></div>';
 		content += '<div id="cap-contact-summary"></div>';
 		content += '</div></div>'; // close capsule-content

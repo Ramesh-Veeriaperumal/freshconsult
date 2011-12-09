@@ -82,7 +82,7 @@ Freshdesk.Widget.prototype={
 	},
 
 	submit_data:function(data){
-		alert("data "+data);
+		//alert("data "+data);
 		var params=Form.serialize(data);
 		params+="&domain="+this.options.domain+"&ssl_enabled="+this.options.ssl_enabled;
 		if(this.options.ticket_id){
@@ -131,7 +131,7 @@ var CustomWidget =  {
 	include_js: function(jslocation) {
 		widget_script = document.createElement('script');
 		widget_script.type = 'text/javascript';
-		widget_script.src = jslocation;
+		widget_script.src = jslocation + "?" + (new Date().getTime());
 		document.getElementsByTagName('head')[0].appendChild(widget_script);
 	}
 };

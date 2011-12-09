@@ -25,8 +25,35 @@ var $J = jQuery.noConflict();
    
    // App initialisation  
    $(document).ready(function() {
-      // SyntaxHighlighter.all();
+	   var widgetPopup = null;   
 
+		$("body").click(function(ev){
+			if((widgetPopup != null) && !$(ev.target).parents().hasClass("popover")){
+				widgetPopup.popover('hide');
+				widgetPopup = null;
+			}
+		});
+		  
+		$("a[rel=widget-popover]")
+			.popover({ 
+					delayOut: 300,
+					trigger: 'manual',
+					offset: 5,
+ 			    	html: true,
+ 			    	template: '<div class="arrow"></div><div class="inner"><div class="content"><p></p></div></div>',
+					content: function(){
+						return $("#" + $(this).attr("data-widget-container")).val();
+					}
+				})
+			.live("click", function(e){
+				e.preventDefault();
+				e.stopPropagation();
+				$('[rel=widget-popover]', '[rel=popover]').each(function(){
+				     $(this).popover('hide');
+				});
+ 		      widgetPopup = $(this).popover('show');
+			});
+		
       // - Labels with overlabel will act a Placeholder for form elements 
       $("label.overlabel").overlabel();
       

@@ -17,7 +17,7 @@
 			%>
 					<%= construct_ui_element :configs, input_key.to_s, input_value, field_value%>
 					<%# Move the below line into construct_ui_element method.%>
-					<%= content_tag(:div, input_value[:info], :class => "info-data") unless input_value[:info].blank? %>
+					<%= content_tag(:div, t(input_value[:info]), :class => "info-data") unless input_value[:info].blank? %>
 					<span class="seperator"></span>
 			 <% end
 			  end %>
