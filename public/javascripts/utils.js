@@ -3,6 +3,11 @@
  * Genric core utility class for the application
  */
 
+function autoSaveTinyMce(editor){
+   tinyMCE.triggerSave();
+   return true;
+}
+
 // Primarly for the form customizer page. Used for making the text unselectable
 makePageNonSelectable = function(source){
 	if (document.all) source.onselectstart = function () { return false; };	// Internet Explorer

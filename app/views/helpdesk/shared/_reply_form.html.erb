@@ -64,7 +64,7 @@
                 <%= t("message") %>:
             </label>
             <div class="fields">
-                <%= f.text_area :body_html, :class => "mceEditor", :id => "#{id}-#{cntid}-body", :value => bind_last_conv(@ticket , @signature) %>
+                <%= f.text_area :body_html, :class => "required mceEditor", :id => "#{id}-#{cntid}-body", :value => bind_last_conv(@ticket , @signature) %>
             </div>
         </li>
         <% if !@ticket.ticket_topic.nil? and !(@ticket.ticket_topic.topic.locked) %>
