@@ -1,24 +1,22 @@
-function formElement() {
-	return document.forms[1];
-}
-
 var ImageDialog = {
 	preInit : function() {
 		var url;
 
 		tinyMCEPopup.requireLangPack();
+
 		if (url = tinyMCEPopup.getParam("external_image_list_url"))
 			document.write('<script language="javascript" type="text/javascript" src="' + tinyMCEPopup.editor.documentBaseURI.toAbsolute(url) + '"></script>');
 	},
 
 	init : function(ed) {
-		var f = formElement(), nl = f.elements, ed = tinyMCEPopup.editor, dom = ed.dom, n = ed.selection.getNode();
+		var f = document.forms[0], nl = f.elements, ed = tinyMCEPopup.editor, dom = ed.dom, n = ed.selection.getNode(), fl = tinyMCEPopup.getParam('external_image_list', 'tinyMCEImageList');
 
 		tinyMCEPopup.resizeToInnerSize();
 		this.fillClassList('class_list');
-		this.fillFileList('src_list', 'tinyMCEImageList');
-		this.fillFileList('over_list', 'tinyMCEImageList');
-		this.fillFileList('out_list', 'tinyMCEImageList');
+		this.fillFileList('src_list', fl);
+		this.fillFileList('over_list', fl);
+		this.fillFileList('out_list', fl);
+		TinyMCE_EditableSelects.init();
 
 		if (n.nodeName == 'IMG') {
 			nl.src.value = dom.getAttrib(n, 'src');
@@ -30,7 +28,7 @@ var ImageDialog = {
 			nl.hspace.value = this.getAttrib(n, 'hspace');
 			nl.border.value = this.getAttrib(n, 'border');
 			selectByValue(f, 'align', this.getAttrib(n, 'align'));
-			selectByValue(f, 'class_list', dom.getAttrib(n, 'class'));
+			selectByValue(f, 'class_list', dom.getAttrib(n, 'class'), true, true);
 			nl.style.value = dom.getAttrib(n, 'style');
 			nl.id.value = dom.getAttrib(n, 'id');
 			nl.dir.value = dom.getAttrib(n, 'dir');
@@ -44,7 +42,7 @@ var ImageDialog = {
 
 			if (/^\s*this.src\s*=\s*\'([^\']+)\';?\s*$/.test(dom.getAttrib(n, 'onmouseout')))
 				nl.onmouseoutsrc.value = dom.getAttrib(n, 'onmouseout').replace(/^\s*this.src\s*=\s*\'([^\']+)\';?\s*$/, '$1');
-				
+
 			if (ed.settings.inline_styles) {
 				// Move attribs to styles
 				if (dom.getAttrib(n, 'align'))
@@ -91,18 +89,21 @@ var ImageDialog = {
 	},
 
 	insert : function(file, title) {
-		var ed = tinyMCEPopup.editor, t = this, f = formElement();
+		var ed = tinyMCEPopup.editor, t = this, f = document.forms[0];
 
 		if (f.src.value === '') {
-			ed.dom.remove(ed.selection.getNode());
-			ed.execCommand('mceRepaint');
+			if (ed.selection.getNode().nodeName == 'IMG') {
+				ed.dom.remove(ed.selection.getNode());
+				ed.execCommand('mceRepaint');
+			}
+
 			tinyMCEPopup.close();
 			return;
 		}
 
 		if (tinyMCEPopup.getParam("accessibility_warnings", 1)) {
 			if (!f.alt.value) {
-				tinyMCEPopup.editor.windowManager.confirm(tinyMCEPopup.getLang('advimage_dlg.missing_alt'), function(s) {
+				tinyMCEPopup.confirm(tinyMCEPopup.getLang('advimage_dlg.missing_alt'), function(s) {
 					if (s)
 						t.insertAndClose();
 				});
@@ -115,7 +116,9 @@ var ImageDialog = {
 	},
 
 	insertAndClose : function() {
-		var ed = tinyMCEPopup.editor, f = formElement(), nl = f.elements, v, args = {}, el;
+		var ed = tinyMCEPopup.editor, f = document.forms[0], nl = f.elements, v, args = {}, el;
+
+		tinyMCEPopup.restoreSelection();
 
 		// Fixes crash in Safari
 		if (tinymce.isWebKit)
@@ -139,7 +142,7 @@ var ImageDialog = {
 		}
 
 		tinymce.extend(args, {
-			src : nl.src.value,
+			src : nl.src.value.replace(/ /g, '%20'),
 			width : nl.width.value,
 			height : nl.height.value,
 			alt : nl.alt.value,
@@ -168,11 +171,18 @@ var ImageDialog = {
 		if (el && el.nodeName == 'IMG') {
 			ed.dom.setAttribs(el, args);
 		} else {
-			ed.execCommand('mceInsertContent', false, '<img id="__mce_tmp" src="javascript:;" />');
-			ed.dom.setAttribs('__mce_tmp', args);
-			ed.dom.setAttrib('__mce_tmp', 'id', '');
+			tinymce.each(args, function(value, name) {
+				if (value === "") {
+					delete args[name];
+				}
+			});
+
+			ed.execCommand('mceInsertContent', false, tinyMCEPopup.editor.dom.createHTML('img', args), {skip_undo : 1});
+			ed.undoManager.add();
 		}
 
+		tinyMCEPopup.editor.execCommand('mceRepaint');
+		tinyMCEPopup.editor.focus();
 		tinyMCEPopup.close();
 	},
 
@@ -193,6 +203,7 @@ var ImageDialog = {
 				case 'hspace':
 					v = dom.getStyle(e, 'margin-left')
 					v2 = dom.getStyle(e, 'margin-right');
+
 					if (v && v == v2)
 						return parseInt(v.replace(/[^0-9]/g, ''));
 
@@ -236,7 +247,7 @@ var ImageDialog = {
 	},
 
 	setSwapImage : function(st) {
-		var f = formElement();
+		var f = document.forms[0];
 
 		f.onmousemovecheck.checked = st;
 		setBrowserDisabled('overbrowser', !st);
@@ -267,6 +278,7 @@ var ImageDialog = {
 			cl = tinyMCEPopup.editor.dom.getClasses();
 
 		if (cl.length > 0) {
+			lst.options.length = 0;
 			lst.options[lst.options.length] = new Option(tinyMCEPopup.getLang('not_set'), '');
 
 			tinymce.each(cl, function(o) {
@@ -279,7 +291,8 @@ var ImageDialog = {
 	fillFileList : function(id, l) {
 		var dom = tinyMCEPopup.dom, lst = dom.get(id), v, cl;
 
-		l = window[l];
+		l = typeof(l) === 'function' ? l() : window[l];
+		lst.options.length = 0;
 
 		if (l && l.length > 0) {
 			lst.options[lst.options.length] = new Option('', '');
@@ -292,13 +305,13 @@ var ImageDialog = {
 	},
 
 	resetImageData : function() {
-		var f = formElement();
+		var f = document.forms[0];
 
 		f.elements.width.value = f.elements.height.value = '';
 	},
 
 	updateImageData : function(img, st) {
-		var f = formElement();
+		var f = document.forms[0];
 
 		if (!st) {
 			f.elements.width.value = img.width;
@@ -309,7 +322,7 @@ var ImageDialog = {
 	},
 
 	changeAppearance : function() {
-		var ed = tinyMCEPopup.editor, f = formElement(), img = document.getElementById('alignSampleImg');
+		var ed = tinyMCEPopup.editor, f = document.forms[0], img = document.getElementById('alignSampleImg');
 
 		if (img) {
 			if (ed.getParam('inline_styles')) {
@@ -324,7 +337,7 @@ var ImageDialog = {
 	},
 
 	changeHeight : function() {
-		var f = formElement(), tp, t = this;
+		var f = document.forms[0], tp, t = this;
 
 		if (!f.constrain.checked || !t.preloadImg) {
 			return;
@@ -338,7 +351,7 @@ var ImageDialog = {
 	},
 
 	changeWidth : function() {
-		var f = formElement(), tp, t = this;
+		var f = document.forms[0], tp, t = this;
 
 		if (!f.constrain.checked || !t.preloadImg) {
 			return;
@@ -352,7 +365,7 @@ var ImageDialog = {
 	},
 
 	updateStyle : function(ty) {
-		var dom = tinyMCEPopup.dom, st, v, f = formElement(), img = dom.create('img', {style : dom.get('style').value});
+		var dom = tinyMCEPopup.dom, b, bStyle, bColor, v, isIE = tinymce.isIE, f = document.forms[0], img = dom.create('img', {style : dom.get('style').value});
 
 		if (tinyMCEPopup.editor.settings.inline_styles) {
 			// Handle align
@@ -371,14 +384,27 @@ var ImageDialog = {
 
 			// Handle border
 			if (ty == 'border') {
+				b = img.style.border ? img.style.border.split(' ') : [];
+				bStyle = dom.getStyle(img, 'border-style');
+				bColor = dom.getStyle(img, 'border-color');
+
 				dom.setStyle(img, 'border', '');
 
 				v = f.border.value;
 				if (v || v == '0') {
 					if (v == '0')
-						img.style.border = '';
-					else
-						img.style.border = v + 'px solid black';
+						img.style.border = isIE ? '0' : '0 none none';
+					else {
+						if (b.length == 3 && b[isIE ? 2 : 1])
+							bStyle = b[isIE ? 2 : 1];
+						else if (!bStyle || bStyle == 'none')
+							bStyle = 'solid';
+						if (b.length == 3 && b[isIE ? 0 : 2])
+							bColor = b[isIE ? 0 : 2];
+						else if (!bColor || bColor == 'none')
+							bColor = 'black';
+						img.style.border = v + 'px ' + bStyle + ' ' + bColor;
+					}
 				}
 			}
 
@@ -407,13 +433,13 @@ var ImageDialog = {
 			}
 
 			// Merge
-			dom.get('style').value = dom.serializeStyle(dom.parseStyle(img.style.cssText));
+			dom.get('style').value = dom.serializeStyle(dom.parseStyle(img.style.cssText), 'img');
 		}
 	},
 
 	changeMouseMove : function() {
 	},
-	
+
 	showPreviewImage : function(u, st) {
 		if (!u) {
 			tinyMCEPopup.dom.setHTML('prev', '');
@@ -429,57 +455,8 @@ var ImageDialog = {
 			tinyMCEPopup.dom.setHTML('prev', '<img id="previewImg" src="' + u + '" border="0" onload="ImageDialog.updateImageData(this);" onerror="ImageDialog.resetImageData();" />');
 		else
 			tinyMCEPopup.dom.setHTML('prev', '<img id="previewImg" src="' + u + '" border="0" onload="ImageDialog.updateImageData(this, 1);" />');
-		},
-		
-		
-	ts_onload : function() {
-		var iframe1=this.ts_ce('iframe','html_editor_image_upload_frame');
-		iframe1.setAttribute('src','about:blank');
-		iframe1.style.border="0px none";
-		iframe1.style.position="absolute";
-		iframe1.style.width="1px";
-		iframe1.style.height="1px";
-		iframe1.style.visibility="hidden";
-		iframe1.setAttribute('id','html_editor_image_upload_frame');
-		$('image-upload').appendChild(iframe1);
-		$('image_upload_form').setAttribute("action", this.ts_upload_image_path());
-		
-	},
-		
-	ts_upload_image_path : function() {
-      to_path = "/uploaded_images.js";
-	  return to_path;
-	},
-	
-	ts_get_images_path : function() {
-	  // business_alias = window.parent.location.pathname.split("/")[1];
-	  to_path ="uploaded_images";
-	  return to_path;
-	},
-
-	ts_ce : function(tag,name) {
-  	if (name && window.ActiveXObject){
-	    element = document.createElement('<'+tag+' name="'+name+'">');
-	  }else{
-	    element = document.createElement(tag);
-	    element.setAttribute('name',name);
-	  }
-	  return element;
-	},
-
-	ts_insert_image : function(url, alt_text) {
-		$('src').value=url;
-		$('alt').value=alt_text;
-		//$('html_editor_image_upload_frame').remove();
-		var formObj = formElement();
-		formObj.src.value = url;
-		formObj.alt.value = alt_text;
-	//	 setTimeout(function() { insertAction(); }, 1);
-		this.insertAndClose();
-	}		
-		
+	}
 };
 
 ImageDialog.preInit();
 tinyMCEPopup.onInit.add(ImageDialog.init, ImageDialog);
-
