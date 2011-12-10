@@ -248,6 +248,7 @@ EDITOR_OPTIONS: &common
     entity_encoding:                    "raw"
     dialog_type:                        "modal" 
     convert_urls:                       false
+    handle_event_callback:              "autoSaveTinyMce"
     
 LARGE_EDITOR:
     <<: *common
