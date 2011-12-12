@@ -241,13 +241,14 @@ EDITOR_OPTIONS: &common
     paste_auto_cleanup_on_paste:        true
     paste_convert_middot_lists:         false
     paste_unindented_list_class:        "unindentedList"
-    paste_remove_styles:                true
+    paste_remove_styles:                false
     paste_text_sticky:                  true
-    paste_convert_headers_to_strong:    true
+    paste_convert_headers_to_strong:    false
     theme_advanced_styles:              "Code=codeStyle;Quote=quoteStyle"
     entity_encoding:                    "raw"
     dialog_type:                        "modal" 
     convert_urls:                       false
+    handle_event_callback:              "autoSaveTinyMce"
     
 LARGE_EDITOR:
     <<: *common
@@ -270,5 +271,4 @@ FRESH_EDITOR:
 TICKET_EDITOR:
     <<: *common    
     theme_advanced_buttons1:            "bold,italic,|,underline,bullist,numlist,|,forecolor,backcolor,|,link,unlink"
-    height:                             350
-    valid_elements:                     "a[href|target=_blank],strong/b,br,span[style],p,i,em,ol,ul,li,blockquote[class],div[class]"    
+    height:                             350  

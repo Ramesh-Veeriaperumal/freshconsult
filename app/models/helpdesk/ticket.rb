@@ -174,13 +174,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #validates_presence_of :name, :source, :id_token, :access_token, :status, :source
   #validates_length_of :email, :in => 5..320, :allow_nil => false, :allow_blank => false
   #validates_presence_of :responder_id
-  validates_presence_of :requester_id
+  validates_presence_of :requester_id, :message => "should be a valid email address"
   validates_numericality_of :source, :status, :only_integer => true
   validates_numericality_of :requester_id, :responder_id, :only_integer => true, :allow_nil => true
   validates_inclusion_of :source, :in => 1..SOURCES.size
   validates_inclusion_of :status, :in => STATUS_KEYS_BY_TOKEN.values.min..STATUS_KEYS_BY_TOKEN.values.max
   #validates_format_of :email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, 
   #:allow_nil => false, :allow_blank => false
+  
 
   def set_default_values
     self.status = TicketConstants::STATUS_KEYS_BY_TOKEN[:open] unless TicketConstants::STATUS_NAMES_BY_KEY.key?(self.status)
@@ -335,7 +336,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     unless email.blank?
       self.email = parse_email email
       if(requester_id.nil? or !email.eql?(requester.email))
-        @requester = account.all_users.find_by_email(email)
+        @requester = account.all_users.find_by_email(email) unless email.nil?
         if @requester.nil?
           @requester = account.users.new          
           @requester.signup!({:user => {

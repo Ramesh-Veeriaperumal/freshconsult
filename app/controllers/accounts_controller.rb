@@ -68,7 +68,8 @@ class AccountsController < ApplicationController
     end
     
     begin 
-      locale = request.compatible_language_from I18n.available_locales || I18n.default_locale
+      locale = request.compatible_language_from I18n.available_locales  
+      locale = I18n.default_locale if locale.blank?
       @account.language = locale.to_s()
     rescue
       @account.language = I18n.default_locale.to_s()

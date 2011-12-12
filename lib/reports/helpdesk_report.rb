@@ -1,6 +1,5 @@
 module Reports::HelpdeskReport
   
-  include Reports::ChartGenerator
   
   def columns
    [:status,:ticket_type,:priority,:source] 

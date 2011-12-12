@@ -10,12 +10,15 @@
 							when "html_paragraph" then "paragraph"
 							else field.dom_type
 						 end)
+					field_name_correction = (field.field_name == "description_html") ? "description" : field.field_name
 				%>  
         <%= construct_ticket_element :helpdesk_ticket, field, 
                                        field.label_in_portal,
                                        dom_type_correction, 
                                        field.required_in_portal, 
-                                       (field.dom_type == "requester" && logged_in?) ? @ticket.email : "" %>
+                                       (field.dom_type == "requester" && logged_in?) ? @ticket.email : "",
+                                       field_name_correction
+                                       %>
       <% end %>
       <li>
         <%= render :partial=>"/helpdesk/shared/attachment_form"  %>
