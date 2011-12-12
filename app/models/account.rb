@@ -415,7 +415,7 @@ class Account < ActiveRecord::Base
     def set_default_values
       self.time_zone = Time.zone.name if time_zone.nil? #by Shan temp.. to_s is kinda hack.
       self.helpdesk_name = name if helpdesk_name.nil?
-      self.preferences = HashWithIndifferentAccess.new({:bg_color => "#efefef",:header_color => "#2f3733", :tab_color => "#7cb537"})
+      self.preferences = HashWithIndifferentAccess.new({:bg_color => "#efefef",:header_color => "#252525", :tab_color => "#006063"})
       self.shared_secret = generate_secret_token
       self.sso_options = set_sso_options_hash
     end
