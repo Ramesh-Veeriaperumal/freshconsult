@@ -64,7 +64,7 @@ class Helpdesk::NotesController < ApplicationController
         end
         unless params[:notify_emails].blank?
           notify_array = validate_emails(params[:notify_emails])
-          Helpdesk::TicketNotifier.send_later(:deliver_notify_comment, @parent, @item ,@parent.reply_email,{:notify_emails =>notify_array}) unless notify_array.blank? 
+          Helpdesk::TicketNotifier.send_later(:deliver_notify_comment, @parent, @item ,@parent.friendly_reply_email,{:notify_emails =>notify_array}) unless notify_array.blank? 
         end
         
       end
@@ -87,10 +87,10 @@ class Helpdesk::NotesController < ApplicationController
     end
     
     def add_cc_email
-     if !params[:include_cc].blank?# and !params[:cc_emails].blank?
-      #cc_array = params[:cc_emails].split(',').collect
+     if !params[:include_cc].blank?
        cc_array = validate_emails params[:cc_emails]
-       @parent.update_attribute(:cc_email, cc_array)    
+       cc_array = cc_array.compact unless cc_array.nil?
+       @parent.update_attribute(:cc_email, cc_array)  
      end
    end
    

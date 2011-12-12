@@ -36,6 +36,20 @@ class EmailNotification < ActiveRecord::Base
     RESOLUTION_TIME_SLA_VIOLATION => "Resolution time SLA violated - {{ticket.encoded_id}} {{ticket.subject}}"
   }
   
+  
+  DISABLE_NOTIFICATION = { NEW_TICKET =>{:requester_notification=>false},
+                           TICKET_ASSIGNED_TO_GROUP =>{:agent_notification =>false},
+                           TICKET_ASSIGNED_TO_AGENT => {:agent_notification => false},
+                           TICKET_RESOLVED => {:requester_notification => false},
+                           COMMENTED_BY_AGENT =>{:requester_notification => false},
+                           TICKET_REOPENED =>{:requester_notification => false},
+                           REPLIED_BY_REQUESTER =>{:agent_notification =>false},
+                           USER_ACTIVATION => {:requester_notification => false}
+                           
+                         }
+                          
+
+  
   def ticket_subject(ticket)
     Liquid::Template.parse(EMAIL_SUBJECTS[notification_type]).render('ticket' => ticket)
   end
@@ -63,7 +77,7 @@ class EmailNotification < ActiveRecord::Base
     #Thread.current[:notifications][<notification type>][:agent|:requester_notification]
     #For ex., Thread.current[:notifications][1][:requester_notification] = false
     def allowed_in_thread_local?(user_role)
-      (n_hash = Thread.current[:notifications]).nil? || 
+      (n_hash = Thread.current["notifications_#{account_id}"]).nil? || 
         (my_hash = n_hash[notification_type]).nil? || !my_hash[user_role].eql?(false)
     end
     

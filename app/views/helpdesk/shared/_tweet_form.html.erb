@@ -23,8 +23,8 @@
 	  </li>
     <li class="button-container">
        <span class="tweet-counter" id="SendTweetCounter">140</span>
+	   <%= submit_tag(local_assigns[:submit] || ActiveSupport::Inflector.titleize(id), :class => "uiButton" ) %>
 	   <%= submit_tag(t('ticket.tweet_form.tweet_and_resolve'), :onclick => "jQuery('#tweet_ticket_status').val('resolved');" , :class => "uiButton") %>
-       <%= submit_tag(local_assigns[:submit] || ActiveSupport::Inflector.titleize(id), :class => "uiButton" ) %>
     </li>
    </ul> 
   <% end %>

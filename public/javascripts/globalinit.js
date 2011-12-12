@@ -58,6 +58,8 @@ var $J = jQuery.noConflict();
       $("label.overlabel").overlabel();
       
       $(".customSelect").chosen();
+	  
+	  quote_text();
 
       // - jQuery Validation for forms with class .ui-form ( ...An optional dont-validate written for the form element will make the selectors ignore those form alone )
       validateOptions = {
@@ -67,11 +69,19 @@ var $J = jQuery.noConflict();
       };
       
       $(".admin_list li")
+<<<<<<< HEAD
           .hover(
              function(){ $(this).children(".item_actions").css("visibility", "visible"); }, 
              function(){ $(this).children(".item_actions").css("visibility", "hidden"); }
           );
 
+=======
+         .hover(
+            function(){ $(this).children(".item_actions").css("visibility", "visible"); }, 
+            function(){ $(this).children(".item_actions").css("visibility", "hidden"); }
+         );
+	
+>>>>>>> refs/heads/freshdesk_staging
       $("ul.ui-form").not(".dont-validate").parents('form:first').validate(validateOptions);
       $("div.ui-form").not(".dont-validate").find('form:first').validate(validateOptions); 
       $("form.uniForm").validate(validateOptions);

@@ -9,10 +9,10 @@
         <%= content_tag( :h4, t("ticket.note_form.form_title"), :class => "title" ) %>
         <label class="caption"><%= t("message")%>:</label>
         <div class="fields">
-          <%= f.text_area :body_html, :class => "mceEditor", :id => "#{id}-#{cntid}-body" %>
+          <%= f.text_area :body_html, :class => "required mceEditor", :id => "#{id}-#{cntid}-body" %>
           <%= f.label(:private, f.check_box(:private, :checked => true) + t("ticket.note_form.private_note"), :class => "checkbox") %>
           <%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"]%>
-		  <%= hidden_field_tag(:ticket_status , params[:ticket_status], :id=>:note_ticket_status  )%>
+		      <%= hidden_field_tag(:ticket_status , params[:ticket_status], :id=>:note_ticket_status  )%>
         </div>
 		<li class="inline-field field" id="notify-email-form-container" style="display:block">
 			
@@ -23,7 +23,7 @@
            		 </label>
 
                 <% content_for :onload_script do -%>
-				    function agent_lookup(searchString, callback) { 
+				        function agent_lookup(searchString, callback) { 
                     new Ajax.Request('<%= agent_autocomplete_helpdesk_authorizations_path %>?v='+searchString, 
                                                               { parameters: {name: searchString, rand: (new Date()).getTime()},
                                                               onSuccess: function(response) {
@@ -37,7 +37,7 @@
                   var agent_cachedBackend = new Autocompleter.Cache(agent_lookup, {choices: 10});
                   var agent_cachedLookup = agent_cachedBackend.lookup.bind(agent_cachedBackend);
 				
-				  new Autocompleter.MultiValue("notify_emails", agent_cachedLookup, $A(), {frequency: 0.1, acceptNewValues: true});
+				          new Autocompleter.MultiValue("notify_emails", agent_cachedLookup, $A(), {frequency: 0.1, acceptNewValues: true});
 
                 <%- end %>
                 <input type="text" id="notify_emails" name="notify_emails" />
@@ -52,8 +52,8 @@
 				</div>
 			</li>
       <li class="button-container">
-      	<%= submit_tag(t('ticket.note_form.add_and_resolve'), :onclick => "jQuery('#note_ticket_status').val('resolved');" , :class => "uiButton") %>
-        <%= submit_tag(local_assigns[:submit] || ActiveSupport::Inflector.titleize(id), :class => "uiButton") %>
+      	<%= submit_tag(local_assigns[:submit] || ActiveSupport::Inflector.titleize(id), :class => "uiButton") %>
+      	<%= submit_tag(t('ticket.note_form.add_and_resolve'), :onclick => "jQuery('#note_ticket_status').val('resolved');" , :class => "uiButton") %>    
       </li>
     </ul> 
   <% end %>
@@ -67,6 +67,7 @@
         pages: ['attachment-options-note']
       });
 			jQuery("#HelpdeskNotes").validate();	  
+			jQuery("#add-note-cnt-note-body").val("");
     });
   <% end %>
 <% end %>

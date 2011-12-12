@@ -69,6 +69,26 @@ require 'openid'
     redirect_to root_url
   end
   
+  def signup_complete
+    @current_user = current_account.users.find_by_perishable_token(params[:token]) 
+    if @current_user.nil?
+      flash[:notice] = "Please provide valid login details!"
+      return redirect_to login_url 
+    end
+    @current_user.active = true
+    @user_session = @current_user.account.user_sessions.new(@current_user)
+    if @user_session.save
+      @current_user.active = false
+      @current_user.deliver_account_admin_activation
+      SubscriptionNotifier.deliver_welcome!(current_account)
+      flash[:notice] = "Alright! We've sent you an email with the activation link."
+      redirect_to root_url     
+     else
+      flash[:notice] = "Please provide valid login details!"
+      render :action => :new
+     end
+  end
+  
   
   
   def google_auth

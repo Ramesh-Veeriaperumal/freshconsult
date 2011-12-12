@@ -32,7 +32,7 @@
             <%= content_tag( :h4, t(".title", :email => @ticket.requester.email), :class => "title" ) %>
             <%= f.label(:reply_email, "From:", :class => "caption" ) %>
             <div class="fields">
-              <%= select :reply_email, :id, options_for_select(@reply_email, @ticket.reply_email) %>
+              <%= select :reply_email, :id, options_for_select(@reply_email, @ticket.friendly_reply_email) %>
               <input type="checkbox" class="hide" id="include_cc" name="include_cc" value="true" <%= (!@ticket.cc_email.blank?)? "checked" : "" %> />              
               <input type="checkbox" class="hide" id="include_bcc" name="include_bcc" value="true"  />
 			</div>
@@ -76,7 +76,7 @@
                 <%= t("message") %>:
             </label>
             <div class="fields">
-                <%= f.text_area :body_html, :class => "mceEditor", :id => "#{id}-#{cntid}-body", :value => @signature %>
+                <%= f.text_area :body_html, :class => "required mceEditor", :id => "#{id}-#{cntid}-body", :value => bind_last_conv(@ticket , @signature) %>
             </div>
         </li>
         <% if !@ticket.ticket_topic.nil? and !(@ticket.ticket_topic.topic.locked) %>
@@ -101,8 +101,8 @@
             </div>
         </li>
         <li class="button-container">
-        	<%= submit_tag(t('ticket.reply_form.send_and_resolve'), :onclick => "jQuery('#reply_ticket_status').val('resolved');" , :class => "uiButton") %>
-            <%= submit_tag(local_assigns[:submit] || ActiveSupport::Inflector.titleize(id), :class => "uiButton" ) %>
+        	<%= submit_tag(local_assigns[:submit] || ActiveSupport::Inflector.titleize(id), :class => "uiButton" ) %>
+        	<%= submit_tag(t('ticket.reply_form.send_and_resolve'), :onclick => "jQuery('#reply_ticket_status').val('resolved');" , :class => "uiButton") %>    
         </li>
     </ul>
     <% end %>

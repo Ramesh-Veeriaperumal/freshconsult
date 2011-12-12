@@ -1,9 +1,9 @@
 <% content_for :layoutType do -%>single<%- end %>
 <div class="folder-2col">
-	<div class="folder_section">
+	<div class="folder_section" id="folder-section">
 		<%= render :partial => "/solution/shared/category_folder_list", :locals => { :category => @item } %>
 	</div>
-	<div class="artical_section"> 
+	<div class="artical_section" id="article-section"> 
 		<div class="crumbs">
 			<%= link_to t('solution.title'), solution_categories_path %> &rarr; 
 			<%= content_tag (:span, @item.name ) %>
@@ -22,3 +22,8 @@
 		<% end %>	
 	</div> 
 </div>
+
+<% javascript_tag do -%>
+  if(jQuery("#folder-section").height() > jQuery("#article-section").height())
+    jQuery("#article-section").css("minHeight", jQuery("#folder-section").height());
+<%- end %>

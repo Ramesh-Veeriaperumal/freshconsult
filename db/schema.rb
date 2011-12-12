@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111119094928) do
+ActiveRecord::Schema.define(:version => 20111125063159) do
   
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -683,6 +683,7 @@ ActiveRecord::Schema.define(:version => 20111119094928) do
   end
 
   add_index "social_facebook_pages", ["account_id", "page_id"], :name => "index_account_page_id", :unique => true
+  add_index "social_facebook_pages", ["account_id", "page_id"], :name => "social_fb_pages_account_id_and_page_id", :unique => true
   add_index "social_facebook_pages", ["product_id"], :name => "index_product_id"
 
   create_table "social_fb_posts", :force => true do |t|
@@ -954,7 +955,9 @@ ActiveRecord::Schema.define(:version => 20111119094928) do
     t.integer  "import_id",           :limit => 8
     t.string   "google_id"
     t.string   "fb_profile_id"
-    t.string   "language" ,                       :default => "en"
+    t.string   "language",                         :default => "en"
+    t.boolean  "blocked",                          :default => false
+    t.datetime "blocked_at"
   end
 
   add_index "users", ["account_id", "email"], :name => "index_users_on_account_id_and_email", :unique => true
