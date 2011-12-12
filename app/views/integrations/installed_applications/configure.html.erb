@@ -1,7 +1,6 @@
 <% content_for :sidebar do -%>
-  <div class="sidepanel">
-    <%= content_tag (:h3, "Setting up your Addon", :class => "title") %>
-    <%= t(@installing_application.name+"_helptext") %>
+  <div class="sidepanel helpcard">
+    <%= t(@installing_application.name+"_helptext", :full_domain => current_account.full_domain) %>
   </div>
 <%- end %>
 <%= content_tag (:h3, t(@installing_application.name) + " " + t("settings"), :class => "title") %>
