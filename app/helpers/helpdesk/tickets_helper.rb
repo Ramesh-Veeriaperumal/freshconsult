@@ -172,9 +172,9 @@ module Helpdesk::TicketsHelper
       last_reply_time = last_conv.created_at
       last_reply_content = last_conv.body_html
     end
-    content = "<br/><br/><div class='freshdesk_quote'><blockquote class='freshdesk_quote'>On "+formated_date(last_conv.created_at)+
+    content = "<br/><br/>"+signature+"<div class='freshdesk_quote'><blockquote class='freshdesk_quote'>On "+formated_date(last_conv.created_at)+
               "<span class='separator' /> , "+ last_reply_by +" wrote:"+
-              last_reply_content+"--"+signature+"</blockquote></div>"
+              last_reply_content+"</blockquote></div>"
     return content
     
   end
