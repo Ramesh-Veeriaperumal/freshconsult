@@ -34,11 +34,14 @@
 
   Popover.prototype = $.extend({}, $.fn.twipsy.Twipsy.prototype, {
 
-    setContent: function () {
-      var $tip = this.tip()
-      $tip.find('.title')[this.options.html ? 'html' : 'text'](this.getTitle())
-      $tip.find('.content > *')[this.options.html ? 'html' : 'text'](this.getContent())
-      $tip[0].className = 'popover'
+    setContent: function () { 
+      if(this.options.reloadContent || !this.$element.attr("twipsy-content-set")){ 
+         var $tip = this.tip()
+         $tip.find('.title')[this.options.html ? 'html' : 'text'](this.getTitle())
+         $tip.find('.content > *')[this.options.html ? 'html' : 'text'](this.getContent())
+         $tip[0].className = 'popover'
+         this.$element.attr("twipsy-content-set", true)
+      }
     }
 
   , hasContent: function () {
@@ -82,6 +85,7 @@
   $.fn.popover.defaults = $.extend({} , $.fn.twipsy.defaults, {
     placement: 'right'
   , content: 'data-content'
+  , reloadContent : true
   , template: '<div class="arrow"></div><div class="inner"><h3 class="title"></h3><div class="content"><p></p></div></div>'
   })
 

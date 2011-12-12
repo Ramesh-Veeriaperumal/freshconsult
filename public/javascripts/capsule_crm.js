@@ -178,6 +178,22 @@ CapsuleWidget = {
             }
         });
     },
+    
+    processFailure: function(responseEvt){
+       $('capsule-title').removeClassName('paddingloading');  
+       errorResult = '<center class="info-error"><b>Error in retriving Contact information!!!</b><br />'
+       switch(responseEvt.status){
+         case 401:
+            errorResult += "Please verify your API Key";
+         break;
+         case 502:
+            errorResult += "Slow internet connetion or Capsule is down";
+         break;
+      }
+      errorResult += "</center>"
+      $('cap-search-result').update(errorResult);
+    },
+    
     processSearch: function(response) {
         if (response.parties.person || response.parties.organisation) {
             var found = response.parties['@size'];
@@ -344,7 +360,8 @@ capsuleResourceOptions = {
 	},
 	application_resources: [{
 		resource: 'api/party?limit=10&stamp=' + new Date().valueOf() + '&qe=' + encodeURI(CapsuleWidget.searchTerm()),
-		on_success: CapsuleWidget.processSearch
+		on_success: CapsuleWidget.processSearch,
+		on_failure: CapsuleWidget.processFailure
 	}]
 };
 

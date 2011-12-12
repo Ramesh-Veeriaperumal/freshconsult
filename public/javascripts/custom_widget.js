@@ -10,7 +10,7 @@ Freshdesk.Widget.prototype={
 		this.title_anchor = $$("#"+this.options.anchor+" #title")[0];
 		Ajax.Responders.register({
 			onException:function(request, ex){
-				alert("Exception:\n\n"+ex);
+			   //console.log(widget.on_exception(request));
 			}
 		});
 		if(this.options.title){
@@ -23,7 +23,7 @@ Freshdesk.Widget.prototype={
 		this.options.username=credentials.username.value;
 		this.options.password=credentials.password.value;
 		if(this.options.username.blank()&&this.options.password.blank()){
-			alert("Please provide username and password.");
+			//alert("Please provide username and password.");
 		}else{
 			Cookie.set(this.options.anchor+"_username",this.options.username);
 			Cookie.set(this.options.anchor+"_password",this.options.password);
@@ -75,6 +75,9 @@ Freshdesk.Widget.prototype={
 					}
 				},
 				onFailure:function(evt){
+					if(widget != null && widget.on_failure != null){
+						widget.on_failure(evt);
+					}
 					this.resource_failure(evt, this);
 				}
 			});
@@ -92,6 +95,7 @@ Freshdesk.Widget.prototype={
 			var mt=this.options.content_type||"application/xml";
 			params+="&content_type="+mt;
 		}
+
 		new Ajax.Request("/http_request_proxy/fetch",{
 			asynchronous:true,
 			evalScripts:true,
@@ -117,11 +121,11 @@ Freshdesk.Widget.prototype={
 			Cookie.erase(obj.options.anchor+"_username");
 			Cookie.erase(obj.options.anchor+"_password");
 			if(obj.content_anchor.innerHTML != obj.options.login_content()){
-				alert("Username and password are not correct. Please re-enter.");
+				//alert("Username and password are not correct. Please re-enter.");
 			}
 			obj.display();
 		}else{
-			alert(c.responseJSON.error);
+			//alert(c.responseJSON.error);
 		}
 	}
 };

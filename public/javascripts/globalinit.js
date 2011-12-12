@@ -40,6 +40,7 @@ var $J = jQuery.noConflict();
 					trigger: 'manual',
 					offset: 5,
  			    	html: true,
+ 			    	reloadContent: false,
  			    	template: '<div class="arrow"></div><div class="inner"><div class="content"><p></p></div></div>',
 					content: function(){
 						return $("#" + $(this).attr("data-widget-container")).val();
@@ -59,7 +60,7 @@ var $J = jQuery.noConflict();
       
       $(".customSelect").chosen();
 	  
-	  quote_text();
+      quote_text();
 
       // - jQuery Validation for forms with class .ui-form ( ...An optional dont-validate written for the form element will make the selectors ignore those form alone )
       validateOptions = {

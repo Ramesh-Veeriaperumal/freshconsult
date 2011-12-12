@@ -71,9 +71,10 @@
         , placement
         , $tip
         , tp
-
+        
       if (this.hasContent() && this.enabled) {
         $tip = this.tip()
+                
         this.setContent()
 
         if (this.options.animate) {
@@ -123,6 +124,7 @@
       var $tip = this.tip()
       $tip.find('.twipsy-inner')[this.options.html ? 'html' : 'text'](this.getTitle())
       $tip[0].className = 'twipsy'
+      this.$element.attr("twipsy-content-set", true)
     }
 
   , hide: function() {
