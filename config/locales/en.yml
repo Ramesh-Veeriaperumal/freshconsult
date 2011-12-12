@@ -1457,7 +1457,7 @@ en:
     items: Loading more items
   application:
     new: Create New Application
-    desc: Integrate with other apps. to make your Freshdesk experience more awesome.
+    desc: Integrate with other Apps to make your Freshdesk experience more awesome.
     title: Addons & Integration
     disabled: Disabled
     enabled: Enabled
@@ -1494,4 +1494,4 @@ en:
   widgets:
     contact_widget:
       description: "Display a contact or option to add the contact into capsule."
-  capsule_crm_helptext: "<p><strong>API Key</strong><br />To get your unique API key, log on to your Capsule CRM and click on “Preferences”. This will appear on the top right hand corner of your Capsule CRM. Click on “API Authentication Token”, and you can find your unique API key.</p>"
+  capsule_crm_helptext: "<p><strong>API Key</strong><br />To get your unique API key, log on to your Capsule CRM and click on “User -> My Preferences”. This will appear on the top right hand corner of your Capsule CRM. Click on “API Authentication Token”, and you can find your unique API key.</p>"

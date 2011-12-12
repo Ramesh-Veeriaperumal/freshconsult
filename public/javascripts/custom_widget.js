@@ -123,7 +123,7 @@ Freshdesk.Widget.prototype={
 		}else{
 			alert(c.responseJSON.error);
 		}
-	},
+	}
 };
 
 
