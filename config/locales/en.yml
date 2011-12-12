@@ -106,6 +106,11 @@ en:
     popular: Popular
   payment_info: Payment information
   admin:
+    widget_config:
+      index:
+        thankyou_label: "Submit message"
+        thankyou_default: "Thank you for your feedback"
+        thankyou_info: "Message to be displayed after a user submits the ticket form"
     supervisor_rules:
       index:
         help_title: Supervisor
@@ -283,6 +288,10 @@ en:
       updated: Facebook setting has been updated 
     application:
       already: Application already installed.
+      uninstall:
+        success: "The Addon has been removed successfully!"
+      install:
+        success: "The Addon has been Added successfully!"
       configure:
         success: "The Addon has been updated successfully!"
     filter:
@@ -1452,7 +1461,7 @@ en:
     items: Loading more items
   application:
     new: Create New Application
-    desc: Integrate with other apps. to make your Freshdesk experience more awesome.
+    desc: Integrate with other Apps to make your Freshdesk experience more awesome.
     title: Addons & Integration
     disabled: Disabled
     enabled: Enabled
@@ -1473,20 +1482,20 @@ en:
         sign_in_using_google: Sign in using your Google account
         help: Help
   settings: settings        
-  capsule_crm: "Capsule CRM"        
+  capsule_crm: "Capsule CRM"
   integrations:
     capsule:
       label: "Capsule CRM Application"
       desc: "Capsule CRM contact widget will be displayed in the ticket view page and the contact view page."
       form:
-        bcc_drop_box_mail: "Drop box email address"
-        bcc_drop_box_mail_info: "By default this email will be added to bcc of all replies"
+        bcc_drop_box_mail: "Mail Drop Box address"
+        bcc_drop_box_mail_info: "To get your current dropbox email address,<br /> Goto your “<b>Settings -> Mail Drop Box</b>”.<br /> This will appear on the top right hand corner of your Capsule CRM App.<br /> By default this email will be added to bcc field of all replies from freshdesk."
         domain: "Domain"
         domain_info: "ex: example.capsulecrm.com"
         api_key: "Api Key"
-        api_key_info: "To get your unique API key, log on to your Capsule CRM and click on “Preferences”. This will appear on the top right hand corner of your Capsule CRM. Click on “API Authentication Token”, and you can find your unique API key."
+        api_key_info: "To get your unique API key,<br /> Goto your “<b>User -> My Preferences</b>”.<br /> This will appear on the top right hand corner of your Capsule CRM App.<br /> Click on <b>“API Authentication Token”</b>, and you can find your unique API key."
         widget_title: "Widget Title"
   widgets:
     contact_widget:
       description: "Display a contact or option to add the contact into capsule."
-  capsule_crm_helptext: "<p><strong>API Key</strong><br />To get your unique API key, log on to your Capsule CRM and click on “Preferences”. This will appear on the top right hand corner of your Capsule CRM. Click on “API Authentication Token”, and you can find your unique API key.</p>"
+  capsule_crm_helptext: "<h4>Link back from Capsule to Freshdesk</h4><p>You can create a link in Capsule CRM to view the contact's tickets in Freshdesk.</p> <p>To do this Goto your <br /><b>Settings -> Custom Fields -> For People & Organization</b></p><p> Then click on \"Add new...\" and select <b>\"Generated Link\"</b></p> <p>Here give your Link Definition as<span class=\"info-code\">http://%{full_domain}/helpdesk/tickets?email={email}</span></p>"

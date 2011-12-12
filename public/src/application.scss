@@ -27,7 +27,7 @@ body { color: #333; background:$background; min-width:$blueprint-liquid-containe
 
 .sidepanel, .rtCnt{
 	@include shadows(rgba(0,0,0, 0.05), 0px, 1px, 2px);
-}
+} 
 
 .pagearea{
 	@include min-height(450px);
@@ -107,15 +107,22 @@ ul.activityfeed li{
 	line-height:1.5em; 
 	margin:0px;
 	text-align:center;
-}
+} 
 
 .sidepanel{
 	p{
-		font-size:14px; 
+		font-size:1.1em; 
 		line-height:1.5em;
-		font-family:georgia;
 		margin:0px 0px 14px 0px;
+		color:#444;
 	}  
+	 h4{
+		font-size:1.1em;
+		font-weight:bold;
+		line-height:1.4em;
+		margin:0.36em 0;
+	}
+	
 	.element{
 		padding:4px 16px 16px 16px;
 		margin:0px -20px; 
@@ -3234,7 +3241,7 @@ div.addReminder{
 	}
 }
 
-.info-highlight, .info-highlight-deleted, .info-error{
+.info-highlight, .info-highlight-deleted, .info-error, .info-code{
 	font-size:13px;
 	margin:0px 0px 0px 0px;
 	padding:8px 18px;
@@ -3245,6 +3252,16 @@ div.addReminder{
 		padding:6px;
 	}
 }
+
+.info-code{
+	padding:5px 18px 6px;
+	font-size:0.90em;
+	font-family:"monaco", "georgia";
+	margin:3px -20px;
+	display:block;
+}
+
+
 
 .info-highlight-deleted{
 	margin:-13px -20px -10px -20px;
@@ -4439,7 +4456,6 @@ a.close{
 	padding-bottom:15px;
 }
 
-
 #capsule-title{
 	padding-right:33px;
 	position:relative;
@@ -4470,3 +4486,10 @@ a.close{
 	background: sprite($symbol, search);
 }
  
+.quoted_button{
+  margin:10px 0;
+  background:sprite($symbol, quote_button) no-repeat;
+  display:inline-block;
+  width:31px;
+  height:14px;  
+}

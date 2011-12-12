@@ -290,7 +290,7 @@ CapsuleWidget = {
             return;
         }
         //disable_submit($('cap-note'));
-        var more_info = "\n- via freshdesk for - " + window.location;
+        var more_info = "\n- via Freshdesk for - " + window.location;
         var note = theForm.note.value + more_info; // + '\nfor Freshdesk ticket #' + ticket_id;
 
         // clear the note out

@@ -289,7 +289,7 @@
             </div>
      	</div>	
       <% end %>
-      <div id="description-full" style="display:block" class="details min_height">
+      <div id="description-full" style="display:block" class="request_mail details min_height">
     		<%= @ticket.description_html %>
       </div>
       <% unless @ticket.attachments.empty? %>
@@ -352,6 +352,6 @@
 <%= render :partial => "/helpdesk/shared/main_panel" %>
 
 <% content_for :pagefixed do %> 
-  <%= pageless(@ticket_notes.total_pages, helpdesk_ticket_helpdesk_notes_path(@ticket)) %>  
+  <%= pageless(@ticket_notes.total_pages, helpdesk_ticket_helpdesk_notes_path(@ticket), t("loading.items"), "quote_text()") %>  
 <% end %>
 

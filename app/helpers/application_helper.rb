@@ -296,39 +296,40 @@ module ApplicationHelper
     element
   end
 
-  def construct_ticket_element(object_name, field, field_label, dom_type, required, field_value = "")
+  def construct_ticket_element(object_name, field, field_label, dom_type, required, field_value = "", field_name = "")
     element_class   = " #{ (required) ? 'required' : '' } #{ dom_type }"
     field_label    += " #{ (required) ? '*' : '' }"
+    field_name      = (field_name.blank?) ? field.field_name : field_name
     object_name     = "#{object_name.to_s}#{ ( !field.is_default_field? ) ? '[custom_field]' : '' }"
     label = label_tag object_name+"_"+field.field_name, field_label
     case dom_type
       when "requester" then
         element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email", :locals => { :object_name => object_name, :field => field, :url => autocomplete_helpdesk_authorizations_path, :object_name => object_name }))
       when "text", "number", "email" then
-        element = label + text_field(object_name, field.field_name, :class => element_class, :value => field_value)
+        element = label + text_field(object_name, field_name, :class => element_class, :value => field_value)
       when "paragraph" then
-        element = label + text_area(object_name, field.field_name, :class => element_class, :value => field_value)
+        element = label + text_area(object_name, field_name, :class => element_class, :value => field_value)
       when "dropdown" then
-        element = label + select(object_name, field.field_name, field.choices, {:selected => field_value},{:class => element_class})
+        element = label + select(object_name, field_name, field.choices, {:selected => field_value},{:class => element_class})
       when "dropdown_blank" then
-        element = label + select(object_name, field.field_name, field.choices, {:include_blank => "...", :selected => field_value}, {:class => element_class})
+        element = label + select(object_name, field_name, field.choices, {:include_blank => "...", :selected => field_value}, {:class => element_class})
       when "hidden" then
         element = hidden_field(:source, :value => field_value)
       when "checkbox" then
-        element = content_tag(:div, check_box(object_name, field.field_name, :class => element_class, :checked => field_value ) + field_label)
+        element = content_tag(:div, check_box(object_name, field_name, :class => element_class, :checked => field_value ) + field_label)
       when "html_paragraph" then
-        element = label + text_area(object_name, field.field_name, :class => "mceEditor", :value => field_value)
+        element = label + text_area(object_name, field_name, :class => element_class +" mceEditor", :value => field_value)
     end
     content_tag :li, element, :class => dom_type
   end
    
-  def pageless(total_pages, url, message=t("loading.items"))
+  def pageless(total_pages, url, message=t("loading.items"), callback = "function(){}")
     opts = {
       :totalPages => total_pages,
       :url        => url,
-      :loaderMsg  => message
-    }
-        
+      :loaderMsg  => message,
+      :complete  => callback
+    } 
     javascript_tag("jQuery('#Pages').pageless(#{opts.to_json});")
   end
    

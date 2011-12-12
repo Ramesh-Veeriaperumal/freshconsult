@@ -114,7 +114,7 @@ class Helpdesk::TicketsController < ApplicationController
       
     @signature = ""
     @agents = Agent.find(:first, :joins=>:user, :conditions =>{:user_id => current_user.id} )     
-    @signature = RedCloth.new("<br />#{@agents.signature}").to_html unless (@agents.nil? || @agents.signature.blank?)
+    @signature = RedCloth.new("#{@agents.signature}").to_html unless (@agents.nil? || @agents.signature.blank?)
      
     @ticket_notes = @ticket.conversation
     

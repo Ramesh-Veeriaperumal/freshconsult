@@ -131,7 +131,7 @@ class User < ActiveRecord::Base
   end
   
   def has_no_credentials?
-    self.crypted_password.blank? && active? && !deleted && self.authorizations.empty? && self.twitter_id.blank?
+    self.crypted_password.blank? && active? && !account.sso_enabled? && !deleted && self.authorizations.empty? && self.twitter_id.blank?
   end
 
   # TODO move this to the "HelpdeskUser" model
@@ -266,6 +266,12 @@ class User < ActiveRecord::Base
             'helpdesk_name' =>  (!portal.name.blank?) ? portal.name : account.portal_name , 'activation_url' => register_url(perishable_token, :host => (!portal.portal_url.blank?) ? portal.portal_url : account.host)), 
           :subject => "#{ (!portal.name.blank?) ? portal.name : account.portal_name} user activation" , :reply_email => portal.product.friendly_email)
     end
+  end
+  
+  def deliver_account_admin_activation
+      self.active = false
+      reset_perishable_token!
+      UserNotifier.deliver_account_admin_activation!(self)
   end
   
   def set_time_zone

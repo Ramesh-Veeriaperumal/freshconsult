@@ -1,9 +1,7 @@
 class Helpdesk::ProcessEmail < Struct.new(:params)
 
   EMAIL_REGEX = /(\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
-  
-  EMAIL_REGEX = /(\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
-  
+ 
   def perform
     from_email = parse_from_email
     to_email = parse_to_email
@@ -55,8 +53,10 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
     
     def orig_email_from_text #To process mails fwd'ed from agents
-      if (params[:text] && (params[:text].gsub("\r\n", "\n") =~ /^>*\s*From:\s*(.*)\s+<(.*)>$/ or 
-                            params[:text].gsub("\r\n", "\n") =~ /^>>>+\s(.*)\s+<(.*)>$/))
+      content = params[:text] || Helpdesk::HTMLSanitizer.clean(params[:html] )
+      if (content && (content.gsub("\r\n", "\n") =~ /^>*\s*From:\s*(.*)\s+<(.*)>$/ or 
+                            content.gsub("\r\n", "\n") =~ /^\s*From:\s(.*)\s+\[mailto:(.*)\]/ or  
+                            content.gsub("\r\n", "\n") =~ /^>>>+\s(.*)\s+<(.*)>$/))
         name = $1
         email = $2
         if email =~ EMAIL_REGEX
@@ -99,16 +99,17 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     def create_ticket(account, from_email, to_email)
       email_config = account.email_configs.find_by_to_email(to_email[:email])
       user = get_user(account, from_email,email_config)
+      return if user.blocked? #Mails are dropped if the user is blocked
       unless user.customer?
         e_email = orig_email_from_text
         user = get_user(account, e_email , email_config) unless e_email.nil?
       end
-
+     
       ticket = Helpdesk::Ticket.new(
         :account_id => account.id,
         :subject => params[:subject],
-        :description => params[:text],
-        :description_html => Helpdesk::HTMLSanitizer.clean(params[:html]),
+        :description => show_quoted_text(params[:text],to_email[:email] ),
+        :description_html => show_quoted_text(Helpdesk::HTMLSanitizer.clean(params[:html] ), to_email[:email]),
         #:email => from_email[:email],
         #:name => from_email[:name],
         :requester => user,
@@ -148,12 +149,13 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
 
     def add_email_to_ticket(ticket, from_email)
       user = get_user(ticket.account, from_email, ticket.email_config)
+      return if user.blocked? #Mails are dropped if the user is blocked
       if (ticket.requester.email.include?(user.email) || ticket.included_in_cc?(user.email) || !user.customer?) 
         note = ticket.notes.build(
           :private => false,
           :incoming => true,
-          :body => params[:text],
-          :body_html => Helpdesk::HTMLSanitizer.clean(params[:html]),
+          :body => show_quoted_text(params[:text],parse_to_email[:email]),
+          :body_html => show_quoted_text(Helpdesk::HTMLSanitizer.clean(params[:html] ), parse_to_email[:email]),
           :source => 0, #?!?! use SOURCE_KEYS_BY_TOKEN - by Shan
           :user => user, #by Shan temp
           :account_id => ticket.account_id
@@ -184,5 +186,37 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         item.attachments.create(:content => params["attachment#{i+1}"], :account_id => ticket.account_id)
       end
     end
+  
+  
+  def show_quoted_text(text, address)
+    
+    return text if text.blank?
+    
+    regex_arr = [
+      Regexp.new("From:\s*" + Regexp.escape(address), Regexp::IGNORECASE),
+      Regexp.new("<" + Regexp.escape(address) + ">", Regexp::IGNORECASE),
+      Regexp.new(Regexp.escape(address) + "\s+wrote:", Regexp::IGNORECASE),
+      Regexp.new("^.*On.*?wrote:", Regexp::IGNORECASE),
+      Regexp.new("-+original\s+message-+\s*", Regexp::IGNORECASE),
+      Regexp.new("from:\s*", Regexp::IGNORECASE)
+    ]
+    tl = text.length
+
+    #calculates the matching regex closest to top of page
+    index = regex_arr.inject(tl) do |min, regex|
+        (text.index(regex) or tl) < min ? (text.index(regex) or tl) : min
+    end
+    
+    original_msg = text[0, index]
+    old_msg = text[index,text.size]
+   
+    unless old_msg.blank?
+     original_msg = original_msg +
+     "<div class='freshdesk_quote'>" +
+     "<blockquote class='freshdesk_quote'>" + old_msg + "</blockquote>" +
+     "</div>"
+    end   
+    return original_msg
+end
   
 end

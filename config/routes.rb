@@ -35,6 +35,8 @@ ActionController::Routing::Routes.draw do |map|
   map.login '/login', :controller => 'user_sessions', :action => 'new'
   map.sso_login '/login/sso', :controller => 'user_sessions', :action => 'sso_login'
   map.login_normal '/login/normal', :controller => 'user_sessions', :action => 'new'
+  map.signup_complete '/signup_complete/:token', :controller => 'user_sessions', :action => 'signup_complete'
+ 
   
   map.openid_done '/google/complete', :controller => 'accounts', :action => 'openid_complete'
   

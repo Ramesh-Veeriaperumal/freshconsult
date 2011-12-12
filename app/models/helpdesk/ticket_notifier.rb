@@ -43,8 +43,8 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
     body          :ticket => params[:ticket], :body => params[:email_body],
                   :survey_handle => SurveyHandle.create_handle_for_notification(params[:ticket], 
                     params[:notification_type])
-    from          params[:ticket].reply_email
-    headers       "Reply-to" => "#{params[:ticket].reply_email}"
+    from          params[:ticket].friendly_reply_email
+    headers       "Reply-to" => "#{params[:ticket].friendly_reply_email}"
     sent_on       Time.now
     content_type  "text/html"
   end
@@ -87,9 +87,9 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
   def email_to_requester(ticket, content)
     subject       formatted_subject(ticket)
     recipients    ticket.requester.email
-    from          ticket.reply_email
+    from          ticket.friendly_reply_email
     body          content
-    headers       "Reply-to" => "#{ticket.reply_email}"
+    headers       "Reply-to" => "#{ticket.friendly_reply_email}"
     sent_on       Time.now
     content_type  "text/html"
   end
@@ -97,9 +97,9 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
   def internal_email(ticket, receips, content)
     subject       formatted_subject(ticket)
     recipients    receips
-    from          ticket.reply_email
+    from          ticket.friendly_reply_email
     body          content
-    headers       "Reply-to" => "#{ticket.reply_email}"
+    headers       "Reply-to" => "#{ticket.friendly_reply_email}"
     sent_on       Time.now
     content_type  "text/html"
   end

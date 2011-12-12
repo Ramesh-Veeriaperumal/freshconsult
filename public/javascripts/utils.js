@@ -3,6 +3,11 @@
  * Genric core utility class for the application
  */
 
+function autoSaveTinyMce(editor){
+   tinyMCE.triggerSave();
+   return true;
+}
+
 // Primarly for the form customizer page. Used for making the text unselectable
 makePageNonSelectable = function(source){
 	if (document.all) source.onselectstart = function () { return false; };	// Internet Explorer
@@ -126,6 +131,23 @@ function construct_reply_url(to_email, account_name){
    }
    return reply_email;
 }
+
+// Quoted Addition show hide
+   function quote_text(){
+   		jQuery.each(jQuery("div.request_mail"), function(index, item){
+	  		if (!jQuery(item).attr("data-quoted")) {
+				var show_hide = jQuery("<a href='#' />").addClass("quoted_button").text(""), 
+				child_quote = jQuery(item).children("div.freshdesk_quote").prepend(show_hide).children("blockquote.").hide();
+				
+				show_hide.bind("click", function(ev){
+					ev.preventDefault();
+					child_quote.toggle();
+				});
+				jQuery(item).removeClass("request_mail");
+				jQuery(item).attr("data-quoted", true);	
+			}			
+	  	});   		
+   };
 
 active_dialog = null;
 
