@@ -52,20 +52,23 @@
              });
 
       function constFieldDOM(dataItem, container){
+
          var fieldContainer = container || jQuery("<li />");
          fieldContainer.empty();
 
          var label = jQuery("<label />").append(dataItem.label);
          var field = jQuery("<div />");
 
-         var fieldAttr     = '';
-         
+         var fieldAttr     = '';       
          switch(dataItem.dom_type) {
             case 'requester':
                dataItem.type = "text";
             break;
             case 'dropdown_blank':
                dataItem.type = "dropdown";
+            break;
+            case 'html_paragraph':
+               dataItem.type = "paragraph";
             break;
             default:
                dataItem.type = dataItem.dom_type;
@@ -94,6 +97,7 @@
             break;
          
             case 'paragraph':
+            case 'html_paragraph':
                field.append('<textarea disabled="true"'+fieldAttr+'></textarea>');
                fieldContainer.append(label);
             break;
