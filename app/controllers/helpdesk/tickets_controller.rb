@@ -24,9 +24,13 @@ class Helpdesk::TicketsController < ApplicationController
   
   def add_requester_filter
     email = params[:email]
-    requester = current_account.all_users.find_by_email(email) unless email.blank?
-    unless(requester.blank?)
-      requester_id = requester.id
+    unless email.blank?
+      requester = current_account.all_users.find_by_email(email) 
+      if(requester.blank?)
+        requester_id = 0
+      else
+        requester_id = requester.id
+      end
       params[:data_hash] = [{ "condition" => "requester_id", "operator" => "is_in", "value" => requester_id}];
     end
   end
