@@ -1,37 +1,50 @@
+<%= javascript_include_tag  'highcharts.src.js' %>
+<% javascript_tag do %>
+ jQuery(document).ready(function() {
+	   <%=@status_pie_chart%>
+	   <%=@ticket_type_pie_chart%>
+ });
+<%end%>
 <% form_tag :action => :index, :controller => "reports/customer_reports" do %>
 	<%= select_tag "customer_id", options_for_select(current_account.customers.collect{ |c| [c.name, c.id] }.insert(0, '---')) %>     
 	<%=select_month(Date.today)%>
 	<%= submit_tag 'Submit' %>
 <% end %>
-<%if !@total_tickets.nil? and @total_tickets > 0 %>
 <br>
 <br>
-Status: <%=@status_hash.to_json%>
+<%unless @status_hash.nil?%>
+<b>Tickets by Status</b>
 <br>
-<br>
-Ticket type: <%=@ticket_type_hash.to_json%>
-<br>
-<br>
-Priority: <%=@priority_hash.to_json%>
-<br>
-<br>
-Average Resolved Tickets this month: <%=@avg_current_month%>
-<br>
-<br>
-Sla difference:<%=@sla_diff%> 
-<%= get_sla_image(@sla_diff) %>
-<br>
-<br>
-Total tickets: <%=@total_tickets%>
-<br>
-<br>
-All Tickets
-<br>
-<%@customer_tickets.each do |ticket|%>
-<%=ticket.id%> -- <%=ticket.subject%>
-<br>
-<%end%>
+<table>
+	<tr>
+		<td>Total Tickets</td>
+		<td><%=@current_month_tot_tickets%>  </td>
+	</tr>
+	<tr>
+		<td>Open</td>
+		<td> <%=@status_hash.fetch(TicketConstants::STATUS_KEYS_BY_TOKEN[:open],{}).fetch(:count,0)%> </td>
+	</tr>
+	<tr>
+		<td>Pending</td>
+		<td> <%=@status_hash.fetch(TicketConstants::STATUS_KEYS_BY_TOKEN[:pending],{}).fetch(:count,0)%> </td>
+	</tr>
+	<tr>
+		<td>Resolved</td>
+		<td> <%=@status_hash.fetch(TicketConstants::STATUS_KEYS_BY_TOKEN[:resolved],{}).fetch(:count,0)%> </td>
+	</tr>
 
-<%else%>
-No data to display!
+</table>
 <%end%>
+<br>
+<br>
+<table>
+	<tr>Average SLA <%=@avg_sla_current_month%></tr>
+	<tr>SLA Difference is  <%=@sla_diff%></tr>
+</table>
+
+<br>
+<br>
+<div id ="status_freshdesk_chart">
+</div>
+<div id ="ticket_type_freshdesk_chart">
+</div>
