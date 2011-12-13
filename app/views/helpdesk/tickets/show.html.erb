@@ -132,12 +132,12 @@
 			}
 		}
 		
-		function getCannedResponse(ticket_id,ca_resp_id){
+		function getCannedResponse(ticket_id, ca_resp_id){
   	  jQuery("#canned_response_container").addClass("loading")
   		jQuery.ajax({	type: 'POST',
   						url: '/helpdesk/tickets/get_ca_response_content/'+ticket_id+'?ca_resp_id='+ca_resp_id,
   						contentType: 'application/text',
-  						async: false,						
+  						async: false,
   						success: function(data){		
   									insertIntoConversation(data);
   							    jQuery("#canned_response_list")
@@ -352,6 +352,6 @@
 <%= render :partial => "/helpdesk/shared/main_panel" %>
 
 <% content_for :pagefixed do %> 
-  <%= pageless(@ticket_notes.total_pages, helpdesk_ticket_helpdesk_notes_path(@ticket), t("loading.items"), "quote_text()") %>  
+  <%= pageless(@ticket_notes.total_pages, helpdesk_ticket_helpdesk_notes_path(@ticket)) %>  
 <% end %>
 

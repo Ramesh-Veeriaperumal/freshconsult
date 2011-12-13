@@ -40,7 +40,7 @@ var $J = jQuery.noConflict();
 					trigger: 'manual',
 					offset: 5,
  			    	html: true,
- 			    	reloadContent: false,
+ 			    	reloadContent: true,
  			    	template: '<div class="arrow"></div><div class="inner"><div class="content"><p></p></div></div>',
 					content: function(){
 						return $("#" + $(this).attr("data-widget-container")).val();
@@ -49,18 +49,21 @@ var $J = jQuery.noConflict();
 			.live("click", function(e){
 				e.preventDefault();
 				e.stopPropagation();
-				$('[rel=widget-popover]', '[rel=popover]').each(function(){
+				$('[rel=widget-popover]').each(function(){
 				     $(this).popover('hide');
 				});
  		      widgetPopup = $(this).popover('show');
 			});
-		
-      // - Labels with overlabel will act a Placeholder for form elements 
-      $("label.overlabel").overlabel();
+         
+         
+      // - Labels with overlabel will act a Placeholder for form elements
+	   $("label.overlabel").livequery(function(){ $(this).overlabel(); });
+
+      // - Custom select boxs will use a plugin called chosen to render with custom CSS and interactions
+      $("select.customSelect").livequery(function(){ $(this).chosen(); });
       
-      $(".customSelect").chosen();
-	  
-      quote_text();
+      // - Quote Text in the document as they are being loaded
+	   $("div.request_mail").livequery(function(){ quote_text(this); });
 
       // - jQuery Validation for forms with class .ui-form ( ...An optional dont-validate written for the form element will make the selectors ignore those form alone )
       validateOptions = {

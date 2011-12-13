@@ -29,10 +29,9 @@
 	<h3 class="title"><%=t('ticket_due_by_time')%></h3>
 	<ul class="cnt" id="due-by-time-parent">
 	   <li>
-			<div id="edit-due-by-time" >
-				 <span class="edit-item"></span>
-				 <span><%= formated_date(ticket.due_by) %></span>
-			</div> 
+			<a id="edit-due-by-time" data-placement="topRight" href="#" data-widget-container="due-date-dialog-container">
+				<%= formated_date(ticket.due_by) %>
+			</a> 
 	   </li> 
 	</ul>
 	<h3 class="title"><%=t('ticket.properties')%></h3>	

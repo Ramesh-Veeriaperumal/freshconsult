@@ -836,6 +836,9 @@ body h5{
 			li{
 				border-bottom:1px solid #f3f3f3;
 				padding:6px 0px;
+				a{
+					text-decoration:none;
+				}
 				label{
 					display:block;
 					font-size:11px;
@@ -845,15 +848,7 @@ body h5{
 				select{
 					font-size:11px;
 					max-width:100%;
-				}
-				span.edit-item{
-				 	background: sprite($icons, edit-item) no-repeat;	
-					float:right;
-					width:16px;
-					height:16px;
-					margin-top:-2px;
-					cursor:pointer;
-				}
+				} 
 			}
 			li.button-container{
 				border-bottom:0px;
@@ -2953,7 +2948,7 @@ div.addReminder{
 			margin:2px 0px 0px 0px;
 			padding:0px 0px 0px 10px;
 		}
-		input:focus{ @include shadows(0, 0, 0, 0);}
+		input:focus{ @include shadows(0, 0, 0, 0); @include border-radius(0); }
 		label.overlabel{
 			margin:2px 5px 4px 10px;
 			padding:0px;
