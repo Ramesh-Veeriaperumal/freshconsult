@@ -9,16 +9,61 @@ var $J = jQuery.noConflict();
 
    // Tweet custom class
    $.validator.addMethod("tweet", $.validator.methods.maxlength, "Your Tweet was over 140 characters. You'll have to be more clever." );   
+   $.validator.addMethod("facebook", $.validator.methods.maxlength, "Your Facebook reply was over 8000 characters. You'll have to be more clever." );   
    $.validator.addClassRules("tweet", { tweet: 140 });
+   $.validator.addClassRules("facebook", { tweet: 8000 });
+   $.validator.addMethod("multiemail", function(value, element) {
+       if (this.optional(element)) // return true on optional element
+         return true;
+       var emails = value.split( new RegExp( "\\s*,\\s*", "gi" ) );
+       valid = true;
+       $.each(emails, function(i, email){            valid=/^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i.test(email);                     
+           });
+       return valid;
+   }, 'One or more email addresses are invalid.');
+   $.validator.addClassRules("multiemail", { multiemail: true });
    
    // App initialisation  
    $(document).ready(function() {
-      // SyntaxHighlighter.all();
+	   var widgetPopup = null;   
 
-      // - Labels with overlabel will act a Placeholder for form elements 
-      $("label.overlabel").overlabel();
+		$("body").click(function(ev){
+			if((widgetPopup != null) && !$(ev.target).parents().hasClass("popover")){
+				widgetPopup.popover('hide');
+				widgetPopup = null;
+			}
+		});
+		  
+		$("a[rel=widget-popover]")
+			.popover({ 
+					delayOut: 300,
+					trigger: 'manual',
+					offset: 5,
+ 			    	html: true,
+ 			    	reloadContent: true,
+ 			    	template: '<div class="arrow"></div><div class="inner"><div class="content"><p></p></div></div>',
+					content: function(){
+						return $("#" + $(this).attr("data-widget-container")).val();
+					}
+				})
+			.live("click", function(e){
+				e.preventDefault();
+				e.stopPropagation();
+				$('[rel=widget-popover]').each(function(){
+				     $(this).popover('hide');
+				});
+ 		      widgetPopup = $(this).popover('show');
+			});
+         
+         
+      // - Labels with overlabel will act a Placeholder for form elements
+	   $("label.overlabel").livequery(function(){ $(this).overlabel(); });
+
+      // - Custom select boxs will use a plugin called chosen to render with custom CSS and interactions
+      $("select.customSelect").livequery(function(){ $(this).chosen(); });
       
-      $(".customSelect").chosen();
+      // - Quote Text in the document as they are being loaded
+	   $("div.request_mail").livequery(function(){ quote_text(this); });
 
       // - jQuery Validation for forms with class .ui-form ( ...An optional dont-validate written for the form element will make the selectors ignore those form alone )
       validateOptions = {
@@ -26,13 +71,13 @@ var $J = jQuery.noConflict();
          focusCleanup: true,
          focusInvalid: false
       };
-
+      
       $(".admin_list li")
-         .hover(
-            function(){ $(this).children(".item_actions").css("visibility", "visible"); }, 
-            function(){ $(this).children(".item_actions").css("visibility", "hidden"); }
-         );
-
+          .hover(
+             function(){ $(this).children(".item_actions").css("visibility", "visible"); }, 
+             function(){ $(this).children(".item_actions").css("visibility", "hidden"); }
+          );
+          
       $("ul.ui-form").not(".dont-validate").parents('form:first').validate(validateOptions);
       $("div.ui-form").not(".dont-validate").find('form:first').validate(validateOptions); 
       $("form.uniForm").validate(validateOptions);

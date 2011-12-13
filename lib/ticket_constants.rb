@@ -10,7 +10,7 @@ module TicketConstants
     [ :phone,      I18n.t('phone'),            3 ],
     [ :forum,      I18n.t('forum_key'),        4 ],
     [ :twitter,    I18n.t('twitter_source'),   5 ],
-    [ :facebook,   I18n.t('facebook'),         6 ],
+    [ :facebook,   I18n.t('facebook_source'),         6 ],
     [ :chat,       I18n.t('chat'),             7 ]    
   ]
 
@@ -86,10 +86,10 @@ module TicketConstants
   DUE_BY_TYPES_NAMES_BY_SYMBOL = Hash[*DUE_BY_TYPES.map { |i| [i[0], i[1]] }.flatten]
   
   CREATED_BY_VALUES = [
-    [ :thirt_days,  "Last 30 Days",               30 ], 
-    [ :seven_days,  "Last 7 Days",             7 ], 
-    [ :twenty_four,   "Last 24 hours",              1 ],
-    [ :custom_filter,   "Custom Filter",              4 ]
+    [ :thirt_days,    I18n.t("export_data.thirt_days"),   30 ], 
+    [ :seven_days,    I18n.t("export_data.seven_days"),    7 ], 
+    [ :twenty_four,   I18n.t("export_data.twenty_four"),   1 ],
+    [ :custom_filter, I18n.t("export_data.custom_filter"), 4 ]
   ]
 
   CREATED_BY_OPTIONS = CREATED_BY_VALUES.map { |i| [i[1], i[2]] }

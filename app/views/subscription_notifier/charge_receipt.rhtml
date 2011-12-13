@@ -1,29 +1,99 @@
-Thank you for using <%= AppConfig['app_name'] %>!
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
 
-Your credit card <%= @subscription.card_number %> has been charged 
-<%= number_to_currency(@amount) %> for your <%= @subscription.subscription_plan.name %> plan. This charge covers usage
-from <%= Time.now.to_s(:short_day).strip %> until <%= @subscription.next_renewal_at.to_s(:short_day).strip %>.
+<head>
+	<meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
+	
+	<title>Freshdesk Invoice</title>
+	
+</head>
 
-The attached invoice is for your records.
+<body style="font: 12px/1.4 Verdana, serif; background-color:#f4f4f4; padding: 20px; margin: 0; padding: 0;">
 
+	<div style="width: 800px; margin: 0 auto; background-color:#ffffff; margin:0 auto; padding:0 20px 80px 20px; border:1px solid #dfdfdf;">
 
-INVOICE
-----------------------------------------------------------
+		<div style="height: 15px; width: 100%; margin: 20px 0 0 0; background: #036265; text-align: center; color: white; font-weight:bold; font-size:12px; text-decoration: uppercase; letter-spacing: 10px; padding: 8px 0px;">INVOICE</div>
 
-<%= AppConfig['app_name'] %>
+  		<div style="float:left; border:1px solid #FFF;">
+        <img src="https://s3.amazonaws.com/assets.freshdesk.com/images/logo.gif" width="246" height="60" />
+        </div>
+		
+        <div style=" float:left; margin-left:50px; margin-top:70px;">
+        <img src="https://s3.amazonaws.com/assets.freshdesk.com/images/paid.gif" width="172" height="80" /></div>
+		<div id="identity">		
+      <div style="width: 250px; height: 150px; float: right;">
+        <table style="border-collapse: collapse; margin-top: 1px; width: 300px; float: right;">
+          <tr>
+            <td style="border: 1px solid #dfdfdf; padding: 5px; text-align: left; vertical-align:top; background: #f4f4f4; width:40%;">From</td>
+            <td style="border: 1px solid #dfdfdf; padding: 5px; text-align: left; vertical-align:top;">
+              <div><strong>Freshdesk Inc.</strong></div>
+              <div>340 S Lemon Ave #7585</div>
+              <div>Walnut CA 91789</div>
+              <div>USA</div>
+            </td>
+          </tr>
+        </table>              
+      </div>
 
-Bill to:
-<%= @subscription.account.account_admin.name %>
+		</div>
+		
+		<div style="clear:both"></div>
+		
+		<div style="overflow: hidden;">
+      <table style="border-collapse: collapse; float: left; margin-top: 1px; width: 300px; float: left;">
+        <tr>
+          <td style="border: 1px solid #dfdfdf; padding: 5px; text-align: left; vertical-align:top; background: #f4f4f4; width:40%;">Name</td>
+          <td style="border: 1px solid #dfdfdf; padding: 5px; text-align: left; vertical-align:top;">
+            <div><strong><strong><%=@subscription.account.account_admin.name%></strong></strong></div>
+            </td>
+        </tr>
+		<tr>
+          <td style="border: 1px solid #dfdfdf; padding: 5px; text-align: left; vertical-align:top; background: #f4f4f4; width:40%;">Company Name</td>
+          <td style="border: 1px solid #dfdfdf; padding: 5px; text-align: left; vertical-align:top;">
+            <div><strong><strong><%=@subscription.account.name%></strong></strong></div>
+            </td>
+        </tr>
+      </table>
+      <table style="border-collapse: collapse; margin-top: 1px; width: 300px; float: right;">
+          <tr>
+              <td style="border: 1px solid #dfdfdf; padding: 5px; text-align: left; vertical-align:top; background: #f4f4f4; width:40%;">Invoice #</td>
+              <td style="border: 1px solid #dfdfdf; padding: 5px; text-align: left; vertical-align:top;">FD000<%=@subscription_payment.id%></td>
+          </tr>
+          <tr>
+      
+              <td style="border: 1px solid #dfdfdf; padding: 5px; text-align: left; vertical-align:top; background: #f4f4f4; width:40%;">Issue Date</td>
+              <td style="border: 1px solid #dfdfdf; padding: 5px; text-align: left; vertical-align:top;"><div id="date"><%= Time.now.to_s(:short_day).strip %></div></td>
+          </tr>
+          <tr>
+              <td style="border: 1px solid #dfdfdf; padding: 5px; text-align: left; vertical-align:top; background: #f4f4f4; width:40%;">Due Date</td>
+              <td style="border: 1px solid #dfdfdf; padding: 5px; text-align: left; vertical-align:top;"><div style="background-position: left -165px;"><%= @subscription.next_renewal_at.to_s(:short_day).strip %> (Upon receipt)</div></td>
+          </tr>
+      </table>
+    </div>
 
-Description                                          Price
-----------------------------------------------------------
-<%= (@subscription.subscription_plan.name + ' Plan').ljust(36) %> <%= number_to_currency(@amount).rjust(21) %>
-             From <%= Time.now.to_s(:short_day).strip %> to <%= @subscription.next_renewal_at.to_s(:short_day).strip %>
+    <table style="border-collapse: collapse; clear: both; width: 100%; margin: 30px 0 0 0; border: 1px solid #dfdfdf;">		
+		  <tr>
+		      <th style="border: 1px solid #dfdfdf; padding: 5px; background: #f4f4f4; text-align:left;">Type</th>
+		      <th style="border: 1px solid #dfdfdf; padding: 5px; background: #f4f4f4; text-align:left;">Description</th>
+		      <th style="border: 1px solid #dfdfdf; padding: 5px; background: #f4f4f4; text-align:left;">No. of Agents</th>
+		      <th style="border: 1px solid #dfdfdf; padding: 5px; background: #f4f4f4; text-align:left;">Unit Price</th>
+		      <th style="border: 1px solid #dfdfdf; padding: 5px; background: #f4f4f4; text-align:left;">Amount</th>
+		  </tr>
+		  
+		  <tr style="border: 0; vertical-align: top; border-bottom: 1px solid #dfdfdf;">
+		      <td style="border: 1px solid #dfdfdf; padding: 5px; border: 0; vertical-align: top; border-bottom: 1px solid #dfdfdf; width: 175px;">Freshdesk <%=SubscriptionPlan::BILLING_CYCLE_NAMES_BY_KEY[@subscription.renewal_period]%> Subscription Plan - <%=@subscription.subscription_plan.name%></td>
+		      <td style="border: 1px solid #dfdfdf; padding: 5px; border: 0; vertical-align: top; border-bottom: 1px solid #dfdfdf; width: 300px;"> </td>
+		      <td style="border: 1px solid #dfdfdf; padding: 5px; border: 0; vertical-align: top; border-bottom: 1px solid #dfdfdf;"><div class="qty"><%=@subscription.agent_limit%></div></td>
+		      <td style="border: 1px solid #dfdfdf; padding: 5px; border: 0; vertical-align: top; border-bottom: 1px solid #dfdfdf;"><div class="cost">$<%=@subscription.amount/@subscription.agent_limit%></div></td>
+		      <td style="border: 1px solid #dfdfdf; padding: 5px; border: 0; vertical-align: top; border-bottom: 1px solid #dfdfdf;"><span class="price">$<%=@subscription.amount%></span></td>
+		  </tr>
+		  <tr>
+		      <td style="border: 1px solid #dfdfdf; padding: 5px; border: 0;" colspan="2"> </td>
+		      <td style="border: 1px solid #dfdfdf; padding: 5px; border-right: 0; text-align: right;" colspan="2">Subtotal</td>
+		      <td style="border: 1px solid #dfdfdf; padding: 5px; border-left: 0; padding: 10px;"><div id="subtotal">$<%=@subscription.amount%></div></td>
+		  </tr>
+		</table> 
+	</div>
+</body>
 
-                   Credit card billed: <%= @subscription.card_number %>
-
-
-If you have any questions about this invoice, please contact 
-<%= AppConfig['from_email'] %>.
-
-Thank you for your business!
+</html>

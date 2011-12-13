@@ -72,6 +72,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       defs["helpdesk_subscriptions.user_id".to_sym] = ({:operator => :is_in,:is_in => :dropdown, :options => [], :name => "helpdesk_subscriptions.user_id", :container => :dropdown})
       defs[:spam] = ({:operator => :is,:is => :boolean, :options => [], :name => :spam, :container => :boolean})
       defs[:deleted] = ({:operator => :is,:is => :boolean, :options => [], :name => :deleted, :container => :boolean})
+      defs[:requester_id] = ({:operator => :is_in,:is_in => :dropdown, :options => [], :name => :requester_id, :container => :dropdown})  # Added for email based custom view, which will be used in integrations.
       
       defs
     end
@@ -156,14 +157,24 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
         0.upto(size - 1) do |index|
           condition = condition_at(index)
           if condition.key.to_s.include?("responder_id") or condition.key.to_s.include?("helpdesk_subscriptions.user_id") 
-            condition.container.values[0] = condition.container.value.gsub("0",User.current.id.to_s) 
+            arr = condition.container.value.split(",")
+            if arr.include?("0")
+              arr.delete("0")
+              arr << User.current.id.to_s
+            end
+            condition.container.values[0] = arr.join(",")  
           end
           
           if condition.key.to_s.include?("group_id")
             if condition.container.value.include?("0")
               group_ids = User.current.agent_groups.find(:all, :select => 'group_id').map(&:group_id)
-              group_ids = ["-1"] if group_ids.empty?
-              condition.container.values[0] = condition.container.value.gsub("0",group_ids.join(",")) 
+              group_ids = ["-2"] if group_ids.empty?
+              garr = condition.container.value.split(",")
+              if garr.include?("0")
+                garr.delete("0")
+                garr << group_ids
+              end
+              condition.container.values[0] = garr.join(",")
             end
           end
           

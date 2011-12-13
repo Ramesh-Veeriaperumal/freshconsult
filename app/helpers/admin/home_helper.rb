@@ -31,8 +31,9 @@ module Admin::HomeHelper
           ['/admin/supervisor_rules',     'supervisor'              ],
           ['/admin/automations',          'scenario',       feature?(:scenario_automations) ],
           ['/admin/canned_responses',     'canned-response'         ],
-          ['/social/twitters',            'twitter-setting'         ]
-#          ['/admin/surveys',              'survey', current_account.features?(:surveys, :survey_links) ]
+          ['/social/twitters',            'twitter-setting'         ],
+#          ['/admin/surveys',              'survey',           current_account.features?(:surveys, :survey_links) ],
+          ['/social/facebook',            'facebook-setting', current_account.features?(:facebook) ]
       ]],
         
       [ t(".everything_else"), [
@@ -43,7 +44,8 @@ module Admin::HomeHelper
           ['/admin/zen_import',           'import'                  ],
           ['/admin/widget_config',        'feedback'                ],
           ['/agents',                     'agent'                   ],
-          ['/groups',                     'group'                   ]
+          ['/groups',                     'group'                   ],
+          ['/integrations/applications',  'integrations'            ],
       ]]
     ]
 

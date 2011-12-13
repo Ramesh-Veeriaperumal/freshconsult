@@ -4,8 +4,8 @@
 <% javascript_tag do %>
 	jQuery(document).ready(function(){ 
 		jQuery("#ResetColors").click(function(){
-			jQuery("#HeaderColor").val("#2f3733").trigger("keyup");
-			jQuery("#TabColor").val("#7cb537").trigger("keyup");
+			jQuery("#HeaderColor").val("#252525").trigger("keyup");
+			jQuery("#TabColor").val("#006063").trigger("keyup");
 			jQuery("#BackgroundColor").val("#efefef").trigger("keyup");
 		});
 	}); 
@@ -78,6 +78,13 @@
 				<div class="fields">
 					<%= f.time_zone_select :time_zone, ActiveSupport::TimeZone.all %>
 		 		</div>
+			</li>
+			
+			<li class="inline-field">
+				<%= f.label :language, t('account.language'), :class => "caption"  %>
+				<div class="fields">
+					<%= f.select :language, I18n.available_locales_with_name , {:selected =>  @account.language.to_sym() }%>
+				</div>
 			</li>
 			<li class="inline-field">
 				<%= f.label :ticket_display_id, "#{t('next')} Ticket ID #", :class => "caption" %>

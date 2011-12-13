@@ -50,6 +50,12 @@ class Helpdesk::NotesController < ApplicationController
         if tweet?
           twt = send_tweet
           @item.create_tweet({:tweet_id => twt.id, :account_id => current_account.id})
+        elsif facebook?
+          fb_comment = add_facebook_comment
+          unless fb_comment.blank?
+            fb_comment.symbolize_keys!
+            @item.create_fb_post({:post_id => fb_comment[:id], :facebook_page_id =>@parent.fb_post.facebook_page_id ,:account_id => current_account.id})
+          end
         end
         @parent.responder ||= current_user 
         unless params[:ticket_status].blank?
@@ -58,7 +64,7 @@ class Helpdesk::NotesController < ApplicationController
         end
         unless params[:notify_emails].blank?
           notify_array = validate_emails(params[:notify_emails])
-          Helpdesk::TicketNotifier.send_later(:deliver_notify_comment, @parent, @item ,@parent.reply_email,{:notify_emails =>notify_array}) unless notify_array.blank? 
+          Helpdesk::TicketNotifier.send_later(:deliver_notify_comment, @parent, @item ,@parent.friendly_reply_email,{:notify_emails =>notify_array}) unless notify_array.blank? 
         end
         
       end
@@ -81,10 +87,10 @@ class Helpdesk::NotesController < ApplicationController
     end
     
     def add_cc_email
-     if !params[:include_cc].blank?# and !params[:cc_emails].blank?
-      #cc_array = params[:cc_emails].split(',').collect
+     if !params[:include_cc].blank?
        cc_array = validate_emails params[:cc_emails]
-       @parent.update_attribute(:cc_email, cc_array)    
+       cc_array = cc_array.compact unless cc_array.nil?
+       @parent.update_attribute(:cc_email, cc_array)  
      end
    end
    
@@ -129,7 +135,28 @@ class Helpdesk::NotesController < ApplicationController
          flash.now[:notice] = t('twitter.not_authorized')
         end
       end
-    end
+  end
+  
+    def facebook?
+      (!@parent.fb_post.nil?) and (!params[:fb_post].blank?)  and (params[:fb_post].eql?("true")) 
+  end
+  
+  def add_facebook_comment
+    
+      fb_page =  @parent.fb_post.facebook_page
+    
+      unless fb_page.nil?
+       begin 
+        @fb_client = FBClient.new fb_page,{:current_account => current_account}
+        facebook_page = @fb_client.get_page
+        post_id =  @parent.fb_post.post_id
+        comment = facebook_page.put_comment(post_id, @item.body) 
+       rescue
+        flash[:notice] = t('facebook.not_authorized')
+        return nil
+       end
+      end
+  end
   
 
 end

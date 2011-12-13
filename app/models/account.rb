@@ -105,6 +105,10 @@ class Account < ActiveRecord::Base
   
   has_many :canned_responses , :class_name =>'Admin::CannedResponse' , :dependent => :destroy  
   has_many :user_accesses , :class_name =>'Admin::UserAccess' , :dependent => :destroy
+
+  has_many :facebook_pages, :class_name =>'Social::FacebookPage' ,:dependent => :destroy
+  
+  has_many :facebook_posts, :class_name =>'Social::FbPost' ,:dependent => :destroy
   
   has_many :ticket_filters , :class_name =>'Helpdesk::Filters::CustomTicketFilter' , :dependent => :destroy 
   
@@ -137,7 +141,7 @@ class Account < ActiveRecord::Base
   validate_on_create :valid_subscription?
   validates_uniqueness_of :google_domain ,:allow_blank => true, :allow_nil => true
   
-  attr_accessible :name, :domain, :user, :plan, :plan_start, :creditcard, :address,:preferences,:logo_attributes,:fav_icon_attributes,:ticket_display_id,:google_domain
+  attr_accessible :name, :domain, :user, :plan, :plan_start, :creditcard, :address,:preferences,:logo_attributes,:fav_icon_attributes,:ticket_display_id,:google_domain ,:language
   attr_accessor :user, :plan, :plan_start, :creditcard, :address, :affiliate
   
   validates_numericality_of :ticket_display_id,
@@ -153,6 +157,7 @@ class Account < ActiveRecord::Base
   after_create :populate_seed_data
   after_create :populate_features
   after_create :send_welcome_email
+  after_update :update_users_language
   
   before_destroy :update_google_domain
     
@@ -175,11 +180,11 @@ class Account < ActiveRecord::Base
   PLANS_AND_FEATURES = {
     :pro => {
       :features => [ :scenario_automations, :customer_slas, :business_hours, :forums, 
-        :surveys ]
+        :surveys ,:facebook ]
     },
     
     :premium => {
-      :features => [ :multi_product, :multi_timezone ],
+      :features => [ :multi_product, :multi_timezone , :multi_language],
       :inherits => [ :pro ] #To make the hierarchy easier
     }
   }
@@ -217,6 +222,10 @@ class Account < ActiveRecord::Base
     end
   end
   
+  def update_users_language
+    all_users.update_all(:language => language) unless features.multi_language?
+  end
+  
   def needs_payment_info?
     if new_record?
       AppConfig['require_payment_info_for_trials'] && @plan && @plan.amount.to_f + @plan.setup_amount.to_f > 0
@@ -248,11 +257,13 @@ class Account < ActiveRecord::Base
     self.full_domain = "#{domain}.#{AppConfig['base_domain'][RAILS_ENV]}"
   end
   
-  def default_email
+  def default_friendly_email
     primary_email_config.friendly_email
   end
   
-  
+  def default_email
+    primary_email_config.reply_email
+  end
   
   def to_s
     name.blank? ? full_domain : "#{name} (#{full_domain})"
@@ -313,6 +324,10 @@ class Account < ActiveRecord::Base
   
   def ticket_type_values
     ticket_fields.type_field.first.picklist_values
+  end
+  
+  def has_multiple_products?
+    !products.empty?
   end
   
   protected
@@ -403,7 +418,7 @@ class Account < ActiveRecord::Base
     def set_default_values
       self.time_zone = Time.zone.name if time_zone.nil? #by Shan temp.. to_s is kinda hack.
       self.helpdesk_name = name if helpdesk_name.nil?
-      self.preferences = HashWithIndifferentAccess.new({:bg_color => "#efefef",:header_color => "#2f3733", :tab_color => "#7cb537"})
+      self.preferences = HashWithIndifferentAccess.new({:bg_color => "#efefef",:header_color => "#252525", :tab_color => "#006063"})
       self.shared_secret = generate_secret_token
       self.sso_options = set_sso_options_hash
     end
@@ -426,7 +441,7 @@ class Account < ActiveRecord::Base
     end
     
     def create_admin
-      self.user.active = true
+      self.user.active = true  #unless google_domain.blank?
       self.user.account = self
       self.user.user_role = User::USER_ROLES_KEYS_BY_TOKEN[:account_admin]  
       self.user.build_agent()
@@ -438,8 +453,8 @@ class Account < ActiveRecord::Base
       PopulateAccountSeed.populate_for(self)
     end
 
-    def send_welcome_email
-      SubscriptionNotifier.send_later(:deliver_welcome, self)
+   def send_welcome_email
+      SubscriptionNotifier.send_later(:deliver_welcome, self) #unless google_domain.blank?
     end
     
     def update_google_domain

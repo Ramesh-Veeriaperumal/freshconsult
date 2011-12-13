@@ -72,7 +72,7 @@ class Topic < ActiveRecord::Base
     for monitorship in self.monitorships.active_monitors
       user_emails = monitorships.collect {|a| a.user.email}
     end
-    return user_emails
+    return user_emails.compact
   end
    
   def stamp_name
@@ -106,6 +106,13 @@ class Topic < ActiveRecord::Base
     else
       self.destroy
     end
+  end
+  
+  def to_xml(options = {})
+     options[:indent] ||= 2
+      xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
+      xml.instruct! unless options[:skip_instruct]
+      super(:builder => xml, :skip_instruct => true,:except => [:account_id,:import_id]) 
   end
 
   protected

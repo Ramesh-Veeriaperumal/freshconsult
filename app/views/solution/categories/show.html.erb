@@ -1,22 +1,29 @@
 <% content_for :layoutType do -%>single<%- end %>
-<div class="folder_section">
-	<%= render :partial => "/solution/shared/category_folder_list", :locals => { :category => @item } %>
-</div>
-<div class="artical_section"> 
-	<div class="crumbs">
-		<%= link_to t('solution.title'), solution_categories_path %> &rarr; 
-		<%= content_tag (:span, @item.name ) %>
+<div class="folder-2col">
+	<div class="folder_section" id="folder-section">
+		<%= render :partial => "/solution/shared/category_folder_list", :locals => { :category => @item } %>
 	</div>
-	
-	<%= render :partial => "/search/pagesearch", :locals => { :placeholder => t('solutions.search.placeholder', :name => @item.name), :url => "/search/solutions?category_id=#{@item.id}&search_key=" } %>
-	
-	<% unless (@item.folders.visible(current_user).size == 0) %>	
-	  <% if logged_in? && current_user.has_manage_solutions? %>
-	  		<%= render :partial => "/solution/shared/solution_list", :locals => { :category => @item, :folder => @item.folders.visible(current_user).first } %>
-	  <%else%>
-	  		<%= render :partial => "/solution/shared/portal_sol_list", :locals => { :category => @item, :folder => @item.folders.visible(current_user).first } %>
-	  <%end%>
-	<% else %>
-		<span class="info_data"><%= t("solution_category.info2") %></span> <% if permission?(:manage_knowledgebase) %> - <%= link_to 'add a new folder'[:create_new_folder], new_solution_category_folder_path(@item) %> <%end%>
-	<% end %>	
-</div> 
+	<div class="artical_section" id="article-section"> 
+		<div class="crumbs">
+			<%= link_to t('solution.title'), solution_categories_path %> &rarr; 
+			<%= content_tag (:span, @item.name ) %>
+		</div>
+		<div class="search-grey-box">
+			<%= render :partial => "/search/pagesearch", :locals => { :placeholder => t('solutions.search.placeholder', :name => @item.name), :url => "/search/solutions?category_id=#{@item.id}&search_key=" } %>
+		</div>
+		<% unless (@item.folders.visible(current_user).size == 0) %>	
+		  <% if logged_in? && current_user.has_manage_solutions? %>
+		  		<%= render :partial => "/solution/shared/solution_list", :locals => { :category => @item, :folder => @item.folders.visible(current_user).first } %>
+		  <%else%>
+		  		<%= render :partial => "/solution/shared/portal_sol_list", :locals => { :category => @item, :folder => @item.folders.visible(current_user).first } %>
+		  <%end%>
+		<% else %>
+			<span class="info_data"><%= t("solution_category.info2") %></span> <% if permission?(:manage_knowledgebase) %> - <%= link_to 'add a new folder'[:create_new_folder], new_solution_category_folder_path(@item) %> <%end%>
+		<% end %>	
+	</div> 
+</div>
+
+<% javascript_tag do -%>
+  if(jQuery("#folder-section").height() > jQuery("#article-section").height())
+    jQuery("#article-section").css("minHeight", jQuery("#folder-section").height());
+<%- end %>

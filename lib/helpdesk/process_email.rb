@@ -1,7 +1,7 @@
 class Helpdesk::ProcessEmail < Struct.new(:params)
-  
+
   EMAIL_REGEX = /(\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
-  
+ 
   def perform
     from_email = parse_from_email
     to_email = parse_to_email
@@ -12,7 +12,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       ticket = Helpdesk::Ticket.find_by_account_id_and_display_id(account.id, display_id) if display_id
       if ticket
         return if(from_email[:email] == ticket.reply_email) #Premature handling for email looping..
-        add_email_to_ticket(ticket, from_email)
+        add_email_to_ticket(ticket, from_email )
       else
         create_ticket(account, from_email, to_email)
       end
@@ -53,8 +53,10 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
     
     def orig_email_from_text #To process mails fwd'ed from agents
-      if (params[:text] && (params[:text].gsub("\r\n", "\n") =~ /^>*\s*From:\s*(.*)\s+<(.*)>$/ or 
-                            params[:text].gsub("\r\n", "\n") =~ /^>>>+\s(.*)\s+<(.*)>$/))
+      content = params[:text] || Helpdesk::HTMLSanitizer.clean(params[:html] )
+      if (content && (content.gsub("\r\n", "\n") =~ /^>*\s*From:\s*(.*)\s+<(.*)>$/ or 
+                            content.gsub("\r\n", "\n") =~ /^\s*From:\s(.*)\s+\[mailto:(.*)\]/ or  
+                            content.gsub("\r\n", "\n") =~ /^>>>+\s(.*)\s+<(.*)>$/))
         name = $1
         email = $2
         if email =~ EMAIL_REGEX
@@ -95,23 +97,25 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
     
     def create_ticket(account, from_email, to_email)
-      user = get_user(account, from_email)
+      email_config = account.email_configs.find_by_to_email(to_email[:email])
+      user = get_user(account, from_email,email_config)
+      return if user.blocked? #Mails are dropped if the user is blocked
       unless user.customer?
         e_email = orig_email_from_text
-        user = get_user(account, e_email) unless e_email.nil?
+        user = get_user(account, e_email , email_config) unless e_email.nil?
       end
-
+     
       ticket = Helpdesk::Ticket.new(
         :account_id => account.id,
         :subject => params[:subject],
-        :description => params[:text],
-        :description_html => Helpdesk::HTMLSanitizer.clean(params[:html]),
+        :description => show_quoted_text(params[:text],to_email[:email] ),
+        :description_html => show_quoted_text(Helpdesk::HTMLSanitizer.clean(params[:html] ), to_email[:email]),
         #:email => from_email[:email],
         #:name => from_email[:name],
         :requester => user,
         :to_email => to_email[:email],
         :cc_email => parse_cc_email,
-        :email_config => account.email_configs.find_by_to_email(to_email[:email]),
+        :email_config => email_config,
         :status => Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open],
         :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email]
         #:ticket_type =>Helpdesk::Ticket::TYPE_KEYS_BY_TOKEN[:how_to]
@@ -144,17 +148,19 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
 
     def add_email_to_ticket(ticket, from_email)
-      user = get_user(ticket.account, from_email)
+      user = get_user(ticket.account, from_email, ticket.email_config)
+      return if user.blocked? #Mails are dropped if the user is blocked
       if (ticket.requester.email.include?(user.email) || ticket.included_in_cc?(user.email) || !user.customer?) 
         note = ticket.notes.build(
           :private => false,
           :incoming => true,
-          :body => params[:text],
-          :body_html => Helpdesk::HTMLSanitizer.clean(params[:html]),
+          :body => show_quoted_text(params[:text],parse_to_email[:email]),
+          :body_html => show_quoted_text(Helpdesk::HTMLSanitizer.clean(params[:html] ), parse_to_email[:email]),
           :source => 0, #?!?! use SOURCE_KEYS_BY_TOKEN - by Shan
           :user => user, #by Shan temp
           :account_id => ticket.account_id
         )
+        note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] unless user.customer?
       else
         return create_ticket(ticket.account, from_email, parse_to_email)
       end
@@ -163,12 +169,13 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       note
     end
     
-    def get_user(account, from_email)
+    def get_user(account, from_email, email_config)
+      portal = email_config ? email_config.portal : account.main_portal
       user = account.all_users.find_by_email(from_email[:email])
       unless user
         user = account.contacts.new
         user.signup!({:user => {:email => from_email[:email], :name => from_email[:name], 
-          :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}})
+          :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}},portal)
       end
       user.make_current
       user
@@ -179,5 +186,37 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         item.attachments.create(:content => params["attachment#{i+1}"], :account_id => ticket.account_id)
       end
     end
+  
+  
+  def show_quoted_text(text, address)
+    
+    return text if text.blank?
+    
+    regex_arr = [
+      Regexp.new("From:\s*" + Regexp.escape(address), Regexp::IGNORECASE),
+      Regexp.new("<" + Regexp.escape(address) + ">", Regexp::IGNORECASE),
+      Regexp.new(Regexp.escape(address) + "\s+wrote:", Regexp::IGNORECASE),
+      Regexp.new("^.*On.*?wrote:", Regexp::IGNORECASE),
+      Regexp.new("-+original\s+message-+\s*", Regexp::IGNORECASE),
+      Regexp.new("from:\s*", Regexp::IGNORECASE)
+    ]
+    tl = text.length
+
+    #calculates the matching regex closest to top of page
+    index = regex_arr.inject(tl) do |min, regex|
+        (text.index(regex) or tl) < min ? (text.index(regex) or tl) : min
+    end
+    
+    original_msg = text[0, index]
+    old_msg = text[index,text.size]
+   
+    unless old_msg.blank?
+     original_msg = original_msg +
+     "<div class='freshdesk_quote'>" +
+     "<blockquote class='freshdesk_quote'>" + old_msg + "</blockquote>" +
+     "</div>"
+    end   
+    return original_msg
+end
   
 end

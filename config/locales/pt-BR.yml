@@ -1,4 +1,6 @@
 pt-BR:
+   meta:
+     language_name: 'Portuguese/Brazil'
    edit: "Editar"
    back: "Voltar"
    delete: "Excluir"

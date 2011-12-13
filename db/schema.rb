@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111119094928) do
+ActiveRecord::Schema.define(:version => 20111210162346) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -78,6 +78,14 @@ ActiveRecord::Schema.define(:version => 20111119094928) do
     t.text     "signature"
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "applications", :force => true do |t|
+    t.string  "name"
+    t.string  "display_name"
+    t.string  "description"
+    t.integer "widget_id"
+    t.text    "options"
   end
 
   create_table "authorizations", :force => true do |t|
@@ -401,18 +409,18 @@ ActiveRecord::Schema.define(:version => 20111119094928) do
   end
 
   create_table "helpdesk_notes", :force => true do |t|
-    t.text     "body",         :limit => 16777215
+    t.text     "body",         :limit => 2147483647
     t.integer  "user_id",      :limit => 8
-    t.integer  "source",                           :default => 0
-    t.boolean  "incoming",                         :default => false
-    t.boolean  "private",                          :default => true
+    t.integer  "source",                             :default => 0
+    t.boolean  "incoming",                           :default => false
+    t.boolean  "private",                            :default => true
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "deleted",                          :default => false
+    t.boolean  "deleted",                            :default => false
     t.integer  "notable_id",   :limit => 8
     t.string   "notable_type"
     t.integer  "account_id",   :limit => 8
-    t.text     "body_html",    :limit => 16777215
+    t.text     "body_html",    :limit => 2147483647
   end
 
   add_index "helpdesk_notes", ["account_id", "notable_type", "notable_id"], :name => "index_helpdesk_notes_on_notables"
@@ -538,17 +546,17 @@ ActiveRecord::Schema.define(:version => 20111119094928) do
   add_index "helpdesk_ticket_states", ["ticket_id"], :name => "index_helpdesk_ticket_states_on_ticket_id"
 
   create_table "helpdesk_tickets", :force => true do |t|
-    t.text     "description",      :limit => 16777215
+    t.text     "description",      :limit => 2147483647
     t.integer  "requester_id",     :limit => 8
     t.integer  "responder_id",     :limit => 8
-    t.integer  "status",           :limit => 8,        :default => 1
-    t.boolean  "urgent",                               :default => false
-    t.integer  "source",                               :default => 0
-    t.boolean  "spam",                                 :default => false
-    t.boolean  "deleted",                              :default => false
+    t.integer  "status",           :limit => 8,          :default => 1
+    t.boolean  "urgent",                                 :default => false
+    t.integer  "source",                                 :default => 0
+    t.boolean  "spam",                                   :default => false
+    t.boolean  "deleted",                                :default => false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "trained",                              :default => false
+    t.boolean  "trained",                                :default => false
     t.integer  "account_id",       :limit => 8
     t.string   "subject"
     t.integer  "display_id",       :limit => 8
@@ -556,16 +564,16 @@ ActiveRecord::Schema.define(:version => 20111119094928) do
     t.integer  "group_id",         :limit => 8
     t.datetime "due_by"
     t.datetime "frDueBy"
-    t.boolean  "isescalated",                          :default => false
-    t.integer  "priority",         :limit => 8,        :default => 1
-    t.boolean  "fr_escalated",                         :default => false
+    t.boolean  "isescalated",                            :default => false
+    t.integer  "priority",         :limit => 8,          :default => 1
+    t.boolean  "fr_escalated",                           :default => false
     t.string   "to_email"
     t.integer  "email_config_id",  :limit => 8
     t.text     "cc_email"
-    t.boolean  "delta",                                :default => true,  :null => false
+    t.boolean  "delta",                                  :default => true,  :null => false
     t.integer  "import_id",        :limit => 8
     t.string   "ticket_type"
-    t.text     "description_html", :limit => 16777215
+    t.text     "description_html", :limit => 2147483647
   end
 
   add_index "helpdesk_tickets", ["account_id", "display_id"], :name => "index_helpdesk_tickets_on_account_id_and_display_id", :unique => true
@@ -589,6 +597,14 @@ ActiveRecord::Schema.define(:version => 20111119094928) do
   add_index "helpdesk_time_sheets", ["account_id", "ticket_id"], :name => "index_time_sheets_on_account_id_and_ticket_id"
   add_index "helpdesk_time_sheets", ["ticket_id"], :name => "index_time_sheets_on_ticket_id"
   add_index "helpdesk_time_sheets", ["user_id"], :name => "index_time_sheets_on_user_id"
+
+  create_table "installed_applications", :force => true do |t|
+    t.integer  "application_id"
+    t.integer  "account_id"
+    t.string   "configs"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "moderatorships", :force => true do |t|
     t.integer "forum_id", :limit => 8
@@ -671,7 +687,7 @@ ActiveRecord::Schema.define(:version => 20111119094928) do
     t.datetime "updated_at"
   end
 
-  add_index "social_facebook_pages", ["account_id", "page_id"], :name => "index_account_page_id", :unique => true
+  add_index "social_facebook_pages", ["account_id", "page_id"], :name => "social_fb_pages_account_id_and_page_id", :unique => true
   add_index "social_facebook_pages", ["product_id"], :name => "index_product_id"
 
   create_table "social_fb_posts", :force => true do |t|
@@ -939,6 +955,8 @@ ActiveRecord::Schema.define(:version => 20111119094928) do
     t.integer  "import_id",           :limit => 8
     t.string   "fb_profile_id"
     t.string   "language",                         :default => "en"
+    t.boolean  "blocked",                          :default => false
+    t.datetime "blocked_at"
   end
 
   add_index "users", ["account_id", "email"], :name => "index_users_on_account_id_and_email", :unique => true
@@ -987,5 +1005,12 @@ ActiveRecord::Schema.define(:version => 20111119094928) do
   end
 
   add_index "wf_filters", ["user_id"], :name => "index_wf_filters_on_user_id"
+
+  create_table "widgets", :force => true do |t|
+    t.string  "name"
+    t.string  "description"
+    t.text    "script"
+    t.integer "application_id"
+  end
 
 end

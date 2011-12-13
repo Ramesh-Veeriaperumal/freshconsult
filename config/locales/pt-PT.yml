@@ -1,4 +1,6 @@
 pt-PT:
+  meta:
+     language_name: 'Portuguese/Portugal'
   import_step2_info: "Faça corresponder os campos CSV seguintes com os campos da base de dados e realize a importação."
   last_name: "Apelido"
   import_ticket_group: "Tickets &amp; Grupos"

@@ -3,19 +3,20 @@
 <div class="user_details_widget">  
 	<div class="clearfix"><%= user_avatar(user, :medium)  %></div>
 	<div><%= link_to(h(user.name), user, :class => "user_name") %></div>
-  <div class="wrap"><%= auto_link(h(user.email)) %></div>
-        <div><%= h(user.twitter_id) %></div>
-		<div><%= h(user.phone) %></div>
-		<div><%= h(user.mobile) %></div>
-		<div><%= h(user.job_title) %> <b><%= (user.customer ? "at #{user.customer.name}" : "")  %></b></div>
-	</div>
-	<div class="seperator"></div>
-	<h3 class="title"><%=t('ticket.recent_tickets')%></h3>
-	<ul class="ui-list_with_icon">
-	    <% user.tickets.newest(5).each do |ticket| %>	
-			<li>
-				<%= link_to( truncate("##{ticket.display_id} " + h(ticket.subject), 60), ticket ) %>
-			</li>		
-		<% end %>
-	</ul>
+	<%= render_item(h(user.email), "link") %>
+	<%= render_item(h(user.twitter_id)) %>
+	<%= render_item(h(user.fb_profile_id), "facebook") %>		 
+	<%= render_item(h(user.phone)) %>
+	<%= render_item(h(user.mobile)) %>
+	<div><%= h(user.job_title) %> <b><%= (user.customer ? "at #{user.customer.name}" : "")  %></b></div>
 </div>
+
+<span class="seperator"></span>
+<h3 class="title"><%=t('ticket.recent_tickets')%></h3>
+<ul class="ui-list_with_icon">
+	<% user.tickets.newest(5).each do |ticket| %>	
+	<li>
+		<%= link_to( truncate("##{ticket.display_id} " + h(ticket.subject), 60), ticket ) %>
+	</li>
+	<% end %>
+</ul>

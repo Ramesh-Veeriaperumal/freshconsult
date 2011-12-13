@@ -48,15 +48,21 @@ module Helpdesk::TicketActions
   end
   
   def set_date_filter
-   unless params[:date_filter] == TicketConstants::CREATED_BY_KEYS_BY_TOKEN[:custom_filter]
-    params[:start_date] = params[:date_filter].to_i.days.ago
-    params[:end_date] = Time.now
+   if !(params[:date_filter].to_i == TicketConstants::CREATED_BY_KEYS_BY_TOKEN[:custom_filter])
+    params[:start_date] = params[:date_filter].to_i.days.ago.beginning_of_day.to_s(:db)
+    params[:end_date] = Time.now.end_of_day.to_s(:db)
+  else
+    params[:start_date] = Date.parse(params[:start_date]).beginning_of_day.to_s(:db)
+    params[:end_date] = Date.parse(params[:end_date]).end_of_day.to_s(:db)
    end
   end
   
   def configure_export
     flexi_fields = current_account.ticket_fields.custom_fields(:include => :flexifield_def_entry)
-    csv_headers = Helpdesk::TicketModelExtension.csv_headers + flexi_fields.collect { |ff| { :label => ff.label, :value => ff.name, :selected => false} }
+    csv_headers = Helpdesk::TicketModelExtension.csv_headers 
+    #Product entry
+    csv_headers = csv_headers + [ {:label => "Product", :value => "product_name", :selected => false} ] if current_account.has_multiple_products?
+    csv_headers = csv_headers + flexi_fields.collect { |ff| { :label => ff.label, :value => ff.name, :selected => false} }
     render :partial => "configure_export", :locals => {:csv_headers => csv_headers }
   end
   

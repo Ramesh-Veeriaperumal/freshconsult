@@ -35,6 +35,8 @@ ActionController::Routing::Routes.draw do |map|
   map.login '/login', :controller => 'user_sessions', :action => 'new'
   map.sso_login '/login/sso', :controller => 'user_sessions', :action => 'sso_login'
   map.login_normal '/login/normal', :controller => 'user_sessions', :action => 'new'
+  map.signup_complete '/signup_complete/:token', :controller => 'user_sessions', :action => 'signup_complete'
+ 
   
   map.openid_done '/google/complete', :controller => 'accounts', :action => 'openid_complete'
   
@@ -53,7 +55,12 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :ticket_fields, :only => :index
   map.resources :email, :only => [:new, :create]
   map.resources :password_resets, :except => [:index, :show, :destroy]
-  
+
+  map.namespace :integrations do |integration|
+    integration.resources :installed_applications, :member =>{:install => :put, :uninstall => :get, :configure => :get, :update => :put}
+    integration.resources :applications, :member =>{:show => :get}
+  end
+
   map.namespace :admin do |admin|
     admin.resources :home, :only => :index
     admin.resources :widget_config, :only => :index
@@ -76,11 +83,16 @@ ActionController::Routing::Routes.draw do |map|
   
   map.resources :reports
   map.customer_activity   '/activity_reports/customer', :controller => 'reports/customer_reports', :action => 'index'
+  map.helpdesk_activity   '/activity_reports/helpdesk', :controller => 'reports/helpdesk_reports', :action => 'index'
 
   
   map.namespace :social do |social|
-    social.resources :twitters, :controller => 'twitter_handles', 
+    social.resources :twitters, :controller => 'twitter_handles',
                 :collection =>  { :feed => :any, :create_twicket => :post, :send_tweet => :any, :signin => :any, :tweet_exists => :get },
+                :member     =>  { :search => :any, :edit => :any }
+
+    social.resources :facebook, :controller => 'facebook_pages', 
+                :collection =>  { :signin => :any ,:authdone => :any , :event_listener =>:any , :enable_pages =>:any },
                 :member     =>  { :edit => :any }
   end
   

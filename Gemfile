@@ -37,7 +37,8 @@ gem "net-dns", "0.6.1"
 gem "classifier", "1.3.1", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/classifier-1.3.1"
 gem "stemmer", "1.0.1", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/stemmer-1.0.1"
 
-gem "tiny_mce", "0.1.4"
+# This tinymce vendor plugin is update with the tinymce verion 3.4.7
+gem "tiny_mce", "0.1.9", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/tiny_mce-0.1.9"
 gem "jammit"
 gem "zendesk-features", :require => "features"
 
@@ -51,7 +52,7 @@ gem "newrelic_rpm"
 gem "twitter" , "0.9.12"
 gem "newrelic_rpm"
 gem "sanitize", "2.0.3"
-
+gem "koala", "~> 1.0.0"
 
 group :development do
    gem "rspec", "1.3.1"

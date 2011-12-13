@@ -6,7 +6,7 @@
                                         var choices = $A();
                                         response.responseJSON.results
                                           .each(function(item){
-                                            choices.push(item.id);
+                                            choices.push(item.value+" <"+item.id+">");
                                           });                                             
                                         callback(choices);
                                       } });

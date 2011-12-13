@@ -1,0 +1,20 @@
+<% content_for :sidebar do %><% end %>
+<h3 class="title">Associate "Facebook" pages</h3>
+<% if @fb_pages %>
+	<%= render :partial => 'enable_facebook_page'%>
+<% else %>
+<ul class="admin_list">
+	<div class="info-error">
+		<div>
+			<p class="text-red">No Facebook pages are available in your account.</p> 
+			<p>Please add a facebook page for you product or brand to associate it with freshdesk.</p>
+		</div>
+		<div>
+			<%= link_to("Click here", "http://www.facebook.com/FacebookPages", {:target => "_blank"}) %> to learn more about creating your own facebook pages.
+		</div>
+	</div>
+</ul>
+<div>
+  <%= link_to t('back'), "/social/facebook", :class => "uiButton special medium" %> 
+</div>
+<% end %>

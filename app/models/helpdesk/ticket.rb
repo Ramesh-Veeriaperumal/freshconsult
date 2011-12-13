@@ -6,6 +6,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include TicketConstants
   include Helpdesk::TicketModelExtension
   
+  EMAIL_REGEX = /(\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
+  
   set_table_name "helpdesk_tickets"
   
   serialize :cc_email
@@ -79,6 +81,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :as => :tweetable,
     :class_name => 'Social::Tweet',
     :dependent => :destroy
+  
+  has_one :fb_post,
+    :as => :postable,
+    :class_name => 'Social::FbPost',
+    :dependent => :destroy
     
   has_one :ticket_states, :class_name =>'Helpdesk::TicketState', :dependent => :destroy
   has_one :ticket_topic,:dependent => :destroy
@@ -91,7 +98,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   attr_protected :attachments #by Shan - need to check..
   
-  accepts_nested_attributes_for :tweet
+  accepts_nested_attributes_for :tweet, :fb_post
   
   named_scope :created_at_inside, lambda { |start, stop|
           { :conditions => [" helpdesk_tickets.created_at >= ? and helpdesk_tickets.created_at <= ?", start, stop] }
@@ -109,6 +116,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
         :conditions => ["helpdesk_tickets.due_by >  helpdesk_ticket_states.resolved_at AND users.customer_id = ?",customer]
   } 
   }
+  
+   named_scope :resolved_on_time,
+        :joins => :ticket_states,
+        :conditions => ["helpdesk_tickets.due_by >  helpdesk_ticket_states.resolved_at"]
+   
+  named_scope :first_call_resolution,
+           :joins  => :ticket_states,
+           :conditions => ["(helpdesk_ticket_states.resolved_at is not null)  and  helpdesk_ticket_states.inbound_count = 1"]
+      
 
   named_scope :newest, lambda { |num| { :limit => num, :order => 'created_at DESC' } }
   named_scope :updated_in, lambda { |duration| { :conditions => [ 
@@ -160,13 +176,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #validates_presence_of :name, :source, :id_token, :access_token, :status, :source
   #validates_length_of :email, :in => 5..320, :allow_nil => false, :allow_blank => false
   #validates_presence_of :responder_id
-  validates_presence_of :requester_id
+  validates_presence_of :requester_id, :message => "should be a valid email address"
   validates_numericality_of :source, :status, :only_integer => true
   validates_numericality_of :requester_id, :responder_id, :only_integer => true, :allow_nil => true
   validates_inclusion_of :source, :in => 1..SOURCES.size
   validates_inclusion_of :status, :in => STATUS_KEYS_BY_TOKEN.values.min..STATUS_KEYS_BY_TOKEN.values.max
   #validates_format_of :email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, 
   #:allow_nil => false, :allow_blank => false
+  
 
   def set_default_values
     self.status = TicketConstants::STATUS_KEYS_BY_TOKEN[:open] unless TicketConstants::STATUS_NAMES_BY_KEY.key?(self.status)
@@ -199,6 +216,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
    def is_twitter?
     (tweet) and (!account.twitter_handles.blank?) 
   end
+ 
   
   def priority=(val)
     self[:priority] = PRIORITY_KEYS_BY_TOKEN[val] || val
@@ -316,16 +334,17 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def populate_requester #by Shan temp  
-    logger.debug "populate_requester :: email#{email} and twitter: #{twitter_id}"
+    portal =  email_config.portal if email_config
     unless email.blank?
+      self.email = parse_email email
       if(requester_id.nil? or !email.eql?(requester.email))
-        @requester = account.all_users.find_by_email(email)
+        @requester = account.all_users.find_by_email(email) unless email.nil?
         if @requester.nil?
           @requester = account.users.new          
           @requester.signup!({:user => {
             :email => self.email, 
             :name => (name || ''), 
-            :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}})
+            :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}},portal)
         end        
         self.requester = @requester  if @requester.valid?
       end
@@ -348,7 +367,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def autoreply     
-    notify_by_email EmailNotification::NEW_TICKET #Do SPAM check.. by Shan
+    notify_by_email EmailNotification::NEW_TICKET unless spam?#Do SPAM check.. by Shan
     notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_GROUP) if group_id
     notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_AGENT) if responder_id
     
@@ -442,8 +461,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
     "#{ticket.excerpts.subject} (##{ticket.excerpts.display_id})"
   end
   
+  def friendly_reply_email
+    email_config ? email_config.friendly_email : account.default_friendly_email
+  end
+  
   def reply_email
-    email_config ? email_config.friendly_email : account.default_email
+    email_config ? email_config.reply_email : account.default_email
   end
   
   
@@ -628,7 +651,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       options[:indent] ||= 2
       xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
-      super(:builder => xml, :skip_instruct => true,:include => :notes) do |xml|
+      super(:builder => xml, :skip_instruct => true,:include => :notes,:except => [:account_id,:import_id]) do |xml|
        xml.custom_field do
         self.ff_aliases.each do |label|    
           value = self.get_ff_value(label.to_sym()) 
@@ -759,5 +782,19 @@ class Helpdesk::Ticket < ActiveRecord::Base
     
     def add_support_score
       SupportScore.add_support_score(self, ScoreboardRating.resolution_speed(self))
-    end    
+  end
+  
+    
+  def parse_email(email)
+      if email =~ /(.+) <(.+?)>/
+        name = $1
+        email = $2
+      elsif email =~ /<(.+?)>/
+        email = $1
+      else email =~ EMAIL_REGEX
+        email = $1
+      end  
+     email
+   end
 end
+  

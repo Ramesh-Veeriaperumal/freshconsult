@@ -4,10 +4,10 @@ class SlaNotifier < ActionMailer::Base
     subject       params[:subject]
     body          params[:email_body]
     recipients    agent.email
-    from          ticket.account.default_email
+    from          ticket.account.default_friendly_email
     sent_on       Time.now    
-    headers       "Reply-to" => "#{ticket.account.default_email}"
-    content_type  "text/plain"
+    headers       "Reply-to" => "#{ticket.account.default_friendly_email}"
+    content_type  "text/html"
   end
   
 end

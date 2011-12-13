@@ -1,4 +1,6 @@
 pl:
+   meta:
+     language_name: 'Polish'
    edit: "Edycja"
    back: "Wstecz"
    delete: "Usuń"

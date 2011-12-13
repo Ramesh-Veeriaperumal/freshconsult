@@ -6,6 +6,7 @@ module AdminControllerMethods
   def self.included(base)
     base.send :prepend_before_filter, :check_admin_subdomain
     base.send :skip_before_filter, :set_time_zone
+    base.send :skip_before_filter, :set_locale
     base.send :skip_before_filter, :check_account_state
     base.send :layout, false
     base.send :prepend_before_filter,:login_from_basic_auth
@@ -45,7 +46,7 @@ module AdminControllerMethods
        #logger.debug "LOGIN FROM BASIC AUTH called in AdminControllerMethods..."
        authenticate_or_request_with_http_basic do |username, password|
          # This has to return true to let the user in
-         username == 'freshdesk' && password == 'Opmanager12#'
+         username == 'freshdesk' && password == 'USD40$'
        end
      end
     

@@ -13,7 +13,7 @@ label{
 }
 
 input[type=text], select, input.text { 
-   width: 96%;
+   width: 95%;
    margin:0 0 3px 0;
    color:#3f3f3f;
    padding:3px;
@@ -43,6 +43,8 @@ input.password {
 input.text, input[type=text], textarea{
 	border:1px solid #cfcfcf;
 	font-weight:400;
+	padding:5px;
+	@include border-radius(4px);
 }
 
 div.color{
@@ -115,6 +117,15 @@ ul.ui-form .ui-form-inline{
 	li{ padding-left: 0; }
 }
 
+.ui-datepicker-trigger{
+	background: sprite($symbol, calendar) no-repeat;
+	border:0;
+	margin:1px 3px;
+	cursor:pointer;
+	width:18px;
+	height:20px;
+	text-indent:-9999px;
+}
 
 a.addchoice{
 	padding:5px;
@@ -239,13 +250,13 @@ a.addchoice:hover{
    }
    div.checkbox, label.checkbox{
       padding-bottom: 5px;
-      font-size:1.3em;
+      font-size:1.1em;
       position:relative;
 	   input{
          float:left;
-	      margin-left:0;
-	      margin-top:1px;
-	      margin-right:3px;
+	      margin-left:4px;
+	      margin-top:4px;
+	      margin-right:9px;
 	   }
    }
 	label, li.checkbox{
@@ -450,21 +461,41 @@ a.addchoice:hover{
 	}
 }
 
+.threecol-form label{
+	float:left;
+	width:33%
+}
+
 .ui-form .inline-field{
 	/*border-bottom:1px dotted #cfcfcf;*/
 	padding-top:8px;
 	input[type=text], select, input.text {
-		width:auto;
+
 	}
 	.caption{
 		float:left;
-		/*		clear:left; */
+		.logo{
+		   float:left;
+		   height:34px;
+		   width:150px;
+		   margin-left:-2px;
+		   clear:left;
+		}
+		.logo.info-data{
+	      padding:3px;
+	   }	   
+		h2.title{
+			line-height:28px;
+			top:-8px;
+			position:relative;
+		}
 	}
 	.rightalign{
 		font-size:13px;
 		width:195px;
 		text-align:right;
 	}
+
 	div.fields{
 		margin-left:210px;
 		clear:right;

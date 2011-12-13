@@ -51,8 +51,7 @@ input.ui-button { padding: .4em 1em; }
 /* workarounds */
 button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra padding in Firefox */
 
-
-.uiButton, .uiButton:visited, .special-button, .special-button:visited, .uiButton-active	 {
+.uiButton, .uiButton:visited, .special-button, .special-button:visited, .uiButton-active, .uiButton-iphone, .ui-after-submit{
 	@include button-base; 
 	background-image:url(../images/overlay-button.png);
 	background-color:#eeeeee;
@@ -80,11 +79,50 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
    @include text-shadow(rgba(0, 0, 0, 0.2), -1px, -1px, 1px); 
 }
 
+.iphone-active.uiButton, .iphone-inactive.uiButton{
+   text-transform:uppercase; 
+   padding:3px 10px;
+   font-size:13px;
+   @include box-shadow(rgba(0, 0, 0, 0.2) 0 1px 2px);
+   background-image:url(../images/overlay-top-shadow.png);
+   padding-right:40px;
+   position:relative;
+   span{
+      position:absolute;
+      width:30px;
+      height:100%;
+      border:1px solid #a2a2a2;
+      @include background(linear-gradient(top, #d8d8d8, #f9f9f9));
+      right: -1px; 
+      top: -1px;
+      @include border-radius(4px);
+      @include box-shadow(#ebebeb 0 0 0 1px inset);
+   }
+}
+
+.iphone-inactive.uiButton{
+   padding-left:40px;
+   padding-right:10px;
+   span{
+      left:-1px;      
+   }
+}
+
+.ui-after-submit{
+   border-color:#cfcfcf;
+	background-color:#eeeeee;
+	background-image:url('/images/load.gif');
+	background-repeat:no-repeat; 
+	background-position: center;	
+   color:rgba(0, 0, 0, 0);
+	text-shadow: 1px 1px 0 rgba(0, 0, 0, 0);   
+}
+
 .uiButton:active, .fdbutton:active, .uiButton-active:active { top: 1px; }
 .small.uiButton, .small.uiButton:visited 		{ font-size: 11px;  }
 .uiButton, .fdbutton, .uiButton:visited, .fdbutton:visited, 
 .medium.uiButton, .medium.uiButton:visited 		{ font-size: 12px;}
-.large.uiButton, .large.uiButton:visited { font-size: 13px; padding: 8px 14px 9px; }
+.large.uiButton, .large.uiButton:visited { font-size: 1.36em; padding: 8px 14px 9px; }
 
 .forum_button{
 	@include anchor-button;
@@ -183,6 +221,20 @@ div.action_buttons:hover{
 	img{ width:auto; height:auto; }	
    border: 1px solid #cfcfcf;
    cursor: pointer;
+   position:relative;   
+}
+
+.icon-detail{
+   padding-left:25px;
+   span{
+      position:absolute;
+      left:4px;
+      top:3px;
+      width:16px; height:16px; 
+   }
+   .symbols-add{
+       background:sprite($symbol, add) no-repeat;
+   }
 }
 
 .slim-button{

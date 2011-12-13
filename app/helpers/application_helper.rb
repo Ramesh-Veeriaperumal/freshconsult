@@ -3,7 +3,8 @@ module ApplicationHelper
   
   include SavageBeast::ApplicationHelper
   include Juixe::Acts::Voteable
-  
+  include ActionView::Helpers::TextHelper
+    
   require "twitter"
   
   ASSETIMAGE = { :help => "/images/helpimages" }
@@ -34,6 +35,19 @@ module ApplicationHelper
   
   def get_img(file_name, type)
     image_tag("#{ASSETIMAGE[type]}/#{file_name}", :class => "#{type}_image")
+  end
+
+  def render_item(value, type = "text")
+    unless value.blank?
+      case type
+        when "text" then
+          content_tag :div, value
+        when "facebook" then
+          auto_link("http://facebook.com/#{value}")
+        when "link" then
+          auto_link(value)
+      end
+    end
   end
 
   def navigation_tabs
@@ -183,7 +197,10 @@ module ApplicationHelper
   def is_user_social( user, profile_size )
     if user.twitter_id
       profile_size = (profile_size == :medium) ? "original" : "normal"
-      twitter_avatar(user.twitter_id, profile_size)
+      twitter_avatar(user.twitter_id, profile_size) 
+    elsif user.fb_profile_id
+      profile_size = (profile_size == :medium) ? "large" : "square"
+      facebook_avatar(user.fb_profile_id, profile_size)
     else
       "/images/fillers/profile_blank_#{profile_size}.gif"
     end
@@ -191,6 +208,10 @@ module ApplicationHelper
   
   def twitter_avatar( screen_name, profile_size = "normal" )
     "http://api.twitter.com/1/users/profile_image?screen_name=#{screen_name}&size=#{profile_size}"
+  end
+  
+  def facebook_avatar( facebook_id, profile_size = "square")
+    "http://graph.facebook.com/#{facebook_id}/picture?type=#{profile_size}"
   end
   
   # User details page link should be shown only to agents and admin
@@ -216,39 +237,99 @@ module ApplicationHelper
    color
  end
   
-  def construct_ticket_element(object_name, field, field_label, dom_type, required, field_value = "")
+  def get_app_config(app_name)
+    installed_app = Integrations::InstalledApplication.find(:all, :joins=>:application, 
+                  :conditions => {:applications => {:name => app_name}, :account_id => current_account})
+    return installed_app[0].configs[:inputs] unless installed_app.blank?
+  end
+
+  def is_application_installed?(app_name)
+    installed_app = Integrations::InstalledApplication.find(:all, :joins=>:application, 
+                  :conditions => {:applications => {:name => app_name}, :account_id => current_account})
+    return !(installed_app.blank?)
+  end
+  
+  def get_app_details(app_name)
+    installed_app = Integrations::InstalledApplication.find(:all, :joins=>:application, 
+                  :conditions => {:applications => {:name => app_name}, :account_id => current_account})
+    return installed_app
+  end
+
+  def get_app_widget_script(app_name, widget_name, liquid_objs)
+    installed_app = Integrations::InstalledApplication.find(:first, :joins=>{:application => :widgets}, 
+                  :conditions => {:applications => {:name => app_name, :widgets => {:name => widget_name}}, :account_id => current_account})
+    if installed_app.blank? or installed_app.application.blank?
+      return ""
+    else
+      widget = installed_app.application.widgets[0]
+      replace_objs = {installed_app.application.name.to_s => installed_app}
+      replace_objs = liquid_objs.blank? ? replace_objs : liquid_objs.merge(replace_objs)
+      return Liquid::Template.parse(widget.script).render(replace_objs)
+    end
+  end
+
+  def construct_ui_element(object_name, field_name, field, field_value = "")
+    field_label = t(field[:label])
+    dom_type = field[:type]
+    required = field[:required]
     element_class   = " #{ (required) ? 'required' : '' } #{ dom_type }"
     field_label    += " #{ (required) ? '*' : '' }"
+    object_name     = "#{object_name.to_s}"
+    label = label_tag object_name+"_"+field_name, field_label
+    dom_type = dom_type.to_s
+    case dom_type
+      when "text", "number", "email", "multiemail" then
+        element = label + text_field(object_name, field_name, :class => element_class, :value => field_value)
+      when "paragraph" then
+        element = label + text_area(object_name, field_name, :class => element_class, :value => field_value)
+      when "dropdown" then
+        element = label + select(object_name, field_name, field[:choices], :class => element_class, :selected => field_value)
+      when "dropdown_blank" then
+        element = label + select(object_name, field_name, field[:choices], :class => element_class, :selected => field_value, :include_blank => "...")
+      when "hidden" then
+        element = hidden_field(:source, :value => field_value)
+      when "checkbox" then
+        element = content_tag(:div, check_box(object_name, field_name, :class => element_class, :checked => field_value ) + field_label)
+      when "html_paragraph" then
+        element = label + text_area(object_name, field_name, :class => "mceEditor", :value => field_value)
+    end
+    element
+  end
+
+  def construct_ticket_element(object_name, field, field_label, dom_type, required, field_value = "", field_name = "")
+    element_class   = " #{ (required) ? 'required' : '' } #{ dom_type }"
+    field_label    += " #{ (required) ? '*' : '' }"
+    field_name      = (field_name.blank?) ? field.field_name : field_name
     object_name     = "#{object_name.to_s}#{ ( !field.is_default_field? ) ? '[custom_field]' : '' }"
     label = label_tag object_name+"_"+field.field_name, field_label
     case dom_type
       when "requester" then
         element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email", :locals => { :object_name => object_name, :field => field, :url => autocomplete_helpdesk_authorizations_path, :object_name => object_name }))
       when "text", "number", "email" then
-        element = label + text_field(object_name, field.field_name, :class => element_class, :value => field_value)
+        element = label + text_field(object_name, field_name, :class => element_class, :value => field_value)
       when "paragraph" then
-        element = label + text_area(object_name, field.field_name, :class => element_class, :value => field_value)
+        element = label + text_area(object_name, field_name, :class => element_class, :value => field_value)
       when "dropdown" then
-        element = label + select(object_name, field.field_name, field.choices, {:selected => field_value},{:class => element_class})
+        element = label + select(object_name, field_name, field.choices, {:selected => field_value},{:class => element_class})
       when "dropdown_blank" then
-        element = label + select(object_name, field.field_name, field.choices, {:include_blank => "...", :selected => field_value}, {:class => element_class})
+        element = label + select(object_name, field_name, field.choices, {:include_blank => "...", :selected => field_value}, {:class => element_class})
       when "hidden" then
         element = hidden_field(:source, :value => field_value)
       when "checkbox" then
-        element = content_tag(:div, check_box(object_name, field.field_name, :class => element_class, :checked => field_value ) + field_label)
+        element = content_tag(:div, check_box(object_name, field_name, :class => element_class, :checked => field_value ) + field_label)
       when "html_paragraph" then
-        element = label + text_area(object_name, field.field_name, :class => "mceEditor", :value => field_value)
+        element = label + text_area(object_name, field_name, :class => element_class +" mceEditor", :value => field_value)
     end
     content_tag :li, element, :class => dom_type
   end
    
-  def pageless(total_pages, url, message=t("loading.items"))
+  def pageless(total_pages, url, message=t("loading.items"), callback = "function(){}")
     opts = {
       :totalPages => total_pages,
       :url        => url,
-      :loaderMsg  => message
-    }
-        
+      :loaderMsg  => message,
+      :complete  => callback
+    } 
     javascript_tag("jQuery('#Pages').pageless(#{opts.to_json});")
   end
    

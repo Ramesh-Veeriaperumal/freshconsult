@@ -1,5 +1,8 @@
 --- 
 en: 
+  meta:
+   language_name: 'English'
+  attachment_help_info: Attachment(s) size can be up to 20 MB
   feedbackwidget_offset_info: The offset will be the distance of the widget button (pixels) from the left or top of the screen based on the alignment you choose.
   no_twitter_handle: Please configure atleast one twitter account
   reset_my_password: Reset my password 
@@ -14,6 +17,7 @@ en:
   example: example
   pending: Pending
   twitter_source: Twitter
+  facebook_source: Facebook
   working: Working
   attachment: Attachment
   attachments: Attachments
@@ -103,6 +107,11 @@ en:
     popular: Popular
   payment_info: Payment information
   admin:
+    widget_config:
+      index:
+        thankyou_label: "Submit message"
+        thankyou_default: "Thank you for your feedback"
+        thankyou_info: "Message to be displayed after a user submits the ticket form"
     supervisor_rules:
       index:
         help_title: Supervisor
@@ -202,7 +211,7 @@ en:
         screen_name: Screen Name
         default_group : Default Group       
         
-    home: 
+    home:
       index: 
         group: Groups
         business-hours: Business Hours
@@ -217,6 +226,7 @@ en:
         import: Import data from Zendesk
         agent: Agents
         feedback: Feedback widget
+        integrations: "Integrations"
         dispatcher: Dispatch'r
         supervisor: Supervisor
         sla: SLA Policies
@@ -229,6 +239,7 @@ en:
         multi-product: Multiple Products
         twitter-setting: Twitter Settings
         survey: Survey Settings
+        facebook-setting: Facebook Settings
       
     canned_responses:
       index:
@@ -273,7 +284,17 @@ en:
   to_do: To Do
   feedbackwidget_formcustomize: Form customization
   does_not_contain: Does not contain
-  flash: 
+  flash:
+    facebook:
+      updated: Facebook setting has been updated 
+    application:
+      already: Application already installed.
+      uninstall:
+        success: "The Addon has been removed successfully!"
+      install:
+        success: "The Addon has been Added successfully!"
+      configure:
+        success: "The Addon has been updated successfully!"
     filter:
       delete_success: "View has been delete successfully!"
       save_success: "View has been saved successfully!"
@@ -354,7 +375,6 @@ en:
         no_contact: Unable to contact zendesk . Please verify your zendesk credentials and try again !!
         success: Your data import has started and you will receive an email when it is completed. The import process may take several minutes depending on the volume of your data
         failure: Unable to import from zendesk...please try again
-        running: Currently one zendesk import is running. you may try later !!
     contacts: 
       create: 
         success: The contact has been created successfully.
@@ -1020,6 +1040,9 @@ en:
     ticket_save: Successfully converted the tweet as a ticket
     tkt_err_save: Unable to convert the tweet to ticket or already converted
     usr_not_thr: User is not there.    
+  facebook:
+    deleted: The facebook page %{facebook_page} has been removed.
+    not_authorized: You were not authorized by Facebook
   logo: Logo
   ok: Ok
   back: Back
@@ -1116,7 +1139,7 @@ en:
     split_ticket: Split as new Ticket
     tweets: Tweets
     agent_notify: added a note and wants you to have a look
-    note_content: Note content 
+    note_content: Note content
     ticket_url: Ticket URL
   recent_activity: Recent Activity
   forgot_password: Forgot Password
@@ -1193,6 +1216,7 @@ en:
     helpdesk_name: Helpdesk Name
     rebrand: Rebrand your Helpdesk
     helpdesk_url: Helpdesk URL
+    language: Language
   lead: Lead
   comments: Comments
   forum_confirm_msg1: Are you sure you want to delete this category?
@@ -1384,6 +1408,11 @@ en:
   errors: 
     conditions_empty: "Conditions can't be empty"
     actions_empty: "Actions can't be empty"
+  export_data:
+    thirt_days: "Last 30 Days"
+    seven_days: "Last 7 Days"
+    twenty_four: "From yesterday"
+    custom_filter: "Set date"
   date:
     ago: Ago
     from: From Now
@@ -1402,6 +1431,9 @@ en:
     years: Years
   go_back_admin: Go back to Admin
   social:
+    facebook_pages:
+      index:
+        title: "Facebook Pages"
     twitter_handles:
       index:
         title: "Twitter Accounts"
@@ -1428,3 +1460,43 @@ en:
   loading:
     activities: Loading more activities
     items: Loading more items
+  application:
+    new: Create New Application
+    desc: Integrate with other Apps to make your Freshdesk experience more awesome.
+    title: Addons & Integration
+    disabled: Disabled
+    enabled: Enabled
+    configure: Configure
+    enable: Enable
+    click_to_disable: Click to disable Addon
+    click_to_enable: Click to enable Addon    
+    confirm_disable: "Are you sure you want to disable this Addon?"
+    configure_addon: "Click to configure this Addon"
+  home:
+      mobile_index:
+        email: Email
+        password: Password
+        remember: Remember me on this computer
+        login: Login
+        forgot: I forgot my password?
+        sign_in_using: Sign In using
+        sign_in_using_google: Sign in using your Google account
+        help: Help
+  settings: settings        
+  capsule_crm: "Capsule CRM"
+  integrations:
+    capsule:
+      label: "Capsule CRM"
+      desc: "You can view Contact information from Capsule CRM in Freshdesk. This information can be accessed in the Ticket Details page and Contact Details Page."
+      form:
+        bcc_drop_box_mail: "Mail Drop Box address"
+        bcc_drop_box_mail_info: "You can find your unique Capsule Drop box Email address under <b>“Settings -> Mail Drop Box”</b>.<br /> (You can find this on the top right corner of the page).<br /> Copy the email address and paste it in the textfield above. <br /> Freshdesk will automatically add this email address to the Bcc field when you are replying to a Ticket"
+        domain: "Domain"
+        domain_info: "ex: example.capsulecrm.com"
+        api_key: "Api Key"
+        api_key_info: "To get your unique API key, login to your Capsule CRM account and navigate to <br /> <b>“User -> My Preferences”</b>. (You can find this on the top right corner of the page).<br /> Click on <b>“API Authentication Token”</b>, and to get the unique API key.<br /> Copy the key and paste it in the textfield above."
+        widget_title: "Widget Title"
+  widgets:
+    contact_widget:
+      description: "Display a contact or option to add the contact into capsule."
+  capsule_crm_helptext: "<h4>Link back from Capsule to Freshdesk</h4><p>You can create a link in Capsule CRM to view the contact's tickets in Freshdesk.</p> <p>To do this Goto your <br /><b>Settings -> Custom Fields -> For People & Organization</b></p><p> Then click on \"Add new...\" and select <b>\"Generated Link\"</b></p> <p>Copy the URl exactly as shown below and paste it in Capsule CRM as the link definition<span class=\"info-code\">http://%{full_domain}/helpdesk/tickets?email={email}</span></p>"
