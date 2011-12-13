@@ -44,11 +44,11 @@ def check_tickets(table,column_name, threshold)
     deliver_spam_alert(table, requesters, query_str) 
     requesters.each do |requester_id|
       usr = User.find(requester_id)
-      unless usr.blocked?
-        usr.blocked = true
-        usr.blocked_at = current_time.to_s(:db)
-        usr.save
-      end
+#      unless usr.blocked?
+#        usr.blocked = true
+#        usr.blocked_at = current_time.to_s(:db)
+#        usr.save
+#      end
     end
   end
 
