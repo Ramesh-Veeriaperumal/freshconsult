@@ -134,6 +134,15 @@
   						});
   		return true;
   	}
+	
+	
+    jQuery("#time_sheet").dialog2();
+	
+	function show_log_hour()
+	{
+	
+	
+	}
     
   <% end %>
 <% end %> 
@@ -235,6 +244,11 @@
         </div>
         <% unless @ticket.deleted %>
           <div class="ticket_actions action_icons">
+          	
+		    <div class="action_buttons clearfix">
+		      <%= link_to "Time sheet", "/helpdesk/time_sheets/time_sheets_for_ticket/#{@ticket.display_id}", :id => "time_sheet", :title => "Time sheet"  %>
+              <!--%= link_to "Log Hour", "show_log_hour()", :id => "log_hour", :title => "Log hour"  %-->
+            </div>
             <div class="item-right-actions">
         			<ul class="nav-drop"> 
         				<li>

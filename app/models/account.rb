@@ -120,6 +120,9 @@ class Account < ActiveRecord::Base
 
   
   has_many :tags, :class_name =>'Helpdesk::Tag'
+  
+  has_many :time_sheets , :class_name =>'Helpdesk::TimeSheet'
+  
   #Scope restriction ends
   
   validates_format_of :domain, :with => /(?=.*?[A-Za-z])[a-zA-Z0-9]*\Z/

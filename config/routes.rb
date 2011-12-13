@@ -163,6 +163,7 @@ ActionController::Routing::Routes.draw do |map|
   map.namespace :helpdesk do |helpdesk|
 
     helpdesk.resources :tags, :collection => { :autocomplete => :get }
+    helpdesk.resources :time_sheets
     
 
 #    helpdesk.resources :issues, :collection => {:empty_trash => :delete}, :member => { :delete_all => :delete, :assign => :put, :restore => :put, :restore_all => :put } do |ticket|
@@ -176,6 +177,7 @@ ActionController::Routing::Routes.draw do |map|
       ticket.resources :subscriptions, :name_prefix => 'helpdesk_ticket_helpdesk_'
       ticket.resources :tag_uses, :name_prefix => 'helpdesk_ticket_helpdesk_'
       ticket.resources :reminders, :name_prefix => 'helpdesk_ticket_helpdesk_'
+      
     end
 
     #helpdesk.resources :ticket_issues
