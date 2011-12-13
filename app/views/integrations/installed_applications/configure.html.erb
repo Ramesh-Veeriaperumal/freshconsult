@@ -1,8 +1,3 @@
-<% content_for :sidebar do -%>
-  <div class="sidepanel helpcard">
-    <%= t(@installing_application.name+"_helptext", :full_domain => current_account.full_domain) %>
-  </div>
-<%- end %>
 <%= content_tag (:h3, t(@installing_application.name) + " " + t("settings"), :class => "title") %>
 <% form_for @installed_application, :url => { :controller=> "installed_applications", :action => "update" }, :html => {:multipart => true, :id => "ConfigureApplication" } do |f| %>
   <ul class="ui-form">  

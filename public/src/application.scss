@@ -3254,6 +3254,7 @@ div.addReminder{
 	font-family:"monaco", "georgia";
 	margin:3px -20px;
 	display:block;
+	@include wrap();
 }
 
 .info-error{

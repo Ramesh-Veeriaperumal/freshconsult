@@ -1,3 +1,9 @@
+<% content_for :sidebar do -%>
+  <div class="sidepanel helpcard">
+    <%= t(@installing_application.name+"_helptext", :full_domain => current_account.full_domain) %>
+  </div>
+<%- end %>
+
 	<div class="fields">
 		<%= application_form.error_messages %>
 		<%= hidden_field_tag  :application_id,  params[:application_id] %> 

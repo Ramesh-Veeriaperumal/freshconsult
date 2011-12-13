@@ -1485,17 +1485,17 @@ en:
   capsule_crm: "Capsule CRM"
   integrations:
     capsule:
-      label: "Capsule CRM Application"
-      desc: "Capsule CRM contact widget will be displayed in the ticket view page and the contact view page."
+      label: "Capsule CRM"
+      desc: "You can view Contact information from Capsule CRM in Freshdesk. This information can be accessed in the Ticket Details page and Contact Details Page."
       form:
         bcc_drop_box_mail: "Mail Drop Box address"
-        bcc_drop_box_mail_info: "To get your current dropbox email address,<br /> Goto your “<b>Settings -> Mail Drop Box</b>”.<br /> This will appear on the top right hand corner of your Capsule CRM App.<br /> By default this email will be added to bcc field of all replies from freshdesk."
+        bcc_drop_box_mail_info: "You can find your unique Capsule Drop box Email address under <b>“Settings -> Mail Drop Box”</b>.<br /> (You can find this on the top right corner of the page).<br /> Copy the email address and paste it in the textfield above. <br /> Freshdesk will automatically add this email address to the Bcc field when you are replying to a Ticket"
         domain: "Domain"
         domain_info: "ex: example.capsulecrm.com"
         api_key: "Api Key"
-        api_key_info: "To get your unique API key,<br /> Goto your “<b>User -> My Preferences</b>”.<br /> This will appear on the top right hand corner of your Capsule CRM App.<br /> Click on <b>“API Authentication Token”</b>, and you can find your unique API key."
+        api_key_info: "To get your unique API key, login to your Capsule CRM account and navigate to <br /> <b>“User -> My Preferences”</b>. (You can find this on the top right corner of the page).<br /> Click on <b>“API Authentication Token”</b>, and to get the unique API key.<br /> Copy the key and paste it in the textfield above."
         widget_title: "Widget Title"
   widgets:
     contact_widget:
       description: "Display a contact or option to add the contact into capsule."
-  capsule_crm_helptext: "<h4>Link back from Capsule to Freshdesk</h4><p>You can create a link in Capsule CRM to view the contact's tickets in Freshdesk.</p> <p>To do this Goto your <br /><b>Settings -> Custom Fields -> For People & Organization</b></p><p> Then click on \"Add new...\" and select <b>\"Generated Link\"</b></p> <p>Here give your Link Definition as<span class=\"info-code\">http://%{full_domain}/helpdesk/tickets?email={email}</span></p>"
+  capsule_crm_helptext: "<h4>Link back from Capsule to Freshdesk</h4><p>You can create a link in Capsule CRM to view the contact's tickets in Freshdesk.</p> <p>To do this Goto your <br /><b>Settings -> Custom Fields -> For People & Organization</b></p><p> Then click on \"Add new...\" and select <b>\"Generated Link\"</b></p> <p>Copy the URl exactly as shown below and paste it in Capsule CRM as the link definition<span class=\"info-code\">http://%{full_domain}/helpdesk/tickets?email={email}</span></p>"
