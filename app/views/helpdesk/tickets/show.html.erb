@@ -1,4 +1,5 @@
 <% content_for :pagefixed do %>
+
 	<%= javascript_include_tag "helpdesk/expanding_textarea.js" %>
 	<%= javascript_include_tag "helpdesk/multifile.js" %>	
   <%= javascript_include_tag "helpdesk/page_switcher" %>
@@ -131,12 +132,12 @@
 			}
 		}
 		
-		function getCannedResponse(ticket_id,ca_resp_id){
+		function getCannedResponse(ticket_id, ca_resp_id){
   	  jQuery("#canned_response_container").addClass("loading")
   		jQuery.ajax({	type: 'POST',
   						url: '/helpdesk/tickets/get_ca_response_content/'+ticket_id+'?ca_resp_id='+ca_resp_id,
   						contentType: 'application/text',
-  						async: false,						
+  						async: false,
   						success: function(data){		
   									insertIntoConversation(data);
   							    jQuery("#canned_response_list")
@@ -226,13 +227,24 @@
 				<em><%= "##{@ticket.display_id}" %></em>
 				<b><%= h(@ticket.subject) %></b>
 		  </h3>
-			<div class="description"> 
+			<div class="description">         
         <div class="user_details">
           <%= user_avatar(@ticket.requester)  %>
+					<% if is_application_installed?("capsule_crm") %>
+						<textarea id="widget-capsule-crm" style="display:none;">
+							<% @liquid_objects = {"requester" => @ticket.requester} %>
+						  <%= get_app_widget_script("capsule_crm", "contact_widget", @liquid_objects) %>
+						</textarea>
+	          <div class="app-link">
+	            <a data-placement="topRight" href="#" rel="widget-popover" data-widget-container="widget-capsule-crm">
+	              <%= image_tag("application-logo-small/capsule_crm.png") %>
+	            </a>
+	          </div> 
+	        <% end %>
           <div>
 						<%= content_tag :span, "", :class => "custom-tip-bottom icon-image source-#{@ticket.source_name.downcase}", :title => t("ticket.reported_from_source", :source => @ticket.source_name.downcase) %>
-      			<%= t('ticket.reported_by', :requester => link_to(h(@ticket.requester.display_name),@ticket.requester, :class => "user_name"))%>  
-						<%="<#{@ticket.requester.email}>" if @ticket.requester.email%>
+            <%= t('ticket.reported_by', :requester => link_to(h(@ticket.requester.display_name),@ticket.requester, :class => "user_name"))%>  
+						<%="&lt;#{@ticket.requester.email}&gt;" if @ticket.requester.email%>
           </div>
 
           <div> 
@@ -340,6 +352,6 @@
 <%= render :partial => "/helpdesk/shared/main_panel" %>
 
 <% content_for :pagefixed do %> 
-  <%= pageless(@ticket_notes.total_pages, helpdesk_ticket_helpdesk_notes_path(@ticket), t("loading.items"), "quote_text()") %>  
+  <%= pageless(@ticket_notes.total_pages, helpdesk_ticket_helpdesk_notes_path(@ticket)) %>  
 <% end %>
 

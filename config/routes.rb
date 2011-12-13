@@ -55,7 +55,12 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :ticket_fields, :only => :index
   map.resources :email, :only => [:new, :create]
   map.resources :password_resets, :except => [:index, :show, :destroy]
-  
+
+  map.namespace :integrations do |integration|
+    integration.resources :installed_applications, :member =>{:install => :put, :uninstall => :get, :configure => :get, :update => :put}
+    integration.resources :applications, :member =>{:show => :get}
+  end
+
   map.namespace :admin do |admin|
     admin.resources :home, :only => :index
     admin.resources :widget_config, :only => :index

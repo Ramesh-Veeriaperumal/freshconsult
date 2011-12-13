@@ -44,7 +44,8 @@ module Admin::HomeHelper
           ['/admin/zen_import',           'import'                  ],
           ['/admin/widget_config',        'feedback'                ],
           ['/agents',                     'agent'                   ],
-          ['/groups',                     'group'                   ]
+          ['/groups',                     'group'                   ],
+          ['/integrations/applications',  'integrations'            ],
       ]]
     ]
 

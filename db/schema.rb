@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111125063159) do
+ActiveRecord::Schema.define(:version => 20111210162346) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -78,6 +78,14 @@ ActiveRecord::Schema.define(:version => 20111125063159) do
     t.text     "signature"
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "applications", :force => true do |t|
+    t.string  "name"
+    t.string  "display_name"
+    t.string  "description"
+    t.integer "widget_id"
+    t.text    "options"
   end
 
   create_table "authorizations", :force => true do |t|
@@ -401,7 +409,7 @@ ActiveRecord::Schema.define(:version => 20111125063159) do
   end
 
   create_table "helpdesk_notes", :force => true do |t|
-    t.text     "body",         :limit => 16777215
+    t.text     "body",         :limit => 2147483647
     t.integer  "user_id",      :limit => 8
     t.integer  "source",                             :default => 0
     t.boolean  "incoming",                           :default => false
@@ -412,7 +420,7 @@ ActiveRecord::Schema.define(:version => 20111125063159) do
     t.integer  "notable_id",   :limit => 8
     t.string   "notable_type"
     t.integer  "account_id",   :limit => 8
-    t.text     "body_html",    :limit => 16777215
+    t.text     "body_html",    :limit => 2147483647
   end
 
   add_index "helpdesk_notes", ["account_id", "notable_type", "notable_id"], :name => "index_helpdesk_notes_on_notables"
@@ -538,7 +546,7 @@ ActiveRecord::Schema.define(:version => 20111125063159) do
   add_index "helpdesk_ticket_states", ["ticket_id"], :name => "index_helpdesk_ticket_states_on_ticket_id"
 
   create_table "helpdesk_tickets", :force => true do |t|
-    t.text     "description",      :limit => 16777215
+    t.text     "description",      :limit => 2147483647
     t.integer  "requester_id",     :limit => 8
     t.integer  "responder_id",     :limit => 8
     t.integer  "status",           :limit => 8,          :default => 1
@@ -565,13 +573,21 @@ ActiveRecord::Schema.define(:version => 20111125063159) do
     t.boolean  "delta",                                  :default => true,  :null => false
     t.integer  "import_id",        :limit => 8
     t.string   "ticket_type"
-    t.text     "description_html", :limit => 16777215
+    t.text     "description_html", :limit => 2147483647
   end
 
   add_index "helpdesk_tickets", ["account_id", "display_id"], :name => "index_helpdesk_tickets_on_account_id_and_display_id", :unique => true
   add_index "helpdesk_tickets", ["account_id", "requester_id"], :name => "index_helpdesk_tickets_on_account_id_and_requester_id"
   add_index "helpdesk_tickets", ["account_id", "responder_id"], :name => "index_helpdesk_tickets_on_account_id_and_responder_id"
   add_index "helpdesk_tickets", ["requester_id"], :name => "index_helpdesk_tickets_on_requester_id"
+
+  create_table "installed_applications", :force => true do |t|
+    t.integer  "application_id"
+    t.integer  "account_id"
+    t.string   "configs"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "moderatorships", :force => true do |t|
     t.integer "forum_id", :limit => 8
@@ -973,5 +989,12 @@ ActiveRecord::Schema.define(:version => 20111125063159) do
   end
 
   add_index "wf_filters", ["user_id"], :name => "index_wf_filters_on_user_id"
+
+  create_table "widgets", :force => true do |t|
+    t.string  "name"
+    t.string  "description"
+    t.text    "script"
+    t.integer "application_id"
+  end
 
 end

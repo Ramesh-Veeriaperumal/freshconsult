@@ -6,6 +6,7 @@ class Helpdesk::TicketsController < ApplicationController
   
   before_filter :check_user , :only => [:show]
   before_filter :load_ticket_filter , :only => [:index, :custom_view_save]
+  before_filter :add_requester_filter , :only => [:index]
   before_filter { |c| c.requires_permission :manage_tickets }
   
   include HelpdeskControllerMethods  
@@ -21,6 +22,19 @@ class Helpdesk::TicketsController < ApplicationController
 
   uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
   
+  def add_requester_filter
+    email = params[:email]
+    unless email.blank?
+      requester = current_account.all_users.find_by_email(email) 
+      if(requester.blank?)
+        requester_id = 0
+      else
+        requester_id = requester.id
+      end
+      params[:data_hash] = [{ "condition" => "requester_id", "operator" => "is_in", "value" => requester_id}];
+    end
+  end
+
   def load_ticket_filter
    filter_name = @template.current_filter
    if !is_num?(filter_name)
@@ -31,7 +45,6 @@ class Helpdesk::TicketsController < ApplicationController
     @ticket_filter.query_hash = @ticket_filter.data[:data_hash]
     params.merge!(@ticket_filter.attributes["data"])
    end
-  
   end
 
   def load_default_filter(filter_name)
