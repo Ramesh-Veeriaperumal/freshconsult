@@ -269,9 +269,7 @@ class User < ActiveRecord::Base
   end
   
   def deliver_account_admin_activation
-      self.active = false
-      reset_perishable_token!
-      UserNotifier.deliver_account_admin_activation!(self)
+      UserNotifier.send_later(:deliver_account_admin_activation,self)
   end
   
   def set_time_zone
@@ -337,6 +335,8 @@ class User < ActiveRecord::Base
       xml.instruct! unless options[:skip_instruct]
       super(:builder => xml, :skip_instruct => true,:except => [:crypted_password,:password_salt,:perishable_token,:persistence_token,:single_access_token]) 
   end
+  
+  
  
   protected
     def set_account_id_in_children

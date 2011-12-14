@@ -39,6 +39,12 @@
 		    </label>
 			<%= content_tag( :div, t('portal_signup_anon'), :class => "info-data tabbed" ) %>
 		</li>
+		<li>
+			<label>
+		      <%= f.feature_check_box :captcha %> <%=t('portal_captcha')%>
+		    </label>
+			<%= content_tag( :div, t('portal_captcha_anon'), :class => "info-data tabbed" ) %>
+		</li>
 	</ul>
 	<div class="button-container">
 		<%= link_to "&larr; #{t('account.cancel')}", "/admin/home", { :class => "uiButton floatl" } %>
