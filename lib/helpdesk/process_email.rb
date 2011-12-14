@@ -108,8 +108,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       ticket = Helpdesk::Ticket.new(
         :account_id => account.id,
         :subject => params[:subject],
-        :description => show_quoted_text(params[:text],to_email[:email] ),
-        :description_html => show_quoted_text(Helpdesk::HTMLSanitizer.clean(params[:html] ), to_email[:email]),
+        :description => params[:text],
+        :description_html => Helpdesk::HTMLSanitizer.clean(params[:html]),
         #:email => from_email[:email],
         #:name => from_email[:name],
         :requester => user,
