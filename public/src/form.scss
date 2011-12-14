@@ -27,6 +27,10 @@ select {
    width:auto;
 }
 
+.full{
+	width:100%;
+}
+
 textarea { 
    height: 100px;
    width: 96%;
@@ -44,7 +48,7 @@ input.text, input[type=text], textarea{
 	border:1px solid #cfcfcf;
 	font-weight:400;
 	padding:5px;
-	@include border-radius(4px);
+	@include border-radius(3px);
 }
 
 div.color{
@@ -79,6 +83,10 @@ input.very_small{
 
 textarea.smallpara{
 	height:50px;
+}
+
+input.hours{
+	font-size:23px;
 }
 	
 /*input:focus, textarea:focus{ border-color:$tab_color !important; }

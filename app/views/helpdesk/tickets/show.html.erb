@@ -1,6 +1,4 @@
 <% content_for :pagefixed do %>
-
-	<%= javascript_include_tag "helpdesk/expanding_textarea.js" %>
 	<%= javascript_include_tag "helpdesk/multifile.js" %>	
   <%= javascript_include_tag "helpdesk/page_switcher" %>
 	<% javascript_tag do %>
@@ -149,14 +147,7 @@
   	}
 	
 	
-    jQuery("#time_sheet").dialog2();
-	
-	function show_log_hour()
-	{
-	
-	
-	}
-    
+    jQuery("#time_sheet").modalAjax();
   <% end %>
 <% end %> 
 <%= include_tiny_mce_if_needed %>
@@ -267,13 +258,8 @@
           </div> 
         </div>
         <% unless @ticket.deleted %>
-          <div class="ticket_actions action_icons">
-          	
-		    <div class="action_buttons clearfix">
-		      <%= link_to "Time sheet", "/helpdesk/time_sheets/time_sheets_for_ticket/#{@ticket.display_id}", :id => "time_sheet", :title => "Time sheet"  %>
-              <!--%= link_to "Log Hour", "show_log_hour()", :id => "log_hour", :title => "Log hour"  %-->
-            </div>
-            <div class="item-right-actions">
+          <div class="ticket_actions action_icons">          	
+           	<div class="item-right-actions">
         			<ul class="nav-drop"> 
         				<li>
         					<a href="#" class="menu-trigger nav-item-icon"><span class="item-options"></span></a>
@@ -290,6 +276,7 @@
             </div>
             <div class="action_buttons clearfix">
               <%= link_to( "Print", print_helpdesk_ticket_path(@ticket), :target => "_blank") %>
+		      		<%= link_to "Add time", "/helpdesk/time_sheets/time_sheets_for_ticket/#{@ticket.display_id}", :id => "time_sheet", :title => "Add time entry" %>
               <%= link_to t('ticket.merge_btn'), "/helpdesk/tickets/show_tickets_from_same_user/#{@ticket.display_id}", :id => "Merge", :title => "Merge ticket"  %>
               <%= link_to(t('ticket.close_btn'), close_helpdesk_ticket_path(@ticket), :method => :put, :title  => t('ticket.close_btn_title'), :class => "last") unless @ticket.closed? %> 
             </div>	
@@ -347,13 +334,18 @@
 				<% end %>				
 			</div>
 		<% end %>
-		<% unless @ticket_notes.blank? then %>
-      <h3 class="title"><%=t('conversation')%></h3> 
-			<div class="requestCnt request-conversation" id="Pages">
-				<%= render :partial => 'note', :collection => @ticket_notes %>
-		  </div>
-			<%= will_paginate @ticket_notes %>		
-		<% end %>			
+		<div class="well request-well">
+			<ul class="tabs">
+      	<li class="active"><a href="#home"><h5 class="title">Conversation</h5></a></li>
+      	<li><a href="#profile"><h5 class="title">Time Sheet</h5></a></li>
+    	</ul>
+		</div>
+			<% unless @ticket_notes.blank? then %>
+				<div class="requestCnt request-conversation" id="Pages">
+					<%= render :partial => 'note', :collection => @ticket_notes %>
+			  </div>
+				<%= will_paginate @ticket_notes %>		
+			<% end %>
 	</div>
 <% end %>
 

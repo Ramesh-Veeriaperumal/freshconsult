@@ -687,6 +687,7 @@ ActiveRecord::Schema.define(:version => 20111210162346) do
     t.datetime "updated_at"
   end
 
+  add_index "social_facebook_pages", ["account_id", "page_id"], :name => "index_account_page_id", :unique => true
   add_index "social_facebook_pages", ["account_id", "page_id"], :name => "social_fb_pages_account_id_and_page_id", :unique => true
   add_index "social_facebook_pages", ["product_id"], :name => "index_product_id"
 

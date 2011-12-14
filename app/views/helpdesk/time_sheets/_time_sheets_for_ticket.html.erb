@@ -1,179 +1,21 @@
-<% javascript_tag do %>
-
-function time_sheet_action(action,time_entry_id)
-{
-
- var form_id;
-
- 		switch(action)
- 		{
-            case 'edit':
-               jQuery('#time_entry'+time_entry_id).hide();
-			   jQuery('#time_entry_edit'+time_entry_id).show();
-			   return;
-			break;
-			case 'cancel':
-               jQuery('#time_entry'+time_entry_id).show();
-			   jQuery('#time_entry_edit'+time_entry_id).hide();
-			   return;
-            break;
-            case 'update':
-			   form_id = 'time_entry_edit_form'+time_entry_id;
-			   data = get_data_for(form_id);
-            break;
-			case 'destroy':
-              data = {id:time_entry_id} 
-            break;
-			case 'create_timer':
-			  form_id = 'add_new_time_entry'
-              data = get_data_for(form_id)
-            break;
-			case 'start_timer':
-			  data = {id:time_entry_id} 
-            break;
-			case 'stop_timer':
-			  data = {id:time_entry_id} 
-            break;
-            default:
-               return false;
-         }
-		 jQuery('#'+form_id).addClass("loading");
-		 jQuery.ajax({	type: 'POST',
-  				url: '/helpdesk/time_sheets/'+action,
-  				data: data,					
-  				success: function(data){		
-				handle_action_response(action,time_entry_id,data);
-  				jQuery('#'+form_id)
-  						.removeClass("loading")
-  			    	    .hide(300);
-  						}
-  			});		
-
-
-}
-
-function handle_action_response(action,time_entry_id,result)
-{
-
-		if (result.success)
-		{
-		    
-			switch(action)
- 			{
-			    case 'create_timer':
-					 jQuery("#time_sheet_list ul").append('<li><div id="time_entry_item"' + time_entry_id + ' >'+ result.raw + '</div></li>');
-			    break;
-			    case 'update':
-				     jQuery("#time_entry_item"+time_entry_id).replaceWith(result.raw);
-					 jQuery('#total_time_spent').html(result.total_time_spent);
-			    break;
-			    case 'destroy':
-				     jQuery("#time_entry_item"+time_entry_id).parent().remove();
-					 jQuery('#total_time_spent').html(result.total_time_spent);
-			    break;
-		   		case 'start_timer':
-			 	     jQuery('div[id^="timer_control_button"]').each(function(){
-					      							var time_sheet_id = jQuery(this)[0].id.split('timer_control_button')[1];
-					      							jQuery(this).html('<a onclick="time_sheet_action(\'start_timer\','+time_sheet_id+'); return false;" href="#" class="button" >start timer</a>');
-														});
-				    								 jQuery('#timer_control_button'+time_entry_id).html('<a onclick="time_sheet_action(\'stop_timer\','+time_entry_id+'); return false;" href="#" class="button" >stop timer</a>');
-           		break;
-				case 'stop_timer':
-			 	  jQuery('#timer_control_button'+time_entry_id).html('<a onclick="time_sheet_action(\'start_timer\','+time_entry_id+'); return false;" href="#" class="button" >start timer</a>');
-           		break;
-		   		default:
-             	  message = 'success'
-		
-			}
-			
-			jQuery('#response_message').html(result.message);
-			
-		}
-		else
-		{
-		   jQuery('#response_message').html(result.errors);
-		}
-
-
-}
-
-function get_data_for(form_id)
-{			
-var form_val  = jQuery('#'+form_id+' :input');
-var values = {};
-form_val.each(function() {
-        values[this.name] = jQuery(this).val();
-    });
-return values;
-}
-
-
-
-	
-<%end%>
-
-
-<div id="main_content">
-
-<div id="response_message">
-	
-	
-</div>
-
-
-<div  class="button-container">
- <%= link_to_function("Add new entry", "jQuery('#add_new_time_entry').toggle();", :class => "uiButton" ) %>
-</div>
-
-
-<!-- new time entry starts here -->
-<div id="add_new_time_entry" name="new_time_entry" style="display: none;"> 
-    <div>
-      <label class="required">Agent</label>
-      <div class="content">
-   		  <%= collection_select (:time_entry , :user_id, current_account.users.technicians.visible, :id, :name, {:selected => current_user}, { :class => "customSelect" }) %>
-	  </div>
+  <div class="modal-body">
+    <div class="row">
+      <div class="span3">
+        <label class="small">Agent</label>
+        <%= collection_select (:time_entry , :user_id, current_account.users.technicians.visible, :id, :name, {:selected => current_user}, :class => "full") %>
+      </div> 
+      <div class="span2">
+        <label class="small" for="day_entry_hours">Hours</label>
+        <%=text_field(:time_entry, :hours, { :size => 4, :id => "time_entry_hours", :class => "auto number hours" })%>
+      </div>    
+      <div class="span4">
+        <label class="small" for="time_entry_notes">Notes</label>
+        <%=text_area(:time_entry, :note, { :rows => 1  , :id => "time_entry_notes", :class => "auto-height" })%>
+      </div>      
     </div>
-    <div>
-        <label for="day_entry_hours">Hours</label>
-		<%=text_field(:time_entry, :hours, { :size => 4 , :value =>"0.0" , :id => "time_entry_hours"})%>
-    </div>
-    <div>
-      <label for="time_entry_notes">Notes</label>
-	  <%=text_area(:time_entry, :note, { :rows => 4  , :id => "time_entry_notes" , :style => "overflow-x: hidden; overflow-y: hidden;"})%>
-    </div>
+  </div>
   <%= hidden_field(:time_entry , :ticket_id , {:value => params[:id], :id=>:time_entry_ticket_id}  )%>
-   <div class="button-container">
-   	 <%= link_to_function("Start Timer", "time_sheet_action('create_timer');", :class => "uiButton" ) %>
-	 <%= link_to_function("Cancel", "jQuery('#add_new_time_entry').hide();", :class => "uiButton" ) %>
-   </div>
-</div>
-
-<!-- new time entry ends here-->
-
-<div id="time_sheet_list">
-<ul class="admin_list">
-<%
-
-@time_sheets.each do |time_entry|
-
-%>
-
-  <li>
-  	<div id='<%="time_entry_item#{time_entry.id}" %>' >
-  	<!--list starts here-->
-    <%= render :partial => "helpdesk/time_sheets/time_entry_item", :locals => { :time_entry => time_entry } %>
-	</div>
-   <!-- list ends here -->	 	 
-  </li>
-
- <%end%>
-</ul>
-</div>
-
-<div>
-	<label>Total:</label>
-	<div id="total_time_spent">
-	<%=get_total_time(@time_sheets)%>
-	</div>
-</div>
+  <div class="modal-footer">
+    <button class="btn secondary small close-dialog">Cancel</button>    
+    <%= link_to_function("Start Timer", "time_sheet_action('create_timer');", :class => "btn primary" ) %>
+  </div>

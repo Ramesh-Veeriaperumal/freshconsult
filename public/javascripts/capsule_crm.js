@@ -181,7 +181,7 @@ CapsuleWidget = {
     
     processFailure: function(responseEvt){
        $('capsule-title').removeClassName('paddingloading');  
-       errorResult = '<center class="info-error"><b>Error in retriving Contact information!!!</b><br />'
+       errorResult = '<center class="info-error"><b>Error in retrieving Contact information!!!</b><br />'
        switch(responseEvt.status){
          case 401:
             errorResult += "Please verify your API Key";

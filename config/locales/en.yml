@@ -1116,7 +1116,7 @@ en:
       tweet_and_resolve: Tweet and Resolve
     activities: Activities
     requestor_info: Requestor Info
-    reply_to: Reply to ticket
+    reply_to: Reply
     add_note: Add note
     monitor_btn_title: Monitor this ticket
     canned_responses: 
