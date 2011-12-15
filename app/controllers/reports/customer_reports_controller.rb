@@ -6,8 +6,7 @@ class Reports::CustomerReportsController < ApplicationController
   
   def index
     unless params[:customer_id].blank?
-      count_of_tickets_last_month
-      company_activity(params)
+      fetch_activity(params)
       calculate_resolved_on_time(params)
       @customer_tickets = customer_tickets
     end
