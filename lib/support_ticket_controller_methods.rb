@@ -17,7 +17,7 @@ module SupportTicketControllerMethods
   
   def create
     puts "Create method in support controller methods"
-    if create_the_ticket(true)
+    if create_the_ticket(feature?(:captcha))
       flash[:notice] = I18n.t(:'flash.portal.tickets.create.success')
       redirect_to redirect_url and return
     else
