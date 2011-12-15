@@ -201,27 +201,27 @@
 <% content_for :main_panel_actions do %>
 <% end %>
 <% content_for :main_panel_summary do %>
+	<% if @ticket.deleted %>
+		<div class="alert-message block-message warning">
+			<div class="alert-actions-right">
+      	<%= link_to(t('ticket.restore_btn'), restore_helpdesk_ticket_path(@ticket), :method => :put, :class => "btn small", :title => t('ticket.restore_btn_title') ) %>
+    	</div>
+  		<p><strong><%=t('this_ticket_has_been_deleted') %></strong></p>
+		</div>
+  <% end %>
   <div class="request_details">
-    <% if @ticket.deleted %>
-      <div class="info-highlight-deleted">
-        <div class="action_buttons">
-          <%= link_to(t('ticket.restore_btn'), restore_helpdesk_ticket_path(@ticket), :method => :put, :class => "last", :title => t('ticket.restore_btn_title') ) %>
-        </div>
-        <%=t('this_ticket_has_been_deleted') %>
-      </div>	
-      <% end %>	
       <div class="requestCnt request-cnt-first"> 
         <% unless @ticket.deleted %>
-          <div class="request_status">
-	            <ul>
-	                <li>
-	                    <b><%= t('ticket.status') %></b>: <span id="status_name_id"><%= h(@ticket.status_name) %></span>
-	                </li>
-	                <li>
-	                    <b><%= t('ticket.priority') %></b>: <%= h(@ticket.priority_name) %>
-	                </li>
-	            </ul>
- 						</div>
+          <!-- <div class="request_status">
+          	            <ul>
+          	                <li>
+          	                    <b><%= t('ticket.status') %></b>: <span id="status_name_id"><%= h(@ticket.status_name) %></span>
+          	                </li>
+          	                <li>
+          	                    <b><%= t('ticket.priority') %></b>: <%= h(@ticket.priority_name) %>
+          	                </li>
+          	            </ul>
+           						</div> -->
 				<% end %>
 			<h3 class="title">
 				<em><%= "##{@ticket.display_id}" %></em>
@@ -276,7 +276,6 @@
             </div>
             <div class="action_buttons clearfix">
               <%= link_to( "Print", print_helpdesk_ticket_path(@ticket), :target => "_blank") %>
-		      		<%= link_to "Add time", "/helpdesk/time_sheets/time_sheets_for_ticket/#{@ticket.display_id}", :id => "time_sheet", :title => "Add time entry" %>
               <%= link_to t('ticket.merge_btn'), "/helpdesk/tickets/show_tickets_from_same_user/#{@ticket.display_id}", :id => "Merge", :title => "Merge ticket"  %>
               <%= link_to(t('ticket.close_btn'), close_helpdesk_ticket_path(@ticket), :method => :put, :title  => t('ticket.close_btn_title'), :class => "last") unless @ticket.closed? %> 
             </div>	
@@ -309,42 +308,74 @@
     </div>
   </div>		 
 
-		<% unless @ticket.deleted %>
-			<div class="alignright">
-				<%= link_to_function(t('ticket.reply_to'), "swapEmailNote('reply', this)", :class => 'uiButton', :id => "ReplyButton") unless @item.from_email.nil? %>
-				<%= link_to_function(t('ticket.add_note'), "swapEmailNote('note', this)", :class => 'uiButton', :id => "AddNoteButton") %>		
-				<%= link_to_function("Tweet", "swapEmailNote('tweet', this)", :class => 'uiButton', :id => "TweetButton") if @item.requester && @item.is_twitter?%>
-				<%= link_to_function("Comment", "swapEmailNote('fb_post', this)", :class => 'uiButton', :id => "FacebookButton") if @item.requester && @item.fb_post%>
-			</div>
-			<div style="position:relative;">
-				<% if @item.requester %>				
-				  <div class="canned-response-menu" id="canned_response_container" style="display:none;"> 
-            <div>
-              <%= link_to("Add Canned response", new_admin_canned_response_path, :target => "_blank", :class => "button") if(current_user.admin?) %>
-            </div>
-            <div id="canned_response_list"></div>
-				  </div>
-					<%= render(:partial => '/helpdesk/shared/note_form', :locals => { :id => 'add-note',	:cntid => "cnt-note", :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
-					<%= render(:partial => '/helpdesk/shared/reply_form', :locals => { :id => 'send-email', :cntid => 'cnt-reply', :note => [@ticket, Helpdesk::Note.new(:private => false)] }) %>
-					<%= render(:partial => '/helpdesk/shared/tweet_form', :locals => {:id => 'send-tweet', :cntid => 'cnt-tweet', :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
-					<%= render(:partial => '/helpdesk/shared/facebook_form', :locals => {:id => 'send-fb-post', :cntid => 'cnt-fb-post', :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
-			
-				<% else %>
-					<%= render(:partial => '/helpdesk/shared/note_form', :locals => { :id => 'add-note',	:cntid => "cnt-note", :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
-				<% end %>				
-			</div>
-		<% end %>
-		<div class="well request-well">
-			<ul class="tabs">
-      	<li class="active"><a href="#home"><h5 class="title">Conversation</h5></a></li>
-      	<li><a href="#profile"><h5 class="title">Time Sheet</h5></a></li>
+		
+		<div class="request-well">
+			<% unless @ticket.deleted %>
+				<div class="button-container">
+					<%= link_to_function(t('ticket.reply_to'), "swapEmailNote('reply', this)", :class => 'btn small', :id => "ReplyButton") unless @item.from_email.nil? %>
+					<%= link_to_function("Tweet", "swapEmailNote('tweet', this)", :class => 'btn small', :id => "TweetButton") if @item.requester && @item.is_twitter?%>
+					<%= link_to_function("Comment", "swapEmailNote('fb_post', this)", :class => 'btn small', :id => "FacebookButton") if @item.requester && @item.fb_post%>
+					<%= link_to_function(t('ticket.add_note'), "swapEmailNote('note', this)", :class => 'btn small', :id => "AddNoteButton") %>		
+					<%= link_to "Add time", "/helpdesk/time_sheets/time_sheets_for_ticket/#{@ticket.display_id}", :id => "time_sheet", :title => "Add time entry", :class => "btn small" %>
+      		
+				</div>				
+			<% end %>
+			<div class="scrollspy" data-scrollspy="scrollspy">
+				<ul class="tabs" data-tabs="tabs">
+      		<li>
+						<a href="#Pages" class="active">
+							<h4 class="title">Conversation <span class="pill"><%= @ticket_notes.size %></span></h4>
+						</a>
+					</li>
+      		<li><a href="#timesheet"><h4 class="title">Time Sheet <span class="pill">20</span></h4></a></li>
     	</ul>
+			</div>
+		</div>
+		<div>
+			<% if @item.requester %>				
+			  <div class="canned-response-menu" id="canned_response_container" style="display:none;"> 
+          <div>
+            <%= link_to("Add Canned response", new_admin_canned_response_path, :target => "_blank", :class => "button") if(current_user.admin?) %>
+          </div>
+          <div id="canned_response_list"></div>
+			  </div>
+				<%= render(:partial => '/helpdesk/shared/note_form', :locals => { :id => 'add-note',	:cntid => "cnt-note", :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
+				<%= render(:partial => '/helpdesk/shared/reply_form', :locals => { :id => 'send-email', :cntid => 'cnt-reply', :note => [@ticket, Helpdesk::Note.new(:private => false)] }) %>
+				<%= render(:partial => '/helpdesk/shared/tweet_form', :locals => {:id => 'send-tweet', :cntid => 'cnt-tweet', :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
+				<%= render(:partial => '/helpdesk/shared/facebook_form', :locals => {:id => 'send-fb-post', :cntid => 'cnt-fb-post', :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
+
+			<% else %>
+				<%= render(:partial => '/helpdesk/shared/note_form', :locals => { :id => 'add-note',	:cntid => "cnt-note", :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
+			<% end %>				
 		</div>
 			<% unless @ticket_notes.blank? then %>
-				<div class="requestCnt request-conversation" id="Pages">
+			<div class="tab-content">
+				<div class="requestCnt request-conversation tab-pane active" id="Pages">
 					<%= render :partial => 'note', :collection => @ticket_notes %>
+					<%= will_paginate @ticket_notes %>							
 			  </div>
-				<%= will_paginate @ticket_notes %>		
+				<div class="requestCnt request-conversation hide tab-pane" id="timesheet">
+					<% @ticket.time_sheets.each do |time_entry| %>
+					<div class="timeentry">
+						<div class="user_details">
+							<%= user_avatar(time_entry.user) if time_entry.user %>
+							<%= link_to_user(time_entry.user, "user_name") %>
+							<%= formated_date(time_entry.created_at) %>
+					  </div>
+						<div class="time">	
+							<a href="#" class="slim-button">start</a>
+						</div>
+						<div>
+							<%= get_time_in_hours(time_entry.time_spent) %>
+						</div>
+						<div>
+							<%= RedCloth.new("#{time_entry.note}").to_html %>
+						</div>
+					</div>
+					<span class="seperator"></span>
+					<% end %>
+				</div>
+			</div>
 			<% end %>
 	</div>
 <% end %>

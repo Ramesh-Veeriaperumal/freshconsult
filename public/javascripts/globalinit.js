@@ -64,6 +64,10 @@ var $J = jQuery.noConflict();
       
       // - Quote Text in the document as they are being loaded
 	   $("div.request_mail").livequery(function(){ quote_text(this); });
+	   
+	   $('.tabs').livequery(function(){ $(this).tabs() });
+	   $('.scrollspy').livequery(function(){ $(this).scrollSpy() });	   
+	   
 
       // - jQuery Validation for forms with class .ui-form ( ...An optional dont-validate written for the form element will make the selectors ignore those form alone )
       validateOptions = {

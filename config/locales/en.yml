@@ -1484,6 +1484,7 @@ en:
         help: Help
   settings: settings        
   capsule_crm: "Capsule CRM"
+  updated_on: "%{user_name} updated on %{note_date}"
   integrations:
     capsule:
       label: "Capsule CRM"

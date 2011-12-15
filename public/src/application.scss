@@ -484,7 +484,8 @@ body h5{
 	}
 }
 
-.request_details{	  
+.request_details{
+	margin:-13px -20px;
 	.ticket_actions{
 		position:relative; 
 		display:inline;
@@ -505,10 +506,7 @@ body h5{
 	.requestCnt{
 		padding:10px 20px;
 		position:relative;
-		margin:5px -20px 16px -20px;
 		background:#ffffff;
-		border:1px solid #f1f1f1;
-		border-width:1px 0px;
 		.title{ 			
 			color:#555555; 
 			font-size:1.35em;
@@ -537,11 +535,11 @@ body h5{
 	}
 	
 	.request-cnt-first{
-		background:#fafafa;  
+		background:#f5f5f5; 
 		div.description{  
-			margin-left:60px;
+			margin-left:50px;
 			.preview_pic{
-				margin-left:-70px;
+				margin-left:-68px;
 			}	
 			.app-link{
 			   position:absolute;
@@ -622,23 +620,27 @@ body h5{
 		}
 	
 	.request-conversation{
-		padding-top:0px;
-		padding-right:0px;
-		padding-bottom:0px;
-		background-color:#FAFAFA;
-		div.description{
-			border-left:1px solid #efefef;
-			background-color:#ffffff;
-			margin:0px 0px 0px 70px;
-			padding:12px;
-			border-bottom:1px solid #efefef;
+		padding:0;
+		.description, .timeentry{
+			padding:3px 0 8px 0; 
+			.user_details{
+				font-size:12px;
+			}
 			.preview_pic{
-				margin-top:-4px;
+				margin-left:-48px;
+				margin-top:6px;
+				img{
+					width:35px;
+					height:35px;
+				}
 			}
 			.details{
 				border-top:0px;
+				padding-top:3px;
 			}
 		}
+		.description{ margin:0px 60px 0 80px; }
+		.timeentry{ margin:0px 60px 0 110px; }
 	}
 		
 	.request_desp { 
@@ -3109,7 +3111,7 @@ div.addReminder{
          margin:0px; 
          margin-top:3px;
          margin-left:-65px;         
-         @include corners(5px);
+         @include corners(3px);
          border:1px solid #cfcfcf;
          height:40px;
          img{ 
@@ -3271,7 +3273,6 @@ div.addReminder{
 }
 
 .info-highlight-deleted{
-	margin:-13px -20px -10px -20px;
 	padding:15px 18px 18px 18px;
 	font-size:15px;
 } 
@@ -4096,7 +4097,7 @@ a.close{
 }
  
 .quoted_button{
-  margin:10px 0;
+  margin:0 0;
   background:sprite($symbol, quote_button) no-repeat;
   display:inline-block;
   width:31px;
