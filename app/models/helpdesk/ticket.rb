@@ -365,7 +365,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def autoreply     
-    notify_by_email EmailNotification::NEW_TICKET #Do SPAM check.. by Shan
+    notify_by_email EmailNotification::NEW_TICKET unless spam?#Do SPAM check.. by Shan
     notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_GROUP) if group_id
     notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_AGENT) if responder_id
     

@@ -187,7 +187,7 @@ class Account < ActiveRecord::Base
   }
   
   SELECTABLE_FEATURES = [ :open_forums, :open_solutions, :anonymous_tickets, :scoreboard, 
-    :survey_links, :google_signin, :twitter_signin, :signup_link ] #:surveys & ::survey_links $^&WE^%$E
+    :survey_links, :google_signin, :twitter_signin, :signup_link , :captcha ] #:surveys & ::survey_links $^&WE^%$E
   
   has_features do
     PLANS_AND_FEATURES.each_pair do |k, v|
@@ -438,7 +438,7 @@ class Account < ActiveRecord::Base
     end
     
     def create_admin
-      self.user.active = true  #unless google_domain.blank?
+      self.user.active = true  
       self.user.account = self
       self.user.user_role = User::USER_ROLES_KEYS_BY_TOKEN[:account_admin]  
       self.user.build_agent()
@@ -451,7 +451,7 @@ class Account < ActiveRecord::Base
     end
 
    def send_welcome_email
-      SubscriptionNotifier.send_later(:deliver_welcome, self) #unless google_domain.blank?
+      SubscriptionNotifier.send_later(:deliver_welcome, self) unless google_domain.blank?
     end
     
     def update_google_domain

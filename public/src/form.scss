@@ -13,7 +13,7 @@ label{
 }
 
 input[type=text], select, input.text { 
-   width: 96%;
+   width: 95%;
    margin:0 0 3px 0;
    color:#3f3f3f;
    padding:3px;
@@ -43,6 +43,8 @@ input.password {
 input.text, input[type=text], textarea{
 	border:1px solid #cfcfcf;
 	font-weight:400;
+	padding:5px;
+	@include border-radius(4px);
 }
 
 div.color{
@@ -468,11 +470,20 @@ a.addchoice:hover{
 	/*border-bottom:1px dotted #cfcfcf;*/
 	padding-top:8px;
 	input[type=text], select, input.text {
-		width:auto;
+
 	}
 	.caption{
 		float:left;
-		/*		clear:left; */
+		.logo{
+		   float:left;
+		   height:34px;
+		   width:150px;
+		   margin-left:-2px;
+		   clear:left;
+		}
+		.logo.info-data{
+	      padding:3px;
+	   }	   
 		h2.title{
 			line-height:28px;
 			top:-8px;

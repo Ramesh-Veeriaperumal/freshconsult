@@ -2,6 +2,7 @@
 en: 
   meta:
    language_name: 'English'
+  attachment_help_info: Attachment(s) size can be up to 20 MB
   feedbackwidget_offset_info: The offset will be the distance of the widget button (pixels) from the left or top of the screen based on the alignment you choose.
   no_twitter_handle: Please configure atleast one twitter account
   reset_my_password: Reset my password 
@@ -288,6 +289,12 @@ en:
       updated: Facebook setting has been updated 
     application:
       already: Application already installed.
+      uninstall:
+        success: "The Addon has been removed successfully!"
+      install:
+        success: "The Addon has been Added successfully!"
+      configure:
+        success: "The Addon has been updated successfully!"
     filter:
       delete_success: "View has been delete successfully!"
       save_success: "View has been saved successfully!"
@@ -567,6 +574,7 @@ en:
   portal_customizer_google_signin: Allow users to Sign in using Google
   portal_customizer_twitter_signin: Allow users to Sign in using Twitter
   portal_signup: Allow customers to Sign Up from the customer portal
+  portal_captcha: Make captcha compulsory while submitting ticket without logging in
   to_email: To Email
   starts_with: Starts with
   portal_customizer_anon_tickets_i: Turn this feature off, if you want your users to be signed in to submit a ticket.
@@ -796,6 +804,7 @@ en:
   portal_customizer_anon_for_g: Enable this feature if you want customers to be able to sign in using their Google username and password. 
   portal_customizer_anon_for_t: Enable this feature if you want users to be able to sign in using their Twitter username and password. 
   portal_signup_anon: Enable this feature if you want users to be able to sign up and create their own user accounts. This will enable users to login and participate in forum discussions, vote on ideas etc.
+  portal_captcha_anon: Disable this feature if you want users to submit a ticket without the captcha
   card_process: Thank you for your payment. Your Freshdesk account is now live!
   chat: Chat
   country: Country
@@ -1455,11 +1464,16 @@ en:
     items: Loading more items
   application:
     new: Create New Application
+    desc: Integrate with other Apps to make your Freshdesk experience more awesome.
     title: Addons & Integration
     disabled: Disabled
     enabled: Enabled
     configure: Configure
     enable: Enable
+    click_to_disable: Click to disable Addon
+    click_to_enable: Click to enable Addon    
+    confirm_disable: "Are you sure you want to disable this Addon?"
+    configure_addon: "Click to configure this Addon"
   home:
       mobile_index:
         email: Email
@@ -1470,3 +1484,21 @@ en:
         sign_in_using: Sign In using
         sign_in_using_google: Sign in using your Google account
         help: Help
+  settings: settings        
+  capsule_crm: "Capsule CRM"
+  integrations:
+    capsule:
+      label: "Capsule CRM"
+      desc: "You can view Contact information from Capsule CRM in Freshdesk. This information can be accessed in the Ticket Details page and Contact Details Page."
+      form:
+        bcc_drop_box_mail: "Mail Drop Box address"
+        bcc_drop_box_mail_info: "You can find your unique Capsule Drop box Email address under <b>“Settings -> Mail Drop Box”</b>.<br /> (You can find this on the top right corner of the page).<br /> Copy the email address and paste it in the textfield above. <br /> Freshdesk will automatically add this email address to the Bcc field when you are replying to a Ticket"
+        domain: "Domain"
+        domain_info: "ex: example.capsulecrm.com"
+        api_key: "Api Key"
+        api_key_info: "To get your unique API key, login to your Capsule CRM account and navigate to <br /> <b>“User -> My Preferences”</b>. (You can find this on the top right corner of the page).<br /> Click on <b>“API Authentication Token”</b>, and to get the unique API key.<br /> Copy the key and paste it in the textfield above."
+        widget_title: "Widget Title"
+  widgets:
+    contact_widget:
+      description: "Display a contact or option to add the contact into capsule."
+  capsule_crm_helptext: "<h4>Link back from Capsule to Freshdesk</h4><p>You can create a link in Capsule CRM to view the contact's tickets in Freshdesk.</p> <p>To do this Goto your <br /><b>Settings -> Custom Fields -> For People & Organization</b></p><p> Then click on \"Add new...\" and select <b>\"Generated Link\"</b></p> <p>Copy the URl exactly as shown below and paste it in Capsule CRM as the link definition<span class=\"info-code\">http://%{full_domain}/helpdesk/tickets?email={email}</span></p>"

@@ -269,9 +269,7 @@ class User < ActiveRecord::Base
   end
   
   def deliver_account_admin_activation
-      self.active = false
-      reset_perishable_token!
-      UserNotifier.deliver_account_admin_activation!(self)
+      UserNotifier.send_later(:deliver_account_admin_activation,self)
   end
   
   def set_time_zone
@@ -288,11 +286,17 @@ class User < ActiveRecord::Base
   
   def to_liquid
     to_ret = { 
+      "id"   => id,
       "name"  => to_s,
-      "email" => email
+      "email" => email,
+      "phone" => phone,
+      "mobile" => mobile,
+      "job_title" => job_title,
+      "user_role" => user_role,
+      "time_zone" => time_zone,
     }
     
-    to_ret["company_name"] = customer.name if customer_id
+    to_ret["company_name"] = customer.name if customer
     
     to_ret
   end
@@ -331,6 +335,8 @@ class User < ActiveRecord::Base
       xml.instruct! unless options[:skip_instruct]
       super(:builder => xml, :skip_instruct => true,:except => [:crypted_password,:password_salt,:perishable_token,:persistence_token,:single_access_token]) 
   end
+  
+  
  
   protected
     def set_account_id_in_children

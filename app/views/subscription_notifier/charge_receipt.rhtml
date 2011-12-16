@@ -84,7 +84,7 @@
 		      <td style="border: 1px solid #dfdfdf; padding: 5px; border: 0; vertical-align: top; border-bottom: 1px solid #dfdfdf; width: 175px;">Freshdesk <%=SubscriptionPlan::BILLING_CYCLE_NAMES_BY_KEY[@subscription.renewal_period]%> Subscription Plan - <%=@subscription.subscription_plan.name%></td>
 		      <td style="border: 1px solid #dfdfdf; padding: 5px; border: 0; vertical-align: top; border-bottom: 1px solid #dfdfdf; width: 300px;"> </td>
 		      <td style="border: 1px solid #dfdfdf; padding: 5px; border: 0; vertical-align: top; border-bottom: 1px solid #dfdfdf;"><div class="qty"><%=@subscription.agent_limit%></div></td>
-		      <td style="border: 1px solid #dfdfdf; padding: 5px; border: 0; vertical-align: top; border-bottom: 1px solid #dfdfdf;"><div class="cost">$<%=@subscription.amount/@subscription.agent_limit%></div></td>
+		      <td style="border: 1px solid #dfdfdf; padding: 5px; border: 0; vertical-align: top; border-bottom: 1px solid #dfdfdf;"><div class="cost">$<%=@subscription.amount/(@subscription.agent_limit * @subscription.renewal_period)%></div></td>
 		      <td style="border: 1px solid #dfdfdf; padding: 5px; border: 0; vertical-align: top; border-bottom: 1px solid #dfdfdf;"><span class="price">$<%=@subscription.amount%></span></td>
 		  </tr>
 		  <tr>

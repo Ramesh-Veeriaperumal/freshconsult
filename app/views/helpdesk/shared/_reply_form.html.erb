@@ -18,14 +18,16 @@
 <div class="request_panel" id="<%=cntid%>" style="display:none;">
     <% form_for note, :html => {:multipart => true, :id => "HelpdeskReply" } do |f| %>
     <%= f.error_messages %>
+    <% capsule_config = get_app_config('capsule_crm') 
+       bcc_drop_box_email = (capsule_config.blank?) ? [] : capsule_config["bcc_drop_box_mail"].split( /,* /).map{|item|[item, item]} %> 
     <ul class="ui-form dont-validate">
         <li class="inline-field field">
             <div class="request_form_options">
               <a href="javascript:void(0)" onclick="showHideCc(this)" class="slim-button" >
                 <%= (@ticket.cc_email.blank?)? t(".addcc"): t(".removecc") %>
               </a>
-			  <a href="javascript:void(0)" onclick="showHideBcc(this)" class="slim-button" >
-			  	<%=t(".addbcc")%>
+			        <a href="javascript:void(0)" onclick="showHideBcc(this)" class="slim-button" >
+			  	      <%= (bcc_drop_box_email.blank?)? t(".addbcc"): t(".removebcc")  %>
               </a>
               <%= link_to_function( t(:'ticket.canned_responses.insert_ca_response') + " &raquo;", "show_canned_response(#{@ticket.id})", :class => "slim-button insert-canned-response") %>
             </div>
@@ -48,17 +50,19 @@
                 <input type="text" id="cc_emails" name="cc_emails" />
             </div>
         </li>
-		<li class="inline-field field" id="bcc-form-container" style="display:none">
-			 <label class="caption">
-                <%= t(".bcc") %>:
-            </label>
-            <div class="fields">
-                <% content_for :onload_script do -%>
-				new Autocompleter.MultiValue("bcc_emails", cachedLookup, $A(), {frequency: 0.1, acceptNewValues: true});
-                <%- end %>
-                <input type="text" id="bcc_emails" name="bcc_emails" />
-            </div>
-		</li>
+        
+		    <li class="inline-field field" id="bcc-form-container" style='display:<%= bcc_drop_box_email.blank? ? "none": "block" %>;'>
+			    <label class="caption">
+            <%= t(".bcc") %>:
+          </label>
+
+          <div class="fields">
+            <% content_for :onload_script do -%>
+              new Autocompleter.MultiValue("bcc_emails", cachedLookup, $A(<%= bcc_drop_box_email.to_json unless bcc_drop_box_email.blank? %>), {frequency: 0.1, acceptNewValues: true});
+				    <% end %>
+            <input type="text" id="bcc_emails" name="bcc_emails" />
+          </div>
+        </li>
         <li class="inline-field field">
             <label class="caption">
                 <%= t("message") %>:
