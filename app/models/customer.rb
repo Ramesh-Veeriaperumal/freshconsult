@@ -10,7 +10,7 @@ class Customer < ActiveRecord::Base
   
   has_many :users , :class_name =>'User' ,:conditions =>{:deleted =>false} , :dependent => :nullify , :order => :name
   
-  has_many :tickets , :through => :users , :class_name => 'Helpdesk::Ticket'
+  has_many :all_users , :class_name =>'User' , :dependent => :nullify , :order => :name
   
   belongs_to :sla_policy, :class_name =>'Helpdesk::SlaPolicy'
   
@@ -36,6 +36,7 @@ class Customer < ActiveRecord::Base
   before_update :check_sla_policy
   
   has_many :tickets , :through =>:users , :class_name => 'Helpdesk::Ticket' ,:foreign_key => "requester_id"
+
   
   CUST_TYPES = [
     [ :customer,    "Customer",         1 ], 
@@ -67,6 +68,10 @@ class Customer < ActiveRecord::Base
       xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
       super(:builder => xml, :skip_instruct => true,:except => [:account_id,:import_id,:delta]) 
+  end
+  
+  def time_sheets #or use find_by_sql
+    account.time_sheets.all_for_customer(self)
   end
   
 end
