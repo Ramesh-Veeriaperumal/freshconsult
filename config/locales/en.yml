@@ -287,13 +287,16 @@ en:
     facebook:
       updated: Facebook setting has been updated 
     application:
-      already: Application already installed.
+      already: "Addon is already installed."
       uninstall:
         success: "The Addon has been removed successfully!"
+        error: "Error in disabling the Addon."
       install:
         success: "The Addon has been Added successfully!"
       configure:
         success: "The Addon has been updated successfully!"
+        error: "Error in configuring the Addon."
+      not_installed: "This addon is not yet installed."
     filter:
       delete_success: "View has been delete successfully!"
       save_success: "View has been saved successfully!"

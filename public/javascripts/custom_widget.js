@@ -58,7 +58,7 @@ Freshdesk.Widget.prototype={
 		} else {
 			var mt = widget.content_type || "application/json";
 			new Ajax.Request("/http_request_proxy/fetch",{
-				method:"get",
+				method: widget.method || "get",
 				parameters:{
 					domain:this.options.domain,
 					ssl_enabled:this.options.ssl_enabled,
@@ -66,6 +66,7 @@ Freshdesk.Widget.prototype={
 					content_type:mt,
 					cache_gets:this.options.cache_gets
 				},
+				postBody: widget.body, 
 				requestHeaders:{
 					Authorization:"Basic " + Base64.encode(this.options.username + ":" + this.options.password)
 				},
