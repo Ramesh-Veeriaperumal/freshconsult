@@ -622,25 +622,28 @@ body h5{
 	.request-conversation{
 		padding:0;
 		.description, .timeentry{
+			@include pie-clearfix;
+			position:relative;
 			padding:3px 0 8px 0; 
+			margin:0px 60px 0 80px;
 			.user_details{
-				font-size:12px;
+				font-size:1em;
+				position:relative;
 			}
 			.preview_pic{
-				margin-left:-48px;
-				margin-top:6px;
+				margin-left:-40px;
+				margin-top:0px;
 				img{
 					width:35px;
 					height:35px;
+					@include border-radius(4px);
 				}
 			}
 			.details{
 				border-top:0px;
 				padding-top:3px;
 			}
-		}
-		.description{ margin:0px 60px 0 80px; }
-		.timeentry{ margin:0px 60px 0 110px; }
+		} 
 	}
 		
 	.request_desp { 

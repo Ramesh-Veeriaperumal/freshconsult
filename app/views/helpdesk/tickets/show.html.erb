@@ -322,12 +322,19 @@
 			<% end %>
 			<div class="scrollspy" data-scrollspy="scrollspy">
 				<ul class="tabs" data-tabs="tabs">
-      		<li>
-						<a href="#Pages" class="active">
+      		<li class="active">
+						<a href="#Pages">
 							<h4 class="title">Conversation <span class="pill"><%= @ticket_notes.size %></span></h4>
 						</a>
 					</li>
-      		<li><a href="#timesheet"><h4 class="title">Time Sheet <span class="pill">20</span></h4></a></li>
+      		<li>
+						<a href="#timesheet">
+							<h4 class="title">
+								Time Sheet 
+								<span class="pill"><%= @ticket.time_sheets.size %></span>
+							</h4>
+						</a>
+					</li>
     	</ul>
 			</div>
 		</div>
@@ -350,25 +357,30 @@
 		</div>
 			<% unless @ticket_notes.blank? then %>
 			<div class="tab-content">
-				<div class="requestCnt request-conversation tab-pane active" id="Pages">
+				<div class="requestCnt request-conversation hide tab-pane " id="Pages">
 					<%= render :partial => 'note', :collection => @ticket_notes %>
-					<%= will_paginate @ticket_notes %>							
+					<%= will_paginate @ticket_notes %>
 			  </div>
-				<div class="requestCnt request-conversation hide tab-pane" id="timesheet">
+				<div class="requestCnt request-conversation active tab-pane" id="timesheet">
 					<% @ticket.time_sheets.each do |time_entry| %>
 					<div class="timeentry">
+						<span class="billable"></span>
+						<%= content_tag(:span, "", :class => "billable") if time_entry.billable %>
 						<div class="user_details">
 							<%= user_avatar(time_entry.user) if time_entry.user %>
 							<%= link_to_user(time_entry.user, "user_name") %>
 							<%= formated_date(time_entry.created_at) %>
 					  </div>
-						<div class="time">	
-							<a href="#" class="slim-button">start</a>
+						<div class="counter">	
+							<!-- <a href="#" class="slim-button">start</a> -->
+							<span class="clock animated">
+								<span class="timer"></span>
+							</span>
 						</div>
-						<div>
+						<div class="timespent">
 							<%= get_time_in_hours(time_entry.time_spent) %>
 						</div>
-						<div>
+						<div class="note">
 							<%= RedCloth.new("#{time_entry.note}").to_html %>
 						</div>
 					</div>

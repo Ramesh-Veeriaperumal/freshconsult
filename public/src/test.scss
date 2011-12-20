@@ -1305,3 +1305,57 @@ span.pill{
 .active span.pill{
 	background-color:#5880ac;
 }
+
+.clock{
+	display:inline-block;
+	position:relative;
+	background: sprite($symbol, clock);	
+	width:25px;
+	height:25px;
+}
+
+.clock.animated .timer{
+	position:absolute;
+	width:25px;
+	height:35px;
+	top:2px;
+	left:0px;
+	background:url("../images/animated/timer.gif") no-repeat center;	
+}
+
+.timeentry{
+	.timespent, .user_details, .counter, .note{
+		float:left;
+		margin-right:1%; 
+		color:#666666;	
+	}
+	.user_details{
+		min-width:230px;
+		width:30%;
+		.user_name{
+			display:block;
+			margin-bottom:2px;
+		}
+	}
+	.counter{
+		width:5%;
+		text-align:center;
+	}
+	.timespent{
+		font-size:1.40em;
+		width:8%;
+		padding-right:2%;
+		text-align:right;
+	}
+	.note{ 
+		width:44%;
+	}
+	.billable{
+		background: sprite($symbol, billable);
+		position:absolute;
+		left:-65px;
+		top:5px;
+		width:19px;
+		height:18px;
+	}
+}
