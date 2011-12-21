@@ -3,10 +3,14 @@ class Reports::TimesheetReportsController < ApplicationController
   include Reports::TimesheetReport
   
   before_filter { |c| c.requires_permission :manage_tickets }
-  before_filter :buidl_time_sheet, :only => [:index, :export_csv]
+  before_filter :buidl_time_sheet, :only => [:index, :export_csv ,:report_filter]
+  
+  
+  def report_filter
+    render :partial => "time_sheet_list"
+  end
   
   def export_csv
-    
     csv_string = FasterCSV.generate do |csv|
       headers = csv_hash.keys.sort
       csv << headers

@@ -1,33 +1,36 @@
 
-<% form_tag :action => :index do %> 
+<% form_tag({:action => :export_csv}, { :method => :post, :id => 'report_filters' }) do %>
+
+	<div>
 	 <%= collection_select({}, :customer_id, current_account.customers, :id, :name, { :include_blank => '...', :selected => @customer_id })%>
 	 <%= collection_select({}, :user_id, current_account.users.technicians, :id, :name, { :include_blank => '...', :selected => @user_id })%>
 	 <%= select({}, :billable , Helpdesk::TimeSheet::BILLABLE_HASH ,{ :include_blank => '...' , :selected => (@billable.eql?([true,false]) ? "" : @billable)} )%>
 	 <%=select_month(Time.utc(Time.now.year, @month, 1) || Date.today)%>
-	<%= submit_tag "Run report", :class => "uiButton", :id => "run_report" %>
 	
+	</div>
+
+	<div class="button-container">
+    	<%= submit_tag "Export to CSV", :class => "uiButton", :id => "ExportToCSV" %>
+	</div>
 <% end %>
 
-<% form_tag({:action => :export_csv}, { :method => :post, :id => 'exportFilter' }) do %>
+<div id="time_sheet_report" >
+	<%= render :partial => "time_sheet_list", :locals => {:time_sheets => @time_sheets}%> 
+</div>
 
-    <%= hidden_field(:date, :month, :id=>"month_of_year", :value => (@month || Time.zone.now.month)) %>	
-	 <%= hidden_field_tag(:customer_id, @customer_id , :id=>"export_customer_id") %>	
-	 <%= hidden_field_tag(:user_id, @user_id , :id=>"export_agent_id") %>
-	 <%= hidden_field_tag(:billable	, (@billable.eql?([true,false]) ? "" : @billable) , :id=>"export_billable") %>
-	
-	<div class="button-container">
-		<%= submit_tag "Export to CSV", :class => "uiButton", :id => "ExportToCSV" %>
-	</div>
-<%end%>
+<% javascript_tag do %> 
+jQuery(document).ready(function(){
+  jQuery("#report_filters").change(function(){
+    jQuery("#time_sheet_report").html("<div class='loading-box'></div>"); 
+    jQuery.ajax({
+        url: "/reports/timesheet_reports/report_filter",
+        type: "POST",
+        data: jQuery(this).serializeArray(),
+        success: function(data){ 
+		   jQuery("#time_sheet_report").hide().html(data).fadeIn(300);
+        }
+		});
+      }); 	  
+  });
 
-<ul class="admin_list">	
-
-	<% @time_sheets.each do |t_sheet| %>
-			<li>
-				<div> <%=h(t_sheet.user.name)%></div>
-				<div> <%=get_time_in_hours(t_sheet.time_spent)%></div>
-				<div><%=h(t_sheet.note)%></div>	
-				<div><%=h(t_sheet.ticket_display)%></div>							
-			</li>	
-		<% end %>	
-	</ul>
+<% end %>
