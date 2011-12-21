@@ -1,15 +1,12 @@
 class Reports::TimesheetReportsController < ApplicationController
   
-   before_filter { |c| c.requires_permission :manage_tickets }
-   before_filter :buidl_time_sheet, :only => [:index, :export_csv]
+  include Reports::TimesheetReport
   
-  def index
-  end
-
- 
+  before_filter { |c| c.requires_permission :manage_tickets }
+  before_filter :buidl_time_sheet, :only => [:index, :export_csv]
   
   def export_csv
-    csv_hash = {"Agent"=>"agent_name", "Hours"=>"hours_spent", "Date" =>"start_time" ,"Ticket Id"=>"ticket_display", "Note"=>"note"}
+    
     csv_string = FasterCSV.generate do |csv|
       headers = csv_hash.keys.sort
       csv << headers
@@ -35,17 +32,6 @@ class Reports::TimesheetReportsController < ApplicationController
     @time_sheets = obj.time_sheets.by_agent(@user_id).created_at_inside(start_of_month(@month.to_i),end_of_month(@month.to_i)).hour_billable(billable)
   end
   
-    
-  def valid_month?(time)
-    time.is_a?(Numeric) && (1..12).include?(time)
-  end
-  
-  def start_of_month(month=Time.current.month)
-    Time.utc(Time.now.year, month, 1) if valid_month?(month)
-  end
-  
-  def end_of_month(month)
-    start_of_month(month).end_of_month
-  end
+
 
 end
