@@ -1,6 +1,6 @@
-			<li>
-				<div> <%=h(time_sheet.user.name)%></div>
-				<div> <%=get_time_in_hours(time_sheet.time_spent)%></div>
-				<div><%=h(time_sheet.note)%></div>	
-				<div><%=h(time_sheet.ticket_display)%></div>							
-			</li>	
+			<tr class="<%= cycle("odd", "even") %>" >
+				<td> <%=h(time_sheet.user.name)%></td>
+				<td> <%=get_time_in_hours(time_sheet.time_spent)%></td>
+				<td><%=h(time_sheet.note)%></td>	
+				<td><%=h(time_sheet.ticket_display)%></td>							
+			</tr>

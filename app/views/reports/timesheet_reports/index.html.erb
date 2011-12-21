@@ -6,12 +6,13 @@
 	 <%= collection_select({}, :user_id, current_account.users.technicians, :id, :name, { :include_blank => '...', :selected => @user_id })%>
 	 <%= select({}, :billable , Helpdesk::TimeSheet::BILLABLE_HASH ,{ :include_blank => '...' , :selected => (@billable.eql?([true,false]) ? "" : @billable)} )%>
 	 <%=select_month(Time.utc(Time.now.year, @month, 1) || Date.today)%>
+	 
+	 <%= submit_tag "Export to CSV", :class => "uiButton", :id => "ExportToCSV" %>
 	
 	</div>
 
-	<div class="button-container">
-    	<%= submit_tag "Export to CSV", :class => "uiButton", :id => "ExportToCSV" %>
-	</div>
+    
+	
 <% end %>
 
 <div id="time_sheet_report" >
