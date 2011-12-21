@@ -19,7 +19,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
         :select     => "DISTINCT `helpdesk_time_sheets`.*"
       }}
       
-  BILLABLE_HASH = {"Billable" =>[true] , "Non-Billable" =>[false] }
+  BILLABLE_HASH = {"Billable" =>true, "Non-Billable" =>false}
   
   def hours_spent
     hours = time_spent.div(60*60)
@@ -33,7 +33,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
   end
   
   def ticket_display
-    ticket.display_id
+    "#{ticket.display_id} - #{ticket.subject}"
   end
   
 end
