@@ -80,7 +80,7 @@
     admin.resources :surveys, :only => [ :index ]
     admin.resources :zen_import, :collection => {:import_data => :any }
   end
-  
+  map.resources :reports
   map.timesheet_report    '/timesheet_reports', :controller => 'reports/timesheet_reports', :action => 'index'
   map.customer_activity   '/activity_reports/customer', :controller => 'reports/customer_reports', :action => 'index'
   map.helpdesk_activity   '/activity_reports/helpdesk', :controller => 'reports/helpdesk_reports', :action => 'index'
