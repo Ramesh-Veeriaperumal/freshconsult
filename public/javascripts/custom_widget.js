@@ -2,10 +2,10 @@ var Freshdesk = {}
 
 Freshdesk.Widget=Class.create();
 Freshdesk.Widget.prototype={
-	initialize:function(credentials){
-		this.options = credentials || {};
-		this.options.username = credentials.username || Cookie.get(this.options.anchor+"_username");
-		this.options.password = credentials.password || Cookie.get(this.options.anchor+"_password");
+	initialize:function(widgetOptions){
+		this.options = widgetOptions || {};
+		this.options.username = widgetOptions.username || Cookie.get(this.options.anchor+"_username");
+		this.options.password = widgetOptions.password || Cookie.get(this.options.anchor+"_password");
 		this.content_anchor = $$("#"+this.options.anchor+" #content")[0];
 		this.title_anchor = $$("#"+this.options.anchor+" #title")[0];
 		Ajax.Responders.register({
@@ -44,74 +44,39 @@ Freshdesk.Widget.prototype={
 		} else {
 			this.content_anchor.innerHTML = this.options.application_content();
 			this.options.application_resources.each(
-				function(widget){
-					cw.request(widget);
+				function(reqData){
+					cw.request(reqData);
 				});
 		}
 	},
 
-	request:function(widget){
-		if(widget.resource == null){
-			if(widget.on_success != null){
-				widget.on_success();
-			}
-		} else {
-			var mt = widget.content_type || "application/json";
-			new Ajax.Request("/http_request_proxy/fetch",{
-				method:"get",
-				parameters:{
-					domain:this.options.domain,
-					ssl_enabled:this.options.ssl_enabled,
-					resource:widget.resource,
-					content_type:mt,
-					cache_gets:this.options.cache_gets
-				},
-				requestHeaders:{
-					Authorization:"Basic " + Base64.encode(this.options.username + ":" + this.options.password)
-				},
-				onSuccess:function(evt) {
-					if(widget != null && widget.on_success != null){
-						widget.on_success(evt.responseJSON);
-					}
-				},
-				onFailure:function(evt){
-					if(widget != null && widget.on_failure != null){
-						widget.on_failure(evt);
-					}
-					this.resource_failure(evt, this);
-				}
-			});
-		}
-	},
-
-	submit_data:function(data){
-		//alert("data "+data);
-		var params=Form.serialize(data);
-		params+="&domain="+this.options.domain+"&ssl_enabled="+this.options.ssl_enabled;
-		if(this.options.ticket_id){
-			params+="&ticket_id="+this.options.ticket_id;
-		}
-		if(params.indexOf("content_type=")===0){
-			var mt=this.options.content_type||"application/xml";
-			params+="&content_type="+mt;
-		}
-
+	request:function(reqData){
+		var mt = reqData.content_type || "application/json";
 		new Ajax.Request("/http_request_proxy/fetch",{
-			asynchronous:true,
-			evalScripts:true,
-			parameters:params,
-			requestHeaders:{
-				Authorization:"Basic "+Base64.encode(this.options.username+":"+this.options.password)
+			method: reqData.method || "get",
+			parameters:{
+				domain:this.options.domain,
+				ssl_enabled:this.options.ssl_enabled,
+				resource:reqData.resource,
+				content_type:mt,
+				cache_gets:this.options.cache_gets,
+				body:reqData.body
 			},
-			onSuccess:function(evt){
-//				enable_submit(data);
+			requestHeaders:{
+				Authorization:"Basic " + Base64.encode(this.options.username + ":" + this.options.password)
+			},
+			onSuccess:function(evt) {
+				if(reqData != null && reqData.on_success != null){
+					reqData.on_success(evt);
+				}
 			},
 			onFailure:function(evt){
-				this.resource_failure(evt,this);
-//				enable_submit(data);
+				if(reqData != null && reqData.on_failure != null){
+					reqData.on_failure(evt);
+				}
+				this.resource_failure(evt, this);
 			}
 		});
-//		disable_submit(data);
 	},
 
 	resource_failure:function(evt, obj){
@@ -141,6 +106,31 @@ var CustomWidget =  {
 };
 CustomWidget.include_js("/javascripts/base64.js");
 
+var XmlUtil = {
+	getNodeValue:function(dataNode, lookupTag){
+		var element = dataNode.getElementsByTagName(lookupTag);
+		if(element==null || element.length==0){
+			return null;
+		}
+		childNode = element[0].childNodes[0]
+		if(childNode == null){
+			return"";
+		}
+		return childNode.nodeValue;
+	},
+
+	getNodeValueStr:function(dataNode, nodeName){
+		return this.getNodeValue(dataNode, nodeName) || "";
+	},
+
+	getNodeAttrValue:function(dataNode, lookupTag, attrName){
+		var element = dataNode.getElementsByTagName(lookupTag);
+		if(element==null || element.length==0){
+			return null;
+		}
+		return element[0].getAttribute(attrName) || null;
+	}
+}
 
 var ObjectFactory=Class.create({});
 ObjectFactory.instHash=new Hash();

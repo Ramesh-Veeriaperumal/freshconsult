@@ -52,6 +52,7 @@ class Account < ActiveRecord::Base
   has_many :solution_categories , :class_name =>'Solution::Category',:include =>:folders, :dependent => :destroy
   has_many :solution_articles , :class_name =>'Solution::Article'
   
+  has_many :installed_applications, :class_name => 'Integrations::InstalledApplication', :dependent => :destroy
   has_many :customers, :dependent => :destroy
   has_many :contacts, :class_name => 'User' , :conditions =>{:user_role =>[User::USER_ROLES_KEYS_BY_TOKEN[:customer], User::USER_ROLES_KEYS_BY_TOKEN[:client_manager]] , :deleted =>false}
   has_many :agents, :through =>:users , :conditions =>{:users=>{:deleted => false}}
