@@ -266,9 +266,10 @@ module ApplicationHelper
       return ""
     else
       widget = installed_app.application.widgets[0]
-      replace_objs = {installed_app.application.name.to_s => installed_app}
-      replace_objs = liquid_objs.blank? ? replace_objs : liquid_objs.merge(replace_objs)
-      return Liquid::Template.parse(widget.script).render(replace_objs)
+      # replace_objs will contain all the necessary liquid parameter's real values that needs to be replaced.
+      replace_objs = {installed_app.application.name.to_s => installed_app} # Application name based liquid obj values.
+      replace_objs = liquid_objs.blank? ? replace_objs : liquid_objs.merge(replace_objs) # If the there is no liquid_objs passed then just use the application name based values alone.
+      return Liquid::Template.parse(widget.script).render(replace_objs, :filters => [FDTextFilter])  # replace the liquid objs with real values.
     end
   end
 
@@ -368,4 +369,12 @@ module ApplicationHelper
     tab || ""
   end
   
+end
+
+module FDTextFilter
+  def escape_html(input)
+    input = input.to_s.gsub("\"", "\\\"")
+    input = input.gsub("\\", "\\\\")
+    return input
+  end
 end
