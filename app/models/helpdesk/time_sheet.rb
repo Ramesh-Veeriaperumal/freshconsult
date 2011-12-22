@@ -10,16 +10,17 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
   named_scope :hour_billable , lambda {|hr_billable| {:conditions =>{:billable => hr_billable} } }
         
   named_scope :by_agent , lambda { |created_by|
-                                    { :conditions => [" helpdesk_time_sheets.user_id= ? ", created_by] } unless created_by.blank?
+                                    { :conditions => {:user_id => created_by } } unless created_by.blank?
                                   }
-  named_scope :all_for_customer, lambda{ |customer|
+  
+  named_scope :for_customers, lambda{ |customers|
       {
         :joins    => {:ticket =>:requester},
-        :conditions => {:users => {:customer_id => customer.id}},
+        :conditions => {:users => {:customer_id => customers}},
         :select     => "DISTINCT `helpdesk_time_sheets`.*"
-      }}
+      } unless customers.blank?}
       
-  BILLABLE_HASH = {"Billable" =>true, "Non-Billable" =>false}
+  BILLABLE_HASH = { true =>"Billable", false => "Non-Billable"}
   
   def hours_spent
     hours = time_spent.div(60*60)

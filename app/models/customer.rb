@@ -69,9 +69,6 @@ class Customer < ActiveRecord::Base
       xml.instruct! unless options[:skip_instruct]
       super(:builder => xml, :skip_instruct => true,:except => [:account_id,:import_id,:delta]) 
   end
-  
-  def time_sheets #or use find_by_sql
-    account.time_sheets.all_for_customer(self)
-  end
+
   
 end
