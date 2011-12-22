@@ -288,13 +288,17 @@ en:
     facebook:
       updated: Facebook setting has been updated 
     application:
-      already: Application already installed.
+      already: "Addon is already installed."
       uninstall:
-        success: "The Addon has been removed successfully!"
+        success: "The Addon has been disabled successfully!"
+        error: "Error in disabling the Addon."
       install:
-        success: "The Addon has been Added successfully!"
+        success: "The Addon has been enabled successfully!"
+        error: "Error in enabling the Addon."
       configure:
         success: "The Addon has been updated successfully!"
+        error: "Error in configuring the Addon."
+      not_installed: "This addon is not yet installed."
     filter:
       delete_success: "View has been delete successfully!"
       save_success: "View has been saved successfully!"
@@ -1486,6 +1490,7 @@ en:
         help: Help
   settings: settings        
   capsule_crm: "Capsule CRM"
+  freshbooks: "Freshbooks"
   integrations:
     capsule:
       label: "Capsule CRM"
@@ -1498,9 +1503,21 @@ en:
         api_key: "Api Key"
         api_key_info: "To get your unique API key, login to your Capsule CRM account and navigate to <br /> <b>“User -> My Preferences”</b>. (You can find this on the top right corner of the page).<br /> Click on <b>“API Authentication Token”</b>, and to get the unique API key.<br /> Copy the key and paste it in the textfield above."
         widget_title: "Widget Title"
+    freshbooks:
+      label: "Freshbooks"
+      desc: "Now you can log time spend on tickets into your Freshbooks projects and tasks."
+      form:
+        freshbooks_note: "Notes format"
+        freshbooks_note_info: "Default note format which will be added while logging the time spent.  You can change this before logging the time spent as well."
+        api_url: "API URL"
+        api_url_info: "ex: https://example.freshbooks.com/api/2.1/xml-in"
+        api_key: "Authentication Token"
+        api_key_info: ""
+        widget_title: "Widget Title"
   widgets:
     contact_widget:
       description: "Display a contact or option to add the contact into capsule."
   capsule_crm_helptext: "<h4>Link back from Capsule to Freshdesk</h4><p>You can create a link in Capsule CRM to view the contact's tickets in Freshdesk.</p> <p>To do this Goto your <br /><b>Settings -> Custom Fields -> For People & Organization</b></p><p> Then click on \"Add new...\" and select <b>\"Generated Link\"</b></p> <p>Copy the URl exactly as shown below and paste it in Capsule CRM as the link definition<span class=\"info-code\">http://%{full_domain}/helpdesk/tickets?email={email}</span></p>"
+  freshbooks_helptext: "To get your Authentication Token and API URL, login to your Freshbooks account and navigate to <br /> <b>“My Account”</b>. (You can find this on the top right corner of the page).<br /> Click on <b>“FreshBooks API”</b>, and to get the 'API URL' and  'Authentication Token' .<br /> Copy the key and paste it in the textfield above."
   report:
     time_sheet_report: Time Sheet Report

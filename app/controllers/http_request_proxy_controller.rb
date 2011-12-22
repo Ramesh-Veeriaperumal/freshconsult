@@ -20,18 +20,27 @@ class HttpRequestProxyController < ApplicationController
       entity_name = params[:entity_name]
       content_type = params[:content_type] || "application/xml"
       auth_header = request.headers['HTTP_AUTHORIZATION']
-      if(content_type.include? "xml") # Based on the content type convert the form data into xml or json.
-        post_request_body = (params[entity_name].to_xml :root => entity_name) unless entity_name.nil?
+
+      if entity_name.blank?
+        post_request_body = params[:body] unless params[:body].blank?
       else
-        post_request_body = (params[entity_name].to_json :root => entity_name) unless entity_name.nil?
+        if(content_type.include? "xml") # Based on the content type convert the form data into xml or json.
+          post_request_body = (params[entity_name].to_xml :root => entity_name) unless entity_name.nil?
+        else
+          post_request_body = (params[entity_name].to_json :root => entity_name) unless entity_name.nil?
+        end
       end
-  
-      http_s = ssl_enabled == "true"?"https":"http";
-      remote_url = http_s+"://"+ domain + "/" + resource
+
+      unless /http.*/.match(domain)
+        http_s = ssl_enabled == "true"?"https":"http";
+        domain = http_s+"://"+ domain
+      end
+      resource = resource ? "/" + resource : ""
+      remote_url = domain + resource
       options = Hash.new
       options.store(:body, post_request_body) unless post_request_body.nil?  # if the form-data is sent from the integrated widget then set the data in the body to the 3rd party api.
       options.store(:headers, {"Authorization" => auth_header, "Accept" => accept_type, "Content-Type" => content_type}.delete_if{ |k,v| v.nil? })  # TODO: remove delete_if use and find any better way to do it in single line
-      Rails.logger.debug "sending request to=" + remote_url + ", options="+options.to_s+", method="+method+", http_s="+http_s+", username="+user.to_s
+      Rails.logger.debug "sending request to=#{remote_url}, options=#{options.to_s}, method=#{method}, http_s=#{http_s}, username=#{user.to_s}"
       self.class.basic_auth(user, pass) unless (user.nil? || pass.nil?)
   
       begin

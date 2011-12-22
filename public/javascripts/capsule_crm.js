@@ -172,7 +172,7 @@ CapsuleWidget = {
             method: 'get',
             parameters: parameters,
             onSuccess: function (response) {
-                CapsuleWidget.processSearch(response.responseJSON);
+                CapsuleWidget.processSearch(response);
                 // enable_submit($('cap-search'));
                 $('capsule-title').removeClassName('paddingloading');  
             }
@@ -195,6 +195,7 @@ CapsuleWidget = {
     },
     
     processSearch: function(response) {
+		response = response.responseJSON;
         if (response.parties.person || response.parties.organisation) {
             var found = response.parties['@size'];
 

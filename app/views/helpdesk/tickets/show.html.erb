@@ -229,17 +229,17 @@
 		  </h3>
 			<div class="description">         
         <div class="user_details">
-          <%= user_avatar(@ticket.requester)  %>
-					<% if is_application_installed?("capsule_crm") %>
-						<textarea id="widget-capsule-crm" style="display:none;">
-							<% @liquid_objects = {"requester" => @ticket.requester} %>
-						  <%= get_app_widget_script("capsule_crm", "contact_widget", @liquid_objects) %>
-						</textarea>
-	          <div class="app-link">
-	            <a data-placement="topRight" href="#" rel="widget-popover" data-widget-container="widget-capsule-crm">
-	              <%= image_tag("application-logo-small/capsule_crm.png") %>
-	            </a>
-	          </div> 
+			<%= user_avatar(@ticket.requester)  %>
+			<% if is_application_installed?("capsule_crm") %>
+				<textarea id="widget-capsule-crm" style="display:none;">
+					<% @liquid_objects = {"requester" => @ticket.requester} %>
+				 	<%= get_app_widget_script("capsule_crm", "contact_widget", @liquid_objects) %>
+				</textarea>
+				<div class="app-link">
+					<a data-placement="topRight" href="#" rel="widget-popover" data-widget-container="widget-capsule-crm">
+						<%= image_tag("application-logo-small/capsule_crm.png") %>
+					</a>
+				</div> 
 	        <% end %>
           <div>
 						<%= content_tag :span, "", :class => "custom-tip-bottom icon-image source-#{@ticket.source_name.downcase}", :title => t("ticket.reported_from_source", :source => @ticket.source_name.downcase) %>
@@ -361,3 +361,9 @@
   <%= pageless(@ticket_notes.total_pages, helpdesk_ticket_helpdesk_notes_path(@ticket)) %>  
 <% end %>
 
+
+<% if is_application_installed?("freshbooks") %>
+	<% @liquid_values = {"requester" => @ticket.requester, "ticket" => @ticket, "agent" => current_user}
+	%>
+ 	<%= get_app_widget_script("freshbooks", "freshbooks_timeentry_widget", @liquid_values) %>
+<% end %>
