@@ -8,5 +8,8 @@
 		<% @t_reports.each_with_index do |report, index| %>
 				<li><%= link_to report[:label], report_path(index+1), :class => "item_info" %></li> 
 		<% end %>
+		<li>
+			<%= link_to (t('report.time_sheet_report'), timesheet_report_path , :class => "item_info") %>
+		</li>
 	</ul>
 </div>
