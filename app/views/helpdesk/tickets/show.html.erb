@@ -363,7 +363,11 @@
 
 
 <% if is_application_installed?("freshbooks") %>
-	<% @liquid_values = {"requester" => @ticket.requester, "ticket" => @ticket, "agent" => current_user}
+	<% 
+	# Agent email will be fetched from responder. if responder is not assigned then it will be taken from loggedin agent.
+		agent = @ticket.responder
+		agent = current_user if agent.blank?
+		@liquid_values = {"requester" => @ticket.requester, "ticket" => @ticket, "agent" => agent}
 	%>
  	<%= get_app_widget_script("freshbooks", "freshbooks_timeentry_widget", @liquid_values) %>
 <% end %>
