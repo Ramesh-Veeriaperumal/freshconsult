@@ -813,6 +813,9 @@ en:
   forgot_password_intro: Fill out the form below and instructions to reset your password will be emailed to you
   done: Done
   ticket_due_by_time: Due by
+  ticket_pending_since_time: Pending Since
+  ticket_resolved_at_time: Resolved at
+  ticket_closed_at_time: Closed at
   next: Next
   set_password: Set your password
   send_email_to_agent: Send Email to Agent

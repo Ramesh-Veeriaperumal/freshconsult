@@ -178,5 +178,16 @@ module Helpdesk::TicketsHelper
     return content
     
   end
-   
+  
+  def status_changed_time_value_hash (status)
+    case status
+      when TicketConstants::STATUS_KEYS_BY_TOKEN[:resolved]
+        return {:title => t('ticket_resolved_at_time'), :method => "resolved_at"}
+      when TicketConstants::STATUS_KEYS_BY_TOKEN[:pending]
+        return {:title =>  t('ticket_pending_since_time'), :method => "pending_since"}
+      when TicketConstants::STATUS_KEYS_BY_TOKEN[:closed]
+        return {:title => t('ticket_closed_at_time'), :method => "resolved_at"}
+    end
+  end
+  
 end
