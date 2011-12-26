@@ -6,9 +6,9 @@ class HttpRequestProxyController < ApplicationController
   #TODO: covert the fetching and etc logic into an model.
   def fetch
     response_code = 200
-    accept_type = "application/json"
+    content_type = params[:content_type] || "application/json"
+    accept_type = params[:accept_type] || "application/json"
     response_type = "application/json"
-    response = ""
     begin
       method = request.env["REQUEST_METHOD"].downcase
       domain = params[:domain]
@@ -18,16 +18,15 @@ class HttpRequestProxyController < ApplicationController
       user = params[:username]
       pass = params[:password]
       entity_name = params[:entity_name]
-      content_type = params[:content_type] || "application/xml"
       auth_header = request.headers['HTTP_AUTHORIZATION']
 
       if entity_name.blank?
         post_request_body = params[:body] unless params[:body].blank?
       else
         if(content_type.include? "xml") # Based on the content type convert the form data into xml or json.
-          post_request_body = (params[entity_name].to_xml :root => entity_name) unless entity_name.nil?
+          post_request_body = (params[entity_name].to_xml :root => entity_name, :dasherize =>false)
         else
-          post_request_body = (params[entity_name].to_json :root => entity_name) unless entity_name.nil?
+          post_request_body = (params[entity_name].to_json :root => entity_name)
         end
       end
 

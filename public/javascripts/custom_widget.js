@@ -4,8 +4,8 @@ Freshdesk.Widget=Class.create();
 Freshdesk.Widget.prototype={
 	initialize:function(widgetOptions){
 		this.options = widgetOptions || {};
-		this.options.username = widgetOptions.username || Cookie.get(this.options.anchor+"_username");
-		this.options.password = widgetOptions.password || Cookie.get(this.options.anchor+"_password");
+		if(this.options.username) ;else this.options.username = Cookie.get(this.options.anchor+"_username");
+		if(this.options.password) ;else this.options.password = Cookie.get(this.options.anchor+"_password");
 		this.content_anchor = $$("#"+this.options.anchor+" #content")[0];
 		this.title_anchor = $$("#"+this.options.anchor+" #title")[0];
 		Ajax.Responders.register({
@@ -20,13 +20,15 @@ Freshdesk.Widget.prototype={
 	},
 
 	login:function(credentials){
-		this.options.username=credentials.username.value;
-		this.options.password=credentials.password.value;
-		if(this.options.username.blank()&&this.options.password.blank()){
-			//alert("Please provide username and password.");
-		}else{
-			Cookie.set(this.options.anchor+"_username",this.options.username);
-			Cookie.set(this.options.anchor+"_password",this.options.password);
+		this.options.username = credentials.username.value;
+		this.options.password = credentials.password.value;
+		if(this.options.username.blank() && this.options.password.blank()) {
+			alert("Please provide Username and password.");
+		} else {
+			if (credentials.remember_me.value == "true") {
+				Cookie.set(this.options.anchor + "_username", this.options.username);
+				Cookie.set(this.options.anchor + "_password", this.options.password);
+			}
 			this.display();
 		}
 	},
@@ -37,8 +39,14 @@ Freshdesk.Widget.prototype={
 		this.display();
 	},
 
+	display_login:function(){
+		if (this.options.login_content != null) {
+			this.content_anchor.innerHTML = this.options.login_content();
+		}
+	},
+
 	display:function(){
-		var cw=this;
+		var cw = this;
 		if(this.options.login_content != null && !(this.options.username && this.options.password)){
 			this.content_anchor.innerHTML = this.options.login_content();
 		} else {
@@ -51,17 +59,14 @@ Freshdesk.Widget.prototype={
 	},
 
 	request:function(reqData){
-		var mt = reqData.content_type || "application/json";
+		reqData.domain = this.options.domain;
+		reqData.ssl_enabled = this.options.ssl_enabled;
+		reqData.cache_gets = this.options.cache_gets;
+		reqData.accept_type = reqData.accept_type || reqData.content_type;
+		reqData.method = reqData.method || "get";
 		new Ajax.Request("/http_request_proxy/fetch",{
-			method: reqData.method || "get",
-			parameters:{
-				domain:this.options.domain,
-				ssl_enabled:this.options.ssl_enabled,
-				resource:reqData.resource,
-				content_type:mt,
-				cache_gets:this.options.cache_gets,
-				body:reqData.body
-			},
+            asynchronous: true,
+			parameters:reqData,
 			requestHeaders:{
 				Authorization:"Basic " + Base64.encode(this.options.username + ":" + this.options.password)
 			},
@@ -71,30 +76,79 @@ Freshdesk.Widget.prototype={
 				}
 			},
 			onFailure:function(evt){
-				if(reqData != null && reqData.on_failure != null){
+				if (reqData != null && reqData.on_failure != null) {
 					reqData.on_failure(evt);
+				} else {
+					this.resource_failure(evt, this);
 				}
-				this.resource_failure(evt, this);
-			}
+			}.bind(this)
 		});
 	},
 
 	resource_failure:function(evt, obj){
-		if(evt.status==401){
+		if(evt.status == 401){
 			obj.options.username=null;
 			obj.options.password=null;
 			Cookie.erase(obj.options.anchor+"_username");
 			Cookie.erase(obj.options.anchor+"_password");
-			if(obj.content_anchor.innerHTML != obj.options.login_content()){
-				//alert("Username and password are not correct. Please re-enter.");
-			}
-			obj.display();
+			alert("Given user credentials are not correct. Please correct it.");
 		}else{
-			//alert(c.responseJSON.error);
+			errorStr = evt.responseText;
+			alert("An error occured: \n\n"+errorStr+"\nPlease contact support@freshdesk.com for further details.");
 		}
 	}
 };
 
+var UIUtil = {
+	constructDropDown:function(data, dropDownBoxId, entityName, entityId, dispNames, filterBy, searchTerm) {
+		foundEntity = "";
+		dropDownBox = $(dropDownBoxId);
+		dropDownBox.innerHTML = "";
+		var entitiesArray = XmlUtil.extractEntities(data.responseXML, entityName);
+		for(i=0;i<entitiesArray.length;i++) {
+			if (filterBy != null && filterBy != '') {
+				matched = true;
+				for (var filterKey in filterBy) {
+					filterValue = filterBy[filterKey];
+					actualVal = XmlUtil.getNodeValueStr(entitiesArray[i], filterKey);
+					if(filterValue != actualVal) {
+						matched = false;
+						break;
+					}
+				}
+				if (!matched) continue;
+			}
+
+			var newEntityOption = new Element("option");
+			entityIdValue = XmlUtil.getNodeValueStr(entitiesArray[i], entityId);
+			entityEmailValue = XmlUtil.getNodeValueStr(entitiesArray[i], "email");
+			if (searchTerm != null && searchTerm != '') {
+				if (entityEmailValue == searchTerm) {
+					foundEntity = entitiesArray[i];
+					newEntityOption.selected = true;
+				} else if (entityIdValue == searchTerm) {
+					foundEntity = entitiesArray[i];
+					newEntityOption.selected = true;
+				}
+			}
+			dispName = "", sep = "";
+			for(d=0;d<dispNames.length;d++) {
+				dispName += XmlUtil.getNodeValueStr(entitiesArray[i],dispNames[d]) + sep;
+				sep = " ";
+			}
+			if (dispName.length < 2) dispName = entityEmailValue;
+
+			newEntityOption.value = entityIdValue;
+			newEntityOption.innerHTML = dispName;
+			dropDownBox.appendChild(newEntityOption);
+			if (foundEntity == "") {
+				foundEntity = entitiesArray[i];
+				newEntityOption.selected = true;
+			}
+		}
+		return foundEntity;
+	}
+}
 
 var CustomWidget =  {
 	include_js: function(jslocation) {
@@ -107,7 +161,12 @@ var CustomWidget =  {
 CustomWidget.include_js("/javascripts/base64.js");
 
 var XmlUtil = {
+	extractEntities:function(resStr, lookupTag){
+		return resStr.getElementsByTagName(lookupTag)||new Array();
+	},
+
 	getNodeValue:function(dataNode, lookupTag){
+		if(dataNode == '') return;
 		var element = dataNode.getElementsByTagName(lookupTag);
 		if(element==null || element.length==0){
 			return null;

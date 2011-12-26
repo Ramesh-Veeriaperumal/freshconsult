@@ -362,12 +362,19 @@
 <% end %>
 
 
+<% 
+# Agent email will be fetched from responder. if responder is not assigned then it will be taken from loggedin agent.
+	agent = @ticket.responder
+	agent = current_user if agent.blank?
+	@liquid_values = {"requester" => @ticket.requester, "ticket" => @ticket, "agent" => agent}
+%>
+
 <% if is_application_installed?("freshbooks") %>
-	<% 
-	# Agent email will be fetched from responder. if responder is not assigned then it will be taken from loggedin agent.
-		agent = @ticket.responder
-		agent = current_user if agent.blank?
-		@liquid_values = {"requester" => @ticket.requester, "ticket" => @ticket, "agent" => agent}
-	%>
- 	<%= get_app_widget_script("freshbooks", "freshbooks_timeentry_widget", @liquid_values) %>
+	<%fb_code = get_app_widget_script("freshbooks", "freshbooks_timeentry_widget", @liquid_values)%>
+ 	<%= Liquid::Template.parse(fb_code).render("ticket" => @ticket) %> <!--This is to replace the ticket props in the notes field-->
+<% end %>
+
+<% if is_application_installed?("harvest") %>
+	<%fb_code = get_app_widget_script("harvest", "harvest_timeentry_widget", @liquid_values)%>
+ 	<%= Liquid::Template.parse(fb_code).render("ticket" => @ticket) %> <!--This is to replace the ticket props in the notes field-->
 <% end %>
