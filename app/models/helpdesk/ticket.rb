@@ -422,10 +422,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       
       ticket_states.pending_since=Time.zone.now if (status == STATUS_KEYS_BY_TOKEN[:pending])
       ticket_states.set_resolved_at_state if (status == STATUS_KEYS_BY_TOKEN[:resolved])
-      
-      if (status == STATUS_KEYS_BY_TOKEN[:closed]) 
-        ticket_states.resolved_at ||= ticket_states.set_closed_at_state
-      end
+      ticket_states.set_closed_at_state if closed?  
     end    
     ticket_states.save
   end
