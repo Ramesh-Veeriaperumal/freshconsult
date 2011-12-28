@@ -190,7 +190,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         bodyhtml.sub!("cid:#{content_id}",created_attachment.content.url)  unless content_id.nil?
         RAILS_DEFAULT_LOGGER.debug bodyhtml
       end
-      temp_item = item.find(:id)
+      temp_item = item.find(item.id)
       RAILS_DEFAULT_LOGGER.debug temp_item.to_json      
       tempitem.update_attributes(:body_html => bodyhtml)
       RAILS_DEFAULT_LOGGER.debug tempitem.to_json
