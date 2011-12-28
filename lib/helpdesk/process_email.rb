@@ -97,6 +97,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
     
     def create_ticket(account, from_email, to_email)
+      RAILS_DEFAULT_LOGGER.debug "#######################create_ticket"
+      puts "#################puts_created"
       email_config = account.email_configs.find_by_to_email(to_email[:email])
       user = get_user(account, from_email,email_config)
       return if user.blocked? #Mails are dropped if the user is blocked
