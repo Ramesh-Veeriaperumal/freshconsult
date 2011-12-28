@@ -59,6 +59,7 @@
   map.namespace :integrations do |integration|
     integration.resources :installed_applications, :member =>{:install => :put, :uninstall => :get, :configure => :get, :update => :put}
     integration.resources :applications, :member =>{:show => :get}
+    integration.resources :integrated_resource, :member =>{:create => :put, :delete => :delete}
   end
 
   map.namespace :admin do |admin|

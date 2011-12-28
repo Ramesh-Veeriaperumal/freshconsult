@@ -1,14 +1,37 @@
 var HarvestWidget = Class.create();
 HarvestWidget.prototype= {
 	LOGIN_FORM:new Template('<form onsubmit="harvestWidget.freshdeskWidget.login(this);return false;"><label>Username</label><input type="text" id="username"/><label>Password</label><input type="password" id="password"/><br/><input type="checkbox" id="remember_me" checked value="true">Remember this agent</input><br/><input type="submit" value="Login" id="submit"></form>'),
-	HARVEST_FORM:new Template('<form id="harvest-timeentry-form" method="post"> <span class="link" style="font-weight:normal;margin-left:20px;" onclick="harvestWidget.freshdeskWidget.logout()">(Use different user)</span> <label>Client</label><select name="client-id" id="harvest-timeentry-clients" onchange="harvestWidget.clientChanged(this.options[this.selectedIndex].value)"></select> <br/> <label>Project</label><select name="request[project_id]" id="harvest-timeentry-projects" onchange="harvestWidget.projectChanged(this.options[this.selectedIndex].value)"></select> <div class="paddingloading" id="harvest-project-spinner" style="display:none;"></div> <label>Task</label><select disabled name="request[task_id]" id="harvest-timeentry-tasks" onchange="harvestWidget.taskChanged(this.options[this.selectedIndex].value)"></select> <div class="paddingloading" id="harvest-task-spinner" style="display:none;" ></div> <label>Notes</label><textarea disabled name="request[notes]" id="harvest-timeentry-notes" wrap="virtual" style="width:190px; height: 50px;">'+harvestBundle.harvestNote.escapeHTML()+'</textarea> <label>Hours</label><input type="text" disabled name="request[hours]" id="harvest-timeentry-hours" style="width:50px"> <br/><input type="submit" disabled id="harvest-timeentry-submit" style="margin-top: 10px;" value="Submit" onclick="harvestWidget.logTimeEntry($(\'harvest-timeentry-form\'));return false;"></form>'),
+	HARVEST_FORM:new Template('<form id="harvest-timeentry-form" method="post"> <span class="link" style="font-weight:normal;margin-left:20px;" onclick="harvestWidget.freshdeskWidget.logout()">(Use different user)</span> <label>Client</label><select name="client-id" id="harvest-timeentry-clients" onchange="harvestWidget.clientChanged(this.options[this.selectedIndex].value)"></select> <br/> <label>Project</label><select name="request[project_id]" id="harvest-timeentry-projects" onchange="harvestWidget.projectChanged(this.options[this.selectedIndex].value)"></select> <div class="paddingloading" id="harvest-project-spinner" style="display:none;"></div> <label>Task</label><select disabled name="request[task_id]" id="harvest-timeentry-tasks" onchange="harvestWidget.taskChanged(this.options[this.selectedIndex].value)"></select> <div class="paddingloading" id="harvest-task-spinner" style="display:none;" ></div> <label id="harvest-timeentry-notes-label">Notes</label><textarea disabled name="request[notes]" id="harvest-timeentry-notes" wrap="virtual" style="width:190px; height: 50px;">'+harvestBundle.harvestNote.escapeHTML()+'</textarea> <label id="harvest-timeentry-hours-label">Hours</label><input type="text" disabled name="request[hours]" id="harvest-timeentry-hours" style="width:50px"> <br/><input type="submit" disabled id="harvest-timeentry-submit" style="margin-top: 10px;" value="Submit" onclick="harvestWidget.logTimeEntry($(\'harvest-timeentry-form\'));return false;"></form>'),
 
-	initialize:function(harvestBundle){
-		harvestWidget = this;
+	initialize:function(harvestBundle, loadInline){
+		harvestWidget = this; // Assigning to some variable so that it will be accessible inside custom_widget.
 		this.projectData = "";
 		this.taskData = "";
+		var init_reqs = []
+		if (!loadInline || harvestBundle.time_entry_id == '') {
+			init_reqs = [{
+				resource: "clients",
+				content_type: "application/xml",
+				on_failure: harvestWidget.processFailure,
+				on_success: harvestWidget.loadClient.bind(this)
+			}, {
+				resource: "projects",
+				content_type: "application/xml",
+				on_failure: function(evt){
+				},
+				on_success: harvestWidget.loadProject.bind(this)
+			}, {
+				resource: "tasks",
+				content_type: "application/xml",
+				on_failure: function(evt){
+				},
+				on_success: harvestWidget.loadTask.bind(this)
+			}];
+		}
 		if(harvestBundle.domain) {
 			this.freshdeskWidget = new Freshdesk.Widget({
+				application_id:harvestBundle.application_id,
+				integratable_type:"timesheet",
 				anchor:"harvest_widget",
 				domain:harvestBundle.domain,
 				ssl_enabled:harvestBundle.ssl_enabled || "false",
@@ -18,21 +41,10 @@ HarvestWidget.prototype= {
 				application_content: function(){
 					return harvestWidget.HARVEST_FORM.evaluate({});
 				},
-				application_resources:[{
-					resource:"clients",
-					content_type:"application/xml",
-					on_failure: harvestWidget.processFailure,
-					on_success:harvestWidget.loadClient.bind(this)}, {
-					resource:"projects",
-					content_type:"application/xml",
-					on_failure:function(evt){},
-					on_success:harvestWidget.loadProject.bind(this)}, {
-					resource:"tasks",
-					content_type:"application/xml",
-					on_failure:function(evt){},
-					on_success:harvestWidget.loadTask.bind(this)}]
+				application_resources:init_reqs
 			});
 		}
+		if(loadInline) this.convertToInlineWidget();
 	},
 
 	loadClient:function(resData) {
@@ -87,26 +99,48 @@ HarvestWidget.prototype= {
 		Cookie.set("har_task_id", task_id);
 	},
 
-	logTimeEntry:function(resData) {
+	validateInput:function() {
 		var hoursSpent = parseFloat($("harvest-timeentry-hours").value);
 		if(isNaN(hoursSpent)){
 			alert("Enter valid value for hours.");
 			return false;
 		}
-		this.freshdeskWidget.request({
+		return true;
+	},
+
+	logTimeEntry:function() {
+		if (harvestBundle.time_entry_id) {
+			this.updateTimeEntry();
+		} else {
+			this.createTimeEntry();
+		}
+	},
+
+	createTimeEntry:function(resData) {
+		if (this.validateInput()) {
+			this.freshdeskWidget.request({
 				entity_name: "request",
-				"request[project_id]":$("harvest-timeentry-projects").value,
-				"request[task_id]":$("harvest-timeentry-tasks").value,
-				"request[notes]":$("harvest-timeentry-notes").value,
-				"request[hours]":hoursSpent,
-				resource:"daily/add",
+				"request[project_id]": $("harvest-timeentry-projects").value,
+				"request[task_id]": $("harvest-timeentry-tasks").value,
+				"request[notes]": $("harvest-timeentry-notes").value,
+				"request[hours]": $("harvest-timeentry-hours").value,
+				resource: "daily/add",
 				content_type: "application/xml",
-				method: "post", 
-				on_success: harvestWidget.handleTimeEntrySuccess,
+				method: "post",
+				on_success: harvestWidget.handleTimeEntrySuccess.bind(this),
 				on_failure: harvestWidget.processFailure
 			});
+		}
 		return false;
 	}, 
+
+	handleTimeEntrySuccess:function(resData) {
+		resXml = resData.responseXML
+		var dayEntries = XmlUtil.extractEntities(resXml,"day_entry");
+		if(dayEntries.length>0){
+			this.last_added_timeentry_id = XmlUtil.getNodeValueStr(dayEntries[0],"id");
+		}
+	},
 
 	processFailure:function(evt) {
 		if (evt.status == 401) {
@@ -120,16 +154,59 @@ HarvestWidget.prototype= {
 	},
 	
 	// Methods for external widgets use.
+	updateTimeEntry:function(){
+		if (harvestBundle.time_entry_id) {
+			if (this.validateInput()) {
+				this.freshdeskWidget.request({
+					entity_name: "request",
+					"request[notes]": $("harvest-timeentry-notes").value,
+					"request[hours]": $("harvest-timeentry-hours").value,
+					resource: "daily/update/"+harvestBundle.time_entry_id,
+					content_type: "application/xml",
+					method: "post",
+					on_success: harvestWidget.handleTimeEntrySuccess.bind(this),
+					on_failure: harvestWidget.processFailure
+				});
+			}
+		} else {
+			alert('Harvest widget is not loaded properly. Please try again.');
+		}
+	},
+
+	deleteTimeEntry:function(){
+		if (harvestBundle.time_entry_id) {
+			this.freshdeskWidget.request({
+				resource: "daily/delete/"+harvestBundle.time_entry_id,
+				content_type: "application/xml",
+				method: "delete",
+				on_success: harvestWidget.handleTimeEntrySuccess.bind(this),
+				on_failure: harvestWidget.processFailure
+			});
+		} else {
+			alert('Harvest widget is not loaded properly. Please try again.');
+		}
+	},
+
 	convertToInlineWidget:function() {
-		$("freshbooks-timeentry-hours").hide();
-		$("freshbooks-timeentry-notes").hide();
-		$("freshbooks-timeentry-submit").hide();
+		if (harvestBundle.time_entry_id) {
+			$("harvest-timeentry-form").hide();
+		} else {
+			$("harvest-timeentry-hours-label").hide();
+			$("harvest-timeentry-notes-label").hide();
+			$("harvest-timeentry-hours").hide();
+			$("harvest-timeentry-notes").hide();
+			$("harvest-timeentry-submit").hide();
+		}
 	},
 
 	updateNotesAndTimeSpent:function(notes, timeSpent) {
-		$("freshbooks-timeentry-hours").value = timeSpent;
-		$("freshbooks-timeentry-notes").value = (notes+"\n"+freshbooksBundle.freshbooksNote).escapeHTML();
+		$("harvest-timeentry-hours").value = timeSpent;
+		$("harvest-timeentry-notes").value = (notes+"\n"+harvestBundle.harvestNote).escapeHTML();
+	},
+
+	add_harvest_resource_in_db:function(integratable_id){
+		this.freshdeskWidget.create_integrated_resource(this.last_added_timeentry_id, integratable_id);
 	}
 }
 
-harvestWidget = new HarvestWidget(harvestBundle);
+harvestWidget = new HarvestWidget(harvestBundle, false);

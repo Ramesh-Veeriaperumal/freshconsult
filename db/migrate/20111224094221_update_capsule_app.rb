@@ -5,6 +5,7 @@ class UpdateCapsuleApp < ActiveRecord::Migration
   def self.up
     # Update the widget script to use the liquidize filtering for html escaping.
     execute('UPDATE widgets SET SCRIPT=REPLACE(SCRIPT, "{{requester.name}}", "{{requester.name | escape_html}}") WHERE NAME="contact_widget"')
+    change_column :installed_applications, :account_id, "bigint unsigned"
   end
 
   def self.down

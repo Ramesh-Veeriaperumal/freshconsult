@@ -28,7 +28,7 @@ class PopulateFreshbooks < ActiveRecord::Migration
       </div>
       <script type="text/javascript">
         CustomWidget.include_js("/javascripts/integrations/freshbooks.js");
-        freshbooksBundle={ k:"{{freshbooks.api_key}}", freshbooksNote:"{{freshbooks.freshbooks_note | escape_html}}", ticketId:"{{ticket.display_id}}", agentEmail:"{{agent.email}}", reqEmail:"{{requester.email}}"};
+        freshbooksBundle={ k:"{{freshbooks.api_key}}", application_id:"{{application.id}}", time_entry_id:"{{integrated_resource.integrated_resource_id}}", freshbooksNote:"{{freshbooks.freshbooks_note | escape_html}}", ticketId:"{{ticket.display_id}}", agentEmail:"{{agent.email}}", reqEmail:"{{requester.email}}"};
        </script>}
     execute("INSERT INTO widgets(name, description, script, application_id) VALUES ('#{@widget_name}', '#{description}', '#{script}', #{app_id})")
   end

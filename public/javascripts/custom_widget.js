@@ -96,6 +96,39 @@ Freshdesk.Widget.prototype={
 			errorStr = evt.responseText;
 			alert("An error occured: \n\n"+errorStr+"\nPlease contact support@freshdesk.com for further details.");
 		}
+	},
+
+	create_integrated_resource:function(last_created_id, integratable_id) {
+		reqData = {
+			"application_id":this.options.application_id,
+			"integrated_resource[integrated_resource_id]":last_created_id,
+			"integrated_resource[local_integratable_id]":integratable_id,
+			"integrated_resource[local_integratable_type]":this.options.integratable_type
+		};
+		new Ajax.Request("/integrations/integrated_resources/create",{
+            asynchronous: true,
+			method: "post",
+			parameters:reqData,
+			onSuccess:function(evt) {
+			},
+			onFailure:function(evt){
+			}
+		});
+	},
+
+	delete_integrated_resource:function(last_fetched_id) {
+		reqData = {
+			"integrated_resource[id]":last_fetched_id,
+		};
+		new Ajax.Request("/integrations/integrated_resources/delete",{
+            asynchronous: true,
+			method: "delete",
+			parameters:reqData,
+			onSuccess:function(evt) {
+			},
+			onFailure:function(evt){
+			}
+		});
 	}
 };
 

@@ -367,6 +367,9 @@
 	agent = @ticket.responder
 	agent = current_user if agent.blank?
 	@liquid_values = {"requester" => @ticket.requester, "ticket" => @ticket, "agent" => agent}
+# For edit/delete page append one more parameter 'integrated_resource' in @liquid_values
+#	integrated_resource = Integrations::IntegratedResource.find_by_local_integratable_id(12345)
+#	@liquid_values["integrated_resource"] = integrated_resource
 %>
 
 <% if is_application_installed?("freshbooks") %>

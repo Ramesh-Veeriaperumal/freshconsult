@@ -49,6 +49,9 @@ class HttpRequestProxyController < ApplicationController
           when "post" then 
             puts "post "+remote_url+ options.to_s
             remote_response = self.class.post(remote_url, options)
+          when "delete" then 
+            puts "########## delete ######### "+remote_url+ options.to_s
+            remote_response = self.class.delete(remote_url, options)
         end
   
         # TODO Need to audit all the request and response calls to 3rd party api.
