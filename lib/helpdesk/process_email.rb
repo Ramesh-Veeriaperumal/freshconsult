@@ -196,7 +196,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       RAILS_DEFAULT_LOGGER.debug item.body_html
       RAILS_DEFAULT_LOGGER.debug bodyhtml
       item.body_html = bodyhtml
-      item.save
+      item.save!
       RAILS_DEFAULT_LOGGER.debug item.to_json
     end
   
