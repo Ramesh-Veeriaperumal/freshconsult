@@ -97,8 +97,6 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
     
     def create_ticket(account, from_email, to_email)
-      RAILS_DEFAULT_LOGGER.debug "#######################create_ticket"
-      puts "#################puts_created"
       email_config = account.email_configs.find_by_to_email(to_email[:email])
       user = get_user(account, from_email,email_config)
       return if user.blocked? #Mails are dropped if the user is blocked
@@ -189,15 +187,13 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       Integer(params[:attachments]).times do |i|
         created_attachment = item.attachments.create(:content => params["attachment#{i+1}"], :account_id => ticket.account_id)
         content_id = content_ids["attachment#{i+1}"]
-        RAILS_DEFAULT_LOGGER.debug "#############################################################content_id"
-        RAILS_DEFAULT_LOGGER.debug content_ids
-        RAILS_DEFAULT_LOGGER.debug content_id
-        RAILS_DEFAULT_LOGGER.debug "cid:#{content_id}"
         RAILS_DEFAULT_LOGGER.debug item.body_html
         RAILS_DEFAULT_LOGGER.debug item.body_html.sub!("cid:#{content_id}",created_attachment.content.url) unless content_id.nil?
-        bodyhtml = bodyhtml.sub!("cid:#{content_id}",created_attachment.content.url)  unless content_id.nil?
+        RAILS_DEFAULT_LOGGER.debug bodyhtml
+        bodyhtml.sub!("cid:#{content_id}",created_attachment.content.url)  unless content_id.nil?
         RAILS_DEFAULT_LOGGER.debug bodyhtml
       end
+      RAILS_DEFAULT_LOGGER.debug item.body_html
       RAILS_DEFAULT_LOGGER.debug bodyhtml
       item.body_html = bodyhtml
       item.save
