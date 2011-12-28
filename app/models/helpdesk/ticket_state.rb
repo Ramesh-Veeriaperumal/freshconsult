@@ -12,6 +12,7 @@ class Helpdesk::TicketState < ActiveRecord::Base
   end
   
   def set_closed_at_state
+    set_resolved_at_state if resolved_at.nil?
     self.closed_at=Time.zone.now
   end
   
