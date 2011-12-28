@@ -186,7 +186,12 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       Integer(params[:attachments]).times do |i|
         created_attachment = item.attachments.create(:content => params["attachment#{i+1}"], :account_id => ticket.account_id)
         content_id = content_ids["attachment#{i+1}"]
-        item.body_html.sub!("cid:"+content_id,created_attachment.content_url)  unless content_id.nil?      
+        puts "#############################################################content_id"
+        puts content_id
+        puts "cid:#{content_id}"
+        puts item.body_html
+        puts created_attachment.content.url
+        item.body_html.sub!("cid:#{content_id}",created_attachment.content.url)  unless content_id.nil?
       end
       item.save unless content_ids.blank?
     end
