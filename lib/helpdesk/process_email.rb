@@ -187,16 +187,10 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       Integer(params[:attachments]).times do |i|
         created_attachment = item.attachments.create(:content => params["attachment#{i+1}"], :account_id => ticket.account_id)
         content_id = content_ids["attachment#{i+1}"]
-        RAILS_DEFAULT_LOGGER.debug item.body_html
-        RAILS_DEFAULT_LOGGER.debug item.body_html.sub!("cid:#{content_id}",created_attachment.content.url) unless content_id.nil?
-        RAILS_DEFAULT_LOGGER.debug bodyhtml
         bodyhtml.sub!("cid:#{content_id}",created_attachment.content.url)  unless content_id.nil?
         RAILS_DEFAULT_LOGGER.debug bodyhtml
       end
-      RAILS_DEFAULT_LOGGER.debug item.body_html
-      RAILS_DEFAULT_LOGGER.debug bodyhtml
-      item.body_html = bodyhtml
-      ticket.save!
+      item.update_attributes(:body_html => bodyhtml)
       RAILS_DEFAULT_LOGGER.debug item.to_json
     end
   
