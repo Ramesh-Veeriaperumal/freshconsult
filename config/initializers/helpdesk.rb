@@ -33,5 +33,5 @@ I18n.fallbacks.map('pl' => 'en')
 I18n.fallbacks.map('pt-BR' => 'en')
 I18n.fallbacks.map('pt-PT' => 'en')
 I18n.fallbacks.map('fi' => 'en')
-
+I18n.fallbacks.map('sv_SE' => 'en')
 
