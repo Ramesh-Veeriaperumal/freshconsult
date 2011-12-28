@@ -68,7 +68,12 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
   
   def uninstall
     begin
+<<<<<<< HEAD
       success = current_account.installed_applications.delete(params[:id])
+=======
+      installedApp = current_account.installed_applications.find(params[:id])
+      success = installedApp.delete
+>>>>>>> time_tracking
       if success
         flash[:notice] = t(:'flash.application.uninstall.success')
       else

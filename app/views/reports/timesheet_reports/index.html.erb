@@ -1,0 +1,41 @@
+
+<% form_tag({:action => :export_csv}, { :method => :post, :id => 'report_filters' }) do %>
+
+<div>
+		
+	<%= render :partial => "/helpdesk/tickets/containers/multi_select", :locals => { :options => current_account.customers.collect{|c|[c.id , c.name]}, :name =>:customer_id, :selected_val =>@customer_id  } %>
+	
+	<%= render :partial => "/helpdesk/tickets/containers/multi_select", :locals => { :options => current_account.users.technicians.collect{|c|[c.id , c.name]}, :name =>:user_id, :selected_val =>@user_id  } %>
+	 
+	<%= render :partial => "/helpdesk/tickets/containers/multi_select", :locals => { :options => Helpdesk::TimeSheet::BILLABLE_HASH, :name => :billable, :selected_val =>(@billable.eql?([true,false]) ? "" : @billable)  } %>
+	
+	 <%=select_month(Time.utc(Time.now.year, @month, 1) || Date.today)%>
+	 
+	 <%= submit_tag "Export to CSV", :class => "uiButton", :id => "ExportToCSV" %>
+	
+</div>
+
+    
+	
+<% end %>
+
+<div id="time_sheet_report" >
+	<%= render :partial => "time_sheet_list", :locals => {:time_sheets => @time_sheets}%> 
+</div>
+
+<% javascript_tag do %> 
+jQuery(document).ready(function(){
+  jQuery("#report_filters").change(function(){
+    jQuery("#time_sheet_report").html("<div class='loading-box'></div>"); 
+    jQuery.ajax({
+        url: "/reports/timesheet_reports/report_filter",
+        type: "POST",
+        data: jQuery(this).serializeArray(),
+        success: function(data){ 
+		   jQuery("#time_sheet_report").hide().html(data).fadeIn(300);
+        }
+		});
+      }); 	  
+  });
+
+<% end %>

@@ -267,7 +267,11 @@ module ApplicationHelper
     else
       widget = installed_app.application.widgets[0]
       # replace_objs will contain all the necessary liquid parameter's real values that needs to be replaced.
+<<<<<<< HEAD
       replace_objs = {installed_app.application.name.to_s => installed_app} # Application name based liquid obj values.
+=======
+      replace_objs = {installed_app.application.name.to_s => installed_app, "application" => installed_app.application} # Application name based liquid obj values.
+>>>>>>> time_tracking
       replace_objs = liquid_objs.blank? ? replace_objs : liquid_objs.merge(replace_objs) # If the there is no liquid_objs passed then just use the application name based values alone.
       return Liquid::Template.parse(widget.script).render(replace_objs, :filters => [FDTextFilter])  # replace the liquid objs with real values.
     end

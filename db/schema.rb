@@ -581,6 +581,23 @@ ActiveRecord::Schema.define(:version => 20111210162346) do
   add_index "helpdesk_tickets", ["account_id", "responder_id"], :name => "index_helpdesk_tickets_on_account_id_and_responder_id"
   add_index "helpdesk_tickets", ["requester_id"], :name => "index_helpdesk_tickets_on_requester_id"
 
+  create_table "helpdesk_time_sheets", :force => true do |t|
+    t.integer  "ticket_id",     :limit => 8
+    t.datetime "start_time"
+    t.integer  "time_spent",    :limit => 8
+    t.boolean  "timer_running",              :default => false
+    t.boolean  "billable",                   :default => true
+    t.integer  "user_id",       :limit => 8
+    t.text     "note"
+    t.integer  "account_id",    :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "helpdesk_time_sheets", ["account_id", "ticket_id"], :name => "index_time_sheets_on_account_id_and_ticket_id"
+  add_index "helpdesk_time_sheets", ["ticket_id"], :name => "index_time_sheets_on_ticket_id"
+  add_index "helpdesk_time_sheets", ["user_id"], :name => "index_time_sheets_on_user_id"
+
   create_table "installed_applications", :force => true do |t|
     t.integer  "application_id"
     t.integer  "account_id"

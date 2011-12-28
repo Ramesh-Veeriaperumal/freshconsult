@@ -1,4 +1,4 @@
-ActionController::Routing::Routes.draw do |map|
+ ActionController::Routing::Routes.draw do |map|
       
   map.connect '/images/helpdesk/attachments/:id/:style.:format', :controller => '/helpdesk/attachments', :action => 'show', :conditions => { :method => :get }
   
@@ -59,6 +59,7 @@ ActionController::Routing::Routes.draw do |map|
   map.namespace :integrations do |integration|
     integration.resources :installed_applications, :member =>{:install => :put, :uninstall => :get, :configure => :get, :update => :put}
     integration.resources :applications, :member =>{:show => :get}
+    integration.resources :integrated_resource, :member =>{:create => :put, :delete => :delete}
   end
 
   map.namespace :admin do |admin|
@@ -80,8 +81,8 @@ ActionController::Routing::Routes.draw do |map|
     admin.resources :surveys, :only => [ :index ]
     admin.resources :zen_import, :collection => {:import_data => :any }
   end
-  
   map.resources :reports
+  map.timesheet_report    '/timesheet_reports', :controller => 'reports/timesheet_reports', :action => 'index'
   map.customer_activity   '/activity_reports/customer', :controller => 'reports/customer_reports', :action => 'index'
   map.helpdesk_activity   '/activity_reports/helpdesk', :controller => 'reports/helpdesk_reports', :action => 'index'
 
@@ -175,6 +176,7 @@ ActionController::Routing::Routes.draw do |map|
   map.namespace :helpdesk do |helpdesk|
 
     helpdesk.resources :tags, :collection => { :autocomplete => :get }
+    helpdesk.resources :time_sheets
     
 
 #    helpdesk.resources :issues, :collection => {:empty_trash => :delete}, :member => { :delete_all => :delete, :assign => :put, :restore => :put, :restore_all => :put } do |ticket|
@@ -188,6 +190,7 @@ ActionController::Routing::Routes.draw do |map|
       ticket.resources :subscriptions, :name_prefix => 'helpdesk_ticket_helpdesk_'
       ticket.resources :tag_uses, :name_prefix => 'helpdesk_ticket_helpdesk_'
       ticket.resources :reminders, :name_prefix => 'helpdesk_ticket_helpdesk_'
+      
     end
 
     #helpdesk.resources :ticket_issues

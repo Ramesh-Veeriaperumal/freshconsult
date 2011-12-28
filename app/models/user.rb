@@ -22,6 +22,8 @@ class User < ActiveRecord::Base
   has_many :authorizations, :dependent => :destroy
   has_many :votes, :dependent => :destroy
   
+  has_many :time_sheets , :class_name =>'Helpdesk::TimeSheet' , :dependent => :destroy
+  
   validates_uniqueness_of :user_role, :scope => :account_id, :if => Proc.new { |user| user.user_role  == USER_ROLES_KEYS_BY_TOKEN[:account_admin] }
   validates_uniqueness_of :twitter_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
   

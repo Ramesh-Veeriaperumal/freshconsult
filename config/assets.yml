@@ -49,8 +49,7 @@ javascripts:
     - public/javascripts/frameworks/plugins/*.js
     - public/javascripts/hackz.js    
   workspace: 
-    - public/javascripts/bootstrap-twipsy.js
-    - public/javascripts/bootstrap-popover.js
+    - public/javascripts/bootstrap/*.js
     - public/javascripts/utils.js
     - public/javascripts/fast_autocompleter.js    
     - public/javascripts/humane.js

@@ -291,10 +291,15 @@ en:
     application:
       already: "Addon is already installed."
       uninstall:
+<<<<<<< HEAD
         success: "The Addon has been removed successfully!"
+=======
+        success: "The Addon has been disabled successfully!"
+>>>>>>> time_tracking
         error: "Error in disabling the Addon."
       install:
-        success: "The Addon has been Added successfully!"
+        success: "The Addon has been enabled successfully!"
+        error: "Error in enabling the Addon."
       configure:
         success: "The Addon has been updated successfully!"
         error: "Error in configuring the Addon."
@@ -1122,7 +1127,7 @@ en:
       tweet_and_resolve: Tweet and Resolve
     activities: Activities
     requestor_info: Requestor Info
-    reply_to: Reply to ticket
+    reply_to: Reply
     add_note: Add note
     monitor_btn_title: Monitor this ticket
     canned_responses: 
@@ -1490,6 +1495,8 @@ en:
         help: Help
   settings: settings        
   capsule_crm: "Capsule CRM"
+  freshbooks: "Freshbooks"
+  harvest: "Harvest"
   integrations:
     capsule:
       label: "Capsule CRM"
@@ -1498,11 +1505,34 @@ en:
         bcc_drop_box_mail: "Mail Drop Box address"
         bcc_drop_box_mail_info: "You can find your unique Capsule Drop box Email address under <b>“Settings -> Mail Drop Box”</b>.<br /> (You can find this on the top right corner of the page).<br /> Copy the email address and paste it in the textfield above. <br /> Freshdesk will automatically add this email address to the Bcc field when you are replying to a Ticket"
         domain: "Domain"
-        domain_info: "ex: example.capsulecrm.com"
+        domain_info: "Just give the domain alone without https. Ex: example.capsulecrm.com"
         api_key: "Api Key"
         api_key_info: "To get your unique API key, login to your Capsule CRM account and navigate to <br /> <b>“User -> My Preferences”</b>. (You can find this on the top right corner of the page).<br /> Click on <b>“API Authentication Token”</b>, and to get the unique API key.<br /> Copy the key and paste it in the textfield above."
+        widget_title: "Widget Title"
+    freshbooks:
+      label: "Freshbooks"
+      desc: "Now you can log the time spend on tickets into your Freshbooks projects and tasks."
+      form:
+        freshbooks_note: "Notes text"
+        freshbooks_note_info: "Text that will be appended at the end of the note, while logging the time spent. Make it empty for not appending any text."
+        api_url: "API URL"
+        api_url_info: "Give complete API URL wit https. Ex: https://example.freshbooks.com/api/2.1/xml-in"
+        api_key: "Authentication Token"
+        api_key_info: ""
+        widget_title: "Widget Title"
+    harvest:
+      label: "Harvest"
+      desc: "Now you can log the time spend on tickets into your Harvest projects and tasks."
+      form:
+        domain: "Domain"
+        domain_info: "Just give the domain alone without https. Ex: example.harvestapp.com"
+        harvest_note: "Notes text"
+        harvest_note_info: "Text that will be appended at the end of the note, while logging the time spent. Make it empty for not appending any text."
         widget_title: "Widget Title"
   widgets:
     contact_widget:
       description: "Display a contact or option to add the contact into capsule."
   capsule_crm_helptext: "<h4>Link back from Capsule to Freshdesk</h4><p>You can create a link in Capsule CRM to view the contact's tickets in Freshdesk.</p> <p>To do this Goto your <br /><b>Settings -> Custom Fields -> For People & Organization</b></p><p> Then click on \"Add new...\" and select <b>\"Generated Link\"</b></p> <p>Copy the URl exactly as shown below and paste it in Capsule CRM as the link definition<span class=\"info-code\">http://%{full_domain}/helpdesk/tickets?email={email}</span></p>"
+  freshbooks_helptext: "To get your Authentication Token and API URL, login to your Freshbooks account and navigate to <br /> <b>“My Account”</b>. (You can find this on the top right corner of the page).<br /> Click on <b>“FreshBooks API”</b>, and to get the 'API URL' and  'Authentication Token' .<br /> Copy the key and paste it in the textfield above."
+  report:
+    time_sheet_report: Time Sheet Report
