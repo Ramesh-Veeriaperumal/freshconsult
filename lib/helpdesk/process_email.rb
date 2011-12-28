@@ -193,7 +193,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         RAILS_DEFAULT_LOGGER.debug content_id
         RAILS_DEFAULT_LOGGER.debug "cid:#{content_id}"
         RAILS_DEFAULT_LOGGER.debug item.body_html
-        RAILS_DEFAULT_LOGGER.debug created_attachment.content.url
+        RAILS_DEFAULT_LOGGER.debug item.body_html.sub!("cid:#{content_id}",created_attachment.content.url) unless content_id.nil?
         item.body_html.sub!("cid:#{content_id}",created_attachment.content.url)  unless content_id.nil?
       end
       item.save unless content_ids.blank?
