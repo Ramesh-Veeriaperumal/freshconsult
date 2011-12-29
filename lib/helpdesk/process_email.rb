@@ -182,26 +182,17 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
 
     def create_attachments(ticket, item)
-      RAILS_DEFAULT_LOGGER.debug "item.body_html at start #{item.body_html}"
-
       bodyHTML = String.new(item.body_html)
       content_ids = params["content-ids"].nil? ? {} : get_content_ids 
      
-      RAILS_DEFAULT_LOGGER.debug "BODYHTML before loop is #{bodyHTML}"
-      
       Integer(params[:attachments]).times do |i|
         created_attachment = item.attachments.create(:content => params["attachment#{i+1}"], :account_id => ticket.account_id)
         bodyHTML = replace_content_id(bodyHTML, content_ids["attachment#{i+1}"], created_attachment)
       end
-      RAILS_DEFAULT_LOGGER.debug "BODYHTML after loop is #{bodyHTML}"
-      RAILS_DEFAULT_LOGGER.debug "item.body_html after loop & before update #{item.body_html}"
 
       unless content_ids.blank?
         item.class.find(item.id).update_attributes!(:body_html => bodyHTML)
       end
-      RAILS_DEFAULT_LOGGER.debug "BODYHTML after update is #{bodyHTML}"
-      RAILS_DEFAULT_LOGGER.debug "item.body_html after update #{item.body_html}"
-      RAILS_DEFAULT_LOGGER.debug "From DB #{item.class.find(item.id).body_html}"
     end
     
     def replace_content_id(bodyHTML, content_id, created_attachment)
