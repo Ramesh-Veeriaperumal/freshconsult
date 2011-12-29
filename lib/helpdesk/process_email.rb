@@ -182,30 +182,32 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
 
     def create_attachments(ticket, item)
+      bodyhtml = item.body_html
       content_ids = params["content-ids"].nil? ? {} : get_content_ids 
+     
       Integer(params[:attachments]).times do |i|
         created_attachment = item.attachments.create(:content => params["attachment#{i+1}"], :account_id => ticket.account_id)
-        content_id = content_ids["attachment#{i+1}"]
-        puts "#############################################################content_id"
-        puts content_id
-        puts "cid:#{content_id}"
-        puts item.body_html
-        puts created_attachment.content.url
-        item.body_html.sub!("cid:#{content_id}",created_attachment.content.url)  unless content_id.nil?
+        bodyhtml = replace_content_id(bodyhtml, content_ids["attachment#{i+1}"], created_attachment)
       end
-      item.save unless content_ids.blank?
+      item.update_attributes(:body_html => bodyhtml) unless content_ids.blank?
+      RAILS_DEFAULT_LOGGER.debug item.description_html
+      RAILS_DEFAULT_LOGGER.debug item.to_json
+    end
+    
+    def replace_content_id(bodyhtml, content_id, created_attachment)
+        bodyhtml.sub!("cid:#{content_id}",created_attachment.content.url)  unless content_id.nil?
+        bodyhtml
     end
   
-  def get_content_ids
-      #params = {"content-ids"=>"{\"ii_134859f1758502d9\":\"attachment3\",\"ii_134859f3c5030909\":\"attachment2\",\"ii_134859eeb35840e4\":\"attachment1\"}"}
-      split_content_ids = params["content-ids"].tr("{}\\\"","").split(",")   
-      content_ids = {}
-      split_content_ids.each do |content_id|
-        split_content_id = content_id.split(":")
-        content_ids[split_content_id[1]] = split_content_id[0]
-      end
-      content_ids
-  end
+    def get_content_ids
+        content_ids = {}
+        split_content_ids = params["content-ids"].tr("{}\\\"","").split(",")   
+        split_content_ids.each do |content_id|
+          split_content_id = content_id.split(":")
+          content_ids[split_content_id[1]] = split_content_id[0]
+        end
+        content_ids  
+    end
   
   def show_quoted_text(text, address)
     
