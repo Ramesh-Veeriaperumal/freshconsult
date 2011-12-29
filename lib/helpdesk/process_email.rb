@@ -182,14 +182,14 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
 
     def create_attachments(ticket, item)
-      bodyhtml = item.body_html
+      bodyhtml = item.description_html
       content_ids = params["content-ids"].nil? ? {} : get_content_ids 
      
       Integer(params[:attachments]).times do |i|
         created_attachment = item.attachments.create(:content => params["attachment#{i+1}"], :account_id => ticket.account_id)
         bodyhtml = replace_content_id(bodyhtml, content_ids["attachment#{i+1}"], created_attachment)
       end
-      item.update_attributes(:body_html => bodyhtml) unless content_ids.blank?
+      item.update_attributes!(:description_html => bodyhtml) unless content_ids.blank?
       RAILS_DEFAULT_LOGGER.debug item.description_html
       RAILS_DEFAULT_LOGGER.debug item.to_json
     end
