@@ -1,5 +1,5 @@
 --- 
-sv_SE: 
+sv-SE: 
   meta:
    language_name: 'Swedish'
   attachment_help_info: Storleken på bilagor får vara högst 20 MB
@@ -335,7 +335,7 @@ sv_SE:
     contacts_import: 
       failure: Prova igen
       no_file: Ladda upp en fil
-      success: %{created_count} kontakter har nyligen importerats och %{updated_count} befintlig kontakter har uppdaterats!
+      success: "%{created_count} kontakter har nyligen importerats och %{updated_count} befintlig kontakter har uppdaterats!"
     business_hours: 
       update: 
         failure: Det gick inte att uppdatera öppettiderna
@@ -366,8 +366,8 @@ sv_SE:
         success: Ett verifieringsmeddelande har skickats till %{reply_email}!
       activation: 
         invalid_code: Aktiveringskoden är inte giltig!
-        success: %{reply_email} har aktiverats!
-        already_activated: %{reply_email} har redan aktiverats!
+        success: "%{reply_email} har aktiverats!"
+        already_activated: "%{reply_email} har redan aktiverats!"
       make_primary: 
         success: <b>%{reply_email}</b> är nu din primära e-postadress för support!
     data_import: 
@@ -403,15 +403,15 @@ sv_SE:
         admin: Du har inte tillräcklig behörighet för att ändra detta. Logga in som administratör!
       login_not_needed: Du måste vara utloggad för att få åtkomst till denna sida.
       destroy: 
-        failure: %{human_name} kunde inte raderas
-        success: %{human_name} har raderats.
+        failure: "%{human_name} kunde inte raderas"
+        success: "%{human_name} har raderats."
       restore: 
-        failure: %{human_name} kunde inte återställas
+        failure: "%{human_name} kunde inte återställas"
       create: 
-        failure: Det gick inte att spara %{human_name}
-        success: %{human_name} har skapats.
+        failure: "Det gick inte att spara %{human_name}"
+        success: "%{human_name} har skapats."
       update: 
-        success: %{human_name} har uppdaterats.
+        success: "%{human_name} har uppdaterats."
   agent_closes_tkt: Agent stänger ärendet
   submit: skicka
   export_data_successfull: Dina helpdeskdata kommer inom kort att skickas till din e-postadress!
@@ -533,7 +533,7 @@ sv_SE:
       you_must_confirm: Du måste bekräfta din annullering
       delete_my_account: Radera mitt konto
       confirm_and_cancel_my_account: Jag bekräftar att jag vill annullera mitt konto och radera alla mina data...
-      goback: &#x2190; Tillbaka till kontoinställningar
+      goback: "&#x2190; Tillbaka till kontoinställningar"
       change_your_plan: Ändra din plan
       warning_message: När du väl gör detta kommer du inte längre ha tillgång till dina data, så var säker på att du verkligen vill göra detta.
       cancel_account: Annullera Freshdesk-konto
@@ -706,11 +706,11 @@ sv_SE:
         not_a_number: är inte ett nummer
         inclusion: inkluderas inte i listan
       full_messages: 
-        format: %{attribute} %{message}
+        format: "%{attribute} %{message}"
       template: 
         body: "Ett problem uppstod med följande fält:"
         one: Ett fel förhindrade denna %{model} från att sparas
-        other: %{count} fel förhindrade denna %{model} från att sparas
+        other: "%{count} fel förhindrade denna %{model} från att sparas"
   top: Upp
   company_name: Företagsnamn
   expires: Löper ut
@@ -722,24 +722,24 @@ sv_SE:
       unlike: Ogilla
       ideas:
         vote_button: Jag gillar denna idé
-        vote_info_1: %{vote} personer gillar denna idé
-        vote_info_2: %{vote} personer gillar denna idé
+        vote_info_1: "%{vote} personer gillar denna idé"
+        vote_info_2: "%{vote} personer gillar denna idé"
         vote_info_include_1: Du gillar denna idé
-        vote_info_include_2: %{vote} personer (inklusive du) gillar denna idé
+        vote_info_include_2: "%{vote} personer (inklusive du) gillar denna idé"
       problem:
         vote_button: Jag har detta problem
-        vote_info_1: %{vote} personer har detta problem
-        vote_info_2: %{vote} personer har detta problem
+        vote_info_1: "%{vote} personer har detta problem"
+        vote_info_2: "%{vote} personer har detta problem"
         vote_info_include_1: Du har detta problem
-        vote_info_include_2: %{vote} personer (inklusive du) har detta problem
+        vote_info_include_2: "%{vote} personer (inklusive du) har detta problem"
       howto:
         vote_button: Jag har denna fråga
-        vote_info_1: %{vote} personer har denna fråga
-        vote_info_2: %{vote} personer har denna fråga
+        vote_info_1: "%{vote} personer har denna fråga"
+        vote_info_2: "%{vote} personer har denna fråga"
         vote_info_include_1: Du har denna fråga
-        vote_info_include_2: %{vote} personer (inklusive du) har denna fråga
+        vote_info_include_2: "%{vote} personer (inklusive du) har denna fråga"
     post:
-      posted_on: %{user_name} på %{post_date}
+      posted_on: "%{user_name} på %{post_date}"
       edit_post: Redigera post
       unmark_answer: Avmarkera detta som svaret
       post_accepted_as_a_good_answer: Denna post har accepterats som ett bra svar till detta ämne
@@ -922,7 +922,7 @@ sv_SE:
   errors_in_payment_info: "Fel som hittats i samband med din betalningsinformation:"
   attach_files: Bifoga filer
   plan_amount: per agen/månad
-  current_plan_details: %{plan_name} plan med %{agent_limit} agenter
+  current_plan_details: "%{plan_name} plan med %{agent_limit} agenter"
   zendesk_backup: Säkerhetskopieringsfil
   twoday: Två dagar
   profile: 
@@ -1264,14 +1264,14 @@ sv_SE:
       index:
         title: Taggar
     flash:
-      assignedto: %{tickets} tilldelad till %{username}.
-      tickets_closed: %{tickets} stängd
-      assigned_to_you: %{tickets} tilldelad till dig
-      removed_from_spam: %{tickets} borttagen från skräppostmappen.
+      assignedto: "%{tickets} tilldelad till %{username}."
+      tickets_closed: "%{tickets} stängd"
+      assigned_to_you: "%{tickets} tilldelad till dig"
+      removed_from_spam: "%{tickets} borttagen från skräppostmappen."
       closing_the_ticket_failed: Det gick inte stänga ärendet
-      assigned_reassigned: %{type} till %{username}
-      flagged_spam: %{tickets} flaggade som skräppost. %{undo}
-      flagged_unspam: %{tickets} borttagen från skräppostmappen.
+      assigned_reassigned: "%{type} till %{username}"
+      flagged_spam: "%{tickets} flaggade som skräppost. %{undo}"
+      flagged_unspam: "%{tickets} borttagen från skräppostmappen."
     shared:
       reply_form:
         title: Svara till %{email}
@@ -1354,7 +1354,7 @@ sv_SE:
         resolved_or_closed: Lösta eller stängda
         no_tickets: Du har inte några ärenden i den aktuella vyn
       note:
-        posted_on: %{user_name} på %{note_date}
+        posted_on: "%{user_name} på %{note_date}"
         edit_note: Redigera meddelande
         split_this_as_new_ticket: Dela detta som ett nytt ärende
         private_note: Privat meddelande
@@ -1451,7 +1451,7 @@ sv_SE:
     filter:
       index:
         title: Hantera anpassade vyer
-        back: &larr; Tillbaka till Ärenden
+        back: "&larr; Tillbaka till Ärenden"
         no_custom_view: Inga anpassade vyer tillgängliga!
       view:
         delete: Är du säker på att du vill radera denna vy?
@@ -1501,4 +1501,4 @@ sv_SE:
   widgets:
     contact_widget:
       description: Visa en kontakt eller ett alternativ för att lägga till kontakten i Capsule.
-  capsule_crm_helptext: <h4>Länka tillbaka från Capsule till Freshdesk</h4><p>Du kan skapa en länk i Capsule CRM för att visa kontaktens ärenden i Freshdesk.</p> <p>Gör detta genom att gå till din <br /><b>Inställningar -> Anpassade fält -> För personer och organisationen</b></p><p> Klicka färefter på \"Lägg till ny...\" och välj <b>\"Genererad länk\"</b></p> <p>Kopiera URL-länken exakt så som den visas nedan och klistra in den i Capsule CRM som länkdefinition<span class=\"info-code\">http://%{full_domain}/helpdesk/tickets?email={email}</span></p>
+  capsule_crm_helptext: "<h4>Länka tillbaka från Capsule till Freshdesk</h4><p>Du kan skapa en länk i Capsule CRM för att visa kontaktens ärenden i Freshdesk.</p> <p>Gör detta genom att gå till din <br /><b>Inställningar -> Anpassade fält -> För personer och organisationen</b></p><p> Klicka färefter på \"Lägg till ny...\" och välj <b>\"Genererad länk\"</b></p> <p>Kopiera URL-länken exakt så som den visas nedan och klistra in den i Capsule CRM som länkdefinition<span class=\"info-code\">http://%{full_domain}/helpdesk/tickets?email={email}</span></p>"

@@ -1,0 +1,1504 @@
+﻿---
+cs: 
+  meta:
+   language_name: 'Czech'
+  attachment_help_info: Velikost příloh(y) může být až 20 MB
+  feedbackwidget_offset_info: Offset bude vzdálenost widget tlačítka (obrazových bodů), od levé nebo horní části obrazovky k vyrovnání, které si vyberete.
+  no_twitter_handle: Nakonfigurujte prosím alespoň jeden účet Twitter
+  reset_my_password: Obnovit moje heslo 
+  assign: Přiřadit
+  signup: Zaregistrovat se
+  trial_expired_on: Vaše zkušební verze vypršela
+  upgrade_trial: Upgradujte svou zkušební verzi!
+  add_note: Přidat poznámku
+  contact_name: Jméno kontaktu
+  eight: 8 hodiny
+  security_code: Bezpečnostní kód
+  example: příklad
+  pending: Čekající na vyřízení
+  twitter_source: Twitter
+  facebook_source: Facebook
+  working: Pracuji
+  attachment: Příloha
+  attachments: Přílohy
+  show_quoted_text: Zobrazit citovaný text
+  cancel_my_account: Zrušit můj účet
+  resolved_on_time: Vyřešeno včas
+  resolved_late: Vyřešeno pozdě
+  remove: Odstranit
+  user: 
+    company: Společnost
+    photo: Fotka
+    title: Titul
+    info1: Obrázek profilu osoby, doporučujeme pro zachování kvality, mít obrázek takový, aby měl jak šířku, tak výšku stejnou
+    back_info: Další informace
+    mobile: Mobilní telefon
+    twitter_id: Twitter ID
+    full_name: Celé jméno
+    secondary: druhý
+    phone_no: Telefon
+    work: Práce
+    email: E-mail
+  ticket_fields:
+    fields:
+      source: Zdroj
+      subject: Předmět
+      requester: Žadatel
+      status: Stav
+      group: Skupina
+      agent: Agent
+      priority: Priorita
+      description: Popis
+      product: Produkt
+      ticket_type: Typ události
+    customizer_js:
+      untitled: Bez názvu
+      first_choice: První volba
+      second_choice: Druhá volba
+      confirm_delete: Jste si jistí, že chcete smazat toto pole?
+      no_choice_message: Musí tu být alespoň jedna platná volba
+    index: 
+      number: Číslo
+      add_custom_field: Přidat vlastní pole
+      customize_form: Přizpůsobte si podobu "Nové události".
+      single_line: Text řádku
+      title: Políčka události
+      paragraph: Text odstavce
+      checkbox: Zaškrtávací políčko
+      save: Uložit pole události
+      drag_drop_intro: Přetáhněte jakýkoliv typ pole do formuláře "Nová událost" níže pro přidání nového vlastního pole
+      dropdown: Rozbalovací menu
+    formfield_props: 
+      label: Název pole
+      add_new_choice: Přidat novou volbu
+      customer_mandatory: Povinné pro zadání události
+      customer_edit: Může editovat pole Upravit
+      agent_info1: Pole nemůže být prázdné, když zadáváte událost online
+      agent_info2: Pole nemůže být prázdné, když se snažíte uzavřít událost online
+      agent_mandatory_submission: Povinné pro zadání
+      customer_info1: Pole nemůže být prázdné, když zadáváte událost online.
+      for_agents: Pro agenty
+      dropdown_choices: Rozbalovací možnosti
+      label_in_portal: Štítek v portálu
+      customer_visible: Viditelné zákazníkům
+      description: Popis
+      for_customer: Pro zákazníky
+      agent_mandatory_closure: Povinné pro uzavření
+      choices: Volby
+      label_in_portal_info: Název, který je zobrazen ve Vašem samoobslužném portálu
+  folder: 
+    edit: Upravit složku
+    info1: Jste si jisti, že chcete smazat tuto složku?
+    add_folder: Přidat složku
+  amount_per_month: $%{amount} / měsíc
+  agent_deleted_message: Toto je smazaný agent
+  cancel: Zrušit
+  last: poslední
+  agent_emailnotverified: Email nebyl ověřen pro tohoto agenta!
+  agent_assigned_info: Žádné otevřené a nevyřízené události u tohoto agenta
+  basic_details: Management emailových automatických odpovědí při určitých akcích/stavech, pravidla dispečera (filtrování obsahu příchozích emailů), nastavitelná SLA pravidla, Znalostní databáze, Samoobslužný portál, Mapování domény, Komunitní podpora.
+  choose_plan: Zvolit licenci
+  create: Vytvořit
+  feedbackwidget_custom_image_info: Pokud používáte vlastní obrázek, barva a text budou ignorovány
+  account_admin_updated: Účet administrátora by aktualizován!
+  forums_order: 
+    overview: Přehled
+    recent: Nedávný
+    popular: Oblíbené
+  payment_info: Údaje o platbě
+  admin:
+    widget_config:
+      index:
+        thankyou_label: Odeslat zprávu
+        thankyou_default: Děkujeme za vaše reakce
+        thankyou_info: Zpráva zobrazená uživateli po odeslání formuláře události
+    supervisor_rules:
+      index:
+        help_title: Vedoucí
+        title: Vedoucí - pravidla
+        help_info_1: Použijte Vedoucího k pravidelné kontrole nedávných událostí a provádí konkrétní akce závislé na čase, jako jsou zasílání upomínek zákazníkům nebo eskalačních událostí nebo znovu přidělení událostí apod.
+        help_info_2: Např. - pokud událost čeká na reakci zákazníka déle než 24 hodin, pošle se automaticky email tomuto zákazníkovi nebo automaticky uzavře událost ve stavu "Vyřešeno" po více jak 48 hodinách
+        help_info_3: Supervisor poběží každou hodinu a zpracuje události aktualizované během posledních 30 dnů.
+        help_info_4: Pravidla definovaná vedoucím jsou zpracovávány sekvenčně, takže pořadí pravidel je důležité. Pravidlo může spustit určité akce, které spouštějí další vnořená pravidla.
+      new:
+        title: Vedoucí - Nové pravidlo
+      edit:
+        title: Vedoucí - Upravit pravidlo
+    shared:
+      filter_jsinit:
+        insert_placeholder: Vložit zástupnou značku
+        body: Tělo
+        to: Komu
+        selected: Vybráno
+        not_selected: Nezvolen
+    automations:
+      edit:
+        title: Upravit scénář
+    security: 
+      index: 
+        shared_secret: Společné tajemství
+        remote_login_url: Adresa pro vzdálené přihlášení
+        shared_secret_info: Prosím, zkopírujte si tento klíč a bezpečně uschovejte. Budete jej potřebovat k povolení Vzdáleného ověřování. Toto je společné tajemství mezi Vámi a Freshdeskem.
+        remote_logout_url_info: Toto je webová adresa, která v případě, že se uživatelé odhlásí z Freshdesku, přesměruje dané uživatele na požadovanou stránku.
+        remote_login_url_info: Na tuto adresu bude Freshdesk přesměrovávat uživatele k ověření v případě, že se budou přihlašovat do Freshdesku.
+        enable_sso_info: Jednotné příhlášení Vám umožní používat Vaší vlastní aplikaci nebo centralizovaný server (jako je MS Active Directory) k ověřování agentů a zákazníků tak, že budou moct přistupovat do Freshdesku bez nutnosti zadávat odděleně uživatelské jméno a heslo.
+        enable_sso: Umožnit jednotné přihlášení
+        remote_logout_url: Odkaz vzdáleného odlogování
+        remote_authentication: Vzdálené ověření
+    products: 
+      new: 
+        title: Nový produkt
+      portal: 
+        select_forum_category: Zvolte kategorii fóra
+        portal_rebranding: Rebrandování portálu
+        cname_configure_info: Před použitím tohoto políčka se prosím ujistěte, že máte vytvořen CNAME DNS záznam ve Vašem DNS zone souboru, abyste se mohli odkazovat na <strong>help.<b id="domain_info_name">mycompanyname</b>.com</strong>, do %{full_domain}. Váš webový nebo síťový administrátor by měl být schopný Vám pomoct nastavit vše správně
+        select_solution_category: Zvolte kategorii fóra
+        top_level_solution_info: K tomuto produktu můžete přidružit kategorii řešení. Všechna ostatní řešení se zákazníkům nezobrazí, pokud budou prohlížet stránku na portálu s řešením k tomuto produktu.
+        portal_settings: Nastavení portálu
+        portal_name_info: Název / jméno bude zobrazen/o u portálu Vašeho produktu, v hlavičce vedle loga
+        top_level_forum_info: Můžete přidružit kategorii fóra k tomuto produktu. Všechna ostatní fóra nebudou pro zákazníky viditelná, pokud budou prohlížet záložku fóra v tomto produktovém portálu.
+        top_level_forum: Kategorie fóra nejvyšší úrovně
+        portal_url: Odkaz portálu
+        top_level_solution: Kategorie řešení nejvyšší úrovně
+        portal_name: Název portálu
+      edit: 
+        title: Upravit produkt
+      form: 
+        configure_seperate_portal: Nastavit oddělený portál pro tento produkt
+        enable_product_portal: Povolit portál produktu
+        enter_support_email_id: Váš email podpory
+        configure_email: Nastavit email
+        product_name: Název produktu
+      product:
+        email_not_verified: Email není ověřen  
+        delete: Jste si jistí, že chcete smazat tento produkt?
+      index: 
+        title: Produkty        
+        add_product: Přidat produkt
+    canned_responses:
+      ca_response:
+        delete_confirm: Opravdu chcete smazat tuto předem připravenou odpověď?
+      new: 
+        title: Přidat předpřipravenou odpověď        
+      edit: 
+        title: Upravit předpřipravenou odpověď
+      form: 
+        groups: Agenti ve skupině
+        response_name: Název odpovědi
+        all_agents: Všichni agenti
+        me_only: Pouze já
+        available_for: Dostupné pro
+      index: 
+        new: Přidat předpřipravenou odpověď
+        title: Předpřipravená odpověď
+    twitters:
+      index:
+        new: Přidat účet Twitteru
+        title: Účty Twitter
+        search_keys: Hledání klíče
+        add_search: Přidat hledání
+      search:
+        name: Hledat jméno
+        search_key: Vyhledávací dotaz
+        screen_name: Účet Twitteru
+        add_key: Přidat vyhledávací dotaz
+        edit_key: Upravit vyhledávací dotaz
+
+      change:
+        edit_twitter :  Upravit Twitter
+        capture_mention: Převést veřejné názory na událost       
+        capture_dm: Převést zprávy poslané na přímo na události
+        screen_name: Název obrazovky
+        default_group : Běžná skupina       
+
+    home:
+      index: 
+        group: Skupiny
+        business-hours: Pracovní doba
+        title: Admin
+        email-notifications: Emailové upozornění
+        rebranding: Rebrandování Helpdesku
+        account-settings: Nastavení účtu
+        customer-portal: Zákaznický portál
+        canned-response: Předpřipravená odpověď
+        multi-product: Více produktů
+        everything_else: Všechno další
+        import: Importovat data z Zendesku
+        agent: Agenti
+        feedback: Panel zpětné vazby
+        integrations: Integrace
+        dispatcher: Dispečer
+        supervisor: Vedoucí
+        sla: SLA politika
+        ticket-fields: Políčka události
+        remote-authentication: Vzdálené ověření
+        scenario: Automatizace scénářů
+        email-settings: Nastavení emailu
+        everything_helpdesk: Celý helpdesk
+        canned-response: Předpřipravená odpověď
+        multi-product: Více produktů
+        twitter-setting: Nastavení Twitteru
+        survey: Nastavení přehledů
+        facebook-setting: Nastavení Facebooku
+
+    canned_responses:
+      index:
+        title: Předpřipravená odpověď
+        new: Přidat předpřipravenou odpověď
+      new:
+        title: Přidat předpřipravenou odpověď        
+        delete_confirm: Opravdu chcete smazat tuto předem připravenou odpověď?      
+      edit: 
+        title: Upravit předpřipravenou odpověď
+      form:
+        available_for: Dostupné pro
+        all_agents: Všichni agenti
+        groups: Agenti ve skupině
+        me_only: Pouze já
+        response_name: Název odpovědi
+
+  ends_with: Končí na
+  last_name: Příjmení
+  forum:
+    types:
+      howto: Otázky
+      ideas: Nápady
+      announce: Upomínka
+      problem: Problémy
+    confim_msg1: Jste si jisti, že chcete smazat toto fórum?
+    verb: 
+      questions: Otázka položena
+      ideas: Nápad sdílený s
+      announcement: Oznámeno
+      problems: Problém hlášen
+    new: Nové fórum
+    edit: Upravit fórum
+    title: Fóra
+    start_topic: Založit téma
+    visibility:
+      anyone: Kdokoliv
+      logged_users: Přihlášení uživatelé
+      agents: Agenti      
+  password_reset_email: E-mail resetování hesla
+  import_user_org: Uživatelé a organizace
+  to_do: Úkoly k udělání
+  feedbackwidget_formcustomize: Úprava formuláře
+  does_not_contain: Neobsahuje
+  flash:
+    facebook:
+      updated: Nastavení Facebook byla aktualizována 
+    application:
+      already: Aplikace je již instalovaná.
+      uninstall:
+        success: Doplněk byl úspěšně odstraněn!
+      install:
+        success: Doplněk byl úspěšně přidán!
+      configure:
+        success: Doplněk byl úspěšně aktualizován!
+    filter:
+      delete_success: Zobrazení bylo úspěšně odstraněno!
+      save_success: Zobrazení bylo úspěšně uloženo!
+    twitter: 
+      updated: Nastavení Twitter byla aktualizována
+    not_allowed_in_demo_site: Aplikace v Demo modu nemá k této akci dostatečná oprávnění!
+    portal: 
+      tickets: 
+        create: 
+          success: Událost, kterou jste zadali, byla vytvořena a kopie s podrobnostmi Vám byla zaslána emailem.
+    g_app: 
+      user_deleted: Uživatel byl odstraněn!
+      authentication_failed: Ověření selhalo
+      no_subdomain: Takováto subdoména bohužel neexistuje. Prosím, zkute to znovu.
+    profile: 
+      change_password: 
+        failure: Není možné změnit Vaše heslo. Prosím, zkontrolujte znění Vašeho stávajícího hesla
+        success: Heslo bylo úspěšně změněno. Prosím, zkuste se znovu přihlásit.
+      update: 
+        success: Váš profil byl aktualizován.
+    solutions: 
+      remove_tag: 
+        success: Štítek z tohoto řešení byl odstraněn
+    account: 
+      update: 
+        success: Podrobnosti o Vašem účtu byly aktualizovány.
+    portal_settings: 
+      update: 
+        success: Nastavení zákaznického portálu byly aktualizovány
+    sso: 
+      update: 
+        success: Podrobnosti o Vašem účtu byly aktualizovány.
+    agents: 
+      delete: 
+        not_allowed: Ke smazání nemáte přístup!
+      create: 
+        success: Účet agenta by vytvořen a instrukce k aktivaci účtu byly zaslány emailem na %{email}!
+    contacts_import: 
+      failure: Prosím, zkuste to znovu
+      no_file: Prosím, nahrajte požadovaný soubor
+      success: "%{created_count} kontaktů bylo nově importováno a %{updated_count} stávajících kontaktů bylo aktualizováno!"
+    business_hours: 
+      update: 
+        failure: Aktualizace dat Pracovní doby selhala
+        success: Pracovní doba byla úspěšně aktualizována
+    tickets: 
+      merge: 
+        success: Událost byla úspešně sloučena
+        wrong_ticket_id: Prosím, zadejte platné ID události
+      reply: 
+        success: Odpověď byla zaslána.
+      notes: 
+        create: 
+          failure: Vyskytl se problém při přidání poznámky k této události. Prosím, zkuste to znovu.
+          success: K této události byla přidána poznámka.
+      empty_spam: 
+        success: Všechny události ve složce Spam byly smazány.
+      monitor: 
+        stop: Nadále již nesledujete tuto událost
+        start: Nyní sledujete tuto událost
+      empty_trash: 
+        success: Všechny události ve složce Koš byly smazané.
+    custom_fields: 
+      update: 
+        failure: Aktualizace políček v Události selhala.
+        success: Políčka v požadované události byla aktualizována.
+    email_settings: 
+      send_activation: 
+        success: Ověřovací email Vám byl zaslán na %{reply_email}!
+      activation: 
+        invalid_code: Tento akivační kúod není platný!
+        success: "%{reply_email} byl aktivován!"
+        already_activated: "%{reply_email} byl již aktivován!"
+      make_primary: 
+        success: "<b>%{reply_email}</b> je momentálně nastaven jako Váš primární email podpory!"
+    data_import: 
+      zendesk: 
+        no_contact: Nebylo možné kontaktovat zendesk. Prosím, ověřte přihlašovací údaje k této službě a zkuste to znovu!
+        success: Import dat se spustil a po jeho dokončení obdržíte e-mail. Proces importu může trvat několik minut podle objemu vašich dat
+        failure: Nebylo možné importovat ze Zendesk... Zkuste to prosím znovu
+    contacts: 
+      create: 
+        success: Kontakt byl úspěšně vytvořen.
+    to_dos: 
+      complete: 
+        success: To-Do bylo označeno jako hotové.
+    password_resets: 
+      update: 
+        success: Heslo bylo úspěšně změněno
+        invalid_token: Je nám líto, ale nebylo možné najít V8š účet. Pokud potíže přetrvávají, zkuste zkopírovat webovou adresu z emailu přímo do internetového prohlížeče nebo začněte znovu proces resetování hesla.
+      email: 
+        user_not_found: Nebyl nalezen žádný uživatel s touto emailovou adresou
+        success: Instrukce, jak resetovat heslo Vám byly odeslány emailem. Prosím, zkontrolujte Vaši emailovou adresu.
+    login: 
+      verify_credentials: Není možné Vás přihlásit. Prosím, zkontrolujte své přihlašovací údaje
+      sso: 
+        expected_params: Jsou požadované parametry - jméno, email, hash, které nejsou zadány 
+      success: Přihlášení proběhlo úspešně!
+    email_notifications: 
+      update: 
+        success: Upozornění emailem bylo aktualizováno.
+    general: 
+      access_denied: Nemáte oprávnění přístupu k této stránce!
+      need_login: Musíte být přihlášen, abyste získal přístup k této stránce
+      insufficient_privilege: 
+        admin: Nemáte dostatečná práva, abyste tento údaj mohl změnit. Prosím, přihlašte se jako Administrátor..!!
+      login_not_needed: Musíte být odhlášen, abyste měl přístup k této stránce
+      destroy: 
+        failure: Účet %{human_name} nemohl být smazán
+        success: Účet %{human_name} byl smazán..
+      restore: 
+        failure: "%{human_name} nemohl být obnoven"
+      create: 
+        failure: Nemohu uložit %{human_name}
+        success: Účet %{human_name} byl vytvořen.
+      update: 
+        success: Účet %{human_name} byl aktualizován.
+  agent_closes_tkt: Agent uzavírá lístek
+  submit: odeslat
+  export_data_successfull: Údaje o helpdesku budou brzy odeslány na váš e-mail!
+  import_topics: Témata
+  assigned_to: Přiřazeno k
+  change: Změnit
+  back_plans_billing: Zpět k licencím a platbám
+  f_request: Specifický požadavek (doplnění)
+  save_and_create: Uložit a založit další
+  undelete: Obnovit
+  import_zendesk_title: Importovat ze Zendesk
+  closed: Uzavřeno
+  suspended_plan_info: Váš účet byl pozastaven, prosím, zvolte si licenci k uvolnění Vašeho účtu!
+  plan_info_update: Váš plán byl změněn.
+  note: "Poznámka:" 
+  warning: VAROVÁNÍ
+  facebook: Facebook
+  import_user_notification: Odeslat aktivační email uživatele, zatímco bude probíhat import 
+  what_is_cvv: Co je to cw?
+  pro_details: "Vše jako v 'Základní' licenci + navíc: Automatizace scénářů, Zákazníkem specifikovaná SLA pravidla, Pracovní doba, Fóra, Komunitní a emailová podpora."
+  open: Otevřená
+  zendesk_url: Adresa URL Zendesk
+  special_beta_offer: Speciální nabídka pro účty Beta
+  click_to_select_filter: Klikněte pro výběr filtru
+  select_another_plan: Vybrat jinou licenci
+  threeday: 3 dny
+  resolved: Vyřešené
+  logo_delete_msg: Jste si jisti, že chcete smazat toto logo?
+  from_email: Z e-mailu
+  feedbackwidget_custom_image: Vlastní URL cesta k obrázku
+  activities: 
+    solutions: 
+      new_solution: 
+        short: "{{user_path}} navrhnul nové řešení"
+        long: "{{user_path}} navrhnul nové řešení k {{notable_path}}"
+    tickets: 
+      assigned_to_nobody: 
+        short: Přiřazeno k 'nikomu' prostřednictvím {{user_path}}"
+        long: "{{user_path}} přiřadil událost {{notable_path}} na 'Nikdo'"
+      reassigned: 
+        long: "{{user_path}} znovu přidělil událost {{notable_path}} na {{responder_path}}"
+      priority_change: 
+        short: "{{user_path}} změnil prioritu {{priority_name}}"
+        long: "{{user_path}} změnil prioritu události z {{notable_path}} na {{priority_name}}"
+      new_ticket: 
+        short: "{{user_path}} předložil Událost"
+        long: "{{user_path}} předložil novou Událost {{notable_path}}"
+      conversation: 
+        out_email: 
+          short: "{{user_path}} poslal {{reply_path}}"
+          long: "{{user_path}} poslal {{reply_path}} k události {{notable_path}}"
+        in_email: 
+          short: "{{user_path}} poslal {{email_response_path}}"
+          long: "{{user_path}} poslal {{email_response_path}} k události {{notable_path}}"
+        note: 
+          short: "{{user_path}} přidal {{comment_path}}"
+          long: "{{user_path}} přidal {{comment_path}} k lístku {{notable_path}}"
+        twitter: 
+          short: "{{user_path}} přidal {{twitter_path}}"
+          long: "{{user_path}} přidal {{twitter_path}} k lístku {{notable_path}}"
+      assigned: 
+        short: Přiřazeno k {{responder_path}} uživatelem {{user_path}}
+        long: "{{user_path}} přiřadil událost {{notable_path}} k {{responder_path}}"
+      execute_scenario: 
+        short: "{{user_path}} spustil scénář '{{scenario_name}}"
+        long: "{{user_path}} spustil scénář '{{scenario_name}}' na {{notable_path}}"
+      ticket_merge: 
+        short: "{{user_path}} spojil Událost  {{notable_path}} s {{merge_ticket_path}} "
+        long: "{{user_path}} spojil Událost  {{notable_path}} s {{merge_ticket_path}}"
+      ticket_split: 
+        short: "{{user_path}} rozdělil událost {{notable_path}} z {{split_ticket_path}}"
+        long: "{{user_path}} rozdělil událost {{notable_path}} z {{split_ticket_path}}"
+      status_change: 
+        short: "{{user_path}} změnil stav na {{status_name}}"
+        long: "{{user_path}} změnil stav Události {{notable_path}} na {{status_name}}"
+      deleted:
+        short: "{{user_path}} vymazal tento lístek"
+        long: "{{user_path}} vymazal lístek {{notable_path}}"
+      product_change:
+        short: "{{user_path}} změnil produkt na {{product_name}}"
+        long: "{{user_path}} změnil produkt {{notable_path}} na {{product_name}}"
+      product_change_none: 
+        short: "{{user_path}} změnil produkt na 'žádný'"
+        long: "{{user_path}} změnil produkt {{notable_path}} na 'žádný'"
+      ticket_type_change:
+        short: "{{user_path}} změnil typ lístku na {{ticket_type}}"
+        long: "{{user_path}} změnil typ lístku {{notable_path}} na {{ticket_type}}"
+      group_change:
+        short: "{{user_path}} změnil skupinu na {{group_name}}"
+        long: "{{user_path}} změnil skupinu {{notable_path}} na {{group_name}}"
+      group_change_none: 
+        short: "{{user_path}} změnil skupinu na 'žádná'"
+        long: "{{user_path}} změnil skupinu {{notable_path}} na 'žádná'"
+      source_change:
+        short: "{{user_path}} změnil zdroj na {{source_name}}"
+        long: "{{user_path}} změnil zdroj lístku {{notable_path}} na {{source_name}}"
+  credit_card_info: Údaje z platební karty
+  zendesk_backup_info: Zvolte zálohovací soubor , který jste vytvořili v Zendesk aplikaci
+  your_email_address: Vaše e-mailová adresa
+  username: Uživatelské jméno
+  reply: odpovědět
+  is_not: Není
+  less_than: Méně než
+  greater_than: Větší než
+  feedbackwidget_bgcolor: Barva pozadí
+  day: 1 den
+  current_plan: Aktuální licence
+  medium: Střední
+  suspended_plan_admin_info: Váš účet byl zmrazen. Pro bližší informace kontaktujte administrátora nebo agenta, %{email}.
+  delete_confirm_scenario: Jste si jisti, že chcete smazat tento scénář?
+  days: dní
+  basic_brief: Pro malé týmy
+  phone: Telefon
+  edit: Upravit
+  accounts: 
+    cancel: 
+      changeplan_instead_of_cancel: Namísto zrušení účtu byste možná chtěli jen změnit Vaši licenci.
+      intro: Hodláte zrušit Váš účet. to ale <strong>natrvalo smaže všechna Vaše data</strong>.
+      you_must_confirm: Musíte potvrdit Vaši žádost o zrušení
+      delete_my_account: Smazat můj účet
+      confirm_and_cancel_my_account: Potvrzuji, že chci zrušit můj účet a smazaz všechna moje data...
+      goback: "&#x2190; Zpět do nastavení účtu"
+      change_your_plan: Změnit licenci
+      warning_message: Jak jednou provedete tuto akci, již nebudete mít přístup k Vašim datům, tudíž se opravdu přesvědčte, co chcete vlastně provést.
+      cancel_account: Zrušit Freshdesk účet
+    billing: 
+      update_billing_info: Upravit informace ve vyúčtování
+      begin_subscription_info: nabije Vaši kartu a můžete začít okamžitě využívat Vaše předplatné.
+      billing: Vyúčtování
+      save_billing_information: Uložit fakturační údaje
+      save_billing_information_info: uloží Vaše "Plán & Vyúčtování" informace. Vaši kartu nabijeme a můžete začít používat Vaše předplatné a to v momentě, kdy Vaše zkušební doba vyprší.
+      begin_subscription: Začít podepisování ...
+    show: 
+      export_data: Exportovat data
+      export_now: Exportovat nyní
+      export_data_text: Vygenerovat XML všeho v HelpDesku a zaslat je přes email
+      account_settings: Nastavení účtu
+  forum_key: Fórum
+  topics:
+    show:
+      mark_this_idea_as: Označit tento nápad jako
+    last_reply: Poslední odpověď před %{post_time} od %{user_link}
+    posted_at: Napsáno před %{post_time}
+  non_covered_feature_error: Váše současná licence neumožňuje ovládat tuto funkci
+  requester_replies: Žadatel odpověděl na událost
+  start_typing_a_question: Začněte psát otázky a sledujte odpovědi v reálném čase
+  delete_topic_msg: Smazat toto téma navždy
+  first_response_sla: Narušení SLA první odpovědi
+  add_holiday: Přidat dovolenou
+  import_note_info: Pole mohou být ve vašem souboru CSV v libovolném pořadí. Zajistěte ovšem, aby první řádek obsahoval hlavičkové údaje (např. name, email atd.). Jediným vyžadovaným polem je email.
+  at: v
+  add_a_topic: Založit téma
+  bottom: Dole
+  align_to: Přiřadit k
+  feedbackwidget_help_title: Panel zpětné vazby
+  name: Jméno
+  import_user_org_text: Všichni uživatelé & organizace ve Vašem účtu Zendesk budou importováni do Vašeho účtu Freshdesk jako "Kontakty & Společnosti"
+  portal_customizer_open_solutions: Kdokoliv může prohlížet toto veřejné řešení
+  portal_customizer_option_solutions: Uživatelé mohou nahlížet do veřejných řešení bez nutnosti se přihlašovat
+  portal_customizer_google_signin: Povolit uživatelům přihlášení prostřednictvím Google
+  portal_customizer_twitter_signin: Povolit uživatelům přihlášení prostřednictvím Twiiteru
+  portal_signup: Umožnit zákazníkům přihlášení ze zákaznického portálu
+  portal_captcha: Při odesílání lístku bez přihlášení vyžadovat potvrzení přepisem znaků
+  to_email: Do emailu
+  starts_with: Začít s
+  portal_customizer_anon_tickets_i: Tuto vlastnost vypněte, pokud chcete po Vašich uživatelých, aby k založení nové události museli být přihlášeni.
+  portal_customizer_option_tickets_i: Vypněte tuto funkci, chcete-li přinutit uživatele k přihlášení před odesláním lístku
+  set_type_as: Zvolit typ jako
+  change_my_plan: Vybrat tuto licenci
+  add_new_email: Přidat nový email
+  feedbackwidget_title: Nastavení panelu
+  errors_in_your_address: "Chyby ve vámi zadané adrese:"
+  set_priority_as: Nastavit prioritu na
+  sign_in_info: Budete se přihlašovat pomocí
+  posted_by: Vložil
+  already_overdue: Nesplněné už od %{time_words}
+  automations: 
+    new: Nový scénář
+    title: Automatizace scénářů
+    info1: Každý helpdesk má soubor společně odkazujících scénářů - např. Předej na Level 2, Přiřaď ke skupině, Přepošli na obchodní oddělení apod. Tyto scénáře obvyle zahrnují i více aktualizací pro konkrétní Událost
+    available_placeholders: Zástupné značky
+    info2: Například před přiřazením události do skupiny QA budete třeba chtít nastavit typ události jako Bug (Chyba), přiřaďte ji do QA skupiny a napište QA správci o tomto bugu.
+    info3: Automatizace scénáře Vám umožňuje zautomatizovat uvedené operace pomocí jediného kliku.
+    info4: Zvolte si ze zástupných značek níže, které se mají přiložit k emialu a oni dostanou příslušná konvertovaná data
+    info5: Přiřadit QA
+    reorder: Přeobjednat
+    info6: Označit Událost jako Bug a přiřadit skupině QA
+    info7: Operace k provedení
+    info8: Přidat novou akci
+  category: 
+    new: Nová kategorie
+    edit: Upravit kategorii
+  delete: Smazat
+  message: Zpráva
+  edit_forum_category: Upravit kategorii fóra
+  agent_assigned_title: Poslední přiřazené lístky (otevřené a čekající)
+  send_email_to_requester: Zaslat e-mail žadateli
+  feedbackwidget_btcustomize: Přizpůsobit tlačítko
+  solution_category: 
+    name: Název kategorie
+    new: Nová kategorie řešení
+    edit: Upravit kategorii řešení
+    info1: Jste si jistí, že chcete smazat tuto kategorii?
+    info2: Žádné složky v této kategorii
+    save_and_create: Uložit a založit další
+  billed_monthly: Účtováno měsíčně
+  users: 
+    activations: 
+      send_invite_success: Byl odeslán aktivační e-mail!
+      success: Váš účet byl aktivován.
+      code_expired: Platnost vašeho aktivačního kódu vypršela!
+  edit_email: Upravit email
+  fav_delete_msg: Jste si jistí, že chcete smazat tuto ikonu oblíbené položky?
+  dispatch: 
+    new: Dispečer - Nové pravidlo
+    add_new_choice: Přidat novou volbu
+    act_to_perform: Operace k provedení
+    edit: Dispečer - Upravit pravidlo
+    title: Dispečer
+    inactive_rules: Neaktivní pravidla
+    info1: Podpis související s událostmi
+    rule_name: Název pravidla
+    info2: Všechny podpisy související s událostmi budou přiřazeny Susan
+    new_rule: Nové pravidlo
+    info3: Kde by toto pravidlo mělo být použito
+    info4: Dispečer provede automatickou kontrolu nově vytvořených Událostí založených na základě definovaných pravidel a akcí
+    reorder: Přeobjednat
+    info5: Pamatujte, pořadí pravidel je velmi důležité. Dispečer pro každou příchozí Událost spustí první proveditelné pravidlo a zastaví se
+    add_new_action: Přidat novou akci
+    dispatch_rules: Dispečer - Pravidla
+    match_all: Souhlasí všechno
+    match_any: Souhlasí kterýkoliv
+    add_condition: Přidat novou podmínku
+    delete: Jste si jistí, že chcete smazat toto pravidlo?
+  header_logo: Logo v záhlaví
+  solutions:
+    status:
+      draft: Návrh
+      published: Uveřejněn
+    visibility:
+      anyone: Kdokoliv
+      logged_in_users: Přihlášení uživatelé
+      agents: Agenti
+    types:
+      permanent: Stálé
+      workaround: Dočasné
+    search_all: 
+      placeholder: Prohledat všechna řešení
+    search: 
+      placeholder: Hledat %{name}
+  requester_reopens: Žadatel znovu otevřel událost
+  reset: Resetovat
+  import_ignore_first_row: Ignorovat první řádek (záhlaví)
+  portal_customizer_open_sol_i: Tuto vlastnost vypněte, pokud chcete schovat menu "Řešení" do veřejného portálu zákazníků.
+  portal_customizer_option_sol_i: Zakažte tuto možnost, chcete-li, aby se uživatelé přihlásili před prohlížením řešení
+  topic:
+    ideas_stamps:
+      planned: Plánováno
+      implemented: Implementováno
+      nottaken: Nepřebrán
+    name: Název tématu
+    new: Nové téma
+    open: Znovu otevřít toto téma
+    edit: Upravit téma
+    close: Uzavřít tuto diskuzi
+    post: Napsat Téma
+    reply: Opovědět na toto téma
+    msg1: Komentáře jsou pro toto téma uzavřeny
+    sticky: Lípka
+    locked: Zamknuto
+  activerecord: 
+    errors: 
+      messages: 
+        record_invalid: "Potvrzování selhalo: %{errors}"
+        greater_than_or_equal_to: musí být větší nebo rovný %{count}
+        less_than_or_equal_to: musí být menší nebo roven %{count}
+        confirmation: neodpovídá potvrzení
+        not_an_integer: musí být celé číslo
+        blank: nemůže být prázdné
+        invalid: je neplatné
+        exclusion: je vyhrazen
+        odd: musí být lichý
+        even: musí být sudý
+        wrong_length: je špatná délka (mělo by obsahovat %{count} znaků)
+        too_short: je příliš krátké (minimum znaků je %{count})
+        empty: nemůže být prázdný
+        less_than: musí být méně než %{count}
+        equal_to: musí být rovný %{count}
+        greater_than: musí být větší než %{count}
+        too_long: je příliš dlouhé (maximální počet znaků je %{count})
+        accepted: musí být přijato
+        not_a_number: není číslo
+        inclusion: není uveden na seznamu
+      full_messages: 
+        format: "%{attribute} %{message}"
+      template: 
+        body: "V následujících polích byl zjištěny problémy:"
+        one: 1 chyba zabránila uložení tohoto %{model}
+        other: "%{count} chyb zabránilo uložení tohoto %{model}"
+  top: Nahoru
+  company_name: Název společnosti
+  expires: Vyprší
+  total_price: Celková cena
+  update: Aktualizovat
+  save_reply: Ulož odpověď
+  forum_shared:
+    topic_vote:
+      unlike: Jiný než
+      ideas:
+        vote_button: Líbí se mi tento nápad
+        vote_info_1: "%{vote} osobám se líbí tento názor"
+        vote_info_2: "%{vote} lidem se líbí tento nápad"
+        vote_info_include_1: Líbí se vám tento nápad
+        vote_info_include_2: "%{vote} lidem \"včetně vás\" se líbí tento nápad"
+      problem:
+        vote_button: Mám tento problém
+        vote_info_1: "%{vote} osob má tento problém"
+        vote_info_2: "%{vote} lidí má tento problém"
+        vote_info_include_1: Máte tento problém
+        vote_info_include_2: "%{vote} lidí \"včetně vás\" má tento problém"
+      howto:
+        vote_button: Mám tuto otázku
+        vote_info_1: "%{vote} osob má tuto otázku"
+        vote_info_2: "%{vote} lidí má tuto otázku"
+        vote_info_include_1: Máte tuto otázku
+        vote_info_include_2: "%{vote} lidí \"včetně vás\" má tuto otázku"
+    post:
+      posted_on: "%{user_name} dne %{post_date}"
+      edit_post: Upravit příspěvek
+      unmark_answer: Zrušit označení jako odpovědi
+      post_accepted_as_a_good_answer: Tento příspěvek je přijat jako dobrá odpověď na dané téma
+      mark_answer: Označit jako odpověď
+      delete_post_confirm: Odstranit tento příspěvek?  Jste si jisti?
+      delete_post: Odstranit příspěvek
+      answer: Odpověď
+  half: 30 minut
+  between_range: V rozsahu
+  back_to_admin: Zpět do menu Admin
+  group: 
+    new: Nová skupina
+    name: Název skupiny
+    edit: Upravit skupinu
+    title: Skupiny
+    info1: Agenti v této skupině
+    info2: V této skupině nejsou žádn agenti
+    info3: Zaslat eskalační email na
+    info4: pokud událost zůstane nepřiřazena déle než
+    info5: Jste si jistí
+    select_agents: Zvolit agenty
+    assigntime:
+      half: 30 minut
+      one: 1 hodina
+      two: 2 hodiny
+      four: 4 hodiny
+      eight: 8 hodiny
+      two: 12 hodiny
+      day: 1 den
+      twoday: 2 dny
+      threeday: 3 dny
+  four: 4 hodiny
+  problem: Problém
+  change_plan_info: Druh licence můžete kdykoliv změnit. Nastavení výše limitů a ostatních vlastností nové licence, který jste si vybrali, bude plně funkční hned jak se provedou změny, ale částka na Vašem účtě se nezmění, dokud nenastane den splatnosti latební operace. Váš nejbližší datum splatnosti je %{date}.
+  created_on: Vytvořeno
+  zip: PSC
+  import_solution_article: Zařadit článek z fóra jako řešení
+  close: Zavřit
+  agent: 
+    new: Nový agent
+    edit: Upravit agenta
+    title: Agenti
+    info1: Toto je smazaný agent
+    info2: Email byl už převzat
+    signature: Podpis
+    info3: Jste si jistí, že chcete smazat
+    make_admin: Učinit tohoto agenta administrátorem
+    view_user: Prohlédnout uživatele
+    restore: obnovit
+    add_signature: Přidat podpis
+    update: Aktualizovat
+  account_admin: Účet správce
+  right: Vpravo
+  footer: 
+    helpdesk_software: Software helpdesku
+    by_freshdesk: aplikace Freshdesk
+  tkt_unattended_in_grp: Událost bez dozoru ve skupině
+  agent_solves_tkt: Agent vyřešil událost
+  zendesk_url_info: "např.: - http://acme.zendesk.com"
+  portal_customizer_anon_for_i: Tato vlastnost by měla být vypnuta, pokud chcete schovat stránky fóra ve veřejně přístupném zákaznickém portálu.
+  portal_customizer_option_for_i: Zakažte tuto možnost, chcete-li, aby se uživatelé přihlásili před prohlížením řešení
+  portal_customizer_anon_for_g: Aktivujte tuto funkci, pokud mají mít uživatelé možnost přihlásit se svým uživatelským jménem a heslem služby Google. 
+  portal_customizer_anon_for_t: Aktivujte tuto funkci, pokud mají mít uživatelé možnost přihlásit se svým uživatelským jménem a heslem služby Twitter. 
+  portal_signup_anon: Povolte tuto možnost, pokud chcete, aby se uživatelé mohli přihlásit a vytvořit si jejich vlastní uživatelské účty . To umožní uživatelům se přihlásit a podílet se na diskuzích na fŕech, hlasovat o nápadech atd.
+  portal_captcha_anon: Vypněte tuto funkci, chcete-li, aby uživatelé mohli odesílat lístky bez potvrzení
+  card_process: Děkujeme Vám za platbu. Váš Freshdesk účet je nyní aktivován!
+  chat: Chat
+  country: Země
+  card_number: Číslo platební karty
+  forgot_password_intro: Vyplňte formulář níže a instrukce k resetování Vašeho hesla Vám budou zaslány emailem
+  done: Hotovo
+  ticket_due_by_time: Splněno dle času
+  next: Další
+  set_password: Nastavte si Vaše heslo
+  send_email_to_agent: Poslat emil agentovi
+  import_data: Datum importované
+  contacts: 
+    new: Nový kontakt
+    edit_contact: Upravit kontakt
+    edit: Upravit kontakt
+    save_changes: Uložit změny
+    deleted_message: Toto je smazaný kontakt
+    title: Kontakty
+    emailnotverified: E-mail nebyl ověřen pro tento kontakt!
+    showing: Zobrazování
+    info1: Jste si jisti, že chcete smazat tento kontakt?
+    info2: Učinit z tohoto uživatele agenta
+    send_activation: Odeslat aktivační e-mail
+    import_csv: Importovat uživatele z CSV
+    quick_contact: Rychlý kontakt
+    info3: Druhotné informace %{nick_name}
+    working: Pracuji
+    info4: Poslední události od %{nick_name}
+    form_placeholder: 
+      description: Přidat konkrétní poznámky k tomuto příkladu kontaktu – adresa, fanoušek LA Lakers atd.
+    info5: Uživatel až doposud nevytvořit žádný lístek
+    restore: Obnovit
+    info6: Přidat konkrétní poznámky k tomuto kontaktu
+    role:
+      info: může zobrazovat všechny lístky od této společnosti 
+  between: Mezi
+  portal_key: Portál
+  add_new_forum: přidat nové fórum
+  no_forum_category: Žádná fóra v této kategorii
+  sla_policy: 
+    sla_targets: Cíle SLA
+    new: Nová zásada SLA
+    edit: Upravit zásadu SLA
+    select_policy: Vybrat zásadu
+    resolution_time: Čas vyřešení
+    title: Zásada SLA
+    calendar_time: Kalendářní hodiny
+    info1: \tZásada SLA je sada cílových časů odpovědi a vyřízení podle priority lístku. V tomto oboru se úrovně služeb většinou stanovují podle priority. Vaše zásada SLA by měla být co nejjednodušší, např. “lístky s vysokou prioritou je nutné vyřešit za 2 hodiny” atd.
+    override: Potlačení
+    title1: SLA politika
+    info2: Freshdesk používá zásadu SLA ke stanovení "času vyřízení" lístků. Můžete mít výchozí zásadu SLA pro všechny své zákazníky, máte-li ovšem speciálního zákazníka, který vyžaduje rychlejší reakci a kratší časy vyřízení, můžete pro něj vždy vytvořit speciální zásadu SLA.
+    response_time: Čas odpovědi
+    business_time: Pracovní doba
+    info3: Zásada SLA pracuje ve spojení s provozními hodinami
+    tickets_with: Lístky s
+    escalate_to: Eskalovat na
+  left: Levý
+  subscription: 
+    error: 
+      lesser_agents: Váš Freshdesk účet má aktuálně %{agent_count} agentů, nemůžete vytvořit nového kvůli počtu existujících. Prosím, nějaký smažte a zkuste to znovu.
+  activate: Aktivovat
+  feedbackwidget_text: Text
+  billed_amount_per_month: Bude vám účtováno %{amount} dolarů měsíčně
+  import_zendesk_summary: Importovat ze souhrnu Zendesku
+  user_activation_email: Aktivační email uživatele
+  incident: Incident
+  import: Importovat
+  contains: Obsahuje
+  import_solution_article_info: "Poznámka: Neukládáme komentáře k fórům"
+  portal: 
+    search: 
+      placeholder: Hledat pomocí klíčového slova nebo pomocí plného dotazu
+  feedbackwidget_form_title: Panel z názvu
+  cancel_and_back: Zrušit a jít zpět
+  due_in: Splnit do %{time_words}
+  first_name: Křestní jméno
+  pro_brief: Pro větší tým
+  feedbackwidget_position: Pozice
+  resolution_time_sla: Narušení SLA času vyřešení
+  replies: odpovědi
+  urgent: Urgentní
+  import_groups: Skupiny
+  solution:    
+    folders:
+      new:
+        new_folder: Nová složka
+    info9: Veřejné (bude zobrazeno v samoobsluze)
+    edit: Upravit řešení
+    add: Přidat řešení
+    info10: Soukromé (viditelné pouze pro Agenty)
+    add_new_solution: Přidat nové řešení
+    title: Řešení
+    info1: Řešení v aplikaci Freshdesk jsou Vaší znalostní databází
+    info2: Řešení mohou být <b>Veřejné</b> nebo <b>Soukromé</b>. Veřejná řešení jsou viditelná v Samoobslužném portálu a zároveň se zobrazí ve výsledcích při hledání
+    info3: Soukromá řešení jsou řešení viditelné pouze pro agenty, která jsou používána ke sdílení vědomostí
+    no_solutions_info: Žádné řešení v této složce
+    info4: Řešení má 3 hieararchicky sestavené úrovně - <b>Kategorie --> Složka --> Článek</b>
+    type: Typ řešení
+    info5: Řešení mohou být dvou typů - <b>Dočasná</b> nebo<b>Trvalá</b>
+    info6: Řešení může mít status <b>Návrh</b>, pokud na něm zrovna pracujete, pak může být změněn na status <b>Uveřejněný</b> jakmile je dokončeno a revidováno.
+    visibility: Viditelnost
+    info7: Žádné řešení v této složce
+    status: Stav řešení
+    info8: Jste si jisti, že chcete smazat toto řešení?
+    folder: Složka
+  import_updated: Aktualizováno
+  feedbackwidget_intro: Upravte si panel Freshdesku níže a rovnou můžete sledovat zobrazení v reálné podobě.
+  save: Uložit
+  import_added_newly: Nově přidáno
+  select_a_plan_gain_access: Vyberte si z nabídky níže, který plán zvolíte, abyste získali přitup k Vašemu účtu.
+  import_warning_info: Po úspěšném importu bude odeslán jednotlivým kontaktům e-mail s instrukcemi pro aktivaci uživatele. Je-li tento e-mail již v databázi, aktualizují se atributy jako jméno, společnost apod.
+  import_example_title: Následující je příklad CSV souboru
+  change_my_password: Změnit mé heslo
+  answered: Zodpovězeno
+  errors_in_payment_info: "Chyby způsobené informacemi o vaší platbě:"
+  attach_files: Připojit přílohu
+  plan_amount: za 1 agenta / měsíc
+  current_plan_details: "%{plan_name} plán s %{agent_limit} agenty"
+  zendesk_backup: Záložní soubor
+  twoday: 2 dny
+  profile: 
+    change_password: Změnit heslo
+    edit: Upravit profil
+    current_password: Současné heslo
+    confirm_password: Potvrdit heslo
+    new_password: Nové heslo
+  add_to_do: Přidat úkol k provedení
+  subject_or_description: Předmět nebo popis
+  premium_details: Vše v  'Pro'plánu + podpora více produktů, podpora více časových zón, Komunita, E-mailová & telefonní podpora
+  zendesk_credentials: Přihlašovací údaje k Zendesk
+  how_to: Otázka
+  customers: Zákazníci
+  feedbackwidget_embed_code: Kód postraního panelu
+  billing_info_update: Vaše fakturační údaje byly aktualizovány.
+  wrong_portal: 
+    content_not_available: Obsah, který hledáte, není na tomto portálu k dispozici.
+    title: Není k dispozici!
+  click_select_action: Klikněte pro výběr akce
+  import_articles: Články k řešení
+  back: Zpět
+  save_changes: Uložit změny
+  premium_brief: Zpět na začátek řádku
+  begin_subscription_confirm: Vaše kreditní karta bude nabita částkou $%{cost}a Vaše předplatné vstoupí okamžitě v platnost. \n\nProvést nyní?
+  favicon: Favicon
+  is_expiring_today: vyprší dnes
+  feedbackwidget_help_para1: Sbírejte události a informace od zákazníků přidáním záložky s podporou na Vašich webových stránkách.
+  low: Nízká
+  feedbackwidget_defaultbutton: Podpora
+  agents: Agenti
+  header: 
+    welcome: Vítejte
+    new_ticket: Nová událost
+    submit_a_ticket: Odeslat událost
+    login: přihlásit se
+    tabs:
+      reports: Přehledy
+      dashboard: Nástěnka
+      customers: Zákazníci
+      admin: Admin
+      checkstatus: Zkontrolujte stav Vaši události
+      solutions: Řešení
+      forums: Fóra
+      tickets: Události
+      home: Domů
+      company_tickets: Události firem
+      social: Sociální
+    signout: Odhlásit se
+    search: Hledat
+  agent_adds_comment: Agent přidává komentář k události
+  portal_customizer_anon_tickets: Kdokoliv může vložit událost
+  portal_customizer_option_tickets: Uživatel může založit novou událost bez nutnosti přihlášení 
+  feedbackwidget_help_para2: Upravitelné záložky se otevírají do formuláře podpory 
+  tag: 
+    title: Záložky
+  email_notifications: 
+    customize_email: Přizpůsobit email
+    modify_requester_template: Upravit žadatelovu emailovou šablonu
+    requestor_notification: Upozornění žadatele
+    title: Emailové upozornění
+    insert_placeholder: Vložit zástupné značky
+    modify_agent_template: Upravit agentovu emailovou šablonu
+    event: Případ
+    agent_notification: Oznámení od agenta
+  errors_in_plan_change: "Chyby vzniklé na základě Vašich úprav:"
+  formatting_help: Pomoc s formátováním
+  step1: Krok 1
+  next_charge_date: "Vaše další platba bude zpracována:"
+  update_and_login: Aktualizujte a přihlašte se
+  enter_payment: Zadat podrobnosti o platbě...
+  errors_in_payment: "Chyby vzniklé při vaší platbě:"
+  email_configs: 
+    name: Jméno
+    info9: Přiřadit do skupiny
+    reply_emails: Odpovědi e-mailem z aplikace Freshdesk
+    delete: Jste si jisti, že chcete smazat tento e-mail?
+    change_this: Změňte to
+    info10: Nové lístky na tento e-mail podpory se automaticky přiřadí do skupiny
+    title: Nastavení emailu
+    supp_email_add: E-mailová adresa podpory
+    info11: Nakonfigurovat hlavní příchozí a odchozí adresu e-mailu podpory
+    info1: Vaši uživatelé posílají e-maily podpory na
+    add_supp_emails: Druhotná(é) emailová(é) adresa(y) podpory
+    info12: Přidat další e-mailovou adresu
+    info2: Své e-maily podpory musíte přeposlat na svou jedinečnou e-mailovou adresu
+    send_verification_email: Odešlete ověřovací e-mail ještě jednou
+    unverified: Neověřeno
+    info13: Emailová adresa Vaší podpory je
+    info3: Freshdesk převezme tyto e-maily a převede je na lístky
+    inactive_info1: Všechny vaše e-maily pro podporu jsou ještě nepotvrzené; musíte potvrdit alespoň jeden e-mail pro podporu
+    info14: Každý e-mail odeslaný na tuto adresu se převede na lístek
+    info4: <strong>POZNÁMKA:</strong> Máte-li více e-mailových adres pro podporu různých produktů, <a href='{{products_path}}'>můžete je přidat sem</a>.
+    spf_info: Přestože bude většina e-mailů doručena, chcete-li mít jistotu, musíte ve svém souboru zóny DNS vytvořit <a target="_blank" title="Learn more about creating SPF records" href="{{solution_url}}">záznam SPF</a>, používáte-li e-maily ve své vlastní doméně. To napomůže řádnému doručení e-mailu.
+    reply_email: Váš email podpory
+    unverified_info1: Na tento e-mail byla odeslána zpráva s ověřovacím odkazem. Tento e-mail pro podporu bude aktivní až po ověření.
+    inactive_info2: Do té doby se bude jako e-mail pro odpovědi používat výchozí adresa "%{default_email}".
+    info15: Tyto e-maily musíte poslat na
+    info5: E-mailové odpovědi z aplikace Freshdesk automaticky použijí vaše původní identifikátory e-mailu podpory jako poštovní adresu odesílatele
+    primary_supp_email: Hlavní e-mail podpory
+    info16: Lístky budou přiřazeny k
+    info7: To je také vaše adresa pro odpověď, např. support@yourcompany.com
+    make_primary: Změnit na hlavní
+    info8: Přeposílat své e-maily na
+    help_link_info: Další informace získáte v našem článku o nastavení e-mailu...
+  step2: Krok 2
+  import_users_contacts: Uživatelé &rarr; Kontakty
+  linkback_info: Můžete si zvolit Zpětný odkaz na Vaše vlastní webové stránky, na které se bude moci zákazník dostat skrze kliknutí na logo v hlavičce stránky
+  twitter:
+    associate_twitter: Přiřaďte svému helpdesku účet Twitter, abyste mohli začít s podporou svých zákazníků pomocí twitů.
+    success_signin: Účet @%{twitter_screen_name} úspěšně přiřazen k %{helpdesk}.
+    user_exists: Účet Twitter je již přiřazen jinému produktu.
+    not_authorized: Nejste ověřen Twittrem
+    deleted: Účet Twitter @%{twitter_screen_name} byl odstraněn.
+    sent: Tweet zpráva byla úspěšně odeslána
+    error_sending: Chyba při zaslání Tweet zprávy. Twitter bude asi nestabilní. Prosím, zkuste to později.
+    ticket_save: Zprávaz Twitteru byla úspěšně převedena na Událost
+    tkt_err_save: Nemohu převést tuto zprávu z Twitteru nebo již převod proběhl
+    usr_not_thr: Zde se tento uživatel nenachází.    
+  facebook:
+    deleted: Stránka facebook %{facebook_page} byla odstraněna.
+    not_authorized: Nejste ověřen Facebook
+  logo: Logo
+  ok: OK
+  back: Zpět
+  ticket:
+    reported_on: od %{username}, %{date}
+    thanks: Děkujeme za odeslání reakce
+    group: Skupina
+    spam_btn_title: Označit jako spam
+    assigned_to: Přiřazen k
+    edit: Upravit událost
+    ham_btn_title: Toto není spam
+    reported_from_source: Hlášeno prostřednictvím %{source}
+    suggested_solutions: 
+      insert_url: Vložte URL odkaz
+      title: Navrhovaná řešení
+      insert_content_tip: Vložit článek k tomuto řešení do odpovědi nebo poznámky
+      no_result: Žádné řešení nebylo nalezeno
+      insert_url_tip: Umístěte odkaz tohoto řešení do Vaši odpovědi nebo poznámky
+      insert_content: Vložte obsah
+    unassigned: Nepřiřazené
+    suggest_solutions: Navrhnout řešení
+    created_on: Vytvořen v %{time}
+    restore_btn: Obnovit tuto událost
+    merge_btn: Sloučit
+    singular: Událost
+    due_by_time: Splněno dle času
+    delete_btn_title: Přesuňte tuto událost do koše
+    priority: Priorita
+    to_do: Události k vyřízení
+    activity: Aktivity
+    sort_by: Seřadit podle
+    restore_btn_title: Obnovit tuto událost z koše
+    subject: Předmět
+    created_at: Hodin od vytvoření
+    opened_at: Hodin od znovuotevření
+    pending_since: Hodin od doby, kdy se začalo na události pracovat
+    resolved_at: Hodin od vyřešení
+    closed_at: Hodin od uzavření
+    first_assigned_at: Hodin od prvního přiřazení
+    assigned_at: Hodin od přiřazení
+    requester_responded_at: Hodin od odpovědi žadatele
+    agent_responded_at: Hodin od odpovědi agenta
+    first_response_due: Hodin od první odpovědi
+    due_by: Hodin od termínu splnění
+    inbound_count: Počet interakcí žadatele
+    recent_tickets: Aktuální události
+    unflag_spam: Není spam
+    pick_up: Převzít
+    submit_ticket_title: Odeslat událost
+    reply_form: 
+      post_to_linked_forum: Napsat na provázané fórum
+      form_title: Odpovědět na konverzaci
+      reply_email_id: Zaslat odpověď z následujícího email id
+      send_and_resolve: Odeslat a vyřešit
+    reported_by: od %{requester}
+    close_btn: Zavřit
+    close_btn_title: Uzavřit událost
+    tags: 
+      no_match: Nenalezeno. Prosím, vytvořte štítek.
+      create_success: Štítek byl přidán
+      destroy_success: Štítek byl z této události odstraněn
+      add_tag: "Přidat štítek:"
+    type: Typ události
+    execute_scenario: Spustit scénář
+    note_form: 
+      private_note: Toto je soukromá poznámka, neukazovat ji žadateli
+      form_title: Přidat poznámku
+      add_and_resolve: Přidat a vyřešit
+      notify_agents: Upozornit agenty
+    tweet_form:
+      tweet_and_resolve: Tweet a vyřešit
+    activities: Aktivity
+    requestor_info: Informace o žadateli
+    reply_to: Odpovědět na událost
+    add_note: Přidat poznámku
+    monitor_btn_title: Sledovat tuto událost
+    canned_responses: 
+      insert_ca_response: Předpřipravená odpověď
+      insert_ca_resp_tip: Vložit tuto předpřipravenou odpověď
+    split_ticket: Rozdělit jako novou událost
+    flag_spam: Označit spam
+    assign_to_agent: Přiřadit agentovi
+    select_to_agent: Zvolte Agenta
+    delete_btn: Smazat
+    status: Stav
+    source: Zdroj
+    verify_human: K ověření, zda-li jste "živý" uživatel, prosím, opište náhodně poskládaná písmenka.
+    edit_btn: Upravit
+    requester: Žadatel
+    properties: Vlastnosti události
+    submit_ticket: Odeslat 
+    stop_monitor_btn_title: Přestat sledovat tuto událost
+    merge_btn: Sloučit
+    split_ticket: Rozdělit jako novou událost
+    tweets: Zprávy z Tweeteru
+    agent_notify: přidal poznámku, na kterou se máte podívat
+    note_content: Obsah poznámky
+    ticket_url: URL události
+  recent_activity: Poslední aktivita
+  forgot_password: Zapomněl jsem heslo
+  change_plan: Změnit plán
+  feedbackwidget_embed_code_intro: Prosím zkopírujte a vložte kód níže kdekoliv před &lt;/body&gt; tagem v HTML šabloně ve Vaší síti. Toto aplikujte na každou stránku, kde budete chtít poskytovat Freshdesk widget.
+  import_forum: Fóra
+  title: Titul
+  new_ticket_created: Nová událost vytvořena
+  recent_forum_posts: Poslední příspěvky do fóra
+  description: Popis
+  tkt_assigned_to_agent: Událost přiřazena agentovi
+  is: Je
+  helpdesk_title: Helpdesk
+  forums: 
+    search_all: 
+      placeholder: Prohledat všechny témata
+    search: 
+      placeholder: Hledat %{name}
+    form:
+      type: Typ fóra
+      visibility: Viditelnost fóra    
+  next_charge_amount: "%{type} náklady:"
+  company: 
+    info9: Freshdesk bude automaticky přidružovat kontakty s touto společností, jestliže ID emailů budou obsahovat tyto domény
+    name: Název společnosti
+    new: Nová společnost
+    edit: Upravit společnost
+    quick_company: Rychle vytvořená společnost
+    title: Společnosti
+    notes: Poznámky
+    info1: Jste si jisti, že chcete smazat tuto společnost?
+    info2: Doménové názvy pro tuto společnost
+    info4: Přidat poznámku k %{name}
+    info5: Přidat specifické poznámky popisující tuto společnost. Například - Ujednali jsme 100k dohodu s touto společností
+    info6: Lidé v %{name}
+    info7: Lidmi z této společnosti nebyla vytvořeny žádné události
+    info8: Další informace popisující společnosr, jako je adresa, telefonní číslo, www stránky apod.
+  import_zendesk_summary_info: Data Zendesk byla úspěšně importována.
+  one: 1 hodina
+  no_topics_text: Žádná témata v tomto fóru
+  feedbackwidget_offset_label: S posunem
+  send_email_to_group: Zaslat email všem ve skupině
+  activate_account: Aktivujte svůj účet
+  enter_message: Sem zadejte svou zprávu
+  not_selected: Nezvolen
+  enter_billing_for_free: Prosím, zadejte údaje z Vaší platební karty ještě předtím, než si zvolíte způsob úhrady
+  will_expire_in: vyprší
+  asked_on: Dotaz z
+  this_ticket_has_been_deleted: Tato událost byla smazána
+  state: Stav
+  deactivate: Deaktivovat
+  add_tags: Přidat záložku
+  change_to_free_info: Snížení licence bude mít za následek ztrátu funkčnosti a dat. Opravdu chcete snížit licenci?
+  import_step1_info: Zvolte požadovaný CSV soubor a klikněte na Importovat
+  tkt_assigned_to_group: Událost přiřazena do skupiny
+  import_tickets: Události
+  twelve: 12 hodiny
+  agent_info_title: Podrobnosti o agentovi
+  account: 
+    name: Jméno uživatelského účtu
+    cancel: Zrušit a jít zpět
+    page_colors: 
+      title: Barvy stránek
+      background: Pozadí
+      header: Hlavička
+      tab_color: Barva záložky
+    active_since: Aktivní od
+    info1: Toto pole můžete použít k nastavení vlastního doménového mapování pro Freshdesk
+    info2: Před použitím tohoto políčka se prosím ujistěte, že máte vytvořen CNAME DNS záznam ve Vašem DNS zone souboru, abyste se mohli odkazovat na support.mycompanyname.com, do %{full_domain}. Váš webový nebo síťový administrátor by měl být schopný Vám pomoct nastavit vše správně
+    info3: Vrátit původní barvy
+    info4: Počítadlo ID založí další událost s tímto ID číslem (Mělo by být větší než poslední vytvořená událost). Toto ovlivní události vytvořené po této změně, nikoliv stávající zadané.
+    save: Uložit změny
+    time_zone: Časová zóna
+    helpdesk_name: Název Helpdesku
+    rebrand: Znovu přejmenujte Váš Helpdesk
+    helpdesk_url: Odkaz na Helpdesk
+    language: Jazyk
+  lead: Vést
+  comments: Komentář
+  forum_confirm_msg1: Jste si jistí, že chcete smazat tuto kategorii?
+  plans_billing: Verze programu a Vyúčtování
+  portal_customizer_open_forums: Kdokoliv si můžeprohlédnout toto fórum
+  portal_customizer_option_forums: Uživatelé mohou prohlížet Fórum bez přihlášení
+  business_hours: 
+    holiday_name: Název volna
+    title: Pracovní doba
+    info1: Nastavení pracovních hodin v aplikaci Freshdesk vám dovoluje lépe řídit svá SLA. Když kupříkladu váš helpdesk pracuje mezi 9. a 18. hodinou od pondělí do pátku a zákazník odešle lístek s vysokou důležitostí v 16 hodin v úterý, přičemž cílová doba vyřešení SLA je 4 hodiny, pak se čas vyřízení lístku nastaví na 11 hodin ve středu. SLA můžete nakonfigurovat tak, že bude nebo nebude přeskakovat dobu volna
+    info2: Volno funguje úplně stejně jako pracovní hodiny. Když kupříkladu váš helpdesk pracuje mezi 9. a 18. hodinou od pondělí do pátku a zákazník odešle lístek se střední důležitostí ve 20 hodin v pátek, přičemž cílová doba vyřešení SLA je 24 hodin, pak se čas vyřízení lístku nastaví na 9 hodin v úterý (nikoli 20 hodin v sobotu)
+    holiday_added: Volno již přidáno
+    info3: Specifické pracovní hodiny
+    info4: Pracovní dny vašeho helpdesku
+    holiday_list: Roční seznam volna
+    info5: Při výpočtu SLA lístku/události se nebude volno zvažovat
+    holidays: Volno
+    helpdesk_hours: Pracovní doba
+  import_org_companies: Organizace &rarr; Společnosti
+  add: Přidat
+  portal_customizer_title: Upravte svůj veřejný zákaznický portál
+  your_trial_account: Váš zkušební účet
+  reply_topic: Odpovědět do tématu
+  password: Heslo
+  import_step2_info: Srovnat CSV pole s poli v databázi a naimportovat.
+  feedbackwidget_defaulttitle: Nápověda & podpora
+  two: 2 hodiny
+  set_status_as: Nastavit stav jako
+  selected: Vybráno
+  connect_ticket: Odkaz na událost
+  edit_agent: Upravit agenta
+  high: Vysoká
+  scenario_label: Název scénáře
+  email: E-mail
+  linkback_overlabel: Zpětná adresa URL
+  select_a_plan: Zvolit licenci
+  message: Zpráva
+  ticket_was: událost byla
+  tickets_were: události byly
+  undo: Zpět
+  helpdesk:
+    tags:
+      index:
+        title: Záložky
+    flash:
+      assignedto: "%{tickets} přiřazen k %{username}."
+      tickets_closed: "%{tickets} uzavřeny"
+      assigned_to_you: "%{tickets} přiřazené k Vám"
+      removed_from_spam: "%{tickets} byl odstraněna ze složky Spam."
+      closing_the_ticket_failed: Uzavření události selhalo
+      assigned_reassigned: "%{type} %{username}"
+      flagged_spam: "%{tickets} označen jako spam. %{undo}"
+      flagged_unspam: "%{tickets} byl odstraněna ze složky Spam."
+    shared:
+      reply_form:
+        title: Odpověď pro %{email}
+        cc: Kopie
+        addcc: Přidat do kopie
+        removecc: Odstranit Kopie
+        bcc: Bcc
+        addbcc: Přidat Bcc
+        removebcc: Odstranit Bcc
+      tweet_form:
+        title: Odpověď pro %{user}
+    dashboard:
+      index:
+        todo_title: Úkoly k udělání
+      summary:
+        title: Shrnutí události
+        overdue: Nesplněno
+        open: Otevřená
+        due_today: Splnit dnes
+        unassigned: Nepřiřazené
+        pending: Čekající na vyřízení
+    rebranding: 
+      name: 
+        info: Toto bude název HelpDesku, které bude zobrazeno v hlavičce a v emailových oznámeních.
+    ticket_created_on_n_by: "%{requester} v %{date_time}"
+    tickets:
+      customview:
+        new:
+          give_a_name: Přiřaďte tomuto zobrazení název
+          visible_to: Toto zobrazení je viditelné pro
+      execute_scenario_notice: 
+        view_details: zobrazit detaily
+        execute_the_scenario: Spuštěn scénář <b>%{rule_name}</b>
+        actions_performed: Provedené úkony
+      close_notice:
+        ticket_has_been_cloased: Událost byla ukončena.
+        view_ticket: Zobrazit událost
+      show:
+        meta: meta
+        linked_ticket: Tato událost je propojena na fórum
+      components:
+        scenarios:
+          execute_this_scenario: Spustit tento scénář
+        due_date:
+          when_is_it_due: Kdy je termín splnění?
+          today: Dnes
+          tomorrow: Zítra
+          this_week: Tento týden
+          next_week: Příští týden
+          specific_date: Specifikovat datum/čas
+          set_date_time: Nastavit datum a čas
+          due: Termín
+          earlier_date_and_time: Prosím, zadejte datum a čas, který je novější, než datum vytvoření události
+      views: 
+        on_hold: Události v pořadí
+        new: Nové události
+        my_resolved: Mé vyřešené události
+        new_my_open: Nové a mé otevřené události
+        this_view: toto zobrazení
+        all_tickets: Všechny události
+        open: Otevřené události
+        closed: Uzavřené události
+        deleted: Koš
+        overdue: Nesplněné události
+        due_today: Události s termínem splnění do dneška
+        resolved: Vyřešené události
+        my_overdue: Moje nesplněné události
+        tags: Záložky podle událostí
+        my_due_today: Moje události s termínem splnění do dneška
+        my_all: Všechny mé události
+        my_on_hold: Moje události, jež jsou pořadí
+        select: Vybrat zobrazení...
+        spam: Spam
+        monitored_by: Události, které sleduji
+        my_closed: Mé uzavřené události
+        my_open: Mé otevřené události
+        tickets_by: Události podle
+        tickets_twitter: Události zaslané přes Twitter
+        open_or_pending: Otevřené nebo čekající na vyřízení
+        resolved_or_closed: Vyřešené nebo uzavřené
+        no_tickets: V aktuálním zobrazení nemáte žádné události
+      note:
+        posted_on: "%{user_name} dne %{note_date}"
+        edit_note: Upravit poznámku
+        split_this_as_new_ticket: Rozdělit jako novou událost
+        private_note: Soukromá poznámka
+        public_note: Veřejná poznámka
+        incoming_email: Příchozí email
+        outbound_email: Odchozí email
+    merge:
+      merge:
+        merge_into: Sloučit do sebe?
+        other_tickets: Ostatní události zavedeny prostřednictvím %{requester}
+        enter_ticket_id: Zadejte ID události
+        merge: Sloučit
+      confirm_merge:
+        source_merge_description: Tato událost je uzavřena a spojena do události %{ticket_id}.
+        source_ticket_close_info: Tato událost bude uzavřena s následující poznámkou
+        target_ticket_updated_info: Tato událost bude aktualizována s následující poznámkou a všechny konverzace budou přesunuty
+        will_be_merged_into: Bude spojeno s
+        target_merge_description1: Událost %{ticket_id} %{ticket_subject} je sloučena s tímto požadavkem
+        target_merge_description2: Popis v události %{ticket_id}
+        confirm_and_merge: Potvrdit a sloučit    
+  import_ticket_group: Události a Skupiny uživatelů
+  or: nebo
+  tickets_filter:
+    sort_fields:
+      due_by: Splněno dle času
+      date_created: Datum vytvoření
+      last_modified: Naposledy upraveno
+      priority: Priorita
+      status: Stav
+      asc: Vzestupně
+      desc: Sestupně
+  click_to_change_sort_order: Klikněte pro změnu řazení položek
+  user_sessions:
+      new:
+        email: E-mail
+        password: Heslo
+        remember: Zapamatuj si mne na tomto počítači
+        login: Přihlásit se
+        forgot: Zapomněli jste heslo?
+        sign_in_using: Přihlásit se pomocí
+        sign_in_using_google: Přihlásit se pomocí účtu Google
+        help: Nápověda
+  delete_reminder: Smazat toto To-Do?
+  subscription_plan:
+    billing_cycle:
+      annual: Roční
+      quarterly: Čtvrtletně
+      monthly: Měsíčně
+      sixmonth: Půlročně
+  no_message:
+    canned_responses: Nejsou k dispozici předem připravené odpovědi.
+    products: Ještě jste nevytvořili žádny produkt.
+  errors: 
+    conditions_empty: Pole Podmínky nesmí být prázdné
+    actions_empty: Pole Akce nesmí být prázdné
+  export_data:
+    thirt_days: Posledních 30 dnů
+    seven_days: Posledních 7 dnů
+    twenty_four: Ze včerejška
+    custom_filter: Nastavit datum
+  date:
+    ago: Před
+    from: Od teď
+    now: Právě teď
+    minute: Minuta
+    minutes: Minuty
+    hour: Hodina
+    hours: Hodiny
+    day: Den
+    days: Dny
+    week: Týden
+    weeks: Týdny
+    month: Měsíce
+    months: Měsíce
+    year: Rok
+    years: Roky
+  go_back_admin: Jít zpět do menu Admin
+  social:
+    facebook_pages:
+      index:
+        title: Stránky Facebook
+    twitter_handles:
+      index:
+        title: Účty Twitter
+  all_due: Vše 
+  due_today: Dnes
+  due_tomo: Zítra
+  due_next_eight: Dalších 8 hodin
+  block_users: Chcete také zablokovat tento (tyto) kontakt(y)?
+  user_block: Ano
+  users_blocked_message: Tento (tyto) kontakt(y) (%{users}) byly zablokovány
+  user_activation_message_sent: Uživatel byl vytvořen a instrukce k aktivaci byly zaslány na %{user_email}!
+  wf:
+    filter:
+      index:
+        title: Spravovat vlastní zobrazení
+        back: "&larr; Zpět k událostem"
+        no_custom_view: Nejsou k dispozici žádná vlastní zobrazení!
+      view:
+        delete: Jste si jisti, že chcete smazat toto zobrazení?
+    messages:
+      no_tickets_in_view: Nemáte žádné události v %{view_name}.
+  conversation: Konverzace
+  save_this_view: Uložit toto zobrazení...
+  loading:
+    activities: Nahrávání dalších aktivit
+    items: Nahrávání dalších položek
+  application:
+    new: Vytvořit novou aplikaci
+    desc: Integrovat s dalšími aplikacemi, aby byl Freshdesk zábavnější.
+    title: Doplňky a integrace
+    disabled: Zakázáno
+    enabled: Povoleno
+    configure: Konfigurovat
+    enable: Povolit
+    click_to_disable: Kliknutím doplněk vypněte
+    click_to_enable: Kliknutím zapněte doplněk    
+    confirm_disable: Opravdu chcete vypnout tento doplněk?
+    configure_addon: Kliknutím nakonfigurujte tento doplněk
+  home:
+      mobile_index:
+        email: E-mail
+        password: Heslo
+        remember: Zapamatuj si mne na tomto počítači
+        login: Přihlásit se
+        forgot: Zapomněli jste heslo?
+        sign_in_using: Přihlásit se pomocí
+        sign_in_using_google: Přihlásit se pomocí účtu Google
+        help: Nápověda
+  settings: nastavení        
+  capsule_crm: Schránka CRM
+  integrations:
+    capsule:
+      label: Schránka CRM
+      desc: Informace o kontaktu si můžete zobrazit ze schránky CRM v aplikaci Freshdesk. K těmto informacím lze přistupovat na stránce podrobností o události a na stránce podrobností o kontaktu.
+      form:
+        bcc_drop_box_mail: Poštovní adresa dropboxu
+        bcc_drop_box_mail_info: Svou jedinečnou e-mailovou adresu schránky dropboxu najdete pod <b>“Nastavení -> Poštovní dropbox”</b>.<br /> (To najdete v pravém horním rohu stránky.)<br /> E-mailovou adresu zkopírujte a vložte ji do textového políčka nahoře. <br /> Freshdesk automaticky přidá tuto e-mailovou adresu do pole skrytých příjemců, když budete odpovídat na nějaký lístek
+        domain: Doména
+        domain_info: "Např.: example.capsulecrm.com"
+        api_key: Klíč API
+        api_key_info: Abyste získali svůj jedinečný klíč API, přihlaste se ke svému účtu schránky CRM a přejděte na <br /> <b>“Uživatel -> Moje nastavení”</b>. (To najdete v pravém horním rohu stránky.)<br /> Jedinečný klíč API získáte kliknutím na <b>“Token ověření API”</b>.<br /> Klíč zkopírujte a vložte jej do textového políčka nahoře.
+        widget_title: Název panelu
+  widgets:
+    contact_widget:
+      description: Zobrazit kontakt nebo možnost přidání kontaktu do schránky.
+  capsule_crm_helptext: "<h4>Propojení zpět ze schránky na Freshdesk</h4><p>Máte možnost vytvořit ve schránce CRM odkaz pro zobrazení lístků kontaktu v aplikaci Freshdesk.</p> <p>To uděláte tak, že přejdete na své <br /><b>Nastavení -> Vlastní pole -> Pro osoby a organizace</b></p><p> Pak klikněte na \"Přidat nový...\" a vyberte <b>\"Generovaný odkaz\"</b></p> <p>Zkopírujte identifikátor URl přesně tak, jak je uveden níže, a vložte jej do schránky CRM jako definici odkazu<span class=\"info-code\">http://%{full_domain}/helpdesk/tickets?email={email}</span></p>"
