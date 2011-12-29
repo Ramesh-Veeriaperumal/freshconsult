@@ -240,19 +240,17 @@ module ApplicationHelper
    end
    color
  end
-  
+
   def get_app_config(app_name)
-    installed_app = Integrations::InstalledApplication.find(:all, :joins=>:application, 
-                  :conditions => {:applications => {:name => app_name}, :account_id => current_account})
+    installed_app = get_app_details(app_name)
     return installed_app[0].configs[:inputs] unless installed_app.blank?
   end
 
   def is_application_installed?(app_name)
-    installed_app = Integrations::InstalledApplication.find(:all, :joins=>:application, 
-                  :conditions => {:applications => {:name => app_name}, :account_id => current_account})
+    installed_app = get_app_details(app_name)
     return !(installed_app.blank?)
   end
-  
+
   def get_app_details(app_name)
     installed_app = Integrations::InstalledApplication.find(:all, :joins=>:application, 
                   :conditions => {:applications => {:name => app_name}, :account_id => current_account})
@@ -267,11 +265,7 @@ module ApplicationHelper
     else
       widget = installed_app.application.widgets[0]
       # replace_objs will contain all the necessary liquid parameter's real values that needs to be replaced.
-<<<<<<< HEAD
-      replace_objs = {installed_app.application.name.to_s => installed_app} # Application name based liquid obj values.
-=======
       replace_objs = {installed_app.application.name.to_s => installed_app, "application" => installed_app.application} # Application name based liquid obj values.
->>>>>>> time_tracking
       replace_objs = liquid_objs.blank? ? replace_objs : liquid_objs.merge(replace_objs) # If the there is no liquid_objs passed then just use the application name based values alone.
       return Liquid::Template.parse(widget.script).render(replace_objs, :filters => [FDTextFilter])  # replace the liquid objs with real values.
     end
@@ -292,9 +286,16 @@ module ApplicationHelper
       when "paragraph" then
         element = label + text_area(object_name, field_name, :class => element_class, :value => field_value)
       when "dropdown" then
-        element = label + select(object_name, field_name, field[:choices], :class => element_class, :selected => field_value)
-      when "dropdown_blank" then
-        element = label + select(object_name, field_name, field[:choices], :class => element_class, :selected => field_value, :include_blank => "...")
+        choices = [];i=0
+        field[:choices].each do |choice| 
+          choices[i] = t(choice);i=i+1
+        end
+        element = label + select(object_name, field_name, choices, :class => element_class, :selected => field_value)
+      when "custom" then
+        puts "## custom partial "+field[:partial].to_s
+        rendered_partial = (render :partial => "/integrations/applications/"+field[:partial])
+        element = label + rendered_partial
+        puts "## element"+ element.to_s
       when "hidden" then
         element = hidden_field(:source, :value => field_value)
       when "checkbox" then

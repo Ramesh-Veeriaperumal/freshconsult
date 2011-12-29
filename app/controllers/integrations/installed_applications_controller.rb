@@ -23,7 +23,7 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
           flash[:notice] = t(:'flash.application.install.success')
           if installing_application.name == "google_contacts"
             Rails.logger.info "Redirecting to google_contacts oauth."
-            redirect_to "/auth/google"
+            redirect_to "/auth/google?origin=install"
             return
           end
         else
@@ -68,12 +68,8 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
   
   def uninstall
     begin
-<<<<<<< HEAD
-      success = current_account.installed_applications.delete(params[:id])
-=======
       installedApp = current_account.installed_applications.find(params[:id])
       success = installedApp.delete
->>>>>>> time_tracking
       if success
         flash[:notice] = t(:'flash.application.uninstall.success')
       else

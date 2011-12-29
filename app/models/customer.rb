@@ -11,11 +11,8 @@ class Customer < ActiveRecord::Base
   has_many :users , :class_name =>'User' ,:conditions =>{:deleted =>false} , :dependent => :nullify , :order => :name
   
   has_many :all_users , :class_name =>'User' , :dependent => :nullify , :order => :name
-<<<<<<< HEAD
   
   has_many :tickets , :through => :users , :class_name => 'Helpdesk::Ticket'
-=======
->>>>>>> time_tracking
   
   belongs_to :sla_policy, :class_name =>'Helpdesk::SlaPolicy'
   

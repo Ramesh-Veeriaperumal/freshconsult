@@ -291,11 +291,7 @@ en:
     application:
       already: "Addon is already installed."
       uninstall:
-<<<<<<< HEAD
-        success: "The Addon has been removed successfully!"
-=======
         success: "The Addon has been disabled successfully!"
->>>>>>> time_tracking
         error: "Error in disabling the Addon."
       install:
         success: "The Addon has been enabled successfully!"
@@ -838,6 +834,9 @@ en:
     info2: Make this User an Agent
     send_activation: Send activation email
     import_csv: Import users from CSV
+    import_google: Import from Google
+    import_google_no: "No"
+    import_google_yes: "Yes"
     quick_contact: Quick Contact
     info3: Background information of %{nick_name}
     working: Working
@@ -1307,6 +1306,7 @@ en:
         info: This will be the help desk name that is shown in the header and mail notifications.
     ticket_created_on_n_by: by %{requester} on %{date_time}
     tickets:
+      no_email_found: "User with email %{email} is not available in the system."
       customview:
         new:
           give_a_name: Give a name for this view
@@ -1497,6 +1497,7 @@ en:
   capsule_crm: "Capsule CRM"
   freshbooks: "Freshbooks"
   harvest: "Harvest"
+  google_contacts: "Google contacts"
   integrations:
     capsule:
       label: "Capsule CRM"
@@ -1529,6 +1530,21 @@ en:
         harvest_note: "Notes text"
         harvest_note_info: "Text that will be appended at the end of the note, while logging the time spent. Make it empty for not appending any text."
         widget_title: "Widget Title"
+    google_contacts:
+      label: "Google Contacts"
+      desc: "Periodically synchronize the contacts between Google and Freshdesk."
+      overwrite_local: "Export the Freshdesk contacts and any updates into google contacts"
+      overwrite_remote: "Import the Google contacts and any updates into Freshdesk contacts"
+      merge_local: "Merge the Freshdesk and Google contacts (Freshdesk precedence)"
+      merge_remote: "Merge the Google and Freshdesk contacts (Google precedence)"
+      import_success: "Sucessfully imported google contacts." 
+      fetch_problem: "Problem in fetching google contacts." 
+      import: "Import"
+      account_not_configured: "Google account is not configured properly. Please try again."
+      form:
+        sync_type: "Synchronization type"
+        sync_type_info: "How do you want to synchronize the contacts between Google and Freshdesk."
+        account_settings: "Google accounts used for synchronization"
   widgets:
     contact_widget:
       description: "Display a contact or option to add the contact into capsule."
