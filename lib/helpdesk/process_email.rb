@@ -190,11 +190,15 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         bodyhtml = replace_content_id(bodyhtml, content_ids["attachment#{i+1}"], created_attachment)
       end
       #item.update_attributes!(:description_html => bodyhtml) unless content_ids.blank?
-      RAILS_DEFAULT_LOGGER.debug "BODYHTML is #{bodyhtml}"
-      RAILS_DEFAULT_LOGGER.debug "item.description_html before updating #{item.description_html}"
-      item.description_html = bodyhtml  unless content_ids.blank?
-      item.save!
-      RAILS_DEFAULT_LOGGER.debug "item.description_html after updating #{item.description_html}"
+      
+      unless content_ids.blank?
+        Helpdesk::Ticket.find(item.id).update_attributes!(:description_html => bodyhtml)
+      end
+      #RAILS_DEFAULT_LOGGER.debug "BODYHTML is #{bodyhtml}"
+      #RAILS_DEFAULT_LOGGER.debug "item.description_html before updating #{item.description_html}"
+      #item.description_html = bodyhtml  unless content_ids.blank?
+      #item.save!
+      #RAILS_DEFAULT_LOGGER.debug "item.description_html after updating #{item.description_html}"
       RAILS_DEFAULT_LOGGER.debug "From DB #{Helpdesk::Ticket.find(item.id).description_html}"
       
       #RAILS_DEFAULT_LOGGER.debug item.description_html
