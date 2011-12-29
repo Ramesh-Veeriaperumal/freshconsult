@@ -184,7 +184,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     def create_attachments(ticket, item)
       RAILS_DEFAULT_LOGGER.debug "item.description_html at start #{item.description_html}"
 
-      bodyhtml = item.description_html
+      bodyhtml = String.new(item.description_html)
       content_ids = params["content-ids"].nil? ? {} : get_content_ids 
      
       RAILS_DEFAULT_LOGGER.debug "BODYHTML before loop is #{bodyhtml}"
