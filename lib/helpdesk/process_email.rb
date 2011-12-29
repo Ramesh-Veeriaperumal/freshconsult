@@ -182,41 +182,31 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
 
     def create_attachments(ticket, item)
-      RAILS_DEFAULT_LOGGER.debug "item.description_html at start #{item.description_html}"
+      RAILS_DEFAULT_LOGGER.debug "item.body_html at start #{item.body_html}"
 
-      bodyhtml = String.new(item.description_html)
+      bodyHTML = String.new(item.body_html)
       content_ids = params["content-ids"].nil? ? {} : get_content_ids 
      
-      RAILS_DEFAULT_LOGGER.debug "BODYHTML before loop is #{bodyhtml}"
+      RAILS_DEFAULT_LOGGER.debug "BODYHTML before loop is #{bodyHTML}"
       
       Integer(params[:attachments]).times do |i|
         created_attachment = item.attachments.create(:content => params["attachment#{i+1}"], :account_id => ticket.account_id)
-        bodyhtml = replace_content_id(bodyhtml, content_ids["attachment#{i+1}"], created_attachment)
+        bodyHTML = replace_content_id(bodyHTML, content_ids["attachment#{i+1}"], created_attachment)
       end
-      RAILS_DEFAULT_LOGGER.debug "BODYHTML after loop is #{bodyhtml}"
-      RAILS_DEFAULT_LOGGER.debug "item.description_html after loop & before update #{item.description_html}"
+      RAILS_DEFAULT_LOGGER.debug "BODYHTML after loop is #{bodyHTML}"
+      RAILS_DEFAULT_LOGGER.debug "item.body_html after loop & before update #{item.body_html}"
 
-      #item.update_attributes!(:description_html => bodyhtml) unless content_ids.blank?
-      
       unless content_ids.blank?
-        Helpdesk::Ticket.find(item.id).update_attributes!(:description_html => bodyhtml)
+        item.class.find(item.id).update_attributes!(:body_html => bodyHTML)
       end
-      #RAILS_DEFAULT_LOGGER.debug "BODYHTML is #{bodyhtml}"
-      #RAILS_DEFAULT_LOGGER.debug "item.description_html before updating #{item.description_html}"
-      #item.description_html = bodyhtml  unless content_ids.blank?
-      #item.save!
-      #RAILS_DEFAULT_LOGGER.debug "item.description_html after updating #{item.description_html}"
-      RAILS_DEFAULT_LOGGER.debug "BODYHTML after update is #{bodyhtml}"
-      RAILS_DEFAULT_LOGGER.debug "item.description_html after update #{item.description_html}"
-      RAILS_DEFAULT_LOGGER.debug "From DB #{Helpdesk::Ticket.find(item.id).description_html}"
-      
-      #RAILS_DEFAULT_LOGGER.debug item.description_html
-      #RAILS_DEFAULT_LOGGER.debug item.to_json
+      RAILS_DEFAULT_LOGGER.debug "BODYHTML after update is #{bodyHTML}"
+      RAILS_DEFAULT_LOGGER.debug "item.body_html after update #{item.body_html}"
+      RAILS_DEFAULT_LOGGER.debug "From DB #{item.class.find(item.id).body_html}"
     end
     
-    def replace_content_id(bodyhtml, content_id, created_attachment)
-        bodyhtml.sub!("cid:#{content_id}",created_attachment.content.url)  unless content_id.nil?
-        bodyhtml
+    def replace_content_id(bodyHTML, content_id, created_attachment)
+        bodyHTML.sub!("cid:#{content_id}",created_attachment.content.url)  unless content_id.nil?
+        bodyHTML
     end
   
     def get_content_ids
