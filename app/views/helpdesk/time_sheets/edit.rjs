@@ -1,0 +1,2 @@
+page << "jQuery('#timeentry_view_#{@time_entry.id}').slideUp(300)"
+page.replace_html "timeentry_edit_#{@time_entry.id}", :partial => "helpdesk/time_sheets/edit"

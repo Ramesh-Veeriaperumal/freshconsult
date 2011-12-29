@@ -1,37 +1,37 @@
 class Helpdesk::TimeSheetsController < ApplicationController
+  before_filter { |c| c.requires_permission :manage_tickets }
+  
   def index
   end
 
   def new
+    update_running_timer params[:time_entry][:ticket_id]
+    create_time_entry
+    if @time_sheet.save
+       render :new
+     else
+       render :json => { :success => false, :errors => @time_sheet.errors.to_json } 
+     end
   end
 
   def edit
-  end
-
-  def create
+    @time_entry = scoper.find(params[:id])
+    render :edit
   end
 
   def update  
     hours_spent = params[:time_entry][:hours]
     params[:time_entry].delete(:hours)
     time_entry = params[:time_entry].merge!({:time_spent => get_time_in_second(hours_spent.to_i())})
-    @time_sheet = scoper.find(params[:id])
-    if @time_sheet.update_attributes(time_entry)
-      time_entry =  render_to_string(:partial => "helpdesk/time_sheets/time_entry_item", :locals => { :time_entry => @time_sheet })
-      render :json => { :success => true, :raw => time_entry , :total_time_spent => total_time_spent(@time_sheet.ticket.time_sheets || [])  }
-    else
-      render :json => { :success => false, :errors => @time_sheet.errors.to_json } 
-    end
-    
+    @time_entry = scoper.find(params[:id])
+    if @time_entry.update_attributes(time_entry)
+       render :partial => "/helpdesk/time_sheets/time_entry", :object => @time_entry
+    end    
   end
 
   def destroy
-    @time_sheet = scoper.find(params[:id])    
-    if @time_sheet.destroy
-       render :json => { :success => true, :message => "Successfully deleted the time entry" , :total_time_spent => total_time_spent(@time_sheet.ticket.time_sheets || [])}
-    else
-      render :json => { :success => false, :errors => @time_sheet.errors.to_json } 
-    end
+    @time_entry = scoper.find(params[:id])
+    @time_entry.destroy
   end
   
   def create_timer
@@ -64,7 +64,6 @@ class Helpdesk::TimeSheetsController < ApplicationController
     end
   end
   
-  #
   #Following method will stop running timer..
   def update_running_timer ticket_id
     ticket  = current_account.tickets.find(ticket_id)
@@ -83,25 +82,22 @@ class Helpdesk::TimeSheetsController < ApplicationController
   end
   
   def create_time_entry
-    
     hours_spent = params[:time_entry][:hours]
     params[:time_entry].delete(:hours)
     time_entry = params[:time_entry].merge!({:start_time => Time.zone.now(),
                                             :time_spent => get_time_in_second(hours_spent.to_i()),
                                             :timer_running => true,
-                                            :billable => true
-                                            })
+                                            :billable => true})
     @time_sheet = scoper.new(time_entry)  
   end
   
   def time_sheets_for_ticket
-    @ticket = current_account.tickets.find_by_display_id(params[:id]) 
+    @ticket = current_account.tickets.find_by_display_id(params[:id])
     @time_sheets = @ticket.time_sheets || []
     render :partial => "helpdesk/time_sheets/time_sheets_for_ticket"
   end
 
 private
-
 
  def scoper
    current_account.time_sheets
@@ -126,7 +122,6 @@ private
     total_time = hours.to_s()+"."+ minutes_as_percent.to_s()
     total_time
   end
-
 
 end
 

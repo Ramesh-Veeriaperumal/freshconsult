@@ -33,6 +33,10 @@ module ApplicationHelper
     render(:partial => partial, :collection => collection) || content_tag(:div, message, :class => "info-highlight")
   end
   
+  def each_or_new(partial_item, collection, partial_form, partial_form_locals = {})
+    render(:partial => partial_item, :collection => collection) || render(:partial => partial_form, :locals => partial_form_locals)
+  end
+  
   def get_img(file_name, type)
     image_tag("#{ASSETIMAGE[type]}/#{file_name}", :class => "#{type}_image")
   end
@@ -224,8 +228,9 @@ module ApplicationHelper
   end
   
   # Date and time format that is mostly used in our product
-  def formated_date(date_time)
-    date_time.strftime("%B %e %Y at %I:%M %p")
+  def formated_date(date_time, format = "%B %e %Y @ %I:%M %p")
+    format = format.gsub(/.\b[%Yy]/, "") if (date_time.year == Time.now.year)
+    date_time.strftime(format)
   end
   
   # Get Pref color for individual portal
@@ -332,14 +337,20 @@ module ApplicationHelper
     content_tag :li, element, :class => dom_type
   end
    
-  def pageless(total_pages, url, message=t("loading.items"), callback = "function(){}")
+  def pageless(total_pages, url, message=t("loading.items"))
     opts = {
       :totalPages => total_pages,
       :url        => url,
-      :loaderMsg  => message,
-      :complete  => callback
+      :loaderMsg  => message
     } 
     javascript_tag("jQuery('#Pages').pageless(#{opts.to_json});")
+  end
+  
+  def render_page
+    respond_to do |format|
+      format.html { redirect_to :back }
+      format.js
+    end
   end
    
   private

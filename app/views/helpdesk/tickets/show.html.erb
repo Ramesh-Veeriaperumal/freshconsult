@@ -92,6 +92,15 @@
       });
       
       jQuery('#custom_ticket_form').validate(); 
+
+
+      // Updating Various items when a Timeentry is added or removed
+      jQuery('#timesheetlist div.timeentry').livequery(function(ev){
+        jQuery('#timesheet_count').html(jQuery('#timesheetlist div.timeentry').size());
+      }, function(ev){
+        jQuery('#timesheet_count').html(jQuery('#timesheetlist div.timeentry').size());
+      });
+      
     });
 
     function show_canned_response(ticket_id){
@@ -146,61 +155,18 @@
   		return true;
   	}
 	
-	
-    jQuery("#time_sheet").modalAjax();
+    jQuery('a.submit').live("click", function(ev){
+			ev.preventDefault();
+			jQuery(this).button("loading");
+			jQuery(this).parents("form").submit();
+		});
   <% end %>
 <% end %> 
 <%= include_tiny_mce_if_needed %>
 <% content_for :sidebar do %>
-	<% unless @ticket.deleted %>
-		<div class="rtCnt sidepanel ticket-panel">
-			<div class="rtPanel">
-				<a href="javascript:void(0)" class="active" cntid="TicketProperties">
-					<img src="/images/spacer.gif" class="ticketprop" width="36px" height="36px"  />
-					<em><%=t('ticket.properties')%></em>
-				</a>
-        <% link_to({ :action => "component", :component => "related_solutions", :id => @ticket.id }, :classname => "suggestsolutions", :cntid => "related-solutions-div") do %>
-          <img src="/images/spacer.gif" class="suggestsolutions" width="36px" height="36px"  />
-          <em><%= t('ticket.suggest_solutions') %></em>          
-        <% end %>
-        <% if feature?(:scenario_automations) %>
-          <% link_to({ :action => "component", :component => "scenarios", :id => @ticket.id }, :classname => "scenario", :cntid => "scenario-div") do %>
-            <img src="/images/spacer.gif" class="scenario" width="36px" height="36px"  />
-            <em><%= t('ticket.execute_scenario') %></em>
-          <% end %>
-        <% end %>
-        
-        <% link_to({ :action => "component", :component => "user", :id => @ticket.id }, :classname => "requesterinfo", :cntid => "user-div") do %>
-          <img src="/images/spacer.gif" class="requesterinfo" width="36px" height="36px"  />
-          <em><%= t('ticket.requestor_info') %></em>
-        <% end %>        
+	<%= render :partial => "ticket_sidebar" unless @ticket.deleted %>
+<% end %>
 
-        <% link_to({ :action => "component", :component => "todos", :id => @ticket.id }, :classname => "reminders-ticket", :cntid => "todos-div") do %>
-          <img src="/images/spacer.gif" class="todo" width="36px" height="36px"  />
-          <em><%= t('to_do') %></em>
-        <% end %>
-                
-        <% link_to({ :action => "component", :component => "tags", :id => @ticket.id }, :classname => "tags", :cntid => "tags-div") do %>
-          <img src="/images/spacer.gif" class="tags" width="36px" height="36px"  />      
-          <em><%= t('tag.title') %></em>
-        <% end %>
-                
-        <% link_to({ :action => "component", :component => "activity", :id => @ticket.id }, :classname => "activity", :cntid => "activity-div") do %>
-          <img src="/images/spacer.gif" class="activity" width="36px" height="36px"  />
-          <em><%= t('ticket.activities') %></em>
-        <% end %>
-      </div>
-      <div class="rtDetails" id="componentlist">
-        <%= render :partial => "helpdesk/tickets/components/ticket", :object => @ticket %>
-      </div>
-    </div>
-  <% end %>
-<% end %>
-<% content_for :main_panel_title do %>
-<% end %>
-<% content_for :main_panel_actions do %>
-<% end %>
-<% content_for :main_panel_summary do %>
 	<% if @ticket.deleted %>
 		<div class="alert-message block-message warning">
 			<div class="alert-actions-right">
@@ -212,21 +178,21 @@
   <div class="request_details">
       <div class="requestCnt request-cnt-first"> 
         <% unless @ticket.deleted %>
-          <!-- <div class="request_status">
-          	            <ul>
-          	                <li>
-          	                    <b><%= t('ticket.status') %></b>: <span id="status_name_id"><%= h(@ticket.status_name) %></span>
-          	                </li>
-          	                <li>
-          	                    <b><%= t('ticket.priority') %></b>: <%= h(@ticket.priority_name) %>
-          	                </li>
-          	            </ul>
-           						</div> -->
-				<% end %>
-			<h3 class="title">
-				<em><%= "##{@ticket.display_id}" %></em>
-				<b><%= h(@ticket.subject) %></b>
-		  </h3>
+          <div class="request_status">
+            <ul>
+              <li>
+                <b><%= t('ticket.status') %></b>: <span id="status_name_id"><%= h(@ticket.status_name) %></span>
+              </li>
+              <li>
+                <b><%= t('ticket.priority') %></b>: <%= h(@ticket.priority_name) %>
+              </li>
+            </ul>
+          </div>
+        <% end %>
+      <h3 class="title">
+        <em><%= "##{@ticket.display_id}" %></em>
+        <b><%= h(@ticket.subject) %></b>
+      </h3>
 			<div class="description">         
         <div class="user_details">
           <%= user_avatar(@ticket.requester)  %>
@@ -306,99 +272,60 @@
         </div>
       <% end %>
     </div>
-  </div>		 
-
-		
+  </div>
 		<div class="request-well">
 			<% unless @ticket.deleted %>
 				<div class="button-container">
-					<%= link_to_function(t('ticket.reply_to'), "swapEmailNote('reply', this)", :class => 'btn small', :id => "ReplyButton") unless @item.from_email.nil? %>
-					<%= link_to_function("Tweet", "swapEmailNote('tweet', this)", :class => 'btn small', :id => "TweetButton") if @item.requester && @item.is_twitter?%>
-					<%= link_to_function("Comment", "swapEmailNote('fb_post', this)", :class => 'btn small', :id => "FacebookButton") if @item.requester && @item.fb_post%>
-					<%= link_to_function(t('ticket.add_note'), "swapEmailNote('note', this)", :class => 'btn small', :id => "AddNoteButton") %>		
-					<%= link_to "Add time", "/helpdesk/time_sheets/time_sheets_for_ticket/#{@ticket.display_id}", :id => "time_sheet", :title => "Add time entry", :class => "btn small" %>
+					<%= link_to_function(t('ticket.reply_to'), "swapEmailNote('reply', this)", :class => 'uiButton small', :id => "ReplyButton") unless @item.from_email.nil? %>
+					<%= link_to_function("Tweet", "swapEmailNote('tweet', this)", :class => 'uiButton small', :id => "TweetButton") if @item.requester && @item.is_twitter?%>
+					<%= link_to_function("Comment", "swapEmailNote('fb_post', this)", :class => 'uiButton small', :id => "FacebookButton") if @item.requester && @item.fb_post%>
+					<%= link_to_function(t('ticket.add_note'), "swapEmailNote('note', this)", :class => 'uiButton small', :id => "AddNoteButton") %>		
+					<%= link_to_function "Add time", "jQuery('#add_new_time_entry').toggle();", :id => "time_sheet", :title => "Add time entry", :class => "uiButton small" %>
       		
 				</div>				
 			<% end %>
-			<div class="scrollspy" data-scrollspy="scrollspy">
+			
+			<% unless @ticket_notes.blank? && @ticket.time_sheets.blank? %>
 				<ul class="tabs" data-tabs="tabs">
-      		<li class="active">
+      		<li>
 						<a href="#Pages">
 							<h4 class="title">Conversation <span class="pill"><%= @ticket_notes.size %></span></h4>
 						</a>
 					</li>
-      		<li>
+      		<li class="active">
 						<a href="#timesheet">
-							<h4 class="title">
-								Time Sheet 
-								<span class="pill"><%= @ticket.time_sheets.size %></span>
-							</h4>
+							<h4 class="title">Time sheet <span class="pill" id="timesheet_count"><%= @ticket.time_sheets.size %></span></h4>
 						</a>
 					</li>
-    	</ul>
-			</div>
-		</div>
-		<div>
-			<% if @item.requester %>				
-			  <div class="canned-response-menu" id="canned_response_container" style="display:none;"> 
-          <div>
-            <%= link_to("Add Canned response", new_admin_canned_response_path, :target => "_blank", :class => "button") if(current_user.admin?) %>
-          </div>
-          <div id="canned_response_list"></div>
-			  </div>
-				<%= render(:partial => '/helpdesk/shared/note_form', :locals => { :id => 'add-note',	:cntid => "cnt-note", :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
-				<%= render(:partial => '/helpdesk/shared/reply_form', :locals => { :id => 'send-email', :cntid => 'cnt-reply', :note => [@ticket, Helpdesk::Note.new(:private => false)] }) %>
-				<%= render(:partial => '/helpdesk/shared/tweet_form', :locals => {:id => 'send-tweet', :cntid => 'cnt-tweet', :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
-				<%= render(:partial => '/helpdesk/shared/facebook_form', :locals => {:id => 'send-fb-post', :cntid => 'cnt-fb-post', :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
+    	  </ul>
+    	<% end %>
+		  </div>
+			<%= render(:partial => '/helpdesk/shared/reply_form', :locals => { :id => 'send-email', :cntid => 'cnt-reply', :note => [@ticket, Helpdesk::Note.new(:private => false)] }) %>
 
-			<% else %>
-				<%= render(:partial => '/helpdesk/shared/note_form', :locals => { :id => 'add-note',	:cntid => "cnt-note", :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
-			<% end %>				
-		</div>
-			<% unless @ticket_notes.blank? then %>
+			<%= render(:partial => '/helpdesk/shared/note_form', :locals => { :id => 'add-note',	:cntid => "cnt-note", :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
+
+			<%= render(:partial => '/helpdesk/shared/tweet_form', :locals => {:id => 'send-tweet', :cntid => 'cnt-tweet', :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
+			<%= render(:partial => '/helpdesk/shared/facebook_form', :locals => {:id => 'send-fb-post', :cntid => 'cnt-fb-post', :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
 			<div class="tab-content">
-				<div class="requestCnt request-conversation hide tab-pane " id="Pages">
-					<%= render :partial => 'note', :collection => @ticket_notes %>
-					<%= will_paginate @ticket_notes %>
-			  </div>
+				<div class="requestCnt request-conversation tab-pane" id="Pages">
+					<div class="canned-response-menu hide" id="canned_response_container"> 
+            <div>
+              <%= link_to("Add Canned response", new_admin_canned_response_path, :target => "_blank", :class => "button") if(current_user.admin?) %>
+            </div>
+            <div id="canned_response_list"></div>
+    		  </div>
+					<% unless @ticket_notes.blank? %>
+						<%= render :partial => 'note', :collection => @ticket_notes %>
+						<%= will_paginate @ticket_notes %>
+					<% end %>	
+			  </div>			  
 				<div class="requestCnt request-conversation active tab-pane" id="timesheet">
-					<% @ticket.time_sheets.each do |time_entry| %>
-					<div class="timeentry">
-						<span class="billable"></span>
-						<%= content_tag(:span, "", :class => "billable") if time_entry.billable %>
-						<div class="user_details">
-							<%= user_avatar(time_entry.user) if time_entry.user %>
-							<%= link_to_user(time_entry.user, "user_name") %>
-							<%= formated_date(time_entry.created_at) %>
-					  </div>
-						<div class="counter">	
-							<!-- <a href="#" class="slim-button">start</a> -->
-							<span class="clock animated">
-								<span class="timer"></span>
-							</span>
-						</div>
-						<div class="timespent">
-							<%= get_time_in_hours(time_entry.time_spent) %>
-						</div>
-						<div class="note">
-							<%= RedCloth.new("#{time_entry.note}").to_html %>
-						</div>
-					</div>
-					<span class="seperator"></span>
-					<% end %>
+					<%= render :partial => "helpdesk/time_sheets/new", :locals => { :ticket_id => @ticket.id } %>
+					<%= render :partial => "helpdesk/time_sheets/time_sheets_for_ticket" unless @ticket.time_sheets.blank? %>
 				</div>
 			</div>
-			<% end %>
 	</div>
-<% end %>
 
-<% content_for :main_panel_toolbar do -%><%- end %>
-
-<% content_for :main_panel_content do -%>
-	<div class="clear"></div>
-<%- end %>
-
-<%= render :partial => "/helpdesk/shared/main_panel" %>
 
 <% content_for :pagefixed do %> 
   <%= pageless(@ticket_notes.total_pages, helpdesk_ticket_helpdesk_notes_path(@ticket)) %>  

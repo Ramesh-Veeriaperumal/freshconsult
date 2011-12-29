@@ -94,7 +94,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   has_many :survey_handles, :as => :surveyable, :dependent => :destroy
   has_many :support_scores, :as => :scorable, :dependent => :destroy
   
-  has_many :time_sheets , :class_name =>'Helpdesk::TimeSheet', :dependent => :destroy
+  has_many :time_sheets , :class_name =>'Helpdesk::TimeSheet', :dependent => :destroy, :order => "updated_at desc"
   
   attr_protected :attachments #by Shan - need to check..
   

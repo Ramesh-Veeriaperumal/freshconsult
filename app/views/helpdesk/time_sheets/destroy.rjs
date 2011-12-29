@@ -1,0 +1,1 @@
+page << "jQuery('#timeentry_#{params[:id]}').fadeOut(500, function(){ jQuery(this).remove() })"

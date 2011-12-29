@@ -22,6 +22,24 @@ function imgerror(source){
     return true;
 }
 
+// Adding leading zeros to a number
+function pad(number, length) {   
+    var length = length || 2;
+    var str = '' + number;
+    while (str.length < length) {
+        str = '0' + str;
+    }   
+    return str;
+}
+
+// Normalizing Hours
+function normalizeHours(value){
+   return value.split( new RegExp( "\\s*:\\s*", "gi" ) ).collect(function(s) {
+     return pad(s);
+   }).join(':')
+   
+}
+
 // Getting Paramater Value
 function getParameterByName(name, url)
 {

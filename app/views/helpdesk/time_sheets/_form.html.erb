@@ -1,0 +1,14 @@
+<fieldset>
+	<div class="user_details">
+		<label>Agent</label>
+		<%= form.collection_select( :user_id, current_account.users.technicians.visible, :id, :name, {:selected => current_user}, :class => "full") %>
+	</div>
+	<div class="timespent">
+		<label>Hours (00.00)</label>
+		<%= form.text_field(:hours, { :size => 6, :class => "auto number" } ) %>
+	</div>
+	<div class="note">
+		<label>Note</label>
+		<%= form.text_area(:note, { :rows => 2, :class => "paragraph auto-height" })%>
+  </div>		
+</fieldset>

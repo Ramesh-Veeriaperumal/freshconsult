@@ -175,7 +175,7 @@ ActionController::Routing::Routes.draw do |map|
   map.namespace :helpdesk do |helpdesk|
 
     helpdesk.resources :tags, :collection => { :autocomplete => :get }
-    helpdesk.resources :time_sheets
+    helpdesk.resources :time_sheets, :member => { :create_timer => :put }
     
 
 #    helpdesk.resources :issues, :collection => {:empty_trash => :delete}, :member => { :delete_all => :delete, :assign => :put, :restore => :put, :restore_all => :put } do |ticket|

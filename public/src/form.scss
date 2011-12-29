@@ -31,6 +31,18 @@ select {
 	width:100%;
 }
 
+input[disabled],
+select[disabled],
+textarea[disabled],
+input[readonly],
+select[readonly],
+textarea[readonly] {
+  background-color: #f5f5f5;
+  border-color: #ddd;
+  cursor: not-allowed;
+}
+
+
 textarea { 
    height: 100px;
    width: 96%;
@@ -85,8 +97,12 @@ textarea.smallpara{
 	height:50px;
 }
 
-input.hours{
-	font-size:23px;
+
+:-moz-placeholder {
+  color: #bfbfbf;
+}
+::-webkit-input-placeholder {
+  color: #bfbfbf;
 }
 	
 /*input:focus, textarea:focus{ border-color:$tab_color !important; }
@@ -272,7 +288,7 @@ a.addchoice:hover{
 		margin:0;
 		line-height:18px;
 		color:#565656;
-		font-size:1.3em;
+		font-size:1em;
 		font-weight:400;
 	}
 
@@ -477,9 +493,6 @@ a.addchoice:hover{
 .ui-form .inline-field{
 	/*border-bottom:1px dotted #cfcfcf;*/
 	padding-top:8px;
-	input[type=text], select, input.text {
-
-	}
 	.caption{
 		float:left;
 		.logo{

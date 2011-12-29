@@ -522,6 +522,10 @@ body h5{
 				font-weight:normal;
 			}
 		}
+		h4.title{
+			font-size:1.1em;
+			font-weight:bold;
+		}
 		.mark_action{
 			float:right;
 			padding:0px;
@@ -539,7 +543,7 @@ body h5{
 		div.description{  
 			margin-left:50px;
 			.preview_pic{
-				margin-left:-68px;
+				margin-left:-60px;
 			}	
 			.app-link{
 			   position:absolute;
@@ -622,10 +626,11 @@ body h5{
 	.request-conversation{
 		padding:0;
 		.description, .timeentry{
-			@include pie-clearfix;
+			@include clearfix;
 			position:relative;
-			padding:3px 0 8px 0; 
-			margin:0px 60px 0 80px;
+			margin:0;
+			padding:16px 70px 10px 100px;
+			border-bottom:1px solid #efefef;
 			.user_details{
 				font-size:1em;
 				position:relative;

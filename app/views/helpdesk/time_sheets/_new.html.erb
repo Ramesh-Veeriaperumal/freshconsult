@@ -1,0 +1,15 @@
+<% form_remote_for :time_entry, 
+                   :url => new_helpdesk_time_sheet_path, 
+                   :html => { :class => "ui-form hide", :id => "add_new_time_entry" }, 
+                   :complete => "jQuery('#new_time_submit').button('reset')" do |f| %>
+                   
+  <%= render :partial => "/helpdesk/time_sheets/form", :object => f %>
+  
+	<%= hidden_field(:time_entry, :ticket_id , { :value => ticket_id, :id => :time_entry_ticket_id }  )%>
+ 	
+ 	<div class="button-container">	  
+ 	  <%= link_to "Save and start timer", "#", :class => "submit uiButton special", "data-loading-text" => "Saving time entry...", :id => "new_time_submit" %>
+ 		<%= link_to_function("Cancel", "jQuery('#add_new_time_entry').hide();", :class => "uiButton" ) unless @ticket.time_sheets.empty? %>
+ 	</div>
+ 	
+<% end %>

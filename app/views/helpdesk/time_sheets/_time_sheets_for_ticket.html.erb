@@ -1,21 +1,115 @@
-  <div class="modal-body">
-    <div class="row">
-      <div class="span3">
-        <label class="small">Agent</label>
-        <%= collection_select (:time_entry , :user_id, current_account.users.technicians.visible, :id, :name, {:selected => current_user}, :class => "full") %>
-      </div> 
-      <div class="span2">
-        <label class="small" for="day_entry_hours">Hours</label>
-        <%=text_field(:time_entry, :hours, { :size => 4, :id => "time_entry_hours", :class => "auto number hours" })%>
-      </div>    
-      <div class="span4">
-        <label class="small" for="time_entry_notes">Notes</label>
-        <%=text_area(:time_entry, :note, { :rows => 1  , :id => "time_entry_notes", :class => "auto-height" })%>
-      </div>      
-    </div>
-  </div>
-  <%= hidden_field(:time_entry , :ticket_id , {:value => params[:id], :id=>:time_entry_ticket_id}  )%>
-  <div class="modal-footer">
-    <button class="btn secondary small close-dialog">Cancel</button>    
-    <%= link_to_function("Start Timer", "time_sheet_action('create_timer');", :class => "btn primary" ) %>
-  </div>
+<% javascript_tag do %>
+
+function time_sheet_action(action,time_entry_id)
+{
+ 		var form_id;
+		jQuery("#time_sheet_save").button("loading")
+		
+ 		switch(action)
+ 		{
+			case 'edit':
+				 jQuery('#time_entry'+time_entry_id).hide();
+			   jQuery('#time_entry_edit'+time_entry_id).show();
+			   return;
+			break;
+			case 'cancel':
+				jQuery('#time_entry'+time_entry_id).show();
+			   jQuery('#time_entry_edit'+time_entry_id).hide();
+			   return;
+			break;
+			case 'update':
+			   form_id = 'time_entry_edit_form'+time_entry_id;
+			   data = get_data_for(form_id);
+            break;
+			case 'destroy':
+              data = {id:time_entry_id} 
+            break;
+			case 'create_timer':
+			  form_id = 'add_new_time_entry'
+              data = get_data_for(form_id)
+            break;
+			case 'start_timer':
+			  data = {id:time_entry_id} 
+            break;
+			case 'stop_timer':
+			  data = {id:time_entry_id} 
+            break;
+            default:
+				return false;
+			}
+			
+			console.log(data);
+
+		/* jQuery.ajax({	type: 'POST',
+  				url: '/helpdesk/time_sheets/'+action,
+  				data: data,					
+  				success: function(data){		
+						handle_action_response(action,time_entry_id, data);
+						jQuery("#time_sheet_save").button("reset");
+  					jQuery('#'+form_id).hide(300);						
+  			}});	*/
+}
+
+function handle_action_response(action,time_entry_id,result)
+{
+
+		if (result.success)
+		{
+		    
+			switch(action)
+ 			{
+			    case 'create_timer':
+					 jQuery("#time_sheet_list ul").append('<li><div id="time_entry_item"' + time_entry_id + ' >'+ result.raw + '</div></li>');
+			    break;
+			    case 'update':
+				     jQuery("#time_entry_item"+time_entry_id).replaceWith(result.raw);
+					 jQuery('#total_time_spent').html(result.total_time_spent);
+			    break;
+			    case 'destroy':
+				     jQuery("#time_entry_item"+time_entry_id).parent().remove();
+					 jQuery('#total_time_spent').html(result.total_time_spent);
+			    break;
+		   		case 'start_timer':
+			 	     jQuery('div[id^="timer_control_button"]').each(function(){
+					      							var time_sheet_id = jQuery(this)[0].id.split('timer_control_button')[1];
+					      							jQuery(this).html('<a onclick="time_sheet_action(\'start_timer\','+time_sheet_id+'); return false;" href="#" class="button" >start timer</a>');
+														});
+				    								 jQuery('#timer_control_button'+time_entry_id).html('<a onclick="time_sheet_action(\'stop_timer\','+time_entry_id+'); return false;" href="#" class="button" >stop timer</a>');
+           		break;
+				case 'stop_timer':
+			 	  jQuery('#timer_control_button'+time_entry_id).html('<a onclick="time_sheet_action(\'start_timer\','+time_entry_id+'); return false;" href="#" class="button" >start timer</a>');
+           		break;
+		   		default:
+             	  message = 'success'
+		
+			}
+			
+			jQuery('#response_message').html(result.message);
+			
+		}
+		else
+		{
+		   jQuery('#response_message').html(result.errors);
+		}
+
+
+}
+
+function get_data_for(form_id)
+{			
+var form_val  = jQuery('#'+form_id+' :input');
+var values = {};
+form_val.each(function() {
+        values[this.name] = jQuery(this).val();
+    });
+return values;
+} 
+<%end%>
+
+	<div id="timesheetlist">
+		<%= render :partial => "helpdesk/time_sheets/time_entry", :collection => @ticket.time_sheets %>    
+	</div>		
+	<div class="timeentry">
+		<h3 class="title">Total</h3>
+		<%= get_total_time(@ticket.time_sheets)%>
+	</div>
