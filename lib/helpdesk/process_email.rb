@@ -182,13 +182,20 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
 
     def create_attachments(ticket, item)
+      RAILS_DEFAULT_LOGGER.debug "item.description_html at start #{item.description_html}"
+
       bodyhtml = item.description_html
       content_ids = params["content-ids"].nil? ? {} : get_content_ids 
      
+      RAILS_DEFAULT_LOGGER.debug "BODYHTML before loop is #{bodyhtml}"
+      
       Integer(params[:attachments]).times do |i|
         created_attachment = item.attachments.create(:content => params["attachment#{i+1}"], :account_id => ticket.account_id)
         bodyhtml = replace_content_id(bodyhtml, content_ids["attachment#{i+1}"], created_attachment)
       end
+      RAILS_DEFAULT_LOGGER.debug "BODYHTML after loop is #{bodyhtml}"
+      RAILS_DEFAULT_LOGGER.debug "item.description_html after loop & before update #{item.description_html}"
+
       #item.update_attributes!(:description_html => bodyhtml) unless content_ids.blank?
       
       unless content_ids.blank?
@@ -199,6 +206,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       #item.description_html = bodyhtml  unless content_ids.blank?
       #item.save!
       #RAILS_DEFAULT_LOGGER.debug "item.description_html after updating #{item.description_html}"
+      RAILS_DEFAULT_LOGGER.debug "BODYHTML after update is #{bodyhtml}"
+      RAILS_DEFAULT_LOGGER.debug "item.description_html after update #{item.description_html}"
       RAILS_DEFAULT_LOGGER.debug "From DB #{Helpdesk::Ticket.find(item.id).description_html}"
       
       #RAILS_DEFAULT_LOGGER.debug item.description_html
