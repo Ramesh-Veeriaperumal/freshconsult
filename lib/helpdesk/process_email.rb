@@ -191,7 +191,6 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       end
 
       unless content_ids.blank?
-        #item.class.find(item.id).update_attributes!(:body_html => bodyHTML)
         item.update_attributes!(:body_html => temp_body_html)
       end
     end
