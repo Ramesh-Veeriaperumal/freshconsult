@@ -335,7 +335,7 @@ pt-BR:
     contacts_import: 
       failure: Tentar novamente
       no_file: Por favor faça o upload de um arquivo
-      success: %{created_count} contatos foi importada recentemente e os %{updated_count} dos contatos existentes foi atualizada!
+      success: "%{created_count} contatos foi importada recentemente e os %{updated_count} dos contatos existentes foi atualizada!"
     business_hours: 
       update: 
         failure: Falha ao atualizar o Horário Comercial
@@ -366,10 +366,10 @@ pt-BR:
         success: Um email de verificação foi enviado para %{reply_email}!
       activation: 
         invalid_code: O código de ativação não é válido!
-        success: %{reply_email} foi ativado!
-        already_activated: %{reply_email} já foi ativado!
+        success: "%{reply_email} foi ativado!"
+        already_activated: "%{reply_email} já foi ativado!"
       make_primary: 
-        success: <b>%{reply_email}</b> é agora seu principal email de suporte!
+        success: "<b>%{reply_email}</b> é agora seu principal email de suporte!"
     data_import: 
       zendesk: 
         no_contact: Não é possível contatar o zendesk. Verifique suas credenciais do zendesk e tente novamente !!
@@ -533,7 +533,7 @@ pt-BR:
       you_must_confirm: Você deve confirmar seu cancelamento
       delete_my_account: Excluir minha conta
       confirm_and_cancel_my_account: Confirmo que desejo cancelar minha conta e excluir todos os meus dados...
-      goback: &#x2190; Voltar às configurações da conta
+      goback: "&#x2190; Voltar às configurações da conta"
       change_your_plan: Alterar seu plano
       warning_message: Após esse procedimento, você não terá mais acesso aos seus dados, portanto, certifique-se de que realmente deseja fazer isso.
       cancel_account: Cancelar minha conta Freshdesk
@@ -706,11 +706,11 @@ pt-BR:
         not_a_number: não é um número
         inclusion: não está incluido na lista
       full_messages: 
-        format: %{attribute} %{message}
+        format: "%{attribute} %{message}"
       template: 
         body: "Houve problema com os seguintes campos:"
         one: 1 erro proibindo esse %{model} de ser salvo
-        other: %{count} erros proibindo esse %{model} de ser salvo
+        other: "%{count} erros proibindo esse %{model} de ser salvo"
   top: Topo
   company_name: Nome da empresa
   expires: Vence
@@ -722,24 +722,24 @@ pt-BR:
       unlike: Diferente
       ideas:
         vote_button: Gosto desta ideia
-        vote_info_1: %{vote} de pessoas têm esta ideia
-        vote_info_2: %{vote} de pessoas têm esta ideia
+        vote_info_1: "%{vote} de pessoas têm esta ideia"
+        vote_info_2: "%{vote} de pessoas têm esta ideia"
         vote_info_include_1: Você gosta desta ideia
-        vote_info_include_2: %{vote} de pessoas \"incluindo você\" têm esta ideia
+        vote_info_include_2: "%{vote} de pessoas \"incluindo você\" têm esta ideia"
       problem:
         vote_button: Eu tenho este problema
-        vote_info_1: %{vote} das pessoas têm este problema
-        vote_info_2: %{vote} das pessoas têm este problema
+        vote_info_1: "%{vote} das pessoas têm este problema"
+        vote_info_2: "%{vote} das pessoas têm este problema"
         vote_info_include_1: Você tem este problema
-        vote_info_include_2: %{vote} de pessoas \"incluindo você\" têm esse problema
+        vote_info_include_2: "%{vote} de pessoas \"incluindo você\" têm esse problema"
       howto:
         vote_button: Eu tenho esta pergunta
-        vote_info_1: %{vote} das pessoas têm esta pergunta
-        vote_info_2: %{vote} de pessoas têm esta pergunta
+        vote_info_1: "%{vote} das pessoas têm esta pergunta"
+        vote_info_2: "%{vote} de pessoas têm esta pergunta"
         vote_info_include_1: Você tem esta pergunta
-        vote_info_include_2: %{vote} de pessoas \"incluindo você\" têm essa pergunta
+        vote_info_include_2: "%{vote} de pessoas \"incluindo você\" têm essa pergunta"
     post:
-      posted_on: %{user_name} em %{post_date}
+      posted_on: "%{user_name} em %{post_date}"
       edit_post: Editar postagem 
       unmark_answer: Desmarque esta como a resposta
       post_accepted_as_a_good_answer: Esta postagem é aceita como uma boa resposta a este tópico
@@ -798,7 +798,7 @@ pt-BR:
     by_freshdesk: pelo Freshdesk
   tkt_unattended_in_grp: Ticket autônomo no Grupo
   agent_solves_tkt: O agente resolve o Ticket
-  zendesk_url_info: ex.:- http://acme.zendesk.com
+  zendesk_url_info: "ex.:- http://acme.zendesk.com"
   portal_customizer_anon_for_i: Desative este recurso para ocultar a guia 'Fóruns' no portal do cliente público.
   portal_customizer_option_for_i: Desative esta funcionalidade se pretende impedir que usuários não registados possam consultar as soluções disponíveis
   portal_customizer_anon_for_g: Habilitar este recurso para que os clientes sejam capazes de registrar-se usando seu nome de usuário e senha do Google. 
@@ -852,7 +852,7 @@ pt-BR:
     resolution_time: Tempo de resolução
     title: Política de SLA
     calendar_time: 24 horas do dia
-    info1: \tPolítica de SLA é um conjunto de respostas-alvo e os tempos de resolução com base na prioridade. Sua política de SLA pode ser tão simples como dizer “Tickets de alta prioridade devem ser resolvidos em duas horas”, etc
+    info1: "\tPolítica de SLA é um conjunto de respostas-alvo e os tempos de resolução com base na prioridade. Sua política de SLA pode ser tão simples como dizer \"Tickets de alta prioridade devem ser resolvidos em duas horas\", etc"
     override: Substituir
     title1: Políticas de SLA
     info2: Freshdesk usa a política de SLA para determinar o “Vencimento” dos tickets. Você pode ter uma política de SLA padrão para todos os seus clientes, Mas caso tenha um cliente com diferente tempo para resolução, você pode criar uma politica de SLA para esse cliente.
@@ -922,7 +922,7 @@ pt-BR:
   errors_in_payment_info: "Erros encontrados em suas informações de pagamento:"
   attach_files: Anexar arquivos
   plan_amount: por agente/mês
-  current_plan_details: %{plan_name} Plano com %{agent_limit} agentes
+  current_plan_details: "%{plan_name} Plano com %{agent_limit} agentes"
   zendesk_backup: Arquivo de backup
   twoday: 2 Dias
   profile: 
@@ -1033,7 +1033,7 @@ pt-BR:
   linkback_info: Você pode escolher usar o Link de volta para seu próprio website quando o cliente clicar no logotipo do cabeçalho
   twitter:
     associate_twitter: Associar uma conta do twitter ao seu helpdesk, para que você possa começar a oferecer suporte aos seus clientes via twitters.
-    success_signin: @%{twitter_screen_name} foi associado com sucesso ao %{helpdesk}.
+    success_signin: "@%{twitter_screen_name} foi associado com sucesso ao %{helpdesk}."
     user_exists: Conta do Twitter já associada a outro produto.
     not_authorized: Você não foi autorizado pelo Twitter
     deleted: A conta do twitter @%{twitter_screen_name} foi removida.
@@ -1264,14 +1264,14 @@ pt-BR:
       index:
         title: Tags
     flash:
-      assignedto: %{tickets} atribuído a %{username}.
-      tickets_closed: %{tickets} fechados
-      assigned_to_you: %{tickets} atribuído a você
-      removed_from_spam: %{tickets} removidos da pasta de spam.
+      assignedto: "%{tickets} atribuído a %{username}."
+      tickets_closed: "%{tickets} fechados"
+      assigned_to_you: "%{tickets} atribuído a você"
+      removed_from_spam: "%{tickets} removidos da pasta de spam."
       closing_the_ticket_failed: Ocorreu falha no encerramento do ticket 
-      assigned_reassigned: %{type} a %{username}
-      flagged_spam: %{tickets} marcado como spam. %{undo}
-      flagged_unspam: %{tickets} removidos da pasta de spam.
+      assigned_reassigned: "%{type} a %{username}"
+      flagged_spam: "%{tickets} marcado como spam. %{undo}"
+      flagged_unspam: "%{tickets} removidos da pasta de spam."
     shared:
       reply_form:
         title: Responda a %{email}
@@ -1354,7 +1354,7 @@ pt-BR:
         resolved_or_closed: Solucionado ou Encerrado
         no_tickets: Você não possui tickets no modo de exibição atual
       note:
-        posted_on: %{user_name} em %{note_date}
+        posted_on: "%{user_name} em %{note_date}"
         edit_note: Editar nota
         split_this_as_new_ticket: Dividir esse Ticket como novo
         private_note: Nota privada
@@ -1451,7 +1451,7 @@ pt-BR:
     filter:
       index:
         title: Gerenciar modos de exibição personalizados
-        back: &larr; Voltar para Tickets
+        back: "&larr; Voltar para Tickets"
         no_custom_view: Nenhum modo de exibição personalizado disponível!
       view:
         delete: Deseja realmente excluir este modo de exibição?
@@ -1501,4 +1501,4 @@ pt-BR:
   widgets:
     contact_widget:
       description: Exiba um contato ou opção para adicionar o contato na cápsula.
-  capsule_crm_helptext: <h4>Use o link de volta da Cápsula para Freshdesk</h4><p>Você pode criar um link na Cápsula CRM para visualizar os tickets dos contatos no Freshdesk.</p> <p>Para fazer isso, acesse <br /><b>Configurações -> Personalizar campos -> Para pessoas e organização</b></p><p> Depois, clique em \"Adicionar novo...\" e selecionar <b>\"Link gerado\"</b></p> <p>Copie o URL exatamente como mostrado abaixo e cole-o na Cápsula CRM como o link<span class=\"info-code\">http://%{full_domain}/helpdesk/tickets?email={email}</span></p>
+  capsule_crm_helptext: "<h4>Use o link de volta da Cápsula para Freshdesk</h4><p>Você pode criar um link na Cápsula CRM para visualizar os tickets dos contatos no Freshdesk.</p> <p>Para fazer isso, acesse <br /><b>Configurações -> Personalizar campos -> Para pessoas e organização</b></p><p> Depois, clique em \"Adicionar novo...\" e selecionar <b>\"Link gerado\"</b></p> <p>Copie o URL exatamente como mostrado abaixo e cole-o na Cápsula CRM como o link<span class=\"info-code\">http://%{full_domain}/helpdesk/tickets?email={email}</span></p>"
