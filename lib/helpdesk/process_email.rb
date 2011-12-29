@@ -182,17 +182,9 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
 
     def create_attachments(ticket, item)
-      content_ids = params["content-ids"].nil? ? {} : get_content_ids 
-      bodyhtml = item.body_html
       Integer(params[:attachments]).times do |i|
         created_attachment = item.attachments.create(:content => params["attachment#{i+1}"], :account_id => ticket.account_id)
-        content_id = content_ids["attachment#{i+1}"]
-        bodyhtml.sub!("cid:#{content_id}",created_attachment.content.url)  unless content_id.nil?
-        RAILS_DEFAULT_LOGGER.debug bodyhtml
       end
-      temp_ticket = Helpdesk::Ticket.find(ticket.id)
-      temp_ticket.update_attributes(:body_html => bodyhtml)
-      RAILS_DEFAULT_LOGGER.debug temp_ticket.to_json
     end
   
   def get_content_ids
