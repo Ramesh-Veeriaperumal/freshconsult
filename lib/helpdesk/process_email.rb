@@ -189,9 +189,16 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         created_attachment = item.attachments.create(:content => params["attachment#{i+1}"], :account_id => ticket.account_id)
         bodyhtml = replace_content_id(bodyhtml, content_ids["attachment#{i+1}"], created_attachment)
       end
-      item.update_attributes!(:description_html => bodyhtml) unless content_ids.blank?
-      RAILS_DEFAULT_LOGGER.debug item.description_html
-      RAILS_DEFAULT_LOGGER.debug item.to_json
+      #item.update_attributes!(:description_html => bodyhtml) unless content_ids.blank?
+      RAILS_DEFAULT_LOGGER.debug "BODYHTML is #{bodyhtml}"
+      RAILS_DEFAULT_LOGGER.debug "item.description_html before updating #{item.description_html}"
+      item.description_html = bodyhtml  unless content_ids.blank?
+      item.save!
+      RAILS_DEFAULT_LOGGER.debug "item.description_html after updating #{item.description_html}"
+      RAILS_DEFAULT_LOGGER.debug "From DB #{Helpdesk::Ticket.find(item.id).description_html}"
+      
+      #RAILS_DEFAULT_LOGGER.debug item.description_html
+      #RAILS_DEFAULT_LOGGER.debug item.to_json
     end
     
     def replace_content_id(bodyhtml, content_id, created_attachment)
