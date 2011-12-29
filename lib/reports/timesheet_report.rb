@@ -14,7 +14,7 @@ module Reports::TimesheetReport
   end
   
   def csv_hash
-    {"Agent"=>:agent_name, "Hours"=> :hours_spent, "Date" =>:start_time ,"Ticket"=>:ticket_display, "Note"=>:note  }
+    {"Agent"=>:agent_name, "Hours"=> :hours, "Date" =>:start_time ,"Ticket"=>:ticket_display, "Note"=>:note  }
   end
   
 end

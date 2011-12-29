@@ -25,16 +25,11 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
       } unless customers.blank?}
       
   BILLABLE_HASH = { true =>"Billable", false => "Non-Billable"}
-  
-  def hours_spent
-    hours = time_spent.div(60*60)
-    minutes_as_percent = (time_spent.div(60) % 60)*(1.667).round
-    hour_time = hours.to_s()+"."+ minutes_as_percent.to_s()
-    hour_time
-  end
-  
+
   def hours
-   [time_spent.to_i.div(60*60), (time_spent.to_i.div(60) % 60)*(1.667).round].map{ |t| t.to_s.rjust(2, '0') }.join(".")
+   hour_val = time_spent.div(60*60)
+   remaining_sec = time_spent - (60 * 60 *hour_val)
+   [hour_val,  remaining_sec * ((100/3600).to_f)].map{ |t| t.round.to_s }.join(".")
   end
   
   def agent_name

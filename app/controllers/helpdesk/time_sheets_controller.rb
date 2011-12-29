@@ -22,7 +22,7 @@ class Helpdesk::TimeSheetsController < ApplicationController
   def update  
     hours_spent = params[:time_entry][:hours]
     params[:time_entry].delete(:hours)
-    time_entry = params[:time_entry].merge!({:time_spent => get_time_in_second(hours_spent.to_i())})
+    time_entry = params[:time_entry].merge!({:time_spent => get_time_in_second(hours_spent)})
     @time_entry = scoper.find(params[:id])
     if @time_entry.update_attributes(time_entry)
        render :partial => "/helpdesk/time_sheets/time_entry", :object => @time_entry
@@ -85,7 +85,7 @@ class Helpdesk::TimeSheetsController < ApplicationController
     hours_spent = params[:time_entry][:hours]
     params[:time_entry].delete(:hours)
     time_entry = params[:time_entry].merge!({:start_time => Time.zone.now(),
-                                            :time_spent => get_time_in_second(hours_spent.to_i()),
+                                            :time_spent => get_time_in_second(hours_spent),
                                             :timer_running => true,
                                             :billable => true})
     @time_sheet = scoper.new(time_entry)  
@@ -112,7 +112,7 @@ private
   end 
      
   def get_time_in_second time_hour
-      s = time_hour * 60 * 60 
+      s = time_hour.to_f * 60 * 60 
   end
   
   def total_time_spent time_sheets
