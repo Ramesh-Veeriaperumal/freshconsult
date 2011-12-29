@@ -18,13 +18,13 @@ class ActivationsController < ApplicationController
       flash[:notice] = t('users.activations.code_expired')
       return redirect_to new_password_reset_path
     end
-    raise Exception if @user.active?
+    raise Exception if @user.active? and !@user.account_admin?
   end
 
   def create
     @user = current_account.users.find(params[:id])
  
-    raise Exception if @user.active?
+    raise Exception if @user.active? and !@user.account_admin?
  
     if @user.activate!(params)
       flash[:notice] = t('users.activations.success')

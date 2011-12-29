@@ -15,7 +15,7 @@
     <li>
       <%= render :partial=>"/helpdesk/shared/attachment_form"  %>
     </li>
-    <% if !logged_in? %>
+    <% if feature?(:captcha) && !logged_in? %>
       <li>
         <%= content_tag ( :label, t('ticket.verify_human') ) %>
         <%= recaptcha_tags :display => { :theme => "white" }  %>

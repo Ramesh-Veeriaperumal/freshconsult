@@ -22,6 +22,8 @@ class User < ActiveRecord::Base
   has_many :authorizations, :dependent => :destroy
   has_many :votes, :dependent => :destroy
   
+  has_many :time_sheets , :class_name =>'Helpdesk::TimeSheet' , :dependent => :destroy
+  
   validates_uniqueness_of :user_role, :scope => :account_id, :if => Proc.new { |user| user.user_role  == USER_ROLES_KEYS_BY_TOKEN[:account_admin] }
   validates_uniqueness_of :twitter_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
   
@@ -269,9 +271,7 @@ class User < ActiveRecord::Base
   end
   
   def deliver_account_admin_activation
-      self.active = false
-      reset_perishable_token!
-      UserNotifier.deliver_account_admin_activation!(self)
+      UserNotifier.send_later(:deliver_account_admin_activation,self)
   end
   
   def set_time_zone
@@ -337,6 +337,8 @@ class User < ActiveRecord::Base
       xml.instruct! unless options[:skip_instruct]
       super(:builder => xml, :skip_instruct => true,:except => [:crypted_password,:password_salt,:perishable_token,:persistence_token,:single_access_token]) 
   end
+  
+  
  
   protected
     def set_account_id_in_children
