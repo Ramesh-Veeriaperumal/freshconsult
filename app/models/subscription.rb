@@ -1,4 +1,7 @@
 class Subscription < ActiveRecord::Base
+  
+  PRO_RATA_MIN_CHARGE = 4.00
+  
   belongs_to :account
   belongs_to :subscription_plan
   has_many :subscription_payments
@@ -256,7 +259,7 @@ class Subscription < ActiveRecord::Base
     def charge_plan_change_mis
       if  (amount > @old_subscription.amount) and paid_account?  
         amt_to_charge = cal_plan_change_amount.round.to_f
-        misc_charge(amt_to_charge) if amt_to_charge > 0
+        misc_charge(amt_to_charge) if amt_to_charge > PRO_RATA_MIN_CHARGE
       end
     end
     
