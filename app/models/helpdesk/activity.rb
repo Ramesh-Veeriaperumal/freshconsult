@@ -14,11 +14,27 @@ class Helpdesk::Activity < ActiveRecord::Base
   before_create :set_short_descr
   
   named_scope :freshest, lambda { |account|
-    { :conditions => ["account_id = ? ", account], 
+    { :conditions => ["helpdesk_activities.account_id = ? ", account], 
       :order => "helpdesk_activities.created_at DESC"
     }
   }
+
   
+ named_scope :permissible , lambda {|user| { 
+ :joins => "LEFT JOIN `helpdesk_tickets` ON helpdesk_activities.notable_id = helpdesk_tickets.id AND notable_type = 'Helpdesk::Ticket' "  ,
+ :conditions => send(:agent_permission ,user) } unless user.customer?  }
+  
+  def self.agent_permission user
+    
+    permissions = { :all_tickets => [] , 
+                    :group_tickets => ["(helpdesk_activities.notable_type !=?)   OR (helpdesk_tickets.group_id in (?) OR helpdesk_tickets.responder_id=?)",
+                                       'Helpdesk::Ticket' , user.agent_groups.collect{|ag| ag.group_id}.insert(0,0), user.id] , 
+                    :assigned_tickets =>["(helpdesk_activities.notable_type !=?)   OR (helpdesk_tickets.responder_id=?)" ,'Helpdesk::Ticket', user.id] 
+                  }
+                  
+     return permissions[Agent::PERMISSION_TOKENS_BY_KEY[user.agent.ticket_permission]]
+  end
+
   private
     def set_short_descr
       self.short_descr ||= description
