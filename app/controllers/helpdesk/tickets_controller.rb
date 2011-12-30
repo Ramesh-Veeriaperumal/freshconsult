@@ -410,7 +410,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
   
    def verify_permission
-      unless current_user && current_user.has_ticket_permission(@item)
+      unless current_user && current_user.has_ticket_permission?(@item)
         flash[:notice] = t("flash.general.access_denied") 
         redirect_to helpdesk_tickets_url
       end

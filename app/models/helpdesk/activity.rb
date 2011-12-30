@@ -21,7 +21,7 @@ class Helpdesk::Activity < ActiveRecord::Base
 
   
  named_scope :permissible , lambda {|user| { 
- :joins => "LEFT JOIN `helpdesk_tickets` ON helpdesk_activities.notable_id = helpdesk_tickets.id"  ,
+ :joins => "LEFT JOIN `helpdesk_tickets` ON helpdesk_activities.notable_id = helpdesk_tickets.id AND notable_type = 'Helpdesk::Ticket' "  ,
  :conditions => send(:agent_permission ,user) } unless user.customer?  }
   
   def self.agent_permission user

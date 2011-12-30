@@ -1,11 +1,6 @@
 class AddTicketPermissionToAgents < ActiveRecord::Migration
   def self.up
-    add_column :agents, :ticket_permission, :integer
-    
-     Agent.all.each do |agent|
-      agent.update_attribute(:ticket_permission , 1) #1 - all tickets..
-    end
-    
+    add_column :agents, :ticket_permission, :integer , :default => 1    
   end
 
   def self.down

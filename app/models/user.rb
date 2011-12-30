@@ -328,7 +328,7 @@ class User < ActiveRecord::Base
     "@#{twitter_id}"
   end
   
-  def all_ticket_permission
+  def can_view_all_tickets?
     self.permission?(:manage_tickets) && agent.all_ticket_permission
   end
   
@@ -336,8 +336,8 @@ class User < ActiveRecord::Base
     self.permission?(:manage_tickets) && agent.group_ticket_permission
   end
   
-  def has_ticket_permission ticket
-    (all_ticket_permission) or (ticket.responder == self ) or (group_ticket_permission && (ticket.group_id && (agent_groups.collect{|ag| ag.group_id}.insert(0,0)).include?( ticket.group_id))) 
+  def has_ticket_permission? ticket
+    (can_view_all_tickets?) or (ticket.responder == self ) or (group_ticket_permission && (ticket.group_id && (agent_groups.collect{|ag| ag.group_id}.insert(0,0)).include?( ticket.group_id))) 
   end
   
     def to_xml(options = {})
