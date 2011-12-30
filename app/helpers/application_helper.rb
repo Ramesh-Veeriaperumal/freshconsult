@@ -64,7 +64,7 @@ module ApplicationHelper
       forums_tab,
       ['/contacts',           :customers,    permission?(:manage_tickets)],
       ['support/tickets',     :checkstatus, !permission?(:manage_tickets)],
-      ['/reports',            :reports,      permission?(:manage_users)],
+      ['/reports',            :reports,      permission?(:manage_users) && current_user.all_ticket_permission],
       ['/admin/home',         :admin,        permission?(:manage_users)],
       company_tickets_tab
     ]
