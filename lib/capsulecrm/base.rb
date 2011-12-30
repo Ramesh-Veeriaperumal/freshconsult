@@ -138,7 +138,7 @@ module CapsuleCRM
     # returns false if something went wrong (use last_response() to debug)
     def self.create(xml, options={})
       @@last_response = post options[:path], xml_request_options(xml)
-      return false unless last_response.code == 201
+      return false unless last_response.code == 201 
       last_response.headers['location'].split('/').last
     end
 
