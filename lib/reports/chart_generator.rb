@@ -15,21 +15,23 @@ module Reports::ChartGenerator
   
   def gen_line_chart_data(all_hash,resolved_hash)
     line_series_data = []
-    line_series_data.push(prepare_data_series("Tickets Received",all_hash))
-    line_series_data.push(prepare_data_series("Tickets Resolved",resolved_hash))
-    puts "####################################################################"
-    puts line_series_data.to_json
+    line_series_data.push(prepare_data_series("Tickets Received",all_hash,{:type => "column", :color => "#00B9E6"}))
+    line_series_data.push(prepare_data_series("Tickets Resolved",resolved_hash,{:type => "spline", :color => "#FF8749"}))
     line_series_data
   end
   
-  def prepare_data_series(name,series_hash)
+  def prepare_data_series(name,series_hash,options)
     data_hash = {}
     data_hash.store(:name,name)
     series_data = []
-    series_hash.each do |tkt|
-      series_data.push([DateTime.strptime(tkt.date, "%Y-%m-%d %H:%M:%S").to_time.to_i*1000,tkt.count.to_i])
+    unless series_hash.nil?
+      series_hash.each do |tkt|
+        series_data.push([DateTime.strptime(tkt.date, "%Y-%m-%d %H:%M:%S").to_time.to_i*1000,tkt.count.to_i])
+      end
     end
     data_hash.store(:data,series_data)
+    data_hash.store(:type,options[:type])
+    data_hash.store(:color,options[:color])
     data_hash
   end
   
@@ -47,6 +49,7 @@ module Reports::ChartGenerator
           :renderTo => "#{column_name}_freshdesk_chart",
            :margin => [50, 30, 0, 30]
         },
+       :colors => define_colors(column_name),
         :plotOptions => {
           :pie => {
             :dataLabels => {
@@ -60,7 +63,8 @@ module Reports::ChartGenerator
       :series => [
             {
                 :type => 'pie',
-                :data => browser_data
+                :data => browser_data,
+                :innerSize => '40%'
             }
         ],
         :title => {
@@ -80,7 +84,7 @@ module Reports::ChartGenerator
       :chart => {
           :renderTo => "freshdesk_time_line_chart",
            :marginBottom => 100,
-           :marginLeft => 100
+           :marginLeft => 100,
            
         },
       :x_axis => {
@@ -96,9 +100,15 @@ module Reports::ChartGenerator
          },
          :min => 0
       },
+      :plotOptions => {
+         :column => {
+          :pointWidth =>  15
+          }
+       }, 
       :series => line_chart_data,
         :title => {
           :text => "Tickets Activity"
+          
         },
         :tooltip => {
           :formatter => line_tooltip_formatter
@@ -131,5 +141,15 @@ module Reports::ChartGenerator
   'function() {
       if (this.y > 15) return this.point.name;
     }'
+  end
+  
+  def define_colors(column)
+    puts column
+    case column.to_s
+      when "ticket_type"
+        return ["'#FF8749'","'#933A8C'","'#00FFFC'","'#4051F6'"]
+      when "priority"
+        return ["'#49B8F9'","'#4A9D5B'","'#FF4F55'","'#FFEC6C'"]
+    end    
   end
 end
