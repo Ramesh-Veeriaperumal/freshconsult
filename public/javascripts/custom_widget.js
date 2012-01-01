@@ -7,6 +7,7 @@ Freshdesk.Widget.prototype={
 		if(this.options.username) ;else this.options.username = Cookie.get(this.options.anchor+"_username");
 		if(this.options.password) ;else this.options.password = Cookie.get(this.options.anchor+"_password");
 		this.content_anchor = $$("#"+this.options.anchor+" #content")[0];
+		this.error_anchor = $$("#"+this.options.anchor+" #error")[0];
 		this.title_anchor = $$("#"+this.options.anchor+" #title")[0];
 		Ajax.Responders.register({
 			onException:function(request, ex){
@@ -23,7 +24,7 @@ Freshdesk.Widget.prototype={
 		this.options.username = credentials.username.value;
 		this.options.password = credentials.password.value;
 		if(this.options.username.blank() && this.options.password.blank()) {
-			alert("Please provide Username and password.");
+			this.alert_failure("Please provide Username and password.");
 		} else {
 			if (credentials.remember_me.value == "true") {
 				Cookie.set(this.options.anchor + "_username", this.options.username);
@@ -75,48 +76,66 @@ Freshdesk.Widget.prototype={
 					reqData.on_success(evt);
 				}
 			},
-			onFailure:function(evt){
-				if (reqData != null && reqData.on_failure != null) {
-					reqData.on_failure(evt);
-				} else {
-					this.resource_failure(evt, this);
-				}
-			}.bind(this)
+			onFailure:this.resource_failure.bind(this)
 		});
 	},
 
-	resource_failure:function(evt, obj){
-		if(evt.status == 401){
-			obj.options.username=null;
-			obj.options.password=null;
-			Cookie.erase(obj.options.anchor+"_username");
-			Cookie.erase(obj.options.anchor+"_password");
-			alert("Given user credentials are not correct. Please correct it.");
-		}else{
+	resource_failure:function(evt){
+		if (evt.status == 401) {
+			this.options.username = null;
+			this.options.password = null;
+			Cookie.erase(this.options.anchor + "_username");
+			Cookie.erase(this.options.anchor + "_password");
+			if (this.on_failure != null) {
+				reqData.on_failure(evt);
+			} else { this.alert_failure("Given user credentials are not correct. Please correct it.");}
+		} else if (evt.status == 502) {
+			this.alert_failure("Remote application is not responding.  Please check whether given domain url is up.");
+		} else if (evt.status == 500) {
+			this.alert_failure("Unknown server error. Please contact support@freshdesk.com.");
+		} else if (this.on_failure != null) {
+			reqData.on_failure(evt);
+		} else {
 			errorStr = evt.responseText;
-			alert("An error occured: \n\n"+errorStr+"\nPlease contact support@freshdesk.com for further details.");
+			this.alert_failure("An error occured: \n\n" + errorStr + "\nPlease contact support@freshdesk.com for further details.");
 		}
 	},
 
-	create_integrated_resource:function(last_created_id, integratable_id, resultCallback) {
-		reqData = {
-			"application_id":this.options.application_id,
-			"integrated_resource[integrated_resource_id]":last_created_id,
-			"integrated_resource[local_integratable_id]":integratable_id,
-			"integrated_resource[local_integratable_type]":this.options.integratable_type
-		};
-		new Ajax.Request("/integrations/integrated_resources/create",{
-            asynchronous: true,
-			method: "post",
-			parameters:reqData,
-			onSuccess:function(evt) { if(resultCallback) resultCallback(evt);
-			},
-			onFailure:function(evt){ if(resultCallback) resultCallback(evt);
-			}
-		});
+	alert_failure:function(errorMsg) {
+		if (this.error_anchor == null || this.error_anchor !== "") {
+			alert(errorMsg);
+		} else {
+			this.error_anchor.innerHTML = errorMsg;
+		}
 	},
 
-	delete_integrated_resource:function(last_fetched_id) {
+	create_integrated_resource:function(resultCallback) {
+		if (this.remote_integratable_id && this.local_integratable_id) {
+			reqData = {
+				"application_id": this.options.application_id,
+				"integrated_resource[remote_integratable_id]": this.remote_integratable_id,
+				"integrated_resource[local_integratable_id]": this.local_integratable_id,
+				"integrated_resource[local_integratable_type]": this.options.integratable_type
+			};
+			new Ajax.Request("/integrations/integrated_resources/create", {
+				asynchronous: true,
+				method: "post",
+				parameters: reqData,
+				onSuccess: function(evt){
+					this.remote_integratable_id = null;
+					this.local_integratable_id = null;
+					if (resultCallback) 
+						resultCallback(evt);
+				},
+				onFailure: function(evt){
+					if (resultCallback) 
+						resultCallback(evt);
+				}
+			});
+		}
+	},
+
+	delete_integrated_resource:function(last_fetched_id, resultCallback) {
 		reqData = {
 			"integrated_resource[id]":last_fetched_id,
 		};
@@ -124,9 +143,9 @@ Freshdesk.Widget.prototype={
             asynchronous: true,
 			method: "delete",
 			parameters:reqData,
-			onSuccess:function(evt) {
+			onSuccess:function(evt) { if(resultCallback) resultCallback(evt);
 			},
-			onFailure:function(evt){
+			onFailure:function(evt){ if(resultCallback) resultCallback(evt);
 			}
 		});
 	}

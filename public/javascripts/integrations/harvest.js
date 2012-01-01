@@ -127,7 +127,14 @@ HarvestWidget.prototype= {
 				resource: "daily/add",
 				content_type: "application/xml",
 				method: "post",
-				on_success: harvestWidget.handleTimeEntrySuccess.bind(this),
+				on_success: function(evt){
+					harvestWidget.handleTimeEntrySuccess(evt);
+					if (resultCallback) {
+						this.result_callback = resultCallback;
+						resultCallback(evt);
+					}
+					harvestWidget.add_harvest_resource_in_db();
+				}.bind(this),
 				on_failure: harvestWidget.processFailure
 			});
 		}
@@ -138,7 +145,7 @@ HarvestWidget.prototype= {
 		resXml = resData.responseXML
 		var dayEntries = XmlUtil.extractEntities(resXml,"day_entry");
 		if(dayEntries.length>0){
-			this.last_added_timeentry_id = XmlUtil.getNodeValueStr(dayEntries[0],"id");
+			this.freshdeskWidget.remote_integratable_id = XmlUtil.getNodeValueStr(dayEntries[0],"id");
 		}
 	},
 
@@ -147,7 +154,7 @@ HarvestWidget.prototype= {
 			alert("Username or password is incorrect.");
 			harvestWidget.freshdeskWidget.display_login();
 		} else if (evt.status == 404) {
-			alert("Project and/or task is not assigned to the logged in user.");
+			alert("Selected project and/or task is no longer assigned to the logged-in user.");
 		} else {
 			alert(evt.responseText);
 		}
@@ -164,7 +171,10 @@ HarvestWidget.prototype= {
 					resource: "daily/update/"+harvestBundle.remote_integratable_id,
 					content_type: "application/xml",
 					method: "post",
-					on_success: harvestWidget.handleTimeEntrySuccess.bind(this),
+					on_success: function(evt){
+						harvestWidget.handleTimeEntrySuccess(evt);
+						if(resultCallback) resultCallback(evt);
+					}.bind(this),
 					on_failure: harvestWidget.processFailure
 				});
 			}
@@ -179,7 +189,10 @@ HarvestWidget.prototype= {
 				resource: "daily/delete/"+harvestBundle.remote_integratable_id,
 				content_type: "application/xml",
 				method: "delete",
-				on_success: harvestWidget.handleTimeEntrySuccess.bind(this),
+				on_success: function(evt){
+					harvestWidget.handleTimeEntrySuccess(evt);
+					if(resultCallback) resultCallback(evt);
+				}.bind(this),
 				on_failure: harvestWidget.processFailure
 			});
 		} else {
@@ -204,8 +217,24 @@ HarvestWidget.prototype= {
 		$("harvest-timeentry-notes").value = (notes+"\n"+harvestBundle.harvestNote).escapeHTML();
 	},
 
-	add_harvest_resource_in_db:function(integratable_id, resultCallback){
-		this.freshdeskWidget.create_integrated_resource(this.last_added_timeentry_id, integratable_id);
+	set_timesheet_entry_id:function(integratable_id) {
+		if(integratable_id != null) this.freshdeskWidget.local_integratable_id = integratable_id;
+		this.add_harvest_resource_in_db();
+	},
+
+	add_harvest_resource_in_db:function() {
+		this.freshdeskWidget.create_integrated_resource(function(evt){
+			resJ = evt.responseJSON
+			if (resJ['status'] != 'error') {
+				harvestBundle.integrated_resource_id = resJ['integrations_integrated_resource']['id'];
+				harvestBundle.remote_integratable_id = resJ['integrations_integrated_resource']['remote_integratable_id'];
+			} else {
+				console.log("Error while adding the integrated resource in db.");
+			}
+			if (result_callback) 
+				result_callback(evt);
+			this.result_callback = null;
+		}.bind(this));
 	},
 
 	delete_harvest_resource_in_db:function(resultCallback){
@@ -217,4 +246,5 @@ HarvestWidget.prototype= {
 	}
 }
 
-harvestWidget = new HarvestWidget(harvestBundle, false);
+harvestWidget = new HarvestWidget(harvestBundle);
+harvestWidget.set_timesheet_entry_id(1234);

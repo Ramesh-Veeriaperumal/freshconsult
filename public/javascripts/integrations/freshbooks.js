@@ -11,7 +11,7 @@ FreshbooksWidget.prototype = {
 
 	initialize:function(freshbooksBundle, loadInline){
 		widgetInst = this; // Assigning to some variable so that it will be accessible inside custom_widget.
-		this.projectData = ""; this.last_added_timeentry_id = ""; init_reqs = []
+		this.projectData = ""; init_reqs = []
 		if(!loadInline || freshbooksBundle.remote_integratable_id == '') {
 			init_reqs = [{
 				body: widgetInst.CLIENT_LIST_REQ.evaluate({}),
@@ -42,7 +42,7 @@ FreshbooksWidget.prototype = {
 			},
 			application_resources: init_reqs
 		};
-		
+
 		if (typeof(freshbooksBundle) != 'undefined' && freshbooksBundle.k) {
 			freshbooksOptions.username = freshbooksBundle.k;
 			freshbooksOptions.password = "x";
@@ -148,7 +148,14 @@ FreshbooksWidget.prototype = {
 				body: body,
 				content_type: "application/xml",
 				method: "post",
-				on_success: this.handleTimeEntrySuccess.bind(this)
+				on_success: function(evt){
+					this.handleTimeEntrySuccess(evt);
+					if (resultCallback) {
+						this.result_callback = resultCallback;
+						resultCallback(evt);
+					}
+					this.add_freshbooks_resource_in_db();
+				}.bind(this)
 			});
 		}
 		return false;
@@ -159,10 +166,9 @@ FreshbooksWidget.prototype = {
 		if (this.isRespSuccessful(resXml)) {
 			var responses = XmlUtil.extractEntities(resXml,"response");
 			if (responses.length > 0) {
-				this.last_added_timeentry_id = XmlUtil.getNodeValueStr(responses[0], "time_entry_id")
-				add_freshbooks_resource_in_db();
+				this.freshdeskWidget.remote_integratable_id = XmlUtil.getNodeValueStr(responses[0], "time_entry_id")
 			}
-			resetTimeEntryForm();
+//			resetTimeEntryForm();
 		}
 	},
 
@@ -205,7 +211,10 @@ FreshbooksWidget.prototype = {
 					body: body,
 					content_type: "application/xml",
 					method: "post",
-					on_success: this.handleTimeEntrySuccess.bind(this)
+					on_success: function(evt){
+						this.handleTimeEntrySuccess(evt);
+						if(resultCallback) resultCallback(evt);
+					}.bind(this)
 				});
 			}
 		} else {
@@ -222,7 +231,11 @@ FreshbooksWidget.prototype = {
 				body: body,
 				content_type: "application/xml",
 				method: "post",
-				on_success: this.handleTimeEntrySuccess.bind(this)
+				on_success: function(evt){
+					this.handleTimeEntrySuccess(evt);
+					this.delete_freshbooks_resource_in_db(resultCallback);
+					if(resultCallback) resultCallback(evt);
+				}.bind(this)
 			});
 		} else {
 			alert('Freshbooks widget is not loaded properly. Please try again.');
@@ -246,13 +259,24 @@ FreshbooksWidget.prototype = {
 		$("freshbooks-timeentry-notes").value = (notes+"\n"+freshbooksBundle.freshbooksNote).escapeHTML();
 	},
 
-	add_freshbooks_resource_in_db:function(integratable_id, resultCallback){
-		if (this.last_added_timeentry_id && integratable_id) {
-			this.freshdeskWidget.create_integrated_resource(this.last_added_timeentry_id, integratable_id, function(evt){
-				this.last_added_timeentry_id = "";
-				if(resultCallback) resultCallback(evt);
-			}.bind(this));
-		}
+	set_timesheet_entry_id:function(integratable_id) {
+		if(integratable_id != null) this.freshdeskWidget.local_integratable_id = integratable_id;
+		this.add_freshbooks_resource_in_db();
+	},
+
+	add_freshbooks_resource_in_db:function() {
+		this.freshdeskWidget.create_integrated_resource(function(evt){
+			resJ = evt.responseJSON
+			if (resJ['status'] != 'error') {
+				freshbooksBundle.integrated_resource_id = resJ['integrations_integrated_resource']['id'];
+				freshbooksBundle.remote_integratable_id = resJ['integrations_integrated_resource']['remote_integratable_id'];
+			} else {
+				console.log("Error while adding the integrated resource in db.");
+			}
+			if (result_callback) 
+				result_callback(evt);
+			this.result_callback = null;
+		}.bind(this));
 	},
 
 	delete_freshbooks_resource_in_db:function(resultCallback){
