@@ -98,7 +98,7 @@ Freshdesk.Widget.prototype={
 		}
 	},
 
-	create_integrated_resource:function(last_created_id, integratable_id) {
+	create_integrated_resource:function(last_created_id, integratable_id, resultCallback) {
 		reqData = {
 			"application_id":this.options.application_id,
 			"integrated_resource[integrated_resource_id]":last_created_id,
@@ -109,9 +109,9 @@ Freshdesk.Widget.prototype={
             asynchronous: true,
 			method: "post",
 			parameters:reqData,
-			onSuccess:function(evt) {
+			onSuccess:function(evt) { if(resultCallback) resultCallback(evt);
 			},
-			onFailure:function(evt){
+			onFailure:function(evt){ if(resultCallback) resultCallback(evt);
 			}
 		});
 	},

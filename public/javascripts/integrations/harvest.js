@@ -8,7 +8,7 @@ HarvestWidget.prototype= {
 		this.projectData = "";
 		this.taskData = "";
 		var init_reqs = []
-		if (!loadInline || harvestBundle.time_entry_id == '') {
+		if (!loadInline || harvestBundle.remote_integratable_id == '') {
 			init_reqs = [{
 				resource: "clients",
 				content_type: "application/xml",
@@ -109,14 +109,14 @@ HarvestWidget.prototype= {
 	},
 
 	logTimeEntry:function() {
-		if (harvestBundle.time_entry_id) {
+		if (harvestBundle.remote_integratable_id) {
 			this.updateTimeEntry();
 		} else {
 			this.createTimeEntry();
 		}
 	},
 
-	createTimeEntry:function(resData) {
+	createTimeEntry:function(resultCallback) {
 		if (this.validateInput()) {
 			this.freshdeskWidget.request({
 				entity_name: "request",
@@ -154,14 +154,14 @@ HarvestWidget.prototype= {
 	},
 	
 	// Methods for external widgets use.
-	updateTimeEntry:function(){
-		if (harvestBundle.time_entry_id) {
+	updateTimeEntry:function(resultCallback){
+		if (harvestBundle.remote_integratable_id) {
 			if (this.validateInput()) {
 				this.freshdeskWidget.request({
 					entity_name: "request",
 					"request[notes]": $("harvest-timeentry-notes").value,
 					"request[hours]": $("harvest-timeentry-hours").value,
-					resource: "daily/update/"+harvestBundle.time_entry_id,
+					resource: "daily/update/"+harvestBundle.remote_integratable_id,
 					content_type: "application/xml",
 					method: "post",
 					on_success: harvestWidget.handleTimeEntrySuccess.bind(this),
@@ -173,10 +173,10 @@ HarvestWidget.prototype= {
 		}
 	},
 
-	deleteTimeEntry:function(){
-		if (harvestBundle.time_entry_id) {
+	deleteTimeEntry:function(resultCallback){
+		if (harvestBundle.remote_integratable_id) {
 			this.freshdeskWidget.request({
-				resource: "daily/delete/"+harvestBundle.time_entry_id,
+				resource: "daily/delete/"+harvestBundle.remote_integratable_id,
 				content_type: "application/xml",
 				method: "delete",
 				on_success: harvestWidget.handleTimeEntrySuccess.bind(this),
@@ -188,7 +188,7 @@ HarvestWidget.prototype= {
 	},
 
 	convertToInlineWidget:function() {
-		if (harvestBundle.time_entry_id) {
+		if (harvestBundle.remote_integratable_id) {
 			$("harvest-timeentry-form").hide();
 		} else {
 			$("harvest-timeentry-hours-label").hide();
@@ -204,8 +204,16 @@ HarvestWidget.prototype= {
 		$("harvest-timeentry-notes").value = (notes+"\n"+harvestBundle.harvestNote).escapeHTML();
 	},
 
-	add_harvest_resource_in_db:function(integratable_id){
+	add_harvest_resource_in_db:function(integratable_id, resultCallback){
 		this.freshdeskWidget.create_integrated_resource(this.last_added_timeentry_id, integratable_id);
+	},
+
+	delete_harvest_resource_in_db:function(resultCallback){
+		if (harvestBundle.integrated_resource_id) {
+			this.freshdeskWidget.delete_integrated_resource(harvestBundle.integrated_resource_id);
+			harvestBundle.integrated_resource_id = "";
+			harvestBundle.remote_integratable_id = "";
+		}
 	}
 }
 

@@ -252,24 +252,22 @@ module ApplicationHelper
  end
   
   def get_app_config(app_name)
-    installed_app = Integrations::InstalledApplication.find(:all, :joins=>:application, 
-                  :conditions => {:applications => {:name => app_name}, :account_id => current_account})
+    installed_app = get_app_details(app_name)
     return installed_app[0].configs[:inputs] unless installed_app.blank?
   end
 
   def is_application_installed?(app_name)
-    installed_app = Integrations::InstalledApplication.find(:all, :joins=>:application, 
-                  :conditions => {:applications => {:name => app_name}, :account_id => current_account})
+    installed_app = get_app_details(app_name)
     return !(installed_app.blank?)
   end
-  
+
   def get_app_details(app_name)
     installed_app = Integrations::InstalledApplication.find(:all, :joins=>:application, 
                   :conditions => {:applications => {:name => app_name}, :account_id => current_account})
     return installed_app
   end
 
-  def get_app_widget_script(app_name, widget_name, liquid_objs)
+  def get_app_widget_script(app_name, widget_name, liquid_objs) 
     installed_app = Integrations::InstalledApplication.find(:first, :joins=>{:application => :widgets}, 
                   :conditions => {:applications => {:name => app_name, :widgets => {:name => widget_name}}, :account_id => current_account})
     if installed_app.blank? or installed_app.application.blank?

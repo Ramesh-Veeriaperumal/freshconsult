@@ -11,8 +11,8 @@ FreshbooksWidget.prototype = {
 
 	initialize:function(freshbooksBundle, loadInline){
 		widgetInst = this; // Assigning to some variable so that it will be accessible inside custom_widget.
-		this.projectData = ""; init_reqs = []
-		if(!loadInline || freshbooksBundle.time_entry_id == '') {
+		this.projectData = ""; this.last_added_timeentry_id = ""; init_reqs = []
+		if(!loadInline || freshbooksBundle.remote_integratable_id == '') {
 			init_reqs = [{
 				body: widgetInst.CLIENT_LIST_REQ.evaluate({}),
 				content_type: "application/xml",
@@ -128,14 +128,14 @@ FreshbooksWidget.prototype = {
 	},
 
 	logTimeEntry:function() {
-		if (freshbooksBundle.time_entry_id) {
+		if (freshbooksBundle.remote_integratable_id) {
 			this.updateTimeEntry();
 		} else {
 			this.createTimeEntry();
 		}
 	},
 
-	createTimeEntry:function() {
+	createTimeEntry:function(resultCallback) {
 		if (freshbooksWidget.validateInput()) {
 			var body = this.CREATE_TIMEENTRY_REQ.evaluate({
 				staff_id: $("freshbooks-timeentry-staff").value,
@@ -159,7 +159,8 @@ FreshbooksWidget.prototype = {
 		if (this.isRespSuccessful(resXml)) {
 			var responses = XmlUtil.extractEntities(resXml,"response");
 			if (responses.length > 0) {
-				this.last_added_timeentry_id = XmlUtil.getNodeValueStr(responses[0], "time_entry_id");
+				this.last_added_timeentry_id = XmlUtil.getNodeValueStr(responses[0], "time_entry_id")
+				add_freshbooks_resource_in_db();
 			}
 			resetTimeEntryForm();
 		}
@@ -192,11 +193,11 @@ FreshbooksWidget.prototype = {
 	},
 
 	// Methods for external widgets use.
-	updateTimeEntry:function(){
-		if (freshbooksBundle.time_entry_id) {
+	updateTimeEntry:function(resultCallback){
+		if (freshbooksBundle.remote_integratable_id) {
 			if (freshbooksWidget.validateInput()) {
 				var body = this.UPDATE_TIMEENTRY_REQ.evaluate({
-					time_entry_id: freshbooksBundle.time_entry_id,
+					time_entry_id: freshbooksBundle.remote_integratable_id,
 					notes: $("freshbooks-timeentry-notes").value,
 					hours: $("freshbooks-timeentry-hours").value
 				});
@@ -212,10 +213,10 @@ FreshbooksWidget.prototype = {
 		}
 	},
 
-	deleteTimeEntry:function(){
-		if (freshbooksBundle.time_entry_id) {
+	deleteTimeEntry:function(resultCallback){
+		if (freshbooksBundle.remote_integratable_id) {
 			var body = this.DELETE_TIMEENTRY_REQ.evaluate({
-				time_entry_id: freshbooksBundle.time_entry_id
+				time_entry_id: freshbooksBundle.remote_integratable_id
 			});
 			this.freshdeskWidget.request({
 				body: body,
@@ -229,7 +230,7 @@ FreshbooksWidget.prototype = {
 	},
 
 	convertToInlineWidget:function() {
-		if (freshbooksBundle.time_entry_id) {
+		if (freshbooksBundle.remote_integratable_id) {
 			$("freshbooks-timeentry-form").hide();
 		} else {
 			$("freshbooks-timeentry-hours-label").hide();
@@ -245,9 +246,22 @@ FreshbooksWidget.prototype = {
 		$("freshbooks-timeentry-notes").value = (notes+"\n"+freshbooksBundle.freshbooksNote).escapeHTML();
 	},
 
-	add_freshbooks_resource_in_db:function(integratable_id){
-		this.freshdeskWidget.create_integrated_resource(this.last_added_timeentry_id, integratable_id);
+	add_freshbooks_resource_in_db:function(integratable_id, resultCallback){
+		if (this.last_added_timeentry_id && integratable_id) {
+			this.freshdeskWidget.create_integrated_resource(this.last_added_timeentry_id, integratable_id, function(evt){
+				this.last_added_timeentry_id = "";
+				if(resultCallback) resultCallback(evt);
+			}.bind(this));
+		}
+	},
+
+	delete_freshbooks_resource_in_db:function(resultCallback){
+		if (freshbooksBundle.integrated_resource_id) {
+			this.freshdeskWidget.delete_integrated_resource(freshbooksBundle.integrated_resource_id);
+			freshbooksBundle.integrated_resource_id = "";
+			freshbooksBundle.remote_integratable_id = "";
+		}
 	}
 }
 
-freshbooksWidget = new FreshbooksWidget(freshbooksBundle, false);
+freshbooksWidget = new FreshbooksWidget(freshbooksBundle);
