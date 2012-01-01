@@ -247,4 +247,3 @@ HarvestWidget.prototype= {
 }
 
 harvestWidget = new HarvestWidget(harvestBundle);
-harvestWidget.set_timesheet_entry_id(1234);
