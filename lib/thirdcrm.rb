@@ -1,7 +1,6 @@
 require 'capsulecrm'
 require 'active_record'
 
-include ErrorHandle
 
 class ThirdCRM
   
@@ -15,14 +14,21 @@ class ThirdCRM
     CapsuleCRM.initialize!
   end  
   
-  #Account name,helpdesk_url,creation_date,renewal_date,time_zone
-  #Contact -> name,email
   def add_signup_data(account)
+   returned_val = sandbox(0) {
+    raise Exception
     organisation_id = add_organisation(account)
     person_id = add_contact(account,organisation_id)
     add_tag("Sign Up",organisation_id)
     custom_fields = construct_custom_field_data(SIGNUP_DATA,"Sign Up",account)
     create_custom_fields(custom_fields,organisation_id)
+   }
+   
+    
+    #If some error occours while dumping the data into 
+    if returned_val == 0
+      FreshdeskErrorsMailer.deliver_error_in_crm!(account)
+    end
   end
   
   def create_custom_fields(custom_fields,organisation_id)
@@ -76,12 +82,44 @@ class ThirdCRM
     tag.save
   end
   
-  def add_customer_data
-    
-  end
+  def sandbox(return_value = nil)
+      begin
+        return_value = yield
+      rescue Errno::ECONNRESET => e
+        NewRelic::Agent.notice_error(e)
+        RAILS_DEFAULT_LOGGER.debug "Connection reset Error!"
+        RAILS_DEFAULT_LOGGER.debug e.to_s
+      rescue Timeout::Error => e
+        NewRelic::Agent.notice_error(e)
+        RAILS_DEFAULT_LOGGER.debug "Timeout Error!"
+        RAILS_DEFAULT_LOGGER.debug e.to_s
+      rescue EOFError => e
+        NewRelic::Agent.notice_error(e)
+        RAILS_DEFAULT_LOGGER.debug "EOF error"
+        RAILS_DEFAULT_LOGGER.debug e.to_s
+      rescue Errno::ETIMEDOUT => e
+        NewRelic::Agent.notice_error(e)
+        RAILS_DEFAULT_LOGGER.debug "ETimedOut Error!"
+        RAILS_DEFAULT_LOGGER.debug e.to_s
+      rescue OpenSSL::SSL::SSLError => e
+        NewRelic::Agent.notice_error(e)
+        RAILS_DEFAULT_LOGGER.debug "SSL Error!"
+        RAILS_DEFAULT_LOGGER.debug e.to_s
+      rescue SystemStackError => e
+        NewRelic::Agent.notice_error(e)
+        RAILS_DEFAULT_LOGGER.debug "System stack error!"
+        RAILS_DEFAULT_LOGGER.debug e.to_s
+      rescue Exception => e
+        NewRelic::Agent.notice_error(e)
+        RAILS_DEFAULT_LOGGER.debug "Unexpected Exception!"
+        RAILS_DEFAULT_LOGGER.debug e.to_s
+      rescue 
+        RAILS_DEFAULT_LOGGER.debug "Fatal Error!"
+      end
+      
+      return return_value
+      
+    end
   
-  def update_subscription
-    
-  end
   
 end

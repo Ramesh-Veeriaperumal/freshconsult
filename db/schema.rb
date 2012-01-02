@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111229075628) do
+ActiveRecord::Schema.define(:version => 20111230205418) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -74,7 +74,7 @@ ActiveRecord::Schema.define(:version => 20111229075628) do
   add_index "agent_groups", ["group_id", "user_id"], :name => "agent_groups_group_user_ids"
 
   create_table "agents", :force => true do |t|
-    t.integer  "user_id",    :limit => 8
+    t.integer  "user_id",           :limit => 8
     t.text     "signature"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -145,6 +145,16 @@ ActiveRecord::Schema.define(:version => 20111229075628) do
   end
 
   add_index "delayed_jobs", ["locked_by"], :name => "index_delayed_jobs_on_locked_by"
+
+  create_table "deleted_customers", :force => true do |t|
+    t.string   "full_domain"
+    t.integer  "account_id"
+    t.string   "admin_name"
+    t.string   "admin_email"
+    t.text     "account_info"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "email_configs", :force => true do |t|
     t.integer  "account_id",      :limit => 8
