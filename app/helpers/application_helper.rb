@@ -289,14 +289,17 @@ module ApplicationHelper
     field_label = t(field[:label])
     dom_type = field[:type]
     required = field[:required]
-    element_class   = " #{ (required) ? 'required' : '' } #{ dom_type }"
+    rel_value = field[:rel]
+    url_autofill_validator = field[:validator_type]
+    ghost_value = field[:autofill_text]
+    element_class   = " #{ (required) ? 'required' : '' }  #{ (url_autofill_validator == 'domain_validator') ? 'domain_validator' : (url_autofill_validator == 'url_validator') ? 'url_validator' : '' } #{ dom_type }"
     field_label    += " #{ (required) ? '*' : '' }"
     object_name     = "#{object_name.to_s}"
     label = label_tag object_name+"_"+field_name, field_label
     dom_type = dom_type.to_s
     case dom_type
       when "text", "number", "email", "multiemail" then
-        element = label + text_field(object_name, field_name, :class => element_class, :value => field_value)
+        element = label + text_field(object_name, field_name, :class => element_class, :value => field_value, :rel => rel_value, :data_ghost_text => ghost_value)
       when "paragraph" then
         element = label + text_area(object_name, field_name, :class => element_class, :value => field_value)
       when "dropdown" then

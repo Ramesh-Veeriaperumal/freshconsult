@@ -9,7 +9,7 @@ class PopulateHarvest < ActiveRecord::Migration
     options = {
         :keys_order => [:title, :domain, :harvest_note], 
         :title => { :type => :text, :required => true, :label => "integrations.harvest.form.widget_title", :default_value => "Harvest"},
-        :domain => { :type => :text, :required => true, :label => "integrations.harvest.form.domain", :info => "integrations.harvest.form.domain_info" }, 
+        :domain => { :type => :text, :required => true, :label => "integrations.harvest.form.domain", :info => "integrations.harvest.form.domain_info", :rel=> "ghostwriter", :autofill_text => ".harvestapp.com", :validator_type => "domain_validator" }, 
         :harvest_note => { :type => :text, :required => false, :label => "integrations.harvest.form.harvest_note", 
                             :info => "integrations.harvest.form.harvest_note_info", :default_value => 'Freshdesk Ticket # {{ticket.id}}' }
     }.to_yaml
