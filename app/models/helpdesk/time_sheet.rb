@@ -40,4 +40,8 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
     "#{ticket.display_id} - #{ticket.subject}"
   end
   
+  def group_by_day_criteria
+    created_at.to_date.to_s(:db)
+  end
+  
 end

@@ -28,7 +28,7 @@ class Helpdesk::TimeSheetsController < ApplicationController
   
   def time_sheets_for_ticket
     @ticket = current_account.tickets.find_by_display_id(params[:id])
-    @time_sheets = @ticket.time_sheets || []
+    @time_sheets = @ticket.time_sheets.group_by(&:group_by_day_criteria) || []
     render :partial => "helpdesk/time_sheets/time_sheets_for_ticket"
   end
   
