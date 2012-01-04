@@ -2,6 +2,7 @@ class Account < ActiveRecord::Base
   require 'net/dns/resolver'
   require 'net/http' 
   require 'uri' 
+  require 'thirdcrm'
 
   #rebranding starts
   serialize :preferences, Hash
@@ -154,6 +155,7 @@ class Account < ActiveRecord::Base
   after_create :populate_seed_data
   after_create :populate_features
   after_create :send_welcome_email
+  after_create :add_to_crm
   after_update :update_users_language
   
   before_destroy :update_google_domain
@@ -437,6 +439,15 @@ class Account < ActiveRecord::Base
                     :account => self)
     end
     
+    def add_to_crm
+      send_later(:add_to_internal_capsule)
+    end
+    
+    def add_to_internal_capsule
+      crm = ThirdCRM.new
+      crm.add_signup_data(self)
+    end
+    
     def create_admin
       self.user.active = true  
       self.user.account = self
@@ -457,4 +468,9 @@ class Account < ActiveRecord::Base
     def update_google_domain
      self.update_attribute(:google_domain, nil)
     end
+    
+     def subscription_next_renewal_at
+       subscription.next_renewal_at
+     end
+ 
 end

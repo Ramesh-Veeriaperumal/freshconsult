@@ -12,7 +12,7 @@ module Reports::HelpdeskReport
   end
   
  def timeline_columns
-   [:all,:resolved] 
+   [:created_at,:resolved_at] 
  end
  
   def calculate_resolved_on_time(params)
@@ -50,7 +50,7 @@ module Reports::HelpdeskReport
       ticket_timeline = group_tkts_by_timeline(params,column)
       self.instance_variable_set("@#{column}_hash", ticket_timeline)
     end
-    gen_line_chart(@all_hash,@resolved_hash)
+    gen_line_chart(@created_at_hash,@resolved_at_hash)
   end
    
     
@@ -77,17 +77,24 @@ module Reports::HelpdeskReport
      :select => "count(*) count, #{vals[:column_name]}",
      :group => "#{vals[:column_name]}")
   end
-   
-  def group_tkts_by_timeline(params,type)
-    scoper(params[:date][:month].to_i).find( 
-     :all,
-     :select => "count(*) count,created_at date",
-     :conditions => fetch_condition(type),
-     :group => "DATE(created_at)")
+  
+  def timeline_date_condition(month)
+    " helpdesk_ticket_states.created_at > '#{start_of_month(month.to_i).to_s(:db)}' and helpdesk_ticket_states.created_at < '#{end_of_month(month.to_i).to_s(:db)}' "
   end
    
-  def fetch_condition(type)
-    return "status IN (#{TicketConstants::STATUS_KEYS_BY_TOKEN[:resolved]},#{TicketConstants::STATUS_KEYS_BY_TOKEN[:closed]})" if type.to_s.eql?("resolved")
+  def group_tkts_by_timeline(params,type)
+    Account.current.tickets.find( 
+     :all,
+     :select => "count(*) count,helpdesk_ticket_states.#{type} date",
+     :joins => :ticket_states,
+     :conditions => fetch_condition(type,params[:date][:month]),
+     :group => "DATE(helpdesk_ticket_states.#{type})")
+  end
+   
+  def fetch_condition(type,month)
+    condition = timeline_date_condition(month)
+    condition = "#{condition} and resolved_at IS NOT NULL" if type.to_s.eql?("resolved_at")
+    return condition 
   end
   
   def count_of_tickets_last_month(params)

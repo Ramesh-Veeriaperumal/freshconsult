@@ -381,9 +381,24 @@ class AccountsController < ApplicationController
   def cancel
     if request.post? and !params[:confirm].blank?
       SubscriptionNotifier.deliver_account_deleted(current_account)
-      current_account.destroy
-      redirect_to "http://www.freshdesk.com"
+      create_deleted_customers_info
+      #current_account.destroy
     end
+  end
+  
+  def create_deleted_customers_info
+    sub = current_account.subscription
+    DeletedCustomers.create(
+       :full_domain => current_account.full_domain,
+       :account_id => current_account.id,
+       :admin_name => current_account.account_admin.name,
+       :admin_email => current_account.account_admin.email,
+       :account_info => {:plan => sub.subscription_plan_id,
+                         :discount => sub.subscription_discount_id,
+                         :agents_count => current_account.agents.count,
+                         :tickets_count => current_account.tickets.count,
+                         :user_count => current_account.contacts.count}
+    )
   end
   
   def thanks
