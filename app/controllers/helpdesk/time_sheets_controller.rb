@@ -3,7 +3,7 @@ class Helpdesk::TimeSheetsController < ApplicationController
   before_filter :load_time_entry, :only => [ :edit, :update, :destroy, :toggle_timer ]  
   
   def new
-    update_running_timer params[:time_entry][:ticket_id]
+    update_running_timer params[:time_entry][:user_id]
     create_time_entry
     @time_sheet.save
   end
@@ -21,7 +21,7 @@ class Helpdesk::TimeSheetsController < ApplicationController
      if @time_entry.timer_running
         @time_entry.update_attributes({ :timer_running => false, :time_spent => calculate_time_spent(@time_entry) })        
      else
-        update_running_timer @time_entry.ticket.id if @time_entry.ticket
+        update_running_timer @time_entry.user_id
         @time_entry.update_attributes({ :timer_running => true, :start_time => Time.zone.now })
      end
   end
@@ -30,6 +30,12 @@ class Helpdesk::TimeSheetsController < ApplicationController
     @ticket = current_account.tickets.find_by_display_id(params[:id])
     @time_sheets = @ticket.time_sheets || []
     render :partial => "helpdesk/time_sheets/time_sheets_for_ticket"
+  end
+  
+  def time_sheets_by_agents
+     @ticket = current_account.tickets.find_by_display_id(params[:id])
+     @items = @ticket.time_sheets.group_by(&:user) || [] 
+     #need to render a new partial- u may iterate as--@items.each{|key,val| val.each{|t| puts t.note}}
   end
 
 private
@@ -61,10 +67,9 @@ private
     total_time
   end
   
-  #Following method will stop running timer..
-  def update_running_timer ticket_id
-    ticket  = current_account.tickets.find(ticket_id)
-    @time_cleared = ticket.time_sheets.find_by_timer_running(true);
+  #Following method will stop running timer for the user. at a time one user can have only one timer..
+  def update_running_timer user_id
+    @time_cleared = current_account.time_sheets.find_by_user_id_and_timer_running(user_id,true)
     if @time_cleared
        @time_cleared.update_attributes({:timer_running => false, :time_spent => calculate_time_spent(@time_cleared) }) 
     end
