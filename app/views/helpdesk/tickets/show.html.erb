@@ -162,10 +162,10 @@
 		});
   <% end %>
 <% end %> 
-<%= include_tiny_mce_if_needed %>
-<% content_for :sidebar do %>
-	<%= render :partial => "ticket_sidebar" unless @ticket.deleted %>
-<% end %>
+  <%= include_tiny_mce_if_needed %>
+  <% content_for :sidebar do -%>
+	  <%= render :partial => "ticket_sidebar" unless @ticket.deleted %>
+  <%- end %>
 
 	<% if @ticket.deleted %>
 		<div class="alert-message block-message warning">
@@ -195,17 +195,17 @@
       </h3>
 			<div class="description">         
         <div class="user_details">
-			<%= user_avatar(@ticket.requester)  %>
-			<% if is_application_installed?("capsule_crm") %>
-				<textarea id="widget-capsule-crm" style="display:none;">
-					<% @liquid_objects = {"requester" => @ticket.requester} %>
-				 	<%= get_app_widget_script("capsule_crm", "contact_widget", @liquid_objects) %>
-				</textarea>
-				<div class="app-link">
-					<a data-placement="topRight" href="#" rel="widget-popover" data-widget-container="widget-capsule-crm">
-						<%= image_tag("application-logo-small/capsule_crm.png") %>
-					</a>
-				</div> 
+			    <%= user_avatar(@ticket.requester)  %>
+			    <% if is_application_installed?("capsule_crm") %>
+				    <textarea id="widget-capsule-crm" style="display:none;">
+					    <% @liquid_objects = {"requester" => @ticket.requester} %>
+				 	    <%= get_app_widget_script("capsule_crm", "contact_widget", @liquid_objects) %>
+				    </textarea>
+				    <div class="app-link">
+					    <a data-placement="topRight" href="#" rel="widget-popover" data-widget-container="widget-capsule-crm">
+						    <%= image_tag("application-logo-small/capsule_crm.png") %>
+					    </a>
+				    </div> 
 	        <% end %>
           <div>
 						<%= content_tag :span, "", :class => "custom-tip-bottom icon-image source-#{@ticket.source_name.downcase}", :title => t("ticket.reported_from_source", :source => @ticket.source_name.downcase) %>
@@ -329,29 +329,4 @@
 
 <% content_for :pagefixed do %> 
   <%= pageless(@ticket_notes.total_pages, helpdesk_ticket_helpdesk_notes_path(@ticket)) %>  
-<% end %>
-
-
-<% 
-# Agent email will be fetched from responder. if responder is not assigned then it will be taken from loggedin agent.
-	agent = @ticket.responder
-	agent = current_user if agent.blank?
-	@liquid_values = {"requester" => @ticket.requester, "ticket" => @ticket, "agent" => agent}
-# For edit/delete page append one more parameter 'integrated_resource' in @liquid_values
-%>
-
-<%  installedApp = get_app_details("freshbooks");
-#	@time_sheet_entry.integrated_resources.find_by_installed_application_id(installedApp);
-#	@liquid_values["integrated_resource"] = integrated_resource
-	unless installedApp.blank?  %>
-		<%fb_code = get_app_widget_script("freshbooks", "freshbooks_timeentry_widget", @liquid_values)%>
-	 	<%= Liquid::Template.parse(fb_code).render("ticket" => @ticket) %> <!--This is to replace the ticket props in the notes field-->
-<% end %>
-
-<%  installedApp = get_app_details("harvest");
-#	@time_sheet_entry.integrated_resources.find_by_installed_application_id(installedApp);
-#	@liquid_values["integrated_resource"] = integrated_resource
-	unless installedApp.blank?  %>
-		<%fb_code = get_app_widget_script("harvest", "harvest_timeentry_widget", @liquid_values)%>
-	 	<%= Liquid::Template.parse(fb_code).render("ticket" => @ticket) %> <!--This is to replace the ticket props in the notes field-->
 <% end %>

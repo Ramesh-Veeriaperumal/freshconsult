@@ -1274,9 +1274,10 @@ label.small{
 
 .request-well{
 	padding:0;	
-	background-color: #f5f5f5;	
+	@include background-with-css2-fallback(linear-gradient(#fafafa, #f6f6f6 93%, #f1f1f1 97%, #ffffff), #fafafa);
+	position:relative;
 	.tabs{
-		padding:10px 10px 0 25px;	
+		padding:10px 10px 0 50px;	
 		margin-bottom:0;
 		h4.title{
 			font-size:1.1em;
@@ -1288,7 +1289,10 @@ label.small{
 		}
 	}
 	.button-container{
-		padding:0 20px 10px;
+		margin:8px 20px;
+		padding:0;
+		position:absolute;
+		right:0;
 	}
 }
 
@@ -1310,61 +1314,97 @@ a.pill.help{
 	background-color:#5880ac;
 }
 
-.clock{
-	display:inline-block;
+.timer_box{
+	float:left;	 
+	text-align:right;
+	padding-right:10px;
 	position:relative;
+	margin:5px;
+}
+
+.clock{ 
+	top:0;
+	right:0;
+	position:absolute;
+	z-index:3;	
 	background: sprite($symbol, clock-inactive);
 	cursor: pointer;
-	width:24px;
-	height:28px;
+	width:26px;
+	height:26px;  	
 }
-
-.clock:hover{
-	background: sprite($symbol, clock-hover);
-}
-
-.clock.animated, .clock.animated:hover{
+ 
+.clock.animated{
 	background: sprite($symbol, clock);		
 }
 
 .clock.animated .timer{
 	position:absolute;
-	width:20px;
-	height:25px;
+	width:26px;
+	height:22px;
 	top:3px;
-	left:2px;
+	left:0px;
 	background:url("../images/animated/timer.gif") no-repeat center;
 	@include opacity(0.5);
 }
 
 .timeentry, .ui-form{
 	.timespent, .user_details, .note{
-		color:#666666;
+		color:#777;
 		float:left;
-		padding-right:3%;	
+		padding-right:3%;	 
 	}
 	.user_details{
-		width:30%;
+		width:25%;
+		padding-top:6px;
 		.user_name{
 			display:block;
 			margin-bottom:2px;
 		}
 	}
 	.timespent{
-		width:13%;
+		width:12%; 
 	}
 	.note{ 
-		width:48%;
+		width:50%;		
+		padding-right:0;
 	}
 	.billable{
 		background: sprite($symbol, billable);
 		position:absolute;
-		left:-63px;
-		top:1px;
+		left:-65px;
+		top:8px;
 		width:19px;
 		height:18px;
 	}
 }
+
+.timeentry{  
+	.actions{
+		@include clearfix;
+		float:right; 
+		margin-right:0;
+		visibility:hidden;
+		a{
+			float:left;
+			margin-right:5px;
+		}
+	}
+	.timespent{
+		text-align:right; 
+	}
+	.timespent .time{
+		font-size:1.36em;
+		line-height:30px;  
+	}
+	.note{
+		padding-top:4px;
+	}
+}
+
+.timeentry:hover .actions{ 
+	visibility:visible;
+}
+
 
 .request_details .request-conversation .timeentry.special{
 	padding-bottom:0;	

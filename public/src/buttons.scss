@@ -248,6 +248,13 @@ div.action_buttons:hover{
    position:relative;   
 }
 
+.close-button{
+	display:inline-block;
+	width:20px;
+	height:20px;
+	background:sprite($symbol, close-delete) no-repeat;
+}
+
 .icon-detail{
    padding-left:25px;
    span{

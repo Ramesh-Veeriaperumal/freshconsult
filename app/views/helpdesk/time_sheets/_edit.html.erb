@@ -1,7 +1,7 @@
-<% form_remote_for :time_entry, @time_entry, :url => helpdesk_time_sheet_path, :update => { :success => "timeentry_#{@time_entry.id}" }, :html => { :method => :put, :class => "ui-form" } do |f| %>
+<% form_remote_for :time_entry, edit, :url => helpdesk_time_sheet_path, :update => { :success => "timeentry_#{edit.id}" }, :html => { :method => :put, :class => "ui-form" } do |f| %>
   <%= render :partial => "/helpdesk/time_sheets/form", :object => f %>
  	<div class="button-container">
  	  <%= submit_tag "Update", :class => "uiButton special submit", "data-loading-text" => "Saving time entry..." %>
-    <%= link_to_function("Cancel", "jQuery('#timeentry_edit_#{@time_entry.id}').empty(); jQuery('#timeentry_view_#{@time_entry.id}').show();", :class => "uiButton" ) %>
+    <%= link_to_function("Cancel", "jQuery('#timeentry_edit_#{edit.id}').empty(); jQuery('#timeentry_view_#{edit.id}').show();", :class => "uiButton" ) %>
  	</div>
 <% end %>
