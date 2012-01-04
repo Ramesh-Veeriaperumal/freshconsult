@@ -1,8 +1,8 @@
 class AddCaptchaForExistingAccounts < ActiveRecord::Migration
   def self.up
-     Account.all.each do |account|
-      account.features.captcha.create 
-    end
+#     Account.all.each do |account|
+#      account.features.captcha.create 
+#    end
   end
 
   def self.down

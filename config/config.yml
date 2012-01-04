@@ -7,7 +7,7 @@ free_plan_agts: 1
 # Used in account creation (account.rb)
 base_domain: 
     development: freshdesk-dev.com
-    production: freshdesk.com
+    production: freshbugs.com
     staging: freshpo.com
     test: freshpo.com
 

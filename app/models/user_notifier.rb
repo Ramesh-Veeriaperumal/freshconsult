@@ -23,7 +23,7 @@ class UserNotifier < ActionMailer::Base
   def account_admin_activation(account_admin)
     from  AppConfig['from_email'] 
     recipients account_admin.email
-    subject "#{AppConfig['app_name']} account Activation"
+    subject "#{AppConfig['app_name']} Account Activation"
     sent_on Time.now
     body (:account_admin => account_admin, 
           :activation_url => register_url(:activation_code => account_admin.perishable_token, :host => account_admin.account.host))

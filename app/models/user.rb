@@ -298,7 +298,7 @@ class User < ActiveRecord::Base
       "time_zone" => time_zone,
     }
     
-    to_ret["company_name"] = customer.name if customer_id
+    to_ret["company_name"] = customer.name if customer
     
     to_ret
   end
