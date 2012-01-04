@@ -1,6 +1,7 @@
 module Reports::CompanyReport
   
   include Reports::ChartGenerator
+  include Reports::ActivityReport
   
   def columns
     [:status,:ticket_type,:priority]
@@ -8,14 +9,6 @@ module Reports::CompanyReport
   
   def pie_chart_columns
     [:ticket_type,:priority]
-  end
-  
-  def company_activity(params)
-    columns.each do |column_name|
-      tickets_count = group_tkts_by_columns(params,{:column_name => column_name })
-        tickets_hash = get_tickets_hash(tickets_count,column_name)
-        self.instance_variable_set("@#{column_name}_hash", tickets_hash)
-    end
   end
   
   def calculate_resolved_on_time(params)
@@ -31,12 +24,11 @@ module Reports::CompanyReport
    
      if !avg_last_month.nil? and !@avg_sla_current_month.nil?
        @sla_diff = @avg_sla_current_month - avg_last_month
-       @sla_diff = sprintf( "%0.02f", @sla_diff)
      end
   end
   
-  def count_of_tickets_last_month
-   @last_month_tot_tickets = scoper(start_of_last_month(params[:date][:month].to_i).month).count 
+  def count_of_tickets_last_month(params)
+   @last_month_tot_tickets = scoper(start_of_last_month(params[:date][:month].to_i).month).all_company_tickets(params[:customer_id]).count 
   end
   
   def count_of_resolved_on_time(params)
@@ -60,18 +52,6 @@ module Reports::CompanyReport
     tickets_hash
   end
   
-   def calculate_percentage_for_columns(tickets_hash,tkts_count)
-    new_val_hash = {}
-    unless tickets_hash.empty?
-     tickets_hash.each do |key,val_hash|
-       val_per  = (val_hash.fetch(:count).to_f/tkts_count.to_f) * 100
-       val_hash.store(:percentage,sprintf( "%0.02f", val_per))
-       new_val_hash.store(key,val_hash)
-     end
-   end
-   new_val_hash
-  end
-  
   def group_tkts_by_columns(params,vals={})
     scoper(params[:date][:month]).find( 
      :all,
@@ -84,27 +64,5 @@ module Reports::CompanyReport
   def scoper(month=Time.current.month)
     Account.current.tickets.created_at_inside(start_of_month(month.to_i),end_of_month(month.to_i))
   end
-  
-  def valid_month?(time)
-    time.is_a?(Numeric) && (1..12).include?(time)
-  end
-  
-  def start_of_month(month=Time.current.month)
-    Time.utc(Time.now.year, month, 1) if valid_month?(month)
-  end
-  
-  def end_of_month(month)
-    start_of_month(month).end_of_month
-  end
-  
-  def start_of_last_month(month)
-    start_of_month(month).last_month
-  end
-  
-  def end_of_last_month(month)
-    start_of_last_month(month).end_of_month
-  end
-  
-  
   
 end

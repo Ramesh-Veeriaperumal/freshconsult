@@ -15,23 +15,22 @@ module Reports::ChartGenerator
   
   def gen_line_chart_data(all_hash,resolved_hash)
     line_series_data = []
-    data_hash = {}
-    data_hash.store(:name,"Tickets Received")
-    series_data = []
-    all_hash.each do |tkt|
-      series_data.push([Date.parse(tkt.date),tkt.count.to_i])
-    end
-    data_hash.store(:data,series_data)
-    line_series_data.push(data_hash)
-    data_hash = {}
-    data_hash.store(:name,"Tickets Resolved")
-    series_data = []
-    resolved_hash.each do |tkt|
-      series_data.push([Date.parse(tkt.date),tkt.count.to_i])
-    end
-    data_hash.store(:data,series_data)
-    line_series_data.push(data_hash)
+    line_series_data.push(prepare_data_series("Tickets Received",all_hash))
+    line_series_data.push(prepare_data_series("Tickets Resolved",resolved_hash))
+    puts "####################################################################"
+    puts line_series_data.to_json
     line_series_data
+  end
+  
+  def prepare_data_series(name,series_hash)
+    data_hash = {}
+    data_hash.store(:name,name)
+    series_data = []
+    series_hash.each do |tkt|
+      series_data.push([DateTime.strptime(tkt.date, "%Y-%m-%d %H:%M:%S").to_time.to_i*1000,tkt.count.to_i])
+    end
+    data_hash.store(:data,series_data)
+    data_hash
   end
   
   def get_column_value(value,column_name)
@@ -77,35 +76,26 @@ module Reports::ChartGenerator
     line_chart_data = gen_line_chart_data(all_hash,resolved_hash)
   
   self.instance_variable_set("@freshdesk_timeline_chart", 
-    Highchart.pie({
-      :width => '800px',
+    Highchart.spline({
       :chart => {
           :renderTo => "freshdesk_time_line_chart",
-           :type => 'spline',
-           :margin => [50, 30, 0, 30]
+           :marginBottom => 100,
+           :marginLeft => 100
+           
         },
-      :xAxis => {
+      :x_axis => {
          :type => 'datetime',
-         :dateTimeLabelFormats => { 
-            :day => '%e of %b'
+         :dateTimeLabelFormats => {
+            :month => '%e. %b',
+            :year => '%b'
          }
       },
-      :yAxis => {
+      :y_axis => {
          :title =>  {
             :text => 'No. of Tickets'
          },
          :min => 0
       },
-        :plotOptions => {
-          :pie => {
-            :dataLabels => {
-              :formatter => pie_label_formatter, 
-              :style => {
-                :textShadow => '#000000 1px 1px 2px'
-              }
-            }
-          }
-        },
       :series => line_chart_data,
         :title => {
           :text => "Tickets Activity"
@@ -118,8 +108,7 @@ module Reports::ChartGenerator
  
  def line_tooltip_formatter  
    "function() {
-      return '<b>'+ this.series.name +'</b><br/>'+
-               Highcharts.dateFormat('%e. %b', this.x) +': '+ this.y +' m';
+      return  Highcharts.dateFormat('%e. %b', this.x) + ': '+ this.y +' tickets';
     }"
   end
  
@@ -128,6 +117,14 @@ module Reports::ChartGenerator
    'function() {
       return "<strong>" + this.point.name + "</strong>: " + this.y + " %";
     }'
+  end
+  
+  def line_axis_formatter
+    "function() {
+            var monthStr = Highcharts.dateFormat('%b', this.value);
+            var firstLetter = monthStr.substring(0, 1);
+            return firstLetter;
+        }"
   end
  
  def  pie_label_formatter 

@@ -2,6 +2,7 @@
 en: 
   meta:
    language_name: 'English'
+  signup_complete_activate_info: Welcome! We have sent you an email with a link where you can set your password and activate your account.
   attachment_help_info: Attachment(s) size can be up to 20 MB
   feedbackwidget_offset_info: The offset will be the distance of the widget button (pixels) from the left or top of the screen based on the alignment you choose.
   no_twitter_handle: Please configure atleast one twitter account

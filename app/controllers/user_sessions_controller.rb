@@ -79,7 +79,7 @@ require 'openid'
     if @user_session.save
       @current_user.deliver_account_admin_activation
        SubscriptionNotifier.send_later(:deliver_welcome, current_account)
-      flash[:notice] = "Alright! We've sent you an email with the activation link."
+      flash[:notice] = t('signup_complete_activate_info')
       redirect_to root_url     
      else
       flash[:notice] = "Please provide valid login details!"

@@ -9,6 +9,10 @@ module ApplicationHelper
   
   ASSETIMAGE = { :help => "/images/helpimages" }
   
+  def format_float_value(val)
+    sprintf( "%0.02f", val) unless val.nil? 
+  end
+  
   def show_flash
     [:notice, :warning, :error].collect {|type| content_tag('div', flash[type], :id => type, :class => "flash_info #{type}") if flash[type] }
   end

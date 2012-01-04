@@ -1,15 +1,16 @@
 <%= javascript_include_tag  'highcharts.src.js' %>
 <% javascript_tag do %>
  jQuery(document).ready(function() {
-	   <%=@status_pie_chart%>
+       <%=@priority_pie_chart%>
 	   <%=@ticket_type_pie_chart%>
-	   <%=@freshdesk_timeline_chart%>
+		<%=@freshdesk_timeline_chart%>
  });
 <%end%>
 <% form_tag :action => :index, :controller => "reports/helpdesk_reports" do %>
 	<%=select_month(Date.today)%>
 	<%= submit_tag 'Submit' %>
 <% end %>
+<%=@freshdesk_timeline_chart%>
 <br>
 <br>
 <%unless @status_hash.nil?%>
@@ -73,18 +74,18 @@
 </table>
 <%end%>
 <table>
-	<tr>Average SLA <%=@avg_sla_current_month%></tr>
-	<tr>SLA Difference is  <%=@sla_diff%></tr>
+	<tr>Average SLA <%=format_float_value(@avg_sla_current_month)%></tr>
+	<tr>SLA Difference is  <%=format_float_value(@sla_diff)%></tr>
 </table>
 
 <table>
-	<tr>Average FCR <%=@avg_fcr_month%></tr>
-	<tr>FCR Difference is  <%=@fcr_diff%></tr>
+	<tr>Average FCR <%=format_float_value(@avg_fcr_month)%></tr>
+	<tr>FCR Difference is  <%=format_float_value(@fcr_diff)%></tr>
 </table>
 
 <br>
 <br>
-<div id ="status_freshdesk_chart">
+<div id ="priority_freshdesk_chart">
 </div>
 <div id ="ticket_type_freshdesk_chart">
 </div>
