@@ -1,5 +1,6 @@
 class Solution::ArticlesController < ApplicationController
   
+  include Helpdesk::ReorderUtility
   
   before_filter :set_selected_tab
   
@@ -8,6 +9,7 @@ class Solution::ArticlesController < ApplicationController
   before_filter :except => [:index, :show] do |c| 
     c.requires_permission :manage_knowledgebase
   end
+  
   
   uses_tiny_mce :options => Helpdesk::LARGE_EDITOR 
   
@@ -96,7 +98,7 @@ class Solution::ArticlesController < ApplicationController
     end
     
   end
-  
+   
    def delete_tag
      
      logger.debug "delete_tag :: params are :: #{params.inspect} "     
@@ -125,14 +127,19 @@ end
     end
   end
   
-  
-  
- 
-  
 protected
 
   def scoper
     eval "Solution::#{cname.classify}"
+  end
+
+  
+  def reorder_scoper
+    current_account.solution_articles.find(:all, :conditions => {:folder_id => params[:folder_id] })
+  end
+  
+  def reorder_redirect_url
+    solution_category_folder_url(params[:category_id], params[:folder_id])
   end
 
   def cname

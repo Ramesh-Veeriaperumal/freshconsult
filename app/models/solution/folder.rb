@@ -7,9 +7,11 @@ class Solution::Folder < ActiveRecord::Base
   belongs_to :category, :class_name => 'Solution::Category'
   set_table_name "solution_folders"
   
+  acts_as_list :scope => :category
+  
   after_save :set_article_delta_flag
   
-  has_many :articles, :class_name =>'Solution::Article' , :dependent => :destroy
+  has_many :articles, :class_name =>'Solution::Article' , :dependent => :destroy, :order => "position"
   
   named_scope :alphabetical, :order => 'name ASC'
   

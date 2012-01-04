@@ -49,7 +49,7 @@ class Account < ActiveRecord::Base
   
   has_one :subscription, :dependent => :destroy
   has_many :subscription_payments
-  has_many :solution_categories , :class_name =>'Solution::Category',:include =>:folders, :dependent => :destroy
+  has_many :solution_categories , :class_name =>'Solution::Category',:include =>:folders, :dependent => :destroy, :order => "position"
   has_many :solution_articles , :class_name =>'Solution::Article'
   
   has_many :customers, :dependent => :destroy
@@ -84,7 +84,7 @@ class Account < ActiveRecord::Base
   
   has_many :email_notifications, :dependent => :destroy
   has_many :groups, :dependent => :destroy
-  has_many :forum_categories, :dependent => :destroy
+  has_many :forum_categories, :dependent => :destroy, :order => "position"
   
   has_one :business_calendar, :dependent => :destroy
   

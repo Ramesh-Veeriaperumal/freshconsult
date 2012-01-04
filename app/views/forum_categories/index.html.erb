@@ -1,13 +1,14 @@
 <% @monitoring = logged_in? && !Monitorship.count(:id, :conditions => ['user_id = ? and active = ?', current_user.id, true]).zero? %>
 <div class="floatr">
 	<% if admin? %>
+		<%= link_to(t('reorder'),'#', :id => "forum_categories_reorder_button", :class => "uiButton") unless(@forum_categories.size <= 1)%>
   		<%= link_to t('category.new'), new_category_path, :class => "uiButton" %>
 	<% end %> 
 </div>
 <h3 class="title"><%= t('forum.title') %></h3>
 
 <div class="forum_list">
-	<div class="forum-group">
+	<div class="forum-group" id="forum_categories_list">
 		<div class="search-grey-box">
 			<%= render :partial => "/search/pagesearch", :locals => { :placeholder => t('forums.search_all.placeholder'), :url => "/search/topics?search_key=" } %>
 		</div>
@@ -25,4 +26,7 @@
 	</div>
 </div>
 
+<% if logged_in? && current_user.has_manage_solutions? -%>	
+	<%= render :partial => "/shared/reorder_list", :locals => { :items => @forum_categories,  :action_url => reorder_categories_path, :title => :name, :container_id => "forum_categories_sort", :reorder_id => "forum_categories_reorder_button", :list_id => "forum_categories_list"} %>
+<% end %>
 

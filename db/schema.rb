@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111229075628) do
+ActiveRecord::Schema.define(:version => 20120102112314) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -26,6 +26,7 @@ ActiveRecord::Schema.define(:version => 20111229075628) do
     t.text     "sso_options"
     t.string   "google_domain"
     t.string   "language",                       :default => "en"
+    t.boolean  "ssl_enabled",                    :default => true
   end
 
   add_index "accounts", ["full_domain"], :name => "index_accounts_on_full_domain", :unique => true
@@ -74,11 +75,11 @@ ActiveRecord::Schema.define(:version => 20111229075628) do
   add_index "agent_groups", ["group_id", "user_id"], :name => "agent_groups_group_user_ids"
 
   create_table "agents", :force => true do |t|
-    t.integer  "user_id",    :limit => 8
+    t.integer  "user_id",           :limit => 8
     t.text     "signature"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "ticket_permission"
+    t.integer  "ticket_permission",              :default => 1
   end
 
   create_table "applications", :force => true do |t|
@@ -305,6 +306,7 @@ ActiveRecord::Schema.define(:version => 20111229075628) do
     t.datetime "updated_at"
     t.integer  "account_id",  :limit => 8
     t.integer  "import_id",   :limit => 8
+    t.integer  "position"
   end
 
   add_index "forum_categories", ["account_id", "name"], :name => "index_forum_categories_on_account_id_and_name", :unique => true
@@ -727,6 +729,7 @@ ActiveRecord::Schema.define(:version => 20111229075628) do
     t.boolean  "delta",                              :default => true, :null => false
     t.text     "desc_un_html", :limit => 2147483647
     t.integer  "import_id",    :limit => 8
+    t.integer  "position"
   end
 
   add_index "solution_articles", ["account_id", "folder_id"], :name => "index_solution_articles_on_account_id"
@@ -739,6 +742,7 @@ ActiveRecord::Schema.define(:version => 20111229075628) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "import_id",   :limit => 8
+    t.integer  "position"
   end
 
   add_index "solution_categories", ["account_id", "name"], :name => "index_solution_categories_on_account_id_and_name", :unique => true
@@ -751,6 +755,7 @@ ActiveRecord::Schema.define(:version => 20111229075628) do
     t.integer  "category_id", :limit => 8
     t.integer  "import_id",   :limit => 8
     t.integer  "visibility",  :limit => 8
+    t.integer  "position"
   end
 
   add_index "solution_folders", ["category_id", "name"], :name => "index_solution_folders_on_category_id_and_name", :unique => true

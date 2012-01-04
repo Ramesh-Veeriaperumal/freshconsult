@@ -2,6 +2,11 @@
 <div class="folder-2col">
 	<div class="folder_section" id="folder-section">
 		<%= render :partial => "/solution/shared/category_folder_list", :locals => { :category => @item } %>
+		<%= render :partial => "/shared/reorder_list", :locals => { :items => @item.folders.visible(current_user), :action_url => reorder_solution_category_folders_path(@item), :title => :name, :container_id => "folder_sort", :reorder_id => "folder_reorder_button", :list_id => "folder_list"} %>
+		<span class="seperator"></span>
+		<div class="alignright">
+			<%= link_to t('reorder'), '#', :id => "folder_reorder_button", :class => "button" unless(@item.folders.visible(current_user).size <= 1)%>
+		</div>
 	</div>
 	<div class="artical_section" id="article-section"> 
 		<div class="crumbs">
