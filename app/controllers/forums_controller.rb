@@ -1,7 +1,8 @@
 #To Do Shan - Need to use ModelController or HelpdeskController classes, instead of
 #writing/duplicating all the CRUD methods here.
 class ForumsController < ApplicationController 
-  
+   include Helpdesk::ReorderUtility
+ 
   before_filter :except => [:index, :show] do |c| 
     c.requires_permission :manage_forums
   end
@@ -90,6 +91,15 @@ class ForumsController < ApplicationController
   def scoper
     current_account.forum_categories
   end
+  
+  def reorder_scoper
+    scoper.find(params[:category_id]).forums
+  end
+  
+  def reorder_redirect_url
+    category_path(params[:category_id])  
+  end
+ 
   
   protected
     def find_or_initialize_forum # Shan - Should split-up find & initialize as separate methods.

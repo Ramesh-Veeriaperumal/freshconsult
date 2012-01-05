@@ -2,7 +2,7 @@
 <h3 class="title"><%= @page_title = t(".cancel_account") %></h3>
 <p class="intro"><%= t(".intro") %></p>
 
-<% form_tag :action => 'cancel' do %>
+<% form_tag :url => cancel_account_path, :html => { :method =>:post, :id => "account_cancel_form" } do %>
 <ul id="CancelFormBox" class="ui-form dont-validate">
 	<li>
 		<div class="info-highlight">
@@ -17,12 +17,16 @@
 </ul>
 	<div class="button-container">
 		<%= link_to t(".goback"), '/account', :class => "uiButton floatl" %>
-  	<%= submit_tag  t('.delete_my_account'), :class => "uiButton" %>
+		<div id="account_cancel" class="uiButton">
+  <%=t('.delete_my_account')%>
+</div>
   </div>
 <% end %>
 <% content_for :pagefixed do %>
 	<% javascript_tag do %>
+	   
 		jQuery(document).ready(function(){
+		
 			jQuery("#CancelFormBox").parent()
 				.validate({
 					errorPlacement: function(error, element) {
@@ -36,7 +40,18 @@
 					messages: {
 					   required: "<%= t('.you_must_confirm') %>",
 					 }
-				});			
+				});	
+			 jQuery('#account_cancel').click(function() {
+			 	this.disabled = true;
+			    confirm_val = jQuery('#confirm_agree').val();
+   				jQuery.ajax({
+				  type: 'POST',
+				  url: "<%=cancel_account_path%>",
+				  data: { confirm: confirm_val}
+								
+			 	});
+				window.location.href = "http://www.freshdesk.com";
+			});
 		});
 	<% end %>
 <% end %>

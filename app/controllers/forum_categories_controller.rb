@@ -1,5 +1,6 @@
 class ForumCategoriesController < ApplicationController
   include ModelControllerMethods
+  include Helpdesk::ReorderUtility
   
   before_filter :except => [:index, :show] do |c| 
     c.requires_permission :manage_forums
@@ -62,9 +63,9 @@ class ForumCategoriesController < ApplicationController
         else
           render :action => 'show'
         end
+      end
     end
-  end
-  end
+  end  
     
   protected
   
@@ -76,6 +77,14 @@ class ForumCategoriesController < ApplicationController
     
     def scoper
       current_account.forum_categories
+    end
+    
+    def reorder_scoper
+      scoper
+    end
+    
+    def reorder_redirect_url
+      categories_path
     end
     
     def portal_category?

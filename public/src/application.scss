@@ -2589,6 +2589,13 @@ a.page_title{
 	   a{ 
 	      @include link-colors(#333333, #333333, #333333, #333333); }
 	}
+	.sortable{
+		margin:0 -10px 0 -20px;
+		padding:5px 20px;
+	}
+	.sort-list li{
+		font-size:1em;
+	}
 }
 
 .solution_list{
@@ -3246,6 +3253,11 @@ div.addReminder{
 	div{
 		padding:6px;
 	}
+}
+
+.ui-form span.warning{
+	color:#aa3333;
+	background-color:#fffbee;
 }
 
 .info-code{

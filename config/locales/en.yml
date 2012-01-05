@@ -146,6 +146,15 @@ en:
         enable_sso: Enable Single Sign On
         remote_logout_url: Remote logout URL
         remote_authentication: Remote Authentication
+        enable_SSL: "Enable SSL"
+        enable_SSL_anon: "SSL allows you to encrypt data that is transfered to and from freshdesk portals"
+        customer_portal_ssl_warning: "Since custom helpdesk URL is configured for your account you will be redirected to " 
+        multiple_product_ssl_warning: "SSL will not be applicable if multiple products are configured."  
+        enabled: Enabled
+        disabled: Disabled
+        click_to_enable: Click to enable SSL
+        click_to_disable: Click to disable SSL
+        security_title: Security
     products: 
       new: 
         title: New Product
@@ -241,6 +250,7 @@ en:
         twitter-setting: Twitter Settings
         survey: Survey Settings
         facebook-setting: Facebook Settings
+        security: Security
       
     canned_responses:
       index:
@@ -1515,3 +1525,4 @@ en:
     contact_widget:
       description: "Display a contact or option to add the contact into capsule."
   capsule_crm_helptext: "<h4>Link back from Capsule to Freshdesk</h4><p>You can create a link in Capsule CRM to view the contact's tickets in Freshdesk.</p> <p>To do this Goto your <br /><b>Settings -> Custom Fields -> For People & Organization</b></p><p> Then click on \"Add new...\" and select <b>\"Generated Link\"</b></p> <p>Copy the URl exactly as shown below and paste it in Capsule CRM as the link definition<span class=\"info-code\">http://%{full_domain}/helpdesk/tickets?email={email}</span></p>"
+  reorder: "Reorder"

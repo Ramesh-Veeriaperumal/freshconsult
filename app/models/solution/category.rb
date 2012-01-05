@@ -6,7 +6,9 @@ class Solution::Category < ActiveRecord::Base
    belongs_to :account
    set_table_name "solution_categories"
    
-   has_many :folders, :class_name =>'Solution::Folder' , :dependent => :destroy 
+   has_many :folders, :class_name =>'Solution::Folder' , :dependent => :destroy, :order => "position" 
+   
+   acts_as_list :scope => :account
    
    attr_accessible  :name,:description,:import_id
    

@@ -1,5 +1,7 @@
 class Solution::CategoriesController < ApplicationController
   
+  include Helpdesk::ReorderUtility
+  
   before_filter :except => [:index, :show] do |c| 
     c.requires_permission :manage_knowledgebase
   end
@@ -7,6 +9,7 @@ class Solution::CategoriesController < ApplicationController
   before_filter { |c| c.check_portal_scope :open_solutions }
   before_filter :portal_category?, :except => :index
   before_filter :set_selected_tab
+  
   
   def index
     
@@ -98,6 +101,14 @@ end
 
   def scoper
     eval "Solution::#{cname.classify}"
+  end
+  
+  def reorder_scoper
+    current_account.solution_categories
+  end
+  
+  def reorder_redirect_url
+    solution_categories_path
   end
 
   def cname

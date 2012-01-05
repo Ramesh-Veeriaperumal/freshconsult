@@ -1,4 +1,5 @@
 <div class="floatr">
+	<%= link_to t('reorder'),'#', :id=>"article_reorder_button", :class => "button" unless(folder.articles.size <= 1)%>
 	<%= link_to t('solution.add') + "<span class='symbols-add'></span>", new_solution_category_folder_article_path(category , folder), :class => "icon-detail button" %>
 	<%= link_to t('edit'), edit_solution_category_folder_path(category, folder), :class => "button" %>
 </div>
@@ -7,7 +8,7 @@
 <div class="intro"><%= folder.description %></div> 
 <span class="seperator"></span>
 <% unless (folder.articles.size == 0) %>
-	<ol class="artical_list">
+	<ol class="artical_list" id="article_list">
 		<% folder.articles.each do |article| %>
 			<li><%= link_to article.title, solution_category_folder_article_path(category, folder, article) %></li>
 		<% end %>
@@ -18,3 +19,5 @@
 		<%= link_to t('solution.add'), new_solution_category_folder_article_path(category, folder), :class => "uiButton special large" %>
 	</div>
 <% end %>
+
+<%= render :partial => "/shared/reorder_list", :locals => { :items => folder.articles, :action_url => reorder_solution_category_folder_articles_path(category, folder), :title => :title, :container_id => "artical_sort", :reorder_id => "article_reorder_button", :list_id => "article_list"} %>

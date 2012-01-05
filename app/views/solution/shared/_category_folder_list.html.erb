@@ -1,6 +1,6 @@
 <% selected ||= category.folders.first %>
 <h3 class="title"><%= category.name %></h3>
-<ul class="solution_list"> 
+<ul class="solution_list" id="folder_list"> 
 	<% category.folders.visible(current_user).each do |folder| %>  
 		<li class = "<%= ( folder == selected ) ? 'active' : '' %>" > 
 			<%= link_to folder.name,  solution_category_folder_path(category,folder)  %> 

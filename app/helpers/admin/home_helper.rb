@@ -40,7 +40,7 @@ module Admin::HomeHelper
           ['/account',                    'account-settings', current_user.account_admin? ],
           ['/admin/products',             'multi-product',    feature?(:multi_product)  ],
           ['/admin/portal',               'customer-portal'         ],
-          ['/admin/security',             'remote-authentication'   ],
+          ['/admin/security',             'security'   ],
           ['/admin/zen_import',           'import'                  ],
           ['/admin/widget_config',        'feedback'                ],
           ['/agents',                     'agent'                   ],
