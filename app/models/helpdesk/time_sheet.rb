@@ -41,7 +41,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
   end
   
   def group_by_day_criteria
-    created_at.to_date.to_s(:db)
+    executed_at.to_date.to_s(:db)
   end
   
 end

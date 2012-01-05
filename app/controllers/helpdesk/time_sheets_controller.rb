@@ -88,9 +88,10 @@ private
     hours_spent = params[:time_entry][:hours]
     params[:time_entry].delete(:hours)
     time_entry = params[:time_entry].merge!({:start_time => Time.zone.now(),
-                                            :time_spent => get_time_in_second(hours_spent),
-                                            :timer_running => true,
-                                            :billable => true})
+                                             :executed_at => Time.zone.now(),
+                                             :time_spent => get_time_in_second(hours_spent),
+                                             :timer_running => true,
+                                             :billable => true})
     @time_sheet = scoper.new(time_entry)
   end
   
