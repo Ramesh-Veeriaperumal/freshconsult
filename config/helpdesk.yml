@@ -137,7 +137,7 @@ ROLES:
             post_in_forums:         false   # Can respond to topics or post new ones?
             manage_forums:          false   # Forums administration
             manage_account:         false   # Account administration
-            manage_report:          false    # Can see and run reports
+            manage_reports:          false    # Can see and run reports
     customer:
         permissions:
             portal_request:         true    # Can sumit request for support?
@@ -148,7 +148,7 @@ ROLES:
             post_in_forums:         true    # Can respond to topics or post new ones?
             manage_forums:          false   # Forums administration
             manage_account:         false   # Account administration
-            manage_report:          false    # Can see and run reports
+            manage_reports:          false    # Can see and run reports
   
     techsupport:
         title:                      Tech Support
@@ -162,7 +162,7 @@ ROLES:
             post_in_forums:         true    # Can respond to topics or post new ones?
             manage_forums:          false   # Forums administration
             manage_account:         false   # Account administration
-            manage_report:          false    # Can see and run reports
+            manage_reports:          false    # Can see and run reports
     writer:
         title:                      Writer
         description:                Allowed to edit the knowledgebase, but not manage tickets
@@ -175,7 +175,7 @@ ROLES:
             post_in_forums:         true    # Can respond to topics or post new ones?
             manage_forums:          false   # Forums administration
             manage_account:         false   # Account administration
-            manage_report:          false    # Can see and run reports
+            manage_reports:          false    # Can see and run reports
     poweruser:
         title:                      Power User
         description:                Can do everything except user administration
@@ -188,7 +188,7 @@ ROLES:
             post_in_forums:         true    # Can respond to topics or post new ones?
             manage_forums:          true    # Forums administration
             manage_account:         false   # Account administration
-            manage_report:          false    # Can see and run reports
+            manage_reports:          false    # Can see and run reports
     admin:
         title:                      Administrator
         description:                Has total access
@@ -201,7 +201,7 @@ ROLES:
             post_in_forums:         true    # Can respond to topics or post new ones?
             manage_forums:          true    # Forums administration
             manage_account:         false   # Account administration
-            manage_report:          true    # Can see and run reports
+            manage_reports:          true    # Can see and run reports
     account_admin:
             title:                      Account Admin
             description:                Can manage account
@@ -214,7 +214,7 @@ ROLES:
                post_in_forums:         true    # Can respond to topics or post new ones?
                manage_forums:          true    # Forums administration
                manage_account:         true   # Account administration
-               manage_report:          true    # Can see and run reports
+               manage_reports:          true    # Can see and run reports
     supervisor:
         title:                      Supervisor
         description:                Can do everything except administrator including reports
@@ -227,7 +227,7 @@ ROLES:
             post_in_forums:         true    # Can respond to topics or post new ones?
             manage_forums:          true    # Forums administration
             manage_account:         false   # Account administration
-            manage_report:          true    # Can see and run reports
+            manage_reports:          true    # Can see and run reports
 
 
 
