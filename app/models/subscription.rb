@@ -107,9 +107,13 @@ class Subscription < ActiveRecord::Base
   # made the charge and set the billing date into the future.
   def charge
     if amount == 0 || (@response = gateway.purchase(amount_in_pennies, billing_id)).success?
+      begin
         update_attributes(:next_renewal_at => self.next_renewal_at.advance(:months => self.renewal_period), :state => 'active')
         subscription_payments.create(:account => account, :amount => amount, :transaction_id => @response.authorization) unless amount == 0
-        true
+       rescue Exception => err
+         SubscriptionNotifier.deliver_sub_error({:error_msg => err.message, :full_domain => account.full_domain, :custom_message => "Charge failed" })
+       end
+       true
       else
         errors.add_to_base(@response.message)
         false
