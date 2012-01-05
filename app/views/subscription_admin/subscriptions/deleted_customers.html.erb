@@ -1,0 +1,37 @@
+<% @page_title = 'Deleted Customers' %>
+
+<table id="subscriptions">
+  <tr>
+    <th>Full domain</th>
+	<th>Created</th>
+	<th>Deleted On</th>
+    <th>Name</th>
+    <th>Email</th>
+    <th>Agents</th>
+    <th>Tickets</th>
+	<th>Users</th>
+	<th>Plan</th>
+	<th>Discount</th>
+  </tr>
+  
+ <%unless @deleted_customers.nil? %>
+
+<%@deleted_customers.each do |del_cus|%>
+<tr>
+	<td><%=del_cus.full_domain%></td>
+	<td><%=(del_cus.account_info.fetch(:account_created_on,Time.now)).strftime("%d-%B-%Y")%></td>
+	<td><%=del_cus.created_at.strftime("%d-%B-%Y")%></td>
+	<td><%=del_cus.admin_name%></td>
+	<td><%=del_cus.admin_email%></td>
+	<td><%=del_cus.account_info.fetch(:agents_count,0)%></td>
+	<td><%=del_cus.account_info.fetch(:tickets_count,0)%></td>
+	<td><%=del_cus.account_info.fetch(:users_count,0)%></td>
+	<td><%=del_cus.account_info.fetch(:plan,0)%></td>
+	<td><%=del_cus.account_info.fetch(:discount,0)%></td>
+	
+</tr>
+
+<%end%>
+<%end%>
+ </table>
+<%= will_paginate(@deleted_customers) %>
