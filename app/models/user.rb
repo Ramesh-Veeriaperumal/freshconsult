@@ -8,7 +8,8 @@ class User < ActiveRecord::Base
     [ :poweruser,   "Power User",       2 ],
     [ :customer,    "Customer",         3 ],
     [ :account_admin,"Account admin",   4 ],
-    [ :client_manager,"Client Manager", 5 ]
+    [ :client_manager,"Client Manager", 5 ],
+    [ :supervisor,    "Supervisor"    , 6 ]
    ]
 
   USER_ROLES_OPTIONS = USER_ROLES.map { |i| [i[1], i[2]] }
@@ -189,6 +190,10 @@ class User < ActiveRecord::Base
   
   def client_manager?
     user_role == USER_ROLES_KEYS_BY_TOKEN[:client_manager]
+  end
+  
+  def supervisor?
+    user_role == USER_ROLES_KEYS_BY_TOKEN[:supervisor]
   end
 
   #Savage_beast changes end here

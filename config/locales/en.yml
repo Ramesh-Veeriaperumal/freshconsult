@@ -804,10 +804,12 @@ en:
     update: Update
     permissions: Permissions
     admin: Admin
-    global: Global
-    group: Group
-    individual: Individual
+    supervisor: Supervisor
+    global: Agent (Global Access)
+    group: Agent (Group Access) 
+    individual: Agent (Restricted Access)
     admin_info: Can perform all Admin tasks
+    supervisor_info: Can view all Tickets in the Helpdesk and access Reports (no admin privileges)
     global_info: Can view all Tickets in the Helpdesk
     group_info: Can view Tickets in their Groups(s) and Tickets assigned to them
     individual_info: Can only view Tickets assigned to them
