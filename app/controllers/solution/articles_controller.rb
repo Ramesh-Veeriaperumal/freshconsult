@@ -56,10 +56,14 @@ class Solution::ArticlesController < ApplicationController
    current_folder = Solution::Folder.find(params[:solution_article][:folder_id]) 
    @article = current_folder.articles.new(params[nscname]) 
    set_item_user 
+
+   redirect_to_url = @article
+   redirect_to_url = new_solution_category_folder_article_path(params[:category_id], params[:folder_id]) unless params[:save_and_create].nil?
+   
    respond_to do |format|
       if @article.save
         post_persist 
-        format.html { redirect_to @article }        
+        format.html { redirect_to redirect_to_url }        
         format.xml  { render :xml => @article, :status => :created, :location => @article }
       else
         format.html { render :action => "new" }
