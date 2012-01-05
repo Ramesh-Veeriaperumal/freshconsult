@@ -26,6 +26,7 @@ ActiveRecord::Schema.define(:version => 20111230205418) do
     t.text     "sso_options"
     t.string   "google_domain"
     t.string   "language",                       :default => "en"
+    t.boolean  "ssl_enabled",                    :default => true
   end
 
   add_index "accounts", ["full_domain"], :name => "index_accounts_on_full_domain", :unique => true
@@ -315,6 +316,7 @@ ActiveRecord::Schema.define(:version => 20111230205418) do
     t.datetime "updated_at"
     t.integer  "account_id",  :limit => 8
     t.integer  "import_id",   :limit => 8
+    t.integer  "position"
   end
 
   add_index "forum_categories", ["account_id", "name"], :name => "index_forum_categories_on_account_id_and_name", :unique => true
@@ -737,6 +739,7 @@ ActiveRecord::Schema.define(:version => 20111230205418) do
     t.boolean  "delta",                              :default => true, :null => false
     t.text     "desc_un_html", :limit => 2147483647
     t.integer  "import_id",    :limit => 8
+    t.integer  "position"
   end
 
   add_index "solution_articles", ["account_id", "folder_id"], :name => "index_solution_articles_on_account_id"
@@ -749,6 +752,7 @@ ActiveRecord::Schema.define(:version => 20111230205418) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "import_id",   :limit => 8
+    t.integer  "position"
   end
 
   add_index "solution_categories", ["account_id", "name"], :name => "index_solution_categories_on_account_id_and_name", :unique => true
@@ -761,6 +765,7 @@ ActiveRecord::Schema.define(:version => 20111230205418) do
     t.integer  "category_id", :limit => 8
     t.integer  "import_id",   :limit => 8
     t.integer  "visibility",  :limit => 8
+    t.integer  "position"
   end
 
   add_index "solution_folders", ["category_id", "name"], :name => "index_solution_folders_on_category_id_and_name", :unique => true
