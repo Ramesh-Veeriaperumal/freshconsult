@@ -16,7 +16,6 @@ class ThirdCRM
   
   def add_signup_data(account)
    returned_val = sandbox(0) {
-    raise Exception
     organisation_id = add_organisation(account)
     person_id = add_contact(account,organisation_id)
     add_tag("Sign Up",organisation_id)
