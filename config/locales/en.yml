@@ -802,12 +802,17 @@ en:
     restore: restore
     add_signature: Add signature
     update: Update
-    admin: Admin
-    agent_role: Agent
-    all_tickets: All Tickets
-    group_tickets: Tickets assigned to this agent and agent's Group 
-    assigned_tickets: Tickets assigned to this agent
     permissions: Permissions
+    admin: Admin
+    supervisor: Supervisor
+    global: Agent (Global Access)
+    group: Agent (Group Access) 
+    individual: Agent (Restricted Access)
+    admin_info: Can perform all Admin tasks
+    supervisor_info: Can view all Tickets in the Helpdesk and access Reports (no admin privileges)
+    global_info: Can view all Tickets in the Helpdesk
+    group_info: Can view Tickets in their Groups(s) and Tickets assigned to them
+    individual_info: Can only view Tickets assigned to them
   account_admin: Account admin
   right: Right
   footer: 

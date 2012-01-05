@@ -10,8 +10,8 @@ class FreshdeskErrorsMailer < ActionMailer::Base
   end 
   
   def error_in_crm(account) 
-    recipients    AppConfig['from_email']
-    from          "billing@freshdesk.com"
+    recipients    AppConfig['billing_email']
+    from          "kiran@freshdesk.com"
     subject       "Error while adding to Capsule CRM"
     sent_on       Time.now
     body(:account => account)
