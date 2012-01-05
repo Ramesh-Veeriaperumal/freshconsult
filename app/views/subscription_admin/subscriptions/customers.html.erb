@@ -1,9 +1,9 @@
 <% @page_title = 'Customers' %>
 <h3>Customers Per Month</h3>
 <table id="customers">
-	<%@customers_by_month.each do |month,count|%>
+	<%@customers_by_month.each do |date,count|%>
 	  <tr>
-       <td><%=Date::MONTHNAMES[month]%></td>
+       <td><%=date%></td>
        <td><%= count %></td>
      </tr>
 	<%end%>
@@ -14,9 +14,9 @@
 
 <h3>Signup's Per Month</h3>
 <table id="customers">
-	<%@signups_by_month.each do |month,count|%>
+	<%@signups_by_month.each do |date,count|%>
 	  <tr>
-       <td><%=Date::MONTHNAMES[month.to_i]%></td>
+       <td><%=date%></td>
        <td><%= count %></td>
      </tr>
 	<%end%>

@@ -58,15 +58,14 @@ end
    end
    
    def fetch_signups_per_month
-     @signups_by_month = Account.count(:group => "month(created_at)")
+     @signups_by_month = Account.count(:group => "DATE_FORMAT(created_at, '%b, %Y')", :order => "created_at desc")
    end
   
   def fetch_customers_per_month
     @customers_by_month = {}
-    SubscriptionPayment.minimum(:created_at,:group => :account_id).each do |account_id,date|
-      month = date.month
-      count = @customers_by_month.fetch(month,0)
-      @customers_by_month.store(month,count+1)
+    SubscriptionPayment.minimum(:created_at,:group => :account_id, :order => "created_at desc").each do |account_id,date|
+      count = @customers_by_month.fetch(date.strftime("%b, %Y"),0)
+      @customers_by_month.store(date.strftime("%b, %Y"),count+1)
     end
   end
   
