@@ -759,8 +759,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
 
     def create_deleted_activity
-      create_activity(User.current, 'activities.tickets.deleted.long',
+      if deleted
+        create_activity(User.current, 'activities.tickets.deleted.long',
          {'ticket_id' => display_id}, 'activities.tickets.deleted.short')
+      else
+        create_activity(User.current, 'activities.tickets.restored.long',
+         {'ticket_id' => display_id}, 'activities.tickets.restored.short')
+      end 
     end
   
     def create_assigned_activity
