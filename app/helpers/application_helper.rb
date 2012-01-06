@@ -364,7 +364,7 @@ module ApplicationHelper
   end
   
   def company_tickets_tab
-    tab = ['support/company_tickets', :company_tickets , !permission?(:manage_tickets) , current_user.customer.name] if current_user && current_user.customer
+    tab = ['support/company_tickets', :company_tickets , !permission?(:manage_tickets) , current_user.customer.name] if (current_user && current_user.customer && current_user.client_manager?)
     tab || ""
   end
   

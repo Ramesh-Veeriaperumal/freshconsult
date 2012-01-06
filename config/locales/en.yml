@@ -803,7 +803,7 @@ en:
     add_signature: Add signature
     update: Update
     permissions: Permissions
-    admin: Admin
+    admin: Administrator
     supervisor: Supervisor
     global: Agent (Global Access)
     group: Agent (Group Access) 

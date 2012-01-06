@@ -127,24 +127,9 @@
 				</li>
 				</div>
 				
-				 <%= hidden_field(:user, :user_role, :id=>"user_role", :value => @agent.user.user_role ||= User::USER_ROLES_KEYS_BY_TOKEN[:admin] ) %>
+				 <%= hidden_field(:user, :user_role, :id=>"user_role", :value => @agent.user.user_role ||= User::USER_ROLES_KEYS_BY_TOKEN[:poweruser] ) %>
 				
-				<!--li>
-					<%= radio_button(:user, :user_role, User::USER_ROLES_KEYS_BY_TOKEN[:poweruser],{ :checked => @agent.user.agent? ,:id=>"user_role_agent"} ) %> <%=t('agent.agent_role')%>
-					<div class="blockLabels" id="agent_ticket_permission" style="display:none;">
-					  <ul>
-					  	<li>
-					  	   <%= radio_button(:agent, :ticket_permission, Agent::PERMISSION_KEYS_BY_TOKEN[:all_tickets] ,{:checked => true ,:id=>"agent_all_tickets"}) %> <%=t('agent.all_tickets')%>
-						</li>
-						<li>
-					  	   <%= radio_button(:agent, :ticket_permission, Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets] ,{:id=>"agent_group_tickets"}) %> <%=t('agent.group_tickets')%>
-						</li>
-						<li>
-					  	   <%= radio_button(:agent, :ticket_permission, Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets] ,{:id=>"agent_assigned_tickets"}) %> <%=t('agent.assigned_tickets')%>
-						</li>
-					  </ul>
-					</div>
-				</li-->
+				
 			</ul>
 			
 		</li>
