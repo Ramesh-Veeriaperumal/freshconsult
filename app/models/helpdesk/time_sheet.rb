@@ -29,7 +29,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
   def hours
    hour_val = time_spent.div(60*60)
    remaining_sec = time_spent - (60 * 60 *hour_val)
-   [hour_val,  remaining_sec * ((100/3600).to_f)].map{ |t| t.round.to_s }.join(".")
+   [hour_val,  remaining_sec * ((100/36000).to_f)].map{ |t| t.round.to_s }.join(".")
   end
   
   def agent_name

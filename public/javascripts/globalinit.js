@@ -102,7 +102,7 @@ var $J = jQuery.noConflict();
       $("input.datepicker").livequery(function(){ $(this).datepicker({showOn:'focus'});});
       
       // Any object with class custom-tip will be given a different tool tip
-      $("a.tooltip").twipsy({ live: true });
+      $(".tooltip").twipsy({ live: true });
       // - jQuery Validation for forms with class .ui-form ( ...An optional dont-validate written for the form element will make the selectors ignore those form alone )
       validateOptions = {
          onkeyup: false,

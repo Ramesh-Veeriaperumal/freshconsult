@@ -1,6 +1,7 @@
 <% form_remote_for :time_entry, edit, :url => helpdesk_time_sheet_path, :update => { :success => "timeentry_#{edit.id}" }, :html => { :method => :put, :class => "ui-form" } do |f| %>
   <%= render :partial => "/helpdesk/time_sheets/form", :object => f %>
- 	<%= f.text_field :created_at, :value => edit.created_at.strftime("%m/%d/%Y"), :size => 10, :class => "auto datepicker" %>
+  <a href="javascript:void(0)"></a>
+ 	<%= f.text_field :executed_at, :value => edit.created_at.strftime("%m/%d/%Y"), :size => 10, :class => "auto datepicker" %>
 	<%= f.check_box :billable %>
  	<div class="button-container">
  	  <%= submit_tag "Update", :class => "uiButton special submit", "data-loading-text" => "Saving time entry..." %>

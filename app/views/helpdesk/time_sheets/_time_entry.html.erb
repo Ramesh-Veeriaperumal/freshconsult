@@ -12,13 +12,15 @@
                         { :class => "close-button" }) %>
       </div> 
     	<div class="user_details">
-    		<%= content_tag(:span, "", :class => "billable") if time_entry.billable %>	
     		<%= user_avatar(time_entry.user) if time_entry.user %>
     		<%= link_to_user(time_entry.user, "user_name") %>
-    		<%= formated_date(time_entry.created_at, "%A, %e %b %Y") %>
+    		<%= formated_date(time_entry.executed_at, "%A, %e %b %Y") %>
     	</div>
     	<div class="note">    	  
-        <%= link_to_remote( RedCloth.new("#{time_entry.note}").to_html, 
+    	  <%= content_tag(:div, "Timer started <br /> @ #{formated_date(time_entry.start_time, "%I:%M %p")}", :class => "started_time") if time_entry.timer_running %>  	    
+    		<%= content_tag(:span, "", :class => "billable tooltip", :title => "Billable time entry") if time_entry.billable %>	
+
+        <%= link_to_remote( RedCloth.new("#{time_entry.note || 'Add description'}").to_html, 
   	                    { :url => edit_helpdesk_time_sheet_path(time_entry), 
   	                      :method => :get } ) %>
     	</div>
@@ -30,8 +32,7 @@
     		                    { :url => toggle_timer_helpdesk_time_sheet_path(time_entry),
                               :method => :put },
                             { :class => "clock #{current_clock_class} tooltip", 
-                              :title => t(".toggle_timer_#{!time_entry.timer_running}"),
-                              :rel => 'twipsy',
+                              :title => t(".toggle_timer_#{!time_entry.timer_running}"), 
                               :onclick => "jQuery(this).twipsy('hide');",
                               "data-placement" => "above" } %>
         </div>

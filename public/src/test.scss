@@ -1277,7 +1277,7 @@ label.small{
 	@include background-with-css2-fallback(linear-gradient(#fafafa, #f6f6f6 93%, #f1f1f1 97%, #ffffff), #fafafa);
 	position:relative;
 	.tabs{
-		padding:10px 10px 0 50px;	
+		padding:10px 10px 0 10px;	
 		margin-bottom:0;
 		h4.title{
 			font-size:1.1em;
@@ -1333,6 +1333,7 @@ a.pill.help{
 }
  
 .clock.animated{
+	top:5px;	
 	background: sprite($symbol, clock);		
 }
 
@@ -1346,7 +1347,20 @@ a.pill.help{
 	@include opacity(0.5);
 }
 
+.total_time{
+	text-align:right;
+	width:87%;
+	padding:14px 0;
+	color:#888;
+}
 .timeentry, .ui-form{
+	.started_time{
+		font-size:10px;
+		font-style:italic;
+		float:right;
+		text-align:right;
+	}
+	
 	.timespent, .user_details, .note{
 		color:#777;
 		float:left;
@@ -1354,7 +1368,7 @@ a.pill.help{
 		position:relative;
 	}
 	.user_details{
-		width:15%;
+		width:14%;
 		padding-top:3px;
 		.user_name{
 			display:block;
@@ -1362,20 +1376,28 @@ a.pill.help{
 		}
 	}
 	.timespent{
-		width:18%;
+		width:16%;
 		margin-left:2%;
 	}
 	.note{ 
-		width:50%;
+		width:48%;
+		padding-left:20px;
+		a{ @include link-colors(#5c7083); }
 	}
 	.billable{
 		background: sprite($symbol, billable);
 		position:absolute;
-		left:-65px;
-		top:8px;
+		left:0px;
+		top:3px;
 		width:19px;
 		height:18px;
 	}
+}
+
+.time{
+	font-size:1.46em;
+	line-height:26px;
+	padding-left:10px;  
 }
 
 .timeentry{  
@@ -1392,10 +1414,6 @@ a.pill.help{
 	}
 	.timespent{
 		text-align:right; 
-	}
-	.timespent .time{
-		font-size:1.46em;
-		line-height:26px;  
 	}
 	.note{
 		padding-top:4px;
