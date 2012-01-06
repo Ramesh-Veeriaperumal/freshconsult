@@ -1315,11 +1315,10 @@ a.pill.help{
 }
 
 .timer_box{
-	float:left;	 
 	text-align:right;
-	padding-right:10px;
-	position:relative;
-	margin:5px;
+	position:absolute;
+	left:26px;
+	margin:2px;	
 }
 
 .clock{ 
@@ -1351,22 +1350,23 @@ a.pill.help{
 	.timespent, .user_details, .note{
 		color:#777;
 		float:left;
-		padding-right:3%;	 
+		padding-right:2%; 
+		position:relative;
 	}
 	.user_details{
-		width:25%;
-		padding-top:6px;
+		width:15%;
+		padding-top:3px;
 		.user_name{
 			display:block;
 			margin-bottom:2px;
 		}
 	}
 	.timespent{
-		width:12%; 
+		width:18%;
+		margin-left:2%;
 	}
 	.note{ 
-		width:50%;		
-		padding-right:0;
+		width:50%;
 	}
 	.billable{
 		background: sprite($symbol, billable);
@@ -1383,6 +1383,7 @@ a.pill.help{
 		@include clearfix;
 		float:right; 
 		margin-right:0;
+		margin-top:4px;
 		visibility:hidden;
 		a{
 			float:left;
@@ -1393,8 +1394,8 @@ a.pill.help{
 		text-align:right; 
 	}
 	.timespent .time{
-		font-size:1.36em;
-		line-height:30px;  
+		font-size:1.46em;
+		line-height:26px;  
 	}
 	.note{
 		padding-top:4px;

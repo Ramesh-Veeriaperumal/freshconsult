@@ -1265,6 +1265,10 @@ en:
   tickets_were: tickets were
   undo: Undo
   helpdesk:
+    time_sheets: 
+      time_entry:
+        toggle_timer_true: "Start timer"
+        toggle_timer_false: "Stop timer"
     tags:
       index:
         title: Tags

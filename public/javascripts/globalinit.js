@@ -56,7 +56,7 @@ var $J = jQuery.noConflict();
    //URL Validator
    $.validator.addClassRules("url_validator", { url : true });
    
-
+       
    // App initialisation  
    $(document).ready(function() {
        var widgetPopup = null;   
@@ -90,44 +90,47 @@ var $J = jQuery.noConflict();
             });
           
           
-      // - Labels with overlabel will act a Placeholder for form elements
-       $("label.overlabel").livequery(function(){ $(this).overlabel(); });
+      // - Labels with overlabel will act a Placeholder for form elements
+      $("label.overlabel").livequery(function(){ $(this).overlabel(); });
  
-      // - Custom select boxs will use a plugin called chosen to render with custom CSS and interactions
-      $("select.customSelect").livequery(function(){ $(this).chosen(); });
-       
-      // - Quote Text in the document as they are being loaded
-       $("div.request_mail").livequery(function(){ quote_text(this); }); 
-        
-      // - jQuery Validation for forms with class .ui-form ( ...An optional dont-validate written for the form element will make the selectors ignore those form alone )
-      validateOptions = {
-         onkeyup: false,
-         focusCleanup: true,
-         focusInvalid: false
-      };
-       
-      $(".admin_list li")
-          .hover(
-             function(){ $(this).children(".item_actions").css("visibility", "visible"); }, 
-             function(){ $(this).children(".item_actions").css("visibility", "hidden"); }
-          );
-           
-      $("ul.ui-form").not(".dont-validate").parents('form:first').validate(validateOptions);
-      $("div.ui-form").not(".dont-validate").find('form:first').validate(validateOptions); 
-      $("form.uniForm").validate(validateOptions);
-      $("form.ui-form").validate(validateOptions);      
- 
-      // Make Textareas to expand automatically when editing it
-      // Auto Resize in IE seems to be screwing up the horizontal scroll bar... hence removing it
-      if(!$.browser.msie)
-         $("textarea.auto-expand").autoResize();
-         
-        sidebarHeight = $('#Sidebar').height();
-        if(sidebarHeight !== null && sidebarHeight > $('#Pagearea').height())
-            $('#Pagearea').css("minHeight", sidebarHeight);
-         
-        // Any object with class custom-tip will be given a different tool tip
-        $(".custom-tip").qtip({
+      // - Custom select boxs will use a plugin called chosen to render with custom CSS and interactions
+      $("select.customSelect").livequery(function(){ $(this).chosen(); });
+
+      // - Quote Text in the document as they are being loaded
+      $("div.request_mail").livequery(function(){ quote_text(this); }); 
+
+      $("input.datepicker").livequery(function(){ $(this).datepicker({showOn:'focus'});});
+      
+      // Any object with class custom-tip will be given a different tool tip
+      $("a.tooltip").twipsy({ live: true });
+      // - jQuery Validation for forms with class .ui-form ( ...An optional dont-validate written for the form element will make the selectors ignore those form alone )
+      validateOptions = {
+         onkeyup: false,
+         focusCleanup: true,
+         focusInvalid: false
+      };
+      
+      $(".admin_list li")
+         .hover(
+            function(){ $(this).children(".item_actions").css("visibility", "visible"); }, 
+            function(){ $(this).children(".item_actions").css("visibility", "hidden"); }
+         );
+
+      $("ul.ui-form").not(".dont-validate").parents('form:first').validate(validateOptions);
+      $("div.ui-form").not(".dont-validate").find('form:first').validate(validateOptions); 
+      $("form.uniForm").validate(validateOptions);
+      $("form.ui-form").validate(validateOptions);
+
+      // Make Textareas to expand automatically when editing it
+      // Auto Resize in IE seems to be screwing up the horizontal scroll bar... hence removing it
+      if(!$.browser.msie) $("textarea.auto-expand").autoResize();
+
+      sidebarHeight = $('#Sidebar').height();
+      if(sidebarHeight !== null && sidebarHeight > $('#Pagearea').height())
+         $('#Pagearea').css("minHeight", sidebarHeight);
+
+      // Any object with class custom-tip will be given a different tool tip
+      $(".custom-tip").qtip({
              position: {
                   my: 'center right',  // Position my top left...
                   at: 'center left', // at the bottom right of...
