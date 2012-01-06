@@ -892,7 +892,8 @@ en:
       lesser_agents: Your freshdesk account currently has %{agent_count} agents, you cannot subscribe to a lesser number of agents. Please delete some agents and try again.
   activate: Activate
   feedbackwidget_text: Text
-  billed_amount_per_month: You will be billed $%{amount} per month
+  billed_amount_per_month: You will be billed $%{amount} %{period}
+  billed_amount_annually: You will be billed $%{amount} annually
   import_zendesk_summary: Import from zendesk summary
   user_activation_email: User Activation Email
   incident: Incident
