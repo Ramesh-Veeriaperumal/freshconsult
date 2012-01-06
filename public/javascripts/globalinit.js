@@ -99,7 +99,7 @@ var $J = jQuery.noConflict();
       // - Quote Text in the document as they are being loaded
       $("div.request_mail").livequery(function(){ quote_text(this); }); 
 
-      $("input.datepicker").livequery(function(){ $(this).datepicker({showOn:'focus'});});
+      $("input.datepicker").livequery(function(){ $(this).datepicker({showOn:'focus', disabled: true });});
       
       // Any object with class custom-tip will be given a different tool tip
       $(".tooltip").twipsy({ live: true });
