@@ -199,8 +199,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
     self.source = TicketConstants::SOURCE_KEYS_BY_TOKEN[:portal] if self.source == 0
     self.ticket_type ||= account.ticket_type_values.first.value
     self.subject ||= ''
+    self.group_id ||= email_config.group_id unless email_config.nil?
     #self.description = subject if description.blank?
   end
+  
+  
   
   def to_param 
     display_id ? display_id.to_s : nil
