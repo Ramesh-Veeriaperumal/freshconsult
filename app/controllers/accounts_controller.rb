@@ -388,7 +388,8 @@ class AccountsController < ApplicationController
   
   def create_deleted_customers_info
     sub = current_account.subscription
-    DeletedCustomers.create(
+    if sub.active?
+     DeletedCustomers.create(
        :full_domain => current_account.full_domain,
        :account_id => current_account.id,
        :admin_name => current_account.account_admin.name,
@@ -397,8 +398,10 @@ class AccountsController < ApplicationController
                          :discount => sub.subscription_discount_id,
                          :agents_count => current_account.agents.count,
                          :tickets_count => current_account.tickets.count,
-                         :user_count => current_account.contacts.count}
-    )
+                         :user_count => current_account.contacts.count,
+                         :account_created_on => current_account.created_at}
+     )
+    end
   end
   
   def thanks

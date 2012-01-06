@@ -23,6 +23,18 @@ class Subscription < ActiveRecord::Base
   validates_numericality_of :amount, :greater_than_or_equal_to => 0
   validate_on_create :card_storage
   
+  def self.customer_count
+   count(:conditions => {:state => 'active'})
+ end
+  
+  def self.customers_agent_count
+    sum(:agent_limit, :conditions => { :state => 'active'})
+  end
+ 
+  def self.monthly_revenue
+    sum('amount/renewal_period', :conditions => { :state => 'active'}).to_f
+  end
+  
   # This hash is used for validating the subscription when a plan
   # is changed.  It includes both the validation rules and the error
   # message for each limit to be checked.
@@ -107,9 +119,13 @@ class Subscription < ActiveRecord::Base
   # made the charge and set the billing date into the future.
   def charge
     if amount == 0 || (@response = gateway.purchase(amount_in_pennies, billing_id)).success?
+      begin
         update_attributes(:next_renewal_at => self.next_renewal_at.advance(:months => self.renewal_period), :state => 'active')
         subscription_payments.create(:account => account, :amount => amount, :transaction_id => @response.authorization) unless amount == 0
-        true
+       rescue Exception => err
+         SubscriptionNotifier.deliver_sub_error({:error_msg => err.message, :full_domain => account.full_domain, :custom_message => "Charge failed" })
+       end
+       true
       else
         errors.add_to_base(@response.message)
         false
@@ -200,6 +216,10 @@ class Subscription < ActiveRecord::Base
       errors.add_to_base(@response.message)
       return false
     end
+  end
+  
+  def active?
+    state == 'active'
   end
 
   protected

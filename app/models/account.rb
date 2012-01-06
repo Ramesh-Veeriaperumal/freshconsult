@@ -199,6 +199,10 @@ class Account < ActiveRecord::Base
     end
   end
   
+  def self.actual_customer_count
+    Account.count('id',:distinct => true,:joins => :subscription_payments)
+  end
+  
   def get_max_display_id
     ticket_dis_id = self.ticket_display_id
     max_dis_id = self.tickets.maximum('display_id')

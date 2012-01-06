@@ -1,9 +1,20 @@
 class SubscriptionAdmin::SubscriptionsController < ApplicationController
+  
+  DUMMY_ACCOUNTS = 2
+  DUMMY_MONEY = 137.0
+  DUMMY_AGENTS = 5
+   
+   
+  
   include ModelControllerMethods
   include AdminControllerMethods
   
   def index
     @stats = SubscriptionPayment.stats if params[:page].blank?
+    @customer_count = Subscription.customer_count - DUMMY_ACCOUNTS
+    @monthly_revenue = Subscription.monthly_revenue - DUMMY_MONEY
+    @cmrr = @monthly_revenue/@customer_count
+    @customer_agent_count = Subscription.customers_agent_count - DUMMY_AGENTS
     @subscriptions = search(params[:search])
     @subscriptions = @subscriptions.paginate( :page => params[:page], :per_page => 30)
   end
@@ -28,9 +39,34 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
     end
   end
   
+  def deleted_customers
+    @deleted_customers = DeletedCustomers.all
+    @deleted_customers = @deleted_customers.paginate( :page => params[:page], :per_page => 30)
+  end
+  
   def customers
-    @subscriptions = Subscription.paginate(:include => :account, :page => params[:page], :per_page => 30, :order => 'accounts.created_at desc',
-                                           :conditions => ['card_number is not null and state = ? ','active'] )
+    fetch_customers_per_month
+    fetch_signups_per_month
+    fetch_signups_per_day
+#    @subscriptions = Subscription.paginate(:include => :account, :page => params[:page], :per_page => 30, :order => 'accounts.created_at desc',
+#                                           :conditions => ['card_number is not null and state = ? ','active'] )
+end
+   
+   def fetch_signups_per_day
+     #@signups_per_day = Account.count(:group => "day(created_at)",:conditions => {:created_at => (30.days.ago..Time.now)}, :order => "created_at desc")
+     @signups_per_day = Account.find(:all,:conditions => {:created_at => (30.days.ago..Time.now)}, :order => "created_at desc").group_by {|a| a.created_at.at_beginning_of_day}
+   end
+   
+   def fetch_signups_per_month
+     @signups_by_month = Account.count(:group => "DATE_FORMAT(created_at, '%b, %Y')", :order => "created_at desc")
+   end
+  
+  def fetch_customers_per_month
+    @customers_by_month = {}
+    SubscriptionPayment.minimum(:created_at,:group => :account_id, :order => "created_at desc").each do |account_id,date|
+      count = @customers_by_month.fetch(date.strftime("%b, %Y"),0)
+      @customers_by_month.store(date.strftime("%b, %Y"),count+1)
+    end
   end
   
   #"name","full_domain","name","email","created_at","next_renewal_at","amount","agent_limit","subscription_plan_id","renewal_period","subscription_discount_id"
