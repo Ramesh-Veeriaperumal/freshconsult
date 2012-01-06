@@ -431,6 +431,15 @@ a.addchoice:hover{
 					input.text, textarea.paragraph{
 						width:590px;
 					}
+					label.error{
+						margin-left:190px;
+						width:575px;
+						@include border-radius(3px);
+					}
+					
+					.error{
+						border-color:#ff9999;
+					}
 					a.l_placeholder{
 						clear:left;
 						margin-left:190px;
