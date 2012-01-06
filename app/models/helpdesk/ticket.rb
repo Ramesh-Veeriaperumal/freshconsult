@@ -2,6 +2,7 @@ require 'digest/md5'
 
 
 class Helpdesk::Ticket < ActiveRecord::Base 
+
   include ActionController::UrlWriter
   include TicketConstants
   include Helpdesk::TicketModelExtension
@@ -140,7 +141,17 @@ class Helpdesk::Ticket < ActiveRecord::Base
   named_scope :requester_completed, lambda { |user| { :conditions => 
     [ "requester_id=? and status in (#{STATUS_KEYS_BY_TOKEN[:resolved]}, #{STATUS_KEYS_BY_TOKEN[:closed]})",
       user.id ] } }
-  
+      
+  named_scope :permissible , lambda { |user| { :conditions => agent_permission(user)}  unless user.customer? }
+ 
+  def self.agent_permission user
+    
+    permissions = {:all_tickets => [] , 
+                   :group_tickets => ["group_id in (?) OR responder_id=?", user.agent_groups.collect{|ag| ag.group_id}.insert(0,0), user.id] , 
+                   :assigned_tickets =>["responder_id=?", user.id] }
+                  
+     return permissions[Agent::PERMISSION_TOKENS_BY_KEY[user.agent.ticket_permission]]
+  end
   #Sphinx configuration starts
   define_index do
     indexes :display_id, :sortable => true
@@ -422,10 +433,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       
       ticket_states.pending_since=Time.zone.now if (status == STATUS_KEYS_BY_TOKEN[:pending])
       ticket_states.set_resolved_at_state if (status == STATUS_KEYS_BY_TOKEN[:resolved])
-      
-      if (status == STATUS_KEYS_BY_TOKEN[:closed]) 
-        ticket_states.resolved_at ||= ticket_states.set_closed_at_state
-      end
+      ticket_states.set_closed_at_state if closed?
     end    
     ticket_states.save
   end

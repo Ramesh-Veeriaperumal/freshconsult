@@ -8,7 +8,8 @@ class User < ActiveRecord::Base
     [ :poweruser,   "Power User",       2 ],
     [ :customer,    "Customer",         3 ],
     [ :account_admin,"Account admin",   4 ],
-    [ :client_manager,"Client Manager", 5 ]
+    [ :client_manager,"Client Manager", 5 ],
+    [ :supervisor,    "Supervisor"    , 6 ]
    ]
 
   USER_ROLES_OPTIONS = USER_ROLES.map { |i| [i[1], i[2]] }
@@ -190,6 +191,10 @@ class User < ActiveRecord::Base
   def client_manager?
     user_role == USER_ROLES_KEYS_BY_TOKEN[:client_manager]
   end
+  
+  def supervisor?
+    user_role == USER_ROLES_KEYS_BY_TOKEN[:supervisor]
+  end
 
   #Savage_beast changes end here
 
@@ -328,6 +333,17 @@ class User < ActiveRecord::Base
     "@#{twitter_id}"
   end
   
+  def can_view_all_tickets?
+    self.permission?(:manage_tickets) && agent.all_ticket_permission
+  end
+  
+  def group_ticket_permission
+    self.permission?(:manage_tickets) && agent.group_ticket_permission
+  end
+  
+  def has_ticket_permission? ticket
+    (can_view_all_tickets?) or (ticket.responder == self ) or (group_ticket_permission && (ticket.group_id && (agent_groups.collect{|ag| ag.group_id}.insert(0,0)).include?( ticket.group_id))) 
+  end
   
     def to_xml(options = {})
      options[:indent] ||= 2

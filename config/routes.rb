@@ -100,7 +100,7 @@ ActionController::Routing::Routes.draw do |map|
   map.with_options(:conditions => {:subdomain => AppConfig['admin_subdomain']}) do |subdom|
     subdom.root :controller => 'subscription_admin/subscriptions', :action => 'index'
     subdom.with_options(:namespace => 'subscription_admin/', :name_prefix => 'admin_', :path_prefix => nil) do |admin|
-      admin.resources :subscriptions, :member => { :charge => :post, :extend_trial => :post }, :collection => {:customers => :get, :customers_csv => :get}
+      admin.resources :subscriptions, :member => { :charge => :post, :extend_trial => :post }, :collection => {:customers => :get, :customers_csv => :get, :deleted_customers => :get}
       admin.resources :accounts, :collection => {:agents => :get, :helpdesk_urls => :get, :tickets => :get, :renewal_csv => :get}
       admin.resources :subscription_plans, :as => 'plans'
       admin.resources :subscription_discounts, :as => 'discounts'
@@ -229,9 +229,9 @@ ActionController::Routing::Routes.draw do |map|
   end
   
    map.namespace :solution do |solution|     
-     solution.resources :categories  do |category|   
-     category.resources :folders  do |folder|
-       folder.resources :articles, :member => { :thumbs_up => :put, :thumbs_down => :put , :delete_tag => :post } do |article|
+     solution.resources :categories, :collection => {:reorder => :put}  do |category|   
+     category.resources :folders, :collection => {:reorder => :put}  do |folder|
+       folder.resources :articles, :member => { :thumbs_up => :put, :thumbs_down => :put , :delete_tag => :post }, :collection => {:reorder => :put} do |article|
          article.resources :tag_uses
        end
        end

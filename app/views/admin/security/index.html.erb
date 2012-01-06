@@ -1,13 +1,13 @@
 <% content_for :sidebar do -%><%- end %>
-<%= content_tag (:h3, t(".remote_authentication"), :class => "title") %>
+<%= content_tag (:h3, t(".security_title"), :class => "title") %>
 <% form_for  :account,@account, :url=> update_admin_security_path(@account) ,  :html => { :method => :put, :id => "sso_form"  } do |f| %>
 	<%= f.error_messages %>
 	<ul class="ui-form">
 		<li class="inline-field">
 		  <%= check_box('account', 'sso_enabled', options = { :checked => current_account.sso_enabled}, checked_value = "1", unchecked_value = "0") %> <%=t(".enable_sso")%>
-		<%= content_tag( :div, t(".enable_sso_info"), :class => "info-data tabbed" ) %>
-			<div class="info-data tabbed">				
-				<ul class="ui-form-inline" id="sso-form" style="display:<%= current_account.sso_enabled ? "block": "none" %>;">
+		  <%= content_tag( :div, t(".enable_sso_info"), :class => "info-data tabbed" ) %>
+			<div class="info-data tabbed"  id="sso-form" style="display:<%= current_account.sso_enabled ? "block": "none" %>;">				
+				<ul class="ui-form-inline">
 					<li>
 						<%= f.label :shared_secret, t('.shared_secret') %>
 						<%= content_tag( :div, t(".shared_secret_info"), :class => "info-data" ) %>
@@ -29,11 +29,25 @@
 				</ul>
 			</div>
 		</li>
+		<li>
+			<%= check_box('account', 'ssl_enabled', options = { :checked => current_account.ssl_enabled}, checked_value = "1", unchecked_value = "0") %> <%= t('.enable_SSL') %>
+			<% content_tag( :div, :class => "info-data tabbed" ) do %>
+				<p>
+					<%= t(".enable_SSL_anon") %>
+				</p>
+				<span class="warning">
+				<% if current_account.ssl_enabled? %>
+					<% if current_portal.main_portal? && !(current_account.main_portal.portal_url.blank?)%>
+						<%= t(".customer_portal_ssl_warning") + current_account.full_domain + " to avoid SSL errors" %>
+					<%end%> 
+					<%if !current_portal.main_portal?%>
+						<%= t(".multiple_product_ssl_warning") %>
+					<%end%>
+				<%end%>
+				</span>
+			<% end %>
+		</li>
 	</ul>
-	<div class="button-container">
-		<%= link_to "&larr; #{t('account.cancel')}", "/admin/home", :class => "uiButton floatl" %>
-		<%= f.submit t('save'), :class => "uiButton" %>
-	</div>
 	<% javascript_tag do %>
 		(function($){
 			$("#account_sso_enabled").bind("click", function(e){
@@ -41,4 +55,9 @@
 			}); 
 		})(jQuery)
 	<% end %>
+	<div class="button-container">
+		<%= link_to "&larr; #{t('back')}", "/admin/home", :class => "uiButton floatl" %>
+		<%= f.submit t('save'), :class => "uiButton" %>
+	</div>
+	
 <% end %>

@@ -26,14 +26,23 @@
 <% end %>
 
 <div id="TicketProperties">
-	<h3 class="title"><%=t('ticket_due_by_time')%></h3>
-	<ul class="cnt" id="due-by-time-parent">
-	   <li>
-			<a id="edit-due-by-time" data-placement="topRight" href="#" data-widget-container="due-date-dialog-container">
-				<%= formated_date(ticket.due_by) %>
-			</a> 
-	   </li> 
-	</ul>
+	<% if @ticket.open? %>
+		<h3 class="title"><%=t('ticket_due_by_time')%></h3>
+		<ul class="cnt" id="due-by-time-parent">
+		   <li>
+				<a id="edit-due-by-time" data-placement="topRight" href="#" data-widget-container="due-date-dialog-container">
+					<%= formated_date(ticket.due_by) %>
+				</a> 
+		   </li> 
+		</ul>	
+	<% else %>
+		<h3 class="title"><%= status_changed_time_value_hash(@ticket.status)[:title] %></h3>
+		<ul class="cnt" id="due-by-time-parent">
+		   <li>
+		   	  <%=formated_date(@ticket.ticket_states.send(status_changed_time_value_hash(@ticket.status)[:method]))%>
+		   </li> 
+		</ul>	
+	<% end %>
 	<h3 class="title"><%=t('ticket.properties')%></h3>	
 	<% form_for ticket, :html => { :id => 'custom_ticket_form' } do |f| %>
 	   <ul class="cnt">

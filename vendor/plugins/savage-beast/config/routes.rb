@@ -13,8 +13,8 @@ ActionController::Routing::Routes.draw do |map|
     #end
   #end
 
- map.resources :categories, :controller=>'forum_categories'  do |forum_c|
-  forum_c.resources :forums do |forum|
+ map.resources :categories, :collection => {:reorder => :put}, :controller=>'forum_categories'  do |forum_c|
+  forum_c.resources :forums, :collection => {:reorder => :put} do |forum|
     forum.resources :topics, :member => { :update_stamp => :put,:remove_stamp => :put, :update_lock => :put }
     forum.resources :topics do |topic|
       topic.resources :posts, :member => { :toggle_answer => :put } 

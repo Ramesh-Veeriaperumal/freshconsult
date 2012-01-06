@@ -13,7 +13,7 @@ class Helpdesk::DashboardController < ApplicationController
   
   protected
     def recent_activities
-      Helpdesk::Activity.freshest(current_account)
+      Helpdesk::Activity.freshest(current_account).permissible(current_user)
     end
 
 end

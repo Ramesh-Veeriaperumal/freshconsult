@@ -16,7 +16,7 @@ class Helpdesk::TicketsController < ApplicationController
   layout :choose_layout 
   
   before_filter :load_multiple_items, :only => [:destroy, :restore, :spam, :unspam, :assign , :close_multiple ,:pick_tickets]  
-  before_filter :load_item,           :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :get_ca_response_content, :print] 
+  before_filter :load_item, :verify_permission  ,   :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :get_ca_response_content, :print] 
   before_filter :load_flexifield ,    :only => [:execute_scenario]
   before_filter :set_date_filter ,    :only => [:export_csv]
 
@@ -76,7 +76,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
  
   def index
-    @items = current_account.tickets.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter') 
+    @items = current_account.tickets.permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter') 
     @filters_options = scoper_user_filters.map { |i| {:id => i[:id], :name => i[:name], :default => false} }
     @current_options = @ticket_filter.query_hash.map{|i|{ i["condition"] => i["value"] }}.inject({}){|h, e|h.merge! e}
     @show_options = show_options
@@ -102,7 +102,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
   
   def custom_search
-    @items = current_account.tickets.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
+    @items = current_account.tickets.permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
     render :partial => "custom_search"
   end
   
@@ -407,6 +407,13 @@ class Helpdesk::TicketsController < ApplicationController
     false
    else
     true
-   end
+  end
+  
+   def verify_permission
+      unless current_user && current_user.has_ticket_permission?(@item)
+        flash[:notice] = t("flash.general.access_denied") 
+        redirect_to helpdesk_tickets_url
+      end
+    end
 
 end

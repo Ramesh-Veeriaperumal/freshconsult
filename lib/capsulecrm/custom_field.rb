@@ -1,9 +1,10 @@
-class CapsuleCRM::CustomField < CapsuleCRM::Child
+class CapsuleCRM::CustomField < CapsuleCRM::Base
 
   attr_accessor :boolean
   attr_accessor :date
   attr_accessor :label
   attr_accessor :text
+  attr_accessor :tag
 
 
   # nodoc
@@ -25,14 +26,22 @@ class CapsuleCRM::CustomField < CapsuleCRM::Child
     date || text || boolean
   end
   
-
+  def attributes_hash
+    hsh = {  "label" => label ,
+             "tag" => tag  }
+    hsh[:text] = text unless text.blank?
+    hsh[:date] = date unless date.blank?
+    hsh
+  end
+  
   # nodoc
   def self.xml_map
     map = {
       'label' => 'label',
       'text' => 'text',
       'date' => 'date',
-      'boolean' => 'boolean'
+      'boolean' => 'boolean',
+      'tag' => 'tag'
     }
     super.merge map
   end
