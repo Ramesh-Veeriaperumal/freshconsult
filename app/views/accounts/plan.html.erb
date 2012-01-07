@@ -1,7 +1,7 @@
 <% content_for :sidebar do -%>
   <div class="sidepanel">
     <%= content_tag(:h4, "#{ t('current_plan') }", :class => "title") %>
-    <%= content_tag(:strong, "#{ t('current_plan_details', :plan_name => @current_subscription.subscription_plan.name, :agent_limit => @current_subscription.agent_limit) } @ #{t('amount_per_month', :amount => @current_subscription.amount.to_i)}", :class => "highlight") %>
+    <%= content_tag(:strong, "#{ t('current_plan_details', :plan_name => @current_subscription.subscription_plan.name, :agent_limit => @current_subscription.agent_limit) } @ #{get_amount_string(@current_subscription.renewal_period,@current_subscription.amount.to_i)}", :class => "highlight") %>
     <%= content_tag(:p, t('change_plan_info', :date => @subscription.next_renewal_at.to_s(:long_day)), :class => "info-text") %>  
   </div>
 <%- end %>
