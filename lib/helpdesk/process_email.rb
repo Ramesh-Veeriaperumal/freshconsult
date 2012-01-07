@@ -122,7 +122,6 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       )
       ticket = check_for_chat_scources(ticket,from_email)
       ticket = check_for_spam(ticket)
-      ticket.group_id = ticket.email_config.group_id unless ticket.email_config.nil?
       begin
         ticket.save!
         create_attachments(ticket, ticket)
@@ -182,11 +181,33 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
 
     def create_attachments(ticket, item)
+      temp_body_html = String.new(item.body_html)
+      content_ids = params["content-ids"].nil? ? {} : get_content_ids 
+     
       Integer(params[:attachments]).times do |i|
-        item.attachments.create(:content => params["attachment#{i+1}"], :account_id => ticket.account_id)
+        created_attachment = item.attachments.create(:content => params["attachment#{i+1}"], :account_id => ticket.account_id)
+        temp_body_html = replace_content_id(temp_body_html, content_ids["attachment#{i+1}"], created_attachment)
+      end
+
+      unless content_ids.blank?
+        item.update_attributes!(:body_html => temp_body_html)
       end
     end
+    
+    def replace_content_id(bodyHTML, content_id, created_attachment)
+        bodyHTML.sub!("cid:#{content_id}",created_attachment.content.url)  unless content_id.nil?
+        bodyHTML
+    end
   
+    def get_content_ids
+        content_ids = {}
+        split_content_ids = params["content-ids"].tr("{}\\\"","").split(",")   
+        split_content_ids.each do |content_id|
+          split_content_id = content_id.split(":")
+          content_ids[split_content_id[1]] = split_content_id[0]
+        end
+        content_ids  
+    end
   
   def show_quoted_text(text, address)
     

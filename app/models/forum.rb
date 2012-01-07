@@ -1,5 +1,5 @@
 class Forum < ActiveRecord::Base
-  acts_as_list
+  acts_as_list :scope => :forum_category
   
   TYPES = [
     [ :howto,    I18n.t("forum.types.howto"),    1 ],

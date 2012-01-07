@@ -2,6 +2,7 @@ class Account < ActiveRecord::Base
   require 'net/dns/resolver'
   require 'net/http' 
   require 'uri' 
+  require 'thirdcrm'
 
   #rebranding starts
   serialize :preferences, Hash
@@ -49,7 +50,7 @@ class Account < ActiveRecord::Base
   
   has_one :subscription, :dependent => :destroy
   has_many :subscription_payments
-  has_many :solution_categories , :class_name =>'Solution::Category',:include =>:folders, :dependent => :destroy
+  has_many :solution_categories , :class_name =>'Solution::Category',:include =>:folders, :dependent => :destroy, :order => "position"
   has_many :solution_articles , :class_name =>'Solution::Article'
   
   has_many :customers, :dependent => :destroy
@@ -84,7 +85,7 @@ class Account < ActiveRecord::Base
   
   has_many :email_notifications, :dependent => :destroy
   has_many :groups, :dependent => :destroy
-  has_many :forum_categories, :dependent => :destroy
+  has_many :forum_categories, :dependent => :destroy, :order => "position"
   
   has_one :business_calendar, :dependent => :destroy
   
@@ -154,6 +155,7 @@ class Account < ActiveRecord::Base
   after_create :populate_seed_data
   after_create :populate_features
   after_create :send_welcome_email
+  after_create :add_to_crm
   after_update :update_users_language
   
   before_destroy :update_google_domain
@@ -195,6 +197,10 @@ class Account < ActiveRecord::Base
       v[:features].each { |f_n| feature f_n, :requires => k } unless v[:features].nil?
       SELECTABLE_FEATURES.each { |f_n| feature f_n }
     end
+  end
+  
+  def self.actual_customer_count
+    Account.count('id',:distinct => true,:joins => :subscription_payments)
   end
   
   def get_max_display_id
@@ -437,6 +443,15 @@ class Account < ActiveRecord::Base
                     :account => self)
     end
     
+    def add_to_crm
+      send_later(:add_to_internal_capsule)
+    end
+    
+    def add_to_internal_capsule
+      crm = ThirdCRM.new
+      crm.add_signup_data(self)
+    end
+    
     def create_admin
       self.user.active = true  
       self.user.account = self
@@ -457,4 +472,9 @@ class Account < ActiveRecord::Base
     def update_google_domain
      self.update_attribute(:google_domain, nil)
     end
+    
+     def subscription_next_renewal_at
+       subscription.next_renewal_at
+     end
+ 
 end

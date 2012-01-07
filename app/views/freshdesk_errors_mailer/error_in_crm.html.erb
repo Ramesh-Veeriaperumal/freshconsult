@@ -1,0 +1,16 @@
+<div>
+	The account info is  <%= @account.full_domain %><div><br></div>
+	<div>Company Name: <%= @account.name %></div>
+	<div><br></div>
+	<div>Time Zone: <%= @account.time_zone %></div>
+	<div><br></div>
+	<div>User Name: <%= @account.account_admin.name %></div>
+	<div><br></div>
+	<div>User Email: <%= @account.account_admin.email %></div>
+	<div><br></div>
+	<div>Phone: <%= @account.account_admin.phone %></div>
+	<div><br></div>
+	<div> Creation date: <%= @account.created_at %></div>
+	<div><br></div>
+	<div>Renewal Date: <%= @account.subscription.next_renewal_at %> </div>
+</div>

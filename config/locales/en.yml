@@ -146,6 +146,15 @@ en:
         enable_sso: Enable Single Sign On
         remote_logout_url: Remote logout URL
         remote_authentication: Remote Authentication
+        enable_SSL: "Enable SSL"
+        enable_SSL_anon: "SSL allows you to encrypt data that is transfered to and from freshdesk portals"
+        customer_portal_ssl_warning: "Since custom helpdesk URL is configured for your account you will be redirected to " 
+        multiple_product_ssl_warning: "SSL will not be applicable if multiple products are configured."  
+        enabled: Enabled
+        disabled: Disabled
+        click_to_enable: Click to enable SSL
+        click_to_disable: Click to disable SSL
+        security_title: Security
     products: 
       new: 
         title: New Product
@@ -241,6 +250,7 @@ en:
         twitter-setting: Twitter Settings
         survey: Survey Settings
         facebook-setting: Facebook Settings
+        security: Security
       
     canned_responses:
       index:
@@ -491,6 +501,9 @@ en:
       deleted:
         short: "{{user_path}} has deleted this ticket"
         long: "{{user_path}} has deleted the ticket {{notable_path}}"
+      restored:
+        short: "{{user_path}} has restored this ticket"
+        long: "{{user_path}} has restored the ticket {{notable_path}}"
       product_change:
         short: "{{user_path}} changed the product to {{product_name}}"
         long: "{{user_path}} changed the product of {{notable_path}} to {{product_name}}"
@@ -792,6 +805,17 @@ en:
     restore: restore
     add_signature: Add signature
     update: Update
+    permissions: Permissions
+    admin: Administrator
+    supervisor: Supervisor
+    global: Agent (Global Access)
+    group: Agent (Group Access) 
+    individual: Agent (Restricted Access)
+    admin_info: Can perform all Admin tasks
+    supervisor_info: Can view all Tickets in the Helpdesk and access Reports (no admin privileges)
+    global_info: Can view all Tickets in the Helpdesk
+    group_info: Can view Tickets in their Groups(s) and Tickets assigned to them
+    individual_info: Can only view Tickets assigned to them
   account_admin: Account admin
   right: Right
   footer: 
@@ -813,6 +837,9 @@ en:
   forgot_password_intro: Fill out the form below and instructions to reset your password will be emailed to you
   done: Done
   ticket_due_by_time: Due by
+  ticket_pending_since_time: Pending Since
+  ticket_resolved_at_time: Resolved at
+  ticket_closed_at_time: Closed at
   next: Next
   set_password: Set your password
   send_email_to_agent: Send Email to Agent
@@ -868,7 +895,8 @@ en:
       lesser_agents: Your freshdesk account currently has %{agent_count} agents, you cannot subscribe to a lesser number of agents. Please delete some agents and try again.
   activate: Activate
   feedbackwidget_text: Text
-  billed_amount_per_month: You will be billed $%{amount} per month
+  billed_amount_per_month: You will be billed $%{amount} %{period}
+  billed_amount_annually: You will be billed $%{amount} annually
   import_zendesk_summary: Import from zendesk summary
   user_activation_email: User Activation Email
   incident: Incident
@@ -1503,3 +1531,4 @@ en:
     contact_widget:
       description: "Display a contact or option to add the contact into capsule."
   capsule_crm_helptext: "<h4>Link back from Capsule to Freshdesk</h4><p>You can create a link in Capsule CRM to view the contact's tickets in Freshdesk.</p> <p>To do this Goto your <br /><b>Settings -> Custom Fields -> For People & Organization</b></p><p> Then click on \"Add new...\" and select <b>\"Generated Link\"</b></p> <p>Copy the URl exactly as shown below and paste it in Capsule CRM as the link definition<span class=\"info-code\">http://%{full_domain}/helpdesk/tickets?email={email}</span></p>"
+  reorder: "Reorder"

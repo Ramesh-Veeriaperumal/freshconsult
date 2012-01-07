@@ -56,12 +56,12 @@ Lockfile('lock', :retries => 0) do
 
   Subscription.find_due.each do |sub|
   	begin
-    	puts "#{sub.account.full_domain}"
+  		puts "#{sub.account.full_domain}"
     	charge_response = sub.charge
    		puts charge_response
    		if !charge_response
-   		  puts "Sending failure notice!"
-        SubscriptionNotifier.deliver_charge_failure(sub)
+   		 puts "Sending failure notice!"
+      	 SubscriptionNotifier.deliver_charge_failure(sub)
     	end
     rescue Exception => err
    	 SubscriptionNotifier.deliver_sub_error({:error_msg => err.message, :full_domain => sub.account.full_domain, :custom_message => "Charge failed" })

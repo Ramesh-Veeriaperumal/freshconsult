@@ -1,6 +1,8 @@
 class Solution::Article < ActiveRecord::Base
   set_table_name "solution_articles"
   
+  acts_as_list :scope => :folder
+
   belongs_to :folder, :class_name => 'Solution::Folder'
   belongs_to :user, :class_name => 'User'
   belongs_to :account
@@ -28,6 +30,7 @@ class Solution::Article < ActiveRecord::Base
   define_index do
     indexes :title, :sortable => true
     indexes :desc_un_html, :as => :description
+    indexes tags.name , :as => :tags
 
     has account_id, user_id
     has folder.category_id, :as => :category_id
