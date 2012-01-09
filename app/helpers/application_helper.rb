@@ -326,6 +326,19 @@ module ApplicationHelper
     end
     content_tag :li, element, :class => dom_type
   end
+  
+  def construct_ticket_text_element(object_name, field, field_label, dom_type, required, field_value = "", field_name = "")
+    field_name      = (field_name.blank?) ? field.field_name : field_name
+    object_name     = "#{object_name.to_s}#{ ( !field.is_default_field? ) ? '[custom_field]' : '' }"
+    
+    label = label_tag object_name+"_"+field.field_name, field_label, :class => "name_label" 
+    
+    field_value = field.dropdown_selected(field.choices, field_value) if(dom_type == "dropdown") || (dom_type == "dropdown_blank")
+    
+    element = label + label_tag(field_name, field_value, :class => "value_label")
+    
+    content_tag :li, element unless (field_value == "" || field_value == "...")     
+  end
    
   def pageless(total_pages, url, message=t("loading.items"), callback = "function(){}")
     opts = {

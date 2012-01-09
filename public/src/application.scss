@@ -4504,3 +4504,37 @@ a.close{
   width:31px;
   height:14px;  
 }
+.sidepanel {
+	.cnt {
+		li {
+			border-bottom: 1px solid #F3F3F3;
+			padding: 6px 0;
+			
+			a{
+				text-decoration:none;
+			}
+			label{
+				display:block;
+				font-size:11px;
+				font-weight:bold;
+				color:#666666;
+			}
+			select{
+				font-size:11px;
+				max-width:100%;
+			} 
+			.name_label {
+				color: #666666;
+				font-size: 12px;
+				font-weight: bold;
+			}
+			.value_label {
+				color: #666666;
+				font-size: 11px;
+				font-weight: normal;
+			}
+		}
+		
+		
+	}
+}
