@@ -6,7 +6,8 @@ class Support::TicketsController < ApplicationController
   before_filter :only => [:new, :create] do |c| 
     c.check_portal_scope :anonymous_tickets
   end
-  before_filter :require_user_login , :only =>[:index,:filter,:close_ticket]
+  before_filter :require_user_login , :only =>[:index,:filter,:close_ticket, :update]
+  before_filter :load_item, :only =>[:update]
   
   uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
   
@@ -19,6 +20,13 @@ class Support::TicketsController < ApplicationController
     end
   end
   
+  def update
+    if @item.update_attributes(params[:helpdesk_ticket])
+      flash[:notice] = t(:'flash.general.update.success', :human_name => cname.humanize.downcase)
+      redirect_to @item
+    end
+  end
+
   def filter   
     @page_title = TicketsFilter::CUSTOMER_SELECTOR_NAMES[current_filter.to_sym]
     build_tickets
@@ -45,6 +53,15 @@ class Support::TicketsController < ApplicationController
   end
    
   protected 
+
+    def cname
+      @cname ||= controller_name.singularize
+    end
+
+    def load_item
+      @item = Helpdesk::Ticket.find_by_param(params[:id], current_account) 
+      @item || raise(ActiveRecord::RecordNotFound)      
+    end
     def redirect_url
       current_user ? support_ticket_url(@ticket) : root_path
     end

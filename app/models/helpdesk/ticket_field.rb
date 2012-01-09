@@ -115,6 +115,17 @@ class Helpdesk::TicketField < ActiveRecord::Base
     end
   end  
   
+  def dropdown_selected(dropdown_values, selected_value)  
+      selected_text = ""
+      dropdown_values.each do |i|
+        if (i[1] == selected_value)
+           selected_text = i[0] 
+           break
+        end  
+      end
+      selected_text
+  end
+  
   def to_xml(options = {})
     options[:indent] ||= 2
     xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
