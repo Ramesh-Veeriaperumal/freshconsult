@@ -5,7 +5,11 @@ module Helpdesk::HTMLSanitizer
   SANITIZE_CONFIG[:protocols].merge!('img' => {'src' => 'cid'})
   
   def self.clean(html)
-    Sanitize.clean(html, SANITIZE_CONFIG) if html
+    begin
+      Sanitize.clean(html, SANITIZE_CONFIG) if html
+    rescue Exception => e
+      Sanitize.clean(html, Sanitize::Config::BASIC) if html
+    end  
   end
   
   def self.plain(html)
