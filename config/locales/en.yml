@@ -501,6 +501,9 @@ en:
       deleted:
         short: "{{user_path}} has deleted this ticket"
         long: "{{user_path}} has deleted the ticket {{notable_path}}"
+      restored:
+        short: "{{user_path}} has restored this ticket"
+        long: "{{user_path}} has restored the ticket {{notable_path}}"
       product_change:
         short: "{{user_path}} changed the product to {{product_name}}"
         long: "{{user_path}} changed the product of {{notable_path}} to {{product_name}}"
@@ -803,7 +806,7 @@ en:
     add_signature: Add signature
     update: Update
     permissions: Permissions
-    admin: Admin
+    admin: Administrator
     supervisor: Supervisor
     global: Agent (Global Access)
     group: Agent (Group Access) 
@@ -892,7 +895,8 @@ en:
       lesser_agents: Your freshdesk account currently has %{agent_count} agents, you cannot subscribe to a lesser number of agents. Please delete some agents and try again.
   activate: Activate
   feedbackwidget_text: Text
-  billed_amount_per_month: You will be billed $%{amount} per month
+  billed_amount_per_month: You will be billed $%{amount} %{period}
+  billed_amount_annually: You will be billed $%{amount} annually
   import_zendesk_summary: Import from zendesk summary
   user_activation_email: User Activation Email
   incident: Incident

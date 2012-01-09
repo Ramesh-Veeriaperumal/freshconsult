@@ -60,8 +60,8 @@
   				}
 				
   				var body	= jQuery('<div />')
-  								.append("<b><%= t('.body') %></b>")
-  								.append(FactoryUI.paragraph("", "email_body", initFeed["email_body"]))
+  								.append("<b><%= t('.body') %>*</b>")
+  								.append(FactoryUI.paragraph("", "email_body", initFeed["email_body"], "paragraph required"))
   								.append("<a class='l_placeholder slim-button' href='javascript:void(0)'><%= t('.insert_placeholder') %> &raquo;</a>");
 
   				c_dom = jQuery("<div class=\"s_email\" />")

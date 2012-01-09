@@ -23,6 +23,18 @@ class Subscription < ActiveRecord::Base
   validates_numericality_of :amount, :greater_than_or_equal_to => 0
   validate_on_create :card_storage
   
+  def self.customer_count
+   count(:conditions => {:state => 'active'})
+ end
+  
+  def self.customers_agent_count
+    sum(:agent_limit, :conditions => { :state => 'active'})
+  end
+ 
+  def self.monthly_revenue
+    sum('amount/renewal_period', :conditions => { :state => 'active'}).to_f
+  end
+  
   # This hash is used for validating the subscription when a plan
   # is changed.  It includes both the validation rules and the error
   # message for each limit to be checked.
@@ -204,6 +216,10 @@ class Subscription < ActiveRecord::Base
       errors.add_to_base(@response.message)
       return false
     end
+  end
+  
+  def active?
+    state == 'active'
   end
 
   protected

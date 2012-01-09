@@ -122,7 +122,6 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       )
       ticket = check_for_chat_scources(ticket,from_email)
       ticket = check_for_spam(ticket)
-      ticket.group_id = ticket.email_config.group_id unless ticket.email_config.nil?
       begin
         ticket.save!
         create_attachments(ticket, ticket)

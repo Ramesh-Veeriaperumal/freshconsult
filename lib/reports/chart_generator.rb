@@ -89,6 +89,7 @@ module Reports::ChartGenerator
         },
       :x_axis => {
          :type => 'datetime',
+         :allowDecimals => false,
          :dateTimeLabelFormats => {
             :month => '%e. %b',
             :year => '%b'
