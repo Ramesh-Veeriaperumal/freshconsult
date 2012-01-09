@@ -67,7 +67,7 @@ end
       count = @customers_by_month.fetch(date.strftime("%b, %Y"),0)
       @customers_by_month.store(date.strftime("%b, %Y"),count+1)
     end
-    @customers_by_month.sort { |k,v| k[0].to_i <=> v[0].to_i }
+   @customers_by_month =  @customers_by_month.sort { |k,v| k[0].to_i <=> v[0].to_i }
   end
   
   #"name","full_domain","name","email","created_at","next_renewal_at","amount","agent_limit","subscription_plan_id","renewal_period","subscription_discount_id"
