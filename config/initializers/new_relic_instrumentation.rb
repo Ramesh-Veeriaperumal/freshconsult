@@ -5,6 +5,8 @@ if defined?(ThinkingSphinx::Search)
     include NewRelic::Agent::MethodTracer
     add_method_tracer :initialize
     add_method_tracer :results
+    add_method_tracer :populate
+    add_method_tracer :search
   end
 
   Riddle::Client.class_eval do
