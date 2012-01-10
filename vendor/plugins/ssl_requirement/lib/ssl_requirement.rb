@@ -55,7 +55,7 @@ module SslRequirement
   
     def ensure_proper_protocol
       ##  !current_portal.main_portal? - means if the account has multiple products configured then do not apply SSL ##
-      return true if !Rails.env.production? || ssl_allowed || !current_portal.main_portal? 
+      return true if !Rails.env.production? || ssl_allowed? || !current_portal.main_portal? 
       
       if ((ssl_required?  || current_account.ssl_enabled?) && !request.ssl?)       
         redirect_to "https://" + ssl_redirect_host + request.request_uri

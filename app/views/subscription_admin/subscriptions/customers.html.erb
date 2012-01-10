@@ -1,10 +1,10 @@
 <% @page_title = 'Customers' %>
 <h3>Customers Per Month</h3>
 <table id="customers">
-	<%@customers_by_month.each do |date,count|%>
+	<%@customers_by_month.each do |arr|%>
 	  <tr>
-       <td><%=date%></td>
-       <td><%= count %></td>
+       <td><%=arr[0]%></td>
+       <td><%= arr[1] %></td>
      </tr>
 	<%end%>
 </table>

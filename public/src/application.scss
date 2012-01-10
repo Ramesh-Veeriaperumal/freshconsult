@@ -2436,13 +2436,14 @@ a.page_title{
 }
 
 .search_results_bar{
-	@include corners(0px, 0px, 6px, 6px);
-	@include shadows(#bbbbbb, 0px, 3px, 10px);
+	@include border-bottom-radius(6px);
+	@include box-shadow(#aaa 0px 3px 10px);
 	border:1px solid #afafaf;
 	display:none;
 	position:absolute;
 	background:#ffffff;
-	right:10px;
+	right:16px;
+	top:-12px;
 	border-top:1px solid #dddede;
 	padding-left:100px;
 	z-index:9999999;
@@ -2469,7 +2470,7 @@ a.page_title{
 
 .results{ 
 	padding-bottom:8px;
-	.ticket_icon, 	.contact_icon, .company_icon, .solution_icon, .forum_icon { display:inline-block; }
+	.ticket_icon, 	.contact_icon, .company_icon, .solution_icon, .forum_icon { display:block; }
 	.ticket_icon	span.icon{ background:sprite($icons, page-white) no-repeat; }
 	.contact_icon	span.icon{ background:sprite($icons, user) no-repeat; } 
 	.company_icon	span.icon{ background:sprite($icons, building) no-repeat; } 
