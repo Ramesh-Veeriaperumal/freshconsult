@@ -1532,3 +1532,5 @@ en:
       description: "Display a contact or option to add the contact into capsule."
   capsule_crm_helptext: "<h4>Link back from Capsule to Freshdesk</h4><p>You can create a link in Capsule CRM to view the contact's tickets in Freshdesk.</p> <p>To do this Goto your <br /><b>Settings -> Custom Fields -> For People & Organization</b></p><p> Then click on \"Add new...\" and select <b>\"Generated Link\"</b></p> <p>Copy the URl exactly as shown below and paste it in Capsule CRM as the link definition<span class=\"info-code\">http://%{full_domain}/helpdesk/tickets?email={email}</span></p>"
   reorder: "Reorder"
+  delete_the_ticket: "Delete the Ticket"
+  mark_as_spam: "Mark as Spam"
