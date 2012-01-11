@@ -1,4 +1,7 @@
 class SearchController < ApplicationController
+  
+  extend NewRelic::Agent::MethodTracer
+  
   before_filter( :only => [ :suggest, :index ] ) { |c| c.requires_permission :manage_tickets }
   before_filter :forums_allowed_in_portal?, :only => :topics
   before_filter :solutions_allowed_in_portal?, :only => :solutions
@@ -108,8 +111,10 @@ class SearchController < ApplicationController
                                         :with => { :account_id => current_account.id, :deleted => false }, 
                                         :star => true, :match_mode => :any, 
                                         :page => params[:page], :per_page => 10
-  
-      process_results
+      self.class.trace_execution_scoped(['Custom/search_action/process_results']) do 
+        process_results
+      end
+      
     end
 
     def process_results
