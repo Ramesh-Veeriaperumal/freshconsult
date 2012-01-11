@@ -382,7 +382,7 @@ class AccountsController < ApplicationController
     if request.post? and !params[:confirm].blank?
       SubscriptionNotifier.deliver_account_deleted(current_account)
       create_deleted_customers_info
-      #current_account.destroy
+      current_account.destroy
     end
   end
   
