@@ -1938,7 +1938,7 @@ h4.border_title{
 }
 
 .solution-list .odd, .solution-list .even{
-	@include clearfix;
+	@include pie-clearfix;
 	margin:5px 2% 5px 1%; 
 	padding:10px 0px;
 	float:left;
@@ -4536,5 +4536,20 @@ a.close{
 		}
 		
 		
+	}
+}
+
+.dialog-special {
+	.solution-list {
+		label {
+			font-size: 13px;
+		}
+		select {
+			padding: 0px;
+			font-size: 11px;
+		}
+		li {
+			padding: 0px;
+		} 
 	}
 }

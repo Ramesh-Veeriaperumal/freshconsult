@@ -1298,6 +1298,7 @@ en:
     flash:
       assignedto: "%{tickets} assigned to %{username}."
       tickets_closed: "%{tickets} closed"
+      tickets_update: "%{tickets} updated"
       assigned_to_you: "%{tickets} assigned to you"
       removed_from_spam: "%{tickets} removed from the spam folder."
       closing_the_ticket_failed: Closing the ticket failed
@@ -1537,3 +1538,7 @@ en:
   reorder: "Reorder"
   delete_the_ticket: "Delete the Ticket"
   mark_as_spam: "Mark as Spam"
+  bulk_update: "Bulk Update"
+  update_multiple_tickets: "Update Multiple Tickets"
+  no_change: "No Change"
+  ticket_update_multiple_button: "Update"

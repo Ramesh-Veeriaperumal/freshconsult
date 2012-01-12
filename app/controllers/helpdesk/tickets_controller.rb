@@ -18,7 +18,7 @@ class Helpdesk::TicketsController < ApplicationController
   
   layout :choose_layout 
   
-  before_filter :load_multiple_items, :only => [:destroy, :restore, :spam, :unspam, :assign , :close_multiple ,:pick_tickets]  
+  before_filter :load_multiple_items, :only => [:destroy, :restore, :spam, :unspam, :assign , :close_multiple ,:pick_tickets, :update_multiple]  
   before_filter :load_item, :verify_permission  ,   :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :get_ca_response_content, :print] 
   before_filter :load_flexifield ,    :only => [:execute_scenario]
   before_filter :set_date_filter ,    :only => [:export_csv]
@@ -159,6 +159,19 @@ class Helpdesk::TicketsController < ApplicationController
     end
   end
   
+  def update_multiple
+    @items.each do |item|
+      params[nscname].each do |key, value|
+        if(!value.blank?)
+            item.send("#{key}=", value) if item.respond_to?("#{key}=")
+        end    
+      end
+      item.save!
+    end
+    flash[:notice] = render_to_string(:inline => t("helpdesk.flash.tickets_update", :tickets => get_updated_ticket_count ))
+    redirect_to helpdesk_tickets_path
+  end
+  
   def close_multiple
     status_id = Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:closed]       
     @items.each do |item|
@@ -283,9 +296,10 @@ class Helpdesk::TicketsController < ApplicationController
   
   def get_agents #This doesn't belong here.. by Shan
     group_id = params[:id]
+    blank_value = !params[:blank_value].blank? ? params[:blank_value] : "..."
     @agents = current_account.agents.all(:include =>:user)
     @agents = AgentGroup.find(:all, :joins=>:user, :conditions => { :group_id =>group_id ,:users =>{:account_id =>current_account.id} } ) unless group_id.nil?
-    render :partial => "agent_groups"
+    render :partial => "agent_groups", :locals =>{ :blank_value => blank_value}
   end
   
   def new

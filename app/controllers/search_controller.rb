@@ -1,4 +1,7 @@
 class SearchController < ApplicationController
+  
+  extend NewRelic::Agent::MethodTracer
+  
   before_filter( :only => [ :suggest, :index ] ) { |c| c.requires_permission :manage_tickets }
   before_filter :forums_allowed_in_portal?, :only => :topics
   before_filter :solutions_allowed_in_portal?, :only => :solutions
@@ -10,8 +13,14 @@ class SearchController < ApplicationController
   end
   
   def suggest
-    search
+    start_time = Time.now.to_i
+    self.class.trace_execution_scoped(['Custom/search_action/suggest']) do 
+      search
+    end
+    puts "End time before partial in suggest #{Time.now.to_i - start_time}"
+    start_time = Time.now.to_i
     render :partial => '/search/navsearch_items'    
+    puts "End time after partial in suggest #{Time.now.to_i - start_time}"
   end
   
   def content
@@ -104,12 +113,15 @@ class SearchController < ApplicationController
     end
   
     def search
+      start_time = Time.now.to_i
       @items = ThinkingSphinx.search params[:search_key], 
                                         :with => { :account_id => current_account.id, :deleted => false }, 
                                         :star => true, :match_mode => :any, 
                                         :page => params[:page], :per_page => 10
-  
+      puts "End time is sphinx search #{Time.now.to_i - start_time}"
+      start_time = Time.now.to_i
       process_results
+      puts "End time after process results #{Time.now.to_i - start_time}"
     end
 
     def process_results

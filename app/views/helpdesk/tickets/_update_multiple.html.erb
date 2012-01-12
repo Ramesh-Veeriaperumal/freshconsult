@@ -1,0 +1,41 @@
+<div class="dialog-special">
+  <div class="content solution-list">
+  	<ul>
+  	<% helpdesk_submit_options = []%>
+  	 <% current_portal.ticket_fields.each  do |field| %>
+		<% if field.visible_in_view_form? %>
+			<% if ((field.dom_type == "dropdown") || (field.dom_type == "dropdown_blank")) %>
+				<%
+				    object_name     = "#{:helpdesk_ticket.to_s}#{ ( !field.is_default_field? ) ? '[custom_field]' : '' }"
+				    label = label_tag object_name+"_"+field.field_name, field.label
+					helpdesk_submit_options <<  "#{:helpdesk_ticket.to_s}#{ ( !field.is_default_field? ) ? '_custom_field' : '' }"+"_"+field.field_name
+					element = label + select(object_name,field.field_name, field.choices, {:include_blank => t('no_change'), :selected => t('no_change')},{:class => field.dom_type})
+				%>
+			    <%=content_tag :li, element, :class => cycle('odd', 'even') %>
+			<%end%>
+		<%end%>
+	 <%end%>	
+	 </ul>
+  </div>
+  <div class="button-container">
+    <%= link_to_function t('ticket_update_multiple_button'), "helpdesk_submit('#{update_multiple_helpdesk_tickets_path}', 'put', #{helpdesk_submit_options.to_json})", :class => "uiButton" %>
+  </div>  
+</div> 
+
+<% javascript_tag do %>  
+ jQuery('#helpdesk_ticket_group_id')
+   .bind("change", function(e){
+     jQuery('#helpdesk_ticket_responder_id')
+             .html("<option value=''><%=t('no_change')%></option>");
+	 blank_value = "No Change";
+     jQuery.ajax({
+       type:        'POST',
+       url: 		'/helpdesk/tickets/get_agents/'+this.value+'?blank_value=<%=t('no_change')%>',
+       contentType: 'application/text',
+       success:     function(data){
+                       jQuery('#helpdesk_ticket_responder_id')
+                         .html(data);
+                    }
+     });
+   });
+<% end %>
