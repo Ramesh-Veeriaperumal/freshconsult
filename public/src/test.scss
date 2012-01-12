@@ -1014,7 +1014,7 @@ button.btn::-moz-focus-inner, input[type=submit].btn::-moz-focus-inner {
   border-right: 5px solid #000000;
 }
 .twipsy-inner {
-  padding: 3px 8px;
+  padding: 3px 8px 4px;
   background-color: #000000;
   color: white;
   text-align: center;
@@ -1083,17 +1083,13 @@ button.btn::-moz-focus-inner, input[type=submit].btn::-moz-focus-inner {
   height: 0;
 }
 .popover .inner {
-  background: #000000;
+  background: #333;
   background: rgba(0, 0, 0, 0.8);
   padding: 3px;
   overflow: hidden;
   @include min-width(280px);
-  -webkit-border-radius: 6px;
-  -moz-border-radius: 6px;
-  border-radius: 6px;
-  -webkit-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
-  -moz-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
-  box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+	@include border-radius(6px);
+	@include box-shadow(0 3px 7px rgba(0, 0, 0, 0.4));
 }
 .popover .title {
   background-color: #f5f5f5;
@@ -1105,9 +1101,7 @@ button.btn::-moz-focus-inner, input[type=submit].btn::-moz-focus-inner {
 .popover .content {
   background-color: #ffffff;
   padding: 14px;
-  -webkit-border-radius: 0 0 3px 3px;
-  -moz-border-radius: 0 0 3px 3px;
-  border-radius: 0 0 3px 3px;
+	@include border-radius(5px);
   -webkit-background-clip: padding-box;
   -moz-background-clip: padding-box;
   background-clip: padding-box;
@@ -1277,7 +1271,7 @@ label.small{
 	@include background-with-css2-fallback(linear-gradient(#fafafa, #f6f6f6 93%, #f1f1f1 97%, #ffffff), #fafafa);
 	position:relative;
 	.tabs{
-		padding:10px 10px 0 50px;	
+		padding:10px 10px 0 10px;	
 		margin-bottom:0;
 		h4.title{
 			font-size:1.1em;
@@ -1315,11 +1309,10 @@ a.pill.help{
 }
 
 .timer_box{
-	float:left;	 
 	text-align:right;
-	padding-right:10px;
-	position:relative;
-	margin:5px;
+	position:absolute;
+	left:26px;
+	margin:2px;	
 }
 
 .clock{ 
@@ -1330,14 +1323,14 @@ a.pill.help{
 	background: sprite($symbol, clock-inactive);
 	cursor: pointer;
 	width:26px;
-	height:26px;  	
+	height:26px;
 }
  
-.clock.animated{
-	background: sprite($symbol, clock);		
+.time_running .clock{
+	background: sprite($symbol, clock);
 }
 
-.clock.animated .timer{
+.time_running .clock .timer{
 	position:absolute;
 	width:26px;
 	height:22px;
@@ -1347,32 +1340,68 @@ a.pill.help{
 	@include opacity(0.5);
 }
 
+
+.time{
+	font-size:1.46em;
+	line-height:26px;
+	padding-left:10px;  
+	.small{
+		font-size:0.80em;
+		color:#888;
+	}
+}
+
+.time_running .time{
+	color:#336600;
+	.small{
+		color: inherit;
+	}
+}
+
+.total_time{
+	text-align:right;
+	width:87%;
+	padding:14px 0;
+	color:#888;
+}
+
+.time_running .timeentry{
+	background-color:#f6fded;
+}
 .timeentry, .ui-form{
+	.started_time{
+		font-size:10px;
+		font-style:italic;
+		float:right;
+		text-align:right;
+		margin-top:2px;
+	}	
 	.timespent, .user_details, .note{
-		color:#777;
+		color:#555;
 		float:left;
-		padding-right:3%;	 
+		position:relative;
 	}
 	.user_details{
-		width:25%;
-		padding-top:6px;
+		width:18%;
 		.user_name{
 			display:block;
 			margin-bottom:2px;
 		}
 	}
 	.timespent{
-		width:12%; 
+		width:16%;
+		margin-left:1%;
 	}
 	.note{ 
-		width:50%;		
-		padding-right:0;
+		width:50%;
+		padding-left:22px;
+		a{ @include link-colors(#5c7083); }
 	}
 	.billable{
 		background: sprite($symbol, billable);
 		position:absolute;
-		left:-65px;
-		top:8px;
+		left:0;
+		top:0;
 		width:19px;
 		height:18px;
 	}
@@ -1383,6 +1412,7 @@ a.pill.help{
 		@include clearfix;
 		float:right; 
 		margin-right:0;
+		margin-top:4px;
 		visibility:hidden;
 		a{
 			float:left;
@@ -1391,14 +1421,7 @@ a.pill.help{
 	}
 	.timespent{
 		text-align:right; 
-	}
-	.timespent .time{
-		font-size:1.36em;
-		line-height:30px;  
-	}
-	.note{
-		padding-top:4px;
-	}
+	} 
 }
 
 .timeentry:hover .actions{ 
@@ -1419,11 +1442,20 @@ a.pill.help{
 .request-conversation{
 	.ui-form{
 		margin:0;
-		padding:6px 0 0 40px;
-		background-color:#fefef1;
-		@include box-shadow(0 1px 1px rgba(0, 0, 0, 0.1));
+		padding:6px 50px 0;
+		@include box-shadow(0 1px 1px rgba(0, 0, 0, 0.1)); 
+		.user_details, .note{
+			width:25%;
+		}
+		.note{
+			width:50%;
+		}
+		.timespent{
+			width:18%;
+		}
 		.button-container{	
-			padding-right:4%;
+			margin-top:12px;
+			border-top:1px dotted #afafaf;
 		}
 		.error{
 			border-color:#cc9999;
@@ -1437,4 +1469,9 @@ a.pill.help{
 			background-color:#f8ecec;
 		}
 	}
+}
+
+.form-title{
+	padding:16px 0;
+	font-size:1.1em;
 }

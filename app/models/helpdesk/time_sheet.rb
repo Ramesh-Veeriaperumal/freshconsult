@@ -26,18 +26,32 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
       
   BILLABLE_HASH = { true =>"Billable", false => "Non-Billable"}
 
-  def hours
-   hour_val = time_spent.div(60*60)
-   remaining_sec = time_spent - (60 * 60 *hour_val)
-   [hour_val,  remaining_sec * ((100/3600).to_f)].map{ |t| t.round.to_s }.join(".")
+  def hours seconds = time_spent
+    sprintf( "%0.02f", seconds/3600)
   end
-  
+
+  def running_time
+    total_time = time_spent
+    if timer_running
+      from_time = start_time
+      to_time = Time.zone.now
+      from_time = from_time.to_time if from_time.respond_to?(:to_time)
+      to_time = to_time.to_time if to_time.respond_to?(:to_time)
+      total_time += ((to_time - from_time).abs).round 
+    end  
+    total_time
+  end
+
   def agent_name
     user.name
   end
   
   def ticket_display
     "#{ticket.display_id} - #{ticket.subject}"
+  end
+  
+  def group_by_day_criteria
+    executed_at.to_date.to_s(:db)
   end
   
 end

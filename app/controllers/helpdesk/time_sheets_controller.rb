@@ -28,7 +28,7 @@ class Helpdesk::TimeSheetsController < ApplicationController
   
   def time_sheets_for_ticket
     @ticket = current_account.tickets.find_by_display_id(params[:id])
-    @time_sheets = @ticket.time_sheets || []
+    @time_sheets = @ticket.time_sheets.group_by(&:group_by_day_criteria) || []
     render :partial => "helpdesk/time_sheets/time_sheets_for_ticket"
   end
   
@@ -88,9 +88,10 @@ private
     hours_spent = params[:time_entry][:hours]
     params[:time_entry].delete(:hours)
     time_entry = params[:time_entry].merge!({:start_time => Time.zone.now(),
-                                            :time_spent => get_time_in_second(hours_spent),
-                                            :timer_running => true,
-                                            :billable => true})
+                                             :executed_at => Time.zone.now(),
+                                             :time_spent => get_time_in_second(hours_spent),
+                                             :timer_running => true,
+                                             :billable => true})
     @time_sheet = scoper.new(time_entry)
   end
   
