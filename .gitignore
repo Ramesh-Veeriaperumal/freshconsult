@@ -15,3 +15,4 @@ db/sphinx/*
 config/development.sphinx.conf
 config/database.yml
 config/sphinx.yml
+*.scssc
