@@ -1,0 +1,22 @@
+<% 
+# Agent email will be fetched from responder. if responder is not assigned then it will be taken from loggedin agent.
+  agent = @ticket.responder
+  agent = current_user if agent.blank?
+  @liquid_values = {"requester" => @ticket.requester, "ticket" => @ticket, "agent" => agent}
+  # For edit/delete page append one more parameter 'integrated_resource' in @liquid_values
+%>
+<% installedApp = get_app_details("freshbooks");
+# @time_sheet_entry.integrated_resources.find_by_installed_application_id(installedApp);
+# @liquid_values["integrated_resource"] = integrated_resource
+  unless installedApp.blank?  %>  
+    <% javascript_tag do -%>var freshbooksinline = true;<%- end %>
+    <% fb_code = get_app_widget_script("freshbooks", "freshbooks_timeentry_widget", @liquid_values) %>
+    <%= Liquid::Template.parse(fb_code).render("ticket" => @ticket) %> <!--This is to replace the ticket props in the notes field-->
+<% end %>
+<% installedApp = get_app_details("harvest");
+# @time_sheet_entry.integrated_resources.find_by_installed_application_id(installedApp);
+# @liquid_values["integrated_resource"] = integrated_resource
+  unless installedApp.blank?  %>
+    <% fb_code = get_app_widget_script("harvest", "harvest_timeentry_widget", @liquid_values)%>
+    <%= Liquid::Template.parse(fb_code).render("ticket" => @ticket) %><!--This is to replace the ticket props in the notes field-->
+<% end %>

@@ -1,4 +1,4 @@
-<% content_tag :div, :id => "timeentry_#{time_entry.id}" do %>
+<% content_tag :div, :id => "timeentry_#{time_entry.id}", :class => (time_entry.timer_running) ? "time_running" : "" do %>
   <div class="timeentry" id="timeentry_view_<%= time_entry.id %>">     
       <div class="actions">
   	    <%= link_to_remote( t('edit'), 
@@ -17,27 +17,40 @@
     		<%= formated_date(time_entry.executed_at, "%A, %e %b %Y") %>
     	</div>
     	<div class="note">    	  
-    	  <%= content_tag(:div, "Timer started <br /> @ #{formated_date(time_entry.start_time, "%I:%M %p")}", :class => "started_time") if time_entry.timer_running %>
+    	  <%= content_tag(:div, "Timer started<br />@ #{formated_date(time_entry.start_time, "%I:%M %p")}", :class => "started_time") if time_entry.timer_running %>
     		<%= content_tag(:span, "", :class => "billable tooltip", :title => "Billable time entry") if time_entry.billable %>	
 
-        <%= link_to_remote( RedCloth.new("#{time_entry.note}").to_html, 
+        <%= link_to_remote( RedCloth.new("#{time_entry.note}&nbsp;").to_html, 
   	                    { :url => edit_helpdesk_time_sheet_path(time_entry), 
   	                      :method => :get } ) %>
     	</div>
     	<div class="timespent">
-    		<!-- <a href="#" class="slim-button">start</a> -->
-    		<% current_clock_class = (time_entry.timer_running) ? "animated" : "" %>
+    		<!-- <a href="#" class="slim-button">start</a> --> 
     		<div class="timer_box">
     		  <%= link_to_remote "<span class=\"timer\"></span>", 
     		                    { :url => toggle_timer_helpdesk_time_sheet_path(time_entry),
                               :method => :put },
-                            { :class => "clock #{current_clock_class} tooltip", 
+                            { :class => "clock tooltip", 
                               :title => t(".toggle_timer_#{!time_entry.timer_running}"), 
                               :onclick => "jQuery(this).twipsy('hide');",
                               "data-placement" => "above" } %>
         </div>
-    		<span class="time"><%= time_entry.hours %></span>
+        <%= content_tag :span, time_entry.hours(time_entry.running_time), 
+                        :class => "time",
+                        "data-running-time" => time_entry.running_time,
+                        "data-timer-running" => time_entry.timer_running,
+                        :id => "timeentry_timer_#{time_entry.id}" %>
+        <%#= content_tag :span, (Time.mktime(0)+time_entry.time_spent).strftime("%H:%M<span class='small'>:%S</span>"), 
+                  :class => "time tooltip", 
+                  "data-running-time" => time_entry.running_time, 
+                  "data-timer-running" => time_entry.timer_running, 
+                  :id => "timeentry_timer_#{time_entry.id}",
+                  :title => "Time spent in hours #{time_entry.hours}" %>
     	</div> 
   </div>
   <div id="timeentry_edit_<%= time_entry.id %>"></div>
+<% end %>
+
+<% javascript_tag do %>
+  counter("#timeentry_timer_<%=time_entry.id%>");
 <% end %>

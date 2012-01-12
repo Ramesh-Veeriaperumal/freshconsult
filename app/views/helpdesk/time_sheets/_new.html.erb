@@ -1,40 +1,19 @@
-<div class="ui-form hide" id="add_new_time_entry">
-<% form_remote_for :time_entry, 
+<div class="ui-form" id="add_new_time_entry">
+  <div class="form-title"><strong>Add a time entry</strong> or 
+      <%= link_to_function "Start timer", "jQuery('#add_new_time_entry_form').trigger('submit')" %>
+  </div>
+  <% form_remote_for :time_entry, 
                    :url => new_helpdesk_time_sheet_path, 
                    :html => { :id => "add_new_time_entry_form" }, 
                    :complete => "jQuery('#new_time_submit').button('reset');jQuery('#add_new_time_entry_form').get(0).reset()" do |f| %>
                    
-  <%= render :partial => "/helpdesk/time_sheets/form", :object => f %>
+      <%= render :partial => "/helpdesk/time_sheets/form", :object => f %>
   
-	<%= hidden_field(:time_entry, :ticket_id , { :value => ticket_id, :id => :time_entry_ticket_id }  )%>
-
-<% end %>
-
-<% 
-# Agent email will be fetched from responder. if responder is not assigned then it will be taken from loggedin agent.
-	agent = @ticket.responder
-	agent = current_user if agent.blank?
-	@liquid_values = {"requester" => @ticket.requester, "ticket" => @ticket, "agent" => agent}
-  # For edit/delete page append one more parameter 'integrated_resource' in @liquid_values
-%>
-<% installedApp = get_app_details("freshbooks");
-#	@time_sheet_entry.integrated_resources.find_by_installed_application_id(installedApp);
-#	@liquid_values["integrated_resource"] = integrated_resource
-	unless installedApp.blank?  %>	
-    <% javascript_tag do -%>var freshbooksinline = true;<%- end %>
-		<% fb_code = get_app_widget_script("freshbooks", "freshbooks_timeentry_widget", @liquid_values) %>
-	 	<%= Liquid::Template.parse(fb_code).render("ticket" => @ticket) %><!--This is to replace the ticket props in the notes field-->
-<% end %>
-<% installedApp = get_app_details("harvest");
-#	@time_sheet_entry.integrated_resources.find_by_installed_application_id(installedApp);
-#	@liquid_values["integrated_resource"] = integrated_resource
-	unless installedApp.blank?  %>
-		<% fb_code = get_app_widget_script("harvest", "harvest_timeentry_widget", @liquid_values)%>
-	 	<%= Liquid::Template.parse(fb_code).render("ticket" => @ticket) %><!--This is to replace the ticket props in the notes field-->
-<% end %>
+	    <%= hidden_field(:time_entry, :ticket_id , { :value => ticket_id, :id => :time_entry_ticket_id }  )%>
+  <% end %>
 
   <div class="button-container">	  
-    <%= link_to_function "Save and start timer", "jQuery('#add_new_time_entry_form').trigger('submit')", :class => "submit uiButton special", "data-loading-text" => "Saving time entry...", :id => "new_time_submit" %>
+    <%= link_to_function "Add new time entry", "jQuery('#add_new_time_entry_form').trigger('submit')", :class => "submit uiButton special", "data-loading-text" => "Saving time entry...", :id => "new_time_submit" %>
   	<%= link_to_function("Cancel", "jQuery('#add_new_time_entry').hide();", :class => "uiButton" ) unless @ticket.time_sheets.empty? %>
   </div>
 </div>

@@ -2,11 +2,13 @@
   <%= render :partial => "/helpdesk/time_sheets/form", :object => f %>
   <div class="row">
     <div class="span4">
-	    <%= f.check_box :billable %>
-	    <label class="checkbox">This entry is billable</label>
+	    <label class="checkbox">
+	      <%= f.check_box :billable %>
+        This entry is billable
+      </label>
 	  </div>
 	  <div class="span5">
-      <%= link_to_function "Change Date", "$(this).hide(); jQuery('#time_entry_executed_at').show();" %>
+      <%= link_to_function "Change Date", "$(this).hide(); jQuery('#time_entry_executed_at').show().datepicker('show');" %>
  	    <%= f.text_field :executed_at, :value => edit.created_at.strftime("%m/%d/%Y"), :size => 10, :class => "auto hide datepicker" %>
  	  </div>
 	</div>

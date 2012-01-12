@@ -1014,7 +1014,7 @@ button.btn::-moz-focus-inner, input[type=submit].btn::-moz-focus-inner {
   border-right: 5px solid #000000;
 }
 .twipsy-inner {
-  padding: 3px 8px;
+  padding: 3px 8px 4px;
   background-color: #000000;
   color: white;
   text-align: center;
@@ -1083,17 +1083,13 @@ button.btn::-moz-focus-inner, input[type=submit].btn::-moz-focus-inner {
   height: 0;
 }
 .popover .inner {
-  background: #000000;
+  background: #333;
   background: rgba(0, 0, 0, 0.8);
   padding: 3px;
   overflow: hidden;
   @include min-width(280px);
-  -webkit-border-radius: 6px;
-  -moz-border-radius: 6px;
-  border-radius: 6px;
-  -webkit-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
-  -moz-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
-  box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+	@include border-radius(6px);
+	@include box-shadow(0 3px 7px rgba(0, 0, 0, 0.4));
 }
 .popover .title {
   background-color: #f5f5f5;
@@ -1105,9 +1101,7 @@ button.btn::-moz-focus-inner, input[type=submit].btn::-moz-focus-inner {
 .popover .content {
   background-color: #ffffff;
   padding: 14px;
-  -webkit-border-radius: 0 0 3px 3px;
-  -moz-border-radius: 0 0 3px 3px;
-  border-radius: 0 0 3px 3px;
+	@include border-radius(5px);
   -webkit-background-clip: padding-box;
   -moz-background-clip: padding-box;
   background-clip: padding-box;
@@ -1329,15 +1323,14 @@ a.pill.help{
 	background: sprite($symbol, clock-inactive);
 	cursor: pointer;
 	width:26px;
-	height:26px;  	
+	height:26px;
 }
  
-.clock.animated{
-	top:5px;	
-	background: sprite($symbol, clock);		
+.time_running .clock{
+	background: sprite($symbol, clock);
 }
 
-.clock.animated .timer{
+.time_running .clock .timer{
 	position:absolute;
 	width:26px;
 	height:22px;
@@ -1347,11 +1340,33 @@ a.pill.help{
 	@include opacity(0.5);
 }
 
+
+.time{
+	font-size:1.46em;
+	line-height:26px;
+	padding-left:10px;  
+	.small{
+		font-size:0.80em;
+		color:#888;
+	}
+}
+
+.time_running .time{
+	color:#336600;
+	.small{
+		color: inherit;
+	}
+}
+
 .total_time{
 	text-align:right;
 	width:87%;
 	padding:14px 0;
 	color:#888;
+}
+
+.time_running .timeentry{
+	background-color:#f6fded;
 }
 .timeentry, .ui-form{
 	.started_time{
@@ -1359,17 +1374,15 @@ a.pill.help{
 		font-style:italic;
 		float:right;
 		text-align:right;
-	}
-	
+		margin-top:2px;
+	}	
 	.timespent, .user_details, .note{
-		color:#777;
+		color:#555;
 		float:left;
-		padding-right:2%; 
 		position:relative;
 	}
 	.user_details{
-		width:14%;
-		padding-top:3px;
+		width:18%;
 		.user_name{
 			display:block;
 			margin-bottom:2px;
@@ -1377,27 +1390,21 @@ a.pill.help{
 	}
 	.timespent{
 		width:16%;
-		margin-left:2%;
+		margin-left:1%;
 	}
 	.note{ 
-		width:48%;
-		padding-left:20px;
+		width:50%;
+		padding-left:22px;
 		a{ @include link-colors(#5c7083); }
 	}
 	.billable{
 		background: sprite($symbol, billable);
 		position:absolute;
-		left:0px;
-		top:3px;
+		left:0;
+		top:0;
 		width:19px;
 		height:18px;
 	}
-}
-
-.time{
-	font-size:1.46em;
-	line-height:26px;
-	padding-left:10px;  
 }
 
 .timeentry{  
@@ -1414,10 +1421,7 @@ a.pill.help{
 	}
 	.timespent{
 		text-align:right; 
-	}
-	.note{
-		padding-top:4px;
-	}
+	} 
 }
 
 .timeentry:hover .actions{ 
@@ -1438,11 +1442,20 @@ a.pill.help{
 .request-conversation{
 	.ui-form{
 		margin:0;
-		padding:6px 0 0 40px;
-		background-color:#fefef1;
-		@include box-shadow(0 1px 1px rgba(0, 0, 0, 0.1));
+		padding:6px 50px 0;
+		@include box-shadow(0 1px 1px rgba(0, 0, 0, 0.1)); 
+		.user_details, .note{
+			width:25%;
+		}
+		.note{
+			width:50%;
+		}
+		.timespent{
+			width:18%;
+		}
 		.button-container{	
-			padding-right:4%;
+			margin-top:12px;
+			border-top:1px dotted #afafaf;
 		}
 		.error{
 			border-color:#cc9999;
@@ -1456,4 +1469,9 @@ a.pill.help{
 			background-color:#f8ecec;
 		}
 	}
+}
+
+.form-title{
+	padding:16px 0;
+	font-size:1.1em;
 }
