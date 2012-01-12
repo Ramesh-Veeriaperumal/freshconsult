@@ -276,7 +276,14 @@ module ApplicationHelper
     field_label = t(field[:label])
     dom_type = field[:type]
     required = field[:required]
+<<<<<<< Updated upstream
     element_class   = " #{ (required) ? 'required' : '' } #{ dom_type }"
+=======
+    rel_value = field[:rel]
+    url_autofill_validator = field[:validator_type]
+    ghost_value = field[:autofill_text]
+    element_class   = " #{ (required) ? 'required' : '' }  #{ (url_autofill_validator) ? url_autofill_validator  : '' } #{ dom_type }"
+>>>>>>> Stashed changes
     field_label    += " #{ (required) ? '*' : '' }"
     object_name     = "#{object_name.to_s}"
     label = label_tag object_name+"_"+field_name, field_label

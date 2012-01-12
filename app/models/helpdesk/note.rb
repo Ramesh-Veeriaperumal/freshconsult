@@ -119,10 +119,10 @@ class Helpdesk::Note < ActiveRecord::Base
       return unless human_note_for_ticket?
       
       if user.customer?
-        #unless notable.active? 
+        unless notable.active?
           notable.status = Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open]
           notification_type = EmailNotification::TICKET_REOPENED
-        #end 
+        end 
         e_notification = account.email_notifications.find_by_notification_type(notification_type ||= EmailNotification::REPLIED_BY_REQUESTER)
         Helpdesk::TicketNotifier.send_later(:notify_by_email, (notification_type ||= 
               EmailNotification::REPLIED_BY_REQUESTER), notable, self) if notable.responder && e_notification.agent_notification?

@@ -19,12 +19,7 @@
     <% form_for note, :html => {:multipart => true, :id => "HelpdeskReply" } do |f| %>
     <%= f.error_messages %>
     <% capsule_config = get_app_config('capsule_crm') 
-    
-       bcc_drop_box_email = (capsule_config.blank?) ? [] : capsule_config["bcc_drop_box_mail"].split( /,* /).map{|item|[item, item]}
-       fixed_bcc = @email_config.bcc_email.split( /,* /).map{|item|[item, item]}
-       bcc_drop_box_email += fixed_bcc  
-     %>
-       
+       bcc_drop_box_email = (capsule_config.blank?) ? [] : capsule_config["bcc_drop_box_mail"].split( /,* /).map{|item|[item, item]} %> 
     <ul class="ui-form dont-validate">
         <li class="inline-field field">
             <div class="request_form_options">

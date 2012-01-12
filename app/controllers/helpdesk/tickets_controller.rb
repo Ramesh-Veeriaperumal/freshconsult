@@ -121,8 +121,6 @@ class Helpdesk::TicketsController < ApplicationController
      
     @ticket_notes = @ticket.conversation
     
-    @email_config = current_account.primary_email_config
-    
     respond_to do |format|
       format.html  
       format.atom

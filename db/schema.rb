@@ -168,7 +168,6 @@ ActiveRecord::Schema.define(:version => 20111230205418) do
     t.boolean  "active",                       :default => false
     t.string   "activator_token"
     t.string   "name"
-    t.string   "bcc_email"
   end
 
   add_index "email_configs", ["account_id", "to_email"], :name => "index_email_configs_on_account_id_and_to_email", :unique => true

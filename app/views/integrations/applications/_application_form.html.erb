@@ -9,6 +9,14 @@
 		<%= hidden_field_tag  :application_id,  params[:application_id] %> 
 		<% unless @installing_application.options.blank?%>
 			<% @installing_application.options[:keys_order].each do |input_key|
+<<<<<<< Updated upstream
+=======
+				%>
+				<% if(input_key.to_s == 'domain') %>
+				<div class="textfield">
+				<% end %>
+				<%
+>>>>>>> Stashed changes
 				input_value = @installing_application.options[input_key]
 				if is_edit
 					all_field_values = @installed_application.configs[:inputs] unless @installed_application.configs.blank?
@@ -24,7 +32,16 @@
 					<%# Move the below line into construct_ui_element method.%>
 					<%= content_tag(:div, t(input_value[:info]), :class => "info-data") unless input_value[:info].blank? %>
 					<span class="seperator"></span>
+<<<<<<< Updated upstream
 			 <% end
+=======
+			 <% end %>
+			 <% if(input_key.to_s == 'domain') %>
+				</div>
+			 <% end %>
+				
+			 	<%
+>>>>>>> Stashed changes
 			  end %>
 		<% end %>
 	</div>

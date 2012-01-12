@@ -31,10 +31,7 @@ class Helpdesk::SlaDetail < ActiveRecord::Base
     [ :twelve,   I18n.t('twelve'),    43200 ], 
     [ :day,      I18n.t('day'),      86400 ],
     [ :twoday,   I18n.t('twoday'),     172800 ], 
-    [ :threeday, I18n.t('threeday'),     259200 ],
-    [ :oneweek, I18n.t('oneweek'),     604800 ],
-    [ :twoweek, I18n.t('twoweek'),     1209600 ],
-    [ :onemonth, I18n.t('onemonth'),   2419200 ], 
+    [ :threeday, I18n.t('threeday'),     259200 ], 
    
    
   ]

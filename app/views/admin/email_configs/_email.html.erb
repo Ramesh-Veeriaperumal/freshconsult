@@ -18,14 +18,7 @@
 				<label><%=t('email_configs.info15')%> : 
 				<%= content_tag (:span, h(email.to_email), :class => "large highlight" ) %>
 				</label>
-			</div>
-			<% if ( !@email_config.bcc_email.blank? ) %>
-			<div class="item">
-				<label><%=t('email_configs.info18')%> : 
-					<%= content_tag (:span, h(@email_config.bcc_email), :class => "large highlight" ) %>
-				</label>
 			</div> 
-			<% end %>
 			<%= content_tag ( :div, content_tag ( :label, "#{t('email_configs.info16')} <strong>#{email.group.name}</strong> group" ) , :class => "item" ) if email.group %>
 			<% end %>
 		</div>
