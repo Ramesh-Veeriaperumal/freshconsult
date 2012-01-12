@@ -6,7 +6,7 @@
 			<label><%=t('email_configs.name')%></label>
 			<%= f.text_field :name, :class => "text" %>
 	</li>
-	<li>
+	<li>	
 			<label><%=t('email_configs.reply_email') + " *"%></label>
 			<div class="info-data"><%= t('email_configs.info7') %> </div>
 			<%= f.text_field :reply_email, :class => "required text", :id => "reply_to_id" %>
@@ -15,7 +15,13 @@
 			<label><%=t('email_configs.info8')%></label>
 			<%= content_tag(:div, @email_config.to_email, :id => "div_reply_email", :class =>"highlight-textbox-info" )  %>
 			<%= f.hidden_field :to_email, :id => "hidden_reply_to" %>
-	</li>	
+	</li>
+	<li>	
+			<label><%=t('email_configs.bcc_email') %></label>
+			<div class="info-data"><%= t('email_configs.info17') %> </div>
+			<%= f.text_field :bcc_email, :class => "multiemail", :maxlength => 255 %>
+	</li>
+		
 	<li>
 			<label><%=t('email_configs.info9')%></label>
 			<div class="info-data"><%=t('email_configs.info10')%> </div>
