@@ -13,8 +13,14 @@ class SearchController < ApplicationController
   end
   
   def suggest
-    search
+    start_time = Time.now.to_i
+    self.class.trace_execution_scoped(['Custom/search_action/suggest']) do 
+      search
+    end
+    puts "End time before partial in suggest #{Time.now.to_i - start_time}"
+    start_time = Time.now.to_i
     render :partial => '/search/navsearch_items'    
+    puts "End time after partial in suggest #{Time.now.to_i - start_time}"
   end
   
   def content
@@ -107,14 +113,15 @@ class SearchController < ApplicationController
     end
   
     def search
+      start_time = Time.now.to_i
       @items = ThinkingSphinx.search params[:search_key], 
                                         :with => { :account_id => current_account.id, :deleted => false }, 
                                         :star => true, :match_mode => :any, 
                                         :page => params[:page], :per_page => 10
-      self.class.trace_execution_scoped(['Custom/search_action/process_results']) do 
-        process_results
-      end
-      
+      puts "End time is sphinx search #{Time.now.to_i - start_time}"
+      start_time = Time.now.to_i
+      process_results
+      puts "End time after process results #{Time.now.to_i - start_time}"
     end
 
     def process_results
