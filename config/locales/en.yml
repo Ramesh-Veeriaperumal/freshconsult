@@ -433,6 +433,8 @@ en:
   back_plans_billing: Back to Plans &amp; Billing
   f_request: Feature Request
   save_and_create: Save and Create Another
+  save_and_new: Save and New
+  save_and_close: Save and Close
   undelete: Restore
   import_zendesk_title: Import from zendesk
   closed: Closed
