@@ -8,8 +8,9 @@
     </li>
   </ul>
   <div class="button-container">
-    <%= f.submit t('create'), :class => "uiButton" %>
-    <%= submit_tag t('save_and_create'), :name => "save_and_create", :class => "uiButton" %>
+    <%= f.submit t('save'), :class => "uiButton" %>
+    <%= submit_tag t('save_and_new'), :name => "save_and_create", :class => "uiButton" %>
+	<%= submit_tag t('save_and_close'), :name => "save_and_close", :class => "uiButton" %>
     <%= link_to t('cancel'), (@item.new_record? ? {:action => 'index'} : @item ), :class => "uiButton" %>
   </div>
 <% end %>

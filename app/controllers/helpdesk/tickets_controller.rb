@@ -7,6 +7,9 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :check_user , :only => [:show]
   before_filter :load_ticket_filter , :only => [:index, :custom_view_save]
   before_filter :add_requester_filter , :only => [:index]
+  before_filter :disable_notification, :if => :save_and_close?
+  after_filter  :enable_notification, :if => :save_and_close?
+  
   before_filter { |c| c.requires_permission :manage_tickets }
   
   include HelpdeskControllerMethods  
@@ -314,8 +317,10 @@ class Helpdesk::TicketsController < ApplicationController
       @item.build_ticket_topic(:topic_id => params[:topic_id])
     end
     
+    @item.status = Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:closed] if save_and_close?
     if @item.save
       post_persist
+      
     else
       create_error
     end
@@ -348,6 +353,7 @@ class Helpdesk::TicketsController < ApplicationController
   
     def item_url
       return new_helpdesk_ticket_path if params[:save_and_create]
+      return helpdesk_tickets_path if save_and_close?
       @item
     end
   
@@ -364,11 +370,8 @@ class Helpdesk::TicketsController < ApplicationController
     end
 
     def process_item
-      #if @item.source == 0
-        @item.spam = false
-#        @item.create_activity(@item.requester, 'activities.tickets.new_ticket.long', {},
-#                              'activities.tickets.new_ticket.short')
-#      #end
+       @item.spam = false
+       flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/save_and_close_notice') if save_and_close?
     end
     
     def assign_ticket user
@@ -423,11 +426,17 @@ class Helpdesk::TicketsController < ApplicationController
     true
   end
   
+  private
+  
    def verify_permission
       unless current_user && current_user.has_ticket_permission?(@item)
         flash[:notice] = t("flash.general.access_denied") 
         redirect_to helpdesk_tickets_url
       end
-    end
-
+  end
+  
+  def save_and_close?
+    !params[:save_and_close].blank?
+  end
+ 
 end

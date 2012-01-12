@@ -433,6 +433,8 @@ en:
   back_plans_billing: Back to Plans &amp; Billing
   f_request: Feature Request
   save_and_create: Save and Create Another
+  save_and_new: Save and New
+  save_and_close: Save and Close
   undelete: Restore
   import_zendesk_title: Import from zendesk
   closed: Closed
@@ -1339,6 +1341,9 @@ en:
         actions_performed: Actions performed
       close_notice:
         ticket_has_been_cloased: The ticket has been closed.
+        view_ticket: View ticket
+      save_and_close_notice:
+        ticket_saved_and_closed: The ticket has been created and closed.
         view_ticket: View ticket
       show:
         meta: meta
