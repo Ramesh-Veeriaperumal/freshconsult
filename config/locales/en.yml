@@ -1342,6 +1342,9 @@ en:
       close_notice:
         ticket_has_been_cloased: The ticket has been closed.
         view_ticket: View ticket
+      save_and_close_notice:
+        ticket_saved_and_closed: The ticket has been created and closed.
+        view_ticket: View ticket
       show:
         meta: meta
         linked_ticket: This ticket is linked to the forum

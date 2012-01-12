@@ -320,6 +320,7 @@ class Helpdesk::TicketsController < ApplicationController
     @item.status = Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:closed] if save_and_close?
     if @item.save
       post_persist
+      
     else
       create_error
     end
@@ -352,6 +353,7 @@ class Helpdesk::TicketsController < ApplicationController
   
     def item_url
       return new_helpdesk_ticket_path if params[:save_and_create]
+      return helpdesk_tickets_path if save_and_close?
       @item
     end
   
@@ -368,11 +370,8 @@ class Helpdesk::TicketsController < ApplicationController
     end
 
     def process_item
-      #if @item.source == 0
-        @item.spam = false
-#        @item.create_activity(@item.requester, 'activities.tickets.new_ticket.long', {},
-#                              'activities.tickets.new_ticket.short')
-#      #end
+       @item.spam = false
+       flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/save_and_close_notice') if save_and_close?
     end
     
     def assign_ticket user
