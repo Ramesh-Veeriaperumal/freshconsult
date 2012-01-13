@@ -1696,10 +1696,12 @@ ul.user_list{
 	margin:0px;
 	padding:0px;
 	li{
+	  height:100px;
 		float:left;
-		width:auto;
+		width:120px;
+		text-align:center;
 		.preview_pic{
-			margin:2px;
+			margin:2px 34px;
 			img{
 				padding:0px;
 				border:0px;
@@ -1707,6 +1709,7 @@ ul.user_list{
 		}
 		.username{
 			display:block;
+			word-wrap: break-word;
 		}
 	}
 }
