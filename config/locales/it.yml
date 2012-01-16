@@ -20,9 +20,8 @@ it:
         split_this_as_new_ticket: "Converti come nuovo Ticket"
         public_note: "Nota Pubblica"
         edit_note: "Edita Nota"
-        incoming_email: "Email in Entrata"
-        posted_on: "%{user_name} in %{note_date}
-"
+        inbound_email: "Email in Entrata"
+        posted_on: "%{user_name} in %{note_date}"
         outbound_email: "Email in uscita"
       close_notice:
         view_ticket: "Visualizza Ticket"

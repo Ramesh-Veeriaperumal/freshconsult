@@ -20,7 +20,7 @@ pt-PT:
         split_this_as_new_ticket: "Dividir em novo Ticket"
         public_note: "Anotação Pública"
         edit_note: "Editar Anotação"
-        incoming_email: "Email a Receber"
+        inbound_email: "Email a Receber"
         posted_on: "%{user_name} a %{note_date}"
         outbound_email: "Email a Enviar"
       close_notice:

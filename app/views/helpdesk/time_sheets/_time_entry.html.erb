@@ -14,7 +14,9 @@
     	<div class="user_details">
     		<%= user_avatar(time_entry.user) if time_entry.user %>
     		<%= link_to_user(time_entry.user, "user_name") %>
-    		<%= formated_date(time_entry.executed_at, "%A, %e %b %Y") %>
+    		<div>
+    		  <%= formated_date(time_entry.executed_at, "%A, %e %b %Y") %>
+    		</div>
     	</div>
     	<div class="note">    	  
     	  <%= content_tag(:div, "Timer started<br />@ #{formated_date(time_entry.start_time, "%I:%M %p")}", :class => "started_time") if time_entry.timer_running %>

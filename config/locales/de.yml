@@ -20,7 +20,7 @@ de:
         split_this_as_new_ticket: "In ein neues Ticket abspalten"
         public_note: "&Ouml;ffentliche Notiz"
         edit_note: "Notiz bearbeiten"
-        incoming_email: "E-Mail eingehend"
+        inbound_email: "E-Mail eingehend"
         posted_on: "%{user_name} am %{note_date}"
         outbound_email: "E-Mail ausgehend"
       close_notice:

@@ -37,7 +37,7 @@ a:hover{ text-decoration:none;}
 .title a{ @include link-colors(#4D769F, #3399cc, #4D769F, #4D769F); text-decoration:none; }
 h1.title{ font-size:2em; text-transform:capitalize; font-weight:normal; }
 h2.title{ font-size:1.65em; }
-h3.title, h3.sub_title, h3.title-band{ font-size:18px; line-height: 36px;}
+h3.title, h3.sub_title, h3.title-band{ font-size:18px;}
 h4.title { font-size:16px; font-weight:normal; }
 h3.title-band{ margin:12px -20px; background-color:#f2f2f2; padding:8px 20px; }
 h3.sub_title{ font-size:1.1em; }

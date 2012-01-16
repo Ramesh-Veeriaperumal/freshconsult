@@ -1,19 +1,21 @@
-<div class="ui-form" id="add_new_time_entry">
-  <div class="form-title"><strong>Add a time entry</strong> or 
-      <%= link_to_function "Start timer", "jQuery('#add_new_time_entry_form').trigger('submit')" %>
-  </div>
+<div class="request_panel" id="add_new_time_entry">
   <% form_remote_for :time_entry, 
                    :url => new_helpdesk_time_sheet_path, 
                    :html => { :id => "add_new_time_entry_form" }, 
                    :complete => "jQuery('#new_time_submit').button('reset');jQuery('#add_new_time_entry_form').get(0).reset()" do |f| %>
-                   
-      <%= render :partial => "/helpdesk/time_sheets/form", :object => f %>
-  
-	    <%= hidden_field(:time_entry, :ticket_id , { :value => ticket_id, :id => :time_entry_ticket_id }  )%>
+      <ul class="ui-form">
+        <li>
+          <div class="form-title"><strong>Add a time entry</strong> or 
+              <%= link_to_function "Start timer", "jQuery('#add_new_time_entry_form').trigger('submit')" %>
+          </div>
+          <%= render :partial => "/helpdesk/time_sheets/form", :object => f %>
+          <%= hidden_field(:time_entry, :ticket_id , { :value => ticket_id, :id => :time_entry_ticket_id }  )%>                  
+        </li>
+        <li>
+        <li class="button-container">	  
+          <%= link_to_function "Add new time entry", "jQuery('#add_new_time_entry_form').trigger('submit')", :class => "submit uiButton special", "data-loading-text" => "Saving time entry...", :id => "new_time_submit" %>
+  	      <%= link_to_function("Cancel", "jQuery('#add_new_time_entry').hide();", :class => "uiButton" ) unless @ticket.time_sheets.empty? %>
+        </li>
+      </ul>
   <% end %>
-
-  <div class="button-container">	  
-    <%= link_to_function "Add new time entry", "jQuery('#add_new_time_entry_form').trigger('submit')", :class => "submit uiButton special", "data-loading-text" => "Saving time entry...", :id => "new_time_submit" %>
-  	<%= link_to_function("Cancel", "jQuery('#add_new_time_entry').hide();", :class => "uiButton" ) unless @ticket.time_sheets.empty? %>
-  </div>
 </div>

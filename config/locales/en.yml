@@ -1143,7 +1143,7 @@ en:
     submit_ticket: Submit 
     stop_monitor_btn_title: Stop monitoring this ticket
     merge_btn: Merge
-    split_ticket: Split as new Ticket
+    split_ticket: Split
     tweets: Tweets
     agent_notify: added a note and wants you to have a look
     note_content: Note content
@@ -1365,10 +1365,10 @@ en:
       note:
         posted_on: "%{user_name} on %{note_date}"
         edit_note: Edit Note
-        split_this_as_new_ticket: Split this as new Ticket
+        split_this_as_new_ticket: Split this as a new Ticket
         private_note: Private note
         public_note: Public note
-        incoming_email: Incoming email
+        inbound_email: Incoming email
         outbound_email: Outbound email
     merge:
       merge:

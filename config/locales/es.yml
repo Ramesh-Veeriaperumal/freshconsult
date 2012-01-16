@@ -20,7 +20,7 @@ es:
         split_this_as_new_ticket: "Dividir como nuevo tiquete"
         public_note: "Nota pública"
         edit_note: "Editar nota"
-        incoming_email: "Correo entrante"
+        inbound_email: "Correo entrante"
         posted_on: "%{user_name} el %{note_date}"
         outbound_email: "Correo saliente"
       close_notice:

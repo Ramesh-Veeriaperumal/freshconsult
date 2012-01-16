@@ -493,6 +493,7 @@ body h5{
 		margin-top:-30px; 
 		.action_buttons{
 			margin-top:0px;
+			a{ font-size:10px; }
 		} 
 		.item-right-actions{
 		   margin-top:8px;
@@ -501,26 +502,58 @@ body h5{
 	} 
 	.bookmark{
 		display:none;
-	}
-	
+	}	
 	.requestCnt{
-		padding:10px 20px;
 		position:relative;
 		background:#ffffff;
-		.title{ 			
-			color:#555555; 
-			font-size:1.35em;
-			em{ 			
-				font-style:normal;
-				font-weight:normal;
-				color:#888888;
-				font-size:1.1em;  
+		.request-title{
+			$COL_PRI_HIGH: #cc5600;		$COL_PRI_MEDIUM: #0a9458;		$COL_PRI_LOW: #0c8aae;		$COL_PRI_URGENT: #cc0000;			
+			background-color:#f6f6f6; 
+			padding:7px 10px 8px 75px;
+			border-bottom:1px solid #e9e9e9;
+			color:#000000;
+			font-size:13px;
+			position:relative;
+			font-weight:bold;
+			.subject{ line-height:20px; }
+			.ticket-id{	color:#999999; }
+			.status, .priority{
+				font-size:10px;
+				color:#fff;
+				padding:3px 8px 3px;
+				@include border-radius(3px);
+				text-transform:uppercase; 
+				text-align:center;
 			}
-			b{
-				line-height:24px;
-				font-size:1.08em;
-				font-weight:normal;
+			.status{
+				background-color:#669999;	
+				float:right;
+				margin:3px 0 0 10px
+			}			
+			.priority{
+				left:-4px;
+				top:8px;
+				position:absolute;
+				width:50px;
 			}
+			.priority:before {
+			   content:"";
+			   position:absolute;
+			   top:1px;
+			   right:-17px;
+			   display:block; width:0; /* Firefox 3.0 damage limitation */
+			   border:9px solid transparent; 
+			   height:0px;
+			   font-size:0px;
+			}
+			.low{ background-color: $COL_PRI_LOW; }
+			.low:before{ border-left-color: $COL_PRI_LOW; }
+			.medium{ background-color: $COL_PRI_MEDIUM; }
+			.medium:before{ border-left-color: $COL_PRI_MEDIUM; }
+			.high{ background-color: $COL_PRI_HIGH; }
+			.high:before{ border-left-color: $COL_PRI_HIGH; }
+			.urgent{ background-color: $COL_PRI_URGENT; }
+			.urgent:before{ border-left-color: $COL_PRI_URGENT; }
 		}
 		h4.title{
 			font-size:1.1em;
@@ -538,38 +571,65 @@ body h5{
 		}
 	}
 	
-	.request-cnt-first{
-		background:#FAFAFA;
-		div.description{  
-			margin-left:50px;
-			.preview_pic{
-				margin-left:-60px;
-			}	
+	.request-cnt-first{ 
+		div.description{   
 			.app-link{
 			   position:absolute;
 			   margin-left:-72px;
 			   margin-top:50px;
+			}
+			.details{	padding:8px 40px 8px 30px; }
+			.user_details{
+				color:#777777;
+				background-color:#fafafa;
+				border-bottom:1px solid #e9e9e9;
+				padding:6px 20px 6px 30px;
+				font-size:12px;
+				div{
+					padding:2px 0px;
+				}
+				.loading-edit{
+					position:absolute;
+					width:16px;
+					height:11px;
+					margin:3px 8px;
+					@extend .loading-fb;
+				}
 			}
 		}
 	}
 	
 	.facebook_post{
 		@include clearfix;
-		.thumbnail{ float:left; margin-right:10px; }
-		
+		.thumbnail{ float:left; margin-right:10px; } 
 	}
 	
+	.actions{
+		@include clearfix;
+		float:right; 
+		margin-right:0;
+		margin-top:-4px;
+		visibility:hidden;
+		a{
+			float:left;
+			margin-right:5px;
+		}
+	}
+	
+	.description:hover, .timeentry:hover{
+		.actions{
+			visibility:visible;	
+		}
+	} 
+	
+	.preview_pic img{ width:36px; height:36px; }
+	a{ @include link-colors( #333333, #527EAA ); }	
 	div.description{  
-			margin:8px 0px 8px 70px;
-			padding:0px 0px 0px 10px; 
-			position: relative;
+			position: relative; 
 			.details{ 
-				padding:8px 14px 3px 0px;
-				margin-top:4px;
-				border-top:1px solid #efefef; 
-				font-size:13px;
 				@include text-formatting;
-				overflow:auto;
+				overflow: auto;
+				margin-top:8px;
 				p{
 				   margin-right:2em; 
 				}
@@ -593,34 +653,7 @@ body h5{
 			}
 			.min_height{
 				@include min-height(100px);
-			}
-			.preview_pic{
-				position:absolute;
-				margin-left:-80px;
-				margin-top:-2px;
-			}
-			.user_details{
-				color:#777777;
-				font-size:13px;
-				a{
-					text-decoration:none;
-					color:#527eaa;
-					text-transform:capitalize;	
-				}
-				a:hover{
-					text-decoration:none;
-				}
-				div{
-					padding:2px 0px;
-				}
-				.loading-edit{
-					position:absolute;
-					width:16px;
-					height:11px;
-					margin:3px 8px;
-					@extend .loading-fb;
-				}
-			}
+			}		
 		}
 	
 	.request-conversation{
@@ -630,25 +663,19 @@ body h5{
 			@include clearfix;
 			position:relative;
 			margin:0;
-			padding:8px 0 10px 60px;
+			padding:10px 25px 12px 80px;
 			border-bottom:1px solid #efefef;
-			.user_details{
-				font-size:0.96em;
-				position:relative;
-			}
 			.preview_pic{
-				margin-left:-40px;
+				margin-left:-50px;
 				margin-top:1px;
 				margin-right:5px;
-				img{
-					width:30px;
-					height:30px;
-					@include border-radius(4px);
-				}
 			}
-			.details{
-				border-top:0px;
-				padding-top:3px;
+			.user_details{
+				font-style:italic;
+				color:#999999;
+				a{
+					font-style:normal;
+				}
 			}
 		} 
 	}
@@ -764,9 +791,9 @@ body h5{
 		}
 	} 
 	li:hover{
-		background:#f2e9d1;
+		background:#f1f7fc;
 		a{
-			@include link-colors(#993333, #333333, #993333, #993333);
+			@include link-colors(#993333, #333333, #333333, #333333);
 			text-decoration:none;
 		} 
 		.delete{
@@ -1062,11 +1089,11 @@ div.panel_area{
 	}
 }
 
-.action_icons{ 
+.action_icons{
 	img{
 		background-color:none;
-		width:28px;
-		height:28px;
+		width:24px;
+		height:24px;
 	}
 	.monitor img{ 
 		background: sprite($ticketicon, monitor) no-repeat;
@@ -1080,7 +1107,7 @@ div.panel_area{
 	.spam_active img{ 
 		background: sprite($ticketicon, flag-spam_active) no-repeat;
 	}
-}
+} 
 
 .request_panel_list{
 	margin:5px 3px;
@@ -3203,7 +3230,8 @@ div.addReminder{
 .conversation-sprite{ 
 	position:relative;
 	display:inline;
-	margin-top:-10px;
+	margin-top:-8px;
+	left:-3px;
 	float:right;
 	.image {
 		float:right;

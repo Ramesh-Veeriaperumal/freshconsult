@@ -225,6 +225,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def priority_name
     PRIORITY_NAMES_BY_KEY[priority]
   end
+  
+  def priority_key
+    PRIORITY_TOKEN_BY_KEY[priority]
+  end
 
   def create_activity(user, description, activity_data = {}, short_descr = nil)
     activities.create(
