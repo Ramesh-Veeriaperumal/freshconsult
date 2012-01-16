@@ -10,7 +10,9 @@
 		<% unless @installing_application.options.blank?%>
 			<% @installing_application.options[:keys_order].each do |input_key|
 				%>
+				<% if(input_key.to_s == 'domain') %>
 				<div class="textfield">
+				<% end %>
 				<%
 				input_value = @installing_application.options[input_key]
 				if is_edit
@@ -28,7 +30,9 @@
 					<%= content_tag(:div, t(input_value[:info]), :class => "info-data") unless input_value[:info].blank? %>
 					<span class="seperator"></span>
 			 <% end %>
+			 <% if(input_key.to_s == 'domain') %>
 			 	</div>
+			 <% end %>
 			 	<%
 			  end %>
 		<% end %>
