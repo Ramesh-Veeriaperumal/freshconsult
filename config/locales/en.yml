@@ -172,6 +172,8 @@ en:
         portal_url: Portal URL
         top_level_solution: Top level solutions category
         portal_name: Portal name
+        portal_language: Portal Language
+        portal_language_info: This will be the default language when customers visits your portal
       edit: 
         title: Edit Product
       form: 
