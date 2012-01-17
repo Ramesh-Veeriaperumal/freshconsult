@@ -19,7 +19,7 @@
 				<%= content_tag (:span, h(email.to_email), :class => "large highlight" ) %>
 				</label>
 			</div>
-			<% if ( !@email_config.bcc_email.blank? ) %>
+			<% unless @email_config.bcc_email.blank? %>
 			<div class="item">
 				<label><%=t('email_configs.info18')%> : 
 					<%= content_tag (:span, h(@email_config.bcc_email), :class => "large highlight" ) %>
