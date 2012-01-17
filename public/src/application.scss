@@ -1628,15 +1628,14 @@ ul.item_list{
 	border-bottom-color:#e8e8e8;
 	border-left-color:#e8e8e8;
 	li{
-		padding:5px;
-		margin:5px;
-		font-size:12px;
+		padding:2px;
+		margin:5px 0;
 		@include clearfix;
-		position:relative;
-		@include min-width(150px);
+		position:relative; 
 		@include corners(6px);
+		@include min-width(150px);
 		a{
-			text-decoration:none;				
+			text-decoration:none;
 		}	
 		div.preview_pic{
 			margin-right:5px;
@@ -1646,8 +1645,12 @@ ul.item_list{
 			}
 		} 
 		b{
-			position:relative;	
+			position:relative;	 
+			width:138px;
+			float:left;
+			@include wrap;
 			top:2px;
+			font-size:11px;
 		}
 		.selected_tick{
 			position:absolute;
@@ -1656,8 +1659,9 @@ ul.item_list{
 		}
 		.control{
 			position:absolute;
-			right:3px; bottom:3px;
+			right:3px; bottom:-2px;
 			display:none;
+			z-index:9999;
 		}
 	}
 	li:hover{
