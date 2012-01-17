@@ -19,7 +19,12 @@
     <% form_for note, :html => {:multipart => true, :id => "HelpdeskReply" } do |f| %>
     <%= f.error_messages %>
     <% capsule_config = get_app_config('capsule_crm') 
-       bcc_drop_box_email = (capsule_config.blank?) ? [] : capsule_config["bcc_drop_box_mail"].split( /,* /).map{|item|[item, item]} %> 
+    
+       bcc_drop_box_email = (capsule_config.blank?) ? [] : capsule_config["bcc_drop_box_mail"].split( /,* /).map{|item|[item, item]}
+       fixed_bcc = (@email_config.bcc_email.blank?) ? [] : @email_config.bcc_email.split( /,* /).map{|item|[item, item]}
+       bcc_drop_box_email += fixed_bcc  
+     %>
+       
     <ul class="ui-form dont-validate">
         <li class="inline-field field">
             <div class="request_form_options">
@@ -68,7 +73,7 @@
                 <%= t("message") %>:
             </label>
             <div class="fields">
-                <%= f.text_area :body_html, :class => "required mceEditor", :id => "#{id}-#{cntid}-body", :value => bind_last_conv(@ticket , @signature) %>
+                <%= f.text_area :body_html, :class => "required mceEditor", :id => "#{id}-#{cntid}-body", :value => bind_last_conv(@ticket, @signature) %>
             </div>
         </li>
         <% if !@ticket.ticket_topic.nil? and !(@ticket.ticket_topic.topic.locked) %>
