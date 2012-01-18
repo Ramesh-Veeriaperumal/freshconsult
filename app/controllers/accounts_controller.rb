@@ -4,7 +4,7 @@ class AccountsController < ApplicationController
   
   layout :choose_layout 
   
-  skip_before_filter :set_locale
+  skip_before_filter :set_locale, :except => [:calculate_amount,:plans,:billing,:plan,:cancel]
   skip_before_filter :set_time_zone
   skip_before_filter :check_account_state
   
@@ -382,7 +382,8 @@ class AccountsController < ApplicationController
     if request.post? and !params[:confirm].blank?
       SubscriptionNotifier.deliver_account_deleted(current_account)
       create_deleted_customers_info
-      #current_account.destroy
+      current_account.destroy
+      redirect_to "http://www.freshdesk.com"
     end
   end
   
