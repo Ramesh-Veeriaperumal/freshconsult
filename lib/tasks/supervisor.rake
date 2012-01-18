@@ -1,8 +1,8 @@
 #Rake for Supervisor's rule cron job
 namespace :supervisor do
   task :run => :environment do
+   unless Rails.env.staging?    
     puts "Supervisor rule check called at #{Time.zone.now}."
-    
     Account.active_accounts.each do |account|
       account.make_current
       account.supervisor_rules.each do |rule|
@@ -31,5 +31,6 @@ namespace :supervisor do
       end
     end
     puts "Supervisor rule check finished at #{Time.zone.now}."
+   end
   end
 end
