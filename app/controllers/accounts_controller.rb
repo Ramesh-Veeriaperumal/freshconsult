@@ -71,23 +71,17 @@ class AccountsController < ApplicationController
   def create_account
     params[:plan] = SubscriptionPlan::SUBSCRIPTION_PLANS[:premium]
     build_object
+    build_primary_email_and_portal
     build_user
-    build_plan
+    build_plan  
     begin
       @account.time_zone = (ActiveSupport::TimeZone[params[:utc_offset].to_f]).name 
     rescue
       @account.time_zone = (ActiveSupport::TimeZone["Eastern Time (US & Canada)"]).name 
     end
     
-    begin 
-      locale = request.compatible_language_from I18n.available_locales  
-      locale = I18n.default_locale if locale.blank?
-      @account.language = locale.to_s()
-    rescue
-      @account.language = I18n.default_locale.to_s()
-    end
-    
   end
+ 
     
   def signup_google 
     base_domain = AppConfig['base_domain'][RAILS_ENV]
@@ -259,7 +253,6 @@ class AccountsController < ApplicationController
   
   def update
     @account.time_zone = params[:account][:time_zone]
-    @account.language = params[:account][:language]
     @account.ticket_display_id = params[:account][:ticket_display_id]
     @account.main_portal_attributes = params[:account][:main_portal_attributes]
     
@@ -443,6 +436,26 @@ class AccountsController < ApplicationController
       @account.plan = @plan
     end
     
+    def build_primary_email_and_portal
+       d_email = "support@#{@account.full_domain}"
+       @account.build_primary_email_config(:to_email => d_email, :reply_email => d_email, :name => @account.name, :primary_role => true)
+       @account.primary_email_config.active = true
+      
+      begin 
+        locale = request.compatible_language_from I18n.available_locales  
+        locale = I18n.default_locale if locale.blank?
+      rescue
+        locale =  I18n.default_locale
+      end    
+      @account.primary_email_config.build_portal(:name => @account.helpdesk_name || @account.name, :preferences => default_preferences, 
+                               :language => locale.to_s() , :account => @account)
+     
+    end
+ 
+    def default_preferences
+      HashWithIndifferentAccess.new({:bg_color => "#efefef",:header_color => "#252525", :tab_color => "#006063"})
+    end
+  
     def redirect_url
       { :action => 'show' }
     end
