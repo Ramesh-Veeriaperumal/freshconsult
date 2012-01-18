@@ -191,17 +191,17 @@ class Account < ActiveRecord::Base
     }
   }
   
-  SELECTABLE_FEATURES = [ :open_forums, :open_solutions, :anonymous_tickets, :scoreboard, 
-    :survey_links, :google_signin, :twitter_signin, :signup_link , :captcha ] #:surveys & ::survey_links $^&WE^%$E
+# Default feature when creating account has been made true :surveys & ::survey_links $^&WE^%$E
     
-  DEFAULT_FEATURES = {:open_forums => true, :open_solutions => true, :anonymous_tickets =>true, :scoreboard => true, 
+  SELECTABLE_FEATURES = {:open_forums => true, :open_solutions => true, :anonymous_tickets =>true, :scoreboard => true, 
     :survey_links => true, :google_signin => true, :twitter_signin => true, :signup_link => true, :captcha => false}
+    
   
   has_features do
     PLANS_AND_FEATURES.each_pair do |k, v|
       feature k, :requires => ( v[:inherits] || [] )
       v[:features].each { |f_n| feature f_n, :requires => k } unless v[:features].nil?
-      SELECTABLE_FEATURES.each { |f_n| feature f_n }
+      SELECTABLE_FEATURES.keys.each { |f_n| feature f_n }
     end
   end
   
@@ -314,7 +314,7 @@ class Account < ActiveRecord::Base
   
   def populate_features
     add_features_of subscription.subscription_plan.name.downcase.to_sym
-    SELECTABLE_FEATURES.each { |f_n| features.send(f_n).create  if DEFAULT_FEATURES[f_n]}
+    SELECTABLE_FEATURES.each { |key,value| features.send(key).create  if value}
   end
   
   def add_features_of(s_plan)

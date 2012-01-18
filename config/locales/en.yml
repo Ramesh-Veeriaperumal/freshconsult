@@ -837,7 +837,7 @@ en:
   portal_customizer_anon_for_g: Enable this feature if you want customers to be able to sign in using their Google username and password. 
   portal_customizer_anon_for_t: Enable this feature if you want users to be able to sign in using their Twitter username and password. 
   portal_signup_anon: Enable this feature if you want users to be able to sign up and create their own user accounts. This will enable users to login and participate in forum discussions, vote on ideas etc.
-  portal_captcha_anon: Disable this feature if you want users to submit a ticket without the captcha
+  portal_captcha_anon: Enable this feature if you want users to submit tickets with captcha
   card_process: Thank you for your payment. Your Freshdesk account is now live!
   chat: Chat
   country: Country
