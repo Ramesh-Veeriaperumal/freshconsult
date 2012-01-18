@@ -291,7 +291,7 @@ module ApplicationHelper
       when "dropdown_blank" then
         element = label + select(object_name, field_name, field[:choices], :class => element_class, :selected => field_value, :include_blank => "...")
       when "hidden" then
-        element = hidden_field(:source, :value => field_value)
+        element = hidden_field(object_name , field_name , :value => field_value)
       when "checkbox" then
         element = content_tag(:div, check_box(object_name, field_name, :class => element_class, :checked => field_value ) + field_label)
       when "html_paragraph" then
@@ -318,7 +318,7 @@ module ApplicationHelper
       when "dropdown_blank" then
         element = label + select(object_name, field_name, field.choices, {:include_blank => "...", :selected => field_value}, {:class => element_class})
       when "hidden" then
-        element = hidden_field(:source, :value => field_value)
+        element = hidden_field(object_name , field_name , :value => field_value)
       when "checkbox" then
         element = content_tag(:div, check_box(object_name, field_name, :class => element_class, :checked => field_value ) + field_label)
       when "html_paragraph" then
