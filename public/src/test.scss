@@ -1267,8 +1267,6 @@ label.small{
 }
 
 .request-well{
-	padding:0;	
-	margin:18px 13px 12px;
 	@include background-with-css2-fallback(linear-gradient(#fafafa, #f6f6f6 93%, #f1f1f1 97%, #ffffff), #fafafa);
 	position:relative;
 	.action_buttons{
@@ -1277,12 +1275,11 @@ label.small{
 		right:25px;
 	}
 	.tabs{
-		padding:4px 9px 0;
+		padding:4px 9px 0 50px;
 		margin-bottom:0;
 		border:1px solid #eeeeee;
-		@include border-radius(3px);
 		font-size:11px;
-		a{ @include link-colors(#333333, #333333); line-height:28px; padding:0 16px 0 10px; }
+		a{ @include link-colors(#333333, #333333); line-height:28px; padding:0 16px; }
 		span.pill{
 			position:relative;
 			left:6px;
@@ -1368,10 +1365,13 @@ a.pill.help{
 	padding-bottom:16px;
 }
 
-.time_running .timeentry{
-	background-color:#f6fded;
+.ui-form{ 
+	.timespent, .agent, .note{ float:left; }
+	.agent{ width: 25%;  margin-right:4%;}
+	.timespent{ width: 20%; }
+	.note{ width:50%; float:right; }
 }
-.timeentry, .ui-form{
+.timeentry{
 	.started_time{
 		font-size:10px;
 		font-style:italic;
@@ -1383,6 +1383,10 @@ a.pill.help{
 		color:#555;
 		float:left;
 		position:relative;
+	}
+	
+	.user_details{
+		width:20%;
 	}
 	
 	.timespent{
@@ -1404,24 +1408,7 @@ a.pill.help{
 	}
 }
 
-.timeentry{  
-	.timespent{
-		text-align:right; 
-	} 
+.timeentry .timespent{
+	text-align:right; 
 }
 
-
-.request_details .request-conversation .timeentry.special{
-	padding-bottom:0;	
-	padding-left:60px;
-}
-
-.request_panel .ui-form{
-	margin:2px 10px; 
-}
- 
-
-.form-title{
-	padding:16px 0;
-	font-size:1.1em;
-}

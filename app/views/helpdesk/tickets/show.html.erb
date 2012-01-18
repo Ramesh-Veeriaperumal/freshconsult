@@ -32,21 +32,15 @@
 					    </a>
 				    </div> 
 	        <% end %>
-          <div> 
-            <%= link_to( h(@ticket.requester.display_name), @ticket.requester, :class => "user_name") %>  
-						<%="&lt;#{@ticket.requester.email}&gt;" if @ticket.requester.email%>
-          </div>
 
-          <div> 
-            <%= formated_date(@ticket.created_at) %>
-            via <%= @ticket.source_name %>
+          <%= link_to( h(@ticket.requester.display_name), @ticket.requester, :class => "user_name") %>  
+          <%= "&lt;#{@ticket.requester.email}&gt;" if @ticket.requester.email %> 
+
+          <div class="info"> 
+            <%= formated_date(@ticket.created_at) %> via <%= @ticket.source_name %>
             <% metainfo = @ticket.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["meta"]) %>
             <%#= content_tag :span, "", :class => "tooltip icon-image source-#{@ticket.source_name.downcase}", :title => t("ticket.reported_from_source", :source => @ticket.source_name.downcase) %>
-            <% unless (metainfo.blank?) %>
-              <span class="meta_icon" title="<%= metainfo.body %>"> 
-                <%= t(".meta") %>
-              </span>
-            <% end %>
+          <%= content_tag :span, t(".meta"), :title => metainfo.body, :class => "meta_icon tooltip" unless(metainfo.blank?) %>
           </div> 
         </div>
         <% unless @ticket.deleted %>
@@ -79,25 +73,28 @@
                 <%= render :partial => "spam", :locals => { :ticket => @ticket } %>
               </span>
             </div>
-     	</div>	
-      <% end %>
-      <div id="description-full" style="display:block" class="request_mail details min_height">
-    		<%= @ticket.description_html %>
+     	    </div>	
+        <% end %>
+        <div class="request-wrapper">
+        <div id="description-full" class="request_mail details min_height">
+          <span class="seperator"></span>
+          <%= @ticket.description_html %>          
+        </div>      
+        <% unless @ticket.attachments.empty? %>
+          <span class="seperator"></span>
+          <h4><%= pluralize(@ticket.attachments.size, t("attachment"), t("attachments")) %></h4>
+          <ul class="attachment_list">
+            <%= render :partial => '/helpdesk/shared/attachment', :collection => @ticket.attachments, :locals => {:show_delete => true, :url => [@item] } %>
+          </ul>
+        <% end %>
+        <% unless @ticket.ticket_topic.nil? %>
+          <div class="info-highlight">
+            <%= t(".linked_ticket")%>
+            "<%= link_to("#{truncate(@ticket.topic.title)}", category_forum_topic_path(@ticket.topic.forum.forum_category.id, @ticket.topic.forum.id, @ticket.topic.id), :class => "link_to") %>"
+          </div>
+        <% end %>
       </div>
-      <% unless @ticket.attachments.empty? %>
-        <span class="seperator"></span>
-        <h4><%= pluralize(@ticket.attachments.size, t("attachment"), t("attachments")) %></h4>
-        <ul class="attachment_list">
-          <%= render :partial => '/helpdesk/shared/attachment', :collection => @ticket.attachments, :locals => {:show_delete => true, :url => [@item] } %>
-        </ul>
-      <% end %>
-      <% unless @ticket.ticket_topic.nil? %>
-        <div class="info-highlight">
-          <%= t(".linked_ticket")%>
-          "<%= link_to("#{truncate(@ticket.topic.title)}", category_forum_topic_path(@ticket.topic.forum.forum_category.id, @ticket.topic.forum.id, @ticket.topic.id), :class => "link_to") %>"
-        </div>
-      <% end %>
-    </div>
+  </div>
   </div>
 		<div class="request-well">
 			<% unless @ticket.deleted %>
@@ -128,33 +125,34 @@
 					</li>
     	  </ul> 
 		  </div>
-			<%= render(:partial => '/helpdesk/shared/reply_form', :locals => { :id => 'send-email', :cntid => 'cnt-reply', :note => [@ticket, Helpdesk::Note.new(:private => false)] }) %>
+		  <%= render(:partial => '/helpdesk/shared/reply_form', :locals => { :id => 'send-email', :cntid => 'cnt-reply', :note => [@ticket, Helpdesk::Note.new(:private => false)] }) %>
 
 			<%= render(:partial => '/helpdesk/shared/note_form', :locals => { :id => 'add-note',	:cntid => "cnt-note", :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
 
 			<%= render(:partial => '/helpdesk/shared/tweet_form', :locals => {:id => 'send-tweet', :cntid => 'cnt-tweet', :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
 			<%= render(:partial => '/helpdesk/shared/facebook_form', :locals => {:id => 'send-fb-post', :cntid => 'cnt-fb-post', :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
-			
+
 			<%= render :partial => "helpdesk/time_sheets/new", :locals => { :ticket_id => @ticket.id } %>
+			<div class="canned-response-menu hide" id="canned_response_container"> 
+        <div>
+          <%= link_to("Add Canned response", new_admin_canned_response_path, :target => "_blank", :class => "button") if(current_user.admin?) %>
+        </div>
+        <div id="canned_response_list"></div>
+		  </div>
+		  <div class="request-wrapper">		    
 			<div class="tab-content">
-				<div class="requestCnt request-conversation active tab-pane" id="Pages">
-					<div class="canned-response-menu hide" id="canned_response_container"> 
-            <div>
-              <%= link_to("Add Canned response", new_admin_canned_response_path, :target => "_blank", :class => "button") if(current_user.admin?) %>
-            </div>
-            <div id="canned_response_list"></div>
-    		  </div>
+				<div class="requestCnt request-conversation tab-pane" id="Pages">					
 					<% unless @ticket_notes.blank? %>
-						<%= render :partial => 'note', :collection => @ticket_notes %>
+						<%= render :partial => 'note', :collection => @ticket_notes, :spacer_template => "ui/seperator" %>
 						<%= will_paginate @ticket_notes %>
 					<% end %>	
 			  </div>			  
-				<div class="requestCnt request-conversation tab-pane" id="timesheet">
-					<%= render :partial => "helpdesk/time_sheets/time_sheets_for_ticket" unless @ticket.time_sheets.blank? %>
+				<div class="requestCnt request-conversation active tab-pane" id="timesheet">
+					<%= render :partial => "helpdesk/time_sheets/time_sheets_for_ticket" %>
 				</div>
 			</div>
 	</div>
-
+</div>
 
 <% content_for :pagefixed do %> 
   <%= pageless(@ticket_notes.total_pages, helpdesk_ticket_helpdesk_notes_path(@ticket)) %>  

@@ -1,5 +1,5 @@
 <div id="timesheetlist">
-	<%= render :partial => "helpdesk/time_sheets/time_entry", :collection => @ticket.time_sheets %>    
+	<%= render :partial => "helpdesk/time_sheets/time_entry", :collection => @ticket.time_sheets, :spacer_template => "ui/seperator" %>    
 </div>		
 <div class="total_time">
 	<strong>Total</strong>

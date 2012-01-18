@@ -485,12 +485,10 @@ body h5{
 }
 
 .request_details{
-	margin:-13px -20px;
+	margin:-13px -20px 20px -20px;
 	.ticket_actions{
-		position:relative; 
-		display:inline;
-		float:right;
-		margin-top:-30px; 
+		position:relative;
+		float:right; 
 		.action_buttons{
 			margin-top:0px;
 			a{ font-size:10px; }
@@ -505,7 +503,7 @@ body h5{
 	}	
 	.requestCnt{
 		position:relative;
-		background:#ffffff;
+  	font-size:12px;
 		.request-title{
 			$COL_PRI_HIGH: #cc5600;		$COL_PRI_MEDIUM: #0a9458;		$COL_PRI_LOW: #0c8aae;		$COL_PRI_URGENT: #cc0000;			
 			background-color:#f6f6f6; 
@@ -520,27 +518,30 @@ body h5{
 			.status, .priority{
 				font-size:10px;
 				color:#fff;
-				padding:3px 8px 3px;
-				@include border-radius(3px);
 				text-transform:uppercase; 
 				text-align:center;
+				padding:9px 8px 0;
+				line-height:0;
+				height:9px;
+				width:50px;
 			}
 			.status{
 				background-color:#669999;	
 				float:right;
-				margin:3px 0 0 10px
+				margin:3px 0 0 10px;
+				@include border-radius(3px);
 			}			
 			.priority{
 				left:-4px;
 				top:8px;
-				position:absolute;
-				width:50px;
+				position:absolute;				
+				@include border-left-radius(3px);
 			}
 			.priority:before {
 			   content:"";
 			   position:absolute;
-			   top:1px;
-			   right:-17px;
+			   top:0px;
+			   right:-18px;
 			   display:block; width:0; /* Firefox 3.0 damage limitation */
 			   border:9px solid transparent; 
 			   height:0px;
@@ -564,29 +565,22 @@ body h5{
 			padding:0px;
 			margin:0px;
 			margin-top:8px;
-		}
-		.seperator{
-			margin:6px 0px;
-			border-bottom: 1px solid #EFEFEF;
-		}
+		} 
 	}
 	
-	.request-cnt-first{ 
-		div.description{   
+	.request-cnt-first{
+		div.description{
 			.app-link{
 			   position:absolute;
 			   margin-left:-72px;
 			   margin-top:50px;
 			}
-			.details{	padding:8px 40px 8px 30px; }
 			.user_details{
 				color:#777777;
-				background-color:#fafafa;
-				border-bottom:1px solid #e9e9e9;
-				padding:6px 20px 6px 30px;
-				font-size:12px;
-				div{
-					padding:2px 0px;
+				padding:13px 20px 0 25px;
+				.preview_pic{ left:-5px; }
+				.info{
+					margin-top:5px;
 				}
 				.loading-edit{
 					position:absolute;
@@ -622,14 +616,20 @@ body h5{
 		}
 	} 
 	
+	.request-wrapper{
+		margin:0 20px 10px 70px;
+		.seperator{
+			margin:10px 0;
+		}
+	}
+	
 	.preview_pic img{ width:36px; height:36px; }
-	a{ @include link-colors( #333333, #527EAA ); }	
+	.user_name{ @include link-colors( #333333, #527EAA ); } 
 	div.description{  
 			position: relative; 
 			.details{ 
 				@include text-formatting;
 				overflow: auto;
-				margin-top:8px;
 				p{
 				   margin-right:2em; 
 				}
@@ -660,11 +660,10 @@ body h5{
 		padding:0; 
 		margin-top:12px;
 		.description, .timeentry{
-			@include clearfix;
+			@include pie-clearfix;
 			position:relative;
 			margin:0;
-			padding:10px 25px 12px 80px;
-			border-bottom:1px solid #efefef;
+			padding:0 25px 0 0;
 			.preview_pic{
 				margin-left:-50px;
 				margin-top:1px;
@@ -673,9 +672,8 @@ body h5{
 			.user_details{
 				font-style:italic;
 				color:#999999;
-				a{
-					font-style:normal;
-				}
+				padding-bottom:6px;
+				a{	font-style:normal;	}
 			}
 		} 
 	}
@@ -692,47 +690,6 @@ body h5{
 		}		
 	}
 	
-	.request_status{
-		float:right; 
-		position:relative;
-		top:-18px;
-		border:1px solid #d3d497;
-		@include vertical-gradient(#FEFEDF, #FBFD90);
-		filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#FEFEDF', endColorstr='#FBFD90',GradientType=0 ); /* IE6-9 */
-		
-		img{
-			position:absolute;
-			left:-6px;
-			top:0px;
-		}
-	
-		ul{ 			
-			color:#979866;
-			font-weight:bold;	
-			padding:6px 10px; 
-			list-style:none;
-			margin:0px;
-		}
-	
-		ul b{ 
-			float:left;	
-			font-weight:normal;
-		}
-		
-		span.ltSlant{
-			display:none;
-			position:absolute;
-			font-size:0px;
-			line-height:0px;
-			width:0px;
-			height:0px;
-			left:-9px;
-			top:-1px;
-			border:4px solid white;
-			border-right-color:#d3d497;
-			border-bottom-color:#d3d497;
-		}
-	}
 	.subtitle{
 			margin:0px;
 			padding:8px 0px;
