@@ -45,7 +45,7 @@ class AgentsController < Admin::AdminController
     @agent.user = User.new
     @agent.user.avatar = Helpdesk::Attachment.new
     @agent.user.time_zone = current_account.time_zone
-    @agent.user.language = current_account.language
+    @agent.user.language = current_portal.language
      respond_to do |format|
       format.html # new.html.erb
       format.xml  { render :xml => @agent }
