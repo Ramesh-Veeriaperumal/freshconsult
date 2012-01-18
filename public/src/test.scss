@@ -1014,7 +1014,7 @@ button.btn::-moz-focus-inner, input[type=submit].btn::-moz-focus-inner {
   border-right: 5px solid #000000;
 }
 .twipsy-inner {
-  padding: 3px 8px;
+  padding: 3px 8px 4px;
   background-color: #000000;
   color: white;
   text-align: center;
@@ -1083,17 +1083,13 @@ button.btn::-moz-focus-inner, input[type=submit].btn::-moz-focus-inner {
   height: 0;
 }
 .popover .inner {
-  background: #000000;
+  background: #333;
   background: rgba(0, 0, 0, 0.8);
   padding: 3px;
   overflow: hidden;
   @include min-width(280px);
-  -webkit-border-radius: 6px;
-  -moz-border-radius: 6px;
-  border-radius: 6px;
-  -webkit-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
-  -moz-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
-  box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+	@include border-radius(6px);
+	@include box-shadow(0 3px 7px rgba(0, 0, 0, 0.4));
 }
 .popover .title {
   background-color: #f5f5f5;
@@ -1105,9 +1101,7 @@ button.btn::-moz-focus-inner, input[type=submit].btn::-moz-focus-inner {
 .popover .content {
   background-color: #ffffff;
   padding: 14px;
-  -webkit-border-radius: 0 0 3px 3px;
-  -moz-border-radius: 0 0 3px 3px;
-  border-radius: 0 0 3px 3px;
+	@include border-radius(5px);
   -webkit-background-clip: padding-box;
   -moz-background-clip: padding-box;
   background-clip: padding-box;
@@ -1273,46 +1267,42 @@ label.small{
 }
 
 .request-well{
-	padding:0;	
 	@include background-with-css2-fallback(linear-gradient(#fafafa, #f6f6f6 93%, #f1f1f1 97%, #ffffff), #fafafa);
 	position:relative;
+	.action_buttons{
+		position:relative;
+		top:8px;
+		right:25px;
+	}
 	.tabs{
-		padding:10px 10px 0 50px;	
+		padding:4px 9px 0 50px;
 		margin-bottom:0;
-		h4.title{
-			font-size:1.1em;
-			font-weight:bold;
-		}
+		border:1px solid #eeeeee;
+		font-size:11px;
+		a{ @include link-colors(#333333, #333333); line-height:28px; padding:0 16px; }
 		span.pill{
 			position:relative;
-			left:4px;
+			left:6px;
 		}
-	}
-	.button-container{
-		margin:8px 20px;
-		padding:0;
-		position:absolute;
-		right:0;
-	}
+	} 
 }
 
 span.pill, a.pill{
-	background-color:#999;
-	@include border-radius(12px);
-	@include box-shadow(rgba(0,0,0,0.2) 0 1px 3px 1px inset);
-	color:#ffffff;
-	padding:2px 8px;
-	font-size:11px;
+	@include border-radius(3px);
+	@include box-shadow(rgba(0,0,0,0.15) 0 1px 1px 0px inset);
+	padding:2px 5px;
+	font-size:inherit;
 	font-weight:bold;
+	background-color:lighten(#669999, 8%);
+	color:#fff;
+	font-size:9px;
+	line-height:0;
 }
 
 a.pill.help{
 	background-color:#669933;	
 	font-size:13px;
-}
-.active span.pill{
-	background-color:#5880ac;
-}
+} 
 
 .timer_box{
 	text-align:right;
@@ -1329,14 +1319,14 @@ a.pill.help{
 	background: sprite($symbol, clock-inactive);
 	cursor: pointer;
 	width:26px;
-	height:26px;  	
+	height:26px;
 }
  
-.clock.animated{
-	background: sprite($symbol, clock);		
+.time_running .clock{
+	background: sprite($symbol, clock);
 }
 
-.clock.animated .timer{
+.time_running .clock .timer{
 	position:absolute;
 	width:26px;
 	height:22px;
@@ -1346,96 +1336,79 @@ a.pill.help{
 	@include opacity(0.5);
 }
 
-.timeentry, .ui-form{
+
+.time{
+	font-size:1.46em;
+	line-height:26px;
+	padding-left:10px;  
+	.small{
+		font-size:0.80em;
+		color:#888;
+	}
+}
+
+.time_running .time{
+	color:#336600;
+	.small{
+		color: inherit;
+	}
+}
+
+.total_time{
+	text-align:right;
+	width:87%;
+	padding:14px 0;
+	color:#888;
+}
+
+.request_panel .ui-form h4.title{
+	padding-bottom:16px;
+}
+
+.ui-form{ 
+	.timespent, .agent, .note{ float:left; }
+	.agent{ width: 25%;  margin-right:4%;}
+	.timespent{ width: 20%; }
+	.note{ width:50%; float:right; }
+}
+.timeentry{
+	.started_time{
+		font-size:10px;
+		font-style:italic;
+		float:right;
+		text-align:right;
+		margin-top:2px;
+	}	
 	.timespent, .user_details, .note{
-		color:#777;
+		color:#555;
 		float:left;
-		padding-right:2%; 
 		position:relative;
 	}
+	
 	.user_details{
-		width:15%;
-		padding-top:3px;
-		.user_name{
-			display:block;
-			margin-bottom:2px;
-		}
+		width:20%;
 	}
+	
 	.timespent{
-		width:18%;
-		margin-left:2%;
+		width:16%;
+		margin-left:1%;
 	}
 	.note{ 
 		width:50%;
+		padding-left:22px;
+		a{ @include link-colors(#5c7083); }
 	}
 	.billable{
 		background: sprite($symbol, billable);
 		position:absolute;
-		left:-65px;
-		top:8px;
+		left:0;
+		top:0;
 		width:19px;
 		height:18px;
 	}
 }
 
-.timeentry{  
-	.actions{
-		@include clearfix;
-		float:right; 
-		margin-right:0;
-		margin-top:4px;
-		visibility:hidden;
-		a{
-			float:left;
-			margin-right:5px;
-		}
-	}
-	.timespent{
-		text-align:right; 
-	}
-	.timespent .time{
-		font-size:1.46em;
-		line-height:26px;  
-	}
-	.note{
-		padding-top:4px;
-	}
+.timeentry .timespent{
+	text-align:right; 
 }
 
-.timeentry:hover .actions{ 
-	visibility:visible;
-}
-
-
-.request_details .request-conversation .timeentry.special{
-	padding-bottom:0;	
-	padding-left:60px;
-}
-
-.request_panel .ui-form{
-	margin:2px 10px;
-	
-}
-
-.request-conversation{
-	.ui-form{
-		margin:0;
-		padding:6px 0 0 40px;
-		background-color:#fefef1;
-		@include box-shadow(0 1px 1px rgba(0, 0, 0, 0.1));
-		.button-container{	
-			padding-right:4%;
-		}
-		.error{
-			border-color:#cc9999;
-		}
-		label.error{
-			@include border-radius(3px);
-			position:absolute;
-			z-index:99999;
-			@include opacity(0.9);
-			font-size:10px;
-			background-color:#f8ecec;
-		}
-	}
-}

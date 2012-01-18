@@ -4,8 +4,8 @@ Freshdesk.Widget=Class.create();
 Freshdesk.Widget.prototype={
 	initialize:function(widgetOptions){
 		this.options = widgetOptions || {};
-		if(this.options.username) ;else this.options.username = Cookie.get(this.options.anchor+"_username");
-		if(this.options.password) ;else this.options.password = Cookie.get(this.options.anchor+"_password");
+		if(!this.options.username) this.options.username = Cookie.get(this.options.anchor+"_username");
+		if(!this.options.password) this.options.password = Cookie.get(this.options.anchor+"_password");
 		this.content_anchor = $$("#"+this.options.anchor+" #content")[0];
 		this.error_anchor = $$("#"+this.options.anchor+" #error")[0];
 		this.title_anchor = $$("#"+this.options.anchor+" #title")[0];
@@ -137,7 +137,7 @@ Freshdesk.Widget.prototype={
 
 	delete_integrated_resource:function(last_fetched_id, resultCallback) {
 		reqData = {
-			"integrated_resource[id]":last_fetched_id,
+			"integrated_resource[id]":last_fetched_id
 		};
 		new Ajax.Request("/integrations/integrated_resources/delete",{
             asynchronous: true,

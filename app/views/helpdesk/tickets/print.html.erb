@@ -69,7 +69,7 @@
   			<% elsif note.public_note? %>
   				<%= t("helpdesk.tickets.note.public_note") %>
   			<% elsif note.inbound_email? %>
-  				<%= t("helpdesk.tickets.note.incoming_email") %>
+  				<%= t("helpdesk.tickets.note.inbound_email") %>
   			<% elsif note.outbound_email? %>
   				<%= t("helpdesk.tickets.note.outbound_email") %>
   			<% elsif note.tweet? %>

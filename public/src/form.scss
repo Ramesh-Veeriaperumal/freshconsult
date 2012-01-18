@@ -1289,9 +1289,23 @@ table.summary-report{
 }
 
 .request_panel{
-   padding:0 0;
-   margin:5px 0;
-   .ui-form{
+  margin:12px 0;
+	border:1px solid #f6f6f6;
+	.form-title, .ui-form{
+		padding:6px 25px 6px 66px;
+		border-bottom:1px solid #efefef;			
+	}
+	.form-title{ 
+		font-size:12px; 
+		font-weight:bold; 
+		display:block;
+		background-color:#f8f8f8;			
+	}
+	.ui-form{
+		background-color:#fff;
+			margin:0;
+			background:none;
+			border:0;
       li.field{
          border:0;
       }
@@ -1304,8 +1318,8 @@ table.summary-report{
          color:#888888;
          font-size:12px;
       }
-      li.inline-field{
-         padding:1px 18px;
+			li{ padding:0; width:100%;}
+      li.inline-field, fieldset{
          label.caption{
             width:80px;
          }
@@ -1334,11 +1348,7 @@ table.summary-report{
             z-index:1001;
          }
       }
-      .button-container{
-         padding-top:8px;
-         margin-top:8px;
-         border-top:1px solid #efefef;
-      }
+			.button-container{ margin-top:5px; }
    }
 }
 

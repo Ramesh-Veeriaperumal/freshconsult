@@ -57,39 +57,53 @@ var $J = jQuery.noConflict();
    $.validator.addClassRules("url_validator", { url : true });
    
        
-   // App initialisation  
-   $(document).ready(function() {
-       var widgetPopup = null;   
- 
-        $("body").click(function(ev){
-            if((widgetPopup != null) && !$(ev.target).parents().hasClass("popover")){
-                widgetPopup.popover('hide');
-                widgetPopup = null;
-            }
-        });
-           
-        $("a[rel=widget-popover]")
-            .popover({ 
-                    delayOut: 300,
-                    trigger: 'manual',
-                    offset: 5,
-                    html: true,
-                    reloadContent: true,
-                    template: '<div class="arrow"></div><div class="inner"><div class="content"><p></p></div></div>',
-                    content: function(){
-                        return $("#" + $(this).attr("data-widget-container")).val();
-                    }
-                })
-            .live("click", function(e){
-                e.preventDefault();
-                e.stopPropagation();
-                $('[rel=widget-popover]').each(function(){
-                     $(this).popover('hide');
-                });
-              widgetPopup = $(this).popover('show');
-            });
-          
-          
+	// App initialisation  
+	$(document).ready(function() {
+		var widgetPopup = null;   
+
+		$("body").click(function(ev){
+			if((widgetPopup != null) && !$(ev.target).parents().hasClass("popover")){
+				widgetPopup.popover('hide');
+				widgetPopup = null;
+			}
+		});
+		
+		$("a[rel=popover]")
+			.popover({ 
+				delayOut: 300,
+				trigger: 'manual',
+				offset: 5,
+				html: true,
+				reloadContent: false,
+				template: '<div class="arrow"></div><div class="inner"><div class="content"><p></p></div></div>',
+				content: function(){
+					return $("#" + $(this).attr("data-widget-container")).html();
+				}
+			});
+		
+		$("a[rel=widget-popover]")
+			.popover({ 
+				delayOut: 300,
+				trigger: 'manual',
+				offset: 5,
+				html: true,
+				reloadContent: true,
+				template: '<div class="arrow"></div><div class="inner"><div class="content"><p></p></div></div>',
+				content: function(){
+					return $("#" + $(this).attr("data-widget-container")).val();
+				}
+			})
+			
+		$("a[rel=popover], a[rel=widget-popover]").live("click", function(e){
+				e.preventDefault();
+				e.stopPropagation();
+				$('[rel=widget-popover]').each(function(){
+					$(this).popover('hide');
+				});
+ 				widgetPopup = $(this).popover('show');
+			});
+
+
       // - Labels with overlabel will act a Placeholder for form elements
       $("label.overlabel").livequery(function(){ $(this).overlabel(); });
  
@@ -99,10 +113,10 @@ var $J = jQuery.noConflict();
       // - Quote Text in the document as they are being loaded
       $("div.request_mail").livequery(function(){ quote_text(this); }); 
 
-      $("input.datepicker").livequery(function(){ $(this).datepicker({showOn:'focus'});});
+      $("input.datepicker").livequery(function(){ $(this).datepicker({showOn:'focus', disabled: true });});
       
       // Any object with class custom-tip will be given a different tool tip
-      $("a.tooltip").twipsy({ live: true });
+      $(".tooltip").twipsy({ live: true });
       // - jQuery Validation for forms with class .ui-form ( ...An optional dont-validate written for the form element will make the selectors ignore those form alone )
       validateOptions = {
          onkeyup: false,

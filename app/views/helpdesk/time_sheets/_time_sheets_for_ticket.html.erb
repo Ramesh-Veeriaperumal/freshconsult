@@ -1,7 +1,9 @@
 <div id="timesheetlist">
-	<%= render :partial => "helpdesk/time_sheets/time_entry", :collection => @ticket.time_sheets %>    
+	<%= render :partial => "helpdesk/time_sheets/time_entry", :collection => @ticket.time_sheets, :spacer_template => "ui/seperator" %>    
 </div>		
-<div>
-	<h3 class="title">Total</h3>
-	<%= get_total_time(@ticket.time_sheets)%>
+<div class="total_time">
+	<strong>Total</strong>
+	<span class="time">
+	  <%= get_total_time(@ticket.time_sheets)%>
+	</span>
 </div>

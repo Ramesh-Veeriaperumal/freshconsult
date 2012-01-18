@@ -1,4 +1,4 @@
-page.insert_html :top, "timesheetlist", :partial => "helpdesk/time_sheets/time_entry", :object => @time_sheet
+page.insert_html :bottom, "timesheetlist", :partial => "helpdesk/time_sheets/time_entry", :object => @time_sheet
 page << "jQuery('#timeentry_#{@time_sheet.id}').effect('highlight', {}, 2000); jQuery('#add_new_time_entry').slideUp(500)"
 
 unless @time_cleared.nil?

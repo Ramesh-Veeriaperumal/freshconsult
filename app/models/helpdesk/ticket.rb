@@ -94,7 +94,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   has_many :survey_handles, :as => :surveyable, :dependent => :destroy
   has_many :support_scores, :as => :scorable, :dependent => :destroy
   
-  has_many :time_sheets , :class_name =>'Helpdesk::TimeSheet', :dependent => :destroy, :order => "created_at"
+  has_many :time_sheets , :class_name =>'Helpdesk::TimeSheet', :dependent => :destroy, :order => "executed_at"
   
   attr_protected :attachments #by Shan - need to check..
   
@@ -224,6 +224,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def priority_name
     PRIORITY_NAMES_BY_KEY[priority]
+  end
+  
+  def priority_key
+    PRIORITY_TOKEN_BY_KEY[priority]
   end
 
   def create_activity(user, description, activity_data = {}, short_descr = nil)
