@@ -18,11 +18,18 @@
 	 </ul>
   </div>
   <div class="button-container">
+    <%= link_to_function t('ticket_cancel_multiple_button'), "#", :class => "uiButton", :id =>  "ticket_cancel_multiple_button"%>
     <%= link_to_function t('ticket_update_multiple_button'), "helpdesk_submit('#{update_multiple_helpdesk_tickets_path}', 'put', #{helpdesk_submit_options.to_json})", :class => "uiButton" %>
   </div>  
 </div> 
 
-<% javascript_tag do %>  
+
+<% javascript_tag do %> 
+ jQuery('#ticket_cancel_multiple_button').click(
+ 	function(){
+		active_dialog.dialog('close');
+ 	}); 
+	
  jQuery('#helpdesk_ticket_group_id')
    .bind("change", function(e){
      jQuery('#helpdesk_ticket_responder_id')
