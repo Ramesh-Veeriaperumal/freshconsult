@@ -1,4 +1,8 @@
+require 'ruby-prof'
+
 class SearchController < ApplicationController
+  
+  
   before_filter( :only => [ :suggest, :index ] ) { |c| c.requires_permission :manage_tickets }
   before_filter :forums_allowed_in_portal?, :only => :topics
   before_filter :solutions_allowed_in_portal?, :only => :solutions
@@ -10,7 +14,20 @@ class SearchController < ApplicationController
   end
   
   def suggest
+    RubyProf.start
     search
+    results = RubyProf.stop
+    File.open "#{RAILS_ROOT}/tmp/profile-graph.html", 'w' do |file|
+      RubyProf::GraphHtmlPrinter.new(results).print(file)
+    end
+ 
+    File.open "#{RAILS_ROOT}/tmp/profile-flat.txt", 'w' do |file|
+      RubyProf::FlatPrinter.new(results).print(file)
+    end
+ 
+    File.open "#{RAILS_ROOT}/tmp/profile-tree.prof", 'w' do |file|
+      RubyProf::CallTreePrinter.new(results).print(file)
+    end
     render :partial => '/search/navsearch_items'    
   end
   
@@ -108,8 +125,7 @@ class SearchController < ApplicationController
                                         :with => { :account_id => current_account.id, :deleted => false }, 
                                         :star => true, :match_mode => :any, 
                                         :page => params[:page], :per_page => 10
-  
-      process_results
+        process_results
     end
 
     def process_results
