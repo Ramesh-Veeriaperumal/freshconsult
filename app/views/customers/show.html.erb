@@ -76,11 +76,18 @@
 
 <% unless @customer.users.empty? %>
 <span class="seperator"></span>
-<h4 class="title"><%=t('company.info6',:name => @customer.name)%> (<%= @customer.users.size %>) </h4>
+<h4 class="title margin-set"><%=t('company.info6',:name => @customer.name)%> (<%= @customer.users.size %>) </h4>
 	<ul class="user_list">	  
 			  <% @customer.users.each do |user| %>
 			  <li>
-			  	<%= link_to(user_avatar(user, :thumb), user, :title => h(user.name) ) %> 
+			  	<%= link_to(user_avatar(user, :thumb), user, :title => h(user.name) ) %>
+			  	<br />
+			  	<% user_name = user.name %>
+			  	<% if (user_name.length > 27) %>
+			  	<% puts(user_name) %>
+			  	<% user_name = user_name[0..27] + "..."  %>
+			  	<% end %> 
+			  	<%= link_to (h(user_name), user, :class => 'username') %>
 				<%# link_to (h(user.name), user, :class => 'username') %>
 				<%# user.job_title %>
 			  </li>  

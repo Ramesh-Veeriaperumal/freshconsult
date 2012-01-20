@@ -172,6 +172,8 @@ en:
         portal_url: Portal URL
         top_level_solution: Top level solutions category
         portal_name: Portal name
+        portal_language: Portal Language
+        portal_language_info: This will be the default language when customers visits your portal
       edit: 
         title: Edit Product
       form: 
@@ -433,6 +435,8 @@ en:
   back_plans_billing: Back to Plans &amp; Billing
   f_request: Feature Request
   save_and_create: Save and Create Another
+  save_and_new: Save and New
+  save_and_close: Save and Close
   undelete: Restore
   import_zendesk_title: Import from zendesk
   closed: Closed
@@ -787,6 +791,9 @@ en:
       twoday: 2 Days
       threeday: 3 Days
   four: 4 Hours
+  oneweek: 1 Week
+  twoweek: 2 Weeks
+  onemonth: 1 Month
   problem: Problem
   change_plan_info: You can change your plan level at any time.  The position limits and other features of the new plan that you select will be effective as soon as you make the change, but your bill amount will not change until your next bill date.  Your next bill date is %{date}.
   created_on: Created on
@@ -830,7 +837,7 @@ en:
   portal_customizer_anon_for_g: Enable this feature if you want customers to be able to sign in using their Google username and password. 
   portal_customizer_anon_for_t: Enable this feature if you want users to be able to sign in using their Twitter username and password. 
   portal_signup_anon: Enable this feature if you want users to be able to sign up and create their own user accounts. This will enable users to login and participate in forum discussions, vote on ideas etc.
-  portal_captcha_anon: Disable this feature if you want users to submit a ticket without the captcha
+  portal_captcha_anon: Enable this feature if you want users to submit tickets with captcha
   card_process: Thank you for your payment. Your Freshdesk account is now live!
   chat: Chat
   country: Country
@@ -1058,6 +1065,9 @@ en:
     make_primary: Make primary
     info8: Forward your emails to
     help_link_info: Read our Email Settings article for more information...
+    bcc_email: BCC address (optional)
+    info17: This email address will be included automatically in the BCC field for all ticket communications
+    info18: Automatic bcc address included in ticket replies 
   step2: Step 2
   import_users_contacts: Users &rarr; Contacts
   linkback_info: You can choose to Linkback to your own website when the customer clicks on the header logo
@@ -1079,7 +1089,7 @@ en:
   ok: Ok
   back: Back
   ticket:
-    reported_on: "from %{username}, on %{date}"
+    reported_on: "from %{username}, last updated on %{date}"
     thanks: Thank you for submitting a feedback
     group: Group
     spam_btn_title: Mark as spam
@@ -1296,6 +1306,7 @@ en:
     flash:
       assignedto: "%{tickets} assigned to %{username}."
       tickets_closed: "%{tickets} closed"
+      tickets_update: "%{tickets} updated"
       assigned_to_you: "%{tickets} assigned to you"
       removed_from_spam: "%{tickets} removed from the spam folder."
       closing_the_ticket_failed: Closing the ticket failed
@@ -1338,6 +1349,9 @@ en:
         actions_performed: Actions performed
       close_notice:
         ticket_has_been_cloased: The ticket has been closed.
+        view_ticket: View ticket
+      save_and_close_notice:
+        ticket_saved_and_closed: The ticket has been created and closed.
         view_ticket: View ticket
       show:
         meta: meta
@@ -1533,3 +1547,11 @@ en:
       description: "Display a contact or option to add the contact into capsule."
   capsule_crm_helptext: "<h4>Link back from Capsule to Freshdesk</h4><p>You can create a link in Capsule CRM to view the contact's tickets in Freshdesk.</p> <p>To do this Goto your <br /><b>Settings -> Custom Fields -> For People & Organization</b></p><p> Then click on \"Add new...\" and select <b>\"Generated Link\"</b></p> <p>Copy the URl exactly as shown below and paste it in Capsule CRM as the link definition<span class=\"info-code\">http://%{full_domain}/helpdesk/tickets?email={email}</span></p>"
   reorder: "Reorder"
+  delete_the_ticket: "Delete the Ticket"
+  mark_as_spam: "Mark as Spam"
+  bulk_update: "Bulk Update"
+  update_multiple_tickets: "Update Multiple Tickets"
+  no_change: "No Change"
+  ticket_update_multiple_button: "Update"
+  ticket_cancel_multiple_button: "Cancel"
+  agent_working_on_this_ticket: "Agent Working on This Ticket"

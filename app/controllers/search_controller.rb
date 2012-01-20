@@ -1,4 +1,7 @@
+
 class SearchController < ApplicationController
+  
+  
   before_filter( :only => [ :suggest, :index ] ) { |c| c.requires_permission :manage_tickets }
   before_filter :forums_allowed_in_portal?, :only => :topics
   before_filter :solutions_allowed_in_portal?, :only => :solutions
@@ -108,8 +111,7 @@ class SearchController < ApplicationController
                                         :with => { :account_id => current_account.id, :deleted => false }, 
                                         :star => true, :match_mode => :any, 
                                         :page => params[:page], :per_page => 10
-  
-      process_results
+        process_results
     end
 
     def process_results

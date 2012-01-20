@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111230205418) do
+ActiveRecord::Schema.define(:version => 20120113105518) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -25,7 +25,6 @@ ActiveRecord::Schema.define(:version => 20111230205418) do
     t.string   "shared_secret"
     t.text     "sso_options"
     t.string   "google_domain"
-    t.string   "language",                       :default => "en"
     t.boolean  "ssl_enabled",                    :default => true
   end
 
@@ -168,6 +167,7 @@ ActiveRecord::Schema.define(:version => 20111230205418) do
     t.boolean  "active",                       :default => false
     t.string   "activator_token"
     t.string   "name"
+    t.string   "bcc_email"
   end
 
   add_index "email_configs", ["account_id", "to_email"], :name => "index_email_configs_on_account_id_and_to_email", :unique => true
@@ -633,6 +633,7 @@ ActiveRecord::Schema.define(:version => 20111230205418) do
     t.datetime "updated_at"
     t.integer  "solution_category_id", :limit => 8
     t.integer  "forum_category_id",    :limit => 8
+    t.string   "language",                          :default => "en"
   end
 
   add_index "portals", ["account_id", "portal_url"], :name => "index_portals_on_account_id_and_portal_url"

@@ -54,6 +54,7 @@ gem "newrelic_rpm"
 gem "sanitize", "2.0.3"
 gem "koala", "~> 1.0.0"
 
+
 group :development do
    gem "rspec", "1.3.1"
    gem "thoughtbot-shoulda","2.10.2"
