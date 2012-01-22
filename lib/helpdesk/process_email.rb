@@ -1,5 +1,7 @@
 class Helpdesk::ProcessEmail < Struct.new(:params)
  
+  EMAIL_REGEX = /(\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
+ 
   def perform
     from_email = parse_from_email
     to_email = parse_to_email
@@ -40,7 +42,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         email = $2
       elsif email =~ /<(.+?)>/
         email = $1
-      else email =~ User::EMAIL_REGEX
+      else email =~ EMAIL_REGEX
         email = $1
       end
       
@@ -57,7 +59,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
                             content.gsub("\r\n", "\n") =~ /^>>>+\s(.*)\s+<(.*)>$/))
         name = $1
         email = $2
-        if email =~ User::EMAIL_REGEX
+        if email =~ EMAIL_REGEX
           { :name => name, :email => email }
         end
       end
