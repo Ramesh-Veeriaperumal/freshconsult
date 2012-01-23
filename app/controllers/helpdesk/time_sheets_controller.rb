@@ -1,4 +1,6 @@
 class Helpdesk::TimeSheetsController < ApplicationController
+  
+  before_filter { |c| c.requires_feature :time_sheets }
   before_filter { |c| c.requires_permission :manage_tickets }  
   before_filter :load_time_entry, :only => [ :edit, :update, :destroy, :toggle_timer ]  
   
