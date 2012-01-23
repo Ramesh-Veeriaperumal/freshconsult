@@ -46,8 +46,7 @@ jQuery(document).ready(function(){
     
    <h4 class="title">View report between</h4>
    <ul class="ui-form">
-     <li class="inline-field">
-       <%= select_month(Time.utc(Time.now.year, @month, 1) || Date.today)%>	  
+     <li class="inline-field"> 
 				<table>
 					<tr>
 						<td width="100px"><label>From</label></td>
@@ -84,7 +83,10 @@ jQuery(document).ready(function(){
 							selectedDate, instance.settings );
 					dates.not( this ).datepicker( "option", option, date );
 					jQuery(this).attr("date", date);
+					jQuery("#report_filters").trigger("change");
 				}
 			}); 
+		jQuery("#start_date").val('<%= @start_date.strftime("%m/%d/%Y") %>');
+		jQuery("#end_date").val('<%= @end_date.strftime("%m/%d/%Y") %>');	
 	});
 <%end%>

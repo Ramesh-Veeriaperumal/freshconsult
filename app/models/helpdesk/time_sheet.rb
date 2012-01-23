@@ -50,6 +50,10 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
     "#{ticket.display_id} - #{ticket.subject}"
   end
   
+  def customer_name
+    ticket.requester.customer ? ticket.requester.customer.name : ticket.requester.name
+  end
+  
   def group_by_day_criteria
     executed_at.to_date.to_s(:db)
   end
