@@ -232,7 +232,7 @@ class Account < ActiveRecord::Base
   end
   
   def update_users_language
-    all_users.update_all(:language => main_portal.language) unless features.multi_language?
+    all_users.update_all(:language => main_portal.language) if !features.multi_language? and main_portal
   end
   
   def needs_payment_info?

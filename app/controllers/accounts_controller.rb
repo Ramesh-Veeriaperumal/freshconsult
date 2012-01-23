@@ -376,6 +376,7 @@ class AccountsController < ApplicationController
       SubscriptionNotifier.deliver_account_deleted(current_account)
       create_deleted_customers_info
       current_account.destroy
+      redirect_to "http://www.freshdesk.com"
     end
   end
   
