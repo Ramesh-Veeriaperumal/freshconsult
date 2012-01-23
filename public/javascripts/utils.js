@@ -32,24 +32,6 @@ function pad(number, length) {
     return str;
 }
 
-function counter(element){ 
-  if(jQuery(element).data("timerRunning")){
-	  seconds = jQuery(element).data('runningTime');
-	  timeout = (seconds%36);
-	  console.log(timeout + " " + seconds + " " + Math.round((seconds/3600)*100)/100);
-//	  if( timeout == 0 ){
-	  	  jQuery(element).html(pad(Math.round((seconds/3600)*100)/100)); 
-	  	  jQuery(element).data('runningTime', seconds+timeout);
-//	  }
-	  setTimeout(function(){ counter(element); }, timeout*1000);
-	  // 	  seconds = (count + 1) % 60;
-	  // 	  minutes = (count / 60) % 60;
-	  // 	  hours = (count / 60 / 60) % 24;
-	  // 	  jQuery(element).data('runningTime', count+1)
-	  // 	  jQuery(element).html( pad(Math.floor(hours)) + ":" + pad(Math.floor(minutes)) + "<span class='small'>:" + pad(seconds) +"</span>");
-  }
-}
-
 // Normalizing Hours
 function normalizeHours(value){
    return value.split( new RegExp( "\\s*:\\s*", "gi" ) ).collect(function(s) {

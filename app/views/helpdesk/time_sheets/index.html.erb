@@ -1,0 +1,31 @@
+<div id="timesheetlist">
+	<%= render :partial => "helpdesk/time_sheets/time_entry", :collection => @ticket.time_sheets %>    
+</div>		
+<div class="timeentry">
+	<div class="user_details">Total</div>
+	<div class="timespent">
+	  <%= content_tag :span, get_total_time(@ticket.time_sheets), 
+                    :class => "time",
+                    :id => "timeentry_timer_total" %>
+	</div>
+</div>
+
+<% javascript_tag do %>
+  new PeriodicalExecuter(function(pe) {
+     jQuery("div.time_running .time")
+                    .each(function(){
+                      seconds = jQuery(this).data('runningTime');
+                  	  timeout = 10 - seconds%10;
+                  	  jQuery(this)
+                  	    .html(sprintf( "%0.02f", seconds/3600))
+                  	    .data('runningTime', seconds+timeout);                	    
+                    });
+                    
+     total_hours = $$("#timesheetlist .time")
+                    .collect(function(t){ return t.innerHTML; })
+                    .inject(0, function(acc, n) { return parseFloat(acc) + parseFloat(n); });
+     
+     jQuery("#timeentry_timer_total").html(sprintf( "%0.02f", total_hours));
+     
+  }, 10);
+<% end %>

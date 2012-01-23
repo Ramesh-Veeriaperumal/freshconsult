@@ -246,12 +246,12 @@ module ApplicationHelper
    color
  end
  
- def get_time_in_hours time_in_second
-   [time_in_second.div(60*60), (time_in_second.div(60) % 60)*(1.667).round].map{ |t| t.to_s.rjust(2, '0') }.join(".")
+ def get_time_in_hours seconds
+   sprintf( "%0.02f", seconds/3600)
  end
  
  def get_total_time time_sheets
-   total_time_in_sec = time_sheets.collect{|t| t.time_spent}.sum
+   total_time_in_sec = time_sheets.collect{|t| t.running_time}.sum
    return get_time_in_hours(total_time_in_sec)
  end
   

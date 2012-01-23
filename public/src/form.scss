@@ -1287,25 +1287,27 @@ table.summary-report{
 	border:1px solid #f4f4f4;
 	margin-bottom:10px;
 }
-
+ 
 .request_panel{
-  margin:12px 0;
-	border:1px solid #f6f6f6;
+  margin-top:2px;
+	border:1px solid #efefef;
+	background-color:#f8f8f8;
 	.form-title, .ui-form{
 		padding:6px 25px 6px 66px;
-		border-bottom:1px solid #efefef;			
+		border-bottom:1px solid #efefef;
 	}
 	.form-title{ 
 		font-size:12px; 
 		font-weight:bold; 
 		display:block;
-		background-color:#f8f8f8;			
+		background-color:#f8f8f8;
 	}
 	.ui-form{
 		background-color:#fff;
 			margin:0;
 			background:none;
 			border:0;
+			h4.title{ line-height:24px; padding:0; font-size:13.5px; font-weight:bold;  }
       li.field{
          border:0;
       }

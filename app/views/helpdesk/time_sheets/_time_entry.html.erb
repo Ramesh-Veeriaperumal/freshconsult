@@ -18,14 +18,6 @@
     		  <%= formated_date(time_entry.executed_at, "%A, %e %b %Y") %>
     		</div>
     	</div>
-    	<div class="note">    	  
-    	  <%= content_tag(:div, "Timer started<br />@ #{formated_date(time_entry.start_time, "%I:%M %p")}", :class => "started_time") if time_entry.timer_running %>
-    		<%= content_tag(:span, "", :class => "billable tooltip", :title => "Billable time entry") if time_entry.billable %>	
-
-        <%= link_to_remote( RedCloth.new("#{time_entry.note}&nbsp;").to_html, 
-  	                    { :url => edit_helpdesk_time_sheet_path(time_entry), 
-  	                      :method => :get } ) %>
-    	</div>
     	<div class="timespent">
     		<!-- <a href="#" class="slim-button">start</a> --> 
     		<div class="timer_box">
@@ -37,7 +29,8 @@
                               :onclick => "jQuery(this).twipsy('hide');",
                               "data-placement" => "above" } %>
         </div>
-        <%= content_tag :span, time_entry.hours(time_entry.running_time), 
+  	  
+        <%= content_tag :span, get_time_in_hours(time_entry.running_time), 
                         :class => "time",
                         "data-running-time" => time_entry.running_time,
                         "data-timer-running" => time_entry.timer_running,
@@ -48,11 +41,16 @@
                   "data-timer-running" => time_entry.timer_running, 
                   :id => "timeentry_timer_#{time_entry.id}",
                   :title => "Time spent in hours #{time_entry.hours}" %>
-    	</div> 
+        <%= content_tag(:div, "Timer started <br />@ #{formated_date(time_entry.start_time, "%I:%M %p")}", :class => "started_time") if time_entry.timer_running %>
+              		
+    	</div>
+    	<% content_tag :div, :class => "note" do
+    	    concat content_tag(:span, "", :class => "billable tooltip", :title => "Billable time entry") if time_entry.billable
+
+          concat link_to_remote( RedCloth.new(time_entry.note.blank? ? "_add note_" : time_entry.note).to_html, 
+                               { :url => edit_helpdesk_time_sheet_path(time_entry), 
+                                 :method => :get } )
+         end	%>
   </div>
   <div id="timeentry_edit_<%= time_entry.id %>"></div>
-<% end %>
-
-<% javascript_tag do %>
-  counter("#timeentry_timer_<%=time_entry.id%>");
 <% end %>

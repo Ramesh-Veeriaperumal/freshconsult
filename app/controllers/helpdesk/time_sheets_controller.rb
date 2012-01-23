@@ -2,12 +2,18 @@ class Helpdesk::TimeSheetsController < ApplicationController
   before_filter { |c| c.requires_permission :manage_tickets }  
   before_filter :load_time_entry, :only => [ :edit, :update, :destroy, :toggle_timer ]  
   
+  def index
+    @ticket = current_account.tickets.find_by_display_id(params[:ticket_id])
+    @time_sheet = @ticket.time_sheets
+    render :index, :layout => false
+  end
+  
   def new
     update_running_timer params[:time_entry][:user_id]
     create_time_entry
     @time_sheet.save
   end
-
+   
   def update  
     hours_spent = params[:time_entry][:hours]
     params[:time_entry].delete(:hours)

@@ -120,7 +120,6 @@ ul.activityfeed li{
 		font-size:1.1em;
 		font-weight:bold;
 		line-height:1.4em;
-		margin:0.36em 0;
 	}
 	
 	.element{
@@ -487,8 +486,9 @@ body h5{
 .request_details{
 	margin:-13px -20px 20px -20px;
 	.ticket_actions{
-		position:relative;
-		float:right; 
+		position:absolute;
+		right:10px; 
+		top:10px;
 		.action_buttons{
 			margin-top:0px;
 			a{ font-size:10px; }
@@ -624,7 +624,7 @@ body h5{
 	}
 	
 	.preview_pic img{ width:36px; height:36px; }
-	.user_name{ @include link-colors( #333333, #527EAA ); } 
+	a{ @include link-colors( #333333, #527EAA ); } 
 	div.description{  
 			position: relative; 
 			.details{ 
@@ -663,7 +663,8 @@ body h5{
 			@include pie-clearfix;
 			position:relative;
 			margin:0;
-			padding:0 25px 0 0;
+			padding:8px 25px 8px 70px;
+			border-bottom:1px solid #f3f3f3;
 			.preview_pic{
 				margin-left:-50px;
 				margin-top:1px;

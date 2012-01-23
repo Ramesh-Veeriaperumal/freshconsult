@@ -1339,7 +1339,6 @@ a.pill.help{
 
 .time{
 	font-size:1.46em;
-	line-height:26px;
 	padding-left:10px;  
 	.small{
 		font-size:0.80em;
@@ -1361,54 +1360,34 @@ a.pill.help{
 	color:#888;
 }
 
-.request_panel .ui-form h4.title{
-	padding-bottom:16px;
-}
+.ui-form, .timeentry{ .agent, .timespent, .user_details, .note{	float:left; position:relative; } }
 
 .ui-form{ 
-	.timespent, .agent, .note{ float:left; }
 	.agent{ width: 25%;  margin-right:4%;}
 	.timespent{ width: 20%; }
 	.note{ width:50%; float:right; }
 }
+
 .timeentry{
 	.started_time{
 		font-size:10px;
 		font-style:italic;
-		float:right;
 		text-align:right;
 		margin-top:2px;
 	}	
-	.timespent, .user_details, .note{
-		color:#555;
-		float:left;
-		position:relative;
-	}
-	
-	.user_details{
-		width:20%;
-	}
-	
-	.timespent{
-		width:16%;
-		margin-left:1%;
-	}
-	.note{ 
-		width:50%;
-		padding-left:22px;
-		a{ @include link-colors(#5c7083); }
-	}
+	.actions{ margin-top:3px; }
+	.user_details{	width:24%; margin-right: 2%;	}	
+	.user_name{ padding-bottom:3px;  display:block; }
+	.timespent{	width:16%; text-align:right; margin-right: 2%; }
+	.note{ width:40%; padding-left: 4%; em{ color:#336666; font-style:italic; } }
 	.billable{
 		background: sprite($symbol, billable);
 		position:absolute;
 		left:0;
-		top:0;
+		top:1px;
 		width:19px;
 		height:18px;
 	}
 }
-
-.timeentry .timespent{
-	text-align:right; 
-}
+ 
 

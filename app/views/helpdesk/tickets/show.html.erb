@@ -103,10 +103,10 @@
 					<%= link_to_function("Tweet", "swapEmailNote('tweet', this)",  :id => "TweetButton") if @item.requester && @item.is_twitter?%>
 					<%= link_to_function("Comment", "swapEmailNote('fb_post', this)",  :id => "FacebookButton") if @item.requester && @item.fb_post%>
 					<%= link_to_function(t('ticket.add_note'), "swapEmailNote('note', this)", :id => "AddNoteButton") %>		
-					<%= link_to_function "Add time", "jQuery('#add_new_time_entry').toggle();", :id => "time_sheet", :title => "Add time entry" %> 
+					<%= link_to_function "Add time", "jQuery('#add_new_time_entry').slideToggle();jQuery('#timesheettab').trigger('click'); return false;", :id => "time_sheet", :title => "Add time entry" %>
 				</div>				
 			<% end %>
-				<ul class="tabs" data-tabs="tabs">
+				<ul id="tickettabs" class="tabs" data-tabs="tabs">
       		<li class="active">
 						<a href="#Pages">
 							<strong>
@@ -116,15 +116,16 @@
 						</a>
 					</li>
       		<li>
-						<a href="#timesheet">
+						<% link_to("#timesheet", "data-remote-url" => helpdesk_ticket_helpdesk_time_sheets_path(@ticket), "data-update" => "timesheet", :id => "timesheettab") do %>		  
 							<strong>
 							  Time sheet 
 							  <%= content_tag :span, @ticket.time_sheets.size, :id => "timesheet_count", :class => "pill" unless @ticket.time_sheets.empty? %>
 							</strong>
-						</a>
+						<% end %>
 					</li>
     	  </ul> 
 		  </div>
+		      
 		  <%= render(:partial => '/helpdesk/shared/reply_form', :locals => { :id => 'send-email', :cntid => 'cnt-reply', :note => [@ticket, Helpdesk::Note.new(:private => false)] }) %>
 
 			<%= render(:partial => '/helpdesk/shared/note_form', :locals => { :id => 'add-note',	:cntid => "cnt-note", :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
@@ -139,19 +140,17 @@
         </div>
         <div id="canned_response_list"></div>
 		  </div>
-		  <div class="request-wrapper">		    
 			<div class="tab-content">
-				<div class="requestCnt request-conversation tab-pane" id="Pages">					
+				<div class="requestCnt request-conversation active tab-pane" id="Pages">
 					<% unless @ticket_notes.blank? %>
-						<%= render :partial => 'note', :collection => @ticket_notes, :spacer_template => "ui/seperator" %>
+						<%= render :partial => 'note', :collection => @ticket_notes %>
 						<%= will_paginate @ticket_notes %>
 					<% end %>	
 			  </div>			  
-				<div class="requestCnt request-conversation active tab-pane" id="timesheet">
-					<%= render :partial => "helpdesk/time_sheets/time_sheets_for_ticket" %>
+				<div class="requestCnt request-conversation tab-pane" id="timesheet">
+				  <div class="loading-box"></div>
 				</div>
 			</div>
-	</div>
 </div>
 
 <% content_for :pagefixed do %> 
@@ -313,12 +312,21 @@
   		return true;
   	}
 	
-    jQuery('a.submit').live("click", function(ev){
-			ev.preventDefault();
-			jQuery(this).button("loading");
-			jQuery(this).parents("form").submit();
-		});
   <% end %>
 
 <% end %>
 
+<% content_for :onload_script do -%> 
+  jQuery('a.submit').live("click", function(ev){
+		ev.preventDefault();
+		jQuery(this).button("loading");
+		jQuery(this).parents("form").submit();
+	});  
+	jQuery('#timesheettab').click(function(){
+	  if(jQuery(this).data("update")){
+	    _data = jQuery(this).data()
+	    jQuery("#"+_data.update).load(_data.remoteUrl);
+	    _data.update = false;
+	  }
+	});
+<%- end %>

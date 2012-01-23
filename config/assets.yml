@@ -46,6 +46,7 @@ javascripts:
     - public/javascripts/application.js
   frameworks:
     - public/javascripts/frameworks/jquery.js
+    - public/javascripts/frameworks/sprintf.js
     - public/javascripts/frameworks/plugins/*.js
     - public/javascripts/hackz.js    
   workspace: 
