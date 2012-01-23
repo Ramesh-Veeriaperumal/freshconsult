@@ -53,7 +53,6 @@ class CapsuleCRM::Organisation < CapsuleCRM::Party
     options = {:root => 'organisation', :path => path}
     hsh = attributes_hash
     xml_out = hsh.to_xml :root => 'organisation'
-    puts xml_out
     new_id = self.class.create xml_out, options
     unless new_id
       errors << self.class.last_response.response.message

@@ -54,6 +54,19 @@ function getParameterByName(name, url)
     return decodeURIComponent(results[1].replace(/\+/g, " "));
 }
 
+// Reorder show hide functions
+function showSortableForm(buttonid, listid, formid){
+	jQuery("#"+listid).hide();
+	jQuery("#"+buttonid).hide();
+	jQuery("#"+formid).fadeIn(300);
+}
+
+function hideSortableForm(buttonid, listid, formid){		
+	jQuery("#"+listid).fadeIn(300);
+	jQuery("#"+buttonid).show();
+	jQuery("#"+formid).hide();
+}
+
 //Bitly url shortner
 function get_short_url(long_url, callback)
 {

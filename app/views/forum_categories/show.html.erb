@@ -11,6 +11,7 @@
 		<div class="search-grey-box">
 			<% if logged_in? && current_user.has_manage_forums? -%>
 				<div class="action_buttons no_margin">
+					<%= link_to(t('reorder'),'#', :id => "forums_reorder_button", :class => "first") unless (@forum_category.send("#{@content_scope}forums").size <= 1) %>
 			  		<%= link_to  t('forum.new'), new_category_forum_path(@forum_category), :class => "add_new icon" %>
 					<%= link_to t('category.edit') ,edit_category_path(@forum_category), :class => "last" %>  
 				</div> 
@@ -20,3 +21,7 @@
 	<%= render :partial => "forum_shared/category", :object => @forum_category %>
 	</div>		
 </div>
+
+<% if logged_in? && current_user.has_manage_forums? -%>	
+	<%= render :partial => "/shared/reorder_list", :locals => { :items => @forum_category.send("#{@content_scope}forums"),  :action_url => reorder_category_forums_path(@forum_category), :title => :name, :container_id => "forums_sort", :reorder_id => "forums_reorder_button", :list_id => "forums_list"} %>
+<% end %>

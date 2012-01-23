@@ -101,7 +101,7 @@
   map.with_options(:conditions => {:subdomain => AppConfig['admin_subdomain']}) do |subdom|
     subdom.root :controller => 'subscription_admin/subscriptions', :action => 'index'
     subdom.with_options(:namespace => 'subscription_admin/', :name_prefix => 'admin_', :path_prefix => nil) do |admin|
-      admin.resources :subscriptions, :member => { :charge => :post, :extend_trial => :post }, :collection => {:customers => :get, :customers_csv => :get}
+      admin.resources :subscriptions, :member => { :charge => :post, :extend_trial => :post }, :collection => {:customers => :get, :customers_csv => :get, :deleted_customers => :get}
       admin.resources :accounts, :collection => {:agents => :get, :helpdesk_urls => :get, :tickets => :get, :renewal_csv => :get}
       admin.resources :subscription_plans, :as => 'plans'
       admin.resources :subscription_discounts, :as => 'discounts'
@@ -181,7 +181,7 @@
 #      ticket.resources :notes, :member => { :restore => :put }, :name_prefix => 'helpdesk_issue_helpdesk_'
 #    end
 
-    helpdesk.resources :tickets, :collection => { :empty_trash => :delete, :empty_spam => :delete, :user_ticket => :get, :search_tweets => :any, :custom_search => :get, :export_csv => :post }, 
+    helpdesk.resources :tickets, :collection => { :empty_trash => :delete, :empty_spam => :delete, :user_ticket => :get, :search_tweets => :any, :custom_search => :get, :export_csv => :post, :update_multiple => :put }, 
                                  :member => { :assign => :put, :restore => :put, :spam => :put, :unspam => :put, :close => :put, :execute_scenario => :post  , :close_multiple => :put, :pick_tickets => :put, :change_due_by => :put , :get_ca_response_content => :post ,:split_the_ticket =>:post , :merge_with_this_request => :post, :print => :any } do |ticket|
 
       ticket.resources :notes, :member => { :restore => :put }, :name_prefix => 'helpdesk_ticket_helpdesk_'
@@ -231,9 +231,9 @@
   end
   
    map.namespace :solution do |solution|     
-     solution.resources :categories  do |category|   
-     category.resources :folders  do |folder|
-       folder.resources :articles, :member => { :thumbs_up => :put, :thumbs_down => :put , :delete_tag => :post } do |article|
+     solution.resources :categories, :collection => {:reorder => :put}  do |category|   
+     category.resources :folders, :collection => {:reorder => :put}  do |folder|
+       folder.resources :articles, :member => { :thumbs_up => :put, :thumbs_down => :put , :delete_tag => :post }, :collection => {:reorder => :put} do |article|
          article.resources :tag_uses
        end
        end

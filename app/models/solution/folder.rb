@@ -7,9 +7,13 @@ class Solution::Folder < ActiveRecord::Base
   belongs_to :category, :class_name => 'Solution::Category'
   set_table_name "solution_folders"
   
+  acts_as_list :scope => :category
+  
   after_save :set_article_delta_flag
   
-  has_many :articles, :class_name =>'Solution::Article' , :dependent => :destroy
+  has_many :articles, :class_name =>'Solution::Article' , :dependent => :destroy, :order => "position"
+  has_many :published_articles, :class_name =>'Solution::Article' ,:order => "position",
+           :conditions => "solution_articles.status = #{Solution::Article::STATUS_KEYS_BY_TOKEN[:published]}"
   
   named_scope :alphabetical, :order => 'name ASC'
   
@@ -63,7 +67,7 @@ class Solution::Folder < ActiveRecord::Base
      options[:indent] ||= 2
       xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
-      super(:builder => xml, :skip_instruct => true,:except => [:account_id,:import_id]) 
+      super(:builder => xml, :skip_instruct => true,:include => options[:include],:except => [:account_id,:import_id]) 
   end
   
 end

@@ -55,6 +55,7 @@ gem "sanitize", "2.0.3"
 gem "koala", "~> 1.0.0"
 gem "unicorn", "4.1.1"
 
+
 group :development do
    gem "rspec", "1.3.1"
    gem "thoughtbot-shoulda","2.10.2"

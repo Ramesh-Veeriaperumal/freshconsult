@@ -68,7 +68,7 @@ module ApplicationHelper
       forums_tab,
       ['/contacts',           :customers,    permission?(:manage_tickets)],
       ['support/tickets',     :checkstatus, !permission?(:manage_tickets)],
-      ['/reports',            :reports,      permission?(:manage_users)],
+      ['/reports',            :reports,      permission?(:manage_reports) ],
       ['/admin/home',         :admin,        permission?(:manage_users)],
       company_tickets_tab
     ]
@@ -309,7 +309,7 @@ module ApplicationHelper
       when "dropdown_blank" then
         element = label + select(object_name, field_name, field[:choices], :class => element_class, :selected => field_value, :include_blank => "...")
       when "hidden" then
-        element = hidden_field(:source, :value => field_value)
+        element = hidden_field(object_name , field_name , :value => field_value)
       when "checkbox" then
         element = content_tag(:div, check_box(object_name, field_name, :class => element_class, :checked => field_value ) + field_label)
       when "html_paragraph" then
@@ -336,13 +336,26 @@ module ApplicationHelper
       when "dropdown_blank" then
         element = label + select(object_name, field_name, field.choices, {:include_blank => "...", :selected => field_value}, {:class => element_class})
       when "hidden" then
-        element = hidden_field(:source, :value => field_value)
+        element = hidden_field(object_name , field_name , :value => field_value)
       when "checkbox" then
         element = content_tag(:div, check_box(object_name, field_name, :class => element_class, :checked => field_value ) + field_label)
       when "html_paragraph" then
         element = label + text_area(object_name, field_name, :class => element_class +" mceEditor", :value => field_value)
     end
     content_tag :li, element, :class => dom_type
+  end
+  
+  def construct_ticket_text_element(object_name, field, field_label, dom_type, required, field_value = "", field_name = "")
+    field_name      = (field_name.blank?) ? field.field_name : field_name
+    object_name     = "#{object_name.to_s}#{ ( !field.is_default_field? ) ? '[custom_field]' : '' }"
+    
+    label = label_tag object_name+"_"+field.field_name, field_label, :class => "name_label" 
+    
+    field_value = field.dropdown_selected(field.choices, field_value) if(dom_type == "dropdown") || (dom_type == "dropdown_blank")
+    
+    element = label + label_tag(field_name, field_value, :class => "value_label")
+    
+    content_tag :li, element unless (field_value == "" || field_value == "...")     
   end
    
   def pageless(total_pages, url, message=t("loading.items"))
@@ -388,7 +401,7 @@ module ApplicationHelper
   end
   
   def company_tickets_tab
-    tab = ['support/company_tickets', :company_tickets , !permission?(:manage_tickets) , current_user.customer.name] if current_user && current_user.customer
+    tab = ['support/company_tickets', :company_tickets , !permission?(:manage_tickets) , current_user.customer.name] if (current_user && current_user.customer && current_user.client_manager?)
     tab || ""
   end
   

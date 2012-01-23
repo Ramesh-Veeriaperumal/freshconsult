@@ -125,6 +125,17 @@ class Va::Action
       end
     end
     
+    def delete_ticket(act_on)
+      act_on.deleted = true
+      add_activity("Deleted the ticket <b>#{act_on} </b>")
+       
+   end
+    
+    def mark_as_spam(act_on)
+      act_on.spam = true 
+      add_activity("Marked the ticket <b>#{act_on} </b> as spam")
+    end
+    
   private
     def get_group(act_on) # this (g == 0) is kind of hack, same goes for agents also.
       begin

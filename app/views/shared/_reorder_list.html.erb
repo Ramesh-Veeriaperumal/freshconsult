@@ -1,0 +1,52 @@
+<% unless(items.size <= 1) -%>
+	<% container_id = container_id || "sortable" %>
+	<div class="sortable hide" id="<%= container_id %>">
+		<h4 class="title"><%= "Reorder" %></h4>
+		<% form_for :reorder, items, :url => action_url, :html => { :method => :put } do |f| %>
+		  <input name="reorderlist" type="hidden" value="" />
+		  <ul class="sort-list" rel="sortlist">
+			  <% items.each do |item| %>
+			  	<% content_tag :li, :item_id => item.id do %>
+			  		<span class="sort_handle"></span>
+			  		<%= h(item.send(title)) %> 
+			  	<% end %>
+			  <% end %>
+		  </ul>
+		  <div class="button-container">
+			<%= link_to  t("cancel"), "#", :id => "#{container_id}_cancel", :class => "uiButton"  %>
+		    <input type="submit" class="uiButton" value="<%= t("save") %>" />				
+		  </div>
+		<% end %>
+	</div>
+<% end %>
+
+<% content_for :onload_script do %>
+	jQuery(document).ready(function(){	    
+		var reorder_id = "<%=reorder_id%>"
+		var list_id = "<%=list_id%>"
+		var container_id = "<%=container_id%>"
+		var reorder_form = jQuery("#" + container_id + ' ul');
+		reorder_form.sortable({
+	        	containment: "parent", 
+	        	tolerance: "pointer"
+	      	}).parents("form")
+			  .submit(function(ev){
+	      		var position_hash = $H();
+	      		jQuery.each(jQuery("#" + container_id + " ul li"), function(index, item){
+	        		var item_id = item.getAttribute("item_id");
+	          		position_hash.set(item_id, index+1);
+	      		});
+	      		this['reorderlist'].value = position_hash.toJSON();
+	    	});
+			jQuery("#"+reorder_id).click(function(ev){
+				ev.preventDefault();
+				showSortableForm(reorder_id, list_id, container_id);
+			});
+			jQuery("#"+container_id+"_cancel").click(function(ev){
+				ev.preventDefault();
+				hideSortableForm(reorder_id, list_id, container_id);
+			});
+			
+	});
+		
+<% end %>

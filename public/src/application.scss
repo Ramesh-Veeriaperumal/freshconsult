@@ -1625,15 +1625,14 @@ ul.item_list{
 	border-bottom-color:#e8e8e8;
 	border-left-color:#e8e8e8;
 	li{
-		padding:5px;
-		margin:5px;
-		font-size:12px;
+		padding:2px;
+		margin:5px 0;
 		@include clearfix;
-		position:relative;
-		@include min-width(150px);
+		position:relative; 
 		@include corners(6px);
+		@include min-width(150px);
 		a{
-			text-decoration:none;				
+			text-decoration:none;
 		}	
 		div.preview_pic{
 			margin-right:5px;
@@ -1643,8 +1642,12 @@ ul.item_list{
 			}
 		} 
 		b{
-			position:relative;	
+			position:relative;	 
+			width:138px;
+			float:left;
+			@include wrap;
 			top:2px;
+			font-size:11px;
 		}
 		.selected_tick{
 			position:absolute;
@@ -1653,8 +1656,9 @@ ul.item_list{
 		}
 		.control{
 			position:absolute;
-			right:3px; bottom:3px;
+			right:3px; bottom:-2px;
 			display:none;
+			z-index:9999;
 		}
 	}
 	li:hover{
@@ -1693,10 +1697,13 @@ ul.user_list{
 	margin:0px;
 	padding:0px;
 	li{
+	  height:100px;
 		float:left;
-		width:auto;
+		width:120px;
+		
+		text-align:center;
 		.preview_pic{
-			margin:2px;
+			margin:2px 34px;
 			img{
 				padding:0px;
 				border:0px;
@@ -1704,6 +1711,7 @@ ul.user_list{
 		}
 		.username{
 			display:block;
+			word-wrap: break-word;
 		}
 	}
 }
@@ -1935,7 +1943,7 @@ h4.border_title{
 }
 
 .solution-list .odd, .solution-list .even{
-	@include clearfix;
+	@include pie-clearfix;
 	margin:5px 2% 5px 1%; 
 	padding:10px 0px;
 	float:left;
@@ -2433,13 +2441,14 @@ a.page_title{
 }
 
 .search_results_bar{
-	@include corners(0px, 0px, 6px, 6px);
-	@include shadows(#bbbbbb, 0px, 3px, 10px);
+	@include border-bottom-radius(6px);
+	@include box-shadow(#aaa 0px 3px 10px);
 	border:1px solid #afafaf;
 	display:none;
 	position:absolute;
 	background:#ffffff;
-	right:10px;
+	right:16px;
+	top:-12px;
 	border-top:1px solid #dddede;
 	padding-left:100px;
 	z-index:9999999;
@@ -2466,7 +2475,7 @@ a.page_title{
 
 .results{ 
 	padding-bottom:8px;
-	.ticket_icon, 	.contact_icon, .company_icon, .solution_icon, .forum_icon { display:inline-block; }
+	.ticket_icon, 	.contact_icon, .company_icon, .solution_icon, .forum_icon { display:block; }
 	.ticket_icon	span.icon{ background:sprite($icons, page-white) no-repeat; }
 	.contact_icon	span.icon{ background:sprite($icons, user) no-repeat; } 
 	.company_icon	span.icon{ background:sprite($icons, building) no-repeat; } 
@@ -2585,6 +2594,13 @@ a.page_title{
 	.active{
 	   a{ 
 	      @include link-colors(#333333, #333333, #333333, #333333); }
+	}
+	.sortable{
+		margin:0 -10px 0 -20px;
+		padding:5px 20px;
+	}
+	.sort-list li{
+		font-size:1em;
 	}
 }
 
@@ -3244,6 +3260,11 @@ div.addReminder{
 	div{
 		padding:6px;
 	}
+}
+
+.ui-form span.warning{
+	color:#aa3333;
+	background-color:#fffbee;
 }
 
 .info-code{
@@ -4323,4 +4344,53 @@ a.close{
 	text-align:center;
 	color:#666666;
 	@include text-shadow(#ffffff, 0px, 1px, 1px);
+}
+.sidepanel {
+	.cnt {
+		li {
+			border-bottom: 1px solid #F3F3F3;
+			padding: 6px 0;
+			
+			a{
+				text-decoration:none;
+			}
+			label{
+				display:block;
+				font-size:11px;
+				font-weight:bold;
+				color:#666666;
+			}
+			select{
+				font-size:11px;
+				max-width:100%;
+			} 
+			.name_label {
+				color: #666666;
+				font-size: 12px;
+				font-weight: bold;
+			}
+			.value_label {
+				color: #666666;
+				font-size: 11px;
+				font-weight: normal;
+			}
+		}
+		
+		
+	}
+}
+
+.dialog-special {
+	.solution-list {
+		label {
+			font-size: 13px;
+		}
+		select {
+			padding: 0px;
+			font-size: 11px;
+		}
+		li {
+			padding: 0px;
+		} 
+	}
 }
