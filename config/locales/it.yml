@@ -18,7 +18,7 @@ it:
   pending: In sospeso
   twitter_source: Twitter
   facebook_source: Facebook
-  working: In lavoraziona
+  working: Lavora
   attachment: Allegato
   attachments: Allegato
   show_quoted_text: Mostra il testo fra virgolette
@@ -420,7 +420,7 @@ it:
   change: Cambia
   back_plans_billing: Torna ai piani di fatturazione
   f_request: Richiedi Funzione
-  save_and_create: Salva e crier un' altra
+  save_and_create: Salva e creane un'altra
   undelete: Ripristina
   import_zendesk_title: Importati da zendesk
   closed: Chiuso
@@ -616,7 +616,7 @@ it:
     edit: Modifica categoria
     info1: Sei sicuro di voler cancellare questa categoria
     info2: Nessuna cartella in questa categoria
-    save_and_create: Salva e crier un' altra
+    save_and_create: Salva e creane un'altra
   billed_monthly: Fatturato mensile
   users: 
     activations: 
@@ -831,7 +831,7 @@ it:
     import_csv: Importa utenti da CSV
     quick_contact: Aggiungi contatto veloce
     info3: Informazioni complementari su %{nick_name}
-    working: In lavoraziona
+    working: Lavora
     info4: Ticket recenti da %{nick_name}
     form_placeholder: 
       description: Aggiungi note specifiche riguardo questo contatto - indirizzo, interessi, etc.
