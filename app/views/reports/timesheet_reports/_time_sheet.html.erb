@@ -1,6 +1,7 @@
-			<tr class="<%= cycle("odd", "even") %>" >
-				<td> <%=h(time_sheet.user.name)%></td>
-				<td> <%=get_time_in_hours(time_sheet.time_spent)%></td>
-				<td><%=h(time_sheet.note)%></td>	
-				<td><%=h(time_sheet.ticket_display)%></td>							
-			</tr>
+<tr class="<%= cycle("odd", "even") %>" >
+  <td><%= h("$$$Customer") %></td>
+	<td><%= h(time_sheet.ticket_display) %></td>
+	<td><%= h(time_sheet.note) %></td>
+  <td><%= h(time_sheet.user.name) %></td>	
+	<td><%= get_time_in_hours(time_sheet.time_spent) %></td>
+</tr>
