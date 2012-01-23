@@ -26,7 +26,8 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
       
   BILLABLE_HASH = { true =>"Billable", false => "Non-Billable"}
 
-  def hours seconds = time_spent
+  def hours 
+    seconds = time_spent
     sprintf( "%0.02f", seconds/3600)
   end
 
