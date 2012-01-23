@@ -1,6 +1,7 @@
 
 class SearchController < ApplicationController
   
+  extend NewRelic::Agent::MethodTracer
   
   before_filter( :only => [ :suggest, :index ] ) { |c| c.requires_permission :manage_tickets }
   before_filter :forums_allowed_in_portal?, :only => :topics
@@ -13,7 +14,9 @@ class SearchController < ApplicationController
   end
   
   def suggest
+   self.class.trace_execution_scoped(['Custom/suggest_search']) do 
     search
+   end
     render :partial => '/search/navsearch_items'    
   end
   
