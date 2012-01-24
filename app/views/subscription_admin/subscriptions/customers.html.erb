@@ -12,6 +12,19 @@
 <br>
 <br>
 
+<h3>Customers Converted Month</h3>
+<table id="customers_converted">
+	<%@conv_customers_by_month.each do |arr|%>
+	  <tr>
+       <td><%=arr[0]%></td>
+       <td><%= arr[1] %></td>
+     </tr>
+	<%end%>
+</table>
+
+<br>
+<br>
+
 <h3>Signup's Per Month</h3>
 <table id="customers">
 	<%@signups_by_month.each do |date,count|%>
