@@ -1,6 +1,6 @@
 
   <span class="floatr">
-    <%= submit_tag "Export to CSV", :class => "slim-button" %>
+    <%= submit_tag "Export to CSV",{ :class => "slim-button" , :id =>'export_as_csv' }%>
   	<%= link_to("&larr; Back to reports", reports_url, :class => "slim-button") %>
   </span>
   <h3 class="title">
@@ -9,23 +9,7 @@
   <div id="time_sheet_report">
   	<%= render :partial => "time_sheet_list", :locals => {:time_sheets => @time_sheets} %> 
   </div>
-</div>
-<% javascript_tag do %> 
-jQuery(document).ready(function(){
-  jQuery("#report_filters").change(function(){
-    jQuery("#time_sheet_report").html("<div class='loading-box'></div>"); 
-    jQuery.ajax({
-        url: "/reports/timesheet_reports/report_filter",
-        type: "POST",
-        data: jQuery(this).serializeArray(),
-        success: function(data){ 
-		   jQuery("#time_sheet_report").hide().html(data).fadeIn(300);
-        }
-		});
-      }); 	  
-  });
 
-<% end %>
 
 <% content_for :sidebar do -%>
 <div class="sidepanel">
@@ -88,5 +72,22 @@ jQuery(document).ready(function(){
 			}); 
 		jQuery("#start_date").val('<%= @start_date.strftime("%m/%d/%Y") %>');
 		jQuery("#end_date").val('<%= @end_date.strftime("%m/%d/%Y") %>');	
+	
+	    jQuery("#report_filters").change(function(){
+    	jQuery("#time_sheet_report").html("<div class='loading-box'></div>"); 
+    	jQuery.ajax({
+        url: "/reports/timesheet_reports/report_filter",
+        type: "POST",
+        data: jQuery(this).serializeArray(),
+        success: function(data){ 
+		   jQuery("#time_sheet_report").hide().html(data).fadeIn(300);
+        	}
+			});
+      	});
+		
+		jQuery("#export_as_csv").click(function(){
+       		jQuery("#report_filters").submit();
+  		}); 	
+	
 	});
 <%end%>
