@@ -124,7 +124,7 @@
   var loading = function (bool) {
     (isLoading = bool)
     ? (loader && loader.fadeIn('normal'))
-    : (loader && loader.fadeOut('normal'));
+    : (loader && loader.css('display', "none"));
   };
   
   // distance to end of the container
@@ -180,11 +180,11 @@
                loading(FALSE);
                // if there is a complete callback we call it
                if (settings.complete){
-			   	if(typeof settings.complete == "string")
-					eval(settings.complete);
-				else
-			  		settings.complete.call();
-			   } 
+			   	   if(typeof settings.complete == "string")
+					      eval(settings.complete);
+				      else
+			  		      settings.complete.call();
+			      } 
            });
     }
   };

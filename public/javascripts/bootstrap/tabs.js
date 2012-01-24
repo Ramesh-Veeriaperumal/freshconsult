@@ -50,6 +50,11 @@
         return
       }
 
+      if( $this.data("remoteLoad") ){
+         $(href).load($this.data("remoteLoad"))
+         $this.data("remoteLoad", false)
+      }
+
       previous = $ul.find('.active a').last()[0]
       $href = $(href)
 

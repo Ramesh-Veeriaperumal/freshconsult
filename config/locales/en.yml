@@ -1364,6 +1364,8 @@ en:
       show:
         meta: meta
         linked_ticket: This ticket is linked to the forum
+        conversation: Conversation 
+        timesheet: Time Sheet
       components:
         scenarios:
           execute_this_scenario: Execute this scenario

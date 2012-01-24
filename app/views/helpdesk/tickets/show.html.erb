@@ -1,156 +1,25 @@
 <% content_for :sidebar do -%>
-  <%= render :partial => "ticket_sidebar" unless @ticket.deleted %>
+  <div class="rtCnt sidepanel ticket-panel">
+    <%= ticket_sidebar unless @ticket.deleted %>
+  </div>
 <%- end %>
 
-<% if @ticket.deleted %>
-		<div class="alert-message block-message warning">
-			<div class="alert-actions-right">
-      	<%= link_to(t('ticket.restore_btn'), restore_helpdesk_ticket_path(@ticket), :method => :put, :class => "btn small", :title => t('ticket.restore_btn_title') ) %>
-    	</div>
-  		<p><strong><%=t('this_ticket_has_been_deleted') %></strong></p>
-		</div>
-  <% end %>
-  <div class="request_details">
-      <div class="requestCnt request-cnt-first">
-      <div class="request-title">
-        <%= content_tag :span, h(@ticket.status_name), :class => "status" %>
-        <%= content_tag :span, h(@ticket.priority_name), :class => "priority #{@ticket.priority_key}" %>
-        <%= content_tag :span, "##{@ticket.display_id}", :class => "ticket-id" %>
-        <%= content_tag :span, @ticket.subject, :class => "subject" %>
-      </div>
-			<div class="description">         
-        <div class="user_details">
-			    <%= user_avatar(@ticket.requester)  %>
-			    <% if is_application_installed?("capsule_crm") %>
-				    <textarea id="widget-capsule-crm" style="display:none;">
-					    <% @liquid_objects = {"requester" => @ticket.requester} %>
-				 	    <%= get_app_widget_script("capsule_crm", "contact_widget", @liquid_objects) %>
-				    </textarea>
-				    <div class="app-link">
-					    <a data-placement="topRight" href="#" rel="widget-popover" data-widget-container="widget-capsule-crm">
-						    <%= image_tag("application-logo-small/capsule_crm.png") %>
-					    </a>
-				    </div> 
-	        <% end %>
+<%= render :partial => "ticket_info" %>
+<%= render :partial => "ticket_forms" %>
 
-          <%= link_to( h(@ticket.requester.display_name), @ticket.requester, :class => "user_name") %>  
-          <%= "&lt;#{@ticket.requester.email}&gt;" if @ticket.requester.email %> 
-
-          <div class="info"> 
-            <%= formated_date(@ticket.created_at) %> via <%= @ticket.source_name %>
-            <% metainfo = @ticket.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["meta"]) %>
-            <%#= content_tag :span, "", :class => "tooltip icon-image source-#{@ticket.source_name.downcase}", :title => t("ticket.reported_from_source", :source => @ticket.source_name.downcase) %>
-          <%= content_tag :span, t(".meta"), :title => metainfo.body, :class => "meta_icon tooltip" unless(metainfo.blank?) %>
-          </div> 
-        </div>
-        <% unless @ticket.deleted %>
-          <div class="ticket_actions">          	
-           	<div class="item-right-actions">
-        			<ul class="nav-drop"> 
-        				<li>
-        					<a href="#" class="menu-trigger nav-item-icon"><span class="item-options"></span></a>
-                  <ul class="menu-box">
-                    <li class="menu-item"> 
-                       <%= link_to(t('ticket.edit_btn'), edit_helpdesk_ticket_path(@ticket)  ) %>     
-                    </li>	 
-                    <li class="menu-item">
-                      <%= link_to(t('ticket.delete_btn'), @ticket, :method => :delete, :title => t('ticket.delete_btn_title')) %>
-                    </li>
-                  </ul>
-                </li> 
-              </ul>
-            </div>
-            <div class="action_buttons clearfix">
-              <%= link_to( "Print", print_helpdesk_ticket_path(@ticket), :target => "_blank") %>
-              <%= link_to t('ticket.merge_btn'), "/helpdesk/tickets/show_tickets_from_same_user/#{@ticket.display_id}", :id => "Merge", :title => "Merge ticket"  %>
-              <%= link_to(t('ticket.close_btn'), close_helpdesk_ticket_path(@ticket), :method => :put, :title  => t('ticket.close_btn_title'), :class => "last") unless @ticket.closed? %> 
-            </div>	
-            <div class="action_icons floatr">              
-              <span id="monitor">
-                <%= render :partial => "/helpdesk/subscriptions/monitor" %>
-              </span>
-              <span id="spamicon">
-                <%= render :partial => "spam", :locals => { :ticket => @ticket } %>
-              </span>
-            </div>
-     	    </div>	
-        <% end %>
-        <div class="request-wrapper">
-        <div id="description-full" class="request_mail details min_height">
-          <span class="seperator"></span>
-          <%= @ticket.description_html %>          
-        </div>      
-        <% unless @ticket.attachments.empty? %>
-          <span class="seperator"></span>
-          <h4><%= pluralize(@ticket.attachments.size, t("attachment"), t("attachments")) %></h4>
-          <ul class="attachment_list">
-            <%= render :partial => '/helpdesk/shared/attachment', :collection => @ticket.attachments, :locals => {:show_delete => true, :url => [@item] } %>
-          </ul>
-        <% end %>
-        <% unless @ticket.ticket_topic.nil? %>
-          <div class="info-highlight">
-            <%= t(".linked_ticket")%>
-            "<%= link_to("#{truncate(@ticket.topic.title)}", category_forum_topic_path(@ticket.topic.forum.forum_category.id, @ticket.topic.forum.id, @ticket.topic.id), :class => "link_to") %>"
-          </div>
-        <% end %>
-      </div>
-  </div>
-  </div>
-		<div class="request-well">
-			<% unless @ticket.deleted %>
-				<div class="action_buttons">
-					<%= link_to_function(t('ticket.reply_to'), "swapEmailNote('reply', this)", :id => "ReplyButton") unless @item.from_email.nil? %>
-					<%= link_to_function("Tweet", "swapEmailNote('tweet', this)",  :id => "TweetButton") if @item.requester && @item.is_twitter?%>
-					<%= link_to_function("Comment", "swapEmailNote('fb_post', this)",  :id => "FacebookButton") if @item.requester && @item.fb_post%>
-					<%= link_to_function(t('ticket.add_note'), "swapEmailNote('note', this)", :id => "AddNoteButton") %>		
-					<%= link_to_function "Add time", "jQuery('#add_new_time_entry').slideToggle();jQuery('#timesheettab').trigger('click'); return false;", :id => "time_sheet", :title => "Add time entry" %>
-				</div>				
-			<% end %>
-				<ul id="tickettabs" class="tabs" data-tabs="tabs">
-      		<li class="active">
-						<a href="#Pages">
-							<strong>
-							  Conversation 
-							  <%= content_tag :span, @ticket_notes.size, :class => "pill" unless @ticket_notes.empty? %>
-							</strong>
-						</a>
-					</li>
-      		<li>
-						<% link_to("#timesheet", "data-remote-url" => helpdesk_ticket_helpdesk_time_sheets_path(@ticket), "data-update" => "timesheet", :id => "timesheettab") do %>		  
-							<strong>
-							  Time sheet 
-							  <%= content_tag :span, @ticket.time_sheets.size, :id => "timesheet_count", :class => "pill" unless @ticket.time_sheets.empty? %>
-							</strong>
-						<% end %>
-					</li>
-    	  </ul> 
-		  </div>
-		      
-		  <%= render(:partial => '/helpdesk/shared/reply_form', :locals => { :id => 'send-email', :cntid => 'cnt-reply', :note => [@ticket, Helpdesk::Note.new(:private => false)] }) %>
-
-			<%= render(:partial => '/helpdesk/shared/note_form', :locals => { :id => 'add-note',	:cntid => "cnt-note", :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
-
-			<%= render(:partial => '/helpdesk/shared/tweet_form', :locals => {:id => 'send-tweet', :cntid => 'cnt-tweet', :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
-			<%= render(:partial => '/helpdesk/shared/facebook_form', :locals => {:id => 'send-fb-post', :cntid => 'cnt-fb-post', :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
-
-			<%= render :partial => "helpdesk/time_sheets/new", :locals => { :ticket_id => @ticket.id } %>
-			<div class="canned-response-menu hide" id="canned_response_container"> 
-        <div>
-          <%= link_to("Add Canned response", new_admin_canned_response_path, :target => "_blank", :class => "button") if(current_user.admin?) %>
-        </div>
-        <div id="canned_response_list"></div>
-		  </div>
-			<div class="tab-content">
-				<div class="requestCnt request-conversation active tab-pane" id="Pages">
-					<% unless @ticket_notes.blank? %>
-						<%= render :partial => 'note', :collection => @ticket_notes %>
-						<%= will_paginate @ticket_notes %>
-					<% end %>	
-			  </div>			  
-				<div class="requestCnt request-conversation tab-pane" id="timesheet">
-				  <div class="loading-box"></div>
-				</div>
-			</div>
+<div class="request-well">			
+	<%= ticket_tabs %>
+</div>		
+<div class="tab-content">
+	<div class="requestCnt request-conversation active tab-pane" id="Pages">
+		<% unless @ticket_notes.blank? %>
+			<%= render :partial => 'note', :collection => @ticket_notes %>
+			<%= will_paginate @ticket_notes %>
+		<% end %>	
+  </div>			  
+	<div class="requestCnt request-conversation tab-pane" id="Timesheet">
+	  <div class="loading-box"></div>
+	</div>
 </div>
 
 <% content_for :pagefixed do %> 
@@ -159,106 +28,28 @@
   <%= javascript_include_tag "helpdesk/page_switcher" %>
   <%= include_tiny_mce_if_needed %>
 	<% javascript_tag do %>
-		swapEmailNote = function(action, link)
-		{
-			if(action == "reply")
-			{
-				jQuery('#cnt-note').hide();
-				jQuery('#cnt-tweet').hide();
-				jQuery('#cnt-fb-post').hide();
+		swapEmailNote = function(action, link){
+		  jQuery("#TicketForms .request_panel").hide();		  
+			if(action == "reply"){				
 				jQuery('#cnt-reply').toggle();
 				tinyMCE.execInstanceCommand("send-email-cnt-reply-body","mceFocus",false);
 			}
-			else if (action == "note")
-			{
-				jQuery('#cnt-reply').hide();
-				jQuery('#cnt-tweet').hide();
-				jQuery('#cnt-fb-post').hide();
-				jQuery('#cnt-note').toggle();
-				//setCaretToPos($('add-note-cnt-note-body'), 0);
+			else if (action == "note"){
+				jQuery('#cnt-note').toggle(); 
 			}
 			else if (action == "fb_post")
 			{
-				jQuery('#cnt-reply').hide();
-				jQuery('#cnt-tweet').hide();
-				jQuery('#cnt-note').hide();
 				jQuery('#cnt-fb-post').toggle();
-				setCaretToPos($('send-fb-post-cnt-fb-post-body'), 0);
-			
+				setCaretToPos($('send-fb-post-cnt-fb-post-body'), 0);			
 			}
-			else
-			{
-				jQuery('#cnt-reply').hide();
-				jQuery('#cnt-note').hide();
-				jQuery('#cnt-fb-post').hide();
+			else if (action == "timesheet"){
+				jQuery('#add_new_time_entry').toggle();
+			}
+			else{
 				jQuery('#cnt-tweet').toggle();
 				setCaretToPos($('send-tweet-cnt-tweet-body'), 0);			
 			}
 		}
-		Helpdesk.swapEmailNote = function(cls, private, submit, link, id){
-			var el = $(id);
-			el.show();
-			if(private){
-				el.down('li[datafor=note]').show();
-				el.down('li[datafor=email]').hide();	
-			}else{
-				el.down('li[datafor=email]').show();
-				el.down('li[datafor=note]').hide();
-			}
-			el.down('input[type=submit]').value = submit;
-			el.down('input[id$=private]').value = private;
-			
-			link.addClassName('active');
-			link.siblings().each(function(l){ l.removeClassName('active'); });
-		}
-		Helpdesk.submitToTicket = function(cls, private, submit, link){			 
-			var el = $('note-form-container');
-			el.down('input[id$=private]').value = private;
-			if(el.down('textarea').value.trim() != ''){
-				el.down('form').submit();
-			}
-		}
-		
-    jQuery(document).ready(function(){
-      var activeCnt = jQuery("#TicketProperties"); 
-      jQuery(".rtPanel a").bind("click", function(e){
-        e.preventDefault();
-        
-        var link = this;
-        activeCnt.hide().removeClass(link.getAttribute("classname"));
-        activeCnt.parent().get(0).className = "rtDetails";
-        if(!$(link.getAttribute("cntid"))){
-          jQuery("#componentlist").addClass("loading-center");
-          activeCnt = jQuery("<div class='' />")
-                        .attr("id", link.getAttribute("cntid"))
-                        .appendTo("#componentlist");
-          jQuery.ajax({
-              url:      link.href, 
-              success:  function(data){
-                          jQuery("#"+link.getAttribute("cntid"))
-                              .append(data);
-                          jQuery("#componentlist").removeClass("loading-center");
-                        }
-                      });
-        }else{
-          activeCnt = jQuery("#"+link.getAttribute("cntid")).show();
-        }        
-        activeCnt.parent().addClass(link.getAttribute("classname"));
-        jQuery(link).parent().find(".active").removeClass("active");
-        jQuery(link).addClass("active")
-      });
-      
-      jQuery('#custom_ticket_form').validate(); 
-
-
-      // Updating Various items when a Timeentry is added or removed
-      jQuery('#timesheetlist div.timeentry').livequery(function(ev){
-        jQuery('#timesheet_count').html(jQuery('#timesheetlist div.timeentry').size());
-      }, function(ev){
-        jQuery('#timesheet_count').html(jQuery('#timesheetlist div.timeentry').size());
-      });
-      
-    });
 
     function show_canned_response(ticket_id){
       jQuery("#canned_response_container")
@@ -270,8 +61,7 @@
         })
         .show();        
     }
-        
-    jQuery("#Merge").dialog2();
+         
 
 		function insertIntoConversation(value){
 			note_area  = jQuery('#cnt-note');
@@ -320,13 +110,15 @@
   jQuery('a.submit').live("click", function(ev){
 		ev.preventDefault();
 		jQuery(this).button("loading");
-		jQuery(this).parents("form").submit();
-	});  
-	jQuery('#timesheettab').click(function(){
-	  if(jQuery(this).data("update")){
-	    _data = jQuery(this).data()
-	    jQuery("#"+_data.update).load(_data.remoteUrl);
-	    _data.update = false;
-	  }
-	});
+		jQuery(this).parents("form").submit();		
+	}); 
+	
+	jQuery('#custom_ticket_form').validate();
+
+  // Updating Various items when a Timeentry is added or removed
+  jQuery('#timesheetlist div.timeentry').livequery(function(ev){
+    jQuery('#timesheet_count').html(jQuery('#timesheetlist div.timeentry').size());
+  }, function(ev){
+    jQuery('#timesheet_count').html(jQuery('#timesheetlist div.timeentry').size());
+  });
 <%- end %>

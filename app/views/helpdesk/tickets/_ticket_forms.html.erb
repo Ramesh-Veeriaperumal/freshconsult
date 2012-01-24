@@ -1,0 +1,25 @@
+<% unless @ticket.deleted %>
+	<div class="replylinks">
+		<%= link_to_function(t('ticket.reply_to'), "swapEmailNote('reply', this)", :id => "ReplyButton", :class => "button small", "data-toggle" => "toggle") unless @item.from_email.nil? %>
+		<%= link_to_function("Tweet", "swapEmailNote('tweet', this)",  :id => "TweetButton", :class => "button small", "data-toggle" => "toggle") if @item.requester && @item.is_twitter?%>
+		<%= link_to_function("Comment", "swapEmailNote('fb_post', this)",  :id => "FacebookButton", :class => "button small", "data-toggle" => "toggle") if @item.requester && @item.fb_post%>
+		<%= link_to_function(t('ticket.add_note'), "swapEmailNote('note', this)", :id => "AddNoteButton", :class => "button small", "data-toggle" => "toggle") %>		
+		<%= link_to_function("Add time", "swapEmailNote('timesheet', this)", :id => "TimeSheetButton", :title => "Add time entry", :class => "button small", "data-toggle" => "toggle") if feature?(:timesheets) %>
+	</div>
+<% end %>    
+<div id="TicketForms">
+  <%= render(:partial => '/helpdesk/shared/reply_form', :locals => { :id => 'send-email', :cntid => 'cnt-reply', :note => [@ticket, Helpdesk::Note.new(:private => false)] }) %>
+
+  <%= render(:partial => '/helpdesk/shared/note_form', :locals => { :id => 'add-note',	:cntid => "cnt-note", :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
+
+  <%= render(:partial => '/helpdesk/shared/tweet_form', :locals => {:id => 'send-tweet', :cntid => 'cnt-tweet', :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
+  <%= render(:partial => '/helpdesk/shared/facebook_form', :locals => {:id => 'send-fb-post', :cntid => 'cnt-fb-post', :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
+
+  <%= render(:partial => "helpdesk/time_sheets/new", :locals => { :ticket_id => @ticket.id }) if feature?(:timesheets) %>
+</div>
+<div class="canned-response-menu hide" id="canned_response_container"> 
+  <div>
+    <%= link_to("Add Canned response", new_admin_canned_response_path, :target => "_blank", :class => "button") if(current_user.admin?) %>
+  </div>
+  <div id="canned_response_list"></div>
+</div>

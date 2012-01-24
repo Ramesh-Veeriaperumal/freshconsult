@@ -1,4 +1,4 @@
-<div class="request_panel bullet-arrow" id="add_new_time_entry">
+<% content_tag :div, :class => "request_panel hide", :id => "add_new_time_entry" do %>
   <% form_remote_for :time_entry, 
                    :url => new_helpdesk_time_sheet_path, 
                    :html => { :id => "add_new_time_entry_form" }, 
@@ -15,4 +15,4 @@
         </li>
       </ul>
   <% end %>
-</div>
+<% end %>

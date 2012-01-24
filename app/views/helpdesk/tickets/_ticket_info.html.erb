@@ -1,0 +1,98 @@
+<% content_for :pagetop do -%>
+  <% if @ticket.deleted %>
+    <div class="alert-message block-message warning">
+      <div class="alert-actions-right">
+        <%= link_to(t('ticket.restore_btn'), restore_helpdesk_ticket_path(@ticket), :method => :put, :class => "btn small", :title => t('ticket.restore_btn_title') ) %>
+      </div>
+      <p><strong><%= t('this_ticket_has_been_deleted') %></strong></p>
+    </div>
+  <% end %>  
+<% end %>
+
+
+  <div class="request_details">
+         <div class="requestCnt request-cnt-first">
+      <div class="request-title">
+        <%= content_tag :span, h(@ticket.status_name), :class => "status" %>
+        <%= content_tag :span, h(@ticket.priority_name), :class => "priority #{@ticket.priority_key}" %>
+        <%= content_tag :span, "##{@ticket.display_id}", :class => "ticket-id" %>
+        <%= content_tag :span, @ticket.subject, :class => "subject" %>
+      </div>
+			<div class="description">         
+        <div class="user_details">
+			    <%= user_avatar(@ticket.requester)  %>
+			    <% if is_application_installed?("capsule_crm") %>
+				    <textarea id="widget-capsule-crm" style="display:none;">
+					    <% @liquid_objects = {"requester" => @ticket.requester} %>
+				 	    <%= get_app_widget_script("capsule_crm", "contact_widget", @liquid_objects) %>
+				    </textarea>
+				    <div class="app-link">
+					    <a data-placement="topRight" href="#" rel="widget-popover" data-widget-container="widget-capsule-crm">
+						    <%= image_tag("application-logo-small/capsule_crm.png") %>
+					    </a>
+				    </div> 
+	        <% end %>
+
+          <%= link_to( h(@ticket.requester.display_name), @ticket.requester, :class => "user_name") %>  
+          <%= "&lt;#{@ticket.requester.email}&gt;" if @ticket.requester.email %> 
+
+          <div class="info"> 
+            <%= formated_date(@ticket.created_at) %> via <%= @ticket.source_name %>
+            <% metainfo = @ticket.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["meta"]) %>
+            <%#= content_tag :span, "", :class => "tooltip icon-image source-#{@ticket.source_name.downcase}", :title => t("ticket.reported_from_source", :source => @ticket.source_name.downcase) %>
+          <%= content_tag :span, t(".meta"), :title => metainfo.body, :class => "meta_icon tooltip" unless(metainfo.blank?) %>
+          </div> 
+        </div>
+        <% unless @ticket.deleted %>
+          <div class="ticket_actions">          	
+           	<div class="item-right-actions">
+        			<ul class="nav-drop"> 
+        				<li>
+        					<a href="#" class="menu-trigger nav-item-icon"><span class="item-options"></span></a>
+                  <ul class="menu-box">
+                    <li class="menu-item"> 
+                       <%= link_to(t('ticket.edit_btn'), edit_helpdesk_ticket_path(@ticket)  ) %>     
+                    </li>	 
+                    <li class="menu-item">
+                      <%= link_to(t('ticket.delete_btn'), @ticket, :method => :delete, :title => t('ticket.delete_btn_title')) %>
+                    </li>
+                  </ul>
+                </li> 
+              </ul>
+            </div>
+            <div class="action_buttons clearfix">
+              <%= link_to( "Print", print_helpdesk_ticket_path(@ticket), :target => "_blank") %>
+              <%= link_to t('ticket.merge_btn'), "/helpdesk/tickets/show_tickets_from_same_user/#{@ticket.display_id}", :id => "Merge", :title => "Merge ticket", "data-ajax-dialog" => true %>
+              <%= link_to(t('ticket.close_btn'), close_helpdesk_ticket_path(@ticket), :method => :put, :title  => t('ticket.close_btn_title'), :class => "last") unless @ticket.closed? %> 
+            </div>	
+            <div class="action_icons floatr">              
+              <span id="monitor">
+                <%= render :partial => "/helpdesk/subscriptions/monitor" %>
+              </span>
+              <span id="spamicon">
+                <%= render :partial => "spam", :locals => { :ticket => @ticket } %>
+              </span>
+            </div>
+     	    </div>	
+        <% end %>
+        <div class="request-wrapper">
+        <div id="description-full" class="request_mail details min_height">
+          <span class="seperator"></span>
+          <%= @ticket.description_html %>          
+        </div>      
+        <% unless @ticket.attachments.empty? %>
+          <span class="seperator"></span>
+          <h4><%= pluralize(@ticket.attachments.size, t("attachment"), t("attachments")) %></h4>
+          <ul class="attachment_list">
+            <%= render :partial => '/helpdesk/shared/attachment', :collection => @ticket.attachments, :locals => {:show_delete => true, :url => [@item] } %>
+          </ul>
+        <% end %>
+        <% unless @ticket.ticket_topic.nil? %>
+          <div class="info-highlight">
+            <%= t(".linked_ticket")%>
+            "<%= link_to("#{truncate(@ticket.topic.title)}", category_forum_topic_path(@ticket.topic.forum.forum_category.id, @ticket.topic.forum.id, @ticket.topic.id), :class => "link_to") %>"
+          </div>
+        <% end %>
+      </div>
+      </div>
+  </div>

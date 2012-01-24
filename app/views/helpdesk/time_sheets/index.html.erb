@@ -1,7 +1,7 @@
 <div id="timesheetlist">
 	<%= render :partial => "helpdesk/time_sheets/time_entry", :collection => @ticket.time_sheets %>    
 </div>		
-<div class="timeentry">
+<div class="timeentry <%= @ticket.time_sheets.blank? ? 'hide' : '' %>">
 	<div class="user_details">Total</div>
 	<div class="timespent">
 	  <%= content_tag :span, get_total_time(@ticket.time_sheets), 
