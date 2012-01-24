@@ -26,7 +26,8 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
       
   BILLABLE_HASH = { true =>"Billable", false => "Non-Billable"}
 
-  def hours seconds = time_spent
+  def hours 
+    seconds = time_spent
     sprintf( "%0.02f", seconds/3600)
   end
 
@@ -48,6 +49,10 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
   
   def ticket_display
     "#{ticket.display_id} - #{ticket.subject}"
+  end
+  
+  def customer_name
+    ticket.requester.customer ? ticket.requester.customer.name : ticket.requester.name
   end
   
   def group_by_day_criteria
