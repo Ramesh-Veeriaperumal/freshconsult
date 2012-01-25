@@ -1,27 +1,11 @@
 class ProfilesController < ApplicationController
   
-   before_filter :require_user
-   
+   before_filter :require_user  
    include ModelControllerMethods  
-   
-   
-  def index
-  end
-
-  def show
-  end
-
-  def new
-  end
 
   def edit       
-   
-    if current_user.customer?
-      @profile = current_account.users.find(params[:id])
-    else
-       @profile = current_account.agents.find_by_user_id(params[:id]) 
-    end
-      respond_to do |format|
+    @profile = current_user.customer? ? current_user : current_user.agent    
+    respond_to do |format|
       format.html # edit.html.erb
       format.xml  { render :xml => @profile }
     end      
