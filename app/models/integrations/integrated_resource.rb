@@ -33,7 +33,7 @@ class Integrations::IntegratedResource < ActiveRecord::Base
   end
 
   def to_liquid
-    {'integrated_resource_id'=>integrated_resource_id}
+    {'remote_integratable_id'=>remote_integratable_id}
   end
 
   private

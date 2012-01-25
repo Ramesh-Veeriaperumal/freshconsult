@@ -9,7 +9,7 @@ class PopulateHarvest < ActiveRecord::Migration
     options = {
         :keys_order => [:title, :domain, :harvest_note], 
         :title => { :type => :text, :required => true, :label => "integrations.harvest.form.widget_title", :default_value => "Harvest"},
-        :domain => { :type => :text, :required => true, :label => "integrations.harvest.form.domain", :info => "integrations.harvest.form.domain_info" }, 
+        :domain => { :type => :text, :required => true, :label => "integrations.harvest.form.domain", :info => "integrations.harvest.form.domain_info", :rel=> "ghostwriter", :autofill_text => ".harvestapp.com", :validator_type => "domain_validator" }, 
         :harvest_note => { :type => :text, :required => false, :label => "integrations.harvest.form.harvest_note", 
                             :info => "integrations.harvest.form.harvest_note_info", :default_value => 'Freshdesk Ticket # {{ticket.id}}' }
     }.to_yaml
@@ -27,7 +27,7 @@ class PopulateHarvest < ActiveRecord::Migration
       </div>
       <script type="text/javascript">
         CustomWidget.include_js("/javascripts/integrations/harvest.js");
-        harvestBundle={domain:"{{harvest.domain}}", application_id:"{{application.id}}", time_entry_id:"{{integrated_resource.integrated_resource_id}}", harvestNote:"{{harvest.harvest_note | escape_html}}", ticketId:"{{ticket.display_id}}", agentEmail:"{{agent.email}}", reqEmail:"{{requester.email}}"};
+        harvestBundle={domain:"{{harvest.domain}}", application_id:"{{application.id}}", integrated_resource_id:"{{integrated_resource.id}}", remote_integratable_id:"{{integrated_resource.remote_integratable_id}}", harvestNote:"{{harvest.harvest_note | escape_html}}", ticketId:"{{ticket.display_id}}", agentEmail:"{{agent.email}}", reqEmail:"{{requester.email}}"};
        </script>}
     execute("INSERT INTO widgets(name, description, script, application_id) VALUES ('#{@widget_name}', '#{description}', '#{script}', #{app_id})")
   end

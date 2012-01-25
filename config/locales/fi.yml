@@ -20,7 +20,7 @@ fi:
         split_this_as_new_ticket: "Tee tästä uusi case"
         public_note: "Kommentti"
         edit_note: "Muokkaa kommenttia"
-        incoming_email: "Saapuva sähköposti"
+        inbound_email: "Saapuva sähköposti"
         posted_on: "%{user_name} %{note_date}"
         outbound_email: "Lähtevä sähköposti"
       close_notice:

@@ -37,6 +37,10 @@ module ApplicationHelper
     render(:partial => partial, :collection => collection) || content_tag(:div, message, :class => "info-highlight")
   end
   
+  def each_or_new(partial_item, collection, partial_form, partial_form_locals = {})
+    render(:partial => partial_item, :collection => collection) || render(:partial => partial_form, :locals => partial_form_locals)
+  end
+  
   def get_img(file_name, type)
     image_tag("#{ASSETIMAGE[type]}/#{file_name}", :class => "#{type}_image")
   end
@@ -228,8 +232,9 @@ module ApplicationHelper
   end
   
   # Date and time format that is mostly used in our product
-  def formated_date(date_time)
-    date_time.strftime("%B %e %Y at %I:%M %p")
+  def formated_date(date_time, format = "%B %e %Y @ %I:%M %p")
+    format = format.gsub(/.\b[%Yy]/, "") if (date_time.year == Time.now.year)
+    date_time.strftime(format)
   end
   
   # Get Pref color for individual portal
@@ -240,7 +245,20 @@ module ApplicationHelper
    end
    color
  end
+<<<<<<< HEAD
 
+=======
+ 
+ def get_time_in_hours time_in_second
+   [time_in_second.div(60*60), (time_in_second.div(60) % 60)*(1.667).round].map{ |t| t.to_s.rjust(2, '0') }.join(".")
+ end
+ 
+ def get_total_time time_sheets
+   total_time_in_sec = time_sheets.collect{|t| t.time_spent}.sum
+   return get_time_in_hours(total_time_in_sec)
+ end
+  
+>>>>>>> time_tracking_recovery
   def get_app_config(app_name)
     installed_app = get_app_details(app_name)
     return installed_app[0].configs[:inputs] unless installed_app.blank?
@@ -257,7 +275,7 @@ module ApplicationHelper
     return installed_app
   end
 
-  def get_app_widget_script(app_name, widget_name, liquid_objs)
+  def get_app_widget_script(app_name, widget_name, liquid_objs) 
     installed_app = Integrations::InstalledApplication.find(:first, :joins=>{:application => :widgets}, 
                   :conditions => {:applications => {:name => app_name, :widgets => {:name => widget_name}}, :account_id => current_account})
     if installed_app.blank? or installed_app.application.blank?
@@ -272,17 +290,22 @@ module ApplicationHelper
   end
 
   def construct_ui_element(object_name, field_name, field, field_value = "")
+    
     field_label = t(field[:label])
     dom_type = field[:type]
     required = field[:required]
-    element_class   = " #{ (required) ? 'required' : '' } #{ dom_type }"
+    rel_value = field[:rel]
+    url_autofill_validator = field[:validator_type]
+    ghost_value = field[:autofill_text]
+    element_class   = " #{ (required) ? 'required' : '' }  #{ (url_autofill_validator) ? url_autofill_validator  : '' } #{ dom_type }"
     field_label    += " #{ (required) ? '*' : '' }"
     object_name     = "#{object_name.to_s}"
     label = label_tag object_name+"_"+field_name, field_label
     dom_type = dom_type.to_s
+    
     case dom_type
       when "text", "number", "email", "multiemail" then
-        element = label + text_field(object_name, field_name, :class => element_class, :value => field_value)
+        element = label + text_field(object_name, field_name, :class => element_class, :value => field_value, :rel => rel_value, :data_ghost_text => ghost_value)
       when "paragraph" then
         element = label + text_area(object_name, field_name, :class => element_class, :value => field_value)
       when "dropdown" then
@@ -333,14 +356,20 @@ module ApplicationHelper
     content_tag :li, element, :class => dom_type
   end
    
-  def pageless(total_pages, url, message=t("loading.items"), callback = "function(){}")
+  def pageless(total_pages, url, message=t("loading.items"))
     opts = {
       :totalPages => total_pages,
       :url        => url,
-      :loaderMsg  => message,
-      :complete  => callback
+      :loaderMsg  => message
     } 
     javascript_tag("jQuery('#Pages').pageless(#{opts.to_json});")
+  end
+  
+  def render_page
+    respond_to do |format|
+      format.html { redirect_to :back }
+      format.js
+    end
   end
    
   private

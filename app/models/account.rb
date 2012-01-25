@@ -181,7 +181,7 @@ class Account < ActiveRecord::Base
   PLANS_AND_FEATURES = {
     :pro => {
       :features => [ :scenario_automations, :customer_slas, :business_hours, :forums, 
-        :surveys ,:facebook ]
+        :surveys ,:facebook , :timesheets ]
     },
     
     :premium => {

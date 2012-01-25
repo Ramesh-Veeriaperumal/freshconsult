@@ -40,6 +40,7 @@ module TicketConstants
   PRIORITY_OPTIONS = PRIORITIES.map { |i| [i[1], i[2]] }
   PRIORITY_NAMES_BY_KEY = Hash[*PRIORITIES.map { |i| [i[2], i[1]] }.flatten]
   PRIORITY_KEYS_BY_TOKEN = Hash[*PRIORITIES.map { |i| [i[0], i[2]] }.flatten]
+  PRIORITY_TOKEN_BY_KEY = Hash[*PRIORITIES.map { |i| [i[2], i[0]] }.flatten]
   
   TYPE = [
     [ :how_to,    I18n.t('how_to'),          1 ], 

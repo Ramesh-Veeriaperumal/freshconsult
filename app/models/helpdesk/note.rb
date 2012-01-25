@@ -92,7 +92,7 @@ class Helpdesk::Note < ActiveRecord::Base
   
   def outbound_email?
     source == SOURCE_KEYS_BY_TOKEN["email"] && !incoming
-  end
+  end 
   
   def to_liquid
     { 

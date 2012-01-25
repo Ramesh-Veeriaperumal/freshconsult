@@ -38,7 +38,6 @@ class Customer < ActiveRecord::Base
   before_update :check_sla_policy
   
   has_many :tickets , :through =>:users , :class_name => 'Helpdesk::Ticket' ,:foreign_key => "requester_id"
-
   
   CUST_TYPES = [
     [ :customer,    "Customer",         1 ], 
@@ -71,6 +70,5 @@ class Customer < ActiveRecord::Base
       xml.instruct! unless options[:skip_instruct]
       super(:builder => xml, :skip_instruct => true,:except => [:account_id,:import_id,:delta]) 
   end
-
   
 end
