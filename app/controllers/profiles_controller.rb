@@ -47,7 +47,7 @@ end
 
 def update_agent
   
-  @profile = current_account.agents.find_by_user_id(params[:id])
+  @profile = current_user.agent
     respond_to do |format|      
       if @profile.update_attributes(params[:agent])            
           @user = current_account.users.find(@profile.user_id)          
