@@ -1,18 +1,29 @@
-<% content_tag :div, :class => "request_panel hide", :id => "add_new_time_entry" do %>
+<% content_tag :div, :class => "request_panel", :id => "add_new_time_entry" do %>
   <% form_remote_for :time_entry, 
                    :url => new_helpdesk_time_sheet_path, 
                    :html => { :id => "add_new_time_entry_form" }, 
                    :complete => "jQuery('#new_time_submit').button('reset');jQuery('#add_new_time_entry_form').get(0).reset()" do |f| %>
-      <ul class="ui-form">
-      <h4 class="title">New time entry</h4>        
-        <li>
-          <%= render :partial => "/helpdesk/time_sheets/form", :object => f %>
-          <%= hidden_field(:time_entry, :ticket_id , { :value => ticket_id, :id => :time_entry_ticket_id }  )%>                  
-        </li>
-        <li class="button-container">	  
-          <%= link_to "Start timer", "#", :class => "submit uiButton special", "data-loading-text" => "Saving time entry...", :id => "new_time_submit" %>
-  	      <%= link_to_function("Cancel", "jQuery('#add_new_time_entry').hide();", :class => "uiButton" ) %>
-        </li>
-      </ul>
+    <ul class="ui-form">
+      <%= content_tag :h4, t(".title") %>
+      <li>
+        <%= render :partial => "/helpdesk/time_sheets/form", :object => f, :locals => { :type => :new } %>
+        <%= hidden_field(:time_entry, :ticket_id , { :value => ticket_id, :id => :time_entry_ticket_id }  )%>
+      </li>
+      <li class="button-container">
+        <%= submit_tag "Start timer", :class => "submit uiButton special", "data-loading-text" => "Saving time entry...", :id => "new_time_submit" %>
+  	    <%= button_to_function("Cancel", "jQuery('#add_new_time_entry').slideUp(); jQuery('#TimeSheetButton').button('toggle');", :class => "uiButton" ) %>
+      </li>
+    </ul>
   <% end %>
+<% end %>
+<% javascript_tag do %>
+  jQuery("#add_new_time_entry #time_entry_hours")
+    .change(function(ev){
+      if(jQuery(this).val().strip() != "")
+        jQuery("#add_new_time_entry #new_time_submit").val("Save")
+      else
+        jQuery("#add_new_time_entry #new_time_submit").val("Start timer")
+    });
+  
+  jQuery("#add_new_time_entry").toggle(<%= @ticket.time_sheets.blank? %> || jQuery("#TimeSheetButton").hasClass('active'));
 <% end %>

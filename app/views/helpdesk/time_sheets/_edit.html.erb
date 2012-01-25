@@ -7,7 +7,7 @@
 	  <div class="note">
 	    <label class="floatr">
 	      <%= button_to_function "Change Date", "jQuery(this).hide().next().show().datepicker();" %>
- 	      <%= f.text_field :executed_at, :value => edit.created_at.strftime("%m/%d/%Y"), :size => 10, :class => "auto hide datepicker" %>    	    
+ 	      <%= f.text_field :executed_at, :value => edit.executed_at.strftime("%m/%d/%Y"), :size => 10, :class => "auto hide datepicker" %>    	    
  	    </label> 
  	    <label class="checkbox floatl" for="time_entry_billable">
 	      <%= f.check_box :billable %>

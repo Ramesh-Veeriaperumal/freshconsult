@@ -1,5 +1,5 @@
 page.insert_html :bottom, "timesheetlist", :partial => "helpdesk/time_sheets/time_entry", :object => @time_sheet
-page << "jQuery('#timeentry_#{@time_sheet.id}').effect('highlight', {}, 2000); jQuery('#add_new_time_entry').slideUp(500)"
+page << "jQuery('#timeentry_#{@time_sheet.id}').effect('highlight', {}, 2000); jQuery('#add_new_time_entry').slideUp(500); jQuery('#TimeSheetButton').button('toggle')"
 
 unless @time_cleared.nil?
    page.replace "timeentry_#{@time_cleared.id}", :partial => "/helpdesk/time_sheets/time_entry", :object => @time_cleared

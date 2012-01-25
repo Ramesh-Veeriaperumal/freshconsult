@@ -17,9 +17,9 @@
   <% form_tag({:action => :export_csv}, { :method => :post, :id => 'report_filters' }) do %>
     <ul class="ui-form">
       <li>
-        <label>Customers</label> 
-	        <%= render :partial => "/helpdesk/tickets/containers/multi_select", :locals => { :options => current_account.customers.collect{|c|[c.id , c.name]}, :name =>:customer_id, :selected_val => @customer_id  } %> 
-	     
+        <label>Customers</label>  
+        <%= select_tag :customer_id, options_for_select(current_account.customers.collect{|c|[c.name, c.id]}, @customer_id), { :multiple => true, :class => "customSelect auto" } %>
+        	     
         <label>Agents</label>	
     	  <%= render :partial => "/helpdesk/tickets/containers/multi_select", :locals => { :options => current_account.users.technicians.collect{|c|[c.id , c.name]}, :name =>:user_id, :selected_val => @user_id  } %>
        

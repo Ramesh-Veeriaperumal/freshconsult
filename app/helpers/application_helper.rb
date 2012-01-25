@@ -34,7 +34,7 @@ module ApplicationHelper
   end
 
   def each_or_message(partial, collection, message)
-    render(:partial => partial, :collection => collection) || content_tag(:div, message, :class => "info-highlight")
+    render(:partial => partial, :collection => collection) || content_tag(:div, message, :class => "list-noinfo")
   end
   
   def each_or_new(partial_item, collection, partial_form, partial_form_locals = {})

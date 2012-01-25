@@ -1303,11 +1303,16 @@ en:
   ticket_was: ticket was
   tickets_were: tickets were
   undo: Undo
+  total: "Total"
   helpdesk:
-    time_sheets: 
+    time_sheets:
+      index:
+        no_timeentry: "No time entry recorded for this ticket"
       time_entry:
         toggle_timer_true: "Start timer"
         toggle_timer_false: "Stop timer"
+      new:
+        title: "New time entry"
     tags:
       index:
         title: Tags

@@ -8,6 +8,15 @@ function autoSaveTinyMce(editor){
    return true;
 }
 
+function totalTime(listClass, updateId){
+ total_hours = $$(listClass)
+                .collect(function(t){ return t.innerHTML; })
+                .inject(0, function(acc, n) { return parseFloat(acc) + parseFloat(n); });
+ 
+ jQuery(updateId).html(sprintf( "%0.02f", total_hours));    
+}
+
+
 // Primarly for the form customizer page. Used for making the text unselectable
 makePageNonSelectable = function(source){
 	if (document.all) source.onselectstart = function () { return false; };	// Internet Explorer

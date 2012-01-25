@@ -289,6 +289,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     notes.visible.exclude_source('meta').newest_first.paginate(:page => page, :per_page => no_of_records)
   end
 
+  def conversation_count(page = nil, no_of_records = 5)
+    notes.visible.exclude_source('meta').size
+  end
+
   def train(category)
     self[:trained] = true
     self[:spam] = (category == :spam)

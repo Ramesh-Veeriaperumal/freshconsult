@@ -250,11 +250,14 @@ a.addchoice:hover{
 		padding:8px 2% 8px 2%; 
 		margin:0;
 		@include float-left;
-		width:96%;
+		width: 98%;
 		div.field-box{
 			padding:4px 0 8px 0;
 		}
 	} 
+	li.search-choice, li.search-field{
+		width:auto;
+	}
 	/*li:last-child{
 		border-bottom: 0;
     	box-shadow: none;
@@ -1298,9 +1301,10 @@ table.summary-report{
 }
  
 .request_panel{
-  margin-top:2px;
+  margin-top:-10px;
+	margin-bottom:5px;
 	border:1px solid #efefef;
-	background-color:#f8f8f8;
+	background-color:#fafafa;
 	.form-title, .ui-form{
 		padding:6px 25px 6px 66px;
 		border-bottom:1px solid #efefef;
@@ -1316,7 +1320,7 @@ table.summary-report{
 			margin:0;
 			background:none;
 			border:0;
-			h4.title{ line-height:24px; padding:0; font-size:13.5px; font-weight:bold;  }
+			h4{  line-height:24px; padding:0; font-size:13.5px; font-weight:bold; margin-bottom:8px; }
       li.field{
          border:0;
       }
@@ -1352,8 +1356,8 @@ table.summary-report{
       }
       .request_form_options{
          position:absolute;
-         right:26px;
-         top:20px;
+         right:24px;
+         top:10px;
          .insert-canned-response{
             position:relative;
             z-index:1001;

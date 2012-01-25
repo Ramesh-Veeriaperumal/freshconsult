@@ -1,6 +1,6 @@
 <% note_view_id = "note_view_"+note.id.to_s() %>
 <% notedetails  = "note_details_#{note.id.to_s()}" %>
-<div id="<%= note_view_id %>" class="description <%= cycle('stripe', '') %>">  
+<div id="<%= note_view_id %>" class="description count <%= cycle('stripe', '') %>">  
    	<a name="<%= "note#{note.id}" %>"></a>
    	<div class="conversation-sprite">
 			<% if note.private_note? %>	 

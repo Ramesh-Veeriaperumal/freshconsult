@@ -49,15 +49,15 @@ module Helpdesk::TicketsHelper
   end
     
   def ticket_tabs
-    tabs = [['#Pages',     t(".conversation"), @ticket.notes.size],
-            ['#Timesheet', t(".timesheet"),    @ticket.time_sheets.size, 
+    tabs = [['Pages',     t(".conversation"), @ticket.conversation_count],
+            ['Timesheet', t(".timesheet"),    @ticket.time_sheets.size, 
                                                helpdesk_ticket_helpdesk_time_sheets_path(@ticket), 
                                                feature?(:timesheets)]]
     
     ul tabs.map{ |t| 
                   next if !t[4].nil? && !t[4]
-                  link_to t[1] + (content_tag :span, t[2], :class => "pill"), t[0], "data-remote-load" => t[3]
-                }, { :class => "tabs", "data-tabs" => "tabs" }            
+                  link_to t[1] + (content_tag :span, t[2], :class => "pill #{ t[2] == 0 ? 'hide' : ''}", :id => "#{t[0]}Count"), "##{t[0]}", "data-remote-load" => t[3], :id => "#{t[0]}Tab"
+                }, { :class => "tabs", "data-tabs" => "tabs" }
                 
   end
   
