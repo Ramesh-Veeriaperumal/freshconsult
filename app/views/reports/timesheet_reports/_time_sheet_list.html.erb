@@ -1,16 +1,22 @@
 <div class="grid report">	
 		<table width="100%">
 			<tr>
-        <th>Customer</th>
-				<th width="20%">Ticket</th>
-				<th width="50%">Note</th>
-				<th>Agent</th>
-				<th>Hours</th>
+			  <% @headers.each do |header|
+				 	concat content_tag :th, h(Helpdesk::TimeSheet::REPORT_LIST_VIEW[header]), :class => header
+				 end %>
 			</tr>
-     <%= render :partial => "time_sheet", :collection => @time_sheets %>	
+	 
+     <%= render :partial => "time_sheet", :object => @time_sheets %>	
      <tr>
        <th colspan="4">Total</th>
-       <th><%=get_total_time(@time_sheets)%></th>
+       <th class="hours"><div id="totaltime"></div></th>
      </tr>
-   </table>	
+   </table>
+   <% javascript_tag do%>
+   	 total_hours = $$("strong.group_time")
+	 					.collect(function(t){ return t.innerHTML })
+						.inject(0, function(acc, n){ return parseFloat(acc) + parseFloat(n); });
+	 $("totaltime").innerHTML = sprintf( "%0.02f", total_hours);
+	 
+   <% end %>	
 </div>

@@ -25,7 +25,10 @@
        
         <label>Billing type</label>
       	<%= render :partial => "/helpdesk/tickets/containers/multi_select", :locals => { :options => Helpdesk::TimeSheet::BILLABLE_HASH, :name => :billable, :selected_val =>(@billable.eql?([true,false]) ? "" : @billable)  } %>
-      </li> 
+		<label>Group By</label>
+		<%=select_tag :group_by , options_for_select(Helpdesk::TimeSheet::GROUP_BY_ARR) %>
+		
+	  </li> 
 	  </ul>
     
    <h4 class="title">View report between</h4>
