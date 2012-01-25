@@ -48,19 +48,7 @@ module Admin::HomeHelper
           ['/integrations/applications',  'integrations'            ],
       ]]
     ]
-
-                    # [ "People & Roles", [
-                    #                 ['/agents',   'agent' ],
-                    #                 ['/groups',   'group' ]
-                    # ]],
-                    # [ "Account", [
-                    #                 ['/account',            'account-settings' ],
-                    #                 ['/admin/security',     'remote-authentication' ],
-                    #                 ['/admin/zip_readers',  'import' ]
-                    # ]]
-                  
-
-
+ 
     admin_html = 
       admin_links.map do |group|
         content_tag( :div, 

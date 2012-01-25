@@ -92,6 +92,23 @@ module ApplicationHelper
     navigation
   end
   
+  def html_list(type, elements, options = {})
+    if elements.empty?
+      "" 
+    else
+      lis = elements.map { |x| content_tag("li", x, :class => ("active first" if (elements.first == x)))  }
+      content_tag(type, lis, options)
+    end
+  end
+
+  def ul(*args)
+    html_list("ul", *args)
+  end
+
+  def ol(*args)
+    html_list("ol", *args)
+  end
+  
   def check_box_link(text, checked, check_url, check_method, uncheck_url, uncheck_method = :post)
     form_tag("", :method => :put) +    
     check_box_tag("", 1, checked, :onclick => %{this.form.action = this.checked ? '#{check_url}' : '#{uncheck_url}';
