@@ -47,16 +47,13 @@
   <%= javascript_include_tag "helpdesk/multifile.js" %>
   <%= include_tiny_mce_if_needed %>
 	<% javascript_tag do %>
-		swapEmailNote = function(action, link)
-				{
+		swapEmailNote = function(action, link){
+			jQuery("#PagesTab").click();
 					if(action == "reply")
 					{
 						jQuery('#cnt-note').hide();
 						jQuery('#cnt-tweet').hide();
 						jQuery('#cnt-fb-post').hide();
-				swapEmailNote = function(action, link){
-				  jQuery("#TicketForms .request_panel").hide();		  
-					if(action == "reply"){				
 						jQuery('#cnt-reply').toggle();
 						tinyMCE.execInstanceCommand("send-email-cnt-reply-body","mceFocus",false);
 					}
@@ -67,8 +64,6 @@
 						jQuery('#cnt-fb-post').hide();
 						jQuery('#cnt-note').toggle();
 						//setCaretToPos($('add-note-cnt-note-body'), 0);
-					else if (action == "note"){
-						jQuery('#cnt-note').toggle(); 
 					}
 					else if (action == "fb_post")
 					{
@@ -78,17 +73,12 @@
 						jQuery('#cnt-fb-post').toggle();
 						setCaretToPos($('send-fb-post-cnt-fb-post-body'), 0);
 
-						setCaretToPos($('send-fb-post-cnt-fb-post-body'), 0);			
 					}
 					else
 					{
 						jQuery('#cnt-reply').hide();
 						jQuery('#cnt-note').hide();
 						jQuery('#cnt-fb-post').hide();
-					else if (action == "timesheet"){
-						jQuery('#add_new_time_entry').toggle();
-					}
-					else{
 						jQuery('#cnt-tweet').toggle();
 						setCaretToPos($('send-tweet-cnt-tweet-body'), 0);			
 					}

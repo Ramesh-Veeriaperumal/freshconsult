@@ -1,15 +1,15 @@
 <% time_sheet.each do |group_title, time_entrys| %>
   
-	<tr>
+	<tr class="even">
 		<td colspan="4"><%= group_title %></td> 
 		<td class="hours"><strong class="group_time"><%= get_total_time(time_entrys) %></strong></td>
 	</tr>	
 	<% time_entrys.each do |time_entry| %>
 	
-	<tr class="<%= cycle("odd", "even") %>">
-		<%@headers.each do |item|%> 
+	<tr class="odd">
+		<% @headers.each do |item| %> 
 			<%= content_tag :td, h(time_entry.send(item)), :class => item %>
-		<%end%>
+		<% end %>
 	</tr>
 	<% end %>	
 <% end %>

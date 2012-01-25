@@ -15,13 +15,13 @@
 <% javascript_tag do %>
   new PeriodicalExecuter(function(pe) {
      jQuery("div.time_running .time")
-                    .each(function(){
-                      seconds = jQuery(this).data('runningTime');
-                  	  timeout = 10 - seconds%10;
-                  	  jQuery(this)
-                  	    .html(sprintf( "%0.02f", seconds/3600))
-                  	    .data('runningTime', seconds+timeout);                	    
-                    });
+				.each(function(){
+						seconds = jQuery(this).data('runningTime');
+						timeout = 10 - seconds % 10;
+						jQuery(this)
+							.html(sprintf( "%0.02f", seconds/3600))
+							.data('runningTime', seconds+timeout);                	    
+						});
      totalTime("#timesheetlist .time", "#timeentry_timer_total");
   }, 10);
   

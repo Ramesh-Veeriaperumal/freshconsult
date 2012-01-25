@@ -16,7 +16,7 @@
    	 total_hours = $$("strong.group_time")
 	 					.collect(function(t){ return t.innerHTML })
 						.inject(0, function(acc, n){ return parseFloat(acc) + parseFloat(n); });
-	 $("totaltime").innerHTML = sprintf( "%0.02f", total_hours);
-	 
+						
+	   $("totaltime").innerHTML = sprintf( "%0.02f", total_hours);	 
    <% end %>	
 </div>
