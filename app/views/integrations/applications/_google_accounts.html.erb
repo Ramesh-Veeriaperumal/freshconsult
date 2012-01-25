@@ -1,0 +1,63 @@
+<%google_accs = Integrations::GoogleAccount.find_all_installed_google_accounts(current_account)%>
+<%if google_accs.blank?%>
+	<%= link_to(t("integrations.google_contacts.add_more"), "/auth/google?iapp_id="+params[:id], :class => "uiButton special") if params[:action] == "configure" %>
+<%else
+	google_acc = google_accs[0]
+%>
+	<label class="caption"> Name</label>    
+	<div class="fields">
+	    <label><%=google_acc.name%></label>
+	</div>
+    <label class="caption"> Email</label>    
+    <div class="fields">
+        <label><%=google_acc.email%></label>
+    </div>
+    <label class="caption"> Group to import </label>    
+    <div class="fields">
+        <label><%=google_acc.sync_group_name%></label>
+    </div>
+    <label class="caption"> Tag for export </label>    
+    <div class="fields">
+        <label><%=google_acc.sync_tag.blank? ? "N/A" : google_acc.sync_tag.name %></label>
+    </div>
+    <label class="caption"> Last sync time</label>    
+    <div class="fields">
+        <label><%=formated_date(google_acc.last_sync_time)%></label>
+    </div>
+    <label class="caption"> Last sync status</label>    
+    <div class="fields">
+        <label><%=google_acc.last_sync_time%></label>
+    </div>
+	<div class="button-container">
+		<%=link_to(t("integrations.google_contacts.edit"), edit_integrations_google_account_path(google_acc, :iapp_id=>params[:id]), :class => "floatr uiButton")%>
+		<%=link_to(t("integrations.google_contacts.delete"), {:controller=>"google_accounts", :action => "delete", :id => google_acc.id, :iapp_id=>params[:id] },
+					      :confirm => "Are you sure?", :class => "floatr uiButton", :method => :delete) %>
+	</div>
+<!--  This was used for showing multiple accounts.  As on now we only allow single account configuration.
+	<div class="grid">
+		<table borer="0">
+			<tr>
+				<th>Group name (sync tag)</th>
+				<th>Sync Type</th>
+				<th width="110px">
+					<%= link_to(t("integrations.google_contacts.add_more"), "/auth/google?iapp_id="+params[:id], :class => "uiButton special") if params[:action] == "configure" %>
+				</th>
+			</tr>
+	
+			<%google_accs.each { |google_acc|%>
+				<tr class="main_rows">
+					<td>
+						<%=google_acc.sync_group_name%> (<%=google_acc.sync_tag.name unless google_acc.sync_tag.blank?%>)					
+					</td>
+					<td><div title='<%=t("integrations.google_contacts.#{google_acc.sync_type}") unless google_acc.sync_type.blank?%>'><%=t("integrations.google_contacts.#{google_acc.sync_type}_small") unless google_acc.sync_type.blank?%></div></td>
+					<td>
+						<%=link_to(t("integrations.google_contacts.edit"), edit_integrations_google_account_path(google_acc, :iapp_id=>params[:id]), :class => "button")%>
+						<%=link_to(t("integrations.google_contacts.delete"), {:controller=>"google_accounts", :action => "delete", :id => google_acc.id, :iapp_id=>params[:id] },
+					      :confirm => "Are you sure?", :class => "button", :method => :delete) %>
+						</td>
+				</tr>
+			<%}%>
+		</table>
+	</div>
+-->
+<%end%>

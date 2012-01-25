@@ -34,4 +34,8 @@ I18n.fallbacks.map('pt-BR' => 'en')
 I18n.fallbacks.map('pt-PT' => 'en')
 I18n.fallbacks.map('fi' => 'en')
 
+#For importing google contacts lazily from delayed jobs and also using rails recipes.
+Integrations::GoogleContactsImporter
+Integrations::GoogleContactsUtil
+Integrations::GoogleAccount
 

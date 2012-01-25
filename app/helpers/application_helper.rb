@@ -245,10 +245,7 @@ module ApplicationHelper
    end
    color
  end
-<<<<<<< HEAD
 
-=======
- 
  def get_time_in_hours time_in_second
    [time_in_second.div(60*60), (time_in_second.div(60) % 60)*(1.667).round].map{ |t| t.to_s.rjust(2, '0') }.join(".")
  end
@@ -258,7 +255,6 @@ module ApplicationHelper
    return get_time_in_hours(total_time_in_sec)
  end
   
->>>>>>> time_tracking_recovery
   def get_app_config(app_name)
     installed_app = get_app_details(app_name)
     return installed_app[0].configs[:inputs] unless installed_app.blank?
@@ -316,8 +312,8 @@ module ApplicationHelper
         element = label + select(object_name, field_name, choices, :class => element_class, :selected => field_value)
       when "custom" then
         puts "## custom partial "+field[:partial].to_s
-        rendered_partial = (render :partial => "/integrations/applications/"+field[:partial])
-        element = label + rendered_partial
+        rendered_partial = (render :partial => field[:partial])
+        element = "#{label} #{rendered_partial}"
         puts "## element"+ element.to_s
       when "hidden" then
         element = hidden_field(:source, :value => field_value)

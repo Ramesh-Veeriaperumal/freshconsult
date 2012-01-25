@@ -5,10 +5,6 @@ class Integrations::IntegratedResource < ActiveRecord::Base
 
   before_create :set_integratable_type
 
-  def to_hash
-    Hash.from_xml(self.to_xml)
-  end
-
   def self.create(params)
     irParams = params[:integrated_resource]
     unless irParams.blank?

@@ -24,6 +24,10 @@
   	<div class="button-container"><%= submit_tag t('create'), :class => "uiButton small" %></div>
 	<% end %>
 	</div>
+	<div id="contact_tag_cloud" class="sidepanel">
+	<h3 class="title"><%=t('contacts.tag_cloud')%></h3>
+		<%= render :partial => "/helpdesk/tags/tag_cloud", :object => @tags %>
+	</div>
 <%end%>
 
 <%= render(:partial => '/shared/companyheader', :locals => {:type => "user"}) %>

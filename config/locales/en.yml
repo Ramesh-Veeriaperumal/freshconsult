@@ -27,6 +27,7 @@ en:
   resolved_on_time: Resolved on time
   resolved_late: Resolved late
   remove: Remove
+  no_tags: No tags found.
   user: 
     company: Company
     photo: Photo
@@ -38,6 +39,7 @@ en:
     full_name: Full Name
     secondary: secondary
     phone_no: Phone No
+    address: Address
     work: Work
     email: Email
   ticket_fields:
@@ -838,16 +840,18 @@ en:
     import_google_no: "No"
     import_google_yes: "Yes"
     quick_contact: Quick Contact
+    tags: "Tags"
+    tag_cloud: "Contact Tag Cloud"
     info3: Background information of %{nick_name}
     working: Working
     info4: Recent tickets from %{nick_name}
     form_placeholder: 
-      description: Add specific notes regarding this contact example - address, LA Lakers fan etc.
+      description: Add specific notes regarding this contact example - Extra address, LA Lakers fan etc.
     info5: User has not created any ticket till now
     restore: Restore
     info6: Add specific notes regarding this contact
     role:
-      info: can see all tickets from this company 
+      info: Can see all tickets from this company 
   between: Between
   portal_key: Portal
   add_new_forum: add a new forum
@@ -1102,6 +1106,7 @@ en:
     unflag_spam: Not Spam
     pick_up: Pick Up
     submit_ticket_title: Submit a ticket
+    create_ticket_title: Create a ticket
     reply_form: 
       post_to_linked_forum: Post in linked forum
       form_title: Reply to the conversation
@@ -1546,10 +1551,52 @@ en:
       fetch_problem: "Problem in fetching google contacts." 
       import: "Import"
       account_not_configured: "Google account is not configured properly. Please try again."
+      OVERWRITE_LOCAL_small: "Export"
+      OVERWRITE_REMOTE_small: "Import"
+      MERGE_LOCAL_small: "Merge (Freshdesk precedence)"
+      MERGE_REMOTE_small: "Merge (Google precedence)"
+      OVERWRITE_LOCAL: "Export the Freshdesk contacts and any updates into google contacts"
+      OVERWRITE_REMOTE: "Import the Google contacts and any updates into Freshdesk contacts"
+      MERGE_LOCAL: "Merge the Freshdesk and Google contacts (Freshdesk precedence)"
+      MERGE_REMOTE: "Merge the Google and Freshdesk contacts (Google precedence)"
+      MERGE_LATEST: "Merge the Freshdesk and Google contacts (Latest update takes precedence)"
+      import_success: "Google import started successfully." 
+      fetch_problem: "Problem in fetching google contacts." 
+      import_problem: "Problem in importing google contacts." 
+      import: "Import"
+      install: "Activate"
+      edit_app: "Update"
+      add_more: "Authorize"
+      edit: "Edit"
+      already_exist: "Already an account has been configured. One more account can not be added again."
+      delete: "Delete"
+      internal_error: "Some internal error occured. Please contact support."
+      account_not_configured: "Google account is not configured properly. Please try again."
+      overwrite_existing_user: "Overwrite existing Contact details in Freshdesk"
+      enable_integration: "After importing start automatic syncing (once in a day)"
+      name: "Name"
+      email: "Email"
+      group: "Group to sync"
+      tag: "Tag to add"
+      sync_type: "How to sync?"
+      edit_form:
+        install_title: "Google contacts sync setting"
+        import_title: "Google contacts import setting"
+        all_contacts: "All Groups/Contacts"
+        mail_box_detail: "Mail box detail"
+        choose_group_title: "Choose the Group to sync and Tag to add"
+        edit_app_title: "Edit Google contacts sync setting"
       form:
         sync_type: "Synchronization type"
         sync_type_info: "How do you want to synchronize the contacts between Google and Freshdesk."
         account_settings: "Google accounts used for synchronization"
+        account_settings_info: "You can view the configured google account and its configuration details."
+      update_action:
+        success: "Successfully updated the google account."
+        error: "Error while updating the google account."
+      delete_action:
+        success: "Successfully deleted the google account."
+        error: "Error while deleting the google account."
   widgets:
     contact_widget:
       description: "Display a contact or option to add the contact into capsule."

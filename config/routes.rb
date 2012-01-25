@@ -6,16 +6,17 @@
   Jammit::Routes.draw(map)
   
   map.resources :authorizations
+  map.google_sync '/google_sync', :controller=> 'authorizations', :action => 'sync'
   map.callback '/auth/:provider/callback', :controller => 'authorizations', :action => 'create'
   map.failure '/auth/failure', :controller => 'authorizations', :action => 'failure'
   
   map.resources :uploaded_images, :controller => 'uploaded_images'
   
-  map.resources :import , :controller => 'contact_import'
-  
+  map.resources :contact_import , :collection => {:csv => :get, :google => :get}
+
   map.resources :customers ,:member => {:quick => :post}
  
-  map.resources :contacts, :collection => { :autocomplete => :get } , :member => { :restore => :put,:quick_customer => :post ,:make_agent =>:put}
+  map.resources :contacts, :collection => { :contact_email => :get, :autocomplete => :get } , :member => { :restore => :put,:quick_customer => :post ,:make_agent =>:put}
   
   map.resources :groups
   
@@ -25,12 +26,15 @@
 
   map.resources :sla_details
   
+#  map.mobile '/mob', :controller => 'home', :action => 'mobile_index'
+#  map.mobile '/mob_site', :controller => 'user_sessions', :action => 'mob_site'
   #map.resources :support_plans
 
   map.resources :sl_as
 
   map.logout '/logout', :controller => 'user_sessions', :action => 'destroy'
-  map.gauth '/auth/google', :controller => 'user_sessions', :action => 'google_auth'
+  map.gauth '/openid/google', :controller => 'user_sessions', :action => 'openid_google'
+  map.gauth '/opensocial/google', :controller => 'user_sessions', :action => 'opensocial_google'
   map.gauth_done '/authdone/google', :controller => 'user_sessions', :action => 'google_auth_completed'
   map.login '/login', :controller => 'user_sessions', :action => 'new'
   map.sso_login '/login/sso', :controller => 'user_sessions', :action => 'sso_login'
@@ -60,6 +64,7 @@
     integration.resources :installed_applications, :member =>{:install => :put, :uninstall => :get, :configure => :get, :update => :put}
     integration.resources :applications, :member =>{:show => :get}
     integration.resources :integrated_resource, :member =>{:create => :put, :delete => :delete}
+    integration.resources :google_accounts, :member =>{:edit => :get, :delete => :delete, :update => :put, :import_contacts => :put}
   end
 
   map.namespace :admin do |admin|
@@ -183,8 +188,8 @@
 #      ticket.resources :notes, :member => { :restore => :put }, :name_prefix => 'helpdesk_issue_helpdesk_'
 #    end
 
-    helpdesk.resources :tickets, :collection => { :empty_trash => :delete, :empty_spam => :delete, :user_ticket => :get, :search_tweets => :any, :custom_search => :get, :export_csv => :post }, 
-                                 :member => { :assign => :put, :restore => :put, :spam => :put, :unspam => :put, :close => :put, :execute_scenario => :post  , :close_multiple => :put, :pick_tickets => :put, :change_due_by => :put , :get_ca_response_content => :post ,:split_the_ticket =>:post , :merge_with_this_request => :post, :print => :any } do |ticket|
+    helpdesk.resources :tickets, :collection => { :user_tickets => :get, :empty_trash => :delete, :empty_spam => :delete, :user_ticket => :get, :search_tweets => :any, :custom_search => :get, :export_csv => :post }, 
+                                 :member => { :view_ticket => :get, :assign => :put, :restore => :put, :spam => :put, :unspam => :put, :close => :put, :execute_scenario => :post  , :close_multiple => :put, :pick_tickets => :put, :change_due_by => :put , :get_ca_response_content => :post ,:split_the_ticket =>:post , :merge_with_this_request => :post, :print => :any } do |ticket|
 
       ticket.resources :notes, :member => { :restore => :put }, :name_prefix => 'helpdesk_ticket_helpdesk_'
       ticket.resources :subscriptions, :name_prefix => 'helpdesk_ticket_helpdesk_'
@@ -210,6 +215,7 @@
     helpdesk.formatted_dashboard '/dashboard.:format', :controller => 'dashboard', :action => 'index'
     helpdesk.dashboard '', :controller => 'dashboard', :action => 'index'
 
+#    helpdesk.resources :dashboard, :collection => {:index => :get, :tickets_count => :get}
 
     helpdesk.resources :articles, :collection => { :autocomplete => :get }
 

@@ -13,6 +13,12 @@ class Helpdesk::Tag < ActiveRecord::Base
     :source_type => "Helpdesk::Ticket",
     :through => :tag_uses
 
+  has_many :users,
+    :class_name => 'User',
+    :source => :taggable,
+    :source_type => "User",
+    :through => :tag_uses
+
   SORT_FIELDS = [
     [ :activity_desc, 'Most Used',    "tag_uses_count DESC"  ],
     [ :activity_asc,  'Least Used',   "tag_uses_count ASC"  ],
@@ -30,8 +36,25 @@ class Helpdesk::Tag < ActiveRecord::Base
     name
   end
 
+  def self.find_or_create(tag_name, account)
+    unless tag_name.blank?
+      tag = account.tags.find_by_name(tag_name)
+      tag = Helpdesk::Tag.new(:name=>tag_name, :account=>account) if tag.blank?
+      return tag
+    end
+  end
+
+  def tag_size(factor = 1)
+    fs = 0
+    fs += ((Math.log10(self.tag_uses_count))*factor).floor unless self.tag_uses_count.blank? || self.tag_uses_count < 1
+    return fs
+  end
+
   def to_param
     id ? "#{id}-#{name.downcase.gsub(/[^a-z0-9]+/i, '-')}" : nil
   end
 
+  def to_s
+    return name
+  end
 end

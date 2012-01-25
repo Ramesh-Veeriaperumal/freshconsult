@@ -27,6 +27,15 @@ class User < ActiveRecord::Base
   validates_uniqueness_of :user_role, :scope => :account_id, :if => Proc.new { |user| user.user_role  == USER_ROLES_KEYS_BY_TOKEN[:account_admin] }
   validates_uniqueness_of :twitter_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
   
+  has_many :tag_uses,
+    :as => :taggable,
+    :class_name => 'Helpdesk::TagUse',
+    :dependent => :destroy
+
+  has_many :tags, 
+    :class_name => 'Helpdesk::Tag',
+    :through => :tag_uses
+
   has_one :avatar,
     :as => :attachable,
     :class_name => 'Helpdesk::Attachment',
@@ -61,10 +70,45 @@ class User < ActiveRecord::Base
   def chk_email_validation?
     (is_not_deleted?) and (twitter_id.blank? || !email.blank?) and (fb_profile_id.blank? || !email.blank?)
   end
-  
+
+  def add_tag(tag_id)
+    unless tag_id.blank?
+      tag_use = Helpdesk::TagUse.new :tag_id=>tag_id
+      tag_use.taggable_id=self.id
+      tag_use.taggable_type="User"
+      self.tag_uses.push tag_use
+    end
+  end
+
+  def update_tag_names(csv_tag_names)
+    updated_tag_names = csv_tag_names.split(",")
+    new_tags = []
+    updated_tag_names.each { |updated_tag_name|
+      updated_tag_name = updated_tag_name.strip
+      # TODO Below line executes query for every iteration.  Better to use some cached objects.
+      new_tags.push Helpdesk::Tag.find_by_name_and_account_id(updated_tag_name, self.account.id) || Helpdesk::Tag.new(:name => updated_tag_name ,:account_id => self.account.id)
+    }
+    self.tags = new_tags
+  end
+
+  def tagged?(tag_id)
+    unless tag_id.blank?
+      # To avoid DB query.
+      self.tags.each {|tag|
+        return true if tag.id == tag_id
+      }
+      # Check the tag_uses that are not yet committed in the DB
+      self.taguses.each {|tag_use|
+        return true if tag_use.tag_id == tag_id
+      }
+    end
+    return false
+  end
+
+  attr_accessor :import, :google_group_ids
   attr_accessible :name, :email, :password, :password_confirmation , :second_email, :job_title, :phone, :mobile, 
                   :twitter_id, :description, :time_zone, :avatar_attributes,:user_role,:customer_id,:import_id,
-                  :deleted , :fb_profile_id , :language
+                  :deleted , :fb_profile_id , :language, :address
 
   #Sphinx configuration starts
   define_index do
@@ -105,11 +149,14 @@ class User < ActiveRecord::Base
     
     
     self.avatar_attributes=params[:user][:avatar_attributes] unless params[:user][:avatar_attributes].nil?
-   
+    signup   
+  end
+
+  def signup
     return false unless save_without_session_maintenance
     deliver_activation_instructions!(portal) if (!deleted and !email.blank?)
   end
-  
+
   def avatar_attributes=(av_attributes)
     return build_avatar(av_attributes) if avatar.nil?
     avatar.update_attributes(av_attributes)
@@ -131,7 +178,15 @@ class User < ActiveRecord::Base
     #self.openid_identifier = params[:user][:openid_identifier]
     save
   end
-  
+
+  def is_google_contact?
+    google_id.blank?
+  end
+
+  def exist_in_db?
+    !(id.blank?)
+  end
+
   def has_no_credentials?
     self.crypted_password.blank? && active? && !account.sso_enabled? && !deleted && self.authorizations.empty? && self.twitter_id.blank?
   end
@@ -163,7 +218,7 @@ class User < ActiveRecord::Base
   
    
   #accepts_nested_attributes_for :agent
-  
+  accepts_nested_attributes_for :customer  # Added to save the customer while importing user from google contacts.
   
 
   #Savage_beast changes start here
@@ -278,12 +333,12 @@ class User < ActiveRecord::Base
     self.time_zone = account.time_zone if time_zone.nil? #by Shan temp
   end
   
-   def set_language
+  def set_language
     self.language = account.language if language.nil? 
   end
   
   def to_s
-    name.empty? ? email : name
+    name.blank? ? email : name
   end
   
   def to_liquid
@@ -346,7 +401,7 @@ class User < ActiveRecord::Base
   end
   
   def set_contact_name  
-    if self.name.empty?
+    if self.name.blank?
       self.name = (self.email.split("@")[0]).capitalize
     end
    

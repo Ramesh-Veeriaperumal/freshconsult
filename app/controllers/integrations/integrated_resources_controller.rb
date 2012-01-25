@@ -10,7 +10,7 @@ class Integrations::IntegratedResourcesController < Admin::AdminController
     Rails.logger.debug "Creating new integrated resource "+params.inspect
     begin
       newIntegratedResource = Integrations::IntegratedResource.create(params)
-      render :json => newIntegratedResource.to_hash
+      render :json => newIntegratedResource.to_json
     rescue Exception => msg
       puts "Something went wrong while creating an integrated resource ( #{msg})"
       render :json => {:status=>:error}

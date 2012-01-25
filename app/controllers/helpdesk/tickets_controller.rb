@@ -6,7 +6,7 @@ class Helpdesk::TicketsController < ApplicationController
   
   before_filter :check_user , :only => [:show]
   before_filter :load_ticket_filter , :only => [:index, :custom_view_save]
-  before_filter :add_requester_filter , :only => [:index]
+  before_filter :add_requester_filter , :only => [:index, :user_tickets]
   before_filter { |c| c.requires_permission :manage_tickets }
   
   include HelpdeskControllerMethods  
@@ -97,6 +97,27 @@ class Helpdesk::TicketsController < ApplicationController
     end
   end
   
+  def user_tickets
+    @items = current_account.tickets.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
+    puts "@user #{@user}"
+    render :layout => "widgets/contacts"
+  end
+
+  def view_ticket
+    if params['format'] == 'widget'
+      @ticket = Helpdesk::Ticket.find_by_display_id(params[:id]) # using find_by_id(instead of find) to avoid exception when the ticket with that id is not found.
+      @item = @ticket
+      puts "ticket #{@ticket}" 
+      if @ticket.blank?
+        @item = Helpdesk::Ticket.new
+        render :new, :layout => "widgets/contacts"
+      else
+        @ticket_notes = @ticket.conversation
+        render :layout => "widgets/contacts"
+      end
+      return
+    end
+  end
   def custom_view_save
      render :partial => "helpdesk/tickets/customview/new"
   end
@@ -291,6 +312,9 @@ class Helpdesk::TicketsController < ApplicationController
       @item.subject     = @topic.title
       @item.description = @topic.posts.first.body
       @item.requester   = @topic.user
+    end
+    if (params['format'] == 'widget')
+      render :layout => 'widgets/contacts'
     end
   end
  

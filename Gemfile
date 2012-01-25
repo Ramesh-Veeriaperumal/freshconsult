@@ -9,7 +9,7 @@ gem "i18n", "0.4.2"
 
 gem "RedCloth", "4.2.3"
 gem "authlogic", "2.1.6"
-gem "omniauth", "0.1.6"
+gem "omniauth", "0.2.0"
 gem "rufus-scheduler", :require =>"rufus/scheduler"
 gem "tzinfo"
 gem "ruby-debug", "0.10.3"

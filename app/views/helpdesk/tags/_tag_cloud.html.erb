@@ -1,0 +1,19 @@
+<div id="tag-cloud">
+	<% if tag_cloud.blank? %>
+		<%=t("no_tags")%>
+	<%else%>
+		<ul class="" style="display: block;">
+		<%max=0; factor = 1
+		tag_cloud.each { |tag|
+			if max < tag.tag_uses_count 
+				max = tag.tag_uses_count 
+				factor = 100/tag.tag_size unless tag.tag_size == 0 
+			end
+		}
+		tag_cloud.each { |tag|
+		%>
+			<li style="font-size: <%=100+(tag.tag_size(factor))%>%;"><%=link_to(tag.name, {:controller=>"contacts", :tag => tag.id.to_s}) %></li>
+		<% }%> 
+		</ul>
+	<%end%>
+</div>

@@ -18,7 +18,11 @@ module AuthenticationSystem
   private
     def current_user_session
       return @current_user_session if defined?(@current_user_session)
-      @current_user_session = current_account.user_sessions.find
+      if !params['k'].blank? && params['format'] != "widget" # Added this check to avoid any other formats using single access token. (Single access token is mainly by google gadgets or any other third party apps fetches the widgets using single access token authentication.)
+        puts "Single access token based auth requested for non widget based page.  Ignoring the request."
+      else
+        @current_user_session = current_account.user_sessions.find
+      end
     end
 
     def log_out!
