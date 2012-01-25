@@ -1,7 +1,15 @@
-<tr class="<%= cycle("odd", "even") %>" >
-  <td><%= h(time_sheet.customer_name) %></td>
-	<td><%= h(time_sheet.ticket_display) %></td>
-	<td><%= h(time_sheet.note) %></td>
-  <td><%= h(time_sheet.user.name) %></td>	
-	<td><%= h(time_sheet.hours) %></td>
-</tr>
+<% time_sheet.each do |group_title, time_entrys| %>
+  
+	<tr>
+		<td colspan="4"><%= group_title %></td> 
+		<td class="hours"><strong class="group_time"><%= get_total_time(time_entrys) %></strong></td>
+	</tr>	
+	<% time_entrys.each do |time_entry| %>
+	
+	<tr class="<%= cycle("odd", "even") %>">
+		<%@headers.each do |item|%> 
+			<%= content_tag :td, h(time_entry.send(item)), :class => item %>
+		<%end%>
+	</tr>
+	<% end %>	
+<% end %>

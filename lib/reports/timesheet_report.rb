@@ -17,4 +17,9 @@ module Reports::TimesheetReport
     {"Agent"=>:agent_name, "Hours"=> :hours, "Date" =>:start_time ,"Ticket"=>:ticket_display, "Note"=>:note  }
   end
   
+  private
+  def set_selected_tab
+    @selected_tab = :reports
+  end
+  
 end
