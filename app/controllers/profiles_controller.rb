@@ -79,7 +79,7 @@ def change_password
 end
 
 def reset_password
-    @user = current_account.users.find(params[:id])  
+    @user = current_user
     @user.password = params[:user][:password]
     @user.password_confirmation = params[:user][:password_confirmation]
     @user.active = true #by Shan need to revisit..
