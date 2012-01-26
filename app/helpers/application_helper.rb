@@ -92,11 +92,11 @@ module ApplicationHelper
     navigation
   end
   
-  def html_list(type, elements, options = {})
+  def html_list(type, elements, options = {}, activeitem = 0)
     if elements.empty?
       "" 
     else
-      lis = elements.map { |x| content_tag("li", x, :class => ("active first" if (elements.first == x)))  }
+      lis = elements.map { |x| content_tag("li", x, :class => ("active first" if (elements[activeitem] == x)))  }
       content_tag(type, lis, options)
     end
   end
