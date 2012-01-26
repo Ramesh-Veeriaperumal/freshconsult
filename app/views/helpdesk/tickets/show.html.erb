@@ -139,13 +139,6 @@
 
 <% end %>
 
-<% content_for :onload_script do -%> 
-  jQuery('a.submit').live("click", function(ev){
-		ev.preventDefault();
-		jQuery(this).button("loading");
-		jQuery(this).parents("form").submit();		
-	}); 
-	
-	jQuery('#custom_ticket_form').validate();
-	
+<% content_for :onload_script do -%> 	
+	jQuery('#custom_ticket_form').validate();	
 <%- end %>

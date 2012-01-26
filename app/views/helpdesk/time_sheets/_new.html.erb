@@ -10,7 +10,7 @@
         <%= hidden_field(:time_entry, :ticket_id , { :value => ticket_id, :id => :time_entry_ticket_id }  )%>
       </li>
       <li class="button-container">
-        <%= submit_tag "Start timer", :class => "submit uiButton special", "data-loading-text" => "Saving time entry...", :id => "new_time_submit" %>
+        <%= link_to "Start timer", "#", :class => "submit uiButton special", "data-loading-text" => "Saving time entry...", :id => "new_time_submit" %>
   	    <%= button_to_function(t('cancel'), "jQuery('#add_new_time_entry').slideUp(); jQuery('#TimeSheetButton').button('toggle');", :class => "uiButton" ) %>
       </li>
     </ul>

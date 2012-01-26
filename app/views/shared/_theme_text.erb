@@ -32,19 +32,18 @@
 	ul.header-tabs li a  { color: $tab_ctxt_color; }
 	ul.header-tabs li a:hover { background: lighten($tab_color, 3%);  color: $tab_ctxt_color; }
 		
-	.uiButton:hover, .fdbutton:hover, .forum_button:hover, .ui-state-hover, .ui-widget-content .ui-state-hover, 
-	.ui-widget-header .ui-state-hover, .ui-state-focus, .ui-widget-content .ui-state-focus, .ui-widget-header .ui-state-focus  {
+	.uiButton:hover, .forum_button:hover, .ui-state-hover, .ui-widget-content .ui-state-hover, 
+	.ui-widget-header .ui-state-hover, .ui-state-focus, .ui-widget-content .ui-state-focus, .ui-widget-header .ui-state-focus, .special.uiButton:hover  {
 		 background-color:$tab_color; 
 		 border-color: darken($tab_color, 20%);  
 		 color:$tab_ctxt_color; 
 	}
 	
-	.special.uiButton{ 
+	.special.uiButton, .uiButton.disabled, .uiButton.disabled:hover{ 
 	   background-color:darken($tab_color, 6%); 
 	   border-color: darken($tab_color, 13%); 
 	   color:$tab_ctxt_color;  
-	}
-		
+	} 
 	.footerContent, .footerContent a{ color:$bg_ctxt_color; border-color:$bg_ctxt_color;  }
 	.footerContent a:hover{ color:$bg_ctxt_color; }
 	.iphone-inactive.uiButton{

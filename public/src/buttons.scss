@@ -68,6 +68,7 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
 	cursor: pointer;
 	text-shadow: 1px 1px 0 white;
 	@include corners(4px);
+	text-align:center;
 }
 .uiButton:hover, .fdbutton:hover, .forum_button:hover, .uiButton-active:hover { background-color:$tab_color; border-color: darken($tab_color, 10%); color:#ffffff; @include text-shadow(rgba(0, 0, 0, 0.2), -1px, -1px, 1px); }
 
