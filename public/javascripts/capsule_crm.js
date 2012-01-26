@@ -342,7 +342,7 @@ CapsuleWidget = {
 
 capsuleResourceOptions = {
 	anchor: "capsule_widget",
-	domain: $('capsule_widget').getAttribute('domain').escapeHTML(),
+	domain: $('capsule_widget').getAttribute('domain').escapeHTML() + ".capsulecrm.com",
 	ssl_enabled: true,
 	content_type: "application/xml",
 	enable_resource_cache: false,

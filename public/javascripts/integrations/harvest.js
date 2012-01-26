@@ -33,7 +33,7 @@ HarvestWidget.prototype= {
 				application_id:harvestBundle.application_id,
 				integratable_type:"timesheet",
 				anchor:"harvest_widget",
-				domain:harvestBundle.domain,
+				domain:harvestBundle.domain + ".harvestapp.com",
 				ssl_enabled:harvestBundle.ssl_enabled || "false",
 				login_content: function(){
 					return harvestWidget.LOGIN_FORM.evaluate({});

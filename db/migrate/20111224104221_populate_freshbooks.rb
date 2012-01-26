@@ -34,6 +34,7 @@ class PopulateFreshbooks < ActiveRecord::Migration
   end
 
   def self.down
+    execute("DELETE installed_applications FROM installed_applications INNER JOIN applications ON applications.ID=installed_applications.application_id WHERE applications.name='#{@app_name}'")
     execute("DELETE widgets FROM widgets INNER JOIN applications ON widgets.APPLICATION_ID=applications.ID WHERE widgets.name='#{@widget_name}'")
     execute("DELETE FROM applications WHERE name='#{@app_name}'")
   end
