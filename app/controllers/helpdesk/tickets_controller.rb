@@ -332,13 +332,10 @@ class Helpdesk::TicketsController < ApplicationController
       @item.description = @topic.posts.first.body
       @item.requester   = @topic.user
     end
-<<<<<<< HEAD
+    @item.source = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:phone] #setting for agent new ticket- as phone
     if (params['format'] == 'widget')
       render :layout => 'widgets/contacts'
     end
-=======
-    @item.source = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:phone] #setting for agent new ticket- as phone
->>>>>>> time_tracking_recovery
   end
  
   def create
