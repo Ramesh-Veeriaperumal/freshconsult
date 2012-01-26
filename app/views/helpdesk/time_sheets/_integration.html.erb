@@ -5,6 +5,7 @@
   @liquid_values = {"requester" => @ticket.requester, "ticket" => @ticket, "agent" => agent}
   # For edit/delete page append one more parameter 'integrated_resource' in @liquid_values
 %>
+<div class="integration freshbooks">
 <% installedApp = get_app_details("freshbooks");
 # @time_sheet_entry.integrated_resources.find_by_installed_application_id(installedApp);
 # @liquid_values["integrated_resource"] = integrated_resource
@@ -13,6 +14,7 @@
     <% fb_code = get_app_widget_script("freshbooks", "freshbooks_timeentry_widget", @liquid_values) %>
     <%= Liquid::Template.parse(fb_code).render("ticket" => @ticket) %> <!--This is to replace the ticket props in the notes field-->
 <% end %>
+</div>
 <% installedApp = get_app_details("harvest");
 # @time_sheet_entry.integrated_resources.find_by_installed_application_id(installedApp);
 # @liquid_values["integrated_resource"] = integrated_resource

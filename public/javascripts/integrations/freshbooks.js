@@ -1,6 +1,6 @@
 var FreshbooksWidget = Class.create();
 FreshbooksWidget.prototype = {
-	FRESHBOOKS_FORM:new Template('<form id="freshbooks-timeentry-form"> <label>Staff</label><select name="staff-id" id="freshbooks-timeentry-staff" onchange="freshbooksWidget.staffChanged(this.options[this.selectedIndex].value)"></select> <div class="paddingloading" id="freshbooks-staff-spinner"></div> <label>Client</label><select name="client-id" id="freshbooks-timeentry-clients" onchange="freshbooksWidget.clientChanged(this.options[this.selectedIndex].value)"></select> <div class="paddingloading" id="freshbooks-clients-spinner"></div> <label>Project</label><select name="project-id" id="freshbooks-timeentry-projects" onchange="freshbooksWidget.projectChanged(this.options[this.selectedIndex].value)"></select> <div class="paddingloading" id="freshbooks-projects-spinner"></div> <label>Task</label><select disabled name="task-id" id="freshbooks-timeentry-tasks" onchange="freshbooksWidget.taskChanged(this.options[this.selectedIndex].value)"></select> <div class="paddingloading" id="freshbooks-tasks-spinner" style="display:none;" ></div> <label id="freshbooks-timeentry-notes-label">Notes</label><textarea disabled name="notes" id="freshbooks-timeentry-notes" wrap="virtual" style="width:190px; height: 50px;">'+freshbooksBundle.freshbooksNote.escapeHTML()+'</textarea> <label id="freshbooks-timeentry-hours-label">Hours</label><input type="text" disabled name="hours" id="freshbooks-timeentry-hours"><input type="submit" disabled id="freshbooks-timeentry-submit" value="Submit" onclick="freshbooksWidget.logTimeEntry($(\'freshbooks-timeentry-form\'));return false;"></form>'),
+	FRESHBOOKS_FORM:new Template('<form id="freshbooks-timeentry-form"><div class="field"><label>Staff</label><select name="staff-id" id="freshbooks-timeentry-staff" onchange="freshbooksWidget.staffChanged(this.options[this.selectedIndex].value)" disabled class="full"></select> <div class="paddingloading" id="freshbooks-staff-spinner"></div></div><div class="field"><label>Client</label><select name="client-id" id="freshbooks-timeentry-clients" class="full" disabled onchange="freshbooksWidget.clientChanged(this.options[this.selectedIndex].value)"></select> <div class="paddingloading" id="freshbooks-clients-spinner"></div></div><div class="field"><label>Project</label><select class="full" name="project-id" id="freshbooks-timeentry-projects" onchange="freshbooksWidget.projectChanged(this.options[this.selectedIndex].value)" disabled></select> <div class="paddingloading" id="freshbooks-projects-spinner"></div></div><div class="field"><label>Task</label><select class="full" disabled name="task-id" id="freshbooks-timeentry-tasks" onchange="freshbooksWidget.taskChanged(this.options[this.selectedIndex].value)"></select> <div class="paddingloading" id="freshbooks-tasks-spinner" style="display:none;" ></div></div><div class="field"><label id="freshbooks-timeentry-notes-label">Notes</label><textarea disabled name="notes" id="freshbooks-timeentry-notes" wrap="virtual">'+freshbooksBundle.freshbooksNote.escapeHTML()+'</textarea></div><div class="field"><label id="freshbooks-timeentry-hours-label">Hours</label><input type="text" disabled name="hours" id="freshbooks-timeentry-hours"></div><input type="submit" disabled id="freshbooks-timeentry-submit" value="Submit" onclick="freshbooksWidget.logTimeEntry($(\'freshbooks-timeentry-form\'));return false;"></form>'),
 	STAFF_LIST_REQ:new Template('<?xml version="1.0" encoding="utf-8"?><request method="staff.list"></request>'),
 	CLIENT_LIST_REQ:new Template('<?xml version="1.0" encoding="utf-8"?><request method="client.list"> <per_page>250</per_page></request>'),
 	PROJECT_LIST_REQ:new Template('<?xml version="1.0" encoding="utf-8"?><request method="project.list"> <per_page>2000</per_page></request>'),
@@ -12,7 +12,7 @@ FreshbooksWidget.prototype = {
 	initialize:function(freshbooksBundle, loadInline){
 		widgetInst = this; // Assigning to some variable so that it will be accessible inside custom_widget.
 		this.projectData = ""; init_reqs = []
-		if(!loadInline || freshbooksBundle.remote_integratable_id == '') {
+		if(!loadInline || !freshbooksBundle.remote_integratable_id) {
 			init_reqs = [{
 				body: widgetInst.CLIENT_LIST_REQ.evaluate({}),
 				content_type: "application/xml",
@@ -57,17 +57,20 @@ FreshbooksWidget.prototype = {
 	},
 
 	loadStaffList:function(resData){
-		this.loadFreshbooksEntries(resData, "freshbooks-timeentry-staff", "member", "staff_id", ["first_name", "last_name"], null, freshbooksBundle.agentEmail)
+		this.loadFreshbooksEntries(resData, "freshbooks-timeentry-staff", "member", "staff_id", ["first_name", "last_name"], null, freshbooksBundle.agentEmail);
+		$("freshbooks-timeentry-staff").enable();
 	},
 
-	loadClientList:function(resData){
+	loadClientList:function(resData){ 
 		selectedClientNode = this.loadFreshbooksEntries(resData, "freshbooks-timeentry-clients", "client", "client_id", ["first_name","last_name"], null, freshbooksBundle.reqEmail);
 		client_id = XmlUtil.getNodeValueStr(selectedClientNode, "client_id");
+		$("freshbooks-timeentry-clients").enable();
 		this.clientChanged(client_id);
 	},
 
 	loadProjectList:function(resData) {
 		this.projectData=resData;
+		$("freshbooks-timeentry-projects").enable();		
 		this.handleLoadProject();
 	},
 
