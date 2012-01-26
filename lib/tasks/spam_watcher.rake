@@ -1,5 +1,5 @@
-SPAM_TICKETS_THRESHOLD = 20 #Allowed number of tickets in 30 minutes window..
-SPAM_CONVERSATIONS_THRESHOLD = 20
+SPAM_TICKETS_THRESHOLD = 50 #Allowed number of tickets in 30 minutes window..
+SPAM_CONVERSATIONS_THRESHOLD = 50
 
 #We might need to make the time window also as configurable. Right now, 30 minutes looks like a good guess!
 
