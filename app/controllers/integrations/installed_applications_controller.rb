@@ -62,7 +62,7 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
       flash[:error] = t(:'flash.application.not_installed')
       redirect_to :controller=> 'applications', :action => 'index'
     else
-      @installing_application = Integrations::Application.find(@installed_application.application)
+      @installing_application = @installed_application.application
     end
   end
   
