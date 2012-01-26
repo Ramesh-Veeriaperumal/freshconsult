@@ -18,15 +18,16 @@
     <ul class="ui-form">
       <li>
         <label><%=t('helpdesk.time_sheets.customer')%></label>  
-        <%= select_tag :customer_id, options_for_select(current_account.customers.collect{|c|[c.name, c.id]}, @customer_id), { :multiple => true, :class => "customSelect auto" } %>
+        <%= select_tag :customer_id, options_for_select(current_account.customers.collect{|c|[c.name, c.id]}, @customer_id), { :multiple => true, :class => "customSelect auto" , "data-placeholder".to_sym() =>t('report.time_sheet.select_customer')} %>
         	     
         <label><%=t('helpdesk.time_sheets.agent')%></label>	
-    	  <%= render :partial => "/helpdesk/tickets/containers/multi_select", :locals => { :options => current_account.users.technicians.collect{|c|[c.id , c.name]}, :name =>:user_id, :selected_val => @user_id  } %>
-       
-        <label><%=t('helpdesk.time_sheets.billing_type')%></label>
-      	<%= render :partial => "/helpdesk/tickets/containers/multi_select", :locals => { :options => Helpdesk::TimeSheet::BILLABLE_HASH, :name => :billable, :selected_val =>(@billable.eql?([true,false]) ? "" : @billable)  } %>
+		   <%= select_tag :user_id, options_for_select(current_account.users.technicians.collect{|c|[c.name , c.id]}, @user_id), { :multiple => true, :class => "customSelect auto" , "data-placeholder".to_sym() =>t('report.time_sheet.select_agent')} %>
+        
+		 <label><%=t('helpdesk.time_sheets.billing_type')%></label>
+		 <%= select_tag :billable, options_for_select(Helpdesk::TimeSheet::BILLABLE_HASH , (@billable.eql?([true,false]) ? "" : @billable)), { :multiple => true, :class => "customSelect auto" , "data-placeholder".to_sym() =>t('report.time_sheet.select_billable')} %>
+        
 		<label><%=t('helpdesk.time_sheets.group_by')%></label>
-		<%=select_tag :group_by , options_for_select(Helpdesk::TimeSheet::GROUP_BY_ARR) %>
+		<%=select_tag :group_by , options_for_select(Helpdesk::TimeSheet::GROUP_BY_ARR) ,{ :multiple => false, :class => "customSelect auto"}%>
 		
 	  </li> 
 	  </ul>

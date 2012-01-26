@@ -1598,6 +1598,10 @@ en:
   freshbooks_helptext: "To get your Authentication Token and API URL, login to your Freshbooks account and navigate to <br /> <b>“My Account”</b>. (You can find this on the top right corner of the page).<br /> Click on <b>“FreshBooks API”</b>, and to get the 'API URL' and  'Authentication Token' .<br /> Copy the key and paste it in the textfield above."
   report:
     time_sheet_report: Time Sheet Report
+    time_sheet:
+      select_customer: Select Customer
+      select_agent: Select Agent
+      select_billable: Select Billable/Non-Billable
   reorder: "Reorder"
   delete_the_ticket: "Delete the Ticket"
   mark_as_spam: "Mark as Spam"

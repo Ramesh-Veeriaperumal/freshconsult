@@ -25,7 +25,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
         :select     => "DISTINCT `helpdesk_time_sheets`.*"
       } unless customers.blank?}
       
-  BILLABLE_HASH = { true =>"Billable", false => "Non-Billable"}
+  BILLABLE_HASH = { "Billable" => true, "Non-Billable" => false}
   GROUP_BY_ARR = [["Customer" , :customer_name] , ["Ticket",:ticket] , ["Agent" , :agent_name] , ["Date" , :group_by_day_criteria]]
   REPORT_LIST_VIEW = {:ticket => I18n.t('helpdesk.time_sheets.ticket') , :customer_name => I18n.t('helpdesk.time_sheets.customer') , 
                       :agent_name =>  I18n.t('helpdesk.time_sheets.agent') , :note =>  I18n.t('helpdesk.time_sheets.note') ,
