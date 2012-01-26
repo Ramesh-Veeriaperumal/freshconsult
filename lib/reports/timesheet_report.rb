@@ -14,7 +14,7 @@ module Reports::TimesheetReport
   end
   
   def csv_hash
-    {"Agent"=>:agent_name, "Hours"=> :hours, "Date" =>:start_time ,"Ticket"=>:ticket_display, "Note"=>:note  }
+    {"Agent"=>:agent_name, "Hours"=> :hours, "Date" =>:executed_at ,"Ticket"=>:ticket_display, "Note"=>:note  }
   end
   
   def list_view_items
@@ -37,7 +37,7 @@ module Reports::TimesheetReport
 end
 
   def group_by_caluse
-    group_by_caluse = params[:group_by] || :ticket 
+    group_by_caluse = params[:group_by] || :customer_name
     group_by_caluse = group_by_caluse.to_sym()  
   end
 

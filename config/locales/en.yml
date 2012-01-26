@@ -1315,7 +1315,7 @@ en:
         title: "New time entry"
       ticket: Ticket
       customer: Customer
-      executed_at: Executed Date
+      executed_at: Date
       hours: Hours
       agent: Agent
       note: Note
