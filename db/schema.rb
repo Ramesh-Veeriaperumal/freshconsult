@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120113105518) do
+ActiveRecord::Schema.define(:version => 20120118113122) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -605,6 +605,7 @@ ActiveRecord::Schema.define(:version => 20120113105518) do
     t.integer  "account_id",    :limit => 8
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.datetime "executed_at"
   end
 
   add_index "helpdesk_time_sheets", ["account_id", "ticket_id"], :name => "index_time_sheets_on_account_id_and_ticket_id"
@@ -617,6 +618,14 @@ ActiveRecord::Schema.define(:version => 20120113105518) do
     t.string   "configs"
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "integrated_resources", :force => true do |t|
+    t.integer "installed_application_id", :limit => 8
+    t.string  "remote_integratable_id"
+    t.integer "local_integratable_id",    :limit => 8
+    t.string  "local_integratable_type"
+    t.integer "account_id",               :limit => 8
   end
 
   create_table "moderatorships", :force => true do |t|
