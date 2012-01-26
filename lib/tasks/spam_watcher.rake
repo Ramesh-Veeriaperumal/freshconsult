@@ -59,9 +59,9 @@ end
 def deliver_spam_alert(table, requesters, query_str)
   FreshdeskErrorsMailer.deliver_error_email(nil, nil, nil,
     {
-      :subject          => "Abnormal load in #{table}",
+      :subject          => "Abnormal load in spam watcher #{table}",
       :additional_info  => {
-        :accounts_list  => requesters,
+        :requesters_list  => requesters,
         :query          => query_str
       }
     }
