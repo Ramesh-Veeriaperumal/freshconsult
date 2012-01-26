@@ -32,7 +32,11 @@ require 'openssl'
   def sso_login
       if params[:hash] == gen_hash_from_params_hash
           @current_user = current_account.users.find_by_email(params[:email])  
-          @current_user = create_user(params[:email],current_account) if @current_user.blank?  
+          unless @current_user
+            @current_user = create_user(params[:email],current_account,nil,{:name => params[:name]})
+          else
+            @current_user.update_attributes(:name => params[:name])
+          end
           @user_session = @current_user.account.user_sessions.new(@current_user)
           if @user_session.save
               flash[:notice] = t(:'flash.login.success')
@@ -221,16 +225,15 @@ def get_email(resp)
   end
 end
 
- def create_user(email, account,identity_url=nil, google_viewer_id=nil)
-   logger.debug "create user has beeen called ::"
-      @contact = account.users.new
-      @contact.email = email
-      @contact.user_role = User::USER_ROLES_KEYS_BY_TOKEN[:customer]
-      @contact.active = true
-      @contact.google_viewer_id = google_viewer_id
-      @contact.save  
-      @contact.authorizations.create(:uid => identity_url , :provider => 'open_id',:account_id => current_account.id) unless identity_url.nil?
-      return @contact
+ def create_user(email, account,identity_url=nil,options={})
+   @contact = account.users.new
+   @contact.name = options[:name] unless options[:name].blank? 
+   @contact.email = email
+   @contact.user_role = User::USER_ROLES_KEYS_BY_TOKEN[:customer]
+   @contact.active = true     
+   @contact.save  
+   @contact.authorizations.create(:uid => identity_url , :provider => 'open_id',:account_id => current_account.id) unless identity_url.nil?
+   return @contact
   end
   
   TOKEN_TYPE = "OpenSocialFirstTimeAccessToken"  
