@@ -10,20 +10,20 @@
         <%= hidden_field(:time_entry, :ticket_id , { :value => ticket_id, :id => :time_entry_ticket_id }  )%>
       </li>
       <li class="button-container">
-        <%= submit_tag "Start timer", :class => "submit uiButton special", "data-loading-text" => "Saving time entry...", :id => "new_time_submit" %>
+        <%= link_to "Start timer", "#", :class => "submit uiButton special", "data-loading-text" => "Saving time entry...", :id => "new_time_submit" %>
   	    <%= button_to_function(t('cancel'), "jQuery('#add_new_time_entry').slideUp(); jQuery('#TimeSheetButton').button('toggle');", :class => "uiButton" ) %>
       </li>
     </ul>
   <% end %>
+	<%# render :partial => "integration" %>
 <% end %>
 <% javascript_tag do %>
   jQuery("#add_new_time_entry #time_entry_hours")
-    .change(function(ev){
+    .bind("keyup", function(ev){
       if(jQuery(this).val().strip() != "")
         jQuery("#add_new_time_entry #new_time_submit").val("Save")
       else
         jQuery("#add_new_time_entry #new_time_submit").val("Start timer")
-    });
-  
+    });  
   jQuery("#add_new_time_entry").toggle(<%= @ticket.time_sheets.blank? %> || jQuery("#TimeSheetButton").hasClass('active'));
 <% end %>

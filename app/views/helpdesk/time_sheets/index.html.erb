@@ -35,5 +35,13 @@
   
   jQuery("#timesheetlist div.timeentry")
       .livequery( timeCount, timeCount );
+
+  
+	jQuery('a.submit').live("click", function(ev){
+		ev.preventDefault();
+		jQuery(this).button("loading");
+		if(!jQuery(this).hasClass("disabled"))
+			jQuery(this).parents("form").submit();		
+	});
         
 <% end %>

@@ -511,7 +511,7 @@ body h5{
 	}	
 	.requestCnt{
 		position:relative;
-  	font-size:12px;
+  	font-size:12px;		
 		.request-title{
 			$COL_PRI_HIGH: #cc5600;		$COL_PRI_MEDIUM: #0a9458;		$COL_PRI_LOW: #0c8aae;		$COL_PRI_URGENT: #cc0000;			
 			background-color:#f6f6f6; 
@@ -576,12 +576,14 @@ body h5{
 		} 
 	}
 	
+	a.user_name{ @include link-colors( #333333, #527EAA ); } 
+	
 	.request-cnt-first{
 		div.description{
 			.app-link{
 			   position:absolute;
-			   margin-left:-72px;
-			   margin-top:50px;
+			   margin-left:-20px;
+			   margin-top:38px;
 			}
 			.user_details{
 				color:#777777;
@@ -632,7 +634,7 @@ body h5{
 	}
 	
 	.preview_pic img{ width:36px; height:36px; }
-	a{ @include link-colors( #333333, #527EAA ); } 
+
 	div.description{  
 			position: relative; 
 			.details{ 
