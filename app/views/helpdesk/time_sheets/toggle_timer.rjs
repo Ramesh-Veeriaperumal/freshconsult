@@ -1,5 +1,3 @@
 page.replace "timeentry_#{@time_entry.id}", :partial => "/helpdesk/time_sheets/time_entry", :object => @time_entry
 
-unless @time_cleared.nil?
-   page.replace "timeentry_#{@time_cleared.id}", :partial => "/helpdesk/time_sheets/time_entry", :object => @time_cleared
-end
+clear_view_timers page

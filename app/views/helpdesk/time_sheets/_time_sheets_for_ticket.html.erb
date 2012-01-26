@@ -1,9 +1,0 @@
-<div id="timesheetlist">
-	<%= render :partial => "helpdesk/time_sheets/time_entry", :collection => @ticket.time_sheets %>    
-</div>		
-<div class="total_time">
-	<strong>Total</strong>
-	<span class="time">
-	  <%= get_total_time(@ticket.time_sheets)%>
-	</span>
-</div>

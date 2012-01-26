@@ -1,4 +1,7 @@
 class Subscription < ActiveRecord::Base
+  
+  PRO_RATA_MIN_CHARGE = 4.00
+  
   belongs_to :account
   belongs_to :subscription_plan
   has_many :subscription_payments
@@ -19,6 +22,18 @@ class Subscription < ActiveRecord::Base
   validates_numericality_of :renewal_period, :only_integer => true, :greater_than => 0
   validates_numericality_of :amount, :greater_than_or_equal_to => 0
   validate_on_create :card_storage
+  
+  def self.customer_count
+   count(:conditions => {:state => 'active'})
+ end
+  
+  def self.customers_agent_count
+    sum(:agent_limit, :conditions => { :state => 'active'})
+  end
+ 
+  def self.monthly_revenue
+    sum('amount/renewal_period', :conditions => { :state => 'active'}).to_f
+  end
   
   # This hash is used for validating the subscription when a plan
   # is changed.  It includes both the validation rules and the error
@@ -104,9 +119,13 @@ class Subscription < ActiveRecord::Base
   # made the charge and set the billing date into the future.
   def charge
     if amount == 0 || (@response = gateway.purchase(amount_in_pennies, billing_id)).success?
+      begin
         update_attributes(:next_renewal_at => self.next_renewal_at.advance(:months => self.renewal_period), :state => 'active')
         subscription_payments.create(:account => account, :amount => amount, :transaction_id => @response.authorization) unless amount == 0
-        true
+       rescue Exception => err
+         SubscriptionNotifier.deliver_sub_error({:error_msg => err.message, :full_domain => account.full_domain, :custom_message => "Charge failed" })
+       end
+       true
       else
         errors.add_to_base(@response.message)
         false
@@ -198,6 +217,10 @@ class Subscription < ActiveRecord::Base
       return false
     end
   end
+  
+  def active?
+    state == 'active'
+  end
 
   protected
   
@@ -256,7 +279,7 @@ class Subscription < ActiveRecord::Base
     def charge_plan_change_mis
       if  (amount > @old_subscription.amount) and paid_account?  
         amt_to_charge = cal_plan_change_amount.round.to_f
-        misc_charge(amt_to_charge) if amt_to_charge > 0
+        misc_charge(amt_to_charge) if amt_to_charge > PRO_RATA_MIN_CHARGE
       end
     end
     

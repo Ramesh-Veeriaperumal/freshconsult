@@ -16,6 +16,23 @@
     </tr>
   </table>
 <% end %>
+<br>
+<br>
+
+<table id="customer_counts">
+    <tr>
+      <th>Number of Customers</th>
+      <td><%= @customer_count %></td>
+    </tr>
+    <tr>
+      <th>CMRR</th>
+      <td><%= format_float_value(@cmrr) %> $(<%=@monthly_revenue%>)</td>
+    </tr>
+	<tr>
+	  <th>Agent Count</th>
+      <td><%= @customer_agent_count %> </td>
+	</tr>
+  </table>
 
 <br>
  <%=link_to 'customers', customers_admin_subscriptions_path%>

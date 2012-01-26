@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111210162346) do
+ActiveRecord::Schema.define(:version => 20120113105518) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -25,7 +25,7 @@ ActiveRecord::Schema.define(:version => 20111210162346) do
     t.string   "shared_secret"
     t.text     "sso_options"
     t.string   "google_domain"
-    t.string   "language",                       :default => "en"
+    t.boolean  "ssl_enabled",                    :default => true
   end
 
   add_index "accounts", ["full_domain"], :name => "index_accounts_on_full_domain", :unique => true
@@ -74,10 +74,11 @@ ActiveRecord::Schema.define(:version => 20111210162346) do
   add_index "agent_groups", ["group_id", "user_id"], :name => "agent_groups_group_user_ids"
 
   create_table "agents", :force => true do |t|
-    t.integer  "user_id",    :limit => 8
+    t.integer  "user_id",           :limit => 8
     t.text     "signature"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "ticket_permission"
   end
 
   create_table "applications", :force => true do |t|
@@ -145,6 +146,16 @@ ActiveRecord::Schema.define(:version => 20111210162346) do
 
   add_index "delayed_jobs", ["locked_by"], :name => "index_delayed_jobs_on_locked_by"
 
+  create_table "deleted_customers", :force => true do |t|
+    t.string   "full_domain"
+    t.integer  "account_id"
+    t.string   "admin_name"
+    t.string   "admin_email"
+    t.text     "account_info"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "email_configs", :force => true do |t|
     t.integer  "account_id",      :limit => 8
     t.string   "to_email"
@@ -156,6 +167,7 @@ ActiveRecord::Schema.define(:version => 20111210162346) do
     t.boolean  "active",                       :default => false
     t.string   "activator_token"
     t.string   "name"
+    t.string   "bcc_email"
   end
 
   add_index "email_configs", ["account_id", "to_email"], :name => "index_email_configs_on_account_id_and_to_email", :unique => true
@@ -304,6 +316,7 @@ ActiveRecord::Schema.define(:version => 20111210162346) do
     t.datetime "updated_at"
     t.integer  "account_id",  :limit => 8
     t.integer  "import_id",   :limit => 8
+    t.integer  "position"
   end
 
   add_index "forum_categories", ["account_id", "name"], :name => "index_forum_categories_on_account_id_and_name", :unique => true
@@ -637,6 +650,7 @@ ActiveRecord::Schema.define(:version => 20111210162346) do
     t.datetime "updated_at"
     t.integer  "solution_category_id", :limit => 8
     t.integer  "forum_category_id",    :limit => 8
+    t.string   "language",                          :default => "en"
   end
 
   add_index "portals", ["account_id", "portal_url"], :name => "index_portals_on_account_id_and_portal_url"
@@ -743,6 +757,7 @@ ActiveRecord::Schema.define(:version => 20111210162346) do
     t.boolean  "delta",                              :default => true, :null => false
     t.text     "desc_un_html", :limit => 2147483647
     t.integer  "import_id",    :limit => 8
+    t.integer  "position"
   end
 
   add_index "solution_articles", ["account_id", "folder_id"], :name => "index_solution_articles_on_account_id"
@@ -755,6 +770,7 @@ ActiveRecord::Schema.define(:version => 20111210162346) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "import_id",   :limit => 8
+    t.integer  "position"
   end
 
   add_index "solution_categories", ["account_id", "name"], :name => "index_solution_categories_on_account_id_and_name", :unique => true
@@ -767,6 +783,7 @@ ActiveRecord::Schema.define(:version => 20111210162346) do
     t.integer  "category_id", :limit => 8
     t.integer  "import_id",   :limit => 8
     t.integer  "visibility",  :limit => 8
+    t.integer  "position"
   end
 
   add_index "solution_folders", ["category_id", "name"], :name => "index_solution_folders_on_category_id_and_name", :unique => true

@@ -8,6 +8,15 @@ function autoSaveTinyMce(editor){
    return true;
 }
 
+function totalTime(listClass, updateId){
+ total_hours = $$(listClass)
+                .collect(function(t){ return t.innerHTML; })
+                .inject(0, function(acc, n) { return parseFloat(acc) + parseFloat(n); });
+ 
+ jQuery(updateId).html(sprintf( "%0.02f", total_hours));    
+}
+
+
 // Primarly for the form customizer page. Used for making the text unselectable
 makePageNonSelectable = function(source){
 	if (document.all) source.onselectstart = function () { return false; };	// Internet Explorer
@@ -32,24 +41,6 @@ function pad(number, length) {
     return str;
 }
 
-function counter(element){ 
-  if(jQuery(element).data("timerRunning")){
-	  seconds = jQuery(element).data('runningTime');
-	  timeout = (seconds%36);
-	  console.log(timeout + " " + seconds + " " + Math.round((seconds/3600)*100)/100);
-//	  if( timeout == 0 ){
-	  	  jQuery(element).html(pad(Math.round((seconds/3600)*100)/100)); 
-	  	  jQuery(element).data('runningTime', seconds+timeout);
-//	  }
-	  setTimeout(function(){ counter(element); }, timeout*1000);
-	  // 	  seconds = (count + 1) % 60;
-	  // 	  minutes = (count / 60) % 60;
-	  // 	  hours = (count / 60 / 60) % 24;
-	  // 	  jQuery(element).data('runningTime', count+1)
-	  // 	  jQuery(element).html( pad(Math.floor(hours)) + ":" + pad(Math.floor(minutes)) + "<span class='small'>:" + pad(seconds) +"</span>");
-  }
-}
-
 // Normalizing Hours
 function normalizeHours(value){
    return value.split( new RegExp( "\\s*:\\s*", "gi" ) ).collect(function(s) {
@@ -70,6 +61,19 @@ function getParameterByName(name, url)
     return "";
   else
     return decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+
+// Reorder show hide functions
+function showSortableForm(buttonid, listid, formid){
+	jQuery("#"+listid).hide();
+	jQuery("#"+buttonid).hide();
+	jQuery("#"+formid).fadeIn(300);
+}
+
+function hideSortableForm(buttonid, listid, formid){		
+	jQuery("#"+listid).fadeIn(300);
+	jQuery("#"+buttonid).show();
+	jQuery("#"+formid).hide();
 }
 
 //Bitly url shortner

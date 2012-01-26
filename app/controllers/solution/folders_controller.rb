@@ -1,7 +1,10 @@
 class Solution::FoldersController < ApplicationController
+    include Helpdesk::ReorderUtility
+
   before_filter :except => [:index, :show] do |c| 
     c.requires_permission :manage_knowledgebase
   end
+  
   before_filter { |c| c.check_portal_scope :open_solutions }
   before_filter :portal_category?
   before_filter :check_folder_permission, :only => [:show]
@@ -24,11 +27,12 @@ class Solution::FoldersController < ApplicationController
     
     respond_to do |format|
       format.html 
-      format.xml  { render :xml => @item.to_xml(:include => :articles) }
-      format.json  { render :json => @item.to_json(:include => :articles) }
+      format.xml  { render :xml => @item.to_xml(:include => fetch_articles_scope) }
+      format.json { render :json => @item.to_json(:except => [:account_id,:import_id],:include => fetch_articles_scope) }
     end
     
   end
+  
 
   def new    
      logger.debug "params:: #{params.inspect}"
@@ -104,13 +108,20 @@ class Solution::FoldersController < ApplicationController
     
   end
 
-
  protected
 
   def scoper
     eval "Solution::#{cname.classify}"
   end
 
+  def reorder_scoper
+    current_account.solution_categories.find(params[:category_id]).folders
+  end
+  
+  def reorder_redirect_url
+    solution_category_url(params[:category_id])
+  end  
+  
   def cname
     @cname ||= controller_name.singularize
   end
@@ -132,6 +143,14 @@ class Solution::FoldersController < ApplicationController
   def portal_category?
     wrong_portal unless(main_portal? || 
           (params[:category_id].to_i == current_portal.solution_category_id)) #Duplicate..
+  end
+  
+  def fetch_articles_scope
+    if current_user && current_user.has_manage_solutions?
+      :articles
+    else
+      :published_articles 
+    end
   end
 
 end

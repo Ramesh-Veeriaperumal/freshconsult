@@ -66,7 +66,6 @@ class CapsuleCRM::Person < CapsuleCRM::Party
     options = {:root => 'person', :path => path}
     hsh = attributes_hash
     xml_out = hsh.to_xml :root => 'person'
-    puts xml_out
     new_id = self.class.create xml_out, options
     unless new_id
       errors << self.class.last_response.response.message
@@ -78,9 +77,9 @@ class CapsuleCRM::Person < CapsuleCRM::Party
   
   def attributes_hash
     hsh = {  "firstName" => name ,
-             "contacts" => {"email" => {"emailAddress" => email, "type" => "Work"},
-                            "phone" => {"phoneNumber" => phone, "type" => "Work"}} ,
+             "contacts" => {"email" => {"emailAddress" => email, "type" => "Work"}} ,
              "organisationId" => organisation_id }
+    hsh[:contacts][:phone] =  {"phoneNumber" => phone, "type" => "Work"} unless phone.blank?
     hsh
   end
 

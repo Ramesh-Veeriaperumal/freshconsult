@@ -2,6 +2,7 @@ require 'digest/md5'
 
 
 class Helpdesk::Ticket < ActiveRecord::Base 
+
   include ActionController::UrlWriter
   include TicketConstants
   include Helpdesk::TicketModelExtension
@@ -142,7 +143,17 @@ class Helpdesk::Ticket < ActiveRecord::Base
   named_scope :requester_completed, lambda { |user| { :conditions => 
     [ "requester_id=? and status in (#{STATUS_KEYS_BY_TOKEN[:resolved]}, #{STATUS_KEYS_BY_TOKEN[:closed]})",
       user.id ] } }
-  
+      
+  named_scope :permissible , lambda { |user| { :conditions => agent_permission(user)}  unless user.customer? }
+ 
+  def self.agent_permission user
+    
+    permissions = {:all_tickets => [] , 
+                   :group_tickets => ["group_id in (?) OR responder_id=?", user.agent_groups.collect{|ag| ag.group_id}.insert(0,0), user.id] , 
+                   :assigned_tickets =>["responder_id=?", user.id] }
+                  
+     return permissions[Agent::PERMISSION_TOKENS_BY_KEY[user.agent.ticket_permission]]
+  end
   #Sphinx configuration starts
   define_index do
     indexes :display_id, :sortable => true
@@ -190,8 +201,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
     self.source = TicketConstants::SOURCE_KEYS_BY_TOKEN[:portal] if self.source == 0
     self.ticket_type ||= account.ticket_type_values.first.value
     self.subject ||= ''
+    self.group_id ||= email_config.group_id unless email_config.nil?
     #self.description = subject if description.blank?
   end
+  
+  
   
   def to_param 
     display_id ? display_id.to_s : nil
@@ -224,6 +238,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def priority_name
     PRIORITY_NAMES_BY_KEY[priority]
+  end
+  
+  def priority_key
+    PRIORITY_TOKEN_BY_KEY[priority]
   end
 
   def create_activity(user, description, activity_data = {}, short_descr = nil)
@@ -269,6 +287,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   def conversation(page = nil, no_of_records = 5)
     notes.visible.exclude_source('meta').newest_first.paginate(:page => page, :per_page => no_of_records)
+  end
+
+  def conversation_count(page = nil, no_of_records = 5)
+    notes.visible.exclude_source('meta').size
   end
 
   def train(category)
@@ -424,10 +446,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       
       ticket_states.pending_since=Time.zone.now if (status == STATUS_KEYS_BY_TOKEN[:pending])
       ticket_states.set_resolved_at_state if (status == STATUS_KEYS_BY_TOKEN[:resolved])
-      
-      if (status == STATUS_KEYS_BY_TOKEN[:closed]) 
-        ticket_states.resolved_at ||= ticket_states.set_closed_at_state
-      end
+      ticket_states.set_closed_at_state if closed?
     end    
     ticket_states.save
   end
@@ -750,8 +769,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
 
     def create_deleted_activity
-      create_activity(User.current, 'activities.tickets.deleted.long',
+      if deleted
+        create_activity(User.current, 'activities.tickets.deleted.long',
          {'ticket_id' => display_id}, 'activities.tickets.deleted.short')
+      else
+        create_activity(User.current, 'activities.tickets.restored.long',
+         {'ticket_id' => display_id}, 'activities.tickets.restored.short')
+      end 
     end
   
     def create_assigned_activity

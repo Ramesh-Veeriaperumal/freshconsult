@@ -1,6 +1,10 @@
 class CapsuleCRM::Collection < Array
 
 
+  def initialize
+    super
+  end
+  
   # nodoc
   def initialize(klass, data)
     return if data.nil?

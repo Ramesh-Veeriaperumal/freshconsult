@@ -92,7 +92,7 @@ class Helpdesk::Note < ActiveRecord::Base
   
   def outbound_email?
     source == SOURCE_KEYS_BY_TOKEN["email"] && !incoming
-  end
+  end 
   
   def to_liquid
     { 
@@ -118,8 +118,8 @@ class Helpdesk::Note < ActiveRecord::Base
     def update_parent #Maybe after_save?!
       return unless human_note_for_ticket?
       
-      if user.customer?
-        unless notable.active?
+      if user.customer? 
+        unless notable.open?
           notable.status = Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open]
           notification_type = EmailNotification::TICKET_REOPENED
         end 

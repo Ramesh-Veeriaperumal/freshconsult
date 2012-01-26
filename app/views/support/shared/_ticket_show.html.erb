@@ -9,42 +9,128 @@
       });
     });	
 
-		function closeTicket(ticket_id)
-		{
-			jQuery.ajax({
-		      					type: 'POST',
-										url: '/support/tickets/close_ticket/'+ticket_id,
-										contentType: 'application/text',
-		      					success: function(data){											
-												if(data.success)
-												{
-													jQuery('#status_name_id').text(data.status).show("highlight", 500);
-													jQuery('#close_ticket_btn').css("display", "none");
-												
-												}								
-												//Need to show the message some where data.message
-										}
-					});	
-		}	
+	function closeTicket(ticket_id)
+	{
+		jQuery.ajax({
+  					type: 'POST',
+							url: '/support/tickets/close_ticket/'+ticket_id,
+							contentType: 'application/text',
+  					success: function(data){											
+								if(data.success)
+								{
+									jQuery('#status_name_id').text(data.status).show("highlight", 500);
+									jQuery('#close_ticket_btn').css("display", "none");
+								
+								}								
+								//Need to show the message some where data.message
+							}
+	    			});	
+	}	
+
+	show_ticket_props_form = function()
+	{
+		jQuery("#edit_button").hide();
+		jQuery("#ticket_props_form").show();	
+		jQuery("#ticket_props").hide();			
+	}	
+	
+	hide_ticket_props_form = function()
+	{
+		jQuery("#edit_button").show();
+		jQuery("#ticket_props_form").hide();	
+		jQuery("#ticket_props").show();	
+	}	
+    jQuery(document).ready(function(){
+      jQuery('#ticket_props_form').validate(); 
+    });
+	
   <%- end %>
 <% end %>
+
 <%= include_tiny_mce_if_needed %>
 <% content_for :sidebar do %>
-	<div class="sidepanel clearfix">
-	  <% if @ticket.responder && !@ticket.deleted %>
-  			<h4 class="title">Agent working on this ticket</h4>
-  			<%= user_avatar(@ticket.responder, :thumb)  %>
-  			<%= content_tag (:b, h(@ticket.responder.name)) %>			
+    <% if @ticket.responder && !@ticket.deleted %>
+		<div class="sidepanel clearfix">
+	  			<h4 class="title"><%=t('agent_working_on_this_ticket')%></h4>
+	  			<%= user_avatar(@ticket.responder, :thumb)  %>
+	  			<%= content_tag(:b, h(@ticket.responder.name)) %>			
+		</div>
   	<% end %>
-    <% current_portal.ticket_fields(:customer_visible).each do |field| %>
-      <% if field.visible_in_view_form? %>
-        <% 
-          field_value = (field.is_default_field?) ? @ticket[field.field_name] : @ticket.get_ff_value(field.name)
-          dom_type    = (field.field_type == "default_source") ? "dropdown" : field.dom_type
-        %>			  
-      <% end %>
-    <%end%> 
-	</div>
+	<%
+		has_visible_field = false;
+		has_editable_field = false;
+
+		current_portal.ticket_fields.each do |field|
+			field_value = (field.is_default_field?) ? @ticket[field.field_name] : @ticket.get_ff_value(field.name)
+			has_visible_field = true if (field.visible_in_view_form? && field.visible_in_portal && !field_value.blank?)
+			has_editable_field = true if (field.visible_in_view_form? && field.editable_in_portal)
+		end
+	%>
+	
+	<%if has_visible_field%>
+		<div id="ticket_" class="sidepanel clearfix">
+			<%if has_editable_field%>
+				<div class="floatr">
+					<%= link_to_function("Edit", "show_ticket_props_form()", :class => "uiButton" , :id => "edit_button")  %>
+				</div>
+			<%end%>
+			
+			<h4 class="border_title"><%=t('ticket.properties')%></h4>
+			
+			<div id="ticket_props">
+			   <ul class="cnt">
+				   <% current_portal.ticket_fields.each do |field| %>
+				     <% if (field.visible_in_view_form? && field.visible_in_portal)%>
+				       <% 
+				          field_value = (field.is_default_field?) ? @ticket[field.field_name] : @ticket.get_ff_value(field.name)
+				          dom_type    = (field.field_type == "default_source") ? "dropdown" : field.dom_type
+				       %>
+		          	   <%= construct_ticket_text_element :helpdesk_ticket, field, field.label_in_portal, dom_type, field.required, field_value %>
+		             <% end %>
+		           <% end %>
+			   </ul>
+		    </div>
+			
+			<%if has_editable_field%>	
+				<div id="ticket_props_form" style="display:none;">
+					<% form_for @ticket, :url => {:action => "update", :controller => "support/tickets"}, :html => { :id => 'portal_ticket_form' } do |f| %>
+					   <ul class="cnt">
+						   <% current_portal.ticket_fields.each do |field| %>
+						     <% if (field.visible_in_view_form? && field.editable_in_portal)%>
+						       <% 
+						          field_value = (field.is_default_field?) ? @ticket[field.field_name] : @ticket.get_ff_value(field.name)
+						          dom_type    = (field.field_type == "default_source") ? "dropdown" : field.dom_type
+						       %>
+				          	   <%= construct_ticket_element :helpdesk_ticket, field, field.label_in_portal, dom_type, field.required, field_value %>
+				             <% end %>
+				           <% end %>
+							<li class="button-container">
+								<%= link_to_function("cancel", "hide_ticket_props_form()", :class => "uiButton" )  %>
+								<%= f.submit t('update'), :class => "uiButton" %>
+							</li>
+									
+					       <% javascript_tag do %>  
+					         jQuery('#helpdesk_ticket_group_id')
+					           .bind("change", function(e){
+					             jQuery('#helpdesk_ticket_responder_id')
+					                     .html("<option value=''>...</option>");
+					             jQuery.ajax({
+					               type:        'POST',
+					               url: 		     '/helpdesk/tickets/get_agents/'+this.value,
+					               contentType: 'application/text',
+					               success:     function(data){
+					                               jQuery('#helpdesk_ticket_responder_id')
+					                                 .html(data);
+					                            }
+					             });
+					           });
+					       <% end %>
+					   </ul>
+					<% end %> 	   	
+				</div>
+			<%end%>
+		</div>
+	<%end%>
 <% end %>
 	
 <div class="request_details">

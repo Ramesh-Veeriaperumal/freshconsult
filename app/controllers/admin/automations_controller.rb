@@ -108,6 +108,9 @@ class Admin::AutomationsController < Admin::AdminController
           :domtype => 'email_select', :choices => agents },
         { :name => "send_email_to_requester", :value => t('send_email_to_requester'), 
           :domtype => 'email' },
+        { :name => 0, :value => "------------------------------" },
+        { :name => "delete_ticket", :value => t('delete_the_ticket')},
+        { :name => "mark_as_spam", :value => t('mark_as_spam')},
         { :name => 0, :value => "------------------------------" } ]
                         
       additional_actions.each { |index, value| action_hash.insert(index, value) }

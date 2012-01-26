@@ -109,7 +109,7 @@ module Reports::ConstructReport
  end
  
  def tkt_scoper
-   scoper.tickets
+   scoper.tickets.visible
  end
  
  def scoper

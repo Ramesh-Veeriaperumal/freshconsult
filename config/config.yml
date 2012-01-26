@@ -26,7 +26,7 @@ crm:
        api_key: "08a70b1b65d5775a1138db79ed84313b"
        domain:  "freshdesk-dev"
     production: 
-       api_key: "08a70b1b65d5775a1138db79ed84313b"
+       api_key: "7689a7f6686c7ad23037f9ad96e7c4cc"
        domain:  "freshdesk"
     staging:  
        api_key: "08a70b1b65d5775a1138db79ed84313b"

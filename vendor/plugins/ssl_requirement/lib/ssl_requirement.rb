@@ -44,19 +44,23 @@ module SslRequirement
     def ssl_allowed?
       (self.class.read_inheritable_attribute(:ssl_allowed_actions) || []).include?(action_name.to_sym)
     end
+    
+    def ssl_redirect_host
+      ## If the account has custom helpdesk URL configured then redirect him to the freshdesk full domain while applying SSL.
+      ## This will prevent the SSL errors the customers get.
+      current_account.main_portal.portal_url.blank? ? request.host : current_account.full_domain        
+    end  
 
   private
+  
     def ensure_proper_protocol
-      return true if !Rails.env.production? || ssl_allowed?
-
-      if ssl_required? && !request.ssl?
-        redirect_to "https://" + request.host + request.request_uri
+      ##  !current_portal.main_portal? - means if the account has multiple products configured then do not apply SSL ##
+      return true if !Rails.env.production? || ssl_allowed? || !current_portal.main_portal? 
+      
+      if ((ssl_required?  || current_account.ssl_enabled?) && !request.ssl?)       
+        redirect_to "https://" + ssl_redirect_host + request.request_uri
         flash.keep
         return false
-      #elsif request.ssl? && !ssl_required?
-        #redirect_to "http://" + request.host + request.request_uri
-        #flash.keep
-        #return false
       end
     end
 end

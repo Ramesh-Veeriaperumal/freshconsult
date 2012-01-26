@@ -30,6 +30,7 @@
 
 <% if logged_in? && current_user.has_manage_solutions? -%>
 	<div class="floatr">
+	    <%= link_to t('reorder'),'#', :id => "categories_reorder_button", :class => "uiButton" unless(@categories.size <= 1)%>
 		<%= link_to t('solution_category.new'), new_solution_category_path, :class => "uiButton" %>
 	</div>
 <%- end %>
@@ -37,7 +38,7 @@
 <div class="search-grey-box ignore-margin-20">
 	<%= render :partial => "/search/pagesearch", :locals => { :placeholder => t('solutions.search_all.placeholder'), :url => "/search/solutions?search_key=" } %>
 </div>
-<div class="clearfix solution-list">			
+<div class="clearfix solution-list" id="categories_list">			
 	<% @categories.each do |category| %>
 		<div class="<%= cycle('odd', 'even') %>">
 			<% if logged_in? && current_user.has_manage_solutions? -%>
@@ -66,7 +67,12 @@
 			   </li>
 			<% end %> 
 			</ul>
-			<%= content_tag (:span, t('solution_category.info2'), :class => "no_info_text") if (category.folders.size == 0)  %>
+			<%= content_tag(:span, t('solution_category.info2'), :class => "no_info_text") if (category.folders.size == 0)  %>
 		</div>
 	<%end%>
-</div> 
+</div>
+
+<% if logged_in? && current_user.has_manage_solutions? -%>	
+	<%= render :partial => "/shared/reorder_list", :locals => { :items => @categories,  :action_url => reorder_solution_categories_path, :title => :name, :container_id => "categories_sort", :reorder_id => "categories_reorder_button", :list_id => "categories_list"} %>
+<% end %>
+   
