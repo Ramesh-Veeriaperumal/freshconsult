@@ -59,62 +59,12 @@ Freshdesk.Widget.prototype={
 		}
 	},
 
-<<<<<<< HEAD
-	request:function(widget){
-		if(widget.resource == null){
-			if(widget.on_success != null){
-				widget.on_success();
-			}
-		} else {
-			var mt = widget.content_type || "application/json";
-			new Ajax.Request("/http_request_proxy/fetch",{
-				method: widget.method || "get",
-				parameters:{
-					domain:this.options.domain,
-					ssl_enabled:this.options.ssl_enabled,
-					resource:widget.resource,
-					content_type:mt,
-					cache_gets:this.options.cache_gets
-				},
-				postBody: widget.body, 
-				requestHeaders:{
-					Authorization:"Basic " + Base64.encode(this.options.username + ":" + this.options.password)
-				},
-				onSuccess:function(evt) {
-					if(widget != null && widget.on_success != null){
-						widget.on_success(evt.responseJSON);
-					}
-				},
-				onFailure:function(evt){
-					if(widget != null && widget.on_failure != null){
-						widget.on_failure(evt);
-					}
-					this.resource_failure(evt, this);
-				}
-			});
-		}
-	},
-
-	submit_data:function(data){
-		//alert("data "+data);
-		var params=Form.serialize(data);
-		params+="&domain="+this.options.domain+"&ssl_enabled="+this.options.ssl_enabled;
-		if(this.options.ticket_id){
-			params+="&ticket_id="+this.options.ticket_id;
-		}
-		if(params.indexOf("content_type=")===0){
-			var mt=this.options.content_type||"application/xml";
-			params+="&content_type="+mt;
-		}
-
-=======
 	request:function(reqData){
 		reqData.domain = this.options.domain;
 		reqData.ssl_enabled = this.options.ssl_enabled;
 		reqData.cache_gets = this.options.cache_gets;
 		reqData.accept_type = reqData.accept_type || reqData.content_type;
 		reqData.method = reqData.method || "get";
->>>>>>> time_tracking
 		new Ajax.Request("/http_request_proxy/fetch",{
             asynchronous: true,
 			parameters:reqData,
