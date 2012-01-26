@@ -6,7 +6,7 @@ SPAM_CONVERSATIONS_THRESHOLD = 20
 namespace :spam_watcher do
   desc 'Check for abnormal activities and email us, if needed'
   task :ticket_load => :environment do
-    puts "Check for abnormal activities started at ddddddddddddddddd #{Time.now}"
+    puts "Check for abnormal activities started at #{Time.now}"
     check_tickets('helpdesk_tickets', 'requester_id', SPAM_TICKETS_THRESHOLD)
     check_tickets('helpdesk_notes', 'user_id', SPAM_CONVERSATIONS_THRESHOLD)
   end
@@ -39,7 +39,7 @@ def check_tickets(table,column_name, threshold)
   eos
   puts query_str
   requesters = ActiveRecord::Base.connection.select_values(query_str)
-  puts "The accounts which are having abnormal load in '#{table}' are #{requesters}"
+  puts "The requesters which are having abnormal load in '#{table}' are #{requesters}"
   
   unless requesters.empty?
     deliver_spam_alert(table, requesters, query_str) 
