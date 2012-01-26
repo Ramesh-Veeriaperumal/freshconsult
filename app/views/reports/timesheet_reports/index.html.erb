@@ -17,15 +17,15 @@
   <% form_tag({:action => :export_csv}, { :method => :post, :id => 'report_filters' }) do %>
     <ul class="ui-form">
       <li>
-        <label>Customers</label>  
+        <label><%=t('helpdesk.time_sheets.customer')%></label>  
         <%= select_tag :customer_id, options_for_select(current_account.customers.collect{|c|[c.name, c.id]}, @customer_id), { :multiple => true, :class => "customSelect auto" } %>
         	     
-        <label>Agents</label>	
+        <label><%=t('helpdesk.time_sheets.agent')%></label>	
     	  <%= render :partial => "/helpdesk/tickets/containers/multi_select", :locals => { :options => current_account.users.technicians.collect{|c|[c.id , c.name]}, :name =>:user_id, :selected_val => @user_id  } %>
        
-        <label>Billing type</label>
+        <label><%=t('helpdesk.time_sheets.billing_type')%></label>
       	<%= render :partial => "/helpdesk/tickets/containers/multi_select", :locals => { :options => Helpdesk::TimeSheet::BILLABLE_HASH, :name => :billable, :selected_val =>(@billable.eql?([true,false]) ? "" : @billable)  } %>
-		<label>Group By</label>
+		<label><%=t('helpdesk.time_sheets.group_by')%></label>
 		<%=select_tag :group_by , options_for_select(Helpdesk::TimeSheet::GROUP_BY_ARR) %>
 		
 	  </li> 

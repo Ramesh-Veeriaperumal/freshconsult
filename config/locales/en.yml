@@ -1319,6 +1319,11 @@ en:
       hours: Hours
       agent: Agent
       note: Note
+      billing_type: Billing Type
+      group_by: Group By
+      report:
+        no_timeentry: "No time sheet record found"
+        total: Total
     tags:
       index:
         title: Tags
