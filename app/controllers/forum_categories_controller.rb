@@ -1,5 +1,6 @@
 class ForumCategoriesController < ApplicationController
   include ModelControllerMethods
+  include Helpdesk::ReorderUtility
   
   before_filter :except => [:index, :show] do |c| 
     c.requires_permission :manage_forums
@@ -44,8 +45,10 @@ class ForumCategoriesController < ApplicationController
 
     respond_to do |format|
       format.html 
-      format.xml  { render :xml => @forum_category.to_xml(:include => :forums) }
-      format.json  { render :json => @forum_category.to_json(:include => :forums) }
+      format.xml  { render :xml => @forum_category.to_xml(:include => fetch_forum_scope) }
+      format.json  { render :json => @forum_category.to_json(
+                              :except => [:account_id,:import_id],
+                              :include => fetch_forum_scope) }
       format.atom 
       
      
@@ -62,9 +65,9 @@ class ForumCategoriesController < ApplicationController
         else
           render :action => 'show'
         end
+      end
     end
-  end
-  end
+  end  
     
   protected
   
@@ -78,6 +81,14 @@ class ForumCategoriesController < ApplicationController
       current_account.forum_categories
     end
     
+    def reorder_scoper
+      scoper
+    end
+    
+    def reorder_redirect_url
+      categories_path
+    end
+    
     def portal_category?
       wrong_portal unless(main_portal? || 
             (params[:id] && params[:id].to_i == current_portal.forum_category_id))
@@ -85,6 +96,16 @@ class ForumCategoriesController < ApplicationController
     
     def set_selected_tab
       @selected_tab = :forums
+    end
+    
+    def fetch_forum_scope
+      if current_user && current_user.has_manage_forums?
+      :forums
+     elsif current_user
+      :user_forums
+     else
+      :portal_forums 
+     end
     end
     
 end

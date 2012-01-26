@@ -1,431 +1,1503 @@
-pl:
-   meta:
-     language_name: 'Polish'
-   edit: "Edycja"
-   back: "Wstecz"
-   delete: "Usuń"
-   create: "Utwórz"
-   cancel: "Anuluj"
-   title: "Tytuł"
-   message: "Wiadomość"
-   description: "Opis"
-   add_a_topic: "Rozpocznij nowy wątek"
-   no_topics_text: "Brak tematów na forum"
-   connect_ticket: "Połącz ze zgłoszeniem"
-   posted_by: "Zamieszczone przez"
-   reply_topic: "Odpisz na temat"
-   comments: "Komentarze"
-   formatting_help: "Formatting Help"
-   save_reply: "Zapisz odpowiedź"
-   save:    "Zapisz"
-   save_changes: "Zapisz zmiany"
-   created_on: "Utworzone"
-   asked_on: "Wysłane"
-   delete_topic_msg: "Usuń ten wątek"
-   no_forum_category: "Brak forum w tej kategorii"
-   add_new_forum: "dodaj nowe forum"
-   edit_forum_category: "Edytuj kategorię forum"
-   forum_confirm_msg1: "Czy na pewno chcesz usunąć tą kategorię?"
-   next:    "Następny"
-   close: "Zamknij"
-   done: "Zrobine"
-   reset: "Reset"
-   deactivate: "deaktywuj"
-   activate: "aktywuj"
-   add: "Dodaj"
-   change: "Zmień"
-   name: "Nazwa"
-   save_and_create: "Zapisz i utwórz kolejny"
-   attach_files: "Dodaj pliki"
-   update: "Aktualizuj"
-   to_do: "Lista zadań"
-   add_to_do: "Dodaj do listy zadań"
-   activities: "Działania"
-   undelete: "Cofnij usunięcie"
-   recent_activity: "Ostatnie aktywności"
-   
-   
-   sla_policy: 
-       title: "Polityka SLA"
-       title1: "Polityki SLA"
-       select_policy: "Wybierz regułę"
-       edit: "Edytuj regułę SLA"
-       new: "Nowa reguła SLA"
-       sla_targets: "Cele SLA"
-       tickets_with: "Zgłoszenie z"
-       response_time: "Czas reakcji"
-       resolution_time: "Czas rozwiązania"
-       escalate_to: "Eskaluj do"
-       override: "Nadpisz"
-       info1: "Reguła SLA definiuje oczekiwane czasy reakcji i rozwiązania w oparciu o priorytet zgłoszenia. Definiowanie poziomów usług w oparciu o priorytety jest najcześciej stosowaną praktyką. Twoja polityka SLA może być bardzo prosta, np. zawierać się w zdaniu “Zgłoszenia o wysokim priorytecie powinny być rozwiązywane w ciągu 2 godzin”."
-       info2: "Freshdesk wykorzystuje Politykę SLA aby określić “Czas rozwiązania” zgłoszeń. Możesz stosować domyślne SLA dla wszystkich swoich klientów, ale jeśli masz klienta, który wymaga szybszych czasów reakcji i rozwiązania, zawsze możesz utworzyć dla tego klienta dedykowaną politykę SLA."
-       info3: "Polityki SLA działają w połaczeniu z Godzinami pracy."
-       
-   tag:
-     title: "Tagi"    
-   
-   company:
-       title: "Firmy"
-       new: "Nowa firma"
-       edit: "Edytuj firmę"
-       name: "Nazwa firmy"
-       quick_company: "Szybka firma"
-       info1: "Czy na pewno chcesz usunąć tą firmę?"
-       info2: "Nazwa domeny dla firmy"
-       info3: "Dodaj notaki dla kontaktu"
-       info4: "Dodaj notatkę o %{name}"
-       info5: "Dodaj notatki dla tej firmu"
-       info6: "Ludzie w %{name}"
-       info7: "Brak zgłoszeń od osób z tej firmie"
-       info8: "Więcej informacji o firmie, jak adres, telefon, strona internetowa itd."
-       info9: "Freshdesk automatycznie połączy kontakty do tej firmy, jeśli w adrsie email będzie ta sama domena"
-       
-   
-   ticket:
-       unassigned: "Nieprzydzielony"
-       assigned_to: "Przydzielony do"
-       status: "Status"
-       singular: "Zgłoszenie"
-       edit: "Edytuj zgłoszenie"
-       requester: "Zgłaszający"
-       subject: "Temat"
-       type: "Typ"
-       status: "Status"
-       group: "Grupa"
-       assigned_to: "Przydzielone do"
-       priority: "Priorytet"
-       properties: "Właściwości zgłoszenia"
-       suggest_solutions: "Sugeruj rozwiązania"
-       execute_scenario: "Wykonaj scenariusz"
-       requestor_info: "Dane zgłaszającego"
-       due_by_time: "Data realizacji"
-       source: "Źródło"
-       recent_tickets: "Ostatnie zgłoszenia"
-       to_do: "Zgłoszenia do realizacji"
-       activity: "Aktywność"
-       unflag_spam: "Spam nieoznaczony"
-       flag_spam: "Oznacz spam"
-       pick_up: "Podejmij"
-       assign_to_agent: "Przydziel do agenta"
-       sort_by: "Sortowanie według"
-   
-   contacts:
-       edit: "Edytuj kontakt"
-       new: "Nowy kontakt"
-       showing: "Wyświetla"
-       import_csv: "Importuj zgłaszających z plku CSV"
-       title: "Kontakty"
-       quick_contact: "Szybki kontakt"
-       save_changes: "Zapisz zmiany"
-       edit_contact: "Edytuj kontakt"
-       working: "Pracuje"
-       info1: "Czy na pewno chcesz usunąć ten kontakt?"
-       info2: "Przekształć tego użytkownika w agenta"
-       info3: "Dodatkowe informacje dla %{nick_name}"
-       info4: "Ostatnie zgłoszenia dla %{nick_name}"
-       info5: "Użytkownik nie zarejestrował jeszcze żadnych zgłoszeń"
-       deleted_message:     "To jest usunięty kontakt"
-       restore:             "Przywróć"
-       emailnotverified:    "Email tego użytkownika nie został jeszcze zweryfikowany!"
-       form_placeholder:
-           description:     "Dodaj dodatkowe informacje dla tego kontaktu, np. adres, fan Lecha Poznań itd."
-      
+pl: 
+  meta:
+   language_name: Polish
+  attachment_help_info: Rozmiar załącznika(-ów) nie może przekraczać 20 MB
+  feedbackwidget_offset_info: Przesunięcie jest to odległość (w pikselach) przycisku widżeta od lewej lub górnej krawędzi ekranu, w zależności od wybranego wyrównania.
+  no_twitter_handle: Skonfiguruj przynajmniej jedno konto Twitter
+  reset_my_password: Zresetuj moje hasło 
+  assign: Przydziel
+  signup: zarejestruj się
+  trial_expired_on: Twoja wersja próbna wygasła w dniu
+  upgrade_trial: Dokonaj upgrade'u swojej wersji próbnej!
+  add_note: Dodaj notatkę
+  contact_name: Nazwa kontaktu
+  eight: 8 godziny
+  security_code: Kod bezpieczeństwa
+  example: przykład
+  pending: Oczekujące
+  twitter_source: Twitter
+  facebook_source: Facebook
+  working: Pracuje
+  attachment: Załącznik
+  attachments: Załączniki
+  show_quoted_text: Pokaż cytowany tekst
+  cancel_my_account: Anuluj moje konto
+  resolved_on_time: Rozwiązane terminowo
+  resolved_late: Rozwiązane późno
+  remove: Usuń
+  user: 
+    company: Firma
+    photo: Zdjęcie
+    title: Tytuł
+    info1: Zdjęcie profilowe osoby będzie najlepsze, jeśli wysokość i szerokość zdjęcia bedzie taka sama
+    back_info: Informacje dodatkowe
+    mobile: Tel. komórkowy
+    twitter_id: Id Twittera
+    full_name: Pełna nazwa
+    secondary: drugi
+    phone_no: Nr telefonu
+    work: Praca
+    email: E-mail
+  ticket_fields:
+    fields:
+      source: Źródło
+      subject: Temat
+      requester: Zgłaszający
+      status: Status
+      group: Grupa
+      agent: Agent
+      priority: Priorytet
+      description: Opis
+      product: Produkt
+      ticket_type: Typ
+    customizer_js:
+      untitled: Bez tytułu
+      first_choice: Pierwszy wybór
+      second_choice: Drugi wybór
+      confirm_delete: Czy na pewno chcesz usunąć to pole?
+      no_choice_message: Dostępny musi być przynajmniej jeden prawidłowy wybór
+    index: 
+      number: Numer
+      add_custom_field: Dodaj pole niestandardowe
+      customize_form: Dostosuj swój formularz \"Nowe zgłoszenie\".
+      single_line: Tekst w pojedynczym wierszu
+      title: Pola zgłoszenia
+      paragraph: Tekst akapitu
+      checkbox: Pole wyboru
+      save: Zapisz pola zgłoszenia
+      drag_drop_intro: Aby dodać nowe niestandardowe pole, przeciągnij i upuść dowolny typ pola na formularzu „Nowe zgłoszenie” umieszczonym poniżej.
+      dropdown: Rozwijana lista
+    formfield_props: 
+      label: Etykieta pola
+      add_new_choice: Dodaj nowy wybór
+      customer_mandatory: Obowiązkowe, aby możliwe było wysłanie zgłoszenia
+      customer_edit: Może edytować pole
+      agent_info1: Pole nie może być puste podczas wysyłania zgłoszenia
+      agent_info2: Pole nie może być puste podczas zamykania zgłoszenia
+      agent_mandatory_submission: Obowiązkowe, aby możliwe było wysłanie
+      customer_info1: Pole nie może być puste podczas wysyłania zgłoszenia on-line.
+      for_agents: Dla agentów
+      dropdown_choices: Wybory na rozwijanej liście
+      label_in_portal: Etykieta w portalu
+      customer_visible: Widoczne dla klientów
+      description: Opis
+      for_customer: Dla klientów
+      agent_mandatory_closure: Obowiązkowe, aby możliwe było zamknięcie
+      choices: Wybory
+      label_in_portal_info: Etykieta, która jest wyświetlana w Twoim portalu samoobsługowym
+  folder: 
+    edit: Edytuj folder
+    info1: Czy na pewno chcesz usunąć ten folder
+    add_folder: Dodaj folder
+  amount_per_month: "$%{amount} na miesiąc"
+  agent_deleted_message: Ten agent został usunięty
+  cancel: Anuluj
+  last: ostatni
+  agent_emailnotverified: Email nie został zweryfikowany dla tego agenta
+  agent_assigned_info: Brak otwartych i oczekujących zgłoszeń dla tego agenta
+  basic_details: Zarządzanie odpowiedziami e-mail, Reguły dyspozytora, Domyślna polityka SLA, Baza wiedzy, Portal samoobsługowy, Mapowanie domeny, Wsparcie poprzez portale społecznościowe
+  choose_plan: Wybierz plan
+  create: Utwórz
+  feedbackwidget_custom_image_info: jeśli używasz niestandardowego obrazu, kolor i tekst będą ignorowane.
+  account_admin_updated: Administrator konta został zmieniony!
+  forums_order: 
+    overview: Przeglądaj
+    recent: Ostatnio używane
+    popular: Popularne
+  payment_info: Informacje o płatności
+  admin:
+    widget_config:
+      index:
+        thankyou_label: Wyślij wiadomość
+        thankyou_default: Dziękujemy za opinię
+        thankyou_info: Wiadomość wyświetlana po wysłaniu przez użytkownika formularza zgłoszenia
+    supervisor_rules:
+      index:
+        help_title: Supervisor
+        title: Kierownik - Reguły
+        help_info_1: Używaj funkcji Supervisor, aby okresowo sprawdzać ostatnie zgłoszenia i wykonywać pewne uwarunkowane czasem działania, takie jak wysyłanie przypomnień do klientów, eskalowanie zgłoszeń, ponowne przydzielanie zgłoszeń itp.
+        help_info_2: Na przykład - jeśli zgłoszenie czeka na odpowiedź klienta przez ponad 24 godziny, wyślij do klienta wiadomość e-mail z przypomnieniem lub Automatycznie zamknij zgłoszenie, które ma status „Rozwiązane” przez ponad 48 godzin.
+        help_info_3: Funkcja Supervisor będzie uruchamiana co godzinę i będzie przetwarzać zgłoszenia, które były aktualizowane w ciągu ostatnich 30 dni.
+        help_info_4: Reguły funkcji Supervisor są przetwarzane sekwencyjnie, więc ważna jest ich kolejność. Reguła może spowodować pewne działania, które wywołują kolejne reguły.
+      new:
+        title: Supervisor - Nowa reguła
+      edit:
+        title: Kierownik - Edycja reguły
+    shared:
+      filter_jsinit:
+        insert_placeholder: Wprowadź przykładowy tekst
+        body: Treść
+        to: Do
+        selected: Wybrano
+        not_selected: Nie wybrano
+    automations:
+      edit:
+        title: Edytuj scenariusz
+    security: 
+      index: 
+        shared_secret: Wspólny Sekret
+        remote_login_url: Adres URL zdalnego zalogowania
+        shared_secret_info: Skopiuj ten token i przechowuj go w bezpieczny sposób. Jest potrzebny, aby aktywować Zdalne uwierzytelnianie. Jest to wspólny sekret Twój i systemu Freshdesk.
+        remote_logout_url_info: To jest adres URL, do którego system Freshdesk będzie przekierowywał użytkowników po kliknięciu łącza Wylogowanie w systemie Freshdesk.
+        remote_login_url_info: To jest adres URL, do którego system Freshdesk będzie przekierowywał użytkowników w celu dokonania uwierzytelnienia, gdy będą próbować uzyskać dostęp do systemu Freshdesk.
+        enable_sso_info: Funkcja jednorazowego logowania umożliwia użycie Twojej własnej aplikacji lub zcentralizowanego serwera (np. MS Active Directory) w celu uwierzytelniania agentów i klientów, tak aby mogli uzyskiwać dostęp do systemu Freshdesk bez wprowadzenia oddzielnej nazwy użytkownika i hasła.
+        enable_sso: Włącz Jednorazowe logowanie
+        remote_logout_url: Adres URL zdalnego wylogowania
+        remote_authentication: Zdalne uwierzytelnienie
+    products: 
+      new: 
+        title: Nowy produkt
+      portal: 
+        select_forum_category: Wybierz kategorię forum...
+        portal_rebranding: Rebranding portalu
+        cname_configure_info: Przed użyciem tego pola upewnij się, że utworzyłeś w swoim pliku strefy DNS rekord CNAME DNS dla <strong>help.<b id="domain_info_name">mycompanyname</b>.com</strong> wskazujący na nazwę %{full_domain}. Twój webmaster lub administrator serwera powinien być w stanie pomóc Ci skonfigurować to prawidłowo.
+        select_solution_category: Wybierz kategorię forum...
+        top_level_solution_info: Możesz powiązać kategorię rozwiązań z tym produktem. Wszystkie inne rozwiązania będą niewidoczne dla klientów podczas wyświetlania karty Rozwiązania na portalu tego produktu.
+        portal_settings: Ustawienia portalu
+        portal_name_info: Nazwa w Twoim portalu produktu będzie wyświetlana obok logo nagłówka.
+        top_level_forum_info: Możesz powiązać kategorię forum z tym produktem. Wszystkie inne fora będą niewidoczne dla klientów podczas wyświetlania karty fora na portalu tego produktu.
+        top_level_forum: Kategoria najwyższego poziomu forum
+        portal_url: Adres URL portalu
+        top_level_solution: Kategoria najwyższego poziomu rozwiązań
+        portal_name: Nazwa portalu
+      edit: 
+        title: Edytuj produkt
+      form: 
+        configure_seperate_portal: Skonfiguruj oddzielny portal dla tego produktu
+        enable_product_portal: Aktywuj portal produktu
+        enter_support_email_id: Twój adres e-mail wsparcia
+        configure_email: Skonfiguruj adres e-mail
+        product_name: Nazwa produktu
+      product:
+        email_not_verified: Niezweryfikowany adres e-mail  
+        delete: Czy na pewno chcesz usunąć ten produkt?
+      index: 
+        title: Produkty        
+        add_product: Dodaj produkt
+    canned_responses:
+      ca_response:
+        delete_confirm: Czy na pewno chcesz usunąć ten szablon odpowiedzi?
+      new: 
+        title: Dodaj szablon odpowiedzi        
+      edit: 
+        title: Edytuj szablon odpowiedzi
+      form: 
+        groups: Agentów w grupie
+        response_name: Tytuł odpowiedzi
+        all_agents: Wszyscy agenci
+        me_only: Tylko ja
+        available_for: Dostępne dla
+      index: 
+        new: Dodaj szablon odpowiedzi
+        title: Szablony odpowiedzi
+    twitters:
+      index:
+        new: Dodaj konto Twitter
+        title: Konta Twitter
+        search_keys: Szukaj słów kluczowych
+        add_search: Dodaj wyszukiwanie
+      search:
+        name: Nazwa wyszukiwania
+        search_key: Zapytanie
+        screen_name: Konto Twitter
+        add_key: Dodaj zapytanie
+        edit_key: Edytuj zapytanie
 
-   category:
-        new: "Nowa kategoria"
-        edit: "Edytuj kategorię"
-        
-   forum: 
-      title: "Fora"
-      new:  "Nowe forum"
-      type: "Typ forum"
-      edit: "Edytuj forum"
-      verb:
-          questions:     "Pytania zadane przez"
-          ideas:         "Pomysł podany przez"
-          problems:      "Problem zgłoszony przez"  
-          announcement:  "Ogłoszone przez"
-      confim_msg1: "Czy na pewno chcesz usunąć to forum?"
-      start_topic: "Rozpocznij wątek"
-   topic:   
-     new: "Nowy wątek"
-     post: "Wyślij"
-     name: "Nazwa wątku"
-     sticky: "Przyczepiony"
-     locked: "Zablokowany"
-     edit: "Edytuj wątek"
-     msg1: "Komentowanie tego wątku jest zablokowane"
-     open: "Otwórz dyskusję ponownie"
-     close: "Zamknij dyskusję"
-     reply: "Odpowiedz"
-     
-     
-   account:
-       rebrand: "Rebrenduj swój helpdesk"
-       name: "Nazwa konta"
-       time_zone: "Strefa czasowa"
-       helpdesk_name: "Nazwa helpdesku"
-       helpdesk_url:  "Adres URL helpdesku"
-       info1: "Użyj tego pola aby zdefiniować mapowanie zewnętrznej domeny do Freshdesk"
-       info2: "Zanim zastosujesz to pole, upewnij sie, że utworzony został rekord CNAME DNS i twoim pliku strefy DNS, przekierowujący domenę support.mmycompanyname.com na %{full_domain}. Twój webmaster lub administrator serwera powinien pomóc ci w poprawnej konfiguracji"
-       info3: "Ustaw kolory domyślne"
-       info4: "Licznik zgłoszeń zacznie się od tego numeru (powinien być większy niż nr ostatniego utworzonego zgłoszenia). Zmiana będzie miała wpływ na wszystkie przyszłe zgłoszenie."
-       page_colors: 
-               title: "Kolory strony"
-               header: "Nagłowek"
-               tab_color: "Kolor zakłądki"
-               background: "Tło"
-       save: "Save changes"   
-       cancel: "Anuluj i wróc" 
-       active_since: "Aktywne od"
-   email_configs:
-           title: "Ustawienia email"
-           info1: "Twoi użytkownicy wysyłają emaile na adres"
-           info2: "Musisz przekierować twoje emaile na unikalny adres"
-           info3: "Freshdesk pobierze te emaile i skonwertuje na zgłoszenia"
-           info4: "Jeśli wspierasz kilka produktów, możesz dodać do każdego z obsługi każdego z nich osobny email"
-           info5: "W odpowiedzi system Freshdesk będzie w polu Od podawał główny adres email wsparcia"
-           info6: "Wprowadź adres email wsparcia"
-           info7: "To jest również twój adres zwrotny" 
-           info8: "Przekaż pocztę do"
-           info9: "Przydziel do grupy"
-           info10: "Nowe zgłoszenia na ten adres email będą automatycznie przydzielane do grupy"
-           info11: "Skonfiguruj adres email dla wiadomości przychodzących i wychodzących"
-           info12: "Dodaj dodatkowy adres email"
-           info13: "Adres email twojego wsparcia to"
-           info14: "Każdy email wysłany na ten adres zostanie skonwertowany do zgłoszenia"
-           info15: "Musisz przekierować te emaile do"
-           info16: "Zgłoszenia zostaną przydzielone do"
-           supp_email_add: "Adres email wsparcia"
-           make_primary: "Ustaw jako główny"
-           change_this: "Zmień to"
-           primary_supp_email: "Główny adres email wsparcia"
-           add_supp_emails: "Dodatkowe adres email wsparcia"
-           reply_emails: "Emaile z odpowiedzią od Freshdesk"
-           
-   
-   email_notifications:
-           title: "Powiadomienia email"
-           event: "Zdarzenie"
-           requestor_notification: "Powiadomienia do zgłaszającego"
-           agent_notification: "Powiadomienia dla agenta"
-           customize_email: "Dostosuj szablon emaila"
-           insert_placeholder: "Wprowadź przykładowy tekst"
-           modify_template: "Modyfikacja szablonu zgłoszenia"
-   dispatch:
-        title: "Dyspozytor"
-        edit: "Dyspozytor - Edycja reguły" 
-        new: "Dyspozytor - Nowa reguł"
-        rule_name: "Nazwa reguły" 
-        info1: "Zgłoszenia związane z subskrypcją"
-        info2: "Wszystkie powiązane zgłoszenia zostaną przypisane do Suzan"
-        info3: "Kiedy ta reguła powinna być aplikowana"   
-        info4: "Dyspozytor automatycznie przekaże nowoutworzone zgłoszenia w opaciu o zdefiniowane reguły i akcje"
-        info5: "Pamiętaj, kolejność reguł ma znaczenie. Po nadejściu zgłoszenie, dyzpozytor wykona pierwszą pasującą regułę i zatrzyma swoje działanie"
-        add_condition: "Dodaj nowy warunek"
-        act_to_perform: "Akcje do wykonania"
-        add_new_action: "Dodaj nową akcę"
-        match_any: "Dopasuj dowolną"
-        match_all: "Dopasuj wszystkie"
-        add_new_choice: "Dodaj nowy warunek"
-        reorder: "Uporządkuj"
-        new_rule: "Nowa reguła"
-        dispatch_rules: "Dyspozytor - Reguły"
-        inactive_rules: "Reguły nieaktywne"
-   agent:
-       title: "Agenci"
-       edit: "Edytuj agenta"
-       new: "Nowy agent"
-       update: "Aktualizuj"
-       restore: "Przywróć"
-       view_user: "Podgląd użytkownika"
-       make_admin: "Zmień tego agenta w administratora"
-       signature: "Podpis"
-       add_signature: "Doda podpis"
-       info1: "Ten agent został usunięty"
-       info2: "Email już został wykorzystany"
-       info3: "Czy na pewno chcesz to usunąć?"
-   
-   group:
-       title: "Grupy"
-       edit: "Edycja grupy"
-       name: "Nazwa grupy"
-       new: "Nowa grupa"
-       select_agents: "Wybierz agentów"
-       info1: "Agenci w tej grupie"
-       info2: "Brak agentów przypisanych do tej grupy"
-       info3: "Wyślij email eskalujący do"
-       info4: "jeśli zgłoszenie pozostaje nieprzypisane przez więcej niż"
-       info5: "Czy na pewno?"
-  
-      
-       
-   user:
-      full_name: "Pełna nazwa"
-      email: "Email"
-      title: "Tytuł"
-      phone_no: "Nr telefonu"
-      work: "Praca"
-      mobile: "Tel. komórkowy"
-      photo: "Zdjęcie"
-      company: "Firma"
-      twitter_id: "Id Twittera"
-      secondary: "drugi"
-      back_info: "Informacje dodatkowe"
-      info1: "Zdjęcie profilowe osoby będzie najlepsze, jeśli wysokość i szerokość zdjęcia bedzie taka sama"
-      
-   solution:
-       title: "Rozwiązania"
-       add:   "Dodaj rozwiązanie"
-       edit: "Edytuj rozwiązanie"
-       add_new_solution: "Dodaj nowe rozwiązanie"
-       type: "Typ rozwiązania"
-       status: "Status rozwiązania"
-       info1: "Rozwiązania w Freshdesk stanowią twoją bazę więdzy"
-       info2: "Rozwiązania mogą być <b>publiczne</b> lub <b>prywatne</b>. Rozwiązania publiczne są widoczne na portalu samoobsługowym oraz pojawiają się w wynikach wyszukiwania"
-       info3: "Rozwiązania prywatne są dostępne tylko dla agentów i wykorzystywane do wewnętrznego współdzielenia wiedzy"
-       info4: "Drzewo rozwiązań zbudowane jest na 3 poziomach hierarchi - <b>Kategoria --> Folder --> Artykuł</b>"
-       info5: "Rozwiązania mogą byc dwóch rodzajów - <b>Rozwiązanie tymczasowe(Workaround)</b> lub <b>Trwałe (Permanent)</b>"
-       info6: "Rozwiązanie może mieć status <b>Robocze</b>, kiedy nad nim pracujesz. Zostanie zmienione na <b>Opublikowane</b>, jak tylko zostanie dokończone i przeglądnięte"
-       info7: "Brak rozwiązań w tym folderze"  
-       info8: "Czy na pewno chcesz usunąć to rozwiązanie"
-       info9: "Publiczne (Będzie dostępne na portalu samoobsługowym)"
-       info10: "Prywatne (Dostępne tylko dla agentów)"
-       
-       
-   solution_category:
-        edit: "Edytuj kategorię"  
-        new: "Nowa kategoria"
-        save_and_create: "Zapisz i utwórz kolejną" 
-        info1: "Czy na pewnoe chcesz usunąć tą kategorię"
-        info2: "Brak folderów w tej kategorii"
-   
-   folder:
-       add_folder: "Dodaj folder"
-       edit: "Edytuj folder"
-       info1: "Czy na pewno chcesz usunąć ten folder"
-        
-   business_hours:
-       title: "Godziny pracy"
-       holidays: "Dni wolne"
-       helpdesk_hours: "Godziny pracy helpdesk"
-       info1: "Zdefiniowanie godzin pracy w systemie Freshdesk pozwala ci lepiej kontrolować reguły SLA, np.: jeśli helpdesk pracuje od 9 do 18, od poniedziałku do piątku i klient wyśle zgłoszenie o wysokim priorytecie we wtorek o 16:00, z czasem rozwiązania 4 godziny, wtedy czas realizacji zostanie ustawiony na środę, na godzinę 11:00. Możesz skonfigurować reguły SLA by respektowały godziny pracy lub były od nich niezależne"
-       info2: "Dni wolne działają podobnie jak godziny pracym np.: jeśli twój helpdesk pracuje od 9 do 18, od poniedziałku do piątku, i klient wyśle zgłoszenie w piątek o 20:00, z czasem rozwiązania w 24 godziny, wtedy czas rozwiązania zostanie ustawiony na 9 rano we wtorek (a nie w sobotę na 20:00)"
-       info3: "Szczególowe godziny pracy"
-       info4: "Dni pracy twojego helpdesku"
-       info5: "Dni wolne zostaną zignorowane przy kalkulacji SLA dla zgłoszenia"
-       holiday_list: "Lista corocznych dni wolnych"
-       holiday_name: "Nazwa dnia"
-       holiday_added: "Wybrany dzień już został dodany"
-       
-       
-   automations:
-        title: "Automatyzacje scenariuszy"
-        new:  "Nowy scenariusz"
-        reorder: "Uporządkuj"
-        info1: "Każdy helpdesk wykorzystuje zbiór często powtarzalnych scenariuszy - np.: eskaluj do poziomu drugiego, przydziel do grupy QA, przekaż do departamentu sprzedaży itp. Zwykle zgłoszenia ten angażują wiele zmian w zgłoszeniu"
-        info2: "Np., zanim zgłoszenie zostanie przydzielone do grupy QA będziesz chciał ustawić typ zgłoszenia jako błąd, potem przydzielić do grupy QA i wysłać powiadomienie do menedżera o nowym błędzie"
-        info4: "Wybierz poniższe teksty aby nadpisać zawartość emaila i one zostaną skonwertowane do właściwych danych"
-        info5: "Przydziel do kolejki QA"
-        info6: "Oznacz zgłoszenie jako Błąd i przydziel do QA"
-        info7: "Akcje do wykonania"
-        info8: "Dodaj nową akcję"
-        available_placeholders: "Dostępne teksty"
-  
+      change:
+        edit_twitter :  Edytuj konto Twitter
+        capture_mention: Przekonwertuj publiczne wpisy (ang. public mentions) na zgłoszenia       
+        capture_dm: Przekonwertuj bezpośrednie wiadomości na zgłoszenia
+        screen_name: Nazwa ekranu
+        default_group : Grupa domyślna       
 
-  
-    
-   
-          
-        
-   profile:
-       edit: "Edytuj profil" 
-       change_password  : "Zmien hasło"
-       current_password : "Aktualne hasło"
-       new_password     : "Nowe hasło"
-       confirm_password : "Potwierdź hasło"
-       
-   datetime:
-    distance_in_words:
-      half_a_minute: "pół minuty"
-      less_than_x_seconds:
-        one:   "mniej niż sekundę"
-        few:   "mniej niż %{count} sekundy"
-        other: "mniej niż %{count} sekund"
-      x_seconds:
-        one:   "1 sekunda"
-        few:   "%{count} sekundy"
-        other: "%{count} sekund"
-      less_than_x_minutes:
-        one:   "mniej niż minutę"
-        few:   "mniej niż %{count} minuty"
-        other: "mniej niż %{count} minut"
-      x_minutes:
-        one:   "1 minuta"
-        few:   "%{count} minuty"
-        other: "%{count} minut"
-      about_x_hours:
-        one:   "około godziny"
-        few:   "około %{count} godziny"
-        other: "około %{count} godzin"
-      x_days:
-        one:   "1 dzień"
-        few:   "%{count} dni"
-        other: "%{count} dni"
-      about_x_months:
-        one:   "około miesiąca"
-        few:   "około %{count} miesiące"
-        other: "około %{count} miesięcy"
-      x_months:
-        one:   "1 miesiąc"
-        few:   "%{count} miesiące"
-        other: "%{count} miesięcy"
-      about_x_years:
-        one:   "około rok"
-        few:   "około %{count} lata"
-        other: "około %{count} lat"
-      over_x_years:
-        one:   "ponad rok"
-        few:   "ponad %{count} lata"
-        other: "ponad %{count} lat"
-      almost_x_years:
-        one:   "prawie rok"
-        few:   "prawie %{count} lata"
-        other: "prawie %{count} lat"
-       
-   activerecord:
-    errors:
-      template:
-         one:    "Jedne błąd uniemożliwił zapisanie tego %{model}"
-         other:  "%{count} błędów uniemożliwołi zapisanie tego %{model}"
-         body: "Pojawiły się problemy w następujących polach:"   
-     
-           
+    home:
+      index: 
+        group: Grupy
+        business-hours: Godziny pracy
+        title: Administrator
+        email-notifications: Powiadomienie mailowe
+        rebranding: Rebranding helpdeska
+        account-settings: Ustawienia konta
+        customer-portal: Portal klienta
+        canned-response: Szablon odpowiedzi
+        multi-product: Multiple Products
+        everything_else: Wszystko inne
+        import: Importuj dane z Zendesk
+        agent: Agenci
+        feedback: Widżet opinii
+        integrations: Integracje
+        dispatcher: Dyspozytor
+        supervisor: Supervisor
+        sla: Polityki SLA
+        ticket-fields: Pola zgłoszenia
+        remote-authentication: Zdalne uwierzytelnienie
+        scenario: Automatyzacje scenariuszy
+        email-settings: Ustawienia email
+        everything_helpdesk: Everything Helpdesk
+        canned-response: Szablon odpowiedzi
+        multi-product: Wiele produktów
+        twitter-setting: Konfiguracja aplikacji Twitter
+        survey: Ustawienia ankiet
+        facebook-setting: Ustawienia Facebook
 
-      messages:
-          inclusion: "nie jest zawarty na liście"
-          exclusion: "jest zarezerwowany"
-          invalid: "jest błędny"
-          confirmation: "nie jest zgodny z potwierdzeniem"
-          accepted: "musi być zaakceptowane"
-          empty: "nie może być puste"
-          blank: "nie może być puste"
-          too_long: "jest za długie (maximum to %{count} znaków)"
-          too_short: "jest za krótkie (minimum to %{count} znaków)"
-          wrong_length: "jest nieprawidłowej długości (powinno być %{count} znaków)"
-          not_a_number: "nie jest liczbą"
-          not_an_integer: "nie jest liczbą całkowitą"
-          greater_than: "musi być większe niż %{count}"
-          greater_than_or_equal_to: "musi być większe lub równe %{count}"
-          equal_to: "musi być równe %{count}"
-          less_than: "musi być mniejsze niż %{count}"
-          less_than_or_equal_to: "musi być mniejsze lub równe %{count}"
-          odd: "must be podzielne przez 2"
-          even: "must be niepodzielne przez 2"
-          record_invalid: "Walidacja zakończona błędem: %{errors}"
-          <<: *errors_messages
+    canned_responses:
+      index:
+        title: Szablony odpowiedzi
+        new: Dodaj szablon odpowiedzi
+      new:
+        title: Dodaj szablon odpowiedzi        
+        delete_confirm: Czy na pewno chcesz usunąć ten szablon odpowiedzi?      
+      edit: 
+        title: Edytuj szablon odpowiedzi
+      form:
+        available_for: Dostępne dla
+        all_agents: Wszyscy agenci
+        groups: Agentów w grupie
+        me_only: Tylko ja
+        response_name: Tytuł odpowiedzi
 
-      full_messages:
+  ends_with: Kończy się na
+  last_name: Nazwisko
+  forum:
+    types:
+      howto: Pytania
+      ideas: Pomysły
+      announce: Ogłoszenie
+      problem: Problemy
+    confim_msg1: Czy na pewno chcesz usunąć to forum?
+    verb: 
+      questions: Pytania zadane przez
+      ideas: Pomysł podany przez
+      announcement: Ogłoszone przez
+      problems: Problem zgłoszony przez
+    new: Nowe forum
+    edit: Edytuj forum
+    title: Fora
+    start_topic: Rozpocznij wątek
+    visibility:
+      anyone: Ktokolwiek
+      logged_users: Zalogowani Użytkownicy
+      agents: Agenci      
+  password_reset_email: Wiadomość e-mail resetowania hasła
+  import_user_org: Użytkownicy i Organizacje
+  to_do: Lista zadań
+  feedbackwidget_formcustomize: Dostosowywanie formularza
+  does_not_contain: Nie zawiera
+  flash:
+    facebook:
+      updated: Zaktualizowano ustawienia Facebook 
+    application:
+      already: Aplikacja jest już zainstalowana.
+      uninstall:
+        success: Dodatek został pomyślnie usunięty!
+      install:
+        success: Dodatek został pomyślnie dodany!
+      configure:
+        success: Dodatek został pomyślnie zaktualizowany!
+    filter:
+      delete_success: Widok został pomyślnie usunięty!
+      save_success: Widok został pomyślnie zapisany!
+    twitter: 
+      updated: Zaktualizowano ustawienia Twitter
+    not_allowed_in_demo_site: Ta opcja nie jest dostępna w wersji demo.
+    portal: 
+      tickets: 
+        create: 
+          success: Zgłoszenie zostało utworzone a potwierdzenie przesłane na twoje konto email.
+    g_app: 
+      user_deleted: Użytkownik został usunięty.
+      authentication_failed: Uwierzytelnianie nie powiodło się.
+      no_subdomain: Wskazana subdomena nie istnieje. Proszę spróbować ponownie.
+    profile: 
+      change_password: 
+        failure: Zmaina hasła nie udana. Proszę sprawdź aktualne hasło
+        success: Hasło zmienione. Zaloguj się ponownie.
+      update: 
+        success: Twój profil został zaktualizowany
+    solutions: 
+      remove_tag: 
+        success: Usunięto tag z tego rozwiązania
+    account: 
+      update: 
+        success: Twoje konto zostało zaktualizowane.
+    portal_settings: 
+      update: 
+        success: Ustawienia portalu klienta zostały zaktualizowane.
+    sso: 
+      update: 
+        success: Twoje konto zostało zaktualizowane.
+    agents: 
+      delete: 
+        not_allowed: Nie masz uprawnień, aby to usunąć.
+      create: 
+        success: Agent został utworzony, a instrukcje aktywacji wysłane na adres %{email}.
+    contacts_import: 
+      failure: Proszę spróbować ponownie.
+      no_file: Proszę wczytać plik.
+      success: "%{created_count} kontakty zostały zaimportowane, a %{updated_count} istniejące kontakty zostały zaktualizowane."
+    business_hours: 
+      update: 
+        failure: Aktualizacja godzin pracy nie powiodła się.
+        success: Zaktualizowano godziny pracy.
+    tickets: 
+      merge: 
+        success: Zgłoszenia zostały połączone.
+        wrong_ticket_id: Proszę wprowadzić prawidłowy identyfikator zgłoszenia.
+      reply: 
+        success: Odpowiedź wysłana.
+      notes: 
+        create: 
+          failure: Wystąpił problem w czasie dodawania notatki. Proszę spróbować ponownie.
+          success: Notatka została dodana do zgłoszenia.
+      empty_spam: 
+        success: Wszystkie zgłoszenia z folderu Spam zostały usunięte.
+      monitor: 
+        stop: Już nie obserwujesz tego zgłoszenia.
+        start: Obserwujesz teraz to zgłoszenie.
+      empty_trash: 
+        success: Wszystkie zgłoszenia z folderu Kosz zostały usunięte.
+    custom_fields: 
+      update: 
+        failure: Aktualizacja pól formularza zgłoszenia nie powiodła się.
+        success: Pola formularza zgłoszenia zostały zaktualizowane.
+    email_settings: 
+      send_activation: 
+        success: Na adres %{reply_email} wysłano wiadomość weryfikacyjna!
+      activation: 
+        invalid_code: Błędny kod aktywacji!
+        success: Adres %{reply_email} został aktywowany!
+        already_activated: Adres %{reply_email} już został aktywowany!
+      make_primary: 
+        success: "<b>%{reply_email}</b> jest od teraz twoim podstawowym adresem wsparcia!"
+    data_import: 
+      zendesk: 
+        no_contact: Nie udało się skontaktować z Zendesk. Proszę upewnić się, że wskazane dane są prawidłowe i spróbować ponownie.
+        success: Rozpoczął się import Twoich danych, po jego zakończeniu otrzymasz wiadomość e-mail. Proces importowania może zająć kilka minut w zależności od wielkości danych.
+        failure: Nie można zaimportować danych z Zendesk...spróbuj ponownie
+    contacts: 
+      create: 
+        success: Dodano nowy kontakt.
+    to_dos: 
+      complete: 
+        success: Zadanie zostało oznaczone jako zakończone.
+    password_resets: 
+      update: 
+        success: Hasło zmienione.
+        invalid_token: Niestety nie można zlokalizować twojego konta. Spróbuj skopiować podany link do przeglądarki lub ponownie wykonaj procedurę resetu hasła.
+      email: 
+        user_not_found: Nie znaleziono użytkownika o podanym adresie email.
+        success: Instrukcja resetu twojego hasła została wysłana wskazany adres email. Sprawdź zawartość skrzynki pocztowej.
+    login: 
+      verify_credentials: Logowanie nie powiodło się. Proszę sprawdzić poprawność swoich danych.
+      sso: 
+        expected_params: Brakujące parametry to imię i nazwisko, adres e-mail i skrót. 
+      success: Zalogowano do systemu.
+    email_notifications: 
+      update: 
+        success: Powiadomienia email zostały zaktualizowane.
+    general: 
+      access_denied: Nie masz wystarczających uprawnień na dostęp do tej strony.
+      need_login: Aby uzyskać dostęp do tej strony musisz się zalogować.
+      insufficient_privilege: 
+        admin: Nie masz wystarczających uprawnień do przeprowadzenia zmiany. Zaloguj się jako Administrator !
+      login_not_needed: Aby uzyskać dostęp do tej strony musisz się wylogować.
+      destroy: 
+        failure: Konto %{human_name} nie mogło być usunięte.
+        success: Konto %{human_name} zostało usunięte.
+      restore: 
+        failure: Konto %{human_name} nie mogło być odzyskane.
+      create: 
+        failure: Nie można zapisać %{human_name}
+        success: Konto %{human_name} zostało utworzone.
+      update: 
+        success: Konto %{human_name} zostało zaktualizowane.
+  agent_closes_tkt: Agent zamyka zgłoszenie
+  submit: wyślij
+  export_data_successfull: Dane Twojego helpdeska wkrótce zostaną wysłane na Twój adres e-mail!
+  import_topics: Tematy
+  assigned_to: Przydzielono
+  change: Zmień
+  back_plans_billing: Powrót do Planów i Płatności
+  f_request: Prośba o dodanie funkcji
+  save_and_create: Zapisz i utwórz kolejną
+  undelete: Przywróć
+  import_zendesk_title: Importuj z systemu Zendesk
+  closed: Zamknięte
+  suspended_plan_info: Twoje konto zostało zawieszone. Aby kontynuować, wybierz plan!
+  plan_info_update: Twój plan uległ zmianie
+  note: "Uwaga:" 
+  warning: OSTRZEŻENIE
+  facebook: Facebook
+  import_user_notification: Wyślij wiadomość e-mail aktywacji użytkownika podczas importowania 
+  what_is_cvv: Czym jest cw?
+  pro_details: Wszystko w \"Podstawowym\" planie plus, Automatyzacje scenariuszy, umowy SLA dostosowane do klientów, Godziny pracy, Fora, Wsparcie poprzez serwisy społecznościowe i wiadomości e-mail.
+  open: Otwórz
+  zendesk_url: Adres URL systemu Zendesk
+  special_beta_offer: Specjalna oferta dla kont w wersji Beta
+  click_to_select_filter: Kliknij, aby wybrać filtr
+  select_another_plan: Wybierz inny plan
+  threeday: 3 dni
+  resolved: Rozwiązane
+  logo_delete_msg: Czy na pewno chcesz usunąć to logo?
+  from_email: Z wiadomości e-mail
+  feedbackwidget_custom_image: URL niestandardowego obrazu
+  activities: 
+    solutions: 
+      new_solution: 
+        short: "{{user_path}} utworzył nowe Rozwiązanie"
+        long: "{{user_path}} utworzył nowe Rozwiązanie {{notable_path}}"
+    tickets: 
+      assigned_to_nobody: 
+        short: "{{user_path}} zmienił status zgłoszenia na nieprzypisany."
+        long: "{{user_path}} zmienił status zgłoszenia {{notable_path}} na nieprzypisany."
+      reassigned: 
+        long: "{{user_path}} ponownie przypisał zgłoszenie {{notable_path}} do {{responder_path}}"
+      priority_change: 
+        short: "{{user_path}} zmienił priorytet na {{priority_name}}"
+        long: "{{user_path}} zmienił priorytet zgłoszenia {{notable_path}} na {{priority_name}}"
+      new_ticket: 
+        short: "{{user_path}} wysłał zgłoszenie"
+        long: "{{user_path}} wysłał nowe zgłoszenie {{notable_path}}"
+      conversation: 
+        out_email: 
+          short: "{{user_path}} wysłał {{reply_path}}"
+          long: "{{user_path}} wysłał {{reply_path}} na zgłoszenie {{notable_path}}"
+        in_email: 
+          short: "{{user_path}} wysłał {{email_response_path}}"
+          long: "{{user_path}} wysłał {{email_response_path}} na zgłoszenie {{notable_path}}"
+        note: 
+          short: "{{user_path}} dodał {{comment_path}}"
+          long: "{{user_path}} dodał {{comment_path}} do zgłoszenia {{notable_path}}"
+        twitter: 
+          short: "{{user_path}} dodał {{twitter_path}}"
+          long: "{{user_path}} dodał {{twitter_path}} do zgłoszenia {{notable_path}}"
+      assigned: 
+        short: Przypisano do {{responder_path}} przez {{user_path}}
+        long: "{{user_path}} przypisał zgłoszenie {{notable_path}} do {{responder_path}}"
+      execute_scenario: 
+        short: "{{user_path}} wykonał scenariusz '{{scenario_name}}"
+        long: "{{user_path}} wykonał scenariusz '{{scenario_name}}' na {{notable_path}}"
+      ticket_merge: 
+        short: "{{user_path}} podłączył zgłoszenie {{notable_path}} do {{merge_ticket_path}}" 
+        long: "{{user_path}} podłączył zgłoszenie {{notable_path}} do {{merge_ticket_path}}"
+      ticket_split: 
+        short: "{{user_path}} rozdzielił oddzielił zgłoszenie {{notable_path}} od {{split_ticket_path}}"
+        long: "{{user_path}} rozdzielił oddzielił zgłoszenie {{notable_path}} od {{split_ticket_path}}"
+      status_change: 
+        short: "{{user_path}} zmienił status na {{status_name}}"
+        long: "{{user_path}} zmienił status {{notable_path}} na {{status_name}}"
+      deleted:
+        short: "{{user_path}} usunął to zgłoszenie"
+        long: "{{user_path}} usunął zgłoszenie {{notable_path}}"
+      product_change:
+        short: "{{user_path}} zmienił produkt na {{product_name}}"
+        long: "{{user_path}} zmienił produkt {{notable_path}} na {{product_name}}"
+      product_change_none: 
+        short: "{{user_path}} zmienił produkt na 'brak'"
+        long: "{{user_path}} zmienił produkt {{notable_path}} na 'brak'"
+      ticket_type_change:
+        short: "{{user_path}} zmienił typ zgłoszenia na {{ticket_type}}"
+        long: "{{user_path}} zmienił typ zgłoszenia {{notable_path}} na {{ticket_type}}"
+      group_change:
+        short: "{{user_path}} zmienił grupę na {{group_name}}"
+        long: "{{user_path}} zmienił grupę {{notable_path}} na {{group_name}}"
+      group_change_none: 
+        short: "{{user_path}} zmienił grupę na 'brak'"
+        long: "{{user_path}} zmienił grupę {{notable_path}} na 'brak'"
+      source_change:
+        short: "{{user_path}} zmienił źródło na {{source_name}}"
+        long: "{{user_path}} zmienił źródło zgłoszenia {{notable_path}} na {{source_name}}"
+  credit_card_info: Dane karty kredytowej
+  zendesk_backup_info: Wybierz plik backupu Zendesk pobrany z programu Zendesk
+  your_email_address: Twój adres email
+  username: Nazwa użytkownika
+  reply: odpowiedz
+  is_not: Nie jest
+  less_than: Mniej niż
+  greater_than: Więcej niż
+  feedbackwidget_bgcolor: Kolor tła
+  day: 1 dzień
+  current_plan: Obecny plan
+  medium: Średni
+  suspended_plan_admin_info: Twoje konto zostało zawieszone! Proszę skontaktuj się z administratorem %{email}!
+  delete_confirm_scenario: Czy na pewno chcesz usunąć ten scenariusz?
+  days: dni
+  basic_brief: Dla Małych zespołów
+  phone: Telefon
+  edit: Edytuj
+  accounts: 
+    cancel: 
+      changeplan_instead_of_cancel: Być może zamiast anulowania konta chcesz tylko zmienić swój plan.
+      intro: Zamierzasz anulować swoje konto.  Spowoduje to <strong>trwałe usunięcie wszystkich Twoich danych</strong>.
+      you_must_confirm: Musisz potwierdzić anulowanie konta
+      delete_my_account: Usuń moje konto
+      confirm_and_cancel_my_account: Potwierdzam, że chcę anulować konto i usunąć wszystkie moje dane...
+      goback: "&#x2190; Powrót do ustawień konta"
+      change_your_plan: Zmień swój plan
+      warning_message: Po anulowaniu konta nie będziesz mieć już dostępu do swoich danych. Upewnij się, że jest to na pewno ta czynność, którą chcesz wykonać.
+      cancel_account: Anuluj konto Freshdesk
+    billing: 
+      update_billing_info: Zaktualizuj informacje o płatnościach
+      begin_subscription_info: spowoduje obciążenie Twojej karty i natychmiastowe rozpoczęcie subskrypcji.
+      billing: Płatności
+      save_billing_information: Zapisz informacje o płatnościach
+      save_billing_information_info: spowoduje zapisanie Twoich informacji \"Plan i Płatności\". Spowoduje obciążenie Twojej karty i rozpoczęcie subskrypcji po zakończeniu okresu próbnego.
+      begin_subscription: Rozpocznij subskrypcję teraz...
+    show: 
+      export_data: Eksportuj dane
+      export_now: Eksportuj teraz
+      export_data_text: Wygeneruj plik XML wszystkich dostępnych danych helpdeska i wyślij je e-mailem
+      account_settings: Ustawienia konta
+  forum_key: Forum
+  topics:
+    show:
+      mark_this_idea_as: Oznacz ten pomysł jako
+    last_reply: Ostatnia odpowiedź %{post_time} temu wysłana przez %{user_link}
+    posted_at: Wysłano %{post_time} temu
+  non_covered_feature_error: Twój aktualny plan Freshdesk nie obsługuje tej funkcji.
+  requester_replies: Zgłaszający odpowiada na zgłoszenie
+  start_typing_a_question: Rozpocznij wprowadzać pytanie i przeglądaj odpowiedzi w czasie rzeczywistym
+  delete_topic_msg: Usuń ten wątek
+  first_response_sla: Przekroczenie czasu pierwszej reakcji zdefiniowanej w umowie SLA
+  add_holiday: Dodaj dni wolne
+  import_note_info: Pola w Twoim pliku csv mogą być ułożone w dowolnej kolejności. Upewnij się tylko, czy pierwszy wiersz zawiera informacje o nagłówkach (np. imię i nazwisko, e-mail, itp.). Jedynym wymaganym polem jest pole e-mail.
+  at: o
+  add_a_topic: Rozpocznij wątek
+  bottom: Dół
+  align_to: Wyrównaj do
+  feedbackwidget_help_title: Widżet opinii
+  name: Nazwa
+  import_user_org_text: Wszystkie dane Użytkownicy i organizacje w Twoim koncie Zendesk zostaną zaimportowane do Twojego bieżącego konta Freshdesk jako "Kontakty i firmy".
+  portal_customizer_open_solutions: Każdy może przeglądać rozwiązania publiczne
+  portal_customizer_option_solutions: Użytkownicy mogą wyświetlać publiczne rozwiązania bez konieczności logowania się
+  portal_customizer_google_signin: Pozwól użytkownikom logować się, używając konta Google
+  portal_customizer_twitter_signin: Pozwól użytkownikom logować się za pomocą konta Twitter
+  portal_signup: Pozwól klientom rejestrować się z portalu klienta
+  portal_captcha: Ustaw obowiązkowe wprowadzenie kodu obrazkowego podczas wysyłania zgłoszenia bez logowania się
+  to_email: Do wiadomości e-mail
+  starts_with: Rozpoczyna się od
+  portal_customizer_anon_tickets_i: Wyłącz tę funkcję, jeśli chcesz, aby Twoi użytkownicy logowali się w celu wysłania zgłoszenia
+  portal_customizer_option_tickets_i: Wyłącz tę funkcję, jeśli chcesz, aby użytkownicy logowali się przed wysłaniem zgłoszenia
+  set_type_as: Ustaw typ jako
+  change_my_plan: Wybierz ten plan...
+  add_new_email: Dodaj nowy email
+  feedbackwidget_title: Ustawienia widżeta
+  errors_in_your_address: "Znaleziono błędy dotyczące Twojego adresu:"
+  set_priority_as: Ustaw priorytet na
+  sign_in_info: Będziesz logować się za pomocą danych
+  posted_by: Zamieszczone przez
+  already_overdue: Już przeterminowane przez %{time_words}
+  automations: 
+    new: Nowy scenariusz
+    title: Automatyzacje scenariuszy
+    info1: "Każdy helpdesk wykorzystuje zbiór często powtarzalnych scenariuszy - np.: eskaluj do poziomu drugiego, przydziel do grupy QA, przekaż do departamentu sprzedaży itp. Zwykle zgłoszenia ten angażują wiele zmian w zgłoszeniu"
+    available_placeholders: Dostępne teksty
+    info2: Np., zanim zgłoszenie zostanie przydzielone do grupy QA będziesz chciał ustawić typ zgłoszenia jako błąd, potem przydzielić do grupy QA i wysłać powiadomienie do menedżera o nowym błędzie
+    info3: Automatyzacja scenariuszy umożliwia zautomatyzowanie tych działań w jednym kliknięciu
+    info4: Wybierz poniższe teksty aby nadpisać zawartość emaila i one zostaną skonwertowane do właściwych danych
+    info5: Przydziel do kolejki QA
+    reorder: Uporządkuj
+    info6: Oznacz zgłoszenie jako Błąd i przydziel do QA
+    info7: Akcje do wykonania
+    info8: Dodaj nową akcję
+  category: 
+    new: Nowa kategoria
+    edit: Edytuj kategorię
+  delete: Usuń
+  message: Wiadomość
+  edit_forum_category: Edytuj kategorię forum
+  agent_assigned_title: Ostatnio przydzielone zgłoszenia (otwarte i oczekujące)
+  send_email_to_requester: Wyślij e-mail do Zgłaszającego
+  feedbackwidget_btcustomize: Dostosowywanie przycisku
+  solution_category: 
+    name: Nazwa kategorii
+    new: Nowa kategoria
+    edit: Edytuj kategorię
+    info1: Czy na pewnoe chcesz usunąć tą kategorię
+    info2: Brak folderów w tej kategorii
+    save_and_create: Zapisz i utwórz kolejną
+  billed_monthly: Naliczane miesięcznie
+  users: 
+    activations: 
+      send_invite_success: Została wysłana aktywacyjna wiadomość e-mail!
+      success: Twoje konto zostało aktywowane.
+      code_expired: Twój kod aktywacyjny utracił ważność!
+  edit_email: Edytuj adres e-mail
+  fav_delete_msg: Czy na pewno chcesz usunąć tę ikonę Ulubione?
+  dispatch: 
+    new: Dyspozytor - Nowa reguł
+    add_new_choice: Dodaj nowy warunek
+    act_to_perform: Akcje do wykonania
+    edit: Dyspozytor - Edycja reguły
+    title: Dyspozytor
+    inactive_rules: Reguły nieaktywne
+    info1: Zgłoszenia związane z subskrypcją
+    rule_name: Nazwa reguły
+    info2: Wszystkie powiązane zgłoszenia zostaną przypisane do Suzan
+    new_rule: Nowa reguła
+    info3: Kiedy ta reguła powinna być aplikowana
+    info4: Dyspozytor automatycznie przekaże nowoutworzone zgłoszenia w opaciu o zdefiniowane reguły i akcje
+    reorder: Uporządkuj
+    info5: Pamiętaj, kolejność reguł ma znaczenie. Po nadejściu zgłoszenie, dyzpozytor wykona pierwszą pasującą regułę i zatrzyma swoje działanie
+    add_new_action: Dodaj nową akcję
+    dispatch_rules: Dyspozytor - Reguły
+    match_all: Dopasuj wszystkie
+    match_any: Dopasuj dowolną
+    add_condition: Dodaj nowy warunek
+    delete: Czy na pewno chcesz usunąć tę regułę?
+  header_logo: Logo nagłówka
+  solutions:
+    status:
+      draft: Szkic
+      published: Opublikowano
+    visibility:
+      anyone: Ktokolwiek
+      logged_in_users: Zalogowani Użytkownicy
+      agents: Agenci
+    types:
+      permanent: Trwały
+      workaround: Rozwiązanie tymczasowe
+    search_all: 
+      placeholder: Przeszukaj wszystkie Rozwiązania
+    search: 
+      placeholder: Wyszukaj %{name}
+  requester_reopens: Zgłaszający ponownie otwiera zgłoszenie
+  reset: Resetuj
+  import_ignore_first_row: Ignoruj pierwszy wiersz (nagłówki)
+  portal_customizer_open_sol_i: Wyłącz tę funkcję, jeśli chcesz ukryć kartę \"Rozwiązania\" na publicznym portalu klienta.
+  portal_customizer_option_sol_i: Wyłącz tę funkcję, jeśli chcesz, aby użytkownicy logowali się w celu przeglądania rozwiązań
+  topic:
+    ideas_stamps:
+      planned: Zaplanowane
+      implemented: Wdrożone
+      nottaken: Niezastosowane
+    name: Nazwa wątku
+    new: Nowy wątek
+    open: Otwórz dyskusję ponownie
+    edit: Edytuj wątek
+    close: Zamknij dyskusję
+    post: Wyślij
+    reply: Odpowiedz
+    msg1: Komentowanie tego wątku jest zablokowane
+    sticky: Przyczepiony
+    locked: Zablokowany
+  activerecord: 
+    errors: 
+      messages: 
+        record_invalid: "Walidacja zakończona błędem: %{errors}"
+        greater_than_or_equal_to: musi być większe lub równe %{count}
+        less_than_or_equal_to: musi być mniejsze lub równe %{count}
+        confirmation: nie jest zgodny z potwierdzeniem
+        not_an_integer: nie jest liczbą całkowitą
+        blank: nie może być puste
+        invalid: jest błędny
+        exclusion: jest zarezerwowany
+        odd: must be podzielne przez 2
+        even: must be niepodzielne przez 2
+        wrong_length: jest nieprawidłowej długości (powinno być %{count} znaków)
+        too_short: jest za krótkie (minimum to %{count} znaków)
+        empty: nie może być puste
+        less_than: musi być mniejsze niż %{count}
+        equal_to: musi być równe %{count}
+        greater_than: musi być większe niż %{count}
+        too_long: jest za długie (maximum to %{count} znaków)
+        accepted: musi być zaakceptowane
+        not_a_number: nie jest liczbą
+        inclusion: nie jest zawarty na liście
+      full_messages: 
         format: "%{attribute} %{message}"
-   
-       
+      template: 
+        body: "Pojawiły się problemy w następujących polach:"
+        one: Jedne błąd uniemożliwił zapisanie tego %{model}
+        other: "%{count} błędów uniemożliwołi zapisanie tego %{model}"
+  top: Góra
+  company_name: Nazwa firmy
+  expires: Traci ważność
+  total_price: Całkowita cena
+  update: Aktualizuj
+  save_reply: Zapisz odpowiedź
+  forum_shared:
+    topic_vote:
+      unlike: Niepodobne
+      ideas:
+        vote_button: Podoba mi się ten pomysł
+        vote_info_1: "%{vote} Osobie podoba się ten pomysł"
+        vote_info_2: "%{vote} Ludziom podoba się ten pomysł"
+        vote_info_include_1: Podoba Ci się ten pomysł
+        vote_info_include_2: "%{vote} Ludziom „włącznie z Tobą” podoba się ten pomysł"
+      problem:
+        vote_button: To jest mój problem
+        vote_info_1: "%{vote} To jest problem osoby"
+        vote_info_2: "%{vote} To jest problem ludzi"
+        vote_info_include_1: To jest Twój problem
+        vote_info_include_2: "%{vote} To jest problem ludzi \"włącznie z tobą\""
+      howto:
+        vote_button: To jest moje pytanie
+        vote_info_1: "%{vote} To jest pytanie osoby"
+        vote_info_2: "%{vote} To jest pytanie ludzi"
+        vote_info_include_1: To jest Twoje pytanie
+        vote_info_include_2: "%{vote} To jest pytanie ludzi \"włącznie z tobą\""
+    post:
+      posted_on: "%{user_name} dnia %{post_date}"
+      edit_post: Edytuj wpis
+      unmark_answer: Odznacz to jako odpowiedź
+      post_accepted_as_a_good_answer: Ten wpis jest zaakceptowany jako dobra odpowiedź na ten temat
+      mark_answer: Oznacz to jako odpowiedź
+      delete_post_confirm: Usunąć ten wpis?  Czy jesteś pewien?
+      delete_post: Usuń wpis
+      answer: Odpowiedź
+  half: 30 minut
+  between_range: w zakresie
+  back_to_admin: Powrót do Administratora
+  group: 
+    new: Nowa grupa
+    name: Nazwa grupy
+    edit: Edycja grupy
+    title: Grupy
+    info1: Agenci w tej grupie
+    info2: Brak agentów przypisanych do tej grupy
+    info3: Wyślij email eskalujący do
+    info4: jeśli zgłoszenie pozostaje nieprzypisane przez więcej niż
+    info5: Czy na pewno?
+    select_agents: Wybierz agentów
+    assigntime:
+      half: 30 minut
+      one: 1 godzina
+      two: 2 godziny
+      four: 4 godziny
+      eight: 8 godziny
+      two: 12 godziny
+      day: 1 dzień
+      twoday: 2 dni
+      threeday: 3 dni
+  four: 4 godziny
+  problem: Problemy
+  change_plan_info: W każdej chwili możesz zmienić swój poziom planu.  Limity pozycji i inne funkcje nowego, wybranego przez Ciebie planu będą obowiązywać od razu po dokonaniu zmiany, natomiast kwota do zapłaty nie zmieni się do daty następnego rozliczenia.  Twoja data następnego rozliczenia to %{date}.
+  created_on: Utworzone
+  zip: ZIP
+  import_solution_article: Zamień Artykuł w Rozwiązanie.
+  close: Zamknij
+  agent: 
+    new: Nowy agent
+    edit: Edytuj agenta
+    title: Agenci
+    info1: Ten agent został usunięty
+    info2: Email już został wykorzystany
+    signature: Podpis
+    info3: Czy na pewno chcesz to usunąć?
+    make_admin: Zmień tego agenta w administratora
+    view_user: Podgląd użytkownika
+    restore: Przywróć
+    add_signature: Doda podpis
+    update: Aktualizuj
+  account_admin: Administrator konta
+  right: Prawy
+  footer: 
+    helpdesk_software: Oprogramowanie Help Desk
+    by_freshdesk: przez Freshdesk
+  tkt_unattended_in_grp: Zgłoszenie pozostawione bez nadzoru w Grupie
+  agent_solves_tkt: Agent rozwiązuje to zgłoszenie
+  zendesk_url_info: "np.: - http://acme.zendesk.com"
+  portal_customizer_anon_for_i: Wyłącz tę funkcję, jeśli chcesz ukryć kartę "Fora" na publicznym portalu klienta.
+  portal_customizer_option_for_i: Wyłącz tę funkcję, jeśli chcesz, aby użytkownicy logowali się w celu przeglądania rozwiązań
+  portal_customizer_anon_for_g: Włącz tę funkcję, jeśli chcesz, aby użytkownicy mogli się zalogować, używając swojej nazwy użytkownika i hasła Google. 
+  portal_customizer_anon_for_t: Włącz tę funkcję, jeśli chcesz, aby użytkownicy mogli się zalogować, używając swojej nazwy użytkownika i hasła Twitter. 
+  portal_signup_anon: Włącz tę funkcję, jeśli chcesz, aby użytkownicy mogli się rejestrować i tworzyć własne konta użytkowników. Dzięki temu użytkownicy będą mogli logować się i uczestniczyć w dyskusjach na forach, głosować na pomysły itp.
+  portal_captcha_anon: Wyłącz tę funkcję, jeśli chcesz, aby użytkownicy wysyłali zgłoszenia bez przepisywania kodu obrazkowego
+  card_process: Dziękujemy za dokonanie płatności. Możesz teraz korzystać ze swojego konta Freshdesk!
+  chat: Czat
+  country: Kraj
+  card_number: Numer karty
+  forgot_password_intro: Wypełnij poniższy formularz, otrzymasz wówczas wiadomość e-mail z instrukcjami, jak zresetować swoje hasło
+  done: Zrobine
+  ticket_due_by_time: Data realizacji
+  next: Następny
+  set_password: Ustaw hasło
+  send_email_to_agent: Wyślij email do Agenta
+  import_data: Dane zaimportowane
+  contacts: 
+    new: Nowy kontakt
+    edit_contact: Edytuj kontakt
+    edit: Edytuj kontakt
+    save_changes: Zapisz zmiany
+    deleted_message: To jest usunięty kontakt
+    title: Kontakty
+    emailnotverified: Email tego użytkownika nie został jeszcze zweryfikowany!
+    showing: Wyświetla
+    info1: Czy na pewno chcesz usunąć ten kontakt?
+    info2: Przekształć tego użytkownika w agenta
+    send_activation: Wyślij aktywacyjną wiadomość e-mail
+    import_csv: Importuj zgłaszających z plku CSV
+    quick_contact: Szybki kontakt
+    info3: Informacje dodatkowe na temat %{nick_name}
+    working: Pracuje
+    info4: Ostatnie zgłoszenia dla %{nick_name}
+    form_placeholder: 
+      description: Dodaj dodatkowe informacje dla tego kontaktu, np. adres, fan Lecha Poznań itd.
+    info5: Użytkownik nie zarejestrował jeszcze żadnych zgłoszeń
+    restore: Przywróć
+    info6: Dodaj uwagi na temat tego kontaktu
+    role:
+      info: może przeglądać wszystkie zgłoszenia od tej firmy 
+  between: Pomiędzy
+  portal_key: Portal
+  add_new_forum: dodaj nowe forum
+  no_forum_category: Brak forum w tej kategorii
+  sla_policy: 
+    sla_targets: Cele SLA
+    new: Nowa reguła SLA
+    edit: Edytuj regułę SLA
+    select_policy: Wybierz regułę
+    resolution_time: Czas rozwiązania
+    title: Polityka SLA
+    calendar_time: Godziny w kalendarzu
+    info1: "\tReguła SLA definiuje oczekiwane czasy reakcji i rozwiązania w oparciu o priorytet zgłoszenia. Definiowanie poziomów usług w oparciu o priorytety jest najcześciej stosowaną praktyką. Twoja polityka SLA może być bardzo prosta, np. zawierać się w zdaniu \"Zgłoszenia o wysokim priorytecie powinny być rozwiązywane w ciągu 2 godzin\"."
+    override: Nadpisz
+    title1: Polityki SLA
+    info2: "Freshdesk wykorzystuje Politykę SLA aby określić \"Czas rozwiązania\" zgłoszeń. Możesz stosować domyślne SLA dla wszystkich swoich klientów, ale jeśli masz klienta, który wymaga szybszych czasów reakcji i rozwiązania, zawsze możesz utworzyć dla tego klienta dedykowaną politykę SLA."
+    response_time: Czas reakcji
+    business_time: Godziny pracy
+    info3: Polityki SLA działają w połaczeniu z Godzinami pracy.
+    tickets_with: Zgłoszenie z
+    escalate_to: Eskaluj do
+  left: Lewy
+  subscription: 
+    error: 
+      lesser_agents: Twoje konto Freshdesk ma obecnie %{agent_count} agentów, nie możesz subskrybować mniejszej liczby agentów. Usuń niektórych agentów i spróbuj ponownie.
+  activate: aktywuj
+  feedbackwidget_text: Tekst
+  billed_amount_per_month: Będziesz obciążany kwotą %{amount} USD miesięcznie
+  import_zendesk_summary: Importuj z podsumowania Zendesk
+  user_activation_email: Wiadomość e-mail aktywizacji użytkownika
+  incident: Wypadek
+  import: Importuj
+  contains: Zawiera
+  import_solution_article_info: "Uwaga: Nie zapiszemy komentarzy na forum."
+  portal: 
+    search: 
+      placeholder: Szukaj, wpisując słowo kluczowe lub pełne pytanie
+  feedbackwidget_form_title: Tytuł formularza widżeta
+  cancel_and_back: Anuluj i wróc
+  due_in: Termin realizacji w %{time_words}
+  first_name: Imię
+  pro_brief: Dla większych zespołów
+  feedbackwidget_position: Pozycja
+  resolution_time_sla: Przekroczenie czasu rozwiązania zdefiniowanego w umowie SLA
+  replies: odpowiedzi
+  urgent: Pilny
+  import_groups: Grupy
+  solution:    
+    folders:
+      new:
+        new_folder: Nowy folder
+    info9: Publiczne (Będzie dostępne na portalu samoobsługowym)
+    edit: Edytuj rozwiązanie
+    add: Dodaj rozwiązanie
+    info10: Prywatne (Dostępne tylko dla agentów)
+    add_new_solution: Dodaj nowe rozwiązanie
+    title: Rozwiązania
+    info1: Rozwiązania w Freshdesk stanowią twoją bazę więdzy
+    info2: Rozwiązania mogą być <b>publiczne</b> lub <b>prywatne</b>. Rozwiązania publiczne są widoczne na portalu samoobsługowym oraz pojawiają się w wynikach wyszukiwania
+    info3: Rozwiązania prywatne są dostępne tylko dla agentów i wykorzystywane do wewnętrznego współdzielenia wiedzy
+    no_solutions_info: Brak rozwiązań w tym folderze
+    info4: Drzewo rozwiązań zbudowane jest na 3 poziomach hierarchi - <b>Kategoria --> Folder --> Artykuł</b>
+    type: Typ rozwiązania
+    info5: Rozwiązania mogą byc dwóch rodzajów - <b>Rozwiązanie tymczasowe(Workaround)</b> lub <b>Trwałe (Permanent)</b>
+    info6: Rozwiązanie może mieć status <b>Robocze</b>, kiedy nad nim pracujesz. Zostanie zmienione na <b>Opublikowane</b>, jak tylko zostanie dokończone i przeglądnięte
+    visibility: Widoczność
+    info7: Brak rozwiązań w tym folderze
+    status: Status rozwiązania
+    info8: Czy na pewno chcesz usunąć to rozwiązanie
+    folder: Folder
+  import_updated: Zaktualizowane
+  feedbackwidget_intro: Dostosuj swój widżet Freshdesk umieszczony poniżej i zobacz podgląd w czasie rzeczywistym.
+  save: Zapisz
+  import_added_newly: Ostatnio dodane
+  select_a_plan_gain_access: Wybierz jeden z poniższych planów, aby odzyskać dostęp do swojego konta.
+  import_warning_info: Wiadomość e-mail z instrukcjami na temat aktywizacji użytkownika zostanie wysłana do każdego kontaktu po pomyślnym zaimportowaniu. Jeśli adres e-mail jest już zapisany w bazie danych, zaktualizujemy atrybuty, takie jak Imię i nazwisko, Firma itp.
+  import_example_title: Poniżej znajduje się przykład pliku CSV
+  change_my_password: Zmień Moje hasło
+  answered: Udzielono odpowiedzi.
+  errors_in_payment_info: "Znaleziono błędy dotyczące Twoich danych płatności:"
+  attach_files: Dodaj pliki
+  plan_amount: na agenta/miesiąc
+  current_plan_details: "%{plan_name} Plan z %{agent_limit} agentami"
+  zendesk_backup: Plik kopii zapasowej
+  twoday: 2 dni
+  profile: 
+    change_password: Zmien hasło
+    edit: Edytuj profil
+    current_password: Aktualne hasło
+    confirm_password: Potwierdź hasło
+    new_password: Nowe hasło
+  add_to_do: Dodaj do listy zadań
+  subject_or_description: Temat lub Opis
+  premium_details: Wszystko w Planie \"Pro\" plus, wsparcie dla wielu produktów, wsparcie w wielu strefach czasowych, wsparcie poprzez portale społecznościowe, wiadomości e-mail i telefon.
+  zendesk_credentials: Dane logowania w systemie Zendesk
+  how_to: Pytanie
+  customers: Klienci
+  feedbackwidget_embed_code: Kod osadzania widżeta
+  billing_info_update: Twoje dane rozliczeniowe zostały zaktualizowane.
+  wrong_portal: 
+    content_not_available: Treści, których szukasz, są niedostępne w tym portalu.
+    title: Niedostępne!
+  click_select_action: Kliknij, aby wybrać działanie
+  import_articles: Rzowiązania
+  back: Wstecz
+  save_changes: Zapisz zmiany
+  premium_brief: Rozwiązanie najwyższej klasy
+  begin_subscription_confirm: Twoja karta kredytowa zostanie obciążona kwotą %{cost} USD,a Twoja subskrypcja rozpocznie się natychmiast. \n\nKontynuować teraz?
+  favicon: Ikona ulubionych
+  is_expiring_today: kończy się dzisiaj
+  feedbackwidget_help_para1: Uzyskuj informacje zwrotne od swoich klientów, dodając do swoich stron internetowych kartę wsparcia.
+  low: Niska
+  feedbackwidget_defaultbutton: Wsparcie
+  agents: Agenci
+  header: 
+    welcome: Witaj
+    new_ticket: Nowe zgłoszenie
+    submit_a_ticket: Wyślij zgłoszenie
+    login: login
+    tabs:
+      reports: Raporty
+      dashboard: Pulpit
+      customers: Klienci
+      admin: Administrator
+      checkstatus: Sprawdź status swojego zgłoszenia
+      solutions: Rozwiązania
+      forums: Fora
+      tickets: Zgłoszenia
+      home: Strona główna
+      company_tickets: Zgłoszenia firmy
+      social: Społeczne
+    signout: Wyloguj
+    search: Szukaj
+  agent_adds_comment: Agent dodaje komentarz do zgłoszenia
+  portal_customizer_anon_tickets: Każdy może dodać zgłoszenie
+  portal_customizer_option_tickets: Użytkownicy mogą wysyłać zgłoszenia bez konieczności logowania 
+  feedbackwidget_help_para2: Dostosowywalna karta otwiera się w formularzu Zgłoszenie. 
+  tag: 
+    title: Tagi
+  email_notifications: 
+    customize_email: Dostosuj szablon emaila
+    modify_requester_template: Zmodyfikuj szablony email Zgłaszającego
+    requestor_notification: Powiadomienia do zgłaszającego
+    title: Powiadomienia email
+    insert_placeholder: Wprowadź przykładowy tekst
+    modify_agent_template: Zmodyfikuj szablony email Agenta.
+    event: Zdarzenie
+    agent_notification: Powiadomienia dla agenta
+  errors_in_plan_change: "Znaleziono błędy dotyczące Twojej zmiany:"
+  formatting_help: Pomoc na temat formatowania
+  step1: Krok 1
+  next_charge_date: "Twoja kolejna płatność zostanie obliczona w dniu:"
+  update_and_login: Aktualizacja i logowanie
+  enter_payment: Wprowadź dane płatności...
+  errors_in_payment: "Znaleziono błędy dotyczące Twojej płatności:"
+  email_configs: 
+    name: Nazwa
+    info9: Przydziel do grupy
+    reply_emails: Emaile z odpowiedzią od Freshdesk
+    delete: Czy na pewno chcesz usunąć ten adres e-mail?
+    change_this: Zmień to
+    info10: Nowe zgłoszenia na ten adres email będą automatycznie przydzielane do grupy
+    title: Ustawienia email
+    supp_email_add: Adres email wsparcia
+    info11: Skonfiguruj adres email dla wiadomości przychodzących i wychodzących
+    info1: Twoi użytkownicy wysyłają emaile na adres
+    add_supp_emails: Dodatkowe adres email wsparcia
+    info12: Dodaj dodatkowy adres email
+    info2: Musisz przekierować twoje emaile na unikalny adres
+    send_verification_email: Wyślij ponownie weryfikacyjną wiadomość e-mail.
+    unverified: Niezweryfikowane
+    info13: Adres email twojego wsparcia to
+    info3: Freshdesk pobierze te emaile i skonwertuje na zgłoszenia
+    inactive_info1: Wszystkie Twoje adresy e-mail wsparcia są niezweryfikowane. Musisz zweryfikować przynajmniej jeden adres e-mail wsparcia.
+    info14: Każdy email wysłany na ten adres zostanie skonwertowany do zgłoszenia
+    info4: Jeśli wspierasz kilka produktów, możesz dodać do każdego z obsługi każdego z nich osobny email
+    spf_info: Większość Twoich wiadomości e-mail będzie dostarczana. Jednak aby mieć większą pewność, musisz utworzyć <a target="_blank" title="Learn more about creating SPF records" href="{{solution_url}}">rekord SPF</a> w swoim pliku stref DNS, jeśli używasz adresów e-mail w swojej domenie. To pomaga zapewnić prawidłowe dostarczanie wiadomości.
+    reply_email: Twój adres e-mail wsparcia
+    unverified_info1: Wiadomość e-mail z łączem weryfikacyjnym została wysłana na ten adres e-mail. Dopiero po weryfikacji ten adres e-mail wsparcia stanie się aktywny.
+    inactive_info2: Do tego czasu domyślny adres e-mail "%{default_email}" będzie używany jako zwrotny adres e-mail.
+    info15: Musisz przekierować te emaile do
+    info5: W odpowiedzi system Freshdesk będzie w polu Od podawał główny adres email wsparcia
+    primary_supp_email: Główny adres email wsparcia
+    info16: Zgłoszenia zostaną przydzielone do
+    info7: To jest również twój adres zwrotny
+    make_primary: Ustaw jako główny
+    info8: Przekaż pocztę do
+    help_link_info: Aby uzyskać więcej informacji, przeczytaj nasz artykuł Ustawienia e-mail.
+  step2: Krok 2
+  import_users_contacts: Użytkownicy &rarr; Kontakty
+  linkback_info: Możesz wybrać, aby kliknięcie logo nagłówka powodowało wyświetlenie Twojej strony internetowej.
+  twitter:
+    associate_twitter: Powiąż konto Twitter ze swoim helpdeskiem, aby rozpocząć świadczenie pomocy technicznej swoim klientom poprzez serwis Twitter.
+    success_signin: Pomyślnie powiązano konto @%{twitter_screen_name} z %{helpdesk}.
+    user_exists: Konto Twitter jest już powiązane z innym produktem.
+    not_authorized: Brak autoryzacji od serwisu Twitter
+    deleted: Konto Twitter @%{twitter_screen_name} zostało usunięte.
+    sent: Wiadomość tweet została pomyślnie wysłana.
+    error_sending: Wystąpił błąd podczas wysyłania wiadomości tweet! Aplikacja Twitter może być niestabilna. Spróbuj ponownie.
+    ticket_save: Konwersja wiadomości tweet na zgłoszenie została zakończona pomyślnie.
+    tkt_err_save: Nie można przekonwertować wiadomości tweet na zgłoszenie lub została już przekonwertowana.
+    usr_not_thr: Nie ma tam użytkownika.    
+  facebook:
+    deleted: Strony Facebook %{facebook_page} został usunięty.
+    not_authorized: Brak autoryzacji od serwisu Facebook
+  logo: Logo
+  ok: OK
+  back: Wstecz
+  ticket:
+    reported_on: od %{username}, w dniu %{date}
+    thanks: Dziękujemy za przesłanie opinii
+    group: Grupa
+    spam_btn_title: Oznacz jako spam
+    assigned_to: Przydzielone do
+    edit: Edytuj zgłoszenie
+    ham_btn_title: To nie jest spam
+    reported_from_source: Zgłoszono poprzez %{source}
+    suggested_solutions: 
+      insert_url: Wprowadź URL
+      title: Sugerowane Rozwiązania
+      insert_content_tip: Dodaj to Rozwiązanie do swojej odpowiedzi lub notatki
+      no_result: Nie znaleziono Rozwiązania
+      insert_url_tip: Dodaj URL tego Rozwiązania do swojej odpowiedzi lub notatki
+      insert_content: Wprowadź treść
+    unassigned: Nie przydzielone
+    suggest_solutions: Sugeruj rozwiązania
+    created_on: Utworzono %{time}
+    restore_btn: Przywróć zgłoszenie
+    merge_btn: Scal
+    singular: Zgłoszenie
+    due_by_time: Data realizacji
+    delete_btn_title: Przenieś zgłoszenie do Kosza
+    priority: Priorytet
+    to_do: Zgłoszenia do realizacji
+    activity: Aktywność
+    sort_by: Sortowanie według
+    restore_btn_title: Przywróć zgłoszenie z Kosza.
+    subject: Temat
+    created_at: Godzin od utworzenia
+    opened_at: Godzin od ponownego otwarcia
+    pending_since: Liczba godzin od nadania zgłoszeniu statusu Oczekujące
+    resolved_at: Godzin od rozwiązania
+    closed_at: Godzin od zamknięcia zgłoszenia
+    first_assigned_at: Godzin od pierwszego przypisania
+    assigned_at: Godzin od przypisania
+    requester_responded_at: Godzin od odpowiedzi Zgłaszającego.
+    agent_responded_at: Liczba godzin od udzielenia odpowiedzi przez agenta
+    first_response_due: Liczba godzin od wymaganego terminu pierwszej reakcji
+    due_by: Liczba godzin od nadania zgłoszeniu statusu Przeterminowane 
+    inbound_count: Liczba interakcji Zgłaszającego
+    recent_tickets: Ostatnie zgłoszenia
+    unflag_spam: Spam nieoznaczony
+    pick_up: Podejmij
+    submit_ticket_title: Wyślij zgłoszenie
+    reply_form: 
+      post_to_linked_forum: Wpis w zalinkowanym forum
+      form_title: Odpowiedz w konwersacji
+      reply_email_id: Wyślij odpowiedź z następującego id adresu e-mail
+      send_and_resolve: Wyślij i rozwiąż
+    reported_by: od %{requester}
+    close_btn: Zamknij
+    close_btn_title: Zamknij zgłoszenie
+    tags: 
+      no_match: Brak dopasowań. Naciśnij przycisk Enter, aby utworzyć tag.
+      create_success: Dodano tag
+      destroy_success: Tag został usunięty z tego zgłoszenia
+      add_tag: "Dodaj tag:"
+    type: Typ
+    execute_scenario: Wykonaj scenariusz
+    note_form: 
+      private_note: To jest prywatna notatka. Nie pokazuj jej zgłaszającemu
+      form_title: Dodaj notatkę
+      add_and_resolve: Dodaj i rozwiąż
+      notify_agents: Powiadom agentów
+    tweet_form:
+      tweet_and_resolve: Wyślij wiadomość tweet i rozwiąż
+    activities: Aktywności
+    requestor_info: Dane zgłaszającego
+    reply_to: Odpowiedz na zgłoszenie
+    add_note: Dodaj notatkę
+    monitor_btn_title: Obserwuj to zgłoszenie
+    canned_responses: 
+      insert_ca_response: Szablon odpowiedzi
+      insert_ca_resp_tip: Wstaw ten szablon odpowiedzi
+    split_ticket: Rozdziel jako osobne zgłoszenie
+    flag_spam: Oznacz spam
+    assign_to_agent: Przydziel do agenta
+    select_to_agent: Wybierz Agenta
+    delete_btn: Usuń
+    status: Status
+    source: Źródło
+    verify_human: W celu weryfikacji przepisz kod obrazkowy
+    edit_btn: Edytuj
+    requester: Zgłaszający
+    properties: Właściwości zgłoszenia
+    submit_ticket: Wyślij 
+    stop_monitor_btn_title: Przestań obserwować to zgłoszenie
+    merge_btn: Scal
+    split_ticket: Rozdziel jako osobne zgłoszenie
+    tweets: Wiadomości tweet
+    agent_notify: dodał uwagę i chce, abyś się z nią zapoznał
+    note_content: Treść uwagi
+    ticket_url: Adres URL zgłoszenia
+  recent_activity: Ostatnie aktywności
+  forgot_password: Nie pamiętam hasła
+  change_plan: Zmień plan
+  feedbackwidget_embed_code_intro: Skopiuj i wklej poniższy kod w dowolnym miejscu przed znacznikiem &lt;/body&gt; w szablonie html swojego serwisu lub każdej strony, na której chcesz umieścić widżet Freshdesk.
+  import_forum: Fora
+  title: Tytuł
+  new_ticket_created: Utworzono nowe zgłoszenie
+  recent_forum_posts: Ostatnie wpisy na forum
+  description: Opis
+  tkt_assigned_to_agent: Zgłoszenie przypisane do Agenta
+  is: Jest
+  helpdesk_title: Helpdesk
+  forums: 
+    search_all: 
+      placeholder: Przeszukaj wszystkie tematy
+    search: 
+      placeholder: Wyszukaj %{name}
+    form:
+      type: Typ forum
+      visibility: Widoczność forum    
+  next_charge_amount: "%{type} koszt:"
+  company: 
+    info9: Freshdesk automatycznie połączy kontakty do tej firmy, jeśli w adrsie email będzie ta sama domena
+    name: Nazwa firmy
+    new: Nowa firma
+    edit: Edytuj firmę
+    quick_company: Szybka firma
+    title: Firmy
+    notes: Notatki
+    info1: Czy na pewno chcesz usunąć tą firmę?
+    info2: Nazwa domeny dla firmy
+    info4: Dodaj notatkę o %{name}
+    info5: Dodaj notatki dla tej firmu
+    info6: Ludzie w %{name}
+    info7: Brak zgłoszeń od osób z tej firmie
+    info8: Więcej informacji o firmie, jak adres, telefon, strona internetowa itd.
+  import_zendesk_summary_info: Dane Zendesk zostały pomyślnie zaimportowane.
+  one: 1 godzina
+  no_topics_text: Brak tematów na forum
+  feedbackwidget_offset_label: Z przesunięciem
+  send_email_to_group: Wyślij email do grupy.
+  activate_account: Aktywuj swoje konto
+  enter_message: Wprowadź tutaj swoją wiadomość
+  not_selected: Nie wybrano
+  enter_billing_for_free: Przed wyborem płatnego planu wprowadź dane karty kredytowej
+  will_expire_in: straci ważnoność za
+  asked_on: Wysłane
+  this_ticket_has_been_deleted: Zgłoszenie zostało usunięte
+  state: Podaj
+  deactivate: deaktywuj
+  add_tags: Dodaj tagi
+  change_to_free_info: Zmiana wersji Twojego planu na niższą spowoduje utratę danych i funkcjonalności. Czy na pewno chcesz zmienić wersję planu na niższą?
+  import_step1_info: Wskaż plik CSV i kliknij import
+  tkt_assigned_to_group: Zgłoszenie przydzielone Grupie
+  import_tickets: Zgłoszenia
+  twelve: 12 godziny
+  agent_info_title: Informacje o konsultancie
+  account: 
+    name: Nazwa konta
+    cancel: Anuluj i wróc
+    page_colors: 
+      title: Kolory strony
+      background: Tło
+      header: Nagłowek
+      tab_color: Kolor zakłądki
+    active_since: Aktywne od
+    info1: Użyj tego pola aby zdefiniować mapowanie zewnętrznej domeny do Freshdesk
+    info2: Zanim zastosujesz to pole, upewnij sie, że utworzony został rekord CNAME DNS i twoim pliku strefy DNS, przekierowujący domenę support.mmycompanyname.com na %{full_domain}. Twój webmaster lub administrator serwera powinien pomóc ci w poprawnej konfiguracji
+    info3: Ustaw kolory domyślne
+    info4: Licznik zgłoszeń zacznie się od tego numeru (powinien być większy niż nr ostatniego utworzonego zgłoszenia). Zmiana będzie miała wpływ na wszystkie przyszłe zgłoszenie.
+    save: Zapisz zmiany
+    time_zone: Strefa czasowa
+    helpdesk_name: Nazwa helpdesku
+    rebrand: Rebrenduj swój helpdesk
+    helpdesk_url: Adres URL helpdesku
+    language: Język
+  lead: Wprowadzenie
+  comments: Komentarze
+  forum_confirm_msg1: Czy na pewnoe chcesz usunąć tą kategorię
+  plans_billing: Abonamenty i płatności
+  portal_customizer_open_forums: Każdy może wyświetlać fora
+  portal_customizer_option_forums: Użytkownicy mogą wyświetlać fora bez konieczności logowania się
+  business_hours: 
+    holiday_name: Nazwa dnia
+    title: Godziny pracy
+    info1: "Zdefiniowanie godzin pracy w systemie Freshdesk pozwala ci lepiej kontrolować reguły SLA, np.: jeśli helpdesk pracuje od 9 do 18, od poniedziałku do piątku i klient wyśle zgłoszenie o wysokim priorytecie we wtorek o 16:00, z czasem rozwiązania 4 godziny, wtedy czas realizacji zostanie ustawiony na środę, na godzinę 11:00. Możesz skonfigurować reguły SLA by respektowały godziny pracy lub były od nich niezależne"
+    info2: "Dni wolne działają podobnie jak godziny pracym np.: jeśli twój helpdesk pracuje od 9 do 18, od poniedziałku do piątku, i klient wyśle zgłoszenie w piątek o 20:00, z czasem rozwiązania w 24 godziny, wtedy czas rozwiązania zostanie ustawiony na 9 rano we wtorek (a nie w sobotę na 20:00)"
+    holiday_added: Wybrany dzień już został dodany
+    info3: Szczególowe godziny pracy
+    info4: Dni pracy twojego helpdesku
+    holiday_list: Lista corocznych dni wolnych
+    info5: Dni wolne zostaną zignorowane przy kalkulacji SLA dla zgłoszenia
+    holidays: Dni wolne
+    helpdesk_hours: Godziny pracy helpdesk
+  import_org_companies: Organizacje i firmy
+  add: Dodaj
+  portal_customizer_title: Dostosuj swój Publiczny Portal Klienta
+  your_trial_account: Twoje próbne konto
+  reply_topic: Odpisz na temat
+  password: Hasło
+  import_step2_info: Przyporządkuj pola z pliku CSV do pól z bazy danych i zaimportuj
+  feedbackwidget_defaulttitle: Pomoc i Wsparcie
+  two: 2 godziny
+  set_status_as: Ustaw status jako
+  selected: Wybrano
+  connect_ticket: Połącz ze zgłoszeniem
+  edit_agent: Edytuj agenta
+  high: Wysoka
+  scenario_label: Etykieta scenariusza
+  email: E-mail
+  linkback_overlabel: Adres URL strony linkującej bieżącą stronę
+  select_a_plan: Wybierz plan
+  message: Wiadomość
+  ticket_was: Zgłoszenie zostało
+  tickets_were: zgłoszenia były
+  undo: Cofnij
+  helpdesk:
+    tags:
+      index:
+        title: Tagi
+    flash:
+      assignedto: "%{tickets} przydzielone %{username}."
+      tickets_closed: "%{tickets} zamkniętych"
+      assigned_to_you: "Zgłoszen przydzielonych dla Ciebie: %{tickets}"
+      removed_from_spam: "%{tickets} zgłoszeń usuniętych z folderu spam"
+      closing_the_ticket_failed: Nie udało się zamknąć zgłoszenia.
+      assigned_reassigned: "%{type} dla %{username}"
+      flagged_spam: "%{tickets} oznaczonych jako spam. %{undo}"
+      flagged_unspam: "%{tickets} zgłoszeń usuniętych z folderu spam"
+    shared:
+      reply_form:
+        title: Odpowiedz %{email}
+        cc: "DW:"
+        addcc: Dodaj DW
+        removecc: Usuń DW
+        bcc: UDW
+        addbcc: Dodaj UDW
+        removebcc: Usuń UDW
+      tweet_form:
+        title: Odpowiedz %{user}
+    dashboard:
+      index:
+        todo_title: Do wykonania
+      summary:
+        title: Podsumowanie zgłoszeń
+        overdue: Przeterminowane
+        open: Otwórz
+        due_today: Na dziś
+        unassigned: Nie przydzielone
+        pending: Oczekujące
+    rebranding: 
+      name: 
+        info: To będzie nazwa pomocy która będzie wyświetlana w nagłówku oraz w powiadomieniach email.
+    ticket_created_on_n_by: przez %{requester} dnia %{date_time}
+    tickets:
+      customview:
+        new:
+          give_a_name: Nadaj nazwę temu widokowi
+          visible_to: Ten widok jest widoczny dla
+      execute_scenario_notice: 
+        view_details: pokaż szczegóły
+        execute_the_scenario: Wykonano scenariusz <b>%{rule_name}</b>
+        actions_performed: Wykonane akcje
+      close_notice:
+        ticket_has_been_cloased: Zgłoszenie zostało zamknięte
+        view_ticket: Pokaż zgłoszenie
+      show:
+        meta: meta
+        linked_ticket: To zgłoszenie jest powiązane z forum
+      components:
+        scenarios:
+          execute_this_scenario: Wykonaj ten scenariusz
+        due_date:
+          when_is_it_due: Data realizacji
+          today: Dzisiaj
+          tomorrow: Jutro
+          this_week: Ten tydzień
+          next_week: Następny tydzień
+          specific_date: Dokładna data/godzina...
+          set_date_time: Ustaw datę / godzinę
+          due: Termin
+          earlier_date_and_time: Proszę podać datę późniejszą niż data stworzenia zgłoszenia
+      views: 
+        on_hold: Wstrzymane zgłoszenia
+        new: Nowe zgłoszenia
+        my_resolved: Moje rozwiązane zgłoszenia
+        new_my_open: Nowe i Moje otwarte zgłoszenia
+        this_view: ten widok
+        all_tickets: Wszystkie zgłoszenia
+        open: Otwarte zgłoszenia
+        closed: Zamknięte zgłoszenia
+        deleted: Kosz
+        overdue: Przeterminowane zgłoszenia
+        due_today: Zgłoszenia z terminem na dziś
+        resolved: Rozwiązane zgłoszenia
+        my_overdue: Moje przeterminowane zgłoszenia
+        tags: Tagi wg zgłoszeń
+        my_due_today: Moje zgłoszenia z terminem na dziś
+        my_all: Wszystkie moje zgłoszenia
+        my_on_hold: Moje wstrzymane zgłoszenia
+        select: Wybierz widok...
+        spam: Spam
+        monitored_by: Zgłoszenia które obserwuję
+        my_closed: Moje zamknięte zgłoszenia
+        my_open: Moje otwarte zgłoszenia
+        tickets_by: Zgłoszenia wg
+        tickets_twitter: Zgłoszenia przez twitter
+        open_or_pending: Otwarte lub Oczekujące
+        resolved_or_closed: Rozwiązane lub Zamknięte
+        no_tickets: Nie masz żadnych zgłoszeń w bieżącym widoku
+      note:
+        posted_on: "%{user_name} dnia %{note_date}"
+        edit_note: Edytuj notatkę
+        split_this_as_new_ticket: Rozdziel jako osobne zgłoszenie
+        private_note: Notatka prywatna
+        public_note: Notatka publiczna
+        incoming_email: Adres wiadomości przychodzących
+        outbound_email: Adres wiadomości wychodzących
+    merge:
+      merge:
+        merge_into: Scal z?
+        other_tickets: Inne zgłoszenia zgłoszone przez %{requester}
+        enter_ticket_id: Wprowadź numer zgłoszenia
+        merge: Scal
+      confirm_merge:
+        source_merge_description: To zgłoszenie zostało zamknięte i scalone ze zgłoszeniem %{ticket_id}.
+        source_ticket_close_info: To zgłoszenie zostanie zamknięte z następującą notatką
+        target_ticket_updated_info: To zgłoszenie zostanie zaktualizowane z następującą notatką oraz wszystkie rozmowy zostaną przeniesione.
+        will_be_merged_into: Zostanie scalone z...
+        target_merge_description1: Zgłoszenie %{ticket_id} %{ticket_subject} jest scalone z tym żądaniem
+        target_merge_description2: Opis w zgłoszeniu %{ticket_id}
+        confirm_and_merge: Potwierdz i scal    
+  import_ticket_group: Zgłoszenia i Grupa
+  or: lub
+  tickets_filter:
+    sort_fields:
+      due_by: Data realizacji
+      date_created: Data utworzenia
+      last_modified: Ostatnio zmodyfikowane
+      priority: Priorytet
+      status: Status
+      asc: Rosnąco
+      desc: Malejąco
+  click_to_change_sort_order: Kliknij aby zmienić porządek sortowania
+  user_sessions:
+      new:
+        email: E-mail
+        password: Hasło
+        remember: Pamiętaj mnie na tym komputerze
+        login: Logowanie
+        forgot: Zapomniałeś hasła?
+        sign_in_using: Zaloguj się za pomocą
+        sign_in_using_google: Zaloguj się za pomocą swojego konta Google
+        help: Pomoc
+  delete_reminder: Usunąć tę pozycję Do wykonania?
+  subscription_plan:
+    billing_cycle:
+      annual: Rocznie
+      quarterly: Kwartalnie
+      monthly: Miesięcznie
+      sixmonth: Półrocznie
+  no_message:
+    canned_responses: Brak dostępnych szablonów odpowiedzi.
+    products: Nie utworzyłeś jeszcze żadnego produktu.
+  errors: 
+    conditions_empty: Warunki nie mogą być puste
+    actions_empty: Działania nie mogą być puste
+  export_data:
+    thirt_days: Ostatnie 30 dni
+    seven_days: Ostatnie 7 dni
+    twenty_four: Od wczoraj
+    custom_filter: Ustaw datę
+  date:
+    ago: temu
+    from: Od teraz
+    now: Dokładnie teraz
+    minute: Minutę
+    minutes: Minut(y)
+    hour: Godzinę
+    hours: Godzin(y)
+    day: Dzień
+    days: dni
+    week: Tydzień
+    weeks: tygodni(e)
+    month: Miesiąc
+    months: miesiące/miesięcy
+    year: Rok
+    years: lat(a)
+  go_back_admin: Wróć do Administratora
+  social:
+    facebook_pages:
+      index:
+        title: Strony Facebook
+    twitter_handles:
+      index:
+        title: Konta Twitter
+  all_due: Wszystko 
+  due_today: Dzisiaj
+  due_tomo: Jutro
+  due_next_eight: Następne 8 godzin
+  block_users: Czy chcesz także zablokować kontakt(y)?
+  user_block: Tak
+  users_blocked_message: Zablokowano następujący(-e) kontakt(y) (%{users})
+  user_activation_message_sent: Użytkownik został utworzony, a instrukcje na temat aktywacji wysłane na adres %{user_email}!
+  wf:
+    filter:
+      index:
+        title: Zarządzaj widokami niestandardowymi
+        back: "&larr; Powrót do zgłoszeń"
+        no_custom_view: Brak dostępnych widoków niestandardowych!
+      view:
+        delete: Czy na pewno chcesz usunąć ten widok?
+    messages:
+      no_tickets_in_view: Nie masz żadnych zgłoszeń w widoku %{view_name}.
+  conversation: Rozmowa
+  save_this_view: Zapisz ten widok...
+  loading:
+    activities: Ładowanie większej liczby działań
+    items: Ładowanie większej liczby pozycji
+  application:
+    new: Utwórz nową aplikację
+    desc: Zintegruj z innymi aplikacjami, aby jeszcze pełniej korzystać z możliwości systemu Freshdesk.
+    title: Dodatki i integracja
+    disabled: Wyłączone
+    enabled: Włączone
+    configure: Konfiguruj
+    enable: Włącz
+    click_to_disable: Kliknij, aby wyłączyć dodatek
+    click_to_enable: Kliknij, aby włączyć dodatek    
+    confirm_disable: Czy na pewno chcesz wyłączyć ten dodatek?
+    configure_addon: Kliknij, aby skonfigurować ten dodatek
+  home:
+      mobile_index:
+        email: E-mail
+        password: Hasło
+        remember: Pamiętaj mnie na tym komputerze
+        login: Logowanie
+        forgot: Zapomniałeś hasła?
+        sign_in_using: Zaloguj się za pomocą
+        sign_in_using_google: Zaloguj się za pomocą swojego konta Google
+        help: Pomoc
+  settings: ustawienia...        
+  capsule_crm: Capsule CRM
+  integrations:
+    capsule:
+      label: Capsule CRM
+      desc: Możesz przeglądać dane kontaktów z aplikacji Capsule CRM w systemie Freshdesk. Dostęp do tych danych możesz uzyskiwać na stronach Dane zgłoszenia i Dane kontaktu.
+      form:
+        bcc_drop_box_mail: Adres Mail Drop Box
+        bcc_drop_box_mail_info: Możesz znaleźć swój unikalny adres e-mail Capsule Drop box, wybierając kolejno <b>“Ustawienia (Settings) -> Mail Drop Box”</b>.<br /> (Ta opcja znajduje się w prawym górnym rogu strony).<br /> Skopiuj adres e-mail i wklej go w powyższym polu tekstowym. <br /> Gdy będziesz odpowiadać na zgłoszenie, Freshdesk automatycznie doda ten adres e-mail w polu UDW.
+        domain: Domena
+        domain_info: "Np: przykład.capsulecrm.com"
+        api_key: Klucz API
+        api_key_info: Aby uzyskać swój unikalny klucz API, zaloguj się na swoim koncie Capsule CRM, a następnie wybierz kolejno <br /> <b>„Użytkownik (User) -> Moje preferencje (My Preferences)”</b>. (Ta opcja znajduje się w prawym górnym rogu strony).<br /> Kliknij <b>„Token uwierzytelniania API” („API Authentication Token”)</b>, aby uzyskać unikalny klucz API.<br /> Skopiuj ten klucz i wklej go w powyższym polu tekstowym.
+        widget_title: Tytuł widżeta
+  widgets:
+    contact_widget:
+      description: Wyświetl kontakt lub opcja dodawania kontaktu do aplikacji Capsule
+  capsule_crm_helptext: "<h4>Łącze zwrotne z aplikacji Capsule do systemu Freshdesk</h4><p>Możesz utworzyć łącze w aplikacji Capsule CRM, aby przeglądać zgłoszenia kontaktów w systemie Freshdesk.</p> <p>Aby to zrobić, wybierz kolejno <br /><b>Ustawienia (Settings) -> Pola niestandardowe (Custom Fields) -> Dla ludzi i organizacji (For People & Organization)</b></p><p> Następnie kliknij przycisk „Dodaj nowy...” i wybierz <b>„Wygenerowane łącze”</b></p> <p>Skopiuj adres URL dokładnie tak, jak pokazano poniżej, i wklej go w aplikacji Capsule CRM jako definicję łącza<span class=\"info-code\">http://%{full_domain}/helpdesk/tickets?email={email}</span></p>"

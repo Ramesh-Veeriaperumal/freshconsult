@@ -120,7 +120,6 @@ ul.activityfeed li{
 		font-size:1.1em;
 		font-weight:bold;
 		line-height:1.4em;
-		margin:0.36em 0;
 	}
 	
 	.element{
@@ -487,8 +486,9 @@ body h5{
 .request_details{
 	margin:-13px -20px 20px -20px;
 	.ticket_actions{
-		position:relative;
-		float:right; 
+		position:absolute;
+		right:10px; 
+		top:10px;
 		.action_buttons{
 			margin-top:0px;
 			a{ font-size:10px; }
@@ -498,16 +498,24 @@ body h5{
 		   margin-left:6px;
 		}
 	} 
+	.replylinks{
+		float:right;
+		margin:4px 20px 0 0;
+		position:relative;
+		z-index:20;
+		text-align:right;
+		.btn{ font-weight:bold; padding:4px 9px; }
+	}
 	.bookmark{
 		display:none;
 	}	
 	.requestCnt{
 		position:relative;
-  	font-size:12px;
+  	font-size:12px;		
 		.request-title{
 			$COL_PRI_HIGH: #cc5600;		$COL_PRI_MEDIUM: #0a9458;		$COL_PRI_LOW: #0c8aae;		$COL_PRI_URGENT: #cc0000;			
 			background-color:#f6f6f6; 
-			padding:7px 10px 8px 75px;
+			padding:7px 10px 8px 68px;
 			border-bottom:1px solid #e9e9e9;
 			color:#000000;
 			font-size:13px;
@@ -523,13 +531,13 @@ body h5{
 				padding:9px 8px 0;
 				line-height:0;
 				height:9px;
-				width:50px;
+				width:40px;
 			}
 			.status{
-				background-color:#669999;	
 				float:right;
 				margin:3px 0 0 10px;
 				@include border-radius(3px);
+				@include box-shadow( inset 0 1px 1px rgba(0, 0, 0, 0.20) );
 			}			
 			.priority{
 				left:-4px;
@@ -568,12 +576,14 @@ body h5{
 		} 
 	}
 	
+	a.user_name{ @include link-colors( #333333, #527EAA ); } 
+	
 	.request-cnt-first{
 		div.description{
 			.app-link{
 			   position:absolute;
-			   margin-left:-72px;
-			   margin-top:50px;
+			   margin-left:-20px;
+			   margin-top:38px;
 			}
 			.user_details{
 				color:#777777;
@@ -624,7 +634,7 @@ body h5{
 	}
 	
 	.preview_pic img{ width:36px; height:36px; }
-	.user_name{ @include link-colors( #333333, #527EAA ); } 
+
 	div.description{  
 			position: relative; 
 			.details{ 
@@ -658,12 +668,13 @@ body h5{
 	
 	.request-conversation{
 		padding:0; 
-		margin-top:12px;
+		margin-top:10px;
 		.description, .timeentry{
 			@include pie-clearfix;
 			position:relative;
 			margin:0;
-			padding:0 25px 0 0;
+			padding:8px 25px 8px 70px;
+			border-bottom:1px solid #f3f3f3;
 			.preview_pic{
 				margin-left:-50px;
 				margin-top:1px;
@@ -867,64 +878,68 @@ body h5{
 			text-decoration:none;
 			font-weight:bold;
 			color:#9aa2a9;
-			padding:5px;
+			padding:34px 2px 6px;
 			margin-bottom:10px;
 			text-align:center; 
-			img{
+			position:relative; 
+			span{
 				width:44px;
 				height:32px;
+				position:absolute;
+				left:13px;
+				top:0;
 			}
-			img.ticketprop{
+			span.ticket{
 				background: sprite($ticketicon, properties) no-repeat;
 			}
-			img.suggestsolutions{
+			span.search_solutions{
 				background: sprite($ticketicon, solutions) no-repeat;
 			}
-			img.scenario{ 
+			span.scenarios{ 
 				background: sprite($ticketicon, scenario) no-repeat;
 			}
-			img.requesterinfo{ 
+			span.requesterinfo{ 
 				background: sprite($ticketicon, user-info) no-repeat;
 			}
-			img.todo{ 
+			span.todo{ 
 				background: sprite($ticketicon, todo) no-repeat;
 			}
-			img.tags{ 
+			span.tags{ 
 				background: sprite($ticketicon, tag) no-repeat;
 			}
-			img.activity{ 
+			span.activity{ 
 				background: sprite($ticketicon, activity) no-repeat;
 			}
 			
 			em{
 				display:block;
 				font-style:normal;
-				line-height:11px;
+				line-height:14px;
 				white-space:normal;
 				padding-top:0px;
 				@include wrap;
 			} 
 		}
-		a.active, a:hover{
-			img.ticketprop{ 
+		li.active, a:hover{
+			span.ticket{ 
 				background: sprite($ticketicon, properties_active) no-repeat;
 			}
-			img.suggestsolutions{ 
+			span.search_solutions{ 
 				background: sprite($ticketicon, solutions_active) no-repeat;
 			}
-			img.scenario{ 
+			span.scenarios{ 
 				background: sprite($ticketicon, scenario_active) no-repeat;
 			}
-			img.requesterinfo{ 
+			span.requesterinfo{ 
 				background: sprite($ticketicon, user-info_active) no-repeat;
 			}
-			img.todo{ 
+			span.todo{ 
 				background: sprite($ticketicon, todo_active) no-repeat;
 			}
-			img.tags{ 
+			span.tags{ 
 				background: sprite($ticketicon, tag_active) no-repeat;
 			}
-			img.activity{ 
+			span.activity{ 
 				background: sprite($ticketicon, activity_active) no-repeat;
 			}
 			color:#ffffff;
@@ -1112,19 +1127,13 @@ a.request_bt:hover{
  
 .user_details_widget{ 
 	padding:0 10px;
-	div{
-		padding:3px 0px; 
-	}
-	a.user_name{
-		font-size:15px;
-	}
-	a, a.user_name{
-		color:#527EAA;
-	}
+	line-height:20px;
+	a.user_name{ font-size:15px; }
+	.preview_pic{ float:none; display:block; }
 	.preview_pic img{
 		padding:0px;
 		border:0px;
-		margin-bottom:8px;
+		margin:4px 0;
 		width:auto;
 		height:auto;
 		border:1px solid #afafaf;
@@ -1423,35 +1432,31 @@ h4.list_title{
 
 .alpha_sort_list{ 
 	@include clearfix;
+	float:right;
+	border:1px solid red;
 	list-style:none;
 	display:block;
-	margin:0px -20px;
-	background:#f1f1f1;
-	padding:4px 30px;
+	padding:4px 2px;	
+	border:1px solid #dedede;	
+	background: #efefef;
+	@include border-radius(5px);
 	li{
 		float:left;
 		margin:0px;
-		padding:3px 0px;		
-		a{			
-			border:1px solid #dedede;	
-			background: #efefef;			
+		padding:2px 0px;		
+		a{	
 			font-weight:bold;
 			text-decoration:none;
-			font-size:11px;
-			padding:5px 6px;
 			color: #909090;
+			@include border-radius(4px);
+			padding: 4px 5px;
 		}
 	}
 	li.active a, li a:hover{
 			color:#333333;
 			border-color:#f5f5f5f;
-			background: #fff;					
-	}
-	li.first a{ 
-		border-left:1px solid #dedede;	
-	}
-	li.last a{ 
-		border-right:1px solid #dedede;		
+			background: #fff;
+			@include box-shadow(rgba(0, 0, 0, 0.25) 0px 0px 2px inset);
 	}
 } 
 
@@ -1624,15 +1629,14 @@ ul.item_list{
 	border-bottom-color:#e8e8e8;
 	border-left-color:#e8e8e8;
 	li{
-		padding:5px;
-		margin:5px;
-		font-size:12px;
+		padding:2px;
+		margin:5px 0;
 		@include clearfix;
-		position:relative;
-		@include min-width(150px);
+		position:relative; 
 		@include corners(6px);
+		@include min-width(150px);
 		a{
-			text-decoration:none;				
+			text-decoration:none;
 		}	
 		div.preview_pic{
 			margin-right:5px;
@@ -1642,8 +1646,12 @@ ul.item_list{
 			}
 		} 
 		b{
-			position:relative;	
+			position:relative;	 
+			width:138px;
+			float:left;
+			@include wrap;
 			top:2px;
+			font-size:11px;
 		}
 		.selected_tick{
 			position:absolute;
@@ -1652,8 +1660,9 @@ ul.item_list{
 		}
 		.control{
 			position:absolute;
-			right:3px; bottom:3px;
+			right:3px; bottom:-2px;
 			display:none;
+			z-index:9999;
 		}
 	}
 	li:hover{
@@ -1692,10 +1701,13 @@ ul.user_list{
 	margin:0px;
 	padding:0px;
 	li{
+	  height:100px;
 		float:left;
-		width:auto;
+		width:120px;
+		
+		text-align:center;
 		.preview_pic{
-			margin:2px;
+			margin:2px 34px;
 			img{
 				padding:0px;
 				border:0px;
@@ -1703,6 +1715,7 @@ ul.user_list{
 		}
 		.username{
 			display:block;
+			word-wrap: break-word;
 		}
 	}
 }
@@ -1934,7 +1947,7 @@ h4.border_title{
 }
 
 .solution-list .odd, .solution-list .even{
-	@include clearfix;
+	@include pie-clearfix;
 	margin:5px 2% 5px 1%; 
 	padding:10px 0px;
 	float:left;
@@ -2432,13 +2445,14 @@ a.page_title{
 }
 
 .search_results_bar{
-	@include corners(0px, 0px, 6px, 6px);
-	@include shadows(#bbbbbb, 0px, 3px, 10px);
+	@include border-bottom-radius(6px);
+	@include box-shadow(#aaa 0px 3px 10px);
 	border:1px solid #afafaf;
 	display:none;
 	position:absolute;
 	background:#ffffff;
-	right:10px;
+	right:16px;
+	top:-12px;
 	border-top:1px solid #dddede;
 	padding-left:100px;
 	z-index:9999999;
@@ -2465,7 +2479,7 @@ a.page_title{
 
 .results{ 
 	padding-bottom:8px;
-	.ticket_icon, 	.contact_icon, .company_icon, .solution_icon, .forum_icon { display:inline-block; }
+	.ticket_icon, 	.contact_icon, .company_icon, .solution_icon, .forum_icon { display:block; }
 	.ticket_icon	span.icon{ background:sprite($icons, page-white) no-repeat; }
 	.contact_icon	span.icon{ background:sprite($icons, user) no-repeat; } 
 	.company_icon	span.icon{ background:sprite($icons, building) no-repeat; } 
@@ -2584,6 +2598,13 @@ a.page_title{
 	.active{
 	   a{ 
 	      @include link-colors(#333333, #333333, #333333, #333333); }
+	}
+	.sortable{
+		margin:0 -10px 0 -20px;
+		padding:5px 20px;
+	}
+	.sort-list li{
+		font-size:1em;
 	}
 }
 
@@ -2842,14 +2863,14 @@ a.page_title{
    font-size:0px;
 }
 
-.reminders, .reminders-ticket{ 
+.reminders, .todo{ 
 	h3.title{  
 		border-bottom:1px solid #f1edd1;
 		color:#734e3d;  
 		display:block;
 	}
 }
-.rtCnt .rtDetails.reminders-ticket{ 
+.rtCnt .rtDetails.todo{ 
    background-color:#ffffe2; 
 	label{ font-size:14px; }
 	h3.title{
@@ -2858,7 +2879,7 @@ a.page_title{
 	.panel_area{ padding-top:0px; }
 }
 
-.reminders, .reminders-ticket{
+.reminders, .todo{
 	position:relative; 
    background-color:#ffffe2;    
    ul{
@@ -3245,6 +3266,11 @@ div.addReminder{
 	}
 }
 
+.ui-form span.warning{
+	color:#aa3333;
+	background-color:#fffbee;
+}
+
 .info-code{
 	padding:5px 18px 6px;
 	font-size:0.90em;
@@ -3312,23 +3338,21 @@ div.addReminder{
 
 .admin_list, .content_list, .table-list{
 	@include no-bullets;
-	margin:0px -20px 10px -20px;
-	padding:0px 0px;
-	border:1px solid #f2f2f2;
-	border-width:1px 0px;
+
+	padding:0px 0px;  
 	li{	
 		@include clearfix;
-		padding:8px 20px 8px 20px;
-		border-bottom:1px solid #efefef;
-		@include vertical-gradient(#fbfbfb, #fafafa);
+		padding:5px 0;
+		border-bottom:1px solid #efefef; 
 		color:#656565;
 		position:relative;
 		.preview_pic{
 			float:left;
 			margin-right:10px;
-			margin-top:-3px;
+			margin-top:-4px;
 			img{
 			   margin:6px 3px 0px 3px;
+				 width:36px; height: 36px;
 			}
 		}
 		div{
@@ -4317,9 +4341,58 @@ a.close{
 }
 
 .list-noinfo{
-	padding-top:60px; 
+	padding:60px 0; 
 	font-size:1.4em;
 	text-align:center;
 	color:#666666;
 	@include text-shadow(#ffffff, 0px, 1px, 1px);
+}
+.sidepanel {
+	.cnt {
+		li {
+			border-bottom: 1px solid #F3F3F3;
+			padding: 6px 0;
+			
+			a{
+				text-decoration:none;
+			}
+			label{
+				display:block;
+				font-size:11px;
+				font-weight:bold;
+				color:#666666;
+			}
+			select{
+				font-size:11px;
+				max-width:100%;
+			} 
+			.name_label {
+				color: #666666;
+				font-size: 12px;
+				font-weight: bold;
+			}
+			.value_label {
+				color: #666666;
+				font-size: 11px;
+				font-weight: normal;
+			}
+		}
+		
+		
+	}
+}
+
+.dialog-special {
+	.solution-list {
+		label {
+			font-size: 13px;
+		}
+		select {
+			padding: 0px;
+			font-size: 11px;
+		}
+		li {
+			padding: 0px;
+		} 
+	}
 }

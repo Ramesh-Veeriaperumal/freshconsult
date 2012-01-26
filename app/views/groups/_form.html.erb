@@ -30,7 +30,7 @@
 			
 			
 			var userBox = jQuery('<li />')							
-							.append("<div class=\"preview_pic\"><img src=\""+agentThumb+"\" /></div><a href=\"javascript:void(0)\" class=\"button control\">remove</a><b>"+agentName+"</b>");
+							.append("<div class=\"preview_pic\"><img src=\""+agentThumb+"\" /></div><a href=\"javascript:void(0)\" class=\"slim-button control\">remove</a><b title='"+agentName+"'>"+agentName.truncate(30)+"</b>");
 			
 			jQuery("ul#Active_list")
 					.append(userBox);
@@ -45,7 +45,7 @@
 		agent_select = jQuery('select#group_escalate_to').get(0);
 		
 		jQuery("ul#Active_list li a.control")
-			.live("click", function(ev){																	
+			.live("click", function(ev){
 				removeUser(this.parentNode);
 				jQuery(this.parentNode)
 					.remove();	
@@ -97,14 +97,14 @@
 					showagent = "display:none"
 				end 
 			%>
-			<span id="All_Agents" style="<%=showagent%>">
+			<span id="All_Agents" style="<%= showagent %>">
 					<b><%=t('group.select_agents')%> </b>							  			
 					<select id="group_escalate_to">
 						<% @exclude_list.each do |user| %>
 							<% 
-								avatar_url = '/images/icons/profile_blank.gif'
+								avatar_url = '/images/fillers/profile_blank_thumb.gif'
 								unless user.avatar.nil?
-									avatar_url =user.avatar.content.url(:thumb)
+									avatar_url = user.avatar.content.url(:thumb)
 								end 
 							%>
 							<option agent_thumb="<%=avatar_url%>" agent_name="<%=user.name%>" agent_id="<%=user.id%>">
@@ -125,16 +125,15 @@
 			<ul class="item_list active" id="Active_list">	
 					<%  
 						@group.agents.each do |user| 
-						avatar_agent = '/images/icons/profile_blank.gif'
+						avatar_agent = '/images/fillers/profile_blank_thumb.gif'
 						unless user.avatar.nil?
 							avatar_agent = user.avatar.content.url(:thumb)
-						end
-					%>
-					
+						end					  
+					%> 
 					<li agent_thumb="<%=avatar_agent%>" agent_id="<%=user.id %>" agent_name="<%= user.name %>">
 						<%= user_avatar(user, :thumb) %>
-						<a href="javascript:void(0)" class="button control"><%= t("remove") %></a>				
-						<b><%= user.name %></b>
+						<a href="javascript:void(0)" class="slim-button control"><%= t("remove") %></a>				
+						<%= content_tag :b, truncate(user.name, 30), :title => user.name %>
 					</li>
 					<% end %>
 				

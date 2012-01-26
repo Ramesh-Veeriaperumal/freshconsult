@@ -1,41 +1,97 @@
 
-<% form_tag({:action => :export_csv}, { :method => :post, :id => 'report_filters' }) do %>
+  <span class="floatr">
+    <%= submit_tag "Export to CSV",{ :class => "slim-button" , :id =>'export_as_csv' }%>
+  	<%= link_to("&larr; Back to reports", reports_url, :class => "slim-button") %>
+  </span>
+  <h3 class="title">
+    Time sheet report
+  </h3>
+  <div id="time_sheet_report">
+  	<%= render :partial => "time_sheet_list", :locals => {:time_sheets => @time_sheets} %> 
+  </div>
 
-<div>
+
+<% content_for :sidebar do -%>
+<div class="sidepanel">
+  <h4 class="title">Filter report by<h4>
+  <% form_tag({:action => :export_csv}, { :method => :post, :id => 'report_filters' }) do %>
+    <ul class="ui-form">
+      <li>
+        <label><%=t('helpdesk.time_sheets.customer')%></label>  
+        <%= select_tag :customer_id, options_for_select(current_account.customers.collect{|c|[c.name, c.id]}, @customer_id), { :multiple => true, :class => "customSelect auto" , "data-placeholder".to_sym() =>t('report.time_sheet.select_customer')} %>
+        	     
+        <label><%=t('helpdesk.time_sheets.agent')%></label>	
+		   <%= select_tag :user_id, options_for_select(current_account.users.technicians.collect{|c|[c.name , c.id]}, @user_id), { :multiple => true, :class => "customSelect auto" , "data-placeholder".to_sym() =>t('report.time_sheet.select_agent')} %>
+        
+		 <label><%=t('helpdesk.time_sheets.billing_type')%></label>
+		 <%= select_tag :billable, options_for_select(Helpdesk::TimeSheet::BILLABLE_HASH , (@billable.eql?([true,false]) ? "" : @billable)), { :multiple => true, :class => "customSelect auto" , "data-placeholder".to_sym() =>t('report.time_sheet.select_billable')} %>
+        
+		<label><%=t('helpdesk.time_sheets.group_by')%></label>
+		<%=select_tag :group_by , options_for_select(Helpdesk::TimeSheet::GROUP_BY_ARR) ,{ :multiple => false, :class => "customSelect auto"}%>
 		
-	<%= render :partial => "/helpdesk/tickets/containers/multi_select", :locals => { :options => current_account.customers.collect{|c|[c.id , c.name]}, :name =>:customer_id, :selected_val =>@customer_id  } %>
-	
-	<%= render :partial => "/helpdesk/tickets/containers/multi_select", :locals => { :options => current_account.users.technicians.collect{|c|[c.id , c.name]}, :name =>:user_id, :selected_val =>@user_id  } %>
-	 
-	<%= render :partial => "/helpdesk/tickets/containers/multi_select", :locals => { :options => Helpdesk::TimeSheet::BILLABLE_HASH, :name => :billable, :selected_val =>(@billable.eql?([true,false]) ? "" : @billable)  } %>
-	
-	 <%=select_month(Time.utc(Time.now.year, @month, 1) || Date.today)%>
-	 
-	 <%= submit_tag "Export to CSV", :class => "uiButton", :id => "ExportToCSV" %>
-	
-</div>
-
+	  </li> 
+	  </ul>
     
-	
+   <h4 class="title">View report between</h4>
+   <ul class="ui-form">
+     <li class="inline-field"> 
+				<table>
+					<tr>
+						<td width="100px"><label>From</label></td>
+						<td><%= text_field_tag :start_date, "", :class => "text auto", :size => 10 %></td>
+					</tr>
+					<tr>
+						<td><label>To</label></td>
+						<td><%= text_field_tag :end_date, "", :class => "text auto", :size => 10 %></td>
+					</tr>
+				</table>
+			</li>
+		</ul>	     
+  <% end %>
+</div> 
 <% end %>
 
-<div id="time_sheet_report" >
-	<%= render :partial => "time_sheet_list", :locals => {:time_sheets => @time_sheets}%> 
-</div>
-
 <% javascript_tag do %> 
-jQuery(document).ready(function(){
-  jQuery("#report_filters").change(function(){
-    jQuery("#time_sheet_report").html("<div class='loading-box'></div>"); 
-    jQuery.ajax({
+	jQuery(document).ready(function() {
+		var date_today = new Date();
+			var dates = jQuery( "#start_date, #end_date" ).datepicker({
+				changeMonth: true, 
+				changeYear: true,
+				numberOfMonths: 3,
+				showButtonPanel: true,
+				maxDate: "today",
+				showOn: "both", 
+				disabled: true,
+				onSelect: function( selectedDate ) {
+					var option = this.id == "start_date" ? "minDate" : "maxDate",
+						instance = jQuery( this ).data( "datepicker" ),
+						date = jQuery.datepicker.parseDate(
+							instance.settings.dateFormat ||
+							jQuery.datepicker._defaults.dateFormat,
+							selectedDate, instance.settings );
+					dates.not( this ).datepicker( "option", option, date );
+					jQuery(this).attr("date", date);
+					jQuery("#report_filters").trigger("change");
+				}
+			}); 
+		jQuery("#start_date").val('<%= @start_date.strftime("%m/%d/%Y") %>');
+		jQuery("#end_date").val('<%= @end_date.strftime("%m/%d/%Y") %>');	
+	
+	    jQuery("#report_filters").change(function(){
+    	jQuery("#time_sheet_report").html("<div class='loading-box'></div>"); 
+    	jQuery.ajax({
         url: "/reports/timesheet_reports/report_filter",
         type: "POST",
         data: jQuery(this).serializeArray(),
         success: function(data){ 
 		   jQuery("#time_sheet_report").hide().html(data).fadeIn(300);
-        }
-		});
-      }); 	  
-  });
-
-<% end %>
+        	}
+			});
+      	});
+		
+		jQuery("#export_as_csv").click(function(){
+       		jQuery("#report_filters").submit();
+  		}); 	
+	
+	});
+<%end%>

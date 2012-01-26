@@ -677,9 +677,7 @@ footer {
   border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
 }
 .btn.active, .btn:active {
-  -webkit-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.05);
-  -moz-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.05);
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.05);
+	@include box-shadow( inset 0 1px 1px rgba(0, 0, 0, 0.45), 0 1px 2px rgba(0, 0, 0, 0.05) );
 }
 .btn.disabled {
   cursor: default;
@@ -813,9 +811,8 @@ button.btn::-moz-focus-inner, input[type=submit].btn::-moz-focus-inner {
   filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
   padding: 14px;
   border-color: #f4f4e9;
-  -webkit-box-shadow: none;
-  -moz-box-shadow: none;
-  box-shadow: none;
+	margin:0px 10px 4px 0;
+	@include box-shadow(0 1px 2px rgba(0, 0, 0, 0.25));
 }
 .alert-message.block-message ul, .alert-message.block-message p {
   margin-right: 30px;
@@ -1275,28 +1272,33 @@ label.small{
 		right:25px;
 	}
 	.tabs{
-		padding:4px 9px 0 50px;
+		padding:2px 9px 0 50px;
 		margin-bottom:0;
 		border:1px solid #eeeeee;
-		font-size:11px;
-		a{ @include link-colors(#333333, #333333); line-height:28px; padding:0 16px; }
+		font-size:12px;
+		a{ @include link-colors(#808080, #333333); line-height:28px; padding:0 16px; font-weight:bold; }
 		span.pill{
 			position:relative;
-			left:6px;
+			left:8px; top:-1px;
 		}
+		.active a{ @include link-colors(#333333, #333333); }
 	} 
 }
 
 span.pill, a.pill{
-	@include border-radius(3px);
-	@include box-shadow(rgba(0,0,0,0.15) 0 1px 1px 0px inset);
-	padding:2px 5px;
+	@include border-radius(8px);
+	@include box-shadow(rgba(0,0,0,0.4) 0 1px 1px 0px inset);
+	padding:1px 6px 2px;
 	font-size:inherit;
 	font-weight:bold;
-	background-color:lighten(#669999, 8%);
+	background-color:#71859b;
 	color:#fff;
 	font-size:9px;
 	line-height:0;
+}
+
+.active span.pill{
+	background-color:#5880ac;
 }
 
 a.pill.help{
@@ -1339,7 +1341,6 @@ a.pill.help{
 
 .time{
 	font-size:1.46em;
-	line-height:26px;
 	padding-left:10px;  
 	.small{
 		font-size:0.80em;
@@ -1361,54 +1362,32 @@ a.pill.help{
 	color:#888;
 }
 
-.request_panel .ui-form h4.title{
-	padding-bottom:16px;
-}
+.ui-form, .timeentry{ .agent, .timespent, .user_details, .note{	float:left; position:relative; } }
 
 .ui-form{ 
-	.timespent, .agent, .note{ float:left; }
 	.agent{ width: 25%;  margin-right:4%;}
 	.timespent{ width: 20%; }
 	.note{ width:50%; float:right; }
 }
+
 .timeentry{
 	.started_time{
 		font-size:10px;
 		font-style:italic;
-		float:right;
 		text-align:right;
 		margin-top:2px;
 	}	
-	.timespent, .user_details, .note{
-		color:#555;
-		float:left;
-		position:relative;
-	}
-	
-	.user_details{
-		width:20%;
-	}
-	
-	.timespent{
-		width:16%;
-		margin-left:1%;
-	}
-	.note{ 
-		width:50%;
-		padding-left:22px;
-		a{ @include link-colors(#5c7083); }
-	}
+	.actions{ margin-top:3px; }
+	.user_details{	width:24%; margin-right: 2%;	}	
+	.user_name{ padding-bottom:3px;  display:block; }
+	.timespent{	width:16%; text-align:right; margin-right: 2%; }
+	.note{ width:40%; padding-left: 4%; em{ color:#336666; font-style:italic; } }
 	.billable{
 		background: sprite($symbol, billable);
 		position:absolute;
 		left:0;
-		top:0;
+		top:1px;
 		width:19px;
 		height:18px;
 	}
 }
-
-.timeentry .timespent{
-	text-align:right; 
-}
-

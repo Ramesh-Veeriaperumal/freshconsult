@@ -19,6 +19,48 @@ module Helpdesk::TicketsHelper
     end
   end
   
+  def ticket_sidebar
+    tabs = [["TicketProperties", t('ticket.properties'),         "ticket"],
+            ["RelatedSolutions", t('ticket.suggest_solutions'),  "search_solutions"],
+            ["Scenario",         t('ticket.execute_scenario'),   "scenarios",       feature?(:scenario_automations)],
+            ["RequesterInfo",    t('ticket.requestor_info'),     "requesterinfo"],
+            ["Reminder",         t('to_do'),                     "todo"],
+            ["Tags",             t('tag.title'),                 "tags"],
+            ["Activity",         t('ticket.activities'),         "activity"]]
+        
+    icons = ul tabs.map{ |t| 
+                next if !t[3].nil? && !t[3]
+                  link_to content_tag(:span, "", :class => t[2]) + 
+                          content_tag(:em, t[1]), "#"+t[0], 
+                                "data-remote-load" => ( url_for({ :action => "component", 
+                                                                :component => t[2], 
+                                                                :id => @ticket.id }) unless (tabs.first == t) )
+               }, { :class => "rtPanel", "data-tabs" => "tabs" }
+               
+    panels = content_tag :div, tabs.map{ |t| 
+      if(tabs.first == t)
+        content_tag :div, (render :partial => "helpdesk/tickets/components/ticket", :object => @ticket), :class => "rtDetails tab-pane active #{t[2]}", :id => t[0]
+      else
+        content_tag :div, content_tag(:div, "", :class => "loading-box"), :class => "rtDetails tab-pane #{t[2]}", :id => t[0]
+      end
+    }, :class => "tab-content"
+               
+    icons + panels
+  end
+    
+  def ticket_tabs
+    tabs = [['Pages',     t(".conversation"), @ticket.conversation_count],
+            ['Timesheet', t(".timesheet"),    @ticket.time_sheets.size, 
+                                               helpdesk_ticket_helpdesk_time_sheets_path(@ticket), 
+                                               feature?(:timesheets)]]
+    
+    ul tabs.map{ |t| 
+                  next if !t[4].nil? && !t[4]
+                  link_to t[1] + (content_tag :span, t[2], :class => "pill #{ t[2] == 0 ? 'hide' : ''}", :id => "#{t[0]}Count"), "##{t[0]}", "data-remote-load" => t[3], :id => "#{t[0]}Tab"
+                }, { :class => "tabs", "data-tabs" => "tabs" }
+                
+  end
+  
   def top_views(selected = "new_my_open", dynamic_view = [], show_max = 1)
     unless dynamic_view.empty?
       dynamic_view.concat([{ :id => -1 }])
@@ -54,7 +96,7 @@ module Helpdesk::TicketsHelper
   end
   
   def filter_count(selector=nil)
-    TicketsFilter.filter(filter(selector), current_user, current_account.tickets).count
+    TicketsFilter.filter(filter(selector), current_user, current_account.tickets.permissible(current_user)).count
   end
   
   def sort_by_text(sort_key, order)
@@ -178,5 +220,16 @@ module Helpdesk::TicketsHelper
     return content
     
   end
-   
+  
+  def status_changed_time_value_hash (status)
+    case status
+      when TicketConstants::STATUS_KEYS_BY_TOKEN[:resolved]
+        return {:title => t('ticket_resolved_at_time'), :method => "resolved_at"}
+      when TicketConstants::STATUS_KEYS_BY_TOKEN[:pending]
+        return {:title =>  t('ticket_pending_since_time'), :method => "pending_since"}
+      when TicketConstants::STATUS_KEYS_BY_TOKEN[:closed]
+        return {:title => t('ticket_closed_at_time'), :method => "closed_at"}
+    end
+  end
+  
 end

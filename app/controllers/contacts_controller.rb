@@ -231,8 +231,8 @@ protected
 
   def check_email_exist
     if("has already been taken".eql?(@user.errors["email"]))        
-			@existing_user = current_account.all_users.find(:first, :conditions =>{:users =>{:email => @user.email}})
-		end
-	end
+      @existing_user = current_account.all_users.find(:first, :conditions =>{:users =>{:email => @user.email}})
+    end
+  end
 
 end

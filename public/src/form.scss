@@ -250,11 +250,14 @@ a.addchoice:hover{
 		padding:8px 2% 8px 2%; 
 		margin:0;
 		@include float-left;
-		width:96%;
+		width: 98%;
 		div.field-box{
 			padding:4px 0 8px 0;
 		}
 	} 
+	li.search-choice, li.search-field{
+		width:auto;
+	}
 	/*li:last-child{
 		border-bottom: 0;
     	box-shadow: none;
@@ -454,6 +457,15 @@ a.addchoice:hover{
 					}
 					input.text, textarea.paragraph{
 						width:590px;
+					}
+					label.error{
+						margin-left:190px;
+						width:575px;
+						@include border-radius(3px);
+					}
+					
+					.error{
+						border-color:#ff9999;
 					}
 					a.l_placeholder{
 						clear:left;
@@ -714,11 +726,19 @@ input.time{
    margin:0 -5px; 
    table{
       border:0;
+			td{ font-size:12px; border-top-color:#f3f3f3; }
       tr.odd td{
          background:#ffffff;
       }
       tr.even td{
          background:#f8f8f8;
+      }
+      .group_by_day_criteria{
+      	width:15%;
+      }
+      .hours{
+        width:10%;
+        text-align:right;
       }
    }  
 }
@@ -1134,7 +1154,7 @@ fieldset.nestedChoices{
 
 .transparent-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index:99998; background:#ffffff; @include opacity(0); }
 
-.tabbed{ padding-left:25px; }
+.tabbed{ padding-left:20px; }
 
 table.summary{
 	width:100%;
@@ -1287,25 +1307,28 @@ table.summary-report{
 	border:1px solid #f4f4f4;
 	margin-bottom:10px;
 }
-
+ 
 .request_panel{
-  margin:12px 0;
-	border:1px solid #f6f6f6;
+  margin-top:-10px;
+	margin-bottom:5px;
+	border:1px solid #efefef;
+	background-color:#fafafa;
 	.form-title, .ui-form{
 		padding:6px 25px 6px 66px;
-		border-bottom:1px solid #efefef;			
+		border-bottom:1px solid #efefef;
 	}
 	.form-title{ 
 		font-size:12px; 
 		font-weight:bold; 
 		display:block;
-		background-color:#f8f8f8;			
+		background-color:#f8f8f8;
 	}
 	.ui-form{
 		background-color:#fff;
 			margin:0;
 			background:none;
 			border:0;
+			h4{  line-height:24px; padding:0; font-size:13.5px; font-weight:bold; margin-bottom:8px; }
       li.field{
          border:0;
       }
@@ -1341,8 +1364,8 @@ table.summary-report{
       }
       .request_form_options{
          position:absolute;
-         right:26px;
-         top:20px;
+         right:24px;
+         top:10px;
          .insert-canned-response{
             position:relative;
             z-index:1001;

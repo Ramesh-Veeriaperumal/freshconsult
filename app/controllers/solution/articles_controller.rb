@@ -1,5 +1,6 @@
 class Solution::ArticlesController < ApplicationController
   
+  include Helpdesk::ReorderUtility
   
   before_filter :set_selected_tab
   
@@ -8,6 +9,7 @@ class Solution::ArticlesController < ApplicationController
   before_filter :except => [:index, :show] do |c| 
     c.requires_permission :manage_knowledgebase
   end
+  
   
   uses_tiny_mce :options => Helpdesk::LARGE_EDITOR 
   
@@ -54,10 +56,14 @@ class Solution::ArticlesController < ApplicationController
    current_folder = Solution::Folder.find(params[:solution_article][:folder_id]) 
    @article = current_folder.articles.new(params[nscname]) 
    set_item_user 
+
+   redirect_to_url = @article
+   redirect_to_url = new_solution_category_folder_article_path(params[:category_id], params[:folder_id]) unless params[:save_and_create].nil?
+   
    respond_to do |format|
       if @article.save
         post_persist 
-        format.html { redirect_to @article }        
+        format.html { redirect_to redirect_to_url }        
         format.xml  { render :xml => @article, :status => :created, :location => @article }
       else
         format.html { render :action => "new" }
@@ -96,7 +102,7 @@ class Solution::ArticlesController < ApplicationController
     end
     
   end
-  
+   
    def delete_tag
      
      logger.debug "delete_tag :: params are :: #{params.inspect} "     
@@ -125,14 +131,19 @@ end
     end
   end
   
-  
-  
- 
-  
 protected
 
   def scoper
     eval "Solution::#{cname.classify}"
+  end
+
+  
+  def reorder_scoper
+    current_account.solution_articles.find(:all, :conditions => {:folder_id => params[:folder_id] })
+  end
+  
+  def reorder_redirect_url
+    solution_category_folder_url(params[:category_id], params[:folder_id])
   end
 
   def cname

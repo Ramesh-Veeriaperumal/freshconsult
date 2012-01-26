@@ -3,8 +3,11 @@ class Reports::TimesheetReportsController < ApplicationController
   include Reports::TimesheetReport
   
   before_filter { |c| c.requires_permission :manage_tickets }
-  before_filter :buidl_time_sheet, :only => [:index, :export_csv ,:report_filter]
-  
+  before_filter :set_selected_tab
+  before_filter :build_item ,  :only => [:index,:export_csv,:report_filter]
+  before_filter :time_sheet_list, :only => [:index,:report_filter]
+  before_filter :time_sheet_for_export, :only => [:export_csv]
+
   
   def report_filter
     render :partial => "time_sheet_list"
@@ -27,13 +30,14 @@ class Reports::TimesheetReportsController < ApplicationController
             :disposition => "attachment; filename=time_sheet.csv"
   end
   
-   def buidl_time_sheet
-    @month = params[:date] ? params[:date][:month] :Time.zone.now.month
-    @customer_id = params[:customer_id] || []
-    @user_id = params[:user_id] || []
-    @billable = (!params[:billable].blank? && !params[:billable].to_s.eql?("falsetrue")) ? [params[:billable].to_s.to_bool] : [true,false]
-    @time_sheets = current_account.time_sheets.for_customers(@customer_id).by_agent(@user_id).created_at_inside(start_of_month(@month.to_i),end_of_month(@month.to_i)).hour_billable(@billable)
+   def time_sheet_list
+     @time_sheets = current_account.time_sheets.for_customers(@customer_id).by_agent(@user_id).created_at_inside(@start_date,@end_date).hour_billable(@billable).group_by(&group_by_caluse)
+   end
+  
+  def time_sheet_for_export
+     @time_sheets = current_account.time_sheets.for_customers(@customer_id).by_agent(@user_id).created_at_inside(@start_date,@end_date).hour_billable(@billable)
   end
+
 
 
 end

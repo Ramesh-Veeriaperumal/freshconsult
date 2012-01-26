@@ -2,11 +2,20 @@ class Account < ActiveRecord::Base
   require 'net/dns/resolver'
   require 'net/http' 
   require 'uri' 
+  require 'thirdcrm'
 
   #rebranding starts
   serialize :preferences, Hash
   serialize :sso_options, Hash
   
+  has_many :all_email_configs, :class_name => 'EmailConfig', :dependent => :destroy, :order => "name"
+  has_many :email_configs, :conditions => { :active => true }
+  has_one  :primary_email_config, :class_name => 'EmailConfig', :conditions => { :primary_role => true }
+  has_many :products, :class_name => 'EmailConfig', :conditions => { :primary_role => false }, :order => "name"
+  has_many :portals 
+  has_one  :main_portal, :source => :portal, :through => :primary_email_config
+  accepts_nested_attributes_for :main_portal
+ 
   has_many :features,:dependent => :destroy
   has_many :flexi_field_defs, :class_name => 'FlexifieldDef', :dependent => :destroy
   
@@ -49,7 +58,7 @@ class Account < ActiveRecord::Base
   
   has_one :subscription, :dependent => :destroy
   has_many :subscription_payments
-  has_many :solution_categories , :class_name =>'Solution::Category',:include =>:folders, :dependent => :destroy
+  has_many :solution_categories , :class_name =>'Solution::Category',:include =>:folders, :dependent => :destroy, :order => "position"
   has_many :solution_articles , :class_name =>'Solution::Article'
   
   has_many :installed_applications, :class_name => 'Integrations::InstalledApplication', :dependent => :destroy
@@ -75,17 +84,11 @@ class Account < ActiveRecord::Base
   
   has_many :scn_automations, :class_name => 'VARule', :conditions => {:rule_type => VAConfig::SCENARIO_AUTOMATION, :active => true}, :order => "position"
   
-  has_many :all_email_configs, :class_name => 'EmailConfig', :dependent => :destroy, :order => "name"
-  has_many :email_configs, :conditions => { :active => true }
-  has_one  :primary_email_config, :class_name => 'EmailConfig', :conditions => { :primary_role => true }
-  has_many :products, :class_name => 'EmailConfig', :conditions => { :primary_role => false }, :order => "name"
-  has_many :portals
-  has_one  :main_portal, :source => :portal, :through => :primary_email_config
-  accepts_nested_attributes_for :main_portal
+  
   
   has_many :email_notifications, :dependent => :destroy
   has_many :groups, :dependent => :destroy
-  has_many :forum_categories, :dependent => :destroy
+  has_many :forum_categories, :dependent => :destroy, :order => "position"
   
   has_one :business_calendar, :dependent => :destroy
   
@@ -150,14 +153,16 @@ class Account < ActiveRecord::Base
                             :message => "Value must be less than six digits"
                             
 
-  before_create :set_default_values, :config_default_email
+  before_create :set_default_values
+  
   
   before_update :check_default_values, :update_users_time_zone
     
-  after_create :create_admin
+  after_create :create_portal, :create_admin
   after_create :populate_seed_data
   after_create :populate_features
   after_create :send_welcome_email
+  after_create :add_to_crm
   after_update :update_users_language
   
   before_destroy :update_google_domain
@@ -190,15 +195,22 @@ class Account < ActiveRecord::Base
     }
   }
   
-  SELECTABLE_FEATURES = [ :open_forums, :open_solutions, :anonymous_tickets, :scoreboard, 
-    :survey_links, :google_signin, :twitter_signin, :signup_link , :captcha ] #:surveys & ::survey_links $^&WE^%$E
+# Default feature when creating account has been made true :surveys & ::survey_links $^&WE^%$E
+    
+  SELECTABLE_FEATURES = {:open_forums => true, :open_solutions => true, :anonymous_tickets =>true, :scoreboard => true, 
+    :survey_links => true, :google_signin => true, :twitter_signin => true, :signup_link => true, :captcha => false}
+    
   
   has_features do
     PLANS_AND_FEATURES.each_pair do |k, v|
       feature k, :requires => ( v[:inherits] || [] )
       v[:features].each { |f_n| feature f_n, :requires => k } unless v[:features].nil?
-      SELECTABLE_FEATURES.each { |f_n| feature f_n }
+      SELECTABLE_FEATURES.keys.each { |f_n| feature f_n }
     end
+  end
+  
+  def self.actual_customer_count
+    Account.count('id',:distinct => true,:joins => :subscription_payments)
   end
   
   def get_max_display_id
@@ -224,7 +236,7 @@ class Account < ActiveRecord::Base
   end
   
   def update_users_language
-    all_users.update_all(:language => language) unless features.multi_language?
+    all_users.update_all(:language => main_portal.language) if !features.multi_language? and main_portal
   end
   
   def needs_payment_info?
@@ -290,6 +302,10 @@ class Account < ActiveRecord::Base
     main_portal.name
   end
   
+   def language
+      main_portal.language
+   end
+  
   #Sentient things start here, can move to lib some time later - Shan
   def self.current
     Thread.current[:account]
@@ -302,7 +318,7 @@ class Account < ActiveRecord::Base
   
   def populate_features
     add_features_of subscription.subscription_plan.name.downcase.to_sym
-    SELECTABLE_FEATURES.each { |f_n| features.send(f_n).create }
+    SELECTABLE_FEATURES.each { |key,value| features.send(key).create  if value}
   end
   
   def add_features_of(s_plan)
@@ -432,13 +448,13 @@ class Account < ActiveRecord::Base
       HashWithIndifferentAccess.new({:login_url => "",:logout_url => ""})
     end
     
-    def config_default_email
-      d_email = "support@#{full_domain}"
-      e_c = email_configs.build(:to_email => d_email, :reply_email => d_email, :name => name, :primary_role => true)
-      e_c.active = true
-      
-      portal = e_c.build_portal(:name => helpdesk_name, :preferences => preferences, 
-                    :account => self)
+    def add_to_crm
+      send_later(:add_to_internal_capsule)
+    end
+    
+    def add_to_internal_capsule
+      crm = ThirdCRM.new
+      crm.add_signup_data(self)
     end
     
     def create_admin
@@ -448,6 +464,11 @@ class Account < ActiveRecord::Base
       self.user.build_agent()
       self.user.save
       
+    end
+    
+    def create_portal
+      self.primary_email_config.account = self
+      self.primary_email_config.save
     end
 
     def populate_seed_data
@@ -461,4 +482,11 @@ class Account < ActiveRecord::Base
     def update_google_domain
      self.update_attribute(:google_domain, nil)
     end
+    
+    def subscription_next_renewal_at
+       subscription.next_renewal_at
+    end
+   
+   
+  
 end

@@ -26,9 +26,9 @@
 					jQuery(this).attr("date", date);
 				}
 			});
-
-			jQuery("#start_date").val((date_today.getMonth()) + '/' + date_today.getDate() + '/' + date_today.getFullYear());
-			jQuery("#end_date").val((date_today.getMonth()+1) + '/' + date_today.getDate() + '/' + date_today.getFullYear());
+      
+			jQuery("#start_date").val('<%= 30.days.ago.strftime("%m/%d/%Y") %>');
+			jQuery("#end_date").val('<%= Time.now.strftime("%m/%d/%Y") %>');
 
 	});
 <%end%>

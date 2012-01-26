@@ -47,6 +47,10 @@ module Helpdesk::TicketActions
     render :partial => "assign_agent"
   end
   
+  def update_multiple_tickets
+    render :partial => "update_multiple" 
+  end
+  
   def set_date_filter
    if !(params[:date_filter].to_i == TicketConstants::CREATED_BY_KEYS_BY_TOKEN[:custom_filter])
     params[:start_date] = params[:date_filter].to_i.days.ago.beginning_of_day.to_s(:db)
@@ -138,7 +142,7 @@ module Helpdesk::TicketActions
   def move_attachments   
     @note.attachments.each do |attachment|      
       url = attachment.content.url.split('?')[0]
-      @item.attachments.create(:content =>  RemoteFile.new(url), :description => "", :account_id => @item.account_id)    
+      @item.attachments.create(:content =>  RemoteFile.new(URI.parse(url)), :description => "", :account_id => @item.account_id)    
     end
   end
   

@@ -1,4 +1,4 @@
---- 
+---
 en: 
   meta:
    language_name: 'English'
@@ -93,7 +93,8 @@ en:
     edit: Edit Folder
     info1: Are you sure you want to delete this folder?
     add_folder: Add folder
-  amount_per_month: $%{amount} per month
+  amount_per_month: $%{amount} %{period}
+  amount_for_annual: $%{amount} annually
   agent_deleted_message: This is a deleted agent
   cancel: Cancel
   last: last
@@ -148,6 +149,15 @@ en:
         enable_sso: Enable Single Sign On
         remote_logout_url: Remote logout URL
         remote_authentication: Remote Authentication
+        enable_SSL: "Enable SSL"
+        enable_SSL_anon: "SSL allows you to encrypt data that is transfered to and from freshdesk portals"
+        customer_portal_ssl_warning: "Since custom helpdesk URL is configured for your account you will be redirected to " 
+        multiple_product_ssl_warning: "SSL will not be applicable if multiple products are configured."  
+        enabled: Enabled
+        disabled: Disabled
+        click_to_enable: Click to enable SSL
+        click_to_disable: Click to disable SSL
+        security_title: Security
     products: 
       new: 
         title: New Product
@@ -164,6 +174,8 @@ en:
         portal_url: Portal URL
         top_level_solution: Top level solutions category
         portal_name: Portal name
+        portal_language: Portal Language
+        portal_language_info: This will be the default language when customers visits your portal
       edit: 
         title: Edit Product
       form: 
@@ -243,6 +255,7 @@ en:
         twitter-setting: Twitter Settings
         survey: Survey Settings
         facebook-setting: Facebook Settings
+        security: Security
       
     canned_responses:
       index:
@@ -428,6 +441,8 @@ en:
   back_plans_billing: Back to Plans &amp; Billing
   f_request: Feature Request
   save_and_create: Save and Create Another
+  save_and_new: Save and New
+  save_and_close: Save and Close
   undelete: Restore
   import_zendesk_title: Import from zendesk
   closed: Closed
@@ -497,6 +512,9 @@ en:
       deleted:
         short: "{{user_path}} has deleted this ticket"
         long: "{{user_path}} has deleted the ticket {{notable_path}}"
+      restored:
+        short: "{{user_path}} has restored this ticket"
+        long: "{{user_path}} has restored the ticket {{notable_path}}"
       product_change:
         short: "{{user_path}} changed the product to {{product_name}}"
         long: "{{user_path}} changed the product of {{notable_path}} to {{product_name}}"
@@ -779,6 +797,9 @@ en:
       twoday: 2 Days
       threeday: 3 Days
   four: 4 Hours
+  oneweek: 1 Week
+  twoweek: 2 Weeks
+  onemonth: 1 Month
   problem: Problem
   change_plan_info: You can change your plan level at any time.  The position limits and other features of the new plan that you select will be effective as soon as you make the change, but your bill amount will not change until your next bill date.  Your next bill date is %{date}.
   created_on: Created on
@@ -798,6 +819,17 @@ en:
     restore: restore
     add_signature: Add signature
     update: Update
+    permissions: Permissions
+    admin: Administrator
+    supervisor: Supervisor
+    global: Agent (Global Access)
+    group: Agent (Group Access) 
+    individual: Agent (Restricted Access)
+    admin_info: Can perform all Admin tasks
+    supervisor_info: Can view all Tickets in the Helpdesk and access Reports (no admin privileges)
+    global_info: Can view all Tickets in the Helpdesk
+    group_info: Can view Tickets in their Groups(s) and Tickets assigned to them
+    individual_info: Can only view Tickets assigned to them
   account_admin: Account admin
   right: Right
   footer: 
@@ -811,7 +843,7 @@ en:
   portal_customizer_anon_for_g: Enable this feature if you want customers to be able to sign in using their Google username and password. 
   portal_customizer_anon_for_t: Enable this feature if you want users to be able to sign in using their Twitter username and password. 
   portal_signup_anon: Enable this feature if you want users to be able to sign up and create their own user accounts. This will enable users to login and participate in forum discussions, vote on ideas etc.
-  portal_captcha_anon: Disable this feature if you want users to submit a ticket without the captcha
+  portal_captcha_anon: Enable this feature if you want users to submit tickets with captcha
   card_process: Thank you for your payment. Your Freshdesk account is now live!
   chat: Chat
   country: Country
@@ -819,6 +851,9 @@ en:
   forgot_password_intro: Fill out the form below and instructions to reset your password will be emailed to you
   done: Done
   ticket_due_by_time: Due by
+  ticket_pending_since_time: Pending Since
+  ticket_resolved_at_time: Resolved at
+  ticket_closed_at_time: Closed at
   next: Next
   set_password: Set your password
   send_email_to_agent: Send Email to Agent
@@ -879,7 +914,8 @@ en:
       lesser_agents: Your freshdesk account currently has %{agent_count} agents, you cannot subscribe to a lesser number of agents. Please delete some agents and try again.
   activate: Activate
   feedbackwidget_text: Text
-  billed_amount_per_month: You will be billed $%{amount} per month
+  billed_amount_per_month: You will be billed $%{amount} %{period}
+  billed_amount_annually: You will be billed $%{amount} annually
   import_zendesk_summary: Import from zendesk summary
   user_activation_email: User Activation Email
   incident: Incident
@@ -1040,6 +1076,9 @@ en:
     make_primary: Make primary
     info8: Forward your emails to
     help_link_info: Read our Email Settings article for more information...
+    bcc_email: BCC address (optional)
+    info17: This email address will be included automatically in the BCC field for all ticket communications
+    info18: Automatic bcc address included in ticket replies 
   step2: Step 2
   import_users_contacts: Users &rarr; Contacts
   linkback_info: You can choose to Linkback to your own website when the customer clicks on the header logo
@@ -1061,7 +1100,7 @@ en:
   ok: Ok
   back: Back
   ticket:
-    reported_on: "from %{username}, on %{date}"
+    reported_on: "from %{username}, last updated on %{date}"
     thanks: Thank you for submitting a feedback
     group: Group
     spam_btn_title: Mark as spam
@@ -1272,17 +1311,34 @@ en:
   ticket_was: ticket was
   tickets_were: tickets were
   undo: Undo
+  total: "Total"
   helpdesk:
-    time_sheets: 
+    time_sheets:
+      index:
+        no_timeentry: "No time entry recorded for this ticket"
       time_entry:
         toggle_timer_true: "Start timer"
         toggle_timer_false: "Stop timer"
+      new:
+        title: "New time entry"
+      ticket: Ticket
+      customer: Customer
+      executed_at: Date
+      hours: Hours
+      agent: Agent
+      note: Note
+      billing_type: Billing Type
+      group_by: Group By
+      report:
+        no_timeentry: "No time sheet record found"
+        total: Total
     tags:
       index:
         title: Tags
     flash:
       assignedto: "%{tickets} assigned to %{username}."
       tickets_closed: "%{tickets} closed"
+      tickets_update: "%{tickets} updated"
       assigned_to_you: "%{tickets} assigned to you"
       removed_from_spam: "%{tickets} removed from the spam folder."
       closing_the_ticket_failed: Closing the ticket failed
@@ -1327,9 +1383,14 @@ en:
       close_notice:
         ticket_has_been_cloased: The ticket has been closed.
         view_ticket: View ticket
+      save_and_close_notice:
+        ticket_saved_and_closed: The ticket has been created and closed.
+        view_ticket: View ticket
       show:
         meta: meta
         linked_ticket: This ticket is linked to the forum
+        conversation: Conversation 
+        timesheet: Time Sheet
       components:
         scenarios:
           execute_this_scenario: Execute this scenario
@@ -1604,3 +1665,16 @@ en:
   freshbooks_helptext: "To get your Authentication Token and API URL, login to your Freshbooks account and navigate to <br /> <b>“My Account”</b>. (You can find this on the top right corner of the page).<br /> Click on <b>“FreshBooks API”</b>, and to get the 'API URL' and  'Authentication Token' .<br /> Copy the key and paste it in the textfield above."
   report:
     time_sheet_report: Time Sheet Report
+    time_sheet:
+      select_customer: Select Customer
+      select_agent: Select Agent
+      select_billable: Select Billable/Non-Billable
+  reorder: "Reorder"
+  delete_the_ticket: "Delete the Ticket"
+  mark_as_spam: "Mark as Spam"
+  bulk_update: "Bulk Update"
+  update_multiple_tickets: "Update Multiple Tickets"
+  no_change: "No Change"
+  ticket_update_multiple_button: "Update"
+  ticket_cancel_multiple_button: "Cancel"
+  agent_working_on_this_ticket: "Agent Working on This Ticket"

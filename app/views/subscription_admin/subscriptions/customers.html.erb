@@ -1,29 +1,34 @@
 <% @page_title = 'Customers' %>
-
-
-<h1><%= @page_title %></h1>
-<table id="subscriptions">
-  <tr>
-    <th>Account</th>
-    <th>Amount</th>
-    <th>Created</th>
-    <th>Renewal</th>
-	<th>Place</th>
-	<th>Agents</th>
-	<th>Plan</th>
-    
-  </tr>
-  <% @subscriptions.each do |subscription| %>
-    <tr class="<%= 'expired' unless subscription.current? %>">
-      <td><%= link_to(h(subscription.account), [:admin, subscription]) %></td>
-      <td><%= number_to_currency(subscription.amount) %> <%= "(#{subscription.discount.name})" if subscription.discount %></td>
-      <td><%= subscription.created_at.to_s(:short_day) %></td>
-      <td><%= subscription.next_renewal_at.to_s(:short_day) %></td>
-	  <td><%= subscription.account.time_zone %></td>
-	  <td><%= subscription.agent_limit %></td>
-	  <td><%=SubscriptionPlan::BILLING_CYCLE_NAMES_BY_KEY[subscription.renewal_period]%> <%= subscription.subscription_plan.name %></td>
-    </tr>
-  <% end %>
+<h3>Customers Per Month</h3>
+<table id="customers">
+	<%@customers_by_month.each do |arr|%>
+	  <tr>
+       <td><%=arr[0]%></td>
+       <td><%= arr[1] %></td>
+     </tr>
+	<%end%>
 </table>
 
-<%= will_paginate(@subscriptions) %>
+<br>
+<br>
+
+<h3>Signup's Per Month</h3>
+<table id="customers">
+	<%@signups_by_month.each do |date,count|%>
+	  <tr>
+       <td><%=date%></td>
+       <td><%= count %></td>
+     </tr>
+	<%end%>
+</table>
+
+<h3>Last 30 days signups</h3>
+<table id="customers">
+	<%@signups_per_day.each do |day,accs|%>
+	  <tr>
+       <td><%=day.strftime("%d-%B")%></td>
+       <td><%= accs.size %></td>
+     </tr>
+	<%end%>
+</table>
+

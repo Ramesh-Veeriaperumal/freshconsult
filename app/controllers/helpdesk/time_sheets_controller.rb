@@ -1,15 +1,20 @@
 class Helpdesk::TimeSheetsController < ApplicationController
   
-  before_filter { |c| c.requires_feature :time_sheets }
+  before_filter { |c| c.requires_feature :timesheets }
   before_filter { |c| c.requires_permission :manage_tickets }  
   before_filter :load_time_entry, :only => [ :edit, :update, :destroy, :toggle_timer ]  
   
-  def new
-    update_running_timer params[:time_entry][:user_id]
-    create_time_entry
-    @time_sheet.save
+  def index
+    @ticket = current_account.tickets.find_by_display_id(params[:ticket_id])
+    @time_sheet = @ticket.time_sheets
+    render :index, :layout => false
   end
-
+  
+  def new
+    create_time_entry
+    @time_entry.save
+  end
+   
   def update  
     hours_spent = params[:time_entry][:hours]
     params[:time_entry].delete(:hours)
@@ -71,7 +76,7 @@ private
   
   #Following method will stop running timer for the user. at a time one user can have only one timer..
   def update_running_timer user_id
-    @time_cleared = current_account.time_sheets.find_by_user_id_and_timer_running(user_id,true)
+    @time_cleared = current_account.time_sheets.find_by_user_id_and_timer_running(user_id, true)
     if @time_cleared
        @time_cleared.update_attributes({:timer_running => false, :time_spent => calculate_time_spent(@time_cleared) }) 
     end
@@ -89,12 +94,15 @@ private
   def create_time_entry
     hours_spent = params[:time_entry][:hours]
     params[:time_entry].delete(:hours)
+
+    update_running_timer params[:time_entry][:user_id] if hours_spent.blank?
+
     time_entry = params[:time_entry].merge!({:start_time => Time.zone.now(),
                                              :executed_at => Time.zone.now(),
                                              :time_spent => get_time_in_second(hours_spent),
-                                             :timer_running => true,
+                                             :timer_running => hours_spent.blank?,
                                              :billable => true})
-    @time_sheet = scoper.new(time_entry)
+    @time_entry = scoper.new(time_entry)
   end
   
 end

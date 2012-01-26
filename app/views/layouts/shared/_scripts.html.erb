@@ -19,7 +19,7 @@
 	};
 	
   $J(document).ready(function() {
-		$J("a.dialog2").dialog2();		
+		$J("a.dialog2, a[data-ajax-dialog]").dialog2();
     <%= yield :onload_script -%>
   });
 <%- end -%>

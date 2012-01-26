@@ -36,7 +36,7 @@ class PasswordResetsController < ApplicationController
 
   private
     def load_user_using_perishable_token
-      @user = current_account.users.find_using_perishable_token(params[:id])
+      @user = current_account.users.find_using_perishable_token(params[:id],1.weeks)
       unless @user
         flash[:notice] = t(:'flash.password_resets.update.invalid_token')
         redirect_to root_url

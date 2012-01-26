@@ -1,14 +1,23 @@
  <script type="text/javascript">
-	function setUserRole()
-	{		
-		var role = jQuery('#user_role_val').is(':checked') ? '<%=User::USER_ROLES_KEYS_BY_TOKEN[:admin]%>' : '<%=User::USER_ROLES_KEYS_BY_TOKEN[:poweruser]%>'
-		jQuery('#user_role').val(role);
-	}
 	jQuery(document).ready(function(ev){
-		current_role = jQuery('input#user_role').val();
-		<% if @agent.user.user_role %>
-			jQuery('#user_role_val').attr('checked', ( <%= @agent.user.user_role %> == <%=User::USER_ROLES_KEYS_BY_TOKEN[:admin]%> ));
-		<% end %> 
+        
+		<% if @agent.user.admin? %>
+			 jQuery("#user_role_admin").attr('checked', true);
+	    <% elsif @agent.user.supervisor? %>
+		     jQuery("#user_role_supervisor").attr('checked', true);
+    	<% end %> 
+		jQuery("#agent_ticket_permission").click(function(event){ 
+		   jQuery('#user_role').val('<%=User::USER_ROLES_KEYS_BY_TOKEN[:poweruser]%>');
+		});
+		jQuery("#admin_ticket_permission").click(function(event){ 
+		   jQuery('#user_role').val('<%=User::USER_ROLES_KEYS_BY_TOKEN[:admin]%>');
+		});
+		
+		jQuery("#supervisor_ticket_permission").click(function(event){ 
+		   jQuery('#user_role').val('<%=User::USER_ROLES_KEYS_BY_TOKEN[:supervisor]%>');
+		});
+		
+		
 	});	
  </script> 
  <div>
@@ -87,12 +96,42 @@
 		</li>
 		<% unless( @agent.user.permission?(:manage_account) ) %>
 		<li>
-			<h3 class="title border">Permissions</h3>
-			<label>	
-				<input type="checkbox" id="user_role_val" name="user_role" onclick="setUserRole()" /> 
-				<%=t('agent.make_admin')%>
-			</label>	 
-			<%= hidden_field(:user, :user_role, :id=>"user_role", :value => @agent.user.user_role ||= User::USER_ROLES_KEYS_BY_TOKEN[:poweruser] ) %>
+			<h3 class="title border"><%=t('agent.permissions')%></h3>
+			<ul>
+				<div id="admin_ticket_permission">
+				<li>
+					<%= radio_button( :agent ,:ticket_permission, Agent::PERMISSION_KEYS_BY_TOKEN[:all_tickets] ,{:id=>"user_role_admin"}) %>
+					<%=t('agent.admin')%> - <%= content_tag( :span, t('agent.admin_info'), :class => "info-data" ) %>
+				</li>
+				</div>
+				<div id="supervisor_ticket_permission">
+					<li>
+					<%= radio_button(:agent, :ticket_permission, Agent::PERMISSION_KEYS_BY_TOKEN[:all_tickets] ,{:id=>"user_role_supervisor"}) %> 
+					<%=t('agent.supervisor')%> - <%= content_tag( :span, t('agent.supervisor_info'), :class => "info-data" ) %>		
+					</li>
+				</div>
+				<div id="agent_ticket_permission">
+				
+				<li>
+					<%= radio_button(:agent, :ticket_permission, Agent::PERMISSION_KEYS_BY_TOKEN[:all_tickets] ,{:checked => true ,:id=>"agent_all_tickets"}) %> 
+					<%=t('agent.global')%> - <%= content_tag( :span, t('agent.global_info'), :class => "info-data" ) %> 
+					
+				</li>
+				<li>
+					 <%= radio_button(:agent, :ticket_permission, Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets] ,{:id=>"agent_group_tickets"}) %> 
+					 <%=t('agent.group')%> - <%= content_tag( :span, t('agent.group_info'), :class => "info-data" ) %>
+				</li>
+				<li>
+					 <%= radio_button(:agent, :ticket_permission, Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets] ,{:id=>"agent_assigned_tickets"}) %> 
+					 <%=t('agent.individual')%> - <%= content_tag( :span, t('agent.individual_info'), :class => "info-data" ) %>
+				</li>
+				</div>
+				
+				 <%= hidden_field(:user, :user_role, :id=>"user_role", :value => @agent.user.user_role ||= User::USER_ROLES_KEYS_BY_TOKEN[:poweruser] ) %>
+				
+				
+			</ul>
+			
 		</li>
 		<% end %>
 		<li class="seperator"></li>
