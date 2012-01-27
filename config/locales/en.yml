@@ -172,6 +172,8 @@ en:
         portal_url: Portal URL
         top_level_solution: Top level solutions category
         portal_name: Portal name
+        portal_language: Portal Language
+        portal_language_info: This will be the default language when customers visits your portal
       edit: 
         title: Edit Product
       form: 
@@ -835,7 +837,7 @@ en:
   portal_customizer_anon_for_g: Enable this feature if you want customers to be able to sign in using their Google username and password. 
   portal_customizer_anon_for_t: Enable this feature if you want users to be able to sign in using their Twitter username and password. 
   portal_signup_anon: Enable this feature if you want users to be able to sign up and create their own user accounts. This will enable users to login and participate in forum discussions, vote on ideas etc.
-  portal_captcha_anon: Disable this feature if you want users to submit a ticket without the captcha
+  portal_captcha_anon: Enable this feature if you want users to submit tickets with captcha
   card_process: Thank you for your payment. Your Freshdesk account is now live!
   chat: Chat
   country: Country
@@ -1551,3 +1553,5 @@ en:
   update_multiple_tickets: "Update Multiple Tickets"
   no_change: "No Change"
   ticket_update_multiple_button: "Update"
+  ticket_cancel_multiple_button: "Cancel"
+  agent_working_on_this_ticket: "Agent Working on This Ticket"

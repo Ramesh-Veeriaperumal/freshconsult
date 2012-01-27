@@ -97,6 +97,7 @@ class Helpdesk::NotesController < ApplicationController
    def validate_emails email_array
      unless email_array.blank?
      email_array.delete_if {|x| (extract_email(x) == @parent.requester.email or !(valid_email?(x))) }
+     email_array = email_array.collect{|e| e.gsub(/\,/,"")}
      email_array = email_array.uniq
      end
    end

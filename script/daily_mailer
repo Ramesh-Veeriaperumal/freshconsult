@@ -6,6 +6,10 @@ Lockfile('lock', :retries => 0) do
   require File.dirname(__FILE__) + '/../config/boot'
   require File.dirname(__FILE__) + '/../config/environment'
   
+  
+  
+  unless RAILS_ENV == "staging"
+  
   puts "The subscription script file is running "
    
   Subscription.find_expiring_trials.each do |sub|
@@ -77,6 +81,8 @@ Lockfile('lock', :retries => 0) do
    rescue Exception => err
    	 SubscriptionNotifier.deliver_sub_error({:error_msg => err.message, :full_domain => sub.account.full_domain, :custom_message => "late Charge failed" })
    end
+  end
+  
   end
 
 end

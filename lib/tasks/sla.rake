@@ -2,12 +2,13 @@
 namespace :sla do
   desc 'Check for SLA violation and trigger emails..'
   task :escalate => :environment do
-    puts "SLA Escalation task initialized at #{Time.zone.now}"
-    accounts = Account.active_accounts
-    accounts.each do |account|     
+    unless Rails.env.staging?    
+      puts "SLA Escalation task initialized at #{Time.zone.now}"
+      accounts = Account.active_accounts
+      accounts.each do |account|     
     
-    overdue_tickets = account.tickets.visible.find(:all, :readonly => false, :conditions =>['due_by <=? AND isescalated=? AND status=?', Time.zone.now.to_s(:db),false,Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open]] )
-    overdue_tickets.each do |ticket|      
+     overdue_tickets = account.tickets.visible.find(:all, :readonly => false, :conditions =>['due_by <=? AND isescalated=? AND status=?', Time.zone.now.to_s(:db),false,Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open]] )
+     overdue_tickets.each do |ticket|      
       sla_policy_id = nil
       unless ticket.requester.customer.nil?     
         sla_policy_id = ticket.requester.customer.sla_policy_id     
@@ -22,8 +23,8 @@ namespace :sla do
         ticket.update_attribute(:isescalated , true)
      end
     
-    froverdue_tickets = account.tickets.visible.find(:all, :joins => :ticket_states , :readonly => false , :conditions =>['frDueBy <=? AND fr_escalated=? AND status=? AND helpdesk_ticket_states.first_response_time IS ?', Time.zone.now.to_s(:db),false,Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open],nil] )
-    froverdue_tickets.each do |fr_ticket|
+      froverdue_tickets = account.tickets.visible.find(:all, :joins => :ticket_states , :readonly => false , :conditions =>['frDueBy <=? AND fr_escalated=? AND status=? AND helpdesk_ticket_states.first_response_time IS ?', Time.zone.now.to_s(:db),false,Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open],nil] )
+      froverdue_tickets.each do |fr_ticket|
       
       fr_sla_policy_id = nil
       unless fr_ticket.requester.customer.nil?     
@@ -50,6 +51,7 @@ namespace :sla do
     end
     end
     puts "SLA Escalation task completed at #{Time.zone.now}"
+   end
   end
 end
 #SLA ends here
