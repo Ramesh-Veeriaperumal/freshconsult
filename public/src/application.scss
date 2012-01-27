@@ -1628,15 +1628,14 @@ ul.item_list{
 	border-bottom-color:#e8e8e8;
 	border-left-color:#e8e8e8;
 	li{
-		padding:5px;
-		margin:5px;
-		font-size:12px;
+		padding:2px;
+		margin:5px 0;
 		@include clearfix;
-		position:relative;
-		@include min-width(150px);
+		position:relative; 
 		@include corners(6px);
+		@include min-width(150px);
 		a{
-			text-decoration:none;				
+			text-decoration:none;
 		}	
 		div.preview_pic{
 			margin-right:5px;
@@ -1646,8 +1645,12 @@ ul.item_list{
 			}
 		} 
 		b{
-			position:relative;	
+			position:relative;	 
+			width:138px;
+			float:left;
+			@include wrap;
 			top:2px;
+			font-size:11px;
 		}
 		.selected_tick{
 			position:absolute;
@@ -1656,8 +1659,9 @@ ul.item_list{
 		}
 		.control{
 			position:absolute;
-			right:3px; bottom:3px;
+			right:3px; bottom:-2px;
 			display:none;
+			z-index:9999;
 		}
 	}
 	li:hover{
@@ -1696,10 +1700,13 @@ ul.user_list{
 	margin:0px;
 	padding:0px;
 	li{
+	  height:100px;
 		float:left;
-		width:auto;
+		width:120px;
+		
+		text-align:center;
 		.preview_pic{
-			margin:2px;
+			margin:2px 34px;
 			img{
 				padding:0px;
 				border:0px;
@@ -1707,6 +1714,7 @@ ul.user_list{
 		}
 		.username{
 			display:block;
+			word-wrap: break-word;
 		}
 	}
 }
@@ -1938,7 +1946,7 @@ h4.border_title{
 }
 
 .solution-list .odd, .solution-list .even{
-	@include clearfix;
+	@include pie-clearfix;
 	margin:5px 2% 5px 1%; 
 	padding:10px 0px;
 	float:left;
@@ -4536,5 +4544,20 @@ a.close{
 		}
 		
 		
+	}
+}
+
+.dialog-special {
+	.solution-list {
+		label {
+			font-size: 13px;
+		}
+		select {
+			padding: 0px;
+			font-size: 11px;
+		}
+		li {
+			padding: 0px;
+		} 
 	}
 }

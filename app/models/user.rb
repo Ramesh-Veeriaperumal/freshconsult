@@ -16,6 +16,7 @@ class User < ActiveRecord::Base
   USER_ROLES_NAMES_BY_KEY = Hash[*USER_ROLES.map { |i| [i[2], i[1]] }.flatten]
   USER_ROLES_KEYS_BY_TOKEN = Hash[*USER_ROLES.map { |i| [i[0], i[2]] }.flatten]
   USER_ROLES_SYMBOL_BY_KEY = Hash[*USER_ROLES.map { |i| [i[2], i[0]] }.flatten]
+  EMAIL_REGEX = /(\A[A-Z0-9_\.%\+\-\'=]+@(?:[A-Z0-9\-]+\.)+(?:[A-Z]{2,4}|museum|travel)\z)/i
   
   belongs_to :account
   belongs_to :customer
@@ -44,7 +45,7 @@ class User < ActiveRecord::Base
     c.validates_length_of_password_field_options = {:on => :update, :minimum => 4, :if => :has_no_credentials? }
     c.validates_length_of_password_confirmation_field_options = {:on => :update, :minimum => 4, :if => :has_no_credentials?}    
     #The following is a part to validate email only if its not deleted
-    c.merge_validates_format_of_email_field_options  :if =>:chk_email_validation? 
+    c.merge_validates_format_of_email_field_options  :if =>:chk_email_validation?, :with => EMAIL_REGEX 
     c.merge_validates_length_of_email_field_options :if =>:chk_email_validation? 
     c.merge_validates_uniqueness_of_email_field_options :if =>:chk_email_validation? 
   end
@@ -349,7 +350,7 @@ class User < ActiveRecord::Base
      options[:indent] ||= 2
       xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
-      super(:builder => xml, :skip_instruct => true,:except => [:crypted_password,:password_salt,:perishable_token,:persistence_token,:single_access_token]) 
+      super(:builder => xml, :skip_instruct => true,:except => [:account_id,:crypted_password,:password_salt,:perishable_token,:persistence_token,:single_access_token]) 
   end
   
   

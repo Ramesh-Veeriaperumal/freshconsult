@@ -16,6 +16,15 @@
 	<%= portal.text_field :name, :class => "text" %>
 	<%= content_tag(:div, t('.portal_name_info'), :class => "info-data") %>
 	<span class="seperator"></span>
+	
+	<!-- locale starts here-->
+	 <% if feature?(:multi_language) %>
+	  <%= content_tag(:label, t('.portal_language')) %>
+		<%= portal.select :language, I18n.available_locales_with_name , {:selected =>  (!@product.portal.blank?) ? @product.portal.language.to_sym() : current_portal.language.to_sym() }%>
+		<%= content_tag(:div, t('.portal_language_info'), :class => "info-data") %>
+	<span class="seperator"></span>
+	<% end %>
+	<!-- locale ends here -->
 
   <label>    
     <%= t(".top_level_forum") %>

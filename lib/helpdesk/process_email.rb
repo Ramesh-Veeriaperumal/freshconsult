@@ -1,5 +1,5 @@
 class Helpdesk::ProcessEmail < Struct.new(:params)
-
+ 
   EMAIL_REGEX = /(\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
  
   def perform
@@ -149,7 +149,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     def add_email_to_ticket(ticket, from_email)
       user = get_user(ticket.account, from_email, ticket.email_config)
       return if user.blocked? #Mails are dropped if the user is blocked
-      if (ticket.requester.email.include?(user.email) || ticket.included_in_cc?(user.email) || !user.customer?) 
+      if ((ticket.requester.email && ticket.requester.email.include?(user.email)) || ticket.included_in_cc?(user.email) || !user.customer?) 
         note = ticket.notes.build(
           :private => false,
           :incoming => true,

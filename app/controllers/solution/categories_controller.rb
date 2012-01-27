@@ -24,15 +24,16 @@ class Solution::CategoriesController < ApplicationController
   def show
     
      @item = current_account.solution_categories.find(params[:id], :include => :folders)
-     
+    
      respond_to do |format|
       format.html # index.html.erb
-      format.xml  { render :xml => @item.to_xml(:include => :folders) }
-      format.json  { render :json => @item.to_json(:include => :folders) }
+      format.xml {  render :xml => @item.to_xml(:include => fetch_folder_scope) }
+      format.json  { render :json => @item.to_json(:except => [:account_id,:import_id],
+                                                    :include => fetch_folder_scope) }
     end
      
   end
-
+  
   def new
     @category = current_account.solution_categories.new
 
@@ -126,6 +127,16 @@ end
   def portal_category?
     wrong_portal unless(main_portal? || 
           (params[:id] && params[:id].to_i == current_portal.solution_category_id))
+  end
+  
+  def fetch_folder_scope
+    if current_user && current_user.has_manage_solutions?
+      :folders
+    elsif current_user
+      :user_folders
+    else
+      :public_folders 
+    end
   end
 
 end

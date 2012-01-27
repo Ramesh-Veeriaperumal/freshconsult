@@ -45,8 +45,10 @@ class ForumCategoriesController < ApplicationController
 
     respond_to do |format|
       format.html 
-      format.xml  { render :xml => @forum_category.to_xml(:include => :forums) }
-      format.json  { render :json => @forum_category.to_json(:include => :forums) }
+      format.xml  { render :xml => @forum_category.to_xml(:include => fetch_forum_scope) }
+      format.json  { render :json => @forum_category.to_json(
+                              :except => [:account_id,:import_id],
+                              :include => fetch_forum_scope) }
       format.atom 
       
      
@@ -94,6 +96,16 @@ class ForumCategoriesController < ApplicationController
     
     def set_selected_tab
       @selected_tab = :forums
+    end
+    
+    def fetch_forum_scope
+      if current_user && current_user.has_manage_forums?
+      :forums
+     elsif current_user
+      :user_forums
+     else
+      :portal_forums 
+     end
     end
     
 end

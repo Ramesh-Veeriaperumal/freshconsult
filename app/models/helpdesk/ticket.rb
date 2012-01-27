@@ -720,6 +720,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
       requester.customer.nil? ? "No company" : requester.customer.name
     end
     
+    def resolved_at
+      return ticket_states.resolved_at if resolved?
+      return ticket_states.closed_at if closed?
+    end
+    
     def priority_name
       PRIORITY_NAMES_BY_KEY[priority]
     end

@@ -104,6 +104,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     @order_type           = params[:wf_order_type]  || default_order_type
     @order                = params[:wf_order]       || default_order
     
+    
     self.id   =  params[:wf_id].to_i      unless params[:wf_id].blank?
     self.name =  params[:filter_name]     unless params[:filter_name].blank?
     
