@@ -1,0 +1,78 @@
+<div class="sidepanel">
+<% if params[:controller].ends_with("customer_reports") %>
+   <h3 class="title"><%= t('reports.customer_title')%></h3>
+<% else %>
+   <h3 class="title"><%= t('reports.helpdesk_title')%></h3>
+<% end %>   
+	<% form_tag :method => :post do%>
+	<% if params[:controller].ends_with("customer_reports") %>
+		<div class="ff_item" container="dropdown" id="div_ff_customer">
+			<h4 class="title"><%= label_tag "customer_id", t("reports.select_customer") %></h4>           
+		    <%= select_tag "customer_id", options_for_select(current_account.customers.collect{ |c| [c.name, c.id] }) ,:class => "customSelect filter_item" %>     
+	    </div>
+	<% end %> 
+	<% @show_options.each_with_index do |c_hash, i| %> 
+        <% container = (c_hash[:condition] == "users.customer_id") ? "select" : "multi_select" %> 
+    	    <% content_tag :div,{ :id          => "div_ff_#{c_hash[:condition]}", 
+				:class       => "ff_item", 
+				:operator    => c_hash[:operator],
+				:container   => c_hash[:container] } do %>
+		          <h4 class="title"><%= c_hash[:label].to_s.capitalize %></h4>           
+		          <%= render :partial => "/helpdesk/tickets/containers/#{container}", :locals => { :options => c_hash[:options], :name => c_hash[:name], :selected_val => c_hash[:value], :extra_class => c_hash[:extra_class]} %>
+			<% end %>
+		<% end %>
+
+    <div class="ff_item">
+		<h4 class="title"><%= t('reports.select_time_period')%></h4>
+		<%= text_field_tag "dateRange", (params["dateRange"].nil?) ? "#{(Time.now - 31.days).to_time.to_s(:reports)} - #{(Time.now - 1.day).to_time.to_s(:reports)}" : params["dateRange"], :class => "required" %>
+    </div>
+
+	<div class="clearfix"></div>
+	<%= submit_tag t('reports.generate_button'), :class => "uiButton" %>
+	<% end %>
+</div>
+<% javascript_tag do %>
+jQuery(document).ready(function() {
+	jQuery("#dateRange").daterangepicker({
+		earliestDate: Date.parse('1/1/2010'),
+		latestDate:Date.parse('Today-1'),
+		presetRanges: [
+			{text: '<%= t('reports.date_ranges.last_7_days') %>', dateStart: 'Today-8', dateEnd: 'Today-1' },
+			{text: '<%= t('reports.date_ranges.last_30_days') %>',dateStart: 'Today-31', dateEnd: 'Today-1'},
+			{text: '<%= t('reports.date_ranges.last_90_days') %>',dateStart: 'Today-91',  dateEnd: 'Today-1'}
+		],
+		presets: {
+			dateRange: '<%= t('reports.date_ranges.custom') %>'
+		},
+		dateFormat: 'dd MM yy',
+		closeOnSelect: true
+	});
+});
+<% end %>
+
+<% javascript_tag do %>
+	
+  jQuery("#Sidebar form").submit(function(ev){
+  	ev.preventDefault();
+  	jQuery("#report-container #tickets-summary").hide();
+  	jQuery("#report-container #pie-charts").hide();
+  	jQuery("#report-container #timeline-chart").hide();
+  	jQuery("#report-container #ticket-toolbar").hide();
+    jQuery("#report-container").append("<div class='loading-box'></div>"); 
+    
+     jQuery.ajax({
+        url: '<%= (params[:controller].ends_with("customer_reports")) ? "/activity_reports/customer/generate" : "/activity_reports/helpdesk/generate" %>',
+        type: "POST",
+        dataType: "script",
+        data: jQuery(this).serializeArray(),
+        success: function(msg){ 
+		  	jQuery("#report-container #tickets-summary").show();
+		  	jQuery("#report-container #pie-charts").show();
+		  	jQuery("#report-container #timeline-chart").show();
+		  	jQuery("#report-container #ticket-toolbar").show();
+	  		jQuery("#report-container .loading-box").remove();
+        }
+      });
+    return false; 
+  });
+<% end %>
