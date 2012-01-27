@@ -1,0 +1,202 @@
+@import "base";
+@import "mixins";
+
+$report-number-color:#000000;
+$report-number-positive-color:#006063;
+$report-number-negative-color:#990000;
+
+$tickets_summary_bg : #F6F6F6;
+$tickets_summary_bottom_border : #eeeeee;
+$title_color: #666;
+$pie_chart_size: 400px;
+$gauge_chart_size: 120px;
+$timeline_chart_height: 250px;
+$single_stackbar_chart_height: 120px;
+
+#tickets-summary {
+	float: left;
+	margin: -20px -20px 20px;
+	padding: 0 25px 0 20px;
+	border-bottom: solid 1px $tickets_summary_bottom_border;
+	background: $tickets_summary_bg;
+	display: block;
+}
+.report-unit.sla-compliance {
+    width:370px;
+    float:left;
+    ul.summary{
+		li {
+			float:left;
+			h3 {
+				margin-top: 15px;
+			}
+			width:auto;
+			padding: 15px;
+		}
+ 		h4 {
+			width:100px;
+        	.small {
+                	display:inline;
+                	position:static;
+                	font-size:18px;
+        		}
+    	}
+		h4.percent-diff {
+			width:75px;
+			margin: 0;
+			font-size: 14px;
+			background: url(/images/reports/report_arrow-up.png) right no-repeat;
+			padding-right: 20px;
+			color:$report-number-positive-color;
+			text-align:right;
+			.percent {
+				color:lighten($report-number-positive-color, 5%);
+				font-size:10px;
+				display:inline;
+			}
+		}
+		
+		h4.negative.percent-diff {
+			color:$report-number-negative-color;
+			background: url(/images/reports/report_arrow-down.png) right no-repeat;
+			.percent {
+				color:lighten($report-number-negative-color,5%);
+			}
+		}
+	}
+}
+#freshdesk_time_line_chart {
+	height: $timeline_chart_height;
+}
+.report-unit.timeline-chart {
+	height:$timeline_chart_height + 50;
+	width:100%;
+	float:left;
+	margin: 0 0 15px;
+	h3 {
+		margin:25px 0px 5px;
+	}
+}
+.ff_item{
+	margin:0 6px 4px 6px;
+	padding:4px 2px;
+}
+
+.sidepanel h4.title {
+	padding: 5px 0;
+	margin:0;
+	label {
+		font-size:1em;
+		color: #444;
+	}
+}
+
+.uiButton {
+    margin: 20px 80px 0;
+}
+
+#dateRange{
+	font-size:12px;
+	margin: 0 20px 0 0;
+	border-radius:0;
+	/*@include vertical-gradient(#eeeeee, #ffffff);*/
+}
+.report-unit.tickets-summary{
+    width:470px;
+	margin: 40px 0 0;
+	float:left;
+}
+
+#pie-charts {
+	width:100%;
+	float:none;
+	@include clearfix;
+}
+.report-unit.report-pie-chart {
+	height:$pie_chart_size;
+	width:$pie_chart_size;
+	float:left;
+	margin:0 10px 0 0;
+	.chart-container {
+		height:$pie_chart_size - 30;
+		width:$pie_chart_size - 30;
+	}
+}
+.single-stacked-bar {
+	height:$single_stackbar_chart_height;
+}
+.gauge-chart {
+	height:$gauge_chart_size;
+	width:$gauge_chart_size;
+	display: inline;
+}
+.center-by-margin {margin-left:auto; margin-right:auto;}
+.report-unit {
+    margin: 0 0 20px;
+    ul.summary{
+        background-color:$tickets_summary_bg;
+        margin-bottom:10px;
+        border:none;
+        box-shadow:none;
+        li{
+            border-right:1px solid #e8e8e8;
+            width: auto;
+            padding: 0 10px;
+            span{
+                display:block;
+                font-size:10px;
+                color:#666;
+            }
+            h4{
+                font-size:28px;
+                color:$report-number-color;
+                padding-top:0;
+                font-weight:bold;
+            }
+        }
+        li.last { border:0px; }
+        li.big {
+        	margin: 10px inherit;
+        	font-size:1.4em;
+
+        	h4 {
+        		padding: 10px;
+        	}
+        }
+    }
+    h3 {
+        font-size: 16px;
+        color:#666;
+        margin: 30px 0 5px;
+    }
+
+    .tickets .name, .tickets .name-user, .tickets-expanded .name, .tickets-expanded .name-user {
+        padding-left:10px;
+        .preview_pic {
+            display:none;
+        }
+    }
+}
+
+.report-title {
+	margin: 15px;
+}
+
+#ticket-toolbar {
+	margin: -15px -20px 20px; 
+	padding: 10px 20px 0;
+
+	h3 div {
+		position: absolute;
+		top: 15px;
+		right: 10px;
+		font-size: 80%;
+		font-weight: normal;
+		color: #777;
+	}
+}
+
+.ui-datepicker-next.ui-corner-all.ui-state-hover,.ui-datepicker-prev.ui-corner-all.ui-state-hover {
+	cursor: pointer;
+	background-color:#FFF;
+}

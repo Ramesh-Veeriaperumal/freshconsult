@@ -1,5 +1,5 @@
-SPAM_TICKETS_THRESHOLD = 20 #Allowed number of tickets in 30 minutes window..
-SPAM_CONVERSATIONS_THRESHOLD = 20
+SPAM_TICKETS_THRESHOLD = 50 #Allowed number of tickets in 30 minutes window..
+SPAM_CONVERSATIONS_THRESHOLD = 50
 
 #We might need to make the time window also as configurable. Right now, 30 minutes looks like a good guess!
 
@@ -59,9 +59,9 @@ end
 def deliver_spam_alert(table, requesters, query_str)
   FreshdeskErrorsMailer.deliver_error_email(nil, nil, nil,
     {
-      :subject          => "Abnormal load in #{table}",
+      :subject          => "Abnormal load by spam watcher #{table}",
       :additional_info  => {
-        :accounts_list  => requesters,
+        :requesters_list  => requesters,
         :query          => query_str
       }
     }
