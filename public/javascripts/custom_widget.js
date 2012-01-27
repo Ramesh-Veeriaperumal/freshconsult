@@ -183,11 +183,14 @@ var UIUtil = {
 					newEntityOption.selected = true;
 				}
 			}
-			dispName = "", sep = "";
-			for(d=0;d<dispNames.length;d++) {
-				dispName += XmlUtil.getNodeValueStr(entitiesArray[i],dispNames[d]) + sep;
-				sep = " ";
-			}
+         dispName = ""
+         for(d=0;d<dispNames.length;d++) {
+            if (dispNames[d] == ' ' || dispNames[d] == '(' || dispNames[d] == ')' || dispNames[d] == '-') {
+               dispName += dispNames[d];
+            } else {
+               dispName += XmlUtil.getNodeValueStr(entitiesArray[i], dispNames[d]);
+            }
+         }
 			if (dispName.length < 2) dispName = entityEmailValue;
 
 			newEntityOption.value = entityIdValue;

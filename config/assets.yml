@@ -2,40 +2,37 @@ package_assets:         on          # (on, off, always)
 embed_assets:           off         # (on, off, datauri)
 compress_assets:        on          # (on, off)
 package_path:           packages    # (defaults to assets)
-javascript_compressor:  closure     # (yui, closure)
+javascript_compressor:  uglifier    # (yui, closure)
 allow_debugging:        on
-css_compressor_options: 
-compressor_options:
-  compilation_level: "SIMPLE_OPTIMIZATIONS"
   
-# stylesheets:
-#   print:
-#     - public/stylesheets/print.css
-#     
-#   common:
-#     - public/stylesheets/reset.css
-#     - public/stylesheets/layout.css
-#     - public/stylesheets/defaults.css
-#     - public/stylesheets/application.css
-#     - public/stylesheets/test.css
-#     - public/stylesheets/validation.css
-#     - public/stylesheets/form.css
-#     - public/stylesheets/buttons.css
-#     - public/stylesheets/chosen.css    
-#     - public/stylesheets/autocomplete.css
-#     - public/stylesheets/jquery-ui.css
-#     - public/stylesheets/jquery.qtip.css
-#     - public/stylesheets/ie.css
-#   
-#   widget:
-#     - public/stylesheets/reset.css   
-#     - public/stylesheets/defaults.css
-#     - public/stylesheets/form.css
-#     - public/stylesheets/buttons.css
-#     - public/stylesheets/ie.css 
-#   
-#   freshwidget:
-#     - public/stylesheets/freshwidget.css
+stylesheets:
+  print:
+    - public/stylesheets/print.css
+    
+  common:
+    - public/stylesheets/reset.css
+    - public/stylesheets/layout.css
+    - public/stylesheets/defaults.css
+    - public/stylesheets/application.css
+    - public/stylesheets/test.css
+    - public/stylesheets/validation.css
+    - public/stylesheets/form.css
+    - public/stylesheets/buttons.css
+    - public/stylesheets/chosen.css    
+    - public/stylesheets/autocomplete.css
+    - public/stylesheets/jquery-ui.css
+    - public/stylesheets/jquery.qtip.css
+    - public/stylesheets/ie.css
+  
+  widget:
+    - public/stylesheets/reset.css   
+    - public/stylesheets/defaults.css
+    - public/stylesheets/form.css
+    - public/stylesheets/buttons.css
+    - public/stylesheets/ie.css 
+  
+  freshwidget:
+    - public/stylesheets/freshwidget.css
 
 javascripts:
   defaults:
