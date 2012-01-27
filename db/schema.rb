@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120113105518) do
+ActiveRecord::Schema.define(:version => 20120126120246) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -107,6 +107,27 @@ ActiveRecord::Schema.define(:version => 20120113105518) do
   end
 
   add_index "business_calendars", ["account_id"], :name => "index_business_calendars_on_account_id"
+
+  create_table "conversion_metrics", :force => true do |t|
+    t.integer  "account_id",        :limit => 8
+    t.string   "referrer"
+    t.string   "landing_url"
+    t.string   "first_referrer"
+    t.string   "first_landing_url"
+    t.string   "country"
+    t.string   "language"
+    t.string   "search_engine"
+    t.string   "keywords"
+    t.string   "device"
+    t.string   "browser"
+    t.string   "os"
+    t.float    "offset"
+    t.boolean  "is_dst"
+    t.integer  "visits"
+    t.text     "session_json"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "customers", :force => true do |t|
     t.string   "name"

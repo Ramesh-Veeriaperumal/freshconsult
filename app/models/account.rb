@@ -20,7 +20,7 @@ class Account < ActiveRecord::Base
   has_many :flexi_field_defs, :class_name => 'FlexifieldDef', :dependent => :destroy
   
   has_one :data_export,:dependent => :destroy
-  
+  has_one :conversion_metric
 
   
   has_one :logo,
