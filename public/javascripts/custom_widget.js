@@ -15,7 +15,7 @@ Freshdesk.Widget.prototype={
 			}
 		});
 		if(this.options.title){
-			this.title_anchor.innerHTML=this.options.title;
+			this.title_anchor.innerHTML = this.options.title;
 		}
 		this.display();
 	},
