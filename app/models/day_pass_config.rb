@@ -29,13 +29,15 @@ class DayPassConfig < ActiveRecord::Base
     buy_now recharge_quantity
   end
   
-  private
-    def buy_now(quantity)
-      if account.subscription.charge_day_passes(quantity)
-        connection.execute(
-          %(update day_pass_configs set available_passes = 
-          (available_passes + #{ActiveRecord::Base.sanitize(quantity)}) where id=#{id}))
-      end
+  def buy_now(quantity)
+    if account.subscription.charge_day_passes(quantity)
+      connection.execute(
+        %(update day_pass_configs set available_passes = 
+        (available_passes + #{ActiveRecord::Base.sanitize(quantity)}) where id=#{id}))
+        
+      #To do populate day_pass_purchases
+      true
     end
+  end
   
 end
