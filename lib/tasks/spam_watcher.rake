@@ -1,5 +1,6 @@
-SPAM_TICKETS_THRESHOLD = 20 #Allowed number of tickets in 30 minutes window..
-SPAM_CONVERSATIONS_THRESHOLD = 20
+SPAM_TICKETS_THRESHOLD = 50 #Allowed number of tickets in 30 minutes window..
+SPAM_CONVERSATIONS_THRESHOLD = 50
+
 #We might need to make the time window also as configurable. Right now, 30 minutes looks like a good guess!
 
 namespace :spam_watcher do
@@ -33,7 +34,7 @@ def check_tickets(table,column_name, threshold)
   current_time = Time.now #Should it be Time.now?!?!
   query_str = <<-eos
     select #{column_name},count(*) as total from #{table} where created_at 
-    between '#{10.minutes.ago(current_time).to_s(:db)}' and '#{current_time.to_s(:db)}' 
+    between '#{60.minutes.ago(current_time).to_s(:db)}' and '#{current_time.to_s(:db)}' 
     group by #{column_name} having total > #{threshold}
   eos
   puts query_str
@@ -58,9 +59,9 @@ end
 def deliver_spam_alert(table, requesters, query_str)
   FreshdeskErrorsMailer.deliver_error_email(nil, nil, nil,
     {
-      :subject          => "Abnormal load in #{table}",
+      :subject          => "Abnormal load by spam watcher #{table}",
       :additional_info  => {
-        :accounts_list  => requesters,
+        :requesters_list  => requesters,
         :query          => query_str
       }
     }

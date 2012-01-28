@@ -84,6 +84,8 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :reports
   map.customer_activity   '/activity_reports/customer', :controller => 'reports/customer_reports', :action => 'index'
   map.helpdesk_activity   '/activity_reports/helpdesk', :controller => 'reports/helpdesk_reports', :action => 'index'
+  map.customer_activity_generate   '/activity_reports/customer/generate', :controller => 'reports/customer_reports', :action => 'generate'
+  map.helpdesk_activity_generate   '/activity_reports/helpdesk/generate', :controller => 'reports/helpdesk_reports', :action => 'generate'
 
   
   map.namespace :social do |social|

@@ -48,6 +48,8 @@ javascripts:
     - public/javascripts/frameworks/jquery.js
     - public/javascripts/frameworks/plugins/*.js
     - public/javascripts/hackz.js    
+  visitor:
+      - public/javascripts/frameworks/session.js            
   workspace: 
     - public/javascripts/bootstrap-twipsy.js
     - public/javascripts/bootstrap-popover.js

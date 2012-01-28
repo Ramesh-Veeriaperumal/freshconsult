@@ -27,11 +27,12 @@ class Solution::FoldersController < ApplicationController
     
     respond_to do |format|
       format.html 
-      format.xml  { render :xml => @item.to_xml(:include => :articles) }
-      format.json  { render :json => @item.to_json(:include => :articles) }
+      format.xml  { render :xml => @item.to_xml(:include => fetch_articles_scope) }
+      format.json { render :json => @item.to_json(:except => [:account_id,:import_id],:include => fetch_articles_scope) }
     end
     
   end
+  
 
   def new    
      logger.debug "params:: #{params.inspect}"
@@ -142,6 +143,14 @@ class Solution::FoldersController < ApplicationController
   def portal_category?
     wrong_portal unless(main_portal? || 
           (params[:category_id].to_i == current_portal.solution_category_id)) #Duplicate..
+  end
+  
+  def fetch_articles_scope
+    if current_user && current_user.has_manage_solutions?
+      :articles
+    else
+      :published_articles 
+    end
   end
 
 end

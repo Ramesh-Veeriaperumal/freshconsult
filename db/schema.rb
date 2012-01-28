@@ -25,7 +25,6 @@ ActiveRecord::Schema.define(:version => 20120127092703) do
     t.string   "shared_secret"
     t.text     "sso_options"
     t.string   "google_domain"
-    t.string   "language",                       :default => "en"
     t.boolean  "ssl_enabled",                    :default => true
   end
 
@@ -109,6 +108,27 @@ ActiveRecord::Schema.define(:version => 20120127092703) do
   end
 
   add_index "business_calendars", ["account_id"], :name => "index_business_calendars_on_account_id"
+
+  create_table "conversion_metrics", :force => true do |t|
+    t.integer  "account_id",        :limit => 8
+    t.string   "referrer"
+    t.string   "landing_url"
+    t.string   "first_referrer"
+    t.string   "first_landing_url"
+    t.string   "country"
+    t.string   "language"
+    t.string   "search_engine"
+    t.string   "keywords"
+    t.string   "device"
+    t.string   "browser"
+    t.string   "os"
+    t.float    "offset"
+    t.boolean  "is_dst"
+    t.integer  "visits"
+    t.text     "session_json"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "customers", :force => true do |t|
     t.string   "name"
@@ -664,6 +684,7 @@ ActiveRecord::Schema.define(:version => 20120127092703) do
     t.datetime "updated_at"
     t.integer  "solution_category_id", :limit => 8
     t.integer  "forum_category_id",    :limit => 8
+    t.string   "language",                          :default => "en"
   end
 
   add_index "portals", ["account_id", "portal_url"], :name => "index_portals_on_account_id_and_portal_url"

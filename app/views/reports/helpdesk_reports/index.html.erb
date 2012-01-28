@@ -1,93 +1,25 @@
-<%= javascript_include_tag  'highcharts.src.js' %>
+<%= javascript_include_tag  'highcharts.js' %>
+<%= javascript_include_tag  '/javascripts/report/date' %>
+<%= javascript_include_tag  '/javascripts/report/daterangepicker.jQuery.js' %>
+<%= stylesheet_link_tag 'reports' %>
+<%= stylesheet_link_tag 'ui.daterangepicker' %>
+
+<% content_for :sidebar do %>
+	<%= render :partial => "/reports/shared/sidebar" %>
+<%end%>	
+<div id="report-container">
+	<div id="ticket-toolbar" class="toolbar">
+		<h3 class="title" id="report-main-title"></h3>
+	</div>
+	<div  id="tickets-summary"></div>
+	<div class="clearfix">&nbsp;</div><div class="clear"></div>
+	<div class="report-unit timeline-chart" id="timeline-chart"></div>
+	<div class="clearfix">&nbsp;</div>
+	<div id="pie-charts"></div>
+</div>
+<!-- Submitting the form by default -->
 <% javascript_tag do %>
- jQuery(document).ready(function() {
-       <%=@priority_pie_chart%>
-	   <%=@ticket_type_pie_chart%>
-		<%=@freshdesk_timeline_chart%>
- });
-<%end%>
-<% form_tag :action => :index, :controller => "reports/helpdesk_reports" do %>
-	<%=select_month(Date.today)%>
-	<%= submit_tag 'Submit' %>
+jQuery(document).ready(function() {
+	jQuery("#Sidebar form").submit();
+});
 <% end %>
-<br>
-<br>
-<%unless @status_hash.nil?%>
-<b>Tickets by Status</b>
-<br>
-<table>
-	<tr>
-		<td>Total Tickets</td>
-		<td><%=@current_month_tot_tickets%>  </td>
-	</tr>
-	<tr>
-		<td>Open</td>
-		<td> <%=@status_hash.fetch(TicketConstants::STATUS_KEYS_BY_TOKEN[:open],{}).fetch(:count,0)%> </td>
-	</tr>
-	<tr>
-		<td>Pending</td>
-		<td> <%=@status_hash.fetch(TicketConstants::STATUS_KEYS_BY_TOKEN[:pending],{}).fetch(:count,0)%> </td>
-	</tr>
-	<tr>
-		<td>Resolved</td>
-		<td> <%=@status_hash.fetch(TicketConstants::STATUS_KEYS_BY_TOKEN[:resolved],{}).fetch(:count,0)%> </td>
-	</tr>
-
-</table>
-<%end%>
-<br>
-<br>
-<%unless @source_hash.nil?%>
-<b>Tickets by Source</b>
-<br>
-<table>
-	<tr>
-		<td>Total Tickets</td>
-		<td><%=@current_month_tot_tickets%>  </td>
-	</tr>
-	<tr>
-		<td>Email</td>
-		<td> <%=@source_hash.fetch(TicketConstants::SOURCE_KEYS_BY_TOKEN[:email],{}).fetch(:percentage,0)%>% </td>
-	</tr>
-	<tr>
-		<td>Portal</td>
-		<td> <%=@source_hash.fetch(TicketConstants::SOURCE_KEYS_BY_TOKEN[:portal],{}).fetch(:percentage,0)%>% </td>
-	</tr>
-	<tr>
-		<td>Phone</td>
-		<td> <%=@source_hash.fetch(TicketConstants::SOURCE_KEYS_BY_TOKEN[:phone],{}).fetch(:percentage,0)%>% </td>
-	</tr>
-	<tr>
-		<td>Twitter</td>
-		<td> <%=@source_hash.fetch(TicketConstants::SOURCE_KEYS_BY_TOKEN[:twitter],{}).fetch(:percentage,0)%>% </td>
-	</tr>
-	<tr>
-		<td>Facebook</td>
-		<td> <%=@source_hash.fetch(TicketConstants::SOURCE_KEYS_BY_TOKEN[:facebook],{}).fetch(:percentage,0)%>% </td>
-	</tr>
-	<tr>
-		<td>Chat</td>
-		<td> <%=@source_hash.fetch(TicketConstants::SOURCE_KEYS_BY_TOKEN[:chat],{}).fetch(:percentage,0)%>% </td>
-	</tr>
-
-</table>
-<%end%>
-<table>
-	<tr>Average SLA <%=format_float_value(@avg_sla_current_month)%></tr>
-	<tr>SLA Difference is  <%=format_float_value(@sla_diff)%></tr>
-</table>
-
-<table>
-	<tr>Average FCR <%=format_float_value(@avg_fcr_month)%></tr>
-	<tr>FCR Difference is  <%=format_float_value(@fcr_diff)%></tr>
-</table>
-
-<br>
-<br>
-<div id ="priority_freshdesk_chart">
-</div>
-<div id ="ticket_type_freshdesk_chart">
-</div>
-<div id ="freshdesk_time_line_chart">
-</div>
-

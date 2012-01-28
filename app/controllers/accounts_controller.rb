@@ -71,23 +71,18 @@ class AccountsController < ApplicationController
   def create_account
     params[:plan] = SubscriptionPlan::SUBSCRIPTION_PLANS[:garden]
     build_object
+    build_primary_email_and_portal
     build_user
-    build_plan
+    build_plan  
+    store_metrics
     begin
       @account.time_zone = (ActiveSupport::TimeZone[params[:utc_offset].to_f]).name 
     rescue
       @account.time_zone = (ActiveSupport::TimeZone["Eastern Time (US & Canada)"]).name 
     end
     
-    begin 
-      locale = request.compatible_language_from I18n.available_locales  
-      locale = I18n.default_locale if locale.blank?
-      @account.language = locale.to_s()
-    rescue
-      @account.language = I18n.default_locale.to_s()
-    end
-    
   end
+ 
     
   def signup_google 
     base_domain = AppConfig['base_domain'][RAILS_ENV]
@@ -259,7 +254,6 @@ class AccountsController < ApplicationController
   
   def update
     @account.time_zone = params[:account][:time_zone]
-    @account.language = params[:account][:language]
     @account.ticket_display_id = params[:account][:ticket_display_id]
     @account.main_portal_attributes = params[:account][:main_portal_attributes]
     
@@ -383,6 +377,7 @@ class AccountsController < ApplicationController
       SubscriptionNotifier.deliver_account_deleted(current_account)
       create_deleted_customers_info
       current_account.destroy
+      redirect_to "http://www.freshdesk.com"
     end
   end
   
@@ -443,6 +438,26 @@ class AccountsController < ApplicationController
       @account.plan = @plan
     end
     
+    def build_primary_email_and_portal
+       d_email = "support@#{@account.full_domain}"
+       @account.build_primary_email_config(:to_email => d_email, :reply_email => d_email, :name => @account.name, :primary_role => true)
+       @account.primary_email_config.active = true
+      
+      begin 
+        locale = request.compatible_language_from I18n.available_locales  
+        locale = I18n.default_locale if locale.blank?
+      rescue
+        locale =  I18n.default_locale
+      end    
+      @account.primary_email_config.build_portal(:name => @account.helpdesk_name || @account.name, :preferences => default_preferences, 
+                               :language => locale.to_s() , :account => @account)
+     
+    end
+ 
+    def default_preferences
+      HashWithIndifferentAccess.new({:bg_color => "#efefef",:header_color => "#252525", :tab_color => "#006063"})
+    end
+  
     def redirect_url
       { :action => 'show' }
     end
@@ -479,5 +494,41 @@ class AccountsController < ApplicationController
     def admin_selected_tab
       @selected_tab = :admin
     end
+    
+    def store_metrics
+      return unless params[:session_json]
+        
+      metrics =  JSON.parse(params[:session_json])
+      metrics_obj = {}
 
+      metrics_obj[:referrer] = metrics["current_session"]["referrer"]
+      metrics_obj[:landing_url] = metrics["current_session"]["url"]
+      metrics_obj[:first_referrer] = params[:first_referrer]
+      metrics_obj[:first_landing_url] = params[:first_landing_url]
+      metrics_obj[:country] = metrics["locale"]["country"]
+      metrics_obj[:language] = metrics["locale"]["lang"]
+      metrics_obj[:search_engine] = metrics["current_session"]["search"]["engine"]
+      metrics_obj[:keywords] = metrics["current_session"]["search"]["query"]
+      metrics_obj[:visits] = params[:pre_visits]
+
+      if metrics["device"]["is_mobile"]
+        metrics_obj[:device] = "M"
+      elsif  metrics["device"]["is_phone"]
+        metrics_obj[:device] = "P"
+      elsif  metrics["device"]["is_tablet"]
+        metrics_obj[:device] = "T"
+      else
+        metrics_obj[:device] = "C"  
+      end
+
+      metrics_obj[:browser] = metrics["browser"]["browser"]                 
+      metrics_obj[:os] = metrics["browser"]["os"]
+      metrics_obj[:offset] = metrics["time"]["tz_offset"]
+      metrics_obj[:is_dst] = metrics["time"]["observes_dst"]
+      metrics_obj[:session_json] = metrics
+
+      c_metric = @account.build_conversion_metric(metrics_obj)
+      c_metric.save
+    end
+    
 end
