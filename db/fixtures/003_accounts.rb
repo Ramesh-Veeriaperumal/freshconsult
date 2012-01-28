@@ -3,7 +3,7 @@ unless Account.current
     user = User.new(:name => 'Support', :password => 'test', :password_confirmation => 'test', 
                     :email => 'sample@freshdesk.com', :role_token => User::USER_ROLES_KEYS_BY_TOKEN[:account_admin])
     
-    a = Account.create(:name => 'Test Account', :domain => 'localhost', :plan => SubscriptionPlan.find_by_name(SubscriptionPlan::SUBSCRIPTION_PLANS[:premium]), :user => user)
+    a = Account.create(:name => 'Test Account', :domain => 'localhost', :plan => SubscriptionPlan.find_by_name(SubscriptionPlan::SUBSCRIPTION_PLANS[:garden]), :user => user)
     a.update_attribute(:full_domain, 'localhost')
     a.primary_email_config.update_attributes(:reply_email => "support@localhost", :to_email => "support@localhost")
     

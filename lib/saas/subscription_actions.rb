@@ -3,16 +3,12 @@ class SAAS::SubscriptionActions
     update_features(account, old_subscription)
     
     case account.plan_name
-    when :free
+    when :sprout
       drop_custom_sla(account)
       update_timezone_to_users(account)
       drop_additional_emails(account)
-      drop_except_account_admin(account)
-    when :basic
+    when :blossom
       drop_custom_sla(account)
-      update_timezone_to_users(account)
-      drop_additional_emails(account)
-    when :pro
       update_timezone_to_users(account)
       drop_additional_emails(account)
     end

@@ -69,7 +69,7 @@ class AccountsController < ApplicationController
   end
 
   def create_account
-    params[:plan] = SubscriptionPlan::SUBSCRIPTION_PLANS[:premium]
+    params[:plan] = SubscriptionPlan::SUBSCRIPTION_PLANS[:garden]
     build_object
     build_user
     build_plan
@@ -465,7 +465,9 @@ class AccountsController < ApplicationController
     end
     
     def load_plans
-      @plans = SubscriptionPlan.find(:all, :order => 'amount asc').collect {|p| p.discount = @discount; p }
+      plans = SubscriptionPlan.current
+      plans << @subscription.subscription_plan if @subscription.subscription_plan.classic?
+      @plans = plans.collect {|p| p.discount = @discount; p }
     end
     
     def authorized?

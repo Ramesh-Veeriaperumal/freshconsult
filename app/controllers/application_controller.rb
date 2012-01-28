@@ -3,9 +3,8 @@
 
 class ApplicationController < ActionController::Base
   
-  
   before_filter :check_account_state, :except => [:show,:index]
-  before_filter :set_time_zone
+  before_filter :set_time_zone, :check_day_pass_usage
   
   before_filter :set_locale
 
@@ -15,10 +14,6 @@ class ApplicationController < ActionController::Base
   
   include SslRequirement
   include SubscriptionSystem
-  #include ExceptionNotification::Notifiable #For sending notifications when error occours in the application
-  
-  
-  #include SentientController
   
   # See ActionController::RequestForgeryProtection for details
   # Uncomment the :secret if you're not using the cookie session store
@@ -32,45 +27,7 @@ class ApplicationController < ActionController::Base
   
   # Scrub sensitive parameters from your log
   filter_parameter_logging :password, :password_confirmation
-#  helper_method :current_user_session, :current_user
-#
-#  private
-#    def current_user_session
-#      return @current_user_session if defined?(@current_user_session)
-#      @current_user_session = UserSession.find
-#    end
-#
-#    def current_user
-#      return @current_user if defined?(@current_user)
-#      @current_user = current_user_session && current_user_session.user
-#    end
-#
-#    def require_user
-#      unless current_user
-#        store_location
-#        flash[:notice] = "You must be logged in to access this page"
-#        redirect_to new_user_session_url
-#        return false
-#      end
-#    end
-#
-#    def require_no_user
-#      if current_user
-#        store_location
-#        flash[:notice] = "You must be logged out to access this page"
-#        redirect_to account_url
-#        return false
-#      end
-#    end
-#    
-#    def store_location
-#      session[:return_to] = request.request_uri
-#    end
-#    
-#    def redirect_back_or_default(default)
-#      redirect_to(session[:return_to] || default)
-#      session[:return_to] = nil
-#    end
+
   def set_locale
     I18n.locale =  (current_user && current_user.language) ? current_user.language : (current_account ? current_account.language : I18n.default_locale) 
   end
@@ -86,7 +43,7 @@ class ApplicationController < ActionController::Base
       end
      end
   end
-
+  
   def set_time_zone
     begin
       current_account.make_current

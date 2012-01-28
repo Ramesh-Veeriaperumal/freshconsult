@@ -64,6 +64,8 @@ class Subscription < ActiveRecord::Base
     
     self.renewal_period = billing_cycle unless billing_cycle.nil?
     self.subscription_plan = plan
+    self.free_agents = plan.free_agents
+    self.day_pass_amount = plan.day_pass_amount
   end
   
   # The plan_id and plan_id= methods are convenience methods for the
@@ -86,6 +88,10 @@ class Subscription < ActiveRecord::Base
   
   def amount_in_pennies
     (amount * 100).to_i
+  end
+  
+  def paid_agents
+    (agent_limit - free_agents)
   end
   
   def store_card(creditcard, gw_options = {})
@@ -138,11 +144,27 @@ class Subscription < ActiveRecord::Base
   # be created, but the subscription itself is not modified.
   def misc_charge(amount)
     if amount == 0 || (@response = gateway.purchase((amount * 100).to_i, billing_id)).success?
-      subscription_payments.create(:account => account, :amount => amount, :transaction_id => @response.authorization, :misc => true)
+      s_payment = subscription_payments.create(:account => account, :amount => amount, :transaction_id => @response.authorization, :misc => true)
+      SubscriptionNotifier.deliver_misc_receipt(s_payment)
       true
     else
       errors.add_to_base(@response.message)
       false
+    end
+  end
+  
+  def charge_day_passes(quantity)
+    amount_to_charge = quantity * day_pass_amount
+    
+    if(@response = gateway.purchase((amount_to_charge * 100).to_i, billing_id)).success?
+      s_payment = subscription_payments.create(:account => account, 
+            :amount => amount_to_charge, :transaction_id => @response.authorization, 
+            :misc => true)
+
+      SubscriptionNotifier.deliver_day_pass_receipt(quantity, s_payment)
+      true
+    else
+      errors.add_to_base(@response.message)
     end
   end
   
@@ -297,7 +319,7 @@ class Subscription < ActiveRecord::Base
     
     def total_amount
       apply_the_cycle
-      self.amount = agent_limit ? (self.amount * agent_limit) : subscription_plan.amount
+      self.amount = agent_limit ? (self.amount * paid_agents) : subscription_plan.amount
     end
     
     def apply_the_cycle

@@ -20,6 +20,9 @@
 							<%= content_tag(:div, (plan_name == "premium") ? t("special_beta_offer") : "&nbsp;", :class => "discount-info-text" ) if(@discount && @discount.name.downcase == "beta users special")  %>
 						</div>
 						<%= content_tag(:p,  t("#{plan_name}_details"), :class => "plan-details" ) %>
+						<p><br>
+							<%= "First #{ plan.free_agents == 1 ? 'agent' : pluralize(plan.free_agents, 'agent')} will be free" %>
+						</p>
 					</div>
 					<button data-plan="<%= plan.name %>" data-plan-cost="<%= plan.amount.to_i %>" data-plan-id = "<%= plan.id %>" class="plan-button" id='<%= "#{ plan.name }_button" %>'><%=t('choose_plan')%></button>
 					<div id="billing-<%= plan.name %>"></div>

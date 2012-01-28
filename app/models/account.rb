@@ -13,8 +13,6 @@ class Account < ActiveRecord::Base
   
   has_one :data_export,:dependent => :destroy
   
-
-  
   has_one :logo,
     :as => :attachable,
     :class_name => 'Helpdesk::Attachment',
@@ -56,6 +54,8 @@ class Account < ActiveRecord::Base
   has_many :customers, :dependent => :destroy
   has_many :contacts, :class_name => 'User' , :conditions =>{:user_role =>[User::USER_ROLES_KEYS_BY_TOKEN[:customer], User::USER_ROLES_KEYS_BY_TOKEN[:client_manager]] , :deleted =>false}
   has_many :agents, :through =>:users , :conditions =>{:users=>{:deleted => false}}
+  has_many :full_time_agents, :through =>:users, :conditions => { :occasional => false, 
+      :users=> { :deleted => false } }
   has_many :all_contacts , :class_name => 'User', :conditions =>{:user_role => [User::USER_ROLES_KEYS_BY_TOKEN[:customer], User::USER_ROLES_KEYS_BY_TOKEN[:client_manager]]}
   has_many :all_agents, :class_name => 'Agent', :through =>:all_users  , :source =>:agent
   has_many :sla_policies , :class_name => 'Helpdesk::SlaPolicy' ,:dependent => :destroy
@@ -120,6 +120,8 @@ class Account < ActiveRecord::Base
   has_many :scoreboard_ratings, :dependent => :destroy
   has_many :survey_handles, :through => :survey
 
+  has_many :day_pass_usages, :dependent => :destroy
+  has_one :day_pass_config, :dependent => :destroy
   
   has_one :data_import,:class_name => 'Admin::DataImport' ,:dependent => :destroy
 
@@ -166,7 +168,7 @@ class Account < ActiveRecord::Base
              
   
   Limits = {
-    'agent_limit' => Proc.new {|a| a.agents.count }
+    'agent_limit' => Proc.new {|a| a.full_time_agents.count }
   }
   
   Limits.each do |name, meth|
@@ -185,6 +187,20 @@ class Account < ActiveRecord::Base
     :premium => {
       :features => [ :multi_product, :multi_timezone , :multi_language],
       :inherits => [ :pro ] #To make the hierarchy easier
+    },
+    
+    :sprout => {
+      :features => [ :scenario_automations, :business_hours ]
+    },
+    
+    :blossom => {
+      :features => [ :twitter, :facebook, :forums, :surveys ],
+      :inherits => [ :sprout ]
+    },
+    
+    :garden => {
+      :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language ],
+      :inherits => [ :blossom ]
     }
   }
   

@@ -45,6 +45,7 @@ module Admin::HomeHelper
           ['/admin/widget_config',        'feedback'                ],
           ['/agents',                     'agent'                   ],
           ['/groups',                     'group'                   ],
+          ['/admin/day_passes',           'day_pass',         current_account.subscription.active? ],
           ['/integrations/applications',  'integrations'            ],
       ]]
     ]
