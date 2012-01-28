@@ -26,7 +26,6 @@ HarvestWidget.prototype= {
 			},
 			on_success: harvestWidget.loadTask.bind(this)
 		}];
-		alert("harvestBundle.remote_integratable_id "+harvestBundle.remote_integratable_id)
 		if (harvestBundle.remote_integratable_id) 
 			init_reqs[0] = {
 				resource: "daily/show/"+harvestBundle.remote_integratable_id,
@@ -55,7 +54,7 @@ HarvestWidget.prototype= {
 	},
 
 	loadTimeEntry: function(resData) {
-		if (resData && this.isRespSuccessful(resData.responseXML)) {
+		if (resData) {
 			this.timeEntryXml = resData.responseXML;
 			this.resetTimeEntryForm();
 		}
@@ -209,7 +208,7 @@ HarvestWidget.prototype= {
 		else
 			this.resetTimeEntryForm();
 	},
- 
+
 	resetTimeEntryForm: function(){
 		if(this.timeEntryXml) {
 			// Editing the existing entry. Select already associated entry in the drop-downs that are already loaded.
@@ -218,7 +217,9 @@ HarvestWidget.prototype= {
 				project_id = XmlUtil.getNodeValueStr(time_entry_node[0], "project_id");
 				client_id = this.get_client_id(this.projectData, project_id);
 				UIUtil.chooseDropdownEntry("harvest-timeentry-clients", client_id);
-				this.clientChanged(client_id);
+				this.clientChanged(client_id);  // This will take care of changing the project selection.
+				task_id = XmlUtil.getNodeValueStr(time_entry_node[0], "task_id");
+				UIUtil.chooseDropdownEntry("harvest-timeentry-tasks", task_id);
 			}
 		} else {
 			// Do nothing. As this the form is going to be used for creating new entry, let the staff, client, project and task drop down be selected with the last selected entry itself. 

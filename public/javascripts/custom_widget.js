@@ -90,7 +90,7 @@ Freshdesk.Widget.prototype={
 				reqData.on_failure(evt);
 			} else { this.alert_failure("Given user credentials are not correct. Please correct it.");}
 		} else if (evt.status == 502) {
-			this.alert_failure("Remote application is not responding.  Please check whether given domain url is up.");
+			this.alert_failure("Remote application is not responding.  Please verify the given domain.");
 		} else if (evt.status == 500) {
 			this.alert_failure("Unknown server error. Please contact support@freshdesk.com.");
 		} else if (this.on_failure != null) {
