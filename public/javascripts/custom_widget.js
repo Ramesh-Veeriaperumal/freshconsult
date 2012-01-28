@@ -54,7 +54,7 @@ Freshdesk.Widget.prototype={
 			this.content_anchor.innerHTML = this.options.application_content();
 			this.options.application_resources.each(
 				function(reqData){
-					cw.request(reqData);
+					if(reqData) cw.request(reqData);
 				});
 		}
 	},
@@ -183,14 +183,14 @@ var UIUtil = {
 					newEntityOption.selected = true;
 				}
 			}
-         dispName = ""
-         for(d=0;d<dispNames.length;d++) {
-            if (dispNames[d] == ' ' || dispNames[d] == '(' || dispNames[d] == ')' || dispNames[d] == '-') {
-               dispName += dispNames[d];
-            } else {
-               dispName += XmlUtil.getNodeValueStr(entitiesArray[i], dispNames[d]);
-            }
-         }
+			dispName = ""
+			for(d=0;d<dispNames.length;d++) {
+				if (dispNames[d] == ' ' || dispNames[d] == '(' || dispNames[d] == ')' || dispNames[d] == '-') {
+					dispName += dispNames[d];
+				} else {
+					dispName += XmlUtil.getNodeValueStr(entitiesArray[i], dispNames[d]);
+				}
+			}
 			if (dispName.length < 2) dispName = entityEmailValue;
 
 			newEntityOption.value = entityIdValue;
@@ -202,6 +202,28 @@ var UIUtil = {
 			}
 		}
 		return foundEntity;
+	},
+
+	addDropdownEntry: function(dropDownBoxId, value, name, addItFirst) {
+		projectDropDownBox = $(dropDownBoxId);
+		var newEntityOption = new Element("option");
+		newEntityOption.value = value;
+		newEntityOption.innerHTML = name;
+		if(addItFirst)
+			projectDropDownBox.insertBefore(newEntityOption, projectDropDownBox.childNodes[0]);
+		else
+			projectDropDownBox.appendChild(newEntityOption);
+	},
+
+	chooseDropdownEntry: function(dropDownBoxId, searchValue) {
+		projectDropDownBoxOptions = $(dropDownBoxId).options;
+		var len = projectDropDownBoxOptions.length;
+		for (var i = 0; i < len; i++) {
+			if(projectDropDownBoxOptions[i].value == searchValue) {
+				projectDropDownBoxOptions[i].selected = true;
+				break;
+			} 
+		}
 	}
 }
 
