@@ -32,7 +32,7 @@ select {
 }
 
 input[disabled],
-select[disabled],
+/*select[disabled],*/
 textarea[disabled],
 input[readonly],
 select[readonly],
@@ -1336,6 +1336,25 @@ table.summary-report{
          font-size:13px;
          color:#333333;
       }
+			div.integration{
+				@include pie-clearfix;
+				padding:10px 0 10px 0;
+				margin:10px 0 10px;
+				border:1px dotted #efefef;
+				border-width:1px 0;
+				.freshbooks{
+					position:absolute;
+					width:40px;
+					height:10px;
+					border:1px solid red;
+				}
+			}
+			div.field{
+				width:23%;
+				float:left;
+				margin-left:2%;
+			}
+			div.field.first{ margin-left:0; }
       label.overlabel{
          margin:2px 8px;
          color:#888888;

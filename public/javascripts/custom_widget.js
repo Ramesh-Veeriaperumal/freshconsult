@@ -54,7 +54,7 @@ Freshdesk.Widget.prototype={
 			this.content_anchor.innerHTML = this.options.application_content();
 			this.options.application_resources.each(
 				function(reqData){
-					cw.request(reqData);
+					if(reqData) cw.request(reqData);
 				});
 		}
 	},
@@ -90,7 +90,7 @@ Freshdesk.Widget.prototype={
 				reqData.on_failure(evt);
 			} else { this.alert_failure("Given user credentials are not correct. Please correct it.");}
 		} else if (evt.status == 502) {
-			this.alert_failure("Remote application is not responding.  Please check whether given domain url is up.");
+			this.alert_failure("Remote application is not responding.  Please verify the given domain.");
 		} else if (evt.status == 500) {
 			this.alert_failure("Unknown server error. Please contact support@freshdesk.com.");
 		} else if (this.on_failure != null) {
@@ -183,10 +183,13 @@ var UIUtil = {
 					newEntityOption.selected = true;
 				}
 			}
-			dispName = "", sep = "";
+			dispName = ""
 			for(d=0;d<dispNames.length;d++) {
-				dispName += XmlUtil.getNodeValueStr(entitiesArray[i],dispNames[d]) + sep;
-				sep = " ";
+				if (dispNames[d] == ' ' || dispNames[d] == '(' || dispNames[d] == ')' || dispNames[d] == '-') {
+					dispName += dispNames[d];
+				} else {
+					dispName += XmlUtil.getNodeValueStr(entitiesArray[i], dispNames[d]);
+				}
 			}
 			if (dispName.length < 2) dispName = entityEmailValue;
 
@@ -199,6 +202,28 @@ var UIUtil = {
 			}
 		}
 		return foundEntity;
+	},
+
+	addDropdownEntry: function(dropDownBoxId, value, name, addItFirst) {
+		projectDropDownBox = $(dropDownBoxId);
+		var newEntityOption = new Element("option");
+		newEntityOption.value = value;
+		newEntityOption.innerHTML = name;
+		if(addItFirst)
+			projectDropDownBox.insertBefore(newEntityOption, projectDropDownBox.childNodes[0]);
+		else
+			projectDropDownBox.appendChild(newEntityOption);
+	},
+
+	chooseDropdownEntry: function(dropDownBoxId, searchValue) {
+		projectDropDownBoxOptions = $(dropDownBoxId).options;
+		var len = projectDropDownBoxOptions.length;
+		for (var i = 0; i < len; i++) {
+			if(projectDropDownBoxOptions[i].value == searchValue) {
+				projectDropDownBoxOptions[i].selected = true;
+				break;
+			} 
+		}
 	}
 }
 

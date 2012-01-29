@@ -5,6 +5,7 @@
 <%- end %>
 
 <%= render :partial => "ticket_info" %>
+
 <% unless @ticket.deleted %>
 	<div class="replylinks">
 		<%= button_to_function(t('ticket.reply_to'), "swapEmailNote('reply', this)", :id => "ReplyButton", :class => "btn small", "data-toggle" => "toggle") unless @item.from_email.nil? %>
