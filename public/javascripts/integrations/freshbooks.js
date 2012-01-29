@@ -347,8 +347,10 @@ FreshbooksWidget.prototype = {
 
 	// This is method needs to be called by the external time entry code to map the remote and local integrated resorce ids.
 	set_timesheet_entry_id:function(integratable_id) {
-		if(integratable_id != null) this.freshdeskWidget.local_integratable_id = integratable_id;
-		this.add_freshbooks_resource_in_db();
+		if (!freshbooksBundle.remote_integratable_id) {
+			this.freshdeskWidget.local_integratable_id = integratable_id;
+			this.add_freshbooks_resource_in_db();
+		}
 	},
 
 	add_freshbooks_resource_in_db:function() {
