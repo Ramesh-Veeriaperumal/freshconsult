@@ -26,7 +26,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       :create_initial_activity, :support_score_on_create
   before_update :cache_old_model, :update_dueby 
   after_update :save_custom_field, :update_ticket_states, :notify_on_update, :update_activity, 
-      :support_score_on_update
+      :support_score_on_update, :stop_timesheet_timers
   
   belongs_to :account
   belongs_to :email_config
@@ -721,6 +721,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
     def priority_name
       PRIORITY_NAMES_BY_KEY[priority]
     end
+    
+   def stop_timesheet_timers
+    if status != @old_ticket.status && (status == STATUS_KEYS_BY_TOKEN[:resolved] or status == STATUS_KEYS_BY_TOKEN[:closed])
+       running_timesheets =  time_sheets.find(:all , :conditions =>{:timer_running => true})
+       running_timesheets.each{|t| t.stop_timer}
+    end
+   end
   
   private
   
@@ -819,6 +826,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
         email = $1
       end  
      email
-   end
+ end
+ 
 end
   
