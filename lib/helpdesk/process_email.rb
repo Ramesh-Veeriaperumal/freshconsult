@@ -1,5 +1,9 @@
 class Helpdesk::ProcessEmail < Struct.new(:params)
  
+  include EmailCommands
+  
+  EMAIL_REGEX = /(\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
+  
   def perform
     from_email = parse_from_email
     to_email = parse_to_email
@@ -40,7 +44,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         email = $2
       elsif email =~ /<(.+?)>/
         email = $1
-      else email =~ User::EMAIL_REGEX
+      else email =~ EMAIL_REGEX
         email = $1
       end
       
@@ -57,7 +61,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
                             content.gsub("\r\n", "\n") =~ /^>>>+\s(.*)\s+<(.*)>$/))
         name = $1
         email = $2
-        if email =~ User::EMAIL_REGEX
+        if email =~ EMAIL_REGEX
           { :name => name, :email => email }
         end
       end
@@ -120,6 +124,13 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       )
       ticket = check_for_chat_scources(ticket,from_email)
       ticket = check_for_spam(ticket)
+      
+      process_email_commands(ticket, user, email_config) if user.agent?
+
+      email_cmds_regex = get_email_cmd_regex(account)
+      ticket.description = ticket.description.gsub(email_cmds_regex, "") unless ticket.description.nil?
+      ticket.description_html = ticket.description_html.gsub(email_cmds_regex, "") unless ticket.description_html.nil?
+
       begin
         ticket.save!
         create_attachments(ticket, ticket)
@@ -158,6 +169,13 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
           :account_id => ticket.account_id
         )
         note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] unless user.customer?
+        
+        process_email_commands(ticket, user, ticket.email_config) if user.agent?
+  
+        email_cmds_regex = get_email_cmd_regex(ticket.account)
+        note.body = note.body.gsub(email_cmds_regex, "") unless note.body.nil?
+        note.body_html = note.body_html.gsub(email_cmds_regex, "") unless note.body_html.nil?
+        ticket.save
       else
         return create_ticket(ticket.account, from_email, parse_to_email)
       end

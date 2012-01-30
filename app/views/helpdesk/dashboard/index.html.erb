@@ -23,4 +23,22 @@
   <%= pageless(@items.total_pages, helpdesk_dashboard_path, t("loading.activities")) %>  
 <% end %>
 
+<% javascript_tag do %>
+	jQuery.PeriodicalUpdater(
+		'/helpdesk/dashboard/latest_activities', 
+		{ 
+			method: 'get', 
+			data:  function() { return "previous_id="+jQuery('#Pages li').first().attr('id') },
+			minTimeout: 60000, 
+			maxTimeout: 61000, 
+			multiplier: 1, 
+			type: 'text',
+		}, 
+		function(remoteData, success, xhr, handle) 
+		{
+			jQuery('#Pages').prepend(remoteData);
+		}
+	);
+<%end%>
+
 

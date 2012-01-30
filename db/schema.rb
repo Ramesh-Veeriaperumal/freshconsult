@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120113105518) do
+ActiveRecord::Schema.define(:version => 20120124071320) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -152,6 +152,13 @@ ActiveRecord::Schema.define(:version => 20120113105518) do
     t.string   "admin_name"
     t.string   "admin_email"
     t.text     "account_info"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "email_commands_settings", :force => true do |t|
+    t.string   "email_cmds_delimeter"
+    t.integer  "account_id",           :limit => 8
     t.datetime "created_at"
     t.datetime "updated_at"
   end
