@@ -6,6 +6,8 @@ class FlexifieldDefEntry < ActiveRecord::Base
   has_many :flexifield_picklist_vals, :dependent => :destroy
   has_one :ticket_field, :class_name => 'Helpdesk::TicketField', :dependent => :destroy
   validates_presence_of :flexifield_name, :flexifield_alias, :flexifield_order
+
+  named_scope :drop_down_fields, :condition => {:flexifield_coltype => 'dropdown' }
   
   before_save :ensure_alias_is_one_word
   

@@ -63,6 +63,7 @@ ActionController::Routing::Routes.draw do |map|
 
   map.namespace :admin do |admin|
     admin.resources :home, :only => :index
+    admin.resources :day_passes, :only => [:index, :update], :member => { :buy_now => :put }
     admin.resources :widget_config, :only => :index
     admin.resources :automations, :member => { :deactivate => :put, :activate => :put }, :collections => { :reorder => :put }
     admin.resources :va_rules, :member => { :deactivate => :put, :activate => :put }, :collections => { :reorder => :put }
@@ -85,6 +86,8 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :reports
   map.customer_activity   '/activity_reports/customer', :controller => 'reports/customer_reports', :action => 'index'
   map.helpdesk_activity   '/activity_reports/helpdesk', :controller => 'reports/helpdesk_reports', :action => 'index'
+  map.customer_activity_generate   '/activity_reports/customer/generate', :controller => 'reports/customer_reports', :action => 'generate'
+  map.helpdesk_activity_generate   '/activity_reports/helpdesk/generate', :controller => 'reports/helpdesk_reports', :action => 'generate'
 
   
   map.namespace :social do |social|

@@ -37,6 +37,13 @@ class SubscriptionNotifier < ActionMailer::Base
     @content_type = "text/html"
   end
   
+  def day_pass_receipt(quantity, subscription_payment)
+    setup_email(subscription_payment.subscription.account.account_admin, "Your #{AppConfig['app_name']} invoice")
+    setup_bcc
+    @body = { :units => quantity, :subscription_payment => subscription_payment }
+    @content_type = "text/html"
+  end
+  
   def setup_receipt(subscription_payment)
     setup_email(subscription_payment.subscription.account.account_admin, "Your #{AppConfig['app_name']} invoice")
     @body = { :subscription => subscription_payment.subscription, :amount => subscription_payment.amount }

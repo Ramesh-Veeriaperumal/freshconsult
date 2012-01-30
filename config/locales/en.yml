@@ -227,6 +227,7 @@ en:
     home:
       index: 
         group: Groups
+        day_pass: Day Pass Settings
         business-hours: Business Hours
         title: Admin
         email-notifications: Email Notifications
@@ -796,7 +797,7 @@ en:
   twoweek: 2 Weeks
   onemonth: 1 Month
   problem: Problem
-  change_plan_info: You can change your plan level at any time.  The position limits and other features of the new plan that you select will be effective as soon as you make the change, but your bill amount will not change until your next bill date.  Your next bill date is %{date}.
+  change_plan_info: You can change your plan at any time, your next bill date is %{date}.
   created_on: Created on
   zip: Zip
   import_solution_article: Convert Article forum to solution
@@ -825,6 +826,11 @@ en:
     global_info: Can view all Tickets in the Helpdesk
     group_info: Can view Tickets in their Groups(s) and Tickets assigned to them
     individual_info: Can only view Tickets assigned to them
+    occasional_description: This agent will be accessing the support portal
+    full_time: Full time
+    occasional: Occasionally
+    day_pass_expired: Your day pass has expired, please login to acquire a new day pass.
+    insufficient_day_pass: Unable to allocate a day pass for you, please contct your administrator.
   account_admin: Account admin
   right: Right
   footer: 
@@ -972,6 +978,9 @@ en:
   add_to_do: Add To do
   subject_or_description: Subject or Description
   premium_details: Everything in &quot;Pro&quot; Plan plus, Multiple Product Support, Multi-timezone support, Community, Email &amp; Phone Support
+  sprout_details: Email Response Management, All Automations, Default SLA Policy, Knowledge Base, Self-Service Portal, Domain Mapping, Basic Reporting, Community Support.
+  blossom_details: Everything in &quot;Sprout&quot; Plan plus, Twitter Support, Facebook Support, Forums, Community &amp; Email Support.
+  garden_details: Everything in &quot;Blossom&quot; Plan plus, Multiple Product Support, Advanced Reporting, Community, Email &amp; Phone Support
   zendesk_credentials: Zendesk Credentials
   how_to: Question
   customers: Customers
@@ -985,6 +994,9 @@ en:
   back: Back
   save_changes: Save Changes
   premium_brief: Top-of-the-line
+  sprout_brief: Robust Email Helpdesk
+  blossom_brief: Social Customer Support
+  garden_brief: Multi Product Support
   begin_subscription_confirm: Your credit card is going to be charged for the amount of $%{cost}\nand your subscription will begin immediately. \n\nProceed now?
   favicon: Favicon
   is_expiring_today: is expiring today
@@ -1548,6 +1560,33 @@ en:
       description: "Display a contact or option to add the contact into capsule."
   capsule_crm_helptext: "<h4>Link back from Capsule to Freshdesk</h4><p>You can create a link in Capsule CRM to view the contact's tickets in Freshdesk.</p> <p>To do this Goto your <br /><b>Settings -> Custom Fields -> For People & Organization</b></p><p> Then click on \"Add new...\" and select <b>\"Generated Link\"</b></p> <p>Copy the URl exactly as shown below and paste it in Capsule CRM as the link definition<span class=\"info-code\">http://%{full_domain}/helpdesk/tickets?email={email}</span></p>"
   reorder: "Reorder"
+  reports:
+      select_customer: "Select Customer"
+      select_options: "Reports by"
+      tickets_by: "Tickets By"
+      helpdesk_title: "Helpdesk Activity Report"
+      customer_title: "Customer Activity Report"
+      helpdesk_title_nav: "Helpdesk Activity"
+      customer_title_nav: "Customer Activity"
+      select_time_period: "Select Time period"
+      generate_button: "Generate"
+      pie_chart_title_prefix: "Tickets By "
+      timeline_chart_title: "Tickets Received vs Resolved"
+      customer_activity_title: "Activity Report"
+      helpdesk_activity_title: "Helpdesk Activity Report"
+      date_ranges:
+        last_7_days: "Last 7 days"
+        last_30_days: "Last 30 days"
+        last_90_days: "Last 90 days"
+        custom: "Date Range"
+      summary:
+        title: "Tickets summary"
+        total_tickets: "Total Tickets"
+        open_tickets: "Open Tickets"
+        pending_tickets : "Pending Tickets"
+        resolved_tickets: "Resolved Tickets"
+        sla_compliance: "SLA Compliance"
+        fcr: "First Call Resolution"
   delete_the_ticket: "Delete the Ticket"
   mark_as_spam: "Mark as Spam"
   bulk_update: "Bulk Update"

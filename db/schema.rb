@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120124071320) do
+ActiveRecord::Schema.define(:version => 20120127092703) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -79,6 +79,7 @@ ActiveRecord::Schema.define(:version => 20120124071320) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "ticket_permission"
+    t.boolean  "occasional",                     :default => false
   end
 
   create_table "applications", :force => true do |t|
@@ -108,6 +109,27 @@ ActiveRecord::Schema.define(:version => 20120124071320) do
 
   add_index "business_calendars", ["account_id"], :name => "index_business_calendars_on_account_id"
 
+  create_table "conversion_metrics", :force => true do |t|
+    t.integer  "account_id",        :limit => 8
+    t.string   "referrer"
+    t.string   "landing_url"
+    t.string   "first_referrer"
+    t.string   "first_landing_url"
+    t.string   "country"
+    t.string   "language"
+    t.string   "search_engine"
+    t.string   "keywords"
+    t.string   "device"
+    t.string   "browser"
+    t.string   "os"
+    t.float    "offset"
+    t.boolean  "is_dst"
+    t.integer  "visits"
+    t.text     "session_json"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "customers", :force => true do |t|
     t.string   "name"
     t.string   "cust_identifier"
@@ -127,6 +149,35 @@ ActiveRecord::Schema.define(:version => 20120124071320) do
   create_table "data_exports", :force => true do |t|
     t.integer  "account_id"
     t.boolean  "status"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "day_pass_configs", :force => true do |t|
+    t.integer  "account_id",        :limit => 8
+    t.integer  "available_passes"
+    t.boolean  "auto_recharge"
+    t.integer  "recharge_quantity"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "day_pass_purchases", :force => true do |t|
+    t.integer  "account_id",         :limit => 8
+    t.integer  "paid_with"
+    t.string   "order_type"
+    t.integer  "order_id",           :limit => 8
+    t.integer  "status"
+    t.integer  "quantity_purchased"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "day_pass_usages", :force => true do |t|
+    t.integer  "account_id", :limit => 8
+    t.integer  "user_id",    :limit => 8
+    t.text     "usage_info"
+    t.datetime "granted_on"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -821,12 +872,15 @@ ActiveRecord::Schema.define(:version => 20120124071320) do
 
   create_table "subscription_plans", :force => true do |t|
     t.string   "name"
-    t.decimal  "amount",         :precision => 10, :scale => 2
+    t.decimal  "amount",          :precision => 10, :scale => 2
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "renewal_period",                                :default => 1
-    t.decimal  "setup_amount",   :precision => 10, :scale => 2
-    t.integer  "trial_period",                                  :default => 1
+    t.integer  "renewal_period",                                 :default => 1
+    t.decimal  "setup_amount",    :precision => 10, :scale => 2
+    t.integer  "trial_period",                                   :default => 1
+    t.integer  "free_agents"
+    t.decimal  "day_pass_amount", :precision => 10, :scale => 2
+    t.boolean  "classic",                                        :default => false
   end
 
   create_table "subscriptions", :force => true do |t|
@@ -844,6 +898,8 @@ ActiveRecord::Schema.define(:version => 20120124071320) do
     t.integer  "subscription_discount_id",  :limit => 8
     t.integer  "subscription_affiliate_id", :limit => 8
     t.integer  "agent_limit"
+    t.integer  "free_agents"
+    t.decimal  "day_pass_amount",                        :precision => 10, :scale => 2
   end
 
   add_index "subscriptions", ["account_id"], :name => "index_subscriptions_on_account_id"

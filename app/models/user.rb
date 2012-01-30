@@ -23,6 +23,7 @@ class User < ActiveRecord::Base
   
   has_many :authorizations, :dependent => :destroy
   has_many :votes, :dependent => :destroy
+  has_many :day_pass_usages, :dependent => :destroy
   
   validates_uniqueness_of :user_role, :scope => :account_id, :if => Proc.new { |user| user.user_role  == USER_ROLES_KEYS_BY_TOKEN[:account_admin] }
   validates_uniqueness_of :twitter_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
@@ -156,6 +157,8 @@ class User < ActiveRecord::Base
   :order => "created_at desc"
   
   has_one :agent , :class_name => 'Agent' , :foreign_key => "user_id", :dependent => :destroy
+  has_one :full_time_agent, :class_name => 'Agent', :foreign_key => "user_id", :conditions => { 
+      :occasional => false  } #no direct use, need this in account model for pass through.
   
   has_many :agent_groups , :class_name =>'AgentGroup', :foreign_key => "user_id" , :dependent => :destroy
   
@@ -320,6 +323,14 @@ class User < ActiveRecord::Base
     !self.deleted
   end
   
+  def occasional_agent?
+    agent && agent.occasional
+  end
+  
+  def day_pass_granted_on(start_time = DayPassUsage.start_time) #Revisit..
+    day_pass_usages.on_the_day(start_time).first
+  end
+  
   def self.filter(letter, page)
   paginate :per_page => 10, :page => page,
            :conditions => ['name like ?', "#{letter}%"],
@@ -350,7 +361,7 @@ class User < ActiveRecord::Base
      options[:indent] ||= 2
       xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
-      super(:builder => xml, :skip_instruct => true,:except => [:crypted_password,:password_salt,:perishable_token,:persistence_token,:single_access_token]) 
+      super(:builder => xml, :skip_instruct => true,:except => [:account_id,:crypted_password,:password_salt,:perishable_token,:persistence_token,:single_access_token]) 
   end
   
   

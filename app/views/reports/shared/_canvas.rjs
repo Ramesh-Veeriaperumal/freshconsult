@@ -1,0 +1,8 @@
+page.replace_html 'timeline-chart', :partial => '/reports/shared/timeline_chart'
+page.replace_html 'pie-charts', :partial => '/reports/shared/pie_charts'
+page.replace_html 'tickets-summary', :partial => '/reports/shared/tickets_summary'
+if params[:controller].ends_with("customer_reports")
+	page.replace_html 'ticket-toolbar', "<h3 class='title'> #{@selected_customer.name} - #{t('reports.customer_title')}  <div>#{params["dateRange"]}</div></h3>"
+else
+	page.replace_html 'ticket-toolbar', "<h3 class='title'>#{t('reports.helpdesk_activity_title')}  <div>#{params["dateRange"]}</div></h3>"
+end

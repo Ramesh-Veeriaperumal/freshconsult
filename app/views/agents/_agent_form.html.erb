@@ -134,6 +134,13 @@
 			
 		</li>
 		<% end %>
+		
+		<li>
+			<%= label(:agent, :occasional, t('agent.occasional_description')) %>
+			<br><%= radio_button 'agent', 'occasional', 'false', :checked => !@agent.occasional %> <%= t('agent.full_time') %>
+			<%= radio_button 'agent', 'occasional', 'true', :checked => @agent.occasional %> <%= t('agent.occasional') %>
+		</li>
+				
 		<li class="seperator"></li>
 	</ul>	 	
  

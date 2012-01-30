@@ -8,7 +8,7 @@ class AddLanguageToPortals < ActiveRecord::Migration
   end
 
   def self.down
-    add_column :portals, :language, :string , :default => 'en'
+    add_column :accounts, :language, :string , :default => 'en'
     Account.all.each do |account|
       account.update_attribute(:language , account.main_portal.language)
     end
