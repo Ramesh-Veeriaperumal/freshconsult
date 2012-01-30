@@ -62,7 +62,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         name = $1
         email = $2
         if email =~ EMAIL_REGEX
-          { :name => name, :email => email }
+          { :name => name, :email => $1 }
         end
       end
     end
