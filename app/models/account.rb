@@ -217,7 +217,7 @@ class Account < ActiveRecord::Base
   has_features do
     PLANS_AND_FEATURES.each_pair do |k, v|
       feature k, :requires => ( v[:inherits] || [] )
-      v[:features].each { |f_n| feature f_n, :requires => k } unless v[:features].nil?
+      v[:features].each { |f_n| feature f_n, :requires => [] } unless v[:features].nil?
       SELECTABLE_FEATURES.keys.each { |f_n| feature f_n }
     end
   end
