@@ -159,8 +159,10 @@ class Helpdesk::TicketsController < ApplicationController
   
   def update
     old_item = @item.clone
+    #old_timer_count = @item.time_sheets.timer_active.size -  we will enable this later
     if @item.update_attributes(params[nscname])
       flash[:notice] = t(:'flash.general.update.success', :human_name => cname.humanize.downcase)
+      #flash[:notice] = flash[:notice].chomp(".")+"& \n"+ t(:'flash.tickets.timesheet.timer_stopped') if ((old_timer_count - @item.time_sheets.timer_active.size) > 0)
       redirect_to item_url
     else
       edit_error
@@ -355,7 +357,7 @@ class Helpdesk::TicketsController < ApplicationController
 
   def close 
     status_id = Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:closed]
-    logger.debug "Closed the ticket with status id #{status_id}"
+    #@old_timer_count = @item.time_sheets.timer_active.size - will enable this later..not a good solution
     if @item.update_attribute(:status , status_id)
       flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/close_notice')
       redirect_to redirect_url

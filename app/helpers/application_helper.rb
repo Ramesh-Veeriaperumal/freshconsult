@@ -185,6 +185,10 @@ module ApplicationHelper
   def split_ticket_path(args_hash)
     link_to(args_hash['subject']+"(##{args_hash['ticket_id']})", "#{helpdesk_ticket_path args_hash['ticket_id']}}")
   end
+  
+   def timesheet_path(args_hash, link_display = 'time entry')
+    link_to(link_display, "#{helpdesk_ticket_path args_hash['ticket_id']}#time_entry#{args_hash['timesheet_id']}")
+  end
   #Liquid ends here..
   
   #Ticket place-holders, which will be used in email and comment contents.
