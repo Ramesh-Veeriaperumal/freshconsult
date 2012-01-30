@@ -255,6 +255,7 @@ en:
         survey: Survey Settings
         facebook-setting: Facebook Settings
         security: Security
+        email_commands_setting: "Email Command Settings"
       
     canned_responses:
       index:
@@ -1594,4 +1595,12 @@ en:
   ticket_update_multiple_button: "Update"
   ticket_cancel_multiple_button: "Cancel"
   agent_working_on_this_ticket: "Agent Working on This Ticket"
-
+  email_commands_update_success: "Email Command Settingss were successfully updated."
+  email_commands_update_failed:  "Failed to update Email Command Settings."
+  email_command_settings_heading: "Email Command Settings"
+  email_command_settings_info: "Configure the delimeter used to identify and extract email commands from the mail"
+  email_command_delimeter_label: "Email Commands Delimeter"
+  email_command_preview_to_email: "To"
+  email_command_preview_to_email_value: "customer@acme.com"
+  email_command_preview_subject: "Subject"
+  email_command_preview_subject_value: "Support Ticket"

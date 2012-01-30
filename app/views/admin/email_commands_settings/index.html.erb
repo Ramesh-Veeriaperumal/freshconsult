@@ -1,0 +1,79 @@
+<% content_for :sidebar do %>
+	<div class="sidepanel">
+		<h3 class="title"><%= t('email_command_settings_heading')%></h3>
+		<p>
+		 Email commands within Freshdesk enable an agent, to update a ticket directly from his mail inbox. 
+		 Easy to understand and get used to, email commands will speed up ticket processing and enable quick fire responses.
+		 
+		 <br><br>In the case of custom fields, the fields configured by the agent also can be converted into commands.
+
+		 Please note that default delimiter is @simonsays but the agent can change it to his or her own preference. 
+		 
+		 If the format for the command is incorrect, then the actions won’t be executed but the email will be sent as usual	
+		 
+		 <br><br><b>Available email commands: </b><br><br>
+		 status : pending<br>
+		 priority : medium<br>
+		 agent : Jhon Robert<br>
+		 group : Sales<br>
+		 source : email<br>
+		 product : Network<br>
+		 <%= @email_content_custom_commands%>
+		</p>
+	</div>
+<% end %>
+
+<%= content_tag( :h3, t('email_command_settings_heading'), :class => "title") %>
+<%= content_tag( :div, t('email_command_settings_info'), :class => "intro") %>
+
+<% form_for :email_commands_setting, @email_commands_setting, :url => { :action => "update" },  :html => { :method => :put} do |f| %>
+	<%= f.error_messages %>
+	<ul class="ui-form">
+		<li>
+			<label><%=t('email_command_delimeter_label')%></label>
+			<%= f.text_field :email_cmds_delimeter, :class => "text" , :id => "email_cmds_delimeter"%>
+		</li>
+		<li>
+		</li>
+	</ul>
+	<br></br>
+	<div>
+	<label>Preview</label>
+		<ul class="ui-form">
+			<li class = "inline-field">
+				<label class="caption"><%= t('email_command_preview_to_email')%></>:</label>
+				<div class="fields">
+					<input type="text" class = "text" value="<%= t('email_command_preview_to_email_value')%>" disabled="true"></input>
+				</div>
+			</li>
+			<li class = "inline-field">
+				<label class="caption"><%= t('email_command_preview_subject')%>:</label>
+				<div class="fields">
+					<input type="text" class = "text" value = "<%= t('email_command_preview_subject_value')%>"  disabled="true"></input>
+				</div>
+			</li>
+			<li class = "inline-field">
+				<div class="fields">
+					<textarea id="email_content" disabled="true" style="height:200px;"><%= @content%></textarea>
+				</div>
+			</li>
+		</ul>
+	</div>	
+	<div class="button-container">
+		<%= link_to "&larr; #{t('account.cancel')}", "/admin/home", :class => "uiButton floatl" %>
+		<%= f.submit t('save'), :class => "uiButton" %>
+	</div>
+<% end %>
+
+<% javascript_tag do%>
+		email_content_commands = '<%= @email_content_commands%>';
+		content_prefix = 'Hi,\n\n';
+		content_suffix = '\n\nYour issue is resolved now.\n\nThanks,\nAgent Name.\n'; 
+		(function($){
+			$("#email_cmds_delimeter").bind("keyup", function(e){
+				updated_delimeter = jQuery("#email_cmds_delimeter").val(); 
+				content = content_prefix+ updated_delimeter+' '+email_content_commands+' '+updated_delimeter+content_suffix;
+				jQuery("#email_content").val(content);
+			}); 
+		})(jQuery)
+<% end %>

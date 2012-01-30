@@ -80,6 +80,7 @@ ActionController::Routing::Routes.draw do |map|
     admin.resources :products
     admin.resources :surveys, :only => [ :index ]
     admin.resources :zen_import, :collection => {:import_data => :any }
+    admin.resources :email_commands_setting, :member => { :update => :put }
   end
   
   map.resources :reports

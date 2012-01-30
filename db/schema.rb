@@ -207,6 +207,13 @@ ActiveRecord::Schema.define(:version => 20120127092703) do
     t.datetime "updated_at"
   end
 
+  create_table "email_commands_settings", :force => true do |t|
+    t.string   "email_cmds_delimeter"
+    t.integer  "account_id",           :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "email_configs", :force => true do |t|
     t.integer  "account_id",      :limit => 8
     t.string   "to_email"

@@ -24,6 +24,7 @@ module Admin::HomeHelper
           ['/account/edit',               'rebranding'              ],
           ['/admin/email_configs',        'email-settings'          ],
           ['/admin/email_notifications',  'email-notifications'     ],
+          ['/admin/email_commands_settings', 'email_commands_setting'],          
           ['/ticket_fields',              'ticket-fields'           ],
           ['/helpdesk/sla_policies',      'sla'                     ],
           ['/admin/business_calendars',   'business-hours', feature?(:business_hours) ],
