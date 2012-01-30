@@ -711,6 +711,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
     def priority_name
       PRIORITY_NAMES_BY_KEY[priority]
     end
+    
+    def resolved_at
+      return ticket_states.resolved_at if resolved?
+      return ticket_states.closed_at if closed?
+    end
   
   private
   
