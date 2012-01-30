@@ -24,7 +24,7 @@ class Sanitize
   module Config
     HTML_RELAXED = {
       :elements => %w[
-        a abbr b bdo blockquote br caption cite code col colgroup dd del dfn dl
+        a abbr b bdo blockquote br caption cite code col colgroup dd del dfn dl div
         dt em figcaption figure h1 h2 h3 h4 h5 h6 hgroup i img ins kbd li mark
         ol p pre q rp rt ruby s samp small strike strong sub sup table tbody td
         tfoot th thead time tr u ul var wbr span
