@@ -2,7 +2,7 @@
   <div class="timeentry" id="timeentry_view_<%= time_entry.id %>">     
       <div class="actions">
   	    <%= link_to_remote( t('edit'), 
-  	                    { :url => edit_helpdesk_time_sheet_path(time_entry), 
+  	                    { :url => edit_helpdesk_ticket_helpdesk_time_sheet_path(@ticket, time_entry),
   	                      :method => :get },
   	                    { :class => "slim-button" } ) %> 
   	    <%= link_to_remote( "",

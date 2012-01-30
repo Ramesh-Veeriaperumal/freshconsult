@@ -24,6 +24,10 @@
       <th>Number of Customers</th>
       <td><%= @customer_count %></td>
     </tr>
+	<tr>
+	  <th>Paying Customers</th>
+      <td><%= @paying_customers %> </td>
+	</tr>
     <tr>
       <th>CMRR</th>
       <td><%= format_float_value(@cmrr) %> $(<%=@monthly_revenue%>)</td>

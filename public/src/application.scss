@@ -510,8 +510,7 @@ body h5{
 		display:none;
 	}	
 	.requestCnt{
-		position:relative;
-  	font-size:12px;		
+		position:relative; 
 		.request-title{
 			$COL_PRI_HIGH: #cc5600;		$COL_PRI_MEDIUM: #0a9458;		$COL_PRI_LOW: #0c8aae;		$COL_PRI_URGENT: #cc0000;			
 			background-color:#f6f6f6; 
@@ -531,13 +530,14 @@ body h5{
 				padding:9px 8px 0;
 				line-height:0;
 				height:9px;
-				width:40px;
+				@include min-width(40px);
 			}
 			.status{
 				float:right;
-				margin:3px 0 0 10px;
+				margin:2px 0 0 10px;
 				@include border-radius(3px);
 				@include box-shadow( inset 0 1px 1px rgba(0, 0, 0, 0.20) );
+				@include min-width(60px);
 			}			
 			.priority{
 				left:-4px;
@@ -627,7 +627,7 @@ body h5{
 	} 
 	
 	.request-wrapper{
-		margin:0 20px 10px 70px;
+		margin:0 20px 20px 70px;
 		.seperator{
 			margin:10px 0;
 		}

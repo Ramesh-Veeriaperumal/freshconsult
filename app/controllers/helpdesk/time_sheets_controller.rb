@@ -2,10 +2,10 @@ class Helpdesk::TimeSheetsController < ApplicationController
   
   before_filter { |c| c.requires_feature :timesheets }
   before_filter { |c| c.requires_permission :manage_tickets }  
-  before_filter :load_time_entry, :only => [ :edit, :update, :destroy, :toggle_timer ]  
+  before_filter :load_time_entry, :only => [ :edit, :update, :destroy, :toggle_timer ] 
+  before_filter :load_ticket, :only => [:index, :edit, :update, :toggle_timer] 
   
-  def index
-    @ticket = current_account.tickets.find_by_display_id(params[:ticket_id])
+  def index    
     @time_sheet = @ticket.time_sheets
     render :index, :layout => false
   end
@@ -64,6 +64,10 @@ private
   
   def load_time_entry
    @time_entry = scoper.find(params[:id])
+  end
+  
+  def load_ticket
+    @ticket = current_account.tickets.find_by_display_id(params[:ticket_id])
   end
   
   def total_time_spent time_sheets
