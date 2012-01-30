@@ -2,6 +2,8 @@ class Social::TwitterHandlesController < Admin::AdminController
   
   include ErrorHandle 
   
+  before_filter { |c| c.requires_feature :twitter }
+  
   before_filter :except => [:create_twicket,:feed] do |c| 
     c.requires_permission :manage_users
   end

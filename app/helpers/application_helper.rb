@@ -59,7 +59,7 @@ module ApplicationHelper
       ['/home',               :home,        !permission?(:manage_tickets) ],
       ['helpdesk/dashboard',  :dashboard,    permission?(:manage_tickets)],
       ['helpdesk/tickets',    :tickets,      permission?(:manage_tickets)],
-      ['/social/twitters/feed', :social,      permission?(:manage_tickets) && !current_account.twitter_handles.blank?],
+      ['/social/twitters/feed', :social,     can_view_twitter?  ],
       solutions_tab,      
       forums_tab,
       ['/contacts',           :customers,    permission?(:manage_tickets)],
@@ -374,7 +374,12 @@ module ApplicationHelper
     
     def forums_visibility?
       feature?(:forums) && allowed_in_portal?(:open_forums)
-  end
+    end
+    
+    def can_view_twitter?
+      permission?(:manage_tickets) && !current_account.twitter_handles.blank? && feature?(:twitter)
+    end
+    
   
   def company_tickets_tab
     tab = ['support/company_tickets', :company_tickets , !permission?(:manage_tickets) , current_user.customer.name] if (current_user && current_user.customer && current_user.client_manager?)
