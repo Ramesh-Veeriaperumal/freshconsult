@@ -713,8 +713,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
     
     def resolved_at
-      return ticket_states.resolved_at if resolved?
       return ticket_states.closed_at if closed?
+      ticket_states.resolved_at 
     end
   
   private
