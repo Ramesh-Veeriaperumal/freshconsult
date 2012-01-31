@@ -82,7 +82,7 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
 .iphone-active.uiButton, .iphone-inactive.uiButton{
    text-transform:uppercase; 
    padding:3px 10px;
-   font-size:13px;
+   font-size:11px;
    @include box-shadow(rgba(0, 0, 0, 0.2) 0 1px 2px);
    background-image:url(../images/overlay-top-shadow.png);
    padding-right:40px;

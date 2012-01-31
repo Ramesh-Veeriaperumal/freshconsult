@@ -127,7 +127,7 @@ class Account < ActiveRecord::Base
 
   has_one :day_pass_config, :dependent => :destroy
   has_many :day_pass_usages, :dependent => :destroy
-  has_many :day_pass_purchases, :dependent => :destroy
+  has_many :day_pass_purchases, :dependent => :destroy, :order => "created_at desc"
   
   has_one :data_import,:class_name => 'Admin::DataImport' ,:dependent => :destroy
 

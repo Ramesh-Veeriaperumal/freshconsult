@@ -292,17 +292,12 @@ a.addchoice:hover{
 	
 	.largefield{
 		label{
-			font-size:1.4em;			
+			font-size:1.4em;
 		}
 		input{
 			font-size:1.4em; 
 		}
-	}	
-	span{
-		font-weight:normal;
-		/*font-size:0.86em;*/
-		color:#777777;
-	}
+	}	 
 	.check_box{
 		@include clearfix;
 		label{
@@ -1623,4 +1618,52 @@ textarea.tweet{
 
 .ticket-simple-list label{
    font-size:13px; 
+}
+
+
+.inputs-list {
+  margin: 0 0 5px;
+	@include pie-clearfix;
+  width: 100%;
+}
+.inputs-list li {
+  display: block;
+  padding: 8px 0;
+  width: 100%;
+}
+.inputs-list label {
+  display: block;
+  float: none;
+  width: auto;
+  padding: 0;
+  margin-left: 20px;
+  line-height: 18px;
+  text-align: left;
+  white-space: normal;
+	span{
+		font-size:13px;
+	}
+}
+.inputs-list label strong {
+  color: #808080;
+}
+.inputs-list label small {
+  font-size: 11px;
+  font-weight: normal;
+}
+.inputs-list .inputs-list {
+  margin-left: 25px;
+  margin-bottom: 10px;
+  padding-top: 0;
+}
+.inputs-list:first-child {
+  padding-top: 6px;
+}
+.inputs-list li + li {
+  padding-top: 2px;
+}
+.inputs-list input[type=radio], .inputs-list input[type=checkbox] {
+  margin-bottom: 0;
+  margin-left: -20px;
+  float: left;
 }

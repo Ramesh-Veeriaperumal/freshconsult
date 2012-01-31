@@ -1,5 +1,17 @@
 ---
 en: 
+  enabled: "Enabled"
+  disabled: "Disabled"
+  tip_on: "Click to Enable"
+  tip_off: "Click to Disable"
+  credit_card: "Card on file"
+  referral: "Referral credit"  
+  success: "Success"
+  failure: "Error ..."
+  amount: "Amount"
+  paid_with: "Paid with"
+  date_title: "Date"
+  status: "Status"
   meta:
    language_name: 'English'
   signup_complete_activate_info: Welcome! We have sent you an email with a link where you can set your password and activate your account.
@@ -109,6 +121,22 @@ en:
     popular: Popular
   payment_info: Payment information
   admin:
+    day_passes:
+      index:
+        title: "Day Pass"
+        current_balance: "Current Balance - %{balance}"
+        buy_pass: "Buy day passes"
+        buy_now: "Buy more now"
+        day_pass_pack: "%{quantity} Day Pass Pack (%{currency}%{amount})"
+        day_pass_history: "Day Pass Purchase History"
+        add_confirm: "Are you sure you want to add new Day passes?"
+        daypass_quantity: "%{quantity} Day Passes"
+        no_purchase: "You have not purchased any day pass till now"
+        order: "Order #"
+        no_of_day_passes: "# of Day Passes"
+        auto_recharge: "Auto Recharge"
+        recharge_quantity: "Recharge quantity:"
+        day_passes: "Day Passes" 
     widget_config:
       index:
         thankyou_label: "Submit message"
@@ -301,6 +329,9 @@ en:
   feedbackwidget_formcustomize: Form customization
   does_not_contain: Does not contain
   flash:
+    daypass:
+      success: "%{quantity} Day passess have been successfully added to your account"
+      failed: "Error when adding day passes"
     facebook:
       updated: Facebook setting has been updated 
     application:

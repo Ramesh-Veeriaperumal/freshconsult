@@ -12,4 +12,7 @@ class DayPassPurchase < ActiveRecord::Base
     status == STATUS[:success]
   end
   
+  def paid_width_type
+    PAID_WITH_BY_TYPE[paid_with]
+  end
 end
