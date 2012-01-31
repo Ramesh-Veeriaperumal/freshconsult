@@ -2,6 +2,6 @@
 @import "mixins";
 @import "reset";
 
-body, td, pre { color:#333333; font-family:$blueprint-font-family; margin:8px; }
+body, td, pre { color:#333333; font-family:$blueprint-font-family; margin:8px; font-size:13px;}
 
 @include text-formatting; 

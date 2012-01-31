@@ -30,13 +30,24 @@ class DayPassConfig < ActiveRecord::Base
   end
   
   def buy_now(quantity)
-    if account.subscription.charge_day_passes(quantity)
+    if (s_payment = account.subscription.charge_day_passes(quantity))
       connection.execute(
         %(update day_pass_configs set available_passes = 
         (available_passes + #{ActiveRecord::Base.sanitize(quantity)}) where id=#{id}))
         
-      #To do populate day_pass_purchases
-      true
+      account.day_pass_purchases.create(
+        :paid_with => DayPassPurchase::PAID_WITH[:credit_card],
+        :status => DayPassPurchase::STATUS[:success],
+        :quantity_purchased => quantity,
+        :payment => s_payment
+      )
+    else # A bit of duplication?!
+      account.day_pass_purchases.create(
+        :paid_with => DayPassPurchase::PAID_WITH[:credit_card],
+        :status => DayPassPurchase::STATUS[:failure],
+        :quantity_purchased => quantity,
+        :status_message => account.subscription.errors.full_messages.to_sentence
+      )
     end
   end
   

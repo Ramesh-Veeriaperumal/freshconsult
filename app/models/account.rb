@@ -125,8 +125,9 @@ class Account < ActiveRecord::Base
   has_many :scoreboard_ratings, :dependent => :destroy
   has_many :survey_handles, :through => :survey
 
-  has_many :day_pass_usages, :dependent => :destroy
   has_one :day_pass_config, :dependent => :destroy
+  has_many :day_pass_usages, :dependent => :destroy
+  has_many :day_pass_purchases, :dependent => :destroy
   
   has_one :data_import,:class_name => 'Admin::DataImport' ,:dependent => :destroy
 
