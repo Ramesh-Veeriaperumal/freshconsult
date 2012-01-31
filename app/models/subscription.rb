@@ -162,9 +162,10 @@ class Subscription < ActiveRecord::Base
             :misc => true)
 
       SubscriptionNotifier.deliver_day_pass_receipt(quantity, s_payment)
-      true
+      s_payment
     else
       errors.add_to_base(@response.message)
+      false
     end
   end
   
