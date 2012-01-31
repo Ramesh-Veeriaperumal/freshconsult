@@ -354,7 +354,7 @@ module ApplicationHelper
     label = label_tag object_name+"_"+field.field_name, field_label
     case dom_type
       when "requester" then
-        element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email", :locals => { :object_name => object_name, :field => field, :url => autocomplete_helpdesk_authorizations_path, :object_name => object_name }))
+        element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email.html", :locals => { :object_name => object_name, :field => field, :url => autocomplete_helpdesk_authorizations_path, :object_name => object_name }))
       when "text", "number", "email" then
         element = label + text_field(object_name, field_name, :class => element_class, :value => field_value)
       when "paragraph" then

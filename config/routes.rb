@@ -180,9 +180,7 @@
   # you pass in [@ticket, @note] it will look for helpdesk_ticket_helpdesk_note, etc.
   map.namespace :helpdesk do |helpdesk|
 
-    helpdesk.resources :tags, :collection => { :autocomplete => :get }
-    helpdesk.resources :time_sheets, :member => { :toggle_timer => :put }
-    
+    helpdesk.resources :tags, :collection => { :autocomplete => :get }    
 
 #    helpdesk.resources :issues, :collection => {:empty_trash => :delete}, :member => { :delete_all => :delete, :assign => :put, :restore => :put, :restore_all => :put } do |ticket|
 #      ticket.resources :notes, :member => { :restore => :put }, :name_prefix => 'helpdesk_issue_helpdesk_'
@@ -195,6 +193,7 @@
       ticket.resources :subscriptions, :name_prefix => 'helpdesk_ticket_helpdesk_'
       ticket.resources :tag_uses, :name_prefix => 'helpdesk_ticket_helpdesk_'
       ticket.resources :reminders, :name_prefix => 'helpdesk_ticket_helpdesk_'
+      ticket.resources :time_sheets, :name_prefix => 'helpdesk_ticket_helpdesk_'   
       
     end
 
@@ -203,6 +202,7 @@
     helpdesk.resources :notes
 
     helpdesk.resources :reminders, :member => { :complete => :put, :restore => :put }
+    helpdesk.resources :time_sheets, :member => { :toggle_timer => :put }    
 
     helpdesk.filter_tag_tickets    '/tags/:id/*filters', :controller => 'tags', :action => 'show'
     helpdesk.filter_tickets        '/tickets/filter/tags', :controller => 'tags', :action => 'index'

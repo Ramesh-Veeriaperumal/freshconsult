@@ -328,6 +328,7 @@ en:
     g_app: 
       user_deleted: User is deleted!
       authentication_failed: Authentication Failed
+      authentication_success: Authentication successfully completed
       no_subdomain: There is no subdomain like this. Please try again.
     profile: 
       change_password: 
@@ -1399,6 +1400,11 @@ en:
         ticket_saved_and_closed: The ticket has been created and closed.
         view_ticket: View ticket
       show:
+        meta: meta
+        linked_ticket: This ticket is linked to the forum
+        conversation: Conversation 
+        timesheet: Time Sheet
+      view_ticket:
         meta: meta
         linked_ticket: This ticket is linked to the forum
         conversation: Conversation 

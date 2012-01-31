@@ -73,7 +73,7 @@ require 'openssl'
         else
           single_access_token = user.reset_single_access_token
           saved = user.save!
-          puts "single access token reset status #{saved}"
+          puts "single access token reset status #{saved} #{current_account.full_domain}"
           json = {:user_exists => :true, :t=>single_access_token, :url_root=>current_account.full_domain} # TODO Check with Shan on, what will be populated for full_domain in case user hosts on his own domain name.
         end
       end
@@ -174,7 +174,16 @@ require 'openssl'
     @auth = Authorization.find_by_provider_and_uid_and_account_id(provider, identity_url,current_account.id)
     @current_user = @auth.user unless @auth.blank?
     @current_user = current_account.all_users.find_by_email(email) if @current_user.blank?
-    google_viewer_id = KeyValuePair.find_by_key(params[:t]).value unless params[:t].blank?
+    unless params[:t].blank?
+      kvp = KeyValuePair.find_by_key(params[:t])
+      if kvp.blank?
+        flash[:error] = t(:'flash.g_app.authentication_failed')
+        @gauth_error = true
+        render :action => 'gmail_gadget_auth', :layout => 'layouts/widgets/contacts.widget'
+        return
+      end
+      google_viewer_id = kvp.value 
+    end
     if @current_user.blank?  
       @current_user = create_user(email,current_account,identity_url,google_viewer_id) 
     else
@@ -190,19 +199,20 @@ require 'openssl'
       @user_session = current_account.user_sessions.new(@current_user)  
       if @user_session.save
           logger.debug " @user session has been saved :: #{@user_session.inspect}"
-          flash[:notice] = t(:'flash.login.success')
+          flash[:notice] = t(:'flash.g_app.authentication_success')
           redirect_back_or_default('/')
       else
-         flash[:notice] = t(:'flash.g_app.authentication_failed')
+         flash[:error] = t(:'flash.g_app.authentication_failed')
          redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
       end
     else
-      flash[:notice] = t(:'flash.login.success')
-      return redirect_to root_url
+      flash[:notice] = t(:'flash.g_app.authentication_success')
+      render :action => 'gmail_gadget_auth', :layout => 'layouts/widgets/contacts.widget'
     end
   else
     flash[:error] = t(:'flash.g_app.authentication_failed')
-    return redirect_to root_url
+    @gauth_error = true
+    render :action => 'gmail_gadget_auth', :layout => 'layouts/widgets/contacts.widget'
   end
 end
  
