@@ -11,6 +11,12 @@ class Helpdesk::DashboardController < ApplicationController
     end
   end
   
+  def latest_activities
+    previous_id = params[:previous_id]
+    activities = Helpdesk::Activity.freshest(current_account).activity_since(previous_id).permissible(current_user)
+    render :partial => "ticket_note", :collection => activities
+  end
+  
   protected
     def recent_activities
       Helpdesk::Activity.freshest(current_account).permissible(current_user)

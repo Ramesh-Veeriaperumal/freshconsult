@@ -9,6 +9,7 @@ module AdminControllerMethods
     base.send :skip_before_filter, :set_locale
     base.send :skip_before_filter, :check_account_state
     base.send :skip_before_filter, :ensure_proper_protocol
+     base.send :skip_before_filter, :check_day_pass_usage
     base.send :layout, false
     base.send :prepend_before_filter,:login_from_basic_auth
   end

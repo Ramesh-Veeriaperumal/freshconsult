@@ -17,6 +17,7 @@ module TicketConstants
   SOURCE_OPTIONS = SOURCES.map { |i| [i[1], i[2]] }
   SOURCE_NAMES_BY_KEY = Hash[*SOURCES.map { |i| [i[2], i[1]] }.flatten]
   SOURCE_KEYS_BY_TOKEN = Hash[*SOURCES.map { |i| [i[0], i[2]] }.flatten]
+  SOURCE_KEYS_BY_NAME = Hash[*SOURCES.map { |i| [i[1], i[2]] }.flatten]
 
   STATUSES = [
     #[ :new,         "New",        1 ], 
@@ -29,6 +30,7 @@ module TicketConstants
   STATUS_OPTIONS = STATUSES.map { |i| [i[1], i[2]] }
   STATUS_NAMES_BY_KEY = Hash[*STATUSES.map { |i| [i[2], i[1]] }.flatten]
   STATUS_KEYS_BY_TOKEN = Hash[*STATUSES.map { |i| [i[0], i[2]] }.flatten]
+  STATUS_KEYS_BY_NAME = Hash[*STATUSES.map { |i| [i[1], i[2]] }.flatten]
   
   PRIORITIES = [
     [ :low,       I18n.t('low'),         1 ], 
@@ -40,6 +42,7 @@ module TicketConstants
   PRIORITY_OPTIONS = PRIORITIES.map { |i| [i[1], i[2]] }
   PRIORITY_NAMES_BY_KEY = Hash[*PRIORITIES.map { |i| [i[2], i[1]] }.flatten]
   PRIORITY_KEYS_BY_TOKEN = Hash[*PRIORITIES.map { |i| [i[0], i[2]] }.flatten]
+  PRIORITY_KEYS_BY_NAME = Hash[*PRIORITIES.map { |i| [i[1], i[2]] }.flatten]
   
   TYPE = [
     [ :how_to,    I18n.t('how_to'),          1 ], 

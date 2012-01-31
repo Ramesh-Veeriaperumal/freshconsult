@@ -10,7 +10,17 @@ class SubscriptionPlan < ActiveRecord::Base
   
   attr_accessor :discount
   
-  SUBSCRIPTION_PLANS = {:basic => "Basic", :pro => "Pro" , :premium => "Premium", :free => "Free" }
+  named_scope :current, :conditions => { :classic => false }, :order => 'amount asc'
+  
+  SUBSCRIPTION_PLANS = { 
+    :basic => "Basic", 
+    :pro => "Pro", 
+    :premium => "Premium", 
+    :free => "Free",
+    :sprout => "Sprout",
+    :blossom => "Blossom",
+    :garden => "Garden"
+  }
   
   BILLING_CYCLE = [
     [ :monthly,    I18n.t("subscription_plan.billing_cycle.monthly"),    1 ],
@@ -23,9 +33,18 @@ class SubscriptionPlan < ActiveRecord::Base
   BILLING_CYCLE_NAMES_BY_KEY = Hash[*BILLING_CYCLE.map { |i| [i[2], i[1]] }.flatten]
   BILLING_CYCLE_KEYS_BY_TOKEN = Hash[*BILLING_CYCLE.map { |i| [i[0], i[2]] }.flatten]
   
-  BILLING_CYCLE_DISCOUNT = {SUBSCRIPTION_PLANS[:premium] => {BILLING_CYCLE_KEYS_BY_TOKEN[:annual] => 0.85,BILLING_CYCLE_KEYS_BY_TOKEN[:six_month] => 0.95},
-                            SUBSCRIPTION_PLANS[:pro] => {BILLING_CYCLE_KEYS_BY_TOKEN[:annual] => 0.85,BILLING_CYCLE_KEYS_BY_TOKEN[:six_month] => 0.95},
-                            SUBSCRIPTION_PLANS[:basic] => {}}
+  BILLING_CYCLE_DISCOUNT = {
+    SUBSCRIPTION_PLANS[:premium] => { 
+      BILLING_CYCLE_KEYS_BY_TOKEN[:annual] => 0.85, BILLING_CYCLE_KEYS_BY_TOKEN[:six_month] => 0.95 },
+    SUBSCRIPTION_PLANS[:pro] => { 
+      BILLING_CYCLE_KEYS_BY_TOKEN[:annual] => 0.85, BILLING_CYCLE_KEYS_BY_TOKEN[:six_month] => 0.95 },
+    SUBSCRIPTION_PLANS[:basic] => { },
+    SUBSCRIPTION_PLANS[:garden] => { 
+      BILLING_CYCLE_KEYS_BY_TOKEN[:annual] => 0.85, BILLING_CYCLE_KEYS_BY_TOKEN[:six_month] => 0.95 },
+    SUBSCRIPTION_PLANS[:blossom] => { 
+      BILLING_CYCLE_KEYS_BY_TOKEN[:annual] => 0.85, BILLING_CYCLE_KEYS_BY_TOKEN[:six_month] => 0.95 },
+    SUBSCRIPTION_PLANS[:sprout] => { }
+  }
 
   def fetch_discount(billing_cycle)
     BILLING_CYCLE_DISCOUNT[self.name].fetch(billing_cycle,1)
