@@ -4,4 +4,6 @@
 
 body, td, pre { color:#333333; font-family:$blueprint-font-family; margin:8px; }
 
+p { margin:0px; border:0px; }
+
 @include text-formatting; 
