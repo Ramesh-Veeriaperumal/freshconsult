@@ -1,4 +1,0 @@
-page.insert_html :bottom, "timesheetlist", :partial => "helpdesk/time_sheets/time_entry", :object => @time_entry
-page << "jQuery('#timeentry_#{@time_entry.id}').effect('highlight', {}, 2000); jQuery('#add_new_time_entry').slideUp(500); jQuery('#TimeSheetButton').button('toggle'); jQuery('#add_new_time_entry #time_entry_hours').val('Start timer')"
-
-clear_view_timers page

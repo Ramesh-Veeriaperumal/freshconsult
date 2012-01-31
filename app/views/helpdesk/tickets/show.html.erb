@@ -8,11 +8,11 @@
 
 <% unless @ticket.deleted %>
 	<div class="replylinks">
-		<%= button_to_function(t('ticket.reply_to'), "swapEmailNote('reply', this)", :id => "ReplyButton", :class => "btn small", "data-toggle" => "toggle") unless @item.from_email.nil? %>
-		<%= button_to_function("Tweet", "swapEmailNote('tweet', this)",  :id => "TweetButton", :class => "btn small", "data-toggle" => "toggle") if @item.requester && @item.is_twitter?%>
-		<%= button_to_function("Comment", "swapEmailNote('fb_post', this)",  :id => "FacebookButton", :class => "btn small", "data-toggle" => "toggle") if @item.requester && @item.fb_post%>
-		<%= button_to_function(t('ticket.add_note'), "swapEmailNote('note', this)", :id => "AddNoteButton", :class => "btn small", "data-toggle" => "toggle") %>		
-		<%= button_to_function("Add time", "jQuery('#TimesheetTab').click(); jQuery('#add_new_time_entry').slideToggle()", :id => "TimeSheetButton", :title => "Add time entry", :class => "btn small", "data-toggle" => "toggle") if feature?(:timesheets) %>
+		<%= button_to_function(t('ticket.reply_to'), "swapEmailNote('reply', this)", :id => "ReplyButton", :class => "btn small") unless @item.from_email.nil? %>
+		<%= button_to_function("Tweet", "swapEmailNote('tweet', this)",  :id => "TweetButton", :class => "btn small") if @item.requester && @item.is_twitter?%>
+		<%= button_to_function("Comment", "swapEmailNote('fb_post', this)",  :id => "FacebookButton", :class => "btn small") if @item.requester && @item.fb_post%>
+		<%= button_to_function(t('ticket.add_note'), "swapEmailNote('note', this)", :id => "AddNoteButton", :class => "btn small") %>		
+		<%= button_to_function(t("ticket.add_time"), "jQuery('#TimesheetTab').click()", :id => "TimeSheetButton", :title => "Add time entry", :class => "btn small") if feature?(:timesheets) %>
 	</div>
 <% end %>
 
@@ -45,7 +45,6 @@
 
 <% content_for :pagefixed do %> 
   <%= pageless(@ticket_notes.total_pages, helpdesk_ticket_helpdesk_notes_path(@ticket)) %>  
-  <%= javascript_include_tag "helpdesk/multifile.js" %>
   <%= include_tiny_mce_if_needed %>
 	<% javascript_tag do %>
 		swapEmailNote = function(action, link){
@@ -142,5 +141,5 @@
 
 <% content_for :onload_script do -%> 	
 	jQuery('#custom_ticket_form').validate();
-	jQuery("#TimeSheetButton").click();
+	jQuery("#TimesheetTab").click();
 <%- end %>

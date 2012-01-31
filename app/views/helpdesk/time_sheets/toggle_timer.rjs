@@ -1,3 +1,4 @@
 page.replace "timeentry_#{@time_entry.id}", :partial => "/helpdesk/time_sheets/time_entry", :object => @time_entry
 
-clear_view_timers page
+page << "console.log('#{@time_cleared.inspect}')"
+clear_view_timers(page, @timeentry, @time_cleared)

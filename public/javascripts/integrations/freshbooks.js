@@ -393,4 +393,4 @@ FreshbooksWidget.prototype = {
 	}
 }
 
-freshbooksWidget = new FreshbooksWidget(freshbooksBundle, freshbooksinline);
+freshbooksWidget = new FreshbooksWidget(freshbooksBundle, true);

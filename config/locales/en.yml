@@ -1101,6 +1101,7 @@ en:
     edit: Edit ticket
     ham_btn_title: This is not spam
     reported_from_source: Reported via %{source}
+    add_time: Add time
     suggested_solutions: 
       insert_url: Insert URL
       title: Suggested Solutions

@@ -4286,7 +4286,7 @@ a.close{
    background:#ffffff;
    padding:5px 0;
    z-index:999999;
-   min-width:200px;
+	 @include min-width(250px);
    @include opacity(0.95);
    @include corners(5px);
    @include single-box-shadow( rgba(0, 0, 0, 0.6), 0px, 2px, 4px );

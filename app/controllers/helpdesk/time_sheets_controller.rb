@@ -3,15 +3,25 @@ class Helpdesk::TimeSheetsController < ApplicationController
   before_filter { |c| c.requires_feature :timesheets }
   before_filter { |c| c.requires_permission :manage_tickets }  
   before_filter :load_time_entry, :only => [ :edit, :update, :destroy, :toggle_timer ] 
-  before_filter :load_ticket, :only => [:index, :edit, :update, :toggle_timer] 
+  before_filter :load_ticket, :only => [:create, :index, :edit, :update, :toggle_timer] 
   
   def index    
     @time_sheet = @ticket.time_sheets
     render :index, :layout => false
   end
   
-  def new
-    create_time_entry
+  def create
+    hours_spent = params[:time_entry][:hours]
+    params[:time_entry].delete(:hours)
+
+    update_running_timer params[:time_entry][:user_id] if hours_spent.blank?
+
+    time_entry = params[:time_entry].merge!({:start_time => Time.zone.now(),
+                                             :executed_at => Time.zone.now(),
+                                             :time_spent => get_time_in_second(hours_spent),
+                                             :timer_running => hours_spent.blank?,
+                                             :billable => true})
+    @time_entry = scoper.new(time_entry)
     @time_entry.save
   end
    
@@ -63,7 +73,7 @@ private
   end
   
   def load_time_entry
-   @time_entry = scoper.find(params[:id])
+    @time_entry = scoper.find(params[:id])
   end
   
   def load_ticket
@@ -94,20 +104,6 @@ private
     running_time =  ((to_time - from_time).abs).round 
     return (time_entry.time_spent + running_time)
   end
-  
-  def create_time_entry
-    hours_spent = params[:time_entry][:hours]
-    params[:time_entry].delete(:hours)
 
-    update_running_timer params[:time_entry][:user_id] if hours_spent.blank?
-
-    time_entry = params[:time_entry].merge!({:start_time => Time.zone.now(),
-                                             :executed_at => Time.zone.now(),
-                                             :time_spent => get_time_in_second(hours_spent),
-                                             :timer_running => hours_spent.blank?,
-                                             :billable => true})
-    @time_entry = scoper.new(time_entry)
-  end
-  
 end
 

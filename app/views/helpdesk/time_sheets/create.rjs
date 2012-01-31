@@ -1,0 +1,10 @@
+page.insert_html :bottom, "timesheetlist", :partial => "helpdesk/time_sheets/time_entry", :object => @time_entry
+page << "jQuery('#timeentry_#{@time_entry.id}').effect('highlight', {}, 2000); jQuery('#add_new_time_entry').slideUp(500); jQuery('#TimeSheetButton').button('toggle'); jQuery('#add_new_time_entry #time_entry_hours').html('Start timer')"
+
+clear_view_timers page, @timeentry, @time_cleared
+
+renderTimesheetIntegratedApps @liquid_values, 
+
+page << "freshbooksWidget.updateNotesAndTimeSpent('#{@time_entry.note}', #{get_time_in_hours(@time_entry.time_spent)});"
+page << "freshbooksWidget.logTimeEntry();"
+page << "freshbooksWidget.set_timesheet_entry_id(#{@time_entry.id});"

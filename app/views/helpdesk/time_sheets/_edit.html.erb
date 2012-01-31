@@ -15,12 +15,10 @@
       </label>
  	  </div>
 	</fieldset>
-
-		<%= render :partial => "integration" %>
-
+	<%= content_tag :div, "", :id => "timeentry_apps_#{edit.id}" %>
  	<div class="button-container">
  	  <%= submit_tag "Update", :class => "uiButton special submit", "data-loading-text" => "Saving time entry..." %>
-    <%= link_to_function("Cancel", "jQuery('#timeentry_edit_#{edit.id}').empty(); jQuery('#timeentry_view_#{edit.id}').show();", :class => "uiButton" ) %>
+    <%= link_to_function(t('cancel'), "timesheet.clearEdit(#{edit.id})", :class => "uiButton" ) %>
  	</div>
 <% end %>
 </div>

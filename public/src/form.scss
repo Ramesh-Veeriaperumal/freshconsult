@@ -1309,45 +1309,30 @@ table.summary-report{
 }
  
 .request_panel{
-	margin:10px;
+	padding:0 20px 10px 65px; margin:0;
+	border-bottom: 1px solid #F3F3F3;
 	.button-container{ 
-		padding:6px 25px;
-		text-align:left; 
+		padding:6px 10px;
+		margin-top:10px;
 		background-color:#efefef;
-		@include border-bottom-radius(5px);
+		@include border-radius(5px);
 		@include box-shadow(rgba(0, 0, 0, 0.2) 0 0 2px inset);
 		position:relative; 
 		top: -10px;
 	}
 	.ui-form{
-		border:1px solid #efefef; 
-		margin:0;	padding:10px 0 10px 0;
-		h4{ line-height:0; font-size:11px; text-transform: uppercase; font-weight:bold;  background-color:#efefef; 	@include border-bottom-radius(3px); padding:12px 6px; position:absolute; top:0px; left:15px;
-			border:1px solid #e3e3e3;} 
+		border:0;  background: none;
+		margin:0;	padding:0; 
+			.title{
+				padding-bottom:2px;
+			}
       li.field{
-         border:0;
+         border:0; padding:0;
       }
       label, div.fields label{
          font-size:13px;
          color:#333333;
-      }
-			div.integration{
-				border-top:1px solid #f3f3f3;
-				@include pie-clearfix;
-				position:relative;
-				padding:3px 10px 9px 70px;
-				margin:6px 0;
-				.app-logo{
-					position:absolute;
-					width:55px;
-					top:0;
-					left:3px;
-					height:20px;
-					background-color:#efefef;
-					@include border-bottom-radius(3px);
-					border:1px solid #e3e3e3;
-				}
-			}
+      }			
 			div.field{
 				width:23%;
 				float:left;
@@ -1358,11 +1343,27 @@ table.summary-report{
          margin:2px 8px;
          color:#888888;
          font-size:12px;
-      }
+      } 
 			fieldset{
-				padding: 16px 25px 6px;
+				padding:10px 0;
+				position:relative;
 			}
-			li{ padding:0; width:100%; }
+			fieldset.integration{
+				@include pie-clearfix;
+				position:relative;
+				padding-left:80px;				
+				border-top:1px solid #e3e3e3;
+				.app-logo{
+					position:absolute;
+					width:51px;
+					top:-10px;
+					left:-80px;
+					height:20px;
+					background-color:#efefef;
+					@include border-bottom-radius(3px);
+					border:1px solid #e3e3e3;
+				}
+			}
       li.inline-field, fieldset{
          label.caption{
             width:80px;

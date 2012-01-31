@@ -5,32 +5,6 @@
   @liquid_values = {"requester" => @ticket.requester, "ticket" => @ticket, "agent" => agent }
   # For edit/delete page append one more parameter 'integrated_resource' in @liquid_values
 %>
-<% installedApp = get_app_details("freshbooks")
-   unless installedApp.blank?
-	 	unless @time_entry.blank?
-			integrated_resource = @time_entry.integrated_resources.find_by_installed_application_id(installedApp)
-			puts "integrated_resource #{integrated_resource}"
-			@liquid_values["integrated_resource"] = integrated_resource  
-		end
-    fb_code = get_app_widget_script("freshbooks", "freshbooks_timeentry_widget", @liquid_values) %>
-	 	<div class="integration">
-			<span class="app-logo application-logo-freshbooks-small"></span>
-    	<% javascript_tag do -%>var freshbooksinline = true;<%- end %>
-    	<%= Liquid::Template.parse(fb_code).render("ticket" => @ticket) %> 
-			<!--This is to replace the ticket props in the notes field-->
-		</div>
-<% end %>
-<% installedApp = get_app_details("harvest");
-  unless installedApp.blank?
-	unless @time_entry.blank?
-		@time_entry.integrated_resources.find_by_installed_application_id(installedApp);
-		@liquid_values["integrated_resource"] = integrated_resource
-	end
-    har_code = get_app_widget_script("harvest", "harvest_timeentry_widget", @liquid_values) %>
-		<div class="integration">
-			<span class="app-logo application-logo-harvest-small"></span>
-    	<% javascript_tag do -%>var harvestinline = true;<%- end %>
-    	<%= Liquid::Template.parse(har_code).render("ticket" => @ticket) %>
-			<!--This is to replace the ticket props in the notes field-->
-		</div>
-<% end %>
+<div id="time_integration">
+	<%= renderTimesheetIntegratedApps(@liquid_values) %>
+</div>
