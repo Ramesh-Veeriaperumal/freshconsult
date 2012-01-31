@@ -73,7 +73,7 @@ end
   #"name","full_domain","name","email","created_at","next_renewal_at","amount","agent_limit","subscription_plan_id","renewal_period","subscription_discount_id"
   def customers_csv
    subscriptions = Subscription.find(:all,:include => :account, :order => 'accounts.created_at desc',
-                                           :conditions => ['card_number is not null and state = ? ','active'] )
+                                           :conditions => {:state => 'active'} )
     csv_string = FasterCSV.generate do |csv| 
       # header row 
       csv << ["name","full_domain","contact name","email","created_at","next_renewal_at","amount","agent_limit","plan","renewal_period","discount"] 
@@ -83,7 +83,7 @@ end
         account = sub.account
         user = account.account_admin
         discount_name = "#{sub.discount.name} ($#{sub.discount.amount} per agent)" if sub.discount
-        csv << [account.name, account.full_domain, user.name,user.email,account.created_at,sub.next_renewal_at,sub.amount,sub.agent_limit,
+        csv << [account.name, account.full_domain, user.name,user.email,account.created_at.strftime('%Y-%m-%d'),sub.next_renewal_at.strftime('%Y-%m-%d'),sub.amount,sub.agent_limit,
                 sub.subscription_plan.name,sub.renewal_period,discount_name ||= 'NULL'] 
       end 
     end 
