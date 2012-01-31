@@ -32,7 +32,7 @@ module Admin::HomeHelper
           ['/admin/supervisor_rules',     'supervisor'              ],
           ['/admin/automations',          'scenario',       feature?(:scenario_automations) ],
           ['/admin/canned_responses',     'canned-response'         ],
-          ['/social/twitters',            'twitter-setting'         ],
+          ['/social/twitters',            'twitter-setting',feature?(:twitter) ],
 #          ['/admin/surveys',              'survey',           current_account.features?(:surveys, :survey_links) ],
           ['/social/facebook',            'facebook-setting', current_account.features?(:facebook) ]
       ]],

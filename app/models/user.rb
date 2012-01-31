@@ -185,7 +185,7 @@ class User < ActiveRecord::Base
   end
   
   def agent?
-    user_role == USER_ROLES_KEYS_BY_TOKEN[:poweruser]
+    !customer?
   end
   
   def account_admin?
