@@ -12,6 +12,7 @@ en:
   paid_with: "Paid with"
   date_title: "Date"
   status: "Status"
+  proceed_now: "\n\nProceed now?"
   meta:
    language_name: 'English'
   signup_complete_activate_info: Welcome! We have sent you an email with a link where you can set your password and activate your account.
@@ -123,13 +124,13 @@ en:
   admin:
     day_passes:
       index:
-        title: "Day Pass"
-        current_balance: "Current Balance - %{balance}"
-        buy_pass: "Buy day passes"
-        buy_now: "Buy more now"
+        title: "Day Passes"
+        current_balance: "Current balance %{balance}"
+        buy_pass: "Buy more Day Passes"
+        buy_now: "Buy now"
         day_pass_pack: "%{quantity} Day Pass Pack (%{currency}%{amount})"
-        day_pass_history: "Day Pass Purchase History"
-        add_confirm: "Are you sure you want to add new Day passes?"
+        day_pass_history: "Purchase History"
+        add_confirm: "Your credit card is going to be charged for the amount of"
         daypass_quantity: "%{quantity} Day Passes"
         no_purchase: "You have not purchased any day pass till now"
         order: "Order #"
