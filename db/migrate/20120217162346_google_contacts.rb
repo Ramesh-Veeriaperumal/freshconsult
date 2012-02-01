@@ -9,7 +9,7 @@ class GoogleContacts < ActiveRecord::Migration
       t.string :sync_group_id, :null => false, :default => "0"
       t.string :sync_group_name, :null => false, :default => "All"
       t.column :sync_tag_id, "bigint unsigned"
-      t.string :sync_type
+      t.integer :sync_type, :null => false, :default => 0  # 0 is for MERGE_LATEST
       t.datetime :last_sync_time, :null => false, :default => '1970-01-01 00:00:00'
       t.string :last_sync_status
       t.boolean :overwrite_existing_user, :null => false, :default => true

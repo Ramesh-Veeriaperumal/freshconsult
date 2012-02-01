@@ -23,6 +23,7 @@ module Integrations::GoogleContactsUtil
   end
 
   def self.parse_id(goog_id_uri)
+    puts "goog_id_uri #{goog_id_uri}"
     matched_goog_id = /\[*base\/(.*)/.match(goog_id_uri[0]) unless goog_id_uri.blank? # looking for pattern 'any chars/base/<id>'
     return matched_goog_id[1] unless matched_goog_id.blank?
   end
@@ -53,22 +54,17 @@ module Integrations::GoogleContactsUtil
     end
   end
 
-  def disable_notification (account)
-     Thread.current["notifications_#{account.id}"] = EmailNotification::DISABLE_NOTIFICATION   
-  end
-
-  def enable_notification (account)
-    Thread.current["notifications_#{account.id}"] = nil
-  end
-
-  def remove_discrepancy(db_contacts, google_contacts, precedence="LATEST", overwrite_google_id=false)
-    puts "BEFORE #{db_contacts.length}    #{google_contacts.length}"
+  # While exporting the db data into google, db will not contain correct google_id.  For this update_google_id will be useful. 
+  def remove_discrepancy(db_contacts, google_contacts, precedence="LATEST", update_google_id=false)
+    puts "BEFORE remove_discrepancy, total db contacts: #{db_contacts.length}, total google contacts: #{google_contacts.length}"
     google_contacts.each { |google_contact|
       db_contacts.each { |db_contact|
         if is_matched(google_contact, db_contact)
           puts "Found a discrepancy. Db contact = #{db_contact.email} Google contact , #{google_contact['id']}"
           if precedence == "LATEST"
-            if is_db_latest
+            if google_contact.updated_at == db_contact.updated_at
+              precedence = "BOTH"
+            elsif google_contact.updated_at > db_contact.updated_at
               precedence = "DB"
             else
               precedence = "GOOGLE"
@@ -78,20 +74,23 @@ module Integrations::GoogleContactsUtil
             google_contacts.delete(google_contact)
           elsif precedence == "GOOGLE"
             db_contacts.delete(db_contact)
+          elsif precedence == "BOTH"
+            google_contacts.delete(google_contact)
+            db_contacts.delete(db_contact)
           end
-          db_contact.google_id = parse_id(google_contact['id']) if db_contact.google_id.blank? or overwrite_google_id
+          db_contact.google_id = google_contact.id if db_contact.google_id.blank? or update_google_id
         end
       }
     }
-    puts "AFTER #{db_contacts.length}    #{google_contacts.length}"
+    puts "AFTER remove_discrepancy, total db contacts: #{db_contacts.length}, total google contacts: #{google_contacts.length}"
   end
 
   def is_db_latest(google_contact, db_contact)
+    puts "############# google_contact #{google_contact.inspect}   db_contact #{db_contact.inspect} #################"
     false
   end
 
   def is_matched(google_contact, db_contact)
-    puts "#{parse_id(google_contact['id'])}    #{db_contact.google_id.to_s}   #{get_prime_sec_email(google_contact)[0]}   #{db_contact.email}"
-    (parse_id(google_contact['id']) == db_contact.google_id.to_s) or (get_prime_sec_email(google_contact)[0].to_s == db_contact.email)
+    google_contact.id == db_contact.google_id.to_s or google_contact.email == db_contact.email or google_contact.second_email == db_contact.email
   end
 end

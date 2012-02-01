@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120118113122) do
+ActiveRecord::Schema.define(:version => 20120217162346) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -337,6 +337,23 @@ ActiveRecord::Schema.define(:version => 20120118113122) do
 
   add_index "forums", ["forum_category_id", "name"], :name => "index_forums_on_forum_category_id", :unique => true
 
+  create_table "google_accounts", :force => true do |t|
+    t.string   "name"
+    t.string   "email"
+    t.string   "token"
+    t.string   "secret"
+    t.integer  "account_id",              :limit => 8
+    t.string   "sync_group_id",                        :default => "0",                   :null => false
+    t.string   "sync_group_name",                      :default => "All",                 :null => false
+    t.integer  "sync_tag_id",             :limit => 8
+    t.integer  "sync_type",                            :default => 0,                     :null => false
+    t.datetime "last_sync_time",                       :default => '1970-01-01 00:00:00', :null => false
+    t.string   "last_sync_status"
+    t.boolean  "overwrite_existing_user",              :default => true,                  :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "groups", :force => true do |t|
     t.string   "name"
     t.text     "description"
@@ -614,7 +631,7 @@ ActiveRecord::Schema.define(:version => 20120118113122) do
 
   create_table "installed_applications", :force => true do |t|
     t.integer  "application_id"
-    t.integer  "account_id"
+    t.integer  "account_id",     :limit => 8
     t.string   "configs"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -626,6 +643,13 @@ ActiveRecord::Schema.define(:version => 20120118113122) do
     t.integer "local_integratable_id",    :limit => 8
     t.string  "local_integratable_type"
     t.integer "account_id",               :limit => 8
+  end
+
+  create_table "key_value_pairs", :force => true do |t|
+    t.string  "key"
+    t.string  "value"
+    t.string  "obj_type"
+    t.integer "account_id", :limit => 8
   end
 
   create_table "moderatorships", :force => true do |t|
@@ -981,9 +1005,13 @@ ActiveRecord::Schema.define(:version => 20120118113122) do
     t.boolean  "delta",                            :default => true,  :null => false
     t.integer  "import_id",           :limit => 8
     t.string   "fb_profile_id"
+    t.string   "portal"
     t.string   "language",                         :default => "en"
     t.boolean  "blocked",                          :default => false
     t.datetime "blocked_at"
+    t.string   "address"
+    t.string   "google_id"
+    t.string   "google_viewer_id"
   end
 
   add_index "users", ["account_id", "email"], :name => "index_users_on_account_id_and_email", :unique => true
