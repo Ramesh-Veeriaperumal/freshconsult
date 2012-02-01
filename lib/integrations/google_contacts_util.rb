@@ -23,7 +23,7 @@ module Integrations::GoogleContactsUtil
   end
 
   def self.parse_id(goog_id_uri)
-    puts "goog_id_uri #{goog_id_uri}"
+#    puts "goog_id_uri #{goog_id_uri}"
     matched_goog_id = /\[*base\/(.*)/.match(goog_id_uri[0]) unless goog_id_uri.blank? # looking for pattern 'any chars/base/<id>'
     return matched_goog_id[1] unless matched_goog_id.blank?
   end
@@ -60,11 +60,11 @@ module Integrations::GoogleContactsUtil
     google_contacts.each { |google_contact|
       db_contacts.each { |db_contact|
         if is_matched(google_contact, db_contact)
-          puts "Found a discrepancy. Db contact = #{db_contact.email} Google contact , #{google_contact['id']}"
+#          puts "Found a discrepancy. Db contact = #{db_contact.inspect} Google contact , #{google_contact.inspect}"
           if precedence == "LATEST"
             if google_contact.updated_at == db_contact.updated_at
               precedence = "BOTH"
-            elsif google_contact.updated_at > db_contact.updated_at
+            elsif db_contact.updated_at > google_contact.updated_at
               precedence = "DB"
             else
               precedence = "GOOGLE"

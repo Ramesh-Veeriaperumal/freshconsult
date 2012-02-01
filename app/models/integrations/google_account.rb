@@ -92,7 +92,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
   end
 
   def batch_update_google_contacts(db_contacts)
-#    stats = [[0,0,0],[0,0,0]]
+    stats = [[0,0,0],[0,0,0]]
     db_contacts_slices = db_contacts.each_slice(500).to_a
     slice_no = 1
     db_contacts_slices.each { |db_contacts_slice|
@@ -109,7 +109,8 @@ class Integrations::GoogleAccount < ActiveRecord::Base
       rescue => e
         puts "Problem in exporting google contacts slice no #{slice_no}. \n#{e.message}\n#{e.backtrace.join("\n\t")}"
       end
-     }
+    }
+    return stats
   end
 
   # If batch true is passed then just the batch xml will be returned.
@@ -144,31 +145,32 @@ class Integrations::GoogleAccount < ActiveRecord::Base
   end
 
   private
-    def handle_batch_response(batch_response, stats = [[0,0,0],[0,0,0]])
+    def handle_batch_response(batch_response, stats)
       if batch_response.code == "200"
         batch_response_xml = batch_response.body
         batch_response_hash = XmlSimple.xml_in(batch_response_xml)
-        puts "Converted batch_response_hash #{batch_response_hash}"
+        puts "stats #{stats}  \n Converted batch_response_hash #{batch_response_hash.inspect}"
         batch_response_hash = batch_response_hash['entry']
         batch_response_hash.each {|response|
           begin
             status_code = response['status'][0]['code']
             id = response['id']
             operation = id[1]
-            email = response['email'][0]['address']
             if status_code == "200" || status_code == "201"
               if operation == CREATE
+                email = response['email'][0]['address']
                 # If create contact is successful update the id in the database.
                 goog_id = Integrations::GoogleContactsUtil.parse_id(id)
                 db_contact = User.find_by_email(email)
                 updated = update_google_contact_id(db_contact, goog_id)
                 stats[0][0]+=1
-                puts "Newly added contact id #{goog_id} and status #{updated}"
+                puts "Newly added contact id #{goog_id} and status #{updated} #{stats}"
               else
                 operation == DELETE ? stats[0][2]+=1 : stats[0][1]+=1
-                puts "Successfully #{operation}d contact with id #{id} and status_code #{status_code}."
+                puts "Successfully #{operation}d contact with id #{id} and status_code #{status_code} #{stats}."
               end
-            elsif status_code == "404"
+            elsif status_code == "404" && operation == UPDATE
+              email = response['email'][0]['address']
               puts "Contact does not exist. Adding the contact #{id}"
               db_contact = User.find_by_email(email)
               add_google_contact(db_contact) # This is not a batch operation. One entry will be added.
@@ -431,7 +433,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
       goog_contact_detail["google_group_ids"] = google_group_ids
 
       # Set the google updated time in the user model
-      updated = contact_xml_as_hash["updated"]
+      updated = contact_xml_as_hash["updated"][0]
       goog_contact_detail["updated_at"] = Time.parse(updated)
 
       user.add_tag self.sync_tag # Tag the user with the sync_tag
