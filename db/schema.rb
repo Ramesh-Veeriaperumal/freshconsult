@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120127092703) do
+ActiveRecord::Schema.define(:version => 20120130123030) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -165,12 +165,13 @@ ActiveRecord::Schema.define(:version => 20120127092703) do
   create_table "day_pass_purchases", :force => true do |t|
     t.integer  "account_id",         :limit => 8
     t.integer  "paid_with"
-    t.string   "order_type"
-    t.integer  "order_id",           :limit => 8
+    t.string   "payment_type"
+    t.integer  "payment_id",         :limit => 8
     t.integer  "status"
     t.integer  "quantity_purchased"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "status_message"
   end
 
   create_table "day_pass_usages", :force => true do |t|
