@@ -1418,6 +1418,8 @@ en:
         public_note: Public note
         incoming_email: Incoming email
         outbound_email: Outbound email
+        attachment_size: 
+           exceed: Oops! Your attachment exceeds 20 MB. Please attach a smaller file.
     merge:
       merge:
         merge_into: Merge into?
