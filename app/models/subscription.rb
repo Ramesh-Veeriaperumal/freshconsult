@@ -9,7 +9,7 @@ class Subscription < ActiveRecord::Base
   belongs_to :affiliate, :class_name => 'SubscriptionAffiliate', :foreign_key => 'subscription_affiliate_id'
   
   before_create :set_renewal_at
-  before_update  :cache_old_model,:set_free_plan_agnt_limit, :charge_if_free,:charge_plan_change_mis
+  before_update  :cache_old_model,:charge_plan_change_mis
   before_destroy :destroy_gateway_record
   before_validation :update_amount
   after_update :update_features,:send_invoice
@@ -109,7 +109,6 @@ class Subscription < ActiveRecord::Base
       self.card_expiration = "%02d-%d" % [creditcard.expiry_date.month, creditcard.expiry_date.year]
       set_billing
     else
-      puts errors.to_json
       errors.add_to_base(@response.message)
       false
     end
@@ -244,7 +243,7 @@ class Subscription < ActiveRecord::Base
   def active?
     state == 'active'
   end
-
+  
   protected
   
     def set_billing
@@ -300,7 +299,7 @@ class Subscription < ActiveRecord::Base
     end
     
     def charge_plan_change_mis
-      if  (amount > @old_subscription.amount) and paid_account?  
+      if  (amount > @old_subscription.amount) and active?  
         amt_to_charge = cal_plan_change_amount.round.to_f
         misc_charge(amt_to_charge) if amt_to_charge > PRO_RATA_MIN_CHARGE
       end

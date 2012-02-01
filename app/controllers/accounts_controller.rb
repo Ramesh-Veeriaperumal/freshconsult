@@ -327,14 +327,13 @@ class AccountsController < ApplicationController
         render :action => "plan" and return
       end
       
-      if (@subscription.amount > 0 and @subscription.card_number.blank?)
+      unless  @subscription.active?
         redirect_to :action => "billing"
       else
         flash[:notice] = t('plan_info_update')
         redirect_to :action => "show"
       end 
     else
-      #@plans = SubscriptionPlan.find(:all, :conditions => ['id <> ?', @subscription.subscription_plan_id], :order => 'amount asc').collect {|p| p.discount = @subscription.discount; p }
       load_plans
     end
   end
