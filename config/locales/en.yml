@@ -1635,3 +1635,4 @@ en:
   email_command_preview_to_email_value: "customer@acme.com"
   email_command_preview_subject: "Subject"
   email_command_preview_subject_value: "Support Ticket"
+  unable_to_charge: "Unable to charge the card for the added agent!"

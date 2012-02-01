@@ -25,7 +25,7 @@ class AuthorizationsController < ApplicationController
   def create_session
     @user_session = @current_user.account.user_sessions.new(@current_user)
     if @user_session.save
-      redirect_back_or_default('/')
+      redirect_back_or_default('/') if grant_day_pass
     else
       flash[:notice] = t(:'flash.g_app.authentication_failed')
       redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
