@@ -3,10 +3,15 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
   belongs_to :ticket , :class_name =>'Helpdesk::Ticket', :foreign_key =>'ticket_id'
   belongs_to :user
   
+  after_create :create_new_activity
+  after_update :update_timer_activity , :if  => :timer_running_changed?
+  
   has_many :integrated_resources, 
     :class_name => 'Integrations::IntegratedResource',
     :as => 'local_integratable',
     :dependent => :destroy
+    
+  named_scope :timer_active , :conditions =>["timer_running=?" , true]
 
   named_scope :created_at_inside, lambda { |start, stop|
           { :conditions => [" helpdesk_time_sheets.start_time >= ? and helpdesk_time_sheets.start_time <= ?", start, stop] }
@@ -62,5 +67,46 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
   def group_by_day_criteria
     executed_at.to_date.to_s(:db)
   end
+  
+  def stop_timer
+     self.timer_running=false
+     self.time_spent = calculate_time_spent
+     self.save
+  end
+  
+  private
+  
+   def calculate_time_spent
+    to_time = Time.zone.now.to_time
+    from_time = start_time.to_time 
+    running_time =  ((to_time - from_time).abs).round 
+    return (time_spent + running_time)
+   end
+
+  def update_timer_activity
+     
+      if timer_running
+         ticket.create_activity(User.current, 'activities.tickets.timesheet.timer_started.long', 
+          {'eval_args' => {'timesheet_path' => ['timesheet_path', 
+                                {'ticket_id' => ticket.display_id, 'timesheet_id' => id}]}},
+                                'activities.tickets.timesheet.timer_started.short')
+        
+      else
+        ticket.create_activity(User.current, 'activities.tickets.timesheet.timer_stopped.long', 
+          {'eval_args' => {'timesheet_path' => ['timesheet_path', 
+                                {'ticket_id' => ticket.display_id, 'timesheet_id' => id}]}},
+                                'activities.tickets.timesheet.timer_stopped.short')
+      end 
+  end
+  
+  def create_new_activity
+      ticket.create_activity(User.current, 'activities.tickets.timesheet.new.long', 
+          {'eval_args' => {'timesheet_path' => ['timesheet_path', 
+                                {'ticket_id' => ticket.display_id, 'timesheet_id' => id}]}},
+                                'activities.tickets.timesheet.new.short')
+                                
+   
+ end
+
   
 end

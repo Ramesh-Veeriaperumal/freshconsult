@@ -185,6 +185,10 @@ module ApplicationHelper
   def split_ticket_path(args_hash)
     link_to(args_hash['subject']+"(##{args_hash['ticket_id']})", "#{helpdesk_ticket_path args_hash['ticket_id']}}")
   end
+  
+   def timesheet_path(args_hash, link_display = 'time entry')
+    link_to(link_display, "#{helpdesk_ticket_path args_hash['ticket_id']}#time_entry#{args_hash['timesheet_id']}")
+  end
   #Liquid ends here..
   
   #Ticket place-holders, which will be used in email and comment contents.
@@ -350,7 +354,7 @@ module ApplicationHelper
     label = label_tag object_name+"_"+field.field_name, field_label
     case dom_type
       when "requester" then
-        element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email", :locals => { :object_name => object_name, :field => field, :url => autocomplete_helpdesk_authorizations_path, :object_name => object_name }))
+        element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email.html", :locals => { :object_name => object_name, :field => field, :url => autocomplete_helpdesk_authorizations_path, :object_name => object_name }))
       when "text", "number", "email" then
         element = label + text_field(object_name, field_name, :class => element_class, :value => field_value)
       when "paragraph" then

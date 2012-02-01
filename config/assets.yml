@@ -33,6 +33,23 @@ stylesheets:
   
   freshwidget:
     - public/stylesheets/freshwidget.css
+    
+  gadget:
+    - public/stylesheets/reset.css
+    - public/stylesheets/layout.css
+    - public/stylesheets/defaults.css
+    - public/stylesheets/application.css
+    - public/stylesheets/test.css
+    - public/stylesheets/validation.css
+    - public/stylesheets/form.css
+    - public/stylesheets/buttons.css
+    - public/stylesheets/chosen.css    
+    - public/stylesheets/autocomplete.css
+    - public/stylesheets/jquery-ui.css
+    - public/stylesheets/jquery.qtip.css
+    - public/stylesheets/ie.css
+    - public/stylesheets/gadget.css
+
 
 javascripts:
   defaults:

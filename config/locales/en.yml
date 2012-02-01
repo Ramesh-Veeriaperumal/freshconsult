@@ -328,6 +328,7 @@ en:
     g_app: 
       user_deleted: User is deleted!
       authentication_failed: Authentication Failed
+      authentication_success: Authentication successfully completed
       no_subdomain: There is no subdomain like this. Please try again.
     profile: 
       change_password: 
@@ -372,6 +373,8 @@ en:
           success: The note has been added to your ticket.
       empty_spam: 
         success: All tickets in the spam folder were deleted.
+      timesheet:
+        timer_stopped: ticket timers has been stopped
       monitor: 
         stop: You are no longer monitoring this ticket
         start: You are now monitoring this ticket
@@ -494,6 +497,16 @@ en:
         twitter: 
           short: "{{user_path}} added a {{twitter_path}}"
           long: "{{user_path}} added a {{twitter_path}} to the ticket {{notable_path}}"
+      timesheet:
+        new:
+          short: "{{user_path}} added a {{timesheet_path}}"
+          long: "{{user_path}} added a {{timesheet_path}} to the ticket {{notable_path}}"
+        timer_started:
+          short: "{{user_path}} started timer on  {{timesheet_path}}"
+          long: "{{user_path}} started timer on {{timesheet_path}} to the ticket {{notable_path}}"
+        timer_stopped:
+          short: "{{user_path}} stopped timer on  {{timesheet_path}}"
+          long: "{{user_path}} stopped timer on {{timesheet_path}} to the ticket {{notable_path}}"
       assigned: 
         short: Assigned to {{responder_path}} by {{user_path}}
         long: "{{user_path}} assigned the ticket {{notable_path}} to {{responder_path}}"
@@ -1387,6 +1400,11 @@ en:
         ticket_saved_and_closed: The ticket has been created and closed.
         view_ticket: View ticket
       show:
+        meta: meta
+        linked_ticket: This ticket is linked to the forum
+        conversation: Conversation 
+        timesheet: Time Sheet
+      view_ticket:
         meta: meta
         linked_ticket: This ticket is linked to the forum
         conversation: Conversation 
