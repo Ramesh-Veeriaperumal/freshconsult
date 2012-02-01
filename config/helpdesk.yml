@@ -269,9 +269,6 @@ EDITOR_OPTIONS: &common
     dialog_type:                        "modal" 
     convert_urls:                       false
     handle_event_callback:              "autoSaveTinyMce"
-    force_br_newlines:                  true
-    force_p_newlines:                   false
-    forced_root_block:                  ""
     
 LARGE_EDITOR:
     <<: *common
