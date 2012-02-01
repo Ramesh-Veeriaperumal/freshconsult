@@ -180,7 +180,6 @@ class ContactsController < ApplicationController
     puts "@user #{@user}"
     if @user.blank?
       initialize_new_user
-      @ticket=Helpdesk::Ticket.first
       render :new, :layout => "widgets/contacts"
     else
       render :show, :layout => "widgets/contacts"
@@ -205,7 +204,7 @@ protected
       current_account.contacts
     else
       tag = current_account.tags.find(params[:tag])
-      tag.users
+      tag.contacts
     end
   end
 

@@ -26,7 +26,7 @@
     </div>
     <label class="caption"> Last sync status</label>    
     <div class="fields">
-        <label><%=google_acc.last_sync_time%></label>
+        <label><%=google_acc.last_sync_status.inspect%></label>
     </div>
 	<div class="button-container">
 		<%=link_to(t("integrations.google_contacts.edit"), edit_integrations_google_account_path(google_acc, :iapp_id=>params[:id]), :class => "floatr uiButton")%>

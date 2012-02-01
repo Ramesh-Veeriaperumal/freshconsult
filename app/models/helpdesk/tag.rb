@@ -19,6 +19,13 @@ class Helpdesk::Tag < ActiveRecord::Base
     :source_type => "User",
     :through => :tag_uses
 
+  has_many :contacts,
+    :class_name => 'User',
+    :source => :taggable,
+    :source_type => "User",
+    :through => :tag_uses,
+    :conditions =>{:user_role =>[User::USER_ROLES_KEYS_BY_TOKEN[:customer], User::USER_ROLES_KEYS_BY_TOKEN[:client_manager]] , :deleted =>false}
+
   SORT_FIELDS = [
     [ :activity_desc, 'Most Used',    "tag_uses_count DESC"  ],
     [ :activity_asc,  'Least Used',   "tag_uses_count ASC"  ],
@@ -34,14 +41,6 @@ class Helpdesk::Tag < ActiveRecord::Base
   
   def nickname
     name
-  end
-
-  def self.find_or_create(tag_name, account)
-    unless tag_name.blank?
-      tag = account.tags.find_by_name(tag_name)
-      tag = Helpdesk::Tag.new(:name=>tag_name, :account=>account) if tag.blank?
-      return tag
-    end
   end
 
   def tag_size(factor = 1)

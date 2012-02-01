@@ -1,4 +1,4 @@
-# This class is little raw.  It will not disable any notifications or do not have import, export and sync time knowledge it completely built into it.  
+# WARNING!!!  This class is little raw.  It will not disable any notifications or do not have import, export and sync time knowledge.  
 # Check out google_contacts_importer for proper import, export or merge functionalities.
 
 class Integrations::GoogleAccount < ActiveRecord::Base
@@ -11,7 +11,8 @@ class Integrations::GoogleAccount < ActiveRecord::Base
   def self.find_or_create(params, account)
     id = params[:id]
     id = params[:integrations_google_account][:id] if id.blank?
-    params[:integrations_google_account][:sync_tag] = Helpdesk::Tag.find_or_create(params[:integrations_google_account][:sync_tag], account)
+    sync_tag_name = params[:integrations_google_account][:sync_tag]
+    params[:integrations_google_account][:sync_tag] = sync_tag_name.blank? ? nil : account.tags.find_or_create_by_name(sync_tag_name)
     params[:integrations_google_account][:account] = account
     if id.blank?
       # The below line has to be removed, to support multiple google accounts for single account.
@@ -22,7 +23,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
     if goog_acc.blank?
       goog_acc = Integrations::GoogleAccount.new(params[:integrations_google_account])
     else
-      goog_acc.update_attributes(params[:integrations_google_account])
+      goog_acc.attributes = params[:integrations_google_account]
     end
     return goog_acc
   end
@@ -91,6 +92,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
   end
 
   def batch_update_google_contacts(db_contacts)
+#    stats = [[0,0,0],[0,0,0]]
     db_contacts_slices = db_contacts.each_slice(500).to_a
     slice_no = 1
     db_contacts_slices.each { |db_contacts_slice|
@@ -102,7 +104,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
         uri = google_contact_batch_uri(self)
         access_token = prepare_access_token(self.token, self.secret)
         batch_response = access_token.post(uri, batch_operation_xml, {"Content-Type" => "application/atom+xml", "GData-Version" => "3.0", "If-Match" => "*"})
-        handle_batch_response(batch_response)
+        stats = handle_batch_response(batch_response, stats)
         slice_no += 1
       rescue => e
         puts "Problem in exporting google contacts slice no #{slice_no}. \n#{e.message}\n#{e.backtrace.join("\n\t")}"
@@ -133,8 +135,16 @@ class Integrations::GoogleAccount < ActiveRecord::Base
     return batch_xml;
   end
 
+  def is_primary?
+    !self.id.blank?
+  end
+
+  def make_it_non_primary
+    self.id = nil
+  end
+
   private
-    def handle_batch_response(batch_response)
+    def handle_batch_response(batch_response, stats = [[0,0,0],[0,0,0]])
       if batch_response.code == "200"
         batch_response_xml = batch_response.body
         batch_response_hash = XmlSimple.xml_in(batch_response_xml)
@@ -152,8 +162,10 @@ class Integrations::GoogleAccount < ActiveRecord::Base
                 goog_id = Integrations::GoogleContactsUtil.parse_id(id)
                 db_contact = User.find_by_email(email)
                 updated = update_google_contact_id(db_contact, goog_id)
+                stats[0][0]+=1
                 puts "Newly added contact id #{goog_id} and status #{updated}"
               else
+                operation == DELETE ? stats[0][2]+=1 : stats[0][1]+=1
                 puts "Successfully #{operation}d contact with id #{id} and status_code #{status_code}."
               end
             elsif status_code == "404"
@@ -161,6 +173,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
               db_contact = User.find_by_email(email)
               add_google_contact(db_contact) # This is not a batch operation. One entry will be added.
             else
+              operation == CREATE ? (stats[1][0]+=1) : (operation == DELETE ? stats[1][2]+=1 : stats[1][1]+=1)
               puts "Error in #{operation}. For #{email}, the response #{response.inspect}"
             end
           rescue => e
@@ -170,6 +183,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
       else
         puts "Failed to export the Google contacts through batch operation. #{batch_response.inspect}"
       end
+      return stats
     end
 
     def add_google_contact(db_contact, batch=false)
@@ -352,11 +366,14 @@ class Integrations::GoogleAccount < ActiveRecord::Base
       user = User.find_by_email(primary_email, :include=>:tags) unless primary_email.blank?
       goog_contact_detail["second_email"] = emails[1] # secondary email
 #      puts "Finding user using email "+user.to_s
-  
-      goog_id = Integrations::GoogleContactsUtil.parse_id(contact_xml_as_hash['id'])
-      goog_contact_detail["google_id"] = goog_id unless goog_id.blank?
-      # user is not found using email then fetch user based on his google id. mostly used for deleted users in google contacts.
-      user = User.find(:first, :include=>:tags, :conditions => ["google_id = ?", goog_id]) if user.blank?
+
+      # Google id based search and updating google_id will only happen for the primary google account.
+      if is_primary?
+        goog_id = Integrations::GoogleContactsUtil.parse_id(contact_xml_as_hash['id'])
+        goog_contact_detail["google_id"] = goog_id unless goog_id.blank?
+        # user is not found using email then fetch user based on his google id. mostly used for deleted users in google contacts.
+        user = User.find(:first, :include=>:tags, :conditions => ["google_id = ?", goog_id]) if user.blank?
+      end
 
       title = contact_xml_as_hash['title']
       goog_contact_detail["title"] = title[0]['content'] unless title.blank?
@@ -413,13 +430,12 @@ class Integrations::GoogleAccount < ActiveRecord::Base
       }
       goog_contact_detail["google_group_ids"] = google_group_ids
 
-      
-      # Tag the new user without IDs. For existing user tag him if he is not already tagged and this is the first time he synced with google.
-      sync_tag_id = sync_tag.id unless sync_tag.blank?
-      if user.id.blank? || (!user.tagged?(sync_tag_id) && user.google_id.blank?)
-        user.add_tag sync_tag_id
-      end
-      puts "Complete goog_contact_detail "+goog_contact_detail.inspect + ", sync_tag_id #{sync_tag_id}, user detail "+user.inspect
+      # Set the google updated time in the user model
+      updated = contact_xml_as_hash["updated"]
+      goog_contact_detail["updated_at"] = Time.parse(updated)
+
+      user.add_tag self.sync_tag # Tag the user with the sync_tag
+#      puts "Complete goog_contact_detail "+goog_contact_detail.inspect + ", sync_tag_id #{sync_tag_id}, user detail "+user.inspect
 
       # Set the values for the user.  TODO The below code could be avoided by directly setting the values in the user object itself.
       goog_contact_detail.each { |key, value|
@@ -462,6 +478,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
       "deleted" => "deleted",
       "postalAddress_home" => "description",
       "postalAddress_work" => "address",
+      "updated_at" => "updated_at",
       "content" => "description",
       "google_group_ids" => "google_group_ids"
     }

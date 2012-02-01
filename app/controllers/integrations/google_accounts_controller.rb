@@ -49,17 +49,35 @@ class Integrations::GoogleAccountsController < Admin::AdminController
       flash[:error] = t("integrations.google_contacts.internal_error")
     else
       begin
-        sync_tag = goog_acc.sync_tag
-        unless sync_tag.blank?
-          goog_acc.sync_tag = sync_tag.save! if sync_tag.id.blank? # Create the tag only if the id is not null, which means it does not exist in the DB.
-        end
-        goog_acc.account = nil; goog_acc.account_id = current_account.id;  # This is needed because sometimes the to_yaml of account object (called by send_later for serializing into DB) fails due to some anonymous variables populated in the current_account object.  Also in a way this is little efficient. 
-        Integrations::GoogleContactsImporter.new(goog_acc).send_later(:import_google_contacts)
-        # TODO.  Do not overwrite the google_id when multiple account imported.  Only schedule more than 25 contacts.  Send email after finishing import.  Maintain the sync status.
+        goog_acc.account = nil; goog_acc.account_id = current_account.id;  # This is needed because sometimes the to_yaml of account object (called by send_later for serializing into DB) fails due to some anonymous variables populated in the current_account object.  Also in a way this is little efficient for to_yaml. 
+        # Save the google account before starting the importer.  So that importer will assume the google account as primary/synced google account.
         if !params[:enable_integration].blank? and (params[:enable_integration] == "true" || params[:enable_integration] == "1")
-          goog_acc.save!
+          goog_acc.save
+        else
+          goog_acc.make_it_non_primary 
         end
-        flash[:notice] = t("integrations.google_contacts.import_success")
+        user_email = current_user.email
+        latest_goog_cnts = goog_acc.find_latest_google_contacts(nil, nil, 21)
+        if latest_goog_cnts.length > 20
+          # If more than 20 google contacts available for import add it to delayed jobs.
+          Integrations::GoogleContactsImporter.new(goog_acc).send_later(:import_google_contacts, {:send_email=>true, :email=>user_email, :domain=>current_account.full_domain})
+          flash[:notice] = t("integrations.google_contacts.import_later_success", :email => user_email)
+        else
+          goog_cnts_iptr = Integrations::GoogleContactsImporter.new(goog_acc)
+          updated_goog_acc = goog_cnts_iptr.import_google_contacts
+          puts "status #{updated_goog_acc.last_sync_status.inspect}"
+          if updated_goog_acc.last_sync_status[:status] == "error"
+            flash[:error] = t("integrations.google_contacts.import_problem")
+          else
+            db_stats = updated_goog_acc.last_sync_status[:db_stats]
+            if db_stats.blank?
+              flash[:notice] = t("integrations.google_contacts.import_success_no_stats")
+            else
+              flash[:notice] = t("integrations.google_contacts.import_success", {:added=>(db_stats[0][0] ? db_stats[0][0] : 0), 
+                                      :updated=>(db_stats[0][1] ? db_stats[0][1] : 0), :deleted=>(db_stats[0][2] ? db_stats[0][2] : 0)})
+            end
+          end
+        end
       rescue Exception => e
         puts "Problem in importing google contacts for #{goog_acc.inspect}. \n#{e.message}\n#{e.backtrace.join("\n\t")}"
         flash[:error] = t("integrations.google_contacts.import_problem")

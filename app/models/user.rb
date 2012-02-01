@@ -73,13 +73,9 @@ class User < ActiveRecord::Base
     (is_not_deleted?) and (twitter_id.blank? || !email.blank?) and (fb_profile_id.blank? || !email.blank?)
   end
 
-  def add_tag(tag_id)
-    unless tag_id.blank?
-      tag_use = Helpdesk::TagUse.new :tag_id=>tag_id
-      tag_use.taggable_id=self.id
-      tag_use.taggable_type="User"
-      self.tag_uses.push tag_use
-    end
+  def add_tag(tag)
+    # Tag the users if he is not already tagged
+    self.tags.push tag unless tag.blank? or self.tagged?(tag.id)
   end
 
   def update_tag_names(csv_tag_names)
@@ -88,7 +84,7 @@ class User < ActiveRecord::Base
     updated_tag_names.each { |updated_tag_name|
       updated_tag_name = updated_tag_name.strip
       # TODO Below line executes query for every iteration.  Better to use some cached objects.
-      new_tags.push Helpdesk::Tag.find_by_name_and_account_id(updated_tag_name, self.account.id) || Helpdesk::Tag.new(:name => updated_tag_name ,:account_id => self.account.id)
+      new_tags.push self.account.tags.find_by_name(updated_tag_name) || Helpdesk::Tag.new(:name => updated_tag_name ,:account_id => self.account.id)
     }
     self.tags = new_tags
   end
@@ -99,8 +95,8 @@ class User < ActiveRecord::Base
       self.tags.each {|tag|
         return true if tag.id == tag_id
       }
-      # Check the tag_uses that are not yet committed in the DB
-      self.taguses.each {|tag_use|
+      # Check the tag_uses that are not yet committed in the DB, if any
+      self.tag_uses.each {|tag_use|
         return true if tag_use.tag_id == tag_id
       }
     end
@@ -157,6 +153,7 @@ class User < ActiveRecord::Base
   def signup
     return false unless save_without_session_maintenance
     deliver_activation_instructions!(portal) if (!deleted and !email.blank?)
+    true
   end
 
   def avatar_attributes=(av_attributes)

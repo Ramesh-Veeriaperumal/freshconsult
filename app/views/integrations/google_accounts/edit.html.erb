@@ -7,8 +7,9 @@
 	@google_groups.each {|gg|
 		gg_arr.push([gg.name, gg.group_id])
 	}
-	sync_types = [[t("integrations.google_contacts.MERGE_LATEST"), "MERGE_LATEST"], [t("integrations.google_contacts.OVERWRITE_LOCAL"), "OVERWRITE_LOCAL"], [t("integrations.google_contacts.OVERWRITE_REMOTE"), "OVERWRITE_REMOTE"], 
-					[t("integrations.google_contacts.MERGE_LOCAL"), "MERGE_LOCAL"], [t("integrations.google_contacts.MERGE_REMOTE"), "MERGE_REMOTE"]]
+	sync_types = [[t("integrations.google_contacts.MERGE_LATEST"), SyncType::MERGE_LATEST], [t("integrations.google_contacts.OVERWRITE_LOCAL"), SyncType::OVERWRITE_LOCAL], 
+					[t("integrations.google_contacts.OVERWRITE_REMOTE"), SyncType::OVERWRITE_REMOTE], [t("integrations.google_contacts.MERGE_LOCAL"), SyncType::MERGE_LOCAL], 
+					[t("integrations.google_contacts.MERGE_REMOTE"), SyncType::MERGE_REMOTE]]
 	%>
 	<ul class="ui-form">
 		<li>	
@@ -66,7 +67,7 @@
 			<li class="inline-field" style="display :none">
 				<label class="caption"><%=t("integrations.google_contacts.sync_type")%></label>
 				<div class="fields">
-					<%=f.select :sync_type, options_for_select(sync_types, "MERGE_LATEST") %><br/>
+					<%=f.select :sync_type, options_for_select(sync_types, SyncType::MERGE_LATEST) %><br/>
 				</div>
 			</li>
 		<%end%>
