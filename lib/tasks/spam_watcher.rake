@@ -24,7 +24,6 @@ def check_for_users_and_unblock
   users = ActiveRecord::Base.connection.select_values(query_str)
   
   unless users.blank?
-    puts "update users set blocked = 0,blocked_at = null where id IN (#{users*","}) "
     ActiveRecord::Base.connection.execute("update users set blocked = 0,blocked_at = null where id IN (#{users*","}) ")
   end
   
