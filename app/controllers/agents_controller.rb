@@ -1,11 +1,14 @@
 class AgentsController < Admin::AdminController
+  include HandleAdditionalAgent
   
-  skip_before_filter :check_account_state
+  skip_before_filter :check_account_state, :only => :destroy
   
   before_filter :load_object, :only => [:update,:destroy,:restore,:edit]
+  before_filter :update_agent_object, :only => :update
   before_filter :check_demo_site, :only => [:destroy,:update,:create]
   before_filter :check_user_permission, :only => :destroy
-  before_filter :check_agent_limit, :only => :create
+  before_filter :build_user_and_agent, :only => [:create]
+  before_filter :charge_agent_prorata, :only => [:create,:restore,:update]
   
   def load_object
     @agent = scoper.find(params[:id])
@@ -66,10 +69,7 @@ class AgentsController < Admin::AdminController
   end
 
   def create    
-    @user  = current_account.users.new #by Shan need to check later        
-    @agent = current_account.agents.new(params[nscname]) 
-    
-    if @user.signup!(:user => params[:user])       
+    if @user.signup!(:user => params[:user])  
       @agent.user_id = @user.id      
       if @agent.save
          flash[:notice] = t(:'flash.agents.create.success', :email => @user.email)
@@ -99,7 +99,6 @@ class AgentsController < Admin::AdminController
         @agent.user =@user       
         render :action => :edit
       end    
-     
   end
 
   def destroy    
@@ -124,6 +123,15 @@ end
 
  protected
  
+  def build_user_and_agent
+    @user  = current_account.users.build(params[:user])
+    @agent = current_account.agents.new(params[nscname]) 
+  end
+  
+  def update_agent_object
+    @agent.occasional = params[:agent][:occasional]
+  end
+ 
   def scoper
      current_account.all_agents
   end
@@ -141,8 +149,5 @@ end
            @existing_user = current_account.all_users.find(:first, :conditions =>{:users =>{:email => @user.email}})
      end    
   end
-
-  def check_agent_limit
-    redirect_to :back if current_account.reached_agent_limit?
-  end
+  
 end

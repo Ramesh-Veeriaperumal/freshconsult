@@ -144,6 +144,12 @@ ul.activityfeed li{
 	.element.last{
 		border-bottom:0px;
 	}
+	.actions{
+		float:right;
+		position:relative;
+		left:5px;
+		top:3px;			
+	}
 } 
 
 .left_connected{
@@ -2355,7 +2361,7 @@ a.page_title{
 }
 
 .highlight{
-	font-size:12px; color:#0078BD;
+	color:#0078BD;
 }
 
 .company_box, .contact-box{
@@ -4542,8 +4548,6 @@ a.close{
 				font-weight: normal;
 			}
 		}
-		
-		
 	}
 }
 
@@ -4562,3 +4566,15 @@ a.close{
 	}
 }
 
+.message-highlight {
+	h4.title{
+		padding-bottom:0;
+		font-weight:bold;
+	}
+  background-color: #fefbf3;
+  padding: 9px;
+  border: 1px solid rgba(0,0,0,.2);
+  -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.1);
+     -moz-box-shadow: 0 1px 2px rgba(0,0,0,.1);
+          box-shadow: 0 1px 2px rgba(0,0,0,.1);
+}

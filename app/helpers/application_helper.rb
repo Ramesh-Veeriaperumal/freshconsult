@@ -37,6 +37,16 @@ module ApplicationHelper
     render(:partial => partial, :collection => collection) || content_tag(:div, message, :class => "info-highlight")
   end
   
+  # A helper to show an enable disalbed toggle button like iphone 
+  # The toggle_url can be a controller action that will toggle based on the status
+  def on_off_button(obj, toggle_url, text_on = t("enabled"), text_off = t("disabled"), tip_on = t("tip_on"), tip_off = t("tip_off"))
+    button_text = (obj) ? text_on : text_off
+    button_title = (obj) ? tip_off : tip_on
+    button_class = (obj) ? "iphone-active" : "iphone-inactive"
+    link_to "<strong> #{ button_text } </strong><span></span>", toggle_url, { :class => 
+      "uiButton special #{button_class} custom-tip-top", :title => button_title, :method => 'put' }
+  end
+  
   def get_img(file_name, type)
     image_tag("#{ASSETIMAGE[type]}/#{file_name}", :class => "#{type}_image")
   end
@@ -88,6 +98,23 @@ module ApplicationHelper
     navigation
   end
   
+  def html_list(type, elements, options = {}, activeitem = 0)
+      if elements.empty?
+        "" 
+      else
+        lis = elements.map { |x| content_tag("li", x, :class => ("active first" if (elements[activeitem] == x)))  }
+        content_tag(type, lis, options)
+      end
+    end
+
+  def ul(*args)
+    html_list("ul", *args)
+  end
+  
+  def ol(*args)
+    html_list("ol", *args)
+  end  
+
   def check_box_link(text, checked, check_url, check_method, uncheck_url, uncheck_method = :post)
     form_tag("", :method => :put) +    
     check_box_tag("", 1, checked, :onclick => %{this.form.action = this.checked ? '#{check_url}' : '#{uncheck_url}';

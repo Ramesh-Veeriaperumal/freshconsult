@@ -1,12 +1,21 @@
 class ContactsController < ApplicationController
-  
+   include HandleAdditionalAgent
+   
    before_filter { |c| c.requires_permission :manage_tickets }
   
    include ModelControllerMethods
    before_filter :check_demo_site, :only => [:destroy,:update,:create]
-   before_filter :check_agent_limit, :only => :make_agent
    before_filter :set_selected_tab
+   before_filter :build_agent_and_user, :only => :make_agent
+   before_filter :charge_agent_prorata, :only => :make_agent
    skip_before_filter :build_object , :only => :new
+   
+   def build_agent_and_user
+    @obj.update_attributes(:delete =>false   ,:user_role =>User::USER_ROLES_KEYS_BY_TOKEN[:poweruser])      
+    @agent = current_account.agents.new
+    @agent.occasional = false
+    @agent.user = @obj  
+   end
    
    def check_demo_site
     if AppConfig['demo_site'][RAILS_ENV] == current_account.full_domain
@@ -150,10 +159,7 @@ class ContactsController < ApplicationController
   end
   
   def make_agent    
-    @obj.update_attributes(:delete =>false   ,:user_role =>User::USER_ROLES_KEYS_BY_TOKEN[:poweruser])      
-    @agent = current_account.agents.new
-    @agent.user_id = @obj.id  
-    if @agent.save        
+     if @agent.save        
       redirect_to @obj
     else
       redirect_to :back
@@ -197,10 +203,6 @@ protected
     @obj = self.instance_variable_set('@' + cname, current_account.all_users.new(params[cname]) )
   end
   
-  def check_agent_limit
-      redirect_to :back if current_account.reached_agent_limit?
-  end
-
   def check_email_exist
     if("has already been taken".eql?(@user.errors["email"]))        
 			@existing_user = current_account.all_users.find(:first, :conditions =>{:users =>{:email => @user.email}})
