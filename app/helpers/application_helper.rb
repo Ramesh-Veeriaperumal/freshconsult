@@ -43,7 +43,8 @@ module ApplicationHelper
     button_text = (obj) ? text_on : text_off
     button_title = (obj) ? tip_off : tip_on
     button_class = (obj) ? "iphone-active" : "iphone-inactive"
-    link_to "<strong> #{ button_text } </strong><span></span>", toggle_url, :class => "uiButton special #{button_class} custom-tip-top", :title => button_title
+    link_to "<strong> #{ button_text } </strong><span></span>", toggle_url, { :class => 
+      "uiButton special #{button_class} custom-tip-top", :title => button_title, :method => 'put' }
   end
   
   def get_img(file_name, type)

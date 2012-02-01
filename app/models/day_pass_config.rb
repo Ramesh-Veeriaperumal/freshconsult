@@ -3,6 +3,8 @@ class DayPassConfig < ActiveRecord::Base
   
   RECHARGE_THRESHOLD = 2
   
+  attr_protected :account_id
+  
   def grant_day_pass(user, params)
     #Need to revisit about the right place.
     send_later(:try_auto_recharge) if available_passes <= RECHARGE_THRESHOLD
