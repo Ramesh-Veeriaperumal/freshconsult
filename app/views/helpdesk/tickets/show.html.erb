@@ -32,10 +32,14 @@
 			  </div>
 			  <div id="canned_response_list"></div>
 			</div>
-		</div>
+		</div> 
 		<% unless @ticket_notes.blank? %>
 			<%= render :partial => 'note', :collection => @ticket_notes %>
 			<%= will_paginate @ticket_notes %>
+		<% else %>	
+			<% content_for :onload_script do -%> 
+			  jQuery('#cnt-reply').show();
+			<% end %>
 		<% end %>	
   </div>			  
 	<div class="requestCnt request-conversation tab-pane" id="Timesheet">

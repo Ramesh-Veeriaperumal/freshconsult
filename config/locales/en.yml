@@ -1308,7 +1308,7 @@ en:
   helpdesk:
     time_sheets:
       index:
-        no_timeentry: "No time entry recorded for this ticket"
+        no_timeentry: "No time entry logged for this ticket"
       time_entry:
         toggle_timer_true: "Start timer"
         toggle_timer_false: "Stop timer"

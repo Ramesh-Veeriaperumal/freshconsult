@@ -32,7 +32,6 @@ TicketTimesheet.prototype = {
         
         jQuery("#add_new_time_entry #time_entry_hours")
            .bind("keyup", function(ev){
-              console.log("Added content");
               if(jQuery(this).val().strip() != ""){
                  jQuery("#add_new_time_entry #new_time_submit").html("Save");
               }else{
@@ -46,13 +45,15 @@ TicketTimesheet.prototype = {
         jQuery("#TimeSheetButton").click(function(ev){
            jQuery('#TimesheetTab').click();
            timesheet.clearEdit();
-           timesheet.editCompelete("add");
+           timesheet.editCompelete("add"); 
         });
   },
 
-  editCompelete: function(id) {
+  editCompelete: function(id, dontshow) { 
      this.clearEdit();
-     jQuery('#timeentry_'+id).addClass("active_edit");
+     console.log(id);
+     if(!dontshow)
+      jQuery('#timeentry_'+id).addClass("active_edit");
      jQuery('#time_integration').detach().appendTo('#timeentry_apps_'+id);
   },
   

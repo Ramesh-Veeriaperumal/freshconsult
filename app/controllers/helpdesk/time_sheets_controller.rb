@@ -30,7 +30,7 @@ class Helpdesk::TimeSheetsController < ApplicationController
     params[:time_entry].delete(:hours)
     time_entry = params[:time_entry].merge!({:time_spent => get_time_in_second(hours_spent)})
     if @time_entry.update_attributes(time_entry)
-        render :partial => "/helpdesk/time_sheets/time_entry", :object => @time_entry
+       
     end
   end 
   

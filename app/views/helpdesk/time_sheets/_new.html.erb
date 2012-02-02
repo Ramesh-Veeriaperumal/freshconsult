@@ -2,8 +2,8 @@
 	<div class="request_panel timeentry_edit">
   <% form_remote_for :time_entry, 
                    :url => helpdesk_ticket_helpdesk_time_sheets_path(@ticket), 
-                   :html => { :id => "add_new_time_entry_form", :class => "ui-form" }, 
-                   :complete => "jQuery('#new_time_submit').button('reset');jQuery('#add_new_time_entry_form').get(0).reset()" do |f| %>
+                   :html => { :id => "add_new_time_entry", :class => "ui-form" }, 
+                   :complete => "jQuery('#new_time_submit').button('reset');jQuery('#add_new_time_entry').get(0).reset()" do |f| %>
     <%= content_tag :h4, t(".title"), :class => "title" %>
 		<%= hidden_field(:time_entry, :ticket_id , { :value => @ticket.id }  )%>
     <%= render :partial => "/helpdesk/time_sheets/form", :object => f, :locals => { :type => :new } %>

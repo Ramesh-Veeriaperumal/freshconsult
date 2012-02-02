@@ -2,5 +2,4 @@ page << "timesheet.editCompelete('add', true)"
 
 page.replace "timeentry_#{@time_entry.id}", :partial => "/helpdesk/time_sheets/time_entry", :object => @time_entry
 
-page << "console.log('#{@time_cleared.inspect}')"
-clear_view_timers(page, @timeentry, @time_cleared)
+pushToTimesheetIntegratedApps page, @time_entry
