@@ -4,6 +4,7 @@
 <%else
 	google_acc = google_accs[0]
 %>
+<div class="google_contacts_sync">
 	<label class="caption"> Name</label>    
 	<div class="fields">
 	    <label><%=google_acc.name%></label>
@@ -26,13 +27,13 @@
     </div>
     <label class="caption"> Last sync status</label>    
     <div class="fields">
-        <label><%=google_acc.last_sync_status.inspect%></label>
+        <label><%= render :partial => '/integrations/applications/google_sync_status', :locals => {:status => google_acc.last_sync_status} %></label>
     </div>
-	<div class="button-container">
+    <% content_for :special_buttons do %>
 		<%=link_to(t("integrations.google_contacts.edit"), edit_integrations_google_account_path(google_acc, :iapp_id=>params[:id]), :class => "floatr uiButton")%>
 		<%=link_to(t("integrations.google_contacts.delete"), {:controller=>"google_accounts", :action => "delete", :id => google_acc.id, :iapp_id=>params[:id] },
 					      :confirm => "Are you sure?", :class => "floatr uiButton", :method => :delete) %>
-	</div>
+	<% end %>
 <!--  This was used for showing multiple accounts.  As on now we only allow single account configuration.
 	<div class="grid">
 		<table borer="0">
@@ -60,4 +61,5 @@
 		</table>
 	</div>
 -->
+</div>
 <%end%>

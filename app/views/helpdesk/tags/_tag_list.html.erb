@@ -2,11 +2,13 @@
 	<% if tag_list.blank? %>
 		<%=t("no_tags")%>
 	<%else%>		
-		<ul style="display: block;">
+		<div class="tag_list">
 		<%tag_list.each { |tag|
 		%>
-			<li><%=link_to(tag.name, {:controller=>"contacts", :tag => tag.id.to_s})%></li>
+			<div class='item contact-tag'>
+				<%=link_to(tag.name, {:controller=>"contacts", :tag => tag.id.to_s}) %>
+			</div>
 		<%}%> 
-		</ul>
+		</div>
 	<%end%>
 </div>

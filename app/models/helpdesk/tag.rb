@@ -43,9 +43,12 @@ class Helpdesk::Tag < ActiveRecord::Base
     name
   end
 
-  def tag_size(factor = 1)
+  def tag_size(biggest = 1)
+    min = -20
+    max = 50
     fs = 0
-    fs += ((Math.log10(self.tag_uses_count))*factor).floor unless self.tag_uses_count.blank? || self.tag_uses_count < 1
+    # fs += ((Math.log10(self.tag_uses_count)) * factor).floor unless self.tag_uses_count.blank? || self.tag_uses_count < 1
+    fs += (Math.log(self.tag_uses_count) / Math.log(biggest) * (max-min) ) + min
     return fs
   end
 

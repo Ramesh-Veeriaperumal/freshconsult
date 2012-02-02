@@ -93,7 +93,15 @@ class Helpdesk::TicketsController < ApplicationController
         render :xml => @items.to_xml
       end      
       format.json do
-        render :json => Hash.from_xml(@items.to_xml)
+        
+        json = "["
+        @items.each { |tic| json << tic.to_json[10..-2] + ","}  
+        #Removing the root node, so that it conforms to JSON REST API standards
+        # 10..-2 will remove "{ticket:" and the last "}"
+
+        # Now we have to remove the last comma to have a valid JSON encoded string.
+        render :json => json[0..-2] + "]"
+
       end      
       format.atom do
       end

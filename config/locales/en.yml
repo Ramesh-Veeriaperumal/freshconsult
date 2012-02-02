@@ -1660,6 +1660,12 @@ en:
       group: "Group to sync"
       tag: "Tag to add"
       sync_type: "How to sync?"
+      sync_status:
+        added: "added"
+        modified: "modified"
+        deleted: "deleted"
+        google: "Contacts on your Google Account"
+        freshdesk: "Contacts on your Freshdesk"
       edit_form:
         install_title: "Google contacts sync setting"
         import_title: "Google contacts import setting"
@@ -1670,7 +1676,7 @@ en:
       form:
         sync_type: "Synchronization type"
         sync_type_info: "How do you want to synchronize the contacts between Google and Freshdesk."
-        account_settings: "Google accounts used for synchronization"
+        account_settings: ""
         account_settings_info: "You can view the configured google account and its configuration details."
       update_action:
         success: "Successfully updated the google account."

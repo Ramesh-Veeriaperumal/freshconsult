@@ -1,0 +1,12 @@
+<% 
+order = {0 => 'added', 1=>'modified', 2 => 'deleted'} 
+places = { :db_stats => 'freshdesk', :google_stats => 'google'}
+%>
+<% places.each do |hash_key, type| %>
+	<ul class="sync_status">
+		<li class="<%= type %> custom-tip" title="<%= t("integrations.google_contacts.sync_status.#{type}") %>"> &nbsp; </li>
+	<% order.each do |key, str| %>
+		<%= "<li class='#{str}'><strong> #{status[hash_key][0][key]}</strong> <span>" + t("integrations.google_contacts.sync_status.#{str}") + "</span></li>" unless status[hash_key][0][key].nil? or status[hash_key][0][key]==0 %>
+	<% end %>
+	</ul> <br />
+<% end %>

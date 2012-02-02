@@ -5,6 +5,7 @@
 /* Importing admin icons */
 @import "admin-icon/*.png";
 @import "application-logo/*.png";
+@import "sync-status/*.png";
 
 /* Bullet icon */ 
 $bullet-icon:"symbols/request_nav_seperator.gif";
@@ -3032,11 +3033,15 @@ div.addReminder{
 		background-color:#e7e7e7;
 		color:#666666;
 		padding:3px 0px 0px 8px;
-		margin:0px 4px;
+		margin:0px 4px 4px;
 		.tag_delete{
 			float:right;
 			visibility:hidden;
 		}
+	}
+	div.item.contact-tag {
+		padding:3px 8px;
+		height: auto;
 	}	
 	div.item:hover{
 		.tag_delete{
@@ -4394,5 +4399,76 @@ a.close{
 		li {
 			padding: 0px;
 		} 
+	}
+}
+
+.ui-form .inline-field .google_contacts_sync {
+ 	label.caption {
+ 		font-size: 1em;
+ 	}
+
+	div.fields  {
+		ul.sync_status.freshdesk {
+			color: #00868f;
+		}
+		ul.sync_status.google {
+			color: #0078BD;
+		}
+
+		ul.sync_status {
+			display: block;
+			margin: 0 0 10px;
+			li {
+				text-align:right;
+				display: inline;
+				width: 100px;
+				padding:0 5px;
+				span {
+					color: #FFF;
+					border-radius: 3px;
+					padding: 3px 5px;
+					font-size: 0.75em;
+					text-transform: uppercase;
+					margin: 3px;
+				}
+			}
+			li.freshdesk {
+				width: 35px;
+				height:24px;
+				@include sync-status-sprite(freshdesk);
+			}			
+			li.google {
+				width: 35px;
+				height:24px;
+				@include sync-status-sprite(google);
+			}		
+			
+			li.added {
+				color:#00868f;
+				width: 100px;
+				span {
+					background: #00868f;
+				}
+			}
+			li.modified {
+				color:#3c7ed3;
+
+				span {
+					background: #3c7ed3;
+				}
+			}	
+			li.deleted {
+				color:#fe552e;
+
+				span {
+					background: #fe552e;
+				}
+			}	
+		}
+
+		label {
+			font-size: 1em;
+			font-weight:bold;
+		}
 	}
 }
