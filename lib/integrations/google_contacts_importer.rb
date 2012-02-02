@@ -9,12 +9,12 @@ class Integrations::GoogleContactsImporter
 
   def self.sync_google_contacts_for_all_accounts 
     # The below query fetches GoogleAccount along with InstalledApplication's configs field through inner join.  So only if the google_contacts integration is enabled this will fetch the detail.
-    google_accounts = Integrations::GoogleAccount.find_all_installed_google_accounts
+    google_accounts = Integrations::GoogleAccount.fetch_all_installed_google_accounts
     google_accounts.each { |google_account|
 #        sync_type = YAML::load(google_account.configs)[:inputs]["sync_type"]
       begin
         goog_cnt_importer = Integrations::GoogleContactsImporter.new(google_account)
-        if Time.now > google_account.last_sync_time+86400 # Start the syncing only if the last sync time more than a day.
+        if Time.now > google_account.last_sync_time+1440 # Start the syncing only if the last sync time more than an hour.
           goog_cnt_importer.sync_google_contacts
         end
       rescue => err
@@ -40,28 +40,28 @@ class Integrations::GoogleContactsImporter
         when SyncType::OVERWRITE_LOCAL # Export
           db_contacts = find_updated_db_contacts
           # Fetch the contact in Google first
-          goog_contacts = @google_account.find_latest_google_contacts
+          goog_contacts = @google_account.fetch_latest_google_contacts
           # Remove discrepancy method also updates google_id in the db_contacts. This is will be useful in deciding update or add of a contact while exporting.
           remove_discrepancy(db_contacts, goog_contacts, "DB", true)
           google_stats = @google_account.batch_update_google_contacts(db_contacts)
         when SyncType::OVERWRITE_REMOTE # Import
-          goog_contacts = @google_account.find_latest_google_contacts
+          goog_contacts = @google_account.fetch_latest_google_contacts
           db_stats = update_db_contacts(goog_contacts, overwrite_existing_user)
         when SyncType::MERGE_LOCAL # Merge Freshdesk precedence  
           db_contacts = find_updated_db_contacts
-          goog_contacts = @google_account.find_latest_google_contacts
+          goog_contacts = @google_account.fetch_latest_google_contacts
           remove_discrepancy(db_contacts, goog_contacts,"DB")
           google_stats = @google_account.batch_update_google_contacts(db_contacts)
           db_stats = update_db_contacts(goog_contacts, overwrite_existing_user)
         when SyncType::MERGE_REMOTE # Merge Google precedence
           db_contacts = find_updated_db_contacts
-          goog_contacts = @google_account.find_latest_google_contacts
+          goog_contacts = @google_account.fetch_latest_google_contacts
           remove_discrepancy(db_contacts, goog_contacts,"GOOGLE")
           google_stats = @google_account.batch_update_google_contacts(db_contacts)
           db_stats = update_db_contacts(goog_contacts, overwrite_existing_user)
         when SyncType::MERGE_LATEST # Take latest record as precedence
           db_contacts = find_updated_db_contacts
-          goog_contacts = @google_account.find_latest_google_contacts
+          goog_contacts = @google_account.fetch_latest_google_contacts
           remove_discrepancy(db_contacts, goog_contacts)
           google_stats = @google_account.batch_update_google_contacts(db_contacts)
           db_stats = update_db_contacts(goog_contacts, overwrite_existing_user)
@@ -84,9 +84,8 @@ class Integrations::GoogleContactsImporter
   def find_updated_db_contacts()
     last_sync_time = @google_account.last_sync_time
     sync_tag_id = @google_account.sync_tag_id
-    if sync_tag_id.blank?
-      users = User.find(:all, :conditions => ["updated_at > ? and account_id = ?", last_sync_time, @google_account.account]);
-    else
+    unless sync_tag_id.blank?
+      # If sync tag is not specified then users in db will not be pushed back to Google.
       users = User.find(:all, :joins=>"INNER JOIN helpdesk_tag_uses ON helpdesk_tag_uses.taggable_id=users.id and helpdesk_tag_uses.taggable_type='User'", 
                         :conditions => ["updated_at > ? and account_id = ? and helpdesk_tag_uses.tag_id=?", last_sync_time, @google_account.account_id, sync_tag_id])
     end

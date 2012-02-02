@@ -7,7 +7,7 @@ class Integrations::GoogleAccountsController < Admin::AdminController
     if(@google_account.blank?)
       flash[:error] = t('integrations.google_contacts.account_not_configured')
     else
-      @google_groups = @google_account.find_all_google_groups
+      @google_groups = @google_account.fetch_all_google_groups
       @omniauth_origin = "edit_app"
     end
   end
@@ -52,12 +52,12 @@ class Integrations::GoogleAccountsController < Admin::AdminController
         goog_acc.account = nil; goog_acc.account_id = current_account.id;  # This is needed because sometimes the to_yaml of account object (called by send_later for serializing into DB) fails due to some anonymous variables populated in the current_account object.  Also in a way this is little efficient for to_yaml. 
         # Save the google account before starting the importer.  So that importer will assume the google account as primary/synced google account.
         if !params[:enable_integration].blank? and (params[:enable_integration] == "true" || params[:enable_integration] == "1")
-          goog_acc.save
+          enable_integration
         else
-          goog_acc.make_it_non_primary 
+          goog_acc.make_it_non_primary # In case the account is already saved.
         end
         user_email = current_user.email
-        latest_goog_cnts = goog_acc.find_latest_google_contacts(nil, nil, 21)
+        latest_goog_cnts = goog_acc.fetch_latest_google_contacts(nil, nil, 21)
         if latest_goog_cnts.length > 20
           # If more than 20 google contacts available for import add it to delayed jobs.
           Integrations::GoogleContactsImporter.new(goog_acc).send_later(:import_google_contacts, {:send_email=>true, :email=>user_email, :domain=>current_account.full_domain})

@@ -38,6 +38,8 @@ class User < ActiveRecord::Base
     :class_name => 'Helpdesk::Tag',
     :through => :tag_uses
 
+  has_one :google_contact, :dependent => :destroy # Using has_one because right now syncing from only one google account is supported.
+
   has_one :avatar,
     :as => :attachable,
     :class_name => 'Helpdesk::Attachment',
@@ -103,7 +105,7 @@ class User < ActiveRecord::Base
     return false
   end
 
-  attr_accessor :import, :google_group_ids
+  attr_accessor :import
   attr_accessible :name, :email, :password, :password_confirmation , :second_email, :job_title, :phone, :mobile, 
                   :twitter_id, :description, :time_zone, :avatar_attributes,:user_role,:customer_id,:import_id,
                   :deleted , :fb_profile_id , :language, :address
