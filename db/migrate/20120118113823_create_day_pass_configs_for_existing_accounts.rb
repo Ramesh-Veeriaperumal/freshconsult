@@ -1,7 +1,7 @@
 class CreateDayPassConfigsForExistingAccounts < ActiveRecord::Migration
   def self.up
     Account.all.each do |account|
-      account.create_day_pass_config( :available_passes => 3, :auto_recharge => true, 
+      account.create_day_pass_config( :available_passes => 3, :auto_recharge => false, 
                                       :recharge_quantity => 10 )
     end
   end
