@@ -48,7 +48,7 @@ class AuthorizationsController < ApplicationController
 #            flash[:error] = "Error during google signup process."
 #          end
           # Fetch only the groups
-          @google_groups = @google_account.find_all_google_groups
+          @google_groups = @google_account.fetch_all_google_groups
           render 'integrations/google_accounts/edit'
         end
       end

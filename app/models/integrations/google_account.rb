@@ -7,6 +7,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
   belongs_to :sync_tag, :class_name => "Helpdesk::Tag"
   attr_protected :account_id, :sync_tag_id
   serialize :last_sync_status, Hash
+  has_many :google_contact, :dependent => :destroy
 
   def self.find_or_create(params, account)
     id = params[:id]
@@ -43,8 +44,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
     Integrations::GoogleAccount.delete_all(["account_id = ?", account])
   end
 
-  def find_all_google_groups(query_params=nil)
-#    puts "Inside find_google_groups for "+google_account.inspect
+  def fetch_all_google_groups(query_params=nil)
     google_account = self 
     token = google_account.token
     secret = google_account.secret
@@ -68,12 +68,12 @@ class Integrations::GoogleAccount < ActiveRecord::Base
     return google_groups_arr
   end
 
-  def find_all_google_contacts()
+  def fetch_all_google_contacts()
     return find_latest_google_contacts("none", Time.at(0)) # To fetch all the contacts change the last synced time 0.
   end
 
   # If group_id is null or empty then the group_id configured to sync will be used.  Use 'none' as group_id to fetch complete contact list.
-  def find_latest_google_contacts(group_id=nil, last_sync_time=nil, max_results=10000)
+  def fetch_latest_google_contacts(group_id=nil, last_sync_time=nil, max_results=10000)
     query_params = ""
     last_sync_time = self.last_sync_time if last_sync_time.blank?
     if group_id.blank?
@@ -88,12 +88,12 @@ class Integrations::GoogleAccount < ActiveRecord::Base
     query_params = "?showdeleted&updated-min="+ sync_time_str  # url to fetch only the modified contacts since last sync time. showdeleted fetches the deleted user as well. 
     query_params = query_params + "&group="+google_group_uri(self.email, group_id) unless group_id.blank?
     query_params = "#{query_params}&max-results#{max_results}"
-    return find_google_contacts(query_params)
+    return fetch_google_contacts(query_params)
   end
 
   def batch_update_google_contacts(db_contacts)
     stats = [[0,0,0],[0,0,0]]
-    db_contacts_slices = db_contacts.each_slice(500).to_a
+    db_contacts_slices = db_contacts.each_slice(100).to_a # Batch requests are limited to 100 operations at a time by Google.
     slice_no = 1
     db_contacts_slices.each { |db_contacts_slice|
       begin
@@ -161,7 +161,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
                 email = response['email'][0]['address']
                 # If create contact is successful update the id in the database.
                 goog_id = Integrations::GoogleContactsUtil.parse_id(id)
-                db_contact = User.find_by_email(email)
+                db_contact = find_user_by_email(email)
                 updated = update_google_contact_id(db_contact, goog_id)
                 stats[0][0]+=1
                 puts "Newly added contact id #{goog_id} and status #{updated} #{stats}"
@@ -170,9 +170,9 @@ class Integrations::GoogleAccount < ActiveRecord::Base
                 puts "Successfully #{operation}d contact with id #{id} and status_code #{status_code} #{stats}."
               end
             elsif status_code == "404" && operation == UPDATE
-              email = response['email'][0]['address']
+              goog_id = Integrations::GoogleContactsUtil.parse_id(id)
               puts "Contact does not exist. Adding the contact #{id}"
-              db_contact = User.find_by_email(email)
+              db_contact = find_user_by_google_id(goog_id)
               add_google_contact(db_contact) # This is not a batch operation. One entry will be added.
             else
               operation == CREATE ? (stats[1][0]+=1) : (operation == DELETE ? stats[1][2]+=1 : stats[1][1]+=1)
@@ -258,13 +258,12 @@ class Integrations::GoogleAccount < ActiveRecord::Base
       end
     end
 
-    def find_google_contacts_by_id(id)
-      find_google_contacts("/"+id)
+    def fetch_google_contacts_by_id(id)
+      fetch_google_contacts("/"+id)
     end
 
-    def find_google_contacts(query_params)
+    def fetch_google_contacts(query_params)
       google_account = self
-  #    puts "Inside find_google_contacts for "+google_account.inspect
       token = google_account.token
       secret = google_account.secret
 
@@ -286,7 +285,8 @@ class Integrations::GoogleAccount < ActiveRecord::Base
 #      puts updated_contact_hash.inspect
       google_users = []
       updated_contact_hash.each { |contact_entry|
-        google_users.push(convert_to_user(contact_entry, account))
+        converted_user = convert_to_user(contact_entry, account)
+        google_users.push(converted_user) unless (converted_user.blank? or converted_user.email.blank?)
       }
 
       puts "#{google_users.length} users from google account has been fetched with query #{query_params}. Email #{google_account.email}"
@@ -298,7 +298,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
       if operation != CREATE
         goog_contacts_url += "/"+user.google_id
       end
-      etag_xml = operation == CREATE ? "" : " gd:etag='#{operation}ContactEtag'"
+      etag_xml = ""#operation == CREATE ? "" : " gd:etag='#{operation}ContactEtag'"
       xml_str = "<entry#{etag_xml}> <batch:id>#{operation}</batch:id> <batch:operation type='#{operation == CREATE ? "insert" : operation}'/> <id>#{goog_contacts_url}</id> <category scheme='http://schemas.google.com/g/2005#kind' term='http://schemas.google.com/contact/2008#contact'/>"
       xml_str << contact_xml(user, group_uri) unless operation == DELETE
       xml_str << "</entry>"
@@ -359,30 +359,28 @@ class Integrations::GoogleAccount < ActiveRecord::Base
 
     # This method will take care of creating(add) or fetch/updating(edit) or setting delete flag(delete) an user from google contact entry xml. 
     def convert_to_user(contact_xml_as_hash, account)
-  #      puts "Inside convert_to_user : contact_xml_as_hash"+contact_xml_as_hash.inspect
       goog_contact_detail = {}; user = nil
       emails = Integrations::GoogleContactsUtil.get_prime_sec_email(contact_xml_as_hash)
       primary_email = emails[0]  #primary email
       goog_contact_detail["primary_email"] = primary_email
       # Get the user based on his primary email address
-      user = User.find_by_email(primary_email, :include=>:tags) unless primary_email.blank?
+      user = find_user_by_email(primary_email) unless primary_email.blank?
       goog_contact_detail["second_email"] = emails[1] # secondary email
-#      puts "Finding user using email "+user.to_s
 
       # Google id based search and updating google_id will only happen for the primary google account.
       if is_primary?
-        goog_id = Integrations::GoogleContactsUtil.parse_id(contact_xml_as_hash['id'])
-        goog_contact_detail["google_id"] = goog_id unless goog_id.blank?
+        google_id = Integrations::GoogleContactsUtil.parse_id(contact_xml_as_hash['id'])
         # user is not found using email then fetch user based on his google id. mostly used for deleted users in google contacts.
-        user = User.find(:first, :include=>:tags, :conditions => ["google_id = ?", goog_id]) if user.blank?
+        user = find_user_by_google_id(google_id) if user.blank?
       end
 
       title = contact_xml_as_hash['title']
       goog_contact_detail["title"] = title[0]['content'] unless title.blank?
-  
+
       # Create the user if not able to fetch with any of the above options
       user = User.new if user.blank?
-  
+      user.google_contact = GoogleContact.new if user.google_contact.blank?
+
       # Fetch values from google xml
       if contact_xml_as_hash['deleted'].blank?
         goog_contact_detail["deleted"] = false
@@ -430,7 +428,6 @@ class Integrations::GoogleAccount < ActiveRecord::Base
         group_id = Integrations::GoogleContactsUtil.parse_id([grp_xml["href"]])
         google_group_ids.push(group_id) unless group_id.blank?
       }
-      goog_contact_detail["google_group_ids"] = google_group_ids
 
       # Set the google updated time in the user model
       updated = contact_xml_as_hash["updated"][0]
@@ -445,6 +442,8 @@ class Integrations::GoogleAccount < ActiveRecord::Base
         user.write_attribute(db_attr, value) unless (db_attr.blank? or value.blank?)
       }
 
+      user.google_contact.google_id = google_id
+      user.google_contact.google_group_ids = google_group_ids
       user.account = account if user.account.blank?
       user.customer.account = account unless user.customer.blank? || !user.customer.account.blank?
 #      puts "Converted user.  User id #{user.id}.  Delete flag #{user.deleted}."
@@ -460,6 +459,15 @@ class Integrations::GoogleAccount < ActiveRecord::Base
       end
     end
 
+    def find_user_by_email(email)
+      self.account.all_users.find_by_email(email, :include=>[:tags, :google_contact]) unless email.blank?
+    end
+
+    def find_user_by_google_id(google_id)
+      self.account.all_users.find(:first, :include=>[:tags], :joins=>"INNER JOIN google_contacts ON google_contacts.user_id=users.id", 
+                                  :conditions=>["google_contacts.google_id = ? and google_contacts.google_account_id = ?", google_id, self.id]) unless google_id.blank?
+    end
+
     @@fd_goog_contact_xml_mapping = {
       "name" => "<gd:name><gd:fullName>$name</gd:fullName></gd:name>", 
       "email" => "<gd:email rel='http://schemas.google.com/g/2005#work' primary='true' address='$email'/>",
@@ -471,7 +479,6 @@ class Integrations::GoogleAccount < ActiveRecord::Base
     }
 
     @@goog_fd_field_mapping = {
-      "google_id" => "google_id",
       "title" => "name",
       "primary_email" => "email",
       "second_email" => "second_email",
@@ -482,7 +489,6 @@ class Integrations::GoogleAccount < ActiveRecord::Base
       "postalAddress_work" => "address",
       "updated_at" => "updated_at",
       "content" => "description",
-      "google_group_ids" => "google_group_ids"
     }
     CREATE="create"
     RETRIEVE="retrieve"

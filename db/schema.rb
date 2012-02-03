@@ -354,6 +354,13 @@ ActiveRecord::Schema.define(:version => 20120217162346) do
     t.datetime "updated_at"
   end
 
+  create_table "google_contacts", :force => true do |t|
+    t.integer "user_id",           :limit => 8
+    t.string  "google_id"
+    t.string  "google_xml"
+    t.integer "google_account_id", :limit => 8
+  end
+
   create_table "groups", :force => true do |t|
     t.string   "name"
     t.text     "description"
@@ -1009,8 +1016,8 @@ ActiveRecord::Schema.define(:version => 20120217162346) do
     t.string   "language",                         :default => "en"
     t.boolean  "blocked",                          :default => false
     t.datetime "blocked_at"
-    t.string   "address"
     t.string   "google_id"
+    t.string   "address"
     t.string   "google_viewer_id"
   end
 

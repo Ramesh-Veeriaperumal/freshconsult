@@ -1,4 +1,6 @@
 class GoogleContacts < ActiveRecord::Migration
+  @app_name = "google_contacts"
+
   def self.up
     create_table :google_accounts do |t|
       t.string :name
@@ -16,6 +18,13 @@ class GoogleContacts < ActiveRecord::Migration
       t.timestamps
     end
 
+    create_table :google_contacts do |t|
+      t.column :user_id, "bigint unsigned"
+      t.string :google_id
+      t.string :google_xml
+      t.column :google_account_id, "bigint unsigned"
+    end
+
     create_table :key_value_pairs do |t|
       t.string :key
       t.string :value
@@ -24,19 +33,14 @@ class GoogleContacts < ActiveRecord::Migration
     end
 
     add_column :users, :address, :string
-    add_column :users, :google_id, :string
     add_column :users, :google_viewer_id, :string
 
     google_contacts = Integrations::Application.create(
-        :name => "google_contacts",  # Do not change the name.
+        :name => @app_name,
         :display_name => "integrations.google_contacts.label", 
         :description => "integrations.google_contacts.desc", 
         :options => { 
                       :keys_order => [:account_settings], 
-#                      :sync_type => { :type => :dropdown, 
-#                          :choices => ["integrations.google_contacts.overwrite_local", "integrations.google_contacts.overwrite_remote", "integrations.google_contacts.merge_local", "integrations.google_contacts.merge_remote"], 
-#                          :required => true, :label => "integrations.google_contacts.form.sync_type",   
-#                          :info => "integrations.google_contacts.form.sync_type_info" }, 
                       :account_settings => {:type => :custom, 
                           :partial => "/integrations/applications/google_accounts", 
                           :required => false, :label => "integrations.google_contacts.form.account_settings", 
@@ -45,11 +49,11 @@ class GoogleContacts < ActiveRecord::Migration
   end
 
   def self.down
-    Integrations::Application.find(:first, :conditions => {:name => "google_contacts"}).delete
+    Integrations::Application.find(:first, :conditions => {:name => @app_name}).delete
     remove_column :users, :google_viewer_id
-    remove_column :users, :google_id
     remove_column :users, :address
     drop_table :key_value_pairs
+    drop_table :google_contacts
     drop_table :google_accounts
   end
 end
