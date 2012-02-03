@@ -1,29 +1,45 @@
-<div class="floatr">
-  <%= button_to_function t(".buy_pass"), "jQuery(this).removeClass('special');jQuery('#BuyPasses').slideDown();", :class => "uiButton special" %>
-</div>
-<%= content_tag :h3, t(".title") + " - " + content_tag(:span, t(".current_balance", :balance => @day_pass_config.available_passes), :class => "highlight"), :class => "title" %> 
-  <ul id="BuyPasses" class="ui-form tabbed hide">
-    <li>
-   <%= content_tag :h4, t(".buy_pass"), :class => "title" %>
-   <% form_tag(buy_now_admin_day_pass_path(@day_pass_config), :method => :put) do %>
-     <%= ul @day_pass_amounts.map { |pass|
-          content_tag :label,  
-                       radio_button_tag(:quantity, pass[0], (pass[0] == 10), "data-amount" => pass[1]) +
-                       content_tag(:span, t(".day_pass_pack", :quantity => pass[0], :currency => "$", :amount => pass[1]))
-         },  
-         :class => "inputs-list"
-     %>
-    <p>
-	    <%= submit_tag t(".buy_now"), :class => "uiButton special", :onclick => "return confirm('#{t(".add_confirm")} $' + jQuery('input[name=quantity]:checked').data('amount'));" %>
-	    <%= button_to_function t("cancel"), "jQuery('#BuyPasses').slideUp();", :class => "uiButton" %>
-		</p>
-		<% end %>
-	  </li>
-	</ul>
+  <%= content_tag :h3, t(".title"), :class => "title" %>  
+  <ul class="ui-form">
+    <li class="inline-field">
+      <div class="admin_help_image">
+
+            <div class="content">
+              <h2 class="title">
+                <%= t(".current_balance", :balance => pluralize(@day_pass_config.available_passes, "pass")) %>
+              </h2>
+              <p class="info-data">
+                 
+              </p>
+              <%= button_to_function t(".buy_pass"), "jQuery(this).hide();jQuery('#BuyPasses').slideDown();", :class => "uiButton special", :id => "daypass_button" %>
+              <span class="seperator"></span>
+              <div id="BuyPasses">
+               <%= content_tag :h2, t(".buy_pass"), :class => "title" %>
+
+               <% form_tag(buy_now_admin_day_pass_path(@day_pass_config), :method => :put) do %>
+                 <%= ul @day_pass_amounts.map { |pass|
+                      content_tag :label,  
+                                   radio_button_tag(:quantity, pass[0], (pass[0] == 10), "data-amount" => pass[1]) +
+                                   content_tag(:span, t(".day_pass_pack", :quantity => pass[0], :currency => "$", :amount => pass[1]))
+                     },  
+                     :class => "inputs-list"
+                 %>
+                <p>
+            	    <%= submit_tag t(".buy_now"), :class => "uiButton special", :onclick => "return confirm('#{t(".add_confirm")} $' + jQuery('input[name=quantity]:checked').data('amount'));" %>
+            	    <%= button_to_function t("cancel"), "jQuery('#BuyPasses').slideUp(function(){jQuery('#daypass_button').show()});", :class => "uiButton" %>
+            		</p>
+            		<% end %>
+            	</div>
+              
+            </div>
+          </div>
+    </li>
+  </ul>
+  
+  
+	<% unless @day_pass_purchases.empty? %>
 	<span class="seperator"></span>
-	<div>
-	  <%= content_tag :h3, t(".day_pass_history"), :class => "title" %>
-	  <% unless @day_pass_purchases.empty? %>
+	<div class="tabbed">
+	  <%= content_tag :h4, t(".day_pass_history"), :class => "title" %>
 	  <div class="table-grid">
 	  <table>
       <thead>
@@ -40,12 +56,9 @@
        <%= render :partial => "purchases", :collection => @day_pass_purchases %> 
 	    </tbody>
     </table>
-    </div> 
-    <% else %>
-      <div class="info-highlight"><%=  t(".no_purchase") %></div>
-    <% end %>
+    </div>
 	</div> 
-	
+  <% end %>	
 <% content_for :sidebar do -%>
   <div class="sidepanel">
     <div class="actions">
@@ -62,4 +75,4 @@
     <% end %>
     </div>
   </div>
-<% end %> 
+<% end %>

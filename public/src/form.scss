@@ -1620,9 +1620,10 @@ textarea.tweet{
    font-size:13px; 
 }
 
-
-.inputs-list {
-  margin: 0 0 5px;
+ul.ui-form .inputs-list{
+	margin: -8px 0 20px;
+}
+.inputs-list {  
 	@include pie-clearfix;
   width: 100%;
 }
