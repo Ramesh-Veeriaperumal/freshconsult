@@ -12,7 +12,7 @@
 <%= render :partial => "summary" %>
 <div id="Activity">
 	<h3 class="title"><%=t('recent_activity')%></h3>
-	<div id="recent_activities_count" class='info-highlight center hide'></div>
+	<div id="recent_activities_count" class='info-highlight center hide' style="cursor:pointer;"></div>
 	<div id="recent_activities" class='hide'></div>
 	<ul id="Pages" class="activityfeed">		
 		<% @items.each_with_index do |item, i| %>
@@ -33,7 +33,7 @@
 		{ 
 			method: 'get', 
 			data:  function() { return "previous_id="+previous_id },
-			minTimeout: 10000, 
+			minTimeout: 60000, 
 			maxTimeout: 61000, 
 			multiplier: 1, 
 			type: 'text',
