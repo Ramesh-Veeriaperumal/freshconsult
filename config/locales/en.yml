@@ -124,7 +124,7 @@ en:
   admin:
     day_passes:
       index:
-        title: "Agent day passes"
+        title: "Day Pass"
         current_balance: "You have %{balance} left!"
         buy_pass: "Buy more passes"
         buy_now: "Buy now"
@@ -134,7 +134,7 @@ en:
         daypass_quantity: "%{quantity} Day Passes"
         order: "Order #"
         no_of_day_passes: "# of Day Passes"
-        auto_recharge: "Auto recharge"
+        auto_recharge: "Auto-recharge"
         recharge_quantity: "Recharge quantity:"
         day_passes: "Day Passes" 
     widget_config:
@@ -330,7 +330,7 @@ en:
   does_not_contain: Does not contain
   flash:
     daypass:
-      success: "%{quantity} \"Day Passes\" have been successfully added to your account"
+      success: "%{quantity} Day Passes have been successfully added to your account."
       failed: "Error when adding day passes"
     facebook:
       updated: Facebook setting has been updated 

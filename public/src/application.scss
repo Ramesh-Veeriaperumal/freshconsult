@@ -4093,6 +4093,17 @@ a.close{
    }
 }
 
+.admin_icon_image{ 
+	@include box-shadow(rgba(0, 0, 0, 0.15) 1px 0 3px);
+	margin:-13px -20px;
+	padding:20px 0 35px 0;
+	.content{
+	   margin:0 20px 0 40px;
+	} 
+	h2{ font-size:2em; }
+	h3{ font-weight:normal; color: #336699; }
+} 
+
 .tweet-counter{
    font-size:16px; 
    position:relative;
