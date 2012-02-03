@@ -32,6 +32,8 @@
 </div>
  
  <% fields_for "users", @agent.user do |usr| %>
+      
+	  <%=check_agents_limit%>
  
       <% if @existing_user %>
 	  	<div id="errorExplanation" class="errorExplanation">
@@ -137,8 +139,8 @@
 		
 		<li>
 			<%= label(:agent, :occasional, t('agent.occasional_description')) %>
-			<br><%= radio_button 'agent', 'occasional', 'false', :checked => !@agent.occasional %> <%= t('agent.full_time') %>
-			<%= radio_button 'agent', 'occasional', 'true', :checked => @agent.occasional %> <%= t('agent.occasional') %>
+			<br><%= radio_button 'agent', 'occasional', 'false', :checked => !agents_exceeded?(@agent), :disabled => agents_exceeded?(@agent) %> <%= t('agent.full_time') %>
+			<%= radio_button 'agent', 'occasional', 'true',:checked => agents_exceeded?(@agent) %> <%= t('agent.occasional') %>
 		</li>
 				
 		<li class="seperator"></li>

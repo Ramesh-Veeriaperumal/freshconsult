@@ -1,14 +1,11 @@
 class AgentsController < Admin::AdminController
-  include HandleAdditionalAgent
   
   skip_before_filter :check_account_state, :only => :destroy
   
   before_filter :load_object, :only => [:update,:destroy,:restore,:edit]
-  before_filter :update_agent_object, :only => :update
   before_filter :check_demo_site, :only => [:destroy,:update,:create]
   before_filter :check_user_permission, :only => :destroy
-  before_filter :build_user_and_agent, :only => [:create]
-  before_filter :charge_agent_prorata, :only => [:create,:restore,:update]
+  before_filter :check_agent_limit, :only =>  :restore
   
   def load_object
     @agent = scoper.find(params[:id])
@@ -69,7 +66,10 @@ class AgentsController < Admin::AdminController
   end
 
   def create    
-    if @user.signup!(:user => params[:user])  
+    @user  = current_account.users.new #by Shan need to check later        
+    @agent = current_account.agents.new(params[nscname]) 
+    check_agent_limit
+    if @user.signup!(:user => params[:user])       
       @agent.user_id = @user.id      
       if @agent.save
          flash[:notice] = t(:'flash.agents.create.success', :email => @user.email)
@@ -83,8 +83,10 @@ class AgentsController < Admin::AdminController
         render :action => :new        
     end    
   end
-
+  
   def update
+      @agent.occasional = params[:agent][:occasional]
+      check_agent_limit
       if @agent.update_attributes(params[nscname])            
           @user = current_account.all_users.find(@agent.user_id)          
           if @user.update_attributes(params[:user])        
@@ -99,6 +101,7 @@ class AgentsController < Admin::AdminController
         @agent.user =@user       
         render :action => :edit
       end    
+     
   end
 
   def destroy    
@@ -123,15 +126,6 @@ end
 
  protected
  
-  def build_user_and_agent
-    @user  = current_account.users.build(params[:user])
-    @agent = current_account.agents.new(params[nscname]) 
-  end
-  
-  def update_agent_object
-    @agent.occasional = params[:agent][:occasional]
-  end
- 
   def scoper
      current_account.all_agents
   end
@@ -150,4 +144,7 @@ end
      end    
   end
   
+  def check_agent_limit
+    redirect_to :back if current_account.reached_agent_limit? and !@agent.occasional?
+  end
 end
