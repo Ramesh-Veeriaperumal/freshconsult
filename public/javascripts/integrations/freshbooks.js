@@ -45,6 +45,7 @@ FreshbooksWidget.prototype = {
 			application_id:freshbooksBundle.application_id,
 			integratable_type:"timesheet",
 			anchor: "freshbooks_widget",
+			app_name:"Freshbooks",
 			domain: $('freshbooks_widget').getAttribute('api_url').escapeHTML(),
 			application_content: function() {
 				return widgetInst.FRESHBOOKS_FORM.evaluate({});
@@ -239,10 +240,10 @@ FreshbooksWidget.prototype = {
 		freshbooksBundle.integrated_resource_id = integrated_resource_id
 		freshbooksBundle.remote_integratable_id = remote_integratable_id
 		if (!is_delete_request)
-   		if (freshbooksBundle.remote_integratable_id)
-   			this.retrieveTimeEntry();
-   		else
-   			this.resetTimeEntryForm();
+	   		if (freshbooksBundle.remote_integratable_id)
+	   			this.retrieveTimeEntry();
+	   		else
+	   			this.resetTimeEntryForm();
 	},
 
 	resetTimeEntryForm: function(){
@@ -278,7 +279,7 @@ FreshbooksWidget.prototype = {
 		if(resEntities.length>0){
 			var errorStr = XmlUtil.getNodeValueStr(resEntities[0],"error");
 			if(errorStr != ""){
-				alert("An error occured: \n\n"+errorStr+"\nPlease contact support@freshdesk.com for further details.");
+				alert("Freshbooks reports the below error: \n\n" + errorStr + "\n\nTry fixing the error manually.  Otherwise contact support.");
 				return false;
 			}
 		}
@@ -313,9 +314,9 @@ FreshbooksWidget.prototype = {
 	},
 
 	deleteTimeEntryUsingIds:function(integrated_resource_id, remote_integratable_id, resultCallback){
-	   this.setIntegratedResourceIds(integrated_resource_id, remote_integratable_id, true);
-   	this.deleteTimeEntry(resultCallback);
-   },
+		this.setIntegratedResourceIds(integrated_resource_id, remote_integratable_id, true);
+		this.deleteTimeEntry(resultCallback);
+	},
 
 	deleteTimeEntry:function(resultCallback){
 		if (freshbooksBundle.remote_integratable_id) {
@@ -345,7 +346,7 @@ FreshbooksWidget.prototype = {
 		$("freshbooks-timeentry-submit").hide();
 	},
 
-	updateNotesAndTimeSpent:function(notes, timeSpent) {
+	updateNotesAndTimeSpent:function(notes, timeSpent, billable) {
 		$("freshbooks-timeentry-hours").value = timeSpent;
 		$("freshbooks-timeentry-notes").value = (notes+"\n"+freshbooksBundle.freshbooksNote).escapeHTML();
 	},

@@ -7,10 +7,12 @@ module Helpdesk::TimeSheetsHelper
   
   def renderTimesheetIntegratedApps( liquid_values ) 
     integrated_apps.map do |app|
+      widget_code = get_app_widget_script(app[0], app[1], liquid_values)
+      widget_code_with_ticket_id = Liquid::Template.parse(widget_code).render(liquid_values) 
       unless get_app_details(app[0]).blank?
          content_tag :fieldset, :class => "integration" do
            "<script type=\"text/javascript\">#{app[0]}inline=true;</script>"+
-           get_app_widget_script(app[0], app[1], liquid_values) +
+            widget_code_with_ticket_id + 
            content_tag(:span, "", :class => "app-logo application-logo-#{app[0]}-small")      
            #Liquid::Template.parse(widget_include).render("ticket" => @ticket)
          end
@@ -22,7 +24,7 @@ module Helpdesk::TimeSheetsHelper
     integrated_apps.each do |app|
       unless get_app_details(app[0]).blank? 
         #page << "console.log(#{timeentry.to_json})"
-        page << "#{app[2]}.updateNotesAndTimeSpent('#{timeentry.note}', #{get_time_in_hours(timeentry.time_spent)});"
+        page << "#{app[2]}.updateNotesAndTimeSpent('#{timeentry.note}', #{get_time_in_hours(timeentry.time_spent)}, #{timeentry.billable});"
         page << "#{app[2]}.logTimeEntry();"
         page << "#{app[2]}.set_timesheet_entry_id(#{timeentry.id});"
       end
@@ -32,8 +34,9 @@ module Helpdesk::TimeSheetsHelper
   def modifyTimesheetApps( timeentry, type = :edit )
     script = ""
     integrated_apps.each do |app|
-      unless get_app_details(app[0]).blank? && timeentry.blank?
-        integrated_app = timeentry.integrated_resources.find_by_installed_application_id(get_app_details(app[0]))
+      app_detail = get_app_details(app[0])
+      unless app_detail.blank? && timeentry.blank?
+        integrated_app = timeentry.integrated_resources.find_by_installed_application_id(app_detail)
         #script += "console.log('#{integrated_app.inspect}');"
         unless integrated_app.blank?
           case type
