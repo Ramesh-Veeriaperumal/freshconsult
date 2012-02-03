@@ -199,11 +199,11 @@ FreshbooksWidget.prototype = {
 				method: "post",
 				on_success: function(evt){
 					this.handleTimeEntrySuccess(evt);
+					this.add_freshbooks_resource_in_db();
 					if (resultCallback) {
 						this.result_callback = resultCallback;
 						resultCallback(evt);
 					}
-					this.add_freshbooks_resource_in_db();
 				}.bind(this)
 			});
 		}

@@ -33,7 +33,7 @@ module Helpdesk::TimeSheetsHelper
     integrated_apps.each do |app|
       unless get_app_details(app[0]).blank? && timeentry.blank?
         integrated_app = timeentry.integrated_resources.find_by_installed_application_id(get_app_details(app[0]))
-        script += "console.log('#{integrated_app.inspect}');"
+        #script += "console.log('#{integrated_app.inspect}');"
         unless integrated_app.blank?
           case type
             when :edit then
