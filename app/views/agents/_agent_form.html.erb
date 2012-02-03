@@ -33,7 +33,9 @@
  
  <% fields_for "users", @agent.user do |usr| %>
       
-	  <%=check_agents_limit%>
+	  <%if @agent.occasional? or @agent.new_record?%>
+	    <%=check_agents_limit%>
+	  <%end%>
  
       <% if @existing_user %>
 	  	<div id="errorExplanation" class="errorExplanation">
