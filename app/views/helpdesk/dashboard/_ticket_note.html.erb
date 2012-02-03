@@ -1,4 +1,4 @@
-<li class="clearfix" id="<%=ticket_note.id%>"> 
+<li class="clearfix activity" id="<%=ticket_note.id%>"> 
 	<%= user_avatar( ticket_note.user ) %>
 	<%= Liquid::Template.parse(h t(ticket_note.description)).render(eval_activity_data(ticket_note.activity_data).merge(
 			'user_path' => link_to(h(ticket_note.user), ticket_note.user, :class => "username"),

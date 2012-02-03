@@ -173,8 +173,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         process_email_commands(ticket, user, ticket.email_config) if user.agent?
   
         email_cmds_regex = get_email_cmd_regex(ticket.account)
-        note.body = note.body.gsub(email_cmds_regex, "") unless note.body.nil?
-        note.body_html = note.body_html.gsub(email_cmds_regex, "") unless note.body_html.nil?
+        note.body = show_quoted_text(params[:text].gsub(email_cmds_regex, "") ,parse_to_email[:email]) unless params[:text].blank?
+        note.body_html = show_quoted_text(Helpdesk::HTMLSanitizer.clean(params[:html].gsub(email_cmds_regex, "")), parse_to_email[:email]) unless params[:html].blank?
         ticket.save
       else
         return create_ticket(ticket.account, from_email, parse_to_email)

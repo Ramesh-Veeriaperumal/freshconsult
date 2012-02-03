@@ -28,7 +28,8 @@ class ActivationsController < ApplicationController
  
     if @user.activate!(params)
       flash[:notice] = t('users.activations.success')
-      redirect_to root_url
+      @current_user = @user
+      redirect_to(root_url) if grant_day_pass
     else
       render :action => :new
     end

@@ -186,9 +186,12 @@ class Account < ActiveRecord::Base
   end
   
   PLANS_AND_FEATURES = {
+    :basic => { :features => [ :twitter ] },
+    
     :pro => {
       :features => [ :scenario_automations, :customer_slas, :business_hours, :forums, 
-        :surveys ,:facebook ]
+        :surveys ,:facebook ],
+      :inherits => [ :basic ]
     },
     
     :premium => {

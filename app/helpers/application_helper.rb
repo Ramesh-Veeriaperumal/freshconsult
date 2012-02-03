@@ -367,12 +367,12 @@ module ApplicationHelper
     content_tag :li, element unless (field_value == "" || field_value == "...")     
   end
    
-  def pageless(total_pages, url, message=t("loading.items"), callback = "function(){}")
+  def pageless(total_pages, url, message=t("loading.items"), params = {})
     opts = {
       :totalPages => total_pages,
       :url        => url,
       :loaderMsg  => message,
-      :complete  => callback
+      :params => params
     } 
     javascript_tag("jQuery('#Pages').pageless(#{opts.to_json});")
   end

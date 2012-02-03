@@ -12,7 +12,9 @@
 <%= render :partial => "summary" %>
 <div id="Activity">
 	<h3 class="title"><%=t('recent_activity')%></h3>
-	<ul id="Pages" class="activityfeed">
+	<div id="recent_activities_count" class='info-highlight center hide' style="cursor:pointer;"></div>
+	<div id="recent_activities" class='hide'></div>
+	<ul id="Pages" class="activityfeed">		
 		<% @items.each_with_index do |item, i| %>
 			<%= render(:partial => "ticket_note", :object => item) %> 
 		<% end %>
@@ -20,15 +22,17 @@
 </div>
 <%= will_paginate @items %>
 <% content_for :pagefixed do %> 
-  <%= pageless(@items.total_pages, helpdesk_dashboard_path, t("loading.activities")) %>  
+  <%= pageless(@items.total_pages, helpdesk_dashboard_path, t("loading.activities"), { :activity_id => @items.first.id}) %>  
 <% end %>
 
 <% javascript_tag do %>
+	activity_count = 0;
+	previous_id = jQuery('#Pages li').first().attr('id');
 	jQuery.PeriodicalUpdater(
 		'/helpdesk/dashboard/latest_activities', 
 		{ 
 			method: 'get', 
-			data:  function() { return "previous_id="+jQuery('#Pages li').first().attr('id') },
+			data:  function() { return "previous_id="+previous_id },
 			minTimeout: 60000, 
 			maxTimeout: 61000, 
 			multiplier: 1, 
@@ -36,9 +40,25 @@
 		}, 
 		function(remoteData, success, xhr, handle) 
 		{
-			jQuery('#Pages').prepend(remoteData);
+			jQuery('#recent_activities').prepend(remoteData);
+			if(jQuery('#recent_activities li.activity').length > 0)
+			{   
+				activity_count = jQuery('#recent_activities li.activity').length;
+				jQuery('#recent_activities_count').html(activity_count+" recent activities");
+				previous_id = jQuery('#recent_activities li.activity').first().attr('id');
+				jQuery('#recent_activities_count').show();
+			}
 		}
 	);
+	
+	jQuery('#recent_activities_count').click(function() {
+		new_activites = jQuery("<div />").hide().prepend(jQuery("#recent_activities").html());		
+		jQuery('#Pages').prepend(new_activites);
+		new_activites.slideDown();
+		jQuery("#recent_activities").empty();			
+		jQuery(this).hide();	
+	});
+	
 <%end%>
 
 

@@ -3,6 +3,8 @@ class Helpdesk::NotesController < ApplicationController
   before_filter :load_parent_ticket_or_issue
   
   include HelpdeskControllerMethods
+  
+  before_filter :validate_attachment_size , :only =>[:create]
     
   uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
 
@@ -158,6 +160,12 @@ class Helpdesk::NotesController < ApplicationController
        end
       end
   end
-  
+   def validate_attachment_size
+     total_size = (params[nscname][:attachments] || []).collect{|a| a[:file].size}.sum
+     if total_size > Helpdesk::Note::Max_Attachment_Size    
+        flash[:notice] = t('helpdesk.tickets.note.attachment_size.exceed')
+        redirect_to :back  
+     end
+  end
 
 end
