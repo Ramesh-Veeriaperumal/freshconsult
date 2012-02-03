@@ -25,6 +25,11 @@ class ContactsController < ApplicationController
         @contacts = scoper.all
        render :xml => @contacts.to_xml
       end
+
+      format.json  do
+        @contacts = scoper.all
+       render :json => @contacts.to_json
+      end
       format.atom do
         @contacts = @contacts.newest(20)
       end
@@ -82,6 +87,7 @@ class ContactsController < ApplicationController
     respond_to do |format|
       format.html { }
       format.xml  { render :xml => @user.to_xml} # bad request
+      format.json { render :json => @user.to_json}
     end
   end
   
