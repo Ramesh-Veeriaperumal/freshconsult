@@ -400,4 +400,4 @@ FreshbooksWidget.prototype = {
 	}
 }
 
-freshbooksWidget = new FreshbooksWidget(freshbooksBundle, true);
+freshbooksWidget = new FreshbooksWidget(freshbooksBundle, freshbooksinline);

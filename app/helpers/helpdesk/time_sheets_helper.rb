@@ -9,6 +9,7 @@ module Helpdesk::TimeSheetsHelper
     integrated_apps.map do |app|
       unless get_app_details(app[0]).blank?
          content_tag :fieldset, :class => "integration" do
+           "<script type=\"text/javascript\">#{app[0]}inline=true;</script>"+
            get_app_widget_script(app[0], app[1], liquid_values) +
            content_tag(:span, "", :class => "app-logo application-logo-#{app[0]}-small")      
            #Liquid::Template.parse(widget_include).render("ticket" => @ticket)
@@ -36,10 +37,10 @@ module Helpdesk::TimeSheetsHelper
         #script += "console.log('#{integrated_app.inspect}');"
         unless integrated_app.blank?
           case type
-            when :edit then
-              script += "#{app[2]}.setIntegratedResourceIds(#{integrated_app.id}, #{integrated_app.remote_integratable_id});"
             when :delete then
               script += "#{app[2]}.deleteTimeEntryUsingIds(#{integrated_app.id}, #{integrated_app.remote_integratable_id});" 
+            else
+              script += "#{app[2]}.setIntegratedResourceIds(#{integrated_app.id}, #{integrated_app.remote_integratable_id});"
           end
         end
       end
