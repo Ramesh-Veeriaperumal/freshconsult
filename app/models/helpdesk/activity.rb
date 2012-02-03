@@ -25,6 +25,12 @@ class Helpdesk::Activity < ActiveRecord::Base
     }
   }
 
+  named_scope :activty_before, lambda { |account, activity_id|
+    { :conditions => ["helpdesk_activities.account_id = ? and helpdesk_activities.id <= ?", account, activity_id], 
+      :order => "helpdesk_activities.created_at DESC"
+    }
+  }
+
   
  named_scope :permissible , lambda {|user| { 
  :joins => "LEFT JOIN `helpdesk_tickets` ON helpdesk_activities.notable_id = helpdesk_tickets.id AND notable_type = 'Helpdesk::Ticket' "  ,
