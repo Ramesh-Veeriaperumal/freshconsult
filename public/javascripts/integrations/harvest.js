@@ -61,7 +61,7 @@ HarvestWidget.prototype= {
 	},
 
 	loadClient:function(resData) {
-		selectedClientNode = UIUtil.constructDropDown(resData, "harvest-timeentry-clients", "client", "id", ["name"], null, Cookie.get("har_client_id")||"");
+		selectedClientNode = UIUtil.constructDropDown(resData, "harvest-timeentry-clients", "client", "id", ["name"], null, Cookie.retrieve("har_client_id")||"");
 		client_id = XmlUtil.getNodeValueStr(selectedClientNode, "id");
 		this.clientChanged(client_id);
 	},
@@ -79,7 +79,7 @@ HarvestWidget.prototype= {
 			client_id = this.get_client_id(this.projectData, project_id);
 			UIUtil.chooseDropdownEntry("harvest-timeentry-clients", client_id);
 		} else {
-			searchTerm = Cookie.get("har_project_id")
+			searchTerm = Cookie.retrieve("har_project_id")
 			client_id = $("harvest-timeentry-clients").value
 		}
 		filterBy = null
@@ -102,8 +102,8 @@ HarvestWidget.prototype= {
 		if (this.timeEntryXml)
 			searchTerm = this.get_time_entry_prop_value(this.timeEntryXml, "task_id")
 		else
-			searchTerm = Cookie.get("har_task_id")
-		selectedTaskNode = UIUtil.constructDropDown(this.taskData, "harvest-timeentry-tasks", "task", "id", ["name"], null, Cookie.get("har_task_id")||"");
+			searchTerm = Cookie.retrieve("har_task_id")
+		selectedTaskNode = UIUtil.constructDropDown(this.taskData, "harvest-timeentry-tasks", "task", "id", ["name"], null, Cookie.retrieve("har_task_id")||"");
 		if(!selectedTaskNode) {
 			UIUtil.addDropdownEntry("harvest-timeentry-tasks", "", "None");
 		}
@@ -117,18 +117,18 @@ HarvestWidget.prototype= {
 		if(this.projectData != '') {
 			this.handleLoadProject();
 		}
-		Cookie.set("har_client_id", client_id);
+		Cookie.update("har_client_id", client_id);
 	},
 
 	projectChanged:function(project_id) {
 		if(this.taskData != '') {
 			this.handleLoadTask();
 		}
-		Cookie.set("har_project_id", project_id);
+		Cookie.update("har_project_id", project_id);
 	},
 
 	taskChanged:function(task_id) {
-		Cookie.set("har_task_id", task_id);
+		Cookie.update("har_task_id", task_id);
 	},
 
 	validateInput:function() {
@@ -297,8 +297,10 @@ HarvestWidget.prototype= {
 
 	// This is method needs to be called by the external time entry code to map the remote and local integrated resorce ids.
 	set_timesheet_entry_id:function(integratable_id) {
-		if(integratable_id != null) this.freshdeskWidget.local_integratable_id = integratable_id;
-		this.add_harvest_resource_in_db();
+		if (!harvestBundle.remote_integratable_id) {
+			this.freshdeskWidget.local_integratable_id = integratable_id;
+			this.add_harvest_resource_in_db();
+		}
 	},
 
 	add_harvest_resource_in_db:function() {

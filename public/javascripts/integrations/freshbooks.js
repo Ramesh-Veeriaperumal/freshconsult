@@ -100,7 +100,7 @@ FreshbooksWidget.prototype = {
 		if (this.timeEntryXml)
 			searchTerm = this.get_time_entry_prop_value(this.timeEntryXml, "task_id")
 		else
-			searchTerm = Cookie.get("fb_task_id")
+			searchTerm = Cookie.retrieve("fb_task_id")
 		selectedTaskNode = this.loadFreshbooksEntries(this.taskData, "freshbooks-timeentry-tasks", "task", "task_id", ["name"], null, searchTerm||"");
 		if(!selectedTaskNode) {
 			UIUtil.addDropdownEntry("freshbooks-timeentry-tasks", "", "None");
@@ -129,7 +129,7 @@ FreshbooksWidget.prototype = {
 			client_id = this.get_client_id(this.projectData, project_id);
 			UIUtil.chooseDropdownEntry("freshbooks-timeentry-clients", client_id);
 		} else {
-			searchTerm = Cookie.get("fb_project_id")
+			searchTerm = Cookie.retrieve("fb_project_id")
 			client_id = $("freshbooks-timeentry-clients").value
 		}
 		filterBy = {"client_id":client_id};
@@ -143,7 +143,7 @@ FreshbooksWidget.prototype = {
 
 	projectChanged:function(project_id) {
 		this.requestTaskList(project_id)
-		Cookie.set("fb_project_id", project_id);
+		Cookie.update("fb_project_id", project_id);
 	},
 
 	requestTaskList:function(project_id_val) {
@@ -157,7 +157,7 @@ FreshbooksWidget.prototype = {
 
 	taskChanged:function(task_id) {
 		task_id = $("freshbooks-timeentry-tasks").value;
-		Cookie.set("fb_task_id", task_id);
+		Cookie.update("fb_task_id", task_id);
 	},
 
 	validateInput:function() {
@@ -347,8 +347,10 @@ FreshbooksWidget.prototype = {
 
 	// This is method needs to be called by the external time entry code to map the remote and local integrated resorce ids.
 	set_timesheet_entry_id:function(integratable_id) {
-		if(integratable_id != null) this.freshdeskWidget.local_integratable_id = integratable_id;
-		this.add_freshbooks_resource_in_db();
+		if (!freshbooksBundle.remote_integratable_id) {
+			this.freshdeskWidget.local_integratable_id = integratable_id;
+			this.add_freshbooks_resource_in_db();
+		}
 	},
 
 	add_freshbooks_resource_in_db:function() {
