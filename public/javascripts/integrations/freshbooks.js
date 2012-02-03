@@ -122,7 +122,6 @@ FreshbooksWidget.prototype = {
 	},
 
 	handleLoadProject:function() {
-		console.log("Freshbooks handleLoadProject.");
 		if (this.timeEntryXml) {
 			// If timeEntryXml is populated then this already time entry added in freshbooks.  So choose the correct client and project id in the drop down.
 			project_id = searchTerm = this.get_time_entry_prop_value(this.timeEntryXml, "project_id")
@@ -236,13 +235,14 @@ FreshbooksWidget.prototype = {
 		}
 	},
 
-	setIntegratedResourceIds: function(integrated_resource_id, remote_integratable_id) {
+	setIntegratedResourceIds: function(integrated_resource_id, remote_integratable_id, is_delete_request) {
 		freshbooksBundle.integrated_resource_id = integrated_resource_id
 		freshbooksBundle.remote_integratable_id = remote_integratable_id
-		if (freshbooksBundle.remote_integratable_id)
-			this.retrieveTimeEntry();
-		else
-			this.resetTimeEntryForm();
+		if (!is_delete_request)
+   		if (freshbooksBundle.remote_integratable_id)
+   			this.retrieveTimeEntry();
+   		else
+   			this.resetTimeEntryForm();
 	},
 
 	resetTimeEntryForm: function(){
@@ -311,6 +311,11 @@ FreshbooksWidget.prototype = {
 			alert('Freshbooks widget is not loaded properly. Please try again.');
 		}
 	},
+
+	deleteTimeEntryUsingIds:function(integrated_resource_id, remote_integratable_id, resultCallback){
+	   this.setIntegratedResourceIds(integrated_resource_id, remote_integratable_id, true);
+   	this.deleteTimeEntry(resultCallback);
+   },
 
 	deleteTimeEntry:function(resultCallback){
 		if (freshbooksBundle.remote_integratable_id) {

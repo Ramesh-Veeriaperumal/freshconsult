@@ -1,2 +1,4 @@
+page << "jQuery('#timeentry_#{@time_entry.id}').fadeOut(500, function(){ jQuery(this).remove() });"
+page << "#{modifyTimesheetApps(@time_entry, :delete)}"
+
 @time_entry.destroy
-page << "jQuery('#timeentry_#{@time_entry.id}').fadeOut(500, function(){ jQuery(this).remove() })"

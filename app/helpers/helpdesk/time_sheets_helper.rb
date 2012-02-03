@@ -28,18 +28,23 @@ module Helpdesk::TimeSheetsHelper
     end
   end
   
-  def editTimesheetIntegratedApps( timeentry )
+  def modifyTimesheetApps( timeentry, type = :edit )
     script = ""
     integrated_apps.each do |app|
       unless get_app_details(app[0]).blank? && timeentry.blank?
         integrated_app = timeentry.integrated_resources.find_by_installed_application_id(get_app_details(app[0]))
+        script += "console.log('#{integrated_app.inspect}');"
         unless integrated_app.blank?
-          script += "console.log('#{integrated_app.inspect}');"
-          script += "#{app[2]}.setIntegratedResourceIds(#{integrated_app.id}, #{integrated_app.remote_integratable_id});"
+          case type
+            when :edit then
+              script += "#{app[2]}.setIntegratedResourceIds(#{integrated_app.id}, #{integrated_app.remote_integratable_id});"
+            when :delete then
+              script += "#{app[2]}.deleteTimeEntryUsingIds(#{integrated_app.id}, #{integrated_app.remote_integratable_id});" 
+          end
         end
       end
     end
-    javascript_tag do script end 
+    script
   end
   
   private 

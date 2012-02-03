@@ -51,7 +51,6 @@ TicketTimesheet.prototype = {
 
   editCompelete: function(id, dontshow) { 
      this.clearEdit();
-     console.log(id);
      if(!dontshow)
       jQuery('#timeentry_'+id).addClass("active_edit");
      jQuery('#time_integration').detach().appendTo('#timeentry_apps_'+id);
