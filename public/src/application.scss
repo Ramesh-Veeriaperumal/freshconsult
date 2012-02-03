@@ -3258,16 +3258,31 @@ div.addReminder{
 	}
 }
 
-.info-highlight, .info-highlight-deleted, .info-error, .info-code{
+.info-highlight, .info-highlight-deleted, .info-error, .info-code, .more-tweets{
 	font-size:13px;
 	margin:0px 0px 0px 0px;
-	padding:8px 18px;
+	padding:10px 18px;
 	color:#666666;
-	border:1px solid #f4f4e9;
+	border:1px solid darken(#f4f4e9, 5%);
 	background-color:#fffbee;
 	div{
 		padding:6px;
 	}
+}
+
+.more-tweets{
+	text-align:center;
+	cursor:pointer;
+	text-transform:lowercase;
+	color:#333;
+	margin-bottom:10px;
+	@include border-radius(3px);
+	@include text-shadow( 0 1px 0 white );
+	display:none;
+}
+
+.more-tweets:hover{
+	background-color:darken(#fffbee, 10%);
 }
 
 .ui-form span.warning{

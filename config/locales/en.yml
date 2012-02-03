@@ -130,13 +130,14 @@ en:
         buy_now: "Buy now"
         day_pass_pack: "%{quantity} Day Pass Pack (%{currency}%{amount})"
         day_pass_history: "Purchase History"
-        add_confirm: "Your credit card is going to be charged for the amount of"
+        add_confirm: "Your credit card will be charged "
         daypass_quantity: "%{quantity} Day Passes"
         order: "Order #"
         no_of_day_passes: "# of Day Passes"
-        auto_recharge: "Auto-recharge"
+        auto_recharge: "Auto recharge"
         recharge_quantity: "Recharge quantity:"
         day_passes: "Day Passes" 
+        helptext: "Your day passes will Auto-recharge once the number of available day passes comes down to 2."
     widget_config:
       index:
         thankyou_label: "Submit message"
@@ -1228,6 +1229,7 @@ en:
     note_content: Note content
     ticket_url: Ticket URL
   recent_activity: Recent Activity
+  recent_activities: Recent Activites
   forgot_password: Forgot Password
   change_plan: Change plan
   feedbackwidget_embed_code_intro: Please copy and paste the code below anywhere before the &lt;/body&gt; tag in the html template of your site or every page where you'd like to provide the Freshdesk widget.
@@ -1638,5 +1640,3 @@ en:
   email_command_preview_subject: "Subject"
   email_command_preview_subject_value: "Support Ticket"
   unable_to_charge: "Unable to charge the card for the added agent!"
-  maximum_agents_admin_msg: "You have reached the maximum number of full time agents your subscription allows. You need to delete an existing full time agent or <a href='/account/plans'>upgrade your account</a> to create a new agent.If you just need an occasional agent, you can add one below"
-  maximum_agents_msg: "You have reached the maximum number of agents your subscription allows. You need to delete an existing agent or contact your account administrator to upgrade your account.If you just need an occasional agent, you can add one below"
