@@ -1,7 +1,7 @@
 var HarvestWidget = Class.create();
 HarvestWidget.prototype= {
 	LOGIN_FORM:new Template('<form onsubmit="harvestWidget.freshdeskWidget.login(this);if(harvestWidget.inline) harvestWidget.convertToInlineWidget();return false;"><div class="field first"><label>Username</label><input type="text" id="username"/></div><div class="field"><label>Password</label><input type="password" class="text" id="password"/></div><div class="field"><label><input type="checkbox" id="remember_me" checked value="true" />Remember me</label><input type="submit" class="btn" value="Login" id="submit"></div></form>'),
-	HARVEST_FORM:new Template('<form id="harvest-timeentry-form" method="post"> <a href="javascript:void(0)" class="link" onclick="harvestWidget.freshdeskWidget.logout()">(Use different user)</a> <div class="field first"><label>Client</label><select name="client-id" id="harvest-timeentry-clients" onchange="harvestWidget.clientChanged(this.options[this.selectedIndex].value)"></select> </div><div class="field"> <label>Project</label><select name="request[project_id]" id="harvest-timeentry-projects" onchange="harvestWidget.projectChanged(this.options[this.selectedIndex].value)"></select> <div class="paddingloading" id="harvest-project-spinner" style="display:none;"></div> </div><div class="field"><label>Task</label><select disabled name="request[task_id]" id="harvest-timeentry-tasks" onchange="harvestWidget.taskChanged(this.options[this.selectedIndex].value)"></select> <div class="paddingloading" id="harvest-task-spinner" style="display:none;" ></div> </div><div class="field"><label id="harvest-timeentry-notes-label">Notes</label><textarea disabled name="request[notes]" id="harvest-timeentry-notes" wrap="virtual">'+harvestBundle.harvestNote.escapeHTML()+'</textarea></div><div class="field"> <label id="harvest-timeentry-hours-label">Hours</label><input type="text" disabled name="request[hours]" id="harvest-timeentry-hours"> </div> <div class="field"><label id="harvest-timeentry-billable-label"><input type="checkbox" id="harvest-timeentry-billable" checked value="true" />Billable</label> <input type="submit" disabled id="harvest-timeentry-submit" value="Submit" onclick="harvestWidget.logTimeEntry($(\'harvest-timeentry-form\'));return false;"></form>'),
+	HARVEST_FORM:new Template('<form id="harvest-timeentry-form" method="post"> <a href="javascript:void(0)" class="link" onclick="harvestWidget.freshdeskWidget.logout()">(Use different user)</a> <div class="field first"><label>Client</label><select name="client-id" id="harvest-timeentry-clients" onchange="harvestWidget.clientChanged(this.options[this.selectedIndex].value)"></select> </div><div class="field"> <label>Project</label><select name="request[project_id]" id="harvest-timeentry-projects" onchange="harvestWidget.projectChanged(this.options[this.selectedIndex].value)"></select> <div class="paddingloading" id="harvest-project-spinner" style="display:none;"></div> </div><div class="field"><label>Task</label><select disabled name="request[task_id]" id="harvest-timeentry-tasks" onchange="harvestWidget.taskChanged(this.options[this.selectedIndex].value)"></select> <div class="paddingloading" id="harvest-task-spinner" style="display:none;" ></div> </div><div class="field"><label id="harvest-timeentry-notes-label">Notes</label><textarea disabled name="request[notes]" id="harvest-timeentry-notes" wrap="virtual">'+harvestBundle.harvestNote.escapeHTML()+'</textarea></div><div class="field"> <label id="harvest-timeentry-hours-label">Hours</label><input type="text" disabled name="request[hours]" id="harvest-timeentry-hours"> </div> <input type="submit" disabled id="harvest-timeentry-submit" value="Submit" onclick="harvestWidget.logTimeEntry($(\'harvest-timeentry-form\'));return false;"></form>'),
 
 	initialize:function(harvestBundle, loadInline){
 		harvestWidget = this; // Assigning to some variable so that it will be accessible inside custom_widget.
@@ -112,7 +112,6 @@ HarvestWidget.prototype= {
 		$("harvest-timeentry-tasks").enable();
 		$("harvest-timeentry-hours").enable();
 		$("harvest-timeentry-notes").enable();
-		$("harvest-timeentry-billable").enable();
 		$("harvest-timeentry-submit").enable();
 	},
 
@@ -140,6 +139,7 @@ HarvestWidget.prototype= {
 			alert("Enter valid value for hours.");
 			return false;
 		}
+		return true;
 	},
 
 	logTimeEntry:function() {
@@ -151,7 +151,6 @@ HarvestWidget.prototype= {
 	},
 
 	createTimeEntry:function(resultCallback) {
-		alert($("harvest-timeentry-billable").value);
 		if (this.validateInput()) {
 			this.freshdeskWidget.request({
 				entity_name: "request",
@@ -159,7 +158,6 @@ HarvestWidget.prototype= {
 				"request[task_id]": $("harvest-timeentry-tasks").value,
 				"request[notes]": $("harvest-timeentry-notes").value,
 				"request[hours]": $("harvest-timeentry-hours").value,
-				"request[billable]": $("harvest-timeentry-billable").value,
 				resource: "daily/add",
 				content_type: "application/xml",
 				method: "post",
@@ -223,7 +221,6 @@ HarvestWidget.prototype= {
 			// Do nothing. As this the form is going to be used for creating new entry, let the staff, client, project and task drop down be selected with the last selected entry itself. 
 		}
 		$("harvest-timeentry-hours").value = "";
-		$("harvest-timeentry-billable").selected = true
 		$("harvest-timeentry-notes").value = harvestBundle.harvestNote.escapeHTML();
 		$("harvest-timeentry-notes").focus();
 	},
@@ -248,7 +245,6 @@ HarvestWidget.prototype= {
 					"request[project_id]": $("harvest-timeentry-projects").value,
 					"request[task_id]": $("harvest-timeentry-tasks").value,
 					"request[notes]": $("harvest-timeentry-notes").value,
-					"request[billable]": $("harvest-timeentry-billable").value,
 					"request[hours]": $("harvest-timeentry-hours").value,
 					resource: "daily/update/"+harvestBundle.remote_integratable_id,
 					content_type: "application/xml",
@@ -291,10 +287,8 @@ HarvestWidget.prototype= {
 		if ($("harvest-timeentry-hours-label")) {
 			$("harvest-timeentry-hours-label").hide();
 			$("harvest-timeentry-notes-label").hide();
-			$("harvest-timeentry-billable-label").hide();
 			$("harvest-timeentry-hours").hide();
 			$("harvest-timeentry-notes").hide();
-			$("harvest-timeentry-billable").hide();
 			$("harvest-timeentry-submit").hide();
 		}
 	},
@@ -302,7 +296,6 @@ HarvestWidget.prototype= {
 	updateNotesAndTimeSpent:function(notes, timeSpent, billable) {
 		$("harvest-timeentry-hours").value = timeSpent;
 		$("harvest-timeentry-notes").value = (notes+"\n"+harvestBundle.harvestNote).escapeHTML();
-		$("harvest-timeentry-billable").value = billable;
 	},
 
 	// This is method needs to be called by the external time entry code to map the remote and local integrated resorce ids.
