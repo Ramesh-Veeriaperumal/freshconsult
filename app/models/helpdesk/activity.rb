@@ -15,7 +15,7 @@ class Helpdesk::Activity < ActiveRecord::Base
   
   named_scope :freshest, lambda { |account|
     { :conditions => ["helpdesk_activities.account_id = ? ", account], 
-      :order => "helpdesk_activities.created_at DESC"
+      :order => "helpdesk_activities.id DESC"
     }
   }
 
@@ -27,7 +27,7 @@ class Helpdesk::Activity < ActiveRecord::Base
 
   named_scope :activty_before, lambda { |account, activity_id|
     { :conditions => ["helpdesk_activities.account_id = ? and helpdesk_activities.id <= ?", account, activity_id], 
-      :order => "helpdesk_activities.created_at DESC"
+      :order => "helpdesk_activities.id DESC"
     }
   }
 
