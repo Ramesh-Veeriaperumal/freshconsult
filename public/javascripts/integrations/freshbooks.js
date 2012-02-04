@@ -99,9 +99,10 @@ FreshbooksWidget.prototype = {
 
 	loadTaskList:function(resData) {
 		this.taskData = resData;
-		if (this.timeEntryXml)
+		if (this.timeEntryXml) {
 			searchTerm = this.get_time_entry_prop_value(this.timeEntryXml, "task_id")
-		else
+			this.timeEntryXml = "" // Required drop downs already populated using this xml. reset this to empty, otherwise all other methods things still it needs to use this xml to load them.
+		} else 
 			searchTerm = Cookie.retrieve("fb_task_id")
 		selectedTaskNode = this.loadFreshbooksEntries(this.taskData, "freshbooks-timeentry-tasks", "task", "task_id", ["name"], null, searchTerm||"");
 		if(!selectedTaskNode) {
@@ -125,7 +126,7 @@ FreshbooksWidget.prototype = {
 
 	handleLoadProject:function() {
 		if (this.timeEntryXml) {
-			// If timeEntryXml is populated then this already time entry added in freshbooks.  So choose the correct client and project id in the drop down.
+			// If timeEntryXml is populated then this time entry is already added in freshbooks.  So choose the correct client and project id in the drop down.
 			project_id = searchTerm = this.get_time_entry_prop_value(this.timeEntryXml, "project_id")
 			client_id = this.get_client_id(this.projectData, project_id);
 			UIUtil.chooseDropdownEntry("freshbooks-timeentry-clients", client_id);
@@ -218,7 +219,6 @@ FreshbooksWidget.prototype = {
 			var responses = XmlUtil.extractEntities(resXml,"response");
 			if (responses.length > 0) {
 				this.freshdeskWidget.remote_integratable_id = XmlUtil.getNodeValueStr(responses[0], "time_entry_id")
-				this.resetTimeEntryForm();
 			}
 		}
 	},
@@ -237,9 +237,12 @@ FreshbooksWidget.prototype = {
 		}
 	},
 
-	setIntegratedResourceIds: function(integrated_resource_id, remote_integratable_id, is_delete_request) {
+	// This method is for reusing same widget again and again in multiple time sheet entry forms.  So this will resets all the states of this form. 
+	resetIntegratedResourceIds: function(integrated_resource_id, remote_integratable_id, local_integratable_id, is_delete_request) {
 		freshbooksBundle.integrated_resource_id = integrated_resource_id
 		freshbooksBundle.remote_integratable_id = remote_integratable_id
+		this.freshdeskWidget.local_integratable_id = local_integratable_id
+		this.freshdeskWidget.remote_integratable_id = remote_integratable_id
 		if (!is_delete_request)
 	   		if (freshbooksBundle.remote_integratable_id)
 	   			this.retrieveTimeEntry();
@@ -259,6 +262,7 @@ FreshbooksWidget.prototype = {
 				UIUtil.chooseDropdownEntry("freshbooks-timeentry-clients", client_id);
 				this.clientChanged(client_id);
 			}
+			this.timeEntryXml = "" // Required drop downs already populated using this xml. reset this to empty, otherwise all other methods things still it needs to use this xml to load them.
 		} else {
 			// Do nothing. As this the form is going to be used for creating new entry, let the staff, client, project and task drop down be selected with the last selected entry itself. 
 		}
@@ -333,14 +337,9 @@ FreshbooksWidget.prototype = {
 	},
 
 	deleteTimeEntryUsingIds:function(integrated_resource_id, remote_integratable_id, resultCallback){
-		this.setIntegratedResourceIds(integrated_resource_id, remote_integratable_id, true);
-		this.deleteTimeEntry(resultCallback);
-	},
-
-	deleteTimeEntry:function(resultCallback){
-		if (freshbooksBundle.remote_integratable_id) {
+		if (remote_integratable_id) {
 			var body = this.DELETE_TIMEENTRY_REQ.evaluate({
-				time_entry_id: freshbooksBundle.remote_integratable_id
+				time_entry_id: remote_integratable_id
 			});
 			this.freshdeskWidget.request({
 				body: body,
@@ -348,10 +347,16 @@ FreshbooksWidget.prototype = {
 				method: "post",
 				on_success: function(evt){
 					this.handleTimeEntrySuccess(evt);
-					this.delete_freshbooks_resource_in_db(resultCallback);
+					this.delete_freshbooks_resource_in_db(integrated_resource_id, resultCallback);
 					if(resultCallback) resultCallback(evt);
 				}.bind(this)
 			});
+		}
+	},
+
+	deleteTimeEntry:function(resultCallback){
+		if (freshbooksBundle.remote_integratable_id) {
+			deleteTimeEntryUsingIds(freshbooksBundle.remote_integratable_id, freshbooksBundle.integrated_resource_id, resultCallback)
 		} else {
 			alert('Freshbooks widget is not loaded properly. Please delete the entry manually.');
 		}
@@ -393,9 +398,9 @@ FreshbooksWidget.prototype = {
 		}.bind(this));
 	},
 
-	delete_freshbooks_resource_in_db:function(resultCallback){
-		if (freshbooksBundle.integrated_resource_id) {
-			this.freshdeskWidget.delete_integrated_resource(freshbooksBundle.integrated_resource_id);
+	delete_freshbooks_resource_in_db:function(integrated_resource_id, resultCallback){
+		if (integrated_resource_id) {
+			this.freshdeskWidget.delete_integrated_resource(integrated_resource_id);
 			freshbooksBundle.integrated_resource_id = "";
 			freshbooksBundle.remote_integratable_id = "";
 		}

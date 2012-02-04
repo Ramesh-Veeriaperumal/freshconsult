@@ -24,7 +24,7 @@ module Helpdesk::TimeSheetsHelper
     integrated_apps.each do |app|
       unless get_app_details(app[0]).blank? 
         #page << "console.log(#{timeentry.to_json})"
-        page << "#{app[2]}.updateNotesAndTimeSpent('#{timeentry.note}' #{get_app_specific_hours(app[0], timeentry.hours, timeentry.timer_running)}, #{timeentry.billable});"
+        page << "#{app[2]}.updateNotesAndTimeSpent('#{timeentry.note}', #{timeentry.time_spent == 0? "0.01" : timeentry.hours}, #{timeentry.billable});"
         page << "#{app[2]}.logTimeEntry();"
         page << "#{app[2]}.set_timesheet_entry_id(#{timeentry.id});" # This is not needed for update.  But no harm in calling.
       end
@@ -41,7 +41,7 @@ module Helpdesk::TimeSheetsHelper
           if type == :delete
             script += "#{app[2]}.deleteTimeEntryUsingIds(#{integrated_app.id}, #{integrated_app.remote_integratable_id});"
           else
-            script += "#{app[2]}.updateTimeEntryUsingIds(#{integrated_app.remote_integratable_id} #{get_app_specific_hours(app[0], timeentry.hours, timeentry.timer_running)});"
+            script += "#{app[2]}.updateTimeEntryUsingIds(#{integrated_app.remote_integratable_id}, #{timeentry.time_spent == 0? "0.01" : timeentry.hours});"
           end
         end
       end
@@ -57,18 +57,13 @@ module Helpdesk::TimeSheetsHelper
         integrated_app = timeentry.integrated_resources.find_by_installed_application_id(app_detail)
         #script += "console.log('#{integrated_app.inspect}');"
         if integrated_app.blank?
-          script += "#{app[2]}.setIntegratedResourceIds('', '');"
+          script += "#{app[2]}.resetIntegratedResourceIds('', '');"
         else
-          script += "#{app[2]}.setIntegratedResourceIds(#{integrated_app.id}, #{integrated_app.remote_integratable_id});"
+          script += "#{app[2]}.resetIntegratedResourceIds(#{integrated_app.id}, #{integrated_app.remote_integratable_id});"
         end
       end
     end
     script
-  end
-
-  def get_app_specific_hours(app_name, hours, timer_running)
-    hours = (hours == 0 or hours == '')? ", 0.01" : ", "+hours
-    hours
   end
   
   private 

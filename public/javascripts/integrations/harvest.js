@@ -101,9 +101,11 @@ HarvestWidget.prototype= {
 
 	handleLoadTask:function() {
 		console.log("Harest handleLoadTask.");
-		if (this.timeEntryXml)
+		if (this.timeEntryXml) {
 			searchTerm = this.get_time_entry_prop_value(this.timeEntryXml, "task_id")
-		else
+			this.timeEntryXml = "" // Required drop downs already populated using this xml. reset this to empty, otherwise all other methods things still it needs to use this xml to load them.
+		}
+		else 
 			searchTerm = Cookie.retrieve("har_task_id")
 		selectedTaskNode = UIUtil.constructDropDown(this.taskData, "harvest-timeentry-tasks", "task", "id", ["name"], null, Cookie.retrieve("har_task_id")||"");
 		if(!selectedTaskNode) {
@@ -198,9 +200,11 @@ HarvestWidget.prototype= {
 		}
 	},
  
-	setIntegratedResourceIds: function(integrated_resource_id, remote_integratable_id, is_delete_request) {
+	resetIntegratedResourceIds: function(integrated_resource_id, remote_integratable_id, local_integratable_id, is_delete_request) {
 		harvestBundle.integrated_resource_id = integrated_resource_id
 		harvestBundle.remote_integratable_id = remote_integratable_id
+		this.freshdeskWidget.local_integratable_id = local_integratable_id
+		this.freshdeskWidget.remote_integratable_id = remote_integratable_id
 		if (!is_delete_request)
 			if (harvestBundle.remote_integratable_id)
 				this.retrieveTimeEntry();
@@ -220,6 +224,7 @@ HarvestWidget.prototype= {
 				task_id = XmlUtil.getNodeValueStr(time_entry_node[0], "task_id");
 				UIUtil.chooseDropdownEntry("harvest-timeentry-tasks", task_id);
 			}
+			this.timeEntryXml = "" // Required drop downs already populated using this xml. reset this to empty, otherwise all other methods things still it needs to use this xml to load them.
 		} else {
 			// Do nothing. As this the form is going to be used for creating new entry, let the staff, client, project and task drop down be selected with the last selected entry itself. 
 		}
@@ -282,22 +287,24 @@ HarvestWidget.prototype= {
 	},
 
 	deleteTimeEntryUsingIds:function(integrated_resource_id, remote_integratable_id, resultCallback){
-		this.setIntegratedResourceIds(integrated_resource_id, remote_integratable_id, true);
-		this.deleteTimeEntry(resultCallback);
-	},
-
-	deleteTimeEntry:function(resultCallback){
-		if (harvestBundle.remote_integratable_id) {
+		if (remote_integratable_id) {
 			this.freshdeskWidget.request({
-				resource: "daily/delete/"+harvestBundle.remote_integratable_id,
+				resource: "daily/delete/"+remote_integratable_id,
 				content_type: "application/xml",
 				method: "delete",
 				on_success: function(evt){
 					harvestWidget.handleTimeEntrySuccess(evt);
+					this.delete_harvest_resource_in_db(integrated_resource_id, resultCallback);
 					if(resultCallback) resultCallback(evt);
 				}.bind(this),
 				on_failure: harvestWidget.processFailure
 			});
+		}
+	},
+
+	deleteTimeEntry:function(resultCallback){
+		if (harvestBundle.remote_integratable_id) {
+			deleteTimeEntryUsingIds(harvestBundle.remote_integratable_id, harvestBundle.integrated_resource_id, resultCallback);
 		} else {
 			alert('Harvest widget is not loaded properly. Please delete the entry manually.');
 		}
@@ -341,9 +348,9 @@ HarvestWidget.prototype= {
 		}.bind(this));
 	},
 
-	delete_harvest_resource_in_db:function(resultCallback){
-		if (harvestBundle.integrated_resource_id) {
-			this.freshdeskWidget.delete_integrated_resource(harvestBundle.integrated_resource_id);
+	delete_harvest_resource_in_db:function(integrated_resource_id, resultCallback){
+		if (integrated_resource_id) {
+			this.freshdeskWidget.delete_integrated_resource(integrated_resource_id);
 			harvestBundle.integrated_resource_id = "";
 			harvestBundle.remote_integratable_id = "";
 		}
