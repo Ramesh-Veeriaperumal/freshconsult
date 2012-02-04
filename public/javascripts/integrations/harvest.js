@@ -235,7 +235,24 @@ HarvestWidget.prototype= {
 			alert(evt.responseText);
 		}
 	},
-	
+
+	updateTimeEntryUsingIds:function(remote_integratable_id, hours, resultCallback) {
+		if (remote_integratable_id) {
+			this.freshdeskWidget.request({
+				entity_name: "request",
+				"request[hours]": hours+"",
+				resource: "daily/update/"+remote_integratable_id,
+				content_type: "application/xml",
+				method: "post",
+				on_success: function(evt){
+					harvestWidget.handleTimeEntrySuccess(evt);
+					if(resultCallback) resultCallback(evt);
+				}.bind(this),
+				on_failure: harvestWidget.processFailure
+			});
+		}
+	},
+
 	// Methods for external widgets use.
 	updateTimeEntry:function(resultCallback){
 		if (harvestBundle.remote_integratable_id) {

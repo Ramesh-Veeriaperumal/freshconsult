@@ -24,14 +24,32 @@ module Helpdesk::TimeSheetsHelper
     integrated_apps.each do |app|
       unless get_app_details(app[0]).blank? 
         #page << "console.log(#{timeentry.to_json})"
-        page << "#{app[2]}.updateNotesAndTimeSpent('#{timeentry.note}', #{get_time_in_hours(timeentry.time_spent)}, #{timeentry.billable});"
+        page << "#{app[2]}.updateNotesAndTimeSpent('#{timeentry.note}' #{get_app_specific_hours(app[0], timeentry.hours, timeentry.timer_running)}, #{timeentry.billable});"
         page << "#{app[2]}.logTimeEntry();"
-        page << "#{app[2]}.set_timesheet_entry_id(#{timeentry.id});"
+        page << "#{app[2]}.set_timesheet_entry_id(#{timeentry.id});" # This is not needed for update.  But no harm in calling.
       end
     end
   end
   
-  def modifyTimesheetApps( timeentry, type = :edit )
+  def pushToIntegratedAppsWithoutLoading(timeentry, type=:edit)
+    script = ""
+    integrated_apps.each do |app|
+      app_detail = get_app_details(app[0])
+      unless app_detail.blank? && timeentry.blank?
+        integrated_app = timeentry.integrated_resources.find_by_installed_application_id(app_detail)
+        unless integrated_app.blank?
+          if type == :delete
+            script += "#{app[2]}.deleteTimeEntryUsingIds(#{integrated_app.id}, #{integrated_app.remote_integratable_id});"
+          else
+            script += "#{app[2]}.updateTimeEntryUsingIds(#{integrated_app.remote_integratable_id} #{get_app_specific_hours(app[0], timeentry.hours, timeentry.timer_running)});"
+          end
+        end
+      end
+    end
+    script
+  end
+  
+  def modifyTimesheetApps(timeentry)
     script = ""
     integrated_apps.each do |app|
       app_detail = get_app_details(app[0])
@@ -39,16 +57,17 @@ module Helpdesk::TimeSheetsHelper
         integrated_app = timeentry.integrated_resources.find_by_installed_application_id(app_detail)
         #script += "console.log('#{integrated_app.inspect}');"
         unless integrated_app.blank?
-          case type
-            when :delete then
-              script += "#{app[2]}.deleteTimeEntryUsingIds(#{integrated_app.id}, #{integrated_app.remote_integratable_id});" 
-            else
-              script += "#{app[2]}.setIntegratedResourceIds(#{integrated_app.id}, #{integrated_app.remote_integratable_id});"
-          end
+          script += "#{app[2]}.setIntegratedResourceIds(#{integrated_app.id}, #{integrated_app.remote_integratable_id});"
         end
       end
     end
     script
+  end
+
+  def get_app_specific_hours(app_name, hours, timer_running)
+    hours = hours == 0 ? ", 0.01" : ", "+hours
+    hours = ", ''" if app_name == "harvest" and timer_running
+    hours
   end
   
   private 

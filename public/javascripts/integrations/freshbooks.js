@@ -8,6 +8,7 @@ FreshbooksWidget.prototype = {
 	CREATE_TIMEENTRY_REQ:new Template('<?xml version="1.0" encoding="ISO-8859-1"?><request method="time_entry.create"> <time_entry> <project_id>#{project_id}</project_id> <task_id>#{task_id}</task_id> <hours>#{hours}</hours> <notes><![CDATA[#{notes}]]></notes> <staff_id>#{staff_id}</staff_id> </time_entry></request>'),
 	RETRIEVE_TIMEENTRY_REQ:new Template('<?xml version="1.0" encoding="ISO-8859-1"?><request method="time_entry.get"> <time_entry_id>#{time_entry_id}</time_entry_id> </request>'),
 	UPDATE_TIMEENTRY_REQ:new Template('<?xml version="1.0" encoding="ISO-8859-1"?><request method="time_entry.update"> <time_entry> <time_entry_id>#{time_entry_id}</time_entry_id> <project_id>#{project_id}</project_id> <task_id>#{task_id}</task_id> <staff_id>#{staff_id}</staff_id> <hours>#{hours}</hours> <notes><![CDATA[#{notes}]]></notes> </time_entry></request>'),
+	UPDATE_TIMEENTRY_ONLY_HOURS_REQ:new Template('<?xml version="1.0" encoding="ISO-8859-1"?><request method="time_entry.update"> <time_entry> <time_entry_id>#{time_entry_id}</time_entry_id> <hours>#{hours}</hours> </time_entry></request>'),
 	DELETE_TIMEENTRY_REQ:new Template('<?xml version="1.0" encoding="ISO-8859-1"?><request method="time_entry.delete"> <time_entry_id>#{time_entry_id}</time_entry_id> </request>'),
 
 	initialize:function(freshbooksBundle, loadInline){
@@ -284,6 +285,24 @@ FreshbooksWidget.prototype = {
 			}
 		}
 		return true;
+	},
+
+	updateTimeEntryUsingIds:function(remote_integratable_id, hours, resultCallback) {
+		if (remote_integratable_id) {
+			var body = this.UPDATE_TIMEENTRY_ONLY_HOURS_REQ.evaluate({
+				time_entry_id: remote_integratable_id,
+				hours: hours+""
+			});
+			this.freshdeskWidget.request({
+				body: body,
+				content_type: "application/xml",
+				method: "post",
+				on_success: function(evt){
+					this.handleTimeEntrySuccess(evt);
+					if(resultCallback) resultCallback(evt);
+				}.bind(this)
+			});
+		}
 	},
 
 	// Methods for external widgets use.
