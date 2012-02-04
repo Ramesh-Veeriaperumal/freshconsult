@@ -16,9 +16,6 @@
  	  </div>
 	</fieldset>
 	<%= content_tag :div, "", :id => "timeentry_apps_#{edit.id}" %>
-	<% javascript_tag do %>
-	  <%= modifyTimesheetApps(edit) %> 
-	<% end  %>
 	
  	<div class="button-container">
  	  <%= submit_tag "Update", :class => "uiButton special submit", "data-loading-text" => "Saving time entry..." %>

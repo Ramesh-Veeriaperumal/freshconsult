@@ -35,7 +35,7 @@ module Helpdesk::TimeSheetsHelper
     script = ""
     integrated_apps.each do |app|
       app_detail = get_app_details(app[0])
-      unless app_detail.blank? && timeentry.blank?
+      unless app_detail.blank? or timeentry.blank?
         integrated_app = timeentry.integrated_resources.find_by_installed_application_id(app_detail)
         unless integrated_app.blank?
           if type == :delete
@@ -53,10 +53,12 @@ module Helpdesk::TimeSheetsHelper
     script = ""
     integrated_apps.each do |app|
       app_detail = get_app_details(app[0])
-      unless app_detail.blank? && timeentry.blank?
+      unless app_detail.blank? or timeentry.blank?
         integrated_app = timeentry.integrated_resources.find_by_installed_application_id(app_detail)
         #script += "console.log('#{integrated_app.inspect}');"
-        unless integrated_app.blank?
+        if integrated_app.blank?
+          script += "#{app[2]}.setIntegratedResourceIds('', '');"
+        else
           script += "#{app[2]}.setIntegratedResourceIds(#{integrated_app.id}, #{integrated_app.remote_integratable_id});"
         end
       end
@@ -65,8 +67,7 @@ module Helpdesk::TimeSheetsHelper
   end
 
   def get_app_specific_hours(app_name, hours, timer_running)
-    hours = hours == 0 ? ", 0.01" : ", "+hours
-    hours = ", ''" if app_name == "harvest" and timer_running
+    hours = (hours == 0 or hours == '')? ", 0.01" : ", "+hours
     hours
   end
   
