@@ -354,7 +354,9 @@ class Account < ActiveRecord::Base
     p_features = PLANS_AND_FEATURES[s_plan]
     unless p_features.nil?
       p_features[:inherits].each { |p_n| remove_features_of(p_n) } unless p_features[:inherits].nil?
+      
       features.send(s_plan).destroy
+      p_features[:features].each { |f_n| features.send(f_n).destroy } unless p_features[:features].nil?
     end
   end
   

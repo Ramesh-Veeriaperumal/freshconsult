@@ -1,29 +1,38 @@
-<div class="floatr">
-  <%= button_to_function t(".buy_pass"), "jQuery(this).removeClass('special');jQuery('#BuyPasses').slideDown();", :class => "uiButton special" %>
-</div>
-<%= content_tag :h3, t(".title") + " - " + content_tag(:span, t(".current_balance", :balance => @day_pass_config.available_passes), :class => "highlight"), :class => "title" %> 
-  <ul id="BuyPasses" class="ui-form tabbed hide">
-    <li>
-   <%= content_tag :h4, t(".buy_pass"), :class => "title" %>
-   <% form_tag(buy_now_admin_day_pass_path(@day_pass_config), :method => :put) do %>
-     <%= ul @day_pass_amounts.map { |pass|
-          content_tag :label,  
-                       radio_button_tag(:quantity, pass[0], (pass[0] == 10), "data-amount" => pass[1]) +
-                       content_tag(:span, t(".day_pass_pack", :quantity => pass[0], :currency => "$", :amount => pass[1]))
-         },  
-         :class => "inputs-list"
-     %>
-    <p>
-	    <%= submit_tag t(".buy_now"), :class => "uiButton special", :onclick => "return confirm('#{t(".add_confirm")} $' + jQuery('input[name=quantity]:checked').data('amount'));" %>
-	    <%= button_to_function t("cancel"), "jQuery('#BuyPasses').slideUp();", :class => "uiButton" %>
-		</p>
-		<% end %>
-	  </li>
-	</ul>
-	<span class="seperator"></span>
-	<div>
-	  <%= content_tag :h3, t(".day_pass_history"), :class => "title" %>
-	  <% unless @day_pass_purchases.empty? %>
+      <div class="admin_icon_image">
+        <div class="content">
+          <%= content_tag :h2, t(".title"), :class => "title" %>  
+
+          <div class="intro">
+            <h3 class="title">
+              <%= t(".current_balance", :balance => pluralize(@day_pass_config.available_passes, "pass")) %>
+            </h3>
+          </div>
+          <%= button_to_function t(".buy_pass"), "jQuery(this).hide();jQuery('#BuyPasses').slideDown();", :class => "uiButton special", :id => "daypass_button" %>
+          <div id="BuyPasses" class="hide">
+           <span class="seperator"></span>
+           <%= content_tag :h2, t(".buy_pass"), :class => "title" %>        
+           <% form_tag(buy_now_admin_day_pass_path(@day_pass_config), :method => :put) do %>
+             <%= ul @day_pass_amounts.map { |pass|
+                  content_tag :label,  
+                    radio_button_tag(:quantity, pass[0], (pass[0] == 10), "data-amount" => pass[1]) +
+                    content_tag(:span, t(".day_pass_pack", :quantity => pass[0], :currency => "$", :amount => pass[1]))
+                 },  
+                 :class => "inputs-list"
+             %>
+            <p>
+        	    <%= submit_tag t(".buy_now"), :class => "uiButton special", :onclick => "return confirm('#{t(".add_confirm")} $' + jQuery('input[name=quantity]:checked').data('amount'));" %>
+        	    <%= button_to_function t("cancel"), "jQuery('#BuyPasses').slideUp(function(){jQuery('#daypass_button').show()});", :class => "uiButton" %>
+        		</p>
+        		<% end %>
+        	</div>         	
+        </div>
+      </div> 
+       
+  
+	<% unless @day_pass_purchases.empty? %> 
+	<br /><br />
+	<div class="tabbed">
+	  <%= content_tag :h4, t(".day_pass_history"), :class => "title" %>
 	  <div class="table-grid">
 	  <table>
       <thead>
@@ -40,12 +49,9 @@
        <%= render :partial => "purchases", :collection => @day_pass_purchases %> 
 	    </tbody>
     </table>
-    </div> 
-    <% else %>
-      <div class="info-highlight"><%=  t(".no_purchase") %></div>
-    <% end %>
+    </div>
 	</div> 
-	
+  <% end %>	 
 <% content_for :sidebar do -%>
   <div class="sidepanel">
     <div class="actions">
@@ -53,13 +59,19 @@
     </div>
     <%= content_tag :h3, t(".auto_recharge"), :class => "title" %>
     <p><%= content_tag :strong, t(".recharge_quantity") %> </p>
-    <div><%= t(".daypass_quantity", :quantity => @day_pass_config.recharge_quantity) %> (<a href="javascript:void(0)" onclick="jQuery(this).parent().hide(); jQuery('#update_daypass').slideDown();"><%= t("change") %></a>) </div>
-    <div id="update_daypass" style="display:none;">
+    <div  id="text_daypass" class="intro"><%= t(".daypass_quantity", :quantity => @day_pass_config.recharge_quantity) %> (<a href="javascript:void(0)" onclick="jQuery(this).parent().hide(); jQuery('#update_daypass').slideDown();"><%= t("change") %></a>) </div>
+    <div id="update_daypass" class="intro hide">
     <% form_tag(admin_day_pass_path(@day_pass_config), :method => :put ) do %>
       <%= select :day_pass_config, :recharge_quantity, options_for_select([ "5", "10", "25", "50" ], @day_pass_config.recharge_quantity.to_s)  %>
       <%= t(".day_passes") %>
-      <button class='button'><%= t("update") %></button>
+      <br />      
+      <button class='button' style="margin-left:-2px;"><%= t("update") %></button> or <a href="javascript:void(0)" onclick="$('update_daypass').hide(); $('text_daypass').show()" >cancel</a>
     <% end %>
     </div>
+    <span class="seperator"></span>
+    <br />
+    <p class="intro">
+      <%= t('.helptext') %>
+    </p>
   </div>
-<% end %> 
+<% end %>

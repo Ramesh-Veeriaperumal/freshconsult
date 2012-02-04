@@ -1,24 +1,30 @@
 <% content_for :sidebar do %>
 	<div class="sidepanel">
 		<h3 class="title"><%= t('email_command_settings_heading')%></h3>
-		<p>
-		 Email commands within Freshdesk enable an agent, to update a ticket directly from his mail inbox. 
-		 Easy to understand and get used to, email commands will speed up ticket processing and enable quick fire responses.
-		 
-		 <br><br>In the case of custom fields, the fields configured by the agent also can be converted into commands.
+		<p>	 
+      When replying to Email notifications from Freshdesk you can now include "Email Commands" to instruct Freshdesk to perform certain actions on the Ticket. 
+      </p>
+    <p>
+      Email commands must follow the correct syntax and must be placed within a pre-configured delimiter text. (Default is @simonsays)
+    </p>
+    <p>
+      For example the command - "@simonsays agent : John Roberts Status:Resolved @simonsays" will assign the ticket to the agent John Roberts and mark the Ticket as Resolved. 
+    </p>
+    <p>
+      The rest of your email content will be added as a conversation to Freshdesk and also sent to the Requestor via email. The Email Command text will be stripped by Freshdesk and will not be seen by the Requestor.
+      </p>
 
-		 Please note that default delimiter is @simonsays but the agent can change it to his or her own preference. 
-		 
-		 If the format for the command is incorrect, then the actions won’t be executed but the email will be sent as usual	
-		 
-		 <br><br><b>Available email commands: </b><br><br>
-		 status : pending<br>
-		 priority : medium<br>
-		 agent : Jhon Robert<br>
-		 group : Sales<br>
-		 source : email<br>
-		 product : Network<br>
-		 <%= @email_content_custom_commands%>
+
+		 <span class="seperator"></span>
+		 <p>
+		 <h4>Available commands</h4>
+		 <strong>status</strong>: pending<br>
+		 <strong>priority</strong>: medium<br>
+		 <strong>agent</strong>: John Robert<br>
+		 <strong>group</strong>: Sales<br>
+		 <strong>source</strong>: email<br>
+		 <strong>product</strong>: Freshdesk<br>
+		 <%= @email_content_custom_commands%>		 
 		</p>
 	</div>
 <% end %>
