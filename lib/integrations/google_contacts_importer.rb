@@ -9,7 +9,7 @@ class Integrations::GoogleContactsImporter
 
   def self.sync_google_contacts_for_all_accounts 
     # The below query fetches GoogleAccount along with InstalledApplication's configs field through inner join.  So only if the google_contacts integration is enabled this will fetch the detail.
-    google_accounts = Integrations::GoogleAccount.fetch_all_installed_google_accounts
+    google_accounts = Integrations::GoogleAccount.find_all_installed_google_accounts
     google_accounts.each { |google_account|
 #        sync_type = YAML::load(google_account.configs)[:inputs]["sync_type"]
       begin
@@ -42,7 +42,7 @@ class Integrations::GoogleContactsImporter
           # Fetch the contact in Google first
           goog_contacts = @google_account.fetch_latest_google_contacts
           # Remove discrepancy method also updates google_id in the db_contacts. This is will be useful in deciding update or add of a contact while exporting.
-          remove_discrepancy(db_contacts, goog_contacts, "DB", true)
+          remove_discrepancy_and_set_google_data(db_contacts, goog_contacts, "DB", true)
           google_stats = @google_account.batch_update_google_contacts(db_contacts)
         when SyncType::OVERWRITE_REMOTE # Import
           goog_contacts = @google_account.fetch_latest_google_contacts
@@ -50,19 +50,19 @@ class Integrations::GoogleContactsImporter
         when SyncType::MERGE_LOCAL # Merge Freshdesk precedence  
           db_contacts = find_updated_db_contacts
           goog_contacts = @google_account.fetch_latest_google_contacts
-          remove_discrepancy(db_contacts, goog_contacts,"DB")
+          remove_discrepancy_and_set_google_data(db_contacts, goog_contacts,"DB")
           google_stats = @google_account.batch_update_google_contacts(db_contacts)
           db_stats = update_db_contacts(goog_contacts, overwrite_existing_user)
         when SyncType::MERGE_REMOTE # Merge Google precedence
           db_contacts = find_updated_db_contacts
           goog_contacts = @google_account.fetch_latest_google_contacts
-          remove_discrepancy(db_contacts, goog_contacts,"GOOGLE")
+          remove_discrepancy_and_set_google_data(db_contacts, goog_contacts,"GOOGLE")
           google_stats = @google_account.batch_update_google_contacts(db_contacts)
           db_stats = update_db_contacts(goog_contacts, overwrite_existing_user)
         when SyncType::MERGE_LATEST # Take latest record as precedence
           db_contacts = find_updated_db_contacts
           goog_contacts = @google_account.fetch_latest_google_contacts
-          remove_discrepancy(db_contacts, goog_contacts)
+          remove_discrepancy_and_set_google_data(db_contacts, goog_contacts)
           google_stats = @google_account.batch_update_google_contacts(db_contacts)
           db_stats = update_db_contacts(goog_contacts, overwrite_existing_user)
       end

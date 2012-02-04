@@ -21,7 +21,7 @@ class GoogleContacts < ActiveRecord::Migration
     create_table :google_contacts do |t|
       t.column :user_id, "bigint unsigned"
       t.string :google_id
-      t.string :google_xml
+      t.text :google_xml
       t.column :google_account_id, "bigint unsigned"
     end
 

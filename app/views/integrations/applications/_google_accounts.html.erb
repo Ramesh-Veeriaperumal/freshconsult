@@ -5,11 +5,11 @@
 	google_acc = google_accs[0]
 %>
 <div class="google_contacts_sync">
-	<label class="caption"> Name</label>    
+	<label class="caption"> Name</label>
 	<div class="fields">
 	    <label><%=google_acc.name%></label>
 	</div>
-    <label class="caption"> Email</label>    
+    <label class="caption"> Email</label>
     <div class="fields">
         <label><%=google_acc.email%></label>
     </div>
@@ -23,7 +23,13 @@
     </div>
     <label class="caption"> Last sync time</label>    
     <div class="fields">
-        <label><%=formated_date(google_acc.last_sync_time)%></label>
+        <label>
+        	<%if google_acc.last_sync_time.year == 1970%>
+        		<%=t("integrations.google_contacts.not_yet_synced")%>
+			<%else%>
+        		<%=formated_date(google_acc.last_sync_time)%>
+			<%end%>
+		</label>
     </div>
     <label class="caption"> Last sync status</label>    
     <div class="fields">
@@ -34,7 +40,7 @@
 		<%=link_to(t("integrations.google_contacts.delete"), {:controller=>"google_accounts", :action => "delete", :id => google_acc.id, :iapp_id=>params[:id] },
 					      :confirm => "Are you sure?", :class => "floatr uiButton", :method => :delete) %>
 	<% end %>
-<!--  This was used for showing multiple accounts.  As on now we only allow single account configuration.
+<!--  This was used for showing multiple accounts.  As of now, we only allow single account configuration.
 	<div class="grid">
 		<table borer="0">
 			<tr>

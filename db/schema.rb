@@ -357,7 +357,7 @@ ActiveRecord::Schema.define(:version => 20120217162346) do
   create_table "google_contacts", :force => true do |t|
     t.integer "user_id",           :limit => 8
     t.string  "google_id"
-    t.string  "google_xml"
+    t.text    "google_xml"
     t.integer "google_account_id", :limit => 8
   end
 

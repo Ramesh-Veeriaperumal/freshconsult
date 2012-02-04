@@ -71,10 +71,10 @@ require 'openssl'
         if user.blank?
           json = {:user_exists => :false, :t=>generate_random_hash(google_viewer_id, current_account)}  
         else
-          single_access_token = user.reset_single_access_token
-          saved = user.save!
-          puts "single access token reset status #{saved} #{current_account.full_domain}"
-          json = {:user_exists => :true, :t=>single_access_token, :url_root=>current_account.full_domain} # TODO Check with Shan on, what will be populated for full_domain in case user hosts on his own domain name.
+#          single_access_token = user.reset_single_access_token
+#          saved = user.save!
+#          puts "single access token reset status #{saved} #{current_account.full_domain}"
+          json = {:user_exists => :true, :t=>user.single_access_token, :url_root=>current_account.full_domain} # TODO Check with Shan on, what will be populated for full_domain in case user hosts on his own domain name.
         end
       end
     else      

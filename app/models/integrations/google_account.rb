@@ -2,6 +2,7 @@
 # Check out google_contacts_importer for proper import, export or merge functionalities.
 
 class Integrations::GoogleAccount < ActiveRecord::Base
+  include Integrations::GoogleContactsUtil
 
   belongs_to :account
   belongs_to :sync_tag, :class_name => "Helpdesk::Tag"
@@ -166,6 +167,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
                 stats[0][0]+=1
                 puts "Newly added contact id #{goog_id} and status #{updated} #{stats}"
               else
+                update_google_contact_id(db_contact, goog_id) if db_contact.google_contact.blank?
                 operation == DELETE ? stats[0][2]+=1 : stats[0][1]+=1
                 puts "Successfully #{operation}d contact with id #{id} and status_code #{status_code} #{stats}."
               end
@@ -191,12 +193,10 @@ class Integrations::GoogleAccount < ActiveRecord::Base
     def add_google_contact(db_contact, batch=false)
   #      puts "add_google_contact "+db_contact.inspect
       google_account = self
-      group_uri = nil
-      group_uri = google_group_uri(google_account.email, google_account.sync_group_id) unless google_account.sync_group_id.blank?
       if batch
-        return covert_to_batch_contact_xml(db_contact, CREATE, group_uri)
+        return covert_to_batch_contact_xml(db_contact, CREATE)
       else
-        goog_contact_entry_xml += covert_to_contact_xml(db_contact, group_uri)
+        goog_contact_entry_xml += covert_to_contact_xml(db_contact)
 #        puts "goog_contact_entry_xml #{goog_contact_entry_xml}"
         goog_contacts_url = google_contact_uri(google_account)
         access_token = prepare_access_token(google_account.token, google_account.secret)
@@ -224,9 +224,9 @@ class Integrations::GoogleAccount < ActiveRecord::Base
         group_uri = nil
         group_uri = google_group_uri(google_account.email, google_account.sync_group_id) unless google_account.sync_group_id.blank?
         if batch
-          return covert_to_batch_contact_xml(db_contact, UPDATE, group_uri)
+          return covert_to_batch_contact_xml(db_contact, UPDATE)
         else
-          goog_contact_entry_xml = covert_to_contact_xml(db_contact, group_uri)
+          goog_contact_entry_xml = covert_to_contact_xml(db_contact)
           goog_contacts_url = google_contact_uri(google_account)+"/"+goog_contact_id
     #        puts goog_contact_entry_xml +" "+goog_contacts_url 
           access_token = prepare_access_token(google_account.token, google_account.secret)
@@ -234,6 +234,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
           puts "Updating contact #{db_contact}, response #{response.inspect}"
           if response.code == "200" || response.code == "201"
             puts "Successfully updated contact #{goog_contact_id}"
+            #TODO update the google_id if the google_contact is not yet created for this db_contact.
           elsif response.code == "404"  # If the user does not found.
             puts "Contact does not exist. Adding the contact #{goog_contact_id}"
             add_google_contact(db_contact)
@@ -275,57 +276,62 @@ class Integrations::GoogleAccount < ActiveRecord::Base
       access_token = prepare_access_token(token, secret)
       updated_contact_xml = access_token.get(goog_contacts_url).body
 #      puts goog_contacts_url + "   " + updated_contact_xml
-      updated_contact_hash = {}
-      begin
-        updated_contact_hash = XmlSimple.xml_in(updated_contact_xml)
-        updated_contact_hash = updated_contact_hash['entry']
-      rescue
-        puts "Error: No contact fetched."+updated_contact_hash.inspect
-      end
-#      puts updated_contact_hash.inspect
       google_users = []
-      updated_contact_hash.each { |contact_entry|
-        converted_user = convert_to_user(contact_entry, account)
-        google_users.push(converted_user) unless (converted_user.blank? or converted_user.email.blank?)
-      }
-
+      begin
+        doc = REXML::Document.new(updated_contact_xml)   
+        doc.elements.each('feed/entry') { |contact_entry_element|
+          converted_user = convert_to_user(contact_entry_element)
+          google_users.push(converted_user) unless (converted_user.blank? or converted_user.email.blank?)
+        }
+      rescue => e
+        puts "Error: No contact fetched. #{e.inspect}"+updated_contact_xml
+      end
       puts "#{google_users.length} users from google account has been fetched with query #{query_params}. Email #{google_account.email}"
       return google_users
     end
 
-    def covert_to_batch_contact_xml(user, operation, group_uri=nil)
+    def covert_to_batch_contact_xml(user, operation)
       goog_contacts_url = google_contact_uri(self)
       if operation != CREATE
         goog_contacts_url += "/"+user.google_id
       end
       etag_xml = ""#operation == CREATE ? "" : " gd:etag='#{operation}ContactEtag'"
       xml_str = "<entry#{etag_xml}> <batch:id>#{operation}</batch:id> <batch:operation type='#{operation == CREATE ? "insert" : operation}'/> <id>#{goog_contacts_url}</id> <category scheme='http://schemas.google.com/g/2005#kind' term='http://schemas.google.com/contact/2008#contact'/>"
-      xml_str << contact_xml(user, group_uri) unless operation == DELETE
+      xml_str << contact_xml(user) unless operation == DELETE
       xml_str << "</entry>"
 #      puts "xml_str #{xml_str}"
       return xml_str
     end
 
-    def covert_to_contact_xml(user, group_uri=nil)
+    def covert_to_contact_xml(user)
       # Creating xml string directly with out using xml object.  Works faster.
       xml_str =   "<atom:entry xmlns:atom='http://www.w3.org/2005/Atom' xmlns:gd='http://schemas.google.com/g/2005' xmlns:gContact='http://schemas.google.com/contact/2008'> <atom:category scheme='http://schemas.google.com/g/2005#kind' term='http://schemas.google.com/contact/2008#contact'/>"
-      xml_str << contact_xml(user, group_uri)
+      xml_str << contact_xml(user)
       xml_str << "</atom:entry>"
     end
 
-    def contact_xml(user, group_uri=nil)
+    def contact_xml(user)
       xml_str = ""
-      user.class.column_names.collect { |prop_name|
-        if(user.has_attribute?(prop_name) && @@fd_goog_contact_xml_mapping.has_key?(prop_name))
+      # This will make sure the entries present in the google is preserved without touching them
+      trimmed_xml = trimmed_contact_xml(user, self.sync_group_id)
+      trimmed_xml.elements {|ele|
+        xml_str << ele.to_s
+      }
+      # Now append the overwritten entries
+      USER_FILEDS_TO_GOOGLE_XML_MAPPING.each { |prop_name, goog_prop_xml|
+        if(!goog_prop_xml.blank? and user.has_attribute?(prop_name))
           prop_value = user.read_attribute(prop_name)
           unless prop_value.blank?
-            goog_prop_xml = @@fd_goog_contact_xml_mapping[prop_name]
             prop_value = prop_value.to_s.to_xs
             xml_str << goog_prop_xml.gsub("$"+prop_name, prop_value)
           end
         end
       }
-      xml_str << " <gContact:groupMembershipInfo deleted='false' href='"+group_uri+"'/>" unless group_uri.blank?
+      xml_str << " <gd:organization rel='http://schemas.google.com/g/2005#other'><gd:orgName>#{user.customer.name}</gd:orgName></gd:organization>" unless user.customer.blank?
+      unless self.sync_group_id.blank?
+        group_uri = google_group_uri(self.email, self.sync_group_id) 
+        xml_str << " <gContact:groupMembershipInfo deleted='false' href='#{group_uri}'/>"
+      end
     end
 
     def prepare_access_token(oauth_token, oauth_token_secret)
@@ -358,92 +364,47 @@ class Integrations::GoogleAccount < ActiveRecord::Base
     end
 
     # This method will take care of creating(add) or fetch/updating(edit) or setting delete flag(delete) an user from google contact entry xml. 
-    def convert_to_user(contact_xml_as_hash, account)
-      goog_contact_detail = {}; user = nil
-      emails = Integrations::GoogleContactsUtil.get_prime_sec_email(contact_xml_as_hash)
-      primary_email = emails[0]  #primary email
-      goog_contact_detail["primary_email"] = primary_email
+    def convert_to_user(contact_entry_ele)
+      goog_contact_detail = parse_user_xml(contact_entry_ele)
+      user = nil
       # Get the user based on his primary email address
-      user = find_user_by_email(primary_email) unless primary_email.blank?
-      goog_contact_detail["second_email"] = emails[1] # secondary email
+      user = find_user_by_email(goog_contact_detail[:primary_email]) unless goog_contact_detail[:primary_email].blank?
 
-      # Google id based search and updating google_id will only happen for the primary google account.
-      if is_primary?
-        google_id = Integrations::GoogleContactsUtil.parse_id(contact_xml_as_hash['id'])
-        # user is not found using email then fetch user based on his google id. mostly used for deleted users in google contacts.
-        user = find_user_by_google_id(google_id) if user.blank?
-      end
-
-      title = contact_xml_as_hash['title']
-      goog_contact_detail["title"] = title[0]['content'] unless title.blank?
+      # user is not found using email then fetch user based on his google id. mostly used for deleted users in google contacts.
+      user = find_user_by_google_id(goog_contact_detail[:google_id]) if user.blank? and self.is_primary?
 
       # Create the user if not able to fetch with any of the above options
       user = User.new if user.blank?
-      user.google_contact = GoogleContact.new if user.google_contact.blank?
-
-      # Fetch values from google xml
-      if contact_xml_as_hash['deleted'].blank?
-        goog_contact_detail["deleted"] = false
-      else
-        goog_contact_detail["deleted"] = true
+      # Google id based search and updating google_id will only happen for the primary google account.
+      if self.is_primary?
+        user.google_contact = GoogleContact.new(:google_account=>self) if user.google_contact.blank?
+        user.google_contact.google_xml = goog_contact_detail[:google_xml]
+        user.google_contact.google_id = goog_contact_detail[:google_id]
+        user.google_contact.google_group_ids = goog_contact_detail[:google_group_ids]
       end
-      contact_xml_as_hash["postalAddress"].each { |p_addr|
-        rel = p_addr["rel"]
-        value = p_addr["content"]
-        if rel.end_with?("work")
-          goog_contact_detail["postalAddress_work"] = value
-        elsif rel.end_with?("home")
-          goog_contact_detail["postalAddress_home"] = value
-        end
-      }
-      contact_xml_as_hash["phoneNumber"].each { |phone_no|
-        rel = phone_no["rel"]
-        value = phone_no["content"]
-        if rel.end_with?("work")
-          goog_contact_detail["phoneNumber_work"] = value
-        elsif rel.end_with?("mobile")
-          goog_contact_detail["phoneNumber_mobile"] = value
-        end
-      }
+
       # orgName would be considered as customer name.  If the name is removed then the customer will not be associated
-      org_entry = contact_xml_as_hash["organization"] 
-      orgName = org_entry[0]["orgName"] unless org_entry.blank?
+      orgName = goog_contact_detail[:orgName]
       if orgName.blank?
         user.customer = nil
       else
-        customer = Customer.find_by_name(orgName[0])
+        customer = Customer.find_by_name(orgName)
         if customer.blank?
           customer = Customer.new
-          customer.name = orgName[0]
+          customer.name = orgName
         end
         user.customer = customer
       end
-      notes_content = contact_xml_as_hash["content"]
-      goog_contact_detail["content"] = notes_content["content"] unless notes_content.blank?
-
-      # Fetch google group detail
-      groups_xml = contact_xml_as_hash["groupMembershipInfo"]
-      google_group_ids = []
-      groups_xml.each {|grp_xml|
-        group_id = Integrations::GoogleContactsUtil.parse_id([grp_xml["href"]])
-        google_group_ids.push(group_id) unless group_id.blank?
-      }
-
-      # Set the google updated time in the user model
-      updated = contact_xml_as_hash["updated"][0]
-      goog_contact_detail["updated_at"] = Time.parse(updated)
 
       user.add_tag self.sync_tag # Tag the user with the sync_tag
 #      puts "Complete goog_contact_detail "+goog_contact_detail.inspect + ", sync_tag_id #{sync_tag_id}, user detail "+user.inspect
 
-      # Set the values for the user.  TODO The below code could be avoided by directly setting the values in the user object itself.
+      # Set the values for the user.
       goog_contact_detail.each { |key, value|
-        db_attr = @@goog_fd_field_mapping[key]
+        db_attr = GOOGLE_FIELDS_TO_USER_FILEDS_MAPPING[key]
         user.write_attribute(db_attr, value) unless (db_attr.blank? or value.blank?)
       }
 
-      user.google_contact.google_id = google_id
-      user.google_contact.google_group_ids = google_group_ids
       user.account = account if user.account.blank?
       user.customer.account = account unless user.customer.blank? || !user.customer.account.blank?
 #      puts "Converted user.  User id #{user.id}.  Delete flag #{user.deleted}."
@@ -454,7 +415,10 @@ class Integrations::GoogleAccount < ActiveRecord::Base
       if db_contact.blank?
         return false
       else
-        db_contact.google_id = goog_id
+        if db_contact.google_contact.blank?
+          db_contact.google_contact = GoogleContact.new(:google_account=>self)
+        end
+        db_contact.google_contact.google_id = goog_id
         db_contact.save!
       end
     end
@@ -468,28 +432,6 @@ class Integrations::GoogleAccount < ActiveRecord::Base
                                   :conditions=>["google_contacts.google_id = ? and google_contacts.google_account_id = ?", google_id, self.id]) unless google_id.blank?
     end
 
-    @@fd_goog_contact_xml_mapping = {
-      "name" => "<gd:name><gd:fullName>$name</gd:fullName></gd:name>", 
-      "email" => "<gd:email rel='http://schemas.google.com/g/2005#work' primary='true' address='$email'/>",
-      "second_email" => "<gd:email rel='http://schemas.google.com/g/2005#home' address='$second_email'/>", 
-      "phone" => "<gd:phoneNumber rel='http://schemas.google.com/g/2005#work' primary='true'>$phone</gd:phoneNumber>",
-      "mobile" => "<gd:phoneNumber rel='http://schemas.google.com/g/2005#home'>$mobile</gd:phoneNumber>",
-      "address" => "<gd:structuredPostalAddress rel='http://schemas.google.com/g/2005#work' primary='true'> <gd:formattedAddress> $address </gd:formattedAddress> </gd:structuredPostalAddress>",
-      "description" => "<gd:content>$description</gd:content>",
-    }
-
-    @@goog_fd_field_mapping = {
-      "title" => "name",
-      "primary_email" => "email",
-      "second_email" => "second_email",
-      "phoneNumber_mobile" => "mobile",
-      "phoneNumber_work" => "phone",
-      "deleted" => "deleted",
-      "postalAddress_home" => "description",
-      "postalAddress_work" => "address",
-      "updated_at" => "updated_at",
-      "content" => "description",
-    }
     CREATE="create"
     RETRIEVE="retrieve"
     UPDATE="update"

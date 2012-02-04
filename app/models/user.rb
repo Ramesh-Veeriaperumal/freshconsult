@@ -219,7 +219,7 @@ class User < ActiveRecord::Base
   
    
   #accepts_nested_attributes_for :agent
-  accepts_nested_attributes_for :customer  # Added to save the customer while importing user from google contacts.
+  accepts_nested_attributes_for :customer, :google_contact  # Added to save the customer while importing user from google contacts.
   
 
   #Savage_beast changes start here
@@ -443,9 +443,5 @@ class User < ActiveRecord::Base
      auth.destroy
    end 
  end
- 
- 
- 
- 
-  
+   
 end
