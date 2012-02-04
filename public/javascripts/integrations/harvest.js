@@ -134,7 +134,10 @@ HarvestWidget.prototype= {
 	},
 
 	validateInput:function() {
-		var hoursSpent = parseFloat($("harvest-timeentry-hours").value);
+		var hoursSpent = $("harvest-timeentry-hours").value
+	    if (hoursSpent != "") {
+			hoursSpent = parseFloat(hoursSpent);
+		}
 		if(isNaN(hoursSpent)){
 			alert("Enter valid value for hours.");
 			return false;
