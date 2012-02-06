@@ -1,11 +1,4 @@
-
 class HttpRequestProxy
-  include HTTParty
-
-  def initialize
-    puts "Calling initialize"
-    self.class.cookies({}) # Clean up all the existing cookies if any when new instance is created.
-  end
 
   def fetch(params, request)
     response_code = 200
@@ -40,29 +33,22 @@ class HttpRequestProxy
       end
       resource = resource ? "/" + resource : ""
       remote_url = domain + resource
+      auth_header = Base64.encode64("#{user}:#{pass}") unless (user.blank? or pass.blank?)
       options = Hash.new
-      options.store(:body, post_request_body) unless post_request_body.nil?  # if the form-data is sent from the integrated widget then set the data in the body of the 3rd party api.
-      options.store(:headers, {"Authorization" => auth_header, "Accept" => accept_type, "Content-Type" => content_type, "User-Agent" => user_agent}.delete_if{ |k,v| v.nil? })  # TODO: remove delete_if use and find any better way to do it in single line
-      Rails.logger.debug "sending request to=#{remote_url}, options=#{options.to_s}, method=#{method}"
-      self.class.basic_auth(user, pass) unless (user.nil? || pass.nil?)
+      options[:body] = post_request_body unless post_request_body.blank?  # if the form-data is sent from the integrated widget then set the data in the body of the 3rd party api.
+      options[:headers] = {"Authorization" => auth_header, "Accept" => accept_type, "Content-Type" => content_type, "User-Agent" => user_agent}.delete_if{ |k,v| v.blank? }  # TODO: remove delete_if use and find any better way to do it in single line
 
       begin
-        case method
-          when "get" then 
-            remote_response = self.class.get(remote_url, options)
-          when "post" then 
-            puts "post "+remote_url+ options.to_s
-            remote_response = self.class.post(remote_url, options)
-          when "delete" then 
-            puts "########## delete ######### "+remote_url+ options.to_s
-            remote_response = self.class.delete(remote_url, options)
-        end
+        net_http_method = HTTP_METHOD_TO_CLASS_MAPPING[method.to_s]
+        proxy_request = HTTParty::Request.new(net_http_method, remote_url, options)
+        Rails.logger.debug "Sending request: #{proxy_request.inspect}"
+        proxy_response = proxy_request.perform
+        Rails.logger.debug "Received response: #{proxy_response.inspect}"
   
         # TODO Need to audit all the request and response calls to 3rd party api.
-        response_body = remote_response.body
-        response_code = remote_response.code
-        response_type = remote_response.header['content-type']
-        response_headers = remote_response.headers
+        response_body = proxy_response.body
+        response_code = proxy_response.code
+        response_type = proxy_response.header['content-type']
       rescue => e
         Rails.logger.error("Error during #{method.to_s}ing #{remote_url.to_s}. \n#{e.message}\n#{e.backtrace.join("\n")}")  # TODO make sure any password/apikey sent in the url is not printed here.
         response_body = '{"result":"error"}'
@@ -73,9 +59,14 @@ class HttpRequestProxy
       response_body = '{"result":"error"}'
       response_code = 500  # Internal server error
     end
-    Rails.logger.debug "response_body: #{response_body}, response_headers: #{response_headers.inspect}, response_code: #{response_code}, accept_type: #{accept_type}"
     response_type = accept_type if response_type.blank?
     return {:text=>response_body, :content_type => response_type, :status => response_code}
   end
 
+  HTTP_METHOD_TO_CLASS_MAPPING = {
+            "get" => Net::HTTP::Get,
+            "post" => Net::HTTP::Post,
+            "put" => Net::HTTP::Put,
+            "delete" => Net::HTTP::Delete
+        }
 end
