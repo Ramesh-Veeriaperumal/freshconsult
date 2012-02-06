@@ -1184,6 +1184,7 @@ en:
       form_title: Reply to the conversation
       reply_email_id: Send the reply from the following email id
       send_and_resolve: Send and Resolve
+      send: Send
     reported_by: from %{requester}
     close_btn: Close
     close_btn_title: Close this ticket
@@ -1201,6 +1202,7 @@ en:
       notify_agents: Notify Agents
     tweet_form:
       tweet_and_resolve: Tweet and Resolve
+      user_not_following: This user is not following your twitter account
     activities: Activities
     requestor_info: Requestor Info
     reply_to: Reply to ticket
@@ -1639,3 +1641,4 @@ en:
   email_command_preview_subject: "Subject"
   email_command_preview_subject_value: "Support Ticket"
   unable_to_charge: "Unable to charge the card for the added agent!"
+  never: Never

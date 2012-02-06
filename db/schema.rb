@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120130123030) do
+ActiveRecord::Schema.define(:version => 20120202080457) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -764,6 +764,7 @@ ActiveRecord::Schema.define(:version => 20120130123030) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "account_id"
+    t.string   "tweet_type",                  :default => "mention"
   end
 
   create_table "social_twitter_handles", :force => true do |t|
@@ -780,6 +781,7 @@ ActiveRecord::Schema.define(:version => 20120130123030) do
     t.text     "search_keys"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "dm_thread_time",                         :default => 0
   end
 
   add_index "social_twitter_handles", ["account_id", "twitter_user_id"], :name => "social_twitter_handle_product_id", :unique => true

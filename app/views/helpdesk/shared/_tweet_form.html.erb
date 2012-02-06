@@ -16,21 +16,58 @@
 				Message:
 			</label>
 	    <div class="fields">
-	    	<%= f.text_area :body, { :class => 'required tweet auto-height', :id => "#{id}-#{cntid}-body", :value =>"@#{@ticket.requester.twitter_id}", :rows => "3" } %>
+	    	<%= f.text_area :body, { :class => 'required tweet auto-height', :id => "#{id}-#{cntid}-body", :value =>default_twitter_body_val(@ticket), :rows => "3" } %>
       	<%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["twitter"]%>  
 				<%= hidden_field_tag(:ticket_status , params[:ticket_status], :id=>:tweet_ticket_status  )%>        
 	    </div>
 	  </li>
     <li class="button-container">
+       <span id="not_following_message" class="info-highlight center" style="padding:8px 10px;position:relative;left:-20px;top:2px;"><%=t('ticket.tweet_form.user_not_following')%></span>
        <span class="tweet-counter" id="SendTweetCounter">140</span>
-	   <%= submit_tag(local_assigns[:submit] || ActiveSupport::Inflector.titleize(id), :class => "uiButton" ) %>
-	   <%= submit_tag(t('ticket.tweet_form.tweet_and_resolve'), :onclick => "jQuery('#tweet_ticket_status').val('resolved');" , :class => "uiButton") %>
+	   <span id="tweet_type_selector" style="display:none;position:relative;">
+	   	<%= select_tag :tweet_type , options_for_select(Social::Tweet::TWEET_TYPES, @ticket.tweet ? @ticket.tweet.tweet_type.to_sym : :mention ) ,{}%>
+	   </span>
+	   
+	   <%= submit_tag(t('ticket.reply_form.send'), :class => "uiButton" ) %>
+	   <%= submit_tag(t('ticket.reply_form.send_and_resolve'), :onclick => "jQuery('#tweet_ticket_status').val('resolved');" , :class => "uiButton") %>
     </li>
    </ul> 
   <% end %>
-</div> 
+</div> 	
 
 <% content_for :onload_script do %>
   jQuery("#HelpdeskTweets").validate();	
   jQuery('#send-tweet-cnt-tweet-body').NobleCount('#SendTweetCounter', { on_negative : "error" }); 
+<% end %>
+
+<% javascript_tag do %>
+jQuery(document).ready(function(){
+jQuery('#twitter_handle').change(function user_follows(){
+twitter_handle= jQuery('#twitter_handle').val();
+req_twt_id = '<%=@ticket.requester.twitter_id %>';
+if (req_twt_id == "")
+{
+return ;
+}
+
+jQuery.ajax({	type: 'POST',
+				url: '/social/twitters/user_following?twitter_handle='+twitter_handle+'&req_twt_id='+req_twt_id,
+				contentType: 'application/text', 
+				async: false, 
+				success: function(data){ 
+				if (data.user_follows == true)
+				{
+					jQuery('#tweet_type_selector').show();
+					jQuery('#not_following_message').hide();
+				}
+				else
+				{
+					jQuery('#tweet_type_selector').hide();
+					jQuery('#not_following_message').show();
+				}
+			 }
+			});
+	}); 
+jQuery('#twitter_handle').change(); 
+});
 <% end %>
