@@ -18,7 +18,7 @@ class UpdateCapsuleApp < ActiveRecord::Migration
 
   def self.down
     execute('UPDATE widgets SET SCRIPT=REPLACE(SCRIPT, "{{requester.name | escape_html}}", "{{requester.name}}") WHERE NAME="contact_widget"')
-    
+    capsule_app = Integrations::Application.find_by_name('capsule_crm');
     capsule_app.options[:domain].delete(:rel)
     capsule_app.options[:domain].delete(:autofill_text)
     capsule_app.options[:domain].delete(:validator_type)

@@ -1,31 +1,32 @@
 .ui-form .textfield.ghostenabled input {
-			z-index: 100;
-			position:relative;
-			background: none;
-		}	
-		;
-		.ui-form .textfield .ghostwriter_info div {
-			z-index : 0;
-		}
-		.ui-form .textfield .ghostwriter_info {
-		padding: 5px 10px 5px 0px;
-		background:white;
-		z-index:0;
-		font-size: 16px;
-		position: relative;
+z-index: 100;
+position:relative;
+background: none;
+}
+.textfield.ghostenabled{
+position:relative;
+}		
+.ui-form .textfield .ghostwriter_info div {
+z-index : 0;
+}
+.ui-form .textfield .ghostwriter_info {
+padding: 5px 10px 5px 0px;
+background:white;
+z-index:0;
+font-size: 16px;
+position: relative;
+color: #999999;
+position: absolute;
+
+left: 0;
+top: 1px;
+border-radius:5px;
+border: 0;
+width: 95%;
+}
+.ui-form .textfield .ghostwriter_hide {
+visibility: hidden;
+padding-left:7px;
+padding-right: 2px
+}
 		
-		left: 0;
-		top: 56px;
-		border-radius:5px;
-		border: 0;
-		width: 95%;
-		}
-		.ui-form .textfield .ghostwriter_hide {
-		visibility: hidden;
-		padding-left:7px;
-		padding-right: 2px
-		}
-		.ui-form .textfield .ghostwriter_info {
-		color: #999999;
-		margin-top:-27px;
-		}
