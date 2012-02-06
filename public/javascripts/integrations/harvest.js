@@ -1,7 +1,7 @@
 var HarvestWidget = Class.create();
 HarvestWidget.prototype= {
 	LOGIN_FORM:new Template('<form onsubmit="harvestWidget.freshdeskWidget.login(this);if(harvestWidget.inline) harvestWidget.convertToInlineWidget();return false;"><div class="field first"><label>Username</label><input type="text" id="username"/></div><div class="field"><label>Password</label><input type="password" class="text" id="password"/></div><div class="field"><label><input type="checkbox" id="remember_me" checked value="true" />Remember me</label><input type="submit" class="btn" value="Login" id="submit"></div></form>'),
-	HARVEST_FORM:new Template('<form id="harvest-timeentry-form" method="post"> <a href="javascript:void(0)" class="link" onclick="harvestWidget.freshdeskWidget.logout()">(Use different user)</a> <div class="field first"><label>Client</label><select name="client-id" id="harvest-timeentry-clients" onchange="harvestWidget.clientChanged(this.options[this.selectedIndex].value)" class="hide"></select> <div class="loading-fb" id="harvest-client-spinner"></div></div><div class="field"> <label>Project</label><select name="request[project_id]" id="harvest-timeentry-projects" onchange="harvestWidget.projectChanged(this.options[this.selectedIndex].value)" class="hide"></select> <div class="loading-fb" id="harvest-project-spinner"></div> </div><div class="field"><label>Task</label><select disabled name="request[task_id]" id="harvest-timeentry-tasks" onchange="harvestWidget.taskChanged(this.options[this.selectedIndex].value)" class="hide"></select> <div class="loading-fb" id="harvest-task-spinner" ></div> </div><div class="field"><label id="harvest-timeentry-notes-label">Notes</label><textarea disabled name="request[notes]" id="harvest-timeentry-notes" wrap="virtual">'+harvestBundle.harvestNote.escapeHTML()+'</textarea></div><div class="field"> <label id="harvest-timeentry-hours-label">Hours</label><input type="text" disabled name="request[hours]" id="harvest-timeentry-hours"> </div> <input type="submit" disabled id="harvest-timeentry-submit" value="Submit" onclick="harvestWidget.logTimeEntry($(\'harvest-timeentry-form\'));return false;"></form>'),
+	HARVEST_FORM:new Template('<form id="harvest-timeentry-form" method="post"> <a href="javascript:void(0)" class="link" onclick="harvestWidget.freshdeskWidget.logout()">(Use different user)</a> <div class="field first"><label>Client</label><select name="client-id" id="harvest-timeentry-clients" onchange="harvestWidget.clientChanged(this.options[this.selectedIndex].value)" class="hide"></select> <div class="loading-fb" id="harvest-clients-spinner"></div></div><div class="field"> <label>Project</label><select name="request[project_id]" id="harvest-timeentry-projects" onchange="harvestWidget.projectChanged(this.options[this.selectedIndex].value)" class="hide"></select> <div class="loading-fb" id="harvest-projects-spinner"></div> </div><div class="field"><label>Task</label><select disabled name="request[task_id]" id="harvest-timeentry-tasks" onchange="harvestWidget.taskChanged(this.options[this.selectedIndex].value)" class="hide"></select> <div class="loading-fb" id="harvest-tasks-spinner" ></div> </div><div class="field"><label id="harvest-timeentry-notes-label">Notes</label><textarea disabled name="request[notes]" id="harvest-timeentry-notes" wrap="virtual">'+harvestBundle.harvestNote.escapeHTML()+'</textarea></div><div class="field"> <label id="harvest-timeentry-hours-label">Hours</label><input type="text" disabled name="request[hours]" id="harvest-timeentry-hours"> </div> <input type="submit" disabled id="harvest-timeentry-submit" value="Submit" onclick="harvestWidget.logTimeEntry($(\'harvest-timeentry-form\'));return false;"></form>'),
 
 	initialize:function(harvestBundle, loadInline){
 		harvestWidget = this; // Assigning to some variable so that it will be accessible inside custom_widget.
@@ -67,8 +67,7 @@ HarvestWidget.prototype= {
 		client_id = XmlUtil.getNodeValueStr(selectedClientNode, "id");
 		this.clientChanged(client_id);
 
-		jQuery("#harvest-timeentry-clients").removeClass('hide');
-		jQuery("#harvest-client-spinner").addClass('hide');
+		UIUtil.hideLoading('harvest','clients');
 
 	},
 
@@ -87,7 +86,7 @@ HarvestWidget.prototype= {
 			UIUtil.chooseDropdownEntry("harvest-timeentry-clients", client_id);
 		} else {
 			searchTerm = Cookie.retrieve("har_project_id")
-			client_id = $("harvest-client-spinner").value
+			client_id = $("harvest-timeentry-clients").value
 		}
 		filterBy = null
 		if(client_id) filterBy = {"client-id":client_id};
@@ -98,8 +97,7 @@ HarvestWidget.prototype= {
 		project_id = XmlUtil.getNodeValueStr(selectedProjectNode, "id");
 		this.projectChanged(project_id);
 
-		jQuery("#harvest-timeentry-projects").removeClass('hide');
-		jQuery("#harvest-project-spinner").addClass('hide');
+		UIUtil.hideLoading('harvest','projects');
 	},
 
 	loadTask:function(resData) {
@@ -108,9 +106,7 @@ HarvestWidget.prototype= {
 	},
 
 	handleLoadTask:function() {
-
-		jQuery("#harvest-timeentry-tasks").addClass('hide');
-		jQuery("#harvest-task-spinner").removeClass('hide');
+		UIUtil.hideLoading('harvest','tasks');
 
 		console.log("Harest handleLoadTask.");
 		if (this.timeEntryXml) {
@@ -127,9 +123,6 @@ HarvestWidget.prototype= {
 		$("harvest-timeentry-hours").enable();
 		$("harvest-timeentry-notes").enable();
 		$("harvest-timeentry-submit").enable();
-
-		jQuery("#harvest-timeentry-tasks").removeClass('hide');
-		jQuery("#harvest-task-spinner").addClass('hide');
 
 		jQuery(".harvest_timetracking_widget").removeClass('still_loading');
 	},

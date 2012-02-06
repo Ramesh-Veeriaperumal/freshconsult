@@ -81,8 +81,7 @@ FreshbooksWidget.prototype = {
 			searchTerm = freshbooksBundle.agentEmail
 		this.loadFreshbooksEntries(resData, "freshbooks-timeentry-staff", "member", "staff_id", ["first_name", " ", "last_name"], null, searchTerm);
 		UIUtil.addDropdownEntry("freshbooks-timeentry-staff", "", "None", true);
-		jQuery("#freshbooks-staff-spinner").addClass('hide');
-		jQuery("#freshbooks-timeentry-staff").removeClass('hide');
+		UIUtil.hideLoading('freshbooks','staff');
 		$("freshbooks-timeentry-staff").enable();
 		console.log('staff loaded');
 	},
@@ -91,17 +90,16 @@ FreshbooksWidget.prototype = {
 		console.log('Loaded client lists');
 		selectedClientNode = this.loadFreshbooksEntries(resData, "freshbooks-timeentry-clients", "client", "client_id", ["organization", " ", "(", "first_name", " ", "last_name", ")"], null, freshbooksBundle.reqEmail);
 		client_id = XmlUtil.getNodeValueStr(selectedClientNode, "client_id");
-		jQuery("#freshbooks-clients-spinner").addClass('hide');
 		
-		jQuery("#freshbooks-timeentry-clients").removeClass('hide');
+		UIUtil.hideLoading('freshbooks','clients');
+
 		$("freshbooks-timeentry-clients").enable();
 		this.clientChanged(client_id);
 	},
 
 	loadProjectList:function(resData) {
 		this.projectData=resData;
-		jQuery("#freshbooks-projects-spinner").addClass('hide');
-		jQuery("#freshbooks-timeentry-projects").removeClass('hide');
+		UIUtil.hideLoading('freshbooks','projects');
 		$("freshbooks-timeentry-projects").enable();		
 		this.handleLoadProject();
 	},
@@ -117,8 +115,7 @@ FreshbooksWidget.prototype = {
 		if(!selectedTaskNode) {
 			UIUtil.addDropdownEntry("freshbooks-timeentry-tasks", "", "None");
 		}
-		jQuery("#freshbooks-tasks-spinner").addClass('hide');
-		jQuery("#freshbooks-timeentry-tasks").removeClass('hide');
+		UIUtil.hideLoading('freshbooks','tasks');
 
 		$("freshbooks-timeentry-tasks").enable();
 		$("freshbooks-timeentry-hours").enable();

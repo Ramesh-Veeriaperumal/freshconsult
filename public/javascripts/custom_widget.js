@@ -227,6 +227,16 @@ var UIUtil = {
 				break;
 			} 
 		}
+	},
+
+	hideLoading: function(integrationName,fieldName) {
+		jQuery("#" + integrationName + "-timeentry-" + fieldName).removeClass('hide');
+		jQuery("#" + integrationName + "-" + fieldName + "-spinner").addClass('hide');
+	},
+
+	showLoading: function(integrationName,fieldName) {
+		jQuery("#" + integrationName + "-timeentry-" + fieldName).addClass('hide');
+		jQuery("#" + integrationName + "-" + fieldName + "-spinner").removeClass('hide');
 	}
 }
 
