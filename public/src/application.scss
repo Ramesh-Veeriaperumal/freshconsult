@@ -543,18 +543,8 @@ body h5{
 			.priority{
 				left:-4px;
 				top:8px;
-				position:absolute;				
-				@include border-left-radius(3px);
-			}
-			.priority:before {
-			   content:"";
-			   position:absolute;
-			   top:0px;
-			   right:-18px;
-			   display:block; width:0; /* Firefox 3.0 damage limitation */
-			   border:9px solid transparent; 
-			   height:0px;
-			   font-size:0px;
+				position:absolute;
+				@include pointer-title;
 			}
 			.low{ background-color: $COL_PRI_LOW; }
 			.low:before{ border-left-color: $COL_PRI_LOW; }
@@ -3536,7 +3526,6 @@ div.addReminder{
 }
 
 @include all-application-logo-sprites;
-
 .deactivated{
    li{
 	   background:#f8f8f8;
@@ -4302,7 +4291,7 @@ a.close{
    background:#ffffff;
    padding:5px 0;
    z-index:999999;
-   min-width:200px;
+	 @include min-width(250px);
    @include opacity(0.95);
    @include corners(5px);
    @include single-box-shadow( rgba(0, 0, 0, 0.6), 0px, 2px, 4px );

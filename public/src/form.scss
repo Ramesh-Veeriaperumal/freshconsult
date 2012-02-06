@@ -1309,46 +1309,30 @@ table.summary-report{
 }
  
 .request_panel{
-  margin-top:-10px;
-	margin-bottom:5px;
-	border:1px solid #efefef;
-	background-color:#fafafa;
-	.form-title, .ui-form{
-		padding:6px 25px 6px 66px;
-		border-bottom:1px solid #efefef;
-	}
-	.form-title{ 
-		font-size:12px; 
-		font-weight:bold; 
-		display:block;
-		background-color:#f8f8f8;
+	padding:0 20px 10px 65px; margin:0;
+	border-bottom: 1px solid #F3F3F3;
+	.button-container{ 
+		padding:6px 10px;
+		margin-top:10px;
+		background-color:#efefef;
+		@include border-radius(5px);
+		@include box-shadow(rgba(0, 0, 0, 0.2) 0 0 2px inset);
+		position:relative; 
+		top: -10px;
 	}
 	.ui-form{
-		background-color:#fff;
-			margin:0;
-			background:none;
-			border:0;
-			h4{  line-height:24px; padding:0; font-size:13.5px; font-weight:bold; margin-bottom:8px; }
+		border:0;  background: none;
+		margin:0;	padding:0; 
+			.title{
+				padding-bottom:2px;
+			}
       li.field{
-         border:0;
+         border:0; padding:0;
       }
       label, div.fields label{
          font-size:13px;
          color:#333333;
-      }
-			div.integration{
-				@include pie-clearfix;
-				padding:10px 0 10px 0;
-				margin:10px 0 10px;
-				border:1px dotted #efefef;
-				border-width:1px 0;
-				.freshbooks{
-					position:absolute;
-					width:40px;
-					height:10px;
-					border:1px solid red;
-				}
-			}
+      }			
 			div.field{
 				width:23%;
 				float:left;
@@ -1359,8 +1343,27 @@ table.summary-report{
          margin:2px 8px;
          color:#888888;
          font-size:12px;
-      }
-			li{ padding:0; width:100%;}
+      } 
+			fieldset{
+				padding:10px 0;
+				position:relative;
+			}
+			fieldset.integration{
+				@include pie-clearfix;
+				position:relative;
+				padding-left:80px;				
+				border-top:1px solid #e3e3e3;
+				.app-logo{
+					position:absolute;
+					width:51px;
+					top:-10px;
+					left:-80px;
+					height:20px;
+					background-color:#efefef;
+					@include border-bottom-radius(3px);
+					border:1px solid #e3e3e3;
+				}
+			}
       li.inline-field, fieldset{
          label.caption{
             width:80px;
@@ -1390,7 +1393,6 @@ table.summary-report{
             z-index:1001;
          }
       }
-			.button-container{ margin-top:5px; }
    }
 }
 

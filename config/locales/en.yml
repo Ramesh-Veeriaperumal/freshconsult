@@ -1121,6 +1121,7 @@ en:
     edit: Edit ticket
     ham_btn_title: This is not spam
     reported_from_source: Reported via %{source}
+    add_time: Add time
     suggested_solutions: 
       insert_url: Insert URL
       title: Suggested Solutions
@@ -1328,7 +1329,7 @@ en:
   helpdesk:
     time_sheets:
       index:
-        no_timeentry: "No time entry recorded for this ticket"
+        no_timeentry: "No time entry logged for this ticket"
       time_entry:
         toggle_timer_true: "Start timer"
         toggle_timer_false: "Stop timer"

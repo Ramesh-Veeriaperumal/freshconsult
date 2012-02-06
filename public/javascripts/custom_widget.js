@@ -9,13 +9,14 @@ Freshdesk.Widget.prototype={
 		this.content_anchor = $$("#"+this.options.anchor+" #content")[0];
 		this.error_anchor = $$("#"+this.options.anchor+" #error")[0];
 		this.title_anchor = $$("#"+this.options.anchor+" #title")[0];
+		this.app_name = this.options.app_name || "Integrated Application";
 		Ajax.Responders.register({
 			onException:function(request, ex){
 			   //console.log(widget.on_exception(request));
 			}
 		});
 		if(this.options.title){
-			this.title_anchor.innerHTML=this.options.title;
+			this.title_anchor.innerHTML = this.options.title;
 		}
 		this.display();
 	},
@@ -89,6 +90,8 @@ Freshdesk.Widget.prototype={
 			if (this.on_failure != null) {
 				reqData.on_failure(evt);
 			} else { this.alert_failure("Given user credentials are not correct. Please correct it.");}
+		} else if (evt.status == 403) {
+			this.alert_failure(this.app_name+" forbidden the request.  Check your "+this.app_name+" account is still valid.");
 		} else if (evt.status == 502) {
 			this.alert_failure("Remote application is not responding.  Please verify the given domain.");
 		} else if (evt.status == 500) {
@@ -97,7 +100,7 @@ Freshdesk.Widget.prototype={
 			reqData.on_failure(evt);
 		} else {
 			errorStr = evt.responseText;
-			this.alert_failure("An error occured: \n\n" + errorStr + "\nPlease contact support@freshdesk.com for further details.");
+			this.alert_failure(this.app_name+" reports the below error: \n\n" + errorStr + "\n\nTry fixing the error manually.  Otherwise contact support.");
 		}
 	},
 

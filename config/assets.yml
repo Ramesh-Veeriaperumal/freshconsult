@@ -71,6 +71,8 @@ javascripts:
     - public/javascripts/factory_ui.js
     - public/javascripts/json2.js
     - public/javascripts/globalinit.js
+  timesheet:
+    - public/javascripts/timesheet.js
   freshwidget:
     - public/javascripts/freshwidget.js
   custom_widget:

@@ -11,7 +11,7 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
   def install # also updates
     Rails.logger.debug "Installing application with id "+params[:id]
     installing_application = Integrations::Application.find(params[:id])
-    installed_application = current_account.installed_applications.find(:first, :conditions => ["application_id = ?", installing_application])
+    installed_application = current_account.installed_applications.find_by_application_id(installing_application)
     if installed_application.blank?
       installed_application = Integrations::InstalledApplication.new
       installed_application.application = installing_application

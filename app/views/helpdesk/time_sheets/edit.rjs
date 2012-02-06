@@ -1,2 +1,7 @@
-page << "jQuery('#timeentry_view_#{@time_entry.id}').slideUp(300);"
+page << "timesheet.editCompelete('add', true)"
+
 page.replace_html "timeentry_edit_#{@time_entry.id}", :partial => "helpdesk/time_sheets/edit", :object => @time_entry
+
+page << "timesheet.editCompelete(#{@time_entry.id});"
+
+page << modifyTimesheetApps(@time_entry)

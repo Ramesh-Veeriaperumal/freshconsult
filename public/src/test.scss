@@ -1264,7 +1264,7 @@ label.small{
 }
 
 .request-well{
-	@include background-with-css2-fallback(linear-gradient(#fafafa, #f6f6f6 93%, #f1f1f1 97%, #ffffff), #fafafa);
+	@include background-with-css2-fallback(linear-gradient(#ffffff 60%, #f6f6f6 93%, #f1f1f1 97%, #ffffff), #fafafa);
 	position:relative;
 	.action_buttons{
 		position:relative;
@@ -1273,15 +1273,11 @@ label.small{
 	}
 	.tabs{
 		padding:2px 9px 0 50px;
-		margin-bottom:0;
-		border:1px solid #eeeeee;
-		font-size:12px;
-		a{ @include link-colors(#808080, #333333); line-height:28px; padding:0 16px; font-weight:bold; }
+		a{ font-weight:bold; }
 		span.pill{
 			position:relative;
 			left:8px; top:-1px;
 		}
-		.active a{ @include link-colors(#333333, #333333); }
 	} 
 }
 
@@ -1368,6 +1364,15 @@ a.pill.help{
 	.agent{ width: 25%;  margin-right:4%;}
 	.timespent{ width: 20%; }
 	.note{ width:50%; float:right; }
+}
+
+.timeentry_edit{
+	display:none;
+}
+
+.active_edit{ 
+	.timeentry{ display:none; }
+	.timeentry_edit{ display:block; }
 }
 
 .timeentry{
