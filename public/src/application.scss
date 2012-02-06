@@ -2111,6 +2111,7 @@ h4.border_title{
 	background-image:url('/images/ajax-loader.gif');
 	background-repeat:no-repeat;
 	background-position: 10px 10px;
+	min-height:33px;
 }
 
 .loading-center, .loading-box{
@@ -2126,6 +2127,7 @@ h4.border_title{
 }
 
 .loading-fb{
+	min-height:20px;
 	background-image:url('/images/load-fb-style.gif');
 	background-repeat:no-repeat;
 	background-position: 0px 0px;	
@@ -4384,4 +4386,8 @@ a.close{
 			padding: 0px;
 		} 
 	}
+}
+
+#timeentry_add {
+	margin-bottom: 25px;
 }

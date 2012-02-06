@@ -10,10 +10,11 @@ module Helpdesk::TimeSheetsHelper
       widget_code = get_app_widget_script(app[0], app[1], liquid_values)
       widget_code_with_ticket_id = Liquid::Template.parse(widget_code).render(liquid_values) 
       unless get_app_details(app[0]).blank?
-         content_tag :fieldset, :class => "integration" do
+         content_tag :fieldset, :class => "integration still_loading #{app[0]}_timetracking_widget" do
            "<script type=\"text/javascript\">#{app[0]}inline=true;</script>"+
-            widget_code_with_ticket_id + 
-           content_tag(:span, "", :class => "app-logo application-logo-#{app[0]}-small")      
+
+            '<div class="integration_container">' + widget_code_with_ticket_id + '</div>' +
+           content_tag(:span, check_box_tag("#{app[0]}-timeentry-enabled", "1", :checked => 'checked'), :class => "app-logo application-logo-#{app[0]}-small")      
            #Liquid::Template.parse(widget_include).render("ticket" => @ticket)
          end
       end
@@ -23,10 +24,11 @@ module Helpdesk::TimeSheetsHelper
   def pushToTimesheetIntegratedApps(page, timeentry)
     integrated_apps.each do |app|
       unless get_app_details(app[0]).blank? 
-        #page << "console.log(#{timeentry.to_json})"
+        page << "try{"
         page << "#{app[2]}.updateNotesAndTimeSpent('#{timeentry.note}', #{timeentry.time_spent == 0? "0.01" : timeentry.hours}, #{timeentry.billable});"
         page << "#{app[2]}.logTimeEntry();"
         page << "#{app[2]}.set_timesheet_entry_id(#{timeentry.id});" # This is not needed for update.  But no harm in calling.
+        page << "}catch(e){}"
       end
     end
   end
