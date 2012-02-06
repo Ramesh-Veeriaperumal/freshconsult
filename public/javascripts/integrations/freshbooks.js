@@ -284,7 +284,7 @@ FreshbooksWidget.prototype = {
 		if(resEntities.length>0){
 			var errorStr = XmlUtil.getNodeValueStr(resEntities[0],"error");
 			if(errorStr != ""){
-				alert("Freshbooks reports the below error: \n\n" + errorStr + "\n\nTry fixing the error manually.  Otherwise contact support.");
+				alert("Freshbooks reports the below error: \n\n" + errorStr + "\n\nTry fixing the error manually.  If you can not do so, contact support.");
 				return false;
 			}
 		}

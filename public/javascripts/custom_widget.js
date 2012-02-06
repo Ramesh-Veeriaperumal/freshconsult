@@ -89,18 +89,18 @@ Freshdesk.Widget.prototype={
 			Cookie.remove(this.options.anchor + "_password");
 			if (this.on_failure != null) {
 				reqData.on_failure(evt);
-			} else { this.alert_failure("Given user credentials are not correct. Please correct it.");}
+			} else { this.alert_failure("Given user credentials for "+this.app_name+" are incorrect. Please correct them.");}
 		} else if (evt.status == 403) {
-			this.alert_failure(this.app_name+" forbidden the request.  Check your "+this.app_name+" account is still valid.");
+			this.alert_failure(this.app_name+" forbidden the request.  Check if your "+this.app_name+" account is still valid.");
 		} else if (evt.status == 502) {
-			this.alert_failure("Remote application is not responding.  Please verify the given domain.");
+			this.alert_failure(this.app_name+" is not responding.  Please verify the given domain.");
 		} else if (evt.status == 500) {
 			this.alert_failure("Unknown server error. Please contact support@freshdesk.com.");
 		} else if (this.on_failure != null) {
 			reqData.on_failure(evt);
 		} else {
 			errorStr = evt.responseText;
-			this.alert_failure(this.app_name+" reports the below error: \n\n" + errorStr + "\n\nTry fixing the error manually.  Otherwise contact support.");
+			this.alert_failure(this.app_name+" reports the below error: \n\n" + errorStr + "\n\nTry fixing the error manually.  If you can not do so, contact support.");
 		}
 	},
 
