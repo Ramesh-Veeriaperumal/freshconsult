@@ -46,6 +46,10 @@ TicketTimesheet.prototype = {
            jQuery('#TimesheetTab').click();
            timesheet.clearEdit();
            timesheet.editCompelete("add"); 
+		   if (typeof harvestWidget != 'undefined' && harvestWidget) 
+		   		harvestWidget.resetIntegratedResourceIds()
+		   if (typeof freshbooksWidget != 'undefined' && freshbooksWidget) 
+		   		freshbooksWidget.resetIntegratedResourceIds()
         });
   },
 
