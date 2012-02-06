@@ -6,6 +6,7 @@ class CreateIntegratedResources < ActiveRecord::Migration
       t.column :local_integratable_id, "bigint unsigned"
       t.string :local_integratable_type
       t.column :account_id, "bigint unsigned"
+      t.timestamps
     end
   end
 

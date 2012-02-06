@@ -96,7 +96,7 @@ var $J = jQuery.noConflict();
 			
 		$("a[rel=popover], a[rel=widget-popover]").live("click", function(e){
 				e.preventDefault();
-				e.stopPropagation();
+				e.stopPropagation(); 
 				$('[rel=widget-popover]').each(function(){
 					$(this).popover('hide');
 				});

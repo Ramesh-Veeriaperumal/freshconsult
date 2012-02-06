@@ -14,6 +14,7 @@ module Helpdesk::TicketModelExtension
       {:label => "Group", :value => "group_name", :selected => false},
       {:label => "Created Time", :value => "created_at", :selected => false},
       {:label => "Due by Time", :value => "due_by", :selected => false},
+      {:label => "Resolved Time", :value => "resolved_at", :selected => false}
      ]
    end
 

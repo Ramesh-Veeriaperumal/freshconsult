@@ -2,16 +2,26 @@ class Helpdesk::TimeSheetsController < ApplicationController
   
   before_filter { |c| c.requires_feature :timesheets }
   before_filter { |c| c.requires_permission :manage_tickets }  
-  before_filter :load_time_entry, :only => [ :edit, :update, :destroy, :toggle_timer ]  
+  before_filter :load_time_entry, :only => [ :edit, :update, :destroy, :toggle_timer ] 
+  before_filter :load_ticket, :only => [:create, :index, :edit, :update, :toggle_timer] 
   
-  def index
-    @ticket = current_account.tickets.find_by_display_id(params[:ticket_id])
+  def index    
     @time_sheet = @ticket.time_sheets
     render :index, :layout => false
   end
   
-  def new
-    create_time_entry
+  def create
+    hours_spent = params[:time_entry][:hours]
+    params[:time_entry].delete(:hours)
+
+    update_running_timer params[:time_entry][:user_id] if hours_spent.blank?
+
+    time_entry = params[:time_entry].merge!({:start_time => Time.zone.now(),
+                                             :executed_at => Time.zone.now(),
+                                             :time_spent => get_time_in_second(hours_spent),
+                                             :timer_running => hours_spent.blank?,
+                                             :billable => true})
+    @time_entry = scoper.new(time_entry)
     @time_entry.save
   end
    
@@ -20,7 +30,7 @@ class Helpdesk::TimeSheetsController < ApplicationController
     params[:time_entry].delete(:hours)
     time_entry = params[:time_entry].merge!({:time_spent => get_time_in_second(hours_spent)})
     if @time_entry.update_attributes(time_entry)
-        render :partial => "/helpdesk/time_sheets/time_entry", :object => @time_entry
+       
     end
   end 
   
@@ -63,7 +73,11 @@ private
   end
   
   def load_time_entry
-   @time_entry = scoper.find(params[:id])
+    @time_entry = scoper.find(params[:id])
+  end
+  
+  def load_ticket
+    @ticket = current_account.tickets.find_by_display_id(params[:ticket_id])
   end
   
   def total_time_spent time_sheets
@@ -90,20 +104,6 @@ private
     running_time =  ((to_time - from_time).abs).round 
     return (time_entry.time_spent + running_time)
   end
-  
-  def create_time_entry
-    hours_spent = params[:time_entry][:hours]
-    params[:time_entry].delete(:hours)
 
-    update_running_timer params[:time_entry][:user_id] if hours_spent.blank?
-
-    time_entry = params[:time_entry].merge!({:start_time => Time.zone.now(),
-                                             :executed_at => Time.zone.now(),
-                                             :time_spent => get_time_in_second(hours_spent),
-                                             :timer_running => hours_spent.blank?,
-                                             :billable => true})
-    @time_entry = scoper.new(time_entry)
-  end
-  
 end
 

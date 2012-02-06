@@ -370,6 +370,8 @@ en:
           success: The note has been added to your ticket.
       empty_spam: 
         success: All tickets in the spam folder were deleted.
+      timesheet:
+        timer_stopped: ticket timers has been stopped
       monitor: 
         stop: You are no longer monitoring this ticket
         start: You are now monitoring this ticket
@@ -492,6 +494,16 @@ en:
         twitter: 
           short: "{{user_path}} added a {{twitter_path}}"
           long: "{{user_path}} added a {{twitter_path}} to the ticket {{notable_path}}"
+      timesheet:
+        new:
+          short: "{{user_path}} added a {{timesheet_path}}"
+          long: "{{user_path}} added a {{timesheet_path}} to the ticket {{notable_path}}"
+        timer_started:
+          short: "{{user_path}} started timer on  {{timesheet_path}}"
+          long: "{{user_path}} started timer on {{timesheet_path}} to the ticket {{notable_path}}"
+        timer_stopped:
+          short: "{{user_path}} stopped timer on  {{timesheet_path}}"
+          long: "{{user_path}} stopped timer on {{timesheet_path}} to the ticket {{notable_path}}"
       assigned: 
         short: Assigned to {{responder_path}} by {{user_path}}
         long: "{{user_path}} assigned the ticket {{notable_path}} to {{responder_path}}"
@@ -1101,6 +1113,7 @@ en:
     edit: Edit ticket
     ham_btn_title: This is not spam
     reported_from_source: Reported via %{source}
+    add_time: Add time
     suggested_solutions: 
       insert_url: Insert URL
       title: Suggested Solutions
@@ -1307,7 +1320,7 @@ en:
   helpdesk:
     time_sheets:
       index:
-        no_timeentry: "No time entry recorded for this ticket"
+        no_timeentry: "No time entry logged for this ticket"
       time_entry:
         toggle_timer_true: "Start timer"
         toggle_timer_false: "Stop timer"
@@ -1573,29 +1586,30 @@ en:
         widget_title: "Widget Title"
     freshbooks:
       label: "Freshbooks"
-      desc: "Now you can log the time spend on tickets into your Freshbooks projects and tasks."
+      desc: "You can log time spend on tickets into your Freshbooks projects and tasks."
       form:
         freshbooks_note: "Notes text"
-        freshbooks_note_info: "Text that will be appended at the end of the note, while logging the time spent. Make it empty for not appending any text."
+        freshbooks_note_info: "This text will be appended at the end of the note, with the time spent log."
         api_url: "API URL"
-        api_url_info: "Give complete API URL wit https. Ex: https://example.freshbooks.com/api/2.1/xml-in"
+        api_url_info: "Enter complete API URL with https. Ex: https://example.freshbooks.com/api/2.1/xml-in"
         api_key: "Authentication Token"
         api_key_info: ""
         widget_title: "Widget Title"
     harvest:
       label: "Harvest"
-      desc: "Now you can log the time spend on tickets into your Harvest projects and tasks."
+      desc: "You can log time spend on tickets into your Harvest projects and tasks."
       form:
         domain: "Domain"
-        domain_info: "Just give the domain alone without https. Ex: example.harvestapp.com"
+        domain_info: "Enter the domain alone without https. Ex: example.harvestapp.com"
         harvest_note: "Notes text"
-        harvest_note_info: "Text that will be appended at the end of the note, while logging the time spent. Make it empty for not appending any text."
+        harvest_note_info: "This text that will be appended at the end of the note, with the time spent log."
         widget_title: "Widget Title"
   widgets:
     contact_widget:
       description: "Display a contact or option to add the contact into capsule."
   capsule_crm_helptext: "<h4>Link back from Capsule to Freshdesk</h4><p>You can create a link in Capsule CRM to view the contact's tickets in Freshdesk.</p> <p>To do this Goto your <br /><b>Settings -> Custom Fields -> For People & Organization</b></p><p> Then click on \"Add new...\" and select <b>\"Generated Link\"</b></p> <p>Copy the URl exactly as shown below and paste it in Capsule CRM as the link definition<span class=\"info-code\">http://%{full_domain}/helpdesk/tickets?email={email}</span></p>"
-  freshbooks_helptext: "To get your Authentication Token and API URL, login to your Freshbooks account and navigate to <br /> <b>“My Account”</b>. (You can find this on the top right corner of the page).<br /> Click on <b>“FreshBooks API”</b>, and to get the 'API URL' and  'Authentication Token' .<br /> Copy the key and paste it in the textfield above."
+  freshbooks_helptext: "<h4>Freshbooks Integration Help</h4><p><br/>To integrate Freshbooks with Freshdesk, you first need to get the Freshbooks API & Authentication token. <br/><br/>Log on to your Freshbooks account, click on your <b>People tab</b> and go on to the <b>Staff and Contractors subtab</b>. Click on <b>Edit</b> in your Admin.  You can find your API URL and Authentication Token.<br/><br/>In Freshdesk, click on a ticket and go to the Time Sheet tab.  You can then add your time tracking entry into Freshbooks."
+  harvest_helptext: "<h4>Harvest Integration Help</h4><p><br/>To integrate Harvest with Freshdesk, type in your <b>Domain name</b> and click on Enable.<br/><br/>Click on a ticket, go to the <b>Time Sheet tab</b>.  You can then type in your Harvest <b>Username</b> and <b>Password</b> to login. Now you can add your time tracking entry into Harvest.<br/><br/>Note: You can click on <b>Remember me</b>, so that you do not have to type in your Harvest credentials each time."
   report:
     time_sheet_report: Time Sheet Report
     time_sheet:

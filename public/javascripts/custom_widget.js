@@ -4,18 +4,19 @@ Freshdesk.Widget=Class.create();
 Freshdesk.Widget.prototype={
 	initialize:function(widgetOptions){
 		this.options = widgetOptions || {};
-		if(!this.options.username) this.options.username = Cookie.get(this.options.anchor+"_username");
-		if(!this.options.password) this.options.password = Cookie.get(this.options.anchor+"_password");
+		if(!this.options.username) this.options.username = Cookie.retrieve(this.options.anchor+"_username");
+		if(!this.options.password) this.options.password = Cookie.retrieve(this.options.anchor+"_password");
 		this.content_anchor = $$("#"+this.options.anchor+" #content")[0];
 		this.error_anchor = $$("#"+this.options.anchor+" #error")[0];
 		this.title_anchor = $$("#"+this.options.anchor+" #title")[0];
+		this.app_name = this.options.app_name || "Integrated Application";
 		Ajax.Responders.register({
 			onException:function(request, ex){
 			   //console.log(widget.on_exception(request));
 			}
 		});
 		if(this.options.title){
-			this.title_anchor.innerHTML=this.options.title;
+			this.title_anchor.innerHTML = this.options.title;
 		}
 		this.display();
 	},
@@ -27,16 +28,16 @@ Freshdesk.Widget.prototype={
 			this.alert_failure("Please provide Username and password.");
 		} else {
 			if (credentials.remember_me.value == "true") {
-				Cookie.set(this.options.anchor + "_username", this.options.username);
-				Cookie.set(this.options.anchor + "_password", this.options.password);
+				Cookie.update(this.options.anchor + "_username", this.options.username);
+				Cookie.update(this.options.anchor + "_password", this.options.password);
 			}
 			this.display();
 		}
 	},
 
 	logout:function(){
-		Cookie.erase(this.options.anchor+"_username"); this.options.username=null;
-		Cookie.erase(this.options.anchor+"_password"); this.options.password=null;
+		Cookie.remove(this.options.anchor+"_username"); this.options.username=null;
+		Cookie.remove(this.options.anchor+"_password"); this.options.password=null;
 		this.display();
 	},
 
@@ -54,7 +55,7 @@ Freshdesk.Widget.prototype={
 			this.content_anchor.innerHTML = this.options.application_content();
 			this.options.application_resources.each(
 				function(reqData){
-					cw.request(reqData);
+					if(reqData) cw.request(reqData);
 				});
 		}
 	},
@@ -84,20 +85,22 @@ Freshdesk.Widget.prototype={
 		if (evt.status == 401) {
 			this.options.username = null;
 			this.options.password = null;
-			Cookie.erase(this.options.anchor + "_username");
-			Cookie.erase(this.options.anchor + "_password");
+			Cookie.remove(this.options.anchor + "_username");
+			Cookie.remove(this.options.anchor + "_password");
 			if (this.on_failure != null) {
 				reqData.on_failure(evt);
-			} else { this.alert_failure("Given user credentials are not correct. Please correct it.");}
+			} else { this.alert_failure("Given user credentials for "+this.app_name+" are incorrect. Please correct them.");}
+		} else if (evt.status == 403) {
+			this.alert_failure(this.app_name+" forbidden the request.  Check if your "+this.app_name+" account is still valid.");
 		} else if (evt.status == 502) {
-			this.alert_failure("Remote application is not responding.  Please check whether given domain url is up.");
+			this.alert_failure(this.app_name+" is not responding.  Please verify the given domain.");
 		} else if (evt.status == 500) {
 			this.alert_failure("Unknown server error. Please contact support@freshdesk.com.");
 		} else if (this.on_failure != null) {
 			reqData.on_failure(evt);
 		} else {
 			errorStr = evt.responseText;
-			this.alert_failure("An error occured: \n\n" + errorStr + "\nPlease contact support@freshdesk.com for further details.");
+			this.alert_failure(this.app_name+" reports the below error: \n\n" + errorStr + "\n\nTry fixing the error manually.  If you can not do so, contact support.");
 		}
 	},
 
@@ -183,10 +186,13 @@ var UIUtil = {
 					newEntityOption.selected = true;
 				}
 			}
-			dispName = "", sep = "";
+			dispName = ""
 			for(d=0;d<dispNames.length;d++) {
-				dispName += XmlUtil.getNodeValueStr(entitiesArray[i],dispNames[d]) + sep;
-				sep = " ";
+				if (dispNames[d] == ' ' || dispNames[d] == '(' || dispNames[d] == ')' || dispNames[d] == '-') {
+					dispName += dispNames[d];
+				} else {
+					dispName += XmlUtil.getNodeValueStr(entitiesArray[i], dispNames[d]);
+				}
 			}
 			if (dispName.length < 2) dispName = entityEmailValue;
 
@@ -199,6 +205,28 @@ var UIUtil = {
 			}
 		}
 		return foundEntity;
+	},
+
+	addDropdownEntry: function(dropDownBoxId, value, name, addItFirst) {
+		projectDropDownBox = $(dropDownBoxId);
+		var newEntityOption = new Element("option");
+		newEntityOption.value = value;
+		newEntityOption.innerHTML = name;
+		if(addItFirst)
+			projectDropDownBox.insertBefore(newEntityOption, projectDropDownBox.childNodes[0]);
+		else
+			projectDropDownBox.appendChild(newEntityOption);
+	},
+
+	chooseDropdownEntry: function(dropDownBoxId, searchValue) {
+		projectDropDownBoxOptions = $(dropDownBoxId).options;
+		var len = projectDropDownBoxOptions.length;
+		for (var i = 0; i < len; i++) {
+			if(projectDropDownBoxOptions[i].value == searchValue) {
+				projectDropDownBoxOptions[i].selected = true;
+				break;
+			} 
+		}
 	}
 }
 
@@ -243,26 +271,8 @@ var XmlUtil = {
 	}
 }
 
-var ObjectFactory=Class.create({});
-ObjectFactory.instHash=new Hash();
-ObjectFactory.create=function(object, params){
-	instance=new object(params);
-	ObjectFactory.instHash.set(params.id, instance);
-	return instance;
-};
-
-ObjectFactory.get=function(objectId){
-	return ObjectFactory.instHash.get(objectId);
-};
-
-ObjectFactory.remove=function(objectId){
-	return ObjectFactory.instHash.unset(objectId);
-};
-
-
-
 var Cookie=Class.create({});
-Cookie.set = function(cookieId, value, expireDays){
+Cookie.update = function(cookieId, value, expireDays){
 	var expireString="";
 	if(expireDate!==undefined){
 		var expireDate=new Date();
@@ -272,21 +282,13 @@ Cookie.set = function(cookieId, value, expireDays){
 	return(document.cookie=escape(cookieId)+"="+escape(value||"") + expireString + "; path=/");
 };
 
-Cookie.get = function(cookieId){
+Cookie.retrieve = function(cookieId){
 	var cookie=document.cookie.match(new RegExp("(^|;)\\s*"+escape(cookieId)+"=([^;\\s]*)"));
 	return(cookie?unescape(cookie[2]):null);
 };
 
-Cookie.erase = function(cookieId){
-	var cookie = Cookie.get(cookieId)||true;
-	Cookie.set(cookieId, "", -1);
+Cookie.remove = function(cookieId){
+	var cookie = Cookie.retrieve(cookieId)||true;
+	Cookie.update(cookieId, "", -1);
 	return cookie;
-};
-
-Cookie.accept = function(){
-	if(typeof navigator.cookieEnabled=="boolean"){
-		return navigator.cookieEnabled;
-	}
-	Cookie.set("_test","1");
-	return(Cookie.erase("_test")==="1");
 };
