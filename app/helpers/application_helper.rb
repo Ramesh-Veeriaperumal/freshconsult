@@ -322,7 +322,7 @@ module ApplicationHelper
     
     case dom_type
       when "text", "number", "email", "multiemail" then
-        element = label + text_field(object_name, field_name, :class => element_class, :value => field_value, :rel => rel_value, :data_ghost_text => ghost_value)
+        element = label + text_field(object_name, field_name, :class => element_class, :value => field_value, :rel => rel_value, "data-ghost-text" => ghost_value)
       when "paragraph" then
         element = label + text_area(object_name, field_name, :class => element_class, :value => field_value)
       when "dropdown" then

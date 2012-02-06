@@ -5,15 +5,18 @@
        ghosttext: "",
        placeholder: "",
        infoclass: "ghostwriter_info",
-       copyclass: "ghostwriter_hide"
+       copyclass: "ghostwriter_hide",
+       containerClass: "textfield"
     }, options);
 
-    return this.each(function(index, item) {        
-       item.ghostplaceholder = $(item).attr("data-placeholder") || settings.placeholder;
-       item.ghosttext   = $(item).attr("data_ghost_text") || settings.ghosttext;
+    return this.each(function(index, item) {
+      console.log(settings.containerClass);
+       item.ghostplaceholder = $(item).data("placeholder") || settings.placeholder;
+       item.ghosttext   = $(item).data("ghostText") || settings.ghosttext;
        item.ghosttextspan = $("<span />").text(item.ghostplaceholder);
        item.ghostCopy = $("<span />").addClass(settings.copyclass);
        item.ghostBox = $("<div />").addClass(settings.infoclass).append(item.ghostCopy).append(item.ghosttextspan);
+       $(item).wrap("<div class='"+settings.containerClass+"' />");
        $(item).parent().addClass('ghostenabled');
        $(item).parent().prepend(item.ghostBox);
        $(item).bind("keyup keydown keypress change", 
