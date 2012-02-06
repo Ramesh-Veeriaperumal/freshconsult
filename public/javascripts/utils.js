@@ -8,6 +8,10 @@ function autoSaveTinyMce(editor){
    return true;
 }
 
+function plural( count, text1, text2 ){
+   return(count + " " + ((parseInt(count) > 1) ? text2 : text1))
+}
+
 // Primarly for the form customizer page. Used for making the text unselectable
 makePageNonSelectable = function(source){
 	if (document.all) source.onselectstart = function () { return false; };	// Internet Explorer

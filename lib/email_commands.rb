@@ -2,15 +2,15 @@ module EmailCommands
 
   include TicketConstants
   
-  EMAIL_COMMANDS_REGEX = "(\s*((.+)\s*:\s*(.+)(,)*)*\s*)"
 
   def process_email_commands(ticket, user, email_config)
-    content = params[:text] || Helpdesk::HTMLSanitizer.clean(params[:html] )
+    content = params[:text] || Helpdesk::HTMLSanitizer.plain(params[:html] )
     begin
       email_cmds_regex = get_email_cmd_regex(ticket.account)
       if email_cmds_regex && (content =~ email_cmds_regex)
         custom_ff_fields = {}
-        cmds = ActiveSupport::JSON.decode("{ #{$1} }")  
+        email_cmds = $1.gsub("\\r\\n","").gsub("\\n","") unless $1.blank?
+        cmds = ActiveSupport::JSON.decode("{ #{email_cmds} }")  
         cmds.each_pair do |cmd, value|
         begin
             cmd = cmd.downcase
@@ -33,7 +33,7 @@ module EmailCommands
   
   def get_email_cmd_regex(account)
     delimeter = account.email_commands_setting.email_cmds_delimeter
-    email_cmds_regex = Regexp.new("#{delimeter} #{EMAIL_COMMANDS_REGEX} #{delimeter}") unless delimeter.blank?
+    email_cmds_regex = Regexp.new("#{delimeter}(.+)#{delimeter}",Regexp::IGNORECASE | Regexp::MULTILINE) unless delimeter.blank?
     email_cmds_regex
   end
   

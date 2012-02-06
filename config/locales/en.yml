@@ -124,20 +124,20 @@ en:
   admin:
     day_passes:
       index:
-        title: "Day Passes"
-        current_balance: "Current balance %{balance}"
-        buy_pass: "Buy more Day Passes"
+        title: "Day Pass"
+        current_balance: "You have %{balance} left!"
+        buy_pass: "Buy more passes"
         buy_now: "Buy now"
         day_pass_pack: "%{quantity} Day Pass Pack (%{currency}%{amount})"
         day_pass_history: "Purchase History"
-        add_confirm: "Your credit card is going to be charged for the amount of"
+        add_confirm: "Your credit card will be charged "
         daypass_quantity: "%{quantity} Day Passes"
-        no_purchase: "You have not purchased any day pass till now"
         order: "Order #"
         no_of_day_passes: "# of Day Passes"
-        auto_recharge: "Auto Recharge"
+        auto_recharge: "Auto recharge"
         recharge_quantity: "Recharge quantity:"
         day_passes: "Day Passes" 
+        helptext: "Your day passes will Auto-recharge once the number of available day passes comes down to 2."
     widget_config:
       index:
         thankyou_label: "Submit message"
@@ -331,7 +331,7 @@ en:
   does_not_contain: Does not contain
   flash:
     daypass:
-      success: "%{quantity} Day passess have been successfully added to your account"
+      success: "%{quantity} Day Passes have been successfully added to your account."
       failed: "Error when adding day passes"
     facebook:
       updated: Facebook setting has been updated 
@@ -1231,6 +1231,7 @@ en:
     note_content: Note content
     ticket_url: Ticket URL
   recent_activity: Recent Activity
+  recent_activities: Recent Activites
   forgot_password: Forgot Password
   change_plan: Change plan
   feedbackwidget_embed_code_intro: Please copy and paste the code below anywhere before the &lt;/body&gt; tag in the html template of your site or every page where you'd like to provide the Freshdesk widget.

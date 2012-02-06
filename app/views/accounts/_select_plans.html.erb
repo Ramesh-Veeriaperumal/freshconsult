@@ -5,10 +5,9 @@
 				<% plans.each do |plan| %>
 				<% plan_name = plan.name.downcase %>
 				<% unless plan_name == "free" %>
-				<td id = "plan-<%= plan.name %>">
+				<td id = "plan-<%= plan.name %>" width='<%="#{(100/plans.size.to_f).to_i}%"%>'>
 					<div class="plan-details">			
 						<div class="plan-title">
-							
 							<% bool_beta_plan = (plan_name == "premium" && @discount  && @discount.name.downcase == "beta users special") %>
 							<%= content_tag(:h2, plan.name ) %>
 							<% if(bool_beta_plan) %>
