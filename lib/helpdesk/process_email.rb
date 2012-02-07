@@ -12,7 +12,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     if !account.nil? and account.active?
       encode_stuffs
       kbase_email = "kbase@#{account.full_domain}"
-      RAILS_DEFAULT_LOGGER.debug "###### get_envelope_to : #{get_envelope_to.inspect}. size : #{get_envelope_to.size)"
+      RAILS_DEFAULT_LOGGER.debug "###### get_envelope_to : #{get_envelope_to.inspect}. size : #{get_envelope_to.size}"
       if ((to_email[:email] != kbase_email) || (get_envelope_to.size > 1))
         display_id = Helpdesk::Ticket.extract_id_token(params[:subject])
         ticket = Helpdesk::Ticket.find_by_account_id_and_display_id(account.id, display_id) if display_id
