@@ -1,7 +1,7 @@
 <% content_for :onload_script do %>
 	jQuery("#PortalUrl")
 		.rules("add", {
-	  			required: function(element) { return jQuery("#EnablePortal").attr("checked"); }
+	  			required: function(element) { return ((!!jQuery("input[@id=EnablePortal]:checked").length)); }
 	   });
 <% end %>
 <span class="seperator"></span>

@@ -1,4 +1,7 @@
 class Helpdesk::NotesController < ApplicationController
+  
+  include Helpdesk::ArticlesUtility
+  
   before_filter { |c| c.requires_permission :manage_tickets }
   before_filter :load_parent_ticket_or_issue
   
@@ -26,6 +29,7 @@ class Helpdesk::NotesController < ApplicationController
           @post.save!
         end
       end
+      create_article_from_note
       post_persist
     else
       create_error
@@ -50,7 +54,8 @@ class Helpdesk::NotesController < ApplicationController
       if @parent.is_a? Helpdesk::Ticket      
         send_reply_email if @item.source.eql?(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["email"])
         if tweet?
-          twt = send_tweet
+          twt_type = params[:tweet_type] || :mention.to_s
+          twt = send("send_tweet_as_#{twt_type}")
           @item.create_tweet({:tweet_id => twt.id, :account_id => current_account.id})
         elsif facebook?
           fb_comment = add_facebook_comment
@@ -125,7 +130,7 @@ class Helpdesk::NotesController < ApplicationController
       redirect_to @parent
     end
     
-    def send_tweet
+    def send_tweet_as_mention
       reply_twitter = current_account.twitter_handles.find(params[:twitter_handle])
       unless reply_twitter.nil?
        begin
@@ -133,10 +138,28 @@ class Helpdesk::NotesController < ApplicationController
         twitter = @wrapper.get_twitter
         latest_comment = @parent.notes.latest_twitter_comment.first
         status_id = latest_comment.nil? ? @parent.tweet.tweet_id : latest_comment.tweet.tweet_id
-        twitter.update(@item.body, {:in_reply_to_status_id => status_id})
-      rescue
+        twitter.update(validate_tweet(@item.body), {:in_reply_to_status_id => status_id})
+       rescue
          flash.now[:notice] = t('twitter.not_authorized')
-        end
+       end
+      end
+  end
+  
+  
+  def send_tweet_as_dm
+     logger.debug "Called  send_tweet_as_dm send_tweet_as_dm "
+      reply_twitter = current_account.twitter_handles.find(params[:twitter_handle])
+      unless reply_twitter.nil?
+       begin
+        @wrapper = TwitterWrapper.new reply_twitter
+        twitter = @wrapper.get_twitter
+        latest_comment = @parent.notes.latest_twitter_comment.first
+        status_id = latest_comment.nil? ? @parent.tweet.tweet_id : latest_comment.tweet.tweet_id    
+        req_twt_id = latest_comment.nil? ? @parent.requester.twitter_id : latest_comment.user.twitter_id
+        resp = twitter.direct_message_create(req_twt_id, @item.body)
+       rescue  
+         flash.now[:notice] = t('twitter.not_authorized')
+       end
       end
   end
   
@@ -166,6 +189,15 @@ class Helpdesk::NotesController < ApplicationController
         flash[:notice] = t('helpdesk.tickets.note.attachment_size.exceed')
         redirect_to :back  
      end
+ end
+ 
+ 
+  def validate_tweet tweet
+   twitter_id = "@#{@parent.requester.twitter_id}" 
+   return tweet if ( tweet[0,twitter_id.length] == twitter_id)
+   twt_text = (twitter_id+" "+  tweet)
+   twt_text = twt_text[0,Social::Tweet::LENGTH - 1] if twt_text.length > Social::Tweet::LENGTH
+   return twt_text
   end
 
 end

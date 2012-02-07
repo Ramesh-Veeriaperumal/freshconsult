@@ -18,19 +18,26 @@ code, pre {
 	font-size:11px;
 }
 
-a{ @include link-colors(#336699, #65a2e6); }
-a:hover{text-decoration:none;}
+a{ 
+  @include link-colors(#336699, #00438a);
+  text-decoration: none;
+  font-weight: inherit;
+}
+a:hover{ text-decoration:none;}
 
-.hide{
-    display:none;
+.hide {
+  display: none;
+}
+.show {
+  display: block;
 }
 
-.clearfix{ @include clearfix; }
+.clearfix{ @include pie-clearfix; }
 
-.title{ color:#444444; padding:6px 0px 10px 0px;font-weight:bold;}
+.title{ color:#404040; padding: 6px 0px 10px 0px; font-weight:bold;}
 .title a{ @include link-colors(#4D769F, #3399cc, #4D769F, #4D769F); text-decoration:none; }
 h1.title{ font-size:2em; text-transform:capitalize; font-weight:normal; }
-h2.title{ font-size:1.65em; font-weight:normal; }
+h2.title{ font-size:1.65em; }
 h3.title, h3.sub_title, h3.title-band{ font-size:1.45em; }
 h4.title { font-size:1.30em; }
 h4.title.margin-set { margin-bottom:8px }
@@ -137,4 +144,12 @@ label.error{
 }
 .alert-block p + p {
   margin-top: 5px;
+}
+
+.underline{
+	text-decoration:underline;
+}
+
+.underline:hover{
+	text-decoration:none;
 }

@@ -62,6 +62,7 @@ class Account < ActiveRecord::Base
   has_many :solution_categories , :class_name =>'Solution::Category',:include =>:folders, :dependent => :destroy, :order => "position"
   has_many :solution_articles , :class_name =>'Solution::Article'
   
+  has_many :installed_applications, :class_name => 'Integrations::InstalledApplication', :dependent => :destroy
   has_many :customers, :dependent => :destroy
   has_many :contacts, :class_name => 'User' , :conditions =>{:user_role =>[User::USER_ROLES_KEYS_BY_TOKEN[:customer], User::USER_ROLES_KEYS_BY_TOKEN[:client_manager]] , :deleted =>false}
   has_many :agents, :through =>:users , :conditions =>{:users=>{:deleted => false}}
@@ -133,6 +134,9 @@ class Account < ActiveRecord::Base
 
   
   has_many :tags, :class_name =>'Helpdesk::Tag'
+  
+  has_many :time_sheets , :class_name =>'Helpdesk::TimeSheet'
+  
   #Scope restriction ends
   
   validates_format_of :domain, :with => /(?=.*?[A-Za-z])[a-zA-Z0-9]*\Z/
@@ -190,7 +194,7 @@ class Account < ActiveRecord::Base
     
     :pro => {
       :features => [ :scenario_automations, :customer_slas, :business_hours, :forums, 
-        :surveys ,:facebook ],
+        :surveys ,:facebook, :timesheets ],
       :inherits => [ :basic ]
     },
     
@@ -204,7 +208,7 @@ class Account < ActiveRecord::Base
     },
     
     :blossom => {
-      :features => [ :twitter, :facebook, :forums, :surveys ],
+      :features => [ :twitter, :facebook, :forums, :surveys , :timesheets ],
       :inherits => [ :sprout ]
     },
     

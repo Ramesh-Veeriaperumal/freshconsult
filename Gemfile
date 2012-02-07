@@ -53,6 +53,7 @@ gem "twitter" , "0.9.12"
 gem "newrelic_rpm"
 gem "sanitize", "2.0.3"
 gem "koala", "~> 1.0.0"
+gem "unicorn", "4.1.1"
 
 
 group :development do

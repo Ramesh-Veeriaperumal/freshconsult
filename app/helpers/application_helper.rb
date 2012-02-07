@@ -34,7 +34,11 @@ module ApplicationHelper
   end
 
   def each_or_message(partial, collection, message)
-    render(:partial => partial, :collection => collection) || content_tag(:div, message, :class => "info-highlight")
+    render(:partial => partial, :collection => collection) || content_tag(:div, message, :class => "list-noinfo")
+  end
+  
+  def each_or_new(partial_item, collection, partial_form, partial_form_locals = {})
+    render(:partial => partial_item, :collection => collection) || render(:partial => partial_form, :locals => partial_form_locals)
   end
   
   # A helper to show an enable disalbed toggle button like iphone 
@@ -99,22 +103,22 @@ module ApplicationHelper
   end
   
   def html_list(type, elements, options = {}, activeitem = 0)
-      if elements.empty?
-        "" 
-      else
-        lis = elements.map { |x| content_tag("li", x, :class => ("active first" if (elements[activeitem] == x)))  }
-        content_tag(type, lis, options)
-      end
+    if elements.empty?
+      "" 
+    else
+      lis = elements.map { |x| content_tag("li", x, :class => ("active first" if (elements[activeitem] == x)))  }
+      content_tag(type, lis, options)
     end
+  end
 
   def ul(*args)
     html_list("ul", *args)
   end
-  
+
   def ol(*args)
     html_list("ol", *args)
-  end  
-
+  end
+  
   def check_box_link(text, checked, check_url, check_method, uncheck_url, uncheck_method = :post)
     form_tag("", :method => :put) +    
     check_box_tag("", 1, checked, :onclick => %{this.form.action = this.checked ? '#{check_url}' : '#{uncheck_url}';
@@ -191,6 +195,10 @@ module ApplicationHelper
   def split_ticket_path(args_hash)
     link_to(args_hash['subject']+"(##{args_hash['ticket_id']})", "#{helpdesk_ticket_path args_hash['ticket_id']}}")
   end
+  
+   def timesheet_path(args_hash, link_display = 'time entry')
+    link_to(link_display, "#{helpdesk_ticket_path args_hash['ticket_id']}#time_entry#{args_hash['timesheet_id']}")
+  end
   #Liquid ends here..
   
   #Ticket place-holders, which will be used in email and comment contents.
@@ -255,8 +263,9 @@ module ApplicationHelper
   end
   
   # Date and time format that is mostly used in our product
-  def formated_date(date_time)
-    date_time.strftime("%B %e %Y at %I:%M %p")
+  def formated_date(date_time, format = "%B %e %Y @ %I:%M %p")
+    format = format.gsub(/.\b[%Yy]/, "") if (date_time.year == Time.now.year)
+    date_time.strftime(format)
   end
   
   # Get Pref color for individual portal
@@ -267,50 +276,63 @@ module ApplicationHelper
    end
    color
  end
+ 
+ def get_time_in_hours seconds
+   sprintf( "%0.02f", seconds/3600)
+ end
+ 
+ def get_total_time time_sheets
+   total_time_in_sec = time_sheets.collect{|t| t.running_time}.sum
+   return get_time_in_hours(total_time_in_sec)
+ end
   
   def get_app_config(app_name)
-    installed_app = Integrations::InstalledApplication.find(:all, :joins=>:application, 
-                  :conditions => {:applications => {:name => app_name}, :account_id => current_account})
+    installed_app = get_app_details(app_name)
     return installed_app[0].configs[:inputs] unless installed_app.blank?
   end
 
   def is_application_installed?(app_name)
-    installed_app = Integrations::InstalledApplication.find(:all, :joins=>:application, 
-                  :conditions => {:applications => {:name => app_name}, :account_id => current_account})
+    installed_app = get_app_details(app_name)
     return !(installed_app.blank?)
   end
-  
+
   def get_app_details(app_name)
     installed_app = Integrations::InstalledApplication.find(:all, :joins=>:application, 
                   :conditions => {:applications => {:name => app_name}, :account_id => current_account})
     return installed_app
   end
 
-  def get_app_widget_script(app_name, widget_name, liquid_objs)
+  def get_app_widget_script(app_name, widget_name, liquid_objs) 
     installed_app = Integrations::InstalledApplication.find(:first, :joins=>{:application => :widgets}, 
                   :conditions => {:applications => {:name => app_name, :widgets => {:name => widget_name}}, :account_id => current_account})
     if installed_app.blank? or installed_app.application.blank?
       return ""
     else
       widget = installed_app.application.widgets[0]
-      replace_objs = {installed_app.application.name.to_s => installed_app}
-      replace_objs = liquid_objs.blank? ? replace_objs : liquid_objs.merge(replace_objs)
-      return Liquid::Template.parse(widget.script).render(replace_objs)
+      # replace_objs will contain all the necessary liquid parameter's real values that needs to be replaced.
+      replace_objs = {installed_app.application.name.to_s => installed_app, "application" => installed_app.application} # Application name based liquid obj values.
+      replace_objs = liquid_objs.blank? ? replace_objs : liquid_objs.merge(replace_objs) # If the there is no liquid_objs passed then just use the application name based values alone.
+      return Liquid::Template.parse(widget.script).render(replace_objs, :filters => [FDTextFilter])  # replace the liquid objs with real values.
     end
   end
 
   def construct_ui_element(object_name, field_name, field, field_value = "")
+    
     field_label = t(field[:label])
     dom_type = field[:type]
     required = field[:required]
-    element_class   = " #{ (required) ? 'required' : '' } #{ dom_type }"
+    rel_value = field[:rel]
+    url_autofill_validator = field[:validator_type]
+    ghost_value = field[:autofill_text]
+    element_class   = " #{ (required) ? 'required' : '' }  #{ (url_autofill_validator) ? url_autofill_validator  : '' } #{ dom_type }"
     field_label    += " #{ (required) ? '*' : '' }"
     object_name     = "#{object_name.to_s}"
     label = label_tag object_name+"_"+field_name, field_label
     dom_type = dom_type.to_s
+    
     case dom_type
       when "text", "number", "email", "multiemail" then
-        element = label + text_field(object_name, field_name, :class => element_class, :value => field_value)
+        element = label + text_field(object_name, field_name, :class => element_class, :value => field_value, :rel => rel_value, "data-ghost-text" => ghost_value)
       when "paragraph" then
         element = label + text_area(object_name, field_name, :class => element_class, :value => field_value)
       when "dropdown" then
@@ -376,6 +398,13 @@ module ApplicationHelper
     } 
     javascript_tag("jQuery('#Pages').pageless(#{opts.to_json});")
   end
+  
+  def render_page
+    respond_to do |format|
+      format.html { redirect_to :back }
+      format.js
+    end
+  end
    
   private
     def solutions_tab
@@ -413,4 +442,12 @@ module ApplicationHelper
     tab || ""
   end
   
+end
+
+module FDTextFilter
+  def escape_html(input)
+    input = input.to_s.gsub("\"", "\\\"")
+    input = input.gsub("\\", "\\\\")
+    return input
+  end
 end

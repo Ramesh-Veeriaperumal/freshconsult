@@ -1,0 +1,13 @@
+<%= render :partial => "helpdesk/time_sheets/new" %>
+<div id="timesheetlist">
+	<%= each_or_message "helpdesk/time_sheets/time_entry", @ticket.time_sheets, t(".no_timeentry") %>
+</div>
+<div id="timesheettotal" class="timeentry <%= @ticket.time_sheets.blank? ? 'hide' : '' %>">
+	<div class="user_details"><%= t("total") %></div>
+	<div class="timespent">
+	  <%= content_tag :span, get_total_time(@ticket.time_sheets),
+                    :class => "time",
+                    :id => "timeentry_timer_total" %>
+	</div>
+</div>
+<%= include_javascripts :timesheet %>

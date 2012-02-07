@@ -8,7 +8,7 @@ allow_debugging:        on
 stylesheets:
   print:
     - public/stylesheets/print.css
-        
+
   common:
     - public/stylesheets/reset.css
     - public/stylesheets/layout.css
@@ -44,19 +44,21 @@ javascripts:
     - public/javascripts/application.js
   frameworks:
     - public/javascripts/frameworks/jquery.js
+    - public/javascripts/frameworks/sprintf.js
     - public/javascripts/frameworks/plugins/*.js
     - public/javascripts/hackz.js    
   visitor:
       - public/javascripts/frameworks/session.js            
   workspace: 
-    - public/javascripts/bootstrap-twipsy.js
-    - public/javascripts/bootstrap-popover.js
+    - public/javascripts/bootstrap/*.js
     - public/javascripts/utils.js
     - public/javascripts/fast_autocompleter.js    
     - public/javascripts/humane.js
     - public/javascripts/factory_ui.js
     - public/javascripts/json2.js
     - public/javascripts/globalinit.js
+  timesheet:
+    - public/javascripts/timesheet.js
   freshwidget:
     - public/javascripts/freshwidget.js
   custom_widget:

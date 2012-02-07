@@ -26,7 +26,12 @@ class Solution::FoldersController < ApplicationController
     @item = current_category.folders.find(params[:id], :include => :articles)
     
     respond_to do |format|
-      format.html 
+      if (@item.is_default? && !permission?(:manage_knowledgebase))
+        store_location
+        format.html {redirect_to login_url }
+      else
+        format.html
+      end
       format.xml  { render :xml => @item.to_xml(:include => fetch_articles_scope) }
       format.json { render :json => @item.to_json(:except => [:account_id,:import_id],:include => fetch_articles_scope) }
     end
@@ -48,7 +53,12 @@ class Solution::FoldersController < ApplicationController
     current_category = current_account.solution_categories.find(params[:category_id])
      @folder = current_category.folders.find(params[:id])      
       respond_to do |format|
-      format.html # edit.html.erb
+      if @folder.is_default?
+        flash[:notice] = I18n.t('folder_edit_not_allowed')
+        format.html {redirect_to :action => "show" }
+      else
+         format.html # edit.html.erb
+      end
       format.xml  { render :xml => @folder }
     end
   end
@@ -97,7 +107,7 @@ class Solution::FoldersController < ApplicationController
     current_category = current_account.solution_categories.find(params[:category_id])     
     @folder = current_category.folders.find(params[:id])
     
-    @folder.destroy
+    @folder.destroy unless @folder.is_default?
     
     redirect_to_url = solution_category_url(params[:category_id])
     

@@ -26,7 +26,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       :create_initial_activity, :support_score_on_create
   before_update :cache_old_model, :update_dueby 
   after_update :save_custom_field, :update_ticket_states, :notify_on_update, :update_activity, 
-      :support_score_on_update
+      :support_score_on_update, :stop_timesheet_timers
   
   belongs_to :account
   belongs_to :email_config
@@ -94,6 +94,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   has_many :survey_handles, :as => :surveyable, :dependent => :destroy
   has_many :support_scores, :as => :scorable, :dependent => :destroy
+  
+  has_many :time_sheets , :class_name =>'Helpdesk::TimeSheet', :dependent => :destroy, :order => "executed_at"
   
   attr_protected :attachments #by Shan - need to check..
   
@@ -249,6 +251,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def priority_name
     PRIORITY_NAMES_BY_KEY[priority]
   end
+  
+  def priority_key
+    PRIORITY_TOKEN_BY_KEY[priority]
+  end
 
   def create_activity(user, description, activity_data = {}, short_descr = nil)
     activities.create(
@@ -293,6 +299,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   def conversation(page = nil, no_of_records = 5)
     notes.visible.exclude_source('meta').newest_first.paginate(:page => page, :per_page => no_of_records)
+  end
+
+  def conversation_count(page = nil, no_of_records = 5)
+    notes.visible.exclude_source('meta').size
   end
 
   def train(category)
@@ -728,6 +738,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
     def priority_name
       PRIORITY_NAMES_BY_KEY[priority]
     end
+    
+   def stop_timesheet_timers
+    if status != @old_ticket.status && (status == STATUS_KEYS_BY_TOKEN[:resolved] or status == STATUS_KEYS_BY_TOKEN[:closed])
+       running_timesheets =  time_sheets.find(:all , :conditions =>{:timer_running => true})
+       running_timesheets.each{|t| t.stop_timer}
+    end
+   end
   
   private
   
@@ -826,6 +843,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
         email = $1
       end  
      email
-   end
+ end
+ 
 end
   
