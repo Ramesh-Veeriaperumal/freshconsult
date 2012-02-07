@@ -208,7 +208,7 @@ class Account < ActiveRecord::Base
     },
     
     :blossom => {
-      :features => [ :twitter, :facebook, :forums, :surveys ],
+      :features => [ :twitter, :facebook, :forums, :surveys , :timesheets ],
       :inherits => [ :sprout ]
     },
     
