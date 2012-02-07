@@ -26,7 +26,7 @@
       <% if !note.incoming %>
         <%= link_to t('ticket.split_ticket'), { :action => :split_the_ticket , :note_id => note.id } , :method => :post, :class => "slim-button tooltip" , :title => t(".split_this_as_new_ticket", :confirm => "Split this note and create it as a new ticket?")  if @item && !@item.fb_post %>
       <% end %>
-      <%= link_to_remote( "", helpdesk_ticket_helpdesk_note_path(note.notable, note), :method => :delete, :class => "close-button", :confirm => "Delete this note?" ) %>   
+      <%= link_to( "", helpdesk_ticket_helpdesk_note_path(note.notable, note), :method => :delete, :class => "close-button", :confirm => "Delete this note?" ) %>   
       <% end %>
     </div>
   <div class="user_details">    
