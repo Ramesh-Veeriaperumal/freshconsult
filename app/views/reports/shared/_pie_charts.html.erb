@@ -5,26 +5,25 @@
 	<%= @source_single_stacked_bar_chart %>
   <% end %>
 </div>
+<%=@pie_charts_hash["flexifields.ffs_01"]%>
 <%	
-unless params[:reports].nil?
-	params[:reports].each do |report_name|
-		unless self.instance_variable_get("@#{report_name.to_s.gsub('.', '_')}_pie_chart").nil? or report_name.to_s == 'status'
+unless @pie_charts_hash.nil?
+	@pie_charts_hash.each do |label,pie_chart|
 		%>
 		<div class="report-unit report-pie-chart">
-			<h3><%= t('reports.pie_chart_title_prefix') %> <%= @pie_chart_labels.fetch(report_name.to_s,'')%></h3>
-			<div id ="<%=report_name.to_s.gsub('.', '_')%>_freshdesk_chart" class="chart-container"></div>
+			<h3><%= t('reports.pie_chart_title_prefix') %> <%= @pie_chart_labels.fetch(label,'')%></h3>
+			<div id ="<%=label.gsub('.', '_')%>_freshdesk_chart" class="chart-container">No Data to display!</div>
 		</div>
 		<%
-		end
 	end
 end
 %>
 <% javascript_tag do %>
 	jQuery(document).ready(function() {
-	<%	unless params[:reports].nil?
-			params[:reports].each do |report_name|
+	<%	unless @pie_charts_hash.nil?
+			@pie_charts_hash.each do |label,pie_chart|
 				%>
-				<%=self.instance_variable_get("@#{report_name.to_s.gsub('.', '_')}_pie_chart") unless report_name.to_s=='status'%>
+				<%=pie_chart%>
 			<%
 			end
 		end 
