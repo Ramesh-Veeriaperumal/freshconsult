@@ -6,13 +6,17 @@
   var currentactive,
       position   		= -1, 
       insideSearch 	= false;
-
-  callbackToSearch = function(string){
+      currentString = "";
+      
+  callbackToSearch = function(string){    
     jQuery.ajax({ url: "/search/suggest?search_key="+string, 
                   success: function(data){
-                            $J("#SearchResultsBar").css("display", "inline"); 
-                            position   = -1;
-                            $J("#SearchResultsBar .results").html(data);
+                           if(string == $("header_search").value){
+                              //console.log(currentString);
+                              $J("#SearchResultsBar").css("display", "inline"); 
+                              position   = -1;
+                              $J("#SearchResultsBar .results").html(data);
+                           }
                           }});
                         }
 			
@@ -21,7 +25,7 @@
 			});
 			
 			$J("#SearchResultsBar a").live("hover", function(){
-				$(currentactive).removeClass("active");
+				$J(currentactive).removeClass("active");
 				currentactive = $J(this).addClass("active");
 			});
 			
@@ -54,17 +58,17 @@
 				currentactive = $J(searchlist.get(position)).addClass("active"); 
 			};
 			
-			var executeAction = function (keyCode){ 
+			var executeAction = function (keyCode){
 				 switch (keyCode) {
-			        case 40:
-						move(1); 
-			            break;
-			        case 38:
-						move(-1); 
-			            break;
+          case 40:
+            move(1); 
+          break;
+          case 38:
+            move(-1); 
+          break;
 					case 13:
 						$J(currentactive).trigger("click");
-						break; 
+          break; 
 				}
 			} 
 			
@@ -78,10 +82,11 @@
 					break;
 					default:
 						searchString = this.value.replace(/^\s+|\s+$/g, "");
-						if(searchString != '' && searchString.length > 1){
+						if(searchString != '' && searchString.length > 1 && currentString != searchString){
 							delay(function(){
 						      callbackToSearch(searchString);
-						    }, 200 ); 
+						      currentString = searchString;
+						    }, 100 ); 
 						}else{
 							jQuery("#SearchResultsBar").hide();				
 						}

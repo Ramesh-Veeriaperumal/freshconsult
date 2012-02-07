@@ -635,6 +635,8 @@ body h5{
 			position: relative; 
 			.details{ 
 				@include text-formatting;
+				font-size:13px;
+				line-height:18px;
 				overflow: auto;
 				p{
 				   margin-right:2em; 
@@ -1428,14 +1430,13 @@ h4.list_title{
 
 .alpha_sort_list{ 
 	@include clearfix;
-	float:right;
-	border:1px solid red;
+	display:block;
 	list-style:none;
 	display:block;
-	padding:4px 2px;	
-	border:1px solid #dedede;	
+	padding:4px 20px;
+	margin:0 -20px;	
+	border-bottom:1px solid #dedede;	
 	background: #efefef;
-	@include border-radius(5px);
 	li{
 		float:left;
 		margin:0px;
@@ -3351,11 +3352,15 @@ div.addReminder{
 
 .admin_list, .content_list, .table-list{
 	@include no-bullets;
-
-	padding:0px 0px;  
+ 	border-color: #F2F2F2;
+	border-style: solid;
+	border-width: 1px 0;
+	padding:0px 0px;
+	margin:0 -20px;
 	li{	
 		@include clearfix;
-		padding:5px 0;
+		padding:8px 20px;
+		background: #FAFAFA;
 		border-bottom:1px solid #efefef; 
 		color:#656565;
 		position:relative;
