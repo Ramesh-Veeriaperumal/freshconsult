@@ -12,7 +12,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     if !account.nil? and account.active?
       encode_stuffs
       kbase_email = "kbase@#{account.full_domain}"
-      if (to_email[:email] != kbase_email)          
+      if (to_email[:email] != kbase_email) || (get_envelope_to.size > 1)
         display_id = Helpdesk::Ticket.extract_id_token(params[:subject])
         ticket = Helpdesk::Ticket.find_by_account_id_and_display_id(account.id, display_id) if display_id
         if ticket
@@ -263,5 +263,10 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end   
     return original_msg
 end
+    def get_envelope_to
+      envelope = params[:envelope]
+      envelope_to = envelope.nil? ? [] : (ActiveSupport::JSON.decode envelope)['to']
+      envelope_to
+    end    
   
 end

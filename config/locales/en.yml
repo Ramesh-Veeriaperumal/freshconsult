@@ -1713,9 +1713,9 @@ en:
   email_command_preview_subject_value: "Support Ticket"
   unable_to_charge: "Unable to charge the card for the added agent!"
   default_category: "Default Category"
-  default_category_description: "All mails sent to %{full_domain} will be stored here as drafts"
+  default_category_description: "All emails sent to %{full_domain} will be stored here as drafts"
   default_folder: "Drafts"
-  default_folder_description: "All mails sent to %{full_domain} will be stored here as drafts"
+  default_folder_description: "All emails sent to %{full_domain} will be stored here as drafts"
   category_edit_not_allowed: "This category can't be modified"
   folder_edit_not_allowed: "This folder can't be modified" 
   never: Never
