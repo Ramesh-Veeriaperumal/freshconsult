@@ -10,12 +10,15 @@
 <div id="report-container">
 	<div id="ticket-toolbar" class="toolbar">
 		<h3 class="title" id="report-main-title"></h3>
-	</div>
-	<div  id="tickets-summary"></div>
-	<div class="clearfix">&nbsp;</div><div class="clear"></div>
-	<div class="report-unit timeline-chart" id="timeline-chart"></div>
-	<div class="clearfix">&nbsp;</div>
-	<div id="pie-charts"></div>
+	</div>	
+	<div id="charts-nodata" style="display:none;" class="list-noinfo">No data to display</div>
+	<div id="report-content">
+		<div id="tickets-summary"></div>
+		<div class="clearfix">&nbsp;</div><div class="clear"></div>
+		<div class="report-unit timeline-chart" id="timeline-chart"></div>
+		<div class="clearfix">&nbsp;</div>
+		<div id="pie-charts"></div>
+	</div>	
 </div>
 <!-- Submitting the form by default -->
 <% javascript_tag do %>

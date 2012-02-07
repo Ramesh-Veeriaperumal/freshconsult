@@ -1,0 +1,41 @@
+<%= select_tag :reports, options_for_select(@show_fields.map {|k,v| [v, k]}, [:priority,:ticket_type]), { :multiple => true, :class => "customSelect filter_item" } %>		
+
+<div class="ff_item">
+	<h4 class="title"><%= t('reports.select_time_period')%></h4>
+	<%= text_field_tag :date_range, :class => "required" %>
+ </div>
+
+<% javascript_tag do %>
+jQuery(document).ready(function() {
+	jQuery("#date_range").daterangepicker({
+		earliestDate: Date.parse('1/1/2010'),
+		latestDate:Date.parse('Today-1'),
+		presetRanges: [
+			{text: '<%= t('reports.date_ranges.last_7_days') %>', dateStart: 'Today-8', dateEnd: 'Today-1' },
+			{text: '<%= t('reports.date_ranges.last_30_days') %>',dateStart: 'Today-31', dateEnd: 'Today-1'},
+			{text: '<%= t('reports.date_ranges.last_90_days') %>',dateStart: 'Today-91',  dateEnd: 'Today-1'}
+		],
+		presets: {
+			dateRange: '<%= t('reports.date_ranges.custom') %>'
+		},
+		dateFormat: 'dd MM yy',
+		closeOnSelect: true
+	});
+	jQuery("#date_range").val('<%= 30.days.ago.strftime("%d %B %Y") %> - <%= Time.now.strftime("%d %B %Y") %>');
+});
+
+jQuery("#Sidebar form").submit(function(ev){
+  	ev.preventDefault();
+  	jQuery("#report-content, #charts-nodata").hide();
+    jQuery("#report-container").append("<div class='loading-box'></div>"); 
+     jQuery.ajax({
+        url: jQuery("#Sidebar form").attr('action'),
+        type: "POST",
+        data: jQuery(this).serializeArray(),
+        success: function(msg){		  	
+	  		jQuery("#report-container .loading-box").remove();
+        }
+      });
+    return false; 
+  });
+<% end %>
