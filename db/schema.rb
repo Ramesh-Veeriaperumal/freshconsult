@@ -698,17 +698,19 @@ ActiveRecord::Schema.define(:version => 20120217162346) do
   create_table "installed_applications", :force => true do |t|
     t.integer  "application_id"
     t.integer  "account_id",     :limit => 8
-    t.string   "configs"
+    t.text     "configs"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   create_table "integrated_resources", :force => true do |t|
-    t.integer "installed_application_id", :limit => 8
-    t.string  "remote_integratable_id"
-    t.integer "local_integratable_id",    :limit => 8
-    t.string  "local_integratable_type"
-    t.integer "account_id",               :limit => 8
+    t.integer  "installed_application_id", :limit => 8
+    t.string   "remote_integratable_id"
+    t.integer  "local_integratable_id",    :limit => 8
+    t.string   "local_integratable_type"
+    t.integer  "account_id",               :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "key_value_pairs", :force => true do |t|
