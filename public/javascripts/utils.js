@@ -12,6 +12,14 @@ function plural( count, text1, text2 ){
    return(count + " " + ((parseInt(count) > 1) ? text2 : text1))
 }
 
+function totalTime(listClass, updateId){
+ total_hours = $$(listClass)
+                .collect(function(t){ return t.innerHTML; })
+                .inject(0, function(acc, n) { return parseFloat(acc) + parseFloat(n); });
+ 
+ jQuery(updateId).html(sprintf( "%0.02f", total_hours));    
+}
+
 // Primarly for the form customizer page. Used for making the text unselectable
 makePageNonSelectable = function(source){
 	if (document.all) source.onselectstart = function () { return false; };	// Internet Explorer
@@ -24,6 +32,24 @@ function imgerror(source){
     source.src = "/images/fillers/profile_blank_thumb.gif";
     source.onerror = "";
     return true;
+}
+
+// Adding leading zeros to a number
+function pad(number, length) {   
+    var length = length || 2;
+    var str = '' + number;
+    while (str.length < length) {
+        str = '0' + str;
+    }   
+    return str;
+}
+
+// Normalizing Hours
+function normalizeHours(value){
+   return value.split( new RegExp( "\\s*:\\s*", "gi" ) ).collect(function(s) {
+     return pad(s);
+   }).join(':')
+   
 }
 
 // Getting Paramater Value
@@ -173,6 +199,8 @@ active_dialog = null;
           return this.each(function(){
             $this = $(this);
             var dialog = null;
+            
+            $this.modal()
             $this.click(function(e){
                e.preventDefault();
                width = $this.attr("dialogWidth") || '750px';
@@ -316,6 +344,51 @@ active_dialog = null;
 
     });
     return this;
+  };
+
+})( jQuery );
+
+(function( $ ){
+   var methods = {
+        init : function( options ) {
+          return this.each(function(){
+            $this = $(this);
+            dialogid = this.id + "_dialog";
+            dialogcontent = this.id + "_dialogcontent";            
+            var dialog = null;
+            $("body").prepend('<div id="'+dialogid+'" class="modal hide fade"><div class="modal-header"><a href="#" class="close"></a><h3 class="title">'+ this.title +'</h3></div><div id="'+dialogcontent+'"><p class="loading-box" ></p></div></div>');
+            
+            $("#"+dialogid).data({"content": dialogcontent, "href": $this.attr("href")});
+            $this.attr("data-controls-modal", dialogid);
+            $this.attr("data-backdrop", true);
+            $this.attr("data-keyboard", true);
+            
+            $this.modal();
+            
+            $("#"+dialogid).bind('shown', function(){
+               self = $(this)
+               if(!self.attr("ajax-loaded")){
+                  $("#"+self.data("content")).load(self.data("href"), {}, function(responseText, textStatus, XMLHttpRequest) { 
+                     self.attr("ajax-loaded", true);                     
+                     self.find('.close-dialog').click(function(){
+                        self.modal("hide");
+                     });
+                  });
+               }
+            });
+          });
+        }
+   };
+   
+  $.fn.modalAjax = function( method ) {    
+    // Method calling logic
+    if ( methods[method] ) {
+      return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));
+    } else if ( typeof method === 'object' || ! method ) {
+      return methods.init.apply( this, arguments );
+    } else {
+      $.error( 'Method ' +  method + ' does not exist on jQuery.dialog2' );
+    }
   };
 
 })( jQuery );

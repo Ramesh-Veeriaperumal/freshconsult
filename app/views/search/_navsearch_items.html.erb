@@ -1,6 +1,10 @@
 <!-- To do - Remove duplicates and use some partials by Shan -->
 		<% unless @total_results == 0 %>
-			<li><div class="title"><%= (@total_results == 1) ? "Displaying 1 result" : "Displaying Top #{@total_results} results" %></div></li>
+			<li>
+			  <div class="title">
+			    <%= "Displaying #{pluralize(@total_results, "result")}" %>
+			  </div>
+			</li>
 		<% end %>
 		
 		<% unless @searched_tickets.nil? or @searched_tickets.empty? %>

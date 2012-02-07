@@ -24,7 +24,7 @@
 <% content_for :main_panel_title do %>
   <h3 class="title">
 	  <%= t(".title") %>
-	  <%= render :partial => "/helpdesk/tickets/filters" %>
+	  <!--%= render :partial => "/helpdesk/tickets/filters" %-->
   </h3>
   <!--All Tags--> <!--sup><%= Helpdesk::Tag.all(:conditions => { :account_id => current_account.id }).size %></sup-->
 <% end %>

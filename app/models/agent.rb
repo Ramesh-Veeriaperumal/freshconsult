@@ -11,7 +11,9 @@ class Agent < ActiveRecord::Base
   
   
   has_many :agent_groups ,:class_name => 'AgentGroup', :through => :user , :foreign_key =>'user_id', :source =>'agents'
-  
+
+  has_many :time_sheets , :class_name => 'Helpdesk::TimeSheet' , :through => :user , :foreign_key =>'user_id'
+
   before_create :set_default_ticket_permission
  
   TICKET_PERMISSION = [

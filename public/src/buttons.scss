@@ -54,7 +54,7 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
 .uiButton, .uiButton:visited, .special-button, .special-button:visited, .uiButton-active, .uiButton-iphone, .ui-after-submit{
 	@include button-base; 
 	background-image:url(../images/overlay-button.png);
-	background-color:#eeeeee;
+	background-color:#f8f8f8;
 	background-repeat:repeat-x; 
 	color: #333333;
 	display:inline-block;
@@ -65,10 +65,10 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
 	padding:5px 12px 6px;
 	position: relative;
 	font-size:11px;
-	font-weight:bold;
 	cursor: pointer;
 	text-shadow: 1px 1px 0 white;
 	@include corners(4px);
+	text-align:center;
 }
 .uiButton:hover, .fdbutton:hover, .forum_button:hover, .uiButton-active:hover { background-color:$tab_color; border-color: darken($tab_color, 10%); color:#ffffff; @include text-shadow(rgba(0, 0, 0, 0.2), -1px, -1px, 1px); }
 
@@ -77,6 +77,10 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
    border-color: darken($tab_color, 13%); 
    color:#ffffff; 
    @include text-shadow(rgba(0, 0, 0, 0.2), -1px, -1px, 1px); 
+}
+
+.submit.uiButton{
+	@include min-width(100px);
 }
 
 .iphone-active.uiButton, .iphone-inactive.uiButton{
@@ -123,6 +127,31 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
 .uiButton, .fdbutton, .uiButton:visited, .fdbutton:visited { font-size: 12px; }
 .medium.uiButton, .medium.uiButton:visited { font-size: 14px; }
 .large.uiButton, .large.uiButton:visited { font-size: 1.36em; padding: 8px 14px 9px; }
+
+.uiButton.disabled {
+  cursor: default;
+  background-image: none;
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
+  filter: alpha(opacity=65);
+  -khtml-opacity: 0.65;
+  -moz-opacity: 0.65;
+  opacity: 0.65;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+}
+.uiButton[disabled] {
+  cursor: default;
+  background-image: none;
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
+  filter: alpha(opacity=65);
+  -khtml-opacity: 0.65;
+  -moz-opacity: 0.65;
+  opacity: 0.65;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+}
 
 .forum_button{
 	@include anchor-button;
@@ -222,6 +251,13 @@ div.action_buttons:hover{
    border: 1px solid #cfcfcf;
    cursor: pointer;
    position:relative;   
+}
+
+.close-button{
+	display:inline-block;
+	width:20px;
+	height:20px;
+	background:sprite($symbol, close-delete) no-repeat;
 }
 
 .icon-detail{
