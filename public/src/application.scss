@@ -144,6 +144,12 @@ ul.activityfeed li{
 	.element.last{
 		border-bottom:0px;
 	}
+	.actions{
+		float:right;
+		position:relative;
+		left:5px;
+		top:3px;			
+	}
 } 
 
 .left_connected{
@@ -2112,6 +2118,7 @@ h4.border_title{
 	background-image:url('/images/ajax-loader.gif');
 	background-repeat:no-repeat;
 	background-position: 10px 10px;
+	min-height:33px;
 }
 
 .loading-center, .loading-box{
@@ -2127,6 +2134,7 @@ h4.border_title{
 }
 
 .loading-fb{
+	min-height:20px;
 	background-image:url('/images/load-fb-style.gif');
 	background-repeat:no-repeat;
 	background-position: 0px 0px;	
@@ -2347,7 +2355,7 @@ a.page_title{
 }
 
 .highlight{
-	font-size:12px; color:#0078BD;
+	color:#0078BD;
 }
 
 .company_box, .contact-box{
@@ -3249,16 +3257,31 @@ div.addReminder{
 	}
 }
 
-.info-highlight, .info-highlight-deleted, .info-error, .info-code{
+.info-highlight, .info-highlight-deleted, .info-error, .info-code, .more-tweets{
 	font-size:13px;
 	margin:0px 0px 0px 0px;
-	padding:8px 18px;
+	padding:10px 18px;
 	color:#666666;
-	border:1px solid #f4f4e9;
+	border:1px solid darken(#f4f4e9, 5%);
 	background-color:#fffbee;
 	div{
 		padding:6px;
 	}
+}
+
+.more-tweets{
+	text-align:center;
+	cursor:pointer;
+	text-transform:lowercase;
+	color:#333;
+	margin-bottom:10px;
+	@include border-radius(3px);
+	@include text-shadow( 0 1px 0 white );
+	display:none;
+}
+
+.more-tweets:hover{
+	background-color:darken(#fffbee, 10%);
 }
 
 .ui-form span.warning{
@@ -3641,7 +3664,7 @@ div.addReminder{
 	background:#ededed;
 	border:1px solid #cccccc;
 	table{ width:100%; }
-	td{ width:33%; vertical-align:top;border:1px solid #dadada;	padding:8px 13px; }
+	td{ vertical-align:top;border:1px solid #dadada;	padding:8px 13px; }
 	.plan-details{ 
 		h2, h4{	text-transform:uppercase; font-weight:bold; }
 		h2{
@@ -4073,13 +4096,23 @@ a.close{
    .content{
       margin:0px 0px 0px 230px;
       p.info-data{
-         font-family:verdana;
          font-size:15px;
          line-height:26px;
          padding-right:8%;
       }
    }
 }
+
+.admin_icon_image{ 
+	@include box-shadow(rgba(0, 0, 0, 0.15) 1px 0 3px);
+	margin:-13px -20px;
+	padding:20px 0 35px 0;
+	.content{
+	   margin:0 20px 0 40px;
+	} 
+	h2{ font-size:2em; }
+	h3{ font-weight:normal; color: #336699; }
+} 
 
 .tweet-counter{
    font-size:16px; 
@@ -4371,8 +4404,6 @@ a.close{
 				font-weight: normal;
 			}
 		}
-		
-		
 	}
 }
 
@@ -4460,4 +4491,20 @@ a.close{
 			font-weight:bold;
 		}
 	}
+
+.message-highlight {
+	h4.title{
+		padding-bottom:0;
+		font-weight:bold;
+	}
+  background-color: #fefbf3;
+  padding: 9px;
+  border: 1px solid rgba(0,0,0,.2);
+  -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.1);
+     -moz-box-shadow: 0 1px 2px rgba(0,0,0,.1);
+          box-shadow: 0 1px 2px rgba(0,0,0,.1);
+}
+
+#timeentry_add {
+	margin-bottom: 25px;
 }

@@ -10,6 +10,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
     
   before_destroy :delete_from_ticket_filter
   before_update :delete_from_ticket_filter
+  before_save :set_portal_edit
   
   acts_as_list
   
@@ -153,5 +154,11 @@ class Helpdesk::TicketField < ActiveRecord::Base
     def populate_label
       self.label = name.titleize if label.blank?
       self.label_in_portal = label if label_in_portal.blank?
-    end
+   end
+   def set_portal_edit
+      self.editable_in_portal = false unless visible_in_portal
+      self
+   end
+  
+  
 end

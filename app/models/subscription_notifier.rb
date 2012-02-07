@@ -14,7 +14,7 @@ class SubscriptionNotifier < ActionMailer::Base
   end
   
   def setup_bcc
-     @bcc = AppConfig['sub_bcc_email'][RAILS_ENV]
+     @bcc = AppConfig['sub_bcc_email'][RAILS_ENV] if Rails.env.production?
   end
   
   def welcome(account)
@@ -34,6 +34,13 @@ class SubscriptionNotifier < ActionMailer::Base
     setup_email(subscription_payment.subscription.account.account_admin, "Your #{AppConfig['app_name']} invoice")
     setup_bcc
     @body = { :subscription => subscription_payment.subscription, :amount => subscription_payment.amount, :subscription_payment => subscription_payment }
+    @content_type = "text/html"
+  end
+  
+  def day_pass_receipt(quantity, subscription_payment)
+    setup_email(subscription_payment.subscription.account.account_admin, "Your #{AppConfig['app_name']} invoice")
+    setup_bcc
+    @body = { :units => quantity, :subscription_payment => subscription_payment }
     @content_type = "text/html"
   end
   

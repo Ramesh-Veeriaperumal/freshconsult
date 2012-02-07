@@ -1,8 +1,7 @@
 unless Account.current
   SubscriptionPlan.seed_many(:name, [
-    { :name => 'Basic', :amount => 9 },
-    { :name => 'Pro', :amount => 19 },
-    { :name => 'Premium', :amount => 29 },
-    { :name => 'Free', :amount => 0 }
+    { :name => 'Sprout', :amount => 9, :free_agents => 1, :day_pass_amount => 1.00 },
+    { :name => 'Blossom', :amount => 19, :free_agents => 1, :day_pass_amount => 2.00 },
+    { :name => 'Garden', :amount => 29, :free_agents => 1, :day_pass_amount => 2.00 }
   ])
 end

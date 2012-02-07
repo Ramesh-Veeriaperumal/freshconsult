@@ -13,39 +13,31 @@ require 'openssl'
   skip_before_filter :require_user, :except => :destroy
   skip_before_filter :check_account_state
   before_filter :check_sso_params, :only => :sso_login
+  skip_before_filter :check_day_pass_usage
   
   def new
     if current_account.sso_enabled? and (request.request_uri != "/login/normal")
-       redirect_to  current_account.sso_options[:login_url]
+      redirect_to  current_account.sso_options[:login_url]
     end
+    
     @user_session = current_account.user_sessions.new
   end
-  
  
-  def check_sso_params
-    if params[:name].blank? or params[:email].blank? or params[:hash].blank?
-      flash[:notice] = t(:'flash.login.sso.expected_params')
-      redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
-    end
-  end
-  
   def sso_login
-      if params[:hash] == gen_hash_from_params_hash
-          @current_user = current_account.users.find_by_email(params[:email])  
-          unless @current_user
-            @current_user = create_user(params[:email],current_account,nil,{:name => params[:name]})
-          else
-            @current_user.update_attributes(:name => params[:name])
-          end
-          @user_session = @current_user.account.user_sessions.new(@current_user)
-          if @user_session.save
-              flash[:notice] = t(:'flash.login.success')
-              redirect_back_or_default('/')      
-          else
-              flash[:notice] = "Login was unscucessfull!"
-              redirect_to login_normal_url
-          end
+    if params[:hash] == gen_hash_from_params_hash
+      @current_user = current_account.users.find_by_email(params[:email])  
+      unless @current_user
+        @current_user = create_user(params[:email],current_account,nil,{:name => params[:name]})
       else
+        @current_user.update_attributes(:name => params[:name])
+      end
+      
+      @user_session = @current_user.account.user_sessions.new(@current_user)
+      if @user_session.save
+        flash[:notice] = t(:'flash.login.success')
+        redirect_back_or_default('/')  if grant_day_pass  
+      else
+        flash[:notice] = "Login was unscucessfull!"
         redirect_to login_normal_url
       end
    end
@@ -93,7 +85,7 @@ require 'openssl'
   end
 
   def gen_hash_from_params_hash
-     Digest::MD5.hexdigest(params[:name]+params[:email]+current_account.shared_secret)
+    Digest::MD5.hexdigest(params[:name]+params[:email]+current_account.shared_secret)
   end
   
   def show
@@ -103,8 +95,13 @@ require 'openssl'
   def create   
     @user_session = current_account.user_sessions.new(params[:user_session])
     if @user_session.save
-      #flash[:notice] = "Login successful!"
-      redirect_back_or_default('/')
+      #Temporary hack due to current_user not returning proper value
+      @current_user_session = @user_session
+      @current_user = @user_session.record
+      #Hack ends here
+      
+      redirect_back_or_default('/') if grant_day_pass
+      #Unable to put 'grant_day_pass' in after_filter due to double render
     else
       note_failed_login
       render :action => :new
@@ -113,10 +110,10 @@ require 'openssl'
   
   def destroy
     current_user_session.destroy unless current_user_session.nil? 
-    #flash[:notice] = "Logout successful!"
     if current_account.sso_enabled? and !current_account.sso_options[:logout_url].blank?
       return redirect_to current_account.sso_options[:logout_url]
     end
+    
     redirect_to root_url
   end
   
@@ -126,16 +123,17 @@ require 'openssl'
       flash[:notice] = "Please provide valid login details!!"
       return redirect_to login_url 
     end
+    
     @user_session = current_account.user_sessions.new(@current_user)
     if @user_session.save
       @current_user.deliver_account_admin_activation
-       SubscriptionNotifier.send_later(:deliver_welcome, current_account)
+      SubscriptionNotifier.send_later(:deliver_welcome, current_account)
       flash[:notice] = t('signup_complete_activate_info')
       redirect_to root_url     
-     else
+    else
       flash[:notice] = "Please provide valid login details!"
       render :action => :new
-     end
+    end
   end
 
   def openid_google
@@ -214,26 +212,30 @@ require 'openssl'
     @gauth_error = true
     render :action => 'gmail_gadget_auth', :layout => 'layouts/widgets/contacts.widget'
   end
-end
  
   private
-
+    def check_sso_params
+      if params[:name].blank? or params[:email].blank? or params[:hash].blank?
+        flash[:notice] = t(:'flash.login.sso.expected_params')
+        redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
+      end
+    end
+    
     def note_failed_login
       #flash[:error] = "Couldn't log you in as '#{params[:user_session][:email]}'"
       logger.warn "Failed login for '#{params[:user_session][:email]}' from #{request.remote_ip} at #{Time.now.utc}"
-  end
+    end
   
-def get_email(resp)
-   if resp.status == :success
-    session[:openid] = resp.display_identifier
-    logger.debug "display_identifier is ::: #{resp.display_identifier}"
-    ax_response = OpenID::AX::FetchResponse.from_success_response(resp)
-    email = ax_response.data["http://axschema.org/contact/email"].first  
-    
-  else
-    logger.debug "Error: #{resp.status}"   
-  end
-end
+    def get_email(resp)
+      if resp.status == :success
+        session[:openid] = resp.display_identifier
+        logger.debug "display_identifier is ::: #{resp.display_identifier}"
+        ax_response = OpenID::AX::FetchResponse.from_success_response(resp)
+        email = ax_response.data["http://axschema.org/contact/email"].first  
+      else
+        logger.debug "Error in get_email of UserSessionsController : #{resp.status}"   
+      end
+    end
 
  def create_user(email, account,identity_url=nil,options={})
    @contact = account.users.new

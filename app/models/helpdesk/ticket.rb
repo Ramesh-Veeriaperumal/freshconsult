@@ -104,6 +104,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
   named_scope :created_at_inside, lambda { |start, stop|
           { :conditions => [" helpdesk_tickets.created_at >= ? and helpdesk_tickets.created_at <= ?", start, stop] }
         }
+  named_scope :resolved_at_inside, lambda { |start, stop|
+          { 
+            :joins => [:ticket_states,:requester],
+            :conditions => [" helpdesk_ticket_states.resolved_at >= ? and helpdesk_ticket_states.resolved_at <= ?", start, stop] }
+        }
+
   named_scope :resolved_and_closed_tickets, :conditions => {:status => [STATUS_KEYS_BY_TOKEN[:resolved],STATUS_KEYS_BY_TOKEN[:closed]]}
   
   named_scope :all_company_tickets,lambda { |customer| { 
@@ -125,7 +131,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
   named_scope :first_call_resolution,
            :joins  => :ticket_states,
            :conditions => ["(helpdesk_ticket_states.resolved_at is not null)  and  helpdesk_ticket_states.inbound_count = 1"]
-      
+
+  named_scope :company_first_call_resolution,lambda { |customer| { 
+        :joins => [:ticket_states,:requester],
+        :conditions => ["(helpdesk_ticket_states.resolved_at is not null)  and  helpdesk_ticket_states.inbound_count = 1 AND users.customer_id = ?",customer]
+  } 
+  }
+        
 
   named_scope :newest, lambda { |num| { :limit => num, :order => 'created_at DESC' } }
   named_scope :updated_in, lambda { |duration| { :conditions => [ 
@@ -719,8 +731,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
     
     def resolved_at
-      return ticket_states.resolved_at if resolved?
       return ticket_states.closed_at if closed?
+      ticket_states.resolved_at 
     end
     
     def priority_name

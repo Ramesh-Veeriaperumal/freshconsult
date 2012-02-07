@@ -319,17 +319,12 @@ a.addchoice:hover{
 	
 	.largefield{
 		label{
-			font-size:1.4em;			
+			font-size:1.4em;
 		}
 		input{
 			font-size:1.4em; 
 		}
-	}	
-	span{
-		font-weight:normal;
-		/*font-size:0.86em;*/
-		color:#777777;
-	}
+	}	 
 	.check_box{
 		@include clearfix;
 		label{
@@ -1311,59 +1306,77 @@ table.summary-report{
 .request_panel{
 	padding:0 20px 10px 65px; margin:0;
 	border-bottom: 1px solid #F3F3F3;
+
 	.button-container{ 
 		padding:6px 10px;
 		margin-top:10px;
 		background-color:#efefef;
 		@include border-radius(5px);
 		@include box-shadow(rgba(0, 0, 0, 0.2) 0 0 2px inset);
-		position:relative; 
-		top: -10px;
 	}
+	.absolute-button-container{
+		position:absolute;
+		bottom:5px;
+		width:88%;
+	}
+
 	.ui-form{
 		border:0;  background: none;
 		margin:0;	padding:0; 
-			.title{
-				padding-bottom:2px;
-			}
-      li.field{
-         border:0; padding:0;
-      }
-      label, div.fields label{
-         font-size:13px;
-         color:#333333;
-      }			
-			div.field{
-				width:23%;
-				float:left;
-				margin-left:2%;
-			}
-			div.field.first{ margin-left:0; }
-      label.overlabel{
-         margin:2px 8px;
-         color:#888888;
-         font-size:12px;
-      } 
-			fieldset{
-				padding:10px 0;
-				position:relative;
-			}
-			fieldset.integration{
-				@include pie-clearfix;
-				position:relative;
-				padding-left:80px;				
-				border-top:1px solid #e3e3e3;
-				.app-logo{
-					position:absolute;
-					width:51px;
-					top:-10px;
-					left:-80px;
-					height:20px;
-					background-color:#efefef;
-					@include border-bottom-radius(3px);
-					border:1px solid #e3e3e3;
+		.title{
+			padding-bottom:2px;
+		}
+		li.field{
+			border:0; padding:0;
+		}
+		label, div.fields label{
+			font-size:13px;
+			color:#333333;
+		}			
+		div.field{
+			width:23%;
+			float:left;
+			margin-left:2%;
+		}
+		div.field.first{ margin-left:0; }
+
+		label.overlabel{
+			margin:2px 8px;
+			color:#888888;
+			font-size:12px;
+		} 
+		fieldset{
+			padding:10px 0;
+			position:relative;
+		}
+		fieldset.integration{
+			margin-bottom: 10px;
+			@include pie-clearfix;
+			position:relative;
+			padding:0;
+			.integration_container {
+				padding:20px 0 10px 80px;
+			}				
+			border-top:1px solid #e3e3e3;
+			.app-logo{
+				position:absolute;
+				width:51px;
+				top:0;
+				left:0;
+				padding-right:25px;
+				height:20px;
+				background-color:#efefef;
+				@include border-bottom-radius(3px);
+				border:1px solid #e3e3e3;
+
+				cursor: pointer;
+				input[type=checkbox] {
+					position: absolute;
+					right:5px;
+					top:2px;
 				}
 			}
+		}
       li.inline-field, fieldset{
          label.caption{
             width:80px;
@@ -1394,6 +1407,14 @@ table.summary-report{
          }
       }
    }
+}
+
+.timeentry_edit{
+	position: relative;
+	padding-bottom:50px;
+	.ui-form{
+		position: static;
+	}
 }
 
 .nav_search{
@@ -1689,4 +1710,53 @@ textarea.tweet{
 
 .ticket-simple-list label{
    font-size:13px; 
+}
+
+ul.ui-form .inputs-list{
+	margin: -8px 0 20px;
+}
+.inputs-list {  
+	@include pie-clearfix;
+  width: 100%;
+}
+.inputs-list li {
+  display: block;
+  padding: 8px 0;
+  width: 100%;
+}
+.inputs-list label {
+  display: block;
+  float: none;
+  width: auto;
+  padding: 0;
+  margin-left: 20px;
+  line-height: 18px;
+  text-align: left;
+  white-space: normal;
+	span{
+		font-size:13px;
+	}
+}
+.inputs-list label strong {
+  color: #808080;
+}
+.inputs-list label small {
+  font-size: 11px;
+  font-weight: normal;
+}
+.inputs-list .inputs-list {
+  margin-left: 25px;
+  margin-bottom: 10px;
+  padding-top: 0;
+}
+.inputs-list:first-child {
+  padding-top: 6px;
+}
+.inputs-list li + li {
+  padding-top: 2px;
+}
+.inputs-list input[type=radio], .inputs-list input[type=checkbox] {
+  margin-bottom: 0;
+  margin-left: -20px;
+  float: left;
 }

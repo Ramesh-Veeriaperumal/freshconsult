@@ -232,4 +232,12 @@ module Helpdesk::TicketsHelper
     end
   end
   
+  def default_twitter_body_val (ticket)
+    if (ticket.tweet && ticket.tweet.tweet_type == 'mention')
+     return "@#{ticket.requester.twitter_id}"
+    else
+     return ""
+    end
+  end
+  
 end

@@ -62,7 +62,7 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
 	margin:1px; 
 	line-height:17px;
 	border: 1px solid #d4d4d4;
-	padding:5px 12px;
+	padding:5px 12px 6px;
 	position: relative;
 	font-size:11px;
 	cursor: pointer;
@@ -86,7 +86,7 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
 .iphone-active.uiButton, .iphone-inactive.uiButton{
    text-transform:uppercase; 
    padding:3px 10px;
-   font-size:13px;
+   font-size:11px;
    @include box-shadow(rgba(0, 0, 0, 0.2) 0 1px 2px);
    background-image:url(../images/overlay-top-shadow.png);
    padding-right:40px;
@@ -123,9 +123,9 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
 }
 
 .uiButton:active, .fdbutton:active, .uiButton-active:active { top: 1px; }
-.small.uiButton, .small.uiButton:visited 		{ font-size: 11px;  }
-.uiButton, .fdbutton, .uiButton:visited, .fdbutton:visited, 
-.medium.uiButton, .medium.uiButton:visited 		{ font-size: 12px;}
+.small.uiButton, .small.uiButton:visited { font-size: 11px;  }
+.uiButton, .fdbutton, .uiButton:visited, .fdbutton:visited { font-size: 12px; }
+.medium.uiButton, .medium.uiButton:visited { font-size: 14px; }
 .large.uiButton, .large.uiButton:visited { font-size: 1.36em; padding: 8px 14px 9px; }
 
 .uiButton.disabled {

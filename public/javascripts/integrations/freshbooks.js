@@ -1,6 +1,6 @@
 var FreshbooksWidget = Class.create();
 FreshbooksWidget.prototype = {
-	FRESHBOOKS_FORM:new Template('<form id="freshbooks-timeentry-form"><div class="field first"><label>Staff</label><select name="staff-id" id="freshbooks-timeentry-staff" onchange="freshbooksWidget.staffChanged(this.options[this.selectedIndex].value)" disabled class="full"></select> <div class="paddingloading" id="freshbooks-staff-spinner"></div></div><div class="field"><label>Client</label><select name="client-id" id="freshbooks-timeentry-clients" class="full" disabled onchange="freshbooksWidget.clientChanged(this.options[this.selectedIndex].value)"></select> <div class="paddingloading" id="freshbooks-clients-spinner"></div></div><div class="field"><label>Project</label><select class="full" name="project-id" id="freshbooks-timeentry-projects" onchange="freshbooksWidget.projectChanged(this.options[this.selectedIndex].value)" disabled></select> <div class="paddingloading" id="freshbooks-projects-spinner"></div></div><div class="field last"><label>Task</label><select class="full" disabled name="task-id" id="freshbooks-timeentry-tasks" onchange="freshbooksWidget.taskChanged(this.options[this.selectedIndex].value)"></select> <div class="paddingloading" id="freshbooks-tasks-spinner" style="display:none;" ></div></div><div class="field"><label id="freshbooks-timeentry-notes-label">Notes</label><textarea disabled name="notes" id="freshbooks-timeentry-notes" wrap="virtual">'+freshbooksBundle.freshbooksNote.escapeHTML()+'</textarea></div><div class="field"><label id="freshbooks-timeentry-hours-label">Hours</label><input type="text" disabled name="hours" id="freshbooks-timeentry-hours"></div><input type="submit" disabled id="freshbooks-timeentry-submit" value="Submit" onclick="freshbooksWidget.logTimeEntry($(\'freshbooks-timeentry-form\'));return false;"></form>'),
+	FRESHBOOKS_FORM:new Template('<form id="freshbooks-timeentry-form"><div class="field first"><label>Staff</label><select name="staff-id" id="freshbooks-timeentry-staff" onchange="freshbooksWidget.staffChanged(this.options[this.selectedIndex].value)" disabled class="full hide"></select> <div class="loading-fb" id="freshbooks-staff-spinner"></div></div><div class="field"><label>Client</label><select name="client-id" id="freshbooks-timeentry-clients" class="full hide" disabled onchange="freshbooksWidget.clientChanged(this.options[this.selectedIndex].value)"></select> <div class="loading-fb" id="freshbooks-clients-spinner"></div></div><div class="field"><label>Project</label><select class="full hide" name="project-id" id="freshbooks-timeentry-projects" onchange="freshbooksWidget.projectChanged(this.options[this.selectedIndex].value)" disabled></select> <div class="loading-fb" id="freshbooks-projects-spinner"></div></div><div class="field last"><label>Task</label><select class="full hide" disabled name="task-id" id="freshbooks-timeentry-tasks" onchange="freshbooksWidget.taskChanged(this.options[this.selectedIndex].value)"></select> <div class="loading-fb" id="freshbooks-tasks-spinner" ></div></div><div class="field"><label id="freshbooks-timeentry-notes-label">Notes</label><textarea disabled name="notes" id="freshbooks-timeentry-notes" wrap="virtual">'+freshbooksBundle.freshbooksNote.escapeHTML()+'</textarea></div><div class="field"><label id="freshbooks-timeentry-hours-label">Hours</label><input type="text" disabled name="hours" id="freshbooks-timeentry-hours"></div><input type="submit" disabled id="freshbooks-timeentry-submit" value="Submit" onclick="freshbooksWidget.logTimeEntry($(\'freshbooks-timeentry-form\'));return false;"></form>'),
 	STAFF_LIST_REQ:new Template('<?xml version="1.0" encoding="utf-8"?><request method="staff.list"></request>'),
 	CLIENT_LIST_REQ:new Template('<?xml version="1.0" encoding="utf-8"?><request method="client.list"> <per_page>250</per_page></request>'),
 	PROJECT_LIST_REQ:new Template('<?xml version="1.0" encoding="utf-8"?><request method="project.list"> <per_page>2000</per_page></request>'),
@@ -81,18 +81,25 @@ FreshbooksWidget.prototype = {
 			searchTerm = freshbooksBundle.agentEmail
 		this.loadFreshbooksEntries(resData, "freshbooks-timeentry-staff", "member", "staff_id", ["first_name", " ", "last_name"], null, searchTerm);
 		UIUtil.addDropdownEntry("freshbooks-timeentry-staff", "", "None", true);
+		UIUtil.hideLoading('freshbooks','staff');
 		$("freshbooks-timeentry-staff").enable();
+		console.log('staff loaded');
 	},
 
 	loadClientList:function(resData){ 
+		console.log('Loaded client lists');
 		selectedClientNode = this.loadFreshbooksEntries(resData, "freshbooks-timeentry-clients", "client", "client_id", ["organization", " ", "(", "first_name", " ", "last_name", ")"], null, freshbooksBundle.reqEmail);
 		client_id = XmlUtil.getNodeValueStr(selectedClientNode, "client_id");
+		
+		UIUtil.hideLoading('freshbooks','clients');
+
 		$("freshbooks-timeentry-clients").enable();
 		this.clientChanged(client_id);
 	},
 
 	loadProjectList:function(resData) {
 		this.projectData=resData;
+		UIUtil.hideLoading('freshbooks','projects');
 		$("freshbooks-timeentry-projects").enable();		
 		this.handleLoadProject();
 	},
@@ -108,10 +115,14 @@ FreshbooksWidget.prototype = {
 		if(!selectedTaskNode) {
 			UIUtil.addDropdownEntry("freshbooks-timeentry-tasks", "", "None");
 		}
+		UIUtil.hideLoading('freshbooks','tasks');
+
 		$("freshbooks-timeentry-tasks").enable();
 		$("freshbooks-timeentry-hours").enable();
 		$("freshbooks-timeentry-notes").enable();
 		$("freshbooks-timeentry-submit").enable();
+
+		jQuery(".freshbooks_timetracking_widget").removeClass('still_loading');
 	},
 
 	staffChanged:function(staff_id) {
@@ -149,6 +160,11 @@ FreshbooksWidget.prototype = {
 	},
 
 	requestTaskList:function(project_id_val) {
+		jQuery(".freshbooks_timetracking_widget").addClass('still_loading');
+
+		jQuery("#freshbooks-tasks-spinner").removeClass('hide');
+		jQuery("#freshbooks-timeentry-tasks").addClass('hide');
+
 		this.freshdeskWidget.request({
 			body: this.TASK_LIST_REQ.evaluate({project_id:project_id_val}),
 			content_type: "application/xml",
@@ -163,6 +179,10 @@ FreshbooksWidget.prototype = {
 	},
 
 	validateInput:function() {
+
+		if (!jQuery('#freshbooks-timeentry-enabled').is(':checked')) {
+			return false;
+		}
 		var hoursSpent = parseFloat($("freshbooks-timeentry-hours").value);
 		if(isNaN(hoursSpent)){
 			alert("Enter valid value for hours.");

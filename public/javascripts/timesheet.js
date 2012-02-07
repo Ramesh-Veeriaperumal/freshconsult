@@ -5,8 +5,7 @@
 var TicketTimesheet = Class.create();
 TicketTimesheet.prototype = {
   initialize: function(initList, _options) {
-     this.editid  = null;
-          
+    this.editid  = null;     
      // Running the autoupdate for the timer when it is active.
      new PeriodicalExecuter(function(pe) {
         jQuery("div.time_running .time")
@@ -25,7 +24,12 @@ TicketTimesheet.prototype = {
 
          jQuery('a.submit').live("click", function(ev){
            ev.preventDefault();
+           if (jQuery("#time_integration .integration.still_loading").length) {
+             return false;
+           }
+
            jQuery(this).button("loading");
+
            if(!jQuery(this).hasClass("disabled"))
                jQuery(this).parents("form").submit();		
          });
@@ -39,8 +43,9 @@ TicketTimesheet.prototype = {
               }
            }); 
         
-        if(jQuery("#timesheetlist .timeentry").size() == 0 || jQuery("#TimeSheetButton").hasClass('active'))     
+        if(jQuery("#timesheetlist .timeentry").size() == 0 || jQuery("#TimeSheetButton").hasClass('active')){ 
            jQuery('#timeentry_add').addClass("active_edit");
+         }
          
         jQuery("#TimeSheetButton").click(function(ev){
            jQuery('#TimesheetTab').click();
@@ -51,6 +56,22 @@ TicketTimesheet.prototype = {
 		   if (typeof freshbooksWidget != 'undefined' && freshbooksWidget) 
 		   		freshbooksWidget.resetIntegratedResourceIds()
         });
+
+        jQuery("#timeentry_apps_add .app-logo").live('click',function(ev) {
+          var checkbox = jQuery(this).children("input[type=checkbox]");
+          checkbox.attr('checked', !checkbox.is(':checked'));
+        });
+
+    //     console.log('Positioning the buttons');
+
+    // //Positioning the button container below the integration widgets
+    // var widgets_height = jQuery("#timeentry_apps_add").height();
+    // var buttons_height = jQuery("#timeentry_add .request_panel.timeentry_edit .button-container").height();
+    // jQuery("#timeentry_add .request_panel.timeentry_edit .button-container").css({top:widgets_height + 25});
+    // jQuery("#timeentry_apps_add").css({top:-buttons_height});
+
+    // console.log('Positioning done. ');
+     
   },
 
   editCompelete: function(id, dontshow) { 

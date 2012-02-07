@@ -1,4 +1,3 @@
-
 if RAILS_ENV == 'development'
   require 'compass'
   # If you have any compass plugins, require them here.

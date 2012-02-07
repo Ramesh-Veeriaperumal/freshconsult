@@ -8,6 +8,10 @@ function autoSaveTinyMce(editor){
    return true;
 }
 
+function plural( count, text1, text2 ){
+   return(count + " " + ((parseInt(count) > 1) ? text2 : text1))
+}
+
 function totalTime(listClass, updateId){
  total_hours = $$(listClass)
                 .collect(function(t){ return t.innerHTML; })
@@ -15,7 +19,6 @@ function totalTime(listClass, updateId){
  
  jQuery(updateId).html(sprintf( "%0.02f", total_hours));    
 }
-
 
 // Primarly for the form customizer page. Used for making the text unselectable
 makePageNonSelectable = function(source){

@@ -69,11 +69,12 @@ class AccountsController < ApplicationController
   end
 
   def create_account
-    params[:plan] = SubscriptionPlan::SUBSCRIPTION_PLANS[:premium]
+    params[:plan] = SubscriptionPlan::SUBSCRIPTION_PLANS[:garden]
     build_object
     build_primary_email_and_portal
     build_user
     build_plan  
+    store_metrics
     begin
       @account.time_zone = (ActiveSupport::TimeZone[params[:utc_offset].to_f]).name 
     rescue
@@ -326,14 +327,13 @@ class AccountsController < ApplicationController
         render :action => "plan" and return
       end
       
-      if (@subscription.amount > 0 and @subscription.card_number.blank?)
+      unless  @subscription.active?
         redirect_to :action => "billing"
       else
         flash[:notice] = t('plan_info_update')
         redirect_to :action => "show"
       end 
     else
-      #@plans = SubscriptionPlan.find(:all, :conditions => ['id <> ?', @subscription.subscription_plan_id], :order => 'amount asc').collect {|p| p.discount = @subscription.discount; p }
       load_plans
     end
   end
@@ -479,7 +479,9 @@ class AccountsController < ApplicationController
     end
     
     def load_plans
-      @plans = SubscriptionPlan.find(:all, :order => 'amount asc').collect {|p| p.discount = @discount; p }
+      plans = SubscriptionPlan.current
+      plans << @subscription.subscription_plan if @subscription.subscription_plan.classic?
+      @plans = plans.collect {|p| p.discount = @discount; p }
     end
     
     def authorized?
@@ -491,5 +493,41 @@ class AccountsController < ApplicationController
     def admin_selected_tab
       @selected_tab = :admin
     end
+    
+    def store_metrics
+      return unless params[:session_json]
+        
+      metrics =  JSON.parse(params[:session_json])
+      metrics_obj = {}
 
+      metrics_obj[:referrer] = metrics["current_session"]["referrer"]
+      metrics_obj[:landing_url] = metrics["current_session"]["url"]
+      metrics_obj[:first_referrer] = params[:first_referrer]
+      metrics_obj[:first_landing_url] = params[:first_landing_url]
+      metrics_obj[:country] = metrics["locale"]["country"]
+      metrics_obj[:language] = metrics["locale"]["lang"]
+      metrics_obj[:search_engine] = metrics["current_session"]["search"]["engine"]
+      metrics_obj[:keywords] = metrics["current_session"]["search"]["query"]
+      metrics_obj[:visits] = params[:pre_visits]
+
+      if metrics["device"]["is_mobile"]
+        metrics_obj[:device] = "M"
+      elsif  metrics["device"]["is_phone"]
+        metrics_obj[:device] = "P"
+      elsif  metrics["device"]["is_tablet"]
+        metrics_obj[:device] = "T"
+      else
+        metrics_obj[:device] = "C"  
+      end
+
+      metrics_obj[:browser] = metrics["browser"]["browser"]                 
+      metrics_obj[:os] = metrics["browser"]["os"]
+      metrics_obj[:offset] = metrics["time"]["tz_offset"]
+      metrics_obj[:is_dst] = metrics["time"]["observes_dst"]
+      metrics_obj[:session_json] = metrics
+
+      c_metric = @account.build_conversion_metric(metrics_obj)
+      c_metric.save
+    end
+    
 end

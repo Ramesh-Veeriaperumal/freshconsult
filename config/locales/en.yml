@@ -1,5 +1,18 @@
 ---
 en: 
+  enabled: "Enabled"
+  disabled: "Disabled"
+  tip_on: "Click to Enable"
+  tip_off: "Click to Disable"
+  credit_card: "Card on file"
+  referral: "Referral credit"  
+  success: "Success"
+  failure: "Error ..."
+  amount: "Amount"
+  paid_with: "Paid with"
+  date_title: "Date"
+  status: "Status"
+  proceed_now: "\n\nProceed now?"
   meta:
    language_name: 'English'
   signup_complete_activate_info: Welcome! We have sent you an email with a link where you can set your password and activate your account.
@@ -111,6 +124,22 @@ en:
     popular: Popular
   payment_info: Payment information
   admin:
+    day_passes:
+      index:
+        title: "Day Pass"
+        current_balance: "You have %{balance} left!"
+        buy_pass: "Buy more passes"
+        buy_now: "Buy now"
+        day_pass_pack: "%{quantity} Day Pass Pack (%{currency}%{amount})"
+        day_pass_history: "Purchase History"
+        add_confirm: "Your credit card will be charged "
+        daypass_quantity: "%{quantity} Day Passes"
+        order: "Order #"
+        no_of_day_passes: "# of Day Passes"
+        auto_recharge: "Auto recharge"
+        recharge_quantity: "Recharge quantity:"
+        day_passes: "Day Passes" 
+        helptext: "Your day passes will Auto-recharge once the number of available day passes comes down to 2."
     widget_config:
       index:
         thankyou_label: "Submit message"
@@ -229,6 +258,7 @@ en:
     home:
       index: 
         group: Groups
+        day_pass: Day Pass Settings
         business-hours: Business Hours
         title: Admin
         email-notifications: Email Notifications
@@ -256,6 +286,7 @@ en:
         survey: Survey Settings
         facebook-setting: Facebook Settings
         security: Security
+        email_commands_setting: "Email Command Settings"
       
     canned_responses:
       index:
@@ -301,6 +332,9 @@ en:
   feedbackwidget_formcustomize: Form customization
   does_not_contain: Does not contain
   flash:
+    daypass:
+      success: "%{quantity} Day Passes have been successfully added to your account."
+      failed: "Error when adding day passes"
     facebook:
       updated: Facebook setting has been updated 
     application:
@@ -814,7 +848,7 @@ en:
   twoweek: 2 Weeks
   onemonth: 1 Month
   problem: Problem
-  change_plan_info: You can change your plan level at any time.  The position limits and other features of the new plan that you select will be effective as soon as you make the change, but your bill amount will not change until your next bill date.  Your next bill date is %{date}.
+  change_plan_info: You can change your plan at any time, your next bill date is %{date}.
   created_on: Created on
   zip: Zip
   import_solution_article: Convert Article forum to solution
@@ -843,6 +877,11 @@ en:
     global_info: Can view all Tickets in the Helpdesk
     group_info: Can view Tickets in their Groups(s) and Tickets assigned to them
     individual_info: Can only view Tickets assigned to them
+    occasional_description: This agent will be accessing the support portal
+    full_time: Full time
+    occasional: Occasionally
+    day_pass_expired: Your day pass has expired, please login to acquire a new day pass.
+    insufficient_day_pass: Unable to allocate a day pass for you, please contct your administrator.
   account_admin: Account admin
   right: Right
   footer: 
@@ -995,6 +1034,9 @@ en:
   add_to_do: Add To do
   subject_or_description: Subject or Description
   premium_details: Everything in &quot;Pro&quot; Plan plus, Multiple Product Support, Multi-timezone support, Community, Email &amp; Phone Support
+  sprout_details: Email Response Management, All Automations, Default SLA Policy, Knowledge Base, Self-Service Portal, Domain Mapping, Basic Reporting, Community Support.
+  blossom_details: Everything in &quot;Sprout&quot; Plan plus, Twitter Support, Facebook Support, Forums, Community &amp; Email Support.
+  garden_details: Everything in &quot;Blossom&quot; Plan plus, Multiple Product Support, Advanced Reporting, Community, Email &amp; Phone Support
   zendesk_credentials: Zendesk Credentials
   how_to: Question
   customers: Customers
@@ -1008,6 +1050,9 @@ en:
   back: Back
   save_changes: Save Changes
   premium_brief: Top-of-the-line
+  sprout_brief: Robust Email Helpdesk
+  blossom_brief: Social Customer Support
+  garden_brief: Multi Product Support
   begin_subscription_confirm: Your credit card is going to be charged for the amount of $%{cost}\nand your subscription will begin immediately. \n\nProceed now?
   favicon: Favicon
   is_expiring_today: is expiring today
@@ -1165,6 +1210,7 @@ en:
       form_title: Reply to the conversation
       reply_email_id: Send the reply from the following email id
       send_and_resolve: Send and Resolve
+      send: Send
     reported_by: from %{requester}
     close_btn: Close
     close_btn_title: Close this ticket
@@ -1182,6 +1228,7 @@ en:
       notify_agents: Notify Agents
     tweet_form:
       tweet_and_resolve: Tweet and Resolve
+      user_not_following: This user is not following your twitter account
     activities: Activities
     requestor_info: Requestor Info
     reply_to: Reply
@@ -1210,6 +1257,7 @@ en:
     note_content: Note content
     ticket_url: Ticket URL
   recent_activity: Recent Activity
+  recent_activities: Recent Activites
   forgot_password: Forgot Password
   change_plan: Change plan
   feedbackwidget_embed_code_intro: Please copy and paste the code below anywhere before the &lt;/body&gt; tag in the html template of your site or every page where you'd like to provide the Freshdesk widget.
@@ -1459,6 +1507,8 @@ en:
         public_note: Public note
         inbound_email: Incoming email
         outbound_email: Outbound email
+        attachment_size: 
+           exceed: Oops! Your attachment exceeds 20 MB. Please attach a smaller file.
     merge:
       merge:
         merge_into: Merge into?
@@ -1703,6 +1753,33 @@ en:
       select_agent: Select Agent
       select_billable: Select Billable/Non-Billable
   reorder: "Reorder"
+  reports:
+      select_customer: "Select Customer"
+      select_options: "Reports by"
+      tickets_by: "Tickets By"
+      helpdesk_title: "Helpdesk Activity Report"
+      customer_title: "Customer Activity Report"
+      helpdesk_title_nav: "Helpdesk Activity"
+      customer_title_nav: "Customer Activity"
+      select_time_period: "Select Time period"
+      generate_button: "Generate"
+      pie_chart_title_prefix: "Tickets By "
+      timeline_chart_title: "Tickets Received vs Resolved"
+      customer_activity_title: "Activity Report"
+      helpdesk_activity_title: "Helpdesk Activity Report"
+      date_ranges:
+        last_7_days: "Last 7 days"
+        last_30_days: "Last 30 days"
+        last_90_days: "Last 90 days"
+        custom: "Date Range"
+      summary:
+        title: "Tickets summary"
+        total_tickets: "Total Tickets"
+        open_tickets: "Open Tickets"
+        pending_tickets : "Pending Tickets"
+        resolved_tickets: "Resolved Tickets"
+        sla_compliance: "SLA Compliance"
+        fcr: "First Call Resolution"
   delete_the_ticket: "Delete the Ticket"
   mark_as_spam: "Mark as Spam"
   bulk_update: "Bulk Update"
@@ -1711,3 +1788,14 @@ en:
   ticket_update_multiple_button: "Update"
   ticket_cancel_multiple_button: "Cancel"
   agent_working_on_this_ticket: "Agent Working on This Ticket"
+  email_commands_update_success: "Email Command Settingss were successfully updated."
+  email_commands_update_failed:  "Failed to update Email Command Settings."
+  email_command_settings_heading: "Email Command Settings"
+  email_command_settings_info: "Configure the delimeter used to identify and extract email commands from the mail"
+  email_command_delimeter_label: "Email Commands Delimeter"
+  email_command_preview_to_email: "To"
+  email_command_preview_to_email_value: "customer@acme.com"
+  email_command_preview_subject: "Subject"
+  email_command_preview_subject_value: "Support Ticket"
+  unable_to_charge: "Unable to charge the card for the added agent!"
+  never: Never

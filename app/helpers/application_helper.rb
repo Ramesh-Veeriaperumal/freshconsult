@@ -41,6 +41,16 @@ module ApplicationHelper
     render(:partial => partial_item, :collection => collection) || render(:partial => partial_form, :locals => partial_form_locals)
   end
   
+  # A helper to show an enable disalbed toggle button like iphone 
+  # The toggle_url can be a controller action that will toggle based on the status
+  def on_off_button(obj, toggle_url, text_on = t("enabled"), text_off = t("disabled"), tip_on = t("tip_on"), tip_off = t("tip_off"))
+    button_text = (obj) ? text_on : text_off
+    button_title = (obj) ? tip_off : tip_on
+    button_class = (obj) ? "iphone-active" : "iphone-inactive"
+    link_to "<strong> #{ button_text } </strong><span></span>", toggle_url, { :class => 
+      "uiButton special #{button_class} custom-tip-top", :title => button_title, :method => 'put' }
+  end
+  
   def get_img(file_name, type)
     image_tag("#{ASSETIMAGE[type]}/#{file_name}", :class => "#{type}_image")
   end
@@ -63,7 +73,7 @@ module ApplicationHelper
       ['/home',               :home,        !permission?(:manage_tickets) ],
       ['helpdesk/dashboard',  :dashboard,    permission?(:manage_tickets)],
       ['helpdesk/tickets',    :tickets,      permission?(:manage_tickets)],
-      ['/social/twitters/feed', :social,      permission?(:manage_tickets) && !current_account.twitter_handles.blank?],
+      ['/social/twitters/feed', :social,     can_view_twitter?  ],
       solutions_tab,      
       forums_tab,
       ['/contacts',           :customers,    permission?(:manage_tickets)],
@@ -384,11 +394,12 @@ module ApplicationHelper
     content_tag :li, element unless (field_value == "" || field_value == "...")     
   end
    
-  def pageless(total_pages, url, message=t("loading.items"))
+  def pageless(total_pages, url, message=t("loading.items"), params = {})
     opts = {
       :totalPages => total_pages,
       :url        => url,
-      :loaderMsg  => message
+      :loaderMsg  => message,
+      :params => params
     } 
     javascript_tag("jQuery('#Pages').pageless(#{opts.to_json});")
   end
@@ -424,7 +435,12 @@ module ApplicationHelper
     
     def forums_visibility?
       feature?(:forums) && allowed_in_portal?(:open_forums)
-  end
+    end
+    
+    def can_view_twitter?
+      permission?(:manage_tickets) && !current_account.twitter_handles.blank? && feature?(:twitter)
+    end
+    
   
   def company_tickets_tab
     tab = ['support/company_tickets', :company_tickets , !permission?(:manage_tickets) , current_user.customer.name] if (current_user && current_user.customer && current_user.client_manager?)

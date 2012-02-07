@@ -6,6 +6,25 @@
 	{
 		associate_existing_domain()	
 	}
+	
+	// script to store visitor traffic info in cookie
+	if(session){
+		
+		 if(!(jQuery.cookie("fd_fr"))){jQuery.cookie("fd_fr",session["current_session"]["referrer"],{expires:365});}
+		 if(!(jQuery.cookie("fd_flu"))){jQuery.cookie("fd_flu",session["current_session"]["url"],{expires:365});}
+		
+		 var visits = (jQuery.cookie("fd_vi"))||0;
+		 jQuery.cookie("fd_vi", (parseInt(visits)+1),{expires:365});
+		
+	}
+	
+	jQuery("#google_sign_up_form").submit(function(){
+			jQuery("#session_json").val(JSON.stringify(session));
+			jQuery("#first_referrer").val((jQuery.cookie("fd_fr")||""));
+			jQuery("#first_landing_url").val((jQuery.cookie("fd_flu")||""));
+			jQuery("#pre_visits").val((jQuery.cookie("fd_vi")||0));
+	})
+	
   });
   
   function getLocalTimeZoneOffset()
@@ -55,13 +74,19 @@ cancel_url = "https://www.google.com/a/cpanel/"+@account.google_domain
 	<div class="intro info-data">
 		Create a new Freshdesk account or <a href="javascript:associate_existing_domain()">Link your existing Freshdesk account.</a>
 	</div>	
-		<% form_for :account, @account, :url => {:action=> :create_account_google} , :html => { :method => "put" } do |f| %>
+		<% form_for :account, @account, :url => {:action=> :create_account_google} , :html => { :method => "put", :id => "google_sign_up_form" } do |f| %>
 			<%= f.error_messages %>
 		  <input type="hidden" name="call_back" id="call_back_url" value="<%=@call_back_url%>" />
 		  <input type="hidden" value="<%=@user.name%>" size="24" name="user[name]" id="user_name" class="textfield">
 		  <input type="hidden" value="<%=@user.email%>" size="24" name="user[email]" id="user_email" class="textfield">
 		  <input type="hidden" name="utc_offset" id="account_timezone_offset" />
 		  <input type="hidden" value="<%=@account.google_domain%>" name="account[google_domain]" id="account_google_domain" class="textfield" />
+		   
+		  	<input type="hidden" name="session_json" id="session_json" value="">
+			<input type="hidden" name="first_referrer" id="first_referrer" value="">
+			<input type="hidden" name="first_landing_url" id="first_landing_url" value="">
+			<input type="hidden" name="pre_visits" id="pre_visits" value="">
+			
 		  <ul>
 				<li>
 					<label for="account_name">Company Name</label>

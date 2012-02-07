@@ -8,7 +8,7 @@ allow_debugging:        on
 stylesheets:
   print:
     - public/stylesheets/print.css
-    
+
   common:
     - public/stylesheets/reset.css
     - public/stylesheets/layout.css
@@ -18,12 +18,13 @@ stylesheets:
     - public/stylesheets/validation.css
     - public/stylesheets/form.css
     - public/stylesheets/buttons.css
-    - public/stylesheets/chosen.css    
+    - public/stylesheets/chosen.css
+    - public/stylesheets/table.css
     - public/stylesheets/autocomplete.css
     - public/stylesheets/jquery-ui.css
     - public/stylesheets/jquery.qtip.css
     - public/stylesheets/ie.css
-  
+
   widget:
     - public/stylesheets/reset.css   
     - public/stylesheets/defaults.css
@@ -63,6 +64,8 @@ javascripts:
     - public/javascripts/frameworks/sprintf.js
     - public/javascripts/frameworks/plugins/*.js
     - public/javascripts/hackz.js    
+  visitor:
+      - public/javascripts/frameworks/session.js            
   workspace: 
     - public/javascripts/bootstrap/*.js
     - public/javascripts/utils.js

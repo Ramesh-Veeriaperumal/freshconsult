@@ -10,6 +10,10 @@ class Social::Tweet < ActiveRecord::Base
   validates_presence_of   :tweet_id, :account_id
   validates_uniqueness_of :tweet_id, :scope => :account_id, :message => "Tweet already converted as a ticket"
   
+  LENGTH = 140
+  
+  TWEET_TYPES = [["Mention", :mention],["Direct Message",:dm]] 
+  
   def is_ticket?
     tweetable_type.eql?('Helpdesk::Ticket')
   end

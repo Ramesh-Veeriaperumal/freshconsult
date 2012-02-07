@@ -4,6 +4,8 @@ class Helpdesk::Note < ActiveRecord::Base
   belongs_to :notable, :polymorphic => true  
   belongs_to :account
   belongs_to :user
+  
+  Max_Attachment_Size = 20.megabyte
 
   has_many :attachments,
     :as => :attachable,

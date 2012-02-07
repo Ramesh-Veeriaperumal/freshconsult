@@ -7,7 +7,7 @@ class Agent < ActiveRecord::Base
   
   validates_presence_of :user_id
   
-  attr_accessible :signature, :user_id , :ticket_permission
+  attr_accessible :signature, :user_id , :ticket_permission, :occasional
   
   
   has_many :agent_groups ,:class_name => 'AgentGroup', :through => :user , :foreign_key =>'user_id', :source =>'agents'
