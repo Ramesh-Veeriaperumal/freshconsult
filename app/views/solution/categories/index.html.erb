@@ -41,7 +41,7 @@
 <div class="clearfix solution-list" id="categories_list">			
 	<% @categories.each do |category| %>
 		<div class="<%= cycle('odd', 'even') %>">
-			<% if logged_in? && current_user.has_manage_solutions? -%>
+			<% if (!category.is_default? && permission?(:manage_knowledgebase)) -%>
 					<div class="action_buttons">
 						<%= link_to t('folder.add_folder'), new_solution_category_folder_path(category), :class => "first"  %> 
 						<%= link_to t('edit') ,edit_solution_category_path(category), :class => "last"   %>

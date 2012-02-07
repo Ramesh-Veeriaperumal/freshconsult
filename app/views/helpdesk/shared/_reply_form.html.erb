@@ -5,7 +5,11 @@
                                                               onSuccess: function(response) {
                                                                 var choices = $A();
                                                                 response.responseJSON.results.each(function(item){
-                                                                  choices.push([item.value +" <"+item.id+">", item.value +" <"+item.id+">" ]);
+																  if(item.value == "") {
+																  	choices.push([item.id, item.id]);
+																  } else {
+																	choices.push([item.value +" <"+item.id+">", item.value +" <"+item.id+">" ]);
+																  }	
                                                                 });                                                
                                                                 callback(choices);
                                                               } });

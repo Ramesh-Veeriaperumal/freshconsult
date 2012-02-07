@@ -1,6 +1,7 @@
 class Helpdesk::ProcessEmail < Struct.new(:params)
  
   include EmailCommands
+  include Helpdesk::ArticlesUtility
   
   EMAIL_REGEX = /(\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
   
@@ -10,13 +11,20 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     account = Account.find_by_full_domain(to_email[:domain])
     if !account.nil? and account.active?
       encode_stuffs
-      display_id = Helpdesk::Ticket.extract_id_token(params[:subject])
-      ticket = Helpdesk::Ticket.find_by_account_id_and_display_id(account.id, display_id) if display_id
-      if ticket
-        return if(from_email[:email] == ticket.reply_email) #Premature handling for email looping..
-        add_email_to_ticket(ticket, from_email )
-      else
-        create_ticket(account, from_email, to_email)
+      kbase_email = "kbase@#{account.full_domain}"
+      if (to_email[:email] != kbase_email)          
+        display_id = Helpdesk::Ticket.extract_id_token(params[:subject])
+        ticket = Helpdesk::Ticket.find_by_account_id_and_display_id(account.id, display_id) if display_id
+        if ticket
+          return if(from_email[:email] == ticket.reply_email) #Premature handling for email looping..
+          add_email_to_ticket(ticket, from_email ) unless to_email[:email] == kbase_email
+        else
+          create_ticket(account, from_email, to_email) unless to_email[:email] == kbase_email
+        end
+      end
+      
+      if ((to_email[:email] == kbase_email) || (parse_cc_email.include?(kbase_email)))
+        create_article_from_email(account, from_email, to_email)
       end
     end
   end

@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120130123030) do
+ActiveRecord::Schema.define(:version => 20120204092612) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -813,6 +813,7 @@ ActiveRecord::Schema.define(:version => 20120130123030) do
     t.datetime "updated_at"
     t.integer  "import_id",   :limit => 8
     t.integer  "position"
+    t.boolean  "is_default",               :default => false
   end
 
   add_index "solution_categories", ["account_id", "name"], :name => "index_solution_categories_on_account_id_and_name", :unique => true
@@ -826,6 +827,7 @@ ActiveRecord::Schema.define(:version => 20120130123030) do
     t.integer  "import_id",   :limit => 8
     t.integer  "visibility",  :limit => 8
     t.integer  "position"
+    t.boolean  "is_default",               :default => false
   end
 
   add_index "solution_folders", ["category_id", "name"], :name => "index_solution_folders_on_category_id_and_name", :unique => true
