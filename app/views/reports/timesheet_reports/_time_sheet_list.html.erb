@@ -1,0 +1,33 @@
+<div class="grid report">	
+		<table width="100%">
+			<tr>
+			  <% @headers.each do |header|
+				 	concat content_tag :th, h(Helpdesk::TimeSheet::REPORT_LIST_VIEW[header]), :class => header
+				 end %>
+			</tr>
+			
+	 	<% if @time_sheets.size > 0 %>
+     		<%= render :partial => "time_sheet", :object => @time_sheets %>	
+			<tr>
+       			<th colspan="4"><%=t('helpdesk.time_sheets.report.total')%></th>
+       			<th class="hours"><div id="totaltime"></div></th>
+     		</tr>
+	    <%else%>
+		    <tr>
+		    	<td colspan="5">		    		
+					<div class="list-noinfo"><%=t('helpdesk.time_sheets.report.no_timeentry')%></div>
+		    	</td>		      
+			</tr>
+		<%end%>
+     
+   </table>
+   <% javascript_tag do%>
+   	 try{
+   	   total_hours = $$("strong.group_time")
+	 					.collect(function(t){ return t.innerHTML })
+						.inject(0, function(acc, n){ return parseFloat(acc) + parseFloat(n); });
+						
+	   $("totaltime").innerHTML = sprintf( "%0.02f", total_hours);
+	  }catch(e){}	 
+   <% end %>	
+</div>

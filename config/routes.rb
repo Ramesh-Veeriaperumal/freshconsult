@@ -1,4 +1,4 @@
-ActionController::Routing::Routes.draw do |map|
+ ActionController::Routing::Routes.draw do |map|
       
   map.connect '/images/helpdesk/attachments/:id/:style.:format', :controller => '/helpdesk/attachments', :action => 'show', :conditions => { :method => :get }
   
@@ -59,6 +59,7 @@ ActionController::Routing::Routes.draw do |map|
   map.namespace :integrations do |integration|
     integration.resources :installed_applications, :member =>{:install => :put, :uninstall => :get, :configure => :get, :update => :put}
     integration.resources :applications, :member =>{:show => :get}
+    integration.resources :integrated_resource, :member =>{:create => :put, :delete => :delete}
   end
 
   map.namespace :admin do |admin|
@@ -82,8 +83,8 @@ ActionController::Routing::Routes.draw do |map|
     admin.resources :zen_import, :collection => {:import_data => :any }
     admin.resources :email_commands_setting, :member => { :update => :put }
   end
-  
   map.resources :reports
+  map.timesheet_report    '/timesheet_reports', :controller => 'reports/timesheet_reports', :action => 'index'
   map.customer_activity   '/activity_reports/customer', :controller => 'reports/customer_reports', :action => 'index'
   map.helpdesk_activity   '/activity_reports/helpdesk', :controller => 'reports/helpdesk_reports', :action => 'index'
   map.customer_activity_generate   '/activity_reports/customer/generate', :controller => 'reports/customer_reports', :action => 'generate'
@@ -179,7 +180,6 @@ ActionController::Routing::Routes.draw do |map|
   map.namespace :helpdesk do |helpdesk|
 
     helpdesk.resources :tags, :collection => { :autocomplete => :get }
-    
 
 #    helpdesk.resources :issues, :collection => {:empty_trash => :delete}, :member => { :delete_all => :delete, :assign => :put, :restore => :put, :restore_all => :put } do |ticket|
 #      ticket.resources :notes, :member => { :restore => :put }, :name_prefix => 'helpdesk_issue_helpdesk_'
@@ -192,6 +192,7 @@ ActionController::Routing::Routes.draw do |map|
       ticket.resources :subscriptions, :name_prefix => 'helpdesk_ticket_helpdesk_'
       ticket.resources :tag_uses, :name_prefix => 'helpdesk_ticket_helpdesk_'
       ticket.resources :reminders, :name_prefix => 'helpdesk_ticket_helpdesk_'
+      ticket.resources :time_sheets, :name_prefix => 'helpdesk_ticket_helpdesk_'
     end
 
     #helpdesk.resources :ticket_issues
@@ -199,6 +200,7 @@ ActionController::Routing::Routes.draw do |map|
     helpdesk.resources :notes
 
     helpdesk.resources :reminders, :member => { :complete => :put, :restore => :put }
+    helpdesk.resources :time_sheets, :member => { :toggle_timer => :put }    
 
     helpdesk.filter_tag_tickets    '/tags/:id/*filters', :controller => 'tags', :action => 'show'
     helpdesk.filter_tickets        '/tickets/filter/tags', :controller => 'tags', :action => 'index'

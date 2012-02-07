@@ -15,7 +15,7 @@
 <%- end %>
 
 
-<div class="request_panel" id="<%=cntid%>" style="display:none;">
+<div class="request_panel hide" id="<%=cntid%>">
     <% form_for note, :html => {:multipart => true, :id => "HelpdeskReply" } do |f| %>
     <%= f.error_messages %>
     <% capsule_config = get_app_config('capsule_crm') 
@@ -26,23 +26,23 @@
      %>
        
     <ul class="ui-form dont-validate">
+				<div class="request_form_options">
+					<a href="javascript:void(0)" onclick="showHideCc(this)" class="slim-button" >
+						<%= (@ticket.cc_email.blank?)? t(".addcc"): t(".removecc") %>
+					</a>
+					<a href="javascript:void(0)" onclick="showHideBcc(this)" class="slim-button" >
+						<%= (bcc_drop_box_email.blank?)? t(".addbcc"): t(".removebcc")  %>
+					</a>
+					<%= link_to_function( t(:'ticket.canned_responses.insert_ca_response') + " &raquo;", "show_canned_response(#{@ticket.id})", :class => "slim-button insert-canned-response") %>
+        </div>
+        <%= content_tag( :h4, t(".title", :email => @ticket.requester.email), :class => "title" ) %>
         <li class="inline-field field">
-            <div class="request_form_options">
-              <a href="javascript:void(0)" onclick="showHideCc(this)" class="slim-button" >
-                <%= (@ticket.cc_email.blank?)? t(".addcc"): t(".removecc") %>
-              </a>
-			        <a href="javascript:void(0)" onclick="showHideBcc(this)" class="slim-button" >
-			  	      <%= (bcc_drop_box_email.blank?)? t(".addbcc"): t(".removebcc")  %>
-              </a>
-              <%= link_to_function( t(:'ticket.canned_responses.insert_ca_response') + " &raquo;", "show_canned_response(#{@ticket.id})", :class => "slim-button insert-canned-response") %>
-            </div>
-            <%= content_tag( :h4, t(".title", :email => @ticket.requester.email), :class => "title" ) %>
             <%= f.label(:reply_email, "From:", :class => "caption" ) %>
             <div class="fields">
               <%= select :reply_email, :id, options_for_select(@reply_email, @ticket.friendly_reply_email) %>
               <input type="checkbox" class="hide" id="include_cc" name="include_cc" value="true" <%= (!@ticket.cc_email.blank?)? "checked" : "" %> />              
               <input type="checkbox" class="hide" id="include_bcc" name="include_bcc" value="true"  />
-			</div>
+					</div>
         </li>
         <li class="inline-field field" id="cc-form-container" style="display:<%= @ticket.cc_email.blank? ? "none": "block" %>;">
             <label class="caption">
@@ -98,7 +98,7 @@
             </div>
         </li>
         <li class="button-container">
-        	<%= submit_tag(local_assigns[:submit] || ActiveSupport::Inflector.titleize(id), :class => "uiButton" ) %>
+        	<%= submit_tag(local_assigns[:submit] || ActiveSupport::Inflector.titleize(id), :class => "uiButton special" ) %>
         	<%= submit_tag(t('ticket.reply_form.send_and_resolve'), :onclick => "jQuery('#reply_ticket_status').val('resolved');" , :class => "uiButton") %>    
         </li>
     </ul>

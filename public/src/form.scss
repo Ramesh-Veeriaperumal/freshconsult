@@ -27,6 +27,22 @@ select {
    width:auto;
 }
 
+.full{
+	width:100%;
+}
+
+input[disabled],
+/*select[disabled],*/
+textarea[disabled],
+input[readonly],
+select[readonly],
+textarea[readonly] {
+  background-color: #f5f5f5;
+  border-color: #ddd;
+  cursor: not-allowed;
+}
+
+
 textarea { 
    height: 100px;
    width: 96%;
@@ -44,7 +60,7 @@ input.text, input[type=text], textarea{
 	border:1px solid #cfcfcf;
 	font-weight:400;
 	padding:5px;
-	@include border-radius(4px);
+	@include border-radius(3px);
 }
 
 div.color{
@@ -79,6 +95,14 @@ input.very_small{
 
 textarea.smallpara{
 	height:50px;
+}
+
+
+:-moz-placeholder {
+  color: #bfbfbf;
+}
+::-webkit-input-placeholder {
+  color: #bfbfbf;
 }
 	
 /*input:focus, textarea:focus{ border-color:$tab_color !important; }
@@ -226,11 +250,14 @@ a.addchoice:hover{
 		padding:8px 2% 8px 2%; 
 		margin:0;
 		@include float-left;
-		width:96%;
+		width: 98%;
 		div.field-box{
 			padding:4px 0 8px 0;
 		}
 	} 
+	li.search-choice, li.search-field{
+		width:auto;
+	}
 	/*li:last-child{
 		border-bottom: 0;
     	box-shadow: none;
@@ -264,7 +291,7 @@ a.addchoice:hover{
 		margin:0;
 		line-height:18px;
 		color:#565656;
-		font-size:1.3em;
+		font-size:1em;
 		font-weight:400;
 	}
 
@@ -473,9 +500,6 @@ a.addchoice:hover{
 .ui-form .inline-field{
 	/*border-bottom:1px dotted #cfcfcf;*/
 	padding-top:8px;
-	input[type=text], select, input.text {
-
-	}
 	.caption{
 		float:left;
 		.logo{
@@ -697,11 +721,19 @@ input.time{
    margin:0 -5px; 
    table{
       border:0;
+			td{ font-size:12px; border-top-color:#f3f3f3; }
       tr.odd td{
          background:#ffffff;
       }
       tr.even td{
          background:#f8f8f8;
+      }
+      .group_by_day_criteria{
+      	width:15%;
+      }
+      .hours{
+        width:10%;
+        text-align:right;
       }
    }  
 }
@@ -1270,25 +1302,82 @@ table.summary-report{
 	border:1px solid #f4f4f4;
 	margin-bottom:10px;
 }
-
+ 
 .request_panel{
-   padding:0 0;
-   margin:5px 0;
-   .ui-form{
-      li.field{
-         border:0;
-      }
-      label, div.fields label{
-         font-size:13px;
-         color:#333333;
-      }
-      label.overlabel{
-         margin:2px 8px;
-         color:#888888;
-         font-size:12px;
-      }
-      li.inline-field{
-         padding:1px 18px;
+	padding:0 20px 10px 65px; margin:0;
+	border-bottom: 1px solid #F3F3F3;
+
+	.button-container{ 
+		padding:6px 10px;
+		margin-top:10px;
+		background-color:#efefef;
+		@include border-radius(5px);
+		@include box-shadow(rgba(0, 0, 0, 0.2) 0 0 2px inset);
+	}
+	.absolute-button-container{
+		position:absolute;
+		bottom:5px;
+		width:88%;
+	}
+
+	.ui-form{
+		border:0;  background: none;
+		margin:0;	padding:0; 
+		.title{
+			padding-bottom:2px;
+		}
+		li.field{
+			border:0; padding:0;
+		}
+		label, div.fields label{
+			font-size:13px;
+			color:#333333;
+		}			
+		div.field{
+			width:23%;
+			float:left;
+			margin-left:2%;
+		}
+		div.field.first{ margin-left:0; }
+
+		label.overlabel{
+			margin:2px 8px;
+			color:#888888;
+			font-size:12px;
+		} 
+		fieldset{
+			padding:10px 0;
+			position:relative;
+		}
+		fieldset.integration{
+			margin-bottom: 10px;
+			@include pie-clearfix;
+			position:relative;
+			padding:0;
+			.integration_container {
+				padding:20px 0 10px 80px;
+			}				
+			border-top:1px solid #e3e3e3;
+			.app-logo{
+				position:absolute;
+				width:51px;
+				top:0;
+				left:0;
+				padding-right:25px;
+				height:20px;
+				background-color:#efefef;
+				@include border-bottom-radius(3px);
+				border:1px solid #e3e3e3;
+
+				cursor: pointer;
+				input[type=checkbox] {
+					position: absolute;
+					right:5px;
+					top:2px;
+				}
+			}
+		}
+      li.inline-field, fieldset{
          label.caption{
             width:80px;
          }
@@ -1310,19 +1399,22 @@ table.summary-report{
       }
       .request_form_options{
          position:absolute;
-         right:26px;
-         top:20px;
+         right:24px;
+         top:10px;
          .insert-canned-response{
             position:relative;
             z-index:1001;
          }
       }
-      .button-container{
-         padding-top:8px;
-         margin-top:8px;
-         border-top:1px solid #efefef;
-      }
    }
+}
+
+.timeentry_edit{
+	position: relative;
+	padding-bottom:50px;
+	.ui-form{
+		position: static;
+	}
 }
 
 .nav_search{

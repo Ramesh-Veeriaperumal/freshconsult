@@ -1,0 +1,8 @@
+<% 
+  # Agent email will be fetched from responder. if responder is not assigned then it will be taken from loggedin agent.
+  @liquid_values = { "requester" => @ticket.requester, "ticket" => @ticket, "agent" => (@ticket.responder || current_user) }
+  # For edit/delete page append one more parameter 'integrated_resource' in @liquid_values
+%>
+<div id="time_integration">
+	<%= renderTimesheetIntegratedApps(@liquid_values) %>
+</div>

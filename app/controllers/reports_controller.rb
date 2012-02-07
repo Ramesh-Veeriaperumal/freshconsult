@@ -23,7 +23,8 @@ class ReportsController < ApplicationController
   
   def report_list
     @t_reports = [{ :name => "responder", :label => "Agent ticket summary", :title => "Agent", :object => "agents" }, 
-                  { :name => "group"    , :label => "Group ticket summary", :title => "Group", :object => "groups" }]
+                  { :name => "group"    , :label => "Group ticket summary", :title => "Group", :object => "groups" }
+                 ]
   end
   
   def get_current_object
