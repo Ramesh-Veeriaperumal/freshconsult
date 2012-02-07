@@ -296,7 +296,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
         goog_contacts_url += "/"+user.google_id
       end
       etag_xml = ""#operation == CREATE ? "" : " gd:etag='#{operation}ContactEtag'"
-      xml_str = "<entry#{etag_xml}> <batch:id>#{operation}</batch:id> <batch:operation type='#{operation == CREATE ? "insert" : operation}'/> <id>#{goog_contacts_url}</id> <category scheme='http://schemas.google.com/g/2005#kind' term='http://schemas.google.com/contact/2008#contact'/>"
+      xml_str = "<entry#{etag_xml}> <batch:id>#{operation}</batch:id> <batch:operation type='#{operation == CREATE ? "insert" : operation}'/> <category scheme='http://schemas.google.com/g/2005#kind' term='http://schemas.google.com/contact/2008#contact'/>"
       xml_str << contact_xml(user) unless operation == DELETE
       xml_str << "</entry>"
 #      puts "xml_str #{xml_str}"
@@ -314,7 +314,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
       xml_str = ""
       # This will make sure the entries present in the google is preserved without touching them
       trimmed_xml = trimmed_contact_xml(user, self.sync_group_id)
-      trimmed_xml.elements {|ele|
+      trimmed_xml.elements.each {|ele|
         xml_str << ele.to_s
       }
       # Now append the overwritten entries

@@ -95,6 +95,7 @@ module Integrations::GoogleContactsUtil
           elsif precedence == "BOTH"
             copy(db_contact, google_contact)
             google_contact.google_contact = pre_google_cnt
+            db_contact.google_contact = pre_google_cnt # This will be used while serializing the db contact to google xml
             db_contacts.delete(db_contact)
           end
         end
@@ -107,7 +108,7 @@ module Integrations::GoogleContactsUtil
     google_contact.google_contact.id == db_contact.google_contact.google_id.to_s or google_contact.email == db_contact.email or google_contact.second_email == db_contact.email
   end
 
-  def trimmed_contact_xml(user, sync_group_id)
+  def trimmed_contact_xml(user, sync_group_id=nil)
     google_xml = user.google_contact.google_xml
     return if google_xml.blank?
     doc = REXML::Document.new("<feed xmlns='http://www.w3.org/2005/Atom' xmlns:openSearch='http://a9.com/-/spec/opensearchrss/1.0/' xmlns:gContact='http://schemas.google.com/contact/2008' xmlns:batch='http://schemas.google.com/gdata/batch' xmlns:gd='http://schemas.google.com/g/2005'>"+google_xml+"</feed>")
@@ -159,7 +160,7 @@ module Integrations::GoogleContactsUtil
 
       #orgName
       org_elements = entry_element.get_elements('gd:organization')
-      entry_element.delete_element(org_elements) unless org_elements.blank? or user.customer.blank?
+      entry_element.delete_element(org_elements[0]) unless org_elements.blank? or user.customer.blank?
 
       # group
       entry_element.elements.each("gContact:groupMembershipInfo") {|element|
@@ -244,18 +245,19 @@ module Integrations::GoogleContactsUtil
         end
       end
     }
+    to_user.customer = from_user.customer
   end
 
   GOOGLE_USER_FIELD_XML_MAPPING = [
     [:title, "name", "<gd:name><gd:fullName>$name</gd:fullName></gd:name>"], 
     [:primary_email, "email", "<gd:email rel='http://schemas.google.com/g/2005#work' primary='true' address='$email'/>"], 
     [:second_email, "second_email", "<gd:email rel='http://schemas.google.com/g/2005#home' address='$second_email'/>"], 
-    [:phoneNumber_mobile, "mobile", "<gd:phoneNumber rel='http://schemas.google.com/g/2005#home'>$mobile</gd:phoneNumber>"], 
+    [:phoneNumber_mobile, "mobile", "<gd:phoneNumber rel='http://schemas.google.com/g/2005#mobile'>$mobile</gd:phoneNumber>"], 
     [:phoneNumber_work, "phone", "<gd:phoneNumber rel='http://schemas.google.com/g/2005#work' primary='true'>$phone</gd:phoneNumber>"], 
     [:postalAddress_work, "address", "<gd:structuredPostalAddress rel='http://schemas.google.com/g/2005#work' primary='true'> <gd:formattedAddress> $address </gd:formattedAddress> </gd:structuredPostalAddress>"], 
     [:content, "description", "<gd:content>$description</gd:content>"], 
     [:deleted, "deleted", nil], 
-    [:postalAddress_home, "description", nil], 
+    [:postalAddress_home, "description", "<gd:content>$description</gd:content>"], 
     [:updated_at, "updated_at", nil]
   ]
 

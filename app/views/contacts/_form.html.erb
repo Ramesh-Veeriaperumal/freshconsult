@@ -102,7 +102,7 @@
 		</li>
 		<li>
 			<%= label(:user, :address, t('user.address')) %>
-			<%= text_field(:user, :address, :class => "text" ) %>
+			<%= text_area(:user, :address, :class => "text" ) %>
 		</li>		
 		<li>			
 			<%= check_box(:user, :user_role,{:disabled => role_disabled  , :id =>'contact_role' , :checked => @user.user_role == User::USER_ROLES_KEYS_BY_TOKEN[:client_manager] },User::USER_ROLES_KEYS_BY_TOKEN[:client_manager] , User::USER_ROLES_KEYS_BY_TOKEN[:customer] )%> <%=t('contacts.role.info')%>

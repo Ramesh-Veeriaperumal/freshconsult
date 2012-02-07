@@ -332,10 +332,8 @@ module ApplicationHelper
         end
         element = label + select(object_name, field_name, choices, :class => element_class, :selected => field_value)
       when "custom" then
-        puts "## custom partial "+field[:partial].to_s
         rendered_partial = (render :partial => field[:partial])
         element = "#{label} #{rendered_partial}"
-        puts "## element"+ element.to_s
       when "hidden" then
         element = hidden_field(object_name , field_name , :value => field_value)
       when "checkbox" then
