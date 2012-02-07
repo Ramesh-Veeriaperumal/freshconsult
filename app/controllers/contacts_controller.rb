@@ -1,12 +1,11 @@
 class ContactsController < ApplicationController
-   include HandleAdditionalAgent
    
    before_filter { |c| c.requires_permission :manage_tickets }
   
    include ModelControllerMethods
    before_filter :check_demo_site, :only => [:destroy,:update,:create]
    before_filter :set_selected_tab
-   before_filter :check_agent_limit, :only =>  :restore
+   before_filter :check_agent_limit, :only =>  :make_agent
    skip_before_filter :build_object , :only => :new
    
    
