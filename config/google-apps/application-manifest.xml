@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ApplicationManifest xmlns="http://schemas.google.com/ApplicationManifest/2009">
+
+  <!-- Support info to show in the marketplace & control panel -->
+  <Support>
+    <!-- URL for application setup as an optional redirect during the install -->
+    <Link rel="setup" href="https://signup.freshdesk.com/account/signup_google?domain=${DOMAIN_NAME}" />
+
+    <!-- URL for application configuration, accessed from the app settings page in the control panel -->
+    <Link rel="manage" href="https://login.freshdesk.com/auth/google?domain=${DOMAIN_NAME}" />
+
+    <!-- URL explaining how customers get support. -->
+    <Link rel="support" href="http://support.freshdesk.com" />
+
+    <!-- URL that is displayed to admins during the deletion process, to specify policies such as data retention, how to claim accounts, etc. -->
+    <Link rel="deletion-policy" href="http://freshdesk.com/terms.html" />
+  </Support>
+
+  <!-- Name and description pulled from message bundles -->
+  <Name>Freshdesk</Name>
+  <Description>Freshdesk is your answer to today's customer support needs</Description>
+
+  <!-- Show this link in Google's universal navigation for all users -->
+  <Extension id="navLink" type="link">
+    <Name>Freshdesk</Name>
+    <Url>https://login.freshdesk.com/auth/google?domain=${DOMAIN_NAME}</Url>
+    <!-- This app also uses the Contact API -->
+    <Scope ref="contactFeed"/>
+   </Extension>
+
+  <!-- Declare our OpenID realm so our app is white listed -->
+  <Extension id="realm" type="openIdRealm">	  <Url>http://*.freshdesk.com</Url>
+  </Extension>
+
+  <!-- Need access to the Contact feed -->
+  <Scope id="contactFeed">
+    <Url>https://www.google.com/m8/feeds/</Url>
+    <Reason>This application allows an administrator to import contacts, to enable them to use Freshdesk</Reason>
+  </Scope>
+
+</ApplicationManifest>
+
