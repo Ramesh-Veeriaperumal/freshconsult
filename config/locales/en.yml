@@ -1685,7 +1685,7 @@ en:
       select_options: "Reports by"
       tickets_by: "Tickets By"
       helpdesk_title: "Helpdesk Activity Report"
-      customer_title: "Activity Report"
+      customer_title: "Customer Activity Report"
       helpdesk_title_nav: "Helpdesk Activity"
       customer_title_nav: "Customer Activity"
       select_time_period: "Select Time period"
