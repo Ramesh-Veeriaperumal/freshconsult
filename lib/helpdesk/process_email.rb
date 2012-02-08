@@ -37,8 +37,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     
     article_params[:title] = params[:subject].gsub(/\[#([0-9]*)\]/,"")
     article_params[:description] = Helpdesk::HTMLSanitizer.clean(params[:html]) || params[:text]
-    article_params[:user] = user
-    article_params[:account] = account
+    article_params[:user] = user.id
+    article_params[:account] = account.id
     article_params[:content_ids] = params["content-ids"].nil? ? {} : get_content_ids
 
     attachments = {}
