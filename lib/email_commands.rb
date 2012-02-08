@@ -11,7 +11,7 @@ module EmailCommands
         custom_ff_fields = {}
         email_cmds = $1.gsub("\\r\\n","").gsub("\\n","") unless $1.blank?
         cmds = ActiveSupport::JSON.decode("{ #{email_cmds} }")  
-        RAILS_DEFAULT_LOGGER.debug "######### The email commands are : #{cmds}"
+        RAILS_DEFAULT_LOGGER.debug "The email commands are : #{cmds}"
         cmds.each_pair do |cmd, value|
         begin
             cmd = cmd.downcase

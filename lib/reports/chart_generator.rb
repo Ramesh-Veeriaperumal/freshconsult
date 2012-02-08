@@ -11,10 +11,7 @@ module Reports::ChartGenerator
     value_hash.each do |key,tkt_hash|
       sort_data.push([key,tkt_hash[:percentage].to_f ])
     end
-
-    sort_data.map! { |pair| [pair.first, pair.second.to_f] }
     sort_data.sort! { |a, b| b.second <=> a.second }
-    
     pie_data = []
     sort_data.each do |key,tkt_hash|
       pie_data.push({:name => get_column_value(key,column_name),  :y => tkt_hash.to_f })
@@ -42,7 +39,7 @@ module Reports::ChartGenerator
     
     pie_data = []
     sort_data.each do |key,tkt_hash|
-      pie_data.push({:name => get_column_value(key,column_name),  :data => [tkt_hash.to_f] })
+      pie_data.push({:name => TicketConstants::SOURCE_NAMES_BY_KEY.fetch(key),  :data => [tkt_hash.to_f] })
     end
     pie_data
   end
@@ -69,8 +66,8 @@ module Reports::ChartGenerator
     # Pushing the dates with 0 tickets
     
     tmp_dates_without_data = []
-    this_date = @starting_date
-    until this_date >= @ending_date
+    this_date = Time.parse(start_date)
+    until this_date >= Time.parse(end_date)
       series_data.push([this_date.to_i*1000,0]) unless dates_with_data.include?(this_date.to_i*1000)
       tmp_dates_without_data.push([this_date.to_i*1000,0]) unless dates_with_data.include?(this_date.to_i*1000)      
       this_date += 1.day
@@ -88,13 +85,12 @@ module Reports::ChartGenerator
   
   def gen_pie_chart(value_arr,column_name)
     browser_data = gen_pie_data(value_arr,column_name)
-    self.instance_variable_set("@#{column_name.to_s.gsub('.', '_')}_pie_chart",
+    unless browser_data.blank?
     Highchart.pie({
       :chart => {
           :renderTo => "#{column_name.to_s.gsub('.', '_')}_freshdesk_chart",
           :margin => [-80, 10, 0, 10],
         },
-      # :colors => define_colors(column_name),
       :plotOptions => {
         :pie => {
           :size => '75%',
@@ -139,13 +135,13 @@ module Reports::ChartGenerator
         :tooltip => {
           :formatter => pie_tooltip_formatter
         },
-    }))
+    })
+   end
   end 
   
   def gen_single_stacked_bar_chart(value_arr,column_name)
 
     browser_data = gen_stacked_bar_data(value_arr,column_name)
-    puts "To Chart Data being sent: #{browser_data.inspect}"
     self.instance_variable_set("@#{column_name.to_s.gsub('.', '_')}_single_stacked_bar_chart",
     Highchart.bar({
       :chart => {
@@ -260,8 +256,7 @@ module Reports::ChartGenerator
  end 
  
  def gen_line_chart(all_hash,resolved_hash)
-    line_chart_data = gen_line_chart_data(all_hash,resolved_hash)
-  
+  line_chart_data = gen_line_chart_data(all_hash,resolved_hash)
   self.instance_variable_set("@freshdesk_timeline_chart", 
     Highchart.column({
       :chart => {
@@ -305,6 +300,7 @@ module Reports::ChartGenerator
          },
          :min => 0,
          :gridLineWidth => 1,
+         :allowDecimals => false,
          :gridLineDashStyle => 'ShortDot',
       },
       :plotOptions => {

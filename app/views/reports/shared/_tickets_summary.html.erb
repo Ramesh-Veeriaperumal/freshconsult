@@ -1,4 +1,4 @@
-<% unless @status_hash.nil? || @current_month_tot_tickets == 0 %>
+<% unless @current_month_tot_tickets == 0 %>
 <div class="tickets-summary extra_for_fcr report-unit">
   <h3><%= t('reports.summary.title')%></h3>
   <ul class="summary clearfix">
@@ -27,7 +27,7 @@
       <h3><%= t('reports.summary.sla_compliance')%> </h3>
       <div id="sla_freshdesk_gauge" class="gauge-chart"></div>
 
-      <% unless @sla_diff == 0 %>
+      <% unless @sla_diff.nil? %>
       <h4 class='<%= "negative" if @sla_diff < 0 %> percent-diff'>
         <%= format_float_value(@sla_diff)%><span class="percent">%</span>
       </h4>
@@ -36,7 +36,7 @@
     <li class="last">
       <h3><%= t('reports.summary.fcr')%> </h3>
       <div id="fcr_freshdesk_gauge" class="gauge-chart"></div>
-      <% unless @fcr_diff == 0 %>
+      <% unless @fcr_diff.nil? %>
         <h4 class='<%= "negative" if @fcr_diff < 0 %> percent-diff'>
           <%= format_float_value(@fcr_diff)%><span class="percent">%</span>
         </h4>
