@@ -401,14 +401,13 @@ class User < ActiveRecord::Base
    end 
  end
  
-  def self.find_by_email_or_name(value, account_id)
+  def self.find_by_email_or_name(value)
     conditions = {}
     if value =~ /(\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
       conditions[:email] = value
     else
       conditions[:name] = value
     end
-    conditions[:account_id] = account_id
     user = self.find(:first, :conditions => conditions)
     user
   end

@@ -1,7 +1,5 @@
 class Helpdesk::NotesController < ApplicationController
   
-  include Helpdesk::ArticlesUtility
-  
   before_filter { |c| c.requires_permission :manage_tickets }
   before_filter :load_parent_ticket_or_issue
   
@@ -29,7 +27,7 @@ class Helpdesk::NotesController < ApplicationController
           @post.save!
         end
       end
-      create_article_from_note
+      create_article if email_reply?
       post_persist
     else
       create_error
@@ -47,6 +45,22 @@ class Helpdesk::NotesController < ApplicationController
 
     def item_url
       @parent
+    end
+    
+    def email_reply?
+      @item.source.eql?(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["email"])
+    end
+    
+    def create_article
+      kbase_email = current_account.kbase_email
+      if ((params[:bcc_emails] && params[:bcc_emails].include?(kbase_email)) || (params[:cc_emails] && params[:cc_emails].include?(kbase_email)))
+        params[:bcc_emails].delete(kbase_email)
+        params[:cc_emails].delete(kbase_email)
+        
+        body_html = params[:helpdesk_note][:body_html]
+        attachments = params[:helpdesk_note][:attachments]
+        Helpdesk::KbaseArticles.create_article_from_note(current_account, current_user, @parent.subject, body_html, attachments)
+      end
     end
 
     def process_item

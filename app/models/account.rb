@@ -372,6 +372,10 @@ class Account < ActiveRecord::Base
     !products.empty?
   end
   
+  def kbase_email
+    "kbase@#{full_domain}"
+  end
+
   protected
   
     def valid_domain?
