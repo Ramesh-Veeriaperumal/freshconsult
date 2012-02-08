@@ -30,7 +30,7 @@
             Freshdesk
         </Name>
         <Url>
-            https://login.freshdesk.com/auth/google?domain=${DOMAIN_NAME}
+            https://login.freshdesk.com/openid/google?domain=${DOMAIN_NAME}
         </Url>
         <!-- This app also uses the Contact API -->
         <Scope ref="contactFeed"/>

@@ -1,4 +1,4 @@
-class Integrations::GmailGadgetsController < Admin::AdminController
+class Integrations::GmailGadgetsController < ApplicationController
 
   def spec
     if Rails.env.production?
