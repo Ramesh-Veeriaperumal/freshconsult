@@ -33,7 +33,7 @@ class GoogleContacts < ActiveRecord::Migration
     end
 
     add_column :users, :address, :string
-    add_column :users, :google_viewer_id, :string
+    add_column :agents, :google_viewer_id, :string
 
     google_contacts = Integrations::Application.create(
         :name => @app_name,
@@ -50,7 +50,7 @@ class GoogleContacts < ActiveRecord::Migration
 
   def self.down
     Integrations::Application.find(:first, :conditions => {:name => @app_name}).delete
-    remove_column :users, :google_viewer_id
+    remove_column :agents, :google_viewer_id
     remove_column :users, :address
     drop_table :key_value_pairs
     drop_table :google_contacts

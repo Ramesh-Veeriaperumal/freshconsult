@@ -62,12 +62,14 @@ class ContactsController < ApplicationController
       respond_to do |format|
         format.html { redirect_to contacts_url }
         format.xml  { render :xml => @user, :status => :created, :location => contacts_url(@user) }
+        format.widget { render :action => :show}
       end
     else
       check_email_exist
-       respond_to do |format|
+      respond_to do |format|
         format.html { render :action => :new}
         format.xml  { render :xml => @user.errors, :status => :unprocessable_entity} # bad request
+        format.widget { render :action => :show}
       end
     end
   end

@@ -40,37 +40,42 @@ require 'openssl'
         flash[:notice] = "Login was unscucessfull!"
         redirect_to login_normal_url
       end
+    end
    end
 
   def opensocial_google
-    cert_file  = "#{RAILS_ROOT}/config/cert/#{params['xoauth_public_key']}"
-    cert = OpenSSL::X509::Certificate.new( File.read(cert_file) )
-    public_key = OpenSSL::PKey::RSA.new(cert.public_key)
-    container = params['opensocial_container']
-    consumer = OAuth::Consumer.new(container, public_key)
-    req = OAuth::RequestProxy::ActionControllerRequest.new(request)
-    sign = OAuth::Signature::RSA::SHA1.new(req, {:consumer => consumer})
-    verified = sign.verify
-    puts "verified = #{verified}"
-    if verified
-      current_account = Account.find(:first,:conditions=>{:google_domain=>params[:domain]},:order=>"updated_at DESC") unless params[:domain].blank?
-      google_viewer_id = params['opensocial_viewer_id']
-      google_viewer_id = params['opensocial_owner_id'] if google_viewer_id.blank?
-      if google_viewer_id.blank?
-        json = {:verified => :false}
-      else
-        user = User.find_by_google_viewer_id(google_viewer_id)
-        if user.blank?
-          json = {:user_exists => :false, :t=>generate_random_hash(google_viewer_id, current_account)}  
+    begin
+      cert_file  = "#{RAILS_ROOT}/config/cert/#{params['xoauth_public_key']}"
+      cert = OpenSSL::X509::Certificate.new( File.read(cert_file) )
+      public_key = OpenSSL::PKey::RSA.new(cert.public_key)
+      container = params['opensocial_container']
+      consumer = OAuth::Consumer.new(container, public_key)
+      req = OAuth::RequestProxy::ActionControllerRequest.new(request)
+      sign = OAuth::Signature::RSA::SHA1.new(req, {:consumer => consumer})
+      verified = sign.verify
+      puts "verified = #{verified}"
+      if verified
+        current_account = Account.find(:first,:conditions=>{:google_domain=>params[:domain]},:order=>"updated_at DESC") unless params[:domain].blank?
+        google_viewer_id = params['opensocial_viewer_id']
+        google_viewer_id = params['opensocial_owner_id'] if google_viewer_id.blank?
+        if google_viewer_id.blank?
+          json = {:verified => :false, :reason=>t("flash.gmail_gadgets.viewer_id_not_sent_by_gmail")}
         else
-#          single_access_token = user.reset_single_access_token
-#          saved = user.save!
-#          puts "single access token reset status #{saved} #{current_account.full_domain}"
-          json = {:user_exists => :true, :t=>user.single_access_token, :url_root=>current_account.full_domain} # TODO Check with Shan on, what will be populated for full_domain in case user hosts on his own domain name.
+          agent = Agent.find_by_google_viewer_id(google_viewer_id)
+          if agent.blank?
+            json = {:user_exists => :false, :t=>generate_random_hash(google_viewer_id, current_account)}  
+          elsif agent.user.deleted?
+            json = {:verified => :false, :reason=>t("flash.gmail_gadgets.agent_not_active")}
+          else
+            json = {:user_exists => :true, :t=>agent.user.single_access_token, 
+                    :url_root=>agent.user.account.full_domain, :ssl_enabled=>agent.user.account.ssl_enabled}
+          end
         end
+      else
+        json = {:verified => :false, :reason=>t("flash.gmail_gadgets.gmail_request_unverified")}
       end
-    else      
-      json = {:verified => :false}
+    rescue
+      json = {:verified => :false, :reason=>t("flash.gmail_gadgets.unknown_error")}
     end
     puts "result json #{json.inspect}"
     render :json => json
@@ -162,57 +167,68 @@ require 'openssl'
   end
 
   def google_auth_completed    
-  resp = request.env[Rack::OpenID::RESPONSE]  
-  email = nil
-  if resp.status == :success
-    email = get_email resp
-    provider = 'open_id' 
-    identity_url = resp.display_identifier
-    logger.debug "The display identifier is :: #{identity_url.inspect}"
-    @auth = Authorization.find_by_provider_and_uid_and_account_id(provider, identity_url,current_account.id)
-    @current_user = @auth.user unless @auth.blank?
-    @current_user = current_account.all_users.find_by_email(email) if @current_user.blank?
-    unless params[:t].blank?
-      kvp = KeyValuePair.find_by_key(params[:t])
-      if kvp.blank?
-        flash[:error] = t(:'flash.g_app.authentication_failed')
-        @gauth_error = true
-        render :action => 'gmail_gadget_auth', :layout => 'layouts/widgets/contacts.widget'
-        return
-      end
-      google_viewer_id = kvp.value 
-    end
-    if @current_user.blank?  
-      @current_user = create_user(email,current_account,identity_url,google_viewer_id) 
-    else
-      if @auth.blank?
-        @current_user.authorizations.create(:provider => provider, :uid => identity_url, :account_id => current_account.id) #Add an auth in existing user
-      end
-      @current_user.google_viewer_id = google_viewer_id
-      @current_user.active = true 
-      @current_user.save!
-    end
-
-    if google_viewer_id.blank?
-      @user_session = current_account.user_sessions.new(@current_user)  
-      if @user_session.save
-          logger.debug " @user session has been saved :: #{@user_session.inspect}"
-          flash[:notice] = t(:'flash.g_app.authentication_success')
-          redirect_back_or_default('/')
+    resp = request.env[Rack::OpenID::RESPONSE]  
+    email = nil
+    flash = {}
+    if resp.status == :success
+      email = get_email resp
+      provider = 'open_id' 
+      identity_url = resp.display_identifier
+      logger.debug "The display identifier is :: #{identity_url.inspect}"
+      @auth = Authorization.find_by_provider_and_uid_and_account_id(provider, identity_url,current_account.id)
+      @current_user = @auth.user unless @auth.blank?
+      @current_user = current_account.all_users.find_by_email(email) if @current_user.blank?
+      gmail_gadget_temp_token = params[:t]
+      unless gmail_gadget_temp_token.blank?
+        kvp = KeyValuePair.find_by_key(gmail_gadget_temp_token)
+        if kvp.blank? or kvp.value.blank?
+          flash[:error] = t(:'flash.gmail_gadgets.kvp_missing')
+        elsif @current_user.blank?
+          flash[:error] = t(:'flash.gmail_gadgets.user_missing')
+        elsif @current_user.agent.blank?
+          flash[:error] = t(:'flash.gmail_gadgets.agent_missing')
+        else
+          google_viewer_id = kvp.value
+        end
       else
-         flash[:error] = t(:'flash.g_app.authentication_failed')
-         redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
+        if @current_user.blank?  
+          @current_user = create_user(email,current_account,identity_url,google_viewer_id) 
+        end
       end
-    else
-      flash[:notice] = t(:'flash.g_app.authentication_success')
+
+      if flash[:error].blank?
+        if @auth.blank?
+          @current_user.authorizations.create(:provider => provider, :uid => identity_url, :account_id => current_account.id) #Add an auth in existing user
+        end
+        @current_user.active = true 
+        saved = @current_user.save
+        puts "User saved status: #{saved}"
+
+        @user_session = current_account.user_sessions.new(@current_user)  
+        if @user_session.save
+          logger.debug " @user session has been saved :: #{@user_session.inspect}"
+          if gmail_gadget_temp_token.blank?
+            flash[:notice] = t(:'flash.g_app.authentication_success')
+            redirect_back_or_default('/')
+          else
+            @current_user.agent.google_viewer_id = google_viewer_id
+            @current_user.agent.save!
+            flash[:notice] = t(:'flash.g_app.authentication_success')
+            render :action => 'gmail_gadget_auth', :layout => 'layouts/widgets/contacts.widget'
+          end
+        else
+          flash[:error] = t(:'flash.g_app.authentication_failed')
+          redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
+        end
+      else
+        render :action => 'gmail_gadget_auth', :layout => 'layouts/widgets/contacts.widget'
+      end
+    elsif !gmail_gadget_temp_token.blank?
+      flash[:error] = t(:'flash.g_app.authentication_failed')
       render :action => 'gmail_gadget_auth', :layout => 'layouts/widgets/contacts.widget'
     end
-  else
-    flash[:error] = t(:'flash.g_app.authentication_failed')
-    @gauth_error = true
-    render :action => 'gmail_gadget_auth', :layout => 'layouts/widgets/contacts.widget'
   end
- 
+
   private
     def check_sso_params
       if params[:name].blank? or params[:email].blank? or params[:hash].blank?
@@ -237,16 +253,12 @@ require 'openssl'
       end
     end
 
- def create_user(email, account,identity_url=nil,options={})
-   @contact = account.users.new
-   @contact.name = options[:name] unless options[:name].blank? 
-   @contact.email = email
-   @contact.user_role = User::USER_ROLES_KEYS_BY_TOKEN[:customer]
-   @contact.active = true     
-   @contact.save  
-   @contact.authorizations.create(:uid => identity_url , :provider => 'open_id',:account_id => current_account.id) unless identity_url.nil?
-   return @contact
-  end
-  
-  TOKEN_TYPE = "OpenSocialFirstTimeAccessToken"  
+    def create_user(email, account,identity_url=nil,options={})
+      @contact = account.users.new
+      @contact.name = options[:name] unless options[:name].blank? 
+      @contact.email = email
+      @contact.user_role = User::USER_ROLES_KEYS_BY_TOKEN[:customer]
+      return @contact
+    end
+    TOKEN_TYPE = "OpenSocialFirstTimeAccessToken"  
 end

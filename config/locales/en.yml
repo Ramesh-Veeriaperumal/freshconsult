@@ -332,6 +332,14 @@ en:
   feedbackwidget_formcustomize: Form customization
   does_not_contain: Does not contain
   flash:
+    gmail_gadgets:
+      kvp_missing: "Invalid authentication.  Please try again."
+      user_missing: "In Freshdesk, your email does not exist.  Add an agent with your email and try again."
+      agent_missing: "In Freshdesk, you are not an Agent.  Convert the user to agent and try again."
+      agent_not_active: "In Freshdesk, you email is not active.  Activate and try again."
+      viewer_id_not_sent_by_gmail: "Wrong Gmail request.  Please try after logging in again."
+      gmail_request_unverified: "Wrong Gmail signature.  Please try after logging in again."
+      unknown_error: "Unknown server error. Please contact support."
     daypass:
       success: "%{quantity} Day Passes have been successfully added to your account."
       failed: "Error when adding day passes"
@@ -1205,6 +1213,7 @@ en:
     pick_up: Pick Up
     submit_ticket_title: Submit a ticket
     create_ticket_title: Create a ticket
+    convert_ticket_title: Convert as a ticket
     reply_form: 
       post_to_linked_forum: Post in linked forum
       form_title: Reply to the conversation

@@ -181,10 +181,6 @@ class User < ActiveRecord::Base
     save
   end
 
-  def is_google_contact?
-    google_id.blank?
-  end
-
   def exist_in_db?
     !(id.blank?)
   end

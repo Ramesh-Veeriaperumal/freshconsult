@@ -26,6 +26,8 @@ module Integrations::GoogleContactsUtil
     end
     def google_id
     end
+    def google_xml
+    end
 =begin
     def method_missing(meth_name, *args, &block)
       meth_name = meth_name.to_s
@@ -114,19 +116,21 @@ module Integrations::GoogleContactsUtil
     doc = REXML::Document.new("<feed xmlns='http://www.w3.org/2005/Atom' xmlns:openSearch='http://a9.com/-/spec/opensearchrss/1.0/' xmlns:gContact='http://schemas.google.com/contact/2008' xmlns:batch='http://schemas.google.com/gdata/batch' xmlns:gd='http://schemas.google.com/g/2005'>"+google_xml+"</feed>")
     contact_ele_xml = nil
     doc.elements.each('feed/entry') {|entry_element|
-      # do not remove id
-      # title/name
-      id_elements = entry_element.get_elements('title')
-      entry_element.delete_element(id_elements[0]) unless id_elements.blank? or user.name.blank?
+      # remove id/category
+      delete(entry_element, entry_element.get_elements('id'))
+      delete(entry_element, entry_element.get_elements('category'))
+
+      # name
+      delete(entry_element, entry_element.get_elements('gd:name')) unless user.name.blank?
 
       #email
       entry_element.elements.each('gd:email') { |email_element|
         is_primary = email_element.attribute('primary').value
         rel = email_element.attribute('rel').value
         unless is_primary.blank? || is_primary != "true"
-          entry_element.delete_element(email_element) unless user.email.blank?
+          delete(entry_element, email_element) unless user.email.blank?
         else
-          entry_element.delete_element(email_element) if rel.end_with?("home") && !user.second_email.blank?
+          delete(entry_element, email_element) if rel.end_with?("home") && !user.second_email.blank?
         end
       }
 
@@ -135,40 +139,36 @@ module Integrations::GoogleContactsUtil
         rel = element.attribute('rel').value
         value = element.text.strip
         if rel.end_with?("work")
-          entry_element.delete_element(element) unless user.phone.blank?
+          delete(entry_element, element) unless user.phone.blank?
         elsif rel.end_with?("mobile")
-          entry_element.delete_element(element) unless user.mobile.blank?
+          delete(entry_element, element) unless user.mobile.blank?
         end
       }
 
       #postalAddress
-      entry_element.elements.each('gd:postalAddress') { |element|
+      entry_element.elements.each('gd:structuredPostalAddress') { |element|
         rel = element.attribute('rel').value
         if rel.end_with?("work")
-          entry_element.delete_element(element) unless user.address.blank?
-          break;
+          delete(entry_element, element) unless user.address.blank?
         end
       }
 
       #content/description
-      content_elements = entry_element.get_elements('content')
-      entry_element.delete_element(content_elements[0]) unless content_elements.blank? or user.description.blank?
+      delete(entry_element, entry_element.get_elements('content')) unless user.description.blank?
 
       #deleted
-      deleted_elements = entry_element.get_elements('gd:deleted')
-      entry_element.delete_element(deleted_elements) unless deleted_elements.blank? or user.deleted
+      delete(entry_element, entry_element.get_elements('gd:deleted')) unless user.deleted
 
       #orgName
-      org_elements = entry_element.get_elements('gd:organization')
-      entry_element.delete_element(org_elements[0]) unless org_elements.blank? or user.customer.blank?
+      delete(entry_element, entry_element.get_elements('gd:organization')) unless user.customer.blank?
 
       # group
       entry_element.elements.each("gContact:groupMembershipInfo") {|element|
         group_id = Integrations::GoogleContactsUtil.parse_id([element.attribute('href').value])
-        entry_element.delete_element(element) unless group_id.blank? or group_id != sync_group_id
+        delete(entry_element,element) unless group_id.blank? or group_id != sync_group_id
       }
 
-      entry_element.delete_element(entry_element.get_elements('updated')[0]) #updated
+      delete(entry_element,entry_element.get_elements('updated')) #updated
       contact_ele_xml = entry_element
     }
     contact_ele_xml
@@ -189,7 +189,7 @@ module Integrations::GoogleContactsUtil
     }
 
     goog_contact_detail[:google_id] = Integrations::GoogleContactsUtil.parse_id([entry_element.get_text('id').value]) #id
-    goog_contact_detail[:title] = entry_element.get_text('title').value #title
+    goog_contact_detail[:name] = entry_element.get_text('gd:name/gd:fullName').value #name
     #deleted
     deleted_val = entry_element.get_elements('gd:deleted')
     if deleted_val.blank?
@@ -198,9 +198,10 @@ module Integrations::GoogleContactsUtil
       goog_contact_detail[:deleted] = true
     end
     #postalAddress
-    entry_element.elements.each('gd:postalAddress') { |element|
+    entry_element.elements.each('gd:structuredPostalAddress') { |element|
+      formatted_addr_element = element.get_elements('gd:formattedAddress')[0]
       rel = element.attribute('rel').value
-      value = element.text.strip
+      value = formatted_addr_element.text.strip
       if rel.end_with?("work")
         goog_contact_detail[:postalAddress_work] = value
       elsif rel.end_with?("home")
@@ -236,32 +237,54 @@ module Integrations::GoogleContactsUtil
     goog_acc.save
   end
 
-  def copy(from_user, to_user)
-    USER_FIELDS.each { |prop_name|
-      if(from_user.has_attribute?(prop_name))
-        prop_value = from_user.read_attribute(prop_name)
-        unless prop_value.blank?
-          to_user.write_attribute(prop_name, prop_value)
+  private
+    def delete(entry_element, delete_element)
+      unless delete_element.blank?
+        if delete_element.instance_of?(Array)
+          entry_element.delete_element(delete_element[0])
+        else
+          entry_element.delete_element(delete_element)
         end
       end
-    }
-    to_user.customer = from_user.customer
-  end
+    end
 
-  GOOGLE_USER_FIELD_XML_MAPPING = [
-    [:title, "name", "<gd:name><gd:fullName>$name</gd:fullName></gd:name>"], 
-    [:primary_email, "email", "<gd:email rel='http://schemas.google.com/g/2005#work' primary='true' address='$email'/>"], 
-    [:second_email, "second_email", "<gd:email rel='http://schemas.google.com/g/2005#home' address='$second_email'/>"], 
-    [:phoneNumber_mobile, "mobile", "<gd:phoneNumber rel='http://schemas.google.com/g/2005#mobile'>$mobile</gd:phoneNumber>"], 
-    [:phoneNumber_work, "phone", "<gd:phoneNumber rel='http://schemas.google.com/g/2005#work' primary='true'>$phone</gd:phoneNumber>"], 
-    [:postalAddress_work, "address", "<gd:structuredPostalAddress rel='http://schemas.google.com/g/2005#work' primary='true'> <gd:formattedAddress> $address </gd:formattedAddress> </gd:structuredPostalAddress>"], 
-    [:content, "description", "<gd:content>$description</gd:content>"], 
-    [:deleted, "deleted", nil], 
-    [:postalAddress_home, "description", "<gd:content>$description</gd:content>"], 
-    [:updated_at, "updated_at", nil]
-  ]
+    def copy(from_user, to_user)
+      USER_FIELDS.each { |prop_name|
+        if(from_user.has_attribute?(prop_name))
+          prop_value = from_user.read_attribute(prop_name)
+          unless prop_value.blank?
+            to_user.write_attribute(prop_name, prop_value)
+          end
+        end
+      }
+      to_user.customer = from_user.customer
+    end
 
-  USER_FIELDS = GOOGLE_USER_FIELD_XML_MAPPING.map { |i|  i[1] }.flatten
-  GOOGLE_FIELDS_TO_USER_FILEDS_MAPPING = Hash[*GOOGLE_USER_FIELD_XML_MAPPING.map { |i| [i[0], i[1]] }.flatten]
-  USER_FILEDS_TO_GOOGLE_XML_MAPPING = Hash[*GOOGLE_USER_FIELD_XML_MAPPING.map { |i| [i[1], i[2]] }.flatten]
+=begin
+    def correct_postal_address(entry_element, paddr_element)
+      paddr_element.name = "gd:structuredPostalAddress"
+      addr_val = paddr_element.text
+      paddr_element.text = nil
+      faEle = REXML::Element.new("gd:formattedAddress")
+      faEle.text=addr_val
+      paddr_element.add_element(faEle)
+      paddr_element
+    end
+=end
+
+    GOOGLE_USER_FIELD_XML_MAPPING = [
+      [:name, "name", "<gd:name><gd:fullName>$name</gd:fullName></gd:name>"], 
+      [:primary_email, "email", "<gd:email rel='http://schemas.google.com/g/2005#work' primary='true' address='$email'/>"], 
+      [:second_email, "second_email", "<gd:email rel='http://schemas.google.com/g/2005#home' address='$second_email'/>"], 
+      [:phoneNumber_mobile, "mobile", "<gd:phoneNumber rel='http://schemas.google.com/g/2005#mobile'>$mobile</gd:phoneNumber>"], 
+      [:phoneNumber_work, "phone", "<gd:phoneNumber rel='http://schemas.google.com/g/2005#work' primary='true'>$phone</gd:phoneNumber>"], 
+      [:postalAddress_work, "address", "<gd:structuredPostalAddress rel='http://schemas.google.com/g/2005#work' primary='true'> <gd:formattedAddress> $address </gd:formattedAddress> </gd:structuredPostalAddress>"], 
+      [:content, "description", "<content>$description</content>"], 
+      [:deleted, "deleted", nil], 
+      [:updated_at, "updated_at", nil]
+    ]
+  
+    USER_FIELDS = GOOGLE_USER_FIELD_XML_MAPPING.map { |i|  i[1] }.flatten
+    GOOGLE_FIELDS_TO_USER_FILEDS_MAPPING = Hash[*GOOGLE_USER_FIELD_XML_MAPPING.map { |i| [i[0], i[1]] }.flatten]
+    USER_FILEDS_TO_GOOGLE_XML_MAPPING = Hash[*GOOGLE_USER_FIELD_XML_MAPPING.map { |i| [i[1], i[2]] }.flatten]
 end

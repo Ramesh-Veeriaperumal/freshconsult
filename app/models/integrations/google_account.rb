@@ -74,7 +74,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
   end
 
   # If group_id is null or empty then the group_id configured to sync will be used.  Use 'none' as group_id to fetch complete contact list.
-  def fetch_latest_google_contacts(group_id=nil, last_sync_time=nil, max_results=10000)
+  def fetch_latest_google_contacts(group_id=nil, last_sync_time=nil, max_results=100000)
     query_params = ""
     last_sync_time = self.last_sync_time if last_sync_time.blank?
     if group_id.blank?
@@ -122,7 +122,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
         if db_contact.deleted and self.overwrite_existing_user # deleted
           puts "Deleting contact #{db_contact.email} in google for account #{db_contact.account_id}."
           response = delete_google_contact(db_contact, batch)
-        elsif db_contact.google_id.blank?
+        elsif db_contact.google_contact.google_id.blank?
           puts "Adding contact #{db_contact.email} in google for account #{db_contact.account_id}."
           response = add_google_contact(db_contact, batch)
         else self.overwrite_existing_user# updated
@@ -214,7 +214,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
 
     def update_google_contact(db_contact, batch=false)
       google_account = self 
-      goog_contact_id = db_contact.google_id
+      goog_contact_id = db_contact.google_contact.google_id
       #TODO If the google contact id is not available in db try fetching the contact using email (CURRENTLY NOT SUPPORTED BY GOOGLE API).
       # If the goog_contact_id is blank then assume the user itself dose not exist in the google contact. Create a new user.
       if goog_contact_id.blank?
@@ -245,7 +245,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
 
     def delete_google_contact(db_contact, batch=false)
       google_account = self 
-      goog_contact_id = db_contact.google_id
+      goog_contact_id = db_contact.google_contact.google_id
       #TODO If the google contact id is not available in db try fetching the contact using email (CURRENTLY NOT SUPPORTED BY GOOGLE API).
       unless goog_contact_id.blank?
         if batch
@@ -274,8 +274,8 @@ class Integrations::GoogleAccount < ActiveRecord::Base
         goog_contacts_url = goog_contacts_url+query_params 
       end
       access_token = prepare_access_token(token, secret)
-      updated_contact_xml = access_token.get(goog_contacts_url).body
-#      puts goog_contacts_url + "   " + updated_contact_xml
+      updated_contact_xml = access_token.get(goog_contacts_url, "GData-Version" => "3.0").body
+      puts goog_contacts_url + "   " + updated_contact_xml
       google_users = []
       begin
         doc = REXML::Document.new(updated_contact_xml)   
@@ -293,10 +293,10 @@ class Integrations::GoogleAccount < ActiveRecord::Base
     def covert_to_batch_contact_xml(user, operation)
       goog_contacts_url = google_contact_uri(self)
       if operation != CREATE
-        goog_contacts_url += "/"+user.google_id
+        goog_contacts_url += "/"+user.google_contact.google_id
       end
       etag_xml = ""#operation == CREATE ? "" : " gd:etag='#{operation}ContactEtag'"
-      xml_str = "<entry#{etag_xml}> <batch:id>#{operation}</batch:id> <batch:operation type='#{operation == CREATE ? "insert" : operation}'/> <category scheme='http://schemas.google.com/g/2005#kind' term='http://schemas.google.com/contact/2008#contact'/>"
+      xml_str = "<entry#{etag_xml}> <batch:id>#{operation}</batch:id> <batch:operation type='#{operation == CREATE ? "insert" : operation}'/> <id>#{goog_contacts_url}</id> <category scheme='http://schemas.google.com/g/2005#kind' term='http://schemas.google.com/contact/2008#contact'/>"
       xml_str << contact_xml(user) unless operation == DELETE
       xml_str << "</entry>"
 #      puts "xml_str #{xml_str}"
@@ -305,19 +305,14 @@ class Integrations::GoogleAccount < ActiveRecord::Base
 
     def covert_to_contact_xml(user)
       # Creating xml string directly with out using xml object.  Works faster.
-      xml_str =   "<atom:entry xmlns:atom='http://www.w3.org/2005/Atom' xmlns:gd='http://schemas.google.com/g/2005' xmlns:gContact='http://schemas.google.com/contact/2008'> <atom:category scheme='http://schemas.google.com/g/2005#kind' term='http://schemas.google.com/contact/2008#contact'/>"
+      xml_str =   "<atom:entry xmlns:atom='http://www.w3.org/2005/Atom' xmlns:gd='http://schemas.google.com/g/2005' xmlns:gContact='http://schemas.google.com/contact/2008'> <category term='http://schemas.google.com/contact/2008#contact' scheme='http://schemas.google.com/g/2005#kind'/>"
       xml_str << contact_xml(user)
       xml_str << "</atom:entry>"
     end
 
     def contact_xml(user)
       xml_str = ""
-      # This will make sure the entries present in the google is preserved without touching them
-      trimmed_xml = trimmed_contact_xml(user, self.sync_group_id)
-      trimmed_xml.elements.each {|ele|
-        xml_str << ele.to_s
-      }
-      # Now append the overwritten entries
+      # Append the overwritten entries
       USER_FILEDS_TO_GOOGLE_XML_MAPPING.each { |prop_name, goog_prop_xml|
         if(!goog_prop_xml.blank? and user.has_attribute?(prop_name))
           prop_value = user.read_attribute(prop_name)
@@ -327,6 +322,14 @@ class Integrations::GoogleAccount < ActiveRecord::Base
           end
         end
       }
+      # Now make sure the entries present in the original google xml is preserved without touching them.
+      trimmed_xml = trimmed_contact_xml(user, self.sync_group_id)
+      unless trimmed_xml.blank?
+        trimmed_xml.elements.each {|ele|
+          xml_str << ele.to_s
+        }
+      end
+      # Overwrite other data in DB.
       xml_str << " <gd:organization rel='http://schemas.google.com/g/2005#other'><gd:orgName>#{user.customer.name}</gd:orgName></gd:organization>" unless user.customer.blank?
       unless self.sync_group_id.blank?
         group_uri = google_group_uri(self.email, self.sync_group_id) 
