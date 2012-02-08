@@ -10,15 +10,46 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     account = Account.find_by_full_domain(to_email[:domain])
     if !account.nil? and account.active?
       encode_stuffs
-      display_id = Helpdesk::Ticket.extract_id_token(params[:subject])
-      ticket = Helpdesk::Ticket.find_by_account_id_and_display_id(account.id, display_id) if display_id
-      if ticket
-        return if(from_email[:email] == ticket.reply_email) #Premature handling for email looping..
-        add_email_to_ticket(ticket, from_email )
-      else
-        create_ticket(account, from_email, to_email)
+      kbase_email = account.kbase_email
+      if (to_email[:email] != kbase_email) || (get_envelope_to.size > 1)
+        display_id = Helpdesk::Ticket.extract_id_token(params[:subject])
+        ticket = Helpdesk::Ticket.find_by_account_id_and_display_id(account.id, display_id) if display_id
+        if ticket
+          return if(from_email[:email] == ticket.reply_email) #Premature handling for email looping..
+          add_email_to_ticket(ticket, from_email )
+        else
+          create_ticket(account, from_email, to_email)
+        end
+      end
+      
+      if ((to_email[:email] == kbase_email) || (parse_cc_email && parse_cc_email.include?(kbase_email)))
+        create_article(account, from_email, to_email)
       end
     end
+  end
+  
+  def create_article(account, from_email, to_email)
+
+    article_params = {}
+
+    email_config = account.email_configs.find_by_to_email(to_email[:email])
+    user = get_user(account, from_email,email_config)
+    
+    article_params[:title] = params[:subject].gsub(/\[#([0-9]*)\]/,"")
+    article_params[:description] = Helpdesk::HTMLSanitizer.clean(params[:html]) || params[:text]
+    article_params[:user] = user
+    article_params[:account] = account
+    article_params[:content_ids] = params["content-ids"].nil? ? {} : get_content_ids
+
+    attachments = {}
+    
+    Integer(params[:attachments]).times do |i|
+      attachments["attachment#{i+1}"] = params["attachment#{i+1}"]
+    end
+      
+    article_params[:attachments] = attachments
+    
+    Helpdesk::KbaseArticles.send_later(:create_article_from_email, article_params)
   end
   
   private
@@ -255,5 +286,10 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end   
     return original_msg
 end
+    def get_envelope_to
+      envelope = params[:envelope]
+      envelope_to = envelope.nil? ? [] : (ActiveSupport::JSON.decode envelope)['to']
+      envelope_to
+    end    
   
 end

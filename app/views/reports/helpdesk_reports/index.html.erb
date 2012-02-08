@@ -3,23 +3,11 @@
 <%= javascript_include_tag  '/javascripts/report/daterangepicker.jQuery.js' %>
 <%= stylesheet_link_tag 'reports' %>
 <%= stylesheet_link_tag 'ui.daterangepicker' %>
-
 <% content_for :sidebar do %>
-	<%= render :partial => "/reports/shared/sidebar" %>
+	<%= render :partial => "/reports/helpdesk_reports/sidebar" %>
 <%end%>	
-<div id="report-container">
-	<div id="ticket-toolbar" class="toolbar">
-		<h3 class="title" id="report-main-title"></h3>
-	</div>
-	<div  id="tickets-summary"></div>
-	<div class="clearfix">&nbsp;</div><div class="clear"></div>
-	<div class="report-unit timeline-chart" id="timeline-chart"></div>
-	<div class="clearfix">&nbsp;</div>
-	<div id="pie-charts"></div>
-</div>
-<!-- Submitting the form by default -->
-<% javascript_tag do %>
-jQuery(document).ready(function() {
-	jQuery("#Sidebar form").submit();
-});
+<div class="report-container" id="report-container"></div>            
+                                           
+<% content_for :onload_script do %>     
+  jQuery("#Sidebar form").submit();
 <% end %>

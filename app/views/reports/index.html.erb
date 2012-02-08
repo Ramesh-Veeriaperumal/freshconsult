@@ -1,17 +1,16 @@
 <% content_for :sidebar do -%><%- end %>
-<h3 class="title">Reporting</h3>
-<div class="intro">
-	Gives you the statistics for the <b>Last 30 days</b>
-</div>
-<div class="content_list">
-	<ul>
-		<% @t_reports.each_with_index do |report, index| %>
-				<li><%= link_to report[:label], report_path(index+1), :class => "item_info" %></li> 
-		<% end %>
-		<% if feature?(:timesheets) %>
-			<li>
-				<%= link_to (t('report.time_sheet_report'), timesheet_report_path , :class => "item_info") %>
-			</li>
-		<% end %>
+<h3 class="title"><%= t('reports.tab_heading') %></h3>
+<div>
+	<ul class="report_items">
+	<% @t_reports.each_with_index do |report, index| %>
+		<%= report_item({:label => report[:label], :class => report[:object], :url => report_path(index+1)}) %>
+	<% end %>
+	<% if feature?(:timesheets) %>
+		<%= report_item({:label => t('reports.timesheet_reports.index.title'), :class => 'timesheet', :url => timesheet_report_path}) %>
+	<% end %>
+	<% if feature?(:advanced_reporting) %>
+		<%= report_item({:label => t('reports.customer_title_nav'), :class => 'customer', :url => customer_activity_url}) %>
+		<%= report_item({:label => t('reports.helpdesk_title_nav'), :class => 'helpdesk', :url => helpdesk_activity_url}) %>
+	<% end %>
 	</ul>
 </div>

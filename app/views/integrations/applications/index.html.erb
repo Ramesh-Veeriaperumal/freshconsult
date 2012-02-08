@@ -3,6 +3,8 @@
 <div class="intro"><%=t('application.desc')%></div>
 <ul class="table-list">
 	<% @applications.each do |application| %>
+	
+	   <%next if !feature?(:timesheets) && (application.name == 'freshbooks' or application.name == 'harvest') %>
 	  	<li>
 				<div class="application">
 					<div class="logo application-logo-<%= application.name %>"></div>

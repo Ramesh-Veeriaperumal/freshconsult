@@ -11,6 +11,7 @@ module EmailCommands
         custom_ff_fields = {}
         email_cmds = $1.gsub("\\r\\n","").gsub("\\n","") unless $1.blank?
         cmds = ActiveSupport::JSON.decode("{ #{email_cmds} }")  
+        RAILS_DEFAULT_LOGGER.debug "The email commands are : #{cmds}"
         cmds.each_pair do |cmd, value|
         begin
             cmd = cmd.downcase
@@ -21,13 +22,13 @@ module EmailCommands
               custom_ff_fields[custom_field.name.to_sym] = value unless custom_field.blank?
             end                
           rescue Exception => e
-            # Do Nothing
+            NewRelic::Agent.notice_error(e)
           end
         end
         ticket.custom_field = custom_ff_fields  unless custom_ff_fields.blank?
       end
-    rescue
-      #Do nothing
+    rescue Exception => e
+      NewRelic::Agent.notice_error(e)
     end
   end
   
@@ -55,7 +56,7 @@ module EmailCommands
   end
   
   def agent(ticket, value)
-    responder = User.find_by_email_or_name(value,ticket.account.id)  ########### Move This to Agent model as self method 
+    responder = ticket.account.users.find_by_email_or_name(value) 
     ticket.responder = responder if responder && responder.agent?
   end
   

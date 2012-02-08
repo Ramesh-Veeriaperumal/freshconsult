@@ -1,6 +1,6 @@
 class Solution::Folder < ActiveRecord::Base
   
-  attr_accessible  :name,:description, :visibility
+  attr_accessible  :name,:description, :visibility, :is_default
   validates_presence_of :name
   validates_uniqueness_of :name, :scope => :category_id
   

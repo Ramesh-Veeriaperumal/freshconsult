@@ -199,7 +199,7 @@ class Account < ActiveRecord::Base
     },
     
     :premium => {
-      :features => [ :multi_product, :multi_timezone , :multi_language],
+      :features => [ :multi_product, :multi_timezone , :multi_language, :advanced_reporting],
       :inherits => [ :pro ] #To make the hierarchy easier
     },
     
@@ -208,12 +208,12 @@ class Account < ActiveRecord::Base
     },
     
     :blossom => {
-      :features => [ :twitter, :facebook, :forums, :surveys ],
+      :features => [ :twitter, :facebook, :forums, :surveys , :timesheets ],
       :inherits => [ :sprout ]
     },
     
     :garden => {
-      :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language ],
+      :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, :advanced_reporting ],
       :inherits => [ :blossom ]
     }
   }
@@ -372,6 +372,10 @@ class Account < ActiveRecord::Base
     !products.empty?
   end
   
+  def kbase_email
+    "kbase@#{full_domain}"
+  end
+
   protected
   
     def valid_domain?

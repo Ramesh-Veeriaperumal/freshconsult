@@ -13,4 +13,12 @@ module Reports::CustomerReportsHelper
     end
   end
   
+  def fetch_customer_name(customer)
+   if customer
+    customer.name
+  else
+    "Customer"
+   end
+  end
+  
 end

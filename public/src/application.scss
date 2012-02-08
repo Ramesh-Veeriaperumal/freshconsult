@@ -5,7 +5,8 @@
 /* Importing admin icons */
 @import "admin-icon/*.png";
 @import "application-logo/*.png";
-@import "sync-status/*.png";
+
+@import "reports-icon/*.png";
 
 /* Bullet icon */ 
 $bullet-icon:"symbols/request_nav_seperator.gif";
@@ -636,6 +637,8 @@ body h5{
 			position: relative; 
 			.details{ 
 				@include text-formatting;
+				font-size:13px;
+				line-height:18px;
 				overflow: auto;
 				p{
 				   margin-right:2em; 
@@ -1429,19 +1432,18 @@ h4.list_title{
 
 .alpha_sort_list{ 
 	@include clearfix;
-	float:right;
-	border:1px solid red;
+	display:block;
 	list-style:none;
 	display:block;
-	padding:4px 2px;	
-	border:1px solid #dedede;	
+	padding:4px 20px;
+	margin:0 -20px;	
+	border-bottom:1px solid #dedede;	
 	background: #efefef;
-	@include border-radius(5px);
 	li{
 		float:left;
 		margin:0px;
-		padding:2px 0px;		
-		a{	
+		padding:2px 0px;
+		a{
 			font-weight:bold;
 			text-decoration:none;
 			color: #909090;
@@ -3031,15 +3033,11 @@ div.addReminder{
 		background-color:#e7e7e7;
 		color:#666666;
 		padding:3px 0px 0px 8px;
-		margin:0px 4px 4px;
+		margin:0px 4px;
 		.tag_delete{
 			float:right;
 			visibility:hidden;
 		}
-	}
-	div.item.contact-tag {
-		padding:3px 8px;
-		height: auto;
 	}	
 	div.item:hover{
 		.tag_delete{
@@ -3356,11 +3354,15 @@ div.addReminder{
 
 .admin_list, .content_list, .table-list{
 	@include no-bullets;
-
-	padding:0px 0px;  
+ 	border-color: #F2F2F2;
+	border-style: solid;
+	border-width: 1px 0;
+	padding:0px 0px;
+	margin:0 -20px;
 	li{	
-		@include clearfix;
-		padding:5px 0;
+		@include pie-clearfix;
+		padding:8px 20px;
+		background: #FAFAFA;
 		border-bottom:1px solid #efefef; 
 		color:#656565;
 		position:relative;
@@ -4422,77 +4424,6 @@ a.close{
 	}
 }
 
-.ui-form .inline-field .google_contacts_sync {
- 	label.caption {
- 		font-size: 1em;
- 	}
-
-	div.fields  {
-		ul.sync_status.freshdesk {
-			color: #00868f;
-		}
-		ul.sync_status.google {
-			color: #0078BD;
-		}
-
-		ul.sync_status {
-			display: block;
-			margin: 0 0 10px;
-			li {
-				text-align:right;
-				display: inline;
-				width: 100px;
-				padding:0 5px;
-				span {
-					color: #FFF;
-					border-radius: 3px;
-					padding: 3px 5px;
-					font-size: 0.75em;
-					text-transform: uppercase;
-					margin: 3px;
-				}
-			}
-			li.freshdesk {
-				width: 35px;
-				height:24px;
-				@include sync-status-sprite(freshdesk);
-			}			
-			li.google {
-				width: 35px;
-				height:24px;
-				@include sync-status-sprite(google);
-			}		
-			
-			li.added {
-				color:#00868f;
-				width: 100px;
-				span {
-					background: #00868f;
-				}
-			}
-			li.modified {
-				color:#3c7ed3;
-
-				span {
-					background: #3c7ed3;
-				}
-			}	
-			li.deleted {
-				color:#fe552e;
-
-				span {
-					background: #fe552e;
-				}
-			}	
-		}
-
-		label {
-			font-size: 1em;
-			font-weight:bold;
-		}
-	}
-}
-
 .message-highlight {
 	h4.title{
 		padding-bottom:0;
@@ -4508,4 +4439,35 @@ a.close{
 
 #timeentry_add {
 	margin-bottom: 25px;
+}
+.report_items {
+	border-top: 1px solid #F2F2F2;
+	@include all-reports-icon-sprites;
+	@include pie-clearfix;
+	li {
+		margin: 25px 40px 25px 20px;
+		float:left;
+		a {
+			min-height:26px;
+			display: block;
+			padding:10px;
+			border-radius:6px;
+			color: #333;
+			width: 160px;
+			text-align:center;
+			div {
+				padding:10px 0 0;
+			}
+
+			&:hover {
+				color: #333;
+				background:#f2f2f2;
+				@include inset-shadows(rgba(0,0,0, 0.2), 0, 1px, 2px);	
+			}
+		}
+	}
+}
+
+.single_click_link {
+	cursor: pointer;
 }

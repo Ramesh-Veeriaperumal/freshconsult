@@ -1,0 +1,7 @@
+<div class="sidepanel">
+  <% form_remote_tag(:url => '/activity_reports/helpdesk/generate', :update => "report-container", 
+	                   :loading => "jQuery('#report-container').html('<div class=\"loading-box\"></div>');  ") do %>
+	  <%= render :partial => "/reports/shared/options_form" %> 
+	<%= submit_tag t('reports.generate_button'), :class => "uiButton" %>
+	<% end %>
+</div>

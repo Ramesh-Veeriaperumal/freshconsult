@@ -1,7 +1,7 @@
 class PopulateTimesheetFeatureData < ActiveRecord::Migration
   def self.up
      Account.all.each do |account|
-      account.features.timesheets.create if account.features.pro.available?
+      account.features.timesheets.create if account.features.forums.available?
     end
   end
 

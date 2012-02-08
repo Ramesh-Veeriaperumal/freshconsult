@@ -15,14 +15,19 @@ class Solution::Category < ActiveRecord::Base
    
    acts_as_list :scope => :account
    
-   attr_accessible  :name,:description,:import_id
+   attr_accessible  :name,:description,:import_id, :is_default
    
-   
+   named_scope :customer_categories, {:conditions => {:is_default=>false}}     
+
   def to_xml(options = {})
      options[:indent] ||= 2
       xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
       super(:builder => xml, :skip_instruct => true,:include => options[:include],:except => [:account_id,:import_id]) 
+  end
+  
+  def self.get_default_categories_visibility(user)
+    user.customer? ? {:is_default=>false} : {}
   end
    
 end
