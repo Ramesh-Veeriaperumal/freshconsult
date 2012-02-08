@@ -59,8 +59,8 @@ module Reports::ChartGenerator
     dates_with_data = []
     unless series_hash.nil?
       series_hash.each do |tkt|
-        series_data.push([DateTime.strptime(tkt.date, "%Y-%m-%d").to_time.to_i*1000,tkt.count.to_i])
-        dates_with_data.push DateTime.strptime(tkt.date, "%Y-%m-%d").to_time.to_i*1000
+        series_data.push([Time.parse(tkt.date).to_i*1000, tkt.count.to_i])
+        dates_with_data.push(Time.parse(tkt.date).to_i*1000)
       end
     end
     # Pushing the dates with 0 tickets

@@ -199,7 +199,7 @@ class Account < ActiveRecord::Base
     },
     
     :premium => {
-      :features => [ :multi_product, :multi_timezone , :multi_language],
+      :features => [ :multi_product, :multi_timezone , :multi_language, :advanced_reporting],
       :inherits => [ :pro ] #To make the hierarchy easier
     },
     
@@ -213,7 +213,7 @@ class Account < ActiveRecord::Base
     },
     
     :garden => {
-      :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language ],
+      :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, :advanced_reporting ],
       :inherits => [ :blossom ]
     }
   }

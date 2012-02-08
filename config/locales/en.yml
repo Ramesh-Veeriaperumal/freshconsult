@@ -1668,6 +1668,7 @@ en:
       select_billable: Select Billable/Non-Billable
   reorder: "Reorder"
   reports:
+      tab_heading: "Reports"
       select_customer: "Select Customer"
       select_options: "Reports by"
       tickets_by: "Tickets By"
