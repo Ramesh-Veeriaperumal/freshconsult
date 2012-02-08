@@ -49,7 +49,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       
     article_params[:attachments] = attachments
     
-    Helpdesk::KbaseArticles.send_later(:create_article_from_email, article_params)
+    Helpdesk::KbaseArticles.create_article_from_email(article_params)
   end
   
   private
