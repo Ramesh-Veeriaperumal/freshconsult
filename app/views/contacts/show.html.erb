@@ -5,7 +5,6 @@
 	    <%= get_app_widget_script("capsule_crm", "contact_widget", @liquid_objects)%>
 	  </div>  
 	<% end %>
-
 <%- end %>
 <div class="contact-box clearfix">
 		<div class="action_buttons">
@@ -23,11 +22,13 @@
 		<% unless @user.customer.blank? %>
 		   <%= t("at") %> <%= link_to(h(@user.customer.name), @user.customer)  %>
 		<% end %>
+		<%= render :partial => "/helpdesk/tags/tag_list", :object => @user.tags %>
 		<div class="user-info">
 			<%= content_tag (:div, "#{content_tag(:span, t('user.email'))}  #{h(@user.email)}") unless @user.email.blank? %>
 			<%= content_tag (:div, "#{content_tag(:span, t('user.secondary'))}  #{h(@user.second_email)}") unless @user.second_email.blank? %>
 			<%= content_tag (:div, "#{content_tag(:span, t('user.phone_no'))}  #{h(@user.phone)}") unless @user.phone.blank? %>
 			<%= content_tag (:div, "#{content_tag(:span, t('user.mobile'))}  #{h(@user.mobile)}") unless @user.mobile.blank? %>
+			<%= content_tag (:div, "#{content_tag(:span, t('user.address'))}  <div>#{h(@user.address)}</div>") unless @user.address.blank? %>
 			<%= content_tag (:div, "#{content_tag(:span, t('user.twitter_id'))}  #{h(@user.twitter_id)}") unless @user.twitter_id.blank? %>
 			<%= content_tag (:div, "#{content_tag(:span, t('facebook_source'))}  <a target='_blank' href=http://facebook.com/#{h(@user.fb_profile_id) }>http://facebook.com/people/#{h(@user.fb_profile_id)}</a>") unless @user.fb_profile_id.blank? %>
 			<%= content_tag (:div, "#{content_tag(:span, t('account.time_zone'))}  #{h(@user.time_zone)}") %>
@@ -49,9 +50,10 @@
 				<%= f.submit t('save'), :class=>"uiButton small"  %> &nbsp;
 			</div>
 		<% end %>
+
 		<span class="seperator"></span>
 		<h4 class="title"><%=t('contacts.info4',:nick_name => @user.display_name)%></h4>
-		<% if @user_tickets_open_pending.empty? %>
+		<% if @user_tickets_open_pending.blank? %>
 			<%= "#{t('contacts.info5')}" %>
 		<% end %>
 		<%= render :partial => "tickets", :object => @user_tickets_open_pending %>

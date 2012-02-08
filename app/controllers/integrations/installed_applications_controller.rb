@@ -20,12 +20,12 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
       begin
         successful = installed_application.save!
         if successful
-          flash[:notice] = t(:'flash.application.install.success')
           if installing_application.name == "google_contacts"
             Rails.logger.info "Redirecting to google_contacts oauth."
-            redirect_to "/auth/google"
+            redirect_to "/auth/google?origin=install"
             return
           end
+          flash[:notice] = t(:'flash.application.install.success')
         else
           flash[:error] = t(:'flash.application.install.error')
         end
@@ -71,6 +71,10 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
       installedApp = current_account.installed_applications.find(params[:id])
       success = installedApp.delete
       if success
+        if installedApp.application.name == "google_contacts"
+          Rails.logger.info "Deleting all the google accounts corresponding to this account."
+          Integrations::GoogleAccount.delete_all_google_accounts(current_account)
+        end
         flash[:notice] = t(:'flash.application.uninstall.success')
       else
         flash[:error] = t(:'flash.application.uninstall.error')
@@ -84,6 +88,6 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
   
   private
   def convert_to_configs_hash(params)
-    return {:inputs => params[:configs].to_hash} # TODO: need to encrypt the password and should not print the password in log file.
+    return {:inputs => params[:configs].to_hash} unless params[:configs].blank? # TODO: need to encrypt the password and should not print the password in log file.
   end
 end

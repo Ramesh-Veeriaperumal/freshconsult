@@ -336,9 +336,14 @@ module ApplicationHelper
       when "paragraph" then
         element = label + text_area(object_name, field_name, :class => element_class, :value => field_value)
       when "dropdown" then
-        element = label + select(object_name, field_name, field[:choices], :class => element_class, :selected => field_value)
-      when "dropdown_blank" then
-        element = label + select(object_name, field_name, field[:choices], :class => element_class, :selected => field_value, :include_blank => "...")
+        choices = [];i=0
+        field[:choices].each do |choice| 
+          choices[i] = t(choice);i=i+1
+        end
+        element = label + select(object_name, field_name, choices, :class => element_class, :selected => field_value)
+      when "custom" then
+        rendered_partial = (render :partial => field[:partial])
+        element = "#{label} #{rendered_partial}"
       when "hidden" then
         element = hidden_field(object_name , field_name , :value => field_value)
       when "checkbox" then
@@ -357,7 +362,7 @@ module ApplicationHelper
     label = label_tag object_name+"_"+field.field_name, field_label
     case dom_type
       when "requester" then
-        element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email", :locals => { :object_name => object_name, :field => field, :url => autocomplete_helpdesk_authorizations_path, :object_name => object_name }))
+        element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email.html", :locals => { :object_name => object_name, :field => field, :url => autocomplete_helpdesk_authorizations_path, :object_name => object_name }))
       when "text", "number", "email" then
         element = label + text_field(object_name, field_name, :class => element_class, :value => field_value)
       when "paragraph" then

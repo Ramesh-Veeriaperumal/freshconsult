@@ -72,6 +72,14 @@ class EmailNotification < ActiveRecord::Base
     format_template requester_template
   end
   
+  def self.disable_notification (account)
+     Thread.current["notifications_#{account.id}"] = EmailNotification::DISABLE_NOTIFICATION   
+  end
+
+  def self.enable_notification (account)
+    Thread.current["notifications_#{account.id}"] = nil
+  end
+
   private
     #Introduced to restrict notification storm, during other helpdesks data import.
     #Notification can be disabled for requesters and ticket creation in the import thread.

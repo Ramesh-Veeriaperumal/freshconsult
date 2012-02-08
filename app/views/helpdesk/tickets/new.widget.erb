@@ -1,0 +1,10 @@
+<% content_for :sidebar do -%><%- end %>
+<%= content_tag (:h3, t("ticket.convert_ticket_title"), :class => "title") %>
+<% form_for @item, :url => { :controller => "/helpdesk/tickets", :action => "create.widget" }, :html => {:multipart => true, :id => "NewTicket", :onsubmit=>"var new_ticket_form = jQuery('#NewTicket');var serialized_data = new_ticket_form.serializeArray();var form_data={}; for(var i=0;i<serialized_data.length;i++) {form_data[serialized_data[i].name] = serialized_data[i].value}var url = '/helpdesk/tickets.widget';makeRequest(url, handleResponse, {}, form_data); return false;" } do |f| %>
+  <ul class="ui-form">  
+    <%= render :partial => "ticket_form.html.erb", :object => f, :locals => { :is_edit => false } %>
+  </ul>
+  <div class="button-container">
+    <%= f.submit t('create'), :class => "uiButton" %>
+  </div>
+<% end %>
