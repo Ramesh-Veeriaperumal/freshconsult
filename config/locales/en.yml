@@ -1581,7 +1581,11 @@ en:
         associate_account: Associate a Facebook page to <b> %{account_name} </b> and respond to your customers from within freshdesk when they comment or post to your wall.
         add_facebook: Add Facebook Page
       form:
-        
+        visitor_posts: Import <strong>"Visitor posts"</strong> as ticket
+        visitor_posts_info: Freshdesk will convert all visitor posts on this Facebook page as tickets.
+        company_posts: Import <strong>"Company posts"</strong> as ticket
+        company_posts_info: Freshdesk will convert all Company posts on this Facebook page into tickets.
+        product: Product          
     twitter_handles:
       index:
         title: "Twitter Accounts"
