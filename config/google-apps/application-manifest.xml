@@ -1,42 +1,193 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <ApplicationManifest xmlns="http://schemas.google.com/ApplicationManifest/2009">
+    
+    <!-- Support info to show in the marketplace & control panel -->
+    <Support>
+        <!-- URL for application setup as an optional redirect during the install -->
+        <Link rel="setup" href="https://signup.freshdesk.com/account/signup_google?domain=${DOMAIN_NAME}"/>
+        
+        <!-- URL for application configuration, accessed from the app settings page in the control panel -->
+        <Link rel="manage" href="https://login.freshdesk.com/openid/google?domain=${DOMAIN_NAME}"/>
+        
+        <!-- URL explaining how customers get support. -->
+        <Link rel="support" href="http://support.freshdesk.com"/>
+        
+        <!-- URL that is displayed to admins during the deletion process, to specify policies such as data retention, how to claim accounts, etc. -->
+        <Link rel="deletion-policy" href="http://freshdesk.com/terms.html"/>
+    </Support>
+    
+    <!-- Name and description pulled from message bundles -->
+    <Name>
+        Freshdesk
+    </Name>
+    <Description>
+        Freshdesk is your answer to today's customer support needs
+    </Description>
+    
+    <!-- Show this link in Google's universal navigation for all users -->
+    <Extension id="navLink" type="link">
+        <Name>
+            Freshdesk
+        </Name>
+        <Url>
+            https://login.freshdesk.com/auth/google?domain=${DOMAIN_NAME}
+        </Url>
+        <!-- This app also uses the Contact API -->
+        <Scope ref="contactFeed"/>
+    </Extension>
 
-  <!-- Support info to show in the marketplace & control panel -->
-  <Support>
-    <!-- URL for application setup as an optional redirect during the install -->
-    <Link rel="setup" href="https://signup.freshdesk.com/account/signup_google?domain=${DOMAIN_NAME}" />
+    <!-- Declare our OpenID realm so our app is white listed -->
+    <Extension id="realm" type="openIdRealm">
+        <Url>
+            http://*.freshdesk.com
+        </Url>
+    </Extension>
 
-    <!-- URL for application configuration, accessed from the app settings page in the control panel -->
-    <Link rel="manage" href="https://login.freshdesk.com/auth/google?domain=${DOMAIN_NAME}" />
+    <!-- Freshdesk Gmail Gadget -->
+    <Extension id="FreshdeskGadget" type="gadget">
+        <Name>
+            Freshdesk Gmail contextual gadget
+        </Name>
+        <Url>
+            https://login.freshdesk.com/integrations/gmail_gadgets/spec.xml
+        </Url>
+        <Container name="mail"/>
+    </Extension>
+    
+    <!-- EXTRACTOR -->
+    <Extension id="RecipientToEmailExtractor" type="contextExtractor">
+        <Name>
+            Recipient Extractor
+        </Name>
+        <Url>
+            google.com:RecipientEmailExtractor
+        </Url>
+        <Param name="recipient_email" value=".*"/>
+        <Triggers ref="FreshdeskGadget"/>
+        <Scope ref="toEmail"/>
+        <Scope ref="ccEmail"/>
+        <Container name="mail"/>
+    </Extension>
+    
+    <Extension id="SenderExtractor" type="contextExtractor">
+        <Name>
+            Sender Extractor
+        </Name>
+        <Url>
+            google.com:SenderEmailExtractor
+        </Url>
+        <Param name="sender_email" value=".*"/>
+        <Triggers ref="FreshdeskGadget"/>
+        <Scope ref="senderEmail"/>
+        <Container name="mail"/>
+    </Extension>
+    
+    <Extension id="SubjectExtractor" type="contextExtractor">
+        <Name>
+            Subject Extractor
+        </Name>
+        <Url>
+            google.com:RawSubjectExtractor
+        </Url>
+        <Param name="subject" value=".*"/>
+        <Triggers ref="FreshdeskGadget"/>
+        <Scope ref="emailSubject"/>
+        <Container name="mail"/>
+    </Extension>
+    
+    <Extension id="BodyExtractor" type="contextExtractor">
+        <Name>
+            Body Extractor
+        </Name>
+        <Url>
+            google.com:EmailBodyExtractor
+        </Url>
+        <Param name="email_body" value=".*"/>
+        <Triggers ref="FreshdeskGadget"/>
+        <Scope ref="emailBody"/>
+        <Container name="mail"/>
+    </Extension>
+    
+    <Extension id="USPhoneExtractor" type="contextExtractor">
+        <Name>
+            USPhone Extractor
+        </Name>
+        <Url>
+            google.com:USPhoneExtractor
+        </Url>
+        <Param name="phone_number" value=".*"/>
+        <Triggers ref="FreshdeskGadget"/>
+        <Scope ref="usPhone"/>
+        <Container name="mail"/>
+    </Extension>
+    
+    <!-- SCOPE -->
+    <!-- Need access to the Contact feed for Single sign-on-->
+    <Scope id="contactFeed">
+        <Url>
+            https://www.google.com/m8/feeds/
+        </Url>
+        <Reason>
+            This application allows an administrator to import contacts, to enable them to use Freshdesk
+        </Reason>
+    </Scope>
 
-    <!-- URL explaining how customers get support. -->
-    <Link rel="support" href="http://support.freshdesk.com" />
-
-    <!-- URL that is displayed to admins during the deletion process, to specify policies such as data retention, how to claim accounts, etc. -->
-    <Link rel="deletion-policy" href="http://freshdesk.com/terms.html" />
-  </Support>
-
-  <!-- Name and description pulled from message bundles -->
-  <Name>Freshdesk</Name>
-  <Description>Freshdesk is your answer to today's customer support needs</Description>
-
-  <!-- Show this link in Google's universal navigation for all users -->
-  <Extension id="navLink" type="link">
-    <Name>Freshdesk</Name>
-    <Url>https://login.freshdesk.com/auth/google?domain=${DOMAIN_NAME}</Url>
-    <!-- This app also uses the Contact API -->
-    <Scope ref="contactFeed"/>
-   </Extension>
-
-  <!-- Declare our OpenID realm so our app is white listed -->
-  <Extension id="realm" type="openIdRealm">	  <Url>http://*.freshdesk.com</Url>
-  </Extension>
-
-  <!-- Need access to the Contact feed -->
-  <Scope id="contactFeed">
-    <Url>https://www.google.com/m8/feeds/</Url>
-    <Reason>This application allows an administrator to import contacts, to enable them to use Freshdesk</Reason>
-  </Scope>
-
+    <Scope id="senderEmail">
+        <Url>
+            tag:google.com,2010:auth/contextual/extractor/FROM_ADDRESS
+        </Url>
+        <Reason>
+            We use this to determine if the person who emailed you is a contact in system yet or not.
+        </Reason>
+    </Scope>
+    
+    <Scope id="toEmail">
+        <Url>
+            tag:google.com,2010:auth/contextual/extractor/TO_ADDRESS
+        </Url>
+        <Reason>
+            We use this to determine who you are in the system.
+        </Reason>
+    </Scope>
+    
+    <Scope id="ccEmail">
+        <Url>
+            tag:google.com,2010:auth/contextual/extractor/CC_EMAIL
+        </Url>
+        <Reason>
+            We use this to determine if the person who emailed you is a contact in system yet or not.
+        </Reason>
+    </Scope>
+    
+    <Scope id="emailSubject">
+        <Url>
+            tag:google.com,2010:auth/contextual/extractor/RAW_SUBJECT
+        </Url>
+        <Reason>
+            This application searches the Subject: line of each email for the text "Hello World."
+        </Reason>
+    </Scope>
+    
+    <Scope id="emailBody">
+        <Url>
+            tag:google.com,2010:auth/contextual/extractor/BODY
+        </Url>
+        <Reason>
+            This application searches the message body of each email for the text "Hello World."
+        </Reason>
+    </Scope>
+    
+    
+    <Scope id="usPhone">
+        <Url>
+            tag:google.com,2010:auth/contextual/extractor/BODY
+        </Url>
+        <Url>
+            tag:google.com,2010:auth/contextual/extractor/SUBJECT
+        </Url>
+        <Reason>
+            This application searches the message body of each email for the text "Hello World."
+        </Reason>
+    </Scope>
 </ApplicationManifest>
 
