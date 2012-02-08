@@ -1,13 +1,14 @@
+if params[:controller].ends_with("customer_reports")
+  page.replace_html 'ticket-toolbar', "<h3 class='title'> #{@selected_customer.name} - #{t('reports.customer_title')}  <div>#{params[:date_range]}</div></h3>"
+else
+  page.replace_html 'ticket-toolbar', "<h3 class='title'>#{t('reports.helpdesk_activity_title')}  <div>#{params[:date_range]}</div></h3>"
+end
+
 if !@current_month_tot_tickets.nil? and @current_month_tot_tickets > 0
   page.replace_html 'timeline-chart', :partial => '/reports/shared/timeline_chart'
   page.replace_html 'pie-charts', :partial => '/reports/shared/pie_charts'
   page.replace_html 'tickets-summary', :partial => '/reports/shared/tickets_summary'
   page << "$('report-content').show();$('charts-nodata').hide()"
-  if params[:controller].ends_with("customer_reports")
-    page.replace_html 'ticket-toolbar', "<h3 class='title'> #{@selected_customer.name} - #{t('reports.customer_title')}  <div>#{params[:date_range]}</div></h3>"
-  else
-    page.replace_html 'ticket-toolbar', "<h3 class='title'>#{t('reports.helpdesk_activity_title')}  <div>#{params[:date_range]}</div></h3>"
-  end
 else
   page << "$('report-content').hide();$('charts-nodata').show()"  
 end
