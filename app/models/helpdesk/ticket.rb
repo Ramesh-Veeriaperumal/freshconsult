@@ -242,6 +242,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
    def is_twitter?
     (tweet) and (!account.twitter_handles.blank?) 
   end
+  
+  def is_facebook?
+     (fb_post) and (fb_post.facebook_page) 
+  end
  
   
   def priority=(val)
