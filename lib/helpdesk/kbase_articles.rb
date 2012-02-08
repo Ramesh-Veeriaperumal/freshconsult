@@ -6,11 +6,11 @@ class Helpdesk::KbaseArticles
     
     if user.agent?
       article = add_knowledge_base_article(account, user, article_params[:title], article_params[:description])        
-      create_article_attachments(article_params, article)
+      create_article_attachments(article_params, article, account)
     end
   end
       
-  def self.create_article_attachments(article_params, article)
+  def self.create_article_attachments(article_params, article, account)
     
     temp_body_html = String.new(article.description)
     content_ids = article_params[:content_ids] 
