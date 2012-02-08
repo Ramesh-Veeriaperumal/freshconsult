@@ -41,7 +41,7 @@ module Reports::ActivityReport
       end
 
     end
-    tickets_hash.store(TicketConstants::STATUS_KEYS_BY_TOKEN[:resolved], add_resolved_and_closed_tickets(tickets_hash)) if column_name == 'status'
+    tickets_hash.store(TicketConstants::STATUS_KEYS_BY_TOKEN[:resolved],{ :count =>  add_resolved_and_closed_tickets(tickets_hash)}) if column_name.to_s == "status"
     @current_month_tot_tickets = tot_count
     tickets_hash = calculate_percentage_for_columns(tickets_hash,@current_month_tot_tickets)
     
