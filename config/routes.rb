@@ -216,11 +216,8 @@
 
     helpdesk.resources :articles, :collection => { :autocomplete => :get }
 
-    helpdesk.resources :article_guides
 
     helpdesk.resources :attachments
-
-    helpdesk.resources :guides, :member => { :reorder_articles => :put, :privatize => :put, :publicize => :put }, :collection => { :reorder => :put }
     
     helpdesk.resources :authorizations, :collection => { :autocomplete => :get, :agent_autocomplete => :get }
     
@@ -248,7 +245,6 @@
      end
 
   map.namespace :support do |support|
-    support.resources :guides 
      support.resources  :articles, :member => { :thumbs_up => :put, :thumbs_down => :put , :create_ticket => :post }
        support.resources :tickets do |ticket|
       ticket.resources :notes, :name_prefix => 'support_ticket_helpdesk_'
@@ -256,7 +252,6 @@
     support.resources :company_tickets
     support.resources :minimal_tickets
     support.resources :registrations
-    support.map '', :controller => 'guides', :action => 'index'
     
     support.customer_survey '/surveys/:survey_code/:rating/new', :controller => 'surveys', :action => 'new'
     support.survey_feedback '/surveys/:survey_code/:rating', :controller => 'surveys', :action => 'create', 
