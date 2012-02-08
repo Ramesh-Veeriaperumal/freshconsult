@@ -80,6 +80,7 @@ ActiveRecord::Schema.define(:version => 20120217162346) do
     t.datetime "updated_at"
     t.integer  "ticket_permission"
     t.boolean  "occasional",                     :default => false
+    t.string   "google_viewer_id"
   end
 
   create_table "applications", :force => true do |t|
@@ -1086,9 +1087,7 @@ ActiveRecord::Schema.define(:version => 20120217162346) do
     t.string   "language",                         :default => "en"
     t.boolean  "blocked",                          :default => false
     t.datetime "blocked_at"
-    t.string   "google_id"
     t.string   "address"
-    t.string   "google_viewer_id"
   end
 
   add_index "users", ["account_id", "email"], :name => "index_users_on_account_id_and_email", :unique => true
