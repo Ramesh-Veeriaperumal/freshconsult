@@ -12,7 +12,7 @@ class Reports::HelpdeskReportsController < ApplicationController
     calculate_resolved_on_time
     calculate_fcr
     get_tickets_time_line
-    render :partial => "/reports/shared/canvas"
+    render :partial => "/reports/shared/report"
   end
   
  protected

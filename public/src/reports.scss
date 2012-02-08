@@ -210,8 +210,8 @@ $single_stackbar_chart_height: 120px;
 
 .toolbar {
 	padding: 10px 20px 0;
-	h3 div {
-		position: absolute;
+	h3 span {
+    float:right;
 		top: 15px;
 		right: 10px;
 		font-size: 80%;

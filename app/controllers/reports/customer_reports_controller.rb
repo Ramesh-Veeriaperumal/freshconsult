@@ -14,7 +14,7 @@ class Reports::CustomerReportsController < ApplicationController
      get_tickets_time_line
      calculate_fcr
    end
-    render :partial => "/reports/shared/canvas"
+    render :partial => "/reports/shared/report"
   end
   
   protected
