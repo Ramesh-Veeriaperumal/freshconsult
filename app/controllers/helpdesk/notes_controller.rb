@@ -27,7 +27,13 @@ class Helpdesk::NotesController < ApplicationController
           @post.save!
         end
       end
-      create_article if email_reply?
+
+      begin
+        create_article if email_reply?
+      rescue Exception => e
+        NewRelic::Agent.notice_error(e)
+      end
+  
       post_persist
     else
       create_error
