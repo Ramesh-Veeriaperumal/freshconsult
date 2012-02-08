@@ -155,6 +155,7 @@ class ContactsController < ApplicationController
   def make_agent    
     @obj.update_attributes(:delete =>false   ,:user_role =>User::USER_ROLES_KEYS_BY_TOKEN[:poweruser])      
     @agent = current_account.agents.new
+    @agent.user = @obj 
     @agent.occasional = false
      if @agent.save        
       redirect_to @obj
