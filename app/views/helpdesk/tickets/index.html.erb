@@ -1,7 +1,7 @@
 <% content_for :onload_script do %>
   $J('#rightCol').css("minHeight", $J('#leftcol').height());
 	$J("#helpdesk-select-all").live("click", function(ev){
-		$J("#tickets-expanded input[type=checkbox]").attr("checked", $J(this).attr("checked"));
+		$J("#tickets-expanded input[type=checkbox]").prop("checked", $J(this).prop("checked"));
 	});	
 
   $J("#select_view_id").live("change", function(ev){

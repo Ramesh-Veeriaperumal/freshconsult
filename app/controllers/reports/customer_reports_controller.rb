@@ -15,7 +15,7 @@ class Reports::CustomerReportsController < ApplicationController
      get_tickets_time_line
      calculate_fcr
    end
-    render :partial => "/reports/shared/canvas"
+    render :partial => "/reports/shared/report"
   end
   
   protected
@@ -26,8 +26,7 @@ class Reports::CustomerReportsController < ApplicationController
   
   def set_default_values
     @show_fields = { :priority =>  t('ticket_fields.fields.priority'),
-                     :ticket_type => t('ticket_fields.fields.ticket_type')
-                    }
+                     :ticket_type => t('ticket_fields.fields.ticket_type') }
     @pie_chart_labels = {"priority" => t('ticket_fields.fields.priority'), "ticket_type" => t('ticket_fields.fields.ticket_type')}
     current_account.ticket_fields.custom_dropdown_fields.each do |f|
       @show_fields[ "flexifields.#{f.flexifield_def_entry.flexifield_name}"] = f.label

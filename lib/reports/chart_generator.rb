@@ -216,8 +216,8 @@ module Reports::ChartGenerator
     Highchart.pie({
       :chart => {
           :renderTo => "#{column_name.to_s.gsub('.', '_')}_freshdesk_gauge",
-          :backgroundColor => '#F6F6F6',
-           # :margin => [0, 10, 20, 10]
+          # :backgroundColor => '#F6F6F6',
+          # :margin => [0, 10, 20, 10]
         },
       :colors => define_gauge_colors(column_name),
       :plotOptions => {
@@ -229,11 +229,11 @@ module Reports::ChartGenerator
           :dataLabels => {
             :enabled => true,
             :connectorWidth => 1,
-            :distance => -47,
+            :distance => -49,
             :formatter => gauge_label_formatter,
             :color => '#000000',
             :style => {
-              :font => '14pt "Myriad Pro"'
+              :font => '14pt "Lucida Grande"'
             }
           },
         }
@@ -301,7 +301,8 @@ module Reports::ChartGenerator
          :min => 0,
          :gridLineWidth => 1,
          :allowDecimals => false,
-         :gridLineDashStyle => 'ShortDot',
+         :gridLineDashStyle => 'ShortDot',   
+         :showFirstLabel => false
       },
       :plotOptions => {
          :column => {
@@ -387,7 +388,7 @@ module Reports::ChartGenerator
       when "sla"
         return ["'#0A9456'","'#CC0000'"]
       when "fcr"
-        return ["'#0C8AAE'","'#FFFFFF'"]
+        return ["'#0C8AAE'","'#CFCFCF'"]
     end    
   end
 end

@@ -1,0 +1,27 @@
+	<div id="ticket-toolbar" class="toolbar">
+		<h3 class="title" id="report-main-title">
+		  <span><%= params[:date_range] %></span>        
+		  <%= params[:controller].ends_with("customer_reports") ? 
+		          fetch_customer_name(@selected_customer) : t('reports.helpdesk_activity_title') %>
+		</h3>
+	</div>
+	<div id="report-content">                
+	  <% if !@current_month_tot_tickets.nil? and @current_month_tot_tickets > 0 %>
+		<div id="tickets-summary" class="report-wrapper">
+		  <%= render :partial => '/reports/shared/tickets_summary' %>
+		</div> 
+		<div class="seperator"></div>
+		<div class="report-wrapper">
+		  <div class="report-unit timeline-chart" id="timeline-chart">
+   		  <%= render :partial => '/reports/shared/timeline_chart' %>
+		  </div>
+		</div>
+	  <div class="seperator"></div>		  
+	  <div id="pie-charts">
+	    <%= render :partial => '/reports/shared/pie_charts' %>     
+	  </div>
+	  <% else %>
+	  	<div id="charts-nodata" style="display:none;" class="list-noinfo"> No data to display </div>   
+	  <% end %>
+	</div>	
+
