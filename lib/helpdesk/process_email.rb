@@ -12,15 +12,14 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     if !account.nil? and account.active?
       encode_stuffs
       kbase_email = "kbase@#{account.full_domain}"
-      RAILS_DEFAULT_LOGGER.debug "###### get_envelope_to : #{get_envelope_to}"
       if (to_email[:email] != kbase_email) || (get_envelope_to.size > 1)
         display_id = Helpdesk::Ticket.extract_id_token(params[:subject])
         ticket = Helpdesk::Ticket.find_by_account_id_and_display_id(account.id, display_id) if display_id
         if ticket
           return if(from_email[:email] == ticket.reply_email) #Premature handling for email looping..
-          add_email_to_ticket(ticket, from_email ) unless to_email[:email] == kbase_email
+          add_email_to_ticket(ticket, from_email )
         else
-          create_ticket(account, from_email, to_email) unless to_email[:email] == kbase_email
+          create_ticket(account, from_email, to_email)
         end
       end
       
