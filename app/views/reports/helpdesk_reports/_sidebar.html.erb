@@ -1,8 +1,6 @@
 <div class="sidepanel">
-    <h3 class="title"><%= t('reports.helpdesk_title')%></h3>  
 	<% form_tag '/activity_reports/helpdesk/generate' do%>
-	  <%= render :partial => "/reports/shared/options_form" %>
-	<div class="clearfix"></div>
+	  <%= render :partial => "/reports/shared/options_form" %> 
 	<%= submit_tag t('reports.generate_button'), :class => "uiButton" %>
 	<% end %>
 </div>

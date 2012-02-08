@@ -1,9 +1,11 @@
-<%= select_tag :reports, options_for_select(@show_fields.map {|k,v| [v, k]}, [:priority,:ticket_type]), { :multiple => true, :class => "customSelect filter_item" } %>		
-
-<div class="ff_item">
-	<h4 class="title"><%= t('reports.select_time_period')%></h4>
-	<%= text_field_tag :date_range,:class => "required" %>
- </div>
+<div>
+	<label class="caption">Reports by</label>
+  <%= select_tag :reports, options_for_select(@show_fields.map {|k,v| [v, k]}, [:priority,:ticket_type]), { :multiple => true, :class => "customSelect filter_item" } %>		
+</div>    
+<div>
+	<label class="caption"><%= t('reports.select_time_period')%></label>
+	<%= text_field_tag :date_range, :class => "required" %>
+</div>
 
 <% javascript_tag do %>
 jQuery(document).ready(function() {

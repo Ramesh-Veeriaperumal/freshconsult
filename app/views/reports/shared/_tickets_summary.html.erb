@@ -1,52 +1,48 @@
 <% unless @current_month_tot_tickets == 0 %>
-<div class="tickets-summary extra_for_fcr report-unit">
-  <h3><%= t('reports.summary.title')%></h3>
-  <ul class="summary clearfix">
-    <li>
-      <h4><%= number_with_delimiter(@current_month_tot_tickets) %></h4>
-      <%= t('reports.summary.total_tickets')%> 
-    </li>
-    <li>
-      <h4><%= number_with_delimiter(@status_hash.fetch(TicketConstants::STATUS_KEYS_BY_TOKEN[:open],{}).fetch(:count,0)) %></h4>
-      <%= t('reports.summary.open_tickets')%> 
-    </li>
-    <li>
-      <h4><%= number_with_delimiter(@status_hash.fetch(TicketConstants::STATUS_KEYS_BY_TOKEN[:pending],{}).fetch(:count,0)) %></h4>
-      <%= t('reports.summary.pending_tickets')%> 
-    </li>
-    <li class="last">
-      <h4><%= number_with_delimiter(@status_hash.fetch(TicketConstants::STATUS_KEYS_BY_TOKEN[:resolved],{}).fetch(:count,0).to_i) %></h4>
-      <%= t('reports.summary.resolved_tickets')%> 
-    </li>
-  </ul>
-</div>
+  <div class="tickets-summary extra_for_fcr report-unit">
+    <h3><%= t('reports.summary.title')%></h3>
+    <ul class="summary clearfix">
+      <li>
+        <h4><%= number_with_delimiter(@current_month_tot_tickets) %></h4>
+        <span><%= t('reports.summary.total_tickets')%> </span>
+      </li>
+      <li>
+        <h4><%= number_with_delimiter(@status_hash.fetch(TicketConstants::STATUS_KEYS_BY_TOKEN[:open],{}).fetch(:count,0)) %></h4>
+        <span><%= t('reports.summary.open_tickets')%> </span>
+      </li>
+      <li>
+        <h4><%= number_with_delimiter(@status_hash.fetch(TicketConstants::STATUS_KEYS_BY_TOKEN[:pending],{}).fetch(:count,0)) %></h4>
+        <span><%= t('reports.summary.pending_tickets')%></span> 
+      </li>
+      <li class="last">
+        <h4><%= number_with_delimiter(@status_hash.fetch(TicketConstants::STATUS_KEYS_BY_TOKEN[:resolved],{}).fetch(:count,0).to_i) %></h4>
+        <span><%= t('reports.summary.resolved_tickets')%> </span>
+      </li>
+    </ul>
+  </div>
 
-<div class="sla-compliance report-unit">
-  <ul class="summary clearfix">
-    <li class="last">
-      <h3><%= t('reports.summary.sla_compliance')%> </h3>
-      <div id="sla_freshdesk_gauge" class="gauge-chart"></div>
-
-      <% unless @sla_diff.nil? %>
+  <div class="sla-compliance report-unit">
+    <h3><%= t('reports.summary.sla_compliance')%> </h3>
+    <div id="sla_freshdesk_gauge" class="gauge-chart"></div> 
+    <% unless @sla_diff.nil? %>
       <h4 class='<%= "negative" if @sla_diff < 0 %> percent-diff'>
         <%= format_float_value(@sla_diff)%><span class="percent">%</span>
       </h4>
-      <% end %>
-    </li>
-    <li class="last">
-      <h3><%= t('reports.summary.fcr')%> </h3>
-      <div id="fcr_freshdesk_gauge" class="gauge-chart"></div>
-      <% unless @fcr_diff.nil? %>
-        <h4 class='<%= "negative" if @fcr_diff < 0 %> percent-diff'>
-          <%= format_float_value(@fcr_diff)%><span class="percent">%</span>
-        </h4>
-      <% end %>
-    </li>
-  </ul>
-</div>
+    <% end %>
+  </div>
+
+  <div class="sla-compliance report-unit">
+    <h3><%= t('reports.summary.fcr')%> </h3>
+    <div id="fcr_freshdesk_gauge" class="gauge-chart"></div>
+    <% unless @fcr_diff.nil? %>
+      <h4 class='<%= "negative" if @fcr_diff < 0 %> percent-diff'>
+        <%= format_float_value(@fcr_diff)%><span class="percent">%</span>
+      </h4>
+    <% end %>
+  </div>
+
   <% javascript_tag do %>
     <%= @fcr_pie_gauge %>
     <%= @sla_pie_gauge %>
   <% end %>
-</div>
 <%end%>
