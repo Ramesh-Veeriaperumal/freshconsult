@@ -216,6 +216,11 @@ jQuery.fn.daterangepicker = function(settings){
 	//preset menu click events	
 	function clickActions(el, rp, rpPickers, doneBtn){
 		
+		rp.find('.range-start').datepicker('option', 'minDate', options.earliestDate); 
+		rp.find('.range-start').datepicker('option', 'maxDate', options.latestDate); 
+		rp.find('.range-end').datepicker('option', 'minDate', options.earliestDate); 
+		rp.find('.range-end').datepicker('option', 'maxDate', options.latestDate);
+		
 		if(el.is('.ui-daterangepicker-specificDate')){
 			//Specific Date (show the "start" calendar)
 			doneBtn.hide();

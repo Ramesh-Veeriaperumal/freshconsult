@@ -1,8 +1,8 @@
 <div class="sidepanel">
-    <h3 class="title"><%= t('reports.helpdesk_title')%></h3>  
-	<% form_tag '/activity_reports/customer/generate' do%>
+	<% form_remote_tag(:url => '/activity_reports/customer/generate', :update => "report-container", 
+	                   :loading => "jQuery('#report-container').html('<div class=\"loading-box\"></div>');  ") do %>
 	  <div class="ff_item" container="dropdown" id="div_ff_customer">
-		<h4 class="title"><%= label_tag "customer_id", t("reports.select_customer") %></h4>           
+		<label class="caption"><%= label_tag "customer_id", t("reports.select_customer") %></label>           
 		<%= select_tag "customer_id", options_for_select(current_account.customers.collect{ |c| [c.name, c.id] }) ,:class => "customSelect filter_item" %>     
 	  </div>
 	  <%= render :partial => "/reports/shared/options_form" %>

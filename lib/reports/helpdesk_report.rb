@@ -18,7 +18,7 @@ module Reports::HelpdeskReport
  def group_tkts_by_columns(vals={})
     scoper.find( 
      :all,
-     :joins => [:requester, :flexifield],
+     :joins => :flexifield,
      :select => "count(*) count, #{vals[:column_name]}",
      :conditions => ["#{vals[:column_name]} is NOT NULL"],
      :group => "#{vals[:column_name]}")

@@ -74,7 +74,6 @@ GEM
       closure-compiler (>= 0.1.0)
       yui-compressor (>= 0.9.1)
     json (1.5.3)
-    kgio (2.7.0)
     koala (1.0.0)
       json (~> 1.0)
       multipart-post (~> 1.0)
@@ -146,7 +145,6 @@ GEM
       activeresource (= 2.3.8)
       activesupport (= 2.3.8)
       rake (>= 0.8.3)
-    raindrops (0.8.0)
     rake (0.8.7)
     rest-client (1.6.1)
       mime-types (>= 1.16)
@@ -186,10 +184,6 @@ GEM
       multi_json (~> 0.0.4)
       oauth (~> 0.4.3)
     tzinfo (0.3.26)
-    unicorn (4.1.1)
-      kgio (~> 2.4)
-      rack
-      raindrops (~> 0.6)
     xml-simple (1.0.15)
     yui-compressor (0.9.6)
       POpen4 (>= 0.1.4)
@@ -239,5 +233,4 @@ DEPENDENCIES
   ts-delayed-delta (= 1.1.0)
   twitter (= 0.9.12)
   tzinfo
-  unicorn (= 4.1.1)
   zendesk-features

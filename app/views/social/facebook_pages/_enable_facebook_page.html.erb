@@ -1,6 +1,6 @@
 <% form_for :facebook_page, :url => { :controller=>"social/facebook_pages", :action=>"enable_pages"}, :html => { :multipart => true , :method => :put } do |f| %>
 <p class="intro">
-	Select the facebook pages you would like to associate to the Helpdesk.
+	<%=t('.associate')%>
 </p> 
 <ul class="admin_list">
 	<%= hidden_field(:user, :profile_id, :id => "profile_id", :value => @fb_pages.first[:profile_id]) %>	

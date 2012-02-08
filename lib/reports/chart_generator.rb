@@ -11,10 +11,7 @@ module Reports::ChartGenerator
     value_hash.each do |key,tkt_hash|
       sort_data.push([key,tkt_hash[:percentage].to_f ])
     end
-
-    #sort_data.map! { |pair| [pair.first, pair.second.to_f] }
     sort_data.sort! { |a, b| b.second <=> a.second }
-    
     pie_data = []
     sort_data.each do |key,tkt_hash|
       pie_data.push({:name => get_column_value(key,column_name),  :y => tkt_hash.to_f })
@@ -219,8 +216,8 @@ module Reports::ChartGenerator
     Highchart.pie({
       :chart => {
           :renderTo => "#{column_name.to_s.gsub('.', '_')}_freshdesk_gauge",
-          :backgroundColor => '#F6F6F6',
-           # :margin => [0, 10, 20, 10]
+          # :backgroundColor => '#F6F6F6',
+          # :margin => [0, 10, 20, 10]
         },
       :colors => define_gauge_colors(column_name),
       :plotOptions => {
@@ -232,11 +229,11 @@ module Reports::ChartGenerator
           :dataLabels => {
             :enabled => true,
             :connectorWidth => 1,
-            :distance => -47,
+            :distance => -49,
             :formatter => gauge_label_formatter,
             :color => '#000000',
             :style => {
-              :font => '14pt "Myriad Pro"'
+              :font => '14pt "Lucida Grande"'
             }
           },
         }
@@ -259,8 +256,7 @@ module Reports::ChartGenerator
  end 
  
  def gen_line_chart(all_hash,resolved_hash)
-    line_chart_data = gen_line_chart_data(all_hash,resolved_hash)
-  
+  line_chart_data = gen_line_chart_data(all_hash,resolved_hash)
   self.instance_variable_set("@freshdesk_timeline_chart", 
     Highchart.column({
       :chart => {
@@ -304,6 +300,7 @@ module Reports::ChartGenerator
          },
          :min => 0,
          :gridLineWidth => 1,
+         :allowDecimals => false,
          :gridLineDashStyle => 'ShortDot',
       },
       :plotOptions => {
@@ -390,7 +387,7 @@ module Reports::ChartGenerator
       when "sla"
         return ["'#0A9456'","'#CC0000'"]
       when "fcr"
-        return ["'#0C8AAE'","'#FFFFFF'"]
+        return ["'#0C8AAE'","'#CFCFCF'"]
     end    
   end
 end
