@@ -1745,8 +1745,8 @@ en:
         added: "added"
         modified: "modified"
         deleted: "deleted"
-        google: "Contacts on your Google Account"
-        freshdesk: "Contacts on your Freshdesk"
+        google: "Exported Contacts status in Google"
+        freshdesk: "Imported Contacts status in Freshdesk"
       edit_form:
         install_title: "Google contacts sync setting"
         import_title: "Google contacts import setting"

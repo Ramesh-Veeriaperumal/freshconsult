@@ -88,7 +88,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
     sync_time_str = last_sync_time.gmtime.strftime("%Y-%m-%dT%H:%M:%S")
     query_params = "?showdeleted&updated-min="+ sync_time_str  # url to fetch only the modified contacts since last sync time. showdeleted fetches the deleted user as well. 
     query_params = query_params + "&group="+google_group_uri(self.email, group_id) unless group_id.blank?
-    query_params = "#{query_params}&max-results#{max_results}"
+    query_params = "#{query_params}&max-results=#{max_results}"
     return fetch_google_contacts(query_params)
   end
 

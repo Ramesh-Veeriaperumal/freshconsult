@@ -127,16 +127,24 @@ class Integrations::GoogleContactsImporter
     end
 
     def send_success_email (status, options={})
-      if options[:send_email]
-        email_params = {:email => options[:email], :domain => options[:domain], :status =>  status}
-        Admin::DataImportMailer.deliver_google_contacts_import_email(email_params)
+      begin
+        if options[:send_email]
+          email_params = {:email => options[:email], :domain => options[:domain], :status =>  status}
+          Admin::DataImportMailer.deliver_google_contacts_import_email(email_params)
+        end
+      rescue => e
+        puts "ERROR: NOT ABLE SEND GOOGLE CONTACTS IMPORT MAIL.  \n#{e.message}\n#{e.backtrace.join("\n\t")}"
       end
     end
 
-    def send_success_email (status, options={})
-      if options[:send_email]
-        email_params = {:email => options[:email], :domain => options[:domain], :status =>  status}
-        Admin::DataImportMailer.deliver_google_contacts_import_error_email(email_params)
+    def send_error_email (status, options={})
+      begin
+        if options[:send_email]
+          email_params = {:email => options[:email], :domain => options[:domain], :status =>  status}
+          Admin::DataImportMailer.deliver_google_contacts_import_error_email(email_params)
+        end
+      rescue => e
+        puts "ERROR: NOT ABLE SEND GOOGLE CONTACTS ERROR IMPORT MAIL.  \n#{e.message}\n#{e.backtrace.join("\n\t")}"
       end
     end
 end
