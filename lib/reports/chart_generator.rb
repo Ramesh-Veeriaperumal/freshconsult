@@ -387,7 +387,7 @@ module Reports::ChartGenerator
       when "sla"
         return ["'#0A9456'","'#CC0000'"]
       when "fcr"
-        return ["'#0C8AAE'","'#F2F2F2'"]
+        return ["'#0C8AAE'","'#CFCFCF'"]
     end    
   end
 end
