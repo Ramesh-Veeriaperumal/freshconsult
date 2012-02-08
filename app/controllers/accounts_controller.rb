@@ -384,7 +384,7 @@ class AccountsController < ApplicationController
     sub = current_account.subscription
     if sub.active?
      DeletedCustomers.create(
-       :full_domain => current_account.full_domain,
+       :full_domain => "#{current_account.name}(#{current_account.full_domain})",
        :account_id => current_account.id,
        :admin_name => current_account.account_admin.name,
        :admin_email => current_account.account_admin.email,
