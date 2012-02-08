@@ -23,23 +23,6 @@ jQuery(document).ready(function() {
 		dateFormat: 'dd MM yy',
 		closeOnSelect: true
 	});
-	jQuery("#date_range").val('<%= 30.days.ago.strftime("%d %B %Y") %> - <%= Time.now.strftime("%d %B %Y") %>');
-	
-	
-});
-
-jQuery("#Sidebar form").submit(function(ev){
-  	ev.preventDefault();
-  	jQuery("#report-content, #charts-nodata").hide();
-    jQuery("#report-container").append("<div class='loading-box'></div>"); 
-     jQuery.ajax({
-        url: jQuery("#Sidebar form").attr('action'),
-        type: "POST",
-        data: jQuery(this).serializeArray(),
-        success: function(msg){		  	
-	  		jQuery("#report-container .loading-box").remove();
-        }
-      });
-    return false; 
-  });
+	jQuery("#date_range").val('<%= 30.days.ago.strftime("%d %B %Y") %> - <%= Time.now.strftime("%d %B %Y") %>');   
+});     
 <% end %>
