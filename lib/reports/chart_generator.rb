@@ -301,7 +301,8 @@ module Reports::ChartGenerator
          :min => 0,
          :gridLineWidth => 1,
          :allowDecimals => false,
-         :gridLineDashStyle => 'ShortDot',
+         :gridLineDashStyle => 'ShortDot',   
+         :showFirstLabel => false
       },
       :plotOptions => {
          :column => {
