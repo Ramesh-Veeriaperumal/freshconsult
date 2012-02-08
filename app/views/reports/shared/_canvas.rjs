@@ -1,5 +1,5 @@
 if params[:controller].ends_with("customer_reports")
-  page.replace_html 'ticket-toolbar', "<h3 class='title'> #{@selected_customer.name} - #{t('reports.customer_title')}  <div>#{params[:date_range]}</div></h3>"
+  page.replace_html 'ticket-toolbar', "<h3 class='title'> #{fetch_customer_name(@selected_customer)}  #{t('reports.customer_title')}  <div>#{params[:date_range]}</div></h3>"
 else
   page.replace_html 'ticket-toolbar', "<h3 class='title'>#{t('reports.helpdesk_activity_title')}  <div>#{params[:date_range]}</div></h3>"
 end
