@@ -194,7 +194,7 @@ require 'openssl'
         end
       else
         if @current_user.blank?  
-          @current_user = create_user(email,current_account,identity_url,google_viewer_id) 
+          @current_user = create_user(email,current_account,identity_url) 
         end
       end
 

@@ -5,9 +5,8 @@
 		<div class="tag_list">
 		<% max=0; factor = 1
 		tag_cloud.each { |tag|
-			puts "#{tag.name.to_s} is used #{tag.tag_uses_count} times."
-			if max < tag.tag_uses_count 
-				max = tag.tag_uses_count 
+			if max < tag.uses_count 
+				max = tag.uses_count 
 				factor = 100/tag.tag_size unless tag.tag_size == 0 
 			end
 		}
