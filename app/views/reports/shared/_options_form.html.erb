@@ -1,5 +1,5 @@
 <div>
-	<label class="caption"></label>
+	<label class="caption">Reports by</label>
   <%= select_tag :reports, options_for_select(@show_fields.map {|k,v| [v, k]}, [:priority,:ticket_type]), { :multiple => true, :class => "customSelect filter_item" } %>		
 </div>    
 <div>

@@ -60,11 +60,7 @@ $single_stackbar_chart_height: 120px;
 		color: #444;
 	}
 }
-
-.uiButton {
-    margin: 20px 80px 0;
-}
-
+ 
 #dateRange{
 	font-size:12px;
 	margin: 0 20px 0 0;
@@ -93,8 +89,20 @@ $single_stackbar_chart_height: 120px;
 	.chart-container {
 		height:$pie_chart_size - 30;
 		width:$pie_chart_size - 30;
+		position:relative;
+	}
+	.noinfo{ 
+	  width:250px;
+	  text-align:center;
+	  margin:10px 0 0;
+	  background: url("/images/fillers/no-pie-doughnut.png") no-repeat center;
+	  font-size:16px;
+	  font-weight:bold;
+	  padding:110px 0;
 	}
 }
+
+
 .single-stacked-bar {
 	height:$single_stackbar_chart_height;
 }
