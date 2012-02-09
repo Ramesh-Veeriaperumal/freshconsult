@@ -240,7 +240,7 @@ EDITOR_OPTIONS: &common
        - advimage
        - paste
        - inlinepopups
-       - autoresize
+       #- autoresize
        - table
     mode:                               "textareas"
     apply_source_formatting:            false

@@ -489,13 +489,19 @@ body h5{
 	a.first{
 		padding-left:0px;
 	}
+}            
+
+.forumlinks{       
+  position:absolute;
+  margin-top:-30px;
+  right:20px;
 }
 
 .request_details{
 	margin:-13px -20px 20px -20px;
 	.ticket_actions{
 		position:absolute;
-		right:10px; 
+		right:18px; 
 		top:10px;
 		.action_buttons{
 			margin-top:0px;
@@ -566,12 +572,6 @@ body h5{
 			font-size:1.1em;
 			font-weight:bold;
 		}
-		.mark_action{
-			float:right;
-			padding:0px;
-			margin:0px;
-			margin-top:8px;
-		} 
 	}
 	
 	a.user_name{ @include link-colors( #333333, #527EAA ); } 
@@ -4475,4 +4475,26 @@ a.close{
 
 .single_click_link {
 	cursor: pointer;
+}     
+
+.forum_info{
+	background:#fff7b4; 
+	display:inline; 
+	font-weight:bold;
+	border: 1px solid #fff7b4; 
+    color: #333333;
+    font-size: 13px;	
+    padding: 8px 10px;
+   	position:relative;  
+   	margin-left:2px;
+   	span.bottom-pointer{
+   		border:10px solid transparent;
+   		border-top-color:#fff7b4;
+   		border-bottom:0px;
+   		width:0px;
+   		height:0px;
+   		bottom:-11px;
+   		left:20px;
+   		position:absolute;
+   	} 
 }

@@ -172,28 +172,6 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
 }
 .small.forum_button{ font-size:11px; padding:1px 14px; }
 
-.forum_info{
-	background:#fff7b4; 
-	display:inline; 
-	font-weight:bold;
-	border: 1px solid #fff7b4; 
-    color: #333333;
-    font-size: 13px;	
-    padding: 8px 10px;
-   	position:relative;  
-   	margin-left:2px;
-   	span.bottom-pointer{
-   		border:10px solid transparent;
-   		border-top-color:#fff7b4;
-   		border-bottom:0px;
-   		width:0px;
-   		height:0px;
-   		bottom:-11px;
-   		left:20px;
-   		position:absolute;
-   	} 
-}
-
 div.action_buttons{
 	position:relative;
 	float:right;
