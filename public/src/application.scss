@@ -6,6 +6,10 @@
 @import "admin-icon/*.png";
 @import "application-logo/*.png";
 
+/* Google sync status icons */
+@import "sync-status/*.png";
+
+/*Report tab icons */
 @import "reports-icon/*.png";
 
 /* Bullet icon */ 
@@ -4473,6 +4477,76 @@ a.close{
 	}
 }
 
+.ui-form .inline-field .google_contacts_sync {
+ 	label.caption {
+ 		font-size: 1em;
+ 	}
+
+	div.fields  {
+		ul.sync_status.freshdesk {
+			color: #00868f;
+		}
+		ul.sync_status.google {
+			color: #0078BD;
+		}
+
+		ul.sync_status {
+			display: block;
+			margin: 0 0 10px;
+			li {
+				text-align:right;
+				display: inline;
+				width: 100px;
+				padding:0 5px;
+				span {
+					color: #FFF;
+					border-radius: 3px;
+					padding: 3px 5px;
+					font-size: 0.75em;
+					text-transform: uppercase;
+					margin: 3px;
+				}
+			}
+			li.freshdesk {
+				width: 35px;
+				height:24px;
+				@include sync-status-sprite(freshdesk);
+			}			
+			li.google {
+				width: 35px;
+				height:24px;
+				@include sync-status-sprite(google);
+			}		
+			
+			li.added {
+				color:#00868f;
+				width: 100px;
+				span {
+					background: #00868f;
+				}
+			}
+			li.modified {
+				color:#3c7ed3;
+
+				span {
+					background: #3c7ed3;
+				}
+			}	
+			li.deleted {
+				color:#fe552e;
+
+				span {
+					background: #fe552e;
+				}
+			}	
+		}
+
+		label {
+			font-size: 1em;
+			font-weight:bold;
+		}
+	}
+}
 .single_click_link {
 	cursor: pointer;
 }     

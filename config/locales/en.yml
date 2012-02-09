@@ -941,7 +941,7 @@ en:
     working: Working
     info4: Recent tickets from %{nick_name}
     form_placeholder: 
-      description: Add specific notes regarding this contact example - Detailed address, LA Lakers fan etc.
+      description: Add specific notes regarding this contact example - LA Lakers fan etc.
     info5: User has not created any ticket till now
     restore: Restore
     info6: Add specific notes regarding this contact
