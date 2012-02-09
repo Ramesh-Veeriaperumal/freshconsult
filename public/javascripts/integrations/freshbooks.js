@@ -83,11 +83,9 @@ FreshbooksWidget.prototype = {
 		UIUtil.addDropdownEntry("freshbooks-timeentry-staff", "", "None", true);
 		UIUtil.hideLoading('freshbooks','staff');
 		$("freshbooks-timeentry-staff").enable();
-		console.log('staff loaded');
 	},
 
 	loadClientList:function(resData){ 
-		console.log('Loaded client lists');
 		selectedClientNode = this.loadFreshbooksEntries(resData, "freshbooks-timeentry-clients", "client", "client_id", ["organization", " ", "(", "first_name", " ", "last_name", ")"], null, freshbooksBundle.reqEmail);
 		client_id = XmlUtil.getNodeValueStr(selectedClientNode, "client_id");
 		
@@ -410,7 +408,7 @@ FreshbooksWidget.prototype = {
 				freshbooksBundle.integrated_resource_id = resJ['integrations_integrated_resource']['id'];
 				freshbooksBundle.remote_integratable_id = resJ['integrations_integrated_resource']['remote_integratable_id'];
 			} else {
-				console.log("Error while adding the integrated resource in db.");
+				alter("Freshbooks: Error while associating the remote resource id with local integrated resource id in db.");
 			}
 			if (result_callback) 
 				result_callback(evt);
