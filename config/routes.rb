@@ -191,7 +191,7 @@
 #      ticket.resources :notes, :member => { :restore => :put }, :name_prefix => 'helpdesk_issue_helpdesk_'
 #    end
 
-    helpdesk.resources :tickets, :collection => { :user_tickets => :get, :empty_trash => :delete, :empty_spam => :delete, :user_ticket => :get, :search_tweets => :any, :custom_search => :get, :export_csv => :post }, 
+    helpdesk.resources :tickets, :collection => { :user_tickets => :get, :empty_trash => :delete, :empty_spam => :delete, :user_ticket => :get, :search_tweets => :any, :custom_search => :get, :export_csv => :post, :update_multiple => :put  }, 
                                  :member => { :view_ticket => :get, :assign => :put, :restore => :put, :spam => :put, :unspam => :put, :close => :put, :execute_scenario => :post  , :close_multiple => :put, :pick_tickets => :put, :change_due_by => :put , :get_ca_response_content => :post ,:split_the_ticket =>:post , :merge_with_this_request => :post, :print => :any } do |ticket|
 
       ticket.resources :notes, :member => { :restore => :put }, :name_prefix => 'helpdesk_ticket_helpdesk_'
@@ -240,9 +240,9 @@
   end
   
    map.namespace :solution do |solution|     
-     solution.resources :categories  do |category|   
-     category.resources :folders  do |folder|
-       folder.resources :articles, :member => { :thumbs_up => :put, :thumbs_down => :put , :delete_tag => :post } do |article|
+     solution.resources :categories, :collection => {:reorder => :put}  do |category|   
+     category.resources :folders, :collection => {:reorder => :put}  do |folder|
+       folder.resources :articles, :member => { :thumbs_up => :put, :thumbs_down => :put , :delete_tag => :post }, :collection => {:reorder => :put} do |article|
          article.resources :tag_uses
        end
        end
