@@ -41,7 +41,7 @@ HarvestWidget.prototype= {
 				integratable_type:"timesheet",
 				anchor:"harvest_widget",
 				app_name:"Harvest",
-				domain:harvestBundle.domain + ".harvestapp.com",
+				domain:harvestBundle.domain,
 				ssl_enabled:harvestBundle.ssl_enabled || "false",
 				login_content: function(){
 					return harvestWidget.LOGIN_FORM.evaluate({});
