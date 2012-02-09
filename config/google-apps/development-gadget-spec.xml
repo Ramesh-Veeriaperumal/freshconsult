@@ -34,7 +34,7 @@
    "html" and "card" are required for all Gmail contextual gadgets. -->
   <Content type="html" view="card">
     <![CDATA[
-	<link type="text/css" rel="stylesheet" media="screen, projection" href="http://122.174.69.36:3000/packages/gadget.css">
+	<link type="text/css" rel="stylesheet" media="screen, projection" href="http://115.115.88.180:3000/packages/gadget.css">
 	<style type="text/css">
 		body {
 			min-width: 300px;
@@ -57,13 +57,13 @@
 	<div id="error"></div>
 
 	<script type="text/javascript">
-		alert(" Dev Version - v0.00426 ");
+		alert(" Dev Version - v0.00427 ");
 
 		// <!-- Fetch the array of content matches. -->
 		matches = google.contentmatch.getContentMatches();
 		var from_email=""; to_email=""; subject=""; body=""; us_phone=""; ticket_id=""; t=""; var cnt=Math.floor((Math.random()*1000)*(Math.random()*100));
 		var domain = "";
-		var url_root="122.174.69.36:3000"; 
+		var url_root="115.115.88.180:3000"; 
 		var http_s="http";
 
 		// <!-- Iterate through the array and display output for each match. -->
