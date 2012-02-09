@@ -22,8 +22,12 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         end
       end
       
-      if ((to_email[:email] == kbase_email) || (parse_cc_email && parse_cc_email.include?(kbase_email)))
-        create_article(account, from_email, to_email)
+      begin
+        if ((to_email[:email] == kbase_email) || (parse_cc_email && parse_cc_email.include?(kbase_email)))
+          create_article(account, from_email, to_email)
+        end
+      rescue Exception => e
+        NewRelic::Agent.notice_error(e)
       end
     end
   end
@@ -37,8 +41,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     
     article_params[:title] = params[:subject].gsub(/\[#([0-9]*)\]/,"")
     article_params[:description] = Helpdesk::HTMLSanitizer.clean(params[:html]) || params[:text]
-    article_params[:user] = user
-    article_params[:account] = account
+    article_params[:user] = user.id
+    article_params[:account] = account.id
     article_params[:content_ids] = params["content-ids"].nil? ? {} : get_content_ids
 
     attachments = {}
@@ -49,7 +53,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       
     article_params[:attachments] = attachments
     
-    Helpdesk::KbaseArticles.send_later(:create_article_from_email, article_params)
+    Helpdesk::KbaseArticles.create_article_from_email(article_params)
   end
   
   private

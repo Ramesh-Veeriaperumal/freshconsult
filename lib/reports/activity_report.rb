@@ -41,7 +41,7 @@ module Reports::ActivityReport
       end
 
     end
-    tickets_hash.store(TicketConstants::STATUS_KEYS_BY_TOKEN[:resolved], add_resolved_and_closed_tickets(tickets_hash)) if column_name == 'status'
+    tickets_hash.store(TicketConstants::STATUS_KEYS_BY_TOKEN[:resolved],{ :count =>  add_resolved_and_closed_tickets(tickets_hash)}) if column_name.to_s == "status"
     @current_month_tot_tickets = tot_count
     tickets_hash = calculate_percentage_for_columns(tickets_hash,@current_month_tot_tickets)
     
@@ -123,12 +123,13 @@ module Reports::ActivityReport
   end
   
   def previous_start
-    distance_between_dates =  Time.parse(start_date) - Time.parse(end_date)
-    previous_end - distance_between_dates
+    distance_between_dates =  Time.parse(end_date) - Time.parse(start_date)
+    prev_start = Time.parse(previous_end) - distance_between_dates
+    prev_start.beginning_of_day.to_s(:db)
   end
   
   def previous_end
-    Time.parse(start_date) - 1.day
+    (Time.parse(start_date) - 1.day).end_of_day.to_s(:db)
   end
   
 end

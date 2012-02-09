@@ -1,8 +1,9 @@
 #config/initializers/omniauth.rb
 require 'openid/store/filesystem'
 
-
 ActionController::Dispatcher.middleware.use OmniAuth::Builder do
+  oauth_s = Integrations::GoogleContactsUtil.get_oauth_keys
+  provider :google, oauth_s[0], oauth_s[1]
   if Rails.env.production?
    provider :twitter,  'dJ8tRu32g8UfWpPgs3bg', 'Brp3pT6z9JTGvCB1dWLEIHLBEre8Yy9lEFGZXwfUo'
   elsif Rails.env.staging?

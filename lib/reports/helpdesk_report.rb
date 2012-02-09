@@ -27,7 +27,7 @@ module Reports::HelpdeskReport
   def group_tkts_by_timeline(type,startingDate=nil, endingDate=nil)
     Account.current.tickets.visible.find( 
      :all,
-     :select => "count(*) count,helpdesk_ticket_states.#{type} date",
+     :select => "count(*) count,DATE(helpdesk_ticket_states.#{type}) date",
      :joins => :ticket_states,
      :conditions => fetch_condition(type),
      :group => "DATE(helpdesk_ticket_states.#{type})")

@@ -1,9 +1,14 @@
+require "digest"
 class UserSessionsController < ApplicationController
   
-  require 'gapps_openid'
-  require 'rack/openid'
-  require 'uri'
-  require 'openid'
+require 'gapps_openid'
+require 'rack/openid'
+require 'uri'
+require 'openid'
+require 'oauth/consumer' 
+require 'oauth/request_proxy/action_controller_request'
+require 'oauth/signature/rsa/sha1'
+require 'openssl'
   
   skip_before_filter :require_user, :except => :destroy
   skip_before_filter :check_account_state
@@ -39,7 +44,53 @@ class UserSessionsController < ApplicationController
       redirect_to login_normal_url
     end  
   end
-  
+
+  def opensocial_google
+    begin
+      cert_file  = "#{RAILS_ROOT}/config/cert/#{params['xoauth_public_key']}"
+      cert = OpenSSL::X509::Certificate.new( File.read(cert_file) )
+      public_key = OpenSSL::PKey::RSA.new(cert.public_key)
+      container = params['opensocial_container']
+      consumer = OAuth::Consumer.new(container, public_key)
+      req = OAuth::RequestProxy::ActionControllerRequest.new(request)
+      sign = OAuth::Signature::RSA::SHA1.new(req, {:consumer => consumer})
+      verified = sign.verify
+      puts "verified = #{verified}"
+      if verified
+        current_account = Account.find(:first,:conditions=>{:google_domain=>params[:domain]},:order=>"updated_at DESC") unless params[:domain].blank?
+        google_viewer_id = params['opensocial_viewer_id']
+        google_viewer_id = params['opensocial_owner_id'] if google_viewer_id.blank?
+        if google_viewer_id.blank?
+          json = {:verified => :false, :reason=>t("flash.gmail_gadgets.viewer_id_not_sent_by_gmail")}
+        else
+          agent = Agent.find_by_google_viewer_id(google_viewer_id)
+          if agent.blank?
+            json = {:user_exists => :false, :t=>generate_random_hash(google_viewer_id, current_account)}  
+          elsif agent.user.deleted?
+            json = {:verified => :false, :reason=>t("flash.gmail_gadgets.agent_not_active")}
+          else
+            json = {:user_exists => :true, :t=>agent.user.single_access_token, 
+                    :url_root=>agent.user.account.full_domain, :ssl_enabled=>agent.user.account.ssl_enabled}
+          end
+        end
+      else
+        json = {:verified => :false, :reason=>t("flash.gmail_gadgets.gmail_request_unverified")}
+      end
+    rescue
+      json = {:verified => :false, :reason=>t("flash.gmail_gadgets.unknown_error")}
+    end
+    puts "result json #{json.inspect}"
+    render :json => json
+  end
+
+  def generate_random_hash(google_viewer_id, account)
+     generated_hash = Digest::MD5.hexdigest(DateTime.now.to_s + google_viewer_id)
+     KeyValuePair.delete_all(["value=? and obj_type=? and account_id=?", google_viewer_id, TOKEN_TYPE, account])
+     kvp = KeyValuePair.new({:key=>generated_hash, :value=>google_viewer_id, :obj_type=>TOKEN_TYPE, :account_id=>account})
+     kvp.save! # if it throws exception, let it propagate. Without storing this info anyway we cannot proceed. 
+     return generated_hash;
+  end
+
   def gen_hash_from_params_hash
     Digest::MD5.hexdigest(params[:name]+params[:email]+current_account.shared_secret)
   end
@@ -91,8 +142,8 @@ class UserSessionsController < ApplicationController
       render :action => :new
     end
   end
-  
-  def google_auth
+
+  def openid_google
     base_domain = AppConfig['base_domain'][RAILS_ENV]
     domain_name = params[:domain] 
     signup_url = "https://signup."+base_domain+"/account/signup_google?domain="+domain_name unless domain_name.blank?   
@@ -105,56 +156,81 @@ class UserSessionsController < ApplicationController
       flash[:notice] = "There is no account associated with your domain. You may signup here"
       redirect_to signup_url and return unless signup_url.blank? 
       raise ActiveResource::ResourceNotFound
-    end    
+    end
     ##Need to handle the case where google is integrated with a seperate domain-- 2 times we need to authenticate
-    return_url = "https://"+cust_url+"/authdone/google?domain="+params[:domain] 
+    t_url = params[:t] ? "&t="+params[:t] : "" # passed token will be preserved for authentication. 
+    return_url = "http://"+cust_url+"/authdone/google?domain="+params[:domain]+t_url
     logger.debug "the return_url is :: #{return_url}"    
-    re_alm = "https://*."+base_domain    
+    re_alm = "http://"+cust_url    
     logger.debug "domain name is :: #{domain_name}"
     url = nil    
     url = ("https://www.google.com/accounts/o8/site-xrds?hd=" + params[:domain]) unless domain_name.blank?
-    authenticate_with_open_id(url,{ :required => ["http://axschema.org/contact/email", :email] , :return_to => return_url, 
-      :trust_root =>re_alm}) do |result, identity_url, registration|
-    end
+    authenticate_with_open_id(url,{ :required => ["http://axschema.org/contact/email", :email] , :return_to => return_url, :trust_root =>re_alm}) do |result, identity_url, registration| end
   end
-  
+
   def google_auth_completed    
     resp = request.env[Rack::OpenID::RESPONSE]  
     email = nil
+    flash = {}
     if resp.status == :success
       email = get_email resp
-    else
+      provider = 'open_id' 
+      identity_url = resp.display_identifier
+      logger.debug "The display identifier is :: #{identity_url.inspect}"
+      @auth = Authorization.find_by_provider_and_uid_and_account_id(provider, identity_url,current_account.id)
+      @current_user = @auth.user unless @auth.blank?
+      @current_user = current_account.all_users.find_by_email(email) if @current_user.blank?
+      gmail_gadget_temp_token = params[:t]
+      unless gmail_gadget_temp_token.blank?
+        kvp = KeyValuePair.find_by_key(gmail_gadget_temp_token)
+        if kvp.blank? or kvp.value.blank?
+          flash[:error] = t(:'flash.gmail_gadgets.kvp_missing')
+        elsif @current_user.blank?
+          flash[:error] = t(:'flash.gmail_gadgets.user_missing')
+        elsif @current_user.agent.blank?
+          flash[:error] = t(:'flash.gmail_gadgets.agent_missing')
+        else
+          google_viewer_id = kvp.value
+        end
+      else
+        if @current_user.blank?  
+          @current_user = create_user(email,current_account,identity_url) 
+        end
+      end
+
+      if flash[:error].blank?
+        if @auth.blank?
+          @current_user.authorizations.create(:provider => provider, :uid => identity_url, :account_id => current_account.id) #Add an auth in existing user
+        end
+        @current_user.active = true 
+        saved = @current_user.save
+        puts "User saved status: #{saved}"
+
+        @user_session = current_account.user_sessions.new(@current_user)  
+        if @user_session.save
+          logger.debug " @user session has been saved :: #{@user_session.inspect}"
+          if gmail_gadget_temp_token.blank?
+            flash[:notice] = t(:'flash.g_app.authentication_success')
+            redirect_back_or_default('/')
+          else
+            @current_user.agent.google_viewer_id = google_viewer_id
+            @current_user.agent.save!
+            flash[:notice] = t(:'flash.g_app.authentication_success')
+            render :action => 'gmail_gadget_auth', :layout => 'layouts/widgets/contacts.widget'
+          end
+        else
+          flash[:error] = t(:'flash.g_app.authentication_failed')
+          redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
+        end
+      else
+        render :action => 'gmail_gadget_auth', :layout => 'layouts/widgets/contacts.widget'
+      end
+    elsif !gmail_gadget_temp_token.blank?
       flash[:error] = t(:'flash.g_app.authentication_failed')
-      return redirect_to root_url
-    end
-    
-    provider = 'open_id' 
-    identity_url = resp.display_identifier
-    logger.debug "The display identifier is :: #{identity_url.inspect}"
-    @auth = Authorization.find_by_provider_and_uid_and_account_id(provider, identity_url,current_account.id)
-    @current_user = @auth.user unless @auth.blank?
-    @current_user = current_account.all_users.find_by_email(email) if @current_user.blank?
-    
-    if @current_user.blank?  
-      @current_user = create_user(email,current_account,identity_url) 
-    elsif @auth.blank?
-      #Add an auth in existing user
-      @current_user.authorizations.create(:provider => provider, :uid => identity_url, :account_id => current_account.id)
-      @current_user.active = true 
-      @current_user.save!
-    end
-  
-    @user_session = current_account.user_sessions.new(@current_user)  
-    if @user_session.save
-      logger.debug " @user session has been saved :: #{@user_session.inspect}"
-      flash[:notice] = t(:'flash.login.success')
-      redirect_back_or_default('/')      
-    else
-      flash[:notice] = t(:'flash.g_app.authentication_failed')
-      redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
+      render :action => 'gmail_gadget_auth', :layout => 'layouts/widgets/contacts.widget'
     end
   end
- 
+
   private
     def check_sso_params
       if params[:name].blank? or params[:email].blank? or params[:hash].blank?
@@ -165,7 +241,7 @@ class UserSessionsController < ApplicationController
     
     def note_failed_login
       #flash[:error] = "Couldn't log you in as '#{params[:user_session][:email]}'"
-      logger.warn "Failed login for '#{params[:user_session][:login]}' from #{request.remote_ip} at #{Time.now.utc}"
+      logger.warn "Failed login for '#{params[:user_session][:email]}' from #{request.remote_ip} at #{Time.now.utc}"
     end
   
     def get_email(resp)
@@ -184,11 +260,7 @@ class UserSessionsController < ApplicationController
       @contact.name = options[:name] unless options[:name].blank? 
       @contact.email = email
       @contact.user_role = User::USER_ROLES_KEYS_BY_TOKEN[:customer]
-      @contact.active = true     
-      @contact.save  
-      @contact.authorizations.create(:uid => identity_url , :provider => 'open_id',:account_id => current_account.id) unless identity_url.nil?
-      
-      @contact
+      return @contact
     end
-  
+    TOKEN_TYPE = "OpenSocialFirstTimeAccessToken"  
 end

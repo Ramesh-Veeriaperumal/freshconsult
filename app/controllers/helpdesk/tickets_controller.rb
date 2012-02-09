@@ -6,7 +6,7 @@ class Helpdesk::TicketsController < ApplicationController
   
   before_filter :check_user , :only => [:show]
   before_filter :load_ticket_filter , :only => [:index, :custom_view_save]
-  before_filter :add_requester_filter , :only => [:index]
+  before_filter :add_requester_filter , :only => [:index, :user_tickets]
   before_filter :disable_notification, :if => :save_and_close?
   after_filter  :enable_notification, :if => :save_and_close?
   
@@ -93,13 +93,42 @@ class Helpdesk::TicketsController < ApplicationController
         render :xml => @items.to_xml
       end      
       format.json do
-        render :json => Hash.from_xml(@items.to_xml)
+        
+        json = "["
+        @items.each { |tic| json << tic.to_json[10..-2] + ","}  
+        #Removing the root node, so that it conforms to JSON REST API standards
+        # 10..-2 will remove "{ticket:" and the last "}"
+
+        # Now we have to remove the last comma to have a valid JSON encoded string.
+        render :json => json[0..-2] + "]"
+
       end      
       format.atom do
       end
     end
   end
   
+  def user_tickets
+    @items = current_account.tickets.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
+    puts "@user #{@user}"
+    render :layout => "widgets/contacts"
+  end
+
+  def view_ticket
+    if params['format'] == 'widget'
+      @ticket = current_account.tickets.find_by_display_id(params[:id]) # using find_by_id(instead of find) to avoid exception when the ticket with that id is not found.
+      @item = @ticket
+      puts "ticket #{@ticket}" 
+      if @ticket.blank?
+        @item = Helpdesk::Ticket.new
+        render :new, :layout => "widgets/contacts"
+      else
+        @ticket_notes = @ticket.conversation
+        render :layout => "widgets/contacts"
+      end
+      return
+    end
+  end
   def custom_view_save
      render :partial => "helpdesk/tickets/customview/new"
   end
@@ -314,6 +343,9 @@ class Helpdesk::TicketsController < ApplicationController
       @item.requester   = @topic.user
     end
     @item.source = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:phone] #setting for agent new ticket- as phone
+    if params['format'] == 'widget'
+      render :layout => 'widgets/contacts'
+    end
   end
  
   def create
@@ -325,7 +357,6 @@ class Helpdesk::TicketsController < ApplicationController
     @item.status = Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:closed] if save_and_close?
     if @item.save
       post_persist
-      
     else
       create_error
     end
