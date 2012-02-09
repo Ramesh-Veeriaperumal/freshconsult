@@ -52,7 +52,7 @@ class Helpdesk::Tag < ActiveRecord::Base
     max = 50
 
     font_size = 100
-    font_size += (Math.log(self.uses_count) / Math.log(biggest) * (max-min) ) + min unless biggest == 1 || self.uses_count == 0
+    font_size += (self.uses_count / biggest * (max-min) ) + min if biggest > 1 and self.uses_count > 0
     
     font_size
   end
