@@ -147,8 +147,9 @@ class User < ActiveRecord::Base
     self.import_id = params[:user][:import_id]
     self.fb_profile_id = params[:user][:fb_profile_id]
     self.language = params[:user][:language]
-    
-    
+    # update tags
+    csv_tag_names = params[:tags][:name]
+    update_tag_names(csv_tag_names)
     self.avatar_attributes=params[:user][:avatar_attributes] unless params[:user][:avatar_attributes].nil?
     signup(portal)
   end

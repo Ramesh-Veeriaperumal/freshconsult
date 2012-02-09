@@ -391,9 +391,9 @@ class Integrations::GoogleAccount < ActiveRecord::Base
       if orgName.blank?
         user.customer = nil
       else
-        customer = Customer.find_by_name(orgName)
+        customer = account.customers.find_by_name(orgName)
         if customer.blank?
-          customer = Customer.new
+          customer = account.customers.new
           customer.name = orgName
         end
         user.customer = customer

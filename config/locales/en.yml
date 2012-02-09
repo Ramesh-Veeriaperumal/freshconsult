@@ -1659,11 +1659,7 @@ en:
         sign_in_using_google: Sign in using your Google account
         help: Help
   settings: settings        
-  capsule_crm: "Capsule CRM"
   updated_on: "%{user_name} updated on %{note_date}"
-  freshbooks: "Freshbooks"
-  harvest: "Harvest"
-  google_contacts: "Google contacts"
   integrations:
     capsule:
       label: "Capsule CRM"
