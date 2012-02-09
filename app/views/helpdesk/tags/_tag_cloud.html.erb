@@ -2,20 +2,32 @@
 	<% if tag_cloud.blank? %>
 		<%=t("no_tags")%>
 	<%else%>
-		<div class="tag_list">
-		<% max=0; factor = 1
-		tag_cloud.each { |tag|
-			if max < tag.uses_count 
-				max = tag.uses_count 
-				factor = 100/tag.tag_size unless tag.tag_size == 0 
-			end
-		}
-		tag_cloud.each { |tag|
-		%>
-			<div class='item contact-tag' style="font-size: <%=100+(tag.tag_size(max))%>%;">
-				<%=link_to(tag.name, {:controller=>"contacts", :tag => tag.id.to_s}) %>
-			</div>
-		<% }%> 
+	<div class="tag_list">
+		<% 
+		max=0
+		unless tag_cloud.count < 2
+			tag_cloud.each { |tag|
+				if max < tag.uses_count 
+					max = tag.uses_count 
+				end
+			}
+		end
+
+		begin
+			tag_cloud.each { |tag|
+				unless tag.uses_count == 0 
+			%>
+				<div class='item contact-tag' style="font-size: <%=100+(tag.tag_size(max))%>%;">
+					<%=link_to(tag.name, {:controller=>"contacts", :tag => tag.id.to_s}) %>
+				</div>
+			<% 
+				end
+			}
+		rescue => error
+			puts "Tag cloud generation error while determining the font size."
+			puts error.inspect
+		end
+			%> 
 		</div>
 	<%end%>
 </div>

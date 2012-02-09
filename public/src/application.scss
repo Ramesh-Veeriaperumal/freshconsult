@@ -3039,6 +3039,10 @@ div.addReminder{
 			visibility:hidden;
 		}
 	}	
+	div.item.contact-tag {
+		padding:3px 8px;
+		height: auto;
+	}	
 	div.item:hover{
 		.tag_delete{
 			visibility:visible;
