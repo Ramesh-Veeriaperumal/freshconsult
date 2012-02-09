@@ -12,4 +12,8 @@
 
 <% content_for :onload_script do %>     
   jQuery("#Sidebar form").submit();
+  jQuery('#date_range').bind('keypress keyup keydown', function(ev) {
+  	ev.preventDefault();
+  	return false;
+  });
 <% end %>
