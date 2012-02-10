@@ -458,6 +458,7 @@ var ImageDialog = {
 	},
 
 	ts_ce : function(tag,name) {
+	var element;
   	try {
 	    element = document.createElement('<'+tag+' name="'+name+'">');
 	  }catch(e){
