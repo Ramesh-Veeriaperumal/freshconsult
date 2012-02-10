@@ -339,7 +339,7 @@ class Helpdesk::TicketsController < ApplicationController
     unless params[:topic_id].nil?
       @topic = Topic.find(params[:topic_id])
       @item.subject     = @topic.title
-      @item.description = @topic.posts.first.body
+      @item.description_html = @topic.posts.first.body
       @item.requester   = @topic.user
     end
     @item.source = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:phone] #setting for agent new ticket- as phone

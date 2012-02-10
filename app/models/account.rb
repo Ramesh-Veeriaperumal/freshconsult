@@ -377,7 +377,7 @@ class Account < ActiveRecord::Base
   end
   
   def has_credit_card?
-    subscription.card_number.nil?
+    !subscription.card_number.nil?
   end
 
   protected

@@ -8,7 +8,9 @@
               <%= t(".current_balance", :balance => pluralize(@day_pass_config.available_passes, "pass")) %>
             </h3>
           </div>
-          <%= button_to_function t(".buy_pass"), "jQuery(this).hide();jQuery('#BuyPasses').slideDown();", :class => "uiButton special", :id => "daypass_button" %>
+		  <%if current_account.has_credit_card?%>
+          	<%= button_to_function t(".buy_pass"), "jQuery(this).hide();jQuery('#BuyPasses').slideDown();", :class => "uiButton special", :id => "daypass_button" %>
+		  <%end%>
           <div id="BuyPasses" class="hide">
            <span class="seperator"></span>
            <%= content_tag :h2, t(".buy_pass"), :class => "title" %>        
@@ -31,7 +33,7 @@
 								<strong>No credit card on file. </strong> <br /> Enter payment information to add more day passes    
 								<br />                
 								<br />                                               
-								<%= link_to( "Enter payment information", billing_account_url, :class => "btn" ) %> 
+								<%= link_to( "Enter payment information", account_url, :class => "btn" ) %> 
 						 </p>
 					<% end %>
         </div>
@@ -63,7 +65,7 @@
   <% end %>	                     
 
 <% content_for :sidebar do -%>
-	<% if current_account.subscription.active? %>      
+	<% if current_account.has_credit_card? %>      
   <div class="sidepanel">
     <div class="actions">
       <%= on_off_button(@day_pass_config.auto_recharge, toggle_auto_recharge_admin_day_pass_path(@day_pass_config) ) %>
