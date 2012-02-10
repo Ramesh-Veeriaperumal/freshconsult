@@ -1401,7 +1401,7 @@ en:
       billing_type: Billing Type
       group_by: Group By
       report:
-        no_timeentry: "No time sheet record found"
+        no_timeentry: "No data available"
         total: Total
       form:
         agent: Agent

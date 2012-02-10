@@ -19,7 +19,8 @@
 	  	<% if permission?(:manage_tickets) %>
       <%= link_to_remote( t("edit"), { :loading => "$('loading_#{notedetails}').show();", 
                                         :loaded  => "$('loading_#{notedetails}').hide();", 
-                                        :update  => notedetails,
+                                        :update  => notedetails, 
+																				:complete => "jQuery('##{notedetails}').removeClass('details')",
                                         :url => edit_helpdesk_ticket_helpdesk_note_path(note.notable, note), 
                                         :method => :GET },
                                       { :class => "slim-button" }) %> 

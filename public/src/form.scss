@@ -1324,7 +1324,7 @@ table.summary-report{
 		border:0;  background: none;
 		margin:0;	padding:0; 
 		.title{
-			padding-bottom:2px;
+			padding-bottom:12px;
 		}            
 		li{ padding-left:0; padding-right:0; }
 		li.field{
@@ -1400,14 +1400,18 @@ table.summary-report{
       }
       .request_form_options{
          position:absolute;
-         right:24px;
-         top:10px;
+         right:20px;
+         top:6px;
          .insert-canned-response{
             position:relative;
             z-index:1001;
          }
       }
    }
+}
+                         
+#Timesheet .request_panel .ui-form .title{  
+  margin-bottom: -10px;
 }
 
 .timeentry_edit{
