@@ -4,7 +4,7 @@
 # Code is not reloaded between requests
 config.log_level = :debug
 
-config.cache_classes = true
+config.cache_classes = false
 
 # Use a different logger for distributed setups
 # config.logger = SyslogLogger.new
@@ -13,7 +13,7 @@ config.cache_classes = true
 config.action_controller.consider_all_requests_local = false
 config.action_controller.perform_caching             = true
 config.action_view.cache_template_loading            = true
-#config.reload_plugins = true
+config.reload_plugins = true
 
 config.after_initialize do
   ActiveMerchant::Billing::Base.gateway_mode = :test
