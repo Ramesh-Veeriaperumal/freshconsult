@@ -19,7 +19,7 @@ window.FactoryUI = {
 			value		= _value || "";
 
 		return jQuery("<input type='text' />")
-				.attr({ "name": name })
+				.prop({ "name": name })
 				.addClass(className)
 				.val(value);
 	},
@@ -30,7 +30,7 @@ window.FactoryUI = {
 		var className   = _className	|| "dropdown",
 			name		= _name			|| "",
 			select		= jQuery("<select />")
-							.attr({ "name": name })
+							.prop({ "name": name })
 							.addClass(className);
 		
 		choices.each(function(item){
@@ -48,7 +48,7 @@ window.FactoryUI = {
 			value		= _value || "";
 			
 		return jQuery("<textarea />")
-					.attr({ "name": name })
+					.prop({ "name": name })
 					.addClass(className)
 					.val(value);
 	},
@@ -61,9 +61,9 @@ window.FactoryUI = {
 		labelBox  = jQuery("<label />")
 					.addClass( className );
 		hiddenBox = jQuery("<input type='hidden' />")
-					.attr({ "name" : name, "value" : false });
+					.prop({ "name" : name, "value" : false });
 		checkBox  = jQuery("<input type='checkbox' />")
-					.attr({ "name" : name, "checked": "checked", value: true });
+					.prop({ "name" : name, "checked": "checked", value: true });
 
 		return labelBox.append(hiddenBox).append(checkBox).append(label);
 	}
