@@ -9,11 +9,11 @@ class Integrations::IntegratedResourcesController < Admin::AdminController
   def create
     Rails.logger.debug "Creating new integrated resource "+params.inspect
     begin
-      newIntegratedResource = Integrations::IntegratedResource.create(params)
+      newIntegratedResource = Integrations::IntegratedResource.createResource(params)
       if newIntegratedResource.blank?
         render :json => {:status=>:error}
       else
-        render :json => newIntegratedResource.to_hash
+        render :json => newIntegratedResource
       end
     rescue Exception => msg
       puts "Something went wrong while creating an integrated resource ( #{msg})"
@@ -24,10 +24,14 @@ class Integrations::IntegratedResourcesController < Admin::AdminController
   def delete
     Rails.logger.debug "Deleting integrated resource "+params.inspect
     begin
-      status = Integrations::IntegratedResource.delete(params)
-      render :json => {:status=>status}
+      status = Integrations::IntegratedResource.deleteResource(params)
+      if status
+        render :json => {:status=>status}
+      else
+        render :json => {:status=>:error}
+      end
     rescue Exception => msg
-      puts "Something went wrong while creating an integrated resource ( #{msg})"
+      puts "Something went wrong while deleting an integrated resource ( #{msg})"
       render :json => {:status=>:error}
     end
   end
