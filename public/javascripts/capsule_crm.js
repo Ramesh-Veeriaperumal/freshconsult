@@ -344,6 +344,7 @@ capsuleResourceOptions = {
 	anchor: "capsule_widget",
 	domain: $('capsule_widget').getAttribute('domain').escapeHTML(),
 	ssl_enabled: true,
+	app_name:"Capsule CRM",
 	content_type: "application/xml",
 	enable_resource_cache: false,
 	application_content: function() {
