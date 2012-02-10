@@ -204,8 +204,6 @@ active_dialog = null;
             self.click(function(e){
                e.preventDefault();
                width = $(this).data("width") || '750px';
-
-			   console.log(this);
                
                if(dialog == null){
                   dialog = $("<div class='loading-center' />")
