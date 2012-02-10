@@ -1832,3 +1832,4 @@ en:
   maximum_agents_admin_msg: "You have reached the maximum number of full time agents your subscription allows. You need to delete an existing full time agent or <a href='/account/plans'>upgrade your account</a> to create a new agent.If you just need an occasional agent, you can add one below"
   maximum_agents_msg: "You have reached the maximum number of agents your subscription allows. You need to delete an existing agent or contact your account administrator to upgrade your account.If you just need an occasional agent, you can add one below"
   no_date_to_display: "No data to display"
+  email_command_delimeter_length_error_msg: " Please provide atleast three characters for the delimeter."
