@@ -163,8 +163,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       process_email_commands(ticket, user, email_config) if user.agent?
 
       email_cmds_regex = get_email_cmd_regex(account)
-      ticket.description = ticket.description.gsub(email_cmds_regex, "") unless ticket.description.nil?
-      ticket.description_html = ticket.description_html.gsub(email_cmds_regex, "") unless ticket.description_html.nil?
+      ticket.description = ticket.description.gsub(email_cmds_regex, "") if(!ticket.description.blank? && email_cmds_regex)
+      ticket.description_html = ticket.description_html.gsub(email_cmds_regex, "") if(!ticket.description_html.blank? && email_cmds_regex)
 
       begin
         ticket.save!
@@ -208,8 +208,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         process_email_commands(ticket, user, ticket.email_config) if user.agent?
   
         email_cmds_regex = get_email_cmd_regex(ticket.account)
-        note.body = show_quoted_text(params[:text].gsub(email_cmds_regex, "") ,parse_to_email[:email]) unless params[:text].blank?
-        note.body_html = show_quoted_text(Helpdesk::HTMLSanitizer.clean(params[:html].gsub(email_cmds_regex, "")), parse_to_email[:email]) unless params[:html].blank?
+        note.body = show_quoted_text(params[:text].gsub(email_cmds_regex, "") ,parse_to_email[:email]) if(!params[:text].blank? && email_cmds_regex)
+        note.body_html = show_quoted_text(Helpdesk::HTMLSanitizer.clean(params[:html].gsub(email_cmds_regex, "")), parse_to_email[:email]) if(!params[:html].blank? && email_cmds_regex)
         ticket.save
       else
         return create_ticket(ticket.account, from_email, parse_to_email)

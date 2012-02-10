@@ -29,7 +29,7 @@ class Admin::EmailCommandsSettingsController < Admin::AdminController
    if @email_commands_setting.update_attributes(params[:email_commands_setting])     
      flash[:notice] = I18n.t('email_commands_update_success')    
    else
-     flash[:notice] = I18n.t('email_commands_update_failed')
+     flash[:notice] = I18n.t('email_commands_update_failed')+(@email_commands_setting.errors[:email_cmds_delimeter] || "")
    end
 
    redirect_back_or_default :action => 'index'
