@@ -7,7 +7,7 @@ Freshdesk.Widget.prototype={
 		if(!this.options.username) this.options.username = Cookie.retrieve(this.options.anchor+"_username");
 		if(!this.options.password) this.options.password = Cookie.retrieve(this.options.anchor+"_password");
 		this.content_anchor = $$("#"+this.options.anchor+" .content")[0];
-		this.error_anchor = $$("#"+this.options.anchor+" #error")[0];
+		this.error_anchor = $$("#"+this.options.anchor+" .error")[0];
 		this.title_anchor = $$("#"+this.options.anchor+" #title")[0];
 		this.app_name = this.options.app_name || "Integrated Application";
 		Ajax.Responders.register({
@@ -19,6 +19,10 @@ Freshdesk.Widget.prototype={
 			this.title_anchor.innerHTML = this.options.title;
 		}
 		this.display();
+	},
+
+	getUsername: function() {
+		return this.options.username;
 	},
 
 	login:function(credentials){
@@ -164,10 +168,10 @@ Freshdesk.Widget.prototype={
 };
 
 var UIUtil = {
-	constructDropDown:function(data, dropDownBoxId, entityName, entityId, dispNames, filterBy, searchTerm) {
+	constructDropDown:function(data, dropDownBoxId, entityName, entityId, dispNames, filterBy, searchTerm, keepOldEntries) {
 		foundEntity = "";
 		dropDownBox = $(dropDownBoxId);
-		dropDownBox.innerHTML = "";
+		if (!keepOldEntries) dropDownBox.innerHTML = "";
 		var entitiesArray = XmlUtil.extractEntities(data.responseXML, entityName);
 		for(i=0;i<entitiesArray.length;i++) {
 			if (filterBy != null && filterBy != '') {
