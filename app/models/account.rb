@@ -375,6 +375,10 @@ class Account < ActiveRecord::Base
   def kbase_email
     "kbase@#{full_domain}"
   end
+  
+  def has_credit_card?
+    subscription.card_number.nil?
+  end
 
   protected
   
