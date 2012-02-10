@@ -24,7 +24,7 @@ class PopulateFreshbooks < ActiveRecord::Migration
     description = "freshbooks.widgets.timeentry_widget.description"
     script = %{
       <div id="freshbooks_widget" api_url="{{freshbooks.api_url}}" title="{{freshbooks.title}}">
-        <div id="content"></div>
+        <div class="content"></div>
       </div>
       <script type="text/javascript">
         CustomWidget.include_js("/javascripts/integrations/freshbooks.js");

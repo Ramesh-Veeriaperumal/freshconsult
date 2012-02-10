@@ -178,9 +178,6 @@ FreshbooksWidget.prototype = {
 
 	validateInput:function() {
 
-		if (!jQuery('#freshbooks-timeentry-enabled').is(':checked')) {
-			return false;
-		}
 		var hoursSpent = parseFloat($("freshbooks-timeentry-hours").value);
 		if(isNaN(hoursSpent)){
 			alert("Enter valid value for hours.");

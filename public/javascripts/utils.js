@@ -197,11 +197,11 @@ active_dialog = null;
    var methods = {
         init : function( options ) {
           return this.each(function(i, item){
-            self = $(item);
+            curItem = $(item);
             var dialog = null;
             
-            self.modal()
-            self.click(function(e){
+            curItem.modal();
+            curItem.click(function(e){
                e.preventDefault();
                width = $(this).data("width") || '750px';
                

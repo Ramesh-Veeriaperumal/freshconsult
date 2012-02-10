@@ -1,6 +1,6 @@
 <div class="report-wrapper">
   <div class="report-unit">
-    <h3><%= t('reports.pie_chart_title_prefix') %> <%= t('ticket_fields.fields.source')%>
+    <h3><%= t('reports.pie_chart_title_prefix') %> <%= t('ticket_fields.fields.source')%></h3>
     <div id="source_freshdesk_single_stacked_bar_chart" class="single-stacked-bar"></div>
     <% javascript_tag do %>
   	<%= @source_single_stacked_bar_chart %>
@@ -9,7 +9,6 @@
 </div>  
 <div class="seperator"></div>
 <div class="report-wrapper">
-<%=@pie_charts_hash["flexifields.ffs_01"]%>
 <% unless @pie_charts_hash.nil?
   	@pie_charts_hash.each do |label,pie_chart|
   		%>

@@ -333,10 +333,10 @@ en:
   does_not_contain: Does not contain
   flash:
     gmail_gadgets:
-      kvp_missing: "Invalid authentication.  Please try again."
+      kvp_missing: "Invalid authentication.  Reopen the mail and try again."
       user_missing: "In Freshdesk, your email does not exist.  Add an agent with your email and try again."
       agent_missing: "In Freshdesk, you are not an Agent.  Convert the user to agent and try again."
-      agent_not_active: "In Freshdesk, you email is not active.  Activate and try again."
+      agent_not_active: "In Freshdesk, you email might have been deleted or deactivated.  Activate it and try again."
       viewer_id_not_sent_by_gmail: "Wrong Gmail request.  Please try after logging in again."
       gmail_request_unverified: "Wrong Gmail signature.  Please try after logging in again."
       unknown_error: "Unknown server error. Please contact support."
@@ -1674,7 +1674,7 @@ en:
         widget_title: "Widget Title"
     freshbooks:
       label: "Freshbooks"
-      desc: "You can log time spend on tickets into your Freshbooks projects and tasks."
+      desc: "You can log time spent on tickets into your Freshbooks projects and tasks."
       form:
         freshbooks_note: "Notes text"
         freshbooks_note_info: "This text will be appended at the end of the note, with the time spent log."
@@ -1685,7 +1685,7 @@ en:
         widget_title: "Widget Title"
     harvest:
       label: "Harvest"
-      desc: "You can log time spend on tickets into your Harvest projects and tasks."
+      desc: "You can log time spent on tickets into your Harvest projects and tasks."
       form:
         domain: "Domain"
         domain_info: "Enter the domain alone without https. Ex: example.harvestapp.com"

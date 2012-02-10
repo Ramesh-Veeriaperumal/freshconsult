@@ -18,7 +18,7 @@ Integrations::Widget.seed(:application_id, :name) do |s|
   s.description = "freshbooks.widgets.timeentry_widget.description"
   s.script = %{
     <div id="freshbooks_widget" api_url="{{freshbooks.api_url}}" title="{{freshbooks.title}}">
-      <div id="content"></div>
+      <div class="content"></div>
     </div>
     <script type="text/javascript">
       CustomWidget.include_js("/javascripts/integrations/freshbooks.js");
@@ -45,7 +45,7 @@ Integrations::Widget.seed(:application_id, :name) do |s|
   s.description = "harvest.widgets.timeentry_widget.description"
   s.script = %{
     <div id="harvest_widget" title="{{harvest.title}}">
-      <div id="content"></div>
+      <div class="content"></div>
     </div>
     <script type="text/javascript">
       CustomWidget.include_js("/javascripts/integrations/harvest.js");
