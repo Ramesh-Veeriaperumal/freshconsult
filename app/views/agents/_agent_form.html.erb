@@ -2,9 +2,9 @@
 	jQuery(document).ready(function(ev){
         
 		<% if @agent.user.admin? %>
-			 jQuery("#user_role_admin").attr('checked', true);
+			 jQuery("#user_role_admin").prop('checked', true);
 	    <% elsif @agent.user.supervisor? %>
-		     jQuery("#user_role_supervisor").attr('checked', true);
+		     jQuery("#user_role_supervisor").prop('checked', true);
     	<% end %> 
 		jQuery("#agent_ticket_permission").click(function(event){ 
 		   jQuery('#user_role').val('<%=User::USER_ROLES_KEYS_BY_TOKEN[:poweruser]%>');

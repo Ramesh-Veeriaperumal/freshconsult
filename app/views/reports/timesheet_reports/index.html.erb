@@ -70,7 +70,7 @@
 							jQuery.datepicker._defaults.dateFormat,
 							selectedDate, instance.settings );
 					dates.not( this ).datepicker( "option", option, date );
-					jQuery(this).attr("date", date);
+					jQuery(this).prop("date", date);
 					jQuery("#report_filters").trigger("change");
 				}
 			}); 
