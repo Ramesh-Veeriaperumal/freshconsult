@@ -50,7 +50,11 @@ class Helpdesk::Tag < ActiveRecord::Base
   def tag_size(biggest = 1)
     min = -20
     max = 50
-    100 + ((Math.log(self.uses_count) / Math.log(biggest) * (max-min) ) + min unless biggest==1)
+
+    font_size = 100
+    font_size += (self.uses_count / biggest * (max-min) ) + min if biggest > 1 and self.uses_count > 0
+    
+    font_size
   end
 
   def to_param

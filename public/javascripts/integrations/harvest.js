@@ -147,16 +147,21 @@ HarvestWidget.prototype= {
 		if (!jQuery('#harvest-timeentry-enabled').is(':checked')) {
 			return false;
 		}
-		var hoursSpent = $("harvest-timeentry-hours").value
-	    if (hoursSpent != "") {
-			hoursSpent = parseFloat(hoursSpent);
-		}
-
-		if(isNaN(hoursSpent)){
-			alert("Enter valid value for hours.");
+		if ($("harvest-timeentry-hours")) {
+			var hoursSpent = $("harvest-timeentry-hours").value
+			if (hoursSpent != "") {
+				hoursSpent = parseFloat(hoursSpent);
+			}
+			
+			if (isNaN(hoursSpent)) {
+				alert("Enter valid value for hours.");
+				return false;
+			}
+			return true;
+		} else {
+			alert("Please login to harvest.");
 			return false;
 		}
-		return true;
 	},
 
 	logTimeEntry:function() {
@@ -240,9 +245,11 @@ HarvestWidget.prototype= {
 		} else {
 			// Do nothing. As this the form is going to be used for creating new entry, let the staff, client, project and task drop down be selected with the last selected entry itself. 
 		}
-		$("harvest-timeentry-hours").value = "";
-		$("harvest-timeentry-notes").value = harvestBundle.harvestNote.escapeHTML();
-		$("harvest-timeentry-notes").focus();
+		if ($("harvest-timeentry-hours")) {
+			$("harvest-timeentry-hours").value = "";
+			$("harvest-timeentry-notes").value = harvestBundle.harvestNote.escapeHTML();
+			$("harvest-timeentry-notes").focus();
+		}
 	},
 
 	processFailure:function(evt) {

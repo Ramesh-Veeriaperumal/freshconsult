@@ -34,16 +34,6 @@ $single_stackbar_chart_height: 120px;
   @include clearfix;  
 } 
 
-.report-container{
-  .seperator{
-  	@include background-with-css2-fallback(linear-gradient(#ffffff 60%, #f6f6f6 85%, #f1f1f1 97%, #ffffff), #fafafa);
-    border-bottom:1px solid $tickets_summary_bottom_border;
-    height:10px;
-    margin-bottom:15px;
-    margin-top:0;
-  }
-}
-
 #freshdesk_time_line_chart {
 	height: $timeline_chart_height;
 	margin-top:20px;
