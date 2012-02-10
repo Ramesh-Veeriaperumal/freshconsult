@@ -458,9 +458,9 @@ var ImageDialog = {
 	},
 
 	ts_ce : function(tag,name) {
-  	if (name && window.ActiveXObject){
+  	try {
 	    element = document.createElement('<'+tag+' name="'+name+'">');
-	  }else{
+	  }catch(e){
 	    element = document.createElement(tag);
 	    element.setAttribute('name',name);
 	  }
