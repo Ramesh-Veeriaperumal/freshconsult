@@ -1,8 +1,8 @@
 <div class="dialog-special">
   <div class="content">
-     <%= select_tag 'responder_id', options_from_collection_for_select(current_account.users.technicians.visible, :id, :name, current_user), { :class => "customSelect" } %>
+     <%= select_tag 'responder_id', options_from_collection_for_select(current_account.users.technicians.visible, :id, :name, current_user), { :class => "full" } %>
   </div>
   <div class="button-container">
     <%= link_to_function t("assign"), "helpdesk_submit('#{assign_helpdesk_ticket_path('multiple')}', 'put', ['responder_id'])", :class => "uiButton" %>
   </div>  
-</div> 
+</div>  
