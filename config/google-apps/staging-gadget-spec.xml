@@ -203,7 +203,7 @@
 		}
 
 		function openPopup(url) {
-			var popup = window.open(url, 'OpenID','height=250,width=400');
+			var popup = window.open(url, 'OpenID','height=400,width=600');
 			if(popup == null) {
 				alert("Popups might be blocked in your browser. Please enable it and click again.");
 			} else {

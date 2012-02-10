@@ -1325,7 +1325,8 @@ table.summary-report{
 		margin:0;	padding:0; 
 		.title{
 			padding-bottom:2px;
-		}
+		}            
+		li{ padding-left:0; padding-right:0; }
 		li.field{
 			border:0; padding:0;
 		}

@@ -35,9 +35,9 @@ window.FactoryUI = {
 		
 		choices.each(function(item){
 			jQuery( "<option />" )
-				.text( item.value )
-				.val( item.name )
-				.appendTo(select);
+				.text( item.value )				
+				.appendTo(select)
+				.get(0).value = item.name;  
 		});
 		return jQuery(select);
 	},

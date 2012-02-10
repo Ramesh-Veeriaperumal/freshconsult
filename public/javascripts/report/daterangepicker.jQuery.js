@@ -67,7 +67,6 @@ jQuery.fn.daterangepicker = function(settings){
 				if (jQuery(this).hasClass('range-start')) {
 					constrainTheOtherPicker('range-start');
 				} else {
-					console.log(jQuery(this).attr("class"));
 					constrainTheOtherPicker('range-end');
 				}
 				

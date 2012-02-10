@@ -41,7 +41,7 @@ var $J = jQuery.noConflict();
         if (value.length == 0) { return true; }       
      	if(/((http|https|ftp):\/\/)\w+/.test(value))
      	valid = false;
-     	else if(/\w+[.\-]\w+/.test(value))
+     	else if(/\w+[\-]\w+/.test(value))
      	valid = true;
         else if((/\W\w*/.test(value))) {
         valid = false;

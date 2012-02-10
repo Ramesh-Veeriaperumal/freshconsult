@@ -34,16 +34,6 @@ $single_stackbar_chart_height: 120px;
   @include clearfix;  
 } 
 
-.report-container{
-  .seperator{
-  	@include background-with-css2-fallback(linear-gradient(#ffffff 60%, #f6f6f6 85%, #f1f1f1 97%, #ffffff), #fafafa);
-    border-bottom:1px solid $tickets_summary_bottom_border;
-    height:10px;
-    margin-bottom:15px;
-    margin-top:0;
-  }
-}
-
 #freshdesk_time_line_chart {
 	height: $timeline_chart_height;
 	margin-top:20px;
@@ -112,22 +102,7 @@ $single_stackbar_chart_height: 120px;
 	display: inline;
 }
 .center-by-margin {margin-left:auto; margin-right:auto;}
-.report-unit.sla-compliance { 
-    ul.summary{
-			li {
-				float:left;
-				padding:15px;
-				width:auto;
-				border:1px solid green;
-			}
-	 		h4 {
-				width:100px;
-				.small {
-					display:inline;
-					position:static;
-					font-size:18px;
-				}
-			}
+.sla-compliance {                
 			h4.percent-diff {
 				width:75px;
 				margin: 0;
@@ -149,7 +124,7 @@ $single_stackbar_chart_height: 120px;
 				.percent {
 					color:lighten($report-number-negative-color,5%);
 			}
-		}
+
 	}
 }
 .report-unit {

@@ -41,7 +41,7 @@ HarvestWidget.prototype= {
 				integratable_type:"timesheet",
 				anchor:"harvest_widget",
 				app_name:"Harvest",
-				domain:harvestBundle.domain + ".harvestapp.com",
+				domain:harvestBundle.domain,
 				ssl_enabled:harvestBundle.ssl_enabled || "false",
 				login_content: function(){
 					return harvestWidget.LOGIN_FORM.evaluate({});
@@ -78,7 +78,6 @@ HarvestWidget.prototype= {
 	},
 
 	handleLoadProject:function() {
-		console.log("Harest handleLoadProject.");
 		if (this.timeEntryXml) {
 			// If timeEntryXml is populated then this already time entry added in harvest.  So choose the correct client and project id in the drop down.
 			project_id = searchTerm = this.get_time_entry_prop_value(this.timeEntryXml, "project_id")
@@ -107,8 +106,6 @@ HarvestWidget.prototype= {
 
 	handleLoadTask:function() {
 		UIUtil.hideLoading('harvest','tasks');
-
-		console.log("Harest handleLoadTask.");
 		if (this.timeEntryXml) {
 			searchTerm = this.get_time_entry_prop_value(this.timeEntryXml, "task_id")
 			this.timeEntryXml = "" // Required drop downs already populated using this xml. reset this to empty, otherwise all other methods things still it needs to use this xml to load them.
@@ -150,16 +147,21 @@ HarvestWidget.prototype= {
 		if (!jQuery('#harvest-timeentry-enabled').is(':checked')) {
 			return false;
 		}
-		var hoursSpent = $("harvest-timeentry-hours").value
-	    if (hoursSpent != "") {
-			hoursSpent = parseFloat(hoursSpent);
-		}
-
-		if(isNaN(hoursSpent)){
-			alert("Enter valid value for hours.");
+		if ($("harvest-timeentry-hours")) {
+			var hoursSpent = $("harvest-timeentry-hours").value
+			if (hoursSpent != "") {
+				hoursSpent = parseFloat(hoursSpent);
+			}
+			
+			if (isNaN(hoursSpent)) {
+				alert("Enter valid value for hours.");
+				return false;
+			}
+			return true;
+		} else {
+			alert("Please login to harvest.");
 			return false;
 		}
-		return true;
 	},
 
 	logTimeEntry:function() {
@@ -243,9 +245,11 @@ HarvestWidget.prototype= {
 		} else {
 			// Do nothing. As this the form is going to be used for creating new entry, let the staff, client, project and task drop down be selected with the last selected entry itself. 
 		}
-		$("harvest-timeentry-hours").value = "";
-		$("harvest-timeentry-notes").value = harvestBundle.harvestNote.escapeHTML();
-		$("harvest-timeentry-notes").focus();
+		if ($("harvest-timeentry-hours")) {
+			$("harvest-timeentry-hours").value = "";
+			$("harvest-timeentry-notes").value = harvestBundle.harvestNote.escapeHTML();
+			$("harvest-timeentry-notes").focus();
+		}
 	},
 
 	processFailure:function(evt) {
@@ -355,7 +359,7 @@ HarvestWidget.prototype= {
 				harvestBundle.integrated_resource_id = resJ['integrations_integrated_resource']['id'];
 				harvestBundle.remote_integratable_id = resJ['integrations_integrated_resource']['remote_integratable_id'];
 			} else {
-				console.log("Error while adding the integrated resource in db.");
+				alter("Harvest: Error while associating the remote resource id with local integrated resource id in db.");
 			}
 			if (result_callback) 
 				result_callback(evt);

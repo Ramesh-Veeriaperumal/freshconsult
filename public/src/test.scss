@@ -1396,3 +1396,26 @@ a.pill.help{
 		height:18px;
 	}
 }
+
+.report-container .seperator, .seperator-shadow{
+  	@include background-with-css2-fallback(linear-gradient(#ffffff 60%, #f6f6f6 85%, #f1f1f1 97%, #ffffff), #fafafa);
+    border-bottom:1px solid #eeeeee;
+    height:10px;
+    margin-bottom:15px;
+    margin-top:0;
+}
+
+
+.forum-title{
+  font-size:16px;
+  margin:10px 20px 2px; 
+}
+
+.breadcrumbs{
+  background-color: #F8F8F8;
+  border-bottom: 1px solid #E8E8E8;
+  color: #999999;
+  font-size: 12px;  
+  padding: 8px 20px;
+  margin-bottom:8px;
+}

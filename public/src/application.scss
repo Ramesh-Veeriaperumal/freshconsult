@@ -6,6 +6,10 @@
 @import "admin-icon/*.png";
 @import "application-logo/*.png";
 
+/* Google sync status icons */
+@import "sync-status/*.png";
+
+/*Report tab icons */
 @import "reports-icon/*.png";
 
 /* Bullet icon */ 
@@ -489,13 +493,19 @@ body h5{
 	a.first{
 		padding-left:0px;
 	}
+}            
+
+.forumlinks{       
+  position:absolute;
+  margin-top:-30px;
+  right:20px;
 }
 
 .request_details{
 	margin:-13px -20px 20px -20px;
 	.ticket_actions{
 		position:absolute;
-		right:10px; 
+		right:18px; 
 		top:10px;
 		.action_buttons{
 			margin-top:0px;
@@ -566,12 +576,6 @@ body h5{
 			font-size:1.1em;
 			font-weight:bold;
 		}
-		.mark_action{
-			float:right;
-			padding:0px;
-			margin:0px;
-			margin-top:8px;
-		} 
 	}
 	
 	a.user_name{ @include link-colors( #333333, #527EAA ); } 
@@ -3039,6 +3043,11 @@ div.addReminder{
 			visibility:hidden;
 		}
 	}	
+	div.item.contact-tag {
+		padding:3px 8px;
+		height: auto;
+		margin:4px;
+	}	
 	div.item:hover{
 		.tag_delete{
 			visibility:visible;
@@ -4468,6 +4477,98 @@ a.close{
 	}
 }
 
+.ui-form .inline-field .google_contacts_sync {
+ 	label.caption {
+ 		font-size: 1em;
+ 	}
+
+	div.fields  {
+		ul.sync_status.freshdesk {
+			color: #00868f;
+		}
+		ul.sync_status.google {
+			color: #0078BD;
+		}
+
+		ul.sync_status {
+			display: block;
+			margin: 0 0 10px;
+			li {
+				text-align:right;
+				display: inline;
+				width: 100px;
+				padding:0 5px;
+				span {
+					color: #FFF;
+					border-radius: 3px;
+					padding: 3px 5px;
+					font-size: 0.75em;
+					text-transform: uppercase;
+					margin: 3px;
+				}
+			}
+			li.freshdesk {
+				width: 35px;
+				height:24px;
+				@include sync-status-sprite(freshdesk);
+			}			
+			li.google {
+				width: 35px;
+				height:24px;
+				@include sync-status-sprite(google);
+			}		
+			
+			li.added {
+				color:#00868f;
+				width: 100px;
+				span {
+					background: #00868f;
+				}
+			}
+			li.modified {
+				color:#3c7ed3;
+
+				span {
+					background: #3c7ed3;
+				}
+			}	
+			li.deleted {
+				color:#fe552e;
+
+				span {
+					background: #fe552e;
+				}
+			}	
+		}
+
+		label {
+			font-size: 1em;
+			font-weight:bold;
+		}
+	}
+}
 .single_click_link {
 	cursor: pointer;
+}     
+
+.forum_info{
+	background:#fff7b4; 
+	display:inline; 
+	font-weight:bold;
+	border: 1px solid #fff7b4; 
+    color: #333333;
+    font-size: 13px;	
+    padding: 8px 10px;
+   	position:relative;  
+   	margin-left:2px;
+   	span.bottom-pointer{
+   		border:10px solid transparent;
+   		border-top-color:#fff7b4;
+   		border-bottom:0px;
+   		width:0px;
+   		height:0px;
+   		bottom:-11px;
+   		left:20px;
+   		position:absolute;
+   	} 
 }

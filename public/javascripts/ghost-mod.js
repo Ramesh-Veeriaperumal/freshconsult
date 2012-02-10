@@ -10,7 +10,6 @@
     }, options);
 
     return this.each(function(index, item) {
-      console.log(settings.containerClass);
        item.ghostplaceholder = $(item).data("placeholder") || settings.placeholder;
        item.ghosttext   = $(item).data("ghostText") || settings.ghosttext;
        item.ghosttextspan = $("<span />").text(item.ghostplaceholder);

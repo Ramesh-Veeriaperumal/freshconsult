@@ -38,7 +38,7 @@
           <div class="info"> 
             <%= formated_date(@ticket.created_at) %> via <%= @ticket.source_name %>
             <% metainfo = @ticket.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["meta"]) %> 
-          <%= content_tag :span, t(".meta"), :title => metainfo.body, :class => "meta_icon tooltip" unless(metainfo.blank?) %>
+          <%= content_tag :span, t("helpdesk.tickets.show.meta"), :title => metainfo.body, :class => "meta_icon tooltip" unless(metainfo.blank?) %>
           </div> 
         </div>
         <% unless @ticket.deleted %>
@@ -87,7 +87,7 @@
         <% end %>
         <% unless @ticket.ticket_topic.nil? %>
           <div class="info-highlight">
-            <%= t(".linked_ticket")%>
+            <%= t("helpdesk.tickets.show.linked_ticket")%>
             "<%= link_to("#{truncate(@ticket.topic.title)}", category_forum_topic_path(@ticket.topic.forum.forum_category.id, @ticket.topic.forum.id, @ticket.topic.id), :class => "link_to") %>"
           </div>
         <% end %>
