@@ -196,14 +196,14 @@ active_dialog = null;
 (function( $ ){
    var methods = {
         init : function( options ) {
-          return this.each(function(){
-            $this = $(this);
+          return this.each(function(i, item){
+            self = $(item);
             var dialog = null;
             
-            $this.modal()
-            $this.click(function(e){
+            self.modal()
+            self.click(function(e){
                e.preventDefault();
-               width = $this.attr("dialogWidth") || '750px';
+               width = $(this).data("width") || '750px';
                
                if(dialog == null){
                   dialog = $("<div class='loading-center' />")

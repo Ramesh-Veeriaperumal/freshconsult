@@ -35,21 +35,21 @@ class GoogleContacts < ActiveRecord::Migration
     add_column :users, :address, :string
     add_column :agents, :google_viewer_id, :string
 
-    google_contacts = Integrations::Application.create(
-        :name => @app_name,
-        :display_name => "integrations.google_contacts.label", 
-        :description => "integrations.google_contacts.desc", 
-        :options => { 
-                      :keys_order => [:account_settings], 
-                      :account_settings => {:type => :custom, 
-                          :partial => "/integrations/applications/google_accounts", 
-                          :required => false, :label => "integrations.google_contacts.form.account_settings", 
-                          :info => "integrations.google_contacts.form.account_settings_info" }})
-    google_contacts.save
+#    google_contacts = Integrations::Application.create(
+#        :name => @app_name,
+#        :display_name => "integrations.google_contacts.label", 
+#        :description => "integrations.google_contacts.desc", 
+#        :options => { 
+#                      :keys_order => [:account_settings], 
+#                      :account_settings => {:type => :custom, 
+#                          :partial => "/integrations/applications/google_accounts", 
+#                          :required => false, :label => "integrations.google_contacts.form.account_settings", 
+#                          :info => "integrations.google_contacts.form.account_settings_info" }})
+#    google_contacts.save
   end
 
   def self.down
-    Integrations::Application.find(:first, :conditions => {:name => @app_name}).delete
+#    Integrations::Application.find(:first, :conditions => {:name => @app_name}).delete
     remove_column :agents, :google_viewer_id
     remove_column :users, :address
     drop_table :key_value_pairs
