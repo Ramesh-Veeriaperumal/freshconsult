@@ -6,6 +6,7 @@ class UpdateInstalledAndCapsuleApp < ActiveRecord::Migration
 
     # Update the widget script to use the liquidize filtering for html escaping.
     execute('UPDATE widgets SET SCRIPT=REPLACE(SCRIPT, "{{requester.name}}", "{{requester.name | escape_html}}") WHERE NAME="contact_widget"')
+    execute('UPDATE widgets SET SCRIPT=REPLACE(SCRIPT, "id=\"content\"", "class=\"content\"") WHERE NAME="contact_widget"')
 
     #Updates to the domain field for including attributes related to autofill and validation
     capsule_app = Integrations::Application.find_by_name('capsule_crm'); 

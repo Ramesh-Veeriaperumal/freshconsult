@@ -333,10 +333,10 @@ en:
   does_not_contain: Does not contain
   flash:
     gmail_gadgets:
-      kvp_missing: "Invalid authentication.  Please try again."
+      kvp_missing: "Invalid authentication.  Reopen the mail and try again."
       user_missing: "In Freshdesk, your email does not exist.  Add an agent with your email and try again."
       agent_missing: "In Freshdesk, you are not an Agent.  Convert the user to agent and try again."
-      agent_not_active: "In Freshdesk, you email is not active.  Activate and try again."
+      agent_not_active: "In Freshdesk, you email might have been deleted or deactivated.  Activate it and try again."
       viewer_id_not_sent_by_gmail: "Wrong Gmail request.  Please try after logging in again."
       gmail_request_unverified: "Wrong Gmail signature.  Please try after logging in again."
       unknown_error: "Unknown server error. Please contact support."
