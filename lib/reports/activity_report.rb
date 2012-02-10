@@ -115,11 +115,11 @@ module Reports::ActivityReport
   end
   
   def parse_from_date
-    params[:date_range].split(" - ")[0]
+    (params[:date_range].split(" - ")[0]) || params[:date_range]
   end
   
   def parse_to_date
-    params[:date_range].split(" - ")[1] 
+    (params[:date_range].split(" - ")[1]) || params[:date_range]
   end
   
   def previous_start
