@@ -2,8 +2,8 @@ var FreshbooksWidget = Class.create();
 FreshbooksWidget.prototype = {
 	FRESHBOOKS_FORM:new Template('<form id="freshbooks-timeentry-form"><div class="field first"><label>Staff</label><select name="staff-id" id="freshbooks-timeentry-staff" onchange="freshbooksWidget.staffChanged(this.options[this.selectedIndex].value)" disabled class="full hide"></select> <div class="loading-fb" id="freshbooks-staff-spinner"></div></div><div class="field"><label>Client</label><select name="client-id" id="freshbooks-timeentry-clients" class="full hide" disabled onchange="freshbooksWidget.clientChanged(this.options[this.selectedIndex].value)"></select> <div class="loading-fb" id="freshbooks-clients-spinner"></div></div><div class="field"><label>Project</label><select class="full hide" name="project-id" id="freshbooks-timeentry-projects" onchange="freshbooksWidget.projectChanged(this.options[this.selectedIndex].value)" disabled></select> <div class="loading-fb" id="freshbooks-projects-spinner"></div></div><div class="field last"><label>Task</label><select class="full hide" disabled name="task-id" id="freshbooks-timeentry-tasks" onchange="freshbooksWidget.taskChanged(this.options[this.selectedIndex].value)"></select> <div class="loading-fb" id="freshbooks-tasks-spinner" ></div></div><div class="field"><label id="freshbooks-timeentry-notes-label">Notes</label><textarea disabled name="notes" id="freshbooks-timeentry-notes" wrap="virtual">'+freshbooksBundle.freshbooksNote.escapeHTML()+'</textarea></div><div class="field"><label id="freshbooks-timeentry-hours-label">Hours</label><input type="text" disabled name="hours" id="freshbooks-timeentry-hours"></div><input type="submit" disabled id="freshbooks-timeentry-submit" value="Submit" onclick="freshbooksWidget.logTimeEntry($(\'freshbooks-timeentry-form\'));return false;"></form>'),
 	STAFF_LIST_REQ:new Template('<?xml version="1.0" encoding="utf-8"?><request method="staff.list"></request>'),
-	CLIENT_LIST_REQ:new Template('<?xml version="1.0" encoding="utf-8"?><request method="client.list"> <per_page>250</per_page></request>'),
-	PROJECT_LIST_REQ:new Template('<?xml version="1.0" encoding="utf-8"?><request method="project.list"> <per_page>2000</per_page></request>'),
+	CLIENT_LIST_REQ:new Template('<?xml version="1.0" encoding="utf-8"?><request method="client.list"> <page>#{page}</page><per_page>100</per_page></request>'),
+	PROJECT_LIST_REQ:new Template('<?xml version="1.0" encoding="utf-8"?><request method="project.list"> <page>#{page}</page><per_page>100</per_page></request>'),
 	TASK_LIST_REQ:new Template('<?xml version="1.0" encoding="utf-8"?> <request method="task.list" > <project_id>#{project_id}</project_id> </request>'),
 	CREATE_TIMEENTRY_REQ:new Template('<?xml version="1.0" encoding="ISO-8859-1"?><request method="time_entry.create"> <time_entry> <project_id>#{project_id}</project_id> <task_id>#{task_id}</task_id> <hours>#{hours}</hours> <notes><![CDATA[#{notes}]]></notes> <staff_id>#{staff_id}</staff_id> </time_entry></request>'),
 	RETRIEVE_TIMEENTRY_REQ:new Template('<?xml version="1.0" encoding="ISO-8859-1"?><request method="time_entry.get"> <time_entry_id>#{time_entry_id}</time_entry_id> </request>'),
@@ -21,12 +21,12 @@ FreshbooksWidget.prototype = {
 			on_success: widgetInst.loadStaffList.bind(this),
 			on_failure: function(evt){}
 		}, {
-			body: widgetInst.CLIENT_LIST_REQ.evaluate({}),
+			body: widgetInst.CLIENT_LIST_REQ.evaluate({page:1}),
 			content_type: "application/xml",
 			method: "post", 
 			on_success: widgetInst.loadClientList.bind(this)
 		}, {
-			body: widgetInst.PROJECT_LIST_REQ.evaluate({}),
+			body: widgetInst.PROJECT_LIST_REQ.evaluate({page:1}),
 			content_type: "application/xml",
 			method: "post", 
 			on_success: widgetInst.loadProjectList.bind(this),
@@ -85,21 +85,56 @@ FreshbooksWidget.prototype = {
 		$("freshbooks-timeentry-staff").enable();
 	},
 
-	loadClientList:function(resData){ 
-		selectedClientNode = this.loadFreshbooksEntries(resData, "freshbooks-timeentry-clients", "client", "client_id", ["organization", " ", "(", "first_name", " ", "last_name", ")"], null, freshbooksBundle.reqEmail);
+	loadClientList:function(resData){
+		tot_pages = this.fetchMultiPages(resData, "clients", this.CLIENT_LIST_REQ, this.loadClientList)
+		selectedClientNode = this.loadFreshbooksEntries(resData, "freshbooks-timeentry-clients", "client", "client_id", ["organization", " ", "(", "first_name", " ", "last_name", ")"], null, freshbooksBundle.reqEmail, tot_pages>1);
 		client_id = XmlUtil.getNodeValueStr(selectedClientNode, "client_id");
-		
 		UIUtil.hideLoading('freshbooks','clients');
-
 		$("freshbooks-timeentry-clients").enable();
 		this.clientChanged(client_id);
 	},
 
 	loadProjectList:function(resData) {
-		this.projectData=resData;
+		tot_pages = this.fetchMultiPages(resData, "projects", this.PROJECT_LIST_REQ, this.loadProjectList)
+		if (tot_pages > 1)
+			mergePagedProjects(resData)
+		else
+			this.projectData=resData;
 		UIUtil.hideLoading('freshbooks','projects');
 		$("freshbooks-timeentry-projects").enable();		
 		this.handleLoadProject();
+	},
+
+	fetchMultiPages: function(resData, dataNodeName, reqTemplate, success_fun) {
+		tot_pages = 1
+		try {
+			dataNode = XmlUtil.extractEntities(resData.responseXML, dataNodeName)[0];
+			curr_page = dataNode.getAttribute("page");
+			tot_pages = dataNode.getAttribute("pages");
+			if (tot_pages > 1 && curr_page == 1) {
+				for (var p = 2; p <= tot_pages; p++) {
+					this.freshdeskWidget.request({
+						body: reqTemplate.evaluate({page:p}),
+						content_type: "application/xml",
+						method: "post",
+						on_success: success_fun.bind(this),
+						on_failure: function(evt){
+						}
+					});
+				}
+			}
+		}catch(e) {}
+		return tot_pages;
+	},
+
+	mergePagedProjects: function(resData) {
+		try{
+			projectsNode = XmlUtil.extractEntities(this.projectData.responseXML, "projects")[0]
+			var projectsArray = XmlUtil.extractEntities(resData.responseXML, "project")
+			for (i = 0; i < projectsArray.length; i++) {
+				projectsNode.appendChild(projectsArray[i]);
+			}
+		}catch(e) {}
 	},
 
 	loadTaskList:function(resData) {
@@ -287,9 +322,9 @@ FreshbooksWidget.prototype = {
 	},
 
 	// Utility methods
-	loadFreshbooksEntries:function(resData, dropDownBoxId, entityName, entityId, dispNames, filterBy, searchTerm) {
+	loadFreshbooksEntries:function(resData, dropDownBoxId, entityName, entityId, dispNames, filterBy, searchTerm, keepOldEntries) {
 		if(this.isRespSuccessful(resData.responseXML)){
-			UIUtil.constructDropDown(resData, dropDownBoxId, entityName, entityId, dispNames, filterBy, searchTerm);
+			UIUtil.constructDropDown(resData, dropDownBoxId, entityName, entityId, dispNames, filterBy, searchTerm, keepOldEntries);
 		}
 		return foundEntity;
 	},
