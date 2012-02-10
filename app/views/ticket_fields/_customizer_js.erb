@@ -330,12 +330,12 @@
             sourceData.set("label_in_portal"       , dialogDOMMap.label_in_portal.val());
             sourceData.set("description"           , dialogDOMMap.description.val());
 
-            sourceData.set("required"              , dialogDOMMap.required.attr("checked"));
-            sourceData.set("required_for_closure"  , dialogDOMMap.required_for_closure.attr("checked"));
+            sourceData.set("required"              , dialogDOMMap.required.prop("checked"));
+            sourceData.set("required_for_closure"  , dialogDOMMap.required_for_closure.prop("checked"));
 
-            sourceData.set("visible_in_portal"     , dialogDOMMap.visible_in_portal.attr("checked"));
-            sourceData.set("editable_in_portal"    , dialogDOMMap.editable_in_portal.attr("checked"));
-            sourceData.set("required_in_portal"    , dialogDOMMap.required_in_portal.attr("checked"));
+            sourceData.set("visible_in_portal"     , dialogDOMMap.visible_in_portal.prop("checked"));
+            sourceData.set("editable_in_portal"    , dialogDOMMap.editable_in_portal.prop("checked"));
+            sourceData.set("required_in_portal"    , dialogDOMMap.required_in_portal.prop("checked"));
 
             sourceData.set("choices", getAllChoices(dialogDOMMap.choices));
 

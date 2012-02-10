@@ -941,7 +941,7 @@ en:
     working: Working
     info4: Recent tickets from %{nick_name}
     form_placeholder: 
-      description: Add specific notes regarding this contact example - Detailed address, LA Lakers fan etc.
+      description: Add specific notes regarding this contact example - LA Lakers fan etc.
     info5: User has not created any ticket till now
     restore: Restore
     info6: Add specific notes regarding this contact
@@ -1659,11 +1659,7 @@ en:
         sign_in_using_google: Sign in using your Google account
         help: Help
   settings: settings        
-  capsule_crm: "Capsule CRM"
   updated_on: "%{user_name} updated on %{note_date}"
-  freshbooks: "Freshbooks"
-  harvest: "Harvest"
-  google_contacts: "Google contacts"
   integrations:
     capsule:
       label: "Capsule CRM"
@@ -1781,8 +1777,8 @@ en:
       tickets_by: "Tickets By"
       helpdesk_title: "Helpdesk Activity Report"
       customer_title: "Customer Activity Report"
-      helpdesk_title_nav: "Helpdesk Activity"
-      customer_title_nav: "Customer Activity"
+      helpdesk_title_nav: "Helpdesk Activity Report"
+      customer_title_nav: "Customer Activity Report"
       select_time_period: "Select Time period"
       generate_button: "Generate"
       pie_chart_title_prefix: "Tickets By "

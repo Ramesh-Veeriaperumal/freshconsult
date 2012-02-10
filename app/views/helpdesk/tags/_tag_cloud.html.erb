@@ -4,7 +4,7 @@
 	<%else%>
 	<div class="tag_list">
 		<% 
-		max = 0
+		max = 1
 		unless tag_cloud.count < 2
 			tag_cloud.each do |tag|
 				if max < tag.uses_count 

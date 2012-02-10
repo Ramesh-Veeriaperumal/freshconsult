@@ -927,7 +927,7 @@ span.sort_handle{
 .ui-dialog .ui-dialog-titlebar-close span { display: block; margin: 1px; }
 .ui-dialog .ui-dialog-titlebar-close:hover, .ui-dialog .ui-dialog-titlebar-close:focus { background-color:#efefef; }
 .ui-dialog .ui-dialog-content { 
-   position: relative; border: 0; padding: 0 0; overflow: auto; zoom: 1; margin-bottom:0; 
+   position: relative; border: 0; padding: 0 0;  zoom: 1; margin-bottom:0; 
    .info-highlight{
       margin:0 0 6px 0;
       font-size:13px;
@@ -1325,7 +1325,8 @@ table.summary-report{
 		margin:0;	padding:0; 
 		.title{
 			padding-bottom:2px;
-		}
+		}            
+		li{ padding-left:0; padding-right:0; }
 		li.field{
 			border:0; padding:0;
 		}

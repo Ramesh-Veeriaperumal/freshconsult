@@ -95,6 +95,15 @@ Freshdesk.Widget.prototype={
 		} else if (evt.status == 502) {
 			this.alert_failure(this.app_name+" is not responding.  Please verify the given domain.");
 		} else if (evt.status == 500) {
+			// Right now 500 is used for freshdesk internal server error. The below one is special handling for Harvest.  If more apps follows this convention then move it to widget code.
+			if (this.app_name == "Harvest") {
+				var error = XmlUtil.extractEntities(evt.responseXML,"error");
+				if (error.length > 0) {
+					err_msg = XmlUtil.getNodeValueStr(error[0], "message");
+					alert(this.app_name+" reports the below error: \n\n" + err_msg + "\n\nTry fixing the error manually.  If you can not do so, contact support.");
+					return;
+				}
+			}
 			this.alert_failure("Unknown server error. Please contact support@freshdesk.com.");
 		} else if (this.on_failure != null) {
 			reqData.on_failure(evt);
