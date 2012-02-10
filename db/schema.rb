@@ -25,7 +25,7 @@ ActiveRecord::Schema.define(:version => 20120208111008) do
     t.string   "shared_secret"
     t.text     "sso_options"
     t.string   "google_domain"
-    t.boolean  "ssl_enabled",                    :default => true
+    t.boolean  "ssl_enabled",                    :default => false
   end
 
   add_index "accounts", ["full_domain"], :name => "index_accounts_on_full_domain", :unique => true
