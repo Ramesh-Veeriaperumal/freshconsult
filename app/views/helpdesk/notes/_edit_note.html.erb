@@ -1,6 +1,6 @@
 <%= include_tiny_mce_if_needed %>
 <% form_for [@parent, @item], :html => { :id => "Edit_Note_#{@item.id}" } do |f| %>
-	<ul class="ui-form">
+	<ul>
 		<li>
 			<%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"]%>
 			<%= f.text_area :body_html, :value => @item.body_html, :class => "mceEditor" %>

@@ -34,7 +34,6 @@
 <% javascript_tag do %>
 jQuery(document).ready(function() {
 	jQuery("#dateRange").daterangepicker({
-		earliestDate: Date.parse('1/1/2010'),
 		latestDate:Date.parse('Today-1'),
 		presetRanges: [
 			{text: '<%= t('reports.date_ranges.last_7_days') %>', dateStart: 'Today-8', dateEnd: 'Today-1' },

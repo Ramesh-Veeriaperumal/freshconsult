@@ -643,7 +643,7 @@ body h5{
 				@include text-formatting;
 				font-size:13px;
 				line-height:18px;
-				overflow: auto;
+				table, table td, table th { border: 0; }
 				p{
 				   margin-right:2em; 
 				}
