@@ -171,7 +171,7 @@ module Reports::ChartGenerator
       },
       :plotOptions => {
         :series => {
-          :stacking => 'normal',
+          :stacking => 'normal'
         },
         :bar => {
           :borderWidth => 0,
@@ -198,7 +198,6 @@ module Reports::ChartGenerator
         :reversed => true,
         :verticalAlign => 'top',
         :floating => false,
-        
         :labelFormatter => pie_legend_formatter,
       },
       :series => browser_data,
@@ -355,7 +354,7 @@ module Reports::ChartGenerator
 
  def  stack_bar_single_tooltip_formatter 
   "function() {
-      return '<strong>' + this.series.name + '</strong> ' + this.y + '%';
+      return '<strong>' + this.series.name  + '</strong> ' + Math.round(this.percentage,3)+ '%';
     }"
   end
   
