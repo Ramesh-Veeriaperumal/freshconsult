@@ -24,7 +24,8 @@ TicketTimesheet.prototype = {
 
          jQuery('a.submit').live("click", function(ev){
            ev.preventDefault();
-           if (jQuery("#time_integration .integration.still_loading").length) {
+
+           if (jQuery("#timeentry_apps_add .app-logo input[type=checkbox]").filter(':checked').parentsUntil('#time_integration').filter(".still_loading").length) {
              return false;
            }
 
@@ -60,8 +61,10 @@ TicketTimesheet.prototype = {
         });
 
         jQuery("#timeentry_apps_add .app-logo").live('click',function(ev) {
-          var checkbox = jQuery(this).children("input[type=checkbox]");
-          checkbox.prop('checked', !checkbox.is(':checked'));
+          if (!jQuery(ev.srcElement).is('input[type=checkbox]')) {
+            var checkbox = jQuery(this).children("input[type=checkbox]");
+            checkbox.prop('checked', !checkbox.prop('checked'));
+          }
         });
 
     //     console.log('Positioning the buttons');

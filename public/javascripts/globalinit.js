@@ -147,10 +147,10 @@ var $J = jQuery.noConflict();
 		});
 
 		//Clicking on the row (for ticket list only), the check box is toggled.
-		$('.tickets tr').live('click',function(ev) {
+		$('.tickets tbody tr').live('click',function(ev) {
 			if (! $(ev.srcElement).is('input')) {
 				var checkbox = $(this).find('input[type=checkbox]').first();
-				checkbox.attr('checked',!checkbox.is(':checked'));
+				checkbox.prop('checked',!checkbox.prop('checked'));
 			}
 		});
 		

@@ -178,9 +178,6 @@ FreshbooksWidget.prototype = {
 
 	validateInput:function() {
 
-		if (!jQuery('#freshbooks-timeentry-enabled').is(':checked')) {
-			return false;
-		}
 		var hoursSpent = parseFloat($("freshbooks-timeentry-hours").value);
 		if(isNaN(hoursSpent)){
 			alert("Enter valid value for hours.");
@@ -302,7 +299,7 @@ FreshbooksWidget.prototype = {
 		if(resEntities.length>0){
 			var errorStr = XmlUtil.getNodeValueStr(resEntities[0],"error");
 			if(errorStr != ""){
-				alert("Freshbooks reports the below error: \n\n" + errorStr + "\n\nTry fixing the error manually.  If you can not do so, contact support.");
+				alert("Freshbooks reports the below error: \n\n" + errorStr + "\n\nTry again after correcting the error or fix the error manually.  If you can not do so, contact support.");
 				return false;
 			}
 		}
