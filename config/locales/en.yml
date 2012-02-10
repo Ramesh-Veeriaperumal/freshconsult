@@ -1674,7 +1674,7 @@ en:
         widget_title: "Widget Title"
     freshbooks:
       label: "Freshbooks"
-      desc: "You can log time spend on tickets into your Freshbooks projects and tasks."
+      desc: "You can log time spent on tickets into your Freshbooks projects and tasks."
       form:
         freshbooks_note: "Notes text"
         freshbooks_note_info: "This text will be appended at the end of the note, with the time spent log."
@@ -1685,7 +1685,7 @@ en:
         widget_title: "Widget Title"
     harvest:
       label: "Harvest"
-      desc: "You can log time spend on tickets into your Harvest projects and tasks."
+      desc: "You can log time spent on tickets into your Harvest projects and tasks."
       form:
         domain: "Domain"
         domain_info: "Enter the domain alone without https. Ex: example.harvestapp.com"
