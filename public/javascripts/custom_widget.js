@@ -100,7 +100,7 @@ Freshdesk.Widget.prototype={
 				var error = XmlUtil.extractEntities(evt.responseXML,"error");
 				if (error.length > 0) {
 					err_msg = XmlUtil.getNodeValueStr(error[0], "message");
-					alert(this.app_name+" reports the below error: \n\n" + err_msg + "\n\nTry fixing the error manually.  If you can not do so, contact support.");
+					alert(this.app_name+" reports the below error: \n\n" + err_msg + "\n\nTry again after correcting the error or fix the error manually.  If you can not do so, contact support.");
 					return;
 				}
 			}
@@ -109,7 +109,7 @@ Freshdesk.Widget.prototype={
 			reqData.on_failure(evt);
 		} else {
 			errorStr = evt.responseText;
-			this.alert_failure(this.app_name+" reports the below error: \n\n" + errorStr + "\n\nTry fixing the error manually.  If you can not do so, contact support.");
+			this.alert_failure(this.app_name+" reports the below error: \n\n" + errorStr + "\n\nTry again after correcting the error or fix the error manually.  If you can not do so, contact support.");
 		}
 	},
 

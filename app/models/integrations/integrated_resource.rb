@@ -5,7 +5,7 @@ class Integrations::IntegratedResource < ActiveRecord::Base
 
   before_create :set_integratable_type
 
-  def self.create(params)
+  def self.createResource(params)
     irParams = params[:integrated_resource]
     unless irParams.blank?
       irParams[:installed_application] = irParams[:account].installed_applications.find_by_application_id(params['application_id'])
@@ -15,12 +15,12 @@ class Integrations::IntegratedResource < ActiveRecord::Base
     end
   end
 
-  def self.delete(params)
+  def self.deleteResource(params)
     irParams = params[:integrated_resource]
-    unless(irParams)
+    unless(irParams.blank?)
       ir = Integrations::IntegratedResource.find(:first, :joins=>"INNER JOIN installed_applications ON integrated_resources.installed_application_id=installed_applications.id", 
                      :conditions=>['integrated_resources.id=? and installed_applications.account_id=?',irParams[:id],irParams[:account]])
-      return ir.delete
+      ir.delete unless ir.blank?
     end
   end
 
