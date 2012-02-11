@@ -28,6 +28,7 @@ require 'openssl'
       @current_user = current_account.users.find_by_email(params[:email])  
       unless @current_user
         @current_user = create_user(params[:email],current_account,nil,{:name => params[:name]})
+        @current_user.save
       else
         @current_user.update_attributes(:name => params[:name])
       end
