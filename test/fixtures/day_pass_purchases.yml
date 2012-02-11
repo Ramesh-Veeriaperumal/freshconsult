@@ -1,0 +1,17 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  account_id: 1
+  paid_with: 1
+  order_type: MyString
+  order_id: 1
+  status: 1
+  quantity_purchased: 1
+
+two:
+  account_id: 1
+  paid_with: 1
+  order_type: MyString
+  order_id: 1
+  status: 1
+  quantity_purchased: 1

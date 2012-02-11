@@ -1,7 +1,7 @@
 <% unless @items.empty? %>
   <table class="tickets">	
     <tbody>
-      <%= render :partial => "/helpdesk/shared/expanded/ticket", :collection => @items %>
+      <%= render :partial => "/helpdesk/shared/expanded/ticket.html", :collection => @items %>
     </tbody>
   </table>
   <div class="toolbar">

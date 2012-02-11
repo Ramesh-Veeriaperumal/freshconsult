@@ -32,7 +32,7 @@ class SubscriptionPayment < ActiveRecord::Base
       if setup?
         SubscriptionNotifier.deliver_setup_receipt(self)
       elsif misc?
-        SubscriptionNotifier.deliver_misc_receipt(self)
+        #SubscriptionNotifier.deliver_misc_receipt(self) #Has been moved to subscription itself.
       else
         SubscriptionNotifier.deliver_charge_receipt(self)
       end

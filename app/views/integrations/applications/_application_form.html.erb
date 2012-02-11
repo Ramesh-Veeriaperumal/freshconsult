@@ -7,24 +7,26 @@
 	<div class="fields">
 		<%= application_form.error_messages %>
 		<%= hidden_field_tag  :application_id,  params[:application_id] %> 
-		<% unless @installing_application.options.blank?%>
+		<% all_field_values = @installed_application.configs[:inputs] unless @installed_application.blank? or @installed_application.configs.blank?
+			unless @installing_application.options.blank?%>
 			<% @installing_application.options[:keys_order].each do |input_key|
 				input_value = @installing_application.options[input_key]
 				if is_edit
-					all_field_values = @installed_application.configs[:inputs] unless @installed_application.configs.blank?
 					field_value = all_field_values[input_key.to_s] unless all_field_values.blank?
 				else
 					field_value = input_value[:default_value]
 			    end
 
-				# TODO: In case of edit these values should be obtained from @installed_application variable to make it upgrade(in case if we introduce new param for any installed app) proof. 
-				unless input_value.blank?
-			%>
+				unless input_value.blank? %>
 					<%= construct_ui_element :configs, input_key.to_s, input_value, field_value%>
 					<%# Move the below line into construct_ui_element method.%>
 					<%= content_tag(:div, t(input_value[:info]), :class => "info-data") unless input_value[:info].blank? %>
 					<span class="seperator"></span>
-			 <% end
-			  end %>
+			 <% end %>
+		  <% end %>
 		<% end %>
 	</div>
+
+<%= javascript_include_tag 'ghost-mod' %>
+<%= stylesheet_link_tag 'ghost-style' %> 
+	

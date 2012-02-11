@@ -1,12 +1,15 @@
 class ContactsController < ApplicationController
-  
+   
    before_filter { |c| c.requires_permission :manage_tickets }
   
    include ModelControllerMethods
    before_filter :check_demo_site, :only => [:destroy,:update,:create]
-   before_filter :check_agent_limit, :only => :make_agent
    before_filter :set_selected_tab
+   before_filter :check_agent_limit, :only =>  :make_agent
    skip_before_filter :build_object , :only => :new
+   
+   
+  
    
    def check_demo_site
     if AppConfig['demo_site'][RAILS_ENV] == current_account.full_domain
@@ -18,11 +21,17 @@ class ContactsController < ApplicationController
   def index
     respond_to do |format|
       format.html do
+        @tags = current_account.tags.find(:all)
         @contacts = scoper.filter(params[:letter],params[:page])
       end
       format.xml  do
         @contacts = scoper.all
        render :xml => @contacts.to_xml
+      end
+
+      format.json  do
+        @contacts = scoper.all
+       render :json => @contacts.to_json
       end
       format.atom do
         @contacts = @contacts.newest(20)
@@ -31,11 +40,7 @@ class ContactsController < ApplicationController
   end
 
   def new
-    @user = current_account.users.new
-    @user.user_role = User::USER_ROLES_KEYS_BY_TOKEN[:customer]
-    @user.avatar = Helpdesk::Attachment.new
-    @user.time_zone = current_account.time_zone
-    @user.language = current_portal.language
+    initialize_new_user
   end
   
   def quick_customer
@@ -57,12 +62,14 @@ class ContactsController < ApplicationController
       respond_to do |format|
         format.html { redirect_to contacts_url }
         format.xml  { render :xml => @user, :status => :created, :location => contacts_url(@user) }
+        format.widget { render :action => :show}
       end
     else
       check_email_exist
-       respond_to do |format|
+      respond_to do |format|
         format.html { render :action => :new}
         format.xml  { render :xml => @user.errors, :status => :unprocessable_entity} # bad request
+        format.widget { render :action => :show}
       end
     end
   end
@@ -76,12 +83,16 @@ class ContactsController < ApplicationController
     @user.signup!(params)
   end
   
-  def show 
-    @user = current_account.all_users.find(params[:id])
+  def show
+    email = params[:email]
+    @user = nil # reset the user object.
+    @user = current_account.all_users.find_by_email(email) unless email.blank?
+    @user = current_account.all_users.find(params[:id]) if @user.blank?
     @user_tickets_open_pending = current_account.tickets.requester_active(@user).visible.newest(5)
     respond_to do |format|
       format.html { }
       format.xml  { render :xml => @user.to_xml} # bad request
+      format.json { render :json => @user.to_json}
     end
   end
   
@@ -97,7 +108,10 @@ class ContactsController < ApplicationController
       @obj.customer_id = current_account.customers.find_or_create_by_name(company_name).id 
     else
       @obj.customer_id = nil
-    end     
+    end
+    # update tags
+    csv_tag_names = params[:tags][:name]
+    @obj.update_tag_names(csv_tag_names)
     if @obj.update_attributes(params[cname])
       respond_to do |format|
         format.html { redirect_to contacts_url }
@@ -152,8 +166,9 @@ class ContactsController < ApplicationController
   def make_agent    
     @obj.update_attributes(:delete =>false   ,:user_role =>User::USER_ROLES_KEYS_BY_TOKEN[:poweruser])      
     @agent = current_account.agents.new
-    @agent.user_id = @obj.id  
-    if @agent.save        
+    @agent.user = @obj 
+    @agent.occasional = false
+     if @agent.save        
       redirect_to @obj
     else
       redirect_to :back
@@ -171,14 +186,38 @@ class ContactsController < ApplicationController
     end    
   end
  
+  def contact_email
+    email = params[:email]
+    @user = current_account.all_users.find_by_email(email) unless email.blank?
+    puts "@user #{@user}"
+    if @user.blank?
+      initialize_new_user
+      render :new, :layout => "widgets/contacts"
+    else
+      render :show, :layout => "widgets/contacts"
+    end
+  end
 protected
+
+  def initialize_new_user
+    @user = current_account.users.new
+    @user.user_role = User::USER_ROLES_KEYS_BY_TOKEN[:customer]
+    @user.avatar = Helpdesk::Attachment.new
+    @user.time_zone = current_account.time_zone
+    @user.language = current_account.language
+  end
 
   def cname
       @cname ='user'
   end
 
   def scoper
+    if params[:tag].blank?
       current_account.contacts
+    else
+      tag = current_account.tags.find(params[:tag])
+      tag.contacts
+    end
   end
 
   def authorized?
@@ -197,14 +236,14 @@ protected
     @obj = self.instance_variable_set('@' + cname, current_account.all_users.new(params[cname]) )
   end
   
-  def check_agent_limit
-      redirect_to :back if current_account.reached_agent_limit?
-  end
-
   def check_email_exist
     if("has already been taken".eql?(@user.errors["email"]))        
 			@existing_user = current_account.all_users.find(:first, :conditions =>{:users =>{:email => @user.email}})
 		end
-	end
+ end
+
+ def check_agent_limit
+    redirect_to :back if current_account.reached_agent_limit? 
+  end
 
 end

@@ -172,7 +172,7 @@ CapsuleWidget = {
             method: 'get',
             parameters: parameters,
             onSuccess: function (response) {
-                CapsuleWidget.processSearch(response.responseJSON);
+                CapsuleWidget.processSearch(response);
                 // enable_submit($('cap-search'));
                 $('capsule-title').removeClassName('paddingloading');  
             }
@@ -181,7 +181,7 @@ CapsuleWidget = {
     
     processFailure: function(responseEvt){
        $('capsule-title').removeClassName('paddingloading');  
-       errorResult = '<center class="info-error"><b>Error in retriving Contact information!!!</b><br />'
+       errorResult = '<center class="info-error"><b>Error in retrieving Contact information!!!</b><br />'
        switch(responseEvt.status){
          case 401:
             errorResult += "Please verify your API Key";
@@ -195,6 +195,7 @@ CapsuleWidget = {
     },
     
     processSearch: function(response) {
+		response = response.responseJSON;
         if (response.parties.person || response.parties.organisation) {
             var found = response.parties['@size'];
 
@@ -343,6 +344,7 @@ capsuleResourceOptions = {
 	anchor: "capsule_widget",
 	domain: $('capsule_widget').getAttribute('domain').escapeHTML(),
 	ssl_enabled: true,
+	app_name:"Capsule CRM",
 	content_type: "application/xml",
 	enable_resource_cache: false,
 	application_content: function() {

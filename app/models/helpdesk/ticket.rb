@@ -26,7 +26,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       :create_initial_activity, :support_score_on_create
   before_update :cache_old_model, :update_dueby 
   after_update :save_custom_field, :update_ticket_states, :notify_on_update, :update_activity, 
-      :support_score_on_update
+      :support_score_on_update, :stop_timesheet_timers
   
   belongs_to :account
   belongs_to :email_config
@@ -95,6 +95,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   has_many :survey_handles, :as => :surveyable, :dependent => :destroy
   has_many :support_scores, :as => :scorable, :dependent => :destroy
   
+  has_many :time_sheets , :class_name =>'Helpdesk::TimeSheet', :dependent => :destroy, :order => "executed_at"
+  
   attr_protected :attachments #by Shan - need to check..
   
   accepts_nested_attributes_for :tweet, :fb_post
@@ -102,6 +104,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
   named_scope :created_at_inside, lambda { |start, stop|
           { :conditions => [" helpdesk_tickets.created_at >= ? and helpdesk_tickets.created_at <= ?", start, stop] }
         }
+  named_scope :resolved_at_inside, lambda { |start, stop|
+          { 
+            :joins => [:ticket_states,:requester],
+            :conditions => [" helpdesk_ticket_states.resolved_at >= ? and helpdesk_ticket_states.resolved_at <= ?", start, stop] }
+        }
+
   named_scope :resolved_and_closed_tickets, :conditions => {:status => [STATUS_KEYS_BY_TOKEN[:resolved],STATUS_KEYS_BY_TOKEN[:closed]]}
   
   named_scope :all_company_tickets,lambda { |customer| { 
@@ -123,7 +131,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
   named_scope :first_call_resolution,
            :joins  => :ticket_states,
            :conditions => ["(helpdesk_ticket_states.resolved_at is not null)  and  helpdesk_ticket_states.inbound_count = 1"]
-      
+
+  named_scope :company_first_call_resolution,lambda { |customer| { 
+        :joins => [:ticket_states,:requester],
+        :conditions => ["(helpdesk_ticket_states.resolved_at is not null)  and  helpdesk_ticket_states.inbound_count = 1 AND users.customer_id = ?",customer]
+  } 
+  }
+        
 
   named_scope :newest, lambda { |num| { :limit => num, :order => 'created_at DESC' } }
   named_scope :updated_in, lambda { |duration| { :conditions => [ 
@@ -228,6 +242,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
    def is_twitter?
     (tweet) and (!account.twitter_handles.blank?) 
   end
+  
+  def is_facebook?
+     (fb_post) and (fb_post.facebook_page) 
+  end
  
   
   def priority=(val)
@@ -236,6 +254,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def priority_name
     PRIORITY_NAMES_BY_KEY[priority]
+  end
+  
+  def priority_key
+    PRIORITY_TOKEN_BY_KEY[priority]
   end
 
   def create_activity(user, description, activity_data = {}, short_descr = nil)
@@ -281,6 +303,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   def conversation(page = nil, no_of_records = 5)
     notes.visible.exclude_source('meta').newest_first.paginate(:page => page, :per_page => no_of_records)
+  end
+
+  def conversation_count(page = nil, no_of_records = 5)
+    notes.visible.exclude_source('meta').size
   end
 
   def train(category)
@@ -708,14 +734,21 @@ class Helpdesk::Ticket < ActiveRecord::Base
       requester.customer.nil? ? "No company" : requester.customer.name
     end
     
-    def priority_name
-      PRIORITY_NAMES_BY_KEY[priority]
-    end
-    
     def resolved_at
       return ticket_states.closed_at if closed?
       ticket_states.resolved_at 
     end
+    
+    def priority_name
+      PRIORITY_NAMES_BY_KEY[priority]
+    end
+    
+   def stop_timesheet_timers
+    if status != @old_ticket.status && (status == STATUS_KEYS_BY_TOKEN[:resolved] or status == STATUS_KEYS_BY_TOKEN[:closed])
+       running_timesheets =  time_sheets.find(:all , :conditions =>{:timer_running => true})
+       running_timesheets.each{|t| t.stop_timer}
+    end
+   end
   
   private
   
@@ -814,6 +847,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
         email = $1
       end  
      email
-   end
+ end
+ 
 end
   

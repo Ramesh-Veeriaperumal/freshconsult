@@ -1,0 +1,37 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  account_id: 1
+  referrer: MyString
+  landing_url: MyString
+  first_referrer: MyString
+  first_landing_url: MyString
+  country: MyString
+  language: MyString
+  search_engine: MyString
+  keywords: MyString
+  device: MyString
+  browser: MyString
+  os: MyString
+  offset: 1.5
+  is_dst: false
+  visits: 1
+  session_json: MyText
+
+two:
+  account_id: 1
+  referrer: MyString
+  landing_url: MyString
+  first_referrer: MyString
+  first_landing_url: MyString
+  country: MyString
+  language: MyString
+  search_engine: MyString
+  keywords: MyString
+  device: MyString
+  browser: MyString
+  os: MyString
+  offset: 1.5
+  is_dst: false
+  visits: 1
+  session_json: MyText

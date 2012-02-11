@@ -1,4 +1,4 @@
-<%= content_tag (:h3, t(@installing_application.name) + " " + t("settings"), :class => "title") %>
+<%= content_tag (:h3, t('integrations.'+@installing_application.name+'.label') + " " + t("settings"), :class => "title") %>
 <% form_for @installed_application, :url => { :controller=> "installed_applications", :action => "update" }, :html => {:multipart => true, :id => "ConfigureApplication" } do |f| %>
   <ul class="ui-form">  
 		<li class="inline-field">
@@ -13,6 +13,10 @@
   </ul>
   <div class="button-container">
     <%= link_to t('back'), {:controller => 'applications', :action => 'index'}, :class => "floatl uiButton" %>
-    <%= f.submit t('update'), :class => "uiButton" %>
+	<% if @installing_application.name != "google_contacts"%>
+	    <%= f.submit t('update'), :class => "uiButton" %>
+    <% else %>
+		<%= yield :special_buttons %>    
+	<%end%>
   </div>
 <% end %>

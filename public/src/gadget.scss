@@ -1,0 +1,66 @@
+// This import applies a global reset to any page that imports this stylesheet.
+@import "base";
+@import "mixins";
+
+$min-width: 600px;
+$main_content_bradius: 5px;
+$auth_bgcolor: #FAFAFA;
+body#gcgadget { 
+	color: #333; 
+	background:none; 
+	min-width:$min-width+20; 
+
+	.ui-form {
+		background: none;
+	}
+
+	ul.tabs {
+		margin: 0;
+	}
+}
+#auth {
+	@include border-radius($main_content_bradius);
+	background: $auth_bgcolor;
+	padding: 20px;
+	display: none;
+	text-align:center;
+
+	.uiButton {
+		padding: 10px 30px;
+		font-size: 120%;
+	}
+}
+
+#fullbody {
+	@include border-radius($main_content_bradius);
+	display:none; 
+	/* Hiding the div by default */
+
+	.company_box, .contact-box {
+		margin: 15px 0;
+	}
+
+	.request_details {
+		margin: 5px -25px;
+
+		.actions, #TimesheetTab, .conversation-sprite {
+			display: none;
+		}
+	}
+
+	.alert-message {
+		margin: 0 -20px;
+
+		.alert-actions-right {
+			display: none;
+		}
+	}
+}
+
+#content_div {
+	background: white;
+	padding: 10px 25px;
+	border-color: #DDD;
+	border-width: 0 1px 1px;
+	border-style: solid;
+}

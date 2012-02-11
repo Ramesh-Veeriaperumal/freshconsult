@@ -1,4 +1,4 @@
-ActionController::Routing::Routes.draw do |map|
+ ActionController::Routing::Routes.draw do |map|
       
   map.connect '/images/helpdesk/attachments/:id/:style.:format', :controller => '/helpdesk/attachments', :action => 'show', :conditions => { :method => :get }
   
@@ -6,16 +6,17 @@ ActionController::Routing::Routes.draw do |map|
   Jammit::Routes.draw(map)
   
   map.resources :authorizations
+  map.google_sync '/google_sync', :controller=> 'authorizations', :action => 'sync'
   map.callback '/auth/:provider/callback', :controller => 'authorizations', :action => 'create'
   map.failure '/auth/failure', :controller => 'authorizations', :action => 'failure'
   
   map.resources :uploaded_images, :controller => 'uploaded_images'
   
-  map.resources :import , :controller => 'contact_import'
-  
+  map.resources :contact_import , :collection => {:csv => :get, :google => :get}
+
   map.resources :customers ,:member => {:quick => :post}
  
-  map.resources :contacts, :collection => { :autocomplete => :get } , :member => { :restore => :put,:quick_customer => :post ,:make_agent =>:put}
+  map.resources :contacts, :collection => { :contact_email => :get, :autocomplete => :get } , :member => { :restore => :put,:quick_customer => :post ,:make_agent =>:put}
   
   map.resources :groups
   
@@ -25,12 +26,15 @@ ActionController::Routing::Routes.draw do |map|
 
   map.resources :sla_details
   
+#  map.mobile '/mob', :controller => 'home', :action => 'mobile_index'
+#  map.mobile '/mob_site', :controller => 'user_sessions', :action => 'mob_site'
   #map.resources :support_plans
 
   map.resources :sl_as
 
   map.logout '/logout', :controller => 'user_sessions', :action => 'destroy'
-  map.gauth '/auth/google', :controller => 'user_sessions', :action => 'google_auth'
+  map.gauth '/openid/google', :controller => 'user_sessions', :action => 'openid_google'
+  map.gauth '/opensocial/google', :controller => 'user_sessions', :action => 'opensocial_google'
   map.gauth_done '/authdone/google', :controller => 'user_sessions', :action => 'google_auth_completed'
   map.login '/login', :controller => 'user_sessions', :action => 'new'
   map.sso_login '/login/sso', :controller => 'user_sessions', :action => 'sso_login'
@@ -59,10 +63,14 @@ ActionController::Routing::Routes.draw do |map|
   map.namespace :integrations do |integration|
     integration.resources :installed_applications, :member =>{:install => :put, :uninstall => :get, :configure => :get, :update => :put}
     integration.resources :applications, :member =>{:show => :get}
+    integration.resources :integrated_resource, :member =>{:create => :put, :delete => :delete}
+    integration.resources :google_accounts, :member =>{:edit => :get, :delete => :delete, :update => :put, :import_contacts => :put}
+    integration.resources :gmail_gadgets, :collection =>{:spec => :get}
   end
 
   map.namespace :admin do |admin|
     admin.resources :home, :only => :index
+    admin.resources :day_passes, :only => [:index, :update], :member => { :buy_now => :put, :toggle_auto_recharge => :put }
     admin.resources :widget_config, :only => :index
     admin.resources :automations, :member => { :deactivate => :put, :activate => :put }, :collections => { :reorder => :put }
     admin.resources :va_rules, :member => { :deactivate => :put, :activate => :put }, :collections => { :reorder => :put }
@@ -79,16 +87,19 @@ ActionController::Routing::Routes.draw do |map|
     admin.resources :products
     admin.resources :surveys, :only => [ :index ]
     admin.resources :zen_import, :collection => {:import_data => :any }
+    admin.resources :email_commands_setting, :member => { :update => :put }
   end
-  
   map.resources :reports
+  map.timesheet_report    '/timesheet_reports', :controller => 'reports/timesheet_reports', :action => 'index'
   map.customer_activity   '/activity_reports/customer', :controller => 'reports/customer_reports', :action => 'index'
   map.helpdesk_activity   '/activity_reports/helpdesk', :controller => 'reports/helpdesk_reports', :action => 'index'
+  map.customer_activity_generate   '/activity_reports/customer/generate', :controller => 'reports/customer_reports', :action => 'generate'
+  map.helpdesk_activity_generate   '/activity_reports/helpdesk/generate', :controller => 'reports/helpdesk_reports', :action => 'generate'
 
   
   map.namespace :social do |social|
     social.resources :twitters, :controller => 'twitter_handles',
-                :collection =>  { :feed => :any, :create_twicket => :post, :send_tweet => :any, :signin => :any, :tweet_exists => :get },
+                :collection =>  { :feed => :any, :create_twicket => :post, :send_tweet => :any, :signin => :any, :tweet_exists => :get , :user_following => :any },
                 :member     =>  { :search => :any, :edit => :any }
 
     social.resources :facebook, :controller => 'facebook_pages', 
@@ -100,7 +111,7 @@ ActionController::Routing::Routes.draw do |map|
   map.with_options(:conditions => {:subdomain => AppConfig['admin_subdomain']}) do |subdom|
     subdom.root :controller => 'subscription_admin/subscriptions', :action => 'index'
     subdom.with_options(:namespace => 'subscription_admin/', :name_prefix => 'admin_', :path_prefix => nil) do |admin|
-      admin.resources :subscriptions, :member => { :charge => :post, :extend_trial => :post }, :collection => {:customers => :get, :customers_csv => :get, :deleted_customers => :get}
+      admin.resources :subscriptions, :member => { :charge => :post, :extend_trial => :post }, :collection => {:customers => :get, :customers_csv => :get}
       admin.resources :accounts, :collection => {:agents => :get, :helpdesk_urls => :get, :tickets => :get, :renewal_csv => :get}
       admin.resources :subscription_plans, :as => 'plans'
       admin.resources :subscription_discounts, :as => 'discounts'
@@ -174,20 +185,21 @@ ActionController::Routing::Routes.draw do |map|
   # you pass in [@ticket, @note] it will look for helpdesk_ticket_helpdesk_note, etc.
   map.namespace :helpdesk do |helpdesk|
 
-    helpdesk.resources :tags, :collection => { :autocomplete => :get }
-    
+    helpdesk.resources :tags, :collection => { :autocomplete => :get }    
 
 #    helpdesk.resources :issues, :collection => {:empty_trash => :delete}, :member => { :delete_all => :delete, :assign => :put, :restore => :put, :restore_all => :put } do |ticket|
 #      ticket.resources :notes, :member => { :restore => :put }, :name_prefix => 'helpdesk_issue_helpdesk_'
 #    end
 
-    helpdesk.resources :tickets, :collection => { :empty_trash => :delete, :empty_spam => :delete, :user_ticket => :get, :search_tweets => :any, :custom_search => :get, :export_csv => :post, :update_multiple => :put }, 
-                                 :member => { :assign => :put, :restore => :put, :spam => :put, :unspam => :put, :close => :put, :execute_scenario => :post  , :close_multiple => :put, :pick_tickets => :put, :change_due_by => :put , :get_ca_response_content => :post ,:split_the_ticket =>:post , :merge_with_this_request => :post, :print => :any } do |ticket|
+    helpdesk.resources :tickets, :collection => { :user_tickets => :get, :empty_trash => :delete, :empty_spam => :delete, :user_ticket => :get, :search_tweets => :any, :custom_search => :get, :export_csv => :post, :update_multiple => :put  }, 
+                                 :member => { :view_ticket => :get, :assign => :put, :restore => :put, :spam => :put, :unspam => :put, :close => :put, :execute_scenario => :post  , :close_multiple => :put, :pick_tickets => :put, :change_due_by => :put , :get_ca_response_content => :post ,:split_the_ticket =>:post , :merge_with_this_request => :post, :print => :any } do |ticket|
 
       ticket.resources :notes, :member => { :restore => :put }, :name_prefix => 'helpdesk_ticket_helpdesk_'
       ticket.resources :subscriptions, :name_prefix => 'helpdesk_ticket_helpdesk_'
       ticket.resources :tag_uses, :name_prefix => 'helpdesk_ticket_helpdesk_'
       ticket.resources :reminders, :name_prefix => 'helpdesk_ticket_helpdesk_'
+      ticket.resources :time_sheets, :name_prefix => 'helpdesk_ticket_helpdesk_'   
+      
     end
 
     #helpdesk.resources :ticket_issues
@@ -195,6 +207,7 @@ ActionController::Routing::Routes.draw do |map|
     helpdesk.resources :notes
 
     helpdesk.resources :reminders, :member => { :complete => :put, :restore => :put }
+    helpdesk.resources :time_sheets, :member => { :toggle_timer => :put }    
 
     helpdesk.filter_tag_tickets    '/tags/:id/*filters', :controller => 'tags', :action => 'show'
     helpdesk.filter_tickets        '/tickets/filter/tags', :controller => 'tags', :action => 'index'
@@ -207,14 +220,12 @@ ActionController::Routing::Routes.draw do |map|
     helpdesk.formatted_dashboard '/dashboard.:format', :controller => 'dashboard', :action => 'index'
     helpdesk.dashboard '', :controller => 'dashboard', :action => 'index'
 
+#    helpdesk.resources :dashboard, :collection => {:index => :get, :tickets_count => :get}
 
     helpdesk.resources :articles, :collection => { :autocomplete => :get }
 
-    helpdesk.resources :article_guides
 
     helpdesk.resources :attachments
-
-    helpdesk.resources :guides, :member => { :reorder_articles => :put, :privatize => :put, :publicize => :put }, :collection => { :reorder => :put }
     
     helpdesk.resources :authorizations, :collection => { :autocomplete => :get, :agent_autocomplete => :get }
     
@@ -242,7 +253,6 @@ ActionController::Routing::Routes.draw do |map|
      end
 
   map.namespace :support do |support|
-    support.resources :guides 
      support.resources  :articles, :member => { :thumbs_up => :put, :thumbs_down => :put , :create_ticket => :post }
        support.resources :tickets do |ticket|
       ticket.resources :notes, :name_prefix => 'support_ticket_helpdesk_'
@@ -250,7 +260,6 @@ ActionController::Routing::Routes.draw do |map|
     support.resources :company_tickets
     support.resources :minimal_tickets
     support.resources :registrations
-    support.map '', :controller => 'guides', :action => 'index'
     
     support.customer_survey '/surveys/:survey_code/:rating/new', :controller => 'surveys', :action => 'new'
     support.survey_feedback '/surveys/:survey_code/:rating', :controller => 'surveys', :action => 'create', 

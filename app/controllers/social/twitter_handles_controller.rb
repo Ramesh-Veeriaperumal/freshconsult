@@ -2,6 +2,8 @@ class Social::TwitterHandlesController < Admin::AdminController
   
   include ErrorHandle 
   
+  before_filter { |c| c.requires_feature :twitter }
+  
   before_filter :except => [:create_twicket,:feed] do |c| 
     c.requires_permission :manage_users
   end
@@ -207,7 +209,19 @@ class Social::TwitterHandlesController < Admin::AdminController
       format.html { redirect_to :back }
       format.js
     end
-  end 
+  end
+ 
+   #Followig method will check requester is a follower of responding twitter Id
+   def user_following 
+     user_follows = false
+     reply_twitter = current_account.twitter_handles.find(params[:twitter_handle])
+      unless reply_twitter.nil?
+        @wrapper = TwitterWrapper.new reply_twitter
+        twitter  = @wrapper.get_twitter
+        user_follows = twitter.friendship_exists?(params[:req_twt_id], reply_twitter.screen_name)
+      end
+     render :json =>{:user_follows => user_follows }.to_json
+   end
   
   protected
     def twitter_wrapper

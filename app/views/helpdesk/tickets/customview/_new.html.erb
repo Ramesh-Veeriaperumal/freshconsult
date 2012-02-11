@@ -38,7 +38,7 @@
 <% javascript_tag do %>
   jQuery("#freshFilter").validate({
     submitHandler: function(){
-	 		jQuery("#freshFilterSave").attr('disabled', 'disabled').switchClass("uiButton", "ui-after-submit", 0);
+	 		jQuery("#freshFilterSave").prop('disabled', 'disabled').switchClass("uiButton", "ui-after-submit", 0);
       jQuery.ajax({
         url: "/wf/filter/save_filter",
         type: "POST",
@@ -63,7 +63,7 @@
 		else
 		{
 			jQuery('#accessible_group').hide();	
-			jQuery('#visibility_group_id').attr('disabled','disabled');
+			jQuery('#visibility_group_id').prop('disabled','disabled');
 		}
 	}
 <% end %>

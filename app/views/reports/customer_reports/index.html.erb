@@ -1,50 +1,20 @@
-<%= javascript_include_tag  'highcharts.src.js' %>
-<% javascript_tag do %>
- jQuery(document).ready(function() {
-	   <%=@status_pie_chart%>
-	   <%=@ticket_type_pie_chart%>
- });
-<%end%>
-<% form_tag :action => :index, :controller => "reports/customer_reports" do %>
-	<%= select_tag "customer_id", options_for_select(current_account.customers.collect{ |c| [c.name, c.id] }.insert(0, '---')) %>     
-	<%=select_month(Date.today)%>
-	<%= submit_tag 'Submit' %>
+<%= javascript_include_tag  'highcharts.js' %>
+<%= javascript_include_tag  '/javascripts/report/date' %>
+<%= javascript_include_tag  '/javascripts/report/daterangepicker.jQuery.js' %>
+<%= stylesheet_link_tag 'reports', :media => "screen, print, projection"  %>
+<%= stylesheet_link_tag "report-print", :media => "print, projection" %>
+<%= stylesheet_link_tag 'ui.daterangepicker' %>
+
+<% content_for :sidebar do %>
+	<%= render :partial => "/reports/customer_reports/sidebar" %>
+<%end%>	                                          
+
+<div class="report-container" id="report-container"></div>                         
+
+<% content_for :onload_script do %>     
+  jQuery("#Sidebar form").submit();
+  jQuery('#date_range').bind('keypress keyup keydown', function(ev) {
+  	ev.preventDefault();
+  	return false;
+  });
 <% end %>
-<br>
-<br>
-<%unless @status_hash.nil?%>
-<b>Tickets by Status</b>
-<br>
-<table>
-	<tr>
-		<td>Total Tickets</td>
-		<td><%=@current_month_tot_tickets%>  </td>
-	</tr>
-	<tr>
-		<td>Open</td>
-		<td> <%=@status_hash.fetch(TicketConstants::STATUS_KEYS_BY_TOKEN[:open],{}).fetch(:count,0)%> </td>
-	</tr>
-	<tr>
-		<td>Pending</td>
-		<td> <%=@status_hash.fetch(TicketConstants::STATUS_KEYS_BY_TOKEN[:pending],{}).fetch(:count,0)%> </td>
-	</tr>
-	<tr>
-		<td>Resolved</td>
-		<td> <%=@status_hash.fetch(TicketConstants::STATUS_KEYS_BY_TOKEN[:resolved],{}).fetch(:count,0)%> </td>
-	</tr>
-
-</table>
-<%end%>
-<br>
-<br>
-<table>
-	<tr>Average SLA <%=format_float_value(@avg_sla_current_month)%> %</tr>
-	<tr>SLA Difference is  <%=format_float_value(@sla_diff)%> %</tr>
-</table>
-
-<br>
-<br>
-<div id ="status_freshdesk_chart">
-</div>
-<div id ="ticket_type_freshdesk_chart">
-</div>

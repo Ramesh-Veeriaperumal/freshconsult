@@ -1,0 +1,53 @@
+<% content_tag :div, :id => "timeentry_#{time_entry.id}", :class => (time_entry.timer_running) ? "time_running" : "" do %>
+  <div class="timeentry" id="timeentry_view_<%= time_entry.id %>">     
+      <div class="actions">
+  	    <%= link_to_remote( t('edit'), 
+  	                    { :url => edit_helpdesk_ticket_helpdesk_time_sheet_path(@ticket, time_entry),
+  	                      :method => :get },
+  	                    { :class => "slim-button timeedit" } ) %> 
+  	    <%= link_to_remote( "",
+                        { :url => helpdesk_time_sheet_url(time_entry),
+                          :method => :delete ,
+                          :confirm => "Delete this time entry?" },
+                        { :class => "close-button" }) %>
+      </div> 
+    	<div class="user_details">
+    		<%= user_avatar(time_entry.user) if time_entry.user %>
+    		<%= link_to_user(time_entry.user, :class => "user_name") %>
+    		<div>
+    		  <%= formated_date(time_entry.executed_at, "%A, %e %b %Y") %>
+    		</div>
+    	</div>
+    	<div class="timespent">
+    		<div class="timer_box">
+    		  <%= link_to_remote "<span class=\"timer\"></span>", 
+    		                    { :url => toggle_timer_helpdesk_time_sheet_path(time_entry),
+                              :method => :put },
+                            { :class => "clock tooltip", 
+                              :title => t(".toggle_timer_#{!time_entry.timer_running}"), 
+                              :onclick => "jQuery(this).twipsy('hide');",
+                              "data-placement" => "above" } %>
+        </div>
+  	  
+        <%= content_tag :span, get_time_in_hours(time_entry.running_time), 
+                        :class => "time",
+                        "data-running-time" => time_entry.running_time,
+                        "data-timer-running" => time_entry.timer_running,
+                        :id => "timeentry_timer_#{time_entry.id}" %>
+
+        <%= content_tag(:div, "Timer started <br />@ #{formated_date(time_entry.start_time, "%I:%M %p")}", :class => "started_time") if time_entry.timer_running %>
+              		
+    	</div>
+    	<% content_tag :div, :class => "note" do
+    	    concat content_tag(:span, "", :class => "billable tooltip", :title => "Billable time entry") if time_entry.billable
+
+          concat link_to_remote( RedCloth.new(time_entry.note.blank? ? "_add note_" : time_entry.note).to_html, 
+                               { :url => edit_helpdesk_time_sheet_path(time_entry), 
+                                 :method => :get } )
+         end	%>
+  </div>
+  <div class="timeentry_edit" id="timeentry_edit_<%= time_entry.id %>">  </div>
+<% end %>
+<% javascript_tag do -%>
+   totalTime("#timesheetlist .time", "#timeentry_timer_total");
+<% end %>

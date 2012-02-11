@@ -1,0 +1,14 @@
+<fieldset>
+	<div class="agent">
+		<label><%= t('.agent')%></label>
+		<%= form.collection_select( :user_id, current_account.users.technicians.visible, :id, :name, { :selected => current_user.id }, {:class => "full"}) %>
+	</div>
+	<div class="timespent">
+		<label><%= t('.hours')%></label>
+		<%= form.text_field(:hours, { :size => 6, :class => "auto number", :autocomplete => "off" } ) %>
+	</div>
+	<div class="note">
+		<label><%= t('.note')%></label>
+		<%= form.text_area(:note, { :rows => 2, :class => "paragraph auto-height" })%>
+  </div>		
+</fieldset>

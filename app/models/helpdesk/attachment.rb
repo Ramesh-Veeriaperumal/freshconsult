@@ -18,13 +18,18 @@ class Helpdesk::Attachment < ActiveRecord::Base
   
     #before_validation_on_create :set_random_secret
     before_post_process :image?
+    #before_post_process :set_content_dispositon
     before_create :set_content_type
   
-    def set_content_type
-      mime_content_type = File.extname(self.content_file_name).gsub('.','')
-      self.content_content_type = "application/pdf" if !mime_content_type.blank? and mime_content_type.eql?("pdf")
+   def set_content_type
+    mime_content_type = File.extname(self.content_file_name).gsub('.','')
+    self.content_content_type = "application/pdf" if !mime_content_type.blank? and mime_content_type.eql?("pdf")
    end
-   
+
+   def set_content_dispositon
+     self.content.options.merge({:s3_headers => {"Content-Disposition" => "attachment; filename="+self.content_file_name}})
+  end
+  
   def attachment_url
     class_string =  self.class
     "#{class_string.to_s.tableize}/#{id}/#{content_file_name}"

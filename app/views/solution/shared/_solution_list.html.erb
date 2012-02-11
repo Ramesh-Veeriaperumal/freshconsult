@@ -1,7 +1,7 @@
 <div class="floatr">
 	<%= link_to t('reorder'),'#', :id=>"article_reorder_button", :class => "button" unless(folder.articles.size <= 1)%>
 	<%= link_to t('solution.add') + "<span class='symbols-add'></span>", new_solution_category_folder_article_path(category , folder), :class => "icon-detail button" %>
-	<%= link_to t('edit'), edit_solution_category_folder_path(category, folder), :class => "button" %>
+	<%= link_to t('edit'), edit_solution_category_folder_path(category, folder), :class => "button" unless category.is_default?%>
 </div>
 
 <h3 class="title"><%= folder.name %></h3> 

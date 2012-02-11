@@ -12,6 +12,7 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
   def index
     @stats = SubscriptionPayment.stats if params[:page].blank?
     @customer_count = Subscription.customer_count - DUMMY_ACCOUNTS
+    @paying_customers = Account.actual_customer_count
     @monthly_revenue = Subscription.monthly_revenue - DUMMY_MONEY
     @cmrr = @monthly_revenue/@customer_count
     @customer_agent_count = Subscription.customers_agent_count - DUMMY_AGENTS
@@ -48,12 +49,10 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
     fetch_customers_per_month
     fetch_signups_per_month
     fetch_signups_per_day
-#    @subscriptions = Subscription.paginate(:include => :account, :page => params[:page], :per_page => 30, :order => 'accounts.created_at desc',
-#                                           :conditions => ['card_number is not null and state = ? ','active'] )
-end
+    converted_customers_per_month
+  end
    
    def fetch_signups_per_day
-     #@signups_per_day = Account.count(:group => "day(created_at)",:conditions => {:created_at => (30.days.ago..Time.now)}, :order => "created_at desc")
      @signups_per_day = Account.find(:all,:conditions => {:created_at => (30.days.ago..Time.now)}, :order => "created_at desc").group_by {|a| a.created_at.at_beginning_of_day}
    end
    
@@ -67,7 +66,15 @@ end
       count = @customers_by_month.fetch(date.strftime("%b, %Y"),0)
       @customers_by_month.store(date.strftime("%b, %Y"),count+1)
     end
-   @customers_by_month =  @customers_by_month.sort { |k,v| k[0].to_i <=> v[0].to_i }
+   @customers_by_month =  @customers_by_month.sort { |k,v| Time.parse(k[0]).to_i <=> Time.parse(v[0]).to_i }
+ end
+   
+   def converted_customers_per_month
+    @conv_customers_by_month = Account.count(:id,:distinct => true,
+                                                 :joins => :subscription_payments,
+                                                 :group => "DATE_FORMAT(accounts.created_at,'%b %Y')")
+    
+    @conv_customers_by_month =  @conv_customers_by_month.sort { |k,v| Time.parse(k[0]).to_i <=> Time.parse(v[0]).to_i }
   end
   
   #"name","full_domain","name","email","created_at","next_renewal_at","amount","agent_limit","subscription_plan_id","renewal_period","subscription_discount_id"

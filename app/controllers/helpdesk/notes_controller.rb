@@ -1,8 +1,11 @@
 class Helpdesk::NotesController < ApplicationController
+  
   before_filter { |c| c.requires_permission :manage_tickets }
   before_filter :load_parent_ticket_or_issue
   
   include HelpdeskControllerMethods
+  
+  before_filter :validate_attachment_size , :only =>[:create]
     
   uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
 
@@ -24,6 +27,13 @@ class Helpdesk::NotesController < ApplicationController
           @post.save!
         end
       end
+
+      begin
+        create_article if email_reply?
+      rescue Exception => e
+        NewRelic::Agent.notice_error(e)
+      end
+  
       post_persist
     else
       create_error
@@ -42,13 +52,30 @@ class Helpdesk::NotesController < ApplicationController
     def item_url
       @parent
     end
+    
+    def email_reply?
+      @item.source.eql?(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["email"])
+    end
+    
+    def create_article
+      kbase_email = current_account.kbase_email
+      if ((params[:bcc_emails] && params[:bcc_emails].include?(kbase_email)) || (params[:cc_emails] && params[:cc_emails].include?(kbase_email)))
+        params[:bcc_emails].delete(kbase_email)
+        params[:cc_emails].delete(kbase_email)
+        
+        body_html = params[:helpdesk_note][:body_html]
+        attachments = params[:helpdesk_note][:attachments]
+        Helpdesk::KbaseArticles.create_article_from_note(current_account, current_user, @parent.subject, body_html, attachments)
+      end
+    end
 
     def process_item
       Thread.current[:notifications] = current_account.email_notifications
       if @parent.is_a? Helpdesk::Ticket      
         send_reply_email if @item.source.eql?(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["email"])
         if tweet?
-          twt = send_tweet
+          twt_type = params[:tweet_type] || :mention.to_s
+          twt = send("send_tweet_as_#{twt_type}")
           @item.create_tweet({:tweet_id => twt.id, :account_id => current_account.id})
         elsif facebook?
           fb_comment = add_facebook_comment
@@ -123,7 +150,7 @@ class Helpdesk::NotesController < ApplicationController
       redirect_to @parent
     end
     
-    def send_tweet
+    def send_tweet_as_mention
       reply_twitter = current_account.twitter_handles.find(params[:twitter_handle])
       unless reply_twitter.nil?
        begin
@@ -131,10 +158,28 @@ class Helpdesk::NotesController < ApplicationController
         twitter = @wrapper.get_twitter
         latest_comment = @parent.notes.latest_twitter_comment.first
         status_id = latest_comment.nil? ? @parent.tweet.tweet_id : latest_comment.tweet.tweet_id
-        twitter.update(@item.body, {:in_reply_to_status_id => status_id})
-      rescue
+        twitter.update(validate_tweet(@item.body), {:in_reply_to_status_id => status_id})
+       rescue
          flash.now[:notice] = t('twitter.not_authorized')
-        end
+       end
+      end
+  end
+  
+  
+  def send_tweet_as_dm
+     logger.debug "Called  send_tweet_as_dm send_tweet_as_dm "
+      reply_twitter = current_account.twitter_handles.find(params[:twitter_handle])
+      unless reply_twitter.nil?
+       begin
+        @wrapper = TwitterWrapper.new reply_twitter
+        twitter = @wrapper.get_twitter
+        latest_comment = @parent.notes.latest_twitter_comment.first
+        status_id = latest_comment.nil? ? @parent.tweet.tweet_id : latest_comment.tweet.tweet_id    
+        req_twt_id = latest_comment.nil? ? @parent.requester.twitter_id : latest_comment.user.twitter_id
+        resp = twitter.direct_message_create(req_twt_id, @item.body)
+       rescue  
+         flash.now[:notice] = t('twitter.not_authorized')
+       end
       end
   end
   
@@ -158,6 +203,21 @@ class Helpdesk::NotesController < ApplicationController
        end
       end
   end
-  
+   def validate_attachment_size
+     total_size = (params[nscname][:attachments] || []).collect{|a| a[:file].size}.sum
+     if total_size > Helpdesk::Note::Max_Attachment_Size    
+        flash[:notice] = t('helpdesk.tickets.note.attachment_size.exceed')
+        redirect_to :back  
+     end
+ end
+ 
+ 
+  def validate_tweet tweet
+   twitter_id = "@#{@parent.requester.twitter_id}" 
+   return tweet if ( tweet[0,twitter_id.length] == twitter_id)
+   twt_text = (twitter_id+" "+  tweet)
+   twt_text = twt_text[0,Social::Tweet::LENGTH - 1] if twt_text.length > Social::Tweet::LENGTH
+   return twt_text
+  end
 
 end

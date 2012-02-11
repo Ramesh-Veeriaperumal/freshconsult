@@ -1,0 +1,14 @@
+<tr>
+  <%= content_tag :td, formated_date(purchases.created_at) %>
+  <%= content_tag :td, purchases.payment_id || "-" %>
+  <%= content_tag :td, purchases.quantity_purchased %>  
+  <%= content_tag :td, purchases.payment.blank? ? "-" : "$#{purchases.payment.amount}" %>
+  <%= content_tag :td, t(purchases.paid_width_type) %>
+  <% content_tag :td do
+      if purchases.success?
+        concat content_tag :span, t("success"), :class => "label success"
+      else
+        concat content_tag :span, t("failure"), :class => "label important custom-tip-top", :title => purchases.status_message
+      end
+     end %>   
+</tr> 

@@ -27,6 +27,8 @@ class Helpdesk::AuthorizationsController < ApplicationController
 
     r = {:results => items.map {|i| {:id => i.email, :value => i.name} } } 
 
+    r[:results].push({:id => current_account.kbase_email, :value => ""}) if params[:v] =~ /(kb[ase]?.*)/
+
     respond_to do |format|
       format.json { render :json => r.to_json }
     end

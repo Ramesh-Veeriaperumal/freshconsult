@@ -28,7 +28,12 @@ class Solution::CategoriesController < ApplicationController
      @item = current_account.solution_categories.find(params[:id], :include => :folders)
     
      respond_to do |format|
-      format.html # index.html.erb
+      if (@item.is_default? && !permission?(:manage_knowledgebase))
+        store_location
+        format.html {redirect_to login_url }
+      else
+        format.html # index.html.erb
+      end
       format.xml {  render :xml => @item.to_xml(:include => fetch_folder_scope) }
       format.json  { render :json => @item.to_json(:except => [:account_id,:import_id],
                                                     :include => fetch_folder_scope) }
@@ -49,7 +54,12 @@ class Solution::CategoriesController < ApplicationController
     
      @category = current_account.solution_categories.find(params[:id])      
       respond_to do |format|
-      format.html # edit.html.erb
+      if @category.is_default?
+        flash[:notice] = I18n.t('category_edit_not_allowed')
+        format.html {redirect_to :action => "show" }
+      else
+        format.html # edit.html.erb
+      end
       format.xml  { render :xml => @category }
     end
   end
@@ -92,7 +102,7 @@ class Solution::CategoriesController < ApplicationController
   def destroy
     
     @category = current_account.solution_categories.find(params[:id])
-    @category.destroy
+    @category.destroy unless @category.is_default?
 
     respond_to do |format|
       format.html {  redirect_to :action =>"index" }

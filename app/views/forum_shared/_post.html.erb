@@ -35,7 +35,7 @@
 	<%= content_tag(:div, t(".answer"), :class => "stamp_answer floatr", :title => t(".post_accepted_as_a_good_answer")) if post.answer? %>
 	<div class="user_details">
 		<%= user_avatar(post.user) if post.user %>
-		<%= t(".posted_on", :user_name => link_to_user(post.user, "user_name"), :post_date => formated_date(post.created_at) ) %>
+		<%= t(".posted_on", :user_name => link_to_user(post.user, {:class => "user_name"}), :post_date => formated_date(post.created_at) ) %>
 		<span class="loading-edit" id='<%= "loading_#{post.id}" %>' style="display:none;"></span>
 	</div>
 	<div class="details" id='<%= "post_details_#{post.id}" %>'>

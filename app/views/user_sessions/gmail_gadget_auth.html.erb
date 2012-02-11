@@ -1,0 +1,28 @@
+<div class="pagearea" id="Pagearea">
+<% @page_title = 'Google Authentication'
+flash[:notice] = @notice 
+%>
+<%= show_flash %>	
+<div class="action_area">
+<% content_tag :button,  :onclick => 'javascript:window.close();', :class => 'uiButton' do %>
+	Close Window
+<% end %>
+</div>
+<% javascript_tag do %>
+	<%= "setTimeout(function() {window.close()},5000); " if !@gauth_error %>
+<%	end %>
+</div>
+<style type="text/css">
+body {
+	min-width:200px;
+}
+.pagearea {
+	min-height: 300px;
+	margin: 10px;
+}
+
+.action_area {
+	margin:30px;
+	text-align: center;
+}
+</style>

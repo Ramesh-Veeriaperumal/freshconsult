@@ -1,22 +1,59 @@
 class Helpdesk::ProcessEmail < Struct.new(:params)
  
+  include EmailCommands
+  
   EMAIL_REGEX = /(\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
- 
+  
   def perform
     from_email = parse_from_email
     to_email = parse_to_email
     account = Account.find_by_full_domain(to_email[:domain])
     if !account.nil? and account.active?
       encode_stuffs
-      display_id = Helpdesk::Ticket.extract_id_token(params[:subject])
-      ticket = Helpdesk::Ticket.find_by_account_id_and_display_id(account.id, display_id) if display_id
-      if ticket
-        return if(from_email[:email] == ticket.reply_email) #Premature handling for email looping..
-        add_email_to_ticket(ticket, from_email )
-      else
-        create_ticket(account, from_email, to_email)
+      kbase_email = account.kbase_email
+      if (to_email[:email] != kbase_email) || (get_envelope_to.size > 1)
+        display_id = Helpdesk::Ticket.extract_id_token(params[:subject])
+        ticket = Helpdesk::Ticket.find_by_account_id_and_display_id(account.id, display_id) if display_id
+        if ticket
+          return if(from_email[:email] == ticket.reply_email) #Premature handling for email looping..
+          add_email_to_ticket(ticket, from_email )
+        else
+          create_ticket(account, from_email, to_email)
+        end
+      end
+      
+      begin
+        if ((to_email[:email] == kbase_email) || (parse_cc_email && parse_cc_email.include?(kbase_email)))
+          create_article(account, from_email, to_email)
+        end
+      rescue Exception => e
+        NewRelic::Agent.notice_error(e)
       end
     end
+  end
+  
+  def create_article(account, from_email, to_email)
+
+    article_params = {}
+
+    email_config = account.email_configs.find_by_to_email(to_email[:email])
+    user = get_user(account, from_email,email_config)
+    
+    article_params[:title] = params[:subject].gsub(/\[#([0-9]*)\]/,"")
+    article_params[:description] = Helpdesk::HTMLSanitizer.clean(params[:html]) || params[:text]
+    article_params[:user] = user.id
+    article_params[:account] = account.id
+    article_params[:content_ids] = params["content-ids"].nil? ? {} : get_content_ids
+
+    attachments = {}
+    
+    Integer(params[:attachments]).times do |i|
+      attachments["attachment#{i+1}"] = params["attachment#{i+1}"]
+    end
+      
+    article_params[:attachments] = attachments
+    
+    Helpdesk::KbaseArticles.create_article_from_email(article_params)
   end
   
   private
@@ -77,10 +114,10 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     
     def parse_from_email
       f_email = parse_email(params[:from])
-      return f_email unless(f_email[:email].blank? || f_email[:email] =~ /noreply/)
+      return f_email unless(f_email[:email].blank? || f_email[:email] =~ /(noreply)|(no-reply)/i)
       
       headers = params[:headers]
-      if(!headers.nil? && headers =~ /Reply-to:(.+)$/)
+      if(!headers.nil? && headers =~ /Reply-to:(.+)$/i)
         rt_email = parse_email($1)
         return rt_email unless rt_email[:email].blank?
       end
@@ -122,6 +159,13 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       )
       ticket = check_for_chat_scources(ticket,from_email)
       ticket = check_for_spam(ticket)
+      
+      process_email_commands(ticket, user, email_config) if user.agent?
+
+      email_cmds_regex = get_email_cmd_regex(account)
+      ticket.description = ticket.description.gsub(email_cmds_regex, "") if(!ticket.description.blank? && email_cmds_regex)
+      ticket.description_html = ticket.description_html.gsub(email_cmds_regex, "") if(!ticket.description_html.blank? && email_cmds_regex)
+
       begin
         ticket.save!
         create_attachments(ticket, ticket)
@@ -160,6 +204,13 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
           :account_id => ticket.account_id
         )
         note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] unless user.customer?
+        
+        process_email_commands(ticket, user, ticket.email_config) if user.agent?
+  
+        email_cmds_regex = get_email_cmd_regex(ticket.account)
+        note.body = show_quoted_text(params[:text].gsub(email_cmds_regex, "") ,parse_to_email[:email]) if(!params[:text].blank? && email_cmds_regex)
+        note.body_html = show_quoted_text(Helpdesk::HTMLSanitizer.clean(params[:html].gsub(email_cmds_regex, "")), parse_to_email[:email]) if(!params[:html].blank? && email_cmds_regex)
+        ticket.save
       else
         return create_ticket(ticket.account, from_email, parse_to_email)
       end
@@ -239,5 +290,10 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end   
     return original_msg
 end
+    def get_envelope_to
+      envelope = params[:envelope]
+      envelope_to = envelope.nil? ? [] : (ActiveSupport::JSON.decode envelope)['to']
+      envelope_to
+    end    
   
 end

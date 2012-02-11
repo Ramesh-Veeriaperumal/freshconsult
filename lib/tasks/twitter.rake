@@ -21,7 +21,7 @@ namespace :twitter do
             end
         
             last_tweet_id = tweets[0].id unless tweets.blank?       
-            create_ticket_from_tweet tweets , twt_handle        
+            create_ticket_from_dm (tweets , twt_handle )       
             twt_handle.update_attribute(:last_dm_id, last_tweet_id) unless last_tweet_id.blank?
           end
         
@@ -34,31 +34,52 @@ namespace :twitter do
               tweets = twitter.mentions({:since_id =>twt_handle.last_mention_id})
             end       
             last_tweet_id = tweets[0].id unless tweets.blank?   
-            create_ticket_from_tweet tweets ,twt_handle        
+            create_ticket_from_mention (tweets ,twt_handle )        
             twt_handle.update_attribute(:last_mention_id, last_tweet_id) unless last_tweet_id.blank?
          end       
        end ### ends ####
      end
    end
    puts "Twitter closed at #{Time.zone.now}"
-  end
-  
-  ##Need to consider the 
-  def create_ticket_from_tweet tweets , twt_handle
-      tweets.each do |twt|
-         @sender = twt.sender || twt.user 
+ end
+ 
+ def create_ticket_from_mention tweets , twt_handle
+     tweets.each do |twt|
+         @sender = twt.user 
          @account = twt_handle.account
          @user = get_user(@sender.screen_name)
          
-          if twt.in_reply_to_status_id.blank?         
-            add_tweet_as_ticket twt , twt_handle
-          else
-            add_tweet_as_note twt , twt_handle
-          end
+         if twt.in_reply_to_status_id.blank?         
+            add_tweet_as_ticket twt , twt_handle , :mention
+         else
+            tweet = @account.tweets.find_by_tweet_id(twt.in_reply_to_status_id)
+            unless tweet.blank?
+              ticket = tweet.get_ticket
+              add_tweet_as_note twt , twt_handle , :mention , ticket
+            else
+              add_tweet_as_ticket twt , twt_handle , :mention
+            end
+         end
      end
-  end
+ end
+
+ def create_ticket_from_dm tweets , twt_handle
+   tweets.each do |twt|
+         @sender = twt.sender 
+         @account = twt_handle.account
+         @user = get_user(@sender.screen_name)
+         previous_ticket = @user.tickets.visible.newest(1).first
+         last_reply = (!previous_ticket.notes.blank? && !previous_ticket.notes.latest_twitter_comment.blank?) ? previous_ticket.notes.latest_twitter_comment.first : previous_ticket  unless previous_ticket.blank?
+         
+         if last_reply && (Time.zone.now < (last_reply.created_at + twt_handle.dm_thread_time.seconds))
+           add_tweet_as_note twt , twt_handle , :dm , previous_ticket
+         else
+            add_tweet_as_ticket twt , twt_handle , :dm
+         end
+     end
+ end
   
-  def add_tweet_as_ticket twt , twt_handle
+  def add_tweet_as_ticket twt , twt_handle , twt_type
      
      ticket = @account.tickets.build(
       :subject => twt.text,
@@ -67,7 +88,7 @@ namespace :twitter do
       :email_config_id => twt_handle.product_id,
       :group_id => twt_handle.product.group_id,
       :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:twitter],
-      :tweet_attributes => {:tweet_id => twt.id, :account_id => @account.id} )
+      :tweet_attributes => {:tweet_id => twt.id, :account_id => @account.id , :tweet_type => twt_type.to_s} )
       
       if ticket.save
         puts "This ticket has been saved"
@@ -87,31 +108,21 @@ namespace :twitter do
      user
   end
   
-  def add_tweet_as_note twt,twt_handle 
-    tweet = @account.tweets.find_by_tweet_id(twt.in_reply_to_status_id)
+  def add_tweet_as_note twt,twt_handle, twt_type , ticket
     
-    unless tweet.nil?  
-      ticket = tweet.get_ticket
-    end
-    
-    unless ticket.blank?
-      puts "Ticket id is #{ticket.id}"
       note = ticket.notes.build(
         :body => twt.text,
         :incoming => true,
         :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:twitter],
         :account_id => twt_handle.account_id,
         :user_id => @user.id ,
-        :tweet_attributes => {:tweet_id => twt.id, :account_id => @account.id}
+        :tweet_attributes => {:tweet_id => twt.id, :account_id => @account.id , :tweet_type => twt_type.to_s}
        )
       if note.save
         puts "This note has been added"
       else
         puts "error while saving the ticket:: #{note.errors.to_json}"
       end
-    else
-      add_tweet_as_ticket (twt,twt_handle)
-    end
   end
   
 end

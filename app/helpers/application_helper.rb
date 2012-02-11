@@ -34,7 +34,21 @@ module ApplicationHelper
   end
 
   def each_or_message(partial, collection, message)
-    render(:partial => partial, :collection => collection) || content_tag(:div, message, :class => "info-highlight")
+    render(:partial => partial, :collection => collection) || content_tag(:div, message, :class => "list-noinfo")
+  end
+  
+  def each_or_new(partial_item, collection, partial_form, partial_form_locals = {})
+    render(:partial => partial_item, :collection => collection) || render(:partial => partial_form, :locals => partial_form_locals)
+  end
+  
+  # A helper to show an enable disalbed toggle button like iphone 
+  # The toggle_url can be a controller action that will toggle based on the status
+  def on_off_button(obj, toggle_url, text_on = t("enabled"), text_off = t("disabled"), tip_on = t("tip_on"), tip_off = t("tip_off"))
+    button_text = (obj) ? text_on : text_off
+    button_title = (obj) ? tip_off : tip_on
+    button_class = (obj) ? "iphone-active" : "iphone-inactive"
+    link_to "<strong> #{ button_text } </strong><span></span>", toggle_url, { :class => 
+      "uiButton special #{button_class} custom-tip-top", :title => button_title, :method => 'put' }
   end
   
   def get_img(file_name, type)
@@ -59,7 +73,7 @@ module ApplicationHelper
       ['/home',               :home,        !permission?(:manage_tickets) ],
       ['helpdesk/dashboard',  :dashboard,    permission?(:manage_tickets)],
       ['helpdesk/tickets',    :tickets,      permission?(:manage_tickets)],
-      ['/social/twitters/feed', :social,      permission?(:manage_tickets) && !current_account.twitter_handles.blank?],
+      ['/social/twitters/feed', :social,     can_view_twitter?  ],
       solutions_tab,      
       forums_tab,
       ['/contacts',           :customers,    permission?(:manage_tickets)],
@@ -86,6 +100,23 @@ module ApplicationHelper
       tab( s[3] || t("header.tabs.#{s[1].to_s}") , {:controller => s[0], :action => :index}, active && :active ) 
     end
     navigation
+  end
+  
+  def html_list(type, elements, options = {}, activeitem = 0)
+    if elements.empty?
+      "" 
+    else
+      lis = elements.map { |x| content_tag("li", x, :class => ("active first" if (elements[activeitem] == x)))  }
+      content_tag(type, lis, options)
+    end
+  end
+
+  def ul(*args)
+    html_list("ul", *args)
+  end
+
+  def ol(*args)
+    html_list("ol", *args)
   end
   
   def check_box_link(text, checked, check_url, check_method, uncheck_url, uncheck_method = :post)
@@ -164,6 +195,10 @@ module ApplicationHelper
   def split_ticket_path(args_hash)
     link_to(args_hash['subject']+"(##{args_hash['ticket_id']})", "#{helpdesk_ticket_path args_hash['ticket_id']}}")
   end
+  
+   def timesheet_path(args_hash, link_display = 'time entry')
+    link_to(link_display, "#{helpdesk_ticket_path args_hash['ticket_id']}#time_entry#{args_hash['timesheet_id']}")
+  end
   #Liquid ends here..
   
   #Ticket place-holders, which will be used in email and comment contents.
@@ -219,17 +254,18 @@ module ApplicationHelper
   end
   
   # User details page link should be shown only to agents and admin
-  def link_to_user( user, classname = "" )
+  def link_to_user(user, options = {})
     if current_user && !current_user.customer?
-      link_to user.display_name, user, :class => classname
+      link_to(user.display_name, user, options)
     else 
-      content_tag(:strong, user.display_name, :class => classname)
+      content_tag(:strong, user.display_name, options)
     end
   end
   
   # Date and time format that is mostly used in our product
-  def formated_date(date_time)
-    date_time.strftime("%B %e %Y at %I:%M %p")
+  def formated_date(date_time, format = "%B %e %Y @ %I:%M %p")
+    format = format.gsub(/.\b[%Yy]/, "") if (date_time.year == Time.now.year)
+    date_time.strftime(format)
   end
   
   # Get Pref color for individual portal
@@ -240,56 +276,76 @@ module ApplicationHelper
    end
    color
  end
+ 
+ def get_time_in_hours seconds
+   sprintf( "%0.02f", seconds/3600)
+ end
+ 
+ def get_total_time time_sheets
+   total_time_in_sec = time_sheets.collect{|t| t.running_time}.sum
+   return get_time_in_hours(total_time_in_sec)
+ end
   
   def get_app_config(app_name)
-    installed_app = Integrations::InstalledApplication.find(:all, :joins=>:application, 
-                  :conditions => {:applications => {:name => app_name}, :account_id => current_account})
+    installed_app = get_app_details(app_name)
     return installed_app[0].configs[:inputs] unless installed_app.blank?
   end
 
   def is_application_installed?(app_name)
-    installed_app = Integrations::InstalledApplication.find(:all, :joins=>:application, 
-                  :conditions => {:applications => {:name => app_name}, :account_id => current_account})
+    installed_app = get_app_details(app_name)
     return !(installed_app.blank?)
   end
-  
+
   def get_app_details(app_name)
     installed_app = Integrations::InstalledApplication.find(:all, :joins=>:application, 
                   :conditions => {:applications => {:name => app_name}, :account_id => current_account})
     return installed_app
   end
 
-  def get_app_widget_script(app_name, widget_name, liquid_objs)
+  def get_app_widget_script(app_name, widget_name, liquid_objs) 
     installed_app = Integrations::InstalledApplication.find(:first, :joins=>{:application => :widgets}, 
                   :conditions => {:applications => {:name => app_name, :widgets => {:name => widget_name}}, :account_id => current_account})
     if installed_app.blank? or installed_app.application.blank?
       return ""
     else
       widget = installed_app.application.widgets[0]
-      replace_objs = {installed_app.application.name.to_s => installed_app}
-      replace_objs = liquid_objs.blank? ? replace_objs : liquid_objs.merge(replace_objs)
-      return Liquid::Template.parse(widget.script).render(replace_objs)
+      # replace_objs will contain all the necessary liquid parameter's real values that needs to be replaced.
+      replace_objs = {installed_app.application.name.to_s => installed_app, "application" => installed_app.application} # Application name based liquid obj values.
+      replace_objs = liquid_objs.blank? ? replace_objs : liquid_objs.merge(replace_objs) # If the there is no liquid_objs passed then just use the application name based values alone.
+      return Liquid::Template.parse(widget.script).render(replace_objs, :filters => [FDTextFilter])  # replace the liquid objs with real values.
     end
   end
 
   def construct_ui_element(object_name, field_name, field, field_value = "")
+    
     field_label = t(field[:label])
     dom_type = field[:type]
     required = field[:required]
-    element_class   = " #{ (required) ? 'required' : '' } #{ dom_type }"
+    rel_value = field[:rel]
+    url_autofill_validator = field[:validator_type]
+    ghost_value = field[:autofill_text]
+    element_class   = " #{ (required) ? 'required' : '' }  #{ (url_autofill_validator) ? url_autofill_validator  : '' } #{ dom_type }"
     field_label    += " #{ (required) ? '*' : '' }"
     object_name     = "#{object_name.to_s}"
     label = label_tag object_name+"_"+field_name, field_label
     dom_type = dom_type.to_s
+    
     case dom_type
       when "text", "number", "email", "multiemail" then
-        element = label + text_field(object_name, field_name, :class => element_class, :value => field_value)
+        field_value = field_value.to_s.split(ghost_value).first unless ghost_value.blank?
+        element = label + text_field(object_name, field_name, :class => element_class, :value => field_value, :rel => rel_value, "data-ghost-text" => ghost_value)
+        element << hidden_field(object_name , :ghostvalue , :value => ghost_value) unless ghost_value.blank?
       when "paragraph" then
         element = label + text_area(object_name, field_name, :class => element_class, :value => field_value)
       when "dropdown" then
-        element = label + select(object_name, field_name, field[:choices], :class => element_class, :selected => field_value)
-      when "dropdown_blank" then
-        element = label + select(object_name, field_name, field[:choices], :class => element_class, :selected => field_value, :include_blank => "...")
+        choices = [];i=0
+        field[:choices].each do |choice| 
+          choices[i] = t(choice);i=i+1
+        end
+        element = label + select(object_name, field_name, choices, :class => element_class, :selected => field_value)
+      when "custom" then
+        rendered_partial = (render :partial => field[:partial])
+        element = "#{label} #{rendered_partial}"
       when "hidden" then
         element = hidden_field(object_name , field_name , :value => field_value)
       when "checkbox" then
@@ -308,7 +364,7 @@ module ApplicationHelper
     label = label_tag object_name+"_"+field.field_name, field_label
     case dom_type
       when "requester" then
-        element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email", :locals => { :object_name => object_name, :field => field, :url => autocomplete_helpdesk_authorizations_path, :object_name => object_name }))
+        element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email.html", :locals => { :object_name => object_name, :field => field, :url => autocomplete_helpdesk_authorizations_path, :object_name => object_name }))
       when "text", "number", "email" then
         element = label + text_field(object_name, field_name, :class => element_class, :value => field_value)
       when "paragraph" then
@@ -340,14 +396,21 @@ module ApplicationHelper
     content_tag :li, element unless (field_value == "" || field_value == "...")     
   end
    
-  def pageless(total_pages, url, message=t("loading.items"), callback = "function(){}")
+  def pageless(total_pages, url, message=t("loading.items"), params = {})
     opts = {
       :totalPages => total_pages,
       :url        => url,
       :loaderMsg  => message,
-      :complete  => callback
+      :params => params
     } 
     javascript_tag("jQuery('#Pages').pageless(#{opts.to_json});")
+  end
+  
+  def render_page
+    respond_to do |format|
+      format.html { redirect_to :back }
+      format.js
+    end
   end
    
   private
@@ -374,11 +437,24 @@ module ApplicationHelper
     
     def forums_visibility?
       feature?(:forums) && allowed_in_portal?(:open_forums)
-  end
+    end
+    
+    def can_view_twitter?
+      permission?(:manage_tickets) && !current_account.twitter_handles.blank? && feature?(:twitter)
+    end
+    
   
   def company_tickets_tab
     tab = ['support/company_tickets', :company_tickets , !permission?(:manage_tickets) , current_user.customer.name] if (current_user && current_user.customer && current_user.client_manager?)
     tab || ""
   end
   
+end
+
+module FDTextFilter
+  def escape_html(input)
+    input = input.to_s.gsub("\"", "\\\"")
+    input = input.gsub("\\", "\\\\")
+    return input
+  end
 end

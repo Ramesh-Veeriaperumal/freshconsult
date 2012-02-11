@@ -12,21 +12,21 @@
     <div class="fields">
       <label class="checkbox">
         <%= check_box "social_facebook_page", :import_visitor_posts, { :checked => facebook_page.import_visitor_posts } %> 	
-        Import <strong>"Visitor posts"</strong> as ticket
+        <%=t('.visitor_posts')%>
       </label>
       <div class="info-data tabbed">
-        Freshdesk will convert all visitor posts on this Facebook page as tickets.
+        <%= t('.visitor_posts_info')%>
       </div>				
       <span class="seperator"></span>
       <label class="checkbox">
         <%= check_box "social_facebook_page", :import_company_posts, { :checked => facebook_page.import_company_posts } %> 
-        Import <strong>"Company posts"</strong> as ticket
+        <%= t('.company_posts')%>
       </label>
       <div class="info-data tabbed">
-        Freshdesk will convert all Company posts on this Facebook page into tickets.
+      	<%= t('.company_posts_info')%>
       </div>
 	   <span class="seperator"></span>
-      <label class="caption">Product</label>
+      <label class="caption"><%= t('.product')%></label>
       <div class="fields">
   	    <%= collection_select(:social_facebook_page, :product_id, current_account.products, :id, :name, { :include_blank => '...', :selected => facebook_page.product_id })%>
   	  </div>	 

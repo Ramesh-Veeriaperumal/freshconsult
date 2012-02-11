@@ -1,5 +1,7 @@
 class Social::FacebookPagesController < Admin::AdminController
   
+  before_filter { |c| c.requires_feature :facebook }
+  
   before_filter :except => [:event_listener] do |c| 
     c.requires_permission :manage_users
   end

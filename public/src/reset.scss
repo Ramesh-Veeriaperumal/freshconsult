@@ -92,5 +92,38 @@ strong, b{ font-weight:bold; }
 @include reset-html5; 
 
 /* END RESET CSS */
- 
+
+#tag-list{
+	margin: 5px -5px 5px 0;
+}
+#tag-list li {
+    display: inline;
+    list-style: none outside none;
+    margin: 0;
+	color: #000000;
+	border-color: #DDDDDD; 
+	border-width : 1px; 
+	border-style: solid;
+	@include border-radius(3px);
+	padding:2px 3px;
+	font-size:11px; 
+	background-color: #33a8a8;
+}
+#tag-list li a{
+    color: #fff;
+}
+
+#tag-cloud{
+	margin: 5px -5px 5px 0;
+}
+#tag-cloud li {
+    display: inline;
+    list-style: none outside none;
+    margin: 0;
+    padding: 0;
+}
+
+#tag-cloud li a:hover {
+    color: #000000;
+}
 

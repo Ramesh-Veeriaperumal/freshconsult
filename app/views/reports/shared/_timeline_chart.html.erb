@@ -1,0 +1,7 @@
+<h3><%= t('reports.timeline_chart_title') %></h3>
+<div id ="freshdesk_time_line_chart"></div>
+<% javascript_tag do %>
+jQuery(document).ready(function() {
+	<%= @freshdesk_timeline_chart %>
+});
+<%end%>

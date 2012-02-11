@@ -1,0 +1,201 @@
+@import "base";
+@import "mixins";
+
+$report-number-color:#333;
+$report-number-positive-color:#006063;
+$report-number-negative-color:#990000;
+
+$tickets_summary_bg : #F6F6F6;
+$tickets_summary_bottom_border : #eeeeee;
+$title_color: #666;
+$pie_chart_size: 400px;
+$gauge_chart_size: 120px;
+$timeline_chart_height: 250px;
+$single_stackbar_chart_height: 120px;
+
+#date_range{
+	font-size:12px;
+  height:20px;
+}
+
+.caption{
+  font-size:10px;
+  font-weight:bold;
+  text-transform:uppercase;
+}
+
+.report-container{
+  margin:-15px -20px; 
+  padding:0 0;
+}
+
+.report-wrapper{
+  padding:15px 25px 0;
+  @include clearfix;  
+} 
+
+#freshdesk_time_line_chart {
+	height: $timeline_chart_height;
+	margin-top:20px;
+}
+.report-unit.timeline-chart {
+	height:$timeline_chart_height + 50; 
+} 
+
+.sidepanel h4.title {
+	padding: 5px 0;
+	margin:0;
+	label {
+		font-size:1em;
+		color: #444;
+	}
+}
+ 
+#dateRange{
+	font-size:12px;
+	margin: 0 20px 0 0;
+	border-radius:0;
+	/*@include vertical-gradient(#eeeeee, #ffffff);*/
+} 
+
+.report-container{
+  .tickets-summary, .sla-compliance{
+    float:left;
+  }
+  .tickets-summary{ width:50%; }
+  .sla-compliance{ width:25%; }
+}
+
+#pie-charts {
+	width:100%;
+	float:none;
+	@include clearfix;
+}
+.report-unit.report-pie-chart {
+	height:$pie_chart_size;
+	width:50%;
+	float:left;
+	margin:0;
+	.chart-container {
+		height:$pie_chart_size - 30;
+		width:$pie_chart_size - 30;
+		position:relative;
+	}
+	.noinfo{ 
+	  width:250px;
+	  text-align:center;
+	  margin:10px 0 0;
+	  background: url("/images/fillers/no-pie-doughnut.png") no-repeat center;
+	  font-size:16px;
+	  font-weight:bold;
+	  padding:110px 0;
+	}
+}
+
+
+.single-stacked-bar {
+	height:$single_stackbar_chart_height;
+}
+.gauge-chart {
+	height:$gauge_chart_size;
+	width:$gauge_chart_size;
+	display: inline;
+}
+.center-by-margin {margin-left:auto; margin-right:auto;}
+.sla-compliance {                
+			h4.percent-diff {
+				width:75px;
+				margin: 0;
+				font-size: 14px;
+				background: url(/images/reports/report_arrow-up.png) right no-repeat;
+				padding-right: 20px;
+				color:$report-number-positive-color;
+				text-align:right;
+				.percent {
+					color:lighten($report-number-positive-color, 5%);
+					font-size:10px;
+					display:inline;
+				}
+			}
+		
+			h4.negative.percent-diff {
+				color:$report-number-negative-color;
+				background: url(/images/reports/report_arrow-down.png) right no-repeat;
+				.percent {
+					color:lighten($report-number-negative-color,5%);
+			}
+
+	}
+}
+.report-unit {
+    margin: 0 0 20px;	
+		h3 {
+			font-size:14px;
+			color:#333;
+			font-weight:bold;
+			line-height:18px;
+		}
+    ul.summary{
+/*        background-color:$tickets_summary_bg;*/
+        background:none;
+        margin:10px 0; 
+        border:none;
+        box-shadow:none;
+        li{
+            width: auto;
+            padding: 0 2% 0 0;
+            text-align:left;
+            width:20%;
+            border:0;
+            span{
+                display:inline-block;
+                font-size:12px;
+                line-height:18px;
+                width:10px;
+            }
+            h4{
+                font-size:40px;
+                line-height:56px;
+                color:$report-number-color;
+                padding-top:0;
+                font-weight:bold;
+            }
+        }
+        li.last { border:0px;  }
+        li.big {
+        	margin: 10px inherit;
+        	font-size:1.4em;
+        	h4 {
+        		padding: 10px;
+        	}
+        }
+    } 
+
+    .tickets .name, .tickets .name-user, .tickets-expanded .name, .tickets-expanded .name-user {
+        padding-left:10px;
+        .preview_pic {
+            display:none;
+        }
+    }
+}
+
+.report-title {
+	margin: 15px;
+}
+
+.toolbar {
+	padding: 10px 20px 0;
+	h3 span {
+    float:right;
+		top: 15px;
+		right: 10px;
+		font-size: 80%;
+		font-weight: normal;
+		color: #777;
+	}
+}
+
+.ui-datepicker-next.ui-corner-all.ui-state-hover,.ui-datepicker-prev.ui-corner-all.ui-state-hover {
+	cursor: pointer;
+	background-color:#FFF;
+}
