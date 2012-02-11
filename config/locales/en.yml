@@ -1661,6 +1661,8 @@ en:
   settings: settings        
   updated_on: "%{user_name} updated on %{note_date}"
   integrations:
+    capsule_crm:
+      label: "Capsule CRM"
     capsule:
       label: "Capsule CRM"
       desc: "You can view Contact information from Capsule CRM in Freshdesk. This information can be accessed in the Ticket Details page and Contact Details Page."
