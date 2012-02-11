@@ -36,7 +36,13 @@
 		<span class="loading-edit" id='<%= "loading_#{notedetails}" %>' style="display:none;"></span> 
   </div> 
 	<div class="request_mail details" id='<%= notedetails %>'>
-		<%= note.body_html %>
+		<table>
+			<tr>
+    		<td>
+					<%= note.body_html %>
+				 </td>
+			 </tr>
+		 </table>
 	</div>
 	<% unless note.attachments.empty? %>
 		<span class="seperator"></span>
