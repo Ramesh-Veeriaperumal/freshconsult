@@ -1,0 +1,6 @@
+page.insert_html :bottom, "timesheetlist", :partial => "helpdesk/time_sheets/time_entry", :object => @time_entry
+page << "jQuery('#timeentry_#{@time_entry.id}').effect('highlight', {}, 2000); jQuery('#timeentry_add').removeClass('active_edit');"
+
+clear_view_timers page, @time_entry, @time_cleared
+
+pushToTimesheetIntegratedApps page, @time_entry

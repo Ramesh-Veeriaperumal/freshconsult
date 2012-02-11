@@ -1,55 +1,41 @@
 <% note_view_id = "note_view_"+note.id.to_s() %>
 <% notedetails  = "note_details_#{note.id.to_s()}" %>
-<div id="<%=note_view_id%>" class="description <%= cycle('stripe', '') %>">
+<div id="<%= note_view_id %>" class="description count <%= cycle('stripe', '') %>">  
    	<a name="<%= "note#{note.id}" %>"></a>
-		<div class="conversation-sprite">
+   	<div class="conversation-sprite">
 			<% if note.private_note? %>	 
 				<span class="image note-private" title='<%= t(".private_note") %>'></span>
 			<% elsif note.public_note? %>
 				<span class="image note-public" title='<%= t(".public_note") %>'></span>
 			<% elsif note.inbound_email? %>
-				<span class="image email-receive" title='<%= t(".incoming_email") %>'></span>
+				<span class="image email-receive" title='<%= t(".inbound_email") %>'></span>
 			<% elsif note.outbound_email? %>
 				<span class="image email-reply" title='<%= t(".outbound_email") %>'></span>
 			<% elsif note.tweet? %>
 				<span class="image tweet-note" title='Tweet'></span>
 			<% end %>
-		</div>
-
-		<div class="item-right-actions">		
-			<ul class="nav-drop">
-				<% if permission?(:manage_tickets) %>
-				<li>
-					<a href="#" class="menu-trigger nav-item-icon"><span class="item-options"></span></a>
-          <ul class="menu-box">
-            <li class="menu-item">
-              <%= link_to_remote( t(".edit_note"), { :loading => "$('loading_#{notedetails}').show();", 
-                                                     :loaded  => "$('loading_#{notedetails}').hide();", 
-                                                     :update  => notedetails,
-                                                     :url => edit_helpdesk_ticket_helpdesk_note_path(note.notable, note), :method => :GET }) %>
-            </li>
-            <li class="menu-item">
-              <%= link_to t("delete"), helpdesk_ticket_helpdesk_note_path(note.notable, note), :method => :delete, :class => "last" %>
-            </li>	
-            
-            <% if note.incoming %>
-              <li class="menu-item">
-                <%= link_to t('ticket.split_ticket'), { :action => :split_the_ticket , :note_id => note.id } , :method => :post, :class => "last" , :title => t(".split_this_as_new_ticket")  if @item && !@item.fb_post%>
-              </li>	
-            <% end %>
-            	         
-          </ul>
-        </li>
-        <% end %>
-      </ul>
+		</div> 
+		<div class="actions">
+	  	<% if permission?(:manage_tickets) %>
+      <%= link_to_remote( t("edit"), { :loading => "$('loading_#{notedetails}').show();", 
+                                        :loaded  => "$('loading_#{notedetails}').hide();", 
+                                        :update  => notedetails, 
+																				:complete => "jQuery('##{notedetails}').removeClass('details')",
+                                        :url => edit_helpdesk_ticket_helpdesk_note_path(note.notable, note), 
+                                        :method => :GET },
+                                      { :class => "slim-button" }) %> 
+      <% if !note.incoming %>
+        <%= link_to t('ticket.split_ticket'), { :action => :split_the_ticket , :note_id => note.id } , :method => :post, :class => "slim-button tooltip" , :title => t(".split_this_as_new_ticket", :confirm => "Split this note and create it as a new ticket?")  if @item && !@item.fb_post %>
+      <% end %>
+      <%= link_to( "", helpdesk_ticket_helpdesk_note_path(note.notable, note), :method => :delete, :class => "close-button", :confirm => "Delete this note?" ) %>   
+      <% end %>
     </div>
-
-  <div class="user_details">
+  <div class="user_details">    
 		<%= user_avatar(note.user) if note.user %>
-    <%= t(".posted_on", :user_name => link_to_user(note.user, "user_name"), :note_date => formated_date(note.created_at) ) %>
-		<span class="loading-edit" id='<%= "loading_#{notedetails}" %>' style="display:none;"></span>
-  </div>
-	<div class="request_mail details ticketdetails" id='<%= notedetails %>'>
+    <%= t(".posted_on", :user_name => link_to_user(note.user, :class => "user_name"), :note_date => formated_date(note.created_at) ) %>
+		<span class="loading-edit" id='<%= "loading_#{notedetails}" %>' style="display:none;"></span> 
+  </div> 
+	<div class="request_mail details" id='<%= notedetails %>'>
 		<%= note.body_html %>
 	</div>
 	<% unless note.attachments.empty? %>
@@ -59,4 +45,4 @@
 		    <%= render :partial => '/helpdesk/shared/attachment', :collection => note.attachments, :locals => {:show_delete => true, :url => [@item] } %>
 		</ul>
 	<% end %>
-</div>
+</div> 

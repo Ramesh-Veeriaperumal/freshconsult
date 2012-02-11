@@ -24,6 +24,23 @@
   border-radius: $tl $tr $br $bl;
 }
 
+@mixin pointer-title($bg: #afafaf, $ht: 9px){
+	@include border-left-radius(3px);
+	background-color: $bg;
+	height: $ht;
+	&:before {
+	   content:"";
+	   position:absolute;
+	   top:0px;
+	   right:-($ht*2);
+	   display:block; width:0; /* Firefox 3.0 damage limitation */
+	   border:$ht solid transparent; 
+		 border-left-color: $bg;
+	   height:0px;
+	   font-size:0px;
+	}
+}
+
 @mixin vertical-gradient($start: black, $end: #cccccc) {
   @include filter-gradient($start, $end);
   /* Fallback: */

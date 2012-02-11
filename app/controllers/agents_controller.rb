@@ -1,11 +1,11 @@
 class AgentsController < Admin::AdminController
   
-  skip_before_filter :check_account_state
+  skip_before_filter :check_account_state, :only => :destroy
   
   before_filter :load_object, :only => [:update,:destroy,:restore,:edit]
   before_filter :check_demo_site, :only => [:destroy,:update,:create]
   before_filter :check_user_permission, :only => :destroy
-  before_filter :check_agent_limit, :only =>  [:create,:restore]
+  before_filter :check_agent_limit, :only =>  :restore
   
   def load_object
     @agent = scoper.find(params[:id])
@@ -68,7 +68,7 @@ class AgentsController < Admin::AdminController
   def create    
     @user  = current_account.users.new #by Shan need to check later        
     @agent = current_account.agents.new(params[nscname]) 
-    
+    check_agent_limit
     if @user.signup!(:user => params[:user])       
       @agent.user_id = @user.id      
       if @agent.save
@@ -83,8 +83,10 @@ class AgentsController < Admin::AdminController
         render :action => :new        
     end    
   end
-
+  
   def update
+      @agent.occasional = params[:agent][:occasional]
+      check_agent_limit
       if @agent.update_attributes(params[nscname])            
           @user = current_account.all_users.find(@agent.user_id)          
           if @user.update_attributes(params[:user])        
@@ -141,8 +143,8 @@ end
            @existing_user = current_account.all_users.find(:first, :conditions =>{:users =>{:email => @user.email}})
      end    
   end
-
+  
   def check_agent_limit
-    redirect_to :back if current_account.reached_agent_limit?
+    redirect_to :back if current_account.reached_agent_limit? and !@agent.occasional?
   end
 end

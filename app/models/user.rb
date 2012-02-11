@@ -23,10 +23,24 @@ class User < ActiveRecord::Base
   
   has_many :authorizations, :dependent => :destroy
   has_many :votes, :dependent => :destroy
+  has_many :day_pass_usages, :dependent => :destroy
+  
+  has_many :time_sheets , :class_name =>'Helpdesk::TimeSheet' , :dependent => :destroy
   
   validates_uniqueness_of :user_role, :scope => :account_id, :if => Proc.new { |user| user.user_role  == USER_ROLES_KEYS_BY_TOKEN[:account_admin] }
   validates_uniqueness_of :twitter_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
   
+  has_many :tag_uses,
+    :as => :taggable,
+    :class_name => 'Helpdesk::TagUse',
+    :dependent => :destroy
+
+  has_many :tags, 
+    :class_name => 'Helpdesk::Tag',
+    :through => :tag_uses
+
+  has_one :google_contact, :dependent => :destroy # Using has_one because right now syncing from only one google account is supported.
+
   has_one :avatar,
     :as => :attachable,
     :class_name => 'Helpdesk::Attachment',
@@ -61,10 +75,43 @@ class User < ActiveRecord::Base
   def chk_email_validation?
     (is_not_deleted?) and (twitter_id.blank? || !email.blank?) and (fb_profile_id.blank? || !email.blank?)
   end
-  
+
+  def add_tag(tag)
+    # Tag the users if he is not already tagged
+    self.tags.push tag unless tag.blank? or self.tagged?(tag.id)
+  end
+
+  def update_tag_names(csv_tag_names)
+    unless csv_tag_names.blank?
+      updated_tag_names = csv_tag_names.split(",")
+      new_tags = []
+      updated_tag_names.each { |updated_tag_name|
+        updated_tag_name = updated_tag_name.strip
+        # TODO Below line executes query for every iteration.  Better to use some cached objects.
+        new_tags.push self.account.tags.find_by_name(updated_tag_name) || Helpdesk::Tag.new(:name => updated_tag_name ,:account_id => self.account.id)
+      }
+      self.tags = new_tags
+    end
+  end
+
+  def tagged?(tag_id)
+    unless tag_id.blank?
+      # To avoid DB query.
+      self.tags.each {|tag|
+        return true if tag.id == tag_id
+      }
+      # Check the tag_uses that are not yet committed in the DB, if any
+      self.tag_uses.each {|tag_use|
+        return true if tag_use.tag_id == tag_id
+      }
+    end
+    return false
+  end
+
+  attr_accessor :import
   attr_accessible :name, :email, :password, :password_confirmation , :second_email, :job_title, :phone, :mobile, 
                   :twitter_id, :description, :time_zone, :avatar_attributes,:user_role,:customer_id,:import_id,
-                  :deleted , :fb_profile_id , :language
+                  :deleted , :fb_profile_id , :language, :address
 
   #Sphinx configuration starts
   define_index do
@@ -102,14 +149,19 @@ class User < ActiveRecord::Base
     self.import_id = params[:user][:import_id]
     self.fb_profile_id = params[:user][:fb_profile_id]
     self.language = params[:user][:language]
-    
-    
+    # update tags
+    csv_tag_names = params[:tags][:name] unless params[:tags].blank?
+    update_tag_names(csv_tag_names)
     self.avatar_attributes=params[:user][:avatar_attributes] unless params[:user][:avatar_attributes].nil?
-   
+    signup(portal)
+  end
+
+  def signup(portal=nil)
     return false unless save_without_session_maintenance
     deliver_activation_instructions!(portal) if (!deleted and !email.blank?)
+    true
   end
-  
+
   def avatar_attributes=(av_attributes)
     return build_avatar(av_attributes) if avatar.nil?
     avatar.update_attributes(av_attributes)
@@ -131,7 +183,11 @@ class User < ActiveRecord::Base
     #self.openid_identifier = params[:user][:openid_identifier]
     save
   end
-  
+
+  def exist_in_db?
+    !(id.blank?)
+  end
+
   def has_no_credentials?
     self.crypted_password.blank? && active? && !account.sso_enabled? && !deleted && self.authorizations.empty? && self.twitter_id.blank?
   end
@@ -156,6 +212,8 @@ class User < ActiveRecord::Base
   :order => "created_at desc"
   
   has_one :agent , :class_name => 'Agent' , :foreign_key => "user_id", :dependent => :destroy
+  has_one :full_time_agent, :class_name => 'Agent', :foreign_key => "user_id", :conditions => { 
+      :occasional => false  } #no direct use, need this in account model for pass through.
   
   has_many :agent_groups , :class_name =>'AgentGroup', :foreign_key => "user_id" , :dependent => :destroy
   
@@ -163,7 +221,7 @@ class User < ActiveRecord::Base
   
    
   #accepts_nested_attributes_for :agent
-  
+  accepts_nested_attributes_for :customer, :google_contact  # Added to save the customer while importing user from google contacts.
   
 
   #Savage_beast changes start here
@@ -182,7 +240,7 @@ class User < ActiveRecord::Base
   end
   
   def agent?
-    user_role == USER_ROLES_KEYS_BY_TOKEN[:poweruser]
+    !customer?
   end
   
   def account_admin?
@@ -282,12 +340,12 @@ class User < ActiveRecord::Base
     self.time_zone = account.time_zone if time_zone.nil? #by Shan temp
   end
   
-   def set_language
+  def set_language
     self.language = account.language if language.nil? 
   end
   
   def to_s
-    name.empty? ? email : name
+    name.blank? ? email : name
   end
   
   def to_liquid
@@ -318,6 +376,14 @@ class User < ActiveRecord::Base
   def is_not_deleted?
     logger.debug "not ::deleted ?:: #{!self.deleted}"
     !self.deleted
+  end
+  
+  def occasional_agent?
+    agent && agent.occasional
+  end
+  
+  def day_pass_granted_on(start_time = DayPassUsage.start_time) #Revisit..
+    day_pass_usages.on_the_day(start_time).first
   end
   
   def self.filter(letter, page)
@@ -361,7 +427,7 @@ class User < ActiveRecord::Base
   end
   
   def set_contact_name  
-    if self.name.empty?
+    if self.name.blank?
       self.name = (self.email.split("@")[0]).capitalize
     end
    
@@ -388,8 +454,14 @@ class User < ActiveRecord::Base
    end 
  end
  
- 
- 
- 
-  
+  def self.find_by_email_or_name(value)
+    conditions = {}
+    if value =~ /(\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
+      conditions[:email] = value
+    else
+      conditions[:name] = value
+    end
+    user = self.find(:first, :conditions => conditions)
+    user
+  end
 end

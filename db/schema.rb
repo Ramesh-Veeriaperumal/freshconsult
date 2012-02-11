@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120113105518) do
+ActiveRecord::Schema.define(:version => 20120208111008) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -25,7 +25,7 @@ ActiveRecord::Schema.define(:version => 20120113105518) do
     t.string   "shared_secret"
     t.text     "sso_options"
     t.string   "google_domain"
-    t.boolean  "ssl_enabled",                    :default => true
+    t.boolean  "ssl_enabled",                    :default => false
   end
 
   add_index "accounts", ["full_domain"], :name => "index_accounts_on_full_domain", :unique => true
@@ -79,6 +79,8 @@ ActiveRecord::Schema.define(:version => 20120113105518) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "ticket_permission"
+    t.boolean  "occasional",                     :default => false
+    t.string   "google_viewer_id"
   end
 
   create_table "applications", :force => true do |t|
@@ -108,6 +110,27 @@ ActiveRecord::Schema.define(:version => 20120113105518) do
 
   add_index "business_calendars", ["account_id"], :name => "index_business_calendars_on_account_id"
 
+  create_table "conversion_metrics", :force => true do |t|
+    t.integer  "account_id",        :limit => 8
+    t.string   "referrer"
+    t.string   "landing_url"
+    t.string   "first_referrer"
+    t.string   "first_landing_url"
+    t.string   "country"
+    t.string   "language"
+    t.string   "search_engine"
+    t.string   "keywords"
+    t.string   "device"
+    t.string   "browser"
+    t.string   "os"
+    t.float    "offset"
+    t.boolean  "is_dst"
+    t.integer  "visits"
+    t.text     "session_json"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "customers", :force => true do |t|
     t.string   "name"
     t.string   "cust_identifier"
@@ -127,6 +150,36 @@ ActiveRecord::Schema.define(:version => 20120113105518) do
   create_table "data_exports", :force => true do |t|
     t.integer  "account_id"
     t.boolean  "status"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "day_pass_configs", :force => true do |t|
+    t.integer  "account_id",        :limit => 8
+    t.integer  "available_passes"
+    t.boolean  "auto_recharge"
+    t.integer  "recharge_quantity"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "day_pass_purchases", :force => true do |t|
+    t.integer  "account_id",         :limit => 8
+    t.integer  "paid_with"
+    t.string   "payment_type"
+    t.integer  "payment_id",         :limit => 8
+    t.integer  "status"
+    t.integer  "quantity_purchased"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "status_message"
+  end
+
+  create_table "day_pass_usages", :force => true do |t|
+    t.integer  "account_id", :limit => 8
+    t.integer  "user_id",    :limit => 8
+    t.text     "usage_info"
+    t.datetime "granted_on"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -152,6 +205,13 @@ ActiveRecord::Schema.define(:version => 20120113105518) do
     t.string   "admin_name"
     t.string   "admin_email"
     t.text     "account_info"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "email_commands_settings", :force => true do |t|
+    t.string   "email_cmds_delimeter"
+    t.integer  "account_id",           :limit => 8
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -336,6 +396,30 @@ ActiveRecord::Schema.define(:version => 20120113105518) do
   end
 
   add_index "forums", ["forum_category_id", "name"], :name => "index_forums_on_forum_category_id", :unique => true
+
+  create_table "google_accounts", :force => true do |t|
+    t.string   "name"
+    t.string   "email"
+    t.string   "token"
+    t.string   "secret"
+    t.integer  "account_id",              :limit => 8
+    t.string   "sync_group_id",                        :default => "0",                   :null => false
+    t.string   "sync_group_name",                      :default => "All",                 :null => false
+    t.integer  "sync_tag_id",             :limit => 8
+    t.integer  "sync_type",                            :default => 0,                     :null => false
+    t.datetime "last_sync_time",                       :default => '1970-01-01 00:00:00', :null => false
+    t.string   "last_sync_status"
+    t.boolean  "overwrite_existing_user",              :default => true,                  :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "google_contacts", :force => true do |t|
+    t.integer "user_id",           :limit => 8
+    t.string  "google_id"
+    t.text    "google_xml"
+    t.integer "google_account_id", :limit => 8
+  end
 
   create_table "groups", :force => true do |t|
     t.string   "name"
@@ -594,12 +678,47 @@ ActiveRecord::Schema.define(:version => 20120113105518) do
   add_index "helpdesk_tickets", ["account_id", "responder_id"], :name => "index_helpdesk_tickets_on_account_id_and_responder_id"
   add_index "helpdesk_tickets", ["requester_id"], :name => "index_helpdesk_tickets_on_requester_id"
 
-  create_table "installed_applications", :force => true do |t|
-    t.integer  "application_id"
-    t.integer  "account_id"
-    t.string   "configs"
+  create_table "helpdesk_time_sheets", :force => true do |t|
+    t.integer  "ticket_id",     :limit => 8
+    t.datetime "start_time"
+    t.integer  "time_spent",    :limit => 8
+    t.boolean  "timer_running",              :default => false
+    t.boolean  "billable",                   :default => true
+    t.integer  "user_id",       :limit => 8
+    t.text     "note"
+    t.integer  "account_id",    :limit => 8
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.datetime "executed_at"
+  end
+
+  add_index "helpdesk_time_sheets", ["account_id", "ticket_id"], :name => "index_time_sheets_on_account_id_and_ticket_id"
+  add_index "helpdesk_time_sheets", ["ticket_id"], :name => "index_time_sheets_on_ticket_id"
+  add_index "helpdesk_time_sheets", ["user_id"], :name => "index_time_sheets_on_user_id"
+
+  create_table "installed_applications", :force => true do |t|
+    t.integer  "application_id"
+    t.integer  "account_id",     :limit => 8
+    t.text     "configs"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "integrated_resources", :force => true do |t|
+    t.integer  "installed_application_id", :limit => 8
+    t.string   "remote_integratable_id"
+    t.integer  "local_integratable_id",    :limit => 8
+    t.string   "local_integratable_type"
+    t.integer  "account_id",               :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "key_value_pairs", :force => true do |t|
+    t.string  "key"
+    t.string  "value"
+    t.string  "obj_type"
+    t.integer "account_id", :limit => 8
   end
 
   create_table "moderatorships", :force => true do |t|
@@ -705,6 +824,7 @@ ActiveRecord::Schema.define(:version => 20120113105518) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "account_id"
+    t.string   "tweet_type",                  :default => "mention"
   end
 
   create_table "social_twitter_handles", :force => true do |t|
@@ -721,6 +841,7 @@ ActiveRecord::Schema.define(:version => 20120113105518) do
     t.text     "search_keys"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "dm_thread_time",                         :default => 0
   end
 
   add_index "social_twitter_handles", ["account_id", "twitter_user_id"], :name => "social_twitter_handle_product_id", :unique => true
@@ -754,6 +875,7 @@ ActiveRecord::Schema.define(:version => 20120113105518) do
     t.datetime "updated_at"
     t.integer  "import_id",   :limit => 8
     t.integer  "position"
+    t.boolean  "is_default",               :default => false
   end
 
   add_index "solution_categories", ["account_id", "name"], :name => "index_solution_categories_on_account_id_and_name", :unique => true
@@ -767,6 +889,7 @@ ActiveRecord::Schema.define(:version => 20120113105518) do
     t.integer  "import_id",   :limit => 8
     t.integer  "visibility",  :limit => 8
     t.integer  "position"
+    t.boolean  "is_default",               :default => false
   end
 
   add_index "solution_folders", ["category_id", "name"], :name => "index_solution_folders_on_category_id_and_name", :unique => true
@@ -814,12 +937,15 @@ ActiveRecord::Schema.define(:version => 20120113105518) do
 
   create_table "subscription_plans", :force => true do |t|
     t.string   "name"
-    t.decimal  "amount",         :precision => 10, :scale => 2
+    t.decimal  "amount",          :precision => 10, :scale => 2
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "renewal_period",                                :default => 1
-    t.decimal  "setup_amount",   :precision => 10, :scale => 2
-    t.integer  "trial_period",                                  :default => 1
+    t.integer  "renewal_period",                                 :default => 1
+    t.decimal  "setup_amount",    :precision => 10, :scale => 2
+    t.integer  "trial_period",                                   :default => 1
+    t.integer  "free_agents"
+    t.decimal  "day_pass_amount", :precision => 10, :scale => 2
+    t.boolean  "classic",                                        :default => false
   end
 
   create_table "subscriptions", :force => true do |t|
@@ -837,6 +963,8 @@ ActiveRecord::Schema.define(:version => 20120113105518) do
     t.integer  "subscription_discount_id",  :limit => 8
     t.integer  "subscription_affiliate_id", :limit => 8
     t.integer  "agent_limit"
+    t.integer  "free_agents"
+    t.decimal  "day_pass_amount",                        :precision => 10, :scale => 2
   end
 
   add_index "subscriptions", ["account_id"], :name => "index_subscriptions_on_account_id"
@@ -958,6 +1086,7 @@ ActiveRecord::Schema.define(:version => 20120113105518) do
     t.string   "language",                         :default => "en"
     t.boolean  "blocked",                          :default => false
     t.datetime "blocked_at"
+    t.string   "address"
   end
 
   add_index "users", ["account_id", "email"], :name => "index_users_on_account_id_and_email", :unique => true

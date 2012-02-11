@@ -19,7 +19,7 @@
 						<%= f.select(:sla_policy_id, current_account.sla_policies.map {|u| [u.name, u.id]}) %>
 					</div>
 					<%= f.submit t('change') %>
-					<a href="javascript:void(0)" onclick="jQuery('#sla_details, #sla_form').toggle(); jQuery('#sla_button').show()">Cancel</a>
+					<a href="javascript:void(0)" onclick="jQuery('#sla_details, #sla_form').toggle(); jQuery('#sla_button').show()"><%=t('cancel')%></a>
 				<% end %>
 			</div>
 		</div>

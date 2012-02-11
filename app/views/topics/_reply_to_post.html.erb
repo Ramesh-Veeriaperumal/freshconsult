@@ -3,9 +3,9 @@
 	<div class="request_panel">
 	  <%= content_tag 'p', h(flash[:bad_reply]), :class => 'notice' if flash[:bad_reply] %>
 	  <% form_for :post, :url => posts_path(:category_id => @forum_category,:forum_id => @forum, :topic_id => @topic, :page => @topic.last_page), :html => {:multipart => true} do |f| -%>
+		<h4 class="title"><%=t('topic.reply')%></h4>
 	  <ul class="note_form ui-form">
 	  	<li>
-	  		<h3 class="title"><%=t('topic.reply')%></h3>
         <%= f.text_area :body_html, :class => "mceEditor", :id => 'topic_body' %>
 	    </li>
 		<li>

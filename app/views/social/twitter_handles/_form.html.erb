@@ -44,7 +44,17 @@
       </label>
       <div class="info-data tabbed">
         Freshdesk will automatically convert any Direct messages to this Twitter account into tickets.
-      </div>	 
+      </div>
+	  <!-- another one... -->
+	  <span class="seperator"></span>
+	  <label class="caption">DM Thread Time</label>
+      <div class="fields">
+      	<%= select (:social_twitter_handle ,:dm_thread_time, Social::TwitterHandle::DM_THREADTIME_OPTIONS ,{:selected => twitter_handle.dm_thread_time}) %>
+      </div>
+      <div class="info-data tabbed">
+        Maximum time to consider direct messages from same user as threaded.
+      </div>	 	
+	  <!-- --> 
       <span class="seperator"></span>
       <label class="caption">Product</label>
       <div class="fields">

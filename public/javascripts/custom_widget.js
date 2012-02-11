@@ -2,134 +2,256 @@ var Freshdesk = {}
 
 Freshdesk.Widget=Class.create();
 Freshdesk.Widget.prototype={
-	initialize:function(credentials){
-		this.options = credentials || {};
-		this.options.username = credentials.username || Cookie.get(this.options.anchor+"_username");
-		this.options.password = credentials.password || Cookie.get(this.options.anchor+"_password");
-		this.content_anchor = $$("#"+this.options.anchor+" #content")[0];
+	initialize:function(widgetOptions){
+		this.options = widgetOptions || {};
+		if(!this.options.username) this.options.username = Cookie.retrieve(this.options.anchor+"_username");
+		if(!this.options.password) this.options.password = Cookie.retrieve(this.options.anchor+"_password");
+		this.content_anchor = $$("#"+this.options.anchor+" .content")[0];
+		this.error_anchor = $$("#"+this.options.anchor+" .error")[0];
 		this.title_anchor = $$("#"+this.options.anchor+" #title")[0];
+		this.app_name = this.options.app_name || "Integrated Application";
 		Ajax.Responders.register({
 			onException:function(request, ex){
 			   //console.log(widget.on_exception(request));
 			}
 		});
 		if(this.options.title){
-			this.title_anchor.innerHTML=this.options.title;
+			this.title_anchor.innerHTML = this.options.title;
 		}
 		this.display();
 	},
 
+	getUsername: function() {
+		return this.options.username;
+	},
+
 	login:function(credentials){
-		this.options.username=credentials.username.value;
-		this.options.password=credentials.password.value;
-		if(this.options.username.blank()&&this.options.password.blank()){
-			//alert("Please provide username and password.");
-		}else{
-			Cookie.set(this.options.anchor+"_username",this.options.username);
-			Cookie.set(this.options.anchor+"_password",this.options.password);
+		this.options.username = credentials.username.value;
+		this.options.password = credentials.password.value;
+		if(this.options.username.blank() && this.options.password.blank()) {
+			this.alert_failure("Please provide Username and password.");
+		} else {
+			if (credentials.remember_me.value == "true") {
+				Cookie.update(this.options.anchor + "_username", this.options.username);
+				Cookie.update(this.options.anchor + "_password", this.options.password);
+			}
 			this.display();
 		}
 	},
 
 	logout:function(){
-		Cookie.erase(this.options.anchor+"_username"); this.options.username=null;
-		Cookie.erase(this.options.anchor+"_password"); this.options.password=null;
+		Cookie.remove(this.options.anchor+"_username"); this.options.username=null;
+		Cookie.remove(this.options.anchor+"_password"); this.options.password=null;
 		this.display();
 	},
 
+	display_login:function(){
+		if (this.options.login_content != null) {
+			this.content_anchor.innerHTML = this.options.login_content();
+		}
+	},
+
 	display:function(){
-		var cw=this;
+		var cw = this;
 		if(this.options.login_content != null && !(this.options.username && this.options.password)){
 			this.content_anchor.innerHTML = this.options.login_content();
 		} else {
 			this.content_anchor.innerHTML = this.options.application_content();
 			this.options.application_resources.each(
-				function(widget){
-					cw.request(widget);
+				function(reqData){
+					if(reqData) cw.request(reqData);
 				});
 		}
 	},
 
-	request:function(widget){
-		if(widget.resource == null){
-			if(widget.on_success != null){
-				widget.on_success();
+	request:function(reqData){
+		reqData.domain = this.options.domain;
+		reqData.ssl_enabled = this.options.ssl_enabled;
+		reqData.cache_gets = this.options.cache_gets;
+		reqData.accept_type = reqData.accept_type || reqData.content_type;
+		reqData.method = reqData.method || "get";
+		new Ajax.Request("/http_request_proxy/fetch",{
+            asynchronous: true,
+			parameters:reqData,
+			requestHeaders:{
+				Authorization:"Basic " + Base64.encode(this.options.username + ":" + this.options.password)
+			},
+			onSuccess:function(evt) {
+				if(reqData != null && reqData.on_success != null){
+					reqData.on_success(evt);
+				}
+			},
+			onFailure:this.resource_failure.bind(this)
+		});
+	},
+
+	resource_failure:function(evt){
+		if (evt.status == 401) {
+			this.options.username = null;
+			this.options.password = null;
+			Cookie.remove(this.options.anchor + "_username");
+			Cookie.remove(this.options.anchor + "_password");
+			if (this.on_failure != null) {
+				reqData.on_failure(evt);
+			} else { this.alert_failure("Given user credentials for "+this.app_name+" are incorrect. Please correct them.");}
+		} else if (evt.status == 403) {
+			this.alert_failure(this.app_name+" forbidden the request.  Check if your "+this.app_name+" account is still valid.");
+		} else if (evt.status == 502) {
+			this.alert_failure(this.app_name+" is not responding.  Please verify the given domain.");
+		} else if (evt.status == 500) {
+			// Right now 500 is used for freshdesk internal server error. The below one is special handling for Harvest.  If more apps follows this convention then move it to widget code.
+			if (this.app_name == "Harvest") {
+				var error = XmlUtil.extractEntities(evt.responseXML,"error");
+				if (error.length > 0) {
+					err_msg = XmlUtil.getNodeValueStr(error[0], "message");
+					alert(this.app_name+" reports the below error: \n\n" + err_msg + "\n\nTry again after correcting the error or fix the error manually.  If you can not do so, contact support.");
+					return;
+				}
 			}
+			this.alert_failure("Unknown server error. Please contact support@freshdesk.com.");
+		} else if (this.on_failure != null) {
+			reqData.on_failure(evt);
 		} else {
-			var mt = widget.content_type || "application/json";
-			new Ajax.Request("/http_request_proxy/fetch",{
-				method:"get",
-				parameters:{
-					domain:this.options.domain,
-					ssl_enabled:this.options.ssl_enabled,
-					resource:widget.resource,
-					content_type:mt,
-					cache_gets:this.options.cache_gets
+			errorStr = evt.responseText;
+			this.alert_failure(this.app_name+" reports the below error: \n\n" + errorStr + "\n\nTry again after correcting the error or fix the error manually.  If you can not do so, contact support.");
+		}
+	},
+
+	alert_failure:function(errorMsg) {
+		if (this.error_anchor == null || this.error_anchor !== "") {
+			alert(errorMsg);
+		} else {
+			this.error_anchor.innerHTML = errorMsg;
+		}
+	},
+
+	create_integrated_resource:function(resultCallback) {
+		if (this.remote_integratable_id && this.local_integratable_id) {
+			reqData = {
+				"application_id": this.options.application_id,
+				"integrated_resource[remote_integratable_id]": this.remote_integratable_id,
+				"integrated_resource[local_integratable_id]": this.local_integratable_id,
+				"integrated_resource[local_integratable_type]": this.options.integratable_type
+			};
+			new Ajax.Request("/integrations/integrated_resources/create", {
+				asynchronous: true,
+				method: "post",
+				parameters: reqData,
+				onSuccess: function(evt){
+					this.remote_integratable_id = null;
+					this.local_integratable_id = null;
+					if (resultCallback) 
+						resultCallback(evt);
 				},
-				requestHeaders:{
-					Authorization:"Basic " + Base64.encode(this.options.username + ":" + this.options.password)
-				},
-				onSuccess:function(evt) {
-					if(widget != null && widget.on_success != null){
-						widget.on_success(evt.responseJSON);
-					}
-				},
-				onFailure:function(evt){
-					if(widget != null && widget.on_failure != null){
-						widget.on_failure(evt);
-					}
-					this.resource_failure(evt, this);
+				onFailure: function(evt){
+					if (resultCallback) 
+						resultCallback(evt);
 				}
 			});
 		}
 	},
 
-	submit_data:function(data){
-		//alert("data "+data);
-		var params=Form.serialize(data);
-		params+="&domain="+this.options.domain+"&ssl_enabled="+this.options.ssl_enabled;
-		if(this.options.ticket_id){
-			params+="&ticket_id="+this.options.ticket_id;
-		}
-		if(params.indexOf("content_type=")===0){
-			var mt=this.options.content_type||"application/xml";
-			params+="&content_type="+mt;
-		}
-
-		new Ajax.Request("/http_request_proxy/fetch",{
-			asynchronous:true,
-			evalScripts:true,
-			parameters:params,
-			requestHeaders:{
-				Authorization:"Basic "+Base64.encode(this.options.username+":"+this.options.password)
+	delete_integrated_resource:function(last_fetched_id, resultCallback) {
+		reqData = {
+			"integrated_resource[id]":last_fetched_id
+		};
+		new Ajax.Request("/integrations/integrated_resources/delete",{
+            asynchronous: true,
+			method: "delete",
+			parameters:reqData,
+			onSuccess:function(evt) { if(resultCallback) resultCallback(evt);
 			},
-			onSuccess:function(evt){
-//				enable_submit(data);
-			},
-			onFailure:function(evt){
-				this.resource_failure(evt,this);
-//				enable_submit(data);
+			onFailure:function(evt){ if(resultCallback) resultCallback(evt);
 			}
 		});
-//		disable_submit(data);
-	},
-
-	resource_failure:function(evt, obj){
-		if(evt.status==401){
-			obj.options.username=null;
-			obj.options.password=null;
-			Cookie.erase(obj.options.anchor+"_username");
-			Cookie.erase(obj.options.anchor+"_password");
-			if(obj.content_anchor.innerHTML != obj.options.login_content()){
-				//alert("Username and password are not correct. Please re-enter.");
-			}
-			obj.display();
-		}else{
-			//alert(c.responseJSON.error);
-		}
 	}
 };
 
+var UIUtil = {
+	constructDropDown:function(data, dropDownBoxId, entityName, entityId, dispNames, filterBy, searchTerm, keepOldEntries) {
+		foundEntity = "";
+		dropDownBox = $(dropDownBoxId);
+		if (!keepOldEntries) dropDownBox.innerHTML = "";
+		var entitiesArray = XmlUtil.extractEntities(data.responseXML, entityName);
+		for(i=0;i<entitiesArray.length;i++) {
+			if (filterBy != null && filterBy != '') {
+				matched = true;
+				for (var filterKey in filterBy) {
+					filterValue = filterBy[filterKey];
+					actualVal = XmlUtil.getNodeValueStr(entitiesArray[i], filterKey);
+					if(filterValue != actualVal) {
+						matched = false;
+						break;
+					}
+				}
+				if (!matched) continue;
+			}
+
+			var newEntityOption = new Element("option");
+			entityIdValue = XmlUtil.getNodeValueStr(entitiesArray[i], entityId);
+			entityEmailValue = XmlUtil.getNodeValueStr(entitiesArray[i], "email");
+			if (searchTerm != null && searchTerm != '') {
+				if (entityEmailValue == searchTerm) {
+					foundEntity = entitiesArray[i];
+					newEntityOption.selected = true;
+				} else if (entityIdValue == searchTerm) {
+					foundEntity = entitiesArray[i];
+					newEntityOption.selected = true;
+				}
+			}
+			dispName = ""
+			for(d=0;d<dispNames.length;d++) {
+				if (dispNames[d] == ' ' || dispNames[d] == '(' || dispNames[d] == ')' || dispNames[d] == '-') {
+					dispName += dispNames[d];
+				} else {
+					dispName += XmlUtil.getNodeValueStr(entitiesArray[i], dispNames[d]);
+				}
+			}
+			if (dispName.length < 2) dispName = entityEmailValue;
+
+			newEntityOption.value = entityIdValue;
+			newEntityOption.innerHTML = dispName;
+			dropDownBox.appendChild(newEntityOption);
+			if (foundEntity == "") {
+				foundEntity = entitiesArray[i];
+				newEntityOption.selected = true;
+			}
+		}
+		return foundEntity;
+	},
+
+	addDropdownEntry: function(dropDownBoxId, value, name, addItFirst) {
+		projectDropDownBox = $(dropDownBoxId);
+		var newEntityOption = new Element("option");
+		newEntityOption.value = value;
+		newEntityOption.innerHTML = name;
+		if(addItFirst)
+			projectDropDownBox.insertBefore(newEntityOption, projectDropDownBox.childNodes[0]);
+		else
+			projectDropDownBox.appendChild(newEntityOption);
+	},
+
+	chooseDropdownEntry: function(dropDownBoxId, searchValue) {
+		projectDropDownBoxOptions = $(dropDownBoxId).options;
+		var len = projectDropDownBoxOptions.length;
+		for (var i = 0; i < len; i++) {
+			if(projectDropDownBoxOptions[i].value == searchValue) {
+				projectDropDownBoxOptions[i].selected = true;
+				break;
+			} 
+		}
+	},
+
+	hideLoading: function(integrationName,fieldName) {
+		jQuery("#" + integrationName + "-timeentry-" + fieldName).removeClass('hide');
+		jQuery("#" + integrationName + "-" + fieldName + "-spinner").addClass('hide');
+	},
+
+	showLoading: function(integrationName,fieldName) {
+		jQuery("#" + integrationName + "-timeentry-" + fieldName).addClass('hide');
+		jQuery("#" + integrationName + "-" + fieldName + "-spinner").removeClass('hide');
+	}
+}
 
 var CustomWidget =  {
 	include_js: function(jslocation) {
@@ -141,27 +263,39 @@ var CustomWidget =  {
 };
 CustomWidget.include_js("/javascripts/base64.js");
 
+var XmlUtil = {
+	extractEntities:function(resStr, lookupTag){
+		return resStr.getElementsByTagName(lookupTag)||new Array();
+	},
 
-var ObjectFactory=Class.create({});
-ObjectFactory.instHash=new Hash();
-ObjectFactory.create=function(object, params){
-	instance=new object(params);
-	ObjectFactory.instHash.set(params.id, instance);
-	return instance;
-};
+	getNodeValue:function(dataNode, lookupTag){
+		if(dataNode == '') return;
+		var element = dataNode.getElementsByTagName(lookupTag);
+		if(element==null || element.length==0){
+			return null;
+		}
+		childNode = element[0].childNodes[0]
+		if(childNode == null){
+			return"";
+		}
+		return childNode.nodeValue;
+	},
 
-ObjectFactory.get=function(objectId){
-	return ObjectFactory.instHash.get(objectId);
-};
+	getNodeValueStr:function(dataNode, nodeName){
+		return this.getNodeValue(dataNode, nodeName) || "";
+	},
 
-ObjectFactory.remove=function(objectId){
-	return ObjectFactory.instHash.unset(objectId);
-};
-
-
+	getNodeAttrValue:function(dataNode, lookupTag, attrName){
+		var element = dataNode.getElementsByTagName(lookupTag);
+		if(element==null || element.length==0){
+			return null;
+		}
+		return element[0].getAttribute(attrName) || null;
+	}
+}
 
 var Cookie=Class.create({});
-Cookie.set = function(cookieId, value, expireDays){
+Cookie.update = function(cookieId, value, expireDays){
 	var expireString="";
 	if(expireDate!==undefined){
 		var expireDate=new Date();
@@ -171,21 +305,13 @@ Cookie.set = function(cookieId, value, expireDays){
 	return(document.cookie=escape(cookieId)+"="+escape(value||"") + expireString + "; path=/");
 };
 
-Cookie.get = function(cookieId){
+Cookie.retrieve = function(cookieId){
 	var cookie=document.cookie.match(new RegExp("(^|;)\\s*"+escape(cookieId)+"=([^;\\s]*)"));
 	return(cookie?unescape(cookie[2]):null);
 };
 
-Cookie.erase = function(cookieId){
-	var cookie = Cookie.get(cookieId)||true;
-	Cookie.set(cookieId, "", -1);
+Cookie.remove = function(cookieId){
+	var cookie = Cookie.retrieve(cookieId)||true;
+	Cookie.update(cookieId, "", -1);
 	return cookie;
-};
-
-Cookie.accept = function(){
-	if(typeof navigator.cookieEnabled=="boolean"){
-		return navigator.cookieEnabled;
-	}
-	Cookie.set("_test","1");
-	return(Cookie.erase("_test")==="1");
 };

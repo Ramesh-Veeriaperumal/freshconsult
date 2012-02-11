@@ -1,8 +1,3 @@
-<% if current_account.reached_agent_limit? %>	
-	<p>
-	    You have reached the maximum number of agents you can have with your subscription. You can either delete some of your agents or <a href="/account/plan">upgrade your account</a> to be able to create a new agent.
-	</p>	
-<% else %>
 	<% content_for :sidebar do -%><%-end %>
 	<h3 class="title"><%=t('agent.new')%></h3>
 	<% form_for @agent, :html => { :multipart => true } do |f| %>
@@ -13,4 +8,3 @@
 			<%= link_to "Cancel", {:action => 'index'}, :class => "uiButton" %>
 		</div>  
 	<%end%>
-<% end %>

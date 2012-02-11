@@ -1,5 +1,14 @@
-<%= content_tag (:h3, t(@installing_application.name) + " " + t("settings"), :class => "title") %>
-<% form_for @installing_application, :url => { :controller=> "installed_applications", :action => "install" }, :html => {:multipart => true, :id => "InstallApplication" } do |f| %>
+<%= content_tag (:h3, t('integrations.'+@installing_application.name+'.label') + " " + t("settings"), :class => "title") %>
+<% install_action = @installing_application.options.delete(:install_action) # If the form needs different install action, then this can be used.
+  url = { :controller=> "installed_applications", :action => "install" }  # default url for installing an app.
+  html = {:multipart => true, :id => "InstallApplication" } # default html for installing an app.
+  unless install_action.blank?
+    puts "install_action is not blank"
+	url = install_action[:url]
+	http_method = install_action[:method]
+	html[:method] = http_method unless http_method.blank?
+  end
+  form_for @installing_application, :url => url, :html => html do |f| %>
   <ul class="ui-form">  
 		<li class="inline-field">
 			<label class="caption">

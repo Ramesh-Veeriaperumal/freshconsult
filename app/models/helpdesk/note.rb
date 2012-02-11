@@ -4,6 +4,8 @@ class Helpdesk::Note < ActiveRecord::Base
   belongs_to :notable, :polymorphic => true  
   belongs_to :account
   belongs_to :user
+  
+  Max_Attachment_Size = 20.megabyte
 
   has_many :attachments,
     :as => :attachable,
@@ -92,7 +94,7 @@ class Helpdesk::Note < ActiveRecord::Base
   
   def outbound_email?
     source == SOURCE_KEYS_BY_TOKEN["email"] && !incoming
-  end
+  end 
   
   def to_liquid
     { 

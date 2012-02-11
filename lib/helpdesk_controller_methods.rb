@@ -23,6 +23,7 @@ module HelpdeskControllerMethods
     respond_to do |format|
       format.html { redirect_to params[:redirect_to].present? ? params[:redirect_to] : item_url }
       format.xml  { head 200 }
+      format.widget {render :action=>:create_ticket_status, :layout => "widgets/contacts"}
       format.js
     end
   end
@@ -31,6 +32,8 @@ module HelpdeskControllerMethods
     respond_to do |format|
       format.html { render :action => :new }
       format.xml  { render :xml => @item.errors}
+      format.widget { flash[:error] = "Error in creating the ticket. Try again later."
+      render :action=>:create_ticket_status, :layout => "widgets/contacts"}
     end
   end
 

@@ -19,8 +19,10 @@
 				<div class="info-highlight"> 
 					<h3 class="title">
   					<%= t('current_plan_details', :plan_name  => @subscription.subscription_plan.name, :agent_limit => @subscription.agent_limit) %>
-					</h3>				
+					</h3>	
+					<% if @subscription.amount > 0 %>			
 					<%= content_tag(:strong, get_payment_string( @subscription.renewal_period,@subscription.amount.to_i )) %>
+					<%end%>
 				</div>
 			<% end %>
 			<%= content_tag(:h3, t("credit_card_info"), :class => "title") %>
@@ -30,7 +32,6 @@
 				<div class="button-container">
 					<% if @subscription.state == 'trial' %>
 						<%= link_to( "&larr; #{t('select_another_plan')}", account_url, :class => "uiButton floatl" ) %>
-						<%= submit_tag t('.save_billing_information'), :class => "uiButton" %>	
 						<%= submit_tag t('.begin_subscription'), :class => "uiButton special", :id => "begin_subscription" %>	
 					<% else %>
 						<%= link_to( "&larr; #{t("cancel_and_back")}", account_url, :class => "uiButton floatl" ) %>
@@ -45,6 +46,9 @@
 		jQuery("#begin_subscription")
 			.click(function(){
 				$("chargenow").value = true;
+				<%if @subscription.amount.to_i == 0 %>
+				  return true;
+				<%end%>
 				return confirm("<%= t('begin_subscription_confirm', :cost => @subscription.amount.to_i ) %>") ;
 			});
 	<% end %>

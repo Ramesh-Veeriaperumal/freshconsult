@@ -3977,7 +3977,12 @@ Object.extend(Event, (function() {
       if (document.createEvent) {
         element.dispatchEvent(event);
       } else {
-        element.fireEvent(event.eventType, event);
+  	     try{
+	        element.fireEvent(event.eventType, event);
+		  } catch(error) {
+			  // Error: No such interface supported (IE)
+			  element.fireEvent(event.eventType);
+	     }
       }
 
       return Event.extend(event);

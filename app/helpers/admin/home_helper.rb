@@ -24,6 +24,7 @@ module Admin::HomeHelper
           ['/account/edit',               'rebranding'              ],
           ['/admin/email_configs',        'email-settings'          ],
           ['/admin/email_notifications',  'email-notifications'     ],
+          ['/admin/email_commands_settings', 'email_commands_setting'],          
           ['/ticket_fields',              'ticket-fields'           ],
           ['/helpdesk/sla_policies',      'sla'                     ],
           ['/admin/business_calendars',   'business-hours', feature?(:business_hours) ],
@@ -31,7 +32,7 @@ module Admin::HomeHelper
           ['/admin/supervisor_rules',     'supervisor'              ],
           ['/admin/automations',          'scenario',       feature?(:scenario_automations) ],
           ['/admin/canned_responses',     'canned-response'         ],
-          ['/social/twitters',            'twitter-setting'         ],
+          ['/social/twitters',            'twitter-setting',feature?(:twitter) ],
 #          ['/admin/surveys',              'survey',           current_account.features?(:surveys, :survey_links) ],
           ['/social/facebook',            'facebook-setting', current_account.features?(:facebook) ]
       ]],
@@ -45,22 +46,11 @@ module Admin::HomeHelper
           ['/admin/widget_config',        'feedback'                ],
           ['/agents',                     'agent'                   ],
           ['/groups',                     'group'                   ],
+          ['/admin/day_passes',           'day_pass'                ],
           ['/integrations/applications',  'integrations'            ],
       ]]
     ]
-
-                    # [ "People & Roles", [
-                    #                 ['/agents',   'agent' ],
-                    #                 ['/groups',   'group' ]
-                    # ]],
-                    # [ "Account", [
-                    #                 ['/account',            'account-settings' ],
-                    #                 ['/admin/security',     'remote-authentication' ],
-                    #                 ['/admin/zip_readers',  'import' ]
-                    # ]]
-                  
-
-
+ 
     admin_html = 
       admin_links.map do |group|
         content_tag( :div, 

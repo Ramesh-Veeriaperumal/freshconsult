@@ -20,7 +20,7 @@ fr:
         split_this_as_new_ticket: "Ventiler comme nouveau ticket"
         public_note: "Note publique"
         edit_note: "Modifier la Note"
-        incoming_email: "Mails entrants"
+        inbound_email: "Mails entrants"
         posted_on: "%{user_name} le %{note_date}"
         outbound_email: "E-mails sortants"
       close_notice:

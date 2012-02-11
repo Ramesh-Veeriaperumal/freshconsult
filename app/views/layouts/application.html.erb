@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
   <%= render :partial => "layouts/shared/html" %>
 	<%= render :partial => "layouts/shared/head" %>
 	<body class="<% unless @content_for_sidebar %>single<% end %> <%= yield :layoutType %>">
@@ -14,10 +14,10 @@
 							</div>
 						<% end %>  
 						<div class="leftcontent">
-							<%= show_flash %> 
+							<%= show_flash %>
 							<div class="flash_info notice" id="noticeajax" style="display:none;"></div>
-							<%= yield :breadcrumb %>
-							<div class="pagearea" id="Pagearea">				
+							<%= yield :pagetop %>
+							<div class="pagearea" id="Pagearea">
 								<%= yield %>
 							</div>
 						</div>

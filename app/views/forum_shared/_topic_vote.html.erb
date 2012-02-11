@@ -1,13 +1,13 @@
-  <span id="votes<%= @topic.id %>">
+  <div id="votes<%= @topic.id %>">
       <% vote_count = (topic_vote.votes_for == 1) ? 1 : 2 %>
       <% if(topic_vote.voted_by_user? current_user) %>
-        <div class="forum_info">
-          <%= t(".#{@forum.type_symbol}.vote_info_include_#{vote_count}", :vote => topic_vote.votes_for) %>
+        <div class="alert alert-info">   
+          <strong><%= t(".#{@forum.type_symbol}.vote_info_include_#{vote_count}", :vote => topic_vote.votes_for) %></strong>
         </div>
       <% else %>				
         <% if (topic_vote.votes_for != 0) %>
-          <div class="forum_info">
-            <%= t(".#{@forum.type_symbol}.vote_info_#{vote_count}", :vote => topic_vote.votes_for) %>
+          <div class="alert alert-info"> 
+            <strong><%= t(".#{@forum.type_symbol}.vote_info_#{vote_count}", :vote => topic_vote.votes_for) %></strong>
             <span class="bottom-pointer"></span>
           </div>
         <% end %>
@@ -21,7 +21,7 @@
                                                       :forum_id => @forum.id,
                                                       :category_id => @forum_category.id,
                                                       :vote => "for" },
-                                        :html   => {  :class => "forum_button" } %>
+                                        :html   => {  :class => "btn" } %>
         <% else %>
           <% if (@forum.forum_type == 2) %>
             <%= link_to_remote t(".unlike"), 
@@ -31,8 +31,8 @@
                                                      :forum_id => @forum.id, 
                                                      :category_id => @forum_category.id,
                                                      :vote   => "for" },
-                                        :html => { :class => "forum_button small" } %>
+                                        :html => { :class => "btn" } %>
         <% end %>
       <% end %>
     </div>
-  </span>
+  </div>

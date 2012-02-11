@@ -3,16 +3,14 @@ class SAAS::SubscriptionActions
     update_features(account, old_subscription)
     
     case account.plan_name
-    when :free
+    when :sprout
       drop_custom_sla(account)
       update_timezone_to_users(account)
       drop_additional_emails(account)
-      drop_except_account_admin(account)
-    when :basic
+      drop_facebook_pages(account)
+      drop_twitter_handles(account)
+    when :blossom
       drop_custom_sla(account)
-      update_timezone_to_users(account)
-      drop_additional_emails(account)
-    when :pro
       update_timezone_to_users(account)
       drop_additional_emails(account)
     end
@@ -52,5 +50,14 @@ class SAAS::SubscriptionActions
       EmailConfig.destroy_all(:account_id => account.id, :primary_role => false)
       #We are not updating the email_config_id in Tickets model knowingly.
       #Tested, haven't faced any problem with stale email config ids.
-    end
+  end
+  
+   def drop_facebook_pages(account)
+     account.facebook_pages.destroy_all
+   end
+   
+   def drop_twitter_handles(account)
+     account.twitter_handles.destroy_all
+   end
+ 
 end

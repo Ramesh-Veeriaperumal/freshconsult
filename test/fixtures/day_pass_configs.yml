@@ -1,0 +1,13 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  account_id: 1
+  available_passes: 1
+  auto_recharge: false
+  recharge_quantity: 1
+
+two:
+  account_id: 1
+  available_passes: 1
+  auto_recharge: false
+  recharge_quantity: 1

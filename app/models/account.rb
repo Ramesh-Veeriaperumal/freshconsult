@@ -21,7 +21,8 @@ class Account < ActiveRecord::Base
   
   has_one :data_export,:dependent => :destroy
   
-
+  has_one :email_commands_setting,:dependent => :destroy
+  has_one :conversion_metric
   
   has_one :logo,
     :as => :attachable,
@@ -61,9 +62,12 @@ class Account < ActiveRecord::Base
   has_many :solution_categories , :class_name =>'Solution::Category',:include =>:folders, :dependent => :destroy, :order => "position"
   has_many :solution_articles , :class_name =>'Solution::Article'
   
+  has_many :installed_applications, :class_name => 'Integrations::InstalledApplication', :dependent => :destroy
   has_many :customers, :dependent => :destroy
   has_many :contacts, :class_name => 'User' , :conditions =>{:user_role =>[User::USER_ROLES_KEYS_BY_TOKEN[:customer], User::USER_ROLES_KEYS_BY_TOKEN[:client_manager]] , :deleted =>false}
   has_many :agents, :through =>:users , :conditions =>{:users=>{:deleted => false}}
+  has_many :full_time_agents, :through =>:users, :conditions => { :occasional => false, 
+      :users=> { :deleted => false } }
   has_many :all_contacts , :class_name => 'User', :conditions =>{:user_role => [User::USER_ROLES_KEYS_BY_TOKEN[:customer], User::USER_ROLES_KEYS_BY_TOKEN[:client_manager]]}
   has_many :all_agents, :class_name => 'Agent', :through =>:all_users  , :source =>:agent
   has_many :sla_policies , :class_name => 'Helpdesk::SlaPolicy' ,:dependent => :destroy
@@ -122,11 +126,17 @@ class Account < ActiveRecord::Base
   has_many :scoreboard_ratings, :dependent => :destroy
   has_many :survey_handles, :through => :survey
 
+  has_one :day_pass_config, :dependent => :destroy
+  has_many :day_pass_usages, :dependent => :destroy
+  has_many :day_pass_purchases, :dependent => :destroy, :order => "created_at desc"
   
   has_one :data_import,:class_name => 'Admin::DataImport' ,:dependent => :destroy
 
   
   has_many :tags, :class_name =>'Helpdesk::Tag'
+  
+  has_many :time_sheets , :class_name =>'Helpdesk::TimeSheet'
+  
   #Scope restriction ends
   
   validates_format_of :domain, :with => /(?=.*?[A-Za-z])[a-zA-Z0-9]*\Z/
@@ -169,7 +179,7 @@ class Account < ActiveRecord::Base
              
   
   Limits = {
-    'agent_limit' => Proc.new {|a| a.agents.count }
+    'agent_limit' => Proc.new {|a| a.full_time_agents.count }
   }
   
   Limits.each do |name, meth|
@@ -180,14 +190,31 @@ class Account < ActiveRecord::Base
   end
   
   PLANS_AND_FEATURES = {
+    :basic => { :features => [ :twitter ] },
+    
     :pro => {
       :features => [ :scenario_automations, :customer_slas, :business_hours, :forums, 
-        :surveys ,:facebook ]
+        :surveys ,:facebook, :timesheets ],
+      :inherits => [ :basic ]
     },
     
     :premium => {
-      :features => [ :multi_product, :multi_timezone , :multi_language],
+      :features => [ :multi_product, :multi_timezone , :multi_language, :advanced_reporting],
       :inherits => [ :pro ] #To make the hierarchy easier
+    },
+    
+    :sprout => {
+      :features => [ :scenario_automations, :business_hours ]
+    },
+    
+    :blossom => {
+      :features => [ :twitter, :facebook, :forums, :surveys , :timesheets ],
+      :inherits => [ :sprout ]
+    },
+    
+    :garden => {
+      :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, :advanced_reporting ],
+      :inherits => [ :blossom ]
     }
   }
   
@@ -200,7 +227,7 @@ class Account < ActiveRecord::Base
   has_features do
     PLANS_AND_FEATURES.each_pair do |k, v|
       feature k, :requires => ( v[:inherits] || [] )
-      v[:features].each { |f_n| feature f_n, :requires => k } unless v[:features].nil?
+      v[:features].each { |f_n| feature f_n, :requires => [] } unless v[:features].nil?
       SELECTABLE_FEATURES.keys.each { |f_n| feature f_n }
     end
   end
@@ -331,7 +358,9 @@ class Account < ActiveRecord::Base
     p_features = PLANS_AND_FEATURES[s_plan]
     unless p_features.nil?
       p_features[:inherits].each { |p_n| remove_features_of(p_n) } unless p_features[:inherits].nil?
+      
       features.send(s_plan).destroy
+      p_features[:features].each { |f_n| features.send(f_n).destroy } unless p_features[:features].nil?
     end
   end
   
@@ -343,6 +372,14 @@ class Account < ActiveRecord::Base
     !products.empty?
   end
   
+  def kbase_email
+    "kbase@#{full_domain}"
+  end
+  
+  def has_credit_card?
+    !subscription.card_number.nil?
+  end
+
   protected
   
     def valid_domain?

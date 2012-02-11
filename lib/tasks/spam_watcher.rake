@@ -6,7 +6,7 @@ SPAM_CONVERSATIONS_THRESHOLD = 50
 namespace :spam_watcher do
   desc 'Check for abnormal activities and email us, if needed'
   task :ticket_load => :environment do
-    puts "Check for abnormal activities started at #{Time.now}"
+    puts "Check for abnormal activities started at ddddddddddddddddd #{Time.now}"
     check_tickets('helpdesk_tickets', 'requester_id', SPAM_TICKETS_THRESHOLD)
     check_tickets('helpdesk_notes', 'user_id', SPAM_CONVERSATIONS_THRESHOLD)
   end
@@ -24,7 +24,6 @@ def check_for_users_and_unblock
   users = ActiveRecord::Base.connection.select_values(query_str)
   
   unless users.blank?
-    puts "update users set blocked = 0,blocked_at = null where id IN (#{users*","}) "
     ActiveRecord::Base.connection.execute("update users set blocked = 0,blocked_at = null where id IN (#{users*","}) ")
   end
   
@@ -39,7 +38,7 @@ def check_tickets(table,column_name, threshold)
   eos
   puts query_str
   requesters = ActiveRecord::Base.connection.select_values(query_str)
-  puts "The requesters which are having abnormal load in '#{table}' are #{requesters}"
+  puts "The accounts which are having abnormal load in '#{table}' are #{requesters}"
   
   unless requesters.empty?
     deliver_spam_alert(table, requesters, query_str) 
@@ -59,7 +58,7 @@ end
 def deliver_spam_alert(table, requesters, query_str)
   FreshdeskErrorsMailer.deliver_error_email(nil, nil, nil,
     {
-      :subject          => "Abnormal load in spam watcher #{table}",
+      :subject          => "Abnormal load by spam watcher #{table}",
       :additional_info  => {
         :requesters_list  => requesters,
         :query          => query_str

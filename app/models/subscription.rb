@@ -9,7 +9,7 @@ class Subscription < ActiveRecord::Base
   belongs_to :affiliate, :class_name => 'SubscriptionAffiliate', :foreign_key => 'subscription_affiliate_id'
   
   before_create :set_renewal_at
-  before_update  :cache_old_model,:set_free_plan_agnt_limit, :charge_if_free,:charge_plan_change_mis
+  before_update  :cache_old_model,:charge_plan_change_mis
   before_destroy :destroy_gateway_record
   before_validation :update_amount
   after_update :update_features,:send_invoice
@@ -64,6 +64,8 @@ class Subscription < ActiveRecord::Base
     
     self.renewal_period = billing_cycle unless billing_cycle.nil?
     self.subscription_plan = plan
+    self.free_agents = plan.free_agents
+    self.day_pass_amount = plan.day_pass_amount
   end
   
   # The plan_id and plan_id= methods are convenience methods for the
@@ -88,6 +90,10 @@ class Subscription < ActiveRecord::Base
     (amount * 100).to_i
   end
   
+  def paid_agents
+    (agent_limit - free_agents)
+  end
+  
   def store_card(creditcard, gw_options = {})
     # Clear out payment info if switching to CC from PayPal
     destroy_gateway_record(paypal) if paypal?
@@ -103,7 +109,6 @@ class Subscription < ActiveRecord::Base
       self.card_expiration = "%02d-%d" % [creditcard.expiry_date.month, creditcard.expiry_date.year]
       set_billing
     else
-      puts errors.to_json
       errors.add_to_base(@response.message)
       false
     end
@@ -138,8 +143,25 @@ class Subscription < ActiveRecord::Base
   # be created, but the subscription itself is not modified.
   def misc_charge(amount)
     if amount == 0 || (@response = gateway.purchase((amount * 100).to_i, billing_id)).success?
-      subscription_payments.create(:account => account, :amount => amount, :transaction_id => @response.authorization, :misc => true)
+      s_payment = subscription_payments.create(:account => account, :amount => amount, :transaction_id => @response.authorization, :misc => true)
+      SubscriptionNotifier.deliver_misc_receipt(s_payment)
       true
+    else
+      errors.add_to_base(@response.message)
+      false
+    end
+  end
+  
+  def charge_day_passes(quantity)
+    amount_to_charge = quantity * day_pass_amount
+    
+    if(@response = gateway.purchase((amount_to_charge * 100).to_i, billing_id)).success?
+      s_payment = subscription_payments.create(:account => account, 
+            :amount => amount_to_charge, :transaction_id => @response.authorization, 
+            :misc => true)
+
+      SubscriptionNotifier.deliver_day_pass_receipt(quantity, s_payment)
+      s_payment
     else
       errors.add_to_base(@response.message)
       false
@@ -221,7 +243,7 @@ class Subscription < ActiveRecord::Base
   def active?
     state == 'active'
   end
-
+  
   protected
   
     def set_billing
@@ -277,7 +299,7 @@ class Subscription < ActiveRecord::Base
     end
     
     def charge_plan_change_mis
-      if  (amount > @old_subscription.amount) and paid_account?  
+      if  (amount > @old_subscription.amount) and active?  
         amt_to_charge = cal_plan_change_amount.round.to_f
         misc_charge(amt_to_charge) if amt_to_charge > PRO_RATA_MIN_CHARGE
       end
@@ -297,7 +319,7 @@ class Subscription < ActiveRecord::Base
     
     def total_amount
       apply_the_cycle
-      self.amount = agent_limit ? (self.amount * agent_limit) : subscription_plan.amount
+      self.amount = agent_limit ? (self.amount * paid_agents) : subscription_plan.amount
     end
     
     def apply_the_cycle
@@ -317,9 +339,9 @@ class Subscription < ActiveRecord::Base
     
     def validate_on_update
       chk_change_billing_cycle
-      return if self.amount == 0      
-      if(agent_limit && agent_limit < account.agents.count)
-       errors.add_to_base(I18n.t("subscription.error.lesser_agents", {:agent_count => account.agents.count}))end         
+      if(agent_limit && agent_limit < account.full_time_agents.count)
+       errors.add_to_base(I18n.t("subscription.error.lesser_agents", {:agent_count => account.agents.count}))
+      end         
     end
     
     def charge_if_free

@@ -1,53 +1,51 @@
-<% javascript_tag do %>
-	jQuery(document).ready(function(){
-		jQuery("#contact_customer").autocomplete({
-			source: function( request, response ) {
-				jQuery.ajax({
-					url: "<%=autocomplete_contacts_path%>",
-					data: {
-						v: request.term
-					},
-					success: function(data) {
-						response( jQuery.map( data.results, function( item ) {
-							//console.log(item.value);
-							return {
-								label: item.value,
-								value: item.value
-							}
-						}));
-					}
-				});
-			},
-			select: function( event, ui ) {
-				
-			},
-			open: function(){
-				jQuery(this).removeClass('ui-corner-all');
-			}
-		}).data( "autocomplete" )
-			._renderItem = function( ul, item ) {
-									return jQuery( "<li></li>" )
-										.data( "item.autocomplete", item )
-										.append( "<a>" + item.label + "</a>" )
-										.appendTo( ul );
-								};	
-	});
-	
-	function enable_role_change()
-	{
-		var company = jQuery('#contact_customer').val();
-		if (company != null && company != "")
-		{
-			jQuery('#contact_role').removeAttr("disabled");
-		}
-		else
-		{			
-			jQuery('#contact_role').removeAttr('checked');
-			jQuery('#contact_role').attr( "disabled" , true );
-		}
-	
-	}
-	
+<% content_for :onload_script do %>               
+  jQuery("#contact_customer").autocomplete({
+      source: function(request, response) {
+          jQuery.ajax({
+              url: "<%=autocomplete_contacts_path%>",
+              data: {
+                  v: request.term
+              },
+              success: function(data) {
+                  response(jQuery.map(data.results,
+                  function(item) {
+                      //console.log(item.value);
+                      return {
+                          label: item.value,
+                          value: item.value
+                      }
+                  }));
+              }
+          });
+      },
+      select: function(event, ui) {
+
+          },
+      open: function() {
+          jQuery(this).removeClass('ui-corner-all');
+      }
+  }).data("autocomplete")
+  ._renderItem = function(ul, item) {
+      return jQuery("<li></li>")
+      .data("item.autocomplete", item)
+      .append("<a>" + item.label + "</a>")
+      .appendTo(ul);
+  };
+
+
+  jQuery("#contact_customer").bind("keydown",
+  function(ev) {
+      var company = this.value;
+      if (company != null && company != "")
+      {
+          jQuery('#contact_role').removeAttr("disabled");
+      }
+      else
+      {
+          jQuery('#contact_role').removeAttr('checked');
+          jQuery('#contact_role').prop("disabled", true);
+      }
+  }).trigger("keydown");
 <% end %>
 
  	 <% if @existing_user %>
@@ -73,7 +71,21 @@
 		<li>
 			<%= label(:user, :job_title, t('user.title')) %>
 			<%= text_field(:user, :job_title, :class => "text" ) %>
-		</li>		
+		</li>
+		<% fields_for :tags  do |tag|
+			tag_csv = @user.tags.collect{|tg| tg.name+", "}
+			if tag_csv.blank?
+				tag_csv=""
+			else
+				tag_csv[-1] = tag_csv[-1][0..-3]
+			end 
+		%>
+		<li>
+			<%= tag.label(:name, t('tag.title')) %>
+			<%= tag.text_field :name , :value => tag_csv, :class => "text" %>
+		</li>
+		<%end%>
+
 		<li>
 			<%
 				company_name = "";
@@ -84,11 +96,15 @@
 				end
 			%>
 			<%= label(:user, :customer, t('user.company')) %>
-			<%= text_field(:user, :customer, :class => "text" , :value => company_name, :id => "contact_customer" ,:onchange => "enable_role_change()") %>
+			<%= text_field(:user, :customer, :class => "text" , :value => company_name, :id => "contact_customer") %>
 		</li>
 		<li>			
-			<%= check_box(:user, :user_role,{:disabled => role_disabled  , :id =>'contact_role' , :checked => @user.user_role == User::USER_ROLES_KEYS_BY_TOKEN[:client_manager] },User::USER_ROLES_KEYS_BY_TOKEN[:client_manager] , User::USER_ROLES_KEYS_BY_TOKEN[:customer] )%> <%=t('contacts.role.info')%>
+			<%= check_box(:user, :user_role, { :disabled => role_disabled, :id =>'contact_role', :checked => @user.user_role == User::USER_ROLES_KEYS_BY_TOKEN[:client_manager] }, User::USER_ROLES_KEYS_BY_TOKEN[:client_manager], User::USER_ROLES_KEYS_BY_TOKEN[:customer] ) %> <%= t('contacts.role.info') %>
 		</li>
+		<li>
+			<%= label(:user, :address, t('user.address')) %>
+			<%= text_area(:user, :address, :class => "text" ) %>
+		</li>		
 		<li class="small">	
 			<%= label(:user, :phone, "#{t('user.phone_no')}.") %>	
 			<label class="overlabel" for="phone_work"><%=t('user.work')%></label>
@@ -106,7 +122,7 @@
 			<%= text_field(:user, :twitter_id, :class => "text" ) %>
 		</li>
 		<li>
-			<%= render :partial => "/shared/profileavatar", :locals => { :user => @user, :type => type } %> 
+			<%= render :partial => "/shared/profileavatar.html", :locals => { :user => @user, :type => type } %> 
 		</li>
 		
 		<% if feature?(:multi_timezone) %>
@@ -122,12 +138,12 @@
 				<%= f.select :language, I18n.available_locales_with_name , {:selected => @user.language ? @user.language.to_sym() : current_portal.language.to_sym()}%>
 			</li>
 		<% end %>
-		
+
 		<li>
 			<%= label(:user, :description, t('user.back_info')) %>
 			<label class="overlabel" for="user_binfo">
 				<%=t('contacts.info6')%>
-				example - address, LA Lakers fan etc.
+				example - LA Lakers fan etc.
 			</label>
 			<%= text_area(:user, :description, :class => "text", :id => "user_binfo" ) %>
 		</li>		

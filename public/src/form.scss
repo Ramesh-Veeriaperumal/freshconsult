@@ -27,6 +27,22 @@ select {
    width:auto;
 }
 
+.full{
+	width:100%;
+}
+
+input[disabled],
+/*select[disabled],*/
+textarea[disabled],
+input[readonly],
+select[readonly],
+textarea[readonly] {
+  background-color: #f5f5f5;
+  border-color: #ddd;
+  cursor: not-allowed;
+}
+
+
 textarea { 
    height: 100px;
    width: 96%;
@@ -44,7 +60,7 @@ input.text, input[type=text], textarea{
 	border:1px solid #cfcfcf;
 	font-weight:400;
 	padding:5px;
-	@include border-radius(4px);
+	@include border-radius(3px);
 }
 
 div.color{
@@ -79,6 +95,14 @@ input.very_small{
 
 textarea.smallpara{
 	height:50px;
+}
+
+
+:-moz-placeholder {
+  color: #bfbfbf;
+}
+::-webkit-input-placeholder {
+  color: #bfbfbf;
 }
 	
 /*input:focus, textarea:focus{ border-color:$tab_color !important; }
@@ -226,11 +250,14 @@ a.addchoice:hover{
 		padding:8px 2% 8px 2%; 
 		margin:0;
 		@include float-left;
-		width:96%;
+		width: 98%;
 		div.field-box{
 			padding:4px 0 8px 0;
 		}
 	} 
+	li.search-choice, li.search-field{
+		width:auto;
+	}
 	/*li:last-child{
 		border-bottom: 0;
     	box-shadow: none;
@@ -264,7 +291,7 @@ a.addchoice:hover{
 		margin:0;
 		line-height:18px;
 		color:#565656;
-		font-size:1.3em;
+		font-size:1em;
 		font-weight:400;
 	}
 
@@ -292,17 +319,12 @@ a.addchoice:hover{
 	
 	.largefield{
 		label{
-			font-size:1.4em;			
+			font-size:1.4em;
 		}
 		input{
 			font-size:1.4em; 
 		}
-	}	
-	span{
-		font-weight:normal;
-		/*font-size:0.86em;*/
-		color:#777777;
-	}
+	}	 
 	.check_box{
 		@include clearfix;
 		label{
@@ -478,9 +500,6 @@ a.addchoice:hover{
 .ui-form .inline-field{
 	/*border-bottom:1px dotted #cfcfcf;*/
 	padding-top:8px;
-	input[type=text], select, input.text {
-
-	}
 	.caption{
 		float:left;
 		.logo{
@@ -702,11 +721,19 @@ input.time{
    margin:0 -5px; 
    table{
       border:0;
+			td{ font-size:12px; border-top-color:#f3f3f3; }
       tr.odd td{
          background:#ffffff;
       }
       tr.even td{
          background:#f8f8f8;
+      }
+      .group_by_day_criteria{
+      	width:15%;
+      }
+      .hours{
+        width:10%;
+        text-align:right;
       }
    }  
 }
@@ -900,7 +927,7 @@ span.sort_handle{
 .ui-dialog .ui-dialog-titlebar-close span { display: block; margin: 1px; }
 .ui-dialog .ui-dialog-titlebar-close:hover, .ui-dialog .ui-dialog-titlebar-close:focus { background-color:#efefef; }
 .ui-dialog .ui-dialog-content { 
-   position: relative; border: 0; padding: 0 0; overflow: auto; zoom: 1; margin-bottom:0; 
+   position: relative; border: 0; padding: 0 0;  zoom: 1; margin-bottom:0; 
    .info-highlight{
       margin:0 0 6px 0;
       font-size:13px;
@@ -1275,25 +1302,83 @@ table.summary-report{
 	border:1px solid #f4f4f4;
 	margin-bottom:10px;
 }
-
+ 
 .request_panel{
-   padding:0 0;
-   margin:5px 0;
-   .ui-form{
-      li.field{
-         border:0;
-      }
-      label, div.fields label{
-         font-size:13px;
-         color:#333333;
-      }
-      label.overlabel{
-         margin:2px 8px;
-         color:#888888;
-         font-size:12px;
-      }
-      li.inline-field{
-         padding:1px 18px;
+	padding:0 20px 10px 65px; margin:0;
+	border-bottom: 1px solid #F3F3F3;
+
+	.button-container{ 
+		padding:6px 10px;
+		margin-top:10px;
+		background-color:#efefef;
+		@include border-radius(5px);
+		@include box-shadow(rgba(0, 0, 0, 0.2) 0 0 2px inset);
+	}
+	.absolute-button-container{
+		position:absolute;
+		bottom:5px;
+		width:88%;
+	}
+
+	.ui-form{
+		border:0;  background: none;
+		margin:0;	padding:0; 
+		.title{
+			padding-bottom:12px;
+		}            
+		li{ padding-left:0; padding-right:0; }
+		li.field{
+			border:0; padding:0;
+		}
+		label, div.fields label{
+			font-size:13px;
+			color:#333333;
+		}			
+		div.field{
+			width:23%;
+			float:left;
+			margin-left:2%;
+		}
+		div.field.first{ margin-left:0; }
+
+		label.overlabel{
+			margin:2px 8px;
+			color:#888888;
+			font-size:12px;
+		} 
+		fieldset{
+			padding:10px 0;
+			position:relative;
+		}
+		fieldset.integration{
+			margin-bottom: 10px;
+			@include pie-clearfix;
+			position:relative;
+			padding:0;
+			.integration_container {
+				padding:20px 0 10px 80px;
+			}				
+			border-top:1px solid #e3e3e3;
+			.app-logo{
+				position:absolute;
+				width:51px;
+				top:0;
+				left:0;
+				padding-right:25px;
+				height:20px;
+				background-color:#efefef;
+				@include border-bottom-radius(3px);
+				border:1px solid #e3e3e3;
+
+				cursor: pointer;
+				input[type=checkbox] {
+					position: absolute;
+					right:5px;
+					top:2px;
+				}
+			}
+		}
+      li.inline-field, fieldset{
          label.caption{
             width:80px;
          }
@@ -1315,19 +1400,26 @@ table.summary-report{
       }
       .request_form_options{
          position:absolute;
-         right:26px;
-         top:20px;
+         right:20px;
+         top:6px;
          .insert-canned-response{
             position:relative;
             z-index:1001;
          }
       }
-      .button-container{
-         padding-top:8px;
-         margin-top:8px;
-         border-top:1px solid #efefef;
-      }
    }
+}
+                         
+#Timesheet .request_panel .ui-form .title{  
+  margin-bottom: -10px;
+}
+
+.timeentry_edit{
+	position: relative;
+	padding-bottom:50px;
+	.ui-form{
+		position: static;
+	}
 }
 
 .nav_search{
@@ -1576,9 +1668,8 @@ a.new_ticket:hover{
    width:400px;
    position:absolute;
    z-index:1000;
-   right:6px;
-   top:12px;
-   
+   right:35px;
+   top:0;   
    ul{
       border-top:1px solid #efefef;
       position:relative;
@@ -1623,4 +1714,53 @@ textarea.tweet{
 
 .ticket-simple-list label{
    font-size:13px; 
+}
+
+ul.ui-form .inputs-list{
+	margin: -8px 0 20px;
+}
+.inputs-list {  
+	@include pie-clearfix;
+  width: 100%;
+}
+.inputs-list li {
+  display: block;
+  padding: 8px 0;
+  width: 100%;
+}
+.inputs-list label {
+  display: block;
+  float: none;
+  width: auto;
+  padding: 0;
+  margin-left: 20px;
+  line-height: 18px;
+  text-align: left;
+  white-space: normal;
+	span{
+		font-size:13px;
+	}
+}
+.inputs-list label strong {
+  color: #808080;
+}
+.inputs-list label small {
+  font-size: 11px;
+  font-weight: normal;
+}
+.inputs-list .inputs-list {
+  margin-left: 25px;
+  margin-bottom: 10px;
+  padding-top: 0;
+}
+.inputs-list:first-child {
+  padding-top: 6px;
+}
+.inputs-list li + li {
+  padding-top: 2px;
+}
+.inputs-list input[type=radio], .inputs-list input[type=checkbox] {
+  margin-bottom: 0;
+  margin-left: -20px;
+  float: left;
 }

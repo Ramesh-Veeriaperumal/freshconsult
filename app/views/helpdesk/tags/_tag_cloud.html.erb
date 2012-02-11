@@ -1,0 +1,26 @@
+<div id="tag-cloud">
+	<% if tag_cloud.blank? %>
+		<%=t("no_tags")%>
+	<%else%>
+	<div class="tag_list">
+		<% 
+		max = 1
+		unless tag_cloud.count < 2
+			tag_cloud.each do |tag|
+				if max < tag.uses_count 
+					max = tag.uses_count 
+				end
+			end
+		end
+
+		tag_cloud.each do |tag|
+			unless tag.uses_count == 0 
+			 	concat content_tag :div, 
+		 			link_to(tag.name, { :controller=>"contacts", :tag => tag.id.to_s }), 
+		 			{:class => 'item contact-tag', :style => "font-size:#{tag.tag_size(max)}%;"}
+			end
+		end
+		%> 
+		</div>
+	<%end%>
+</div>

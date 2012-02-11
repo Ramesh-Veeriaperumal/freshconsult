@@ -1,0 +1,22 @@
+<% user = ticket.requester %>
+<h3 class="title"><%=t('ticket.requestor_info')%></h3>
+<div class="user_details_widget">  
+	<%= user_avatar(user, :medium)  %>
+	<%= link_to(h(user.name), user, :class => "user_name") %>
+	<%= render_item(h(user.email), "link") %>
+	<div><%= h(user.job_title) %> <b><%= (user.customer ? "at #{user.customer.name}" : "")  %></b></div>
+	<%= render_item(h(user.twitter_id)) %>
+	<%= render_item(h(user.fb_profile_id), "facebook") %>		 
+	<%= render_item(h(user.phone)) %>
+	<%= render_item(h(user.mobile)) %>
+</div>
+
+<span class="seperator"></span>
+<h3 class="title"><%=t('ticket.recent_tickets')%></h3>
+<ul class="ui-list_with_icon">
+	<% user.tickets.newest(5).each do |ticket| %>	
+	<li>
+		<%= link_to( truncate("##{ticket.display_id} " + h(ticket.subject), 60), ticket ) %>
+	</li>
+	<% end %>
+</ul>

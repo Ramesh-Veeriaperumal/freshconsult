@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Module>
+    <ModulePrefs title="Freshdesk"
+	description="Your Social Help Desk."
+	height="200"
+	author="Navaneeth"
+	author_email="navaneeth@freshdesk.com"
+	author_location="Chennai, IN">
+    <Require feature="opensocial-0.9" />
+    <!-- Declare feature dependencies. -->
+
+    <!-- This one is not specific to Gmail contextual gadgets. -->
+    <Require feature="dynamic-height"/>
+
+    <!-- The next feature, Caja, is optional, and is supported for
+     use only within test domains. Uncomment the tag only for
+     non-production gadgets. -->
+    <!-- <Require feature="caja"/> -->
+
+    <!-- The next feature, google.contentmatch, is required for all
+     Gmail contextual gadgets.
+     <Param> - specify one or more comma-separated extractor IDs in
+     a param named "extractors". This line is overridden by the extractor ID
+     in the manifest, but is still expected to be present. -->
+    <Require feature="google.contentmatch">
+      <Param name="extractors">
+        google.com:HelloWorld
+      </Param>
+    </Require>
+    <Require feature="setprefs"/> 
+  </ModulePrefs>
+
+  <!-- Define the content type and display location. The settings
+   "html" and "card" are required for all Gmail contextual gadgets. -->
+  <Content type="html" view="card">
+    <![CDATA[
+	<link type="text/css" rel="stylesheet" media="screen, projection" href="http://login.freshpo.com/packages/gadget.css">
+	<style type="text/css">
+		body {
+			min-width: 300px;
+		}
+	</style>
+	<script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js'></script>
+	<div id="fullbody">
+		<ul class="tabs" id="gcgTabs">
+		<li id="contact" class="active" onclick="showContact()"><a href="#">Contact</a></li>
+		<li id="recent_tickets"><a href="#" onclick="showRecentTickets()">Recent Tickets</a></li>
+		<li id="ticket"><a href="#" onclick="showTicket()">Ticket</a></li>
+		</ul>
+		<div id="content_div"></div>
+		<div id="output"></div>
+	</div>
+	<div id="auth">
+		<div class="center">You have not yet Linked this gmail id with an Agent in Freshdesk.  Click 'Connect' to link your Freshdesk account.</div><br/>
+		<a class="special uiButton" href="javascript:void(0);">Connect your Freshdesk</a>
+	</div>
+	<div id="error"></div>
+
+	<script type="text/javascript">
+		// <!-- Fetch the array of content matches. -->
+		matches = google.contentmatch.getContentMatches();
+		var from_email=""; to_email=""; subject=""; body=""; us_phone=""; ticket_id=""; t=""; var cnt=Math.floor((Math.random()*1000)*(Math.random()*100));
+		var domain = "";
+		var url_root="login.freshpo.com"; 
+		var http_s="http";
+
+		// <!-- Iterate through the array and display output for each match. -->
+		for (var match in matches) {
+			for (var key in matches[match]) {
+				if (key == "subject") {
+					subject = matches[match][key];
+					ticket_id_matches = subject.match("\\[#(\\d*)\]");
+					if(ticket_id_matches != null)
+						ticket_id = ticket_id_matches[1];
+				} else if(key == "recipient_email") {
+					to_email = matches[match][key];
+				} else if(key == "sender_email") {
+					from_email = matches[match][key];
+				} else if(key == "email_body") {
+					body = matches[match][key];
+				} else if(key == "phone_number") {
+					us_phone = matches[match][key];
+				}
+			}
+		}
+
+		function showTicket() {
+			activateTab("ticket");
+			var params = {};
+			if (ticket_id == null || ticket_id == '') {
+				showNewTicketForm();
+			} else {
+				var url = http_s+"://"+url_root+"/helpdesk/tickets/"+ticket_id+"/view_ticket.widget?k="+t;
+				openSocialRequest(url, handleResponse, params);
+			}
+		};
+
+		function showNewTicketForm() {
+			activateTab("ticket");
+			var params = {};
+			var url = http_s+"://"+url_root+"/helpdesk/tickets/new.widget?k="+t;
+			openSocialRequest(url, handleResponse, params);
+		};
+
+		function showContact() {
+			activateTab("contact");
+			var params = {};
+			var url = http_s+"://"+url_root+"/contacts/contact_email.widget?email="+from_email+"&k="+t;
+			openSocialRequest(url, handleResponse, params);
+		};
+
+		function showNewContactForm() {
+			activateTab("contact");
+			var params = {};
+			var url = http_s+"://"+url_root+"/contacts/new.widget?k="+t;
+			openSocialRequest(url, handleResponse, params);
+		};
+
+		function showRecentTickets() {
+			activateTab("recent_tickets");
+			var params = {};
+			var url = http_s+"://"+url_root+"/helpdesk/tickets/user_tickets.widget?email="+from_email+"&k="+t
+			openSocialRequest(url, handleResponse, params);
+		};
+
+		function handleResponse(obj) {
+			//obj.text contains the text of the page that was requested
+			res_text = obj.text
+			if(res_text == null || res_text == '') res_text = "Completed the request."
+			document.getElementById('content_div').innerHTML = res_text;
+			// Stop the progress bar
+			populateFields();
+			hideLoading();
+			postProcess();
+			autoHeight();
+		};
+
+		function populateFields() {
+			new_user_form = jQuery("#new_user");
+			if(new_user_form != null) {
+				email_field = jQuery("#email_primary")
+				if(email_field != null) email_field.val(from_email);
+				phone_field = jQuery("#phone_work")
+				if(phone_field != null) phone_field.val(us_phone);
+			}
+			new_ticket_form = jQuery("#NewTicket");
+			if(new_ticket_form  != null) {
+				tic_email_field = jQuery("#helpdesk_ticket_email")
+				if(tic_email_field != null) tic_email_field.val(from_email);
+				subject_field = jQuery("#helpdesk_ticket_subject")
+				if(subject_field != null) subject_field.val(subject);
+				body_field = jQuery("#helpdesk_ticket_description_html")
+				//if(body_field != null) body_field.val(body);
+			}
+		}
+
+		function init() {
+			// Retrieve the domain of the current user. gadgets.util.getUrlParameters()['parent'] returns a value
+			// of of the form: http(s)://mail.google.com/mail/domain.com/html for Gmail (other containers are similar).
+			// The example below shows a regular expression for use with Gmail. For Calendar, use this regular
+			// expression instead: /calendar\/hosted\/([^\/]+)/
+			domain = gadgets.util.getUrlParameters()['parent'].match(/.+\/a\/(.+)\/html/)[1];
+			// Hit the server, passing in a signed request (and OpenSocial ID), to see if we know who the user is.
+			var params = {};
+			params[gadgets.io.RequestParameters.AUTHORIZATION] = gadgets.io.AuthorizationType.SIGNED;
+			var url = http_s+"://"+url_root+"/opensocial/google?domain="+domain
+			openSocialRequest(url, initResponse, params);
+		};
+
+		function handleInitSuccessResponse(content) {
+			t = content.t;
+			url_root = content.url_root;
+			ssl_enabled = content.ssl_enabled;
+			if (ssl_enabled) http = "https"
+			showContact();
+			jQuery('#auth').hide();
+		};
+
+		function initResponse(response) {
+			content = eval('(' + response.data + ')')
+			hideLoading();
+			if (content.user_exists == "true") {
+				handleInitSuccessResponse(content);
+			} else if (content.user_exists == undefined) {
+				if (content.reason) {
+					showError(content.reason);
+				} else {
+					showError("Unknown Error. Please try again.");
+				}
+			} else if (content.user_exists == "false") { // User doesn't exist, need to do OpenID to match user ID to OpenID.
+				showAuth(content.t);
+				t = content.t;
+			}
+		}
+
+		function activateTab(tabid) {
+			jQuery("#contact").removeClass("active")
+			jQuery("#recent_tickets").removeClass("active")
+			jQuery("#ticket").removeClass("active")
+			jQuery("#"+tabid).addClass("active")
+		}
+
+		function openPopup(url) {
+			var popup = window.open(url, 'OpenID','height=400,width=600');
+			if(popup == null) {
+				alert("Popups might be blocked in your browser. Please enable it and click again.");
+			} else {
+				// Check every 100 ms if the popup is closed.
+				finishedInterval = setInterval(function() {
+					// If the popup is closed, we've either finished OpenID, or the user closed it. Verify with the server in case the
+					// user closed the popup.
+					if (popup != null && popup.closed) {
+						var params = {};
+						jQuery('#auth').hide();
+						params[gadgets.io.RequestParameters.AUTHORIZATION] = gadgets.io.AuthorizationType.SIGNED;
+						var url = http_s+"://"+url_root+"/opensocial/google?domain="+domain;
+						openSocialRequest(url, openIdUserCreateResponse, params);
+						clearInterval(finishedInterval);
+					}
+				}, 100);
+			}
+		}
+
+		function openIdUserCreateResponse(response) {
+			content = eval('(' + response.data + ')')
+			if (content.user_exists == "true") {
+				handleInitSuccessResponse(content);
+			} else { // User doesn't exist, need to do OpenID to match user ID to OpenID.
+				showUnsuccessfulAuth();
+			}
+		}
+
+		function openSocialRequest(url, handleResponse, params) {
+			// Start the progress bar
+			showLoading();
+			// alert("openSocialRequest url "+url);
+			gadgets.io.makeRequest(url+"&"+cnt, handleResponse, params);
+			cnt = cnt + 1
+		}
+
+		// This method will be used by the widgets (New ticket, New contact forms) added.
+		function makeRequest(url, handleResponse, params, form_data) {
+			// Start the progress bar
+			showLoading();
+			// alert("openSocialRequest url "+http_s+"://"+url_root+url);
+			if (form_data != null) {
+				params[gadgets.io.RequestParameters.METHOD] = gadgets.io.MethodType.POST;
+				params[gadgets.io.RequestParameters.POST_DATA] = gadgets.io.encodeValues(form_data);
+			}
+			gadgets.io.makeRequest(http_s+"://"+url_root+url+"?k="+t, handleResponse, params);
+		}
+
+		function showAuth(t) {
+			console.log('Showing Auth div');
+
+			var url = http_s+"://"+url_root+"/openid/google?domain=" + domain+"&t="+t;
+
+			var button = jQuery('#auth a');
+			button.click(function() {openPopup(url)});
+
+			hideLoading();
+			jQuery('#fullbody').hide();
+			jQuery('#auth').show();
+
+			gadgets.window.adjustHeight(120);
+		}
+
+		function showUnsuccessfulAuth() {
+			jQuery('#gcgLoading').remove();
+			jQuery('#auth').show();
+		}
+
+		function showError(err_msg) {
+			jQuery('#gcgLoading').remove();
+//			jQuery('#error').show();
+			document.getElementById('error').innerHTML = err_msg
+		}
+
+		function showLoading() {
+			jQuery('#gcgLoading').remove();
+			jQuery('body').attr('id','gcgadget');
+			console.log('Loading Code');
+			jQuery("#fullbody").hide();
+			var loading_div = jQuery('<div></div>')
+					.attr('id',"gcgLoading")
+					.attr('style','text-align:center; padding: 20px;')
+					.html( '<img src="' + http_s+"://"+url_root+"/images/load.gif" + '" />' );
+			
+			jQuery('body').prepend(loading_div);
+		}
+
+		function hideLoading() {
+			jQuery("#fullbody").show();
+			console.log('Hiding the loading box');
+			jQuery('#gcgLoading').remove();
+		}
+
+		function autoHeight() {
+			console.log('Changing the height to ' + jQuery('#fullbody').height());
+			gadgets.window.adjustHeight(jQuery('#fullbody').height());
+		}
+
+		function imgerror(source){
+			source.src = http_s+"://"+url_root+"/images/fillers/profile_blank_thumb.gif";
+			source.onerror = "";
+			return true;
+		}
+
+		function postProcess() {
+			jQuery('.request-conversation').show();
+			// For tickets view, showing 
+
+			jQuery('#ui-widget-container a').each( function (i, item) {
+				if (!$(this).hasClass('post_processed')) {
+					var current_url = $(this).attr('href');
+					$(this).attr('href',http_s+"://"+url_root+current_url);
+					$(this).attr('target','__new');
+					$(this).addClass('post_processed')
+				}
+			} );
+		}
+
+		gadgets.util.registerOnLoadHandler(init);
+
+      </script>
+   ]]>
+  </Content>
+</Module>
+
