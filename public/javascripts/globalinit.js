@@ -148,7 +148,7 @@ var $J = jQuery.noConflict();
 
 		//Clicking on the row (for ticket list only), the check box is toggled.
 		$('.tickets tbody tr').live('click',function(ev) {
-			if (! $(ev.srcElement).is('input')) {
+			if (! $(ev.target).is('input[type=checkbox]')) {
 				var checkbox = $(this).find('input[type=checkbox]').first();
 				checkbox.prop('checked',!checkbox.prop('checked'));
 			}

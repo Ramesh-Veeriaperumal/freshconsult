@@ -9,12 +9,11 @@
 		<%= link_to @article.folder.category.name, solution_category_path(@article.folder.category) %> &rarr;
 		<%= link_to @article.folder.name, solution_category_folder_path(@article.folder.category_id, @article.folder)%>
  	</div>
-	
+	<div class="floatr">
+		<%= link_to(t('edit'), edit_solution_category_folder_article_path(@article.folder.category_id,@article.folder,@article), :class => "btn small") %>
+	</div>	
 	<h2 class="title"><%= @article.title %></h2> 
-	<div class="info_data clearfix">
-		<div class="floatr">
-			<%= link_to(t('edit'), edit_solution_category_folder_article_path(@article.folder.category_id,@article.folder,@article), :class => "uiButton small") %>
-		</div>
+	<div class="info_data">
 		<div class="article_info">
 		By <b> <%= @article.user.name%></b> 
 		| <%= @article.updated_at.strftime("%B %e %Y at %I:%M %p")%> 
