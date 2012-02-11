@@ -5,7 +5,7 @@
       When replying to Email notifications from Freshdesk you can now include "Email Commands" to instruct Freshdesk to perform certain actions on the Ticket. 
       </p>
     <p>
-      Email commands must follow the correct syntax and must be placed within a pre-configured delimiter text with a minimum of three characters length. (Default is @simonsays)
+      Email commands must follow the correct syntax and must be placed within a pre-configured delimiter text. (Default is @simonsays)
     </p>
     <p>
       For example the command - "@simonsays agent : John Roberts Status:Resolved @simonsays" will assign the ticket to the agent John Roberts and mark the Ticket as Resolved. 
@@ -38,6 +38,7 @@
 		<li>
 			<label><%=t('email_command_delimeter_label')%></label>
 			<%= f.text_field :email_cmds_delimeter, :class => "text" , :id => "email_cmds_delimeter"%>
+			<div class="info-data"><%= t('email_command_del_info_data') %> </div>
 		</li>
 		<li>
 		</li>
