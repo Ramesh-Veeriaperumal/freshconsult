@@ -1661,6 +1661,8 @@ en:
   settings: settings        
   updated_on: "%{user_name} updated on %{note_date}"
   integrations:
+    capsule_crm:
+      label: "Capsule CRM"
     capsule:
       label: "Capsule CRM"
       desc: "You can view Contact information from Capsule CRM in Freshdesk. This information can be accessed in the Ticket Details page and Contact Details Page."
@@ -1833,3 +1835,5 @@ en:
   maximum_agents_msg: "You have reached the maximum number of agents your subscription allows. You need to delete an existing agent or contact your account administrator to upgrade your account.If you just need an occasional agent, you can add one below"
   no_date_to_display: "No data to display"
   email_command_delimeter_length_error_msg: " Please provide atleast three characters for the delimeter."
+  email_command_del_info_data: "Tip - Choose a unique delimiter combination of minimum three characters (special characters recommended) that will not conflict the regular email response."
+  

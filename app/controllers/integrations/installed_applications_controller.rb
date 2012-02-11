@@ -40,7 +40,7 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
   end
   
   def update
-    installed_application = current_account.installed_applications.find(:first, :conditions => ["id",params[:id]])
+    installed_application = current_account.installed_applications.find(params[:id])
     if installed_application.blank?
       flash[:error] = t(:'flash.application.not_installed')
     else
