@@ -21,7 +21,7 @@ module Helpdesk::TicketsHelper
   
   def ticket_sidebar
     tabs = [["TicketProperties", t('ticket.properties'),         "ticket"],
-            ["RelatedSolutions", t('ticket.suggest_solutions'),  "search_solutions"],
+            ["RelatedSolutions", t('ticket.suggest_solutions'),  "related_solutions"],
             ["Scenario",         t('ticket.execute_scenario'),   "scenarios",       feature?(:scenario_automations)],
             ["RequesterInfo",    t('ticket.requestor_info'),     "requesterinfo"],
             ["Reminder",         t('to_do'),                     "todo"],
