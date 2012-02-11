@@ -496,9 +496,16 @@ body h5{
 }            
 
 .forumlinks{       
+  align:right;
+}
+
+.replylinks{
   position:absolute;
-  margin-top:-30px;
-  right:20px;
+  right:10px;             
+  top: 0;             
+	z-index:20;
+	text-align:right;
+	.btn{ font-weight:bold; padding:4px 9px; }
 }
 
 .request_details{
@@ -516,14 +523,6 @@ body h5{
 		   margin-left:6px;
 		}
 	} 
-	.replylinks{
-		float:right;
-		margin:4px 20px 0 0;
-		position:relative;
-		z-index:20;
-		text-align:right;
-		.btn{ font-weight:bold; padding:4px 9px; }
-	}
 	.bookmark{
 		display:none;
 	}	
@@ -3328,7 +3327,7 @@ div.addReminder{
 }
 
 
-.forum-group{
+.forum-group, .list-group{
 	margin:0px -20px; 
 }
 
