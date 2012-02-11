@@ -13,7 +13,9 @@ class Solution::CategoriesController < ApplicationController
   
   def index
     
-    @categories = permission?(:manage_knowledgebase) ? current_portal.solution_categories : current_portal.solution_categories.customer_categories  
+    @categories = permission?(:manage_knowledgebase) ? current_portal.solution_categories : 
+      (main_portal? ? current_portal.solution_categories.customer_categories : current_portal.solution_categories)
+
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @categories }
