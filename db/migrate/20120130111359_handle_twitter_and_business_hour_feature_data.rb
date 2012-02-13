@@ -1,5 +1,4 @@
 class HandleTwitterAndBusinessHourFeatureData < ActiveRecord::Migration
-  class PopulateTwitterFeatureData < ActiveRecord::Migration
   def self.up
      Account.all.each do |account|
       account.features.twitter.create 
@@ -13,6 +12,5 @@ class HandleTwitterAndBusinessHourFeatureData < ActiveRecord::Migration
       account.features.business_hours.destroy unless account.features.pro.available?
     end
   end
-end
-
+  
 end
