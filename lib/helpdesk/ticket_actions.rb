@@ -142,7 +142,7 @@ module Helpdesk::TicketActions
   def move_attachments   
     @note.attachments.each do |attachment|      
       url = attachment.content.url.split('?')[0]
-      @item.attachments.create(:content =>  RemoteFile.new(URI.parse(url)), :description => "", :account_id => @item.account_id)    
+      @item.attachments.create(:content =>  RemoteFile.new(URI.encode(url)), :description => "", :account_id => @item.account_id)    
     end
   end
   
