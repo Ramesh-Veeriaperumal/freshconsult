@@ -6,7 +6,7 @@
 		<%= report_item({:label => report[:label], :class => report[:object], :url => report_path(index+1)}) %>
 	<% end %>
 	<% if feature?(:timesheets) %>
-		<%= report_item({:label => t('reports.timesheet_reports.index.title'), :class => 'timesheet', :url => timesheet_report_path}) %>
+		<%= report_item({:label => t('reports.timesheet_reports.index.title'), :class => 'timesheet', :url => timesheet_reports_url}) %>
 	<% end %>
 	<% if feature?(:advanced_reporting) %>
 		<%= report_item({:label => t('reports.customer_title_nav'), :class => 'customer', :url => customer_activity_url}) %>
