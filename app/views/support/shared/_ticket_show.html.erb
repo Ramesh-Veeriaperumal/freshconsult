@@ -183,7 +183,7 @@
 		<% unless @ticket.deleted %>
 			<div class="request-wrapper">				
 				<% unless (@ticket.status == 5) %>
-					<%= link_to "Close this ticket", '/support/tickets/close_ticket/'+@ticket.id.to_s, :class =>"uiButton" %>
+					<%= link_to "Close this ticket", '/support/tickets/close_ticket/'+@ticket.display_id.to_s, :class =>"uiButton" %>
 				<% end %>
 				<a href="javascript:void(0)" class="uiButton" onclick="jQuery('#ReplyToTicket').show(); jQuery(this).hide();">Add note</a>
 			</div>  
