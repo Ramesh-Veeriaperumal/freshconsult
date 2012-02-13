@@ -39,7 +39,7 @@
     <!-- Declare our OpenID realm so our app is white listed -->
     <Extension id="realm" type="openIdRealm">
         <Url>
-            http://*.freshdesk.com
+            http*://*.freshdesk.com
         </Url>
     </Extension>
 
