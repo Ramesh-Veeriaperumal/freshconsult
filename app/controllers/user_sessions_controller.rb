@@ -159,13 +159,13 @@ require 'openssl'
       redirect_to signup_url and return unless signup_url.blank? 
       raise ActiveResource::ResourceNotFound
     end
+    http_s = @current_account.ssl_enabled ? "https" : "http"
     ##Need to handle the case where google is integrated with a seperate domain-- 2 times we need to authenticate
     t_url = params[:t] ? "&t="+params[:t] : "" # passed token will be preserved for authentication. 
-    return_url = "http://"+cust_url+"/authdone/google?domain="+params[:domain]+t_url
-    logger.debug "the return_url is :: #{return_url}"    
-    re_alm = "http://"+cust_url    
-    logger.debug "domain name is :: #{domain_name}"
-    url = nil    
+    return_url = http_s+"://"+cust_url+"/authdone/google?domain="+params[:domain]+t_url
+    re_alm = http_s+"://"+cust_url
+    logger.debug "domain name is : #{domain_name}, return_url is : #{return_url}, re_alm : #{re_alm}"
+    url = nil
     url = ("https://www.google.com/accounts/o8/site-xrds?hd=" + params[:domain]) unless domain_name.blank?
     authenticate_with_open_id(url,{ :required => ["http://axschema.org/contact/email", :email] , :return_to => return_url, :trust_root =>re_alm}) do |result, identity_url, registration| end
   end

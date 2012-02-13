@@ -26,13 +26,21 @@ class Subscription < ActiveRecord::Base
   def self.customer_count
    count(:conditions => {:state => 'active'})
  end
+ 
+  def self.free_customers
+   count(:conditions => {:state => 'active',:amount => 0.00})
+  end
   
   def self.customers_agent_count
     sum(:agent_limit, :conditions => { :state => 'active'})
   end
+  
+  def self.customers_free_agent_count
+    sum(:free_agents, :conditions => { :state => 'active'})
+  end
  
   def self.monthly_revenue
-    sum('amount/renewal_period', :conditions => { :state => 'active'}).to_f
+    sum('amount/renewal_period', :conditions => [ " state = 'active' and amount > 0.00 "]).to_f
   end
   
   # This hash is used for validating the subscription when a plan
