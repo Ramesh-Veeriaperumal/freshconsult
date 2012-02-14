@@ -5,7 +5,7 @@ class Helpdesk::Note < ActiveRecord::Base
   belongs_to :account
   belongs_to :user
   
-  Max_Attachment_Size = 20.megabyte
+  Max_Attachment_Size = 15.megabyte
 
   has_many :attachments,
     :as => :attachable,
