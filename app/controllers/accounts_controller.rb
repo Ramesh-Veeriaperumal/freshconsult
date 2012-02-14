@@ -74,7 +74,12 @@ class AccountsController < ApplicationController
     build_primary_email_and_portal
     build_user
     build_plan  
-    store_metrics
+    
+    begin
+        store_metrics
+    rescue
+    end
+      
     begin
       @account.time_zone = (ActiveSupport::TimeZone[params[:utc_offset].to_f]).name 
     rescue
@@ -495,7 +500,7 @@ class AccountsController < ApplicationController
     end
     
     def store_metrics
-      return unless params[:session_json]
+      return if params[:session_json].blank?
         
       metrics =  JSON.parse(params[:session_json])
       metrics_obj = {}
