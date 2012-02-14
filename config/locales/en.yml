@@ -1246,7 +1246,7 @@ en:
     canned_responses: 
       insert_ca_response: Canned Response
       insert_ca_resp_tip: Insert this canned response
-    split_ticket: Split as new Ticket
+    split_ticket: Split as new Ticket                                   
     flag_spam: Flag Spam
     assign_to_agent: Assign to Agent
     select_to_agent: Select an Agent
@@ -1516,6 +1516,7 @@ en:
         posted_on: "%{user_name} on %{note_date}"
         edit_note: Edit Note
         split_this_as_new_ticket: Split this as a new Ticket
+        split_ticket_confirm: Split this note and create it as a new ticket?
         private_note: Private note
         public_note: Public note
         inbound_email: Incoming email
