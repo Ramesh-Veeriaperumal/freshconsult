@@ -70,7 +70,7 @@
 							jQuery.datepicker._defaults.dateFormat,
 							selectedDate, instance.settings );
 					dates.not( this ).datepicker( "option", option, date );
-					jQuery(this).attr("date", date);
+					jQuery(this).prop("date", date);
 					jQuery("#report_filters").trigger("change");
 				}
 			}); 
@@ -80,7 +80,7 @@
 	    jQuery("#report_filters").change(function(){
     	jQuery("#time_sheet_report").html("<div class='loading-box'></div>"); 
     	jQuery.ajax({
-        url: "/reports/timesheet_reports/report_filter",
+        url: '<%=report_filter_timesheet_reports_url%>',
         type: "POST",
         data: jQuery(this).serializeArray(),
         success: function(data){ 

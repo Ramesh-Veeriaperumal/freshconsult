@@ -1,23 +1,20 @@
-<% content_for :sidebar do -%>
-	<div class="sidepanel">
-		<ul class="ui-list_with_icon">
-			<li><%= link_to(t('helpdesk.tickets.views.all_tickets'), "/support/tickets" ) %></li>
-			<li><%= link_to(t('helpdesk.tickets.views.open_or_pending'),"/support/tickets/filter/open_or_pending" ) %></li>
-			<li><%= link_to(t('helpdesk.tickets.views.resolved_or_closed') ,"/support/tickets/filter/resolved_or_closed" ) %></li>
-		</ul>
-		</br>
-	</div> 
-<%- end %>
+<% content_for :sidebar do -%><%- end %>
 
 <h3 class="title"><%= @page_title %></h3>
-<div class="tickets-container">
+<div class="list-group tickets-container">          
+ <div class="list-bar">
+ 	<%= link_to(t('helpdesk.tickets.views.all_tickets'), "/support/tickets", :class => "first" ) %>      
+	<%= link_to(t('helpdesk.tickets.views.open_or_pending'),"/support/tickets/filter/open_or_pending" ) %>     
+	<%= link_to(t('helpdesk.tickets.views.resolved_or_closed') ,"/support/tickets/filter/resolved_or_closed" ) %>
+ </div>
  <table class="tickets">	
 	<tbody>
 		<%= each_or_message("/support/shared/ticket", @tickets, t("helpdesk.tickets.views.no_tickets")) %>
 	</tbody>
- </table>
-</div>
+ </table>   
 
  <div class="toolbar">
     <%= will_paginate @tickets, :class => "toolbar_pagination_full" %>  
  </div>
+</div>
+             

@@ -46,6 +46,9 @@
 		jQuery("#begin_subscription")
 			.click(function(){
 				$("chargenow").value = true;
+				<%if @subscription.amount.to_i == 0 %>
+				  return true;
+				<%end%>
 				return confirm("<%= t('begin_subscription_confirm', :cost => @subscription.amount.to_i ) %>") ;
 			});
 	<% end %>

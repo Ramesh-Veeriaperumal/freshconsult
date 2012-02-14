@@ -72,7 +72,8 @@
 		      <div class="request-wrapper">    	 
 					  <div class="details min_height">    
 					    <span class="seperator"></span>
-						  <%= first_post.body_html %>
+						  <%= first_post.body_html %>     
+							<span class="seperator"></span>  
 						</div>
 					 
 					<% unless first_post.attachments.empty? %>
@@ -88,7 +89,7 @@
 							  <%= render (:partial => "/forum_shared/topic_vote", :object => @topic) if logged_in? %> 
 						</div>
 					<% end %>             
-					<div class="forumlinks">
+					<div class="alignright">
            <%= content_tag(:h4, t('topic.msg1'), :class => "title" ) if @topic.locked? %>
            <%= link_to( (@topic.locked)?t('topic.open'):t('topic.close'),
               update_lock_category_forum_topic_path(@forum_category,@forum, @topic),

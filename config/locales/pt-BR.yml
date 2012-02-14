@@ -480,7 +480,7 @@ pt-BR:
         long: "{{user_path}} executou o cenário '{{scenario_name}}' em {{notable_path}}"
       ticket_merge: 
         short: "{{user_path}} misturou o ticket {{notable_path}} para {{merge_ticket_path}}" 
-        long: "{{user_path}} misturou o ticket {{notable_path}} para {{merge_ticket_path}"
+        long: "{{user_path}} misturou o ticket {{notable_path}} para {{merge_ticket_path}}"
       ticket_split: 
         short: "{{user_path}} dividiu o ticket {{notable_path}} de {{split_ticket_path}}"
         long: "{{user_path}} dividiu o ticket {{notable_path}} de {{split_ticket_path}}"

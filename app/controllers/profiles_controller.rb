@@ -47,7 +47,7 @@ end
 
 def update_agent
   
-  @profile = current_account.agents.find_by_user_id(params[:id])
+  @profile = current_user.agent
     respond_to do |format|      
       if @profile.update_attributes(params[:agent])            
           @user = current_account.users.find(@profile.user_id)          
@@ -79,7 +79,7 @@ def change_password
 end
 
 def reset_password
-    @user = current_account.users.find(params[:id])  
+    @user = current_user
     @user.password = params[:user][:password]
     @user.password_confirmation = params[:user][:password_confirmation]
     @user.active = true #by Shan need to revisit..

@@ -89,6 +89,7 @@ module Reports::ChartGenerator
       :chart => {
           :renderTo => "#{column_name.to_s.gsub('.', '_')}_freshdesk_chart",
           :margin => [-80, 10, 0, 10],
+          :borderColor => 'rgba(0,0,0,0)'
         },
       :plotOptions => {
         :pie => {
@@ -145,7 +146,8 @@ module Reports::ChartGenerator
     Highchart.bar({
       :chart => {
           :renderTo => "#{column_name.to_s.gsub('.', '_')}_freshdesk_single_stacked_bar_chart",
-          :margin => [10,5,10,40]
+          :margin => [10,5,10,40],
+          :borderColor => 'rgba(0,0,0,0)'
         },
       :x_axis => {
       	:categories => ['Tickets'],
@@ -171,7 +173,7 @@ module Reports::ChartGenerator
       },
       :plotOptions => {
         :series => {
-          :stacking => 'normal',
+          :stacking => 'normal'
         },
         :bar => {
           :borderWidth => 0,
@@ -198,7 +200,6 @@ module Reports::ChartGenerator
         :reversed => true,
         :verticalAlign => 'top',
         :floating => false,
-        
         :labelFormatter => pie_legend_formatter,
       },
       :series => browser_data,
@@ -215,6 +216,7 @@ module Reports::ChartGenerator
     Highchart.pie({
       :chart => {
           :renderTo => "#{column_name.to_s.gsub('.', '_')}_freshdesk_gauge",
+          :borderColor => 'rgba(0,0,0,0)'
           # :backgroundColor => '#F6F6F6',
           # :margin => [0, 10, 20, 10]
         },
@@ -265,6 +267,7 @@ module Reports::ChartGenerator
           :marginLeft => 70,
           :marginRight => 30,
           :zoomType => 'x',
+          :borderColor => 'rgba(0,0,0,0)'
       },
       :legend => {
         :layout => 'horizontal',
@@ -355,7 +358,7 @@ module Reports::ChartGenerator
 
  def  stack_bar_single_tooltip_formatter 
   "function() {
-      return '<strong>' + this.series.name + '</strong> ' + this.y + '%';
+      return '<strong>' + this.series.name  + '</strong> ' + Math.round(this.percentage,3)+ '%';
     }"
   end
   

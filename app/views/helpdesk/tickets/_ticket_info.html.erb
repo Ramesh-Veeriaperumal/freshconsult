@@ -75,8 +75,16 @@
         <% end %>
         <div class="request-wrapper">
         <div id="description-full" class="request_mail details min_height">
-          <span class="seperator"></span>
-          <%= @ticket.description_html %>          
+          <span class="seperator"></span>                                  
+					<table>
+						<tr>
+          		<td>
+								<div class="request_mail">
+									<%= @ticket.description_html %>
+								</div>
+						  </td>	
+						</tr>
+  				</table>
         </div>      
         <% unless @ticket.attachments.empty? %>
           <span class="seperator"></span>
@@ -92,5 +100,5 @@
           </div>
         <% end %>
       </div>
-      </div>
+    </div>
   </div>

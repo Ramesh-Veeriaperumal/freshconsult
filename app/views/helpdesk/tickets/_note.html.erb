@@ -19,7 +19,8 @@
 	  	<% if permission?(:manage_tickets) %>
       <%= link_to_remote( t("edit"), { :loading => "$('loading_#{notedetails}').show();", 
                                         :loaded  => "$('loading_#{notedetails}').hide();", 
-                                        :update  => notedetails,
+                                        :update  => notedetails, 
+																				:complete => "jQuery('##{notedetails}').removeClass('details')",
                                         :url => edit_helpdesk_ticket_helpdesk_note_path(note.notable, note), 
                                         :method => :GET },
                                       { :class => "slim-button" }) %> 
@@ -34,8 +35,16 @@
     <%= t(".posted_on", :user_name => link_to_user(note.user, :class => "user_name"), :note_date => formated_date(note.created_at) ) %>
 		<span class="loading-edit" id='<%= "loading_#{notedetails}" %>' style="display:none;"></span> 
   </div> 
-	<div class="request_mail details" id='<%= notedetails %>'>
-		<%= note.body_html %>
+	<div class="details" id='<%= notedetails %>'>
+		<table>
+			<tr>
+    		<td>  
+					<div class="request_mail">
+						<%= note.body_html %>
+					</div>
+				 </td>
+			 </tr>
+		 </table>
 	</div>
 	<% unless note.attachments.empty? %>
 		<span class="seperator"></span>

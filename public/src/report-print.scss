@@ -1,0 +1,56 @@
+@import "blueprint";
+
+// Generate the blueprint print styles:
+@include blueprint-print;
+ 
+a, a:visited { color: #444; text-decoration: underline; }
+a:after { content: " (" attr(href) ")"; } 
+abbr:after { content: " (" attr(title) ")"; }
+.ir a:after { content: ""; }  
+pre, blockquote { border: 1px solid #999; page-break-inside: avoid; }
+thead { display: table-header-group; }  
+tr, img { page-break-inside: avoid; }
+p, h2, h3 { orphans: 3; widows: 3; }
+h2, h3{ page-break-after: avoid;} 
+p{ 
+	font-size:1.0em; 
+   margin: 0 0 0;
+   text-align: left;
+}
+
+body{
+    background: none repeat scroll 0 0 white;
+    font-size: 80%;
+	font-family:Verdana,sans-serif;
+	line-height: 1.8em;
+	min-width: 900px; 
+ }
+ .header, #Sidebar, #footer{
+ 	display: none;
+ }
+
+ .report-unit{
+ 	ul.summary {
+ 		li {
+ 			list-style:none;
+ 			display: inline;
+ 			float:left;
+ 			h4 {
+ 				margin: 10px 0;
+ 			}
+ 		}
+ 	}
+
+ }
+
+.pagebreak {
+	page-break-before: always;
+}
+.header{
+	border:1px dashed #afafaf; 
+	border-width:1px 0px;
+	h3{
+	   margin:8px 0;
+	   font-size:1.1em;
+	}
+}

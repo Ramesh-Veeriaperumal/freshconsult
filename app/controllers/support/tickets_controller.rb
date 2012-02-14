@@ -39,17 +39,19 @@ class Support::TicketsController < ApplicationController
      logger.debug "close the ticket...with status id  #{status_id}"
      res = Hash.new
      if @item.update_attribute(:status , status_id)
-       res["success"] = true
-       res["status"] = 'Closed'
-       res["value"] = status_id
-       res["message"]="Successfully updated"
-       render :json => ActiveSupport::JSON.encode(res)
+       # res["success"] = true
+       #        res["status"] = 'Closed'
+       #        res["value"]  = status_id
+       #        res["message"] = "Successfully updated"
+       #        render :json => ActiveSupport::JSON.encode(res)
+       flash[:notice] = "Successfully updated"
      else
-       res["success"] = false
-       res["message"]="closing the ticket failed"
-       render :json => ActiveSupport::JSON.encode(res)
-       
-     end
+       # res["success"] = false
+       # res["message"] = "closing the ticket failed"
+       # render :json => ActiveSupport::JSON.encode(res)      
+       flash[:notice] = "Closing the ticket failed"
+     end                                       
+     redirect_to :back
   end
    
   protected 

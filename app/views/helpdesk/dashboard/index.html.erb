@@ -29,7 +29,7 @@
 
 <% content_for :onload_script do %>
 	activity_count = 0;
-	previous_id = jQuery('#Pages li').first().attr('id');
+	previous_id = jQuery('#Pages li').first().prop('id');
 
   new PeriodicalExecuter(function(pe) {
     jQuery.get(

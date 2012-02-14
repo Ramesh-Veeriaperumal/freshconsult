@@ -60,12 +60,6 @@ TicketTimesheet.prototype = {
 		   		freshbooksWidget.resetIntegratedResourceIds()
         });
 
-        jQuery("#timeentry_apps_add .app-logo").live('click',function(ev) {
-          if (!jQuery(ev.srcElement).is('input[type=checkbox]')) {
-            var checkbox = jQuery(this).children("input[type=checkbox]");
-            checkbox.prop('checked', !checkbox.prop('checked'));
-          }
-        });
 
     //     console.log('Positioning the buttons');
 
@@ -99,3 +93,10 @@ TicketTimesheet.prototype = {
   }
 };
 var timesheet = new TicketTimesheet();	
+
+jQuery("#time_integration .app-logo").live('click',function(ev) {
+  if (!jQuery(ev.target).is('input[type=checkbox]')) {
+    var checkbox = jQuery(this).children("input[type=checkbox]");
+    checkbox.prop('checked', !checkbox.prop('checked'));
+  }
+});

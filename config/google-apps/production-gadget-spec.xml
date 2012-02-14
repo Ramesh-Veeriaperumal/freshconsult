@@ -57,8 +57,6 @@
 	<div id="error"></div>
 
 	<script type="text/javascript">
-		alert(" Dev Version - v0.00426 ");
-
 		// <!-- Fetch the array of content matches. -->
 		matches = google.contentmatch.getContentMatches();
 		var from_email=""; to_email=""; subject=""; body=""; us_phone=""; ticket_id=""; t=""; var cnt=Math.floor((Math.random()*1000)*(Math.random()*100));
