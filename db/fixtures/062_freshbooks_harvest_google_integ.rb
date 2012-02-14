@@ -56,15 +56,15 @@ end
 
 
 # Populate Google contacts
-google_contacts_app = Integrations::Application.seed(:name) do |s|
-  s.name = "google_contacts"  # Do not change the name.
-  s.display_name = "integrations.google_contacts.label" 
-  s.description = "integrations.google_contacts.desc"
-  s.options = { 
-                :keys_order => [:account_settings], 
-                :account_settings => {:type => :custom, 
-                    :partial => "/integrations/applications/google_accounts", 
-                    :required => false, :label => "integrations.google_contacts.form.account_settings", 
-                    :info => "integrations.google_contacts.form.account_settings_info" }
-               }
-end
+#google_contacts_app = Integrations::Application.seed(:name) do |s|
+#  s.name = "google_contacts"  # Do not change the name.
+#  s.display_name = "integrations.google_contacts.label" 
+#  s.description = "integrations.google_contacts.desc"
+#  s.options = { 
+#                :keys_order => [:account_settings], 
+#                :account_settings => {:type => :custom, 
+#                    :partial => "/integrations/applications/google_accounts", 
+#                    :required => false, :label => "integrations.google_contacts.form.account_settings", 
+#                    :info => "integrations.google_contacts.form.account_settings_info" }
+#               }
+#end

@@ -3,6 +3,6 @@
 	<%= Liquid::Template.parse(h t(ticket_note.description)).render(eval_activity_data(ticket_note.activity_data).merge(
 			'user_path' => link_to(h(ticket_note.user), ticket_note.user, :class => "username"),
 			'notable_path' => link_to(h(ticket_note.notable), ticket_note.notable, :class => "notelink") )) %>     
-			
- 	<div class="activity_time"><%= distance_of_time_in_words_to_now(ticket_note.created_at) %> ago</div>
+
+	<%= content_tag :div,  "", :class => "activity_time", :title => ticket_note.created_at.strftime("%a, %d %b %Y %H:%M:%S %z")  %>
 </li>

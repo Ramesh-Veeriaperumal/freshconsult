@@ -12,9 +12,7 @@
 <%= render :partial => "summary" %>
 <div id="Activity">
 	<h3 class="title"><%=t('recent_activity')%></h3>
-	<div id="recent_activities_count" class='more-tweets'>
-	  1 new activity
-	</div>
+	<div id="recent_activities_count" class='more-tweets'></div>
 	<div id="recent_activities" class='hide'></div>
 	<ul id="Pages" class="activityfeed">		
 		<% @items.each_with_index do |item, i| %>
@@ -30,7 +28,7 @@
 <% content_for :onload_script do %>
 	activity_count = 0;
 	previous_id = jQuery('#Pages li').first().prop('id');
-
+  jQuery("#Pages div.activity_time").humaneDates(); 
   new PeriodicalExecuter(function(pe) {
     jQuery.get(
       "/helpdesk/dashboard/latest_activities",
@@ -44,12 +42,13 @@
       			  .html(plural(activity_count, "<%= t('recent_activity') %>", "<%= t('recent_activities') %>"));
       			previous_id = jQuery('#recent_activities li.activity').first().attr('id');
       			jQuery('#recent_activities_count').slideDown();
-      		}
+      		}                                                      
+					jQuery("div.activity_time").humaneDates();
     });
   }, 30);
   
 	jQuery('#recent_activities_count').click(function() {
-		new_activites = jQuery("<div />").addClass("borderbottom").hide().prepend(jQuery("#recent_activities").html());		
+		var new_activites = jQuery("<div />").addClass("borderbottom").hide().prepend(jQuery("#recent_activities").html());		
 		jQuery('#Pages').prepend(new_activites);
 		new_activites.slideDown();
 		jQuery("#recent_activities").empty();			
