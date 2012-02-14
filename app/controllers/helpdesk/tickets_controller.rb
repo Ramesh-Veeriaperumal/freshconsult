@@ -29,12 +29,15 @@ class Helpdesk::TicketsController < ApplicationController
     email = params[:email]
     unless email.blank?
       requester = current_account.all_users.find_by_email(email) 
+      @user_name = email
       if(requester.blank?)
         requester_id = 0
       else
         requester_id = requester.id
+        @user_name = requester.name unless requester.name.blank?
       end
-      params[:data_hash] = [{ "condition" => "requester_id", "operator" => "is_in", "value" => requester_id}];
+      params[:data_hash] = [{ "condition" => "requester_id", "operator" => "is_in", "value" => requester_id}, 
+                            { "condition" => "status", "operator" => "is_in", "value" => "#{Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open]},#{Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:pending]}"}];
     end
   end
 
@@ -109,8 +112,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
   
   def user_tickets
-    @items = current_account.tickets.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
-    puts "@user #{@user}"
+    @items = current_account.tickets.permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
     render :layout => "widgets/contacts"
   end
 
