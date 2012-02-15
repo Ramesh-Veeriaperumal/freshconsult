@@ -30,6 +30,7 @@ class Import::ZendeskData < Struct.new(:params)
   def perform
 
     @current_account = Account.find_by_full_domain(params[:domain])
+    @current_account.make_current
     file_list = params[:zendesk][:files]
     
     begin
