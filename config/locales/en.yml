@@ -1246,7 +1246,7 @@ en:
     canned_responses: 
       insert_ca_response: Canned Response
       insert_ca_resp_tip: Insert this canned response
-    split_ticket: Split as new Ticket
+    split_ticket: Split as new Ticket                                   
     flag_spam: Flag Spam
     assign_to_agent: Assign to Agent
     select_to_agent: Select an Agent
@@ -1516,6 +1516,7 @@ en:
         posted_on: "%{user_name} on %{note_date}"
         edit_note: Edit Note
         split_this_as_new_ticket: Split this as a new Ticket
+        split_ticket_confirm: Split this note and create it as a new ticket?
         private_note: Private note
         public_note: Public note
         inbound_email: Incoming email
@@ -1631,6 +1632,7 @@ en:
         delete: "Are you sure you want to delete this view?"
     messages:
       no_tickets_in_view: You don't have any tickets in %{view_name}.
+      no_tickets_for_user: There are no open tickets for %{user_name} to view.
   conversation: Conversation
   save_this_view: "Save this View..."
   loading:
