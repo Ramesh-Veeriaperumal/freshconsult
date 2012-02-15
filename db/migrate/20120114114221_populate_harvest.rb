@@ -23,7 +23,7 @@ class PopulateHarvest < ActiveRecord::Migration
     description = "harvest.widgets.timeentry_widget.description"
     script = %{
       <div id="harvest_widget" title="{{harvest.title}}">
-        <div id="content"></div>
+        <div class="content"></div>
       </div>
       <script type="text/javascript">
         CustomWidget.include_js("/javascripts/integrations/harvest.js");

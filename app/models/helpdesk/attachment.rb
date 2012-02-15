@@ -18,7 +18,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
   
     #before_validation_on_create :set_random_secret
     before_post_process :image?
-    before_post_process :set_content_dispositon
+    #before_post_process :set_content_dispositon
     before_create :set_content_type
   
    def set_content_type

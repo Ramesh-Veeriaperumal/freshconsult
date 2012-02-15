@@ -3,7 +3,7 @@
 		<%= link_to t('company.new'), new_customer_path, :class => "uiButton" %>			
 		<%= link_to(t('contacts.new'), new_contact_url, :class => "uiButton") %>
 		<%= link_to(t('contacts.import_csv'), csv_contact_import_path, :class => "uiButton grey") %>
-		<%= link_to(t('contacts.import_google'), google_contact_import_path, :class => "uiButton grey") %>
+		<div style="display:none;"><%= link_to(t('contacts.import_google'), google_contact_import_path, :class => "uiButton grey") %></div>
 	</div>
 
 	<h3 class="title"><%= @page_title = t('customers') %></h3>	

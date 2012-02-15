@@ -2,7 +2,7 @@
 	<% form_remote_tag(:url => '/activity_reports/customer/generate', :update => "report-container", 
 	                   :loading => "jQuery('#report-container').html('<div class=\"loading-box\"></div>');  ") do %>
 	  <div class="ff_item" container="dropdown" id="div_ff_customer">
-		<label class="caption"><%= label_tag "customer_id", t("reports.select_customer") %></label>           
+		<%= label_tag "customer_id", t("reports.select_customer"), :class => 'caption' %>
 		<%= select_tag "customer_id", options_for_select(current_account.customers.collect{ |c| [c.name, c.id] }) ,:class => "customSelect filter_item" %>     
 	  </div>
 	  <%= render :partial => "/reports/shared/options_form" %>

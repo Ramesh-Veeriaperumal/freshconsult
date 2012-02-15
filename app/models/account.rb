@@ -110,7 +110,7 @@ class Account < ActiveRecord::Base
   has_many :ticket_fields, :class_name => 'Helpdesk::TicketField', :dependent => :destroy, 
     :include => [:picklist_values, :flexifield_def_entry], :order => "position"
   
-  has_many :canned_responses , :class_name =>'Admin::CannedResponse' , :dependent => :destroy  
+  has_many :canned_responses , :class_name =>'Admin::CannedResponse' , :dependent => :destroy , :order => 'title' 
   has_many :user_accesses , :class_name =>'Admin::UserAccess' , :dependent => :destroy
 
   has_many :facebook_pages, :class_name =>'Social::FacebookPage' ,:dependent => :destroy
@@ -374,6 +374,10 @@ class Account < ActiveRecord::Base
   
   def kbase_email
     "kbase@#{full_domain}"
+  end
+  
+  def has_credit_card?
+    !subscription.card_number.nil?
   end
 
   protected

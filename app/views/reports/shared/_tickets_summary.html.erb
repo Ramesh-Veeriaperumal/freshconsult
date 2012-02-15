@@ -24,7 +24,7 @@
   <div class="sla-compliance report-unit">
     <h3><%= t('reports.summary.sla_compliance')%> </h3>
     <div id="sla_freshdesk_gauge" class="gauge-chart"></div> 
-    <% unless @sla_diff.nil? %>
+    <% unless @sla_diff.nil? || @sla_diff == 0 %>
       <h4 class='<%= "negative" if @sla_diff < 0 %> percent-diff'>
         <%= format_float_value(@sla_diff)%><span class="percent">%</span>
       </h4>
@@ -34,7 +34,7 @@
   <div class="sla-compliance report-unit">
     <h3><%= t('reports.summary.fcr')%> </h3>
     <div id="fcr_freshdesk_gauge" class="gauge-chart"></div>
-    <% unless @fcr_diff.nil? %>
+    <% unless @fcr_diff.nil? || @fcr_diff == 0 %>
       <h4 class='<%= "negative" if @fcr_diff < 0 %> percent-diff'>
         <%= format_float_value(@fcr_diff)%><span class="percent">%</span>
       </h4>

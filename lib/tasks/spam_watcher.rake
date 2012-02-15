@@ -19,7 +19,7 @@ namespace :spam_watcher do
 end
 
 def check_for_users_and_unblock
-  current_time = Time.now #Should it be Time.now?!?!
+  current_time = Time.zone.now #Should it be Time.now?!?!
   query_str = "select id  from users where blocked_at < '#{60.minutes.ago(current_time).to_s(:db)}'" 
   users = ActiveRecord::Base.connection.select_values(query_str)
   
@@ -30,7 +30,7 @@ def check_for_users_and_unblock
 end
 
 def check_tickets(table,column_name, threshold)
-  current_time = Time.now #Should it be Time.now?!?!
+  current_time = Time.zone.now #Should it be Time.now?!?!
   query_str = <<-eos
     select #{column_name},count(*) as total from #{table} where created_at 
     between '#{60.minutes.ago(current_time).to_s(:db)}' and '#{current_time.to_s(:db)}' 

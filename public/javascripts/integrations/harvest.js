@@ -1,7 +1,7 @@
 var HarvestWidget = Class.create();
 HarvestWidget.prototype= {
 	LOGIN_FORM:new Template('<form onsubmit="harvestWidget.freshdeskWidget.login(this);if(harvestWidget.inline) harvestWidget.convertToInlineWidget();return false;"><div class="field first"><label>Username</label><input type="text" id="username"/></div><div class="field"><label>Password</label><input type="password" class="text" id="password"/></div><div class="field"><label><input type="checkbox" id="remember_me" checked value="true" />Remember me</label><input type="submit" class="btn" value="Login" id="submit"></div></form>'),
-	HARVEST_FORM:new Template('<form id="harvest-timeentry-form" method="post"> <a href="javascript:void(0)" class="link" onclick="harvestWidget.freshdeskWidget.logout()">(Use different user)</a> <div class="field first"><label>Client</label><select name="client-id" id="harvest-timeentry-clients" onchange="harvestWidget.clientChanged(this.options[this.selectedIndex].value)" class="hide"></select> <div class="loading-fb" id="harvest-clients-spinner"></div></div><div class="field"> <label>Project</label><select name="request[project_id]" id="harvest-timeentry-projects" onchange="harvestWidget.projectChanged(this.options[this.selectedIndex].value)" class="hide"></select> <div class="loading-fb" id="harvest-projects-spinner"></div> </div><div class="field"><label>Task</label><select disabled name="request[task_id]" id="harvest-timeentry-tasks" onchange="harvestWidget.taskChanged(this.options[this.selectedIndex].value)" class="hide"></select> <div class="loading-fb" id="harvest-tasks-spinner" ></div> </div><div class="field"><label id="harvest-timeentry-notes-label">Notes</label><textarea disabled name="request[notes]" id="harvest-timeentry-notes" wrap="virtual">'+harvestBundle.harvestNote.escapeHTML()+'</textarea></div><div class="field"> <label id="harvest-timeentry-hours-label">Hours</label><input type="text" disabled name="request[hours]" id="harvest-timeentry-hours"> </div> <input type="submit" disabled id="harvest-timeentry-submit" value="Submit" onclick="harvestWidget.logTimeEntry($(\'harvest-timeentry-form\'));return false;"></form>'),
+	HARVEST_FORM:new Template('<form id="harvest-timeentry-form" method="post"> <a href="javascript:void(0)" class="link" onclick="harvestWidget.freshdeskWidget.logout()">(Use different user)</a> <div class="field first"><label>Client</label><select name="client-id" id="harvest-timeentry-clients" onchange="harvestWidget.clientChanged(this.options[this.selectedIndex].value)" class="full hide"></select> <div class="loading-fb" id="harvest-clients-spinner"></div></div><div class="field"> <label>Project</label><select name="request[project_id]" id="harvest-timeentry-projects" onchange="harvestWidget.projectChanged(this.options[this.selectedIndex].value)" class="full hide"></select> <div class="loading-fb" id="harvest-projects-spinner"></div> </div><div class="field"><label>Task</label><select disabled name="request[task_id]" id="harvest-timeentry-tasks" onchange="harvestWidget.taskChanged(this.options[this.selectedIndex].value)" class="full hide"></select> <div class="loading-fb" id="harvest-tasks-spinner" ></div> </div><div class="field"><label id="harvest-timeentry-notes-label">Notes</label><textarea disabled name="request[notes]" id="harvest-timeentry-notes" wrap="virtual">'+harvestBundle.harvestNote.escapeHTML()+'</textarea></div><div class="field"> <label id="harvest-timeentry-hours-label">Hours</label><input type="text" disabled name="request[hours]" id="harvest-timeentry-hours"> </div> <input type="submit" disabled id="harvest-timeentry-submit" value="Submit" onclick="harvestWidget.logTimeEntry($(\'harvest-timeentry-form\'));return false;"></form>'),
 
 	initialize:function(harvestBundle, loadInline){
 		harvestWidget = this; // Assigning to some variable so that it will be accessible inside custom_widget.
@@ -41,7 +41,7 @@ HarvestWidget.prototype= {
 				integratable_type:"timesheet",
 				anchor:"harvest_widget",
 				app_name:"Harvest",
-				domain:harvestBundle.domain + ".harvestapp.com",
+				domain:harvestBundle.domain,
 				ssl_enabled:harvestBundle.ssl_enabled || "false",
 				login_content: function(){
 					return harvestWidget.LOGIN_FORM.evaluate({});
@@ -78,7 +78,6 @@ HarvestWidget.prototype= {
 	},
 
 	handleLoadProject:function() {
-		console.log("Harest handleLoadProject.");
 		if (this.timeEntryXml) {
 			// If timeEntryXml is populated then this already time entry added in harvest.  So choose the correct client and project id in the drop down.
 			project_id = searchTerm = this.get_time_entry_prop_value(this.timeEntryXml, "project_id")
@@ -107,8 +106,6 @@ HarvestWidget.prototype= {
 
 	handleLoadTask:function() {
 		UIUtil.hideLoading('harvest','tasks');
-
-		console.log("Harest handleLoadTask.");
 		if (this.timeEntryXml) {
 			searchTerm = this.get_time_entry_prop_value(this.timeEntryXml, "task_id")
 			this.timeEntryXml = "" // Required drop downs already populated using this xml. reset this to empty, otherwise all other methods things still it needs to use this xml to load them.
@@ -147,19 +144,21 @@ HarvestWidget.prototype= {
 
 	validateInput:function() {
 
-		if (!jQuery('#harvest-timeentry-enabled').is(':checked')) {
+		if ($("harvest-timeentry-hours")) {
+			var hoursSpent = $("harvest-timeentry-hours").value
+			if (hoursSpent != "") {
+				hoursSpent = parseFloat(hoursSpent);
+			}
+			
+			if (isNaN(hoursSpent)) {
+				alert("Enter valid value for hours.");
+				return false;
+			}
+			return true;
+		} else {
+			alert("Please login to harvest.");
 			return false;
 		}
-		var hoursSpent = $("harvest-timeentry-hours").value
-	    if (hoursSpent != "") {
-			hoursSpent = parseFloat(hoursSpent);
-		}
-
-		if(isNaN(hoursSpent)){
-			alert("Enter valid value for hours.");
-			return false;
-		}
-		return true;
 	},
 
 	logTimeEntry:function() {
@@ -243,9 +242,11 @@ HarvestWidget.prototype= {
 		} else {
 			// Do nothing. As this the form is going to be used for creating new entry, let the staff, client, project and task drop down be selected with the last selected entry itself. 
 		}
-		$("harvest-timeentry-hours").value = "";
-		$("harvest-timeentry-notes").value = harvestBundle.harvestNote.escapeHTML();
-		$("harvest-timeentry-notes").focus();
+		if ($("harvest-timeentry-hours")) {
+			$("harvest-timeentry-hours").value = "";
+			$("harvest-timeentry-notes").value = harvestBundle.harvestNote.escapeHTML();
+			$("harvest-timeentry-notes").focus();
+		}
 	},
 
 	processFailure:function(evt) {
@@ -355,7 +356,7 @@ HarvestWidget.prototype= {
 				harvestBundle.integrated_resource_id = resJ['integrations_integrated_resource']['id'];
 				harvestBundle.remote_integratable_id = resJ['integrations_integrated_resource']['remote_integratable_id'];
 			} else {
-				console.log("Error while adding the integrated resource in db.");
+				alter("Harvest: Error while associating the remote resource id with local integrated resource id in db.");
 			}
 			if (result_callback) 
 				result_callback(evt);

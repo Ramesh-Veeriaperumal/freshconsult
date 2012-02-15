@@ -43,7 +43,7 @@
 		else
 		{			
 			jQuery('#contact_role').removeAttr('checked');
-			jQuery('#contact_role').attr( "disabled" , true );
+			jQuery('#contact_role').prop( "disabled" , true );
 		}
 	
 	}
@@ -111,7 +111,7 @@
 			<%= label(:user, :description, t('user.back_info')) %>
 			<label class="overlabel" for="user_binfo">
 				<%=t('contacts.info6')%>
-				example - address, LA Lakers fan etc.
+				example - LA Lakers fan etc.
 			</label>
 			<%= text_area(:user, :description, :class => "text", :id => "user_binfo" ) %>
 		</li>		

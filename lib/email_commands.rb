@@ -13,7 +13,7 @@ module EmailCommands
         cmds = ActiveSupport::JSON.decode("{ #{email_cmds} }")  
         RAILS_DEFAULT_LOGGER.debug "The email commands are : #{cmds}"
         cmds.each_pair do |cmd, value|
-        begin
+          begin
             cmd = cmd.downcase
             if respond_to?(cmd)
               send(cmd,ticket,value)

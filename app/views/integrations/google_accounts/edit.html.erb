@@ -3,7 +3,7 @@
 <% 
   action = @omniauth_origin == "import" ? "import_contacts" : "update"
   form_for @google_account, :url => { :controller=> "integrations/google_accounts", :action => action, :iapp_id => (params[:iapp_id] unless params[:iapp_id].blank?) } do |f| 
-	gg_arr = [[t("integrations.google_contacts.edit_form.all_contacts"), "none"],["My Contacts", "6"]]
+	gg_arr = [["My Contacts", "6"]]
 	@google_groups.each {|gg|
 		gg_arr.push([gg.name, gg.group_id])
 	}

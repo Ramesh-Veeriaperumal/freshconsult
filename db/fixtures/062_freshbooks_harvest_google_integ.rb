@@ -1,9 +1,9 @@
 # Populate freshbooks
 freshbooks_app = Integrations::Application.seed(:name) do |s|
-  name = "freshbooks"
-  display_name = "integrations.freshbooks.label"  
-  description = "integrations.freshbooks.desc"
-  options = {
+  s.name = "freshbooks"
+  s.display_name = "integrations.freshbooks.label"  
+  s.description = "integrations.freshbooks.desc"
+  s.options = {
       :keys_order => [:title, :api_url, :api_key, :freshbooks_note], 
       :title => { :type => :text, :required => true, :label => "integrations.freshbooks.form.widget_title", :default_value => "Freshbooks"},
       :api_url => { :type => :text, :required => true, :label => "integrations.freshbooks.form.api_url", :info => "integrations.freshbooks.form.api_url_info", :validator_type => "url_validator" }, 
@@ -14,11 +14,11 @@ freshbooks_app = Integrations::Application.seed(:name) do |s|
 end
 
 Integrations::Widget.seed(:application_id, :name) do |s|
-  name = "freshbooks_timeentry_widget"
-  description = "freshbooks.widgets.timeentry_widget.description"
-  script = %{
+  s.name = "freshbooks_timeentry_widget"
+  s.description = "freshbooks.widgets.timeentry_widget.description"
+  s.script = %{
     <div id="freshbooks_widget" api_url="{{freshbooks.api_url}}" title="{{freshbooks.title}}">
-      <div id="content"></div>
+      <div class="content"></div>
     </div>
     <script type="text/javascript">
       CustomWidget.include_js("/javascripts/integrations/freshbooks.js");
@@ -45,7 +45,7 @@ Integrations::Widget.seed(:application_id, :name) do |s|
   s.description = "harvest.widgets.timeentry_widget.description"
   s.script = %{
     <div id="harvest_widget" title="{{harvest.title}}">
-      <div id="content"></div>
+      <div class="content"></div>
     </div>
     <script type="text/javascript">
       CustomWidget.include_js("/javascripts/integrations/harvest.js");
@@ -56,15 +56,15 @@ end
 
 
 # Populate Google contacts
-google_contacts_app = Integrations::Application.seed(:name) do |s|
-  s.name = "google_contacts",  # Do not change the name.
-  s.display_name = "integrations.google_contacts.label", 
-  s.description = "integrations.google_contacts.desc", 
-  s.options = { 
-                :keys_order => [:account_settings], 
-                :account_settings => {:type => :custom, 
-                    :partial => "/integrations/applications/google_accounts", 
-                    :required => false, :label => "integrations.google_contacts.form.account_settings", 
-                    :info => "integrations.google_contacts.form.account_settings_info" }
-               }
-end
+#google_contacts_app = Integrations::Application.seed(:name) do |s|
+#  s.name = "google_contacts"  # Do not change the name.
+#  s.display_name = "integrations.google_contacts.label" 
+#  s.description = "integrations.google_contacts.desc"
+#  s.options = { 
+#                :keys_order => [:account_settings], 
+#                :account_settings => {:type => :custom, 
+#                    :partial => "/integrations/applications/google_accounts", 
+#                    :required => false, :label => "integrations.google_contacts.form.account_settings", 
+#                    :info => "integrations.google_contacts.form.account_settings_info" }
+#               }
+#end

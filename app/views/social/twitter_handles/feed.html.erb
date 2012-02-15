@@ -1,9 +1,7 @@
 <% content_for :sidebar do -%>
 <%-end %>
 <% first_search = nil %>
-<h3 class="title">
-	Twitter
-</h3>
+<h3 class="title">Twitter</h3>
 <div class="page-list">
 	<table class="tweet-table">
 		<tr>
@@ -57,7 +55,7 @@
 						      <a href="#" data-user="${from_user}" class="button reply_button">
 						        Reply
 					        </a>
-  						    <a href="#" data-text="${text}" data-user="${from_user}" data-tweet-id="${id_str}" class="button convert_as_ticket">
+  						    <a href="#" data-text="${text}" data-user="${from_user}" data-id="${id_str}" class="button convert_as_ticket">
   							    Convert to Ticket
   						    </a>
   						  </span>
@@ -147,8 +145,8 @@
 			        jQuery("#search_keys .item_info").removeClass("selected");
 			        jQuery(this).addClass("selected");
 			        jQuery('#twittersearch').val(jQuery.trim(this.title)).trigger("focus");
-			        current_product_id = jQuery(this).attr("product_id");
-			        current_twitter_id = jQuery(this).attr("twitter_id");
+			        current_product_id = this.getAttribute("product_id");
+			        current_twitter_id = this.getAttribute("twitter_id"); 
 			        jQuery("#search_twitter").trigger("submit");
 						});
 						
@@ -172,7 +170,7 @@
 	  .live("click", function(e){
 	    e.preventDefault();   
 	     
-	    var user = jQuery(this).attr("data-user");
+	    var user = jQuery(this).data("user");
 	    jQuery("#twitter_handle").val(current_twitter_id);
 	    jQuery("#tweet_form").dialog({  modal:true, width:'600px', height:'auto', position:'top',
                                       title: "Reply to @" + user, resizable: false, draggable: false });
@@ -185,14 +183,14 @@
 	jQuery("#twitter_results a.convert_as_ticket")
 	  .live("click", function(e){
 	    e.preventDefault(); 
-	    var screen_name = jQuery(this).attr("data-user"),
-	        tweet_text  = jQuery(this).attr("data-text"),
-	        tweet_id    = jQuery(this).attr("data-tweet-id"),
+	    var screen_name = this.getAttribute("data-user"),
+	        tweet_text  = this.getAttribute("data-text"), 
 	        json_data   = { "subject"          : screen_name + ' - ' + tweet_text,
 	                        "description"      : tweet_text,
 	                        "email_config_id"  : current_product_id, 
 	                        "twitter_id"       : screen_name,
-	                        "tweet_attributes" : { "tweet_id": tweet_id, "account_id": <%= current_account.id %>  }};
+	                        "tweet_attributes" : { "tweet_id": this.getAttribute("data-id"), "account_id": <%= current_account.id %>  }};
+
       link = jQuery(this);
        
       jQuery.ajax({

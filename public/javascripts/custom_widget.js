@@ -6,8 +6,8 @@ Freshdesk.Widget.prototype={
 		this.options = widgetOptions || {};
 		if(!this.options.username) this.options.username = Cookie.retrieve(this.options.anchor+"_username");
 		if(!this.options.password) this.options.password = Cookie.retrieve(this.options.anchor+"_password");
-		this.content_anchor = $$("#"+this.options.anchor+" #content")[0];
-		this.error_anchor = $$("#"+this.options.anchor+" #error")[0];
+		this.content_anchor = $$("#"+this.options.anchor+" .content")[0];
+		this.error_anchor = $$("#"+this.options.anchor+" .error")[0];
 		this.title_anchor = $$("#"+this.options.anchor+" #title")[0];
 		this.app_name = this.options.app_name || "Integrated Application";
 		Ajax.Responders.register({
@@ -19,6 +19,10 @@ Freshdesk.Widget.prototype={
 			this.title_anchor.innerHTML = this.options.title;
 		}
 		this.display();
+	},
+
+	getUsername: function() {
+		return this.options.username;
 	},
 
 	login:function(credentials){
@@ -95,12 +99,21 @@ Freshdesk.Widget.prototype={
 		} else if (evt.status == 502) {
 			this.alert_failure(this.app_name+" is not responding.  Please verify the given domain.");
 		} else if (evt.status == 500) {
+			// Right now 500 is used for freshdesk internal server error. The below one is special handling for Harvest.  If more apps follows this convention then move it to widget code.
+			if (this.app_name == "Harvest") {
+				var error = XmlUtil.extractEntities(evt.responseXML,"error");
+				if (error.length > 0) {
+					err_msg = XmlUtil.getNodeValueStr(error[0], "message");
+					alert(this.app_name+" reports the below error: \n\n" + err_msg + "\n\nTry again after correcting the error or fix the error manually.  If you can not do so, contact support.");
+					return;
+				}
+			}
 			this.alert_failure("Unknown server error. Please contact support@freshdesk.com.");
 		} else if (this.on_failure != null) {
 			reqData.on_failure(evt);
 		} else {
 			errorStr = evt.responseText;
-			this.alert_failure(this.app_name+" reports the below error: \n\n" + errorStr + "\n\nTry fixing the error manually.  If you can not do so, contact support.");
+			this.alert_failure(this.app_name+" reports the below error: \n\n" + errorStr + "\n\nTry again after correcting the error or fix the error manually.  If you can not do so, contact support.");
 		}
 	},
 
@@ -155,10 +168,10 @@ Freshdesk.Widget.prototype={
 };
 
 var UIUtil = {
-	constructDropDown:function(data, dropDownBoxId, entityName, entityId, dispNames, filterBy, searchTerm) {
+	constructDropDown:function(data, dropDownBoxId, entityName, entityId, dispNames, filterBy, searchTerm, keepOldEntries) {
 		foundEntity = "";
 		dropDownBox = $(dropDownBoxId);
-		dropDownBox.innerHTML = "";
+		if (!keepOldEntries) dropDownBox.innerHTML = "";
 		var entitiesArray = XmlUtil.extractEntities(data.responseXML, entityName);
 		for(i=0;i<entitiesArray.length;i++) {
 			if (filterBy != null && filterBy != '') {

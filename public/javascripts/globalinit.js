@@ -41,7 +41,7 @@ var $J = jQuery.noConflict();
         if (value.length == 0) { return true; }       
      	if(/((http|https|ftp):\/\/)\w+/.test(value))
      	valid = false;
-     	else if(/\w+[.\-]\w+/.test(value))
+     	else if(/\w+[\-]\w+/.test(value))
      	valid = true;
         else if((/\W\w*/.test(value))) {
         valid = false;
@@ -147,10 +147,10 @@ var $J = jQuery.noConflict();
 		});
 
 		//Clicking on the row (for ticket list only), the check box is toggled.
-		$('.tickets tr').live('click',function(ev) {
-			if (! $(ev.srcElement).is('input')) {
+		$('.tickets tbody tr').live('click',function(ev) {
+			if (! $(ev.target).is('input[type=checkbox]')) {
 				var checkbox = $(this).find('input[type=checkbox]').first();
-				checkbox.attr('checked',!checkbox.is(':checked'));
+				checkbox.prop('checked',!checkbox.prop('checked'));
 			}
 		});
 		

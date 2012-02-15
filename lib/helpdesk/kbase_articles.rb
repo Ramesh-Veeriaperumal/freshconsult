@@ -1,15 +1,16 @@
 class Helpdesk::KbaseArticles
 
-  def self.create_article_from_email(article_params)   
-    user = article_params[:user]
+  def self.create_article_from_email(article_params)  
+    account = Account.find(article_params[:account])
+    user = account.users.find(article_params[:user])
     
     if user.agent?
-      article = add_knowledge_base_article(article_params[:account], user, article_params[:title], article_params[:description])        
-      create_article_attachments(article_params, article)
+      article = add_knowledge_base_article(account, user, article_params[:title], article_params[:description])        
+      create_article_attachments(article_params, article, account)
     end
   end
       
-  def self.create_article_attachments(article_params, article)
+  def self.create_article_attachments(article_params, article, account)
     
     temp_body_html = String.new(article.description)
     content_ids = article_params[:content_ids] 
@@ -37,6 +38,7 @@ class Helpdesk::KbaseArticles
     
     default_category = account.solution_categories.find_by_is_default(true)
     default_folder = default_category.folders.find_by_is_default(true) if default_category
+    
     
     if default_folder
       article = default_folder.articles.build(

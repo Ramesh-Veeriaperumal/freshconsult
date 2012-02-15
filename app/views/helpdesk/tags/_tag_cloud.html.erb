@@ -2,21 +2,25 @@
 	<% if tag_cloud.blank? %>
 		<%=t("no_tags")%>
 	<%else%>
-		<div class="tag_list">
-		<% max=0; factor = 1
-		tag_cloud.each { |tag|
-			puts "#{tag.name.to_s} is used #{tag.tag_uses_count} times."
-			if max < tag.tag_uses_count 
-				max = tag.tag_uses_count 
-				factor = 100/tag.tag_size unless tag.tag_size == 0 
+	<div class="tag_list">
+		<% 
+		max = 1
+		unless tag_cloud.count < 2
+			tag_cloud.each do |tag|
+				if max < tag.uses_count 
+					max = tag.uses_count 
+				end
 			end
-		}
-		tag_cloud.each { |tag|
-		%>
-			<div class='item contact-tag' style="font-size: <%=100+(tag.tag_size(max))%>%;">
-				<%=link_to(tag.name, {:controller=>"contacts", :tag => tag.id.to_s}) %>
-			</div>
-		<% }%> 
+		end
+
+		tag_cloud.each do |tag|
+			unless tag.uses_count == 0 
+			 	concat content_tag :div, 
+		 			link_to(tag.name, { :controller=>"contacts", :tag => tag.id.to_s }), 
+		 			{:class => 'item contact-tag', :style => "font-size:#{tag.tag_size(max)}%;"}
+			end
+		end
+		%> 
 		</div>
 	<%end%>
 </div>

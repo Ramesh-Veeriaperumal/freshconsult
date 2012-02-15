@@ -68,7 +68,7 @@ class AgentsController < Admin::AdminController
   def create    
     @user  = current_account.users.new #by Shan need to check later        
     @agent = current_account.agents.new(params[nscname]) 
-    check_agent_limit
+    #check_agent_limit
     if @user.signup!(:user => params[:user])       
       @agent.user_id = @user.id      
       if @agent.save
@@ -86,7 +86,7 @@ class AgentsController < Admin::AdminController
   
   def update
       @agent.occasional = params[:agent][:occasional]
-      check_agent_limit
+      #check_agent_limit
       if @agent.update_attributes(params[nscname])            
           @user = current_account.all_users.find(@agent.user_id)          
           if @user.update_attributes(params[:user])        

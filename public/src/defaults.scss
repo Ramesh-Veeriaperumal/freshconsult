@@ -57,7 +57,7 @@ h3.sub_title{ font-size:1.1em; }
 } 
 
 .borderbottom{
-	border-bottom:1px solid #dfdfdf;
+	border-bottom:1px dotted #EFEFEF;
 }
 
 table td{ 
@@ -90,26 +90,44 @@ textarea.auto-height{
 
 label.error{
    color:red;
+}                                    
+
+.close-text {
+  float: right;
+  font-family:arial;
+  font-size: 16px;
+  font-weight: bold;
+  line-height: 18px;
+  color: #000000;
+  text-shadow: 0 1px 0 #ffffff;
+  @include opacity(0.4);
+}
+.close-text:hover {
+  color: #000000;
+  text-decoration: none;
+  @include opacity(0.6);
+  cursor: pointer;
 }
 
 .alert {
-  padding: 8px 35px 8px 14px;
-  margin-bottom: 18px;
+  padding: 8px 14px;
+  margin-top:8px;
+  margin-bottom: 5px;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
   background-color: #fcf8e3;
   border: 1px solid #fbeed5;
-  -webkit-border-radius: 4px;
-  -moz-border-radius: 4px;
-  border-radius: 4px;
+  @include border-radius(4px);
+  position:relative;
 }
 .alert, .alert-heading {
   color: #c09853;
 }
-.alert .close {
-  position: relative;
-  top: -2px;
-  right: -21px;
+.alert .close-text {
+  position: absolute;
+  top: 2px;
+  right: 15px;
   line-height: 18px;
+  font-weight:normal;
 }
 .alert-success {
   background-color: #dff0d8;
@@ -133,7 +151,7 @@ label.error{
   border-color: #bce8f1;
 }
 .alert-info, .alert-info .alert-heading {
-  color: #3a87ad;
+  color: darken(#3a87ad, 10%);
 }
 .alert-block {
   padding-top: 14px;

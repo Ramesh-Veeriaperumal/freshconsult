@@ -12,5 +12,6 @@ class ReconfigureSubscriptionPlans < ActiveRecord::Migration
   end
 
   def self.down
+    remove_column :subscription_plans, :classic
   end
 end

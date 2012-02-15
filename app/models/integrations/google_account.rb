@@ -74,7 +74,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
   end
 
   # If group_id is null or empty then the group_id configured to sync will be used.  Use 'none' as group_id to fetch complete contact list.
-  def fetch_latest_google_contacts(group_id=nil, last_sync_time=nil, max_results=100000)
+  def fetch_latest_google_contacts(group_id=nil, last_sync_time=nil, max_results=10000)
     query_params = ""
     last_sync_time = self.last_sync_time if last_sync_time.blank?
     if group_id.blank?
@@ -391,9 +391,9 @@ class Integrations::GoogleAccount < ActiveRecord::Base
       if orgName.blank?
         user.customer = nil
       else
-        customer = Customer.find_by_name(orgName)
+        customer = account.customers.find_by_name(orgName)
         if customer.blank?
-          customer = Customer.new
+          customer = account.customers.new
           customer.name = orgName
         end
         user.customer = customer

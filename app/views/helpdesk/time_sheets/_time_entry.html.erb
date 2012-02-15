@@ -13,7 +13,7 @@
       </div> 
     	<div class="user_details">
     		<%= user_avatar(time_entry.user) if time_entry.user %>
-    		<%= link_to_user(time_entry.user, "user_name") %>
+    		<%= link_to_user(time_entry.user, :class => "user_name") %>
     		<div>
     		  <%= formated_date(time_entry.executed_at, "%A, %e %b %Y") %>
     		</div>

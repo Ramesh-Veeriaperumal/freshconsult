@@ -115,20 +115,21 @@ module Reports::ActivityReport
   end
   
   def parse_from_date
-    params[:date_range].split(" - ")[0]
+    (params[:date_range].split(" - ")[0]) || params[:date_range]
   end
   
   def parse_to_date
-    params[:date_range].split(" - ")[1] 
+    (params[:date_range].split(" - ")[1]) || params[:date_range]
   end
   
   def previous_start
-    distance_between_dates =  Time.parse(start_date) - Time.parse(end_date)
-    previous_end - distance_between_dates
+    distance_between_dates =  Time.parse(end_date) - Time.parse(start_date)
+    prev_start = Time.parse(previous_end) - distance_between_dates
+    prev_start.beginning_of_day.to_s(:db)
   end
   
   def previous_end
-    Time.parse(start_date) - 1.day
+    (Time.parse(start_date) - 1.day).end_of_day.to_s(:db)
   end
   
 end

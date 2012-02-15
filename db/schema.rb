@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120217162346) do
+ActiveRecord::Schema.define(:version => 20120208111008) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -25,7 +25,7 @@ ActiveRecord::Schema.define(:version => 20120217162346) do
     t.string   "shared_secret"
     t.text     "sso_options"
     t.string   "google_domain"
-    t.boolean  "ssl_enabled",                    :default => true
+    t.boolean  "ssl_enabled",                    :default => false
   end
 
   add_index "accounts", ["full_domain"], :name => "index_accounts_on_full_domain", :unique => true
@@ -1083,7 +1083,6 @@ ActiveRecord::Schema.define(:version => 20120217162346) do
     t.boolean  "delta",                            :default => true,  :null => false
     t.integer  "import_id",           :limit => 8
     t.string   "fb_profile_id"
-    t.string   "portal"
     t.string   "language",                         :default => "en"
     t.boolean  "blocked",                          :default => false
     t.datetime "blocked_at"

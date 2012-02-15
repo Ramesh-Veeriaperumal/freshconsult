@@ -28,6 +28,8 @@ require 'openssl'
       @current_user = current_account.users.find_by_email(params[:email])  
       unless @current_user
         @current_user = create_user(params[:email],current_account,nil,{:name => params[:name]})
+        @current_user.active = true
+        saved = @current_user.save
       else
         @current_user.update_attributes(:name => params[:name])
       end
@@ -40,8 +42,10 @@ require 'openssl'
         flash[:notice] = "Login was unscucessfull!"
         redirect_to login_normal_url
       end
-    end
-   end
+    else
+      redirect_to login_normal_url
+    end  
+  end
 
   def opensocial_google
     begin
@@ -64,7 +68,7 @@ require 'openssl'
           agent = Agent.find_by_google_viewer_id(google_viewer_id)
           if agent.blank?
             json = {:user_exists => :false, :t=>generate_random_hash(google_viewer_id, current_account)}  
-          elsif agent.user.deleted?
+          elsif agent.user.deleted? or !agent.user.active?
             json = {:verified => :false, :reason=>t("flash.gmail_gadgets.agent_not_active")}
           else
             json = {:user_exists => :true, :t=>agent.user.single_access_token, 
@@ -155,13 +159,13 @@ require 'openssl'
       redirect_to signup_url and return unless signup_url.blank? 
       raise ActiveResource::ResourceNotFound
     end
+    http_s = @current_account.ssl_enabled ? "https" : "http"
     ##Need to handle the case where google is integrated with a seperate domain-- 2 times we need to authenticate
     t_url = params[:t] ? "&t="+params[:t] : "" # passed token will be preserved for authentication. 
-    return_url = "http://"+cust_url+"/authdone/google?domain="+params[:domain]+t_url
-    logger.debug "the return_url is :: #{return_url}"    
-    re_alm = "http://"+cust_url    
-    logger.debug "domain name is :: #{domain_name}"
-    url = nil    
+    return_url = http_s+"://"+cust_url+"/authdone/google?domain="+params[:domain]+t_url
+    re_alm = http_s+"://"+cust_url
+    logger.debug "domain name is : #{domain_name}, return_url is : #{return_url}, re_alm : #{re_alm}"
+    url = nil
     url = ("https://www.google.com/accounts/o8/site-xrds?hd=" + params[:domain]) unless domain_name.blank?
     authenticate_with_open_id(url,{ :required => ["http://axschema.org/contact/email", :email] , :return_to => return_url, :trust_root =>re_alm}) do |result, identity_url, registration| end
   end
@@ -181,27 +185,31 @@ require 'openssl'
       gmail_gadget_temp_token = params[:t]
       unless gmail_gadget_temp_token.blank?
         kvp = KeyValuePair.find_by_key(gmail_gadget_temp_token)
+        @gauth_error=true
         if kvp.blank? or kvp.value.blank?
-          flash[:error] = t(:'flash.gmail_gadgets.kvp_missing')
+          @notice = t(:'flash.gmail_gadgets.kvp_missing')
         elsif @current_user.blank?
-          flash[:error] = t(:'flash.gmail_gadgets.user_missing')
+          @notice = t(:'flash.gmail_gadgets.user_missing')
         elsif @current_user.agent.blank?
-          flash[:error] = t(:'flash.gmail_gadgets.agent_missing')
+          @notice = t(:'flash.gmail_gadgets.agent_missing')
         else
           google_viewer_id = kvp.value
+          @gauth_error=false
         end
       else
         if @current_user.blank?  
-          @current_user = create_user(email,current_account,identity_url,google_viewer_id) 
+          @current_user = create_user(email,current_account,identity_url) 
         end
       end
 
-      if flash[:error].blank?
+      if @gauth_error
+        render :action => 'gmail_gadget_auth', :layout => 'layouts/widgets/contacts.widget'
+      else
+        @current_user.active = true 
+        saved = @current_user.save
         if @auth.blank?
           @current_user.authorizations.create(:provider => provider, :uid => identity_url, :account_id => current_account.id) #Add an auth in existing user
         end
-        @current_user.active = true 
-        saved = @current_user.save
         puts "User saved status: #{saved}"
 
         @user_session = current_account.user_sessions.new(@current_user)  
@@ -213,18 +221,16 @@ require 'openssl'
           else
             @current_user.agent.google_viewer_id = google_viewer_id
             @current_user.agent.save!
-            flash[:notice] = t(:'flash.g_app.authentication_success')
+            @notice = t(:'flash.g_app.authentication_success')
             render :action => 'gmail_gadget_auth', :layout => 'layouts/widgets/contacts.widget'
           end
         else
-          flash[:error] = t(:'flash.g_app.authentication_failed')
+          flash[:notice] = t(:'flash.g_app.authentication_failed')
           redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
         end
-      else
-        render :action => 'gmail_gadget_auth', :layout => 'layouts/widgets/contacts.widget'
       end
     elsif !gmail_gadget_temp_token.blank?
-      flash[:error] = t(:'flash.g_app.authentication_failed')
+      @notice = t(:'flash.g_app.authentication_failed')
       render :action => 'gmail_gadget_auth', :layout => 'layouts/widgets/contacts.widget'
     end
   end

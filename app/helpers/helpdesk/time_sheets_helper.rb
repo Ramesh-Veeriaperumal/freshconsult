@@ -25,9 +25,11 @@ module Helpdesk::TimeSheetsHelper
     integrated_apps.each do |app|
       unless get_app_details(app[0]).blank? 
         page << "try{"
+        page << "if (jQuery('##{app[0]}-timeentry-enabled').is(':checked')) {"
         page << "#{app[2]}.updateNotesAndTimeSpent('#{timeentry.note}', #{timeentry.time_spent == 0? "0.01" : timeentry.hours}, #{timeentry.billable});"
         page << "#{app[2]}.logTimeEntry();"
         page << "#{app[2]}.set_timesheet_entry_id(#{timeentry.id});" # This is not needed for update.  But no harm in calling.
+        page << "}"
         page << "}catch(e){}"
       end
     end

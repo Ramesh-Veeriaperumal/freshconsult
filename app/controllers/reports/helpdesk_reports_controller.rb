@@ -16,7 +16,8 @@ class Reports::HelpdeskReportsController < ApplicationController
     render :partial => "/reports/shared/report"
   end
   
- protected  
+ protected
+  
   def set_selected_tab
       @selected_tab = :reports
   end
@@ -32,4 +33,5 @@ class Reports::HelpdeskReportsController < ApplicationController
     end
   end
   
+
 end

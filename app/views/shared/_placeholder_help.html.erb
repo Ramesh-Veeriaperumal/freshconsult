@@ -5,9 +5,11 @@
 		});
 		jQuery("#placeholder-list-1 a").click(function(ev){       
       if(active_email_body.get(0)){
-        var placeHolderText = jQuery(this).attr("placeholder");
+        var placeHolderText = jQuery(this).data("placeholder");  
+				//console.log(placeHolderText);
         if(active_email_body.hasClass("mceEditor")){
-          tinyMCE.execInstanceCommand(active_email_body.attr("id"), "mceInsertContent", false, placeHolderText);  	      
+					tinyMCE.get(active_email_body.prop("id")).selection.setContent(placeHolderText, { no_events: true });
+          //tinyMCE.execInstanceCommand(active_email_body.prop("id"), "mceInsertContent", false, placeHolderText);  	      
         }else{
           insertTextAtCursor(active_email_body.get(0), placeHolderText);
         }
@@ -17,7 +19,7 @@
 			jQuery('#place-dialog')
 					.hide();	
 		});
-		jQuery('#place-dialog').draggable();		
+		jQuery('#place-dialog').draggable();
 	});
 <% end %>
 
@@ -28,7 +30,7 @@
 	<div id="placeholder-list-1" class="placeholder-list">
 		<dl>
 			<% ticket_placeholders.each do |ph| %>
-				<dt><a class="uiButton small custom-tip" href="javascript:void(0)"  placeholder="<%= ph[0] %>" title="<%= ph[2] %>"><%= ph[1] %></a></dt> 
+				<dt><a class="uiButton small tooltip" href="javascript:void(0)" data-placeholder="<%= ph[0] %>" title="<%= ph[2] %>"><%= ph[1] %></a></dt> 
 			<% end %>
 		</dl>	
 	</div> 

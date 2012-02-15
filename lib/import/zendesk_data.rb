@@ -17,7 +17,8 @@ class Import::ZendeskData < Struct.new(:params)
                             4 => "Task"}
     ZENDESK_TICKET_STATUS = {1 => 2, 
                              2=> 3,
-                             3=> 4
+                             3=> 4,
+                             4 =>5
                             }
                             
    ZENDESK_ROLE_MAP = {0 =>3,

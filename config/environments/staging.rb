@@ -2,7 +2,7 @@
 
 # The production environment is meant for finished, "live" apps.
 # Code is not reloaded between requests
-#config.log_level = :debug
+config.log_level = :debug
 
 config.cache_classes = true
 
@@ -25,5 +25,11 @@ end
 
 # Enable serving of images, stylesheets, and javascripts from an asset server
 # config.action_controller.asset_host                  = "http://assets.example.com"
+ActionController::Base.asset_host =  Proc.new { |source, request|
+  params = request.parameters
+  if params['format'] == 'widget'
+    "https://assets.freshpo.com"
+  end
+}
 # Disable delivery errors, bad email addresses will be ignored
 # config.action_mailer.raise_delivery_errors = false

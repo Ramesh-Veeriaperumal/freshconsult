@@ -1,7 +1,8 @@
 <%= javascript_include_tag  'highcharts.js' %>
 <%= javascript_include_tag  '/javascripts/report/date' %>
 <%= javascript_include_tag  '/javascripts/report/daterangepicker.jQuery.js' %>
-<%= stylesheet_link_tag 'reports' %>
+<%= stylesheet_link_tag 'reports', :media => "screen, print, projection"  %>
+<%= stylesheet_link_tag "report-print", :media => "print, projection" %>
 <%= stylesheet_link_tag 'ui.daterangepicker' %>
 
 <% content_for :sidebar do %>
@@ -12,4 +13,8 @@
 
 <% content_for :onload_script do %>     
   jQuery("#Sidebar form").submit();
+  jQuery('#date_range').bind('keypress keyup keydown', function(ev) {
+  	ev.preventDefault();
+  	return false;
+  });
 <% end %>

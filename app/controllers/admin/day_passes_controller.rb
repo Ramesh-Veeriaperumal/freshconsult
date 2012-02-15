@@ -1,4 +1,7 @@
-class Admin::DayPassesController < Admin::AdminController
+class Admin::DayPassesController < ApplicationController
+  
+  before_filter { |c| c.requires_permission :manage_account }
+  before_filter :set_selected_tab
   before_filter :load_config
   before_filter :load_purchases, :only => [:index]
   
@@ -37,6 +40,10 @@ class Admin::DayPassesController < Admin::AdminController
     
     def load_purchases
       @day_pass_purchases = current_account.day_pass_purchases.all(:include => :payment)
+  end
+  
+   def set_selected_tab
+        @selected_tab = :admin
     end
 
 end

@@ -2,19 +2,17 @@
 	<div class="request_panel timeentry_edit">
   <% form_remote_for :time_entry, 
                    :url => helpdesk_ticket_helpdesk_time_sheets_path(@ticket), 
-                   :before => 'if (jQuery("#time_integration .still_loading").length) return false;',
-                   :html => { :id => "add_new_time_entry", :class => "ui-form" }, 
-                   :complete => "jQuery('#new_time_submit').button('reset');jQuery('#add_new_time_entry').get(0).reset()" do |f| %>
+                   :before => 'if (jQuery("#timeentry_apps_add .app-logo input[type=checkbox]").filter(":checked").parentsUntil("#time_integration").filter(".still_loading").length) return false;',
+                   :html => { :id => "add_new_time_entry", :class => "ui-form" } do |f| %>
     <%= content_tag :h4, t(".title"), :class => "title" %>
 		<%= hidden_field(:time_entry, :ticket_id , { :value => @ticket.id }  )%>
     <%= render :partial => "/helpdesk/time_sheets/form", :object => f, :locals => { :type => :new } %>
 		<div class="button-container absolute-button-container">
        <%= link_to "Start timer", "#", :class => "submit uiButton special", "data-loading-text" => "Saving time entry...", :id => "new_time_submit" %>
-  	   <%= button_to_function(t('cancel'), "timesheet.clearEdit();", :class => "uiButton" ) %>
+  	   <%= button_to_function(t('cancel'), "timesheet.clearEdit()", :class => "uiButton" ) %>
     </div>
   <% end %>
-    <div id="timeentry_apps_add" class="ui-form">
-
+    <div id="timeentry_apps_add" class="ui-form">   
       <%= render :partial => "integration" %>
     </div>
 	</div>

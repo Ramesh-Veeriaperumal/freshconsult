@@ -43,7 +43,7 @@
       else
       {
           jQuery('#contact_role').removeAttr('checked');
-          jQuery('#contact_role').attr("disabled", true);
+          jQuery('#contact_role').prop("disabled", true);
       }
   }).trigger("keydown");
 <% end %>
@@ -98,13 +98,13 @@
 			<%= label(:user, :customer, t('user.company')) %>
 			<%= text_field(:user, :customer, :class => "text" , :value => company_name, :id => "contact_customer") %>
 		</li>
+		<li>			
+			<%= check_box(:user, :user_role, { :disabled => role_disabled, :id =>'contact_role', :checked => @user.user_role == User::USER_ROLES_KEYS_BY_TOKEN[:client_manager] }, User::USER_ROLES_KEYS_BY_TOKEN[:client_manager], User::USER_ROLES_KEYS_BY_TOKEN[:customer] ) %> <%= t('contacts.role.info') %>
+		</li>
 		<li>
 			<%= label(:user, :address, t('user.address')) %>
 			<%= text_area(:user, :address, :class => "text" ) %>
 		</li>		
-		<li>			
-			<%= check_box(:user, :user_role, { :disabled => role_disabled, :id =>'contact_role', :checked => @user.user_role == User::USER_ROLES_KEYS_BY_TOKEN[:client_manager] }, User::USER_ROLES_KEYS_BY_TOKEN[:client_manager], User::USER_ROLES_KEYS_BY_TOKEN[:customer] ) %> <%= t('contacts.role.info') %>
-		</li>
 		<li class="small">	
 			<%= label(:user, :phone, "#{t('user.phone_no')}.") %>	
 			<label class="overlabel" for="phone_work"><%=t('user.work')%></label>
@@ -143,7 +143,7 @@
 			<%= label(:user, :description, t('user.back_info')) %>
 			<label class="overlabel" for="user_binfo">
 				<%=t('contacts.info6')%>
-				example - address, LA Lakers fan etc.
+				example - LA Lakers fan etc.
 			</label>
 			<%= text_area(:user, :description, :class => "text", :id => "user_binfo" ) %>
 		</li>		

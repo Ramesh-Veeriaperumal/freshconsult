@@ -927,7 +927,7 @@ span.sort_handle{
 .ui-dialog .ui-dialog-titlebar-close span { display: block; margin: 1px; }
 .ui-dialog .ui-dialog-titlebar-close:hover, .ui-dialog .ui-dialog-titlebar-close:focus { background-color:#efefef; }
 .ui-dialog .ui-dialog-content { 
-   position: relative; border: 0; padding: 0 0; overflow: auto; zoom: 1; margin-bottom:0; 
+   position: relative; border: 0; padding: 0 0;  zoom: 1; margin-bottom:0; 
    .info-highlight{
       margin:0 0 6px 0;
       font-size:13px;
@@ -1324,8 +1324,9 @@ table.summary-report{
 		border:0;  background: none;
 		margin:0;	padding:0; 
 		.title{
-			padding-bottom:2px;
-		}
+			padding-bottom:12px;
+		}            
+		li{ padding-left:0; padding-right:0; }
 		li.field{
 			border:0; padding:0;
 		}
@@ -1399,14 +1400,18 @@ table.summary-report{
       }
       .request_form_options{
          position:absolute;
-         right:24px;
-         top:10px;
+         right:20px;
+         top:6px;
          .insert-canned-response{
             position:relative;
             z-index:1001;
          }
       }
    }
+}
+                         
+#Timesheet .request_panel .ui-form .title{  
+  margin-bottom: -10px;
 }
 
 .timeentry_edit{

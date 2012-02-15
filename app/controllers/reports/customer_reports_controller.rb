@@ -1,5 +1,6 @@
 class Reports::CustomerReportsController < ApplicationController
   include Reports::CompanyReport
+   
   before_filter { |c| c.requires_feature :advanced_reporting }
   before_filter { |c| c.requires_permission :manage_reports }
   before_filter :set_selected_tab
@@ -31,10 +32,8 @@ class Reports::CustomerReportsController < ApplicationController
       @show_fields[ "flexifields.#{f.flexifield_def_entry.flexifield_name}"] = f.label
       @pie_chart_labels.store "flexifields.#{f.flexifield_def_entry.flexifield_name}" , f.label
     end
-
-    render :partial => "/reports/shared/canvas"
   end
-
+  
   def select_customer
     if params[:customer_id].nil?
       @selected_customer = current_account.customers.first
@@ -43,4 +42,5 @@ class Reports::CustomerReportsController < ApplicationController
       @selected_customer = current_account.customers.find(params[:customer_id])
     end
   end
+
 end

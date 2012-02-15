@@ -254,11 +254,11 @@ module ApplicationHelper
   end
   
   # User details page link should be shown only to agents and admin
-  def link_to_user( user, classname = "" )
+  def link_to_user(user, options = {})
     if current_user && !current_user.customer?
-      link_to user.display_name, user, :class => classname
+      link_to(user.display_name, user, options)
     else 
-      content_tag(:strong, user.display_name, :class => classname)
+      content_tag(:strong, user.display_name, options)
     end
   end
   
@@ -332,7 +332,9 @@ module ApplicationHelper
     
     case dom_type
       when "text", "number", "email", "multiemail" then
+        field_value = field_value.to_s.split(ghost_value).first unless ghost_value.blank?
         element = label + text_field(object_name, field_name, :class => element_class, :value => field_value, :rel => rel_value, "data-ghost-text" => ghost_value)
+        element << hidden_field(object_name , :ghostvalue , :value => ghost_value) unless ghost_value.blank?
       when "paragraph" then
         element = label + text_area(object_name, field_name, :class => element_class, :value => field_value)
       when "dropdown" then

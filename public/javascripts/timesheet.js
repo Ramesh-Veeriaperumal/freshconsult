@@ -24,7 +24,8 @@ TicketTimesheet.prototype = {
 
          jQuery('a.submit').live("click", function(ev){
            ev.preventDefault();
-           if (jQuery("#time_integration .integration.still_loading").length) {
+
+           if (jQuery("#timeentry_apps_add .app-logo input[type=checkbox]").filter(':checked').parentsUntil('#time_integration').filter(".still_loading").length) {
              return false;
            }
 
@@ -50,17 +51,15 @@ TicketTimesheet.prototype = {
         jQuery("#TimeSheetButton").click(function(ev){
            jQuery('#TimesheetTab').click();
            timesheet.clearEdit();
-           timesheet.editCompelete("add"); 
-		   if (typeof harvestWidget != 'undefined' && harvestWidget) 
+           timesheet.editCompelete("add");    
+           jQuery('#add_new_time_entry').get(0).reset();
+			  jQuery("#new_time_submit").button('reset').html("Start timer");
+		     if (typeof harvestWidget != 'undefined' && harvestWidget) 
 		   		harvestWidget.resetIntegratedResourceIds()
-		   if (typeof freshbooksWidget != 'undefined' && freshbooksWidget) 
+		     if (typeof freshbooksWidget != 'undefined' && freshbooksWidget) 
 		   		freshbooksWidget.resetIntegratedResourceIds()
         });
 
-        jQuery("#timeentry_apps_add .app-logo").live('click',function(ev) {
-          var checkbox = jQuery(this).children("input[type=checkbox]");
-          checkbox.attr('checked', !checkbox.is(':checked'));
-        });
 
     //     console.log('Positioning the buttons');
 
@@ -93,4 +92,11 @@ TicketTimesheet.prototype = {
       totalTime("#timesheetlist .time", "#timeentry_timer_total");
   }
 };
-var timesheet = new TicketTimesheet();
+var timesheet = new TicketTimesheet();	
+
+jQuery("#time_integration .app-logo").live('click',function(ev) {
+  if (!jQuery(ev.target).is('input[type=checkbox]')) {
+    var checkbox = jQuery(this).children("input[type=checkbox]");
+    checkbox.prop('checked', !checkbox.prop('checked'));
+  }
+});

@@ -51,9 +51,9 @@
 <% content_for :sidebar do %>
     <% if @ticket.responder && !@ticket.deleted %>
 		<div class="sidepanel clearfix">
-	  			<h4 class="title"><%=t('agent_working_on_this_ticket')%></h4>
-	  			<%= user_avatar(@ticket.responder, :thumb)  %>
-	  			<%= content_tag(:b, h(@ticket.responder.name)) %>			
+			<h4 class="title"><%=t('agent_working_on_this_ticket')%></h4>
+			<%= user_avatar(@ticket.responder, :thumb)  %>
+			<%= content_tag(:b, h(@ticket.responder.name)) %>			
 		</div>
   	<% end %>
 	<%
@@ -141,16 +141,16 @@
 		<% end %>
     <div class="requestCnt request-cnt-first">
 			<% unless @ticket.deleted %>
-    		<div class="request_status">
+    	 <!-- <div class="request_status">
 					<span class="ltSlant"></span>
 						<ul>
 							<li>
 								<b>Status</b>: <span id="status_name_id"><%= h(@ticket.status_name) %></span>
 							</li>
 						</ul>
-				</div>
+				</div> -->
 			<% end %>
-				<h3 class="title">
+				<h3 class="forum-title">
 					<em><%= "##{@ticket.display_id}" %></em>
 					<b><%= h(@ticket.subject) %></b>
 				</h3>
@@ -158,22 +158,18 @@
 					<div class="ticket_actions action_icons" id="close_ticket_btn"></div>	 
 		        <div class="user_details">
 		        	<%= user_avatar(@ticket.requester)  %>
-		          	<div> Reported by <%= link_to(h(@ticket.requester.display_name),@ticket.requester, :class => "user_name") %> </div>
-		        <div> 
-						Created on <%= formated_date(@ticket.created_at) %>
-						<% metainfo = @ticket.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["meta"]) %>
-						<% unless (metainfo.blank?) %>
-							<span class="meta_icon" title="<%= metainfo.body %>"> 
-								meta
-							</span>
-						<% end %>
-					 </div>
+		        	Reported by <%= link_to_user(@ticket.requester, :class => "user_name") %> 
+		        	<div class="info"> 
+								Created on <%= formated_date(@ticket.created_at) %>    
+					 		</div>					
+		        </div>                       
+						<div class="request-wrapper">
+		        	<div id="description-full" class="details min_height">
+								<span class="seperator"></span>
+			    			<%= @ticket.description_html %>
+			    		</div>  
+		 			  </div>
 					
-		        </div>
-		        <div id="description-full" class="details min_height">
-			    	<%= @ticket.description_html %>
-			    </div>  
-			</div>
 			
 			<% unless @ticket.attachments.empty? %>
 				<span class="seperator"></span>
@@ -182,11 +178,12 @@
 				     <%= render :partial => '/helpdesk/shared/attachment', :collection => @ticket.attachments, :locals => {:show_delete => true, :url => [@item] } %>
 				</ul>
 			<% end %> 
-	    </div>
+	    </div>               
+	</div>                
 		<% unless @ticket.deleted %>
-			<div class="alignright">		
+			<div class="request-wrapper">				
 				<% unless (@ticket.status == 5) %>
-					<%= link_to_function("Close this ticket", "closeTicket(#{@ticket.display_id})", :class => "uiButton" )  %>
+					<%= link_to "Close this ticket", '/support/tickets/close_ticket/'+@ticket.display_id.to_s, :class =>"uiButton" %>
 				<% end %>
 				<a href="javascript:void(0)" class="uiButton" onclick="jQuery('#ReplyToTicket').show(); jQuery(this).hide();">Add note</a>
 			</div>  
@@ -211,9 +208,9 @@
 				</ul>
 			<% end %>		
 		</div>
-		
+    <div class="seperator-shadow"></div>
 		<% unless @ticket.notes.public.exclude_source('meta').newest_first.blank? then %>
-			<h3 class="subtitle">Conversation</h3>
+			<h3 class="forum-title">Conversation</h3>
 			<div class="requestCnt request-conversation">
 				<%= render :partial => '/helpdesk/tickets/note', :collection => @ticket.notes.public.exclude_source('meta') %>
 		    </div>
