@@ -70,7 +70,7 @@ class Helpdesk::TicketsController < ApplicationController
   def user_ticket
     @user = current_account.users.find_by_email(params[:email])
     if !@user.nil?
-      @tickets =  Helpdesk::Ticket.requester_active(@user)
+      @tickets =  current_account.tickets.requester_active(@user)
     else
       @tickets = []
     end
