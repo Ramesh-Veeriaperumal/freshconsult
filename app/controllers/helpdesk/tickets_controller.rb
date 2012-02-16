@@ -120,15 +120,18 @@ class Helpdesk::TicketsController < ApplicationController
     if params['format'] == 'widget'
       @ticket = current_account.tickets.find_by_display_id(params[:id]) # using find_by_id(instead of find) to avoid exception when the ticket with that id is not found.
       @item = @ticket
-      puts "ticket #{@ticket}" 
       if @ticket.blank?
         @item = Helpdesk::Ticket.new
         render :new, :layout => "widgets/contacts"
       else
-        @ticket_notes = @ticket.conversation
-        render :layout => "widgets/contacts"
+        if verify_permission
+          @ticket_notes = @ticket.conversation
+          render :layout => "widgets/contacts"
+        else
+          @no_auth = true
+          render :layout => "widgets/contacts"
+        end
       end
-      return
     end
   end
   def custom_view_save
@@ -469,8 +472,13 @@ class Helpdesk::TicketsController < ApplicationController
    def verify_permission
       unless current_user && current_user.has_ticket_permission?(@item)
         flash[:notice] = t("flash.general.access_denied") 
-        redirect_to helpdesk_tickets_url
+        if params['format'] == "widget"
+          return false
+        else
+          redirect_to helpdesk_tickets_url
+        end
       end
+    true
   end
   
   def save_and_close?
