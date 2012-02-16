@@ -211,7 +211,7 @@ def get_entry_data file_path, make_solution
    
      entry.elements.each("submitter-id") do |submitter|      
        user = submitter.text 
-       submitter_id = @current_account.users.find_by_import_id(user.to_i()).id unless user.blank?
+       submitter_id = @current_account.all_users.find_by_import_id(user.to_i()).id unless user.blank?
      end
    
      entry.elements.each("title") do |forum_title|      
@@ -300,7 +300,7 @@ def get_entry_data file_path, make_solution
        end       
        post.elements.each("user-id") do |post_user|
          user = post_user.text         
-         created_by = @current_account.users.find_by_import_id(user.to_i()).id unless user.blank?
+         created_by = @current_account.all_users.find_by_import_id(user.to_i()).id unless user.blank?
        end
        
        post.elements.each("id") do |imp|
@@ -363,7 +363,7 @@ def save_solution_article article, curr_folder
      article.elements.each("is-public") {|public| is_public = public.text } 
      article.elements.each("submitter-id") do |submitter|      
        user = submitter.text 
-       submitter_id = @current_account.users.find_by_import_id(user.to_i()).id unless user.blank?
+       submitter_id = @current_account.all_users.find_by_import_id(user.to_i()).id unless user.blank?
      end
      article.elements.each("created-at") do |created_time|  
         created_time = created_time.text
