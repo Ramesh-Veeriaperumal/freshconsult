@@ -14,9 +14,7 @@ class SearchController < ApplicationController
   end
   
   def suggest
-   self.class.trace_execution_scoped(['Custom/suggest_search']) do 
     search
-   end
     render :partial => '/search/navsearch_items'    
   end
   
@@ -112,7 +110,7 @@ class SearchController < ApplicationController
     def search
       @items = ThinkingSphinx.search params[:search_key], 
                                         :with => { :account_id => current_account.id, :deleted => false }, 
-                                        :star => true, :match_mode => :any, 
+                                        :star => Regexp.new('\w+@*\w+', nil, 'u'), :match_mode => :any, 
                                         :page => params[:page], :per_page => 10
         process_results
     end
