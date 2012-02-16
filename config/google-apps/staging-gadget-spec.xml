@@ -128,10 +128,11 @@
 			jQuery('#maxmin_tip').removeClass('hide');
 			prefs.set("maxmin",false);
 
+			jQuery('#maxmin').attr('title','Maximise the Gadget');
 			
 			updateCookie('minimized', 'yes', 365);
 			
-			gadgets.window.adjustHeight(40);
+			gadgets.window.adjustHeight(20);
 		}
 
 		function maximize() {
@@ -140,7 +141,7 @@
 			jQuery('#maxmin_tip').addClass('hide');
 			prefs.set("maxmin",true);
 			updateCookie('minimized', 'no', 365);
-
+			jQuery('#maxmin').attr('title','Minimise the Gadget');
 			autoHeight();
 		}
 
@@ -369,6 +370,7 @@
 		function openSocialRequest(url, handleResponse, params) {
 			// Start the progress bar
 			showLoading();
+
 			gadgets.io.makeRequest(url+"&"+cnt, handleResponse, params);
 			cnt = cnt + 1
 		}
@@ -377,6 +379,7 @@
 		function makeRequest(url, handleResponse, params, form_data) {
 			// Start the progress bar
 			showLoading();
+			
 			if (form_data != null) {
 				params[gadgets.io.RequestParameters.METHOD] = gadgets.io.MethodType.POST;
 				params[gadgets.io.RequestParameters.POST_DATA] = gadgets.io.encodeValues(form_data);
@@ -400,7 +403,7 @@
 
 		function showUnsuccessfulAuth() {
 			jQuery('#gcgLoading').remove();
-			jQuery('#auth').addClass('hide');
+			jQuery('#auth').removeClass('hide');
 		}
 
 		function showError(err_msg) {
@@ -416,7 +419,7 @@
 			var loading_div = jQuery('<div></div>')
 					.attr('id',"gcgLoading")
 					.attr('style','text-align:center; padding: 20px;')
-					.html( '<img src="' + http_s+"://"+url_root+"/images/load.gif" + '" />' );
+					.html( '<img src="https://asset.freshpo.com/images/load.gif" />' );
 			
 			jQuery('body').prepend(loading_div);
 		}
@@ -435,7 +438,7 @@
 		}
 
 		function imgerror(source){
-			source.src = http_s+"://"+url_root+"/images/fillers/profile_blank_thumb.gif";
+			source.src = "https://asset.freshpo.com/images/fillers/profile_blank_thumb.gif";
 			source.onerror = "";
 			return true;
 		}
