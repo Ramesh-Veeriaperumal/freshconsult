@@ -69,7 +69,7 @@
 	<div id="error"></div>
 
 	<script type="text/javascript">
-		alert(" Dev Version - v0.00459 ");
+		alert(" Dev Version - v0.00460 ");
 
 		function updateCookie(cookieId, value, expireDays){
 			var expireString="";
@@ -457,8 +457,10 @@
 			jQuery('#ui-widget-container a').each( function (i, item) {
 				if (!$(this).hasClass('post_processed')) {
 					var current_url = $(this).attr('href');
-					current_url = current_url.replace(/(&k=)\w*/g,"");
-					current_url = current_url.replace("user_tickets.widget","");
+					if (current_url) {
+						current_url = current_url.replace(/(&k=)\w*/g,"");
+						current_url = current_url.replace("user_tickets.widget","");
+					}
 
 					console.log(current_url);
 					$(this).attr('href',http_s+"://"+url_root+current_url);
