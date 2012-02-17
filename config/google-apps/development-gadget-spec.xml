@@ -130,7 +130,7 @@
 			jQuery('#maxmin_tip').removeClass('hide');
 			prefs.set("maxmin",false);
 
-			jQuery('#maxmin').attr('title','Maximise the Gadget');
+			jQuery('#maxmin').attr('title','Maximize the Gadget');
 
 			console.log('Setting to false');
 			updateCookie('minimized', 'yes', 365);
@@ -144,18 +144,18 @@
 			jQuery('#maxmin_tip').addClass('hide');
 			prefs.set("maxmin",true);
 			updateCookie('minimized', 'no', 365);
-			jQuery('#maxmin').attr('title','Minimise the Gadget');
+			jQuery('#maxmin').attr('title','Minimize the Gadget');
 
 			autoHeight();
 		}
 
 		function gadgetInit() {
 			var minmax = prefs.getBool("maxmin");
-			console.log('Gadget Initialise');
+			console.log('Gadget Initialize');
 			console.log(minmax);
 			console.log('Above is minmax value in userpref');
 			if ( (getCookie('minimized') === 'no') || (getCookie('minimized') === null) &&  minmax == true) {
-				//Maximised State
+				//Maximized State
 				init();
 			} else {
 				minimize();
