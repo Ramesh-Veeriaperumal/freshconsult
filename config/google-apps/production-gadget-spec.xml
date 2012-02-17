@@ -419,7 +419,7 @@
 			var loading_div = jQuery('<div></div>')
 					.attr('id',"gcgLoading")
 					.attr('style','text-align:center; padding: 20px;')
-					.html( '<img src="https://asset.freshdesk.com/images/load.gif" + '" />' );
+					.html( '<img src="https://asset.freshdesk.com/images/load.gif" />' );
 			
 			jQuery('body').prepend(loading_div);
 			autoHeight();
