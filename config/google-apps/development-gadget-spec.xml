@@ -63,7 +63,7 @@
 		<div id="output"></div>
 	</div>
 	<div id="auth" class="hide">
-		<div class="center">You have not yet Linked this gmail id with an Agent in Freshdesk.  Click 'Connect' to link your Freshdesk account.</div><br/>
+		<div class="center">You have not yet linked this Gmail account with an agent in Freshdesk.</div><br/>
 		<a class="special uiButton" href="javascript:void(0);">Connect your Freshdesk</a>
 	</div>
 	<div id="error"></div>
