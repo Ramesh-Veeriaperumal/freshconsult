@@ -2,7 +2,7 @@
 <Module>
     <ModulePrefs title="Freshdesk"
 	description="Your Social Help Desk."
-	height="200"
+	height="20"
 	author="Navaneeth"
 	author_email="navaneeth@freshdesk.com"
 	author_location="Chennai, IN">
@@ -63,7 +63,7 @@
 		<div id="output"></div>
 	</div>
 	<div id="auth" class="hide">
-		<div class="center">You have not yet Linked this gmail id with an Agent in Freshdesk.  Click 'Connect' to link your Freshdesk account.</div><br/>
+		<div class="center">You have not yet linked this Gmail account with an agent in Freshdesk.</div><br/>
 		<a class="special uiButton" href="javascript:void(0);">Connect your Freshdesk</a>
 	</div>
 	<div id="error"></div>
@@ -428,6 +428,7 @@
 					.html( '<img src="https://asset.freshpo.com/images/load.gif" />' );
 			
 			jQuery('body').prepend(loading_div);
+			autoHeight();
 		}
 
 		function hideLoading() {
