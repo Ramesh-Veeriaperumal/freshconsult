@@ -26,6 +26,11 @@ class Helpdesk::Tag < ActiveRecord::Base
     :through => :tag_uses,
     :conditions =>{:user_role =>[User::USER_ROLES_KEYS_BY_TOKEN[:customer], User::USER_ROLES_KEYS_BY_TOKEN[:client_manager]] , :deleted =>false}
 
+  named_scope :with_taggable_type, lambda { |taggable_type| { 
+            :include => :tag_uses,
+            :conditions => ["helpdesk_tag_uses.taggable_type = ?", taggable_type] }
+        }
+
   SORT_FIELDS = [
     [ :activity_desc, 'Most Used',    "tag_uses_count DESC"  ],
     [ :activity_asc,  'Least Used',   "tag_uses_count ASC"  ],

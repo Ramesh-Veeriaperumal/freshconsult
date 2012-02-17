@@ -22,7 +22,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   before_validation :populate_requester, :set_default_values
   before_create :set_dueby, :save_ticket_states
-  after_create :refresh_display_id, :save_custom_field, :pass_thro_biz_rules, :autoreply, 
+  after_create :refresh_display_id, :save_custom_field, :pass_thro_biz_rules, 
       :create_initial_activity, :support_score_on_create
   before_update :cache_old_model, :update_dueby 
   after_update :save_custom_field, :update_ticket_states, :notify_on_update, :update_activity, 
@@ -150,7 +150,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   named_scope :unresolved, :conditions => ["status in (#{STATUS_KEYS_BY_TOKEN[:open]}, #{STATUS_KEYS_BY_TOKEN[:pending]})"]
   named_scope :assigned_to, lambda { |agent| { :conditions => ["responder_id=?", agent.id] } }
   named_scope :requester_active, lambda { |user| { :conditions => 
-    [ "requester_id=? and status in (#{STATUS_KEYS_BY_TOKEN[:open]}, #{STATUS_KEYS_BY_TOKEN[:pending]})",
+    [ "requester_id=? ",
       user.id ] } }
   named_scope :requester_completed, lambda { |user| { :conditions => 
     [ "requester_id=? and status in (#{STATUS_KEYS_BY_TOKEN[:resolved]}, #{STATUS_KEYS_BY_TOKEN[:closed]})",
@@ -405,7 +405,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def autoreply     
-    notify_by_email EmailNotification::NEW_TICKET unless spam?#Do SPAM check.. by Shan
+    return if spam? || deleted?
+    notify_by_email EmailNotification::NEW_TICKET
     notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_GROUP) if group_id
     notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_AGENT) if responder_id
     
@@ -529,13 +530,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #virtual agent things end here..
   
   def pass_thro_biz_rules
-     send_later(:delayed_rule_check )
+     send_later(:delayed_rule_check)
   end
   
   def delayed_rule_check
     evaluate_on = check_rules     
     update_custom_field evaluate_on unless evaluate_on.nil?
-    save! #Should move this to unless block.. by Shan
+    save #Should move this to unless block.. by Shan
+    autoreply
   end
  
   def check_rules
