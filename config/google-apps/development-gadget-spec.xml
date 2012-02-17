@@ -2,7 +2,7 @@
 <Module>
     <ModulePrefs title="Freshdesk"
 	description="Your Social Help Desk."
-	height="200"
+	height="20"
 	author="Navaneeth"
 	author_email="navaneeth@freshdesk.com"
 	author_location="Chennai, IN">
@@ -428,6 +428,7 @@
 					.html( '<img src="https://asset.freshpo.com/images/load.gif" />' );
 			
 			jQuery('body').prepend(loading_div);
+			autoHeight();
 		}
 
 		function hideLoading() {

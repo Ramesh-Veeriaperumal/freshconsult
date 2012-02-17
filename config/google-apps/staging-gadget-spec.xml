@@ -2,7 +2,7 @@
 <Module>
     <ModulePrefs title="Freshdesk"
 	description="Your Social Help Desk."
-	height="200"
+	height="20"
 	author="Navaneeth"
 	author_email="navaneeth@freshdesk.com"
 	author_location="Chennai, IN">
@@ -379,7 +379,7 @@
 		function makeRequest(url, handleResponse, params, form_data) {
 			// Start the progress bar
 			showLoading();
-			
+
 			if (form_data != null) {
 				params[gadgets.io.RequestParameters.METHOD] = gadgets.io.MethodType.POST;
 				params[gadgets.io.RequestParameters.POST_DATA] = gadgets.io.encodeValues(form_data);
@@ -422,6 +422,7 @@
 					.html( '<img src="https://asset.freshpo.com/images/load.gif" />' );
 			
 			jQuery('body').prepend(loading_div);
+			autoHeight();
 		}
 
 		function hideLoading() {
