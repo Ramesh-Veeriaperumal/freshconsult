@@ -128,7 +128,7 @@
 			jQuery('#maxmin_tip').removeClass('hide');
 			prefs.set("maxmin",false);
 
-			jQuery('#maxmin').attr('title','Maximise the Gadget');
+			jQuery('#maxmin').attr('title','Maximize the Gadget');
 			
 			updateCookie('minimized', 'yes', 365);
 			
@@ -141,7 +141,7 @@
 			jQuery('#maxmin_tip').addClass('hide');
 			prefs.set("maxmin",true);
 			updateCookie('minimized', 'no', 365);
-			jQuery('#maxmin').attr('title','Minimise the Gadget');
+			jQuery('#maxmin').attr('title','Minimize the Gadget');
 			autoHeight();
 		}
 
@@ -149,7 +149,7 @@
 			var minmax = prefs.getBool("maxmin");
 			
 			if ( (getCookie('minimized') === 'no') || (getCookie('minimized') === null) &&  minmax == true) {
-				//Maximised State
+				//Maximized State
 				init();
 			} else {
 				minimize();
@@ -451,8 +451,10 @@
 			jQuery('#ui-widget-container a').each( function (i, item) {
 				if (!$(this).hasClass('post_processed')) {
 					var current_url = $(this).attr('href');
-					current_url = current_url.replace(/(&k=)\w*/g,"");
-					current_url = current_url.replace("user_tickets.widget","");
+					if (current_url) {
+						current_url = current_url.replace(/(&k=)\w*/g,"");
+						current_url = current_url.replace("user_tickets.widget","");
+					}
 
 					
 					$(this).attr('href',http_s+"://"+url_root+current_url);
