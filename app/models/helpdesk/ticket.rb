@@ -168,12 +168,27 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   #Sphinx configuration starts
   define_index do
-    indexes :display_id, :sortable => true
-    indexes :subject, :sortable => true
-    indexes description
-    indexes notes.body, :as => :note
+   
+   define_source do 
+     indexes :display_id, :sortable => true
+     indexes :subject, :sortable => true
+     indexes description
+     indexes notes.body, :as => :note
     
-    has account_id, deleted
+     has account_id, deleted
+     where "id % 2 = 0" 
+    end
+    
+    define_source do 
+      indexes :display_id, :sortable => true
+      indexes :subject, :sortable => true
+      indexes description
+      indexes notes.body, :as => :note
+    
+      has account_id, deleted
+    
+      where "id % 2 = 1" 
+    end
     
     set_property :delta => :delayed
     set_property :field_weights => {
