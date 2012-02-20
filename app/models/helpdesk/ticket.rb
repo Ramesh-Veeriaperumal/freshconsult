@@ -419,8 +419,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
     
   end
   
-  def autoreply     
-    notify_by_email EmailNotification::NEW_TICKET unless spam?#Do SPAM check.. by Shan
+  def autoreply
+    return if spam? || deleted?
+    notify_by_email EmailNotification::NEW_TICKET
     notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_GROUP) if group_id
     notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_AGENT) if responder_id
     
@@ -544,13 +545,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #virtual agent things end here..
   
   def pass_thro_biz_rules
-     send_later(:delayed_rule_check )
+     send_later(:delayed_rule_check)
   end
   
   def delayed_rule_check
     evaluate_on = check_rules     
     update_custom_field evaluate_on unless evaluate_on.nil?
-    save! #Should move this to unless block.. by Shan
+    save #Should move this to unless block.. by Shan
   end
  
   def check_rules
