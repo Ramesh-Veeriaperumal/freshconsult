@@ -22,7 +22,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   before_validation :populate_requester, :set_default_values
   before_create :set_dueby, :save_ticket_states
-  after_create :refresh_display_id, :save_custom_field, :pass_thro_biz_rules, 
+  after_create :refresh_display_id, :save_custom_field, :pass_thro_biz_rules, :autoreply, 
       :create_initial_activity, :support_score_on_create
   before_update :cache_old_model, :update_dueby 
   after_update :save_custom_field, :update_ticket_states, :notify_on_update, :update_activity, 
@@ -537,7 +537,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
     evaluate_on = check_rules     
     update_custom_field evaluate_on unless evaluate_on.nil?
     save #Should move this to unless block.. by Shan
-    autoreply
   end
  
   def check_rules
