@@ -123,11 +123,9 @@ def post_persist
   
 end
  def create_attachments
-   logger.debug "create_attachments  "
     return unless @article.respond_to?(:attachments)
     (params[nscname][:attachments] || []).each do |a|
-      logger.debug "creating file :#{a[:file]}"
-      @article.attachments.create(:content => a[:file], :description => a[:description], :account_id => @article.account_id)
+      @article.attachments.create(:content => a[:resource], :description => a[:description], :account_id => @article.account_id)
     end
   end
   

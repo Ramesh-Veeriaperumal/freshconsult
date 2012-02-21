@@ -32,7 +32,7 @@ module Helpdesk::TicketActions
   #we are getting the mass-assignment warning right now..
   def handle_attachments
     (params[:helpdesk_ticket][:attachments] || []).each do |a|
-      @ticket.attachments.create(:content => a[:file], :description => a[:description], :account_id => @ticket.account_id)
+      @ticket.attachments.create(:content => a[:resource], :description => a[:description], :account_id => @ticket.account_id)
     end
   end
   

@@ -204,7 +204,7 @@ class Helpdesk::NotesController < ApplicationController
       end
   end
    def validate_attachment_size
-     total_size = (params[nscname][:attachments] || []).collect{|a| a[:file].size}.sum
+     total_size = (params[nscname][:attachments] || []).collect{|a| a[:resource].size}.sum
      if total_size > Helpdesk::Note::Max_Attachment_Size    
         flash[:notice] = t('helpdesk.tickets.note.attachment_size.exceed')
         redirect_to :back  

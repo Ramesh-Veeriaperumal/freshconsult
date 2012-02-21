@@ -102,6 +102,14 @@ class Helpdesk::Note < ActiveRecord::Base
       "body"      => liquidize_body
     }
   end
+  
+  def to_xml(options = {})
+     options[:indent] ||= 2
+      xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
+      xml.instruct! unless options[:skip_instruct]
+      super(:builder => xml, :skip_instruct => true,:include => :attachments,:except => [:account_id,:notable_id,:notable_type]) 
+   end
+    
 
   protected
     def save_response_time
