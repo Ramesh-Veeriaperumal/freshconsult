@@ -63,6 +63,9 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
       redirect_to :controller=> 'applications', :action => 'index'
     else
       @installing_application = @installed_application.application
+      decryptedValue = decrypt_password
+      @installed_application.configs[:inputs]['password'] = decryptedValue unless decryptedValue.blank?
+      return @installing_application
     end
   end
   
@@ -89,8 +92,25 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
   private
   def convert_to_configs_hash(params)
     unless params[:configs].blank?# TODO: need to encrypt the password and should not print the password in log file.
+      params[:configs][:password] = get_encrypted_value(params[:configs][:password]) unless params[:configs][:password].blank?
       params[:configs][:domain] = params[:configs][:domain] + params[:configs][:ghostvalue] unless params[:configs][:ghostvalue].blank? or params[:configs][:domain].blank?
       {:inputs => params[:configs].to_hash}  
     end
   end
+
+  def decrypt_password  
+    apps = @installing_application.options
+    hashData = @installing_application.options
+    hashData.each do |key, hash| 
+      unless hash.class.to_s == "Array"
+        if(hash[:type].to_s == "password")
+          pwdValue = @installed_application.configs[:inputs]['password']
+          pwdValue = Integrations::AppsUtil.get_decrypted_value(pwdValue) unless pwdValue.blank?
+          return pwdValue
+        end
+      end
+    end
+  end
+
+
 end

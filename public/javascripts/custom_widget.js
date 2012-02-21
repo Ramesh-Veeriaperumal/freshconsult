@@ -6,8 +6,8 @@ Freshdesk.Widget.prototype={
 		this.options = widgetOptions || {};
 		if(!this.options.username) this.options.username = Cookie.retrieve(this.options.anchor+"_username");
 		if(!this.options.password) this.options.password = Cookie.retrieve(this.options.anchor+"_password");
-		this.content_anchor = $$("#"+this.options.anchor+" .content")[0];
-		this.error_anchor = $$("#"+this.options.anchor+" .error")[0];
+		this.content_anchor = $$("#"+this.options.anchor+" #content")[0];
+		this.error_anchor = $$("#"+this.options.anchor+" #error")[0];
 		this.title_anchor = $$("#"+this.options.anchor+" #title")[0];
 		this.app_name = this.options.app_name || "Integrated Application";
 		Ajax.Responders.register({
@@ -57,10 +57,12 @@ Freshdesk.Widget.prototype={
 			this.content_anchor.innerHTML = this.options.login_content();
 		} else {
 			this.content_anchor.innerHTML = this.options.application_content();
+			if(this.options.application_resources){
 			this.options.application_resources.each(
 				function(reqData){
 					if(reqData) cw.request(reqData);
 				});
+			}
 		}
 	},
 
@@ -100,6 +102,7 @@ Freshdesk.Widget.prototype={
 			this.alert_failure(this.app_name+" is not responding.  Please verify the given domain.");
 		} else if (evt.status == 500) {
 			// Right now 500 is used for freshdesk internal server error. The below one is special handling for Harvest.  If more apps follows this convention then move it to widget code.
+			alert(this.app_name)
 			if (this.app_name == "Harvest") {
 				var error = XmlUtil.extractEntities(evt.responseXML,"error");
 				if (error.length > 0) {
@@ -108,12 +111,31 @@ Freshdesk.Widget.prototype={
 					return;
 				}
 			}
+			else if (this.app_name == "Jira") {
+				console.log(evt)
+				error = evt.responseJSON.errorMessages;
+				if (error.length > 0) {
+					err_msg = error[0];
+					alert(this.app_name+" reports the below error: \n\n" + err_msg + "\n\nTry again after correcting the error or fix the error manually.  If you can not do so, contact support.");
+					return;
+				}
+			}
 			this.alert_failure("Unknown server error. Please contact support@freshdesk.com.");
 		} else if (this.on_failure != null) {
 			reqData.on_failure(evt);
 		} else {
-			errorStr = evt.responseText;
-			this.alert_failure(this.app_name+" reports the below error: \n\n" + errorStr + "\n\nTry again after correcting the error or fix the error manually.  If you can not do so, contact support.");
+			if (this.app_name == "Jira") {
+				error = evt.responseJSON.errorMessages;
+				if (error.length > 0) {
+					err_msg = error[0];
+					alert(this.app_name+" reports the below error: \n\n" + err_msg + "\n\nTry again after correcting the error or fix the error manually.  If you can not do so, contact support.");
+					return;
+				}
+			}else{
+				errorStr = evt.responseText;
+				this.alert_failure(this.app_name+" reports the below error: \n\n" + errorStr + "\n\nTry again after correcting the error or fix the error manually.  If you can not do so, contact support.");
+			}
+			
 		}
 	},
 
@@ -168,17 +190,27 @@ Freshdesk.Widget.prototype={
 };
 
 var UIUtil = {
-	constructDropDown:function(data, dropDownBoxId, entityName, entityId, dispNames, filterBy, searchTerm, keepOldEntries) {
+
+	constructDropDown:function(data, type, dropDownBoxId, entityName, entityId, dispNames, filterBy, searchTerm, keepOldEntries) {
 		foundEntity = "";
 		dropDownBox = $(dropDownBoxId);
 		if (!keepOldEntries) dropDownBox.innerHTML = "";
-		var entitiesArray = XmlUtil.extractEntities(data.responseXML, entityName);
+		if(type == "xml"){
+			parser = XmlUtil;
+			data = data.responseXML;
+		}
+		else{
+			parser = JsonUtil; 
+			data = data.responseJSON;
+		}
+		console.log(parser)	
+		var entitiesArray = parser.extractEntities(data, entityName);
 		for(i=0;i<entitiesArray.length;i++) {
 			if (filterBy != null && filterBy != '') {
 				matched = true;
 				for (var filterKey in filterBy) {
 					filterValue = filterBy[filterKey];
-					actualVal = XmlUtil.getNodeValueStr(entitiesArray[i], filterKey);
+					actualVal = parser.getNodeValueStr(entitiesArray[i], filterKey);
 					if(filterValue != actualVal) {
 						matched = false;
 						break;
@@ -188,8 +220,8 @@ var UIUtil = {
 			}
 
 			var newEntityOption = new Element("option");
-			entityIdValue = XmlUtil.getNodeValueStr(entitiesArray[i], entityId);
-			entityEmailValue = XmlUtil.getNodeValueStr(entitiesArray[i], "email");
+			entityIdValue = parser.getNodeValueStr(entitiesArray[i], entityId);
+			entityEmailValue = parser.getNodeValueStr(entitiesArray[i], "email");
 			if (searchTerm != null && searchTerm != '') {
 				if (entityEmailValue == searchTerm) {
 					foundEntity = entitiesArray[i];
@@ -204,7 +236,7 @@ var UIUtil = {
 				if (dispNames[d] == ' ' || dispNames[d] == '(' || dispNames[d] == ')' || dispNames[d] == '-') {
 					dispName += dispNames[d];
 				} else {
-					dispName += XmlUtil.getNodeValueStr(entitiesArray[i], dispNames[d]);
+					dispName += parser.getNodeValueStr(entitiesArray[i], dispNames[d]);
 				}
 			}
 			if (dispName.length < 2) dispName = entityEmailValue;
@@ -292,6 +324,47 @@ var XmlUtil = {
 		}
 		return element[0].getAttribute(attrName) || null;
 	}
+}
+
+var JsonUtil = {
+	extractEntities:function(resStr, lookupTag){
+		if(resStr instanceof Array)
+			return resStr;
+		else if(resStr instanceof Object)
+		{
+			var result = resStr[lookupTag] || Array();
+			return result;	
+		}
+		
+	},
+	getNodeValue:function(dataNode, lookupTag){
+		if(dataNode == '') return;
+		var element = dataNode[lookupTag];
+		if(element==null || element.length==0){
+			return null;
+		}
+		return element;
+	},
+
+	getNodeValueStr:function(dataNode, nodeName){
+		return this.getNodeValue(dataNode, nodeName) || "";
+	},
+
+	getMultiNodeValue:function(data, dataNodes){
+		var innerJson;
+		var innerValue;
+		var jsonValue = data;
+		var nodeArray = dataNodes.split(".");
+		if(nodeArray.length > 1){
+			for(var i=0; i<(nodeArray.length - 1); i++){
+				innerJson = JsonUtil.extractEntities(jsonValue, nodeArray[i]);
+				jsonValue = innerJson;
+			}
+		innerValue = JsonUtil.getNodeValueStr(jsonValue, nodeArray[nodeArray.length-1]);
+		}
+		return innerValue;
+	}
+
 }
 
 var Cookie=Class.create({});

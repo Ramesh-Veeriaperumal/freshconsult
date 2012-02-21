@@ -584,10 +584,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #Might be darn expensive db queries, need to revisit - shan.
   def to_liquid
     { 
-      "id"                                => display_id,
+      "id"                                => display_id, 
       "encoded_id"                        => encode_display_id,
       "subject"                           => subject,
       "description"                       => description_with_attachments,
+      "description_text"                  => description,
       "requester"                         => requester,
       "agent"                             => responder,
       "group"                             => group,

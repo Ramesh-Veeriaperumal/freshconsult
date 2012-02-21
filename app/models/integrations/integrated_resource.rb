@@ -29,7 +29,10 @@ class Integrations::IntegratedResource < ActiveRecord::Base
   end
 
   def to_liquid
-    {'remote_integratable_id'=>remote_integratable_id}
+  {
+    'remote_integratable_id'=>remote_integratable_id,
+    'id'=>id
+  }
   end
 
   private
@@ -38,6 +41,7 @@ class Integrations::IntegratedResource < ActiveRecord::Base
     end
 
     @@integratable_type_map = {
-      'timesheet'=>Helpdesk::TimeSheet.name
+      'timesheet'=>Helpdesk::TimeSheet.name,
+      'issue-tracking'=>'issue-tracking'
     }
 end

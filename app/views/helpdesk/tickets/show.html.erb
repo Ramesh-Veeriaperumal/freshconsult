@@ -2,6 +2,23 @@
   <div class="rtCnt sidepanel ticket-panel">
     <%= ticket_sidebar unless @ticket.deleted %>
   </div>
+  	<% installedApp = get_app_details("jira") %>
+  	<% integrated_resource = Integrations::IntegratedResource.find_by_local_integratable_id(@ticket.id) %>
+  	<% if is_application_installed?("jira")  %> 	
+  	<div id="jira" class="sidepanel">
+  	<h3 class="title">JIRA</h3>
+  	<span class="seperator"></span>
+  	<%
+  	 installed_app = get_app_details("jira")
+  	 username =  get_jira_username(installed_app) 
+  	 password =  get_jira_password(installed_app) 
+  	 @liquid_objects = {"requester" => @ticket.requester, "ticket" => @ticket, "agent" => @agent, "integrated_resource" => integrated_resource, "username" => username , "password" => password} %>
+	<% widget_code = get_app_widget_script("jira", "jira_widget", @liquid_objects) %>
+	<%= Liquid::Template.parse(widget_code).render("ticket" => @ticket) %>
+	</div>
+	<% end %>
+  
+
 <%- end %>
 
 <%= render :partial => "ticket_info" %>       
