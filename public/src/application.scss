@@ -4572,3 +4572,24 @@ a.close{
    		position:absolute;
    	} 
 }
+
+
+a.submit_link{
+  text-decoration:underline;
+  font-weight:normal;
+}       
+
+a.submit_link:hover{ 
+  text-decoration:none;  
+}
+
+.or-icon{
+  background:#f2f2f2;
+  margin:0 16px;
+  @include border-radius(12px);
+  font-weight:normal;
+  font-size:12px;
+  text-transform:uppercase;
+  padding:5px;               
+  font-style:italic;
+}
