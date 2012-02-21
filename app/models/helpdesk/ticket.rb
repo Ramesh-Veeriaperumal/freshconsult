@@ -22,7 +22,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   before_validation :populate_requester, :set_default_values
   before_create :set_dueby, :save_ticket_states
-  after_create :refresh_display_id, :save_custom_field, :pass_thro_biz_rules, :autoreply, 
+  after_create :refresh_display_id, :save_custom_field, :pass_thro_biz_rules,  
       :create_initial_activity, :support_score_on_create
   before_update :cache_old_model, :update_dueby 
   after_update :save_custom_field, :update_ticket_states, :notify_on_update, :update_activity, 
@@ -406,12 +406,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   def autoreply     
     return if spam? || deleted?
-    notify_by_email EmailNotification::NEW_TICKET
-    notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_GROUP) if group_id
-    notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_AGENT) if responder_id
+    notify_by_email(EmailNotification::NEW_TICKET)
+    notify_by_email_without_delay(EmailNotification::TICKET_ASSIGNED_TO_GROUP) if group_id and !group_id_changed?
+    notify_by_email_without_delay(EmailNotification::TICKET_ASSIGNED_TO_AGENT) if responder_id and !responder_id_changed?
     
-    return notify_by_email(EmailNotification::TICKET_RESOLVED) if (status == STATUS_KEYS_BY_TOKEN[:resolved])
-    return notify_by_email(EmailNotification::TICKET_CLOSED) if (status == STATUS_KEYS_BY_TOKEN[:closed])
+    unless status_changed?
+      return notify_by_email_without_delay(EmailNotification::TICKET_RESOLVED) if resolved?
+      return notify_by_email_without_delay(EmailNotification::TICKET_CLOSED) if closed?
+    end
   end
 
   def out_of_office?
@@ -427,6 +429,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def notify_on_update
+    return if spam? || deleted?
     notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_GROUP) if (group_id != @old_ticket.group_id && group)
     if (responder_id != @old_ticket.responder_id && responder && responder != User.current)
       notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_AGENT)
@@ -468,7 +471,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     ticket_states.save
   end
   
-    
+  def notify_by_email_without_delay(notification_type)    
+    Helpdesk::TicketNotifier.notify_by_email(notification_type, self) if notify_enabled?(notification_type)
+  end
+  
   def notify_by_email(notification_type)    
     Helpdesk::TicketNotifier.send_later(:notify_by_email, notification_type, self) if notify_enabled?(notification_type)
   end
@@ -534,8 +540,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def delayed_rule_check
+   begin
     evaluate_on = check_rules     
     update_custom_field evaluate_on unless evaluate_on.nil?
+    autoreply
+   rescue Exception => e #better to write some rescue code 
+    NewRelic::Agent.notice_error(e)
+   end
     save #Should move this to unless block.. by Shan
   end
  
