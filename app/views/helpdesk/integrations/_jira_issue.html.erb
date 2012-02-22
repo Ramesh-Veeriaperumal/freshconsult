@@ -1,0 +1,2 @@
+<%= link_to image_tag("/images/spacer.gif"), "#", :class=> 'jira', :title => t('ticket.integrations.jira.create'), "data-placement" => "topRight", :rel => "widget-popover", "data-widget-container" => "widget-jira" if resource.nil? %>
+<%= link_to image_tag("/images/spacer.gif"), "#", :class=> 'jira_active', :title => t('ticket.integrations.jira.create'), "data-placement" => "topRight", :rel => "widget-popover", "data-widget-container" => "widget-jira" unless resource.nil? %>

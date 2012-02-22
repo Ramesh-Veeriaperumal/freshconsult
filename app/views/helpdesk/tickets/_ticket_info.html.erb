@@ -63,7 +63,25 @@
               <%= link_to t('ticket.merge_btn'), "/helpdesk/tickets/show_tickets_from_same_user/#{@ticket.display_id}", :id => "Merge", :title => "Merge ticket", "data-ajax-dialog" => true %>
               <%= link_to(t('ticket.close_btn'), close_helpdesk_ticket_path(@ticket), :method => :put, :title  => t('ticket.close_btn_title'), :class => "last") unless @ticket.closed? %> 
             </div>	
-            <div class="action_icons floatr">              
+            <div class="action_icons floatr"> 
+              <% if is_application_installed?("jira")  %>   
+                <% installedApp = get_app_details("jira") %>
+                <% jira_integrated_resource = Integrations::IntegratedResource.find_by_local_integratable_id(@ticket.id) %>
+                <textarea id="widget-jira" style="display:none">
+                  <div class="content"><div class="negtive-margin">
+                    <h3 class="title">JIRA</h3>
+                    <span class="seperator"></span>
+                    <%
+                    installed_app = get_app_details("jira")
+                    @liquid_objects = {"requester" => @ticket.requester, "ticket" => @ticket, "agent" => @agent, "integrated_resource" => jira_integrated_resource} %>
+                    <% widget_code = get_app_widget_script("jira", "jira_widget", @liquid_objects) %>
+                    <%= Liquid::Template.parse(widget_code).render("ticket" => @ticket) %>
+                  </div></div>
+                </textarea>
+                <span id="jira_issue_icon">
+                  <%= render :partial => "/helpdesk/integrations/jira_issue", :locals => {:resource => jira_integrated_resource } %>
+                </span>  
+              <% end %>             
               <span id="monitor">
                 <%= render :partial => "/helpdesk/subscriptions/monitor" %>
               </span>

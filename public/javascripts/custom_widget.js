@@ -6,7 +6,7 @@ Freshdesk.Widget.prototype={
 		this.options = widgetOptions || {};
 		if(!this.options.username) this.options.username = Cookie.retrieve(this.options.anchor+"_username");
 		if(!this.options.password) this.options.password = Cookie.retrieve(this.options.anchor+"_password");
-		this.content_anchor = $$("#"+this.options.anchor+" #content")[0];
+		this.content_anchor = $$("#"+this.options.anchor+" .content")[0];
 		this.error_anchor = $$("#"+this.options.anchor+" #error")[0];
 		this.title_anchor = $$("#"+this.options.anchor+" #title")[0];
 		this.app_name = this.options.app_name || "Integrated Application";
@@ -280,13 +280,32 @@ var UIUtil = {
 		}
 	},
 
-	hideLoading: function(integrationName,fieldName) {
-		jQuery("#" + integrationName + "-timeentry-" + fieldName).removeClass('hide');
+	hideLoading: function(integrationName,fieldName,context) {
+
+		if (typeof context == undefined) {
+			context = "-timeentry";
+		}
+		jQuery("#" + integrationName + context + '-' + fieldName).removeClass('hide');
+		
 		jQuery("#" + integrationName + "-" + fieldName + "-spinner").addClass('hide');
+
+		var parent_form = jQuery("#" + integrationName + context + '-' + fieldName).parentsUntil('form').siblings().andSelf();
+		console.log(parent_form);
+		if ( parent_form.find('.loading-fb.hide').length == parent_form.find('.loading-fb').length) {
+			//All the loading are hidden
+
+			var submit_button = parent_form.filter('.uiButton');
+			submit_button.prop('disabled',!submit_button.prop('disabled'));
+
+		}
 	},
 
-	showLoading: function(integrationName,fieldName) {
-		jQuery("#" + integrationName + "-timeentry-" + fieldName).addClass('hide');
+	showLoading: function(integrationName,fieldName,context) {
+		if (typeof context == undefined) {
+			context = "-timeentry";
+		}
+		jQuery("#" + integrationName + context + '-' + fieldName).addClass('hide');
+		
 		jQuery("#" + integrationName + "-" + fieldName + "-spinner").removeClass('hide');
 	}
 }

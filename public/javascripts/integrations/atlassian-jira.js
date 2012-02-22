@@ -1,18 +1,40 @@
 var JiraWidget = Class.create();
 JiraWidget.prototype= {
 	JIRA_FORM:new Template(
-	    '<form id="jira-add-form" method="post"> ' +
-	    '<label>Project</label> ' +
-	    '<select name="project_id" id="jira-projects" onchange="jiraWidget.projectChanged(this.options[this.selectedIndex].value)"></select> ' +
-	    '<label>Issue Type</label> ' +
-	    '<select name="issue_type" id="jira-issue-types" onchange="jiraWidget.typeChanged(this.options[this.selectedIndex].value)"></select> ' +
-	    '<label>Summary</label> ' +
-	    '<textarea name="issue_summary" id="jira-issue-summary" style="width:190px; height: 50px;"></textarea>' +
-   	    '<input type="submit" id="jira-submit" class="uiButton" style="margin-top: 1px;" value="Submit" ' +
-   	    'onclick="jiraWidget.createJiraIssue();return false;"> ' +
-   	    '<input type="submit" id="jira-cancel" class="uiButton" style="margin-top: 1px;" value="Cancel" ' +
-   	    'onclick="jiraWidget.displayParentWidget();return false;"> ' +
-	    '</form>'),
+		'<div id="jira_issue_create"><div class="heading"><span class="current_form">Create a new issue</span>' +
+			'<span class="divider"> or </span>' + 
+			' <span class="other_form show_linkform">Link to an existing issue</span></div>' + 
+	    '<form id="jira-add-form" method="post" class="ui-form"> ' +
+		    '<div class="field half_width left">' +
+			    '<label>Project</label> ' +
+			    '<select class="full hide" name="project_id" id="jira-projects" onchange="jiraWidget.projectChanged(this.options[this.selectedIndex].value)"></select> ' +
+			    '<div class="loading-fb" id="jira-projects-spinner"> </div>' + 
+		    '</div>' + 
+		    '<div class="field half_width right">' +
+			    '<label>Issue Type</label> ' +
+			    '<select class="full hide" name="issue_type" id="jira-issue-types" onchange="jiraWidget.typeChanged(this.options[this.selectedIndex].value)"></select> ' +
+			    '<div class="loading-fb" id="jira-issue-types-spinner"> </div>' + 
+		    '</div>' + 
+		    '<div class="field">' +
+			    '<label>Summary</label> ' +
+			    '<input type="text" name="issue_summary" id="jira-issue-summary" class="full" value="#{subject}" />' +
+	   	    '</div>' + 
+	   	    '<input type="submit" id="jira-submit" class="uiButton"  value="Create Issue" ' +
+	   	    'onclick="jiraWidget.createJiraIssue();return false;" disabled> ' +
+	    '</form></div>' +
+	    '<div id="jira_issue_link" class="hide"> ' +
+	    '<div class="heading"><span class="other_form show_createform">Create a new issue</span>' +
+			'<span class="divider"> or </span>' + 
+			' <span class="current_form ">Link to an existing issue</span></div>' + 
+   		'<form id="jira-link-issue" class="ui-form"> ' +
+		    '<div class="field">' +
+				'<label>Issue ID</label>'+
+				'<input type="text" id="jira-issue-id" class="full"></input>' +
+			'</div>' +
+			'<input type="submit" id="jira-submit" class="uiButton" value="Link Issue" ' +
+			'onclick="jiraWidget.linkJiraIssue();return false;"> '+
+   	    '</form></div>'
+		),
 	JIRA_ISSUE:new Template(
 		'<div id="jira-issue-widget">' +
 		'<form id="jira-issue-form" method="post"> ' +
@@ -37,18 +59,16 @@ JiraWidget.prototype= {
    	    'onclick="jiraWidget.deleteJiraIssue();return false;"> ' +
 	    '</form></div>'),
    	JIRA_PARENT:new Template(
-   		'<form id = "create-issue-form">'+
-   		'<a href="javascript:void(0)" id="jira_create" onclick="return jiraWidget.displayCreateWidget()">Create a new Issue</a>'+
-   		'</form>'+
-   		'<hr/>'+
-		'<form id = "link-issue-form">'+
-   		'<a href="javascript:void(0)" id="jira_link" onclick="return jiraWidget.displayLinkWidget()">Link to an Existing Issue</a>'+
-   		'</form>'),
+   		'<script type="text/javascript>jiraWidget.displayCreateWidget();</script>'),
    	JIRA_LINK:new Template(
-   		'<form id="jira-link-issue"> ' +
-		'<label>Existing Issue ID to link this ticket to</label>'+
-		'<input type="text" id="jira-issue-id"></input>' +
-		'<br />' +
+   		'<div class="heading"><span class="other_form show_createform">Create a new issue</span>' +
+			'<span class="divider"> or </span>' + 
+			' <span class="current_form ">Link to an existing issue</span></div>' + 
+   		'<form id="jira-link-issue" class="ui-form"> ' +
+		    '<div class="field">' +
+		'<label>Issue ID</label>'+
+		'<input type="text" id="jira-issue-id" class="full"></input>' +
+		'</div>' +
 		'<input type="submit" id="jira-submit" class="uiButton" style="margin-top: 1px;" value="Link Issue" ' +
 		'onclick="jiraWidget.linkJiraIssue();return false;"> '+
 		'<input type="submit" id="jira-cancel" class="uiButton" style="margin-top: 1px;" value="Cancel" ' +
@@ -67,7 +87,14 @@ JiraWidget.prototype= {
 				on_failure: jiraWidget.processFailure,
 				on_success: jiraWidget.displayIssue.bind(this)
 			}];	
-		}
+		}  else {
+			init_reqs = [{
+				resource: "rest/api/latest/project",
+				content_type: "application/json",
+				on_failure: jiraWidget.processFailure,
+				on_success: jiraWidget.loadProject.bind(this)
+			}];
+		} 
 		if(jiraBundle.domain) {
 			this.freshdeskWidget = new Freshdesk.Widget({
 				application_id:jiraBundle.application_id,
@@ -85,6 +112,13 @@ JiraWidget.prototype= {
 				application_resources:init_reqs
 			});
 		}
+
+
+		jQuery('.show_linkform, .show_createform').live('click',function(e) {
+			e.preventDefault();
+			jQuery('#jira_issue_create, #jira_issue_link').toggleClass('hide');
+		});
+
 	},	
 
 	addToJira:function(){
@@ -92,7 +126,7 @@ JiraWidget.prototype= {
 		if (jiraBundle.remote_integratable_id) {
 			appContent = jiraWidget.JIRA_ISSUE.evaluate({});
 		} else {
-			appContent = jiraWidget.JIRA_PARENT.evaluate({});
+			appContent = jiraWidget.JIRA_FORM.evaluate({subject:jiraBundle.ticketSubject});
 		}
 		return appContent;
 	},
@@ -113,6 +147,8 @@ JiraWidget.prototype= {
 		selectedProjectNode = UIUtil.constructDropDown(this.projectData, "json", "jira-projects", null, "key", ["name"], null, Cookie.retrieve("jira_project_id")||"");
 		//project_id = XmlUtil.getNodeValueStr(selectedProjectNode, "id");
 		//this.projectChanged(project_id);
+
+		UIUtil.hideLoading('jira','projects','');
 	},
 
 	loadIssueTypes:function(){
@@ -159,6 +195,8 @@ JiraWidget.prototype= {
 		console.log(resData);
 		//selectedProjectNode = UIUtil.constructDropDownJson(resData, "jira-issue-types", "types", "typeId", ["typeName"], null, Cookie.retrieve("jira_type_id")||"");
 		selectedProjectNode = UIUtil.constructDropDown(resData, "json", "jira-issue-types", "types", "typeId", ["typeName"], null, Cookie.retrieve("jira_type_id")||"");
+
+		UIUtil.hideLoading('jira','issue-types','');
 	},
 
 	createJiraIssue:function(resultCallback) {
@@ -261,6 +299,8 @@ JiraWidget.prototype= {
 		jiraWidget.freshdeskWidget.options.application_content = this.displayIssueContent 
 		jiraWidget.freshdeskWidget.options.application_resources = init_reqs;
 		jiraWidget.freshdeskWidget.display();
+
+		//Show loading
 		
 	},
 
@@ -274,7 +314,9 @@ JiraWidget.prototype= {
 		jiraWidget.freshdeskWidget.options.application_content = this.displayFormContent;
 		jiraWidget.freshdeskWidget.options.application_resources = init_reqs;
 		jiraWidget.freshdeskWidget.display();
-		jQuery('#jira-issue-summary').text(jiraBundle.ticketSubject);
+		console.log("Subject is " + jiraBundle.ticketSubject);
+		jQuery('#jira-issue-summary').val(jiraBundle.ticketSubject);
+
 		
 	},
 
@@ -282,6 +324,7 @@ JiraWidget.prototype= {
 		jiraWidget.freshdeskWidget.options.application_content = this.displayLinkContent;
 		jiraWidget.freshdeskWidget.options.application_resources = null;
 		jiraWidget.freshdeskWidget.display();
+
 	},
 
 	displayParentWidget:function(){

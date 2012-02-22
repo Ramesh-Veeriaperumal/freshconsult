@@ -1083,6 +1083,12 @@ div.panel_area{
 	.spam_active img{ 
 		background: sprite($ticketicon, flag-spam_active) no-repeat;
 	}
+	.jira img{ 
+		background: sprite($ticketicon, jira) no-repeat;
+	}
+	.jira_active img{ 
+		background: sprite($ticketicon, jira_active) no-repeat;
+	}
 } 
 
 .request_panel_list{
@@ -4571,4 +4577,60 @@ a.close{
    		left:20px;
    		position:absolute;
    	} 
+}
+
+#jira_widget {
+	.content {
+		width: 350px;
+	}
+	@include pie-clearfix;
+	.heading {
+		margin: 10px 0 0;
+		.current_form {
+			font-size:1.2em;
+			font-weight:bold;
+			color:#000;
+		}
+
+		.other_form {
+			font-size:1.1em;
+			color:#369;
+			cursor: pointer;
+		}
+
+		.divider {
+			padding:0 15px;
+		}
+	}
+
+	.ui-form {
+		background:none;
+		border:none;
+
+		div.field {
+			float:left;
+			margin:5px 0;
+
+			width:100%;
+
+			&.half_width {
+				width:45%;
+				padding: 0 5% 0 0;
+
+				&.right {
+					padding: 0 0 0 5%;
+				}
+			}
+
+		}
+
+		.uiButton[type=submit] {
+			margin:15px 0 10px;
+		}
+	}
+
+	.loading-fb {
+		width:90%;
+		margin: 3px 5%;
+	}
 }
