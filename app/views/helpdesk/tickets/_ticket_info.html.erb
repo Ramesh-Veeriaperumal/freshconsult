@@ -65,22 +65,7 @@
             </div>	
             <div class="action_icons floatr"> 
               <% if is_application_installed?("jira")  %>   
-                <% installedApp = get_app_details("jira") %>
-                <% jira_integrated_resource = Integrations::IntegratedResource.find_by_local_integratable_id(@ticket.id) %>
-                <textarea id="widget-jira" style="display:none">
-                  <div class="content"><div class="negtive-margin">
-                    <h3 class="title">JIRA</h3>
-                    <span class="seperator"></span>
-                    <%
-                    installed_app = get_app_details("jira")
-                    @liquid_objects = {"requester" => @ticket.requester, "ticket" => @ticket, "agent" => @agent, "integrated_resource" => jira_integrated_resource} %>
-                    <% widget_code = get_app_widget_script("jira", "jira_widget", @liquid_objects) %>
-                    <%= Liquid::Template.parse(widget_code).render("ticket" => @ticket) %>
-                  </div></div>
-                </textarea>
-                <span id="jira_issue_icon">
-                  <%= render :partial => "/helpdesk/integrations/jira_issue", :locals => {:resource => jira_integrated_resource } %>
-                </span>  
+                  <%= render :partial => "/helpdesk/integrations/jira_issue"%>
               <% end %>             
               <span id="monitor">
                 <%= render :partial => "/helpdesk/subscriptions/monitor" %>

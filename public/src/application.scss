@@ -4633,4 +4633,29 @@ a.close{
 		width:90%;
 		margin: 3px 5%;
 	}
+
+	.jira_issue_details {
+		font-size:13px;
+
+		#jira-issue-id {
+			font-weight:bold;
+		}
+
+		li {
+			margin:20px 0;
+
+			label {
+				font-size:11px;
+				color:#666;
+				float:left;
+				padding:0;
+				width: 100px;
+
+				&#jira-link-label {
+					margin-bottom:10px;
+					width:100%;
+				}
+			}
+		}
+	}
 }

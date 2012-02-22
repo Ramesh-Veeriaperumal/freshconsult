@@ -38,25 +38,25 @@ JiraWidget.prototype= {
 	JIRA_ISSUE:new Template(
 		'<div id="jira-issue-widget">' +
 		'<form id="jira-issue-form" method="post"> ' +
-	    '<h3><span id="jira-issue-id"></span></h3>'+
-	    '<h4><span id="jira-issue-summary"></span></h4>'+
-	    '<span class="seperator"></span>'+
-	    '<h4>Type</h4>'+
+	    '<div class="jira_issue_details hide"><span id="jira-issue-id"></span><br />'+
+	    '<span id="jira-issue-summary"></span>'+
+	    '<ul>'+
+	    '<li> <label>Type</label>' +
 	    '<span id="jira-issue-type"></span>'+
-	    '<br/><br/>'+
-	    '<h4>Status</h4>'+
+	    '</li>'+
+	    '<li> <label>Status</label>' +
 	    '<span id="jira-issue-status"></span>'+
-	    '<br/><br/>'+
-	    '<h4>Created On</h4>'+
+	    '</li>'+
+	    '<li> <label>Created On</label>' +
 	    '<span id="jira-issue-createdon"></span>'+
-	    '<br/><br/>'+
-	    '<h4 class="hide" id="jira-link-label">Linked Freshdesk Tickets</h4>'+
+	    '</li>'+
+	    '<li> <label class="hide" id="jira-link-label">Linked Tickets</label> <br />' +
 	    '<span id="jira-issue-link"></span>'+
-	    '<br/>'+
-	    '<input type="submit" id="jira-unlink" class="uiButton" style="margin-top: 1px;" value="Unlink Issue" ' +
-   	    'onclick="jiraWidget.unlinkJiraIssue();return false;"> ' +
-   	    '<input type="submit" id="jira-delete" class="uiButton" style="margin-top: 1px;" value="Delete Issue" ' +
+	    '</li>'+
+	    '<input type="button" id="jira-unlink" class="uiButton" value="Unlink Issue" > ' +
+   	    '<input type="button" id="jira-delete" class="uiButton" value="Delete Issue" ' +
    	    'onclick="jiraWidget.deleteJiraIssue();return false;"> ' +
+	    '</div>'+
 	    '</form></div>'),
    	JIRA_PARENT:new Template(
    		'<script type="text/javascript>jiraWidget.displayCreateWidget();</script>'),
@@ -94,6 +94,8 @@ JiraWidget.prototype= {
 				on_failure: jiraWidget.processFailure,
 				on_success: jiraWidget.loadProject.bind(this)
 			}];
+
+			jQuery('#jira_issue_loading').addClass('hide');
 		} 
 		if(jiraBundle.domain) {
 			this.freshdeskWidget = new Freshdesk.Widget({
@@ -113,10 +115,19 @@ JiraWidget.prototype= {
 			});
 		}
 
-
-		jQuery('.show_linkform, .show_createform').live('click',function(e) {
+		jQuery('.show_linkform, .show_createform').bind('click',function(e) {
 			e.preventDefault();
 			jQuery('#jira_issue_create, #jira_issue_link').toggleClass('hide');
+		});
+
+		jQuery('#jira-unlink').bind('click',function(ev) {
+			ev.preventDefault();
+			jiraWidget.unlinkJiraIssue();
+		});
+
+		jQuery('#jira-delete').bind('click',function(ev) {
+			ev.preventDefault();
+			jiraWidget.deleteJiraIssue();
 		});
 
 	},	
@@ -200,6 +211,10 @@ JiraWidget.prototype= {
 	},
 
 	createJiraIssue:function(resultCallback) {
+
+		jQuery('#jira_issue_loading').removeClass('hide');
+		jQuery('.jira_issue_details').addClass('hide');
+
 		self = this;
 		integratable_type = "issue-tracking";
 		summary = jQuery('#jira-issue-summary').val();
@@ -255,12 +270,16 @@ JiraWidget.prototype= {
 		var issueStatus = JsonUtil.getMultiNodeValue(resJson, "fields.status"+value+".name");
 		var issueCreated = JsonUtil.getMultiNodeValue(resJson, "fields.created"+value);
 		this.displayCustomFieldData(resJson);
-		jQuery('#jira-issue-id').html("<h4><a target='_blank' href='" + issueLink + "'>" + jiraBundle.remote_integratable_id +"</a></h4>") ;
+		jQuery('#jira-issue-id').html("<a target='_blank' href='" + issueLink + "'>" + jiraBundle.remote_integratable_id +"</a>") ;
 		jQuery('#jira-issue-type').text(issueType);
-		jQuery('#jira-issue-summary').html("<h3>" + issueSummary + "</h3>");
+		jQuery('#jira-issue-summary').html(issueSummary);
 		jQuery('#jira-issue-status').text(issueStatus);
 		jQuery('#jira-issue-createdon').text(issueCreated);
 		this.displayIssueWidgetStatus = false;
+
+
+		jQuery('#jira_issue_loading').addClass('hide');
+		jQuery('.jira_issue_details').removeClass('hide');
 		 
 	},
 
@@ -301,6 +320,8 @@ JiraWidget.prototype= {
 		jiraWidget.freshdeskWidget.display();
 
 		//Show loading
+		jQuery('#jira_issue_loading').removeClass('hide');
+		jQuery('.jira_issue_details').addClass('hide');
 		
 	},
 
@@ -368,6 +389,10 @@ JiraWidget.prototype= {
 	},
 	
 	linkJiraIssue:function(){
+
+		jQuery('#jira_issue_loading').removeClass('hide');
+		jQuery('.jira_issue_details').addClass('hide');
+		
 		remoteKey = jQuery('#jira-issue-id').val();
 		jiraWidget.linkIssueId = remoteKey;
 		this.freshdeskWidget.request({
@@ -500,7 +525,7 @@ JiraWidget.prototype= {
 		  			jQuery('#jira-issue-link').html(issueHtml);		
 		  		}
 				
-		  	}
+		  	} 
 		 }
 	}
 }
