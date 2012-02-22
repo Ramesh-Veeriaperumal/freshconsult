@@ -87,7 +87,7 @@ var $J = jQuery.noConflict();
 				trigger: 'manual',
 				offset: 5,
 				html: true,
-				reloadContent: true,
+				reloadContent: false,
 				template: '<div class="arrow"></div><div class="inner"><div class="content"><p></p></div></div>',
 				content: function(){
 					return $("#" + $(this).attr("data-widget-container")).val();

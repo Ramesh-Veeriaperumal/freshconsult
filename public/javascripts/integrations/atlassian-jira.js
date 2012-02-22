@@ -1,7 +1,7 @@
 var JiraWidget = Class.create();
 JiraWidget.prototype= {
 	JIRA_FORM:new Template(
-		'<div id="jira_issue_create"><div class="heading"><span class="current_form">Create a new issue</span>' +
+		'<div id="jira_issue_forms"><div id="jira_issue_create"><div class="heading"><span class="current_form">Create a new issue</span>' +
 			'<span class="divider"> or </span>' + 
 			' <span class="other_form show_linkform">Link to an existing issue</span></div>' + 
 	    '<form id="jira-add-form" method="post" class="ui-form"> ' +
@@ -33,7 +33,7 @@ JiraWidget.prototype= {
 			'</div>' +
 			'<input type="submit" id="jira-submit" class="uiButton" value="Link Issue" ' +
 			'onclick="jiraWidget.linkJiraIssue();return false;"> '+
-   	    '</form></div>'
+   	    '</form></div></div>'
 		),
 	JIRA_ISSUE:new Template(
 		'<div id="jira-issue-widget">' +
@@ -114,17 +114,17 @@ JiraWidget.prototype= {
 			});
 		}
 
-		jQuery('.show_linkform, .show_createform').bind('click',function(e) {
+		jQuery('.show_linkform, .show_createform').live('click',function(e) {
 			e.preventDefault();
 			jQuery('#jira_issue_create, #jira_issue_link').toggleClass('hide');
 		});
 
-		jQuery('#jira-unlink').bind('click',function(ev) {
+		jQuery('#jira-unlink').live('click',function(ev) {
 			ev.preventDefault();
 			jiraWidget.unlinkJiraIssue();
 		});
 
-		jQuery('#jira-delete').bind('click',function(ev) {
+		jQuery('#jira-delete').live('click',function(ev) {
 			ev.preventDefault();
 			jiraWidget.deleteJiraIssue();
 		});
@@ -211,8 +211,7 @@ JiraWidget.prototype= {
 
 	createJiraIssue:function(resultCallback) {
 
-		jQuery('#jira_issue_loading').removeClass('hide');
-		jQuery('.jira_issue_details').addClass('hide');
+		this.showSpinner();
 
 		self = this;
 		integratable_type = "issue-tracking";
@@ -244,6 +243,7 @@ JiraWidget.prototype= {
 					jiraBundle.remote_integratable_id = resJ['integrated_resource']['remote_integratable_id'];
 					self.createdisplayIssueWidget();
 
+					jQuery('#jira_issue_icon a.jira').removeClass('jira').addClass('jira_active');
 					if (resultCallback) 
 						resultCallback(evt);
 				},
@@ -276,9 +276,7 @@ JiraWidget.prototype= {
 		jQuery('#jira-issue-createdon').text(issueCreated);
 		this.displayIssueWidgetStatus = false;
 
-
-		jQuery('#jira_issue_loading').addClass('hide');
-		jQuery('.jira_issue_details').removeClass('hide');
+		this.hideSpinner();
 		 
 	},
 
@@ -319,12 +317,12 @@ JiraWidget.prototype= {
 		jiraWidget.freshdeskWidget.display();
 
 		//Show loading
-		jQuery('#jira_issue_loading').removeClass('hide');
-		jQuery('.jira_issue_details').addClass('hide');
+		this.showSpinner();
 		
 	},
 
 	displayCreateWidget:function(){
+		this.hideSpinner();
 		init_reqs = [{
 				resource: "rest/api/latest/project",
 				content_type: "application/json",
@@ -367,7 +365,7 @@ JiraWidget.prototype= {
 	},
 
 	displayParentContent:function(){
-		return jiraWidget.JIRA_PARENT.evaluate({});
+		return jiraWidget.JIRA_FORM.evaluate({});
 	},
 
 
@@ -388,9 +386,7 @@ JiraWidget.prototype= {
 	},
 	
 	linkJiraIssue:function(){
-
-		jQuery('#jira_issue_loading').removeClass('hide');
-		jQuery('.jira_issue_details').addClass('hide');
+		this.showSpinner();
 		
 		remoteKey = jQuery('#jira-issue-id').val();
 		jiraWidget.linkIssueId = remoteKey;
@@ -427,7 +423,7 @@ JiraWidget.prototype= {
 		}
 		else
 		{
-			ticketData = "#"+" (" + document.URL +") - " + jiraBundle.ticketSubject;		
+			ticketData = "#"+jiraBundle.ticketId+" (" + document.URL +") - " + jiraBundle.ticketSubject;
 			reqData = {
 				"domain":jiraBundle.domain,
 				"remoteKey":jiraWidget.linkIssueId,
@@ -450,6 +446,9 @@ JiraWidget.prototype= {
 						jiraBundle.integrated_resource_id = resJ['integrated_resource']['id'];
 						jiraBundle.remote_integratable_id = resJ['integrated_resource']['remote_integratable_id'];
 						jiraWidget.linkIssue = true;
+
+						jQuery('#jira_issue_icon a.jira').removeClass('jira').addClass('jira_active');
+
 						self.createdisplayIssueWidget();
 					}
 					else{
@@ -469,14 +468,17 @@ JiraWidget.prototype= {
 
 	unlinkJiraIssue:function(){
 		if (jiraBundle.integrated_resource_id) {
+			this.showSpinner();
 			this.freshdeskWidget.delete_integrated_resource(jiraBundle.integrated_resource_id);
 			jiraBundle.integrated_resource_id = "";
 			jiraBundle.remote_integratable_id = "";
-			this.displayParentWidget();
+			jQuery('#jira_issue_icon a.jira_active').addClass('jira').removeClass('jira_active');
+			this.displayCreateWidget();
 		}
 	},
 
 	deleteJiraIssue:function(){
+		this.showSpinner();
 		self = this;
 		reqData = {
 				"integrated_resource[remote_integratable_id]":jiraBundle.remote_integratable_id,
@@ -490,7 +492,8 @@ JiraWidget.prototype= {
 				onSuccess: function(evt){
 					resJ = evt.responseJSON
 					if (resJ['status'] != 'error') {
-						self.displayParentWidget();
+						jQuery('#jira_issue_icon a.jira_active').addClass('jira').removeClass('jira_active');
+						self.displayCreateWidget();
 					} else {
 						console.log("Error while deleting the jira issue");
 					}
@@ -526,7 +529,19 @@ JiraWidget.prototype= {
 				
 		  	} 
 		 }
-	}
+	},
+
+	showSpinner: function() {
+		
+		jQuery('#jira_issue_loading').removeClass('hide');
+		jQuery('.jira_issue_details, #jira_issue_forms').addClass('hide');
+	}, 
+
+	hideSpinner: function() {
+		
+		jQuery('#jira_issue_loading').addClass('hide');
+		jQuery('.jira_issue_details, #jira_issue_forms').removeClass('hide');
+	}, 
 }
 
 jiraWidget = new JiraWidget(jiraBundle);
