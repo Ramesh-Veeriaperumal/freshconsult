@@ -1,6 +1,7 @@
 class Integrations::InstalledApplicationsController < Admin::AdminController
   
   include Integrations::AppsUtil
+  include Integrations::JiraSystem
   
   def index
     @applications = Integrations::Application.all
@@ -24,6 +25,10 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
             Rails.logger.info "Redirecting to google_contacts oauth."
             redirect_to "/auth/google?origin=install"
             return
+          end
+          if installing_application.name == "jira"
+            installed_application.configs[:inputs]['customFieldId'] = getJiraCustomField(params, current_account)
+            installed_application.save! unless installed_application.configs[:inputs]['customFieldId'].blank?
           end
           flash[:notice] = t(:'flash.application.install.success')
         else
@@ -97,6 +102,7 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
       {:inputs => params[:configs].to_hash}  
     end
   end
+
 
   def decrypt_password  
     apps = @installing_application.options

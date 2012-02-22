@@ -10,9 +10,9 @@
   	<span class="seperator"></span>
   	<%
   	 installed_app = get_app_details("jira")
-  	 username =  get_jira_username(installed_app) 
-  	 password =  get_jira_password(installed_app) 
-  	 @liquid_objects = {"requester" => @ticket.requester, "ticket" => @ticket, "agent" => @agent, "integrated_resource" => integrated_resource, "username" => username , "password" => password} %>
+  	 #username =  get_jira_username(installed_app) 
+  	 #password =  get_jira_password(installed_app) 
+  	 @liquid_objects = {"requester" => @ticket.requester, "ticket" => @ticket, "agent" => @agent, "integrated_resource" => integrated_resource} %>
 	<% widget_code = get_app_widget_script("jira", "jira_widget", @liquid_objects) %>
 	<%= Liquid::Template.parse(widget_code).render("ticket" => @ticket) %>
 	</div>

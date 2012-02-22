@@ -69,6 +69,16 @@ class Integrations::JiraIssueController < ApplicationController
 		end
 	end
 
+	def getCustomFieldId
+		begin
+			customFieldId = $jiraObj.getCustomFieldId();
+			render :json => {:customFieldId=> "#{customFieldId}"}
+		rescue Exception => msg
+			puts "Error fetching custom fields from Jira ( #{msg})"
+			render :json => {:status=>:error}
+		end
+	end
+
 	def getJiraObject
 		installed_app = Integrations::InstalledApplication.find(:all, :joins=>:application, 
                   :conditions => {:applications => {:name => "jira"}, :account_id => current_account})

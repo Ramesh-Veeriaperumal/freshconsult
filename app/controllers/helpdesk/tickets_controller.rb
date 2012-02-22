@@ -3,6 +3,7 @@ require 'fastercsv'
 class Helpdesk::TicketsController < ApplicationController  
   
   include ActionView::Helpers::TextHelper
+  include Integrations::JiraSystem
   
   before_filter :check_user , :only => [:show]
   before_filter :load_ticket_filter , :only => [:index, :custom_view_save]

@@ -14,4 +14,16 @@ module Integrations::JiraSystem
 	    encrypted_pwd = installed_app[0].configs[:inputs]['password']
 	    Integrations::AppsUtil.get_decrypted_value(encrypted_pwd)
 	end
+
+
+  def getJiraCustomField(params, current_account)
+    installed_app = Integrations::InstalledApplication.find(:all, :joins=>:application, 
+                  :conditions => {:applications => {:name => "jira"}, :account_id => current_account})
+    username = get_jira_username(installed_app)
+    password = get_jira_password(installed_app)
+    params['domain'] = params[:configs]['domain']
+    $jiraObj = Integrations::JiraIssue.new(username, password, params)
+    $jiraObj.getCustomFieldId();
+  end
+
  end

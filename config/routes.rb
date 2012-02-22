@@ -66,7 +66,7 @@
     integration.resources :integrated_resource, :member =>{:create => :put, :delete => :delete}
     integration.resources :google_accounts, :member =>{:edit => :get, :delete => :delete, :update => :put, :import_contacts => :put}
     integration.resources :gmail_gadgets, :collection =>{:spec => :get}
-    integration.resources :jira_issue, :member =>{:create => :post, :show => :get, :delete => :delete, :update => :put}
+    integration.resources :jira_issue, :member =>{:create => :post, :show => :get, :delete => :delete, :update => :put, :getCustomFieldId => :get}
   end
 
   map.namespace :admin do |admin|

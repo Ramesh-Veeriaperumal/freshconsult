@@ -62,7 +62,7 @@ JiraWidget.prototype= {
 		if(jiraBundle.remote_integratable_id)
 		{
 			init_reqs = [{
-				resource: "rest/api/2.0.alpha1/issue/" + jiraBundle.remote_integratable_id,
+				resource: "rest/api/latest/issue/" + jiraBundle.remote_integratable_id,
 				content_type: "application/json",
 				on_failure: jiraWidget.processFailure,
 				on_success: jiraWidget.displayIssue.bind(this)
@@ -75,7 +75,8 @@ JiraWidget.prototype= {
 				anchor:"jira_widget",
 				domain:jiraBundle.domain,
 				username:jiraBundle.username, 
-				password:jiraBundle.password,
+				use_server_password: true,
+				//password:jiraBundle.password,
 				//ssl_enabled:harvestBundle.ssl_enabled || "false",
 				login_content: null,
 				application_content: function(){
@@ -204,32 +205,25 @@ JiraWidget.prototype= {
 	displayIssue:function(resData){
 		console.log("Inside displayIssue");
 		resJson = resData.responseJSON;
+		var value="";
 		var issueLink = jiraBundle.domain + "/browse/" + jiraBundle.remote_integratable_id;
-		var issueType = JsonUtil.getMultiNodeValue(resJson, "fields.issuetype.value.name");
-		var issueSummary = JsonUtil.getMultiNodeValue(resJson, "fields.summary.value");
-		var issueStatus = JsonUtil.getMultiNodeValue(resJson, "fields.status.value.name");
-		var issueCreated = JsonUtil.getMultiNodeValue(resJson, "fields.created.value");
-		var customFieldData = this.getCustomFieldValue(resJson);
+		jiraVer = JsonUtil.getMultiNodeValue(resJson, "fields.issuetype.value");
+		if(jiraVer != ""){
+			value = ".value";
+		}
+		fieldName = "fields.issuetype"+value+".name"
+		var issueType = JsonUtil.getMultiNodeValue(resJson, "fields.issuetype"+value+".name");
+		var issueSummary = JsonUtil.getMultiNodeValue(resJson, "fields.summary"+value);
+		var issueStatus = JsonUtil.getMultiNodeValue(resJson, "fields.status"+value+".name");
+		var issueCreated = JsonUtil.getMultiNodeValue(resJson, "fields.created"+value);
+		this.displayCustomFieldData(resJson);
 		jQuery('#jira-issue-id').html("<h4><a target='_blank' href='" + issueLink + "'>" + jiraBundle.remote_integratable_id +"</a></h4>") ;
 		jQuery('#jira-issue-type').text(issueType);
 		jQuery('#jira-issue-summary').html("<h3>" + issueSummary + "</h3>");
 		jQuery('#jira-issue-status').text(issueStatus);
 		jQuery('#jira-issue-createdon').text(issueCreated);
-		//jQuery('#jira-issue-desc').text(issueDesc);
 		this.displayIssueWidgetStatus = false;
-		if(customFieldData){
-			customField = customFieldData.split("url:");
-			issueLinks = customField[1];
-			if(issueLinks != "undefined"){
-				issueHtml = this.formatIssueLinks(issueLinks);
-				if(issueHtml != "duplicate_issue")
-				{
-					jQuery('#jira-link-label').show();	
-					jQuery('#jira-issue-link').html(issueHtml);		
-				}
-				
-			}
-		}
+		 
 	},
 
 	formatIssueLinks:function(issueLinks){
@@ -259,7 +253,7 @@ JiraWidget.prototype= {
 
 	createdisplayIssueWidget:function(){
 		init_reqs = [{
-				resource: "rest/api/2.0.alpha1/issue/" + jiraBundle.remote_integratable_id,
+				resource: "rest/api/latest/issue/" + jiraBundle.remote_integratable_id,
 				content_type: "application/json",
 				on_failure: jiraWidget.processFailure,
 				on_success: jiraWidget.displayIssue.bind(this)
@@ -272,7 +266,7 @@ JiraWidget.prototype= {
 
 	displayCreateWidget:function(){
 		init_reqs = [{
-				resource: "rest/api/2.0.alpha1/project",
+				resource: "rest/api/latest/project",
 				content_type: "application/json",
 				on_failure: jiraWidget.processFailure,
 				on_success: jiraWidget.loadProject.bind(this)
@@ -334,7 +328,7 @@ JiraWidget.prototype= {
 		remoteKey = jQuery('#jira-issue-id').val();
 		jiraWidget.linkIssueId = remoteKey;
 		this.freshdeskWidget.request({
-				resource: "rest/api/2.0.alpha1/issue/"+remoteKey,
+				resource: "rest/api/latest/issue/"+remoteKey,
 				content_type: "application/json",
 				on_success: jiraWidget.updateIssue.bind(this),
 				on_failure: jiraWidget.processFailure
@@ -345,23 +339,18 @@ JiraWidget.prototype= {
 		self = this;
 		var isCustomFieldDef = false
 		integratable_type = "issue-tracking";
-		freshdeskFieldData = this.getCustomFieldValue(resData.responseJSON);
-		console.log(freshdeskFieldData)
-		if (freshdeskFieldData)
+		freshdeskData = this.getCustomFieldData(resData.responseJSON);
+		if (freshdeskData)
 		{
 			isCustomFieldDef = true;
-			customFieldData = freshdeskFieldData.split("url:");
-			customFieldId = customFieldData[0]; 
-			freshdeskData = customFieldData[1];
 			if (freshdeskData == "undefined" )
 				freshdeskData = "#"+jiraBundle.ticketId+" (" + document.URL +") - " + jiraBundle.ticketSubject;
 			else
 				freshdeskData += "\n#"+jiraBundle.ticketId+" (" + document.URL +") - " + jiraBundle.ticketSubject;
-			
 			reqData = {
 			"domain":jiraBundle.domain,	
 			"isCustomFieldDef":"true",
-			"customFieldId":customFieldId,
+			"customFieldId":jiraBundle.custom_field_id,
 			"ticketData":freshdeskData,
 			"remoteKey":jiraWidget.linkIssueId,
 			"application_id": jiraBundle.application_id,
@@ -382,7 +371,6 @@ JiraWidget.prototype= {
 				"integrated_resource[local_integratable_type]": integratable_type
 			};
 		}
-
 		new Ajax.Request("/integrations/jira_issue/update", {
 				asynchronous: true,
 				method: "put",
@@ -450,24 +438,27 @@ JiraWidget.prototype= {
 		
 	},
 
-	getCustomFieldValue:function(resJson){
-		for (var key in resJson) {
-		  if (resJson.hasOwnProperty(key)) {
-		  	if(key == "fields")
-		  	{
-		  		fieldsJson = resJson["fields"];
-		  		break;
-		  	}
-		  }
+	getCustomFieldData:function(resJson){
+		if(jiraBundle.custom_field_id){
+			issueLinks = JsonUtil.getMultiNodeValue(resJson, "fields."+jiraBundle.custom_field_id);
+			return issueLinks;
 		}
-		for (var key in fieldsJson) {
-		  if (fieldsJson.hasOwnProperty(key)) {
-		  	if(fieldsJson[key]["name"] == "Freshdesk Tickets")
-		  	{
-		  		return key + "url:" + fieldsJson[key]["value"];
+	},
+
+	displayCustomFieldData:function(resJson){
+		if(jiraBundle.custom_field_id){
+		 	issueLinks = JsonUtil.getMultiNodeValue(resJson, "fields."+jiraBundle.custom_field_id);
+		 	console.log(issueLinks)
+		 	if(issueLinks != "undefined"){
+		  		issueHtml = this.formatIssueLinks(issueLinks);
+		  		if(issueHtml != "duplicate_issue")
+		  		{
+		  			jQuery('#jira-link-label').show();	
+		  			jQuery('#jira-issue-link').html(issueHtml);		
+		  		}
+				
 		  	}
-		  }
-		}
+		 }
 	}
 }
 

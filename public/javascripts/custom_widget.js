@@ -72,12 +72,18 @@ Freshdesk.Widget.prototype={
 		reqData.cache_gets = this.options.cache_gets;
 		reqData.accept_type = reqData.accept_type || reqData.content_type;
 		reqData.method = reqData.method || "get";
+		reqHeader = {}
+		if(this.options.use_server_password) {
+			reqData.username = this.options.username
+			reqData.use_server_password = this.options.use_server_password
+			reqData.app_name = this.options.app_name
+		} else {
+			reqHeader = {Authorization:"Basic " + Base64.encode(this.options.username + ":" + this.options.password)}
+		}
 		new Ajax.Request("/http_request_proxy/fetch",{
             asynchronous: true,
 			parameters:reqData,
-			requestHeaders:{
-				Authorization:"Basic " + Base64.encode(this.options.username + ":" + this.options.password)
-			},
+			requestHeaders:reqHeader,
 			onSuccess:function(evt) {
 				if(reqData != null && reqData.on_success != null){
 					reqData.on_success(evt);

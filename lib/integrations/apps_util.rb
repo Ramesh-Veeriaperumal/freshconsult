@@ -19,4 +19,10 @@ module Integrations::AppsUtil
   	decrypted_value = private_key.private_decrypt(Base64.decode64(encrypted_value))
   end
 
+  def get_password_for_app(app_name, account)
+      installed_app = Integrations::InstalledApplication.find(:first, :joins=>:application, 
+                  :conditions => {:applications => {:name => app_name}, :account_id => account})
+      encrypted_pwd = installed_app.configs[:inputs]['password']
+      Integrations::AppsUtil.get_decrypted_value(encrypted_pwd)
+  end
 end
