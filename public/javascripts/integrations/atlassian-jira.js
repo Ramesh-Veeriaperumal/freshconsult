@@ -53,9 +53,8 @@ JiraWidget.prototype= {
 	    '<li> <label class="hide" id="jira-link-label">Linked Tickets</label> <br />' +
 	    '<span id="jira-issue-link"></span>'+
 	    '</li>'+
-	    '<input type="button" id="jira-unlink" class="uiButton" value="Unlink Issue" > ' +
-   	    '<input type="button" id="jira-delete" class="uiButton" value="Delete Issue" ' +
-   	    'onclick="jiraWidget.deleteJiraIssue();return false;"> ' +
+	    '<a id="jira-unlink" class="uiButton" > Unlink Issue </a>' +
+   	    '<a id="jira-delete" class="uiButton" > Delete Issue </a>' +
 	    '</div>'+
 	    '</form></div>'),
    	JIRA_PARENT:new Template(
