@@ -46,10 +46,14 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
   
   def update
     installed_application = current_account.installed_applications.find(params[:id])
+    installing_application = installed_application.application
     if installed_application.blank?
       flash[:error] = t(:'flash.application.not_installed')
     else
       installed_application.configs = convert_to_configs_hash(params)
+      if installing_application.name == "jira"
+          installed_application.configs[:inputs]['customFieldId'] = getJiraCustomField(params, current_account)
+      end
       begin
         installed_application.save!
         flash[:notice] = t(:'flash.application.configure.success')
