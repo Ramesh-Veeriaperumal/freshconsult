@@ -1,0 +1,17 @@
+<% installedApp = get_app_details("jira") %>
+<% jira_integrated_resource = Integrations::IntegratedResource.find_by_local_integratable_id(@ticket.id) %>
+<textarea id="widget-jira" style="display:none">
+  <div class="content"><div class="negtive-margin">
+    <h3 class="title">Jira Project Tracking</h3>
+    <%
+    installed_app = get_app_details("jira")
+    @liquid_objects = {"requester" => @ticket.requester, "ticket" => @ticket, "agent" => @agent, "integrated_resource" => jira_integrated_resource} %>
+    <% widget_code = get_app_widget_script("jira", "jira_widget", @liquid_objects) %>
+    <%= Liquid::Template.parse(widget_code).render("ticket" => @ticket) %>
+    <div class="loading-box" id="jira_issue_loading"></div>
+  </div></div>
+</textarea>
+<span id="jira_issue_icon">
+	<%= link_to image_tag("/images/spacer.gif"), "#", :class=> 'jira', :title => t('ticket.integrations.jira.create'), "data-placement" => "topRight", :rel => "widget-popover", "data-widget-container" => "widget-jira" if jira_integrated_resource.nil? %>
+	<%= link_to image_tag("/images/spacer.gif"), "#", :class=> 'jira_active', :title => t('ticket.integrations.jira.create'), "data-placement" => "topRight", :rel => "widget-popover", "data-widget-container" => "widget-jira" unless jira_integrated_resource.nil? %>
+</span>  
