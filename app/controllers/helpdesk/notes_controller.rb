@@ -141,6 +141,7 @@ class Helpdesk::NotesController < ApplicationController
 
     def send_reply_email
       reply_email = params[:reply_email][:id] unless params[:reply_email].nil?
+      reply_email = current_account.primary_email_config.reply_email if reply_email.blank?
       add_cc_email     
       Helpdesk::TicketNotifier.send_later(:deliver_reply, @parent, @item , reply_email,{:include_cc => params[:include_cc] , :bcc_emails =>validate_emails(params[:bcc_emails])})  
       flash[:notice] = t(:'flash.tickets.reply.success')
