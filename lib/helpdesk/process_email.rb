@@ -73,16 +73,20 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       end
     end
     
-    def parse_email(email)
-      if email =~ /(.+) <(.+?)>/
+    def parse_email(email_text)
+      
+      if email_text =~ /(.+) <(.+?)>/
         name = $1
         email = $2
-      elsif email =~ /<(.+?)>/
-        email = $1
-      else email =~ EMAIL_REGEX
+      elsif email_text =~ /<(.+?)>/
         email = $1
       end
       
+      if((email && !(email =~ EMAIL_REGEX) && (email_text =~ EMAIL_REGEX)) || (email_text =~ EMAIL_REGEX))
+        email = $1  
+      end
+
+
       name ||= ""
       domain = (/@(.+)/).match(email).to_a[1]
       
@@ -100,6 +104,11 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
           { :name => name, :email => $1 }
         end
       end
+    end
+    
+    def parse_orginal_to
+      original_to = parse_email params[:to]            
+      original_to_email =  original_to[:name].blank? ? original_to[:email] : "#{original_to[:name]} <#{original_to[:email]}>"      
     end
     
     def parse_to_email
@@ -150,7 +159,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         #:email => from_email[:email],
         #:name => from_email[:name],
         :requester => user,
-        :to_email => to_email[:email],
+        :to_email => parse_orginal_to,
         :cc_email => parse_cc_email,
         :email_config => email_config,
         :status => Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open],
@@ -159,6 +168,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       )
       ticket = check_for_chat_scources(ticket,from_email)
       ticket = check_for_spam(ticket)
+      ticket = check_for_auto_responders(ticket)
       
       process_email_commands(ticket, user, email_config) if user.agent?
 
@@ -188,6 +198,14 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         ticket.email = chat_email unless chat_email.blank? && (chat_email == "unknown@example.com")
       end
       ticket
+    end
+    
+    def check_for_auto_responders(ticket)
+      headers = params[:headers]
+      if(!headers.blank? && headers =~ /Precedence:(\s)*[bulk|junk]/i && headers =~ /Auto-Submitted:(\s)*auto-replied/i)
+        ticket.spam = true
+      end
+      ticket  
     end
 
     def add_email_to_ticket(ticket, from_email)

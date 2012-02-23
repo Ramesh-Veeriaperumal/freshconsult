@@ -158,6 +158,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
       
   named_scope :permissible , lambda { |user| { :conditions => agent_permission(user)}  unless user.customer? }
  
+  named_scope :latest_tickets, lambda {|updated_at| {:conditions => ["helpdesk_tickets.updated_at > ?", updated_at]}}
+  
   def self.agent_permission user
     
     permissions = {:all_tickets => [] , 
