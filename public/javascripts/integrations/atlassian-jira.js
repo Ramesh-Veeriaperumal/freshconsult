@@ -90,8 +90,8 @@ JiraWidget.prototype= {
 			init_reqs = [{
 				resource: "rest/api/latest/project",
 				content_type: "application/json",
-				on_failure: jiraWidget.processFailure,
-				on_success: jiraWidget.loadProject.bind(this)
+				on_success: jiraWidget.loadProject.bind(this),
+				on_failure: jiraWidget.processFailure.bind(this)
 			}];
 
 			jQuery('#jira_issue_loading').addClass('hide');
@@ -273,7 +273,7 @@ JiraWidget.prototype= {
 		jQuery('#jira-issue-type').text(issueType);
 		jQuery('#jira-issue-summary').html(issueSummary);
 		jQuery('#jira-issue-status').text(issueStatus);
-		jQuery('#jira-issue-createdon').text(issueCreated);
+		jQuery('#jira-issue-createdon').text(freshdate(issueCreated));
 		this.displayIssueWidgetStatus = false;
 
 		this.hideSpinner();
@@ -542,6 +542,19 @@ JiraWidget.prototype= {
 		jQuery('#jira_issue_loading').addClass('hide');
 		jQuery('.jira_issue_details, #jira_issue_forms').removeClass('hide');
 	}, 
+
+	processFailure: function(evt) {
+		if (evt.status == 401) {
+			alert("Username or password is incorrect.");
+			//harvestWidget.freshdeskWidget.display_login();
+		} else if (evt.status == 404) {
+			jiraWidget.unlinkJiraIssue();
+			console.log("Jira issue not available");
+		} 
+		else{
+			console.log("Server Error")
+		}
+	},
 }
 
 jiraWidget = new JiraWidget(jiraBundle);

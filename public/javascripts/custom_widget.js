@@ -89,17 +89,23 @@ Freshdesk.Widget.prototype={
 					reqData.on_success(evt);
 				}
 			},
-			onFailure:this.resource_failure.bind(this)
+			onFailure:function(evt) {
+				alert("calling ");
+				this.resource_failure(evt, reqData)
+			}.bind(this)
 		});
 	},
 
-	resource_failure:function(evt){
+	resource_failure:function(evt, reqData){
+		console.log(reqData.on_failure+"coool")
+		console.log('asdasdasdasdas~~~~~~~~~');
+
 		if (evt.status == 401) {
 			this.options.username = null;
 			this.options.password = null;
 			Cookie.remove(this.options.anchor + "_username");
 			Cookie.remove(this.options.anchor + "_password");
-			if (this.on_failure != null) {
+			if (typeof reqData.on_failure != 'undefined' && reqData.on_failure != null) {
 				reqData.on_failure(evt);
 			} else { this.alert_failure("Given user credentials for "+this.app_name+" are incorrect. Please correct them.");}
 		} else if (evt.status == 403) {
@@ -127,20 +133,13 @@ Freshdesk.Widget.prototype={
 				}
 			}
 			this.alert_failure("Unknown server error. Please contact support@freshdesk.com.");
-		} else if (this.on_failure != null) {
+		} else if (typeof reqData.on_failure != 'undefined' && reqData.on_failure != null) {
+			alert("failed");
+			alert(reqData+"");
 			reqData.on_failure(evt);
 		} else {
-			if (this.app_name == "Jira") {
-				error = evt.responseJSON.errorMessages;
-				if (error.length > 0) {
-					err_msg = error[0];
-					alert(this.app_name+" reports the below error: \n\n" + err_msg + "\n\nTry again after correcting the error or fix the error manually.  If you can not do so, contact support.");
-					return;
-				}
-			}else{
 				errorStr = evt.responseText;
 				this.alert_failure(this.app_name+" reports the below error: \n\n" + errorStr + "\n\nTry again after correcting the error or fix the error manually.  If you can not do so, contact support.");
-			}
 			
 		}
 	},
