@@ -193,7 +193,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     def add_email_to_ticket(ticket, from_email)
       user = get_user(ticket.account, from_email, ticket.email_config)
       return if user.blocked? #Mails are dropped if the user is blocked
-      if ((ticket.requester.email && ticket.requester.email.include?(user.email)) || ticket.included_in_cc?(user.email) || !user.customer?) 
+      if can_be_added_to_ticket?(ticket,user)
         note = ticket.notes.build(
           :private => false,
           :incoming => true,
@@ -217,6 +217,17 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       
       create_attachments(ticket, note) if note.save 
       note
+    end
+    
+    def can_be_added_to_ticket?(ticket,user)
+      !user.customer? or
+      (ticket.requester.email and ticket.requester.email.include?(user.email)) or 
+      (ticket.included_in_cc?(user.email)) or
+      belong_to_same_company?(ticket,user)
+    end
+    
+    def belong_to_same_company?(ticket,user)
+      user.customer_id and (user.customer_id == ticket.requester.customer_id)
     end
     
     def get_user(account, from_email, email_config)
