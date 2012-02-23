@@ -157,7 +157,7 @@ class Helpdesk::TicketsController < ApplicationController
   def set_prev_next_tickets
     if params[:filters].nil?
       @filters = {}
-      index_filter = @ticket_filter
+      index_filter = @ticket_filter.deserialize_from_params(@filters)
     else  
       @filters = params[:filters]
       index_filter = "Helpdesk::Filters::CustomTicketFilter".constantize.new().deserialize_from_params(@filters)
