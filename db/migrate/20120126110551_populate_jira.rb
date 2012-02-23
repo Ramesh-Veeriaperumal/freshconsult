@@ -21,11 +21,11 @@ class PopulateJira < ActiveRecord::Migration
     app_id = res.fetch_row[0]
     puts "INSERTED JIRA APP ID #{app_id}"
 
-    # Add new widget under harvest app
-    description = "harvest.widgets.timeentry_widget.description"
+    # Add new widget under jira app
+    description = "jira.widgets.jira_widget.description"
     script = %{
       <div id="jira_widget">
-        <div id="content"></div>
+        <div class="content"></div>
       </div>
       <script type="text/javascript">
         CustomWidget.include_js("/javascripts/integrations/atlassian-jira.js");

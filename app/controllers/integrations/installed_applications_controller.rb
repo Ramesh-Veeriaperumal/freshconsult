@@ -26,11 +26,18 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
             redirect_to "/auth/google?origin=install"
             return
           end
+          #if installing_application.name == "jira"
+          #  installed_application.configs[:inputs]['customFieldId'] = getJiraCustomField(params, current_account)
+          #  installed_application.save! unless installed_application.configs[:inputs]['customFieldId'].blank?
+          #end
+
           if installing_application.name == "jira"
-            installed_application.configs[:inputs]['customFieldId'] = getJiraCustomField(params, current_account)
-            installed_application.save! unless installed_application.configs[:inputs]['customFieldId'].blank?
+            createCustomField(params, installing_application, installed_application)
           end
-          flash[:notice] = t(:'flash.application.install.success')
+          
+          unless $update_error
+            flash[:notice] = t(:'flash.application.install.success')
+          end
         else
           flash[:error] = t(:'flash.application.install.error')
         end
@@ -51,12 +58,14 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
       flash[:error] = t(:'flash.application.not_installed')
     else
       installed_application.configs = convert_to_configs_hash(params)
-      if installing_application.name == "jira"
-          installed_application.configs[:inputs]['customFieldId'] = getJiraCustomField(params, current_account)
-      end
       begin
         installed_application.save!
-        flash[:notice] = t(:'flash.application.configure.success')
+        if installing_application.name == "jira"
+          createCustomField(params, installing_application, installed_application)
+        end
+        unless $update_error
+          flash[:notice] = t(:'flash.application.configure.success')   
+        end
       rescue Exception => msg
         puts "Something went wrong while configuring an installed ( #{msg})"
         flash[:error] = t(:'flash.application.configure.error')
@@ -122,5 +131,15 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
     end
   end
 
+  def createCustomField(params, installing_application, installed_application)
+      begin
+          installed_application.configs[:inputs]['customFieldId'] = getJiraCustomField(params, current_account)
+          installed_application.save! unless installed_application.configs[:inputs]['customFieldId'].blank?
+      rescue Exception => msg
+          errMsg = msg.to_s.split('Exception:')
+          flash[:error] = " Jira reports the following error : #{errMsg[1]}" 
+          $update_error = true;
+      end
+  end
 
 end

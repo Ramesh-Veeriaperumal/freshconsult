@@ -1,6 +1,7 @@
 class HttpRequestProxyController < ApplicationController
   include Integrations::AppsUtil
   before_filter :populate_server_password, :only => [:fetch]
+  before_filter :authenticated_agent_check 
   def fetch
     httpRequestProxy = HttpRequestProxy.new
     render httpRequestProxy.fetch(params, request);
@@ -13,4 +14,8 @@ class HttpRequestProxyController < ApplicationController
   			params[:password] = password
   		end
   	end
+  
+    def authenticated_agent_check
+      render :status => 401 if current_user.blank? || current_user.agent.blank?
+    end
 end

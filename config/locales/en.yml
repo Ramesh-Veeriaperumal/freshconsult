@@ -1772,7 +1772,7 @@ en:
       desc: "Connect with Jira"
       form:
         domain: "Domain"
-        domain_info: "Just give the domain alone without https. Ex: example.atlassian.net"
+        domain_info: "Enter the complete jira account URL with https/http. Ex. https://example.atlassian.net"
         jira_note: "Notes text"
         jira_note_info: "Text that will be appended at the end of the note, while logging the time spent. Make it empty for not appending any text."
         widget_title: "Widget Title"

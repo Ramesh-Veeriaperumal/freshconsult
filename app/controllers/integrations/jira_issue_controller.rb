@@ -14,7 +14,7 @@ class Integrations::JiraIssueController < ApplicationController
 			render :json => resJson
 		rescue Exception => msg
 			puts "Fetching Issue Types from Jira failed ( #{msg})"
-			render :json => {:status=> "#{msg}"}
+			render :json => {:error=> "#{msg}"}
 		end
 	end
 
@@ -31,7 +31,7 @@ class Integrations::JiraIssueController < ApplicationController
 			end
 		rescue Exception => msg
 			puts "Error exporting ticket to jira issue ( #{msg})"
-			render :json => {:status=>:error}
+			render :json => {:error=> "#{msg}"}
 		end
 	end
 
@@ -45,7 +45,7 @@ class Integrations::JiraIssueController < ApplicationController
 			render :json => newIntegratedResource
 		rescue Exception => msg
 			#puts "Error linking the ticket to the jira issue ( #{msg})"
-			render :json => {:status=>:error}
+			render :json => {:error=> "#{msg}"}
 		end
 	end
 
@@ -65,7 +65,7 @@ class Integrations::JiraIssueController < ApplicationController
 			render :json => {:status=>$status}
 		rescue Exception => msg
 			puts "Error deleting jira issue ( #{msg})"
-			render :json => {:status=>:error}
+			render :json => {:error=> "#{msg}"}
 		end
 	end
 
@@ -75,7 +75,7 @@ class Integrations::JiraIssueController < ApplicationController
 			render :json => {:customFieldId=> "#{customFieldId}"}
 		rescue Exception => msg
 			puts "Error fetching custom fields from Jira ( #{msg})"
-			render :json => {:status=>:error}
+			render :json => {:error=> "#{msg}"}
 		end
 	end
 

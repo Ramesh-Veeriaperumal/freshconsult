@@ -172,12 +172,14 @@ JiraWidget.prototype= {
 				parameters: reqData,
 				onSuccess: function(evt){
 					resJ = evt.responseJSON
-					if (resJ['status'] != 'error') {
+					if (resJ['error'] == null || resJ['error'] == "") {
 						resData = evt;
 						console.log(resData);
 						this.handleLoadIssueTypes(resData);
 					} else {
-						console.log("Error fetching Issue types from Jira");
+						jiraException = this.jiraExceptionFilter(resJ['error'])
+						if(jiraException == false)
+						alert("Unknown server error. Please contact support@freshdesk.com.");
 					}
 					if (resultCallback) 
 						resultCallback(evt);
@@ -239,9 +241,16 @@ JiraWidget.prototype= {
 				parameters: reqData,
 				onSuccess: function(evt){
 					resJ = evt.responseJSON
+					if (resJ['error'] == null || resJ['error'] == "") {
 					jiraBundle.integrated_resource_id = resJ['integrated_resource']['id'];
 					jiraBundle.remote_integratable_id = resJ['integrated_resource']['remote_integratable_id'];
 					self.createdisplayIssueWidget();
+				}
+				else{
+					jiraException = self.jiraExceptionFilter(resJ['error'])
+					if(jiraException == false)
+					alert("Unknown server error. Please contact support@freshdesk.com.");
+				}
 
 					jQuery('#jira_issue_icon a.jira').removeClass('jira').addClass('jira_active');
 					if (resultCallback) 
@@ -254,30 +263,43 @@ JiraWidget.prototype= {
 			});
 	},
 
+	jiraExceptionFilter:function(errMsg){
+		if (errMsg.indexOf("Exception:") != -1){
+			jiraMsg = errMsg.split("Exception:")
+			alert("Jira reports the below error:\n\n" + jiraMsg[1] +"\n\n Please contact Support.");
+			return true;
+		}
+		else
+		return false;
+	},
+
 	displayIssue:function(resData){
-		console.log("Inside displayIssue");
 		resJson = resData.responseJSON;
 		var value="";
 		var issueLink = jiraBundle.domain + "/browse/" + jiraBundle.remote_integratable_id;
-		jiraVer = JsonUtil.getMultiNodeValue(resJson, "fields.issuetype.value");
+		jiraVer = JsonUtil.getMultiNodeValue(resJson, "fields.issuetype.value.name");
 		if(jiraVer != ""){
 			value = ".value";
 		}
 		fieldName = "fields.issuetype"+value+".name"
 		var issueType = JsonUtil.getMultiNodeValue(resJson, "fields.issuetype"+value+".name");
+
 		var issueSummary = JsonUtil.getMultiNodeValue(resJson, "fields.summary"+value);
 		var issueStatus = JsonUtil.getMultiNodeValue(resJson, "fields.status"+value+".name");
 		var issueCreated = JsonUtil.getMultiNodeValue(resJson, "fields.created"+value);
-		this.displayCustomFieldData(resJson);
+		this.displayCustomFieldData(resJson, value);
 		jQuery('#jira-issue-id').html("<a target='_blank' href='" + issueLink + "'>" + jiraBundle.remote_integratable_id +"</a>") ;
 		jQuery('#jira-issue-type').text(issueType);
 		jQuery('#jira-issue-summary').html(issueSummary);
 		jQuery('#jira-issue-status').text(issueStatus);
 		jQuery('#jira-issue-createdon').text(freshdate(issueCreated));
 		this.displayIssueWidgetStatus = false;
-
 		this.hideSpinner();
-		 
+
+
+		jQuery('#jira_issue_loading').addClass('hide');
+		jQuery('.jira_issue_details').removeClass('hide');	
+
 	},
 
 	formatIssueLinks:function(issueLinks){
@@ -369,22 +391,6 @@ JiraWidget.prototype= {
 	},
 
 
-	exportJiraIssue:function(){
-		jiraWidget.linkIssueId = jQuery('#jira-issue-id').val();
-		this.extractProjectId();
-	},
-
-	extractProjectId:function(){
-		if(jiraWidget.linkIssueId){
-			linkId = jiraWidget.linkIssueId;
-			projectId = linkId.split("-");
-			jiraBundle.projectId = projectId[0]; 
-			jiraBundle.typeId = "1";
-			jiraBundle.desc = "This issue duplicates " + linkId;
-			this.createJiraIssue();
-		}
-	},
-	
 	linkJiraIssue:function(){
 		this.showSpinner();
 		
@@ -403,10 +409,10 @@ JiraWidget.prototype= {
 		var isCustomFieldDef = false
 		integratable_type = "issue-tracking";
 		freshdeskData = this.getCustomFieldData(resData.responseJSON);
-		if (freshdeskData)
+		if (freshdeskData != null)
 		{
 			isCustomFieldDef = true;
-			if (freshdeskData == "undefined" )
+			if (freshdeskData == "undefined" || freshdeskData == "")
 				freshdeskData = "#"+jiraBundle.ticketId+" (" + document.URL +") - " + jiraBundle.ticketSubject;
 			else
 				freshdeskData += "\n#"+jiraBundle.ticketId+" (" + document.URL +") - " + jiraBundle.ticketSubject;
@@ -442,7 +448,7 @@ JiraWidget.prototype= {
 					
 					resJ = evt.responseJSON
 					displayIssue = true;
-					if (resJ['status'] != 'error') {
+					if (resJ['error'] == null || resJ['error'] == "") {
 						jiraBundle.integrated_resource_id = resJ['integrated_resource']['id'];
 						jiraBundle.remote_integratable_id = resJ['integrated_resource']['remote_integratable_id'];
 						jiraWidget.linkIssue = true;
@@ -452,7 +458,9 @@ JiraWidget.prototype= {
 						self.createdisplayIssueWidget();
 					}
 					else{
-						alert("Error linking the ticket with jira issue");
+						jiraException = self.jiraExceptionFilter(resJ['error'])
+						if(jiraException == false)
+						alert("Unknown server error. Please contact support@freshdesk.com.");
 					}
 
 					if (resultCallback) 
@@ -491,11 +499,13 @@ JiraWidget.prototype= {
 				parameters: reqData,
 				onSuccess: function(evt){
 					resJ = evt.responseJSON
-					if (resJ['status'] != 'error') {
+					if (resJ['error'] == null || resJ['error'] == "") {
 						jQuery('#jira_issue_icon a.jira_active').addClass('jira').removeClass('jira_active');
 						self.displayCreateWidget();
 					} else {
-						console.log("Error while deleting the jira issue");
+						jiraException = self.jiraExceptionFilter(resJ['error'])
+						if(jiraException == false)
+						alert("Unknown server error. Please contact support@freshdesk.com.");
 					}
 					if (resultCallback) 
 						resultCallback(evt);
@@ -509,17 +519,20 @@ JiraWidget.prototype= {
 	},
 
 	getCustomFieldData:function(resJson){
+		var value="";
 		if(jiraBundle.custom_field_id){
-			issueLinks = JsonUtil.getMultiNodeValue(resJson, "fields."+jiraBundle.custom_field_id);
+			jiraVer = JsonUtil.getMultiNodeValue(resJson, "fields.issuetype.value.name");
+			if(jiraVer != ""){
+				value = ".value";
+			}
+			issueLinks = JsonUtil.getMultiNodeValue(resJson, "fields."+jiraBundle.custom_field_id+value);
 			return issueLinks;
 		}
 	},
 
 	displayCustomFieldData:function(resJson){
-		if(jiraBundle.custom_field_id){
-		 	issueLinks = JsonUtil.getMultiNodeValue(resJson, "fields."+jiraBundle.custom_field_id);
-		 	console.log(issueLinks)
-		 	if(issueLinks != "undefined"){
+			issueLinks = this.getCustomFieldData(resJson);
+			if(issueLinks != "undefined"){
 		  		issueHtml = this.formatIssueLinks(issueLinks);
 		  		if(issueHtml != "duplicate_issue")
 		  		{
@@ -528,7 +541,7 @@ JiraWidget.prototype= {
 		  		}
 				
 		  	} 
-		 }
+
 	},
 
 	showSpinner: function() {
@@ -554,7 +567,7 @@ JiraWidget.prototype= {
 		else{
 			console.log("Server Error")
 		}
-	},
+	}
 }
 
 jiraWidget = new JiraWidget(jiraBundle);
