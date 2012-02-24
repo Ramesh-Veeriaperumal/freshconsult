@@ -373,6 +373,9 @@ en:
       authentication_success: Authentication successfully completed
       no_subdomain: There is no subdomain like this. Please try again.
     profile: 
+      api_key:
+        reset_success: "API Key has been reset successfully." 
+        reset_failure: "Error in resetting API Key."
       change_password: 
         failure: Unable to change your password, Please check your current password
         success: Password successfully updated. Please login again
@@ -1039,6 +1042,9 @@ en:
     current_password: Current password
     confirm_password: Confirm password
     new_password: New password
+    api_key:
+      title: "Your API Key"
+      reset: "Reset API Key"
   add_to_do: Add To do
   subject_or_description: Subject or Description
   premium_details: Everything in &quot;Pro&quot; Plan plus, Multiple Product Support, Multi-timezone support, Community, Email &amp; Phone Support
@@ -1727,7 +1733,7 @@ en:
       edit_app: "Update"
       add_more: "Authorize"
       edit: "Edit"
-      already_exist: "Already an account has been configured. One more account can not be added again."
+      already_exist: "Already this email has been configured for syncing. You can not add the same email again."
       delete: "Delete"
       internal_error: "Some internal error occured. Please contact support."
       account_not_configured: "Google account is not configured properly. Please try again."
@@ -1735,12 +1741,12 @@ en:
       enable_integration: "After importing start automatic syncing (hourly once)"
       name: "Account Name"
       email: "Email"
-      group: "Group to import"
-      tag: "Tag to add/export"
+      group: "Sync Group name"
+      tag: "Sync Tag name"
       sync_type: "How to sync?"
       last_sync_time: "Last sync time"
       last_sync_status: "Last sync status"
-      not_yet_synced: "Syncing not yet started."
+      not_yet_synced: "Not yet started."
       no_status: "N/A"
       sync_status:
         added: "added"
@@ -1753,6 +1759,7 @@ en:
         import_title: "Google contacts import setting"
         all_contacts: "All Groups/Contacts"
         mail_box_detail: "Mail box detail"
+        import_group: Contacts from the below selected group will be copied (Optional)
         choose_group_title: "Choose the Group to sync and Tag to add"
         edit_app_title: "Edit Google contacts sync setting"
       form:
@@ -1850,4 +1857,3 @@ en:
   no_date_to_display: "No data to display"
   email_command_delimeter_length_error_msg: " Please provide atleast three characters for the delimeter."
   email_command_del_info_data: "Tip - Choose a unique delimiter combination of minimum three characters (special characters recommended) that will not conflict the regular email response."
-  

@@ -3,10 +3,6 @@
 <% 
   action = @omniauth_origin == "import" ? "import_contacts" : "update"
   form_for @google_account, :url => { :controller=> "integrations/google_accounts", :action => action, :iapp_id => (params[:iapp_id] unless params[:iapp_id].blank?) } do |f| 
-	gg_arr = [["My Contacts", "6"]]
-	@google_groups.each {|gg|
-		gg_arr.push([gg.name, gg.group_id])
-	}
 	sync_types = [[t("integrations.google_contacts.MERGE_LATEST"), SyncType::MERGE_LATEST], [t("integrations.google_contacts.OVERWRITE_LOCAL"), SyncType::OVERWRITE_LOCAL], 
 					[t("integrations.google_contacts.OVERWRITE_REMOTE"), SyncType::OVERWRITE_REMOTE], [t("integrations.google_contacts.MERGE_LOCAL"), SyncType::MERGE_LOCAL], 
 					[t("integrations.google_contacts.MERGE_REMOTE"), SyncType::MERGE_REMOTE]]
@@ -28,20 +24,42 @@
 			</div>
 			<span class="seperator"></span>
 		</li>         
-		
+				
 		<li>	
 			<h5 class="title"><%=t('integrations.google_contacts.edit_form.choose_group_title')%></h5>
 		</li>
 		<li class="inline-field">
+			<label class="caption"><%=t('integrations.google_contacts.edit_form.import_group')%></label><br/>
+			<div class="fields">
+				<%@google_groups.each {|gg| %>
+					<%=check_box_tag "integrations_google_account[import_groups][]", gg.group_id%><%=gg.name%>
+				<%}%>
+			</div>
+		</li>
+		<li class="inline-field">
 			<label class="caption"><%=t('integrations.google_contacts.group')%></label>
 			<div class="fields">
-				<%=f.select :sync_group_id, options_for_select(gg_arr, @google_account.sync_group_id), {}, {:onchange=>"group_changed()"}%>
 			</div>
 		</li>
 		<li class="inline-field">
 			<label class="caption"><%=t('integrations.google_contacts.tag')%></label>
 			<div class="fields">
-				<%=f.text_field :sync_tag%>
+				<%=text_field_tag :sync_tag, @google_account.sync_tag.blank? ? "gmail": @google_account.sync_tag, {:onchange=>"tag_changed()"}%>
+			</div>
+		</li>
+		<li class="inline-field">
+			<div class="fields">
+				<label id="tag_usage_status">
+					<% tag_to_acc_map = {}
+					@existing_google_accounts.each { |g_account|
+						s_tag = g_account.sync_tag
+						unless s_tag.blank?
+							tag_to_acc_map[s_tag] = [] if tag_to_acc_map[s_tag].blank?
+							tag_to_acc_map[s_tag].push(g_account.email)
+						end
+					}%>
+					<%=javascript_tag "var tag_to_acc_map = #{tag_to_acc_map.to_json}" %>
+				</label>
 			</div>
 		</li>
 		<li class="inline-field">
@@ -72,8 +90,9 @@
 			</li>
 		<%end%>
 	</ul>
- 
-	<%=f.hidden_field :sync_group_name %>
+
+	<%=f.hidden_field :sync_group_id%>
+	<%=f.hidden_field :sync_group_name%>
 	<%=hidden_field_tag :omniauth_origin, :omniauth_origin, :value => @omniauth_origin %>
 	<%=f.hidden_field :id %>
 	<%=f.hidden_field :name %>
@@ -88,7 +107,7 @@
 <%end%>
  
 <script type="text/javascript">
-    function group_changed(evt) {
+/*    function group_changed(evt) {
 		group_select_field = $('integrations_google_account_sync_group_id')
 		sidx = group_select_field.selectedIndex
 		if (sidx > -1) {
@@ -96,5 +115,12 @@
 			$('integrations_google_account_sync_group_name').value = group_name
 			$('integrations_google_account_sync_tag').value = "gmail-"+group_name.toLowerCase().replace(" ", "-");
 		}
+	}
+*/
+    function tag_changed(evt){
+		sync_tag_field = $('integrations_google_account_sync_tag')
+		tag_using_accs = tag_to_acc_map[sync_tag_field.value];
+		tag_usage_status_field = $('tag_usage_status')
+		tag_usage_status_field.innerHTML = tag_using_accs+' using the same tag for syncing.'
 	}
 </script>

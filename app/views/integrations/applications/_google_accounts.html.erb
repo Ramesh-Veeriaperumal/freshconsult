@@ -6,6 +6,7 @@
 <%else
 	google_acc = google_accs[0]
 %>
+<!--  This was used for showing single account.  As of now, we allow multiple accounts configuration.
 <div class="google_contacts_sync">
 	<label class="caption"> <%=t("integrations.google_contacts.name")%></label>
 	<div class="fields">
@@ -42,12 +43,14 @@
 		<%=link_to(t("integrations.google_contacts.delete"), {:controller=>"google_accounts", :action => "delete", :id => google_acc.id, :iapp_id=>params[:id] },
 					      :confirm => "Are you sure?", :class => "floatr uiButton", :method => :delete) %>
 	<% end %>
-<!--  This was used for showing multiple accounts.  As of now, we only allow single account configuration.
+-->
 	<div class="grid">
 		<table borer="0">
 			<tr>
-				<th>Group name (sync tag)</th>
-				<th>Sync Type</th>
+				<th>Account name (email)</th>
+				<th>Sync Tag</th>
+				<th>Last sync time</th>
+				<th>Last sync status</th>
 				<th width="110px">
 					<%= link_to(t("integrations.google_contacts.add_more"), "/auth/google?iapp_id="+params[:id], :class => "uiButton special") if params[:action] == "configure" %>
 				</th>
@@ -56,9 +59,21 @@
 			<%google_accs.each { |google_acc|%>
 				<tr class="main_rows">
 					<td>
-						<%=google_acc.sync_group_name%> (<%=google_acc.sync_tag.name unless google_acc.sync_tag.blank?%>)					
+						<%=google_acc.name%> (<%=google_acc.email%>)					
 					</td>
-					<td><div title='<%=t("integrations.google_contacts.#{google_acc.sync_type}") unless google_acc.sync_type.blank?%>'><%=t("integrations.google_contacts.#{google_acc.sync_type}_small") unless google_acc.sync_type.blank?%></div></td>
+					<td>
+						<%=google_acc.sync_tag.name unless google_acc.sync_tag.blank?%>					
+					</td>
+					<td>
+			        	<%if google_acc.last_sync_time.year == 1970%>
+			        		<%=t("integrations.google_contacts.not_yet_synced")%>
+						<%else%>
+			        		<%=formated_date(google_acc.last_sync_time)%>
+						<%end%>
+					</td>
+					<td>
+						<%= render :partial => '/integrations/applications/google_sync_status', :locals => {:status => google_acc.last_sync_status} %>
+					</td>
 					<td>
 						<%=link_to(t("integrations.google_contacts.edit"), edit_integrations_google_account_path(google_acc, :iapp_id=>params[:id]), :class => "button")%>
 						<%=link_to(t("integrations.google_contacts.delete"), {:controller=>"google_accounts", :action => "delete", :id => google_acc.id, :iapp_id=>params[:id] },
@@ -68,6 +83,5 @@
 			<%}%>
 		</table>
 	</div>
--->
 </div>
 <%end%>

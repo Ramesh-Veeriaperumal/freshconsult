@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120208111008) do
+ActiveRecord::Schema.define(:version => 20120215070800) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -87,7 +87,7 @@ ActiveRecord::Schema.define(:version => 20120208111008) do
     t.string  "name"
     t.string  "display_name"
     t.string  "description"
-    t.integer "widget_id"
+    t.integer "listing_order"
     t.text    "options"
   end
 
