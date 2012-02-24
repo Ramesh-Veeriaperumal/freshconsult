@@ -3,6 +3,13 @@
  * Genric core utility class for the application
  */
 
+function log(entry) {
+  if (console) {
+    console.log(entry);
+  } else {
+    alert(entry);
+  }
+}
 function autoSaveTinyMce(editor){
    tinyMCE.triggerSave();
    return true;

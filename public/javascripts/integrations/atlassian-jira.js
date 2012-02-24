@@ -541,13 +541,11 @@ JiraWidget.prototype= {
 	},
 
 	showSpinner: function() {
-		
 		jQuery('#jira_issue_loading').removeClass('hide');
 		jQuery('.jira_issue_details, #jira_issue_forms').addClass('hide');
 	}, 
 
 	hideSpinner: function() {
-		
 		jQuery('#jira_issue_loading').addClass('hide');
 		jQuery('.jira_issue_details, #jira_issue_forms').removeClass('hide');
 	}, 
