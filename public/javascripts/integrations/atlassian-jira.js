@@ -104,8 +104,6 @@ JiraWidget.prototype= {
 				domain:jiraBundle.domain,
 				username:jiraBundle.username, 
 				use_server_password: true,
-				//password:jiraBundle.password,
-				//ssl_enabled:harvestBundle.ssl_enabled || "false",
 				login_content: null,
 				application_content: function(){
 					return jiraWidget.addToJira();
@@ -152,17 +150,12 @@ JiraWidget.prototype= {
 	},
 
 	handleLoadProject:function() {
-		console.log("Jira handleLoadProject.");
-		console.log(this.projectData);
 		selectedProjectNode = UIUtil.constructDropDown(this.projectData, "json", "jira-projects", null, "key", ["name"], null, Cookie.retrieve("jira_project_id")||"");
-		//project_id = XmlUtil.getNodeValueStr(selectedProjectNode, "id");
-		//this.projectChanged(project_id);
-
 		UIUtil.hideLoading('jira','projects','');
 	},
 
 	loadIssueTypes:function(){
-		console.log("Jira loadIssueTypes");
+		
 		reqData = {
 				"domain":jiraBundle.domain
 			};
@@ -174,7 +167,7 @@ JiraWidget.prototype= {
 					resJ = evt.responseJSON
 					if (resJ['error'] == null || resJ['error'] == "") {
 						resData = evt;
-						console.log(resData);
+						
 						this.handleLoadIssueTypes(resData);
 					} else {
 						jiraException = this.jiraExceptionFilter(resJ['error'])
@@ -185,11 +178,9 @@ JiraWidget.prototype= {
 						resultCallback(evt);
 				}.bind(this),
 				onFailure: function(evt){
-					console.log(evt);
-					console.log(evt.responseText);
-					console.log(jQuery(evt.responseText).find('pre').first().text());
+					
 					var error_message = jQuery(evt.responseText).find('pre').first().text();
-					console.log("Error Message is " + error_message);
+					
 					if (resultCallback) 
 						resultCallback(evt);
 				}
@@ -203,9 +194,6 @@ JiraWidget.prototype= {
 	},
 
 	handleLoadIssueTypes:function(resData){
-		console.log("Jira handleLoadIssueTypes");
-		console.log(resData);
-		//selectedProjectNode = UIUtil.constructDropDownJson(resData, "jira-issue-types", "types", "typeId", ["typeName"], null, Cookie.retrieve("jira_type_id")||"");
 		selectedProjectNode = UIUtil.constructDropDown(resData, "json", "jira-issue-types", "types", "typeId", ["typeName"], null, Cookie.retrieve("jira_type_id")||"");
 
 		UIUtil.hideLoading('jira','issue-types','');
@@ -244,7 +232,8 @@ JiraWidget.prototype= {
 					if (resJ['error'] == null || resJ['error'] == "") {
 					jiraBundle.integrated_resource_id = resJ['integrated_resource']['id'];
 					jiraBundle.remote_integratable_id = resJ['integrated_resource']['remote_integratable_id'];
-					self.createdisplayIssueWidget();
+					jiraBundle.custom_field_id = resJ['integrated_resource']['custom_field'];
+					jiraWidget.createdisplayIssueWidget();
 				}
 				else{
 					jiraException = self.jiraExceptionFilter(resJ['error'])
@@ -287,7 +276,9 @@ JiraWidget.prototype= {
 		var issueSummary = JsonUtil.getMultiNodeValue(resJson, "fields.summary"+value);
 		var issueStatus = JsonUtil.getMultiNodeValue(resJson, "fields.status"+value+".name");
 		var issueCreated = JsonUtil.getMultiNodeValue(resJson, "fields.created"+value);
+		if(jiraBundle.custom_field_id){
 		this.displayCustomFieldData(resJson, value);
+		}
 		jQuery('#jira-issue-id').html("<a target='_blank' href='" + issueLink + "'>" + jiraBundle.remote_integratable_id +"</a>") ;
 		jQuery('#jira-issue-type').text(issueType);
 		jQuery('#jira-issue-summary').html(issueSummary);
@@ -305,7 +296,7 @@ JiraWidget.prototype= {
 	formatIssueLinks:function(issueLinks){
 		if(jiraWidget.linkIssue == true){
 			currentURL = document.URL
-			if(issueLinks.indexOf(currentURL) == -1){
+			if(issueLinks.indexOf(currentURL) != -1){
 				return "duplicate_issue"			
 			}	
 		}
@@ -354,7 +345,7 @@ JiraWidget.prototype= {
 		jiraWidget.freshdeskWidget.options.application_content = this.displayFormContent;
 		jiraWidget.freshdeskWidget.options.application_resources = init_reqs;
 		jiraWidget.freshdeskWidget.display();
-		console.log("Subject is " + jiraBundle.ticketSubject);
+		
 		jQuery('#jira-issue-summary').val(jiraBundle.ticketSubject);
 
 		
@@ -397,7 +388,7 @@ JiraWidget.prototype= {
 		remoteKey = jQuery('#jira-issue-id').val();
 		jiraWidget.linkIssueId = remoteKey;
 		this.freshdeskWidget.request({
-				resource: "rest/api/latest/issue/"+remoteKey,
+				resource: "rest/api/latest/issue/"+encodeURIComponent(remoteKey),
 				content_type: "application/json",
 				on_success: jiraWidget.updateIssue.bind(this),
 				on_failure: jiraWidget.processFailure
@@ -452,10 +443,11 @@ JiraWidget.prototype= {
 						jiraBundle.integrated_resource_id = resJ['integrated_resource']['id'];
 						jiraBundle.remote_integratable_id = resJ['integrated_resource']['remote_integratable_id'];
 						jiraWidget.linkIssue = true;
+						jiraBundle.custom_field_id = resJ['integrated_resource']['custom_field'];
 
 						jQuery('#jira_issue_icon a.jira').removeClass('jira').addClass('jira_active');
 
-						self.createdisplayIssueWidget();
+						jiraWidget.createdisplayIssueWidget();
 					}
 					else{
 						jiraException = self.jiraExceptionFilter(resJ['error'])
@@ -481,8 +473,9 @@ JiraWidget.prototype= {
 			jiraBundle.integrated_resource_id = "";
 			jiraBundle.remote_integratable_id = "";
 			jQuery('#jira_issue_icon a.jira_active').addClass('jira').removeClass('jira_active');
-			this.displayCreateWidget();
 		}
+
+		this.displayCreateWidget();
 	},
 
 	deleteJiraIssue:function(){
@@ -501,11 +494,14 @@ JiraWidget.prototype= {
 					resJ = evt.responseJSON
 					if (resJ['error'] == null || resJ['error'] == "") {
 						jQuery('#jira_issue_icon a.jira_active').addClass('jira').removeClass('jira_active');
-						self.displayCreateWidget();
+						jiraWidget.displayCreateWidget();
 					} else {
-						jiraException = self.jiraExceptionFilter(resJ['error'])
+						jiraException = self.jiraExceptionFilter(resJ['error']);
+
+						alert('aaaaa');
+
 						if(jiraException == false)
-						alert("Unknown server error. Please contact support@freshdesk.com.");
+							alert("Unknown server error. Please contact support@freshdesk.com.");
 					}
 					if (resultCallback) 
 						resultCallback(evt);
@@ -532,9 +528,9 @@ JiraWidget.prototype= {
 
 	displayCustomFieldData:function(resJson){
 			issueLinks = this.getCustomFieldData(resJson);
-			if(issueLinks != "undefined"){
+			if(typeof issueLinks != "undefined"){
 		  		issueHtml = this.formatIssueLinks(issueLinks);
-		  		if(issueHtml != "duplicate_issue")
+		  		if(issueHtml != "duplicate_issue" || issueHtml != "")
 		  		{
 		  			jQuery('#jira-link-label').show();	
 		  			jQuery('#jira-issue-link').html(issueHtml);		
@@ -545,13 +541,11 @@ JiraWidget.prototype= {
 	},
 
 	showSpinner: function() {
-		
 		jQuery('#jira_issue_loading').removeClass('hide');
 		jQuery('.jira_issue_details, #jira_issue_forms').addClass('hide');
 	}, 
 
 	hideSpinner: function() {
-		
 		jQuery('#jira_issue_loading').addClass('hide');
 		jQuery('.jira_issue_details, #jira_issue_forms').removeClass('hide');
 	}, 
@@ -561,11 +555,11 @@ JiraWidget.prototype= {
 			alert("Username or password is incorrect.");
 			//harvestWidget.freshdeskWidget.display_login();
 		} else if (evt.status == 404) {
+			alert("Permission Denied (or) Issue not available");
 			jiraWidget.unlinkJiraIssue();
-			console.log("Jira issue not available");
 		} 
 		else{
-			console.log("Server Error")
+			// log("Server Error")
 		}
 	}
 }

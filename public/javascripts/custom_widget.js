@@ -90,16 +90,14 @@ Freshdesk.Widget.prototype={
 				}
 			},
 			onFailure:function(evt) {
-				alert("calling ");
+				
 				this.resource_failure(evt, reqData)
 			}.bind(this)
 		});
 	},
 
 	resource_failure:function(evt, reqData){
-		console.log(reqData.on_failure+"coool")
-		console.log('asdasdasdasdas~~~~~~~~~');
-
+		
 		if (evt.status == 401) {
 			this.options.username = null;
 			this.options.password = null;
@@ -123,19 +121,8 @@ Freshdesk.Widget.prototype={
 					return;
 				}
 			}
-			else if (this.app_name == "Jira") {
-				console.log(evt)
-				error = evt.responseJSON.errorMessages;
-				if (error.length > 0) {
-					err_msg = error[0];
-					alert(this.app_name+" reports the below error: \n\n" + err_msg + "\n\nTry again after correcting the error or fix the error manually.  If you can not do so, contact support.");
-					return;
-				}
-			}
 			this.alert_failure("Unknown server error. Please contact support@freshdesk.com.");
 		} else if (typeof reqData.on_failure != 'undefined' && reqData.on_failure != null) {
-			alert("failed");
-			alert(reqData+"");
 			reqData.on_failure(evt);
 		} else {
 				errorStr = evt.responseText;
@@ -208,7 +195,7 @@ var UIUtil = {
 			parser = JsonUtil; 
 			data = data.responseJSON;
 		}
-		console.log(parser)	
+		
 		var entitiesArray = parser.extractEntities(data, entityName);
 		for(i=0;i<entitiesArray.length;i++) {
 			if (filterBy != null && filterBy != '') {
@@ -280,29 +267,19 @@ var UIUtil = {
 	},
 
 	hideLoading: function(integrationName,fieldName,context) {
-
-		if (typeof context == undefined) {
-			context = "-timeentry";
-		}
 		jQuery("#" + integrationName + context + '-' + fieldName).removeClass('hide');
-		
 		jQuery("#" + integrationName + "-" + fieldName + "-spinner").addClass('hide');
 
 		var parent_form = jQuery("#" + integrationName + context + '-' + fieldName).parentsUntil('form').siblings().andSelf();
-		console.log(parent_form);
+		
 		if ( parent_form.find('.loading-fb.hide').length == parent_form.find('.loading-fb').length) {
 			//All the loading are hidden
-
 			var submit_button = parent_form.filter('.uiButton');
 			submit_button.prop('disabled',!submit_button.prop('disabled'));
-
 		}
 	},
 
 	showLoading: function(integrationName,fieldName,context) {
-		if (typeof context == undefined) {
-			context = "-timeentry";
-		}
 		jQuery("#" + integrationName + context + '-' + fieldName).addClass('hide');
 		
 		jQuery("#" + integrationName + "-" + fieldName + "-spinner").removeClass('hide');

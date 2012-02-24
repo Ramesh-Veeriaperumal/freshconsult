@@ -79,9 +79,11 @@ FreshbooksWidget.prototype = {
 			searchTerm = this.get_time_entry_prop_value(this.timeEntryXml, "staff_id")
 		else
 			searchTerm = freshbooksBundle.agentEmail
+		
+		
 		this.loadFreshbooksEntries(resData, "freshbooks-timeentry-staff", "member", "staff_id", ["first_name", " ", "last_name"], null, searchTerm);
 		UIUtil.addDropdownEntry("freshbooks-timeentry-staff", "", "None", true);
-		UIUtil.hideLoading('freshbooks','staff');
+		UIUtil.hideLoading('freshbooks','staff','-timeentry');
 		$("freshbooks-timeentry-staff").enable();
 	},
 
@@ -89,7 +91,7 @@ FreshbooksWidget.prototype = {
 		tot_pages = this.fetchMultiPages(resData, "clients", this.CLIENT_LIST_REQ, this.loadClientList)
 		selectedClientNode = this.loadFreshbooksEntries(resData, "freshbooks-timeentry-clients", "client", "client_id", ["organization", " ", "(", "first_name", " ", "last_name", ")"], null, freshbooksBundle.reqEmail, tot_pages>1);
 		client_id = XmlUtil.getNodeValueStr(selectedClientNode, "client_id");
-		UIUtil.hideLoading('freshbooks','clients');
+		UIUtil.hideLoading('freshbooks','clients','-timeentry');
 		$("freshbooks-timeentry-clients").enable();
 		this.clientChanged(client_id);
 	},
@@ -100,7 +102,7 @@ FreshbooksWidget.prototype = {
 			mergePagedProjects(resData)
 		else
 			this.projectData=resData;
-		UIUtil.hideLoading('freshbooks','projects');
+		UIUtil.hideLoading('freshbooks','projects','-timeentry');
 		$("freshbooks-timeentry-projects").enable();		
 		this.handleLoadProject();
 	},
@@ -148,7 +150,7 @@ FreshbooksWidget.prototype = {
 		if(!selectedTaskNode) {
 			UIUtil.addDropdownEntry("freshbooks-timeentry-tasks", "", "None");
 		}
-		UIUtil.hideLoading('freshbooks','tasks');
+		UIUtil.hideLoading('freshbooks','tasks','-timeentry');
 
 		$("freshbooks-timeentry-tasks").enable();
 		$("freshbooks-timeentry-hours").enable();
@@ -324,7 +326,8 @@ FreshbooksWidget.prototype = {
 	// Utility methods
 	loadFreshbooksEntries:function(resData, dropDownBoxId, entityName, entityId, dispNames, filterBy, searchTerm, keepOldEntries) {
 		if(this.isRespSuccessful(resData.responseXML)){
-			UIUtil.constructDropDown(resData, dropDownBoxId, entityName, entityId, dispNames, filterBy, searchTerm, keepOldEntries);
+			UIUtil.constructDropDown(resData, 'xml', dropDownBoxId, entityName, entityId, dispNames, filterBy, searchTerm, keepOldEntries);
+			
 		}
 		return foundEntity;
 	},

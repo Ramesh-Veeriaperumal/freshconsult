@@ -4,9 +4,10 @@ require 'json'
 
 class Integrations::JiraIssue
 
-	def initialize(username, password, params)
+	def initialize(username, password, installed_app, params)
 			$jira = Jira4R::JiraTool.new(2, params['domain'])
 			$jira.login(username, password)
+            $installed_app = installed_app[0] unless installed_app.blank?
 	end
 
 	def create(params)
@@ -15,7 +16,7 @@ class Integrations::JiraIssue
 		issue.type = params['issueTypeId']
 		issue.summary = params['summary']
 		issue.description = params['description']
-		customId = getCustomFieldId()
+		customId = customFieldChecker
 		if customId
 			freshdeskField = Jira4R::V2::RemoteCustomFieldValue.new
 			freshdeskField.customfieldId = customId
@@ -55,9 +56,12 @@ class Integrations::JiraIssue
 	end
 
 	def update(params)
-		if(params['isCustomFieldDef'] == "true")
+		#if(params['isCustomFieldDef'] == "true")
+        customId = customFieldChecker
+        if(customId)
 			customField = Jira4R::V2::RemoteFieldValue.new
-			customField.id = params['customFieldId']
+			#customField.id = params['customFieldId']
+            customField.id = customId
 			puts params['ticketData']
 			customField.values = params['ticketData']
 			resData = $jira.updateIssue(params['remoteKey'], customField)	
@@ -74,7 +78,7 @@ class Integrations::JiraIssue
 	end
 
 
-	def getCustomFieldId()
+	def getCustomFieldId
 		customData = $jira.getCustomFields()
 		customData.each do |customField|
 			if(customField.name == "Freshdesk Tickets")
@@ -89,5 +93,33 @@ class Integrations::JiraIssue
 		jiraComment.body = ticketData
 		$jira.addComment(issueId, jiraComment)
 	end
+
+    def customFieldChecker
+        if $installed_app.configs[:inputs]['customFieldId']
+            return $installed_app.configs[:inputs]['customFieldId']
+        else
+            return populate_custom_field
+        end
+        return
+    end
+
+    def populate_custom_field 
+        custom_field_id = getCustomFieldId
+        unless custom_field_id.blank?
+            $installed_app.configs[:inputs]['customFieldId'] = custom_field_id
+            $installed_app.save!
+            return custom_field_id
+        end
+        return
+    end
+
+    def delete_custom_field
+        $installed_app.configs[:inputs]['customFieldId'] = nil
+        $installed_app.save!
+    end
+
+    def jira_serverinfo
+        $jira.getServerInfo().version
+    end
 		
 end
