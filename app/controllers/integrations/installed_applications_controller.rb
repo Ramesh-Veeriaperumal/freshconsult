@@ -26,17 +26,11 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
             redirect_to "/auth/google?origin=install"
             return
           end
-          #if installing_application.name == "jira"
-          #  installed_application.configs[:inputs]['customFieldId'] = getJiraCustomField(params, current_account)
-          #  installed_application.save! unless installed_application.configs[:inputs]['customFieldId'].blank?
-          #end
-
           if installing_application.name == "jira"
-            createCustomField(params, installing_application, installed_application)
+           check_jira_authenticity(params, installed_application)
           end
-          
           unless $update_error
-            flash[:notice] = t(:'flash.application.install.success')
+            flash[:notice] = t(:'flash.application.install.success')   
           end
         else
           flash[:error] = t(:'flash.application.install.error')
@@ -61,7 +55,7 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
       begin
         installed_application.save!
         if installing_application.name == "jira"
-          createCustomField(params, installing_application, installed_application)
+         check_jira_authenticity(params, installed_application)
         end
         unless $update_error
           flash[:notice] = t(:'flash.application.configure.success')   
@@ -81,8 +75,7 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
       redirect_to :controller=> 'applications', :action => 'index'
     else
       @installing_application = @installed_application.application
-      decryptedValue = decrypt_password
-      @installed_application.configs[:inputs]['password'] = decryptedValue unless decryptedValue.blank?
+      @installed_application.configs[:inputs]['password'] = decrypt_password unless decrypt_password.blank?
       return @installing_application
     end
   end
@@ -116,30 +109,25 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
     end
   end
 
-
   def decrypt_password  
-    apps = @installing_application.options
-    hashData = @installing_application.options
-    hashData.each do |key, hash| 
-      unless hash.class.to_s == "Array"
-        if(hash[:type].to_s == "password")
-          pwdValue = @installed_application.configs[:inputs]['password']
-          pwdValue = Integrations::AppsUtil.get_decrypted_value(pwdValue) unless pwdValue.blank?
-          return pwdValue
-        end
-      end
-    end
+    pwd_encrypted = @installed_application.configs[:inputs]['password']
+    pwd_decrypted = Integrations::AppsUtil.get_decrypted_value(pwd_encrypted) unless pwd_encrypted.blank?
+    return pwd_decrypted
   end
 
-  def createCustomField(params, installing_application, installed_application)
-      begin
-          installed_application.configs[:inputs]['customFieldId'] = getJiraCustomField(params, current_account)
-          installed_application.save! unless installed_application.configs[:inputs]['customFieldId'].blank?
-      rescue Exception => msg
-          errMsg = msg.to_s.split('Exception:')
-          flash[:error] = " Jira reports the following error : #{errMsg[1]}" 
-          $update_error = true;
-      end
+  def check_jira_authenticity(params, installed_application)
+    $update_error = false
+    begin
+      jira_version = jira_authenticity(params)
+      if jira_version.blank?
+        flash[:error] = "Could not establish connection with the Jira Instance. Please verify your URL and try again" 
+        $update_error = true
+      end        
+    rescue Exception => msg
+      flash[:error] = " Jira reports the following error : #{msg}" unless msg.blank?
+      installed_application.destroy
+      $update_error = true
+    end
   end
 
 end

@@ -121,15 +121,6 @@ Freshdesk.Widget.prototype={
 					return;
 				}
 			}
-			else if (this.app_name == "Jira") {
-				
-				error = evt.responseJSON.errorMessages;
-				if (error.length > 0) {
-					err_msg = error[0];
-					alert(this.app_name+" reports the below error: \n\n" + err_msg + "\n\nTry again after correcting the error or fix the error manually.  If you can not do so, contact support.");
-					return;
-				}
-			}
 			this.alert_failure("Unknown server error. Please contact support@freshdesk.com.");
 		} else if (typeof reqData.on_failure != 'undefined' && reqData.on_failure != null) {
 			reqData.on_failure(evt);

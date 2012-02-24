@@ -22,16 +22,25 @@ class Integrations::JiraIssueController < ApplicationController
 		Rails.logger.debug "Creating Jira Issues  " + params.inspect
 		begin
 			resData = $jiraObj.create(params)
+			installed_app = Integrations::InstalledApplication.find(:all, :include=>:application, 
+                  :conditions => {:applications => {:name => "jira"}, :account_id => current_account})
+            custom_field_id = installed_app[0].configs[:inputs]['customFieldId']
 			unless resData.blank?
 				resJson = JSON.parse(resData)
 				params['integrated_resource']['remote_integratable_id'] = resJson['key']
 				params['integrated_resource']['account'] = current_account
 				newIntegratedResource = Integrations::IntegratedResource.createResource(params)
+				newIntegratedResource["custom_field"]=custom_field_id unless custom_field_id.blank?
 				render :json => newIntegratedResource
 			end
 		rescue Exception => msg
 			puts "Error exporting ticket to jira issue ( #{msg})"
-			render :json => {:error=> "#{msg}"}
+			if msg.to_s.include? 'Exception: Custom field ID'
+				reload_custom_field
+			else
+				render :json => {:error=> "#{msg}"}	
+			end
+			
 		end
 	end
 
@@ -39,13 +48,19 @@ class Integrations::JiraIssueController < ApplicationController
 		Rails.logger.debug "Updating Jira Issues  " + params.inspect
 		begin
 			resData = $jiraObj.update(params)
+			#resData should be checked for errors ---------------
+			installed_app = Integrations::InstalledApplication.find(:all, :include=>:application, 
+                  :conditions => {:applications => {:name => "jira"}, :account_id => current_account})
+            custom_field_id = installed_app[0].configs[:inputs]['customFieldId']
 			params['integrated_resource']['remote_integratable_id'] = params['remoteKey']
 			params['integrated_resource']['account'] = current_account
 			newIntegratedResource = Integrations::IntegratedResource.createResource(params)
+			newIntegratedResource["custom_field"]=custom_field_id unless custom_field_id.blank?
 			render :json => newIntegratedResource
 		rescue Exception => msg
 			#puts "Error linking the ticket to the jira issue ( #{msg})"
 			render :json => {:error=> "#{msg}"}
+			#if customid field not available exception occurs, do some stuff to delete the customfield id and add comment
 		end
 	end
 
@@ -80,11 +95,23 @@ class Integrations::JiraIssueController < ApplicationController
 	end
 
 	def getJiraObject
-		installed_app = Integrations::InstalledApplication.find(:all, :joins=>:application, 
+		installed_app = Integrations::InstalledApplication.find(:all, :include=>:application, 
                   :conditions => {:applications => {:name => "jira"}, :account_id => current_account})
 		username = get_jira_username(installed_app)
 		password = get_jira_password(installed_app)
-		$jiraObj = Integrations::JiraIssue.new(username, password, params)
+		$jiraObj = Integrations::JiraIssue.new(username, password, installed_app, params)
+
+	end
+
+	def reload_custom_field
+		begin
+			$jiraObj.delete_custom_field
+			create
+		rescue Exception => msg
+			puts "Error reloading custom field ( #{msg})"
+			render :json => {:error=> "#{msg}"}
+		end
+
 	end
 
 end
