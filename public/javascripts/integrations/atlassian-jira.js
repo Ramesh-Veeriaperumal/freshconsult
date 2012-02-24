@@ -152,11 +152,7 @@ JiraWidget.prototype= {
 	},
 
 	handleLoadProject:function() {
-		
 		selectedProjectNode = UIUtil.constructDropDown(this.projectData, "json", "jira-projects", null, "key", ["name"], null, Cookie.retrieve("jira_project_id")||"");
-		//project_id = XmlUtil.getNodeValueStr(selectedProjectNode, "id");
-		//this.projectChanged(project_id);
-
 		UIUtil.hideLoading('jira','projects','');
 	},
 
@@ -545,13 +541,11 @@ JiraWidget.prototype= {
 	},
 
 	showSpinner: function() {
-		
 		jQuery('#jira_issue_loading').removeClass('hide');
 		jQuery('.jira_issue_details, #jira_issue_forms').addClass('hide');
 	}, 
 
 	hideSpinner: function() {
-		
 		jQuery('#jira_issue_loading').addClass('hide');
 		jQuery('.jira_issue_details, #jira_issue_forms').removeClass('hide');
 	}, 
