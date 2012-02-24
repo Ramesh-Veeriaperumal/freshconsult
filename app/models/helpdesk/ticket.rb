@@ -536,7 +536,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #virtual agent things end here..
   
   def pass_thro_biz_rules
-     send_later(:delayed_rule_check)
+     send_later(:delayed_rule_check) unless import_id
   end
   
   def delayed_rule_check
