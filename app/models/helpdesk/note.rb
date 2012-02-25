@@ -122,16 +122,16 @@ class Helpdesk::Note < ActiveRecord::Base
       
       if user.customer? 
         unless notable.open?
-          notable.status = Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open]
-          notification_type = EmailNotification::TICKET_REOPENED
+          notable.status = Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open] unless notable.import_id
+          notification_type = EmailNotification::TICKET_REOPENED  
         end 
         e_notification = account.email_notifications.find_by_notification_type(notification_type ||= EmailNotification::REPLIED_BY_REQUESTER)
         Helpdesk::TicketNotifier.send_later(:notify_by_email, (notification_type ||= 
-              EmailNotification::REPLIED_BY_REQUESTER), notable, self) if notable.responder && e_notification.agent_notification?
+              EmailNotification::REPLIED_BY_REQUESTER), notable, self) if can_send_req_reply_notification?
       else
         e_notification = account.email_notifications.find_by_notification_type(EmailNotification::COMMENTED_BY_AGENT)
         Helpdesk::TicketNotifier.send_later(:notify_by_email, EmailNotification::COMMENTED_BY_AGENT, 
-            notable, self) if source.eql?(SOURCE_KEYS_BY_TOKEN["note"]) && !private && e_notification.requester_notification?
+            notable, self) if can_send_agent_reply_notification?
       end
       
       notable.updated_at = created_at
@@ -175,5 +175,12 @@ class Helpdesk::Note < ActiveRecord::Base
     def liquidize_body
       attachments.empty? ? body_html : 
         "#{body_html}\n\nAttachments :\n#{notable.liquidize_attachments(attachments)}\n"
+    end
+    def can_send_req_reply_notification?
+      notable.responder && !notable.import_id && e_notification.agent_notification?
+    end
+    
+    def can_send_agent_reply_notification?
+      source.eql?(SOURCE_KEYS_BY_TOKEN["note"]) && !private && !notable.import_id && e_notification.requester_notification?
     end
 end
