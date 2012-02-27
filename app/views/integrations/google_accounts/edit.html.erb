@@ -44,7 +44,7 @@
 		<li class="inline-field">
 			<label class="caption"><%=t('integrations.google_contacts.tag')%></label>
 			<div class="fields">
-				<%=text_field_tag :sync_tag, @google_account.sync_tag.blank? ? "gmail": @google_account.sync_tag, {:onchange=>"tag_changed()"}%>
+				<%=text_field_tag "integrations_google_account[sync_tag]", @google_account.sync_tag.blank? ? "gmail": @google_account.sync_tag, {:onchange=>"tag_changed()"}%>
 			</div>
 		</li>
 		<li class="inline-field">

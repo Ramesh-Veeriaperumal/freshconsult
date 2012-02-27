@@ -14,7 +14,7 @@ class Integrations::GoogleContactsImporter
 #        sync_type = YAML::load(google_account.configs)[:inputs]["sync_type"]
       begin
         goog_cnt_importer = Integrations::GoogleContactsImporter.new(google_account)
-        if Time.now > google_account.last_sync_time+1440 # Start the syncing only if the last sync time more than an hour.
+        if Time.now > google_account.last_sync_time+86400 # Start the syncing only if the last sync time more than an hour.
           goog_cnt_importer.sync_google_contacts
         end
       rescue => err
@@ -24,7 +24,6 @@ class Integrations::GoogleContactsImporter
   end
 
   def import_google_contacts(options = {})
-    @google_account.account = Account.find(@google_account.account_id) unless @google_account.account.blank?
     sync_google_contacts :sync_type => SyncType::OVERWRITE_REMOTE
   end
 
@@ -39,7 +38,7 @@ class Integrations::GoogleContactsImporter
       raise "Syncing still in progress." if @google_account.last_sync_status[:status] == :progress
       # Check and Store the 'progress' status.
       @google_account.last_sync_status[:status] = :progress
-      @google_account.save! unless @google_account.id.blank?
+      @google_account.save! unless @google_account.new_record?
       # Disbale notification before doing any other operations.
       EmailNotification.disable_notification(@google_account.account)
       case sync_type
@@ -66,14 +65,14 @@ class Integrations::GoogleContactsImporter
           google_stats = @google_account.batch_update_google_contacts(db_contacts)
       end 
       # Update the sync time and status
-      @google_account.last_sync_time = DateTime.now 
+      @google_account.last_sync_time = DateTime.now+0.0001 unless @google_account.donot_update_sync_time # Storing 8secs forward.
       sync_stats = {:status=>:success, :db_stats => db_stats, :google_stats => google_stats}
     ensure
       # Enable notification before doing any other operations.
       EmailNotification.enable_notification(@google_account.account) 
       Rails.logger.info "last_sync_status #{sync_stats.inspect}"
       @google_account.last_sync_status = sync_stats
-      @google_account.save! unless @google_account.id.blank?
+      @google_account.save! unless @google_account.new_record?
       send_success_email(@google_account.last_sync_status, options) # Send email after saving the status into db.
     end
     Rails.logger.info "###### Completed sync_google_contacts for account #{@google_account.account.name} from email #{@google_account.email}, with options=#{options.inspect} ######"
@@ -86,7 +85,7 @@ class Integrations::GoogleContactsImporter
     unless sync_tag_id.blank?
       # If sync tag is not specified then users in db will not be pushed back to Google.
       # deletion handling is Disabled for now. Remove the deleted check in the query to enable it.
-      users = @google_account.account.all_users.find(:all, :joins=>"INNER JOIN helpdesk_tag_uses ON helpdesk_tag_uses.taggable_id=users.id and helpdesk_tag_uses.taggable_type='User'", 
+      users = @google_account.account.all_users.find(:all, :include=>:google_contacts, :joins=>"INNER JOIN helpdesk_tag_uses ON helpdesk_tag_uses.taggable_id=users.id and helpdesk_tag_uses.taggable_type='User'", 
                         :conditions => ["updated_at > ? and helpdesk_tag_uses.tag_id=? and deleted=?", last_sync_time, sync_tag_id, false])
     end
     puts "#{users.length} users in db has been fetched. #{@google_account.email}"
@@ -97,13 +96,15 @@ class Integrations::GoogleContactsImporter
   
     def handle_import_and_remove_discrepancy(db_contacts, overwrite_existing_user, discre_precedence)
       goog_contacts = []
-      agg_db_stats = [0,0,0]
+      agg_db_stats = [[0,0,0],[0,0,0]]
       begin
         goog_contacts = @google_account.fetch_latest_google_contacts(MAX_RESULTS)
         remove_discrepancy_and_set_google_data(@google_account, db_contacts, goog_contacts, discre_precedence) unless db_contacts.blank?
         fetched_db_stats = update_db_contacts(goog_contacts, overwrite_existing_user)
         fetched_db_stats.each_index { |i|
-          agg_db_stats[i] = agg_db_stats[i] + fetched_db_stats[0][i]
+          fetched_db_stats.each_index { |j|
+            agg_db_stats[i][j] = agg_db_stats[i][j] + fetched_db_stats[i][j]
+          }
         }
       end while goog_contacts.length > MAX_RESULTS
       agg_db_stats
@@ -144,6 +145,7 @@ class Integrations::GoogleContactsImporter
       begin
         if options[:send_email]
           email_params = {:email => options[:email], :domain => options[:domain], :status =>  status}
+          Rails.logger.info "Sending google import mail with params #{email_params}"
           Admin::DataImportMailer.deliver_google_contacts_import_email(email_params)
         end
       rescue => e

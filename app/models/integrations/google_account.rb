@@ -9,7 +9,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
   attr_protected :account_id, :sync_tag_id
   serialize :last_sync_status, Hash
   has_many :google_contacts, :dependent => :destroy
-  attr_accessor :last_sync_index, :import_groups # Non persisted property used only for importing.
+  attr_accessor :last_sync_index, :import_groups, :donot_update_sync_time # Non persisted property used only for importing.
 
   def self.find_or_create(params, account)
     id = params[:id]
@@ -39,10 +39,6 @@ class Integrations::GoogleAccount < ActiveRecord::Base
     Integrations::GoogleAccount.find(:all, 
                   :joins => "INNER JOIN installed_applications ON installed_applications.account_id=google_accounts.account_id", 
                   :select => "google_accounts.*, installed_applications.configs", :conditions => conditions)
-  end
-
-  def self.delete_all_google_accounts(account)
-    Integrations::GoogleAccount.delete_all(["account_id = ?", account])
   end
 
   def create_google_group(group_name)
@@ -217,8 +213,8 @@ class Integrations::GoogleAccount < ActiveRecord::Base
               end
             elsif status_code == "404" && operation == UPDATE
               goog_id = Integrations::GoogleContactsUtil.parse_id(id)
-              puts "Contact does not exist. Adding the contact #{id}"
               db_contact = find_user_by_google_id(goog_id)
+              puts "Contact does not exist. Adding the contact #{db_contact} with google id #{goog_id}"
               add_google_contact(db_contact) # This is not a batch operation. One entry will be added.
             else
               operation == CREATE ? (stats[1][0]+=1) : (operation == DELETE ? stats[1][2]+=1 : stats[1][1]+=1)
@@ -240,8 +236,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
       if batch
         return covert_to_batch_contact_xml(db_contact, CREATE)
       else
-        goog_contact_entry_xml += covert_to_contact_xml(db_contact)
-#        puts "goog_contact_entry_xml #{goog_contact_entry_xml}"
+        goog_contact_entry_xml = covert_to_contact_xml(db_contact)
         goog_contacts_url = google_contact_uri(google_account)
         access_token = prepare_access_token(google_account.token, google_account.secret)
         response = access_token.post(goog_contacts_url, goog_contact_entry_xml, {"Content-Type" => "application/atom+xml", "GData-Version" => "3.0"})
@@ -319,7 +314,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
       end
       access_token = prepare_access_token(token, secret)
       updated_contact_xml = access_token.get(goog_contacts_url, "GData-Version" => "3.0").body
-      Rails.logger.debug goog_contacts_url + "   " + updated_contact_xml
+      # Rails.logger.debug goog_contacts_url + "   " + updated_contact_xml
       google_users = []
       begin
         doc = REXML::Document.new(updated_contact_xml)   
@@ -372,7 +367,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
         end
       }
       # Now make sure the entries present in the original google xml is preserved without touching them.
-      trimmed_xml = trimmed_contact_xml(user, self.sync_group_id)
+      trimmed_xml = trimmed_contact_xml(user, fetch_current_account_contact(user), self.sync_group_id)
       unless trimmed_xml.blank?
         trimmed_xml.elements.each {|ele|
           xml_str << ele.to_s
@@ -384,6 +379,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
         group_uri = google_group_uri(self.email, self.sync_group_id) 
         xml_str << " <gContact:groupMembershipInfo deleted='false' href='#{group_uri}'/>"
       end
+      xml_str
     end
 
     def prepare_access_token(oauth_token, oauth_token_secret)
@@ -428,11 +424,9 @@ class Integrations::GoogleAccount < ActiveRecord::Base
       # Create the user if not able to fetch with any of the above options
       user = User.new if user.blank?
       if user.google_contacts.blank?
-        gcnt = GoogleContact.new(:google_account=>self)
-        user.google_contacts.push(gcnt)
-      else
-        gcnt = fetch_current_account_contact(user)
+        user.google_contacts.build(:google_account=>self) # Will not persist the data in DB even if new_record? is true.
       end
+      gcnt = fetch_current_account_contact(user)
       gcnt.google_xml = goog_contact_detail[:google_xml]
       gcnt.google_id = goog_contact_detail[:google_id]
       gcnt.google_group_ids = goog_contact_detail[:google_group_ids]
@@ -486,7 +480,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
     end
 
     def find_user_by_google_id(google_id)
-      self.account.all_users.find(:first, :include=>[:tags], :joins=>"INNER JOIN google_contacts ON google_contacts.user_id=users.id", 
+      self.account.all_users.first(:include=>[:tags], :joins=>"INNER JOIN google_contacts ON google_contacts.user_id=users.id", 
                                   :conditions=>["google_contacts.google_id = ? and google_contacts.google_account_id = ?", google_id, self.id]) unless google_id.blank?
     end
 
@@ -494,6 +488,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
       db_contact.google_contacts.each {|g_cnt|
         return g_cnt if g_cnt.google_account_id == self.id
       }
+      return nil
     end
 
     CREATE="create"

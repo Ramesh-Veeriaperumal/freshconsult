@@ -4,7 +4,17 @@ class Integrations::InstalledApplication < ActiveRecord::Base
   belongs_to :account
   has_many :integrated_resources, :class_name => 'Integrations::IntegratedResource', :dependent => :destroy
   attr_protected :application_id, :account_id
+
+  after_destroy :delete_google_accounts
   def to_liquid
     configs[:inputs]
   end
+
+  private
+  	def delete_google_accounts
+	    if self.application.name == "google_contacts"
+	      Rails.logger.info "Deleting all the google accounts corresponding to this account."
+	      Integrations::GoogleAccount.destroy_all ["account_id = ?", self.account]
+	    end
+  	end
 end
