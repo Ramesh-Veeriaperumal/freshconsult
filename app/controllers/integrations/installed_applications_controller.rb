@@ -124,6 +124,9 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
         $update_error = true
       end        
     rescue Exception => msg
+      if msg.to_s.include?("Exception:")
+        msg = msg.to_s.split("Exception:")[1]
+      end
       flash[:error] = " Jira reports the following error : #{msg}" unless msg.blank?
       installed_application.destroy
       $update_error = true

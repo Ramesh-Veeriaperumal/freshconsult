@@ -294,12 +294,6 @@ JiraWidget.prototype= {
 	},
 
 	formatIssueLinks:function(issueLinks){
-		if(jiraWidget.linkIssue == true){
-			currentURL = document.URL
-			if(issueLinks.indexOf(currentURL) != -1){
-				return "duplicate_issue"			
-			}	
-		}
 		jiraIssues = issueLinks.split("\n");
 		var issueHtml="";
 		for(var i=0; i<jiraIssues.length; i++){
@@ -402,21 +396,25 @@ JiraWidget.prototype= {
 		freshdeskData = this.getCustomFieldData(resData.responseJSON);
 		if (freshdeskData != null)
 		{
-			isCustomFieldDef = true;
-			if (freshdeskData == "undefined" || freshdeskData == "")
-				freshdeskData = "#"+jiraBundle.ticketId+" (" + document.URL +") - " + jiraBundle.ticketSubject;
-			else
-				freshdeskData += "\n#"+jiraBundle.ticketId+" (" + document.URL +") - " + jiraBundle.ticketSubject;
+			if (freshdeskData.indexOf(document.URL) != -1)
+			ticketData = freshdeskData;
+			else{
+				isCustomFieldDef = true;
+				if (freshdeskData == "undefined" || freshdeskData == "")
+					ticketData = "#"+jiraBundle.ticketId+" (" + document.URL +") - " + jiraBundle.ticketSubject;
+				else
+					ticketData = freshdeskData + "\n#"+jiraBundle.ticketId+" (" + document.URL +") - " + jiraBundle.ticketSubject;
+			}
 			reqData = {
-			"domain":jiraBundle.domain,	
-			"isCustomFieldDef":"true",
-			"customFieldId":jiraBundle.custom_field_id,
-			"ticketData":freshdeskData,
-			"remoteKey":jiraWidget.linkIssueId,
-			"application_id": jiraBundle.application_id,
-			"integrated_resource[local_integratable_id]":jiraBundle.ticketId,
-			"integrated_resource[local_integratable_type]": integratable_type
-			};
+				"domain":jiraBundle.domain,	
+				"isCustomFieldDef":"true",
+				"customFieldId":jiraBundle.custom_field_id,
+				"ticketData":ticketData,
+				"remoteKey":jiraWidget.linkIssueId,
+				"application_id": jiraBundle.application_id,
+				"integrated_resource[local_integratable_id]":jiraBundle.ticketId,
+				"integrated_resource[local_integratable_type]": integratable_type
+			};	
 		}
 		else
 		{
