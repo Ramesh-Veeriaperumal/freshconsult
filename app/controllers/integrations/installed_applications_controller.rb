@@ -3,12 +3,6 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
   include Integrations::AppsUtil
   include Integrations::JiraSystem
   
-  def index
-    @applications = Integrations::Application.all
-    @installed_applications = get_installed_apps
-    render :template=> 'integrations/applications/index'
-  end
-  
   def install # also updates
     Rails.logger.debug "Installing application with id "+params[:id]
     installing_application = Integrations::Application.find(params[:id])
@@ -75,7 +69,6 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
       redirect_to :controller=> 'applications', :action => 'index'
     else
       @installing_application = @installed_application.application
-      @installed_application.configs[:inputs]['password'] = decrypt_password unless decrypt_password.blank?
       return @installing_application
     end
   end

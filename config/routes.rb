@@ -20,7 +20,7 @@
   
   map.resources :groups
   
-  map.resources :profiles , :member => { :change_password => :post}
+  map.resources :profiles , :member => { :change_password => :post}, :collection => {:reset_api_key => :post}
   
   map.resources :agents, :member => { :delete_avatar => :delete , :restore => :put }
 

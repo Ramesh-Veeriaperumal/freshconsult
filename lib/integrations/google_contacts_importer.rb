@@ -25,16 +25,22 @@ class Integrations::GoogleContactsImporter
 
   def import_google_contacts(options = {})
     @google_account.account = Account.find(@google_account.account_id) unless @google_account.account.blank?
-    options[:sync_type] = SyncType::OVERWRITE_REMOTE
-    sync_google_contacts(options)
+    sync_google_contacts :sync_type => SyncType::OVERWRITE_REMOTE
   end
 
   def sync_google_contacts(options = {})
-    puts "###### Inside sync_google_contacts for account #{@google_account.account.name} from email #{@google_account.email}, with options=#{options.inspect} ######"
+    Rails.logger.info "###### Inside sync_google_contacts for account #{@google_account.account.name} from email #{@google_account.email}, with options=#{options.inspect} ######"
     overwrite_existing_user = options[:overwrite_existing_user].blank? ? @google_account.overwrite_existing_user : options[:overwrite_existing_user]
     sync_type = options[:sync_type].blank? ? @google_account.sync_type : options[:sync_type]
-    status = {:status=>:error} # If no exception occurs then the status will be reset with proper status else it will say in error status.
+    sync_stats = {:status=>:error} # If no exception occurs then the status will be reset with proper status else it will say in error status.
     begin
+      # Do not proceed further if the status is still in 'progress'.
+      @google_account.last_sync_status = {} if @google_account.last_sync_status.blank?
+      raise "Syncing still in progress." if @google_account.last_sync_status[:status] == :progress
+      # Check and Store the 'progress' status.
+      @google_account.last_sync_status[:status] = :progress
+      @google_account.save! unless @google_account.id.blank?
+      # Disbale notification before doing any other operations.
       EmailNotification.disable_notification(@google_account.account)
       case sync_type
         when SyncType::OVERWRITE_LOCAL # Export
@@ -42,42 +48,35 @@ class Integrations::GoogleContactsImporter
           # Fetch the contact in Google first
           goog_contacts = @google_account.fetch_latest_google_contacts
           # Remove discrepancy method also updates google_id in the db_contacts. This is will be useful in deciding update or add of a contact while exporting.
-          remove_discrepancy_and_set_google_data(db_contacts, goog_contacts, "DB", true)
+          remove_discrepancy_and_set_google_data(@google_account, db_contacts, goog_contacts, "DB", true)
           google_stats = @google_account.batch_update_google_contacts(db_contacts)
         when SyncType::OVERWRITE_REMOTE # Import
-          goog_contacts = @google_account.fetch_latest_google_contacts
-          db_stats = update_db_contacts(goog_contacts, overwrite_existing_user)
+          db_stats = handle_import_and_remove_discrepancy(nil, overwrite_existing_user, nil)
         when SyncType::MERGE_LOCAL # Merge Freshdesk precedence  
           db_contacts = find_updated_db_contacts
-          goog_contacts = @google_account.fetch_latest_google_contacts
-          remove_discrepancy_and_set_google_data(db_contacts, goog_contacts,"DB")
+          db_stats = handle_import_and_remove_discrepancy(db_contacts, overwrite_existing_user, "DB")
           google_stats = @google_account.batch_update_google_contacts(db_contacts)
-          db_stats = update_db_contacts(goog_contacts, overwrite_existing_user)
         when SyncType::MERGE_REMOTE # Merge Google precedence
           db_contacts = find_updated_db_contacts
-          goog_contacts = @google_account.fetch_latest_google_contacts
-          remove_discrepancy_and_set_google_data(db_contacts, goog_contacts,"GOOGLE")
+          db_stats = handle_import_and_remove_discrepancy(db_contacts, overwrite_existing_user, "GOOGLE")
           google_stats = @google_account.batch_update_google_contacts(db_contacts)
-          db_stats = update_db_contacts(goog_contacts, overwrite_existing_user)
         when SyncType::MERGE_LATEST # Take latest record as precedence
           db_contacts = find_updated_db_contacts
-          goog_contacts = @google_account.fetch_latest_google_contacts
-          remove_discrepancy_and_set_google_data(db_contacts, goog_contacts)
+          db_stats = handle_import_and_remove_discrepancy(db_contacts, overwrite_existing_user, "LATEST")
           google_stats = @google_account.batch_update_google_contacts(db_contacts)
-          db_stats = update_db_contacts(goog_contacts, overwrite_existing_user)
-      end
+      end 
       # Update the sync time and status
       @google_account.last_sync_time = DateTime.now 
-      status = {:status=>:success, :db_stats => db_stats, :google_stats => google_stats}
+      sync_stats = {:status=>:success, :db_stats => db_stats, :google_stats => google_stats}
     ensure
       # Enable notification before doing any other operations.
       EmailNotification.enable_notification(@google_account.account) 
-      puts "last_sync_status #{status.inspect} #{@google_account.is_primary?}"
-      @google_account.last_sync_status = status
-      @google_account.save! if @google_account.is_primary?
-      send_success_email(status, options) # Send email after saving the status into db.
+      Rails.logger.info "last_sync_status #{sync_stats.inspect}"
+      @google_account.last_sync_status = sync_stats
+      @google_account.save! unless @google_account.id.blank?
+      send_success_email(@google_account.last_sync_status, options) # Send email after saving the status into db.
     end
-    puts "###### Completed sync_google_contacts for account #{@google_account.account.name} from email #{@google_account.email}, with options=#{options.inspect} ######"
+    Rails.logger.info "###### Completed sync_google_contacts for account #{@google_account.account.name} from email #{@google_account.email}, with options=#{options.inspect} ######"
     return @google_account
   end
 
@@ -86,8 +85,9 @@ class Integrations::GoogleContactsImporter
     sync_tag_id = @google_account.sync_tag_id
     unless sync_tag_id.blank?
       # If sync tag is not specified then users in db will not be pushed back to Google.
-      users = User.find(:all, :joins=>"INNER JOIN helpdesk_tag_uses ON helpdesk_tag_uses.taggable_id=users.id and helpdesk_tag_uses.taggable_type='User'", 
-                        :conditions => ["updated_at > ? and account_id = ? and helpdesk_tag_uses.tag_id=?", last_sync_time, @google_account.account_id, sync_tag_id])
+      # deletion handling is Disabled for now. Remove the deleted check in the query to enable it.
+      users = @google_account.account.all_users.find(:all, :joins=>"INNER JOIN helpdesk_tag_uses ON helpdesk_tag_uses.taggable_id=users.id and helpdesk_tag_uses.taggable_type='User'", 
+                        :conditions => ["updated_at > ? and helpdesk_tag_uses.tag_id=? and deleted=?", last_sync_time, sync_tag_id, false])
     end
     puts "#{users.length} users in db has been fetched. #{@google_account.email}"
     return users
@@ -95,6 +95,20 @@ class Integrations::GoogleContactsImporter
 
   private
   
+    def handle_import_and_remove_discrepancy(db_contacts, overwrite_existing_user, discre_precedence)
+      goog_contacts = []
+      agg_db_stats = [0,0,0]
+      begin
+        goog_contacts = @google_account.fetch_latest_google_contacts(MAX_RESULTS)
+        remove_discrepancy_and_set_google_data(@google_account, db_contacts, goog_contacts, discre_precedence) unless db_contacts.blank?
+        fetched_db_stats = update_db_contacts(goog_contacts, overwrite_existing_user)
+        fetched_db_stats.each_index { |i|
+          agg_db_stats[i] = agg_db_stats[i] + fetched_db_stats[0][i]
+        }
+      end while goog_contacts.length > MAX_RESULTS
+      agg_db_stats
+    end
+
     def update_db_contacts(updated_goog_contacts_hash, overwrite_existing_user = true)
   #   puts "Inside update_db_contacts #{updated_goog_contacts_hash.inspect}"
       stats=[0,0,0]; err_stats=[0,0,0]
@@ -147,4 +161,6 @@ class Integrations::GoogleContactsImporter
         puts "ERROR: NOT ABLE SEND GOOGLE CONTACTS ERROR IMPORT MAIL.  \n#{e.message}\n#{e.backtrace.join("\n\t")}"
       end
     end
+
+    MAX_RESULTS = 1000
 end
