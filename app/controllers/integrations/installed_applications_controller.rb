@@ -11,7 +11,9 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
       installed_application = Integrations::InstalledApplication.new
       installed_application.application = installing_application
       installed_application.account = current_account
+      params[:configs][:domain] = params[:configs][:domain][0..-2] if installing_application.name == "jira" and params[:configs][:domain].ends_with?('/')
       installed_application.configs = convert_to_configs_hash(params)
+
       begin
         successful = installed_application.save!
         if successful
@@ -45,7 +47,10 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
     if installed_application.blank?
       flash[:error] = t(:'flash.application.not_installed')
     else
+      params[:configs][:domain] = params[:configs][:domain][0..-2] if installing_application.name == "jira" and params[:configs][:domain].ends_with?('/')
       installed_application.configs = convert_to_configs_hash(params)
+
+
       begin
         installed_application.save!
         if installing_application.name == "jira"
@@ -100,6 +105,7 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
     unless params[:configs].blank?# TODO: need to encrypt the password and should not print the password in log file.
       params[:configs][:password] = get_encrypted_value(params[:configs][:password]) unless params[:configs][:password].blank?
       params[:configs][:domain] = params[:configs][:domain] + params[:configs][:ghostvalue] unless params[:configs][:ghostvalue].blank? or params[:configs][:domain].blank?
+       
       {:inputs => params[:configs].to_hash}  
     end
   end
