@@ -73,7 +73,7 @@ module Integrations::GoogleContactsUtil
 
   # While exporting the db data into google, db will not contain correct google_id.  For this update_google_id will be useful. 
   def remove_discrepancy_and_set_google_data(google_account, db_contacts, google_contacts, precedence="LATEST", update_google_id=false)
-    puts "BEFORE remove_discrepancy, total db contacts: #{db_contacts.length}, total google contacts: #{google_contacts.length}"
+    Rails.logger.debug "BEFORE remove_discrepancy, total db contacts: #{db_contacts.length}, total google contacts: #{google_contacts.length}"
     google_contacts.each { |goog_cnt|
       db_contacts.each { |db_cnt|
         if is_matched(google_account, goog_cnt, db_cnt)
@@ -104,7 +104,7 @@ module Integrations::GoogleContactsUtil
         end
       }
     }
-    puts "AFTER remove_discrepancy, total db contacts: #{db_contacts.length}, total google contacts: #{google_contacts.length}"
+    Rails.logger.debug "AFTER remove_discrepancy, total db contacts: #{db_contacts.length}, total google contacts: #{google_contacts.length}"
   end
 
   def is_matched(google_account, goog_cnt, db_cnt)

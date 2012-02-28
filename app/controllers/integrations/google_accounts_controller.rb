@@ -99,7 +99,6 @@ class Integrations::GoogleAccountsController < Admin::AdminController
           flash[:notice] = t("integrations.google_contacts.import_later_success", :email => user_email)
         else
           updated_goog_acc = goog_cnts_iptr.import_google_contacts
-          puts "status #{updated_goog_acc.last_sync_status.inspect}"
           if updated_goog_acc.last_sync_status[:status] == "error"
             flash[:error] = t("integrations.google_contacts.import_problem")
           else
