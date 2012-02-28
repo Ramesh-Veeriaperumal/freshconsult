@@ -491,7 +491,7 @@ JiraWidget.prototype= {
 			if(jiraWidget.ticketData){
 				linkedTicket = "#"+jiraBundle.ticketId+" (" + document.URL +") - " + jiraBundle.ticketSubject;
 				ticketData = jiraWidget.ticketData;
-				fdTicket = ticketData.split(linkedTicket);
+				fdTicket = ticketData.split(linkedTicket + "\n");
 				if(fdTicket != null){
 					linkedTicket = fdTicket[0] + fdTicket[1];
 					jiraWidget.linkedTicket = "unlink"
