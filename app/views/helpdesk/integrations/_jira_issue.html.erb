@@ -10,7 +10,6 @@
     <div class="loading-box" id="jira_issue_loading"></div>
   </div></div>
 </textarea>
-<span id="jira_issue_icon">
-	<%= link_to image_tag("/images/spacer.gif"), "#", :class=> 'jira', :title => t('ticket.integrations.jira.create'), "data-placement" => "below", :rel => "widget-popover", "data-widget-container" => "widget-jira" if jira_integrated_resource.nil? %>
-	<%= link_to image_tag("/images/spacer.gif"), "#", :class=> 'jira_active', :title => t('ticket.integrations.jira.create'), "data-placement" => "below", :rel => "widget-popover", "data-widget-container" => "widget-jira" unless jira_integrated_resource.nil? %>
+<span id="jira_issue_icon" class="custom-tip-bottom" title="<%=t('ticket.integrations.jira.tooltip')%>">
+	<%= link_to image_tag("/images/spacer.gif"), "#", :class=> (jira_integrated_resource.nil?) ? 'jira' : 'jira_active',  "data-placement" => "below", :rel => "widget-popover", "data-widget-container" => "widget-jira" %>
 </span>  

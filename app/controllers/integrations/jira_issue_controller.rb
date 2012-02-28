@@ -52,11 +52,16 @@ class Integrations::JiraIssueController < ApplicationController
 			installed_app = Integrations::InstalledApplication.find(:all, :include=>:application, 
                   :conditions => {:applications => {:name => "jira"}, :account_id => current_account})
             custom_field_id = installed_app[0].configs[:inputs]['customFieldId']
-			params['integrated_resource']['remote_integratable_id'] = params['remoteKey']
-			params['integrated_resource']['account'] = current_account
-			newIntegratedResource = Integrations::IntegratedResource.createResource(params)
-			newIntegratedResource["custom_field"]=custom_field_id unless custom_field_id.blank?
-			render :json => newIntegratedResource
+            if params['updateType'] != "unlink"
+				params['integrated_resource']['remote_integratable_id'] = params['remoteKey']
+				params['integrated_resource']['account'] = current_account
+				newIntegratedResource = Integrations::IntegratedResource.createResource(params)
+				newIntegratedResource["custom_field"]=custom_field_id unless custom_field_id.blank?
+				render :json => newIntegratedResource
+			else
+				render :json => {:status=>'Issue Unlinked'}
+			end
+
 		rescue Exception => msg
 			#puts "Error linking the ticket to the jira issue ( #{msg})"
 			render :json => {:error=> "#{msg}"}

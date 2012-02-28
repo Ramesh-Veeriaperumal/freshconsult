@@ -38,8 +38,9 @@ JiraWidget.prototype= {
 	JIRA_ISSUE:new Template(
 		'<div id="jira-issue-widget">' +
 		'<form id="jira-issue-form" method="post"> ' +
-	    '<div class="jira_issue_details hide"><span id="jira-issue-id"></span><br />'+
+	    '<div class="jira_issue_details hide"><div id="jira-link"><span id="jira-issue-id"></span><br />'+
 	    '<span id="jira-issue-summary"></span>'+
+	    '<a target="_blank" id="jira-view">View issue in Jira</a></div>'+
 	    '<ul>'+
 	    '<li> <label>Type</label>' +
 	    '<span id="jira-issue-type"></span>'+
@@ -50,11 +51,11 @@ JiraWidget.prototype= {
 	    '<li> <label>Created On</label>' +
 	    '<span id="jira-issue-createdon"></span>'+
 	    '</li>'+
-	    '<li> <label class="hide" id="jira-link-label">Linked Tickets</label> <br />' +
+	    '<li> <label class="hide" id="jira-link-label">Linked Freshdesk Tickets</label> <br />' +
 	    '<span id="jira-issue-link"></span>'+
 	    '</li>'+
-	    '<a id="jira-unlink" class="uiButton" > Unlink Issue </a>' +
-   	    '<a id="jira-delete" class="uiButton" > Delete Issue </a>' +
+	    '<a id="jira-unlink" class="uiButton" title="Remove the link between this ticket and the associated Jira issue" > Unlink Issue </a>' +
+   	    '<a id="jira-delete" class="uiButton" title="Delete the associated issue in Jira "> Delete Issue </a>' +
 	    '</div>'+
 	    '</form></div>'),
    	JIRA_PARENT:new Template(
@@ -280,6 +281,7 @@ JiraWidget.prototype= {
 		this.displayCustomFieldData(resJson, value);
 		}
 		jQuery('#jira-issue-id').html("<a target='_blank' href='" + issueLink + "'>" + jiraBundle.remote_integratable_id +"</a>") ;
+		jQuery('#jira-view').attr("href",issueLink);
 		jQuery('#jira-issue-type').text(issueType);
 		jQuery('#jira-issue-summary').html(issueSummary);
 		jQuery('#jira-issue-status').text(issueStatus);
@@ -295,6 +297,8 @@ JiraWidget.prototype= {
 
 	formatIssueLinks:function(issueLinks){
 		jiraIssues = issueLinks.split("\n");
+		jiraWidget.ticketData = issueLinks;
+		jiraWidget.unlinkId = jiraBundle.remote_integratable_id;
 		var issueHtml="";
 		for(var i=0; i<jiraIssues.length; i++){
 			startUrl = jiraIssues[i].indexOf('(');
@@ -381,6 +385,7 @@ JiraWidget.prototype= {
 		
 		remoteKey = jQuery('#jira-issue-id').val();
 		jiraWidget.linkIssueId = remoteKey;
+		jiraWidget.linkedTicket=""
 		this.freshdeskWidget.request({
 				resource: "rest/api/latest/issue/"+encodeURIComponent(remoteKey),
 				content_type: "application/json",
@@ -391,9 +396,12 @@ JiraWidget.prototype= {
 
 	updateIssue:function(resData){
 		self = this;
-		var isCustomFieldDef = false
+		var isCustomFieldDef = false;
+		var freshdeskData;
 		integratable_type = "issue-tracking";
+		if(resData)
 		freshdeskData = this.getCustomFieldData(resData.responseJSON);
+
 		if (freshdeskData != null)
 		{
 			if (freshdeskData.indexOf(document.URL) != -1)
@@ -405,7 +413,7 @@ JiraWidget.prototype= {
 				else
 					ticketData = freshdeskData + "\n#"+jiraBundle.ticketId+" (" + document.URL +") - " + jiraBundle.ticketSubject;
 			}
-			reqData = {
+				reqData = {
 				"domain":jiraBundle.domain,	
 				"isCustomFieldDef":"true",
 				"customFieldId":jiraBundle.custom_field_id,
@@ -429,6 +437,19 @@ JiraWidget.prototype= {
 				"integrated_resource[local_integratable_type]": integratable_type
 			};
 		}
+		if (jiraWidget.linkedTicket == "unlink"){
+			ticketData = jiraWidget.ticketData;
+			reqData = {
+				"domain":jiraBundle.domain,
+				"remoteKey":jiraWidget.unlinkId,
+				"ticketData":ticketData,
+				"isCustomFieldDef":"false",	
+				"updateType":"unlink",
+				"application_id": jiraBundle.application_id,
+				"integrated_resource[local_integratable_id]":jiraBundle.ticketId,
+				"integrated_resource[local_integratable_type]": integratable_type
+			};
+		}
 		new Ajax.Request("/integrations/jira_issue/update", {
 				asynchronous: true,
 				method: "put",
@@ -444,7 +465,7 @@ JiraWidget.prototype= {
 						jiraBundle.custom_field_id = resJ['integrated_resource']['custom_field'];
 
 						jQuery('#jira_issue_icon a.jira').removeClass('jira').addClass('jira_active');
-
+						if (jiraWidget.linkedTicket != "unlink")
 						jiraWidget.createdisplayIssueWidget();
 					}
 					else{
@@ -467,9 +488,21 @@ JiraWidget.prototype= {
 	unlinkJiraIssue:function(){
 		if (jiraBundle.integrated_resource_id) {
 			this.showSpinner();
+			if(jiraWidget.ticketData){
+				linkedTicket = "#"+jiraBundle.ticketId+" (" + document.URL +") - " + jiraBundle.ticketSubject;
+				ticketData = jiraWidget.ticketData;
+				fdTicket = ticketData.split(linkedTicket);
+				if(fdTicket != null){
+					linkedTicket = fdTicket[0] + fdTicket[1];
+					jiraWidget.linkedTicket = "unlink"
+					jiraWidget.ticketData=linkedTicket
+					jiraWidget.updateIssue();	
+				} 
+			}
 			this.freshdeskWidget.delete_integrated_resource(jiraBundle.integrated_resource_id);
 			jiraBundle.integrated_resource_id = "";
 			jiraBundle.remote_integratable_id = "";
+			
 			jQuery('#jira_issue_icon a.jira_active').addClass('jira').removeClass('jira_active');
 		}
 
@@ -495,8 +528,6 @@ JiraWidget.prototype= {
 						jiraWidget.displayCreateWidget();
 					} else {
 						jiraException = self.jiraExceptionFilter(resJ['error']);
-
-						alert('aaaaa');
 
 						if(jiraException == false)
 							alert("Unknown server error. Please contact support@freshdesk.com.");

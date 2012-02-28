@@ -4637,6 +4637,16 @@ a.close{
 	.jira_issue_details {
 		font-size:13px;
 
+		#jira-link {
+		border-bottom: dotted 1px #CCC;
+			#jira-view {
+				float:right;
+				font-size:10px;
+				text-align:right;
+				width:100px;
+			}
+		}
+
 		#jira-issue-id {
 			font-weight:bold;
 		}
