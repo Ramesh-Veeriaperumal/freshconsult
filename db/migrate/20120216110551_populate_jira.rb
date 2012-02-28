@@ -6,6 +6,7 @@ class PopulateJira < ActiveRecord::Migration
   def self.up
     display_name = "integrations.jira.label"  
     description = "integrations.jira.desc"
+    listing_order = 5,
     options = {
         :keys_order => [:title, :domain, :username, :password, :jira_note], 
         :title => { :type => :text, :required => true, :label => "integrations.jira.form.widget_title", :default_value => "Atlassian Jira"},
