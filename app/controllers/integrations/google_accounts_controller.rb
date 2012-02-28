@@ -15,10 +15,10 @@ class Integrations::GoogleAccountsController < Admin::AdminController
   def update
     Rails.logger.debug "Integrations::GoogleAccountController.update #{params.inspect}"
     begin
+      params[:enable_integration] = "true"
       goog_acc = handle_contacts_import params
       unless goog_acc.blank?
-        goog_acc.last_sync_time = DateTime.now
-        goog_acc.save!
+        flash[:notice] = t('integrations.google_contacts.update_action.success') + t('integrations.google_contacts.update_action.also') + flash[:notice]
       end
     rescue => err
       Rails.logger.error("Error during update. \n#{err.message}\n#{err.backtrace.join("\n")}")
@@ -34,7 +34,7 @@ class Integrations::GoogleAccountsController < Admin::AdminController
   def delete
     Rails.logger.debug "Integrations::GoogleAccountsController.delete #{params.inspect}"
     begin
-      Integrations::GoogleAccount.delete_all ["id=? and account_id=?", params[:id], current_account]
+      Integrations::GoogleAccount.destroy_all ["id=? and account_id=?", params[:id], current_account]
       flash[:notice] = t('integrations.google_contacts.delete_action.success')
     rescue => err
         Rails.logger.error("Error during delete. \n#{err.message}\n#{err.backtrace.join("\n")}")
@@ -51,7 +51,7 @@ class Integrations::GoogleAccountsController < Admin::AdminController
   private
     def handle_contacts_import(params, goog_acc=nil)
       goog_acc = Integrations::GoogleAccount.find_or_create(params, current_account) if goog_acc.blank?
-      Rails.logger.debug "import_contacts #{goog_acc.inspect}"
+      Rails.logger.debug "handle_contacts_import #{goog_acc.inspect}"
       if goog_acc.blank?
         Rails.logger.error "ERROR:: Google account not configured properly for importing."
         flash[:error] = t("integrations.google_contacts.internal_error")
@@ -77,7 +77,7 @@ class Integrations::GoogleAccountsController < Admin::AdminController
       g_name = params[:integrations_google_account][:sync_group_name]
       if g_id.blank?
         g_id = goog_acc.create_google_group(g_name)
-        params[:integrations_google_account][:sync_group_id] = g_id
+        goog_acc.sync_group_id = g_id
       end
     end
 
@@ -88,27 +88,29 @@ class Integrations::GoogleAccountsController < Admin::AdminController
         # Reset the start index and import groups so the real import happens from the beginning.
         goog_acc.reset_start_index
         goog_acc.import_groups = pre_import_groups
+        goog_acc.donot_update_sync_time = true
         # Now start the importing.
+        goog_cnts_iptr = Integrations::GoogleContactsImporter.new(goog_acc)
         if latest_goog_cnts.length > 20
           goog_acc.account = nil; goog_acc.account_id = current_account.id;  # This is needed because sometimes the to_yaml of account object (called by send_later for serializing into DB) fails due to some anonymous variables populated in the current_account object.  Also in a way this is little efficient for to_yaml. 
           # If more than 20 google contacts available for import add it to delayed jobs.
           user_email = current_user.email
-          Integrations::GoogleContactsImporter.new(goog_acc).send_later(:import_google_contacts, {:send_email=>true, :email=>user_email, :domain=>current_account.full_domain})
+          goog_cnts_iptr.send_later(:import_google_contacts, {:send_email=>true, :email=>user_email, :domain=>current_account.full_domain})
           flash[:notice] = t("integrations.google_contacts.import_later_success", :email => user_email)
         else
-          goog_cnts_iptr = Integrations::GoogleContactsImporter.new(goog_acc)
           updated_goog_acc = goog_cnts_iptr.import_google_contacts
           puts "status #{updated_goog_acc.last_sync_status.inspect}"
           if updated_goog_acc.last_sync_status[:status] == "error"
             flash[:error] = t("integrations.google_contacts.import_problem")
           else
             db_stats = updated_goog_acc.last_sync_status[:db_stats]
-            if db_stats.blank?
-              flash[:notice] = t("integrations.google_contacts.import_success_no_stats")
-            else
-              flash[:notice] = t("integrations.google_contacts.import_success", {:added=>(db_stats[0][0] ? db_stats[0][0] : 0), 
-                                      :updated=>(db_stats[0][1] ? db_stats[0][1] : 0), :deleted=>(db_stats[0][2] ? db_stats[0][2] : 0)})
-            end
+            flash[:notice] = t("integrations.google_contacts.import_success_no_stats")
+            # if db_stats.blank?
+            #   flash[:notice] = t("integrations.google_contacts.import_success_no_stats")
+            # else
+            #   flash[:notice] = t("integrations.google_contacts.import_success", {:added=>(db_stats[0][0] ? db_stats[0][0] : 0), 
+            #                           :updated=>(db_stats[0][1] ? db_stats[0][1] : 0), :deleted=>(db_stats[0][2] ? db_stats[0][2] : 0)})
+            # end
           end
         end
       end

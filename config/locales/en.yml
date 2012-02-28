@@ -1773,6 +1773,7 @@ en:
         account_not_configured: "<br/>Google accont settings is not yet configured.  Click %{action} and connect to Google to configure it.<br/><br/>"
       update_action:
         success: "Successfully updated the google account."
+        also: "<br/>Also "
         error: "Error while updating the google account."
       delete_action:
         success: "Successfully deleted the google account."

@@ -49,12 +49,10 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
     else
       params[:configs][:domain] = params[:configs][:domain][0..-2] if installing_application.name == "jira" and params[:configs][:domain].ends_with?('/')
       installed_application.configs = convert_to_configs_hash(params)
-
-
       begin
         installed_application.save!
         if installing_application.name == "jira"
-         check_jira_authenticity(params, installed_application)
+          check_jira_authenticity(params, installed_application)
         end
         unless $update_error
           flash[:notice] = t(:'flash.application.configure.success')   
@@ -82,12 +80,8 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
   def uninstall
     begin
       installedApp = current_account.installed_applications.find(params[:id])
-      success = installedApp.delete
+      success = installedApp.destroy
       if success
-        if installedApp.application.name == "google_contacts"
-          Rails.logger.info "Deleting all the google accounts corresponding to this account."
-          Integrations::GoogleAccount.delete_all_google_accounts(current_account)
-        end
         flash[:notice] = t(:'flash.application.uninstall.success')
       else
         flash[:error] = t(:'flash.application.uninstall.error')

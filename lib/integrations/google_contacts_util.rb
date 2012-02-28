@@ -42,7 +42,7 @@ module Integrations::GoogleContactsUtil
   end
 
   def self.parse_id(goog_id_uri)
-    matched_goog_id = /\[*base\/(.*)/.match(goog_id_uri[0]) unless goog_id_uri.blank? # looking for pattern 'any chars/base/<id>'
+    matched_goog_id = /.*[base||full]\/(.*)/.match(goog_id_uri[0]) unless goog_id_uri.blank? # looking for pattern 'any chars/[base or full]/<id>'
     return matched_goog_id[1] unless matched_goog_id.blank?
   end
 
@@ -90,7 +90,7 @@ module Integrations::GoogleContactsUtil
           pre_google_cnts = goog_cnt.google_contacts
           if precedence == "DB"
             copy(db_cnt, goog_cnt)
-            google_contact.google_contacts = pre_google_cnts
+            goog_cnt.google_contacts = pre_google_cnts
             db_cnt.google_contacts = pre_google_cnts # This will be used while serializing the db contact to google xml
           elsif precedence == "GOOGLE"
             db_contacts.delete(db_cnt)
@@ -100,6 +100,7 @@ module Integrations::GoogleContactsUtil
             db_cnt.google_contacts = pre_google_cnts # This will be used while serializing the db contact to google xml
             db_contacts.delete(db_cnt)
           end
+          break;
         end
       }
     }
@@ -107,9 +108,13 @@ module Integrations::GoogleContactsUtil
   end
 
   def is_matched(google_account, goog_cnt, db_cnt)
-    (!goog_cnt.blank? and !db_cnt.blank?) and 
-          (fetch_current_account_contact(goog_cnt, google_account).google_id == fetch_current_account_contact(db_cnt, google_account).google_id or  
-          goog_cnt.email == db_cnt.email or goog_cnt.second_email == db_cnt.email)
+    if !goog_cnt.blank? and !db_cnt.blank?
+      g_goog_cnt = fetch_current_account_contact(goog_cnt, google_account)
+      g_db_cnt = fetch_current_account_contact(db_cnt, google_account)
+      return ((!g_goog_cnt.blank?) and (g_goog_cnt.google_id == g_db_cnt.google_id or goog_cnt.email == db_cnt.email or goog_cnt.second_email == db_cnt.email))
+    else
+      return false
+    end
   end
 
   def trimmed_contact_xml(user, goog_cnt, sync_group_id=nil)
@@ -235,8 +240,8 @@ module Integrations::GoogleContactsUtil
   end
 
   def enable_integration(goog_acc)
-    Integrations::Application.install(APP_NAMES[:google_contacts], goog_acc.account)
-    goog_acc.save
+    Integrations::Application.install_or_update(APP_NAMES[:google_contacts], goog_acc.account)
+    goog_acc.save!
   end
 
   private
@@ -266,6 +271,7 @@ module Integrations::GoogleContactsUtil
       db_cnt.google_contacts.each {|g_cnt|
         return g_cnt if g_cnt.google_account_id == google_account.id
       }
+      return nil
     end
 
 =begin
