@@ -68,7 +68,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
     access_token = prepare_access_token(token, secret)
     updated_groups_xml = access_token.get(goog_groups_url).body
     puts goog_groups_url + "   " + updated_groups_xml
-    updated_groups_hash = XmlSimple.xml_in(updated_groups_xml)['entry']
+    updated_groups_hash = XmlSimple.xml_in(updated_groups_xml)['entry'] || []
     puts "#{updated_groups_hash.length} groups from google account has been fetched with query #{query_params}. #{google_account.email}"
     google_groups_arr = []
     updated_groups_hash.insert(0, 'id'=>['base/6'], 'content'=>{'content'=>'My Contacts'})
