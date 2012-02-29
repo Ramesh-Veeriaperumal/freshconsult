@@ -1734,7 +1734,7 @@ en:
       import: "Import"
       install: "Activate"
       edit_app: "Update"
-      add_more: "Authorize"
+      add_more: "Sync new account"
       edit: "Edit"
       already_exist: "Already this email has been configured for syncing. You can not add the same email again."
       delete: "Delete"
@@ -1745,10 +1745,12 @@ en:
       name: "Account Name"
       email: "Email"
       group: "Sync Group name"
-      tag: "Sync Tag name"
+      tag: "Sync Settings"
+      tag_label: "Sync tag"
       sync_type: "How to sync?"
       last_sync_time: "Last sync time"
       last_sync_status: "Last sync status"
+      last_sync: "Last sync"
       not_yet_synced: "Not yet started."
       no_status: "N/A"
       sync_status:
@@ -1761,8 +1763,8 @@ en:
         install_title: "Google contacts sync setting"
         import_title: "Google contacts import setting"
         all_contacts: "All Groups/Contacts"
-        mail_box_detail: "Mail box detail"
-        import_group: Contacts from the below selected group will be copied (Optional)
+        mail_box_detail: "Sync with"
+        import_group: Select Groups to Import (optional)
         choose_group_title: "Choose the Group to sync and Tag to add"
         edit_app_title: "Edit Google contacts sync setting"
       form:

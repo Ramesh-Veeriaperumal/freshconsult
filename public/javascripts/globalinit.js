@@ -123,6 +123,37 @@ var $J = jQuery.noConflict();
          focusCleanup: true,
          focusInvalid: false
       };
+
+      $(".form-tooltip").twipsy({ 
+        live: true,
+        trigger: 'focus',
+        template: '<div class="twipsy-arrow"></div><div class="twipsy-inner big"></div>'
+      });
+
+      $('input[type=checkbox].iphone').each( function() {
+        var el = $(this);
+        var active_text = el.attr('data-active-text') || "Yes";
+        var inactive_text = el.attr('data-inactive-text') || "No";
+        el.wrap('<div class="stylised iphone" />');
+        el = el.parent();
+        el.append('<span class="text">' + active_text + '</span><span class="other"></span>');
+        el.children('input[type=checkbox]').addClass('hide');
+
+        el.bind('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation(); 
+          $(this).toggleClass('inactive');
+
+          $(this).children('.text').text( $(this).hasClass('inactive') ? inactive_text : active_text);
+
+          if ($(this).hasClass('inactive')) {
+            $(this).children('input[type=checkbox]').removeAttr('checked');
+          } else {
+            $(this).children('input[type=checkbox]').attr('checked','checked');
+          }
+          
+        });
+      });
       
       $(".admin_list li")
          .hover(
