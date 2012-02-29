@@ -695,16 +695,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def to_xml(options = {})
-      options[:indent] ||= 2
-      xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
-      xml.instruct! unless options[:skip_instruct]
-      super(:builder => xml, :skip_instruct => true,:include => [:notes,:attachments],:except => [:account_id,:import_id]) do |xml|
-       xml.custom_field do
-        self.ff_aliases.each do |label|    
-          value = self.get_ff_value(label.to_sym()) 
-          xml.tag!(label.gsub(/[^0-9A-Za-z_]/, ''), value) unless value.blank?
+    options[:indent] ||= 2
+    xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
+    xml.instruct! unless options[:skip_instruct]
+    super(:builder => xml, :skip_instruct => true,:include => [:notes,:attachments],:except => [:account_id,:import_id]) do |xml|
+      xml.custom_field do
+        self.account.ticket_fields.custom_fields.each do |field|
+          value = send(field.name) 
+          xml.tag!(field.name.gsub(/[^0-9A-Za-z_]/, ''), value) unless value.blank?
         end
-       
       end
      end
   end
