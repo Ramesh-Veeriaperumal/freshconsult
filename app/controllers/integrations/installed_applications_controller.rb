@@ -2,6 +2,9 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
   
   include Integrations::AppsUtil
   include Integrations::JiraSystem
+
+  before_filter :check_jira_authenticity, :only => [:install, :update]
+  before_filter :strip_slash, :only => [:install, :update]
   
   def install # also updates
     Rails.logger.debug "Installing application with id "+params[:id]
@@ -12,7 +15,7 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
       installed_application.application = installing_application
       installed_application.account = current_account
       params[:configs][:domain] = params[:configs][:domain][0..-2] if installing_application.name == "jira" and params[:configs][:domain].ends_with?('/')
-      installed_application.configs = convert_to_configs_hash(params)
+      installed_application[:configs] = convert_to_configs_hash(params)
 
       begin
         successful = installed_application.save!
@@ -22,12 +25,7 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
             redirect_to "/auth/google?origin=install"
             return
           end
-          if installing_application.name == "jira"
-           check_jira_authenticity(params, installed_application)
-          end
-          unless $update_error
-            flash[:notice] = t(:'flash.application.install.success')   
-          end
+          flash[:notice] = t(:'flash.application.install.success')   
         else
           flash[:error] = t(:'flash.application.install.error')
         end
@@ -47,16 +45,10 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
     if installed_application.blank?
       flash[:error] = t(:'flash.application.not_installed')
     else
-      params[:configs][:domain] = params[:configs][:domain][0..-2] if installing_application.name == "jira" and params[:configs][:domain].ends_with?('/')
       installed_application.configs = convert_to_configs_hash(params)
       begin
         installed_application.save!
-        if installing_application.name == "jira"
-          check_jira_authenticity(params, installed_application)
-        end
-        unless $update_error
-          flash[:notice] = t(:'flash.application.configure.success')   
-        end
+        flash[:notice] = t(:'flash.application.configure.success')   
       rescue Exception => msg
         puts "Something went wrong while configuring an installed ( #{msg})"
         flash[:error] = t(:'flash.application.configure.error')
@@ -104,27 +96,27 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
   end
 
   def decrypt_password  
-    pwd_encrypted = @installed_application.configs[:inputs]['password'] unless @installed_application.configs.blank?
+    pwd_encrypted = @installed_application.configs_password unless @installed_application.configs.blank?
     pwd_decrypted = Integrations::AppsUtil.get_decrypted_value(pwd_encrypted) unless pwd_encrypted.blank?
     return pwd_decrypted
   end
 
-  def check_jira_authenticity(params, installed_application)
-    $update_error = false
+  def check_jira_authenticity
     begin
-      jira_version = jira_authenticity(params)
-      if jira_version.blank?
-        flash[:error] = "Could not establish connection with the Jira Instance. Please verify your URL and try again" 
-        $update_error = true
-      end        
+      jira_version = jira_authenticity(params)   
     rescue Exception => msg
       if msg.to_s.include?("Exception:")
         msg = msg.to_s.split("Exception:")[1]
+      elsif msg.to_s.include?("execution expired")
+        msg = "Could not establish connection with your Jira Instance. Please verify the URL and try again" 
       end
       flash[:error] = " Jira reports the following error : #{msg}" unless msg.blank?
-      installed_application.destroy
-      $update_error = true
+      redirect_to :controller=> 'applications', :action => 'index'
     end
+  end
+
+  def strip_slash
+    params[:configs][:domain] = params[:configs][:domain][0..-2] if !(params[:configs].blank?) and params[:configs][:domain].ends_with?('/')
   end
 
 end

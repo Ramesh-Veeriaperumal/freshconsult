@@ -99,15 +99,19 @@ JiraWidget.prototype= {
 		} 
 		if(jiraBundle.domain) {
 			this.freshdeskWidget = new Freshdesk.Widget({
-				application_id:jiraBundle.application_id,
 				app_name:"Jira",
 				anchor:"jira_widget",
 				domain:jiraBundle.domain,
+				application_id:jiraBundle.application_id,
 				username:jiraBundle.username, 
 				use_server_password: true,
 				login_content: null,
 				application_content: function(){
-					return jiraWidget.addToJira();
+					if (jiraBundle.remote_integratable_id) {
+						return jiraWidget.JIRA_ISSUE.evaluate({});
+					} else {
+						return jiraWidget.JIRA_FORM.evaluate({subject:jiraBundle.ticketSubject});
+					}
 				},
 				application_resources:init_reqs
 			});
@@ -130,16 +134,6 @@ JiraWidget.prototype= {
 
 	},	
 
-	addToJira:function(){
-		var appContent;
-		if (jiraBundle.remote_integratable_id) {
-			appContent = jiraWidget.JIRA_ISSUE.evaluate({});
-		} else {
-			appContent = jiraWidget.JIRA_FORM.evaluate({subject:jiraBundle.ticketSubject});
-		}
-		return appContent;
-	},
-
 	loadProject:function(resData) {
 		this.projectData=resData;
 		this.handleLoadProject(resData);
@@ -160,7 +154,7 @@ JiraWidget.prototype= {
 		reqData = {
 				"domain":jiraBundle.domain
 			};
-			new Ajax.Request("/integrations/jira_issue/show", {
+			new Ajax.Request("/integrations/jira_issue/get_issue_types", {
 				asynchronous: true,
 				method: "get",
 				parameters: reqData,
@@ -168,7 +162,6 @@ JiraWidget.prototype= {
 					resJ = evt.responseJSON
 					if (resJ['error'] == null || resJ['error'] == "") {
 						resData = evt;
-						
 						this.handleLoadIssueTypes(resData);
 					} else {
 						jiraException = this.jiraExceptionFilter(resJ['error'])
@@ -196,7 +189,6 @@ JiraWidget.prototype= {
 
 	handleLoadIssueTypes:function(resData){
 		selectedProjectNode = UIUtil.constructDropDown(resData, "json", "jira-issue-types", "types", "typeId", ["typeName"], null, Cookie.retrieve("jira_type_id")||"");
-
 		UIUtil.hideLoading('jira','issue-types','');
 	},
 
@@ -214,11 +206,11 @@ JiraWidget.prototype= {
 		ticketData = "#"+jiraBundle.ticketId+" (" + document.URL +") - " + jiraBundle.ticketSubject;
 		reqData = {
 				"domain":jiraBundle.domain,
-				"application_id": jiraBundle.application_id,
 				"projectId": projectId,
 				"issueTypeId":typeId,
 				"summary":ticketSummary,
 				"description":jiraBundle.jiraNote,
+				"application_id": jiraBundle.application_id,
 				"ticketData":ticketData,
 				"integrated_resource[local_integratable_id]":jiraBundle.ticketId,
 				"integrated_resource[local_integratable_type]": integratable_type
@@ -234,7 +226,7 @@ JiraWidget.prototype= {
 					jiraBundle.integrated_resource_id = resJ['integrated_resource']['id'];
 					jiraBundle.remote_integratable_id = resJ['integrated_resource']['remote_integratable_id'];
 					jiraBundle.custom_field_id = resJ['integrated_resource']['custom_field'];
-					jiraWidget.createdisplayIssueWidget();
+					jiraWidget.renderDisplayIssueWidget();
 				}
 				else{
 					jiraException = self.jiraExceptionFilter(resJ['error'])
@@ -316,7 +308,7 @@ JiraWidget.prototype= {
 		return issueHtml;
 	},
 
-	createdisplayIssueWidget:function(){
+	renderDisplayIssueWidget:function(){
 		init_reqs = [{
 				resource: "rest/api/latest/issue/" + jiraBundle.remote_integratable_id,
 				content_type: "application/json",
@@ -437,19 +429,7 @@ JiraWidget.prototype= {
 				"integrated_resource[local_integratable_type]": integratable_type
 			};
 		}
-		if (jiraWidget.linkedTicket == "unlink"){
-			ticketData = jiraWidget.ticketData;
-			reqData = {
-				"domain":jiraBundle.domain,
-				"remoteKey":jiraWidget.unlinkId,
-				"ticketData":ticketData,
-				"isCustomFieldDef":"false",	
-				"updateType":"unlink",
-				"application_id": jiraBundle.application_id,
-				"integrated_resource[local_integratable_id]":jiraBundle.ticketId,
-				"integrated_resource[local_integratable_type]": integratable_type
-			};
-		}
+
 		new Ajax.Request("/integrations/jira_issue/update", {
 				asynchronous: true,
 				method: "put",
@@ -465,8 +445,7 @@ JiraWidget.prototype= {
 						jiraBundle.custom_field_id = resJ['integrated_resource']['custom_field'];
 
 						jQuery('#jira_issue_icon a.jira').removeClass('jira').addClass('jira_active');
-						if (jiraWidget.linkedTicket != "unlink")
-						jiraWidget.createdisplayIssueWidget();
+						jiraWidget.renderDisplayIssueWidget();
 					}
 					else{
 						jiraException = self.jiraExceptionFilter(resJ['error'])
@@ -490,16 +469,42 @@ JiraWidget.prototype= {
 			this.showSpinner();
 			if(jiraWidget.ticketData){
 				linkedTicket = "#"+jiraBundle.ticketId+" (" + document.URL +") - " + jiraBundle.ticketSubject;
-				ticketData = jiraWidget.ticketData;
-				fdTicket = ticketData.split(linkedTicket);
+				ticketData = jiraWidget.ticketData+"\n";
+				fdTicket = ticketData.split(linkedTicket+"\n");
 				if(fdTicket != null){
 					linkedTicket = fdTicket[0] + fdTicket[1];
-					jiraWidget.linkedTicket = "unlink"
-					jiraWidget.ticketData=linkedTicket
-					jiraWidget.updateIssue();	
-				} 
+					ticketData = linkedTicket;	
+				}
+				reqData = {
+				"domain":jiraBundle.domain,
+				"remoteKey":jiraWidget.unlinkId,
+				"ticketData":ticketData,
+				"application_id": jiraBundle.application_id,
+				"integrated_resource[id]":jiraBundle.integrated_resource_id
+				}; 
 			}
-			this.freshdeskWidget.delete_integrated_resource(jiraBundle.integrated_resource_id);
+			new Ajax.Request("/integrations/jira_issue/unlink", {
+				asynchronous: true,
+				method: "put",
+				parameters: reqData,
+				onSuccess: function(evt){					
+					resJ = evt.responseJSON
+					if (resJ['error'] == null || resJ['error'] == "") {
+						
+					}
+					else{
+						jiraException = self.jiraExceptionFilter(resJ['error'])
+						if(jiraException == false)
+						alert("Unknown server error. Please contact support@freshdesk.com.");
+					}
+					if (resultCallback) 
+						resultCallback(evt);
+				},
+				onFailure: function(evt){
+					if (resultCallback) 
+						resultCallback(evt);
+				}
+			});
 			jiraBundle.integrated_resource_id = "";
 			jiraBundle.remote_integratable_id = "";
 			
@@ -584,7 +589,7 @@ JiraWidget.prototype= {
 			alert("Username or password is incorrect.");
 			//harvestWidget.freshdeskWidget.display_login();
 		} else if (evt.status == 404) {
-			alert("Permission Denied (or) Issue not available");
+			alert("Issue not available or Premission denied");
 			jiraWidget.unlinkJiraIssue();
 		} 
 		else{

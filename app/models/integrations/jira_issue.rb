@@ -5,9 +5,9 @@ require 'json'
 class Integrations::JiraIssue
 
 	def initialize(username, password, installed_app, params)
-			$jira = Jira4R::JiraTool.new(2, params['domain'])
-			$jira.login(username, password)
-            $installed_app = installed_app[0] unless installed_app.blank?
+			@jira = Jira4R::JiraTool.new(2, params['domain'])
+			@jira.login(username, password)
+            @installed_app = installed_app unless installed_app.blank?
 	end
 
 	def create(params)
@@ -23,7 +23,7 @@ class Integrations::JiraIssue
 			freshdeskField.values = params['ticketData']
 			issue.customFieldValues = [freshdeskField]
 		end
-		resData = $jira.createIssue(issue)
+		resData = @jira.createIssue(issue)
 		if customId.blank?
 			unless resData.blank?
 				jsonData = JSON.parse(resData.to_json)
@@ -37,34 +37,27 @@ class Integrations::JiraIssue
 		return resData.to_json
 	end
 
-	def show(params)
+	def get_issue_types(params)
 		jsonArray = Array.new
-		issueTypes = $jira.getIssueTypes()
-		i =0
-		while i<issueTypes.length
-		  issueHash = { 'typeId' => issueTypes[i].id, 'typeName' => issueTypes[i].name }
-		  jsonArray.push(issueHash)
-		  i = i+1
-		end 
+		issueTypes = @jira.getIssueTypes()
+        issueTypes.each { |i_type|
+          jsonArray.push 'typeId' => i_type.id, 'typeName' => i_type.name
+        }
 		resJson = {'types' => jsonArray}
 		return resJson
 	end
 
 	def delete(params)
-		resData = $jira.deleteIssue(params['integrated_resource']['remote_integratable_id'])
-		return resData
+		@jira.deleteIssue(params['integrated_resource']['remote_integratable_id'])
 	end
 
 	def update(params)
-		#if(params['isCustomFieldDef'] == "true")
         customId = customFieldChecker
         if(customId)
 			customField = Jira4R::V2::RemoteFieldValue.new
-			#customField.id = params['customFieldId']
             customField.id = customId
-			puts params['ticketData']
 			customField.values = params['ticketData']
-			resData = $jira.updateIssue(params['remoteKey'], customField)	
+			resData = @jira.updateIssue(params['remoteKey'], customField)	
 			comment = false
 		else
 			issueId = params['remoteKey']
@@ -77,9 +70,18 @@ class Integrations::JiraIssue
 		return resData
 	end
 
+    def delete_custom_field
+        @installed_app[:configs][:inputs]['customFieldId'] = nil
+        @installed_app.save!
+    end
 
+    def jira_serverinfo
+        @jira.getServerInfo().version
+    end
+
+    private
 	def getCustomFieldId
-		customData = $jira.getCustomFields()
+		customData = @jira.getCustomFields()
 		customData.each do |customField|
 			if(customField.name == "Freshdesk Tickets")
 				return customField.id
@@ -91,12 +93,12 @@ class Integrations::JiraIssue
 	def addCommentToJira(issueId, ticketData)
 		jiraComment = Jira4R::V2::RemoteComment.new
 		jiraComment.body = ticketData
-		$jira.addComment(issueId, jiraComment)
+		@jira.addComment(issueId, jiraComment)
 	end
 
-    def customFieldChecker
-        if $installed_app.configs[:inputs]['customFieldId']
-            return $installed_app.configs[:inputs]['customFieldId']
+    def customFieldChecker 
+        if @installed_app.configs_customFieldId
+            return @installed_app.configs_customFieldId
         else
             return populate_custom_field
         end
@@ -106,20 +108,11 @@ class Integrations::JiraIssue
     def populate_custom_field 
         custom_field_id = getCustomFieldId
         unless custom_field_id.blank?
-            $installed_app.configs[:inputs]['customFieldId'] = custom_field_id
-            $installed_app.save!
+            @installed_app[:configs][:inputs]['customFieldId'] = custom_field_id
+            @installed_app.save!
             return custom_field_id
         end
         return
     end
-
-    def delete_custom_field
-        $installed_app.configs[:inputs]['customFieldId'] = nil
-        $installed_app.save!
-    end
-
-    def jira_serverinfo
-        $jira.getServerInfo().version
-    end
-		
+	
 end
