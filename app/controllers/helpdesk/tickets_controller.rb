@@ -114,7 +114,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
   
   def latest_ticket_count    
-    index_filter = "Helpdesk::Filters::CustomTicketFilter".constantize.new().deserialize_from_params(params)       
+    index_filter =  current_account.ticket_filters.new(Helpdesk::Filters::CustomTicketFilter::MODEL_NAME).deserialize_from_params(params)       
     ticket_count =  current_account.tickets.permissible(current_user).latest_tickets(params[:latest_updated_at]).count(:id, :conditions=> index_filter.sql_conditions)
 
     respond_to do |format|
@@ -160,10 +160,12 @@ class Helpdesk::TicketsController < ApplicationController
       index_filter = @ticket_filter.deserialize_from_params(@filters)
     else  
       @filters = params[:filters]
-      index_filter = "Helpdesk::Filters::CustomTicketFilter".constantize.new().deserialize_from_params(@filters)
+      index_filter = current_account.ticket_filters.new(Helpdesk::Filters::CustomTicketFilter::MODEL_NAME).deserialize_from_params(@filters)
     end
 
-    ticket_ids = index_filter.adjacent_tickets(@ticket)
+    ticket_ids = index_filter.adjacent_tickets(@ticket, current_account, current_user)
+    
+    RAILS_DEFAULT_LOGGER.debug "next_previous_tickets : #{ticket_ids.to_json}"
     
     ticket_ids.each do |t|
        (t[2] == "previous") ? @previous_ticket_id = t[1] : @next_ticket_id = t[1]        

@@ -168,6 +168,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
                   
      return permissions[Agent::PERMISSION_TOKENS_BY_KEY[user.agent.ticket_permission]]
   end
+  
+  def agent_permission_condition user
+     permissions = {:all_tickets => "" , 
+                   :group_tickets => " AND (group_id in (#{user.agent_groups.collect{|ag| ag.group_id}.insert(0,0)}) OR responder_id= #{user.id}) " , 
+                   :assigned_tickets => " AND (responder_id= #{user.id}) " }
+                  
+     return permissions[Agent::PERMISSION_TOKENS_BY_KEY[user.agent.ticket_permission]]
+  end
   #Sphinx configuration starts
   define_index do
    

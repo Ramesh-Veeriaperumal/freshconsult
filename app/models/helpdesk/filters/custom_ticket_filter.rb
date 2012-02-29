@@ -262,32 +262,36 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     "helpdesk_tickets.#{@order}"    
   end
   
-  def previous_ticket_sql(ticket)   
+  def previous_ticket_sql(ticket, account, user)   
     order_field_value = ticket.send(@order)
     order_field_value =  order_field_value.to_formatted_s(:db) if order_field_value.kind_of?(Time)
     cond_operator = (@order_type == "desc") ? ">" : "<"
 
-    prev_cond = " AND ((#{order_field} = '#{order_field_value}' AND helpdesk_tickets.id < #{ticket.send("id")} ) OR (#{order_field} #{cond_operator} '#{order_field_value}'))"    
+    prev_cond = " AND ((#{order_field} = '#{order_field_value}' AND helpdesk_tickets.id < #{ticket.send("id")} ) OR (#{order_field} #{cond_operator} '#{order_field_value}')) " << permissible_conditions(ticket, account, user)    
     
     previous_sql_query = "SELECT helpdesk_tickets.id, helpdesk_tickets.display_id, 'previous' from helpdesk_tickets INNER JOIN flexifields ON flexifields.flexifield_set_id = helpdesk_tickets.id WHERE  #{sql_conditions} "
     
     previous_sql_query << prev_cond << " ORDER BY " << reverse_order_clause << " LIMIT 1"
   end
   
-  def next_ticket_sql(ticket)
+  def next_ticket_sql(ticket, account, user)
     order_field_value = ticket.send(@order)
     order_field_value =  order_field_value.to_formatted_s(:db) if order_field_value.kind_of?(Time)
     cond_operator = (@order_type == "desc") ? "<" : ">"
     
-    next_cond = "AND ((#{order_field} = '#{order_field_value}' AND helpdesk_tickets.id > #{ticket.send("id")} )  OR (#{order_field} #{cond_operator} '#{order_field_value}'))"
+    next_cond = "AND ((#{order_field} = '#{order_field_value}' AND helpdesk_tickets.id > #{ticket.send("id")} )  OR (#{order_field} #{cond_operator} '#{order_field_value}')) " << permissible_conditions(ticket, account, user) 
     next_sql_query = "SELECT helpdesk_tickets.id, helpdesk_tickets.display_id, 'next' from helpdesk_tickets INNER JOIN flexifields ON flexifields.flexifield_set_id = helpdesk_tickets.id WHERE  #{sql_conditions} "
     
     next_sql_query << next_cond << " ORDER BY " << order_clause << " LIMIT 1"
   end
   
-  def adjacent_tickets(ticket)
+  def adjacent_tickets(ticket, account, user)
     handle_empty_filter!   
-    tickets = ActiveRecord::Base.connection().execute("(#{previous_ticket_sql(ticket)}) UNION ALL (#{next_ticket_sql(ticket)})")   
+    tickets = ActiveRecord::Base.connection().execute("(#{previous_ticket_sql(ticket, account, user)}) UNION ALL (#{next_ticket_sql(ticket, account, user)})")   
+  end
+  
+  def permissible_conditions(ticket, account, user)    
+    return (" AND (helpdesk_tickets.account_id = #{account.id}) " << ticket.agent_permission_condition(user))   
   end
   
 end
