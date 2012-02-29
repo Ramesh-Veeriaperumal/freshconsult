@@ -7,46 +7,39 @@
 					[t("integrations.google_contacts.OVERWRITE_REMOTE"), SyncType::OVERWRITE_REMOTE], [t("integrations.google_contacts.MERGE_LOCAL"), SyncType::MERGE_LOCAL], 
 					[t("integrations.google_contacts.MERGE_REMOTE"), SyncType::MERGE_REMOTE]]
 	%>
-	<ul class="ui-form">
-		<li>	
-			<h5 class="title"><%=t('integrations.google_contacts.edit_form.mail_box_detail')%></h5>
-		</li>
-		<li class="inline-field">
-			<label class="caption"> <%=t('integrations.google_contacts.name')%></label>    
-			<div class="fields">
-				<label><%=@google_account.name%></label>
-			</div>
-		</li> 
-		<li class="inline-field">
-			<label class="caption"> <%=t('integrations.google_contacts.email')%></label>    
-			<div class="fields">
-				<label><%=@google_account.email%></label>
-			</div>
-			<span class="seperator"></span>
-		</li>         
-				
-		<li>	
-			<h5 class="title"><%=t('integrations.google_contacts.edit_form.choose_group_title')%></h5>
-		</li>
-		<li class="inline-field">
-			<label class="caption"><%=t('integrations.google_contacts.edit_form.import_group')%></label><br/>
+	<ul class="ui-form google_accounts">
+			
+		<h4 class="title"><%=t('integrations.google_contacts.edit_form.mail_box_detail')%> <%=@google_account.name%> ( <%=@google_account.email%> )</h4>
+		
+		<fieldset>
+			<legend><%=t('integrations.google_contacts.edit_form.import_group')%></legend>
 			<div class="fields">
 				<%@google_groups.each {|gg| %>
-					<%=check_box_tag "integrations_google_account[import_groups][]", gg.group_id%><%=gg.name%>
+					<label class="checkwrapper"><%=check_box_tag "integrations_google_account[import_groups][]", gg.group_id%><%=gg.name%></label>
 				<%}%>
 			</div>
-		</li>
-		<li class="inline-field">
-			<label class="caption"><%=t('integrations.google_contacts.group')%></label>
+
+		</fieldset>
+		
+		<fieldset>
+			<legend><%=t('integrations.google_contacts.tag')%></legend>
 			<div class="fields">
+				<label class="caption" for="integrations_google_account_sync_tag"><%=t('integrations.google_contacts.tag_label')%></label>
+				<%=text_field_tag "integrations_google_account[sync_tag]", @google_account.sync_tag.blank? ? "gmail": @google_account.sync_tag, :onchange=>"tag_changed()" ,  "data-placement" => "right", :class=>"form-tooltip mini", :title => 'Using the same sync tag across multiple Google Accounts  allows you to share Freshdesk Contacts with everyone' %>
 			</div>
-		</li>
-		<li class="inline-field">
-			<label class="caption"><%=t('integrations.google_contacts.tag')%></label>
+			
+			<div class="special-notice">
+				A new contact group <strong>Freshdesk Contacts</strong> will be created in your Gmail Account for Contact syncing.
+			</div>
+
 			<div class="fields">
-				<%=text_field_tag "integrations_google_account[sync_tag]", @google_account.sync_tag.blank? ? "gmail": @google_account.sync_tag, {:onchange=>"tag_changed()"}%>
+				<label>
+				    <%=t("integrations.google_contacts.overwrite_existing_user")%> <%=check_box_tag :overwrite_existing_user, 1, true, :class => 'iphone' , "data-active-text" => "Yes", "data-inactive-text" => "No" %>
+					
+				</label>
 			</div>
-		</li>
+
+		</fieldset>
 		<li class="inline-field">
 			<div class="fields">
 				<label id="tag_usage_status">
@@ -62,14 +55,7 @@
 				</label>
 			</div>
 		</li>
-		<li class="inline-field">
-			<div class="fields">
-				<label>
-				    <%=f.check_box :overwrite_existing_user%>
-					<%=t("integrations.google_contacts.overwrite_existing_user")%>
-				</label>
-			</div>
-		</li>
+		
 		<% if @omniauth_origin == "import" %>
 			<%if @db_google_account.blank?%>
 				<li class="inline-field">

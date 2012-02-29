@@ -18,7 +18,7 @@ class Integrations::GoogleAccountsController < Admin::AdminController
       params[:enable_integration] = "true"
       goog_acc = handle_contacts_import params
       unless goog_acc.blank?
-        flash[:notice] = t('integrations.google_contacts.update_action.success') + t('integrations.google_contacts.update_action.also') + flash[:notice]
+        flash[:notice] = "#{t('integrations.google_contacts.update_action.success')} #{flash[:notice].blank? ? "" : t('integrations.google_contacts.update_action.also') + flash[:notice]}"
       end
     rescue => err
       Rails.logger.error("Error during update. \n#{err.message}\n#{err.backtrace.join("\n")}")
@@ -99,7 +99,6 @@ class Integrations::GoogleAccountsController < Admin::AdminController
           flash[:notice] = t("integrations.google_contacts.import_later_success", :email => user_email)
         else
           updated_goog_acc = goog_cnts_iptr.import_google_contacts
-          puts "status #{updated_goog_acc.last_sync_status.inspect}"
           if updated_goog_acc.last_sync_status[:status] == "error"
             flash[:error] = t("integrations.google_contacts.import_problem")
           else

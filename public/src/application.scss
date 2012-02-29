@@ -4483,6 +4483,85 @@ a.close{
 	}
 }
 
+.google_accounts {
+
+	.buttons {
+		text-align:right;
+		padding:0 35px 20px;
+	}
+	h4.title {
+		font-size:14px;
+		margin:10px 55px 25px;
+	}
+	table {
+		margin:15px 0 25px;
+	}
+	tr {
+		color:#666;
+
+		span {
+			color:#000;
+		}
+
+		&.headings {
+			border-bottom: solid 1px #CCC;
+			th {
+				padding:5px 0 10px;
+				color:#666;
+				font-size:11px;
+			}
+		}
+
+		td {
+			padding: 15px 0 15px;
+		}
+		border-bottom: solid 1px #EEE;
+	}
+
+	fieldset{
+		@include pie-clearfix;
+		border: solid 1px #EEE;
+		border-radius:10px;
+		margin:15px;
+		padding:25px;
+
+		legend {
+			padding: 0 15px;
+			color:#666;
+			font-size: 14px;
+		}
+
+		.fields {
+			.checkwrapper {
+				margin:5px 10px;
+				padding:0 5px;
+				float:left;
+				width:200px;
+
+				input[type=checkbox] {
+					margin-right: 10px;
+				}
+			}
+			input.mini {
+				width:50%;
+			}
+
+			.caption {
+				font-weight: bold;
+			}
+		}
+
+		.special-notice {
+			background-color: #FDFDE5;
+			color: #333;
+			font-size: 12px;
+			line-height: 18px;
+			margin:15px 0;
+			padding: 10px 20px;
+		}
+	}
+}
+
 .ui-form .inline-field .google_contacts_sync {
  	label.caption {
  		font-size: 1em;
@@ -4668,4 +4747,12 @@ a.close{
 			}
 		}
 	}
+}
+
+.twipsy-inner.big {
+	max-width: 300px;
+	font-size:110%;
+	font-weight:normal;
+	line-height:160%;
+	text-align:left;
 }

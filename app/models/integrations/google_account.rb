@@ -44,13 +44,11 @@ class Integrations::GoogleAccount < ActiveRecord::Base
   def create_google_group(group_name)
     xml_to_send = CREATE_GROUP_XML.gsub("$group_name", group_name)
     access_token = prepare_access_token(self.token, self.secret)
-    puts "xml_to_send #{xml_to_send} #{google_groups_uri(self)}"
     response = access_token.post(google_groups_uri(self), xml_to_send, {"Content-Type" => "application/atom+xml", "GData-Version" => "3.0"})
-    puts "response #{response.inspect}"
+    Rails.logger.debug "response #{response.inspect}"
     if response.code == "200" || response.code == "201"
       # If create group is successful return the id
       updated_group_hash = XmlSimple.xml_in(response.body)
-      puts "updated_group_hash #{updated_group_hash.inspect}"
       goog_grp_id = Integrations::GoogleContactsUtil.parse_id(updated_group_hash['id'])
       return goog_grp_id
     end
@@ -67,9 +65,8 @@ class Integrations::GoogleAccount < ActiveRecord::Base
     end
     access_token = prepare_access_token(token, secret)
     updated_groups_xml = access_token.get(goog_groups_url).body
-    puts goog_groups_url + "   " + updated_groups_xml
-    updated_groups_hash = XmlSimple.xml_in(updated_groups_xml)['entry']
-    puts "#{updated_groups_hash.length} groups from google account has been fetched with query #{query_params}. #{google_account.email}"
+    updated_groups_hash = XmlSimple.xml_in(updated_groups_xml)['entry'] || []
+    Rails.logger.debug "#{updated_groups_hash.length} groups from google account has been fetched with query #{query_params}. #{google_account.email}"
     google_groups_arr = []
     updated_groups_hash.insert(0, 'id'=>['base/6'], 'content'=>{'content'=>'My Contacts'})
     updated_groups_hash.each {|group_hash|
@@ -149,14 +146,14 @@ class Integrations::GoogleAccount < ActiveRecord::Base
         batch_operation_xml = "<?xml version='1.0' encoding='UTF-8'?> <feed xmlns='http://www.w3.org/2005/Atom' xmlns:gContact='http://schemas.google.com/contact/2008' xmlns:gd='http://schemas.google.com/g/2005' xmlns:batch='http://schemas.google.com/gdata/batch'>"
         batch_operation_xml << update_google_contacts(db_contacts_slice, true)
         batch_operation_xml << "</feed>"
-        puts "batch_operation_xml #{batch_operation_xml}"
+        # puts "batch_operation_xml #{batch_operation_xml}"
         uri = google_contact_batch_uri(self)
         access_token = prepare_access_token(self.token, self.secret)
         batch_response = access_token.post(uri, batch_operation_xml, {"Content-Type" => "application/atom+xml", "GData-Version" => "3.0", "If-Match" => "*"})
         stats = handle_batch_response(batch_response, stats)
         slice_no += 1
       rescue => e
-        puts "Problem in exporting google contacts slice no #{slice_no}. \n#{e.message}\n#{e.backtrace.join("\n\t")}"
+        Rails.logger.error "Problem in exporting google contacts slice no #{slice_no}. \n#{e.message}\n#{e.backtrace.join("\n\t")}"
       end
     }
     return stats
@@ -168,18 +165,18 @@ class Integrations::GoogleAccount < ActiveRecord::Base
     db_contacts.each do |db_contact|
       begin
         if db_contact.deleted and self.overwrite_existing_user # deleted
-          puts "Deleting contact #{db_contact.email} in google for account #{db_contact.account_id}."
+          Rails.logger.debug "Deleting contact #{db_contact.email} in google for account #{db_contact.account_id}."
           response = delete_google_contact(db_contact, batch)
         elsif !fetch_current_account_contact(db_contact)
-          puts "Adding contact #{db_contact.email} in google for account #{db_contact.account_id}."
+          Rails.logger.debug "Adding contact #{db_contact.email} in google for account #{db_contact.account_id}."
           response = add_google_contact(db_contact, batch)
         else self.overwrite_existing_user# updated
-          puts "Updating contact #{db_contact.email} in google for account #{db_contact.account_id}."
+          Rails.logger.debug "Updating contact #{db_contact.email} in google for account #{db_contact.account_id}."
           response = update_google_contact(db_contact, batch)
         end
         batch_xml << response unless response.blank?
       rescue => e
-        puts "Problem in exporting google contact #{db_contact.email}. \n#{e.message}\n#{e.backtrace.join("\n\t")}"
+        Rails.logger.error "Problem in exporting google contact #{db_contact.email}. \n#{e.message}\n#{e.backtrace.join("\n\t")}"
       end
     end
     return batch_xml;
@@ -190,7 +187,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
       if batch_response.code == "200"
         batch_response_xml = batch_response.body
         batch_response_hash = XmlSimple.xml_in(batch_response_xml)
-        puts "stats #{stats}  \n Converted batch_response_hash #{batch_response_hash.inspect}"
+        # puts "stats #{stats}  \n Converted batch_response_hash #{batch_response_hash.inspect}"
         batch_response_hash = batch_response_hash['entry']
         batch_response_hash.each {|response|
           begin
@@ -205,27 +202,27 @@ class Integrations::GoogleAccount < ActiveRecord::Base
                 db_contact = find_user_by_email(email)
                 updated = update_google_contact_id(db_contact, goog_id)
                 stats[0][0]+=1
-                puts "Newly added contact id #{goog_id} and status #{updated} #{stats}"
+                Rails.logger.info "Newly added contact id #{goog_id} and status #{updated} #{stats}"
               else
                 update_google_contact_id(db_contact, goog_id)
                 operation == DELETE ? stats[0][2]+=1 : stats[0][1]+=1
-                puts "Successfully #{operation}d contact with id #{id} and status_code #{status_code} #{stats}."
+                Rails.logger.info "Successfully #{operation}d contact with id #{id} and status_code #{status_code} #{stats}."
               end
             elsif status_code == "404" && operation == UPDATE
               goog_id = Integrations::GoogleContactsUtil.parse_id(id)
               db_contact = find_user_by_google_id(goog_id)
-              puts "Contact does not exist. Adding the contact #{db_contact} with google id #{goog_id}"
+              Rails.logger.info "Contact does not exist. Adding the contact #{db_contact} with google id #{goog_id}"
               add_google_contact(db_contact) # This is not a batch operation. One entry will be added.
             else
               operation == CREATE ? (stats[1][0]+=1) : (operation == DELETE ? stats[1][2]+=1 : stats[1][1]+=1)
-              puts "Error in #{operation}. For #{email}, the response #{response.inspect}"
+              Rails.logger.error "Error in #{operation}. For #{email}, the response #{response.inspect}"
             end
           rescue => e
-            puts "ERROR in processing single batch_response_xml.\n#{response.inspect}.  \n#{e.message}\n#{e.backtrace.join("\n")}"
+            Rails.logger.error "ERROR in processing single batch_response_xml.\n#{response.inspect}.  \n#{e.message}\n#{e.backtrace.join("\n")}"
           end
         }
       else
-        puts "Failed to export the Google contacts through batch operation. #{batch_response.inspect}"
+        Rails.logger.error "Failed to export the Google contacts through batch operation. #{batch_response.inspect}"
       end
       return stats
     end
@@ -240,13 +237,13 @@ class Integrations::GoogleAccount < ActiveRecord::Base
         goog_contacts_url = google_contact_uri(google_account)
         access_token = prepare_access_token(google_account.token, google_account.secret)
         response = access_token.post(goog_contacts_url, goog_contact_entry_xml, {"Content-Type" => "application/atom+xml", "GData-Version" => "3.0"})
-        puts "Adding contact #{db_contact}, response #{response.inspect}"
+        Rails.logger.debug "Adding contact #{db_contact}, response #{response.inspect}"
         if response.code == "200" || response.code == "201"
           # If create contact is successful update the id in the database.
           updated_contact_hash = XmlSimple.xml_in(response.body)
           goog_id = Integrations::GoogleContactsUtil.parse_id(updated_contact_hash['id'])
           updated = update_google_contact_id(db_contact, goog_id)
-          puts "Newly added contacts id #{goog_id}, updated #{updated}"
+          Rails.logger.info "Newly added contacts id #{goog_id}, updated #{updated}"
         end
       end
     end
@@ -270,12 +267,12 @@ class Integrations::GoogleAccount < ActiveRecord::Base
     #        puts goog_contact_entry_xml +" "+goog_contacts_url 
           access_token = prepare_access_token(google_account.token, google_account.secret)
           response = access_token.put(goog_contacts_url, goog_contact_entry_xml, {"Content-Type" => "application/atom+xml", "GData-Version" => "3.0", "If-Match" => "*"})
-          puts "Updating contact #{db_contact}, response #{response.inspect}"
+          Rails.logger.debug "Updating contact #{db_contact}, response #{response.inspect}"
           if response.code == "200" || response.code == "201"
-            puts "Successfully updated contact #{goog_contact_id}"
+            Rails.logger.info "Successfully updated contact #{goog_contact_id}"
             #TODO update the google_id if the google_contact is not yet created for this db_contact.
           elsif response.code == "404"  # If the user does not found.
-            puts "Contact does not exist. Adding the contact #{goog_contact_id}"
+            Rails.logger.info "Contact does not exist. Adding the contact #{goog_contact_id}"
             add_google_contact(db_contact)
           end
         end
@@ -293,7 +290,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
           goog_contacts_url = google_contact_uri(google_account)+"/"+goog_contact_id
           access_token = prepare_access_token(google_account.token, google_account.secret)
           response = access_token.delete(goog_contacts_url, {"If-Match" => "*"})
-          puts "Deleting contact #{db_contact}, response #{response.inspect}"
+          Rails.logger.info "Deleted contact #{db_contact}, response #{response.inspect}"
         end
       end
     end
@@ -324,13 +321,13 @@ class Integrations::GoogleAccount < ActiveRecord::Base
             google_users.push(converted_user)
           rescue => e
             google_users.push(nil) # In case any exception occurs just store nil value for giving the correct number contacts fetched.
-            puts "Error in processing a contact. contact_entry_element #{contact_entry_element.inspect}:  #{e.inspect}"
+            Rails.logger.error "Error in processing a contact. contact_entry_element #{contact_entry_element.inspect}:  #{e.inspect}"
           end
         }
       rescue => e
         Rails.logger.error "Error in parsing the xml: #{updated_contact_xml}.  #{e.inspect}"
       end
-      puts "#{google_users.length} users from google account has been fetched with query #{query_params}. Email #{google_account.email}"
+      Rails.logger.info "#{google_users.length} users from google account has been fetched with query #{query_params}. Email #{google_account.email}"
       return google_users
     end
 

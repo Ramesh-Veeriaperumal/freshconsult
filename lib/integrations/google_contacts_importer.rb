@@ -18,7 +18,7 @@ class Integrations::GoogleContactsImporter
           goog_cnt_importer.sync_google_contacts
         end
       rescue => err
-        puts "Error while syncing google_contacts for account #{google_account.inspect}. \n#{err.message}\n#{err.backtrace.join("\n\t")}"
+        Rails.logger.error "Error while syncing google_contacts for account #{google_account.inspect}. \n#{err.message}\n#{err.backtrace.join("\n\t")}"
       end
     }
   end
@@ -88,7 +88,7 @@ class Integrations::GoogleContactsImporter
       users = @google_account.account.all_users.find(:all, :include=>:google_contacts, :joins=>"INNER JOIN helpdesk_tag_uses ON helpdesk_tag_uses.taggable_id=users.id and helpdesk_tag_uses.taggable_type='User'", 
                         :conditions => ["updated_at > ? and helpdesk_tag_uses.tag_id=? and deleted=?", last_sync_time, sync_tag_id, false])
     end
-    puts "#{users.length} users in db has been fetched. #{@google_account.email}"
+    Rails.logger.debug "#{users.length} users in db has been fetched. #{@google_account.email}"
     return users
   end
 
@@ -116,25 +116,23 @@ class Integrations::GoogleContactsImporter
       account = @google_account.account
       updated_goog_contacts_hash.each { |user|
         unless user.blank? || account.blank?
-          puts user.inspect
           begin
             sync_tag_id = @google_account.sync_tag.id unless @google_account.sync_tag.blank?
             if user.exist_in_db?
-              puts "overwrite_existing_user #{sync_tag_id} #{user.tagged?(sync_tag_id)}"
               if overwrite_existing_user # && user.deleted == false
                 if sync_tag_id.blank? || user.tagged?(sync_tag_id)
                   updated = user.save
                   updated ? (user.deleted ? stats[2] += 1 : stats[1] += 1) : (user.deleted ? err_stats[2] += 1 : err_stats[1] += 1) 
-                  puts "User #{user.email} update successful :: #{updated}, errors: #{user.errors.full_messages}"
+                  Rails.logger.info "User #{user.email} update successful :: #{updated}, errors: #{user.errors.full_messages}"
                 end
               end
             else
               added = user.signup # This method will take care of properly saving and sending activation instructions if needed etc.
               added ? stats[0] += 1 : err_stats[0] += 1
-              puts "User #{user.email} signup successful :: #{added}, errors: #{user.errors.full_messages}"
+              Rails.logger.info "User #{user.email} signup successful :: #{added}, errors: #{user.errors.full_messages}"
             end
           rescue => e
-            puts "Problem in updating google contact #{user.email}. \n#{e.message}\n#{e.backtrace.join("\n\t")}"
+            Rails.logger.error "Problem in updating google contact #{user.email}. \n#{e.message}\n#{e.backtrace.join("\n\t")}"
           end
         end
       }
@@ -149,7 +147,7 @@ class Integrations::GoogleContactsImporter
           Admin::DataImportMailer.deliver_google_contacts_import_email(email_params)
         end
       rescue => e
-        puts "ERROR: NOT ABLE SEND GOOGLE CONTACTS IMPORT MAIL.  \n#{e.message}\n#{e.backtrace.join("\n\t")}"
+        Rails.logger.error "ERROR: NOT ABLE SEND GOOGLE CONTACTS IMPORT MAIL.  \n#{e.message}\n#{e.backtrace.join("\n\t")}"
       end
     end
 
@@ -160,7 +158,7 @@ class Integrations::GoogleContactsImporter
           Admin::DataImportMailer.deliver_google_contacts_import_error_email(email_params)
         end
       rescue => e
-        puts "ERROR: NOT ABLE SEND GOOGLE CONTACTS ERROR IMPORT MAIL.  \n#{e.message}\n#{e.backtrace.join("\n\t")}"
+        Rails.logger.error "ERROR: NOT ABLE SEND GOOGLE CONTACTS ERROR IMPORT MAIL.  \n#{e.message}\n#{e.backtrace.join("\n\t")}"
       end
     end
 
