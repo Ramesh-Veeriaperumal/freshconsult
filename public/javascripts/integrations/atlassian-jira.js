@@ -29,6 +29,7 @@ JiraWidget.prototype= {
    		'<form id="jira-link-issue" class="ui-form"> ' +
 		    '<div class="field">' +
 				'<label>Issue ID</label>'+
+				'<label for="jira-issue-id" class="overlabel">Ex: FX-173</label>' +
 				'<input type="text" id="jira-issue-id" class="full"></input>' +
 			'</div>' +
 			'<input type="submit" id="jira-submit" class="uiButton" value="Link Issue" ' +
