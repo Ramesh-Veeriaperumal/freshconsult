@@ -44,7 +44,7 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
                   :survey_handle => SurveyHandle.create_handle_for_notification(params[:ticket], 
                     params[:notification_type])
     from          params[:ticket].friendly_reply_email
-    headers       "Reply-to" => "#{params[:ticket].friendly_reply_email}", "Precedence" => "bulk", "Auto-Submitted" => "auto-replied"
+    headers       "Reply-to" => "#{params[:ticket].friendly_reply_email}"
     sent_on       Time.now
     content_type  "text/html"
   end
