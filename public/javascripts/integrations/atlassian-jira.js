@@ -590,7 +590,8 @@ JiraWidget.prototype= {
 		if (evt.status == 401) {
 			alert("Username or password is incorrect.");
 		} else if (evt.status == 404) {
-			alert("Issue not available or Premission denied");
+			var error_json = evt.responseJSON
+			alert(error_json['errorMessages']);
 			jiraWidget.freshdeskWidget.delete_integrated_resource(jiraBundle.integrated_resource_id);
 			jiraWidget.displayCreateWidget();
 		} 
