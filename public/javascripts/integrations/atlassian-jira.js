@@ -470,11 +470,12 @@ JiraWidget.prototype= {
 			this.showSpinner();
 			if(jiraWidget.ticketData){
 				linkedTicket = "#"+jiraBundle.ticketId+" (" + document.URL +") - " + jiraBundle.ticketSubject;
-				ticketData = jiraWidget.ticketData+"\n";
-				fdTicket = ticketData.split(linkedTicket+"\n");
-				if(fdTicket != null){
-					linkedTicket = fdTicket[0] + fdTicket[1];
-					ticketData = linkedTicket;	
+				ticketData = "";
+				fdTickets = jiraWidget.ticketData.split("\n");
+				for (var i=0; i < fdTickets.length; i++){
+					if (fdTickets[i].trim() != '' && fdTickets[i] != linkedTicket) {
+						ticketData += fdTickets[i] + "\n";
+					}
 				}
 				reqData = {
 				"domain":jiraBundle.domain,
