@@ -24,7 +24,9 @@
 						<%=google_acc.sync_tag.name unless google_acc.sync_tag.blank?%>					
 					</td>
 					<td>
-			        	<%if google_acc.last_sync_time.year == 1970%>
+			        	<%if !google_acc.last_sync_status.blank? and google_acc.last_sync_status[:status] == :progress%>
+			        		<%=t("integrations.google_contacts.syncing_in_progress")%>
+			        	<%elsif google_acc.last_sync_time.year == 1970%>
 			        		<%=t("integrations.google_contacts.not_yet_synced")%>
 						<%else%>
 			        		<%=formated_date(google_acc.last_sync_time)%>

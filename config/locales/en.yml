@@ -1752,6 +1752,7 @@ en:
       last_sync_status: "Last sync status"
       last_sync: "Last sync"
       not_yet_synced: "Not yet started"
+      syncing_in_progress: "Syncing in progress"
       no_status: "N/A"
       info1: "Using the same sync tag across multiple Google accounts allows you to share Freshdesk contacts with all the accounts.  If you do not want to sync any contacts into Google, you may leave it empty."
       sync_group_info: "A new contact group <strong>%{group_name}</strong> will be created in your Gmail account for syncing contacts."
