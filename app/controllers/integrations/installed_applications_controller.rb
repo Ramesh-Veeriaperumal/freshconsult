@@ -102,6 +102,8 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
   end
 
   def check_jira_authenticity
+    installing_application = Integrations::Application.find(params[:id])
+    if installing_application.name == "jira"
     begin
       jira_version = jira_authenticity(params)   
     rescue Exception => msg
@@ -113,6 +115,7 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
       flash[:error] = " Jira reports the following error : #{msg}" unless msg.blank?
       redirect_to :controller=> 'applications', :action => 'index'
     end
+  end
   end
 
   def strip_slash
