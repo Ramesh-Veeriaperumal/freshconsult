@@ -105,8 +105,8 @@
 */
     function tag_changed(evt){
 		sync_tag_field = $('integrations_google_account_sync_tag')
-		tag_using_accs = tag_to_acc_map[sync_tag_field.value];
+		tag_using_accs = tag_to_acc_map[sync_tag_field.value] || "None of the accounts";
 		tag_usage_status_field = $('tag_usage_status')
-		tag_usage_status_field.innerHTML = tag_using_accs+' using the same tag for syncing.'
+		tag_usage_status_field.innerHTML = tag_using_accs+' sharing the same tag for syncing.'
 	}
 </script>

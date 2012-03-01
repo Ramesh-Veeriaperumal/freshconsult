@@ -4532,9 +4532,10 @@ a.close{
 		}
 
 		.fields {
+			padding: 0 20px;
 			.checkwrapper {
-				margin:5px 10px;
-				padding:0 5px;
+				margin:5px 10px 5px 0px;
+				padding:0 5px 0 0;
 				float:left;
 				width:200px;
 
@@ -4556,7 +4557,7 @@ a.close{
 			color: #333;
 			font-size: 12px;
 			line-height: 18px;
-			margin:15px 0;
+			margin:15px 0 15px 25px;
 			padding: 10px 20px;
 		}
 	}
