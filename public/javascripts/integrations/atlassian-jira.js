@@ -29,6 +29,7 @@ JiraWidget.prototype= {
    		'<form id="jira-link-issue" class="ui-form"> ' +
 		    '<div class="field">' +
 				'<label>Issue ID</label>'+
+				'<label for="jira-issue-id" class="overlabel">Ex: FX-173</label>' +
 				'<input type="text" id="jira-issue-id" class="full"></input>' +
 			'</div>' +
 			'<input type="submit" id="jira-submit" class="uiButton" value="Link Issue" ' +
@@ -587,10 +588,10 @@ JiraWidget.prototype= {
 	processFailure: function(evt) {
 		if (evt.status == 401) {
 			alert("Username or password is incorrect.");
-			//harvestWidget.freshdeskWidget.display_login();
 		} else if (evt.status == 404) {
 			alert("Issue not available or Premission denied");
-			jiraWidget.unlinkJiraIssue();
+			jiraWidget.freshdeskWidget.delete_integrated_resource(jiraBundle.integrated_resource_id);
+			jiraWidget.displayCreateWidget();
 		} 
 		else{
 			// log("Server Error")
