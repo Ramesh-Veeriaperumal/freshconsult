@@ -1791,7 +1791,7 @@ en:
         domain: "Domain"
         domain_info: "Enter the complete jira account URL with https/http. Ex. https://example.atlassian.net"
         jira_note: "Description text"
-        jira_note_info: "This text will be added to the issue description in Jira"
+        jira_note_info: "This text will be added to the issue description in Jira."
         widget_title: "Widget Title"
         username: "Username"
         password: "Password"

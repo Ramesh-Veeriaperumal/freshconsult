@@ -193,6 +193,13 @@ JiraWidget.prototype= {
 		UIUtil.hideLoading('jira','issue-types','');
 	},
 
+	getCurrentUrl:function(){
+		current_url = document.URL;
+		domain_url = current_url.split("helpdesk/tickets");
+		ticket_url = domain_url[0] + "helpdesk/tickets" + "/" + jiraBundle.ticketId;
+		return ticket_url; 
+	},
+
 	createJiraIssue:function(resultCallback) {
 
 		this.showSpinner();
@@ -204,7 +211,7 @@ JiraWidget.prototype= {
 		typeId = (jiraBundle.typeId) ? jiraBundle.typeId : jQuery('#jira-issue-types').val();
 		ticketSummary = (summary) ? summary : jiraBundle.ticketSubject;
 		//ticketData = "Freshdesk Ticket #"+jiraBundle.ticketId+" -- " + document.URL;
-		ticketData = "#"+jiraBundle.ticketId+" (" + document.URL +") - " + jiraBundle.ticketSubject;
+		ticketData = "#"+jiraBundle.ticketId+" (" + jiraWidget.getCurrentUrl() +") - " + jiraBundle.ticketSubject;
 		reqData = {
 				"domain":jiraBundle.domain,
 				"projectId": projectId,
@@ -273,7 +280,11 @@ JiraWidget.prototype= {
 		if(jiraBundle.custom_field_id){
 		this.displayCustomFieldData(resJson, value);
 		}
-		jQuery('#jira-issue-id').html("<a target='_blank' href='" + issueLink + "'>" + jiraBundle.remote_integratable_id +"</a>") ;
+		if(issueStatus == "Resolved" || issueStatus == "Closed")
+			issueIdHtml = "<a class='strikethrough' target='_blank' href='" + issueLink + "'>" + jiraBundle.remote_integratable_id +"</a>";
+		else
+			issueIdHtml = "<a target='_blank' href='" + issueLink + "'>" + jiraBundle.remote_integratable_id +"</a>";
+		jQuery('#jira-issue-id').html(issueIdHtml) ;
 		jQuery('#jira-view').attr("href",issueLink);
 		jQuery('#jira-issue-type').text(issueType);
 		jQuery('#jira-issue-summary').html(issueSummary);
@@ -397,14 +408,14 @@ JiraWidget.prototype= {
 
 		if (freshdeskData != null)
 		{
-			if (freshdeskData.indexOf(document.URL) != -1)
+			if (freshdeskData.indexOf(jiraWidget.getCurrentUrl()) != -1)
 			ticketData = freshdeskData;
 			else{
 				isCustomFieldDef = true;
 				if (freshdeskData == "undefined" || freshdeskData == "")
-					ticketData = "#"+jiraBundle.ticketId+" (" + document.URL +") - " + jiraBundle.ticketSubject;
+					ticketData = "#"+jiraBundle.ticketId+" (" + jiraWidget.getCurrentUrl() +") - " + jiraBundle.ticketSubject;
 				else
-					ticketData = freshdeskData + "\n#"+jiraBundle.ticketId+" (" + document.URL +") - " + jiraBundle.ticketSubject;
+					ticketData = freshdeskData + "\n#"+jiraBundle.ticketId+" (" + jiraWidget.getCurrentUrl() +") - " + jiraBundle.ticketSubject;
 			}
 				reqData = {
 				"domain":jiraBundle.domain,	
@@ -419,7 +430,7 @@ JiraWidget.prototype= {
 		}
 		else
 		{
-			ticketData = "#"+jiraBundle.ticketId+" (" + document.URL +") - " + jiraBundle.ticketSubject;
+			ticketData = "#"+jiraBundle.ticketId+" (" + jiraWidget.getCurrentUrl() +") - " + jiraBundle.ticketSubject;
 			reqData = {
 				"domain":jiraBundle.domain,
 				"remoteKey":jiraWidget.linkIssueId,
@@ -469,7 +480,7 @@ JiraWidget.prototype= {
 		if (jiraBundle.integrated_resource_id) {
 			this.showSpinner();
 			if(jiraWidget.ticketData){
-				linkedTicket = "#"+jiraBundle.ticketId+" (" + document.URL +") - " + jiraBundle.ticketSubject;
+				linkedTicket = "#"+jiraBundle.ticketId+" (" + jiraWidget.getCurrentUrl() +") - " + jiraBundle.ticketSubject;
 				ticketData = "";
 				fdTickets = jiraWidget.ticketData.split("\n");
 				for (var i=0; i < fdTickets.length; i++){

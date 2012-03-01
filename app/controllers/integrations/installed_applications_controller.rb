@@ -60,7 +60,9 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
       redirect_to :controller=> 'applications', :action => 'index'
     else
       @installing_application = @installed_application.application
-      @installed_application.configs[:inputs]['password'] = decrypt_password unless decrypt_password.blank?
+      puts "Installed Application : #{@installed_application.inspect}"
+      @installed_application.configs[:inputs]['password'] = '' unless @installed_application.configs[:inputs]['password'].nil?
+      puts "Installed Application Now : #{@installed_application.inspect}"
       return @installing_application
     end
   end
