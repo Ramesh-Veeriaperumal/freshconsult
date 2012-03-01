@@ -40,7 +40,7 @@
 					<label class="center" for="api_key"><%=@profile.user.single_access_token%></label>
 			</ul> 
 			<div class="button-container">
-  				<%= submit_tag t("profile.api_key.reset"), :class => "uiButton" %>
+  				<%= submit_tag t("profile.api_key.reset"), :class => "uiButton", :confirm => t("profile.api_key.reset_warning") %>
 			</div>
 		<% end %>
 	</div>	

@@ -1045,6 +1045,7 @@ en:
     api_key:
       title: "Your API Key"
       reset: "Reset API Key"
+      reset_warning: "Once the API key is reset, all the applications using the old key will stop working.  Are you sure to continue?"
   add_to_do: Add To do
   subject_or_description: Subject or Description
   premium_details: Everything in &quot;Pro&quot; Plan plus, Multiple Product Support, Multi-timezone support, Community, Email &amp; Phone Support
@@ -1672,6 +1673,10 @@ en:
   settings: settings        
   updated_on: "%{user_name} updated on %{note_date}"
   jira: "Atlassian Jira"
+  mobile:
+    home:
+      remember: "Remember me"
+      login: "Login"
   integrations:
     capsule_crm:
       label: "Capsule CRM"
