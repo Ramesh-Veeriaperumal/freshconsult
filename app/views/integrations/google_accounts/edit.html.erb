@@ -1,4 +1,4 @@
-<% content_for :sidebar do -%><%- end %>
+<% content_for :sidebar do %><div class="sidepanel helpcard"><%=t('integrations.google_contacts.edit_helptext')%></div><% end %>
 <h3 class="title"><%=t("integrations.google_contacts.edit_form.#{@omniauth_origin}_title")%></h3>
 <% 
   action = @omniauth_origin == "import" ? "import_contacts" : "update"
