@@ -202,7 +202,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     
     def check_for_auto_responders(ticket)
       headers = params[:headers]
-      if(!headers.blank? && headers =~ /Precedence:(\s)*[bulk|junk]/i && headers =~ /Auto-Submitted:(\s)*auto-replied/i)
+      if(!headers.blank? && ((headers =~ /Precedence:(\s)*[bulk|junk]/i) || (headers =~ /Auto-Submitted:(\s)*auto-replied/i) || (headers =~ /X-Autoresponder:/i)))
         ticket.spam = true
       end
       ticket  
