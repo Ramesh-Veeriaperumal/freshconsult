@@ -1789,7 +1789,7 @@ en:
       desc: "Convert tickets into issues that can be tracked in Jira."
       form:
         domain: "Domain"
-        domain_info: "Enter the complete jira account URL with https/http. Ex. https://example.atlassian.net"
+        domain_info: "Enter the complete Jira account URL with https/http. Ex. https://example.atlassian.net. <br /><span class='italics'> Note: The on-premise variants of Jira should be exposed to the internet. </span>" 
         jira_note: "Description text"
         jira_note_info: "This text will be added to the issue description in Jira."
         widget_title: "Widget Title"
