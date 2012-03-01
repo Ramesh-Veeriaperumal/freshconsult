@@ -16,7 +16,7 @@ class UserNotifier < ActionMailer::Base
     from          reply_email || user.account.default_friendly_email
     recipients    user.email
     sent_on       Time.now
-    headers       "Reply-to" => "#{user.account.default_friendly_email}"
+    headers       "Reply-to" => "#{user.account.default_friendly_email}", "Precedence" => "bulk", "Auto-Submitted" => "auto-replied"
     content_type  "text/plain"
   end
   

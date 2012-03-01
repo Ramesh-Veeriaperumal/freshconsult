@@ -72,7 +72,7 @@ class Subscription < ActiveRecord::Base
     
     self.renewal_period = billing_cycle unless billing_cycle.nil?
     self.subscription_plan = plan
-    self.free_agents = plan.free_agents
+    self.free_agents = plan.free_agents if free_agents.nil?
     self.day_pass_amount = plan.day_pass_amount
   end
   
@@ -328,6 +328,7 @@ class Subscription < ActiveRecord::Base
     def total_amount
       apply_the_cycle
       self.amount = agent_limit ? (self.amount * paid_agents) : subscription_plan.amount
+      self.amount = (amount > 0)?  amount : 0.00
     end
     
     def apply_the_cycle
