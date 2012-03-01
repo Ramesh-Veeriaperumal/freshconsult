@@ -314,10 +314,11 @@ class Integrations::GoogleAccount < ActiveRecord::Base
       # Rails.logger.debug goog_contacts_url + "   " + updated_contact_xml
       google_users = []
       begin
-        doc = REXML::Document.new(updated_contact_xml)   
+        doc = REXML::Document.new(updated_contact_xml)
+        new_company_list = {}
         doc.elements.each('feed/entry') { |contact_entry_element|
           begin
-            converted_user = convert_to_user(contact_entry_element)
+            converted_user = convert_to_user(contact_entry_element, new_company_list)
             google_users.push(converted_user)
           rescue => e
             google_users.push(nil) # In case any exception occurs just store nil value for giving the correct number contacts fetched.
@@ -409,7 +410,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
     end
 
     # This method will take care of creating(add) or fetch/updating(edit) or setting delete flag(delete) an user from google contact entry xml. 
-    def convert_to_user(contact_entry_ele)
+    def convert_to_user(contact_entry_ele, new_company_list={})
       goog_contact_detail = parse_user_xml(contact_entry_ele)
       user = nil
       # Get the user based on his primary email address
@@ -433,10 +434,12 @@ class Integrations::GoogleAccount < ActiveRecord::Base
       if orgName.blank?
         user.customer = nil
       else
-        customer = account.customers.find_by_name(orgName)
+        customer = new_company_list[orgName]
+        customer = account.customers.find_by_name(orgName) if customer.blank?
         if customer.blank?
           customer = account.customers.new
           customer.name = orgName
+          new_company_list[orgName] = customer
         end
         user.customer = customer
       end
