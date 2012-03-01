@@ -240,4 +240,18 @@ module Helpdesk::TicketsHelper
     end
   end
   
+  def get_ticket_show_params(params, ticket_display_id)
+    filters = {:filters => params.clone}
+    
+    if filters[:filters].blank?
+      show_params = {:id=>ticket_display_id}
+    else  
+      filters[:filters].delete("action")
+      filters[:filters].delete("controller")
+      filters[:filters].delete("page")
+      show_params = filters.merge!({:id=>ticket_display_id})
+    end
+    show_params
+  end
+  
 end

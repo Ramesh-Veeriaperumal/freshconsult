@@ -158,6 +158,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
       
   named_scope :permissible , lambda { |user| { :conditions => agent_permission(user)}  unless user.customer? }
  
+  named_scope :latest_tickets, lambda {|updated_at| {:conditions => ["helpdesk_tickets.updated_at > ?", updated_at]}}
+  
   def self.agent_permission user
     
     permissions = {:all_tickets => [] , 
@@ -166,14 +168,37 @@ class Helpdesk::Ticket < ActiveRecord::Base
                   
      return permissions[Agent::PERMISSION_TOKENS_BY_KEY[user.agent.ticket_permission]]
   end
+  
+  def agent_permission_condition user
+     permissions = {:all_tickets => "" , 
+                   :group_tickets => " AND (group_id in (#{user.agent_groups.collect{|ag| ag.group_id}.insert(0,0)}) OR responder_id= #{user.id}) " , 
+                   :assigned_tickets => " AND (responder_id= #{user.id}) " }
+                  
+     return permissions[Agent::PERMISSION_TOKENS_BY_KEY[user.agent.ticket_permission]]
+  end
   #Sphinx configuration starts
   define_index do
-    indexes :display_id, :sortable => true
-    indexes :subject, :sortable => true
-    indexes description
-    indexes notes.body, :as => :note
+   
+   define_source do 
+     indexes :display_id, :sortable => true
+     indexes :subject, :sortable => true
+     indexes description
+     indexes notes.body, :as => :note
     
-    has account_id, deleted
+     has account_id, deleted
+     where "id % 2 = 0" 
+    end
+    
+    define_source do 
+      indexes :display_id, :sortable => true
+      indexes :subject, :sortable => true
+      indexes description
+      indexes notes.body, :as => :note
+    
+      has account_id, deleted
+    
+      where "id % 2 = 1" 
+    end
     
     set_property :delta => :delayed
     set_property :field_weights => {
@@ -404,8 +429,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
     
   end
   
-  def autoreply     
-    notify_by_email EmailNotification::NEW_TICKET unless spam?#Do SPAM check.. by Shan
+  def autoreply
+    return if spam? || deleted?
+    notify_by_email EmailNotification::NEW_TICKET
     notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_GROUP) if group_id
     notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_AGENT) if responder_id
     
@@ -529,13 +555,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #virtual agent things end here..
   
   def pass_thro_biz_rules
-     send_later(:delayed_rule_check )
+     send_later(:delayed_rule_check)
   end
   
   def delayed_rule_check
     evaluate_on = check_rules     
     update_custom_field evaluate_on unless evaluate_on.nil?
-    save! #Should move this to unless block.. by Shan
+    save #Should move this to unless block.. by Shan
   end
  
   def check_rules

@@ -231,12 +231,25 @@ class Wf::Filter < ActiveRecord::Base
     @order_clause ||= begin
       order_parts = order.split('.')
       if order_parts.size > 1
-        "#{order_parts.first.camelcase.constantize.table_name}.#{order_parts.last} #{order_type}"
+        "#{order_parts.first.camelcase.constantize.table_name}.#{order_parts.last} #{order_type}, #{order_parts.first.camelcase.constantize.table_name}.id "
       else
-        "#{model_class_name.constantize.table_name}.#{order_parts.first} #{order_type}"
+        "#{model_class_name.constantize.table_name}.#{order_parts.first} #{order_type}, #{model_class_name.constantize.table_name}.id "
       end
     end  
   end
+  
+  def reverse_order_clause
+    @reverse_order_clause ||= begin
+      reverse_order_type = (order_type == "asc")? "desc":"asc"
+      order_parts = order.split('.')
+      if order_parts.size > 1
+        "#{order_parts.first.camelcase.constantize.table_name}.#{order_parts.last} #{reverse_order_type}, #{order_parts.first.camelcase.constantize.table_name}.id desc "
+      else
+        "#{model_class_name.constantize.table_name}.#{order_parts.first} #{reverse_order_type}, #{model_class_name.constantize.table_name}.id desc "
+      end
+    end  
+  end
+
 
   def column_sorted?(key)
     key.to_s == order
