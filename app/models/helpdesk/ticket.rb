@@ -622,6 +622,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def to_liquid
     { 
       "id"                                => display_id,
+      "raw_id"                            => id,
       "encoded_id"                        => encode_display_id,
       "subject"                           => subject,
       "description"                       => description_with_attachments,
