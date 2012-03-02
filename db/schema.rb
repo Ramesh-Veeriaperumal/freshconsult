@@ -403,8 +403,8 @@ ActiveRecord::Schema.define(:version => 20120215070800) do
     t.string   "token"
     t.string   "secret"
     t.integer  "account_id",              :limit => 8
-    t.string   "sync_group_id",                        :default => "0",                   :null => false
-    t.string   "sync_group_name",                      :default => "All",                 :null => false
+    t.string   "sync_group_id"
+    t.string   "sync_group_name",                      :default => "Freshdesk Contacts",  :null => false
     t.integer  "sync_tag_id",             :limit => 8
     t.integer  "sync_type",                            :default => 0,                     :null => false
     t.datetime "last_sync_time",                       :default => '1970-01-01 00:00:00', :null => false
