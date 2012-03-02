@@ -1,6 +1,7 @@
 require "digest"
 class UserSessionsController < ApplicationController
-  
+  include Mobile::MobileHelperMethods
+
 require 'gapps_openid'
 require 'rack/openid'
 require 'uri'
@@ -10,6 +11,7 @@ require 'oauth/request_proxy/action_controller_request'
 require 'oauth/signature/rsa/sha1'
 require 'openssl'
   
+  before_filter :set_mobile, :only => [:create, :destroy, :new]
   skip_before_filter :require_user, :except => :destroy
   skip_before_filter :check_account_state
   before_filter :check_sso_params, :only => :sso_login
