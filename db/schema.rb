@@ -50,15 +50,6 @@ ActiveRecord::Schema.define(:version => 20120215070800) do
     t.datetime "updated_at"
   end
 
-  add_index "admin_data_imports", ["account_id", "created_at"], :name => "index_data_imports_on_account_id_and_created_at"
-
-  create_table "admin_reports", :force => true do |t|
-    t.string "name"
-    t.string "display_name"
-    t.string "description"
-    t.text   "query"
-  end
-
   create_table "admin_user_accesses", :force => true do |t|
     t.string   "accessible_type"
     t.integer  "accessible_id"
@@ -87,7 +78,7 @@ ActiveRecord::Schema.define(:version => 20120215070800) do
     t.text     "signature"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "ticket_permission",              :default => 1
+    t.integer  "ticket_permission"
     t.boolean  "occasional",                     :default => false
     t.string   "google_viewer_id"
   end
@@ -412,8 +403,8 @@ ActiveRecord::Schema.define(:version => 20120215070800) do
     t.string   "token"
     t.string   "secret"
     t.integer  "account_id",              :limit => 8
-    t.string   "sync_group_id"
-    t.string   "sync_group_name",                      :default => "Freshdesk Contacts",  :null => false
+    t.string   "sync_group_id",                        :default => "0",                   :null => false
+    t.string   "sync_group_name",                      :default => "All",                 :null => false
     t.integer  "sync_tag_id",             :limit => 8
     t.integer  "sync_type",                            :default => 0,                     :null => false
     t.datetime "last_sync_time",                       :default => '1970-01-01 00:00:00', :null => false
@@ -813,6 +804,7 @@ ActiveRecord::Schema.define(:version => 20120215070800) do
   end
 
   add_index "social_facebook_pages", ["account_id", "page_id"], :name => "index_account_page_id", :unique => true
+  add_index "social_facebook_pages", ["account_id", "page_id"], :name => "social_fb_pages_account_id_and_page_id", :unique => true
   add_index "social_facebook_pages", ["product_id"], :name => "index_product_id"
 
   create_table "social_fb_posts", :force => true do |t|
@@ -1028,10 +1020,6 @@ ActiveRecord::Schema.define(:version => 20120215070800) do
     t.datetime "updated_at"
   end
 
-  create_table "temp", :id => false, :force => true do |t|
-    t.binary "skey", :limit => 255
-  end
-
   create_table "ticket_topics", :force => true do |t|
     t.integer  "ticket_id",  :limit => 8
     t.integer  "topic_id",   :limit => 8
@@ -1061,10 +1049,6 @@ ActiveRecord::Schema.define(:version => 20120215070800) do
   add_index "topics", ["forum_id", "replied_at"], :name => "index_topics_on_forum_id_and_replied_at"
   add_index "topics", ["forum_id", "sticky", "replied_at"], :name => "index_topics_on_sticky_and_replied_at"
   add_index "topics", ["forum_id"], :name => "index_topics_on_forum_id"
-
-  create_table "ttemp", :force => true do |t|
-    t.string "name"
-  end
 
   create_table "users", :force => true do |t|
     t.string   "name",                             :default => "",    :null => false
