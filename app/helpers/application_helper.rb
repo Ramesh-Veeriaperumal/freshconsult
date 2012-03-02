@@ -20,6 +20,14 @@ module ApplicationHelper
   def page_title
     portal_name = h( (current_portal.name.blank?) ? current_portal.product.name : current_portal.name ) + " : "
     portal_name += @page_title || t('helpdesk_title')
+  end 
+  
+  def page_description
+    @page_description
+  end                
+  
+  def page_keywords
+    @page_keywords    
   end
 
   def tab(title, url, cls = false)

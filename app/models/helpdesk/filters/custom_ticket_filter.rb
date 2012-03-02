@@ -128,7 +128,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     end
     
     #### Very bad condition need to change -- error prone
-    if !params[:filter_name].eql?("spam") or !params[:filter_name].eql?("deleted")
+    if !params[:filter_name].eql?("spam") and !params[:filter_name].eql?("deleted")
       action_hash.push({ "condition" => "spam", "operator" => "is", "value" => false})
       action_hash.push({ "condition" => "deleted", "operator" => "is", "value" => false})
     end

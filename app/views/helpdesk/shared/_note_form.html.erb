@@ -9,7 +9,7 @@
         <%= content_tag( :h4, t("ticket.note_form.form_title"), :class => "title" ) %>
         <label class="caption"><%= t("message")%>:</label>
         <div class="fields">
-          <%= f.text_area :body_html, :class => "required mceEditor", :id => "#{id}-#{cntid}-body" %>
+          <%= f.text_area :body_html, :class => "required mceEditor", :id => "#{id}-#{cntid}-body", :value => "<span id='caret_pos_holder' style='display:none;'>&nbsp;</span>" %>
           <%= f.label(:private, f.check_box(:private, :checked => true) + t("ticket.note_form.private_note"), :class => "checkbox") %>
           <%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"]%>
 		      <%= hidden_field_tag(:ticket_status , params[:ticket_status], :id=>:note_ticket_status  )%>
@@ -51,11 +51,12 @@
 			  	<% end %>
 				</div>
 			</li>
-      <li class="button-container">
-      	<%= submit_tag(local_assigns[:submit] || ActiveSupport::Inflector.titleize(id), :class => "uiButton") %>
-      	<%= submit_tag(t('ticket.note_form.add_and_resolve'), :onclick => "jQuery('#note_ticket_status').val('resolved');" , :class => "uiButton") %>    
-      </li>
     </ul> 
+    <div class="button-container">
+    	<%= submit_tag(local_assigns[:submit] || ActiveSupport::Inflector.titleize(id), :class => "uiButton special") %>
+    	<%= submit_tag(t('ticket.note_form.add_and_resolve'), :onclick => "jQuery('#note_ticket_status').val('resolved');" , :class => "uiButton") %> 
+			<%= button_to_function(t('cancel'), "jQuery('#cnt-note').slideUp()", :class => "uiButton" ) %>   
+    </div>
   <% end %>
 </div> 
 <% content_for :pagefixed do %>
