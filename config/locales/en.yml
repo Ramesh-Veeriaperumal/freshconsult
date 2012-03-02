@@ -1712,7 +1712,7 @@ en:
         harvest_note_info: "This text that will be appended at the end of the note, with the time spent log."
         widget_title: "Widget Title"
     google_contacts:
-      label: "Google Contacts"
+      label: "Google contacts sync"
       desc: "Periodically synchronize contacts between Google and Freshdesk."
       import_success: "Sucessfully imported Google contacts." 
       fetch_problem: "Problem in fetching Google contacts." 
@@ -1757,9 +1757,9 @@ en:
       no_status: "N/A"
       info1: "Using the same sync tag across multiple Google accounts allows you to share Freshdesk contacts with all the accounts.  If you do not want to sync any contacts into Google, you may leave it empty."
       sync_group_info: "A new contact group <strong>%{group_name}</strong> will be created in your Gmail account for syncing contacts."
-      edit_helptext: "<h4>Google contacts sync help</h4><p><br/> <b>Select Groups to Import (optional)</b> <br/> Along with seting up the synchronization with google, You can optionally import contacts from existing groups listed here.  Please select the groups from which you want import the contacts into Freshdesk.<br/><br/> 
-            <b>Sync Setting</b><br/> Contacts between Google and Freshdesk will be synced using this setting. Freshdesk contacts tagged with the specified <b>'Sync tag'</b> will be syncd into Google.  Meantime the contacts imported from Google will be tagged with the given <b>'Sync tag'</b>.<br/><br/>
-            For syncing contacts into Google an special group mentioned here will be created.  After first time import any contacts added into this group will be synced back to Freshdesk and vice versa. <br/><br/>  You can disable the overwriting existing contact details as well."
+      edit_helptext: "<h4>Google contacts sync help</h4><p><br/> <b>Select Groups to Import (optional)</b> <br/> Along with setting up Google synchronization, you can optionally import contacts from existing groups listed here. Please select the groups from which you want import contacts into Freshdesk.<br/><br/> 
+            <b>Sync Setting</b><br/> This setting controls syncing of contacts between Google and Freshdesk. Freshdesk contacts tagged with the specified <b>'Sync tag'</b> will be synced with Google. Also, contacts imported from Google will be tagged with that <b>'Sync tag'</b>.<br/><br/>
+            A special group mentioned here will be created to sync contacts with Google. After the first time import, all contacts added to this group will be synced back to Freshdesk and vice versa."
       sync_status:
         added: "added"
         modified: "modified"
@@ -1777,7 +1777,7 @@ en:
         sync_type_info: "How do you want to synchronize the contacts between Google and Freshdesk."
         account_settings: ""
         account_settings_info: ""
-        account_not_configured: "<br/>Google accont settings is not yet configured.  Click %{action} and connect to Google to configure it.<br/><br/>"
+        account_not_configured: "<br/>Google account settings are not yet configured. Click on '%{action}' to configure new account with Google.<br/><br/>"
       update_action:
         success: "Successfully added Google account."
         also: "  Also "
@@ -1806,7 +1806,7 @@ en:
   To create an issue or link to an existing issue from Freshdesk, navigate to the Tickets page and click on <img src='/images/ticket-icon/jira.png'/><br/><br/>
   To view details of your linked Freshdesk tickets in JIRA, and conversely to view JIRA issue details in Freshdesk, the JIRA administrator is recommended to create a Free Text custom field with the name &quot;Freshdesk Tickets&quot; as described below. 
   <br/><br/>Log on to your JIRA account, click on <b>Administration</b>, navigate to <b>Issues</b> -> <b>Fields</b> and click on <b>Add Custom Field</b>. In <b>Create Custom Field</b> screen, select <b> Free Text Field </b> and click on <b>Next</b>. Input <b>&quot;Freshdesk Tickets&quot;</b> in Field Name and click on Finish. In <b>Associate field to Screens</b> page, select all the check-boxes and click on 'Update'.<br/><br/>"
-  google_contacts_helptext: "<h4>Google contacts sync setup help</h4><p><br/> Here you can setup, to keep your complete contact details between Google and Freshdesk in sync. <br/><br/> Please click <b>Sync new account</b> to start syncing contacts.  Once setup you can view sync setting detail and the Last synced time.  You can 'Delete' an account, if you do not want sync with that account anymore."
+  google_contacts_helptext: "<h4>Google contacts sync setup help</h4><p><br/> Once enabled, click on <b>‘Sync new account’</b> to sync contacts from new accounts. Once you have set it up, you can view sync setting details along with the last synced time.<br/><br/> You can delete an account, if you do not want to sync with that account anymore."
   reorder: "Reorder"
   reports:
       tab_heading: "Reports"
