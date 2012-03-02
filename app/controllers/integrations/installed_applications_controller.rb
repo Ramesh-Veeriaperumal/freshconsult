@@ -60,9 +60,7 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
       redirect_to :controller=> 'applications', :action => 'index'
     else
       @installing_application = @installed_application.application
-      puts "Installed Application : #{@installed_application.inspect}"
-      @installed_application.configs[:inputs]['password'] = '' unless @installed_application.configs[:inputs]['password'].nil?
-      puts "Installed Application Now : #{@installed_application.inspect}"
+      @installed_application.configs[:inputs][:password.to_s] = '' unless @installed_application.configs[:inputs][:password.to_s].blank?
       return @installing_application
     end
   end
@@ -88,7 +86,7 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
         params[:configs][:password] = get_encrypted_value(params[:configs][:password]) unless params[:configs][:password].blank?
         params[:configs][:domain] = params[:configs][:domain] + params[:configs][:ghostvalue] unless params[:configs][:ghostvalue].blank? or params[:configs][:domain].blank?
          
-        {:inputs => params[:configs].to_hash}  
+        {:inputs => params[:configs].to_hash || {}}  
       end
     end
 
