@@ -39,7 +39,7 @@ class User < ActiveRecord::Base
     :class_name => 'Helpdesk::Tag',
     :through => :tag_uses
 
-  has_one :google_contact, :dependent => :destroy # Using has_one because right now syncing from only one google account is supported.
+  has_many :google_contacts, :dependent => :destroy
 
   has_one :avatar,
     :as => :attachable,
@@ -221,7 +221,7 @@ class User < ActiveRecord::Base
   
    
   #accepts_nested_attributes_for :agent
-  accepts_nested_attributes_for :customer, :google_contact  # Added to save the customer while importing user from google contacts.
+  accepts_nested_attributes_for :customer, :google_contacts  # Added to save the customer while importing user from google contacts.
   
 
   #Savage_beast changes start here

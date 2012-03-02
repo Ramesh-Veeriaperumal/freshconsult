@@ -20,7 +20,7 @@
   
   map.resources :groups
   
-  map.resources :profiles , :member => { :change_password => :post}
+  map.resources :profiles , :member => { :change_password => :post}, :collection => {:reset_api_key => :post}
   
   map.resources :agents, :member => { :delete_avatar => :delete , :restore => :put }
 
@@ -66,6 +66,7 @@
     integration.resources :integrated_resource, :member =>{:create => :put, :delete => :delete}
     integration.resources :google_accounts, :member =>{:edit => :get, :delete => :delete, :update => :put, :import_contacts => :put}
     integration.resources :gmail_gadgets, :collection =>{:spec => :get}
+    integration.resources :jira_issue, :collection => {:get_issue_types => :get, :unlink => :put}
   end
 
   map.namespace :admin do |admin|
