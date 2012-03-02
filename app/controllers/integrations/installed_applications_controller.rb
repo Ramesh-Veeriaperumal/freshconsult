@@ -82,10 +82,11 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
   
   private
     def convert_to_configs_hash(params)
-      unless params[:configs].blank?# TODO: need to encrypt the password and should not print the password in log file.
+      if params[:configs].blank?# TODO: need to encrypt the password and should not print the password in log file.
+        {:inputs => {}}  
+      else
         params[:configs][:password] = get_encrypted_value(params[:configs][:password]) unless params[:configs][:password].blank?
         params[:configs][:domain] = params[:configs][:domain] + params[:configs][:ghostvalue] unless params[:configs][:ghostvalue].blank? or params[:configs][:domain].blank?
-         
         {:inputs => params[:configs].to_hash || {}}  
       end
     end
