@@ -111,6 +111,7 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
     def check_jira_authenticity
       if @installing_application.name == "jira"
         begin
+          params[:configs][:password] = decrypt_password if params[:configs][:password].blank? and !@installed_application.configs.blank?
           jira_version = jira_authenticity(params)   
         rescue Exception => msg
           if msg.to_s.include?("Exception:")
