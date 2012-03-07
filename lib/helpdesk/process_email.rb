@@ -215,8 +215,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         note = ticket.notes.build(
           :private => false,
           :incoming => true,
-          :body => show_quoted_text(params[:text],parse_to_email[:email]),
-          :body_html => show_quoted_text(Helpdesk::HTMLSanitizer.clean(params[:html] ), parse_to_email[:email]),
+          :body => show_quoted_text(params[:text],ticket.reply_email),
+          :body_html => show_quoted_text(Helpdesk::HTMLSanitizer.clean(params[:html] ), ticket.reply_email),
           :source => 0, #?!?! use SOURCE_KEYS_BY_TOKEN - by Shan
           :user => user, #by Shan temp
           :account_id => ticket.account_id
@@ -224,8 +224,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] unless user.customer?
         process_email_commands(ticket, user, ticket.email_config) if user.agent?
         email_cmds_regex = get_email_cmd_regex(ticket.account)
-        note.body = show_quoted_text(params[:text].gsub(email_cmds_regex, "") ,parse_to_email[:email]) if(!params[:text].blank? && email_cmds_regex)
-        note.body_html = show_quoted_text(Helpdesk::HTMLSanitizer.clean(params[:html].gsub(email_cmds_regex, "")), parse_to_email[:email]) if(!params[:html].blank? && email_cmds_regex)
+        note.body = show_quoted_text(params[:text].gsub(email_cmds_regex, "") ,ticket.reply_email) if(!params[:text].blank? && email_cmds_regex)
+        note.body_html = show_quoted_text(Helpdesk::HTMLSanitizer.clean(params[:html].gsub(email_cmds_regex, "")), ticket.reply_email) if(!params[:html].blank? && email_cmds_regex)
         ticket.save
       else
         return create_ticket(ticket.account, from_email, parse_to_email)
