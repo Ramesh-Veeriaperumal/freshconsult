@@ -1,22 +1,8 @@
-﻿---
+--- 
 sv-SE: 
-  enabled: Aktiverad
-  disabled: Avaktivera
-  tip_on: Klicka för att aktivera
-  tip_off: Klicka för att avaktivera
-  credit_card: Kort i arkiv
-  referral: Referenskredit
-  success: Lyckades
-  failure: Fel...
-  amount: Belopp
-  paid_with: Betalad med
-  date_title: Datum
-  status: Status
-  proceed_now: \n\nFortsätta nu?
   meta:
    language_name: 'Swedish'
-  signup_complete_activate_info: Välkommen! Vi har skickat ett e-postmeddelande med en länk där du kan ställa in ditt lösenord och aktivera ditt konto.
-  attachment_help_info: Storleken på bilagor får vara högst 15 MB
+  attachment_help_info: Storleken på bilagor får vara högst 20 MB
   feedbackwidget_offset_info: Förskjutningen kommer att vara avståndet från widgetknappen (pixlar) från vänster eller övre delen av skärmen, baserat på justeringen du väljer.
   no_twitter_handle: Konfigurera minst ett Twitter-konto
   reset_my_password: Återställ mitt lösenord 
@@ -40,7 +26,6 @@ sv-SE:
   resolved_on_time: Löst i tid
   resolved_late: Löst sent
   remove: Ta bort
-  no_tags: Inga taggar hittades.
   user: 
     company: Företag
     photo: Bild
@@ -52,7 +37,6 @@ sv-SE:
     full_name: Fullständigt namn
     secondary: sekundär
     phone_no: Telefonnummer
-    address: Adress
     work: Arbete
     email: E-post
   ticket_fields:
@@ -106,8 +90,7 @@ sv-SE:
     edit: Redigera mapp
     info1: Är du säker på att du vill radera denna mapp?
     add_folder: Lägg till mapp
-  amount_per_month: $%{amount} %{period}
-  amount_for_annual: $%{amount} årsvis
+  amount_per_month: $%{amount} per månad
   agent_deleted_message: Detta är en raderad agent
   cancel: Avbryt
   last: senaste
@@ -116,7 +99,7 @@ sv-SE:
   basic_details: Svarshantering för e-post, avsändarregler, standard SLA-policy, kunskapsdatabas, självserviceportal, domänmappläggning, forumsupport.
   choose_plan: Välj plan
   create: Skapa
-  feedbackwidget_custom_image_info: om du använder en anpassad bild kommer färgen och texten att ignoreras.
+  feedbackwidget_custom_image_info: om du använder en anpassad vil kommer färgen och texten att ignoreras.
   account_admin_updated: Kontoadministratören har uppdaterats!
   forums_order: 
     overview: Översikt
@@ -124,22 +107,6 @@ sv-SE:
     popular: Populär
   payment_info: Betalningsinformation
   admin:
-    day_passes:
-      index:
-        title: Dagspass
-        current_balance: Du har %{balance} kvar!
-        buy_pass: Köp flera pass
-        buy_now: Köp nu
-        day_pass_pack: %{quantity} dagspasspaket (%{currency}%{amount})
-        day_pass_history: Inköpshistorik
-        add_confirm: Ditt betalkort debiteras 
-        daypass_quantity: %{quantity} dagspass
-        order: Ordernr
-        no_of_day_passes: nr på dagspass
-        auto_recharge: Automatisk omladdning
-        recharge_quantity: Omladdningsmängd:
-        day_passes: Dagspass
-        helptext: Dina dagspass laddas om automatiskt så snart antal tillgängliga dagspass går ner till 2.
     widget_config:
       index:
         thankyou_label: Skicka meddelande
@@ -149,12 +116,12 @@ sv-SE:
       index:
         help_title: Övervakare
         title: Övervakare - Regler
-        help_info_1: Använd Övervakaren för att tidvis kontrollera nyliga ärenden och utför vissa tidsbaserade aktiviteter, såsom att skicka påminnelser till kunder, eskalera ärenden eller tilldela ärenden på nytt etc.
+        help_info_1: Använd Övervakaren för att tidvis kontrollera nyliga ärenden och utför vissa tidsbaserade aktiviteter, såsom att skicka påminnelser till kunder, eskalera ärenen eller tilldela ärenden på nytt etc.
         help_info_2: Exempel - Om ett ärende väntar på kundsvar längre än 24 timmar, skicka ett påminnelsemeddelande till kunden eller stäng ett ärende automatiskt som har statusen "Löst" under längre tid än 48 timmar.
         help_info_3: Övervakaren körs varje timme och bearbetar ärenden som har uppdaterats under de senaste 30 dagarna.
-        help_info_4: Övervakarregler bearbetas i sekvenser, vilket innebär att ordningen på reglerna är viktig. En regel kan utlösa åtgärder som i sin tur utlöser följdregler.
+        help_info_4: Övervakarregler bearbetas i sekvenser, vilket innebär att ordningen på reglerna är viktig. En regel kan orsaka vissa åtgärder som utlöser efterföljande regler.
       new:
-        title: Övervakare – Ny regel
+        title: Övervakare - Ny regel
       edit:
         title: Övervakare - Redigera regel
     shared:
@@ -171,29 +138,20 @@ sv-SE:
       index: 
         shared_secret: Delad hemlighet
         remote_login_url: URL för fjärrinloggning
-        shared_secret_info: Kopiera denna token och förvara den säkert. Du måste ha denna för att aktivera fjärrautentisering. Det här är en hemlighet som stannar mellan dig och Freshdesk.
+        shared_secret_info: Kopiera denna token och förvara det säkert. Du behöver den för att kunna aktivera fjärrautentisering. Detta är en hemlighet som du delar med Freshdesk.
         remote_logout_url_info: Detta är URL-länken till vilken Freshdesk omdirigerar användare när de klickar på utloggningslänken i Freshdesk.
         remote_login_url_info: Detta är URL-länken till vilken Freshdesk omdirigerar användare för autentisering när de försöker få åtkomst till Freshdesk.
-        enable_sso_info: Med engångsinloggning kan du använda ditt eget program eller en centraliserad server (såsom MS Active Directory) för att autentisera agenter och kunder för att de ska kunna få åtkomst till Freshdesk utan att ange ett separat användarnamn och lösenord.
+        enable_sso_info: Med engångsinloggning kan du använda ditt eget program eller en centraliserad server (såsom MS Sctive Directory) för att autentisera agenter och kunder för att de ska kunna få åtkomst till Freshdesk utan att ange ett separat användarnamn och lösenord.
         enable_sso: Aktivera engångsinloggning
         remote_logout_url: URL till fjärrutloggning
         remote_authentication: Fjärrautentisering
-        enable_SSL: Aktivera SSL
-        enable_SSL_anon: SSL gör att du kan kryptera data som överförs till och från freshdeskportaler
-        customer_portal_ssl_warning: Eftersom anpassad helpdesk-URL har konfigurerats för ditt konto kommer du att omdirigeras till 
-        multiple_product_ssl_warning: SSL kommer inte att vara tillämpligt om flera produkter konfigureras.
-        enabled: Aktiverad
-        disabled: Avaktivera
-        click_to_enable: Klicka för att aktivera SSL
-        click_to_disable: Klicka för att avaktivera SSL
-        security_title: Säkerhet
     products: 
       new: 
         title: Ny produkt
       portal: 
         select_forum_category: Välj en forumkategori...
         portal_rebranding: Omprofilering av portal
-        cname_configure_info: Innan du använder det här fältet ska du se till att du har skapat en CNAME DNS-post i din DNS Zone-fil för att dirigera <strong>help.<b id="domain_info_name">mycompanyname</b>.com</strong> till %{full_domain}. Din webbansvariga eller serveradministratör kan hjälpa dig att ställa in detta rätt.
+        cname_configure_info: Innan du använder det här fältet ska du se till att du har skapat en CNAME DNS-post i din DNS Zone-fil för att dirigera <strong>help.<b id="domain_info_name">mycompanyname</b>.com</strong> till %{full_domain}. Din webbmaster eller serveradministratör bör kunna hjälpa dig att ställa in detta på korrekt sätt
         select_solution_category: Välj en forumkategori...
         top_level_solution_info: Du kan associera en lösningskategori till den här produkten. Inga andra lösningar kommer inte att visas för kunden när lösningsfliken i den här produktportalen visas.
         portal_settings: Portalinställningar
@@ -203,8 +161,6 @@ sv-SE:
         portal_url: Portal-URL
         top_level_solution: Lösningskategori på högsta nivån
         portal_name: Portalnamn
-        portal_language: Portalspråk
-        portal_language_info: Detta blir det förvalda språket när kunder besöker portalen
       edit: 
         title: Redigera produkt
       form: 
@@ -258,7 +214,6 @@ sv-SE:
     home:
       index: 
         group: Grupper
-        day_pass: Inställningar för dagspass
         business-hours: Öppettider
         title: Administratör
         email-notifications: E-postmeddelanden
@@ -281,12 +236,10 @@ sv-SE:
         email-settings: E-postinställningar
         everything_helpdesk: Helpdesk för allt
         canned-response: Avvisat svar
-        multi-product: Multiprodukter
+        multi-product: Flera produkter
         twitter-setting: Twitter-inställningar
         survey: Inställningar för undersökning
         facebook-setting: Facebook-inställningar
-        security: Säkerhet
-        email_commands_setting: Inställningar för e-postkommando
 
     canned_responses:
       index:
@@ -332,31 +285,16 @@ sv-SE:
   feedbackwidget_formcustomize: Anpassning av formulär
   does_not_contain: Innehåller inte
   flash:
-    gmail_gadgets:
-      kvp_missing: Ogiltig autentisering.  Öppna meddelandet och prova igen.
-      user_missing: Din e-post finns inte i Freshdesk.  Lägg till en agent med din e-postadress och prova igen.
-      agent_missing: Du är inte en agent i Freshdesk.  Omvandla användaren till agent och prova igen.
-      agent_not_active: Din e-postadress kan vara raderad eller avaktiverad i Freshdesk.  Aktivera den och prova igen.
-      viewer_id_not_sent_by_gmail: Felaktig Gmail-begäran.  Prova på nytt när du loggat in på nytt.
-      gmail_request_unverified: Felaktig Gmail-signatur.  Prova på nytt när du loggat in på nytt.
-      unknown_error: Okänt serverfel. Kontakta supporten.
-    daypass:
-      success: %{quantity} dagspass har lagts till på ditt konto.
-      failed: Fel när dagspass lades till
     facebook:
       updated: Facebook-inställningen har uppdaterats 
     application:
-      already: Tillägg är redan installerat.
+      already: Programmet har redan installerats.
       uninstall:
-        success: Tillägget har avaktiverats!
-        error: Fel vid avaktivering av tillägg.
+        success: Tillägget har tagits bort!
       install:
-        success: Tillägget har aktiverats!
-        error: Fel vid aktivering av tillägg.
+        success: Tillägget lades till!
       configure:
         success: Tillägget uppdaterades!
-        error: Fel vid konfigurering av tillägg.
-      not_installed: Tillägget har ännu inte installerats.
     filter:
       delete_success: Vyn raderades!
       save_success: Vyn sparades!
@@ -370,7 +308,6 @@ sv-SE:
     g_app: 
       user_deleted: Användaren har raderats!
       authentication_failed: Autentiseringen misslyckades
-      authentication_success: Autentisering har genomförts
       no_subdomain: Det finns inte någon sådan här underdomän. Prova igen.
     profile: 
       change_password: 
@@ -398,7 +335,7 @@ sv-SE:
     contacts_import: 
       failure: Prova igen
       no_file: Ladda upp en fil
-      success: %{created_count} kontakter har nyligen importerats och %{updated_count} befintlig kontakter har uppdaterats!
+      success: "%{created_count} kontakter har nyligen importerats och %{updated_count} befintlig kontakter har uppdaterats!"
     business_hours: 
       update: 
         failure: Det gick inte att uppdatera öppettiderna
@@ -415,8 +352,6 @@ sv-SE:
           success: Meddelandet har inte lagts till ditt ärende.
       empty_spam: 
         success: Alla ärenden i skräppostmappen raderades.
-      timesheet:
-        timer_stopped: tidräknaren för ärende har stoppats
       monitor: 
         stop: Du övervakar inte längre detta ärende.
         start: Du övervakar nu detta ärende.
@@ -431,33 +366,32 @@ sv-SE:
         success: Ett verifieringsmeddelande har skickats till %{reply_email}!
       activation: 
         invalid_code: Aktiveringskoden är inte giltig!
-        success: %{reply_email} har aktiverats!
-        already_activated: %{reply_email} har redan aktiverats!
+        success: "%{reply_email} har aktiverats!"
+        already_activated: "%{reply_email} har redan aktiverats!"
       make_primary: 
         success: <b>%{reply_email}</b> är nu din primära e-postadress för support!
     data_import: 
       zendesk: 
-        no_contact: Kan inte få kontakt med zendesk. Bekräfta dina Zendesk-uppgifter och prova igen!
+        no_contact: Det gick inte att kontakta Zendesk. Bekräfta dina Zendesk-uppgifter och prova igen!
         success: Din dataimport har påbörjats och du kommer att få ett e-postmeddelande när processen är klar. Importprocessen kan ta flera minuter, beroende på volymen på dina data.
         failure: Det gick inte att importera från Zendesk...försök igen
-        running: Just nu håller en zendeskimport på, prova igen senare!
     contacts: 
       create: 
-        success: Kontakten har skapats.
+        success: Kontakten skapades.
     to_dos: 
       complete: 
         success: Att göra-uppgifterna har markerats som slutförda.
     password_resets: 
       update: 
         success: Lösenordet uppdaterades
-        invalid_token: Tyvärr kunde vi inte hitta ditt konto. Om du har problem kan du prova att kopiera och klistra in URL-länken från din e-post till din webbläsare, eller starta om processen för lösenordsåterställning.
+        invalid_token: Vi beklagar, men vi kunde inte hitta ditt konto. Om du har problem kan du prova att kopiera och klistra in URL-länken från din e-post till din webbläsare, eller starta om processen för lösenordsåterställning.
       email: 
         user_not_found: Någon användare med denna e-postadress hittades inte.
         success: Instruktioner om hur du återställer ditt lösenord har e-postats till dig. Kontrollera din e-post.
     login: 
       verify_credentials: Det gick inte att logga in dig. Bekräfta dina uppgifter.
       sso: 
-        expected_params: Förväntade parametrar är namn, e-post och hash-tecken som inte finns 
+        expected_params: Förväntade parametrar är namn, e-post och hash som inte finns 
       success: Inloggningen lyckades!
     email_notifications: 
       update: 
@@ -466,18 +400,18 @@ sv-SE:
       access_denied: Du har inte behörighet att komma åt denna sida!
       need_login: Du måste vara inloggad för att få åtkomst till denna sida.
       insufficient_privilege: 
-        admin: Du har inte tillräcklig behörighet för att ändra detta. Logga in som administratör!!
+        admin: Du har inte tillräcklig behörighet för att ändra detta. Logga in som administratör!
       login_not_needed: Du måste vara utloggad för att få åtkomst till denna sida.
       destroy: 
-        failure: %{human_name} kunde inte raderas
-        success: %{human_name} har raderats.
+        failure: "%{human_name} kunde inte raderas"
+        success: "%{human_name} har raderats."
       restore: 
-        failure: %{human_name} kunde inte återställas
+        failure: "%{human_name} kunde inte återställas"
       create: 
-        failure: Det gick inte att spara %{human_name}
-        success: %{human_name} har skapats.
+        failure: "Det gick inte att spara %{human_name}"
+        success: "%{human_name} har skapats."
       update: 
-        success: %{human_name} har uppdaterats.
+        success: "%{human_name} har uppdaterats."
   agent_closes_tkt: Agent stänger ärendet
   submit: skicka
   export_data_successfull: Dina helpdeskdata kommer inom kort att skickas till din e-postadress!
@@ -487,8 +421,6 @@ sv-SE:
   back_plans_billing: Tillbaka till Planer och fakturering
   f_request: Begäran om funktion
   save_and_create: Spara och skapa en annan
-  save_and_new: Spara och nytt
-  save_and_close: Spara och stäng
   undelete: Återställ
   import_zendesk_title: Importera från Zendesk
   closed: Stängd
@@ -513,82 +445,69 @@ sv-SE:
   activities: 
     solutions: 
       new_solution: 
-        short: {{user_path}} skapade den nya lösningen
-        long: {{user_path}} skapade en ny lösning {{notable_path}}
+        short: "{{user_path}} skapade den nya lösningen"
+        long: "{{user_path}} skapade en ny lösning {{notable_path}}"
     tickets: 
       assigned_to_nobody: 
-        short: Tilldelad statusen "Ingen" av {{user_path}}
-        long: {{user_path}} tilldelade ärendet {{notable_path}} till "Ingen"
+        short: Tilldelad statusen 'Ingen' av {{user_path}}
+        long: "{{user_path}} tilldelade ärendet {{notable_path}} till 'Ingen'"
       reassigned: 
-        long: {{user_path}} omtilldelade ärendet {{notable_path}} till {{responder_path}}
+        long: "{{user_path}} omtilldelade ärendet {{notable_path}} till {{responder_path}}"
       priority_change: 
-        short: {{user_path}} ändrade prioriteten till {{priority_name}}
-        long: {{user_path}} ändrade ärendeprioriteten för {{notable_path}} till {{priority_name}}
+        short: "{{user_path}} ändrade prioriteten till {{priority_name}}"
+        long: "{{user_path}} ändrade ärendeprioriteten för {{notable_path}} till {{priority_name}}"
       new_ticket: 
-        short: {{user_path}} skickade in ärendet
-        long: {{user_path}} skickade ett nytt ärende {{notable_path}}
+        short: "{{user_path}} skickade in ärendet"
+        long: "{{user_path}} skickade ett nytt ärende {{notable_path}}"
       conversation: 
         out_email: 
-          short: {{user_path}} har skickat en {{reply_path}}
-          long: {{user_path}} har skickat en {{reply_path}} till ärendet {{notable_path}}
+          short: "{{user_path}} har skickat en {{reply_path}}"
+          long: "{{user_path}} har skickat en {{reply_path}} till ärendet {{notable_path}}"
         in_email: 
-          short: {{user_path}} skickade en {{email_response_path}}
-          long: {{user_path}} skickade en {{email_response_path}} till ärendet {{notable_path}}
+          short: "{{user_path}} skickade en {{email_response_path}}"
+          long: "{{user_path}} skickade en {{email_response_path}} till ärendet {{notable_path}}"
         note: 
-          short: {{user_path}} lade till en {{comment_path}}
-          long: {{user_path}} lade till en {{comment_path}} till ärendet {{notable_path}}
+          short: "{{user_path}} lade till en {{comment_path}}"
+          long: "{{user_path}} lade till en {{comment_path}} till ärendet {{notable_path}}"
         twitter: 
-          short: {{user_path}} lade till en {{twitter_path}}
-          long: {{user_path}} lade till en {{twitter_path}} till ärendet {{notable_path}}
-      timesheet:
-        new:
-          short: {{user_path}} lade till en {{timesheet_path}}
-          long: {{user_path}} lade till en {{timesheet_path}} till ärendet {{notable_path}}
-        timer_started:
-          short: {{user_path}} startade tidräknare {{timesheet_path}}
-          long: {{user_path}} startade tidräknare {{timesheet_path}} för ärende {{notable_path}}
-        timer_stopped:
-          short: {{user_path}} stoppade tidräknare {{timesheet_path}}
-          long: {{user_path}} stoppade tidräknare {{timesheet_path}} för ärende {{notable_path}}
+          short: "{{user_path}} lade till en {{twitter_path}}"
+          long: "{{user_path}} lade till en {{twitter_path}} till ärendet {{notable_path}}"
       assigned: 
         short: Tilldelad till {{responder_path}} av {{user_path}}
-        long: {{user_path}} tilldelade ärendet {{notable_path}} till {{responder_path}}
+        long: "{{user_path}} tilldelade ärendet {{notable_path}} till {{responder_path}}"
       execute_scenario: 
-        short: {{user_path}} utförde scenariot '{{scenario_name}}
-        long: {{user_path}} utförde scenariot '{{scenario_name}}' på {{notable_path}}
+        short: "{{user_path}} utförde scenariot '{{scenario_name}}"
+        long: "{{user_path}} utförde scenariot '{{scenario_name}}' på {{notable_path}}"
       ticket_merge: 
-        short: {{user_path}} har slagit samman ärendet {{notable_path}} med {{merge_ticket_path}} 
-        long: {{user_path}} har slagit samman ärendet {{notable_path}} med {{merge_ticket_path}}
+        short: "{{user_path}} har slagit samman ärendet {{notable_path}} med {{merge_ticket_path}}"
+        long: "{{user_path}} har slagit samman ärendet {{notable_path}} med {{merge_ticket_path}}"
       ticket_split: 
-        short: {{user_path}} har delat ärendet {{notable_path}} från {{split_ticket_path}}
-        long: {{user_path}} har delat ärendet {{notable_path}} från {{split_ticket_path}}
+        short: "{{user_path}} har delat ärendet {{notable_path}} från {{split_ticket_path}}"
+        long: "{{user_path}} har delat ärendet {{notable_path}} från {{split_ticket_path}}"
       status_change: 
-        short: {{user_path}} ändrade statusen till {{status_name}}
-        long: {{user_path}} ändrade ärendestatusen för {{notable_path}} till {{status_name}}
+        short: "{{user_path}} ändrade statusen till {{status_name}}"
+        long: "{{user_path}} ändrade ärendestatusen för {{notable_path}} till {{status_name}}"
       deleted:
-        short: {{user_path}} har raderat det här ärendet
-        long: {{user_path}} har raderat ärendet {{notable_path}}
-      restored:
-        short: {{user_path}} har återställt det här ärendet
-        long: {{user_path}} har återställt ärendet {{notable_path}}
+        short: "{{user_path}} har raderat det här ärendet"
+        long: "{{user_path}} har raderat ärendet {{notable_path}}"
       product_change:
-        short: {{user_path}} ändrade produkten till {{product_name}}
-        long: {{user_path}} ändrade produkten i {{notable_path}} till {{product_name}}
+        short: "{{user_path}} ändrade produkten till {{product_name}}"
+        long: "{{user_path}} ändrade produkten i {{notable_path}} till {{product_name}}"
       product_change_none: 
-        short: {{user_path}} ändrade produkten till "ingen"
-        long: {{user_path}} ändrade produkten i {{notable_path}} till "ingen"
+        short: "{{user_path}} ändrade produkten till 'ingen'"
+        long: "{{user_path}} ändrade produkten i {{notable_path}} till 'ingen'"
       ticket_type_change:
-        short: {{user_path}} ändrade ärendetypen till {{ticket_type}}
-        long: {{user_path}} ändrade ärendetypen för {{notable_path}} till {{ticket_type}}
+        short: "{{user_path}} ändrade ärendetypen till {{ticket_type}}"
+        long: "{{user_path}} ändrade ärendetypen för {{notable_path}} till {{ticket_type}}"
       group_change:
-        short: {{user_path}} ändrade gruppen till {{group_name}}
-        long: {{user_path}} ändrade gruppen för {{notable_path}} till {{group_name}}
+        short: "{{user_path}} ändrade gruppen till {{group_name}}"
+        long: "{{user_path}} ändrade gruppen för {{notable_path}} till {{group_name}}"
       group_change_none: 
-        short: {{user_path}} ändrade gruppen till "ingen"
-        long: {{user_path}} ändrade gruppen för {{notable_path}} till "ingen"
+        short: "{{user_path}} ändrade gruppen till 'ingen'"
+        long: "{{user_path}} ändrade gruppen för {{notable_path}} till 'ingen'"
       source_change:
-        short: {{user_path}} ändrade källan till {{source_name}}
-        long: {{user_path}} ändrade ärendekällan för {{notable_path}} till {{source_name}}
+        short: "{{user_path}} ändrade källan till {{source_name}}"
+        long: "{{user_path}} ändrade ärendekällan för {{notable_path}} till {{source_name}}"
   credit_card_info: Kreditkortsinformation
   zendesk_backup_info: Välj den Zendesk-säkerhetskopieringsfilen som du hämtade från Zendesk
   your_email_address: Din e-postadress
@@ -605,16 +524,16 @@ sv-SE:
   delete_confirm_scenario: Är du säker på att du vill radera detta scenario?
   days: dagar
   basic_brief: För små team
-  phone: Tel
+  phone: Telefon
   edit: Redigera
   accounts: 
     cancel: 
       changeplan_instead_of_cancel: I stället för att annullera ditt konto kanske du bara vill byta plan.
-      intro: Du håller på att radera ditt konto.  Detta kommer att <strong>radera alla dina data permanent</strong>.
+      intro: Du är på väg att annullera ditt konto.  Detta kommer att <strong>radera alla dina data permanent</strong>.
       you_must_confirm: Du måste bekräfta din annullering
       delete_my_account: Radera mitt konto
       confirm_and_cancel_my_account: Jag bekräftar att jag vill annullera mitt konto och radera alla mina data...
-      goback: &#x2190; Tillbaka till kontoinställningar
+      goback: "&#x2190; Tillbaka till kontoinställningar"
       change_your_plan: Ändra din plan
       warning_message: När du väl gör detta kommer du inte längre ha tillgång till dina data, så var säker på att du verkligen vill göra detta.
       cancel_account: Annullera Freshdesk-konto
@@ -623,7 +542,7 @@ sv-SE:
       begin_subscription_info: kommer att debitera ditt kort och påbörja din prenumeration omgående.
       billing: Fakturering
       save_billing_information: Spara faktureringsinformation
-      save_billing_information_info: kommer att spara din "Planer och fakturering"-information. Vi debiterar ditt kort och påbörjar din prenumeration först då din provperiod har löpt ut.
+      save_billing_information_info: sparar din plan- och faktureringsinformation. Vi debiterar ditt kort och påbörjar din prenumeration först då din provperiod har löpt ut.
       begin_subscription: Påbörja prenumeration nu...
     show: 
       export_data: Exportera data
@@ -657,14 +576,14 @@ sv-SE:
   portal_signup: Tillåt kunder att registrera sig via kundportalen
   portal_captcha: Gör captcha obligatoriskt när ärenden skickas in utan inloggning
   to_email: Att e-posta
-  starts_with: Börjar med
+  starts_with: Börjar med 
   portal_customizer_anon_tickets_i: Avaktivera denna funktion om du vill att dina användare ska vara inloggade för att kunna skicka ett ärende.
   portal_customizer_option_tickets_i: Avaktivera denna funktion om du vill tvinga användare att logga in innan de skickar ett ärende
   set_type_as: Ställ in typ som
   change_my_plan: Välj denna plan...
   add_new_email: Lägg till ny e-post
   feedbackwidget_title: Inställningar för widget
-  errors_in_your_address: Fel som hittats i samband med din adress:
+  errors_in_your_address: "Fel som hittats i samband med din adress:"
   set_priority_as: Ställ in prioritet som
   sign_in_info: Du kommer att logga in med
   posted_by: Publicerad av
@@ -720,7 +639,7 @@ sv-SE:
     info3: När bör denna regel tillämpas
     info4: Avsändaren kommer automatiskt att skicka ett nyligen skapat supportärende baserat på de definierade reglerna och åtgärderna
     reorder: Ordna om
-    info5: Kom ihåg att ordningsföljden för reglerna är viktigt. För varje inkommande ärende kommer avsändaren att utföra den första matchande regeln och stoppa
+    info5: Kom ihåg att ordningen på reglerna är viktig. För varje inkommande ärende kommer avsändaren att utföra den första matchande regeln och stoppa
     add_new_action: Lägg till ny åtgärd
     dispatch_rules: Avsändare - Regler
     match_all: Matcha alla
@@ -745,7 +664,7 @@ sv-SE:
       placeholder: Sök %{name}
   requester_reopens: Beställaren öppnar ärendet på nytt
   reset: Återställ
-  import_ignore_first_row: Ignorera den första raden (rubriker)
+  import_ignore_first_row: Ignorera den försa raden (rubriker)
   portal_customizer_open_sol_i: Avaktivera denna funktion om du vill dölja fliken Lösningar i den publika kundportalen.
   portal_customizer_option_sol_i: Avaktivera denna funktion om du vill att användarna ska logga in för att kunna visa lösningar
   topic:
@@ -766,7 +685,7 @@ sv-SE:
   activerecord: 
     errors: 
       messages: 
-        record_invalid: Valideringen misslyckades: %{errors}
+        record_invalid: "Valideringen misslyckades: %{errors}"
         greater_than_or_equal_to: måste vara större än eller lika med %{count}
         less_than_or_equal_to: måste vara mindre än eller lika med %{count}
         confirmation: stämmer inte överens med bekräftelsen
@@ -787,11 +706,11 @@ sv-SE:
         not_a_number: är inte ett nummer
         inclusion: inkluderas inte i listan
       full_messages: 
-        format: %{attribute} %{message}
+        format: "%{attribute} %{message}"
       template: 
-        body: Ett problem uppstod med följande fält:
+        body: "Ett problem uppstod med följande fält:"
         one: Ett fel förhindrade denna %{model} från att sparas
-        other: %{count} fel förhindrade denna %{model} från att sparas
+        other: "%{count} fel förhindrade denna %{model} från att sparas"
   top: Upp
   company_name: Företagsnamn
   expires: Löper ut
@@ -803,24 +722,24 @@ sv-SE:
       unlike: Ogilla
       ideas:
         vote_button: Jag gillar denna idé
-        vote_info_1: %{vote} personer gillar denna idé
-        vote_info_2: %{vote} personer gillar denna idé
+        vote_info_1: "%{vote} personer gillar denna idé"
+        vote_info_2: "%{vote} personer gillar denna idé"
         vote_info_include_1: Du gillar denna idé
-        vote_info_include_2: %{vote} personer \"inklusive du\" gillar denna idé
+        vote_info_include_2: "%{vote} personer (inklusive du) gillar denna idé"
       problem:
         vote_button: Jag har detta problem
-        vote_info_1: %{vote} personer har detta problem
-        vote_info_2: %{vote} personer har detta problem
+        vote_info_1: "%{vote} personer har detta problem"
+        vote_info_2: "%{vote} personer har detta problem"
         vote_info_include_1: Du har detta problem
-        vote_info_include_2: %{vote} personer \"inklusive du\" har detta problem
+        vote_info_include_2: "%{vote} personer (inklusive du) har detta problem"
       howto:
         vote_button: Jag har denna fråga
-        vote_info_1: %{vote} personer har denna fråga
-        vote_info_2: %{vote} personer har denna fråga
+        vote_info_1: "%{vote} personer har denna fråga"
+        vote_info_2: "%{vote} personer har denna fråga"
         vote_info_include_1: Du har denna fråga
-        vote_info_include_2: %{vote} personer \"inklusive du\" har denna fråga
+        vote_info_include_2: "%{vote} personer (inklusive du) har denna fråga"
     post:
-      posted_on: %{user_name} på %{post_date}
+      posted_on: "%{user_name} på %{post_date}"
       edit_post: Redigera post
       unmark_answer: Avmarkera detta som svaret
       post_accepted_as_a_good_answer: Denna post har accepterats som ett bra svar till detta ämne
@@ -838,7 +757,7 @@ sv-SE:
     title: Grupper
     info1: Agenter i den här gruppen
     info2: Inga agenter i denna grupp
-    info3: Skicka ett meddelande om eskalering till
+    info3: Skicka ett meddelande om eskalering till 
     info4: om ett ärende kvarstår som ej tilldelad under längre tid än
     info5: Är du säker
     select_agents: Välj agenter
@@ -848,16 +767,13 @@ sv-SE:
       two: Två timmar
       four: Fyra timmar
       eight: Åtta timmar
-      two: Tolv timmar
+      two: 12 timmar
       day: En dag
       twoday: Två dagar
       threeday: Tre dagar
   four: Fyra timmar
-  oneweek: En vecka
-  twoweek: Två veckor
-  onemonth: En månad
   problem: Problem
-  change_plan_info: Du kan ändra plan när du vill, ditt nästa debiteringsdatum är %{date}.
+  change_plan_info: Du kan när som helst ändra din plannivå.  Positionen begränsar och andra funktioner i den nya planen som du väljer börjar gälla så fort du gör ändringen, men ditt fakturabelopp kommer inte att ändras förrän vid nästa fakturadatum.  Ditt nästa fakturadatum är %{date}.
   created_on: Skapad den
   zip: Postnummer
   import_solution_article: Konvertera artikelforum till lösning
@@ -875,22 +791,6 @@ sv-SE:
     restore: återställ
     add_signature: Lägg till signatur
     update: Uppdatera
-    permissions: Behörigheter
-    admin: Administratör
-    supervisor: Övervakare
-    global: Agent (Global åtkomst)
-    group: Agent (Gruppåtkomst) 
-    individual: Agent (Begränsad åtkomst)
-    admin_info: Kan utföra alla Admin-uppgifter
-    supervisor_info: Kan visa alla ärenden i Helpdesk och komma åt rapporter (inga adminbehörigheter)
-    global_info: Kan visa alla ärenden i Helpdesk
-    group_info: Kan visa ärenden i sin(a) grupp(er) och deras tilldelade ärenden
-    individual_info: Kan enbart visa ärenden som de fått tilldelade
-    occasional_description: Den här agenten kan komma åt supportportalen
-    full_time: Heltid
-    occasional: Tillfälligtvis
-    day_pass_expired: Ditt dagspass är utgånget, logga in för att hämta ett nytt dagspass.
-    insufficient_day_pass: Kan inte tilldela ett dagspass till dig, kontakta din administratör.
   account_admin: Kontoadministratör
   right: Höger
   footer: 
@@ -898,13 +798,13 @@ sv-SE:
     by_freshdesk: av Freshdesk
   tkt_unattended_in_grp: Ärendet är oövervakat i gruppen
   agent_solves_tkt: Agent löser ärendet
-  zendesk_url_info: exempelvis:- http://acme.zendesk.com
+  zendesk_url_info: "exempelvis:- http://acme.zendesk.com"
   portal_customizer_anon_for_i: Avaktivera denna funktion om du vill dölja fliken Forum i den publika kundportalen.
   portal_customizer_option_for_i: Avaktivera denna funktion om du vill att användarna ska logga in för att kunna visa lösningar
   portal_customizer_anon_for_g: Aktivera denna funktion om du vill att kunder ska kunna logga in med sina Google-användarnamn och lösenord. 
   portal_customizer_anon_for_t: Aktivera denna funktion om du vill att användare ska kunna logga in med sina Twitter-användarnamn och lösenord. 
-  portal_signup_anon: Aktivera denna funktion om du vill att användare ska kunna registrera sig och skapa egna användarkonton. Det här kommer att tillåta användare att logga in och delta i forumdiskussioner, rösta på idéer etc.
-  portal_captcha_anon: Aktivera den här funktionen om du vill att användare ska skicka in ärenden med captcha
+  portal_signup_anon: Aktivera denna funktion om du vill att användare ska kunna registrera sig och skapa egna användarkonton. Detta för det möjligt för användare att logga in och delta i dorumdiskussioner, rösta på idéer osv.
+  portal_captcha_anon: Avaktivera den här funktionen om du vill att användare ska kunna skicka ett ärende utan captcha
   card_process: Tack för din betalning. Ditt Freshdesk-konto är nu aktivt!
   chat: Chatt
   country: Land
@@ -912,9 +812,6 @@ sv-SE:
   forgot_password_intro: Fyll i formuläret nedan så skickas instruktioner om hur du återställer lösenordet till dig via e-post.
   done: Klar
   ticket_due_by_time: Förfaller den
-  ticket_pending_since_time: Vilande sedan
-  ticket_resolved_at_time: Löst vid
-  ticket_closed_at_time: Stängt vid
   next: Nästa
   set_password: Ställ in ditt lösenord
   send_email_to_agent: Skicka e-post till agent
@@ -932,22 +829,17 @@ sv-SE:
     info2: Gör denna användare till en agent
     send_activation: Skicka aktiveringsmeddelande
     import_csv: Importera användare från CSV
-    import_google: Importera från Google
-    import_google_no: Nej
-    import_google_yes: Ja
     quick_contact: Snabbkontakt
-    tags: Taggar
-    tag_cloud: Kontakt taggmoln
     info3: Bakgrundsinformation för %{nick_name}
     working: Arbetar
     info4: Senaste ärenden från %{nick_name}
     form_placeholder: 
-      description: Lägg till specifika meddelanden om denna kontakt, exempelvis LA Lakers-fan etc.
+      description: Lägg till specifika meddelanden om denna kontakt, exempelvis adress, LA Lakers-fan etc.
     info5: Användaren har inte skapat något ärende förrän nu
     restore: Återställ
     info6: Lägg till specifika meddelanden gällande denna kontakt
     role:
-      info: Kan se alla ärenden från detta företag 
+      info: kan se alla ärenden från detta företag 
   between: Mellan
   portal_key: Portal
   add_new_forum: lägg till ett nytt forum
@@ -972,11 +864,10 @@ sv-SE:
   left: Kvar
   subscription: 
     error: 
-      lesser_agents: Ditt Freshdesk-konto har för närvarande %{agent_count} agenter, du kan inte prenumerera på ett färre antal agenter. Radera några agenter och prova igen.
+      lesser_agents: Ditt Freshdesk-konto har för närvarande %{agent_count} agenter, du kan inte prenumerera på ett färre antal agenter. Radera några agenter och försök igen.
   activate: Aktivera
   feedbackwidget_text: Text
-  billed_amount_per_month: Du kommer att faktureras $%{amount} %{period}
-  billed_amount_annually: Du kommer att faktureras $%{amount} årsvis
+  billed_amount_per_month: Du kommer att faktureras $%{amount} per månad
   import_zendesk_summary: Importera från Zendesk-sammanfattning
   user_activation_email: E-postmeddelanden med aktivering till användare
   incident: Händelse
@@ -1007,13 +898,13 @@ sv-SE:
     add_new_solution: Lägg till en ny lösning
     title: Lösningar
     info1: Lösningar i Freshdesk är din kunskapsdatabas
-    info2: Lösningar kan vara <b>publika</b> eller <b>privata</b>. Publika lösningar är synliga i självserviceportalen och visas även i sökresultaten
+    info2: Lösningar kan vara <b>publika</b> eller <b>privata</b>. Publika lösnngar är synliga i självserviceportalen och visas även i sökresultaten
     info3: Privata lösningar är lösningar endast för agenter för intern kunskapsdelning
     no_solutions_info: Ingen lösning i denna mapp
     info4: Lösningar har en hierarki i tre nivåer - <b>Kategori --> Mapp --> Artikel</b>
     type: Lösningstyp
-    info5: En lösning kan vara av två olika typer - <b>Kringgå</b> eller <b>Permanent</b>
-    info6: En lösning kan ha statusen <b>Utdrag</b> när du arbetar med den och kan sedan ändras till statusen <b>Publicerad</b> då den har slutförts och granskats
+    info5: Lösningar kan vara av två olika typer - <b>Kringå</b> eller <b>Permanent</b> lösningar
+    info6: En lösning kan ha statusen <b>Utdrag</b> när du arbeter med den och kan sedan ändras till statusen <b>Publicerad</b> då den har slutförts och granskats
     visibility: Synlighet
     info7: Ingen lösning i denna mapp
     status: Lösningsstatus
@@ -1026,12 +917,12 @@ sv-SE:
   select_a_plan_gain_access: Välj en plan nedan för att återigen få åtkomst till ditt konto.
   import_warning_info: Ett e-postmeddelande instruktioner om användaraktivering kommer vid lyckad import att skickas till varje kontakt. Om e-posten redan finns i databasen, kommer vi att uppdatera attribut som Namn, Företag etc.
   import_example_title: Följande är exempel på en CSV-fil
-  change_my_password: Ändra mitt lösenord
+  change_my_password: Ändra mitt lösneord
   answered: Besvarad
-  errors_in_payment_info: Fel som hittats i samband med din betalningsinformation:
+  errors_in_payment_info: "Fel som hittats i samband med din betalningsinformation:"
   attach_files: Bifoga filer
   plan_amount: per agen/månad
-  current_plan_details: %{plan_name} plan med %{agent_limit} agenter
+  current_plan_details: "%{plan_name} plan med %{agent_limit} agenter"
   zendesk_backup: Säkerhetskopieringsfil
   twoday: Två dagar
   profile: 
@@ -1043,9 +934,6 @@ sv-SE:
   add_to_do: Lägg till Att göra-uppgift
   subject_or_description: Ämne eller beskrivning
   premium_details: Allt i Pro Plan Plus, support för flera produkter, support för flera tidszoner, community, e-post- och telefonsupport
-  sprout_details: Svarshantering för e-post, alla automatiseringar, standard SLA-policy, kunskapsdatabas, självserviceportal, domänmappläggning, grundläggande rapportering, forumsupport.
-  blossom_details: Allting i "Sprout"-plan plus Twitter-support, Facebook-support, forum, community- och e-postsupport.
-  garden_details: Allt i "Blossom"-plan plus, support för flera produkter, avancerad rapportering, community, e-post- och telefonsupport.
   zendesk_credentials: Zendesk-inloggningsuppgifter
   how_to: Fråga
   customers: Kunder
@@ -1059,9 +947,6 @@ sv-SE:
   back: Tillbaka
   save_changes: Spara ändringar
   premium_brief: Överst
-  sprout_brief: Robust e-post-Helpdesk
-  blossom_brief: Social kundservice
-  garden_brief: Stöd för flera produkter
   begin_subscription_confirm: Ditt kreditkort kommer att debiteras ett belopp om $%{cost}och din prenumeration börjar omgående. \n\nFortsätta nu?
   favicon: Favicon
   is_expiring_today: går ut idag
@@ -1103,13 +988,13 @@ sv-SE:
     modify_agent_template: Modifiera agentens e-postmall
     event: Händelse
     agent_notification: Agentmeddelande
-  errors_in_plan_change: Fel som hittats i samband med din ändring:
+  errors_in_plan_change: "Fel som hittats i samband med din ändring:"
   formatting_help: Formateringshjälp
   step1: Steg 1
-  next_charge_date: Din nästa betalning kommer att bearbetas den:
+  next_charge_date: "Din nästa betalning kommer att bearbetas den:"
   update_and_login: Uppdatera och logga in
   enter_payment: Ange betalningsinformation...
-  errors_in_payment: Fel som hittats i samband med din betalning:
+  errors_in_payment: "Fel som hittats i samband med din betalning:"
   email_configs: 
     name: Namn
     info9: Tilldela till grupp
@@ -1142,10 +1027,7 @@ sv-SE:
     info7: Detta är även din e-postadress för svar, exempelvis support@yourcompany.com
     make_primary: Gör till primär
     info8: Vidarebefordra dina e-poster till
-    help_link_info: Läs vår artikel om e-postinställningar för mer information...
-    bcc_email: BCC-adress (frivillig)
-    info17: Den här e-postadressen kommer automatiskt att inkluderas i fältet BCC vid all ärendekommunikation
-    info18: Automatisk BCC-adress inkluderas i ärendesvar 
+    help_link_info: Läs vår artikel om e-postinstllningar för mer information...
   step2: Steg 2
   import_users_contacts: Användare &rarr; Kontakter
   linkback_info: Du kan välja att länka tillbaka till din egen webbplats när kunden klickar på rubriklogotypen
@@ -1156,18 +1038,18 @@ sv-SE:
     not_authorized: Du har inte auktoriserats av Twitter
     deleted: Twitter-kontot @%{twitter_screen_name} har tagits bort.
     sent: Sändningen av denna tweet lyckades
-    error_sending: Fel vid sändande av denna tweet! Twitter kanske är instabilt. Prova igen.
+    error_sending: Ett fel uppstod vid sändningen av denna tweet! Twitter kan vara instabilt. Prova igen.
     ticket_save: Konverteringen av tweeten till ett ärende lyckades
     tkt_err_save: Det gick inte att konvertera tweeten till ett ärende eller så har den redan konverterats
     usr_not_thr: Användaren är inte där.    
   facebook:
-    deleted: Facebook-sidan %{facebook_page} har tagits bort.
+    deleted: Den Facebook-sida %{facebook_page} har tagits bort.
     not_authorized: Du har inte auktoriserats av Facebook
   logo: Logotyp
   ok: Ok
   back: Tillbaka
   ticket:
-    reported_on: från %{username}, senast uppdaterat %{date}
+    reported_on: från %{username}, den %{date}
     thanks: Tack för din feedback
     group: Grupp
     spam_btn_title: Markera som skräppost
@@ -1175,7 +1057,6 @@ sv-SE:
     edit: Redigera ärende
     ham_btn_title: Detta är inte skräppost
     reported_from_source: Rapporterad via %{source}
-    add_time: Lägg till tid
     suggested_solutions: 
       insert_url: Infoga URL
       title: Föreslagna lösningar
@@ -1213,22 +1094,19 @@ sv-SE:
     unflag_spam: Ej skräppost
     pick_up: Hämtning
     submit_ticket_title: Skicka ett ärende
-    create_ticket_title: Skapa ärende
-    convert_ticket_title: Gör om till ärende
     reply_form: 
       post_to_linked_forum: Publicera i länkat forum
       form_title: Svara på konversationen
       reply_email_id: Skicka svaret från följande e-post-ID
       send_and_resolve: Skicka och åtgärda
-      send: Skicka
     reported_by: från %{requester}
     close_btn: Stäng
     close_btn_title: Stäng det här ärendet
     tags: 
-      no_match: Inga matchningar. Tryck på enter för att skapa tagg.
+      no_match: Inga träffar. Tryck på enter för att skapa tagg.
       create_success: Taggen lades till
       destroy_success: Taggen togs bort från det här ärendet.
-      add_tag: Lägg till en tagg:
+      add_tag: "Lägg till en tagg:"
     type: Typ
     execute_scenario: Utför scenario
     note_form: 
@@ -1238,16 +1116,15 @@ sv-SE:
       notify_agents: Meddela agenter
     tweet_form:
       tweet_and_resolve: Tweeta och åtgärda
-      user_not_following: Användaren följer inte ditt twitterkonto
     activities: Aktiviteter
     requestor_info: Information om beställaren
-    reply_to: Meddela
+    reply_to: Svara på ärendet
     add_note: Lägg till meddelande
     monitor_btn_title: Övervaka detta ärende
     canned_responses: 
       insert_ca_response: Avvisat svar
       insert_ca_resp_tip: Infoga detta avvisade svar
-    split_ticket: Dela detta som ett nytt ärende                                   
+    split_ticket: Dela detta som ett nytt ärende
     flag_spam: Flagga skräppost
     assign_to_agent: Tilldela till agent
     select_to_agent: Välj en agent
@@ -1261,13 +1138,12 @@ sv-SE:
     submit_ticket: Skicka 
     stop_monitor_btn_title: Sluta övervaka detta ärende
     merge_btn: Slå samman
-    split_ticket: Dela up
+    split_ticket: Dela detta som ett nytt ärende
     tweets: Tweets
     agent_notify: lade till ett meddelande och vill att du tar en titt
     note_content: Meddelandeinnehåll
     ticket_url: Ärende-URL
   recent_activity: Senaste aktivitet
-  recent_activities: Senaste aktiviteter
   forgot_password: Glömt lösenord
   change_plan: Ändra plan
   feedbackwidget_embed_code_intro: Kopiera och klistra in koden nedan var som helst  före taggen &lt;/body&gt; i HTML-mallen av din webbplats eller på varje sida där du vill tillhandahålla Freshdesk-widgeten.
@@ -1287,7 +1163,7 @@ sv-SE:
     form:
       type: Forumtyp
       visibility: Synlighet i forum    
-  next_charge_amount: %{type} kostnad:
+  next_charge_amount: "%{type} kostnad:"
   company: 
     info9: Freshdesk kommer automatiskt att associera Kontakter med detta företag om e-post-ID:n innehåller dessa domäner
     name: Företagsnamn
@@ -1322,7 +1198,7 @@ sv-SE:
   import_step1_info: Välj en CSV-fil och klicka på importera
   tkt_assigned_to_group: Ärende tilldelat till grupp
   import_tickets: Ärenden
-  twelve: Tolv timmar
+  twelve: 12 timmar
   agent_info_title: Agentinformation
   account: 
     name: Kontonamn
@@ -1334,9 +1210,9 @@ sv-SE:
       tab_color: Flikfärg
     active_since: Aktiv sedan
     info1: Du kan använda det här fältet till att ställa in anpassad domänmappläggning för Freshdesk
-    info2: Innan du använder det här fältet ska du se till att du har skapat en CNAME DNS-post i din DNS Zone-fil för att dirigera support.mycompanyname.com till %{full_domain}. Din webbansvariga eller serveradministratör kan hjälpa dig att ställa in detta rätt.
+    info2: Innan du använder det här fältet ska du se till att du har skapat en CNAME DNS-post i din DNS Zone-fil för att dirigera support.mycompanyname.com till %{full_domain}. Din webbmaster eller serveradministratör bör kunna hjälpa dig att ställa in detta på korrekt sätt
     info3: Återställ till standardfärger
-    info4: Nästa ärende-ID-räknare kommer att starta med det här numret (bör vara större än den senast skapade ärende-ID:t). Detta påverkar ärenden som skapas framgent.
+    info4: Nästa ärende-ID-räknare kommer att starta med det här numret (bör vara större än den senast skapade ärende-ID:t). Detta påverkar ärenden som skapas från och med nu.
     save: Spara ändringar
     time_zone: Tidszon
     helpdesk_name: Helpdesknamn
@@ -1383,44 +1259,19 @@ sv-SE:
   ticket_was: ärendet var
   tickets_were: ärenden var
   undo: Ångra
-  total: Total
   helpdesk:
-    time_sheets:
-      index:
-        no_timeentry: Ingen tidspost har loggats för detta ärende
-      time_entry:
-        toggle_timer_true: Starta tidräknare
-        toggle_timer_false: Stoppa tidräknare
-      new:
-        title: Ny tidspost
-      ticket: Ärende
-      customer: Kund
-      executed_at: Datum
-      hours: Timmar
-      agent: Agent
-      note: Nota
-      billing_type: Debiteringstyp
-      group_by: Gruppera efter
-      report:
-        no_timeentry: Inget data tillgängligt
-        total: Total
-      form:
-        agent: Agent
-        hours: Timmar
-        note: Nota
     tags:
       index:
         title: Taggar
     flash:
-      assignedto: %{tickets} tilldelad till %{username}.
-      tickets_closed: %{tickets} stängd
-      tickets_update: %{tickets} uppdaterad
-      assigned_to_you: %{tickets} tilldelad till dig
-      removed_from_spam: %{tickets} borttagen från skräppostmappen.
+      assignedto: "%{tickets} tilldelad till %{username}."
+      tickets_closed: "%{tickets} stängd"
+      assigned_to_you: "%{tickets} tilldelad till dig"
+      removed_from_spam: "%{tickets} borttagen från skräppostmappen."
       closing_the_ticket_failed: Det gick inte stänga ärendet
-      assigned_reassigned: %{type} till %{username}
-      flagged_spam: %{tickets} flaggade som skräppost. %{undo}
-      flagged_unspam: %{tickets} borttagen från skräppostmappen.
+      assigned_reassigned: "%{type} till %{username}"
+      flagged_spam: "%{tickets} flaggade som skräppost. %{undo}"
+      flagged_unspam: "%{tickets} borttagen från skräppostmappen."
     shared:
       reply_form:
         title: Svara till %{email}
@@ -1447,7 +1298,6 @@ sv-SE:
         info: Detta är helpdesknamnet som visas i rubriken och i meddelandena.
     ticket_created_on_n_by: av %{requester} på %{date_time}
     tickets:
-      no_email_found: Användare med e-post %{email} är inte tillgänglig i systemet.
       customview:
         new:
           give_a_name: Ange ett namn för denna vy
@@ -1459,19 +1309,9 @@ sv-SE:
       close_notice:
         ticket_has_been_cloased: Ärendet har stängts.
         view_ticket: Visa ärendet
-      save_and_close_notice:
-        ticket_saved_and_closed: Ärendet har skapts och stängts.
-        view_ticket: Visa ärendet
       show:
         meta: meta
         linked_ticket: Detta ärende är länkat till forumet
-        conversation: Konversation 
-        timesheet: Tidrapport
-      view_ticket:
-        meta: meta
-        linked_ticket: Detta ärende är länkat till forumet
-        conversation: Konversation 
-        timesheet: Tidrapport
       components:
         scenarios:
           execute_this_scenario: Utför detta scenario
@@ -1514,16 +1354,13 @@ sv-SE:
         resolved_or_closed: Lösta eller stängda
         no_tickets: Du har inte några ärenden i den aktuella vyn
       note:
-        posted_on: %{user_name} på %{note_date}
+        posted_on: "%{user_name} på %{note_date}"
         edit_note: Redigera meddelande
-        split_this_as_new_ticket: Dela upp detta som ett nytt ärende
-        split_ticket_confirm: Dela upp detta meddelande och skapa ett nytt ärende från det?
+        split_this_as_new_ticket: Dela detta som ett nytt ärende
         private_note: Privat meddelande
         public_note: Publikt meddelande
-        inbound_email: Inkommande e-post
+        incoming_email: Inkommande e-post
         outbound_email: Utgående e-post
-        attachment_size: 
-           exceed: Hoppsan! Din bilaga är större än 15 MB. Bifoga en mindre fil.
     merge:
       merge:
         merge_into: Slå samman till?
@@ -1599,19 +1436,6 @@ sv-SE:
     facebook_pages:
       index:
         title: Facebook-sidor
-      enable_facebook_page:
-        associate: Markera de Facebooksidor som du vill associera till Helpdesk.
-      engage_info:
-        title: Lägg till dina Facebooksidor.
-        engage_customers: Engagera dina kunder direkt på Facebook
-        associate_account: Associera en Facebooksida till <b> %{account_name} </b> och svara dina kunder från Helpdesk när de kommenterar eller gör inlägg hos dig.
-        add_facebook: Lägg till Facebooksida
-      form:
-        visitor_posts: Importera <strong>"Besökarinlägg"</strong> som ärenden
-        visitor_posts_info: Freshdesk konverterar samtliga besökarinlägg på denna Facebooksida till ärenden.
-        company_posts: Importera <strong>"Företagsinlägg"</strong> som ärenden
-        company_posts_info: Freshdesk konverterar samtliga företagsinlägg på denna Facebooksida till ärenden.
-        product: Produkt          
     twitter_handles:
       index:
         title: Twitter-konton
@@ -1627,13 +1451,12 @@ sv-SE:
     filter:
       index:
         title: Hantera anpassade vyer
-        back: &larr; Tillbaka till Ärenden
+        back: "&larr; Tillbaka till Ärenden"
         no_custom_view: Inga anpassade vyer tillgängliga!
       view:
         delete: Är du säker på att du vill radera denna vy?
     messages:
       no_tickets_in_view: Du har inte några ärenden i %{view_name}.
-      no_tickets_for_user: Det finns inga öppna ärenden för %{user_name} att visa.
   conversation: Konversation
   save_this_view: Spara denna vy...
   loading:
@@ -1662,181 +1485,20 @@ sv-SE:
         sign_in_using_google: Logga in med ditt Google-konto
         help: Hjälp
   settings: inställningar        
-  updated_on: %{user_name} uppdaterad %{note_date}
+  capsule_crm: Capsule CRM
   integrations:
-    capsule_crm:
-      label: Capsule CRM
     capsule:
       label: Capsule CRM
       desc: Du kan visa kontaktinformation från Capsule CRM i Freshdesk. Du kan komma åt denna information via sidan Ärendeinformation och sidan Kontaktinformation.
       form:
         bcc_drop_box_mail: E-post Drop Box-adress
-        bcc_drop_box_mail_info: Du hittar din unika e-postadress för Capsule Drop Box under <b>"Inställningar -> E-post Drop Box"</b>.<br /> (Du hittar detta högst upp till höger på sidan).<br /> Kopiera e-postadressen och klistra in den i textfältet ovan. <br /> Freshdesk kommer att lägga till denna e-postadress automatiskt till fältet för hemlig kopia när du svarar på ett ärende
+        bcc_drop_box_mail_info: Du hittar din unika e-postadress för Capsule Drop Box under <b>“Inställningar -> E-post Drop Box”</b>.<br /> (du hittar detta högst upp till höger på sidan).<br /> Kopiera e-postadressen och klistra in den i textfältet ovan. <br /> Freshdesk kommer att lägga till denna e-postadress automatiskt till fältet för hemlig kopia när du svarar på ett ärende
         domain: Domän
-        domain_info: Ange enbart domänen utan https. Ex: example.capsulecrm.com
+        domain_info: Exempelvis; example.capsulecrm.com
         api_key: API-nyckel
-        api_key_info: Hämta din unika API-nyckel genom att logga in på ditt Capsule CRM-konto och navigera till <br /> <b>“Användare -> Mina inställningar”</b>. (Du hittar detta högst upp till höger på sidan).<br /> Klicka på <b>"API-autentiseringstoken"</b> för att hämta den unika API-nyckeln.<br /> Kopiera nyckeln och klistra in den i textfältet ovan.
+        api_key_info: Hämta din unika API-nyckel genom att logga in på ditt Capsule CRM-konto och navigera till <br /> <b>“Användare -> Mina inställningar”</b>. (du hittar detta högst upp till höger på sidan).<br /> Klicka på <b>“API-autentiseringstoken”</b> och hämta den unika API-nyckeln.<br /> Kopiera nyckeln och klistra in den i textfältet ovan.
         widget_title: Widgetrubrik
-    freshbooks:
-      label: Freshbooks
-      desc: Du kan logga nedlagd tid på ärenden till dina Freshbookprojekt och -uppgifter.
-      form:
-        freshbooks_note: Test för post
-        freshbooks_note_info: Den här texten läggs till i slutet av posten i loggen med nedlagd tid.
-        api_url: API URL
-        api_url_info: Ange fullständig API URL med https. Ex: https://example.freshbooks.com/api/2.1/xml-in
-        api_key: Autentiseringstoken
-        api_key_info: ""
-        widget_title: Widgetrubrik
-    harvest:
-      label: Harvest
-      desc: Du kan logga nedlagd tid på ärenden till dina Harvestprojekt och -uppgifter.
-      form:
-        domain: Domän
-        domain_info: Ange enbart domänen utan https. Ex: example.harvestapp.com
-        harvest_note: Test för post
-        harvest_note_info: Den här texten läggs till i slutet av posten i loggen med nedlagd tid.
-        widget_title: Widgetrubrik
-    google_contacts:
-      label: Google-kontakter
-      desc: Synkronisera regelbundet kontakterna mellan Google och Freshdesk.
-      overwrite_local: Exportera Freshdesk-kontakterna och eventuella uppdateringar till Google-kontakter.
-      overwrite_remote: Importera Google-kontakter och eventuella uppdateringar till Freshdesk-kontakter.
-      merge_local: Slå samman Freshdesk- och Google-kontakter (Freshdesk går före)
-      merge_remote: Slå samman Google- och Freshdesk-kontakter (Google går före)
-      import_success: Google-kontakter har importerats.
-      fetch_problem: Problem vid hämtning av Google-kontakter.
-      import: Importera
-      account_not_configured: Google-kontot är inte rätt konfigurerat. Prova igen.
-      OVERWRITE_LOCAL_small: Exportera
-      OVERWRITE_REMOTE_small: Importera
-      MERGE_LOCAL_small: Slå samman (Freshdesk går före)
-      MERGE_REMOTE_small: Slå samman (Google går före)
-      OVERWRITE_LOCAL: Exportera Freshdesk-kontakterna och eventuella uppdateringar till Google-kontakter.
-      OVERWRITE_REMOTE: Importera Google-kontakter och eventuella uppdateringar till Freshdesk-kontakter.
-      MERGE_LOCAL: Slå samman Freshdesk- och Google-kontakter (Freshdesk går före)
-      MERGE_REMOTE: Slå samman Google- och Freshdesk-kontakter (Google går före)
-      MERGE_LATEST: Slå samman Freshdesk- och Google-kontakter (Senaste uppdatering går före)
-      import_later_success: Import av Google-kontakter har startats.  Du kommer att få ett e-postmeddelande till %{email} när importen är klar.
-      import_success_no_stats: Google-kontakter har importerats.
-      import_success: Google-kontakter har importerats.Status: %{added} tillagda, %{updated} uppdaterade och %{deleted} raderade.
-      fetch_problem: Problem vid hämtning av Google-kontakter.
-      import_problem: Problem vid import av Google-kontakter.
-      import: Importera
-      install: Aktivera
-      edit_app: Uppdatera
-      add_more: Auktorisera
-      edit: Redigera
-      already_exist: Ett konto har redan konfigurerats. Ett konto till kan inte läggas till igen.
-      delete: Radera
-      internal_error: Något internt fel uppstod. Kontakta supporten.
-      account_not_configured: Google-kontot är inte rätt konfigurerat. Prova igen.
-      overwrite_existing_user: Skriv över befintlig kontaktinformation i Freshdesk
-      enable_integration: Starta automatisk synkronisering efter import (en gång i timmen).
-      name: Kontonamn
-      email: E-post
-      group: Grupp som ska importeras
-      tag: Tagga för att lägga till/exportera
-      sync_type: Hur synkroniserar man?
-      last_sync_time: Senaste synkroniseringstid
-      last_sync_status: Senaste synkroniseringsstatus
-      not_yet_synced: Synkronisering har inte startats.
-      no_status: Ej tillämplig
-      sync_status:
-        added: tillagd
-        modified: modifierad
-        deleted: raderad
-        google: Status för exporterade kontakter i Google
-        freshdesk: Status för importerade kontakter i Google
-      edit_form:
-        install_title: Inställningar för synkronisering av Google-kontakter
-        import_title: Inställningar för import av Google-kontakter
-        all_contacts: Alla grupper/kontakter
-        mail_box_detail: Inkorgsinformation
-        choose_group_title: Välj grupp att synkronisera och tagg att lägga till
-        edit_app_title: Redigera inställningar för synkronisering av Google-kontakter
-      form:
-        sync_type: Synkroniseringstyp
-        sync_type_info: Hur vill du synkronisera kontakterna mellan Google och Freshdesk?
-        account_settings: ""
-        account_settings_info: Du kan visa det konfigurerade Google-kontot, dess konfiguration och synkroniseringsstatus här.
-        account_not_configured: <br/>Inställningarna för Google-kontot har ännu inte konfigurerats.  Klicka på %{action} och anslut till Google för att konfigurera det.<br/><br/>
-      update_action:
-        success: Google-kontot har uppdaterats.
-        error: Fel när Google-kontot skulle uppdateras.
-      delete_action:
-        success: Google-kontot har raderats.
-        error: Fel när Google-kontot skulle raderas.
   widgets:
     contact_widget:
       description: Visa en kontakt eller ett alternativ för att lägga till kontakten i Capsule.
-  capsule_crm_helptext: <h4>Länka tillbaka från Capsule till Freshdesk</h4><p>Du kan skapa en länk i Capsule CRM för att visa kontaktens ärenden i Freshdesk.</p> <p>Gör detta genom att gå till din <br /><b>Inställningar -> Anpassade fält -> För personer och organisationen</b></p><p> Klicka därefter på \"Lägg till ny...\" och välj <b>\"Genererad länk\"</b></p> <p>Kopiera URL-länken exakt så som den visas nedan och klistra in den i Capsule CRM som länkdefinition<span class=\"info-code\">http://%{full_domain}/helpdesk/tickets?email={email}</span></p>
-  freshbooks_helptext: <h4>Freshbooks integrationshjälp</h4><p><br/>För att integrera Freshbooks med Freshdesk måste du först få tag på Freshbooks API och autentiseringstoken. <br/><br/>Logga in på ditt Freshbooks-konto, klicka på fliken <b>Personer</b> och gå vidare till underfliken <b>Personal och leverantörer</b>. Klicka på <b>Redigera</b> i Admin.  Här finns API URL och autentiseringstoken.<br/><br/>I Freshdesk klickar du på ett ärende och går vidare till fliken Tidrapport.  Här kan du sedan lägga till din tidspost i Freshbooks.
-  harvest_helptext: <h4>Harvest integrationshjälp</h4><p><br/>För att integrera Harvest med Freshdesk skriver du in ditt <b>Domännamn</b> och klickar på Aktivera.<br/><br/>Klicka på ett ärende och gå sedan till fliken <b>Tidrapport</b>.  Här kan du sedan skiva in ditt Harvest <b>Användarnamn</b> och <b>Lösenord</b> för att logga in. Här kan du sedan lägga till din tidspost i Harvest.<br/><br/>Obs! Du kan klicka på <b>Kom ihåg mig</b> så att du inte behöver skriva in dina Harvest-uppgifter varenda gång.
-
-  reorder: Ordna om
-  reports:
-      tab_heading: Rapporter
-      select_customer: Välj kund
-      select_options: Rapporter per
-      tickets_by: Ärenden per
-      helpdesk_title: Helpdesk aktivitetsrapport
-      customer_title: Kund aktivitetsrapport
-      helpdesk_title_nav: Helpdesk aktivitetsrapport
-      customer_title_nav: Kund aktivitetsrapport
-      select_time_period: Markera tidsperiod
-      generate_button: Generera
-      pie_chart_title_prefix: Ärenden per 
-      timeline_chart_title: Mottagna ärenden jmf med lösta
-      customer_activity_title: Aktivitetsrapport
-      helpdesk_activity_title: Helpdesk aktivitetsrapport
-      date_ranges:
-        last_7_days: Senaste sju dagarna
-        last_30_days: Senaste 30 dagarna
-        last_90_days: Senaste 90 dagarna
-        custom: Datumintervall
-      summary:
-        title: Ärendesammanfattning
-        total_tickets: Totala ärenden
-        open_tickets: Öppna ärenden
-        pending_tickets : Väntande ärenden
-        resolved_tickets: Lösta ärenden
-        sla_compliance: SLA-uppfyllelse
-        fcr: Lösning vid första samtal
-      timesheet_reports:
-        index:
-          title: Tidrapportsammanställning
-          select_customer: Välj kund
-          select_agent: Välj agent
-          select_billable: Markera fakturerbar/icke fakturerbar
-  delete_the_ticket: Radera ärendet
-  mark_as_spam: Markera som skräppost
-  bulk_update: Massuppdatering
-  update_multiple_tickets: Uppdatera flera ärenden
-  no_change: Ingen ändring
-  ticket_update_multiple_button: Uppdatera
-  ticket_cancel_multiple_button: Avbryt
-  agent_working_on_this_ticket: Agent som arbetar med ärendet
-  email_commands_update_success: Inställningar för e-postkommando har uppdaterats
-  email_commands_update_failed:  Kunde inte uppdatera inställningar för e-postkommando
-  email_command_settings_heading: Inställningar för e-postkommando
-  email_command_settings_info: Konfigurera den delimeter som används för att identifiera och hämta e-postkommandon från meddelanden
-  email_command_delimeter_label: Delimeter för e-postkommandon
-  email_command_preview_to_email: Till
-  email_command_preview_to_email_value: kunden@acme.com
-  email_command_preview_subject: Ämne
-  email_command_preview_subject_value: Supportärende
-  unable_to_charge: Kunde inte ladda kortet för den tillagda agenten!
-  default_category: Standardkategori
-  default_category_description: All e-post som skickats till %{full_domain} sparas här som utkast.
-  default_folder: Utkast
-  default_folder_description: All e-post som skickats till %{full_domain} sparas här som utkast.
-  category_edit_not_allowed: Den här kategorin kan inte modifieras
-  folder_edit_not_allowed: Den här mappen kan inte modifieras
-  never: Aldrig
-  maximum_agents_admin_msg: Du har nått max antal heltidsagenter för ditt abonnemang. Du måste radera en befintlig heltidsagent eller <a href='/account/plans'>uppgradera kontot</a> för att kunna skapa en ny agent. Om du bara behöver en tillfällig agent kan du lägga till en nedan.
-  maximum_agents_msg: Du har nått max antal agenter för ditt abonnemang. Du måste radera en befintlig agent eller kontakta din kontoadministratör för att uppgradera kontot. Om du bara behöver en tillfällig agent kan du lägga till en nedan.
-  no_date_to_display: Inga data att visa
-  email_command_delimeter_length_error_msg:  Ange minst tre tecken för delimetern.
-  email_command_del_info_data: Tips – Välj en unik delimeter med minst tre tecken (vi rekommenderar specialtecken) som inte kommer i konflikt med det vanliga e-postsvaret.
-
+  capsule_crm_helptext: "<h4>Länka tillbaka från Capsule till Freshdesk</h4><p>Du kan skapa en länk i Capsule CRM för att visa kontaktens ärenden i Freshdesk.</p> <p>Gör detta genom att gå till din <br /><b>Inställningar -> Anpassade fält -> För personer och organisationen</b></p><p> Klicka färefter på \"Lägg till ny...\" och välj <b>\"Genererad länk\"</b></p> <p>Kopiera URL-länken exakt så som den visas nedan och klistra in den i Capsule CRM som länkdefinition<span class=\"info-code\">http://%{full_domain}/helpdesk/tickets?email={email}</span></p>"
