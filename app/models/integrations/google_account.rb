@@ -116,12 +116,13 @@ class Integrations::GoogleAccount < ActiveRecord::Base
     else
       remaining_results = max_results
       start_index = self.last_sync_index
+      new_company_list = {}
       self.import_groups.delete_if { |g_group_id|
         if agg_g_cnts.length > max_results
           false
         else
           query_params = "?group=#{google_group_uri(self.email, g_group_id)}#{show_deleted}&max-results=#{remaining_results+1}&start-index=#{start_index+1}"
-          fetched_g_cnts = fetch_google_contacts(query_params)
+          fetched_g_cnts = fetch_google_contacts(query_params, new_company_list)
           self.last_sync_index = fetched_g_cnts.length
           start_index = 0
           # Aggregate the fetched google contacts. 
@@ -299,7 +300,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
       fetch_google_contacts("/"+id)
     end
 
-    def fetch_google_contacts(query_params)
+    def fetch_google_contacts(query_params, new_company_list = {})
       google_account = self
       token = google_account.token
       secret = google_account.secret
@@ -315,7 +316,6 @@ class Integrations::GoogleAccount < ActiveRecord::Base
       google_users = []
       begin
         doc = REXML::Document.new(updated_contact_xml)
-        new_company_list = {}
         doc.elements.each('feed/entry') { |contact_entry_element|
           begin
             converted_user = convert_to_user(contact_entry_element, new_company_list)
@@ -424,7 +424,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
       gcnt = fetch_current_account_contact(user)
       if gcnt.blank?
         user.google_contacts.build(:google_account=>self) # Will not persist the data in DB even if new_record? is true.
-        gcnt = fetch_current_account_contact(user)
+        gcnt = user.google_contacts[0]
       end
       gcnt.google_xml = goog_contact_detail[:google_xml]
       gcnt.google_id = goog_contact_detail[:google_id]
@@ -469,6 +469,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
           return false if g_cnt.google_id = goog_id
         else
           db_contact.google_contacts.build(:google_account=>self)
+          g_cnt = db_contact.google_contacts[0]
         end
         g_cnt.google_id = goog_id
         db_contact.save!
