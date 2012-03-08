@@ -293,7 +293,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     regex_arr = [
       Regexp.new("From:\s*" + Regexp.escape(address), Regexp::IGNORECASE),
       Regexp.new("<" + Regexp.escape(address) + ">", Regexp::IGNORECASE),
-      Regexp.new(Regexp.escape(address) + "\s+wrote:", Regexp::IGNORECASE),
+      Regexp.new(Regexp.escape(address) + "\s+wrote:", Regexp::IGNORECASE),   
+      Regexp.new("\\n.*.\d.*." + Regexp.escape(address) ),
       Regexp.new("On.*?wrote:"),
       Regexp.new("-+original\s+message-+\s*", Regexp::IGNORECASE),
       Regexp.new("from:\s*", Regexp::IGNORECASE)
