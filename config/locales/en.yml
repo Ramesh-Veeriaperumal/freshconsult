@@ -1887,3 +1887,5 @@ en:
   email_command_del_info_data: "Tip - Choose a unique delimiter combination of minimum three characters (special characters recommended) that will not conflict the regular email response."
   latest_ticket: "new update"
   latest_tickets: "new updates"
+  search:
+    no_results_msg: "No results found"  
