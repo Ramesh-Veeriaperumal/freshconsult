@@ -19,7 +19,6 @@ class PopulateGoogleAnalytics < ActiveRecord::Migration
   def self.down
   	Integrations::Application.find(:first, :conditions => {:name => @app_name}).delete
   	execute("DELETE installed_applications FROM installed_applications INNER JOIN applications ON applications.ID=installed_applications.application_id WHERE applications.name='#{@app_name}'")
-    execute('UPDATE applications SET listing_order=NULL')
   end
 end
 

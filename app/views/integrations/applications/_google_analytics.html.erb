@@ -4,15 +4,15 @@
 <% if portals.size > 1 %>
 	<%portals.each { |portal|%>
 	<div class="fields">
-		<label for="configs_<%=portal.id%>_account_number">Tracking ID for <%=portal.name%></label>
+		<label for="configs_<%=portal.id%>_account_number"><%= t('integrations.google_analytics.form.tracking_id') + portal.name%></label>
 		<% if portal == portals.first %>
-		<label for="configs_<%=portal.id%>_account_number" class="overlabel">Eg: UA-123456-1</label>
+		<label for="configs_<%=portal.id%>_account_number" class="overlabel"><%= t('integrations.google_analytics.form.tracking_id_example') %></label>
 		<% end %>
 		<input title="<%= t('integrations.google_analytics.inline_help') + portal.name%>" type="text" id="configs_<%=portal.id%>_account_number" class="analytics_account" name="configs[<%=portal.id%>][account_number]" value="<%=  @installed_application[:configs][:inputs][portal.id.to_s][:account_number] unless @installed_application.blank? || @installed_application[:configs][:inputs][portal.id.to_s].blank? || @installed_application[:configs][:inputs][portal.id.to_s][:account_number].blank? %>" />
 	
 		<% if portal == portals.first %>
 		<br />
-			<input type="checkbox" id="copy_settings" /> <label for="copy_settings" class="inline">Use the above Tracking ID for all portals</label> 
+			<input type="checkbox" id="copy_settings" /> <label for="copy_settings" class="inline"><%= t('integrations.google_analytics.form.copy_settings') %></label> 
 		</div>
 		<% end %>
 	<%}%>
