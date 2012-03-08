@@ -1409,6 +1409,12 @@ table.summary-report{
       }
    }
 }
+
+table.vmiddle {
+	td {
+		vertical-align:middle;
+	}
+}
                          
 #Timesheet .request_panel .ui-form .title{  
   margin-bottom: -10px;
