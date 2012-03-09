@@ -409,6 +409,8 @@ table.summary-report thead td { text-align: center; font-weight: bold; padding: 
 .request_panel .ui-form .request_form_options { position: absolute; right: 20px; top: 6px; }
 .request_panel .ui-form .request_form_options .insert-canned-response { position: relative; z-index: 1001; }
 
+table.vmiddle td { vertical-align: middle; }
+
 #Timesheet .request_panel .ui-form .title { margin-bottom: -10px; }
 
 .timeentry_edit { position: relative; padding-bottom: 50px; }
