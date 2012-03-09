@@ -27,7 +27,10 @@
 			        	<%if !google_acc.last_sync_status.blank? and google_acc.last_sync_status[:status] == :progress%>
 			        		<%=t("integrations.google_contacts.syncing_in_progress")%>
 			        	<%elsif google_acc.last_sync_time.year == 1970%>
-			        		<%=t("integrations.google_contacts.not_yet_synced")%>
+			        		<%if !google_acc.last_sync_status.blank? and google_acc.last_sync_status[:status] == :success%>
+					        	<%=t("integrations.google_contacts.import_complete")%>
+							<%end%>
+				        	<%=t("integrations.google_contacts.not_yet_synced")%>
 						<%else%>
 			        		<%=formated_date(google_acc.last_sync_time)%>
 						<%end%>

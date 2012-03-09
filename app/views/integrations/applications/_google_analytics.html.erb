@@ -1,0 +1,61 @@
+<%portals = Portal.find(:all, :joins => [:product], :conditions => {:account_id => current_account}, :order => 'primary_role DESC')%>
+<div class="google_analytics">
+<fieldset>
+<% if portals.size > 1 %>
+	<%portals.each { |portal|%>
+	<div class="fields">
+		<label for="configs_<%=portal.id%>_account_number"><%= t('integrations.google_analytics.form.tracking_id') + portal.name%></label>
+		<% if portal == portals.first %>
+		<label for="configs_<%=portal.id%>_account_number" class="overlabel"><%= t('integrations.google_analytics.form.tracking_id_example') %></label>
+		<% end %>
+		<input title="<%= t('integrations.google_analytics.inline_help') + portal.name%>" type="text" id="configs_<%=portal.id%>_account_number" class="analytics_account" name="configs[<%=portal.id%>][account_number]" value="<%=  @installed_application[:configs][:inputs][portal.id.to_s][:account_number] unless @installed_application.blank? || @installed_application[:configs][:inputs][portal.id.to_s].blank? || @installed_application[:configs][:inputs][portal.id.to_s][:account_number].blank? %>" />
+	
+		<% if portal == portals.first %>
+		<br />
+			<input type="checkbox" id="copy_settings" /> <label for="copy_settings" class="inline"><%= t('integrations.google_analytics.form.copy_settings') %></label> 
+		</div>
+		<% end %>
+	<%}%>
+<% else %>
+	<div class="fields">
+		<label for="configs_<%=portals.first.id%>_account_number"><%= t('integrations.google_analytics.account_number')%></label>
+		<label for="configs_<%=portals.first.id%>_account_number" class="overlabel">Eg: UA-123456-1</label>
+		<input type="text" id="configs_<%=portals.first.id%>_account_number" class="analytics_account mini" name="configs[<%=portals.first.id%>][account_number]" value="<%=  @installed_application[:configs][:inputs][portals.first.id.to_s][:account_number] unless @installed_application.blank? || @installed_application[:configs][:inputs][portals.first.id.to_s].blank? || @installed_application[:configs][:inputs][portals.first.id.to_s][:account_number].blank? %>" />
+	</div>
+<% end %>
+</fieldset>
+</div>
+
+<script type="text/javascript">
+	jQuery(document).ready(function() {
+		jQuery(".analytics_account").first().bind('keypress keyup keydown change', function() {
+			if(jQuery("#copy_settings").prop("checked")){
+				portal_account = jQuery(".analytics_account").first().val();
+				jQuery(".analytics_account").val(portal_account);	
+			}			
+		});
+		jQuery(".analytics_domain").first().bind('keypress keyup keydown change', function() {
+			if(jQuery("#copy_settings").prop("checked")){
+				portal_domain = jQuery(".analytics_domain").first().val();
+				jQuery(".analytics_domain").val(portal_domain);	
+			}			
+		});
+		jQuery("#copy_settings").bind('change', function() {
+			if(jQuery("#copy_settings").prop("checked")){
+				portal_account = jQuery(".analytics_account").first().val();
+				portal_domain = jQuery(".analytics_domain").first().val();
+				jQuery(".analytics_account").val(portal_account);
+				jQuery(".analytics_domain").val(portal_domain);	
+				jQuery(".analytics_account").not(':first').attr("readonly", "readonly");
+				jQuery(".analytics_domain").not(':first').attr("readonly", "readonly");
+			}
+			else{
+				jQuery(".analytics_account").not(':first').removeAttr("readonly");
+				jQuery(".analytics_domain").not(':first').removeAttr("readonly");
+			}
+		});
+
+		jQuery("#copy_settings").trigger('change');
+	});
+
+</script>

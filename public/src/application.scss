@@ -4481,7 +4481,7 @@ a.close{
 	}
 }
 
-.google_accounts {
+.google_accounts, .google_analytics {
 
 	.buttons {
 		text-align:right;
@@ -4561,6 +4561,27 @@ a.close{
 	}
 }
 
+.ui-form .inline-field .fields .google_analytics {
+	fieldset{
+		border:none;
+		margin:0;
+		padding:0;
+
+		legend {
+			padding: 0 15px;
+			color:#666;
+			font-size: 14px;
+		}
+
+		.fields {
+			margin: 0 0 10px 0px;
+			label.inline {
+				display: inline;
+				font-size:1em;
+			}
+		}
+	}
+}
 .ui-form .inline-field .google_contacts_sync {
  	label.caption {
  		font-size: 1em;
