@@ -1,1 +1,57 @@
-#date_range{font-size:12px;height:20px}.caption{font-size:10px;font-weight:bold;text-transform:uppercase}.report-container{margin:-15px -20px;padding:0 0}.report-wrapper{padding:15px 25px 0;overflow:hidden;*zoom:1}#freshdesk_time_line_chart{height:250px;margin-top:20px}.report-unit.timeline-chart{height:300px}.sidepanel h4.title{padding:5px 0;margin:0}.sidepanel h4.title label{font-size:1em;color:#444}#dateRange{font-size:12px;margin:0 20px 0 0;border-radius:0}.report-container .tickets-summary,.report-container .sla-compliance{float:left}.report-container .tickets-summary{width:60%}.report-container .sla-compliance{width:20%}#pie-charts{width:100%;float:none;overflow:hidden;*zoom:1}.report-unit.report-pie-chart{height:400px;width:50%;float:left;margin:0}.report-unit.report-pie-chart .chart-container{height:370px;width:370px;position:relative}.report-unit.report-pie-chart .noinfo{width:250px;text-align:center;margin:10px 0 0;background:url("/images/fillers/no-pie-doughnut.png") no-repeat center;font-size:16px;font-weight:bold;padding:110px 0}.single-stacked-bar{height:120px}.gauge-chart{height:120px;width:120px;display:inline}.center-by-margin{margin-left:auto;margin-right:auto}.sla-compliance h4.percent-diff{width:75px;margin:0;font-size:14px;background:url(/images/reports/report_arrow-up.png) right no-repeat;padding-right:20px;color:#006063;text-align:right}.sla-compliance h4.percent-diff .percent{color:#00797d;font-size:10px;display:inline}.sla-compliance h4.negative.percent-diff{color:#990000;background:url(/images/reports/report_arrow-down.png) right no-repeat}.sla-compliance h4.negative.percent-diff .percent{color:#b30000}.report-unit{margin:0 0 20px}.report-unit h3{font-size:12px;color:#333;font-weight:bold;line-height:18px}.report-unit ul.summary{background:none;margin:10px 0;border:0;box-shadow:none}.report-unit ul.summary li{width:auto;margin:0 3% 0 0;text-align:left;width:22%;border-right:1px dotted #dfdfdf}.report-unit ul.summary li span{display:inline-block;font-size:12px;line-height:18px;width:10px}.report-unit ul.summary li h4{font-size:26px;line-height:56px;color:#333333;padding-top:0;font-weight:bold}.report-unit ul.summary li.last{margin:0;border:0}.report-unit ul.summary li.big{margin:10px inherit;font-size:1.4em}.report-unit ul.summary li.big h4{padding:10px}.report-unit .tickets .name,.report-unit .tickets .name-user,.report-unit .tickets-expanded .name,.report-unit .tickets-expanded .name-user{padding-left:10px}.report-unit .tickets .name .preview_pic,.report-unit .tickets .name-user .preview_pic,.report-unit .tickets-expanded .name .preview_pic,.report-unit .tickets-expanded .name-user .preview_pic{display:none}.report-title{margin:15px}.toolbar{padding:10px 20px 0}.toolbar h3 span{float:right;top:15px;right:10px;font-size:80%;font-weight:normal;color:#777}.ui-datepicker-next.ui-corner-all.ui-state-hover,.ui-datepicker-prev.ui-corner-all.ui-state-hover{cursor:pointer;background-color:#FFF}
+/* Theme Colors and layout Defaults */
+#date_range { font-size: 12px; height: 20px; }
+
+.caption { font-size: 10px; font-weight: bold; text-transform: uppercase; }
+
+.report-container { margin: -15px -20px; padding: 0 0; }
+
+.report-wrapper { padding: 15px 25px 0; overflow: hidden; *zoom: 1; }
+
+#freshdesk_time_line_chart { height: 250px; margin-top: 20px; }
+
+.report-unit.timeline-chart { height: 300px; }
+
+.sidepanel h4.title { padding: 5px 0; margin: 0; }
+.sidepanel h4.title label { font-size: 1em; color: #444; }
+
+#dateRange { font-size: 12px; margin: 0 20px 0 0; border-radius: 0; /*@include vertical-gradient(#eeeeee, #ffffff);*/ }
+
+.report-container .tickets-summary, .report-container .sla-compliance { float: left; }
+.report-container .tickets-summary { width: 60%; }
+.report-container .sla-compliance { width: 20%; }
+
+#pie-charts { width: 100%; float: none; overflow: hidden; *zoom: 1; }
+
+.report-unit.report-pie-chart { height: 400px; width: 50%; float: left; margin: 0; }
+.report-unit.report-pie-chart .chart-container { height: 370px; width: 370px; position: relative; }
+.report-unit.report-pie-chart .noinfo { width: 250px; text-align: center; margin: 10px 0 0; background: url("/images/fillers/no-pie-doughnut.png") no-repeat center; font-size: 16px; font-weight: bold; padding: 110px 0; }
+
+.single-stacked-bar { height: 120px; }
+
+.gauge-chart { height: 120px; width: 120px; display: inline; }
+
+.center-by-margin { margin-left: auto; margin-right: auto; }
+
+.sla-compliance h4.percent-diff { width: 75px; margin: 0; font-size: 14px; background: url(/images/reports/report_arrow-up.png) right no-repeat; padding-right: 20px; color: #006063; text-align: right; }
+.sla-compliance h4.percent-diff .percent { color: #00797d; font-size: 10px; display: inline; }
+.sla-compliance h4.negative.percent-diff { color: #990000; background: url(/images/reports/report_arrow-down.png) right no-repeat; }
+.sla-compliance h4.negative.percent-diff .percent { color: #b30000; }
+
+.report-unit { margin: 0 0 20px; }
+.report-unit h3 { font-size: 12px; color: #333; font-weight: bold; line-height: 18px; }
+.report-unit ul.summary { /*        background-color:$tickets_summary_bg;*/ background: none; margin: 10px 0; border: 0; box-shadow: none; }
+.report-unit ul.summary li { width: auto; margin: 0 3% 0 0; text-align: left; width: 22%; border-right: 1px dotted #dfdfdf; }
+.report-unit ul.summary li span { display: inline-block; font-size: 12px; line-height: 18px; width: 10px; }
+.report-unit ul.summary li h4 { font-size: 26px; line-height: 56px; color: #333333; padding-top: 0; font-weight: bold; }
+.report-unit ul.summary li.last { margin: 0; border: 0; }
+.report-unit ul.summary li.big { margin: 10px inherit; font-size: 1.4em; }
+.report-unit ul.summary li.big h4 { padding: 10px; }
+.report-unit .tickets .name, .report-unit .tickets .name-user, .report-unit .tickets-expanded .name, .report-unit .tickets-expanded .name-user { padding-left: 10px; }
+.report-unit .tickets .name .preview_pic, .report-unit .tickets .name-user .preview_pic, .report-unit .tickets-expanded .name .preview_pic, .report-unit .tickets-expanded .name-user .preview_pic { display: none; }
+
+.report-title { margin: 15px; }
+
+.toolbar { padding: 10px 20px 0; }
+.toolbar h3 span { float: right; top: 15px; right: 10px; font-size: 80%; font-weight: normal; color: #777; }
+
+.ui-datepicker-next.ui-corner-all.ui-state-hover, .ui-datepicker-prev.ui-corner-all.ui-state-hover { cursor: pointer; background-color: #FFF; }
