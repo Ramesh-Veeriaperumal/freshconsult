@@ -1046,7 +1046,7 @@ en:
     api_key:
       title: "Your API Key"
       reset: "Reset API Key"
-      reset_warning: "Once the API key is reset, all the applications using the old key will stop working.  Are you sure to continue?"
+      reset_warning: "Once the API key is reset, all the applications using the old key will stop working.  Are you sure you want to continue?"
   add_to_do: Add To do
   subject_or_description: Subject or Description
   premium_details: Everything in &quot;Pro&quot; Plan plus, Multiple Product Support, Multi-timezone support, Community, Email &amp; Phone Support
@@ -1821,7 +1821,7 @@ en:
   To create an issue or link to an existing issue from Freshdesk, navigate to the Tickets page and click on <img src='/images/ticket-icon/jira.png'/><br/><br/>
   To view details of your linked Freshdesk tickets in JIRA, and conversely to view JIRA issue details in Freshdesk, the JIRA administrator is recommended to create a Free Text custom field with the name &quot;Freshdesk Tickets&quot; as described below. 
   <br/><br/>Log on to your JIRA account, click on <b>Administration</b>, navigate to <b>Issues</b> -> <b>Fields</b> and click on <b>Add Custom Field</b>. In <b>Create Custom Field</b> screen, select <b> Free Text Field </b> and click on <b>Next</b>. Input <b>&quot;Freshdesk Tickets&quot;</b> in Field Name and click on Finish. In <b>Associate field to Screens</b> page, select all the check-boxes and click on 'Update'.<br/><br/>"
-  google_contacts_helptext: "<h4>Google contacts sync setup help</h4><p><br/> Click on <b>‘Sync new account’</b> to sync contacts. Enter your Google credentials when prompted.<br/><br/>You can delete an account, if you do not want to sync with that account anymore.<br/><br/><b>Note:</b> We recommend that you do a full back-up of your Google contacts and keep a copy of this record before syncing to ensure data integrity. See back-up options on Google contact sync.."
+  google_contacts_helptext: "<h4>Google contacts sync setup help</h4><p><br/> Click on <b>‘Sync new account’</b> to add new Google account for syncing. When prompted, grant access to Freshdesk to use Google contacts (Enter your Google user name & password if prompted).<br/><br/>You can delete an account if you do not want to sync with that account anymore.<br/><br/><b>Note:</b> It is recommended that you take and store a back-up of your Google contacts before start syncing."
   google_analytics_helptext: "<h4>Google Analytics Integration Help</h4><p><br/>To integrate Google Analytics with Freshdesk, it is recommended that you create a dedicated property inside your company's account in Google Analytics.
   <br/><br/>To create a property, login to your Google Analytics account and go on to your Admin tab and select the desired account. Click on <b>'New Property'</b> to create one. In '<b>Website URL'</b>, enter your Support Portal's  URL and click on <b>'Create Property'</b>. Now, click on the property you just created, and you'll be able to see the <b>'Property ID'</b> just below the property name. Copy this onto the Google Analytics Settings in Freshdesk.</p>"
   reorder: "Reorder"

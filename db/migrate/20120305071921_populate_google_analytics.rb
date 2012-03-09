@@ -7,6 +7,7 @@ class PopulateGoogleAnalytics < ActiveRecord::Migration
         :name => @app_name,
         :display_name => "integrations.google_analytics.label", 
         :description => "integrations.google_analytics.desc", 
+        :listing_order => 6,
         :options => { 
                       :keys_order => [:google_analytics_settings], 
                       :google_analytics_settings => {:type => :custom, 
