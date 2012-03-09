@@ -74,9 +74,8 @@ class AccountsController < ApplicationController
     build_primary_email_and_portal
     build_user
     build_plan  
-    
     begin
-        store_metrics
+      store_metrics
     rescue
     end
       
