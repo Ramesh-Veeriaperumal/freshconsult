@@ -73,16 +73,20 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       end
     end
     
-    def parse_email(email)
-      if email =~ /(.+) <(.+?)>/
+    def parse_email(email_text)
+      
+      if email_text =~ /(.+) <(.+?)>/
         name = $1
         email = $2
-      elsif email =~ /<(.+?)>/
-        email = $1
-      else email =~ EMAIL_REGEX
+      elsif email_text =~ /<(.+?)>/
         email = $1
       end
       
+      if((email && !(email =~ EMAIL_REGEX) && (email_text =~ EMAIL_REGEX)) || (email_text =~ EMAIL_REGEX))
+        email = $1  
+      end
+
+
       name ||= ""
       domain = (/@(.+)/).match(email).to_a[1]
       
@@ -100,6 +104,11 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
           { :name => name, :email => $1 }
         end
       end
+    end
+    
+    def parse_orginal_to
+      original_to = parse_email params[:to]            
+      original_to_email =  original_to[:name].blank? ? original_to[:email] : "#{original_to[:name]} <#{original_to[:email]}>"      
     end
     
     def parse_to_email
@@ -150,7 +159,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         #:email => from_email[:email],
         #:name => from_email[:name],
         :requester => user,
-        :to_email => to_email[:email],
+        :to_email => parse_orginal_to,
         :cc_email => parse_cc_email,
         :email_config => email_config,
         :status => Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open],
@@ -159,6 +168,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       )
       ticket = check_for_chat_scources(ticket,from_email)
       ticket = check_for_spam(ticket)
+      ticket = check_for_auto_responders(ticket)
       
       process_email_commands(ticket, user, email_config) if user.agent?
 
@@ -189,6 +199,14 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       end
       ticket
     end
+    
+    def check_for_auto_responders(ticket)
+      headers = params[:headers]
+      if(!headers.blank? && ((headers =~ /Precedence:(\s)*[bulk|junk]/i) || (headers =~ /Auto-Submitted:(\s)*auto-*/i) || (headers =~ /Reply-To:(\s)*<>/i) || (headers =~ /Return-Path:(\s)*<>/i)))
+        ticket.spam = true
+      end
+      ticket  
+    end
 
     def add_email_to_ticket(ticket, from_email)
       user = get_user(ticket.account, from_email, ticket.email_config)
@@ -197,24 +215,21 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         note = ticket.notes.build(
           :private => false,
           :incoming => true,
-          :body => show_quoted_text(params[:text],parse_to_email[:email]),
-          :body_html => show_quoted_text(Helpdesk::HTMLSanitizer.clean(params[:html] ), parse_to_email[:email]),
+          :body => show_quoted_text(params[:text],ticket.reply_email),
+          :body_html => show_quoted_text(Helpdesk::HTMLSanitizer.clean(params[:html] ), ticket.reply_email),
           :source => 0, #?!?! use SOURCE_KEYS_BY_TOKEN - by Shan
           :user => user, #by Shan temp
           :account_id => ticket.account_id
         )
         note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] unless user.customer?
-        
         process_email_commands(ticket, user, ticket.email_config) if user.agent?
-  
         email_cmds_regex = get_email_cmd_regex(ticket.account)
-        note.body = show_quoted_text(params[:text].gsub(email_cmds_regex, "") ,parse_to_email[:email]) if(!params[:text].blank? && email_cmds_regex)
-        note.body_html = show_quoted_text(Helpdesk::HTMLSanitizer.clean(params[:html].gsub(email_cmds_regex, "")), parse_to_email[:email]) if(!params[:html].blank? && email_cmds_regex)
+        note.body = show_quoted_text(params[:text].gsub(email_cmds_regex, "") ,ticket.reply_email) if(!params[:text].blank? && email_cmds_regex)
+        note.body_html = show_quoted_text(Helpdesk::HTMLSanitizer.clean(params[:html].gsub(email_cmds_regex, "")), ticket.reply_email) if(!params[:html].blank? && email_cmds_regex)
         ticket.save
       else
         return create_ticket(ticket.account, from_email, parse_to_email)
       end
-      
       create_attachments(ticket, note) if note.save 
       note
     end
@@ -278,7 +293,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     regex_arr = [
       Regexp.new("From:\s*" + Regexp.escape(address), Regexp::IGNORECASE),
       Regexp.new("<" + Regexp.escape(address) + ">", Regexp::IGNORECASE),
-      Regexp.new(Regexp.escape(address) + "\s+wrote:", Regexp::IGNORECASE),
+      Regexp.new(Regexp.escape(address) + "\s+wrote:", Regexp::IGNORECASE),   
+      Regexp.new("\\n.*.\d.*." + Regexp.escape(address) ),
       Regexp.new("On.*?wrote:"),
       Regexp.new("-+original\s+message-+\s*", Regexp::IGNORECASE),
       Regexp.new("from:\s*", Regexp::IGNORECASE)

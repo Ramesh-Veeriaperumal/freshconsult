@@ -14,6 +14,7 @@ gem "rufus-scheduler", :require =>"rufus/scheduler"
 gem "tzinfo"
 gem "ruby-debug", "0.10.3"
 
+gem "jira4r", "0.3.0"
 gem "ruby-openid", "2.1.8", :require => "openid"
 gem "ruby-openid-apps-discovery", "1.2.0"
 
@@ -53,6 +54,7 @@ gem "twitter" , "0.9.12"
 gem "newrelic_rpm"
 gem "sanitize", "2.0.3"
 gem "koala", "~> 1.0.0"
+gem "spreadsheet", "0.6.8"
 
 
 group :development do

@@ -158,6 +158,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
       
   named_scope :permissible , lambda { |user| { :conditions => agent_permission(user)}  unless user.customer? }
  
+  named_scope :latest_tickets, lambda {|updated_at| {:conditions => ["helpdesk_tickets.updated_at > ?", updated_at]}}
+  
   def self.agent_permission user
     
     permissions = {:all_tickets => [] , 
@@ -166,15 +168,24 @@ class Helpdesk::Ticket < ActiveRecord::Base
                   
      return permissions[Agent::PERMISSION_TOKENS_BY_KEY[user.agent.ticket_permission]]
   end
+  
+  def agent_permission_condition user
+     permissions = {:all_tickets => "" , 
+                   :group_tickets => " AND (group_id in (#{user.agent_groups.collect{|ag| ag.group_id}.insert(0,0)}) OR responder_id= #{user.id}) " , 
+                   :assigned_tickets => " AND (responder_id= #{user.id}) " }
+                  
+     return permissions[Agent::PERMISSION_TOKENS_BY_KEY[user.agent.ticket_permission]]
+  end
   #Sphinx configuration starts
   define_index do
-    indexes :display_id, :sortable => true
-    indexes :subject, :sortable => true
-    indexes description
-    indexes notes.body, :as => :note
+   
+     indexes :display_id, :sortable => true
+     indexes :subject, :sortable => true
+     indexes description
+     indexes notes.body, :as => :note
     
-    has account_id, deleted
-    
+     has account_id, deleted
+
     set_property :delta => :delayed
     set_property :field_weights => {
       :display_id   => 10,
@@ -597,6 +608,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def to_liquid
     { 
       "id"                                => display_id,
+      "raw_id"                            => id,
       "encoded_id"                        => encode_display_id,
       "subject"                           => subject,
       "description"                       => description_with_attachments,

@@ -6,8 +6,46 @@
   <%= render :partial => "/helpdesk/shared/ticket_sort" unless @items.empty? %>
 </div>
      
+<div id="recent_ticket_count" class='more-tweets'>
+  1 new update
+</div>
+
 <% form_tag "", { :id => "tickets-expanded",  :method => :put } do %>
   <div id="ticket-list">
     <%= render :partial => "/helpdesk/shared/tickets" %>
   </div>    
 <% end %>
+
+<% javascript_tag do %>
+	new PeriodicalExecuter(function(pe) {
+		params = jQuery("#FilterOptions").serializeArray(); 
+		params.push({name:"latest_updated_at",value:jQuery('#latest_updated_at').prop('value')})
+	
+		jQuery.ajax({
+		  url:"/helpdesk/tickets/latest_ticket_count",
+		  type: "POST",
+	      dataType: "script",
+		  data: params,
+		  success: function(data) {
+		  	if(data > 0) {
+	  			jQuery('#recent_ticket_count')
+	  			  .html(plural(data, "<%= t('latest_ticket') %>", "<%= t('latest_tickets') %>"));
+	  			jQuery('#recent_ticket_count').slideDown();
+			}
+		  }
+		});
+	}, 30);
+  
+	jQuery('#recent_ticket_count').click(function(){
+	    jQuery("#ticket-list").html("<div class='loading-box'></div>"); 
+	     jQuery.ajax({
+	        url: "/helpdesk/tickets/custom_search",
+	        type: "POST",
+	        dataType: "script",
+	        data: jQuery("#FilterOptions").serializeArray(),
+	        success: function(msg){ 
+	        }
+	      }); 
+		jQuery(this).hide();	
+	});	
+<%end%>
