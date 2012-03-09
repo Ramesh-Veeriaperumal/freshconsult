@@ -52,13 +52,6 @@ ActiveRecord::Schema.define(:version => 20120305071921) do
 
   add_index "admin_data_imports", ["account_id", "created_at"], :name => "index_data_imports_on_account_id_and_created_at"
 
-  create_table "admin_reports", :force => true do |t|
-    t.string "name"
-    t.string "display_name"
-    t.string "description"
-    t.text   "query"
-  end
-
   create_table "admin_user_accesses", :force => true do |t|
     t.string   "accessible_type"
     t.integer  "accessible_id"
@@ -1028,10 +1021,6 @@ ActiveRecord::Schema.define(:version => 20120305071921) do
     t.datetime "updated_at"
   end
 
-  create_table "temp", :id => false, :force => true do |t|
-    t.binary "skey", :limit => 255
-  end
-
   create_table "ticket_topics", :force => true do |t|
     t.integer  "ticket_id",  :limit => 8
     t.integer  "topic_id",   :limit => 8
@@ -1061,10 +1050,6 @@ ActiveRecord::Schema.define(:version => 20120305071921) do
   add_index "topics", ["forum_id", "replied_at"], :name => "index_topics_on_forum_id_and_replied_at"
   add_index "topics", ["forum_id", "sticky", "replied_at"], :name => "index_topics_on_sticky_and_replied_at"
   add_index "topics", ["forum_id"], :name => "index_topics_on_forum_id"
-
-  create_table "ttemp", :force => true do |t|
-    t.string "name"
-  end
 
   create_table "users", :force => true do |t|
     t.string   "name",                             :default => "",    :null => false
