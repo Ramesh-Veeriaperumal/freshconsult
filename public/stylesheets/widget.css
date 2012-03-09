@@ -808,7 +808,9 @@ div.action_buttons:hover { -moz-box-shadow: rgba(0, 0, 0, 0.1) 0 0 2px; -webkit-
 .page_info .toolbar_pagination { top: -6px; }
 .page_info .toolbar_pagination .prev_page, .page_info .toolbar_pagination .next_page { width: 7px; top: -37px; }
 
-.toolbar_pagination { float: right; top: -4px; }
+.request-title .toolbar_pagination { top: -4px; left: 75px; }
+
+.toolbar_pagination { float: right; }
 .toolbar_pagination .prev_page, .toolbar_pagination .next_page { float: left; font-size: 1px; width: 7px; height: 9px; right: 0px; height: 14px; position: absolute; width: 11px; }
 .toolbar_pagination .prev_page span, .toolbar_pagination .next_page span { left: 2px; top: 0px; position: absolute; width: 22px; height: 22px; }
 .toolbar_pagination .prev_page { -moz-border-radius: 3px 0 0 3px; -webkit-border-radius: 3px 0 0 3px; border-radius: 3px 0 0 3px; margin-right: 0px; right: 30px; }

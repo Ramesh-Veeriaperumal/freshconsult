@@ -338,11 +338,15 @@ div.action_buttons:hover{
       top:-37px;
 		}
 	}
+}                      
+
+.request-title .toolbar_pagination{
+  top:-4px;
+	left:75px;
 }
 
 .toolbar_pagination{
-   float:right;           
-   top:-4px;
+   float:right;        
    .prev_page, .next_page{
       float:left; font-size:1px; width:7px; height:9px;   
       right:0px; 
