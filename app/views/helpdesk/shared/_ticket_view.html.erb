@@ -17,7 +17,7 @@
 <% end %>
 
 <% javascript_tag do %>
-	new PeriodicalExecuter(function(pe) {
+	/* new PeriodicalExecuter(function(pe) {
 		params = jQuery("#FilterOptions").serializeArray(); 
 		params.push({name:"latest_updated_at",value:jQuery('#latest_updated_at').prop('value')})
 	
@@ -34,7 +34,7 @@
 			}
 		  }
 		});
-	}, 30);
+	}, 30); */
   
 	jQuery('#recent_ticket_count').click(function(){
 	    jQuery("#ticket-list").html("<div class='loading-box'></div>"); 
