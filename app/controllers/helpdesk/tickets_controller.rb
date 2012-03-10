@@ -203,8 +203,6 @@ class Helpdesk::TicketsController < ApplicationController
     
     @email_config = current_account.primary_email_config
     
-    set_prev_next_tickets
-    
     respond_to do |format|
       format.html  
       format.atom
