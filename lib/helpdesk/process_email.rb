@@ -168,7 +168,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       )
       ticket = check_for_chat_scources(ticket,from_email)
       ticket = check_for_spam(ticket)
-      ticket = check_for_auto_responders(ticket)
+      #ticket = check_for_auto_responders(ticket)
       
       process_email_commands(ticket, user, email_config) if user.agent?
 
