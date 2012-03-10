@@ -623,6 +623,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       "encoded_id"                        => encode_display_id,
       "subject"                           => subject,
       "description"                       => description_with_attachments,
+      "description_text"                  => description,
       "requester"                         => requester,
       "agent"                             => responder,
       "group"                             => group,
