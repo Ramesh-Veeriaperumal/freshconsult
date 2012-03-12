@@ -162,6 +162,16 @@ class Helpdesk::TicketsController < ApplicationController
   def set_prev_next_tickets
     if params[:filters].nil?
       @filters = {}
+      
+      if @item.deleted?
+        @filters = {:filter_name => "deleted"}
+      elsif @item.spam?
+        @filters = {:filter_name => "spam"}
+      else
+        @filters = {:filter_name => "all_tickets"}
+      end
+      conditions = @item.get_default_filter_permissible_conditions(current_user)     
+      @filters.merge!(:data_hash => conditions) unless conditions.blank?
       index_filter = @ticket_filter.deserialize_from_params(@filters)
     else  
       @filters = params[:filters]
@@ -169,12 +179,11 @@ class Helpdesk::TicketsController < ApplicationController
     end
 
     ticket_ids = index_filter.adjacent_tickets(@ticket, current_account, current_user)
-    
-    RAILS_DEFAULT_LOGGER.debug "next_previous_tickets : #{ticket_ids.to_json}"
-    
+        
     ticket_ids.each do |t|
        (t[2] == "previous") ? @previous_ticket_id = t[1] : @next_ticket_id = t[1]        
     end
+    RAILS_DEFAULT_LOGGER.debug "next_previous_tickets : #{@previous_ticket_id} , #{@next_ticket_id}"
   end
   
   def show
@@ -194,10 +203,10 @@ class Helpdesk::TicketsController < ApplicationController
     
     @email_config = current_account.primary_email_config
     
-    set_prev_next_tickets
-    
     respond_to do |format|
-      format.html  
+      format.html{
+        set_prev_next_tickets
+      }  
       format.atom
       format.xml  { 
         render :xml => @item.to_xml  

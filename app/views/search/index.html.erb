@@ -9,5 +9,5 @@
 	<!-- h3 class="sub_title">Search for "Freshdesk" has 120 results</h3 -->
 
 	<%= render :partial => 'search_results' %>
-	<%= will_paginate @items %>
+	<%= will_paginate @items unless @items.blank?%>
 </div>

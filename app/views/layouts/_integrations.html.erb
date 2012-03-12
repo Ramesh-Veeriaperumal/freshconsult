@@ -1,0 +1,23 @@
+<% if current_user.blank? || current_user.agent.blank? %>
+	<% installed_app = Integrations::InstalledApplication.find(:first, :include=>:application,:conditions => {:applications => {:name => "google_analytics"}, :account_id => current_account})  
+		app_config = installed_app[:configs][:inputs] unless installed_app.blank?
+	%>
+	<% unless app_config.blank? || app_config[current_portal.id.to_s].blank? || app_config[current_portal.id.to_s]['account_number'].blank? %>
+		<!-- google analytices starts here -->
+		<script type="text/javascript">
+		var _gaq = _gaq || [];
+		    _gaq.push(['_setAccount', '<%= app_config[current_portal.id.to_s]['account_number'] %>']);
+		    <% unless app_config[current_portal.id.to_s]['domain'].blank? %>
+		    _gaq.push(['_setDomainName', '<%= app_config[current_portal.id.to_s]['domain'] %>']);
+		    <% end %>
+		    _gaq.push(['_trackPageview']);
+
+		  (function() {
+		    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		  })();
+		</script>
+		<!-- google analytices ends here -->
+	<% end %>
+<% end %>

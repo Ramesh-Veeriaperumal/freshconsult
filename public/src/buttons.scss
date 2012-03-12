@@ -329,16 +329,30 @@ div.action_buttons:hover{
    @include single-text-shadow(#ffffff);
    @include single-box-shadow(#ffffff, 1px, 0, 1px);   
 }
+             
+.page_info{
+	.toolbar_pagination{			
+    top:-6px;  
+	  .prev_page, .next_page{			
+			width:7px;
+      top:-37px;
+		}
+	}
+}                      
+
+.request-title .toolbar_pagination{
+  top:-4px;
+	left:75px;
+}
 
 .toolbar_pagination{
-   float:right;
-   top:-6px;
+   float:right;        
    .prev_page, .next_page{
       float:left; font-size:1px; width:7px; height:9px;   
-      right:0px;
-      top:-37px;
+      right:0px; 
       height:14px;
-      position:absolute;      
+      position:absolute;    
+  		width:11px;
       span{
          left:2px; top:0px;
          position:absolute; width:22px; height:22px;  

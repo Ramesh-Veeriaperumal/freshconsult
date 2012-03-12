@@ -1,6 +1,8 @@
 class Integrations::GoogleAccountsController < Admin::AdminController
   include Integrations::GoogleContactsUtil
 
+  before_filter :update_params, :only => [:edit, :update]
+
   def edit
     Rails.logger.debug "Integrations::GoogleAccountsController.edit #{params.inspect}"
     @google_account = Integrations::GoogleAccount.find(:first, :conditions => ["id=? and account_id=?", params[:id], current_account])
@@ -111,6 +113,14 @@ class Integrations::GoogleAccountsController < Admin::AdminController
             #                           :updated=>(db_stats[0][1] ? db_stats[0][1] : 0), :deleted=>(db_stats[0][2] ? db_stats[0][2] : 0)})
             # end
           end
+        end
+      end
+    end
+
+    def update_params
+      unless params["integrations_google_account"].blank?
+        if params["integrations_google_account"]["overwrite_existing_user"].blank?
+          params["integrations_google_account"]["overwrite_existing_user"] = false
         end
       end
     end

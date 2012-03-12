@@ -126,7 +126,7 @@ class Helpdesk::Note < ActiveRecord::Base
       
       if user.customer? 
         unless notable.open?
-          notable.status = Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open]
+          notable.status = Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open] unless notable.import_id
           notification_type = EmailNotification::TICKET_REOPENED
         end 
         e_notification = account.email_notifications.find_by_notification_type(notification_type ||= EmailNotification::REPLIED_BY_REQUESTER)

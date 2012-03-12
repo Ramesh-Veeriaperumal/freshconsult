@@ -26,7 +26,6 @@
 
 @mixin pointer-title($bg: #afafaf, $ht: 9px){
 	@include border-left-radius(3px);
-	background-color: $bg;
 	height: $ht;
 	&:before {
 	   content:"";
@@ -34,8 +33,7 @@
 	   top:0px;
 	   right:-($ht*2);
 	   display:block; width:0; /* Firefox 3.0 damage limitation */
-	   border:$ht solid transparent; 
-		 border-left-color: $bg;
+	   border:$ht solid transparent;   
 	   height:0px;
 	   font-size:0px;
 	}

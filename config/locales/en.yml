@@ -1046,7 +1046,7 @@ en:
     api_key:
       title: "Your API Key"
       reset: "Reset API Key"
-      reset_warning: "Once the API key is reset, all the applications using the old key will stop working.  Are you sure to continue?"
+      reset_warning: "Once the API key is reset, all the applications using the old key will stop working.  Are you sure you want to continue?"
   add_to_do: Add To do
   subject_or_description: Subject or Description
   premium_details: Everything in &quot;Pro&quot; Plan plus, Multiple Product Support, Multi-timezone support, Community, Email &amp; Phone Support
@@ -1727,7 +1727,7 @@ en:
       MERGE_LOCAL: "Merge Freshdesk and Google contacts (Freshdesk precedence)"
       MERGE_REMOTE: "Merge Google and Freshdesk contacts (Google precedence)"
       MERGE_LATEST: "Merge Freshdesk and Google contacts (Latest update takes precedence)"
-      import_later_success: "Google contacts import started successfully.  You will receive an email to %{email} after import completes." 
+      import_later_success: "Google contacts import started successfully.  You can check the import status in the settings page itself." 
       import_success_no_stats: "Successfully imported Google contacts." 
       import_success: "Successfully imported Google contacts.\nStatus: %{added} Added, %{updated} Updated and %{deleted} Deleted." 
       fetch_problem: "Problem in fetching Google contacts." 
@@ -1752,7 +1752,8 @@ en:
       last_sync_time: "Last sync time"
       last_sync_status: "Last sync status"
       last_sync: "Last sync"
-      not_yet_synced: "Not yet started"
+      import_complete: "One time import completed."
+      not_yet_synced: "Syncing not started."
       syncing_in_progress: "Syncing in progress"
       no_status: "N/A"
       info1: "Using the same sync tag across multiple Google accounts allows you to share Freshdesk contacts with all the accounts.  If you do not want to sync any contacts into Google, you may leave it empty."
@@ -1796,6 +1797,20 @@ en:
         widget_title: "Widget Title"
         username: "Username"
         password: "Password"
+    google_analytics:
+      label: "Google Analytics"
+      desc: "Monitor visitor stats on your support portal using Google Analytics"
+      portal: "Portal"
+      account_number: "Enter your Tracking ID"
+      inline_help: "Enter the Tracking ID for "
+      domain: "Domain"
+      form:
+        google_analytics_settings_info: ""
+        google_analytics_settings: ""
+        tracking_id: "Tracking ID for "
+        tracking_id_example: "Eg: UA-123456-1"
+        copy_settings: "Use the above Tracking ID for all portals"
+
   widgets:
     contact_widget:
       description: "Display a contact or option to add the contact into capsule."
@@ -1806,7 +1821,9 @@ en:
   To create an issue or link to an existing issue from Freshdesk, navigate to the Tickets page and click on <img src='/images/ticket-icon/jira.png'/><br/><br/>
   To view details of your linked Freshdesk tickets in JIRA, and conversely to view JIRA issue details in Freshdesk, the JIRA administrator is recommended to create a Free Text custom field with the name &quot;Freshdesk Tickets&quot; as described below. 
   <br/><br/>Log on to your JIRA account, click on <b>Administration</b>, navigate to <b>Issues</b> -> <b>Fields</b> and click on <b>Add Custom Field</b>. In <b>Create Custom Field</b> screen, select <b> Free Text Field </b> and click on <b>Next</b>. Input <b>&quot;Freshdesk Tickets&quot;</b> in Field Name and click on Finish. In <b>Associate field to Screens</b> page, select all the check-boxes and click on 'Update'.<br/><br/>"
-  google_contacts_helptext: "<h4>Google contacts sync setup help</h4><p><br/> Once enabled, click on <b>‘Sync new account’</b> to sync contacts from new accounts. Once you have set it up, you can view sync setting details along with the last synced time.<br/><br/> You can delete an account, if you do not want to sync with that account anymore."
+  google_contacts_helptext: "<h4>Google contacts sync setup help</h4><p><br/> Click on <b>‘Sync new account’</b> to add new Google account for syncing. When prompted, grant access to Freshdesk to use Google contacts (Enter your Google user name & password if prompted).<br/><br/>You can delete an account if you do not want to sync with that account anymore.<br/><br/><b>Note:</b> It is recommended that you take and store a back-up of your Google contacts before start syncing."
+  google_analytics_helptext: "<h4>Google Analytics Integration Help</h4><p><br/>To integrate Google Analytics with Freshdesk, it is recommended that you create a dedicated property inside your company's account in Google Analytics.
+  <br/><br/>To create a property, login to your Google Analytics account and go on to your Admin tab and select the desired account. Click on <b>'New Property'</b> to create one. In '<b>Website URL'</b>, enter your Support Portal's  URL and click on <b>'Create Property'</b>. Now, click on the property you just created, and you'll be able to see the <b>'Property ID'</b> just below the property name. Copy this onto the Google Analytics Settings in Freshdesk.</p>"
   reorder: "Reorder"
   reports:
       tab_heading: "Reports"
@@ -1874,3 +1891,5 @@ en:
   email_command_del_info_data: "Tip - Choose a unique delimiter combination of minimum three characters (special characters recommended) that will not conflict the regular email response."
   latest_ticket: "new update"
   latest_tickets: "new updates"
+  search:
+    no_results_msg: "No results found"  
