@@ -478,8 +478,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def update_ticket_states 
     
-    ticket_states.assigned_at=Time.zone.now if (responder_id != @old_ticket.responder_id && responder)    
-    if (@old_ticket.responder_id.nil? && responder_id != @old_ticket.responder_id && responder)
+    ticket_states.assigned_at=Time.zone.now if (responder_id != @old_ticket.responder_id && responder)   
+    if(responder and ticket_states.first_assigned_at.nil?)
       ticket_states.first_assigned_at = Time.zone.now
     end
     
