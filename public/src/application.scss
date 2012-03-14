@@ -508,10 +508,26 @@ body h5{
 	text-align:right;
 	.btn{ font-weight:bold; padding:4px 9px; }
 }
-               
-.priority-pointer, .status-pointer{
-   @include pointer-title; 
-}                             
+                         
+.status-pointer, .priority-pointer{
+	font-size:9px;
+	color:#fff;
+	text-transform:uppercase; 
+	text-align:center;
+	padding:9px 3px 0 6px;
+	line-height:0;
+	height:9px;                
+	position:absolute;
+  @include pointer-title;	      
+	@include min-width(48px); 
+	left:-4px;	
+}
+.status-pointer{  
+	top:24px;  
+}			                     
+.priority-pointer{
+	top:4px; 	     
+}          
 
 .request-title{
 	$COL_PRI_HIGH: #cc5600;		$COL_PRI_MEDIUM: #0a9458;		$COL_PRI_LOW: #0c8aae;		$COL_PRI_URGENT: #cc0000;			
@@ -524,29 +540,7 @@ body h5{
 	font-weight:bold;                 
 	@include min-height(35px);
 	.subject{ line-height:20px; }
-	.ticket-id{	color:#999999; }
-	.status-pointer, .priority-pointer{
-		font-size:10px;
-		color:#fff;
-		text-transform:uppercase; 
-		text-align:center;
-		padding:9px 9px 0;
-		line-height:0;
-		height:9px;				
-	}
-	.status-pointer{            
-		float:left;                
-		position:relative;
-		margin:1px 12px 0 -14px;
-		padding-left:18px;
-		text-align:left;
-	}			                     
-	.priority-pointer{
-		left:-4px;
-		top:8px;
-		position:absolute;     
-		@include min-width(45px); 
-	} 
+	.ticket-id{	color:#999999; }        	
 	.low{ background-color: $COL_PRI_LOW; }
 	.low:before{ border-left-color: $COL_PRI_LOW; }
 	.medium{ background-color: $COL_PRI_MEDIUM; }
