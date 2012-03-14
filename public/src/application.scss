@@ -508,7 +508,52 @@ body h5{
 	text-align:right;
 	.btn{ font-weight:bold; padding:4px 9px; }
 }
+                         
+.status-pointer, .priority-pointer{
+	font-size:9px;
+	color:#fff;
+	text-transform:uppercase; 
+	text-align:center;
+	padding:9px 3px 0 6px;
+	line-height:0;
+	height:9px;                
+	position:absolute;
+  @include pointer-title;	      
+	@include min-width(48px); 
+	left:-4px;	
+}
+.status-pointer{  
+	top:24px;  
+}			                     
+.priority-pointer{
+	top:4px; 	     
+}          
 
+.request-title{
+	$COL_PRI_HIGH: #cc5600;		$COL_PRI_MEDIUM: #0a9458;		$COL_PRI_LOW: #0c8aae;		$COL_PRI_URGENT: #cc0000;			
+	background-color:#f6f6f6; 
+	padding:7px 70px;
+	border-bottom:1px solid #e9e9e9;
+	color:#000000;
+	font-size:13px;
+	position:relative;
+	font-weight:bold;                 
+	@include min-height(35px);
+	.subject{ line-height:20px; }
+	.ticket-id{	color:#999999; }        	
+	.low{ background-color: $COL_PRI_LOW; }
+	.low:before{ border-left-color: $COL_PRI_LOW; }
+	.medium{ background-color: $COL_PRI_MEDIUM; }
+	.medium:before{ border-left-color: $COL_PRI_MEDIUM; }
+	.high{ background-color: $COL_PRI_HIGH; }
+	.high:before{ border-left-color: $COL_PRI_HIGH; }
+	.urgent{ background-color: $COL_PRI_URGENT; }
+	.urgent:before{ border-left-color: $COL_PRI_URGENT; }
+}
+h4.title{
+	font-size:1.1em;
+	font-weight:bold;
+}
 .request_details{
 	margin:-13px -20px 20px -20px;
 	.ticket_actions{
@@ -528,54 +573,7 @@ body h5{
 		display:none;
 	}	
 	.requestCnt{
-		position:relative; 
-		.request-title{
-			$COL_PRI_HIGH: #cc5600;		$COL_PRI_MEDIUM: #0a9458;		$COL_PRI_LOW: #0c8aae;		$COL_PRI_URGENT: #cc0000;			
-			background-color:#f6f6f6; 
-			padding:7px 10px 8px 68px;
-			border-bottom:1px solid #e9e9e9;
-			color:#000000;
-			font-size:13px;
-			position:relative;
-			font-weight:bold;
-			.subject{ line-height:20px; }
-			.ticket-id{	color:#999999; }
-			.status, .priority{
-				font-size:10px;
-				color:#fff;
-				text-transform:uppercase; 
-				text-align:center;
-				padding:9px 8px 0;
-				line-height:0;
-				height:9px;
-				@include min-width(40px);
-			}
-			.status{
-				float:right;
-				margin:2px 0 0 10px;
-				@include border-radius(3px);
-				@include box-shadow( inset 0 1px 1px rgba(0, 0, 0, 0.20) );
-				@include min-width(60px);
-			}			
-			.priority{
-				left:-4px;
-				top:8px;
-				position:absolute;
-				@include pointer-title;
-			}
-			.low{ background-color: $COL_PRI_LOW; }
-			.low:before{ border-left-color: $COL_PRI_LOW; }
-			.medium{ background-color: $COL_PRI_MEDIUM; }
-			.medium:before{ border-left-color: $COL_PRI_MEDIUM; }
-			.high{ background-color: $COL_PRI_HIGH; }
-			.high:before{ border-left-color: $COL_PRI_HIGH; }
-			.urgent{ background-color: $COL_PRI_URGENT; }
-			.urgent:before{ border-left-color: $COL_PRI_URGENT; }
-		}
-		h4.title{
-			font-size:1.1em;
-			font-weight:bold;
-		}
+		position:relative; 		
 	}
 	
 	a.user_name{ @include link-colors( #333333, #527EAA ); } 
@@ -593,6 +591,10 @@ body h5{
 				.preview_pic{ left:-5px; }
 				.info{
 					margin-top:5px;
+				}    
+				.light{
+					font-style:italic;
+					color:#afafaf;
 				}
 				.loading-edit{
 					position:absolute;
@@ -1080,6 +1082,12 @@ div.panel_area{
 	}
 	.spam_active img{ 
 		background: sprite($ticketicon, flag-spam_active) no-repeat;
+	}
+	.jira img{ 
+		background: sprite($ticketicon, jira) no-repeat;
+	}
+	.jira_active img{ 
+		background: sprite($ticketicon, jira_active) no-repeat;
 	}
 } 
 
@@ -4475,6 +4483,107 @@ a.close{
 	}
 }
 
+.google_accounts, .google_analytics {
+
+	.buttons {
+		text-align:right;
+		padding:0 35px 20px;
+	}
+	h4.title {
+		font-size:14px;
+		margin:10px 55px 25px;
+	}
+	table {
+		margin:15px 0 25px;
+	}
+	tr {
+		color:#666;
+
+		span {
+			color:#000;
+		}
+
+		&.headings {
+			border-bottom: solid 1px #CCC;
+			th {
+				padding:5px 0 10px;
+				color:#666;
+				font-size:11px;
+			}
+		}
+
+		td {
+			padding: 15px 0 15px;
+		}
+		border-bottom: solid 1px #EEE;
+	}
+
+	fieldset{
+		@include pie-clearfix;
+		border: solid 1px #EEE;
+		border-radius:10px;
+		margin:15px;
+		padding:25px;
+
+		legend {
+			padding: 0 15px;
+			color:#666;
+			font-size: 14px;
+		}
+
+		.fields {
+			padding: 0 20px;
+			.checkwrapper {
+				margin:5px 10px 5px 0px;
+				padding:0 5px 0 0;
+				float:left;
+				width:200px;
+
+				input[type=checkbox] {
+					margin-right: 10px;
+				}
+			}
+			input.mini {
+				width:50%;
+			}
+
+			.caption {
+				font-weight: bold;
+			}
+		}
+
+		.special-notice {
+			background-color: #FDFDE5;
+			color: #333;
+			font-size: 12px;
+			line-height: 18px;
+			margin:15px 0 15px 25px;
+			padding: 10px 20px;
+		}
+	}
+}
+
+.ui-form .inline-field .fields .google_analytics {
+	fieldset{
+		border:none;
+		margin:0;
+		padding:0;
+
+		legend {
+			padding: 0 15px;
+			color:#666;
+			font-size: 14px;
+		}
+
+		.fields {
+			margin: 0 0 10px 0px;
+			label.inline {
+				display: inline;
+				font-size:1em;
+			}
+		}
+	}
+}
 .ui-form .inline-field .google_contacts_sync {
  	label.caption {
  		font-size: 1em;
@@ -4571,6 +4680,113 @@ a.close{
    	} 
 }
 
+#jira_widget {
+	.content {
+		width: 350px;
+	}
+	@include pie-clearfix;
+	.heading {
+		margin: 10px 0 0;
+		.current_form {
+			font-size:14px;
+			font-weight:bold;
+			color:#000;
+		}
+
+		.other_form {
+			font-size:12px;
+			color:#369;
+			cursor: pointer;
+		}
+
+		.divider {
+			padding:0 15px;
+		}
+	}
+
+	.ui-form {
+		background:none;
+		border:none;
+
+		div.field {
+			float:left;
+			margin:5px 0;
+
+			width:100%;
+
+			&.half_width {
+				width:45%;
+				padding: 0 5% 0 0;
+
+				&.right {
+					padding: 0 0 0 5%;
+				}
+			}
+
+		}
+
+		.uiButton[type=submit] {
+			margin:15px 0 10px;
+		}
+	}
+
+	.loading-fb {
+		width:90%;
+		margin: 3px 5%;
+	}
+
+	.jira_issue_details {
+		font-size:13px;
+
+		#jira-link {
+			overflow:hidden;
+		border-bottom: dotted 1px #CCC;
+			#jira-view {
+				float:right;
+				font-size:10px;
+				text-align:right;
+				width:100px;
+			}
+		}
+
+		#jira-issue-id {
+			font-weight:bold;
+		}
+
+		li {
+			margin:20px 0;
+
+			label {
+				font-size:11px;
+				color:#666;
+				float:left;
+				padding:0;
+				width: 100px;
+
+				&#jira-link-label {
+					margin-bottom:10px;
+					width:100%;
+				}
+			}
+		}
+	}
+}
+
+.twipsy-inner.big {
+	max-width: 300px;
+	font-size:110%;
+	font-weight:normal;
+	line-height:160%;
+	text-align:left;
+}
+
+.strikethrough {
+	text-decoration: line-through;
+}
+
+.italics {
+	font-style:italic;
+}
 
 a.submit_link{
   text-decoration:underline;

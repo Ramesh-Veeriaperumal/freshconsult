@@ -5,7 +5,7 @@ class Helpdesk::TicketsController < ApplicationController
   include ActionView::Helpers::TextHelper
   
   before_filter :check_user , :only => [:show]
-  before_filter :load_ticket_filter , :only => [:index, :custom_view_save]
+  before_filter :load_ticket_filter , :only => [:index, :show, :custom_view_save, :latest_ticket_count]
   before_filter :add_requester_filter , :only => [:index, :user_tickets]
   before_filter :disable_notification, :if => :save_and_close?
   after_filter  :enable_notification, :if => :save_and_close?
@@ -22,6 +22,7 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :load_item, :verify_permission  ,   :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :get_ca_response_content, :print] 
   before_filter :load_flexifield ,    :only => [:execute_scenario]
   before_filter :set_date_filter ,    :only => [:export_csv]
+  #before_filter :set_latest_updated_at , :only => [:index, :custom_search]
 
   uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
   
@@ -80,6 +81,10 @@ class Helpdesk::TicketsController < ApplicationController
       end
     end
   end
+  
+  def set_latest_updated_at
+     @latest_updated_at = current_account.tickets.maximum(:updated_at).to_formatted_s(:db)   
+  end
  
   def index
     @items = current_account.tickets.permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter') 
@@ -107,6 +112,17 @@ class Helpdesk::TicketsController < ApplicationController
 
       end      
       format.atom do
+      end
+    end
+  end
+  
+  def latest_ticket_count    
+    index_filter =  current_account.ticket_filters.new(Helpdesk::Filters::CustomTicketFilter::MODEL_NAME).deserialize_from_params(params)       
+    ticket_count =  current_account.tickets.permissible(current_user).latest_tickets(params[:latest_updated_at]).count(:id, :conditions=> index_filter.sql_conditions)
+
+    respond_to do |format|
+      format.html do
+        render :text => ticket_count
       end
     end
   end
@@ -143,8 +159,38 @@ class Helpdesk::TicketsController < ApplicationController
     render :partial => "custom_search"
   end
   
+  def set_prev_next_tickets
+    if params[:filters].nil?
+      @filters = {}
+      
+      if @item.deleted?
+        @filters = {:filter_name => "deleted"}
+      elsif @item.spam?
+        @filters = {:filter_name => "spam"}
+      else
+        @filters = {:filter_name => "all_tickets"}
+      end
+      conditions = @item.get_default_filter_permissible_conditions(current_user)     
+      @filters.merge!(:data_hash => conditions) unless conditions.blank?
+      index_filter = @ticket_filter.deserialize_from_params(@filters)
+    else  
+      @filters = params[:filters]
+      index_filter = current_account.ticket_filters.new(Helpdesk::Filters::CustomTicketFilter::MODEL_NAME).deserialize_from_params(@filters)
+    end
+
+    ticket_ids = index_filter.adjacent_tickets(@ticket, current_account, current_user)
+        
+    ticket_ids.each do |t|
+       (t[2] == "previous") ? @previous_ticket_id = t[1] : @next_ticket_id = t[1]        
+    end
+    RAILS_DEFAULT_LOGGER.debug "next_previous_tickets : #{@previous_ticket_id} , #{@next_ticket_id}"
+  end
+  
   def show
     @reply_email = current_account.reply_emails
+    
+    @reply_email.push(@item.to_email) unless @item.to_email.blank?
+
     @subscription = current_user && @item.subscriptions.find(
       :first, 
       :conditions => {:user_id => current_user.id})

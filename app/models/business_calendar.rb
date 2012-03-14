@@ -12,7 +12,7 @@ class BusinessCalendar < ActiveRecord::Base
   
   attr_accessible :holiday_data,:business_time_data
   
-  HOLIDAYS_SEED_DATA =[["Jan 17", "Birthday of Martin Luther King Jr"], ["Feb 21", "Washington’s Birthday"], ["May 30", "Memorial Day"],["Jul 04", "Independence Day"],["Sep 05", "Labor Day"],["Oct 10", "Columbus Day"],["Nov 11", "Veterans Day"],["Nov 24", "Thanksgiving Day"],["Dec 26", "Christmas Day"],["Dec 31", "New Year’s Day"]]
+  HOLIDAYS_SEED_DATA =[["Jan 16", "Birthday of Martin Luther King Jr"], ["Feb 20", "Washington’s Birthday"], ["May 28", "Memorial Day"],["Jul 04", "Independence Day"],["Sep 03", "Labor Day"],["Oct 08", "Columbus Day"],["Nov 11", "Veterans Day"],["Nov 22", "Thanksgiving Day"],["Dec 25", "Christmas Day"],["Jan 01", "New Year’s Day"]]
    
   DEFAULT_SEED_DATA = {
     :beginning_of_workday => '9:00 am',

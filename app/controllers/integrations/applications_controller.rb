@@ -3,7 +3,7 @@ class Integrations::ApplicationsController < Admin::AdminController
   include Integrations::AppsUtil
 
   def index
-    @applications = Integrations::Application.all
+    @applications = Integrations::Application.find(:all, :order => :listing_order)
     @installed_applications = get_installed_apps
   end
 
