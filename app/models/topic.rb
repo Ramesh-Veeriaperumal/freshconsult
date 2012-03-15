@@ -115,6 +115,15 @@ class Topic < ActiveRecord::Base
       super(:builder => xml, :skip_instruct => true,:include => options[:include],:except => [:account_id,:import_id]) 
   end
 
+  def users_who_voted
+    users = User.find(:all,
+      :joins => [:votes],
+      :conditions => ["votes.voteable_id = ? and users.account_id = ?", id, account_id],
+      :order => "votes.created_at DESC"
+    )
+    users
+  end
+  
   protected
     def set_default_replied_at_and_sticky
       self.replied_at = Time.now.utc
@@ -151,9 +160,9 @@ class Topic < ActiveRecord::Base
       Forum.update_all forum_conditions, ['id = ?', forum_id]
       @old_forum_id = @voices = nil
     end
-
+    
     def update_post_user_counts
       @voices = voices.to_a
-  end
+    end
 
 end

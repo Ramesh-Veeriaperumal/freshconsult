@@ -1419,12 +1419,18 @@ h4.list_title{
 			width:100%;
 			margin-bottom:10px;
 			border-bottom:1px solid #efefef;
+			overflow: hidden;
 		}
 		li{  
 			.topic_icon{
 			 	@include float-left; 
 			 	margin-right:10px;
 			}
+			img{
+				width: 36px;
+				height: 36px;
+			}
+
 		}
 		h4.topic_title{
 			margin:0px;		

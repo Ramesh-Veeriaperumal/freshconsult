@@ -176,7 +176,11 @@ def update_lock
    end
 end
 
- def create_attachments
+def users_voted
+    render :partial => "forum_shared/topic_voted_users", :object => @topic
+end
+
+def create_attachments
    return unless @topic.posts.first.respond_to?(:attachments) 
     unless params[:post].nil?
     (params[:post][:attachments] || []).each do |a|

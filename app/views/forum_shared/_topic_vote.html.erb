@@ -2,7 +2,7 @@
       <% vote_count = (topic_vote.votes_for == 1) ? 1 : 2 %>
       <% if(topic_vote.voted_by_user? current_user) %>
         <div class="alert alert-info">   
-          <strong><%= t(".#{@forum.type_symbol}.vote_info_include_#{vote_count}", :vote => topic_vote.votes_for) %></strong>
+          <strong><%= t(".#{@forum.type_symbol}.vote_info_include_#{vote_count}", :vote => (vote_count == 2) ? (topic_vote.votes_for - 1) : (topic_vote.votes_for)) %></strong>
         </div>
       <% else %>				
         <% if (topic_vote.votes_for != 0) %>
@@ -12,6 +12,7 @@
           </div>
         <% end %>
       <% end %>
+		 <div id="users-voted-list" style="display:none; overflow-y:auto;"></div>
       <div>
         <% unless(topic_vote.voted_by_user? current_user) %>
           <%= link_to_remote t(".#{@forum.type_symbol}.vote_button"), 
@@ -36,3 +37,72 @@
       <% end %>
     </div>
   </div>
+<script type="text/javascript">
+  
+  jQuery.fn.userTooltip = function () {
+    
+    var userData = {};
+    
+    var showTooltip = function(elm, data) {
+      jQuery(elm).qtip({
+          style: {
+            classes:'ui-tooltip-light ui-tooltip-rounded ui-tooltip-shadow'
+          },
+          content: {
+            text: data,
+          },
+          position: { 
+            type: 'absolute',
+            my: 'left middle',
+            at: 'right  middle'
+          },
+          overwrite: false,
+          show: {
+            delay: 500,
+            ready: true
+          },
+          hide: {
+            fixed: true,
+            delay: 500
+          }
+        });
+    };
+
+    this.live("mouseover", function(event) {
+        var key = "u" + jQuery(this).attr("qid");
+        if(!userData[key]) {
+          jQuery.ajax({
+              url: "/profiles/info/" + jQuery(this).attr("qid"),
+              context: jQuery(this),
+              type: "GET",
+              success: function(data){
+                userData[key] = data;
+                showTooltip(jQuery(this), data);
+              }
+          });
+        } else {
+            showTooltip(jQuery(this), userData[key]);
+        }    
+    });
+  
+    return this;
+  };
+
+	jQuery(document).ready(function() {
+    jQuery("#users-voted").bind("click", function(event) {
+			var wqurl = "<%= category_forum_topic_path(@forum_category,@forum, @topic)%>";
+      var wtitle = "<%= t(".#{@forum.type_symbol}.voted_users_widget_title") %>";			
+      jQuery.ajax({
+		        url: wqurl + "/users_voted",
+		        type: "GET",
+		        success: function(data){
+			 	       jQuery("#users-voted-list").hide().html(data)
+						      .dialog({modal:true, title: wtitle, width:'350px', height: '300' , position:'top', draggable: false, resizable: false});
+		        }
+		      });			
+		event.preventDefault();
+		event.stopPropagation();
+		});
+    jQuery("#voted-users a[qid]").userTooltip();
+	});
+</script>

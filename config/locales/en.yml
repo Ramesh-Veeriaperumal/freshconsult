@@ -806,22 +806,25 @@ en:
       unlike: Unlike
       ideas:
         vote_button: I like this Idea
-        vote_info_1: "%{vote} Person likes this Idea"
-        vote_info_2: "%{vote} People like this Idea"
+        vote_info_1: <a id='users-voted' href='#' title='See who likes this'> %{vote} Person</a> likes this Idea
+        vote_info_2: <a id='users-voted' href='#' title='See who like this'> %{vote} People</a> like this Idea
         vote_info_include_1: You like this Idea
-        vote_info_include_2: "%{vote} People \"including you\" like this Idea"
+        vote_info_include_2: You and <a id='users-voted' href='#' title='See who like this'> %{vote} People</a> like this Idea
+        voted_users_widget_title: People who like this idea
       problem:
         vote_button: I have this Problem
-        vote_info_1: "%{vote} Person has this Problem"
-        vote_info_2: "%{vote} People have this Problem"
+        vote_info_1: <a id='users-voted' href='#' title='See who has this'> %{vote} Person</a> has this Problem
+        vote_info_2: <a id='users-voted' href='#' title='See who have this'> %{vote} People</a> have this Problem
         vote_info_include_1: You have this Problem
-        vote_info_include_2: "%{vote} People \"including you\" have this Problem"
+        vote_info_include_2: You and <a id='users-voted' href='#' title='See who have this'> %{vote} People</a> have this Problem
+        voted_users_widget_title: People who have this problem
       howto:
         vote_button: I have this Question
-        vote_info_1: "%{vote} Person has this Question"
-        vote_info_2: "%{vote} People have this Question"
+        vote_info_1: <a id='users-voted' href='#' title='See who has this'> %{vote} Person</a> has this Question
+        vote_info_2: <a id='users-voted' href='#' title='See who have this'> %{vote} People</a> have this Question
         vote_info_include_1: You have this Question
-        vote_info_include_2: "%{vote} People \"including you\" have this Question"        
+        vote_info_include_2: You and <a id='users-voted' href='#' title='See who have this'> %{vote} People</a> have this Question
+        voted_users_widget_title: People who have this question        
     post:
       posted_on: "%{user_name} on %{post_date}"
       edit_post: Edit Post
