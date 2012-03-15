@@ -12,6 +12,7 @@ label{
    font-size:1.4em;
 }
 
+
 input[type=text], select, input.text { 
    width: 95%;
    margin:0 0 3px 0;
@@ -655,6 +656,7 @@ input.time{
 	   border-bottom:1px solid #afafaf;
 	   color:#000000;
 	}
+	.text{ font-size:1.0em; }
 	table{
 		padding:0; margin:0;
 		border:0;
@@ -677,9 +679,10 @@ input.time{
 		}
 		td{			
 			label{
-				font-size:12px;
-				padding:0 6px;
 				color:#555555;
+				font-weight:bold;
+   				font-size:1em;
+   				padding:8px 0 6px 0;
 				em{
 					font-style:normal;
 					font-weight:bold;

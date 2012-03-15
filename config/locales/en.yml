@@ -1110,6 +1110,8 @@ en:
     modify_agent_template: Modify Agent Email Template
     event: Event
     agent_notification: Agent Notification
+    subject: Subject
+    do_not_delete_ticket_id_from_subject: Ticket conversations will not be managed properly if you delete the ticket id placeholder from the subject
   errors_in_plan_change: "Errors encountered with your change:"
   formatting_help: Formatting Help
   step1: Step 1

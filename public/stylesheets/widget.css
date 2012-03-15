@@ -341,12 +341,13 @@ input.time { font-weight: normal; font-size: 12px; }
 
 .grid { border: 1px solid #cfcfcf; padding: 0; background: #f6f6f6; }
 .grid label.caption { font-size: 13px; padding: 8px 10px; background: #fefeee; font-weight: bold; border-bottom: 1px solid #afafaf; color: #000000; }
+.grid .text { font-size: 1.0em; }
 .grid table { padding: 0; margin: 0; border: 0; font-size: 13px; border-bottom: 2px solid #cfcfcf; }
 .grid table th, .grid table td { padding: 8px 10px; vertical-align: top; border: 0; }
 .grid table th { line-height: 18px; font-weight: bold; background-image: url(../images/overlay-button.png); background-color: #f2f2f2; background-repeat: repeat-x; }
 .grid table th span { display: block; }
 .grid table td { background-color: #efefef; border-top: 1px solid #cfcfcf; }
-.grid table td label { font-size: 12px; padding: 0 6px; color: #555555; }
+.grid table td label { color: #555555; font-weight: bold; font-size: 1em; padding: 8px 0 6px 0; }
 .grid table td label em { font-style: normal; font-weight: bold; text-transform: capitalize; color: #000000; }
 .grid table tr.even td { background-color: #f4f4f4; }
 .grid .olist { list-style: decimal; }

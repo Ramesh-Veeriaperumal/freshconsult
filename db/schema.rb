@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120215070800) do
+ActiveRecord::Schema.define(:version => 20120313102516) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -233,7 +233,7 @@ ActiveRecord::Schema.define(:version => 20120215070800) do
   add_index "email_configs", ["account_id", "to_email"], :name => "index_email_configs_on_account_id_and_to_email", :unique => true
 
   create_table "email_notifications", :force => true do |t|
-    t.integer  "account_id",             :limit => 8
+    t.integer  "account_id",                 :limit => 8
     t.boolean  "requester_notification"
     t.text     "requester_template"
     t.boolean  "agent_notification"
@@ -241,6 +241,8 @@ ActiveRecord::Schema.define(:version => 20120215070800) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "notification_type"
+    t.text     "requester_subject_template"
+    t.text     "agent_subject_template"
   end
 
   add_index "email_notifications", ["account_id", "notification_type"], :name => "index_email_notifications_on_notification_type", :unique => true
