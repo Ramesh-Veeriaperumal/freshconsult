@@ -1,10 +1,8 @@
-  <% if @no_auth %>
-    <div class="alert-message block-message warning">
-      <p><strong><%= t('flash.general.access_denied') %></strong></p>
-    </div>
-  <%else%>
   <% if @ticket.deleted %>
     <div class="alert-message block-message warning">
+      <div class="alert-actions-right">
+        <%= link_to(t('ticket.restore_btn'), restore_helpdesk_ticket_path(@ticket), :method => :put, :class => "btn small", :title => t('ticket.restore_btn_title') ) %>
+      </div>
       <p><strong><%= t('this_ticket_has_been_deleted') %></strong></p>
     </div>
   <% end %>
@@ -58,4 +56,3 @@
     <% end %> 
   </div>
 </div>
-  <% end %>

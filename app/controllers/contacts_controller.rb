@@ -21,7 +21,7 @@ class ContactsController < ApplicationController
   def index
     respond_to do |format|
       format.html do
-        @tags = current_account.tags.with_taggable_type(User.to_s)
+        @tags = current_account.tags.find(:all)
         @contacts = scoper.filter(params[:letter],params[:page])
       end
       format.xml  do

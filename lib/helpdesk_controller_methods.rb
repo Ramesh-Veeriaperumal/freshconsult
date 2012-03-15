@@ -182,7 +182,7 @@ protected
   def create_attachments
     return unless @item.respond_to?(:attachments) 
     (params[nscname][:attachments] || []).each do |a|
-      @item.attachments.create(:content => a[:resource], :description => a[:description], :account_id => @item.account_id)
+      @item.attachments.create(:content => a[:file], :description => a[:description], :account_id => @item.account_id)
     end
     
   end

@@ -20,14 +20,6 @@ module ApplicationHelper
   def page_title
     portal_name = h( (current_portal.name.blank?) ? current_portal.product.name : current_portal.name ) + " : "
     portal_name += @page_title || t('helpdesk_title')
-  end 
-  
-  def page_description
-    @page_description
-  end                
-  
-  def page_keywords
-    @page_keywords    
   end
 
   def tab(title, url, cls = false)
@@ -337,15 +329,12 @@ module ApplicationHelper
     object_name     = "#{object_name.to_s}"
     label = label_tag object_name+"_"+field_name, field_label
     dom_type = dom_type.to_s
-
+    
     case dom_type
       when "text", "number", "email", "multiemail" then
         field_value = field_value.to_s.split(ghost_value).first unless ghost_value.blank?
         element = label + text_field(object_name, field_name, :class => element_class, :value => field_value, :rel => rel_value, "data-ghost-text" => ghost_value)
         element << hidden_field(object_name , :ghostvalue , :value => ghost_value) unless ghost_value.blank?
-      when "password" then
-        pwd_element_class = " #{ (required) ? 'required' : '' }  text"
-        element = label + password_field(object_name, field_name, :type => "password", :class => pwd_element_class, :value => field_value)
       when "paragraph" then
         element = label + text_area(object_name, field_name, :class => element_class, :value => field_value)
       when "dropdown" then

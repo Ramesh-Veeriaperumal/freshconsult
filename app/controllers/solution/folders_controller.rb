@@ -8,8 +8,7 @@ class Solution::FoldersController < ApplicationController
   before_filter { |c| c.check_portal_scope :open_solutions }
   before_filter :portal_category?
   before_filter :check_folder_permission, :only => [:show]
-  before_filter :set_selected_tab       
-  before_filter :page_title    
+  before_filter :set_selected_tab
   
   def index        
     current_category  = current_account.solution_categories.find(params[:category_id])
@@ -123,10 +122,6 @@ class Solution::FoldersController < ApplicationController
 
   def scoper
     eval "Solution::#{cname.classify}"
-  end
-
-  def page_title
-    @page_title = t("header.tabs.solutions")
   end
 
   def reorder_scoper

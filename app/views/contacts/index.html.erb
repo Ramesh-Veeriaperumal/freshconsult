@@ -51,7 +51,7 @@
 				<% end %> 
 			</div>
 			<div class="info_data">
-				<%= content_tag (:span, "#{h(contact.email)} ") unless contact.email.blank? %>
+		  		<%= content_tag (:span, "#{h(contact.email)} ") unless contact.email.blank? %>
 				<%= content_tag (:span, "#{h(contact.phone)}") unless contact.phone.blank? %>
 			</div>
 	 </div>
@@ -59,6 +59,4 @@
     </li>	
   <% end %>	 
 </ul> 
-<div class="negtiveMargin">  
-	<%= will_paginate @contacts %> 
-</div>
+<div>  <%= will_paginate @contacts %> </div>

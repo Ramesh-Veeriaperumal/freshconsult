@@ -5,7 +5,7 @@ class Helpdesk::TicketsController < ApplicationController
   include ActionView::Helpers::TextHelper
   
   before_filter :check_user , :only => [:show]
-  before_filter :load_ticket_filter , :only => [:index, :show, :custom_view_save, :latest_ticket_count]
+  before_filter :load_ticket_filter , :only => [:index, :custom_view_save]
   before_filter :add_requester_filter , :only => [:index, :user_tickets]
   before_filter :disable_notification, :if => :save_and_close?
   after_filter  :enable_notification, :if => :save_and_close?
@@ -22,7 +22,6 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :load_item, :verify_permission  ,   :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :get_ca_response_content, :print] 
   before_filter :load_flexifield ,    :only => [:execute_scenario]
   before_filter :set_date_filter ,    :only => [:export_csv]
-  before_filter :set_latest_updated_at , :only => [:index, :custom_search]
 
   uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
   
@@ -30,15 +29,12 @@ class Helpdesk::TicketsController < ApplicationController
     email = params[:email]
     unless email.blank?
       requester = current_account.all_users.find_by_email(email) 
-      @user_name = email
       if(requester.blank?)
         requester_id = 0
       else
         requester_id = requester.id
-        @user_name = requester.name unless requester.name.blank?
       end
-      params[:data_hash] = [{ "condition" => "requester_id", "operator" => "is_in", "value" => requester_id}, 
-                            { "condition" => "status", "operator" => "is_in", "value" => "#{Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open]},#{Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:pending]}"}];
+      params[:data_hash] = [{ "condition" => "requester_id", "operator" => "is_in", "value" => requester_id}];
     end
   end
 
@@ -71,7 +67,7 @@ class Helpdesk::TicketsController < ApplicationController
   def user_ticket
     @user = current_account.users.find_by_email(params[:email])
     if !@user.nil?
-      @tickets =  current_account.tickets.requester_active(@user)
+      @tickets =  Helpdesk::Ticket.requester_active(@user)
     else
       @tickets = []
     end
@@ -80,10 +76,6 @@ class Helpdesk::TicketsController < ApplicationController
         render :xml => @tickets.to_xml
       end
     end
-  end
-  
-  def set_latest_updated_at
-     @latest_updated_at = current_account.tickets.maximum(:updated_at).to_formatted_s(:db)   
   end
  
   def index
@@ -116,19 +108,9 @@ class Helpdesk::TicketsController < ApplicationController
     end
   end
   
-  def latest_ticket_count    
-    index_filter =  current_account.ticket_filters.new(Helpdesk::Filters::CustomTicketFilter::MODEL_NAME).deserialize_from_params(params)       
-    ticket_count =  current_account.tickets.permissible(current_user).latest_tickets(params[:latest_updated_at]).count(:id, :conditions=> index_filter.sql_conditions)
-
-    respond_to do |format|
-      format.html do
-        render :text => ticket_count
-      end
-    end
-  end
-  
   def user_tickets
-    @items = current_account.tickets.permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
+    @items = current_account.tickets.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
+    puts "@user #{@user}"
     render :layout => "widgets/contacts"
   end
 
@@ -136,18 +118,15 @@ class Helpdesk::TicketsController < ApplicationController
     if params['format'] == 'widget'
       @ticket = current_account.tickets.find_by_display_id(params[:id]) # using find_by_id(instead of find) to avoid exception when the ticket with that id is not found.
       @item = @ticket
+      puts "ticket #{@ticket}" 
       if @ticket.blank?
         @item = Helpdesk::Ticket.new
         render :new, :layout => "widgets/contacts"
       else
-        if verify_permission
-          @ticket_notes = @ticket.conversation
-          render :layout => "widgets/contacts"
-        else
-          @no_auth = true
-          render :layout => "widgets/contacts"
-        end
+        @ticket_notes = @ticket.conversation
+        render :layout => "widgets/contacts"
       end
+      return
     end
   end
   def custom_view_save
@@ -159,38 +138,8 @@ class Helpdesk::TicketsController < ApplicationController
     render :partial => "custom_search"
   end
   
-  def set_prev_next_tickets
-    if params[:filters].nil?
-      @filters = {}
-      
-      if @item.deleted?
-        @filters = {:filter_name => "deleted"}
-      elsif @item.spam?
-        @filters = {:filter_name => "spam"}
-      else
-        @filters = {:filter_name => "all_tickets"}
-      end
-      conditions = @item.get_default_filter_permissible_conditions(current_user)     
-      @filters.merge!(:data_hash => conditions) unless conditions.blank?
-      index_filter = @ticket_filter.deserialize_from_params(@filters)
-    else  
-      @filters = params[:filters]
-      index_filter = current_account.ticket_filters.new(Helpdesk::Filters::CustomTicketFilter::MODEL_NAME).deserialize_from_params(@filters)
-    end
-
-    ticket_ids = index_filter.adjacent_tickets(@ticket, current_account, current_user)
-        
-    ticket_ids.each do |t|
-       (t[2] == "previous") ? @previous_ticket_id = t[1] : @next_ticket_id = t[1]        
-    end
-    RAILS_DEFAULT_LOGGER.debug "next_previous_tickets : #{@previous_ticket_id} , #{@next_ticket_id}"
-  end
-  
   def show
     @reply_email = current_account.reply_emails
-    
-    @reply_email.push(@item.to_email) unless @item.to_email.blank?
-
     @subscription = current_user && @item.subscriptions.find(
       :first, 
       :conditions => {:user_id => current_user.id})
@@ -204,9 +153,7 @@ class Helpdesk::TicketsController < ApplicationController
     @email_config = current_account.primary_email_config
     
     respond_to do |format|
-      format.html{
-        set_prev_next_tickets
-      }  
+      format.html  
       format.atom
       format.xml  { 
         render :xml => @item.to_xml  
@@ -520,13 +467,8 @@ class Helpdesk::TicketsController < ApplicationController
    def verify_permission
       unless current_user && current_user.has_ticket_permission?(@item)
         flash[:notice] = t("flash.general.access_denied") 
-        if params['format'] == "widget"
-          return false
-        else
-          redirect_to helpdesk_tickets_url
-        end
+        redirect_to helpdesk_tickets_url
       end
-    true
   end
   
   def save_and_close?

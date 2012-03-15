@@ -74,8 +74,9 @@ class AccountsController < ApplicationController
     build_primary_email_and_portal
     build_user
     build_plan  
+    
     begin
-      store_metrics
+        store_metrics
     rescue
     end
       
@@ -267,8 +268,16 @@ class AccountsController < ApplicationController
     else
       render :action => 'edit'
     end
-  end
+  end  
   
+  def rebrand  
+    responseObj = { :status => 
+        current_portal.update_attributes(params[:account][:main_portal_attributes]) }
+
+    respond_to do |format|
+      format.json { render :json => responseObj.to_json }
+    end
+  end
   
   def plans
     # render :layout => 'public' # Uncomment if your "public" site has a different layout than the one used for logged-in users

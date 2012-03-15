@@ -180,7 +180,7 @@ end
    return unless @topic.posts.first.respond_to?(:attachments) 
     unless params[:post].nil?
     (params[:post][:attachments] || []).each do |a|
-      @topic.posts.first.attachments.create(:content => a[:resource], :description => a[:description], :account_id => @topic.posts.first.account_id)
+      @topic.posts.first.attachments.create(:content => a[:file], :description => a[:description], :account_id => @topic.posts.first.account_id)
     end
    end
   end

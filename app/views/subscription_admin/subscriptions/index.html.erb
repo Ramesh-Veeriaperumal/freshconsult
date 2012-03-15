@@ -24,21 +24,13 @@
       <th>Number of Customers</th>
       <td><%= @customer_count %></td>
     </tr>
-	 <tr>
-      <th>Paid Customers</th>
-      <td><%= @customer_count - @free_customers %></td>
-    </tr>
 	<tr>
-	  <th>Free Customers</th>
-      <td><%= @free_customers %> </td>
+	  <th>Paying Customers</th>
+      <td><%= @paying_customers %> </td>
 	</tr>
     <tr>
-      <th>RPU</th>
-      <td><%= format_float_value(@cmrr) %></td>
-    </tr>
-	<tr>
       <th>CMRR</th>
-      <td><%=format_float_value(@monthly_revenue)%></td>
+      <td><%= format_float_value(@cmrr) %> $(<%=@monthly_revenue%>)</td>
     </tr>
 	<tr>
 	  <th>Agent Count</th>

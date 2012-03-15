@@ -4,8 +4,8 @@
 class ApplicationController < ActionController::Base
   
   before_filter :check_account_state, :except => [:show,:index]
-  before_filter :set_default_locale
-  before_filter :set_time_zone, :check_day_pass_usage 
+  before_filter :set_time_zone, :check_day_pass_usage
+  
   before_filter :set_locale
 
   include AuthenticationSystem
@@ -63,10 +63,6 @@ class ApplicationController < ActionController::Base
   
   def wrong_portal
     render("/errors/wrong_portal")
-  end
-  
-  def set_default_locale
-    I18n.locale = I18n.default_locale
   end
   
 end

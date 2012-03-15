@@ -59,6 +59,23 @@
 			<%= label(:user, :email, t('user.email')) %> 
 			<%= text_field(:user, :email, :id => "email_primary" ) %> 
 		</li>
+		<li>
+			<%= label(:user, :job_title, t('user.title')) %>
+			<%= text_field(:user, :job_title, :class => "text" ) %>
+		</li>
+		<% fields_for :tags  do |tag|
+			tag_csv = @user.tags.collect{|tg| tg.name+", "}
+			if tag_csv.blank?
+				tag_csv=""
+			else
+				tag_csv[-1] = tag_csv[-1][0..-3]
+			end 
+		%>
+		<li>
+			<%= tag.label(:name, t('tag.title')) %>
+			<%= tag.text_field :name , :value => tag_csv, :class => "text" %>
+		</li>
+		<%end%>
 
 		<li>
 			<%
@@ -72,12 +89,31 @@
 			<%= label(:user, :customer, t('user.company')) %>
 			<%= text_field(:user, :customer, :class => "text" , :value => company_name, :id => "contact_customer" ,:onchange => "enable_role_change()") %>
 		</li>
+		<li>
+			<%= label(:user, :address, t('user.address')) %>
+			<%= text_area(:user, :address, :class => "text" ) %>
+		</li>		
 		<li class="small">	
 			<%= label(:user, :phone, "#{t('user.phone_no')}.") %>	
+			<label class="overlabel" for="phone_work"><%=t('user.work')%></label>
 			<%= text_field(:user, :phone, :class => "text", :id => "phone_work" ) %>
-		</li>
-		<li class="small">	
-			<%= label(:user, :phone, "#{t('user.mobile')}.") %>	
+			<br />
+			<label class="overlabel" for="phone_mobile"><%=t('user.mobile')%></label>
 			<%= text_field(:user, :mobile, :class => "text", :id => "phone_mobile" ) %>
 		</li>
+		
+		
+		<li class="small">
+			<%= label(:user, :twitter_id, t('user.twitter_id')) %>
+			<%= text_field(:user, :twitter_id, :class => "text" ) %>
+		</li>
+		<li>
+			<%= label(:user, :description, t('user.back_info')) %>
+			<label class="overlabel" for="user_binfo">
+				<%=t('contacts.info6')%>
+				example - LA Lakers fan etc.
+			</label>
+			<%= text_area(:user, :description, :class => "text", :id => "user_binfo" ) %>
+		</li>		
+		
 	</ul>	 

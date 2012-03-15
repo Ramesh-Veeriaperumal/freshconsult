@@ -16,17 +16,6 @@ class Reports::HelpdeskReportsController < ApplicationController
     render :partial => "/reports/shared/report"
   end
   
-   def export_to_excel
-     @pie_charts_hash = {}
-     fetch_activity
-     get_tickets_time_line
-     send_data write_io, :filename => 'helpdesk_report.xls',
-        :type => 'application/vnd.ms-excel; charset=utf-8; header=present', 
-            :disposition => "attachment; filename=helpdesk_report.xls" 
-   end
-  
-  
-  
  protected
   
   def set_selected_tab
@@ -44,4 +33,5 @@ class Reports::HelpdeskReportsController < ApplicationController
     end
   end
   
+
 end

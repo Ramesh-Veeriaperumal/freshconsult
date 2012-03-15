@@ -57,12 +57,10 @@ Freshdesk.Widget.prototype={
 			this.content_anchor.innerHTML = this.options.login_content();
 		} else {
 			this.content_anchor.innerHTML = this.options.application_content();
-			if(this.options.application_resources){
 			this.options.application_resources.each(
 				function(reqData){
 					if(reqData) cw.request(reqData);
 				});
-			}
 		}
 	},
 
@@ -72,38 +70,28 @@ Freshdesk.Widget.prototype={
 		reqData.cache_gets = this.options.cache_gets;
 		reqData.accept_type = reqData.accept_type || reqData.content_type;
 		reqData.method = reqData.method || "get";
-		reqHeader = {}
-		if(this.options.use_server_password) {
-			reqData.username = this.options.username
-			reqData.use_server_password = this.options.use_server_password
-			reqData.app_name = this.options.app_name
-		} else {
-			reqHeader = {Authorization:"Basic " + Base64.encode(this.options.username + ":" + this.options.password)}
-		}
 		new Ajax.Request("/http_request_proxy/fetch",{
             asynchronous: true,
 			parameters:reqData,
-			requestHeaders:reqHeader,
+			requestHeaders:{
+				Authorization:"Basic " + Base64.encode(this.options.username + ":" + this.options.password)
+			},
 			onSuccess:function(evt) {
 				if(reqData != null && reqData.on_success != null){
 					reqData.on_success(evt);
 				}
 			},
-			onFailure:function(evt) {
-				
-				this.resource_failure(evt, reqData)
-			}.bind(this)
+			onFailure:this.resource_failure.bind(this)
 		});
 	},
 
-	resource_failure:function(evt, reqData){
-		
+	resource_failure:function(evt){
 		if (evt.status == 401) {
 			this.options.username = null;
 			this.options.password = null;
 			Cookie.remove(this.options.anchor + "_username");
 			Cookie.remove(this.options.anchor + "_password");
-			if (typeof reqData.on_failure != 'undefined' && reqData.on_failure != null) {
+			if (this.on_failure != null) {
 				reqData.on_failure(evt);
 			} else { this.alert_failure("Given user credentials for "+this.app_name+" are incorrect. Please correct them.");}
 		} else if (evt.status == 403) {
@@ -121,12 +109,11 @@ Freshdesk.Widget.prototype={
 				}
 			}
 			this.alert_failure("Unknown server error. Please contact support@freshdesk.com.");
-		} else if (typeof reqData.on_failure != 'undefined' && reqData.on_failure != null) {
+		} else if (this.on_failure != null) {
 			reqData.on_failure(evt);
 		} else {
-				errorStr = evt.responseText;
-				this.alert_failure(this.app_name+" reports the below error: \n\n" + errorStr + "\n\nTry again after correcting the error or fix the error manually.  If you can not do so, contact support.");
-			
+			errorStr = evt.responseText;
+			this.alert_failure(this.app_name+" reports the below error: \n\n" + errorStr + "\n\nTry again after correcting the error or fix the error manually.  If you can not do so, contact support.");
 		}
 	},
 
@@ -181,27 +168,17 @@ Freshdesk.Widget.prototype={
 };
 
 var UIUtil = {
-
-	constructDropDown:function(data, type, dropDownBoxId, entityName, entityId, dispNames, filterBy, searchTerm, keepOldEntries) {
+	constructDropDown:function(data, dropDownBoxId, entityName, entityId, dispNames, filterBy, searchTerm, keepOldEntries) {
 		foundEntity = "";
 		dropDownBox = $(dropDownBoxId);
 		if (!keepOldEntries) dropDownBox.innerHTML = "";
-		if(type == "xml"){
-			parser = XmlUtil;
-			data = data.responseXML;
-		}
-		else{
-			parser = JsonUtil; 
-			data = data.responseJSON;
-		}
-		
-		var entitiesArray = parser.extractEntities(data, entityName);
+		var entitiesArray = XmlUtil.extractEntities(data.responseXML, entityName);
 		for(i=0;i<entitiesArray.length;i++) {
 			if (filterBy != null && filterBy != '') {
 				matched = true;
 				for (var filterKey in filterBy) {
 					filterValue = filterBy[filterKey];
-					actualVal = parser.getNodeValueStr(entitiesArray[i], filterKey);
+					actualVal = XmlUtil.getNodeValueStr(entitiesArray[i], filterKey);
 					if(filterValue != actualVal) {
 						matched = false;
 						break;
@@ -211,8 +188,8 @@ var UIUtil = {
 			}
 
 			var newEntityOption = new Element("option");
-			entityIdValue = parser.getNodeValueStr(entitiesArray[i], entityId);
-			entityEmailValue = parser.getNodeValueStr(entitiesArray[i], "email");
+			entityIdValue = XmlUtil.getNodeValueStr(entitiesArray[i], entityId);
+			entityEmailValue = XmlUtil.getNodeValueStr(entitiesArray[i], "email");
 			if (searchTerm != null && searchTerm != '') {
 				if (entityEmailValue == searchTerm) {
 					foundEntity = entitiesArray[i];
@@ -227,7 +204,7 @@ var UIUtil = {
 				if (dispNames[d] == ' ' || dispNames[d] == '(' || dispNames[d] == ')' || dispNames[d] == '-') {
 					dispName += dispNames[d];
 				} else {
-					dispName += parser.getNodeValueStr(entitiesArray[i], dispNames[d]);
+					dispName += XmlUtil.getNodeValueStr(entitiesArray[i], dispNames[d]);
 				}
 			}
 			if (dispName.length < 2) dispName = entityEmailValue;
@@ -265,22 +242,13 @@ var UIUtil = {
 		}
 	},
 
-	hideLoading: function(integrationName,fieldName,context) {
-		jQuery("#" + integrationName + context + '-' + fieldName).removeClass('hide');
+	hideLoading: function(integrationName,fieldName) {
+		jQuery("#" + integrationName + "-timeentry-" + fieldName).removeClass('hide');
 		jQuery("#" + integrationName + "-" + fieldName + "-spinner").addClass('hide');
-
-		var parent_form = jQuery("#" + integrationName + context + '-' + fieldName).parentsUntil('form').siblings().andSelf();
-		
-		if ( parent_form.find('.loading-fb.hide').length == parent_form.find('.loading-fb').length) {
-			//All the loading are hidden
-			var submit_button = parent_form.filter('.uiButton');
-			submit_button.prop('disabled',!submit_button.prop('disabled'));
-		}
 	},
 
-	showLoading: function(integrationName,fieldName,context) {
-		jQuery("#" + integrationName + context + '-' + fieldName).addClass('hide');
-		
+	showLoading: function(integrationName,fieldName) {
+		jQuery("#" + integrationName + "-timeentry-" + fieldName).addClass('hide');
 		jQuery("#" + integrationName + "-" + fieldName + "-spinner").removeClass('hide');
 	}
 }
@@ -324,47 +292,6 @@ var XmlUtil = {
 		}
 		return element[0].getAttribute(attrName) || null;
 	}
-}
-
-var JsonUtil = {
-	extractEntities:function(resStr, lookupTag){
-		if(resStr instanceof Array)
-			return resStr;
-		else if(resStr instanceof Object)
-		{
-			var result = resStr[lookupTag] || Array();
-			return result;	
-		}
-		
-	},
-	getNodeValue:function(dataNode, lookupTag){
-		if(dataNode == '') return;
-		var element = dataNode[lookupTag];
-		if(element==null || element.length==0){
-			return null;
-		}
-		return element;
-	},
-
-	getNodeValueStr:function(dataNode, nodeName){
-		return this.getNodeValue(dataNode, nodeName) || "";
-	},
-
-	getMultiNodeValue:function(data, dataNodes){
-		var innerJson;
-		var innerValue;
-		var jsonValue = data;
-		var nodeArray = dataNodes.split(".");
-		if(nodeArray.length > 1){
-			for(var i=0; i<(nodeArray.length - 1); i++){
-				innerJson = JsonUtil.extractEntities(jsonValue, nodeArray[i]);
-				jsonValue = innerJson;
-			}
-		innerValue = JsonUtil.getNodeValueStr(jsonValue, nodeArray[nodeArray.length-1]);
-		}
-		return innerValue;
-	}
-
 }
 
 var Cookie=Class.create({});

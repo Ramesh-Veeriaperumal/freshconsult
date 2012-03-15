@@ -101,13 +101,11 @@
                 <% end %>
             </div>
         </li>
+        <li class="button-container">
+        	<%= submit_tag(local_assigns[:submit] || ActiveSupport::Inflector.titleize(id), :class => "uiButton special" ) %>
+        	<%= submit_tag(t('ticket.reply_form.send_and_resolve'), :onclick => "jQuery('#reply_ticket_status').val('resolved');" , :class => "uiButton") %>    
+        </li>
     </ul>
-    <div class="button-container">
-    	<%= submit_tag(local_assigns[:submit] || ActiveSupport::Inflector.titleize(id), :class => "uiButton special" ) %>
-    	<%= submit_tag(t('ticket.reply_form.send_and_resolve'), :onclick => "jQuery('#reply_ticket_status').val('resolved');" , :class => "uiButton") %>
-			<%= button_to_function(t('cancel'), "jQuery('#cnt-reply').slideUp()", :class => "uiButton" ) %>
-    </div>
-
     <% end %>
 </div>
 <% content_for :pagefixed do %>

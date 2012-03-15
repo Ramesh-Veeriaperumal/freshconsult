@@ -16,28 +16,12 @@ module AuthenticationSystem
 
 
   private
-
     def current_user_session
       return @current_user_session if defined?(@current_user_session)
-      handle_api_key(request, params)
-      @current_user_session = current_account.user_sessions.find
-    end
-
-    def handle_api_key(request, params)
-      if params['k'].blank?
-        if SUPPORTED_API_KEY_FORMATS.include?(params['format'])
-          # Handling the api key authentication.
-          http_auth_header = request.headers['HTTP_AUTHORIZATION']
-          basic_auth_match = /Basic (.*)/.match(http_auth_header)
-          if !basic_auth_match.blank? && basic_auth_match.length > 1
-            api_key_with_x = Base64.decode64(basic_auth_match[1])
-            api_key = api_key_with_x.split(":")[0]
-            params['k'] = api_key
-          end
-        end
-      elsif params['format'] != "widget"
-        params['k'] = nil
-        Rails.logger.error "Single access token based auth requested for non widget based page.  Removing single access token."
+      if !params['k'].blank? && params['format'] != "widget" # Added this check to avoid any other formats using single access token. (Single access token is mainly by google gadgets or any other third party apps fetches the widgets using single access token authentication.)
+        puts "Single access token based auth requested for non widget based page.  Ignoring the request."
+      else
+        @current_user_session = current_account.user_sessions.find
       end
     end
 
@@ -129,5 +113,4 @@ module AuthenticationSystem
       current_user && current_user.occasional_agent? && current_account.subscription.active?
     end
 
-    SUPPORTED_API_KEY_FORMATS = ['xml', 'json', 'widget']
 end

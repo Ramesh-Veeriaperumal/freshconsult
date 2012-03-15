@@ -85,7 +85,4 @@ Helpdesk.Multifile = {
     }
 };
 
-jQuery("document").ready(function(){
-	 Helpdesk.Multifile.load();
-});
-
+document.observe("dom:loaded", Helpdesk.Multifile.load);

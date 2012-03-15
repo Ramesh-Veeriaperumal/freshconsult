@@ -87,15 +87,11 @@ class Helpdesk::ExportData < Struct.new(:params)
      write_to_file("Customers.xml",xml_output)
   end
   
-  def export_tickets_data
-    i = 0 
-    @current_account.tickets.find_in_batches(:batch_size => 300, :include => [:notes,:attachments]) do |tkts|
-       xml_output = tkts.to_xml
-       write_to_file("Tickets#{i}.xml",xml_output)
-       i+=1
-    end
+   def export_tickets_data
+     tickets = @current_account.tickets.all
+     xml_output = tickets.to_xml
+     write_to_file("Tickets.xml",xml_output)
   end
-
   
   def export_groups_data
     groups = @current_account.groups.all

@@ -9,7 +9,9 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
+
 ActiveRecord::Schema.define(:version => 20120313102516) do
+
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -87,7 +89,7 @@ ActiveRecord::Schema.define(:version => 20120313102516) do
     t.string  "name"
     t.string  "display_name"
     t.string  "description"
-    t.integer "listing_order"
+    t.integer "widget_id"
     t.text    "options"
   end
 
@@ -405,8 +407,8 @@ ActiveRecord::Schema.define(:version => 20120313102516) do
     t.string   "token"
     t.string   "secret"
     t.integer  "account_id",              :limit => 8
-    t.string   "sync_group_id"
-    t.string   "sync_group_name",                      :default => "Freshdesk Contacts",  :null => false
+    t.string   "sync_group_id",                        :default => "0",                   :null => false
+    t.string   "sync_group_name",                      :default => "All",                 :null => false
     t.integer  "sync_tag_id",             :limit => 8
     t.integer  "sync_type",                            :default => 0,                     :null => false
     t.datetime "last_sync_time",                       :default => '1970-01-01 00:00:00', :null => false

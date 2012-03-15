@@ -80,3 +80,5 @@ javascripts:
     - public/javascripts/freshwidget.js
   custom_widget:
     - public/javascripts/custom_widget.js
+  getting_started:
+    - public/javascripts/getting_started.js

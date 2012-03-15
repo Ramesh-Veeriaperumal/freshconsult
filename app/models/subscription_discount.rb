@@ -19,7 +19,7 @@ class SubscriptionDiscount < ActiveRecord::Base
     return 0 unless subtotal.to_i > 0
     return 0 unless self.available?
     self.calculated_amount = if self.percent
-      (self.amount * subtotal).round.to_f
+      (self.amount * subtotal).round(2)
     else
       self.amount > subtotal ? subtotal : self.amount
     end

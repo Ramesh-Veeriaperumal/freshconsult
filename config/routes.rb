@@ -20,10 +20,10 @@
   
   map.resources :groups
   
-  map.resources :profiles , :member => { :change_password => :post}, :collection => {:reset_api_key => :post}
+  map.resources :profiles , :member => { :change_password => :post}
   
-  map.resources :agents, :member => { :delete_avatar => :delete , :restore => :put }
-
+  map.resources :agents, :member => { :delete_avatar => :delete , :restore => :put }, :collection => {:create_multiple_items => :put}
+  
   map.resources :sla_details
   
 #  map.mobile '/mob', :controller => 'home', :action => 'mobile_index'
@@ -66,7 +66,6 @@
     integration.resources :integrated_resource, :member =>{:create => :put, :delete => :delete}
     integration.resources :google_accounts, :member =>{:edit => :get, :delete => :delete, :update => :put, :import_contacts => :put}
     integration.resources :gmail_gadgets, :collection =>{:spec => :get}
-    integration.resources :jira_issue, :collection => {:get_issue_types => :get, :unlink => :put}
   end
 
   map.namespace :admin do |admin|
@@ -77,9 +76,10 @@
     admin.resources :va_rules, :member => { :deactivate => :put, :activate => :put }, :collections => { :reorder => :put }
     admin.resources :supervisor_rules, :member => { :deactivate => :put, :activate => :put }, 
       :collections => { :reorder => :put }
-    admin.resources :email_configs, :member => { :make_primary => :put, :deliver_verification => :get }
+    admin.resources :email_configs, :member => { :make_primary => :put, :deliver_verification => :get, :test_email => :put}
     admin.register_email '/register_email/:activation_code', :controller => 'email_configs', :action => 'register_email'
     admin.resources :email_notifications
+    admin.resources :getting_started, :only => :index
     admin.resources :business_calender, :member => { :update => :put }
     admin.resources :security, :member => { :update => :put }
     admin.resources :data_export, :collection => {:export => :any }
@@ -92,17 +92,16 @@
   end
   
   map.resources :reports
-  map.resources :timesheet_reports , :controller => 'reports/timesheet_reports' , :collection => {:report_filter => :post , :export_csv => :post} 
+  map.resources :timesheet_reports , :controller => 'reports/timesheet_reports' , :collection => {:report_filter => :post} 
   map.customer_activity   '/activity_reports/customer', :controller => 'reports/customer_reports', :action => 'index'
   map.helpdesk_activity   '/activity_reports/helpdesk', :controller => 'reports/helpdesk_reports', :action => 'index'
   map.customer_activity_generate   '/activity_reports/customer/generate', :controller => 'reports/customer_reports', :action => 'generate'
   map.helpdesk_activity_generate   '/activity_reports/helpdesk/generate', :controller => 'reports/helpdesk_reports', :action => 'generate'
-  map.helpdesk_activity_export   '/activity_reports/helpdesk/export_to_excel', :controller => 'reports/helpdesk_reports', :action => 'export_to_excel'
 
   
   map.namespace :social do |social|
     social.resources :twitters, :controller => 'twitter_handles',
-                :collection =>  { :feed => :any, :create_twicket => :post, :send_tweet => :any, :signin => :any, :tweet_exists => :get , :user_following => :any },
+                :collection =>  { :feed => :any, :create_twicket => :post, :send_tweet => :any, :signin => :any, :tweet_exists => :get , :user_following => :any, :authdone => :any },
                 :member     =>  { :search => :any, :edit => :any }
 
     social.resources :facebook, :controller => 'facebook_pages', 
@@ -131,7 +130,7 @@
   map.connect '/signup/d/:discount', :controller => 'accounts', :action => 'plans'
   map.thanks '/signup/thanks', :controller => 'accounts', :action => 'thanks'
   map.create '/signup/create/:discount', :controller => 'accounts', :action => 'create', :discount => nil
-  map.resource :account, :collection => { :dashboard => :get, :thanks => :get, :plans => :get, :billing => :any, :paypal => :any, :plan => :any, :plan_paypal => :any, :cancel => :any, :canceled => :get , :signup_google => :any, :calculate_amount => :any }
+  map.resource :account, :collection => {:rebrand => :put, :dashboard => :get, :thanks => :get, :plans => :get, :billing => :any, :paypal => :any, :plan => :any, :plan_paypal => :any, :cancel => :any, :canceled => :get , :signup_google => :any, :calculate_amount => :any }
   map.new_account '/signup/:plan/:discount', :controller => 'accounts', :action => 'new', :plan => nil, :discount => nil
   
   map.forgot_password '/account/forgot', :controller => 'user_sessions', :action => 'forgot'
@@ -194,7 +193,7 @@
 #      ticket.resources :notes, :member => { :restore => :put }, :name_prefix => 'helpdesk_issue_helpdesk_'
 #    end
 
-    helpdesk.resources :tickets, :collection => { :user_tickets => :get, :empty_trash => :delete, :empty_spam => :delete, :user_ticket => :get, :search_tweets => :any, :custom_search => :get, :export_csv => :post, :update_multiple => :put  , :latest_ticket_count => :post}, 
+    helpdesk.resources :tickets, :collection => { :user_tickets => :get, :empty_trash => :delete, :empty_spam => :delete, :user_ticket => :get, :search_tweets => :any, :custom_search => :get, :export_csv => :post, :update_multiple => :put  }, 
                                  :member => { :view_ticket => :get, :assign => :put, :restore => :put, :spam => :put, :unspam => :put, :close => :put, :execute_scenario => :post  , :close_multiple => :put, :pick_tickets => :put, :change_due_by => :put , :get_ca_response_content => :post ,:split_the_ticket =>:post , :merge_with_this_request => :post, :print => :any } do |ticket|
 
       ticket.resources :notes, :member => { :restore => :put }, :name_prefix => 'helpdesk_ticket_helpdesk_'

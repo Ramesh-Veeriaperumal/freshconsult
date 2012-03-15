@@ -9,7 +9,7 @@
     <%= render :partial => "/helpdesk/time_sheets/form", :object => f, :locals => { :type => :new } %>
 		<div class="button-container absolute-button-container">
        <%= link_to "Start timer", "#", :class => "submit uiButton special", "data-loading-text" => "Saving time entry...", :id => "new_time_submit" %>
-  	   <%= button_to_function(t('cancel'), "timesheet.clearEdit()", :class => "uiButton" ) %>
+  	   <%= button_to_function(t('cancel'), "timesheet.clearEdit();", :class => "uiButton" ) %>
     </div>
   <% end %>
     <div id="timeentry_apps_add" class="ui-form">   

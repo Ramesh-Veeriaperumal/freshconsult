@@ -504,7 +504,7 @@ footer {
 .page-header h1 {
   margin-bottom: 8px;
 }
-/*
+
 .pagination {
   height: 36px;
   margin: 18px 0;
@@ -532,6 +532,7 @@ footer {
   border-right-color: #ddd;
   border-right-color: rgba(0, 0, 0, 0.15);
   *border-right-color: #ddd;
+  /* IE6-7 */
 
   text-decoration: none;
 }
@@ -544,7 +545,7 @@ footer {
 }
 .pagination .next a {
   border: 0;
-}             */
+}
 .alert-message .alert-actions-right{
 	float:right;
 	margin-top:-8px;

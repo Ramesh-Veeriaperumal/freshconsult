@@ -1,8 +1,4 @@
-	<% content_tag :h3, :class => "title" do
-				concat t('start_typing_a_question')
-				concat content_tag( :span, " or ", :class => "or-icon")
-				concat link_to(t('header.submit_a_ticket'), new_support_ticket_path, :class => "uiButton special")
-	 	 end %>
+	<%= content_tag( :h3, t('start_typing_a_question'), :class => "title" ) %>
 	<div class="search-grey-box  ignore-margin-20">
 		<%= render :partial => "/search/pagesearch", :locals => { :placeholder => t('portal.search.placeholder') } %>
 	</div>

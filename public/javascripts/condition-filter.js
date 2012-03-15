@@ -146,7 +146,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
 
 							flag = false;
 						}
-						else if(item.value != -1) { 
+						else if(item.value != 0) { 
 							tempConstruct.set(item.name, item.value);
 						}
 					}
@@ -193,8 +193,8 @@ rules_filter = function(_name, filter_data, parentDom, options){
 				.sortable({ items: "fieldset", containment: "parent", tolerance: "pointer", handle:"span.sort_handle"});
 
 			jQuery(parentDom).parents('form:first').submit(function(e){
-			   domUtil.get_filter_list('json', this);
-			   //return false;
+				domUtil.get_filter_list('json', this);
+			   //return true;
 			});
 
 			jQuery('.l_placeholder').live("click", function(ev){
@@ -209,7 +209,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
 						function(){ 
 							var rule_drop = jQuery(this).next().empty();
 
-							if(this.value !== -1){
+							if(this.value !== 0){
 								var hg_item = hg_data.get(this.value);
 								var data_id = hg_item.name + itemManager.get();
 

@@ -5,20 +5,18 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <style type="text/css" media="screen">
-      body {
-        font-family: "monaco", "georgia";
-        font-size:0.75em;
-      }
       h3 { color: #000; }
       ul { list-style: none; }
     </style>
 </head>
 <body>
-Hi, <br/><br/>
 
-Your Google contacts import has been finished successfully.  Please check the imported contacts under Contacts tab.<br/><br/>
+Your Google contacts import has been finished successfully.
 
-Thanks,<br/>
-Freshdesk Team.<br/>
+
+
+<%= content_tag( :h3,  t('integrations.google_contacts.last_sync_status'), :class => "title" ) %>
+<label><%= render :partial => '/integrations/applications/google_sync_status', :locals => {:status => @last_stats} %></label>
+
 </body>
 </html>

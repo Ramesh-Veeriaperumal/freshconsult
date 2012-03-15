@@ -5,7 +5,7 @@ class Helpdesk::Note < ActiveRecord::Base
   belongs_to :account
   belongs_to :user
   
-  Max_Attachment_Size = 15.megabyte
+  Max_Attachment_Size = 20.megabyte
 
   has_many :attachments,
     :as => :attachable,
@@ -72,6 +72,10 @@ class Helpdesk::Note < ActiveRecord::Base
   	source == SOURCE_KEYS_BY_TOKEN["note"]
   end
   
+  def note?
+    source == SOURCE_KEYS_BY_TOKEN["note"]
+  end
+  
   def tweet?
     source == SOURCE_KEYS_BY_TOKEN["twitter"]    
   end
@@ -98,14 +102,6 @@ class Helpdesk::Note < ActiveRecord::Base
       "body"      => liquidize_body
     }
   end
-  
-  def to_xml(options = {})
-     options[:indent] ||= 2
-      xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
-      xml.instruct! unless options[:skip_instruct]
-      super(:builder => xml, :skip_instruct => true,:include => :attachments,:except => [:account_id,:notable_id,:notable_type]) 
-   end
-    
 
   protected
     def save_response_time
@@ -126,7 +122,7 @@ class Helpdesk::Note < ActiveRecord::Base
       
       if user.customer? 
         unless notable.open?
-          notable.status = Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open] unless notable.import_id
+          notable.status = Helpdesk::Ticket::STATUS_KEYS_BY_TOKEN[:open]
           notification_type = EmailNotification::TICKET_REOPENED
         end 
         e_notification = account.email_notifications.find_by_notification_type(notification_type ||= EmailNotification::REPLIED_BY_REQUESTER)

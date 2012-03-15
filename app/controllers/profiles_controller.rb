@@ -19,23 +19,10 @@ class ProfilesController < ApplicationController
        update_contact
      else
        update_agent
-     end  
+     end
+  
   end
   
-  def reset_api_key
-    begin
-      current_user.reset_single_access_token
-      saved = current_user.save!
-      @profile = current_user.customer? ? current_user : current_user.agent    
-      Rails.logger.debug "single access token reset status #{saved}"
-      flash[:notice] = t("flash.profile.api_key.reset_success")
-    rescue => e
-      Rails.logger.error "Something went wrong while resetting the api key ( #{e.inspect})"
-      flash[:error] = t("flash.profile.api_key.reset_failure")
-    end
-    render :action => :edit
-  end
-
 def destroy
 end
 

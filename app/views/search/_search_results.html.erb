@@ -1,13 +1,5 @@
 
 	<ul class="results">
-		<% if @total_results == 0 %>
-			<li class="ticket_icon"> 
-				<div class="group">
-					<p><strong><%= t('search.no_results_msg') %></strong></p>
-				</div>
-			</li>
-		<% end %>
-		
 		<% unless @searched_tickets.nil? %>
 			<li class="ticket_icon"> 
 				<strong class="title">Tickets</strong>

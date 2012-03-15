@@ -1,5 +1,8 @@
 module EmailCommands 
 
+  include TicketConstants
+  
+
   def process_email_commands(ticket, user, email_config)
     content = params[:text] || Helpdesk::HTMLSanitizer.plain(params[:html] )
     begin
@@ -13,7 +16,7 @@ module EmailCommands
           begin
             cmd = cmd.downcase
             if respond_to?(cmd)
-              send(cmd,ticket,value,user)
+              send(cmd,ticket,value)
             elsif !ticket.respond_to?(cmd)
               custom_field = ticket.account.ticket_fields.find_by_label(cmd);    
               custom_ff_fields[custom_field.name.to_sym] = value unless custom_field.blank?
@@ -35,33 +38,29 @@ module EmailCommands
     email_cmds_regex
   end
   
-  def source(ticket, value, user)
-    ticket.source = TicketConstants::SOURCE_KEYS_BY_TOKEN[value.to_sym] unless TicketConstants::SOURCE_KEYS_BY_TOKEN[value.to_sym].blank?    
+  def source(ticket, value)
+    ticket.source = SOURCE_KEYS_BY_TOKEN[value.to_sym] unless SOURCE_KEYS_BY_TOKEN[value.to_sym].blank?;    
   end
   
-  def status(ticket, value, user)
-    ticket.status = TicketConstants::STATUS_KEYS_BY_TOKEN[value.to_sym] unless TicketConstants::STATUS_KEYS_BY_TOKEN[value.to_sym].blank? 
+  def status(ticket, value)
+    ticket.status = STATUS_KEYS_BY_TOKEN[value.to_sym] unless STATUS_KEYS_BY_TOKEN[value.to_sym].blank?; 
   end
   
-  def priority(ticket, value, user)
-    ticket.priority = TicketConstants::PRIORITY_KEYS_BY_TOKEN[value.to_sym] unless TicketConstants::PRIORITY_KEYS_BY_TOKEN[value.to_sym].blank?
+  def priority(ticket, value)
+    ticket.priority = PRIORITY_KEYS_BY_TOKEN[value.to_sym] unless PRIORITY_KEYS_BY_TOKEN[value.to_sym].blank?;
   end
   
-  def group(ticket, value, user)
+  def group(ticket, value)
     group = ticket.account.groups.find_by_name(value)      
     ticket.group = group unless group.nil?
   end
   
-  def agent(ticket, value, user)
-    if value =~ /me/i
-      responder = user
-    else
-      responder = ticket.account.users.find_by_email_or_name(value) 
-    end
+  def agent(ticket, value)
+    responder = ticket.account.users.find_by_email_or_name(value) 
     ticket.responder = responder if responder && responder.agent?
   end
   
-  def product(ticket, value, user)
+  def product(ticket, value)
     email_config = ticket.account.email_configs.find_by_name(value)
     ticket.email_config = email_config unless email_config.blank? 
   end

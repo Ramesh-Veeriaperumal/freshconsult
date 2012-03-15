@@ -8,7 +8,7 @@ class Social::FacebookPosts
  
  def fetch
   
-   until_time = @fb_page.fetch_since   
+   until_time = Time.zone.now   
    query = "SELECT post_id,message,actor_id,updated_time,created_time,comments FROM stream WHERE source_id=#{@fb_page.page_id} and actor_id!=#{@fb_page.page_id} and updated_time > #{@fb_page.fetch_since}"
    
    if @fb_page.import_visitor_posts && @fb_page.import_company_posts

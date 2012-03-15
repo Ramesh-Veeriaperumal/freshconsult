@@ -28,7 +28,7 @@ end
 ActionController::Base.asset_host =  Proc.new { |source, request|
   params = request.parameters
   if params['format'] == 'widget'
-    "https://asset.freshpo.com"
+    "http://assets.freshpo.com"
   end
 }
 # Disable delivery errors, bad email addresses will be ignored

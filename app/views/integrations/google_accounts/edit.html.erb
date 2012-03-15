@@ -1,61 +1,57 @@
-<% content_for :sidebar do %><div class="sidepanel helpcard"><%=t('integrations.google_contacts.edit_helptext')%></div><% end %>
+<% content_for :sidebar do -%><%- end %>
 <h3 class="title"><%=t("integrations.google_contacts.edit_form.#{@omniauth_origin}_title")%></h3>
 <% 
   action = @omniauth_origin == "import" ? "import_contacts" : "update"
   form_for @google_account, :url => { :controller=> "integrations/google_accounts", :action => action, :iapp_id => (params[:iapp_id] unless params[:iapp_id].blank?) } do |f| 
+	gg_arr = [["My Contacts", "6"]]
+	@google_groups.each {|gg|
+		gg_arr.push([gg.name, gg.group_id])
+	}
 	sync_types = [[t("integrations.google_contacts.MERGE_LATEST"), SyncType::MERGE_LATEST], [t("integrations.google_contacts.OVERWRITE_LOCAL"), SyncType::OVERWRITE_LOCAL], 
 					[t("integrations.google_contacts.OVERWRITE_REMOTE"), SyncType::OVERWRITE_REMOTE], [t("integrations.google_contacts.MERGE_LOCAL"), SyncType::MERGE_LOCAL], 
 					[t("integrations.google_contacts.MERGE_REMOTE"), SyncType::MERGE_REMOTE]]
 	%>
-	<ul class="ui-form google_accounts">
-			
-		<h4 class="title"><%=t('integrations.google_contacts.edit_form.mail_box_detail')%> <%=@google_account.name%> ( <%=@google_account.email%> )</h4>
+	<ul class="ui-form">
+		<li>	
+			<h5 class="title"><%=t('integrations.google_contacts.edit_form.mail_box_detail')%></h5>
+		</li>
+		<li class="inline-field">
+			<label class="caption"> <%=t('integrations.google_contacts.name')%></label>    
+			<div class="fields">
+				<label><%=@google_account.name%></label>
+			</div>
+		</li> 
+		<li class="inline-field">
+			<label class="caption"> <%=t('integrations.google_contacts.email')%></label>    
+			<div class="fields">
+				<label><%=@google_account.email%></label>
+			</div>
+			<span class="seperator"></span>
+		</li>         
 		
-		<fieldset>
-			<legend><%=t('integrations.google_contacts.edit_form.import_group')%></legend>
+		<li>	
+			<h5 class="title"><%=t('integrations.google_contacts.edit_form.choose_group_title')%></h5>
+		</li>
+		<li class="inline-field">
+			<label class="caption"><%=t('integrations.google_contacts.group')%></label>
 			<div class="fields">
-				<%@google_groups.each {|gg| %>
-					<label class="checkwrapper"><%=check_box_tag "integrations_google_account[import_groups][]", gg.group_id%><%=gg.name%></label>
-				<%}%>
+				<%=f.select :sync_group_id, options_for_select(gg_arr, @google_account.sync_group_id), {}, {:onchange=>"group_changed()"}%>
 			</div>
-
-		</fieldset>
-		
-		<fieldset>
-			<legend><%=t('integrations.google_contacts.tag')%></legend>
+		</li>
+		<li class="inline-field">
+			<label class="caption"><%=t('integrations.google_contacts.tag')%></label>
 			<div class="fields">
-				<label class="caption" for="integrations_google_account_sync_tag"><%=t('integrations.google_contacts.tag_label')%></label>
-				<%=text_field_tag "integrations_google_account[sync_tag]", @google_account.sync_tag.blank? ? "gmail": @google_account.sync_tag, :onchange=>"tag_changed()" ,  "data-placement" => "right", :class=>"form-tooltip mini", :title => t("integrations.google_contacts.info1")%>
+				<%=f.text_field :sync_tag%>
 			</div>
-			
-			<div class="special-notice">
-				<%=t('integrations.google_contacts.sync_group_info', :group_name => @google_account.sync_group_name)%>
-			</div>
-
-			<div class="fields">
-				<label>
-				    <%=t("integrations.google_contacts.overwrite_existing_user")%> <%=check_box_tag "integrations_google_account[overwrite_existing_user]", 1, true, :class => 'iphone' , "data-active-text" => "Yes", "data-inactive-text" => "No" %>
-					
-				</label>
-			</div>
-
-		</fieldset>
+		</li>
 		<li class="inline-field">
 			<div class="fields">
-				<label id="tag_usage_status">
-					<% tag_to_acc_map = {}
-					@existing_google_accounts.each { |g_account|
-						s_tag = g_account.sync_tag
-						unless s_tag.blank?
-							tag_to_acc_map[s_tag] = [] if tag_to_acc_map[s_tag].blank?
-							tag_to_acc_map[s_tag].push(g_account.email)
-						end
-					}%>
-					<%=javascript_tag "var tag_to_acc_map = #{tag_to_acc_map.to_json}" %>
+				<label>
+				    <%=f.check_box :overwrite_existing_user%>
+					<%=t("integrations.google_contacts.overwrite_existing_user")%>
 				</label>
 			</div>
 		</li>
-		
 		<% if @omniauth_origin == "import" %>
 			<%if @db_google_account.blank?%>
 				<li class="inline-field">
@@ -76,9 +72,8 @@
 			</li>
 		<%end%>
 	</ul>
-
-	<%=f.hidden_field :sync_group_id%>
-	<%=f.hidden_field :sync_group_name%>
+ 
+	<%=f.hidden_field :sync_group_name %>
 	<%=hidden_field_tag :omniauth_origin, :omniauth_origin, :value => @omniauth_origin %>
 	<%=f.hidden_field :id %>
 	<%=f.hidden_field :name %>
@@ -93,7 +88,7 @@
 <%end%>
  
 <script type="text/javascript">
-/*    function group_changed(evt) {
+    function group_changed(evt) {
 		group_select_field = $('integrations_google_account_sync_group_id')
 		sidx = group_select_field.selectedIndex
 		if (sidx > -1) {
@@ -101,12 +96,5 @@
 			$('integrations_google_account_sync_group_name').value = group_name
 			$('integrations_google_account_sync_tag').value = "gmail-"+group_name.toLowerCase().replace(" ", "-");
 		}
-	}
-*/
-    function tag_changed(evt){
-		sync_tag_field = $('integrations_google_account_sync_tag')
-		tag_using_accs = tag_to_acc_map[sync_tag_field.value] || "None of the accounts";
-		tag_usage_status_field = $('tag_usage_status')
-		// tag_usage_status_field.innerHTML = tag_using_accs+' sharing the same tag for syncing.'
 	}
 </script>

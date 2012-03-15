@@ -87,31 +87,31 @@ class Admin::AutomationsController < Admin::AdminController
       groups << ([0, '{{ticket.group}}'])
       
       action_hash     = [
-        { :name => -1, :value => "--- #{t('click_select_action')} ---" },
+        { :name => 0, :value => "--- #{t('click_select_action')} ---" },
         { :name => "priority", :value => t('set_priority_as'), :domtype => "dropdown", 
           :choices => Helpdesk::Ticket::PRIORITY_NAMES_BY_KEY.sort },
         { :name => "ticket_type", :value => t('set_type_as'), :domtype => "dropdown", 
           :choices => current_account.ticket_type_values.collect { |c| [ c.value, c.value ] } },
         { :name => "status", :value => t('set_status_as'), :domtype => "dropdown", 
           :choices => Helpdesk::Ticket::STATUS_NAMES_BY_KEY.sort },
-        { :name => -1, :value => "------------------------------" },
+        { :name => 0, :value => "------------------------------" },
         { :name => "add_tag", :value => t('add_tags'), :domtype => 'text' },
-        { :name => -1, :value => "------------------------------" },
+        { :name => 0, :value => "------------------------------" },
         { :name => "responder_id", :value => t('ticket.assign_to_agent'), 
           :domtype => 'dropdown', :choices => agents },
         { :name => "group_id", :value => t('email_configs.info9'), :domtype => 'dropdown', 
           :choices => groups },
-        { :name => -1, :value => "------------------------------" },
+        { :name => 0, :value => "------------------------------" },
         { :name => "send_email_to_group", :value => t('send_email_to_group'), 
           :domtype => 'email_select', :choices => groups },
         { :name => "send_email_to_agent", :value => t('send_email_to_agent'), 
           :domtype => 'email_select', :choices => agents },
         { :name => "send_email_to_requester", :value => t('send_email_to_requester'), 
           :domtype => 'email' },
-        { :name => -1, :value => "------------------------------" },
+        { :name => 0, :value => "------------------------------" },
         { :name => "delete_ticket", :value => t('delete_the_ticket')},
         { :name => "mark_as_spam", :value => t('mark_as_spam')},
-        { :name => -1, :value => "------------------------------" } ]
+        { :name => 0, :value => "------------------------------" } ]
                         
       additional_actions.each { |index, value| action_hash.insert(index, value) }
       add_custom_actions action_hash

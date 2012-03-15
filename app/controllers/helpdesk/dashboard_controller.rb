@@ -17,10 +17,6 @@ class Helpdesk::DashboardController < ApplicationController
     render :partial => "ticket_note", :collection => activities
   end
   
-  def latest_summary
-    render :partial => "summary"
-  end
-  
   protected
     def recent_activities(activity_id)
       if activity_id

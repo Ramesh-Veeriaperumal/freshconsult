@@ -1,472 +1,406 @@
-﻿---
 de: 
   meta:
    language_name: 'German'
-  enabled: "Aktiviert"
-  disabled: "Deaktiviert"
-  tip_on: "Klicken zum Aktivieren"
-  tip_off: "Klicken zum Deaktivieren"
-  credit_card: "Karte erfasst"
-  referral: "Vermittlungsgutschrift"
-  success: "Erfolg"
-  failure: "Fehler ..."
-  amount: "Summe"
-  paid_with: "Bezahlt mit"
-  date_title: "Datum"
-  status: "Status"
-  proceed_now: "\n\nJetzt fortfahren?"
-  signup_complete_activate_info: "Willkommen! Wir haben Ihnen per E-Mail einen Link gesendet, mit dem Sie ein neues Kennwort definieren und Ihr Konto aktivieren können."
-  attachment_help_info: "Die Anhanggröße kann bis zu 15 MB betragen"
-  feedbackwidget_offset_info: "Der Abstand ist die Entfernung des Widget-Buttons in Pixeln von der linken oder oberen Bildschirmbegrenzung und kann von Ihnen frei eingestellt werden."
-  no_twitter_handle: "Bitte konfigurieren Sie mindestens ein Twitter-Konto"
-  reset_my_password: "Eigenes Passwort zurücksetzen "
-  assign: "Zuweisen"
-  signup: "Registrieren"
-  trial_expired_on: "Testversion ist abgelaufen am"
-  upgrade_trial: "Verlängern Sie jetzt Ihre Testversion!"
-  add_note: "Notiz hinzufügen"
-  contact_name: "Kontaktname"
-  eight: "8 Stunden"
-  security_code: "Sicherheitscode"
-  example: "Beispiel"
-  pending: "Ausstehend"
-  twitter_source: "Twitter"
-  facebook_source: "Facebook"
-  working: "In Bearbeitung"
-  attachment: "Anhang"
-  attachments: "Anhänge"
-  show_quoted_text: "Vollständig anzeigen"
-  cancel_my_account: "Konto löschen"
-  resolved_on_time: "Rechtzeitig gelöst"
-  resolved_late: "Verspätet gelöst"
-  remove: "Entfernen"
-  no_tags: "Keine Tags gefunden."
+  attachment_help_info: Die Anhanggröße kann bis zu 20 MB betragen
+  feedbackwidget_offset_info: Der Abstand ist die Entfernung des Widget-Buttons in Pixeln von der linken oder oberen Bildschirmbegrenzung und kann von Ihnen frei eingestellt werden.
+  no_twitter_handle: Bitte konfigurieren Sie mindestens ein Twitter-Konto
+  reset_my_password: Eigenes Passwort zurücksetzen 
+  assign: Zuweisen
+  signup: Registrieren
+  trial_expired_on: Testversion ist abgelaufen am
+  upgrade_trial: Verlängern Sie jetzt Ihre Testversion!
+  add_note: Notiz hinzufügen
+  contact_name: Kontaktname
+  eight: 8 Stunden
+  security_code: Sicherheitscode
+  example: Beispiel
+  pending: Ausstehend
+  twitter_source: Twitter
+  facebook_source: Facebook
+  working: In Bearbeitung
+  attachment: Anhang
+  attachments: Anhänge
+  show_quoted_text: Vollständig anzeigen
+  cancel_my_account: Konto löschen
+  resolved_on_time: Rechtzeitig gelöst
+  resolved_late: Verspätet gelöst
+  remove: Entfernen
   user: 
-    company: "Unternehmen"
-    photo: "Foto"
-    title: "Titel"
-    info1: "Ein Profilbild (Avatar) für die Person. Am Besten ist ein quadratisches Bild."
-    back_info: "Zusätzliche Details"
-    mobile: "Mobil"
-    twitter_id: "Twitter-ID"
-    full_name: "Vollständiger Name"
-    secondary: "Optional"
-    phone_no: "Telefon"
-    address: "Adresse"
-    work: "Geschäftlich"
-    email: "E-Mail"
+    company: Unternehmen
+    photo: Foto
+    title: Titel
+    info1: Ein Profilbild (Avatar) für die Person. Am Besten ist ein quadratisches Bild.
+    back_info: Zusätzliche Details
+    mobile: Mobil
+    twitter_id: Twitter-ID
+    full_name: Vollständiger Name
+    secondary: Optional
+    phone_no: Telefon
+    work: Arbeit
+    email: E-Mail
   ticket_fields:
     fields:
-      source: "Quelle"
-      subject: "Betreff"
-      requester: "Anfragender"
-      status: "Status"
-      group: "Gruppe"
-      agent: "Techniker"
-      priority: "Priorität"
-      description: "Beschreibung"
-      product: "Produkt"
-      ticket_type: "Typ"
+      source: Quelle
+      subject: Thema
+      requester: Anfragender
+      status: Status
+      group: Gruppe
+      agent: Techniker
+      priority: Priorität
+      description: Beschreibung
+      product: Produkt
+      ticket_type: Typ
     customizer_js:
-      untitled: "Ohne Titel"
-      first_choice: "Erste Wahl"
-      second_choice: "Zweite Wahl"
-      confirm_delete: "Wollen Sie dieses Feld wirklich löschen?"
-      no_choice_message: "Es muss mindestens eine gültige Auswahl vorhanden sein"
+      untitled: Ohne Titel
+      first_choice: Erste Wahl
+      second_choice: Zweite Wahl
+      confirm_delete: Wollen Sie dieses Feld wirklich löschen?
+      no_choice_message: Es muss mindestens eine gültige Auswahl vorhanden sein
     index: 
-      number: "Nummer"
-      add_custom_field: "Eigenes Feld hinzufügen"
-      customize_form: "Passen Sie Ihr &Neues Ticket&-Formular an."
-      single_line: "Einzeiliges Textfeld"
-      title: "Ticket-Felder"
-      paragraph: "Paragraph"
-      checkbox: "Kontrollkästchen"
-      save: "Ticket-Felder speichern"
-      drag_drop_intro: "Ziehen Sie beliebige Feldtypen mittels Drag'n Drop in das 'Neues-Ticket'-Formular unterhalb."
-      dropdown: "Dropdown"
+      number: Nummer
+      add_custom_field: Eigenes Feld hinzufügen
+      customize_form: Passen Sie Ihr &Neues Ticket&-Formular an.
+      single_line: Einzeiliges Textfeld
+      title: Ticket-Felder
+      paragraph: Paragraph
+      checkbox: Kontrollkästchen
+      save: Ticket-Felder speichern
+      drag_drop_intro: Ziehen Sie beliebige Feldtypen mittels Drag'n Drop in das 'Neues-Ticket'-Formular unterhalb.
+      dropdown: Dropdown
     formfield_props: 
-      label: "Feldname"
-      add_new_choice: "Neue Auswahl hinzufügen"
-      customer_mandatory: "Pflichtfeld zum Absenden des Tickets"
-      customer_edit: "Bearbeiten des Felds möglich"
-      agent_info1: "Feld darf beim Absenden des Tickets nicht leer sein"
-      agent_info2: "Feld darf beim Schließen des Tickets nicht leer sein"
-      agent_mandatory_submission: "Pflichtfeld zum Absenden des Tickets"
-      customer_info1: "Feld kann nicht leer bleiben, wenn das Ticket online verschickt wird."
-      for_agents: "Für Techniker"
-      dropdown_choices: "Dropdown-Auswahl"
-      label_in_portal: "Anzeigefeld im Portal"
-      customer_visible: "Sichtbar für Kunden"
-      description: "Beschreibung"
-      for_customer: "Für Kunden"
-      agent_mandatory_closure: "Pflichtfeld zum Schließen"
-      choices: "Auswahl"
-      label_in_portal_info: "Das Feld, das im Self-Service Portal angezeigt wird"
+      label: Feldname
+      add_new_choice: Neue Auswahl hinzufügen
+      customer_mandatory: Pflichtfeld zum Absenden des Tickets
+      customer_edit: Bearbeiten des Felds möglich
+      agent_info1: Feld darf beim Absenden des Tickets nicht leer sein
+      agent_info2: Feld darf beim Schließen des Tickets nicht leer sein
+      agent_mandatory_submission: Pflichtfeld zum Absenden des Tickets
+      customer_info1: Feld kann nicht leer bleiben, wenn das Ticket online verschickt wird.
+      for_agents: Für Techniker
+      dropdown_choices: Dropdown-Auswahl
+      label_in_portal: Anzeigefeld im Portal
+      customer_visible: Sichtbar für Kunden
+      description: Beschreibung
+      for_customer: Für Kunden
+      agent_mandatory_closure: Pflichtfeld zum Schließen
+      choices: Auswahl
+      label_in_portal_info: Das Feld, das im Self-Service Portal angezeigt wird
   folder: 
-    edit: "Ordner bearbeiten"
-    info1: "Wollen Sie den Ordner wirklich löschen"
-    add_folder: "Ordner hinzufügen"
-  amount_per_month: "$%{amount} %{period}  amount_for_annual: $%{amount} jährlich"
-  agent_deleted_message: "Dies ist ein gelöschter Techniker"
-  cancel: "Abbrechen"
-  last: "Letztes"
-  agent_emailnotverified: "E-Mail-Adresse des Technikers wurde noch nicht bestätigt!"
-  agent_assigned_info: "Keine offenen oder unerledigten Tickets für diesen Techniker"
-  basic_details: "Verwaltung von E-Mail-Antworten, Dispatch'r Regeln, SLA-Richtlinien, Wissensdatenbank, Self-Service Portal, Domainzuweisungen, Community Support."
-  choose_plan: "Edition auswählen"
-  create: "Erstellen"
-  feedbackwidget_custom_image_info: "Wenn ein individuelles Bild verwendet wird, wird die Farbe und der Text ignoriert."
-  account_admin_updated: "Kontoadministrator wurde aktualisiert!"
+    edit: Ordner bearbeiten
+    info1: Wollen Sie den Ordner wirklich löschen
+    add_folder: Ordner hinzufügen
+  amount_per_month: $%{amount} pro Monat
+  agent_deleted_message: Dies ist ein gelöschter Techniker
+  cancel: Abbrechen
+  last: Letztes
+  agent_emailnotverified: E-Mail-Adresse des Technikers wurde noch nicht bestätigt!
+  agent_assigned_info: Keine offenen oder unerledigten Tickets für diesen Techniker
+  basic_details: Verwaltung von E-Mail-Antworten, Dispatch'r Regeln, SLA-Richtlinien, Wissensdatenbank, Self-Service Portal, Domainzuweisungen, Community Support.
+  choose_plan: Edition auswählen
+  create: Neu
+  feedbackwidget_custom_image_info: Wenn ein individuelles Bild verwendet wird, wird die Farbe und der Text ignoriert.
+  account_admin_updated: Kontoadministrator wurde aktualisiert!
   forums_order: 
-    overview: "Übersicht"
-    recent: "Aktuell"
-    popular: "Beliebt"
-  payment_info: "Zahlungsdaten"
+    overview: Übersicht
+    recent: Aktuell
+    popular: Beliebt
+  payment_info: Zahlungsdaten
   admin:
-    day_passes:
-      index:
-        title: "Tagespass"
-        current_balance: "Sie haben %{balance} übrig!"
-        buy_pass: "Weitere Pässe kaufen"
-        buy_now: "Jetzt kaufen"
-        day_pass_pack: "%{quantity} Tagespasspaket (%{currency}%{amount})"
-        day_pass_history: "Bestellverlauf"
-        add_confirm: "Ihre Kreditkarte wird belastet "
-        daypass_quantity: "%{quantity} Tagespässe"
-        order: "Bestellnummer"
-        no_of_day_passes: "Nummer der Tagespässe"
-        auto_recharge: "Automatisches Aufladen"
-        recharge_quantity: "Aufladesumme:"
-        day_passes: "Tagespässe"
-        helptext: "Ihre Tagespässe werden automatisch aufgeladen, sobald die Anzahl der verfügbaren Tagespässe 2 erreicht."
     widget_config:
       index:
-        thankyou_label: "Nachricht senden"
-        thankyou_default: "Danke für Ihre Rückmeldung"
-        thankyou_info: "Nachricht zur Anzeige nach dem Senden eines Tickets durch den Benutzer"
+        thankyou_label: Nachricht senden
+        thankyou_default: Danke für Ihre Rückmeldung
+        thankyou_info: Nachricht zur Anzeige nach dem Senden eines Tickets durch den Benutzer
     supervisor_rules:
       index:
-        help_title: "Supervisor"
-        title: "Supervisor - Regeln"
-        help_info_1: "Benutzen Sie &quot;Supervisor&quot;, um periodische Überprüfungen und Aktionen wie Erinnerungen an Kunden oder Eskalationen durchzuführen."
+        help_title: Supervisor
+        title: Supervisor - Regeln
+        help_info_1: Benutzen Sie "Supervisor", um periodische Überprüfungen und Aktionen wie Erinnerungen an Kunden oder Eskalationen durchzuführen.
         help_info_2: "Z.B.: Wenn die Antwort eines Kunden mehr als 24 Stunden offen ist, sende eine Erinnerungs-E-Mail und schließe es dann spätestens nach 48 Stunden."
-        help_info_3: "Der Supervisor läuft jede Stunde und verarbeitet Tickets, die in den letzten 30 Tagen aktualisiert wurden."
-        help_info_4: "Die &quot;Supervisor&quot;-Regeln werden sequentiell abgearbeitet, die Reihenfolge der Regeln ist folglich relevant. Eine Regel kann bestimmte Aktionen nach sich ziehen und weitere Regeln auslösen."
+        help_info_3: Der Supervisor läuft jede Stunde und verarbeitet Tickets, die in den letzten 30 Tagen aktualisiert wurden.
+        help_info_4: Die "Supervisor"-Regeln werden sequentiell abgearbeitet, die Reihenfolge der Regeln ist folglich relevant. Eine Regel kann bestimmte Aktionen nach sich ziehen und weitere Regeln auslösen.
       new:
-        title: "Supervisor - Neue Regel"
+        title: Supervisor - Neue Regel
       edit:
-        title: "Supervisor - Regel ändern"
+        title: Supervisor - Regel ändern
     shared:
       filter_jsinit:
-        insert_placeholder: "Platzhalter einfügen"
-        body: "Hauptteil"
-        to: "Bis"
-        selected: "Ausgewählt"
-        not_selected: "Nicht ausgewählt"
+        insert_placeholder: Platzhalter einfügen
+        body: Hauptteil
+        to: An
+        selected: Ausgewählt
+        not_selected: Nicht ausgewählt
     automations:
       edit:
-        title: "Szenario bearbeiten"
+        title: Szenario bearbeiten
     security: 
       index: 
-        shared_secret: "Gemeinsamer Schlüssel"
-        remote_login_url: "URL für die Remote-Authentifizierung"
-        shared_secret_info: "Bitte bewahren Sie diesen Schlüssel (Token) sicher auf. Sie benötigen ihn, um die Remote-Authentifizierung in Ihrem FreshDesk zu aktivieren."
-        remote_logout_url_info: "Das ist die URL (Link), an die Freshdesk Benutzer weiterleitet, die sich abmelden / ausloggen möchten."
-        remote_login_url_info: "Das ist die URL (Link), an die Freshdesk nicht authentifizierte Benutzer zur Anmeldung weiterleitet."
-        enable_sso_info: "Single Sign-On erlaubt Ihnen, eigene Anwendungen oder zentralisierte Dienste wie Microsoft Active Directory zu verwenden, so dass Ihre Kunden Freshdesk ohne zusätzliche Anmeldung mit Benutzername und Passwort verwenden können."
-        enable_sso: "Single Sign-On aktivieren"
-        remote_logout_url: "Remote Logout-URL"
-        remote_authentication: "Remote Authentifizierung"
-        enable_SSL: "SSL aktivieren"
-        enable_SSL_anon: "Mit SSL können Sie Daten verschlüsseln, die zwischen Freshdesk-Portalen übermittelt werden"
-        customer_portal_ssl_warning: "Da für Ihr Konto eine benutzerdefinierte Helpdesk-URL konfiguriert ist, werden Sie weitergeleitet an "
-        multiple_product_ssl_warning: "SSL wird nicht angewendet, wenn mehrere Produkte konfiguriert sind."
-        enabled: "Aktiviert"
-        disabled: "Deaktiviert"
-        click_to_enable: "Klicken Sie hier zum Aktivieren von SSL"
-        click_to_disable: "Klicken Sie hier zum Deaktivieren von SSL"
-        security_title: "Sicherheit"
+        shared_secret: Gemeinsamer Schlüssel
+        remote_login_url: URL für die Remote-Authentifizierung
+        shared_secret_info: Bitte bewahren Sie diesen Schlüssel (Token) sicher auf. Sie benötigen ihn, um die Remote-Authentifizierung in Ihrem FreshDesk zu aktivieren.
+        remote_logout_url_info: Das ist die URL (Link), an die Freshdesk Benutzer weiterleitet, die sich abmelden / ausloggen möchten.
+        remote_login_url_info: Das ist die URL (Link), an die Freshdesk nicht authentifizierte Benutzer zur Anmeldung weiterleitet.
+        enable_sso_info: Single Sign-On erlaubt Ihnen, eigene Anwendungen oder zentralisierte Dienste wie Microsoft Active Directory zu verwenden, so dass Ihre Kunden Freshdesk ohne zusätzliche Anmeldung mit Benutzername und Passwort verwenden können.
+        enable_sso: Single Sign-On aktivieren
+        remote_logout_url: Remote Logout-URL
+        remote_authentication: Remote Authentifizierung
     products: 
       new: 
-        title: "Neues Produkt"
+        title: Neues Produkt
       portal: 
-        select_forum_category: "Forenkategorie auswählen..."
-        portal_rebranding: "Rebranding für Ihr Portal"
-        cname_configure_info: "Bevor Sie dieses Feld ausfüllen, gewährleisten Sie bitte, dass ein CNAME DNS-Record in Ihrer DNS-Zonendatei von <strong>help.<b id=&quot;domain_info_name&quot;>mycompanyname</b>.com</strong> auf %{full_domain} zeigt. Der entsprechende Webmaster sollte Ihnen bei Fragen und Problemen zur Seite stehen."
-        select_solution_category: "Forenkategorie auswählen..."
-        top_level_solution_info: "Sie können eine Lösungskategorie diesem Produkt zuweisen. Alle anderen Lösungen werden den Kunden nicht angezeigt, wenn diese den Lösungs-Tab im Produktportal aufrufen."
-        portal_settings: "Portal-Einstellung"
-        portal_name_info: "Der Name wird im Produktportal neben dem Header-Logo angezeigt."
-        top_level_forum_info: "Sie können eine Forenkategorie diesem Produkt zuweisen. Alle anderen Foren werden den Kunden nicht angezeigt, wenn diese den Lösungs-Tab im Produktportal aufrufen."
-        top_level_forum: "Top-Level Forenkategorie"
-        portal_url: "Portal-URL"
-        top_level_solution: "Top-Level Lösungskategorie"
-        portal_name: "Portalname"
-        portal_language: "Portalsprache"
-        portal_language_info: "Dies ist die Standardsprache, wenn Kunden Ihr Portal besuchen"
+        select_forum_category: Forenkategorie auswählen...
+        portal_rebranding: Rebranding für Ihr Portal
+        cname_configure_info: Bevor Sie dieses Feld ausfüllen, gewährleisten Sie bitte, dass ein CNAME DNS-Record in Ihrer DNS-Zonendatei von <strong>help.<b id="domain_info_name">mycompanyname</b>.com</strong> auf %{full_domain} zeigt. Der entsprechende Webmaster sollte Ihnen bei Fragen und Problemen zur Seite stehen.
+        select_solution_category: Forenkategorie auswählen...
+        top_level_solution_info: Sie können eine Lösungskategorie diesem Produkt zuweisen. Alle anderen Lösungen werden den Kunden nicht angezeigt, wenn diese den Lösungs-Tab im Produktportal aufrufen.
+        portal_settings: Portal-Einstellung
+        portal_name_info: Der Name wird im Produktportal neben dem Header-Logo angezeigt.
+        top_level_forum_info: Sie können eine Forenkategorie diesem Produkt zuweisen. Alle anderen Foren werden den Kunden nicht angezeigt, wenn diese den Lösungs-Tab im Produktportal aufrufen.
+        top_level_forum: Top-Level Forenkategorie
+        portal_url: Portal-URL
+        top_level_solution: Top-Level Lösungskategorie
+        portal_name: Portalname
       edit: 
-        title: "Produkt bearbeiten"
+        title: Produkt bearbeiten
       form: 
-        configure_seperate_portal: "Konfigurieren Sie ein separates Portal für dieses Produkt"
-        enable_product_portal: "Produktportal aktivieren"
-        enter_support_email_id: "Ihre Support-E-Mail-Adresse"
-        configure_email: "E-Mail-Adresse konfigurieren"
-        product_name: "Produktname"
+        configure_seperate_portal: Konfigurieren Sie ein separates Portal für dieses Produkt
+        enable_product_portal: Produktportal aktivieren
+        enter_support_email_id: Ihre Support-E-Mail-Adresse
+        configure_email: E-Mail-Adresse konfigurieren
+        product_name: Produktname
       product:
-        email_not_verified: "E-Mail wurde nicht verifiziert.  "
-        delete: "Wollen Sie dieses Produkt wirklich löschen?"
+        email_not_verified: E-Mail wurde nicht verifiziert.  
+        delete: Wollen Sie dieses Produkt wirklich löschen?
       index: 
-        title: "Produkte        "
-        add_product: "Produkt hinzufügen"
+        title: Produkte        
+        add_product: Produkt hinzufügen
     canned_responses:
       ca_response:
-        delete_confirm: "Sind Sie sicher, dass Sie diese Musterantwort löschen möchten?"
+        delete_confirm: Sind Sie sicher, dass Sie diese Musterantwort löschen möchten?
       new: 
-        title: "Standardantwort hinzufügen        "
+        title: Standardantwort hinzufügen        
       edit: 
-        title: "Standardantwort bearbeiten"
+        title: Standardantwort bearbeiten
       form: 
-        groups: "Techniker in der Gruppe"
-        response_name: "Titel der Antwort"
-        all_agents: "Alle Techniker"
-        me_only: "Nur mich"
-        available_for: "Verfügbar für"
+        groups: Techniker in der Gruppe
+        response_name: Titel der Antwort
+        all_agents: Alle Techniker
+        me_only: Nur mich
+        available_for: Verfügbar für
       index: 
-        new: "Standardantwort hinzufügen"
-        title: "Standardantworten"
+        new: Standardantwort hinzufügen
+        title: Standardantworten
     twitters:
       index:
-        new: "Twitter-Konto hinzufügen"
-        title: "Twitter-Konten"
-        search_keys: "Suchbegriffe"
-        add_search: "Suche hinzufügen"
+        new: Twitter-Konto hinzufügen
+        title: Twitter-Konten
+        search_keys: Suchbegriffe
+        add_search: Suche hinzufügen
       search:
-        name: "Name der Suche"
-        search_key: "Suchanfrage"
-        screen_name: "Twitter-Konto"
-        add_key: "Suchanfrage hinzufügen"
-        edit_key: "Suchanfrage bearbeiten"
+        name: Name der Suche
+        search_key: Suchanfrage
+        screen_name: Twitter-Konto
+        add_key: Suchanfrage hinzufügen
+        edit_key: Suchanfrage bearbeiten
 
       change:
-        edit_twitter :  "Twitter bearbeiten"
-        capture_mention: "Öffentliche Tweets als Tickets verarbeiten       "
-        capture_dm: "Direkte Nachrichten zu Tickets konvertieren"
-        screen_name: "Anzeigename"
-        default_group : "Standardgruppe       "
+        edit_twitter :  Twitter bearbeiten
+        capture_mention: Öffentliche Tweets als Tickets verarbeiten       
+        capture_dm: Direkte Nachrichten zu Tickets konvertieren
+        screen_name: Anzeigename
+        default_group : Standardgruppe       
 
     home:
       index: 
-        group: "Gruppen"
-        day_pass: "Tagespasseinstellungen"
-        business-hours: "Geschäftszeiten"
-        title: "Admin"
-        email-notifications: "E-Mail-Benachrichtigungen"
-        rebranding: "Helpdesk-Rebranding"
-        account-settings: "Kontoeinstellungen"
-        customer-portal: "Kundenportal"
-        canned-response: "Standardantwort einfügen"
-        multi-product: "Multi-Produkt-Einstellungen"
-        everything_else: "Alles andere"
-        import: "Daten aus Zendesk importieren"
-        agent: "Techniker"
-        feedback: "Feedback-Widget"
-        integrations: "Integrationen"
-        dispatcher: "Dispatch'r"
-        supervisor: "Supervisor"
-        sla: "SLA Richtlinien"
-        ticket-fields: "Ticket-Felder"
-        remote-authentication: "Remote Authentifizierung"
-        scenario: "Automatisierte Szenarien"
-        email-settings: "E-Mail-Einstellungen"
-        everything_helpdesk: "Alles zum HelpDesk"
-        canned-response: "Standardantwort einfügen"
-        multi-product: "Mehrere Produkte"
-        twitter-setting: "Twitter-Einstellungen"
-        survey: "Umfrage-Einstellungen"
-        facebook-setting: "Facebook-Einstellungen"
-        security: "Sicherheit"
-        email_commands_setting: "E-Mail-Befehlseinstellungen"
+        group: Gruppen
+        business-hours: Geschäftszeiten
+        title: Admin
+        email-notifications: E-Mail-Benachrichtigungen
+        rebranding: Helpdesk-Rebranding
+        account-settings: Kontoeinstellungen
+        customer-portal: Kundenportal
+        canned-response: Standardantwort einfügen
+        multi-product: Multi-Produkt-Einstellungen
+        everything_else: Alles andere
+        import: Daten aus Zendesk importieren
+        agent: Techniker
+        feedback: Feedback-Widget
+        integrations: Integrationen
+        dispatcher: Dispatch'r
+        supervisor: Supervisor
+        sla: SLA Richtlinien
+        ticket-fields: Ticket-Felder
+        remote-authentication: Remote Authentifizierung
+        scenario: Automatisierte Szenarien
+        email-settings: E-Mail-Einstellungen
+        everything_helpdesk: Alles zum HelpDesk
+        canned-response: Standardantwort einfügen
+        multi-product: Mehrere Produkte
+        twitter-setting: Twitter-Einstellungen
+        survey: Umfrage-Einstellungen
+        facebook-setting: Facebook-Einstellungen
 
     canned_responses:
       index:
-        title: "Standardantworten"
-        new: "Standardantwort hinzufügen"
+        title: Standardantworten
+        new: Standardantwort hinzufügen
       new:
-        title: "Standardantwort hinzufügen        "
-        delete_confirm: "Sind Sie sicher, dass Sie diese Musterantwort löschen möchten?      "
+        title: Standardantwort hinzufügen        
+        delete_confirm: Sind Sie sicher, dass Sie diese Musterantwort löschen möchten?      
       edit: 
-        title: "Standardantwort bearbeiten"
+        title: Standardantwort bearbeiten
       form:
-        available_for: "Verfügbar für"
-        all_agents: "Alle Techniker"
-        groups: "Techniker in der Gruppe"
-        me_only: "Nur mich"
-        response_name: "Titel der Antwort"
+        available_for: Verfügbar für
+        all_agents: Alle Techniker
+        groups: Techniker in der Gruppe
+        me_only: Nur mich
+        response_name: Titel der Antwort
 
-  ends_with: "Endet mit"
-  last_name: "Nachname"
+  ends_with: Endet mit
+  last_name: Nachname
   forum:
     types:
-      howto: "Fragen"
-      ideas: "Ideen"
-      announce: "Ankündigung"
-      problem: "Probleme"
-    confim_msg1: "Wollen Sie das Forum wirklich löschen"
+      howto: Fragen
+      ideas: Ideen
+      announce: Ankündigung
+      problem: Probleme
+    confim_msg1: Wollen Sie das Forum wirklich löschen
     verb: 
-      questions: "Frage gestellt von"
-      ideas: "Idee geteilt von"
-      announcement: "Veröffentlicht von"
-      problems: "Problem berichtet von"
-    new: "Neues Forum"
-    edit: "Forum bearbeiten"
-    title: "Foren"
-    start_topic: "Neues Thema öffnen"
+      questions: Frage gestellt von
+      ideas: Idee geteilt von
+      announcement: Veröffentlicht von
+      problems: Problem berichtet von
+    new: Neues Forum
+    edit: Forum bearbeiten
+    title: Foren
+    start_topic: Neues Thema öffnen
     visibility:
-      anyone: "Alle"
-      logged_users: "Angemeldete Benutzer"
-      agents: "Techniker      "
-  password_reset_email: "&Passwort Zurücksetzen&-E-Mail"
-  import_user_org: "Benutzer & Organisationen"
-  to_do: "Aufgaben"
-  feedbackwidget_formcustomize: "Formular anpassen"
-  does_not_contain: "Enthält nicht"
+      anyone: Alle
+      logged_users: Angemeldete Benutzer
+      agents: Techniker      
+  password_reset_email: &Passwort Zurücksetzen&-E-Mail
+  import_user_org: Benutzer & Organisationen
+  to_do: Aufgaben
+  feedbackwidget_formcustomize: Formular anpassen
+  does_not_contain: Enthält nicht
   flash:
-    gmail_gadgets:
-      kvp_missing: "Ungültige Authentifizierung.  Bitte öffnen Sie die Mail erneut und versuchen Sie es erneut."
-      user_missing: "Ihre E-Mail ist nicht in Freshdesk vorhanden.  Fügen Sie einen Techniker mit Ihrer E-Mail hinzu und versuchen Sie es erneut."
-      agent_missing: "Sie sind in Freshdesk kein Techniker.  Bitte konvertieren Sie den Benutzer zum Techniker und versuchen Sie es erneut."
-      agent_not_active: "Ihre E-Mail wurde möglicherweise in Freshdesk gelöscht oder deaktiviert.  Bitte aktivieren Sie sie und versuchen Sie es erneut."
-      viewer_id_not_sent_by_gmail: "Falsche Gmail-Anfrage.  Bitte versuchen Sie es nach der Anmeldung erneut."
-      gmail_request_unverified: "Falsche Gmail-Signatur.  Bitte versuchen Sie es nach der Anmeldung erneut."
-      unknown_error: "Unbekannter Serverfehler. Bitte wenden Sie sich an den Support."
-    daypass:
-      success: "%{quantity} Tagespässe wurden erfolgreich zu Ihrem Konto hinzugefügt."
-      failed: "Fehler beim Hinzufügen der Tagespässe"
     facebook:
-      updated: "Facebook-Einstellungen wurden aktualisiert "
+      updated: Facebook-Einstellungen wurden aktualisiert 
     application:
-      already: "Das Add-On ist bereits installiert."
+      already: Die Anwendung wurde bereits installiert.
       uninstall:
-        success: "Das Add-On wurde erfolgreich deaktiviert!"
-        error: "Fehler bei der Deaktivierung des Add-Ons."
+        success: Das Add-On wurde erfolgreich entfernt!
       install:
-        success: "Das Add-On wurde erfolgreich aktiviert!"
-        error: "Fehler bei der Aktivierung des Add-Ons."
+        success: Das Add-On wurde erfolgreich hinzugefügt!
       configure:
-        success: "Das Add-On wurde erfolgreich aktualisiert!"
-        error: "Fehler beim Konfigurieren des Add-Ons."
-      not_installed: "Dieses Add-On wurde noch nicht installiert."
+        success: Das Add-On wurde erfolgreich aktualisiert!
     filter:
-      delete_success: "Die Ansicht wurde erfolgreich gelöscht!"
-      save_success: "Die Ansicht wurde erfolgreich gespeichert!"
+      delete_success: Die Ansicht wurde erfolgreich gelöscht!
+      save_success: Die Ansicht wurde erfolgreich gespeichert!
     twitter: 
-      updated: "Twitter-Einstellung wurde aktualisiert"
-    not_allowed_in_demo_site: "Nicht in der Demoversion enthalten!"
+      updated: Twitter-Einstellung wurde aktualisiert
+    not_allowed_in_demo_site: Nicht in der Demoversion enthalten!
     portal: 
       tickets: 
         create: 
-          success: "Ihr Ticket wurde erstellt und eine Kopie an Ihre E-Mail-Adresse versandt."
+          success: Ihr Ticket wurde erstellt und eine Kopie an Ihre E-Mail-Adresse versandt.
     g_app: 
-      user_deleted: "Benutzer wurde gelöscht!"
-      authentication_failed: "Anmeldung fehlgeschlagen"
-      authentication_success: "Authentifizierung erfolgreich abgeschlossen"
-      no_subdomain: "Diese Subdomain existiert leider nicht. Bitte versuchen Sie mit einem anderen Namen."
+      user_deleted: Benutzer wurde gelöscht!
+      authentication_failed: Anmeldung fehlgeschlagen
+      no_subdomain: Diese Subdomain existiert leider nicht. Bitte versuchen Sie mit einem anderen Namen.
     profile: 
       change_password: 
-        failure: "Konnte Passwort nicht ändern. Bitte überprüfen Sie das aktuelle."
-        success: "Passwort erfolgreich geändert. Bitte melden Sie sich erneut an."
+        failure: Konnte Passwort nicht ändern. Bitte überprüfen Sie das aktuelle.
+        success: Passwort erfolgreich geändert. Bitte melden Sie sich erneut an.
       update: 
-        success: "Ihr Profil wurde erfolgreich aktualisiert."
+        success: Ihr Profil wurde erfolgreich aktualisiert.
     solutions: 
       remove_tag: 
-        success: "Der Tag wurde von dieser Lösung entfernt"
+        success: Der Tag wurde von dieser Lösung entfernt
     account: 
       update: 
-        success: "Ihre Kontodaten wurden aktualisiert."
+        success: Ihre Kontodaten wurden aktualisiert.
     portal_settings: 
       update: 
-        success: "Die Einstellungen für das Kundenportal wurden aktualisiert."
+        success: Die Einstellungen für das Kundenportal wurden aktualisiert.
     sso: 
       update: 
-        success: "Ihre Kontodaten wurden aktualisiert."
+        success: Ihre Kontodaten wurden aktualisiert.
     agents: 
       delete: 
-        not_allowed: "Sie dürfen dieses Element nicht löschen!"
+        not_allowed: Sie dürfen dieses Element nicht löschen!
       create: 
-        success: "Der Techniker wurde erstellt und eine Anleitung zum Freischalten des Kontos an %{email} gesendet!"
+        success: Der Techniker wurde erstellt und eine Anleitung zum Freischalten des Kontos an %{email} gesendet!
     contacts_import: 
-      failure: "Bitte versuchen Sie es erneut"
-      no_file: "Bitte laden Sie eine Datei hoch"
+      failure: Bitte versuchen Sie es erneut
+      no_file: Bitte laden Sie eine Datei hoch
       success: "%{created_count} Kontakte wurden neu erstellt und %{updated_count} vorhandene Kontakte wurden aktualisiert!"
     business_hours: 
       update: 
-        failure: "Geschäftszeiten konnten nicht aktualisiert werden"
-        success: "Geschäftszeiten wurden aktualisiert"
+        failure: Geschäftszeiten konnten nicht aktualisiert werden
+        success: Geschäftszeiten wurden aktualisiert
     tickets: 
       merge: 
-        success: "Ticket wurde erfolgreich hinzugefügt"
-        wrong_ticket_id: "Bitte geben Sie eine gültige Ticket-ID an"
+        success: Ticket wurde erfolgreich hinzugefügt
+        wrong_ticket_id: Bitte geben Sie eine gültige Ticket-ID an
       reply: 
-        success: "Antwort wurde versandt."
+        success: Antwort wurde versandt.
       notes: 
         create: 
-          failure: "Es trat ein Fehler beim Hinzufügen der Notiz zum Ticket auf. Bitte versuchen Sie es erneut."
-          success: "Die Notiz wurde zum Ticket hinzugefügt."
+          failure: Es trat ein Fehler beim Hinzufügen der Notiz zum Ticket auf. Bitte versuchen Sie es erneut.
+          success: Die Notiz wurde zum Ticket hinzugefügt.
       empty_spam: 
-        success: "Alle Tickets im Ordner &Spam& wurden gelöscht."
-      timesheet:
-        timer_stopped: "Ticket-Timer wurde gestoppt"
+        success: Alle Tickets im Ordner &Spam& wurden gelöscht.
       monitor: 
-        stop: "Sie folgen diesem Ticket nicht mehr"
-        start: "Sie folgen nun diesem Ticket"
+        stop: Sie folgen diesem Ticket nicht mehr
+        start: Sie folgen nun diesem Ticket
       empty_trash: 
-        success: "Alle Tickets im Ordner 'Gelöschte Tickets' wurden endgültig gelöscht."
+        success: Alle Tickets im Ordner 'Gelöschte Tickets' wurden entgültig gelöscht.
     custom_fields: 
       update: 
-        failure: "Aktualisierung der Ticketfelder fehlgeschlagen."
-        success: "Aktualisierung der Ticketfelder war erfolgreich."
+        failure: Aktualisierung der Ticketfelder fehlgeschlagen.
+        success: Aktualisierung der Ticketfelder war erfolgreich.
     email_settings: 
       send_activation: 
-        success: "Eine E-Mail mit einem Verifizierungscode wurde an %{reply_email} geschickt!"
+        success: Eine E-Mail mit einem Verifizierungscode wurde an %{reply_email} geschickt!
       activation: 
-        invalid_code: "Der Aktivierungscode ist nicht gültig!"
+        invalid_code: Der Aktivierungscode ist nicht gültig!
         success: "%{reply_email} wurde erfolgreich aktiviert!"
         already_activated: "%{reply_email} wurde bereits aktiviert!"
       make_primary: 
         success: "<b>%{reply_email}</b> ist ab sofort Ihre primäre Support E-Mail-Adresse!"
     data_import: 
       zendesk: 
-        no_contact: "Konnte keine erfolgreiche Verbindung mit Zendesk aufbauen. Bitte überprüfen Sie Ihre Zendesk-Anmeldedaten und versuchen Sie es erneut!"
-        success: "Ihr Datenimport wurde gestartet, Sie erhalten eine E-Mail, sobald er abgeschlossen ist. Der Importvorgang kann einige Minuten in Anspruch nehmen, je nach Umfang Ihrer Daten"
-        failure: "Der Import von Zendesk konnte nicht durchgeführt werden, bitte versuchen Sie es erneut"
-        running: "Derzeit ist ein Zendesk-Import aktiv. Bitte versuchen Sie es später erneut."
+        no_contact: Konnte keine erfolgreiche Verbindung mit Zendesk aufbauen. Bitte überprüfen Sie Ihre Zendesk-Anmeldedaten und versuchen Sie es erneut!
+        success: Ihr Datenimport wurde gestartet, Sie erhalten eine E-Mail, sobald er abgeschlossen ist. Der Importvorgang kann einige Minuten in Anspruch nehmen, je nach Umfang Ihrer Daten
+        failure: Der Import von Zendesk konnte nicht durchgeführt werden, bitte versuchen Sie es erneut
     contacts: 
       create: 
-        success: "Der Kontakt wurde erfolgreich hinzufügt."
+        success: Der Kontakt wurde erfolgreich hinzufügt.
     to_dos: 
       complete: 
-        success: "Die Aufgabe wurde als erledigt markiert."
+        success: Die Aufgabe wurde als erledigt markiert.
     password_resets: 
       update: 
-        success: "Passwort erfolgreich aktualisiert"
-        invalid_token: "Ihr Konto konnte leider nicht gefunden werden. Versuchen Sie es erneut, indem Sie die URL auf der E-Mail in den Browser kopieren oder den Prozess &Passwort zurücksetzen& ausführen."
+        success: Passwort erfolgreich aktualisiert
+        invalid_token: Ihr Konto konnte leider nicht gefunden werden. Versuchen Sie es erneut, indem Sie die URL auf der E-Mail in den Browser kopieren oder den Prozess &Passwort zurücksetzen& ausführen.
       email: 
-        user_not_found: "Kein Benutzer mit dieser E-Mail-Adresse gefunden"
-        success: "Die Anweisungen zum Zurücksetzen des Passworts wurden Ihnen per E-Mail verschickt. Bitte überprüfen Sie Ihr E-Mail-Postfach."
+        user_not_found: Kein Benutzer mit dieser E-Mail-Adresse gefunden
+        success: Die Anweisungen zum Zurücksetzen des Passworts wurden Ihnen per E-Mail verschickt. Bitte überprüfen Sie Ihr E-Mail-Postfach.
     login: 
-      verify_credentials: "Leider konnten Sie nicht angemeldet werden. Bitte überprüfen Sie Ihre Anmeldedaten"
+      verify_credentials: Leider konnten Sie nicht angemeldet werden. Bitte überprüfen Sie Ihre Anmeldedaten
       sso: 
-        expected_params: "Erwartete Parameter sind Name, E-Mail-Adresse und Hashcode. Einige oder alle wurden nicht übermittelt. "
-      success: "Anmeldung erfolgreich!"
+        expected_params: Erwartete Parameter sind Name, E-Mail-Adresse und Hashcode. Einige oder alle wurden nicht übermittelt. 
+      success: Anmeldung erfolgreich!
     email_notifications: 
       update: 
-        success: "E-Mail-Benachrichtigungen wurden aktualisiert."
+        success: E-Mail-Benachrichtigungen wurden aktualisiert.
     general: 
-      access_denied: "Sie haben keinen Zugriff auf diese Seite."
-      need_login: "Bitte melden Sie sich an, um diese Seite zu betrachten"
+      access_denied: Sie haben keinen Zugriff auf diese Seite.
+      need_login: Bitte melden Sie sich an, um diese Seite zu betrachten
       insufficient_privilege: 
-        admin: "Sie haben mit Ihrer aktuellen Rolle keinen Zugriff auf diese Seite. Bitte melden Sie sich als Administrator an."
-      login_not_needed: "Bitte melden Sie sich ab, um diese Seite zu sehen"
+        admin: Sie haben mit Ihrer aktuellen Rolle keinen Zugriff auf diese Seite. Bitte melden Sie sich als Administrator an.
+      login_not_needed: Bitte melden Sie sich ab, um diese Seite zu sehen
       destroy: 
         failure: "%{human_name} konnte nicht gelöscht werden"
         success: "%{human_name} wurde gelöscht."
@@ -477,38 +411,36 @@ de:
         success: "%{human_name} wurde erstellt."
       update: 
         success: "%{human_name} wurde aktualisiert."
-  agent_closes_tkt: "Ein Techniker schließt dieses Ticket"
-  submit: "senden"
-  export_data_successfull: "Ihre Helpdesk-Daten werden in Kürze an Ihre E-Mail-Adresse gesendet!"
-  import_topics: "Themen"
-  assigned_to: "Zugewiesen an"
-  change: "Ändern"
-  back_plans_billing: "Zurück zu den Editionen & Rechnungen"
-  f_request: "Funktionsanfrage"
-  save_and_create: "Speichern und Neu"
-  save_and_new: "Speichern und Neu"
-  save_and_close: "Speichern und schließen"
-  undelete: "Wiederherstellen"
-  import_zendesk_title: "Import aus Zendesk"
-  closed: "Geschlossen"
-  suspended_plan_info: "Ihr Konto ist im Moment nicht aktiv, bitte wählen Sie eine Edition aus, um fortzufahren!"
-  plan_info_update: "Ihre Edition wurde geändert."
-  note: "Hinweis: "
-  warning: "WARNUNG"
-  facebook: "Facebook"
-  import_user_notification: "Benutzer-Aktivierungsmail während dem Importieren senden "
-  what_is_cvv: "Was ist ein CVV?"
-  pro_details: "Alles aus der &quot;Basic&quot; Edition und zusätzlich Szenario-Automationen, kundenspezifische SLAs, Geschäftszeiten, Foren, Community- & E-mail-Support."
-  open: "Offen"
-  zendesk_url: "Zendesk-URL"
-  special_beta_offer: "Unser Angebot für Beta-Kunden"
-  click_to_select_filter: "Klicken Sie hier, um einen Filter auszuwählen"
-  select_another_plan: "Edition wechseln"
-  threeday: "3 Tage"
-  resolved: "Gelöst"
-  logo_delete_msg: "Wollen Sie dieses Logo wirklich löschen?"
-  from_email: "Von E-Mail-Adresse"
-  feedbackwidget_custom_image: "Eigene Bild-URL"
+  agent_closes_tkt: Ein Techniker schließt dieses Ticket
+  submit: senden
+  export_data_successfull: Ihre Helpdesk-Daten werden in Kürze an Ihre E-Mail-Adresse gesendet!
+  import_topics: Themen
+  assigned_to: Zugewiesen an
+  change: Ändern
+  back_plans_billing: Zurück zu den Editionen & Rechnungen
+  f_request: Funktionsanfrage
+  save_and_create: Speichern und Neu
+  undelete: Wiederherstellen
+  import_zendesk_title: Import aus Zendesk
+  closed: Geschlossen
+  suspended_plan_info: Ihr Konto ist im Moment nicht aktiv, bitte wählen Sie eine Edition aus, um fortzufahren!
+  plan_info_update: Ihre Edition wurde geändert.
+  note: "Hinweis:" 
+  warning: WARNUNG
+  facebook: Facebook
+  import_user_notification: Benutzer-Aktivierungsmail während dem Importieren senden 
+  what_is_cvv: Was ist ein CVV?
+  pro_details: "Alles aus der 'Basic' Edition und zusätzlich Szenario-Automationen, kundenspezifische SLAs, Geschäftszeiten, Foren, Community- & E-mail-Support."
+  open: Offen
+  zendesk_url: Zendesk-URL
+  special_beta_offer: Unser Angebot für Beta-Kunden
+  click_to_select_filter: Klicken Sie hier, um einen Filter auszuwählen
+  select_another_plan: Edition wechseln
+  threeday: 3 Tage
+  resolved: Gelöst
+  logo_delete_msg: Wollen Sie dieses Logo wirklich löschen?
+  from_email: Von E-Mail-Adresse
+  feedbackwidget_custom_image: Eigene Bild-URL
   activities: 
     solutions: 
       new_solution: 
@@ -516,7 +448,7 @@ de:
         long: "{{user_path}} erstellte Lösung {{notable_path}}"
     tickets: 
       assigned_to_nobody: 
-        short: "Zugewiesen an &Niemand (Nobody)& durch {{user_path}}"
+        short: Zugewiesen an &Niemand (Nobody)& durch {{user_path}}
         long: "{{user_path}} wies das Ticket {{notable_path}} &Niemand (Nobody)& zu"
       reassigned: 
         long: "{{user_path}} wies das Ticket {{notable_path}} wieder {{responder_path}} zu"
@@ -532,31 +464,21 @@ de:
           long: "{{user_path}} hat ein(e) {{reply_path}} bezüglich des Tickets {{notable_path}} verschickt"
         in_email: 
           short: "{{user_path}} verschickte eine {{email_response_path}}"
-          long: "{{user_path}} verschickte eine {{email_response_path}} für das Ticket {{notable_path}}"
+          long: "{{user_path}} verschickte eine {{email_response_path}} ür das Ticket {{notable_path}}"
         note: 
           short: "{{user_path}} hat {{comment_path}} hinzugefügt"
           long: "{{user_path}} hat {{comment_path}} dem Ticket {{notable_path}} hinzugefügt"
         twitter: 
           short: "{{user_path}} hat {{twitter_path}} hinzugefügt"
           long: "{{user_path}} hat {{twitter_path}} dem Ticket {{notable_path}} hinzugefügt"
-      timesheet:
-        new:
-          short: "{{user_path}} hat {{timesheet_path}} hinzugefügt"
-          long: "{{user_path}} hat {{timesheet_path}} dem Ticket {{notable_path}} hinzugefügt"
-        timer_started:
-          short: "{{user_path}} hat den Timer für {{timesheet_path}} gestartet"
-          long: "{{user_path}} hat den Timer für {{timesheet_path}} für das Ticket {{notable_path}} gestartet"
-        timer_stopped:
-          short: "{{user_path}} hat den Timer für {{timesheet_path}} gestoppt"
-          long: "{{user_path}} hat den Timer für {{timesheet_path}} für das Ticket {{notable_path}} gestoppt"
       assigned: 
-        short: "Zugewiesen an {{responder_path}} durch {{user_path}}"
+        short: Zugewiesen an {{responder_path}} durch {{user_path}}
         long: "{{user_path}} wies das Ticket {{notable_path}} {{responder_path}} zu"
       execute_scenario: 
         short: "{{user_path}} führte das Szenario '{{scenario_name}} aus"
         long: "{{user_path}} führte das Szenario '{{scenario_name}}' für  {{notable_path}} aus"
       ticket_merge: 
-        short: "{{user_path}} hat Ticket {{notable_path}} mit {{merge_ticket_path}} zusammengeführt "
+        short: "{{user_path}} hat Ticket {{notable_path}} mit {{merge_ticket_path}} zusammengeführt" 
         long: "{{user_path}} hat Ticket {{notable_path}} mit {{merge_ticket_path}} zusammengeführt"
       ticket_split: 
         short: "{{user_path}} hat Ticket {{notable_path}} von {{split_ticket_path}} getrennt"
@@ -567,9 +489,6 @@ de:
       deleted:
         short: "{{user_path}} hat dieses Ticket gelöscht."
         long: "{{user_path}} hat diese Ticket gelöscht {{notable_path}}"
-      restored:
-        short: "{{user_path}} hat dieses Ticket wiederhergestellt"
-        long: "{{user_path}} hat das Ticket {{notable_path}} wiederhergestellt"
       product_change:
         short: "{{user_path}} änderte den Produktnamen auf {{product_name}}"
         long: "{{user_path}} änderte das Produkt von {{notable_path}} auf {{product_name}}"
@@ -588,1252 +507,997 @@ de:
       source_change:
         short: "{{user_path}} hat die Quelle zu {{source_name}} geändert"
         long: "{{user_path}} änderte die Ticket-Quelle von {{notable_path}} auf {{source_name}}"
-  credit_card_info: "Informationen zur Kreditkarte"
-  zendesk_backup_info: "Wählen Sie eine BackUp-Datei von Zendesk aus, die aus Zendesk geladen wurde"
-  your_email_address: "Ihre E-Mail-Adresse"
-  username: "Benutzername"
-  reply: "Antwort"
-  is_not: "ist nicht"
-  less_than: "Weniger als"
-  greater_than: "Größer als"
-  feedbackwidget_bgcolor: "Hintergrundfarbe"
-  day: "1 Tag"
-  current_plan: "Aktuelle Edition"
-  medium: "Mittel"
-  suspended_plan_admin_info: "Ihr Konto wurde deaktiviert, bitte kontaktieren Sie den Administrator per E-Mail %{email}!"
-  delete_confirm_scenario: "Wollen Sie das Szenario wirklich löschen?"
-  days: "Tage"
-  basic_brief: "Für kleine Teams"
-  phone: "Telefon"
-  edit: "Bearbeiten"
+  credit_card_info: Informationen zur Kreditkarte
+  zendesk_backup_info: Wählen Sie eine BackUp-Datei von Zendesk aus, die aus Zendesk geladen wurde
+  your_email_address: Ihre E-Mail-Adresse
+  username: Benutzername
+  reply: Antwort
+  is_not: ist nicht
+  less_than: Weniger als
+  greater_than: Größer als
+  feedbackwidget_bgcolor: Hintergrundfarbe
+  day: 1 Tag
+  current_plan: Aktuelle Edition
+  medium: Mittel
+  suspended_plan_admin_info: Ihr Konto wurde deaktiviert, bitte kontaktieren Sie den Administrator per E-Mail %{email}!
+  delete_confirm_scenario: Wollen Sie das Szenario wirklich löschen?
+  days: Tage
+  basic_brief: Für kleine Teams
+  phone: Telefon
+  edit: Bearbeiten
   accounts: 
     cancel: 
-      changeplan_instead_of_cancel: "Möchten Sie vielleicht die Edition wechseln, anstatt das Konto zu löschen?"
-      intro: "Sie sind dabei Ihr Konto zu löschen.  Wenn Sie fortfahren, werden alle zum Konto zugehörigen Daten <strong>für immer gelöscht</strong>."
-      you_must_confirm: "Bitte bestätigen Sie die Auflösung des Kontos"
-      delete_my_account: "Konto löschen"
-      confirm_and_cancel_my_account: "Hiermit bestätige ich, dass mein Konto und alle damit verknüpften Daten gelöscht werden sollen."
-      goback: "← Zurück zu den Kontoeinstellungen"
-      change_your_plan: "Edition ändern"
-      warning_message: "Wenn Sie fortfahren, werden Sie keinen Zugriff mehr auf ihre Daten haben. Bitte überdenken Sie diese Entscheidung und führen den Schritt nur aus, wenn Sie sich wirklich sicher sind."
-      cancel_account: "Freshdesk-Konto löschen"
+      changeplan_instead_of_cancel: Möchten Sie vielleicht die Edition wechseln, anstatt das Konto zu löschen?
+      intro: Sie sind dabei Ihr Konto zu löschen.  Wenn Sie fortfahren, werden alle zum Konto zugehörigen Daten <strong>für immer gelöscht</strong>.
+      you_must_confirm: Bitte bestätigen Sie die Auflösung des Kontos
+      delete_my_account: Konto löschen
+      confirm_and_cancel_my_account: Hiermit bestätige ich, dass mein Konto und alle damit verknüpften Daten gelöscht werden sollen.
+      goback: ← Zurück zu den Kontoeinstellungen
+      change_your_plan: Edition ändern
+      warning_message: Wenn Sie fortfahren, werden Sie keinen Zugriff mehr auf ihre Daten haben. Bitte überdenken Sie diese Entscheidung und führen den Schritt nur aus, wenn Sie sich wirklich sicher sind.
+      cancel_account: Freskdesk-Konto löschen
     billing: 
-      update_billing_info: "Rechnungsdaten aktualisieren"
-      begin_subscription_info: "wird den Betrag von Ihrer Kreditarte abbuchen und Ihre Subskription beginnen."
-      billing: "Rechnungsdaten"
-      save_billing_information: "Rechnungsdaten speichern"
-      save_billing_information_info: "speichert die Informationen über Ihre &quot;Edition & Rechnungsdaten&quot;. Wir belasten Ihre Kreditkarte erst, wenn die Testphase abgelaufen ist und Ihre Subskription beginnt."
-      begin_subscription: "Subskription jetzt beginnen..."
+      update_billing_info: Rechnungsdaten aktualisieren
+      begin_subscription_info: wird den Betrag von Ihrer Kreditarte abbuchen und Ihre Subskription beginnen.
+      billing: Rechnungsdaten
+      save_billing_information: Rechnungsdaten speichern
+      save_billing_information_info: "speichert die Informationen über Ihre 'Edition & Rechnungsdaten'. Wir belasten Ihre Kreditkarte erst, wenn die Testphase abgelaufen ist und Ihre Subskription beginnt."
+      begin_subscription: Subskription jetzt beginnen...
     show: 
-      export_data: "Daten exportieren"
-      export_now: "Jetzt exportieren"
-      export_data_text: "Ein XML mit aller HelpDesk-Daten erstellen und per E-Mail versenden"
-      account_settings: "Kontoeinstellungen"
-  forum_key: "Forum"
+      export_data: Daten exportieren
+      export_now: Jetzt exportieren
+      export_data_text: Ein XML mit aller HelpDesk-Daten erstellen und per E-Mail versenden
+      account_settings: Kontoeinstellungen
+  forum_key: Forum
   topics:
     show:
-      mark_this_idea_as: "Diese Idee markieren als"
-    last_reply: "Letzte Antwort am %{post_time} von %{user_link}"
-    posted_at: "Veröffentlicht vor %{post_time}"
-  non_covered_feature_error: "Dieses Feature ist in Ihrer aktuellen FreshDesk-Edition nicht enthalten."
-  requester_replies: "Anfragender antwortet auf Ticket"
-  start_typing_a_question: "Geben Sie eine Fragen ein und erhalten Sie die Antworten in Echtzeit"
-  delete_topic_msg: "Thema endgültig löschen"
-  first_response_sla: "&quot;Erste Rückmeldung&quot; SLA-Verletzung"
+      mark_this_idea_as: Diese Idee markieren als
+    last_reply: Letzte Antwort am %{post_time} von %{user_link}
+    posted_at: Veröffentlicht vor %{post_time}
+  non_covered_feature_error: Dieses Feature ist in Ihrer aktuellen FreshDesk-Edition nicht enthalten.
+  requester_replies: Anfragender antwortet auf Ticket
+  start_typing_a_question: Geben Sie eine Fragen ein und erhalten Sie die Antworten in Echtzeit
+  delete_topic_msg: Thema endgültig löschen
+  first_response_sla: "'Erste Rückmeldung' SLA-Verletzung"
   add_holiday: "Urlaubszeiten / Feiertage hinzufügen"
-  import_note_info: "Die Felder in der CSV-Datei können beliebig angeordnet sein. Berücksichtigen Sie bitte nur, dass die erste Zeile die Header-Informationen enthält (z.B. Name, E-Mail...) und, dass ein Feld &quot;email&quot; existieren muss."
-  at: "bei"
-  add_a_topic: "Neues Thema öffnen"
-  bottom: "Unten"
-  align_to: "Ausrichten nach"
-  feedbackwidget_help_title: "Feedback-Widget"
-  name: "Name"
-  import_user_org_text: "Alle Benutzer & Organisationen in Ihrem Zendesk-Konto werden in Ihr Freshdesk-Konto als &quot;Kontakte & Unternehmen&quot; kopiert"
-  portal_customizer_open_solutions: "Jeder kann öffentliche Lösungen sehen"
-  portal_customizer_option_solutions: "Benutzer können öffentliche Lösungen ohne Anmeldung sehen"
-  portal_customizer_google_signin: "Erlauben Sie Benutzern, sich über Google anzumelden"
-  portal_customizer_twitter_signin: "Benutzern erlauben, sich mit Twitter anzumelden"
-  portal_signup: "Erlauben Sie Kunden, sich im Kundenportal anzumelden"
-  portal_captcha: "Captcha für das Senden eines Tickets ohne Anmeldung verpflichtend machen"
-  to_email: "An E-Mail-Adresse"
-  starts_with: "Beginnt mit"
-  portal_customizer_anon_tickets_i: "Schalten Sie diese Funktion aus, wenn Benutzer angemeldet sein müssen, um Tickets zu öffnen."
-  portal_customizer_option_tickets_i: "Deaktivieren Sie dieses Feature, wenn Sie Benutzer zur Anmeldung verpflichten möchten, bevor sie Tickets öffnen"
-  set_type_as: "Typ auf"
-  change_my_plan: "Diese Edition wählen..."
-  add_new_email: "Neue E-Mail-Adresse hinzufügen"
-  feedbackwidget_title: "Widget-Einstellungen"
+  import_note_info: Die Felder in der CSV-Datei können beliebig angeordnet sein. Berücksichtigen Sie bitte nur, dass die erste Zeile die Header-Informationen enthält (z.B. Name, E-Mail...) und, dass ein Feld "email" existieren muss.
+  at: an
+  add_a_topic: Neues Thema öffnen
+  bottom: Nach unten
+  align_to: Ausrichten nach
+  feedbackwidget_help_title: Feedback-Widget
+  name: Name
+  import_user_org_text: "Alle Benutzer & Organisationen in Ihrem Zendesk-Konto werden in Ihr Freshdesk-Konto als 'Kontakte & Unternehmen' kopiert"
+  portal_customizer_open_solutions: Jeder kann öffentliche Lösungen sehen
+  portal_customizer_option_solutions: Benutzer können öffentliche Lösungen ohne Anmeldung sehen
+  portal_customizer_google_signin: Erlauben Sie Benutzern, sich über Google anzumelden
+  portal_customizer_twitter_signin: Benutzern erlauben, sich mit Twitter anzumelden
+  portal_signup: Erlauben Sie Kunden, sich im Kundenportal anzumelden
+  portal_captcha: Captcha für das Senden eines Tickets ohne Anmeldung verpflichtend machen
+  to_email: An E-Mail-Adresse
+  starts_with: Beginnt mit
+  portal_customizer_anon_tickets_i: Schalten Sie diese Funktion aus, wenn Benutzer angemeldet sein müssen, um Tickets zu öffnen.
+  portal_customizer_option_tickets_i: Deaktivieren Sie dieses Feature, wenn Sie Benutzer zur Anmeldung verpflichten möchten, bevor sie Tickets öffnen
+  set_type_as: Typ auf
+  change_my_plan: Diese Edition wählen...
+  add_new_email: Neue E-Mail-Adresse hinzufügen
+  feedbackwidget_title: Widget-Einstellungen
   errors_in_your_address: "Folgende Fehler traten bei der Adresse auf:"
-  set_priority_as: "Priorität auf"
-  sign_in_info: "Sie melden sich an mit"
-  posted_by: "Geschrieben von"
-  already_overdue: "Mittlerweile überfällig seit %{time_words}"
+  set_priority_as: Priorität auf
+  sign_in_info: Sie melden sich an mit
+  posted_by: Geschrieben von
+  already_overdue: Mittlerweile überfallig seit %{time_words}
   automations: 
-    new: "Neues Szenario"
-    title: "Automatisierte Szenarien"
-    info1: "Jeder HelpDesk hat spezifische, sich wiederholende Szenarien - z.B. Eskaliere Ticket auf Stufe 2, der Qualitätssicherung zuweisen, an den Vertrieb weiterleiten... In diesen Szenarien sind normalerweise mehrere Schritte nötig"
-    available_placeholders: "Verfügbare Platzhalter"
+    new: Neues Szenario
+    title: Automatisierte Szenarien
+    info1: Jeder HelpDesk hat spezifische, sich wiederholende Szenarien - z.B. Eskaliere Ticket auf Stufe 2, der Qualitätssicherung zuweisen, an den Vertrieb weiterleiten... In diesen Szenarien sind normalerweise mehrere Schritte nötig
+    available_placeholders: Verfügbare Platzhalter
     info2: "Beispiel: Bevor ein Ticket der Qualitätssicherung zugewiesen wird, muss der Ticket-Typ auf Bug gesetzt werden. Anschließend wird das Ticket der Gruppe QS zugewiesen und an den Leiter der QS geschickt."
-    info3: "Automatisierte Szenarien erlauben viele Schritte mit einem Klick zu gehen"
-    info4: "Wählen Sie die Platzhalter (unten) aus, damit sie automatisch mit den richtigen Inhalten ausgefüllt werden"
-    info5: "Der Qualitätssicherung zuweisen"
-    reorder: "Sortieren"
-    info6: "Ticket als Bug markieren und Qualitätssicherung zuweisen"
-    info7: "Auszuführende Aktionen"
-    info8: "Aktion hinzufügen"
+    info3: Automatisierte Szenarien erlauben viele Schritte mit einem Klick zu gehen
+    info4: Wählen Sie die Platzhalter (unten) aus, damit sie automatisch mit den richtigen Inhalten ausgefüllt werden
+    info5: Der Qualitätssicherung zuweisen
+    reorder: Sortieren
+    info6: Ticket als Bug markieren und Qualitätssicherung zuweisen
+    info7: Auszuführende Aktionen
+    info8: Aktion hinzufügen
   category: 
-    new: "Neue Kategorie"
-    edit: "Kategorie bearbeiten"
-  delete: "Löschen"
-  message: "Nachricht"
-  edit_forum_category: "Forenkategorie bearbeiten"
-  agent_assigned_title: "Kürzlich zugewiesene Tickets (Offen & unerledigt)"
-  send_email_to_requester: "E-Mail an Anfragenden senden"
-  feedbackwidget_btcustomize: "Buttons anpassen"
+    new: Neue Kategorie
+    edit: Kategorie bearbeiten
+  delete: Löschen
+  message: Nachricht
+  edit_forum_category: Forenkategorie bearbeiten
+  agent_assigned_title: Kürzlich zugewiesene Tickets (Offen & unerledigt)
+  send_email_to_requester: E-Mail an Anfragenden senden
+  feedbackwidget_btcustomize: Buttons anpassen
   solution_category: 
-    name: "Kategoriename"
-    new: "Neue Kategorie"
-    edit: "Kategorie bearbeiten"
-    info1: "Wollen Sie die Kategorie wirklich löschen"
-    info2: "Keine Ordner in dieser Kategorie"
-    save_and_create: "Speichern und Neu"
-  billed_monthly: "Monatliche Abrechnung"
+    name: Kategoriename
+    new: Neue Kategorie
+    edit: Kategorie bearbeiten
+    info1: Wollen Sie die Kategorie wirklich löschen
+    info2: Keine Ordner in dieser Kategorie
+    save_and_create: Speichern und Neu
+  billed_monthly: Monatliche Abrechnung
   users: 
     activations: 
-      send_invite_success: "Aktivierungs-E-Mail wurde versandt!"
-      success: "Ihr Konto wurde erfolgreich aktiviert."
-      code_expired: "Ihr Aktivierungscode ist abgelaufen!"
-  edit_email: "E-Mail bearbeiten"
-  fav_delete_msg: "Wollen Sie das Favicon wirklich löschen?"
+      send_invite_success: Aktivierungs-E-Mail wurde versandt!
+      success: Ihr Konto wurde erfolgreich aktiviert.
+      code_expired: Ihr Aktivierungscode ist abgelaufen!
+  edit_email: E-Mail bearbeiten
+  fav_delete_msg: Wollen Sie das Favicon wirklich löschen?
   dispatch: 
-    new: "Dispatch'r - Neue Regel"
-    add_new_choice: "Auswahl hinzufügen"
-    act_to_perform: "Auszuführende Aktionen"
-    edit: "Dispatch'r - Bearbeitungsregel"
-    title: "Dispatch'r"
-    inactive_rules: "Inaktive Regeln"
-    info1: "Tickets bezüglich der Anmeldung"
-    rule_name: "Regelname"
-    info2: "Alle Tickets bezüglich der Anmeldung werden Susan zugeordnet"
-    new_rule: "Neue Regel"
-    info3: "Wann soll diese Regel angewandt werden"
-    info4: "Dispatch'r weist neue Tickets entsprechend der Regeln und Aktionen zu"
-    reorder: "Sortieren"
+    new: Dispatch'r - Neue Regel
+    add_new_choice: Auswahl hinzufügen
+    act_to_perform: Auszuführende Aktionen
+    edit: Dispatch'r - Bearbeitungsregel
+    title: Dispatch'r
+    inactive_rules: Inaktive Regeln
+    info1: Tickets bezüglich der Anmeldung
+    rule_name: Regelname
+    info2: Alle Tickets bezüglich der Anmeldung werden Susan zugeordnet
+    new_rule: Neue Regel
+    info3: Wann soll diese Regel angewandt werden
+    info4: Dispatch'r weist neue Tickets entsprechend der Regeln und Aktionen zu
+    reorder: Sortieren
     info5: "Bitte beachten: Die Reihenfolge der Regeln wird berücksichtigt. Nur die erste passende Regeln, die Dispatch'r findet, wird angewandt."
-    add_new_action: "Aktion hinzufügen"
-    dispatch_rules: "Dispatch'r - Regeln"
-    match_all: "Entspricht allen"
-    match_any: "Entspricht irgendeiner"
-    add_condition: "Bedingung hinzufügen"
-    delete: "Wollen Sie diese Regel wirklich löschen?"
-  header_logo: "Header-Logo"
+    add_new_action: Aktion hinzufügen
+    dispatch_rules: Dispatch'r - Regeln
+    match_all: Entspricht allen
+    match_any: Entspricht irgendeiner
+    add_condition: Bedingung hinzufügen
+    delete: Wollen Sie diese Regel wirklich löschen?
+  header_logo: Header-Logo
   solutions:
     status:
-      draft: "Entwurf"
-      published: "Veröffentlicht"
+      draft: Entwurf
+      published: Veröffentlicht
     visibility:
-      anyone: "Alle"
-      logged_in_users: "Angemeldete Benutzer"
-      agents: "Techniker"
+      anyone: Alle
+      logged_in_users: Angemeldete Benutzer
+      agents: Techniker
     types:
-      permanent: "Dauerhaft"
-      workaround: "Problemumgehung"
+      permanent: Dauerhaft
+      workaround: Problemumgehung
     search_all: 
-      placeholder: "Alle Lösungen durchsuchen"
+      placeholder: Alle Lösungen durchsuchen
     search: 
-      placeholder: "Suche %{name}"
-  requester_reopens: "Anfragender wiedereröffnet Ticket"
-  reset: "Zurücksetzen"
-  import_ignore_first_row: "Erste Zeile ignorieren (Headings)"
-  portal_customizer_open_sol_i: "Schalten Sie diese Funktion aus, wenn die &quot;Lösungen&quot;-Tab nicht in der Navigationsleiste im Kundenportal angezeigt werden soll."
-  portal_customizer_option_sol_i: "Deaktivieren Sie diese Funktion, wenn Sie möchten, dass Benutzer sich anmelden, bevor Sie die Lösungen sehen"
+      placeholder: Suche %{name}
+  requester_reopens: Anfragender wiedereröffnet Ticket
+  reset: Zurücksetzen
+  import_ignore_first_row: Erste Zeile ignorieren (Headings)
+  portal_customizer_open_sol_i: Schalten Sie diese Funktion aus, wenn die "Lösungen"-Tab nicht in der Navigationsleiste im Kundenportal angezeigt werden soll.
+  portal_customizer_option_sol_i: Deaktivieren Sie diese Funktion, wenn Sie möchten, dass Benutzer sich anmelden, bevor Sie die Lösungen sehen
   topic:
     ideas_stamps:
-      planned: "Geplant"
-      implemented: "Implementiert"
-      nottaken: "Nicht berücksichtigt"
-    name: "Name für das Thema"
-    new: "Neues Thema"
-    open: "Diskussion wieder freigeben"
-    edit: "Thema bearbeiten"
-    close: "Diskussion sperren"
-    post: "Thema speichern"
-    reply: "Auf Thema antworten"
-    msg1: "Keine Kommentare für dieses Thema möglich"
-    sticky: "Als Erstes anzeigen"
-    locked: "Gesperrt"
+      planned: Geplant
+      implemented: Implementiert
+      nottaken: Nicht berücksichtigt
+    name: Name für das Thema
+    new: Neues Thema
+    open: Diskussion wieder freigeben
+    edit: Thema bearbeiten
+    close: Diskussion sperren
+    post: Thema speichern
+    reply: Auf Thema antworten
+    msg1: Keine Kommentare für dieses Thema möglich
+    sticky: Als Erstes anzeigen
+    locked: Gesperrt
   activerecord: 
     errors: 
       messages: 
         record_invalid: "Validierung fehlgeschlagen: %{errors}"
-        greater_than_or_equal_to: "muss größer gleich %{count} sein"
-        less_than_or_equal_to: "muss kleiner gleich %{count} sein"
-        confirmation: "ist nicht gleich der Bestätigung"
-        not_an_integer: "muss eine Zahl sein"
-        blank: "darf nicht frei bleiben"
-        invalid: "ist nicht gültig"
-        exclusion: "steht nicht zur Verfügung"
-        odd: "muss ungerade sein"
-        even: "muss gerade sein"
-        wrong_length: "hat die falsche Länge (%{count} Zeichen verlangt)"
-        too_short: "ist zu kurz (wenigstens is %{count} Zeichen)"
-        empty: "darf nicht leer bleiben"
-        less_than: "muss weniger als %{count} sein"
-        equal_to: "muss gleich %{count} sein"
-        greater_than: "muss größer sein als %{count}"
-        too_long: "ist zu lang (höchstens %{count} Zeichen)"
-        accepted: "muss akzeptiert werden"
-        not_a_number: "ist keine Zahl"
-        inclusion: "ist nicht in der Liste enthalten"
+        greater_than_or_equal_to: muss größer gleich %{count} sein
+        less_than_or_equal_to: muss kleiner gleich %{count} sein
+        confirmation: ist nicht gleich der Bestätigung
+        not_an_integer: muss eine Zahl sein
+        blank: darf nicht frei bleiben
+        invalid: ist nicht gültig
+        exclusion: steht nicht zur Verfügung
+        odd: muss ungerade sein
+        even: muss gerade sein
+        wrong_length: hat die falsche Länge (%{count} Zeichen verlangt)
+        too_short: ist zu kurz (wenigstens is %{count} Zeichen)
+        empty: darf nicht leer bleiben
+        less_than: muss weniger als %{count} sein
+        equal_to: muss gleich %{count} sein
+        greater_than: muss größer sein als %{count}
+        too_long: ist zu lang (höchstens %{count} Zeichen)
+        accepted: muss akzeptiert werden
+        not_a_number: ist keine Zahl
+        inclusion: ist nicht in der Liste enthalten
       full_messages: 
-        format: "%{attribute} %{message}      template: "
+        format: "%{attribute} %{message}"
+      template: 
         body: "Folgende Felder enthalten Fehler:"
-        one: "1 Fehler verhinderte, dass %{model} gespeichert wurde"
+        one: 1 Fehler verhinderte, dass %{model} gespeichert wurde
         other: "%{count} Fehler verhinderten das Speichern"
-  top: "Oben"
-  company_name: "Firmenname"
-  expires: "Läuft ab"
-  total_price: "Preis insgesamt"
-  update: "Aktualisieren"
-  save_reply: "Antwort speichern"
+  top: Oben
+  company_name: Firmenname
+  expires: Läuft ab
+  total_price: Preis insgesamt
+  update: Aktualisieren
+  save_reply: Antwort speichern
   forum_shared:
     topic_vote:
-      unlike: "Nicht mehr gut finden"
+      unlike: Nicht mehr gut finden
       ideas:
-        vote_button: "Ich finde diese Idee gut"
+        vote_button: Ich finde diese Idee gut
         vote_info_1: "%{vote} Personen finden diese Idee gut"
         vote_info_2: "%{vote} Personen finden diese Idee gut"
-        vote_info_include_1: "Sie finden diese Idee gut"
-        vote_info_include_2: "%{vote} Personen \&quot;einschließlich Sie\&quot; finden diese Idee gut"
+        vote_info_include_1: Sie finden diese Idee gut
+        vote_info_include_2: "%{vote} Personen (Sie eingeschlossen) finden diese Idee gut"
       problem:
-        vote_button: "Ich bin von diesem Problem betroffen"
+        vote_button: Ich bin von diesem Problem betroffen
         vote_info_1: "%{vote} Personen haben diese Problem"
         vote_info_2: "%{vote} Personen haben dieses Problem"
-        vote_info_include_1: "Sie sind von diesem Problem betroffen"
-        vote_info_include_2: "%{vote} Personen \&quot;einschließlich Sie\&quot; haben dieses Problem"
+        vote_info_include_1: Sie sind von diesem Problem betroffen
+        vote_info_include_2: "%{vote} Personen (Sie eingeschlossen) sind von diesem Problem betroffen"
       howto:
-        vote_button: "Ich habe diese Frage"
+        vote_button: Ich habe diese Frage
         vote_info_1: "%{vote} Personen haben diese Frage"
         vote_info_2: "%{vote} Personen haben diese Frage"
-        vote_info_include_1: "Sie haben diese Frage"
-        vote_info_include_2: "%{vote} Personen \&quot;einschließlich Sie\&quot; haben diese Frage"
+        vote_info_include_1: Sie haben diese Frage
+        vote_info_include_2: "%{vote} Personen (Sie eingeschlossen) haben diese Frage"
     post:
       posted_on: "%{user_name} am %{post_date}"
-      edit_post: "Beitrag bearbeiten"
-      unmark_answer: "Zuweisung als Antwort aufheben"
-      post_accepted_as_a_good_answer: "Dieser Beitrag wurde als gute Antwort markiert"
-      mark_answer: "Als Antwort zuweisen"
-      delete_post_confirm: "Wollen Sie den Beitrag wirklich löschen?"
-      delete_post: "Beitrag löschen"
-      answer: "Antwort"
-  half: "30 Minuten"
-  between_range: "&quot;Von - Bis&quot;-Spanne"
-  back_to_admin: "Zurück zu Admin"
+      edit_post: Beitrag bearbeiten
+      unmark_answer: Zuweisung als Antwort aufheben
+      post_accepted_as_a_good_answer: Dieser Beitrag wurde als gute Antwort markiert
+      mark_answer: Als Antwort zuweisen
+      delete_post_confirm: Wollen Sie den Beitrag wirklich löschen?
+      delete_post: Beitrag löschen
+      answer: Antwort
+  half: 30 Minuten
+  between_range: "'Von - Bis'-Spanne"
+  back_to_admin: Zurück zu Admin
   group: 
-    new: "Neue Gruppe"
-    name: "Gruppenname"
-    edit: "Gruppen bearbeiten"
-    title: "Gruppen"
-    info1: "Techniker in dieser Gruppe"
-    info2: "Keine Techniker in dieser Gruppe"
-    info3: "Eskalieren an"
-    info4: "Wenn ein Ticket länger liegt als"
-    info5: "Sicher"
-    select_agents: "Techniker auswählen"
+    new: Neue Gruppe
+    name: Gruppenname
+    edit: Gruppen bearbeiten
+    title: Gruppen
+    info1: Techniker in dieser Gruppe
+    info2: Keine Techniker in dieser Gruppe
+    info3: Eskalieren an
+    info4: Wenn ein Ticket länger liegt als
+    info5: Sicher
+    select_agents: Techniker auswählen
     assigntime:
-      half: "30 Minuten"
-      one: "1 Stunde"
-      two: "2 Stunden"
-      four: "4 Stunden"
-      eight: "8 Stunden"
-      two: "12 Stunden"
-      day: "1 Tag"
-      twoday: "2 Tage"
-      threeday: "3 Tage"
-  four: "4 Stunden"
-  oneweek: "1 Woche"
-  twoweek: "2 Wochen"
-  onemonth: "1 Monat"
-  problem: "Problem"
-  change_plan_info: "Sie können Ihren Tarif jederzeit ändern, Ihr nächstes Rechnungsdatum ist %{date}."
-  created_on: "Erstellt am"
-  zip: "PLZ"
-  import_solution_article: "Forenbeitrag in Lösungsartikel überführen"
-  close: "Schließen"
+      half: 30 Minuten
+      one: 1 Stunde
+      two: 2 Stunden
+      four: 4 Stunden
+      eight: 8 Stunden
+      two: 12 Stunden
+      day: 1 Tag
+      twoday: 2 Tage
+      threeday: 3 Tage
+  four: 4 Stunden
+  problem: Problem
+  change_plan_info: Sie können Ihre Edition jederzeit wechseln. Die Funktionen und Techniker-Beschränkungen Ihrer neuen Edition werden aktiv, sobald Sie die Änderung ausführen. Dagegen ändert sich der Rechnungsbetrag erst zur nächsten regulären Rechnungsstellung. Diese erfolgt am %{date}.
+  created_on: Erstellt am
+  zip: PLZ
+  import_solution_article: Forenbeitrag in Lösungsartikel überführen
+  close: Schließen
   agent: 
-    new: "Neuer Techniker"
-    edit: "Techniker bearbeiten"
-    title: "Techniker"
-    info1: "Das ist ein gelöschter Techniker"
-    info2: "E-Mail wurde bereits ausgewählt"
-    signature: "Signatur"
-    info3: "Wollen Sie wirklich löschen"
-    make_admin: "Techniker zum Admin befördern"
-    view_user: "Benutzer ansehen"
-    restore: "Wiederherstellen"
-    add_signature: "Signatur hinzufügen"
-    update: "Aktualisieren"
-    permissions: "Berechtigungen"
-    admin: "Administrator"
-    supervisor: "Supervisor"
-    global: "Techniker (Globaler Zugriff)"
-    group: "Techniker (Gruppenzugriff) "
-    individual: "Techniker (Eingeschränkter Zugriff)"
-    admin_info: "Darf alle Administrationsaufgaben durchführen"
-    supervisor_info: "Darf alle Tickets in Helpdesk ansehen und auf Berichte zugreifen (keine Administratorrechte)"
-    global_info: "Darf alle Tickets in Helpdesk ansehen"
-    group_info: "Darf Tickets in den eigenen Gruppen und ihm selbst zugewiesene Tickets ansehen"
-    individual_info: "Darf nur ihm selbst zugewiesene Tickets ansehen"
-    occasional_description: "Dieser Techniker darf auf das Support-Portal zugreifen"
-    full_time: "Vollzeit"
-    occasional: "Gelegentlich"
-    day_pass_expired: "Ihr Tagespass ist abgelaufen, bitte melden Sie sich an, um einen neuen Tagespass zu erhalten."
-    insufficient_day_pass: "Es kann Ihnen kein Pass zugeordnet werden, bitte wenden Sie sich an Ihren Administrator."
-  account_admin: "Kontoadministrator"
-  right: "Rechts"
+    new: Neuer Techniker
+    edit: Techniker bearbeiten
+    title: Techniker
+    info1: Das ist ein gelöschter Techniker
+    info2: E-Mail wurde bereits ausgewählt
+    signature: Signatur
+    info3: Wollen Sie wirklich löschen
+    make_admin: Techniker zum Admin befördern
+    view_user: Benutzer ansehen
+    restore: Wiederherstellen
+    add_signature: Signatur hinzufügen
+    update: Aktualisieren
+  account_admin: Kontoadministrator
+  right: Rechts
   footer: 
-    helpdesk_software: "Helpdesk-Software"
-    by_freshdesk: "von Freshdesk"
-  tkt_unattended_in_grp: "Ticket in der Gruppe unbearbeitet"
-  agent_solves_tkt: "Techniker löst das Ticket"
+    helpdesk_software: Helpdesk-Software
+    by_freshdesk: von Freshdesk
+  tkt_unattended_in_grp: Ticket in der Gruppe unbearbeitet
+  agent_solves_tkt: Techniker löst das Ticket
   zendesk_url_info: "z.B.:- http://acme.zendesk.com"
-  portal_customizer_anon_for_i: "Schalten Sie diese Funktion aus, wenn der Tab &quot;Forum&quot; nicht im Kundenportal erscheinen soll."
-  portal_customizer_option_for_i: "Deaktivieren Sie diese Funktion, wenn Sie möchten, dass Benutzer sich anmelden, bevor Sie die Lösungen sehen"
-  portal_customizer_anon_for_g: "Aktivieren Sie diese Funktion, um Benutzern das Anmelden über Google zu ermöglichen. "
-  portal_customizer_anon_for_t: "Aktivieren Sie diese Funktion, um Benutzern das Anmelden über Twitter zu ermöglichen. "
-  portal_signup_anon: "Aktivieren Sie diese Funktion, wenn Sie Benutzern ermöglichen möchten, dass sie sich selbstständig registrieren. Die Benutzer können möglicherweise auf Forendiskussionen, Umfragen und Ideen zugreifen."
-  portal_captcha_anon: "Aktivieren Sie diese Funktion, wenn Sie möchten, dass Benutzer ein Ticket mit Captcha senden können"
-  card_process: "Vielen Dank, die Bezahlung wurde ausgeführt. Ihr Freshdesk-Konto ist nun aktiv!"
-  chat: "Chat"
-  country: "Land"
-  card_number: "Kartennummer"
-  forgot_password_intro: "Bitte füllen Sie die Felder des Formulars unterhalb aus, damit Anweisungen zum Zurücksetzen des Passwort an Ihre E-Mail-Adresse gesendet werden können"
-  done: "Fertig"
-  ticket_due_by_time: "Fällig"
-  ticket_pending_since_time: "Ausstehend seit"
-  ticket_resolved_at_time: "Gelöst um"
-  ticket_closed_at_time: "Geschlossen um"
-  next: "Nächste"
-  set_password: "Passwort setzen"
-  send_email_to_agent: "E-Mail an Techniker schicken"
-  import_data: "Datum des Imports"
+  portal_customizer_anon_for_i: Schalten Sie diese Funktion aus, wenn der Tab "Forum" nicht im Kundenportal erscheinen soll.
+  portal_customizer_option_for_i: Deaktivieren Sie diese Funktion, wenn Sie möchten, dass Benutzer sich anmelden, bevor Sie die Lösungen sehen
+  portal_customizer_anon_for_g: Aktivieren Sie diese Funktion, um Benutzern das Anmelden über Google zu ermöglichen. 
+  portal_customizer_anon_for_t: Aktivieren Sie diese Funktion, um Benutzern das Anmelden über Twitter zu ermöglichen. 
+  portal_signup_anon: Aktivieren Sie diese Funktion, wenn Sie Benutzern ermöglichen möchten, dass sie sich selbstständig registrieren. Die Benutzer können möglicherweise auf Forendiskussionen, Umfragen und Ideen zugreifen.
+  portal_captcha_anon: Deaktivieren Sie diese Funktion, wenn Sie möchten, dass Benutzer ein Ticket ohne Captcha senden können
+  card_process: Vielen Dank, die Bezahlung wurde ausgeführt. Ihr Freshdesk-Konto ist nun aktiv!
+  chat: Chat
+  country: Land
+  card_number: Kartennummer
+  forgot_password_intro: Bitte füllen Sie die Felder des Formulars unterhalb aus, damit Anweisungen zum Zurücksetzen des Passwort an Ihre E-Mail-Adresse gesendet werden können
+  done: Fertig
+  ticket_due_by_time: Fällig
+  next: Nächstes
+  set_password: Passwort setzen
+  send_email_to_agent: E-Mail an Techniker schicken
+  import_data: Datum des Imports
   contacts: 
-    new: "Neuer Kontakt"
-    edit_contact: "Kontakt bearbeiten"
-    edit: "Kontakt bearbeiten"
-    save_changes: "Änderungen speichern"
-    deleted_message: "Dieser Kontakt wurde gelöscht"
-    title: "Kontakte"
-    emailnotverified: "E-Mailadresse nicht freigeschaltet!"
-    showing: "Angezeigt"
-    info1: "Wollen Sie den Kontakt wirklich löschen"
-    info2: "Zu einem Techniker machen"
-    send_activation: "Aktivierungsmail senden"
-    import_csv: "Benutzer aus CSV"
-    import_google: "Import aus Google"
-    import_google_no: "Nein"
-    import_google_yes: "Ja"
-    quick_contact: "Kontakt (schnell)"
-    tags: "Tags"
-    tag_cloud: "Kontakt-Tag-Cloud"
-    info3: "Hintergrundinformationen zu %{nick_name}"
-    working: "In Bearbeitung"
-    info4: "Aktuelle Tickets von %{nick_name}"
+    new: Neuer Kontakt
+    edit_contact: Kontakt bearbeiten
+    edit: Kontakt bearbeiten
+    save_changes: Änderungen speichern
+    deleted_message: Dieser Kontakt wurde gelöscht
+    title: Kontakte
+    emailnotverified: E-Mailadresse nicht freigeschaltet!
+    showing: Angezeigt
+    info1: Wollen Sie den xontakt wirklich löschen
+    info2: Zu einem Techniker machen
+    send_activation: Aktivierungsmail senden
+    import_csv: Benutzer aus CSV
+    quick_contact: Kontakt (schnell)
+    info3: Hintergrundinformationen zu %{nick_name}
+    working: In Bearbeitung
+    info4: Aktuelle Tickets von %{nick_name}
     form_placeholder: 
-      description: "Notizen für diesen Kontakt hinzufügen, zum Beispiel: FC Bayern-Fan, usw."
-    info5: "Keine Tickets von diesem Benutzer"
-    restore: "Wiederherstellen"
-    info6: "Eigene Notizen zum Kontakt hinzufügen"
+      description: Notizen für diesen Kontakt hinzufügen - Adresse, FC Bayern-Fan, usw.
+    info5: Keine Tickets von diesem Benutzer
+    restore: Wiederherstellen
+    info6: Eigene Notizen zum Kontakt hinzufügen
     role:
-      info: "Darf alle Tickets dieses Unternehmens ansehen "
-  between: "Zwischen"
-  portal_key: "Portal"
-  add_new_forum: "Neues Forum erstellen"
-  no_forum_category: "Keine Foren zu dieser Kategorie"
+      info: kann alle Tickets dieses Unternehmens sehen 
+  between: Zwischen
+  portal_key: Portal
+  add_new_forum: Neues Forum erstellen
+  no_forum_category: Keine Foren zu dieser Kategorie
   sla_policy: 
-    sla_targets: "SLA Ziele"
-    new: "Neue SLA Richtlinie"
-    edit: "Richtlinie bearbeiten"
-    select_policy: "Richtlinie auswählen"
-    resolution_time: "Lösungszeit"
-    title: "SLA Richtlinie"
-    calendar_time: "Stundenformat"
+    sla_targets: SLA Ziele
+    new: Neue SLA Richtlinie
+    edit: Richtlinie bearbeiten
+    select_policy: Richtlinie auswählen
+    resolution_time: Lösungszeit
+    title: SLA Richtlinie
+    calendar_time: Stundenformat
     info1: "\tEine SLA Richtlinie ist ist eine Kombination aus Antwort- und Lösungszeit basierend auf der Ticketpriorität.Es entspricht Business Practices, Service Levels nach ihrer Priorität zu setzen. Ihre SLA Richtlinien könnten so lauten: Alle Tickets mit hoher Priorität müssen innerhalb von 2 Stunden gelöst werden. usw"
-    override: "Überschreiben"
-    title1: "SLA Richtlinien"
-    info2: "Freshdesk benutzt die SLA Richtlinie, um zu bestimmen, wann ein Ticket fällig ist. Sie können eine SLA Richtlinie für alle Kunden einrichten. Aber wenn Sie einen Kunden mit anderen Wünschen haben, können Sie für ihn eine eigene SLA Richtlinie einrichten."
-    response_time: "Antwortzeit"
-    business_time: "Geschäftszeiten"
-    info3: "Die SLA Richtlinie wird in Verbindung mit den Geschäftszeiten verarbeitet."
-    tickets_with: "Tickets mit"
-    escalate_to: "Eskalieren an"
-  left: "Links"
+    override: Überschreiben
+    title1: SLA Richtlinien
+    info2: Freshdesk benutzt die SLA Richtlinie, um zu bestimmen, wann ein Ticket fällig ist. Sie können eine SLA Richtlinie für alle Kunden einrichten. Aber wenn Sie einen Kunden mit anderen Wünschen haben, können Sie für ihn eine eigene SLA Richtlinie einrichten.
+    response_time: Antwortzeit
+    business_time: Geschäftszeiten
+    info3: Die SLA Richtlinie wird in Verbindung mit den Geschäftszeiten verarbeitet.
+    tickets_with: Tickets mit
+    escalate_to: Eskalieren an
+  left: Links
   subscription: 
     error: 
-      lesser_agents: "In Ihrem Freshdesk-Konto sind aktuell %{agent_count} Techniker eingetragen, so dass die gewünschte Zahl für die Lizenzierung nicht berücksichtigt werden kann. Bitte entfernen Sie Techniker und versuchen Sie es erneut."
-  activate: "Aktivieren"
-  feedbackwidget_text: "Text"
-  billed_amount_per_month: "Ihnen werden $%{amount} verrechnet %{period}  billed_amount_annually: Ihnen werden $%{amount} jährlich verrechnet"
-  import_zendesk_summary: "Zusammenfassung des Imports aus Zendesk"
-  user_activation_email: "Aktivierungsmail für Benutzer"
-  incident: "Störfall"
-  import: "Importieren"
-  contains: "Enthält"
+      lesser_agents: In Ihrem Freshdesk-Konto sind aktuell %{agent_count} Techniker eingetragen, so dass die gewünschte Zahl für die Lizensierung nicht berücksichtigt werden kann. Bitte entfernen Sie Techniker und versuchen Sie es erneut.
+  activate: Aktivieren
+  feedbackwidget_text: Text
+  billed_amount_per_month: Ihre monatliche Rechnung beträgt $%{amount} pro Monat
+  import_zendesk_summary: Zusammenfassung des Imports aus Zendesk
+  user_activation_email: Aktivierungsmail für Benutzer
+  incident: Störfall
+  import: Importieren
+  contains: Enthält
   import_solution_article_info: "Hinweis: Die Forenkommentare werden nicht gespeichert"
   portal: 
     search: 
-      placeholder: "Suchen Sie mittels Eingabe eines Schlüsselworts oder einer vollständigen Frage"
-  feedbackwidget_form_title: "Titel des Widget-Formulars"
-  cancel_and_back: "Abbrechen und zurück"
-  due_in: "Fällig in %{time_words}"
-  first_name: "Vorname"
-  pro_brief: "Für große Teams"
-  feedbackwidget_position: "Position"
-  resolution_time_sla: "&quot;Lösungszeit&quot; SLA-Verletzung"
-  replies: "Antwort"
-  urgent: "Dringlich"
-  import_groups: "Gruppen"
+      placeholder: Suchen Sie mittels Eingabe eines Schlüsselworts oder einer vollständigen Frage
+  feedbackwidget_form_title: Titel des Widget-Formulars
+  cancel_and_back: Abbrechen und zurück
+  due_in: Fällig in %{time_words}
+  first_name: Vorname
+  pro_brief: Für große Teams
+  feedbackwidget_position: Position
+  resolution_time_sla: "'Lösungszeit' SLA-Verletzung"
+  replies: Antwort
+  urgent: Dringlich
+  import_groups: Gruppen
   solution:    
     folders:
       new:
-        new_folder: "Neuer Ordner"
-    info9: "Öffentlich (allgemein zugänglich)"
-    edit: "Lösung bearbeiten"
-    add: "Lösung hinzufügen"
-    info10: "Intern (nur für Techniker und Admins)"
-    add_new_solution: "Lösung hinzufügen"
-    title: "Lösungen"
-    info1: "Lösungen in Freshdesk entspricht Ihrer Lösungsdatenbank"
-    info2: "Lösungen können <b>öffentlich</b> oder <b>intern</b> sein. Öffentliche Lösungen werden im Self-Service Portal veröffentlicht und erscheinen in der allgemeinen Suche."
-    info3: "Interne Lösungen können nur von Technikern eingesehen werden."
-    no_solutions_info: "Keine Lösung in diesem Ordner"
+        new_folder: Neuer Ordner
+    info9: Öffentlich (allgemein zugänglich)
+    edit: Lösung bearbeiten
+    add: Lösung hinzufügen
+    info10: Intern (nur für Techniker und Admins)
+    add_new_solution: Lösung hinzufügen
+    title: Lösungen
+    info1: Lösungen in Freshdesk entspricht Ihrer Lösungsdatenbank
+    info2: Lösungen können <b>öffentlich</b> oder <b>intern</b> sein. Öffentliche Lösungen werden im Self-Service Portal veröffentlicht und erscheinen in der allgemeinen Suche.
+    info3: Interne Lösungen können nur von Technikern eingesehen werden.
+    no_solutions_info: Keine Lösung in diesem Ordner
     info4: "Lösungen werden folgendermaßen kategorisiert: <b>Kategorie --> Ordner --> Beitrag</b>"
-    type: "Lösungstyp"
-    info5: "Lösungen sind entweder <b>Workarounds</b> oder <b>dauerhafte</b> Lösungen"
-    info6: "Eine Lösung befindet sich im <b>Entwurfs</b>-Stadium und kann auf <b>Veröffentlicht</b> gesetzt werden, sobald die Lösung genehmigt wurde"
-    visibility: "Sichtbarkeit"
-    info7: "Keine Lösung in diesem Ordner"
-    status: "Status der Lösung"
-    info8: "Wollen Sie die Lösung wirklich löschen"
-    folder: "Ordner"
-  import_updated: "Aktualisiert"
-  feedbackwidget_intro: "Passen Sie Ihr Widget unterhalb an und betrachten Sie Änderungen in der Echtzeit-Vorschau."
-  save: "Speichern"
-  import_added_newly: "Kürzlich hinzugefügt"
-  select_a_plan_gain_access: "Wählen Sie unterhalb eine Edition, um wieder Zugriff auf Ihr Konto zu erhalten."
-  import_warning_info: "Eine E-Mail mit Anweisung zum Aktivieren der Adresse wird an jeden erfolgreich importierten Kontakt verschickt. Wenn die E-Mail-Adresse bereits in der Datenbank ist, werden Attribute wie Name, Unternehmen usw. aktualisiert"
-  import_example_title: "Unterhalb ein Beispiel für eine CSV-Datei"
-  change_my_password: "Passwort ändern"
-  answered: "Beantwortet"
+    type: Lösungstyp
+    info5: Lösungen sind entweder <b>Workarounds</b> oder <b>dauerhafte</b> Lösungen
+    info6: Eine Lösung befindet sich im <b>Entwurfs</b>-Stadium und kann auf <b>Veröffentlicht</b> gesetzt werden, sobald die Lösung genehmigt wurde
+    visibility: Sichtbarkeit
+    info7: Keine Lösung in diesem Ordner
+    status: Status der Lösung
+    info8: Wollen Sie die Lösung wirklich löschen
+    folder: Ordner
+  import_updated: Aktualisiert
+  feedbackwidget_intro: Passen Sie Ihr Widget unterhalb an und betrachten Sie Änderungen in der Echtzeit-Vorschau.
+  save: Speichern
+  import_added_newly: Kürzlich hinzugefügt
+  select_a_plan_gain_access: Wählen Sie unterhalb eine Edition, um wieder Zugriff auf Ihr Konto zu erhalten.
+  import_warning_info: Eine E-Mail mit Anweisung zum Aktivieren der Adresse wird an jeden erfolgreich importierten Kontakt verschickt. Wenn die E-Mail-Adresse bereits in der Datenbank ist, werden Attribute wie Name, Unternehmen usw. aktualisiert
+  import_example_title: Unterhalb ein Beispiel für eine CSV-Datei
+  change_my_password: Passwort ändern
+  answered: Beantwortet
   errors_in_payment_info: "Fehler bei der Überprüfung der Zahlungsdaten:"
-  attach_files: "Datei hinzufügen"
-  plan_amount: "pro Techniker im Monat"
+  attach_files: Datei hinzufügen
+  plan_amount: pro Techniker im Monat
   current_plan_details: "%{plan_name} Edition mit %{agent_limit} Technikern"
-  zendesk_backup: "BackUp-Datei"
-  twoday: "2 Tage"
+  zendesk_backup: BackUp-Datei
+  twoday: 2 Tage
   profile: 
-    change_password: "Passwort ändern"
-    edit: "Profil bearbeiten"
-    current_password: "Altes Passwort"
-    confirm_password: "Passwort bestätigen"
-    new_password: "Neues Passwort"
-  add_to_do: "Zu Aufgaben hinzufügen"
-  subject_or_description: "Thema oder Beschreibung"
-  premium_details: "Alles aus der &quot;Pro&quot;-Edition und zusätzlich Unterstützung mehrerer Produkte, Unterstützung mehrerer Zeitzonen, Community-, E-Mail- & Telefon-Support"
-  sprout_details: "Verwaltung von E-Mail-Antworten, alle Automatisierungen, SLA-Standardrichtlinien, Wissensdatenbank, Self-Service-Portal, Domainzuweisungen, grundlegende Berichte, Community-Support."
-  blossom_details: "Alles in Sprout Plan Plus, Twitter-Support, Facebook-Support, Foren, Community- und  E-Mail-Support."
-  garden_details: "Alles in Blossom Plan Plus, mehrfacher Produktsupport, erweiterte Berichte, Community, E-Mail- und Telefonsupport"
-  zendesk_credentials: "Zendesk-Anmeldedaten"
-  how_to: "Frage"
-  customers: "Kunden"
-  feedbackwidget_embed_code: "Code zum Einbetten des Widgets"
-  billing_info_update: "Ihre Zahlungsdaten wurden aktualisiert."
+    change_password: Passwort ändern
+    edit: Profil bearbeiten
+    current_password: Altes Passwort
+    confirm_password: Passwort bestätigen
+    new_password: Neues Passwort
+  add_to_do: Zu Aufgaben hinzufügen
+  subject_or_description: Thema oder Beschreibung
+  premium_details: Alles aus der 'Pro'-Edition und zusätzlich Unterstützung mehrerer Produkte, Unterstützung mehrerer Zeitzonen, Community-, E-Mail- & Telefon-Support
+  zendesk_credentials: Zendesk-Anmeldedaten
+  how_to: Frage
+  customers: Kunden
+  feedbackwidget_embed_code: Code zum Einbetten des Widgets
+  billing_info_update: Ihre Zahlungsdaten wurden aktualisiert.
   wrong_portal: 
-    content_not_available: "Der gesuchte Inhalt ist in diesem Portal nicht verfügbar."
-    title: "Nicht verfügbar!"
-  click_select_action: "Hier klicken, um eine Aktion auszuwählen"
-  import_articles: "Lösungsartikel"
-  back: "Zurück"
-  save_changes: "Unterschiede speichern"
-  premium_brief: "Premium"
-  sprout_brief: "Sicherer E-Mail-Helpdesk"
-  blossom_brief: "Soziale Kundenbetreuung"
-  garden_brief: "Mehrfacher Produktsupport"
-  begin_subscription_confirm: "Ihre Kreditkarte wird mit dem Betrag von $%{cost} belastetund Ihr Abonnement beginnt sofort. \n\nJetzt fortfahren?"
-  favicon: "Favicon"
-  is_expiring_today: "läuft heute aus"
-  feedbackwidget_help_para1: "Erhalten Sie Feedback von Ihren Kunden, indem Sie ein Support-Tab auf Ihrer Website platzieren."
-  low: "Niedrig"
-  feedbackwidget_defaultbutton: "Support"
-  agents: "Techniker"
+    content_not_available: Der gesuchte Inhalt ist in diesem Portal nicht verfügbar.
+    title: Nicht verfügbar!
+  click_select_action: Hier klicken, um eine Aktion auszuwählen
+  import_articles: Lösungsartikel
+  back: Zurück
+  save_changes: Unterschiede speichern
+  premium_brief: Premium
+  begin_subscription_confirm: Es werden $%{cost} von Ihrer Kreditkarte abgebuchtund Ihre Subskription beginnt ab sofort. \n\nMöchten Sie fortfahren?
+  favicon: Favicon
+  is_expiring_today: läuft heute aus
+  feedbackwidget_help_para1: Erhalten Sie Feedback von Ihren Kunden, indem Sie ein Support-Tab auf Ihrer Website platzieren.
+  low: Niedrig
+  feedbackwidget_defaultbutton: Support
+  agents: Techniker
   header: 
-    welcome: "Willkommen"
-    new_ticket: "Neues Ticket"
-    submit_a_ticket: "Ticket öffnen"
-    login: "Anmelden"
+    welcome: Willkommen
+    new_ticket: Neues Ticket
+    submit_a_ticket: Ticket öffnen
+    login: Anmelden
     tabs:
-      reports: "Berichte"
-      dashboard: "Dashboard"
-      customers: "Kunden"
-      admin: "Admin"
-      checkstatus: "Ticket-Status überprüfen"
-      solutions: "Lösungen"
-      forums: "Foren"
-      tickets: "Tickets"
-      home: "Start"
-      company_tickets: "Tickets des Unternehmens"
-      social: "Soziales"
-    signout: "Abmelden"
-    search: "Suchen"
-  agent_adds_comment: "Techniker fügt Kommentare zum Ticket hinzu"
-  portal_customizer_anon_tickets: "Jeder kann Tickets erstellen"
-  portal_customizer_option_tickets: "Benutzer können ein Ticket ohne Anmeldung öffnen. "
-  feedbackwidget_help_para2: "Anpassbarer Tab führt zu einem Formular zum Erstellen von Support-Tickets. "
+      reports: Berichte
+      dashboard: Konsole
+      customers: Kunden
+      admin: Admin
+      checkstatus: Ticket-Status überprüfen
+      solutions: Lösungen
+      forums: Foren
+      tickets: Tickets
+      home: Start
+      company_tickets: Tickets des Unternehmens
+      social: Soziales
+    signout: Abmelden
+    search: Suchen
+  agent_adds_comment: Techniker fügt Kommentare zum Ticket hinzu
+  portal_customizer_anon_tickets: Jeder kann Tickets erstellen
+  portal_customizer_option_tickets: Benutzer können ein Ticket ohne Anmeldung öffnen. 
+  feedbackwidget_help_para2: Anpassbarer Tab führt zu einem Formular zum Erstellen von Support-Tickets. 
   tag: 
-    title: "Tags"
+    title: Tags
   email_notifications: 
-    customize_email: "E-Mail anpassen"
-    modify_requester_template: "E-Mail-Vorlage für Anfragende bearbeiten"
-    requestor_notification: "Benachrichtigung an Anfragenden"
-    title: "E-Mailbenachrichtigungen"
-    insert_placeholder: "Platzhalter einfügen"
-    modify_agent_template: "E-Mail-Vorlage für Anfragende bearbeiten"
-    event: "Ereignis"
-    agent_notification: "Benachrichtigung an Techniker"
+    customize_email: E-Mail anpassen
+    modify_requester_template: E-Mail-Vorlage für Anfragende bearbeiten
+    requestor_notification: Benachrichtigung an Anfragenden
+    title: E-Mailbenachrichtigungen
+    insert_placeholder: Platzhalter einfügen
+    modify_agent_template: E-Mail-Vorlage für Anfragende bearbeiten
+    event: Ereignis
+    agent_notification: Benachrichtigung an Techniker
   errors_in_plan_change: "Fehler beim Ändern aufgetreten:"
-  formatting_help: "Formatierungshilfe"
-  step1: "Schritt 1"
+  formatting_help: Formatierungshilfe
+  step1: Schritt 1
   next_charge_date: "Der nächste Betrag wird abgebucht am:"
-  update_and_login: "Aktualisieren und anmelden"
-  enter_payment: "Zahlungsdaten eintragen..."
+  update_and_login: Aktualisieren und anmelden
+  enter_payment: Zahlungsdaten eintragen...
   errors_in_payment: "Fehler bei der Abbuchung aufgetreten:"
   email_configs: 
-    name: "Name"
-    info9: "Einer Gruppe zuweisen"
-    reply_emails: "Antwortnachrichten von Freshdesk"
-    delete: "Wollen Sie diese E-Mail wirklich löschen?"
-    change_this: "Verändern"
-    info10: "Neue Tickets an diese E-Mailadresse werden automatisch der Gruppe zugeordnet"
-    title: "E-Mail-Einstellungen"
-    supp_email_add: "Support-E-Mailadresse"
-    info11: "Support-E-Mailadresse (ein- und ausgehend) konfigurieren"
-    info1: "Ihre Benutzer senden Support-E-Mails an"
-    add_supp_emails: "Zusätzliche Support-E-Mailadresse(n)"
-    info12: "Weitere E-Mailadresse eingeben"
-    info2: "Alle Support-E-Mails müssen an genau eine E-Mailadresse gesendet werden"
-    send_verification_email: "Bestätigungsmail erneut senden"
-    unverified: "Nicht bestätigt"
-    info13: "Ihre Support-E-Mailadresse ist"
-    info3: "Freshdesk fragt dieses Postfach ab und interpretiert eingehende E-Mails als Tickets"
-    inactive_info1: "Bislang wurde keine Support-E-Mail-Adresse verifiziert, bitte bestätigen Sie zumindest eine Adresse"
-    info14: "Jede Nachricht an diese Adresse wird zum Ticket"
-    info4: "Geben Sie mehrere E-Mailadressen an, falls Sie mehrere Produkte betreuen - für jedes eine eigene E-Mailadresse"
-    spf_info: "Auch wenn die meisten E-Mails ausgeliefert werden, ist es sicherer, einen <a target=&quot;_blank&quot; title=&quot;Mehr über SPF-Records erfahren&quot; href=&quot;{{solution_url}}&quot;>SPF-Record</a> in der DNS-Zonendatei anzugeben. Dies trifft natürlich nur zu, wenn Sie E-Mails über eine Domain verschicken, die von Ihrer Organisation betreut wird. Mit SPF-Records wird die Wahrscheinlichkeit vergrößert, dass Ihre E-Mails von Mailservern angenommen werden."
-    reply_email: "Ihre Support-E-Mail-Adresse"
-    unverified_info1: "Eine E-Mail mit einem Bestätigungslink wurde an die E-Mail-Adresse geschickt. Erst nach Bestätigung wird die E-Mail-Adresse aktiv."
-    inactive_info2: "Bis dahin wird die Standard E-Mail-Adresse &quot;%{default_email}&quot; als Reply-To-Adresse verwendet."
-    info15: "Diese Nachrichten weiterleiten an"
-    info5: "Antworten von Freshdesk verwenden automatisch die E-Mailadresse, an die adressiert wurde"
-    primary_supp_email: "Primäre Support-E-Mailadresse"
-    info16: "Tickets zuweisen"
-    info7: "Das ist auch die Antwortadresse"
-    make_primary: "Als Primär definieren"
-    info8: "E-Mails an diese Adresse weiterleiten"
-    help_link_info: "Lesen Sie unseren Beitrag zu E-Mail-Einstellungen, um mehr darüber zu erfahren..."
-    bcc_email: "BCC-Adresse (optional)"
-    info17: "Diese E-Mail-Adresse wird automatisch in das BCC-Feld für jegliche Ticktekommunikation eingefügt"
-    info18: "Automatisch in Ticketantworten eingefügte BCC-Adresse "
-  step2: "Schritt 2"
-  import_users_contacts: "Benutzer → Kontakte"
-  linkback_info: "Sie können das Logo auf Ihre eigene Website verlinken, um Kunden dorthin zu leiten"
+    name: Name
+    info9: Einer Gruppe zuweisen
+    reply_emails: Antwortnachrichten von Freshdesk
+    delete: Wollen Sie diese E-Mail wirklich löschen?
+    change_this: Verändern
+    info10: Neue Tickets an diese E-Mailadresse werden automatisch der Gruppe zugeordnet
+    title: E-Mail-Einstellungen
+    supp_email_add: Support-E-Mailadresse
+    info11: Support-E-Mailadresse (ein- und ausgehend) konfigurieren
+    info1: Ihre Benutzer senden Support-E-Mails an
+    add_supp_emails: Zusätzliche Support-E-Mailadresse(n)
+    info12: Weitere E-Mailadresse eingeben
+    info2: Alle Support-E-Mails müssen an genau eine E-Mailadresse gesendet werden
+    send_verification_email: Bestätigungsmail erneut senden
+    unverified: Nicht bestätigt
+    info13: Ihre Support-E-Mailadresse ist
+    info3: Freshdesk fragt dieses Postfach ab und interpretiert eingehende E-Mails als Tickets
+    inactive_info1: Bislang wurde keine Support-E-Mail-Adresse verifiziert, bitte bestätigen Sie zumindest eine Adresse
+    info14: Jede Nachricht an diese Adresse wird zum Ticket
+    info4: Geben Sie mehrere E-Mailadressen an, falls Sie mehrere Produkte betreuen - für jedes eine eigene E-Mailadresse
+    spf_info: Auch wenn die meisten E-Mails ausgeliefert werden, ist es sicherer, einen <a target="_blank" title="Mehr über SPF-Records erfahren" href="{{solution_url}}">SPF-Record</a> in der DNS-Zonendatei anzugeben. Dies trifft natürlich nur zu, wenn Sie E-Mails über eine Domain verschicken, die von Ihrer Organisation betreut wird. Mit SPF-Records wird die Wahrscheinlichkeit vergrößert, dass Ihre E-Mails von Mailservern angenommen werden.
+    reply_email: Ihre Support-E-Mail-Adresse
+    unverified_info1: Eine E-Mail mit einem Bestätigungslink wurde an die E-Mail-Adresse geschickt. Erst nach Bestätigung wird die E-Mail-Adresse aktiv.
+    inactive_info2: Bis dahin wird die Standard E-Mail-Adresse "%{default_email}" als Reply-To-Adresse verwendet.
+    info15: Diese Nachrichten weiterleiten an
+    info5: Antworten von Freshdesk verwenden automatisch die E-Mailadresse, an die adressiert wurde
+    primary_supp_email: Primäre Support-E-Mailadresse
+    info16: Tickets zuweisen
+    info7: Das ist auch die Antwortadresse
+    make_primary: Als Primär definieren
+    info8: E-Mails an diese Adresse weiterleiten
+    help_link_info: Lesen Sie unseren Beitrag zu E-Mail-Einstellungen, um mehr darüber zu erfahren...
+  step2: Schritt 2
+  import_users_contacts: Benutzer → Kontakte
+  linkback_info: Sie können das Logo auf Ihre eigene Website verlinken, um Kunden dorthin zu leiten
   twitter:
-    associate_twitter: "Verknüpfen Sie ein Twitter-Konto mit Ihrem Helpdesk, damit Sie Ihren Kunden Support über Twitter anbieten können."
+    associate_twitter: Verknüpfen Sie ein Twitter-Konto mit Ihrem Helpdesk, damit Sie Ihren Kunden Support über Twitter anbieten können.
     success_signin: "@@%{twitter_screen_name} wurde erfolgreich mit %{helpdesk} verknüpft."
-    user_exists: "Es besteht bereits ein Twitter-Konto für dieses Produkt."
-    not_authorized: "Autorisierung bei Twitter fehlgeschlagen"
-    deleted: "Das Twitter-Konto @%{twitter_screen_name} wurde entfernt."
-    sent: "Tweet erfolgreich versandt."
-    error_sending: "Fehler beim Senden des Tweets! Bitte versuchen Sie es erneut."
-    ticket_save: "Tweet wurde erfolgreich in ein Ticket konvertiert."
-    tkt_err_save: "Konnte Tweet nicht in ein Ticket überführen, möglicherweise doppelter Eintrag."
-    usr_not_thr: "Benutzer ist nicht aktiv.    "
+    user_exists: Es besteht bereits ein Twitter-Konto für dieses Produkt.
+    not_authorized: Autorisierung bei Twitter fehlgeschlagen
+    deleted: Das Twitter-Konto @%{twitter_screen_name} wurde entfernt.
+    sent: Tweet erfolgreich versandt.
+    error_sending: Fehler beim Senden des Tweets! Bitte versuchen Sie es erneut.
+    ticket_save: Tweet wurde erfolgreich in ein Ticket konvertiert.
+    tkt_err_save: Konnte Tweet nicht in ein Ticket überführen, möglicherweise doppelter Eintrag.
+    usr_not_thr: Benutzer ist nicht aktiv.    
   facebook:
-    deleted: "Die Facebook-Seite %{facebook_page} wurde entfernt."
-    not_authorized: "Autorisierung bei Facebook fehlgeschlagen"
-  logo: "Logo"
-  ok: "OK"
-  back: "Zurück"
+    deleted: Die Facebook-Seite %{facebook_page} wurde entfernt.
+    not_authorized: Autorisierung bei Facebook fehlgeschlagen
+  logo: Logo
+  ok: OK
+  back: Zurück
   ticket:
-    reported_on: "von %{username}, zuletzt aktualisiert am %{date}"
-    thanks: "Vielen Dank für Ihre Rückmeldung"
-    group: "Gruppe"
-    spam_btn_title: "Als Spam markieren"
-    assigned_to: "Zugewiesen an"
-    edit: "Ticket bearbeiten"
-    ham_btn_title: "Kein Spam"
-    reported_from_source: "Erfasst über %{source}"
-    add_time: "Zeit hinzufügen"
+    reported_on: von %{username}, am %{date}
+    thanks: Vielen Dank für Ihre Rückmeldung
+    group: Gruppe
+    spam_btn_title: Als Spam markieren
+    assigned_to: Zugewiesen an
+    edit: Ticket bearbeiten
+    ham_btn_title: Kein Spam
+    reported_from_source: Erfasst über %{source}
     suggested_solutions: 
-      insert_url: "URL einfügen"
-      title: "Vorgeschlagene Lösungen"
-      insert_content_tip: "Diesen Lösungsartikel in Ihre Antwort oder Notiz einfügen"
-      no_result: "Keine Lösungen gefunden"
-      insert_url_tip: "Diese Lösungs-URL Ihrer Antwort oder Notiz hinzufügen"
-      insert_content: "Inhalt einfügen"
-    unassigned: "Nicht zugewiesen"
-    suggest_solutions: "Lösung vorschlagen"
-    created_on: "Erstellt am %{time}"
-    restore_btn: "Ticket wiederherstellen"
-    merge_btn: "Zusammenführen"
-    singular: "Ticket"
-    due_by_time: "Fällig"
-    delete_btn_title: "Ticket in den Papierkorb schieben"
-    priority: "Priorität"
-    to_do: "Zu erledigende Tickets"
-    activity: "Aktivität"
-    sort_by: "Sortieren nach"
-    restore_btn_title: "Ticket aus dem Papierkorb wiederherstellen"
-    subject: "Betreff"
-    created_at: "Erstellt seit (in Stunden)"
-    opened_at: "Wieder geöffnet seit (in Stunden)"
-    pending_since: "Unerledigt seit (in Stunden)"
-    resolved_at: "Gelöst seit (in Stunden)"
-    closed_at: "Geschlossen seit (in Stunden)"
-    first_assigned_at: "Zuerst zugewiesen seit (in Stunden)"
-    assigned_at: "Zugewiesen seit (in Stunden)"
-    requester_responded_at: "Stunden seit der Antwort des Anfragenden"
-    agent_responded_at: "Stunden seit der Technikerantwort"
-    first_response_due: "Erste Rückmeldung fällig seit (in Stunden)"
-    due_by: "Ticket fällig (in Stunden)"
-    inbound_count: "Interaktionen mit dem Anfragenden"
-    recent_tickets: "Aktuelle Tickets"
-    unflag_spam: "Kein Spam"
-    pick_up: "Übernehmen"
-    submit_ticket_title: "Ticket öffnen"
-    create_ticket_title: "Ein Ticket erstellen"
-    convert_ticket_title: "In Ticket umwandeln"
+      insert_url: URL einfügen
+      title: Vorgeschlagene Lösungen
+      insert_content_tip: Diesen Lösungsartikel in Ihre Antwort oder Notiz einfügen
+      no_result: Keine Lösungen gefunden
+      insert_url_tip: Diese Lösungs-URL Ihrer Antwort oder Notiz hinzufügen
+      insert_content: Inhalt einfügen
+    unassigned: Nicht zugewiesen
+    suggest_solutions: Lösung vorschlagen
+    created_on: Erstellt am %{time}
+    restore_btn: Ticket wiederherstellen
+    merge_btn: Zusammenführen
+    singular: Ticket
+    due_by_time: Fällig
+    delete_btn_title: Ticket in den Papierkorb schieben
+    priority: Priorität
+    to_do: Zu erledigende Tickets
+    activity: Aktivität
+    sort_by: Sortieren nach
+    restore_btn_title: Ticket aus dem Papierkorb wiederherstellen
+    subject: Thema
+    created_at: Erstellt seit (in Stunden)
+    opened_at: Wieder geöffnet seit (in Stunden)
+    pending_since: Unerledigt seit (in Stunden)
+    resolved_at: Gelöst seit (in Stunden)
+    closed_at: Geschlossen seit (in Stunden)
+    first_assigned_at: Zuerst zugewiesen seit (in Stunden)
+    assigned_at: Zugewiesen seit (in Stunden)
+    requester_responded_at: Stunden seit der Antwort des Anfragenden
+    agent_responded_at: Stunden seit der Technikerantwort
+    first_response_due: Erste Rückmeldung fällig seit (in Stunden)
+    due_by: Ticket fällig (in Stunden)
+    inbound_count: Interaktionen mit dem Anfragenden
+    recent_tickets: Aktuelle Tickets
+    unflag_spam: Kein Spam
+    pick_up: Übernehmen
+    submit_ticket_title: Ticket öffnen
     reply_form: 
-      post_to_linked_forum: "In verknüpftes Forum als Beitrag speichern"
-      form_title: "Auf Konversation antworten"
-      reply_email_id: "Antwort von folgender E-Mail-Adresse senden"
-      send_and_resolve: "Senden und lösen"
-      send: "Senden"
-    reported_by: "von %{requester}"
-    close_btn: "Schließen"
-    close_btn_title: "Ticket schließen"
+      post_to_linked_forum: In verknüpftes Forum als Beitrag speichern
+      form_title: Auf Konversation antworten
+      reply_email_id: Antwort von folgender E-Mail-Adresse senden
+      send_and_resolve: Senden und lösen
+    reported_by: von %{requester}
+    close_btn: Schließen
+    close_btn_title: Ticket schließen
     tags: 
-      no_match: "Keine Treffer. Drücken Sie Enter zum Erstellen des Tags."
-      create_success: "Tag hinzugefügt"
-      destroy_success: "Tag vom Ticket entfernt"
+      no_match: Keine Treffer. Drücken Sie Enter zum Erstellen des Tags.
+      create_success: Tag hinzugefügt
+      destroy_success: Tag vom Ticket entfernt
       add_tag: "Tag hinzufügen:"
-    type: "Typ"
-    execute_scenario: "Scenario ausführen"
+    type: Typ
+    execute_scenario: Scenario ausführen
     note_form: 
-      private_note: "Dies ist eine private Notiz, zeige Sie dem Anfragenden nicht an"
-      form_title: "Notiz hinzufügen"
-      add_and_resolve: "Hinzufügen und lösen"
-      notify_agents: "Techniker benachrichtigen"
+      private_note: Dies ist eine private Notiz, zeige Sie dem Anfragenden nicht an
+      form_title: Notiz hinzufügen
+      add_and_resolve: Hinzufügen und lösen
+      notify_agents: Agenten benachrichtigen
     tweet_form:
-      tweet_and_resolve: "Twittern und lösen"
-      user_not_following: "Dieser Benutzer folgt Ihrem Twitter-Konto nicht"
-    activities: "Aktivitäten"
-    requestor_info: "Info zum Anfragenden"
-    reply_to: "Antworten"
-    add_note: "Notiz hinzufügen"
-    monitor_btn_title: "Ticket verfolgen"
+      tweet_and_resolve: Twittern und lösen
+    activities: Aktivitäten
+    requestor_info: Info zum Anfragenden
+    reply_to: Auf Ticket antworten
+    add_note: Notiz hinzufügen
+    monitor_btn_title: Ticket verfolgen
     canned_responses: 
-      insert_ca_response: "Standardantwort einfügen"
-      insert_ca_resp_tip: "Diese Standardantwort hinzufügen"
-    split_ticket: "In neues Ticket aufspalten                                   "
-    flag_spam: "Spam"
-    assign_to_agent: "Techniker zuweisen"
-    select_to_agent: "Techniker auswählen"
-    delete_btn: "Löschen"
-    status: "Status"
-    source: "Quelle"
-    verify_human: "Bitte geben Sie die verwürfelten Buchstaben ein, um automatisierte Zugriffe zu verhindern"
-    edit_btn: "Bearbeiten"
-    requester: "Anfragender"
-    properties: "Ticket-Details"
-    submit_ticket: "Senden "
-    stop_monitor_btn_title: "Ticket nicht mehr folgen"
-    merge_btn: "Zusammenführen"
-    split_ticket: "Aufteilen"
-    tweets: "Tweets"
-    agent_notify: "hat eine Notiz hinzugefügt und möchte, dass Sie sie sich ansehen"
-    note_content: "Inhalt der Notiz"
-    ticket_url: "Ticket-URL"
-  recent_activity: "Neueste Aktivitäten"
-  recent_activities: "Letzte Aktivitäten"
-  forgot_password: "Passwort vergessen"
-  change_plan: "Edition ändern"
-  feedbackwidget_embed_code_intro: "Kopieren Sie den Code unterhalb und fügen ihn in Ihrem Website-Template an der gewünschten Stelle vor dem </body>-Tag ein, um das Freshdesk-Widget an der entsprechende Stelle zu platzieren."
-  import_forum: "Foren"
-  title: "Titel"
-  new_ticket_created: "Neues Ticket erstellt"
-  recent_forum_posts: "Letzte Forenbeiträge"
-  description: "Beschreibung"
-  tkt_assigned_to_agent: "Ticket wurde Techniker zugewiesen"
-  is: "Ist"
-  helpdesk_title: "Helpdesk"
+      insert_ca_response: Standardantwort einfügen
+      insert_ca_resp_tip: Diese Standardantwort hinzufügen
+    split_ticket: In neues Ticket aufspalten
+    flag_spam: Spam
+    assign_to_agent: Techniker zuweisen
+    select_to_agent: Techniker auswählen
+    delete_btn: Löschen
+    status: Status
+    source: Quelle
+    verify_human: Bitte geben Sie die verwürfelten Buchstaben ein, um automatisierte Zugriffe zu verhindern
+    edit_btn: Bearbeiten
+    requester: Anfragender
+    properties: Ticket-Details
+    submit_ticket: Senden 
+    stop_monitor_btn_title: Ticket nicht mehr folgen
+    merge_btn: Zusammenführen
+    split_ticket: In neues Ticket aufspalten
+    tweets: Tweets
+    agent_notify: hat eine Notiz hinzugefügt und möchte, dass Sie sie sich ansehen
+    note_content: Inhalt der Notiz
+    ticket_url: Ticket-URL
+  recent_activity: Neueste Aktivitäten
+  forgot_password: Passwort vergessen
+  change_plan: Edition ändern
+  feedbackwidget_embed_code_intro: Kopieren Sie den Code unterhalb und fügen ihn in Ihrem Website-Template an der gewünschten Stelle vor dem </body>-Tag ein, um das Freshdesk-Widget an der entsprechende Stelle zu platzieren.
+  import_forum: Foren
+  title: Titel
+  new_ticket_created: Neues Ticket erstellt
+  recent_forum_posts: Letzte Forenbeiträge
+  description: Beschreibung
+  tkt_assigned_to_agent: Ticket wurde Techniker zugewiesen
+  is: Ist
+  helpdesk_title: Helpdesk
   forums: 
     search_all: 
-      placeholder: "Alle Themen durchsuchen"
+      placeholder: Alle Themen durchsuchen
     search: 
-      placeholder: "Suche %{name}"
+      placeholder: Suche %{name}
     form:
-      type: "Forentyp"
-      visibility: "Sichtbarkeit des Forums    "
+      type: Forentyp
+      visibility: Sichtbarkeit des Forums    
   next_charge_amount: "%{type} kostet:"
   company: 
-    info9: "Freshdesk fügt Kontakte automatisch dem Unternehmen hinzu, wenn die Kontakt-E-Mailadresse auf die Domain endet."
-    name: "Unternehmensname"
-    new: "Neues Unternehmen"
-    edit: "Unternehmen bearbeiten"
-    quick_company: "Unternehmen (schnell)"
-    title: "Unternehmen"
-    notes: "Notizen"
-    info1: "Wollen Sie das Unternehmen wirklich löschen"
-    info2: "Domain-Namen für dieses Unternehmen"
-    info4: "Notiz für %{name} hinzufügen"
-    info5: "Notizen für dieses Unternehmen hinzufügen"
-    info6: "Personen von %{name}"
-    info7: "Keine Tickets von diesem Unternehmen vorhanden"
-    info8: "Mehr Informationen zu diesem Unternehmen, wie z.B. Adresse, Telefon, Website, usw."
-  import_zendesk_summary_info: "Zendesk-Daten wurden erfolgreich importiert."
-  one: "1 Stunde"
-  no_topics_text: "Keine Themen in diesem Forum"
-  feedbackwidget_offset_label: "Mit einem Offset von"
-  send_email_to_group: "E-Mail an Gruppe senden"
-  activate_account: "Konto aktivieren"
-  enter_message: "Nachricht hier eingeben"
-  not_selected: "Nichts ausgewählt"
-  enter_billing_for_free: "Bitte geben Sie zuerst Ihre Kreditkartendaten ein, bevor Sie eine kostenpflichtige Edition wählen."
-  will_expire_in: "läuft ab in"
-  asked_on: "Gefragt zu"
-  this_ticket_has_been_deleted: "Dieses Ticket wurde gelöscht"
-  state: "Status"
-  deactivate: "Deaktivieren"
-  add_tags: "Tag(s) hinzufügen"
-  change_to_free_info: "Ein Downgrade Ihrer Edition führt zu Funktions- und Datenverlust. Sind Sie sicher, mit dem Downgrade fortzufahren?"
-  import_step1_info: "Wählen Sie eine CSV-Datei aus und klicken auf Importieren"
-  tkt_assigned_to_group: "Ticket der Gruppe zugeordnet"
-  import_tickets: "Tickets"
-  twelve: "12 Stunden"
-  agent_info_title: "Technikerdetails"
+    info9: Freshdesk fügt Kontakte automatisch dem Unternehmen hinzu, wenn die Kontakt-E-Mailadresse auf die Domain endet.
+    name: Unternehmensname
+    new: Neues Unternehmen
+    edit: Unternehmen bearbeiten
+    quick_company: Unternehmen (schnell)
+    title: Unternehmen
+    notes: Notizen
+    info1: Wollen Sie das Unternehmen wirklich löschen
+    info2: Domain-Namen für dieses Unternehmen
+    info4: Notiz für %{name} hinzufügen
+    info5: Notizen für dieses Unternehmen hinzufügen
+    info6: Personen von %{name}
+    info7: Keine Tickets von diesem Unternehmen vorhanden
+    info8: Mehr Informationen zu diesem Unternehmen, wie z.B. Adresse, Telefon, Website, usw.
+  import_zendesk_summary_info: Zendesk-Daten wurden erfolgreich importiert.
+  one: 1 Stunde
+  no_topics_text: Keine Themen in diesem Forum
+  feedbackwidget_offset_label: Mit einem Offset von
+  send_email_to_group: E-Mail an Gruppe senden
+  activate_account: Konto aktivieren
+  enter_message: Nachricht hier eingeben
+  not_selected: Nichts ausgewählt
+  enter_billing_for_free: Bitte geben Sie zuerst Ihre Kreditkartendaten ein, bevor Sie eine kostenpflichtige Edition wählen.
+  will_expire_in: läuft ab in
+  asked_on: Gefragt zu
+  this_ticket_has_been_deleted: Dieses Ticket wurde gelöscht
+  state: Status
+  deactivate: Deaktivieren
+  add_tags: Tag(s) hinzufügen
+  change_to_free_info: Ein Downgrade Ihrer Edition führt zu Funktions- und Datenverlust. Sind Sie sicher, mit dem Downgrade fortzufahren?
+  import_step1_info: Wählen Sie eine CSV-Datei aus und klicken auf Importieren
+  tkt_assigned_to_group: Ticket der Gruppe zugeordnet
+  import_tickets: Tickets
+  twelve: 12 Stunden
+  agent_info_title: Technikerdetails
   account: 
-    name: "Kontoname"
-    cancel: "Abbrechen und zurück"
+    name: Kontoname
+    cancel: Abbrechen und zurück
     page_colors: 
-      title: "Farben für die Seite"
-      background: "Hintergrund"
-      header: "Kopfzeile"
-      tab_color: "Tab-Farbe"
-    active_since: "Aktiv seit"
-    info1: "Nutzen Sie dieses Feld, um Ihrem Freshdesk eine andere URL zu geben"
-    info2: "Bevor Sie dieses Feld nutzen, versichern Sie sich bitte, dass ein CNAME DNS-Record in Ihrer DNS-Zonendatei auf support.meinedomain.de auf %{full_domain} zeigt. Fragen Sie im Zweifelsfall Ihren Systemadmin."
-    info3: "Auf die Standardfarben zurücksetzen"
-    info4: "Das nächste Ticket erhält dieses Ticketnummer. (Die eingegebene Zahl sollte größer als das zuletzt eingegangene Ticket sein). Diese Einstellung ist nur für zukünftige Tickets relevant."
-    save: "Änderungen speichern"
-    time_zone: "Zeitzone"
-    helpdesk_name: "Helpdesk-Name"
-    rebrand: "Individualisieren Sie Ihren Helpdesk"
-    helpdesk_url: "Helpdesk-URL"
-    language: "Sprache"
-  lead: "Lead"
-  comments: "Kommentare"
-  forum_confirm_msg1: "Wollen Sie die Kategorie wirklich löschen"
-  plans_billing: "Editionen & Zahlungsdaten"
-  portal_customizer_open_forums: "Jeder kann die Foren aufrufen"
-  portal_customizer_option_forums: "Benutzer können die Foren ohne Anmeldung sehen"
+      title: Farben für die Seite
+      background: Hintergrund
+      header: Kopfzeile
+      tab_color: Tab-Farbe
+    active_since: Aktiv seit
+    info1: Nutzen Sie dieses Feld, um Ihrem Freshdesk eine andere URL zu geben
+    info2: Bevor Sie dieses Feld nutzen, versichern Sie sich bitte, dass ein CNAME DNS-Record in Ihrer DNS-Zonendatei auf support.meinedomain.de auf %{full_domain} zeigt. Fragen Sie im Zweifelsfall Ihren Systemadmin.
+    info3: Auf die Standardfarben zurücksetzen
+    info4: Das nächste Ticket erhält dieses Ticketnummer. (Die eingegebene Zahl sollte größer als das zuletzt eingegangene Ticket sein). Diese Einstellung ist nur für zukünftige Tickets relevant.
+    save: Änderungen speichern
+    time_zone: Zeitzone
+    helpdesk_name: Helpdesk-Name
+    rebrand: Individualisieren Sie Ihren Helpdesk
+    helpdesk_url: Helpdesk-URL
+    language: Sprache
+  lead: Lead
+  comments: Kommentare
+  forum_confirm_msg1: Wollen Sie die Kategorie wirklich löschen
+  plans_billing: Editionen & Zahlungsdaten
+  portal_customizer_open_forums: Jeder kann die Foren aufrufen
+  portal_customizer_option_forums: Benutzer können die Foren ohne Anmeldung sehen
   business_hours: 
-    holiday_name: "Name der Feiertage"
-    title: "Geschäftszeiten"
-    info1: "Geschäftszeiten einzugeben ist für die korrektive Verarbeitung der SLA Richtlinien wichtig. Wenn Ihre Geschäftszeiten Mo - Fr von 9 bis 16 Uhr sind, dann muss ein am Dienstag um 14 Uhr eingehendes Ticket mit hoher Priorität (in unserem Beispiel 4 Stunden Lösungszeit) erst am Mittwoch um 11 gelöst sein. Stellen Sie in den SLA Richtlinien ein, ob die Geschäftszeiten für die jeweilige Richtlinie relevant ist oder nicht."
-    info2: "Urlaubszeiten / Feiertage haben die gleiche Wirkung wie Geschäftszeiten. Wenn ein Ticket am Freitag Abend eingeht, der HelpDesk einen 5x8h-Service anbietet, muss das Ticket frühestens am Montag gelöst sein."
-    holiday_added: "Feiertag bereits hinzugefügt"
-    info3: "Eigene Arbeitszeiten"
-    info4: "Arbeitstage für den HelpDesk"
-    holiday_list: "Jährliche Feiertagsliste"
-    info5: "Urlaubszeiten / Feiertage werden für die Berechnung der SLA für einen Ticket nicht berücksichtigt"
-    holidays: "Urlaubszeit / Feiertage"
-    helpdesk_hours: "Helpdesk Öffnungszeiten"
-  import_org_companies: "Organisationen → Unternehmen"
-  add: "Hinzufügen"
-  portal_customizer_title: "Individualisieren Sie Ihr öffentliches Kundenportal"
-  your_trial_account: "Ihr Testkonto"
-  reply_topic: "Auf Thema antworten"
-  password: "Kennwort"
-  import_step2_info: "Bilden Sie die folgenden CSV-Felder auf die Datenbankfelder zum Importieren ab."
-  feedbackwidget_defaulttitle: "Hilfe & Support"
-  two: "2 Stunden"
-  set_status_as: "Status setzen auf"
-  selected: "Ausgewählt"
-  connect_ticket: "Mit Ticket verknüpfen"
-  edit_agent: "Techniker bearbeiten"
-  high: "Hoch"
-  scenario_label: "Label für Szenario"
-  email: "E-Mail"
-  linkback_overlabel: "Linkback-URL"
-  select_a_plan: "Edition auswählen"
-  message: "Nachricht"
-  ticket_was: "Ticket war"
-  tickets_were: "Tickets waren"
-  undo: "Rückgängig machen"
-  total: "Insgesamt"
+    holiday_name: Name der Feiertage
+    title: Geschäftszeiten
+    info1: Geschäftszeiten einzugeben ist für die korrektive Verarbeitung der SLA Richtlinien wichtig. Wenn Ihre Geschäftszeiten Mo - Fr von 9 bis 16 Uhr sind, dann muss ein am Dienstag um 14 Uhr eingehendes Ticket mit hoher Priorität (in unserem Beispiel 4 Stunden Lösungszeit) erst am Mittwoch um 11 gelöst sein. Stellen Sie in den SLA Richtlinien ein, ob die Geschäftszeiten für die jeweilige Richtlinie relevant ist oder nicht.
+    info2: Urlaubszeiten / Feiertage haben die gleiche Wirkung wie Geschäftszeiten. Wenn ein Ticket am Freitag Abend eingeht, der HelpDesk einen 5x8h-Service anbietet, muss das Ticket frühestens am Montag gelöst sein.
+    holiday_added: Feiertag bereits hinzugefügt
+    info3: Eigene Arbeitszeiten
+    info4: Arbeitstage für den HelpDesk
+    holiday_list: Liste der Feiertage über das Kalenderjahr
+    info5: Urlaubszeiten / Feiertage werden für die Berechnung der SLA für einen Ticket nicht berücksichtigt
+    holidays: Urlaubszeit / Feiertage
+    helpdesk_hours: Helpdesk Öffnungszeiten
+  import_org_companies: Organisationen → Unternehmen
+  add: Hinzufügen
+  portal_customizer_title: Individualisieren Sie Ihr öffentliches Kundenportal
+  your_trial_account: Ihr Testkonto
+  reply_topic: Auf Thema antworten
+  password: Kennwort
+  import_step2_info: Bilden Sie die folgenden CSV-Felder auf die Datenbankfelder zum Importieren ab.
+  feedbackwidget_defaulttitle: Hilfe & Support
+  two: 2 Stunden
+  set_status_as: Status setzen auf
+  selected: Ausgewählt
+  connect_ticket: Mit Ticket verknüpfen
+  edit_agent: Techniker bearbeiten
+  high: Hoch
+  scenario_label: Label für Szenario
+  email: E-Mail
+  linkback_overlabel: Linkback-URL
+  select_a_plan: Edition auswählen
+  message: Nachricht
+  ticket_was: Ticket war
+  tickets_were: Tickets waren
+  undo: Rückgängig machen
   helpdesk:
-    time_sheets:
-      index:
-        no_timeentry: "Keine Zeiteinträge vorhanden für dieses Ticket"
-      time_entry:
-        toggle_timer_true: "Timer starten"
-        toggle_timer_false: "Timer anhalten"
-      new:
-        title: "Neuer Zeiteintrag"
-      ticket: "Ticket"
-      customer: "Kunde"
-      executed_at: "Datum"
-      hours: "Stunden"
-      agent: "Techniker"
-      note: "Hinweis"
-      billing_type: "Abrechnungstyp"
-      group_by: "Gruppieren nach"
-      report:
-        no_timeentry: "Keine Daten verfügbar"
-        total: "Insgesamt"
-      form:
-        agent: "Techniker"
-        hours: "Stunden"
-        note: "Hinweis"
     tags:
       index:
-        title: "Tags"
+        title: Tags
     flash:
       assignedto: "%{tickets} sind %{username} zugewiesen."
       tickets_closed: "%{tickets} geschlossen"
-      tickets_update: "%{tickets} aktualisiert"
       assigned_to_you: "%{tickets} Ihnen zugewiesen"
       removed_from_spam: "%{tickets} aus dem Spam-Folder entfernt."
-      closing_the_ticket_failed: "Schließen des Tickets fehlgeschlagen"
+      closing_the_ticket_failed: Schließen des Tickets fehlgeschlagen
       assigned_reassigned: "%{type} an %{username}"
       flagged_spam: "%{tickets} als Spam markiert. %{undo}"
       flagged_unspam: "%{tickets} aus dem Spam-Folder entfernt."
     shared:
       reply_form:
-        title: "Antworten an %{email}"
-        cc: "CC"
-        addcc: "CC hinzufügen"
-        removecc: "CC entfernen"
-        bcc: "Bcc"
-        addbcc: "Bcc hinzufügen"
-        removebcc: "Bcc entfernen"
+        title: Antworten an %{email}
+        cc: CC
+        addcc: CC hinzufügen
+        removecc: CC entfernen
+        bcc: Bcc
+        addbcc: Bcc hinzufügen
+        removebcc: Bcc entfernen
       tweet_form:
-        title: "Antworten an %{user}"
+        title: Antworten an %{user}
     dashboard:
       index:
-        todo_title: "Aufgaben"
+        todo_title: Aufgaben
       summary:
-        title: "Ticket-Zusammenfassung"
-        overdue: "Überfällig"
-        open: "Offen"
-        due_today: "Heute fällig"
-        unassigned: "Nicht zugewiesen"
-        pending: "Ausstehend"
+        title: Ticket-Zusammenfassung
+        overdue: Überfällig
+        open: Offen
+        due_today: Heute fällig
+        unassigned: Nicht zugewiesen
+        pending: Ausstehend
     rebranding: 
       name: 
-        info: "Dieser Name erscheint als Name des HelpDesks im Header-Bereich des Portals und wird in E-Mail-Benachrichtigungen angezeigt."
-    ticket_created_on_n_by: "von %{requester} am %{date_time}"
+        info: Dieser Name erscheint als Name des HelpDesks im Header-Bereich des Portals und wird in E-Mail-Benachrichtigungen angezeigt.
+    ticket_created_on_n_by: von %{requester} am %{date_time}
     tickets:
-      no_email_found: "Der Benutzer mit der E-Mail %{email} ist im System nicht verfügbar."
       customview:
         new:
-          give_a_name: "Geben Sie einen Name für diese Ansicht ein"
-          visible_to: "Diese Ansicht ist sichtbar für"
+          give_a_name: Geben Sie einen Name für diese Ansicht ein
+          visible_to: Diese Ansicht ist sichtbar für
       execute_scenario_notice: 
-        view_details: "Details anzeigen"
-        execute_the_scenario: "Szenario <b>%{rule_name}</b> ausführen"
-        actions_performed: "Aktionen ausgeführt"
+        view_details: Details anzeigen
+        execute_the_scenario: Szenario <b>%{rule_name}</b> ausführen
+        actions_performed: Aktionen ausgeführt
       close_notice:
-        ticket_has_been_cloased: "Dieses Ticket wurde geschlossen."
-        view_ticket: "Ticket ansehen"
-      save_and_close_notice:
-        ticket_saved_and_closed: "Das Ticket wurde erstellt und geschlossen."
-        view_ticket: "Ticket ansehen"
+        ticket_has_been_cloased: Dieses Ticket wurde geschlossen.
+        view_ticket: Ticket ansehen
       show:
-        meta: "Meta"
-        linked_ticket: "Dieses Ticket ist mit dem Forum verknüpft"
-        conversation: "Unterhaltung "
-        timesheet: "Zeittabelle"
-      view_ticket:
-        meta: "Meta"
-        linked_ticket: "Dieses Ticket ist mit dem Forum verknüpft"
-        conversation: "Unterhaltung "
-        timesheet: "Zeittabelle"
+        meta: Meta
+        linked_ticket: Dieses Ticket ist mit dem Forum verknüpft
       components:
         scenarios:
-          execute_this_scenario: "Szenario ausführen"
+          execute_this_scenario: Szenario ausführen
         due_date:
-          when_is_it_due: "Wann ist es fällig?"
-          today: "Heute"
-          tomorrow: "Morgen"
-          this_week: "Diese Woche"
-          next_week: "Nächste Woche"
-          specific_date: "Bestimmte Datum/Zeit..."
-          set_date_time: "Datum und Zeit setzen"
-          due: "Fällig"
-          earlier_date_and_time: "Bitte wählen Sie ein Datum und eine Zeit aus, die nach dem Erstelldatum und -zeit des Tickets liegt."
+          when_is_it_due: Wann ist es fällig?
+          today: Heute
+          tomorrow: Morgen
+          this_week: Diese Woche
+          next_week: Nächste Woche
+          specific_date: Bestimmte Datum/Zeit...
+          set_date_time: Datum und Zeit setzen
+          due: Fällig
+          earlier_date_and_time: Bitte wählen Sie ein Datum und eine Zeit aus, die nach dem Erstelldatum und -zeit des Tickets liegt.
       views: 
-        on_hold: "Tickets in der Warteschleife"
-        new: "Neue Tickets"
-        my_resolved: "Meine gelösten Tickets"
-        new_my_open: "Neue & Meine offenen Tickets"
-        this_view: "diese Ansicht"
-        all_tickets: "Alle Tickets"
-        open: "Offene Tickets"
-        closed: "Geschlossene Tickets"
-        deleted: "Papierkorb"
-        overdue: "Überfällige Tickets"
-        due_today: "Heute fällige Tickets"
-        resolved: "Gelöste Tickets"
-        my_overdue: "Meine überfälligen Tickets"
-        tags: "Tickets nach Tags"
-        my_due_today: "Meine heute fälligen Tickets"
-        my_all: "Alle meine Tickets"
-        my_on_hold: "Meine Tickets in der Warteschleife"
-        select: "Ansicht auswählen..."
-        spam: "Spam"
-        monitored_by: "Tickets, denen ich folge"
-        my_closed: "Meine geschlossenen Tickets"
-        my_open: "Meine offenen Tickets"
-        tickets_by: "Tickets von"
-        tickets_twitter: "Tickets aus Twitter"
-        open_or_pending: "Offen oder Ausstehend"
-        resolved_or_closed: "Gelöst oder Geschlossen"
-        no_tickets: "Sie haben in der aktuellen Ansicht keine Tickets"
+        on_hold: Tickets in der Warteschleife
+        new: Neue Tickets
+        my_resolved: Meine gelösten Tickets
+        new_my_open: Neue & Meine offenen Tickets
+        this_view: diese Ansicht
+        all_tickets: Alle Tickets
+        open: Offene Tickets
+        closed: Geschlossene Tickets
+        deleted: Müll
+        overdue: Überfällige Tickets
+        due_today: Heute fällige Tickets
+        resolved: Gelöste Tickets
+        my_overdue: Meine überfälligen Tickets
+        tags: Tickets nach Tags
+        my_due_today: Meine heute fälligen Tickets
+        my_all: Alle meine Tickets
+        my_on_hold: Meine Tickets in der Warteschleife
+        select: Ansicht auswählen...
+        spam: Spam
+        monitored_by: Tickets, denen ich folge
+        my_closed: Meine geschlossenen Tickets
+        my_open: Meine offenen Tickets
+        tickets_by: Tickets von
+        tickets_twitter: Tickets aus Twitter
+        open_or_pending: Offen oder Ausstehend
+        resolved_or_closed: Gelöst oder Geschlossen
+        no_tickets: Sie haben in der aktuellen Ansicht keine Tickets
       note:
         posted_on: "%{user_name} am %{note_date}"
-        edit_note: "Notiz bearbeiten"
-        split_this_as_new_ticket: "In ein neues Ticket abspalten"
-        split_ticket_confirm: "Diese Notiz abspalten und als neues Ticket erstellen?"
-        private_note: "Private Notiz"
-        public_note: "Öffentliche Notiz"
-        inbound_email: "E-Mail eingehend"
-        outbound_email: "E-Mail ausgehend"
-        attachment_size: 
-           exceed: "Ups! Ihr Anhang überschreitet 15 MB Bitte hängen Sie eine kleinere Datei an."
+        edit_note: Notiz bearbeiten
+        split_this_as_new_ticket: In ein neues Ticket abspalten
+        private_note: Private Notiz
+        public_note: Öffentliche Notiz
+        incoming_email: E-Mail eingehend
+        outbound_email: E-Mail ausgehend
     merge:
       merge:
-        merge_into: "Zusammenführen mit?"
-        other_tickets: "Die anderen Tickets wurden von %{requester} geöffnet"
-        enter_ticket_id: "Bitte geben Sie eine Ticket-ID ein"
-        merge: "Zusammenführen"
+        merge_into: Zusammenführen mit?
+        other_tickets: Die anderen Tickets wurden von %{requester} geöffnet
+        enter_ticket_id: Bitte geben Sie eine Ticket-ID ein
+        merge: Zusammenführen
       confirm_merge:
-        source_merge_description: "Dieses Ticket wird geschlossen und in das Ticket %{ticket_id} überführt."
-        source_ticket_close_info: "Dieses Ticket wird mit folgender Notiz versehen und geschlossen"
-        target_ticket_updated_info: "Dieses Ticket wird mit folgender Notiz versehen und alle Konversationen verschoben."
-        will_be_merged_into: "Wird in folgendes Ticket überführt..."
-        target_merge_description1: "Ticket %{ticket_id} %{ticket_subject} wurde mit dieser Anfrage zusammengeführt"
-        target_merge_description2: "Beschreibung von Ticket %{ticket_id}"
-        confirm_and_merge: "Bestätigen und zusammenführen    "
-  import_ticket_group: "Tickets & Gruppen"
-  or: "oder"
+        source_merge_description: Dieses Ticket wird geschlossen und in das Ticket %{ticket_id} überführt.
+        source_ticket_close_info: Dieses Ticket wird mit folgender Notiz versehen und geschlossen
+        target_ticket_updated_info: Dieses Ticket wird mit folgender Notiz versehen und alle Konversationen verschoben.
+        will_be_merged_into: Wird in folgendes Ticket überführt...
+        target_merge_description1: Ticket %{ticket_id} %{ticket_subject} wurde mit dieser Anfrage zusammengeführt
+        target_merge_description2: Beschreibung von Ticket %{ticket_id}
+        confirm_and_merge: Bestätigen und zusammenführen    
+  import_ticket_group: Tickets & Gruppen
+  or: oder
   tickets_filter:
     sort_fields:
-      due_by: "Fällig"
-      date_created: "Erstellt am"
-      last_modified: "Zuletzt bearbeitet"
-      priority: "Priorität"
-      status: "Status"
-      asc: "Aufsteigend"
-      desc: "Absteigend"
-  click_to_change_sort_order: "Hier klicken, um die Sortierreihenfolge zu ändern"
+      due_by: Fällig
+      date_created: Erstellt am
+      last_modified: Zuletzt bearbeitet
+      priority: Priorität
+      status: Status
+      asc: Aufsteigend
+      desc: Absteigend
+  click_to_change_sort_order: Hier klicken, um die Sortierreihenfolge zu ändern
   user_sessions:
       new:
-        email: "E-Mail"
-        password: "Kennwort"
-        remember: "Meine Anmeldedaten auf diesem Computer speichern"
-        login: "Anmelden"
-        forgot: "Kennwort vergessen?"
-        sign_in_using: "Anmelden mit"
-        sign_in_using_google: "Mit einem Google-Konto anmelden"
-        help: "Hilfe"
-  delete_reminder: "Diese Aufgabe wirklich löschen?"
+        email: E-Mail
+        password: Kennwort
+        remember: Meine Anmeldedaten auf diesem Computer speichern
+        login: Anmelden
+        forgot: Kennwort vergessen?
+        sign_in_using: Anmelden mit
+        sign_in_using_google: Mit einem Google-Konto anmelden
+        help: Hilfe
+  delete_reminder: Diese Aufgabe wirklich löschen?
   subscription_plan:
     billing_cycle:
-      annual: "Jährlich"
-      quarterly: "Quartalsweise"
-      monthly: "Monatlich"
-      sixmonth: "Halbjährlich"
+      annual: Jährlich
+      quarterly: Quartalsweise
+      monthly: Monatlich
+      sixmonth: Halbjährlich
   no_message:
-    canned_responses: "Keine vorgefertigten Antworten verfügbar."
-    products: "Sie haben noch kein Produkt erstellt."
+    canned_responses: Keine vorgefertigten Antworten verfügbar.
+    products: Sie haben noch kein Produkt erstellt.
   errors: 
-    conditions_empty: "Die Konditionen dürfen nicht leer sein"
-    actions_empty: "Aktionen können nicht leer sein"
+    conditions_empty: Die Konditionen dürfen nicht leer sein
+    actions_empty: Aktionen können nicht leer sein
   export_data:
-    thirt_days: "Letzte 30 Tage"
-    seven_days: "Letzte 7 Tage"
-    twenty_four: "Ab gestern"
-    custom_filter: "Datum festlegen"
+    thirt_days: Letzte 30 Tage
+    seven_days: Letzte 7 Tage
+    twenty_four: Ab gestern
+    custom_filter: Datum festlegen
   date:
-    ago: "Her"
-    from: "Von jetzt an"
-    now: "Gerade"
-    minute: "Minute"
-    minutes: "Minuten"
-    hour: "Stunde"
-    hours: "Stunden"
-    day: "Tag"
-    days: "Tage"
-    week: "Woche"
-    weeks: "Wochen"
-    month: "Monat"
-    months: "Monate"
-    year: "Jahr"
-    years: "Jahre"
-  go_back_admin: "Zurück zum Administrationsbereich"
+    ago: Her
+    from: Von jetzt an
+    now: Gerade
+    minute: Minute
+    minutes: Minuten
+    hour: Stunde
+    hours: Stunden
+    day: Tage
+    days: Tage
+    week: Woche
+    weeks: Wochen
+    month: Monat
+    months: Monate
+    year: Jahr
+    years: Jahre
+  go_back_admin: Zurück zum Administrationsbereich
   social:
     facebook_pages:
       index:
-        title: "Facebook-Seiten"
-      enable_facebook_page:
-        associate: "Wählen Sie die Facebook-Seiten aus, die Sie Helpdesk zuordnen möchten."
-      engage_info:
-        title: "Fügen Sie Ihre Facebook-Seiten hinzu"
-        engage_customers: "Binden Sie Ihre Kunden direkt in Facebook ein"
-        associate_account: "Ordnen Sie <b> %{account_name} </b> eine Facebook-Seite zu und antworten Sie Ihren Kunden direkt aus Freshdesk, wenn sie einen Kommentar oder eine Nachricht an Ihre Pinnwand senden."
-        add_facebook: "Facebook-Seite hinzufügen"
-      form:
-        visitor_posts: "Import von <strong>&quot;Besucherbeiträgen&quot;</strong> als Ticket"
-        visitor_posts_info: "Freshdesk wandelt alle Besucherbeiträge auf dieser Facebook-Seite in Tickets um."
-        company_posts: "Import von <strong>&quot;Unternehmensbeiträgen&quot;</strong> als Ticket"
-        company_posts_info: "Freshdesk wandelt alle Unternehmensbeiträge auf dieser Facebook-Seite in Tickets um."
-        product: "Produkt          "
+        title: Facebook-Seiten
     twitter_handles:
       index:
-        title: "Twitter-Konten"
-  all_due: "Alle "
-  due_today: "Heute"
-  due_tomo: "Morgen"
-  due_next_eight: "Nächste 8 Stunden"
-  block_users: "Möchten Sie die Kontakte ebenfalls blockieren?"
-  user_block: "Ja"
-  users_blocked_message: "Die folgenden Kontakte (%{users}) wurden blockiert"
-  user_activation_message_sent: "Der Benutzer wurde erstellt und eine Aktivierungsanleitung wurde an %{user_email} gesendet!"
+        title: Twitter-Konten
+  all_due: Alle 
+  due_today: Heute
+  due_tomo: Morgen
+  due_next_eight: Nächste 8 Stunden
+  block_users: Möchten Sie die Kontakte ebenfalls blockieren?
+  user_block: Ja
+  users_blocked_message: Die folgenden Kontakte (%{users}) wurden blockiert
+  user_activation_message_sent: Der Benutzer wurde erstellt und eine Aktivierungsanleitung wurde an %{user_email} gesendet!
   wf:
     filter:
       index:
-        title: "Benutzerdefinierte Ansichten verwalten"
+        title: Benutzerdefinierte Ansichten verwalten
         back: "&larr; Zurück zu Tickets"
-        no_custom_view: "Es sind keine benutzerdefinierten Ansichten verfügbar!"
+        no_custom_view: Es sind keine benutzerdefinierten Ansichten verfügbar!
       view:
-        delete: "Sind Sie sicher, dass Sie diese Ansicht löschen möchten?"
+        delete: Sind Sie sicher, dass Sie diese Ansicht löschen möchten?
     messages:
-      no_tickets_in_view: "Sie haben keine Tickets in %{view_name}."
-      no_tickets_for_user: "Es sind keine offenen Tickets für %{user_name} zur Ansicht vorhanden."
-  conversation: "Unterhaltung"
-  save_this_view: "Diese Ansicht speichern..."
+      no_tickets_in_view: Sie haben keine Tickets in %{view_name}.
+  conversation: Unterhaltung
+  save_this_view: Diese Ansicht speichern...
   loading:
-    activities: "Weitere Aktivitäten werden geladen"
-    items: "Weitere Elemente werden geladen"
+    activities: Weitere Aktivitäten werden geladen
+    items: Weitere Elemente werden geladen
   application:
-    new: "Neue Anwendung erstellen"
-    desc: "Die Integration mit anderen Apps macht das Arbeiten mit Freshdesk noch komfortabler."
-    title: "Add-Ons & Integration"
-    disabled: "Deaktiviert"
-    enabled: "Aktiviert"
-    configure: "Konfigurieren"
-    enable: "Aktivieren"
-    click_to_disable: "Klicken Sie hier zum Deaktivieren des Add-Ons"
-    click_to_enable: "Klicken Sie hier zum Aktivieren des Add-Ons    "
-    confirm_disable: "Sind Sie sicher, dass Sie dieses Add-On deaktivieren möchten?"
-    configure_addon: "Klicken Sie hier zum Konfigurieren dieses Add-Ons"
+    new: Neue Anwendung erstellen
+    desc: Die Integration mit anderen Apps macht das Arbeiten mit Freshdesk noch komfortabler.
+    title: Add-Ons & Integration
+    disabled: Deaktiviert
+    enabled: Aktiviert
+    configure: Konfigurieren
+    enable: Aktivieren
+    click_to_disable: Klicken Sie hier zum Deaktivieren des Add-Ons
+    click_to_enable: Klicken Sie hier zum Aktivieren des Add-Ons    
+    confirm_disable: Sind Sie sicher, dass Sie dieses Add-On deaktivieren möchten?
+    configure_addon: Klicken Sie hier zum Konfigurieren dieses Add-Ons
   home:
       mobile_index:
-        email: "E-Mail"
-        password: "Kennwort"
-        remember: "Meine Anmeldedaten auf diesem Computer speichern"
-        login: "Anmelden"
-        forgot: "Kennwort vergessen?"
-        sign_in_using: "Anmelden mit"
-        sign_in_using_google: "Mit einem Google-Konto anmelden"
-        help: "Hilfe"
-  settings: "Einstellungen        "
-  updated_on: "%{user_name} aktualisiert am%{note_date}"
+        email: E-Mail
+        password: Kennwort
+        remember: Meine Anmeldedaten auf diesem Computer speichern
+        login: Anmelden
+        forgot: Kennwort vergessen?
+        sign_in_using: Anmelden mit
+        sign_in_using_google: Mit einem Google-Konto anmelden
+        help: Hilfe
+  settings: Einstellungen        
+  capsule_crm: Capsule CRM
   integrations:
-    capsule_crm:
-      label: "Capsule CRM"
     capsule:
-      label: "Capsule CRM"
-      desc: "Sie können Kontaktinformationen von Capsule CRM in Freshdesk ansehen. Diese Informationen sind über die Ticketdetailseite und die Kontaktdetailseite verfügbar."
+      label: Capsule CRM
+      desc: Sie können Kontaktinformationen von Capsule CRM in Freshdesk ansehen. Diese Informationen sind über die Ticketdetailseite und die Kontaktdetailseite verfügbar.
       form:
-        bcc_drop_box_mail: "Dropbox-E-Mail-Adresse"
-        bcc_drop_box_mail_info: "Sie finden Ihre eindeutige Capsule Dropbox-E-Mail-Adresse unter <b>“Einstellungen-> Mail-Dropbox”</b>.<br /> (Sie finden den Punkt in der oberen rechten Fensterecke).<br /> Kopieren Sie die E-Mail-Adresse und fügen Sie sie in das oben stehenden Textfeld ein. <br /> Freshdesk fügt diese E-Mail-Adresse automatisch ins Bcc-Feld ein, wenn Sie auf ein Ticket antworten"
-        domain: "Domäne"
-        domain_info: "Geben Sie einfach die Domäne allein an, ohne HTTPS. Z. B.: example.capsulecrm.com"
-        api_key: "API-Schlüssel"
-        api_key_info: "Um Ihren eindeutigen API-Schlüssel zu erhalten, melden Sie sich bei Ihrem Capsule CRM-Konto an und navigieren Sie zu <br /> <b>“Benutzer -> Meine Einstellungen”</b>. (Sie finden den Punkt in der oberen rechten Fensterecke).<br /> Klicken Sie auf <b>“API-Authentifizierungstoken”</b>, um den eindeutigen API-Schlüssel zu erhalten.<br /> Kopieren Sie den Schlüssel und fügen Sie ihn in das oben stehenden Textfeld ein."
-        widget_title: "Widget-Titel"
-    freshbooks:
-      label: "Freshbooks"
-      desc: "Sie können für Tickets aufgewendete Zeit in Ihren Freshbooks-Projekten und -Aufgaben erfassen."
-      form:
-        freshbooks_note: "Notizentext"
-        freshbooks_note_info: "Dieser Text wird an das Ende der Notiz angehängt, zusammen mit dem Zeitaufwandsprotokoll."
-        api_url: "API-URL"
-        api_url_info: "Geben Sie eine vollständige API-URL mit HTTPS ein. Z. B.: https://example.freshbooks.com/api/2.1/xml-in"
-        api_key: "Authentifizierungstoken"
-        api_key_info: "&quot;&quot;"
-        widget_title: "Widget-Titel"
-    harvest:
-      label: "Harvest"
-      desc: "Sie können für Tickets aufgewendete Zeit in Ihren Harvest-Projekten und -Aufgaben erfassen."
-      form:
-        domain: "Domäne"
-        domain_info: "Geben Sie die Domäne allein ein, ohne HTTPS. Z. B.: example.harvestapp.com"
-        harvest_note: "Notizentext"
-        harvest_note_info: "Dieser Text wird an das Ende der Notiz angehängt, zusammen mit dem Zeitaufwandsprotokoll."
-        widget_title: "Widget-Titel"
-    google_contacts:
-      label: "Google Kontakte"
-      desc: "Regelmäßiges Synchronisieren der Kontakte zwischen Google und Freshdesk."
-      overwrite_local: "Exportieren der Freshdesk-Kontakte und Updates zu den Google-Kontakten"
-      overwrite_remote: "Importieren der Google-Kontakte und Updates zu den Freshdesk-Kontakten"
-      merge_local: "Zusammenführen der Freshdesk- und Google-Kontakte (Freshdesk-Vorrang)"
-      merge_remote: "Zusammenführen der Google- und Freshdesk-Kontakte (Google-Vorrang)"
-      import_success: "Google-Kontakte erfolgreich importiert."
-      fetch_problem: "Problem beim Abrufen der Google-Kontakte."
-      import: "Importieren"
-      account_not_configured: "Das Google-Konto ist nicht richtig konfiguriert. Bitte versuchen Sie es erneut."
-      OVERWRITE_LOCAL_small: "Exportieren"
-      OVERWRITE_REMOTE_small: "Importieren"
-      MERGE_LOCAL_small: "Zusammenführen (Freshdesk-Vorrang)"
-      MERGE_REMOTE_small: "Zusammenführen (Google-Vorrang)"
-      OVERWRITE_LOCAL: "Exportieren der Freshdesk-Kontakte und Updates zu den Google-Kontakten"
-      OVERWRITE_REMOTE: "Importieren der Google-Kontakte und Updates zu den Freshdesk-Kontakten"
-      MERGE_LOCAL: "Zusammenführen der Freshdesk- und Google-Kontakte (Freshdesk-Vorrang)"
-      MERGE_REMOTE: "Zusammenführen der Google- und Freshdesk-Kontakte (Google-Vorrang)"
-      MERGE_LATEST: "Zusammenführen der Freshdesk- und Google-Kontakte (Letzte Aktualisierungen haben Vorrang)"
-      import_later_success: "Import der Google-Kontakte wurde erfolgreich gestartet  Nach Abschluss des Imports erhalten Sie eine E-Mail-Benachrichtigung an %{email}."
-      import_success_no_stats: "Google-Kontakte erfolgreich importiert."
-      import_success: "Google-Kontakte erfolgreich importiert.Status: %{added} hinzugefügt, %{updated} aktualisiert und %{deleted} gelöscht."
-      fetch_problem: "Problem beim Abrufen der Google-Kontakte."
-      import_problem: "Problem beim Import der Google-Kontakte."
-      import: "Importieren"
-      install: "Aktivieren"
-      edit_app: "Aktualisieren"
-      add_more: "Autorisieren"
-      edit: "Bearbeiten"
-      already_exist: "Es wurde bereits ein E-Mail-Konto konfiguriert. Es können keine weiteren Konten hinzugefügt werden."
-      delete: "Löschen"
-      internal_error: "Es ist ein interner Fehler aufgetreten. Bitte wenden Sie sich an den Support."
-      account_not_configured: "Das Google-Konto ist nicht richtig konfiguriert. Bitte versuchen Sie es erneut."
-      overwrite_existing_user: "Bestehende Kontaktdetails in Freshdesk überschreiben"
-      enable_integration: "Nach dem Import automatisch Synchronisierung starten (einmal pro Stunde)"
-      name: "Kontoname"
-      email: "E-Mail"
-      group: "Gruppe zum Import"
-      tag: "Tag zum Hinzufügen/Export"
-      sync_type: "Wie funktioniert die Synchronisierung?"
-      last_sync_time: "Letzte Synchronisierungszeit"
-      last_sync_status: "Letzter Synchronisierungsstatus"
-      not_yet_synced: "Die Synchronisierung wurde noch nicht gestartet."
-      no_status: "N/A"
-      sync_status:
-        added: "hinzugefügt"
-        modified: "geändert"
-        deleted: "gelöscht"
-        google: "Status der exportierten Kontakte in Google"
-        freshdesk: "Status der importierten Kontakte in Freshdesk"
-      edit_form:
-        install_title: "Synchronisierungseinstellungen der Google-Kontakte"
-        import_title: "Importeinstellungen der Google-Kontakte"
-        all_contacts: "Alle Gruppen/Kontakte"
-        mail_box_detail: "Postfachdetails"
-        choose_group_title: "Auswahl der Gruppe zur Synchronisierung und des Tags zum Hinzufügen"
-        edit_app_title: "Synchronisierungseinstellungen der Google-Kontakte bearbeiten"
-      form:
-        sync_type: "Synchronisierungstyp"
-        sync_type_info: "Wie möchten Sie die Kontakte zwischen Google und Freshdesk synchronisieren?"
-        account_settings: "&quot;&quot;"
-        account_settings_info: "Sie können sich hier das konfigurierte Google-Konto, seine Einstellungen und seinen Synchronisierungsstatus ansehen."
-        account_not_configured: "<br/>Die Google-Kontoeinstellungen sind noch nicht konfiguriert.  Klicken Sie auf %{action} und verbinden Sie sich zum Konfigurieren mit Google.<br/><br/>"
-      update_action:
-        success: "Google-Konto wurden erfolgreich aktualisiert."
-        error: "Fehler beim Aktualisieren des Google-Kontos."
-      delete_action:
-        success: "Google-Konto wurde erfolgreich gelöscht."
-        error: "Fehler beim Löschen des Google-Kontos."
+        bcc_drop_box_mail: Dropbox-E-Mail-Adresse
+        bcc_drop_box_mail_info: Sie finden Ihre eindeutige Capsule Dropbox-E-Mail-Adresse unter <b>“Einstellungen-> Mail-Dropbox”</b>.<br /> (Sie finden den Punkt in der oberen rechten Fensterecke).<br /> Kopieren Sie die E-Mail-Adresse und fügen Sie sie in das oben stehenden Textfeld ein. <br /> Freshdesk fügt diese E-Mail-Adresse automatisch ins Bcc-Feld ein, wenn Sie auf ein Ticket antworten
+        domain: Domäne
+        domain_info: "z. B.: example.capsulecrm.com"
+        api_key: API-Schlüssel
+        api_key_info: Um Ihren eindeutigen API-Schlüssel zu erhalten, melden Sie sich bei Ihrem Capsule CRM-Konto an und navigieren Sie zu <br /> <b>“Benutzer -> Meine Einstellungen”</b>. (Sie finden den Punkt in der oberen rechten Fensterecke).<br /> Klicken Sie auf <b>“API-Authentifizierungstoken”</b>, um den eindeutigen API-Schlüssel zu erhalten.<br /> Kopieren Sie den Schlüssel und fügen Sie ihn in das oben stehenden Textfeld ein.
+        widget_title: Widget-Titel
   widgets:
     contact_widget:
-      description: "Einen Kontakt oder eine Option anzeigen, um den Kontakt in Capsule hinzuzufügen."
-  capsule_crm_helptext: "<h4>Verknüpfung von Capsule zu Freshdesk</h4><p>Sie können in Capsule CRM eine Verknüpfung erstellen, um die Tickets des Kontakts in Freshdesk anzusehen.</p> <p>Gehen Sie dazu zu Ihren <br /><b>Einstellungen -> Benutzerdefinierte Felder -> Für Personen & Unternehmen</b></p><p> Klicken Sie anschließend auf \&quot;Neu hinzufügen...\&quot; und wählen Sie <b>\&quot;Generierter Link\&quot;</b></p> <p>Kopieren Sie die URl genau so, wie unten gezeigt und fügen Sie sie in Capsule CRM als Linkdefinition ein: <span class=\&quot;info-code\&quot;>http://%{full_domain}/helpdesk/tickets?email={email}</span></p>"
-  freshbooks_helptext: "<h4>Hilfe zur Freshbooks-Integration</h4><p><br/>Um Freshbooks mit Freshdesk zu integrieren, benötigen Sie zunächst die Freshbooks-API und den Authentifizierungstoken. <br/><br/>Melden Sie sich bei Ihrem Freshbooks-Konto an, klicken Sie auf die Registerkarte <b>Personen</b> und wechseln Sie zum Bereich <b>Mitarbeiter und Lieferanten</b>. Klicken Sie im Administrationsbereich auf <b>Bearbeiten</b>.  Hier finden Sei Ihre API-URL und den Authentifizierungstoken.<br/><br/>Klicken Sie in Freshdesk auf ein Ticket und wechseln Sie zur Registerkarte Zeittabelle.  Nun können Sie Ihren Zeitverfolgungseintrag in Freshdesk hinzufügen."
-  harvest_helptext: "<h4>Hilfe zur Harvest-Integration</h4><p><br/>Um Harvest mit Freshdesk zu integrieren, geben Sie Ihren <b>Domainnamen</b> ein und klicken Sie auf Aktivieren.<br/><br/>Klicken sie auf ein Ticket und wechseln Sie zur Registerkarte <b>Zeittabelle</b>.  Anschließend können Sie zur Anmeldung Ihren <b>Benutzernamen</b> und Ihr <b>Kennwort</b> für Harvest eingeben. Nun können Sie Ihren Zeitverfolgungseintrag in Harvest hinzufügen.<br/><br/>Hinweis: Wenn Sie auf <b>Meine Angaben speichern</b> klicken, müssen Sie Ihre Harvest-Anmeldedaten nicht jedes Mal eingeben."
-
-  reorder: "Sortieren"
-  reports:
-      tab_heading: "Berichte"
-      select_customer: "Kunden wählen"
-      select_options: "Berichte von"
-      tickets_by: "Tickets von"
-      helpdesk_title: "Helpdesk-Aktivitätsbericht"
-      customer_title: "Kundenaktivitätsbericht"
-      helpdesk_title_nav: "Helpdesk-Aktivitätsbericht"
-      customer_title_nav: "Kundenaktivitätsbericht"
-      select_time_period: "Zeitraum auswählen"
-      generate_button: "Erstellen"
-      pie_chart_title_prefix: "Tickets von "
-      timeline_chart_title: "Erhaltene vs. gelöste Tickets"
-      customer_activity_title: "Aktivitätsbericht"
-      helpdesk_activity_title: "Helpdesk-Aktivitätsbericht"
-      date_ranges:
-        last_7_days: "Letzte 7 Tage"
-        last_30_days: "Letzte 30 Tage"
-        last_90_days: "Letzte 90 Tage"
-        custom: "Datumsbereich"
-      summary:
-        title: "Ticketübersicht"
-        total_tickets: "Tickets gesamt"
-        open_tickets: "Offene Tickets"
-        pending_tickets : "Offene Tickets"
-        resolved_tickets: "Gelöste Tickets"
-        sla_compliance: "SLA-Einhaltung"
-        fcr: "Erstanruflösung"
-      timesheet_reports:
-        index:
-          title: "Zeittabellenbericht"
-          select_customer: "Kunden wählen"
-          select_agent: "Techniker wählen"
-          select_billable: "Abrechenbar/Nicht abrechenbar wählen"
-  delete_the_ticket: "Ticket löschen"
-  mark_as_spam: "Als Spam markieren"
-  bulk_update: "Bulk-Update"
-  update_multiple_tickets: "Mehrere Tickets aktualisieren"
-  no_change: "Keine Änderung"
-  ticket_update_multiple_button: "Aktualisieren"
-  ticket_cancel_multiple_button: "Abbrechen"
-  agent_working_on_this_ticket: "Mit diesem Ticket beschäftigter Techniker"
-  email_commands_update_success: "E-Mail-Befehlseinstellungen wurden erfolgreich aktualisiert."
-  email_commands_update_failed:  "Fehler beim Aktualisieren der E-Mail-Befehlseinstellungen."
-  email_command_settings_heading: "E-Mail-Befehlseinstellungen"
-  email_command_settings_info: "Trennzeichen für die Identifizierung und Extraktion von E-Mail-Befehlen aus der Mail konfigurieren"
-  email_command_delimeter_label: "E-Mail-Befehlstrennzeichen"
-  email_command_preview_to_email: "An"
-  email_command_preview_to_email_value: "customer@acme.com"
-  email_command_preview_subject: "Betreff"
-  email_command_preview_subject_value: "Supportticket"
-  unable_to_charge: "Die Karte für den hinzugefügten Techniker kann nicht belastet werden!"
-  default_category: "Standardkategorie"
-  default_category_description: "Alle an %{full_domain} gesendeten E-Mails werden hier als Entwurf gespeichert"
-  default_folder: "Entwürfe"
-  default_folder_description: "Alle an %{full_domain} gesendeten E-Mails werden hier als Entwurf gespeichert"
-  category_edit_not_allowed: "Diese Kategorie kann nicht geändert werden"
-  folder_edit_not_allowed: "Dieser Ordner kann nicht geändert werden"
-  never: "Nie"
-  maximum_agents_admin_msg: "Sie haben die maximale Anzahl von Vollzeittechnikern für Ihr Abonnement erreicht. Sie müssen einen vorhandenen Vollzeittechniker löschen oder <a href='/account/plans'>für Ihr Konto ein Upgrade durchführen</a>, um einen neuen Techniker zu erstellen. Sollten Sie nur gelegentlich einen Techniker benötigen, können Sie unten einen hinzufügen"
-  maximum_agents_msg: "Sie haben die maximale Anzahl von Technikern für Ihr Abonnement erreicht. Sie müssen einen vorhandenen Techniker löschen oder sich an Ihren Kontoadministrator wenden, um für Ihr Konto ein Upgrade durchzuführen. Sollten Sie nur gelegentlich einen Techniker benötigen, können Sie unten einen hinzufügen"
-  no_date_to_display: "Keine Daten zur Anzeige vorhanden"
-  email_command_delimeter_length_error_msg:  "Bitte geben Sie mindestens drei Zeichen als Trennzeichen ein."
-  email_command_del_info_data: "Tipp: Wählen Sie eine eindeutige Kombination aus mindestens drei Zeichen als Trennzeichen (Sonderzeichen sind empfehlenswert), die keinen Konflikt zu regulären E-Mail-Antworten darstellt."
-
+      description: Einen Kontakt oder eine Option anzeigen, um den Kontakt in Capsule hinzuzufügen.
+  capsule_crm_helptext: "<h4>Verknüpfung von Capsule zu Freshdesk</h4><p>Sie können in Capsule CRM eine Verknüpfung erstellen, um die Tickets des Kontakts in Freshdesk anzusehen.</p> <p>Gehen Sie dazu zu Ihren <br /><b>Einstellungen -> Benutzerdefinierte Felder -> Für Personen & Unternehmen</b></p><p> Klicken Sie anschließend auf \"Neu hinzufügen...\" und wählen Sie <b>\"Generierter Link\"</b></p> <p>Kopieren Sie die URl genau so, wie unten gezeigt und fügen Sie sie in Capsule CRM als Linkdefinition ein: <span class=\"info-code\">http://%{full_domain}/helpdesk/tickets?email={email}</span></p>"
