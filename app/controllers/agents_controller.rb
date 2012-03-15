@@ -84,6 +84,28 @@ class AgentsController < Admin::AdminController
     end    
   end
   
+  def create_multiple_items
+    @agent_emails = params[:agents_invite_email].split(/,/)
+
+    responseObj = {}
+    if current_account.can_add_agents?(@agent_emails.length)
+      @agent_emails.each do |agent_email|        
+        @user  = current_account.users.new
+        if @user.signup!(:user => { :email => agent_email })
+          @user.create_agent
+        end
+      end      
+      responseObj[:reached_limit] = false      
+    else      
+      responseObj[:reached_limit] = true      
+    end   
+
+    respond_to do |format|
+      format.json { render :json => responseObj.to_json }
+    end
+      
+  end
+  
   def update
       @agent.occasional = params[:agent][:occasional]
       #check_agent_limit

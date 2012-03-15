@@ -22,8 +22,8 @@
   
   map.resources :profiles , :member => { :change_password => :post}
   
-  map.resources :agents, :member => { :delete_avatar => :delete , :restore => :put }
-
+  map.resources :agents, :member => { :delete_avatar => :delete , :restore => :put }, :collection => {:create_multiple_items => :put}
+  
   map.resources :sla_details
   
 #  map.mobile '/mob', :controller => 'home', :action => 'mobile_index'
@@ -76,9 +76,10 @@
     admin.resources :va_rules, :member => { :deactivate => :put, :activate => :put }, :collections => { :reorder => :put }
     admin.resources :supervisor_rules, :member => { :deactivate => :put, :activate => :put }, 
       :collections => { :reorder => :put }
-    admin.resources :email_configs, :member => { :make_primary => :put, :deliver_verification => :get }
+    admin.resources :email_configs, :member => { :make_primary => :put, :deliver_verification => :get, :test_email => :put}
     admin.register_email '/register_email/:activation_code', :controller => 'email_configs', :action => 'register_email'
     admin.resources :email_notifications
+    admin.resources :getting_started, :only => :index
     admin.resources :business_calender, :member => { :update => :put }
     admin.resources :security, :member => { :update => :put }
     admin.resources :data_export, :collection => {:export => :any }
@@ -100,7 +101,7 @@
   
   map.namespace :social do |social|
     social.resources :twitters, :controller => 'twitter_handles',
-                :collection =>  { :feed => :any, :create_twicket => :post, :send_tweet => :any, :signin => :any, :tweet_exists => :get , :user_following => :any },
+                :collection =>  { :feed => :any, :create_twicket => :post, :send_tweet => :any, :signin => :any, :tweet_exists => :get , :user_following => :any, :authdone => :any },
                 :member     =>  { :search => :any, :edit => :any }
 
     social.resources :facebook, :controller => 'facebook_pages', 
@@ -129,7 +130,7 @@
   map.connect '/signup/d/:discount', :controller => 'accounts', :action => 'plans'
   map.thanks '/signup/thanks', :controller => 'accounts', :action => 'thanks'
   map.create '/signup/create/:discount', :controller => 'accounts', :action => 'create', :discount => nil
-  map.resource :account, :collection => { :dashboard => :get, :thanks => :get, :plans => :get, :billing => :any, :paypal => :any, :plan => :any, :plan_paypal => :any, :cancel => :any, :canceled => :get , :signup_google => :any, :calculate_amount => :any }
+  map.resource :account, :collection => {:rebrand => :put, :dashboard => :get, :thanks => :get, :plans => :get, :billing => :any, :paypal => :any, :plan => :any, :plan_paypal => :any, :cancel => :any, :canceled => :get , :signup_google => :any, :calculate_amount => :any }
   map.new_account '/signup/:plan/:discount', :controller => 'accounts', :action => 'new', :plan => nil, :discount => nil
   
   map.forgot_password '/account/forgot', :controller => 'user_sessions', :action => 'forgot'

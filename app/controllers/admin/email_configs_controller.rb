@@ -22,6 +22,14 @@ class Admin::EmailConfigsController < Admin::AdminController
     @groups = current_account.groups
   end
   
+  def test_email
+    emailObj = EmailConfigNotifier.deliver_test_email(current_account.primary_email_config)
+    
+    respond_to do |format|
+      format.json { render :json => {:email_sent => true}.to_json }
+    end
+  end
+  
   def make_primary 
     @email_config = scoper.find(params[:id])
     if @email_config
