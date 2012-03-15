@@ -387,9 +387,8 @@ table.summary-report thead td { text-align: center; font-weight: bold; padding: 
 .request_panel { padding: 0 20px 10px 65px; margin: 0; border-bottom: 1px solid #F3F3F3; }
 .request_panel .button-container { padding: 6px 10px; margin-top: 10px; background-color: #efefef; -moz-border-radius: 5px; -webkit-border-radius: 5px; -o-border-radius: 5px; -ms-border-radius: 5px; -khtml-border-radius: 5px; border-radius: 5px; -moz-box-shadow: rgba(0, 0, 0, 0.2) 0 0 2px inset; -webkit-box-shadow: rgba(0, 0, 0, 0.2) 0 0 2px inset; -o-box-shadow: rgba(0, 0, 0, 0.2) 0 0 2px inset; box-shadow: rgba(0, 0, 0, 0.2) 0 0 2px inset; }
 .request_panel .absolute-button-container { position: absolute; bottom: 5px; width: 88%; }
-.request_panel .ui-form { border: 0; background: none; margin: 0; padding: 0; }
+.request_panel .ui-form { border: 0; background: none; margin: 0; padding: 0; /*li{ padding-left:0; padding-right:0; }*/ }
 .request_panel .ui-form .title { padding-bottom: 12px; }
-.request_panel .ui-form li { padding-left: 0; padding-right: 0; }
 .request_panel .ui-form li.field { border: 0; padding: 0; }
 .request_panel .ui-form label, .request_panel .ui-form div.fields label { font-size: 13px; color: #333333; }
 .request_panel .ui-form div.field { width: 23%; float: left; margin-left: 2%; }
