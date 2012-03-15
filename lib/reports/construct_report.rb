@@ -53,7 +53,7 @@ module Reports::ConstructReport
    @date_condition ||= begin 
     date_con = " helpdesk_tickets.created_at between '#{1.month.ago.to_s(:db)}' and now() "
     unless params[:start_date].blank? and params[:end_date].blank?
-      date_con = " helpdesk_tickets.created_at > '#{DateTime.parse(params[:start_date])}' and helpdesk_tickets.created_at < '#{DateTime.parse(params[:end_date])}' "
+      date_con = " helpdesk_tickets.created_at > '#{Time.parse(params[:start_date]).beginning_of_day.to_s(:db)}' and helpdesk_tickets.created_at < '#{Time.parse(params[:end_date]).end_of_day.to_s(:db)}' "
     end
     date_con
    end

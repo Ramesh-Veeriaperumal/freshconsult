@@ -15,8 +15,16 @@ module ApplicationHelper
   
   def show_flash
     [:notice, :warning, :error].collect {|type| content_tag('div', flash[type], :id => type, :class => "flash_info #{type}") if flash[type] }
-  end
-
+  end           
+  
+  def show_maintenance_message                                                    
+    if(current_user and permission?(:manage_tickets))    
+      (cookies["maintenance"] = { :value => true, :expires => (Time.now.wday%7).days.from_now }) if cookies["maintenance"].nil?      
+        
+      content_tag('center', "<a href='javascript:void(0)' onclick='jQuery(this).parent().fadeOut(400); jQuery.cookie(\"maintenance\", false);' class='close'></a>We will be performing a scheduled maintenance on <br /><strong>Saturday March 17 between 10:00 PM EST to 11:00 PM EST</strong><br /><br /> Freshdesk might be intermittently unavailable or slow during this time. <br />Please bear with us.", :id => type, :class => "alert-message block-message warning") unless (cookies["maintenance"] == "false")
+    end                     
+  end         
+  
   def page_title
     portal_name = h( (current_portal.name.blank?) ? current_portal.product.name : current_portal.name ) + " : "
     portal_name += @page_title || t('helpdesk_title')

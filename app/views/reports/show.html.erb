@@ -27,9 +27,14 @@
 				}
 			});
       
-			jQuery("#start_date").val('<%= 30.days.ago.strftime("%m/%d/%Y") %>');
-			jQuery("#end_date").val('<%= Time.now.strftime("%m/%d/%Y") %>');
+			jQuery("#start_date").val('<%= params[:start_date].blank? ? 30.days.ago.strftime("%m/%d/%Y") : params[:start_date] %>');
+			jQuery("#end_date").val('<%= params[:end_date].blank? ? Time.now.strftime("%m/%d/%Y") : params[:end_date] %>');
 
+
+		jQuery("#start_date, #end_date").bind('keypress keyup keydown', function(ev) {
+			ev.preventDefault();
+			return false;
+		});
 	});
 <%end%>
 
