@@ -1,25 +1,27 @@
 <% @page_title = 'Subscriptions' %>
-<% if @stats %>
-  <h1>Revenue Summary</h1>
-  <table id="stats">
-    <tr>
-      <th>Last Month</th>
-      <td><%= number_to_currency(@stats[:last_month]) %></td>
-    </tr>
-    <tr>
-      <th>Last 30 Days</th>
-      <td><%= number_to_currency(@stats[:last_30]) %></td>
-    </tr>
-    <tr>
-      <th>This Month</th>
-      <td><%= number_to_currency(@stats[:this_month]) %></td>
-    </tr>
-  </table>
-<% end %>
-<br>
-<br>
-
-<table id="customer_counts">
+<%= link_to 'Export Customers', customers_csv_admin_subscriptions_path, :class => "btn btn-primary floatr" %>
+<h2>Revenue Summary</h2>   
+<div class="row">              
+	<% if @stats %>  
+		<div class="span5">	
+  		<table class="table" id="stats">   
+			    <tr>
+			      <th>Last Month</th>  
+						<td><%= number_to_currency(@stats[:last_month]) %></td>                                    
+			    </tr> 
+			    <tr>
+			      <th>Last 30 Days</th>         
+			      <td><%= number_to_currency(@stats[:last_30]) %></td>
+					</tr>
+					<tr>
+						<th>This Month</th>
+			      <td><%= number_to_currency(@stats[:this_month]) %></td>
+			    </tr> 
+		  </table>
+		</div> 
+ 	 <% end %>
+<div class="span7">
+<table id="customer_counts" class="table">
     <tr>
       <th>Number of Customers</th>
       <td><%= @customer_count %></td>
@@ -44,26 +46,14 @@
 	  <th>Agent Count</th>
       <td><%= @customer_agent_count %> </td>
 	</tr>
-  </table>
+  </table>  
+		   
+  </div>
+</div>
+ 
 
-<br>
- <%=link_to 'customers', customers_admin_subscriptions_path%>
-<br>
-
-<br>
- <%=link_to 'customers.csv', customers_csv_admin_subscriptions_path%>
-<br>
-
-<% form_tag "/", :method => 'get' do %>
-  <p>
-  	
-    <%= text_field_tag :search, params[:search] %>
-    <%= submit_tag "Search", :name => nil %>
-  </p>
-<% end %>
-
-<h1><%= @page_title %></h1>
-<table id="subscriptions">
+<h2><%= @page_title %></h2>
+<table id="subscriptions" class="table">
   <tr>
     <th>Account</th>
     <th>Amount</th>

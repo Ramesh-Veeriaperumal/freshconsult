@@ -1,6 +1,7 @@
  ActionController::Routing::Routes.draw do |map|
-      
   map.connect '/images/helpdesk/attachments/:id/:style.:format', :controller => '/helpdesk/attachments', :action => 'show', :conditions => { :method => :get }
+  
+  map.connect "/javascripts/:action.:format", :controller => 'javascripts'
   
   # Routing for Asset management Jammit
   Jammit::Routes.draw(map)
@@ -120,6 +121,7 @@
       admin.resources :subscription_discounts, :as => 'discounts'
       admin.resources :subscription_affiliates, :as => 'affiliates'
       admin.resources :subscription_payments, :as => 'payments'
+      admin.resources :subscription_announcements, :as => 'announcements'
     end
   end
   
