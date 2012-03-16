@@ -1168,7 +1168,7 @@ en:
     event: Event
     agent_notification: Agent Notification
     subject: Subject
-    do_not_delete_ticket_id_from_subject: Ticket conversations will not be managed properly if you delete the ticket id placeholder from the subject
+    do_not_delete_ticket_id_from_subject: To capture Customer replies as Ticket Conversations the Ticket ID placeholder should not be removed from the subject line
   errors_in_plan_change: "Errors encountered with your change:"
   formatting_help: Formatting Help
   step1: Step 1
