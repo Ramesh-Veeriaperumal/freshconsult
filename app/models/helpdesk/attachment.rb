@@ -56,6 +56,15 @@ class Helpdesk::Attachment < ActiveRecord::Base
     end
   end
   
+  def to_xml(options = {})
+     options[:indent] ||= 2
+      xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
+      xml.instruct! unless options[:skip_instruct]
+      super(:builder => xml, :skip_instruct => true,:except => [:account_id,:description,:content_updated_at,:attachable_id,:attachable_type]) do |xml|
+         xml.tag!("attachment_url",AWS::S3::S3Object.url_for(content.path,content.bucket_name,:expires_in => 300.seconds).gsub( "#{AWS::S3::DEFAULT_HOST}/", '' ))
+     end
+   end
+  
   private
   
   def set_random_secret

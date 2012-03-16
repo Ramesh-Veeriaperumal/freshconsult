@@ -76,10 +76,10 @@ class AccountsController < ApplicationController
     build_plan  
     
     begin
-        store_metrics
+      store_metrics
     rescue
     end
-      
+    
     begin
       @account.time_zone = (ActiveSupport::TimeZone[params[:utc_offset].to_f]).name 
     rescue

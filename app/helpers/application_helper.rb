@@ -16,10 +16,29 @@ module ApplicationHelper
   def show_flash
     [:notice, :warning, :error].collect {|type| content_tag('div', flash[type], :id => type, :class => "flash_info #{type}") if flash[type] }
   end
+  
+  def show_admin_flash
+    [:notice, :warning, :error].collect {|type| content_tag('div', "<a class='close' data-dismiss='alert'>×</a>" + flash[type], :id => type, :class => "alert alert-block alert-#{type}") if flash[type] }  
+  end   
+  
+  def show_announcements                                                    
+    if permission?(:manage_tickets)
+      @current_announcements ||= SubscriptionAnnouncement.current_announcements(session[:announcement_hide_time])  
+      render :partial => "/shared/announcement", :object => @current_announcements unless @current_announcements.blank?
+    end     
+  end         
 
   def page_title
     portal_name = h( (current_portal.name.blank?) ? current_portal.product.name : current_portal.name ) + " : "
     portal_name += @page_title || t('helpdesk_title')
+  end 
+  
+  def page_description
+    @page_description
+  end                
+  
+  def page_keywords
+    @page_keywords    
   end
 
   def tab(title, url, cls = false)
@@ -100,6 +119,20 @@ module ApplicationHelper
       tab( s[3] || t("header.tabs.#{s[1].to_s}") , {:controller => s[0], :action => :index}, active && :active ) 
     end
     navigation
+  end          
+  
+  def subscription_tabs
+    tabs = [
+      [customers_admin_subscriptions_path, :customers, "Customers" ],
+      [admin_subscription_affiliates_path, :affiliates, "Affiliates" ],
+      [admin_subscription_discounts_path, :discounts, "Discounts" ],
+      [admin_subscription_payments_path, :payments, "Payments" ],
+      [admin_subscription_announcements_path, :announcements, "Announcements" ]
+    ]
+
+    navigation = tabs.map do |s| 
+      content_tag(:li, link_to(s[2], s[0]), :class => ((@selected_tab == s[1]) ? "active" : ""))
+    end
   end
   
   def html_list(type, elements, options = {}, activeitem = 0)
@@ -329,12 +362,15 @@ module ApplicationHelper
     object_name     = "#{object_name.to_s}"
     label = label_tag object_name+"_"+field_name, field_label
     dom_type = dom_type.to_s
-    
+
     case dom_type
       when "text", "number", "email", "multiemail" then
         field_value = field_value.to_s.split(ghost_value).first unless ghost_value.blank?
         element = label + text_field(object_name, field_name, :class => element_class, :value => field_value, :rel => rel_value, "data-ghost-text" => ghost_value)
         element << hidden_field(object_name , :ghostvalue , :value => ghost_value) unless ghost_value.blank?
+      when "password" then
+        pwd_element_class = " #{ (required) ? 'required' : '' }  text"
+        element = label + password_field(object_name, field_name, :type => "password", :class => pwd_element_class, :value => field_value)
       when "paragraph" then
         element = label + text_area(object_name, field_name, :class => element_class, :value => field_value)
       when "dropdown" then

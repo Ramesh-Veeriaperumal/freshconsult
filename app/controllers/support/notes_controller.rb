@@ -31,7 +31,7 @@ class Support::NotesController < ApplicationController
   def create_attachments 
     return unless @note.respond_to?(:attachments)
     (params[:helpdesk_note][:attachments] || []).each do |a| 
-      @note.attachments.create(:content => a[:file], :description => a[:description], :account_id => @note.account_id)
+      @note.attachments.create(:content => a[:resource], :description => a[:description], :account_id => @note.account_id)
     end
   end
   

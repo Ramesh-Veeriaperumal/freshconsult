@@ -24,17 +24,17 @@
                                         :url => edit_helpdesk_ticket_helpdesk_note_path(note.notable, note), 
                                         :method => :GET },
                                       { :class => "slim-button" }) %> 
-      <% if !note.incoming %>
-        <%= link_to t('ticket.split_ticket'), { :action => :split_the_ticket , :note_id => note.id } , :method => :post, :class => "slim-button tooltip" , :title => t(".split_this_as_new_ticket", :confirm => "Split this note and create it as a new ticket?")  if @item && !@item.fb_post %>
+      <% if note.incoming %>
+        <%= link_to t('ticket.split_ticket'), { :action => :split_the_ticket , :note_id => note.id }, :method => :post, :class => "slim-button tooltip", :title => t(".split_this_as_new_ticket"), :confirm => t(".split_ticket_confirm") if @item && !@item.fb_post %>
       <% end %>
       <%= link_to( "", helpdesk_ticket_helpdesk_note_path(note.notable, note), :method => :delete, :class => "close-button", :confirm => "Delete this note?" ) %>   
       <% end %>
     </div>
-  <div class="user_details">    
+		<div class="user_details">    
 		<%= user_avatar(note.user) if note.user %>
     <%= t(".posted_on", :user_name => link_to_user(note.user, :class => "user_name"), :note_date => formated_date(note.created_at) ) %>
 		<span class="loading-edit" id='<%= "loading_#{notedetails}" %>' style="display:none;"></span> 
-  </div> 
+  	</div> 
 	<div class="details" id='<%= notedetails %>'>
 		<table>
 			<tr>
@@ -50,7 +50,7 @@
 		<span class="seperator"></span>
 		<h4 class="lowercase"><%= pluralize(note.attachments.size, t('attachment'), t('attachments'))%></h4>
 		<ul class="attachment_list">
-		    <%= render :partial => '/helpdesk/shared/attachment', :collection => note.attachments, :locals => {:show_delete => true, :url => [@item] } %>
+		    <%= render :partial => '/helpdesk/shared/attachment.html', :collection => note.attachments, :locals => {:show_delete => true, :url => [@item] } %>
 		</ul>
 	<% end %>
 </div> 

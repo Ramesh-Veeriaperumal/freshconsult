@@ -39,7 +39,6 @@ body { color: #333; background:$background; min-width:$blueprint-liquid-containe
 	@include min-height(450px);
 	@include shadows(rgba(0,0,0, 0.2), 0px, 2px, 3px);
 	position:relative;
-	overflow:auto;
 }
 
 ul.activityfeed, ul.summary{
@@ -509,9 +508,51 @@ body h5{
 	text-align:right;
 	.btn{ font-weight:bold; padding:4px 9px; }
 }
-               
+                         
+.status-pointer, .priority-pointer{
+	font-size:9px;
+	color:#fff;
+	text-transform:uppercase; 
+	text-align:center;
+	padding:9px 3px 0 6px;
+	line-height:0;
+	height:9px;                
+	position:absolute;
+  @include pointer-title;	      
+	@include min-width(48px); 
+	left:-4px;	
+}
+.status-pointer{  
+	top:24px;  
+}			                     
 .priority-pointer{
-   @include pointer-title; 
+	top:4px; 	     
+}          
+
+.request-title{
+	$COL_PRI_HIGH: #cc5600;		$COL_PRI_MEDIUM: #0a9458;		$COL_PRI_LOW: #0c8aae;		$COL_PRI_URGENT: #cc0000;			
+	background-color:#f6f6f6; 
+	padding:7px 70px;
+	border-bottom:1px solid #e9e9e9;
+	color:#000000;
+	font-size:13px;
+	position:relative;
+	font-weight:bold;                 
+	@include min-height(35px);
+	.subject{ line-height:20px; }
+	.ticket-id{	color:#999999; }        	
+	.low{ background-color: $COL_PRI_LOW; }
+	.low:before{ border-left-color: $COL_PRI_LOW; }
+	.medium{ background-color: $COL_PRI_MEDIUM; }
+	.medium:before{ border-left-color: $COL_PRI_MEDIUM; }
+	.high{ background-color: $COL_PRI_HIGH; }
+	.high:before{ border-left-color: $COL_PRI_HIGH; }
+	.urgent{ background-color: $COL_PRI_URGENT; }
+	.urgent:before{ border-left-color: $COL_PRI_URGENT; }
+}
+h4.title{
+	font-size:1.1em;
+	font-weight:bold;
 }
 .request_details{
 	margin:-13px -20px 20px -20px;
@@ -575,6 +616,7 @@ body h5{
 			font-size:1.1em;
 			font-weight:bold;
 		}
+		position:relative; 		
 	}
 	
 	a.user_name{ @include link-colors( #333333, #527EAA ); } 
@@ -5124,5 +5166,5 @@ a.submit_link:hover{
 	.gs_error_highlight{
 		border:1px solid red !important;
 	}
- 
+
 /* Getting Started page style ends */

@@ -132,4 +132,61 @@ module Reports::ActivityReport
     (Time.parse(start_date) - 1.day).end_of_day.to_s(:db)
   end
   
+  def write_io
+    current_index = 0
+    io = StringIO.new('')
+    book = Spreadsheet::Workbook.new
+    sheet = book.create_worksheet
+    sheet.name = 'Activity Report'
+    row = sheet.row(current_index)
+    columns_in_use = columns
+    unless params[:reports].nil?
+      columns_in_use = columns_in_use.concat(params[:reports])
+      columns_in_use.each do  |column_name|
+        current_index = fill_row(self.instance_variable_get("@#{column_name.to_s.gsub('.', '_')}_hash"),sheet,column_name,current_index)
+      end
+    end
+    unless @current_month_tot_tickets == 0 
+      export_line_chart_data(sheet,current_index)      
+    end
+    book.write(io)
+    io.string
+  end
+  
+  def export_line_chart_data(sheet,current_index)
+    row = sheet.row(current_index+=2)
+      row.push("Date","Created Count","Resolved Count")
+      data_series_hash = {}
+      unless @created_at_hash.nil?
+        @created_at_hash.each do |tkt|
+          data_series_hash.store(tkt.date,{:created_count => tkt.count.to_i})
+        end
+      end
+      unless @resolved_at_hash.nil?
+        @resolved_at_hash.each do |tkt|
+          data_series_hash.store(tkt.date,(data_series_hash.fetch(tkt.date,{:created_count => 0})).merge({:resolved_count,tkt.count.to_i}))
+        end
+      end
+      data_series_hash.each do |date,count_hash|
+        row = sheet.row(current_index+=1)
+        row.push(date,count_hash.fetch(:created_count,0),count_hash.fetch(:resolved_count,0))
+    end
+  end
+  
+  def fill_row(column_hash,sheet,column_name,current_index)
+    row = sheet.row(current_index+=2)
+    row.push("Tickets By #{@pie_chart_labels.fetch(column_name,column_name)}")
+    constants_mapping = Reports::ChartGenerator::TICKET_COLUMN_MAPPING.fetch(column_name.to_s,column_hash)
+    if column_name.eql?(:status)
+      constants_mapping = TicketConstants::STATUS_NAMES_BY_KEY.clone()
+      constants_mapping.delete(TicketConstants::STATUS_KEYS_BY_TOKEN[:closed]) 
+    end
+    constants_mapping.each do |k,v|
+      row = sheet.row(current_index+=1)
+      label = Reports::ChartGenerator::TICKET_COLUMN_MAPPING.has_key?(column_name.to_s) ? v : k
+      row.push(label,column_hash.fetch(k,{}).fetch(:count,0).to_i)
+    end
+    current_index
+  end
+  
 end

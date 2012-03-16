@@ -17,7 +17,8 @@ class Import::ZendeskData < Struct.new(:params)
                             4 => "Task"}
     ZENDESK_TICKET_STATUS = {1 => 2, 
                              2=> 3,
-                             3=> 4
+                             3=> 4,
+                             4 =>5
                             }
                             
    ZENDESK_ROLE_MAP = {0 =>3,
@@ -29,6 +30,7 @@ class Import::ZendeskData < Struct.new(:params)
   def perform
 
     @current_account = Account.find_by_full_domain(params[:domain])
+    @current_account.make_current
     file_list = params[:zendesk][:files]
     
     begin

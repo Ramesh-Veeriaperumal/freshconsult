@@ -14,9 +14,7 @@ class SearchController < ApplicationController
   end
   
   def suggest
-   self.class.trace_execution_scoped(['Custom/suggest_search']) do 
     search
-   end
     render :partial => '/search/navsearch_items'    
   end
   
@@ -71,16 +69,20 @@ class SearchController < ApplicationController
       s_options = { :account_id => current_account.id }      
       s_options.merge!(:category_id => params[:category_id]) unless params[:category_id].blank?
       s_options.merge!(:visibility => get_visibility(f_classes)) 
-      
-      if main_portal?
-        @items = ThinkingSphinx.search params[:search_key], 
-                                      :with => s_options,#, :star => true
-                                      :classes => f_classes, :per_page => 10
-      else
-        search_portal_content(f_classes, s_options)
+      begin
+        if main_portal?
+          @items = ThinkingSphinx.search params[:search_key], 
+                                        :with => s_options,#, :star => true
+                                        :classes => f_classes, :per_page => 10
+        else
+          search_portal_content(f_classes, s_options)
+        end
+        process_results
+      rescue Exception => e
+        @total_results = 0
+        NewRelic::Agent.notice_error(e)      
       end
       
-      process_results
       respond_to do |format|
         format.html { render :partial => '/search/search_results'  }
         format.xml  { 
@@ -110,11 +112,16 @@ class SearchController < ApplicationController
     end
   
     def search
-      @items = ThinkingSphinx.search params[:search_key], 
+      begin
+        @items = ThinkingSphinx.search params[:search_key], 
                                         :with => { :account_id => current_account.id, :deleted => false }, 
-                                        :star => true, :match_mode => :any, 
+                                        :star => Regexp.new('\w+@*\w+', nil, 'u'), :match_mode => :any, 
                                         :page => params[:page], :per_page => 10
         process_results
+      rescue Exception => e
+        @total_results = 0
+        NewRelic::Agent.notice_error(e)
+      end
     end
 
     def process_results

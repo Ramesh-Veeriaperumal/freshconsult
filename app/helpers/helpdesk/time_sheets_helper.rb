@@ -30,7 +30,7 @@ module Helpdesk::TimeSheetsHelper
         page << "#{app[2]}.logTimeEntry();"
         page << "#{app[2]}.set_timesheet_entry_id(#{timeentry.id});" # This is not needed for update.  But no harm in calling.
         page << "}"
-        page << "}catch(e){}"
+        page << "}catch(e){ log(e)}"
       end
     end
   end

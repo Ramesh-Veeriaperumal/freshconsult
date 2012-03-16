@@ -14,8 +14,7 @@
 			<%= button_to_function("Tweet", "swapEmailNote('tweet', this)",  :id => "TweetButton", :class => "button") if @item.requester && @item.is_twitter?%>
 			<%= button_to_function("Comment", "swapEmailNote('fb_post', this)",  :id => "FacebookButton", :class => "button") if @item.requester && @item.is_facebook?%>
 			<%= button_to_function(t('ticket.add_note'), "swapEmailNote('note', this)", :id => "AddNoteButton", :class => "button") %>		
-			<%= button_to_function(t("ticket.add_time"), "jQuery('#TimesheetTab').click(); jQuery
-			(this).button('toggle')", :id => "TimeSheetButton", :title => "Add time entry", :class => "button") if feature?(:timesheets) %>
+			<%= button_to_function(t("ticket.add_time"), "jQuery('#TimesheetTab').click(); jQuery(this).button('toggle')", :id => "TimeSheetButton", :title => "Add time entry", :class => "button") if feature?(:timesheets) %>
 		</div>
 	<% end %>
 </div>		
@@ -47,23 +46,23 @@
   <%= pageless(@ticket_notes.total_pages, helpdesk_ticket_helpdesk_notes_path(@ticket)) %>  
   <%= include_tiny_mce_if_needed %>
 	<% javascript_tag do %>
-		swapEmailNote = function(action, link){
+		swapEmailNote = function(action, link){  
 			jQuery("#PagesTab").click();
 					if(action == "reply")
 					{
 						jQuery('#cnt-note').hide();
 						jQuery('#cnt-tweet').hide();
-						jQuery('#cnt-fb-post').hide();
-						jQuery('#cnt-reply').toggle();
-						tinyMCE.execInstanceCommand("send-email-cnt-reply-body","mceFocus",false);
+						jQuery('#cnt-fb-post').hide(); 
+						jQuery('#cnt-reply').slideToggle();
+						insertIntoConversation("");						
 					}
 					else if (action == "note")
 					{
 						jQuery('#cnt-reply').hide();
 						jQuery('#cnt-tweet').hide();
 						jQuery('#cnt-fb-post').hide();
-						jQuery('#cnt-note').toggle();
-						//setCaretToPos($('add-note-cnt-note-body'), 0);
+						jQuery('#cnt-note').slideToggle(); 
+						insertIntoConversation("");
 					}
 					else if (action == "fb_post")
 					{
@@ -71,8 +70,7 @@
 						jQuery('#cnt-tweet').hide();
 						jQuery('#cnt-note').hide();
 						jQuery('#cnt-fb-post').toggle();
-						setCaretToPos($('send-fb-post-cnt-fb-post-body'), 0);
-
+						setCaretToPos($('send-fb-post-cnt-fb-post-body'), 0); 
 					}
 					else
 					{
@@ -100,8 +98,11 @@
 			note_area  = jQuery('#cnt-note');
 			reply_area = jQuery('#cnt-reply');
 			tweet_area = jQuery('#cnt-tweet');
-			if(note_area.css("display") == 'block'){
-				tinyMCE.execInstanceCommand("add-note-cnt-note-body","mceInsertContent",false, value);
+			if(note_area.css("display") == 'block'){                                                
+				var addNote = tinyMCE.get("add-note-cnt-note-body");
+				addNote.selection.select(addNote.dom.select('span#caret_pos_holder')[0]);   
+				addNote.dom.remove(addNote.dom.select('span#caret_pos_holder')[0]);
+        tinyMCE.execInstanceCommand("add-note-cnt-note-body","mceInsertContent",false, value);
 			} 
 			else if(tweet_area.css("display") == 'block'){
 				get_short_url(value, function(bitly){
@@ -114,9 +115,14 @@
 			else{
 				if(reply_area.css("display") == 'none')
 					jQuery('#ReplyButton').trigger("click");
-               
+        
+				var replyMessage = tinyMCE.get("send-email-cnt-reply-body");
+				replyMessage.selection.select(replyMessage.dom.select('span#caret_pos_holder')[0]);   
+				replyMessage.dom.remove(replyMessage.dom.select('span#caret_pos_holder')[0]);
         tinyMCE.execInstanceCommand("send-email-cnt-reply-body","mceInsertContent",false, value);
-			}
+			}        
+			
+			return;
 		}
 		
 		function getCannedResponse(ticket_id, ca_resp_id){
