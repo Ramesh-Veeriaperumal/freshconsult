@@ -1,7 +1,8 @@
 class SubscriptionAdmin::SubscriptionAnnouncementsController < ApplicationController
   include AdminControllerMethods
   before_filter :build_object, :only => [ :new ]
-  before_filter :load_object, :only => [ :edit, :update, :destroy ]
+  before_filter :load_object, :only => [ :edit, :update, :destroy ]        
+  before_filter :set_selected_tab
   
   def index
     @announcements = scoper.all
@@ -41,5 +42,9 @@ class SubscriptionAdmin::SubscriptionAnnouncementsController < ApplicationContro
     
     def build_object
       @announcement = scoper.new
+    end 
+    
+    def set_selected_tab
+       @selected_tab = :announcements
     end
 end

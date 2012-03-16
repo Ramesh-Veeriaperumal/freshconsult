@@ -123,11 +123,12 @@ module ApplicationHelper
   
   def subscription_tabs
     tabs = [
-      [customers_admin_subscriptions_path, :customers, "Customers" ],
-      [admin_subscription_affiliates_path, :affiliates, "Affiliates" ],
+#      [customers_admin_subscriptions_path, :customers, "Customers" ],
+#      [admin_subscription_affiliates_path, :affiliates, "Affiliates" ],
       [admin_subscription_discounts_path, :discounts, "Discounts" ],
       [admin_subscription_payments_path, :payments, "Payments" ],
-      [admin_subscription_announcements_path, :announcements, "Announcements" ]
+      [admin_subscription_announcements_path, :announcements, "Announcements" ],
+      [admin_subscription_plans_path, :plans, "Plans" ]      
     ]
 
     navigation = tabs.map do |s| 

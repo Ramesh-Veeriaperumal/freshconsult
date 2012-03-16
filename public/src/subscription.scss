@@ -1,4 +1,10 @@
-body{	padding-top:70px; }      
+body{ background: url("/images/subscriptionadminbg.png"); }                                                    
+.navbar-inner{ 	background: url("/images/subscriptionadmintopbg.png"); }
+.navbar .nav .active > a, .navbar .nav .active > a:hover { background-color: #203938;  }
+.navbar-search .search-query { background-color:#497272; }
+.navbar .nav > li > a, .navbar-search .search-query:-moz-placeholder{ color:#85acac; }
+
+.main-body{	padding-top:70px; }
 h2 + table, h3 + table, h4 + table, h2 + .row {
 	margin-top:10px;
 }      
@@ -11,3 +17,5 @@ h2 + table, h3 + table, h4 + table, h2 + .row {
 	margin-left:-40px;
 	margin-top:-5px;
 }
+
+section{ padding-top:30px;}
