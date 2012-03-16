@@ -274,9 +274,9 @@ class Subscription < ActiveRecord::Base
           end
         end
       else
-        if (!next_renewal_at? || next_renewal_at < 1.day.from_now.at_midnight || @charge_now.eql?("true")) and amount > 0
-          if (@response = gateway.purchase(amount_in_pennies, billing_id)).success?
-            subscription_payments.build(:account => account, :amount => amount, :transaction_id => @response.authorization)
+        if (!next_renewal_at? || next_renewal_at < 1.day.from_now.at_midnight || @charge_now.eql?("true")) 
+          if (amount == 0) ||  (@response = gateway.purchase(amount_in_pennies, billing_id)).success?
+            subscription_payments.build(:account => account, :amount => amount, :transaction_id => @response.authorization) unless amount == 0
             self.state = 'active'
             self.next_renewal_at = Time.now.advance(:months => renewal_period)
           else

@@ -12,20 +12,8 @@
   <div class="request_details">
     <div class="requestCnt request-cnt-first">
       <div class="request-title">
-        <div class="toolbar_pagination" style="left: -80px;margin-top: 40px;">
-        	<% if @previous_ticket_id %>
-        		<a href="<%= helpdesk_ticket_path(get_ticket_show_params(@filters, @previous_ticket_id))%>" class="prev_page" rel="prev"><span></span></a>
-			<% else %>	
-            	<span class="disabled prev_page"><span></span></span>
-			<% end %>	
-        	<% if @next_ticket_id %>
-        		<a href="<%= helpdesk_ticket_path(get_ticket_show_params(@filters, @next_ticket_id))%>" class="next_page" rel="next" style="width:11px;"><span></span></a>
-			<% else %>	
-            	<span class="disabled next_page"><span></span></span>
-			<% end %>			
-        </div>      	
-        <%= content_tag :span, h(@ticket.status_name), :class => "status theme-tab" %>
-        <%= content_tag :span, h(@ticket.priority_name), :class => "priority #{@ticket.priority_key}" %>
+        <%= content_tag :span, h(@ticket.status_name), :class => "status-pointer theme-tab" %>
+        <%= content_tag :span, h(@ticket.priority_name), :class => "priority-pointer #{@ticket.priority_key}" %>
         <%= content_tag :span, "##{@ticket.display_id}", :class => "ticket-id" %>
         <%= content_tag :span, @ticket.subject, :class => "subject" %>
       </div>
@@ -49,7 +37,7 @@
 
           <div class="info"> 
             <%= formated_date(@ticket.created_at) %> via <%= @ticket.source_name %>
-      		<%= content_tag :span, @ticket.to_email.gsub("<","&lt;").gsub(">","&gt;") if @ticket.to_email && (@ticket.source == (Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email])) %>
+      		<%= content_tag :span, "sent to " + @ticket.to_email.gsub("<","&lt;").gsub(">","&gt;"), :class => "light" if @ticket.to_email && (@ticket.source == (Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email])) %>
             <% metainfo = @ticket.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["meta"]) %> 
           <%= content_tag :span, t("helpdesk.tickets.show.meta"), :title => metainfo.body, :class => "meta_icon tooltip" unless(metainfo.blank?) %>
           </div> 

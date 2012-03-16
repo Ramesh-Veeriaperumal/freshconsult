@@ -2,6 +2,8 @@
 @import "base";
 @import "mixins";
 
+@import "gmail-gadget/*.png";
+
 $min-width: 600px;
 $main_content_bradius: 5px;
 $auth_bgcolor: #FAFAFA;
@@ -12,17 +14,83 @@ body#gcgadget {
 
 	.ui-form {
 		background: none;
+		margin: 0 25px;
 	}
 
 	ul.tabs {
 		margin: 0;
 	}
+
+	h3.title {
+		margin: 0 25px;
+	}
+
+
+	#maxmin_tip {
+		position: absolute;
+		top:1px;
+		right:16px;
+		width:300px;
+		height:20px;
+		text-align:right;
+		padding-right: 10px;
+		cursor: pointer;
+
+		color:#666;
+		font-weight:bold;
+
+	}
+
+	#maxmin {
+		position: absolute;
+		top:3px;
+		right:3px;
+		width:13px;
+		height:13px;
+		cursor: pointer;
+		&.maximize {
+			@include gmail-gadget-sprite(maximize);
+		}
+
+		&.minimize {
+			@include gmail-gadget-sprite(minimize);
+		}
+	}
+
+	.contact-box div.profile_pic {
+		position: static;
+	}
+
+	#fullbody .alert-message {
+		margin: 0 10px;
+	}
+}
+
+body.minimized {
+	#content_div {
+		display: none;
+	}
+
+	ul.tabs {
+		display: none;
+	}
+
+	.tabs > li > a, .tabs .active > a, .tabs .active > a:hover {
+		background:#EEE;
+		border:1px solid #DDD;
+		border-bottom: none;
+		color:#999;
+	}
+
+	#auth {
+		display: none;
+	}
+
 }
 #auth {
 	@include border-radius($main_content_bradius);
 	background: $auth_bgcolor;
 	padding: 20px;
-	display: none;
 	text-align:center;
 
 	.uiButton {
@@ -33,15 +101,14 @@ body#gcgadget {
 
 #fullbody {
 	@include border-radius($main_content_bradius);
-	display:none; 
 	/* Hiding the div by default */
 
 	.company_box, .contact-box {
-		margin: 15px 0;
+		margin: 15px 25px;
 	}
 
 	.request_details {
-		margin: 5px -25px;
+		margin: 5px 0;
 
 		.actions, #TimesheetTab, .conversation-sprite {
 			display: none;
@@ -55,12 +122,22 @@ body#gcgadget {
 			display: none;
 		}
 	}
+
+	.tickets {
+		input[type=checkbox] {
+			display: none;
+		}
+	}
 }
 
 #content_div {
 	background: white;
-	padding: 10px 25px;
+	padding: 10px 0;
 	border-color: #DDD;
 	border-width: 0 1px 1px;
 	border-style: solid;
+}
+
+.button-container {
+	margin: 0 25px;
 }

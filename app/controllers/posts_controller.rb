@@ -96,7 +96,7 @@ class PostsController < ApplicationController
    def create_attachments
    return unless @post.respond_to?(:attachments)
     (params[:post][:attachments] || []).each do |a|
-      @post.attachments.create(:content => a[:file], :description => a[:description], :account_id => @post.account_id)
+      @post.attachments.create(:content => a[:resource], :description => a[:description], :account_id => @post.account_id)
     end
   end
   

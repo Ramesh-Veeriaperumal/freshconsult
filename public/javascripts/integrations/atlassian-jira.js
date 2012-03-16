@@ -220,7 +220,7 @@ JiraWidget.prototype= {
 				"description":jiraBundle.jiraNote,
 				"application_id": jiraBundle.application_id,
 				"ticketData":ticketData,
-				"integrated_resource[local_integratable_id]":jiraBundle.ticketId,
+				"integrated_resource[local_integratable_id]":jiraBundle.ticket_rawId,
 				"integrated_resource[local_integratable_type]": integratable_type
 
 			};
@@ -424,7 +424,7 @@ JiraWidget.prototype= {
 				"ticketData":ticketData,
 				"remoteKey":jiraWidget.linkIssueId,
 				"application_id": jiraBundle.application_id,
-				"integrated_resource[local_integratable_id]":jiraBundle.ticketId,
+				"integrated_resource[local_integratable_id]":jiraBundle.ticket_rawId,
 				"integrated_resource[local_integratable_type]": integratable_type
 			};	
 		}
@@ -437,7 +437,7 @@ JiraWidget.prototype= {
 				"ticketData":ticketData,
 				"isCustomFieldDef":"false",	
 				"application_id": jiraBundle.application_id,
-				"integrated_resource[local_integratable_id]":jiraBundle.ticketId,
+				"integrated_resource[local_integratable_id]":jiraBundle.ticket_rawId,
 				"integrated_resource[local_integratable_type]": integratable_type
 			};
 		}

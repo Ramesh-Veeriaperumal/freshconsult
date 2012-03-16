@@ -1,5 +1,8 @@
 <% javascript_tag do %>	
 	jQuery(document).ready(function(){
+		jQuery("input[name$=_subject_template]").live("focus", function(){
+			active_email_body = jQuery(this);
+		});
 		jQuery("textarea").live("focus", function(){
 			active_email_body = jQuery(this);
 		});

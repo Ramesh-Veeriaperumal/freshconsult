@@ -50,7 +50,16 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
   end
  
   def get_subject(notification_type, ticket)
-    Liquid::Template.parse(EmailNotification::EMAIL_SUBJECTS[notification_type]).render('ticket' => ticket)
+    e_notification = ticket.account.email_notifications.find_by_notification_type(notification_type)
+    if e_notification.agent_notification?
+      a_s_template = Liquid::Template.parse(e_notification.agent_subject_template)
+      return a_s_template.render('ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name)
+    end
+    
+    if e_notification.requester_notification?
+      r_s_template = Liquid::Template.parse(e_notification.requester_subject_template)
+      return r_s_template.render('ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name)
+    end
   end
   
   def reply(ticket, note , reply_email, options={})

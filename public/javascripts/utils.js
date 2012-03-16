@@ -207,7 +207,7 @@ function construct_reply_url(to_email, account_name){
    function quote_text(item){
       if (!jQuery(item).attr("data-quoted")) {
          var show_hide = jQuery("<a href='#' />").addClass("quoted_button").text(""), 
-            child_quote = jQuery(item).children("div.freshdesk_quote").prepend(show_hide).children("blockquote.").hide();
+            child_quote = jQuery(item).find("div.freshdesk_quote").first().prepend(show_hide).children("blockquote.freshdesk_quote").hide();
             
             show_hide.bind("click", function(ev){
                ev.preventDefault();

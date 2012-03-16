@@ -219,7 +219,7 @@ Autocompleter.MultiValue = Class.create({
     this.stopIndicator();
     if(Element.getStyle(this.choicesHolder, 'display')!='none') {
       this.options.onHide(this.element, this.choicesHolder);
-    }
+    }                   
     if(this.iefix) Element.hide(this.iefix);
   },
   
@@ -289,7 +289,8 @@ Autocompleter.MultiValue = Class.create({
   },
   
   onSearchFieldBlur: function(event) {
-    this.addNewValueFromSearchField.bind(this).delay(0.1, event.element());
+    this.addNewValueFromSearchField.bind(this).delay(0.1, event.element());    
+    this.selectEntry(); 
   },
   
   addNewValueFromSearchField: function(searchFieldElement) {

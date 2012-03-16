@@ -22,7 +22,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   before_validation :populate_requester, :set_default_values
   before_create :set_dueby, :save_ticket_states
-  after_create :refresh_display_id, :save_custom_field, :pass_thro_biz_rules, :autoreply, 
+  after_create :refresh_display_id, :save_custom_field, :pass_thro_biz_rules,  
       :create_initial_activity, :support_score_on_create
   before_update :cache_old_model, :update_dueby 
   after_update :save_custom_field, :update_ticket_states, :notify_on_update, :update_activity, 
@@ -150,7 +150,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   named_scope :unresolved, :conditions => ["status in (#{STATUS_KEYS_BY_TOKEN[:open]}, #{STATUS_KEYS_BY_TOKEN[:pending]})"]
   named_scope :assigned_to, lambda { |agent| { :conditions => ["responder_id=?", agent.id] } }
   named_scope :requester_active, lambda { |user| { :conditions => 
-    [ "requester_id=? and status in (#{STATUS_KEYS_BY_TOKEN[:open]}, #{STATUS_KEYS_BY_TOKEN[:pending]})",
+    [ "requester_id=? ",
       user.id ] } }
   named_scope :requester_completed, lambda { |user| { :conditions => 
     [ "requester_id=? and status in (#{STATUS_KEYS_BY_TOKEN[:resolved]}, #{STATUS_KEYS_BY_TOKEN[:closed]})",
@@ -176,30 +176,27 @@ class Helpdesk::Ticket < ActiveRecord::Base
                   
      return permissions[Agent::PERMISSION_TOKENS_BY_KEY[user.agent.ticket_permission]]
   end
+  
+  def get_default_filter_permissible_conditions user
+    
+     permissions = {:all_tickets => "" , 
+                   :group_tickets => " [{\"condition\": \"responder_id\", \"operator\": \"is_in\", \"value\": \"#{user.id}\"}, {\"condition\": \"group_id\", \"operator\": \"is_in\", \"value\": \"#{user.agent_groups.collect{|ag| ag.group_id}.insert(0,0)}\"}] " , 
+                   :assigned_tickets => "[{\"condition\": \"responder_id\", \"operator\": \"is_in\", \"value\": \"#{user.id}\"}]"}
+                  
+     return permissions[Agent::PERMISSION_TOKENS_BY_KEY[user.agent.ticket_permission]]
+    
+  end
+  
   #Sphinx configuration starts
   define_index do
    
-   define_source do 
      indexes :display_id, :sortable => true
      indexes :subject, :sortable => true
      indexes description
      indexes notes.body, :as => :note
     
      has account_id, deleted
-     where "id % 2 = 0" 
-    end
-    
-    define_source do 
-      indexes :display_id, :sortable => true
-      indexes :subject, :sortable => true
-      indexes description
-      indexes notes.body, :as => :note
-    
-      has account_id, deleted
-    
-      where "id % 2 = 1" 
-    end
-    
+
     set_property :delta => :delayed
     set_property :field_weights => {
       :display_id   => 10,
@@ -429,14 +426,16 @@ class Helpdesk::Ticket < ActiveRecord::Base
     
   end
   
-  def autoreply
+  def autoreply     
     return if spam? || deleted?
-    notify_by_email EmailNotification::NEW_TICKET
-    notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_GROUP) if group_id
-    notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_AGENT) if responder_id
+    notify_by_email(EmailNotification::NEW_TICKET)
+    notify_by_email_without_delay(EmailNotification::TICKET_ASSIGNED_TO_GROUP) if group_id and !group_id_changed?
+    notify_by_email_without_delay(EmailNotification::TICKET_ASSIGNED_TO_AGENT) if responder_id and !responder_id_changed?
     
-    return notify_by_email(EmailNotification::TICKET_RESOLVED) if (status == STATUS_KEYS_BY_TOKEN[:resolved])
-    return notify_by_email(EmailNotification::TICKET_CLOSED) if (status == STATUS_KEYS_BY_TOKEN[:closed])
+    unless status_changed?
+      return notify_by_email_without_delay(EmailNotification::TICKET_RESOLVED) if resolved?
+      return notify_by_email_without_delay(EmailNotification::TICKET_CLOSED) if closed?
+    end
   end
 
   def out_of_office?
@@ -452,6 +451,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def notify_on_update
+    return if spam? || deleted?
     notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_GROUP) if (group_id != @old_ticket.group_id && group)
     if (responder_id != @old_ticket.responder_id && responder && responder != User.current)
       notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_AGENT)
@@ -493,7 +493,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     ticket_states.save
   end
   
-    
+  def notify_by_email_without_delay(notification_type)    
+    Helpdesk::TicketNotifier.notify_by_email(notification_type, self) if notify_enabled?(notification_type)
+  end
+  
   def notify_by_email(notification_type)    
     Helpdesk::TicketNotifier.send_later(:notify_by_email, notification_type, self) if notify_enabled?(notification_type)
   end
@@ -555,12 +558,17 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #virtual agent things end here..
   
   def pass_thro_biz_rules
-     send_later(:delayed_rule_check)
+     send_later(:delayed_rule_check) unless import_id
   end
   
   def delayed_rule_check
+   begin
     evaluate_on = check_rules     
     update_custom_field evaluate_on unless evaluate_on.nil?
+    autoreply
+   rescue Exception => e #better to write some rescue code 
+    NewRelic::Agent.notice_error(e)
+   end
     save #Should move this to unless block.. by Shan
   end
  
@@ -610,7 +618,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #Might be darn expensive db queries, need to revisit - shan.
   def to_liquid
     { 
-      "id"                                => display_id, 
+      "id"                                => display_id,
+      "raw_id"                            => id,
       "encoded_id"                        => encode_display_id,
       "subject"                           => subject,
       "description"                       => description_with_attachments,
@@ -710,16 +719,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def to_xml(options = {})
-      options[:indent] ||= 2
-      xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
-      xml.instruct! unless options[:skip_instruct]
-      super(:builder => xml, :skip_instruct => true,:include => :notes,:except => [:account_id,:import_id]) do |xml|
-       xml.custom_field do
-        self.ff_aliases.each do |label|    
-          value = self.get_ff_value(label.to_sym()) 
-          xml.tag!(label.gsub(/[^0-9A-Za-z_]/, ''), value) unless value.blank?
+    options[:indent] ||= 2
+    xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
+    xml.instruct! unless options[:skip_instruct]
+    super(:builder => xml, :skip_instruct => true,:include => [:notes,:attachments],:except => [:account_id,:import_id]) do |xml|
+      xml.custom_field do
+        self.account.ticket_fields.custom_fields.each do |field|
+          value = send(field.name) 
+          xml.tag!(field.name.gsub(/[^0-9A-Za-z_]/, ''), value) unless value.blank?
         end
-       
       end
      end
   end

@@ -9,7 +9,7 @@ class Solution::ArticlesController < ApplicationController
   before_filter :except => [:index, :show] do |c| 
     c.requires_permission :manage_knowledgebase
   end
-  
+  before_filter :page_title 
   
   uses_tiny_mce :options => Helpdesk::LARGE_EDITOR 
   
@@ -18,18 +18,20 @@ class Solution::ArticlesController < ApplicationController
     redirect_to redirect_to_url    
   end
 
-  def show
-   
+  def show           
     @article = current_account.solution_articles.find(params[:id], :include => :folder) 
     wrong_portal and return unless(main_portal? || 
         (@article.folder.category_id == current_portal.solution_category_id))
+    
+    @page_title = @article.title
+    @page_description = "#{@article.title}. #{@article.folder.name}. #{@article.folder.category.name}" 
+    @page_keywords = @article.tags.join(", ")
         
     respond_to do |format|
       format.html
       format.xml  { render :xml => @article.to_xml(:include => :folder) }
       format.json  { render :json => @article.to_json(:include => :folder) }
-    end
-    
+    end    
   end
 
   def new
@@ -123,11 +125,9 @@ def post_persist
   
 end
  def create_attachments
-   logger.debug "create_attachments  "
     return unless @article.respond_to?(:attachments)
     (params[nscname][:attachments] || []).each do |a|
-      logger.debug "creating file :#{a[:file]}"
-      @article.attachments.create(:content => a[:file], :description => a[:description], :account_id => @article.account_id)
+      @article.attachments.create(:content => a[:resource], :description => a[:description], :account_id => @article.account_id)
     end
   end
   
@@ -163,7 +163,11 @@ protected
   end
   
   def set_selected_tab
-      @selected_tab = :solutions
+    @selected_tab = :solutions
+  end     
+  
+  def page_title
+    @page_title = t("header.tabs.solutions")    
   end
 
 def check_solution_permission  

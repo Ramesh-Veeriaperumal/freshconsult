@@ -22,7 +22,7 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :load_item, :verify_permission  ,   :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :get_ca_response_content, :print] 
   before_filter :load_flexifield ,    :only => [:execute_scenario]
   before_filter :set_date_filter ,    :only => [:export_csv]
-  before_filter :set_latest_updated_at , :only => [:index, :custom_search]
+  #before_filter :set_latest_updated_at , :only => [:index, :custom_search]
 
   uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
   
@@ -71,7 +71,7 @@ class Helpdesk::TicketsController < ApplicationController
   def user_ticket
     @user = current_account.users.find_by_email(params[:email])
     if !@user.nil?
-      @tickets =  Helpdesk::Ticket.requester_active(@user)
+      @tickets =  current_account.tickets.requester_active(@user)
     else
       @tickets = []
     end
@@ -136,15 +136,18 @@ class Helpdesk::TicketsController < ApplicationController
     if params['format'] == 'widget'
       @ticket = current_account.tickets.find_by_display_id(params[:id]) # using find_by_id(instead of find) to avoid exception when the ticket with that id is not found.
       @item = @ticket
-      puts "ticket #{@ticket}" 
       if @ticket.blank?
         @item = Helpdesk::Ticket.new
         render :new, :layout => "widgets/contacts"
       else
-        @ticket_notes = @ticket.conversation
-        render :layout => "widgets/contacts"
+        if verify_permission
+          @ticket_notes = @ticket.conversation
+          render :layout => "widgets/contacts"
+        else
+          @no_auth = true
+          render :layout => "widgets/contacts"
+        end
       end
-      return
     end
   end
   def custom_view_save
@@ -159,6 +162,16 @@ class Helpdesk::TicketsController < ApplicationController
   def set_prev_next_tickets
     if params[:filters].nil?
       @filters = {}
+      
+      if @item.deleted?
+        @filters = {:filter_name => "deleted"}
+      elsif @item.spam?
+        @filters = {:filter_name => "spam"}
+      else
+        @filters = {:filter_name => "all_tickets"}
+      end
+      conditions = @item.get_default_filter_permissible_conditions(current_user)     
+      @filters.merge!(:data_hash => conditions) unless conditions.blank?
       index_filter = @ticket_filter.deserialize_from_params(@filters)
     else  
       @filters = params[:filters]
@@ -166,12 +179,11 @@ class Helpdesk::TicketsController < ApplicationController
     end
 
     ticket_ids = index_filter.adjacent_tickets(@ticket, current_account, current_user)
-    
-    RAILS_DEFAULT_LOGGER.debug "next_previous_tickets : #{ticket_ids.to_json}"
-    
+        
     ticket_ids.each do |t|
        (t[2] == "previous") ? @previous_ticket_id = t[1] : @next_ticket_id = t[1]        
     end
+    RAILS_DEFAULT_LOGGER.debug "next_previous_tickets : #{@previous_ticket_id} , #{@next_ticket_id}"
   end
   
   def show
@@ -190,8 +202,6 @@ class Helpdesk::TicketsController < ApplicationController
     @ticket_notes = @ticket.conversation
     
     @email_config = current_account.primary_email_config
-    
-    set_prev_next_tickets
     
     respond_to do |format|
       format.html  
@@ -508,8 +518,13 @@ class Helpdesk::TicketsController < ApplicationController
    def verify_permission
       unless current_user && current_user.has_ticket_permission?(@item)
         flash[:notice] = t("flash.general.access_denied") 
-        redirect_to helpdesk_tickets_url
+        if params['format'] == "widget"
+          return false
+        else
+          redirect_to helpdesk_tickets_url
+        end
       end
+    true
   end
   
   def save_and_close?
