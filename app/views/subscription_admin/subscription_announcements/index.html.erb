@@ -1,30 +1,33 @@
-<%= link_to('Add a new announcement', new_admin_subscription_announcement_path, :class => "btn btn-primary btn-large floatr") %>
-<h2><%= @page_title = 'Announcements' %></h2>                                                                         
 <div class="row">            
-	<div class="span12">
-	<table id="anouncements" class="table">
+	<div class="span10">
+	<div class="page-header">
+		<%= link_to('New announcement', new_admin_subscription_announcement_path, :class => "btn btn-success pull-right") %>                                                                                                                        
+		<h1><%= @page_title = 'Announcements' %></h1>
+	</div>
+	<table id="anouncements" class="table table-bordered">
 	  <tr>
-	    <th>Message</th>
-	    <th colspan="2">Display between</th>
+	    <th>Display between</th>
+	    <th colspan="2">Message</th>
 	  </tr>
 	  <% @announcements.each do |announcement| %>
 	    <tr>
-	      <td><%= announcement.message %></td>
 	      <td class="span4">    
 					<div>
-						from ~
+						From ~
 						<%= formated_date(announcement.starts_at) %> 
 					</div>         	
 					<div>
-						to ~
+						To ~
 	      		<%= formated_date(announcement.ends_at) %>
 					</div>
 				</td>
+				<td><%= announcement.message %></td>
 				<td>
-					<%= link_to('Edit', edit_admin_subscription_announcement_path(announcement), :class => "btn") %>
+					<%= link_to('Edit', edit_admin_subscription_announcement_path(announcement), :class => "btn btn-small") %>
 				</td>
 	    </tr>
 	  <% end %>
-	</table>         
+	</table>    
+	</div>     
 </div>
-</div>
+

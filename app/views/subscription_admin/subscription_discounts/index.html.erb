@@ -1,16 +1,23 @@
-<h1><%= @page_title = 'Discounts' %></h1>
-<%= link_to('Add a new discount', :action => 'new') %>
-<table id="discounts">
-  <tr>
-    <th>Name</th>
-    <th>Code</th>
-    <th>Amount</th>
-  </tr>
-  <% @subscription_discounts.each do |discount| %>
-    <tr>
-      <td><%= link_to(h(discount.name), [:admin, discount]) %></td>
-      <td><%= link_to(h(discount.code), [:admin, discount]) %></td>
-      <td><%= discount_label(discount) %></td>
-    </tr>
-  <% end %>
-</table>
+<div class="row">
+	<div class="span10">
+		<div class="page-header">
+			<%= link_to('New discount', new_admin_subscription_discount_path, :class => "pull-right btn btn-success") %>
+			<h2><%= @page_title = 'Discounts' %></h2>
+		</div>
+
+		<table id="discounts" class="table table-bordered">
+		  <tr>
+		    <th>Name</th>
+		    <th>Code</th>
+		    <th>Amount</th>
+		  </tr>
+		  <% @subscription_discounts.each do |discount| %>
+		    <tr>
+		      <td><%= link_to(h(discount.name), [:admin, discount]) %></td>
+		      <td><%= link_to(h(discount.code), [:admin, discount]) %></td>
+		      <td><%= discount_label(discount) %></td>
+		    </tr>
+		  <% end %>
+		</table>
+	</div>
+</div>

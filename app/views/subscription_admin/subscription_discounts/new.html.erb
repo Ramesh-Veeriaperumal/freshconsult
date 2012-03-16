@@ -1,5 +1,7 @@
-<h1><%= @page_title = 'Create Discount' %></h1>
+<div class="page-header">
+	<h2><%= @page_title = 'Create Discount' %></h2>
+</div>
 
-<% form_for [:admin, @subscription_discount] do |form| %>
+<% form_for [:admin, @subscription_discount], :html => {:class => "form-horizontal"} do |form| %>
   <%= render :partial => 'form', :object => form %>
 <% end %>

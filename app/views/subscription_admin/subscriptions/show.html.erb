@@ -1,84 +1,96 @@
-<h1><%= @page_title = 'View Subscription' %></h1>
-<%= link_to('Edit Subscription', :action => 'edit') %>
-<table id="subscription">
-  <tr>
-    <th>Account</th>
-    <td><%= link_to(h(@subscription.account), [:admin, @subscription.account]) %></td>
-  </tr>
-  <tr>
-    <th>Amount</th>
-    <td><%= number_to_currency(@subscription.amount) %></td>
-  </tr>
-  <tr>
-    <th>Created</th>
-    <td><%= @subscription.created_at.to_s(:short_day) %></td>
-  </tr>
-  <tr class="<%= 'expired' unless @subscription.current? %>">
-    <th>Next Renewal</th>
-    <td><%= @subscription.next_renewal_at.to_s(:short_day) %></td>
-  </tr>
-  <tr>
-    <th>Plan</th>
-    <td><%= link_to(@subscription.subscription_plan, [:admin, @subscription.subscription_plan]) %></td>
-  </tr>
-  <tr>
-    <th>Discount</th>
-    <td><%= @subscription.discount ? "#{@subscription.discount.name} (#{@subscription.discount.code}) - #{discount_label(@subscription.discount)}" : 'None' %></td>
-  </tr>
-  <tr>
-    <th>State</th>
-    <td><%= @subscription.state %></td>
-  </tr>
-  <tr>
-    <th>Agents</th>
-    <td><%= @subscription.account.agents.count %></td>
-  </tr>
-</table>
-
-<h2>Charge Subscription</h2>
-<p>
-  Use this form to make a one-time charge against the card on file for the subscription.  A transaction will happen as soon as you submit this form.  Amounts should be entered as dollars and cents, without the dollar sign or commas: e.g., 1.50 to charge $1.50.
-</p>
-<% if @subscription.errors.any? %>
-<div class="errorExplanation" id="errorExplanation">
-  <h3>Errors encountered while charging the card:</h3>
-  <ul>
-    <%= @subscription.errors.full_messages.map {|e| content_tag(:li, e)} %>
-  </ul>
+<div class="page-header">
+	<%= link_to('Edit Subscription', edit_admin_subscription_path(@subscription), :class => "btn btn-success pull-right") %>	
+	<h2><%= @page_title = @subscription.account %></h2>                                                                         
 </div>
-<% end %>
+<div class="row">     
+	<div class="span4">
+		<h3>Summary</h3>
+		<table id="subscription" class="table table-bordered">
+		  <tr>
+		    <th>Account</th>
+		    <td><%= h(@subscription.account) %></td>
+		  </tr>
+		  <tr>
+		    <th>Amount</th>
+		    <td><%= number_to_currency(@subscription.amount) %></td>
+		  </tr>
+		  <tr>
+		    <th>Created</th>
+		    <td><%= @subscription.created_at.to_s(:short_day) %></td>
+		  </tr>
+		  <tr class="<%= 'expired' unless @subscription.current? %>">
+		    <th>Next Renewal</th>
+		    <td><%= @subscription.next_renewal_at.to_s(:short_day) %></td>
+		  </tr>
+		  <tr>
+		    <th>Plan</th>
+		    <td><%= @subscription.subscription_plan %></td>
+		  </tr>
+		  <tr>
+		    <th>Discount</th>
+		    <td><%= @subscription.discount ? "#{@subscription.discount.name} (#{@subscription.discount.code}) - #{discount_label(@subscription.discount)}" : 'None' %></td>
+		  </tr>
+		  <tr>
+		    <th>State</th>
+		    <td><%= @subscription.state %></td>
+		  </tr>
+		  <tr>
+		    <th>Agents</th>
+		    <td><%= @subscription.account.agents.count %></td>
+		  </tr>                
+			<tr>
+		    <th>Lifetime Revenue</th>
+		    <td><%= number_to_currency(@subscription.account.subscription_payments.sum(:amount)) %></td>
+		  </tr>
+		</table>   
+	</div>       
+	<div class="span4">
+		<h3>Transactions</h3>
+		<table id="transactions" class="table">
+		  <tr>
+		    <th>ID</th>
+		    <th>Date</th>
+		    <th>Amount</th>
+		    <th>Transaction ID</th>
+		  </tr>
+		  <% @subscription.subscription_payments.each do |payment| %>
+		    <tr>
+		      <td><%= payment.id %></td>
+		      <td><%= payment.created_at.to_s(:short_day) %></td>
+		      <td><%= number_to_currency(payment.amount) %></td>
+		      <td><%= payment.transaction_id %></td>
+		    </tr>
+		  <% end %>
+		</table>    
+	</div>	
+ 	<div class="span4">
+		<h3>Charge Subscription</h3>
+		<p>
+		  Use this form to make a one-time charge against the card on file for the subscription.  A transaction will happen as soon as you submit this form.  Amounts should be entered as dollars and cents, without the dollar sign or commas: e.g., 1.50 to charge $1.50.
+		</p>
+		<% if @subscription.errors.any? %>
+		<div class="errorExplanation" id="errorExplanation">
+		  <h3>Errors encountered while charging the card:</h3>
+		  <ul>
+		    <%= @subscription.errors.full_messages.map {|e| content_tag(:li, e)} %>
+		  </ul>
+		</div>
+		<% end %>
 
-<% form_tag({:action => 'charge'}, :id => 'charge_form', :onsubmit => 'return checkForm()') do %>
-  <label>Amount</label>
-  <input type="text" name="amount" id="amount" />
-  <input type="submit" value="Charge card" />
-<% end %>
+		<% form_tag({:action => 'charge'}, :id => 'charge_form', :class => "well form-inline", :onsubmit => 'return checkForm()') do %>
+		  <input type="text" name="amount" id="amount" placeholder="Amount" />
+		  <input type="submit" value="Charge card" class="btn" />
+		<% end %>
 
-<h2>Extend trail</h2>
+		<h3>Extend trial</h3>
 
-<% form_tag({:action => 'extend_trial'}, :id => 'trial_form') do %>
-  <label>No. of trial days</label>
-  <input type="text" name="trial_days" id="trial_days" />
-  <input type="submit" value="Extend trial" />
-<% end %>
-
-<h2>Transactions</h2>
-<table id="transactions">
-  <tr>
-    <th>ID</th>
-    <th>Date</th>
-    <th>Amount</th>
-    <th>Transaction ID</th>
-  </tr>
-  <% @subscription.subscription_payments.each do |payment| %>
-    <tr>
-      <td><%= payment.id %></td>
-      <td><%= payment.created_at.to_s(:short_day) %></td>
-      <td><%= number_to_currency(payment.amount) %></td>
-      <td><%= payment.transaction_id %></td>
-    </tr>
-  <% end %>
-</table>
+		<% form_tag({:action => 'extend_trial'}, :id => 'trial_form', :class => "well form-inline") do %>
+		  <input type="text" name="trial_days" id="trial_days" placeholder="No. of trial days" />
+		  <input type="submit" value="Extend trial" class="btn" />
+		<% end %>
+	</div>    
+	
+</div>
 
 <% content_for :pagefixed do -%>
   <script type="text/javascript" charset="utf-8">

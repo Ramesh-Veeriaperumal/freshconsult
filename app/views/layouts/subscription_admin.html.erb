@@ -12,11 +12,16 @@
 	</head>
 	<body>     
 		<div class="navbar navbar-fixed-top">
-		      <div class="navbar-inner">
-		        <div class="container"> 
+		      <div class="navbar-inner">  
+		        <div class="container">       
+							<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+								<span class="icon-bar"></span>
+								<span class="icon-bar"></span>
+								<span class="icon-bar"></span>
+							</a>
 		          <a class="brand" href="/">
-		          	<%= image_tag "admin-logo.png", :class => "admin-logo" %>
-		          </a>
+		          	Freshdesk admin
+		          </a>            
 		          <div class="nav-collapse">
 		            <ul class="nav">
 		              <%= subscription_tabs %>
@@ -27,8 +32,8 @@
 		          </div>
 		        </div>
 		      </div>
-		    </div>
-		<div class="container">  
+		    </div>   
+		<div class="container main-body">  
 			<%= show_admin_flash %>
 			<%= yield %>
 		</div>
