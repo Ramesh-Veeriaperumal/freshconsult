@@ -509,9 +509,6 @@ body h5{
 	text-align:right;
 	.btn{ font-weight:bold; padding:4px 9px; }
 }
-               
-.priority-pointer{
-   @include pointer-title; 
                          
 .status-pointer, .priority-pointer{
 	font-size:9px;
@@ -5170,5 +5167,5 @@ a.submit_link:hover{
 	.gs_error_highlight{
 		border:1px solid red !important;
 	}
- 
+
 /* Getting Started page style ends */
