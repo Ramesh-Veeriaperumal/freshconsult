@@ -16,11 +16,7 @@ module ApplicationHelper
   def show_flash
     [:notice, :warning, :error].collect {|type| content_tag('div', flash[type], :id => type, :class => "flash_info #{type}") if flash[type] }
   end
-  
-  def show_admin_flash
-    [:notice, :warning, :error].collect {|type| content_tag('div', "<a class='close' data-dismiss='alert'>×</a>" + flash[type], :id => type, :class => "alert alert-block alert-#{type}") if flash[type] }  
-  end   
-  
+ 
   def show_announcements                                                    
     if permission?(:manage_tickets)
       @current_announcements ||= SubscriptionAnnouncement.current_announcements(session[:announcement_hide_time])  
@@ -120,22 +116,7 @@ module ApplicationHelper
     end
     navigation
   end          
-  
-  def subscription_tabs
-    tabs = [
-#      [customers_admin_subscriptions_path, :customers, "Customers" ],
-#      [admin_subscription_affiliates_path, :affiliates, "Affiliates" ],
-      [admin_subscription_discounts_path, :discounts, "Discounts" ],
-      [admin_subscription_payments_path, :payments, "Payments" ],
-      [admin_subscription_announcements_path, :announcements, "Announcements" ],
-      [admin_subscription_plans_path, :plans, "Plans" ]      
-    ]
-
-    navigation = tabs.map do |s| 
-      content_tag(:li, link_to(s[2], s[0]), :class => ((@selected_tab == s[1]) ? "active" : ""))
-    end
-  end
-  
+ 
   def html_list(type, elements, options = {}, activeitem = 0)
     if elements.empty?
       "" 
