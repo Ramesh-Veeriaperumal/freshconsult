@@ -1,0 +1,7 @@
+body { padding-top: 70px; }
+
+h2 + table, h3 + table, h4 + table, h2 + .row { margin-top: 10px; }
+
+.floatr { float: right; }
+
+.admin-logo { position: absolute; margin-left: -40px; margin-top: -5px; }

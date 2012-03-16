@@ -3,9 +3,37 @@
  * Genric core utility class for the application
  */
 
+function log(entry) {
+  if (console) {
+    console.log(entry);
+  } else {
+    alert(entry);
+  }
+}
 function autoSaveTinyMce(editor){
    tinyMCE.triggerSave();
    return true;
+}
+
+function freshdate(str) {
+  var month_names = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var d =  parseUTCDate(str);
+
+  var date_part = month_names[d.getMonth()] + " " + d.getDate() + " " + d.getFullYear();
+  var time_part = pad(d.getMinutes(),2);
+
+  if (d.getHours() > 12) {
+    time_part = (d.getHours() - 12) + ":" + time_part + " PM";
+  } else{
+    time_part = d.getHours() + ":" + time_part + " AM";
+  }
+
+  return date_part + " @ " + time_part;
+}
+
+function parseUTCDate(str) {
+  var date_parts  = str.match(/(\d+)/g);
+  return new Date(date_parts[0], date_parts[1]-1, date_parts[2], date_parts[3], date_parts[4], date_parts[5]);
 }
 
 function plural( count, text1, text2 ){
@@ -179,7 +207,7 @@ function construct_reply_url(to_email, account_name){
    function quote_text(item){
       if (!jQuery(item).attr("data-quoted")) {
          var show_hide = jQuery("<a href='#' />").addClass("quoted_button").text(""), 
-            child_quote = jQuery(item).children("div.freshdesk_quote").prepend(show_hide).children("blockquote.").hide();
+            child_quote = jQuery(item).find("div.freshdesk_quote").first().prepend(show_hide).children("blockquote.freshdesk_quote").hide();
             
             show_hide.bind("click", function(ev){
                ev.preventDefault();
@@ -260,7 +288,6 @@ active_dialog = null;
     );
     return this;
  }; 
- 
 
  $(document).bind('mousedown', function(e) {
     if($(this).data("active-menu")){

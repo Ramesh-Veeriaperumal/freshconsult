@@ -112,6 +112,49 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
    }
 }
 
+.stylised.iphone {
+  border-radius: 5px;
+  background-color: #004244;
+  border:1px solid #002021;
+  cursor:pointer;
+  color: white;
+  display: inline;
+   text-transform:uppercase; 
+   padding:7px 10px;
+   font-size:11px;
+   @include box-shadow(rgba(0, 0, 0, 0.2) 0 1px 2px);
+   background-image:url(../images/overlay-top-shadow.png);
+   background-position:top left;
+   background-repeat:repeat-x;
+   padding-right:40px;
+   position:relative;
+
+   span.other{
+      position:absolute;
+      width:30px;
+      height:100%;
+      border:1px solid #a2a2a2;
+      @include background(linear-gradient(top, #d8d8d8, #f9f9f9));
+      right: -1px; 
+      top: -1px;
+      @include border-radius(4px);
+      @include box-shadow(#ebebeb 0 0 0 1px inset);
+   }
+
+  &.inactive{
+    background-color: #E7E7E7;
+    color: #7F7F7F;
+    border-color: #A4A4A4;
+    text-shadow: 0 0 0 transparent;
+    padding-left:40px;
+    padding-right:10px;
+    span.other{
+      left:-1px;   
+    }
+ }
+}
+
+
 .ui-after-submit{
    border-color:#cfcfcf;
 	background-color:#eeeeee;
@@ -286,16 +329,30 @@ div.action_buttons:hover{
    @include single-text-shadow(#ffffff);
    @include single-box-shadow(#ffffff, 1px, 0, 1px);   
 }
+             
+.page_info{
+	.toolbar_pagination{			
+    top:-6px;  
+	  .prev_page, .next_page{			
+			width:7px;
+      top:-37px;
+		}
+	}
+}                      
+
+.request-title .toolbar_pagination{
+  top:-2px;
+	left:65px;
+}
 
 .toolbar_pagination{
-   float:right;
-   top:-6px;
+   float:right;        
    .prev_page, .next_page{
       float:left; font-size:1px; width:7px; height:9px;   
-      right:0px;
-      top:-37px;
+      right:0px; 
       height:14px;
-      position:absolute;      
+      position:absolute;    
+  		width:11px;
       span{
          left:2px; top:0px;
          position:absolute; width:22px; height:22px;  

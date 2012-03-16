@@ -29,26 +29,26 @@ class AuthorizationsController < ApplicationController
           @omniauth_origin = "install"
         end
         @google_account = Integrations::GoogleAccount.new
-        @db_google_account = Integrations::GoogleAccount.find_by_account_id(current_account)
+        @db_google_account = Integrations::GoogleAccount.find_by_account_id_and_email(current_account, user_info["email"])
         if !@db_google_account.blank? && @omniauth_origin == "install"
-          puts "As already an account has been configured can not configure one more account."
+          Rails.logger.error "As already an account has been configured can not configure one more account."
           flash[:error] = t("integrations.google_contacts.already_exist")
           redirect_to configure_integrations_installed_application_path(params[:iapp_id]) 
         else
+          @existing_google_accounts = Integrations::GoogleAccount.find_all_by_account_id(current_account)
           @google_account.account = current_account
           @google_account.token = @omniauth['credentials']['token']
           @google_account.secret = @omniauth['credentials']['secret']
           @google_account.name = user_info["name"]
           @google_account.email = user_info["email"]
-          puts "@google_account details #{@google_account.inspect} @db_google_account #{@db_google_account.inspect}"
-#          begin
-#            @google_account = @google_account.save!
-#          rescue Exception => msg
-#            puts "Something went wrong during google account creation (#{msg})"
-#            flash[:error] = "Error during google signup process."
-#          end
-          # Fetch only the groups
+          @google_account.sync_group_name = "Freshdesk Contacts"
+          Rails.logger.debug "@google_account details #{@google_account.inspect} existing_google_accounts #{@existing_google_accounts.inspect}"
+          # Fetch all the groups
           @google_groups = @google_account.fetch_all_google_groups
+          # Reuse the group id, if the group with same name already exist.
+          @google_groups.each { |g_group|
+            @google_account.sync_group_id = g_group.group_id if g_group.name == @google_account.sync_group_name
+          }
           render 'integrations/google_accounts/edit'
         end
       end

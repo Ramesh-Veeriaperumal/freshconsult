@@ -2,7 +2,7 @@
 <Module>
     <ModulePrefs title="Freshdesk"
 	description="Your Social Help Desk."
-	height="200"
+	height="20"
 	author="Navaneeth"
 	author_email="navaneeth@freshdesk.com"
 	author_location="Chennai, IN">
@@ -30,18 +30,29 @@
     <Require feature="setprefs"/> 
   </ModulePrefs>
 
+  <UserPref name="maxmin" default_value="true" datatype="bool" display_name="By default the gadget is in maximized state" />
+
   <!-- Define the content type and display location. The settings
    "html" and "card" are required for all Gmail contextual gadgets. -->
   <Content type="html" view="card">
     <![CDATA[
-	<link type="text/css" rel="stylesheet" media="screen, projection" href="http://login.freshpo.com/packages/gadget.css">
-	<style type="text/css">
+	<link type="text/css" rel="stylesheet" media="screen, projection" href="https://asset.freshpo.com/packages/gadget.css">
+	
+	<script type='text/javascript' src='https://asset.freshpo.com/javascripts/frameworks/jquery.js?1328620567'></script>
+    <script src="https://asset.freshpo.com/javascripts/frameworks/plugins/jquery.tinymce.js?1325848019" type="text/javascript"></script>
+    <script src="https://asset.freshpo.com/javascripts/tiny_mce/tiny_mce_src.js?1325848020" type="text/javascript"></script>
+
+      <style type="text/css">
+		html {
+			overflow-y: hidden;
+		}
 		body {
 			min-width: 300px;
 		}
 	</style>
-	<script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js'></script>
-	<div id="fullbody">
+	<div id="maxmin" class="minimize hide" title="Minimize the Gadget">&nbsp;</div>
+	<div id="maxmin_tip" class="hide">Click here to maximize the gadget</div>
+	<div id="fullbody" class="hide">
 		<ul class="tabs" id="gcgTabs">
 		<li id="contact" class="active" onclick="showContact()"><a href="#">Contact</a></li>
 		<li id="recent_tickets"><a href="#" onclick="showRecentTickets()">Recent Tickets</a></li>
@@ -50,19 +61,46 @@
 		<div id="content_div"></div>
 		<div id="output"></div>
 	</div>
-	<div id="auth">
-		<div class="center">You have not yet Linked this gmail id with an Agent in Freshdesk.  Click 'Connect' to link your Freshdesk account.</div><br/>
+	<div id="auth" class="hide">
+		<div class="center">You have not yet linked this Gmail account with an agent in Freshdesk.</div><br/>
 		<a class="special uiButton" href="javascript:void(0);">Connect your Freshdesk</a>
 	</div>
 	<div id="error"></div>
 
 	<script type="text/javascript">
+
+		function updateCookie(cookieId, value, expireDays){
+			var expireString="";
+			if(expireDate!==undefined){
+				var expireDate=new Date();
+				expireDate.setTime((24*60*60*1000*parseFloat(expireDays)) + expireDate.getTime());
+				expireString="; expires="+expireDate.toGMTString();
+			}
+			return(document.cookie=escape(cookieId)+"="+escape(value||"") + expireString + "; path=/");
+		}
+
+		function getCookie(cookieId){
+			var cookie=document.cookie.match(new RegExp("(^|;)\\s*"+escape(cookieId)+"=([^;\\s]*)"));
+			return(cookie?unescape(cookie[2]):null);
+		};
+
+		function deleteCookie(cookieId){
+			var cookie = Cookie.retrieve(cookieId)||true;
+			updateCookie(cookieId, "", -1);
+			return cookie;
+		};
+
+
 		// <!-- Fetch the array of content matches. -->
 		matches = google.contentmatch.getContentMatches();
 		var from_email=""; to_email=""; subject=""; body=""; us_phone=""; ticket_id=""; t=""; var cnt=Math.floor((Math.random()*1000)*(Math.random()*100));
 		var domain = "";
 		var url_root="login.freshpo.com"; 
 		var http_s="http";
+		var init_done = false;
+		var current_tab = 'contact';
+
+		var prefs = new _IG_Prefs();
 
 		// <!-- Iterate through the array and display output for each match. -->
 		for (var match in matches) {
@@ -82,6 +120,44 @@
 					us_phone = matches[match][key];
 				}
 			}
+		}
+
+		function minimize() {
+			jQuery('body').addClass('minimized');
+			jQuery('#maxmin').removeClass('minimize').addClass('maximize').removeClass('hide');
+			jQuery('#maxmin_tip').removeClass('hide');
+			prefs.set("maxmin",false);
+
+			jQuery('#maxmin').attr('title','Maximize the Gadget');
+			
+			updateCookie('minimized', 'yes', 365);
+			
+			gadgets.window.adjustHeight(20);
+		}
+
+		function maximize() {
+			jQuery('body').removeClass('minimized');
+			jQuery('#maxmin').addClass('minimize').removeClass('maximize').removeClass('hide');
+			jQuery('#maxmin_tip').addClass('hide');
+			prefs.set("maxmin",true);
+			updateCookie('minimized', 'no', 365);
+			jQuery('#maxmin').attr('title','Minimize the Gadget');
+			autoHeight();
+		}
+
+		function gadgetInit() {
+			var minmax = prefs.getBool("maxmin");
+			
+			if ( (getCookie('minimized') === 'no') || (getCookie('minimized') === null) &&  minmax == true) {
+				//Maximized State
+				init();
+			} else {
+				minimize();
+			}
+		}
+
+		function isMinimized() {
+			return jQuery('body').hasClass('minimized')
 		}
 
 		function showTicket() {
@@ -151,19 +227,69 @@
 				if(subject_field != null) subject_field.val(subject);
 				body_field = jQuery("#helpdesk_ticket_description_html")
 				//if(body_field != null) body_field.val(body);
+					
+				tinyMCE.init({
+					apply_source_formatting : false,
+					content_css : '/stylesheets/fresh-mce/content.css',
+					convert_urls : false,
+					dialog_type : 'modal',
+					editor_selector : 'mceEditor',
+					entity_encoding : 'raw',
+					force_br_newlines : true,
+					force_p_newlines : false,
+					forced_root_block : '',
+					handle_event_callback : function(editor){
+					   tinyMCE.triggerSave();
+					   return true;
+					},
+					setupcontent_callback: function(editor_id, body, doc) {
+						autoHeight();
+					},
+					height : '250',
+					inline_styles : false,
+					inlinepopups_skin : 'fresh',
+					language : 'en',
+					mode : 'textareas',
+					paste_auto_cleanup_on_paste : true,
+					paste_convert_headers_to_strong : false,
+					paste_convert_middot_lists : false,
+					paste_create_linebreaks : false,
+					paste_create_paragraphs : false,
+					paste_remove_styles : false,
+					paste_text_sticky : true,
+					paste_unindented_list_class : 'unindentedList',
+					paste_use_dialog : true,
+					plugins : "safari,media,advimage,paste,inlinepopups,table",
+					skin : 'fresh',
+					theme : 'advanced',
+					theme_advanced_buttons1 : 'bold,italic,|,underline,bullist,numlist,|,forecolor,backcolor,|,link,unlink',
+					theme_advanced_buttons2 : '',
+					theme_advanced_buttons3 : '',
+					theme_advanced_resizing : true,
+					theme_advanced_styles : 'Code=codeStyle;Quote=quoteStyle',
+					theme_advanced_toolbar_align : 'left',
+					theme_advanced_toolbar_location : 'top',
+					width : '100%'
+
+				});
 			}
 		}
 
 		function init() {
+
+			maximize();
 			// Retrieve the domain of the current user. gadgets.util.getUrlParameters()['parent'] returns a value
 			// of of the form: http(s)://mail.google.com/mail/domain.com/html for Gmail (other containers are similar).
-			// The example below shows a regular expression for use with Gmail. For Calendar, use this regular
-			// expression instead: /calendar\/hosted\/([^\/]+)/
+			
 			domain = gadgets.util.getUrlParameters()['parent'].match(/.+\/a\/(.+)\/html/)[1];
 			// Hit the server, passing in a signed request (and OpenSocial ID), to see if we know who the user is.
 			var params = {};
 			params[gadgets.io.RequestParameters.AUTHORIZATION] = gadgets.io.AuthorizationType.SIGNED;
-			var url = http_s+"://"+url_root+"/opensocial/google?domain="+domain
+			
+			var url = http_s+"://"+url_root+"/opensocial/google?domain="+domain;
+			
+			init_done = true;	//Flag set for Minimize/Maximize
+
 			openSocialRequest(url, initResponse, params);
 		};
 
@@ -171,9 +297,15 @@
 			t = content.t;
 			url_root = content.url_root;
 			ssl_enabled = content.ssl_enabled;
-			if (ssl_enabled) http = "https"
-			showContact();
-			jQuery('#auth').hide();
+			if (ssl_enabled) http_s = "https"
+			if (current_tab == 'recent_tickets') {
+				showRecentTickets();
+			} else if (current_tab == 'ticket') {
+				showTicket();
+			} else {
+				showContact();
+			}
+			jQuery('#auth').addClass('hide');;
 		};
 
 		function initResponse(response) {
@@ -194,6 +326,11 @@
 		}
 
 		function activateTab(tabid) {
+			current_tab = tabid;
+			maximize();
+			if (!init_done) {
+				init();
+			}
 			jQuery("#contact").removeClass("active")
 			jQuery("#recent_tickets").removeClass("active")
 			jQuery("#ticket").removeClass("active")
@@ -211,7 +348,7 @@
 					// user closed the popup.
 					if (popup != null && popup.closed) {
 						var params = {};
-						jQuery('#auth').hide();
+						jQuery('#auth').addClass('hide');;
 						params[gadgets.io.RequestParameters.AUTHORIZATION] = gadgets.io.AuthorizationType.SIGNED;
 						var url = http_s+"://"+url_root+"/opensocial/google?domain="+domain;
 						openSocialRequest(url, openIdUserCreateResponse, params);
@@ -233,7 +370,7 @@
 		function openSocialRequest(url, handleResponse, params) {
 			// Start the progress bar
 			showLoading();
-			// alert("openSocialRequest url "+url);
+
 			gadgets.io.makeRequest(url+"&"+cnt, handleResponse, params);
 			cnt = cnt + 1
 		}
@@ -242,7 +379,7 @@
 		function makeRequest(url, handleResponse, params, form_data) {
 			// Start the progress bar
 			showLoading();
-			// alert("openSocialRequest url "+http_s+"://"+url_root+url);
+
 			if (form_data != null) {
 				params[gadgets.io.RequestParameters.METHOD] = gadgets.io.MethodType.POST;
 				params[gadgets.io.RequestParameters.POST_DATA] = gadgets.io.encodeValues(form_data);
@@ -251,7 +388,6 @@
 		}
 
 		function showAuth(t) {
-			console.log('Showing Auth div');
 
 			var url = http_s+"://"+url_root+"/openid/google?domain=" + domain+"&t="+t;
 
@@ -259,60 +395,68 @@
 			button.click(function() {openPopup(url)});
 
 			hideLoading();
-			jQuery('#fullbody').hide();
-			jQuery('#auth').show();
+			jQuery('#fullbody').addClass('hide');
+			jQuery('#auth').removeClass('hide');
 
 			gadgets.window.adjustHeight(120);
 		}
 
 		function showUnsuccessfulAuth() {
 			jQuery('#gcgLoading').remove();
-			jQuery('#auth').show();
+			jQuery('#auth').removeClass('hide');
 		}
 
 		function showError(err_msg) {
 			jQuery('#gcgLoading').remove();
-//			jQuery('#error').show();
+//			jQuery('#error').removeClass('hide');
 			document.getElementById('error').innerHTML = err_msg
 		}
 
 		function showLoading() {
 			jQuery('#gcgLoading').remove();
-			jQuery('body').attr('id','gcgadget');
-			console.log('Loading Code');
-			jQuery("#fullbody").hide();
+			
+			jQuery("#fullbody").addClass('hide');;
 			var loading_div = jQuery('<div></div>')
 					.attr('id',"gcgLoading")
 					.attr('style','text-align:center; padding: 20px;')
-					.html( '<img src="' + http_s+"://"+url_root+"/images/load.gif" + '" />' );
+					.html( '<img src="https://asset.freshpo.com/images/load.gif" />' );
 			
 			jQuery('body').prepend(loading_div);
+			autoHeight();
 		}
 
 		function hideLoading() {
-			jQuery("#fullbody").show();
-			console.log('Hiding the loading box');
+			jQuery("#fullbody").removeClass('hide');
 			jQuery('#gcgLoading').remove();
 		}
 
 		function autoHeight() {
-			console.log('Changing the height to ' + jQuery('#fullbody').height());
-			gadgets.window.adjustHeight(jQuery('#fullbody').height());
+			if (jQuery('#fullbody').hasClass('hide')) {
+				gadgets.window.adjustHeight(jQuery('#auth').height() + 40);
+			} else {
+				gadgets.window.adjustHeight(jQuery('#fullbody').height());
+			}
 		}
 
 		function imgerror(source){
-			source.src = http_s+"://"+url_root+"/images/fillers/profile_blank_thumb.gif";
+			source.src = "https://asset.freshpo.com/images/fillers/profile_blank_thumb.gif";
 			source.onerror = "";
 			return true;
 		}
 
 		function postProcess() {
-			jQuery('.request-conversation').show();
+			jQuery('.request-conversation').removeClass('hide');
 			// For tickets view, showing 
 
 			jQuery('#ui-widget-container a').each( function (i, item) {
 				if (!$(this).hasClass('post_processed')) {
 					var current_url = $(this).attr('href');
+					if (current_url) {
+						current_url = current_url.replace(/(&k=)\w*/g,"");
+						current_url = current_url.replace("user_tickets.widget","");
+					}
+
+					
 					$(this).attr('href',http_s+"://"+url_root+current_url);
 					$(this).attr('target','__new');
 					$(this).addClass('post_processed')
@@ -320,10 +464,30 @@
 			} );
 		}
 
-		gadgets.util.registerOnLoadHandler(init);
+		gadgets.util.registerOnLoadHandler(gadgetInit);
+
+		function toggleState() {
+			if (isMinimized() ) {
+				maximize();
+
+				if (!init_done) {
+					init();
+				} 
+			} else {
+				minimize();
+			}
+		}
+
+		jQuery(document).ready(function() {
+
+			jQuery('body').attr('id','gcgadget');
+			jQuery('html').attr('style','overflow:hidden');
+			
+			jQuery("#maxmin").live('click',toggleState);
+			jQuery("#maxmin_tip").live('click',toggleState);		
+		});
 
       </script>
    ]]>
   </Content>
 </Module>
-

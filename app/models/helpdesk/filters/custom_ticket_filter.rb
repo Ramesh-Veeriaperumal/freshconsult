@@ -128,7 +128,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     end
     
     #### Very bad condition need to change -- error prone
-    if !params[:filter_name].eql?("spam") or !params[:filter_name].eql?("deleted")
+    if !params[:filter_name].eql?("spam") and !params[:filter_name].eql?("deleted")
       action_hash.push({ "condition" => "spam", "operator" => "is", "value" => false})
       action_hash.push({ "condition" => "deleted", "operator" => "is", "value" => false})
     end
@@ -151,9 +151,9 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     @sql_conditions  ||= begin
 
       if errors? 
-        all_sql_conditions = [" 1 = 2 "] 
+        all_sql_conditions = " 1 = 2 " 
       else
-        all_sql_conditions = [""]
+        all_sql_conditions = ""
         condition_at(0)
         0.upto(size - 1) do |index|
           condition = condition_at(index)
@@ -185,18 +185,23 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
             raise Wf::FilterException.new("Unsupported operator  for container #{condition.container.class.name}")
           end
           
-          if all_sql_conditions[0].size > 0
-            all_sql_conditions[0] << ( match.to_sym == :any ? "  OR" : " AND ")
+          if all_sql_conditions.size > 0
+            all_sql_conditions << ( match.to_sym == :any ? "  OR" : " AND ")
           end
-          
-          all_sql_conditions[0] << sql_condition[0]
+          all_sql_conditions << sql_condition[0]
           sql_condition[1..-1].each do |c|
-            all_sql_conditions << c
+            if c.kind_of?(Array)
+              all_sql_conditions.sub!("?", c.map{ |value| ActiveRecord::Base.sanitize(value) }.join(","))
+            elsif c.kind_of?(String)
+              all_sql_conditions.sub!("?", ActiveRecord::Base.sanitize(c.to_s))
+            else
+              all_sql_conditions.sub!("?", c.to_s)
+            end
           end
         end
       end
       
-      all_sql_conditions
+      [all_sql_conditions]
     end
   end
   
@@ -252,5 +257,41 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   def joins
     ["INNER JOIN flexifields ON flexifields.flexifield_set_id = helpdesk_tickets.id  "]
   end      
+  
+  def order_field
+    "helpdesk_tickets.#{@order}"    
+  end
+  
+  def previous_ticket_sql(ticket, account, user)   
+    order_field_value = ticket.send(@order)
+    order_field_value =  order_field_value.to_formatted_s(:db) if order_field_value.kind_of?(Time)
+    cond_operator = (@order_type == "desc") ? ">" : "<"
+
+    prev_cond = " AND ((#{order_field} = '#{order_field_value}' AND helpdesk_tickets.id < #{ticket.send("id")} ) OR (#{order_field} #{cond_operator} '#{order_field_value}')) " << permissible_conditions(ticket, account, user)    
+    
+    previous_sql_query = "SELECT helpdesk_tickets.id, helpdesk_tickets.display_id, 'previous' from helpdesk_tickets INNER JOIN flexifields ON flexifields.flexifield_set_id = helpdesk_tickets.id WHERE  #{sql_conditions} "
+    
+    previous_sql_query << prev_cond << " ORDER BY " << reverse_order_clause << " LIMIT 1"
+  end
+  
+  def next_ticket_sql(ticket, account, user)
+    order_field_value = ticket.send(@order)
+    order_field_value =  order_field_value.to_formatted_s(:db) if order_field_value.kind_of?(Time)
+    cond_operator = (@order_type == "desc") ? "<" : ">"
+    
+    next_cond = "AND ((#{order_field} = '#{order_field_value}' AND helpdesk_tickets.id > #{ticket.send("id")} )  OR (#{order_field} #{cond_operator} '#{order_field_value}')) " << permissible_conditions(ticket, account, user) 
+    next_sql_query = "SELECT helpdesk_tickets.id, helpdesk_tickets.display_id, 'next' from helpdesk_tickets INNER JOIN flexifields ON flexifields.flexifield_set_id = helpdesk_tickets.id WHERE  #{sql_conditions} "
+    
+    next_sql_query << next_cond << " ORDER BY " << order_clause << " LIMIT 1"
+  end
+  
+  def adjacent_tickets(ticket, account, user)
+    handle_empty_filter!   
+    tickets = ActiveRecord::Base.connection().execute("(#{previous_ticket_sql(ticket, account, user)}) UNION ALL (#{next_ticket_sql(ticket, account, user)})")   
+  end
+  
+  def permissible_conditions(ticket, account, user)    
+    return (" AND (helpdesk_tickets.account_id = #{account.id}) " << ticket.agent_permission_condition(user))   
+  end
   
 end

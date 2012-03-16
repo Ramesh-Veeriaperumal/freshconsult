@@ -15,10 +15,21 @@ module AgentsHelper
   def agents_exceeded?(agent)
    if agent.new_record?
      current_account.reached_agent_limit?
-   else
+   else 
      agent.occasional?
    end
-   
+ end 
+ 
+  def full_time_disabled?(agent)
+   if agent.new_record?
+     current_account.reached_agent_limit?
+   elsif agent.occasional?
+     current_account.reached_agent_limit?
+   else
+     false
+   end
  end
+ 
+ 
   
 end

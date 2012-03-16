@@ -1,6 +1,7 @@
  ActionController::Routing::Routes.draw do |map|
-      
   map.connect '/images/helpdesk/attachments/:id/:style.:format', :controller => '/helpdesk/attachments', :action => 'show', :conditions => { :method => :get }
+  
+  map.connect "/javascripts/:action.:format", :controller => 'javascripts'
   
   # Routing for Asset management Jammit
   Jammit::Routes.draw(map)
@@ -20,7 +21,7 @@
   
   map.resources :groups
   
-  map.resources :profiles , :member => { :change_password => :post}
+  map.resources :profiles , :member => { :change_password => :post}, :collection => {:reset_api_key => :post}
   
   map.resources :agents, :member => { :delete_avatar => :delete , :restore => :put }, :collection => {:create_multiple_items => :put}
   
@@ -66,6 +67,7 @@
     integration.resources :integrated_resource, :member =>{:create => :put, :delete => :delete}
     integration.resources :google_accounts, :member =>{:edit => :get, :delete => :delete, :update => :put, :import_contacts => :put}
     integration.resources :gmail_gadgets, :collection =>{:spec => :get}
+    integration.resources :jira_issue, :collection => {:get_issue_types => :get, :unlink => :put}
   end
 
   map.namespace :admin do |admin|
@@ -92,11 +94,12 @@
   end
   
   map.resources :reports
-  map.resources :timesheet_reports , :controller => 'reports/timesheet_reports' , :collection => {:report_filter => :post} 
+  map.resources :timesheet_reports , :controller => 'reports/timesheet_reports' , :collection => {:report_filter => :post , :export_csv => :post} 
   map.customer_activity   '/activity_reports/customer', :controller => 'reports/customer_reports', :action => 'index'
   map.helpdesk_activity   '/activity_reports/helpdesk', :controller => 'reports/helpdesk_reports', :action => 'index'
   map.customer_activity_generate   '/activity_reports/customer/generate', :controller => 'reports/customer_reports', :action => 'generate'
   map.helpdesk_activity_generate   '/activity_reports/helpdesk/generate', :controller => 'reports/helpdesk_reports', :action => 'generate'
+  map.helpdesk_activity_export   '/activity_reports/helpdesk/export_to_excel', :controller => 'reports/helpdesk_reports', :action => 'export_to_excel'
 
   
   map.namespace :social do |social|
@@ -119,6 +122,7 @@
       admin.resources :subscription_discounts, :as => 'discounts'
       admin.resources :subscription_affiliates, :as => 'affiliates'
       admin.resources :subscription_payments, :as => 'payments'
+      admin.resources :subscription_announcements, :as => 'announcements'
     end
   end
   
@@ -193,7 +197,7 @@
 #      ticket.resources :notes, :member => { :restore => :put }, :name_prefix => 'helpdesk_issue_helpdesk_'
 #    end
 
-    helpdesk.resources :tickets, :collection => { :user_tickets => :get, :empty_trash => :delete, :empty_spam => :delete, :user_ticket => :get, :search_tweets => :any, :custom_search => :get, :export_csv => :post, :update_multiple => :put  }, 
+    helpdesk.resources :tickets, :collection => { :user_tickets => :get, :empty_trash => :delete, :empty_spam => :delete, :user_ticket => :get, :search_tweets => :any, :custom_search => :get, :export_csv => :post, :update_multiple => :put  , :latest_ticket_count => :post}, 
                                  :member => { :view_ticket => :get, :assign => :put, :restore => :put, :spam => :put, :unspam => :put, :close => :put, :execute_scenario => :post  , :close_multiple => :put, :pick_tickets => :put, :change_due_by => :put , :get_ca_response_content => :post ,:split_the_ticket =>:post , :merge_with_this_request => :post, :print => :any } do |ticket|
 
       ticket.resources :notes, :member => { :restore => :put }, :name_prefix => 'helpdesk_ticket_helpdesk_'

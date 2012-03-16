@@ -3,7 +3,7 @@
 <%= javascript_include_tag "helpdesk/article_section" %>
 <% attach_id = attach_id || "solution_article" %>
 <label><%=t('attach_files')%></label>
-<input type="file" id="<%=attach_id%>_file" name="emptyfile" nameWhenFilled="solution_article[attachments][][file]" fileContainer="<%=attach_id%>-container" fileList="<%=attach_id%>-attachments" sendFocusTo="<%=attach_id%>-body" />
+<input type="file" id="<%=attach_id%>_file" name="emptyfile" nameWhenFilled="solution_article[attachments][][resource]" fileContainer="<%=attach_id%>-container" fileList="<%=attach_id%>-attachments" sendFocusTo="<%=attach_id%>-body" />
 <div class="attachments" id="<%=attach_id%>-container" style="display:none">
   <div id="<%=attach_id%>-attachments"></div>
 </div>

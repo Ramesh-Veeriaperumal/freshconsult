@@ -3792,12 +3792,14 @@ Event.Methods = (function() {
     },
 
     pointer: function(event) {
+		try{  
       return {
         x: event.pageX || (event.clientX +
           (document.documentElement.scrollLeft || document.body.scrollLeft)),
         y: event.pageY || (event.clientY +
           (document.documentElement.scrollTop || document.body.scrollTop))
-      };
+      };    
+		}catch(e){}
     },
 
     pointerX: function(event) { return Event.pointer(event).x },
@@ -3831,12 +3833,14 @@ Event.extend = (function() {
 
       event._extendedByPrototype = Prototype.emptyFunction;
       var pointer = Event.pointer(event);
+		try{
       Object.extend(event, {
         target: event.srcElement,
         relatedTarget: Event.relatedTarget(event),
         pageX:  pointer.x,
         pageY:  pointer.y
-      });
+      }); 
+		}catch(e){}
       return Object.extend(event, methods);
     };
 
@@ -3979,9 +3983,11 @@ Object.extend(Event, (function() {
       } else {
   	     try{
 	        element.fireEvent(event.eventType, event);
-		  } catch(error) {
-			  // Error: No such interface supported (IE)
-			  element.fireEvent(event.eventType);
+		  } catch(error) {                             
+				try{
+			  		// Error: No such interface supported (IE)
+			  		element.fireEvent(event.eventType);
+				}catch(e){}
 	     }
       }
 
