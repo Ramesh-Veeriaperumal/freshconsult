@@ -39,7 +39,6 @@ body { color: #333; background:$background; min-width:$blueprint-liquid-containe
 	@include min-height(450px);
 	@include shadows(rgba(0,0,0, 0.2), 0px, 2px, 3px);
 	position:relative;
-	overflow:auto;
 }
 
 ul.activityfeed, ul.summary{
