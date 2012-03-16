@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120305071921) do
+ActiveRecord::Schema.define(:version => 20120314144717) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -904,6 +904,14 @@ ActiveRecord::Schema.define(:version => 20120305071921) do
   end
 
   add_index "subscription_affiliates", ["token"], :name => "index_subscription_affiliates_on_token"
+
+  create_table "subscription_announcements", :force => true do |t|
+    t.text     "message"
+    t.datetime "starts_at"
+    t.datetime "ends_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "subscription_discounts", :force => true do |t|
     t.string   "name"

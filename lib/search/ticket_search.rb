@@ -64,7 +64,7 @@ module Search::TicketSearch
     if criteria_key == :responder_id
       agents = []
       agents.push([0, "Me" ])
-      agents.concat(Account.current.users.technicians.collect { |au| [au.id, au.name] })
+      agents.concat(Account.current.agents(:include => :user).collect { |au| [au.user.id, au.user.name] })
       agents.push([-1, "Unassigned" ])
       return agents
     end

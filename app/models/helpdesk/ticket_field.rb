@@ -106,7 +106,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
        when "default_ticket_type" then
          picklist_values.collect { |c| [c.value, c.value] }
        when "default_agent" then
-         account.users.technicians.collect { |c| [c.name, c.id] }
+         account.agents(:include => :user).collect { |c| [c.user.name, c.user.id] }
        when "default_group" then
          account.groups.collect { |c| [c.name, c.id] }
        when "default_product" then

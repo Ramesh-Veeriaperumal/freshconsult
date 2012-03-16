@@ -51,6 +51,10 @@ stylesheets:
     - public/stylesheets/ie.css
     - public/stylesheets/gadget.css
 
+  subscription:
+    - public/stylesheets/bootstrap.css
+    - public/stylesheets/bootstrap-responsive.css
+    - public/stylesheets/subscription.css    
 
 javascripts:
   defaults:
@@ -80,3 +84,6 @@ javascripts:
     - public/javascripts/freshwidget.js
   custom_widget:
     - public/javascripts/custom_widget.js
+  subscription:                    
+    - public/javascripts/jquery-1.7.1.min.js
+    - public/javascripts/bootstrap.js
