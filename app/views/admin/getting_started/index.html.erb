@@ -46,7 +46,7 @@
 				form.ajaxSubmit({
 					success:function(data){
 					var send_mail_ele = jQuery("#send_mail_content");
-					send_mail_ele.html((send_mail_ele.html().replace(current_email,reply_email)));
+					send_mail_ele.html((send_mail_ele.html().replace((new RegExp(current_email,"gi")),reply_email)));
 					current_email = reply_email;	Loading.updateStatus(statusBox,"success",GettingStarted.translate("successfully_updated"));
 					},
 					error:function(data){
