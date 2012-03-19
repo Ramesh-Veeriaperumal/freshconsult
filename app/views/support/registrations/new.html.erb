@@ -1,6 +1,6 @@
-<h3 class="title"><%= t('signup') %> to <%=current_portal.name%></h3>
+<h3 class="title"><%= t('signup_title', :current_portal => current_portal.name) %></h3>
 <% form_for :user, :url => {:controller => 'support/registrations', :action => 'create' } do |f| -%>
-    <%= error_messages_for :user %>
+	<%= error_messages_for :user %>
 	<%= hidden_field_tag "user[user_role]", User::USER_ROLES_KEYS_BY_TOKEN[:customer], :id => "user[user_role]" %>
 	<ul class="ui-form">
 		<li> 
