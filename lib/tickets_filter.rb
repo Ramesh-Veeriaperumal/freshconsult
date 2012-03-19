@@ -146,8 +146,8 @@ module TicketsFilter
                                         STATUS_KEYS_BY_TOKEN[:resolved], STATUS_KEYS_BY_TOKEN[:closed]],
         :on_hold          => ["status = ?", STATUS_KEYS_BY_TOKEN[:pending]],
         :twitter          => ["source = ?", SOURCE_KEYS_BY_TOKEN[:twitter]],
-        :open_or_pending  => ["status in (?, ?)" , STATUS_KEYS_BY_TOKEN[:open], STATUS_KEYS_BY_TOKEN[:pending]],
-        :resolved_or_closed  => ["status in (?, ?)" , STATUS_KEYS_BY_TOKEN[:resolved], STATUS_KEYS_BY_TOKEN[:closed]]
+        :open_or_pending  => ["status in (?, ?) and helpdesk_tickets.deleted=?" , STATUS_KEYS_BY_TOKEN[:open], STATUS_KEYS_BY_TOKEN[:pending] , false],
+        :resolved_or_closed  => ["status in (?, ?) and helpdesk_tickets.deleted=?" , STATUS_KEYS_BY_TOKEN[:resolved], STATUS_KEYS_BY_TOKEN[:closed],false]
       }
     end
 

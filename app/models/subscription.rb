@@ -26,13 +26,21 @@ class Subscription < ActiveRecord::Base
   def self.customer_count
    count(:conditions => {:state => 'active'})
  end
+ 
+  def self.free_customers
+   count(:conditions => {:state => 'active',:amount => 0.00})
+  end
   
   def self.customers_agent_count
     sum(:agent_limit, :conditions => { :state => 'active'})
   end
+  
+  def self.customers_free_agent_count
+    sum(:free_agents, :conditions => { :state => 'active'})
+  end
  
   def self.monthly_revenue
-    sum('amount/renewal_period', :conditions => { :state => 'active'}).to_f
+    sum('amount/renewal_period', :conditions => [ " state = 'active' and amount > 0.00 "]).to_f
   end
   
   # This hash is used for validating the subscription when a plan
@@ -64,7 +72,7 @@ class Subscription < ActiveRecord::Base
     
     self.renewal_period = billing_cycle unless billing_cycle.nil?
     self.subscription_plan = plan
-    self.free_agents = plan.free_agents
+    self.free_agents = plan.free_agents if free_agents.nil?
     self.day_pass_amount = plan.day_pass_amount
   end
   
@@ -266,9 +274,9 @@ class Subscription < ActiveRecord::Base
           end
         end
       else
-        if (!next_renewal_at? || next_renewal_at < 1.day.from_now.at_midnight || @charge_now.eql?("true")) and amount > 0
-          if (@response = gateway.purchase(amount_in_pennies, billing_id)).success?
-            subscription_payments.build(:account => account, :amount => amount, :transaction_id => @response.authorization)
+        if (!next_renewal_at? || next_renewal_at < 1.day.from_now.at_midnight || @charge_now.eql?("true")) 
+          if (amount == 0) ||  (@response = gateway.purchase(amount_in_pennies, billing_id)).success?
+            subscription_payments.build(:account => account, :amount => amount, :transaction_id => @response.authorization) unless amount == 0
             self.state = 'active'
             self.next_renewal_at = Time.now.advance(:months => renewal_period)
           else
@@ -320,6 +328,7 @@ class Subscription < ActiveRecord::Base
     def total_amount
       apply_the_cycle
       self.amount = agent_limit ? (self.amount * paid_agents) : subscription_plan.amount
+      self.amount = (amount > 0)?  amount : 0.00
     end
     
     def apply_the_cycle

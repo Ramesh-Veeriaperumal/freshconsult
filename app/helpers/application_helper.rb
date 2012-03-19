@@ -4,7 +4,7 @@ module ApplicationHelper
   include SavageBeast::ApplicationHelper
   include Juixe::Acts::Voteable
   include ActionView::Helpers::TextHelper
-    
+
   require "twitter"
   
   ASSETIMAGE = { :help => "/images/helpimages" }
@@ -16,10 +16,29 @@ module ApplicationHelper
   def show_flash
     [:notice, :warning, :error].collect {|type| content_tag('div', flash[type], :id => type, :class => "flash_info #{type}") if flash[type] }
   end
+  
+  def show_admin_flash
+    [:notice, :warning, :error].collect {|type| content_tag('div', "<a class='close' data-dismiss='alert'>×</a>" + flash[type], :id => type, :class => "alert alert-block alert-#{type}") if flash[type] }  
+  end   
+  
+  def show_announcements                                                    
+    if permission?(:manage_tickets)
+      @current_announcements ||= SubscriptionAnnouncement.current_announcements(session[:announcement_hide_time])  
+      render :partial => "/shared/announcement", :object => @current_announcements unless @current_announcements.blank?
+    end     
+  end         
 
   def page_title
     portal_name = h( (current_portal.name.blank?) ? current_portal.product.name : current_portal.name ) + " : "
     portal_name += @page_title || t('helpdesk_title')
+  end 
+  
+  def page_description
+    @page_description
+  end                
+  
+  def page_keywords
+    @page_keywords    
   end
 
   def tab(title, url, cls = false)
@@ -100,6 +119,21 @@ module ApplicationHelper
       tab( s[3] || t("header.tabs.#{s[1].to_s}") , {:controller => s[0], :action => :index}, active && :active ) 
     end
     navigation
+  end          
+  
+  def subscription_tabs
+    tabs = [
+#      [customers_admin_subscriptions_path, :customers, "Customers" ],
+#      [admin_subscription_affiliates_path, :affiliates, "Affiliates" ],
+      [admin_subscription_discounts_path, :discounts, "Discounts" ],
+      [admin_subscription_payments_path, :payments, "Payments" ],
+      [admin_subscription_announcements_path, :announcements, "Announcements" ],
+      [admin_subscription_plans_path, :plans, "Plans" ]      
+    ]
+
+    navigation = tabs.map do |s| 
+      content_tag(:li, link_to(s[2], s[0]), :class => ((@selected_tab == s[1]) ? "active" : ""))
+    end
   end
   
   def html_list(type, elements, options = {}, activeitem = 0)
@@ -312,7 +346,7 @@ module ApplicationHelper
       # replace_objs will contain all the necessary liquid parameter's real values that needs to be replaced.
       replace_objs = {installed_app.application.name.to_s => installed_app, "application" => installed_app.application} # Application name based liquid obj values.
       replace_objs = liquid_objs.blank? ? replace_objs : liquid_objs.merge(replace_objs) # If the there is no liquid_objs passed then just use the application name based values alone.
-      return Liquid::Template.parse(widget.script).render(replace_objs, :filters => [FDTextFilter])  # replace the liquid objs with real values.
+      return Liquid::Template.parse(widget.script).render(replace_objs, :filters => [Integrations::FDTextFilter])  # replace the liquid objs with real values.
     end
   end
 
@@ -329,12 +363,15 @@ module ApplicationHelper
     object_name     = "#{object_name.to_s}"
     label = label_tag object_name+"_"+field_name, field_label
     dom_type = dom_type.to_s
-    
+
     case dom_type
       when "text", "number", "email", "multiemail" then
         field_value = field_value.to_s.split(ghost_value).first unless ghost_value.blank?
         element = label + text_field(object_name, field_name, :class => element_class, :value => field_value, :rel => rel_value, "data-ghost-text" => ghost_value)
         element << hidden_field(object_name , :ghostvalue , :value => ghost_value) unless ghost_value.blank?
+      when "password" then
+        pwd_element_class = " #{ (required) ? 'required' : '' }  text"
+        element = label + password_field(object_name, field_name, :type => "password", :class => pwd_element_class, :value => field_value)
       when "paragraph" then
         element = label + text_area(object_name, field_name, :class => element_class, :value => field_value)
       when "dropdown" then
@@ -449,12 +486,4 @@ module ApplicationHelper
     tab || ""
   end
   
-end
-
-module FDTextFilter
-  def escape_html(input)
-    input = input.to_s.gsub("\"", "\\\"")
-    input = input.gsub("\\", "\\\\")
-    return input
-  end
 end

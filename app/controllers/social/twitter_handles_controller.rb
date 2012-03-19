@@ -1,15 +1,15 @@
-class Social::TwitterHandlesController < Admin::AdminController
+class Social::TwitterHandlesController < ApplicationController
   
   include ErrorHandle 
   
   before_filter { |c| c.requires_feature :twitter }
   
-  before_filter :except => [:create_twicket,:feed] do |c| 
+  before_filter :except => [:create_twicket,:feed, :user_following,:tweet_exists] do |c| 
     c.requires_permission :manage_users
   end
   
-  before_filter :only => [ :create_twicket,:feed] do |c| 
-    c.requires_permission :manage_forums
+  before_filter :only => [ :create_twicket,:feed, :user_following,:tweet_exists] do |c| 
+    c.requires_permission :manage_tickets
   end
   
   prepend_before_filter :load_product, :only => [ :signin, :authdone ]
@@ -117,11 +117,11 @@ class Social::TwitterHandlesController < Admin::AdminController
     end
   end
   
-  def new_search    
-    @twitter_handles = scoper.find(:all, :include => :user)
-    @twitter_search = current_account.twitter_search_keys.new
-    render :partial => "new_search_key"   
-  end 
+#  def new_search    
+#    @twitter_handles = scoper.find(:all, :include => :user)
+#    @twitter_search = current_account.twitter_search_keys.new
+#    render :partial => "new_search_key"   
+#  end 
   
   def feed
     @selected_tab = :social

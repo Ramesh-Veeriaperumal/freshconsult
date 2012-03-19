@@ -2,20 +2,20 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
   
   DUMMY_ACCOUNTS = 2
   DUMMY_MONEY = 137.0
-  DUMMY_AGENTS = 5
-   
-   
+  DUMMY_AGENTS = 5      
   
   include ModelControllerMethods
-  include AdminControllerMethods
+  include AdminControllerMethods 
+  
+  before_filter :set_selected_tab, :only => [ :customers ]
   
   def index
     @stats = SubscriptionPayment.stats if params[:page].blank?
     @customer_count = Subscription.customer_count - DUMMY_ACCOUNTS
-    @paying_customers = Account.actual_customer_count
+    @free_customers = Subscription.free_customers
     @monthly_revenue = Subscription.monthly_revenue - DUMMY_MONEY
-    @cmrr = @monthly_revenue/@customer_count
-    @customer_agent_count = Subscription.customers_agent_count - DUMMY_AGENTS
+    @cmrr = @monthly_revenue/(@customer_count - @free_customers)
+    @customer_agent_count = Subscription.customers_agent_count - (Subscription.customers_free_agent_count + DUMMY_AGENTS)
     @subscriptions = search(params[:search])
     @subscriptions = @subscriptions.paginate( :page => params[:page], :per_page => 30)
   end
@@ -116,5 +116,9 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
     def redirect_url
       action_name == 'destroy' ? { :action => 'index'} : [:admin, @subscription]
     end
+  
+  def set_selected_tab
+     @selected_tab = :customers
+  end
   
 end

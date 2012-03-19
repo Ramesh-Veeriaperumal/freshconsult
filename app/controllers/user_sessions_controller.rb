@@ -159,21 +159,22 @@ require 'openssl'
       redirect_to signup_url and return unless signup_url.blank? 
       raise ActiveResource::ResourceNotFound
     end
+    http_s = @current_account.ssl_enabled ? "https" : "http"
     ##Need to handle the case where google is integrated with a seperate domain-- 2 times we need to authenticate
     t_url = params[:t] ? "&t="+params[:t] : "" # passed token will be preserved for authentication. 
-    return_url = "http://"+cust_url+"/authdone/google?domain="+params[:domain]+t_url
-    logger.debug "the return_url is :: #{return_url}"    
-    re_alm = "http://"+cust_url    
-    logger.debug "domain name is :: #{domain_name}"
-    url = nil    
+    return_url = http_s+"://"+cust_url+"/authdone/google?domain="+params[:domain]+t_url
+    re_alm = http_s+"://"+cust_url
+    logger.debug "domain name is : #{domain_name}, return_url is : #{return_url}, re_alm : #{re_alm}"
+    url = nil
     url = ("https://www.google.com/accounts/o8/site-xrds?hd=" + params[:domain]) unless domain_name.blank?
     authenticate_with_open_id(url,{ :required => ["http://axschema.org/contact/email", :email] , :return_to => return_url, :trust_root =>re_alm}) do |result, identity_url, registration| end
   end
-
+  
   def google_auth_completed    
     resp = request.env[Rack::OpenID::RESPONSE]  
     email = nil
     flash = {}
+    gmail_gadget_temp_token = params[:t]
     if resp.status == :success
       email = get_email resp
       provider = 'open_id' 
@@ -182,7 +183,6 @@ require 'openssl'
       @auth = Authorization.find_by_provider_and_uid_and_account_id(provider, identity_url,current_account.id)
       @current_user = @auth.user unless @auth.blank?
       @current_user = current_account.all_users.find_by_email(email) if @current_user.blank?
-      gmail_gadget_temp_token = params[:t]
       unless gmail_gadget_temp_token.blank?
         kvp = KeyValuePair.find_by_key(gmail_gadget_temp_token)
         @gauth_error=true
@@ -229,7 +229,10 @@ require 'openssl'
           redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
         end
       end
-    elsif !gmail_gadget_temp_token.blank?
+    elsif gmail_gadget_temp_token.blank?
+      flash[:notice] = t(:'flash.g_app.authentication_failed')
+      redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
+    else
       @notice = t(:'flash.g_app.authentication_failed')
       render :action => 'gmail_gadget_auth', :layout => 'layouts/widgets/contacts.widget'
     end

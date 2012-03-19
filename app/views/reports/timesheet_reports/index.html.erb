@@ -14,7 +14,7 @@
 <% content_for :sidebar do -%>
 <div class="sidepanel">
   <h4 class="title">Filter report by<h4>
-  <% form_tag({:action => :export_csv}, { :method => :post, :id => 'report_filters' }) do %>
+  <% form_tag(export_csv_timesheet_reports_url, { :method => :post, :id => 'report_filters' }) do %>
     <ul class="ui-form">
       <li>
         <label><%=t('helpdesk.time_sheets.customer')%></label>  
