@@ -88,7 +88,7 @@ en:
       label: Field Label
       add_new_choice: Add new choice
       customer_mandatory: Mandatory for ticket submission
-      customer_edit: Can Edit the field
+      customer_edit: Can edit the field
       agent_info1: Field cannot be blank when submitting the ticket
       agent_info2: Field cannot be blank when closing the ticket
       agent_mandatory_submission: Mandatory for submission
