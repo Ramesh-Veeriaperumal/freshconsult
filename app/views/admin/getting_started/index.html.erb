@@ -2,6 +2,7 @@
 <%= include_javascripts :getting_started  %>
 <% javascript_tag do %>
 	var hideDelay=3000;
+	var current_email = "<%=@email_config.reply_email%>";
 	var GettingStarted = {
 		i18n:{},
 		translate:function(key){
@@ -44,7 +45,9 @@
 				loadingDiv.show();
 				form.ajaxSubmit({
 					success:function(data){
-						Loading.updateStatus(statusBox,"success",GettingStarted.translate("successfully_updated"));
+					var send_mail_ele = jQuery("#send_mail_content");
+					send_mail_ele.html((send_mail_ele.html().replace(current_email,reply_email)));
+					current_email = reply_email;	Loading.updateStatus(statusBox,"success",GettingStarted.translate("successfully_updated"));
 					},
 					error:function(data){
 						Loading.updateStatus(statusBox,"failure",GettingStarted.translate("problem_updating"));
