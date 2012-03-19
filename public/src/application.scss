@@ -572,7 +572,7 @@ h4.title{
 	.bookmark{
 		display:none;
 	}	
-	.requestCnt{
+	.requestCnt{             
 		position:relative; 
 		.request-title{
 			$COL_PRI_HIGH: #cc5600;		$COL_PRI_MEDIUM: #0a9458;		$COL_PRI_LOW: #0c8aae;		$COL_PRI_URGENT: #cc0000;			
@@ -615,7 +615,7 @@ h4.title{
 		h4.title{
 			font-size:1.1em;
 			font-weight:bold;
-		}
+		}                       
 		position:relative; 		
 	}
 	
@@ -4855,8 +4855,7 @@ a.submit_link:hover{
   text-transform:uppercase;
   padding:5px;               
   font-style:italic;
-}
-
+}      
 
 /* Getting Started page style starts */
  
