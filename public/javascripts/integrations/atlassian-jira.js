@@ -111,7 +111,7 @@ JiraWidget.prototype= {
 					if (jiraBundle.remote_integratable_id) {
 						return jiraWidget.JIRA_ISSUE.evaluate({});
 					} else {
-						return jiraWidget.JIRA_FORM.evaluate({subject:jiraBundle.ticketSubject});
+						return jiraWidget.JIRA_FORM.evaluate({subject:jiraBundle.ticketSubject.replace(/"/g,"&quot;")});
 					}
 				},
 				application_resources:init_reqs
