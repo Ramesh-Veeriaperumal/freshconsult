@@ -208,8 +208,7 @@ ul.header-tabs{
 				font-size:13px;
 				font-weight:bold;
 				text-align:center;
-				display:block;
-				text-transform:capitalize;
+				display:block;                          
 				@include text-shadow(rgba(0, 0, 0, 0.1), 1px, 1px, 1px);
 			}
 			a:hover{
