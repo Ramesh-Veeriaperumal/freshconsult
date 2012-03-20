@@ -1,6 +1,9 @@
 class ProfilesController < ApplicationController
   
-   before_filter :require_user  
+   before_filter :require_user 
+   before_filter :only => [:info] do |c|
+      c.requires_permission :view_users_info
+   end 
    include ModelControllerMethods  
 
   def edit       
@@ -98,7 +101,11 @@ def reset_password
     @user.active = true #by Shan need to revisit..
     @user.save
 end
-  
+
+def info
+  @user_info = current_account.all_users.find(params[:id])
+  render :partial => "profiles/info", :object => @user_info 
+end  
 
 protected
 
