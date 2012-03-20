@@ -828,7 +828,7 @@ div.action_buttons:hover { -moz-box-shadow: rgba(0, 0, 0, 0.1) 0 0 2px; -webkit-
 .toolbar_pagination .current, .toolbar_pagination_full .current { background: #ffffff; border-color: #dfdfdf; }
 
 /* Theme Colors and layout Defaults */
-.ie6 .wrapper, .ie7 .wrapper { width: expression((document.body.clientWidth < 982)? "982px" : "95%"); width: 980px; }
+.ie6 .wrapper, .ie7 .wrapper { width: expression((document.body.clientWidth < 982)? "982px" : "90%"); width: 980px; }
 .ie6 ul.header-tabs li.active a, .ie6 ul.header-tabs li.active a:hover, .ie7 ul.header-tabs li.active a, .ie7 ul.header-tabs li.active a:hover { top: 1px; padding-top: 7px; }
 .ie6 input, .ie6 button, .ie7 input, .ie7 button { overflow: visible; }
 .ie6 input.text, .ie7 input.text { overflow-x: hidden; }

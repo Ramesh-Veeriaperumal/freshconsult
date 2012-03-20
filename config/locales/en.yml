@@ -22,6 +22,7 @@ en:
   reset_my_password: Reset my password 
   assign: Assign
   signup: sign up
+  signup_title: "Sign up to %{current_portal}"
   trial_expired_on: Your trial has expired on
   upgrade_trial: Upgrade your trial!
   add_note: Add Note

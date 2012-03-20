@@ -2,8 +2,8 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8">                       
-		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">  
-  	<title><%= page_title %></title>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">     
+  	<title><% @page_title %></title>
 
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	
@@ -23,8 +23,19 @@
 		          	Freshdesk admin
 		          </a>            
 		          <div class="nav-collapse">
-		            <ul class="nav">
-		              <%= subscription_tabs %>
+		            <ul class="nav">                    
+		              <%=
+		              	  [
+										      [customers_admin_subscriptions_path(), :customers, "Customers" ],
+										#      [admin_subscription_affiliates_path, :affiliates, "Affiliates" ],
+										      [admin_subscription_discounts_path, :discounts, "Discounts" ],
+										      [admin_subscription_payments_path, :payments, "Payments" ],
+										      [admin_subscription_announcements_path, :announcements, "Announcements" ],
+										      [admin_subscription_plans_path, :plans, "Plans" ]      
+										    ].map do |s| 
+										      content_tag(:li, link_to(s[2], s[0]), :class => ((@selected_tab == s[1]) ? "active" : ""))
+										    end
+									%>          
 		            </ul> 
 								<% form_tag "/", :method => 'get', :class => "navbar-search pull-right" do %>
 								  <%= text_field_tag :search, params[:search], :class => "search-query span3", :placeholder => "Search account", :autocompelete => "off" %> 
@@ -34,9 +45,12 @@
 		      </div>
 		    </div>   
 		<div class="container main-body">  
-			<%= show_admin_flash %>
+			<%= [:notice, :warning, :error].collect {|type| content_tag('div', "<a class='close' data-dismiss='alert'>×</a>" + flash[type], :id => type, :class => "alert alert-block alert-#{type}") if flash[type] }   %>
 			<%= yield %>
 		</div>
-		<%= include_javascripts :subscription%>
+		<%= include_javascripts :subscription%>    
+		<% javascript_tag do %>
+			jQuery.noConflict();
+		<% end %>
 	</body>
 </html>
