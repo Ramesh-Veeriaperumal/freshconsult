@@ -14,11 +14,11 @@
 	      <td class="span4">    
 					<div>
 						From ~
-						<%= formated_date(announcement.starts_at) %> 
+						<%= announcement.starts_at.to_s %> 
 					</div>         	
 					<div>
 						To ~
-	      		<%= formated_date(announcement.ends_at) %>
+	      		<%= announcement.ends_at.to_s %>
 					</div>
 				</td>
 				<td><%= announcement.message %></td>

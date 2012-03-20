@@ -5,13 +5,10 @@
 html {  height:100%; overflow-y:scroll; }
 
 .wrapper{
-   @include clearfix;
+	@include clearfix;
 	@include container;
-	position:relative;
-	text-align: left; 
-	max-width:1280px;
-	min-width:auto;
-	padding:0px 8px; 
+	position: relative;
+	text-align: left;
 }
   
 .top_links a{
@@ -208,8 +205,7 @@ ul.header-tabs{
 				font-size:13px;
 				font-weight:bold;
 				text-align:center;
-				display:block;
-				text-transform:capitalize;
+				display:block;                          
 				@include text-shadow(rgba(0, 0, 0, 0.1), 1px, 1px, 1px);
 			}
 			a:hover{

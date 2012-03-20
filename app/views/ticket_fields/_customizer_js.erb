@@ -28,7 +28,7 @@
          visible_in_portal:      jQuery(dialogContainer+' input[name|="customervisible"]'), 
          editable_in_portal:     jQuery(dialogContainer+' input[name|="customereditable"]'), 
          required_in_portal:     jQuery(dialogContainer+' input[name|="customerrequired"]'),
-         choices:                jQuery(dialogContainer+' div[name|="customchoices"]'),
+         choices:                jQuery(dialogContainer+' div[name|="customchoices"]')
       };
 
       var fieldTemplate =
@@ -44,7 +44,7 @@
                  required:               false,
                  required_for_closure:   false,
                  visible_in_portal:      true, 
-                 editable_in_portal:     false, 
+                 editable_in_portal:     true, 
                  required_in_portal:     false,
                  id:                     null, 
                  choices:                [],
@@ -463,7 +463,7 @@
          $("#CustomFieldsDialog")
             .position({
                my:"center",
-               at:"right top",
+               at:"center center",
                of: element,
                collision: "fit fit",
                offset: "-50 -50"
