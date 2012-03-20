@@ -209,9 +209,9 @@
 		<strong><%=t('.rebrand_title')%></strong>
 		<p><%=t('.rebrand_sub_title')%></p>
 		<label><%=t('.rebrand_company_label')%></label>
-		<%= portal.text_field :name, :class => "text auto", :placeholder => t('.rebrand_company_field_placeholder') %>
+		<%= portal.text_field :name, :placeholder => t('.rebrand_company_field_placeholder') %>
 		<%= render :partial => "/shared/logo_image", :locals => { :item => @account.main_portal, :field_name => "account[main_portal_attributes]" } %>
-		<label><%=t('.rebrand_paint_title')%></label>
+		<label class="spacer"><b><%=t('.rebrand_paint_title')%></b></label>
 
 		<div class="clear">
 			<div class=" float">
