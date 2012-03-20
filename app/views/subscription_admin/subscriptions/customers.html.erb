@@ -1,47 +1,51 @@
-<% @page_title = 'Customers' %>
-<h3>Customers Per Month</h3>
-<table id="customers">
-	<%@customers_by_month.each do |arr|%>
-	  <tr>
-       <td><%=arr[0]%></td>
-       <td><%= arr[1] %></td>
-     </tr>
-	<%end%>
-</table>
+<% @page_title = 'Customers' %>   
+<div class="row">       
+	 <div class="span3">
+			<h3>Last 30 days signups</h3>
+			<table id="customers" class="table">
+				<%@signups_per_day.each do |day,accs|%>
+				  <tr>
+			       <td><%=day.strftime("%d-%B")%></td>
+			       <td><%= accs.size %></td>
+			     </tr>
+				<%end%>
+			</table>
+		</div>
 
-<br>
-<br>
+	 <div class="span3">
+		<h3>Signup's Per Month</h3>
+		<table id="customers" class="table">
+			<%@signups_by_month.each do |date,count|%>
+			  <tr>
+		       <td><%=date%></td>
+		       <td><%= count %></td>
+		     </tr>
+			<%end%>
+		</table>
+	</div>
+  
+	 <div class="span3">
+		<h3>Customers Per Month</h3>
+		<table id="customers" class="table">
+			<%@customers_by_month.each do |arr|%>
+			  <tr>
+		       <td><%=arr[0]%></td>
+		       <td><%= arr[1] %></td>
+		     </tr>
+			<%end%>
+		</table>        
+	 </div>
 
-<h3>Customers Converted Month</h3>
-<table id="customers_converted">
-	<%@conv_customers_by_month.each do |arr|%>
-	  <tr>
-       <td><%=arr[0]%></td>
-       <td><%= arr[1] %></td>
-     </tr>
-	<%end%>
-</table>
-
-<br>
-<br>
-
-<h3>Signup's Per Month</h3>
-<table id="customers">
-	<%@signups_by_month.each do |date,count|%>
-	  <tr>
-       <td><%=date%></td>
-       <td><%= count %></td>
-     </tr>
-	<%end%>
-</table>
-
-<h3>Last 30 days signups</h3>
-<table id="customers">
-	<%@signups_per_day.each do |day,accs|%>
-	  <tr>
-       <td><%=day.strftime("%d-%B")%></td>
-       <td><%= accs.size %></td>
-     </tr>
-	<%end%>
-</table>
-
+	 <div class="span3">
+		<h3>Customers Converted Month</h3>
+		<table id="customers_converted" class="table">
+			<%@conv_customers_by_month.each do |arr|%>
+			  <tr>
+		       <td><%=arr[0]%></td>
+		       <td><%= arr[1] %></td>
+		     </tr>
+			<%end%>
+		</table>
+		</div>     
+</div>		
+	 

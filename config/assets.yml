@@ -87,5 +87,6 @@ javascripts:
   getting_started:
     - public/javascripts/getting_started.js
   subscription:                    
+    - public/javascripts/prototype.js  
     - public/javascripts/jquery-1.7.1.min.js
     - public/javascripts/bootstrap.js
