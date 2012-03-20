@@ -516,29 +516,29 @@ body h5{
 	text-align:center;
 	padding:9px 3px 0 6px;
 	line-height:0;
-	height:9px;                
-	position:absolute;
-  @include pointer-title;	      
+	height:9px;
 	@include min-width(48px); 
 	left:-4px;	
 }
 .status-pointer{  
-	top:24px;  
+	float:right;  
+	@include border-radius(3px);
 }			                     
 .priority-pointer{
-	top:4px; 	     
+	top:9px; 	
+	position:absolute;
+  @include pointer-title;     
 }          
 
 .request-title{
 	$COL_PRI_HIGH: #cc5600;		$COL_PRI_MEDIUM: #0a9458;		$COL_PRI_LOW: #0c8aae;		$COL_PRI_URGENT: #cc0000;			
 	background-color:#f6f6f6; 
-	padding:7px 70px;
+	padding:7px 20px 8px 70px;
 	border-bottom:1px solid #e9e9e9;
 	color:#000000;
 	font-size:13px;
 	position:relative;
-	font-weight:bold;                 
-	@include min-height(35px);
+	font-weight:bold;           
 	.subject{ line-height:20px; }
 	.ticket-id{	color:#999999; }        	
 	.low{ background-color: $COL_PRI_LOW; }
@@ -573,45 +573,7 @@ h4.title{
 		display:none;
 	}	
 	.requestCnt{             
-		position:relative; 
-		.request-title{
-			$COL_PRI_HIGH: #cc5600;		$COL_PRI_MEDIUM: #0a9458;		$COL_PRI_LOW: #0c8aae;		$COL_PRI_URGENT: #cc0000;			
-			background-color:#f6f6f6; 
-			padding:7px 80px 8px 85px;
-			border-bottom:1px solid #e9e9e9;
-			color:#000000;
-			font-size:13px;
-			position:relative;
-			font-weight:bold;                 
-			@include min-height(35px);
-			.subject{ line-height:20px; }
-			.ticket-id{	color:#999999; }
-			.status-pointer, .priority-pointer{
-				font-size:10px;
-				color:#fff;
-				text-transform:uppercase; 
-				text-align:center;
-				padding:9px 8px 0;
-				line-height:0;
-				height:9px;
-				@include min-width(55px);
-				left:-4px;
-				top:8px;
-				position:absolute;
-			}
-			.status-pointer{            
-				top:29px;        
-				@include border-radius(3px);
-			}			                      
-			.low{ background-color: $COL_PRI_LOW; }
-			.low:before{ border-left-color: $COL_PRI_LOW; }
-			.medium{ background-color: $COL_PRI_MEDIUM; }
-			.medium:before{ border-left-color: $COL_PRI_MEDIUM; }
-			.high{ background-color: $COL_PRI_HIGH; }
-			.high:before{ border-left-color: $COL_PRI_HIGH; }
-			.urgent{ background-color: $COL_PRI_URGENT; }
-			.urgent:before{ border-left-color: $COL_PRI_URGENT; }
-		}
+		position:relative;
 		h4.title{
 			font-size:1.1em;
 			font-weight:bold;

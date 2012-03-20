@@ -1,7 +1,7 @@
 /* Theme Colors and layout Defaults */
 html { height: 100%; overflow-y: scroll; }
 
-.wrapper { overflow: hidden; *zoom: 1; min-width: 1102px; width: 95%; margin: 0 auto; overflow: hidden; *zoom: 1; position: relative; text-align: left; max-width: 1280px; min-width: auto; padding: 0px 8px; }
+.wrapper { overflow: hidden; *zoom: 1; min-width: 950px; width: 90%; margin: 0 auto; overflow: hidden; *zoom: 1; position: relative; text-align: left; }
 
 .top_links a { text-decoration: none; font-weight: bold; padding: 0px 8px; margin: 0px; border-right: 1px solid #afafaf; border-left: 1px solid #efefef; color: #527eaa; }
 .top_links a:visited { color: #527eaa; }
