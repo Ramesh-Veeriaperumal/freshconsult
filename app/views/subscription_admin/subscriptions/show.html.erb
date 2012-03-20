@@ -7,13 +7,21 @@
 		<h3>Summary</h3>
 		<table id="subscription" class="table table-bordered">
 		  <tr>
-		    <th>Account</th>
+		    <th>Name</th>
 		    <td><%= h(@subscription.account) %></td>
+		  </tr>           
+		  <tr>
+		    <th>Contact information</th>
+		    <td><%= @subscription.account.account_admin.email %> <%= @subscription.account.account_admin.phone %></td>
 		  </tr>
 		  <tr>
-		    <th>Amount</th>
+		    <th>Monthly Revenue</th>
 		    <td><%= number_to_currency(@subscription.amount) %></td>
 		  </tr>
+      <tr>
+        <th>Lifetime Revenue</th>
+        <td><%= number_to_currency(@subscription.account.subscription_payments.sum(:amount)) %></td>
+      </tr>
 		  <tr>
 		    <th>Created</th>
 		    <td><%= @subscription.created_at.to_s(:short_day) %></td>
@@ -21,7 +29,7 @@
 		  <tr class="<%= 'expired' unless @subscription.current? %>">
 		    <th>Next Renewal</th>
 		    <td><%= @subscription.next_renewal_at.to_s(:short_day) %></td>
-		  </tr>
+		  </tr>       
 		  <tr>
 		    <th>Plan</th>
 		    <td><%= @subscription.subscription_plan %></td>
@@ -37,10 +45,6 @@
 		  <tr>
 		    <th>Agents</th>
 		    <td><%= @subscription.account.agents.count %></td>
-		  </tr>                
-			<tr>
-		    <th>Lifetime Revenue</th>
-		    <td><%= number_to_currency(@subscription.account.subscription_payments.sum(:amount)) %></td>
 		  </tr>
 		</table>   
 	</div>       
