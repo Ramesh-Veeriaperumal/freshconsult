@@ -25,9 +25,8 @@ class Admin::EmailConfigsController < Admin::AdminController
   def test_email
     emailObj = EmailConfigNotifier.deliver_test_email(current_account.primary_email_config)
     
-    respond_to do |format|
-      format.json { render :json => {:email_sent => true}.to_json }
-    end
+    render :json => {:email_sent => true}.to_json 
+    
   end
   
   def make_primary 

@@ -274,9 +274,8 @@ class AccountsController < ApplicationController
     responseObj = { :status => 
         current_portal.update_attributes(params[:account][:main_portal_attributes]) }
 
-    respond_to do |format|
-      format.json { render :json => responseObj.to_json }
-    end
+        render :json => responseObj.to_json
+    
   end
   
   def plans

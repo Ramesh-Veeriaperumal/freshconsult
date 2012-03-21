@@ -140,13 +140,13 @@ en:
             send_test_mail_info2: (Learn How)
             send_test_mail_info3: If you think everything is good so far, try <b>%{send_test_mail_link}</b>
             send_test_mail_link_title: sending a test mail
-            send_test_mail_response1: We've sent a test mail to <b>%{reply_email}</b>. If everything goes well, you  can see  the <a href="/helpdesk/tickets" target="_blank">new ticket</a> in the tickets view.
+            send_test_mail_response1: We've sent a test mail to <b><span id=reply_email_1>%{reply_email}</span></b>. If everything goes well, you  can see  the <a href="/helpdesk/tickets" target="_blank">new ticket</a> in the tickets view.
             send_test_mail_confirm_yes: Yes, i got it.
             send_test_mail_confirm_no: No, i can't see any ticket.
             send_test_mail_response_yes: Congratulations!!! You have successfully connected your support email with your help desk portal. Happy Supporting!!!
             send_test_mail_response_no1: There seems to be a problem ->
             send_test_mail_response_no2: Learn how
-            send_test_mail_response_no3: to forward your emails to <b>%{to_email}</b> and try %{send_test_mail_link} again.( Did you not even receive the test mail at %{reply_email} Wait for a couple of minutes, and if there still seems to be a problem, <a href="https://support.freshdesk.com/" target="_blank">let us know</a> )
+            send_test_mail_response_no3: to forward your emails to <b>%{to_email}</b> and try %{send_test_mail_link} again.( Did you not even receive the test mail at <span id=reply_email_2>%{reply_email}</span> Wait for a couple of minutes, and if there still seems to be a problem, <a href="https://support.freshdesk.com/" target="_blank">let us know</a> )
             agent_title: Feeling lonely?
             agent_sub_title: Invite your team to use Freshdesk
             agent_send_invite_label: Send Invites to agents

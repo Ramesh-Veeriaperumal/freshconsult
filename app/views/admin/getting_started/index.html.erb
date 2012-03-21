@@ -2,7 +2,6 @@
 <%= include_javascripts :getting_started  %>
 <% javascript_tag do %>
 	var hideDelay=3000;
-	var current_email = "<%=@email_config.reply_email%>";
 	var GettingStarted = {
 		i18n:{},
 		translate:function(key){
@@ -45,9 +44,11 @@
 				loadingDiv.show();
 				form.ajaxSubmit({
 					success:function(data){
-					var send_mail_ele = jQuery("#send_mail_content");
-					send_mail_ele.html((send_mail_ele.html().replace((new RegExp(current_email,"gi")),reply_email)));
-					current_email = reply_email;	Loading.updateStatus(statusBox,"success",GettingStarted.translate("successfully_updated"));
+					var reply_email_1 = jQuery("#reply_email_1");
+					reply_email_1.html(reply_email);
+					var reply_email_2 = jQuery("#reply_email_2");
+					reply_email_2.html(reply_email);
+	Loading.updateStatus(statusBox,"success",GettingStarted.translate("successfully_updated"));
 					},
 					error:function(data){
 						Loading.updateStatus(statusBox,"failure",GettingStarted.translate("problem_updating"));
@@ -144,7 +145,7 @@
 
 <div class="clear gs">
 	<div id="email_config_box" class="bigbox float">
-	 <% form_for :email_config, @email_config, :url => admin_email_config_path(@email_config, :json), :html => { :method => :put,:id =>"email_config"} do |f| %>	
+	 <% form_for :email_config, @email_config, :url => admin_email_config_path(@email_config,:json), :html => { :method => :put,:id =>"email_config"} do |f| %>	
 		<strong><%=t('.email_config_title')%></strong>
 		<p><%=t('.email_config_sub_title')%></p>
 		<label class="spacer"><%=t('.email_config_field_title')%></label>
@@ -154,11 +155,11 @@
 		<div class="gs_request">	
 		<p id="fwdemail"><%=t('.send_test_mail_info1', :to_email => @email_config[:to_email])%></b>
 		<a href="https://support.google.com/mail/bin/answer.py?hl=en&answer=10957" target="_blank"><%=t('.send_test_mail_info2')%></a>
-		<b><%= t('.send_test_mail_info3', :send_test_mail_link => link_to_remote( t('.send_test_mail_link_title'),:url => (test_email_admin_email_config_path(@email_config,:json)), :method => :put, :class => "", :style => "text-decoration:underline;", :id => "send_test_mail", :failure => "SendTestMail.fail(request)", :success => "SendTestMail.success(request)", :loading => "SendTestMail.request()" ) )%></b></p>
+		<b><%= t('.send_test_mail_info3', :send_test_mail_link => link_to_remote( t('.send_test_mail_link_title'),:url => (test_email_admin_email_config_path(@email_config)), :method => :put, :class => "", :style => "text-decoration:underline;", :id => "send_test_mail", :failure => "SendTestMail.fail(request)", :success => "SendTestMail.success(request)", :loading => "SendTestMail.request()" ) )%></b></p>
 		</div>
 		<div class="gs_response">
 			<p>	
-						<%=t('.send_test_mail_response1',:reply_email => @email_config.reply_email)%><br><br>
+	<%=t('.send_test_mail_response1',:reply_email => @email_config.reply_email)%><br><br>
 						<a href="javascript:SendTestMail.confirm('yes');" class="uiButton"><%=t('.send_test_mail_confirm_yes')%></a><a href="javascript:SendTestMail.confirm('no');" class="uiButton" style="margin-left:10px;"><%=t('.send_test_mail_confirm_no')%></a>
 			</p>
 		</div>
@@ -168,7 +169,7 @@
 		<div class="gs_no">
 			<p>
 				<%=t('.send_test_mail_response_no1')%>
-					<a href="https://support.google.com/mail/bin/answer.py?hl=en&answer=10957" target="_blank"><%=t('.send_test_mail_response_no2')%></a> <%=t('.send_test_mail_response_no3', :to_email =>  @email_config.to_email, :reply_email => @email_config.reply_email, :send_test_mail_link => link_to_remote( t('.send_test_mail_link_title') , :url => (test_email_admin_email_config_path(@email_config,:json)), :method => :put, :style => "text-decoration:underline;", :id => "send_test_mail", :failure => "SendTestMail.fail(request)", :success => "SendTestMail.success(request)", :loading => "SendTestMail.request()" )) %>
+					<a href="https://support.google.com/mail/bin/answer.py?hl=en&answer=10957" target="_blank"><%=t('.send_test_mail_response_no2')%></a> <%=t('.send_test_mail_response_no3', :to_email =>  @email_config.to_email, :reply_email => @email_config.reply_email, :send_test_mail_link => link_to_remote( t('.send_test_mail_link_title') , :url => (test_email_admin_email_config_path(@email_config)), :method => :put, :style => "text-decoration:underline;", :id => "send_test_mail", :failure => "SendTestMail.fail(request)", :success => "SendTestMail.success(request)", :loading => "SendTestMail.request()" )) %>
 			</p>
 		</div>	
 		</div>
@@ -181,7 +182,7 @@
     <div class="float">
 	
 		<div id="agent_box" class="smallbox">			
-		<% form_for @agent, :url => create_multiple_items_agents_path(:json), :html => { :method => :put,:id =>"agent_invite" } do |f| %>	
+		<% form_for @agent, :url => create_multiple_items_agents_path(), :html => { :method => :put,:id =>"agent_invite" } do |f| %>	
 		<strong><%=t('.agent_title')%></strong>
 		<p style="margin-bottom: 25px;"><%=t('.agent_sub_title')%></p>
 		<label><%=t('.agent_send_invite_label')%></label>
@@ -195,16 +196,18 @@
 		<div id="social_box" class="smallbox minifier">
 			<strong><%=t('.social_title')%></strong>
 			<p><%=t('.social_sub_title')%></p>
-			<div>
-			<a href="<%=@wrapper.authorize_url%>" target="_blank"><div class="twitterbutton float"><strong><%=t('.social_twitter')%></strong><samp><%=t('.social_twitter_add')%></samp></div></a>	
-			<a href="<%=@fb_client.authorize_url%>" target="_blank"><div class="facebookbutton float"><strong><%=t('.social_facebook')%></strong><samp><%=t('.social_facebook_add')%></samp></div></a>	
+			<div style="margin-left: 30px;">
+			<a href="<%=@wrapper.authorize_url%>" target="_blank"><div class="twitterbutton float">
+<!--[if lt IE 9]><img src="/images/twitter_32.png" style="float: left; margin: -3px 5px 0 -35px; border: 0;"><![endif]-->				<strong><%=t('.social_twitter')%></strong><samp><%=t('.social_twitter_add')%></samp></div></a>	
+			<a href="<%=@fb_client.authorize_url%>" target="_blank"><div class="facebookbutton float">
+<!--[if lt IE 9]><img src="/images/facebook_32.png" style="float: left; margin: -3px 4px 0 -35px; border: 0;"><![endif]-->								<strong><%=t('.social_facebook')%></strong><samp><%=t('.social_facebook_add')%></samp></div></a>	
 	    	</div>
 	    </div>
 	
 	</div>	
 	
 	<div id="rebrand_box" class="bigbox float">
-		<% form_for :account, @account, :url => rebrand_account_path(:json),  :html => { :multipart => true ,:method => :put, :id => "rebrand" } do |f| %>
+		<% form_for :account, @account, :url => rebrand_account_path(),  :html => { :multipart => true ,:method => :put, :id => "rebrand" } do |f| %>
 		<% f.fields_for :main_portal do |portal| %>
 		<strong><%=t('.rebrand_title')%></strong>
 		<p><%=t('.rebrand_sub_title')%></p>
