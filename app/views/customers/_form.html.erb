@@ -17,10 +17,10 @@
 		  </li>
 		  <li>
 		  	<%= f.label :domains, t('company.info2') %>		
-			<%= f.text_field :domains, :id => "domain_names", :class => "text"  %>
-			<span>
-				<b><%= t('note') %>:</b> <%=t('company.info9')%> 
-			</span>
+			  <%= f.text_field :domains, :id => "domain_names", :class => "text"  %>
+			  <div class="info-data">
+				  <b><%= t('note') %></b> <%=t('company.info9')%> 
+			  </div>
 		  </li> 
 	</ul>
 	
