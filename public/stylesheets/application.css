@@ -65,7 +65,7 @@ ul.activityfeed li div.preview_pic img { width: 40px; height: 40px; }
 .left_connected { position: relative; left: 3px; border-right: 0px; margin: 12px 0px; }
 
 .ui-list_with_icon { margin-left: 0; padding-top: 5px; list-style: none; margin: 0px; padding: 0px; }
-.ui-list_with_icon li { padding-left: 14px; background: url('/images/symbols/request_nav_seperator.gif?1318328674') no-repeat 3px 9px; list-style-type: none; }
+.ui-list_with_icon li { padding-left: 14px; background: url('/images/symbols/request_nav_seperator.gif?1331025619') no-repeat 3px 9px; list-style-type: none; }
 .ui-list_with_icon li { padding: 4px 0px 4px 18px; color: #41658a; position: relative; }
 .ui-list_with_icon li img { position: absolute; left: 0px; top: 4px; }
 .ui-list_with_icon li a { color: #527eaa; font-size: 1.0em; line-height: 1.5; text-decoration: none; }
@@ -657,7 +657,7 @@ h4.border_title { font-size: 16px; border-bottom: 1px solid #ebebeb; padding-bot
 .solution-list .odd a:hover, .solution-list .even a:hover { color: #3399cc; }
 .solution-list .odd a:active, .solution-list .even a:active { color: #4d769f; }
 .solution-list .odd ul, .solution-list .even ul { margin-left: 0; }
-.solution-list .odd ul li, .solution-list .even ul li { padding-left: 14px; background: url('/images/symbols/request_nav_seperator.gif?1318328674') no-repeat -0.5px 5px; list-style-type: none; }
+.solution-list .odd ul li, .solution-list .even ul li { padding-left: 14px; background: url('/images/symbols/request_nav_seperator.gif?1331025619') no-repeat -0.5px 5px; list-style-type: none; }
 .solution-list .odd li, .solution-list .even li { line-height: 22px; padding: 0px 0px 4px 18px; color: black; }
 .solution-list .odd li a, .solution-list .even li a { font-size: 13px; color: #21759b; }
 .solution-list .odd li a:visited, .solution-list .even li a:visited { color: #21759b; }
@@ -1521,7 +1521,7 @@ a.submit_link:hover { text-decoration: none; }
 
 .gs .positioning { position: absolute; bottom: 0; left: 10px; width: 100%; }
 
-.gs .bigbox, .gs .smallbox { background: #fff; /* Old browsers */ background: -moz-linear-gradient(top, #eeeeee 5%, white 25%); /* FF3.6+ */ background: -webkit-gradient(linear, left top, left bottom, color-stop(5%, #eeeeee), color-stop(35%, white)); /* Chrome,Safari4+ */ background: -webkit-linear-gradient(top, #eeeeee 5%, white 35%); /* Chrome10+,Safari5+ */ background: -o-linear-gradient(top, #bbee90 5%, #eeeeee 35%); /* Opera 11.10+ */ background: -ms-linear-gradient(top, #bbee90 5%, #eeeeee 35%); /* IE10+ */ background: linear-gradient(top, #bbee90 5%, #eeeeee 35%); /* W3C */ filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eee', endColorstr='#fff',GradientType=0 ); /* IE6-8 */ -webkit-border-radius: 6px; -moz-border-radius: 6px; -o-border-radius: 6px; -ms-border-radius: 6px; border-radius: 6px; /* useful if you don't want a bg color from leaking outside the border: */ -moz-background-clip: padding; -webkit-background-clip: padding-box; background-clip: padding-box; -webkit-box-shadow: 0px 0px 5px 1px #ccc; -moz-box-shadow: 0px 0px 5px 1px #ccc; box-shadow: 0px 0px 5px 1px #ccc; font-size: 13px; padding: 10px; width: 340px; margin: 10px; }
+.gs .bigbox, .gs .smallbox { background: #fff; /* Old browsers */ background: -moz-linear-gradient(top, #eeeeee 5%, white 25%); /* FF3.6+ */ background: -webkit-gradient(linear, left top, left bottom, color-stop(5%, #eeeeee), color-stop(35%, white)); /* Chrome,Safari4+ */ background: -webkit-linear-gradient(top, #eeeeee 5%, white 35%); /* Chrome10+,Safari5+ */ background: -o-linear-gradient(top, #bbee90 5%, #eeeeee 35%); /* Opera 11.10+ */ background: -ms-linear-gradient(top, #bbee90 5%, #eeeeee 35%); /* IE10+ */ background: linear-gradient(top, #bbee90 5%, #eeeeee 35%); /* W3C */ filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eee', endColorstr='#fff',GradientType=0 ); /* IE6-8 */ -webkit-border-radius: 6px; -moz-border-radius: 6px; -o-border-radius: 6px; -ms-border-radius: 6px; border-radius: 6px; /* useful if you don't want a bg color from leaking outside the border: */ -moz-background-clip: padding; -webkit-background-clip: padding-box; background-clip: padding-box; -webkit-box-shadow: 0px 0px 5px 1px #ccc; -moz-box-shadow: 0px 0px 5px 1px #ccc; box-shadow: 0px 0px 5px 1px #ccc; font-size: 13px; padding: 10px; width: 320px; margin: 10px; }
 
 .gs h3.title { font-size: 1em; padding: 4px 0; font-weight: normal; }
 
@@ -1608,3 +1608,6 @@ a.submit_link:hover { text-decoration: none; }
 .gs_error_highlight { border: 1px solid red !important; }
 
 /* Getting Started page style ends */
+.hovercard { font-size: 14px; float: left; margin-bottom: 2px; }
+.hovercard .smalltext { color: #999; font-size: 12px; margin-bottom: 2px; }
+.hovercard div { font-size: 12px; margin-bottom: 2px; }
