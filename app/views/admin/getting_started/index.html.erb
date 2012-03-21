@@ -116,25 +116,7 @@
 			loadingDiv = (loadingDiv.length>0)? loadingDiv : Loading.getContainer("#rebrand_submit_status","#rebrand_box");
 			loadingDiv.show();
 			var statusBox = loadingDiv.find("#status_update");
-			Loading.updateStatus(statusBox,"update",GettingStarted.translate("updating"));
-			form.ajaxSubmit({
-				 success:function(data){
-				     
-	Loading.updateStatus(statusBox,"success",GettingStarted.translate("implement_changes"));
-					location.reload(true);
-
-				
-				},
-				error:function(){
-					Loading.updateStatus(statusBox,"failure",GettingStarted.translate("problem_updating"));
-				},
-				complete:function(){
-					loadingDiv.delay(hideDelay).hide(1);
-				}
-			});
-			
-		    event.stopPropagation();
-		    return false;
+			Loading.updateStatus(statusBox,"update",GettingStarted.translate("updating"));			
 		});
 	});
 <% end %>

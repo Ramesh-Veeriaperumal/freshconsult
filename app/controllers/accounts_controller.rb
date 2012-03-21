@@ -273,9 +273,7 @@ class AccountsController < ApplicationController
   def rebrand  
     responseObj = { :status => 
         current_portal.update_attributes(params[:account][:main_portal_attributes]) }
-
-        render :json => responseObj.to_json
-    
+    redirect_to admin_getting_started_index_path        
   end
   
   def plans
