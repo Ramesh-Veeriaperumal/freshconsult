@@ -320,7 +320,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def encode_display_id
-    "[##{display_id}]"
+    "[#{delimited_display_id}]"
   end
   
   def conversation(page = nil, no_of_records = 5)
@@ -336,8 +336,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
     self[:spam] = (category == :spam)
   end
     
-  def self.extract_id_token(text)
-    pieces = text.match(/\[#([0-9]*)\]/) #by Shan changed to just numeric
+  def self.extract_id_token(text, delimeter)
+    pieces = text.match(Regexp.new("\\[#{delimeter}([0-9]*)\\]")) #by Shan changed to just numeric
     pieces && pieces[1]
   end
 
@@ -516,7 +516,16 @@ class Helpdesk::Ticket < ActiveRecord::Base
       [:flexifield_def_entries =>:flexifield_picklist_vals], 
       :conditions => ['account_id=? AND module=?',account_id,'Ticket'] ) 
   end
+
+  def ticket_id_delimiter
+    delimiter = account.email_commands_setting.ticket_id_delimiter
+    delimiter = delimiter.blank? ? '#' : delimiter
+  end
   
+  def delimited_display_id
+    "#{ticket_id_delimiter}#{display_id}"
+  end
+
   def to_s
     "#{subject} (##{display_id})"
   end
