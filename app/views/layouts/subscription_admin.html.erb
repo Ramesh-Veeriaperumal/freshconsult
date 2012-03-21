@@ -48,6 +48,9 @@
 			<%= [:notice, :warning, :error].collect {|type| content_tag('div', "<a class='close' data-dismiss='alert'>×</a>" + flash[type], :id => type, :class => "alert alert-block alert-#{type}") if flash[type] }   %>
 			<%= yield %>
 		</div>
-		<%= include_javascripts :subscription%>
+		<%= include_javascripts :subscription%>    
+		<% javascript_tag do %>
+			jQuery.noConflict();
+		<% end %>
 	</body>
 </html>
