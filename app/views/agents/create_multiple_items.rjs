@@ -6,4 +6,4 @@ else
   page << "Loading.updateStatus(status_box,'success', '"+t('admin.getting_started.index.successfully_updated')+"');"
 end
 
-page.call "loading_div.hide"
+page << "loading_div.delay(1000).hide(1);"
