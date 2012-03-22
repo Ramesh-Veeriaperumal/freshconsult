@@ -1,7 +1,7 @@
 <div class="gs_request">	
 <p id="fwdemail"><%=t('.send_test_mail_info1', :to_email => @email_config[:to_email])%></b>
 <a href="https://support.google.com/mail/bin/answer.py?hl=en&answer=10957" target="_blank"><%=t('.send_test_mail_info2')%></a>
-<b><%= t('.send_test_mail_info3', :send_test_mail_link => link_to_remote( t('.send_test_mail_link_title'),:url => (test_email_admin_email_config_path(@email_config)), :method => :put, :class => "", :style => "text-decoration:underline;", :id => "send_test_mail", :failure => "SendTestMail.fail(request)", :success => "SendTestMail.success(request)", :loading => "SendTestMail.request()" ) )%></b></p>
+<b><%= t('.send_test_mail_info3', :send_test_mail_link => link_to_remote( t('.send_test_mail_link_title'),:url => (test_email_admin_email_config_path(@email_config)), :method => :put, :html => {:class => "uiButton"}, :id => "send_test_mail", :failure => "SendTestMail.fail(request)", :success => "SendTestMail.success(request)", :loading => "SendTestMail.request()" ) )%></b></p>
 </div>
 <div class="gs_response">
 	<p>	
@@ -15,6 +15,6 @@
 <div class="gs_no">
 	<p>
 		<%=t('.send_test_mail_response_no1')%>
-			<a href="https://support.google.com/mail/bin/answer.py?hl=en&answer=10957" target="_blank"><%=t('.send_test_mail_response_no2')%></a> <%=t('.send_test_mail_response_no3', :to_email =>  @email_config.to_email, :reply_email => @email_config.reply_email, :send_test_mail_link => link_to_remote( t('.send_test_mail_link_title') , :url => (test_email_admin_email_config_path(@email_config)), :method => :put, :style => "text-decoration:underline;", :id => "send_test_mail", :failure => "SendTestMail.fail(request)", :success => "SendTestMail.success(request)", :loading => "SendTestMail.request()" )) %>
+			<a href="https://support.google.com/mail/bin/answer.py?hl=en&answer=10957" target="_blank"><%=t('.send_test_mail_response_no2')%></a> <%=t('.send_test_mail_response_no3', :to_email =>  @email_config.to_email, :reply_email => @email_config.reply_email, :send_test_mail_link => link_to_remote( t('.send_test_mail_link_title') , :url => (test_email_admin_email_config_path(@email_config)), :method => :put, :html => { :class => "uiButton"}, :id => "send_test_mail", :failure => "SendTestMail.fail(request)", :success => "SendTestMail.success(request)", :loading => "SendTestMail.request()" )) %>
 	</p>
 </div>
