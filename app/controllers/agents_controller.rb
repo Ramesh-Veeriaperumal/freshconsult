@@ -98,10 +98,7 @@ class AgentsController < Admin::AdminController
       @responseObj[:reached_limit] = false
     else      
       @responseObj[:reached_limit] = true
-    end   
-
-    render :json => @responseObj.to_json 
-      
+    end              
   end
   
   def update
