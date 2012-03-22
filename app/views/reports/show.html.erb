@@ -1,3 +1,6 @@
+<%= javascript_include_tag  '/javascripts/report/date' %>
+<%= javascript_include_tag  '/javascripts/report/daterangepicker.jQuery.js' %>
+<%= stylesheet_link_tag 'ui.daterangepicker' %>
 <span class="floatr">
 	<%= link_to("&larr; Back to reports", reports_url, :class => "slim-button") %>
 </span>
@@ -37,27 +40,44 @@
 
 <% content_for :sidebar do %>
 <div class="sidepanel">
-  <h4 class="title">View report between</h4>
+  <h4 class="title"><%= t('reports.select_time_period')%></h4>
 	<form id="report_search">
 		<ul class="ui-form">
 			<li class="inline-field">
-				<table>
-					<tr>
-						<td width="100px"><label>From</label></td>
-						<td><input type="text" id="start_date" date="" name="start_date" class="text  auto" value="<%= params[:start_date] || 30.days.ago.strftime("%m/%d/%Y") %>" size="10" /></td>
-					</tr>
-					<tr>
-						<td><label>To</label></td>
-						<td><input type="text" id="end_date" date="" class="text auto" name="end_date" value="<%= params[:end_date] || Time.now.strftime("%m/%d/%Y") %>"  size="10" /></td>
-					</tr>
-				</table>
+				<div>
+					<%= text_field_tag :date_range, params[:date_range] || "#{30.days.ago.strftime("%m/%d/%Y")} - #{Time.now.strftime("%m/%d/%Y")}", :class => "required" %>
+				</div>
 			</li>
 		</ul>
 		<div class="button-container">
 			<%= submit_tag "Show report", :class => "uiButton" %>
 		</div>
 	</form>
+
 </div>
+
+
+<% javascript_tag do %>
+jQuery(document).ready(function() {
+	jQuery("#date_range").daterangepicker({
+		earliestDate: Date.parse('1/1/2009'),
+		latestDate: new Date(),
+		presetRanges: [
+			{text: '<%= t('reports.date_ranges.today') %>', dateStart: 'Today', dateEnd: 'Today' },
+			{text: '<%= t('reports.date_ranges.yesterday') %>', dateStart: 'Today-1', dateEnd: 'Today-1' },
+			{text: '<%= t('reports.date_ranges.last_7_days') %>', dateStart: 'Today-8', dateEnd: 'Today-1' },
+			{text: '<%= t('reports.date_ranges.last_30_days') %>',dateStart: 'Today-31', dateEnd: 'Today-1'},
+			{text: '<%= t('reports.date_ranges.last_90_days') %>',dateStart: 'Today-91',  dateEnd: 'Today-1'}
+		],
+		presets: {
+			dateRange: '<%= t('reports.date_ranges.custom') %>'
+		},
+		dateFormat: 'dd MM yy',
+		closeOnSelect: true
+	});
+	jQuery("#date_range").val('<%= 30.days.ago.strftime("%d %B %Y") %> - <%= Time.now.strftime("%d %B %Y") %>');   
+});     
+<% end %>
 <% end %>
 
 <div class="grid report">	
@@ -68,7 +88,6 @@
 			<th>Tickets Resolved</th>
 			<th>On time Resolution</th>
 			<th>% of OTR</th>
-			<th>Overdue </th>
 			<th>First Contact Resolution</th>
 			<th width="80px">FCR %</th>
 			<th>Avg. 1st Response Time</th>
@@ -87,7 +106,6 @@
 			<td><%= data.fetch("Resolved", 0) %></td>
 			<td><%= data.fetch(:tkt_res_on_time, 0) %></td>
 			<td><%= percentage(data.fetch(:tkt_res_on_time,0).to_i,data.fetch('Resolved',0).to_i) %></td>
-			<td><%= data.fetch(:over_due_tkts, 0) %></td>
 			<td><%= data.fetch(:fcr, 0) %></td>
 			<td><%= data.fetch(:fcr_per, 0) %> %</td>
 			<td><%= timediff_in_words(data.fetch(:average_first_response_time, 0)) %></td>

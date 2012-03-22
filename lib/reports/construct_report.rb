@@ -2,7 +2,7 @@ module Reports::ConstructReport
   
   def build_tkts_hash(val,params)
     @val = val
-    date_condition(params)
+    date_condition
     @global_hash = tkts_by_status(fetch_tkts_by_status)
     merge_hash(:tkt_res_on_time,fetch_tkt_res_on_time)
     merge_hash(:over_due_tkts,fetch_overdue_tkts)
@@ -50,13 +50,9 @@ module Reports::ConstructReport
   end
  end
  
- def date_condition(params)
+ def date_condition
    @date_condition ||= begin 
-    date_con = " helpdesk_ticket_states.resolved_at between '#{1.month.ago.to_s(:db)}' and now() "
-    unless params[:start_date].blank? and params[:end_date].blank?
-      date_con = " helpdesk_ticket_states.resolved_at > '#{Time.parse(params[:start_date]).beginning_of_day.to_s(:db)}' and helpdesk_ticket_states.resolved_at < '#{Time.parse(params[:end_date]).end_of_day.to_s(:db)}' "
-    end
-    date_con
+    " helpdesk_ticket_states.resolved_at > '#{start_date}' and helpdesk_ticket_states.resolved_at < '#{end_date}' "
    end
  end
  
@@ -130,6 +126,33 @@ module Reports::ConstructReport
  def scoper
    Account.current
  end
+
+
+  def start_date
+    parse_from_date.nil? ? 30.days.ago.to_s(:db): Time.parse(parse_from_date).beginning_of_day.to_s(:db) 
+  end
+  
+  def end_date
+    parse_to_date.nil? ? Time.now.to_s(:db): Time.parse(parse_to_date).end_of_day.to_s(:db)
+  end
+  
+  def parse_from_date
+    (params[:date_range].split(" - ")[0]) || params[:date_range]
+  end
+  
+  def parse_to_date
+    (params[:date_range].split(" - ")[1]) || params[:date_range]
+  end
+  
+  def previous_start
+    distance_between_dates =  Time.parse(end_date) - Time.parse(start_date)
+    prev_start = Time.parse(previous_end) - distance_between_dates
+    prev_start.beginning_of_day.to_s(:db)
+  end
+  
+  def previous_end
+    (Time.parse(start_date) - 1.day).end_of_day.to_s(:db)
+  end
 
  def filter_options
   defs = []

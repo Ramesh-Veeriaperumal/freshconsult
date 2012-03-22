@@ -11,6 +11,9 @@ module Reports::ActivityReport
       tickets_hash = get_tickets_hash(tickets_count,column_name)
       self.instance_variable_set("@#{column_name.to_s.gsub('.', '_')}_hash", tickets_hash)
     end
+
+    count_of_resolved_tickets
+    
   end
   
  def get_tickets_time_line

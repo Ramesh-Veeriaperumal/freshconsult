@@ -144,15 +144,14 @@ $single_stackbar_chart_height: 120px;
         
         li{
             width: auto;
-            margin: 0 3% 0 0;
-            text-align:left;
-            width:22%;                             
+            margin: 15px 3% 0;
+            text-align:center;
+            width:38%;                             
             border-right:1px dotted #dfdfdf;
             span{
                 display:inline-block;
                 font-size:12px;
                 line-height:18px;
-                width:10px;
             }
             h4{
                 font-size:26px;
@@ -163,7 +162,7 @@ $single_stackbar_chart_height: 120px;
 
             }
         }
-        li.last { margin:0; border:0; }
+        li.last { margin:15px 0 0; border:0; }
         li.big {
         	margin: 10px inherit;
         	font-size:1.4em;
