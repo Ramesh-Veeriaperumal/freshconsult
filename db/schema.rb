@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120215070800) do
+ActiveRecord::Schema.define(:version => 20120321095818) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -50,6 +50,8 @@ ActiveRecord::Schema.define(:version => 20120215070800) do
     t.datetime "updated_at"
   end
 
+  add_index "admin_data_imports", ["account_id", "created_at"], :name => "index_data_imports_on_account_id_and_created_at"
+
   create_table "admin_user_accesses", :force => true do |t|
     t.string   "accessible_type"
     t.integer  "accessible_id"
@@ -78,7 +80,7 @@ ActiveRecord::Schema.define(:version => 20120215070800) do
     t.text     "signature"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "ticket_permission"
+    t.integer  "ticket_permission",              :default => 1
     t.boolean  "occasional",                     :default => false
     t.string   "google_viewer_id"
   end
@@ -214,6 +216,7 @@ ActiveRecord::Schema.define(:version => 20120215070800) do
     t.integer  "account_id",           :limit => 8
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "ticket_id_delimiter",               :default => "#"
   end
 
   create_table "email_configs", :force => true do |t|
@@ -233,7 +236,7 @@ ActiveRecord::Schema.define(:version => 20120215070800) do
   add_index "email_configs", ["account_id", "to_email"], :name => "index_email_configs_on_account_id_and_to_email", :unique => true
 
   create_table "email_notifications", :force => true do |t|
-    t.integer  "account_id",             :limit => 8
+    t.integer  "account_id",                 :limit => 8
     t.boolean  "requester_notification"
     t.text     "requester_template"
     t.boolean  "agent_notification"
@@ -241,6 +244,8 @@ ActiveRecord::Schema.define(:version => 20120215070800) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "notification_type"
+    t.text     "requester_subject_template"
+    t.text     "agent_subject_template"
   end
 
   add_index "email_notifications", ["account_id", "notification_type"], :name => "index_email_notifications_on_notification_type", :unique => true
@@ -804,7 +809,6 @@ ActiveRecord::Schema.define(:version => 20120215070800) do
   end
 
   add_index "social_facebook_pages", ["account_id", "page_id"], :name => "index_account_page_id", :unique => true
-  add_index "social_facebook_pages", ["account_id", "page_id"], :name => "social_fb_pages_account_id_and_page_id", :unique => true
   add_index "social_facebook_pages", ["product_id"], :name => "index_product_id"
 
   create_table "social_fb_posts", :force => true do |t|
@@ -903,6 +907,14 @@ ActiveRecord::Schema.define(:version => 20120215070800) do
   end
 
   add_index "subscription_affiliates", ["token"], :name => "index_subscription_affiliates_on_token"
+
+  create_table "subscription_announcements", :force => true do |t|
+    t.text     "message"
+    t.datetime "starts_at"
+    t.datetime "ends_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "subscription_discounts", :force => true do |t|
     t.string   "name"

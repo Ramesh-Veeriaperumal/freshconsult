@@ -22,6 +22,7 @@ en:
   reset_my_password: Reset my password 
   assign: Assign
   signup: sign up
+  signup_title: "Sign up to %{current_portal}"
   trial_expired_on: Your trial has expired on
   upgrade_trial: Upgrade your trial!
   add_note: Add Note
@@ -88,7 +89,7 @@ en:
       label: Field Label
       add_new_choice: Add new choice
       customer_mandatory: Mandatory for ticket submission
-      customer_edit: Can Edit the field
+      customer_edit: Can edit the field
       agent_info1: Field cannot be blank when submitting the ticket
       agent_info2: Field cannot be blank when closing the ticket
       agent_mandatory_submission: Mandatory for submission
@@ -124,6 +125,63 @@ en:
     popular: Popular
   payment_info: Payment information
   admin:
+    getting_started:
+        index:
+            config-support-email-address: "Configure your support email address"
+            save-and-next: "Save and Go to next"
+            send_verification_email: Send verification email
+            send_invite: Send Invite
+            title: Cool! Looks like your help desk is ready to roll...
+            sub_title: Here's a bunch of stuff to help you get started
+            email_config_title: What's your support email?
+            email_config_sub_title: Let Freshdesk handle your Support Emails!
+            email_config_field_title: Your Support Email Address
+            send_test_mail_info1: Make sure you've set up your emails to forward to <b> %{to_email} </b>.
+            send_test_mail_info2: (Learn How)
+            send_test_mail_info3: If you think everything is good so far, try <b>%{send_test_mail_link}</b>
+            send_test_mail_link_title: sending a test mail
+            send_test_mail_response1: We've sent a test mail to <b><span id=reply_email_1>%{reply_email}</span></b>. If everything goes well, you  can see  the <a href="/helpdesk/tickets" target="_blank">new ticket</a> in the tickets view.
+            send_test_mail_confirm_yes: Yes, i got it.
+            send_test_mail_confirm_no: No, i can't see any ticket.
+            send_test_mail_response_yes: Congratulations!!! You have successfully connected your support email with your help desk portal. Happy Supporting!!!
+            send_test_mail_response_no1: There seems to be a problem ->
+            send_test_mail_response_no2: Learn how
+            send_test_mail_response_no3: to forward your emails to <b>%{to_email}</b> and try %{send_test_mail_link} again.( Did you not even receive the test mail at <span id=reply_email_2>%{reply_email}</span> Wait for a couple of minutes, and if there still seems to be a problem, <a href="https://support.freshdesk.com/" target="_blank">let us know</a> )
+            agent_title: Feeling lonely?
+            agent_sub_title: Invite your team to use Freshdesk
+            agent_send_invite_label: Send Invites to agents
+            agent_invite_field_placeholder: Enter your team members email
+            social_title: Go Social?
+            social_sub_title: Start supporting customers on twitter and facebook
+            social_twitter: Twitter
+            social_twitter_add: Add Account
+            social_facebook: Facebook
+            social_facebook_add: Add a Page
+            rebrand_title: Make it your own!
+            rebrand_sub_title: Rebrand Freshdesk with your logo & colors
+            rebrand_company_label: Company Name
+            rebrand_company_field_placeholder: Enter your company name
+            rebrand_paint_title: Paint your helpdesk
+            rebrand_color_header: Header
+            rebrand_color_tabs: Tabs
+            rebrand_color_background: Background
+            rebrand_submit_label: Rebrand
+            admin_title: Everything Good?
+            admin_sub_title: Don't forget to check out all under-the-hood features you can customize in the "%{admin_tab}" tab
+            product_link_label: Jump into your helpdesk >>
+            validating: Validating...
+            updating: Updating...
+            successfully_updated: Successfully updated.
+            problem_updating: Problem in updating, please try again.
+            email_invalid: Your mail is invalid, please check.
+            emails_invalid: One or more of your mail is invalid.
+            implement_changes: Implementing the changes...
+            email_sent_success: Mail has been succesfully sent.
+            email_send_problem: Problem while sending the mail.
+            sending_test_mail_progress: Sending test mail, please wait...
+            agent_invite_multi_info: Use comma ( , ) to add multiple emails.
+            agent_limit_reached: You have exceeded your agents limit.
+
     day_passes:
       index:
         title: "Day Pass"
@@ -806,22 +864,25 @@ en:
       unlike: Unlike
       ideas:
         vote_button: I like this Idea
-        vote_info_1: "%{vote} Person likes this Idea"
-        vote_info_2: "%{vote} People like this Idea"
+        vote_info_1: <a id='users-voted' href='#' title='See who likes this'> %{vote} Person</a> likes this Idea
+        vote_info_2: <a id='users-voted' href='#' title='See who like this'> %{vote} People</a> like this Idea
         vote_info_include_1: You like this Idea
-        vote_info_include_2: "%{vote} People \"including you\" like this Idea"
+        vote_info_include_2: You and <a id='users-voted' href='#' title='See who like this'> %{vote} People</a> like this Idea
+        voted_users_widget_title: People who like this idea
       problem:
         vote_button: I have this Problem
-        vote_info_1: "%{vote} Person has this Problem"
-        vote_info_2: "%{vote} People have this Problem"
+        vote_info_1: <a id='users-voted' href='#' title='See who has this'> %{vote} Person</a> has this Problem
+        vote_info_2: <a id='users-voted' href='#' title='See who have this'> %{vote} People</a> have this Problem
         vote_info_include_1: You have this Problem
-        vote_info_include_2: "%{vote} People \"including you\" have this Problem"
+        vote_info_include_2: You and <a id='users-voted' href='#' title='See who have this'> %{vote} People</a> have this Problem
+        voted_users_widget_title: People who have this problem
       howto:
         vote_button: I have this Question
-        vote_info_1: "%{vote} Person has this Question"
-        vote_info_2: "%{vote} People have this Question"
+        vote_info_1: <a id='users-voted' href='#' title='See who has this'> %{vote} Person</a> has this Question
+        vote_info_2: <a id='users-voted' href='#' title='See who have this'> %{vote} People</a> have this Question
         vote_info_include_1: You have this Question
-        vote_info_include_2: "%{vote} People \"including you\" have this Question"        
+        vote_info_include_2: You and <a id='users-voted' href='#' title='See who have this'> %{vote} People</a> have this Question
+        voted_users_widget_title: People who have this question
     post:
       posted_on: "%{user_name} on %{post_date}"
       edit_post: Edit Post
@@ -1110,6 +1171,8 @@ en:
     modify_agent_template: Modify Agent Email Template
     event: Event
     agent_notification: Agent Notification
+    subject: Subject
+    do_not_delete_ticket_id_from_subject: To capture Customer replies as Ticket Conversations the Ticket ID placeholder should not be removed from the subject line
   errors_in_plan_change: "Errors encountered with your change:"
   formatting_help: Formatting Help
   step1: Step 1

@@ -12,6 +12,7 @@ label{
    font-size:1.4em;
 }
 
+
 input[type=text], select, input.text { 
    width: 95%;
    margin:0 0 3px 0;
@@ -250,7 +251,7 @@ a.addchoice:hover{
 		padding:8px 2% 8px 2%; 
 		margin:0;
 		@include float-left;
-		width: 98%;
+		width: 96%;
 		div.field-box{
 			padding:4px 0 8px 0;
 		}
@@ -264,10 +265,7 @@ a.addchoice:hover{
 	}*/
 	.hidden{
 	   display:none;
-	}
-	li.text, li.paragraph{
-		width:96%;
-	}
+	}    
    li.dropdown, li.small, li.dropdown_blank, li.number{
       width:46%;
       input{ width:auto; }
@@ -655,6 +653,7 @@ input.time{
 	   border-bottom:1px solid #afafaf;
 	   color:#000000;
 	}
+	.text{ font-size:1.0em; }
 	table{
 		padding:0; margin:0;
 		border:0;
@@ -677,9 +676,10 @@ input.time{
 		}
 		td{			
 			label{
-				font-size:12px;
-				padding:0 6px;
 				color:#555555;
+				font-weight:bold;
+   				font-size:1em;
+   				padding:8px 0 6px 0;
 				em{
 					font-style:normal;
 					font-weight:bold;
@@ -829,10 +829,11 @@ span.sort_handle{
 .ui-custom-form{
 	padding:0 0 15px 0;	
 	position:relative;
-	li{   
-		position:relative; 
+	li{         
+		@include pie-clearfix;
+		position:relative;
 		div{ position:relative; }
-		cursor:move; 
+		cursor:move;
 		border-bottom:1px solid #efefef;
 	} 
 	

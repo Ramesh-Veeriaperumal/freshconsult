@@ -27,10 +27,6 @@
 				}
 			});
       
-			jQuery("#start_date").val('<%= params[:start_date].blank? ? 30.days.ago.strftime("%m/%d/%Y") : params[:start_date] %>');
-			jQuery("#end_date").val('<%= params[:end_date].blank? ? Time.now.strftime("%m/%d/%Y") : params[:end_date] %>');
-
-
 		jQuery("#start_date, #end_date").bind('keypress keyup keydown', function(ev) {
 			ev.preventDefault();
 			return false;
@@ -48,11 +44,11 @@
 				<table>
 					<tr>
 						<td width="100px"><label>From</label></td>
-						<td><input type="text" id="start_date" date="" name="start_date" class="text  auto" value="<%= params[:start_date] %>" size="10" /></td>
+						<td><input type="text" id="start_date" date="" name="start_date" class="text  auto" value="<%= params[:start_date] || 30.days.ago.strftime("%m/%d/%Y") %>" size="10" /></td>
 					</tr>
 					<tr>
 						<td><label>To</label></td>
-						<td><input type="text" id="end_date" date="" class="text auto" name="end_date" value="<%= params[:end_date] %>"  size="10" /></td>
+						<td><input type="text" id="end_date" date="" class="text auto" name="end_date" value="<%= params[:end_date] || Time.now.strftime("%m/%d/%Y") %>"  size="10" /></td>
 					</tr>
 				</table>
 			</li>

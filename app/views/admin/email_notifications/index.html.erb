@@ -28,6 +28,7 @@
 		});
 		
 		jQuery("a.reset_template").bind("click", function(ev){
+			jQuery(this).prevAll("input[name$=_subject_template]").val(jQuery(this).prevAll("input[name$=_subject_template_hid]").val());
 			jQuery(this).prev().prev().val(jQuery(this).prev().prev().prev().val()); 
 		});
 		
@@ -36,10 +37,14 @@
 			var allNotifications  = $H();
 			var currentNotify	  = 0;
 			jQuery.each(allNotificationsDom, function(index, item){
-				var tempHash 	  = { requester_notification: 0,  agent_notification: 0, requester_template: "", agent_template: "" };
+				var tempHash 	  = { requester_notification: 0,  agent_notification: 0, requester_subject_template: "", agent_subject_template: "", requester_template: "", agent_template: "" };
 				currentNotify 	  = item.getAttribute("notify_type");
 				jQuery.each(jQuery(item).find("input.checkbox"), function(index, checkItem){
 					tempHash[checkItem.name] = (checkItem.checked)?1:0;		
+				});
+				
+				jQuery.each(jQuery(item).next().find("input[name$=_subject_template]"), function(index, textItem){
+					tempHash[textItem.name] = textItem.value;
 				});
 				
 				jQuery.each(jQuery(item).next().find("textarea"), function(index, textareaItem){
@@ -103,6 +108,14 @@
 						<% end %>
 						<h4 class="title"><%=t('email_notifications.modify_requester_template')%></h4> 
 						
+						<label><%= t('email_notifications.subject') %></label>
+						<input type="hidden" name="requester_subject_template_hid" value="<%= h ("#{data.requester_subject_template}") %>" />
+						<input type="text" name="requester_subject_template" class="text" value="<%= h ("#{data.requester_subject_template}") %>" />
+						<%if data[:notification_type] != EmailNotification::USER_ACTIVATION and data[:notification_type] != EmailNotification::PASSWORD_RESET %>
+							<div class="info-data"><%=t('email_notifications.do_not_delete_ticket_id_from_subject')%></div>
+						<%end%>						
+						
+						<label><%= t('message') %></label>
 						<input type="hidden" value="<%= h ("#{data.requester_template}") %>" />
 						<textarea name="requester_template" class="requesteremail"><%= h ("#{data.requester_template}") %></textarea>
 						
@@ -115,6 +128,14 @@
 						<% end %>
 						<h4 class="title"><%=t('email_notifications.modify_agent_template')%></h4>
 						 
+						<label><%= t('email_notifications.subject') %></label>
+						<input type="hidden" name="agent_subject_template_hid" value="<%= h ("#{data.agent_subject_template}") %>" />
+						<input type="text" class="text" name="agent_subject_template" value="<%= h ("#{data.agent_subject_template}") %>" />						
+						<%if data[:notification_type] != EmailNotification::USER_ACTIVATION and data[:notification_type] != EmailNotification::PASSWORD_RESET %>
+							<div class="info-data"><%=t('email_notifications.do_not_delete_ticket_id_from_subject')%></div>
+						<%end%>
+											     
+						<label><%= t('message') %></label>
 						<input type="hidden" value="<%= h ("#{data.agent_template}") %>" />
 						<textarea name="agent_template" class="agentemail"><%= h ("#{data.agent_template}") %></textarea>
 						

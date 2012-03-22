@@ -84,11 +84,10 @@ a.addchoice:hover { background-color: #e8e8e8; }
 		border-bottom: 0; 	box-shadow: none;
 	}*/ }
 .ui-form div.field-box { padding: 6px 2% 10px 2%; overflow: hidden; *zoom: 1; }
-.ui-form li { padding: 8px 2% 8px 2%; margin: 0; display: inline; float: left; width: 98%; }
+.ui-form li { padding: 8px 2% 8px 2%; margin: 0; display: inline; float: left; width: 96%; }
 .ui-form li div.field-box { padding: 4px 0 8px 0; }
 .ui-form li.search-choice, .ui-form li.search-field { width: auto; }
 .ui-form .hidden { display: none; }
-.ui-form li.text, .ui-form li.paragraph { width: 96%; }
 .ui-form li.dropdown, .ui-form li.small, .ui-form li.dropdown_blank, .ui-form li.number { width: 46%; }
 .ui-form li.dropdown input, .ui-form li.small input, .ui-form li.dropdown_blank input, .ui-form li.number input { width: auto; }
 .ui-form li.dropdown select, .ui-form li.dropdown_blank select { margin-bottom: 8px; }
@@ -181,12 +180,13 @@ input.time { font-weight: normal; font-size: 12px; }
 
 .grid { border: 1px solid #cfcfcf; padding: 0; background: #f6f6f6; }
 .grid label.caption { font-size: 13px; padding: 8px 10px; background: #fefeee; font-weight: bold; border-bottom: 1px solid #afafaf; color: #000000; }
+.grid .text { font-size: 1.0em; }
 .grid table { padding: 0; margin: 0; border: 0; font-size: 13px; border-bottom: 2px solid #cfcfcf; }
 .grid table th, .grid table td { padding: 8px 10px; vertical-align: top; border: 0; }
 .grid table th { line-height: 18px; font-weight: bold; background-image: url(../images/overlay-button.png); background-color: #f2f2f2; background-repeat: repeat-x; }
 .grid table th span { display: block; }
 .grid table td { background-color: #efefef; border-top: 1px solid #cfcfcf; }
-.grid table td label { font-size: 12px; padding: 0 6px; color: #555555; }
+.grid table td label { color: #555555; font-weight: bold; font-size: 1em; padding: 8px 0 6px 0; }
 .grid table td label em { font-style: normal; font-weight: bold; text-transform: capitalize; color: #000000; }
 .grid table tr.even td { background-color: #f4f4f4; }
 .grid .olist { list-style: decimal; }
@@ -230,7 +230,8 @@ span.sort_handle { position: relative; left: 0; top: 1px; width: 25px; height: 2
 .ui-sortable-placeholder { background: #ffffff !important; visibility: visible !important; position: relative; z-index: 99; }
 
 .ui-custom-form { padding: 0 0 15px 0; position: relative; }
-.ui-custom-form li { position: relative; cursor: move; border-bottom: 1px solid #efefef; }
+.ui-custom-form li { *zoom: 1; position: relative; cursor: move; border-bottom: 1px solid #efefef; }
+.ui-custom-form li:after { content: ""; display: table; clear: both; }
 .ui-custom-form li div { position: relative; }
 .ui-custom-form li:hover, .ui-custom-form li.hover, .ui-custom-form li.active { background: #ffffff; border-color: #dfdfdf; }
 .ui-custom-form li:hover .ui-field-panel, .ui-custom-form li.hover .ui-field-panel, .ui-custom-form li.active .ui-field-panel { display: block; }

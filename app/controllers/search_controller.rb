@@ -1,3 +1,4 @@
+
 class SearchController < ApplicationController
   
   extend NewRelic::Agent::MethodTracer
@@ -76,7 +77,6 @@ class SearchController < ApplicationController
         else
           search_portal_content(f_classes, s_options)
         end
-        
         process_results
       rescue Exception => e
         @total_results = 0
@@ -118,7 +118,7 @@ class SearchController < ApplicationController
                                         :star => Regexp.new('\w+@*\w+', nil, 'u'), :match_mode => :any, 
                                         :page => params[:page], :per_page => 10
         process_results
-      rescue Exception => e 
+      rescue Exception => e
         @total_results = 0
         NewRelic::Agent.notice_error(e)
       end

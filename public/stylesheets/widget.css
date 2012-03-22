@@ -244,11 +244,10 @@ a.addchoice:hover { background-color: #e8e8e8; }
 		border-bottom: 0; 	box-shadow: none;
 	}*/ }
 .ui-form div.field-box { padding: 6px 2% 10px 2%; overflow: hidden; *zoom: 1; }
-.ui-form li { padding: 8px 2% 8px 2%; margin: 0; display: inline; float: left; width: 98%; }
+.ui-form li { padding: 8px 2% 8px 2%; margin: 0; display: inline; float: left; width: 96%; }
 .ui-form li div.field-box { padding: 4px 0 8px 0; }
 .ui-form li.search-choice, .ui-form li.search-field { width: auto; }
 .ui-form .hidden { display: none; }
-.ui-form li.text, .ui-form li.paragraph { width: 96%; }
 .ui-form li.dropdown, .ui-form li.small, .ui-form li.dropdown_blank, .ui-form li.number { width: 46%; }
 .ui-form li.dropdown input, .ui-form li.small input, .ui-form li.dropdown_blank input, .ui-form li.number input { width: auto; }
 .ui-form li.dropdown select, .ui-form li.dropdown_blank select { margin-bottom: 8px; }
@@ -341,12 +340,13 @@ input.time { font-weight: normal; font-size: 12px; }
 
 .grid { border: 1px solid #cfcfcf; padding: 0; background: #f6f6f6; }
 .grid label.caption { font-size: 13px; padding: 8px 10px; background: #fefeee; font-weight: bold; border-bottom: 1px solid #afafaf; color: #000000; }
+.grid .text { font-size: 1.0em; }
 .grid table { padding: 0; margin: 0; border: 0; font-size: 13px; border-bottom: 2px solid #cfcfcf; }
 .grid table th, .grid table td { padding: 8px 10px; vertical-align: top; border: 0; }
 .grid table th { line-height: 18px; font-weight: bold; background-image: url(../images/overlay-button.png); background-color: #f2f2f2; background-repeat: repeat-x; }
 .grid table th span { display: block; }
 .grid table td { background-color: #efefef; border-top: 1px solid #cfcfcf; }
-.grid table td label { font-size: 12px; padding: 0 6px; color: #555555; }
+.grid table td label { color: #555555; font-weight: bold; font-size: 1em; padding: 8px 0 6px 0; }
 .grid table td label em { font-style: normal; font-weight: bold; text-transform: capitalize; color: #000000; }
 .grid table tr.even td { background-color: #f4f4f4; }
 .grid .olist { list-style: decimal; }
@@ -390,7 +390,8 @@ span.sort_handle { position: relative; left: 0; top: 1px; width: 25px; height: 2
 .ui-sortable-placeholder { background: #ffffff !important; visibility: visible !important; position: relative; z-index: 99; }
 
 .ui-custom-form { padding: 0 0 15px 0; position: relative; }
-.ui-custom-form li { position: relative; cursor: move; border-bottom: 1px solid #efefef; }
+.ui-custom-form li { *zoom: 1; position: relative; cursor: move; border-bottom: 1px solid #efefef; }
+.ui-custom-form li:after { content: ""; display: table; clear: both; }
 .ui-custom-form li div { position: relative; }
 .ui-custom-form li:hover, .ui-custom-form li.hover, .ui-custom-form li.active { background: #ffffff; border-color: #dfdfdf; }
 .ui-custom-form li:hover .ui-field-panel, .ui-custom-form li.hover .ui-field-panel, .ui-custom-form li.active .ui-field-panel { display: block; }
@@ -807,7 +808,7 @@ div.action_buttons:hover { -moz-box-shadow: rgba(0, 0, 0, 0.1) 0 0 2px; -webkit-
 .page_info .toolbar_pagination { top: -6px; }
 .page_info .toolbar_pagination .prev_page, .page_info .toolbar_pagination .next_page { width: 7px; top: -37px; }
 
-.request-title .toolbar_pagination { top: -4px; left: 75px; }
+.request-title .toolbar_pagination { top: -2px; left: 65px; }
 
 .toolbar_pagination { float: right; }
 .toolbar_pagination .prev_page, .toolbar_pagination .next_page { float: left; font-size: 1px; width: 7px; height: 9px; right: 0px; height: 14px; position: absolute; width: 11px; }
@@ -827,7 +828,7 @@ div.action_buttons:hover { -moz-box-shadow: rgba(0, 0, 0, 0.1) 0 0 2px; -webkit-
 .toolbar_pagination .current, .toolbar_pagination_full .current { background: #ffffff; border-color: #dfdfdf; }
 
 /* Theme Colors and layout Defaults */
-.ie6 .wrapper, .ie7 .wrapper { width: expression((document.body.clientWidth < 982)? "982px" : "95%"); width: 980px; }
+.ie6 .wrapper, .ie7 .wrapper { width: expression((document.body.clientWidth < 982)? "982px" : "90%"); width: 980px; }
 .ie6 ul.header-tabs li.active a, .ie6 ul.header-tabs li.active a:hover, .ie7 ul.header-tabs li.active a, .ie7 ul.header-tabs li.active a:hover { top: 1px; padding-top: 7px; }
 .ie6 input, .ie6 button, .ie7 input, .ie7 button { overflow: visible; }
 .ie6 input.text, .ie7 input.text { overflow-x: hidden; }
@@ -837,7 +838,6 @@ div.action_buttons:hover { -moz-box-shadow: rgba(0, 0, 0, 0.1) 0 0 2px; -webkit-
 .ie6 .reminders ul li, .ie6 .reminders-ticket ul li, .ie7 .reminders ul li, .ie7 .reminders-ticket ul li { display: inline-block; }
 .ie6 .uniForm, .ie6 .uniForm fieldset, .ie6 .uniForm .ctrlHolder, .ie6 .uniForm .formHint, .ie6 .uniForm .buttonHolder, .ie6 .uniForm .ctrlHolder ul, .ie7 .uniForm, .ie7 .uniForm fieldset, .ie7 .uniForm .ctrlHolder, .ie7 .uniForm .formHint, .ie7 .uniForm .buttonHolder, .ie7 .uniForm .ctrlHolder ul { zoom: 1; }
 .ie6 .uniForm .textInput, .ie6 .uniForm .fileUpload, .ie6 .uniForm .selectInput, .ie6 .uniForm select, .ie7 .uniForm .textInput, .ie7 .uniForm .fileUpload, .ie7 .uniForm .selectInput, .ie7 .uniForm select { height: 24px; }
-.ie6 #custom_form li, .ie7 #custom_form li { height: 65px !important; }
 .ie6 .ui-form .attachment_list li, .ie7 .ui-form .attachment_list li { width: 200px; border: 0px; }
 .ie6 .ui-form .attachment_list li .delete, .ie7 .ui-form .attachment_list li .delete { display: block; }
 .ie6 .request-list div.item .bulb, .ie6 .request-list div.item .wand, .ie7 .request-list div.item .bulb, .ie7 .request-list div.item .wand { left: 0px; margin-left: -25px; }
@@ -852,9 +852,6 @@ div.action_buttons:hover { -moz-box-shadow: rgba(0, 0, 0, 0.1) 0 0 2px; -webkit-
 .ie6 .uiButton, .ie7 .uiButton { padding: 4px 8px; font-size: 11px; }
 .ie6 a.uiButton, .ie6 a.uiButton:visited, .ie7 a.uiButton, .ie7 a.uiButton:visited { padding-top: 5px; padding-bottom: 6px; font-size: 11px; }
 .ie6 .ui-login .ui-form, .ie6 .ui-signup .ui-form, .ie7 .ui-login .ui-form, .ie7 .ui-signup .ui-form { -moz-box-shadow: 0px 1px 6px #cfcfcf; -webkit-box-shadow: 0px 1px 6px #cfcfcf; box-shadow: 0px 1px 6px #cfcfcf; }
-.ie6 .ui-form li, .ie6 .ui-form li.text, .ie6 .ui-form li.paragraph, .ie7 .ui-form li, .ie7 .ui-form li.text, .ie7 .ui-form li.paragraph { width: 100%; }
-.ie6 .ui-form li.dropdown, .ie6 .ui-form li.small, .ie6 .ui-form li.dropdown_blank, .ie7 .ui-form li.dropdown, .ie7 .ui-form li.small, .ie7 .ui-form li.dropdown_blank { padding-left: 2%; padding-right: 2%; width: 48%; }
-.ie6 .ui-form li.checkbox input, .ie7 .ui-form li.checkbox input { margin: 0px; }
 .ie6 .dialog-panel, .ie6 .due-date-dialog, .ie7 .dialog-panel, .ie7 .due-date-dialog { -moz-box-shadow: #9f9f9f 0px 2px 4px; -webkit-box-shadow: #9f9f9f 0px 2px 4px; box-shadow: #9f9f9f 0px 2px 4px; }
 .ie6 .due-date-dialog, .ie7 .due-date-dialog { margin-left: 0px; top: -8px; }
 .ie6 .ui-form .conditionset fieldset div.s_email div input.text, .ie6 .ui-form .conditionset fieldset div.s_email div textarea.paragraph, .ie7 .ui-form .conditionset fieldset div.s_email div input.text, .ie7 .ui-form .conditionset fieldset div.s_email div textarea.paragraph { width: 550px; }

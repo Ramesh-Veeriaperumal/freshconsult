@@ -8,7 +8,7 @@
   	  <%= user_avatar(ticket.requester) %>
 			<span class="need-attention-icon"></span>
       <h3>
-        <%= link_to( truncate(h(ticket.subject), { :length => 80 }) + content_tag(:span, " ##{ticket.display_id}", :class => "info-data"), helpdesk_ticket_path(get_ticket_show_params(params, ticket.display_id)), :title => truncate(ticket.description, { :length => 350, :omission => "..." }), :class => "ticket-description-tip" ) %> 
+        <%= link_to( truncate(h(ticket.subject), { :length => 80 }) + content_tag(:span, " ##{ticket.display_id}", :class => "info-data"), ticket, :title => truncate(ticket.description, { :length => 350, :omission => "..." }), :class => "ticket-description-tip" ) %> 
 	  	</h3>
 	  <% unless ticket.requester.nil? %>
 			<% content_tag :div, :class => "info-data" do %>

@@ -108,6 +108,15 @@ class Topic < ActiveRecord::Base
     end
   end
   
+  def users_who_voted
+    users = User.find(:all,
+      :joins => [:votes],
+      :conditions => ["votes.voteable_id = ? and users.account_id = ?", id, account_id],
+      :order => "votes.created_at DESC"
+    )
+    users
+  end
+  
   def to_xml(options = {})
      options[:indent] ||= 2
       xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])

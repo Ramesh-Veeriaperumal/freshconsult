@@ -2,12 +2,12 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
   
   DUMMY_ACCOUNTS = 2
   DUMMY_MONEY = 137.0
-  DUMMY_AGENTS = 5
-   
-   
+  DUMMY_AGENTS = 5      
   
   include ModelControllerMethods
-  include AdminControllerMethods
+  include AdminControllerMethods 
+  
+  before_filter :set_selected_tab, :only => [ :customers ]
   
   def index
     @stats = SubscriptionPayment.stats if params[:page].blank?
@@ -116,5 +116,9 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
     def redirect_url
       action_name == 'destroy' ? { :action => 'index'} : [:admin, @subscription]
     end
+  
+  def set_selected_tab
+     @selected_tab = :customers
+  end
   
 end

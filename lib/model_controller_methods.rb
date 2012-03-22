@@ -40,9 +40,18 @@ module ModelControllerMethods
   end
 
   def update
-    if @obj.update_attributes(params[cname])
-      flash[:notice] = I18n.t(:'flash.general.update.success', :human_name => human_name)
-      redirect_back_or_default redirect_url
+    if @obj.update_attributes(params[cname])      
+      
+      respond_to do |format|        
+        format.html  do
+          flash[:notice] = I18n.t(:'flash.general.update.success', :human_name => human_name)
+          redirect_back_or_default redirect_url
+        end
+        format.json do                    
+          render :json => {:updated => true}.to_json
+        end
+      end
+      
     else
       logger.debug "error while saving #{@obj.errors.inspect}"
       update_error

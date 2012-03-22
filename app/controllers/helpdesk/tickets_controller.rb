@@ -22,7 +22,7 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :load_item, :verify_permission  ,   :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :get_ca_response_content, :print] 
   before_filter :load_flexifield ,    :only => [:execute_scenario]
   before_filter :set_date_filter ,    :only => [:export_csv]
-  before_filter :set_latest_updated_at , :only => [:index, :custom_search]
+  #before_filter :set_latest_updated_at , :only => [:index, :custom_search]
 
   uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
   
@@ -204,9 +204,7 @@ class Helpdesk::TicketsController < ApplicationController
     @email_config = current_account.primary_email_config
     
     respond_to do |format|
-      format.html{
-        set_prev_next_tickets
-      }  
+      format.html  
       format.atom
       format.xml  { 
         render :xml => @item.to_xml  

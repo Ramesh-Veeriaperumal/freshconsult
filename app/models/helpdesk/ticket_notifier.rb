@@ -4,22 +4,26 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
     e_notification = ticket.account.email_notifications.find_by_notification_type(notification_type)
     if e_notification.agent_notification?
       a_template = Liquid::Template.parse(e_notification.formatted_agent_template)
+      a_s_template = Liquid::Template.parse(e_notification.agent_subject_template)
       i_receips = internal_receips(notification_type, ticket)
       deliver_email_notification({ :ticket => ticket,
              :notification_type => notification_type,
              :receips => i_receips,
              :email_body => a_template.render('ticket' => ticket, 
-                'helpdesk_name' => ticket.account.portal_name, 'comment' => comment)
+                'helpdesk_name' => ticket.account.portal_name, 'comment' => comment),
+             :subject => a_s_template.render('ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name)
           }) unless i_receips.nil?
     end
     
     if e_notification.requester_notification? and !ticket.out_of_office?
       r_template = Liquid::Template.parse(e_notification.formatted_requester_template)
+      r_s_template = Liquid::Template.parse(e_notification.requester_subject_template)
       deliver_email_notification({ :ticket => ticket,
              :notification_type => notification_type,
              :receips => ticket.requester.email,
              :email_body => r_template.render('ticket' => ticket, 
-                'helpdesk_name' => ticket.account.portal_name, 'comment' => comment)
+                'helpdesk_name' => ticket.account.portal_name, 'comment' => comment),
+             :subject => r_s_template.render('ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name)
           }) if ticket.requester_has_email?
     end
   end
@@ -38,7 +42,7 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
   end
   
   def email_notification(params)
-    subject       get_subject(params[:notification_type], params[:ticket])
+    subject       params[:subject]
     recipients    params[:receips]
     body          :ticket => params[:ticket], :body => params[:email_body],
                   :survey_handle => SurveyHandle.create_handle_for_notification(params[:ticket], 
@@ -49,10 +53,6 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
     content_type  "text/html"
   end
  
-  def get_subject(notification_type, ticket)
-    Liquid::Template.parse(EmailNotification::EMAIL_SUBJECTS[notification_type]).render('ticket' => ticket)
-  end
-  
   def reply(ticket, note , reply_email, options={})
     subject       formatted_subject(ticket)
     recipients    ticket.requester.email

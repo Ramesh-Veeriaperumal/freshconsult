@@ -13,7 +13,6 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
       @installed_application = Integrations::InstalledApplication.new
       @installed_application.application = @installing_application
       @installed_application.account = current_account
-      params[:configs][:domain] = params[:configs][:domain][0..-2] if @installing_application.name == "jira" and params[:configs][:domain].ends_with?('/')
       @installed_application[:configs] = convert_to_configs_hash(params)
 
       begin

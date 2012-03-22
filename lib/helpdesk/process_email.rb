@@ -12,7 +12,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       encode_stuffs
       kbase_email = account.kbase_email
       if (to_email[:email] != kbase_email) || (get_envelope_to.size > 1)
-        display_id = Helpdesk::Ticket.extract_id_token(params[:subject])
+        display_id = Helpdesk::Ticket.extract_id_token(params[:subject], account.email_commands_setting.ticket_id_delimiter)
         ticket = Helpdesk::Ticket.find_by_account_id_and_display_id(account.id, display_id) if display_id
         if ticket
           return if(from_email[:email] == ticket.reply_email) #Premature handling for email looping..
@@ -39,7 +39,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     email_config = account.email_configs.find_by_to_email(to_email[:email])
     user = get_user(account, from_email,email_config)
     
-    article_params[:title] = params[:subject].gsub(/\[#([0-9]*)\]/,"")
+    article_params[:title] = params[:subject].gsub(Regexp.new("\\[#{account.email_commands_setting.ticket_id_delimiter}([0-9]*)\\]"),"")
     article_params[:description] = Helpdesk::HTMLSanitizer.clean(params[:html]) || params[:text]
     article_params[:user] = user.id
     article_params[:account] = account.id
@@ -168,7 +168,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       )
       ticket = check_for_chat_scources(ticket,from_email)
       ticket = check_for_spam(ticket)
-      ticket = check_for_auto_responders(ticket)
+      #ticket = check_for_auto_responders(ticket)
       
       process_email_commands(ticket, user, email_config) if user.agent?
 

@@ -4,7 +4,7 @@ module ApplicationHelper
   include SavageBeast::ApplicationHelper
   include Juixe::Acts::Voteable
   include ActionView::Helpers::TextHelper
-    
+
   require "twitter"
   
   ASSETIMAGE = { :help => "/images/helpimages" }
@@ -46,16 +46,15 @@ module ApplicationHelper
   
   def show_flash
     [:notice, :warning, :error].collect {|type| content_tag('div', flash[type], :id => type, :class => "flash_info #{type}") if flash[type] }
-  end           
-  
-  def show_maintenance_message                                                    
-    if(current_user and permission?(:manage_tickets))    
-      (cookies["maintenance"] = { :value => true, :expires => (Time.now.wday%7).days.from_now }) if cookies["maintenance"].nil?      
-        
-      content_tag('center', "<a href='javascript:void(0)' onclick='jQuery(this).parent().fadeOut(400); jQuery.cookie(\"maintenance\", false);' class='close'></a>We will be performing a scheduled maintenance on <br /><strong>Saturday March 17 between 10:00 PM EST to 11:00 PM EST</strong><br /><br /> Freshdesk might be intermittently unavailable or slow during this time. <br />Please bear with us.", :id => type, :class => "alert-message block-message warning") unless (cookies["maintenance"] == "false")
-    end                     
+  end
+ 
+  def show_announcements                                                    
+    if permission?(:manage_tickets)
+      @current_announcements ||= SubscriptionAnnouncement.current_announcements(session[:announcement_hide_time])  
+      render :partial => "/shared/announcement", :object => @current_announcements unless @current_announcements.blank?
+    end     
   end         
-  
+
   def page_title
     portal_name = h( (current_portal.name.blank?) ? current_portal.product.name : current_portal.name ) + " : "
     portal_name += @page_title || t('helpdesk_title')
@@ -147,8 +146,8 @@ module ApplicationHelper
       tab( s[3] || t("header.tabs.#{s[1].to_s}") , {:controller => s[0], :action => :index}, active && :active ) 
     end
     navigation
-  end
-  
+  end          
+ 
   def html_list(type, elements, options = {}, activeitem = 0)
     if elements.empty?
       "" 
@@ -359,7 +358,7 @@ module ApplicationHelper
       # replace_objs will contain all the necessary liquid parameter's real values that needs to be replaced.
       replace_objs = {installed_app.application.name.to_s => installed_app, "application" => installed_app.application} # Application name based liquid obj values.
       replace_objs = liquid_objs.blank? ? replace_objs : liquid_objs.merge(replace_objs) # If the there is no liquid_objs passed then just use the application name based values alone.
-      return Liquid::Template.parse(widget.script).render(replace_objs, :filters => [FDTextFilter])  # replace the liquid objs with real values.
+      return Liquid::Template.parse(widget.script).render(replace_objs, :filters => [Integrations::FDTextFilter])  # replace the liquid objs with real values.
     end
   end
 
@@ -499,12 +498,4 @@ module ApplicationHelper
     tab || ""
   end
   
-end
-
-module FDTextFilter
-  def escape_html(input)
-    input = input.to_s.gsub("\"", "\\\"")
-    input = input.gsub("\\", "\\\\")
-    return input
-  end
 end

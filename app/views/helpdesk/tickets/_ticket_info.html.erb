@@ -12,22 +12,10 @@
   <div class="request_details">
     <div class="requestCnt request-cnt-first">
       <div class="request-title">
-        <div class="toolbar_pagination">
-        	<% if @previous_ticket_id %>
-        		<a href="<%= helpdesk_ticket_path(get_ticket_show_params(@filters, @previous_ticket_id))%>" class="prev_page tooltip" rel="prev" title="Previous ticket"><span></span></a>
-			<% else %>	
-            	<span class="disabled prev_page"><span></span></span>
-			<% end %>	
-        	<% if @next_ticket_id %>
-        		<a href="<%= helpdesk_ticket_path(get_ticket_show_params(@filters, @next_ticket_id))%>" class="next_page tooltip" rel="next" title="Next ticket"><span></span></a>
-			<% else %>	
-            	<span class="disabled next_page"><span></span></span>
-			<% end %>			
-        </div>      	
         <%= content_tag :span, h(@ticket.status_name), :class => "status-pointer theme-tab" %>
         <%= content_tag :span, h(@ticket.priority_name), :class => "priority-pointer #{@ticket.priority_key}" %>
-        <%= content_tag :span, "##{@ticket.display_id}", :class => "ticket-id" %>
-        <%= content_tag :span, @ticket.subject, :class => "subject" %>
+        <%= content_tag :span, "##{h(@ticket.display_id)}", :class => "ticket-id" %>
+        <%= content_tag :span, h(@ticket.subject), :class => "subject" %>
       </div>
 			<div class="description">         
         <div class="user_details">

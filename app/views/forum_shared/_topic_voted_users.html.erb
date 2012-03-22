@@ -1,0 +1,13 @@
+<div id="voted-users" class="topics_list">
+	<ul class="base_set">
+		<% @topic.users_who_voted.each do |user| %>
+		<li>
+			<% if (@topic.voted_by_user?(current_user) and user.id == current_user.id) %>
+				<strong><%= user_avatar(user) %><%= link_to_user user, :class => "user_name", :qid => "#{user.id}" %></strong>
+			<% else %>
+				<%= user_avatar(user) %><%= link_to_user user, :class => "user_name" , :qid => "#{user.id}" %>
+			<% end %>
+		</li>
+		<% end %>
+	</ul>
+</div>

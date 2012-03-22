@@ -74,11 +74,12 @@ class AccountsController < ApplicationController
     build_primary_email_and_portal
     build_user
     build_plan  
+    
     begin
       store_metrics
     rescue
     end
-      
+    
     begin
       @account.time_zone = (ActiveSupport::TimeZone[params[:utc_offset].to_f]).name 
     rescue
@@ -267,8 +268,13 @@ class AccountsController < ApplicationController
     else
       render :action => 'edit'
     end
-  end
+  end  
   
+  def rebrand  
+    responseObj = { :status => 
+        current_portal.update_attributes(params[:account][:main_portal_attributes]) }
+    redirect_to admin_getting_started_index_path        
+  end
   
   def plans
     # render :layout => 'public' # Uncomment if your "public" site has a different layout than the one used for logged-in users
