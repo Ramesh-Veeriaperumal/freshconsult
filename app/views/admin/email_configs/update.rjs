@@ -1,0 +1,2 @@
+page.hide("email_config_status")
+page.replace_html("send_mail_content", :partial => "admin/getting_started/send_mail_content")

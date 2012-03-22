@@ -126,16 +126,7 @@ en:
   payment_info: Payment information
   admin:
     getting_started:
-        index:
-            config-support-email-address: "Configure your support email address"
-            save-and-next: "Save and Go to next"
-            send_verification_email: Send verification email
-            send_invite: Send Invite
-            title: Cool! Looks like your help desk is ready to roll...
-            sub_title: Here's a bunch of stuff to help you get started
-            email_config_title: What's your support email?
-            email_config_sub_title: Let Freshdesk handle your Support Emails!
-            email_config_field_title: Your Support Email Address
+        send_mail_content:
             send_test_mail_info1: Make sure you've set up your emails to forward to <b> %{to_email} </b>.
             send_test_mail_info2: (Learn How)
             send_test_mail_info3: If you think everything is good so far, try <b>%{send_test_mail_link}</b>
@@ -147,6 +138,17 @@ en:
             send_test_mail_response_no1: There seems to be a problem ->
             send_test_mail_response_no2: Learn how
             send_test_mail_response_no3: to forward your emails to <b>%{to_email}</b> and try %{send_test_mail_link} again.( Did you not even receive the test mail at <span id=reply_email_2>%{reply_email}</span> Wait for a couple of minutes, and if there still seems to be a problem, <a href="https://support.freshdesk.com/" target="_blank">let us know</a> )
+        
+        index:
+            config-support-email-address: "Configure your support email address"
+            save-and-next: "Save and Go to next"
+            send_verification_email: Send verification email
+            send_invite: Send Invite
+            title: Cool! Looks like your help desk is ready to roll...
+            sub_title: Here's a bunch of stuff to help you get started
+            email_config_title: What's your support email?
+            email_config_sub_title: Let Freshdesk handle your Support Emails!
+            email_config_field_title: Your Support Email Address
             agent_title: Feeling lonely?
             agent_sub_title: Invite your team to use Freshdesk
             agent_send_invite_label: Send Invites to agents

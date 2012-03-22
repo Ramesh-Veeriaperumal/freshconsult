@@ -1,0 +1,9 @@
+page << "var loading_div = jQuery('#agent_invite_status');"
+page << "var status_box = loading_div.find('#status_update');"
+if @responseObj[:reached_limit]
+  page << "Loading.updateStatus(status_box,'failure', '"+t('admin.getting_started.index.agent_limit_reached')+"');"
+else
+  page << "Loading.updateStatus(status_box,'success', '"+t('admin.getting_started.index.successfully_updated')+"');"
+end
+
+page.call "loading_div.hide"
