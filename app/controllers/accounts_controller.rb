@@ -4,7 +4,7 @@ class AccountsController < ApplicationController
   
   layout :choose_layout 
   
-  skip_before_filter :set_locale, :except => [:calculate_amount,:plans,:billing,:plan,:cancel]
+  skip_before_filter :set_locale, :except => [:calculate_amount,:plans,:billing,:plan,:cancel,:show]
   skip_before_filter :set_time_zone
   skip_before_filter :check_account_state
   
