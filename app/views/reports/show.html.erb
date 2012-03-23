@@ -2,7 +2,7 @@
 <%= javascript_include_tag  '/javascripts/report/daterangepicker.jQuery.js' %>
 <%= stylesheet_link_tag 'ui.daterangepicker' %>
 <span class="floatr">
-	<%= link_to("&larr; Back to reports", reports_url, :class => "slim-button") %>
+	<%= link_to("&larr; #{t('reports.summary_report.back_to_reports')}", reports_url, :class => "slim-button") %>
 </span>
 <h3 class="title">
 	<%= @current_report[:label] %>
@@ -45,7 +45,7 @@
 		<ul class="ui-form">
 			<li class="inline-field">
 				<div>
-					<%= text_field_tag :date_range, params[:date_range] || "#{30.days.ago.strftime("%m/%d/%Y")} - #{Time.now.strftime("%m/%d/%Y")}", :class => "required" %>
+					<%= text_field_tag :date_range, h(params[:date_range]) || "#{30.days.ago.strftime("%m/%d/%Y")} - #{Time.now.strftime("%m/%d/%Y")}", :class => "required" %>
 				</div>
 			</li>
 		</ul>
@@ -74,13 +74,12 @@ jQuery(document).ready(function() {
 		},
 		dateFormat: 'dd MM yy',
 		closeOnSelect: true
-	});
-	jQuery("#date_range").val('<%= 30.days.ago.strftime("%d %B %Y") %> - <%= Time.now.strftime("%d %B %Y") %>');   
+	});   
 });     
 <% end %>
 <% end %>
 
-<div class="grid report">	
+<div class="grid report">
 	<table width="100%" id="summary_report" class="tablesorter">
 		<thead>
 		<tr>
@@ -105,9 +104,9 @@ jQuery(document).ready(function() {
 			<% end %>
 			<td><%= data.fetch("Resolved", 0) %></td>
 			<td><%= data.fetch(:tkt_res_on_time, 0) %></td>
-			<td><%= percentage(data.fetch(:tkt_res_on_time,0).to_i,data.fetch('Resolved',0).to_i) %></td>
+			<td><%= percentage(data.fetch(:tk_res_on_time,0).to_i,data.fetch('Resolved',0).to_i) %></td>
 			<td><%= data.fetch(:fcr, 0) %></td>
-			<td><%= data.fetch(:fcr_per, 0) %> %</td>
+			<td><%= percentage(data.fetch(:fcr,0).to_i,data.fetch('Resolved',0).to_i) %></td>
 			<td><%= timediff_in_words(data.fetch(:average_first_response_time, 0)) %></td>
 		</tr>
 		<% end %>
