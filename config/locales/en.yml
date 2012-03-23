@@ -1905,6 +1905,13 @@ en:
       timeline_chart_title: "Tickets Received vs Resolved"
       customer_activity_title: "Activity Report"
       helpdesk_activity_title: "Helpdesk Activity Report"
+      summary_report:
+        tickets_resolved: "Tickets Resolved"
+        on_time_resolution: "On time Resolution"
+        on_time_resolution_percent: "% of OTR"
+        fcr_count: "First Contact Resolution"
+        fcr_percent: "FCR %"
+        avg_1st_response_time: "Avg. 1st Response Time"
       date_ranges:
         today: "Today"
         yesterday: "Yesterday"

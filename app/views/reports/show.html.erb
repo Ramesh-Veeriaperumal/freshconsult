@@ -85,12 +85,12 @@ jQuery(document).ready(function() {
 		<thead>
 		<tr>
 			<th><%= @current_report[:title] %></th>
-			<th>Tickets Resolved</th>
-			<th>On time Resolution</th>
-			<th>% of OTR</th>
-			<th>First Contact Resolution</th>
-			<th width="80px">FCR %</th>
-			<th>Avg. 1st Response Time</th>
+			<th><%= t('reports.summary_report.tickets_resolved') %></th>
+			<th><%= t('reports.summary_report.on_time_resolution') %></th>
+			<th width='80'><%= t('reports.summary_report.on_time_resolution_percent') %></th>
+			<th><%= t('reports.summary_report.fcr_count') %></th>
+			<th width='80'><%= t('reports.summary_report.fcr_percent') %></th>
+			<th><%= t('reports.summary_report.avg_1st_response_time') %></th>
 		</tr>
 		</thead>
 		<% @current_object.each do |obj| %>

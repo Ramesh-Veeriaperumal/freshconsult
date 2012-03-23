@@ -57,7 +57,7 @@
 			jQuery("#AllNotification").val(allNotifications.toJSON()); 
 		});
 		jQuery('.link_placeholder').live("click", function(ev){
-				active_email_body = jQuery(this).next().next().next();
+				active_email_body = jQuery(this).parent().find('input[type="text"]');
 				jQuery('#place-dialog').slideDown();			
 		});
 		
@@ -107,9 +107,9 @@
 							<a href="javascript:void(0)" class="link_placeholder"><%=t('email_notifications.insert_placeholder')%> &raquo;</a>
 						<% end %>
 						<h4 class="title"><%=t('email_notifications.modify_requester_template')%></h4> 
-						
+            <input type="hidden" name="requester_subject_template_hid" value="<%= h ("#{data.requester_subject_template}") %>" />              
 						<label><%= t('email_notifications.subject') %></label>
-						<input type="hidden" name="requester_subject_template_hid" value="<%= h ("#{data.requester_subject_template}") %>" />
+						
 						<input type="text" name="requester_subject_template" class="text" value="<%= h ("#{data.requester_subject_template}") %>" />
 						<%if data[:notification_type] != EmailNotification::USER_ACTIVATION and data[:notification_type] != EmailNotification::PASSWORD_RESET %>
 							<div class="info-data"><%=t('email_notifications.do_not_delete_ticket_id_from_subject')%></div>
@@ -128,8 +128,8 @@
 						<% end %>
 						<h4 class="title"><%=t('email_notifications.modify_agent_template')%></h4>
 						 
+						<input type="hidden" name="agent_subject_template_hid" value="<%= h ("#{data.agent_subject_template}") %>" />						    
 						<label><%= t('email_notifications.subject') %></label>
-						<input type="hidden" name="agent_subject_template_hid" value="<%= h ("#{data.agent_subject_template}") %>" />
 						<input type="text" class="text" name="agent_subject_template" value="<%= h ("#{data.agent_subject_template}") %>" />						
 						<%if data[:notification_type] != EmailNotification::USER_ACTIVATION and data[:notification_type] != EmailNotification::PASSWORD_RESET %>
 							<div class="info-data"><%=t('email_notifications.do_not_delete_ticket_id_from_subject')%></div>

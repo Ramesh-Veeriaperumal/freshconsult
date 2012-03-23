@@ -24,7 +24,9 @@ module ApplicationHelper
     days  = (hours / 24).to_i
     hours = hours - (days * 24)
 
-    if days > 0
+    if (interval.to_i <= 0) 
+      "-"
+    elsif days > 0
       "#{days} days and #{hours % 24} hours"
     elsif hours > 0
       "#{hours} hours and #{mins % 60} minutes"
