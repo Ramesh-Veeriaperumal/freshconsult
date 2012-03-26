@@ -130,8 +130,8 @@ en:
             send_test_mail_info1: Make sure you've set up your emails to forward to <b> %{to_email} </b>.
             send_test_mail_info2: (Learn How)
             send_test_mail_info3: If you think everything is good so far, try <b>%{send_test_mail_link}</b>
-            send_test_mail_link_title: sending a test mail
-            send_test_mail_response1: We've sent a test mail to <b><span id=reply_email_1>%{reply_email}</span></b>. If everything goes well, you  can see  the <a href="/helpdesk/tickets" target="_blank">new ticket</a> in the tickets view.
+            send_test_mail_link_title: sending a test email
+            send_test_mail_response1: We've sent a test email to <b><span id=reply_email_1>%{reply_email}</span></b>. If everything goes well, you  can see  the <a href="/helpdesk/tickets" target="_blank">new ticket</a> in the tickets view.
             send_test_mail_confirm_yes: Yes, i got it.
             send_test_mail_confirm_no: No, i can't see any ticket.
             send_test_mail_response_yes: Congratulations!!! You have successfully connected your support email with your help desk portal. Happy Supporting!!!
@@ -150,7 +150,7 @@ en:
             email_config_sub_title: Let Freshdesk handle your Support Emails!
             email_config_field_title: Your Support Email Address
             agent_title: Feeling lonely?
-            agent_sub_title: Invite your team to use Freshdesk
+            agent_sub_title: Invite your team to Freshdesk
             agent_send_invite_label: Send Invites to agents
             agent_invite_field_placeholder: Enter your team members email
             social_title: Go Social?
@@ -175,14 +175,20 @@ en:
             updating: Updating...
             successfully_updated: Successfully updated.
             problem_updating: Problem in updating, please try again.
-            email_invalid: Your mail is invalid, please check.
-            emails_invalid: One or more of your mail is invalid.
+            email_invalid: Your email is invalid, please check.
+            emails_invalid: One or more of your email is invalid.
             implement_changes: Implementing the changes...
-            email_sent_success: Mail has been succesfully sent.
+            email_sent_success: Email has been succesfully sent.
             email_send_problem: Problem while sending the mail.
-            sending_test_mail_progress: Sending test mail, please wait...
+            sending_test_mail_progress: Sending test email, please wait...
             agent_invite_multi_info: Use comma ( , ) to add multiple emails.
             agent_limit_reached: You have exceeded your agents limit.
+            rebrand_header_invalid: Header color code is invalid.
+            rebrand_tab_invalid: Tab color code is invalid.
+            rebrand_bg_invalid: Background color code is invalid.
+            rebrand_header_empty: Header color code is required.
+            rebrand_tab_empty: Tab color code is required.
+            rebrand_bg_empty: Background color code is required.
 
     day_passes:
       index:
@@ -1906,9 +1912,10 @@ en:
       customer_activity_title: "Activity Report"
       helpdesk_activity_title: "Helpdesk Activity Report"
       summary_report:
+        back_to_reports: "Back to Reports"
         tickets_resolved: "Tickets Resolved"
         on_time_resolution: "On time Resolution"
-        on_time_resolution_percent: "% of OTR"
+        on_time_resolution_percent: "OTR %"
         fcr_count: "First Contact Resolution"
         fcr_percent: "FCR %"
         avg_1st_response_time: "Avg. 1st Response Time"
