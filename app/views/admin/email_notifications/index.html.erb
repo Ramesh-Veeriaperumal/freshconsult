@@ -28,8 +28,17 @@
 		});
 		
 		jQuery("a.reset_template").bind("click", function(ev){
-			jQuery(this).prevAll("input[name$=_subject_template]").val(jQuery(this).prevAll("input[name$=_subject_template_hid]").val());
-			jQuery(this).prev().prev().val(jQuery(this).prev().prev().prev().val()); 
+      jQuery(this).prevAll("input[name$=_subject_template]")
+        .val(jQuery(this).prevAll("input[name$=_subject_template_hid]").val());
+			agent_template = jQuery(this).prevAll("textarea.desc_info");
+			  agent_template.val(agent_template.prev().val()); 
+			  
+		  agent_select = jQuery(this).prevAll("select.customSelect");
+		  jQuery.each(agent_select.children("options"), function(i, item){
+         item.removeAttribute("selected");
+		  });         
+		  agent_select.val((agent_select.data('default')+"").split(","));		  
+		  agent_select.trigger("liszt:updated");
 		});
 		
 		jQuery("#Updateform").submit(function(){
@@ -59,6 +68,7 @@
 			jQuery("#NotifyAgents").val(notifyAgents.toJSON());
 		});
 		jQuery('.link_placeholder').live("click", function(ev){
+		    ev.preventDefault();
 				active_email_body = jQuery(this).parent().find('input[type="text"]');
 				jQuery('#place-dialog').slideDown();			
 		});
@@ -107,7 +117,7 @@
 				<td colspan="3">
 					<div class="requester_div" style="display:none;" id='<%="requester_div_#{data.id}" %>'>
 						<%if item[:placeholder] != false %>
-							<a href="javascript:void(0)" class="link_placeholder"><%=t('email_notifications.insert_placeholder')%> &raquo;</a>
+							<a href="#" class="link_placeholder slim-button"><%=t('email_notifications.insert_placeholder')%> &raquo;</a>
 						<% end %>
 						<h4 class="title"><%=t('email_notifications.modify_requester_template')%></h4> 
             <input type="hidden" name="requester_subject_template_hid" value="<%= h ("#{data.requester_subject_template}") %>" />              
@@ -120,14 +130,14 @@
 						
 						<label><%= t('message') %></label>
 						<input type="hidden" value="<%= h ("#{data.requester_template}") %>" />
-						<textarea name="requester_template" class="requesteremail"><%= h ("#{data.requester_template}") %></textarea>
-						
+						<textarea name="requester_template" class="desc_info requesteremail"><%= h ("#{data.requester_template}") %></textarea>
+						<div class="seperator"></div>						
 						<a href="javascript:void(0)" class="button close_template"><%=t('done')%></a>
 						<a href="javascript:void(0)" class="button reset_template"><%=t('reset')%></a>
 					</div>
 					<div class="agent_div" style="display:none;" id='<%="agent_div_#{data.id}"%>'>
 						<%if item[:placeholder] != false %>
-							<a href="javascript:void(0)" class="link_placeholder"><%=t('email_notifications.insert_placeholder')%> &raquo;</a>
+							<a href="#" class="link_placeholder slim-button"><%=t('email_notifications.insert_placeholder')%> &raquo;</a>
 						<% end %>
 						<h4 class="title"><%=t('email_notifications.modify_agent_template')%></h4>
 						 
@@ -140,14 +150,14 @@
 											     
 						<label><%= t('message') %></label>
 						<input type="hidden" value="<%= h ("#{data.agent_template}") %>" />
-						<textarea name="agent_template" class="agentemail"><%= h ("#{data.agent_template}") %></textarea>
-						
+						<textarea name="agent_template" class="desc_info agentemail"><%= h ("#{data.agent_template}") %></textarea>
+						     
 						<% if data[:notification_type] == EmailNotification::NEW_TICKET %>
-							<h4 class="title"><%= t('agent.title') %></h4>
-							<% selectTagName = "notify_agents_#{data.id}"%>
-							<%= select_tag selectTagName, options_for_select( @agent_hash[:options].map {|a| [a[1], a[0]] }, data.agents.collect {|a| a.id} ), { :multiple => true, :class => "customSelect", :style => "width:500px" } %>
-						<% end %>	
-												
+							<label><%= t('agent.title') %></label>         
+							<%= select_tag "notify_agents_#{data.id}", options_for_select( @agent_hash[:options].map {|a| [a[1], a[0]] }, data.agents.collect {|a| a.id} ), { :multiple => true, "data-placeholder"=> "Optionally select agents to notify", :class => "customSelect", "data-default" => data.agents.collect{|a| a.id}.join(",") } %>
+						<% end %>                                
+						<div class="seperator"></div>
+						
 						<a href="javascript:void(0)" class="button close_template"><%=t('done')%></a>
 						<a href="javascript:void(0)" class="button reset_template"><%=t('reset')%></a>
 					</div> 
