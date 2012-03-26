@@ -1912,7 +1912,7 @@ en:
         on_time_resolution_percent: "OTR %"
         fcr_count: "First Contact Resolution"
         fcr_percent: "FCR %"
-        avg_1st_response_time: "Avg. 1st Response Time"
+        avg_1st_response_time: "Avg. first response time"
       date_ranges:
         today: "Today"
         yesterday: "Yesterday"
