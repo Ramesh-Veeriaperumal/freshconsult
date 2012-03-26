@@ -5,7 +5,7 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
     if e_notification.agent_notification?
       a_template = Liquid::Template.parse(e_notification.formatted_agent_template)
       a_s_template = Liquid::Template.parse(e_notification.agent_subject_template)
-      i_receips = internal_receips(notification_type, ticket)
+      i_receips = internal_receips(e_notification, ticket)
       deliver_email_notification({ :ticket => ticket,
              :notification_type => notification_type,
              :receips => i_receips,
@@ -30,12 +30,15 @@ class Helpdesk::TicketNotifier < ActionMailer::Base
   
   
   
-  def self.internal_receips(notification_type, ticket)
-    if(notification_type == EmailNotification::TICKET_ASSIGNED_TO_GROUP)
+  def self.internal_receips(e_notification, ticket)
+    if(e_notification.notification_type == EmailNotification::TICKET_ASSIGNED_TO_GROUP)
       unless ticket.group.nil?
         to_ret = ticket.group.agent_emails
         return to_ret unless to_ret.empty?
       end
+    elsif(e_notification.notification_type == EmailNotification::NEW_TICKET)
+        to_ret = e_notification.agents.collect { |a| a.email }
+        return to_ret unless to_ret.empty?  
     else
       ticket.responder.email unless ticket.responder.nil?
     end
