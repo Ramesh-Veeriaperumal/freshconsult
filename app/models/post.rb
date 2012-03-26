@@ -20,7 +20,7 @@ class Post < ActiveRecord::Base
   after_destroy :update_cached_fields
 
   
-  attr_protected	:topic_id
+  attr_protected	:topic_id , :account_id
   
   def editable_by?(user)
     user && (user.id == user_id || user.has_manage_forums? || user.moderator_of?(forum_id))

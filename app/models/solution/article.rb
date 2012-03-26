@@ -45,7 +45,7 @@ class Solution::Article < ActiveRecord::Base
   end
 
   after_create :create_activity
-  attr_protected :folder_id
+  attr_protected :folder_id , :account_id
   
   validates_presence_of :title, :description, :user_id , :account_id
   validates_length_of :title, :in => 3..240

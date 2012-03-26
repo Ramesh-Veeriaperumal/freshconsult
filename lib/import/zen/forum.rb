@@ -57,8 +57,10 @@ module Import::Zen::Forum
    category = @current_account.forum_categories.find_by_import_id(forum_prop.category_id) || @current_account.forum_categories.first
    forum = category.forums.find(:first, :conditions =>['name=? or import_id=?',forum_prop.name,forum_prop.import_id])
    unless forum
-     forum_hash = forum_prop.to_hash.tap { |hs| hs.delete(:category_id) }.merge({:account_id =>@current_account.id })
-     forum = category.forums.create(forum_hash)
+     forum_hash = forum_prop.to_hash.tap { |hs| hs.delete(:category_id) }
+     forum = category.forums.build(forum_hash)
+     forum.account_id = @current_account.id
+     forum.save
    else
      forum.update_attribute(:import_id , forum_prop.import_id )
    end
@@ -72,13 +74,15 @@ module Import::Zen::Forum
    topic = Topic.find_by_account_id_and_import_id(@current_account.id,topic_prop.import_id)   
    unless topic
        user = @current_account.all_users.find_by_import_id(topic_prop.user_id)
-       topic_hash = topic_prop.to_hash.tap { |hs| hs.delete(:body) }.merge({:forum_id =>forum.id ,:user_id =>user.id , :account_id => @current_account.id})
+       topic_hash = topic_prop.to_hash.tap { |hs| hs.delete(:body) }.merge({:forum_id =>forum.id ,:user_id =>user.id })
        topic = forum.topics.build(topic_hash)
+       topic.account_id = @current_account.id
        if topic.save
-          post_hash = topic_prop.to_hash.delete_if{|k, v| [:title,:stamp_type].include? k }.merge({:forum_id =>forum.id ,:user_id =>user.id , 
-                                                                                                     :account_id => @current_account.id , 
+          post_hash = topic_prop.to_hash.delete_if{|k, v| [:title,:stamp_type].include? k }.merge({:forum_id =>forum.id ,:user_id =>user.id ,
                                                                                                      :body_html =>topic_prop.body })                                                                                        
-          topic.posts.create(post_hash)
+          post = topic.posts.build(post_hash)
+          post.account_id = @current_account.id
+          post.save
        end
    else
        topic.update_attribute(:import_id , topic_prop.import_id )
@@ -93,9 +97,10 @@ module Import::Zen::Forum
      post = topic.posts.find_by_import_id(post_prop.imp_id)     
      unless post
        user = @current_account.all_users.find_by_import_id(topic_prop.user_id)
-       post_hash = post_prop.to_hash.merge({:user_id =>user.id ,:account_id => @current_account.id , :forum_id => topic.forum_id,
-                                            :body_html =>post_prop.body})
-       post = topic.posts.create(post_hash)
+       post_hash = post_prop.to_hash.merge({:user_id =>user.id ,:forum_id => topic.forum_id, :body_html =>post_prop.body})
+       post = topic.posts.build(post_hash)
+       post.account_id = @current_account.id
+       post.save
      else
        post.update_attribute(:import_id , post_prop.import_id )
      end
@@ -120,11 +125,13 @@ def save_solution_article topic_prop
   unless article    
     sol_folder = @current_account.folders.find_by_import_id(topic_prop.forum_id)
     user = @current_account.all_users.find_by_import_id(topic_prop.user_id)
-    article_hash = topic_prop.to_hash.delete_if{|k, v| [:body,:stamp_type,:forum_id].include? k }.merge({:user_id =>user.id ,:account_id => @current_account.id ,
+    article_hash = topic_prop.to_hash.delete_if{|k, v| [:body,:stamp_type,:forum_id].include? k }.merge({:user_id =>user.id ,
                                                                                                :description => topic_prop.body,
                                                                                                :status =>Solution::Article::STATUS_KEYS_BY_TOKEN[:published], 
                                                                                                :art_type => Solution::Article::TYPE_KEYS_BY_TOKEN[:permanent]})
-    article = sol_folder.articles.create(article_hash)
+    article = sol_folder.articles.build(article_hash)
+    article.account_id = @current_account.id 
+    article.save
   else
     article.update_attribute(:import_id , topic_prop.import_id )
   end

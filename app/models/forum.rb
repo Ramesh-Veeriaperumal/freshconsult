@@ -51,7 +51,7 @@ class Forum < ActiveRecord::Base
   
   format_attribute :description
   
-  attr_protected :forum_category_id
+  attr_protected :forum_category_id , :account_id
 
    after_save :set_topic_delta_flag
   
