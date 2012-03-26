@@ -190,6 +190,8 @@ en:
             rebrand_tab_empty: Tab color code is required.
             rebrand_bg_empty: Background color code is required.
             agent_email_taken: Following email(s) has already been taken:<br> %{emails}
+            agent_email_exist: Email(s) already taken.
+            agent_email_partial: Partially successful.
 
     day_passes:
       index:
