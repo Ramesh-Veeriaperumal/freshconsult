@@ -22,6 +22,12 @@
 		GettingStarted.i18n["email_send_problem"] = "<%=t('.email_send_problem')%>";
 		GettingStarted.i18n["sending_test_mail_progress"] = "<%=t('.sending_test_mail_progress')%>";
 		GettingStarted.i18n["agent_limit_reached"] = "<%=t('.agent_limit_reached')%>";
+		GettingStarted.i18n["rebrand_header_empty"] = "<%=t('.rebrand_header_empty')%>";
+		GettingStarted.i18n["rebrand_tab_empty"] = "<%=t('.rebrand_tab_empty')%>";
+		GettingStarted.i18n["rebrand_bg_empty"] = "<%=t('.rebrand_bg_empty')%>";
+		GettingStarted.i18n["rebrand_header_invalid"] = "<%=t('.rebrand_header_invalid')%>";
+		GettingStarted.i18n["rebrand_tab_invalid"] = "<%=t('.rebrand_tab_invalid')%>";
+		GettingStarted.i18n["rebrand_bg_invalid"] = "<%=t('.rebrand_bg_invalid')%>";
 		
 		jQuery("#ResetColors").click(function(){
 			jQuery("#HeaderColor").val("#252525").trigger("keyup");
@@ -77,14 +83,53 @@
 		});
 		
 		jQuery('input#rebrand_submit').click( function(event) {				
-			var form = jQuery('form#rebrand');
+			
 			var loadingDiv = jQuery("#rebrand_submit_status");
 			loadingDiv = (loadingDiv.length>0)? loadingDiv : Loading.getContainer("#rebrand_submit_status","#rebrand_box");
-			loadingDiv.show();
 			var statusBox = loadingDiv.find("#status_update");
-			Loading.updateStatus(statusBox,"update",GettingStarted.translate("updating"));			
+			
+			var form = jQuery('form#rebrand');
+			
+			
+			var header_color = form.find("#HeaderColor");
+			var tab_color = form.find("#TabColor");
+			var bg_color = form.find("#BackgroundColor");
+			
+									
+			if(!Validate.colorCode(header_color.val())){	
+				var errorMessage = Validate.isEmpty(header_color.val())?GettingStarted.translate("rebrand_header_empty"):GettingStarted.translate("rebrand_header_invalid");			
+				Loading.error(statusBox,errorMessage);
+				loadingDiv.show();
+				loadingDiv.delay(3000).hide(1);
+				header_color.focus();
+				event.stopPropagation();
+				return false;
+			}
+			else if(!Validate.colorCode(tab_color.val())){
+				var errorMessage = Validate.isEmpty(tab_color.val())?GettingStarted.translate("rebrand_tab_empty"):GettingStarted.translate("rebrand_tab_invalid");			
+				Loading.error(statusBox,errorMessage);
+				loadingDiv.show();
+				loadingDiv.delay(3000).hide(1);
+				tab_color.focus();
+				event.stopPropagation();
+				return false;
+			}
+			else if(!Validate.colorCode(bg_color.val())){
+				var errorMessage = Validate.isEmpty(bg_color.val())?GettingStarted.translate("rebrand_bg_empty"):GettingStarted.translate("rebrand_bg_invalid");
+				Loading.error(statusBox,errorMessage);
+				loadingDiv.show();
+				loadingDiv.delay(3000).hide(1);
+				bg_color.focus();
+				event.stopPropagation();
+				return false;
+			}
+			
+			Loading.updateStatus(statusBox,"update",GettingStarted.translate("updating"));		
+			loadingDiv.show();				
+			loadingDiv.delay(3000).hide(1);		
+							
 		});
-	});
+	});	
 <% end %>
 <div class="clear gs">
 
