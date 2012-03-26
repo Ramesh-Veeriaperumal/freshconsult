@@ -57,7 +57,6 @@ gem "koala", "~> 1.0.0"
 gem "spreadsheet", "0.6.8"
 
 gem "sax-machine", "~> 0.1.0"
-gem "crewait", "~> 0.1.7"
 
 
 group :development do

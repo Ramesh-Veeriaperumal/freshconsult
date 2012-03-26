@@ -18,19 +18,19 @@ class Import::Zen::Start < Struct.new(:params)
     @current_account = Account.find_by_full_domain(params[:domain])   
     @current_account.make_current    
     return if @current_account.blank?
-    #begin
+    begin
       @base_dir = extract_zendesk_zip
       disable_notification 
       handle_migration(params[:zendesk][:files] , @base_dir)
       enable_notification
       send_success_email(params[:email] , params[:domain])
       delete_import_files @base_dir
-#    rescue => e
-#      handle_error
-#      NewRelic::Agent.notice_error(e)
-#      puts "Error while importing data ::#{e.message}\n#{e.backtrace.join("\n")}"
-#      return true   
-#    end
+    rescue => e
+      handle_error
+      NewRelic::Agent.notice_error(e)
+      puts "Error while importing data ::#{e.message}\n#{e.backtrace.join("\n")}"
+      return true   
+    end
   end
    
  def handle_migration (file_list , base_dir)
