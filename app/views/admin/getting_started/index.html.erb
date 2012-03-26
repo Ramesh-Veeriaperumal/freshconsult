@@ -28,6 +28,9 @@
 		GettingStarted.i18n["rebrand_header_invalid"] = "<%=t('.rebrand_header_invalid')%>";
 		GettingStarted.i18n["rebrand_tab_invalid"] = "<%=t('.rebrand_tab_invalid')%>";
 		GettingStarted.i18n["rebrand_bg_invalid"] = "<%=t('.rebrand_bg_invalid')%>";
+		GettingStarted.i18n["agent_email_sending"] = "<%=t('.agent_email_sending')%>";
+		GettingStarted.i18n["agent_email_required"] = "<%=t('.agent_email_required')%>";
+		
 		
 		jQuery("#ResetColors").click(function(){
 			jQuery("#HeaderColor").val("#252525").trigger("keyup");
@@ -69,11 +72,16 @@
 			var agent_emails_ele = form.children("#agents_invite_email");
 			var agent_emails = agent_emails_ele.val();
 			if(Validate.email(agent_emails))
-			{
-				Loading.updateStatus(statusBox,"update",GettingStarted.translate("updating"));
+			{			  	Loading.updateStatus(statusBox,"update",GettingStarted.translate("agent_email_sending"));
+		
 			}
 			else{
-				Loading.updateStatus(statusBox,"failure",GettingStarted.translate("emails_invalid"));
+			
+                if(Validate.isEmpty(agent_emails)){
+					Loading.updateStatus(statusBox,"failure",GettingStarted.translate("agent_email_required"));
+				  }
+				else{						Loading.updateStatus(statusBox,"failure",GettingStarted.translate("emails_invalid"));
+				}
 				agent_emails_ele.addClass("gs_error_highlight");
 				agent_emails_ele.focus();
 				loadingDiv.delay(hideDelay).hide(1);

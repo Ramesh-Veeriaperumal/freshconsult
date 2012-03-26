@@ -193,7 +193,8 @@ en:
             agent_email_taken: Following email(s) has already been taken:<br> %{emails}
             agent_email_exist: Email(s) already taken.
             agent_email_partial: Partially successful.
-
+            agent_email_sending: Sending Invites...
+            agent_email_required: Email ID required to send invite.
     day_passes:
       index:
         title: "Day Pass"
