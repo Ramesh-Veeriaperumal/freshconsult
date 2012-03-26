@@ -56,6 +56,8 @@ gem "sanitize", "2.0.3"
 gem "koala", "~> 1.0.0"
 gem "spreadsheet", "0.6.8"
 
+gem "sax-machine", "~> 0.1.0"
+
 
 group :development do
    gem "rspec", "1.3.1"

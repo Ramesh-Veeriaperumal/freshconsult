@@ -53,7 +53,7 @@ class Topic < ActiveRecord::Base
     }
   }
   
-  attr_accessible :title,:stamp_type
+  attr_protected :forum_id , :account_id
   # to help with the create form
   attr_accessor :body_html
   

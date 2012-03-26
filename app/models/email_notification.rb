@@ -44,7 +44,7 @@ class EmailNotification < ActiveRecord::Base
                            TICKET_CLOSED => {:requester_notification => false},
                            COMMENTED_BY_AGENT =>{:requester_notification => false},
                            TICKET_RESOLVED =>{:requester_notification => false},
-                           TICKET_REOPENED =>{:requester_notification => false},
+                           TICKET_REOPENED =>{:agent_notification => false},
                            REPLIED_BY_REQUESTER =>{:agent_notification =>false},
                            USER_ACTIVATION => {:requester_notification => false}
                            
