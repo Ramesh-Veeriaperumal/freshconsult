@@ -12,15 +12,44 @@ module ApplicationHelper
   def format_float_value(val)
     sprintf( "%0.02f", val) unless val.nil? 
   end
+
+  def timediff_in_words(interval)
+    secs  = interval.to_i
+    mins  = (secs / 60).to_i
+    secs = secs - (mins * 60)
+
+    hours = (mins / 60).to_i
+    mins = mins - (hours * 60)
+
+    days  = (hours / 24).to_i
+    hours = hours - (days * 24)
+
+    if (interval.to_i <= 0) 
+      "-"
+    elsif days > 0
+      "#{days} days and #{hours % 24} hours"
+    elsif hours > 0
+      "#{hours} hours and #{mins % 60} minutes"
+    elsif mins > 0
+      "#{mins} minutes and #{secs % 60} seconds"
+    elsif secs >= 0
+      "#{secs} seconds"
+    end
+
+  end
+
+  def percentage(numerator, denominator)
+    if denominator == 0
+      "-"
+    else
+      format_float_value(100 * numerator / denominator) + '%'
+    end
+  end
   
   def show_flash
     [:notice, :warning, :error].collect {|type| content_tag('div', flash[type], :id => type, :class => "flash_info #{type}") if flash[type] }
   end
-  
-  def show_admin_flash
-    [:notice, :warning, :error].collect {|type| content_tag('div', "<a class='close' data-dismiss='alert'>×</a>" + flash[type], :id => type, :class => "alert alert-block alert-#{type}") if flash[type] }  
-  end   
-  
+ 
   def show_announcements                                                    
     if permission?(:manage_tickets)
       @current_announcements ||= SubscriptionAnnouncement.current_announcements(session[:announcement_hide_time])  
@@ -120,22 +149,7 @@ module ApplicationHelper
     end
     navigation
   end          
-  
-  def subscription_tabs
-    tabs = [
-#      [customers_admin_subscriptions_path, :customers, "Customers" ],
-#      [admin_subscription_affiliates_path, :affiliates, "Affiliates" ],
-      [admin_subscription_discounts_path, :discounts, "Discounts" ],
-      [admin_subscription_payments_path, :payments, "Payments" ],
-      [admin_subscription_announcements_path, :announcements, "Announcements" ],
-      [admin_subscription_plans_path, :plans, "Plans" ]      
-    ]
-
-    navigation = tabs.map do |s| 
-      content_tag(:li, link_to(s[2], s[0]), :class => ((@selected_tab == s[1]) ? "active" : ""))
-    end
-  end
-  
+ 
   def html_list(type, elements, options = {}, activeitem = 0)
     if elements.empty?
       "" 

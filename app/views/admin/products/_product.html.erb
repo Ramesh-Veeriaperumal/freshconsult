@@ -34,7 +34,7 @@
  				<div class="channel-text">
 					<% if(product.portal_enabled?) %>
 						<span class='icon url-active'></span>
-       			<%= link_to(product.portal.portal_url, product.portal.portal_url, { :target => "_blank" }) %>
+       			<%= link_to(product.portal.portal_url, "http://#{product.portal.portal_url}", { :target => "_blank" }) %>
 					<% else %>
 						<span class='icon url'></span>
 						<%= link_to("Enable Portal", edit_admin_product_path(product, :enable_portal => true), :class => "slim-button") %>

@@ -9,7 +9,7 @@
 		jQuery("#placeholder-list-1 a").click(function(ev){       
       if(active_email_body.get(0)){
         var placeHolderText = jQuery(this).data("placeholder");  
-				//console.log(placeHolderText);
+				//console.log(active_email_body);  
         if(active_email_body.hasClass("mceEditor")){
 					tinyMCE.get(active_email_body.prop("id")).selection.setContent(placeHolderText, { no_events: true });
           //tinyMCE.execInstanceCommand(active_email_body.prop("id"), "mceInsertContent", false, placeHolderText);  	      
@@ -19,8 +19,7 @@
 		  }
 		});
 		jQuery('#placeholder_close').click(function(){
-			jQuery('#place-dialog')
-					.hide();	
+			jQuery('#place-dialog').hide();	
 		});
 		jQuery('#place-dialog').draggable();
 	});

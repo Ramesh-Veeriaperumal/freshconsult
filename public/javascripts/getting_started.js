@@ -15,6 +15,14 @@ var Validate = {
 	    }
 	
 	   }
+	},
+	colorCode:function(val){
+		var colorCode = /^#(?:[0-9a-fA-F]{3}){1,2}$/;
+		return colorCode.test(val);
+	},
+	isEmpty:function(val){
+		var empty_string = /^\s*$/;
+		return empty_string.test(val);
 	}
 }
 	
@@ -22,7 +30,15 @@ var Loading ={
 	updateStatus:function(statusObj, status, content){	
 	     statusObj.find("div.gs_"+status).html(content);
 		 statusObj.attr("class","gs_"+status);
-	},	
+	},
+	error:function(statusObj,content){
+		statusObj.find("div.gs_failure").html(content);
+		 statusObj.attr("class","gs_failure");
+	},
+	success:function(statusObj,content){
+		statusObj.find("div.gs_success").html(content);
+		 statusObj.attr("class","gs_success");
+	},
 	getContainer:function(divId,objId){	
 		var loadingDiv = document.createElement("div");
 		loadingDiv.innerHTML='<div id="status_update"><div class="gs_success"></div><div class="gs_failure"></div><div class="gs_update"></div></div>';

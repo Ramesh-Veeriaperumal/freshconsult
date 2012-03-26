@@ -28,7 +28,14 @@ module Reports::CompanyReport
      :joins => :requester,
      :conditions => { :users => {:customer_id => "#{params[:customer_id]}"}}).count
   end
- 
+
+  def count_of_resolved_tickets
+    @count_of_resolved_tickets ||= Account.current.tickets.visible.find( 
+     :all,
+     :joins => [:requester, :ticket_states],
+     :conditions => ["(`users`.`customer_id` = ?) AND (helpdesk_ticket_states.resolved_at > '#{start_date}' and helpdesk_ticket_states.resolved_at < '#{end_date}' )",params[:customer_id] ]).count
+  end
+
   def group_tkts_by_columns(vals={})
     scoper.find(
      :all,

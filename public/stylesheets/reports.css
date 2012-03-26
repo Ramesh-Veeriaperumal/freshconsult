@@ -40,10 +40,10 @@
 .report-unit { margin: 0 0 20px; }
 .report-unit h3 { font-size: 12px; color: #333; font-weight: bold; line-height: 18px; }
 .report-unit ul.summary { /*        background-color:$tickets_summary_bg;*/ background: none; margin: 10px 0; border: 0; box-shadow: none; }
-.report-unit ul.summary li { width: auto; margin: 0 3% 0 0; text-align: left; width: 22%; border-right: 1px dotted #dfdfdf; }
-.report-unit ul.summary li span { display: inline-block; font-size: 12px; line-height: 18px; width: 10px; }
+.report-unit ul.summary li { width: auto; margin: 15px 3% 0; text-align: center; width: 38%; border-right: 1px dotted #dfdfdf; }
+.report-unit ul.summary li span { display: inline-block; font-size: 12px; line-height: 18px; }
 .report-unit ul.summary li h4 { font-size: 26px; line-height: 56px; color: #333333; padding-top: 0; font-weight: bold; }
-.report-unit ul.summary li.last { margin: 0; border: 0; }
+.report-unit ul.summary li.last { margin: 15px 0 0; border: 0; }
 .report-unit ul.summary li.big { margin: 10px inherit; font-size: 1.4em; }
 .report-unit ul.summary li.big h4 { padding: 10px; }
 .report-unit .tickets .name, .report-unit .tickets .name-user, .report-unit .tickets-expanded .name, .report-unit .tickets-expanded .name-user { padding-left: 10px; }

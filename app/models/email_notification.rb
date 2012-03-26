@@ -2,6 +2,11 @@ class EmailNotification < ActiveRecord::Base
   belongs_to :account
   attr_protected  :account_id
   
+  has_many :email_notification_agents, :class_name => "EmailNotificationAgent", :dependent => :destroy
+  
+  has_many :agents, :through => :email_notification_agents, :source => :user, 
+              :conditions => { :users => {:deleted =>  false}}, :select => "users.id, users.email"
+  
   validates_uniqueness_of :notification_type, :scope => :account_id
   
   #Notification types
@@ -44,7 +49,7 @@ class EmailNotification < ActiveRecord::Base
                            TICKET_CLOSED => {:requester_notification => false},
                            COMMENTED_BY_AGENT =>{:requester_notification => false},
                            TICKET_RESOLVED =>{:requester_notification => false},
-                           TICKET_REOPENED =>{:requester_notification => false},
+                           TICKET_REOPENED =>{:agent_notification => false},
                            REPLIED_BY_REQUESTER =>{:agent_notification =>false},
                            USER_ACTIVATION => {:requester_notification => false}
                            

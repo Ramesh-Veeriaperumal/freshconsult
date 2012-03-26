@@ -10,8 +10,7 @@ before_filter :check_data_import_status, :only => :index
   
   def import_data
     
-    @item = current_account.build_data_import({:status=>true , :import_type =>'Zendesk'})
-    
+    @item = current_account.build_data_import({:status=>true , :import_type =>'Zendesk'})   
     if @item.save
        @item.attachments.create(:content => params[:zendesk][:file], :description => 'zen data', :account_id => @item.account_id)
        handle_zen_import
@@ -34,7 +33,7 @@ before_filter :check_data_import_status, :only => :index
                               }
                   }
    
-    Delayed::Job.enqueue Import::ZendeskData.new(zen_params)
+    Delayed::Job.enqueue Import::Zen::Start.new(zen_params)
   end
   
   protected
