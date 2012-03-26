@@ -2,6 +2,8 @@ class Helpdesk::TicketState < ActiveRecord::Base
   set_table_name "helpdesk_ticket_states"
   belongs_to :tickets , :class_name =>'Helpdesk::Ticket',:foreign_key =>'ticket_id'
   
+  attr_protected :ticket_id
+  
   def reset_tkt_states
     self.resolved_at = nil
     self.closed_at = nil

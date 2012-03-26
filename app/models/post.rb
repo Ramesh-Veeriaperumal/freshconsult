@@ -20,8 +20,8 @@ class Post < ActiveRecord::Base
   after_destroy :update_cached_fields
 
   
-  attr_accessible :body_html	
-	
+  attr_protected	:topic_id
+  
   def editable_by?(user)
     user && (user.id == user_id || user.has_manage_forums? || user.moderator_of?(forum_id))
   end

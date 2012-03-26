@@ -51,8 +51,8 @@ class Forum < ActiveRecord::Base
   
   format_attribute :description
   
-  attr_accessible :name,:description, :description_html, :forum_type ,:import_id, :forum_visibility
-  
+  attr_protected :forum_category_id
+
    after_save :set_topic_delta_flag
   
   #validates_inclusion_of :forum_visibility, :in => VISIBILITY_KEYS_BY_TOKEN.values.min..VISIBILITY_KEYS_BY_TOKEN.values.max

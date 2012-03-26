@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120321095818) do
+ActiveRecord::Schema.define(:version => 20120309095357) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -679,6 +679,7 @@ ActiveRecord::Schema.define(:version => 20120321095818) do
   end
 
   add_index "helpdesk_tickets", ["account_id", "display_id"], :name => "index_helpdesk_tickets_on_account_id_and_display_id", :unique => true
+  add_index "helpdesk_tickets", ["account_id", "import_id"], :name => "index_helpdesk_tickets_on_account_id_and_import_id", :unique => true
   add_index "helpdesk_tickets", ["account_id", "requester_id"], :name => "index_helpdesk_tickets_on_account_id_and_requester_id"
   add_index "helpdesk_tickets", ["account_id", "responder_id"], :name => "index_helpdesk_tickets_on_account_id_and_responder_id"
   add_index "helpdesk_tickets", ["requester_id"], :name => "index_helpdesk_tickets_on_requester_id"
@@ -1102,6 +1103,7 @@ ActiveRecord::Schema.define(:version => 20120321095818) do
   end
 
   add_index "users", ["account_id", "email"], :name => "index_users_on_account_id_and_email", :unique => true
+  add_index "users", ["account_id", "import_id"], :name => "index_users_on_account_id_and_import_id", :unique => true
   add_index "users", ["account_id"], :name => "index_users_on_account_id"
   add_index "users", ["customer_id"], :name => "index_users_on_customer_id"
   add_index "users", ["email"], :name => "index_users_on_email"
