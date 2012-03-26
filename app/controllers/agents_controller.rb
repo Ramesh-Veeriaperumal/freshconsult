@@ -89,12 +89,18 @@ class AgentsController < Admin::AdminController
 
     @responseObj = {}
     if current_account.can_add_agents?(@agent_emails.length)
+      @existing_users = [];
       @agent_emails.each do |agent_email|        
         @user  = current_account.users.new
         if @user.signup!(:user => { :email => agent_email })
           @user.create_agent
+        else
+          check_email_exist
+          @existing_users << @existing_user
         end
+        
       end      
+            
       @responseObj[:reached_limit] = false
     else      
       @responseObj[:reached_limit] = true

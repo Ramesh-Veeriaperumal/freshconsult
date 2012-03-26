@@ -189,6 +189,7 @@ en:
             rebrand_header_empty: Header color code is required.
             rebrand_tab_empty: Tab color code is required.
             rebrand_bg_empty: Background color code is required.
+            agent_email_taken: Following email(s) has already been taken:<br> %{emails}
 
     day_passes:
       index:

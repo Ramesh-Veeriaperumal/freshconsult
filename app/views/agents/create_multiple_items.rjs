@@ -6,4 +6,10 @@ else
   page << "Loading.updateStatus(status_box,'success', '"+t('admin.getting_started.index.successfully_updated')+"');"
 end
 
+if @existing_users.length > 0
+   @agents_email = (@existing_users.collect { |a| a[:email] }).join(", ")
+   flash[:notice] = t(:'admin.getting_started.index.agent_email_taken', :emails => @agents_email)
+   show_ajax_flash page
+end
+
 page << "loading_div.delay(1000).hide(1);"
