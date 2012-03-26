@@ -93,7 +93,7 @@ class Helpdesk::TicketsController < ApplicationController
       params[:page] = '1'  
       @items = current_account.tickets.permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter') 
     end
-    
+
     @filters_options = scoper_user_filters.map { |i| {:id => i[:id], :name => i[:name], :default => false} }
     @current_options = @ticket_filter.query_hash.map{|i|{ i["condition"] => i["value"] }}.inject({}){|h, e|h.merge! e}
     @show_options = show_options
@@ -326,7 +326,7 @@ class Helpdesk::TicketsController < ApplicationController
     
     flash[:notice] =  notice_msg 
     respond_to do |format|
-      format.html { redirect_to helpdesk_tickets_path(:page => params[:page])  }
+      format.html { redirect_to redirect_url  }
       format.js
     end
   end
@@ -424,7 +424,7 @@ class Helpdesk::TicketsController < ApplicationController
     #@old_timer_count = @item.time_sheets.timer_active.size - will enable this later..not a good solution
     if @item.update_attribute(:status , status_id)
       flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/close_notice')
-      redirect_to helpdesk_tickets_path(:page => params[:page])
+      redirect_to redirect_url
     else
       flash[:error] = t("helpdesk.flash.closing_the_ticket_failed")
       redirect_to :back
@@ -455,7 +455,7 @@ class Helpdesk::TicketsController < ApplicationController
     end
   
     def redirect_url
-      { :action => 'index' }
+      helpdesk_tickets_path(:page => params[:page])
     end
     
     def scoper_user_filters
