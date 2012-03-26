@@ -1,42 +1,17 @@
+<%
+date_range = params[:date_range].blank? ? "#{30.days.ago.strftime("%d %B %Y")} - #{Time.now.strftime("%d %B %Y")}" :  h(params[:date_range])
+%>
 <%= javascript_include_tag  '/javascripts/report/date' %>
 <%= javascript_include_tag  '/javascripts/report/daterangepicker.jQuery.js' %>
 <%= stylesheet_link_tag 'ui.daterangepicker' %>
+<%= stylesheet_link_tag 'reports' %>
 <span class="floatr">
 	<%= link_to("&larr; #{t('reports.summary_report.back_to_reports')}", reports_url, :class => "slim-button") %>
 </span>
 <h3 class="title">
 	<%= @current_report[:label] %>
+<h4 class='title'> <%= date_range %></h4>
 </h3>
-<% javascript_tag do %> 
-	jQuery(document).ready(function() {
-		var date_today = new Date();
-			var dates = jQuery( "#start_date, #end_date" ).datepicker({
-				changeMonth: true, 
-				changeYear: true,
-				numberOfMonths: 3,
-				showButtonPanel: true,
-				maxDate: "today",
-				showOn: "both", 
-				disabled: true,
-				onSelect: function( selectedDate ) {
-					var option = this.id == "start_date" ? "minDate" : "maxDate",
-						instance = jQuery( this ).data( "datepicker" ),
-						date = jQuery.datepicker.parseDate(
-							instance.settings.dateFormat ||
-							jQuery.datepicker._defaults.dateFormat,
-							selectedDate, instance.settings );
-					dates.not( this ).datepicker( "option", option, date );
-					jQuery(this).prop("date", date);
-				}
-			});
-      
-		jQuery("#date_range").bind('keypress keyup keydown', function(ev) {
-			ev.preventDefault();
-			return false;
-		});
-
-	});
-<%end%>
 
 <% content_for :sidebar do %>
 <div class="sidepanel">
@@ -45,12 +20,12 @@
 		<ul class="ui-form">
 			<li class="inline-field">
 				<div>
-					<%= text_field_tag :date_range, params[:date_range].blank? ? "#{30.days.ago.strftime("%d %B %Y")} - #{Time.now.strftime("%d %B %Y")}" :  h(params[:date_range]), :class => "required" %>
+					<%= text_field_tag :date_range, date_range, :class => "required" %>
 				</div>
 			</li>
 		</ul>
 		<div class="button-container">
-			<%= submit_tag "Show report", :class => "uiButton" %>
+			<%= submit_tag t('reports.summary_report.show_report'), :class => "uiButton" %>
 		</div>
 	</form>
 
@@ -75,6 +50,11 @@ jQuery(document).ready(function() {
 		dateFormat: 'dd MM yy',
 		closeOnSelect: true
 	});   
+
+	jQuery("#date_range").bind('keypress keyup keydown', function(ev) {
+		ev.preventDefault();
+		return false;
+	});
 });     
 <% end %>
 <% end %>
@@ -101,8 +81,14 @@ jQuery(document).ready(function() {
 						<% data = @report_data.fetch(obj.id, {}) %>	
 			<% end %>
 			<td><%= data.fetch("Resolved", 0) %></td>
-			<td><%= percentage(data.fetch(:tkt_res_on_time,0).to_i,data.fetch('Resolved',0).to_i) %> (<%= data.fetch(:tkt_res_on_time, 0) %>)</td>
-			<td><%= percentage(data.fetch(:fcr,0).to_i,data.fetch('Resolved',0).to_i) %> (<%= data.fetch(:fcr, 0) %>)</td>
+			<td>
+				<%= percentage(data.fetch(:tkt_res_on_time,0).to_i,data.fetch('Resolved',0).to_i) %> 
+				(<%= data.fetch(:tkt_res_on_time, 0) %>)
+			</td>
+			<td>
+				<%= percentage(data.fetch(:fcr,0).to_i,data.fetch('Resolved',0).to_i) %> 
+				(<%= data.fetch(:fcr, 0) %>)
+			</td>
 			<td><%= timediff_in_words(data.fetch(:average_first_response_time, 0)) %></td>
 		</tr>
 		<% end %>

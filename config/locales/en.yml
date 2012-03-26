@@ -1917,6 +1917,7 @@ en:
       helpdesk_activity_title: "Helpdesk Activity Report"
       summary_report:
         back_to_reports: "Back to Reports"
+        show_report: "Show report"
         tickets_resolved: "Tickets Resolved"
         on_time_resolution: "On time Resolution"
         on_time_resolution_percent: "OTR %"
