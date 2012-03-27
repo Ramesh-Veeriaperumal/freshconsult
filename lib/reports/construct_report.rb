@@ -112,7 +112,7 @@ module Reports::ConstructReport
  def fetch_afrt
    tkt_scoper.find(
      :all, 
-     :select => "avg(helpdesk_ticket_states.first_response_time - helpdesk_tickets.created_at) count, #{@val}_id", 
+     :select => "avg(TIMEDIFF(helpdesk_ticket_states.first_response_time, helpdesk_tickets.created_at)) count, #{@val}_id", 
      :include => @val,
      :joins => "INNER JOIN helpdesk_ticket_states on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id", 
      :conditions => " (helpdesk_ticket_states.resolved_at is not null) and (#{@date_condition}) ",

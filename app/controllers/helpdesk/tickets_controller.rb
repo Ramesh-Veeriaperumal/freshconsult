@@ -88,6 +88,12 @@ class Helpdesk::TicketsController < ApplicationController
  
   def index
     @items = current_account.tickets.permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter') 
+
+    if @items.empty? && !params[:page].nil? && params[:page] != '1'
+      params[:page] = '1'  
+      @items = current_account.tickets.permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter') 
+    end
+
     @filters_options = scoper_user_filters.map { |i| {:id => i[:id], :name => i[:name], :default => false} }
     @current_options = @ticket_filter.query_hash.map{|i|{ i["condition"] => i["value"] }}.inject({}){|h, e|h.merge! e}
     @show_options = show_options
@@ -449,7 +455,7 @@ class Helpdesk::TicketsController < ApplicationController
     end
   
     def redirect_url
-      { :action => 'index' }
+      helpdesk_tickets_path(:page => params[:page])
     end
     
     def scoper_user_filters

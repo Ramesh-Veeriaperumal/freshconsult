@@ -188,6 +188,12 @@ input.time { font-weight: normal; font-size: 12px; }
 .grid table td { background-color: #efefef; border-top: 1px solid #cfcfcf; }
 .grid table td label { color: #555555; font-weight: bold; font-size: 1em; padding: 8px 0 6px 0; }
 .grid table td label em { font-style: normal; font-weight: bold; text-transform: capitalize; color: #000000; }
+.grid table td .chzn-container { width: 96.8% !important; }
+.grid table td .chzn-drop { width: 100% !important; }
+.grid table td ul.chzn-choices li { width: auto; }
+.grid table td .search-field { min-width: 500px; width: auto !important; width: 500px; }
+.grid table td .search-field .default { width: 100% !important; }
+.grid table td ul.chzn-results li { float: none; display: block; width: 100%; }
 .grid table tr.even td { background-color: #f4f4f4; }
 .grid .olist { list-style: decimal; }
 .grid .grid_form td { border: 0; padding: 6px 10px 0 10px; background: #fafafa; }
