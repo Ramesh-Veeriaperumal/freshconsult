@@ -257,6 +257,10 @@ class User < ActiveRecord::Base
     user_role == USER_ROLES_KEYS_BY_TOKEN[:supervisor]
   end
 
+  def first_login?
+    login_count == 1
+  end
+  
   #Savage_beast changes end here
 
   #Search display
