@@ -61,6 +61,13 @@ Regards,
     :notification_type => EmailNotification::NEW_TICKET, 
     :account_id => account.id, :requester_notification => true, 
     :agent_notification => false,
+    :agent_template => 'Hi,
+
+A new ticket has been created. 
+You may view and respond to the ticket here {{ticket.url}}
+
+Regards,
+{{helpdesk_name}}',
     :requester_template => 'Dear {{ticket.requester.name}},
 
 We would like to acknowledge that we have received your request and a ticket has been created with Ticket ID - {{ticket.id}}.
@@ -73,7 +80,8 @@ Thank you for your patience.
 
 Sincerely,
 {{helpdesk_name}} Support Team',
-    :requester_subject_template => "Ticket Received - [\#{{ticket.id}}] {{ticket.subject}}"
+    :requester_subject_template => "Ticket Received - [\#{{ticket.id}}] {{ticket.subject}}",
+    :agent_subject_template => "New Ticket has been created - [\#{{ticket.id}}] {{ticket.subject}}"
   },
   { :notification_type => EmailNotification::TICKET_ASSIGNED_TO_GROUP, 
       :account_id => account.id, :requester_notification => false, 

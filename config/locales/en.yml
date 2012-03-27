@@ -193,7 +193,8 @@ en:
             agent_email_taken: Following email(s) has already been taken:<br> %{emails}
             agent_email_exist: Email(s) already taken.
             agent_email_partial: Partially successful.
-
+            agent_email_sending: Sending Invites...
+            agent_email_required: Email ID required to send invite.
     day_passes:
       index:
         title: "Day Pass"
@@ -1184,7 +1185,7 @@ en:
     event: Event
     agent_notification: Agent Notification
     subject: Subject
-    do_not_delete_ticket_id_from_subject: To capture Customer replies as Ticket Conversations the Ticket ID placeholder should not be removed from the subject line
+    do_not_delete_ticket_id_from_subject: To capture customer replies as ticket conversations, the ticket ID placeholder should not be removed from the subject line
   errors_in_plan_change: "Errors encountered with your change:"
   formatting_help: Formatting Help
   step1: Step 1
@@ -1924,6 +1925,7 @@ en:
       helpdesk_activity_title: "Helpdesk Activity Report"
       summary_report:
         back_to_reports: "Back to Reports"
+        show_report: "Show report"
         tickets_resolved: "Tickets Resolved"
         on_time_resolution: "On time Resolution"
         on_time_resolution_percent: "OTR %"

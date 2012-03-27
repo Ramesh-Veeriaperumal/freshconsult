@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120309095357) do
+ActiveRecord::Schema.define(:version => 20120323190635) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -234,6 +234,16 @@ ActiveRecord::Schema.define(:version => 20120309095357) do
   end
 
   add_index "email_configs", ["account_id", "to_email"], :name => "index_email_configs_on_account_id_and_to_email", :unique => true
+
+  create_table "email_notification_agents", :force => true do |t|
+    t.integer  "email_notification_id", :limit => 8
+    t.integer  "user_id",               :limit => 8
+    t.integer  "account_id",            :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "email_notification_agents", ["account_id", "email_notification_id"], :name => "index_email_notification_agents_on_acc_and_email_notification_id"
 
   create_table "email_notifications", :force => true do |t|
     t.integer  "account_id",                 :limit => 8
