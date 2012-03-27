@@ -71,9 +71,13 @@ class TopicsController < ApplicationController
     topic_saved, post_saved = false, false
 		# this is icky - move the topic/first post workings into the topic model?
     Topic.transaction do
-      @topic  = @forum.topics.build(params[:topic])
+      topic_param = params[:topic].symbolize_keys
+      topic_param.delete_if{|k, v| [:body_html].include? k }
+      @topic  = @forum.topics.build(topic_param)
       assign_protected
-      @post       = @topic.posts.build(params[:topic])
+      post_param =  params[:topic].symbolize_keys
+      post_param.delete_if{|k, v| [:title,:sticky,:locked].include? k }
+      @post       = @topic.posts.build(post_param)
       @post.topic = @topic
       @post.user  = current_user
       @post.account_id = current_account.id
