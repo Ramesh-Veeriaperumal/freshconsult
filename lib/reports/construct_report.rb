@@ -93,7 +93,7 @@ module Reports::ConstructReport
      :select => "count(*) count, #{@val}_id", 
      :include => @val,
      :joins => "INNER JOIN helpdesk_ticket_states on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id", 
-     :conditions => " (helpdesk_tickets.due_by <  helpdesk_ticket_states.resolved_at ) and (#{@date_condition}) ",
+     :conditions => ["helpdesk_tickets.status IN (?,?) and (helpdesk_tickets.due_by <  helpdesk_ticket_states.resolved_at ) and (#{@date_condition}) ",TicketConstants::STATUS_KEYS_BY_TOKEN[:resolved],TicketConstants::STATUS_KEYS_BY_TOKEN[:closed]],
      :group => "#{@val}_id")
  end
  
@@ -103,7 +103,7 @@ module Reports::ConstructReport
      :select => "count(*) count, #{@val}_id", 
      :include => @val,
      :joins => "INNER JOIN helpdesk_ticket_states on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id", 
-     :conditions => " (helpdesk_ticket_states.resolved_at is not null)  and  helpdesk_ticket_states.inbound_count = 1 and (#{@date_condition}) ",
+     :conditions => ["helpdesk_tickets.status IN (?,?) and  (helpdesk_ticket_states.resolved_at is not null)  and  helpdesk_ticket_states.inbound_count = 1 and (#{@date_condition}) ",TicketConstants::STATUS_KEYS_BY_TOKEN[:resolved],TicketConstants::STATUS_KEYS_BY_TOKEN[:closed]],
      :group => "#{@val}_id")
  end
  
@@ -115,7 +115,7 @@ module Reports::ConstructReport
      :select => "avg(TIME_TO_SEC(TIMEDIFF(helpdesk_ticket_states.first_response_time, helpdesk_tickets.created_at))) count, #{@val}_id", 
      :include => @val,
      :joins => "INNER JOIN helpdesk_ticket_states on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id", 
-     :conditions => " (helpdesk_ticket_states.resolved_at is not null) and (#{@date_condition}) ",
+     :conditions => ["helpdesk_tickets.status IN (?,?) and (helpdesk_ticket_states.resolved_at is not null) and (#{@date_condition}) ",TicketConstants::STATUS_KEYS_BY_TOKEN[:resolved],TicketConstants::STATUS_KEYS_BY_TOKEN[:closed]],
      :group => "#{@val}_id")
  end
  

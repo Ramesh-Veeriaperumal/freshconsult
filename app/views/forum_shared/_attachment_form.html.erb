@@ -12,10 +12,10 @@
   the attachments table.
  %>
 			
-<textarea id="file-list-template" style="display:none">
+<script id="file-list-template" type="text/x-jquery-tmpl">			
   <div class="item">
   	<span>
-  		#{name} - <a href="javascript:void(0)" onclick="Helpdesk.Multifile.remove(this); return false;", inputId="#{inputId}">remove</a>
+  		${name} - <a href="javascript:void(0)" onclick="Helpdesk.Multifile.remove(this); return false;", inputId="${inputId}">remove</a>
 	</span>
   </div>
-</textarea>
+</script>
