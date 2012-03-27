@@ -1517,6 +1517,8 @@ en:
         removebcc: Remove Bcc
       tweet_form:
         title: "Reply to %{user}"
+      history:
+        recent_item: Recent Items
     dashboard:
       index:
         todo_title: To-Dos
@@ -1700,6 +1702,11 @@ en:
     twitter_handles:
       index:
         title: "Twitter Accounts"
+      signin_info:
+        title: Sign in using twitter
+        engage_customers: Engage your customers, directly on twitter
+        associate_account: Associate a twitter account to <b>  %{product_name} </b> and respond to your customers with a tweet or message from within Freshdesk.
+        add_twitter: Add twitter account
   all_due: All 
   due_today: Today
   due_tomo: Tomorrow
@@ -1945,6 +1952,9 @@ en:
           select_customer: Select Customer
           select_agent: Select Agent
           select_billable: Select Billable/Non-Billable
+          view_between: View report between
+          from: From
+          to: To
   delete_the_ticket: "Delete the Ticket"
   mark_as_spam: "Mark as Spam"
   bulk_update: "Bulk Update"
