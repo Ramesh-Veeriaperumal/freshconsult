@@ -71,12 +71,8 @@ class TopicsController < ApplicationController
     topic_saved, post_saved = false, false
 		# this is icky - move the topic/first post workings into the topic model?
     Topic.transaction do
-      topic_param = params[:topic].symbolize_keys
-      topic_param.delete_if{|k, v| [:body_html].include? k }
       @topic  = @forum.topics.build(topic_param)
       assign_protected
-      post_param =  params[:topic].symbolize_keys
-      post_param.delete_if{|k, v| [:title,:sticky,:locked].include? k }
       @post       = @topic.posts.build(post_param)
       @post.topic = @topic
       @post.user  = current_user
@@ -104,11 +100,11 @@ class TopicsController < ApplicationController
   
   def update
     topic_saved, post_saved = false, false
-    Topic.transaction do
-      @topic.attributes = params[:topic]
+    Topic.transaction do    
+      @topic.attributes = topic_param
       assign_protected
       @post = @topic.posts.first
-      @post.attributes = params[:topic]
+      @post.attributes = post_param
       @topic.body_html = @post.body_html 
       topic_saved = @topic.save
       post_saved = @post.save
@@ -224,6 +220,17 @@ end
       @selected_tab = :forums
     end
   
+    def topic_param 
+      param = params[:topic].symbolize_keys
+      param.delete_if{|k, v| [:body_html].include? k }
+      return param
+    end
+  
+    def post_param
+      param=  params[:topic].symbolize_keys
+      param.delete_if{|k, v| [:title,:sticky,:locked].include? k }
+      return param
+    end
     
 #    def authorized?
 #      %w(new create).include?(action_name) || @topic.editable_by?(current_user)
