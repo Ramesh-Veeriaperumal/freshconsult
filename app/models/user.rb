@@ -258,7 +258,7 @@ class User < ActiveRecord::Base
   end
 
   def first_login?
-    login_count == 1
+    login_count <= 2
   end
   
   #Savage_beast changes end here
