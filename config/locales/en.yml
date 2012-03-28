@@ -125,6 +125,16 @@ en:
     popular: Popular
   payment_info: Payment information
   admin:
+    surveys:
+     index:    
+        title: Survey Settings
+        enable_label: Enable Customer Satisfaction Surveys
+        link_text_label: Survey Link Text
+        link_text_input: Please take a minute to rate your customer support experience
+        link_text_info: This text appears below your signature at the bottom of the email sent to the customer
+        send_while_option1: Send survey link after the ticket is resolved. Let customers give feedback whenever they want
+        send_while_option2: Send survey link in every email. Let customers give feedback whenever they want.
+            
     getting_started:
         send_mail_content:
             send_test_mail_info1: Make sure you've set up your emails to forward to <b> %{to_email} </b>.
