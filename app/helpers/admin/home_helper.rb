@@ -34,7 +34,8 @@ module Admin::HomeHelper
           ['/admin/canned_responses',     'canned-response'         ],
           ['/social/twitters',            'twitter-setting',feature?(:twitter) ],
 #          ['/admin/surveys',              'survey',           current_account.features?(:surveys, :survey_links) ],
-          ['/social/facebook',            'facebook-setting', current_account.features?(:facebook) ]
+          ['/social/facebook',            'facebook-setting', current_account.features?(:facebook) ],
+          ['/admin/surveys',               'survey-settings', current_account.features?(:surveys)      ]
       ]],
         
       [ t(".everything_else"), [
