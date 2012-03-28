@@ -108,7 +108,7 @@ class Social::FacebookPosts
     post_id = feed[:post_id]
     post = @account.facebook_posts.find_by_post_id(post_id)
    
-    comments = @rest.get_connections(post_id, "comments" , {:since =>@fb_page.fetch_since})  
+    comments = @rest.get_connections(post_id, "comments")  
     comments = comments.reject(&:blank?)
    
     unless post.blank?  
