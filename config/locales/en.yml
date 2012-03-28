@@ -126,6 +126,7 @@ en:
   payment_info: Payment information
   admin:
     surveys:
+     successfully_updated: Survey settings has been successfully updated.
      index:    
         title: Survey Settings
         enable_label: Enable Customer Satisfaction Surveys

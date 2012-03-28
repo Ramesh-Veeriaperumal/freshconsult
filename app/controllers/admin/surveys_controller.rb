@@ -1,6 +1,4 @@
 class Admin::SurveysController < Admin::AdminController
-  
-   include ModelControllerMethods
    
   def index
     @account = current_account    
@@ -18,8 +16,9 @@ class Admin::SurveysController < Admin::AdminController
     end    
   end
   
-  def store
-     
+  def update
+    @survey = current_account.survey
+    @survey.store(params[:survey])        
   end
   
 end
