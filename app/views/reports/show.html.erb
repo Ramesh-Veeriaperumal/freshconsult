@@ -79,14 +79,18 @@ jQuery(document).ready(function() {
 			<%	when "group" %>
 						<td><%= obj.name %></td>
 						<% data = @report_data.fetch(obj.id, {}) %>	
-			<% end %>
-			<td><%= data.fetch("Resolved", 0) %></td>
+			<% end 
+
+			resolved_count = data.fetch(TicketConstants::STATUS_KEYS_BY_TOKEN[:resolved], 0).to_i + data.fetch(TicketConstants::STATUS_KEYS_BY_TOKEN[:closed], 0).to_i
+
+			%>
+			<td><%= resolved_count %></td>
 			<td>
-				<%= percentage(data.fetch(:tkt_res_on_time,0).to_i,data.fetch('Resolved',0).to_i) %> 
+				<%= percentage(data.fetch(:tkt_res_on_time,0).to_i,resolved_count) %> 
 				(<%= data.fetch(:tkt_res_on_time, 0) %>)
 			</td>
 			<td>
-				<%= percentage(data.fetch(:fcr,0).to_i,data.fetch('Resolved',0).to_i) %> 
+				<%= percentage(data.fetch(:fcr,0).to_i,resolved_count) %> 
 				(<%= data.fetch(:fcr, 0) %>)
 			</td>
 			<td><%= timediff_in_words(data.fetch(:average_first_response_time, 0)) %></td>

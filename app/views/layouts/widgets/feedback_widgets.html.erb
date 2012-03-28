@@ -14,18 +14,16 @@
 	  <title><%= "#{h(current_account.name)} Widget" %></title>
 
 		<%= stylesheet_link_tag "widget", :media => "screen, projection" %>
-		
-		<%= render :partial => "shared/theme.css"  %>
-		
-		<%= include_javascripts :defaults  %>
-		<%= include_javascripts :frameworks %>
-		<%= include_javascripts :workspace %>	
+		<%= include_javascripts :fdwidget %>
 	  <%= yield :head %>
+	  <script type="text/javascript">document.domain = document.domain;</script>
 	</head>
     <body>
     	<style> body{ background:transparent; }</style>
-		  <div class="content ui-widget-container" id="ui-widget-container">
-			  <%= yield %>
+		  <div class="content ui-widget-container" id="ui-widget-container" name="ui-widget-container">
+		  	<%= yield%>
+		  </div>
+		  <div class="content ui-widget-container" id="ui-thanks-container" name="ui-widget-container" style="display:none">
 		  </div>
     </body>
 </html>

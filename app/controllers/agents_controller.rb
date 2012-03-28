@@ -93,7 +93,7 @@ class AgentsController < Admin::AdminController
       @new_users = [];
       @agent_emails.each do |agent_email|        
         @user  = current_account.users.new
-        if @user.signup!(:user => { :email => agent_email })
+        if @user.signup!(:user => { :email => agent_email, :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:poweruser] })
           @user.create_agent
           @new_users << @user
         else
