@@ -201,7 +201,6 @@ JiraWidget.prototype= {
 	},
 
 	createJiraIssue:function(resultCallback) {
-
 		this.showSpinner();
 
 		self = this;
@@ -217,13 +216,13 @@ JiraWidget.prototype= {
 				"projectId": projectId,
 				"issueTypeId":typeId,
 				"summary":ticketSummary,
-				"description":jiraBundle.jiraNote,
+				"description":  jQuery('#jira-note').html(), //jiraBundle.jiraNote,
 				"application_id": jiraBundle.application_id,
 				"ticketData":ticketData,
 				"integrated_resource[local_integratable_id]":jiraBundle.ticket_rawId,
 				"integrated_resource[local_integratable_type]": integratable_type
 
-			};
+			};	
 			new Ajax.Request("/integrations/jira_issue/create", {
 				asynchronous: true,
 				method: "post",
