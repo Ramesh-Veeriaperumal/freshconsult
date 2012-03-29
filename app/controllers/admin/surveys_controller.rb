@@ -1,5 +1,7 @@
 class Admin::SurveysController < Admin::AdminController
-   
+     
+  before_filter { |c| c.requires_feature :surveys }
+     
   def index
     @account = current_account    
     @survey = current_account.survey
