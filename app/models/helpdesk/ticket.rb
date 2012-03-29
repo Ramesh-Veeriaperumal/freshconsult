@@ -151,7 +151,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   named_scope :assigned_to, lambda { |agent| { :conditions => ["responder_id=?", agent.id] } }
   named_scope :requester_active, lambda { |user| { :conditions => 
     [ "requester_id=? ",
-      user.id ] } }
+      user.id ], :order => 'created_at DESC' } }
   named_scope :requester_completed, lambda { |user| { :conditions => 
     [ "requester_id=? and status in (#{STATUS_KEYS_BY_TOKEN[:resolved]}, #{STATUS_KEYS_BY_TOKEN[:closed]})",
       user.id ] } }

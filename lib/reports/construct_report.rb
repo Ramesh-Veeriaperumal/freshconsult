@@ -55,24 +55,18 @@ module Reports::ConstructReport
     " helpdesk_ticket_states.resolved_at > '#{start_date}' and helpdesk_ticket_states.resolved_at < '#{end_date}' "
    end
  end
- 
- def fetch_tkts_by_type
-   tkt_scoper.find( 
-     :all,
-     :include => @val, 
-     :joins => "INNER JOIN helpdesk_ticket_states on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id", 
-     :select => "count(*) count, ticket_type", 
-     :conditions => @date_condition,
-     :group => "ticket_type")
+
+ def resolved_condition
+  "helpdesk_tickets.status IN (#{TicketConstants::STATUS_KEYS_BY_TOKEN[:resolved]},#{TicketConstants::STATUS_KEYS_BY_TOKEN[:closed]}) and (helpdesk_ticket_states.resolved_at is not null) and (#{@date_condition})"
  end
- 
+
  def fetch_tkts_by_status
    tkt_scoper.find( 
      :all,
      :include => @val, 
      :joins => "INNER JOIN helpdesk_ticket_states on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id", 
      :select => "count(*) count, #{@val}_id,status", 
-     :conditions => @date_condition,
+     :conditions => resolved_condition,
      :group => "#{@val}_id,status")
  end
  
@@ -82,7 +76,7 @@ module Reports::ConstructReport
      :select => "count(*) count, #{@val}_id", 
      :include => @val,
      :joins => "INNER JOIN helpdesk_ticket_states on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id", 
-     :conditions => ["helpdesk_tickets.status IN (?,?) and helpdesk_tickets.due_by >=  helpdesk_ticket_states.resolved_at and (#{@date_condition})",TicketConstants::STATUS_KEYS_BY_TOKEN[:resolved],TicketConstants::STATUS_KEYS_BY_TOKEN[:closed]],
+     :conditions => "#{resolved_condition} and helpdesk_tickets.due_by >=  helpdesk_ticket_states.resolved_at",
      :group => "#{@val}_id")
  end
  
@@ -93,7 +87,7 @@ module Reports::ConstructReport
      :select => "count(*) count, #{@val}_id", 
      :include => @val,
      :joins => "INNER JOIN helpdesk_ticket_states on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id", 
-     :conditions => ["helpdesk_tickets.status IN (?,?) and (helpdesk_tickets.due_by <  helpdesk_ticket_states.resolved_at ) and (#{@date_condition}) ",TicketConstants::STATUS_KEYS_BY_TOKEN[:resolved],TicketConstants::STATUS_KEYS_BY_TOKEN[:closed]],
+     :conditions => "#{resolved_condition} and (helpdesk_tickets.due_by <  helpdesk_ticket_states.resolved_at )",
      :group => "#{@val}_id")
  end
  
@@ -103,7 +97,7 @@ module Reports::ConstructReport
      :select => "count(*) count, #{@val}_id", 
      :include => @val,
      :joins => "INNER JOIN helpdesk_ticket_states on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id", 
-     :conditions => ["helpdesk_tickets.status IN (?,?) and  (helpdesk_ticket_states.resolved_at is not null)  and  helpdesk_ticket_states.inbound_count = 1 and (#{@date_condition}) ",TicketConstants::STATUS_KEYS_BY_TOKEN[:resolved],TicketConstants::STATUS_KEYS_BY_TOKEN[:closed]],
+     :conditions => "#{resolved_condition} and  helpdesk_ticket_states.inbound_count = 1",
      :group => "#{@val}_id")
  end
  
@@ -115,7 +109,7 @@ module Reports::ConstructReport
      :select => "avg(TIME_TO_SEC(TIMEDIFF(helpdesk_ticket_states.first_response_time, helpdesk_tickets.created_at))) count, #{@val}_id", 
      :include => @val,
      :joins => "INNER JOIN helpdesk_ticket_states on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id", 
-     :conditions => [" (#{@date_condition}) ",TicketConstants::STATUS_KEYS_BY_TOKEN[:resolved],TicketConstants::STATUS_KEYS_BY_TOKEN[:closed]],
+     :conditions => resolved_condition,
      :group => "#{@val}_id")
  end
  
@@ -144,14 +138,4 @@ module Reports::ConstructReport
     params[:date_range].nil? ? nil : (params[:date_range].split(" - ")[1]) || params[:date_range]
   end
   
-  def previous_start
-    distance_between_dates =  Time.parse(end_date) - Time.parse(start_date)
-    prev_start = Time.parse(previous_end) - distance_between_dates
-    prev_start.beginning_of_day.to_s(:db)
-  end
-  
-  def previous_end
-    (Time.parse(start_date) - 1.day).end_of_day.to_s(:db)
-  end
-
 end
