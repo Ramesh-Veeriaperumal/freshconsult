@@ -34,4 +34,15 @@ class Admin::SurveysController < Admin::AdminController
     end    
   end
 
+  def update_sb
+    params[:scoreboard_ratings].each_value do |sb|
+      scoreboard_ratings = current_account.scoreboard_ratings.find(sb[:id])
+      scoreboard_ratings[:score] = sb[:score]
+      if scoreboard_ratings.save
+        flash[:notice] = t(:'admin.surveys.successfully_updated')
+      else
+        flash[:notice] = t(:'admin.surveys.error_updated')
+      end   
+    end
+  end
 end

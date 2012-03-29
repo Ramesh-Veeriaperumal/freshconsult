@@ -127,6 +127,7 @@ en:
   admin:
     surveys:
      successfully_updated: Survey settings has been successfully updated.
+     error_updated: Error while updating survey settings.
      index:    
         title: Survey Settings
      satisfaction_settings:    
