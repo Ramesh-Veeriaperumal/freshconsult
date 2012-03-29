@@ -16,6 +16,11 @@ class Admin::GettingStartedController < Admin::AdminController
     @agent.user.language = current_portal.language
     @account = current_account
   end
+  
+  def delete_logo
+  	 current_account.main_portal.logo.destroy
+ 	   render :text => "success"
+  end
     
   protected
   
