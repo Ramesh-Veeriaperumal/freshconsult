@@ -1,0 +1,16 @@
+<br>
+    <br>
+    <div class="survey-settings">
+    		<% remote_form_for :account, @account, :url => {:action => "enable_sb"},  :html => { :method => :put, :id => "scoreboard_enable" } do |account| %>
+    			<%= account.feature_check_box :scoreboard %><%= t('.enable_scoreboard_label') %><br><br>
+    		<% end %>
+    		<%= t('.about_scoreboard')%>
+    		<div id="scoreboard_elements">
+
+    		<% remote_form_for :scoreboard_ratings, @scoreboard_ratings, :url => { :action => "update_sb" },  :html => { :method => :put } do |f| %>
+			<h2></h2>
+			<%= submit_tag t('account.save'), :class => 'uiButton' %>
+		<% end %>	
+
+    		</div>	
+    </div>

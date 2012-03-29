@@ -21,4 +21,15 @@ class Admin::SurveysController < Admin::AdminController
     @survey.store(params[:survey])        
   end
   
+  #scoreboard related
+  def enable_sb
+    if(params[:account][:features][:scoreboard] == "1")
+       current_account.features.scoreboard.create
+       @enable_sb = true
+    else
+       @enable_sb = false
+       current_account.features.scoreboard.destroy
+    end    
+  end
+
 end

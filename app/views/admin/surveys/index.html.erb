@@ -3,6 +3,10 @@
 	jQuery('input#account_features_survey_links').click( function(event) {						
 		    var form = jQuery('form#survey_enable');
 		    form.submit();
+	});
+	jQuery('input#account_features_scoreboard').click( function(event) {						
+		    var form = jQuery('form#scoreboard_enable');
+		    form.submit();
 	});	
   });	
 <% end %>
@@ -32,4 +36,7 @@
 	  </div>
 		
     </div>
+
+    
+    <%= render :partial => 'scoreboard_ratings' %>
 </div>
