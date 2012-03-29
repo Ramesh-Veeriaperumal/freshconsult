@@ -1,0 +1,19 @@
+<h3 class="title">Portal templates</h3>         
+<% form_for [:admin, @portal_template], :html => { :method => :post } do |f| -%>
+	<label>Header</label>
+	<%= f.text_area :header %>
+	
+	<label>Footer</label>
+	<%= f.text_area :footer %>
+
+	<label>Contact Information</label>
+	<%= f.text_area :contact_info %>	
+		
+	<label>Custom Css</label>
+	<%= f.text_area :custom_css %>        
+	
+	<label>Layout</label>
+	<%= f.text_area :layout %>
+
+	<%= submit_tag "Save changes", :class => "btn primary", :disable_with => "Please wait..." %>
+<% end -%>

@@ -1,4 +1,5 @@
  ActionController::Routing::Routes.draw do |map|
+
   map.connect '/images/helpdesk/attachments/:id/:style.:format', :controller => '/helpdesk/attachments', :action => 'show', :conditions => { :method => :get }
   
   map.connect "/javascripts/:action.:format", :controller => 'javascripts'
@@ -85,9 +86,12 @@
     admin.resources :business_calender, :member => { :update => :put }
     admin.resources :security, :member => { :update => :put }
     admin.resources :data_export, :collection => {:export => :any }
-    admin.resources :portal, :only => [ :index, :update ]
     admin.resources :canned_responses
     admin.resources :products
+    admin.resources :portal, :only => [ :index, :update ] do |portal|
+      portal.resources :portal_templates, :name_prefix => "admin_"
+      portal.resources :portal_pages, :name_prefix => "admin_"
+    end
     admin.resources :surveys, :only => [ :index ]
     admin.resources :zen_import, :collection => {:import_data => :any }
     admin.resources :email_commands_setting, :member => { :update => :put }

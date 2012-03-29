@@ -1,0 +1,23 @@
+<p>
+  <b>Portal template:</b>
+  <%=h @portal_template_page.portal_template_id %>
+</p>
+
+<p>
+  <b>Account:</b>
+  <%=h @portal_template_page.account_id %>
+</p>
+
+<p>
+  <b>Page type:</b>
+  <%=h @portal_template_page.page_type %>
+</p>
+
+<p>
+  <b>Page content:</b>
+  <%=h @portal_template_page.page_content %>
+</p>
+
+
+<%= link_to 'Edit', edit_portal_template_page_path(@portal_template_page) %> |
+<%= link_to 'Back', portal_template_pages_path %>

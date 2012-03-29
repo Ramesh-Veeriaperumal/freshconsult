@@ -16,6 +16,8 @@ class Portal < ActiveRecord::Base
     :class_name => 'Helpdesk::Attachment',
     :conditions => ['description = ?', 'fav_icon' ],
     :dependent => :destroy
+  
+  has_one :portal_template
 
   belongs_to :account
   belongs_to :product, :class_name => 'EmailConfig'

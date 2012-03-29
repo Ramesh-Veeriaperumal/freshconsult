@@ -10,11 +10,14 @@
 		});
 	}); 
 <% end %>
-<h3 class="title"><%=t('account.rebrand')%></h3> 
+<h1 class="title"><%=t('account.customize_portal')%></h1> 
 	<% form_for :account, @account, :url => { :action => 'update' }, :html => { :multipart => true ,:method => :put } do |f| %>
 	  <%= f.error_messages %>
-		<ul class="ui-form">
-			
+		<ul class="ui-form">            
+		  <li>
+		    <h3 class="title">Rebrand your portal</h3>        
+		    <span class="seperator"></span>
+		  </li>
 			<% f.fields_for :main_portal do |portal| %>
 			<li class="inline-field">
 				<%= portal.label :name, t('account.helpdesk_name'), :class => "caption" %>
@@ -54,11 +57,16 @@
 					<div class="color fields"> 
 							<input type="color" maxlength="7" id="BackgroundColor" class="color_field required" name="account[main_portal_attributes][preferences][bg_color]"  data-hex="true" value="<%=portal_pref(@account.main_portal, :bg_color)%>" />
 							<p>
-								<a href="javascript:void(0)" id="ResetColors"><%=t('account.info3')%> </a>
+								<a href="javascript:void(0)" class="btn" id="ResetColors"><%=t('account.info3')%> </a>  
+								<%= link_to "Advanced style and layout customization", new_admin_portal_template_path( @account.main_portal ), :class => "btn primary" %>
 							</p>
 					</div>	
 			  <% end %>
-			</li>
+			</li>       
+			<li>
+		    <h3 class="title">Settings</h3>        
+		    <span class="seperator"></span>
+		  </li>
 			<li class="inline-field">
 				<%= portal.label :portal_url, t('account.helpdesk_url'), :class => "caption" %>
 				<div class="fields">			    

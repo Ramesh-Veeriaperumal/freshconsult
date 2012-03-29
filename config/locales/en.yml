@@ -1396,7 +1396,8 @@ en:
   agent_info_title: Agent information
   account: 
     name: Account Name
-    cancel: Cancel and go back
+    cancel: Cancel and go back   
+    customize_portal: "Customize portal"
     page_colors: 
       title: Page colors
       background: Background
