@@ -151,6 +151,7 @@ class User < ActiveRecord::Base
     self.import_id = params[:user][:import_id]
     self.fb_profile_id = params[:user][:fb_profile_id]
     self.language = params[:user][:language]
+    self.address = params[:user][:address]
     # update tags
     csv_tag_names = params[:tags][:name] unless params[:tags].blank?
     update_tag_names(csv_tag_names)
