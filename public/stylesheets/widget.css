@@ -353,7 +353,7 @@ input.time { font-weight: normal; font-size: 12px; }
 .grid table td ul.chzn-choices li { width: auto; }
 .grid table td .search-field { min-width: 500px; width: auto !important; width: 500px; }
 .grid table td .search-field .default { width: 100% !important; }
-.grid table td ul.chzn-results li { float: none; display: block; width: 100%; }
+.grid table td ul.chzn-results li.active-result { float: none; display: block; width: 100%; }
 .grid table tr.even td { background-color: #f4f4f4; }
 .grid .olist { list-style: decimal; }
 .grid .grid_form td { border: 0; padding: 6px 10px 0 10px; background: #fafafa; }
