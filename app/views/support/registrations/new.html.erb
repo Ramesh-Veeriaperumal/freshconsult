@@ -13,7 +13,7 @@
 		</li>
 		<li>
         	<%= content_tag ( :label, t('ticket.verify_human') ) %>
-        	<%= recaptcha_tags :display => { :theme => "white" }, :ssl => current_account.ssl_enabled?   %>
+        	<%= recaptcha_tags :display => { :theme => "white" }, :ssl => current_account.ssl_enabled? %>
       </li>
 	</ul>
   	
