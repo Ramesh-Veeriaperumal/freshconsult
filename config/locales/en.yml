@@ -124,6 +124,13 @@ en:
     recent: Recent
     popular: Popular
   payment_info: Payment information
+  support:
+      surveys:
+          new:
+              thanks_info: Thanks for taking time to rate our support experience.
+              feedback_info: Your feedback is very much appreciated.
+              feedback_optional: Feedback is optional
+              send: Send Feedback
   admin:
     surveys:
      successfully_updated: Survey settings has been successfully updated.
