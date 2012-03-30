@@ -63,13 +63,15 @@ module Reports::ChartGenerator
         dates_with_data.push(Time.parse(tkt.date).to_i*1000)
       end
     end
+
     # Pushing the dates with 0 tickets
     tmp_dates_without_data = []
-    this_date = Time.parse(start_date)
-    until this_date >= Time.parse(end_date)
+    this_date = Time.parse(start_date).beginning_of_day
+    report_end_date = Time.parse(end_date).beginning_of_day
+    until this_date >= report_end_date
       series_data.push([this_date.to_i*1000,0]) unless dates_with_data.include?(this_date.to_i*1000)
       tmp_dates_without_data.push([this_date.to_i*1000,0]) unless dates_with_data.include?(this_date.to_i*1000)      
-      this_date += 1.day
+      this_date = this_date.since 1.day
     end
     data_hash.store(:data,series_data)
     data_hash.store(:type,options[:type])
