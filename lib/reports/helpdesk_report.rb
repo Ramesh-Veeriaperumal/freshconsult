@@ -42,7 +42,14 @@ module Reports::HelpdeskReport
   def count_of_tickets_last_month
     @last_month_tot_tickets ||= scoper(previous_start, previous_end).count 
   end
-  
+
+  def count_of_resolved_tickets
+    @count_of_resolved_tickets ||= Account.current.tickets.visible.find( 
+     :all,
+     :joins => :ticket_states,
+     :conditions => " (helpdesk_ticket_states.resolved_at > '#{start_date}' and helpdesk_ticket_states.resolved_at < '#{end_date}' )").count
+  end
+
   def count_of_fcr
     scoper.first_call_resolution.count
   end

@@ -1,0 +1,5 @@
+page << "var loading_div = jQuery('#email_config_status');"
+page << "var status_box = loading_div.find('#status_update');"
+page << "Loading.updateStatus(status_box,'success', '"+t('admin.getting_started.index.successfully_updated')+"');"
+page << "loading_div.delay(1000).hide(1);"
+page.replace_html("send_mail_content", :partial => "admin/getting_started/send_mail_content")

@@ -16,24 +16,9 @@ class Integrations::JiraIssue
 		issue.type = params['issueTypeId']
 		issue.summary = params['summary']
 		issue.description = params['description']
-		customId = customFieldChecker
-		if customId
-			freshdeskField = Jira4R::V2::RemoteCustomFieldValue.new
-			freshdeskField.customfieldId = customId
-			freshdeskField.values = params['ticketData']
-			issue.customFieldValues = [freshdeskField]
-		end
 		resData = @jira.createIssue(issue)
-		if customId.blank?
-			unless resData.blank?
-				jsonData = JSON.parse(resData.to_json)
-				issueId = jsonData['key']
-				commentResponse = addCommentToJira(issueId, params['ticketData'])
-			end
-			unless commentResponse.blank?
-				resData = nil
-			end
-		end
+		params['remoteKey'] = resData.key unless resData.key.blank? 
+		resData = update(params)
 		return resData.to_json
 	end
 
@@ -57,7 +42,7 @@ class Integrations::JiraIssue
 			customField = Jira4R::V2::RemoteFieldValue.new
             customField.id = customId
 			customField.values = params['ticketData']
-			resData = @jira.updateIssue(params['remoteKey'], customField)	
+			resData = @jira.updateIssue(params['remoteKey'], [customField])	
 			comment = false
 		else
 			issueId = params['remoteKey']

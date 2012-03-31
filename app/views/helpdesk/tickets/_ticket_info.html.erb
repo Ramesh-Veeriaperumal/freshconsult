@@ -14,8 +14,8 @@
       <div class="request-title">
         <%= content_tag :span, h(@ticket.status_name), :class => "status-pointer theme-tab" %>
         <%= content_tag :span, h(@ticket.priority_name), :class => "priority-pointer #{@ticket.priority_key}" %>
-        <%= content_tag :span, "##{@ticket.display_id}", :class => "ticket-id" %>
-        <%= content_tag :span, @ticket.subject, :class => "subject" %>
+        <%= content_tag :span, "##{h(@ticket.display_id)}", :class => "ticket-id" %>
+        <%= content_tag :span, h(@ticket.subject), :class => "subject" %>
       </div>
 			<div class="description">         
         <div class="user_details">
@@ -53,7 +53,7 @@
                        <%= link_to(t('ticket.edit_btn'), edit_helpdesk_ticket_path(@ticket)  ) %>     
                     </li>	 
                     <li class="menu-item">
-                      <%= link_to(t('ticket.delete_btn'), @ticket, :method => :delete, :title => t('ticket.delete_btn_title')) %>
+                      <%= link_to(t('ticket.delete_btn'), helpdesk_ticket_path({:id => @ticket.display_id, :page => params[:page]}), :method => :delete, :title => t('ticket.delete_btn_title')) %>
                     </li>
                   </ul>
                 </li> 
@@ -62,7 +62,7 @@
             <div class="action_buttons clearfix">
               <%= link_to( "Print", print_helpdesk_ticket_path(@ticket), :target => "_blank") %>
               <%= link_to t('ticket.merge_btn'), "/helpdesk/tickets/show_tickets_from_same_user/#{@ticket.display_id}", :id => "Merge", :title => "Merge ticket", "data-ajax-dialog" => true %>
-              <%= link_to(t('ticket.close_btn'), close_helpdesk_ticket_path(@ticket), :method => :put, :title  => t('ticket.close_btn_title'), :class => "last") unless @ticket.closed? %> 
+              <%= link_to(t('ticket.close_btn'), close_helpdesk_ticket_path({:id => @ticket.display_id, :page => params[:page]}), :method => :put, :title  => t('ticket.close_btn_title'), :class => "last") unless @ticket.closed? %> 
             </div>	
             <div class="action_icons floatr"> 
               <% if is_application_installed?("jira")  %>   
@@ -72,7 +72,7 @@
                 <%= render :partial => "/helpdesk/subscriptions/monitor" %>
               </span>
               <span id="spamicon">
-                <%= render :partial => "spam", :locals => { :ticket => @ticket } %>
+                <%= render :partial => "spam", :locals => { :ticket => @ticket, :page => params[:page] } %>
               </span>
             </div>
      	    </div>	
@@ -99,8 +99,8 @@
         <% end %>
         <% unless @ticket.ticket_topic.nil? %>
           <div class="info-highlight">
-            <%= t("helpdesk.tickets.show.linked_ticket")%>
-            "<%= link_to("#{truncate(@ticket.topic.title)}", category_forum_topic_path(@ticket.topic.forum.forum_category.id, @ticket.topic.forum.id, @ticket.topic.id), :class => "link_to") %>"
+            <%= t("helpdesk.tickets.show.linked_ticket") %>
+            "<%= link_to("#{truncate(h(@ticket.topic.title))}", category_forum_topic_path(@ticket.topic.forum.forum_category.id, @ticket.topic.forum.id, @ticket.topic.id), :class => "link_to") %>"
           </div>
         <% end %>
       </div>

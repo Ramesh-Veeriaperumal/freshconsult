@@ -53,7 +53,7 @@ class Topic < ActiveRecord::Base
     }
   }
   
-  attr_accessible :title,:stamp_type
+  attr_protected :forum_id , :account_id
   # to help with the create form
   attr_accessor :body_html
   
@@ -106,6 +106,15 @@ class Topic < ActiveRecord::Base
     else
       self.destroy
     end
+  end
+  
+  def users_who_voted
+    users = User.find(:all,
+      :joins => [:votes],
+      :conditions => ["votes.voteable_id = ? and users.account_id = ?", id, account_id],
+      :order => "votes.created_at DESC"
+    )
+    users
   end
   
   def to_xml(options = {})

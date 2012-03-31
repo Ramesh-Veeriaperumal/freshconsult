@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120321095818) do
+ActiveRecord::Schema.define(:version => 20120323190635) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -235,8 +235,18 @@ ActiveRecord::Schema.define(:version => 20120321095818) do
 
   add_index "email_configs", ["account_id", "to_email"], :name => "index_email_configs_on_account_id_and_to_email", :unique => true
 
+  create_table "email_notification_agents", :force => true do |t|
+    t.integer  "email_notification_id", :limit => 8
+    t.integer  "user_id",               :limit => 8
+    t.integer  "account_id",            :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "email_notification_agents", ["account_id", "email_notification_id"], :name => "index_email_notification_agents_on_acc_and_email_notification_id"
+
   create_table "email_notifications", :force => true do |t|
-    t.integer  "account_id",             :limit => 8
+    t.integer  "account_id",                 :limit => 8
     t.boolean  "requester_notification"
     t.text     "requester_template"
     t.boolean  "agent_notification"
@@ -244,6 +254,8 @@ ActiveRecord::Schema.define(:version => 20120321095818) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "notification_type"
+    t.text     "requester_subject_template"
+    t.text     "agent_subject_template"
   end
 
   add_index "email_notifications", ["account_id", "notification_type"], :name => "index_email_notifications_on_notification_type", :unique => true
@@ -677,6 +689,7 @@ ActiveRecord::Schema.define(:version => 20120321095818) do
   end
 
   add_index "helpdesk_tickets", ["account_id", "display_id"], :name => "index_helpdesk_tickets_on_account_id_and_display_id", :unique => true
+  add_index "helpdesk_tickets", ["account_id", "import_id"], :name => "index_helpdesk_tickets_on_account_id_and_import_id", :unique => true
   add_index "helpdesk_tickets", ["account_id", "requester_id"], :name => "index_helpdesk_tickets_on_account_id_and_requester_id"
   add_index "helpdesk_tickets", ["account_id", "responder_id"], :name => "index_helpdesk_tickets_on_account_id_and_responder_id"
   add_index "helpdesk_tickets", ["requester_id"], :name => "index_helpdesk_tickets_on_requester_id"
@@ -1100,6 +1113,7 @@ ActiveRecord::Schema.define(:version => 20120321095818) do
   end
 
   add_index "users", ["account_id", "email"], :name => "index_users_on_account_id_and_email", :unique => true
+  add_index "users", ["account_id", "import_id"], :name => "index_users_on_account_id_and_import_id", :unique => true
   add_index "users", ["account_id"], :name => "index_users_on_account_id"
   add_index "users", ["customer_id"], :name => "index_users_on_customer_id"
   add_index "users", ["email"], :name => "index_users_on_email"

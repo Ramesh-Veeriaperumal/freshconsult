@@ -22,6 +22,7 @@ en:
   reset_my_password: Reset my password 
   assign: Assign
   signup: sign up
+  signup_title: "Sign up to %{current_portal}"
   trial_expired_on: Your trial has expired on
   upgrade_trial: Upgrade your trial!
   add_note: Add Note
@@ -88,7 +89,7 @@ en:
       label: Field Label
       add_new_choice: Add new choice
       customer_mandatory: Mandatory for ticket submission
-      customer_edit: Can Edit the field
+      customer_edit: Can edit the field
       agent_info1: Field cannot be blank when submitting the ticket
       agent_info2: Field cannot be blank when closing the ticket
       agent_mandatory_submission: Mandatory for submission
@@ -124,6 +125,76 @@ en:
     popular: Popular
   payment_info: Payment information
   admin:
+    getting_started:
+        send_mail_content:
+            send_test_mail_info1: Make sure you've set up your emails to forward to <b> %{to_email} </b>.
+            send_test_mail_info2: (Learn How)
+            send_test_mail_info3: If you think everything is good so far, try <b>%{send_test_mail_link}</b>
+            send_test_mail_link_title: sending a test email
+            send_test_mail_response1: We've sent a test email to <b><span id=reply_email_1>%{reply_email}</span></b>. If everything goes well, you  can see  the <a href="/helpdesk/tickets" target="_blank">new ticket</a> in the tickets view.
+            send_test_mail_confirm_yes: Yes, i got it.
+            send_test_mail_confirm_no: No, i can't see any ticket.
+            send_test_mail_response_yes: Congratulations!!! You have successfully connected your support email with your help desk portal. Happy Supporting!!!
+            send_test_mail_response_no1: There seems to be a problem ->
+            send_test_mail_response_no2: Learn how
+            send_test_mail_response_no3: to forward your emails to <b>%{to_email}</b> and try %{send_test_mail_link} again. If you did not receive the email in your Inbox, please wait for a couple of minutes, and if there still seems to be a problem, <a href="https://support.freshdesk.com/" target="_blank">let us know</a>.
+        
+        index:
+            config-support-email-address: "Configure your support email address"
+            save-and-next: "Save and Go to next"
+            send_verification_email: Send verification email
+            send_invite: Send Invite
+            title: Cool! Looks like your help desk is ready to roll...
+            sub_title: Here's a bunch of stuff to help you get started
+            email_config_title: What's your support email?
+            email_config_sub_title: Let Freshdesk handle your Support Emails!
+            email_config_field_title: Your Support Email Address
+            agent_title: Feeling lonely?
+            agent_sub_title: Invite your team to Freshdesk
+            agent_send_invite_label: Send Invites to agents
+            agent_invite_field_placeholder: Enter your team members email
+            social_title: Go Social?
+            social_sub_title: Start supporting customers on twitter and facebook
+            social_twitter: Twitter
+            social_twitter_add: Add Account
+            social_facebook: Facebook
+            social_facebook_add: Add a Page
+            rebrand_title: Make it your own!
+            rebrand_sub_title: Rebrand Freshdesk with your logo & colors
+            rebrand_company_label: Company Name
+            rebrand_company_field_placeholder: Enter your company name
+            rebrand_paint_title: Paint your helpdesk
+            rebrand_color_header: Header
+            rebrand_color_tabs: Tabs
+            rebrand_color_background: Background
+            rebrand_submit_label: Rebrand
+            admin_title: Everything Good?
+            admin_sub_title: Don't forget to check out all under-the-hood features you can customize in the "%{admin_tab}" tab
+            product_link_label: Jump into your helpdesk >>
+            validating: Validating...
+            updating: Updating...
+            successfully_updated: Successfully updated.
+            successfully_sent: Successfully sent.
+            problem_updating: Problem in updating, please try again.
+            email_invalid: Your email is invalid, please check.
+            emails_invalid: One or more of your email is invalid.
+            implement_changes: Implementing the changes...
+            email_sent_success: Email has been succesfully sent.
+            email_send_problem: Problem while sending the mail.
+            sending_test_mail_progress: Sending test email, please wait...
+            agent_invite_multi_info: Use comma ( , ) to add multiple emails.
+            agent_limit_reached: You have exceeded your agents limit.
+            rebrand_header_invalid: Header color code is invalid.
+            rebrand_tab_invalid: Tab color code is invalid.
+            rebrand_bg_invalid: Background color code is invalid.
+            rebrand_header_empty: Header color code is required.
+            rebrand_tab_empty: Tab color code is required.
+            rebrand_bg_empty: Background color code is required.
+            agent_email_taken: Following email(s) has already been taken:<br> %{emails}
+            agent_email_exist: Email(s) already taken.
+            agent_email_partial: Partially successful.
+            agent_email_sending: Sending Invites...
+            agent_email_required: Email ID required to send invite.
     day_passes:
       index:
         title: "Day Pass"
@@ -194,7 +265,7 @@ en:
         select_forum_category: Select a forum category...
         portal_rebranding: Portal rebranding
         cname_configure_info: Before using this field please ensure that you have created a CNAME DNS record in your DNS Zone file to point <strong>help.<b id="domain_info_name">mycompanyname</b>.com</strong> to %{full_domain}. Your Webmaster or Server administrator should be able to help you set this up correctly
-        select_solution_category: Select a forum category...
+        select_solution_category: Select a solution category...
         top_level_solution_info: You can associate a solution category to this product. All other solutions will not be shown to the customers, when viewing the solutions tab in this product portal.
         portal_settings: Portal settings
         portal_name_info: The name will be displayed in your product portal next to the header logo
@@ -806,22 +877,25 @@ en:
       unlike: Unlike
       ideas:
         vote_button: I like this Idea
-        vote_info_1: "%{vote} Person likes this Idea"
-        vote_info_2: "%{vote} People like this Idea"
+        vote_info_1: <a id='users-voted' href='#' title='See who likes this'> %{vote} Person</a> likes this Idea
+        vote_info_2: <a id='users-voted' href='#' title='See who like this'> %{vote} People</a> like this Idea
         vote_info_include_1: You like this Idea
-        vote_info_include_2: "%{vote} People \"including you\" like this Idea"
+        vote_info_include_2: You and <a id='users-voted' href='#' title='See who like this'> %{vote} People</a> like this Idea
+        voted_users_widget_title: People who like this idea
       problem:
         vote_button: I have this Problem
-        vote_info_1: "%{vote} Person has this Problem"
-        vote_info_2: "%{vote} People have this Problem"
+        vote_info_1: <a id='users-voted' href='#' title='See who has this'> %{vote} Person</a> has this Problem
+        vote_info_2: <a id='users-voted' href='#' title='See who have this'> %{vote} People</a> have this Problem
         vote_info_include_1: You have this Problem
-        vote_info_include_2: "%{vote} People \"including you\" have this Problem"
+        vote_info_include_2: You and <a id='users-voted' href='#' title='See who have this'> %{vote} People</a> have this Problem
+        voted_users_widget_title: People who have this problem
       howto:
         vote_button: I have this Question
-        vote_info_1: "%{vote} Person has this Question"
-        vote_info_2: "%{vote} People have this Question"
+        vote_info_1: <a id='users-voted' href='#' title='See who has this'> %{vote} Person</a> has this Question
+        vote_info_2: <a id='users-voted' href='#' title='See who have this'> %{vote} People</a> have this Question
         vote_info_include_1: You have this Question
-        vote_info_include_2: "%{vote} People \"including you\" have this Question"        
+        vote_info_include_2: You and <a id='users-voted' href='#' title='See who have this'> %{vote} People</a> have this Question
+        voted_users_widget_title: People who have this question
     post:
       posted_on: "%{user_name} on %{post_date}"
       edit_post: Edit Post
@@ -1110,6 +1184,8 @@ en:
     modify_agent_template: Modify Agent Email Template
     event: Event
     agent_notification: Agent Notification
+    subject: Subject
+    do_not_delete_ticket_id_from_subject: To capture customer replies as ticket conversations, the ticket ID placeholder should not be removed from the subject line
   errors_in_plan_change: "Errors encountered with your change:"
   formatting_help: Formatting Help
   step1: Step 1
@@ -1442,6 +1518,8 @@ en:
         removebcc: Remove Bcc
       tweet_form:
         title: "Reply to %{user}"
+      history:
+        recent_item: Recent Items
     dashboard:
       index:
         todo_title: To-Dos
@@ -1625,6 +1703,11 @@ en:
     twitter_handles:
       index:
         title: "Twitter Accounts"
+      signin_info:
+        title: Sign in using twitter
+        engage_customers: Engage your customers, directly on twitter
+        associate_account: Associate a twitter account to <b>  %{product_name} </b> and respond to your customers with a tweet or message from within Freshdesk.
+        add_twitter: Add twitter account
   all_due: All 
   due_today: Today
   due_tomo: Tomorrow
@@ -1840,7 +1923,19 @@ en:
       timeline_chart_title: "Tickets Received vs Resolved"
       customer_activity_title: "Activity Report"
       helpdesk_activity_title: "Helpdesk Activity Report"
+      summary_report:
+        back_to_reports: "Back to Reports"
+        show_report: "Show report"
+        tickets_resolved: "Tickets Resolved"
+        on_time_resolution: "On time Resolution"
+        on_time_resolution_percent: "OTR %"
+        fcr_count: "First Contact Resolution"
+        fcr_percent: "FCR %"
+        avg_1st_response_time: "Avg. first response time"
+        helptext: "Statistics calculated in the report are with respect to the number of tickets resolved. <br /> Tickets resolved within SLAs are summarized as &quot;On Time Resolution&quot;. <br /> The &quot;First Contact Resolution&quot; column shows tickets that have been resolved within the first reply.<br /> &quot;Average First Response Time&quot; shows the time elapsed between when the ticket was created and when the agent first replied to it."
       date_ranges:
+        today: "Today"
+        yesterday: "Yesterday"
         last_7_days: "Last 7 days"
         last_30_days: "Last 30 days"
         last_90_days: "Last 90 days"
@@ -1848,6 +1943,7 @@ en:
       summary:
         title: "Tickets summary"
         total_tickets: "Total Tickets"
+        received_tickets: "Received Tickets"
         open_tickets: "Open Tickets"
         pending_tickets : "Pending Tickets"
         resolved_tickets: "Resolved Tickets"
@@ -1859,6 +1955,9 @@ en:
           select_customer: Select Customer
           select_agent: Select Agent
           select_billable: Select Billable/Non-Billable
+          view_between: View report between
+          from: From
+          to: To
   delete_the_ticket: "Delete the Ticket"
   mark_as_spam: "Mark as Spam"
   bulk_update: "Bulk Update"

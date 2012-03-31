@@ -3,20 +3,13 @@
     <h3><%= t('reports.summary.title')%></h3>
     <ul class="summary clearfix">
       <li>
+        <span><%= t('reports.summary.received_tickets')%> </span>
         <h4><%= number_with_delimiter(@current_month_tot_tickets) %></h4>
-        <span><%= t('reports.summary.total_tickets')%> </span>
-      </li>
-      <li>
-        <h4><%= number_with_delimiter(@status_hash.fetch(TicketConstants::STATUS_KEYS_BY_TOKEN[:open],{}).fetch(:count,0)) %></h4>
-        <span><%= t('reports.summary.open_tickets')%> </span>
-      </li>
-      <li>
-        <h4><%= number_with_delimiter(@status_hash.fetch(TicketConstants::STATUS_KEYS_BY_TOKEN[:pending],{}).fetch(:count,0)) %></h4>
-        <span><%= t('reports.summary.pending_tickets')%></span> 
       </li>
       <li class="last">
-        <h4><%= number_with_delimiter(@status_hash.fetch(TicketConstants::STATUS_KEYS_BY_TOKEN[:resolved],{}).fetch(:count,0).to_i) %></h4>
         <span><%= t('reports.summary.resolved_tickets')%> </span>
+        <h4><%= number_with_delimiter(@count_of_resolved_tickets) %></h4>
+        
       </li>
     </ul>
   </div>

@@ -295,6 +295,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       Regexp.new("<" + Regexp.escape(address) + ">", Regexp::IGNORECASE),
       Regexp.new(Regexp.escape(address) + "\s+wrote:", Regexp::IGNORECASE),   
       Regexp.new("\\n.*.\d.*." + Regexp.escape(address) ),
+      Regexp.new("<div>\n<br>On.*?wrote:"),
       Regexp.new("On.*?wrote:"),
       Regexp.new("-+original\s+message-+\s*", Regexp::IGNORECASE),
       Regexp.new("from:\s*", Regexp::IGNORECASE)
