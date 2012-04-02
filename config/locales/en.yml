@@ -1933,6 +1933,7 @@ en:
       customer_title: "Customer Activity Report"
       helpdesk_title_nav: "Helpdesk Activity Report"
       customer_title_nav: "Customer Activity Report"
+      scoreboard_title_nav: "Leaderboard"
       select_time_period: "Select Time period"
       generate_button: "Generate"
       pie_chart_title_prefix: "Tickets By "
