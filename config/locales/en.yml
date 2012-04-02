@@ -276,7 +276,7 @@ en:
         select_forum_category: Select a forum category...
         portal_rebranding: Portal rebranding
         cname_configure_info: Before using this field please ensure that you have created a CNAME DNS record in your DNS Zone file to point <strong>help.<b id="domain_info_name">mycompanyname</b>.com</strong> to %{full_domain}. Your Webmaster or Server administrator should be able to help you set this up correctly
-        select_solution_category: Select a forum category...
+        select_solution_category: Select a solution category...
         top_level_solution_info: You can associate a solution category to this product. All other solutions will not be shown to the customers, when viewing the solutions tab in this product portal.
         portal_settings: Portal settings
         portal_name_info: The name will be displayed in your product portal next to the header logo
@@ -1942,7 +1942,8 @@ en:
         on_time_resolution_percent: "OTR %"
         fcr_count: "First Contact Resolution"
         fcr_percent: "FCR %"
-        avg_1st_response_time: "Avg. first response time <br /> (for resolved tickets)"
+        avg_1st_response_time: "Avg. first response time"
+        helptext: "Statistics calculated in the report are with respect to the number of tickets resolved. <br /> Tickets resolved within SLAs are summarized as &quot;On Time Resolution&quot;. <br /> The &quot;First Contact Resolution&quot; column shows tickets that have been resolved within the first reply.<br /> &quot;Average First Response Time&quot; shows the time elapsed between when the ticket was created and when the agent first replied to it."
       date_ranges:
         today: "Today"
         yesterday: "Yesterday"

@@ -42,7 +42,7 @@ class EmailNotification < ActiveRecord::Base
   }
   
   
-  DISABLE_NOTIFICATION = { NEW_TICKET =>{:requester_notification=>false},
+  DISABLE_NOTIFICATION = { NEW_TICKET =>{ :requester_notification => false, :agent_notification => false },
                            TICKET_ASSIGNED_TO_GROUP =>{:agent_notification =>false},
                            TICKET_ASSIGNED_TO_AGENT => {:agent_notification => false},
                            TICKET_RESOLVED => {:requester_notification => false},
