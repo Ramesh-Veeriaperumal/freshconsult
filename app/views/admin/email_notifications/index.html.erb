@@ -28,31 +28,48 @@
 		});
 		
 		jQuery("a.reset_template").bind("click", function(ev){
-			jQuery(this).prev().prev().val(jQuery(this).prev().prev().prev().val()); 
+      jQuery(this).prevAll("input[name$=_subject_template]")
+        .val(jQuery(this).prevAll("input[name$=_subject_template_hid]").val());
+			agent_template = jQuery(this).prevAll("textarea.desc_info");
+			  agent_template.val(agent_template.prev().val()); 
+			  
+		  agent_select = jQuery(this).prevAll("select.customSelect");
+		  jQuery.each(agent_select.children("options"), function(i, item){
+         item.removeAttribute("selected");
+		  });         
+		  agent_select.val((agent_select.data('default')+"").split(","));		  
+		  agent_select.trigger("liszt:updated");
 		});
 		
 		jQuery("#Updateform").submit(function(){
 			allNotificationsDom   = jQuery("tr.main_rows");
 			var allNotifications  = $H();
+			var notifyAgents = $H();
 			var currentNotify	  = 0;
 			jQuery.each(allNotificationsDom, function(index, item){
-				var tempHash 	  = { requester_notification: 0,  agent_notification: 0, requester_template: "", agent_template: "" };
+				var tempHash 	  = { requester_notification: 0,  agent_notification: 0, requester_subject_template: "", agent_subject_template: "", requester_template: "", agent_template: "" };
 				currentNotify 	  = item.getAttribute("notify_type");
 				jQuery.each(jQuery(item).find("input.checkbox"), function(index, checkItem){
 					tempHash[checkItem.name] = (checkItem.checked)?1:0;		
+				});
+				
+				jQuery.each(jQuery(item).next().find("input[name$=_subject_template]"), function(index, textItem){
+					tempHash[textItem.name] = textItem.value;
 				});
 				
 				jQuery.each(jQuery(item).next().find("textarea"), function(index, textareaItem){
 					tempHash[textareaItem.name] = textareaItem.value;
 				});
 				
+				notifyAgents.set(currentNotify, jQuery("#notify_agents_"+currentNotify).val());
 				allNotifications.set(currentNotify, tempHash);
 			});
-			
 			jQuery("#AllNotification").val(allNotifications.toJSON()); 
+			jQuery("#NotifyAgents").val(notifyAgents.toJSON());
 		});
 		jQuery('.link_placeholder').live("click", function(ev){
-				active_email_body = jQuery(this).next().next().next();
+		    ev.preventDefault();
+				active_email_body = jQuery(this).parent().find('input[type="text"]');
 				jQuery('#place-dialog').slideDown();			
 		});
 		
@@ -63,6 +80,7 @@
 <div>
 	<% form_for :update, @email_notifications, :url => { :action => "update" }, :html => { :method => :put, :id => "Updateform" } do |f| %>
 	<%= f.hidden_field :notification_data, { :id => "AllNotification" } %>
+	<%= f.hidden_field :notifyagents_data, { :id => "NotifyAgents" } %>
 	<div class="grid">
 		<table border="0">
 			<tr>
@@ -99,24 +117,46 @@
 				<td colspan="3">
 					<div class="requester_div" style="display:none;" id='<%="requester_div_#{data.id}" %>'>
 						<%if item[:placeholder] != false %>
-							<a href="javascript:void(0)" class="link_placeholder"><%=t('email_notifications.insert_placeholder')%> &raquo;</a>
+							<a href="#" class="link_placeholder slim-button"><%=t('email_notifications.insert_placeholder')%> &raquo;</a>
 						<% end %>
 						<h4 class="title"><%=t('email_notifications.modify_requester_template')%></h4> 
+            <input type="hidden" name="requester_subject_template_hid" value="<%= h ("#{data.requester_subject_template}") %>" />              
+						<label><%= t('email_notifications.subject') %></label>
 						
+						<input type="text" name="requester_subject_template" class="text" value="<%= h ("#{data.requester_subject_template}") %>" />
+						<%if data[:notification_type] != EmailNotification::USER_ACTIVATION and data[:notification_type] != EmailNotification::PASSWORD_RESET %>
+							<div class="info-data"><%=t('email_notifications.do_not_delete_ticket_id_from_subject')%></div>
+						<%end%>						
+						
+						<label><%= t('message') %></label>
 						<input type="hidden" value="<%= h ("#{data.requester_template}") %>" />
-						<textarea name="requester_template" class="requesteremail"><%= h ("#{data.requester_template}") %></textarea>
-						
+						<textarea name="requester_template" class="desc_info requesteremail"><%= h ("#{data.requester_template}") %></textarea>
+						<div class="seperator"></div>						
 						<a href="javascript:void(0)" class="button close_template"><%=t('done')%></a>
 						<a href="javascript:void(0)" class="button reset_template"><%=t('reset')%></a>
 					</div>
 					<div class="agent_div" style="display:none;" id='<%="agent_div_#{data.id}"%>'>
 						<%if item[:placeholder] != false %>
-							<a href="javascript:void(0)" class="link_placeholder"><%=t('email_notifications.insert_placeholder')%> &raquo;</a>
+							<a href="#" class="link_placeholder slim-button"><%=t('email_notifications.insert_placeholder')%> &raquo;</a>
 						<% end %>
 						<h4 class="title"><%=t('email_notifications.modify_agent_template')%></h4>
 						 
+						<input type="hidden" name="agent_subject_template_hid" value="<%= h ("#{data.agent_subject_template}") %>" />						    
+						<label><%= t('email_notifications.subject') %></label>
+						<input type="text" class="text" name="agent_subject_template" value="<%= h ("#{data.agent_subject_template}") %>" />						
+						<%if data[:notification_type] != EmailNotification::USER_ACTIVATION and data[:notification_type] != EmailNotification::PASSWORD_RESET %>
+							<div class="info-data"><%=t('email_notifications.do_not_delete_ticket_id_from_subject')%></div>
+						<%end%>
+											     
+						<label><%= t('message') %></label>
 						<input type="hidden" value="<%= h ("#{data.agent_template}") %>" />
-						<textarea name="agent_template" class="agentemail"><%= h ("#{data.agent_template}") %></textarea>
+						<textarea name="agent_template" class="desc_info agentemail"><%= h ("#{data.agent_template}") %></textarea>
+						     
+						<% if data[:notification_type] == EmailNotification::NEW_TICKET %>
+							<label><%= t('agent.title') %></label>         
+							<%= select_tag "notify_agents_#{data.id}", options_for_select( @agent_hash[:options].map {|a| [a[1], a[0]] }, data.agents.collect {|a| a.id} ), { :multiple => true, "data-placeholder"=> "Optionally select agents to notify", :class => "customSelect", "data-default" => data.agents.collect{|a| a.id}.join(",") } %>
+						<% end %>                                
+						<div class="seperator"></div>
 						
 						<a href="javascript:void(0)" class="button close_template"><%=t('done')%></a>
 						<a href="javascript:void(0)" class="button reset_template"><%=t('reset')%></a>

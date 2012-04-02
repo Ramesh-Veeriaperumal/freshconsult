@@ -1,7 +1,7 @@
 /* Theme Colors and layout Defaults */
 html { height: 100%; overflow-y: scroll; }
 
-.wrapper { overflow: hidden; *zoom: 1; min-width: 1102px; width: 95%; margin: 0 auto; overflow: hidden; *zoom: 1; position: relative; text-align: left; max-width: 1280px; min-width: auto; padding: 0px 8px; }
+.wrapper { overflow: hidden; *zoom: 1; min-width: 1102px; width: 90%; margin: 0 auto; overflow: hidden; *zoom: 1; position: relative; text-align: left; }
 
 .top_links a { text-decoration: none; font-weight: bold; padding: 0px 8px; margin: 0px; border-right: 1px solid #afafaf; border-left: 1px solid #efefef; color: #527eaa; }
 .top_links a:visited { color: #527eaa; }
@@ -64,7 +64,7 @@ div.bg_pulp { background-color: #F3F1EC; }
 ul.header-tabs { list-style: none; }
 ul.header-tabs li { float: left; position: relative; }
 ul.header-tabs li span { background: none; height: 1px; display: block; font-size: 0px; position: relative; z-index: 1; margin-bottom: -2px; }
-ul.header-tabs li a { position: relative; z-index: 5; text-decoration: none; color: #ffffff; padding: 9px 16px 8px 16px; font-size: 13px; font-weight: bold; text-align: center; display: block; text-transform: capitalize; text-shadow: rgba(0, 0, 0, 0.1) 1px 1px 1px; }
+ul.header-tabs li a { position: relative; z-index: 5; text-decoration: none; color: #ffffff; padding: 9px 16px 8px 16px; font-size: 13px; font-weight: bold; text-align: center; display: block; text-shadow: rgba(0, 0, 0, 0.1) 1px 1px 1px; }
 ul.header-tabs li a:hover { background: #95cb54; -moz-box-shadow: inset 0px -2px 1px rgba(0, 0, 0, 0.1); -webkit-box-shadow: inset 0px -2px 1px rgba(0, 0, 0, 0.1); box-shadow: inset 0px -2px 1px rgba(0, 0, 0, 0.1); color: #ffffff; }
 ul.header-tabs li.active a, ul.header-tabs li.active a:hover { border-color: #618e2b; background: #efefef; padding-top: 7px; top: 2px; -moz-box-shadow: rgba(0, 0, 0, 0.4) 0px 0px 1px; -webkit-box-shadow: rgba(0, 0, 0, 0.4) 0px 0px 1px; box-shadow: rgba(0, 0, 0, 0.4) 0px 0px 1px; color: #000000; }
 

@@ -236,6 +236,11 @@ class Account < ActiveRecord::Base
     Account.count('id',:distinct => true,:joins => :subscription_payments)
   end
   
+  def can_add_agents?(agent_count)
+    subscription.agent_limit.nil? or 
+      (subscription.agent_limit >= (agent_count + full_time_agents.count))
+  end
+  
   def get_max_display_id
     ticket_dis_id = self.ticket_display_id
     max_dis_id = self.tickets.maximum('display_id')

@@ -21,8 +21,8 @@ class Post < ActiveRecord::Base
   after_destroy :update_cached_fields
 
   
-  attr_accessible :body_html	
-	
+  attr_protected	:topic_id , :account_id
+  
   def editable_by?(user)
     user && (user.id == user_id || user.has_manage_forums? || user.moderator_of?(forum_id))
   end
@@ -34,9 +34,13 @@ class Post < ActiveRecord::Base
   end
   
   def monitor_reply
-    emailcoll = self.topic.monitorship_emails
-    PostMailer.send_later(:deliver_monitor_email,emailcoll,self,self.user)  if emailcoll.count > 0
-    
+    send_later(:send_monitorship_emails)
+  end
+  
+  def send_monitorship_emails
+    topic.monitorships.active_monitors.each do |monitorship|
+      PostMailer.deliver_monitor_email!(monitorship.user.email,self,self.user)
+    end
   end
   
   def to_xml(options = {})

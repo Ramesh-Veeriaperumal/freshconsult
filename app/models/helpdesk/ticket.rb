@@ -157,7 +157,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   named_scope :assigned_to, lambda { |agent| { :conditions => ["responder_id=?", agent.id] } }
   named_scope :requester_active, lambda { |user| { :conditions => 
     [ "requester_id=? ",
-      user.id ] } }
+      user.id ], :order => 'created_at DESC' } }
   named_scope :requester_completed, lambda { |user| { :conditions => 
     [ "requester_id=? and status in (#{STATUS_KEYS_BY_TOKEN[:resolved]}, #{STATUS_KEYS_BY_TOKEN[:closed]})",
       user.id ] } }
@@ -326,7 +326,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def encode_display_id
-    "[##{display_id}]"
+    "[#{delimited_display_id}]"
   end
   
   def conversation(page = nil, no_of_records = 5)
@@ -342,8 +342,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
     self[:spam] = (category == :spam)
   end
     
-  def self.extract_id_token(text)
-    pieces = text.match(/\[#([0-9]*)\]/) #by Shan changed to just numeric
+  def self.extract_id_token(text, delimeter)
+    pieces = text.match(Regexp.new("\\[#{delimeter}([0-9]*)\\]")) #by Shan changed to just numeric
     pieces && pieces[1]
   end
 
@@ -507,14 +507,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
     Helpdesk::TicketNotifier.send_later(:notify_by_email, notification_type, self) if notify_enabled?(notification_type)
   end
   
-  REQUESTER_NOTIFICATIONS = [ EmailNotification::NEW_TICKET, 
-    EmailNotification::TICKET_CLOSED, EmailNotification::TICKET_RESOLVED  ]
-  
   def notify_enabled?(notification_type)
     e_notification = account.email_notifications.find_by_notification_type(notification_type)
-    
-    REQUESTER_NOTIFICATIONS.include?(notification_type) ? e_notification.requester_notification? : 
-      e_notification.agent_notification?
+    e_notification.requester_notification? or e_notification.agent_notification?
   end
   
   def custom_fields
@@ -522,7 +517,16 @@ class Helpdesk::Ticket < ActiveRecord::Base
       [:flexifield_def_entries =>:flexifield_picklist_vals], 
       :conditions => ['account_id=? AND module=?',account_id,'Ticket'] ) 
   end
+
+  def ticket_id_delimiter
+    delimiter = account.email_commands_setting.ticket_id_delimiter
+    delimiter = delimiter.blank? ? '#' : delimiter
+  end
   
+  def delimited_display_id
+    "#{ticket_id_delimiter}#{display_id}"
+  end
+
   def to_s
     "#{subject} (##{display_id})"
   end

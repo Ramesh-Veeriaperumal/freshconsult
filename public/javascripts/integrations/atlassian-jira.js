@@ -111,7 +111,7 @@ JiraWidget.prototype= {
 					if (jiraBundle.remote_integratable_id) {
 						return jiraWidget.JIRA_ISSUE.evaluate({});
 					} else {
-						return jiraWidget.JIRA_FORM.evaluate({subject:jiraBundle.ticketSubject});
+						return jiraWidget.JIRA_FORM.evaluate({subject:jiraBundle.ticketSubject.replace(/"/g,"&quot;")});
 					}
 				},
 				application_resources:init_reqs
@@ -201,7 +201,6 @@ JiraWidget.prototype= {
 	},
 
 	createJiraIssue:function(resultCallback) {
-
 		this.showSpinner();
 
 		self = this;
@@ -217,13 +216,13 @@ JiraWidget.prototype= {
 				"projectId": projectId,
 				"issueTypeId":typeId,
 				"summary":ticketSummary,
-				"description":jiraBundle.jiraNote,
+				"description":  jQuery('#jira-note').html(), //jiraBundle.jiraNote,
 				"application_id": jiraBundle.application_id,
 				"ticketData":ticketData,
 				"integrated_resource[local_integratable_id]":jiraBundle.ticket_rawId,
 				"integrated_resource[local_integratable_type]": integratable_type
 
-			};
+			};	
 			new Ajax.Request("/integrations/jira_issue/create", {
 				asynchronous: true,
 				method: "post",

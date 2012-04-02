@@ -138,7 +138,7 @@ require 'openssl'
       @current_user.deliver_account_admin_activation
       SubscriptionNotifier.send_later(:deliver_welcome, current_account)
       flash[:notice] = t('signup_complete_activate_info')
-      redirect_to root_url     
+      redirect_to admin_getting_started_index_path  
     else
       flash[:notice] = "Please provide valid login details!"
       render :action => :new
@@ -215,9 +215,14 @@ require 'openssl'
         @user_session = current_account.user_sessions.new(@current_user)  
         if @user_session.save
           logger.debug " @user session has been saved :: #{@user_session.inspect}"
+          
           if gmail_gadget_temp_token.blank?
-            flash[:notice] = t(:'flash.g_app.authentication_success')
-            redirect_back_or_default('/')
+            flash[:notice] = t(:'flash.g_app.authentication_success')        
+            if (@current_user.account_admin? && @current_user.first_login?)
+               redirect_to admin_getting_started_index_path
+            else
+              redirect_back_or_default('/')            
+            end  
           else
             @current_user.agent.google_viewer_id = google_viewer_id
             @current_user.agent.save!
