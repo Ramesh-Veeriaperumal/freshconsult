@@ -1605,3 +1605,5 @@ a.submit_link:hover { text-decoration: none; }
 .hovercard { font-size: 14px; float: left; margin-bottom: 2px; }
 .hovercard .smalltext { color: #999; font-size: 12px; margin-bottom: 2px; }
 .hovercard div { font-size: 12px; margin-bottom: 2px; }
+
+.survey_settings { padding: 10px; margin: 10px; }

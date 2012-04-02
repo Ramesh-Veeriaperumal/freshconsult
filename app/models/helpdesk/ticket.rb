@@ -151,7 +151,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   named_scope :assigned_to, lambda { |agent| { :conditions => ["responder_id=?", agent.id] } }
   named_scope :requester_active, lambda { |user| { :conditions => 
     [ "requester_id=? ",
-      user.id ] } }
+      user.id ], :order => 'created_at DESC' } }
   named_scope :requester_completed, lambda { |user| { :conditions => 
     [ "requester_id=? and status in (#{STATUS_KEYS_BY_TOKEN[:resolved]}, #{STATUS_KEYS_BY_TOKEN[:closed]})",
       user.id ] } }
@@ -501,14 +501,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
     Helpdesk::TicketNotifier.send_later(:notify_by_email, notification_type, self) if notify_enabled?(notification_type)
   end
   
-  REQUESTER_NOTIFICATIONS = [ EmailNotification::NEW_TICKET, 
-    EmailNotification::TICKET_CLOSED, EmailNotification::TICKET_RESOLVED  ]
-  
   def notify_enabled?(notification_type)
     e_notification = account.email_notifications.find_by_notification_type(notification_type)
-    
-    REQUESTER_NOTIFICATIONS.include?(notification_type) ? e_notification.requester_notification? : 
-      e_notification.agent_notification?
+    e_notification.requester_notification? or e_notification.agent_notification?
   end
   
   def custom_fields

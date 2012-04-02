@@ -4,7 +4,8 @@ date_range = params[:date_range].blank? ? "#{30.days.ago.strftime("%d %B %Y")} -
 <%= javascript_include_tag  '/javascripts/report/date' %>
 <%= javascript_include_tag  '/javascripts/report/daterangepicker.jQuery.js' %>
 <%= stylesheet_link_tag 'ui.daterangepicker' %>
-<%= stylesheet_link_tag 'reports' %>
+<%= stylesheet_link_tag 'reports', :media => "screen, print, projection"  %>
+<%= stylesheet_link_tag "report-print", :media => "print, projection" %>
 <span class="floatr">
 	<%= link_to("&larr; #{t('reports.summary_report.back_to_reports')}", reports_url, :class => "slim-button") %>
 </span>
@@ -29,6 +30,10 @@ date_range = params[:date_range].blank? ? "#{30.days.ago.strftime("%d %B %Y")} -
 		</div>
 	</form>
 
+</div>
+
+<div class="sidepanel helpcard">
+	<p>	<%= t('reports.summary_report.helptext') %> </p>
 </div>
 
 
