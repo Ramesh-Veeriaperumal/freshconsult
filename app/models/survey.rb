@@ -21,9 +21,8 @@ class Survey < ActiveRecord::Base
   has_many :survey_results, :dependent => :destroy
   
   def can_send?(ticket, s_while)
-    false
-    # ( account.features?(:surveys, :survey_links) && ticket.requester && 
-    #       ticket.requester.customer? && (send_while == s_while) )
+    ( account.features?(:surveys, :survey_links) && ticket.requester && 
+           ticket.requester.customer? && (send_while == s_while) )
   end
   
   def store(survey)     

@@ -124,6 +124,13 @@ en:
     recent: Recent
     popular: Popular
   payment_info: Payment information
+  support:
+      surveys:
+          new:
+              thanks_info: Thanks for taking time to rate our support experience.
+              feedback_info: Your feedback is very much appreciated.
+              feedback_optional: Feedback is optional
+              send: Send Feedback
   admin:
     surveys:
      successfully_updated: Survey settings has been successfully updated.
@@ -135,8 +142,8 @@ en:
         link_text_label: Survey Link Text
         link_text_input: Please take a minute to rate your customer support experience
         link_text_info: This text appears below your signature at the bottom of the email sent to the customer
-        send_while_option1: Send survey link after the ticket is resolved. Let customers give feedback whenever they want
-        send_while_option2: Send survey link in every email. Let customers give feedback whenever they want.
+        send_while_option1: Send survey link in every email. Let customers give feedback whenever they want.
+        send_while_option2: Send survey link after the ticket is resolved. Let customers give feedback whenever they want        
      scoreboard_ratings:
         enable_scoreboard_label: Enable Support Scoreboard
         about_scoreboard: Support Scoreboard allows you to award points to agents based on resolution time and customer happiness    
