@@ -11,7 +11,9 @@ class UsersController < ApplicationController
     c.requires_permission :manage_account
   end
   
-  before_filter { |c| c.requires_permission :manage_tickets }
+  before_filter :except => :revert_identity do |c|
+   c.requires_permission :manage_tickets 
+  end
   before_filter :load_multiple_items, :only => :block
 
    ##redirect to contacts
@@ -85,6 +87,35 @@ class UsersController < ApplicationController
     end
   end
 
+  def assume_identity
+    user = current_account.users.find params[:id]
+
+    if is_allowed_to_assume?(user)
+      
+      session[:original_user] = current_user.id
+      session[:assumed_user] = user.id
+      
+      flash[:notice] = I18n.t("assumed_identity_msg", :user_name => user.name)
+    else
+      flash[:notice] = I18n.t("assuming_identity_not_allowed_msg")
+    end
+    redirect_to "/"
+  end
+
+  def revert_identity
+    if(session.has_key?(:original_user))
+      
+      revert_current_user
+
+      session.delete :original_user
+      session.delete :assumed_user
+      
+      flash[:notice] = I18n.t("identity_reverted_msg")
+    else
+      flash[:error] = I18n.t("identity_reverted_error_msg")
+    end
+    redirect_to "/"
+  end
  
   protected
   

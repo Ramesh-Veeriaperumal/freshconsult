@@ -9,6 +9,9 @@
     <div class="header_links">
       <% if current_user then %>              
         <%= t('header.welcome') %><span class="font_color"><strong><%= link_to current_user.name, edit_profile_path(current_user) %></strong>-<%= link_to(t('header.signout'), logout_path) %></span>
+        <%if is_assumed_user? %>
+        	<span class="font_color"><strong><%= link_to t('revert_identity_link_msg'), revert_identity_users_path%></strong></span>
+        <%end%>
       <% else %>
         <%= link_to( t('header.login') , login_path) %>
 		<%= link_to( t('signup') , new_support_registration_path) if feature?(:signup_link) %>
