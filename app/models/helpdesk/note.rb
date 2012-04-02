@@ -1,7 +1,9 @@
 class Helpdesk::Note < ActiveRecord::Base
   set_table_name "helpdesk_notes"
 
-  belongs_to :notable, :polymorphic => true  
+  belongs_to :notable, :polymorphic => true,
+  :conditions => '#{notable_type.constantize.table_name}.account_id = #{account_id}'
+
   belongs_to :account
   belongs_to :user
   
@@ -10,6 +12,7 @@ class Helpdesk::Note < ActiveRecord::Base
   has_many :attachments,
     :as => :attachable,
     :class_name => 'Helpdesk::Attachment',
+    :conditions => 'helpdesk_attachments.account_id = #{account_id}',
     :dependent => :destroy
     
   has_one :tweet,

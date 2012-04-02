@@ -7,14 +7,13 @@ class Portal < ActiveRecord::Base
   has_one :logo,
     :as => :attachable,
     :class_name => 'Helpdesk::Attachment',
-    #:conditions => ['description = ?', 'logo' ],
-    :conditions => { :description => 'logo' },
+    :conditions =>  [' description = ? and helpdesk_attachments.account_id = #{account_id}', 'logo' ],
     :dependent => :destroy
   
   has_one :fav_icon,
     :as => :attachable,
     :class_name => 'Helpdesk::Attachment',
-    :conditions => ['description = ?', 'fav_icon' ],
+    :conditions => [' description = ? and helpdesk_attachments.account_id = #{account_id}', 'fav_icon' ], 
     :dependent => :destroy
 
   belongs_to :account

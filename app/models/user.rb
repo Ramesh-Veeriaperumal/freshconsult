@@ -44,6 +44,7 @@ class User < ActiveRecord::Base
   has_one :avatar,
     :as => :attachable,
     :class_name => 'Helpdesk::Attachment',
+    :conditions => 'helpdesk_attachments.account_id = #{account_id}',
     :dependent => :destroy
 
   before_create :set_time_zone , :set_company_name , :set_language

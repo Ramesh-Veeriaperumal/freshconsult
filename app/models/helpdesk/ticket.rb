@@ -37,15 +37,18 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   belongs_to :requester,
     :class_name => 'User'
+  
 
   has_many :notes, 
     :class_name => 'Helpdesk::Note',
     :as => 'notable',
+    :conditions => 'helpdesk_notes.account_id = #{account_id}',
     :dependent => :destroy
     
   has_many :activities,
     :class_name => 'Helpdesk::Activity',
     :as => 'notable',
+    :conditions => 'helpdesk_activities.account_id = #{account_id}',
     :dependent => :destroy
 
   has_many :reminders, 
@@ -76,6 +79,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   has_many :attachments,
     :as => :attachable,
     :class_name => 'Helpdesk::Attachment',
+    :conditions => 'helpdesk_attachments.account_id = #{account_id}',
     :dependent => :destroy
   
   has_one :tweet,
@@ -112,6 +116,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   named_scope :resolved_and_closed_tickets, :conditions => {:status => [STATUS_KEYS_BY_TOKEN[:resolved],STATUS_KEYS_BY_TOKEN[:closed]]}
   
+  #named_scope :account_scope, :conditions => ['helpdesk_tickets.account_id = #{account_id}']
+    
   named_scope :all_company_tickets,lambda { |customer| { 
         :joins => :requester,
         :conditions => [" users.customer_id = ?",customer]
