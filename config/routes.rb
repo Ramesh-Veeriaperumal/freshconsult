@@ -89,8 +89,8 @@
     admin.resources :canned_responses
     admin.resources :products
     admin.resources :portal, :only => [ :index, :update ] do |portal|
-      portal.resources :portal_templates, :name_prefix => "admin_"
-      portal.resources :portal_pages, :name_prefix => "admin_"
+      portal.resources :templates, :controller => 'portal_templates'
+      portal.resources :pages, :controller => 'portal_pages'
     end
     admin.resources :surveys, :only => [ :index ]
     admin.resources :zen_import, :collection => {:import_data => :any }

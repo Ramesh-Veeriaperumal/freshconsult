@@ -58,7 +58,7 @@
 							<input type="color" maxlength="7" id="BackgroundColor" class="color_field required" name="account[main_portal_attributes][preferences][bg_color]"  data-hex="true" value="<%=portal_pref(@account.main_portal, :bg_color)%>" />
 							<p>
 								<a href="javascript:void(0)" class="btn" id="ResetColors"><%=t('account.info3')%> </a>  
-								<%= link_to "Advanced style and layout customization", new_admin_portal_template_path( @account.main_portal ), :class => "btn primary" %>
+								<%= link_to "Advanced style and layout customization", admin_portal_templates_path( @account.main_portal ), :class => "btn primary" %>                 
 							</p>
 					</div>	
 			  <% end %>

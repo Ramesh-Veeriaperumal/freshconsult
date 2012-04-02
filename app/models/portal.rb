@@ -17,7 +17,7 @@ class Portal < ActiveRecord::Base
     :conditions => ['description = ?', 'fav_icon' ],
     :dependent => :destroy
   
-  has_one :portal_template
+  has_one :template, :class_name => 'Portal::Template'
 
   belongs_to :account
   belongs_to :product, :class_name => 'EmailConfig'

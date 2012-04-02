@@ -1,21 +1,16 @@
 class Admin::PortalTemplatesController < Admin::AdminController               
-  before_filter :build_object, :only => :new 
+  before_filter :build_object, :only => [:index, :update] 
 
-  def create      
-    puts "Paramters for Create #{params[:portal_template].inspect}"          
-    @portal_template = current_portal.build_portal_template(params[:portal_template])   
-    if @portal_template.save
+  def update                                                             
+    if @portal_template.update_attributes(params[:portal_template])
       flash[:notice] = "Portal template saved successfully"
-    end
+    end 
     redirect_to :back  
   end                                                             
  
   protected
-    def scoper
-      current_portal
-    end
-                     
     def build_object
-      @portal_template = current_portal.build_portal_template
+      @portal = current_account.portals.find_by_id(params[:portal_id]) || current_portal 
+      @portal_template = @portal.template || @portal.build_template()
     end
 end
