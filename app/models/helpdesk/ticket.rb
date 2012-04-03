@@ -729,8 +729,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
     super(:builder => xml, :skip_instruct => true,:include => [:notes,:attachments],:except => [:account_id,:import_id]) do |xml|
       xml.custom_field do
         self.account.ticket_fields.custom_fields.each do |field|
-          value = send(field.name) 
-          xml.tag!(field.name.gsub(/[^0-9A-Za-z_]/, ''), value) unless value.blank?
+          begin
+           value = send(field.name) 
+           xml.tag!(field.name.gsub(/[^0-9A-Za-z_]/, ''), value) unless value.blank?
+         rescue
+           end 
         end
       end
      end
