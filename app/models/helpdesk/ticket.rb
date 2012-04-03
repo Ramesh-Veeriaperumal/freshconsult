@@ -537,7 +537,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
     email_config ? email_config.reply_email : account.default_email
   end
   
-  
+  def reply_name
+    email_config ? email_config.name : account.primary_email_config.name
+  end
 
   #Some hackish things for virtual agent rules.
   def tag_names
